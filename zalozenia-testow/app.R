@@ -52,55 +52,58 @@ set.seed(456)
 DEMO_SKEWED_DATA <- rgamma(50, shape = 2, scale = 15)
 
 # ============================================================================
-# FUNKCJE GENERUJĄCE DANE - MODUŁ 2: JEDNORODNOŚĆ WARIANCJI
+# STAŁE ZBIORY DANYCH - MODUŁ 2: JEDNORODNOŚĆ WARIANCJI
 # ============================================================================
 
-generate_equal_variance_data <- function(n_groups = 2, n_per_group = 30) {
-  set.seed(NULL)
-  groups <- rep(paste0("Grupa_", LETTERS[1:n_groups]), each = n_per_group)
+# Funkcja pomocnicza do tworzenia stałych danych
+create_variance_data <- function(seed, n_per_group, means, sds, group_names) {
+  set.seed(seed)
+  n_groups <- length(means)
+  groups <- rep(group_names[1:n_groups], times = n_per_group)
   values <- c()
   for (i in 1:n_groups) {
-    values <- c(values, rnorm(n_per_group, mean = 50 + i * 5, sd = 10))
+    values <- c(values, rnorm(n_per_group[i], mean = means[i], sd = sds[i]))
   }
-  data.frame(group = groups, value = values)
+  data.frame(group = factor(groups, levels = group_names[1:n_groups]), value = values)
 }
 
-generate_slightly_unequal_variance_data <- function(n_groups = 2, n_per_group = 30) {
-  set.seed(NULL)
-  groups <- rep(paste0("Grupa_", LETTERS[1:n_groups]), each = n_per_group)
-  values <- c()
-  sds <- seq(10, 10 + (n_groups - 1) * 5, length.out = n_groups)
-  for (i in 1:n_groups) {
-    values <- c(values, rnorm(n_per_group, mean = 50 + i * 5, sd = sds[i]))
+# 2 grupy - równe wariancje, równe n (SD = 10, 10)
+VAR_EQUAL_2 <- create_variance_data(
+  seed = 101, n_per_group = c(30, 30),
+  means = c(50, 55), sds = c(10, 10),
+  group_names = c("Grupa A", "Grupa B", "Grupa C")
+)
+
+# 2 grupy - bardzo różne wariancje + nierówne n (mała grupa z dużą wariancją!)
+# Student's t: p=0.026 (istotne!), Welch's t: p=0.204 (nieistotne) - ROZBIEŻNOŚĆ!
+VAR_UNEQUAL_2 <- create_variance_data(
+  seed = 117, n_per_group = c(12, 40),
+  means = c(50, 54), sds = c(22, 7),
+  group_names = c("Grupa A", "Grupa B", "Grupa C")
+)
+
+# 3 grupy - równe wariancje (SD = 10, 10, 10)
+VAR_EQUAL_3 <- create_variance_data(
+  seed = 103, n_per_group = c(25, 25, 25),
+  means = c(50, 55, 60), sds = c(10, 10, 10),
+  group_names = c("Grupa A", "Grupa B", "Grupa C")
+)
+
+# 3 grupy - bardzo różne wariancje + nierówne n (mała grupa z dużą wariancją!)
+# Klasyczna ANOVA: p=0.007 (istotne!), Welch ANOVA: p=0.315 (nieistotne) - ROZBIEŻNOŚĆ!
+VAR_UNEQUAL_3 <- create_variance_data(
+  seed = 140, n_per_group = c(10, 30, 30),
+  means = c(50, 53, 56), sds = c(25, 8, 8),
+  group_names = c("Grupa A", "Grupa B", "Grupa C")
+)
+
+# Funkcje zwracające stałe dane
+get_variance_data <- function(n_groups, equal_var) {
+  if (n_groups == 2) {
+    if (equal_var) VAR_EQUAL_2 else VAR_UNEQUAL_2
+  } else {
+    if (equal_var) VAR_EQUAL_3 else VAR_UNEQUAL_3
   }
-  data.frame(group = groups, value = values)
-}
-
-generate_very_unequal_variance_data <- function(n_groups = 2, n_per_group = 30) {
-  set.seed(NULL)
-  groups <- rep(paste0("Grupa_", LETTERS[1:n_groups]), each = n_per_group)
-  values <- c()
-  sds <- seq(5, 5 * n_groups * 2, length.out = n_groups)
-  for (i in 1:n_groups) {
-    values <- c(values, rnorm(n_per_group, mean = 50 + i * 5, sd = sds[i]))
-  }
-  data.frame(group = groups, value = values)
-}
-
-generate_unequal_n_variance_data <- function(n_groups = 2) {
-  set.seed(NULL)
-  n_vals <- c(20, 50)
-  if (n_groups == 3) n_vals <- c(15, 30, 60)
-
-  groups <- c()
-  values <- c()
-  sds <- seq(5, 5 * n_groups * 2, length.out = n_groups)
-
-  for (i in 1:n_groups) {
-    groups <- c(groups, rep(paste0("Grupa_", LETTERS[i]), n_vals[i]))
-    values <- c(values, rnorm(n_vals[i], mean = 50 + i * 5, sd = sds[i]))
-  }
-  data.frame(group = groups, value = values)
 }
 
 # ============================================================================
@@ -315,21 +318,6 @@ generate_regression_multiple_outliers <- function(n = 50) {
 # ============================================================================
 # PRE-COMPUTED WYNIKI SYMULACJI (Monte Carlo, n_sim = 10000)
 # ============================================================================
-
-# Moduł 2: Jednorodność wariancji - błąd typu I przy różnych kombinacjach n i SD
-precomputed_variance <- data.frame(
-  scenariusz = factor(c("n=20,20\nSD=1:1", "n=20,20\nSD=1:1",
-                        "n=20,20\nSD=1:4", "n=20,20\nSD=1:4",
-                        "n=10,30\nSD=1:4", "n=10,30\nSD=1:4",
-                        "n=30,10\nSD=1:4", "n=30,10\nSD=1:4"),
-                      levels = c("n=20,20\nSD=1:1", "n=20,20\nSD=1:4",
-                                 "n=10,30\nSD=1:4", "n=30,10\nSD=1:4")),
-  test = rep(c("Student's t", "Welch's t"), 4),
-  blad_typu_I = c(0.051, 0.050,   # równe wszystko
-                  0.071, 0.052,   # równe n, różne SD
-                  0.148, 0.053,   # mała grupa + duża wariancja (NAJGORSZY!)
-                  0.024, 0.051)   # duża grupa + duża wariancja (konserwatywny)
-)
 
 # Moduł 4: Regresja - pokrycie 95% CI przy heteroskedastyczności
 precomputed_regression <- data.frame(
@@ -574,20 +562,16 @@ ui <- fluidPage(
           sidebarLayout(
             sidebarPanel(
               h4("Wybór scenariusza"),
-              selectInput("variance_scenario", "Typ scenariusza:",
+              selectInput("variance_scenario", "Typ wariancji:",
                           choices = c(
-                            "Równe wariancje (idealny)" = "equal",
-                            "Lekko różne wariancje" = "slightly_unequal",
-                            "Bardzo różne wariancje" = "very_unequal",
-                            "Różne n + różne wariancje" = "unequal_n"
+                            "Równe wariancje" = "equal",
+                            "Różne wariancje" = "unequal"
                           ),
                           selected = "equal"),
 
-              sliderInput("variance_n_groups", "Liczba grup:",
-                          min = 2, max = 3, value = 2, step = 1),
-
-              actionButton("variance_regenerate", "🎲 Losuj nowe dane",
-                           class = "btn-success", width = "100%"),
+              radioButtons("variance_n_groups", "Liczba grup:",
+                           choices = c("2 grupy" = "2", "3 grupy" = "3"),
+                           selected = "2", inline = TRUE),
 
               hr(),
 
@@ -601,22 +585,34 @@ ui <- fluidPage(
             ),
 
             mainPanel(
-              div(
-                style = "border: 2px solid #3498db; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
-                h4("Boxploty grup"),
-                plotOutput("variance_boxplot", height = "300px")
+              fluidRow(
+                column(6,
+                  div(
+                    style = "border: 2px solid #3498db; border-radius: 5px; padding: 10px;",
+                    h4("Boxploty grup"),
+                    plotOutput("variance_boxplot", height = "280px")
+                  )
+                ),
+                column(6,
+                  div(
+                    style = "border: 2px solid #e67e22; border-radius: 5px; padding: 10px;",
+                    h4("Statystyki opisowe"),
+                    tableOutput("variance_stats")
+                  )
+                )
               ),
 
-              div(
-                style = "border: 2px solid #e67e22; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
-                h4("Statystyki opisowe"),
-                tableOutput("variance_stats")
-              ),
+              br(),
 
               div(
                 style = "border: 2px solid #95a5a6; border-radius: 5px; padding: 10px;",
                 h4("Test Levene'a"),
-                tableOutput("variance_test")
+                tableOutput("variance_test"),
+                div(
+                  style = "background-color: #ecf0f1; padding: 10px; border-radius: 5px; margin-top: 10px;",
+                  p("Test Levene'a sprawdza hipotezę o równości wariancji między grupami. ",
+                    "p < 0.05 oznacza istotne różnice w wariancjach.")
+                )
               ),
 
               width = 9
@@ -624,151 +620,84 @@ ui <- fluidPage(
           )
         ),
 
-        # --- Podtab: Dlaczego to ważne? ---
+        # --- Podtab: Wpływ na test ---
         tabPanel(
-          "Dlaczego to ważne?",
+          "Wpływ na test",
           br(),
-          h3("Konsekwencje łamania założenia jednorodności wariancji"),
-          p("Symulacja Monte Carlo (10 000 powtórzeń): Porównanie dwóch grup z identycznymi średnimi (H0 prawdziwe)."),
-          p(strong("Kluczowy czynnik: "), "interakcja między nierównymi liczebnościami grup (n) a nierównymi wariancjami."),
+          h3("Jak nierówne wariancje wpływają na porównanie grup?"),
+          p("Porównujemy grupy testami: ", strong("Student's t / ANOVA"), " (zakłada równe wariancje) vs ",
+            strong("Welch's t / Welch's ANOVA"), " (nie zakłada)."),
+
+          hr(),
+
+          radioButtons("var_test_n_groups", "Liczba grup:",
+                       choices = c("2 grupy (t-test)" = "2", "3 grupy (ANOVA)" = "3"),
+                       selected = "2", inline = TRUE),
 
           hr(),
 
           fluidRow(
+            # Panel 1: Równe wariancje
             column(6,
               div(class = "result-box-success",
-                h4("Równe n, równe wariancje"),
-                p("n1 = 20, n2 = 20, SD ratio = 1:1"),
-                br(),
-                p("Błąd typu I dla ", strong("Student's t: "),
-                  span(class = "value-big value-ok", "5.1%")),
-                p("Błąd typu I dla ", strong("Welch's t: "),
-                  span(class = "value-big value-ok", "5.0%")),
-                p(style = "color: #28a745;", "Oba testy działają poprawnie!")
+                h4("Równe wariancje"),
+                plotOutput("var_test_boxplot_equal", height = "180px"),
+                hr(),
+
+                h5("Statystyki grup"),
+                tableOutput("var_test_stats_equal"),
+
+                hr(),
+
+                h5("Wyniki testów"),
+                tableOutput("var_test_results_equal"),
+
+                hr(),
+
+                div(style = "background-color: rgba(40, 167, 69, 0.1); padding: 10px; border-radius: 5px;",
+                  p(strong("Interpretacja:")),
+                  p("Oba testy dają podobne wyniki - założenie spełnione, więc nie ma problemu.")
+                )
               )
             ),
+
+            # Panel 2: Różne wariancje
             column(6,
               div(class = "result-box-danger",
-                h4("Mała grupa + duża wariancja"),
-                p("n1 = 10, n2 = 30, SD ratio = 1:4"),
-                p(style = "font-style: italic;", "(mała grupa ma 4x większą wariancję)"),
-                br(),
-                p("Błąd typu I dla ", strong("Student's t: "),
-                  span(class = "value-big value-bad", "14.8%")),
-                p("Błąd typu I dla ", strong("Welch's t: "),
-                  span(class = "value-big value-ok", "5.3%")),
-                p(style = "color: #dc3545;", "Student's t daje 3x więcej fałszywych pozytywów!")
+                h4("Różne wariancje"),
+                plotOutput("var_test_boxplot_unequal", height = "180px"),
+                hr(),
+
+                h5("Statystyki grup"),
+                tableOutput("var_test_stats_unequal"),
+
+                hr(),
+
+                h5("Wyniki testów"),
+                tableOutput("var_test_results_unequal"),
+
+                hr(),
+
+                div(style = "background-color: rgba(220, 53, 69, 0.1); padding: 10px; border-radius: 5px;",
+                  p(strong("Interpretacja:")),
+                  uiOutput("var_test_interpretation_unequal")
+                )
               )
             )
           ),
 
           hr(),
-
-          h4("Porównanie wszystkich scenariuszy"),
-          plotOutput("var_consequence_comparison", height = "350px"),
-
-          div(class = "result-box-warning",
-            h4("Ciekawy przypadek: duża grupa + duża wariancja"),
-            p("Gdy ", strong("większa"), " grupa ma ", strong("większą"), " wariancję (n=30, SD=4 vs n=10, SD=1):"),
-            p("Student's t staje się ", strong("konserwatywny"), " (błąd I = 2.4% zamiast 5%)"),
-            p("To oznacza ", strong("utratę mocy"), " - test rzadziej wykrywa prawdziwe różnice.")
-          ),
-
-          div(class = "interpretation-box",
-            h4("Wniosek"),
-            p(strong("Najgorszy przypadek:"), " mała grupa + duża wariancja = dramatyczna inflacja błędu typu I"),
-            p(strong("Welch's t-test"), " jest zawsze bezpieczny - automatycznie koryguje dla nierównych wariancji."),
-            p(style = "font-style: italic;",
-              "Zalecenie: Zawsze używaj Welch's t-test (w R: t.test(..., var.equal = FALSE) - domyślne ustawienie).")
-          )
-        ),
-
-        # --- Podtab: Problem u podstawy ---
-        tabPanel(
-          "Problem u podstawy",
-          br(),
-          h3("Niepewność pomiaru średniej zależy od wariancji"),
-          p("Kluczowe pytanie: ", strong("Jak precyzyjnie znamy średnią w każdej grupie?")),
-
-          hr(),
-
-          h4("Błąd standardowy średniej (SEM)"),
-
-          div(style = "background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;",
-            p("Niepewność średniej w grupie:"),
-            p(style = "font-family: monospace; font-size: 18px; text-align: center;",
-              "SEM = SD / \u221An"),
-            p(style = "text-align: center;", "Im większa wariancja (SD) → tym większa niepewność średniej")
-          ),
-
-          fluidRow(
-            column(6,
-              div(class = "result-box-success",
-                h4("Obie grupy: podobna niepewność"),
-                p("Grupa A: n=20, SD=10 → SEM = 2.2"),
-                p("Grupa B: n=20, SD=10 → SEM = 2.2"),
-                br(),
-                plotOutput("var_base_sem_equal", height = "200px"),
-                br(),
-                p("Obie średnie znamy z ", strong("podobną precyzją")),
-                p("Test porównuje je sprawiedliwie")
-              )
-            ),
-            column(6,
-              div(class = "result-box-danger",
-                h4("Różna niepewność w grupach"),
-                p("Grupa A: n=10, SD=40 → SEM = 12.6"),
-                p("Grupa B: n=30, SD=10 → SEM = 1.8"),
-                br(),
-                plotOutput("var_base_sem_unequal", height = "200px"),
-                br(),
-                p("Średnią grupy A znamy ", strong("7x gorzej"), " niż B!"),
-                p("Test nie wie, że jedna średnia jest 'rozmazana'")
-              )
-            )
-          ),
-
-          hr(),
-
-          h4("Problem: Test zakłada równą niepewność obu średnich"),
-
-          div(class = "result-box-warning",
-            p("Testy zakładające równe wariancje (Student's t, klasyczna ANOVA) liczą ",
-              strong("wspólny błąd standardowy"), " dla wszystkich grup."),
-            br(),
-            p("Gdy grupy mają różne wariancje:"),
-            tags$ul(
-              tags$li("Wspólny SE jest ", strong("uśrednieniem"), " - nie pasuje do żadnej grupy"),
-              tags$li("Dla grupy z dużą wariancją: SE ", strong("zaniżony"), " → za dużo 'istotnych' wyników"),
-              tags$li("Dla grupy z małą wariancją: SE ", strong("zawyżony"), " → tracimy moc")
-            ),
-            br(),
-            p(strong("Kluczowy czynnik: "), "Która grupa ma więcej obserwacji?"),
-            tags$ul(
-              tags$li("Mała grupa + duża wariancja → ", span(style="color:#dc3545;", strong("inflacja błędu I (liberalny)"))),
-              tags$li("Duża grupa + duża wariancja → ", span(style="color:#f39c12;", strong("utrata mocy (konserwatywny)")))
-            )
-          ),
-
-          hr(),
-
-          h4("Wizualizacja: Rozkłady średnich z próby (sampling distributions)"),
-          p("Każda krzywa to rozkład możliwych średnich przy wielokrotnym próbkowaniu:"),
-          plotOutput("var_base_sampling_dist", height = "300px"),
 
           div(class = "interpretation-box",
             h4("Kluczowy wniosek"),
-            p("Problem ", strong("nie jest specyficzny"), " dla t-testu - dotyczy też ANOVA i innych testów."),
-            p("Fundamentalny problem: ", strong("różne grupy mają różną niepewność pomiaru średniej"), "."),
-            br(),
-            p("Rozwiązania:"),
+            p("Przy ", strong("nierównych wariancjach"), ":"),
             tags$ul(
-              tags$li(strong("Welch's t-test"), " - osobny SE dla każdej grupy (domyślny w R!)"),
-              tags$li(strong("Welch's ANOVA"), " - oneway.test(..., var.equal = FALSE)"),
-              tags$li(strong("Testy nieparametryczne"), " - nie zakładają równych wariancji")
+              tags$li("Student's t / klasyczna ANOVA może dawać błędne p-value"),
+              tags$li("Welch's t / Welch's ANOVA automatycznie koryguje dla różnic w wariancjach"),
+              tags$li("W R: t.test() domyślnie używa Welch's (var.equal = FALSE)")
             ),
             p(style = "font-style: italic;",
-              "Zasada: Jeśli nie masz pewności co do równości wariancji, użyj metody, która tego nie zakłada.")
+              "Zalecenie: Zawsze używaj Welch's wersji testów - działa poprawnie niezależnie od równości wariancji.")
           )
         )
       )
@@ -1359,24 +1288,11 @@ server <- function(input, output, session) {
   # MODUŁ 2: JEDNORODNOŚĆ WARIANCJI
   # ==========================================================================
 
-  variance_data <- reactiveVal(generate_equal_variance_data())
-
-  observeEvent(c(input$variance_scenario, input$variance_n_groups), {
-    data <- switch(input$variance_scenario,
-                   "equal" = generate_equal_variance_data(input$variance_n_groups),
-                   "slightly_unequal" = generate_slightly_unequal_variance_data(input$variance_n_groups),
-                   "very_unequal" = generate_very_unequal_variance_data(input$variance_n_groups),
-                   "unequal_n" = generate_unequal_n_variance_data(input$variance_n_groups))
-    variance_data(data)
-  })
-
-  observeEvent(input$variance_regenerate, {
-    data <- switch(input$variance_scenario,
-                   "equal" = generate_equal_variance_data(input$variance_n_groups),
-                   "slightly_unequal" = generate_slightly_unequal_variance_data(input$variance_n_groups),
-                   "very_unequal" = generate_very_unequal_variance_data(input$variance_n_groups),
-                   "unequal_n" = generate_unequal_n_variance_data(input$variance_n_groups))
-    variance_data(data)
+  # Reactive dla danych wizualizacji
+  variance_data <- reactive({
+    n_groups <- as.numeric(input$variance_n_groups)
+    equal_var <- input$variance_scenario == "equal"
+    get_variance_data(n_groups, equal_var)
   })
 
   output$variance_boxplot <- renderPlot({
@@ -1385,7 +1301,7 @@ server <- function(input, output, session) {
     ggplot(data, aes(x = group, y = value, fill = group)) +
       geom_boxplot(alpha = 0.7) +
       scale_fill_manual(values = c("#3498db", "#e74c3c", "#27ae60")) +
-      theme_minimal(base_size = 14) +
+      theme_minimal(base_size = 12) +
       labs(x = "Grupa", y = "Wartość") +
       theme(legend.position = "none")
   })
@@ -1399,7 +1315,6 @@ server <- function(input, output, session) {
         n = n(),
         Średnia = round(mean(value), 2),
         SD = round(sd(value), 2),
-        Wariancja = round(var(value), 2),
         .groups = "drop"
       ) %>%
       rename(Grupa = group, N = n)
@@ -1424,12 +1339,169 @@ server <- function(input, output, session) {
 
   output$variance_interpretation <- renderText({
     scenario <- input$variance_scenario
+    n_groups <- input$variance_n_groups
 
-    switch(scenario,
-           "equal" = "Idealny przypadek - równe wariancje. Testy jak t-test i ANOVA działają dobrze.",
-           "slightly_unequal" = "Lekko różne wariancje - testy są zazwyczaj odporne na małe różnice.",
-           "very_unequal" = "Bardzo różne wariancje - naruszenie założenia! Użyj Welch's t-test lub testów nieparametrycznych.",
-           "unequal_n" = "Różne n + różne wariancje = najgorszy przypadek. Zdecydowanie użyj Welch's t-test lub testów nieparametrycznych.")
+    if (scenario == "equal") {
+      "Idealny przypadek - równe wariancje. Testy parametryczne (t-test, ANOVA) działają poprawnie."
+    } else {
+      "Różne wariancje między grupami. Student's t / klasyczna ANOVA mogą dawać błędne wyniki. Użyj Welch's."
+    }
+  })
+
+  # ==========================================================================
+  # MODUŁ 2: WPŁYW NA TEST - porównanie grup
+  # ==========================================================================
+
+  # Boxplot - równe wariancje
+  output$var_test_boxplot_equal <- renderPlot({
+    n_groups <- as.numeric(input$var_test_n_groups)
+    data <- get_variance_data(n_groups, equal_var = TRUE)
+
+    ggplot(data, aes(x = group, y = value, fill = group)) +
+      geom_boxplot(alpha = 0.7) +
+      scale_fill_manual(values = c("#3498db", "#27ae60", "#9b59b6")) +
+      theme_minimal(base_size = 11) +
+      labs(x = "", y = "Wartość") +
+      theme(legend.position = "none")
+  })
+
+  # Boxplot - różne wariancje
+  output$var_test_boxplot_unequal <- renderPlot({
+    n_groups <- as.numeric(input$var_test_n_groups)
+    data <- get_variance_data(n_groups, equal_var = FALSE)
+
+    ggplot(data, aes(x = group, y = value, fill = group)) +
+      geom_boxplot(alpha = 0.7) +
+      scale_fill_manual(values = c("#e74c3c", "#f39c12", "#e67e22")) +
+      theme_minimal(base_size = 11) +
+      labs(x = "", y = "Wartość") +
+      theme(legend.position = "none")
+  })
+
+  # Statystyki - równe wariancje
+  output$var_test_stats_equal <- renderTable({
+    n_groups <- as.numeric(input$var_test_n_groups)
+    data <- get_variance_data(n_groups, equal_var = TRUE)
+
+    data %>%
+      group_by(group) %>%
+      summarise(
+        N = n(),
+        Średnia = round(mean(value), 1),
+        SD = round(sd(value), 1),
+        .groups = "drop"
+      ) %>%
+      rename(Grupa = group)
+  }, striped = TRUE, bordered = TRUE, width = "100%")
+
+  # Statystyki - różne wariancje
+  output$var_test_stats_unequal <- renderTable({
+    n_groups <- as.numeric(input$var_test_n_groups)
+    data <- get_variance_data(n_groups, equal_var = FALSE)
+
+    data %>%
+      group_by(group) %>%
+      summarise(
+        N = n(),
+        Średnia = round(mean(value), 1),
+        SD = round(sd(value), 1),
+        .groups = "drop"
+      ) %>%
+      rename(Grupa = group)
+  }, striped = TRUE, bordered = TRUE, width = "100%")
+
+  # Wyniki testów - równe wariancje
+  output$var_test_results_equal <- renderTable({
+    n_groups <- as.numeric(input$var_test_n_groups)
+    data <- get_variance_data(n_groups, equal_var = TRUE)
+
+    if (n_groups == 2) {
+      # t-testy
+      student_t <- t.test(value ~ group, data = data, var.equal = TRUE)
+      welch_t <- t.test(value ~ group, data = data, var.equal = FALSE)
+
+      data.frame(
+        Test = c("Student's t", "Welch's t"),
+        Statystyka = c(round(student_t$statistic, 2), round(welch_t$statistic, 2)),
+        `p-value` = c(format.pval(student_t$p.value, digits = 3),
+                      format.pval(welch_t$p.value, digits = 3)),
+        check.names = FALSE
+      )
+    } else {
+      # ANOVA
+      classic_anova <- summary(aov(value ~ group, data = data))[[1]]
+      welch_anova <- oneway.test(value ~ group, data = data, var.equal = FALSE)
+
+      data.frame(
+        Test = c("Klasyczna ANOVA", "Welch's ANOVA"),
+        Statystyka = c(round(classic_anova$`F value`[1], 2), round(welch_anova$statistic, 2)),
+        `p-value` = c(format.pval(classic_anova$`Pr(>F)`[1], digits = 3),
+                      format.pval(welch_anova$p.value, digits = 3)),
+        check.names = FALSE
+      )
+    }
+  }, striped = TRUE, bordered = TRUE, width = "100%")
+
+  # Wyniki testów - różne wariancje
+  output$var_test_results_unequal <- renderTable({
+    n_groups <- as.numeric(input$var_test_n_groups)
+    data <- get_variance_data(n_groups, equal_var = FALSE)
+
+    if (n_groups == 2) {
+      # t-testy
+      student_t <- t.test(value ~ group, data = data, var.equal = TRUE)
+      welch_t <- t.test(value ~ group, data = data, var.equal = FALSE)
+
+      data.frame(
+        Test = c("Student's t", "Welch's t"),
+        Statystyka = c(round(student_t$statistic, 2), round(welch_t$statistic, 2)),
+        `p-value` = c(format.pval(student_t$p.value, digits = 3),
+                      format.pval(welch_t$p.value, digits = 3)),
+        check.names = FALSE
+      )
+    } else {
+      # ANOVA
+      classic_anova <- summary(aov(value ~ group, data = data))[[1]]
+      welch_anova <- oneway.test(value ~ group, data = data, var.equal = FALSE)
+
+      data.frame(
+        Test = c("Klasyczna ANOVA", "Welch's ANOVA"),
+        Statystyka = c(round(classic_anova$`F value`[1], 2), round(welch_anova$statistic, 2)),
+        `p-value` = c(format.pval(classic_anova$`Pr(>F)`[1], digits = 3),
+                      format.pval(welch_anova$p.value, digits = 3)),
+        check.names = FALSE
+      )
+    }
+  }, striped = TRUE, bordered = TRUE, width = "100%")
+
+  # Interpretacja dla nierównych wariancji
+  output$var_test_interpretation_unequal <- renderUI({
+    n_groups <- as.numeric(input$var_test_n_groups)
+    data <- get_variance_data(n_groups, equal_var = FALSE)
+
+    if (n_groups == 2) {
+      student_t <- t.test(value ~ group, data = data, var.equal = TRUE)
+      welch_t <- t.test(value ~ group, data = data, var.equal = FALSE)
+
+      if (abs(student_t$p.value - welch_t$p.value) > 0.01) {
+        p("Zauważ różnicę w p-value! Student's t nie uwzględnia różnic w wariancjach, ",
+          "co może prowadzić do błędnych wniosków.")
+      } else {
+        p("W tym przypadku różnice są niewielkie, ale przy większych dysproporcjach ",
+          "w wariancjach rozbieżności będą znaczące.")
+      }
+    } else {
+      classic_anova <- summary(aov(value ~ group, data = data))[[1]]
+      welch_anova <- oneway.test(value ~ group, data = data, var.equal = FALSE)
+
+      if (abs(classic_anova$`Pr(>F)`[1] - welch_anova$p.value) > 0.01) {
+        p("Zauważ różnicę w p-value między testami! Klasyczna ANOVA zakłada równe wariancje, ",
+          "Welch's ANOVA jest odporna na ich nierówność.")
+      } else {
+        p("W tym przypadku różnice są niewielkie, ale przy większych dysproporcjach ",
+          "w wariancjach rozbieżności będą znaczące.")
+      }
+    }
   })
 
   # ==========================================================================
@@ -1664,24 +1736,6 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # WYKRESY KONSEKWENCJI - JEDNORODNOŚĆ WARIANCJI
-  # ==========================================================================
-
-  output$var_consequence_comparison <- renderPlot({
-    ggplot(precomputed_variance, aes(x = scenariusz, y = blad_typu_I * 100, fill = test)) +
-      geom_bar(stat = "identity", position = position_dodge(width = 0.8), alpha = 0.8) +
-      geom_hline(yintercept = 5, linetype = "dashed", color = "#e74c3c", size = 1.2) +
-      annotate("text", x = 0.5, y = 6, label = "Oczekiwane 5%", hjust = 0, color = "#e74c3c", size = 4) +
-      scale_fill_manual(values = c("Student's t" = "#3498db", "Welch's t" = "#27ae60")) +
-      theme_minimal(base_size = 14) +
-      labs(x = "Scenariusz", y = "Błąd typu I (%)", fill = "Test",
-           title = "Błąd typu I przy różnych kombinacjach n i wariancji") +
-      theme(legend.position = "bottom",
-            axis.text.x = element_text(size = 10)) +
-      coord_cartesian(ylim = c(0, 18))
-  })
-
-  # ==========================================================================
   # WYKRESY KONSEKWENCJI - HOMOSKEDASTYCZNOŚĆ
   # ==========================================================================
 
@@ -1867,99 +1921,6 @@ server <- function(input, output, session) {
       theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
       xlim(min(ci[1] - 2, 20), max(ci[2] + 2, 40)) +
       annotate("text", x = 25, y = 1.3, label = "μ₀ = 25", color = "#9b59b6", size = 3.5)
-  })
-
-  # ==========================================================================
-  # WYKRESY "PROBLEM U PODSTAWY" - JEDNORODNOŚĆ WARIANCJI (SEM)
-  # ==========================================================================
-
-  # SEM przy równych wariancjach - obie grupy mają podobną precyzję
-  output$var_base_sem_equal <- renderPlot({
-    # Obie grupy: n=20, SD=10 → SEM = 10/√20 = 2.24
-    set.seed(42)
-    df <- data.frame(
-      grupa = factor(c(rep("Grupa A", 20), rep("Grupa B", 20))),
-      value = c(rnorm(20, 50, 10), rnorm(20, 55, 10))
-    )
-
-    stats <- df %>%
-      group_by(grupa) %>%
-      summarise(
-        mean = mean(value),
-        sem = sd(value) / sqrt(n()),
-        .groups = "drop"
-      )
-
-    ggplot(stats, aes(x = grupa, y = mean, fill = grupa)) +
-      geom_bar(stat = "identity", alpha = 0.7, width = 0.6) +
-      geom_errorbar(aes(ymin = mean - sem, ymax = mean + sem), width = 0.2, size = 1) +
-      scale_fill_manual(values = c("#3498db", "#27ae60")) +
-      theme_minimal(base_size = 12) +
-      labs(x = "", y = "Wartość",
-           title = "Równe SD = równa precyzja (SEM)") +
-      theme(legend.position = "none") +
-      geom_text(aes(label = paste0("SEM = ", round(sem, 1))),
-                vjust = -1.5, size = 4) +
-      coord_cartesian(ylim = c(0, 70))
-  })
-
-  # SEM przy nierównych wariancjach - różna precyzja grup
-  output$var_base_sem_unequal <- renderPlot({
-    # Grupa A: n=20, SD=5 → SEM = 5/√20 = 1.12
-    # Grupa B: n=20, SD=20 → SEM = 20/√20 = 4.47
-    set.seed(42)
-    df <- data.frame(
-      grupa = factor(c(rep("Grupa A\n(SD=5)", 20), rep("Grupa B\n(SD=20)", 20))),
-      value = c(rnorm(20, 50, 5), rnorm(20, 55, 20))
-    )
-
-    stats <- df %>%
-      group_by(grupa) %>%
-      summarise(
-        mean = mean(value),
-        sem = sd(value) / sqrt(n()),
-        .groups = "drop"
-      )
-
-    ggplot(stats, aes(x = grupa, y = mean, fill = grupa)) +
-      geom_bar(stat = "identity", alpha = 0.7, width = 0.6) +
-      geom_errorbar(aes(ymin = mean - sem, ymax = mean + sem), width = 0.2, size = 1) +
-      scale_fill_manual(values = c("#3498db", "#e74c3c")) +
-      theme_minimal(base_size = 12) +
-      labs(x = "", y = "Wartość",
-           title = "Różne SD = różna precyzja!") +
-      theme(legend.position = "none") +
-      geom_text(aes(label = paste0("SEM = ", round(sem, 1))),
-                vjust = -1.5, size = 4) +
-      coord_cartesian(ylim = c(0, 80))
-  })
-
-  # Rozkład próbkowy średnich - wizualizacja niepewności
-  output$var_base_sampling_dist <- renderPlot({
-    # Symulacja: Wyobraź sobie powtórzenie eksperymentu 1000 razy
-    set.seed(123)
-
-    # Grupa A: mała wariancja → wąski rozkład średnich
-    means_A <- replicate(1000, mean(rnorm(20, 50, 5)))
-    # Grupa B: duża wariancja → szeroki rozkład średnich
-    means_B <- replicate(1000, mean(rnorm(20, 55, 20)))
-
-    df <- data.frame(
-      mean = c(means_A, means_B),
-      grupa = factor(rep(c("Grupa A (SD=5)", "Grupa B (SD=20)"), each = 1000))
-    )
-
-    ggplot(df, aes(x = mean, fill = grupa)) +
-      geom_density(alpha = 0.5, color = NA) +
-      scale_fill_manual(values = c("#3498db", "#e74c3c")) +
-      theme_minimal(base_size = 14) +
-      labs(x = "Średnia z próby", y = "Gęstość", fill = "",
-           title = "Rozkład próbkowy: jak bardzo 'skacze' średnia między próbami") +
-      theme(legend.position = "bottom") +
-      geom_vline(xintercept = 50, color = "#3498db", linetype = "dashed", size = 1) +
-      geom_vline(xintercept = 55, color = "#e74c3c", linetype = "dashed", size = 1) +
-      annotate("text", x = 50, y = 0.35, label = "μ=50", color = "#3498db", hjust = 1.2, size = 4) +
-      annotate("text", x = 55, y = 0.35, label = "μ=55", color = "#e74c3c", hjust = -0.2, size = 4)
   })
 
   # ==========================================================================
