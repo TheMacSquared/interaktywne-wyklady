@@ -1,5 +1,5 @@
 # 📊 Założenia Testów Statystycznych
-# Interaktywne narzędzie do nauczania założeń wybranych testów statystycznych
+# Interaktywne narzędzie do nauczania założeń testów statystycznych
 
 library(shiny)
 library(ggplot2)
