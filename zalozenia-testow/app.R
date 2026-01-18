@@ -889,6 +889,10 @@ ui <- fluidPage(
         tabPanel(
           "Normalność reszt",
           br(),
+
+          # Nagłówek sekcji
+          h3("Wizualizacja"),
+
           sidebarLayout(
             sidebarPanel(
               h4("Wybór scenariusza"),
@@ -913,41 +917,91 @@ ui <- fluidPage(
             ),
 
             mainPanel(
-              div(
-                style = "border: 2px solid #3498db; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
-                h4("Scatterplot z linią regresji"),
-                plotOutput("reg_normal_scatter", height = "300px")
+              fluidRow(
+                column(6,
+                  div(
+                    style = "border: 2px solid #3498db; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
+                    h4("Scatterplot z linią regresji"),
+                    plotOutput("reg_normal_scatter", height = "280px")
+                  )
+                ),
+                column(6,
+                  div(
+                    style = "border: 2px solid #95a5a6; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
+                    h4("Test Shapiro-Wilka (na resztach)"),
+                    tableOutput("reg_normal_test")
+                  )
+                )
               ),
 
-              div(
-                style = "border: 2px solid #e67e22; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
-                h4("Histogram reszt"),
-                plotOutput("reg_normal_hist", height = "250px")
-              ),
-
-              div(
-                style = "border: 2px solid #9b59b6; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
-                h4("QQ-plot reszt"),
-                plotOutput("reg_normal_qq", height = "250px")
-              ),
-
-              div(
-                style = "border: 2px solid #95a5a6; border-radius: 5px; padding: 10px;",
-                h4("Test Shapiro-Wilka (na resztach)"),
-                tableOutput("reg_normal_test")
+              fluidRow(
+                column(6,
+                  div(
+                    style = "border: 2px solid #e67e22; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
+                    h4("Histogram reszt"),
+                    plotOutput("reg_normal_hist", height = "250px")
+                  )
+                ),
+                column(6,
+                  div(
+                    style = "border: 2px solid #9b59b6; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
+                    h4("QQ-plot reszt"),
+                    plotOutput("reg_normal_qq", height = "250px")
+                  )
+                )
               ),
 
               width = 9
             )
+          ),
+
+          hr(),
+
+          # Sekcja: Wpływ na wyniki
+          h3("Wpływ na wyniki"),
+
+          div(class = "interpretation-box",
+            h4("Czy to założenie jest krytyczne?"),
+            p("Normalność reszt jest ", strong("mniej krytyczna"), " niż inne założenia regresji."),
+
+            fluidRow(
+              column(6,
+                div(style = "background-color: #d4edda; padding: 15px; border-radius: 8px; margin-bottom: 15px;",
+                  h5("Kiedy można zignorować?", style = "color: #155724; margin-top: 0;"),
+                  tags$ul(
+                    tags$li(strong("Duża próba (n > 50):"), " Centralne Twierdzenie Graniczne sprawia, że estymaty są asymptotycznie normalne"),
+                    tags$li(strong("Interesuje nas tylko slope/intercept:"), " Estymaty są nieobciążone niezależnie od rozkładu reszt"),
+                    tags$li(strong("Umiarkowane odchylenia:"), " Lekka skośność nie jest problemem")
+                  )
+                )
+              ),
+              column(6,
+                div(style = "background-color: #f8d7da; padding: 15px; border-radius: 8px; margin-bottom: 15px;",
+                  h5("Kiedy to ważne?", style = "color: #721c24; margin-top: 0;"),
+                  tags$ul(
+                    tags$li(strong("Mała próba (n < 30):"), " CLT nie działa, przedziały ufności mogą być błędne"),
+                    tags$li(strong("Predykcja dla pojedynczych przypadków:"), " Przedziały predykcji zakładają normalność"),
+                    tags$li(strong("Silne outliery:"), " Mogą zniekształcać estymaty (problem dźwigni)")
+                  )
+                )
+              )
+            ),
+
+            p(strong("Wniosek:"), " Sprawdzaj normalność reszt, ale nie panikuj. ",
+              "Heteroskedastyczność i outliery z dużą dźwignią są większym problemem.")
           )
         ),
 
         # ====================================================================
-        # SUB-TAB 4b: Homoskedastyczność - Wizualizacja
+        # SUB-TAB 4b: Homoskedastyczność
         # ====================================================================
         tabPanel(
           "Homoskedastyczność",
           br(),
+
+          # Nagłówek sekcji
+          h3("Wizualizacja"),
+
           sidebarLayout(
             sidebarPanel(
               h4("Wybór scenariusza"),
@@ -972,16 +1026,21 @@ ui <- fluidPage(
             ),
 
             mainPanel(
-              div(
-                style = "border: 2px solid #3498db; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
-                h4("Scatterplot z linią regresji"),
-                plotOutput("reg_homo_scatter", height = "300px")
-              ),
-
-              div(
-                style = "border: 2px solid #e67e22; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
-                h4("Residual plot (kluczowy!)"),
-                plotOutput("reg_homo_residual", height = "300px")
+              fluidRow(
+                column(6,
+                  div(
+                    style = "border: 2px solid #3498db; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
+                    h4("Scatterplot z linią regresji"),
+                    plotOutput("reg_homo_scatter", height = "280px")
+                  )
+                ),
+                column(6,
+                  div(
+                    style = "border: 2px solid #e67e22; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
+                    h4("Residual plot (kluczowy!)"),
+                    plotOutput("reg_homo_residual", height = "280px")
+                  )
+                )
               ),
 
               div(
@@ -992,59 +1051,50 @@ ui <- fluidPage(
 
               width = 9
             )
-          )
-        ),
-
-        # ====================================================================
-        # SUB-TAB 4b2: Homoskedastyczność - Dlaczego to ważne?
-        # ====================================================================
-        tabPanel(
-          "Dlaczego homoskedastyczność?",
-          br(),
-          h3("Konsekwencje heteroskedastyczności"),
-          p("Symulacja Monte Carlo (10 000 powtórzeń): Estymacja współczynnika regresji (prawdziwy slope = 2)."),
-          p(strong("Pokrycie 95% CI"), " = jak często przedział ufności zawiera prawdziwą wartość. Powinno być 95%."),
+          ),
 
           hr(),
+
+          # Sekcja: Wpływ na wyniki
+          h3("Wpływ na wyniki"),
+
+          p("OLS zakłada ", strong("stałą wariancję"), " i oblicza 'średni' błąd standardowy. ",
+            "Przedział ufności jest więc ", strong("taki sam szerokości"), " dla wszystkich wartości X."),
+          p("Punkty ", span(style = "color: #e74c3c;", "czerwone"), " = poza 95% CI (powinno być ~5%)"),
 
           fluidRow(
             column(6,
               div(class = "result-box-success",
                 h4("Homoskedastyczność (stała wariancja)"),
-                plotOutput("reg_homo_ok_plot", height = "200px"),
+                plotOutput("reg_homo_ci_ok_plot", height = "280px"),
                 br(),
-                p("Pokrycie 95% CI dla ", strong("OLS: "),
-                  span(class = "value-big value-ok", "94.8%")),
-                p("Pokrycie 95% CI dla ", strong("Robust SE: "),
-                  span(class = "value-big value-ok", "95.1%")),
-                p(style = "color: #28a745;", "Przedziały ufności są prawidłowe!")
+                p("Punkty poza CI: ", strong("~5%"), " (zgodne z oczekiwaniem)"),
+                p(style = "color: #28a745;", "CI jest prawidłowy na całej długości!")
               )
             ),
             column(6,
               div(class = "result-box-danger",
-                h4("Silna heteroskedastyczność"),
-                plotOutput("reg_homo_bad_plot", height = "200px"),
+                h4("Heteroskedastyczność (rosnąca wariancja)"),
+                plotOutput("reg_homo_ci_bad_plot", height = "280px"),
                 br(),
-                p("Pokrycie 95% CI dla ", strong("OLS: "),
-                  span(class = "value-big value-bad", "84.2%")),
-                p("Pokrycie 95% CI dla ", strong("Robust SE: "),
-                  span(class = "value-big value-ok", "94.8%")),
-                p(style = "color: #dc3545;", "OLS: przedziały są za wąskie! 11% przypadków nie pokrywa prawdy.")
+                p("Punkty poza CI: ", strong("~15%"), " (3× więcej niż powinno!)"),
+                p(style = "color: #dc3545;", "Z prawej strony CI jest za wąski!")
               )
             )
           ),
 
-          hr(),
+          br(),
 
-          h4("Porównanie poziomów heteroskedastyczności"),
-          plotOutput("reg_homo_consequence_comparison", height = "300px"),
+          h4("Symulacja Monte Carlo: Pokrycie 95% CI"),
+          p("10 000 powtórzeń symulacji - jak często CI zawiera prawdziwą wartość slope?"),
+          plotOutput("reg_homo_consequence_comparison", height = "280px"),
 
           div(class = "interpretation-box",
             h4("Wniosek"),
             p("Heteroskedastyczność nie wpływa na ", strong("estymaty współczynników"), " (slope, intercept)."),
             p("Wpływa na ", strong("błędy standardowe"), " - są nieprawidłowe, co prowadzi do:"),
             tags$ul(
-              tags$li("Za wąskich przedziałów ufności"),
+              tags$li("Za wąskich przedziałów ufności (szczególnie tam gdzie wariancja duża)"),
               tags$li("Zbyt małych p-value (nadmiar istotnych wyników)"),
               tags$li("Błędnych wniosków o istotności statystycznej")
             ),
@@ -1055,19 +1105,23 @@ ui <- fluidPage(
         ),
 
         # ====================================================================
-        # SUB-TAB 4c: Wpływ outlierów
+        # SUB-TAB 4c: Outliery i punkty wpływowe
         # ====================================================================
         tabPanel(
-          "Wpływ outlierów",
+          "Outliery i dźwignia",
           br(),
+
+          # Nagłówek sekcji
+          h3("Wizualizacja"),
+
           sidebarLayout(
             sidebarPanel(
               h4("Wybór scenariusza"),
               selectInput("reg_outlier_scenario", "Typ outlierów:",
                           choices = c(
                             "Bez outlierów" = "no_outliers",
-                            "Outlier w Y" = "outlier_y",
-                            "Outlier w X i Y" = "outlier_xy",
+                            "Outlier w Y (centrum X)" = "outlier_y",
+                            "Outlier w X i Y (skraj)" = "outlier_xy",
                             "Kilka outlierów" = "multiple"
                           ),
                           selected = "no_outliers"),
@@ -1087,7 +1141,7 @@ ui <- fluidPage(
               div(
                 style = "border: 2px solid #3498db; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
                 h4("Scatterplot z 2 liniami regresji"),
-                plotOutput("reg_outlier_scatter", height = "400px"),
+                plotOutput("reg_outlier_scatter", height = "350px"),
                 div(
                   style = "background-color: #ecf0f1; padding: 10px; border-radius: 5px; margin-top: 10px;",
                   p("🔵 Niebieska linia: z outlierami | 🔴 Czerwona linia (przerywana): bez outlierów")
@@ -1102,28 +1156,21 @@ ui <- fluidPage(
 
               width = 9
             )
-          )
-        ),
-
-        # ====================================================================
-        # SUB-TAB 4d: Problem u podstawy - Dźwignia (Leverage)
-        # ====================================================================
-        tabPanel(
-          "Problem: Dźwignia",
-          br(),
-          h3("Dlaczego jeden punkt może 'obrócić' całą linię?"),
-          p("Regresja liniowa minimalizuje sumę kwadratów reszt. ",
-            "Ale nie wszystkie punkty mają ", strong("równy wpływ"), " na wynik."),
+          ),
 
           hr(),
 
-          h4("Leverage (dźwignia) - odległość od centrum w X"),
+          # Sekcja: Wpływ na wyniki - Dźwignia
+          h3("Wpływ na wyniki: Dźwignia (Leverage)"),
+
+          p("Nie wszystkie punkty mają ", strong("równy wpływ"), " na linię regresji. ",
+            "Pozycja punktu w X determinuje jego ", strong("dźwignię"), "."),
 
           fluidRow(
             column(6,
               div(class = "result-box-success",
-                h4("Punkt blisko centrum X"),
-                plotOutput("leverage_low_plot", height = "250px"),
+                h4("Outlier blisko centrum X"),
+                plotOutput("leverage_low_plot", height = "220px"),
                 br(),
                 p("Punkt w centrum ma ", strong("małą dźwignię")),
                 p("Nawet jeśli jest 'dziwny' w Y, nie zmieni bardzo linii")
@@ -1131,8 +1178,8 @@ ui <- fluidPage(
             ),
             column(6,
               div(class = "result-box-danger",
-                h4("Punkt daleko od centrum X"),
-                plotOutput("leverage_high_plot", height = "250px"),
+                h4("Outlier daleko od centrum X"),
+                plotOutput("leverage_high_plot", height = "220px"),
                 br(),
                 p("Punkt na skraju ma ", strong("dużą dźwignię")),
                 p("Jak dźwignia - mały ruch na końcu = duży efekt")
@@ -1140,10 +1187,10 @@ ui <- fluidPage(
             )
           ),
 
-          hr(),
+          br(),
 
-          h4("Demonstracja interaktywna: Jak outlier zmienia slope"),
-          plotOutput("leverage_demo_plot", height = "350px"),
+          h4("Demonstracja: Jak pozycja outliera zmienia slope"),
+          plotOutput("leverage_demo_plot", height = "300px"),
 
           div(class = "result-box-warning",
             h4("Cook's Distance - miara wpływu"),
@@ -1154,7 +1201,7 @@ ui <- fluidPage(
           ),
 
           div(class = "interpretation-box",
-            h4("Kluczowy wniosek"),
+            h4("Wniosek"),
             p("Nie wszystkie outliery są równie szkodliwe:"),
             tags$ul(
               tags$li(strong("Outlier w Y blisko centrum X"), " - zaburza intercept, mniej slope"),
@@ -1164,90 +1211,6 @@ ui <- fluidPage(
             p("Zawsze sprawdzaj ", strong("diagnostykę wpływu"), " (Cook's D, leverage plots) po dopasowaniu regresji."),
             p(style = "font-style: italic;",
               "Kod R: plot(model, which = 4)  # Cook's distance plot")
-          )
-        ),
-
-        # ====================================================================
-        # SUB-TAB 4e: Problem u podstawy - Heteroskedastyczność
-        # ====================================================================
-        tabPanel(
-          "Problem: Niepewność",
-          br(),
-          h3("Dlaczego model 'myśli', że jest pewniejszy niż powinien?"),
-          p("OLS zakłada, że rozrzut wokół linii jest ", strong("stały"), ". ",
-            "Ale co jeśli rozrzut rośnie z X?"),
-
-          hr(),
-
-          h4("Przedział ufności zakłada stałą niepewność"),
-
-          fluidRow(
-            column(6,
-              div(class = "result-box-success",
-                h4("Homoskedastyczność"),
-                plotOutput("hetero_ci_ok_plot", height = "280px"),
-                br(),
-                p("Rozrzut danych ", strong("stały"), " → CI jest prawidłowy"),
-                p("Model wie, jak bardzo może się mylić")
-              )
-            ),
-            column(6,
-              div(class = "result-box-danger",
-                h4("Heteroskedastyczność"),
-                plotOutput("hetero_ci_bad_plot", height = "280px"),
-                br(),
-                p("Rozrzut danych ", strong("rośnie"), " → CI jest za wąski z prawej!"),
-                p("Model nie wie, że niepewność rośnie")
-              )
-            )
-          ),
-
-          hr(),
-
-          h4("Konsekwencja: 'Pewność' modelu vs rzeczywistość"),
-
-          div(class = "result-box-warning",
-            fluidRow(
-              column(6,
-                h5("Model twierdzi:"),
-                p("'Jestem 95% pewny, że prawdziwa wartość jest w tym przedziale'"),
-                p(style = "font-family: monospace;", "CI: [1.8, 2.2]")
-              ),
-              column(6,
-                h5("Rzeczywistość:"),
-                p("Przy heteroskedastyczności faktyczne pokrycie to ~85%"),
-                p("Model jest ", strong("nadmiernie pewny siebie"))
-              )
-            )
-          ),
-
-          hr(),
-
-          h4("Analogia: Prognoza pogody"),
-          div(style = "background-color: #f8f9fa; padding: 15px; border-radius: 8px;",
-            p("Wyobraź sobie prognozę pogody, która mówi:"),
-            p(style = "font-style: italic;", "'Jutro będzie 20°C ± 2°C (95% pewności)'"),
-            br(),
-            p("Ale w rzeczywistości:"),
-            tags$ul(
-              tags$li("Rano: rozrzut ± 1°C (prognoza OK)"),
-              tags$li("Popołudniu: rozrzut ± 5°C (prognoza za pewna!)"),
-              tags$li("Wieczorem: rozrzut ± 3°C")
-            ),
-            p("Prognoza używa ", strong("średniego"), " błędu, ale błąd nie jest stały!")
-          ),
-
-          div(class = "interpretation-box",
-            h4("Kluczowy wniosek"),
-            p("Heteroskedastyczność nie zmienia ", strong("gdzie"), " linia jest (slope, intercept są OK)."),
-            p("Zmienia ", strong("jak pewni"), " powinniśmy być tej linii:"),
-            tags$ul(
-              tags$li("Przedziały ufności są nieprawidłowe"),
-              tags$li("p-values są zbyt małe (nadmiar 'istotnych' wyników)"),
-              tags$li("Nie można ufać testom istotności")
-            ),
-            p(strong("Rozwiązanie:"), " Robust Standard Errors nie zakładają stałego rozrzutu - ",
-              "obliczają niepewność lokalnie dla każdego obszaru danych.")
           )
         )
       )
@@ -1756,39 +1719,65 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # WYKRESY KONSEKWENCJI - HOMOSKEDASTYCZNOŚĆ
+  # WYKRESY KONSEKWENCJI - HOMOSKEDASTYCZNOŚĆ (CI z punktami w/poza)
   # ==========================================================================
 
-  # Przykładowy residual plot - OK
-  output$reg_homo_ok_plot <- renderPlot({
+  # Homoskedastyczność - CI prawidłowy
+  output$reg_homo_ci_ok_plot <- renderPlot({
     set.seed(42)
-    x <- runif(80, 10, 100)
-    y <- 2 * x + 50 + rnorm(80, mean = 0, sd = 15)
-    model <- lm(y ~ x)
-    df <- data.frame(fitted = fitted(model), residuals = residuals(model))
+    n <- 100
+    x <- runif(n, 10, 100)
+    y <- 2 * x + 50 + rnorm(n, mean = 0, sd = 15)
+    df <- data.frame(x = x, y = y)
 
-    ggplot(df, aes(x = fitted, y = residuals)) +
-      geom_point(size = 2, alpha = 0.6, color = "#28a745") +
-      geom_hline(yintercept = 0, color = "#1e7e34", linewidth = 1, linetype = "dashed") +
-      theme_minimal(base_size = 11) +
-      labs(x = "Fitted", y = "Residuals", title = "Równy rozrzut") +
-      theme(plot.title = element_text(hjust = 0.5))
+    model <- lm(y ~ x, data = df)
+    pred <- predict(model, interval = "confidence", level = 0.95)
+    df$fit <- pred[, "fit"]
+    df$lwr <- pred[, "lwr"]
+    df$upr <- pred[, "upr"]
+    df$outside <- df$y < df$lwr | df$y > df$upr
+
+    pct_outside <- round(100 * mean(df$outside), 1)
+
+    ggplot(df, aes(x = x, y = y)) +
+      geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.3, fill = "#27ae60") +
+      geom_line(aes(y = fit), color = "#27ae60", linewidth = 1.5) +
+      geom_point(aes(color = outside), size = 2.5, alpha = 0.7) +
+      scale_color_manual(values = c("FALSE" = "#3498db", "TRUE" = "#e74c3c"),
+                         labels = c("W CI", "Poza CI"), name = "") +
+      theme_minimal(base_size = 12) +
+      labs(x = "X", y = "Y",
+           title = paste0("Stała wariancja: ", pct_outside, "% poza CI")) +
+      theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom")
   })
 
-  # Przykładowy residual plot - BAD
-  output$reg_homo_bad_plot <- renderPlot({
+  # Heteroskedastyczność - CI za wąski z prawej
+  output$reg_homo_ci_bad_plot <- renderPlot({
     set.seed(42)
-    x <- runif(80, 10, 100)
-    y <- 2 * x + 50 + rnorm(80, mean = 0, sd = x * 0.4)
-    model <- lm(y ~ x)
-    df <- data.frame(fitted = fitted(model), residuals = residuals(model))
+    n <- 100
+    x <- runif(n, 10, 100)
+    y <- 2 * x + 50 + rnorm(n, mean = 0, sd = x * 0.35)
+    df <- data.frame(x = x, y = y)
 
-    ggplot(df, aes(x = fitted, y = residuals)) +
-      geom_point(size = 2, alpha = 0.6, color = "#dc3545") +
-      geom_hline(yintercept = 0, color = "#bd2130", linewidth = 1, linetype = "dashed") +
-      theme_minimal(base_size = 11) +
-      labs(x = "Fitted", y = "Residuals", title = "Kształt lejka") +
-      theme(plot.title = element_text(hjust = 0.5))
+    model <- lm(y ~ x, data = df)
+    pred <- predict(model, interval = "confidence", level = 0.95)
+    df$fit <- pred[, "fit"]
+    df$lwr <- pred[, "lwr"]
+    df$upr <- pred[, "upr"]
+    df$outside <- df$y < df$lwr | df$y > df$upr
+
+    pct_outside <- round(100 * mean(df$outside), 1)
+
+    ggplot(df, aes(x = x, y = y)) +
+      geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.3, fill = "#e74c3c") +
+      geom_line(aes(y = fit), color = "#e74c3c", linewidth = 1.5) +
+      geom_point(aes(color = outside), size = 2.5, alpha = 0.7) +
+      scale_color_manual(values = c("FALSE" = "#3498db", "TRUE" = "#e74c3c"),
+                         labels = c("W CI", "Poza CI"), name = "") +
+      theme_minimal(base_size = 12) +
+      labs(x = "X", y = "Y",
+           title = paste0("Rosnąca wariancja: ", pct_outside, "% poza CI")) +
+      theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom")
   })
 
   # Wykres porównawczy pokrycia CI
@@ -2034,40 +2023,6 @@ server <- function(input, output, session) {
                          ", skraj=", round(slopes$slope[3], 2))) +
       annotate("text", x = 52, y = 205, label = "Outlier\nw centrum", color = "#f39c12", size = 3) +
       annotate("text", x = 92, y = 85, label = "Outlier\nna skraju", color = "#e74c3c", size = 3)
-  })
-
-  # ==========================================================================
-  # WYKRESY "PROBLEM U PODSTAWY" - HETEROSKEDASTYCZNOŚĆ
-  # ==========================================================================
-
-  # CI przy homoskedastyczności
-  output$hetero_ci_ok_plot <- renderPlot({
-    set.seed(42)
-    x <- seq(10, 100, length.out = 50)
-    y <- 2 * x + 50 + rnorm(50, 0, 15)
-    df <- data.frame(x = x, y = y)
-
-    ggplot(df, aes(x = x, y = y)) +
-      geom_point(color = "#3498db", size = 2, alpha = 0.6) +
-      geom_smooth(method = "lm", se = TRUE, color = "#27ae60", fill = "#27ae60", alpha = 0.3) +
-      theme_minimal(base_size = 12) +
-      labs(x = "X", y = "Y", title = "Stały rozrzut = CI prawidłowy") +
-      theme(plot.title = element_text(hjust = 0.5))
-  })
-
-  # CI przy heteroskedastyczności
-  output$hetero_ci_bad_plot <- renderPlot({
-    set.seed(42)
-    x <- seq(10, 100, length.out = 50)
-    y <- 2 * x + 50 + rnorm(50, 0, x * 0.3)
-    df <- data.frame(x = x, y = y)
-
-    ggplot(df, aes(x = x, y = y)) +
-      geom_point(color = "#e74c3c", size = 2, alpha = 0.6) +
-      geom_smooth(method = "lm", se = TRUE, color = "#e74c3c", fill = "#e74c3c", alpha = 0.3) +
-      theme_minimal(base_size = 12) +
-      labs(x = "X", y = "Y", title = "Rosnący rozrzut = CI za wąski z prawej!") +
-      theme(plot.title = element_text(hjust = 0.5))
   })
 }
 
