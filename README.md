@@ -68,6 +68,12 @@ shiny::runApp("ścieżka/do/aplikacji")
 | [chi-kwadrat-builder](Testowanie-hipotez/chi-kwadrat-builder/) | Test chi-kwadrat | Tabele kontyngencji, niezależność |
 | [korelacja-builder](Testowanie-hipotez/korelacja-builder/) | Korelacja Pearsona vs Spearmana | Związki liniowe i monotoniczne |
 
+### Regresja i modelowanie
+
+| Aplikacja | Opis | Koncepcje |
+|-----------|------|-----------|
+| [regresja-interakcja](regresja-interakcja/) | Porównanie modelu addytywnego i z interakcją | Interakcja zmiennych, równoległe vs przecinające się linie, test F |
+
 ## 📁 Struktura projektu
 
 ```
@@ -105,6 +111,9 @@ Interaktywne/
 │   │   └── app.R
 │   └── korelacja-builder/
 │       └── app.R
+├── regresja-interakcja/        # Regresja z interakcją
+│   ├── app.R
+│   └── README.md
 ├── README.md                   # Ten plik
 └── CLAUDE.md                   # Instrukcje dla AI
 ```
