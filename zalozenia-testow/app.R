@@ -231,87 +231,110 @@ generate_anova_with_outliers <- function(n_per_group = 25) {
 # ============================================================================
 
 # 4a: Normalność reszt
-generate_regression_normal_residuals <- function(n = 80) {
-  set.seed(NULL)
-  x <- runif(n, 10, 100)
-  y <- 2 * x + 50 + rnorm(n, mean = 0, sd = 15)
+# ----------------------------------------------------------------------------
+# 4a: Normalność reszt - SZTYWNE DANE
+# ----------------------------------------------------------------------------
+
+# Scenariusz: Normalny związek liniowy (idealne reszty)
+set.seed(101)
+REG_NORMAL_DATA <- {
+  x <- runif(80, 10, 100)
+  y <- 2 * x + 50 + rnorm(80, mean = 0, sd = 15)
   data.frame(x = x, y = y)
 }
 
-generate_regression_nonlinear <- function(n = 80) {
-  set.seed(NULL)
-  x <- runif(n, 0, 10)
-  # Związek kwadratowy: y = x^2 + szum
-  y <- x^2 + rnorm(n, mean = 0, sd = 5)
+# Scenariusz: Nieliniowy związek (reszty nienormalne - wzorzec)
+set.seed(102)
+REG_NONLINEAR_DATA <- {
+  x <- runif(80, 0, 10)
+  y <- x^2 + rnorm(80, mean = 0, sd = 3)
   data.frame(x = x, y = y)
 }
 
-generate_regression_residuals_outliers <- function(n = 80) {
-  set.seed(NULL)
-  x <- runif(n - 4, 10, 100)
-  y <- 2 * x + 50 + rnorm(n - 4, mean = 0, sd = 15)
+# Scenariusz: Reszty z outlierami (odstające wartości Y)
+set.seed(103)
+REG_OUTLIERS_RESIDUALS_DATA <- {
+  x <- runif(76, 10, 100)
+  y <- 2 * x + 50 + rnorm(76, mean = 0, sd = 15)
+  # Dodaj outliery w Y przy różnych wartościach X
   x <- c(x, c(20, 50, 70, 90))
-  y <- c(y, c(250, 50, 300, 100))
+  y <- c(y, c(250, 40, 300, 90))
   data.frame(x = x, y = y)
 }
 
-# 4b: Homoskedastyczność
-generate_regression_homoscedastic <- function(n = 80) {
-  set.seed(NULL)
-  x <- runif(n, 10, 100)
-  y <- 2 * x + 50 + rnorm(n, mean = 0, sd = 15)
+# ----------------------------------------------------------------------------
+# 4b: Homoskedastyczność - SZTYWNE DANE
+# ----------------------------------------------------------------------------
+
+# Scenariusz: Stała wariancja (homoskedastyczność)
+set.seed(201)
+REG_HOMOSCEDASTIC_DATA <- {
+  x <- runif(80, 10, 100)
+  y <- 2 * x + 50 + rnorm(80, mean = 0, sd = 15)
   data.frame(x = x, y = y)
 }
 
-generate_regression_heteroscedastic_increasing <- function(n = 80) {
-  set.seed(NULL)
-  x <- runif(n, 10, 100)
-  y <- 2 * x + 50 + rnorm(n, mean = 0, sd = x * 0.3)
+# Scenariusz: Wariancja rośnie z X (lejek w prawo)
+set.seed(202)
+REG_HETERO_INCREASING_DATA <- {
+  x <- runif(80, 10, 100)
+  y <- 2 * x + 50 + rnorm(80, mean = 0, sd = x * 0.4)
   data.frame(x = x, y = y)
 }
 
-generate_regression_heteroscedastic_decreasing <- function(n = 80) {
-  set.seed(NULL)
-  x <- runif(n, 10, 100)
-  y <- 2 * x + 50 + rnorm(n, mean = 0, sd = (100 - x) * 0.3)
+# Scenariusz: Wariancja maleje z X (lejek w lewo)
+set.seed(203)
+REG_HETERO_DECREASING_DATA <- {
+  x <- runif(80, 10, 100)
+  y <- 2 * x + 50 + rnorm(80, mean = 0, sd = (110 - x) * 0.35)
   data.frame(x = x, y = y)
 }
 
-# 4c: Wpływ outlierów
-generate_regression_no_outliers <- function(n = 50) {
-  set.seed(NULL)
-  x <- runif(n, 10, 100)
-  y <- 2 * x + 50 + rnorm(n, mean = 0, sd = 15)
+# ----------------------------------------------------------------------------
+# 4c: Wpływ outlierów - SZTYWNE DANE
+# ----------------------------------------------------------------------------
+
+# Scenariusz: Bez outlierów (czyste dane)
+set.seed(301)
+REG_NO_OUTLIERS_DATA <- {
+  x <- runif(50, 10, 100)
+  y <- 2 * x + 50 + rnorm(50, mean = 0, sd = 15)
   data.frame(x = x, y = y, is_outlier = FALSE)
 }
 
-generate_regression_outlier_y <- function(n = 50) {
-  set.seed(NULL)
-  x <- runif(n - 2, 10, 100)
-  y <- 2 * x + 50 + rnorm(n - 2, mean = 0, sd = 15)
+# Scenariusz: Outlier w Y (blisko centrum X)
+set.seed(302)
+REG_OUTLIER_Y_DATA <- {
+  x <- runif(48, 10, 100)
+  y <- 2 * x + 50 + rnorm(48, mean = 0, sd = 15)
+  # Outliery w centrum X - mają mały wpływ na slope
   x <- c(x, c(50, 55))
-  y <- c(y, c(250, 260))
-  is_outlier <- c(rep(FALSE, n - 2), TRUE, TRUE)
+  y <- c(y, c(260, 270))
+  is_outlier <- c(rep(FALSE, 48), TRUE, TRUE)
   data.frame(x = x, y = y, is_outlier = is_outlier)
 }
 
-generate_regression_outlier_xy <- function(n = 50) {
-  set.seed(NULL)
-  x <- runif(n - 2, 10, 90)
-  y <- 2 * x + 50 + rnorm(n - 2, mean = 0, sd = 15)
+# Scenariusz: Outlier w X i Y (wysoka dźwignia)
+set.seed(303)
+REG_OUTLIER_XY_DATA <- {
+  x <- runif(48, 20, 80)
+  y <- 2 * x + 50 + rnorm(48, mean = 0, sd = 15)
+  # Outliery na skrajach X - duży wpływ na slope!
   x <- c(x, c(5, 95))
-  y <- c(y, c(250, 100))
-  is_outlier <- c(rep(FALSE, n - 2), TRUE, TRUE)
+  y <- c(y, c(200, 100))
+  is_outlier <- c(rep(FALSE, 48), TRUE, TRUE)
   data.frame(x = x, y = y, is_outlier = is_outlier)
 }
 
-generate_regression_multiple_outliers <- function(n = 50) {
-  set.seed(NULL)
-  x <- runif(n - 4, 10, 90)
-  y <- 2 * x + 50 + rnorm(n - 4, mean = 0, sd = 15)
-  x <- c(x, c(5, 15, 85, 95))
-  y <- c(y, c(250, 50, 300, 100))
-  is_outlier <- c(rep(FALSE, n - 4), TRUE, TRUE, TRUE, TRUE)
+# Scenariusz: Kilka outlierów (mieszane)
+set.seed(304)
+REG_MULTIPLE_OUTLIERS_DATA <- {
+  x <- runif(46, 15, 85)
+  y <- 2 * x + 50 + rnorm(46, mean = 0, sd = 15)
+  # Różne typy outlierów
+  x <- c(x, c(10, 50, 90, 55))
+  y <- c(y, c(250, 40, 80, 280))
+  is_outlier <- c(rep(FALSE, 46), TRUE, TRUE, TRUE, TRUE)
   data.frame(x = x, y = y, is_outlier = is_outlier)
 }
 
@@ -877,9 +900,6 @@ ui <- fluidPage(
                           ),
                           selected = "normal"),
 
-              actionButton("reg_normal_regenerate", "🎲 Losuj nowe dane",
-                           class = "btn-success", width = "100%"),
-
               hr(),
 
               h4("Wyjaśnienie"),
@@ -938,9 +958,6 @@ ui <- fluidPage(
                             "Rozrzut maleje z X" = "decreasing"
                           ),
                           selected = "homoscedastic"),
-
-              actionButton("reg_homo_regenerate", "🎲 Losuj nowe dane",
-                           class = "btn-success", width = "100%"),
 
               hr(),
 
@@ -1054,9 +1071,6 @@ ui <- fluidPage(
                             "Kilka outlierów" = "multiple"
                           ),
                           selected = "no_outliers"),
-
-              actionButton("reg_outlier_regenerate", "🎲 Losuj nowe dane",
-                           class = "btn-success", width = "100%"),
 
               hr(),
 
@@ -1548,22 +1562,11 @@ server <- function(input, output, session) {
   # MODUŁ 4a: Normalność reszt
   # ==========================================================================
 
-  reg_normal_data <- reactiveVal(generate_regression_normal_residuals())
-
-  observeEvent(input$reg_normal_scenario, {
-    data <- switch(input$reg_normal_scenario,
-                   "normal" = generate_regression_normal_residuals(),
-                   "nonlinear" = generate_regression_nonlinear(),
-                   "outliers" = generate_regression_residuals_outliers())
-    reg_normal_data(data)
-  })
-
-  observeEvent(input$reg_normal_regenerate, {
-    data <- switch(input$reg_normal_scenario,
-                   "normal" = generate_regression_normal_residuals(),
-                   "nonlinear" = generate_regression_nonlinear(),
-                   "outliers" = generate_regression_residuals_outliers())
-    reg_normal_data(data)
+  reg_normal_data <- reactive({
+    switch(input$reg_normal_scenario,
+           "normal" = REG_NORMAL_DATA,
+           "nonlinear" = REG_NONLINEAR_DATA,
+           "outliers" = REG_OUTLIERS_RESIDUALS_DATA)
   })
 
   output$reg_normal_scatter <- renderPlot({
@@ -1635,22 +1638,11 @@ server <- function(input, output, session) {
   # MODUŁ 4b: Homoskedastyczność
   # ==========================================================================
 
-  reg_homo_data <- reactiveVal(generate_regression_homoscedastic())
-
-  observeEvent(input$reg_homo_scenario, {
-    data <- switch(input$reg_homo_scenario,
-                   "homoscedastic" = generate_regression_homoscedastic(),
-                   "increasing" = generate_regression_heteroscedastic_increasing(),
-                   "decreasing" = generate_regression_heteroscedastic_decreasing())
-    reg_homo_data(data)
-  })
-
-  observeEvent(input$reg_homo_regenerate, {
-    data <- switch(input$reg_homo_scenario,
-                   "homoscedastic" = generate_regression_homoscedastic(),
-                   "increasing" = generate_regression_heteroscedastic_increasing(),
-                   "decreasing" = generate_regression_heteroscedastic_decreasing())
-    reg_homo_data(data)
+  reg_homo_data <- reactive({
+    switch(input$reg_homo_scenario,
+           "homoscedastic" = REG_HOMOSCEDASTIC_DATA,
+           "increasing" = REG_HETERO_INCREASING_DATA,
+           "decreasing" = REG_HETERO_DECREASING_DATA)
   })
 
   output$reg_homo_scatter <- renderPlot({
@@ -1698,24 +1690,12 @@ server <- function(input, output, session) {
   # MODUŁ 4c: Wpływ outlierów
   # ==========================================================================
 
-  reg_outlier_data <- reactiveVal(generate_regression_no_outliers())
-
-  observeEvent(input$reg_outlier_scenario, {
-    data <- switch(input$reg_outlier_scenario,
-                   "no_outliers" = generate_regression_no_outliers(),
-                   "outlier_y" = generate_regression_outlier_y(),
-                   "outlier_xy" = generate_regression_outlier_xy(),
-                   "multiple" = generate_regression_multiple_outliers())
-    reg_outlier_data(data)
-  })
-
-  observeEvent(input$reg_outlier_regenerate, {
-    data <- switch(input$reg_outlier_scenario,
-                   "no_outliers" = generate_regression_no_outliers(),
-                   "outlier_y" = generate_regression_outlier_y(),
-                   "outlier_xy" = generate_regression_outlier_xy(),
-                   "multiple" = generate_regression_multiple_outliers())
-    reg_outlier_data(data)
+  reg_outlier_data <- reactive({
+    switch(input$reg_outlier_scenario,
+           "no_outliers" = REG_NO_OUTLIERS_DATA,
+           "outlier_y" = REG_OUTLIER_Y_DATA,
+           "outlier_xy" = REG_OUTLIER_XY_DATA,
+           "multiple" = REG_MULTIPLE_OUTLIERS_DATA)
   })
 
   output$reg_outlier_scatter <- renderPlot({
