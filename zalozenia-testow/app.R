@@ -1059,8 +1059,8 @@ ui <- fluidPage(
           h3("Wpływ na wyniki"),
 
           p("OLS zakłada ", strong("stałą wariancję"), " i oblicza 'średni' błąd standardowy. ",
-            "Przedział ufności jest więc ", strong("taki sam szerokości"), " dla wszystkich wartości X."),
-          p("Punkty ", span(style = "color: #e74c3c;", "czerwone"), " = poza 95% CI (powinno być ~5%)"),
+            "95% przedział predykcji (PI) ma więc ", strong("stałą szerokość"), " dla wszystkich wartości X."),
+          p("Punkty ", span(style = "color: #e74c3c;", "czerwone"), " = poza 95% PI (powinno być ~5%)"),
 
           fluidRow(
             column(6,
@@ -1068,8 +1068,8 @@ ui <- fluidPage(
                 h4("Homoskedastyczność (stała wariancja)"),
                 plotOutput("reg_homo_ci_ok_plot", height = "280px"),
                 br(),
-                p("Punkty poza CI: ", strong("~5%"), " (zgodne z oczekiwaniem)"),
-                p(style = "color: #28a745;", "CI jest prawidłowy na całej długości!")
+                p("Punkty poza PI: ", strong("~5%"), " (zgodne z oczekiwaniem)"),
+                p(style = "color: #28a745;", "PI jest prawidłowy na całej długości!")
               )
             ),
             column(6,
@@ -1077,8 +1077,8 @@ ui <- fluidPage(
                 h4("Heteroskedastyczność (rosnąca wariancja)"),
                 plotOutput("reg_homo_ci_bad_plot", height = "280px"),
                 br(),
-                p("Punkty poza CI: ", strong("~15%"), " (3× więcej niż powinno!)"),
-                p(style = "color: #dc3545;", "Z prawej strony CI jest za wąski!")
+                p("Punkty poza PI: ", strong("więcej z prawej strony!")),
+                p(style = "color: #dc3545;", "PI zakłada stałą wariancję - z prawej jest za wąski!")
               )
             )
           ),
@@ -1722,62 +1722,75 @@ server <- function(input, output, session) {
   # WYKRESY KONSEKWENCJI - HOMOSKEDASTYCZNOŚĆ (CI z punktami w/poza)
   # ==========================================================================
 
-  # Homoskedastyczność - CI prawidłowy
+  # Homoskedastyczność - prediction interval prawidłowy
   output$reg_homo_ci_ok_plot <- renderPlot({
     set.seed(42)
-    n <- 100
+    n <- 200
     x <- runif(n, 10, 100)
-    y <- 2 * x + 50 + rnorm(n, mean = 0, sd = 15)
+    y <- 2 * x + 50 + rnorm(n, mean = 0, sd = 20)
     df <- data.frame(x = x, y = y)
 
     model <- lm(y ~ x, data = df)
-    pred <- predict(model, interval = "confidence", level = 0.95)
+    pred <- predict(model, interval = "prediction", level = 0.95)
     df$fit <- pred[, "fit"]
     df$lwr <- pred[, "lwr"]
     df$upr <- pred[, "upr"]
     df$outside <- df$y < df$lwr | df$y > df$upr
 
     pct_outside <- round(100 * mean(df$outside), 1)
+    # Osobno dla lewej i prawej połowy
+    pct_left <- round(100 * mean(df$outside[df$x < 55]), 1)
+    pct_right <- round(100 * mean(df$outside[df$x >= 55]), 1)
 
     ggplot(df, aes(x = x, y = y)) +
-      geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.3, fill = "#27ae60") +
+      geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.25, fill = "#27ae60") +
       geom_line(aes(y = fit), color = "#27ae60", linewidth = 1.5) +
-      geom_point(aes(color = outside), size = 2.5, alpha = 0.7) +
+      geom_point(aes(color = outside), size = 2, alpha = 0.7) +
       scale_color_manual(values = c("FALSE" = "#3498db", "TRUE" = "#e74c3c"),
-                         labels = c("W CI", "Poza CI"), name = "") +
+                         labels = c("W przedziale", "Poza przedziałem"), name = "") +
       theme_minimal(base_size = 12) +
       labs(x = "X", y = "Y",
-           title = paste0("Stała wariancja: ", pct_outside, "% poza CI")) +
-      theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom")
+           title = paste0("Stała wariancja: ", pct_outside, "% poza PI"),
+           subtitle = paste0("Lewa połowa: ", pct_left, "% | Prawa połowa: ", pct_right, "%")) +
+      theme(plot.title = element_text(hjust = 0.5),
+            plot.subtitle = element_text(hjust = 0.5, size = 10),
+            legend.position = "bottom")
   })
 
-  # Heteroskedastyczność - CI za wąski z prawej
+  # Heteroskedastyczność - prediction interval za wąski z prawej
   output$reg_homo_ci_bad_plot <- renderPlot({
     set.seed(42)
-    n <- 100
+    n <- 200
     x <- runif(n, 10, 100)
-    y <- 2 * x + 50 + rnorm(n, mean = 0, sd = x * 0.35)
+    # Silniejsza heteroskedastyczność: sd rośnie od ~6 do ~60
+    y <- 2 * x + 50 + rnorm(n, mean = 0, sd = x * 0.6)
     df <- data.frame(x = x, y = y)
 
     model <- lm(y ~ x, data = df)
-    pred <- predict(model, interval = "confidence", level = 0.95)
+    pred <- predict(model, interval = "prediction", level = 0.95)
     df$fit <- pred[, "fit"]
     df$lwr <- pred[, "lwr"]
     df$upr <- pred[, "upr"]
     df$outside <- df$y < df$lwr | df$y > df$upr
 
     pct_outside <- round(100 * mean(df$outside), 1)
+    # Osobno dla lewej i prawej połowy
+    pct_left <- round(100 * mean(df$outside[df$x < 55]), 1)
+    pct_right <- round(100 * mean(df$outside[df$x >= 55]), 1)
 
     ggplot(df, aes(x = x, y = y)) +
-      geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.3, fill = "#e74c3c") +
+      geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.25, fill = "#e74c3c") +
       geom_line(aes(y = fit), color = "#e74c3c", linewidth = 1.5) +
-      geom_point(aes(color = outside), size = 2.5, alpha = 0.7) +
+      geom_point(aes(color = outside), size = 2, alpha = 0.7) +
       scale_color_manual(values = c("FALSE" = "#3498db", "TRUE" = "#e74c3c"),
-                         labels = c("W CI", "Poza CI"), name = "") +
+                         labels = c("W przedziale", "Poza przedziałem"), name = "") +
       theme_minimal(base_size = 12) +
       labs(x = "X", y = "Y",
-           title = paste0("Rosnąca wariancja: ", pct_outside, "% poza CI")) +
-      theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom")
+           title = paste0("Rosnąca wariancja: ", pct_outside, "% poza PI"),
+           subtitle = paste0("Lewa połowa: ", pct_left, "% | Prawa połowa: ", pct_right, "%")) +
+      theme(plot.title = element_text(hjust = 0.5),
+            plot.subtitle = element_text(hjust = 0.5, size = 10),
+            legend.position = "bottom")
   })
 
   # Wykres porównawczy pokrycia CI
