@@ -715,8 +715,8 @@ ui <- fluidPage(
       div(
         style = "max-width: 1000px; margin: 0 auto;",
 
-        # Sekcja: Porównanie grup
-        h3("Porównanie grup", style = "color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;"),
+        # Sekcja: Jedna zmienna
+        h3("Jedna zmienna", style = "color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;"),
 
         tags$table(
           class = "table table-bordered table-striped",
@@ -724,41 +724,30 @@ ui <- fluidPage(
           tags$thead(
             style = "background-color: #3498db; color: white;",
             tags$tr(
-              tags$th("Problem", style = "width: 40%;"),
-              tags$th("Test parametryczny", style = "width: 30%;"),
-              tags$th("Test nieparametryczny", style = "width: 30%;")
+              tags$th("Problem", style = "width: 28%;"),
+              tags$th("Oba założenia OK", style = "width: 24%;"),
+              tags$th("Wariancja naruszona", style = "width: 24%;"),
+              tags$th("Normalność naruszona", style = "width: 24%;")
             )
           ),
           tags$tbody(
             tags$tr(
-              tags$td("Jedna próba vs wartość teoretyczna"),
-              tags$td("t-test dla jednej próby"),
-              tags$td("Wilcoxon signed-rank", tags$br(),
-                      tags$small("(test na medianę)", style = "color: #7f8c8d;"))
-            ),
-            tags$tr(
-              tags$td("Dwie grupy niezależne (ilościowe)"),
-              tags$td("t-test dla prób niezależnych", tags$br(),
-                      tags$small("(Welch's t domyślnie)", style = "color: #7f8c8d;")),
-              tags$td("Mann-Whitney U", tags$br(),
-                      tags$small("(= Wilcoxon rank-sum)", style = "color: #7f8c8d;"))
-            ),
-            tags$tr(
-              tags$td("Dwie grupy zależne / pomiary powtórzone"),
-              tags$td("t-test dla prób zależnych"),
+              tags$td("Średnia vs wartość teoretyczna"),
+              tags$td("t-test jednej próby"),
+              tags$td("—"),
               tags$td("Wilcoxon signed-rank")
             ),
             tags$tr(
-              tags$td("Więcej niż 2 grupy niezależne"),
-              tags$td("ANOVA jednokierunkowa", tags$br(),
-                      tags$small("(Welch's ANOVA przy nierównych wariancjach)", style = "color: #7f8c8d;")),
-              tags$td("Kruskal-Wallis")
+              tags$td("Proporcja vs wartość teoretyczna"),
+              tags$td("Test proporcji (z)"),
+              tags$td("—"),
+              tags$td("Test dwumianowy")
             )
           )
         ),
 
-        # Sekcja: Związki między zmiennymi
-        h3("Związki między zmiennymi", style = "color: #2c3e50; border-bottom: 2px solid #27ae60; padding-bottom: 10px;"),
+        # Sekcja: Dwie zmienne
+        h3("Dwie zmienne", style = "color: #2c3e50; border-bottom: 2px solid #27ae60; padding-bottom: 10px;"),
 
         tags$table(
           class = "table table-bordered table-striped",
@@ -766,48 +755,99 @@ ui <- fluidPage(
           tags$thead(
             style = "background-color: #27ae60; color: white;",
             tags$tr(
-              tags$th("Problem", style = "width: 40%;"),
-              tags$th("Metoda parametryczna", style = "width: 30%;"),
-              tags$th("Metoda nieparametryczna", style = "width: 30%;")
+              tags$th("Problem", style = "width: 28%;"),
+              tags$th("Oba założenia OK", style = "width: 24%;"),
+              tags$th("Wariancja naruszona", style = "width: 24%;"),
+              tags$th("Normalność naruszona", style = "width: 24%;")
             )
           ),
           tags$tbody(
             tags$tr(
-              tags$td("Korelacja dwóch zmiennych ilościowych"),
-              tags$td("Pearson r"),
-              tags$td("Spearman rho", tags$br(),
-                      tags$small("(lub Kendall tau)", style = "color: #7f8c8d;"))
+              tags$td("Ilościowa ~ jakościowa (2 gr. niez.)"),
+              tags$td("t-test Studenta"),
+              tags$td("t-test Welcha"),
+              tags$td("Mann-Whitney U")
             ),
             tags$tr(
-              tags$td("Związek zmiennej ilościowej z jakościową"),
+              tags$td("Ilościowa ~ jakościowa (2 gr. zal.)"),
+              tags$td("t-test par"),
+              tags$td("—"),
+              tags$td("Wilcoxon signed-rank")
+            ),
+            tags$tr(
+              tags$td("Ilościowa ~ jakościowa (>2 grup)"),
               tags$td("ANOVA"),
+              tags$td("ANOVA Welcha"),
               tags$td("Kruskal-Wallis")
             ),
             tags$tr(
-              tags$td("Związek dwóch zmiennych jakościowych"),
-              tags$td(tags$em("—")),
-              tags$td("Chi-kwadrat / Fisher exact")
+              tags$td("Ilościowa ~ ilościowa"),
+              tags$td("Pearson r"),
+              tags$td("—"),
+              tags$td("Spearman rho")
             ),
             tags$tr(
-              tags$td("Predykcja zmiennej ilościowej"),
-              tags$td("Regresja liniowa (OLS)"),
-              tags$td(tags$em("Regresja kwantylowa"), tags$br(),
-                      tags$small("(robust regression)", style = "color: #7f8c8d;"))
+              tags$td("Jakościowa ~ jakościowa"),
+              tags$td("—"),
+              tags$td("—"),
+              tags$td("Chi-kwadrat / Fisher")
             )
           )
         ),
 
-        # Sekcja: Kiedy co wybrać
-        h3("Kiedy wybrać test nieparametryczny?", style = "color: #2c3e50; border-bottom: 2px solid #e74c3c; padding-bottom: 10px;"),
+        # Sekcja: Regresja
+        h3("Regresja", style = "color: #2c3e50; border-bottom: 2px solid #9b59b6; padding-bottom: 10px;"),
 
-        div(
-          style = "background-color: #fdf2e9; padding: 20px; border-radius: 10px; margin-bottom: 20px;",
-          tags$ul(
-            style = "font-size: 14px; margin: 0;",
-            tags$li(tags$strong("Mała próba (n < 30)"), " i brak normalności rozkładu"),
-            tags$li(tags$strong("Silna skośność"), " lub outliery, których nie można usunąć"),
-            tags$li(tags$strong("Dane porządkowe"), " (np. skala Likerta 1-5)"),
-            tags$li(tags$strong("Dane w postaci rang"), " lub percentyli")
+        tags$table(
+          class = "table table-bordered table-striped",
+          style = "width: 100%; margin-bottom: 30px; font-size: 14px;",
+          tags$thead(
+            style = "background-color: #9b59b6; color: white;",
+            tags$tr(
+              tags$th("Problem", style = "width: 28%;"),
+              tags$th("Oba założenia OK", style = "width: 24%;"),
+              tags$th("Wariancja naruszona", style = "width: 24%;"),
+              tags$th("Normalność naruszona", style = "width: 24%;")
+            )
+          ),
+          tags$tbody(
+            tags$tr(
+              tags$td("Regresja (1+ predyktorów)"),
+              tags$td("Regresja klasyczna"),
+              tags$td("Robust SE (HC)"),
+              tags$td("Regresja kwantylowa")
+            )
+          )
+        ),
+
+        # Sekcja: Kiedy które założenie jest naruszone
+        h3("Kiedy które założenie jest naruszone?", style = "color: #2c3e50; border-bottom: 2px solid #e74c3c; padding-bottom: 10px;"),
+
+        fluidRow(
+          column(6,
+            div(
+              style = "background-color: #fdf2e9; padding: 15px; border-radius: 10px; margin-bottom: 20px;",
+              h4("Normalność naruszona", style = "color: #e74c3c; margin-top: 0;"),
+              tags$ul(
+                style = "font-size: 14px; margin: 0;",
+                tags$li(tags$strong("Silna skośność"), " rozkładu"),
+                tags$li(tags$strong("Outliery"), ", których nie można usunąć"),
+                tags$li(tags$strong("Dane porządkowe"), " (np. skala Likerta)"),
+                tags$li(tags$strong("Mała próba (n < 30)"), " bez normalności")
+              )
+            )
+          ),
+          column(6,
+            div(
+              style = "background-color: #ebf5fb; padding: 15px; border-radius: 10px; margin-bottom: 20px;",
+              h4("Wariancja naruszona", style = "color: #3498db; margin-top: 0;"),
+              tags$ul(
+                style = "font-size: 14px; margin: 0;",
+                tags$li(tags$strong("Nierówne SD"), " między grupami"),
+                tags$li(tags$strong("Nierówne n"), " w grupach"),
+                tags$li(tags$strong("Test Levene'a"), " istotny (p < 0.05)")
+              )
+            )
           )
         )
       )
