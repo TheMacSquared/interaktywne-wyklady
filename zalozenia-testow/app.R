@@ -338,6 +338,23 @@ REG_MULTIPLE_OUTLIERS_DATA <- {
   data.frame(x = x, y = y, is_outlier = is_outlier)
 }
 
+# ----------------------------------------------------------------------------
+# 4d: Skośne reszty - SZTYWNE DANE (dla nowych zakładek testowych)
+# ----------------------------------------------------------------------------
+
+# Scenariusz: Skośne reszty (błędy log-normalne) - ekstremalny przykład
+set.seed(104)
+REG_SKEWED_RESIDUALS_DATA <- {
+  n <- 200
+  x <- runif(n, 10, 100)
+  # Błędy log-normalne (silnie skośne w prawo) - centered around 0
+  # sdlog = 1.2 daje silniejszą skośność niż 0.8
+  errors <- rlnorm(n, meanlog = 0, sdlog = 1.2) - exp(1.2^2/2)
+  errors <- errors * 25  # scale
+  y <- 2 * x + 50 + errors
+  data.frame(x = x, y = y)
+}
+
 # ============================================================================
 # PRE-COMPUTED WYNIKI SYMULACJI (Monte Carlo, n_sim = 10000)
 # ============================================================================
@@ -993,6 +1010,51 @@ ui <- fluidPage(
         ),
 
         # ====================================================================
+        # SUB-TAB: Skośne reszty (TESTOWA)
+        # ====================================================================
+        tabPanel(
+          "Skośne reszty",
+          br(),
+
+          h3("Jak skośne reszty wpływają na regresję?"),
+          p("Dane ze skośnymi błędami (log-normalne): większość punktów blisko linii, ",
+            "ale kilka ", strong("ekstremalnych"), " daleko powyżej."),
+
+          hr(),
+
+          fluidRow(
+            column(6,
+              div(
+                style = "border: 2px solid #3498db; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
+                h4("Scatter z linią regresji"),
+                plotOutput("reg_skew_scatter", height = "320px"),
+                p(style = "font-size: 12px; color: #666;",
+                  "🔴 OLS (średnia) | 🟢 Mediana warunkowa (kwantyl 0.5)")
+              )
+            ),
+            column(6,
+              div(
+                style = "border: 2px solid #e67e22; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
+                h4("Histogram reszt"),
+                plotOutput("reg_skew_histogram", height = "320px")
+              )
+            )
+          ),
+
+          div(class = "interpretation-box",
+            h4("Co widzimy?"),
+            tags$ul(
+              tags$li("Reszty są ", strong("skośne w prawo"), " - większość blisko zera, ale kilka dużych dodatnich"),
+              tags$li("To znaczy: większość punktów ", strong("poniżej"), " linii OLS, ale kilka ekstremalnych ", strong("powyżej")),
+              tags$li("Linia OLS jest 'pociągana' w górę przez te ekstremalne punkty"),
+              tags$li("Mediana warunkowa (zielona) lepiej reprezentuje 'typowy' punkt")
+            ),
+            p(strong("Wniosek:"), " Skośne reszty = asymetryczne odchylenia od linii. ",
+              "OLS optymalizuje średnią, więc jest wrażliwa na asymetrię.")
+          )
+        ),
+
+        # ====================================================================
         # SUB-TAB 4b: Homoskedastyczność
         # ====================================================================
         tabPanel(
@@ -1596,6 +1658,71 @@ server <- function(input, output, session) {
       check.names = FALSE
     )
   }, striped = TRUE, bordered = TRUE)
+
+  # ==========================================================================
+  # MODUŁ 4a-bis: Skośne reszty (TESTOWA)
+  # ==========================================================================
+
+  output$reg_skew_scatter <- renderPlot({
+    data <- REG_SKEWED_RESIDUALS_DATA
+
+    # Calculate OLS line
+    ols_model <- lm(y ~ x, data = data)
+    ols_coef <- coef(ols_model)
+
+    # Calculate median regression (quantile 0.5) manually
+    # Using simple approach: split into bins and calculate median per bin
+    data$x_bin <- cut(data$x, breaks = 10)
+    median_df <- data %>%
+      group_by(x_bin) %>%
+      summarise(
+        x_mid = mean(x),
+        y_median = median(y),
+        .groups = "drop"
+      )
+
+    # Fit line through medians
+    median_model <- lm(y_median ~ x_mid, data = median_df)
+    median_coef <- coef(median_model)
+
+    ggplot(data, aes(x = x, y = y)) +
+      geom_point(size = 3, alpha = 0.6, color = "#3498db") +
+      # OLS line
+      geom_abline(intercept = ols_coef[1], slope = ols_coef[2],
+                  color = "#e74c3c", linewidth = 1.5) +
+      # Median line
+      geom_abline(intercept = median_coef[1], slope = median_coef[2],
+                  color = "#27ae60", linewidth = 1.5, linetype = "dashed") +
+      theme_minimal(base_size = 14) +
+      labs(x = "X", y = "Y",
+           title = "Dane ze skośnymi resztami",
+           subtitle = paste0("OLS slope: ", round(ols_coef[2], 2),
+                            " | Median slope: ", round(median_coef[2], 2)))
+  })
+
+  output$reg_skew_histogram <- renderPlot({
+    data <- REG_SKEWED_RESIDUALS_DATA
+    model <- lm(y ~ x, data = data)
+    residuals <- residuals(model)
+
+    # Calculate skewness
+    n <- length(residuals)
+    skewness <- (sum((residuals - mean(residuals))^3) / n) /
+                (sum((residuals - mean(residuals))^2) / n)^(3/2)
+
+    df <- data.frame(residuals = residuals)
+
+    ggplot(df, aes(x = residuals)) +
+      geom_histogram(bins = 20, fill = "#3498db", alpha = 0.7, color = "#2c3e50") +
+      geom_vline(xintercept = 0, color = "#e74c3c", linewidth = 1.5, linetype = "dashed") +
+      geom_vline(xintercept = median(residuals), color = "#27ae60", linewidth = 1.5) +
+      theme_minimal(base_size = 14) +
+      labs(x = "Reszty", y = "Liczba obserwacji",
+           title = "Histogram reszt",
+           subtitle = paste0("Skośność: ", round(skewness, 2),
+                            " | Mediana: ", round(median(residuals), 1),
+                            " | Średnia: ", round(mean(residuals), 1)))
+  })
 
   # ==========================================================================
   # MODUŁ 4b: Homoskedastyczność
