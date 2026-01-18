@@ -9,38 +9,47 @@ library(rstatix)
 library(lmtest)
 
 # ============================================================================
-# FUNKCJE GENERUJĄCE DANE - MODUŁ 1: NORMALNOŚĆ
+# STAŁE ZBIORY DANYCH - MODUŁ 1: NORMALNOŚĆ
 # ============================================================================
 
-generate_normal_data <- function(n = 100) {
-  set.seed(NULL)
-  rnorm(n, mean = 50, sd = 10)
-}
+# Dane normalne - idealnie dopasowane do rozkładu normalnego
+# n = 50, seed = 42 dla powtarzalności, następnie posortowane kwantylowo
+set.seed(42)
+NORMAL_DATA <- qnorm(ppoints(50), mean = 50, sd = 10)
 
-generate_slightly_skewed_data <- function(n = 100) {
-  set.seed(NULL)
-  # Gamma z lekką skośnością
-  rgamma(n, shape = 5, scale = 10)
-}
+# Dane lekko skośne - gamma z umiarkowaną skośnością
+set.seed(123)
+SLIGHTLY_SKEWED_DATA <- qgamma(ppoints(50), shape = 7, scale = 7)
 
-generate_highly_skewed_data <- function(n = 100) {
-  set.seed(NULL)
-  # Gamma z silną skośnością
-  rgamma(n, shape = 2, scale = 15)
-}
+# Dane silnie skośne - gamma z silną skośnością
+set.seed(456)
+HIGHLY_SKEWED_DATA <- qgamma(ppoints(50), shape = 2, scale = 15)
 
-generate_bimodal_data <- function(n = 100) {
-  set.seed(NULL)
-  group <- sample(c(1, 2), n, replace = TRUE, prob = c(0.5, 0.5))
-  ifelse(group == 1, rnorm(n, mean = 30, sd = 8), rnorm(n, mean = 70, sd = 8))
-}
+# Dane bimodalne - dwie wyraźnie oddzielone grupy
+BIMODAL_DATA <- c(
+  qnorm(ppoints(25), mean = 30, sd = 5),
+  qnorm(ppoints(25), mean = 70, sd = 5)
+)
 
-generate_outliers_data <- function(n = 100) {
-  set.seed(NULL)
-  base <- rnorm(n - 5, mean = 50, sd = 10)
-  outliers <- c(10, 15, 85, 90, 95)
-  c(base, outliers)
-}
+# Dane z outlierami - normalne z kilkoma ekstremalnymi wartościami
+set.seed(789)
+OUTLIERS_DATA <- c(
+  qnorm(ppoints(45), mean = 50, sd = 8),
+  c(15, 18, 82, 85, 88)  # wyraźne outliery
+)
+
+# Funkcje zwracające stałe dane (dla kompatybilności z resztą kodu)
+get_normal_data <- function() NORMAL_DATA
+get_slightly_skewed_data <- function() SLIGHTLY_SKEWED_DATA
+get_highly_skewed_data <- function() HIGHLY_SKEWED_DATA
+get_bimodal_data <- function() BIMODAL_DATA
+get_outliers_data <- function() OUTLIERS_DATA
+
+# Stałe dane dla demonstracji wpływu na test t
+set.seed(123)
+DEMO_NORMAL_DATA <- rnorm(50, mean = 50, sd = 10)
+set.seed(456)
+DEMO_SKEWED_DATA <- rgamma(50, shape = 2, scale = 15)
 
 # ============================================================================
 # FUNKCJE GENERUJĄCE DANE - MODUŁ 2: JEDNORODNOŚĆ WARIANCJI
@@ -307,21 +316,6 @@ generate_regression_multiple_outliers <- function(n = 50) {
 # PRE-COMPUTED WYNIKI SYMULACJI (Monte Carlo, n_sim = 10000)
 # ============================================================================
 
-# Moduł 1: Normalność - błąd typu I przy różnych rozkładach
-precomputed_normality <- data.frame(
-  rozklad = factor(c("Normalny", "Normalny",
-                     "Lekko skośny", "Lekko skośny",
-                     "Silnie skośny", "Silnie skośny",
-                     "Bimodalny", "Bimodalny"),
-                   levels = c("Normalny", "Lekko skośny", "Silnie skośny", "Bimodalny")),
-  test = rep(c("t-test", "Wilcoxon"), 4),
-  blad_typu_I = c(0.052, 0.048,   # normalny
-                  0.058, 0.051,   # lekko skośny
-                  0.087, 0.052,   # silnie skośny
-                  0.112, 0.054),  # bimodalny
-  n = rep(30, 8)
-)
-
 # Moduł 2: Jednorodność wariancji - błąd typu I przy różnych kombinacjach n i SD
 precomputed_variance <- data.frame(
   scenariusz = factor(c("n=20,20\nSD=1:1", "n=20,20\nSD=1:1",
@@ -421,9 +415,6 @@ ui <- fluidPage(
                           ),
                           selected = "normal"),
 
-              actionButton("normality_regenerate", "🎲 Losuj nowe dane",
-                           class = "btn-success", width = "100%"),
-
               hr(),
 
               checkboxInput("normality_show_normal", "Pokaż rozkład normalny (overlay)", value = TRUE),
@@ -440,26 +431,33 @@ ui <- fluidPage(
             ),
 
             mainPanel(
-              div(
-                style = "border: 2px solid #3498db; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
-                h4("Histogram z rozkładem normalnym"),
-                plotOutput("normality_histogram", height = "300px")
-              ),
-
-              div(
-                style = "border: 2px solid #e67e22; border-radius: 5px; padding: 10px; margin-bottom: 20px;",
-                h4("QQ-plot (Quantile-Quantile)"),
-                plotOutput("normality_qqplot", height = "300px"),
-                div(
-                  style = "background-color: #ecf0f1; padding: 10px; border-radius: 5px; margin-top: 10px;",
-                  p("QQ-plot pokazuje jak dane porównują się z rozkładem normalnym. Jeśli punkty leżą blisko linii, rozkład jest normalny.")
+              fluidRow(
+                column(6,
+                  div(
+                    style = "border: 2px solid #3498db; border-radius: 5px; padding: 10px;",
+                    h4("Histogram z rozkładem normalnym"),
+                    plotOutput("normality_histogram", height = "280px")
+                  )
+                ),
+                column(6,
+                  div(
+                    style = "border: 2px solid #e67e22; border-radius: 5px; padding: 10px;",
+                    h4("QQ-plot (Quantile-Quantile)"),
+                    plotOutput("normality_qqplot", height = "280px")
+                  )
                 )
               ),
+
+              br(),
 
               div(
                 style = "border: 2px solid #95a5a6; border-radius: 5px; padding: 10px;",
                 h4("Test Shapiro-Wilka"),
-                tableOutput("normality_test")
+                tableOutput("normality_test"),
+                div(
+                  style = "background-color: #ecf0f1; padding: 10px; border-radius: 5px; margin-top: 10px;",
+                  p("QQ-plot pokazuje jak dane porównują się z rozkładem normalnym. Jeśli punkty leżą blisko linii, rozkład jest normalny.")
+                )
               ),
 
               width = 9
@@ -467,131 +465,96 @@ ui <- fluidPage(
           )
         ),
 
-        # --- Podtab: Dlaczego to ważne? ---
-        tabPanel(
-          "Dlaczego to ważne?",
-          br(),
-          h3("Konsekwencje łamania założenia normalności"),
-          p("Symulacja Monte Carlo (10 000 powtórzeń): Porównanie dwóch grup z identycznymi średnimi (H0 prawdziwe)."),
-          p(strong("Błąd typu I"), " = odsetek fałszywych pozytywów. Powinien wynosić 5%."),
-
-          hr(),
-
-          fluidRow(
-            column(6,
-              div(class = "result-box-success",
-                h4("Założenie spełnione: rozkład normalny"),
-                plotOutput("norm_consequence_ok", height = "250px"),
-                br(),
-                p("Błąd typu I dla ", strong("t-testu: "),
-                  span(class = "value-big value-ok", "5.2%")),
-                p("Błąd typu I dla ", strong("Wilcoxona: "),
-                  span(class = "value-big value-ok", "4.8%")),
-                p(style = "color: #28a745;", "Oba testy działają poprawnie!")
-              )
-            ),
-            column(6,
-              div(class = "result-box-danger",
-                h4("Założenie złamane: rozkład bimodalny"),
-                plotOutput("norm_consequence_bad", height = "250px"),
-                br(),
-                p("Błąd typu I dla ", strong("t-testu: "),
-                  span(class = "value-big value-bad", "11.2%")),
-                p("Błąd typu I dla ", strong("Wilcoxona: "),
-                  span(class = "value-big value-ok", "5.4%")),
-                p(style = "color: #dc3545;", "t-test daje 2x więcej fałszywych pozytywów!")
-              )
-            )
-          ),
-
-          hr(),
-
-          h4("Porównanie wszystkich rozkładów"),
-          plotOutput("norm_consequence_comparison", height = "350px"),
-
-          div(class = "interpretation-box",
-            h4("Wniosek"),
-            p("Przy ", strong("silnej skośności"), " lub ", strong("rozkładzie bimodalnym"),
-              " t-test może dawać znacznie więcej niż 5% fałszywych pozytywów."),
-            p("Test ", strong("Wilcoxona (Mann-Whitney)"), " jest odporny na naruszenia normalności ",
-              "i utrzymuje prawidłowy poziom błędu typu I (~5%) niezależnie od rozkładu."),
-            p(style = "font-style: italic;",
-              "Zalecenie: Przy wątpliwościach co do normalności, użyj testu Wilcoxona.")
-          )
-        ),
-
         # --- Podtab: Problem u podstawy ---
         tabPanel(
-          "Problem u podstawy",
+          "Wpływ na test t",
           br(),
-          h3("Dlaczego średnia może kłamać?"),
-          p("t-test porównuje ", strong("średnie"), " między grupami. Ale czy średnia zawsze dobrze reprezentuje dane?"),
+          h3("Jak naruszenie normalności wpływa na test t dla jednej próby?"),
+          p("Testujemy hipotezę ", strong("H0: μ = 50"), " dla danych normalnych i ", strong("H0: μ = 25"), " dla danych skośnych."),
 
           hr(),
 
-          h4("Porównanie: Średnia vs Mediana przy różnych rozkładach"),
-
           fluidRow(
+            # Panel 1: Rozkład normalny
             column(6,
               div(class = "result-box-success",
                 h4("Rozkład normalny (symetryczny)"),
+                plotOutput("norm_base_hist_ok", height = "200px"),
+                hr(),
+
+                h5("Statystyki opisowe"),
                 fluidRow(
-                  column(6, plotOutput("norm_base_hist_ok", height = "200px")),
-                  column(6, plotOutput("norm_base_box_ok", height = "200px"))
+                  column(6, p("Średnia: ", span(class = "value-big", style = "color: #e74c3c;", textOutput("norm_base_mean_ok", inline = TRUE)))),
+                  column(6, p("Mediana: ", span(class = "value-big", style = "color: #27ae60;", textOutput("norm_base_median_ok", inline = TRUE))))
                 ),
-                br(),
-                p("Średnia: ", span(class = "value-big", style = "color: #e74c3c;", textOutput("norm_base_mean_ok", inline = TRUE))),
-                p("Mediana: ", span(class = "value-big", style = "color: #27ae60;", textOutput("norm_base_median_ok", inline = TRUE))),
-                p(style = "color: #28a745;", "Średnia ≈ Mediana → obie dobrze opisują 'typową' wartość")
+                p(style = "color: #28a745; font-size: 12px;", "Średnia ≈ Mediana → obie dobrze opisują 'typową' wartość"),
+
+                hr(),
+
+                h5("Wyniki testów (H0: μ = 50)"),
+                tableOutput("norm_base_tests_ok"),
+
+                hr(),
+
+                h5("95% przedział ufności dla średniej"),
+                plotOutput("norm_base_ci_ok", height = "80px"),
+
+                hr(),
+
+                div(style = "background-color: rgba(40, 167, 69, 0.1); padding: 10px; border-radius: 5px;",
+                  p(strong("Interpretacja:")),
+                  p("Test t jest wiarygodny. Średnia dobrze reprezentuje dane, przedział ufności jest poprawny.")
+                )
               )
             ),
+
+            # Panel 2: Rozkład skośny
             column(6,
               div(class = "result-box-danger",
                 h4("Rozkład skośny (asymetryczny)"),
+                plotOutput("norm_base_hist_bad", height = "200px"),
+                hr(),
+
+                h5("Statystyki opisowe"),
                 fluidRow(
-                  column(6, plotOutput("norm_base_hist_bad", height = "200px")),
-                  column(6, plotOutput("norm_base_box_bad", height = "200px"))
+                  column(6, p("Średnia: ", span(class = "value-big", style = "color: #e74c3c;", textOutput("norm_base_mean_bad", inline = TRUE)))),
+                  column(6, p("Mediana: ", span(class = "value-big", style = "color: #27ae60;", textOutput("norm_base_median_bad", inline = TRUE))))
                 ),
-                br(),
-                p("Średnia: ", span(class = "value-big", style = "color: #e74c3c;", textOutput("norm_base_mean_bad", inline = TRUE))),
-                p("Mediana: ", span(class = "value-big", style = "color: #27ae60;", textOutput("norm_base_median_bad", inline = TRUE))),
-                p(style = "color: #dc3545;", "Średnia >> Mediana → średnia 'ucieka' w stronę ogona!")
+                p(style = "color: #dc3545; font-size: 12px;", "Średnia >> Mediana → średnia 'ucieka' w stronę ogona!"),
+
+                hr(),
+
+                h5("Wyniki testów (H0: μ = 25)"),
+                tableOutput("norm_base_tests_bad"),
+
+                hr(),
+
+                h5("95% przedział ufności dla średniej"),
+                plotOutput("norm_base_ci_bad", height = "80px"),
+
+                hr(),
+
+                div(style = "background-color: rgba(220, 53, 69, 0.1); padding: 10px; border-radius: 5px;",
+                  p(strong("Interpretacja:")),
+                  p("Test t i Wilcoxon dają ", strong("rozbieżne wyniki!"), " Test t odrzuca H0 (średnia > 25), ",
+                    "ale Wilcoxon nie (mediana ≈ 25). Która odpowiedź jest 'poprawna'?")
+                )
               )
             )
           ),
 
           hr(),
 
-          h4("Rozkład z outlierami - ekstremalna demonstracja"),
-          fluidRow(
-            column(8,
-              plotOutput("norm_base_outlier_demo", height = "250px")
-            ),
-            column(4,
-              div(class = "result-box-warning",
-                h4("Wpływ 1 outliera"),
-                p("Dane: 10, 12, 11, 13, 10, 12, ", strong("100")),
-                br(),
-                p("Średnia: ", span(class = "value-big value-bad", "24.0")),
-                p("Mediana: ", span(class = "value-big value-ok", "12.0")),
-                br(),
-                p("Jeden outlier przesunął średnią o ", strong("100%"), "!")
-              )
-            )
-          ),
-
           div(class = "interpretation-box",
             h4("Kluczowy wniosek"),
-            p("t-test porównuje ", strong("średnie"), ", które są wrażliwe na:"),
+            p("Przy ", strong("skośnym rozkładzie"), ":"),
             tags$ul(
-              tags$li("Skośność rozkładu (średnia 'ucieka' w stronę ogona)"),
-              tags$li("Outlierów (jeden punkt może drastycznie zmienić średnią)"),
-              tags$li("Rozkłady bimodalne (średnia może leżeć 'pomiędzy' gdzie nikogo nie ma)")
+              tags$li("Średnia 'ucieka' w stronę ogona i nie reprezentuje typowej wartości"),
+              tags$li("Test t testuje średnią, więc może dawać statystycznie istotny wynik, który jest praktycznie bez znaczenia"),
+              tags$li("Test Wilcoxona (na medianie) jest odporny na skośność")
             ),
-            p("Test ", strong("Wilcoxona"), " porównuje ", strong("rangi"), " (czyli pozycje w uporządkowanych danych), ",
-              "co jest odporne na te problemy."),
             p(style = "font-style: italic;",
-              "Metafora: Średnia pensji w firmie, gdzie jest 1 prezes i 100 pracowników - średnia kłamie o 'typowej' pensji.")
+              "Zalecenie: Przy skośnych danych rozważ test Wilcoxona lub transformację danych.")
           )
         )
       )
@@ -1319,25 +1282,15 @@ server <- function(input, output, session) {
   # MODUŁ 1: NORMALNOŚĆ
   # ==========================================================================
 
-  normality_data <- reactiveVal(generate_normal_data())
+  normality_data <- reactiveVal(get_normal_data())
 
   observeEvent(input$normality_scenario, {
     data <- switch(input$normality_scenario,
-                   "normal" = generate_normal_data(),
-                   "slightly_skewed" = generate_slightly_skewed_data(),
-                   "highly_skewed" = generate_highly_skewed_data(),
-                   "bimodal" = generate_bimodal_data(),
-                   "outliers" = generate_outliers_data())
-    normality_data(data)
-  })
-
-  observeEvent(input$normality_regenerate, {
-    data <- switch(input$normality_scenario,
-                   "normal" = generate_normal_data(),
-                   "slightly_skewed" = generate_slightly_skewed_data(),
-                   "highly_skewed" = generate_highly_skewed_data(),
-                   "bimodal" = generate_bimodal_data(),
-                   "outliers" = generate_outliers_data())
+                   "normal" = get_normal_data(),
+                   "slightly_skewed" = get_slightly_skewed_data(),
+                   "highly_skewed" = get_highly_skewed_data(),
+                   "bimodal" = get_bimodal_data(),
+                   "outliers" = get_outliers_data())
     normality_data(data)
   })
 
@@ -1711,55 +1664,6 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # WYKRESY KONSEKWENCJI - NORMALNOŚĆ
-  # ==========================================================================
-
-  # Wykres dla przypadku OK (normalny rozkład)
-  output$norm_consequence_ok <- renderPlot({
-    # Dane przykładowe - rozkład normalny
-    set.seed(42)
-    df <- data.frame(
-      value = rnorm(100, mean = 50, sd = 10)
-    )
-
-    ggplot(df, aes(x = value)) +
-      geom_histogram(bins = 15, fill = "#28a745", alpha = 0.7, color = "#1e7e34") +
-      theme_minimal(base_size = 12) +
-      labs(x = "Wartość", y = "Liczba", title = "Rozkład normalny") +
-      theme(plot.title = element_text(hjust = 0.5))
-  })
-
-  # Wykres dla przypadku złego (bimodalny)
-  output$norm_consequence_bad <- renderPlot({
-    # Dane przykładowe - rozkład bimodalny
-    set.seed(42)
-    group <- sample(c(1, 2), 100, replace = TRUE, prob = c(0.5, 0.5))
-    df <- data.frame(
-      value = ifelse(group == 1, rnorm(100, mean = 30, sd = 8), rnorm(100, mean = 70, sd = 8))
-    )
-
-    ggplot(df, aes(x = value)) +
-      geom_histogram(bins = 15, fill = "#dc3545", alpha = 0.7, color = "#bd2130") +
-      theme_minimal(base_size = 12) +
-      labs(x = "Wartość", y = "Liczba", title = "Rozkład bimodalny") +
-      theme(plot.title = element_text(hjust = 0.5))
-  })
-
-  # Wykres porównawczy wszystkich rozkładów
-  output$norm_consequence_comparison <- renderPlot({
-    ggplot(precomputed_normality, aes(x = rozklad, y = blad_typu_I * 100, fill = test)) +
-      geom_bar(stat = "identity", position = position_dodge(width = 0.8), alpha = 0.8) +
-      geom_hline(yintercept = 5, linetype = "dashed", color = "#e74c3c", size = 1.2) +
-      annotate("text", x = 0.5, y = 5.5, label = "Oczekiwane 5%", hjust = 0, color = "#e74c3c", size = 4) +
-      scale_fill_manual(values = c("t-test" = "#3498db", "Wilcoxon" = "#27ae60")) +
-      theme_minimal(base_size = 14) +
-      labs(x = "Typ rozkładu", y = "Błąd typu I (%)", fill = "Test",
-           title = "Błąd typu I przy różnych rozkładach (n = 30 na grupę)") +
-      theme(legend.position = "bottom") +
-      coord_cartesian(ylim = c(0, 15))
-  })
-
-  # ==========================================================================
   # WYKRESY KONSEKWENCJI - JEDNORODNOŚĆ WARIANCJI
   # ==========================================================================
 
@@ -1828,114 +1732,141 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # WYKRESY "PROBLEM U PODSTAWY" - NORMALNOŚĆ
+  # WYKRESY "WPŁYW NA TEST T" - NORMALNOŚĆ
   # ==========================================================================
 
   # Histogram - rozkład normalny
   output$norm_base_hist_ok <- renderPlot({
-    set.seed(123)
-    df <- data.frame(value = rnorm(100, mean = 50, sd = 10))
+    df <- data.frame(value = DEMO_NORMAL_DATA)
     mean_val <- mean(df$value)
     median_val <- median(df$value)
 
     ggplot(df, aes(x = value)) +
-      geom_histogram(bins = 15, fill = "#3498db", alpha = 0.6, color = "#2980b9") +
+      geom_histogram(bins = 12, fill = "#3498db", alpha = 0.6, color = "#2980b9") +
       geom_vline(xintercept = mean_val, color = "#e74c3c", size = 1.5, linetype = "solid") +
       geom_vline(xintercept = median_val, color = "#27ae60", size = 1.5, linetype = "dashed") +
-      theme_minimal(base_size = 10) +
-      labs(x = "", y = "", title = "Histogram") +
-      theme(plot.title = element_text(hjust = 0.5, size = 10))
-  })
-
-  # Boxplot - rozkład normalny
-  output$norm_base_box_ok <- renderPlot({
-    set.seed(123)
-    df <- data.frame(value = rnorm(100, mean = 50, sd = 10))
-    mean_val <- mean(df$value)
-
-    ggplot(df, aes(x = "", y = value)) +
-      geom_boxplot(fill = "#3498db", alpha = 0.6) +
-      geom_point(aes(y = mean_val), color = "#e74c3c", size = 4, shape = 18) +
-      theme_minimal(base_size = 10) +
-      labs(x = "", y = "", title = "Boxplot") +
-      theme(plot.title = element_text(hjust = 0.5, size = 10)) +
-      annotate("text", x = 1.3, y = mean_val, label = "Średnia", color = "#e74c3c", size = 3)
+      geom_vline(xintercept = 50, color = "#9b59b6", size = 1, linetype = "dotted") +
+      theme_minimal(base_size = 11) +
+      labs(x = "Wartość", y = "Liczba",
+           caption = "Czerwona = średnia, Zielona = mediana, Fioletowa = μ₀ = 50") +
+      theme(plot.caption = element_text(size = 9))
   })
 
   # Średnia i mediana - normalny
   output$norm_base_mean_ok <- renderText({
-    set.seed(123)
-    round(mean(rnorm(100, mean = 50, sd = 10)), 1)
+    round(mean(DEMO_NORMAL_DATA), 1)
   })
 
   output$norm_base_median_ok <- renderText({
-    set.seed(123)
-    round(median(rnorm(100, mean = 50, sd = 10)), 1)
+    round(median(DEMO_NORMAL_DATA), 1)
+  })
+
+  # Testy - rozkład normalny
+  output$norm_base_tests_ok <- renderTable({
+    t_result <- t.test(DEMO_NORMAL_DATA, mu = 50)
+    w_result <- wilcox.test(DEMO_NORMAL_DATA, mu = 50)
+
+    data.frame(
+      Test = c("t-test", "Wilcoxon"),
+      Statystyka = c(round(t_result$statistic, 2), round(w_result$statistic, 0)),
+      `p-value` = c(format.pval(t_result$p.value, digits = 3),
+                    format.pval(w_result$p.value, digits = 3)),
+      Wniosek = c(
+        ifelse(t_result$p.value < 0.05, "Odrzuć H0", "Brak podstaw do odrzucenia"),
+        ifelse(w_result$p.value < 0.05, "Odrzuć H0", "Brak podstaw do odrzucenia")
+      ),
+      check.names = FALSE
+    )
+  }, striped = TRUE, bordered = TRUE, width = "100%")
+
+  # CI - rozkład normalny
+  output$norm_base_ci_ok <- renderPlot({
+    t_result <- t.test(DEMO_NORMAL_DATA, mu = 50)
+    ci <- t_result$conf.int
+    mean_val <- mean(DEMO_NORMAL_DATA)
+
+    df <- data.frame(
+      mean = mean_val,
+      lower = ci[1],
+      upper = ci[2]
+    )
+
+    ggplot(df, aes(x = mean, y = 1)) +
+      geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0.3, size = 1.2, color = "#3498db") +
+      geom_point(size = 4, color = "#3498db") +
+      geom_vline(xintercept = 50, color = "#9b59b6", size = 1.5, linetype = "dashed") +
+      theme_minimal(base_size = 11) +
+      labs(x = "", y = "") +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
+      xlim(min(ci[1] - 2, 45), max(ci[2] + 2, 55)) +
+      annotate("text", x = 50, y = 1.3, label = "μ₀ = 50", color = "#9b59b6", size = 3.5)
   })
 
   # Histogram - rozkład skośny
   output$norm_base_hist_bad <- renderPlot({
-    set.seed(123)
-    df <- data.frame(value = rgamma(100, shape = 2, scale = 15))
+    df <- data.frame(value = DEMO_SKEWED_DATA)
     mean_val <- mean(df$value)
     median_val <- median(df$value)
 
     ggplot(df, aes(x = value)) +
-      geom_histogram(bins = 15, fill = "#e74c3c", alpha = 0.6, color = "#c0392b") +
+      geom_histogram(bins = 12, fill = "#e74c3c", alpha = 0.6, color = "#c0392b") +
       geom_vline(xintercept = mean_val, color = "#e74c3c", size = 1.5, linetype = "solid") +
       geom_vline(xintercept = median_val, color = "#27ae60", size = 1.5, linetype = "dashed") +
-      theme_minimal(base_size = 10) +
-      labs(x = "", y = "", title = "Histogram") +
-      theme(plot.title = element_text(hjust = 0.5, size = 10))
-  })
-
-  # Boxplot - rozkład skośny
-  output$norm_base_box_bad <- renderPlot({
-    set.seed(123)
-    df <- data.frame(value = rgamma(100, shape = 2, scale = 15))
-    mean_val <- mean(df$value)
-
-    ggplot(df, aes(x = "", y = value)) +
-      geom_boxplot(fill = "#e74c3c", alpha = 0.6) +
-      geom_point(aes(y = mean_val), color = "#e74c3c", size = 4, shape = 18) +
-      theme_minimal(base_size = 10) +
-      labs(x = "", y = "", title = "Boxplot") +
-      theme(plot.title = element_text(hjust = 0.5, size = 10)) +
-      annotate("text", x = 1.3, y = mean_val, label = "Średnia", color = "#e74c3c", size = 3)
+      geom_vline(xintercept = 25, color = "#9b59b6", size = 1, linetype = "dotted") +
+      theme_minimal(base_size = 11) +
+      labs(x = "Wartość", y = "Liczba",
+           caption = "Czerwona = średnia, Zielona = mediana, Fioletowa = μ₀ = 25") +
+      theme(plot.caption = element_text(size = 9))
   })
 
   # Średnia i mediana - skośny
   output$norm_base_mean_bad <- renderText({
-    set.seed(123)
-    round(mean(rgamma(100, shape = 2, scale = 15)), 1)
+    round(mean(DEMO_SKEWED_DATA), 1)
   })
 
   output$norm_base_median_bad <- renderText({
-    set.seed(123)
-    round(median(rgamma(100, shape = 2, scale = 15)), 1)
+    round(median(DEMO_SKEWED_DATA), 1)
   })
 
-  # Demonstracja outliera
-  output$norm_base_outlier_demo <- renderPlot({
-    df <- data.frame(
-      value = c(10, 12, 11, 13, 10, 12, 100),
-      label = c(rep("Normalne", 6), "Outlier")
-    )
-    mean_val <- mean(df$value)
-    median_val <- median(df$value)
+  # Testy - rozkład skośny
+  output$norm_base_tests_bad <- renderTable({
+    t_result <- t.test(DEMO_SKEWED_DATA, mu = 25)
+    w_result <- wilcox.test(DEMO_SKEWED_DATA, mu = 25)
 
-    ggplot(df, aes(x = value, y = 0)) +
-      geom_point(aes(color = label), size = 6, alpha = 0.8) +
-      geom_vline(xintercept = mean_val, color = "#e74c3c", size = 2, linetype = "solid") +
-      geom_vline(xintercept = median_val, color = "#27ae60", size = 2, linetype = "dashed") +
-      scale_color_manual(values = c("Normalne" = "#3498db", "Outlier" = "#e74c3c")) +
-      theme_minimal(base_size = 14) +
-      labs(x = "Wartość", y = "", color = "",
-           title = "Czerwona = Średnia (24), Zielona = Mediana (12)") +
-      theme(legend.position = "bottom",
-            axis.text.y = element_blank(),
-            axis.ticks.y = element_blank()) +
-      xlim(0, 110)
+    data.frame(
+      Test = c("t-test", "Wilcoxon"),
+      Statystyka = c(round(t_result$statistic, 2), round(w_result$statistic, 0)),
+      `p-value` = c(format.pval(t_result$p.value, digits = 3),
+                    format.pval(w_result$p.value, digits = 3)),
+      Wniosek = c(
+        ifelse(t_result$p.value < 0.05, "Odrzuć H0", "Brak podstaw do odrzucenia"),
+        ifelse(w_result$p.value < 0.05, "Odrzuć H0", "Brak podstaw do odrzucenia")
+      ),
+      check.names = FALSE
+    )
+  }, striped = TRUE, bordered = TRUE, width = "100%")
+
+  # CI - rozkład skośny
+  output$norm_base_ci_bad <- renderPlot({
+    t_result <- t.test(DEMO_SKEWED_DATA, mu = 25)
+    ci <- t_result$conf.int
+    mean_val <- mean(DEMO_SKEWED_DATA)
+
+    df <- data.frame(
+      mean = mean_val,
+      lower = ci[1],
+      upper = ci[2]
+    )
+
+    ggplot(df, aes(x = mean, y = 1)) +
+      geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0.3, size = 1.2, color = "#e74c3c") +
+      geom_point(size = 4, color = "#e74c3c") +
+      geom_vline(xintercept = 25, color = "#9b59b6", size = 1.5, linetype = "dashed") +
+      theme_minimal(base_size = 11) +
+      labs(x = "", y = "") +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
+      xlim(min(ci[1] - 2, 20), max(ci[2] + 2, 40)) +
+      annotate("text", x = 25, y = 1.3, label = "μ₀ = 25", color = "#9b59b6", size = 3.5)
   })
 
   # ==========================================================================
