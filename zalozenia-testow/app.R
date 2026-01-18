@@ -1241,7 +1241,7 @@ server <- function(input, output, session) {
       y_scaled <- y_seq * length(data) * bin_width
 
       norm_df <- data.frame(x = x_seq, y = y_scaled)
-      p <- p + geom_line(data = norm_df, aes(x = x, y = y), color = "#e74c3c", size = 1.5)
+      p <- p + geom_line(data = norm_df, aes(x = x, y = y), color = "#e74c3c", linewidth = 1.5)
     }
 
     p
@@ -1253,7 +1253,7 @@ server <- function(input, output, session) {
 
     ggplot(df, aes(sample = value)) +
       stat_qq(color = "#3498db", size = 3, alpha = 0.7) +
-      stat_qq_line(color = "#e74c3c", size = 1.5) +
+      stat_qq_line(color = "#e74c3c", linewidth = 1.5) +
       theme_minimal(base_size = 14) +
       labs(x = "Teoretyczne kwantyle", y = "Kwantyle próby")
   })
@@ -1299,7 +1299,7 @@ server <- function(input, output, session) {
     data <- variance_data()
 
     ggplot(data, aes(x = group, y = value, fill = group)) +
-      geom_boxplot(alpha = 0.7) +
+      geom_boxplot(alpha = 0.7, width = 0.7) +
       scale_fill_manual(values = c("#3498db", "#e74c3c", "#27ae60")) +
       theme_minimal(base_size = 12) +
       labs(x = "Grupa", y = "Wartość") +
@@ -1358,7 +1358,7 @@ server <- function(input, output, session) {
     data <- get_variance_data(n_groups, equal_var = TRUE)
 
     ggplot(data, aes(x = group, y = value, fill = group)) +
-      geom_boxplot(alpha = 0.7) +
+      geom_boxplot(alpha = 0.7, width = 0.7) +
       scale_fill_manual(values = c("#3498db", "#27ae60", "#9b59b6")) +
       theme_minimal(base_size = 11) +
       labs(x = "", y = "Wartość") +
@@ -1371,7 +1371,7 @@ server <- function(input, output, session) {
     data <- get_variance_data(n_groups, equal_var = FALSE)
 
     ggplot(data, aes(x = group, y = value, fill = group)) +
-      geom_boxplot(alpha = 0.7) +
+      geom_boxplot(alpha = 0.7, width = 0.7) +
       scale_fill_manual(values = c("#e74c3c", "#f39c12", "#e67e22")) +
       theme_minimal(base_size = 11) +
       labs(x = "", y = "Wartość") +
@@ -1531,7 +1531,7 @@ server <- function(input, output, session) {
 
     ggplot(data, aes(x = x, y = y)) +
       geom_point(size = 3, alpha = 0.6, color = "#3498db") +
-      geom_smooth(method = "lm", se = FALSE, color = "#e74c3c", size = 1.5) +
+      geom_smooth(method = "lm", se = FALSE, color = "#e74c3c", linewidth = 1.5) +
       theme_minimal(base_size = 14) +
       labs(x = "X", y = "Y", title = "Scatterplot z linią regresji")
   })
@@ -1555,7 +1555,7 @@ server <- function(input, output, session) {
     y_scaled <- y_seq * length(residuals) * bin_width
 
     norm_df <- data.frame(x = x_seq, y = y_scaled)
-    p <- p + geom_line(data = norm_df, aes(x = x, y = y), color = "#e74c3c", size = 1.5)
+    p <- p + geom_line(data = norm_df, aes(x = x, y = y), color = "#e74c3c", linewidth = 1.5)
 
     p
   })
@@ -1568,7 +1568,7 @@ server <- function(input, output, session) {
 
     ggplot(df, aes(sample = residuals)) +
       stat_qq(color = "#3498db", size = 3, alpha = 0.7) +
-      stat_qq_line(color = "#e74c3c", size = 1.5) +
+      stat_qq_line(color = "#e74c3c", linewidth = 1.5) +
       theme_minimal(base_size = 14) +
       labs(x = "Teoretyczne kwantyle", y = "Kwantyle reszt")
   })
@@ -1618,7 +1618,7 @@ server <- function(input, output, session) {
 
     ggplot(data, aes(x = x, y = y)) +
       geom_point(size = 3, alpha = 0.6, color = "#3498db") +
-      geom_smooth(method = "lm", se = FALSE, color = "#e74c3c", size = 1.5) +
+      geom_smooth(method = "lm", se = FALSE, color = "#e74c3c", linewidth = 1.5) +
       theme_minimal(base_size = 14) +
       labs(x = "X", y = "Y", title = "Scatterplot z linią regresji")
   })
@@ -1632,7 +1632,7 @@ server <- function(input, output, session) {
 
     ggplot(df, aes(x = fitted, y = residuals)) +
       geom_point(size = 3, alpha = 0.6, color = "#3498db") +
-      geom_hline(yintercept = 0, color = "#e74c3c", size = 1.5, linetype = "dashed") +
+      geom_hline(yintercept = 0, color = "#e74c3c", linewidth = 1.5, linetype = "dashed") +
       theme_minimal(base_size = 14) +
       labs(x = "Fitted values", y = "Residuals", title = "Residual Plot")
   })
@@ -1692,9 +1692,9 @@ server <- function(input, output, session) {
       geom_point(aes(color = is_outlier, size = is_outlier), alpha = 0.6) +
       scale_color_manual(values = c("FALSE" = "#3498db", "TRUE" = "#e74c3c")) +
       scale_size_manual(values = c("FALSE" = 3, "TRUE" = 5)) +
-      geom_smooth(method = "lm", se = FALSE, color = "#3498db", size = 1.5, fullrange = TRUE) +
+      geom_smooth(method = "lm", se = FALSE, color = "#3498db", linewidth = 1.5, fullrange = TRUE) +
       geom_smooth(data = data_without, method = "lm", se = FALSE,
-                  color = "#e74c3c", size = 1.5, linetype = "dashed", fullrange = TRUE) +
+                  color = "#e74c3c", linewidth = 1.5, linetype = "dashed", fullrange = TRUE) +
       theme_minimal(base_size = 14) +
       labs(x = "X", y = "Y", title = "Scatterplot z 2 liniami regresji") +
       theme(legend.position = "none")
@@ -1749,7 +1749,7 @@ server <- function(input, output, session) {
 
     ggplot(df, aes(x = fitted, y = residuals)) +
       geom_point(size = 2, alpha = 0.6, color = "#28a745") +
-      geom_hline(yintercept = 0, color = "#1e7e34", size = 1, linetype = "dashed") +
+      geom_hline(yintercept = 0, color = "#1e7e34", linewidth = 1, linetype = "dashed") +
       theme_minimal(base_size = 11) +
       labs(x = "Fitted", y = "Residuals", title = "Równy rozrzut") +
       theme(plot.title = element_text(hjust = 0.5))
@@ -1765,7 +1765,7 @@ server <- function(input, output, session) {
 
     ggplot(df, aes(x = fitted, y = residuals)) +
       geom_point(size = 2, alpha = 0.6, color = "#dc3545") +
-      geom_hline(yintercept = 0, color = "#bd2130", size = 1, linetype = "dashed") +
+      geom_hline(yintercept = 0, color = "#bd2130", linewidth = 1, linetype = "dashed") +
       theme_minimal(base_size = 11) +
       labs(x = "Fitted", y = "Residuals", title = "Kształt lejka") +
       theme(plot.title = element_text(hjust = 0.5))
@@ -1775,7 +1775,7 @@ server <- function(input, output, session) {
   output$reg_homo_consequence_comparison <- renderPlot({
     ggplot(precomputed_regression, aes(x = heterosked, y = pokrycie_CI * 100, fill = metoda)) +
       geom_bar(stat = "identity", position = position_dodge(width = 0.8), alpha = 0.8) +
-      geom_hline(yintercept = 95, linetype = "dashed", color = "#e74c3c", size = 1.2) +
+      geom_hline(yintercept = 95, linetype = "dashed", color = "#e74c3c", linewidth = 1.2) +
       annotate("text", x = 0.5, y = 96, label = "Oczekiwane 95%", hjust = 0, color = "#e74c3c", size = 4) +
       scale_fill_manual(values = c("OLS (zwykły)" = "#3498db", "Robust SE" = "#27ae60")) +
       theme_minimal(base_size = 14) +
@@ -1797,9 +1797,9 @@ server <- function(input, output, session) {
 
     ggplot(df, aes(x = value)) +
       geom_histogram(bins = 12, fill = "#3498db", alpha = 0.6, color = "#2980b9") +
-      geom_vline(xintercept = mean_val, color = "#e74c3c", size = 1.5, linetype = "solid") +
-      geom_vline(xintercept = median_val, color = "#27ae60", size = 1.5, linetype = "dashed") +
-      geom_vline(xintercept = 50, color = "#9b59b6", size = 1, linetype = "dotted") +
+      geom_vline(xintercept = mean_val, color = "#e74c3c", linewidth = 1.5, linetype = "solid") +
+      geom_vline(xintercept = median_val, color = "#27ae60", linewidth = 1.5, linetype = "dashed") +
+      geom_vline(xintercept = 50, color = "#9b59b6", linewidth = 1, linetype = "dotted") +
       theme_minimal(base_size = 11) +
       labs(x = "Wartość", y = "Liczba",
            caption = "Czerwona = średnia, Zielona = mediana, Fioletowa = μ₀ = 50") +
@@ -1846,9 +1846,9 @@ server <- function(input, output, session) {
     )
 
     ggplot(df, aes(x = mean, y = 1)) +
-      geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0.3, size = 1.2, color = "#3498db") +
+      geom_errorbar(aes(xmin = lower, xmax = upper), width = 0.3, linewidth = 1.2, color = "#3498db", orientation = "y") +
       geom_point(size = 4, color = "#3498db") +
-      geom_vline(xintercept = 50, color = "#9b59b6", size = 1.5, linetype = "dashed") +
+      geom_vline(xintercept = 50, color = "#9b59b6", linewidth = 1.5, linetype = "dashed") +
       theme_minimal(base_size = 11) +
       labs(x = "", y = "") +
       theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
@@ -1864,9 +1864,9 @@ server <- function(input, output, session) {
 
     ggplot(df, aes(x = value)) +
       geom_histogram(bins = 12, fill = "#e74c3c", alpha = 0.6, color = "#c0392b") +
-      geom_vline(xintercept = mean_val, color = "#e74c3c", size = 1.5, linetype = "solid") +
-      geom_vline(xintercept = median_val, color = "#27ae60", size = 1.5, linetype = "dashed") +
-      geom_vline(xintercept = 25, color = "#9b59b6", size = 1, linetype = "dotted") +
+      geom_vline(xintercept = mean_val, color = "#e74c3c", linewidth = 1.5, linetype = "solid") +
+      geom_vline(xintercept = median_val, color = "#27ae60", linewidth = 1.5, linetype = "dashed") +
+      geom_vline(xintercept = 25, color = "#9b59b6", linewidth = 1, linetype = "dotted") +
       theme_minimal(base_size = 11) +
       labs(x = "Wartość", y = "Liczba",
            caption = "Czerwona = średnia, Zielona = mediana, Fioletowa = μ₀ = 25") +
@@ -1913,9 +1913,9 @@ server <- function(input, output, session) {
     )
 
     ggplot(df, aes(x = mean, y = 1)) +
-      geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0.3, size = 1.2, color = "#e74c3c") +
+      geom_errorbar(aes(xmin = lower, xmax = upper), width = 0.3, linewidth = 1.2, color = "#e74c3c", orientation = "y") +
       geom_point(size = 4, color = "#e74c3c") +
-      geom_vline(xintercept = 25, color = "#9b59b6", size = 1.5, linetype = "dashed") +
+      geom_vline(xintercept = 25, color = "#9b59b6", linewidth = 1.5, linetype = "dashed") +
       theme_minimal(base_size = 11) +
       labs(x = "", y = "") +
       theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
@@ -1937,9 +1937,9 @@ server <- function(input, output, session) {
 
     ggplot(df, aes(x = x, y = y)) +
       geom_point(aes(color = outlier, size = outlier), alpha = 0.7) +
-      geom_smooth(method = "lm", se = FALSE, color = "#3498db", size = 1.2) +
+      geom_smooth(method = "lm", se = FALSE, color = "#3498db", linewidth = 1.2) +
       geom_smooth(data = df[!df$outlier, ], method = "lm", se = FALSE,
-                  color = "#27ae60", linetype = "dashed", size = 1.2) +
+                  color = "#27ae60", linetype = "dashed", linewidth = 1.2) +
       scale_color_manual(values = c("FALSE" = "#3498db", "TRUE" = "#e74c3c")) +
       scale_size_manual(values = c("FALSE" = 2, "TRUE" = 5)) +
       theme_minimal(base_size = 11) +
@@ -1957,9 +1957,9 @@ server <- function(input, output, session) {
 
     ggplot(df, aes(x = x, y = y)) +
       geom_point(aes(color = outlier, size = outlier), alpha = 0.7) +
-      geom_smooth(method = "lm", se = FALSE, color = "#3498db", size = 1.2) +
+      geom_smooth(method = "lm", se = FALSE, color = "#3498db", linewidth = 1.2) +
       geom_smooth(data = df[!df$outlier, ], method = "lm", se = FALSE,
-                  color = "#27ae60", linetype = "dashed", size = 1.2) +
+                  color = "#27ae60", linetype = "dashed", linewidth = 1.2) +
       scale_color_manual(values = c("FALSE" = "#3498db", "TRUE" = "#e74c3c")) +
       scale_size_manual(values = c("FALSE" = 2, "TRUE" = 5)) +
       theme_minimal(base_size = 11) +
@@ -2002,11 +2002,11 @@ server <- function(input, output, session) {
       geom_point(aes(x = 95, y = 100), color = "#e74c3c", size = 6, shape = 17) +
       # Linie
       geom_abline(intercept = slopes$intercept[1], slope = slopes$slope[1],
-                  color = "#27ae60", size = 1.5, linetype = "solid") +
+                  color = "#27ae60", linewidth = 1.5, linetype = "solid") +
       geom_abline(intercept = slopes$intercept[2], slope = slopes$slope[2],
-                  color = "#f39c12", size = 1.2, linetype = "dashed") +
+                  color = "#f39c12", linewidth = 1.2, linetype = "dashed") +
       geom_abline(intercept = slopes$intercept[3], slope = slopes$slope[3],
-                  color = "#e74c3c", size = 1.2, linetype = "dotted") +
+                  color = "#e74c3c", linewidth = 1.2, linetype = "dotted") +
       theme_minimal(base_size = 14) +
       labs(x = "X", y = "Y",
            title = paste0("Slope: bez=", round(slopes$slope[1], 2),
