@@ -19,7 +19,37 @@ install.packages(c("rstatix", "broom", "lmtest"))
 
 ## ▶️ Uruchamianie aplikacji
 
-### Metoda 1: Z R/RStudio (zalecana)
+### Metoda 1: Shiny Server (Docker) - zalecana do hostowania
+
+Wszystkie 14 aplikacji dostępnych jako jedna strona internetowa z obliczeniami po stronie serwera.
+
+**Wymagania:** Docker i Docker Compose
+
+```bash
+# Zbuduj i uruchom serwer
+docker compose up -d
+
+# Aplikacje dostępne pod adresem:
+# http://localhost:3838
+```
+
+Portal (strona główna) zawiera linki do wszystkich aplikacji pogrupowanych tematycznie.
+
+Poszczególne aplikacje dostępne pod adresami:
+- `http://localhost:3838/box-plot-builder/`
+- `http://localhost:3838/histogram-builder/`
+- `http://localhost:3838/gra-estymacja/`
+- itd.
+
+```bash
+# Zatrzymanie serwera
+docker compose down
+
+# Przebudowanie po zmianach w kodzie
+docker compose up -d --build
+```
+
+### Metoda 2: Z R/RStudio (pojedyncza aplikacja)
 
 ```r
 # Ustaw katalog roboczy na folder z app.R
@@ -27,12 +57,12 @@ setwd("ścieżka/do/aplikacji")
 shiny::runApp()
 ```
 
-### Metoda 2: Bezpośrednio z pliku
+### Metoda 3: Bezpośrednio z pliku
 
 1. Otwórz plik `app.R` w RStudio
 2. Kliknij przycisk **"Run App"** w prawym górnym rogu edytora
 
-### Metoda 3: Z konsoli R
+### Metoda 4: Z konsoli R
 
 ```r
 shiny::runApp("ścieżka/do/aplikacji")
@@ -78,6 +108,11 @@ shiny::runApp("ścieżka/do/aplikacji")
 
 ```
 Interaktywne/
+├── Dockerfile                  # Konfiguracja kontenera Docker
+├── docker-compose.yml          # Orkiestracja Docker Compose
+├── shiny-server.conf           # Konfiguracja Shiny Server
+├── portal/                     # Strona główna (landing page)
+│   └── app.R
 ├── losowanie_spoznienia/       # Symulator zbierania danych
 │   ├── app.R
 │   └── README.md

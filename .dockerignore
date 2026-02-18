@@ -1,0 +1,5 @@
+.git
+*.md
+box-plot-builder/exported/
+losowanie_spoznienia/install_packages.R
+losowanie_spoznienia/uruchom.R

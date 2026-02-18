@@ -1,0 +1,12 @@
+services:
+  shiny-server:
+    build: .
+    container_name: interaktywne-wyklady
+    ports:
+      - "3838:3838"
+    volumes:
+      - shiny-logs:/var/log/shiny-server
+    restart: unless-stopped
+
+volumes:
+  shiny-logs:
