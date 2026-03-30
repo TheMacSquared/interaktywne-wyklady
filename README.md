@@ -5,15 +5,18 @@ Aplikacje R Shiny w formie interaktywnych skryptów wykładowych. Każda aplikac
 ## 📋 Wymagania
 
 - R (wersja ≥ 4.0)
-- Pakiety R: `shiny`, `ggplot2`, `dplyr`, `e1071`, `gridExtra`
+- Pakiety R: `shiny`, `ggplot2`, `dplyr`, `e1071`, `gridExtra`, `rstatix`, `broom`, `tidyr`, `lmtest`
 
 ## 🚀 Instalacja pakietów
 
 ```r
 install.packages(c("shiny", "ggplot2", "dplyr", "e1071", "gridExtra"))
 
+# Dodatkowe (dla przedzialy-ufnosci, wnioskowanie-statystyczne, regresja, zalozenia-testow)
+install.packages(c("rstatix", "broom", "tidyr", "knitr", "lmtest", "sandwich"))
+
 # Dodatkowe (dla dobre-dane)
-install.packages(c("DT", "tidyr", "AER", "palmerpenguins", "ISLR", "fivethirtyeight"))
+install.packages(c("DT", "AER", "palmerpenguins", "ISLR", "fivethirtyeight"))
 ```
 
 ## ▶️ Uruchamianie
@@ -22,6 +25,11 @@ install.packages(c("DT", "tidyr", "AER", "palmerpenguins", "ISLR", "fivethirtyei
 # Z R/RStudio
 shiny::runApp("typy-danych")
 shiny::runApp("rozklady-prawdopodobienstwa")
+shiny::runApp("przedzialy-ufnosci")
+shiny::runApp("wnioskowanie-statystyczne")
+shiny::runApp("regresja")
+shiny::runApp("zalozenia-testow")
+shiny::runApp("case-studies")
 shiny::runApp("dobre-dane")
 ```
 
@@ -31,6 +39,11 @@ shiny::runApp("dobre-dane")
 |-----------|-------|--------------------|
 | [typy-danych](typy-danych/) | Statystyka opisowa | 6 rozdziałów: typy danych, zmienne jakościowe, statystyki położenia, rozrzutu, kształt rozkładu, ściąga |
 | [rozklady-prawdopodobienstwa](rozklady-prawdopodobienstwa/) | Rozkłady prawdopodobieństwa | 8 rozdziałów: od danych do prawdopodobieństwa, wartość oczekiwana i wariancja, rozkłady dyskretne, ciągłe, normalny, CTG, dobór rozkładu, ściąga |
+| [przedzialy-ufnosci](przedzialy-ufnosci/) | Przedziały ufności | 6 rozdziałów: estymacja punktowa, idea przedziałów, przedział dla średniej, proporcji, czynniki szerokości, ściąga |
+| [wnioskowanie-statystyczne](wnioskowanie-statystyczne/) | Wnioskowanie statystyczne | 9 rozdziałów: logika testowania, formułowanie hipotez, jedna ilo./jako., korelacja, dwie jakościowe, dwie grupy, ANOVA, ściąga |
+| [regresja](regresja/) | Regresja | 5 rozdziałów: liniowa prosta, wieloraka, logistyczna, porównanie modeli (R², AIC, BIC, RMSE), ściąga |
+| [zalozenia-testow](zalozenia-testow/) | Założenia testów | 6 rozdziałów: normalność, jednorodne wariancje, założenia regresji, χ²/Fisher, mapa metod z alternatywami, ściąga |
+| [case-studies](case-studies/) | Case studies | Kompletne analizy od A do Z. Każdy rozdział = jeden zbiór danych, hipotezy, analizy, wnioski. Na razie: CASchools |
 | [dobre-dane](dobre-dane/) | Jakość danych | Ocena zbiorów danych do analiz statystycznych (case studies) |
 
 ## 📁 Struktura projektu
@@ -59,6 +72,53 @@ interaktywne-wyklady/
 │       ├── ch6_ctg.R               # 6. Centralne Twierdzenie Graniczne
 │       ├── ch7_dobor.R             # 7. Dobór rozkładu (drzewo decyzyjne, Q-Q plot)
 │       └── ch8_sciaga.R            # 8. Ściąga (wzory, tabele, funkcje R)
+├── przedzialy-ufnosci/             # Przedziały ufności
+│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
+│   └── modules/
+│       ├── helpers.R               # Generatory danych, symulacje pokrycia, theme
+│       ├── ch1_estymacja.R         # 1. Od próby do populacji (estymacja punktowa)
+│       ├── ch2_idea.R              # 2. Idea przedziałów (100 CI, krok po kroku, quiz)
+│       ├── ch3_srednia.R           # 3. Przedział dla średniej (z vs t, kalkulator)
+│       ├── ch4_proporcja.R         # 4. Przedział dla proporcji (Wald vs Wilson)
+│       ├── ch5_czynniki.R          # 5. Co wpływa na szerokość? (n, CL, s)
+│       └── ch6_sciaga.R            # 6. Ściąga (wzory, drzewo decyzyjne, R)
+├── wnioskowanie-statystyczne/      # Wnioskowanie statystyczne (testy hipotez)
+│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
+│   └── modules/
+│       ├── helpers.R               # Dane studenckie, formatowanie wyników, theme
+│       ├── ch1_logika.R            # 1. Logika testowania (p-wartość, błędy, moc)
+│       ├── ch2_hipotezy.R          # 2. Formułowanie hipotez (pytanie↔hipoteza, quizy, jedno/dwustronny)
+│       ├── ch2_jedna_ilosciowa.R   # 3. Jedna zmienna ilościowa (t, Wilcoxon)
+│       ├── ch3_jedna_jakosciowa.R  # 4. Jedna zmienna jakościowa (χ², dwumianowy)
+│       ├── ch4_korelacja.R         # 5. Dwie ilościowe (Pearson, Spearman)
+│       ├── ch5_dwie_jakosciowe.R   # 6. Dwie jakościowe (χ² niezależności, Fisher)
+│       ├── ch6_dwie_grupy.R        # 7. Ilościowa vs jakościowa, 2 grupy (t, M-W, parowe)
+│       ├── ch7_anova.R             # 8. ANOVA (jednoczynnikowa, Kruskal-Wallis, post-hoc)
+│       └── ch8_sciaga.R            # 9. Ściąga (drzewo decyzyjne, tabele, kod R)
+├── regresja/                        # Regresja liniowa i logistyczna
+│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
+│   └── modules/
+│       ├── helpers.R               # Generatory danych regresyjnych, metryki, theme
+│       ├── ch1_liniowa.R           # 1. Regresja liniowa prosta (scatter, reszty, R²)
+│       ├── ch2_wieloraka.R         # 2. Regresja wieloraka (predyktory, adj.R², stepwise)
+│       ├── ch3_logistyczna.R       # 3. Regresja logistyczna (sigmoida, OR, predykcja)
+│       ├── ch4_porownanie.R        # 4. Porównanie modeli (R², AIC, BIC, RMSE, overfitting)
+│       └── ch5_sciaga.R            # 5. Ściąga (wzory, metryki, kod R)
+├── zalozenia-testow/               # Założenia testów statystycznych
+│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
+│   └── modules/
+│       ├── helpers.R               # Generatory danych z naruszeniami, theme
+│       ├── ch1_normalnosc.R        # 1. Normalność (Q-Q, Shapiro, transformacje)
+│       ├── ch2_wariancje.R         # 2. Jednorodne wariancje (Levene, Bartlett, Welch)
+│       ├── ch3_regresja.R          # 3. Założenia regresji (diagnostyka, BP, DW)
+│       ├── ch4_chi_fisher.R        # 4. Założenia χ² i Fishera (min. liczności)
+│       ├── ch5_mapa.R              # 5. Mapa metod (metoda → założenia → alternatywa)
+│       └── ch6_sciaga.R            # 6. Ściąga (testy diagnostyczne, quick reference)
+├── case-studies/                    # Case studies - kompletne analizy
+│   ├── app.R                       # Główny plik: kolory, CSS/JS
+│   └── modules/
+│       ├── helpers.R               # Formatowanie, theme
+│       └── ch1_caschools.R         # 1. CASchools (EDA, korelacja, t-test, ANOVA, regresja)
 ├── dobre-dane/                     # Jakość danych
 │   └── app.R
 ├── README.md                       # Ten plik
