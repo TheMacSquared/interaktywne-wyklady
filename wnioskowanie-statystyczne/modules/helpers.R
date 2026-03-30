@@ -1,0 +1,171 @@
+# ============================================================================
+# FUNKCJE POMOCNICZE - Wnioskowanie statystyczne
+# ============================================================================
+
+# Generowanie danych studenckich (n=200)
+generate_student_data <- function(n = 200) {
+  set.seed(NULL)
+  plec <- sample(c("Kobieta", "M\u0119\u017cczyzna"), n, replace = TRUE, prob = c(0.55, 0.45))
+  kierunek <- sample(c("Informatyka", "Ekonomia", "Psychologia", "Biologia"),
+                     n, replace = TRUE, prob = c(0.3, 0.25, 0.25, 0.2))
+
+  wzrost <- ifelse(plec == "Kobieta",
+                   rnorm(n, mean = 166, sd = 6),
+                   rnorm(n, mean = 178, sd = 7))
+
+  waga <- ifelse(plec == "Kobieta",
+                 rnorm(n, mean = 62, sd = 8),
+                 rnorm(n, mean = 78, sd = 10))
+
+  # Srednia ocen zalezna od kierunku
+  base_gpa <- switch_kierunek_gpa(kierunek)
+  srednia_ocen <- pmin(pmax(base_gpa + rnorm(n, 0, 0.4), 2.0), 5.0)
+
+  czas_dojazdu <- rgamma(n, shape = 3, scale = 10)
+
+  zdal_egzamin <- rbinom(n, 1, prob = 0.7 + 0.05 * (srednia_ocen - 3.5))
+
+  data.frame(
+    plec = plec,
+    kierunek = kierunek,
+    wzrost = round(wzrost, 1),
+    waga = round(waga, 1),
+    srednia_ocen = round(srednia_ocen, 2),
+    czas_dojazdu = round(czas_dojazdu, 1),
+    zdal_egzamin = factor(ifelse(zdal_egzamin == 1, "Tak", "Nie")),
+    stringsAsFactors = FALSE
+  )
+}
+
+# Pomocnicza: srednia bazowa per kierunek
+switch_kierunek_gpa <- function(kierunek) {
+  sapply(kierunek, function(k) {
+    switch(k,
+      "Informatyka" = 3.6,
+      "Ekonomia" = 3.4,
+      "Psychologia" = 3.8,
+      "Biologia" = 3.5,
+      3.5
+    )
+  })
+}
+
+# Generowanie danych parowych (przed/po interwencji)
+generate_paired_data <- function(n = 30, effect = 5) {
+  set.seed(NULL)
+  wynik_przed <- rnorm(n, mean = 50, sd = 12)
+  wynik_po <- wynik_przed + rnorm(n, mean = effect, sd = 8)
+  data.frame(
+    student = 1:n,
+    wynik_przed = round(wynik_przed, 1),
+    wynik_po = round(wynik_po, 1)
+  )
+}
+
+# Generowanie danych do korelacji
+generate_correlation_data <- function(n = 50, r = 0.7, type = "linear") {
+  set.seed(NULL)
+  if (type == "linear") {
+    x <- rnorm(n, mean = 170, sd = 10)
+    y <- r * scale(x) * 12 + sqrt(1 - r^2) * rnorm(n) * 12 + 70
+    data.frame(x = round(x, 1), y = round(y, 1))
+  } else if (type == "monotonic") {
+    x <- runif(n, 1, 10)
+    y <- log(x) * 5 + rnorm(n, 0, 1)
+    data.frame(x = round(x, 1), y = round(y, 2))
+  } else {
+    x <- rnorm(n, mean = 0, sd = 3)
+    y <- rnorm(n, mean = 0, sd = 3)
+    data.frame(x = round(x, 2), y = round(y, 2))
+  }
+}
+
+# Rysowanie rozkladu pod H0 z zaznaczeniem statystyki testowej
+plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
+                                    alternative = "two.sided") {
+  if (test_type == "t") {
+    x <- seq(-4, 4, length.out = 500)
+    y <- if (!is.null(df)) dt(x, df) else dnorm(x)
+    label <- if (!is.null(df)) paste0("t(", df, ")") else "N(0,1)"
+  } else if (test_type == "chisq") {
+    x <- seq(0, max(stat_value * 2, 15), length.out = 500)
+    y <- dchisq(x, df)
+    label <- paste0("\u03c7\u00b2(", df, ")")
+  } else if (test_type == "f") {
+    x <- seq(0, max(stat_value * 2, 8), length.out = 500)
+    df1 <- df[1]; df2 <- df[2]
+    y <- df(x, df1, df2)
+    label <- paste0("F(", df1, ",", df2, ")")
+  } else {
+    x <- seq(-4, 4, length.out = 500)
+    y <- dnorm(x)
+    label <- "N(0,1)"
+  }
+
+  plot_df <- data.frame(x = x, y = y)
+
+  # Obszar p-wartosci
+  if (test_type %in% c("chisq", "f")) {
+    shade_df <- plot_df[plot_df$x >= stat_value, ]
+  } else if (alternative == "two.sided") {
+    shade_df <- plot_df[abs(plot_df$x) >= abs(stat_value), ]
+  } else if (alternative == "greater") {
+    shade_df <- plot_df[plot_df$x >= stat_value, ]
+  } else {
+    shade_df <- plot_df[plot_df$x <= stat_value, ]
+  }
+
+  p <- ggplot(plot_df, aes(x = x, y = y)) +
+    geom_line(color = "#3498db", linewidth = 1.2) +
+    geom_area(data = shade_df, fill = "#f39c12", alpha = 0.4) +
+    geom_vline(xintercept = stat_value, color = "#e74c3c",
+               linewidth = 1, linetype = "dashed") +
+    annotate("text", x = stat_value, y = max(y) * 0.9,
+             label = paste0("stat = ", round(stat_value, 3)),
+             hjust = -0.1, color = "#e74c3c", fontface = "bold") +
+    labs(title = paste0("Rozk\u0142ad pod H\u2080: ", label),
+         x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
+    theme_test()
+
+  p
+}
+
+# Formatowanie wyniku testu jako tekst PL
+format_test_result <- function(p_value, alpha = 0.05) {
+  if (p_value < alpha) {
+    list(
+      decision = "Odrzucamy H\u2080",
+      color = "#e74c3c",
+      explanation = paste0("p = ", format.pval(p_value, digits = 4),
+                           " < \u03b1 = ", alpha,
+                           " \u2014 wynik istotny statystycznie")
+    )
+  } else {
+    list(
+      decision = "Brak podstaw do odrzucenia H\u2080",
+      color = "#27ae60",
+      explanation = paste0("p = ", format.pval(p_value, digits = 4),
+                           " \u2265 \u03b1 = ", alpha,
+                           " \u2014 wynik nieistotny statystycznie")
+    )
+  }
+}
+
+# Etykieta wielkosci efektu
+effect_size_label <- function(d) {
+  d <- abs(d)
+  if (d < 0.2) "pomijalny"
+  else if (d < 0.5) "ma\u0142y"
+  else if (d < 0.8) "\u015bredni"
+  else "du\u017cy"
+}
+
+# Wspolny theme
+theme_test <- function(base_size = 14) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(face = "bold", size = base_size + 2),
+      plot.subtitle = element_text(color = "#7f8c8d"),
+      panel.grid.minor = element_blank()
+    )
+}
