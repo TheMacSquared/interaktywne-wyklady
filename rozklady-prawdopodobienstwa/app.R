@@ -4,6 +4,7 @@
 library(shiny)
 library(ggplot2)
 library(dplyr)
+library(jsonlite)
 
 # ============================================================================
 # KOLORY
@@ -25,6 +26,10 @@ col_binomial   <- "#e67e22"    # pomaranczowy - dwumianowy
 col_poisson    <- "#1abc9c"    # morski - Poissona
 col_uniform    <- "#3498db"    # niebieski - jednostajny
 col_exponential <- "#e74c3c"   # czerwony - wykladniczy
+col_geometric  <- "#8e44ad"    # ciemny fiolet - geometryczny
+col_t_student  <- "#c0392b"    # ciemny czerwony - t-Studenta
+col_chi_sq     <- "#d35400"    # ciemny pomaranczowy - chi-kwadrat
+col_lognormal  <- "#16a085"    # ciemny turkusowy - log-normalny
 
 # ============================================================================
 # MODULY
@@ -53,6 +58,7 @@ source(file.path(app_dir, "modules", "ch5_normalny.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "ch6_ctg.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch7_dobor.R"),     local = TRUE)
 source(file.path(app_dir, "modules", "ch8_sciaga.R"),    local = TRUE)
+source(file.path(app_dir, "modules", "ch9_quiz.R"),      local = TRUE)
 
 # ============================================================================
 # GLOBAL UI HEADER (CSS, JS)
@@ -244,7 +250,8 @@ ui <- navbarPage(
   ch5_ui,
   ch6_ui,
   ch7_ui,
-  ch8_ui
+  ch8_ui,
+  ch9_ui
 )
 
 # ============================================================================
@@ -278,6 +285,9 @@ server <- function(input, output, session) {
   observeEvent(input$ch7_next, {
     updateNavbarPage(session, "main_nav", selected = "8. \u015aci\u0105ga")
   })
+  observeEvent(input$ch8_next, {
+    updateNavbarPage(session, "main_nav", selected = "9. Quiz")
+  })
 
   # ==========================================================================
   # CHAPTER SERVERS
@@ -291,6 +301,7 @@ server <- function(input, output, session) {
   ch6_server(input, output, session)
   ch7_server(input, output, session)
   ch8_server(input, output, session)
+  ch9_server(input, output, session)
 
 }
 

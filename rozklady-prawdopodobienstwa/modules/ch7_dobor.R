@@ -44,7 +44,8 @@ ch7_ui <- tabPanel("7. Dob\u00f3r rozk\u0142adu",
               choices = c(
                 "Ka\u017cdy wynik jednakowo prawdop." = "d_uniform",
                 "Sta\u0142a liczba pr\u00f3b, sukces/pora\u017cka" = "d_binomial",
-                "Zliczanie zdarze\u0144 w czasie/przestrzeni" = "d_poisson"
+                "Zliczanie zdarze\u0144 w czasie/przestrzeni" = "d_poisson",
+                "Ile pr\u00f3b do pierwszego sukcesu" = "d_geometric"
               )
             )
           ),
@@ -54,7 +55,10 @@ ch7_ui <- tabPanel("7. Dob\u00f3r rozk\u0142adu",
               choices = c(
                 "Symetryczny dzwon" = "c_normal",
                 "Czas oczekiwania (prawosko\u015bny)" = "c_exponential",
-                "Ka\u017cda warto\u015b\u0107 w przedziale jednakowo" = "c_uniform"
+                "Ka\u017cda warto\u015b\u0107 w przedziale jednakowo" = "c_uniform",
+                "Ci\u0119\u017ckie ogony (wnioskowanie)" = "c_t_student",
+                "Suma kwadrat\u00f3w (testy \u03c7\u00b2)" = "c_chi_sq",
+                "Dane prawosko\u015bne, dodatnie" = "c_lognormal"
               )
             )
           )
@@ -90,7 +94,9 @@ ch7_ui <- tabPanel("7. Dob\u00f3r rozk\u0142adu",
               "Wyk\u0142adniczy" = "exponential",
               "Jednostajny" = "uniform",
               "Dwumianowy" = "binomial",
-              "Poissona" = "poisson"
+              "Poissona" = "poisson",
+              "Geometryczny" = "geometric",
+              "Log-normalny" = "lognormal"
             ),
             selected = ""
           ),
@@ -130,7 +136,8 @@ ch7_ui <- tabPanel("7. Dob\u00f3r rozk\u0142adu",
               "Normalny"                = "normal",
               "Wyk\u0142adniczy (prawosko\u015bny)" = "exponential",
               "Ci\u0119\u017ckie ogony (t, df=3)"   = "heavy_tail",
-              "Jednostajny (lekkie ogony)" = "uniform"
+              "Jednostajny (lekkie ogony)" = "uniform",
+              "Log-normalny (prawosko\u015bny)" = "lognormal"
             ),
             selected = "normal"
           ),
@@ -213,6 +220,30 @@ ch7_server <- function(input, output, session) {
         desc = "Ka\u017cda warto\u015b\u0107 w [a,b] jednakowo prawdopodobna",
         example = "Generator liczb losowych, b\u0142\u0105d zaokr\u0105glenia",
         r_func = "runif(n, min, max)"
+      ),
+      "d_geometric" = list(
+        name = "Geometryczny Geom(p)",
+        desc = "Liczba pr\u00f3b do pierwszego sukcesu",
+        example = "Ile rzut\u00f3w do sz\u00f3stki, pr\u00f3by egzaminu do zdania",
+        r_func = "rgeom(n, prob) + 1"
+      ),
+      "c_t_student" = list(
+        name = "t-Studenta t(df)",
+        desc = "Jak normalny, ale z ci\u0119\u017cszymi ogonami; kluczowy we wnioskowaniu",
+        example = "Test t, przedzia\u0142y ufno\u015bci przy ma\u0142ych pr\u00f3bach",
+        r_func = "rt(n, df)"
+      ),
+      "c_chi_sq" = list(
+        name = "Chi-kwadrat \u03c7\u00b2(df)",
+        desc = "Suma kwadrat\u00f3w zmiennych N(0,1); nieujemny, prawosko\u015bny",
+        example = "Test niezale\u017cno\u015bci, test dopasowania, estymacja wariancji",
+        r_func = "rchisq(n, df)"
+      ),
+      "c_lognormal" = list(
+        name = "Log-normalny LogN(\u03bc, \u03c3)",
+        desc = "ln(X) ~ N(\u03bc, \u03c3); zawsze dodatni, prawosko\u015bny",
+        example = "Dochody, ceny akcji, czasy reakcji",
+        r_func = "rlnorm(n, meanlog, sdlog)"
       )
     )
 
@@ -277,6 +308,41 @@ ch7_server <- function(input, output, session) {
           geom_line(color = col_uniform, linewidth = 1.2) +
           labs(title = "U(0, 10)", x = "x", y = "f(x)") +
           theme_prob(base_size = 12)
+      },
+      "d_geometric" = {
+        x <- 1:20; p <- dgeom(x - 1, 0.2)
+        df <- data.frame(x = x, p = p)
+        ggplot(df, aes(x = x, y = p)) +
+          geom_col(fill = col_geometric, color = "white", alpha = 0.85, width = 0.7) +
+          labs(title = "Geom(0.2)", x = "k", y = "P(X=k)") +
+          theme_prob(base_size = 12)
+      },
+      "c_t_student" = {
+        x <- seq(-5, 5, length.out = 500)
+        df <- data.frame(x = x, y = dt(x, df = 3))
+        ggplot(df, aes(x, y)) +
+          geom_area(fill = col_t_student, alpha = 0.3) +
+          geom_line(color = col_t_student, linewidth = 1.2) +
+          labs(title = "t(df=3)", x = "x", y = "f(x)") +
+          theme_prob(base_size = 12)
+      },
+      "c_chi_sq" = {
+        x <- seq(0.01, 20, length.out = 500)
+        df <- data.frame(x = x, y = dchisq(x, df = 5))
+        ggplot(df, aes(x, y)) +
+          geom_area(fill = col_chi_sq, alpha = 0.3) +
+          geom_line(color = col_chi_sq, linewidth = 1.2) +
+          labs(title = "\u03c7\u00b2(df=5)", x = "x", y = "f(x)") +
+          theme_prob(base_size = 12)
+      },
+      "c_lognormal" = {
+        x <- seq(0.01, 10, length.out = 500)
+        df <- data.frame(x = x, y = dlnorm(x, 0, 0.6))
+        ggplot(df, aes(x, y)) +
+          geom_area(fill = col_lognormal, alpha = 0.3) +
+          geom_line(color = col_lognormal, linewidth = 1.2) +
+          labs(title = "LogN(0, 0.6)", x = "x", y = "f(x)") +
+          theme_prob(base_size = 12)
       }
     )
   })
@@ -285,7 +351,8 @@ ch7_server <- function(input, output, session) {
   game_data <- reactiveVal(NULL)
 
   generate_game_data <- function() {
-    dists <- c("normal", "exponential", "uniform", "binomial", "poisson")
+    dists <- c("normal", "exponential", "uniform", "binomial", "poisson",
+                "geometric", "lognormal")
     chosen <- sample(dists, 1)
 
     data <- switch(chosen,
@@ -293,7 +360,9 @@ ch7_server <- function(input, output, session) {
       "exponential" = rexp(500, rate = 0.2),
       "uniform"     = runif(500, min = 10, max = 60),
       "binomial"    = rbinom(500, size = 40, prob = 0.3),
-      "poisson"     = rpois(500, lambda = 7)
+      "poisson"     = rpois(500, lambda = 7),
+      "geometric"   = rgeom(500, prob = 0.15) + 1,
+      "lognormal"   = rlnorm(500, meanlog = 3, sdlog = 0.6)
     )
 
     game_data(list(data = data, true_dist = chosen, checked = FALSE))
@@ -312,7 +381,7 @@ ch7_server <- function(input, output, session) {
     req(gd)
 
     df <- data.frame(x = gd$data)
-    is_discrete <- gd$true_dist %in% c("binomial", "poisson")
+    is_discrete <- gd$true_dist %in% c("binomial", "poisson", "geometric")
 
     p <- ggplot(df, aes(x = x))
 
@@ -353,7 +422,8 @@ ch7_server <- function(input, output, session) {
     dist_names <- c(
       "normal" = "Normalny", "exponential" = "Wyk\u0142adniczy",
       "uniform" = "Jednostajny", "binomial" = "Dwumianowy",
-      "poisson" = "Poissona"
+      "poisson" = "Poissona", "geometric" = "Geometryczny",
+      "lognormal" = "Log-normalny"
     )
 
     if (guess == gd$true_dist) {
@@ -381,7 +451,8 @@ ch7_server <- function(input, output, session) {
       "normal"      = rnorm(n),
       "exponential" = rexp(n, 1),
       "heavy_tail"  = rt(n, df = 3),
-      "uniform"     = runif(n, -2, 2)
+      "uniform"     = runif(n, -2, 2),
+      "lognormal"   = rlnorm(n, 0, 0.6)
     )
     qq_data(data)
   }
@@ -420,7 +491,9 @@ ch7_server <- function(input, output, session) {
       "heavy_tail"  = list(class = "callout-danger",
                            text = "Kszta\u0142t S \u2014 oba ogony s\u0105 za ci\u0119\u017ckie (wi\u0119cej ekstrem\u00f3w ni\u017c w normalnym)."),
       "uniform"     = list(class = "callout-info",
-                           text = "Kszta\u0142t odwr\u00f3conego S \u2014 ogony za lekkie (za ma\u0142o ekstrem\u00f3w).")
+                           text = "Kszta\u0142t odwr\u00f3conego S \u2014 ogony za lekkie (za ma\u0142o ekstrem\u00f3w)."),
+      "lognormal"   = list(class = "callout-warning",
+                           text = "Krzywa w g\u00f3r\u0119 \u2014 dane s\u0105 prawosko\u015bne. Podobnie jak wyk\u0142adniczy, ale z innym mechanizmem (multiplikatywny).")
     )
 
     div(class = verdict$class, verdict$text)

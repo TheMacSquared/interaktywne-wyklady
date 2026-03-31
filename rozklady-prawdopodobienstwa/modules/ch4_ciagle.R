@@ -146,11 +146,168 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
       )
     ),
 
+    # ========================================================================
+    # WIDGET 4: Rozklad t-Studenta
+    # ========================================================================
+    div(class = "section-title", "Rozk\u0142ad t-Studenta"),
+
+    div(class = "narrative",
+      p("Rozk\u0142ad t-Studenta wygl\u0105da jak normalny, ale ma ",
+        tags$b("ci\u0119\u017csze ogony"), " \u2014 warto\u015bci ekstremalne s\u0105 bardziej
+        prawdopodobne. Jest kluczowy we ", tags$b("wnioskowaniu statystycznym"),
+        " (test t, przedzia\u0142y ufno\u015bci)."),
+      p("Parametr ", tags$b("df"), " (stopnie swobody) kontroluje 'grubo\u015b\u0107' ogon\u00f3w.
+        Im wi\u0119cej df, tym bli\u017cej do rozk\u0142adu normalnego.")
+    ),
+
+    div(class = "widget-block",
+      h4("Rozk\u0142ad t-Studenta t(df)"),
+      fluidRow(
+        column(4,
+          sliderInput("ch4_t_df", "df (stopnie swobody):",
+                      min = 1, max = 50, value = 5, step = 1),
+          hr(),
+          div(class = "preset-buttons",
+            actionButton("ch4_t_preset1", "df=1\n(Cauchy)",
+                         class = "btn-outline-primary"),
+            actionButton("ch4_t_preset2", "df=5",
+                         class = "btn-outline-warning"),
+            actionButton("ch4_t_preset3", "df=30\n(\u2248 normalny)",
+                         class = "btn-outline-success")
+          ),
+          hr(),
+          checkboxInput("ch4_t_show_normal", "Poka\u017c N(0,1) dla por\u00f3wnania", value = TRUE),
+          checkboxInput("ch4_t_show_stats", "Poka\u017c E(X) i SD", value = FALSE)
+        ),
+        column(8,
+          plotOutput("ch4_t_plot", height = "350px"),
+          uiOutput("ch4_t_stats")
+        )
+      ),
+      div(class = "formula-box",
+        withMathJax(helpText(
+          "$$E(X) = 0 \\; (df > 1), \\quad Var(X) = \\frac{df}{df - 2} \\; (df > 2)$$"
+        ))
+      )
+    ),
+
+    div(class = "callout-info",
+      tags$strong("Dlaczego t-Studenta?"),
+      " Gdy nie znamy prawdziwego odchylenia standardowego populacji
+        i szacujemy je z pr\u00f3by, rozk\u0142ad statystyki testowej nie jest
+        normalny, ale w\u0142a\u015bnie t-Studenta. Przy ma\u0142ych pr\u00f3bach (n < 30)
+        r\u00f3\u017cnica jest znacz\u0105ca!"
+    ),
+
+    # ========================================================================
+    # WIDGET 5: Rozklad chi-kwadrat
+    # ========================================================================
+    div(class = "section-title", "Rozk\u0142ad chi-kwadrat (\u03c7\u00b2)"),
+
+    div(class = "narrative",
+      p("Rozk\u0142ad chi-kwadrat powstaje jako ", tags$b("suma kwadrat\u00f3w"),
+        " niezale\u017cnych zmiennych N(0,1). Jest zawsze ",
+        tags$b("nieujemny i prawosko\u015bny"), "."),
+      p("Zastosowania: testy niezale\u017cno\u015bci, testy dopasowania,
+        estymacja wariancji.")
+    ),
+
+    div(class = "widget-block",
+      h4("Rozk\u0142ad \u03c7\u00b2(df)"),
+      fluidRow(
+        column(4,
+          sliderInput("ch4_chisq_df", "df (stopnie swobody):",
+                      min = 1, max = 30, value = 5, step = 1),
+          hr(),
+          div(class = "preset-buttons",
+            actionButton("ch4_chisq_preset1", "df=1",
+                         class = "btn-outline-primary"),
+            actionButton("ch4_chisq_preset2", "df=5",
+                         class = "btn-outline-warning"),
+            actionButton("ch4_chisq_preset3", "df=15",
+                         class = "btn-outline-success")
+          ),
+          hr(),
+          checkboxInput("ch4_chisq_show_stats", "Poka\u017c E(X) i SD", value = TRUE)
+        ),
+        column(8,
+          plotOutput("ch4_chisq_plot", height = "350px"),
+          uiOutput("ch4_chisq_stats")
+        )
+      ),
+      div(class = "formula-box",
+        withMathJax(helpText(
+          "$$E(X) = df, \\quad Var(X) = 2 \\cdot df$$"
+        ))
+      )
+    ),
+
+    div(class = "callout-info",
+      tags$strong("Obserwacja:"),
+      " Przy ma\u0142ym df rozk\u0142ad jest mocno prawosko\u015bny.
+        Gdy df ro\u015bnie, rozk\u0142ad staje si\u0119 coraz bardziej symetryczny
+        i zbli\u017ca si\u0119 do normalnego (dzi\u0119ki CTG!)."
+    ),
+
+    # ========================================================================
+    # WIDGET 6: Rozklad log-normalny
+    # ========================================================================
+    div(class = "section-title", "Rozk\u0142ad log-normalny"),
+
+    div(class = "narrative",
+      p("Je\u015bli ", tags$b("ln(X) ~ N(\u03bc, \u03c3)"), ", to X ma rozk\u0142ad log-normalny.
+        Zmienna jest zawsze ", tags$b("dodatnia i prawosko\u015bna"), "."),
+      p("Pojawia si\u0119 wsz\u0119dzie tam, gdzie dane rosn\u0105 ",
+        tags$b("multiplikatywnie"), ": dochody, ceny akcji,
+        czasy reakcji, st\u0119\u017cenia substancji.")
+    ),
+
+    div(class = "widget-block",
+      h4("Rozk\u0142ad LogN(\u03bc, \u03c3)"),
+      fluidRow(
+        column(4,
+          sliderInput("ch4_lnorm_mu", "\u03bc (meanlog):",
+                      min = -1, max = 3, value = 0, step = 0.1),
+          sliderInput("ch4_lnorm_sigma", "\u03c3 (sdlog):",
+                      min = 0.1, max = 2, value = 0.5, step = 0.1),
+          hr(),
+          div(class = "preset-buttons",
+            actionButton("ch4_lnorm_preset1", "Dochody\n(\u03bc=3, \u03c3=0.8)",
+                         class = "btn-outline-primary"),
+            actionButton("ch4_lnorm_preset2", "Ceny akcji\n(\u03bc=1, \u03c3=0.5)",
+                         class = "btn-outline-warning"),
+            actionButton("ch4_lnorm_preset3", "Czas reakcji\n(\u03bc=0, \u03c3=0.5)",
+                         class = "btn-outline-success")
+          ),
+          hr(),
+          checkboxInput("ch4_lnorm_show_stats", "Poka\u017c E(X) i SD", value = TRUE),
+          checkboxInput("ch4_lnorm_show_log", "Poka\u017c na skali logarytmicznej", value = FALSE)
+        ),
+        column(8,
+          plotOutput("ch4_lnorm_plot", height = "350px"),
+          uiOutput("ch4_lnorm_stats")
+        )
+      ),
+      div(class = "formula-box",
+        withMathJax(helpText(
+          "$$E(X) = e^{\\mu + \\sigma^2/2}, \\quad Var(X) = \\left(e^{\\sigma^2} - 1\\right) \\cdot e^{2\\mu + \\sigma^2}$$"
+        ))
+      )
+    ),
+
+    div(class = "callout-warning",
+      tags$strong("Uwaga na \u015bredni\u0105!"),
+      " W rozk\u0142adzie log-normalnym \u015brednia jest zawsze wi\u0119ksza od mediany.
+        Mediana = e^\u03bc, \u015brednia = e^(\u03bc + \u03c3\u00b2/2).
+        Dlatego ", tags$b("mediana dochod\u00f3w"), " jest lepsz\u0105 miar\u0105
+        'typowego' dochodu ni\u017c \u015brednia."
+    ),
+
     # --- Transition ---
     div(class = "chapter-transition",
       p("Spo\u015br\u00f3d wszystkich rozk\u0142ad\u00f3w ci\u0105g\u0142ych, jeden g\u00f3ruje nad innymi.
         Pojawia si\u0119 wsz\u0119dzie w naturze i statystyce.
-        Czas pozna\u0107 ", tags$b("rozk\u0142ad normalny"), "."),
+        Czas pozna\u0107 ", tags$b("rozk\u0142ad normalny"), " dogł\u0119bnie."),
       actionButton("ch4_next", "Dalej: 5. Rozk\u0142ad normalny \u2192",
                    class = "btn-primary btn-lg")
     ),
@@ -388,6 +545,202 @@ ch4_server <- function(input, output, session) {
     sigma <- 1 / lambda
     div(style = "font-size: 13px;",
       paste0("E(X) = 1/\u03bb = ", round(mu, 2), " | SD = 1/\u03bb = ", round(sigma, 2))
+    )
+  })
+
+  # --- Widget 4: t-Studenta ---
+  observeEvent(input$ch4_t_preset1, updateSliderInput(session, "ch4_t_df", value = 1))
+  observeEvent(input$ch4_t_preset2, updateSliderInput(session, "ch4_t_df", value = 5))
+  observeEvent(input$ch4_t_preset3, updateSliderInput(session, "ch4_t_df", value = 30))
+
+  output$ch4_t_plot <- renderPlot({
+    df_val <- input$ch4_t_df
+    show_normal <- input$ch4_t_show_normal
+    show_stats <- input$ch4_t_show_stats
+
+    x_seq <- seq(-5, 5, length.out = 500)
+    y_t <- dt(x_seq, df = df_val)
+    df_plot <- data.frame(x = x_seq, y = y_t)
+
+    pl <- ggplot(df_plot, aes(x = x, y = y)) +
+      geom_area(fill = col_t_student, alpha = 0.3) +
+      geom_line(color = col_t_student, linewidth = 1.2)
+
+    if (show_normal) {
+      y_norm <- dnorm(x_seq)
+      df_norm <- data.frame(x = x_seq, y = y_norm)
+      pl <- pl +
+        geom_line(data = df_norm, aes(x = x, y = y),
+                  color = col_normal, linewidth = 1, linetype = "dashed")
+    }
+
+    if (show_stats && df_val > 2) {
+      mu <- 0
+      sigma <- sqrt(df_val / (df_val - 2))
+      pl <- pl +
+        geom_vline(xintercept = mu, color = col_secondary, linewidth = 1, linetype = "dashed") +
+        annotate("rect", xmin = mu - sigma, xmax = mu + sigma,
+                 ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
+    }
+
+    pl +
+      labs(title = paste0("t(df=", df_val, ")",
+                          if (show_normal) "  vs  N(0,1)" else ""),
+           x = "x", y = "f(x)") +
+      theme_prob()
+  })
+
+  output$ch4_t_stats <- renderUI({
+    df_val <- input$ch4_t_df
+    mu_text <- if (df_val > 1) "E(X) = 0" else "E(X) = niezdef."
+    var_text <- if (df_val > 2) {
+      paste0("Var = df/(df-2) = ", round(df_val / (df_val - 2), 2))
+    } else {
+      "Var = \u221e"
+    }
+    sd_text <- if (df_val > 2) {
+      paste0("SD = ", round(sqrt(df_val / (df_val - 2)), 2))
+    } else {
+      "SD = \u221e"
+    }
+
+    div(style = "text-align: center; margin-top: 10px;",
+      div(class = "stat-box", style = paste0("background: ", col_t_student, ";"), mu_text),
+      div(class = "stat-box", style = paste0("background: ", col_dark, ";"), sd_text),
+      div(class = "stat-box", style = paste0("background: ", col_warning, ";"), var_text)
+    )
+  })
+
+  # --- Widget 5: Chi-kwadrat ---
+  observeEvent(input$ch4_chisq_preset1, updateSliderInput(session, "ch4_chisq_df", value = 1))
+  observeEvent(input$ch4_chisq_preset2, updateSliderInput(session, "ch4_chisq_df", value = 5))
+  observeEvent(input$ch4_chisq_preset3, updateSliderInput(session, "ch4_chisq_df", value = 15))
+
+  output$ch4_chisq_plot <- renderPlot({
+    df_val <- input$ch4_chisq_df
+    show_stats <- input$ch4_chisq_show_stats
+
+    x_max <- max(15, qchisq(0.999, df_val))
+    x_seq <- seq(0.01, x_max, length.out = 500)
+    y_seq <- dchisq(x_seq, df = df_val)
+    df_plot <- data.frame(x = x_seq, y = y_seq)
+
+    mu <- df_val
+    sigma <- sqrt(2 * df_val)
+
+    pl <- ggplot(df_plot, aes(x = x, y = y)) +
+      geom_area(fill = col_chi_sq, alpha = 0.3) +
+      geom_line(color = col_chi_sq, linewidth = 1.2)
+
+    if (show_stats) {
+      pl <- pl +
+        geom_vline(xintercept = mu, color = col_secondary, linewidth = 1.2, linetype = "dashed") +
+        annotate("rect", xmin = max(0, mu - sigma), xmax = mu + sigma,
+                 ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
+    }
+
+    pl +
+      labs(title = paste0("\u03c7\u00b2(df=", df_val, ")"),
+           x = "x", y = "f(x)") +
+      theme_prob()
+  })
+
+  output$ch4_chisq_stats <- renderUI({
+    df_val <- input$ch4_chisq_df
+    mu <- df_val
+    sigma <- sqrt(2 * df_val)
+    div(style = "text-align: center; margin-top: 10px;",
+      div(class = "stat-box", style = paste0("background: ", col_chi_sq, ";"),
+          paste0("E(X) = df = ", mu)),
+      div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
+          paste0("SD = \u221a(2\u00b7df) = ", round(sigma, 2))),
+      div(class = "stat-box", style = paste0("background: ", col_warning, ";"),
+          paste0("Var = 2\u00b7df = ", 2 * df_val))
+    )
+  })
+
+  # --- Widget 6: Log-normalny ---
+  observeEvent(input$ch4_lnorm_preset1, {
+    updateSliderInput(session, "ch4_lnorm_mu", value = 3)
+    updateSliderInput(session, "ch4_lnorm_sigma", value = 0.8)
+  })
+  observeEvent(input$ch4_lnorm_preset2, {
+    updateSliderInput(session, "ch4_lnorm_mu", value = 1)
+    updateSliderInput(session, "ch4_lnorm_sigma", value = 0.5)
+  })
+  observeEvent(input$ch4_lnorm_preset3, {
+    updateSliderInput(session, "ch4_lnorm_mu", value = 0)
+    updateSliderInput(session, "ch4_lnorm_sigma", value = 0.5)
+  })
+
+  output$ch4_lnorm_plot <- renderPlot({
+    mu <- input$ch4_lnorm_mu
+    sigma <- input$ch4_lnorm_sigma
+    show_stats <- input$ch4_lnorm_show_stats
+    show_log <- input$ch4_lnorm_show_log
+
+    x_max <- qlnorm(0.995, mu, sigma)
+    x_seq <- seq(0.001, x_max, length.out = 500)
+    y_seq <- dlnorm(x_seq, mu, sigma)
+    df_plot <- data.frame(x = x_seq, y = y_seq)
+
+    ev <- exp(mu + sigma^2 / 2)
+    med <- exp(mu)
+    sd_val <- sqrt((exp(sigma^2) - 1) * exp(2 * mu + sigma^2))
+
+    if (show_log) {
+      # Wykres na skali log — pokaz ze ln(X) jest normalny
+      log_x <- seq(mu - 4 * sigma, mu + 4 * sigma, length.out = 500)
+      log_y <- dnorm(log_x, mu, sigma)
+      df_log <- data.frame(x = log_x, y = log_y)
+
+      pl <- ggplot(df_log, aes(x = x, y = y)) +
+        geom_area(fill = col_normal, alpha = 0.3) +
+        geom_line(color = col_normal, linewidth = 1.2) +
+        labs(title = paste0("ln(X) ~ N(\u03bc=", mu, ", \u03c3=", sigma, ")"),
+             subtitle = "Logarytm zmiennej ma rozk\u0142ad normalny",
+             x = "ln(x)", y = "f(ln(x))") +
+        theme_prob()
+    } else {
+      pl <- ggplot(df_plot, aes(x = x, y = y)) +
+        geom_area(fill = col_lognormal, alpha = 0.3) +
+        geom_line(color = col_lognormal, linewidth = 1.2)
+
+      if (show_stats) {
+        pl <- pl +
+          geom_vline(xintercept = ev, color = col_secondary, linewidth = 1, linetype = "dashed") +
+          geom_vline(xintercept = med, color = col_primary, linewidth = 1, linetype = "dotted") +
+          annotate("text", x = ev, y = max(y_seq) * 0.9,
+                   label = paste0("\u015brednia = ", round(ev, 1)),
+                   hjust = -0.1, color = col_secondary, fontface = "bold", size = 4) +
+          annotate("text", x = med, y = max(y_seq) * 0.75,
+                   label = paste0("mediana = ", round(med, 1)),
+                   hjust = -0.1, color = col_primary, fontface = "bold", size = 4)
+      }
+
+      pl <- pl +
+        labs(title = paste0("LogN(\u03bc=", mu, ", \u03c3=", sigma, ")"),
+             x = "x", y = "f(x)") +
+        theme_prob()
+    }
+    pl
+  })
+
+  output$ch4_lnorm_stats <- renderUI({
+    mu <- input$ch4_lnorm_mu
+    sigma <- input$ch4_lnorm_sigma
+
+    ev <- exp(mu + sigma^2 / 2)
+    med <- exp(mu)
+    sd_val <- sqrt((exp(sigma^2) - 1) * exp(2 * mu + sigma^2))
+
+    div(style = "text-align: center; margin-top: 10px;",
+      div(class = "stat-box", style = paste0("background: ", col_lognormal, ";"),
+          paste0("E(X) = ", round(ev, 2))),
+      div(class = "stat-box", style = paste0("background: ", col_primary, ";"),
+          paste0("Me = e\u1d58 = ", round(med, 2))),
+      div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
+          paste0("SD = ", round(sd_val, 2)))
     )
   })
 

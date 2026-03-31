@@ -159,21 +159,71 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
     ),
 
     # ========================================================================
-    # WIDGET 4: Porownanie trzech rozkladow
+    # WIDGET 4: Rozklad geometryczny
     # ========================================================================
-    div(class = "section-title", "Por\u00f3wnanie trzech rozk\u0142ad\u00f3w"),
+    div(class = "section-title", "Rozk\u0142ad geometryczny"),
 
     div(class = "narrative",
-      p("Zobaczmy wszystkie trzy rozk\u0142ady obok siebie. Zwr\u00f3\u0107 uwag\u0119 na
+      p("Powtarzamy pr\u00f3by a\u017c do ", tags$b("pierwszego sukcesu"),
+        ". Pytamy: ile pr\u00f3b to zajmie?"),
+      p("Przyk\u0142ady: ile rzut\u00f3w kostk\u0105 do pierwszej sz\u00f3stki?
+        Ile losowa\u0144 do trafienia nagrody? Ile pr\u00f3b egzaminu do zdania?")
+    ),
+
+    div(class = "widget-block",
+      h4("Rozk\u0142ad geometryczny Geom(p)"),
+      fluidRow(
+        column(4,
+          sliderInput("ch3_geom_p", "p (prawdop. sukcesu):",
+                      min = 0.01, max = 0.9, value = 0.2, step = 0.01),
+          hr(),
+          div(class = "preset-buttons",
+            actionButton("ch3_geom_preset1", "Sz\u00f3stka na kostce\n(p=1/6)",
+                         class = "btn-outline-primary"),
+            actionButton("ch3_geom_preset2", "Moneta\n(p=0.5)",
+                         class = "btn-outline-warning"),
+            actionButton("ch3_geom_preset3", "Rzadkie\n(p=0.05)",
+                         class = "btn-outline-danger")
+          ),
+          hr(),
+          checkboxInput("ch3_geom_show_stats", "Poka\u017c E(X) i SD", value = TRUE)
+        ),
+        column(8,
+          plotOutput("ch3_geom_plot", height = "350px"),
+          uiOutput("ch3_geom_stats")
+        )
+      ),
+      div(class = "formula-box",
+        withMathJax(helpText(
+          "$$P(X = k) = (1-p)^{k-1} \\cdot p, \\quad E(X) = \\frac{1}{p}, \\quad Var(X) = \\frac{1-p}{p^2}$$"
+        ))
+      )
+    ),
+
+    div(class = "callout-info",
+      tags$strong("Uwaga:"),
+      " Im mniejsze p, tym d\u0142u\u017cej (przeci\u0119tnie) czekamy na sukces.
+        Rozk\u0142ad geometryczny jest ", tags$b("bezpami\u0119ciowy"),
+      " \u2014 szansa sukcesu w ka\u017cdej pr\u00f3bie jest taka sama,
+        niezale\u017cnie od tego ile pora\u017cek ju\u017c by\u0142o."
+    ),
+
+    # ========================================================================
+    # WIDGET 5: Porownanie czterech rozkladow
+    # ========================================================================
+    div(class = "section-title", "Por\u00f3wnanie czterech rozk\u0142ad\u00f3w"),
+
+    div(class = "narrative",
+      p("Zobaczmy wszystkie cztery rozk\u0142ady obok siebie. Zwr\u00f3\u0107 uwag\u0119 na
         r\u00f3\u017cnice w kszta\u0142tach i na to, kiedy rozk\u0142ad dyskretny zaczyna
         wygl\u0105da\u0107 jak g\u0142adki 'dzwon'.")
     ),
 
     div(class = "widget-block",
-      h4("Trzy rozk\u0142ady obok siebie"),
+      h4("Cztery rozk\u0142ady obok siebie"),
       checkboxInput("ch3_compare_show_ev", "Poka\u017c warto\u015b\u0107 oczekiwan\u0105 (linia)", value = FALSE),
       checkboxInput("ch3_compare_show_sd", "Poka\u017c \u00b1 odchylenie standardowe (pas)", value = FALSE),
-      plotOutput("ch3_compare_plot", height = "300px")
+      plotOutput("ch3_compare_plot", height = "350px")
     ),
 
     # --- Transition ---
@@ -352,7 +402,65 @@ ch3_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 4: Porownanie ---
+  # --- Widget 4: Geometryczny ---
+  observeEvent(input$ch3_geom_preset1, {
+    updateSliderInput(session, "ch3_geom_p", value = round(1/6, 2))
+  })
+  observeEvent(input$ch3_geom_preset2, {
+    updateSliderInput(session, "ch3_geom_p", value = 0.5)
+  })
+  observeEvent(input$ch3_geom_preset3, {
+    updateSliderInput(session, "ch3_geom_p", value = 0.05)
+  })
+
+  output$ch3_geom_plot <- renderPlot({
+    p <- input$ch3_geom_p
+    show_stats <- input$ch3_geom_show_stats
+
+    # X = numer proby (1, 2, 3, ...) — R dgeom liczy porażki (0, 1, 2, ...)
+    x_max <- max(10, qgeom(0.999, p) + 1)
+    x_vals <- 1:x_max
+    probs <- dgeom(x_vals - 1, p)  # przesunięcie: dgeom liczy od 0
+
+    sig <- which(probs > 0.001)
+    x_show_max <- min(x_max, max(sig) + 2)
+    keep <- x_vals <= x_show_max
+
+    df <- data.frame(x = x_vals[keep], prob = probs[keep])
+    mu <- 1 / p
+    sigma <- sqrt((1 - p) / p^2)
+
+    pl <- ggplot(df, aes(x = x, y = prob)) +
+      geom_col(fill = col_geometric, color = "white", alpha = 0.85, width = 0.7) +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+      labs(title = paste0("Geom(p=", p, ")"),
+           x = "Numer pr\u00f3by (k)", y = "P(X = k)") +
+      theme_prob()
+
+    if (show_stats) {
+      pl <- pl +
+        geom_vline(xintercept = mu, color = col_secondary, linewidth = 1.2, linetype = "dashed") +
+        annotate("rect", xmin = mu - sigma, xmax = mu + sigma,
+                 ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
+    }
+    pl
+  })
+
+  output$ch3_geom_stats <- renderUI({
+    p <- input$ch3_geom_p
+    mu <- 1 / p
+    sigma <- sqrt((1 - p) / p^2)
+    div(style = "text-align: center; margin-top: 10px;",
+      div(class = "stat-box", style = paste0("background: ", col_geometric, ";"),
+          paste0("E(X) = 1/p = ", round(mu, 2))),
+      div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
+          paste0("SD = ", round(sigma, 2))),
+      div(class = "stat-box", style = paste0("background: ", col_warning, ";"),
+          paste0("Var = (1-p)/p\u00b2 = ", round(sigma^2, 2)))
+    )
+  })
+
+  # --- Widget 5: Porownanie ---
   output$ch3_compare_plot <- renderPlot({
     show_ev <- input$ch3_compare_show_ev
     show_sd <- input$ch3_compare_show_sd
@@ -374,20 +482,27 @@ ch3_server <- function(input, output, session) {
     keep3 <- p3 > 0.001
     df3 <- data.frame(x = x3[keep3], prob = p3[keep3], dist = "Poissona\nPois(4)")
 
-    df_all <- rbind(df1, df2, df3)
+    # Geometryczny: Geom(0.2)
+    x4 <- 1:25; p4 <- dgeom(x4 - 1, 0.2)
+    mu4 <- 1/0.2; sd4 <- sqrt((1 - 0.2) / 0.2^2)
+    keep4 <- p4 > 0.001
+    df4 <- data.frame(x = x4[keep4], prob = p4[keep4], dist = "Geometryczny\nGeom(0.2)")
+
+    df_all <- rbind(df1, df2, df3, df4)
     df_all$dist <- factor(df_all$dist,
-                          levels = c("Jednostajny\n(kostka)", "Dwumianowy\nB(20, 0.3)", "Poissona\nPois(4)"))
+                          levels = c("Jednostajny\n(kostka)", "Dwumianowy\nB(20, 0.3)",
+                                     "Poissona\nPois(4)", "Geometryczny\nGeom(0.2)"))
 
     stats_df <- data.frame(
       dist = levels(df_all$dist),
-      mu = c(mu1, mu2, mu3),
-      sd = c(sd1, sd2, sd3)
+      mu = c(mu1, mu2, mu3, mu4),
+      sd = c(sd1, sd2, sd3, sd4)
     )
 
     pl <- ggplot(df_all, aes(x = x, y = prob)) +
       geom_col(aes(fill = dist), color = "white", alpha = 0.85, width = 0.7, show.legend = FALSE) +
-      facet_wrap(~dist, scales = "free_x") +
-      scale_fill_manual(values = c(col_uniform, col_binomial, col_poisson)) +
+      facet_wrap(~dist, scales = "free_x", nrow = 2) +
+      scale_fill_manual(values = c(col_uniform, col_binomial, col_poisson, col_geometric)) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
       labs(x = "Warto\u015b\u0107", y = "Prawdopodobie\u0144stwo") +
       theme_prob(base_size = 13)
