@@ -443,17 +443,24 @@ ch1_server <- function(input, output, session) {
     n_levels <- length(fd$labels)
     tab <- table(factor(fd$obs, levels = 1:n_levels)) / length(fd$obs)
 
-    df <- data.frame(
-      outcome = rep(fd$labels, 2),
-      value = c(as.numeric(tab), fd$theo),
-      type = rep(c("Obserwowane", "Teoretyczne"), each = n_levels)
+    df_obs <- data.frame(
+      outcome = factor(fd$labels, levels = fd$labels),
+      value = as.numeric(tab)
     )
-    df$outcome <- factor(df$outcome, levels = fd$labels)
+    df_theo <- data.frame(
+      outcome = factor(fd$labels, levels = fd$labels),
+      value = fd$theo
+    )
 
-    ggplot(df, aes(x = outcome, y = value, fill = type)) +
-      geom_col(position = "dodge", alpha = 0.85, color = "white") +
-      scale_fill_manual(values = c("Obserwowane" = col_primary, "Teoretyczne" = col_secondary),
-                        name = "") +
+    ggplot() +
+      geom_col(data = df_obs, aes(x = outcome, y = value, fill = "Obserwowane"),
+               alpha = 0.85, color = "white") +
+      geom_line(data = df_theo, aes(x = outcome, y = value, color = "Teoretyczne", group = 1),
+                linewidth = 1.2) +
+      geom_point(data = df_theo, aes(x = outcome, y = value, color = "Teoretyczne"),
+                 size = 4) +
+      scale_fill_manual(values = c("Obserwowane" = col_primary), name = "") +
+      scale_color_manual(values = c("Teoretyczne" = col_secondary), name = "") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = paste0("n = ", length(fd$obs), " obserwacji"),
            x = "Wynik", y = "Proporcja / Prawdopodobie\u0144stwo") +

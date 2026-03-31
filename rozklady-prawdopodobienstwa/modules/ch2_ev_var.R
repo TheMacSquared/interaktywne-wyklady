@@ -47,7 +47,7 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
               "A: 50% \u2192 10 z\u0142, 50% \u2192 0 z\u0142"     = "A",
               "B: 100% \u2192 4 z\u0142 (pewna)"              = "B",
               "C: 10% \u2192 100 z\u0142, 90% \u2192 0 z\u0142"    = "C",
-              "D: 80% \u2192 2 z\u0142, 20% \u2192 20 z\u0142"     = "D"
+              "D: 60% \u2192 8 z\u0142, 40% \u2192 \u22125 z\u0142"    = "D"
             ),
             selected = "A"
           ),
@@ -221,8 +221,8 @@ ch2_ev_var_server <- function(input, output, session) {
              label = "B: Pewne 4 z\u0142"),
     C = list(outcomes = c(100, 0), probs = c(0.1, 0.9), ev = 10,
              label = "C: 10% na 100 z\u0142"),
-    D = list(outcomes = c(2, 20), probs = c(0.8, 0.2), ev = 5.6,
-             label = "D: 80% na 2 z\u0142, 20% na 20 z\u0142")
+    D = list(outcomes = c(8, -5), probs = c(0.6, 0.4), ev = 2.8,
+             label = "D: 60% na 8 z\u0142, 40% na \u22125 z\u0142")
   )
 
   # --- Widget 1: Loterie ---
@@ -230,14 +230,15 @@ ch2_ev_var_server <- function(input, output, session) {
 
   play_lottery <- function(n) {
     lot <- lottery_defs[[input$ch2ev_lottery]]
-    new_results <- sample(lot$outcomes, n, replace = TRUE, prob = lot$probs)
+    idx <- sample.int(length(lot$outcomes), n, replace = TRUE, prob = lot$probs)
+    new_results <- lot$outcomes[idx]
     lottery_results(c(lottery_results(), new_results))
   }
 
-  observeEvent(input$ch2ev_play_1, play_lottery(1))
-  observeEvent(input$ch2ev_play_10, play_lottery(10))
-  observeEvent(input$ch2ev_play_100, play_lottery(100))
-  observeEvent(input$ch2ev_play_1000, play_lottery(1000))
+  observeEvent(input$ch2ev_play_1, { play_lottery(1) })
+  observeEvent(input$ch2ev_play_10, { play_lottery(10) })
+  observeEvent(input$ch2ev_play_100, { play_lottery(100) })
+  observeEvent(input$ch2ev_play_1000, { play_lottery(1000) })
   observeEvent(input$ch2ev_reset_lottery, lottery_results(numeric(0)))
   observeEvent(input$ch2ev_lottery, lottery_results(numeric(0)))
 
@@ -270,7 +271,10 @@ ch2_ev_var_server <- function(input, output, session) {
                  label = paste0("E(X) = ", lot$ev),
                  color = col_secondary, fontface = "bold", size = 5,
                  vjust = -1) +
-        scale_y_continuous(limits = c(0, max(max(running_mean) * 1.3, lot$ev * 1.5))) +
+        scale_y_continuous(limits = c(
+          min(min(running_mean), lot$ev) - abs(lot$ev) * 0.3,
+          max(max(running_mean), lot$ev) + abs(lot$ev) * 0.3
+        )) +
         labs(title = "\u015arednia wygrana na gr\u0119 \u2192 E(X)",
              x = "Liczba gier", y = "\u015arednia wygrana (z\u0142)") +
         theme_prob()
