@@ -107,17 +107,8 @@ ch2_ui <- tabPanel("2. Idea przedzia\u0142\u00f3w",
 
     div(class = "widget-block",
       h4("Quiz: interpretacja CI"),
-      radioButtons("ch2_quiz", "Wybierz poprawn\u0105 interpretacj\u0119:",
-        choices = c(
-          "A) Jest 95% prawdopodobie\u0144stwa, \u017ce \u03bc le\u017cy w [165, 175]" = "A",
-          "B) 95% danych z populacji le\u017cy w [165, 175]" = "B",
-          "C) Gdyby\u015bmy powtarzali badanie, 95% tak skonstruowanych przedzia\u0142\u00f3w zawiera\u0142oby \u03bc" = "C",
-          "D) Jeste\u015bmy w 95% pewni, \u017ce \u015brednia z pr\u00f3by le\u017cy w [165, 175]" = "D"
-        ),
-        selected = character(0)
-      ),
-      actionButton("ch2_check", "Sprawd\u017a", class = "btn-primary"),
-      br(), br(),
+      p("Wybierz poprawn\u0105 interpretacj\u0119:"),
+      uiOutput("ch2_quiz_options"),
       uiOutput("ch2_quiz_feedback")
     ),
 
@@ -322,32 +313,70 @@ ch2_server <- function(input, output, session) {
     explanation
   })
 
-  # --- Widget 3: Quiz ---
+  # --- Widget 3: Quiz (tiles) ---
+  ch2_quiz_answered <- reactiveVal(FALSE)
+  ch2_quiz_selected <- reactiveVal(NULL)
+
+  ch2_quiz_choices <- list(
+    list(letter = "A", value = "A",
+         text = "Jest 95% prawdopodobie\u0144stwa, \u017ce \u03bc le\u017cy w [165, 175]"),
+    list(letter = "B", value = "B",
+         text = "95% danych z populacji le\u017cy w [165, 175]"),
+    list(letter = "C", value = "C",
+         text = "Gdyby\u015bmy powtarzali badanie, 95% tak skonstruowanych przedzia\u0142\u00f3w zawiera\u0142oby \u03bc"),
+    list(letter = "D", value = "D",
+         text = "Jeste\u015bmy w 95% pewni, \u017ce \u015brednia z pr\u00f3by le\u017cy w [165, 175]")
+  )
+
+  output$ch2_quiz_options <- renderUI({
+    if (ch2_quiz_answered()) return(NULL)
+    div(class = "quiz-tiles quiz-cols-4",
+      lapply(ch2_quiz_choices, function(opt) {
+        actionButton(paste0("ch2_tile_", opt$value),
+          tagList(
+            div(class = "tile-letter", opt$letter),
+            div(class = "tile-text", opt$text)
+          ),
+          class = "quiz-tile"
+        )
+      })
+    )
+  })
+
+  observe({
+    for (opt in ch2_quiz_choices) {
+      local({
+        val <- opt$value
+        observeEvent(input[[paste0("ch2_tile_", val)]], {
+          if (ch2_quiz_answered()) return()
+          ch2_quiz_selected(val)
+          ch2_quiz_answered(TRUE)
+        }, ignoreInit = TRUE)
+      })
+    }
+  })
+
   output$ch2_quiz_feedback <- renderUI({
-    req(input$ch2_check)
-    isolate({
-      answer <- input$ch2_quiz
-      if (is.null(answer) || answer == "") {
-        div(class = "callout-warning", "Wybierz odpowied\u017a!")
-      } else if (answer == "C") {
-        div(class = "callout-success",
-          tags$strong("Poprawnie!"),
-          p("Przedzia\u0142 ufno\u015bci opisuje ",
-            tags$b("metod\u0119"), ", nie konkretny wynik.
-            95% przedzia\u0142\u00f3w skonstruowanych t\u0105 metod\u0105 zawiera prawdziwe \u03bc.")
-        )
-      } else {
-        feedback <- switch(answer,
-          "A" = "To najcz\u0119stszy b\u0142\u0105d! \u03bc jest sta\u0142e, nie losowe. To przedzia\u0142 jest losowy, nie parametr.",
-          "B" = "Nie \u2014 przedzia\u0142 dotyczy parametru (\u015bredniej), nie poszczeg\u00f3lnych obserwacji.",
-          "D" = "Nie \u2014 \u015brednia z pr\u00f3by zawsze le\u017cy w \u015brodku przedzia\u0142u (jest punktem wyj\u015bcia)."
-        )
-        div(class = "callout-danger",
-          tags$strong("Nie do ko\u0144ca!"),
-          p(feedback),
-          p("Poprawna odpowied\u017a to C.")
-        )
-      }
-    })
+    req(ch2_quiz_answered())
+    answer <- ch2_quiz_selected()
+    if (answer == "C") {
+      div(class = "callout-success",
+        tags$strong("Poprawnie!"),
+        p("Przedzia\u0142 ufno\u015bci opisuje ",
+          tags$b("metod\u0119"), ", nie konkretny wynik.
+          95% przedzia\u0142\u00f3w skonstruowanych t\u0105 metod\u0105 zawiera prawdziwe \u03bc.")
+      )
+    } else {
+      feedback <- switch(answer,
+        "A" = "To najcz\u0119stszy b\u0142\u0105d! \u03bc jest sta\u0142e, nie losowe. To przedzia\u0142 jest losowy, nie parametr.",
+        "B" = "Nie \u2014 przedzia\u0142 dotyczy parametru (\u015bredniej), nie poszczeg\u00f3lnych obserwacji.",
+        "D" = "Nie \u2014 \u015brednia z pr\u00f3by zawsze le\u017cy w \u015brodku przedzia\u0142u (jest punktem wyj\u015bcia)."
+      )
+      div(class = "callout-danger",
+        tags$strong("Nie do ko\u0144ca!"),
+        p(feedback),
+        p("Poprawna odpowied\u017a to C.")
+      )
+    }
   })
 }

@@ -129,17 +129,10 @@ ch1_ui <- tabPanel("1. Logika testowania",
     div(class = "widget-block",
       h4("Quiz: odrzuci\u0107 czy nie?"),
       uiOutput("ch1_quiz_scenario"),
-      radioButtons("ch1_quiz_answer", "Twoja decyzja:",
-        choices = c(
-          "Odrzucamy H\u2080" = "reject",
-          "Brak podstaw do odrzucenia H\u2080" = "fail_to_reject"
-        ),
-        selected = character(0)
-      ),
-      actionButton("ch1_quiz_check", "Sprawd\u017a", class = "btn-primary"),
-      actionButton("ch1_quiz_next", "Nowy scenariusz", class = "btn-outline-secondary"),
-      br(), br(),
-      uiOutput("ch1_quiz_feedback")
+      p("Twoja decyzja:"),
+      uiOutput("ch1_quiz_options"),
+      uiOutput("ch1_quiz_feedback"),
+      actionButton("ch1_quiz_next", "Nowy scenariusz", class = "btn-outline-secondary")
     ),
 
     # Chapter transition
@@ -286,8 +279,10 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 3: Quiz ---
+  # --- Widget 3: Quiz (tiles) ---
   ch1_quiz_data <- reactiveVal(NULL)
+  ch1_quiz_answered <- reactiveVal(FALSE)
+  ch1_quiz_selected <- reactiveVal(NULL)
 
   generate_quiz <- function() {
     scenarios <- list(
@@ -299,6 +294,8 @@ ch1_server <- function(input, output, session) {
       list(p = 0.052, alpha = 0.05, context = "Test t niezale\u017cny: p = 0.052, \u03b1 = 0.05")
     )
     ch1_quiz_data(scenarios[[sample(length(scenarios), 1)]])
+    ch1_quiz_answered(FALSE)
+    ch1_quiz_selected(NULL)
   }
 
   observe({ generate_quiz() })
@@ -312,29 +309,61 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  output$ch1_quiz_feedback <- renderUI({
-    req(input$ch1_quiz_check)
-    isolate({
-      sc <- ch1_quiz_data()
-      answer <- input$ch1_quiz_answer
-      if (is.null(sc) || is.null(answer) || answer == "") return(NULL)
+  ch1_quiz_choices <- list(
+    list(letter = "A", value = "reject", text = "Odrzucamy H\u2080"),
+    list(letter = "B", value = "fail_to_reject", text = "Brak podstaw do odrzucenia H\u2080")
+  )
 
-      correct <- if (sc$p < sc$alpha) "reject" else "fail_to_reject"
-      if (answer == correct) {
-        div(class = "callout-success",
-          tags$strong("Poprawnie!"),
-          p(paste0("p = ", sc$p, " ", ifelse(sc$p < sc$alpha, "<", "\u2265"),
-                   " \u03b1 = ", sc$alpha))
+  output$ch1_quiz_options <- renderUI({
+    ch1_quiz_data()
+    if (ch1_quiz_answered()) return(NULL)
+    div(class = "quiz-tiles quiz-cols-2",
+      lapply(ch1_quiz_choices, function(opt) {
+        actionButton(paste0("ch1_tile_", opt$value),
+          tagList(
+            div(class = "tile-letter", opt$letter),
+            div(class = "tile-text", opt$text)
+          ),
+          class = "quiz-tile"
         )
-      } else {
-        div(class = "callout-danger",
-          tags$strong("Nie! "),
-          p(paste0("p = ", sc$p, " ", ifelse(sc$p < sc$alpha, "<", "\u2265"),
-                   " \u03b1 = ", sc$alpha, ". Zatem: ",
-                   ifelse(correct == "reject", "odrzucamy H\u2080",
-                          "brak podstaw do odrzucenia H\u2080"), "."))
-        )
-      }
-    })
+      })
+    )
+  })
+
+  observe({
+    for (opt in ch1_quiz_choices) {
+      local({
+        val <- opt$value
+        observeEvent(input[[paste0("ch1_tile_", val)]], {
+          if (ch1_quiz_answered()) return()
+          ch1_quiz_selected(val)
+          ch1_quiz_answered(TRUE)
+        }, ignoreInit = TRUE)
+      })
+    }
+  })
+
+  output$ch1_quiz_feedback <- renderUI({
+    req(ch1_quiz_answered())
+    sc <- ch1_quiz_data()
+    answer <- ch1_quiz_selected()
+    if (is.null(sc) || is.null(answer)) return(NULL)
+
+    correct <- if (sc$p < sc$alpha) "reject" else "fail_to_reject"
+    if (answer == correct) {
+      div(class = "callout-success",
+        tags$strong("Poprawnie!"),
+        p(paste0("p = ", sc$p, " ", ifelse(sc$p < sc$alpha, "<", "\u2265"),
+                 " \u03b1 = ", sc$alpha))
+      )
+    } else {
+      div(class = "callout-danger",
+        tags$strong("Nie! "),
+        p(paste0("p = ", sc$p, " ", ifelse(sc$p < sc$alpha, "<", "\u2265"),
+                 " \u03b1 = ", sc$alpha, ". Zatem: ",
+                 ifelse(correct == "reject", "odrzucamy H\u2080",
+                        "brak podstaw do odrzucenia H\u2080"), "."))
+      )
+    }
   })
 }

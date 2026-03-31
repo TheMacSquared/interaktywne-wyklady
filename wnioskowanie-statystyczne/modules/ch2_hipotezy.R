@@ -81,16 +81,9 @@ ch2h_ui <- tabPanel("2. Formu\u0142owanie hipotez",
     div(class = "widget-block",
       h4("Quiz: pytanie \u2192 hipoteza"),
       uiOutput("ch2h_quiz_question"),
-      radioButtons("ch2h_quiz_answer", "Wybierz poprawn\u0105 par\u0119 hipotez:",
-        choices = c("A" = "A", "B" = "B", "C" = "C"),
-        selected = character(0)
-      ),
-      div(style = "display: flex; gap: 8px;",
-        actionButton("ch2h_quiz_check", "Sprawd\u017a", class = "btn-primary"),
-        actionButton("ch2h_quiz_next", "Nast\u0119pne pytanie", class = "btn-outline-secondary")
-      ),
-      br(), br(),
-      uiOutput("ch2h_quiz_feedback")
+      uiOutput("ch2h_quiz_options"),
+      uiOutput("ch2h_quiz_feedback"),
+      actionButton("ch2h_quiz_next", "Nast\u0119pne pytanie", class = "btn-outline-secondary")
     ),
 
     # ========================================================================
@@ -106,16 +99,9 @@ ch2h_ui <- tabPanel("2. Formu\u0142owanie hipotez",
     div(class = "widget-block",
       h4("Quiz: hipoteza \u2192 interpretacja"),
       uiOutput("ch2h_rev_question"),
-      radioButtons("ch2h_rev_answer", "Co badamy?",
-        choices = c("A" = "A", "B" = "B", "C" = "C"),
-        selected = character(0)
-      ),
-      div(style = "display: flex; gap: 8px;",
-        actionButton("ch2h_rev_check", "Sprawd\u017a", class = "btn-primary"),
-        actionButton("ch2h_rev_next", "Nast\u0119pne pytanie", class = "btn-outline-secondary")
-      ),
-      br(), br(),
-      uiOutput("ch2h_rev_feedback")
+      uiOutput("ch2h_rev_options"),
+      uiOutput("ch2h_rev_feedback"),
+      actionButton("ch2h_rev_next", "Nast\u0119pne pytanie", class = "btn-outline-secondary")
     ),
 
     # ========================================================================
@@ -402,42 +388,68 @@ ch2h_server <- function(input, output, session) {
   )
 
   ch2h_quiz_idx <- reactiveVal(1)
+  ch2h_quiz_answered <- reactiveVal(FALSE)
+  ch2h_quiz_selected <- reactiveVal(NULL)
+
   observe({ ch2h_quiz_idx() })  # initialize
   observeEvent(input$ch2h_quiz_next, {
     ch2h_quiz_idx(sample(length(quiz_bank), 1))
+    ch2h_quiz_answered(FALSE)
+    ch2h_quiz_selected(NULL)
   })
 
   output$ch2h_quiz_question <- renderUI({
     q <- quiz_bank[[ch2h_quiz_idx()]]
     div(class = "callout-info",
-      p(tags$strong("Pytanie:"), q$question),
-      tags$ul(
-        tags$li(tags$strong("A) "), q$options["A"]),
-        tags$li(tags$strong("B) "), q$options["B"]),
-        tags$li(tags$strong("C) "), q$options["C"])
-      )
+      p(tags$strong("Pytanie:"), q$question)
     )
   })
 
+  output$ch2h_quiz_options <- renderUI({
+    ch2h_quiz_idx()
+    if (ch2h_quiz_answered()) return(NULL)
+    q <- quiz_bank[[ch2h_quiz_idx()]]
+    letters <- c("A", "B", "C")
+    div(class = "quiz-tiles quiz-cols-3",
+      lapply(letters, function(l) {
+        actionButton(paste0("ch2h_qtile_", l),
+          tagList(
+            div(class = "tile-letter", l),
+            div(class = "tile-text", q$options[l])
+          ),
+          class = "quiz-tile"
+        )
+      })
+    )
+  })
+
+  observe({
+    for (l in c("A", "B", "C")) {
+      local({
+        val <- l
+        observeEvent(input[[paste0("ch2h_qtile_", val)]], {
+          if (ch2h_quiz_answered()) return()
+          ch2h_quiz_selected(val)
+          ch2h_quiz_answered(TRUE)
+        }, ignoreInit = TRUE)
+      })
+    }
+  })
+
   output$ch2h_quiz_feedback <- renderUI({
-    req(input$ch2h_quiz_check)
-    isolate({
-      q <- quiz_bank[[ch2h_quiz_idx()]]
-      answer <- input$ch2h_quiz_answer
-      if (is.null(answer) || answer == "") {
-        return(div(class = "callout-warning", "Wybierz odpowied\u017a!"))
-      }
-      if (answer == q$correct) {
-        div(class = "callout-success",
-          tags$strong("Poprawnie!"),
-          p(q$explanation))
-      } else {
-        div(class = "callout-danger",
-          tags$strong("Nie! "),
-          p("Poprawna odpowied\u017a: ", q$correct, "."),
-          p(q$explanation))
-      }
-    })
+    req(ch2h_quiz_answered())
+    q <- quiz_bank[[ch2h_quiz_idx()]]
+    answer <- ch2h_quiz_selected()
+    if (answer == q$correct) {
+      div(class = "callout-success",
+        tags$strong("Poprawnie!"),
+        p(q$explanation))
+    } else {
+      div(class = "callout-danger",
+        tags$strong("Nie! "),
+        p("Poprawna odpowied\u017a: ", q$correct, "."),
+        p(q$explanation))
+    }
   })
 
   # --- Widget 3: Quiz hipoteza -> interpretacja ---
@@ -500,8 +512,13 @@ ch2h_server <- function(input, output, session) {
   )
 
   ch2h_rev_idx <- reactiveVal(1)
+  ch2h_rev_answered <- reactiveVal(FALSE)
+  ch2h_rev_selected <- reactiveVal(NULL)
+
   observeEvent(input$ch2h_rev_next, {
     ch2h_rev_idx(sample(length(rev_bank), 1))
+    ch2h_rev_answered(FALSE)
+    ch2h_rev_selected(NULL)
   })
 
   output$ch2h_rev_question <- renderUI({
@@ -510,34 +527,55 @@ ch2h_server <- function(input, output, session) {
       p(tags$strong("Kontekst: "), q$context),
       div(class = "formula-box",
         p(tags$strong("Hipotezy: "), q$hypothesis)
-      ),
-      tags$ul(
-        tags$li(tags$strong("A) "), q$options["A"]),
-        tags$li(tags$strong("B) "), q$options["B"]),
-        tags$li(tags$strong("C) "), q$options["C"])
       )
     )
   })
 
+  output$ch2h_rev_options <- renderUI({
+    ch2h_rev_idx()
+    if (ch2h_rev_answered()) return(NULL)
+    q <- rev_bank[[ch2h_rev_idx()]]
+    letters <- c("A", "B", "C")
+    div(class = "quiz-tiles quiz-cols-3",
+      lapply(letters, function(l) {
+        actionButton(paste0("ch2h_rtile_", l),
+          tagList(
+            div(class = "tile-letter", l),
+            div(class = "tile-text", q$options[l])
+          ),
+          class = "quiz-tile"
+        )
+      })
+    )
+  })
+
+  observe({
+    for (l in c("A", "B", "C")) {
+      local({
+        val <- l
+        observeEvent(input[[paste0("ch2h_rtile_", val)]], {
+          if (ch2h_rev_answered()) return()
+          ch2h_rev_selected(val)
+          ch2h_rev_answered(TRUE)
+        }, ignoreInit = TRUE)
+      })
+    }
+  })
+
   output$ch2h_rev_feedback <- renderUI({
-    req(input$ch2h_rev_check)
-    isolate({
-      q <- rev_bank[[ch2h_rev_idx()]]
-      answer <- input$ch2h_rev_answer
-      if (is.null(answer) || answer == "") {
-        return(div(class = "callout-warning", "Wybierz odpowied\u017a!"))
-      }
-      if (answer == q$correct) {
-        div(class = "callout-success",
-          tags$strong("Poprawnie!"),
-          p(q$explanation))
-      } else {
-        div(class = "callout-danger",
-          tags$strong("Nie! "),
-          p("Poprawna odpowied\u017a: ", q$correct, "."),
-          p(q$explanation))
-      }
-    })
+    req(ch2h_rev_answered())
+    q <- rev_bank[[ch2h_rev_idx()]]
+    answer <- ch2h_rev_selected()
+    if (answer == q$correct) {
+      div(class = "callout-success",
+        tags$strong("Poprawnie!"),
+        p(q$explanation))
+    } else {
+      div(class = "callout-danger",
+        tags$strong("Nie! "),
+        p("Poprawna odpowied\u017a: ", q$correct, "."),
+        p(q$explanation))
+    }
   })
 
   # --- Widget 4: Jednostronny vs dwustronny ---

@@ -2,6 +2,7 @@
 # Scrollowalny skrypt z osadzonymi widgetami do nauczania przedzialow ufnosci
 
 library(shiny)
+library(bslib)
 library(ggplot2)
 library(dplyr)
 library(rstatix)
@@ -173,6 +174,33 @@ global_header <- tagList(
   #sticky-toc a:hover { color: #3498db; background: #eaf4fc; }
   #sticky-toc a.toc-active { color: #3498db; font-weight: bold; background: #eaf4fc; }
   @media (max-width: 1400px) { #sticky-toc { display: none; } }
+
+  /* Quiz tiles */
+  .quiz-tiles { display: grid; gap: 12px; margin: 15px 0; }
+  .quiz-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .quiz-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .quiz-cols-4 { grid-template-columns: repeat(2, 1fr); }
+
+  .quiz-tiles .quiz-tile {
+    background: white; border: 2px solid #dee2e6; border-radius: 12px;
+    padding: 20px 12px; text-align: center; cursor: pointer; transition: all 0.3s;
+    display: block; width: 100%; font-family: inherit; color: inherit;
+  }
+  .quiz-tiles .quiz-tile:hover {
+    border-color: #3498db; transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(52,152,219,0.2);
+  }
+  .quiz-tiles .quiz-tile:focus { outline: none; }
+  .quiz-tiles .quiz-tile .tile-letter {
+    display: inline-block; width: 36px; height: 36px; line-height: 36px;
+    border-radius: 50%; background: #3498db; color: white;
+    font-weight: 700; font-size: 16px; margin-bottom: 8px;
+  }
+  .quiz-tiles .quiz-tile .tile-text { font-size: 13px; color: #2c3e50; }
+  .quiz-cols-4 .quiz-tile .tile-text { font-size: 12px; }
+  .quiz-tile.correct { border-color: #27ae60 !important; background: #eafaf1 !important; }
+  .quiz-tile.wrong { border-color: #e74c3c !important; background: #fdedec !important; }
+  .quiz-tile.disabled { pointer-events: none; opacity: 0.7; }
   ")),
   tags$script(HTML("
     $(function() {
@@ -228,6 +256,7 @@ global_header <- tagList(
 ui <- navbarPage(
   "Przedzia\u0142y ufno\u015bci",
   id = "main_nav",
+  theme = bs_theme(bootswatch = "sandstone"),
   header = global_header,
   ch1_ui,
   ch2_ui,

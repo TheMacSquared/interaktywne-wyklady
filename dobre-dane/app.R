@@ -2,6 +2,7 @@
 # Interaktywny wyklad oparty o case studies - ocena jakosci danych do analiz statystycznych
 
 library(shiny)
+library(bslib)
 library(ggplot2)
 library(dplyr)
 library(DT)
@@ -185,6 +186,7 @@ round_df <- function(df, digits = 2) {
 ui <- navbarPage(
   "Co czyni dobry zbior danych?",
   id = "main_nav",
+  theme = bs_theme(bootswatch = "sandstone"),
 
   header = tagList(
     tags$head(
@@ -272,6 +274,33 @@ ui <- navbarPage(
     #sticky-toc a:hover { color: #3498db; background: #eaf4fc; }
     #sticky-toc a.toc-active { color: #3498db; font-weight: bold; background: #eaf4fc; }
     @media (max-width: 1400px) { #sticky-toc { display: none; } }
+
+    /* Quiz tiles */
+    .quiz-tiles { display: grid; gap: 12px; margin: 15px 0; }
+    .quiz-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .quiz-cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .quiz-cols-4 { grid-template-columns: repeat(2, 1fr); }
+
+    .quiz-tiles .quiz-tile {
+      background: white; border: 2px solid #dee2e6; border-radius: 12px;
+      padding: 20px 12px; text-align: center; cursor: pointer; transition: all 0.3s;
+      display: block; width: 100%; font-family: inherit; color: inherit;
+    }
+    .quiz-tiles .quiz-tile:hover {
+      border-color: #3498db; transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(52,152,219,0.2);
+    }
+    .quiz-tiles .quiz-tile:focus { outline: none; }
+    .quiz-tiles .quiz-tile .tile-letter {
+      display: inline-block; width: 36px; height: 36px; line-height: 36px;
+      border-radius: 50%; background: #3498db; color: white;
+      font-weight: 700; font-size: 16px; margin-bottom: 8px;
+    }
+    .quiz-tiles .quiz-tile .tile-text { font-size: 13px; color: #2c3e50; }
+    .quiz-cols-4 .quiz-tile .tile-text { font-size: 12px; }
+    .quiz-tile.correct { border-color: #27ae60 !important; background: #eafaf1 !important; }
+    .quiz-tile.wrong { border-color: #e74c3c !important; background: #fdedec !important; }
+    .quiz-tile.disabled { pointer-events: none; opacity: 0.7; }
   ")),
   tags$script(HTML("
     $(function() {
@@ -586,11 +615,7 @@ ui <- navbarPage(
 
     div(class = "widget-block",
       h4("Jaka analiza tu pasuje?"),
-      radioButtons("tab4_quiz", NULL,
-        choices = c("Test t", "Korelacja", "Regresja", "Zadna z klasycznych"),
-        inline = TRUE
-      ),
-      actionButton("tab4_check", "Sprawdz", class = "btn-primary"),
+      uiOutput("tab4_quiz_options"),
       uiOutput("tab4_quiz_result")
     ),
 
@@ -1320,25 +1345,62 @@ server <- function(input, output, session) {
     })
   })
 
+  tab4_quiz_answered <- reactiveVal(FALSE)
+  tab4_quiz_selected <- reactiveVal(NULL)
+
+  tab4_quiz_choices <- list(
+    list(letter = "A", value = "Test t", text = "Test t"),
+    list(letter = "B", value = "Korelacja", text = "Korelacja"),
+    list(letter = "C", value = "Regresja", text = "Regresja"),
+    list(letter = "D", value = "Zadna z klasycznych", text = "\u017badna z klasycznych")
+  )
+
+  output$tab4_quiz_options <- renderUI({
+    if (tab4_quiz_answered()) return(NULL)
+    div(class = "quiz-tiles quiz-cols-4",
+      lapply(tab4_quiz_choices, function(opt) {
+        actionButton(paste0("tab4_tile_", gsub(" ", "_", opt$value)),
+          tagList(
+            div(class = "tile-letter", opt$letter),
+            div(class = "tile-text", opt$text)
+          ),
+          class = "quiz-tile"
+        )
+      })
+    )
+  })
+
+  observe({
+    for (opt in tab4_quiz_choices) {
+      local({
+        val <- opt$value
+        btn_id <- paste0("tab4_tile_", gsub(" ", "_", val))
+        observeEvent(input[[btn_id]], {
+          if (tab4_quiz_answered()) return()
+          tab4_quiz_selected(val)
+          tab4_quiz_answered(TRUE)
+        }, ignoreInit = TRUE)
+      })
+    }
+  })
+
   output$tab4_quiz_result <- renderUI({
-    req(input$tab4_check > 0)
-    isolate({
-      answer <- input$tab4_quiz
-      if (answer == "Zadna z klasycznych") {
-        div(class = "callout-success", style = "margin-top: 10px;",
-          tags$strong("Dokladnie!"),
-          " Dane eventowe nie nadaja sie do klasycznych testow.",
-          " Kazdy wiersz to zdarzenie, nie niezalezna obserwacja."
-        )
-      } else {
-        div(class = "callout-danger", style = "margin-top: 10px;",
-          tags$strong("Nie do konca."),
-          paste0(" ", answer, " wymaga zmiennych odpowiedniego typu i niezaleznych obserwacji. "),
-          "Tutaj mamy dane eventowe - kazdy wiersz to jedno przeklenstwo lub smierc w filmie. ",
-          "Poprawna odpowiedz: 'Zadna z klasycznych'."
-        )
-      }
-    })
+    req(tab4_quiz_answered())
+    answer <- tab4_quiz_selected()
+    if (answer == "Zadna z klasycznych") {
+      div(class = "callout-success", style = "margin-top: 10px;",
+        tags$strong("Dokladnie!"),
+        " Dane eventowe nie nadaja sie do klasycznych testow.",
+        " Kazdy wiersz to zdarzenie, nie niezalezna obserwacja."
+      )
+    } else {
+      div(class = "callout-danger", style = "margin-top: 10px;",
+        tags$strong("Nie do konca."),
+        paste0(" ", answer, " wymaga zmiennych odpowiedniego typu i niezaleznych obserwacji. "),
+        "Tutaj mamy dane eventowe - kazdy wiersz to jedno przeklenstwo lub smierc w filmie. ",
+        "Poprawna odpowiedz: 'Zadna z klasycznych'."
+      )
+    }
   })
 
   output$tab4_agg_result <- renderUI({

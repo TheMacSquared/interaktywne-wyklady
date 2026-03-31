@@ -184,14 +184,15 @@ ch9_server <- function(input, output, session) {
     opts <- quiz_state$current_options
     letters <- c("A", "B", "C")
 
-    div(style = "display: flex; flex-direction: column; gap: 10px; margin: 15px 0;",
+    div(class = "quiz-tiles quiz-cols-3",
       lapply(seq_along(opts), function(i) {
         btn_id <- paste0("ch9_answer_", i)
         actionButton(btn_id,
-          paste0(letters[i], ")  ", opts[[i]]$label),
-          class = "btn-outline-primary btn-lg",
-          width = "100%",
-          style = "text-align: left; font-size: 16px; padding: 12px 20px;"
+          tagList(
+            div(class = "tile-letter", letters[i]),
+            div(class = "tile-text", opts[[i]]$label)
+          ),
+          class = "quiz-tile"
         )
       })
     )
