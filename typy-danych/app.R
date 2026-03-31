@@ -2,6 +2,7 @@
 # Scrollowalny skrypt z osadzonymi widgetami do nauczania statystyk opisowych
 
 library(shiny)
+library(bslib)
 library(ggplot2)
 library(dplyr)
 library(e1071)  # for skewness, kurtosis
@@ -413,6 +414,7 @@ global_header <- tagList(
 ui <- navbarPage(
   "Statystyka opisowa",
   id = "main_nav",
+  theme = bs_theme(bootswatch = "sandstone"),
   header = global_header,
   ch1_ui,
   ch2_ui,

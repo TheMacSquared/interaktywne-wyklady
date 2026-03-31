@@ -2,6 +2,7 @@
 # Scrollowalny skrypt z osadzonymi widgetami do nauczania regresji liniowej i logistycznej
 
 library(shiny)
+library(bslib)
 library(ggplot2)
 library(dplyr)
 library(rstatix)
@@ -173,6 +174,7 @@ global_header <- tagList(
 ui <- navbarPage(
   "Regresja",
   id = "main_nav",
+  theme = bs_theme(bootswatch = "sandstone"),
   header = global_header,
   ch1_ui,
   ch2_ui,

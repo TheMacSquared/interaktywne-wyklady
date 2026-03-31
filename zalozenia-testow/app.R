@@ -2,6 +2,7 @@
 # Scrollowalny skrypt: zalozenia wszystkich poznanych metod i alternatywy
 
 library(shiny)
+library(bslib)
 library(ggplot2)
 library(dplyr)
 library(rstatix)
@@ -170,6 +171,7 @@ global_header <- tagList(
 ui <- navbarPage(
   "Za\u0142o\u017cenia test\u00f3w",
   id = "main_nav",
+  theme = bs_theme(bootswatch = "sandstone"),
   header = global_header,
   ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui, ch6_ui
 )

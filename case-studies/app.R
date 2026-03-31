@@ -2,6 +2,7 @@
 # Kazdy rozdzial to kompletna analiza jednego zbioru danych
 
 library(shiny)
+library(bslib)
 library(ggplot2)
 library(dplyr)
 library(rstatix)
@@ -175,6 +176,7 @@ global_header <- tagList(
 ui <- navbarPage(
   "Case studies",
   id = "main_nav",
+  theme = bs_theme(bootswatch = "sandstone"),
   header = global_header,
   ch1_ui
 )
