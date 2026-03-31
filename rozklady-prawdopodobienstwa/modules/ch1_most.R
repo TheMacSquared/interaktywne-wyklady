@@ -17,56 +17,6 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobie\u0144stwa",
     ),
 
     # ========================================================================
-    # WIDGET 0: Rozklad empiryczny vs teoretyczny
-    # ========================================================================
-    div(class = "section-title", "Rozk\u0142ad empiryczny vs teoretyczny"),
-
-    div(class = "narrative",
-      p("Znasz ju\u017c histogram \u2014 pokazuje, jak cz\u0119sto dane przyjmuj\u0105
-        r\u00f3\u017cne warto\u015bci. To jest ", tags$b("rozk\u0142ad empiryczny"),
-        " \u2014 oparty na obserwacjach."),
-      p("A gdyby\u015bmy znali ", tags$b("regu\u0142\u0119 generuj\u0105c\u0105 dane"),
-        "? Wtedy zamiast histogramu mieliby\u015bmy g\u0142adk\u0105 krzyw\u0105 \u2014 ",
-        tags$b("rozk\u0142ad teoretyczny"),
-        ". Zobaczmy, jak jedno przechodzi w drugie.")
-    ),
-
-    div(class = "widget-block",
-      h4("Histogram (dane) vs krzywa g\u0119sto\u015bci (model)"),
-      fluidRow(
-        column(4,
-          selectInput("ch1_emp_dist", "Rozk\u0142ad \u017ar\u00f3d\u0142owy:",
-            choices = c(
-              "Wzrost student\u00f3w (normalny)" = "normal",
-              "Czas dojazdu (sko\u015bny)"       = "skewed",
-              "Ocena losowa (jednostajny)"   = "uniform"
-            ),
-            selected = "normal"
-          ),
-          sliderInput("ch1_emp_n", "Wielko\u015b\u0107 pr\u00f3by:",
-                      min = 20, max = 5000, value = 200, step = 20),
-          actionButton("ch1_emp_resample", "Losuj now\u0105 pr\u00f3b\u0119",
-                       class = "btn-primary", width = "100%"),
-          hr(),
-          checkboxInput("ch1_show_hist", "Histogram (dane empiryczne)", value = TRUE),
-          checkboxInput("ch1_show_density", "Krzywa g\u0119sto\u015bci (model teoretyczny)", value = FALSE)
-        ),
-        column(8,
-          plotOutput("ch1_emp_vs_theo", height = "380px"),
-          uiOutput("ch1_emp_text")
-        )
-      )
-    ),
-
-    div(class = "callout-info",
-      tags$strong("Kluczowa idea:"),
-      " W\u0142\u0105cz obie warstwy i zwi\u0119kszaj pr\u00f3b\u0119. Im wi\u0119cej danych,
-        tym lepiej histogram przybli\u017ca krzyw\u0105.
-        Rozk\u0142ad teoretyczny to ", tags$b("idea\u0142"), " \u2014 dane to jego ",
-        tags$b("niedoskona\u0142e odbicie"), "."
-    ),
-
-    # ========================================================================
     # WIDGET 1: Stabilizacja czestosci (rzut kostka)
     # ========================================================================
     div(class = "section-title", "Prawo wielkich liczb w akcji"),
@@ -109,6 +59,57 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobie\u0144stwa",
       " Wraz ze wzrostem liczby obserwacji, cz\u0119sto\u015b\u0107 wzgl\u0119dna ka\u017cdego
         wyniku zbiega do jego prawdopodobie\u0144stwa teoretycznego.
         Dla uczciwej kostki ka\u017cda \u015bcianka ma P = 1/6 \u2248 0.167."
+    ),
+
+    # ========================================================================
+    # WIDGET 0: Rozklad empiryczny vs teoretyczny
+    # ========================================================================
+    div(class = "section-title", "Rozk\u0142ad empiryczny vs teoretyczny"),
+
+    div(class = "narrative",
+      p("Kostka to prosty przyk\u0142ad, ale ten sam mechanizm dzia\u0142a dla ka\u017cdej
+        zmiennej losowej. Znasz ju\u017c histogram \u2014 pokazuje, jak cz\u0119sto dane
+        przyjmuj\u0105 r\u00f3\u017cne warto\u015bci. To jest ", tags$b("rozk\u0142ad empiryczny"),
+        " \u2014 oparty na obserwacjach."),
+      p("A gdyby\u015bmy znali ", tags$b("regu\u0142\u0119 generuj\u0105c\u0105 dane"),
+        "? Wtedy zamiast histogramu mieliby\u015bmy g\u0142adk\u0105 krzyw\u0105 \u2014 ",
+        tags$b("rozk\u0142ad teoretyczny"),
+        ". Zobaczmy, jak jedno przechodzi w drugie.")
+    ),
+
+    div(class = "widget-block",
+      h4("Histogram (dane) vs krzywa g\u0119sto\u015bci (model)"),
+      fluidRow(
+        column(4,
+          selectInput("ch1_emp_dist", "Rozk\u0142ad \u017ar\u00f3d\u0142owy:",
+            choices = c(
+              "Wzrost student\u00f3w (normalny)" = "normal",
+              "Czas dojazdu (sko\u015bny)"       = "skewed",
+              "Ocena losowa (jednostajny)"   = "uniform"
+            ),
+            selected = "normal"
+          ),
+          sliderInput("ch1_emp_n", "Wielko\u015b\u0107 pr\u00f3by:",
+                      min = 20, max = 5000, value = 200, step = 20),
+          actionButton("ch1_emp_resample", "Losuj now\u0105 pr\u00f3b\u0119",
+                       class = "btn-primary", width = "100%"),
+          hr(),
+          checkboxInput("ch1_show_hist", "Histogram (dane empiryczne)", value = TRUE),
+          checkboxInput("ch1_show_density", "Krzywa g\u0119sto\u015bci (model teoretyczny)", value = FALSE)
+        ),
+        column(8,
+          plotOutput("ch1_emp_vs_theo", height = "380px"),
+          uiOutput("ch1_emp_text")
+        )
+      )
+    ),
+
+    div(class = "callout-info",
+      tags$strong("Kluczowa idea:"),
+      " W\u0142\u0105cz obie warstwy i zwi\u0119kszaj pr\u00f3b\u0119. Im wi\u0119cej danych,
+        tym lepiej histogram przybli\u017ca krzyw\u0105.
+        Rozk\u0142ad teoretyczny to ", tags$b("idea\u0142"), " \u2014 dane to jego ",
+        tags$b("niedoskona\u0142e odbicie"), "."
     ),
 
     # ========================================================================
