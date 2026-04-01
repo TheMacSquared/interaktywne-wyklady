@@ -1,0 +1,1297 @@
+---
+title: "Regresja"
+server: shiny
+---
+
+```{r}
+#| context: setup
+#| include: false
+
+source("_common.R")
+
+library(rstatix)
+library(broom)
+library(tidyr)
+library(gridExtra)
+
+# Kolory specyficzne dla regresji
+col_fit        <- "#3498db"
+col_residual   <- "#e74c3c"
+col_data       <- "#2c3e50"
+col_predict    <- "#27ae60"
+col_ci_band    <- "#3498db"
+col_logit      <- "#9b59b6"
+col_model_a    <- "#3498db"
+col_model_b    <- "#e74c3c"
+
+# Theme dla wykresow regresji
+theme_reg <- function(base_size = 14) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(face = "bold", size = base_size + 2),
+      plot.subtitle = element_text(color = "#7f8c8d"),
+      panel.grid.minor = element_blank()
+    )
+}
+
+# Generowanie danych do regresji liniowej prostej
+generate_regression_data <- function(n = 100, beta0 = 10, beta1 = 2, sigma = 5,
+                                      scenario = "custom") {
+  set.seed(NULL)
+  if (scenario == "height_weight") {
+    x <- rnorm(n, mean = 170, sd = 10)
+    y <- -100 + 1.0 * x + rnorm(n, 0, 8)
+    data.frame(x = round(x, 1), y = round(y, 1),
+               x_label = "Wzrost (cm)", y_label = "Waga (kg)")
+  } else if (scenario == "study_grade") {
+    x <- runif(n, 0, 40)
+    y <- 2.0 + 0.06 * x + rnorm(n, 0, 0.5)
+    y <- pmin(pmax(y, 2), 5)
+    data.frame(x = round(x, 1), y = round(y, 2),
+               x_label = "Godziny nauki/tydz.", y_label = "\u015arednia ocen")
+  } else if (scenario == "temp_icecream") {
+    x <- rnorm(n, mean = 20, sd = 7)
+    y <- 50 + 15 * x + rnorm(n, 0, 40)
+    y <- pmax(y, 0)
+    data.frame(x = round(x, 1), y = round(y, 0),
+               x_label = "Temperatura (\u00b0C)", y_label = "Sprzeda\u017c lod\u00f3w")
+  } else {
+    x <- rnorm(n, mean = 0, sd = 3)
+    y <- beta0 + beta1 * x + rnorm(n, 0, sigma)
+    data.frame(x = round(x, 2), y = round(y, 2),
+               x_label = "X", y_label = "Y")
+  }
+}
+
+# Generowanie danych do regresji wielorakiej
+generate_multi_data <- function(n = 150) {
+  set.seed(NULL)
+  godziny_nauki <- runif(n, 0, 40)
+  frekwencja <- runif(n, 30, 100)
+  stres <- runif(n, 1, 10)
+  sen_h <- rnorm(n, 7, 1.5)
+
+  ocena <- 1.5 + 0.04 * godziny_nauki + 0.015 * frekwencja -
+    0.08 * stres + 0.1 * sen_h + rnorm(n, 0, 0.4)
+  ocena <- pmin(pmax(round(ocena, 2), 2.0), 5.0)
+
+  data.frame(
+    ocena = ocena,
+    godziny_nauki = round(godziny_nauki, 1),
+    frekwencja = round(frekwencja, 1),
+    stres = round(stres, 1),
+    sen_h = round(sen_h, 1)
+  )
+}
+
+# Generowanie danych do regresji logistycznej
+generate_logistic_data <- function(n = 200) {
+  set.seed(NULL)
+  godziny_nauki <- runif(n, 0, 40)
+  srednia_ocen <- rnorm(n, 3.5, 0.6)
+  srednia_ocen <- pmin(pmax(srednia_ocen, 2), 5)
+
+  log_odds <- -4 + 0.08 * godziny_nauki + 1.2 * srednia_ocen
+  prob <- 1 / (1 + exp(-log_odds))
+  zdal <- rbinom(n, 1, prob)
+
+  data.frame(
+    zdal = factor(zdal, levels = c(0, 1), labels = c("Nie", "Tak")),
+    zdal_num = zdal,
+    godziny_nauki = round(godziny_nauki, 1),
+    srednia_ocen = round(srednia_ocen, 2),
+    prob = round(prob, 3)
+  )
+}
+
+# Formatowanie wynikow modelu
+format_model_summary <- function(model) {
+  s <- summary(model)
+  tidy_df <- broom::tidy(model)
+  glance_df <- broom::glance(model)
+  list(tidy = tidy_df, glance = glance_df, summary = s)
+}
+
+# Obliczanie metryk porownawczych
+compute_model_metrics <- function(model, data = NULL, y_name = NULL) {
+  g <- broom::glance(model)
+
+  metrics <- list()
+
+  if ("r.squared" %in% names(g)) {
+    metrics$r_squared <- g$r.squared
+    metrics$adj_r_squared <- g$adj.r.squared
+  }
+
+  metrics$aic <- AIC(model)
+  metrics$bic <- BIC(model)
+
+  resid <- residuals(model)
+  metrics$rmse <- sqrt(mean(resid^2))
+
+  metrics$n_params <- length(coef(model))
+
+  metrics
+}
+```
+
+# Regresja liniowa prosta
+
+*Korelacja mówiła, czy dwie zmienne są powiązane.
+Regresja idzie dalej: modeluje ten związek i pozwala predykować.*
+
+## Od korelacji do regresji
+
+Regresja liniowa prosta opisuje związek między jedną zmienną
+objaśniającą (X) a zmienną zależną (Y) za pomocą linii prostej:
+
+::: {.formula-box}
+$$Y = \beta_0 + \beta_1 X + \varepsilon$$
+
+$\beta_0$ — wyraz wolny (intercept): wartość Y gdy X = 0
+
+$\beta_1$ — nachylenie (slope): o ile zmieni się Y, gdy X wzrośnie o 1
+
+$\varepsilon$ — błąd losowy (reszty)
+:::
+
+## Dopasowanie linii regresji
+
+```{r}
+fluidRow(
+  column(4,
+    selectInput("ch1_scenario", "Scenariusz:",
+      choices = c(
+        "Wzrost vs waga" = "height_weight",
+        "Nauka vs oceny" = "study_grade",
+        "Temperatura vs lody" = "temp_icecream"
+      ),
+      selected = "height_weight"
+    ),
+    sliderInput("ch1_n", "Wielkość próby (n):",
+                min = 20, max = 200, value = 80, step = 10),
+    actionButton("ch1_gen", "Generuj dane i dopasuj",
+                 class = "btn-primary", width = "100%"),
+    hr(),
+    checkboxInput("ch1_show_residuals", "Pokaż reszty", value = FALSE),
+    checkboxInput("ch1_show_ci", "Pokaż pasmo ufności", value = TRUE)
+  ),
+  column(8,
+    plotOutput("ch1_scatter", height = "380px"),
+    uiOutput("ch1_model_summary")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+# --- Ch1 Widget 1: Regresja prosta ---
+ch1_data <- reactiveVal(NULL)
+ch1_model <- reactiveVal(NULL)
+
+observeEvent(input$ch1_gen, {
+  df <- generate_regression_data(n = input$ch1_n, scenario = input$ch1_scenario)
+  ch1_data(df)
+  model <- lm(y ~ x, data = df)
+  ch1_model(model)
+})
+
+output$ch1_scatter <- renderPlot({
+  df <- ch1_data()
+  model <- ch1_model()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane i dopasuj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    df$fitted <- fitted(model)
+    df$resid <- residuals(model)
+
+    p <- ggplot(df, aes(x = x, y = y)) +
+      geom_point(color = col_data, alpha = 0.5, size = 2)
+
+    if (input$ch1_show_residuals) {
+      p <- p + geom_segment(aes(xend = x, yend = fitted),
+                            color = col_residual, alpha = 0.3)
+    }
+
+    if (input$ch1_show_ci) {
+      p <- p + geom_smooth(method = "lm", se = TRUE,
+                           color = col_fit, fill = col_ci_band, alpha = 0.15)
+    } else {
+      p <- p + geom_smooth(method = "lm", se = FALSE, color = col_fit)
+    }
+
+    p + labs(title = paste0(df$y_label[1], " ~ ", df$x_label[1]),
+             x = df$x_label[1], y = df$y_label[1]) +
+      theme_reg()
+  }
+})
+
+output$ch1_model_summary <- renderUI({
+  model <- ch1_model()
+  if (is.null(model)) return(NULL)
+
+  s <- summary(model)
+  coefs <- broom::tidy(model)
+  g <- broom::glance(model)
+
+  tagList(
+    stat_box(paste0("R\u00b2 = ", round(g$r.squared, 3)), col_fit),
+    stat_box(paste0("\u03b2\u2080 = ", round(coefs$estimate[1], 2)), col_data),
+    stat_box(paste0("\u03b2\u2081 = ", round(coefs$estimate[2], 3)), col_predict),
+    stat_box(paste0("RMSE = ", round(sqrt(mean(residuals(model)^2)), 2)), col_residual),
+    div(class = "callout-info", style = "margin-top: 10px;",
+      p(tags$strong("Interpretacja:"),
+        paste0(" Gdy ", ch1_data()$x_label[1], " wzrasta o 1, ",
+               ch1_data()$y_label[1], " zmienia si\u0119 \u015brednio o ",
+               round(coefs$estimate[2], 3), "."))
+    )
+  )
+})
+```
+
+## Reszty (residuals)
+
+Reszta to różnica między wartością zaobserwowaną a przewidywaną:
+
+::: {.formula-box}
+$$e_i = y_i - \hat{y}_i$$
+:::
+
+Dobry model ma reszty **małe**, **losowe** i **bez wzorca**.
+
+```{r}
+plotOutput("ch1_resid_plots", height = "300px")
+```
+
+*Używa danych z widgetu powyżej.*
+
+```{r}
+#| context: server
+
+output$ch1_resid_plots <- renderPlot({
+  model <- ch1_model()
+  if (is.null(model)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Najpierw dopasuj model",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    df <- data.frame(
+      fitted = fitted(model),
+      residuals = residuals(model),
+      std_resid = rstandard(model)
+    )
+
+    p1 <- ggplot(df, aes(x = fitted, y = residuals)) +
+      geom_hline(yintercept = 0, linetype = "dashed", color = col_dark) +
+      geom_point(color = col_residual, alpha = 0.5) +
+      geom_smooth(se = FALSE, color = col_fit, linewidth = 0.8) +
+      labs(title = "Reszty vs dopasowane", x = "Warto\u015bci dopasowane",
+           y = "Reszty") +
+      theme_reg()
+
+    p2 <- ggplot(df, aes(sample = std_resid)) +
+      stat_qq(color = col_data, alpha = 0.5) +
+      stat_qq_line(color = col_fit) +
+      labs(title = "Q-Q reszty", x = "Kwantyle teoretyczne",
+           y = "Kwantyle pr\u00f3bkowe") +
+      theme_reg()
+
+    gridExtra::grid.arrange(p1, p2, ncol = 2)
+  }
+})
+```
+
+## $R^2$ — ile model wyjaśnia?
+
+Współczynnik determinacji $R^2$ mówi, jaki odsetek zmienności Y jest wyjaśniony przez model.
+
+::: {.formula-box}
+$$R^2 = 1 - \frac{SS_{res}}{SS_{tot}} = 1 - \frac{\sum(y_i - \hat{y}_i)^2}{\sum(y_i - \bar{y})^2}$$
+:::
+
+Zakres [0, 1]: 0 = model nic nie wyjaśnia, 1 = idealne dopasowanie.
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch1_r2_noise", "Szum (\u03c3):",
+                min = 0.5, max = 20, value = 5, step = 0.5),
+    sliderInput("ch1_r2_slope", "Nachylenie (\u03b2\u2081):",
+                min = 0, max = 5, value = 2, step = 0.25),
+    actionButton("ch1_r2_gen", "Generuj",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch1_r2_plot", height = "300px"),
+    uiOutput("ch1_r2_stats")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch1_r2_data <- reactiveVal(NULL)
+
+observeEvent(input$ch1_r2_gen, {
+  df <- generate_regression_data(
+    n = 100, beta0 = 10, beta1 = input$ch1_r2_slope,
+    sigma = input$ch1_r2_noise
+  )
+  ch1_r2_data(df)
+})
+
+output$ch1_r2_plot <- renderPlot({
+  df <- ch1_r2_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    ggplot(df, aes(x = x, y = y)) +
+      geom_point(color = col_data, alpha = 0.5) +
+      geom_smooth(method = "lm", se = FALSE, color = col_fit, linewidth = 1.2) +
+      labs(title = paste0("R\u00b2 = ",
+                          round(summary(lm(y ~ x, data = df))$r.squared, 3)),
+           x = "X", y = "Y") +
+      theme_reg()
+  }
+})
+
+output$ch1_r2_stats <- renderUI({
+  df <- ch1_r2_data()
+  if (is.null(df)) return(NULL)
+  model <- lm(y ~ x, data = df)
+  r2 <- summary(model)$r.squared
+  tagList(
+    stat_box(paste0("R\u00b2 = ", round(r2, 3)), col_fit),
+    stat_box(paste0(round(r2 * 100, 1), "% zmienno\u015bci wyja\u015bnione"), col_data)
+  )
+})
+```
+
+::: {.callout-warning}
+**Uwaga:** Wysokie $R^2$ nie oznacza, że model jest "dobry" — może być przeuczony.
+Niskie $R^2$ nie oznacza, że model jest bezwartościowy — w naukach społecznych
+$R^2$ = 0.3 jest często bardzo dobre.
+:::
+
+---
+
+# Regresja wieloraka
+
+*Regresja prosta używała jednego predyktora.
+W rzeczywistości na Y wpływa wiele czynników jednocześnie.*
+
+## Wiele predyktorów naraz
+
+Regresja wieloraka rozszerza model o **k predyktorów**:
+
+::: {.formula-box}
+$$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \ldots + \beta_k X_k + \varepsilon$$
+:::
+
+Każde $\beta_j$ mówi: o ile zmieni się Y, gdy $X_j$ wzrośnie o 1,
+**przy stałych pozostałych zmiennych**.
+
+## Budowanie modelu wielorakiego
+
+```{r}
+fluidRow(
+  column(4,
+    helpText("Dane: 150 student\u00f3w. Zmienna zale\u017cna: \u015brednia ocen."),
+    checkboxGroupInput("ch2_predictors", "Predyktory:",
+      choices = c(
+        "Godziny nauki/tydz." = "godziny_nauki",
+        "Frekwencja (%)" = "frekwencja",
+        "Poziom stresu (1-10)" = "stres",
+        "Sen (h/dob\u0119)" = "sen_h"
+      ),
+      selected = c("godziny_nauki", "frekwencja")
+    ),
+    actionButton("ch2_gen", "Generuj dane i dopasuj",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    uiOutput("ch2_model_coefs"),
+    plotOutput("ch2_coef_plot", height = "250px"),
+    uiOutput("ch2_model_stats")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch2_data <- reactiveVal(NULL)
+ch2_model <- reactiveVal(NULL)
+
+observeEvent(input$ch2_gen, {
+  df <- generate_multi_data(150)
+  ch2_data(df)
+
+  preds <- input$ch2_predictors
+  if (length(preds) == 0) preds <- "godziny_nauki"
+
+  formula <- as.formula(paste("ocena ~", paste(preds, collapse = " + ")))
+  model <- lm(formula, data = df)
+  ch2_model(model)
+})
+
+output$ch2_model_coefs <- renderUI({
+  model <- ch2_model()
+  if (is.null(model)) return(NULL)
+
+  coefs <- broom::tidy(model)
+
+  labels_pl <- c(
+    "(Intercept)" = "Wyraz wolny",
+    "godziny_nauki" = "Godziny nauki",
+    "frekwencja" = "Frekwencja",
+    "stres" = "Stres",
+    "sen_h" = "Sen (h)"
+  )
+
+  coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
+                           labels_pl[coefs$term], coefs$term)
+
+  rows <- lapply(1:nrow(coefs), function(i) {
+    sig <- if (coefs$p.value[i] < 0.05) " *" else ""
+    tags$tr(
+      tags$td(coefs$term_pl[i]),
+      tags$td(round(coefs$estimate[i], 4)),
+      tags$td(round(coefs$std.error[i], 4)),
+      tags$td(round(coefs$statistic[i], 3)),
+      tags$td(paste0(format.pval(coefs$p.value[i], digits = 3), sig))
+    )
+  })
+
+  tags$table(class = "table table-bordered table-striped",
+    style = "font-size: 14px;",
+    tags$thead(
+      tags$tr(tags$th("Zmienna"), tags$th("Estymata"), tags$th("SE"),
+              tags$th("t"), tags$th("p"))
+    ),
+    tags$tbody(rows)
+  )
+})
+
+output$ch2_coef_plot <- renderPlot({
+  model <- ch2_model()
+  if (is.null(model)) return(NULL)
+
+  coefs <- broom::tidy(model, conf.int = TRUE)
+  coefs <- coefs[coefs$term != "(Intercept)", ]
+
+  if (nrow(coefs) == 0) return(NULL)
+
+  labels_pl <- c(
+    "godziny_nauki" = "Godziny nauki",
+    "frekwencja" = "Frekwencja",
+    "stres" = "Stres",
+    "sen_h" = "Sen (h)"
+  )
+  coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
+                           labels_pl[coefs$term], coefs$term)
+  coefs$significant <- coefs$p.value < 0.05
+
+  ggplot(coefs, aes(x = estimate, y = term_pl, color = significant)) +
+    geom_point(size = 3) +
+    geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
+    geom_vline(xintercept = 0, linetype = "dashed", color = col_dark) +
+    scale_color_manual(values = c("TRUE" = col_fit, "FALSE" = col_residual),
+                       labels = c("TRUE" = "p < 0.05", "FALSE" = "p \u2265 0.05"),
+                       name = NULL) +
+    labs(title = "Wsp\u00f3\u0142czynniki regresji z 95% CI",
+         x = "Estymata \u03b2", y = NULL) +
+    theme_reg() +
+    theme(legend.position = "top")
+})
+
+output$ch2_model_stats <- renderUI({
+  model <- ch2_model()
+  if (is.null(model)) return(NULL)
+  metrics <- compute_model_metrics(model)
+  tagList(
+    stat_box(paste0("R\u00b2 = ", round(metrics$r_squared, 3)), col_fit),
+    stat_box(paste0("adj.R\u00b2 = ", round(metrics$adj_r_squared, 3)), col_predict),
+    stat_box(paste0("AIC = ", round(metrics$aic, 1)), col_warning),
+    stat_box(paste0("RMSE = ", round(metrics$rmse, 3)), col_residual)
+  )
+})
+```
+
+::: {.callout-note}
+**Skorygowane $R^2$:** Zwykłe $R^2$ zawsze rośnie z każdym dodanym predyktorem
+(nawet bezużytecznym!). Adjusted $R^2$ koryguje ten efekt — karze za zbędne zmienne.
+:::
+
+## Efekt dodawania zmiennych
+
+Zobaczmy, jak zmieniają się metryki modelu, gdy dodajemy
+kolejne predyktory. Czy każda zmienna poprawia model?
+
+```{r}
+fluidRow(
+  column(4,
+    helpText("Modele z 1, 2, 3 i 4 predyktorami \u2014 por\u00f3wnanie metryk."),
+    actionButton("ch2_stepwise", "Buduj modele krok po kroku",
+                 class = "btn-warning", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch2_step_plot", height = "300px"),
+    uiOutput("ch2_step_table")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch2_step_data <- reactiveVal(NULL)
+
+observeEvent(input$ch2_stepwise, {
+  df <- generate_multi_data(150)
+
+  pred_sets <- list(
+    c("godziny_nauki"),
+    c("godziny_nauki", "frekwencja"),
+    c("godziny_nauki", "frekwencja", "stres"),
+    c("godziny_nauki", "frekwencja", "stres", "sen_h")
+  )
+
+  results <- lapply(seq_along(pred_sets), function(i) {
+    formula <- as.formula(paste("ocena ~", paste(pred_sets[[i]], collapse = " + ")))
+    model <- lm(formula, data = df)
+    metrics <- compute_model_metrics(model)
+    data.frame(
+      k = i,
+      predictors = paste(pred_sets[[i]], collapse = " + "),
+      r_squared = metrics$r_squared,
+      adj_r_squared = metrics$adj_r_squared,
+      aic = metrics$aic,
+      bic = metrics$bic,
+      rmse = metrics$rmse
+    )
+  })
+
+  ch2_step_data(do.call(rbind, results))
+})
+
+output$ch2_step_plot <- renderPlot({
+  df <- ch2_step_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Buduj modele'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    long <- df %>%
+      select(k, r_squared, adj_r_squared) %>%
+      tidyr::pivot_longer(cols = c(r_squared, adj_r_squared),
+                          names_to = "metric", values_to = "value") %>%
+      mutate(metric = ifelse(metric == "r_squared", "R\u00b2", "adj. R\u00b2"))
+
+    ggplot(long, aes(x = k, y = value, color = metric)) +
+      geom_line(linewidth = 1.2) +
+      geom_point(size = 3) +
+      scale_x_continuous(breaks = 1:4,
+                         labels = paste0(1:4, " pred.")) +
+      scale_color_manual(values = c(col_fit, col_predict), name = NULL) +
+      labs(title = "R\u00b2 vs adj. R\u00b2 w funkcji liczby predyktor\u00f3w",
+           x = "Liczba predyktor\u00f3w", y = "Warto\u015b\u0107") +
+      theme_reg() +
+      theme(legend.position = "top")
+  }
+})
+
+output$ch2_step_table <- renderUI({
+  df <- ch2_step_data()
+  if (is.null(df)) return(NULL)
+
+  rows <- lapply(1:nrow(df), function(i) {
+    tags$tr(
+      tags$td(df$predictors[i]),
+      tags$td(round(df$r_squared[i], 3)),
+      tags$td(round(df$adj_r_squared[i], 3)),
+      tags$td(round(df$aic[i], 1)),
+      tags$td(round(df$bic[i], 1)),
+      tags$td(round(df$rmse[i], 3))
+    )
+  })
+
+  tags$table(class = "table table-bordered table-striped",
+    style = "font-size: 13px;",
+    tags$thead(
+      tags$tr(tags$th("Predyktory"), tags$th("R\u00b2"), tags$th("adj.R\u00b2"),
+              tags$th("AIC"), tags$th("BIC"), tags$th("RMSE"))
+    ),
+    tags$tbody(rows)
+  )
+})
+```
+
+::: {.callout-warning}
+**Ostrożnie z dodawaniem zmiennych!** Więcej zmiennych = większe $R^2$, ale nie zawsze lepszy model.
+Przeuczone modele słabo generalizują. Używaj adj. $R^2$, AIC, BIC.
+:::
+
+---
+
+# Regresja logistyczna
+
+*Regresja liniowa wymaga ciągłej zmiennej zależnej.
+A co, gdy Y to 0 lub 1 (sukces/porażka)?*
+
+## Dlaczego nie regresja liniowa?
+
+Gdy zmienna zależna jest **binarna** (np. zdany/niezdany egzamin), regresja liniowa
+daje przewidywania spoza zakresu [0, 1]. Rozwiązanie: **regresja logistyczna**.
+
+Zamiast modelować Y bezpośrednio, modelujemy **prawdopodobieństwo** sukcesu:
+
+::: {.formula-box}
+$$P(Y=1) = \frac{1}{1 + e^{-(\beta_0 + \beta_1 X_1 + \ldots + \beta_k X_k)}}$$
+
+Funkcja logistyczna (sigmoida) zamyka wynik w [0, 1].
+:::
+
+## Krzywa logistyczna
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch3_b0", "\u03b2\u2080 (intercept):",
+                min = -10, max = 10, value = -4, step = 0.5),
+    sliderInput("ch3_b1", "\u03b2\u2081 (slope):",
+                min = -3, max = 3, value = 0.2, step = 0.05),
+    hr(),
+    fluidRow(
+      column(4, actionButton("ch3_preset_steep", "Stromy",
+                             class = "btn-outline-primary", width = "100%")),
+      column(4, actionButton("ch3_preset_flat", "P\u0142aski",
+                             class = "btn-outline-secondary", width = "100%")),
+      column(4, actionButton("ch3_preset_neg", "Odwrotny",
+                             class = "btn-outline-danger", width = "100%"))
+    )
+  ),
+  column(8,
+    plotOutput("ch3_sigmoid_plot", height = "350px")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+# --- Ch3 Widget 1: Sigmoida ---
+observeEvent(input$ch3_preset_steep, {
+  updateSliderInput(session, "ch3_b0", value = -5)
+  updateSliderInput(session, "ch3_b1", value = 0.5)
+})
+observeEvent(input$ch3_preset_flat, {
+  updateSliderInput(session, "ch3_b0", value = -1)
+  updateSliderInput(session, "ch3_b1", value = 0.05)
+})
+observeEvent(input$ch3_preset_neg, {
+  updateSliderInput(session, "ch3_b0", value = 5)
+  updateSliderInput(session, "ch3_b1", value = -0.3)
+})
+
+output$ch3_sigmoid_plot <- renderPlot({
+  b0 <- input$ch3_b0
+  b1 <- input$ch3_b1
+  x <- seq(-5, 45, length.out = 500)
+  p <- 1 / (1 + exp(-(b0 + b1 * x)))
+
+  ggplot(data.frame(x = x, p = p), aes(x = x, y = p)) +
+    geom_line(color = col_logit, linewidth = 1.5) +
+    geom_hline(yintercept = 0.5, linetype = "dashed", color = col_dark, alpha = 0.5) +
+    labs(title = paste0("Sigmoida: \u03b2\u2080 = ", b0, ", \u03b2\u2081 = ", b1),
+         x = "X", y = "P(Y = 1)") +
+    ylim(0, 1) +
+    theme_reg()
+})
+```
+
+## Model logistyczny na danych
+
+Scenariusz: czy student zda egzamin? Predyktory: godziny nauki i średnia ocen.
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch3_n", "n:", min = 50, max = 300, value = 150, step = 25),
+    selectInput("ch3_predictor", "Prezentowany predyktor:",
+      choices = c(
+        "Godziny nauki" = "godziny_nauki",
+        "\u015arednia ocen" = "srednia_ocen"
+      ),
+      selected = "godziny_nauki"
+    ),
+    actionButton("ch3_fit", "Dopasuj model",
+                 class = "btn-primary", width = "100%"),
+    hr(),
+    h5("Predykcja dla nowego studenta:"),
+    numericInput("ch3_pred_hours", "Godziny nauki:", value = 20, min = 0, max = 40),
+    numericInput("ch3_pred_gpa", "\u015arednia ocen:", value = 3.5, min = 2, max = 5, step = 0.1),
+    uiOutput("ch3_prediction")
+  ),
+  column(8,
+    plotOutput("ch3_logit_plot", height = "350px"),
+    uiOutput("ch3_model_summary")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+# --- Ch3 Widget 2: Model logistyczny ---
+ch3_data <- reactiveVal(NULL)
+ch3_model <- reactiveVal(NULL)
+
+observeEvent(input$ch3_fit, {
+  df <- generate_logistic_data(input$ch3_n)
+  ch3_data(df)
+  model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
+               data = df, family = binomial)
+  ch3_model(model)
+})
+
+output$ch3_logit_plot <- renderPlot({
+  df <- ch3_data()
+  model <- ch3_model()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Dopasuj model'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    pred_var <- input$ch3_predictor
+    pred_label <- if (pred_var == "godziny_nauki") "Godziny nauki" else "\u015arednia ocen"
+
+    other_var <- setdiff(c("godziny_nauki", "srednia_ocen"), pred_var)
+    other_mean <- mean(df[[other_var]])
+
+    x_seq <- seq(min(df[[pred_var]]), max(df[[pred_var]]), length.out = 200)
+    newdata <- data.frame(x_seq, other_mean)
+    names(newdata) <- c(pred_var, other_var)
+    newdata$pred_prob <- predict(model, newdata, type = "response")
+
+    ggplot() +
+      geom_jitter(data = df, aes(x = .data[[pred_var]], y = zdal_num),
+                  height = 0.03, alpha = 0.3, color = col_data) +
+      geom_line(data = newdata, aes(x = .data[[pred_var]], y = pred_prob),
+                color = col_logit, linewidth = 1.5) +
+      geom_hline(yintercept = 0.5, linetype = "dashed", color = col_warning) +
+      labs(title = paste0("Regresja logistyczna: P(zdanie) ~ ", pred_label),
+           x = pred_label, y = "P(zdanie egzaminu)") +
+      ylim(-0.05, 1.05) +
+      theme_reg()
+  }
+})
+
+output$ch3_model_summary <- renderUI({
+  model <- ch3_model()
+  if (is.null(model)) return(NULL)
+
+  g <- broom::glance(model)
+  coefs <- broom::tidy(model)
+
+  df <- ch3_data()
+  pred_class <- ifelse(predict(model, type = "response") >= 0.5, 1, 0)
+  accuracy <- mean(pred_class == df$zdal_num) * 100
+
+  tagList(
+    stat_box(paste0("AIC = ", round(g$AIC, 1)), col_logit),
+    stat_box(paste0("BIC = ", round(g$BIC, 1)), col_data),
+    stat_box(paste0("Dok\u0142adno\u015b\u0107 = ", round(accuracy, 1), "%"), col_predict)
+  )
+})
+
+output$ch3_prediction <- renderUI({
+  model <- ch3_model()
+  if (is.null(model)) return(NULL)
+
+  newdata <- data.frame(
+    godziny_nauki = input$ch3_pred_hours,
+    srednia_ocen = input$ch3_pred_gpa
+  )
+  prob <- predict(model, newdata, type = "response")
+
+  color <- if (prob >= 0.5) col_predict else col_residual
+  decision <- if (prob >= 0.5) "Prawdopodobnie zda" else "Raczej nie zda"
+
+  stat_box(paste0("P(zdanie) = ", round(prob, 3), " \u2014 ", decision), color)
+})
+```
+
+## Interpretacja: iloraz szans
+
+W regresji logistycznej współczynniki interpretujemy przez **iloraz szans (odds ratio)**:
+
+::: {.formula-box}
+$$OR = e^{\beta_j}$$
+
+OR = 1.5 oznacza: wzrost X o 1 zwiększa szanse sukcesu 1.5-krotnie.
+:::
+
+```{r}
+uiOutput("ch3_odds_ratios")
+```
+
+*Używa modelu dopasowanego powyżej.*
+
+```{r}
+#| context: server
+
+output$ch3_odds_ratios <- renderUI({
+  model <- ch3_model()
+  if (is.null(model)) {
+    return(div(class = "callout-warning", "Najpierw dopasuj model."))
+  }
+
+  coefs <- broom::tidy(model, conf.int = TRUE)
+  coefs$or <- exp(coefs$estimate)
+  coefs$or_low <- exp(coefs$conf.low)
+  coefs$or_high <- exp(coefs$conf.high)
+
+  labels_pl <- c(
+    "(Intercept)" = "Wyraz wolny",
+    "godziny_nauki" = "Godziny nauki (+1h)",
+    "srednia_ocen" = "\u015arednia ocen (+1 pkt)"
+  )
+
+  coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
+                           labels_pl[coefs$term], coefs$term)
+
+  rows <- lapply(2:nrow(coefs), function(i) {
+    tags$tr(
+      tags$td(coefs$term_pl[i]),
+      tags$td(round(coefs$estimate[i], 3)),
+      tags$td(tags$strong(round(coefs$or[i], 3))),
+      tags$td(paste0("[", round(coefs$or_low[i], 3), " ; ",
+                      round(coefs$or_high[i], 3), "]")),
+      tags$td(format.pval(coefs$p.value[i], digits = 3))
+    )
+  })
+
+  tagList(
+    tags$table(class = "table table-bordered",
+      style = "font-size: 14px;",
+      tags$thead(
+        tags$tr(tags$th("Zmienna"), tags$th("\u03b2"), tags$th("OR"),
+                tags$th("95% CI (OR)"), tags$th("p"))
+      ),
+      tags$tbody(rows)
+    ),
+    div(class = "callout-info",
+      p(tags$strong("Interpretacja OR:"),
+        " OR > 1 oznacza, \u017ce wzrost predyktora o 1 zwi\u0119ksza szanse sukcesu.
+          OR < 1 \u2014 zmniejsza. OR = 1 \u2014 brak wp\u0142ywu.")
+    )
+  )
+})
+```
+
+::: {.callout-note}
+**Ocena modelu logistycznego:** Nie używamy $R^2$ w sensie liniowym. Zamiast tego: AIC, BIC, oraz
+macierz pomyłek (confusion matrix) z dokładnością, czułością i swoistością.
+:::
+
+---
+
+# Porównanie modeli
+
+*Zbudowaliśmy różne modele. Jak wybrać najlepszy?
+Poznajmy metryki porównawcze.*
+
+## Metryki jakości modelu
+
+Nie ma jednej uniwersalnej miary. Każda odpowiada na inne pytanie:
+
+| Metryka | Co mierzy | Lepiej gdy |
+|---------|-----------|------------|
+| $R^2$ | Odsetek wyjaśnionej zmienności | wyższe |
+| $R^2_{adj}$ | $R^2$ skorygowane za liczbę predyktorów | wyższe |
+| AIC | Jakość + złożoność (kara za parametry) | niższe |
+| BIC | Jak AIC, ale silniejsza kara za parametry | niższe |
+| RMSE | Średni błąd predykcji (w jednostkach Y) | niższe |
+
+::: {.formula-box}
+**AIC:** $AIC = -2 \ln(L) + 2k$
+
+**BIC:** $BIC = -2 \ln(L) + k \ln(n)$
+
+**RMSE:** $RMSE = \sqrt{\frac{1}{n}\sum(y_i - \hat{y}_i)^2}$
+
+gdzie L = wiarygodność, k = liczba parametrów, n = liczba obserwacji
+:::
+
+## Arena modeli liniowych
+
+```{r}
+fluidRow(
+  column(4,
+    helpText("Generujemy dane i budujemy 4 modele z r\u00f3\u017cn\u0105 liczb\u0105 predyktor\u00f3w."),
+    sliderInput("ch4_n", "n:", min = 50, max = 300, value = 150, step = 25),
+    actionButton("ch4_compare", "Buduj i por\u00f3wnaj modele",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch4_metrics_plot", height = "350px"),
+    uiOutput("ch4_metrics_table")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch4_models <- reactiveVal(NULL)
+
+observeEvent(input$ch4_compare, {
+  df <- generate_multi_data(input$ch4_n)
+
+  models <- list(
+    "1: nauka" = lm(ocena ~ godziny_nauki, data = df),
+    "2: nauka + frekw." = lm(ocena ~ godziny_nauki + frekwencja, data = df),
+    "3: nauka + frekw. + stres" = lm(ocena ~ godziny_nauki + frekwencja + stres, data = df),
+    "4: wszystkie" = lm(ocena ~ godziny_nauki + frekwencja + stres + sen_h, data = df)
+  )
+
+  results <- lapply(names(models), function(name) {
+    m <- compute_model_metrics(models[[name]])
+    data.frame(
+      model = name,
+      r_squared = m$r_squared,
+      adj_r_squared = m$adj_r_squared,
+      aic = m$aic,
+      bic = m$bic,
+      rmse = m$rmse,
+      n_params = m$n_params
+    )
+  })
+
+  ch4_models(do.call(rbind, results))
+})
+
+output$ch4_metrics_plot <- renderPlot({
+  df <- ch4_models()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Buduj i por\u00f3wnaj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    long <- df %>%
+      select(model, adj_r_squared, aic, bic, rmse) %>%
+      tidyr::pivot_longer(-model, names_to = "metric", values_to = "value") %>%
+      mutate(metric = factor(metric,
+        levels = c("adj_r_squared", "aic", "bic", "rmse"),
+        labels = c("adj. R\u00b2", "AIC", "BIC", "RMSE")))
+
+    ggplot(long, aes(x = model, y = value, fill = model)) +
+      geom_col(alpha = 0.8) +
+      facet_wrap(~metric, scales = "free_y", ncol = 4) +
+      scale_fill_manual(values = c(col_fit, col_predict, col_warning, col_logit)) +
+      labs(title = "Metryki 4 modeli", x = NULL, y = "Warto\u015b\u0107") +
+      theme_reg() +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
+  }
+})
+
+output$ch4_metrics_table <- renderUI({
+  df <- ch4_models()
+  if (is.null(df)) return(NULL)
+
+  best_adj_r2 <- which.max(df$adj_r_squared)
+  best_aic <- which.min(df$aic)
+  best_bic <- which.min(df$bic)
+  best_rmse <- which.min(df$rmse)
+
+  rows <- lapply(1:nrow(df), function(i) {
+    tags$tr(
+      tags$td(df$model[i]),
+      tags$td(round(df$r_squared[i], 3)),
+      tags$td(style = if (i == best_adj_r2) "font-weight:bold; color:#27ae60;" else "",
+              round(df$adj_r_squared[i], 3)),
+      tags$td(style = if (i == best_aic) "font-weight:bold; color:#27ae60;" else "",
+              round(df$aic[i], 1)),
+      tags$td(style = if (i == best_bic) "font-weight:bold; color:#27ae60;" else "",
+              round(df$bic[i], 1)),
+      tags$td(style = if (i == best_rmse) "font-weight:bold; color:#27ae60;" else "",
+              round(df$rmse[i], 3))
+    )
+  })
+
+  tags$table(class = "table table-bordered table-striped",
+    style = "font-size: 13px;",
+    tags$thead(
+      tags$tr(tags$th("Model"), tags$th("R\u00b2"), tags$th("adj.R\u00b2"),
+              tags$th("AIC"), tags$th("BIC"), tags$th("RMSE"))
+    ),
+    tags$tbody(rows)
+  )
+})
+```
+
+::: {.callout-note}
+**AIC vs BIC:** AIC faworyzuje modele z lepszą predykcją (nawet złożone).
+BIC mocniej karze za złożoność — preferuje prostsze modele.
+Gdy się nie zgadzają, AIC jest lepszy do predykcji, BIC do wyjaśnienia.
+:::
+
+## Liniowy vs logistyczny
+
+Co się stanie, jeśli spróbujemy użyć regresji liniowej
+do predykcji zmiennej binarnej? Porównajmy z logistyczną.
+
+```{r}
+fluidRow(
+  column(4,
+    actionButton("ch4_lin_vs_log", "Generuj por\u00f3wnanie",
+                 class = "btn-warning", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch4_lin_log_plot", height = "300px"),
+    uiOutput("ch4_lin_log_stats")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch4_lin_log_data <- reactiveVal(NULL)
+
+observeEvent(input$ch4_lin_vs_log, {
+  ch4_lin_log_data(generate_logistic_data(200))
+})
+
+output$ch4_lin_log_plot <- renderPlot({
+  df <- ch4_lin_log_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    ggplot(df, aes(x = godziny_nauki, y = zdal_num)) +
+      geom_jitter(height = 0.03, alpha = 0.3, color = col_data) +
+      geom_smooth(method = "lm", se = FALSE, color = col_model_a,
+                  linewidth = 1, linetype = "dashed") +
+      geom_smooth(method = "glm", method.args = list(family = "binomial"),
+                  se = FALSE, color = col_logit, linewidth = 1.2) +
+      geom_hline(yintercept = c(0, 1), linetype = "dotted", color = "#bdc3c7") +
+      annotate("text", x = 5, y = 0.85, label = "Logistyczny", color = col_logit,
+               fontface = "bold") +
+      annotate("text", x = 35, y = 0.85, label = "Liniowy", color = col_model_a,
+               fontface = "bold") +
+      labs(title = "Regresja liniowa vs logistyczna (dane binarne)",
+           x = "Godziny nauki", y = "P(zdanie)") +
+      ylim(-0.2, 1.2) +
+      theme_reg()
+  }
+})
+
+output$ch4_lin_log_stats <- renderUI({
+  df <- ch4_lin_log_data()
+  if (is.null(df)) return(NULL)
+
+  lin <- lm(zdal_num ~ godziny_nauki, data = df)
+  log <- glm(zdal_num ~ godziny_nauki, data = df, family = binomial)
+
+  lin_pred <- ifelse(fitted(lin) >= 0.5, 1, 0)
+  log_pred <- ifelse(fitted(log) >= 0.5, 1, 0)
+  acc_lin <- mean(lin_pred == df$zdal_num) * 100
+  acc_log <- mean(log_pred == df$zdal_num) * 100
+
+  outside <- mean(fitted(lin) < 0 | fitted(lin) > 1) * 100
+
+  tagList(
+    stat_box(paste0("Liniowy: ", round(acc_lin, 1), "%"), col_model_a),
+    stat_box(paste0("Logistyczny: ", round(acc_log, 1), "%"), col_logit),
+    stat_box(paste0("Liniowy poza [0,1]: ", round(outside, 1), "%"), col_residual)
+  )
+})
+```
+
+::: {.callout-important}
+**Wniosek:** Regresja liniowa na danych binarnych daje predykcje poza [0, 1]
+i nie jest poprawnym modelem. Zawsze używaj regresji logistycznej
+dla zmiennej zależnej 0/1.
+:::
+
+## Przeuczenie (overfitting)
+
+Model z wieloma parametrami może idealnie dopasować się do danych
+treningowych, ale źle generalizować. Zobaczmy to na wielomianach.
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch4_poly_degree", "Stopie\u0144 wielomianu:",
+                min = 1, max = 15, value = 1, step = 1),
+    sliderInput("ch4_poly_n", "n (punkt\u00f3w):",
+                min = 15, max = 100, value = 30, step = 5),
+    actionButton("ch4_poly_gen", "Generuj",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch4_poly_plot", height = "300px"),
+    uiOutput("ch4_poly_stats")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch4_poly_data <- reactiveVal(NULL)
+
+observeEvent(input$ch4_poly_gen, {
+  n <- input$ch4_poly_n
+  x <- sort(runif(n, 0, 10))
+  y <- sin(x) * 3 + rnorm(n, 0, 1)
+  ch4_poly_data(data.frame(x = x, y = y))
+})
+
+output$ch4_poly_plot <- renderPlot({
+  df <- ch4_poly_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    degree <- input$ch4_poly_degree
+    model <- lm(y ~ poly(x, degree), data = df)
+
+    x_pred <- seq(min(df$x), max(df$x), length.out = 200)
+    y_pred <- predict(model, newdata = data.frame(x = x_pred))
+
+    pred_df <- data.frame(x = x_pred, y = y_pred)
+
+    ggplot() +
+      geom_point(data = df, aes(x = x, y = y), color = col_data, alpha = 0.5) +
+      geom_line(data = pred_df, aes(x = x, y = y), color = col_fit, linewidth = 1.2) +
+      labs(title = paste0("Wielomian stopnia ", degree),
+           x = "X", y = "Y") +
+      theme_reg()
+  }
+})
+
+output$ch4_poly_stats <- renderUI({
+  df <- ch4_poly_data()
+  if (is.null(df)) return(NULL)
+  degree <- input$ch4_poly_degree
+  model <- lm(y ~ poly(x, degree), data = df)
+  metrics <- compute_model_metrics(model)
+
+  tagList(
+    stat_box(paste0("R\u00b2 = ", round(metrics$r_squared, 3)), col_fit),
+    stat_box(paste0("adj.R\u00b2 = ", round(metrics$adj_r_squared, 3)), col_predict),
+    stat_box(paste0("AIC = ", round(metrics$aic, 1)), col_warning),
+    stat_box(paste0("BIC = ", round(metrics$bic, 1)), col_data)
+  )
+})
+```
+
+::: {.callout-warning}
+**Złota reguła:** Najlepszy model to nie ten z najwyższym $R^2$, ale ten, który
+najlepiej **generalizuje** na nowe dane. Używaj AIC/BIC do wyboru złożoności.
+:::
+
+---
+
+# Ściąga
+
+*Kompaktowe podsumowanie regresji liniowej, wielorakiej i logistycznej.*
+
+## Trzy typy regresji
+
+| | Liniowa prosta | Wieloraka | Logistyczna |
+|---|---|---|---|
+| **Y** | Ciągła | Ciągła | Binarna (0/1) |
+| **X** | 1 predyktor | k predyktorów | k predyktorów |
+| **Wzór** | $Y = \beta_0 + \beta_1 X + \varepsilon$ | $Y = \beta_0 + \sum \beta_j X_j + \varepsilon$ | $\ln\frac{p}{1-p} = \beta_0 + \sum \beta_j X_j$ |
+| **Estymacja** | OLS | OLS | MLE |
+| **Dopasowanie** | $R^2$, RMSE | adj.$R^2$, AIC, BIC, RMSE | AIC, BIC, dokładność |
+| **Interpr. $\beta$** | zmiana Y na 1 jedn. X | zmiana Y na 1 jedn. $X_j$ (ceteris paribus) | $OR = e^\beta$ |
+
+## Metryki porównawcze
+
+| Metryka | Wzór | Kierunek | Uwagi |
+|---------|------|----------|-------|
+| $R^2$ | $1 - SS_{res}/SS_{tot}$ | wyższe lepiej | Zawsze rośnie z k; nie porównuj modeli o różnej złożoności |
+| $R^2_{adj}$ | $1 - \frac{(1-R^2)(n-1)}{n-k-1}$ | wyższe lepiej | Karze za zbędne predyktory; bezpieczniejsze niż $R^2$ |
+| AIC | $-2\ln L + 2k$ | niższe lepiej | Lepszy do predykcji; łagodniejsza kara |
+| BIC | $-2\ln L + k\ln n$ | niższe lepiej | Silniejsza kara za parametry; preferuje prostsze modele |
+| RMSE | $\sqrt{\frac{1}{n}\sum e_i^2}$ | niższe lepiej | W jednostkach Y; intuicyjne |
+
+## Interpretacja współczynników
+
+::: {.callout-note}
+**Regresja liniowa:**
+$\beta_1 = 0.5$ oznacza: wzrost X o 1 powoduje wzrost Y o 0.5 (ceteris paribus).
+
+**Regresja logistyczna:**
+$\beta_1 = 0.5 \Rightarrow OR = e^{0.5} = 1.65$ oznacza: wzrost X o 1 zwiększa szanse sukcesu 1.65-krotnie.
+
+**Istotność współczynników:**
+p < 0.05 dla $\beta_j$ oznacza, że predyktor $X_j$ istotnie wpływa na Y (przy kontroli pozostałych).
+:::
+
+## Kiedy która regresja?
+
+::: {.callout-tip}
+- **Y ciągła, 1 predyktor** — regresja liniowa prosta
+- **Y ciągła, wiele predyktorów** — regresja wieloraka
+- **Y binarna (0/1)** — regresja logistyczna
+- **Y porządkowa** — regresja porządkowa (ordered logit)
+- **Y licznikowa** — regresja Poissona
+:::
+
+## Funkcje R
+
+```r
+library(broom)
+
+# === Regresja liniowa ===
+model <- lm(y ~ x1 + x2, data = dane)
+summary(model)         # pelne podsumowanie
+tidy(model)            # wspolczynniki jako tabelka
+glance(model)          # metryki (R2, AIC, BIC, ...)
+
+# === Regresja logistyczna ===
+model_log <- glm(y ~ x1 + x2, data = dane, family = binomial)
+tidy(model_log)
+exp(coef(model_log))   # odds ratios
+tidy(model_log, conf.int = TRUE, exponentiate = TRUE)  # OR z CI
+
+# === Porownanie modeli ===
+AIC(model1, model2, model3)
+BIC(model1, model2, model3)
+
+# === Predykcja ===
+predict(model, newdata = data.frame(x1 = 5, x2 = 3))
+predict(model_log, newdata = ..., type = "response")  # prawdopodobienstwa
+```
+
+## Typowe pułapki
+
+::: {.callout-important}
+- **Extrapolacja:** Model działa w zakresie danych treningowych. Predykcja poza tym zakresem jest ryzykowna.
+- **Korelacja predyktorów:** Silna korelacja między X1 i X2 (współliniowość) zawyża SE i utrudnia interpretację.
+- **Overfitting:** Więcej zmiennych = wyższe $R^2$, ale gorsze uogólnianie. Zawsze sprawdzaj adj.$R^2$ / AIC / BIC.
+- **$R^2$ w logistycznej:** Nie używaj $R^2$ do oceny regresji logistycznej. Użyj AIC, BIC, dokładności, ROC-AUC.
+:::

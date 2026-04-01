@@ -1,0 +1,3611 @@
+---
+title: "Rozkłady prawdopodobieństwa"
+server: shiny
+---
+
+```{r}
+#| context: setup
+#| include: false
+
+source("_common.R")
+library(gridExtra)
+
+# ============================================================================
+# KOLORY SPECYFICZNE DLA ROZKLADOW
+# ============================================================================
+
+col_discrete    <- "#3498db"
+col_continuous  <- "#27ae60"
+col_normal      <- "#9b59b6"
+col_binomial    <- "#e67e22"
+col_poisson     <- "#1abc9c"
+col_exponential <- "#e74c3c"
+col_geometric   <- "#8e44ad"
+col_t_student   <- "#c0392b"
+col_chi_sq      <- "#d35400"
+col_lognormal   <- "#16a085"
+
+# ============================================================================
+# FUNKCJE POMOCNICZE
+# ============================================================================
+
+generate_population_sample <- function(dist_type, n) {
+  switch(dist_type,
+    "uniform"     = runif(n, min = 0, max = 10),
+    "exponential" = rexp(n, rate = 0.5),
+    "bimodal"     = {
+      k <- rbinom(n, 1, 0.5)
+      ifelse(k == 1, rnorm(n, mean = 3, sd = 0.8), rnorm(n, mean = 7, sd = 0.8))
+    },
+    "u_shape"     = rbeta(n, 0.5, 0.5) * 10,
+    "skewed_left" = 10 - rgamma(n, shape = 2, scale = 1.5),
+    "die"         = sample(1:6, n, replace = TRUE),
+    rnorm(n)
+  )
+}
+
+get_population_params <- function(dist_type) {
+  switch(dist_type,
+    "uniform"     = list(mu = 5, sigma = sqrt(100/12)),
+    "exponential" = list(mu = 2, sigma = 2),
+    "bimodal"     = list(mu = 5, sigma = sqrt(0.8^2 + 4)),
+    "u_shape"     = list(mu = 5, sigma = sqrt(10^2 / 4)),
+    "skewed_left" = list(mu = 10 - 2*1.5, sigma = sqrt(2) * 1.5),
+    "die"         = list(mu = 3.5, sigma = sqrt(35/12)),
+    list(mu = 0, sigma = 1)
+  )
+}
+
+dist_names_pl <- c(
+  "uniform"     = "Jednostajny",
+  "exponential" = "Wykładniczy (prawoskośny)",
+  "bimodal"     = "Dwumodalny",
+  "u_shape"     = "U-kształtny (Beta)",
+  "skewed_left" = "Lewoskośny",
+  "die"         = "Kostka (dyskretny)"
+)
+
+plot_pmf <- function(x_vals, probs, fill_color = "#3498db",
+                     title = "", xlab = "x", ylab = "P(X = x)",
+                     show_mean = FALSE, show_sd = FALSE, mu = NULL, sigma = NULL) {
+  df <- data.frame(x = x_vals, prob = probs)
+  p <- ggplot(df, aes(x = x, y = prob)) +
+    geom_col(fill = fill_color, color = "white", alpha = 0.85, width = 0.7) +
+    geom_text(aes(label = round(prob, 3)), vjust = -0.5, size = 3.5) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+    labs(title = title, x = xlab, y = ylab) +
+    theme_prob()
+  if (show_mean && !is.null(mu)) {
+    p <- p + geom_vline(xintercept = mu, color = "#e74c3c", linewidth = 1.2, linetype = "dashed")
+  }
+  if (show_sd && !is.null(mu) && !is.null(sigma)) {
+    p <- p +
+      annotate("rect", xmin = mu - sigma, xmax = mu + sigma,
+               ymin = 0, ymax = Inf, fill = "#e74c3c", alpha = 0.1)
+  }
+  p
+}
+
+plot_pdf <- function(density_fn, xlim, fill_color = "#27ae60",
+                     title = "", xlab = "x", ylab = "f(x)",
+                     shade_from = NULL, shade_to = NULL, n_points = 500) {
+  x_seq <- seq(xlim[1], xlim[2], length.out = n_points)
+  y_seq <- density_fn(x_seq)
+  df <- data.frame(x = x_seq, y = y_seq)
+  p <- ggplot(df, aes(x = x, y = y)) +
+    geom_line(color = fill_color, linewidth = 1.2) +
+    labs(title = title, x = xlab, y = ylab) +
+    theme_prob()
+  if (!is.null(shade_from) && !is.null(shade_to)) {
+    shade_x <- seq(max(xlim[1], shade_from), min(xlim[2], shade_to), length.out = 300)
+    shade_y <- density_fn(shade_x)
+    shade_df <- data.frame(x = shade_x, y = shade_y)
+    p <- p +
+      geom_area(data = shade_df, aes(x = x, y = y),
+                fill = fill_color, alpha = 0.3)
+  }
+  p
+}
+
+# ============================================================================
+# QUIZ DATA (inlined from quiz_rozklady.json)
+# ============================================================================
+
+QUIZ_OPTIONS <- list(
+  dwumianowy   = "Rozkład dwumianowy",
+  poissona     = "Rozkład Poissona",
+  normalny     = "Rozkład normalny",
+  geometryczny = "Rozkład geometryczny",
+  lognormalny  = "Rozkład log-normalny",
+  wykladniczy  = "Rozkład wykładniczy"
+)
+
+QUIZ_MAX_QUESTIONS <- 10
+
+quiz_questions <- list(
+  list(id = 1, question = "Liczba orłów w 10 rzutach monetą", correct = "dwumianowy",
+       explanation = "Rzut monetą to doświadczenie Bernoulliego (sukces/porażka). Liczba sukcesów w n próbach ma rozkład dwumianowy B(n,p). Tu: n=10, p=0.5."),
+  list(id = 2, question = "Liczba usterek w metrze bieżącym kabla", correct = "poissona",
+       explanation = "Rozkład Poissona modeluje liczbę zdarzeń w stałym przedziale (czasu/przestrzeni), gdy zdarzenia występują ze stałą średnią częstością (λ), niezależnie od siebie i bez górnego ograniczenia. Usterki spełniają te założenia."),
+  list(id = 3, question = "Wzrost dorosłych mężczyzn w populacji", correct = "normalny",
+       explanation = "Cechy biologiczne w dużych populacjach mają rozkład normalny (Centralne Twierdzenie Graniczne). Wzrost jest sumą wielu czynników genetycznych i środowiskowych."),
+  list(id = 4, question = "Liczba sześćek w 20 rzutach kostką", correct = "dwumianowy",
+       explanation = "Każdy rzut: sukces (6) lub porażka (1-5) z prawdopodobieństwem p=1/6. To schemat Bernoulliego, więc liczba sześćek ~ B(20, 1/6)."),
+  list(id = 5, question = "Liczba zgłoszeń na infolinię w ciągu godziny", correct = "poissona",
+       explanation = "Zgłoszenia przychodzą ze stałą średnią częstością (λ zgłoszeń/godz), niezależnie od siebie, bez górnego limitu. To klasyczne założenia Poissona: zdarzenia w stałym czasie ze znaną λ."),
+  list(id = 6, question = "Wynik testu IQ w populacji", correct = "normalny",
+       explanation = "Testy IQ są skonstruowane tak, by mieć rozkład normalny z średnią 100 i odchyleniem standardowym 15. To założenie projektowe."),
+  list(id = 7, question = "Liczba poprawnych odpowiedzi w teście z 30 pytań (prawda/fałsz), zgadywanie losowe", correct = "dwumianowy",
+       explanation = "Każda odpowiedź: sukces (poprawna) z p=0.5 lub porażka. Niezależne próby Bernoulliego, więc liczba poprawnych ~ B(30, 0.5)."),
+  list(id = 8, question = "Liczba wypadków drogowych na skrzyżowaniu w ciągu tygodnia", correct = "poissona",
+       explanation = "Wypadki zachodzą ze stałą średnią częstością (λ wypadków/tydzień), niezależnie od siebie, w każdym momencie z równym prawdopodobieństwem. Teoretycznie bez górnego limitu. To Poisson."),
+  list(id = 9, question = "Błąd pomiaru masy w laboratorium", correct = "normalny",
+       explanation = "Błędy pomiarowe są sumą wielu małych losowych czynników. Centralne Twierdzenie Graniczne mówi, że taka suma ma rozkład normalny."),
+  list(id = 10, question = "Liczba ósemek wylosowanych z talii 52 kart (losowanie ze zwracaniem, 10 razy)", correct = "dwumianowy",
+       explanation = "Każde losowanie: sukces (ósemka) z p=4/52=1/13. Ze zwracaniem = niezależne próby Bernoulliego, liczba ósemek ~ B(10, 1/13)."),
+  list(id = 11, question = "Liczba literówek na stronie książki", correct = "poissona",
+       explanation = "Literówki występują ze stałą średnią częstością (λ literówek/stronę), niezależnie od siebie, w dowolnym miejscu tekstu. Brak górnego ograniczenia. Rozkład Poissona."),
+  list(id = 12, question = "Temperatura powietrza w południe (w stałej lokalizacji, w tym samym miesiącu różnych lat)", correct = "normalny",
+       explanation = "Temperatura jest wypadkową wielu czynników atmosferycznych. W dłuższym okresie (np. 30 lat) ma rozkład zbliżony do normalnego."),
+  list(id = 13, question = "Liczba sukcesów w 15 próbach, gdy P(sukces)=0.3", correct = "dwumianowy",
+       explanation = "Schemat Bernoulliego: n=15 niezależnych prób z prawdopodobieństwem sukcesu p=0.3. Liczba sukcesów ~ B(15, 0.3)."),
+  list(id = 14, question = "Liczba błędów w 1000 liniach kodu programu", correct = "poissona",
+       explanation = "Błędy występują ze stałą średnią częstością (λ błędów/1000 linii), niezależnie od siebie, w dowolnym miejscu kodu. Brak górnego limitu (nie ma ustalonej liczby prób jak w dwumianowym). To Poisson."),
+  list(id = 15, question = "Średnia ocen ze egzaminu w dużej grupie studentów", correct = "normalny",
+       explanation = "Dla dużej grupy (n>30) średnia z dowolnego rozkładu ma rozkład zbliżony do normalnego (Centralne Twierdzenie Graniczne)."),
+  list(id = 16, question = "Liczba defektów w partii 100 sztuk, gdy p(defekt)=0.05", correct = "dwumianowy",
+       explanation = "Każda sztuka: defekt (sukces) lub nie (porażka) z p=0.05. Niezależne kontrole 100 sztuk ~ B(100, 0.05). (Uwaga: przy małym p można aproksymować Poissonem)"),
+  list(id = 17, question = "Liczba klientów wchodzących do sklepu w ciągu 10 minut", correct = "poissona",
+       explanation = "Klienci przychodzą ze stałą średnią częstością (λ klientów/10 min), niezależnie od siebie, bez pamięci (każda chwila równie prawdopodobna). Brak górnego limitu. Klasyczny Poisson."),
+  list(id = 18, question = "Czas życia żarówki produkowanej przez daną firmę", correct = "normalny",
+       explanation = "Czas życia produktów często ma rozkład normalny (lub log-normalny). Dla żarówek standardowych rozkład normalny jest dobrym przybliżeniem."),
+  list(id = 19, question = "Liczba wygranych losów w loterii (30 losów, p(wygrana)=0.01)", correct = "dwumianowy",
+       explanation = "Każdy los: wygrana (p=0.01) lub przegrana. Niezależne próby ~ B(30, 0.01). (Przy małym p × dużym n można użyć aproksymacji Poissona)."),
+  list(id = 20, question = "Liczba połączeń telefonicznych w centrali w ciągu minuty", correct = "poissona",
+       explanation = "Połączenia przychodzą ze stałą średnią częstością (λ połączeń/min), niezależnie od siebie, w dowolnej chwili. Teoretycznie bez górnego limitu. Klasyczny Poisson w telekomunikacji."),
+  list(id = 21, question = "Waga jabłek w skrzynce (średnia 150g)", correct = "normalny",
+       explanation = "Waga owoców jest zmienną ciągłą zależną od wielu czynników (genetyka, warunki wzrostu). W dużej partii ma rozkład normalny."),
+  list(id = 22, question = "Liczba awarii serwera w ciągu miesiąca (średnio 3 awarie/miesiąc)", correct = "poissona",
+       explanation = "Awarie występują ze stałą średnią częstością (λ=3/miesiąc), niezależnie od siebie, w dowolnym momencie z równym prawdopodobieństwem. Brak górnego ograniczenia. Rozkład Poissona."),
+  list(id = 23, question = "Liczba głów w 50 rzutach monetą", correct = "dwumianowy",
+       explanation = "Rzut monetą: głowa (sukces) z p=0.5. Liczba głów w n=50 rzutach ~ B(50, 0.5)."),
+  list(id = 24, question = "Ciśnienie krwi skurczowe w populacji dorosłych", correct = "normalny",
+       explanation = "Parametry fizjologiczne w dużych populacjach mają zazwyczaj rozkład normalny. Ciśnienie skurczowe też ma rozkład zbliżony do normalnego."),
+  list(id = 25, question = "Liczba bakterii na płytce Petriego (gdy średnio jest 20 kolonii)", correct = "poissona",
+       explanation = "Kolonie pojawiają się ze stałą średnią częstością (λ=20 kolonii/płytka), niezależnie od siebie, w dowolnym miejscu płytki. Brak górnego limitu liczby kolonii. Rozkład Poissona."),
+  list(id = 26, question = "Liczba studentów zdających egzamin (80 osób pisze, każdy p(zdał)=0.7)", correct = "dwumianowy",
+       explanation = "Każdy student: zdał (sukces) z p=0.7 lub nie. Zakładając niezależność (brak ściągania), liczba zdających ~ B(80, 0.7)."),
+  list(id = 27, question = "Liczba meteorów obserwowanych w nocy (średnio 5/godzinę)", correct = "poissona",
+       explanation = "Meteory pojawiają się ze stałą średnią częstością (λ=5/godz), niezależnie od siebie, w dowolnej chwili z równym prawdopodobieństwem. Brak górnego limitu. Rozkład Poissona."),
+  list(id = 29, question = "Czas przygotowania kawy w kawiarni (średnio 3 min z małymi odchyleniami)", correct = "normalny",
+       explanation = "Czas przygotowania kawy zależy od wielu drobnych czynników (ilość mleka, temperatura, barista), które sumują się dając rozkład zbliżony do normalnego — symetryczny wokół średniej."),
+  list(id = 30, question = "Liczba wypadków przy pracy w fabryce w ciągu roku (średnio 12/rok)", correct = "poissona",
+       explanation = "Wypadki zachodzą ze stałą średnią częstością (λ=12/rok), niezależnie od siebie, w dowolnym momencie roku z równym prawdopodobieństwem. Brak górnego limitu. Rozkład Poissona."),
+  list(id = 31, question = "Liczba rzutów kostką do wypadnięcia pierwszej szóstki", correct = "geometryczny",
+       explanation = "Powtarzamy niezależne próby Bernoulliego (p=1/6) aż do pierwszego sukcesu. Liczba prób do pierwszego sukcesu ma rozkład geometryczny Geom(1/6)."),
+  list(id = 32, question = "Liczba losowań karty do wyciągnięcia pierwszego asa (ze zwracaniem)", correct = "geometryczny",
+       explanation = "Każde losowanie to próba Bernoulliego z p=4/52. Zwracanie zapewnia niezależność prób. Liczymy próby do pierwszego sukcesu — rozkład geometryczny Geom(1/13)."),
+  list(id = 33, question = "Ile telefonów do klienta, zanim odbierze (p=0.3)", correct = "geometryczny",
+       explanation = "Każdy telefon to niezależna próba z p=0.3. Interesuje nas ile prób potrzeba do pierwszego sukcesu (odebrania) — rozkład geometryczny Geom(0.3)."),
+  list(id = 34, question = "Liczba prób wpisania losowego 4-cyfrowego PIN-u do trafienia poprawnego", correct = "geometryczny",
+       explanation = "Każda próba to losowe wpisanie PIN-u z p=1/10000. Próby są niezależne, liczymy ile potrzeba do pierwszego trafienia — rozkład geometryczny Geom(1/10000)."),
+  list(id = 35, question = "Ile pudełek z płatkami trzeba kupić, żeby trafić na naklejkę (p=0.1)", correct = "geometryczny",
+       explanation = "Każde pudełko to niezależna próba z p=0.1 szansy na naklejkę. Liczymy pudełka do pierwszego sukcesu — rozkład geometryczny Geom(0.1)."),
+  list(id = 36, question = "Liczba strzałów do pierwszego trafienia w tarczę (p=0.4)", correct = "geometryczny",
+       explanation = "Każdy strzał to niezależna próba Bernoulliego z p=0.4. Interesuje nas liczba strzałów do pierwszego trafienia — rozkład geometryczny Geom(0.4)."),
+  list(id = 37, question = "Ile razy trzeba rzucić monetą, żeby wypadł orzeł", correct = "geometryczny",
+       explanation = "Rzuty monetą to niezależne próby Bernoulliego z p=0.5. Liczymy rzuty do pierwszego orła — rozkład geometryczny Geom(0.5)."),
+  list(id = 38, question = "Liczba rozmów kwalifikacyjnych do otrzymania pierwszej oferty pracy (p=0.2)", correct = "geometryczny",
+       explanation = "Każda rozmowa to niezależna próba z p=0.2. Liczymy ile rozmów do pierwszej oferty — rozkład geometryczny Geom(0.2)."),
+  list(id = 39, question = "Ile pacjentów trzeba zbadać, żeby znaleźć pierwszego z rzadką chorobą (p=0.01)", correct = "geometryczny",
+       explanation = "Każde badanie to niezależna próba z p=0.01. Liczymy badania do pierwszego pozytywnego wyniku — rozkład geometryczny Geom(0.01)."),
+  list(id = 40, question = "Liczba prób uruchomienia starego samochodu do pierwszego udanego startu (p=0.6)", correct = "geometryczny",
+       explanation = "Każda próba uruchomienia to próba Bernoulliego z p=0.6. Liczymy próby do pierwszego sukcesu — rozkład geometryczny Geom(0.6)."),
+  list(id = 41, question = "Miesięczne zarobki pracowników w dużej firmie", correct = "lognormalny",
+       explanation = "Zarobki są zawsze dodatnie, większość osób zarabia blisko mediany, ale jest długi ogon bardzo wysokich płac. Logarytm zarobków ma rozkład normalny — stąd rozkład log-normalny."),
+  list(id = 42, question = "Czas trwania sesji użytkownika na stronie internetowej", correct = "lognormalny",
+       explanation = "Czasy sesji są dodatnie, większość jest krótka, ale zdarzają się bardzo długie. Rozkład jest silnie skośny w prawo — logarytm czasu sesji ma rozkład normalny, więc czas ma rozkład log-normalny."),
+  list(id = 43, question = "Wielkość plików na dysku komputera", correct = "lognormalny",
+       explanation = "Rozmiary plików są dodatnie, większość jest mała, ale zdarzają się bardzo duże pliki. Rozkład jest silnie skośny w prawo — to klasyczny przykład rozkładu log-normalnego."),
+  list(id = 44, question = "Stężenie zanieczyszczeń w powietrzu (pomiary dobowe)", correct = "lognormalny",
+       explanation = "Stężenia są zawsze dodatnie, większość dni ma niskie wartości, ale zdarzają się dni z bardzo wysokim zanieczyszczeniem. Logarytm stężeń ma rozkład normalny — rozkład log-normalny."),
+  list(id = 45, question = "Cena akcji spółki giełdowej", correct = "lognormalny",
+       explanation = "Ceny akcji są zawsze dodatnie. Model geometrycznego ruchu Browna zakłada, że logarytmiczne stopy zwrotu mają rozkład normalny, co oznacza, że same ceny mają rozkład log-normalny."),
+  list(id = 46, question = "Czas naprawy awarii sprzętu w serwisie", correct = "lognormalny",
+       explanation = "Czasy napraw są dodatnie, większość napraw jest szybka, ale zdarzają się bardzo długie. Rozkład jest skośny w prawo — logarytm czasu naprawy ma rozkład normalny, więc czas ma rozkład log-normalny."),
+  list(id = 47, question = "Powierzchnia mieszkań w dużym mieście", correct = "lognormalny",
+       explanation = "Powierzchnie są dodatnie, większość mieszkań ma podobny metraż, ale zdarzają się bardzo duże apartamenty. Rozkład jest skośny w prawo — to rozkład log-normalny."),
+  list(id = 48, question = "Masa cząstek aerozolu w atmosferze", correct = "lognormalny",
+       explanation = "Rozmiary i masy cząstek aerozolu są dodatnie i mają rozkład silnie skośny w prawo. W fizyce atmosfery modeluje się je rozkładem log-normalnym."),
+  list(id = 49, question = "Czas od zakażenia do wystąpienia objawów choroby (okres inkubacji)", correct = "lognormalny",
+       explanation = "Okres inkubacji jest zawsze dodatni, większość osób zachoruje w podobnym czasie, ale u niektórych objawy pojawią się znacznie później. W epidemiologii modeluje się go rozkładem log-normalnym."),
+  list(id = 50, question = "Wielkość odszkodowań wypłacanych przez firmę ubezpieczeniową", correct = "lognormalny",
+       explanation = "Odszkodowania są dodatnie, większość jest niewielka, ale zdarzają się bardzo duże wypłaty. Rozkład jest silnie skośny w prawo — w aktuariacie modeluje się to rozkładem log-normalnym."),
+  list(id = 51, question = "Czas oczekiwania na następną wiadomość na grupowym czacie, gdy wiadomości przychodzą losowo (średnio co 10 min)", correct = "wykladniczy",
+       explanation = "Wiadomości na czacie przychodzą losowo ze stałą średnią częstością (proces Poissona), więc czas między kolejnymi wiadomościami ma rozkład wykładniczy. Kluczowa cecha: brak pamięci — nie ma znaczenia, ile już czekasz."),
+  list(id = 52, question = "Czas między kolejnymi zgłoszeniami na infolinię", correct = "wykladniczy",
+       explanation = "Zgłoszenia przychodzą jako proces Poissona (ze stałą λ). Czas między kolejnymi zgłoszeniami ma rozkład wykładniczy Exp(λ). To naturalny partner rozkładu Poissona."),
+  list(id = 53, question = "Czas do pierwszej awarii nowego serwera", correct = "wykladniczy",
+       explanation = "Przy założeniu stałej intensywności awarii (brak starzenia się), czas do awarii ma rozkład wykładniczy. Cecha braku pamięci: prawdopodobieństwo awarii w następnej godzinie nie zależy od tego, ile serwer już działa."),
+  list(id = 54, question = "Czas między kolejnymi trzęsieniami ziemi w danym regionie", correct = "wykladniczy",
+       explanation = "Trzęsienia ziemi zachodzą losowo ze stałą średnią częstością. Czas między nimi ma rozkład wykładniczy — każda chwila jest równie prawdopodobna, niezależnie od tego, kiedy było ostatnie trzęsienie."),
+  list(id = 55, question = "Czas między kolejnymi klientami wchodzącymi do sklepu", correct = "wykladniczy",
+       explanation = "Klienci przychodzą jako proces Poissona. Czas między kolejnymi klientami ma rozkład wykładniczy Exp(λ). Poisson liczy zdarzenia w przedziale czasu, wykładniczy mierzy czas między zdarzeniami."),
+  list(id = 56, question = "Czas do rozpadu pojedynczego atomu promieniotwórczego", correct = "wykladniczy",
+       explanation = "Rozpad promieniotwórczy to klasyczny proces bezpamięciowy — prawdopodobieństwo rozpadu w następnej sekundzie nie zależy od tego, ile atom już istnieje. Czas do rozpadu ma rozkład wykładniczy."),
+  list(id = 57, question = "Czas między kolejnymi wypadkami na danym odcinku autostrady", correct = "wykladniczy",
+       explanation = "Wypadki zachodzą losowo ze stałą średnią częstością (proces Poissona). Czas między kolejnymi wypadkami ma rozkład wykładniczy."),
+  list(id = 58, question = "Czas oczekiwania na kolejne połączenie telefoniczne w centrali", correct = "wykladniczy",
+       explanation = "Połączenia przychodzą jako proces Poissona. Czas między kolejnymi połączeniami ma rozkład wykładniczy — naturalny partner Poissona w wymiarze ciągłym."),
+  list(id = 59, question = "Czas do znalezienia pierwszego błędu podczas code review (przy stałej intensywności przeglądania)", correct = "wykladniczy",
+       explanation = "Przy stałym tempie przeglądania kodu, błędy pojawiają się losowo ze stałą częstością. Czas do pierwszego znalezionego błędu ma rozkład wykładniczy."),
+  list(id = 60, question = "Czas między kolejnymi meteorami podczas deszczu meteorów", correct = "wykladniczy",
+       explanation = "Meteory pojawiają się losowo ze stałą średnią częstością (proces Poissona). Czas między kolejnymi meteorami ma rozkład wykładniczy — każda chwila jest równie prawdopodobna.")
+)
+```
+
+# Od danych do prawdopodobieństwa
+
+W statystyce opisowej nauczyliśmy się liczyć częstości, obliczać
+średnie i rysować histogramy. Ale co, jeśli chcemy **przewidywać**
+przyszłe obserwacje?
+
+Klucz leży w pojęciu **prawdopodobieństwa**.
+W tym rozdziale zobaczymy, jak częstości względne
+zbiegają do prawdopodobieństw i czym jest rozkład prawdopodobieństwa.
+
+## Prawo wielkich liczb w akcji
+
+Wyobraź sobie, że rzucasz kostką. Jak często wypada każda ścianka?
+Przy kilku rzutach wyniki są chaotyczne, ale im więcej rzutów,
+tym częstości względne stają się bardziej stabilne.
+
+```{r}
+fluidRow(
+  column(4,
+    div(style = "display: flex; flex-direction: column; gap: 8px;",
+      actionButton("ch1_roll_1", "Rzuć 1x",
+                   class = "btn-primary", width = "100%"),
+      actionButton("ch1_roll_10", "Rzuć 10x",
+                   class = "btn-primary", width = "100%"),
+      actionButton("ch1_roll_100", "Rzuć 100x",
+                   class = "btn-primary", width = "100%"),
+      actionButton("ch1_roll_1000", "Rzuć 1000x",
+                   class = "btn-primary", width = "100%"),
+      hr(),
+      actionButton("ch1_roll_reset", "Reset",
+                   class = "btn-outline-secondary", width = "100%")
+    ),
+    br(),
+    uiOutput("ch1_roll_count")
+  ),
+  column(8,
+    plotOutput("ch1_freq_bar", height = "250px"),
+    plotOutput("ch1_conv_plot", height = "250px")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+dice_rolls <- reactiveVal(integer(0))
+
+observeEvent(input$ch1_roll_1, {
+  dice_rolls(c(dice_rolls(), sample(1:6, 1)))
+})
+observeEvent(input$ch1_roll_10, {
+  dice_rolls(c(dice_rolls(), sample(1:6, 10, replace = TRUE)))
+})
+observeEvent(input$ch1_roll_100, {
+  dice_rolls(c(dice_rolls(), sample(1:6, 100, replace = TRUE)))
+})
+observeEvent(input$ch1_roll_1000, {
+  dice_rolls(c(dice_rolls(), sample(1:6, 1000, replace = TRUE)))
+})
+observeEvent(input$ch1_roll_reset, {
+  dice_rolls(integer(0))
+})
+
+output$ch1_roll_count <- renderUI({
+  n <- length(dice_rolls())
+  stat_box(paste0("Rzutów: ", n), col_primary)
+})
+
+output$ch1_freq_bar <- renderPlot({
+  rolls <- dice_rolls()
+  if (length(rolls) == 0) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij przycisk, aby rzucić kostką",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    df <- data.frame(face = factor(rolls, levels = 1:6))
+    freq_df <- df %>% count(face, .drop = FALSE) %>%
+      mutate(rel_freq = n / sum(n))
+    ggplot(freq_df, aes(x = face, y = rel_freq)) +
+      geom_col(fill = col_primary, color = "white", alpha = 0.85) +
+      geom_hline(yintercept = 1/6, color = col_secondary, linewidth = 1, linetype = "dashed") +
+      geom_text(aes(label = sprintf("%.3f", rel_freq)), vjust = -0.5, size = 4) +
+      scale_y_continuous(limits = c(0, max(0.35, max(freq_df$rel_freq) * 1.15)),
+                         expand = expansion(mult = c(0, 0.05))) +
+      labs(title = "Częstości względne", x = "Ścianka", y = "Częstość względna") +
+      annotate("text", x = 6.3, y = 1/6, label = "1/6", color = col_secondary,
+               fontface = "bold", size = 4, hjust = 0) +
+      theme_prob()
+  }
+})
+
+output$ch1_conv_plot <- renderPlot({
+  rolls <- dice_rolls()
+  if (length(rolls) < 2) return(NULL)
+
+  n_total <- length(rolls)
+  if (n_total <= 200) {
+    indices <- seq_len(n_total)
+  } else {
+    indices <- unique(c(
+      seq(1, min(50, n_total)),
+      round(seq(51, n_total, length.out = 150))
+    ))
+  }
+
+  conv_data <- do.call(rbind, lapply(indices, function(i) {
+    tab <- table(factor(rolls[1:i], levels = 1:6)) / i
+    data.frame(n = i, face = factor(1:6), rel_freq = as.numeric(tab))
+  }))
+
+  ggplot(conv_data, aes(x = n, y = rel_freq, color = face)) +
+    geom_line(linewidth = 0.8, alpha = 0.7) +
+    geom_hline(yintercept = 1/6, color = "gray40", linewidth = 0.8, linetype = "dashed") +
+    scale_color_brewer(palette = "Set2", name = "Ścianka") +
+    labs(title = "Zbieżność częstości do 1/6",
+         x = "Liczba rzutów", y = "Częstość względna") +
+    theme_prob() +
+    theme(legend.position = "right")
+})
+```
+
+::: {.callout-note}
+**Prawo wielkich liczb:**
+Wraz ze wzrostem liczby obserwacji, częstość względna każdego
+wyniku zbiega do jego prawdopodobieństwa teoretycznego.
+Dla uczciwej kostki każda ścianka ma P = 1/6 ≈ 0.167.
+:::
+
+## Rozkład empiryczny vs teoretyczny
+
+Kostka to prosty przykład, ale ten sam mechanizm działa dla każdej
+zmiennej losowej. Znasz już histogram — pokazuje, jak często dane
+przyjmują różne wartości. To jest **rozkład empiryczny**
+— oparty na obserwacjach.
+
+A gdybyśmy znali **regułę generującą dane**?
+Wtedy zamiast histogramu mielibyśmy gładką krzywą —
+**rozkład teoretyczny**.
+Zobaczmy, jak jedno przechodzi w drugie.
+
+```{r}
+fluidRow(
+  column(4,
+    selectInput("ch1_emp_dist", "Rozkład źródłowy:",
+      choices = c(
+        "Wzrost studentów (normalny)" = "normal",
+        "Czas dojazdu (skośny)"       = "skewed",
+        "Ocena losowa (jednostajny)"  = "uniform"
+      ),
+      selected = "normal"
+    ),
+    sliderInput("ch1_emp_n", "Wielkość próby:",
+                min = 20, max = 5000, value = 200, step = 20),
+    actionButton("ch1_emp_resample", "Losuj nową próbę",
+                 class = "btn-primary", width = "100%"),
+    hr(),
+    checkboxInput("ch1_show_hist", "Histogram (dane empiryczne)", value = TRUE),
+    checkboxInput("ch1_show_density", "Krzywa gęstości (model teoretyczny)", value = FALSE)
+  ),
+  column(8,
+    plotOutput("ch1_emp_vs_theo", height = "380px"),
+    uiOutput("ch1_emp_text")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch1_emp_data <- reactiveVal(NULL)
+
+generate_emp_data <- function() {
+  n <- input$ch1_emp_n
+  dist <- input$ch1_emp_dist
+  data <- switch(dist,
+    "normal"  = rnorm(n, mean = 170, sd = 8),
+    "skewed"  = rgamma(n, shape = 3, scale = 10) + 5,
+    "uniform" = runif(n, min = 1, max = 6)
+  )
+  ch1_emp_data(list(data = data, dist = dist, n = n))
+}
+
+observe({
+  input$ch1_emp_dist
+  input$ch1_emp_n
+  generate_emp_data()
+})
+observeEvent(input$ch1_emp_resample, generate_emp_data())
+
+output$ch1_emp_vs_theo <- renderPlot({
+  d <- ch1_emp_data()
+  req(d)
+
+  show_hist <- input$ch1_show_hist
+  show_dens <- input$ch1_show_density
+
+  if (!show_hist && !show_dens) {
+    return(ggplot() +
+      annotate("text", x = 0.5, y = 0.5,
+               label = "Włącz przynajmniej jedną warstwę",
+               size = 6, color = "#7f8c8d") +
+      theme_void())
+  }
+
+  df <- data.frame(x = d$data)
+
+  theo_xlim <- switch(d$dist,
+    "normal"  = c(170 - 4*8, 170 + 4*8),
+    "skewed"  = c(0, 5 + qgamma(0.999, shape = 3, scale = 10)),
+    "uniform" = c(0.5, 6.5)
+  )
+  emp_xlim <- range(d$data)
+  x_lo <- min(theo_xlim[1], emp_xlim[1])
+  x_hi <- max(theo_xlim[2], emp_xlim[2])
+  x_margin <- (x_hi - x_lo) * 0.05
+  fixed_xlim <- c(x_lo - x_margin, x_hi + x_margin)
+
+  x_seq <- seq(fixed_xlim[1], fixed_xlim[2], length.out = 500)
+
+  theo_y <- switch(d$dist,
+    "normal"  = dnorm(x_seq, mean = 170, sd = 8),
+    "skewed"  = dgamma(x_seq - 5, shape = 3, scale = 10),
+    "uniform" = dunif(x_seq, min = 1, max = 6)
+  )
+  theo_y[is.na(theo_y) | theo_y < 0] <- 0
+  df_theo <- data.frame(x = x_seq, y = theo_y)
+
+  n_bins <- min(50, max(10, d$n / 10))
+  bin_breaks <- seq(min(d$data), max(d$data), length.out = n_bins + 1)
+
+  theo_ymax <- max(theo_y)
+  hist_obj <- hist(d$data, breaks = bin_breaks, plot = FALSE)
+  hist_ymax <- max(hist_obj$density)
+  fixed_ymax <- max(theo_ymax, hist_ymax) * 1.08
+
+  dist_label <- switch(d$dist,
+    "normal"  = "Rozkład normalny N(170, 8)",
+    "skewed"  = "Rozkład gamma (skośny)",
+    "uniform" = "Rozkład jednostajny U(1, 6)"
+  )
+
+  p <- ggplot()
+
+  if (show_hist) {
+    p <- p + geom_histogram(data = df, aes(x = x, y = after_stat(density)),
+                             breaks = bin_breaks,
+                             fill = col_primary, color = "white", alpha = 0.6)
+  }
+
+  if (show_dens) {
+    p <- p + geom_line(data = df_theo, aes(x = x, y = y),
+                        color = col_secondary, linewidth = 1.8) +
+      geom_area(data = df_theo, aes(x = x, y = y),
+                fill = col_secondary, alpha = 0.1)
+  }
+
+  p + coord_cartesian(xlim = fixed_xlim, ylim = c(0, fixed_ymax)) +
+  labs(
+    title = paste0(if (show_hist && show_dens) "Dane + model"
+                   else if (show_hist) "Dane empiryczne (histogram)"
+                   else "Model teoretyczny (krzywa)"),
+    subtitle = paste0("n = ", d$n, " | ", dist_label),
+    x = "Wartość", y = "Gęstość"
+  ) +
+  theme_prob()
+})
+
+output$ch1_emp_text <- renderUI({
+  show_hist <- input$ch1_show_hist
+  show_dens <- input$ch1_show_density
+
+  if (show_hist && show_dens) {
+    div(class = "callout-success",
+      "Widzisz obie warstwy. Histogram to dane, krzywa to model.
+       Zwiększaj próbę — histogram coraz lepiej przybliża krzywą!")
+  } else if (show_hist) {
+    div(class = "callout-info",
+      "To histogram — rozkład empiryczny oparty na danych.
+       Włącz krzywą gęstości, żeby zobaczyć model teoretyczny.")
+  } else if (show_dens) {
+    div(class = "callout-info",
+      "To krzywa gęstości — model teoretyczny.
+       Włącz histogram, żeby porównać z danymi.")
+  }
+})
+```
+
+::: {.callout-note}
+**Kluczowa idea:**
+Włącz obie warstwy i zwiększaj próbę. Im więcej danych,
+tym lepiej histogram przybliża krzywą.
+Rozkład teoretyczny to **ideał** — dane to jego **niedoskonałe odbicie**.
+:::
+
+## Częstości vs prawdopodobieństwo
+
+Prawdopodobieństwo to **teoretyczny model**
+opisujący, jak często powinny występować różne wyniki.
+Częstości względne z danych to **empiryczne przybliżenie**
+tego modelu.
+
+```{r}
+fluidRow(
+  column(4,
+    radioButtons("ch1_scenario", "Scenariusz:",
+      choices = c(
+        "Uczciwa kostka"   = "fair",
+        "Obciążona kostka" = "loaded",
+        "Moneta"           = "coin"
+      ),
+      selected = "fair"
+    ),
+    sliderInput("ch1_n_obs", "Liczba obserwacji:",
+                min = 10, max = 5000, value = 100, step = 10),
+    actionButton("ch1_resample", "Losuj ponownie",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch1_freq_vs_prob", height = "350px"),
+    uiOutput("ch1_freq_vs_prob_text")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+freq_data <- reactiveVal(NULL)
+
+observe({
+  input$ch1_resample
+  input$ch1_scenario
+  n <- input$ch1_n_obs
+
+  scenario <- input$ch1_scenario
+  if (scenario == "fair") {
+    obs <- sample(1:6, n, replace = TRUE)
+    theo <- rep(1/6, 6)
+    labels <- as.character(1:6)
+  } else if (scenario == "loaded") {
+    probs <- c(0.1, 0.1, 0.1, 0.1, 0.1, 0.5)
+    obs <- sample(1:6, n, replace = TRUE, prob = probs)
+    theo <- probs
+    labels <- as.character(1:6)
+  } else {
+    obs <- sample(c(1, 2), n, replace = TRUE)
+    theo <- c(0.5, 0.5)
+    labels <- c("Orzeł", "Reszka")
+  }
+
+  freq_data(list(obs = obs, theo = theo, labels = labels))
+})
+
+output$ch1_freq_vs_prob <- renderPlot({
+  fd <- freq_data()
+  req(fd)
+
+  n_levels <- length(fd$labels)
+  tab <- table(factor(fd$obs, levels = 1:n_levels)) / length(fd$obs)
+
+  df_obs <- data.frame(
+    outcome = factor(fd$labels, levels = fd$labels),
+    value = as.numeric(tab)
+  )
+  df_theo <- data.frame(
+    outcome = factor(fd$labels, levels = fd$labels),
+    value = fd$theo
+  )
+
+  ggplot() +
+    geom_col(data = df_obs, aes(x = outcome, y = value, fill = "Obserwowane"),
+             alpha = 0.85, color = "white") +
+    geom_line(data = df_theo, aes(x = outcome, y = value, color = "Teoretyczne", group = 1),
+              linewidth = 1.2) +
+    geom_point(data = df_theo, aes(x = outcome, y = value, color = "Teoretyczne"),
+               size = 4) +
+    scale_fill_manual(values = c("Obserwowane" = col_primary), name = "") +
+    scale_color_manual(values = c("Teoretyczne" = col_secondary), name = "") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+    labs(title = paste0("n = ", length(fd$obs), " obserwacji"),
+         x = "Wynik", y = "Proporcja / Prawdopodobieństwo") +
+    theme_prob() +
+    theme(legend.position = "top")
+})
+
+output$ch1_freq_vs_prob_text <- renderUI({
+  fd <- freq_data()
+  req(fd)
+  n <- length(fd$obs)
+  max_diff <- max(abs(table(factor(fd$obs, levels = 1:length(fd$labels))) / n - fd$theo))
+
+  div(class = if (max_diff < 0.05) "callout-success" else "callout-info",
+    paste0("Maksymalna różnica między częstością a prawdopodobieństwem: ",
+           sprintf("%.3f", max_diff),
+           if (max_diff < 0.05) " — dobra zgodność!" else " — spróbuj zwiększyć n")
+  )
+})
+```
+
+## Czym jest rozkład prawdopodobieństwa?
+
+Rozkład prawdopodobieństwa to **kompletny opis**
+wszystkich możliwych wyników i ich prawdopodobieństw.
+Musi spełniać dwa warunki:
+
+1. Każde prawdopodobieństwo jest nieujemne: P(x) ≥ 0
+2. Suma wszystkich prawdopodobieństw wynosi 1
+
+Spróbuj sam(a) zbudować rozkład — ustaw prawdopodobieństwa
+czterech wyników tak, żeby sumowały się do 1.
+
+```{r}
+fluidRow(
+  column(6,
+    sliderInput("ch1_p1", "P(Wynik A):", min = 0, max = 1, value = 0.25, step = 0.01),
+    sliderInput("ch1_p2", "P(Wynik B):", min = 0, max = 1, value = 0.25, step = 0.01),
+    sliderInput("ch1_p3", "P(Wynik C):", min = 0, max = 1, value = 0.25, step = 0.01),
+    sliderInput("ch1_p4", "P(Wynik D):", min = 0, max = 1, value = 0.25, step = 0.01),
+    uiOutput("ch1_sum_check")
+  ),
+  column(6,
+    plotOutput("ch1_custom_dist", height = "300px")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+output$ch1_sum_check <- renderUI({
+  s <- input$ch1_p1 + input$ch1_p2 + input$ch1_p3 + input$ch1_p4
+  if (abs(s - 1) < 0.005) {
+    stat_box(paste0("\u2211 = ", sprintf("%.2f", s), " \u2714"), col_success)
+  } else {
+    stat_box(paste0("\u2211 = ", sprintf("%.2f", s), " \u2260 1 \u2718"), col_secondary)
+  }
+})
+
+output$ch1_custom_dist <- renderPlot({
+  probs <- c(input$ch1_p1, input$ch1_p2, input$ch1_p3, input$ch1_p4)
+  s <- sum(probs)
+  valid <- abs(s - 1) < 0.005
+
+  df <- data.frame(
+    outcome = c("A", "B", "C", "D"),
+    prob = probs
+  )
+
+  ggplot(df, aes(x = outcome, y = prob)) +
+    geom_col(fill = if (valid) col_success else "#95a5a6",
+             color = "white", alpha = 0.85, width = 0.6) +
+    geom_text(aes(label = sprintf("%.2f", prob)), vjust = -0.5, size = 5) +
+    scale_y_continuous(limits = c(0, 1.1), expand = expansion(mult = c(0, 0))) +
+    labs(title = if (valid) "Poprawny rozkład!" else "Suma musi wynosić 1",
+         x = "Wynik", y = "Prawdopodobieństwo") +
+    theme_prob()
+})
+```
+
+::: {.callout-warning}
+**Zapamiętaj:**
+Rozkład prawdopodobieństwa to nie dane — to **model matematyczny**.
+Dane to próbka z tego modelu. Im większa próbka,
+tym lepiej przybliża model.
+:::
+
+---
+
+# Wartość oczekiwana i wariancja
+
+*Wiemy już, czym jest rozkład prawdopodobieństwa. Teraz dwa kluczowe pytania:
+czego możemy się spodziewać i jak bardzo wyniki mogą się różnić?*
+
+Każdy rozkład prawdopodobieństwa można opisać dwoma kluczowymi
+liczbami:
+
+- **Wartość oczekiwana E(X)** — 'na co mogę liczyć w dłuższej perspektywie?'
+- **Wariancja / odchylenie standardowe** — 'jak bardzo wyniki rozpraszają się wokół oczekiwania?'
+
+To rozszerzenie pojęć, które już znasz ze statystyki opisowej
+(średnia i odchylenie standardowe), ale teraz stosujemy je do
+**modeli teoretycznych**, a nie do danych.
+
+## Czego się spodziewać? — gra w loterie
+
+Wyobraź sobie, że możesz grać w jedną z trzech loterii.
+Każda ma inne wygrane i szanse. Która opłaca się najbardziej?
+
+Zagraj wiele razy i obserwuj, jak średnia wygrana na grę
+stabilizuje się — to właśnie **wartość oczekiwana**.
+
+```{r}
+fluidRow(
+  column(4,
+    radioButtons("ch2ev_lottery", "Wybierz loterię:",
+      choices = c(
+        "A: 50% → 10 zł, 50% → 0 zł"     = "A",
+        "B: 100% → 4 zł (pewna)"           = "B",
+        "C: 10% → 100 zł, 90% → 0 zł"     = "C",
+        "D: 60% → 8 zł, 40% → −5 zł"      = "D"
+      ),
+      selected = "A"
+    ),
+    hr(),
+    div(style = "display: flex; flex-direction: column; gap: 8px;",
+      actionButton("ch2ev_play_1", "Graj 1x",
+                   class = "btn-primary", width = "100%"),
+      actionButton("ch2ev_play_10", "Graj 10x",
+                   class = "btn-primary", width = "100%"),
+      actionButton("ch2ev_play_100", "Graj 100x",
+                   class = "btn-primary", width = "100%"),
+      actionButton("ch2ev_play_1000", "Graj 1000x",
+                   class = "btn-warning", width = "100%"),
+      hr(),
+      actionButton("ch2ev_reset_lottery", "Reset",
+                   class = "btn-outline-secondary", width = "100%")
+    ),
+    br(),
+    uiOutput("ch2ev_play_count")
+  ),
+  column(8,
+    plotOutput("ch2ev_convergence_plot", height = "300px"),
+    uiOutput("ch2ev_lottery_stats")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+lottery_defs <- list(
+  A = list(outcomes = c(10, 0), probs = c(0.5, 0.5), ev = 5,
+           label = "A: 50/50 na 10 zł lub 0 zł"),
+  B = list(outcomes = c(4), probs = c(1), ev = 4,
+           label = "B: Pewne 4 zł"),
+  C = list(outcomes = c(100, 0), probs = c(0.1, 0.9), ev = 10,
+           label = "C: 10% na 100 zł"),
+  D = list(outcomes = c(8, -5), probs = c(0.6, 0.4), ev = 2.8,
+           label = "D: 60% na 8 zł, 40% na −5 zł")
+)
+
+lottery_results <- reactiveVal(numeric(0))
+
+play_lottery <- function(n) {
+  lot <- lottery_defs[[input$ch2ev_lottery]]
+  idx <- sample.int(length(lot$outcomes), n, replace = TRUE, prob = lot$probs)
+  new_results <- lot$outcomes[idx]
+  lottery_results(c(lottery_results(), new_results))
+}
+
+observeEvent(input$ch2ev_play_1, { play_lottery(1) })
+observeEvent(input$ch2ev_play_10, { play_lottery(10) })
+observeEvent(input$ch2ev_play_100, { play_lottery(100) })
+observeEvent(input$ch2ev_play_1000, { play_lottery(1000) })
+observeEvent(input$ch2ev_reset_lottery, lottery_results(numeric(0)))
+observeEvent(input$ch2ev_lottery, lottery_results(numeric(0)))
+
+output$ch2ev_play_count <- renderUI({
+  n <- length(lottery_results())
+  stat_box(paste0("Gier: ", n), col_primary)
+})
+
+output$ch2ev_convergence_plot <- renderPlot({
+  results <- lottery_results()
+  lot <- lottery_defs[[input$ch2ev_lottery]]
+
+  if (length(results) == 0) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5,
+               label = "Kliknij 'Graj', aby rozpocząć",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    running_mean <- cumsum(results) / seq_along(results)
+    df <- data.frame(n = seq_along(results), mean = running_mean)
+
+    ggplot(df, aes(x = n, y = mean)) +
+      geom_line(color = col_primary, linewidth = 1) +
+      geom_hline(yintercept = lot$ev, color = col_secondary,
+                 linewidth = 1.2, linetype = "dashed") +
+      annotate("text", x = max(df$n) * 0.95, y = lot$ev,
+               label = paste0("E(X) = ", lot$ev),
+               color = col_secondary, fontface = "bold", size = 5,
+               vjust = -1) +
+      scale_y_continuous(limits = c(
+        min(min(running_mean), lot$ev) - abs(lot$ev) * 0.3,
+        max(max(running_mean), lot$ev) + abs(lot$ev) * 0.3
+      )) +
+      labs(title = "Średnia wygrana na grę → E(X)",
+           x = "Liczba gier", y = "Średnia wygrana (zł)") +
+      theme_prob()
+  }
+})
+
+output$ch2ev_lottery_stats <- renderUI({
+  results <- lottery_results()
+  lot <- lottery_defs[[input$ch2ev_lottery]]
+  req(length(results) > 0)
+
+  obs_mean <- round(mean(results), 2)
+  diff <- abs(obs_mean - lot$ev)
+
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("Śr. dotychczasowa = ", obs_mean, " zł"), col_primary),
+    stat_box(paste0("E(X) = ", lot$ev, " zł"), col_secondary),
+    stat_box(paste0("Różnica: ", round(diff, 2), " zł"),
+             if (diff < 0.5) col_success else col_warning)
+  )
+})
+```
+
+::: {.callout-note}
+**Wartość oczekiwana:**
+To 'długoterminowa średnia' — wynik, wokół którego oscyluje
+średnia po wielu powtórzeniach. Nie musi być równa żadnemu
+konkretnemu wynikowi! (np. E(kostki) = 3.5, choć 3.5 nigdy nie wypada)
+:::
+
+## E(X) jako punkt równowagi
+
+Wartość oczekiwana to **punkt równowagi**
+rozkładu — gdybyś położył(a) słupki PMF na wadze,
+E(X) byłoby miejscem podparcia.
+
+Spróbuj ustawić prawdopodobieństwa i obserwuj,
+jak przesuwa się punkt równowagi.
+
+```{r}
+fluidRow(
+  column(4,
+    h5("Prawdopodobieństwa:"),
+    sliderInput("ch2ev_bal_p1", "P(X = 1):", min = 0, max = 1, value = 0.25, step = 0.01),
+    sliderInput("ch2ev_bal_p2", "P(X = 3):", min = 0, max = 1, value = 0.25, step = 0.01),
+    sliderInput("ch2ev_bal_p3", "P(X = 5):", min = 0, max = 1, value = 0.25, step = 0.01),
+    sliderInput("ch2ev_bal_p4", "P(X = 9):", min = 0, max = 1, value = 0.25, step = 0.01),
+    uiOutput("ch2ev_bal_sum"),
+    hr(),
+    div(class = "preset-buttons",
+      actionButton("ch2ev_bal_sym", "Symetryczny",
+                   class = "btn-outline-primary"),
+      actionButton("ch2ev_bal_skew", "Skośny",
+                   class = "btn-outline-warning"),
+      actionButton("ch2ev_bal_bimod", "Dwumodalny",
+                   class = "btn-outline-success")
+    )
+  ),
+  column(8,
+    plotOutput("ch2ev_balance_plot", height = "350px"),
+    uiOutput("ch2ev_balance_text")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+observeEvent(input$ch2ev_bal_sym, {
+  updateSliderInput(session, "ch2ev_bal_p1", value = 0.25)
+  updateSliderInput(session, "ch2ev_bal_p2", value = 0.25)
+  updateSliderInput(session, "ch2ev_bal_p3", value = 0.25)
+  updateSliderInput(session, "ch2ev_bal_p4", value = 0.25)
+})
+observeEvent(input$ch2ev_bal_skew, {
+  updateSliderInput(session, "ch2ev_bal_p1", value = 0.05)
+  updateSliderInput(session, "ch2ev_bal_p2", value = 0.15)
+  updateSliderInput(session, "ch2ev_bal_p3", value = 0.30)
+  updateSliderInput(session, "ch2ev_bal_p4", value = 0.50)
+})
+observeEvent(input$ch2ev_bal_bimod, {
+  updateSliderInput(session, "ch2ev_bal_p1", value = 0.40)
+  updateSliderInput(session, "ch2ev_bal_p2", value = 0.10)
+  updateSliderInput(session, "ch2ev_bal_p3", value = 0.10)
+  updateSliderInput(session, "ch2ev_bal_p4", value = 0.40)
+})
+
+output$ch2ev_bal_sum <- renderUI({
+  s <- input$ch2ev_bal_p1 + input$ch2ev_bal_p2 + input$ch2ev_bal_p3 + input$ch2ev_bal_p4
+  if (abs(s - 1) < 0.005) {
+    stat_box(paste0("\u2211P = ", sprintf("%.2f", s), " \u2714"), col_success)
+  } else {
+    stat_box(paste0("\u2211P = ", sprintf("%.2f", s), " \u2260 1"), col_secondary)
+  }
+})
+
+output$ch2ev_balance_plot <- renderPlot({
+  x_vals <- c(1, 3, 5, 9)
+  probs <- c(input$ch2ev_bal_p1, input$ch2ev_bal_p2,
+             input$ch2ev_bal_p3, input$ch2ev_bal_p4)
+  s <- sum(probs)
+  if (abs(s - 1) > 0.05) probs <- probs / s
+
+  ev <- sum(x_vals * probs)
+
+  df <- data.frame(x = x_vals, prob = probs)
+
+  ggplot(df, aes(x = x, y = prob)) +
+    geom_col(fill = col_primary, color = "white", alpha = 0.85, width = 0.6) +
+    geom_text(aes(label = sprintf("%.2f", prob)), vjust = -0.5, size = 4.5) +
+    geom_segment(aes(x = 0, xend = 10, y = -0.01, yend = -0.01),
+                 color = col_dark, linewidth = 1.5) +
+    annotate("point", x = ev, y = -0.03,
+             shape = 17, size = 6, color = col_secondary) +
+    annotate("text", x = ev, y = -0.06,
+             label = paste0("E(X) = ", round(ev, 2)),
+             color = col_secondary, fontface = "bold", size = 5) +
+    scale_y_continuous(limits = c(-0.08, max(probs) * 1.3),
+                       expand = expansion(mult = c(0, 0.05))) +
+    scale_x_continuous(breaks = x_vals, limits = c(0, 10)) +
+    labs(title = "Rozkład na wadze — E(X) to punkt równowagi",
+         x = "Wartość (x)", y = "Prawdopodobieństwo P(X=x)") +
+    theme_prob()
+})
+
+output$ch2ev_balance_text <- renderUI({
+  x_vals <- c(1, 3, 5, 9)
+  probs <- c(input$ch2ev_bal_p1, input$ch2ev_bal_p2,
+             input$ch2ev_bal_p3, input$ch2ev_bal_p4)
+  s <- sum(probs)
+  if (abs(s - 1) > 0.05) probs <- probs / s
+  ev <- sum(x_vals * probs)
+
+  calc_parts <- paste(
+    sapply(seq_along(x_vals), function(i) {
+      paste0(x_vals[i], "\u00b7", sprintf("%.2f", probs[i]))
+    }),
+    collapse = " + "
+  )
+
+  div(class = "callout-info",
+    tags$strong("Obliczenie: "),
+    paste0("E(X) = ", calc_parts, " = ", round(ev, 2))
+  )
+})
+```
+
+::: {.callout-warning}
+**Pamiętaj:**
+E(X) to średnia **ważona prawdopodobieństwami**.
+Wynik o dużym prawdopodobieństwie ciągnie E(X) w swoją
+stronę — podobnie jak ciężki przedmiot na wadze.
+:::
+
+## Wariancja — rozrzut wokół oczekiwania
+
+Dwie loterie mogą mieć **tę samą wartość oczekiwaną**,
+ale zupełnie różne ryzyko. Wariancja (i odchylenie standardowe)
+mierzy właśnie to: **jak bardzo wyniki rozpraszają się**
+wokół E(X).
+
+Porównaj trzy loterie — wszystkie mają E(X) = 50 zł:
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch2ev_var_n", "Ile razy zagrać?",
+                min = 10, max = 2000, value = 200, step = 10),
+    actionButton("ch2ev_var_sim", "Symuluj!",
+                 class = "btn-primary", width = "100%"),
+    br(), br(),
+    uiOutput("ch2ev_var_summary")
+  ),
+  column(8,
+    plotOutput("ch2ev_var_plot", height = "400px")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch2ev_var_data <- reactiveVal(NULL)
+
+generate_var_sim <- function() {
+  n <- input$ch2ev_var_n
+  a <- rep(50, n)
+  b <- sample(c(0, 100), n, replace = TRUE)
+  cc <- runif(n, 0, 100)
+  ch2ev_var_data(list(a = a, b = b, c = cc, n = n))
+}
+
+observeEvent(input$ch2ev_var_sim, generate_var_sim())
+
+observe({
+  if (is.null(ch2ev_var_data())) {
+    isolate(generate_var_sim())
+  }
+})
+
+output$ch2ev_var_plot <- renderPlot({
+  d <- ch2ev_var_data()
+  req(d)
+
+  df <- data.frame(
+    value = c(d$a, d$b, d$c),
+    lottery = rep(c("A: Pewne 50 zł\n(Var = 0)",
+                     "B: 0 lub 100 zł\n(Var = 2500)",
+                     "C: Losowe 0-100 zł\n(Var \u2248 833)"),
+                  each = d$n)
+  )
+  df$lottery <- factor(df$lottery, levels = unique(df$lottery))
+
+  ggplot(df, aes(x = value)) +
+    geom_histogram(bins = 30, fill = col_primary, color = "white", alpha = 0.7) +
+    geom_vline(xintercept = 50, color = col_secondary, linewidth = 1.2, linetype = "dashed") +
+    facet_wrap(~lottery, ncol = 3) +
+    annotate("text", x = 50, y = Inf, label = "E(X) = 50",
+             color = col_secondary, fontface = "bold", size = 4, vjust = 2) +
+    labs(title = paste0("Wyniki ", d$n, " gier — to samo E(X), różne ryzyko"),
+         x = "Wygrana (zł)", y = "Liczebność") +
+    theme_prob(base_size = 12)
+})
+
+output$ch2ev_var_summary <- renderUI({
+  d <- ch2ev_var_data()
+  req(d)
+
+  div(
+    h5("Statystyki:"),
+    tags$table(class = "table table-bordered table-sm", style = "font-size: 13px;",
+      tags$thead(tags$tr(tags$th("Loteria"), tags$th("SD"), tags$th("Śr."))),
+      tags$tbody(
+        tags$tr(tags$td("A: Pewna"), tags$td(round(sd(d$a), 1)), tags$td(round(mean(d$a), 1))),
+        tags$tr(tags$td("B: 0/100"), tags$td(round(sd(d$b), 1)), tags$td(round(mean(d$b), 1))),
+        tags$tr(tags$td("C: Losowa"), tags$td(round(sd(d$c), 1)), tags$td(round(mean(d$c), 1)))
+      )
+    )
+  )
+})
+```
+
+::: {.callout-tip}
+**Kluczowa intuicja:**
+
+- **Mała wariancja** = wyniki skupione blisko E(X), małe ryzyko
+- **Duża wariancja** = wyniki rozrzucone szeroko, duże ryzyko
+- **Wariancja = 0** = brak losowości, wynik pewny
+
+Odchylenie standardowe SD = $\sqrt{\text{Var}}$ ma tę samą jednostkę co dane
+(np. złotówki), dlatego jest łatwiejsze w interpretacji.
+:::
+
+## Od danych do modelu
+
+Zwróć uwagę na analogię:
+
+| Statystyka opisowa (dane) | Rachunek prawdopodobieństwa (model) |
+|---|---|
+| Średnia z próby $\bar{x}$ | Wartość oczekiwana E(X) |
+| Wariancja z próby $s^2$ | Wariancja Var(X) |
+| Odchylenie standardowe $s$ | Odchylenie standardowe SD(X) |
+| Obliczane z danych | Obliczane z modelu (rozkładu) |
+
+Prawo wielkich liczb gwarantuje, że $\bar{x} \to E(X)$ wraz ze wzrostem próby.
+
+---
+
+# Rozkłady dyskretne
+
+*Wiemy już, czym jest wartość oczekiwana i wariancja.
+Teraz poznamy trzy klasyczne rozkłady dyskretne i zobaczymy,
+jak ich E(X) i Var(X) zależą od parametrów.*
+
+Rozkład dyskretny opisuje zmienną, która przyjmuje
+**skończoną lub przeliczalną** liczbę wartości
+(np. 0, 1, 2, 3...). Każdej wartości przypisujemy prawdopodobieństwo.
+
+Poznamy trzy najważniejsze:
+
+## Rozkład jednostajny dyskretny
+
+Najprostszy rozkład: każdy wynik jest
+**jednakowo prawdopodobny**. Przykłady: rzut kostką,
+losowanie cyfry, losowanie karty z talii.
+
+```{r}
+fluidRow(
+  column(4,
+    radioButtons("ch3_unif_type", "Eksperyment:",
+      choices = c("Moneta (2 wyniki)" = "coin",
+                  "Kostka (6 wyników)" = "die",
+                  "Kostka 12-ścienna" = "d12"),
+      selected = "die"
+    ),
+    sliderInput("ch3_unif_n", "Liczba prób:",
+                min = 10, max = 5000, value = 100, step = 10),
+    actionButton("ch3_unif_sim", "Symuluj!",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch3_unif_plot", height = "350px")
+  )
+)
+```
+
+::: {.formula-box}
+$$P(X = k) = \frac{1}{n}, \quad E(X) = \frac{n+1}{2}, \quad Var(X) = \frac{n^2 - 1}{12}$$
+:::
+
+```{r}
+#| context: server
+
+ch3_unif_data <- reactiveVal(NULL)
+
+observeEvent(input$ch3_unif_sim, {
+  n <- input$ch3_unif_n
+  type <- input$ch3_unif_type
+  k <- switch(type, "coin" = 2, "die" = 6, "d12" = 12)
+  obs <- sample(1:k, n, replace = TRUE)
+  ch3_unif_data(list(obs = obs, k = k, n = n))
+}, ignoreNULL = FALSE)
+
+observe({
+  input$ch3_unif_type
+  type <- input$ch3_unif_type
+  k <- switch(type, "coin" = 2, "die" = 6, "d12" = 12)
+  ch3_unif_data(list(obs = sample(1:k, input$ch3_unif_n, replace = TRUE),
+                     k = k, n = input$ch3_unif_n))
+})
+
+output$ch3_unif_plot <- renderPlot({
+  d <- ch3_unif_data()
+  req(d)
+
+  df <- data.frame(x = factor(d$obs, levels = 1:d$k))
+  freq_df <- df %>% count(x, .drop = FALSE) %>% mutate(rel = n / sum(n))
+
+  ggplot(freq_df, aes(x = x, y = rel)) +
+    geom_col(fill = col_uniform, color = "white", alpha = 0.7) +
+    geom_hline(yintercept = 1/d$k, color = col_secondary, linewidth = 1, linetype = "dashed") +
+    geom_point(aes(y = 1/d$k), color = col_secondary, size = 3) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+    labs(title = paste0("Rozkład jednostajny: ", d$n, " prób, ", d$k, " wyników"),
+         subtitle = paste0("Linia: P(X=k) = 1/", d$k, " = ", round(1/d$k, 4)),
+         x = "Wynik", y = "Częstość względna") +
+    theme_prob()
+})
+```
+
+## Rozkład dwumianowy (Binomial)
+
+Powtarzamy **n niezależnych prób**, każda z prawdopodobieństwem
+sukcesu **p**. Liczymy **ile razy wystąpił sukces**.
+
+Przykłady: ile orłów w 10 rzutach monetą? Ile wadliwych produktów
+w partii 100? Ile poprawnych odpowiedzi na teście wielokrotnego wyboru?
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch3_binom_n", "n (liczba prób):",
+                min = 1, max = 100, value = 20, step = 1),
+    sliderInput("ch3_binom_p", "p (prawdop. sukcesu):",
+                min = 0, max = 1, value = 0.5, step = 0.01),
+    hr(),
+    div(class = "preset-buttons",
+      actionButton("ch3_binom_preset1", "Moneta\n(n=10, p=0.5)",
+                   class = "btn-outline-primary"),
+      actionButton("ch3_binom_preset2", "Jakość\n(n=100, p=0.02)",
+                   class = "btn-outline-warning"),
+      actionButton("ch3_binom_preset3", "Egzamin\n(n=20, p=0.25)",
+                   class = "btn-outline-success")
+    ),
+    hr(),
+    checkboxInput("ch3_binom_show_stats", "Pokaż E(X) i SD", value = TRUE)
+  ),
+  column(8,
+    plotOutput("ch3_binom_plot", height = "350px"),
+    uiOutput("ch3_binom_stats")
+  )
+)
+```
+
+::: {.formula-box}
+$$P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}, \quad E(X) = np, \quad Var(X) = np(1-p)$$
+:::
+
+```{r}
+#| context: server
+
+observeEvent(input$ch3_binom_preset1, {
+  updateSliderInput(session, "ch3_binom_n", value = 10)
+  updateSliderInput(session, "ch3_binom_p", value = 0.5)
+})
+observeEvent(input$ch3_binom_preset2, {
+  updateSliderInput(session, "ch3_binom_n", value = 100)
+  updateSliderInput(session, "ch3_binom_p", value = 0.02)
+})
+observeEvent(input$ch3_binom_preset3, {
+  updateSliderInput(session, "ch3_binom_n", value = 20)
+  updateSliderInput(session, "ch3_binom_p", value = 0.25)
+})
+
+output$ch3_binom_plot <- renderPlot({
+  n <- input$ch3_binom_n
+  p <- input$ch3_binom_p
+  show_stats <- input$ch3_binom_show_stats
+
+  x_vals <- 0:n
+  probs <- dbinom(x_vals, n, p)
+
+  sig_range <- which(probs > 0.001)
+  if (length(sig_range) > 0) {
+    x_min <- max(0, min(sig_range) - 2)
+    x_max <- min(n, max(sig_range) + 2)
+  } else {
+    x_min <- 0; x_max <- n
+  }
+  keep <- x_vals >= x_min & x_vals <= x_max
+
+  df <- data.frame(x = x_vals[keep], prob = probs[keep])
+  mu <- n * p
+  sigma <- sqrt(n * p * (1 - p))
+
+  pl <- ggplot(df, aes(x = x, y = prob)) +
+    geom_col(fill = col_binomial, color = "white", alpha = 0.85, width = 0.7) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+    labs(title = paste0("B(n=", n, ", p=", p, ")"),
+         x = "Liczba sukcesów (k)", y = "P(X = k)") +
+    theme_prob()
+
+  if (show_stats) {
+    pl <- pl +
+      geom_vline(xintercept = mu, color = col_secondary, linewidth = 1.2, linetype = "dashed") +
+      annotate("rect", xmin = mu - sigma, xmax = mu + sigma,
+               ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
+  }
+  pl
+})
+
+output$ch3_binom_stats <- renderUI({
+  n <- input$ch3_binom_n
+  p <- input$ch3_binom_p
+  mu <- n * p
+  sigma <- sqrt(n * p * (1 - p))
+
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("E(X) = np = ", round(mu, 2)), col_secondary),
+    stat_box(paste0("SD = \u221a(np(1-p)) = ", round(sigma, 2)), col_dark)
+  )
+})
+```
+
+::: {.callout-note}
+**Obserwacja:**
+Przesuwaj suwak p od 0 do 1 i obserwuj, jak kształt rozkładu
+zmienia się z prawoskośnego (p≈ 0) przez symetryczny (p=0.5)
+do lewoskośnego (p≈ 1). Przy dużym n rozkład staje się
+coraz bardziej 'dzwonowaty'.
+:::
+
+## Rozkład Poissona
+
+Zliczamy **rzadkie zdarzenia** w ustalonym czasie lub przestrzeni.
+Parametr λ (lambda) to średnia liczba zdarzeń.
+
+Przykłady: liczba błędów na stronie, klientów w sklepie na godzinę,
+wypadków na skrzyżowaniu w miesiącu.
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch3_pois_lambda", "λ (średnia liczba zdarzeń):",
+                min = 0.5, max = 20, value = 3, step = 0.5),
+    hr(),
+    div(class = "preset-buttons",
+      actionButton("ch3_pois_preset1", "Błędy\n(λ=2)",
+                   class = "btn-outline-primary"),
+      actionButton("ch3_pois_preset2", "Klienci\n(λ=8)",
+                   class = "btn-outline-warning"),
+      actionButton("ch3_pois_preset3", "Wypadki\n(λ=0.5)",
+                   class = "btn-outline-danger")
+    ),
+    hr(),
+    checkboxInput("ch3_pois_show_stats", "Pokaż E(X) i SD", value = TRUE)
+  ),
+  column(8,
+    plotOutput("ch3_pois_plot", height = "350px"),
+    uiOutput("ch3_pois_stats")
+  )
+)
+```
+
+::: {.formula-box}
+$$P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}, \quad E(X) = \lambda, \quad Var(X) = \lambda$$
+:::
+
+```{r}
+#| context: server
+
+observeEvent(input$ch3_pois_preset1, {
+  updateSliderInput(session, "ch3_pois_lambda", value = 2)
+})
+observeEvent(input$ch3_pois_preset2, {
+  updateSliderInput(session, "ch3_pois_lambda", value = 8)
+})
+observeEvent(input$ch3_pois_preset3, {
+  updateSliderInput(session, "ch3_pois_lambda", value = 0.5)
+})
+
+output$ch3_pois_plot <- renderPlot({
+  lambda <- input$ch3_pois_lambda
+  show_stats <- input$ch3_pois_show_stats
+
+  x_max <- max(20, qpois(0.999, lambda))
+  x_vals <- 0:x_max
+  probs <- dpois(x_vals, lambda)
+
+  sig <- which(probs > 0.001)
+  x_show_max <- min(x_max, max(sig) + 2)
+  keep <- x_vals <= x_show_max
+
+  df <- data.frame(x = x_vals[keep], prob = probs[keep])
+  sigma <- sqrt(lambda)
+
+  pl <- ggplot(df, aes(x = x, y = prob)) +
+    geom_col(fill = col_poisson, color = "white", alpha = 0.85, width = 0.7) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+    labs(title = paste0("Pois(λ=", lambda, ")"),
+         x = "Liczba zdarzeń (k)", y = "P(X = k)") +
+    theme_prob()
+
+  if (show_stats) {
+    pl <- pl +
+      geom_vline(xintercept = lambda, color = col_secondary, linewidth = 1.2, linetype = "dashed") +
+      annotate("rect", xmin = lambda - sigma, xmax = lambda + sigma,
+               ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
+  }
+  pl
+})
+
+output$ch3_pois_stats <- renderUI({
+  lambda <- input$ch3_pois_lambda
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("E(X) = λ = ", lambda), col_poisson),
+    stat_box(paste0("SD = \u221aλ = ", round(sqrt(lambda), 2)), col_dark),
+    stat_box(paste0("Var = λ = ", lambda), col_warning)
+  )
+})
+```
+
+::: {.callout-note}
+**Ciekawostka:**
+W rozkładzie Poissona wartość oczekiwana = wariancja = λ.
+Jeśli w danych średnia ≈ wariancja, to dobry kandydat na model Poissona!
+:::
+
+## Rozkład geometryczny
+
+Powtarzamy próby aż do **pierwszego sukcesu**.
+Pytamy: ile prób to zajmie?
+
+Przykłady: ile rzutów kostką do pierwszej szóstki?
+Ile losowań do trafienia nagrody? Ile prób egzaminu do zdania?
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch3_geom_p", "p (prawdop. sukcesu):",
+                min = 0.01, max = 0.9, value = 0.2, step = 0.01),
+    hr(),
+    div(class = "preset-buttons",
+      actionButton("ch3_geom_preset1", "Szóstka na kostce\n(p=1/6)",
+                   class = "btn-outline-primary"),
+      actionButton("ch3_geom_preset2", "Moneta\n(p=0.5)",
+                   class = "btn-outline-warning"),
+      actionButton("ch3_geom_preset3", "Rzadkie\n(p=0.05)",
+                   class = "btn-outline-danger")
+    ),
+    hr(),
+    checkboxInput("ch3_geom_show_stats", "Pokaż E(X) i SD", value = TRUE)
+  ),
+  column(8,
+    plotOutput("ch3_geom_plot", height = "350px"),
+    uiOutput("ch3_geom_stats")
+  )
+)
+```
+
+::: {.formula-box}
+$$P(X = k) = (1-p)^{k-1} \cdot p, \quad E(X) = \frac{1}{p}, \quad Var(X) = \frac{1-p}{p^2}$$
+:::
+
+```{r}
+#| context: server
+
+observeEvent(input$ch3_geom_preset1, {
+  updateSliderInput(session, "ch3_geom_p", value = round(1/6, 2))
+})
+observeEvent(input$ch3_geom_preset2, {
+  updateSliderInput(session, "ch3_geom_p", value = 0.5)
+})
+observeEvent(input$ch3_geom_preset3, {
+  updateSliderInput(session, "ch3_geom_p", value = 0.05)
+})
+
+output$ch3_geom_plot <- renderPlot({
+  p <- input$ch3_geom_p
+  show_stats <- input$ch3_geom_show_stats
+
+  x_max <- max(10, qgeom(0.999, p) + 1)
+  x_vals <- 1:x_max
+  probs <- dgeom(x_vals - 1, p)
+
+  sig <- which(probs > 0.001)
+  x_show_max <- min(x_max, max(sig) + 2)
+  keep <- x_vals <= x_show_max
+
+  df <- data.frame(x = x_vals[keep], prob = probs[keep])
+  mu <- 1 / p
+  sigma <- sqrt((1 - p) / p^2)
+
+  pl <- ggplot(df, aes(x = x, y = prob)) +
+    geom_col(fill = col_geometric, color = "white", alpha = 0.85, width = 0.7) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+    labs(title = paste0("Geom(p=", p, ")"),
+         x = "Numer próby (k)", y = "P(X = k)") +
+    theme_prob()
+
+  if (show_stats) {
+    pl <- pl +
+      geom_vline(xintercept = mu, color = col_secondary, linewidth = 1.2, linetype = "dashed") +
+      annotate("rect", xmin = mu - sigma, xmax = mu + sigma,
+               ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
+  }
+  pl
+})
+
+output$ch3_geom_stats <- renderUI({
+  p <- input$ch3_geom_p
+  mu <- 1 / p
+  sigma <- sqrt((1 - p) / p^2)
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("E(X) = 1/p = ", round(mu, 2)), col_geometric),
+    stat_box(paste0("SD = ", round(sigma, 2)), col_dark),
+    stat_box(paste0("Var = (1-p)/p\u00b2 = ", round(sigma^2, 2)), col_warning)
+  )
+})
+```
+
+::: {.callout-note}
+**Uwaga:**
+Im mniejsze p, tym dłużej (przeciętnie) czekamy na sukces.
+Rozkład geometryczny jest **bezpamięciowy**
+— szansa sukcesu w każdej próbie jest taka sama,
+niezależnie od tego ile porażek już było.
+:::
+
+## Porównanie czterech rozkładów
+
+Zobaczmy wszystkie cztery rozkłady obok siebie. Zwróć uwagę na
+różnice w kształtach i na to, kiedy rozkład dyskretny zaczyna
+wyglądać jak gładki 'dzwon'.
+
+```{r}
+checkboxInput("ch3_compare_show_ev", "Pokaż wartość oczekiwaną (linia)", value = FALSE)
+checkboxInput("ch3_compare_show_sd", "Pokaż ± odchylenie standardowe (pas)", value = FALSE)
+plotOutput("ch3_compare_plot", height = "350px")
+```
+
+```{r}
+#| context: server
+
+output$ch3_compare_plot <- renderPlot({
+  show_ev <- input$ch3_compare_show_ev
+  show_sd <- input$ch3_compare_show_sd
+
+  x1 <- 1:6; p1 <- rep(1/6, 6)
+  mu1 <- 3.5; sd1 <- sqrt(35/12)
+  df1 <- data.frame(x = x1, prob = p1, dist = "Jednostajny\n(kostka)")
+
+  x2 <- 0:20; p2 <- dbinom(x2, 20, 0.3)
+  mu2 <- 6; sd2 <- sqrt(20*0.3*0.7)
+  keep2 <- p2 > 0.001
+  df2 <- data.frame(x = x2[keep2], prob = p2[keep2], dist = "Dwumianowy\nB(20, 0.3)")
+
+  x3 <- 0:15; p3 <- dpois(x3, 4)
+  mu3 <- 4; sd3 <- 2
+  keep3 <- p3 > 0.001
+  df3 <- data.frame(x = x3[keep3], prob = p3[keep3], dist = "Poissona\nPois(4)")
+
+  x4 <- 1:25; p4 <- dgeom(x4 - 1, 0.2)
+  mu4 <- 1/0.2; sd4 <- sqrt((1 - 0.2) / 0.2^2)
+  keep4 <- p4 > 0.001
+  df4 <- data.frame(x = x4[keep4], prob = p4[keep4], dist = "Geometryczny\nGeom(0.2)")
+
+  df_all <- rbind(df1, df2, df3, df4)
+  df_all$dist <- factor(df_all$dist,
+                        levels = c("Jednostajny\n(kostka)", "Dwumianowy\nB(20, 0.3)",
+                                   "Poissona\nPois(4)", "Geometryczny\nGeom(0.2)"))
+
+  stats_df <- data.frame(
+    dist = levels(df_all$dist),
+    mu = c(mu1, mu2, mu3, mu4),
+    sd = c(sd1, sd2, sd3, sd4)
+  )
+
+  pl <- ggplot(df_all, aes(x = x, y = prob)) +
+    geom_col(aes(fill = dist), color = "white", alpha = 0.85, width = 0.7, show.legend = FALSE) +
+    facet_wrap(~dist, scales = "free_x", nrow = 2) +
+    scale_fill_manual(values = c(col_uniform, col_binomial, col_poisson, col_geometric)) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+    labs(x = "Wartość", y = "Prawdopodobieństwo") +
+    theme_prob(base_size = 13)
+
+  if (show_ev) {
+    pl <- pl + geom_vline(data = stats_df, aes(xintercept = mu),
+                          color = col_secondary, linewidth = 1, linetype = "dashed")
+  }
+  if (show_sd) {
+    pl <- pl + geom_rect(data = stats_df,
+                         aes(xmin = mu - sd, xmax = mu + sd, ymin = 0, ymax = Inf),
+                         inherit.aes = FALSE, fill = col_secondary, alpha = 0.08)
+  }
+  pl
+})
+```
+
+---
+
+# Rozkłady ciągłe
+
+*Rozkłady dyskretne opisują zmienne o skończonej liczbie wartości.
+Ale co, gdy zmienna może przyjąć dowolną wartość z przedziału?*
+
+## Od histogramu do krzywej gęstości
+
+Znasz już histogramy ze statystyki opisowej. Teraz zobaczymy,
+jak histogram **przechodzi w gładką krzywą**
+gdy zwiększamy próbę i zwężamy przedziały.
+Ta krzywa to **funkcja gęstości prawdopodobieństwa (PDF)**
+— ciągły odpowiednik PMF.
+
+```{r}
+fluidRow(
+  column(4,
+    selectInput("ch4_step_dist", "Rozkład źródłowy:",
+      choices = c("Normalny" = "normal", "Wykładniczy" = "exp",
+                  "Jednostajny" = "unif"),
+      selected = "normal"
+    ),
+    sliderInput("ch4_step_n", "Wielkość próby:",
+                min = 50, max = 10000, value = 500, step = 50),
+    hr(),
+    actionButton("ch4_step1", "1. Surowe dane (rug)",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch4_step2", "2. Histogram (5 binów)",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch4_step3", "3. Więcej binów (15)",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch4_step4", "4. Jeszcze więcej (30)",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch4_step5", "5. Skala gęstości",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch4_step6", "6. Krzywa gęstości",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch4_step7", "7. Tylko PDF",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch4_step_reset", "Reset",
+                 class = "btn-outline-secondary", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch4_step_plot", height = "400px"),
+    uiOutput("ch4_step_text")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch4_step <- reactiveVal(0)
+ch4_sample_data <- reactiveVal(NULL)
+
+observe({
+  n <- input$ch4_step_n
+  dist <- input$ch4_step_dist
+  data <- switch(dist,
+    "normal" = rnorm(n, mean = 5, sd = 1.5),
+    "exp"    = rexp(n, rate = 0.5),
+    "unif"   = runif(n, min = 0, max = 10)
+  )
+  ch4_sample_data(data)
+  ch4_step(0)
+})
+
+observeEvent(input$ch4_step1, ch4_step(1))
+observeEvent(input$ch4_step2, ch4_step(2))
+observeEvent(input$ch4_step3, ch4_step(3))
+observeEvent(input$ch4_step4, ch4_step(4))
+observeEvent(input$ch4_step5, ch4_step(5))
+observeEvent(input$ch4_step6, ch4_step(6))
+observeEvent(input$ch4_step7, ch4_step(7))
+observeEvent(input$ch4_step_reset, ch4_step(0))
+
+output$ch4_step_plot <- renderPlot({
+  step <- ch4_step()
+  data <- ch4_sample_data()
+  req(data)
+
+  df <- data.frame(x = data)
+
+  if (step == 0) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5,
+               label = "Kliknij krok 1, aby zacząć",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else if (step == 1) {
+    ggplot(df, aes(x = x)) +
+      geom_rug(color = col_primary, alpha = 0.3) +
+      labs(title = "Krok 1: Surowe dane", x = "Wartość", y = "") +
+      theme_prob()
+  } else if (step == 2) {
+    ggplot(df, aes(x = x)) +
+      geom_histogram(bins = 5, fill = col_primary, color = "white", alpha = 0.7) +
+      geom_rug(alpha = 0.2) +
+      labs(title = "Krok 2: Histogram (5 binów)", x = "Wartość", y = "Liczebność") +
+      theme_prob()
+  } else if (step == 3) {
+    ggplot(df, aes(x = x)) +
+      geom_histogram(bins = 15, fill = col_primary, color = "white", alpha = 0.7) +
+      labs(title = "Krok 3: Histogram (15 binów)", x = "Wartość", y = "Liczebność") +
+      theme_prob()
+  } else if (step == 4) {
+    ggplot(df, aes(x = x)) +
+      geom_histogram(bins = 30, fill = col_primary, color = "white", alpha = 0.7) +
+      labs(title = "Krok 4: Histogram (30 binów)", x = "Wartość", y = "Liczebność") +
+      theme_prob()
+  } else if (step == 5) {
+    ggplot(df, aes(x = x)) +
+      geom_histogram(aes(y = after_stat(density)), bins = 30,
+                     fill = col_primary, color = "white", alpha = 0.7) +
+      labs(title = "Krok 5: Skala gęstości (oś Y = gęstość)",
+           x = "Wartość", y = "Gęstość") +
+      theme_prob()
+  } else if (step == 6) {
+    ggplot(df, aes(x = x)) +
+      geom_histogram(aes(y = after_stat(density)), bins = 30,
+                     fill = col_primary, color = "white", alpha = 0.5) +
+      geom_density(color = col_secondary, linewidth = 1.5) +
+      labs(title = "Krok 6: Histogram + krzywa gęstości",
+           x = "Wartość", y = "Gęstość") +
+      theme_prob()
+  } else {
+    ggplot(df, aes(x = x)) +
+      geom_density(fill = col_primary, color = col_dark, linewidth = 1.2, alpha = 0.3) +
+      labs(title = "Krok 7: Funkcja gęstości (PDF)",
+           subtitle = "Matematyczna idealizacja histogramu",
+           x = "Wartość", y = "Gęstość f(x)") +
+      theme_prob()
+  }
+})
+
+output$ch4_step_text <- renderUI({
+  step <- ch4_step()
+  texts <- c(
+    "",
+    "Każda kreska to jedna obserwacja. Trudno coś z tego odczytać.",
+    "5 binów — widzimy ogólny zarys, ale mało szczegółów.",
+    "15 binów — kształt staje się wyraźniejszy.",
+    "30 binów — jeszcze więcej szczegółów, ale słupki są nierówne.",
+    "Zmiana osi Y na gęstość — teraz pole słupków = 1.",
+    "Nakładamy gładką krzywą, która przybliża kształt danych.",
+    "To jest PDF — teoretyczny model opisujący rozkład. Pole pod krzywą = 1."
+  )
+  if (step > 0) div(class = "callout-info", texts[step + 1])
+})
+```
+
+## Prawdopodobieństwo = pole pod krzywą
+
+W rozkładach ciągłych prawdopodobieństwo to
+**pole pod krzywą gęstości** w danym przedziale.
+Wysokość krzywej to NIE prawdopodobieństwo!
+
+Ważna konsekwencja: **P(X = dokładnie 5.0) = 0**
+dla rozkładów ciągłych. Sens ma tylko pytanie o przedziały.
+
+```{r}
+fluidRow(
+  column(4,
+    selectInput("ch4_area_dist", "Rozkład:",
+      choices = c("Normalny N(0,1)" = "norm",
+                  "Wykładniczy Exp(1)" = "exp",
+                  "Jednostajny U(0,10)" = "unif"),
+      selected = "norm"
+    ),
+    sliderInput("ch4_area_a", "Dolna granica (a):",
+                min = -4, max = 4, value = -1, step = 0.1),
+    sliderInput("ch4_area_b", "Górna granica (b):",
+                min = -4, max = 4, value = 1, step = 0.1)
+  ),
+  column(8,
+    plotOutput("ch4_area_plot", height = "350px"),
+    uiOutput("ch4_area_stats")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+observe({
+  dist <- input$ch4_area_dist
+  if (dist == "norm") {
+    updateSliderInput(session, "ch4_area_a", min = -4, max = 4, value = -1, step = 0.1)
+    updateSliderInput(session, "ch4_area_b", min = -4, max = 4, value = 1, step = 0.1)
+  } else if (dist == "exp") {
+    updateSliderInput(session, "ch4_area_a", min = 0, max = 8, value = 0, step = 0.1)
+    updateSliderInput(session, "ch4_area_b", min = 0, max = 8, value = 2, step = 0.1)
+  } else {
+    updateSliderInput(session, "ch4_area_a", min = 0, max = 10, value = 2, step = 0.1)
+    updateSliderInput(session, "ch4_area_b", min = 0, max = 10, value = 7, step = 0.1)
+  }
+})
+
+output$ch4_area_plot <- renderPlot({
+  dist <- input$ch4_area_dist
+  a <- input$ch4_area_a
+  b <- input$ch4_area_b
+
+  if (dist == "norm") {
+    x_range <- c(-4, 4)
+    dfn <- function(x) dnorm(x)
+    prob <- pnorm(b) - pnorm(a)
+  } else if (dist == "exp") {
+    x_range <- c(0, 8)
+    dfn <- function(x) dexp(x)
+    prob <- pexp(b) - pexp(a)
+  } else {
+    x_range <- c(0, 10)
+    dfn <- function(x) dunif(x, 0, 10)
+    prob <- punif(b, 0, 10) - punif(a, 0, 10)
+  }
+
+  x_seq <- seq(x_range[1], x_range[2], length.out = 500)
+  df_curve <- data.frame(x = x_seq, y = dfn(x_seq))
+
+  shade_x <- seq(max(a, x_range[1]), min(b, x_range[2]), length.out = 300)
+  shade_df <- data.frame(x = shade_x, y = dfn(shade_x))
+
+  ggplot() +
+    geom_area(data = shade_df, aes(x = x, y = y),
+              fill = col_primary, alpha = 0.35) +
+    geom_line(data = df_curve, aes(x = x, y = y),
+              color = col_dark, linewidth = 1.2) +
+    geom_vline(xintercept = a, color = col_secondary, linetype = "dashed") +
+    geom_vline(xintercept = b, color = col_secondary, linetype = "dashed") +
+    annotate("text", x = (a + b) / 2, y = max(dfn(x_seq)) * 0.5,
+             label = sprintf("P = %.4f", prob),
+             size = 6, fontface = "bold", color = col_dark) +
+    labs(title = paste0("P(", a, " < X < ", b, ")"),
+         x = "x", y = "f(x)") +
+    theme_prob()
+})
+
+output$ch4_area_stats <- renderUI({
+  dist <- input$ch4_area_dist
+  a <- input$ch4_area_a
+  b <- input$ch4_area_b
+
+  if (dist == "norm") {
+    prob <- pnorm(b) - pnorm(a)
+  } else if (dist == "exp") {
+    prob <- pexp(b) - pexp(a)
+  } else {
+    prob <- punif(b, 0, 10) - punif(a, 0, 10)
+  }
+
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("P(", a, " < X < ", b, ") = ", sprintf("%.4f", max(0, prob))), col_primary),
+    stat_box(paste0(sprintf("%.1f", max(0, prob) * 100), "%"), col_dark)
+  )
+})
+```
+
+::: {.callout-warning}
+**Zapamiętaj:**
+W rozkładzie ciągłym gęstość f(x) może być > 1 (np. U(0, 0.5) ma f(x) = 2),
+ale **pole pod całą krzywą zawsze wynosi 1**.
+:::
+
+## Dwa podstawowe rozkłady ciągłe
+
+**Jednostajny ciągły U(a, b)** — każda wartość w przedziale
+[a, b] jest jednakowo prawdopodobna. Przykład: losowa liczba z generatora.
+
+**Wykładniczy Exp(λ)** — modeluje czas oczekiwania między
+zdarzeniami. Przykład: czas między wiadomościami na WhatsAppie, czas między awariami maszyn.
+
+```{r}
+fluidRow(
+  column(6,
+    h5("Jednostajny U(a, b)"),
+    sliderInput("ch4_unif_a", "a:", min = 0, max = 5, value = 0, step = 0.5),
+    sliderInput("ch4_unif_b", "b:", min = 1, max = 10, value = 5, step = 0.5),
+    plotOutput("ch4_unif_plot", height = "250px"),
+    uiOutput("ch4_unif_stats")
+  ),
+  column(6,
+    h5("Wykładniczy Exp(λ)"),
+    sliderInput("ch4_exp_lambda", "λ (rate):",
+                min = 0.1, max = 3, value = 1, step = 0.1),
+    br(),
+    plotOutput("ch4_exp_plot", height = "250px"),
+    uiOutput("ch4_exp_stats")
+  )
+)
+```
+
+::: {.formula-box}
+Jednostajny: $$f(x) = \frac{1}{b-a}, \quad E(X) = \frac{a+b}{2}, \quad Var(X) = \frac{(b-a)^2}{12}$$
+
+Wykładniczy: $$f(x) = \lambda e^{-\lambda x}, \quad E(X) = \frac{1}{\lambda}, \quad Var(X) = \frac{1}{\lambda^2}$$
+:::
+
+```{r}
+#| context: server
+
+output$ch4_unif_plot <- renderPlot({
+  a <- input$ch4_unif_a
+  b <- input$ch4_unif_b
+  req(b > a)
+
+  x_seq <- seq(a - 1, b + 1, length.out = 500)
+  y_seq <- dunif(x_seq, a, b)
+  df <- data.frame(x = x_seq, y = y_seq)
+
+  ggplot(df, aes(x = x, y = y)) +
+    geom_area(fill = col_uniform, alpha = 0.3) +
+    geom_line(color = col_uniform, linewidth = 1.2) +
+    labs(title = paste0("U(", a, ", ", b, ")"), x = "x", y = "f(x)") +
+    theme_prob(base_size = 12)
+})
+
+output$ch4_unif_stats <- renderUI({
+  a <- input$ch4_unif_a
+  b <- input$ch4_unif_b
+  req(b > a)
+  mu <- (a + b) / 2
+  v <- (b - a)^2 / 12
+  div(style = "font-size: 13px;",
+    paste0("E(X) = ", round(mu, 2), " | SD = ", round(sqrt(v), 2))
+  )
+})
+
+output$ch4_exp_plot <- renderPlot({
+  lambda <- input$ch4_exp_lambda
+  x_seq <- seq(0, 8, length.out = 500)
+  y_seq <- dexp(x_seq, rate = lambda)
+  df <- data.frame(x = x_seq, y = y_seq)
+
+  ggplot(df, aes(x = x, y = y)) +
+    geom_area(fill = col_exponential, alpha = 0.3) +
+    geom_line(color = col_exponential, linewidth = 1.2) +
+    labs(title = paste0("Exp(λ=", lambda, ")"), x = "x", y = "f(x)") +
+    theme_prob(base_size = 12)
+})
+
+output$ch4_exp_stats <- renderUI({
+  lambda <- input$ch4_exp_lambda
+  mu <- 1 / lambda
+  sigma <- 1 / lambda
+  div(style = "font-size: 13px;",
+    paste0("E(X) = 1/λ = ", round(mu, 2), " | SD = 1/λ = ", round(sigma, 2))
+  )
+})
+```
+
+## Rozkład t-Studenta
+
+Rozkład t-Studenta wygląda jak normalny, ale ma
+**cięższe ogony** — wartości ekstremalne są bardziej
+prawdopodobne. Jest kluczowy we **wnioskowaniu statystycznym**
+(test t, przedziały ufności).
+
+Parametr **df** (stopnie swobody) kontroluje 'grubość' ogonów.
+Im więcej df, tym bliżej do rozkładu normalnego.
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch4_t_df", "df (stopnie swobody):",
+                min = 1, max = 50, value = 5, step = 1),
+    hr(),
+    div(class = "preset-buttons",
+      actionButton("ch4_t_preset1", "df=1\n(Cauchy)",
+                   class = "btn-outline-primary"),
+      actionButton("ch4_t_preset2", "df=5",
+                   class = "btn-outline-warning"),
+      actionButton("ch4_t_preset3", "df=30\n(≈ normalny)",
+                   class = "btn-outline-success")
+    ),
+    hr(),
+    checkboxInput("ch4_t_show_normal", "Pokaż N(0,1) dla porównania", value = TRUE),
+    checkboxInput("ch4_t_show_stats", "Pokaż E(X) i SD", value = FALSE)
+  ),
+  column(8,
+    plotOutput("ch4_t_plot", height = "350px"),
+    uiOutput("ch4_t_stats")
+  )
+)
+```
+
+::: {.formula-box}
+$$E(X) = 0 \; (df > 1), \quad Var(X) = \frac{df}{df - 2} \; (df > 2)$$
+:::
+
+```{r}
+#| context: server
+
+observeEvent(input$ch4_t_preset1, updateSliderInput(session, "ch4_t_df", value = 1))
+observeEvent(input$ch4_t_preset2, updateSliderInput(session, "ch4_t_df", value = 5))
+observeEvent(input$ch4_t_preset3, updateSliderInput(session, "ch4_t_df", value = 30))
+
+output$ch4_t_plot <- renderPlot({
+  df_val <- input$ch4_t_df
+  show_normal <- input$ch4_t_show_normal
+  show_stats <- input$ch4_t_show_stats
+
+  x_seq <- seq(-5, 5, length.out = 500)
+  y_t <- dt(x_seq, df = df_val)
+  df_plot <- data.frame(x = x_seq, y = y_t)
+
+  pl <- ggplot(df_plot, aes(x = x, y = y)) +
+    geom_area(fill = col_t_student, alpha = 0.3) +
+    geom_line(color = col_t_student, linewidth = 1.2)
+
+  if (show_normal) {
+    y_norm <- dnorm(x_seq)
+    df_norm <- data.frame(x = x_seq, y = y_norm)
+    pl <- pl +
+      geom_line(data = df_norm, aes(x = x, y = y),
+                color = col_primary, linewidth = 1, linetype = "dashed")
+  }
+
+  if (show_stats && df_val > 2) {
+    mu <- 0
+    sigma <- sqrt(df_val / (df_val - 2))
+    pl <- pl +
+      geom_vline(xintercept = mu, color = col_secondary, linewidth = 1, linetype = "dashed") +
+      annotate("rect", xmin = mu - sigma, xmax = mu + sigma,
+               ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
+  }
+
+  pl +
+    labs(title = paste0("t(df=", df_val, ")",
+                        if (show_normal) "  vs  N(0,1)" else ""),
+         x = "x", y = "f(x)") +
+    theme_prob()
+})
+
+output$ch4_t_stats <- renderUI({
+  df_val <- input$ch4_t_df
+  mu_text <- if (df_val > 1) "E(X) = 0" else "E(X) = niezdef."
+  var_text <- if (df_val > 2) {
+    paste0("Var = df/(df-2) = ", round(df_val / (df_val - 2), 2))
+  } else { "Var = \u221e" }
+  sd_text <- if (df_val > 2) {
+    paste0("SD = ", round(sqrt(df_val / (df_val - 2)), 2))
+  } else { "SD = \u221e" }
+
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(mu_text, col_t_student),
+    stat_box(sd_text, col_dark),
+    stat_box(var_text, col_warning)
+  )
+})
+```
+
+::: {.callout-note}
+**Dlaczego t-Studenta?**
+Gdy nie znamy prawdziwego odchylenia standardowego populacji
+i szacujemy je z próby, rozkład statystyki testowej nie jest
+normalny, ale właśnie t-Studenta. Przy małych próbach (n < 30)
+różnica jest znacząca!
+:::
+
+## Rozkład chi-kwadrat ($\chi^2$)
+
+Rozkład chi-kwadrat powstaje jako **suma kwadratów**
+niezależnych zmiennych N(0,1). Jest zawsze
+**nieujemny i prawoskośny**.
+
+Zastosowania: testy niezależności, testy dopasowania,
+estymacja wariancji.
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch4_chisq_df", "df (stopnie swobody):",
+                min = 1, max = 30, value = 5, step = 1),
+    hr(),
+    div(class = "preset-buttons",
+      actionButton("ch4_chisq_preset1", "df=1",
+                   class = "btn-outline-primary"),
+      actionButton("ch4_chisq_preset2", "df=5",
+                   class = "btn-outline-warning"),
+      actionButton("ch4_chisq_preset3", "df=15",
+                   class = "btn-outline-success")
+    ),
+    hr(),
+    checkboxInput("ch4_chisq_show_stats", "Pokaż E(X) i SD", value = TRUE)
+  ),
+  column(8,
+    plotOutput("ch4_chisq_plot", height = "350px"),
+    uiOutput("ch4_chisq_stats")
+  )
+)
+```
+
+::: {.formula-box}
+$$E(X) = df, \quad Var(X) = 2 \cdot df$$
+:::
+
+```{r}
+#| context: server
+
+observeEvent(input$ch4_chisq_preset1, updateSliderInput(session, "ch4_chisq_df", value = 1))
+observeEvent(input$ch4_chisq_preset2, updateSliderInput(session, "ch4_chisq_df", value = 5))
+observeEvent(input$ch4_chisq_preset3, updateSliderInput(session, "ch4_chisq_df", value = 15))
+
+output$ch4_chisq_plot <- renderPlot({
+  df_val <- input$ch4_chisq_df
+  show_stats <- input$ch4_chisq_show_stats
+
+  x_max <- max(15, qchisq(0.999, df_val))
+  x_seq <- seq(0.01, x_max, length.out = 500)
+  y_seq <- dchisq(x_seq, df = df_val)
+  df_plot <- data.frame(x = x_seq, y = y_seq)
+
+  mu <- df_val
+  sigma <- sqrt(2 * df_val)
+
+  pl <- ggplot(df_plot, aes(x = x, y = y)) +
+    geom_area(fill = col_chi_sq, alpha = 0.3) +
+    geom_line(color = col_chi_sq, linewidth = 1.2)
+
+  if (show_stats) {
+    pl <- pl +
+      geom_vline(xintercept = mu, color = col_secondary, linewidth = 1.2, linetype = "dashed") +
+      annotate("rect", xmin = max(0, mu - sigma), xmax = mu + sigma,
+               ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
+  }
+
+  pl +
+    labs(title = paste0("\u03c7\u00b2(df=", df_val, ")"),
+         x = "x", y = "f(x)") +
+    theme_prob()
+})
+
+output$ch4_chisq_stats <- renderUI({
+  df_val <- input$ch4_chisq_df
+  mu <- df_val
+  sigma <- sqrt(2 * df_val)
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("E(X) = df = ", mu), col_chi_sq),
+    stat_box(paste0("SD = \u221a(2\u00b7df) = ", round(sigma, 2)), col_dark),
+    stat_box(paste0("Var = 2\u00b7df = ", 2 * df_val), col_warning)
+  )
+})
+```
+
+::: {.callout-note}
+**Obserwacja:**
+Przy małym df rozkład jest mocno prawoskośny.
+Gdy df rośnie, rozkład staje się coraz bardziej symetryczny
+i zbliża się do normalnego (dzięki CTG!).
+:::
+
+## Rozkład log-normalny
+
+Jeśli **ln(X) ~ N(μ, σ)**, to X ma rozkład log-normalny.
+Zmienna jest zawsze **dodatnia i prawoskośna**.
+
+Pojawia się wszędzie tam, gdzie dane rosną
+**multiplikatywnie**: dochody, ceny akcji,
+czasy reakcji, stężenia substancji.
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch4_lnorm_mu", "μ (meanlog):",
+                min = -1, max = 3, value = 0, step = 0.1),
+    sliderInput("ch4_lnorm_sigma", "σ (sdlog):",
+                min = 0.1, max = 2, value = 0.5, step = 0.1),
+    hr(),
+    div(class = "preset-buttons",
+      actionButton("ch4_lnorm_preset1", "Dochody\n(μ=3, σ=0.8)",
+                   class = "btn-outline-primary"),
+      actionButton("ch4_lnorm_preset2", "Ceny akcji\n(μ=1, σ=0.5)",
+                   class = "btn-outline-warning"),
+      actionButton("ch4_lnorm_preset3", "Czas reakcji\n(μ=0, σ=0.5)",
+                   class = "btn-outline-success")
+    ),
+    hr(),
+    checkboxInput("ch4_lnorm_show_stats", "Pokaż E(X) i SD", value = TRUE),
+    checkboxInput("ch4_lnorm_show_log", "Pokaż na skali logarytmicznej", value = FALSE)
+  ),
+  column(8,
+    plotOutput("ch4_lnorm_plot", height = "350px"),
+    uiOutput("ch4_lnorm_stats")
+  )
+)
+```
+
+::: {.formula-box}
+$$E(X) = e^{\mu + \sigma^2/2}, \quad Var(X) = \left(e^{\sigma^2} - 1\right) \cdot e^{2\mu + \sigma^2}$$
+:::
+
+```{r}
+#| context: server
+
+observeEvent(input$ch4_lnorm_preset1, {
+  updateSliderInput(session, "ch4_lnorm_mu", value = 3)
+  updateSliderInput(session, "ch4_lnorm_sigma", value = 0.8)
+})
+observeEvent(input$ch4_lnorm_preset2, {
+  updateSliderInput(session, "ch4_lnorm_mu", value = 1)
+  updateSliderInput(session, "ch4_lnorm_sigma", value = 0.5)
+})
+observeEvent(input$ch4_lnorm_preset3, {
+  updateSliderInput(session, "ch4_lnorm_mu", value = 0)
+  updateSliderInput(session, "ch4_lnorm_sigma", value = 0.5)
+})
+
+output$ch4_lnorm_plot <- renderPlot({
+  mu <- input$ch4_lnorm_mu
+  sigma <- input$ch4_lnorm_sigma
+  show_stats <- input$ch4_lnorm_show_stats
+  show_log <- input$ch4_lnorm_show_log
+
+  x_max <- qlnorm(0.995, mu, sigma)
+  x_seq <- seq(0.001, x_max, length.out = 500)
+  y_seq <- dlnorm(x_seq, mu, sigma)
+  df_plot <- data.frame(x = x_seq, y = y_seq)
+
+  ev <- exp(mu + sigma^2 / 2)
+  med <- exp(mu)
+  sd_val <- sqrt((exp(sigma^2) - 1) * exp(2 * mu + sigma^2))
+
+  if (show_log) {
+    log_x <- seq(mu - 4 * sigma, mu + 4 * sigma, length.out = 500)
+    log_y <- dnorm(log_x, mu, sigma)
+    df_log <- data.frame(x = log_x, y = log_y)
+
+    pl <- ggplot(df_log, aes(x = x, y = y)) +
+      geom_area(fill = col_normal, alpha = 0.3) +
+      geom_line(color = col_normal, linewidth = 1.2) +
+      labs(title = paste0("ln(X) ~ N(μ=", mu, ", σ=", sigma, ")"),
+           subtitle = "Logarytm zmiennej ma rozkład normalny",
+           x = "ln(x)", y = "f(ln(x))") +
+      theme_prob()
+  } else {
+    pl <- ggplot(df_plot, aes(x = x, y = y)) +
+      geom_area(fill = col_lognormal, alpha = 0.3) +
+      geom_line(color = col_lognormal, linewidth = 1.2)
+
+    if (show_stats) {
+      pl <- pl +
+        geom_vline(xintercept = ev, color = col_secondary, linewidth = 1, linetype = "dashed") +
+        geom_vline(xintercept = med, color = col_primary, linewidth = 1, linetype = "dotted") +
+        annotate("text", x = ev, y = max(y_seq) * 0.9,
+                 label = paste0("średnia = ", round(ev, 1)),
+                 hjust = -0.1, color = col_secondary, fontface = "bold", size = 4) +
+        annotate("text", x = med, y = max(y_seq) * 0.75,
+                 label = paste0("mediana = ", round(med, 1)),
+                 hjust = -0.1, color = col_primary, fontface = "bold", size = 4)
+    }
+
+    pl <- pl +
+      labs(title = paste0("LogN(μ=", mu, ", σ=", sigma, ")"),
+           x = "x", y = "f(x)") +
+      theme_prob()
+  }
+  pl
+})
+
+output$ch4_lnorm_stats <- renderUI({
+  mu <- input$ch4_lnorm_mu
+  sigma <- input$ch4_lnorm_sigma
+
+  ev <- exp(mu + sigma^2 / 2)
+  med <- exp(mu)
+  sd_val <- sqrt((exp(sigma^2) - 1) * exp(2 * mu + sigma^2))
+
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("E(X) = ", round(ev, 2)), col_lognormal),
+    stat_box(paste0("Me = e\u1d58 = ", round(med, 2)), col_primary),
+    stat_box(paste0("SD = ", round(sd_val, 2)), col_dark)
+  )
+})
+```
+
+::: {.callout-warning}
+**Uwaga na średnią!**
+W rozkładzie log-normalnym średnia jest zawsze większa od mediany.
+Mediana = $e^\mu$, średnia = $e^{\mu + \sigma^2/2}$.
+Dlatego **mediana dochodów** jest lepszą miarą
+'typowego' dochodu niż średnia.
+:::
+
+---
+
+# Rozkład normalny — królowa rozkładów
+
+*Wiemy już, czym są rozkłady ciągłe i jak interpretować gęstość.
+Teraz poznamy najważniejszy ze wszystkich rozkładów.*
+
+Rozkład normalny (Gaussa) to **najczęściej spotykany**
+rozkład w statystyce. Opisuje go tylko
+**dwa parametry**: średnia μ (gdzie jest środek)
+i odchylenie standardowe σ (jak szerokie jest rozproszenie).
+
+Dlaczego jest aż tak ważny? Odpowiedź poznamy w następnym rozdziale (CLT).
+Na razie zbudujmy intuicję.
+
+## Dwa parametry — nieskończone możliwości
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch5_mu", "μ (średnia):",
+                min = -10, max = 10, value = 0, step = 0.5),
+    sliderInput("ch5_sigma", "σ (odch. std.):",
+                min = 0.5, max = 5, value = 1, step = 0.1),
+    hr(),
+    div(class = "preset-buttons",
+      actionButton("ch5_preset_std", "N(0,1)\nStandardowy",
+                   class = "btn-outline-primary"),
+      actionButton("ch5_preset_wzrost_k", "Wzrost\nkobiet",
+                   class = "btn-outline-success"),
+      actionButton("ch5_preset_iq", "IQ",
+                   class = "btn-outline-warning"),
+      actionButton("ch5_preset_temp", "Temp.\nciała",
+                   class = "btn-outline-danger")
+    ),
+    hr(),
+    checkboxInput("ch5_show_empirical", "Pokaż regułę 68-95-99.7", value = TRUE)
+  ),
+  column(8,
+    plotOutput("ch5_explore_plot", height = "400px"),
+    uiOutput("ch5_explore_stats")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+observeEvent(input$ch5_preset_std, {
+  updateSliderInput(session, "ch5_mu", value = 0)
+  updateSliderInput(session, "ch5_sigma", value = 1)
+})
+observeEvent(input$ch5_preset_wzrost_k, {
+  updateSliderInput(session, "ch5_mu", value = 166, min = 140, max = 200)
+  updateSliderInput(session, "ch5_sigma", value = 6, min = 1, max = 15)
+})
+observeEvent(input$ch5_preset_iq, {
+  updateSliderInput(session, "ch5_mu", value = 100, min = 50, max = 150)
+  updateSliderInput(session, "ch5_sigma", value = 15, min = 1, max = 30)
+})
+observeEvent(input$ch5_preset_temp, {
+  updateSliderInput(session, "ch5_mu", value = 36.6, min = 34, max = 40)
+  updateSliderInput(session, "ch5_sigma", value = 0.4, min = 0.1, max = 2)
+})
+
+output$ch5_explore_plot <- renderPlot({
+  mu <- input$ch5_mu
+  sigma <- input$ch5_sigma
+  show_emp <- input$ch5_show_empirical
+
+  x_seq <- seq(mu - 4*sigma, mu + 4*sigma, length.out = 500)
+  df <- data.frame(x = x_seq, y = dnorm(x_seq, mu, sigma))
+
+  p <- ggplot(df, aes(x = x, y = y)) +
+    geom_line(color = col_normal, linewidth = 1.5)
+
+  if (show_emp) {
+    shade1 <- data.frame(
+      x = seq(mu - sigma, mu + sigma, length.out = 200),
+      y = dnorm(seq(mu - sigma, mu + sigma, length.out = 200), mu, sigma)
+    )
+    p <- p + geom_area(data = shade1, aes(x = x, y = y), fill = col_normal, alpha = 0.4)
+
+    shade2l <- data.frame(
+      x = seq(mu - 2*sigma, mu - sigma, length.out = 100),
+      y = dnorm(seq(mu - 2*sigma, mu - sigma, length.out = 100), mu, sigma)
+    )
+    shade2r <- data.frame(
+      x = seq(mu + sigma, mu + 2*sigma, length.out = 100),
+      y = dnorm(seq(mu + sigma, mu + 2*sigma, length.out = 100), mu, sigma)
+    )
+    p <- p +
+      geom_area(data = shade2l, aes(x = x, y = y), fill = col_normal, alpha = 0.25) +
+      geom_area(data = shade2r, aes(x = x, y = y), fill = col_normal, alpha = 0.25)
+
+    shade3l <- data.frame(
+      x = seq(mu - 3*sigma, mu - 2*sigma, length.out = 100),
+      y = dnorm(seq(mu - 3*sigma, mu - 2*sigma, length.out = 100), mu, sigma)
+    )
+    shade3r <- data.frame(
+      x = seq(mu + 2*sigma, mu + 3*sigma, length.out = 100),
+      y = dnorm(seq(mu + 2*sigma, mu + 3*sigma, length.out = 100), mu, sigma)
+    )
+    p <- p +
+      geom_area(data = shade3l, aes(x = x, y = y), fill = col_normal, alpha = 0.12) +
+      geom_area(data = shade3r, aes(x = x, y = y), fill = col_normal, alpha = 0.12)
+
+    y_top <- dnorm(mu, mu, sigma)
+    p <- p +
+      annotate("text", x = mu, y = y_top * 0.6, label = "68%",
+               size = 5, fontface = "bold", color = col_dark) +
+      annotate("text", x = mu, y = y_top * 0.35, label = "95%",
+               size = 4.5, color = col_dark) +
+      annotate("text", x = mu, y = y_top * 0.15, label = "99.7%",
+               size = 4, color = "#7f8c8d")
+  }
+
+  p + geom_vline(xintercept = mu, color = col_dark, linetype = "dashed") +
+    labs(title = paste0("N(μ=", mu, ", σ=", sigma, ")"),
+         x = "x", y = "f(x)") +
+    theme_prob()
+})
+
+output$ch5_explore_stats <- renderUI({
+  mu <- input$ch5_mu
+  sigma <- input$ch5_sigma
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("μ = ", mu), col_normal),
+    stat_box(paste0("σ = ", sigma), col_dark),
+    stat_box(paste0("68%: [", round(mu - sigma, 1), ", ", round(mu + sigma, 1), "]"), col_warning)
+  )
+})
+```
+
+::: {.callout-note}
+**Reguła empiryczna (68-95-99.7):**
+Około 68% danych leży w przedziale μ±σ,
+95% w przedziale μ±2σ, a 99.7% w przedziale μ±3σ.
+:::
+
+## Porównanie dwóch rozkładów normalnych
+
+```{r}
+fluidRow(
+  column(3,
+    h5("Rozkład A", style = "color: #3498db;"),
+    sliderInput("ch5_cmp_mu1", "μ₁:", min = -5, max = 15, value = 5, step = 0.5),
+    sliderInput("ch5_cmp_s1", "σ₁:", min = 0.5, max = 5, value = 1.5, step = 0.1)
+  ),
+  column(3,
+    h5("Rozkład B", style = "color: #e74c3c;"),
+    sliderInput("ch5_cmp_mu2", "μ₂:", min = -5, max = 15, value = 8, step = 0.5),
+    sliderInput("ch5_cmp_s2", "σ₂:", min = 0.5, max = 5, value = 2, step = 0.1),
+    hr(),
+    actionButton("ch5_cmp_preset", "Mężczyźni vs\nkobiety (wzrost)",
+                 class = "btn-outline-primary", width = "100%")
+  ),
+  column(6,
+    plotOutput("ch5_compare_plot", height = "350px")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+observeEvent(input$ch5_cmp_preset, {
+  updateSliderInput(session, "ch5_cmp_mu1", value = 166, min = 140, max = 200)
+  updateSliderInput(session, "ch5_cmp_s1", value = 6, min = 1, max = 15)
+  updateSliderInput(session, "ch5_cmp_mu2", value = 178, min = 140, max = 200)
+  updateSliderInput(session, "ch5_cmp_s2", value = 7, min = 1, max = 15)
+})
+
+output$ch5_compare_plot <- renderPlot({
+  mu1 <- input$ch5_cmp_mu1; s1 <- input$ch5_cmp_s1
+  mu2 <- input$ch5_cmp_mu2; s2 <- input$ch5_cmp_s2
+
+  x_min <- min(mu1 - 4*s1, mu2 - 4*s2)
+  x_max <- max(mu1 + 4*s1, mu2 + 4*s2)
+  x_seq <- seq(x_min, x_max, length.out = 500)
+
+  df <- data.frame(
+    x = rep(x_seq, 2),
+    y = c(dnorm(x_seq, mu1, s1), dnorm(x_seq, mu2, s2)),
+    group = rep(c("A", "B"), each = 500)
+  )
+
+  ggplot(df, aes(x = x, y = y, color = group, fill = group)) +
+    geom_line(linewidth = 1.2) +
+    geom_area(alpha = 0.15, position = "identity") +
+    scale_color_manual(values = c("A" = col_primary, "B" = col_secondary),
+                       labels = c(paste0("A: N(", mu1, ", ", s1, ")"),
+                                  paste0("B: N(", mu2, ", ", s2, ")")),
+                       name = "") +
+    scale_fill_manual(values = c("A" = col_primary, "B" = col_secondary),
+                      guide = "none") +
+    labs(title = "Porównanie dwóch rozkładów normalnych",
+         x = "x", y = "f(x)") +
+    theme_prob() +
+    theme(legend.position = "top")
+})
+```
+
+## Standaryzacja (z-score)
+
+Każdy rozkład normalny można sprowadzić do
+**standardowego N(0, 1)** za pomocą transformacji:
+
+::: {.formula-box}
+$$z = \frac{x - \mu}{\sigma}$$
+:::
+
+Z-score mówi nam: **ile odchyleń standardowych**
+dana wartość leży od średniej.
+
+```{r}
+fluidRow(
+  column(4,
+    numericInput("ch5_z_mu", "μ (np. średnia egzaminu):", value = 65),
+    numericInput("ch5_z_sigma", "σ (np. odch. std.):", value = 10, min = 0.1),
+    numericInput("ch5_z_x", "x (wartość do standaryzacji):", value = 80),
+    hr(),
+    uiOutput("ch5_z_result")
+  ),
+  column(8,
+    plotOutput("ch5_z_plot", height = "350px")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+output$ch5_z_result <- renderUI({
+  mu <- input$ch5_z_mu
+  sigma <- input$ch5_z_sigma
+  x <- input$ch5_z_x
+  req(sigma > 0)
+
+  z <- (x - mu) / sigma
+
+  div(
+    stat_box(paste0("z = (", x, " - ", mu, ") / ", sigma, " = ", round(z, 2)), col_normal),
+    div(class = "callout-info", style = "margin-top: 8px;",
+      paste0("Wartość ", x, " leży ", round(abs(z), 2),
+             " odchyleń standardowych ",
+             if (z >= 0) "powyżej" else "poniżej", " średniej."))
+  )
+})
+
+output$ch5_z_plot <- renderPlot({
+  mu <- input$ch5_z_mu
+  sigma <- input$ch5_z_sigma
+  x <- input$ch5_z_x
+  req(sigma > 0)
+
+  z <- (x - mu) / sigma
+
+  x_seq <- seq(mu - 4*sigma, mu + 4*sigma, length.out = 500)
+  df_orig <- data.frame(x = x_seq, y = dnorm(x_seq, mu, sigma))
+
+  z_seq <- seq(-4, 4, length.out = 500)
+  df_std <- data.frame(x = z_seq, y = dnorm(z_seq))
+
+  p1 <- ggplot(df_orig, aes(x = x, y = y)) +
+    geom_line(color = col_primary, linewidth = 1.2) +
+    geom_vline(xintercept = x, color = col_secondary, linewidth = 1.2) +
+    annotate("point", x = x, y = dnorm(x, mu, sigma),
+             color = col_secondary, size = 4) +
+    annotate("text", x = x, y = dnorm(x, mu, sigma) * 1.2,
+             label = paste0("x = ", x), color = col_secondary,
+             size = 4, fontface = "bold", vjust = -0.5) +
+    labs(title = paste0("Oryginalna skala: N(", mu, ", ", sigma, ")"),
+         x = "x", y = "f(x)") +
+    theme_prob(base_size = 12)
+
+  p2 <- ggplot(df_std, aes(x = x, y = y)) +
+    geom_line(color = col_normal, linewidth = 1.2) +
+    geom_vline(xintercept = z, color = col_secondary, linewidth = 1.2) +
+    annotate("point", x = z, y = dnorm(z), color = col_secondary, size = 4) +
+    annotate("text", x = z, y = dnorm(z) * 1.2,
+             label = paste0("z = ", round(z, 2)), color = col_secondary,
+             size = 4, fontface = "bold", vjust = -0.5) +
+    labs(title = "Standaryzowana skala: N(0, 1)",
+         x = "z", y = "f(z)") +
+    theme_prob(base_size = 12)
+
+  gridExtra::grid.arrange(p1, p2, ncol = 1)
+})
+```
+
+## Obliczanie prawdopodobieństw
+
+Znając z-score, możemy obliczyć prawdopodobieństwo dowolnego
+przedziału. W R używamy funkcji `pnorm()`.
+
+```{r}
+fluidRow(
+  column(4,
+    radioButtons("ch5_prob_type", "Typ pytania:",
+      choices = c(
+        "P(Z < a)" = "less",
+        "P(Z > a)" = "greater",
+        "P(a < Z < b)" = "between"
+      ),
+      selected = "between"
+    ),
+    sliderInput("ch5_prob_a", "a:", min = -4, max = 4, value = -1, step = 0.05),
+    conditionalPanel(
+      condition = "input.ch5_prob_type == 'between'",
+      sliderInput("ch5_prob_b", "b:", min = -4, max = 4, value = 1, step = 0.05)
+    )
+  ),
+  column(8,
+    plotOutput("ch5_prob_plot", height = "300px"),
+    uiOutput("ch5_prob_result")
+  )
+)
+```
+
+::: {.formula-box}
+$$f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}, \quad E(X) = \mu, \quad Var(X) = \sigma^2$$
+:::
+
+```{r}
+#| context: server
+
+output$ch5_prob_plot <- renderPlot({
+  type <- input$ch5_prob_type
+  a <- input$ch5_prob_a
+  b <- if (type == "between") input$ch5_prob_b else NULL
+
+  x_seq <- seq(-4, 4, length.out = 500)
+  df <- data.frame(x = x_seq, y = dnorm(x_seq))
+
+  p <- ggplot(df, aes(x = x, y = y)) +
+    geom_line(color = col_dark, linewidth = 1.2)
+
+  if (type == "less") {
+    shade <- data.frame(x = x_seq[x_seq <= a], y = dnorm(x_seq[x_seq <= a]))
+    p <- p + geom_area(data = shade, fill = col_primary, alpha = 0.4) +
+      geom_vline(xintercept = a, color = col_secondary, linetype = "dashed")
+  } else if (type == "greater") {
+    shade <- data.frame(x = x_seq[x_seq >= a], y = dnorm(x_seq[x_seq >= a]))
+    p <- p + geom_area(data = shade, fill = col_secondary, alpha = 0.4) +
+      geom_vline(xintercept = a, color = col_secondary, linetype = "dashed")
+  } else {
+    shade <- data.frame(x = x_seq[x_seq >= a & x_seq <= b],
+                        y = dnorm(x_seq[x_seq >= a & x_seq <= b]))
+    p <- p + geom_area(data = shade, fill = col_normal, alpha = 0.4) +
+      geom_vline(xintercept = a, color = col_secondary, linetype = "dashed") +
+      geom_vline(xintercept = b, color = col_secondary, linetype = "dashed")
+  }
+
+  prob <- switch(type,
+    "less" = pnorm(a),
+    "greater" = 1 - pnorm(a),
+    "between" = pnorm(b) - pnorm(a)
+  )
+
+  p + annotate("text", x = 0, y = 0.2,
+               label = sprintf("P = %.4f", prob),
+               size = 6, fontface = "bold", color = col_dark) +
+    labs(title = "Rozkład standardowy N(0, 1)", x = "z", y = "f(z)") +
+    theme_prob()
+})
+
+output$ch5_prob_result <- renderUI({
+  type <- input$ch5_prob_type
+  a <- input$ch5_prob_a
+  b <- if (type == "between") input$ch5_prob_b else NULL
+
+  prob <- switch(type,
+    "less" = pnorm(a),
+    "greater" = 1 - pnorm(a),
+    "between" = pnorm(b) - pnorm(a)
+  )
+
+  label <- switch(type,
+    "less" = paste0("P(Z < ", a, ")"),
+    "greater" = paste0("P(Z > ", a, ")"),
+    "between" = paste0("P(", a, " < Z < ", b, ")")
+  )
+
+  r_code <- switch(type,
+    "less" = paste0("pnorm(", a, ")"),
+    "greater" = paste0("1 - pnorm(", a, ")"),
+    "between" = paste0("pnorm(", b, ") - pnorm(", a, ")")
+  )
+
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0(label, " = ", sprintf("%.4f", prob)), col_normal),
+    stat_box(paste0(sprintf("%.2f", prob * 100), "%"), col_dark),
+    div(style = "margin-top: 8px; font-size: 13px; color: #7f8c8d;",
+        paste0("W R: ", r_code))
+  )
+})
+```
+
+---
+
+# Centralne Twierdzenie Graniczne (CTG)
+
+*Rozkład normalny pojawia się wszędzie. Ale dlaczego?
+Odpowiedź to jedno z najważniejszych twierdzeń w statystyce.*
+
+Centralne Twierdzenie Graniczne mówi, że:
+
+::: {.callout-tip}
+**CTG:**
+Jeśli wezmiesz próbę n obserwacji z **dowolnego**
+rozkładu (o skończonej wariancji) i obliczysz średnią,
+to rozkład tej średniej będzie zbiegał do **normalnego**
+wraz ze wzrostem n.
+:::
+
+To wyjaśnia, dlaczego rozkład normalny jest wszędzie — wiele
+zjawisk naturalnych to suma wielu drobnych, niezależnych czynników.
+Zobaczmy to na własne oczy!
+
+## Eksperyment CLT
+
+```{r}
+fluidRow(
+  column(4,
+    selectInput("ch6_pop_dist", "Rozkład populacji:",
+      choices = c(
+        "Jednostajny"         = "uniform",
+        "Wykładniczy (skośny)" = "exponential",
+        "Dwumodalny"          = "bimodal",
+        "U-kształtny"         = "u_shape",
+        "Kostka (dyskretny)"  = "die"
+      ),
+      selected = "exponential"
+    ),
+    sliderInput("ch6_sample_size", "Wielkość próby (n):",
+                min = 1, max = 100, value = 5, step = 1),
+    hr(),
+    div(style = "display: flex; flex-direction: column; gap: 8px;",
+      actionButton("ch6_take_1", "Pobierz 1 próbę",
+                   class = "btn-primary", width = "100%"),
+      actionButton("ch6_take_100", "Pobierz 100 prób",
+                   class = "btn-primary", width = "100%"),
+      actionButton("ch6_take_1000", "Pobierz 1000 prób",
+                   class = "btn-warning", width = "100%"),
+      hr(),
+      actionButton("ch6_reset", "Reset",
+                   class = "btn-outline-secondary", width = "100%")
+    ),
+    br(),
+    uiOutput("ch6_sample_count")
+  ),
+  column(8,
+    plotOutput("ch6_pop_plot", height = "180px"),
+    plotOutput("ch6_means_plot", height = "300px"),
+    uiOutput("ch6_means_stats")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+collected_means <- reactiveVal(numeric(0))
+
+take_samples <- function(k) {
+  n <- input$ch6_sample_size
+  dist <- input$ch6_pop_dist
+  new_means <- replicate(k, {
+    samp <- generate_population_sample(dist, n)
+    mean(samp)
+  })
+  collected_means(c(collected_means(), new_means))
+}
+
+observeEvent(input$ch6_take_1, take_samples(1))
+observeEvent(input$ch6_take_100, take_samples(100))
+observeEvent(input$ch6_take_1000, take_samples(1000))
+observeEvent(input$ch6_reset, collected_means(numeric(0)))
+
+observeEvent(c(input$ch6_pop_dist, input$ch6_sample_size), {
+  collected_means(numeric(0))
+})
+
+output$ch6_sample_count <- renderUI({
+  n <- length(collected_means())
+  stat_box(paste0("Prób: ", n), col_primary)
+})
+
+output$ch6_pop_plot <- renderPlot({
+  dist <- input$ch6_pop_dist
+  dist_label <- dist_names_pl[dist]
+
+  if (dist == "die") {
+    df <- data.frame(x = 1:6, prob = rep(1/6, 6))
+    ggplot(df, aes(x = factor(x), y = prob)) +
+      geom_col(fill = col_warning, color = "white", alpha = 0.85, width = 0.6) +
+      scale_y_continuous(limits = c(0, 0.3), expand = expansion(mult = c(0, 0))) +
+      labs(title = paste0("Populacja: ", dist_label),
+           subtitle = "To NIE jest normalny!",
+           x = "", y = "P(X=k)") +
+      theme_prob(base_size = 11)
+  } else {
+    data <- generate_population_sample(dist, 10000)
+    df <- data.frame(x = data)
+    ggplot(df, aes(x = x)) +
+      geom_density(fill = col_warning, color = col_dark, alpha = 0.5, linewidth = 0.8) +
+      labs(title = paste0("Populacja: ", dist_label),
+           subtitle = "To NIE jest normalny!",
+           x = "", y = "Gęstość") +
+      theme_prob(base_size = 11)
+  }
+})
+
+output$ch6_means_plot <- renderPlot({
+  means <- collected_means()
+
+  if (length(means) == 0) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5,
+               label = "Kliknij 'Pobierz próbę', aby rozpocząć",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    dist <- input$ch6_pop_dist
+    n <- input$ch6_sample_size
+    params <- get_population_params(dist)
+    theo_mu <- params$mu
+    theo_sd <- params$sigma / sqrt(n)
+
+    df <- data.frame(x = means)
+
+    p <- ggplot(df, aes(x = x))
+
+    if (length(means) >= 5) {
+      p <- p + geom_histogram(aes(y = after_stat(density)),
+                              bins = min(50, max(10, length(means) / 5)),
+                              fill = col_primary, color = "white", alpha = 0.7)
+    } else {
+      p <- p + geom_dotplot(fill = col_primary, alpha = 0.7, binwidth = theo_sd / 3)
+    }
+
+    if (length(means) >= 30 && theo_sd > 0) {
+      x_range <- seq(min(means) - theo_sd, max(means) + theo_sd, length.out = 200)
+      norm_df <- data.frame(x = x_range, y = dnorm(x_range, theo_mu, theo_sd))
+      p <- p + geom_line(data = norm_df, aes(x = x, y = y),
+                         color = col_secondary, linewidth = 1.5, linetype = "solid")
+    }
+
+    p + geom_vline(xintercept = theo_mu, color = col_secondary, linetype = "dashed") +
+      labs(title = paste0("Rozkład średnich (n=", n, ", ", length(means), " prób)"),
+           subtitle = paste0("Krzywa: N(", round(theo_mu, 2), ", ",
+                             round(theo_sd, 2), ")"),
+           x = "Średnia z próby", y = "Gęstość") +
+      theme_prob()
+  }
+})
+
+output$ch6_means_stats <- renderUI({
+  means <- collected_means()
+  req(length(means) >= 2)
+
+  dist <- input$ch6_pop_dist
+  n <- input$ch6_sample_size
+  params <- get_population_params(dist)
+  theo_sd <- params$sigma / sqrt(n)
+
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("Śr. średnich = ", round(mean(means), 3)), col_primary),
+    stat_box(paste0("SD średnich = ", round(sd(means), 3)), col_dark),
+    stat_box(paste0("Teor. SD = σ/\u221an = ", round(theo_sd, 3)), col_warning)
+  )
+})
+```
+
+::: {.callout-note}
+**Aha-moment:**
+Zmień rozkład populacji na najbardziej 'dziki' jaki znajdziesz
+(U-kształtny, dwumodalny). Potem zbierz 1000 prób.
+Histogram średnich i tak stanie się dzwonem!
+:::
+
+## Wpływ wielkości próby
+
+Im większa próba n, tym szybciej rozkład średnich staje się
+normalny. Zobaczmy to porównując różne n obok siebie.
+
+```{r}
+selectInput("ch6_effect_dist", "Rozkład populacji:",
+  choices = c(
+    "Wykładniczy" = "exponential",
+    "Jednostajny"  = "uniform",
+    "U-kształtny"  = "u_shape"
+  ),
+  selected = "exponential"
+)
+plotOutput("ch6_effect_plot", height = "350px")
+```
+
+```{r}
+#| context: server
+
+output$ch6_effect_plot <- renderPlot({
+  dist <- input$ch6_effect_dist
+  params <- get_population_params(dist)
+
+  ns <- c(1, 5, 30, 100)
+  plot_data <- do.call(rbind, lapply(ns, function(n) {
+    means <- replicate(2000, mean(generate_population_sample(dist, n)))
+    data.frame(
+      mean_val = means,
+      n_label = paste0("n = ", n)
+    )
+  }))
+  plot_data$n_label <- factor(plot_data$n_label,
+                              levels = paste0("n = ", ns))
+
+  norm_data <- do.call(rbind, lapply(ns, function(n) {
+    theo_sd <- params$sigma / sqrt(n)
+    x_seq <- seq(params$mu - 4*theo_sd, params$mu + 4*theo_sd, length.out = 200)
+    data.frame(
+      x = x_seq,
+      y = dnorm(x_seq, params$mu, theo_sd),
+      n_label = paste0("n = ", n)
+    )
+  }))
+  norm_data$n_label <- factor(norm_data$n_label, levels = paste0("n = ", ns))
+
+  ggplot(plot_data, aes(x = mean_val)) +
+    geom_histogram(aes(y = after_stat(density)),
+                   bins = 40, fill = col_primary, color = "white", alpha = 0.6) +
+    geom_line(data = norm_data, aes(x = x, y = y),
+              color = col_secondary, linewidth = 1.2) +
+    facet_wrap(~n_label, scales = "free") +
+    labs(title = paste0("2000 średnich z rozkładu: ",
+                        dist_names_pl[dist]),
+         x = "Średnia z próby", y = "Gęstość") +
+    theme_prob(base_size = 12)
+})
+```
+
+## Dlaczego to działa? — intuicja
+
+```{r}
+fluidRow(
+  column(4,
+    actionButton("ch6_why_step1", "1. Jedna obserwacja",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch6_why_step2", "2. Średnia z 2",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch6_why_step3", "3. Średnia z 5",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch6_why_step4", "4. Średnia z 30",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch6_why_reset", "Reset",
+                 class = "btn-outline-secondary", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch6_why_plot", height = "350px"),
+    uiOutput("ch6_why_text")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch6_why_step <- reactiveVal(0)
+
+observeEvent(input$ch6_why_step1, ch6_why_step(1))
+observeEvent(input$ch6_why_step2, ch6_why_step(2))
+observeEvent(input$ch6_why_step3, ch6_why_step(3))
+observeEvent(input$ch6_why_step4, ch6_why_step(4))
+observeEvent(input$ch6_why_reset, ch6_why_step(0))
+
+output$ch6_why_plot <- renderPlot({
+  step <- ch6_why_step()
+
+  if (step == 0) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5,
+               label = "Kliknij krok 1, aby zacząć",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    n_val <- c(1, 2, 5, 30)[step]
+    means <- replicate(5000, mean(rexp(n_val, 0.5)))
+    df <- data.frame(x = means)
+    params <- get_population_params("exponential")
+    theo_sd <- params$sigma / sqrt(n_val)
+
+    p <- ggplot(df, aes(x = x)) +
+      geom_histogram(aes(y = after_stat(density)),
+                     bins = 50, fill = col_primary, color = "white", alpha = 0.7)
+
+    if (n_val >= 2) {
+      x_range <- seq(min(means), max(means), length.out = 200)
+      norm_df <- data.frame(x = x_range,
+                            y = dnorm(x_range, params$mu, theo_sd))
+      p <- p + geom_line(data = norm_df, aes(x = x, y = y),
+                         color = col_secondary, linewidth = 1.5)
+    }
+
+    p + labs(title = paste0("Rozkład średniej z ", n_val,
+                            " obserwacji (wykładniczy)"),
+             subtitle = if (n_val == 1) "Identyczny z rozkładem populacji"
+                         else paste0("Krzywa: N(", round(params$mu, 2), ", ",
+                                     round(theo_sd, 2), ")"),
+             x = "Średnia", y = "Gęstość") +
+      theme_prob()
+  }
+})
+
+output$ch6_why_text <- renderUI({
+  step <- ch6_why_step()
+  texts <- list(
+    NULL,
+    "Pojedyncza obserwacja z rozkładu wykładniczego — wyraźanie prawoskośny!",
+    "Średnia z 2: już mniej skrajnych wartości, lewa strona zaczyna się wypełniać.",
+    "Średnia z 5: kształt staje się bardziej symetryczny. Ekstrema się niwelują.",
+    "Średnia z 30: praktycznie normalny! Krzywa gaussowska pasuje niemal idealnie."
+  )
+  if (step > 0) div(class = "callout-info", texts[[step + 1]])
+})
+```
+
+::: {.callout-tip}
+**Kluczowa intuicja:**
+Uśrednianie 'wygładza' indywidualne dziwactwa. Ekstrema w jednym
+kierunku są niwelowane przez ekstrema w drugim. Im więcej
+uśredniamy, tym bliżej środka lądujemy.
+:::
+
+::: {.formula-box}
+$$\bar{X}_n \xrightarrow{d} N\left(\mu, \frac{\sigma}{\sqrt{n}}\right)$$
+
+Rozkład średniej ma tę samą średnią μ co populacja, ale
+odchylenie standardowe maleje jak $1/\sqrt{n}$.
+:::
+
+---
+
+# Ściąga
+
+Kompletna ściąga ze wszystkimi rozkładami, wzorami i regułami
+decyzyjnymi omówionymi w trakcie wykładu.
+
+## Rozkłady dyskretne
+
+```{r}
+tableOutput("ch7_discrete_table")
+```
+
+## Rozkłady ciągłe
+
+```{r}
+tableOutput("ch7_continuous_table")
+```
+
+## Kluczowe wzory
+
+#### Aksjomaty prawdopodobieństwa
+
+1. $P(A) \geq 0$ dla każdego zdarzenia A
+2. $P(\Omega) = 1$ (pewność)
+3. $P(A \cup B) = P(A) + P(B)$ dla zdarzeń rozłącznych
+
+#### Wartość oczekiwana i wariancja
+
+Dyskretne: $$E(X) = \sum_x x \cdot P(X=x), \quad Var(X) = E[(X - E(X))^2]$$
+
+Ciągłe: $$E(X) = \int_{-\infty}^{\infty} x \cdot f(x) \, dx$$
+
+#### Standaryzacja
+
+$$z = \frac{x - \mu}{\sigma}, \quad \text{gdzie } z \sim N(0, 1) \text{ jeśli } x \sim N(\mu, \sigma)$$
+
+#### Centralne Twierdzenie Graniczne
+
+$$\bar{X}_n \xrightarrow{d} N\left(\mu, \frac{\sigma}{\sqrt{n}}\right) \quad \text{dla } n \to \infty$$
+
+Niezależnie od rozkładu populacji (o ile ma skończoną wariancję).
+
+## Drzewo decyzyjne — który rozkład?
+
+Każdy rozkład ma swój 'naturalny habitat'. Kluczowe pytania przy doborze:
+
+1. Czy zmienna jest **dyskretna** czy **ciągła**?
+2. Jaki jest **kształt** danych? (symetryczny, skośny, płaski)
+3. Jaki **mechanizm generuje** dane? (zliczanie, pomiar, oczekiwanie)
+
+```{r}
+fluidRow(
+  column(4,
+    radioButtons("ch7_tree_choice", "Wybierz typ zmiennej:",
+      choices = c(
+        "Zmienna dyskretna" = "discrete",
+        "Zmienna ciągła"   = "continuous"
+      ),
+      selected = "discrete"
+    ),
+    conditionalPanel(
+      condition = "input.ch7_tree_choice == 'discrete'",
+      radioButtons("ch7_disc_type", "Jaki mechanizm?",
+        choices = c(
+          "Każdy wynik jednakowo prawdop." = "d_uniform",
+          "Stała liczba prób, sukces/porażka" = "d_binomial",
+          "Zliczanie zdarzeń w czasie/przestrzeni" = "d_poisson",
+          "Ile prób do pierwszego sukcesu" = "d_geometric"
+        )
+      )
+    ),
+    conditionalPanel(
+      condition = "input.ch7_tree_choice == 'continuous'",
+      radioButtons("ch7_cont_type", "Jaki kształt/mechanizm?",
+        choices = c(
+          "Symetryczny dzwon" = "c_normal",
+          "Czas oczekiwania (prawoskośny)" = "c_exponential",
+          "Każda wartość w przedziale jednakowo" = "c_uniform",
+          "Ciężkie ogony (wnioskowanie)" = "c_t_student",
+          "Suma kwadratów (testy χ²)" = "c_chi_sq",
+          "Dane prawoskośne, dodatnie" = "c_lognormal"
+        )
+      )
+    )
+  ),
+  column(8,
+    uiOutput("ch7_tree_info"),
+    plotOutput("ch7_tree_plot", height = "250px")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch7_selected_dist <- reactive({
+  if (input$ch7_tree_choice == "discrete") {
+    input$ch7_disc_type
+  } else {
+    input$ch7_cont_type
+  }
+})
+
+output$ch7_tree_info <- renderUI({
+  dist <- ch7_selected_dist()
+
+  info <- switch(dist,
+    "d_uniform" = list(
+      name = "Jednostajny dyskretny",
+      desc = "Każdy z k wyników ma P = 1/k",
+      example = "Rzut kostką, losowanie cyfry",
+      r_func = "sample(1:k, n, replace=TRUE)"
+    ),
+    "d_binomial" = list(
+      name = "Dwumianowy B(n, p)",
+      desc = "Liczba sukcesów w n niezależnych próbach",
+      example = "Wadliwe produkty w partii, poprawne odpowiedzi",
+      r_func = "rbinom(n, size, prob)"
+    ),
+    "d_poisson" = list(
+      name = "Poissona Pois(λ)",
+      desc = "Liczba zdarzeń w ustalonym czasie/przestrzeni",
+      example = "Klienci na godzinę, błędy na stronie",
+      r_func = "rpois(n, lambda)"
+    ),
+    "c_normal" = list(
+      name = "Normalny N(μ, σ)",
+      desc = "Symetryczny, dzwonowaty, suma wielu małych efektów",
+      example = "Wzrost, IQ, błędy pomiarowe",
+      r_func = "rnorm(n, mean, sd)"
+    ),
+    "c_exponential" = list(
+      name = "Wykładniczy Exp(λ)",
+      desc = "Czas między zdarzeniami (bezpamięciowy)",
+      example = "Czas do awarii, czas między wiadomościami",
+      r_func = "rexp(n, rate)"
+    ),
+    "c_uniform" = list(
+      name = "Jednostajny ciągły U(a, b)",
+      desc = "Każda wartość w [a,b] jednakowo prawdopodobna",
+      example = "Generator liczb losowych, błąd zaokrąglenia",
+      r_func = "runif(n, min, max)"
+    ),
+    "d_geometric" = list(
+      name = "Geometryczny Geom(p)",
+      desc = "Liczba prób do pierwszego sukcesu",
+      example = "Ile rzutów do szóstki, próby egzaminu do zdania",
+      r_func = "rgeom(n, prob) + 1"
+    ),
+    "c_t_student" = list(
+      name = "t-Studenta t(df)",
+      desc = "Jak normalny, ale z cięższymi ogonami; kluczowy we wnioskowaniu",
+      example = "Test t, przedziały ufności przy małych próbach",
+      r_func = "rt(n, df)"
+    ),
+    "c_chi_sq" = list(
+      name = "Chi-kwadrat χ²(df)",
+      desc = "Suma kwadratów zmiennych N(0,1); nieujemny, prawoskośny",
+      example = "Test niezależności, test dopasowania, estymacja wariancji",
+      r_func = "rchisq(n, df)"
+    ),
+    "c_lognormal" = list(
+      name = "Log-normalny LogN(μ, σ)",
+      desc = "ln(X) ~ N(μ, σ); zawsze dodatni, prawoskośny",
+      example = "Dochody, ceny akcji, czasy reakcji",
+      r_func = "rlnorm(n, meanlog, sdlog)"
+    )
+  )
+
+  div(class = "dist-card",
+    h4(info$name, style = "margin-top: 0;"),
+    p(tags$strong("Opis: "), info$desc),
+    p(tags$strong("Przykład: "), info$example),
+    p(tags$strong("R: "), tags$code(info$r_func))
+  )
+})
+
+output$ch7_tree_plot <- renderPlot({
+  dist <- ch7_selected_dist()
+
+  switch(dist,
+    "d_uniform" = {
+      df <- data.frame(x = 1:6, p = rep(1/6, 6))
+      ggplot(df, aes(x = factor(x), y = p)) +
+        geom_col(fill = col_uniform, color = "white", alpha = 0.85, width = 0.6) +
+        labs(title = "Jednostajny dyskretny (kostka)", x = "k", y = "P(X=k)") +
+        theme_prob(base_size = 12)
+    },
+    "d_binomial" = {
+      x <- 0:20; p <- dbinom(x, 20, 0.3)
+      df <- data.frame(x = x, p = p)
+      ggplot(df, aes(x = x, y = p)) +
+        geom_col(fill = col_binomial, color = "white", alpha = 0.85, width = 0.7) +
+        labs(title = "B(20, 0.3)", x = "k", y = "P(X=k)") +
+        theme_prob(base_size = 12)
+    },
+    "d_poisson" = {
+      x <- 0:15; p <- dpois(x, 4)
+      df <- data.frame(x = x, p = p)
+      ggplot(df, aes(x = x, y = p)) +
+        geom_col(fill = col_poisson, color = "white", alpha = 0.85, width = 0.7) +
+        labs(title = "Pois(4)", x = "k", y = "P(X=k)") +
+        theme_prob(base_size = 12)
+    },
+    "c_normal" = {
+      x <- seq(-4, 4, length.out = 500)
+      df <- data.frame(x = x, y = dnorm(x))
+      ggplot(df, aes(x, y)) +
+        geom_area(fill = col_normal, alpha = 0.3) +
+        geom_line(color = col_normal, linewidth = 1.2) +
+        labs(title = "N(0, 1)", x = "x", y = "f(x)") +
+        theme_prob(base_size = 12)
+    },
+    "c_exponential" = {
+      x <- seq(0, 8, length.out = 500)
+      df <- data.frame(x = x, y = dexp(x, 1))
+      ggplot(df, aes(x, y)) +
+        geom_area(fill = col_exponential, alpha = 0.3) +
+        geom_line(color = col_exponential, linewidth = 1.2) +
+        labs(title = "Exp(1)", x = "x", y = "f(x)") +
+        theme_prob(base_size = 12)
+    },
+    "c_uniform" = {
+      x <- seq(-1, 11, length.out = 500)
+      df <- data.frame(x = x, y = dunif(x, 0, 10))
+      ggplot(df, aes(x, y)) +
+        geom_area(fill = col_uniform, alpha = 0.3) +
+        geom_line(color = col_uniform, linewidth = 1.2) +
+        labs(title = "U(0, 10)", x = "x", y = "f(x)") +
+        theme_prob(base_size = 12)
+    },
+    "d_geometric" = {
+      x <- 1:20; p <- dgeom(x - 1, 0.2)
+      df <- data.frame(x = x, p = p)
+      ggplot(df, aes(x = x, y = p)) +
+        geom_col(fill = col_geometric, color = "white", alpha = 0.85, width = 0.7) +
+        labs(title = "Geom(0.2)", x = "k", y = "P(X=k)") +
+        theme_prob(base_size = 12)
+    },
+    "c_t_student" = {
+      x <- seq(-5, 5, length.out = 500)
+      df <- data.frame(x = x, y = dt(x, df = 3))
+      ggplot(df, aes(x, y)) +
+        geom_area(fill = col_t_student, alpha = 0.3) +
+        geom_line(color = col_t_student, linewidth = 1.2) +
+        labs(title = "t(df=3)", x = "x", y = "f(x)") +
+        theme_prob(base_size = 12)
+    },
+    "c_chi_sq" = {
+      x <- seq(0.01, 20, length.out = 500)
+      df <- data.frame(x = x, y = dchisq(x, df = 5))
+      ggplot(df, aes(x, y)) +
+        geom_area(fill = col_chi_sq, alpha = 0.3) +
+        geom_line(color = col_chi_sq, linewidth = 1.2) +
+        labs(title = "\u03c7\u00b2(df=5)", x = "x", y = "f(x)") +
+        theme_prob(base_size = 12)
+    },
+    "c_lognormal" = {
+      x <- seq(0.01, 10, length.out = 500)
+      df <- data.frame(x = x, y = dlnorm(x, 0, 0.6))
+      ggplot(df, aes(x, y)) +
+        geom_area(fill = col_lognormal, alpha = 0.3) +
+        geom_line(color = col_lognormal, linewidth = 1.2) +
+        labs(title = "LogN(0, 0.6)", x = "x", y = "f(x)") +
+        theme_prob(base_size = 12)
+    }
+  )
+})
+
+# --- Tabele statyczne ---
+output$ch7_discrete_table <- renderTable({
+  data.frame(
+    a = c("Jednostajny dyskretny", "Dwumianowy B(n, p)", "Poissona Pois(λ)", "Geometryczny Geom(p)"),
+    b = c("k (liczba wyników)", "n (próby), p (prawdop.)", "λ (średnia zdarzeń)", "p (prawdop. sukcesu)"),
+    c = c("P(X=x) = 1/k", "P(X=k) = C(n,k) p^k (1-p)^(n-k)", "P(X=k) = λ^k e^(-λ) / k!", "P(X=k) = (1-p)^(k-1) · p"),
+    d = c("(k+1)/2", "np", "λ", "1/p"),
+    e = c("(k²-1)/12", "np(1-p)", "λ", "(1-p)/p²"),
+    f = c("Kostka, losy", "Wadliwe produkty, testy", "Klienci/h, błędy/strona", "Ile prób do sukcesu"),
+    stringsAsFactors = FALSE
+  ) %>% setNames(c("Rozkład", "Parametry", "PMF", "E(X)", "Var(X)", "Przykład"))
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+
+output$ch7_continuous_table <- renderTable({
+  data.frame(
+    a = c("Jednostajny U(a, b)", "Wykładniczy Exp(λ)", "Normalny N(μ, σ)",
+          "t-Studenta t(df)", "Chi-kwadrat χ²(df)", "Log-normalny LogN(μ, σ)"),
+    b = c("a, b (granice)", "λ (rate)", "μ (średnia), σ (odch. std.)",
+          "df (stopnie swobody)", "df (stopnie swobody)", "μ (meanlog), σ (sdlog)"),
+    c = c("f(x) = 1/(b-a)", "f(x) = λ e^(-λx)", "f(x) = krzywa Gaussa",
+          "krzywa t (cięższe ogony)", "prawoskośna, nieujemna", "prawoskośna, dodatnia"),
+    d = c("(a+b)/2", "1/λ", "μ", "0 (df>1)", "df", "exp(μ+σ²/2)"),
+    e = c("(b-a)²/12", "1/λ²", "σ²", "df/(df-2)", "2·df", "(e^σ²-1)·e^(2μ+σ²)"),
+    f = c("Generator losowy", "Czas oczekiwania", "Wzrost, IQ, pomiary",
+          "Test t, przedziały ufności", "Testy χ², wariancja", "Dochody, ceny, czasy reakcji"),
+    stringsAsFactors = FALSE
+  ) %>% setNames(c("Rozkład", "Parametry", "PDF", "E(X)", "Var(X)", "Przykład"))
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+```
+
+## Funkcje R — rodzina d/p/q/r
+
+::: {.callout-note}
+**Konwencja nazw w R:**
+
+- **d** — density/PMF: prawdopodobieństwo lub gęstość w punkcie
+- **p** — CDF: prawdopodobieństwo skumulowane P(X ≤ x)
+- **q** — kwantyl: odwrotność CDF (jaki x daje P = p?)
+- **r** — random: losowanie z rozkładu
+:::
+
+```{r}
+tableOutput("ch7_r_functions_table")
+```
+
+```{r}
+#| context: server
+
+output$ch7_r_functions_table <- renderTable({
+  data.frame(
+    a = c("Normalny", "Dwumianowy", "Poissona", "Geometryczny",
+          "Wykładniczy", "Jednostajny", "t-Studenta", "Chi-kwadrat", "Log-normalny"),
+    b = c("dnorm(x, mean, sd)", "dbinom(x, size, prob)", "dpois(x, lambda)", "dgeom(x, prob)",
+          "dexp(x, rate)", "dunif(x, min, max)", "dt(x, df)", "dchisq(x, df)", "dlnorm(x, meanlog, sdlog)"),
+    c = c("pnorm(q, mean, sd)", "pbinom(q, size, prob)", "ppois(q, lambda)", "pgeom(q, prob)",
+          "pexp(q, rate)", "punif(q, min, max)", "pt(q, df)", "pchisq(q, df)", "plnorm(q, meanlog, sdlog)"),
+    d = c("qnorm(p, mean, sd)", "qbinom(p, size, prob)", "qpois(p, lambda)", "qgeom(p, prob)",
+          "qexp(p, rate)", "qunif(p, min, max)", "qt(p, df)", "qchisq(p, df)", "qlnorm(p, meanlog, sdlog)"),
+    e = c("rnorm(n, mean, sd)", "rbinom(n, size, prob)", "rpois(n, lambda)", "rgeom(n, prob)",
+          "rexp(n, rate)", "runif(n, min, max)", "rt(n, df)", "rchisq(n, df)", "rlnorm(n, meanlog, sdlog)"),
+    stringsAsFactors = FALSE
+  ) %>% setNames(c("Rozkład", "d (gęstość/PMF)", "p (CDF)", "q (kwantyl)", "r (losowanie)"))
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+```
+
+## Przybliżenia między rozkładami
+
+```{r}
+tableOutput("ch7_approx_table")
+```
+
+```{r}
+#| context: server
+
+output$ch7_approx_table <- renderTable({
+  data.frame(
+    a = c("Dwumianowy → Poissona", "Dwumianowy → Normalny", "Poissona → Normalny",
+          "t-Studenta → Normalny", "χ² → Normalny"),
+    b = c("n duże, p małe (λ = np)", "np ≥ 5 i n(1-p) ≥ 5", "λ ≥ 20",
+          "df ≥ 30", "df ≥ 30"),
+    c = c("B(1000, 0.002) ≈ Pois(2)", "B(100, 0.3) ≈ N(30, 4.58)", "Pois(25) ≈ N(25, 5)",
+          "t(50) ≈ N(0, 1)", "χ²(40) ≈ N(40, 8.94)"),
+    stringsAsFactors = FALSE
+  ) %>% setNames(c("Przybliżenie", "Warunek", "Przykład"))
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+```
+
+::: {.callout-warning}
+**Praktyczna reguła:**
+Przybliżenie normalnym stosuj, gdy np ≥ 5 i n(1-p) ≥ 5
+(dla dwumianowego) lub λ ≥ 20 (dla Poissona).
+:::
+
+---
+
+# Quiz: dopasuj rozkład do zjawiska
+
+*Czas sprawdzić, czy potrafisz rozpoznać rozkłady w praktyce!*
+
+Przeczytaj opis zjawiska i wybierz rozkład, który najlepiej je modeluje.
+W każdym pytaniu zobaczysz **3 opcje**
+— jedną poprawną i dwie losowo wybrane błędne.
+
+Quiz losuje **10 pytań** z puli 60. Możesz go powtarzać
+wielokrotnie — za każdym razem dostaniesz inny zestaw.
+
+```{r}
+fluidRow(
+  column(6,
+    actionButton("ch8_start", "Rozpocznij quiz",
+                 class = "btn-primary btn-lg", width = "100%")
+  ),
+  column(6,
+    uiOutput("ch8_progress")
+  )
+)
+
+hr()
+
+uiOutput("ch8_question_ui")
+uiOutput("ch8_options_ui")
+uiOutput("ch8_feedback_ui")
+
+hr()
+
+uiOutput("ch8_summary_ui")
+```
+
+```{r}
+#| context: server
+
+quiz_state <- reactiveValues(
+  active       = FALSE,
+  questions    = list(),
+  current_idx  = 0,
+  total        = 0,
+  correct      = 0,
+  wrong        = 0,
+  answered     = FALSE,
+  current_options = list(),
+  finished     = FALSE
+)
+
+prepare_options <- function() {
+  q <- quiz_state$questions[[quiz_state$current_idx]]
+  correct_val <- q$correct
+  all_vals <- names(QUIZ_OPTIONS)
+  wrong_vals <- setdiff(all_vals, correct_val)
+  selected_wrong <- sample(wrong_vals, 2)
+  opts <- sample(c(correct_val, selected_wrong))
+  quiz_state$current_options <- lapply(opts, function(v) {
+    list(value = v, label = QUIZ_OPTIONS[[v]])
+  })
+}
+
+observeEvent(input$ch8_start, {
+  n <- min(QUIZ_MAX_QUESTIONS, length(quiz_questions))
+  selected <- sample(quiz_questions, n)
+
+  quiz_state$questions <- selected
+  quiz_state$total <- n
+  quiz_state$current_idx <- 1
+  quiz_state$correct <- 0
+  quiz_state$wrong <- 0
+  quiz_state$answered <- FALSE
+  quiz_state$finished <- FALSE
+  quiz_state$active <- TRUE
+
+  prepare_options()
+})
+
+output$ch8_progress <- renderUI({
+  if (!quiz_state$active) return(NULL)
+
+  answered <- quiz_state$correct + quiz_state$wrong
+  total <- quiz_state$total
+  pct <- round(answered / total * 100)
+
+  tagList(
+    div(style = "display: flex; justify-content: space-between; margin-bottom: 4px;",
+      span(paste0("Pytanie ", quiz_state$current_idx, " / ", total)),
+      span(paste0("Wynik: ", quiz_state$correct, " / ", answered),
+           style = paste0("font-weight: bold; color: ",
+                          if (answered == 0) col_dark
+                          else if (quiz_state$correct / answered >= 0.7) col_success
+                          else if (quiz_state$correct / answered >= 0.5) col_warning
+                          else col_secondary))
+    ),
+    div(style = "background: #e9ecef; border-radius: 6px; height: 8px; overflow: hidden;",
+      div(style = paste0(
+        "background: ", col_primary, "; height: 100%; width: ", pct, "%;",
+        "border-radius: 6px; transition: width 0.3s;"
+      ))
+    )
+  )
+})
+
+output$ch8_question_ui <- renderUI({
+  if (!quiz_state$active || quiz_state$finished) return(NULL)
+
+  q <- quiz_state$questions[[quiz_state$current_idx]]
+
+  div(
+    style = "font-size: 18px; font-weight: 500; color: #2c3e50;
+             padding: 20px; background: white; border-radius: 8px;
+             border-left: 4px solid #3498db; margin: 15px 0;",
+    q$question
+  )
+})
+
+output$ch8_options_ui <- renderUI({
+  if (!quiz_state$active || quiz_state$finished) return(NULL)
+  if (quiz_state$answered) return(NULL)
+
+  opts <- quiz_state$current_options
+  letters <- c("A", "B", "C")
+
+  div(class = "quiz-tiles quiz-cols-3",
+    lapply(seq_along(opts), function(i) {
+      btn_id <- paste0("ch8_answer_", i)
+      actionButton(btn_id,
+        tagList(
+          div(class = "tile-letter", letters[i]),
+          div(class = "tile-text", opts[[i]]$label)
+        ),
+        class = "quiz-tile"
+      )
+    })
+  )
+})
+
+observe({
+  for (i in 1:3) {
+    local({
+      idx <- i
+      btn_id <- paste0("ch8_answer_", idx)
+      observeEvent(input[[btn_id]], {
+        if (quiz_state$answered) return()
+
+        q <- quiz_state$questions[[quiz_state$current_idx]]
+        selected_val <- quiz_state$current_options[[idx]]$value
+        is_correct <- (selected_val == q$correct)
+
+        if (is_correct) {
+          quiz_state$correct <- quiz_state$correct + 1
+        } else {
+          quiz_state$wrong <- quiz_state$wrong + 1
+        }
+
+        quiz_state$answered <- TRUE
+        quiz_state$last_correct <- is_correct
+        quiz_state$last_selected <- selected_val
+        quiz_state$last_explanation <- q$explanation
+        quiz_state$last_correct_val <- q$correct
+      }, ignoreInit = TRUE)
+    })
+  }
+})
+
+output$ch8_feedback_ui <- renderUI({
+  if (!quiz_state$active || !quiz_state$answered || quiz_state$finished) return(NULL)
+
+  is_correct <- quiz_state$last_correct
+  explanation <- quiz_state$last_explanation
+  correct_label <- QUIZ_OPTIONS[[quiz_state$last_correct_val]]
+
+  tagList(
+    div(class = if (is_correct) "callout-success" else "callout-danger",
+      tags$strong(if (is_correct) "Dobrze!" else "Nie tym razem."),
+      if (!is_correct) {
+        paste0(" Poprawna odpowiedź: ", correct_label)
+      }
+    ),
+    div(style = "background: #f8f9fa; border-radius: 6px; padding: 12px 16px;
+                 margin: 10px 0; font-size: 14px; color: #555;",
+      explanation
+    ),
+    if (quiz_state$current_idx < quiz_state$total) {
+      actionButton("ch8_next", "Następne pytanie \u2192",
+                   class = "btn-primary", width = "100%",
+                   style = "margin-top: 10px;")
+    } else {
+      actionButton("ch8_finish", "Zobacz wynik",
+                   class = "btn-success btn-lg", width = "100%",
+                   style = "margin-top: 10px;")
+    }
+  )
+})
+
+observeEvent(input$ch8_next, {
+  quiz_state$current_idx <- quiz_state$current_idx + 1
+  quiz_state$answered <- FALSE
+  prepare_options()
+})
+
+observeEvent(input$ch8_finish, {
+  quiz_state$finished <- TRUE
+  quiz_state$answered <- FALSE
+})
+
+output$ch8_summary_ui <- renderUI({
+  if (!quiz_state$finished) return(NULL)
+
+  total <- quiz_state$total
+  correct <- quiz_state$correct
+  pct <- round(correct / total * 100)
+
+  result_color <- if (pct >= 70) col_success
+                  else if (pct >= 50) col_warning
+                  else col_secondary
+
+  result_text <- if (pct >= 90) "Ćwiczenie zakończone celująco!"
+                 else if (pct >= 70) "Dobry wynik!"
+                 else if (pct >= 50) "Nieźle, ale warto powtórzyć."
+                 else "Powtórz materiał z wcześniejszych rozdziałów."
+
+  div(style = "text-align: center; padding: 30px;",
+    div(style = paste0(
+      "font-size: 64px; font-weight: bold; color: ", result_color, ";"
+    ), paste0(pct, "%")),
+    div(style = "font-size: 18px; color: #555; margin: 10px 0;",
+      paste0("Poprawne odpowiedzi: ", correct, " / ", total)
+    ),
+    div(style = "max-width: 300px; margin: 15px auto; background: #e9ecef;
+                 border-radius: 10px; height: 16px; overflow: hidden;",
+      div(style = paste0(
+        "background: ", result_color, "; height: 100%; width: ", pct, "%;
+         border-radius: 10px; transition: width 0.5s;"
+      ))
+    ),
+    div(style = paste0("font-size: 16px; font-weight: bold; color: ", result_color, ";
+                        margin: 10px 0 20px 0;"),
+      result_text
+    ),
+    div(style = "display: flex; gap: 10px; justify-content: center;",
+      actionButton("ch8_start", "Spróbuj ponownie",
+                   class = "btn-primary btn-lg")
+    )
+  )
+})
+```

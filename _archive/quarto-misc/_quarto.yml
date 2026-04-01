@@ -1,0 +1,8 @@
+format:
+  html:
+    theme: sandstone
+    css: styles.css
+    toc: true
+    toc-depth: 2
+    toc-location: left
+    include-before-body: _navbar.html

@@ -1,0 +1,1134 @@
+---
+title: "Założenia testów"
+server: shiny
+---
+
+```{r}
+#| context: setup
+#| include: false
+
+source("_common.R")
+
+library(rstatix)
+library(broom)
+library(lmtest)
+library(gridExtra)
+
+# Kolory specyficzne dla założeń
+col_ok         <- "#27ae60"    # zielony - założenie spełnione
+col_fail       <- "#e74c3c"    # czerwony - założenie naruszone
+col_test       <- "#3498db"    # niebieski - dane/test
+col_alt        <- "#9b59b6"    # fioletowy - alternatywa
+
+# Theme
+theme_assumptions <- function(base_size = 14) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(face = "bold", size = base_size + 2),
+      plot.subtitle = element_text(color = "#7f8c8d"),
+      panel.grid.minor = element_blank()
+    )
+}
+
+# Generowanie danych o różnych rozkładach
+generate_test_data <- function(n = 50, dist = "normal") {
+  set.seed(NULL)
+  switch(dist,
+    "normal"     = rnorm(n, 170, 10),
+    "skewed"     = rgamma(n, shape = 2, scale = 5) + 150,
+    "heavy_tail" = 170 + 10 * rt(n, df = 3),
+    "bimodal"    = c(rnorm(n/2, 160, 4), rnorm(n/2, 180, 4)),
+    "uniform"    = runif(n, 150, 190),
+    rnorm(n, 170, 10)
+  )
+}
+
+# Generowanie danych do 2 grup o różnej wariancji
+generate_two_groups <- function(n1 = 30, n2 = 30, sd1 = 10, sd2 = 10,
+                                 mean1 = 170, mean2 = 175) {
+  set.seed(NULL)
+  data.frame(
+    value = c(rnorm(n1, mean1, sd1), rnorm(n2, mean2, sd2)),
+    group = factor(c(rep("A", n1), rep("B", n2)))
+  )
+}
+
+# Generowanie danych regresji z naruszonymi założeniami
+generate_reg_violations <- function(n = 100, violation = "none") {
+  set.seed(NULL)
+  x <- runif(n, 0, 10)
+
+  if (violation == "none") {
+    y <- 2 + 3 * x + rnorm(n, 0, 2)
+  } else if (violation == "heteroscedasticity") {
+    y <- 2 + 3 * x + rnorm(n, 0, 0.5 * x)
+  } else if (violation == "nonlinear") {
+    y <- 2 + 3 * x - 0.3 * x^2 + rnorm(n, 0, 1.5)
+  } else if (violation == "non_normal_resid") {
+    y <- 2 + 3 * x + (rexp(n, 0.5) - 2)
+  } else if (violation == "autocorrelation") {
+    errors <- arima.sim(n = n, model = list(ar = 0.8), sd = 2)
+    y <- 2 + 3 * x + as.numeric(errors)
+  }
+
+  data.frame(x = x, y = y)
+}
+
+# Nazwy rozkładów
+dist_names_pl <- c(
+  "normal"     = "Normalny",
+  "skewed"     = "Prawoskośny (Gamma)",
+  "heavy_tail" = "Ciężkie ogony (t)",
+  "bimodal"    = "Dwumodalny",
+  "uniform"    = "Jednostajny"
+)
+
+# Dane metod do selektora (ch5)
+method_info <- list(
+  t_one = list(
+    name = "Test t jednej próby",
+    assumptions = c("Dane ilościowe", "Normalność danych (lub n > 30)"),
+    checks = c("Q-Q plot", "shapiro_test()"),
+    alternatives = c("Wilcoxon jednej próby: wilcox_test(x ~ 1, mu = ...)"),
+    r_code = "rstatix::t_test(data, var ~ 1, mu = wartość)"
+  ),
+  t_ind = list(
+    name = "Test t niezależny",
+    assumptions = c("Dane ilościowe", "Normalność w każdej grupie (lub n > 30)", "Równe wariancje (lub użyj Welcha)"),
+    checks = c("Q-Q per group", "shapiro_test() per group", "levene_test()"),
+    alternatives = c("Welch t (domyślny!): t_test(var.equal = FALSE)", "Mann-Whitney U: wilcox_test()"),
+    r_code = "rstatix::t_test(data, var ~ group)"
+  ),
+  t_paired = list(
+    name = "Test t parowy",
+    assumptions = c("Dane ilościowe", "Normalność różnic"),
+    checks = c("shapiro_test() na różnicach"),
+    alternatives = c("Wilcoxon par znakowych: wilcox_test(paired = TRUE)"),
+    r_code = "rstatix::t_test(data, var ~ time, paired = TRUE)"
+  ),
+  anova = list(
+    name = "ANOVA jednoczynnikowa",
+    assumptions = c("Normalność reszt w grupach", "Równe wariancje między grupami"),
+    checks = c("shapiro_test() per group", "levene_test()"),
+    alternatives = c("Welch ANOVA: oneway.test()", "Kruskal-Wallis: kruskal_test()"),
+    r_code = "rstatix::anova_test(data, var ~ group)"
+  ),
+  pearson = list(
+    name = "Korelacja Pearsona",
+    assumptions = c("Liniowość związku", "Normalność dwuwymiarowa", "Brak ekstremalnych outlierów"),
+    checks = c("Scatterplot!", "shapiro_test() na obu zmiennych"),
+    alternatives = c("Spearman: cor_test(method='spearman')", "Kendall: cor_test(method='kendall')"),
+    r_code = "rstatix::cor_test(data, x, y, method = 'pearson')"
+  ),
+  spearman = list(
+    name = "Korelacja Spearmana",
+    assumptions = c("Monotoniczność związku"),
+    checks = c("Scatterplot"),
+    alternatives = c("Kendall tau (bardziej odporny, wolniejszy)"),
+    r_code = "rstatix::cor_test(data, x, y, method = 'spearman')"
+  ),
+  mann_whitney = list(
+    name = "Mann-Whitney U",
+    assumptions = c("Niezależność obserwacji", "Dane co najmniej porządkowe"),
+    checks = c("Sprawdzenie projektu badawczego"),
+    alternatives = c("Test permutacyjny"),
+    r_code = "rstatix::wilcox_test(data, var ~ group)"
+  ),
+  kruskal = list(
+    name = "Kruskal-Wallis",
+    assumptions = c("Niezależność obserwacji", "Podobne kształty rozkładów w grupach"),
+    checks = c("Boxploty, histogramy per grupa"),
+    alternatives = c("Test permutacyjny, bootstrap ANOVA"),
+    r_code = "rstatix::kruskal_test(data, var ~ group)"
+  ),
+  chi_sq = list(
+    name = "χ² niezależności",
+    assumptions = c("Niezależność obserwacji", "Oczekiwane liczności ≥ 5 w każdej komórce"),
+    checks = c("chisq.test()$expected — sprawdź wartości"),
+    alternatives = c("Test Fishera: fisher.test()", "χ² z MC: chisq.test(simulate.p.value=TRUE)"),
+    r_code = "chisq.test(table(var1, var2))"
+  ),
+  fisher = list(
+    name = "Test Fishera",
+    assumptions = c("Niezależność obserwacji"),
+    checks = c("Brak specjalnych wymagań"),
+    alternatives = c("Brak — to metoda dokładna"),
+    r_code = "fisher.test(table(var1, var2))"
+  ),
+  lm = list(
+    name = "Regresja liniowa",
+    assumptions = c("Liniowość związku", "Normalność reszt", "Homoscedastyczność reszt", "Niezależność reszt", "Brak współliniowości (wieloraka)"),
+    checks = c("Reszty vs fitted", "Q-Q reszt", "Scale-Location", "Breusch-Pagan: bptest()", "Durbin-Watson: dwtest()", "VIF: car::vif()"),
+    alternatives = c("Transformacja Y lub X", "Odporne SE: sandwich::vcovHC()", "WLS: lm(weights=)", "GLM, GAM, bootstrap"),
+    r_code = "model <- lm(y ~ x1 + x2, data = dane); summary(model)"
+  ),
+  glm = list(
+    name = "Regresja logistyczna",
+    assumptions = c("Liniowość logitów", "Niezależność obserwacji", "Brak współliniowości", "EPV ≥ 10 (zdarzeń na predyktor)"),
+    checks = c("Hosmer-Lemeshow: hoslem.test()", "VIF: car::vif()", "Sprawdź EPV"),
+    alternatives = c("Firth logistic: logistf::logistf()", "Regularyzacja: glmnet", "Drzewa decyzyjne"),
+    r_code = "model <- glm(y ~ x1 + x2, family = binomial, data = dane)"
+  )
+)
+```
+
+# Normalność rozkładu
+
+*Wiele testów statystycznych zakłada normalność danych.
+Jak to sprawdzić i co zrobić, gdy założenie jest naruszone?*
+
+## Które metody wymagają normalności?
+
+Założenie normalności dotyczy:
+
+- **Test t** (jednej próby, niezależny, parowy) — normalność danych (lub reszt)
+- **ANOVA** — normalność reszt w każdej grupie
+- **Korelacja Pearsona** — rozkład dwuwymiarowy normalny
+- **Regresja liniowa** — normalność reszt (nie danych!)
+
+**Ważne:** Przy dużych próbach (n > 30) testy t i ANOVA są
+odporne na odchylenia dzięki CTG. Normalność jest kluczowa głównie przy małych próbach.
+
+## Wizualne sprawdzanie normalności
+
+```{r}
+fluidRow(
+  column(4,
+    selectInput("ch1_dist", "Rozkład danych:",
+      choices = c(
+        "Normalny" = "normal",
+        "Prawoskośny" = "skewed",
+        "Ciężkie ogony" = "heavy_tail",
+        "Dwumodalny" = "bimodal",
+        "Jednostajny" = "uniform"
+      ),
+      selected = "normal"
+    ),
+    sliderInput("ch1_n", "Wielkość próby (n):",
+                min = 10, max = 200, value = 50, step = 10),
+    actionButton("ch1_gen", "Generuj dane",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch1_normality_plots", height = "350px")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch1_data <- reactiveVal(NULL)
+
+observeEvent(input$ch1_gen, {
+  ch1_data(generate_test_data(input$ch1_n, input$ch1_dist))
+})
+
+output$ch1_normality_plots <- renderPlot({
+  x <- ch1_data()
+  if (is.null(x)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    df <- data.frame(x = x)
+
+    p1 <- ggplot(df, aes(x = x)) +
+      geom_histogram(aes(y = after_stat(density)), bins = 20,
+                     fill = col_test, alpha = 0.6, color = "white") +
+      stat_function(fun = dnorm, args = list(mean = mean(x), sd = sd(x)),
+                    color = col_ok, linewidth = 1.2, linetype = "dashed") +
+      labs(title = "Histogram + krzywa normalna",
+           x = "Wartość", y = "Gęstość") +
+      theme_assumptions()
+
+    p2 <- ggplot(df, aes(sample = x)) +
+      stat_qq(color = col_test, alpha = 0.6) +
+      stat_qq_line(color = col_ok, linewidth = 1) +
+      labs(title = "Q-Q plot",
+           x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
+      theme_assumptions()
+
+    gridExtra::grid.arrange(p1, p2, ncol = 2)
+  }
+})
+```
+
+::: {.callout-note}
+**Jak czytać Q-Q plot:**
+Jeśli punkty leżą na linii — dane są normalne.
+Odchylenia na końcach — ciężkie/lekkie ogony.
+Krzywa — skośność.
+:::
+
+## Testy formalne
+
+Dwa najczęściej używane testy:
+
+- **Shapiro-Wilk** — najlepszy dla n < 50, najczęściej używany
+- **Kolmogorov-Smirnov** — działa dla dowolnego n, mniej mocny
+
+$H_0$: dane pochodzą z rozkładu normalnego. p < 0.05 → odrzucamy normalność.
+
+```{r}
+fluidRow(
+  column(4,
+    helpText("Używa danych z widgetu powyżej."),
+    actionButton("ch1_test_norm", "Testuj normalność",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    uiOutput("ch1_norm_results")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+output$ch1_norm_results <- renderUI({
+  req(input$ch1_test_norm)
+  x <- isolate(ch1_data())
+  if (is.null(x)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+
+  sw <- shapiro.test(x)
+  ks <- ks.test(x, "pnorm", mean = mean(x), sd = sd(x))
+
+  sw_color <- if (sw$p.value >= 0.05) col_ok else col_fail
+  ks_color <- if (ks$p.value >= 0.05) col_ok else col_fail
+
+  tagList(
+    div(class = "callout-info",
+      fluidRow(
+        column(6,
+          p(tags$strong("Shapiro-Wilk:")),
+          p(paste0("W = ", round(sw$statistic, 4))),
+          p(paste0("p = ", format.pval(sw$p.value, digits = 4))),
+          p(style = paste0("color:", sw_color, "; font-weight: bold;"),
+            if (sw$p.value >= 0.05) "Brak podstaw do odrzucenia normalności"
+            else "Normalność odrzucona!")
+        ),
+        column(6,
+          p(tags$strong("Kolmogorov-Smirnov:")),
+          p(paste0("D = ", round(ks$statistic, 4))),
+          p(paste0("p = ", format.pval(ks$p.value, digits = 4))),
+          p(style = paste0("color:", ks_color, "; font-weight: bold;"),
+            if (ks$p.value >= 0.05) "Brak podstaw do odrzucenia normalności"
+            else "Normalność odrzucona!")
+        )
+      )
+    )
+  )
+})
+```
+
+::: {.callout-warning}
+**Problem z testami formalnymi:**
+Przy dużym n test Shapiro-Wilka odrzuci normalność nawet dla
+nieistotnych odchyleń. Przy małym n nie ma mocy.
+**Zawsze łącz test z wizualizacją (Q-Q plot)!**
+:::
+
+## Gdy normalność jest naruszona
+
+Opcje:
+
+1. **Zignoruj** — przy dużym n (> 30) testy parametryczne są odporne
+2. **Użyj alternatywy nieparametrycznej** — patrz tabela
+3. **Transformuj dane** — log, sqrt, Box-Cox
+
+### Efekt transformacji logarytmicznej
+
+```{r}
+fluidRow(
+  column(4,
+    helpText("Generujemy dane prawoskośne i stosujemy log()."),
+    sliderInput("ch1_trans_n", "n:", min = 30, max = 200, value = 80, step = 10),
+    actionButton("ch1_transform", "Generuj i transformuj",
+                 class = "btn-warning", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch1_transform_plots", height = "300px"),
+    uiOutput("ch1_transform_results")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch1_trans_data <- reactiveVal(NULL)
+
+observeEvent(input$ch1_transform, {
+  x <- rgamma(input$ch1_trans_n, shape = 2, scale = 5) + 1
+  ch1_trans_data(x)
+})
+
+output$ch1_transform_plots <- renderPlot({
+  x <- ch1_trans_data()
+  if (is.null(x)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i transformuj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    log_x <- log(x)
+
+    p1 <- ggplot(data.frame(x = x), aes(sample = x)) +
+      stat_qq(color = col_fail, alpha = 0.5) +
+      stat_qq_line(color = col_fail) +
+      labs(title = "Oryginalne (prawoskośne)") +
+      theme_assumptions()
+
+    p2 <- ggplot(data.frame(x = log_x), aes(sample = x)) +
+      stat_qq(color = col_ok, alpha = 0.5) +
+      stat_qq_line(color = col_ok) +
+      labs(title = "Po log()") +
+      theme_assumptions()
+
+    gridExtra::grid.arrange(p1, p2, ncol = 2)
+  }
+})
+
+output$ch1_transform_results <- renderUI({
+  x <- ch1_trans_data()
+  if (is.null(x)) return(NULL)
+
+  sw_orig <- shapiro.test(x)
+  sw_log <- shapiro.test(log(x))
+
+  tagList(
+    stat_box(paste0("Oryginalne: p = ", format.pval(sw_orig$p.value, digits = 3)),
+             if (sw_orig$p.value >= 0.05) col_ok else col_fail),
+    stat_box(paste0("Po log(): p = ", format.pval(sw_log$p.value, digits = 3)),
+             if (sw_log$p.value >= 0.05) col_ok else col_fail)
+  )
+})
+```
+
+::: {.callout-tip}
+**Alternatywy nieparametryczne:**
+
+| Metoda parametryczna | Alternatywa |
+|---|---|
+| Test t jednej próby | Wilcoxon jednej próby |
+| Test t niezależny | Mann-Whitney U |
+| Test t parowy | Wilcoxon par znakowych |
+| ANOVA | Kruskal-Wallis |
+| Pearson | Spearman |
+:::
+
+---
+
+# Jednorodne wariancje
+
+*Normalność to nie jedyne założenie.
+Wiele testów porównawczych wymaga równych wariancji między grupami.*
+
+## Homoscedastyczność — równe wariancje
+
+Założenie jednorodnych wariancji (homoscedastyczność) dotyczy:
+
+- **Test t niezależny** — wariancje w obu grupach powinny być podobne
+- **ANOVA** — wariancje we wszystkich grupach porównywalne
+- **Regresja liniowa** — wariancja reszt stała (homoscedastyczność reszt)
+
+## Jak wygląda naruszenie?
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch2_sd1", "SD grupy A:", min = 2, max = 30, value = 10, step = 1),
+    sliderInput("ch2_sd2", "SD grupy B:", min = 2, max = 30, value = 10, step = 1),
+    sliderInput("ch2_n_per", "n (na grupę):", min = 15, max = 100, value = 40, step = 5),
+    actionButton("ch2_gen", "Generuj dane",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch2_boxplot", height = "300px"),
+    uiOutput("ch2_var_stats")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch2_data <- reactiveVal(NULL)
+
+observeEvent(input$ch2_gen, {
+  ch2_data(generate_two_groups(
+    n1 = input$ch2_n_per, n2 = input$ch2_n_per,
+    sd1 = input$ch2_sd1, sd2 = input$ch2_sd2
+  ))
+})
+
+output$ch2_boxplot <- renderPlot({
+  df <- ch2_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    ggplot(df, aes(x = group, y = value, fill = group)) +
+      geom_boxplot(alpha = 0.6) +
+      geom_jitter(width = 0.15, alpha = 0.3) +
+      scale_fill_manual(values = c(col_test, col_alt)) +
+      labs(title = "Dwie grupy", x = "Grupa", y = "Wartość") +
+      theme_assumptions() +
+      theme(legend.position = "none")
+  }
+})
+
+output$ch2_var_stats <- renderUI({
+  df <- ch2_data()
+  if (is.null(df)) return(NULL)
+  stats <- df %>% group_by(group) %>%
+    summarise(sd = sd(value), var = var(value), .groups = "drop")
+  ratio <- max(stats$var) / min(stats$var)
+
+  tagList(
+    stat_box(paste0("SD(A) = ", round(stats$sd[1], 2)), col_test),
+    stat_box(paste0("SD(B) = ", round(stats$sd[2], 2)), col_alt),
+    stat_box(paste0("Ratio var: ", round(ratio, 2)),
+             if (ratio < 4) col_ok else col_fail)
+  )
+})
+```
+
+## Testy jednorodnych wariancji
+
+Dwa popularne testy:
+
+- **Test Levene'a** — odporny na naruszenie normalności, zalecany
+- **Test Bartletta** — mocniejszy, ale wrażliwy na brak normalności
+
+$H_0$: wariancje są równe we wszystkich grupach.
+
+```{r}
+fluidRow(
+  column(4,
+    helpText("Używa danych z widgetu powyżej."),
+    actionButton("ch2_test_var", "Testuj",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    uiOutput("ch2_test_results")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+output$ch2_test_results <- renderUI({
+  req(input$ch2_test_var)
+  df <- isolate(ch2_data())
+  if (is.null(df)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+
+  lev <- rstatix::levene_test(df, value ~ group)
+  bart <- bartlett.test(value ~ group, data = df)
+
+  lev_color <- if (lev$p >= 0.05) col_ok else col_fail
+  bart_color <- if (bart$p.value >= 0.05) col_ok else col_fail
+
+  div(class = "callout-info",
+    fluidRow(
+      column(6,
+        p(tags$strong("Test Levene'a:")),
+        p(paste0("F = ", round(lev$statistic, 3))),
+        p(paste0("p = ", format.pval(lev$p, digits = 4))),
+        p(style = paste0("color:", lev_color, "; font-weight: bold;"),
+          if (lev$p >= 0.05) "Wariancje jednorodne" else "Wariancje nierówne!")
+      ),
+      column(6,
+        p(tags$strong("Test Bartletta:")),
+        p(paste0("\u03c7\u00b2 = ", round(bart$statistic, 3))),
+        p(paste0("p = ", format.pval(bart$p.value, digits = 4))),
+        p(style = paste0("color:", bart_color, "; font-weight: bold;"),
+          if (bart$p.value >= 0.05) "Wariancje jednorodne" else "Wariancje nierówne!")
+      )
+    )
+  )
+})
+```
+
+## Gdy wariancje są nierówne
+
+Opcje:
+
+1. **Test t Welcha** — domyślny w R! Nie zakłada równych wariancji.
+   W praktyce zawsze można używać Welcha zamiast klasycznego t.
+2. **Mann-Whitney U** — nieparametryczny, nie zakłada równych wariancji
+3. **ANOVA Welcha** — odpowiednik dla 3+ grup (`oneway.test()`)
+4. **Regresja: odporne błędy std.** — `sandwich::vcovHC()` + `lmtest::coeftest()`
+
+### Test t klasyczny vs Welcha
+
+```{r}
+fluidRow(
+  column(4,
+    helpText("Porównanie wyniku: klasyczny test t (zakłada równe wariancje)
+              vs test Welcha (nie zakłada)."),
+    actionButton("ch2_compare_t", "Porównaj testy",
+                 class = "btn-warning", width = "100%")
+  ),
+  column(8,
+    uiOutput("ch2_t_comparison")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+output$ch2_t_comparison <- renderUI({
+  req(input$ch2_compare_t)
+  df <- isolate(ch2_data())
+  if (is.null(df)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+
+  t_classic <- t.test(value ~ group, data = df, var.equal = TRUE)
+  t_welch <- t.test(value ~ group, data = df, var.equal = FALSE)
+
+  div(class = "callout-info",
+    fluidRow(
+      column(6,
+        p(tags$strong("Test t klasyczny"), " (var.equal=TRUE):"),
+        p(paste0("t(", round(t_classic$parameter, 1), ") = ",
+                 round(t_classic$statistic, 3))),
+        p(paste0("p = ", format.pval(t_classic$p.value, digits = 4)))
+      ),
+      column(6,
+        p(tags$strong("Test Welcha"), " (var.equal=FALSE):"),
+        p(paste0("t(", round(t_welch$parameter, 1), ") = ",
+                 round(t_welch$statistic, 3))),
+        p(paste0("p = ", format.pval(t_welch$p.value, digits = 4)))
+      )
+    ),
+    p(style = "margin-top: 10px;",
+      tags$em("Przy nierównych wariancjach wyniki mogą się różnić.
+               Welch jest bezpieczniejszy."))
+  )
+})
+```
+
+::: {.callout-tip}
+**Praktyczna rada:**
+Zawsze używaj testu Welcha (`t.test(var.equal = FALSE)`)
+— to domyślne zachowanie w R. Klasyczny test t z równymi wariancjami
+ma sens tylko gdy masz pewność, że wariancje są równe.
+:::
+
+---
+
+# Założenia regresji
+
+*Regresja liniowa ma własny zestaw założeń. Naruszenie każdego
+prowadzi do innego typu problemów.*
+
+## Pięć założeń regresji liniowej
+
+1. **Liniowość** — związek Y~X jest liniowy
+2. **Niezależność reszt** — reszty nie są skorelowane
+3. **Homoscedastyczność** — wariancja reszt stała
+4. **Normalność reszt** — reszty ~N(0, σ)
+5. **Brak współliniowości** — predyktory nie są silnie skorelowane
+
+Kluczowe: założenia dotyczą **reszt**, nie surowych danych!
+
+## Diagnostyka wizualna
+
+```{r}
+fluidRow(
+  column(4,
+    selectInput("ch3_violation", "Typ naruszenia:",
+      choices = c(
+        "Brak (dane OK)" = "none",
+        "Heteroscedastyczność" = "heteroscedasticity",
+        "Nieliniowość" = "nonlinear",
+        "Nienormalne reszty" = "non_normal_resid",
+        "Autokorelacja" = "autocorrelation"
+      ),
+      selected = "none"
+    ),
+    sliderInput("ch3_n", "n:", min = 50, max = 200, value = 100, step = 25),
+    actionButton("ch3_gen", "Generuj dane",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch3_scatter", height = "250px"),
+    plotOutput("ch3_diag_plots", height = "300px")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch3_data <- reactiveVal(NULL)
+ch3_model <- reactiveVal(NULL)
+
+observeEvent(input$ch3_gen, {
+  df <- generate_reg_violations(input$ch3_n, input$ch3_violation)
+  ch3_data(df)
+  ch3_model(lm(y ~ x, data = df))
+})
+
+output$ch3_scatter <- renderPlot({
+  df <- ch3_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    ggplot(df, aes(x = x, y = y)) +
+      geom_point(color = col_test, alpha = 0.5) +
+      geom_smooth(method = "lm", se = TRUE, color = col_ok, fill = col_ok, alpha = 0.1) +
+      labs(title = "Dane + linia regresji", x = "X", y = "Y") +
+      theme_assumptions()
+  }
+})
+
+output$ch3_diag_plots <- renderPlot({
+  model <- ch3_model()
+  if (is.null(model)) return(NULL)
+
+  df <- data.frame(
+    fitted = fitted(model),
+    residuals = residuals(model),
+    std_resid = rstandard(model),
+    sqrt_abs_resid = sqrt(abs(rstandard(model)))
+  )
+
+  p1 <- ggplot(df, aes(x = fitted, y = residuals)) +
+    geom_hline(yintercept = 0, linetype = "dashed", color = col_dark) +
+    geom_point(color = col_test, alpha = 0.5) +
+    geom_smooth(se = FALSE, color = col_fail, linewidth = 0.8) +
+    labs(title = "Reszty vs dopasowane", x = "Dopasowane", y = "Reszty") +
+    theme_assumptions()
+
+  p2 <- ggplot(df, aes(sample = std_resid)) +
+    stat_qq(color = col_test, alpha = 0.5) +
+    stat_qq_line(color = col_ok) +
+    labs(title = "Q-Q reszt") +
+    theme_assumptions()
+
+  p3 <- ggplot(df, aes(x = fitted, y = sqrt_abs_resid)) +
+    geom_point(color = col_test, alpha = 0.5) +
+    geom_smooth(se = FALSE, color = col_fail, linewidth = 0.8) +
+    labs(title = "Scale-Location", x = "Dopasowane",
+         y = expression(sqrt("|Std. reszty|"))) +
+    theme_assumptions()
+
+  gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
+})
+```
+
+::: {.callout-note}
+**Jak czytać wykresy diagnostyczne:**
+
+- **Reszty vs dopasowane:** losowy rozrzut = OK, wzór = problem
+- **Q-Q reszt:** punkty na linii = normalność OK
+- **Scale-Location:** płaska linia = homoscedastyczność OK
+:::
+
+## Testy formalne założeń regresji
+
+```{r}
+fluidRow(
+  column(4,
+    helpText("Używa modelu z widgetu powyżej."),
+    actionButton("ch3_run_tests", "Uruchom diagnostykę",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    uiOutput("ch3_diag_results")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+output$ch3_diag_results <- renderUI({
+  req(input$ch3_run_tests)
+  model <- isolate(ch3_model())
+  if (is.null(model)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+
+  # Shapiro-Wilk na resztach
+  resid <- residuals(model)
+  sw <- shapiro.test(resid)
+
+  # Breusch-Pagan (heteroscedastyczność)
+  bp <- lmtest::bptest(model)
+
+  # Durbin-Watson (autokorelacja)
+  dw <- lmtest::dwtest(model)
+
+  results <- list(
+    list(name = "Normalność reszt (Shapiro-Wilk)",
+         stat = paste0("W = ", round(sw$statistic, 4)),
+         p = sw$p.value,
+         ok_msg = "Reszty normalne", fail_msg = "Reszty nienormalne!"),
+    list(name = "Homoscedastyczność (Breusch-Pagan)",
+         stat = paste0("BP = ", round(bp$statistic, 3)),
+         p = bp$p.value,
+         ok_msg = "Wariancja stała", fail_msg = "Heteroscedastyczność!"),
+    list(name = "Niezależność reszt (Durbin-Watson)",
+         stat = paste0("DW = ", round(dw$statistic, 3)),
+         p = dw$p.value,
+         ok_msg = "Brak autokorelacji", fail_msg = "Autokorelacja!")
+  )
+
+  div(class = "callout-info",
+    lapply(results, function(r) {
+      color <- if (r$p >= 0.05) col_ok else col_fail
+      msg <- if (r$p >= 0.05) r$ok_msg else r$fail_msg
+      div(style = "margin-bottom: 10px;",
+        p(tags$strong(r$name)),
+        p(paste0(r$stat, ", p = ", format.pval(r$p, digits = 4))),
+        p(style = paste0("color:", color, "; font-weight: bold;"), msg)
+      )
+    })
+  )
+})
+```
+
+## Gdy założenia są naruszone
+
+::: {.callout-tip}
+
+| Naruszenie | Rozwiązanie |
+|---|---|
+| Nieliniowość | Dodaj składnik kwadratowy, transformuj X, użyj GAM |
+| Heteroscedastyczność | Odporne błędy std. (HC), WLS, transformacja log(Y) |
+| Nienormalne reszty | Transformacja Y, bootstrap CI, GLM |
+| Autokorelacja | Modele szeregów czasowych (ARIMA), GLS |
+| Współliniowość | Usuń skorelowane predyktory, PCA, regularyzacja (ridge/lasso) |
+:::
+
+---
+
+# Założenia χ² i Fishera
+
+*Testy dla zmiennych jakościowych mają prostsze, ale ważne założenia
+dotyczące minimalnych liczności.*
+
+## Założenia testu χ²
+
+Test chi-kwadrat (zgodności i niezależności) wymaga:
+
+1. **Niezależność obserwacji** — każda obserwacja należy do jednej kategorii
+2. **Oczekiwane liczności ≥ 5** — w każdej komórce tabeli
+3. Próba losowa z populacji
+
+Gdy oczekiwane liczności < 5, test χ² jest niedokładny.
+
+## Efekt małych liczności
+
+```{r}
+fluidRow(
+  column(4,
+    sliderInput("ch4_n", "Wielkość próby:", min = 10, max = 200, value = 20, step = 5),
+    helpText("Generujemy 500 prób z H\u2080 prawdziwą (brak związku).
+              Sprawdzamy, jak często każdy test fałszywie odrzuci H\u2080."),
+    actionButton("ch4_sim", "Symuluj",
+                 class = "btn-warning", width = "100%")
+  ),
+  column(8,
+    uiOutput("ch4_sim_results"),
+    plotOutput("ch4_sim_plot", height = "250px")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch4_sim_data <- reactiveVal(NULL)
+
+observeEvent(input$ch4_sim, {
+  n <- input$ch4_n
+  n_sims <- 500
+
+  results <- sapply(1:n_sims, function(i) {
+    # H0 prawdziwa: brak związku
+    x <- sample(c("A", "B"), n, replace = TRUE)
+    y <- sample(c("Tak", "Nie"), n, replace = TRUE)
+    tab <- table(x, y)
+
+    p_chi <- tryCatch(chisq.test(tab, correct = FALSE)$p.value, error = function(e) NA)
+    p_fisher <- fisher.test(tab)$p.value
+
+    c(p_chi = p_chi, p_fisher = p_fisher)
+  })
+
+  results_df <- data.frame(t(results))
+  ch4_sim_data(results_df)
+})
+
+output$ch4_sim_results <- renderUI({
+  df <- ch4_sim_data()
+  if (is.null(df)) return(NULL)
+
+  fpr_chi <- mean(df$p_chi < 0.05, na.rm = TRUE) * 100
+  fpr_fisher <- mean(df$p_fisher < 0.05, na.rm = TRUE) * 100
+
+  chi_color <- if (abs(fpr_chi - 5) <= 2) col_ok else col_fail
+  fisher_color <- if (abs(fpr_fisher - 5) <= 2) col_ok else col_fail
+
+  tagList(
+    stat_box(paste0("\u03c7\u00b2: ", round(fpr_chi, 1), "% fałszywych alarmów"), chi_color),
+    stat_box(paste0("Fisher: ", round(fpr_fisher, 1), "% fałszywych alarmów"), fisher_color),
+    stat_box("Oczekiwane: 5%", col_dark)
+  )
+})
+
+output$ch4_sim_plot <- renderPlot({
+  df <- ch4_sim_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Symuluj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    long <- data.frame(
+      test = rep(c("\u03c7\u00b2", "Fisher"), each = nrow(df)),
+      p = c(df$p_chi, df$p_fisher)
+    )
+    long <- long[!is.na(long$p), ]
+
+    ggplot(long, aes(x = p, fill = test)) +
+      geom_histogram(breaks = seq(0, 1, by = 0.05), alpha = 0.6,
+                     color = "white", position = "identity") +
+      geom_vline(xintercept = 0.05, color = col_fail, linetype = "dashed") +
+      scale_fill_manual(values = c(col_test, col_alt), name = NULL) +
+      labs(title = paste0("Rozkład p-wartości (H\u2080 prawdziwa, n = ", input$ch4_n, ")"),
+           x = "p-wartość", y = "Liczba") +
+      theme_assumptions() +
+      theme(legend.position = "top")
+  }
+})
+```
+
+::: {.callout-important}
+**Problem:**
+Przy małych n, test χ² może dawać za dużo lub za mało fałszywych alarmów
+(niekontrolowany błąd I rodzaju). Test Fishera zachowuje się poprawnie.
+:::
+
+## Kiedy χ², kiedy Fisher?
+
+::: {.callout-tip}
+**Zasady:**
+
+- Wszystkie oczekiwane ≥ 5 → **test χ²**
+- Którakolwiek oczekiwana < 5 → **test Fishera**
+- Tabela 2×2 z małym n → zawsze **Fisher**
+- Duża tabela + małe oczekiwane → **χ² z symulacją Monte Carlo**
+  (`chisq.test(simulate.p.value = TRUE)`)
+:::
+
+::: {.callout-note}
+**Założenia testu Fishera:**
+Test Fishera nie ma założeń dotyczących minimalnych liczności —
+jest testem **dokładnym**. Wymaga jedynie niezależności obserwacji
+i stałych sum brzegowych.
+:::
+
+## Założenia korelacji
+
+| Test | Założenia | Alternatywa |
+|---|---|---|
+| Pearson | Liniowość związku, normalność 2D, brak outlierów | Spearman (rangi) |
+| Spearman | Monotoniczność związku (słabsze niż liniowość) | Kendall tau (jeszcze bardziej odporny) |
+
+---
+
+# Mapa metod
+
+*Zbierzmy wszystko w jedną mapę: każda metoda, jej założenia
+i co robić, gdy są naruszone.*
+
+## Kompletna mapa: metoda → założenia → alternatywa
+
+## Testy parametryczne
+
+| Metoda | Założenia | Jak sprawdzić | Gdy naruszone → alternatywa |
+|---|---|---|---|
+| **Test t jednej pr.** | Normalność danych (lub n > 30) | Q-Q plot, Shapiro-Wilk | Wilcoxon jednej próby |
+| **Test t niezależny** | Normalność w grupach, równe wariancje | Shapiro + Levene | Welch t (nierówne war.), Mann-Whitney U (brak norm.) |
+| **Test t parowy** | Normalność różnic | Shapiro na różnicach | Wilcoxon par znakowych |
+| **ANOVA** | Normalność reszt, równe wariancje | Shapiro + Levene | Welch ANOVA (war.), Kruskal-Wallis (norm.) |
+| **Pearson** | Liniowość, normalność 2D, brak outlierów | Scatterplot, Q-Q obu zmiennych | Spearman (monotoniczny), Kendall (odporny) |
+
+## Testy nieparametryczne
+
+| Metoda | Założenia | Uwagi |
+|---|---|---|
+| **Wilcoxon / Mann-Whitney** | Niezależność obserwacji, symetryczne rozkłady (dla mediany) | Nie wymaga normalności. Testuje różnicę rozkładów, nie średnich. |
+| **Kruskal-Wallis** | Niezależność, podobne kształty rozkładów w grupach | Post-hoc: test Dunna z korektą |
+| **Spearman** | Monotoniczność związku | Działa na rangach, odporny na outliery |
+
+## Testy dla zmiennych jakościowych
+
+| Metoda | Założenia | Gdy naruszone |
+|---|---|---|
+| **χ² zgodności** | Oczekiwane ≥ 5 w każdej kategorii | Test dwumianowy (2 kat.), symulacja MC |
+| **χ² niezależności** | Oczekiwane ≥ 5 w każdej komórce | Test Fishera (dokładny) |
+| **Test Fishera** | Niezależność obserwacji | Brak — to już metoda dokładna |
+| **Test dwumianowy** | Niezależność, binarne dane | Brak — to metoda dokładna |
+
+## Regresja
+
+| Metoda | Założenia | Diagnostyka | Alternatywy |
+|---|---|---|---|
+| **Regresja liniowa** | Liniowość, normalność reszt, homoscedastyczność, niezależność reszt, brak współliniowości | Reszty vs fitted, Q-Q, Scale-Location, Breusch-Pagan, Durbin-Watson, VIF | Transformacje, odporne SE (HC), WLS, GLM, GAM, bootstrap |
+| **Regresja logistyczna** | Liniowość logitów, niezależność obserwacji, brak współliniowości, wystarczająco dużo zdarzeń na predyktor (reguła EPV ≥ 10) | Test Hosmera-Lemeshowa, residuals deviance, VIF | Dokładna regresja logistyczna (Firtha), regularyzacja, drzewa decyzyjne |
+
+## Selektor: mam tę metodę — co sprawdzić?
+
+```{r}
+fluidRow(
+  column(4,
+    selectInput("ch5_method", "Metoda:",
+      choices = c(
+        "Test t jednej próby" = "t_one",
+        "Test t niezależny" = "t_ind",
+        "Test t parowy" = "t_paired",
+        "ANOVA" = "anova",
+        "Korelacja Pearsona" = "pearson",
+        "Korelacja Spearmana" = "spearman",
+        "Mann-Whitney U" = "mann_whitney",
+        "Kruskal-Wallis" = "kruskal",
+        "\u03c7\u00b2 niezależności" = "chi_sq",
+        "Test Fishera" = "fisher",
+        "Regresja liniowa" = "lm",
+        "Regresja logistyczna" = "glm"
+      ),
+      selected = "t_ind"
+    )
+  ),
+  column(8,
+    uiOutput("ch5_method_info")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+output$ch5_method_info <- renderUI({
+  info <- method_info[[input$ch5_method]]
+  if (is.null(info)) return(NULL)
+
+  tagList(
+    h4(info$name),
+    div(class = "callout-warning",
+      tags$strong("Założenia:"),
+      tags$ul(lapply(info$assumptions, tags$li))
+    ),
+    div(class = "callout-info",
+      tags$strong("Jak sprawdzić:"),
+      tags$ul(lapply(info$checks, function(c) tags$li(tags$code(c))))
+    ),
+    div(class = "callout-success",
+      tags$strong("Alternatywy:"),
+      tags$ul(lapply(info$alternatives, tags$li))
+    ),
+    div(class = "formula-box",
+      tags$strong("Kod R:"),
+      tags$pre(style = "margin-top: 5px;", tags$code(info$r_code))
+    )
+  )
+})
+```
+
+---
+
+# Ściąga
+
+*Kompaktowe podsumowanie: założenia, testy diagnostyczne i alternatywy.*
+
+## Schemat postępowania
+
+::: {.callout-note}
+**Krok 1: Wybierz metodę** na podstawie typu zmiennych i pytania badawczego.
+
+**Krok 2: Sprawdź założenia** wizualnie (wykresy) i formalnie (testy).
+
+**Krok 3a:** Założenia spełnione → użyj metody parametrycznej.
+
+**Krok 3b:** Założenia naruszone → użyj alternatywy.
+
+**Krok 4:** Raportuj wyniki z wielkością efektu i p-wartością.
+:::
+
+## Testy diagnostyczne — szybka referencja
+
+| Założenie | Test | R | $H_0$ |
+|---|---|---|---|
+| Normalność | Shapiro-Wilk | `shapiro_test()` | Dane są normalne |
+| Normalność | Kolmogorov-Smirnov | `ks.test()` | Dane mają podany rozkład |
+| Równe wariancje | Levene | `levene_test()` | Wariancje równe |
+| Równe wariancje | Bartlett | `bartlett.test()` | Wariancje równe |
+| Homoscedast. reszt | Breusch-Pagan | `lmtest::bptest()` | Wariancja reszt stała |
+| Niezależn. reszt | Durbin-Watson | `lmtest::dwtest()` | Brak autokorelacji |
+| Współliniowość | VIF | `car::vif()` | VIF < 5 (niektórzy < 10) |
+
+## Metoda → alternatywa (quick reference)
+
+| Metoda parametryczna | → Alternatywa nieparametryczna |
+|---|---|
+| Test t jednej próby | Wilcoxon jednej próby |
+| Test t niezależny | Mann-Whitney U |
+| Test t parowy | Wilcoxon par znakowych |
+| ANOVA | Kruskal-Wallis |
+| Tukey HSD (post-hoc) | Test Dunna |
+| Pearson | Spearman |
+| χ² (małe n) | Fisher (dokładny) |
+| Regresja OLS | Odporne SE / bootstrap / GLM |
+
+## Praktyczne rady
+
+::: {.callout-tip}
+- **Wizualizacja > testy formalne.** Wykresy dają intuicję, testy dają liczbę. Używaj obu.
+- **Testy Welcha są domyślne w R.** Nie musisz sprawdzać równości wariancji przed testem t.
+- **Duże n łagodzi naruszenia.** Przy n > 30 testy parametryczne są odporne na brak normalności (CTG).
+- **Testy nieparametryczne nie są "gorsze".** Mają mniejszą moc przy spełnionych założeniach, ale są bezpieczniejsze ogólnie.
+- **Raportuj zawsze wielkość efektu** — p-wartość nie mówi, jak duży jest efekt.
+:::
+
+## Kod R — diagnostyka
+
+::: {.formula-box}
+```r
+library(rstatix)
+library(lmtest)
+
+# === Normalność ===
+data %>% shapiro_test(variable)               # per zmienna
+data %>% group_by(group) %>% shapiro_test(var) # per grupa
+
+# === Równe wariancje ===
+data %>% levene_test(var ~ group)
+bartlett.test(var ~ group, data = data)
+
+# === Diagnostyka regresji ===
+model <- lm(y ~ x1 + x2, data = dane)
+plot(model)                    # 4 wykresy diagnostyczne
+lmtest::bptest(model)          # Breusch-Pagan
+lmtest::dwtest(model)          # Durbin-Watson
+car::vif(model)                # VIF (współliniowość)
+
+# === Odporne błędy standardowe ===
+library(sandwich)
+lmtest::coeftest(model, vcov = sandwich::vcovHC(model, type = 'HC3'))
+
+# === Welch ANOVA (nierówne wariancje) ===
+oneway.test(var ~ group, data = data)
+```
+:::

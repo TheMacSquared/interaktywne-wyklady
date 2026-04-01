@@ -1,0 +1,74 @@
+---
+title: "Interaktywne wykłady ze statystyki"
+---
+
+::: {.column-page}
+
+## O skrypcie
+
+Niniejszy skrypt zawiera interaktywne materiały do kursu statystyki. Każdy wykład łączy
+teorię z symulacjami i widgetami, które pozwalają eksperymentować z pojęciami
+statystycznymi w czasie rzeczywistym.
+
+Materiały są przeznaczone do samodzielnej pracy studentów oraz jako wsparcie
+dla prowadzącego podczas zajęć.
+
+### Jak korzystać
+
+- **Nawigacja** — użyj menu na górze lub spisu treści po lewej stronie
+- **Widgety** — suwaki, przyciski i selektory pozwalają zmieniać parametry i obserwować efekty
+- **Symulacje** — kliknij przycisk, aby uruchomić losowanie / symulację
+- **Ściąga** — każdy wykład kończy się podsumowaniem najważniejszych wzorów i reguł
+
+---
+
+## Spis wykładów
+
+### 1. [Typy danych i statystyka opisowa](01-typy-danych.qmd)
+
+Rodzaje zmiennych (ilościowe, jakościowe, porządkowe), statystyki położenia
+(średnia, mediana, kwartyle), statystyki rozrzutu (wariancja, odchylenie standardowe, IQR)
+oraz kształt rozkładu (skośność, kurtoza). Wizualizacje: histogramy, boxploty, wykresy słupkowe.
+
+### 2. [Rozkłady prawdopodobieństwa](02-rozklady.qmd)
+
+Wartość oczekiwana i wariancja, rozkłady dyskretne (dwumianowy, Poissona, geometryczny),
+rozkłady ciągłe (normalny, wykładniczy, jednostajny), centralne twierdzenie graniczne.
+Quiz sprawdzający rozpoznawanie rozkładów.
+
+### 3. [Przedziały ufności](03-przedzialy.qmd)
+
+Estymacja punktowa, idea przedziału ufności, przedział dla średniej (z vs t),
+przedział dla proporcji (Wald vs Wilson), czynniki wpływające na szerokość przedziału,
+planowanie wielkości próby.
+
+### 4. [Wnioskowanie statystyczne](04-wnioskowanie.qmd)
+
+Logika testowania hipotez, formułowanie hipotez, testy dla jednej i dwóch zmiennych
+(ilościowych i jakościowych), korelacja, ANOVA. Interaktywne symulacje p-wartości
+i mocy testu.
+
+### 5. [Regresja](05-regresja.qmd)
+
+Regresja liniowa prosta i wieloraka, regresja logistyczna, porównanie modeli
+(AIC, BIC, R²). Interaktywne dopasowywanie prostej, wizualizacja reszt
+i diagnostyka modelu.
+
+### 6. [Założenia testów](06-zalozenia.qmd)
+
+Sprawdzanie normalności (Shapiro-Wilk, QQ-plot), jednorodność wariancji (Levene),
+założenia regresji (Breusch-Pagan, Durbin-Watson), warunki testu chi-kwadrat i Fishera.
+Mapa decyzyjna: który test wybrać?
+
+### 7. [Dobre dane](07-dobre-dane.qmd)
+
+Analiza rzeczywistych i syntetycznych zbiorów danych — od małych grup po duże datasety.
+Czyszczenie danych, wykrywanie błędów, ocena jakości zmiennych. Przykłady z pakietów
+AER, palmerpenguins, ISLR i fivethirtyeight.
+
+### 8. [Case studies](08-case-studies.qmd)
+
+Kompletna analiza statystyczna na przykładzie danych California Schools (pakiet AER) —
+od eksploracji, przez testy, po regresję i wnioski.
+
+:::

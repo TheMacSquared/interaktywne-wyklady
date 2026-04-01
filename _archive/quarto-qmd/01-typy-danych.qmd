@@ -1,0 +1,4375 @@
+---
+title: "Typy danych i statystyka opisowa"
+server: shiny
+---
+
+```{=html}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+var pieChartJS = null, barChartJS = null;
+var _pendingScenario = null;
+
+function _doRenderScenario(msg) {
+  if (pieChartJS) pieChartJS.destroy();
+  if (barChartJS) barChartJS.destroy();
+
+  var pieCtx = document.getElementById('ch2_pie_canvas');
+  var barCtx = document.getElementById('ch2_bar_canvas');
+
+  if (!pieCtx || !barCtx) {
+    _pendingScenario = msg;
+    return;
+  }
+  _pendingScenario = null;
+
+  pieChartJS = new Chart(pieCtx, {
+    type: 'pie',
+    data: {
+      labels: msg.labels,
+      datasets: [{
+        data: msg.data,
+        backgroundColor: msg.colors,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.6)'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 500 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) { return ctx.label + ': ' + ctx.parsed + '%'; }
+          }
+        }
+      }
+    }
+  });
+
+  barChartJS = new Chart(barCtx, {
+    type: 'bar',
+    data: {
+      labels: msg.labels,
+      datasets: [{
+        data: msg.data,
+        backgroundColor: msg.colors,
+        borderRadius: 4,
+        barPercentage: 0.7
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      animation: { duration: 500 },
+      scales: {
+        x: {
+          min: 0, max: 50,
+          grid: { color: 'rgba(128,128,128,0.1)' },
+          ticks: {
+            callback: function(v) { return v + '%'; },
+            color: 'rgba(128,128,128,0.5)',
+            font: { size: 12 }
+          }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { color: 'rgba(128,128,128,0.6)', font: { size: 13 } }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) { return ctx.parsed.x + '%'; }
+          }
+        }
+      }
+    }
+  });
+}
+
+Shiny.addCustomMessageHandler('render_scenario', function(msg) {
+  _doRenderScenario(msg);
+});
+
+// Retry rendering when canvas becomes visible
+var _retryObserver = new MutationObserver(function() {
+  if (_pendingScenario) {
+    setTimeout(function() { _doRenderScenario(_pendingScenario); }, 100);
+  }
+});
+_retryObserver.observe(document.body, { childList: true, subtree: true });
+</script>
+```
+
+```{r}
+#| context: setup
+#| include: false
+
+source("_common.R")
+
+library(e1071)
+library(gridExtra)
+
+# ============================================================================
+# KOLORY SPECYFICZNE DLA TEGO WYKLADU
+# ============================================================================
+
+col_nominal    <- "#e74c3c"
+col_ordinal    <- "#f39c12"
+col_discrete   <- "#3498db"
+col_continuous <- "#27ae60"
+
+type_colors <- c(
+  "nominalna"           = col_nominal,
+  "porzadkowa"          = col_ordinal,
+  "ilosciowa_dyskretna" = col_discrete,
+  "ilosciowa_ciagla"    = col_continuous
+)
+
+type_labels <- c(
+  "nominalna"           = "Jakościowa nominalna",
+  "porzadkowa"          = "Jakościowa porządkowa",
+  "ilosciowa_dyskretna" = "Ilościowa dyskretna",
+  "ilosciowa_ciagla"    = "Ilościowa ciągła"
+)
+
+# ============================================================================
+# ZBIOR DANYCH: ANKIETA STUDENCKA
+# ============================================================================
+
+set.seed(2024)
+n <- 200
+
+plec <- sample(c("Kobieta", "Mezczyzna"), n, replace = TRUE, prob = c(0.55, 0.45))
+
+student_data <- data.frame(
+  plec = factor(plec),
+  kierunek = factor(sample(
+    c("Informatyka", "Biologia", "Psychologia", "Ekonomia"),
+    n, replace = TRUE, prob = c(0.3, 0.2, 0.25, 0.25)
+  )),
+  grupa_krwi = factor(sample(
+    c("A", "B", "AB", "0"),
+    n, replace = TRUE, prob = c(0.35, 0.2, 0.08, 0.37)
+  )),
+  rok_studiow = factor(
+    sample(1:5, n, replace = TRUE, prob = c(0.3, 0.25, 0.2, 0.15, 0.1)),
+    levels = 1:5, ordered = TRUE
+  ),
+  zadowolenie = factor(
+    sample(
+      c("Bardzo niezadowolony", "Niezadowolony", "Neutralny", "Zadowolony", "Bardzo zadowolony"),
+      n, replace = TRUE, prob = c(0.05, 0.15, 0.30, 0.35, 0.15)
+    ),
+    levels = c("Bardzo niezadowolony", "Niezadowolony", "Neutralny", "Zadowolony", "Bardzo zadowolony"),
+    ordered = TRUE
+  ),
+  liczba_kursow = sample(3:9, n, replace = TRUE),
+  liczba_nieobecnosci = rpois(n, lambda = 3),
+  wzrost = round(ifelse(
+    plec == "Kobieta",
+    rnorm(n, mean = 166, sd = 6),
+    rnorm(n, mean = 178, sd = 7)
+  ), 1),
+  srednia_ocen = round(pmin(5.0, pmax(2.0, rnorm(n, mean = 3.8, sd = 0.6))), 2),
+  czas_dojazdu = round(rgamma(n, shape = 3, scale = 10) + 5, 1),
+  waga = round(ifelse(
+    plec == "Kobieta",
+    rnorm(n, mean = 62, sd = 8),
+    rnorm(n, mean = 80, sd = 10)
+  ), 1),
+  ocena_wykladowcy = factor(
+    sample(1:10, n, replace = TRUE,
+           prob = c(0.02, 0.03, 0.05, 0.08, 0.12, 0.15, 0.20, 0.18, 0.12, 0.05)),
+    levels = 1:10, ordered = TRUE
+  ),
+  stringsAsFactors = FALSE
+)
+
+# ============================================================================
+# METADANE ZMIENNYCH
+# ============================================================================
+
+variable_meta <- list(
+  plec = list(label = "Płeć", type = "nominalna"),
+  kierunek = list(label = "Kierunek studiów", type = "nominalna"),
+  grupa_krwi = list(label = "Grupa krwi", type = "nominalna"),
+  rok_studiow = list(label = "Rok studiów", type = "porzadkowa"),
+  zadowolenie = list(label = "Zadowolenie ze studiów", type = "porzadkowa"),
+  liczba_kursow = list(label = "Liczba kursów", type = "ilosciowa_dyskretna"),
+  liczba_nieobecnosci = list(label = "Liczba nieobecności", type = "ilosciowa_dyskretna"),
+  wzrost = list(label = "Wzrost (cm)", type = "ilosciowa_ciagla"),
+  srednia_ocen = list(label = "Średnia ocen", type = "ilosciowa_ciagla"),
+  czas_dojazdu = list(label = "Czas dojazdu (min)", type = "ilosciowa_ciagla"),
+  waga = list(label = "Waga (kg)", type = "ilosciowa_ciagla"),
+  ocena_wykladowcy = list(label = "Ocena wykładowcy (1-10)", type = "porzadkowa")
+)
+
+# ============================================================================
+# FUNKCJE POMOCNICZE
+# ============================================================================
+
+render_taxonomy <- function(highlight = NULL, revealed = character(0)) {
+  nodes <- data.frame(
+    id = c("dane", "ilościowe", "jakościowe",
+           "ciagla", "dyskretna", "porzadkowa", "nominalna"),
+    label = c("Dane", "Ilosciowe\n(liczbowe)", "Jakosciowe\n(kategoryczne)",
+              "Ciagle", "Dyskretne", "Porzadkowe", "Nominalne"),
+    x = c(5, 2.5, 7.5, 1.25, 3.75, 6.25, 8.75),
+    y = c(3, 2, 2, 1, 1, 1, 1),
+    type = c(NA, NA, NA, "ilosciowa_ciagla", "ilosciowa_dyskretna", "porzadkowa", "nominalna"),
+    example = c("", "", "",
+                "np. wzrost,\nczas dojazdu",
+                "np. liczba kursow,\nliczba nieobecnosci",
+                "np. rok studiow,\nzadowolenie",
+                "np. plec, kierunek,\ngrupa krwi"),
+    stringsAsFactors = FALSE
+  )
+
+  nodes$fill <- sapply(nodes$type, function(t) {
+    if (is.na(t)) return("#ecf0f1")
+    type_colors[t]
+  })
+  nodes$alpha <- sapply(nodes$type, function(t) {
+    if (is.null(highlight) || is.na(t)) return(1)
+    if (t == highlight) return(1) else return(0.3)
+  })
+
+  edges <- data.frame(
+    x = c(5, 5, 2.5, 2.5, 7.5, 7.5),
+    xend = c(2.5, 7.5, 1.25, 3.75, 6.25, 8.75),
+    y = c(2.75, 2.75, 1.75, 1.75, 1.75, 1.75),
+    yend = c(2.25, 2.25, 1.25, 1.25, 1.25, 1.25)
+  )
+
+  ggplot() +
+    geom_segment(data = edges,
+                 aes(x = x, y = y, xend = xend, yend = yend),
+                 color = "#bdc3c7", linewidth = 1.2) +
+    geom_tile(data = nodes,
+              aes(x = x, y = y, width = 2, height = 0.45),
+              fill = nodes$fill, alpha = nodes$alpha,
+              color = col_dark, linewidth = 0.5) +
+    geom_text(data = nodes,
+              aes(x = x, y = y, label = label),
+              size = 5, fontface = "bold", color = col_dark) +
+    geom_text(data = nodes %>% filter(id %in% revealed),
+              aes(x = x, y = y - 0.35, label = example),
+              size = 3.5, color = "#7f8c8d", lineheight = 0.9) +
+    geom_text(data = nodes %>% filter(example != "", !id %in% revealed),
+              aes(x = x, y = y - 0.35, label = "kliknij aby odkryc"),
+              size = 3, color = "#bdc3c7", fontface = "italic") +
+    coord_cartesian(xlim = c(-0.2, 10.2), ylim = c(0.3, 3.5)) +
+    theme_void() +
+    theme(plot.margin = margin(10, 10, 10, 10))
+}
+
+render_good_plot <- function(x, label, type) {
+  col <- type_colors[type]
+  df <- data.frame(x = x)
+
+  if (type %in% c("nominalna", "porzadkowa")) {
+    ggplot(df, aes(x = x)) +
+      geom_bar(fill = col, color = "white", alpha = 0.85) +
+      geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 4.5) +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+      labs(title = paste0("Wykres słupkowy: ", label), x = label, y = "Liczebność") +
+      theme_minimal(base_size = 14) +
+      theme(axis.text.x = element_text(angle = if (nlevels(factor(x)) > 4) 30 else 0, hjust = 1))
+  } else if (type == "ilosciowa_dyskretna") {
+    ggplot(df, aes(x = factor(x))) +
+      geom_bar(fill = col, color = "white", alpha = 0.85) +
+      geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 4.5) +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+      labs(title = paste0("Wykres słupkowy: ", label), x = label, y = "Liczebność") +
+      theme_minimal(base_size = 14)
+  } else {
+    ggplot(df, aes(x = x)) +
+      geom_histogram(aes(y = after_stat(density)), bins = 20, fill = col, color = "white", alpha = 0.7) +
+      geom_density(color = col, linewidth = 1.2) +
+      labs(title = paste0("Histogram z gęstościa: ", label), x = label, y = "Gęstość") +
+      theme_minimal(base_size = 14)
+  }
+}
+
+render_bad_plot <- function(x, label, type) {
+  df <- data.frame(x = x)
+  if (type %in% c("nominalna", "porzadkowa")) {
+    df$x_num <- as.numeric(factor(x))
+    ggplot(df, aes(x = x_num)) +
+      geom_histogram(bins = 10, fill = "#95a5a6", color = "white") +
+      labs(title = paste0("Histogram (NIEODPOWIEDNI): ", label),
+           subtitle = "Histogram wymaga danych liczbowych - tu mamy kategorie!",
+           x = paste0(label, " (zakodowane jako liczby)"), y = "Liczebność") +
+      theme_minimal(base_size = 14) +
+      theme(plot.title = element_text(color = "#e74c3c"),
+            plot.subtitle = element_text(color = "#e74c3c", face = "italic"))
+  } else {
+    n_unique <- length(unique(x))
+    ggplot(df, aes(x = x)) +
+      geom_bar(fill = "#95a5a6", width = 0.3) +
+      labs(title = paste0("Wykres słupkowy (NIEODPOWIEDNI): ", label),
+           subtitle = paste0(n_unique, " unikalnych wartości - wykres słupkowy jest nieczytelny!"),
+           x = label, y = "Liczebność") +
+      theme_minimal(base_size = 14) +
+      theme(plot.title = element_text(color = "#e74c3c"),
+            plot.subtitle = element_text(color = "#e74c3c", face = "italic"),
+            axis.text.x = element_text(size = 5, angle = 90))
+  }
+}
+
+pie_vs_bar_scenarios <- list(
+  list(
+    name = "Duze różnice",
+    labels = c("Produkt A", "Produkt B", "Produkt C", "Produkt D", "Produkt E"),
+    data = c(45, 25, 15, 10, 5),
+    colors = c("#3266ad", "#1D9E75", "#BA7517", "#D85A30", "#993556"),
+    pie_verdict = "Różnice widoczne, ale porównanie kątów jest trudniejsze niż długości",
+    bar_verdict = "Natychmiastowe porównanie -- różnice czytelne od razu",
+    pie_ok = TRUE
+  ),
+  list(
+    name = "Podobne wartości",
+    labels = c("Produkt A", "Produkt B", "Produkt C", "Produkt D", "Produkt E"),
+    data = c(22, 21, 20, 19, 18),
+    colors = c("#3266ad", "#1D9E75", "#BA7517", "#D85A30", "#993556"),
+    pie_verdict = "Wycinki prawie identyczne -- nie widać która kategoria prowadzi",
+    bar_verdict = "Różnice 1-2 pp. wciąż czytelne dzięki wspólnej osi",
+    pie_ok = FALSE
+  ),
+  list(
+    name = "Podobne + zle kolory",
+    labels = c("Produkt A", "Produkt B", "Produkt C", "Produkt D", "Produkt E"),
+    data = c(22, 21, 20, 19, 18),
+    colors = c("#3266ad", "#4a7abf", "#6290d0", "#7aa6e0", "#93bcf0"),
+    pie_verdict = "Zblizone wielkości + zbliżone kolory = nieczytelny wykres",
+    bar_verdict = "Nawet przy podobnych kolorach pozycja na osi ratuje czytelnosc",
+    pie_ok = FALSE
+  )
+)
+```
+
+# Typy danych
+
+## Typy danych -- fundament analizy statystycznej
+
+Pierwszym krokiem w analizie danych jest rozpoznanie typu zmiennej,
+z którą mamy do czynienia. To nie jest formalność -- typ zmiennej
+determinuje jakie statystyki możemy obliczyć, jakie wykresy narysować
+i jakie testy statystyczne zastosować.
+
+Błędne rozpoznanie typu zmiennej prowadzi do błędnych analiz.
+Na przykład, obliczanie średniej z kodów pocztowych nie ma sensu,
+mimo że są to liczby.
+
+::: {.callout-note}
+**Zasada:** Zanim zaczniesz analizę -- zawsze określ typ każdej zmiennej.
+:::
+
+## Taksonomia typów danych
+
+Poniższy diagram przedstawia hierarchię typów danych.
+Kliknij na liście drzewa (najniższy poziom), aby odkryć
+przykłady zmiennych każdego typu z naszego zbioru danych.
+
+```{r}
+plotOutput("ch1_taxonomy_plot", click = "ch1_taxonomy_click",
+           height = "350px")
+div(style = "text-align: center; margin-top: 10px;",
+  actionButton("ch1_reveal_all", "Odkryj wszystkie",
+               class = "btn-outline-primary", style = "margin-right: 8px;"),
+  actionButton("ch1_hide_all", "Ukryj wszystkie",
+               class = "btn-outline-secondary")
+)
+```
+
+```{r}
+#| context: server
+
+ch1_revealed <- reactiveVal(character(0))
+
+output$ch1_taxonomy_plot <- renderPlot({
+  render_taxonomy(highlight = NULL, revealed = ch1_revealed())
+})
+
+observeEvent(input$ch1_taxonomy_click, {
+  click <- input$ch1_taxonomy_click
+  if (is.null(click)) return()
+
+  leaf_nodes <- data.frame(
+    id = c("ciagla", "dyskretna", "porzadkowa", "nominalna"),
+    x = c(1.25, 3.75, 6.25, 8.75),
+    y = c(1, 1, 1, 1),
+    stringsAsFactors = FALSE
+  )
+
+  distances <- sqrt((leaf_nodes$x - click$x)^2 + (leaf_nodes$y - click$y)^2)
+  nearest_idx <- which.min(distances)
+
+  if (distances[nearest_idx] < 1.5) {
+    nearest_id <- leaf_nodes$id[nearest_idx]
+    current <- ch1_revealed()
+    if (nearest_id %in% current) {
+      ch1_revealed(setdiff(current, nearest_id))
+    } else {
+      ch1_revealed(c(current, nearest_id))
+    }
+  }
+})
+
+observeEvent(input$ch1_reveal_all, {
+  ch1_revealed(c("ciagla", "dyskretna", "porzadkowa", "nominalna"))
+})
+
+observeEvent(input$ch1_hide_all, {
+  ch1_revealed(character(0))
+})
+```
+
+::: {.callout-warning}
+**Uwaga:** Granica między typami nie zawsze jest ostra. Na przykład ocena wykładowcy
+w skali 1-10 może być traktowana jako porządkowa lub dyskretna,
+w zależności od kontekstu i celu analizy.
+:::
+
+## Przykłady typów zmiennych
+
+Zobaczmy jak wygląda każdy typ zmiennej w praktyce.
+Każdy typ ma swoje charakterystyczne cechy i wymaga
+odpowiednich narzędzi wizualizacji.
+
+Włącz opcję poniżej, aby zobaczyć co się stanie,
+gdy użyjemy nieodpowiedniego wykresu.
+
+```{r}
+checkboxInput("ch1_show_bad",
+              "Pokaż nieodpowiednie wykresy (przykład czego NIE robić)",
+              value = FALSE)
+```
+
+::: {layout-ncol=2}
+
+:::: {.card}
+**Jakościowa nominalna**
+
+**Płeć**
+
+Kategorie bez naturalnego porządku. Możemy liczyć ile jest
+obserwacji w każdej kategorii, ale nie możemy ich uporządkować
+ani uśredniać.
+
+```{r}
+plotOutput("ch1_ex1_plot", height = "280px")
+```
+::::
+
+:::: {.card}
+**Jakościowa porządkowa**
+
+**Zadowolenie ze studiów**
+
+Kategorie z naturalnym porządkiem. Wiemy że 'Bardzo zadowolony'
+jest wyżej niż 'Zadowolony', ale nie znamy dokładnych odległości
+między kategoriami.
+
+```{r}
+plotOutput("ch1_ex2_plot", height = "280px")
+```
+::::
+
+:::: {.card}
+**Ilościowa dyskretna**
+
+**Liczba kursów**
+
+Wartości liczbowe, ale tylko całkowite. Możemy obliczać średnią
+i odchylenie standardowe. Wykres słupkowy jest tu odpowiedni,
+bo mamy skończoną liczbę wartości.
+
+```{r}
+plotOutput("ch1_ex3_plot", height = "280px")
+```
+::::
+
+:::: {.card}
+**Ilościowa ciągła**
+
+**Wzrost (cm)**
+
+Wartości liczbowe, które mogą przyjmować dowolne wartości
+z pewnego przedziału (także ułamkowe). Histogram grupuje
+wartości w przedziały, gęstość wygładza rozkład.
+
+```{r}
+plotOutput("ch1_ex4_plot", height = "280px")
+```
+::::
+
+:::
+
+```{r}
+#| context: server
+
+output$ch1_ex1_plot <- renderPlot({
+  if (input$ch1_show_bad) {
+    render_bad_plot(student_data$plec, "Płeć", "nominalna")
+  } else {
+    render_good_plot(student_data$plec, "Płeć", "nominalna")
+  }
+})
+
+output$ch1_ex2_plot <- renderPlot({
+  if (input$ch1_show_bad) {
+    render_bad_plot(student_data$zadowolenie, "Zadowolenie", "porzadkowa")
+  } else {
+    render_good_plot(student_data$zadowolenie, "Zadowolenie", "porzadkowa")
+  }
+})
+
+output$ch1_ex3_plot <- renderPlot({
+  if (input$ch1_show_bad) {
+    render_bad_plot(student_data$liczba_kursow, "Liczba kursów", "ilosciowa_dyskretna")
+  } else {
+    render_good_plot(student_data$liczba_kursow, "Liczba kursów", "ilosciowa_dyskretna")
+  }
+})
+
+output$ch1_ex4_plot <- renderPlot({
+  if (input$ch1_show_bad) {
+    render_bad_plot(student_data$wzrost, "Wzrost (cm)", "ilosciowa_ciagla")
+  } else {
+    render_good_plot(student_data$wzrost, "Wzrost (cm)", "ilosciowa_ciagla")
+  }
+})
+```
+
+## Nasze dane -- ankieta studencka
+
+A tak wyglądają nasze dane -- ankieta 200 studentów.
+To z tego zbioru będą pochodzić wszystkie przykłady
+w dalszej części kursu. Poniżej pierwszych 10 obserwacji.
+
+```{r}
+tableOutput("ch1_data_preview")
+```
+
+```{r}
+#| context: server
+
+output$ch1_data_preview <- renderTable({
+  head(student_data, 10)
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+```
+
+::: {.callout-note}
+**Zwróć uwagę:** Zbiór zawiera zmienne wszystkich czterech typów. W kolejnych
+rozdziałach nauczymy się jak je podsumowywać i wizualizować.
+:::
+
+## Śledź zmienną przez cały kurs
+
+Wybierz jedną zmienną ilościową. W każdym kolejnym rozdziale zobaczysz,
+jakie nowe informacje dają Ci kolejne narzędzia statystyczne zastosowane
+do tej samej zmiennej.
+
+```{r}
+selectInput("tracked_var", "Wybierz zmienną do śledzenia:",
+  choices = c("Wzrost (cm)" = "wzrost",
+              "Waga (kg)" = "waga",
+              "Czas dojazdu (min)" = "czas_dojazdu",
+              "Średnia ocen" = "srednia_ocen"),
+  selected = "wzrost", width = "300px"
+)
+```
+
+---
+
+# Zmienne jakościowe
+
+*W poprzednim rozdziale poznaliśmy cztery typy zmiennych. Teraz zajmiemy się
+pierwszym z nich -- zmiennymi jakościowymi.*
+
+## Zmienne jakościowe
+
+Zmienne jakościowe opisują cechy, nie liczby. Podstawowym narzędziem
+ich opisu jest tabela częstości. Zobaczmy krok po kroku, jak ją
+zbudować na przykładzie zmiennej **kierunek studiów**.
+
+### Tabela częstości -- krok po kroku
+
+```{r}
+radioButtons("ch2_freq_var", "Wybierz zmienną:",
+  choices = c(
+    "Kierunek studiów (nominalna)" = "kierunek",
+    "Zadowolenie ze studiów (porządkowa)" = "zadowolenie"
+  ),
+  selected = "kierunek", inline = TRUE
+)
+div(class = "step-buttons",
+  actionButton("ch2_freq_s1", "1. Surowe dane",
+               class = "btn-outline-primary"),
+  actionButton("ch2_freq_s2", "2. Zliczanie",
+               class = "btn-outline-primary"),
+  actionButton("ch2_freq_s3", "3. Częstości względne",
+               class = "btn-outline-primary"),
+  actionButton("ch2_freq_s4", "4. Skumulowane",
+               class = "btn-outline-primary")
+)
+actionButton("ch2_freq_reset", "Reset", class = "btn-secondary btn-sm")
+uiOutput("ch2_freq_explanation")
+tableOutput("ch2_freq_table")
+```
+
+```{r}
+#| context: server
+
+ch2_freq_step <- reactiveVal(0)
+
+observeEvent(input$ch2_freq_s1, { ch2_freq_step(1) })
+observeEvent(input$ch2_freq_s2, { ch2_freq_step(2) })
+observeEvent(input$ch2_freq_s3, { ch2_freq_step(3) })
+observeEvent(input$ch2_freq_s4, { ch2_freq_step(4) })
+observeEvent(input$ch2_freq_reset, { ch2_freq_step(0) })
+observeEvent(input$ch2_freq_var, { ch2_freq_step(0) })
+
+output$ch2_freq_explanation <- renderUI({
+  step <- ch2_freq_step()
+  var_name <- input$ch2_freq_var
+  is_ord <- (!is.null(var_name) && var_name == "zadowolenie")
+  var_label <- if (is_ord) "zadowolenie" else "kierunek"
+
+  if (step == 0) {
+    div(class = "callout-info",
+        "Kliknij kolejne przyciski, aby zbudować tabelę częstości krok po kroku.")
+  } else if (step == 1) {
+    div(class = "callout-info",
+        tags$b("Krok 1: Surowe dane. "),
+        "Tak wyglądają pierwsze obserwacje zmiennej ",
+        tags$code(var_label), ". Każdy wiersz to odpowiedź jednego studenta.",
+        if (is_ord) tagList(
+          tags$br(),
+          tags$em("Uwaga: kategorie mają naturalną kolejność -- od
+                  'Bardzo niezadowolony' do 'Bardzo zadowolony'.")
+        )
+    )
+  } else if (step == 2) {
+    div(class = "callout-info",
+        tags$b("Krok 2: Zliczanie. "),
+        "Liczymy, ile razy występuje każda kategoria. To są ",
+        tags$b("częstości bezwzględne"), " (liczebności).",
+        if (is_ord) tagList(
+          tags$br(),
+          tags$em("Kategorie są uporządkowane -- ich kolejność w tabeli
+                  ma znaczenie.")
+        )
+    )
+  } else if (step == 3) {
+    div(class = "callout-info",
+        tags$b("Krok 3: Częstości względne. "),
+        "Dzielimy każdą liczebność przez całkowitą liczbę obserwacji (n = ",
+        nrow(student_data), "). Wynik możemy wyrazić jako ułamek lub procent.")
+  } else if (step == 4) {
+    if (is_ord) {
+      div(class = "callout-tip",
+        tags$b("Krok 4: Częstości skumulowane. "),
+        "Sumujemy częstości narastająco. ",
+        tags$b("Dla zmiennej porządkowej to ma głęboki sens!"),
+        tags$br(), tags$br(),
+        "Możemy powiedzieć np.: ",
+        tags$em("'X% studentów jest neutralnych lub bardziej zadowolonych'"),
+        " albo ",
+        tags$em("'Y% studentów jest niezadowolonych lub bardzo niezadowolonych'"),
+        ".",
+        tags$br(), tags$br(),
+        "Skumulowany procent daje sensowną interpretację ",
+        tags$b("tylko wtedy, gdy kategorie mają naturalną kolejność."))
+    } else {
+      div(class = "callout-warning",
+        tags$b("Krok 4: Częstości skumulowane. "),
+        "Sumujemy częstości narastająco. ",
+        tags$b("Ale uwaga!"), " Dla zmiennej ",
+        tags$b("nominalnej"), " kolejność kategorii jest umowna.",
+        tags$br(), tags$br(),
+        "Stwierdzenie '72% studentów studiuje Informatykę lub wcześniej'
+         nie ma sensu -- bo co znaczy 'wcześniej' w liście kierunków?",
+        tags$br(), tags$br(),
+        tags$em("Przełącz na zmienną porządkową (Zadowolenie), żeby
+                zobaczyć, kiedy skumulowany procent jest naprawdę przydatny."))
+    }
+  }
+})
+
+output$ch2_freq_table <- renderTable({
+  step <- ch2_freq_step()
+  if (step == 0) return(NULL)
+
+  var_name <- input$ch2_freq_var
+  is_ord <- (!is.null(var_name) && var_name == "zadowolenie")
+  x <- if (is_ord) student_data$zadowolenie else student_data$kierunek
+  col_label <- if (is_ord) "Zadowolenie" else "Kierunek"
+
+  if (step == 1) {
+    sample_vals <- head(x, 20)
+    df <- data.frame(Nr = 1:20, V = as.character(sample_vals))
+    names(df) <- c("Nr", col_label)
+    return(df)
+  }
+
+  counts <- table(x)
+  df <- data.frame(
+    Kategoria = names(counts),
+    Liczebnosc = as.integer(counts)
+  )
+  names(df) <- c("Kategoria", "Liczebność")
+
+  if (step >= 3) {
+    df[["Częst. względna"]] <- round(df[["Liczebność"]] / sum(df[["Liczebność"]]), 3)
+    df[["Procent (%)"]] <- round(df[["Częst. względna"]] * 100, 1)
+  }
+
+  if (step >= 4) {
+    df[["Skumul. liczebność"]] <- cumsum(df[["Liczebność"]])
+    df[["Skumul. procent (%)"]] <- round(cumsum(df[["Częst. względna"]]) * 100, 1)
+  }
+
+  df
+}, striped = TRUE, hover = TRUE, width = "100%", align = "c")
+```
+
+## Nominalna vs porządkowa -- czy kolejność ma znaczenie?
+
+Zanim przejdziemy do wizualizacji, zatrzymajmy się na ważnym rozróżnieniu.
+Zmienne jakościowe dzielimy na **nominalne** (kategorie bez naturalnej
+kolejności) i **porządkowe** (kategorie z logiczną kolejnością).
+Ta różnica ma praktyczne konsekwencje.
+
+```{r}
+checkboxInput("ch2_ord_shuffle", "Losowa kolejność kategorii", value = FALSE)
+```
+
+::: {layout-ncol=2}
+```{r}
+plotOutput("ch2_ord_nom_plot", height = "300px")
+```
+
+```{r}
+plotOutput("ch2_ord_ord_plot", height = "300px")
+```
+:::
+
+```{r}
+uiOutput("ch2_ord_explanation")
+```
+
+```{r}
+#| context: server
+
+output$ch2_ord_nom_plot <- renderPlot({
+  df <- data.frame(kierunek = student_data$kierunek)
+  lvls <- levels(df$kierunek)
+  if (isTRUE(input$ch2_ord_shuffle)) {
+    lvls <- sample(lvls)
+  }
+  df$kierunek <- factor(df$kierunek, levels = lvls)
+  ggplot(df, aes(x = kierunek)) +
+    geom_bar(fill = col_nominal, color = "white", alpha = 0.85) +
+    geom_text(stat = "count", aes(label = after_stat(count)),
+              vjust = -0.5, size = 5) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+    labs(title = "Nominalna: Kierunek studiów",
+         x = "Kierunek", y = "Liczebność") +
+    theme_minimal(base_size = 14)
+})
+
+output$ch2_ord_ord_plot <- renderPlot({
+  df <- data.frame(zadowolenie = student_data$zadowolenie)
+  lvls <- levels(df$zadowolenie)
+  if (isTRUE(input$ch2_ord_shuffle)) {
+    lvls <- sample(lvls)
+  }
+  df$zadowolenie <- factor(df$zadowolenie, levels = lvls)
+  ggplot(df, aes(x = zadowolenie)) +
+    geom_bar(fill = col_ordinal, color = "white", alpha = 0.85) +
+    geom_text(stat = "count", aes(label = after_stat(count)),
+              vjust = -0.5, size = 5) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+    scale_x_discrete(labels = function(x) gsub(" ", "\n", x)) +
+    labs(title = "Porządkowa: Zadowolenie",
+         x = "Zadowolenie", y = "Liczebność") +
+    theme_minimal(base_size = 14)
+})
+
+output$ch2_ord_explanation <- renderUI({
+  if (isTRUE(input$ch2_ord_shuffle)) {
+    div(class = "callout-warning",
+      tags$strong("Losowa kolejność: "),
+      "Dla ", tags$b("kierunku studiów"), " (zmienna nominalna) zmiana kolejności
+       nie zmienia interpretacji -- kategorie nie mają naturalnego porządku.
+       Ale dla ", tags$b("zadowolenia"), " (zmienna porządkowa) losowa kolejność
+       jest myląca! Tracimy informację o naturalnym porządku od 'bardzo niezadowolony'
+       do 'bardzo zadowolony'."
+    )
+  } else {
+    div(class = "callout-note",
+      tags$strong("Domyślna kolejność: "),
+      "Kierunek studiów pokazujemy w kolejności alfabetycznej (umownej) --
+       moglibyśmy użyć dowolnej innej. Zadowolenie natomiast ma naturalny
+       porządek: od 'bardzo niezadowolony' do 'bardzo zadowolony'. ",
+      tags$em("Włącz 'Losowa kolejność', żeby zobaczyć różnicę!")
+    )
+  }
+})
+```
+
+## Wykres kołowy vs słupkowy
+
+Jak wizualizować zmienne jakościowe? Porównajmy wykres kołowy ze słupkowym
+w trzech scenariuszach -- od łatwego do trudnego. Zobaczysz, dlaczego
+wykres słupkowy jest **zawsze** co najmniej tak samo czytelny.
+
+### Trzy scenariusze porównawcze
+
+```{r}
+div(style = "display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;",
+  actionButton("ch2_sc1", "1. Duże różnice",
+               class = "btn-outline-primary"),
+  actionButton("ch2_sc2", "2. Podobne wartości",
+               class = "btn-outline-primary"),
+  actionButton("ch2_sc3", "3. Podobne + złe kolory",
+               class = "btn-outline-primary")
+)
+```
+
+::: {layout-ncol=2}
+```{r}
+tags$h5(style = "text-align: center; color: #5f5e5a;", "Wykres kołowy")
+div(style = "position: relative; width: 100%; height: 320px;",
+  tags$canvas(id = "ch2_pie_canvas")
+)
+uiOutput("ch2_scenario_pie_verdict")
+```
+
+```{r}
+tags$h5(style = "text-align: center; color: #5f5e5a;", "Wykres słupkowy -- te same dane")
+div(style = "position: relative; width: 100%; height: 320px;",
+  tags$canvas(id = "ch2_bar_canvas")
+)
+uiOutput("ch2_scenario_bar_verdict")
+```
+:::
+
+```{r}
+uiOutput("ch2_scenario_legend")
+```
+
+```{r}
+#| context: server
+
+ch2_scenario_idx <- reactiveVal(1)
+
+observeEvent(input$ch2_sc1, { ch2_scenario_idx(1) })
+observeEvent(input$ch2_sc2, { ch2_scenario_idx(2) })
+observeEvent(input$ch2_sc3, { ch2_scenario_idx(3) })
+
+ch2_current_scenario <- reactive({
+  pie_vs_bar_scenarios[[ch2_scenario_idx()]]
+})
+
+observe({
+  s <- ch2_current_scenario()
+  session$sendCustomMessage("render_scenario", list(
+    labels = as.list(s$labels),
+    data   = as.list(s$data),
+    colors = as.list(s$colors)
+  ))
+})
+
+output$ch2_scenario_pie_verdict <- renderUI({
+  s <- ch2_current_scenario()
+  badge_style <- if (s$pie_ok) "background: #EAF3DE; color: #3B6D11;" else
+                               "background: #FCEBEB; color: #A32D2D;"
+  badge_text  <- if (s$pie_ok) "OK" else "Problem"
+  div(style = "text-align: center; font-size: 13px; color: #5f5e5a; margin-top: 6px;",
+    tags$span(style = paste0("display: inline-block; font-size: 11px; padding: 2px 8px;
+                               border-radius: 6px; font-weight: 500; margin-right: 4px; ",
+                              badge_style), badge_text),
+    s$pie_verdict
+  )
+})
+
+output$ch2_scenario_bar_verdict <- renderUI({
+  s <- ch2_current_scenario()
+  div(style = "text-align: center; font-size: 13px; color: #5f5e5a; margin-top: 6px;",
+    tags$span(style = "display: inline-block; font-size: 11px; padding: 2px 8px;
+                       border-radius: 6px; font-weight: 500; margin-right: 4px;
+                       background: #EAF3DE; color: #3B6D11;", "OK"),
+    s$bar_verdict
+  )
+})
+
+output$ch2_scenario_legend <- renderUI({
+  s <- ch2_current_scenario()
+  legend_items <- mapply(function(label, color, value) {
+    tags$span(style = "display: flex; align-items: center; gap: 4px;",
+      tags$span(style = paste0("width: 10px; height: 10px; border-radius: 2px;
+                                 flex-shrink: 0; background: ", color, ";")),
+      paste0(label, " ", value, "%")
+    )
+  }, s$labels, s$colors, s$data, SIMPLIFY = FALSE)
+  div(style = "display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #5f5e5a; margin-top: 8px;",
+    tagList(legend_items))
+})
+```
+
+## Manipulacja kolorami
+
+Kolory na wykresie mogą manipulować odbiorem danych. Zobaczmy,
+jak ten sam zestaw danych może wyglądać zupełnie inaczej w
+zależności od doboru palety kolorów.
+
+### Jak kolory zmieniają percepcję danych
+
+```{r}
+fluidRow(
+  column(4,
+    selectInput("ch2_color_palette", "Paleta kolorów:",
+      choices = c(
+        "Neutralna (szara)" = "neutral",
+        "Ciepła (podkreśla Informatykę)" = "warm",
+        "Zimna (podkreśla Biologię)" = "cool",
+        "Stronnicza" = "biased",
+        "--- Klasyczne palety R ---" = "sep1",
+        "Viridis" = "viridis",
+        "Set2 (ColorBrewer)" = "set2",
+        "Okabe-Ito (colorblind-safe)" = "okabe_ito",
+        "Tableau 10" = "tableau"
+      ),
+      selected = "neutral"
+    ),
+    actionButton("ch2_color_random", "Losowe kolory",
+                 class = "btn-outline-secondary", width = "100%")
+  ),
+  column(8, plotOutput("ch2_color_plot", height = "380px"))
+)
+```
+
+::: {.callout-warning}
+**Pamiętaj:** Wybór kolorów nie jest neutralny. Intensywne, cieplejsze barwy
+przyciągają uwagę, a jasne/szare marginalizują kategorie.
+
+**Dobre praktyki:**
+
+- **Viridis** -- percepcyjnie równomierna (różnice wartości = różnice w kolorze),
+  czytelna w skali szarości i bezpieczna dla daltonistów. Domyślna w wielu pakietach R.
+- **Okabe-Ito** -- paleta zaprojektowana specjalnie pod kątem daltonistów (ok. 8% mężczyzn).
+  Klasyczny wybór w publikacjach naukowych.
+- **ColorBrewer (Set2, Set3, Paired...)** -- rodzina palet stworzonych przez kartografkę
+  Cynthia Brewer. W R dostępne przez `scale_fill_brewer()`.
+- **Tableau 10** -- standard w narzędziach BI, zbalansowana jasność i kontrast.
+:::
+
+```{r}
+#| context: server
+
+ch2_random_colors <- reactiveVal(NULL)
+
+observeEvent(input$ch2_color_random, {
+  safe_colors <- c(
+    "#e6194B", "#3cb44b", "#4363d8", "#f58231", "#911eb4",
+    "#42d4f4", "#f032e6", "#bfef45", "#fabed4", "#469990",
+    "#dcbeff", "#9A6324", "#800000", "#aaffc3", "#808000",
+    "#000075", "#a9a9a9", "#e6beff", "#ffd8b1", "#fffac8"
+  )
+  ch2_random_colors(sample(safe_colors, 4))
+})
+
+observeEvent(input$ch2_color_palette, {
+  ch2_random_colors(NULL)
+})
+
+output$ch2_color_plot <- renderPlot({
+  df <- data.frame(kierunek = student_data$kierunek)
+  df_counts <- as.data.frame(table(df$kierunek))
+  names(df_counts) <- c("Kierunek", "n")
+
+  levels_order <- levels(student_data$kierunek)
+  if (is.null(levels_order)) levels_order <- unique(as.character(student_data$kierunek))
+
+  rand_cols <- ch2_random_colors()
+  palette_choice <- input$ch2_color_palette
+
+  if (!is.null(rand_cols)) {
+    fill_colors <- setNames(rand_cols, levels_order)
+    subtitle <- "Losowa paleta kolorów"
+  } else if (palette_choice == "neutral") {
+    fill_colors <- setNames(rep("#95a5a6", 4), levels_order)
+    subtitle <- "Neutralna - wszystkie kategorie równe"
+  } else if (palette_choice == "warm") {
+    fill_colors <- setNames(
+      ifelse(levels_order == "Informatyka", "#e74c3c", "#d5d8dc"),
+      levels_order
+    )
+    subtitle <- "Ciepła paleta - uwaga przyciągana do Informatyki"
+  } else if (palette_choice == "cool") {
+    fill_colors <- setNames(
+      ifelse(levels_order == "Biologia", "#2980b9", "#d5d8dc"),
+      levels_order
+    )
+    subtitle <- "Zimna paleta - uwaga przyciągana do Biologii"
+  } else if (palette_choice == "biased") {
+    biggest <- df_counts$Kierunek[which.max(df_counts$n)]
+    smallest <- df_counts$Kierunek[which.min(df_counts$n)]
+    cols <- setNames(rep("#bdc3c7", 4), levels_order)
+    cols[as.character(biggest)]  <- "#e74c3c"
+    cols[as.character(smallest)] <- "#2c3e50"
+    fill_colors <- cols
+    subtitle <- paste0("Stronnicza - ", biggest,
+                       " wyróżniona, ", smallest, " wyciszona")
+  } else if (palette_choice == "viridis") {
+    fill_colors <- setNames(
+      c("#440154", "#31688e", "#35b779", "#fde725")[1:length(levels_order)],
+      levels_order)
+    subtitle <- "Viridis -- percepcyjnie równomierna, colorblind-safe"
+  } else if (palette_choice == "set2") {
+    fill_colors <- setNames(
+      c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3")[1:length(levels_order)],
+      levels_order)
+    subtitle <- "Set2 (ColorBrewer) -- popularny domyślny wybór"
+  } else if (palette_choice == "okabe_ito") {
+    fill_colors <- setNames(
+      c("#E69F00", "#56B4E9", "#009E73", "#CC79A7")[1:length(levels_order)],
+      levels_order)
+    subtitle <- "Okabe-Ito -- zaprojektowana specjalnie dla daltonistów"
+  } else if (palette_choice == "tableau") {
+    fill_colors <- setNames(
+      c("#4e79a7", "#f28e2b", "#e15759", "#76b7b2")[1:length(levels_order)],
+      levels_order)
+    subtitle <- "Tableau 10 -- standard w wizualizacji danych"
+  } else {
+    fill_colors <- setNames(rep("#95a5a6", length(levels_order)), levels_order)
+    subtitle <- ""
+  }
+
+  ggplot(df_counts, aes(x = Kierunek, y = n, fill = Kierunek)) +
+    geom_col(color = "white", width = 0.7) +
+    geom_text(aes(label = n), vjust = -0.5, size = 5) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+    scale_fill_manual(values = fill_colors, guide = "none") +
+    labs(title = "Kierunek studiów",
+         subtitle = subtitle,
+         x = "Kierunek", y = "Liczebność") +
+    theme_minimal(base_size = 14) +
+    theme(plot.title = element_text(face = "bold"),
+          plot.subtitle = element_text(color = "#7f8c8d", face = "italic"))
+})
+```
+
+## Tabela krzyżowa -- dwie zmienne jednocześnie
+
+Dotychczas analizowaliśmy po jednej zmiennej. Ale często chcemy
+zbadać **zależność między dwiema zmiennymi jakościowymi**.
+Służy do tego tabela krzyżowa (kontyngencji).
+
+### Tabela krzyżowa
+
+```{r}
+fluidRow(
+  column(4,
+    selectInput("ch2_cross_row", "Zmienna w wierszach:",
+      choices = c("Płeć" = "plec", "Kierunek" = "kierunek",
+                  "Grupa krwi" = "grupa_krwi"),
+      selected = "plec"
+    )
+  ),
+  column(4,
+    selectInput("ch2_cross_col", "Zmienna w kolumnach:",
+      choices = c("Kierunek" = "kierunek", "Płeć" = "plec",
+                  "Grupa krwi" = "grupa_krwi"),
+      selected = "kierunek"
+    )
+  ),
+  column(4,
+    radioButtons("ch2_cross_type", "Pokaż:",
+      choices = c("Liczebności" = "counts",
+                  "% wierszowe" = "row_pct",
+                  "% kolumnowe" = "col_pct"),
+      selected = "counts", inline = TRUE
+    )
+  )
+)
+tableOutput("ch2_cross_table")
+fluidRow(
+  column(6,
+    radioButtons("ch2_cross_chart", NULL,
+      choices = c("Wykres słupkowy" = "bar", "Heatmapa" = "heatmap"),
+      selected = "bar", inline = TRUE
+    )
+  )
+)
+plotOutput("ch2_cross_plot", height = "350px")
+```
+
+```{r}
+#| context: server
+
+output$ch2_cross_table <- renderTable({
+  row_var <- input$ch2_cross_row
+  col_var <- input$ch2_cross_col
+  req(row_var, col_var, row_var != col_var)
+
+  tbl <- table(student_data[[row_var]], student_data[[col_var]])
+
+  if (input$ch2_cross_type == "counts") {
+    df <- as.data.frame.matrix(tbl)
+    df <- cbind(data.frame(` ` = rownames(df), check.names = FALSE), df)
+  } else if (input$ch2_cross_type == "row_pct") {
+    pct <- round(prop.table(tbl, margin = 1) * 100, 1)
+    df <- as.data.frame.matrix(pct)
+    df[] <- lapply(df, function(x) paste0(x, "%"))
+    df <- cbind(data.frame(` ` = rownames(df), check.names = FALSE), df)
+  } else {
+    pct <- round(prop.table(tbl, margin = 2) * 100, 1)
+    df <- as.data.frame.matrix(pct)
+    df[] <- lapply(df, function(x) paste0(x, "%"))
+    df <- cbind(data.frame(` ` = rownames(df), check.names = FALSE), df)
+  }
+  df
+}, striped = TRUE, hover = TRUE, width = "100%", align = "c")
+
+output$ch2_cross_plot <- renderPlot({
+  row_var <- input$ch2_cross_row
+  col_var <- input$ch2_cross_col
+  chart_type <- input$ch2_cross_chart
+  req(row_var, col_var, row_var != col_var)
+
+  df <- data.frame(
+    row = student_data[[row_var]],
+    col = student_data[[col_var]]
+  )
+
+  row_label <- c("plec" = "Płeć", "kierunek" = "Kierunek", "grupa_krwi" = "Grupa krwi")
+  col_label <- row_label
+
+  if (!is.null(chart_type) && chart_type == "heatmap") {
+    tbl <- table(df$row, df$col)
+    if (input$ch2_cross_type == "row_pct") {
+      tbl <- prop.table(tbl, margin = 1) * 100
+      fill_label <- "% wierszowy"
+      fmt <- function(x) paste0(round(x, 1), "%")
+    } else if (input$ch2_cross_type == "col_pct") {
+      tbl <- prop.table(tbl, margin = 2) * 100
+      fill_label <- "% kolumnowy"
+      fmt <- function(x) paste0(round(x, 1), "%")
+    } else {
+      fill_label <- "Liczebność"
+      fmt <- function(x) as.character(x)
+    }
+    heat_df <- as.data.frame(as.table(tbl))
+    names(heat_df) <- c("Wiersz", "Kolumna", "Wartosc")
+
+    ggplot(heat_df, aes(x = Kolumna, y = Wiersz, fill = Wartosc)) +
+      geom_tile(color = "white", linewidth = 1.5) +
+      geom_text(aes(label = fmt(Wartosc)), size = 5, fontface = "bold") +
+      scale_fill_gradient(low = "#eaf2f8", high = "#2980b9", name = fill_label) +
+      labs(x = col_label[col_var], y = row_label[row_var]) +
+      theme_minimal(base_size = 14) +
+      theme(
+        panel.grid = element_blank(),
+        axis.text = element_text(size = 12)
+      )
+  } else {
+    ggplot(df, aes(x = row, fill = col)) +
+      geom_bar(position = "dodge", alpha = 0.85, color = "white") +
+      scale_fill_brewer(palette = "Set2") +
+      labs(x = row_label[row_var], y = "Liczebność", fill = col_label[col_var]) +
+      theme_minimal(base_size = 14) +
+      theme(legend.position = "top")
+  }
+})
+```
+
+## Dominanta (moda)
+
+Dominanta (moda) to jedyna miara tendencji centralnej dla
+zmiennych nominalnych. Jest to wartość (kategoria), która
+występuje najczęściej w zbiorze danych.
+
+### Dominanta -- najczęściej występująca kategoria
+
+```{r}
+actionButton("ch2_mode_resample", "Losuj nowe proporcje",
+             class = "btn-primary")
+plotOutput("ch2_mode_plot", height = "350px")
+uiOutput("ch2_mode_text")
+```
+
+```{r}
+#| context: server
+
+ch2_mode_data <- reactiveVal(NULL)
+
+observe({
+  if (is.null(ch2_mode_data())) {
+    ch2_mode_data(student_data$kierunek)
+  }
+})
+
+observeEvent(input$ch2_mode_resample, {
+  probs <- runif(4)
+  probs <- probs / sum(probs)
+  new_data <- sample(
+    c("Informatyka", "Biologia", "Psychologia", "Ekonomia"),
+    200, replace = TRUE, prob = probs
+  )
+  ch2_mode_data(factor(new_data,
+    levels = c("Informatyka", "Biologia", "Psychologia", "Ekonomia")))
+})
+
+output$ch2_mode_plot <- renderPlot({
+  req(ch2_mode_data())
+  x <- ch2_mode_data()
+  df_counts <- as.data.frame(table(x))
+  names(df_counts) <- c("Kierunek", "n")
+  mode_cat <- df_counts$Kierunek[which.max(df_counts$n)]
+
+  df_counts$is_mode <- ifelse(df_counts$Kierunek == mode_cat,
+                              "Dominanta", "Inne")
+
+  ggplot(df_counts, aes(x = Kierunek, y = n, fill = is_mode)) +
+    geom_col(color = "white", width = 0.7, alpha = 0.9) +
+    geom_text(aes(label = n), vjust = -0.5, size = 5, fontface = "bold") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+    scale_fill_manual(
+      values = c("Dominanta" = col_nominal, "Inne" = "#d5d8dc"),
+      guide = "none"
+    ) +
+    labs(title = "Kierunek studiów - dominanta",
+         x = "Kierunek", y = "Liczebność") +
+    theme_minimal(base_size = 14) +
+    theme(plot.title = element_text(face = "bold"))
+})
+
+output$ch2_mode_text <- renderUI({
+  req(ch2_mode_data())
+  x <- ch2_mode_data()
+  counts <- table(x)
+  mode_cat <- names(counts)[which.max(counts)]
+  mode_n   <- max(counts)
+  total_n  <- sum(counts)
+  mode_pct <- round(mode_n / total_n * 100, 1)
+
+  div(class = "callout-note",
+    tags$b("Dominanta: "), mode_cat,
+    tags$br(),
+    paste0("Występuje ", mode_n, " razy (", mode_pct, "% z ", total_n,
+           " obserwacji)."),
+    tags$br(),
+    tags$em("Dla zmiennych nominalnych dominanta to jedyna sensowna miara
+            tendencji centralnej - nie możemy obliczyć średniej ani mediany
+            z nazw kategorii.")
+  )
+})
+```
+
+---
+
+# Statystyki położenia
+
+*Zmienne jakościowe podsumowaliśmy tabelami częstości i wykresami słupkowymi.
+Teraz przechodzimy do zmiennych ilościowych -- zaczynając od pytań o 'środek' danych.*
+
+```{r}
+uiOutput("tracker_ch3")
+```
+
+```{r}
+#| context: server
+
+output$tracker_ch3 <- renderUI({
+  var_name <- input$tracked_var
+  req(var_name)
+  vals <- student_data[[var_name]]
+  label <- variable_meta[[var_name]]$label
+
+  div(style = "background: #eaf4fc; border: 1px solid #3498db; border-radius: 6px;
+               padding: 10px 14px; margin-bottom: 15px; font-size: 13px;",
+    tags$strong(paste0("Śledzona zmienna: ", label)),
+    " | Położenie: ",
+    paste0("średnia = ", round(mean(vals), 2),
+           ", mediana = ", round(median(vals), 2))
+  )
+})
+```
+
+## Statystyki położenia
+
+Zmienne ilościowe wymagają nowych narzędzi. Zanim przejdziemy do
+statystyk, poznajmy podstawową wizualizację -- **histogram**.
+Potem zbadamy miary położenia: **średnią**, **medianę** i **percentyle**.
+
+## Histogram -- krok po kroku
+
+Histogram to podstawowy wykres dla zmiennych ciągłych. Pokazuje
+jak często występują wartości w poszczególnych **przedziałach (binach)**.
+Zbudujmy go krok po kroku.
+
+```{r}
+fluidRow(
+  column(4,
+    selectInput("ch3_hist_var", "Zmienna:",
+      choices = c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
+                  "Czas dojazdu (min)" = "czas_dojazdu",
+                  "Średnia ocen" = "srednia_ocen"),
+      selected = "wzrost"
+    ),
+    uiOutput("ch3_hist_bin_slider"),
+    actionButton("ch3_hist_step1", "1. Surowe dane",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch3_hist_step2", "2. Posortuj dane",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch3_hist_step3", "3. Podziel na przedziały",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch3_hist_step4", "4. Przypisz do binów",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch3_hist_step5", "5. Zlicz obserwacje",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch3_hist_step6", "6. Zbuduj słupki",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch3_hist_step7", "7. Gotowy histogram",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch3_hist_step8", "8. Wpływ szerokości binu",
+                 class = "btn-outline-primary", width = "100%"),
+    br(), br(),
+    actionButton("ch3_hist_reset", "Reset",
+                 class = "btn-outline-secondary", width = "100%")
+  ),
+  column(8,
+    plotOutput("ch3_hist_plot", height = "400px"),
+    uiOutput("ch3_hist_text"),
+    tableOutput("ch3_hist_table")
+  )
+)
+```
+
+```{r}
+#| context: server
+
+ch3_hist_step <- reactiveVal(0)
+
+observeEvent(input$ch3_hist_var, { ch3_hist_step(0) })
+observeEvent(input$ch3_hist_reset, { ch3_hist_step(0) })
+observeEvent(input$ch3_hist_step1, { ch3_hist_step(1) })
+observeEvent(input$ch3_hist_step2, { ch3_hist_step(2) })
+observeEvent(input$ch3_hist_step3, { ch3_hist_step(3) })
+observeEvent(input$ch3_hist_step4, { ch3_hist_step(4) })
+observeEvent(input$ch3_hist_step5, { ch3_hist_step(5) })
+observeEvent(input$ch3_hist_step6, { ch3_hist_step(6) })
+observeEvent(input$ch3_hist_step7, { ch3_hist_step(7) })
+observeEvent(input$ch3_hist_step8, { ch3_hist_step(8) })
+
+ch3_hist_defaults <- list(
+  wzrost = list(min = 1, max = 15, value = 3, step = 1, unit = "cm"),
+  waga = list(min = 2, max = 20, value = 5, step = 1, unit = "kg"),
+  czas_dojazdu = list(min = 2, max = 20, value = 5, step = 1, unit = "min"),
+  srednia_ocen = list(min = 0.1, max = 1, value = 0.3, step = 0.05, unit = "pkt")
+)
+
+output$ch3_hist_bin_slider <- renderUI({
+  d <- ch3_hist_defaults[[input$ch3_hist_var]]
+  sliderInput("ch3_hist_bin_width",
+              "Szerokość binu:",
+              min = d$min, max = d$max,
+              value = d$value, step = d$step)
+})
+
+ch3_hist_breaks <- reactive({
+  req(input$ch3_hist_bin_width)
+  x <- student_data[[input$ch3_hist_var]]
+  w <- input$ch3_hist_bin_width
+  start <- floor(min(x) / w) * w
+  end <- ceiling(max(x) / w) * w + w
+  seq(start, end, by = w)
+})
+
+ch3_hist_binned <- reactive({
+  req(input$ch3_hist_bin_width)
+  x <- student_data[[input$ch3_hist_var]]
+  breaks <- ch3_hist_breaks()
+  df <- data.frame(value = x)
+  df$bin <- cut(df$value, breaks = breaks, include.lowest = TRUE, right = FALSE)
+  df$bin_num <- as.numeric(df$bin)
+  df
+})
+
+ch3_hist_stats <- reactive({
+  df <- ch3_hist_binned()
+  breaks <- ch3_hist_breaks()
+  all_bins <- data.frame(
+    bin_start = breaks[-length(breaks)],
+    bin_end = breaks[-1]
+  )
+  all_bins$bin_mid <- (all_bins$bin_start + all_bins$bin_end) / 2
+  all_bins$bin_num <- seq_len(nrow(all_bins))
+
+  counts <- df %>%
+    filter(!is.na(bin)) %>%
+    group_by(bin_num) %>%
+    summarise(count = n(), .groups = "drop")
+  all_bins <- all_bins %>% left_join(counts, by = "bin_num")
+  all_bins$count[is.na(all_bins$count)] <- 0
+
+  min_d <- min(all_bins$bin_num[all_bins$count > 0])
+  max_d <- max(all_bins$bin_num[all_bins$count > 0])
+  all_bins %>%
+    filter(bin_num >= max(1, min_d - 1),
+           bin_num <= min(nrow(all_bins), max_d + 1))
+})
+
+ch3_hist_var_labels <- c(
+  "wzrost" = "Wzrost (cm)", "waga" = "Waga (kg)",
+  "czas_dojazdu" = "Czas dojazdu (min)",
+  "srednia_ocen" = "Średnia ocen"
+)
+
+output$ch3_hist_plot <- renderPlot({
+  step <- ch3_hist_step()
+  var_name <- input$ch3_hist_var
+  req(var_name)
+  x <- student_data[[var_name]]
+  x_label <- ch3_hist_var_labels[var_name]
+  n <- length(x)
+
+  x_lo <- min(x) - diff(range(x)) * 0.05
+  x_hi <- max(x) + diff(range(x)) * 0.05
+
+  strip_theme <- theme_minimal(base_size = 14) +
+    theme(axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.grid.minor.y = element_blank())
+
+  if (step == 0) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5,
+               label = "Kliknij Krok 1", size = 6, color = "gray50") +
+      theme_void() + xlim(0, 1) + ylim(0, 1)
+
+  } else if (step == 1) {
+    df <- data.frame(value = x)
+    ggplot(df, aes(x = value, y = 0)) +
+      geom_jitter(height = 0.3, size = 3, alpha = 0.6, color = "#3498db") +
+      labs(x = x_label, y = "") + strip_theme +
+      coord_cartesian(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.5))
+
+  } else if (step == 2) {
+    df <- data.frame(value = sort(x))
+    ggplot(df, aes(x = value, y = 0)) +
+      geom_point(size = 3, alpha = 0.7, color = "#27ae60") +
+      labs(x = x_label, y = "") + strip_theme +
+      coord_cartesian(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.5))
+
+  } else if (step == 3) {
+    breaks <- ch3_hist_breaks()
+    df <- data.frame(value = sort(x))
+    bin_rects <- data.frame(
+      xmin = breaks[-length(breaks)], xmax = breaks[-1]
+    ) %>% filter(xmax > x_lo, xmin < x_hi)
+
+    ggplot() +
+      geom_rect(data = bin_rects,
+                aes(xmin = xmin, xmax = xmax, ymin = -0.35, ymax = 0.35),
+                fill = NA, color = "#2c3e50", linewidth = 0.8,
+                linetype = "dashed") +
+      geom_point(data = df, aes(x = value, y = 0),
+                 size = 2.5, alpha = 0.5, color = "#95a5a6") +
+      geom_text(data = bin_rects,
+                aes(x = (xmin + xmax) / 2, y = -0.45,
+                    label = paste0("[", xmin, ", ", xmax, ")")),
+                size = 2.8, color = "#2c3e50") +
+      labs(x = x_label, y = "") + strip_theme +
+      coord_cartesian(xlim = c(x_lo, x_hi), ylim = c(-0.55, 0.5))
+
+  } else if (step == 4) {
+    df <- ch3_hist_binned()
+    breaks <- ch3_hist_breaks()
+    bin_rects <- data.frame(
+      xmin = breaks[-length(breaks)], xmax = breaks[-1],
+      bin_num = seq_len(length(breaks) - 1)
+    ) %>% filter(xmax > x_lo, xmin < x_hi)
+
+    ggplot() +
+      geom_rect(data = bin_rects,
+                aes(xmin = xmin, xmax = xmax, ymin = -0.35, ymax = 0.35,
+                    fill = factor(bin_num)),
+                alpha = 0.15, color = "#2c3e50", linewidth = 0.5) +
+      geom_jitter(data = df %>% filter(!is.na(bin)),
+                  aes(x = value, y = 0, color = factor(bin_num)),
+                  height = 0.2, size = 3, alpha = 0.8) +
+      scale_fill_viridis_d(guide = "none") +
+      scale_color_viridis_d(guide = "none") +
+      labs(x = x_label, y = "") + strip_theme +
+      coord_cartesian(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.5))
+
+  } else if (step == 5) {
+    df <- ch3_hist_binned()
+    stats <- ch3_hist_stats()
+
+    ggplot() +
+      geom_rect(data = stats,
+                aes(xmin = bin_start, xmax = bin_end,
+                    ymin = -0.35, ymax = 0.35,
+                    fill = factor(bin_num)),
+                alpha = 0.15, color = "#2c3e50", linewidth = 0.5) +
+      geom_jitter(data = df %>% filter(!is.na(bin)),
+                  aes(x = value, y = 0, color = factor(bin_num)),
+                  height = 0.2, size = 2, alpha = 0.6) +
+      geom_text(data = stats,
+                aes(x = bin_mid, y = 0.45,
+                    label = ifelse(count > 0, paste0("n=", count), "")),
+                size = 4, fontface = "bold", color = "#2c3e50") +
+      scale_fill_viridis_d(guide = "none") +
+      scale_color_viridis_d(guide = "none") +
+      labs(x = x_label, y = "") + strip_theme +
+      coord_cartesian(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.6))
+
+  } else if (step == 6) {
+    stats <- ch3_hist_stats()
+    w <- input$ch3_hist_bin_width
+
+    ggplot(stats, aes(x = bin_mid, y = count)) +
+      geom_col(aes(fill = factor(bin_num)),
+               width = w * 0.95, alpha = 0.7,
+               color = "#2c3e50", linewidth = 0.3) +
+      geom_text(aes(label = count), vjust = -0.5, size = 4, fontface = "bold") +
+      scale_fill_viridis_d(guide = "none") +
+      labs(x = x_label, y = "Liczba obserwacji") +
+      theme_minimal(base_size = 14) +
+      coord_cartesian(xlim = c(x_lo, x_hi))
+
+  } else if (step == 7) {
+    df <- data.frame(value = x)
+    w <- input$ch3_hist_bin_width
+
+    ggplot(df, aes(x = value)) +
+      geom_histogram(binwidth = w, fill = "#3498db", alpha = 0.7,
+                     color = "#2c3e50", linewidth = 0.3) +
+      labs(x = x_label, y = "Liczba obserwacji",
+           title = paste0("Histogram: ", x_label),
+           subtitle = paste0("n = ", n, " | szerokość binu = ", w)) +
+      theme_minimal(base_size = 14)
+
+  } else if (step == 8) {
+    df <- data.frame(value = x)
+    w <- input$ch3_hist_bin_width
+    widths <- c(w / 2, w, w * 2)
+    unit <- ch3_hist_defaults[[var_name]]$unit
+    labels <- paste0("Bin = ", widths, " ", unit)
+
+    plots <- lapply(seq_along(widths), function(i) {
+      ggplot(df, aes(x = value)) +
+        geom_histogram(binwidth = widths[i],
+                       fill = c("#e74c3c", "#3498db", "#27ae60")[i],
+                       alpha = 0.7, color = "#2c3e50", linewidth = 0.3) +
+        labs(x = if (i == 2) x_label else "",
+             y = if (i == 1) "Liczba obs." else "",
+             title = labels[i]) +
+        theme_minimal(base_size = 11) +
+        theme(plot.title = element_text(
+          size = 12, face = "bold",
+          color = c("#e74c3c", "#3498db", "#27ae60")[i]))
+    })
+    gridExtra::grid.arrange(grobs = plots, ncol = 3)
+  }
+})
+
+output$ch3_hist_text <- renderUI({
+  step <- ch3_hist_step()
+  var_name <- input$ch3_hist_var
+  req(var_name)
+  x <- student_data[[var_name]]
+  n <- length(x)
+  unit <- ch3_hist_defaults[[var_name]]$unit
+
+  txt <- switch(as.character(step),
+    "0" = "Kliknij Krok 1, aby rozpocząć budowę histogramu.",
+    "1" = paste0("Mamy ", n, " obserwacji -- każdy punkt to jedna wartość. ",
+                 "Trudno z tego odczytać rozkład, prawda?"),
+    "2" = paste0("Sortujemy od min = ", round(min(x), 1),
+                 " do max = ", round(max(x), 1), " ", unit,
+                 ". Widać zagęszczenia, ale wciąż nieczytelne."),
+    "3" = paste0("Dzielimy oś na równe przedziały (biny) o szerokości ",
+                 input$ch3_hist_bin_width, " ", unit,
+                 ". Każdy bin to 'koszyk' na obserwacje."),
+    "4" = "Każda obserwacja trafia do swojego binu -- kolor = przynależność.",
+    "5" = "Liczymy obserwacje w każdym binie. Te liczby staną się wysokością słupków.",
+    "6" = "Zamieniamy punkty na słupki -- wysokość = liczba obserwacji. To już prawie histogram!",
+    "7" = paste0("Gotowy histogram (n = ", n, ", bin = ", input$ch3_hist_bin_width,
+                 " ", unit, "). Spróbuj zmienić szerokość binu suwakiem!"),
+    "8" = paste0("Te same dane z trzema szerokościami binu. ",
+                 "Za wąskie -> szum. Za szerokie -> utrata szczegółów.")
+  )
+  div(class = "callout-note", p(txt))
+})
+
+output$ch3_hist_table <- renderTable({
+  if (ch3_hist_step() < 5) return(NULL)
+  stats <- ch3_hist_stats()
+  n <- length(student_data[[input$ch3_hist_var]])
+
+  result <- stats %>% filter(count > 0) %>%
+    mutate(pct = round(count / n * 100, 1))
+  out <- data.frame(
+    a = paste0("[", result$bin_start, ", ", result$bin_end, ")"),
+    b = result$count,
+    c = paste0(result$pct, "%")
+  )
+  names(out) <- c("Przedział", "Liczba obs.", "Procent")
+  out
+}, striped = TRUE, hover = TRUE, bordered = TRUE)
+```
+
+## Średnia arytmetyczna
+
+Średnia arytmetyczna to suma wszystkich wartości podzielona
+przez ich liczbę. Jest to 'punkt równowagi' danych -- gdybyśmy
+położyli dane na wadze, średnia byłaby punktem podparcia.
+
+$$\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i = \frac{x_1 + x_2 + \ldots + x_n}{n}$$
+
+### Średnia jako punkt równowagi
+
+```{r}
+selectInput("ch3_mean_var", "Zmienna:",
+  choices = c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
+              "Średnia ocen" = "srednia_ocen"),
+  selected = "wzrost"
+)
+plotOutput("ch3_mean_plot", height = "300px")
+uiOutput("ch3_mean_text")
+```
+
+```{r}
+#| context: server
+
+output$ch3_mean_plot <- renderPlot({
+  var_name <- input$ch3_mean_var
+  req(var_name)
+  x <- student_data[[var_name]]
+  m <- mean(x)
+  var_labels <- c("wzrost" = "Wzrost (cm)", "waga" = "Waga (kg)",
+                  "srednia_ocen" = "Średnia ocen")
+  df <- data.frame(val = x)
+
+  ggplot(df, aes(x = val)) +
+    geom_histogram(bins = 25, fill = "#d5d8dc", color = "white", alpha = 0.8) +
+    geom_vline(xintercept = m, color = "#e74c3c", linewidth = 1.5, linetype = "solid") +
+    annotate("text", x = m, y = Inf, label = paste0("Średnia = ", round(m, 2)),
+             vjust = 2, hjust = -0.1, color = "#e74c3c", size = 5, fontface = "bold") +
+    annotate("segment", x = min(x), xend = m, y = -0.5, yend = -0.5,
+             color = "#3498db", linewidth = 2,
+             arrow = arrow(length = unit(0.2, "cm"), ends = "last")) +
+    annotate("segment", x = max(x), xend = m, y = -0.5, yend = -0.5,
+             color = "#3498db", linewidth = 2,
+             arrow = arrow(length = unit(0.2, "cm"), ends = "last")) +
+    labs(x = var_labels[var_name], y = "Liczebność",
+         title = "Średnia jako punkt równowagi") +
+    theme_minimal(base_size = 14)
+})
+
+output$ch3_mean_text <- renderUI({
+  var_name <- input$ch3_mean_var
+  req(var_name)
+  x <- student_data[[var_name]]
+  m <- mean(x)
+  s <- sum(x)
+  n <- length(x)
+  div(class = "callout-note",
+    p(paste0("$$\\bar{x} = \\frac{", round(s, 1), "}{", n, "} = ", round(m, 2), "$$")),
+    tags$em("Średnia uwzględnia każdą wartość -- jest wrażliwa
+            na wartości skrajne, bo przeciąga ją w ich stronę.")
+  )
+})
+```
+
+## Mediana
+
+Mediana to wartość, która dzieli posortowane dane na dwie
+równe połowy: 50% obserwacji leży poniżej, 50% powyżej.
+Nie zależy od tego, jak bardzo skrajne są wartości
+na końcach -- liczy się tylko pozycja środkowa.
+
+### Mediana dzieli dane na pół
+
+```{r}
+selectInput("ch3_median_var", "Zmienna:",
+  choices = c("Wzrost (cm)" = "wzrost", "Czas dojazdu (min)" = "czas_dojazdu",
+              "Średnia ocen" = "srednia_ocen"),
+  selected = "czas_dojazdu"
+)
+plotOutput("ch3_median_plot", height = "300px")
+uiOutput("ch3_median_text")
+```
+
+```{r}
+#| context: server
+
+output$ch3_median_plot <- renderPlot({
+  var_name <- input$ch3_median_var
+  req(var_name)
+  x <- student_data[[var_name]]
+  med <- median(x)
+  x_sorted <- sort(x)
+  n <- length(x_sorted)
+  n_below <- sum(x_sorted < med)
+  n_above <- sum(x_sorted > med)
+  var_labels <- c("wzrost" = "Wzrost (cm)", "czas_dojazdu" = "Czas dojazdu (min)",
+                  "srednia_ocen" = "Średnia ocen")
+  df <- data.frame(val = x)
+
+  ggplot(df, aes(x = val)) +
+    geom_histogram(bins = 25, fill = "#d5d8dc", color = "white", alpha = 0.8) +
+    geom_vline(xintercept = med, color = "#2980b9", linewidth = 1.5) +
+    annotate("rect", xmin = min(x) - 1, xmax = med, ymin = -Inf, ymax = Inf,
+             fill = "#3498db", alpha = 0.08) +
+    annotate("rect", xmin = med, xmax = max(x) + 1, ymin = -Inf, ymax = Inf,
+             fill = "#e74c3c", alpha = 0.08) +
+    annotate("text", x = (min(x) + med) / 2, y = Inf,
+             label = paste0("50% (", n_below, " obs.)"),
+             vjust = 2, color = "#2c3e50", size = 5, fontface = "bold") +
+    annotate("text", x = (max(x) + med) / 2, y = Inf,
+             label = paste0("50% (", n_above, " obs.)"),
+             vjust = 2, color = "#2c3e50", size = 5, fontface = "bold") +
+    annotate("text", x = med, y = Inf, label = paste0("Me = ", round(med, 1)),
+             vjust = 4, hjust = -0.1, color = "#2980b9", size = 5, fontface = "bold") +
+    geom_histogram(bins = 25, fill = "#d5d8dc", color = "white", alpha = 0.8) +
+    geom_vline(xintercept = med, color = "#2980b9", linewidth = 1.5) +
+    labs(x = var_labels[var_name], y = "Liczebność",
+         title = "Mediana dzieli dane na dwie równe połowy") +
+    theme_minimal(base_size = 14)
+})
+
+output$ch3_median_text <- renderUI({
+  var_name <- input$ch3_median_var
+  req(var_name)
+  x <- student_data[[var_name]]
+  med <- median(x)
+  m <- mean(x)
+  diff <- abs(m - med)
+
+  div(class = "callout-note",
+    tags$b("Mediana = ", round(med, 1)),
+    " | Średnia = ", round(m, 2),
+    " | Różnica = ", round(diff, 2)
+  )
+})
+```
+
+## Średnia vs mediana -- kiedy się różnią?
+
+Dla danych symetrycznych średnia i mediana są blisko siebie.
+Ale co się dzieje, gdy rozkład jest skośny lub pojawi się
+wartość odstająca?
+
+Wyobrażamy sobie zarobki w pewnej firmie. Większość pracowników
+zarabia umiarkowanie, ale są też osoby z bardzo wysokimi pensjami.
+Zobaczmy, jak średnia i mediana reagują na nowe wartości.
+
+### Zarobki w firmie: średnia vs mediana
+
+```{r}
+fluidRow(
+  column(5,
+    sliderInput("ch3_svm_new_value", "Nowa wartość:",
+                min = 2000, max = 25000, value = 5000, step = 500,
+                pre = "", post = " zł", width = "100%")
+  ),
+  column(7,
+    div(style = "display: flex; gap: 8px; margin-top: 25px;",
+      actionButton("ch3_svm_add", "Dodaj wartość",
+                   class = "btn-primary"),
+      actionButton("ch3_svm_outlier", "Dodaj outlier (CEO)",
+                   class = "btn-danger"),
+      actionButton("ch3_svm_reset", "Reset",
+                   class = "btn-default")
+    )
+  )
+)
+hr()
+plotOutput("ch3_svm_hist", height = "280px")
+plotOutput("ch3_svm_strip", height = "120px")
+uiOutput("ch3_svm_stats")
+```
+
+```{r}
+#| context: server
+
+ch3_svm_generate <- function() {
+  round(rgamma(30, shape = 3, scale = 1500) + 2000)
+}
+
+ch3_svm_data <- reactiveVal(NULL)
+
+observe({
+  if (is.null(ch3_svm_data())) {
+    set.seed(NULL)
+    ch3_svm_data(ch3_svm_generate())
+  }
+})
+
+observeEvent(input$ch3_svm_add, {
+  ch3_svm_data(c(ch3_svm_data(), input$ch3_svm_new_value))
+})
+
+observeEvent(input$ch3_svm_outlier, {
+  ch3_svm_data(c(ch3_svm_data(), 50000))
+})
+
+observeEvent(input$ch3_svm_reset, {
+  set.seed(NULL)
+  ch3_svm_data(ch3_svm_generate())
+})
+
+output$ch3_svm_hist <- renderPlot({
+  req(ch3_svm_data())
+  d <- data.frame(x = ch3_svm_data())
+  m <- mean(d$x)
+  med <- median(d$x)
+
+  ggplot(d, aes(x = x)) +
+    geom_histogram(fill = "#bdc3c7", color = "white", bins = 25) +
+    geom_vline(aes(xintercept = m, color = "Srednia"),
+               linewidth = 1.2, linetype = "solid") +
+    geom_vline(aes(xintercept = med, color = "Mediana"),
+               linewidth = 1.2, linetype = "dashed") +
+    scale_color_manual(
+      name = NULL,
+      breaks = c("Srednia", "Mediana"),
+      values = c("Srednia" = "#e74c3c", "Mediana" = "#3498db")
+    ) +
+    scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
+    labs(x = "Zarobki (zł)", y = "Liczba osób",
+         title = "Rozkład zarobków") +
+    theme_minimal(base_size = 14) +
+    theme(legend.position = "top",
+          plot.title = element_text(face = "bold"))
+})
+
+output$ch3_svm_strip <- renderPlot({
+  req(ch3_svm_data())
+  d <- data.frame(x = ch3_svm_data())
+  m <- mean(d$x)
+  med <- median(d$x)
+
+  ggplot(d, aes(x = x, y = 0)) +
+    geom_jitter(height = 0.3, width = 0, size = 2.5,
+                alpha = 0.6, color = "#2c3e50") +
+    geom_point(aes(x = m), y = 0, color = "#e74c3c",
+               size = 5, shape = 18) +
+    geom_point(aes(x = med), y = 0, color = "#3498db",
+               size = 5, shape = 18) +
+    scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
+    labs(x = "Zarobki (zł)", y = NULL) +
+    theme_minimal(base_size = 14) +
+    theme(axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.grid.minor.y = element_blank())
+})
+
+output$ch3_svm_stats <- renderUI({
+  req(ch3_svm_data())
+  d <- ch3_svm_data()
+  m <- mean(d)
+  med <- median(d)
+  diff_val <- m - med
+
+  diff_color <- if (abs(diff_val) < 500) "#27ae60" else "#f39c12"
+
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("Średnia: ", format(round(m), big.mark = " "), " zł"), "#e74c3c"),
+    stat_box(paste0("Mediana: ", format(round(med), big.mark = " "), " zł"), "#3498db"),
+    stat_box(paste0("Różnica: ", format(round(diff_val), big.mark = " "), " zł"), diff_color)
+  )
+})
+```
+
+::: {.callout-note}
+**Obserwacja:** Dodaj kilka 'normalnych' zarobków -- średnia i mediana będą blisko
+siebie. Teraz kliknij 'Dodaj outlier (CEO)' -- zobacz, jak średnia
+skacze w górę, a mediana prawie się nie zmienia!
+:::
+
+## Odporność miar na outliery
+
+Która statystyka jest bardziej odporna na outliery? Średnia
+arytmetyczna bierze pod uwagę każdą wartość -- więc jedna
+ekstremalna obserwacja może ją znacząco przesunąć. Mediana
+ignoruje skrajne wartości, patrząc tylko na 'środek' danych.
+
+Średnia ucinana (trimmed mean) to kompromis: odrzuca pewien
+procent najbardziej skrajnych obserwacji z obu stron, a następnie
+oblicza średnią z pozostałych. Dodajmy kilka ekstremalnych
+zarobków i zobaczmy, co się stanie.
+
+### Odporność: średnia vs mediana vs średnia ucinana
+
+```{r}
+div(style = "display: flex; gap: 8px; margin-bottom: 15px;",
+  actionButton("ch3_rob_add1", "Dodaj outlier (+50 000 zł)",
+               class = "btn-warning"),
+  actionButton("ch3_rob_add5", "Dodaj 5 outlierów",
+               class = "btn-danger"),
+  actionButton("ch3_rob_reset", "Reset",
+               class = "btn-default")
+)
+plotOutput("ch3_rob_plot", height = "320px")
+tableOutput("ch3_rob_table")
+```
+
+```{r}
+#| context: server
+
+ch3_rob_generate <- function() {
+  round(rgamma(40, shape = 3, scale = 1500) + 2000)
+}
+
+ch3_rob_base <- reactiveVal(NULL)
+ch3_rob_outliers <- reactiveVal(numeric(0))
+
+observe({
+  if (is.null(ch3_rob_base())) {
+    set.seed(NULL)
+    ch3_rob_base(ch3_rob_generate())
+  }
+})
+
+ch3_rob_all <- reactive({
+  c(ch3_rob_base(), ch3_rob_outliers())
+})
+
+ch3_rob_base_stats <- reactive({
+  req(ch3_rob_base())
+  d <- ch3_rob_base()
+  list(
+    mean = mean(d),
+    median = median(d),
+    trimmed = mean(d, trim = 0.1)
+  )
+})
+
+observeEvent(input$ch3_rob_add1, {
+  new_outlier <- 50000 + runif(1, -5000, 5000)
+  ch3_rob_outliers(c(ch3_rob_outliers(), round(new_outlier)))
+})
+
+observeEvent(input$ch3_rob_add5, {
+  new_outliers <- round(50000 + runif(5, -5000, 5000))
+  ch3_rob_outliers(c(ch3_rob_outliers(), new_outliers))
+})
+
+observeEvent(input$ch3_rob_reset, {
+  set.seed(NULL)
+  ch3_rob_base(ch3_rob_generate())
+  ch3_rob_outliers(numeric(0))
+})
+
+output$ch3_rob_plot <- renderPlot({
+  req(ch3_rob_all())
+  d <- data.frame(x = ch3_rob_all())
+  m <- mean(d$x)
+  med <- median(d$x)
+  tr <- mean(d$x, trim = 0.1)
+
+  line_data <- data.frame(
+    xval = c(m, med, tr),
+    Statystyka = factor(
+      c("Srednia", "Mediana", "Sr. ucinana (10%)"),
+      levels = c("Srednia", "Mediana", "Sr. ucinana (10%)")
+    ),
+    ltype = c("solid", "dashed", "dotted")
+  )
+
+  n_outliers <- length(ch3_rob_outliers())
+  subtitle_text <- if (n_outliers == 0) {
+    "Brak outlierów"
+  } else {
+    paste0("Liczba dodanych outlierów: ", n_outliers)
+  }
+
+  ggplot(d, aes(x = x)) +
+    geom_histogram(fill = "#bdc3c7", color = "white", bins = 30) +
+    geom_vline(data = line_data,
+               aes(xintercept = xval, color = Statystyka,
+                   linetype = Statystyka),
+               linewidth = 1.2) +
+    scale_color_manual(
+      name = NULL,
+      breaks = c("Srednia", "Mediana", "Sr. ucinana (10%)"),
+      values = c("Srednia" = "#e74c3c",
+                 "Mediana" = "#3498db",
+                 "Sr. ucinana (10%)" = "#27ae60")
+    ) +
+    scale_linetype_manual(
+      name = NULL,
+      breaks = c("Srednia", "Mediana", "Sr. ucinana (10%)"),
+      values = c("Srednia" = "solid",
+                 "Mediana" = "dashed",
+                 "Sr. ucinana (10%)" = "dotted")
+    ) +
+    scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
+    labs(x = "Zarobki (zł)", y = "Liczba osób",
+         title = "Porównanie miar położenia",
+         subtitle = subtitle_text) +
+    theme_minimal(base_size = 14) +
+    theme(legend.position = "top",
+          plot.title = element_text(face = "bold"))
+})
+
+output$ch3_rob_table <- renderTable({
+  req(ch3_rob_all())
+  req(ch3_rob_base_stats())
+
+  d <- ch3_rob_all()
+  base <- ch3_rob_base_stats()
+
+  current_mean <- mean(d)
+  current_med <- median(d)
+  current_tr <- mean(d, trim = 0.1)
+
+  data.frame(
+    Statystyka = c("Średnia", "Mediana", "Średnia ucinana (10%)"),
+    `Wartość` = paste0(
+      format(round(c(current_mean, current_med, current_tr)),
+             big.mark = " "), " zł"),
+    `Zmiana vs bazowa` = paste0(
+      ifelse(c(current_mean - base$mean,
+               current_med - base$median,
+               current_tr - base$trimmed) >= 0, "+", ""),
+      format(round(c(current_mean - base$mean,
+                     current_med - base$median,
+                     current_tr - base$trimmed)),
+             big.mark = " "), " zł"),
+    check.names = FALSE
+  )
+}, striped = TRUE, hover = TRUE, width = "100%", align = "lcr")
+```
+
+::: {.callout-warning}
+**Wniosek:** Średnia arytmetyczna jest bardzo wrażliwa na wartości odstające.
+Mediana jest najbardziej odporna. Średnia ucinana oferuje
+kompromis -- jest mniej wrażliwa niż średnia, ale bardziej niż mediana.
+Dlatego przy skośnych rozkładach (np. zarobki) mediana jest często
+lepszą miarą 'typowej' wartości.
+:::
+
+## Zmienne dyskretne -- te same statystyki, inne wykresy
+
+Dotychczas używaliśmy zmiennych ciągłych (wzrost, zarobki). Ale co ze
+zmiennymi **dyskretnymi** -- takimi jak liczba kursów czy
+liczba nieobecności? Statystyki położenia (średnia, mediana) obliczamy
+tak samo, ale **wizualizacja** wymaga uwagi.
+
+### Dyskretna vs ciągła -- porównanie wizualizacji
+
+```{r}
+selectInput("ch3_disc_var", "Wybierz zmienną dyskretną:",
+  choices = c("Liczba nieobecności" = "liczba_nieobecnosci",
+              "Liczba kursów" = "liczba_kursow"),
+  selected = "liczba_nieobecnosci"
+)
+```
+
+::: {layout-ncol=2}
+```{r}
+tags$h5(style = "text-align: center; color: #27ae60;", "Wykres słupkowy (poprawny)")
+plotOutput("ch3_disc_bar", height = "300px")
+```
+
+```{r}
+tags$h5(style = "text-align: center; color: #e74c3c;", "Histogram (problematyczny)")
+plotOutput("ch3_disc_hist", height = "300px")
+```
+:::
+
+```{r}
+tableOutput("ch3_disc_stats")
+uiOutput("ch3_disc_explanation")
+```
+
+```{r}
+#| context: server
+
+output$ch3_disc_bar <- renderPlot({
+  var_name <- input$ch3_disc_var
+  req(var_name)
+  vals <- student_data[[var_name]]
+  df <- data.frame(x = factor(vals))
+
+  ggplot(df, aes(x = x)) +
+    geom_bar(fill = col_discrete, color = "white", alpha = 0.85) +
+    geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 4) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+    labs(x = variable_meta[[var_name]]$label, y = "Liczebność") +
+    theme_minimal(base_size = 14)
+})
+
+output$ch3_disc_hist <- renderPlot({
+  var_name <- input$ch3_disc_var
+  req(var_name)
+  vals <- student_data[[var_name]]
+
+  ggplot(data.frame(x = vals), aes(x = x)) +
+    geom_histogram(bins = 15, fill = "#e74c3c", color = "white", alpha = 0.6) +
+    labs(x = variable_meta[[var_name]]$label, y = "Liczebność") +
+    theme_minimal(base_size = 14)
+})
+
+output$ch3_disc_stats <- renderTable({
+  var_name <- input$ch3_disc_var
+  req(var_name)
+  vals <- student_data[[var_name]]
+
+  mode_val <- as.numeric(names(sort(table(vals), decreasing = TRUE))[1])
+
+  data.frame(
+    Statystyka = c("Średnia", "Mediana", "Dominanta (moda)", "SD", "Rozstęp"),
+    `Wartość` = c(round(mean(vals), 2), median(vals), mode_val,
+                round(sd(vals), 2), paste0(min(vals), " - ", max(vals))),
+    check.names = FALSE
+  )
+}, striped = TRUE, hover = TRUE, width = "100%", align = "c")
+
+output$ch3_disc_explanation <- renderUI({
+  div(class = "callout-note",
+    tags$strong("Dlaczego wykres słupkowy jest lepszy? "),
+    "Zmienna dyskretna przyjmuje skończenie wiele wartości całkowitych.
+     Wykres słupkowy pokazuje każdą wartość osobno i poprawnie oddaje liczebności.
+     Histogram natomiast grupuje dane w 'kubły' (bins), co może niepoprawnie
+     rozbić lub połączyć wartości całkowite. ",
+    tags$em("Statystyki (średnia, mediana, SD) liczymy tak samo jak dla zmiennych ciągłych.")
+  )
+})
+```
+
+## Modalność rozkładu -- ile 'górek' ma histogram?
+
+W rozdziale o zmiennych jakościowych poznaliśmy dominantę -- najczęstszą
+kategorię. Dla danych ciągłych dominanta pojedynczej wartości nie ma sensu
+(prawie każda wartość jest unikatowa). Ale pojęcie **mody** działa na
+**przedziałach** -- szukamy, który bin histogramu jest najwyższy.
+
+Co ważniejsze, rozkład może mieć **więcej niż jeden szczyt** (modę). To często
+sygnał, że dane pochodzą z kilku różnych grup.
+
+### Unimodalny vs bimodalny vs wielomodalny
+
+```{r}
+radioButtons("ch3_modal_scenario", "Scenariusz:",
+  choices = c(
+    "Unimodalny -- wzrost kobiet" = "unimodal",
+    "Bimodalny -- wzrost (kobiety + mężczyźni)" = "bimodal",
+    "Wielomodalny -- czas dojazdu (autobus vs rower vs auto)" = "multimodal"
+  ),
+  selected = "unimodal"
+)
+plotOutput("ch3_modal_plot", height = "350px")
+uiOutput("ch3_modal_text")
+```
+
+```{r}
+#| context: server
+
+output$ch3_modal_plot <- renderPlot({
+  scenario <- input$ch3_modal_scenario
+  req(scenario)
+
+  set.seed(42)
+  if (scenario == "unimodal") {
+    x <- rnorm(500, mean = 165, sd = 6)
+    df <- data.frame(val = x)
+    ggplot(df, aes(x = val)) +
+      geom_histogram(aes(y = after_stat(density)), bins = 30,
+                     fill = "#3498db", color = "white", alpha = 0.7) +
+      geom_density(linewidth = 1.2, color = "#2c3e50") +
+      geom_vline(xintercept = mean(x), color = "#e74c3c", linewidth = 1, linetype = "dashed") +
+      annotate("text", x = mean(x) + 1, y = Inf, label = "moda \u2248 średnia \u2248 mediana",
+               hjust = 0, vjust = 2, color = "#e74c3c", size = 4.5, fontface = "bold") +
+      labs(title = "Unimodalny -- jeden wyraźny szczyt",
+           x = "Wzrost kobiet (cm)", y = "Gęstość") +
+      theme_minimal(base_size = 14)
+
+  } else if (scenario == "bimodal") {
+    x_k <- rnorm(250, mean = 162, sd = 5)
+    x_m <- rnorm(250, mean = 182, sd = 5)
+    df <- data.frame(val = c(x_k, x_m),
+                     grupa = rep(c("Kobiety", "Mężczyźni"), each = 250))
+    ggplot(df, aes(x = val)) +
+      geom_histogram(aes(y = after_stat(density)), bins = 35,
+                     fill = "#95a5a6", color = "white", alpha = 0.5) +
+      geom_density(linewidth = 1.2, color = "#2c3e50") +
+      geom_density(aes(color = grupa), linewidth = 0.8, linetype = "dashed") +
+      scale_color_manual(values = c("Kobiety" = "#e74c3c", "Mężczyźni" = "#3498db")) +
+      labs(title = "Bimodalny -- dwa szczyty (dwie grupy!)",
+           x = "Wzrost (cm)", y = "Gęstość", color = NULL) +
+      theme_minimal(base_size = 14) +
+      theme(legend.position = "top")
+
+  } else {
+    x1 <- rnorm(150, mean = 12, sd = 3)
+    x2 <- rnorm(120, mean = 25, sd = 4)
+    x3 <- rnorm(130, mean = 40, sd = 5)
+    df <- data.frame(val = c(x1, x2, x3),
+                     grupa = c(rep("Rower", 150), rep("Autobus", 120), rep("Auto", 130)))
+    ggplot(df, aes(x = val)) +
+      geom_histogram(aes(y = after_stat(density)), bins = 40,
+                     fill = "#95a5a6", color = "white", alpha = 0.5) +
+      geom_density(linewidth = 1.2, color = "#2c3e50") +
+      geom_density(aes(color = grupa), linewidth = 0.8, linetype = "dashed") +
+      scale_color_manual(values = c("Rower" = "#27ae60", "Autobus" = "#f39c12", "Auto" = "#e74c3c")) +
+      labs(title = "Wielomodalny -- trzy szczyty (trzy środki transportu)",
+           x = "Czas dojazdu (min)", y = "Gęstość", color = NULL) +
+      theme_minimal(base_size = 14) +
+      theme(legend.position = "top")
+  }
+})
+
+output$ch3_modal_text <- renderUI({
+  scenario <- input$ch3_modal_scenario
+  req(scenario)
+
+  if (scenario == "unimodal") {
+    div(class = "callout-note",
+      tags$b("Rozkład unimodalny: "), "jeden szczyt, jedna 'górka'. ",
+      "Dla rozkładu symetrycznego moda \u2248 średnia \u2248 mediana. ",
+      "Większość statystyk opisowych zakłada właśnie taki rozkład.")
+  } else if (scenario == "bimodal") {
+    div(class = "callout-warning",
+      tags$b("Rozkład bimodalny: "), "dwa szczyty! ",
+      "To sygnał, że dane prawdopodobnie pochodzą z ",
+      tags$b("dwóch różnych grup"), ". ",
+      "Podawanie jednej średniej dla całości jest mylące -- ",
+      "średnia wyląduje między szczytami, gdzie prawie nikt nie jest!",
+      tags$br(), tags$br(),
+      tags$em("Praktyka: rozdziel grupy i analizuj osobno."))
+  } else {
+    div(class = "callout-warning",
+      tags$b("Rozkład wielomodalny: "), "trzy szczyty = trzy podgrupy. ",
+      "Każda podgrupa (rowerzyści, pasażerowie autobusów, kierowcy) ",
+      "ma własną 'typową' wartość. ",
+      tags$br(), tags$br(),
+      tags$em("Wielomodalność to jeden z najważniejszych sygnałów w danych -- ",
+              "mówi, że patrzenie na całość bez podziału na grupy ",
+              "może prowadzić do błędnych wniosków."))
+  }
+})
+```
+
+## Percentyle i kwantyle
+
+Kwantyle i percentyle dzielą dane na części. Percentyl mówi nam,
+jaki procent obserwacji jest poniżej danej wartości. Na przykład
+percentyl 75. oznacza, że 75% obserwacji ma wartość mniejszą
+lub równą tej wartości.
+
+Trzy najważniejsze kwantyle to kwartyle:
+
+- **Q1 (25. percentyl)** -- pierwsza ćwiartka danych
+- **Q2 (50. percentyl)** -- mediana, czyli środek
+- **Q3 (75. percentyl)** -- trzecia ćwiartka danych
+
+Przesuwaj suwak, aby zobaczyć różne percentyle wzrostu studentów
+z naszej ankiety.
+
+### Explorer percentyli: wzrost studentów
+
+```{r}
+fluidRow(
+  column(6,
+    sliderInput("ch3_q_pct", "Percentyl:",
+                min = 0, max = 100, value = 50, step = 1,
+                post = "%", width = "100%")
+  ),
+  column(6,
+    div(style = "display: flex; gap: 8px; margin-top: 25px;",
+      actionButton("ch3_q_q1", "Q1 (25%)", class = "btn-outline-primary"),
+      actionButton("ch3_q_med", "Mediana (50%)", class = "btn-outline-primary"),
+      actionButton("ch3_q_q3", "Q3 (75%)", class = "btn-outline-primary")
+    )
+  )
+)
+hr()
+plotOutput("ch3_q_hist", height = "280px")
+plotOutput("ch3_q_box", height = "120px")
+uiOutput("ch3_q_text")
+```
+
+```{r}
+#| context: server
+
+observeEvent(input$ch3_q_q1, {
+  updateSliderInput(session, "ch3_q_pct", value = 25)
+})
+observeEvent(input$ch3_q_med, {
+  updateSliderInput(session, "ch3_q_pct", value = 50)
+})
+observeEvent(input$ch3_q_q3, {
+  updateSliderInput(session, "ch3_q_pct", value = 75)
+})
+
+output$ch3_q_hist <- renderPlot({
+  pct <- input$ch3_q_pct / 100
+  wzrost <- student_data$wzrost
+  q_val <- quantile(wzrost, probs = pct)
+
+  d <- data.frame(x = wzrost)
+  d$below <- d$x <= q_val
+
+  ggplot(d, aes(x = x)) +
+    geom_histogram(aes(fill = below), color = "white", bins = 25,
+                   boundary = q_val, show.legend = FALSE) +
+    geom_vline(xintercept = q_val, color = "#2c3e50",
+               linewidth = 1.2, linetype = "solid") +
+    annotate("text", x = q_val, y = Inf,
+             label = paste0(round(q_val, 1), " cm"),
+             vjust = -0.5, hjust = -0.1,
+             fontface = "bold", size = 5, color = "#2c3e50") +
+    scale_fill_manual(values = c("TRUE" = "#3498db", "FALSE" = "#bdc3c7")) +
+    labs(x = "Wzrost (cm)", y = "Liczba studentów",
+         title = paste0(input$ch3_q_pct, ". percentyl wzrostu studentów")) +
+    theme_minimal(base_size = 14) +
+    theme(plot.title = element_text(face = "bold"))
+})
+
+output$ch3_q_box <- renderPlot({
+  pct <- input$ch3_q_pct / 100
+  wzrost <- student_data$wzrost
+  q_val <- quantile(wzrost, probs = pct)
+
+  d <- data.frame(x = wzrost)
+
+  ggplot(d, aes(x = x, y = 0)) +
+    geom_boxplot(fill = "#ecf0f1", color = "#2c3e50",
+                 width = 0.5, outlier.alpha = 0.4) +
+    geom_point(aes(x = q_val), y = 0,
+               color = "#e74c3c", size = 5, shape = 18) +
+    annotate("text", x = q_val, y = 0.35,
+             label = paste0("P", input$ch3_q_pct),
+             fontface = "bold", size = 4.5, color = "#e74c3c") +
+    labs(x = "Wzrost (cm)", y = NULL) +
+    theme_minimal(base_size = 14) +
+    theme(axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.grid.minor.y = element_blank())
+})
+
+output$ch3_q_text <- renderUI({
+  pct <- input$ch3_q_pct / 100
+  wzrost <- student_data$wzrost
+  q_val <- round(quantile(wzrost, probs = pct), 1)
+
+  actual_pct <- round(100 * mean(wzrost <= q_val), 1)
+
+  div(style = "font-size: 18px; color: #2c3e50; padding: 10px; text-align: center;",
+    tags$strong(paste0(input$ch3_q_pct, "% studentów")),
+    paste0(" ma wzrost poniżej ", q_val, " cm."),
+    br(),
+    tags$span(style = "font-size: 14px; color: #7f8c8d;",
+      paste0("(Dokładnie ", actual_pct, "% obserwacji <= ", q_val, " cm)"))
+  )
+})
+```
+
+## Gra: Zgadnij średnią i medianę!
+
+Sprawdźmy Twoją intuicję! Na histogramie zobaczysz rozkład danych.
+Kliknij na wykres, aby postawić swój typ: najpierw **średnią**,
+potem **medianę**. Czy potrafisz je odróżnić?
+
+### Kliknij na wykres, aby umieścić średnią i medianę
+
+```{r}
+div(style = "margin-bottom: 10px;",
+  actionButton("ch3_game_new", "Nowa runda",
+               class = "btn-primary", style = "margin-right: 6px;"),
+  actionButton("ch3_game_reveal", "Pokaż odpowiedź",
+               class = "btn-success", style = "margin-right: 6px;")
+)
+uiOutput("ch3_game_status_banner")
+plotOutput("ch3_game_plot", height = "350px", click = "ch3_game_click")
+uiOutput("ch3_game_feedback")
+```
+
+```{r}
+#| context: server
+
+ch3_game_data <- reactiveVal(NULL)
+ch3_game_guesses <- reactiveVal(list(mean = NULL, median = NULL))
+ch3_game_revealed <- reactiveVal(FALSE)
+ch3_game_round <- reactiveVal(0)
+ch3_game_score <- reactiveVal(list(total = 0, good = 0))
+
+generate_game_distribution <- function() {
+  type <- sample(c("symmetric", "right_skew", "left_skew"), 1)
+  n <- 200
+  if (type == "symmetric") {
+    vals <- rnorm(n, mean = sample(40:80, 1), sd = sample(8:15, 1))
+  } else if (type == "right_skew") {
+    vals <- rgamma(n, shape = sample(2:4, 1), scale = sample(5:12, 1)) + sample(10:30, 1)
+  } else {
+    vals <- 100 - rgamma(n, shape = sample(2:4, 1), scale = sample(5:12, 1))
+  }
+  round(vals, 1)
+}
+
+observe({
+  if (is.null(ch3_game_data())) {
+    ch3_game_data(generate_game_distribution())
+  }
+})
+
+observeEvent(input$ch3_game_new, {
+  ch3_game_data(generate_game_distribution())
+  ch3_game_guesses(list(mean = NULL, median = NULL))
+  ch3_game_revealed(FALSE)
+  ch3_game_round(ch3_game_round() + 1)
+})
+
+observeEvent(input$ch3_game_click, {
+  if (ch3_game_revealed()) return()
+  g <- ch3_game_guesses()
+  if (is.null(g$mean)) {
+    g$mean <- input$ch3_game_click$x
+  } else if (is.null(g$median)) {
+    g$median <- input$ch3_game_click$x
+  }
+  ch3_game_guesses(g)
+})
+
+observeEvent(input$ch3_game_reveal, {
+  g <- ch3_game_guesses()
+  req(g$mean, g$median)
+  ch3_game_revealed(TRUE)
+  vals <- ch3_game_data()
+  real_mean <- mean(vals)
+  real_med <- median(vals)
+  rng <- diff(range(vals))
+  mean_err <- abs(g$mean - real_mean) / rng
+  med_err <- abs(g$median - real_med) / rng
+  sc <- ch3_game_score()
+  sc$total <- sc$total + 1
+  if (mean_err < 0.08 && med_err < 0.08) sc$good <- sc$good + 1
+  ch3_game_score(sc)
+})
+
+output$ch3_game_status_banner <- renderUI({
+  g <- ch3_game_guesses()
+  if (is.null(g$mean)) {
+    div(style = "text-align: center; padding: 12px; margin-bottom: 10px;
+                  background: #fdedec; border-radius: 8px; font-size: 18px;
+                  font-weight: bold; color: #e74c3c;",
+      "Kliknij na wykres, aby postawić ŚREDNIĄ"
+    )
+  } else if (is.null(g$median)) {
+    div(style = "text-align: center; padding: 12px; margin-bottom: 10px;
+                  background: #eaf4fc; border-radius: 8px; font-size: 18px;
+                  font-weight: bold; color: #3498db;",
+      "Teraz kliknij, aby postawić MEDIANĘ"
+    )
+  } else if (!ch3_game_revealed()) {
+    div(style = "text-align: center; padding: 12px; margin-bottom: 10px;
+                  background: #eafaf1; border-radius: 8px; font-size: 18px;
+                  font-weight: bold; color: #27ae60;",
+      "Gotowe! Kliknij 'Pokaż odpowiedź'"
+    )
+  } else {
+    sc <- ch3_game_score()
+    div(style = "text-align: center; padding: 8px; margin-bottom: 10px;
+                  background: #f8f9fa; border-radius: 8px; font-size: 14px;
+                  color: #2c3e50;",
+      paste0("Wynik: ", sc$good, "/", sc$total, " trafionych rund")
+    )
+  }
+})
+
+output$ch3_game_plot <- renderPlot({
+  vals <- ch3_game_data()
+  req(vals)
+  g <- ch3_game_guesses()
+  revealed <- ch3_game_revealed()
+
+  p <- ggplot(data.frame(x = vals), aes(x = x)) +
+    geom_histogram(bins = 25, fill = "grey70", color = "white", alpha = 0.7) +
+    theme_minimal(base_size = 14) +
+    labs(x = "Wartość", y = "Liczebność", title = "Gdzie jest średnia? Gdzie mediana?")
+
+  if (!is.null(g$mean)) {
+    p <- p + geom_vline(xintercept = g$mean, color = "#e74c3c",
+                        linewidth = 1.2, linetype = "dashed") +
+      annotate("text", x = g$mean, y = Inf, label = "Twoja\nśrednia",
+               vjust = 2, color = "#e74c3c", fontface = "bold", size = 3.5)
+  }
+  if (!is.null(g$median)) {
+    p <- p + geom_vline(xintercept = g$median, color = "#3498db",
+                        linewidth = 1.2, linetype = "dashed") +
+      annotate("text", x = g$median, y = Inf, label = "Twoja\nmediana",
+               vjust = 3.5, color = "#3498db", fontface = "bold", size = 3.5)
+  }
+
+  if (revealed) {
+    real_mean <- mean(vals)
+    real_med <- median(vals)
+    p <- p +
+      geom_vline(xintercept = real_mean, color = "#e74c3c", linewidth = 1.5) +
+      annotate("text", x = real_mean, y = Inf, label = paste0("Średnia\n", round(real_mean, 1)),
+               vjust = 1, color = "#e74c3c", fontface = "bold", size = 4) +
+      geom_vline(xintercept = real_med, color = "#3498db", linewidth = 1.5) +
+      annotate("text", x = real_med, y = Inf, label = paste0("Mediana\n", round(real_med, 1)),
+               vjust = 2.5, color = "#3498db", fontface = "bold", size = 4)
+  }
+
+  p
+})
+
+output$ch3_game_feedback <- renderUI({
+  if (!ch3_game_revealed()) return(NULL)
+  vals <- ch3_game_data()
+  g <- ch3_game_guesses()
+  real_mean <- mean(vals)
+  real_med <- median(vals)
+
+  mean_err <- round(abs(g$mean - real_mean), 1)
+  med_err <- round(abs(g$median - real_med), 1)
+  rng <- diff(range(vals))
+
+  overall_err <- (abs(g$mean - real_mean) + abs(g$median - real_med)) / rng
+  if (overall_err < 0.08) {
+    grade <- "Doskonale!"
+    cls <- "callout-note"
+  } else if (overall_err < 0.15) {
+    grade <- "Nieźle!"
+    cls <- "callout-warning"
+  } else {
+    grade <- "Można lepiej!"
+    cls <- "callout-important"
+  }
+
+  div(class = cls,
+    tags$strong(paste0(grade, " ")),
+    paste0("Błąd średniej: ", mean_err, ", błąd mediany: ", med_err, ".")
+  )
+})
+```
+
+::: {.callout-note}
+**Rozstęp międzykwartylowy (IQR):** Różnica między Q3 a Q1 to IQR -- miara rozrzutu, która jest odporna
+na outliery. Boxplot (wykres pudełkowy) używa właśnie kwartyli
+do wizualizacji rozkładu danych. Więcej o tym w kolejnym rozdziale!
+:::
+
+---
+
+# Statystyki rozrzutu
+
+*Średnia, mediana, percentyle -- wiemy jak znaleźć 'środek'. Ale środek to nie wszystko.
+Pora zmierzyć, jak bardzo dane są rozproszone wokół tego środka.*
+
+```{r}
+uiOutput("tracker_ch4")
+```
+
+```{r}
+#| context: server
+
+output$tracker_ch4 <- renderUI({
+  var_name <- input$tracked_var
+  req(var_name)
+  vals <- student_data[[var_name]]
+  label <- variable_meta[[var_name]]$label
+
+  div(style = "background: #eaf4fc; border: 1px solid #3498db; border-radius: 6px;
+               padding: 10px 14px; margin-bottom: 15px; font-size: 13px;",
+    tags$strong(paste0("Śledzona zmienna: ", label)),
+    " | Położenie: ",
+    paste0("x\u0304 = ", round(mean(vals), 2), ", Me = ", round(median(vals), 2)),
+    " | Rozrzut: ",
+    paste0("SD = ", round(sd(vals), 2), ", IQR = ", round(IQR(vals), 2))
+  )
+})
+```
+
+## Statystyki rozrzutu
+
+Średnia mówi gdzie jest środek, ale nic o tym jak bardzo dane są
+rozproszone. Dwie grupy mogą mieć tę samą średnią, a wyglądać
+zupełnie inaczej.
+
+W tym rozdziale poznamy miary rozrzutu: odchylenie standardowe,
+wariancję, rozstęp, rozstęp międzykwartylowy (IQR) oraz
+współczynnik zmienności. Nauczymy się też budować boxplot od podstaw.
+
+## Średnia to nie wszystko
+
+Wyobraź sobie dwie linie autobusowe. Obie mają takie samo
+średnie spóźnienie -- około 2 minuty. Którą wybierzesz?
+
+Większość autobusów jest blisko rozkładu (0-4 min spóźnienia),
+rzadko który przyjeżdża za wcześnie, a od czasu do czasu
+zdarza się duże spóźnienie. Ale rozrzut tych spóźnień
+może być bardzo różny.
+
+```{r}
+div(class = "step-buttons",
+  actionButton("ch4_spread_s1", "1. Dwie linie",
+               class = "btn-outline-primary"),
+  actionButton("ch4_spread_s2", "2. Ta sama średnia, ale...",
+               class = "btn-outline-primary"),
+  actionButton("ch4_spread_s3", "3. Wychodzisz wcześniej",
+               class = "btn-outline-primary"),
+  actionButton("ch4_spread_s4", "4. Konsekwencje",
+               class = "btn-outline-primary")
+)
+sliderInput("ch4_spread_buffer", "Wychodzisz wcześniej o (minuty):",
+            min = 0, max = 10, value = 0, step = 1, width = "100%")
+plotOutput("ch4_spread_plot", height = "450px")
+uiOutput("ch4_spread_text")
+```
+
+```{r}
+#| context: server
+
+ch4_spread_step <- reactiveVal(0)
+
+observeEvent(input$ch4_spread_s1, { ch4_spread_step(1) })
+observeEvent(input$ch4_spread_s2, { ch4_spread_step(2) })
+observeEvent(input$ch4_spread_s3, { ch4_spread_step(3) })
+observeEvent(input$ch4_spread_s4, { ch4_spread_step(4) })
+
+ch4_bus_data <- function() {
+  set.seed(123)
+  data_a <- rgamma(1000, shape = 8, scale = 0.25) - 0.3
+  data_b <- rgamma(1000, shape = 0.4, scale = 5)  - 0.3
+  data_a <- data_a - mean(data_a) + 2
+  data_b <- data_b - mean(data_b) + 2
+  list(a = data_a, b = data_b,
+       sd_a = round(sd(data_a), 1), sd_b = round(sd(data_b), 1))
+}
+
+output$ch4_spread_plot <- renderPlot({
+  step <- ch4_spread_step()
+  if (step == 0) return(NULL)
+
+  buffer <- input$ch4_spread_buffer
+  bus <- ch4_bus_data()
+
+  dens_a <- density(bus$a, from = -3, to = 30, n = 500)
+  dens_b <- density(bus$b, from = -3, to = 30, n = 500)
+  df_a <- data.frame(x = dens_a$x, y = dens_a$y,
+                     linia = paste0("Linia A (SD = ", bus$sd_a, ")"))
+  df_b <- data.frame(x = dens_b$x, y = dens_b$y,
+                     linia = paste0("Linia B (SD = ", bus$sd_b, ")"))
+  df_all <- rbind(df_a, df_b)
+
+  col_a <- "#3498db"; col_b <- "#e74c3c"
+  lbl_a <- paste0("Linia A (SD = ", bus$sd_a, ")")
+  lbl_b <- paste0("Linia B (SD = ", bus$sd_b, ")")
+
+  p <- ggplot(df_all, aes(x = x, y = y, color = linia, fill = linia)) +
+    geom_line(linewidth = 1.2) +
+    scale_color_manual(values = setNames(c(col_a, col_b), c(lbl_a, lbl_b))) +
+    scale_fill_manual(values = setNames(c(col_a, col_b), c(lbl_a, lbl_b))) +
+    geom_vline(xintercept = 2, linetype = "dashed", color = "#2c3e50",
+               linewidth = 0.8) +
+    annotate("text", x = 2, y = max(df_a$y) * 1.08,
+             label = "Średnie spóźnienie = 2 min",
+             hjust = 0.5, size = 4.5, color = "#2c3e50", fontface = "bold") +
+    geom_vline(xintercept = 0, linetype = "solid", color = "#95a5a6",
+               linewidth = 0.5, alpha = 0.5) +
+    annotate("text", x = -0.3, y = max(df_a$y) * 0.3,
+             label = "punktualny", angle = 90,
+             size = 3.5, color = "#95a5a6") +
+    labs(x = "Spóźnienie (minuty)    \u2190 za wcześnie | za późno \u2192",
+         y = "Gęstość",
+         title = "Rozkład spóźnień dwóch linii autobusowych",
+         color = NULL, fill = NULL) +
+    coord_cartesian(xlim = c(-3, 25)) +
+    theme_minimal(base_size = 14) +
+    theme(legend.position = "top")
+
+  if (step >= 2) {
+    p <- p +
+      annotate("text", x = -1.5, y = max(df_a$y) * 0.85,
+               label = paste0("SD = ", bus$sd_a, " min\n(niezawodna)"),
+               size = 4, color = col_a, fontface = "bold") +
+      annotate("text", x = 15, y = max(df_b$y) * 1.8,
+               label = paste0("SD = ", bus$sd_b, " min\n(nieprzewidywalna)"),
+               size = 4, color = col_b, fontface = "bold")
+  }
+
+  if (step >= 3) {
+    cutoff <- -buffer
+    shade_a <- df_a[df_a$x >= cutoff, ]
+    shade_b <- df_b[df_b$x >= cutoff, ]
+
+    lbl <- if (buffer == 0) "Wychodzisz\nna stówkę"
+           else paste0("Wychodzisz\n", buffer, " min wcześniej")
+
+    p <- p +
+      geom_area(data = shade_a, aes(x = x, y = y), alpha = 0.25) +
+      geom_area(data = shade_b, aes(x = x, y = y), alpha = 0.15) +
+      geom_vline(xintercept = cutoff, linetype = "dotted",
+                 color = "#27ae60", linewidth = 1) +
+      annotate("text", x = cutoff, y = max(df_a$y) * 0.95,
+               label = lbl,
+               hjust = 1.1, size = 3.8, color = "#27ae60", fontface = "bold")
+  }
+
+  if (step >= 4) {
+    prob_a <- mean(bus$a >= -buffer)
+    prob_b <- mean(bus$b >= -buffer)
+
+    p <- p +
+      annotate("label", x = 18, y = max(df_a$y) * 0.85,
+               label = paste0("P(zdążysz) A = ",
+                              round(prob_a * 100, 1), "%"),
+               size = 4.5, fill = "#eaf4fc", color = col_a,
+               fontface = "bold", label.size = 0.5) +
+      annotate("label", x = 18, y = max(df_a$y) * 0.70,
+               label = paste0("P(zdążysz) B = ",
+                              round(prob_b * 100, 1), "%"),
+               size = 4.5, fill = "#fdedec", color = col_b,
+               fontface = "bold", label.size = 0.5)
+  }
+
+  p
+})
+
+output$ch4_spread_text <- renderUI({
+  step <- ch4_spread_step()
+  buffer <- input$ch4_spread_buffer
+  bus <- ch4_bus_data()
+
+  if (step == 0) {
+    div(class = "callout-note", "Kliknij przycisk kroku, aby rozpocząć.")
+  } else if (step == 1) {
+    div(class = "callout-note",
+        tags$strong("Krok 1:"),
+        " Obie linie mają średnie spóźnienie około 2 minut.
+        Patrząc tylko na średnią, są identyczne.
+        Wartości ujemne = przyjazd przed czasem (rzadko się zdarza).")
+  } else if (step == 2) {
+    pct_10_a <- round(mean(bus$a > 10) * 100, 1)
+    pct_10_b <- round(mean(bus$b > 10) * 100, 1)
+    mean_late_a <- if (any(bus$a > 10)) round(mean(bus$a[bus$a > 10]), 1) else 0
+    mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
+    div(class = "callout-note",
+        tags$strong("Krok 2:"),
+        paste0(" Linia A ma SD = ", bus$sd_a, " min (spóźnienia skupione 0-4 min),
+        a linia B ma SD = ", bus$sd_b, " min (zdarza się i punktualnie,
+        i 10+ min spóźnienia)."),
+        tags$br(), tags$br(),
+        tags$strong("Spóźnienia >10 min: "),
+        paste0("Linia A: ", pct_10_a, "% kursów",
+               if (pct_10_a > 0) paste0(" (śr. ", mean_late_a, " min)") else "",
+               "; Linia B: ", pct_10_b, "% kursów",
+               if (pct_10_b > 0) paste0(" (śr. ", mean_late_b, " min)") else "",
+               "."))
+  } else if (step == 3) {
+    lbl <- if (buffer == 0) "na stówkę (0 min zapasu)"
+           else paste0(buffer, " min wcześniej")
+    div(class = "callout-note",
+        tags$strong("Krok 3:"),
+        paste0(" Wychodzisz ", lbl,
+               ". Jesteś na przystanku o ", buffer,
+               " min przed rozkładem. Zdążysz na każdy autobus,
+               który nie odjedzie wcześniej niż ", buffer,
+               " min przed rozkładem. Zacieniowany obszar = kursy,
+               na które zdążysz. Przesuń suwak!"))
+  } else if (step == 4) {
+    prob_a <- mean(bus$a >= -buffer)
+    prob_b <- mean(bus$b >= -buffer)
+    pct_10_b <- round(mean(bus$b > 10) * 100, 1)
+    mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
+    lbl <- if (buffer == 0) "na stówkę" else paste0(buffer, " min wcześniej")
+    div(class = "callout-note",
+        tags$strong("Krok 4: Konsekwencje"),
+        tags$br(),
+        paste0("Wychodzisz ", lbl, ":"),
+        tags$br(),
+        tags$strong(paste0("Linia A: zdążysz na ", round(prob_a * 100, 1),
+                           "% kursów.")),
+        tags$br(),
+        tags$strong(paste0("Linia B: zdążysz na ", round(prob_b * 100, 1),
+                           "% kursów.")),
+        tags$br(), tags$br(),
+        if (pct_10_b > 0) tagList(
+          tags$em(paste0("A gdy linia B się spóźni poważnie (>10 min, ",
+                         pct_10_b, "% kursów), średnio czekasz ",
+                         mean_late_b, " min. ",
+                         "Linia A praktycznie nigdy tak się nie spóźnia.")),
+          tags$br(), tags$br()
+        ),
+        "To dlatego sama średnia nie wystarczy -- rozrzut danych
+        ma realne konsekwencje!")
+  }
+})
+```
+
+## Odchylenie standardowe krok po kroku
+
+Jak obliczamy odchylenie standardowe? Krok po kroku.
+Zobaczmy to na przykładzie 10 pomiarów wzrostu.
+
+```{r}
+div(class = "step-buttons",
+  actionButton("ch4_sd_s1", "1. Dane",
+               class = "btn-outline-primary"),
+  actionButton("ch4_sd_s2", "2. Odchylenia od średniej",
+               class = "btn-outline-primary"),
+  actionButton("ch4_sd_s3", "3. Wariancja i SD",
+               class = "btn-outline-primary")
+)
+div(style = "margin-bottom: 10px;",
+  actionButton("ch4_sd_new", "Losuj nowy zestaw",
+               class = "btn-success btn-sm", style = "margin-right: 6px;"),
+  actionButton("ch4_sd_reset", "Reset",
+               class = "btn-secondary btn-sm")
+)
+plotOutput("ch4_sd_plot", height = "400px")
+tableOutput("ch4_sd_table")
+uiOutput("ch4_sd_text")
+```
+
+```{r}
+#| context: server
+
+ch4_sd_step <- reactiveVal(0)
+ch4_sd_data <- reactiveVal(round(rnorm(10, mean = 170, sd = 8), 1))
+
+observeEvent(input$ch4_sd_s1, { ch4_sd_step(1) })
+observeEvent(input$ch4_sd_s2, { ch4_sd_step(2) })
+observeEvent(input$ch4_sd_s3, { ch4_sd_step(3) })
+
+observeEvent(input$ch4_sd_new, {
+  set.seed(NULL)
+  ch4_sd_data(round(rnorm(10, mean = 170, sd = 8), 1))
+  ch4_sd_step(0)
+})
+
+observeEvent(input$ch4_sd_reset, {
+  ch4_sd_step(0)
+})
+
+output$ch4_sd_plot <- renderPlot({
+  step <- ch4_sd_step()
+  if (step == 0) return(NULL)
+
+  vals <- ch4_sd_data()
+  n <- length(vals)
+  x_bar <- mean(vals)
+  s <- sd(vals)
+
+  if (step == 1) {
+    df <- data.frame(x = vals)
+    p <- ggplot(df, aes(x = x, y = 0)) +
+      geom_point(size = 4, color = "#3498db") +
+      labs(x = "Wzrost (cm)", y = "",
+           title = "Pomiary wzrostu (n = 10)") +
+      theme_minimal(base_size = 14) +
+      theme(axis.text.y = element_blank(),
+            axis.ticks.y = element_blank(),
+            panel.grid.major.y = element_blank(),
+            panel.grid.minor.y = element_blank()) +
+      scale_y_continuous(limits = c(-0.3, 0.3))
+  } else {
+    deviations <- vals - x_bar
+    ord <- order(abs(deviations), decreasing = TRUE)
+    df <- data.frame(
+      x = vals[ord],
+      dev = deviations[ord],
+      y = seq(n, 1)
+    )
+
+    p <- ggplot(df, aes(x = x, y = y)) +
+      geom_vline(xintercept = x_bar, linetype = "dashed", color = "#e74c3c",
+                 linewidth = 1) +
+      geom_segment(aes(x = x_bar, xend = x, y = y, yend = y),
+                   color = "#f39c12", linewidth = 0.8,
+                   arrow = arrow(length = unit(0.15, "cm"), type = "closed")) +
+      geom_point(size = 4, color = "#3498db") +
+      geom_text(aes(label = paste0(ifelse(dev > 0, "+", ""),
+                                   round(dev, 1))),
+                hjust = ifelse(df$dev >= 0, -0.3, 1.3),
+                size = 3.5, color = "#7f8c8d") +
+      annotate("text", x = x_bar, y = n + 0.8,
+               label = paste0("Średnia = ", round(x_bar, 2)),
+               color = "#e74c3c", size = 5, fontface = "bold") +
+      labs(x = "Wzrost (cm)", y = "",
+           title = "Odchylenia od średniej (posortowane wg odległości)") +
+      theme_minimal(base_size = 14) +
+      theme(axis.text.y = element_blank(),
+            axis.ticks.y = element_blank(),
+            panel.grid.major.y = element_blank(),
+            panel.grid.minor.y = element_blank()) +
+      scale_y_continuous(limits = c(0, n + 1.2))
+
+    if (step >= 3) {
+      p <- p +
+        annotate("rect", xmin = x_bar - s, xmax = x_bar + s,
+                 ymin = 0, ymax = n + 0.3, fill = "#27ae60", alpha = 0.08) +
+        geom_vline(xintercept = x_bar - s, linetype = "dotted",
+                   color = "#27ae60", linewidth = 0.8) +
+        geom_vline(xintercept = x_bar + s, linetype = "dotted",
+                   color = "#27ae60", linewidth = 0.8) +
+        annotate("text", x = x_bar - s, y = 0.3,
+                 label = paste0("śr. - SD\n", round(x_bar - s, 1)),
+                 color = "#27ae60", size = 3.5, fontface = "bold", vjust = 0) +
+        annotate("text", x = x_bar + s, y = 0.3,
+                 label = paste0("śr. + SD\n", round(x_bar + s, 1)),
+                 color = "#27ae60", size = 3.5, fontface = "bold", vjust = 0) +
+        annotate("text", x = x_bar, y = 0.5,
+                 label = paste0("SD = ", round(s, 2), " cm"),
+                 color = "#27ae60", size = 4.5, fontface = "bold")
+    }
+  }
+
+  p
+})
+
+output$ch4_sd_table <- renderTable({
+  step <- ch4_sd_step()
+  if (step < 2) return(NULL)
+
+  vals <- ch4_sd_data()
+  n <- length(vals)
+  x_bar <- mean(vals)
+
+  deviations <- vals - x_bar
+  sq_deviations <- deviations^2
+
+  df <- data.frame(
+    i = 1:n,
+    `xi` = vals,
+    `xi - x_bar` = round(deviations, 2),
+    `(xi - x_bar)^2` = round(sq_deviations, 2),
+    check.names = FALSE
+  )
+
+  if (step >= 3) {
+    summary_row <- data.frame(
+      i = "SUMA",
+      `xi` = "",
+      `xi - x_bar` = "",
+      `(xi - x_bar)^2` = as.character(round(sum(sq_deviations), 2)),
+      check.names = FALSE
+    )
+    df$i <- as.character(df$i)
+    df$`xi` <- as.character(df$`xi`)
+    df$`xi - x_bar` <- as.character(round(deviations, 2))
+    df$`(xi - x_bar)^2` <- as.character(round(sq_deviations, 2))
+    df <- rbind(df, summary_row)
+  }
+
+  df
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%",
+   align = "cccc")
+
+output$ch4_sd_text <- renderUI({
+  step <- ch4_sd_step()
+
+  if (step == 0) {
+    div(class = "callout-note",
+        "Kliknij przycisk kroku, aby rozpocząć obliczanie odchylenia standardowego.")
+  } else if (step == 1) {
+    div(class = "callout-note",
+        tags$strong("Krok 1:"),
+        " Mamy 10 pomiarów wzrostu. Na osi liczbowej każdy punkt to jedna
+        obserwacja. Jak bardzo są rozproszone?")
+  } else if (step == 2) {
+    vals <- ch4_sd_data()
+    x_bar <- mean(vals)
+    div(class = "callout-note",
+        tags$strong("Krok 2:"),
+        paste0(" Obliczamy średnią: x\u0304 = ", round(x_bar, 2),
+               " cm. Następnie liczymy odchylenie każdego punktu od średniej
+               (strzałki na wykresie). W tabeli widzisz odchylenia i ich kwadraty.
+               Kwadraty gwarantują, że odchylenia dodatnie i ujemne się nie
+               znoszą."))
+  } else if (step == 3) {
+    vals <- ch4_sd_data()
+    n <- length(vals)
+    x_bar <- mean(vals)
+    deviations <- vals - x_bar
+    sq_deviations <- deviations^2
+    variance <- sum(sq_deviations) / (n - 1)
+    s <- sqrt(variance)
+    div(class = "callout-note",
+        tags$strong("Krok 3:"),
+        tags$br(), tags$br(),
+        p("$$s = \\sqrt{\\frac{1}{n-1} \\sum_{i=1}^{n} (x_i - \\bar{x})^2}$$"),
+        paste0("Suma kwadratów odchyleń = ", round(sum(sq_deviations), 2)),
+        tags$br(),
+        paste0("Wariancja $s^2$ = suma / (n-1) = ",
+               round(sum(sq_deviations), 2), " / ", n - 1, " = ",
+               round(variance, 2)),
+        tags$br(),
+        tags$strong(paste0("Odchylenie standardowe $s = \\sqrt{",
+                           round(variance, 2), "} = ", round(s, 2), "$ cm")),
+        tags$br(), tags$br(),
+        "Zielony pas na wykresie oznacza przedział $\\bar{x} \\pm s$.
+        W rozkładzie normalnym ok. 68% danych leży w tym przedziale.")
+  }
+})
+```
+
+## Reguła empiryczna (68-95-99.7)
+
+Wiemy już jak obliczyć odchylenie standardowe. Ale co ono oznacza
+w praktyce? Dla rozkładów zbliżonych do normalnego obowiązuje
+**reguła empiryczna**: około 68% danych mieści się w zakresie
+średnia +/-1 SD, 95% w +/-2 SD, a 99.7% w +/-3 SD.
+
+### Reguła 68-95-99.7 -- czy zawsze działa?
+
+```{r}
+selectInput("ch4_emp_var", "Wybierz zmienną:",
+  choices = c("Wzrost (cm)" = "wzrost",
+              "Waga (kg)" = "waga",
+              "Czas dojazdu (min)" = "czas_dojazdu",
+              "Średnia ocen" = "srednia_ocen"),
+  selected = "wzrost"
+)
+plotOutput("ch4_emp_plot", height = "400px")
+uiOutput("ch4_emp_text")
+```
+
+```{r}
+#| context: server
+
+output$ch4_emp_plot <- renderPlot({
+  var_name <- input$ch4_emp_var
+  req(var_name)
+  vals <- student_data[[var_name]]
+  m <- mean(vals)
+  s <- sd(vals)
+
+  band_colors <- c("#3498db", "#f39c12", "#e74c3c")
+  band_alphas <- c(0.25, 0.15, 0.10)
+
+  pct_in <- sapply(1:3, function(k) {
+    round(mean(vals >= m - k * s & vals <= m + k * s) * 100, 1)
+  })
+
+  p <- ggplot(data.frame(x = vals), aes(x = x)) +
+    geom_histogram(aes(y = after_stat(density)),
+                   bins = 25, fill = "grey70", color = "white", alpha = 0.7)
+
+  for (k in 3:1) {
+    p <- p + annotate("rect",
+      xmin = m - k * s, xmax = m + k * s,
+      ymin = -Inf, ymax = Inf,
+      fill = band_colors[k], alpha = band_alphas[k]
+    )
+  }
+
+  p <- p +
+    geom_vline(xintercept = m, color = "#e74c3c", linewidth = 1.2, linetype = "solid") +
+    annotate("text", x = m, y = Inf, label = paste0("x\u0304 = ", round(m, 1)),
+             vjust = -0.5, color = "#e74c3c", fontface = "bold", size = 4.5) +
+    labs(
+      title = paste0("Reguła empiryczna: ", pct_in[1], "% / ",
+                      pct_in[2], "% / ", pct_in[3], "%",
+                      "  (teoria: 68% / 95% / 99.7%)"),
+      x = variable_meta[[var_name]]$label,
+      y = "Gęstość"
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(plot.title = element_text(face = "bold", size = 13))
+
+  p
+})
+
+output$ch4_emp_text <- renderUI({
+  var_name <- input$ch4_emp_var
+  req(var_name)
+  vals <- student_data[[var_name]]
+  m <- mean(vals)
+  s <- sd(vals)
+
+  pct_in <- sapply(1:3, function(k) {
+    round(mean(vals >= m - k * s & vals <= m + k * s) * 100, 1)
+  })
+
+  diff_1sd <- abs(pct_in[1] - 68)
+
+  if (diff_1sd < 5) {
+    div(class = "callout-note",
+      tags$strong("Dobra zgodność z regułą! "),
+      paste0("W przedziale +/-1 SD leży ", pct_in[1], "% danych (teoria: 68%). "),
+      "To oznacza, że rozkład tej zmiennej jest zbliżony do normalnego. ",
+      "Odchylenie standardowe dobrze podsumowuje rozrzut."
+    )
+  } else {
+    div(class = "callout-warning",
+      tags$strong("Słaba zgodność z regułą! "),
+      paste0("W przedziale +/-1 SD leży ", pct_in[1], "% danych (teoria: 68%). "),
+      tags$b("Dlaczego?"), " Reguła 68-95-99.7 zakłada rozkład symetryczny ",
+      "(zbliżony do normalnego). Gdy rozkład jest skośny, dane koncentrują się ",
+      "asymetrycznie wokół średniej -- więcej obserwacji leży po jednej stronie ",
+      "niż po drugiej, co łamie założenie reguły. ",
+      "W takim przypadku IQR lepiej opisuje rozrzut niż odchylenie standardowe."
+    )
+  }
+})
+```
+
+## Budujemy boxplot od podstaw
+
+Boxplot to wizualne podsumowanie rozkładu oparte na kwartylach.
+Zbudujmy go od podstaw, krok po kroku, aby zrozumieć co
+oznacza każdy element tego wykresu.
+
+```{r}
+div(class = "step-buttons",
+  actionButton("ch4_bp_s1", "1. Surowe dane",
+               class = "btn-outline-primary"),
+  actionButton("ch4_bp_s2", "2. Mediana",
+               class = "btn-outline-primary"),
+  actionButton("ch4_bp_s3", "3. Kwartyle i pudełko",
+               class = "btn-outline-primary"),
+  actionButton("ch4_bp_s4", "4. Wąsy i outliers",
+               class = "btn-outline-primary"),
+  actionButton("ch4_bp_s5", "5. Gotowy boxplot",
+               class = "btn-outline-primary")
+)
+div(style = "margin-bottom: 10px;",
+  actionButton("ch4_bp_new", "Losuj nowe dane",
+               class = "btn-success btn-sm", style = "margin-right: 6px;"),
+  actionButton("ch4_bp_reset", "Reset",
+               class = "btn-secondary btn-sm")
+)
+plotOutput("ch4_bp_plot", height = "350px")
+uiOutput("ch4_bp_text")
+```
+
+```{r}
+#| context: server
+
+ch4_bp_step <- reactiveVal(0)
+ch4_bp_data <- reactiveVal(round(c(rnorm(27, 170, 8), 145, 198, 200), 1))
+
+observeEvent(input$ch4_bp_s1, { ch4_bp_step(1) })
+observeEvent(input$ch4_bp_s2, { ch4_bp_step(2) })
+observeEvent(input$ch4_bp_s3, { ch4_bp_step(3) })
+observeEvent(input$ch4_bp_s4, { ch4_bp_step(4) })
+observeEvent(input$ch4_bp_s5, { ch4_bp_step(5) })
+
+observeEvent(input$ch4_bp_new, {
+  set.seed(NULL)
+  ch4_bp_data(round(c(rnorm(27, 170, 8), 145, 198, 200), 1))
+  ch4_bp_step(0)
+})
+
+observeEvent(input$ch4_bp_reset, {
+  ch4_bp_step(0)
+})
+
+output$ch4_bp_plot <- renderPlot({
+  step <- ch4_bp_step()
+  if (step == 0) return(NULL)
+
+  vals <- ch4_bp_data()
+  sorted_vals <- sort(vals)
+  med <- median(vals)
+  q1 <- quantile(vals, 0.25)
+  q3 <- quantile(vals, 0.75)
+  iqr_val <- q3 - q1
+  lower_fence <- q1 - 1.5 * iqr_val
+  upper_fence <- q3 + 1.5 * iqr_val
+  whisker_low <- min(vals[vals >= lower_fence])
+  whisker_high <- max(vals[vals <= upper_fence])
+  outliers <- vals[vals < lower_fence | vals > upper_fence]
+
+  if (step == 5) {
+    df <- data.frame(x = vals)
+    p_box <- ggplot(df, aes(y = x, x = "")) +
+      geom_boxplot(fill = "#3498db", alpha = 0.5, color = "#2c3e50",
+                   outlier.color = "#e74c3c", outlier.size = 3,
+                   width = 0.4) +
+      geom_jitter(width = 0.05, alpha = 0.4, size = 2, color = "#2c3e50") +
+      coord_flip() +
+      labs(x = "", y = "Wzrost (cm)", title = "Gotowy boxplot (geom_boxplot)") +
+      theme_minimal(base_size = 14) +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+
+    p_hist <- ggplot(df, aes(x = x)) +
+      geom_histogram(bins = 15, fill = "#3498db", color = "white", alpha = 0.7) +
+      geom_vline(xintercept = med, color = "#e74c3c", linewidth = 1,
+                 linetype = "dashed") +
+      geom_vline(xintercept = q1, color = "#f39c12", linewidth = 0.8,
+                 linetype = "dotted") +
+      geom_vline(xintercept = q3, color = "#f39c12", linewidth = 0.8,
+                 linetype = "dotted") +
+      labs(x = "Wzrost (cm)", y = "Liczebność",
+           title = "Histogram (do porównania)") +
+      theme_minimal(base_size = 14)
+
+    gridExtra::grid.arrange(p_box, p_hist, nrow = 2, heights = c(1, 1.2))
+    return()
+  }
+
+  df <- data.frame(x = vals, y = 0)
+
+  if (step == 1) {
+    set.seed(42)
+    df$y_jit <- runif(nrow(df), -0.3, 0.3)
+    ggplot(df, aes(x = x, y = y_jit)) +
+      geom_point(size = 3, color = "#3498db", alpha = 0.7) +
+      labs(x = "Wzrost (cm)", y = "", title = "Krok 1: Surowe dane (n = 30)") +
+      theme_minimal(base_size = 14) +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+            panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
+      scale_y_continuous(limits = c(-0.8, 0.8))
+
+  } else if (step == 2) {
+    set.seed(42)
+    df$y_jit <- runif(nrow(df), -0.3, 0.3)
+    ggplot(df, aes(x = x, y = y_jit)) +
+      geom_point(size = 3, color = "#3498db", alpha = 0.7) +
+      geom_vline(xintercept = med, color = "#e74c3c", linewidth = 1.5) +
+      annotate("text", x = med, y = 0.65,
+               label = paste0("Mediana = ", round(med, 1)),
+               color = "#e74c3c", size = 5, fontface = "bold") +
+      labs(x = "Wzrost (cm)", y = "", title = "Krok 2: Mediana dzieli dane na połowy") +
+      theme_minimal(base_size = 14) +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+            panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
+      scale_y_continuous(limits = c(-0.8, 0.8))
+
+  } else if (step == 3) {
+    set.seed(42)
+    df$y_jit <- runif(nrow(df), -0.3, 0.3)
+    ggplot(df, aes(x = x, y = y_jit)) +
+      annotate("rect", xmin = q1, xmax = q3, ymin = -0.5, ymax = 0.5,
+               fill = "#3498db", alpha = 0.2, color = "#3498db", linewidth = 1) +
+      geom_point(size = 3, color = "#3498db", alpha = 0.7) +
+      geom_vline(xintercept = med, color = "#e74c3c", linewidth = 1.5) +
+      geom_vline(xintercept = q1, color = "#f39c12", linewidth = 1, linetype = "dashed") +
+      geom_vline(xintercept = q3, color = "#f39c12", linewidth = 1, linetype = "dashed") +
+      annotate("text", x = med, y = 0.7, label = paste0("Me = ", round(med, 1)),
+               color = "#e74c3c", size = 4.5, fontface = "bold") +
+      annotate("text", x = q1, y = -0.65, label = paste0("Q1 = ", round(q1, 1)),
+               color = "#f39c12", size = 4, fontface = "bold") +
+      annotate("text", x = q3, y = -0.65, label = paste0("Q3 = ", round(q3, 1)),
+               color = "#f39c12", size = 4, fontface = "bold") +
+      annotate("text", x = (q1 + q3) / 2, y = 0.7,
+               label = paste0("IQR = ", round(iqr_val, 1)),
+               color = "#3498db", size = 4, fontface = "bold",
+               hjust = ifelse(abs(med - (q1 + q3) / 2) < 3, 2, 0.5)) +
+      labs(x = "Wzrost (cm)", y = "", title = "Krok 3: Kwartyle Q1, Q3 i pudełko (IQR)") +
+      theme_minimal(base_size = 14) +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+            panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
+      scale_y_continuous(limits = c(-0.9, 0.9))
+
+  } else if (step == 4) {
+    is_outlier <- vals < lower_fence | vals > upper_fence
+    df$outlier <- is_outlier
+    set.seed(42)
+    df$y_jit <- runif(nrow(df), -0.2, 0.2)
+
+    p <- ggplot(df) +
+      annotate("rect", xmin = q1, xmax = q3, ymin = -0.4, ymax = 0.4,
+               fill = "#3498db", alpha = 0.2, color = "#3498db", linewidth = 1) +
+      geom_segment(aes(x = med, xend = med, y = -0.4, yend = 0.4),
+                   color = "#e74c3c", linewidth = 1.5) +
+      geom_segment(aes(x = whisker_low, xend = q1, y = 0, yend = 0),
+                   color = "#2c3e50", linewidth = 0.8) +
+      geom_segment(aes(x = whisker_low, xend = whisker_low, y = -0.2, yend = 0.2),
+                   color = "#2c3e50", linewidth = 0.8) +
+      geom_segment(aes(x = q3, xend = whisker_high, y = 0, yend = 0),
+                   color = "#2c3e50", linewidth = 0.8) +
+      geom_segment(aes(x = whisker_high, xend = whisker_high, y = -0.2, yend = 0.2),
+                   color = "#2c3e50", linewidth = 0.8) +
+      geom_point(data = df[!df$outlier, ], aes(x = x, y = y_jit),
+                 size = 2.5, color = "#3498db", alpha = 0.5) +
+      geom_point(data = df[df$outlier, ], aes(x = x, y = y_jit),
+                 size = 4, color = "#e74c3c", shape = 18) +
+      annotate("text", x = lower_fence, y = -0.55,
+               label = paste0("Q1 - 1.5*IQR\n= ", round(lower_fence, 1)),
+               color = "#7f8c8d", size = 3.5) +
+      annotate("text", x = upper_fence, y = -0.55,
+               label = paste0("Q3 + 1.5*IQR\n= ", round(upper_fence, 1)),
+               color = "#7f8c8d", size = 3.5) +
+      labs(x = "Wzrost (cm)", y = "", title = "Krok 4: Wąsy i wartości odstające") +
+      theme_minimal(base_size = 14) +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+            panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
+      scale_y_continuous(limits = c(-0.8, 0.7))
+
+    if (length(outliers) > 0) {
+      p <- p +
+        annotate("label", x = mean(outliers), y = 0.55,
+                 label = paste0(length(outliers), " outlier(s)"),
+                 fill = "#fdedec", color = "#e74c3c", size = 4,
+                 fontface = "bold", label.size = 0.5)
+    }
+    p
+  }
+})
+
+output$ch4_bp_text <- renderUI({
+  step <- ch4_bp_step()
+  if (step == 0) {
+    div(class = "callout-note",
+        "Kliknij przycisk kroku, aby zacząć budowę boxplota.")
+  } else if (step == 1) {
+    div(class = "callout-note",
+        tags$strong("Krok 1:"),
+        " Zaczynamy od surowych danych. 30 pomiarów wzrostu rozrzuconych
+        na osi liczbowej.")
+  } else if (step == 2) {
+    vals <- ch4_bp_data()
+    div(class = "callout-note",
+        tags$strong("Krok 2:"),
+        paste0(" Sortujemy dane i wyznaczamy medianę = ", round(median(vals), 1),
+               " cm. Mediana dzieli posortowane dane na dwie równe połowy."))
+  } else if (step == 3) {
+    vals <- ch4_bp_data()
+    q1 <- quantile(vals, 0.25)
+    q3 <- quantile(vals, 0.75)
+    div(class = "callout-note",
+        tags$strong("Krok 3:"),
+        paste0(" Wyznaczamy kwartyle: Q1 = ", round(q1, 1),
+               " (25% danych poniżej), Q3 = ", round(q3, 1),
+               " (75% danych poniżej). Pudełko (box) rozciąga się od Q1 do Q3
+               i zawiera środkowe 50% danych. IQR = Q3 - Q1 = ",
+               round(q3 - q1, 1), " cm."))
+  } else if (step == 4) {
+    vals <- ch4_bp_data()
+    q1 <- quantile(vals, 0.25)
+    q3 <- quantile(vals, 0.75)
+    iqr_val <- q3 - q1
+    outliers <- vals[vals < q1 - 1.5 * iqr_val | vals > q3 + 1.5 * iqr_val]
+    div(class = "callout-note",
+        tags$strong("Krok 4:"),
+        paste0(" Wąsy sięgają do najdalszych punktów w granicach
+               1.5 * IQR od pudełka. Wszystko poza wąsami to wartości
+               odstające (outliers). "),
+        if (length(outliers) > 0) {
+          paste0("Znaleziono ", length(outliers),
+                 " wartość(i) odstającą(e): ",
+                 paste(round(outliers, 1), collapse = ", "), " cm.")
+        } else {
+          "Brak wartości odstających."
+        })
+  } else if (step == 5) {
+    div(class = "callout-note",
+        tags$strong("Krok 5:"),
+        " Gotowy boxplot (góra) w porównaniu z histogramem (dół).
+        Boxplot kompaktowo podsumowuje rozkład: mediana, kwartyle,
+        rozstęp i outlierów -- wszystko w jednym wykresie.")
+  }
+})
+```
+
+## Porównanie grup
+
+Dotychczas analizowaliśmy cały zbiór danych naraz. Ale jednym z
+najczęstszych pytań w statystyce jest: **czy grupy się różnią?**
+Boxploty obok siebie to doskonałe narzędzie do porównywania rozkładów
+między grupami.
+
+### Boxploty grupowane
+
+```{r}
+fluidRow(
+  column(4,
+    selectInput("ch4_grp_var", "Zmienna ilościowa:",
+      choices = c("Wzrost (cm)" = "wzrost",
+                  "Waga (kg)" = "waga",
+                  "Czas dojazdu (min)" = "czas_dojazdu",
+                  "Średnia ocen" = "srednia_ocen"),
+      selected = "wzrost"
+    )
+  ),
+  column(4,
+    selectInput("ch4_grp_by", "Grupuj wg:",
+      choices = c("Płeć" = "plec",
+                  "Kierunek" = "kierunek"),
+      selected = "plec"
+    )
+  ),
+  column(4,
+    checkboxInput("ch4_grp_violin", "Pokaż violin plot", value = FALSE),
+    checkboxInput("ch4_grp_points", "Pokaż punkty", value = TRUE)
+  )
+)
+plotOutput("ch4_grp_plot", height = "400px")
+tableOutput("ch4_grp_table")
+```
+
+```{r}
+#| context: server
+
+output$ch4_grp_plot <- renderPlot({
+  var_name <- input$ch4_grp_var
+  grp_name <- input$ch4_grp_by
+  req(var_name, grp_name)
+
+  df <- data.frame(
+    value = student_data[[var_name]],
+    group = student_data[[grp_name]]
+  )
+
+  var_labels <- c("wzrost" = "Wzrost (cm)", "waga" = "Waga (kg)",
+    "czas_dojazdu" = "Czas dojazdu (min)", "srednia_ocen" = "Średnia ocen")
+  grp_label <- ifelse(grp_name == "plec", "Płeć", "Kierunek")
+
+  p <- ggplot(df, aes(x = group, y = value, fill = group))
+
+  if (isTRUE(input$ch4_grp_violin)) {
+    p <- p + geom_violin(alpha = 0.4, color = NA) +
+      geom_boxplot(width = 0.2, alpha = 0.8, outlier.shape = NA)
+  } else {
+    p <- p + geom_boxplot(alpha = 0.7, outlier.color = "#e74c3c", outlier.size = 3)
+  }
+
+  if (isTRUE(input$ch4_grp_points)) {
+    p <- p + geom_jitter(width = 0.15, alpha = 0.3, size = 1.5)
+  }
+
+  p + scale_fill_brewer(palette = "Set2") +
+    labs(x = grp_label, y = var_labels[var_name]) +
+    theme_minimal(base_size = 14) +
+    theme(legend.position = "none")
+})
+
+output$ch4_grp_table <- renderTable({
+  var_name <- input$ch4_grp_var
+  grp_name <- input$ch4_grp_by
+  req(var_name, grp_name)
+
+  df <- data.frame(
+    value = student_data[[var_name]],
+    group = student_data[[grp_name]]
+  )
+
+  df %>%
+    group_by(Grupa = group) %>%
+    summarise(
+      n = n(),
+      `Średnia` = round(mean(value), 2),
+      Mediana = round(median(value), 2),
+      SD = round(sd(value), 2),
+      IQR = round(IQR(value), 2),
+      .groups = "drop"
+    )
+}, striped = TRUE, hover = TRUE, width = "100%", align = "c")
+```
+
+## Porównanie miar rozrzutu
+
+Porównajmy różne miary rozrzutu i ich odporność na wartości
+odstające. Dodaj outliera i obserwuj, które miary się zmieniają,
+a które pozostają stabilne.
+
+```{r}
+div(style = "margin-bottom: 10px;",
+  actionButton("ch4_comp_add1", "Dodaj outlier (+30 cm)",
+               class = "btn-warning", style = "margin-right: 6px;"),
+  actionButton("ch4_comp_add5", "Dodaj 5 outlierów",
+               class = "btn-danger", style = "margin-right: 6px;"),
+  actionButton("ch4_comp_reset", "Reset",
+               class = "btn-secondary")
+)
+plotOutput("ch4_comp_plot", height = "350px")
+tableOutput("ch4_comp_table")
+```
+
+```{r}
+#| context: server
+
+ch4_comp_data <- reactiveVal(NULL)
+
+observe({
+  if (is.null(ch4_comp_data())) {
+    ch4_comp_data(student_data$wzrost)
+  }
+})
+
+observeEvent(input$ch4_comp_add1, {
+  set.seed(NULL)
+  current <- ch4_comp_data()
+  outlier <- max(current) + 30 + runif(1, -5, 5)
+  ch4_comp_data(c(current, round(outlier, 1)))
+})
+
+observeEvent(input$ch4_comp_add5, {
+  set.seed(NULL)
+  current <- ch4_comp_data()
+  outliers <- sapply(1:5, function(i) max(current) + 30 + runif(1, -5, 5))
+  ch4_comp_data(c(current, round(outliers, 1)))
+})
+
+observeEvent(input$ch4_comp_reset, {
+  ch4_comp_data(student_data$wzrost)
+})
+
+output$ch4_comp_plot <- renderPlot({
+  vals <- ch4_comp_data()
+  if (is.null(vals)) return(NULL)
+
+  df <- data.frame(x = vals)
+  data_range <- range(vals)
+  q1 <- quantile(vals, 0.25)
+  q3 <- quantile(vals, 0.75)
+  iqr_val <- q3 - q1
+
+  ggplot(df, aes(x = x)) +
+    geom_histogram(bins = 30, fill = "#3498db", color = "white", alpha = 0.7) +
+    annotate("segment", x = data_range[1], xend = data_range[2],
+             y = -2, yend = -2, color = "#e74c3c", linewidth = 2) +
+    annotate("text",
+             x = (data_range[1] + data_range[2]) / 2, y = -3.5,
+             label = paste0("Rozstęp = ", round(diff(data_range), 1)),
+             color = "#e74c3c", size = 4, fontface = "bold") +
+    annotate("segment", x = q1, xend = q3, y = -6, yend = -6,
+             color = "#27ae60", linewidth = 2) +
+    annotate("text", x = (q1 + q3) / 2, y = -7.5,
+             label = paste0("IQR = ", round(iqr_val, 1)),
+             color = "#27ae60", size = 4, fontface = "bold") +
+    labs(x = "Wzrost (cm)", y = "Liczebność",
+         title = paste0("Histogram wzrostu (n = ", length(vals), ")")) +
+    theme_minimal(base_size = 14) +
+    coord_cartesian(clip = "off") +
+    theme(plot.margin = margin(10, 10, 50, 10))
+})
+
+output$ch4_comp_table <- renderTable({
+  vals <- ch4_comp_data()
+  if (is.null(vals)) return(NULL)
+
+  data.frame(
+    Miara = c("Rozstęp", "IQR (rozstęp międzykwartylowy)",
+              "Odchylenie standardowe (SD)",
+              "Współczynnik zmienności (CV)"),
+    `Wartość` = c(
+      paste0(round(diff(range(vals)), 1), " cm"),
+      paste0(round(IQR(vals), 1), " cm"),
+      paste0(round(sd(vals), 2), " cm"),
+      paste0(round(sd(vals) / mean(vals) * 100, 1), "%")
+    ),
+    `Właściwości` = c(
+      "Bardzo wrażliwy na outlierów - zależy tylko od min i max",
+      "Odporny na outlierów - oparty na kwartylach",
+      "Umiarkowanie wrażliwy - bierze pod uwagę wszystkie dane",
+      "Bezjednostkowy - pozwala porównywać zmienność różnych zmiennych"
+    ),
+    check.names = FALSE,
+    stringsAsFactors = FALSE
+  )
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+```
+
+::: {.callout-note}
+**Wniosek:** Rozstęp jest bardzo wrażliwy na outlierów -- wystarczy jedna wartość
+odstająca, aby go zmienić. IQR i odchylenie standardowe są bardziej
+odporne, a IQR jest z nich najbardziej stabilne.
+:::
+
+## Współczynnik zmienności (CV)
+
+Odchylenie standardowe mówi o rozrzucie, ale w jakich jednostkach?
+SD wzrostu (w cm) i SD wagi (w kg) nie są porównywalne!
+Aby porównać zmienność zmiennych w różnych skalach, używamy
+**współczynnika zmienności** (CV = SD / średnia x 100%).
+
+### Porównanie zmienności między zmiennymi
+
+::: {layout-ncol=2}
+```{r}
+plotOutput("ch4_sd_compare_plot", height = "350px")
+```
+
+```{r}
+plotOutput("ch4_cv_plot", height = "350px")
+```
+:::
+
+```{r}
+tableOutput("ch4_cv_table")
+```
+
+::: {.callout-note}
+**Interpretacja:** Lewy wykres pokazuje SD w oryginalnych jednostkach -- wartości są nieporównywalne,
+bo każda zmienna ma inną skalę. Prawy wykres pokazuje CV (%), które normalizuje
+rozrzut względem średniej -- teraz widać, że **czas dojazdu**
+ma największą względną zmienność, choć jego SD nie jest największe.
+:::
+
+```{r}
+#| context: server
+
+output$ch4_sd_compare_plot <- renderPlot({
+  vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")
+  labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "Średnia ocen")
+
+  stats <- data.frame(
+    Zmienna = factor(labels, levels = rev(labels)),
+    SD = sapply(vars, function(v) sd(student_data[[v]]))
+  )
+
+  ggplot(stats, aes(x = Zmienna, y = SD, fill = SD)) +
+    geom_col(alpha = 0.85, width = 0.6) +
+    geom_text(aes(label = round(SD, 2)), hjust = -0.1, size = 5) +
+    scale_fill_gradient(low = "#85c1e9", high = "#2980b9", guide = "none") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
+    coord_flip() +
+    labs(x = NULL, y = "Odchylenie standardowe (oryg. jednostki)",
+         title = "SD -- nieporównywalne") +
+    theme_minimal(base_size = 14)
+})
+
+output$ch4_cv_plot <- renderPlot({
+  vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")
+  labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "Średnia ocen")
+
+  stats <- data.frame(
+    Zmienna = factor(labels, levels = rev(labels)),
+    CV = sapply(vars, function(v) sd(student_data[[v]]) / mean(student_data[[v]]) * 100)
+  )
+
+  ggplot(stats, aes(x = Zmienna, y = CV, fill = CV)) +
+    geom_col(alpha = 0.85, width = 0.6) +
+    geom_text(aes(label = paste0(round(CV, 1), "%")), hjust = -0.1, size = 5) +
+    scale_fill_gradient(low = "#3498db", high = "#e74c3c", guide = "none") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+    coord_flip() +
+    labs(x = NULL, y = "Współczynnik zmienności (%)",
+         title = "CV -- porównywalne") +
+    theme_minimal(base_size = 14)
+})
+
+output$ch4_cv_table <- renderTable({
+  vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")
+  labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "Średnia ocen")
+
+  data.frame(
+    Zmienna = labels,
+    `Średnia` = sapply(vars, function(v) round(mean(student_data[[v]]), 2)),
+    SD = sapply(vars, function(v) round(sd(student_data[[v]]), 2)),
+    `CV (%)` = sapply(vars, function(v) round(sd(student_data[[v]]) / mean(student_data[[v]]) * 100, 1)),
+    check.names = FALSE
+  )
+}, striped = TRUE, hover = TRUE, width = "100%", align = "c")
+```
+
+---
+
+# Kształt rozkładu
+
+*Znamy już położenie i rozrzut. Ostatni element układanki: jaki kształt ma rozkład?
+Czy jest symetryczny, czy może ma 'długi ogon' w jedną stronę?*
+
+```{r}
+uiOutput("tracker_ch5")
+```
+
+```{r}
+#| context: server
+
+output$tracker_ch5 <- renderUI({
+  var_name <- input$tracked_var
+  req(var_name)
+  vals <- student_data[[var_name]]
+  label <- variable_meta[[var_name]]$label
+  sk <- round(e1071::skewness(vals), 2)
+  ku <- round(e1071::kurtosis(vals), 2)
+
+  div(style = "background: #eaf4fc; border: 1px solid #3498db; border-radius: 6px;
+               padding: 10px 14px; margin-bottom: 15px; font-size: 13px;",
+    tags$strong(paste0("Śledzona zmienna: ", label)),
+    " | x\u0304 = ", round(mean(vals), 2),
+    ", SD = ", round(sd(vals), 2),
+    " | Kształt: skośność = ", sk, ", kurtoza = ", ku
+  )
+})
+```
+
+## Kształt rozkładu
+
+Dwa rozkłady mogą mieć tę samą średnią i odchylenie standardowe,
+a wyglądać zupełnie inaczej. Kształt rozkładu mówi nam o asymetrii
+i 'ciężkości' ogonów.
+
+W tym rozdziale poznasz dwie miary kształtu:
+**skośność** (asymetria) i **kurtozę** (ciężkość ogonów).
+
+## Skośność (asymetria)
+
+Skośność mierzy asymetrię rozkładu. Wartość skośności = 0 oznacza
+idealną symetrię, wartości dodatnie wskazują na dłuższy ogon w prawo,
+a ujemne -- w lewo.
+
+### Porównanie trzech typów skośności
+
+```{r}
+plotOutput("ch5_skew_comparison", height = "300px")
+```
+
+::: {.callout-note}
+**Trzy typy rozkładów:** lewostronnie skośny (ogon w lewo), symetryczny (brak ogona), prawostronnie skośny (ogon w prawo).
+:::
+
+### Sprawdź skośność w naszych danych
+
+```{r}
+selectInput("ch5_skew_var", "Wybierz zmienną:",
+  choices = c(
+    "Wzrost" = "wzrost",
+    "Czas dojazdu" = "czas_dojazdu",
+    "Średnia ocen" = "srednia_ocen",
+    "Liczba nieobecności" = "liczba_nieobecnosci"
+  ),
+  selected = "czas_dojazdu"
+)
+plotOutput("ch5_skew_plot", height = "350px")
+uiOutput("ch5_skew_info")
+```
+
+```{r}
+#| context: server
+
+ch5_skew_data <- reactive({
+  req(input$ch5_skew_var)
+  vals <- student_data[[input$ch5_skew_var]]
+  vals <- vals[!is.na(vals)]
+  list(
+    values = vals,
+    label = variable_meta[[input$ch5_skew_var]]$label,
+    var_name = input$ch5_skew_var
+  )
+})
+
+output$ch5_skew_comparison <- renderPlot({
+  set.seed(42)
+  n_pts <- 5000
+  left_skew  <- -rgamma(n_pts, shape = 4, scale = 1)
+  symmetric  <- rnorm(n_pts, mean = 0, sd = 2)
+  right_skew <- rgamma(n_pts, shape = 4, scale = 1)
+
+  df_cmp <- rbind(
+    data.frame(x = left_skew,  typ = "Lewostronnie skośny"),
+    data.frame(x = symmetric,  typ = "Symetryczny"),
+    data.frame(x = right_skew, typ = "Prawostronnie skośny")
+  )
+  df_cmp$typ <- factor(df_cmp$typ,
+    levels = c("Lewostronnie skośny", "Symetryczny", "Prawostronnie skośny"))
+
+  sk_vals <- c(
+    round(e1071::skewness(left_skew), 2),
+    round(e1071::skewness(symmetric), 2),
+    round(e1071::skewness(right_skew), 2)
+  )
+  label_df <- data.frame(
+    typ = factor(
+      c("Lewostronnie skośny", "Symetryczny", "Prawostronnie skośny"),
+      levels = c("Lewostronnie skośny", "Symetryczny", "Prawostronnie skośny")),
+    label = paste0("skośność = ", sk_vals)
+  )
+
+  ggplot(df_cmp, aes(x = x)) +
+    geom_density(aes(fill = typ), alpha = 0.5, color = "#2c3e50", linewidth = 0.8) +
+    geom_text(data = label_df,
+      aes(label = label), x = 0, y = Inf, vjust = 1.5,
+      size = 4, fontface = "italic", color = "#2c3e50",
+      inherit.aes = FALSE) +
+    facet_wrap(~typ, scales = "free_x") +
+    scale_fill_manual(values = c(
+      "Lewostronnie skośny" = "#e74c3c",
+      "Symetryczny" = "#27ae60",
+      "Prawostronnie skośny" = "#3498db"
+    )) +
+    labs(x = "Wartość", y = "Gęstość",
+      title = "Trzy typy skośności rozkładu") +
+    theme_minimal(base_size = 14) +
+    theme(legend.position = "none",
+          strip.text = element_text(face = "bold", size = 12))
+})
+
+output$ch5_skew_plot <- renderPlot({
+  d <- ch5_skew_data()
+  vals <- d$values
+  m <- mean(vals)
+  med <- median(vals)
+  sk <- e1071::skewness(vals)
+
+  df <- data.frame(x = vals)
+
+  ggplot(df, aes(x = x)) +
+    geom_histogram(aes(y = after_stat(density)),
+      bins = 20, fill = "#3498db", color = "white", alpha = 0.6) +
+    geom_density(color = "#2c3e50", linewidth = 1) +
+    geom_vline(xintercept = m, color = "#e74c3c", linewidth = 1.2, linetype = "solid") +
+    geom_vline(xintercept = med, color = "#3498db", linewidth = 1.2, linetype = "dashed") +
+    annotate("text",
+      x = m, y = -Inf, vjust = -0.5,
+      label = paste0("Średnia = ", round(m, 2)),
+      color = "#e74c3c", size = 3.5, fontface = "bold") +
+    annotate("text",
+      x = med, y = -Inf, vjust = -2,
+      label = paste0("Mediana = ", round(med, 2)),
+      color = "#3498db", size = 3.5, fontface = "bold") +
+    labs(
+      title = paste0(d$label, " -- skośność = ", round(sk, 3)),
+      x = d$label,
+      y = "Gęstość"
+    ) +
+    theme_minimal(base_size = 14)
+})
+
+output$ch5_skew_info <- renderUI({
+  d <- ch5_skew_data()
+  vals <- d$values
+  sk <- e1071::skewness(vals)
+  m <- mean(vals)
+  med <- median(vals)
+
+  p(tags$strong("Skośność = ", round(sk, 3)),
+    " | Średnia = ", round(m, 2),
+    ", Mediana = ", round(med, 2))
+})
+```
+
+## Kurtoza (ciężkość ogonów)
+
+Kurtoza mierzy, jak 'ciężkie' są ogony rozkładu -- czyli
+jak często pojawiają się wartości ekstremalne. Nie chodzi
+o 'spłaszczenie' szczytu, lecz o to, ile obserwacji leży daleko
+od średniej.
+
+### Porównaj rozkłady o różnej kurtozie
+
+```{r}
+fluidRow(
+  column(8,
+    sliderInput("ch5_kurt_val", "Nadwyżkowa kurtoza:",
+      min = -1.2, max = 6, value = 0, step = 0.2
+    )
+  ),
+  column(4,
+    div(style = "margin-top: 25px; display: flex; gap: 4px; flex-wrap: wrap;",
+      actionButton("ch5_kurt_platy", "Platykurtyczny",
+                   class = "btn-outline-primary btn-sm"),
+      actionButton("ch5_kurt_mezo", "Mezokurtyczny",
+                   class = "btn-outline-primary btn-sm"),
+      actionButton("ch5_kurt_lepto", "Leptokurtyczny",
+                   class = "btn-outline-primary btn-sm")
+    )
+  )
+)
+plotOutput("ch5_kurt_plot", height = "350px")
+plotOutput("ch5_kurt_tails", height = "220px")
+uiOutput("ch5_kurt_text")
+```
+
+```{r}
+#| context: server
+
+observeEvent(input$ch5_kurt_platy, { updateSliderInput(session, "ch5_kurt_val", value = -1.0) })
+observeEvent(input$ch5_kurt_mezo,  { updateSliderInput(session, "ch5_kurt_val", value = 0) })
+observeEvent(input$ch5_kurt_lepto, { updateSliderInput(session, "ch5_kurt_val", value = 4) })
+
+ch5_kurt_density <- reactive({
+  ek <- input$ch5_kurt_val
+  req(!is.null(ek))
+  x_seq <- seq(-5, 5, length.out = 500)
+
+  if (ek < -0.01) {
+    a <- max(1.01, (-6 / ek - 3) / 2)
+    scale_b <- sqrt(2 * a + 1)
+    dens <- dbeta((x_seq / scale_b + 1) / 2, a, a) / (2 * scale_b)
+    dens[abs(x_seq) > scale_b] <- 0
+  } else if (ek <= 0.01) {
+    dens <- dnorm(x_seq)
+  } else {
+    df_mapped <- max(4.5, 6 / ek + 4)
+    sd_t <- sqrt(df_mapped / (df_mapped - 2))
+    dens <- dt(x_seq * sd_t, df = df_mapped) * sd_t
+  }
+  data.frame(x = x_seq, dens = dens, norm = dnorm(x_seq))
+})
+
+output$ch5_kurt_plot <- renderPlot({
+  df <- ch5_kurt_density()
+  ek <- input$ch5_kurt_val
+
+  type_name <- if (ek < -0.1) "Platykurtyczny" else if (ek > 0.1) "Leptokurtyczny" else "Mezokurtyczny"
+  type_color <- if (ek < -0.1) "#f39c12" else if (ek > 0.1) "#e74c3c" else "#27ae60"
+
+  ggplot(df, aes(x = x)) +
+    geom_line(aes(y = norm), color = "#95a5a6", linewidth = 1, linetype = "dashed") +
+    geom_area(aes(y = dens), fill = type_color, alpha = 0.35) +
+    geom_line(aes(y = dens), color = type_color, linewidth = 1.2) +
+    annotate("text", x = -4.5, y = max(df$dens) * 0.95,
+      label = paste0(type_name, " (kurtoza = ", round(ek, 1), ")"),
+      color = type_color, hjust = 0, size = 5, fontface = "bold") +
+    annotate("text", x = -4.5, y = max(df$dens) * 0.85,
+      label = "Rozkład normalny (kurtoza = 0)",
+      color = "#95a5a6", hjust = 0, size = 4) +
+    labs(x = "x", y = "Gęstość",
+      title = "Jak kurtoza wpływa na kształt rozkładu?") +
+    theme_minimal(base_size = 14)
+})
+
+output$ch5_kurt_tails <- renderPlot({
+  df <- ch5_kurt_density()
+  ek <- input$ch5_kurt_val
+  type_color <- if (ek < -0.1) "#f39c12" else if (ek > 0.1) "#e74c3c" else "#27ae60"
+
+  tail_df <- df[df$x >= 2.5, ]
+
+  ggplot(tail_df, aes(x = x)) +
+    geom_area(aes(y = norm), fill = "#95a5a6", alpha = 0.15) +
+    geom_line(aes(y = norm), color = "#95a5a6", linewidth = 1, linetype = "dashed") +
+    geom_area(aes(y = dens), fill = type_color, alpha = 0.3) +
+    geom_line(aes(y = dens), color = type_color, linewidth = 1.2) +
+    labs(x = "x", y = "Gęstość",
+      title = "Powiększenie prawego ogona (x > 2.5)") +
+    theme_minimal(base_size = 14)
+})
+
+output$ch5_kurt_text <- renderUI({
+  ek <- input$ch5_kurt_val
+  req(!is.null(ek))
+
+  if (ek < -0.5) {
+    type_class <- "callout-warning"
+    type_name <- "Platykurtyczny"
+    desc <- "Rozkład ma lżejsze ogony niż normalny -- wartości ekstremalne
+             są rzadsze. Dane są bardziej 'skoncentrowane' w okolicy średniej,
+             bez dalekich obserwacji."
+  } else if (ek < 0.5) {
+    type_class <- "callout-note"
+    type_name <- "Mezokurtyczny"
+    desc <- "Rozkład jest zbliżony do normalnego -- ogony mają 'typową'
+             ciężkość. To punkt odniesienia, względem którego porównujemy
+             inne rozkłady."
+  } else {
+    type_class <- "callout-important"
+    type_name <- "Leptokurtyczny"
+    desc <- paste0("Rozkład ma cięższe ogony niż normalny -- wartości
+             ekstremalne pojawiają się częściej niżbyśmy oczekiwali.
+             W finansach to oznacza większe ryzyko ekstremalnych strat
+             ('czarne łabędzie').")
+  }
+
+  div(class = type_class,
+    tags$strong(paste0(type_name, " (nadwyżkowa kurtoza = ", round(ek, 1), ")")),
+    p(desc),
+    tags$ul(
+      tags$li(tags$b("Platykurtyczny"), " (kurtoza < 0): lekkie ogony, mniej ekstremałów"),
+      tags$li(tags$b("Mezokurtyczny"), " (kurtoza \u2248 0): rozkład normalny -- punkt odniesienia"),
+      tags$li(tags$b("Leptokurtyczny"), " (kurtoza > 0): ciężkie ogony, więcej ekstremałów")
+    )
+  )
+})
+```
+
+## Pełny obraz
+
+Na koniec -- pełny obraz. Dla każdej zmiennej ilościowej możemy
+opisać jej położenie, rozrzut i kształt.
+
+```{r}
+selectInput("ch5_full_var", "Wybierz zmienną:",
+  choices = c(
+    "Wzrost" = "wzrost",
+    "Średnia ocen" = "srednia_ocen",
+    "Czas dojazdu" = "czas_dojazdu",
+    "Waga" = "waga"
+  ),
+  selected = "wzrost"
+)
+plotOutput("ch5_full_hist", height = "350px")
+plotOutput("ch5_full_box", height = "120px")
+tableOutput("ch5_full_table")
+uiOutput("ch5_full_interpretation")
+```
+
+```{r}
+#| context: server
+
+ch5_full_data <- reactive({
+  req(input$ch5_full_var)
+  vals <- student_data[[input$ch5_full_var]]
+  vals <- vals[!is.na(vals)]
+  list(
+    values = vals,
+    label = variable_meta[[input$ch5_full_var]]$label,
+    var_name = input$ch5_full_var
+  )
+})
+
+output$ch5_full_hist <- renderPlot({
+  d <- ch5_full_data()
+  vals <- d$values
+  m <- mean(vals)
+  med <- median(vals)
+  df <- data.frame(x = vals)
+
+  ggplot(df, aes(x = x)) +
+    geom_histogram(aes(y = after_stat(density)),
+      bins = 20, fill = "#3498db", color = "white", alpha = 0.5) +
+    geom_density(color = "#2c3e50", linewidth = 1) +
+    geom_rug(color = "#2c3e50", alpha = 0.5) +
+    geom_vline(xintercept = m, color = "#e74c3c", linewidth = 1.1) +
+    geom_vline(xintercept = med, color = "#3498db", linewidth = 1.1, linetype = "dashed") +
+    annotate("text", x = m, y = Inf, vjust = 2, hjust = -0.1,
+      label = paste0("Średnia = ", round(m, 2)),
+      color = "#e74c3c", size = 3.8, fontface = "bold") +
+    annotate("text", x = med, y = Inf, vjust = 3.5, hjust = -0.1,
+      label = paste0("Mediana = ", round(med, 2)),
+      color = "#3498db", size = 3.8, fontface = "bold") +
+    labs(
+      title = paste0("Rozkład zmiennej: ", d$label),
+      x = d$label,
+      y = "Gęstość"
+    ) +
+    theme_minimal(base_size = 14)
+})
+
+output$ch5_full_box <- renderPlot({
+  d <- ch5_full_data()
+  df <- data.frame(x = d$values)
+
+  ggplot(df, aes(x = x)) +
+    geom_boxplot(fill = "#3498db", alpha = 0.4, color = "#2c3e50",
+      outlier.color = "#e74c3c", outlier.size = 3) +
+    labs(x = d$label) +
+    theme_minimal(base_size = 14) +
+    theme(
+      axis.text.y = element_blank(),
+      axis.ticks.y = element_blank(),
+      axis.title.y = element_blank(),
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor.y = element_blank()
+    )
+})
+
+output$ch5_full_table <- renderTable({
+  d <- ch5_full_data()
+  vals <- d$values
+
+  n <- length(vals)
+  m <- mean(vals)
+  med <- median(vals)
+  s <- sd(vals)
+  v <- var(vals)
+  rng <- diff(range(vals))
+  q1 <- quantile(vals, 0.25, names = FALSE)
+  q3 <- quantile(vals, 0.75, names = FALSE)
+  iqr_val <- IQR(vals)
+  cv <- (s / m) * 100
+  sk <- e1071::skewness(vals)
+  ku <- e1071::kurtosis(vals)
+  trimmed <- mean(vals, trim = 0.1)
+
+  h <- hist(vals, breaks = 20, plot = FALSE)
+  mode_bin_idx <- which.max(h$counts)
+  mode_val <- (h$breaks[mode_bin_idx] + h$breaks[mode_bin_idx + 1]) / 2
+
+  stats_df <- data.frame(
+    Statystyka = c(
+      "n", "Średnia", "Mediana", "Dominanta (środek przedziałowy)",
+      "Śr. ucinana 10%",
+      "Odch. std.", "Wariancja", "Rozstęp", "IQR", "CV (%)",
+      "Minimum", "Q1", "Q3", "Maksimum",
+      "Skośność", "Kurtoza"
+    ),
+    `Wartość` = c(
+      as.character(n),
+      formatC(m, format = "f", digits = 2),
+      formatC(med, format = "f", digits = 2),
+      formatC(mode_val, format = "f", digits = 2),
+      formatC(trimmed, format = "f", digits = 2),
+      formatC(s, format = "f", digits = 2),
+      formatC(v, format = "f", digits = 2),
+      formatC(rng, format = "f", digits = 2),
+      formatC(iqr_val, format = "f", digits = 2),
+      formatC(cv, format = "f", digits = 1),
+      formatC(min(vals), format = "f", digits = 2),
+      formatC(q1, format = "f", digits = 2),
+      formatC(q3, format = "f", digits = 2),
+      formatC(max(vals), format = "f", digits = 2),
+      formatC(sk, format = "f", digits = 3),
+      formatC(ku, format = "f", digits = 3)
+    ),
+    stringsAsFactors = FALSE,
+    check.names = FALSE
+  )
+  stats_df
+}, striped = TRUE, hover = TRUE, width = "100%", align = "lr")
+
+output$ch5_full_interpretation <- renderUI({
+  d <- ch5_full_data()
+  vals <- d$values
+  label <- d$label
+
+  m <- mean(vals)
+  med <- median(vals)
+  s <- sd(vals)
+  q1 <- quantile(vals, 0.25, names = FALSE)
+  q3 <- quantile(vals, 0.75, names = FALSE)
+  iqr_val <- IQR(vals)
+  sk <- e1071::skewness(vals)
+
+  lower_fence <- q1 - 1.5 * iqr_val
+  upper_fence <- q3 + 1.5 * iqr_val
+  outliers_low <- vals[vals < lower_fence]
+  outliers_high <- vals[vals > upper_fence]
+  n_outliers <- length(outliers_low) + length(outliers_high)
+
+  if (n_outliers > 0) {
+    outlier_text <- paste0(
+      "Wykryto ", n_outliers, " wartości odstających ",
+      "(poza przedziałem [", round(lower_fence, 2), ", ",
+      round(upper_fence, 2), "])."
+    )
+  } else {
+    outlier_text <- "Brak wartości odstających (wg kryterium 1.5 * IQR)."
+  }
+
+  div(class = "callout-note",
+    p(tags$strong("Podsumowanie:")),
+    tags$ul(
+      tags$li(paste0("Średnia = ", round(m, 2), ", Mediana = ", round(med, 2))),
+      tags$li(paste0("Typowy student ma ", tolower(label),
+        " między ", round(q1, 2), " a ", round(q3, 2), ".")),
+      tags$li(paste0("Skośność = ", round(sk, 3), ", Kurtoza = ", round(e1071::kurtosis(vals), 3))),
+      tags$li(outlier_text)
+    )
+  )
+})
+```
+
+---
+
+# Ściąga
+
+## Podsumowanie -- narzędzia statystyki opisowej
+
+Poniżej kompletna ściąga ze wszystkimi pojęciami i narzędziami
+omówionymi w trakcie wykładu. Warto ją mieć pod ręką podczas analiz.
+
+## Narzędzia wg typu zmiennej
+
+```{r}
+tableOutput("ch6_ref_table")
+```
+
+::: {.callout-important}
+**Najczęstszy błąd:** Obliczanie średniej z danych nominalnych lub porządkowych
+(np. średnia z kodów kierunków). Wynik będzie liczbą, ale
+nie będzie miał żadnego sensu!
+:::
+
+## Miary statystyczne -- kiedy co stosować
+
+### Miary położenia (rozdział 3)
+
+```{r}
+tableOutput("ch6_location_table")
+```
+
+### Miary rozrzutu (rozdział 4)
+
+```{r}
+tableOutput("ch6_spread_table")
+```
+
+### Miary kształtu (rozdział 5)
+
+```{r}
+tableOutput("ch6_shape_table")
+```
+
+## Przewodnik po wykresach
+
+```{r}
+tableOutput("ch6_plots_table")
+```
+
+## Typowe błędy
+
+```{r}
+tableOutput("ch6_mistakes_table")
+```
+
+## Wzory
+
+### Miary położenia
+
+$$\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$
+
+Mediana: wartość środkowa po posortowaniu danych
+
+### Miary rozrzutu
+
+$$s^2 = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2$$
+
+$$s = \sqrt{s^2}$$
+
+$$CV = \frac{s}{\bar{x}} \cdot 100\%$$
+
+$$IQR = Q_3 - Q_1$$
+
+### Miary kształtu
+
+$$\text{Skośność} = \frac{n}{(n-1)(n-2)} \sum \left(\frac{x_i - \bar{x}}{s}\right)^3$$
+
+$$\text{Kurtoza (excess)} = \frac{n(n+1)}{(n-1)(n-2)(n-3)} \sum \left(\frac{x_i - \bar{x}}{s}\right)^4 - \frac{3(n-1)^2}{(n-2)(n-3)}$$
+
+```{r}
+#| context: server
+
+output$ch6_ref_table <- renderTable({
+  df <- data.frame(
+    a = c("Jakościowa nominalna", "Jakościowa porządkowa",
+          "Ilościowa dyskretna", "Ilościowa ciągła"),
+    b = c("Moda, częstości, proporcje",
+          "Moda, częstości, proporcje, częstości skumulowane",
+          "Średnia, mediana, odch. std., kwartyle",
+          "Średnia, mediana, odch. std., kwartyle, skośność, kurtoza"),
+    c = c("Słupkowy, kołowy (ostrożnie!)",
+          "Słupkowy (z zachowaniem kolejności)",
+          "Słupkowy, punktowy",
+          "Histogram, gęstości, pudełkowy, skrzypcowy"),
+    d = c("Nie obliczaj średniej ani mediany",
+          "Nie obliczaj średniej (sporne!), nie rysuj histogramu",
+          "Nie rysuj wykresu gęstości (skończona l. wartości)",
+          "Nie rysuj wykresu słupkowego (zbyt wiele wartości)"),
+    stringsAsFactors = FALSE
+  )
+  names(df) <- c("Typ zmiennej", "Odpowiednie statystyki",
+                 "Odpowiednie wykresy", "Czego NIE robić")
+  df
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+
+output$ch6_location_table <- renderTable({
+  df <- data.frame(
+    a = c("Średnia arytmetyczna", "Mediana",
+          "Średnia ucinana", "Dominanta (moda)"),
+    b = c("Dane symetryczne, bez outlierów",
+          "Dane skośne lub z outlierami",
+          "Kompromis między średnią a medianą",
+          "Zmienne nominalne; szukanie najczęstszej wartości"),
+    c = c("Niska -- jeden outlier może silnie przesunąć",
+          "Wysoka -- zależy tylko od rang",
+          "Średnia -- ucina skrajne obserwacje",
+          "Nie dotyczy (kategorie)"),
+    stringsAsFactors = FALSE
+  )
+  names(df) <- c("Miara", "Kiedy stosować", "Odporność na outliery")
+  df
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+
+output$ch6_spread_table <- renderTable({
+  df <- data.frame(
+    a = c("Odchylenie standardowe (s)", "Wariancja (s\u00b2)",
+          "Rozstęp (Range)", "IQR", "Współczynnik zmienności (CV)"),
+    b = c("Przeciętne odchylenie od średniej",
+          "Kwadrat odchylenia -- w jednostkach\u00b2",
+          "Max - Min (wrażliwy na outliery)",
+          "Rozrzut środkowych 50% danych (Q3 - Q1)",
+          "Rozrzut względem średniej (%), pozwala porównywać zmienne"),
+    c = c("Dane symetryczne, zbliżone do normalnego",
+          "We wzorach (rzadko raportowana wprost)",
+          "Szybka orientacja, małe zbiory",
+          "Dane skośne, z outlierami, razem z boxplotem",
+          "Porównanie rozrzutu zmiennych o różnych jednostkach"),
+    stringsAsFactors = FALSE
+  )
+  names(df) <- c("Miara", "Co mierzy", "Kiedy stosować")
+  df
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+
+output$ch6_shape_table <- renderTable({
+  df <- data.frame(
+    a = c("Skośność", "Kurtoza (excess)"),
+    b = c("0 = symetryczny, >0 prawostronny, <0 lewostronny",
+          "0 = normalny (mezokurtyczny), >0 ciężkie ogony, <0 lekkie ogony"),
+    c = c("|skośność| > 1: silna asymetria, rozważ medianę zamiast średniej",
+          "Kurtoza > 2: częste wartości ekstremalne, uważaj na outliery"),
+    stringsAsFactors = FALSE
+  )
+  names(df) <- c("Miara", "Wartość referencyjna", "Praktyczna reguła")
+  df
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+
+output$ch6_plots_table <- renderTable({
+  df <- data.frame(
+    a = c("Słupkowy (bar)", "Kołowy (pie)", "Histogram",
+          "Gęstości (density)", "Pudełkowy (boxplot)",
+          "Skrzypcowy (violin)", "Heatmapa"),
+    b = c("Jakościowe (nominalne, porządkowe)",
+          "Jakościowe (tylko duże różnice!)",
+          "Ilościowe ciągłe",
+          "Ilościowe ciągłe (gładka wersja histogramu)",
+          "Ilościowe (porównanie grup)",
+          "Ilościowe (pełny kształt rozkładu + porównanie)",
+          "Tabela krzyżowa (dwie zmienne jakościowe)"),
+    c = c("Liczebności / proporcje kategorii",
+          "Proporcje (tylko gdy kategorie bardzo się różnią)",
+          "Kształt rozkładu, skośność, modalność",
+          "Kształt rozkładu (bez zależności od binów)",
+          "Medianę, IQR, outliery -- kompaktowo",
+          "Pełny kształt + medianę/IQR",
+          "Zależności między zmiennymi jakościowymi"),
+    stringsAsFactors = FALSE
+  )
+  names(df) <- c("Wykres", "Typ danych", "Pokazuje")
+  df
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+
+output$ch6_mistakes_table <- renderTable({
+  df <- data.frame(
+    a = c("Średnia z danych nominalnych",
+          "Histogram dla zmiennej dyskretnej (mało wartości)",
+          "Tylko średnia bez miary rozrzutu",
+          "Pie chart dla podobnych wartości",
+          "Ignorowanie outlierów",
+          "Dominanta dla danych ciągłych",
+          "SD bez sprawdzenia symetrii"),
+    b = c("Kategorie nie mają wartości liczbowej -- wynik jest bezsensowny",
+          "Biny łączą wartości, które powinny być osobno -- użyj wykresu słupkowego",
+          "Dwie grupy z tą samą średnią mogą mieć zupełnie różny rozrzut",
+          "Ludzkie oko nie odróżnia kątów różniących się o 2-3%",
+          "Jeden outlier może przesunąć średnią i zwiększyć SD",
+          "Prawie każda wartość występuje 1-2 razy -- moda jest przypadkowa",
+          "Przy silnej skośności SD słabo opisuje rozrzut -- lepsza jest IQR"),
+    c = c("Użyj dominanty (mody) i tabeli częstości",
+          "Użyj wykresu słupkowego (geom_col / geom_bar)",
+          "Zawsze raportuj średnią + SD lub medianę + IQR",
+          "Użyj wykresu słupkowego",
+          "Raportuj medianę + IQR obok średniej + SD",
+          "Użyj średniej i mediany",
+          "Sprawdź skośność; jeśli |skew| > 1, raportuj medianę + IQR"),
+    stringsAsFactors = FALSE
+  )
+  names(df) <- c("Błąd", "Dlaczego to błąd", "Co zrobić zamiast")
+  df
+}, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+```

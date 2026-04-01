@@ -1,0 +1,699 @@
+---
+title: "Case studies"
+server: shiny
+---
+
+```{r}
+#| context: setup
+#| include: false
+
+source("_common.R")
+
+library(rstatix)
+library(broom)
+library(tidyr)
+library(AER)
+library(gridExtra)
+
+# Kolory specyficzne dla case studies
+col_explore    <- "#3498db"
+col_test       <- "#9b59b6"
+col_model      <- "#27ae60"
+col_conclude   <- "#f39c12"
+col_highlight  <- "#e74c3c"
+
+# Theme
+theme_case <- function(base_size = 14) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(face = "bold", size = base_size + 2),
+      plot.subtitle = element_text(color = "#7f8c8d"),
+      panel.grid.minor = element_blank()
+    )
+}
+
+# Formatowanie wyniku testu
+format_decision <- function(p_value, alpha = 0.05) {
+  if (p_value < alpha) {
+    list(text = "Odrzucamy H\u2080", color = "#e74c3c", icon = "\u2717")
+  } else {
+    list(text = "Brak podstaw do odrzucenia H\u2080", color = "#27ae60", icon = "\u2713")
+  }
+}
+
+# Dane
+data("CASchools", package = "AER")
+ca <- CASchools
+ca$score <- (ca$read + ca$math) / 2
+ca$str <- ca$students / ca$teachers
+ca$comp_per_student <- ca$computer / ca$students
+ca$poverty <- ifelse(ca$lunch >= 50, "Wysoki", ifelse(ca$lunch >= 25, "\u015aredni", "Niski"))
+ca$poverty <- factor(ca$poverty, levels = c("Niski", "\u015aredni", "Wysoki"))
+```
+
+# CASchools — czy mniejsze klasy poprawią wyniki?
+
+*Kompletna analiza statystyczna od pytania badawczego do rekomendacji.*
+
+## Sytuacja wyjściowa
+
+Jesteśmy analitykami w kalifornijskim departamencie edukacji.
+Polityk proponuje **zmniejszenie liczebności klas** jako sposób na poprawę
+wyników egzaminacyjnych. Program będzie kosztować miliardy dolarów.
+
+Naszym zadaniem jest zbadać na dostępnych danych:
+
+::: {.callout-note}
+## Główne pytanie badawcze
+
+*"Czy zmniejszenie liczby uczniów na nauczyciela (STR) faktycznie prowadzi
+do lepszych wyników, czy też obserwowany związek wynika z innych czynników?"*
+
+Innymi słowy: czy warto wydać te pieniądze na mniejsze klasy,
+czy może są skuteczniejsze interwencje?
+:::
+
+**Dane:** CASchools — 420 dystryktów szkolnych w Kalifornii (pakiet AER).
+Każda obserwacja to jeden dystrykt.
+
+**Zmienna zależna:** średni wynik egzaminu = (reading + math) / 2
+
+**Kluczowa zmienna niezależna:** STR = uczniowie / nauczyciele
+
+::: {.callout-warning}
+## Plan analizy
+
+1. Poznać dane — czym dysponujemy i jakie są potencjalne zmienne zakłócające
+2. Sprawdzić prosty związek STR → wyniki (korelacja, regresja prosta)
+3. Zidentyfikować zmienne zakłócające — co jeszcze wpływa na wyniki i jest skorelowane z STR?
+4. Zbudować model wieloraki — czy efekt STR przetrwa kontrolowanie zakłóceń?
+5. Odpowiedzieć na pytanie decyzyjne
+:::
+
+---
+
+## Krok 1: Poznanie danych
+
+Zanim zaczniemy analizować, musimy rozumieć, czym dysponujemy.
+Jakie zmienne mogą być istotne?
+
+### Przegląd zmiennych
+
+```{r}
+selectInput("ch1_eda_var", "Zmienna:",
+  choices = c(
+    "Średni wynik (score)" = "score",
+    "Uczniowie/nauczyciel (STR)" = "str",
+    "Wydatki/uczeń" = "expenditure",
+    "Dochód dystryktu" = "income",
+    "% English learners" = "english",
+    "% darmowy lunch (proxy biedy)" = "lunch",
+    "% CalWorks (zasiłki)" = "calworks"
+  ),
+  selected = "score", width = "100%"
+)
+```
+
+```{r}
+plotOutput("ch1_eda_plot", height = "280px")
+uiOutput("ch1_eda_stats")
+```
+
+```{r}
+#| context: server
+
+output$ch1_eda_plot <- renderPlot({
+  var <- input$ch1_eda_var
+  var_label <- switch(var,
+    "score" = "Średni wynik", "str" = "Uczniowie/nauczyciel",
+    "expenditure" = "Wydatki/uczeń ($)", "income" = "Dochód ($tys.)",
+    "english" = "% English learners", "lunch" = "% darmowy lunch",
+    "calworks" = "% CalWorks")
+
+  p1 <- ggplot(ca, aes(x = .data[[var]])) +
+    geom_histogram(bins = 30, fill = col_explore, alpha = 0.6, color = "white") +
+    labs(title = paste0("Rozkład: ", var_label), x = var_label, y = "Liczba") +
+    theme_case()
+
+  p2 <- ggplot(ca, aes(y = .data[[var]])) +
+    geom_boxplot(fill = col_explore, alpha = 0.4) +
+    labs(title = "Boxplot", y = var_label) +
+    theme_case()
+
+  gridExtra::grid.arrange(p1, p2, ncol = 2, widths = c(2, 1))
+})
+
+output$ch1_eda_stats <- renderUI({
+  var <- input$ch1_eda_var
+  x <- ca[[var]]
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("n = ", length(x)), col_explore),
+    stat_box(paste0("Śr. = ", round(mean(x), 1)), col_dark),
+    stat_box(paste0("SD = ", round(sd(x), 1)), col_dark),
+    stat_box(paste0("Zakres: ", round(min(x), 1), "–", round(max(x), 1)), col_dark)
+  )
+})
+```
+
+**Kluczowa obserwacja:** mamy kilka zmiennych opisujących status socjoekonomiczny
+dystryktu (dochód, % darmowy lunch, % CalWorks). Mogą być zmiennymi zakłócającymi —
+jeśli biedniejsze dystrykty mają jednocześnie większe klasy I gorsze wyniki,
+to obserwowany związek STR→wyniki może być pozorny.
+
+### Macierz korelacji — szukamy potencjalnych zakłóceń
+
+```{r}
+plotOutput("ch1_corr_plot", height = "400px")
+```
+
+```{r}
+#| context: server
+
+output$ch1_corr_plot <- renderPlot({
+  vars <- c("score", "str", "expenditure", "income", "english", "lunch", "calworks")
+  cor_mat <- cor(ca[, vars], use = "complete.obs")
+
+  cor_df <- as.data.frame(as.table(cor_mat))
+  names(cor_df) <- c("Var1", "Var2", "value")
+
+  labels_pl <- c(
+    "score" = "Wynik", "str" = "STR", "expenditure" = "Wydatki",
+    "income" = "Dochód", "english" = "% ELL", "lunch" = "% lunch",
+    "calworks" = "% CalWorks")
+  cor_df$Var1 <- labels_pl[as.character(cor_df$Var1)]
+  cor_df$Var2 <- labels_pl[as.character(cor_df$Var2)]
+
+  ggplot(cor_df, aes(x = Var1, y = Var2, fill = value)) +
+    geom_tile(color = "white") +
+    geom_text(aes(label = round(value, 2)), size = 3.5) +
+    scale_fill_gradient2(low = col_highlight, mid = "white", high = col_explore,
+                         midpoint = 0, limits = c(-1, 1), name = "r") +
+    labs(title = "Macierz korelacji — szukamy powiązań i potencjalnych zakłóceń",
+         x = NULL, y = NULL) +
+    theme_case() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+})
+```
+
+::: {.callout-important}
+## Czerwona flaga!
+
+Zmienne społeczno-ekonomiczne (lunch, calworks, income) są:
+
+- silnie skorelowane z **wynikami** (r ≈ −0.87 dla lunch)
+- skorelowane z **STR** (biedniejsze dystrykty mają większe klasy)
+
+To oznacza, że prosty związek STR→wyniki może być **artefaktem biedy**.
+Musimy to rozsupłać.
+:::
+
+---
+
+## Krok 2: Prosty związek STR → wyniki
+
+Najpierw sprawdzamy naiwny związek — bez kontroli czegokolwiek.
+To będzie nasz punkt wyjścia.
+
+::: {.formula-box}
+$H_0: \rho_{\text{STR, score}} = 0$ — brak związku liniowego
+
+$H_1: \rho_{\text{STR, score}} \neq 0$ — jest związek
+:::
+
+### Korelacja i regresja prosta: score ~ STR
+
+```{r}
+checkboxInput("ch1_str_color", "Koloruj wg poziomu biedy", value = FALSE)
+```
+
+```{r}
+plotOutput("ch1_str_plot", height = "380px")
+uiOutput("ch1_str_test")
+```
+
+```{r}
+#| context: server
+
+output$ch1_str_plot <- renderPlot({
+  p <- ggplot(ca, aes(x = str, y = score))
+
+  if (input$ch1_str_color) {
+    p <- p + geom_point(aes(color = poverty), alpha = 0.6, size = 2) +
+      scale_color_manual(values = c(col_explore, col_conclude, col_highlight),
+                         name = "Bieda")
+  } else {
+    p <- p + geom_point(color = col_dark, alpha = 0.4, size = 2)
+  }
+
+  p + geom_smooth(method = "lm", se = TRUE,
+                  color = col_model, fill = col_model, alpha = 0.1) +
+    labs(title = "STR vs wyniki egzaminu",
+         subtitle = "Każdy punkt = jeden dystrykt szkolny",
+         x = "Uczniowie na nauczyciela (STR)",
+         y = "Średni wynik egzaminu") +
+    theme_case()
+})
+
+output$ch1_str_test <- renderUI({
+  cor_res <- rstatix::cor_test(ca, str, score, method = "pearson")
+  tidy_cor <- as.data.frame(cor_res)
+
+  model <- lm(score ~ str, data = ca)
+  coefs <- broom::tidy(model)
+  g <- broom::glance(model)
+
+  tagList(
+    div(class = "formula-box",
+      p(tags$strong("Korelacja Pearsona:")),
+      p(paste0("r = ", round(tidy_cor$cor, 3),
+               ", p ", if (tidy_cor$p < 0.001) "< 0.001" else paste0("= ", round(tidy_cor$p, 4)))),
+      p(style = "color: #e74c3c; font-weight: bold;",
+        "Istotna ujemna korelacja")
+    ),
+    div(class = "formula-box",
+      p(tags$strong("Regresja prosta:")),
+      p(paste0("score = ", round(coefs$estimate[1], 1), " ",
+               round(coefs$estimate[2], 2), " × STR")),
+      p(paste0("R² = ", round(g$r.squared, 3),
+               " (STR wyjaśnia tylko ", round(g$r.squared * 100, 1), "% zmienności)")),
+      p(tags$em("Interpretacja: każdy dodatkowy uczeń/nauczyciela → wynik niższy o ~",
+                abs(round(coefs$estimate[2], 1)), " pkt"))
+    )
+  )
+})
+```
+
+::: {.callout-warning}
+## Na tym etapie polityk powiedziałby:
+
+*"Widzicie? Mniejsze klasy = lepsze wyniki! Dajcie mi budżet."*
+
+Ale my wiemy, że to może być pozorna korelacja. Włączmy kolorowanie wg biedy —
+**widać, że biedne dystrykty (czerwone) skupiają się w prawym dolnym rogu**
+(duże klasy, niskie wyniki). Bieda może tłumaczyć oba zjawiska.
+:::
+
+---
+
+## Krok 3: Czy bieda jest zmienną zakłócającą?
+
+Aby zmienna Z była zakłócającą, musi spełniać dwa warunki:
+(a) wpływać na Y i (b) być skorelowana z X. Sprawdzamy oba.
+
+Zmienną zakłócającą (confoundem) nazwiemy **% darmowy lunch** — to standardowe
+proxy biedy w badaniach edukacyjnych.
+
+### Sprawdzenie dwóch warunków
+
+```{r}
+fluidRow(
+  column(6, plotOutput("ch1_conf_a", height = "280px")),
+  column(6, plotOutput("ch1_conf_b", height = "280px"))
+)
+uiOutput("ch1_conf_stats")
+```
+
+```{r}
+#| context: server
+
+output$ch1_conf_a <- renderPlot({
+  ggplot(ca, aes(x = lunch, y = score)) +
+    geom_point(color = col_dark, alpha = 0.3, size = 1.5) +
+    geom_smooth(method = "lm", se = FALSE, color = col_highlight, linewidth = 1.2) +
+    labs(title = "Warunek (a): lunch → wyniki?",
+         subtitle = paste0("r = ", round(cor(ca$lunch, ca$score), 3)),
+         x = "% darmowy lunch", y = "Wynik") +
+    theme_case()
+})
+
+output$ch1_conf_b <- renderPlot({
+  ggplot(ca, aes(x = lunch, y = str)) +
+    geom_point(color = col_dark, alpha = 0.3, size = 1.5) +
+    geom_smooth(method = "lm", se = FALSE, color = col_test, linewidth = 1.2) +
+    labs(title = "Warunek (b): lunch → STR?",
+         subtitle = paste0("r = ", round(cor(ca$lunch, ca$str), 3)),
+         x = "% darmowy lunch", y = "STR") +
+    theme_case()
+})
+
+output$ch1_conf_stats <- renderUI({
+  r_lunch_score <- cor(ca$lunch, ca$score)
+  r_lunch_str <- cor(ca$lunch, ca$str)
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("lunch→wyniki: r = ", round(r_lunch_score, 3)), col_highlight),
+    stat_box(paste0("lunch→STR: r = ", round(r_lunch_str, 3)), col_test),
+    stat_box("Oba istotne → confound!", col_conclude)
+  )
+})
+```
+
+Oba warunki spełnione. **Lunch (bieda) jest confoundem.**
+Teraz kluczowe pytanie: czy efekt STR przetrwa, gdy skontrolujemy biedę?
+
+### Wyniki w grupach biedy
+
+```{r}
+fluidRow(
+  column(4, uiOutput("ch1_anova_result")),
+  column(8, plotOutput("ch1_anova_plot", height = "320px"))
+)
+```
+
+```{r}
+#| context: server
+
+output$ch1_anova_plot <- renderPlot({
+  ggplot(ca, aes(x = poverty, y = score, fill = poverty)) +
+    geom_boxplot(alpha = 0.6, outlier.alpha = 0.2) +
+    geom_jitter(width = 0.15, alpha = 0.1, size = 1) +
+    scale_fill_manual(values = c(col_explore, col_conclude, col_highlight)) +
+    labs(title = "Wyniki wg poziomu biedy",
+         x = "Poziom biedy (na podst. % darmowy lunch)",
+         y = "Średni wynik") +
+    theme_case() +
+    theme(legend.position = "none")
+})
+
+output$ch1_anova_result <- renderUI({
+  result <- rstatix::anova_test(ca, score ~ poverty)
+  tidy_res <- as.data.frame(result)
+
+  tukey <- rstatix::tukey_hsd(ca, score ~ poverty)
+  tukey_df <- as.data.frame(tukey)
+
+  means <- ca %>% group_by(poverty) %>%
+    summarise(m = round(mean(score), 1), n = n(), .groups = "drop")
+
+  tagList(
+    div(class = "formula-box",
+      p(tags$strong("Średnie w grupach:")),
+      lapply(1:nrow(means), function(i) {
+        p(paste0(means$poverty[i], ": ", means$m[i], " (n=", means$n[i], ")"))
+      }),
+      hr(),
+      p(tags$strong("ANOVA:")),
+      p(paste0("F(", tidy_res$DFn, ",", tidy_res$DFd, ") = ",
+               round(tidy_res$F, 1),
+               ", p < 0.001, η² = ", round(tidy_res$ges, 3))),
+      hr(),
+      p(tags$strong("Tukey HSD:")),
+      tags$ul(lapply(1:nrow(tukey_df), function(i) {
+        tags$li(paste0(tukey_df$group1[i], " vs ", tukey_df$group2[i],
+                       ": Δ = ", round(tukey_df$estimate[i], 1),
+                       " pkt, p.adj ", if (tukey_df$p.adj[i] < 0.001) "< 0.001"
+                       else paste0("= ", round(tukey_df$p.adj[i], 3))))
+      }))
+    )
+  )
+})
+```
+
+::: {.callout-note}
+Wynik ANOVA potwierdza: bieda ma ogromny wpływ na wyniki — różnica między
+grupami to ~30 punktów. To wielokrotnie więcej niż cały zakres STR.
+:::
+
+---
+
+## Krok 4: Czy efekt STR przetrwa kontrolę?
+
+Budujemy modele regresji, stopniowo dodając zmienne kontrolne.
+Obserwujemy, co dzieje się z współczynnikiem STR.
+
+Strategia: zaczynamy od prostego modelu (sam STR) i dodajemy zmienne,
+które podejrzewamy o zakłócanie. Jeśli β przy STR **znacznie zmaleje
+lub straci istotność**, to prosty związek był pozorny.
+
+### Seria modeli — co się dzieje z efektem STR?
+
+```{r}
+actionButton("ch1_compare_models", "Buduj 4 modele",
+             class = "btn-primary", width = "250px")
+```
+
+```{r}
+uiOutput("ch1_model_comparison")
+plotOutput("ch1_beta_str_plot", height = "250px")
+```
+
+```{r}
+#| context: server
+
+ch1_models_data <- reactiveVal(NULL)
+
+observeEvent(input$ch1_compare_models, {
+  m1 <- lm(score ~ str, data = ca)
+  m2 <- lm(score ~ str + income, data = ca)
+  m3 <- lm(score ~ str + income + english, data = ca)
+  m4 <- lm(score ~ str + income + english + lunch, data = ca)
+
+  models <- list(m1, m2, m3, m4)
+  labels <- c("1: sam STR", "2: + dochód", "3: + dochód + ELL", "4: + dochód + ELL + lunch")
+
+  results <- lapply(seq_along(models), function(i) {
+    m <- models[[i]]
+    g <- broom::glance(m)
+    coefs <- broom::tidy(m)
+    beta_str <- coefs$estimate[coefs$term == "str"]
+    p_str <- coefs$p.value[coefs$term == "str"]
+    data.frame(
+      model = labels[i], r2 = g$r.squared, adj_r2 = g$adj.r.squared,
+      aic = g$AIC, rmse = sqrt(mean(residuals(m)^2)),
+      beta_str = beta_str, p_str = p_str
+    )
+  })
+
+  ch1_models_data(do.call(rbind, results))
+})
+
+output$ch1_model_comparison <- renderUI({
+  df <- ch1_models_data()
+  if (is.null(df)) return(NULL)
+
+  rows <- lapply(1:nrow(df), function(i) {
+    p_str_fmt <- if (df$p_str[i] < 0.001) "< 0.001" else round(df$p_str[i], 3)
+    sig_style <- if (df$p_str[i] < 0.05) "font-weight:bold;" else "color: #7f8c8d;"
+    tags$tr(
+      tags$td(df$model[i]),
+      tags$td(style = sig_style, round(df$beta_str[i], 2)),
+      tags$td(p_str_fmt),
+      tags$td(round(df$adj_r2[i], 3)),
+      tags$td(round(df$aic[i], 0))
+    )
+  })
+
+  tagList(
+    tags$table(class = "table table-bordered table-striped",
+      style = "font-size: 13px;",
+      tags$thead(
+        tags$tr(tags$th("Model"), tags$th("β STR"), tags$th("p (STR)"),
+                tags$th("adj.R²"), tags$th("AIC"))
+      ),
+      tags$tbody(rows)
+    ),
+    div(class = "formula-box",
+      p(tags$strong("Obserwacja:"), " β przy STR spada z ~",
+        round(df$beta_str[1], 1), " do ~", round(df$beta_str[3], 1),
+        " po kontroli biedy i ELL. Efekt zmaleje o ~",
+        round((1 - abs(df$beta_str[3]) / abs(df$beta_str[1])) * 100), "%.")
+    )
+  )
+})
+
+output$ch1_beta_str_plot <- renderPlot({
+  df <- ch1_models_data()
+  if (is.null(df)) return(NULL)
+
+  df$model <- factor(df$model, levels = df$model)
+  df$sig <- df$p_str < 0.05
+
+  ggplot(df, aes(x = model, y = beta_str, fill = sig)) +
+    geom_col(alpha = 0.8, width = 0.6) +
+    geom_hline(yintercept = 0, linetype = "dashed") +
+    scale_fill_manual(values = c("TRUE" = col_model, "FALSE" = "#bdc3c7"),
+                      labels = c("TRUE" = "p < 0.05", "FALSE" = "nieistotny"),
+                      name = NULL) +
+    labs(title = "Jak zmienia się efekt STR po dodaniu zmiennych kontrolnych?",
+         x = NULL, y = "β przy STR") +
+    theme_case() +
+    theme(legend.position = "top",
+          axis.text.x = element_text(angle = 20, hjust = 1))
+})
+```
+
+::: {.callout-tip}
+## Kluczowe odkrycie
+
+Współczynnik β przy STR **maleje** po dodaniu zmiennych kontrolnych, ale
+**nie zanika całkowicie**.
+
+To sugeruje, że część oryginalnego efektu była pozorna (napędzana biedą),
+ale mniejsze klasy mogą mieć **niewielki realny efekt** — rzędu ~1 punkt
+na każdego dodatkowego ucznia na nauczyciela.
+:::
+
+---
+
+## Krok 5: Analiza wybranego modelu
+
+Zbadajmy szczegółowo najlepszy model. Możesz sam wybrać predyktory.
+
+### Model wieloraki — wybór predyktorów
+
+```{r}
+fluidRow(
+  column(4,
+    checkboxGroupInput("ch1_reg_vars", "Predyktory:",
+      choices = c(
+        "STR" = "str",
+        "Dochód" = "income",
+        "% English learners" = "english",
+        "% darmowy lunch" = "lunch",
+        "Wydatki/uczeń" = "expenditure"
+      ),
+      selected = c("str", "income", "english")
+    ),
+    actionButton("ch1_fit_model", "Dopasuj",
+                 class = "btn-primary", width = "100%")
+  ),
+  column(8,
+    uiOutput("ch1_reg_coefs"),
+    plotOutput("ch1_reg_coef_plot", height = "230px")
+  )
+)
+uiOutput("ch1_reg_metrics")
+```
+
+```{r}
+#| context: server
+
+ch1_model <- reactiveVal(NULL)
+
+observeEvent(input$ch1_fit_model, {
+  preds <- input$ch1_reg_vars
+  if (length(preds) == 0) preds <- "str"
+  formula <- as.formula(paste("score ~", paste(preds, collapse = " + ")))
+  ch1_model(lm(formula, data = ca))
+})
+
+output$ch1_reg_coefs <- renderUI({
+  model <- ch1_model()
+  if (is.null(model)) return(NULL)
+
+  coefs <- broom::tidy(model)
+  labels_pl <- c(
+    "(Intercept)" = "Wyraz wolny", "str" = "STR",
+    "income" = "Dochód", "english" = "% ELL",
+    "expenditure" = "Wydatki/ucz.", "lunch" = "% lunch")
+  coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
+                           labels_pl[coefs$term], coefs$term)
+
+  rows <- lapply(1:nrow(coefs), function(i) {
+    sig <- coefs$p.value[i] < 0.05
+    tags$tr(style = if (!sig && coefs$term[i] != "(Intercept)") "color: #bdc3c7;" else "",
+      tags$td(coefs$term_pl[i]),
+      tags$td(round(coefs$estimate[i], 3)),
+      tags$td(round(coefs$std.error[i], 3)),
+      tags$td(paste0(format.pval(coefs$p.value[i], digits = 3),
+                      if (sig) " *" else ""))
+    )
+  })
+
+  tags$table(class = "table table-bordered",
+    style = "font-size: 13px;",
+    tags$thead(tags$tr(tags$th("Zmienna"), tags$th("β"), tags$th("SE"), tags$th("p"))),
+    tags$tbody(rows)
+  )
+})
+
+output$ch1_reg_coef_plot <- renderPlot({
+  model <- ch1_model()
+  if (is.null(model)) return(NULL)
+
+  coefs <- broom::tidy(model, conf.int = TRUE)
+  coefs <- coefs[coefs$term != "(Intercept)", ]
+  if (nrow(coefs) == 0) return(NULL)
+
+  labels_pl <- c("str" = "STR", "income" = "Dochód", "english" = "% ELL",
+                  "expenditure" = "Wydatki", "lunch" = "% lunch")
+  coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
+                           labels_pl[coefs$term], coefs$term)
+  coefs$sig <- coefs$p.value < 0.05
+
+  ggplot(coefs, aes(x = estimate, y = term_pl, color = sig)) +
+    geom_point(size = 3) +
+    geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
+    geom_vline(xintercept = 0, linetype = "dashed", color = col_dark) +
+    scale_color_manual(values = c("TRUE" = col_model, "FALSE" = col_highlight),
+                       labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),
+                       name = NULL) +
+    labs(title = "Współczynniki z 95% CI", x = "β", y = NULL) +
+    theme_case() + theme(legend.position = "top")
+})
+
+output$ch1_reg_metrics <- renderUI({
+  model <- ch1_model()
+  if (is.null(model)) return(NULL)
+  g <- broom::glance(model)
+  rmse <- sqrt(mean(residuals(model)^2))
+  div(style = "text-align: center; margin-top: 10px;",
+    stat_box(paste0("adj.R² = ", round(g$adj.r.squared, 3)), col_model),
+    stat_box(paste0("AIC = ", round(g$AIC, 0)), col_conclude),
+    stat_box(paste0("RMSE = ", round(rmse, 1)), col_highlight)
+  )
+})
+```
+
+::: {.callout-warning}
+## Eksperymentuj
+
+- Dodaj **lunch** do modelu z income — co się stanie? (Współliniowość! Oba mierzą biedę.)
+- Usuń income — jak zmieni się β przy STR?
+- Dodaj expenditure — czy wydatki mają efekt po kontroli biedy?
+:::
+
+---
+
+## Krok 6: Odpowiedź na pytanie decyzyjne
+
+Wracamy do oryginalnego pytania: czy zmniejszenie klas to dobra inwestycja?
+
+::: {.callout-tip}
+## Co mówią dane
+
+1. **Prosty związek STR→wyniki istnieje** (r ≈ −0.23), ale jest w dużej mierze
+   **napędzany biedą** — biedniejsze dystrykty mają większe klasy I gorsze wyniki.
+2. **Po kontroli biedy i ELL efekt STR maleje**, ale nie zanika — około −1 punkt
+   na każdego dodatkowego ucznia na nauczyciela.
+3. **Bieda jest wielokrotnie silniejszym predyktorem** niż wielkość klas.
+   Różnica między biednym a zamożnym dystryktem to ~30 punktów;
+   cały zakres STR to ~5 punktów.
+4. **Wydatki na ucznia mają zaskakująco słaby efekt** po kontroli biedy —
+   więcej pieniędzy samo w sobie nie pomaga.
+:::
+
+::: {.callout-warning}
+## Rekomendacja (gdyby to był raport)
+
+Zmniejszenie klas może mieć niewielki pozytywny efekt, ale **nie jest "silver bullet"**.
+Za miliardy dolarów uzyska się poprawkę rzędu kilku punktów.
+
+Bardziej efektywne mogą być interwencje celowane w **przyczyny biedy edukacyjnej**:
+wsparcie językowe dla ELL, programy żywieniowe, wsparcie rodzin.
+:::
+
+::: {.callout-important}
+## Ograniczenia naszej analizy
+
+- **Dane obserwacyjne, nie eksperymentalne** — nie możemy orzekać o przyczynowości.
+  Może istnieją pominięte zmienne (np. jakość nauczycieli).
+- **Dane zagregowane na poziomie dystryktu** — tracimy zmienność między szkołami
+  wewnątrz dystryktu. Błąd ekologiczny.
+- **Współliniowość** — lunch, income, calworks mierzą to samo (biedę).
+  Nie powinny być w modelu jednocześnie.
+- **Przekrojowe, nie podłużne** — widzimy jeden moment, nie zmiany w czasie.
+  Nie wiemy, czy dystrykty które zmniejszyły klasy, poprawiły wyniki.
+
+*Aby naprawdę odpowiedzieć na pytanie decyzyjne, potrzebowalibyśmy
+eksperymentu (np. projekt STAR z Tennessee) lub danych panelowych z instrumentami.*
+:::

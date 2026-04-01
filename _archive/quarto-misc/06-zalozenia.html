@@ -1,0 +1,2169 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Założenia testów</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="06-zalozenia_files/libs/clipboard/clipboard.min.js"></script>
+<script src="06-zalozenia_files/libs/quarto-html/quarto.js"></script>
+<script src="06-zalozenia_files/libs/quarto-html/popper.min.js"></script>
+<script src="06-zalozenia_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="06-zalozenia_files/libs/quarto-html/anchor.min.js"></script>
+<link href="06-zalozenia_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="06-zalozenia_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="06-zalozenia_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="06-zalozenia_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="06-zalozenia_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#normalność-rozkładu" id="toc-normalność-rozkładu" class="nav-link active" data-scroll-target="#normalność-rozkładu">Normalność rozkładu</a>
+  <ul class="collapse">
+  <li><a href="#które-metody-wymagają-normalności" id="toc-które-metody-wymagają-normalności" class="nav-link" data-scroll-target="#które-metody-wymagają-normalności">Które metody wymagają normalności?</a></li>
+  <li><a href="#wizualne-sprawdzanie-normalności" id="toc-wizualne-sprawdzanie-normalności" class="nav-link" data-scroll-target="#wizualne-sprawdzanie-normalności">Wizualne sprawdzanie normalności</a></li>
+  <li><a href="#testy-formalne" id="toc-testy-formalne" class="nav-link" data-scroll-target="#testy-formalne">Testy formalne</a></li>
+  <li><a href="#gdy-normalność-jest-naruszona" id="toc-gdy-normalność-jest-naruszona" class="nav-link" data-scroll-target="#gdy-normalność-jest-naruszona">Gdy normalność jest naruszona</a></li>
+  </ul></li>
+  <li><a href="#jednorodne-wariancje" id="toc-jednorodne-wariancje" class="nav-link" data-scroll-target="#jednorodne-wariancje">Jednorodne wariancje</a>
+  <ul class="collapse">
+  <li><a href="#homoscedastyczność-równe-wariancje" id="toc-homoscedastyczność-równe-wariancje" class="nav-link" data-scroll-target="#homoscedastyczność-równe-wariancje">Homoscedastyczność — równe wariancje</a></li>
+  <li><a href="#jak-wygląda-naruszenie" id="toc-jak-wygląda-naruszenie" class="nav-link" data-scroll-target="#jak-wygląda-naruszenie">Jak wygląda naruszenie?</a></li>
+  <li><a href="#testy-jednorodnych-wariancji" id="toc-testy-jednorodnych-wariancji" class="nav-link" data-scroll-target="#testy-jednorodnych-wariancji">Testy jednorodnych wariancji</a></li>
+  <li><a href="#gdy-wariancje-są-nierówne" id="toc-gdy-wariancje-są-nierówne" class="nav-link" data-scroll-target="#gdy-wariancje-są-nierówne">Gdy wariancje są nierówne</a></li>
+  </ul></li>
+  <li><a href="#założenia-regresji" id="toc-założenia-regresji" class="nav-link" data-scroll-target="#założenia-regresji">Założenia regresji</a>
+  <ul class="collapse">
+  <li><a href="#pięć-założeń-regresji-liniowej" id="toc-pięć-założeń-regresji-liniowej" class="nav-link" data-scroll-target="#pięć-założeń-regresji-liniowej">Pięć założeń regresji liniowej</a></li>
+  <li><a href="#diagnostyka-wizualna" id="toc-diagnostyka-wizualna" class="nav-link" data-scroll-target="#diagnostyka-wizualna">Diagnostyka wizualna</a></li>
+  <li><a href="#testy-formalne-założeń-regresji" id="toc-testy-formalne-założeń-regresji" class="nav-link" data-scroll-target="#testy-formalne-założeń-regresji">Testy formalne założeń regresji</a></li>
+  <li><a href="#gdy-założenia-są-naruszone" id="toc-gdy-założenia-są-naruszone" class="nav-link" data-scroll-target="#gdy-założenia-są-naruszone">Gdy założenia są naruszone</a></li>
+  </ul></li>
+  <li><a href="#założenia-χ²-i-fishera" id="toc-założenia-χ²-i-fishera" class="nav-link" data-scroll-target="#założenia-χ²-i-fishera">Założenia χ² i Fishera</a>
+  <ul class="collapse">
+  <li><a href="#założenia-testu-χ²" id="toc-założenia-testu-χ²" class="nav-link" data-scroll-target="#założenia-testu-χ²">Założenia testu χ²</a></li>
+  <li><a href="#efekt-małych-liczności" id="toc-efekt-małych-liczności" class="nav-link" data-scroll-target="#efekt-małych-liczności">Efekt małych liczności</a></li>
+  <li><a href="#kiedy-χ²-kiedy-fisher" id="toc-kiedy-χ²-kiedy-fisher" class="nav-link" data-scroll-target="#kiedy-χ²-kiedy-fisher">Kiedy χ², kiedy Fisher?</a></li>
+  <li><a href="#założenia-korelacji" id="toc-założenia-korelacji" class="nav-link" data-scroll-target="#założenia-korelacji">Założenia korelacji</a></li>
+  </ul></li>
+  <li><a href="#mapa-metod" id="toc-mapa-metod" class="nav-link" data-scroll-target="#mapa-metod">Mapa metod</a>
+  <ul class="collapse">
+  <li><a href="#kompletna-mapa-metoda-założenia-alternatywa" id="toc-kompletna-mapa-metoda-założenia-alternatywa" class="nav-link" data-scroll-target="#kompletna-mapa-metoda-założenia-alternatywa">Kompletna mapa: metoda → założenia → alternatywa</a></li>
+  <li><a href="#testy-parametryczne" id="toc-testy-parametryczne" class="nav-link" data-scroll-target="#testy-parametryczne">Testy parametryczne</a></li>
+  <li><a href="#testy-nieparametryczne" id="toc-testy-nieparametryczne" class="nav-link" data-scroll-target="#testy-nieparametryczne">Testy nieparametryczne</a></li>
+  <li><a href="#testy-dla-zmiennych-jakościowych" id="toc-testy-dla-zmiennych-jakościowych" class="nav-link" data-scroll-target="#testy-dla-zmiennych-jakościowych">Testy dla zmiennych jakościowych</a></li>
+  <li><a href="#regresja" id="toc-regresja" class="nav-link" data-scroll-target="#regresja">Regresja</a></li>
+  <li><a href="#selektor-mam-tę-metodę-co-sprawdzić" id="toc-selektor-mam-tę-metodę-co-sprawdzić" class="nav-link" data-scroll-target="#selektor-mam-tę-metodę-co-sprawdzić">Selektor: mam tę metodę — co sprawdzić?</a></li>
+  </ul></li>
+  <li><a href="#ściąga" id="toc-ściąga" class="nav-link" data-scroll-target="#ściąga">Ściąga</a>
+  <ul class="collapse">
+  <li><a href="#schemat-postępowania" id="toc-schemat-postępowania" class="nav-link" data-scroll-target="#schemat-postępowania">Schemat postępowania</a></li>
+  <li><a href="#testy-diagnostyczne-szybka-referencja" id="toc-testy-diagnostyczne-szybka-referencja" class="nav-link" data-scroll-target="#testy-diagnostyczne-szybka-referencja">Testy diagnostyczne — szybka referencja</a></li>
+  <li><a href="#metoda-alternatywa-quick-reference" id="toc-metoda-alternatywa-quick-reference" class="nav-link" data-scroll-target="#metoda-alternatywa-quick-reference">Metoda → alternatywa (quick reference)</a></li>
+  <li><a href="#praktyczne-rady" id="toc-praktyczne-rady" class="nav-link" data-scroll-target="#praktyczne-rady">Praktyczne rady</a></li>
+  <li><a href="#kod-r-diagnostyka" id="toc-kod-r-diagnostyka" class="nav-link" data-scroll-target="#kod-r-diagnostyka">Kod R — diagnostyka</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content" id="quarto-document-content">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #2c3e50; margin-bottom: 20px;">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="index.html" style="font-weight: bold;">Interaktywne wykłady ze statystyki</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLectures">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarLectures">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">Strona główna</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Wykłady</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="01-typy-danych.html">1. Typy danych i statystyka opisowa</a></li>
+            <li><a class="dropdown-item" href="02-rozklady.html">2. Rozkłady prawdopodobieństwa</a></li>
+            <li><a class="dropdown-item" href="03-przedzialy.html">3. Przedziały ufności</a></li>
+            <li><a class="dropdown-item" href="04-wnioskowanie.html">4. Wnioskowanie statystyczne</a></li>
+            <li><a class="dropdown-item" href="05-regresja.html">5. Regresja</a></li>
+            <li><a class="dropdown-item" href="06-zalozenia.html">6. Założenia testów</a></li>
+            <li><a class="dropdown-item" href="07-dobre-dane.html">7. Dobre dane</a></li>
+            <li><a class="dropdown-item" href="08-case-studies.html">8. Case studies</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Założenia testów</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="normalność-rozkładu" class="level1">
+<h1>Normalność rozkładu</h1>
+<p><em>Wiele testów statystycznych zakłada normalność danych. Jak to sprawdzić i co zrobić, gdy założenie jest naruszone?</em></p>
+<section id="które-metody-wymagają-normalności" class="level2">
+<h2 class="anchored" data-anchor-id="które-metody-wymagają-normalności">Które metody wymagają normalności?</h2>
+<p>Założenie normalności dotyczy:</p>
+<ul>
+<li><strong>Test t</strong> (jednej próby, niezależny, parowy) — normalność danych (lub reszt)</li>
+<li><strong>ANOVA</strong> — normalność reszt w każdej grupie</li>
+<li><strong>Korelacja Pearsona</strong> — rozkład dwuwymiarowy normalny</li>
+<li><strong>Regresja liniowa</strong> — normalność reszt (nie danych!)</li>
+</ul>
+<p><strong>Ważne:</strong> Przy dużych próbach (n &gt; 30) testy t i ANOVA są odporne na odchylenia dzięki CTG. Normalność jest kluczowa głównie przy małych próbach.</p>
+</section>
+<section id="wizualne-sprawdzanie-normalności" class="level2">
+<h2 class="anchored" data-anchor-id="wizualne-sprawdzanie-normalności">Wizualne sprawdzanie normalności</h2>
+<div class="cell">
+<div class="cell-output-display no-overflow-x">
+<div class="row">
+<div class="col-sm-4">
+<div class="form-group shiny-input-container">
+<label class="control-label" id="ch1_dist-label" for="ch1_dist">Rozkład danych:</label>
+<div>
+<select id="ch1_dist" class="shiny-input-select"><option value="normal" selected="">Normalny</option>
+<option value="skewed">Prawoskośny</option>
+<option value="heavy_tail">Ciężkie ogony</option>
+<option value="bimodal">Dwumodalny</option>
+<option value="uniform">Jednostajny</option></select>
+<script type="application/json" data-for="ch1_dist" data-nonempty="">{"plugins":["selectize-plugin-a11y"]}</script>
+</div>
+</div>
+<div class="form-group shiny-input-container">
+<label class="control-label" id="ch1_n-label" for="ch1_n">Wielkość próby (n):</label>
+<input class="js-range-slider" id="ch1_n" data-skin="shiny" data-min="10" data-max="200" data-from="50" data-step="10" data-grid="true" data-grid-num="9.5" data-grid-snap="false" data-prettify-separator="," data-prettify-enabled="true" data-keyboard="true" data-data-type="number">
+</div>
+<button class="btn btn-default action-button btn-primary" id="ch1_gen" style="width:100%;" type="button">Generuj dane</button>
+</div>
+<div class="col-sm-8">
+<div class="shiny-plot-output html-fill-item" id="ch1_normality_plots" style="width:100%;height:350px;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Jak czytać Q-Q plot:</strong> Jeśli punkty leżą na linii — dane są normalne. Odchylenia na końcach — ciężkie/lekkie ogony. Krzywa — skośność.</p>
+</div>
+</div>
+</section>
+<section id="testy-formalne" class="level2">
+<h2 class="anchored" data-anchor-id="testy-formalne">Testy formalne</h2>
+<p>Dwa najczęściej używane testy:</p>
+<ul>
+<li><strong>Shapiro-Wilk</strong> — najlepszy dla n &lt; 50, najczęściej używany</li>
+<li><strong>Kolmogorov-Smirnov</strong> — działa dla dowolnego n, mniej mocny</li>
+</ul>
+<p><span class="math inline">\(H_0\)</span>: dane pochodzą z rozkładu normalnego. p &lt; 0.05 → odrzucamy normalność.</p>
+<div class="cell">
+<div class="cell-output-display no-overflow-x">
+<div class="row">
+<div class="col-sm-4">
+<span class="help-block">Używa danych z widgetu powyżej.</span>
+<button class="btn btn-default action-button btn-primary" id="ch1_test_norm" style="width:100%;" type="button">Testuj normalność</button>
+</div>
+<div class="col-sm-8">
+<div id="ch1_norm_results" class="shiny-html-output"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Problem z testami formalnymi:</strong> Przy dużym n test Shapiro-Wilka odrzuci normalność nawet dla nieistotnych odchyleń. Przy małym n nie ma mocy. <strong>Zawsze łącz test z wizualizacją (Q-Q plot)!</strong></p>
+</div>
+</div>
+</section>
+<section id="gdy-normalność-jest-naruszona" class="level2">
+<h2 class="anchored" data-anchor-id="gdy-normalność-jest-naruszona">Gdy normalność jest naruszona</h2>
+<p>Opcje:</p>
+<ol type="1">
+<li><strong>Zignoruj</strong> — przy dużym n (&gt; 30) testy parametryczne są odporne</li>
+<li><strong>Użyj alternatywy nieparametrycznej</strong> — patrz tabela</li>
+<li><strong>Transformuj dane</strong> — log, sqrt, Box-Cox</li>
+</ol>
+<section id="efekt-transformacji-logarytmicznej" class="level3">
+<h3 class="anchored" data-anchor-id="efekt-transformacji-logarytmicznej">Efekt transformacji logarytmicznej</h3>
+<div class="cell">
+<div class="cell-output-display no-overflow-x">
+<div class="row">
+<div class="col-sm-4">
+<span class="help-block">Generujemy dane prawoskośne i stosujemy log().</span>
+<div class="form-group shiny-input-container">
+<label class="control-label" id="ch1_trans_n-label" for="ch1_trans_n">n:</label>
+<input class="js-range-slider" id="ch1_trans_n" data-skin="shiny" data-min="30" data-max="200" data-from="80" data-step="10" data-grid="true" data-grid-num="8.5" data-grid-snap="false" data-prettify-separator="," data-prettify-enabled="true" data-keyboard="true" data-data-type="number">
+</div>
+<button class="btn btn-default action-button btn-warning" id="ch1_transform" style="width:100%;" type="button">Generuj i transformuj</button>
+</div>
+<div class="col-sm-8">
+<div class="shiny-plot-output html-fill-item" id="ch1_transform_plots" style="width:100%;height:300px;"></div>
+<div id="ch1_transform_results" class="shiny-html-output"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Alternatywy nieparametryczne:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Metoda parametryczna</th>
+<th>Alternatywa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Test t jednej próby</td>
+<td>Wilcoxon jednej próby</td>
+</tr>
+<tr class="even">
+<td>Test t niezależny</td>
+<td>Mann-Whitney U</td>
+</tr>
+<tr class="odd">
+<td>Test t parowy</td>
+<td>Wilcoxon par znakowych</td>
+</tr>
+<tr class="even">
+<td>ANOVA</td>
+<td>Kruskal-Wallis</td>
+</tr>
+<tr class="odd">
+<td>Pearson</td>
+<td>Spearman</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+</section>
+<section id="jednorodne-wariancje" class="level1">
+<h1>Jednorodne wariancje</h1>
+<p><em>Normalność to nie jedyne założenie. Wiele testów porównawczych wymaga równych wariancji między grupami.</em></p>
+<section id="homoscedastyczność-równe-wariancje" class="level2">
+<h2 class="anchored" data-anchor-id="homoscedastyczność-równe-wariancje">Homoscedastyczność — równe wariancje</h2>
+<p>Założenie jednorodnych wariancji (homoscedastyczność) dotyczy:</p>
+<ul>
+<li><strong>Test t niezależny</strong> — wariancje w obu grupach powinny być podobne</li>
+<li><strong>ANOVA</strong> — wariancje we wszystkich grupach porównywalne</li>
+<li><strong>Regresja liniowa</strong> — wariancja reszt stała (homoscedastyczność reszt)</li>
+</ul>
+</section>
+<section id="jak-wygląda-naruszenie" class="level2">
+<h2 class="anchored" data-anchor-id="jak-wygląda-naruszenie">Jak wygląda naruszenie?</h2>
+<div class="cell">
+<div class="cell-output-display no-overflow-x">
+<div class="row">
+<div class="col-sm-4">
+<div class="form-group shiny-input-container">
+<label class="control-label" id="ch2_sd1-label" for="ch2_sd1">SD grupy A:</label>
+<input class="js-range-slider" id="ch2_sd1" data-skin="shiny" data-min="2" data-max="30" data-from="10" data-step="1" data-grid="true" data-grid-num="9.33333333333333" data-grid-snap="false" data-prettify-separator="," data-prettify-enabled="true" data-keyboard="true" data-data-type="number">
+</div>
+<div class="form-group shiny-input-container">
+<label class="control-label" id="ch2_sd2-label" for="ch2_sd2">SD grupy B:</label>
+<input class="js-range-slider" id="ch2_sd2" data-skin="shiny" data-min="2" data-max="30" data-from="10" data-step="1" data-grid="true" data-grid-num="9.33333333333333" data-grid-snap="false" data-prettify-separator="," data-prettify-enabled="true" data-keyboard="true" data-data-type="number">
+</div>
+<div class="form-group shiny-input-container">
+<label class="control-label" id="ch2_n_per-label" for="ch2_n_per">n (na grupę):</label>
+<input class="js-range-slider" id="ch2_n_per" data-skin="shiny" data-min="15" data-max="100" data-from="40" data-step="5" data-grid="true" data-grid-num="8.5" data-grid-snap="false" data-prettify-separator="," data-prettify-enabled="true" data-keyboard="true" data-data-type="number">
+</div>
+<button class="btn btn-default action-button btn-primary" id="ch2_gen" style="width:100%;" type="button">Generuj dane</button>
+</div>
+<div class="col-sm-8">
+<div class="shiny-plot-output html-fill-item" id="ch2_boxplot" style="width:100%;height:300px;"></div>
+<div id="ch2_var_stats" class="shiny-html-output"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="testy-jednorodnych-wariancji" class="level2">
+<h2 class="anchored" data-anchor-id="testy-jednorodnych-wariancji">Testy jednorodnych wariancji</h2>
+<p>Dwa popularne testy:</p>
+<ul>
+<li><strong>Test Levene’a</strong> — odporny na naruszenie normalności, zalecany</li>
+<li><strong>Test Bartletta</strong> — mocniejszy, ale wrażliwy na brak normalności</li>
+</ul>
+<p><span class="math inline">\(H_0\)</span>: wariancje są równe we wszystkich grupach.</p>
+<div class="cell">
+<div class="cell-output-display no-overflow-x">
+<div class="row">
+<div class="col-sm-4">
+<span class="help-block">Używa danych z widgetu powyżej.</span>
+<button class="btn btn-default action-button btn-primary" id="ch2_test_var" style="width:100%;" type="button">Testuj</button>
+</div>
+<div class="col-sm-8">
+<div id="ch2_test_results" class="shiny-html-output"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="gdy-wariancje-są-nierówne" class="level2">
+<h2 class="anchored" data-anchor-id="gdy-wariancje-są-nierówne">Gdy wariancje są nierówne</h2>
+<p>Opcje:</p>
+<ol type="1">
+<li><strong>Test t Welcha</strong> — domyślny w R! Nie zakłada równych wariancji. W praktyce zawsze można używać Welcha zamiast klasycznego t.</li>
+<li><strong>Mann-Whitney U</strong> — nieparametryczny, nie zakłada równych wariancji</li>
+<li><strong>ANOVA Welcha</strong> — odpowiednik dla 3+ grup (<code>oneway.test()</code>)</li>
+<li><strong>Regresja: odporne błędy std.</strong> — <code>sandwich::vcovHC()</code> + <code>lmtest::coeftest()</code></li>
+</ol>
+<section id="test-t-klasyczny-vs-welcha" class="level3">
+<h3 class="anchored" data-anchor-id="test-t-klasyczny-vs-welcha">Test t klasyczny vs Welcha</h3>
+<div class="cell">
+<div class="cell-output-display no-overflow-x">
+<div class="row">
+<div class="col-sm-4">
+<span class="help-block">Porównanie wyniku: klasyczny test t (zakłada równe wariancje)
+              vs test Welcha (nie zakłada).</span>
+<button class="btn btn-default action-button btn-warning" id="ch2_compare_t" style="width:100%;" type="button">Porównaj testy</button>
+</div>
+<div class="col-sm-8">
+<div id="ch2_t_comparison" class="shiny-html-output"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Praktyczna rada:</strong> Zawsze używaj testu Welcha (<code>t.test(var.equal = FALSE)</code>) — to domyślne zachowanie w R. Klasyczny test t z równymi wariancjami ma sens tylko gdy masz pewność, że wariancje są równe.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+</section>
+<section id="założenia-regresji" class="level1">
+<h1>Założenia regresji</h1>
+<p><em>Regresja liniowa ma własny zestaw założeń. Naruszenie każdego prowadzi do innego typu problemów.</em></p>
+<section id="pięć-założeń-regresji-liniowej" class="level2">
+<h2 class="anchored" data-anchor-id="pięć-założeń-regresji-liniowej">Pięć założeń regresji liniowej</h2>
+<ol type="1">
+<li><strong>Liniowość</strong> — związek Y~X jest liniowy</li>
+<li><strong>Niezależność reszt</strong> — reszty nie są skorelowane</li>
+<li><strong>Homoscedastyczność</strong> — wariancja reszt stała</li>
+<li><strong>Normalność reszt</strong> — reszty ~N(0, σ)</li>
+<li><strong>Brak współliniowości</strong> — predyktory nie są silnie skorelowane</li>
+</ol>
+<p>Kluczowe: założenia dotyczą <strong>reszt</strong>, nie surowych danych!</p>
+</section>
+<section id="diagnostyka-wizualna" class="level2">
+<h2 class="anchored" data-anchor-id="diagnostyka-wizualna">Diagnostyka wizualna</h2>
+<div class="cell">
+<div class="cell-output-display no-overflow-x">
+<div class="row">
+<div class="col-sm-4">
+<div class="form-group shiny-input-container">
+<label class="control-label" id="ch3_violation-label" for="ch3_violation">Typ naruszenia:</label>
+<div>
+<select id="ch3_violation" class="shiny-input-select"><option value="none" selected="">Brak (dane OK)</option>
+<option value="heteroscedasticity">Heteroscedastyczność</option>
+<option value="nonlinear">Nieliniowość</option>
+<option value="non_normal_resid">Nienormalne reszty</option>
+<option value="autocorrelation">Autokorelacja</option></select>
+<script type="application/json" data-for="ch3_violation" data-nonempty="">{"plugins":["selectize-plugin-a11y"]}</script>
+</div>
+</div>
+<div class="form-group shiny-input-container">
+<label class="control-label" id="ch3_n-label" for="ch3_n">n:</label>
+<input class="js-range-slider" id="ch3_n" data-skin="shiny" data-min="50" data-max="200" data-from="100" data-step="25" data-grid="true" data-grid-num="6" data-grid-snap="false" data-prettify-separator="," data-prettify-enabled="true" data-keyboard="true" data-data-type="number">
+</div>
+<button class="btn btn-default action-button btn-primary" id="ch3_gen" style="width:100%;" type="button">Generuj dane</button>
+</div>
+<div class="col-sm-8">
+<div class="shiny-plot-output html-fill-item" id="ch3_scatter" style="width:100%;height:250px;"></div>
+<div class="shiny-plot-output html-fill-item" id="ch3_diag_plots" style="width:100%;height:300px;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Jak czytać wykresy diagnostyczne:</strong></p>
+<ul>
+<li><strong>Reszty vs dopasowane:</strong> losowy rozrzut = OK, wzór = problem</li>
+<li><strong>Q-Q reszt:</strong> punkty na linii = normalność OK</li>
+<li><strong>Scale-Location:</strong> płaska linia = homoscedastyczność OK</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="testy-formalne-założeń-regresji" class="level2">
+<h2 class="anchored" data-anchor-id="testy-formalne-założeń-regresji">Testy formalne założeń regresji</h2>
+<div class="cell">
+<div class="cell-output-display no-overflow-x">
+<div class="row">
+<div class="col-sm-4">
+<span class="help-block">Używa modelu z widgetu powyżej.</span>
+<button class="btn btn-default action-button btn-primary" id="ch3_run_tests" style="width:100%;" type="button">Uruchom diagnostykę</button>
+</div>
+<div class="col-sm-8">
+<div id="ch3_diag_results" class="shiny-html-output"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="gdy-założenia-są-naruszone" class="level2">
+<h2 class="anchored" data-anchor-id="gdy-założenia-są-naruszone">Gdy założenia są naruszone</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Naruszenie</th>
+<th>Rozwiązanie</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Nieliniowość</td>
+<td>Dodaj składnik kwadratowy, transformuj X, użyj GAM</td>
+</tr>
+<tr class="even">
+<td>Heteroscedastyczność</td>
+<td>Odporne błędy std. (HC), WLS, transformacja log(Y)</td>
+</tr>
+<tr class="odd">
+<td>Nienormalne reszty</td>
+<td>Transformacja Y, bootstrap CI, GLM</td>
+</tr>
+<tr class="even">
+<td>Autokorelacja</td>
+<td>Modele szeregów czasowych (ARIMA), GLS</td>
+</tr>
+<tr class="odd">
+<td>Współliniowość</td>
+<td>Usuń skorelowane predyktory, PCA, regularyzacja (ridge/lasso)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="założenia-χ²-i-fishera" class="level1">
+<h1>Założenia χ² i Fishera</h1>
+<p><em>Testy dla zmiennych jakościowych mają prostsze, ale ważne założenia dotyczące minimalnych liczności.</em></p>
+<section id="założenia-testu-χ²" class="level2">
+<h2 class="anchored" data-anchor-id="założenia-testu-χ²">Założenia testu χ²</h2>
+<p>Test chi-kwadrat (zgodności i niezależności) wymaga:</p>
+<ol type="1">
+<li><strong>Niezależność obserwacji</strong> — każda obserwacja należy do jednej kategorii</li>
+<li><strong>Oczekiwane liczności ≥ 5</strong> — w każdej komórce tabeli</li>
+<li>Próba losowa z populacji</li>
+</ol>
+<p>Gdy oczekiwane liczności &lt; 5, test χ² jest niedokładny.</p>
+</section>
+<section id="efekt-małych-liczności" class="level2">
+<h2 class="anchored" data-anchor-id="efekt-małych-liczności">Efekt małych liczności</h2>
+<div class="cell">
+<div class="cell-output-display no-overflow-x">
+<div class="row">
+<div class="col-sm-4">
+<div class="form-group shiny-input-container">
+<label class="control-label" id="ch4_n-label" for="ch4_n">Wielkość próby:</label>
+<input class="js-range-slider" id="ch4_n" data-skin="shiny" data-min="10" data-max="200" data-from="20" data-step="5" data-grid="true" data-grid-num="9.5" data-grid-snap="false" data-prettify-separator="," data-prettify-enabled="true" data-keyboard="true" data-data-type="number">
+</div>
+<span class="help-block">Generujemy 500 prób z H₀ prawdziwą (brak związku).
+              Sprawdzamy, jak często każdy test fałszywie odrzuci H₀.</span>
+<button class="btn btn-default action-button btn-warning" id="ch4_sim" style="width:100%;" type="button">Symuluj</button>
+</div>
+<div class="col-sm-8">
+<div id="ch4_sim_results" class="shiny-html-output"></div>
+<div class="shiny-plot-output html-fill-item" id="ch4_sim_plot" style="width:100%;height:250px;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Problem:</strong> Przy małych n, test χ² może dawać za dużo lub za mało fałszywych alarmów (niekontrolowany błąd I rodzaju). Test Fishera zachowuje się poprawnie.</p>
+</div>
+</div>
+</section>
+<section id="kiedy-χ²-kiedy-fisher" class="level2">
+<h2 class="anchored" data-anchor-id="kiedy-χ²-kiedy-fisher">Kiedy χ², kiedy Fisher?</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Zasady:</strong></p>
+<ul>
+<li>Wszystkie oczekiwane ≥ 5 → <strong>test χ²</strong></li>
+<li>Którakolwiek oczekiwana &lt; 5 → <strong>test Fishera</strong></li>
+<li>Tabela 2×2 z małym n → zawsze <strong>Fisher</strong></li>
+<li>Duża tabela + małe oczekiwane → <strong>χ² z symulacją Monte Carlo</strong> (<code>chisq.test(simulate.p.value = TRUE)</code>)</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Założenia testu Fishera:</strong> Test Fishera nie ma założeń dotyczących minimalnych liczności — jest testem <strong>dokładnym</strong>. Wymaga jedynie niezależności obserwacji i stałych sum brzegowych.</p>
+</div>
+</div>
+</section>
+<section id="założenia-korelacji" class="level2">
+<h2 class="anchored" data-anchor-id="założenia-korelacji">Założenia korelacji</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Test</th>
+<th>Założenia</th>
+<th>Alternatywa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pearson</td>
+<td>Liniowość związku, normalność 2D, brak outlierów</td>
+<td>Spearman (rangi)</td>
+</tr>
+<tr class="even">
+<td>Spearman</td>
+<td>Monotoniczność związku (słabsze niż liniowość)</td>
+<td>Kendall tau (jeszcze bardziej odporny)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="mapa-metod" class="level1">
+<h1>Mapa metod</h1>
+<p><em>Zbierzmy wszystko w jedną mapę: każda metoda, jej założenia i co robić, gdy są naruszone.</em></p>
+<section id="kompletna-mapa-metoda-założenia-alternatywa" class="level2">
+<h2 class="anchored" data-anchor-id="kompletna-mapa-metoda-założenia-alternatywa">Kompletna mapa: metoda → założenia → alternatywa</h2>
+</section>
+<section id="testy-parametryczne" class="level2">
+<h2 class="anchored" data-anchor-id="testy-parametryczne">Testy parametryczne</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Metoda</th>
+<th>Założenia</th>
+<th>Jak sprawdzić</th>
+<th>Gdy naruszone → alternatywa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Test t jednej pr.</strong></td>
+<td>Normalność danych (lub n &gt; 30)</td>
+<td>Q-Q plot, Shapiro-Wilk</td>
+<td>Wilcoxon jednej próby</td>
+</tr>
+<tr class="even">
+<td><strong>Test t niezależny</strong></td>
+<td>Normalność w grupach, równe wariancje</td>
+<td>Shapiro + Levene</td>
+<td>Welch t (nierówne war.), Mann-Whitney U (brak norm.)</td>
+</tr>
+<tr class="odd">
+<td><strong>Test t parowy</strong></td>
+<td>Normalność różnic</td>
+<td>Shapiro na różnicach</td>
+<td>Wilcoxon par znakowych</td>
+</tr>
+<tr class="even">
+<td><strong>ANOVA</strong></td>
+<td>Normalność reszt, równe wariancje</td>
+<td>Shapiro + Levene</td>
+<td>Welch ANOVA (war.), Kruskal-Wallis (norm.)</td>
+</tr>
+<tr class="odd">
+<td><strong>Pearson</strong></td>
+<td>Liniowość, normalność 2D, brak outlierów</td>
+<td>Scatterplot, Q-Q obu zmiennych</td>
+<td>Spearman (monotoniczny), Kendall (odporny)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="testy-nieparametryczne" class="level2">
+<h2 class="anchored" data-anchor-id="testy-nieparametryczne">Testy nieparametryczne</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Metoda</th>
+<th>Założenia</th>
+<th>Uwagi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Wilcoxon / Mann-Whitney</strong></td>
+<td>Niezależność obserwacji, symetryczne rozkłady (dla mediany)</td>
+<td>Nie wymaga normalności. Testuje różnicę rozkładów, nie średnich.</td>
+</tr>
+<tr class="even">
+<td><strong>Kruskal-Wallis</strong></td>
+<td>Niezależność, podobne kształty rozkładów w grupach</td>
+<td>Post-hoc: test Dunna z korektą</td>
+</tr>
+<tr class="odd">
+<td><strong>Spearman</strong></td>
+<td>Monotoniczność związku</td>
+<td>Działa na rangach, odporny na outliery</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="testy-dla-zmiennych-jakościowych" class="level2">
+<h2 class="anchored" data-anchor-id="testy-dla-zmiennych-jakościowych">Testy dla zmiennych jakościowych</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Metoda</th>
+<th>Założenia</th>
+<th>Gdy naruszone</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>χ² zgodności</strong></td>
+<td>Oczekiwane ≥ 5 w każdej kategorii</td>
+<td>Test dwumianowy (2 kat.), symulacja MC</td>
+</tr>
+<tr class="even">
+<td><strong>χ² niezależności</strong></td>
+<td>Oczekiwane ≥ 5 w każdej komórce</td>
+<td>Test Fishera (dokładny)</td>
+</tr>
+<tr class="odd">
+<td><strong>Test Fishera</strong></td>
+<td>Niezależność obserwacji</td>
+<td>Brak — to już metoda dokładna</td>
+</tr>
+<tr class="even">
+<td><strong>Test dwumianowy</strong></td>
+<td>Niezależność, binarne dane</td>
+<td>Brak — to metoda dokładna</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="regresja" class="level2">
+<h2 class="anchored" data-anchor-id="regresja">Regresja</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Metoda</th>
+<th>Założenia</th>
+<th>Diagnostyka</th>
+<th>Alternatywy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Regresja liniowa</strong></td>
+<td>Liniowość, normalność reszt, homoscedastyczność, niezależność reszt, brak współliniowości</td>
+<td>Reszty vs fitted, Q-Q, Scale-Location, Breusch-Pagan, Durbin-Watson, VIF</td>
+<td>Transformacje, odporne SE (HC), WLS, GLM, GAM, bootstrap</td>
+</tr>
+<tr class="even">
+<td><strong>Regresja logistyczna</strong></td>
+<td>Liniowość logitów, niezależność obserwacji, brak współliniowości, wystarczająco dużo zdarzeń na predyktor (reguła EPV ≥ 10)</td>
+<td>Test Hosmera-Lemeshowa, residuals deviance, VIF</td>
+<td>Dokładna regresja logistyczna (Firtha), regularyzacja, drzewa decyzyjne</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="selektor-mam-tę-metodę-co-sprawdzić" class="level2">
+<h2 class="anchored" data-anchor-id="selektor-mam-tę-metodę-co-sprawdzić">Selektor: mam tę metodę — co sprawdzić?</h2>
+<div class="cell">
+<div class="cell-output-display no-overflow-x">
+<div class="row">
+<div class="col-sm-4">
+<div class="form-group shiny-input-container">
+<label class="control-label" id="ch5_method-label" for="ch5_method">Metoda:</label>
+<div>
+<select id="ch5_method" class="shiny-input-select"><option value="t_one">Test t jednej próby</option>
+<option value="t_ind" selected="">Test t niezależny</option>
+<option value="t_paired">Test t parowy</option>
+<option value="anova">ANOVA</option>
+<option value="pearson">Korelacja Pearsona</option>
+<option value="spearman">Korelacja Spearmana</option>
+<option value="mann_whitney">Mann-Whitney U</option>
+<option value="kruskal">Kruskal-Wallis</option>
+<option value="chi_sq">χ² niezależności</option>
+<option value="fisher">Test Fishera</option>
+<option value="lm">Regresja liniowa</option>
+<option value="glm">Regresja logistyczna</option></select>
+<script type="application/json" data-for="ch5_method" data-nonempty="">{"plugins":["selectize-plugin-a11y"]}</script>
+</div>
+</div>
+</div>
+<div class="col-sm-8">
+<div id="ch5_method_info" class="shiny-html-output"></div>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="ściąga" class="level1">
+<h1>Ściąga</h1>
+<p><em>Kompaktowe podsumowanie: założenia, testy diagnostyczne i alternatywy.</em></p>
+<section id="schemat-postępowania" class="level2">
+<h2 class="anchored" data-anchor-id="schemat-postępowania">Schemat postępowania</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Krok 1: Wybierz metodę</strong> na podstawie typu zmiennych i pytania badawczego.</p>
+<p><strong>Krok 2: Sprawdź założenia</strong> wizualnie (wykresy) i formalnie (testy).</p>
+<p><strong>Krok 3a:</strong> Założenia spełnione → użyj metody parametrycznej.</p>
+<p><strong>Krok 3b:</strong> Założenia naruszone → użyj alternatywy.</p>
+<p><strong>Krok 4:</strong> Raportuj wyniki z wielkością efektu i p-wartością.</p>
+</div>
+</div>
+</section>
+<section id="testy-diagnostyczne-szybka-referencja" class="level2">
+<h2 class="anchored" data-anchor-id="testy-diagnostyczne-szybka-referencja">Testy diagnostyczne — szybka referencja</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Założenie</th>
+<th>Test</th>
+<th>R</th>
+<th><span class="math inline">\(H_0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Normalność</td>
+<td>Shapiro-Wilk</td>
+<td><code>shapiro_test()</code></td>
+<td>Dane są normalne</td>
+</tr>
+<tr class="even">
+<td>Normalność</td>
+<td>Kolmogorov-Smirnov</td>
+<td><code>ks.test()</code></td>
+<td>Dane mają podany rozkład</td>
+</tr>
+<tr class="odd">
+<td>Równe wariancje</td>
+<td>Levene</td>
+<td><code>levene_test()</code></td>
+<td>Wariancje równe</td>
+</tr>
+<tr class="even">
+<td>Równe wariancje</td>
+<td>Bartlett</td>
+<td><code>bartlett.test()</code></td>
+<td>Wariancje równe</td>
+</tr>
+<tr class="odd">
+<td>Homoscedast. reszt</td>
+<td>Breusch-Pagan</td>
+<td><code>lmtest::bptest()</code></td>
+<td>Wariancja reszt stała</td>
+</tr>
+<tr class="even">
+<td>Niezależn. reszt</td>
+<td>Durbin-Watson</td>
+<td><code>lmtest::dwtest()</code></td>
+<td>Brak autokorelacji</td>
+</tr>
+<tr class="odd">
+<td>Współliniowość</td>
+<td>VIF</td>
+<td><code>car::vif()</code></td>
+<td>VIF &lt; 5 (niektórzy &lt; 10)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="metoda-alternatywa-quick-reference" class="level2">
+<h2 class="anchored" data-anchor-id="metoda-alternatywa-quick-reference">Metoda → alternatywa (quick reference)</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Metoda parametryczna</th>
+<th>→ Alternatywa nieparametryczna</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Test t jednej próby</td>
+<td>Wilcoxon jednej próby</td>
+</tr>
+<tr class="even">
+<td>Test t niezależny</td>
+<td>Mann-Whitney U</td>
+</tr>
+<tr class="odd">
+<td>Test t parowy</td>
+<td>Wilcoxon par znakowych</td>
+</tr>
+<tr class="even">
+<td>ANOVA</td>
+<td>Kruskal-Wallis</td>
+</tr>
+<tr class="odd">
+<td>Tukey HSD (post-hoc)</td>
+<td>Test Dunna</td>
+</tr>
+<tr class="even">
+<td>Pearson</td>
+<td>Spearman</td>
+</tr>
+<tr class="odd">
+<td>χ² (małe n)</td>
+<td>Fisher (dokładny)</td>
+</tr>
+<tr class="even">
+<td>Regresja OLS</td>
+<td>Odporne SE / bootstrap / GLM</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="praktyczne-rady" class="level2">
+<h2 class="anchored" data-anchor-id="praktyczne-rady">Praktyczne rady</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Wizualizacja &gt; testy formalne.</strong> Wykresy dają intuicję, testy dają liczbę. Używaj obu.</li>
+<li><strong>Testy Welcha są domyślne w R.</strong> Nie musisz sprawdzać równości wariancji przed testem t.</li>
+<li><strong>Duże n łagodzi naruszenia.</strong> Przy n &gt; 30 testy parametryczne są odporne na brak normalności (CTG).</li>
+<li><strong>Testy nieparametryczne nie są “gorsze”.</strong> Mają mniejszą moc przy spełnionych założeniach, ale są bezpieczniejsze ogólnie.</li>
+<li><strong>Raportuj zawsze wielkość efektu</strong> — p-wartość nie mówi, jak duży jest efekt.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="kod-r-diagnostyka" class="level2">
+<h2 class="anchored" data-anchor-id="kod-r-diagnostyka">Kod R — diagnostyka</h2>
+<div class="formula-box">
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstatix)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># === Normalność ===</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">shapiro_test</span>(variable)               <span class="co"># per zmienna</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(group) <span class="sc">%&gt;%</span> <span class="fu">shapiro_test</span>(var) <span class="co"># per grupa</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># === Równe wariancje ===</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">levene_test</span>(var <span class="sc">~</span> group)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">bartlett.test</span>(var <span class="sc">~</span> group, <span class="at">data =</span> data)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># === Diagnostyka regresji ===</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2, <span class="at">data =</span> dane)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model)                    <span class="co"># 4 wykresy diagnostyczne</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">bptest</span>(model)          <span class="co"># Breusch-Pagan</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">dwtest</span>(model)          <span class="co"># Durbin-Watson</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">vif</span>(model)                <span class="co"># VIF (współliniowość)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># === Odporne błędy standardowe ===</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">coeftest</span>(model, <span class="at">vcov =</span> sandwich<span class="sc">::</span><span class="fu">vcovHC</span>(model, <span class="at">type =</span> <span class="st">'HC3'</span>))</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># === Welch ANOVA (nierówne wariancje) ===</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">oneway.test</span>(var <span class="sc">~</span> group, <span class="at">data =</span> data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>
+<script type="application/shiny-prerendered" data-context="server-start">
+source("_common.R")
+
+library(rstatix)
+library(broom)
+library(lmtest)
+library(gridExtra)
+
+# Kolory specyficzne dla założeń
+col_ok         <- "#27ae60"    # zielony - założenie spełnione
+col_fail       <- "#e74c3c"    # czerwony - założenie naruszone
+col_test       <- "#3498db"    # niebieski - dane/test
+col_alt        <- "#9b59b6"    # fioletowy - alternatywa
+
+# Theme
+theme_assumptions <- function(base_size = 14) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(face = "bold", size = base_size + 2),
+      plot.subtitle = element_text(color = "#7f8c8d"),
+      panel.grid.minor = element_blank()
+    )
+}
+
+# Generowanie danych o różnych rozkładach
+generate_test_data <- function(n = 50, dist = "normal") {
+  set.seed(NULL)
+  switch(dist,
+    "normal"     = rnorm(n, 170, 10),
+    "skewed"     = rgamma(n, shape = 2, scale = 5) + 150,
+    "heavy_tail" = 170 + 10 * rt(n, df = 3),
+    "bimodal"    = c(rnorm(n/2, 160, 4), rnorm(n/2, 180, 4)),
+    "uniform"    = runif(n, 150, 190),
+    rnorm(n, 170, 10)
+  )
+}
+
+# Generowanie danych do 2 grup o różnej wariancji
+generate_two_groups <- function(n1 = 30, n2 = 30, sd1 = 10, sd2 = 10,
+                                 mean1 = 170, mean2 = 175) {
+  set.seed(NULL)
+  data.frame(
+    value = c(rnorm(n1, mean1, sd1), rnorm(n2, mean2, sd2)),
+    group = factor(c(rep("A", n1), rep("B", n2)))
+  )
+}
+
+# Generowanie danych regresji z naruszonymi założeniami
+generate_reg_violations <- function(n = 100, violation = "none") {
+  set.seed(NULL)
+  x <- runif(n, 0, 10)
+
+  if (violation == "none") {
+    y <- 2 + 3 * x + rnorm(n, 0, 2)
+  } else if (violation == "heteroscedasticity") {
+    y <- 2 + 3 * x + rnorm(n, 0, 0.5 * x)
+  } else if (violation == "nonlinear") {
+    y <- 2 + 3 * x - 0.3 * x^2 + rnorm(n, 0, 1.5)
+  } else if (violation == "non_normal_resid") {
+    y <- 2 + 3 * x + (rexp(n, 0.5) - 2)
+  } else if (violation == "autocorrelation") {
+    errors <- arima.sim(n = n, model = list(ar = 0.8), sd = 2)
+    y <- 2 + 3 * x + as.numeric(errors)
+  }
+
+  data.frame(x = x, y = y)
+}
+
+# Nazwy rozkładów
+dist_names_pl <- c(
+  "normal"     = "Normalny",
+  "skewed"     = "Prawoskośny (Gamma)",
+  "heavy_tail" = "Ciężkie ogony (t)",
+  "bimodal"    = "Dwumodalny",
+  "uniform"    = "Jednostajny"
+)
+
+# Dane metod do selektora (ch5)
+method_info <- list(
+  t_one = list(
+    name = "Test t jednej próby",
+    assumptions = c("Dane ilościowe", "Normalność danych (lub n > 30)"),
+    checks = c("Q-Q plot", "shapiro_test()"),
+    alternatives = c("Wilcoxon jednej próby: wilcox_test(x ~ 1, mu = ...)"),
+    r_code = "rstatix::t_test(data, var ~ 1, mu = wartość)"
+  ),
+  t_ind = list(
+    name = "Test t niezależny",
+    assumptions = c("Dane ilościowe", "Normalność w każdej grupie (lub n > 30)", "Równe wariancje (lub użyj Welcha)"),
+    checks = c("Q-Q per group", "shapiro_test() per group", "levene_test()"),
+    alternatives = c("Welch t (domyślny!): t_test(var.equal = FALSE)", "Mann-Whitney U: wilcox_test()"),
+    r_code = "rstatix::t_test(data, var ~ group)"
+  ),
+  t_paired = list(
+    name = "Test t parowy",
+    assumptions = c("Dane ilościowe", "Normalność różnic"),
+    checks = c("shapiro_test() na różnicach"),
+    alternatives = c("Wilcoxon par znakowych: wilcox_test(paired = TRUE)"),
+    r_code = "rstatix::t_test(data, var ~ time, paired = TRUE)"
+  ),
+  anova = list(
+    name = "ANOVA jednoczynnikowa",
+    assumptions = c("Normalność reszt w grupach", "Równe wariancje między grupami"),
+    checks = c("shapiro_test() per group", "levene_test()"),
+    alternatives = c("Welch ANOVA: oneway.test()", "Kruskal-Wallis: kruskal_test()"),
+    r_code = "rstatix::anova_test(data, var ~ group)"
+  ),
+  pearson = list(
+    name = "Korelacja Pearsona",
+    assumptions = c("Liniowość związku", "Normalność dwuwymiarowa", "Brak ekstremalnych outlierów"),
+    checks = c("Scatterplot!", "shapiro_test() na obu zmiennych"),
+    alternatives = c("Spearman: cor_test(method='spearman')", "Kendall: cor_test(method='kendall')"),
+    r_code = "rstatix::cor_test(data, x, y, method = 'pearson')"
+  ),
+  spearman = list(
+    name = "Korelacja Spearmana",
+    assumptions = c("Monotoniczność związku"),
+    checks = c("Scatterplot"),
+    alternatives = c("Kendall tau (bardziej odporny, wolniejszy)"),
+    r_code = "rstatix::cor_test(data, x, y, method = 'spearman')"
+  ),
+  mann_whitney = list(
+    name = "Mann-Whitney U",
+    assumptions = c("Niezależność obserwacji", "Dane co najmniej porządkowe"),
+    checks = c("Sprawdzenie projektu badawczego"),
+    alternatives = c("Test permutacyjny"),
+    r_code = "rstatix::wilcox_test(data, var ~ group)"
+  ),
+  kruskal = list(
+    name = "Kruskal-Wallis",
+    assumptions = c("Niezależność obserwacji", "Podobne kształty rozkładów w grupach"),
+    checks = c("Boxploty, histogramy per grupa"),
+    alternatives = c("Test permutacyjny, bootstrap ANOVA"),
+    r_code = "rstatix::kruskal_test(data, var ~ group)"
+  ),
+  chi_sq = list(
+    name = "χ² niezależności",
+    assumptions = c("Niezależność obserwacji", "Oczekiwane liczności ≥ 5 w każdej komórce"),
+    checks = c("chisq.test()$expected — sprawdź wartości"),
+    alternatives = c("Test Fishera: fisher.test()", "χ² z MC: chisq.test(simulate.p.value=TRUE)"),
+    r_code = "chisq.test(table(var1, var2))"
+  ),
+  fisher = list(
+    name = "Test Fishera",
+    assumptions = c("Niezależność obserwacji"),
+    checks = c("Brak specjalnych wymagań"),
+    alternatives = c("Brak — to metoda dokładna"),
+    r_code = "fisher.test(table(var1, var2))"
+  ),
+  lm = list(
+    name = "Regresja liniowa",
+    assumptions = c("Liniowość związku", "Normalność reszt", "Homoscedastyczność reszt", "Niezależność reszt", "Brak współliniowości (wieloraka)"),
+    checks = c("Reszty vs fitted", "Q-Q reszt", "Scale-Location", "Breusch-Pagan: bptest()", "Durbin-Watson: dwtest()", "VIF: car::vif()"),
+    alternatives = c("Transformacja Y lub X", "Odporne SE: sandwich::vcovHC()", "WLS: lm(weights=)", "GLM, GAM, bootstrap"),
+    r_code = "model <- lm(y ~ x1 + x2, data = dane); summary(model)"
+  ),
+  glm = list(
+    name = "Regresja logistyczna",
+    assumptions = c("Liniowość logitów", "Niezależność obserwacji", "Brak współliniowości", "EPV ≥ 10 (zdarzeń na predyktor)"),
+    checks = c("Hosmer-Lemeshow: hoslem.test()", "VIF: car::vif()", "Sprawdź EPV"),
+    alternatives = c("Firth logistic: logistf::logistf()", "Regularyzacja: glmnet", "Drzewa decyzyjne"),
+    r_code = "model <- glm(y ~ x1 + x2, family = binomial, data = dane)"
+  )
+)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+ch1_data <- reactiveVal(NULL)
+
+observeEvent(input$ch1_gen, {
+  ch1_data(generate_test_data(input$ch1_n, input$ch1_dist))
+})
+
+output$ch1_normality_plots <- renderPlot({
+  x <- ch1_data()
+  if (is.null(x)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    df <- data.frame(x = x)
+
+    p1 <- ggplot(df, aes(x = x)) +
+      geom_histogram(aes(y = after_stat(density)), bins = 20,
+                     fill = col_test, alpha = 0.6, color = "white") +
+      stat_function(fun = dnorm, args = list(mean = mean(x), sd = sd(x)),
+                    color = col_ok, linewidth = 1.2, linetype = "dashed") +
+      labs(title = "Histogram + krzywa normalna",
+           x = "Wartość", y = "Gęstość") +
+      theme_assumptions()
+
+    p2 <- ggplot(df, aes(sample = x)) +
+      stat_qq(color = col_test, alpha = 0.6) +
+      stat_qq_line(color = col_ok, linewidth = 1) +
+      labs(title = "Q-Q plot",
+           x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
+      theme_assumptions()
+
+    gridExtra::grid.arrange(p1, p2, ncol = 2)
+  }
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+output$ch1_norm_results <- renderUI({
+  req(input$ch1_test_norm)
+  x <- isolate(ch1_data())
+  if (is.null(x)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+
+  sw <- shapiro.test(x)
+  ks <- ks.test(x, "pnorm", mean = mean(x), sd = sd(x))
+
+  sw_color <- if (sw$p.value >= 0.05) col_ok else col_fail
+  ks_color <- if (ks$p.value >= 0.05) col_ok else col_fail
+
+  tagList(
+    div(class = "callout-info",
+      fluidRow(
+        column(6,
+          p(tags$strong("Shapiro-Wilk:")),
+          p(paste0("W = ", round(sw$statistic, 4))),
+          p(paste0("p = ", format.pval(sw$p.value, digits = 4))),
+          p(style = paste0("color:", sw_color, "; font-weight: bold;"),
+            if (sw$p.value >= 0.05) "Brak podstaw do odrzucenia normalności"
+            else "Normalność odrzucona!")
+        ),
+        column(6,
+          p(tags$strong("Kolmogorov-Smirnov:")),
+          p(paste0("D = ", round(ks$statistic, 4))),
+          p(paste0("p = ", format.pval(ks$p.value, digits = 4))),
+          p(style = paste0("color:", ks_color, "; font-weight: bold;"),
+            if (ks$p.value >= 0.05) "Brak podstaw do odrzucenia normalności"
+            else "Normalność odrzucona!")
+        )
+      )
+    )
+  )
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+ch1_trans_data <- reactiveVal(NULL)
+
+observeEvent(input$ch1_transform, {
+  x <- rgamma(input$ch1_trans_n, shape = 2, scale = 5) + 1
+  ch1_trans_data(x)
+})
+
+output$ch1_transform_plots <- renderPlot({
+  x <- ch1_trans_data()
+  if (is.null(x)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i transformuj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    log_x <- log(x)
+
+    p1 <- ggplot(data.frame(x = x), aes(sample = x)) +
+      stat_qq(color = col_fail, alpha = 0.5) +
+      stat_qq_line(color = col_fail) +
+      labs(title = "Oryginalne (prawoskośne)") +
+      theme_assumptions()
+
+    p2 <- ggplot(data.frame(x = log_x), aes(sample = x)) +
+      stat_qq(color = col_ok, alpha = 0.5) +
+      stat_qq_line(color = col_ok) +
+      labs(title = "Po log()") +
+      theme_assumptions()
+
+    gridExtra::grid.arrange(p1, p2, ncol = 2)
+  }
+})
+
+output$ch1_transform_results <- renderUI({
+  x <- ch1_trans_data()
+  if (is.null(x)) return(NULL)
+
+  sw_orig <- shapiro.test(x)
+  sw_log <- shapiro.test(log(x))
+
+  tagList(
+    stat_box(paste0("Oryginalne: p = ", format.pval(sw_orig$p.value, digits = 3)),
+             if (sw_orig$p.value >= 0.05) col_ok else col_fail),
+    stat_box(paste0("Po log(): p = ", format.pval(sw_log$p.value, digits = 3)),
+             if (sw_log$p.value >= 0.05) col_ok else col_fail)
+  )
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+ch2_data <- reactiveVal(NULL)
+
+observeEvent(input$ch2_gen, {
+  ch2_data(generate_two_groups(
+    n1 = input$ch2_n_per, n2 = input$ch2_n_per,
+    sd1 = input$ch2_sd1, sd2 = input$ch2_sd2
+  ))
+})
+
+output$ch2_boxplot <- renderPlot({
+  df <- ch2_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    ggplot(df, aes(x = group, y = value, fill = group)) +
+      geom_boxplot(alpha = 0.6) +
+      geom_jitter(width = 0.15, alpha = 0.3) +
+      scale_fill_manual(values = c(col_test, col_alt)) +
+      labs(title = "Dwie grupy", x = "Grupa", y = "Wartość") +
+      theme_assumptions() +
+      theme(legend.position = "none")
+  }
+})
+
+output$ch2_var_stats <- renderUI({
+  df <- ch2_data()
+  if (is.null(df)) return(NULL)
+  stats <- df %>% group_by(group) %>%
+    summarise(sd = sd(value), var = var(value), .groups = "drop")
+  ratio <- max(stats$var) / min(stats$var)
+
+  tagList(
+    stat_box(paste0("SD(A) = ", round(stats$sd[1], 2)), col_test),
+    stat_box(paste0("SD(B) = ", round(stats$sd[2], 2)), col_alt),
+    stat_box(paste0("Ratio var: ", round(ratio, 2)),
+             if (ratio < 4) col_ok else col_fail)
+  )
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+output$ch2_test_results <- renderUI({
+  req(input$ch2_test_var)
+  df <- isolate(ch2_data())
+  if (is.null(df)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+
+  lev <- rstatix::levene_test(df, value ~ group)
+  bart <- bartlett.test(value ~ group, data = df)
+
+  lev_color <- if (lev$p >= 0.05) col_ok else col_fail
+  bart_color <- if (bart$p.value >= 0.05) col_ok else col_fail
+
+  div(class = "callout-info",
+    fluidRow(
+      column(6,
+        p(tags$strong("Test Levene'a:")),
+        p(paste0("F = ", round(lev$statistic, 3))),
+        p(paste0("p = ", format.pval(lev$p, digits = 4))),
+        p(style = paste0("color:", lev_color, "; font-weight: bold;"),
+          if (lev$p >= 0.05) "Wariancje jednorodne" else "Wariancje nierówne!")
+      ),
+      column(6,
+        p(tags$strong("Test Bartletta:")),
+        p(paste0("\u03c7\u00b2 = ", round(bart$statistic, 3))),
+        p(paste0("p = ", format.pval(bart$p.value, digits = 4))),
+        p(style = paste0("color:", bart_color, "; font-weight: bold;"),
+          if (bart$p.value >= 0.05) "Wariancje jednorodne" else "Wariancje nierówne!")
+      )
+    )
+  )
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+output$ch2_t_comparison <- renderUI({
+  req(input$ch2_compare_t)
+  df <- isolate(ch2_data())
+  if (is.null(df)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+
+  t_classic <- t.test(value ~ group, data = df, var.equal = TRUE)
+  t_welch <- t.test(value ~ group, data = df, var.equal = FALSE)
+
+  div(class = "callout-info",
+    fluidRow(
+      column(6,
+        p(tags$strong("Test t klasyczny"), " (var.equal=TRUE):"),
+        p(paste0("t(", round(t_classic$parameter, 1), ") = ",
+                 round(t_classic$statistic, 3))),
+        p(paste0("p = ", format.pval(t_classic$p.value, digits = 4)))
+      ),
+      column(6,
+        p(tags$strong("Test Welcha"), " (var.equal=FALSE):"),
+        p(paste0("t(", round(t_welch$parameter, 1), ") = ",
+                 round(t_welch$statistic, 3))),
+        p(paste0("p = ", format.pval(t_welch$p.value, digits = 4)))
+      )
+    ),
+    p(style = "margin-top: 10px;",
+      tags$em("Przy nierównych wariancjach wyniki mogą się różnić.
+               Welch jest bezpieczniejszy."))
+  )
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+ch3_data <- reactiveVal(NULL)
+ch3_model <- reactiveVal(NULL)
+
+observeEvent(input$ch3_gen, {
+  df <- generate_reg_violations(input$ch3_n, input$ch3_violation)
+  ch3_data(df)
+  ch3_model(lm(y ~ x, data = df))
+})
+
+output$ch3_scatter <- renderPlot({
+  df <- ch3_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    ggplot(df, aes(x = x, y = y)) +
+      geom_point(color = col_test, alpha = 0.5) +
+      geom_smooth(method = "lm", se = TRUE, color = col_ok, fill = col_ok, alpha = 0.1) +
+      labs(title = "Dane + linia regresji", x = "X", y = "Y") +
+      theme_assumptions()
+  }
+})
+
+output$ch3_diag_plots <- renderPlot({
+  model <- ch3_model()
+  if (is.null(model)) return(NULL)
+
+  df <- data.frame(
+    fitted = fitted(model),
+    residuals = residuals(model),
+    std_resid = rstandard(model),
+    sqrt_abs_resid = sqrt(abs(rstandard(model)))
+  )
+
+  p1 <- ggplot(df, aes(x = fitted, y = residuals)) +
+    geom_hline(yintercept = 0, linetype = "dashed", color = col_dark) +
+    geom_point(color = col_test, alpha = 0.5) +
+    geom_smooth(se = FALSE, color = col_fail, linewidth = 0.8) +
+    labs(title = "Reszty vs dopasowane", x = "Dopasowane", y = "Reszty") +
+    theme_assumptions()
+
+  p2 <- ggplot(df, aes(sample = std_resid)) +
+    stat_qq(color = col_test, alpha = 0.5) +
+    stat_qq_line(color = col_ok) +
+    labs(title = "Q-Q reszt") +
+    theme_assumptions()
+
+  p3 <- ggplot(df, aes(x = fitted, y = sqrt_abs_resid)) +
+    geom_point(color = col_test, alpha = 0.5) +
+    geom_smooth(se = FALSE, color = col_fail, linewidth = 0.8) +
+    labs(title = "Scale-Location", x = "Dopasowane",
+         y = expression(sqrt("|Std. reszty|"))) +
+    theme_assumptions()
+
+  gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+output$ch3_diag_results <- renderUI({
+  req(input$ch3_run_tests)
+  model <- isolate(ch3_model())
+  if (is.null(model)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+
+  # Shapiro-Wilk na resztach
+  resid <- residuals(model)
+  sw <- shapiro.test(resid)
+
+  # Breusch-Pagan (heteroscedastyczność)
+  bp <- lmtest::bptest(model)
+
+  # Durbin-Watson (autokorelacja)
+  dw <- lmtest::dwtest(model)
+
+  results <- list(
+    list(name = "Normalność reszt (Shapiro-Wilk)",
+         stat = paste0("W = ", round(sw$statistic, 4)),
+         p = sw$p.value,
+         ok_msg = "Reszty normalne", fail_msg = "Reszty nienormalne!"),
+    list(name = "Homoscedastyczność (Breusch-Pagan)",
+         stat = paste0("BP = ", round(bp$statistic, 3)),
+         p = bp$p.value,
+         ok_msg = "Wariancja stała", fail_msg = "Heteroscedastyczność!"),
+    list(name = "Niezależność reszt (Durbin-Watson)",
+         stat = paste0("DW = ", round(dw$statistic, 3)),
+         p = dw$p.value,
+         ok_msg = "Brak autokorelacji", fail_msg = "Autokorelacja!")
+  )
+
+  div(class = "callout-info",
+    lapply(results, function(r) {
+      color <- if (r$p >= 0.05) col_ok else col_fail
+      msg <- if (r$p >= 0.05) r$ok_msg else r$fail_msg
+      div(style = "margin-bottom: 10px;",
+        p(tags$strong(r$name)),
+        p(paste0(r$stat, ", p = ", format.pval(r$p, digits = 4))),
+        p(style = paste0("color:", color, "; font-weight: bold;"), msg)
+      )
+    })
+  )
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+ch4_sim_data <- reactiveVal(NULL)
+
+observeEvent(input$ch4_sim, {
+  n <- input$ch4_n
+  n_sims <- 500
+
+  results <- sapply(1:n_sims, function(i) {
+    # H0 prawdziwa: brak związku
+    x <- sample(c("A", "B"), n, replace = TRUE)
+    y <- sample(c("Tak", "Nie"), n, replace = TRUE)
+    tab <- table(x, y)
+
+    p_chi <- tryCatch(chisq.test(tab, correct = FALSE)$p.value, error = function(e) NA)
+    p_fisher <- fisher.test(tab)$p.value
+
+    c(p_chi = p_chi, p_fisher = p_fisher)
+  })
+
+  results_df <- data.frame(t(results))
+  ch4_sim_data(results_df)
+})
+
+output$ch4_sim_results <- renderUI({
+  df <- ch4_sim_data()
+  if (is.null(df)) return(NULL)
+
+  fpr_chi <- mean(df$p_chi < 0.05, na.rm = TRUE) * 100
+  fpr_fisher <- mean(df$p_fisher < 0.05, na.rm = TRUE) * 100
+
+  chi_color <- if (abs(fpr_chi - 5) <= 2) col_ok else col_fail
+  fisher_color <- if (abs(fpr_fisher - 5) <= 2) col_ok else col_fail
+
+  tagList(
+    stat_box(paste0("\u03c7\u00b2: ", round(fpr_chi, 1), "% fałszywych alarmów"), chi_color),
+    stat_box(paste0("Fisher: ", round(fpr_fisher, 1), "% fałszywych alarmów"), fisher_color),
+    stat_box("Oczekiwane: 5%", col_dark)
+  )
+})
+
+output$ch4_sim_plot <- renderPlot({
+  df <- ch4_sim_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Symuluj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    long <- data.frame(
+      test = rep(c("\u03c7\u00b2", "Fisher"), each = nrow(df)),
+      p = c(df$p_chi, df$p_fisher)
+    )
+    long <- long[!is.na(long$p), ]
+
+    ggplot(long, aes(x = p, fill = test)) +
+      geom_histogram(breaks = seq(0, 1, by = 0.05), alpha = 0.6,
+                     color = "white", position = "identity") +
+      geom_vline(xintercept = 0.05, color = col_fail, linetype = "dashed") +
+      scale_fill_manual(values = c(col_test, col_alt), name = NULL) +
+      labs(title = paste0("Rozkład p-wartości (H\u2080 prawdziwa, n = ", input$ch4_n, ")"),
+           x = "p-wartość", y = "Liczba") +
+      theme_assumptions() +
+      theme(legend.position = "top")
+  }
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+output$ch5_method_info <- renderUI({
+  info <- method_info[[input$ch5_method]]
+  if (is.null(info)) return(NULL)
+
+  tagList(
+    h4(info$name),
+    div(class = "callout-warning",
+      tags$strong("Założenia:"),
+      tags$ul(lapply(info$assumptions, tags$li))
+    ),
+    div(class = "callout-info",
+      tags$strong("Jak sprawdzić:"),
+      tags$ul(lapply(info$checks, function(c) tags$li(tags$code(c))))
+    ),
+    div(class = "callout-success",
+      tags$strong("Alternatywy:"),
+      tags$ul(lapply(info$alternatives, tags$li))
+    ),
+    div(class = "formula-box",
+      tags$strong("Kod R:"),
+      tags$pre(style = "margin-top: 5px;", tags$code(info$r_code))
+    )
+  )
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server-extras">
+ojs_define <- function(..., .session = shiny::getDefaultReactiveDomain()) {
+  quos <- rlang::enquos(...)
+  vars <- rlang::list2(...)
+  nm <- names(vars)
+  if (is.null(nm)) {
+    nm <- rep_len("", length(vars))
+  }
+  mapply(function(q, nm, val) {
+    # Infer name, if possible
+    if (nm == "") {
+      tryCatch({
+        nm <- rlang::as_name(q)
+      }, error = function(e) {
+        code <- paste(collapse = "\n", deparse(rlang::f_rhs(q)))
+        stop("ojs_define() could not create a name for the argument: ", code)
+      })
+    }
+    .session$output[[nm]] <- val
+    outputOptions(.session$output, nm, suspendWhenHidden = FALSE)
+    .session$sendCustomMessage("ojs-export", list(name = nm))
+    NULL
+  }, quos, nm, vars, SIMPLIFY = FALSE, USE.NAMES = FALSE)
+  invisible()
+}
+</script>
+</p>
+<!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="dependencies">
+{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["selectize"]},{"type":"character","attributes":{},"value":["0.15.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/selectize"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/selectize.min.js","accessibility/js/selectize-plugin-a11y.min.js"]},{"type":"character","attributes":{},"value":["css/selectize.bootstrap3.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ionrangeslider-javascript"]},{"type":"character","attributes":{},"value":["2.3.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/ionrangeslider"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/ion.rangeSlider.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["strftime"]},{"type":"character","attributes":{},"value":["0.9.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/strftime"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["strftime-min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ionrangeslider-css"]},{"type":"character","attributes":{},"value":["2.3.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/ionrangeslider"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/ion.rangeSlider.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ionrangeslider-javascript"]},{"type":"character","attributes":{},"value":["2.3.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/ionrangeslider"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/ion.rangeSlider.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["strftime"]},{"type":"character","attributes":{},"value":["0.9.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/strftime"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["strftime-min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ionrangeslider-css"]},{"type":"character","attributes":{},"value":["2.3.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/ionrangeslider"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/ion.rangeSlider.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ionrangeslider-javascript"]},{"type":"character","attributes":{},"value":["2.3.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/ionrangeslider"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/ion.rangeSlider.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["strftime"]},{"type":"character","attributes":{},"value":["0.9.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/strftime"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["strftime-min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ionrangeslider-css"]},{"type":"character","attributes":{},"value":["2.3.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/ionrangeslider"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/ion.rangeSlider.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["selectize"]},{"type":"character","attributes":{},"value":["0.15.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/selectize"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/selectize.min.js","accessibility/js/selectize-plugin-a11y.min.js"]},{"type":"character","attributes":{},"value":["css/selectize.bootstrap3.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ionrangeslider-javascript"]},{"type":"character","attributes":{},"value":["2.3.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/ionrangeslider"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/ion.rangeSlider.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["strftime"]},{"type":"character","attributes":{},"value":["0.9.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/strftime"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["strftime-min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ionrangeslider-css"]},{"type":"character","attributes":{},"value":["2.3.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/ionrangeslider"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/ion.rangeSlider.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ionrangeslider-javascript"]},{"type":"character","attributes":{},"value":["2.3.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/ionrangeslider"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/ion.rangeSlider.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["strftime"]},{"type":"character","attributes":{},"value":["0.9.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/strftime"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["strftime-min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ionrangeslider-css"]},{"type":"character","attributes":{},"value":["2.3.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/ionrangeslider"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/ion.rangeSlider.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["selectize"]},{"type":"character","attributes":{},"value":["0.15.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/selectize"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/selectize.min.js","accessibility/js/selectize-plugin-a11y.min.js"]},{"type":"character","attributes":{},"value":["css/selectize.bootstrap3.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.11.1"]}]}]}
+</script>
+<!--/html_preserve-->
+<!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="execution_dependencies">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66]}},"value":[{"type":"character","attributes":{},"value":["abind","backports","base","broom","bslib","cachem","car","carData","cli","compiler","datasets","digest","dplyr","evaluate","farver","fastmap","Formula","generics","ggplot2","glue","graphics","grDevices","grid","gridExtra","gtable","htmltools","htmlwidgets","httpuv","jquerylib","jsonlite","knitr","later","lattice","lifecycle","lmtest","magrittr","memoise","methods","mime","otel","pillar","pkgconfig","promises","purrr","R6","RColorBrewer","Rcpp","rlang","rmarkdown","rstatix","S7","sass","scales","shiny","stats","tibble","tidyr","tidyselect","tools","utils","vctrs","withr","xfun","xtable","yaml","zoo"]},{"type":"character","attributes":{},"value":["1.4-8","1.5.0","4.5.2","1.0.10","0.10.0","1.1.0","3.1-3","3.0-5","3.6.5","4.5.2","4.5.2","0.6.39","1.1.4","1.0.5","2.1.2","1.2.0","1.2-5","0.1.4","4.0.2","1.8.0","4.5.2","4.5.2","4.5.2","2.3","0.3.6","0.5.9","1.6.4","1.6.16","0.1.4","2.0.0","1.51","1.4.8","0.22-5","1.0.5","0.9-40","2.0.4","2.0.1","4.5.2","0.13","0.2.0","1.11.1","2.0.3","1.5.0","1.2.0","2.6.1","1.1-3","1.1.1","1.1.7","2.30","0.7.2","0.2.1","0.4.10","1.4.0","1.11.1","4.5.2","3.3.0","1.3.1","1.2.1","4.5.2","4.5.2","0.7.2","3.0.2","0.57","1.8-4","2.3.12","1.8-15"]}]}]}
+</script>
+<!--/html_preserve-->
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

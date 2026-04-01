@@ -1,0 +1,2648 @@
+---
+title: "Wnioskowanie statystyczne"
+server: shiny
+---
+
+```{r}
+#| context: setup
+#| include: false
+
+source("_common.R")
+
+library(rstatix)
+library(broom)
+library(tidyr)
+
+# Kolory specyficzne dla testowania hipotez
+col_h0         <- "#3498db"    # niebieski - hipoteza zerowa / rozkład pod H0
+col_h1         <- "#e74c3c"    # czerwony - hipoteza alternatywna / obszar odrzucenia
+col_pvalue     <- "#f39c12"    # pomarańczowy - p-wartość
+col_accept     <- "#27ae60"    # zielony - brak podstaw do odrzucenia
+col_reject     <- "#e74c3c"    # czerwony - odrzucenie H0
+col_effect     <- "#9b59b6"    # fioletowy - wielkość efektu
+col_paired     <- "#1abc9c"    # morski - dane parowe
+
+# ============================================================================
+# FUNKCJE POMOCNICZE
+# ============================================================================
+
+# Generowanie danych studenckich (n=200)
+generate_student_data <- function(n = 200) {
+  set.seed(NULL)
+  plec <- sample(c("Kobieta", "Mężczyzna"), n, replace = TRUE, prob = c(0.55, 0.45))
+  kierunek <- sample(c("Informatyka", "Ekonomia", "Psychologia", "Biologia"),
+                     n, replace = TRUE, prob = c(0.3, 0.25, 0.25, 0.2))
+
+  wzrost <- ifelse(plec == "Kobieta",
+                   rnorm(n, mean = 166, sd = 6),
+                   rnorm(n, mean = 178, sd = 7))
+
+  waga <- ifelse(plec == "Kobieta",
+                 rnorm(n, mean = 62, sd = 8),
+                 rnorm(n, mean = 78, sd = 10))
+
+  base_gpa <- switch_kierunek_gpa(kierunek)
+  srednia_ocen <- pmin(pmax(base_gpa + rnorm(n, 0, 0.4), 2.0), 5.0)
+
+  czas_dojazdu <- rgamma(n, shape = 3, scale = 10)
+
+  zdal_egzamin <- rbinom(n, 1, prob = 0.7 + 0.05 * (srednia_ocen - 3.5))
+
+  data.frame(
+    plec = plec,
+    kierunek = kierunek,
+    wzrost = round(wzrost, 1),
+    waga = round(waga, 1),
+    srednia_ocen = round(srednia_ocen, 2),
+    czas_dojazdu = round(czas_dojazdu, 1),
+    zdal_egzamin = factor(ifelse(zdal_egzamin == 1, "Tak", "Nie")),
+    stringsAsFactors = FALSE
+  )
+}
+
+switch_kierunek_gpa <- function(kierunek) {
+  sapply(kierunek, function(k) {
+    switch(k,
+      "Informatyka" = 3.6,
+      "Ekonomia" = 3.4,
+      "Psychologia" = 3.8,
+      "Biologia" = 3.5,
+      3.5
+    )
+  })
+}
+
+generate_paired_data <- function(n = 30, effect = 5) {
+  set.seed(NULL)
+  wynik_przed <- rnorm(n, mean = 50, sd = 12)
+  wynik_po <- wynik_przed + rnorm(n, mean = effect, sd = 8)
+  data.frame(
+    student = 1:n,
+    wynik_przed = round(wynik_przed, 1),
+    wynik_po = round(wynik_po, 1)
+  )
+}
+
+generate_correlation_data <- function(n = 50, r = 0.7, type = "linear") {
+  set.seed(NULL)
+  if (type == "linear") {
+    x <- rnorm(n, mean = 170, sd = 10)
+    y <- r * scale(x) * 12 + sqrt(1 - r^2) * rnorm(n) * 12 + 70
+    data.frame(x = round(x, 1), y = round(y, 1))
+  } else if (type == "monotonic") {
+    x <- runif(n, 1, 10)
+    y <- log(x) * 5 + rnorm(n, 0, 1)
+    data.frame(x = round(x, 1), y = round(y, 2))
+  } else {
+    x <- rnorm(n, mean = 0, sd = 3)
+    y <- rnorm(n, mean = 0, sd = 3)
+    data.frame(x = round(x, 2), y = round(y, 2))
+  }
+}
+
+plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
+                                    alternative = "two.sided") {
+  if (test_type == "t") {
+    x <- seq(-4, 4, length.out = 500)
+    y <- if (!is.null(df)) dt(x, df) else dnorm(x)
+    label <- if (!is.null(df)) paste0("t(", df, ")") else "N(0,1)"
+  } else if (test_type == "chisq") {
+    x <- seq(0, max(stat_value * 2, 15), length.out = 500)
+    y <- dchisq(x, df)
+    label <- paste0("\u03c7\u00b2(", df, ")")
+  } else if (test_type == "f") {
+    x <- seq(0, max(stat_value * 2, 8), length.out = 500)
+    df1 <- df[1]; df2 <- df[2]
+    y <- df(x, df1, df2)
+    label <- paste0("F(", df1, ",", df2, ")")
+  } else {
+    x <- seq(-4, 4, length.out = 500)
+    y <- dnorm(x)
+    label <- "N(0,1)"
+  }
+
+  plot_df <- data.frame(x = x, y = y)
+
+  if (test_type %in% c("chisq", "f")) {
+    shade_df <- plot_df[plot_df$x >= stat_value, ]
+  } else if (alternative == "two.sided") {
+    shade_df <- plot_df[abs(plot_df$x) >= abs(stat_value), ]
+  } else if (alternative == "greater") {
+    shade_df <- plot_df[plot_df$x >= stat_value, ]
+  } else {
+    shade_df <- plot_df[plot_df$x <= stat_value, ]
+  }
+
+  p <- ggplot(plot_df, aes(x = x, y = y)) +
+    geom_line(color = "#3498db", linewidth = 1.2) +
+    geom_area(data = shade_df, fill = "#f39c12", alpha = 0.4) +
+    geom_vline(xintercept = stat_value, color = "#e74c3c",
+               linewidth = 1, linetype = "dashed") +
+    annotate("text", x = stat_value, y = max(y) * 0.9,
+             label = paste0("stat = ", round(stat_value, 3)),
+             hjust = -0.1, color = "#e74c3c", fontface = "bold") +
+    labs(title = paste0("Rozkład pod H\u2080: ", label),
+         x = "Statystyka testowa", y = "Gęstość") +
+    theme_lecture()
+
+  p
+}
+
+format_test_result <- function(p_value, alpha = 0.05) {
+  if (p_value < alpha) {
+    list(
+      decision = "Odrzucamy H\u2080",
+      color = "#e74c3c",
+      explanation = paste0("p = ", format.pval(p_value, digits = 4),
+                           " < \u03b1 = ", alpha,
+                           " \u2014 wynik istotny statystycznie")
+    )
+  } else {
+    list(
+      decision = "Brak podstaw do odrzucenia H\u2080",
+      color = "#27ae60",
+      explanation = paste0("p = ", format.pval(p_value, digits = 4),
+                           " \u2265 \u03b1 = ", alpha,
+                           " \u2014 wynik nieistotny statystycznie")
+    )
+  }
+}
+
+effect_size_label <- function(d) {
+  d <- abs(d)
+  if (d < 0.2) "pomijalny"
+  else if (d < 0.5) "mały"
+  else if (d < 0.8) "średni"
+  else "duży"
+}
+
+theme_test <- function(base_size = 14) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(face = "bold", size = base_size + 2),
+      plot.subtitle = element_text(color = "#7f8c8d"),
+      panel.grid.minor = element_blank()
+    )
+}
+```
+
+# Logika testowania hipotez
+
+*Przedziały ufności mierzą niepewność estymacji. Teraz przejdziemy do pytania: czy zaobserwowany efekt jest rzeczywisty?*
+
+## Testowanie hipotez — logika rozumowania
+
+Testowanie hipotez statystycznych przypomina proces sądowy:
+
+- **$H_0$ (hipoteza zerowa)** = "oskarżony jest niewinny" — brak efektu, brak różnicy
+- **$H_1$ (hipoteza alternatywna)** = "oskarżony jest winny" — efekt istnieje
+- **Dane** = dowody przedstawione w sądzie
+- **p-wartość** = jak bardzo dane są zaskakujące, jeśli $H_0$ jest prawdziwa
+
+Jeśli p-wartość jest mniejsza niż przyjęty **poziom istotności $\alpha$** (zwykle 0.05), odrzucamy $H_0$ na korzyść $H_1$.
+
+## Co to jest p-wartość?
+
+P-wartość to prawdopodobieństwo uzyskania wyniku **co najmniej tak skrajnego** jak zaobserwowany, **zakładając, że $H_0$ jest prawdziwa**.
+
+Zobaczmy to na symulacji: losujemy próby z populacji, w której $H_0$ jest prawdziwa, i obserwujemy rozkład statystyki testowej.
+
+```{r}
+sliderInput("ch1_n", "Wielkość próby (n):",
+            min = 10, max = 100, value = 30, step = 5)
+helpText("Populacja: N(μ=170, σ=10). Testujemy H₀: μ = 170.")
+div(style = "display: flex; flex-direction: column; gap: 8px;",
+  actionButton("ch1_draw_1", "Pobierz 1 próbę",
+               class = "btn-primary", width = "100%"),
+  actionButton("ch1_draw_100", "Pobierz 100 prób",
+               class = "btn-warning", width = "100%"),
+  actionButton("ch1_reset", "Reset",
+               class = "btn-outline-secondary", width = "100%")
+)
+uiOutput("ch1_sim_info")
+```
+
+```{r}
+plotOutput("ch1_pval_plot", height = "350px")
+uiOutput("ch1_pval_stats")
+```
+
+```{r}
+#| context: server
+
+ch1_pvalues <- reactiveVal(numeric(0))
+
+draw_pvalues <- function(k) {
+  n <- input$ch1_n
+  new_p <- sapply(seq_len(k), function(i) {
+    samp <- rnorm(n, mean = 170, sd = 10)
+    t.test(samp, mu = 170)$p.value
+  })
+  ch1_pvalues(c(ch1_pvalues(), new_p))
+}
+
+observeEvent(input$ch1_draw_1, draw_pvalues(1))
+observeEvent(input$ch1_draw_100, draw_pvalues(100))
+observeEvent(input$ch1_reset, ch1_pvalues(numeric(0)))
+
+output$ch1_sim_info <- renderUI({
+  n_p <- length(ch1_pvalues())
+  stat_box(paste0("Prób: ", n_p), col_h0)
+})
+
+output$ch1_pval_plot <- renderPlot({
+  pvals <- ch1_pvalues()
+  if (length(pvals) == 0) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Pobierz próbę'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    df <- data.frame(p = pvals, significant = pvals < 0.05)
+    ggplot(df, aes(x = p, fill = significant)) +
+      geom_histogram(breaks = seq(0, 1, by = 0.05), color = "white") +
+      geom_vline(xintercept = 0.05, color = col_reject, linewidth = 1.2,
+                 linetype = "dashed") +
+      scale_fill_manual(values = c("TRUE" = col_reject, "FALSE" = col_h0),
+                        labels = c("TRUE" = "p < 0.05", "FALSE" = "p \u2265 0.05"),
+                        name = NULL) +
+      labs(title = "Rozkład p-wartości (H\u2080 prawdziwa!)",
+           x = "p-wartość", y = "Liczba") +
+      theme_test() +
+      theme(legend.position = "top")
+  }
+})
+
+output$ch1_pval_stats <- renderUI({
+  pvals <- ch1_pvalues()
+  if (length(pvals) == 0) return(NULL)
+  n_sig <- sum(pvals < 0.05)
+  pct <- round(n_sig / length(pvals) * 100, 1)
+  div(style = "text-align: center;",
+    stat_box(paste0("p < 0.05: ", n_sig, " (", pct, "%)"), col_reject),
+    stat_box(paste0("p \u2265 0.05: ", length(pvals) - n_sig), col_accept),
+    stat_box("Oczekiwane \u2248 5%", col_dark)
+  )
+})
+```
+
+::: {.callout-note}
+**Obserwacja:** Gdy $H_0$ jest prawdziwa, p-wartości mają rozkład **jednostajny [0, 1]**. Około 5% prób da p < 0.05 — to są fałszywe alarmy (błąd I rodzaju)!
+:::
+
+## Błędy I i II rodzaju
+
+Każda decyzja może być błędna:
+
+|  | $H_0$ prawdziwa | $H_0$ fałszywa |
+|---|---|---|
+| **Nie odrzucamy $H_0$** | OK | Błąd II rodzaju ($\beta$) |
+| **Odrzucamy $H_0$** | Błąd I rodzaju ($\alpha$) | OK (moc = $1-\beta$) |
+
+```{r}
+sliderInput("ch1_alpha", "α (poziom istotności):",
+            min = 0.01, max = 0.20, value = 0.05, step = 0.01)
+sliderInput("ch1_effect", "Wielkość efektu (d):",
+            min = 0, max = 2, value = 0.5, step = 0.1)
+sliderInput("ch1_power_n", "Wielkość próby (n):",
+            min = 10, max = 200, value = 30, step = 5)
+```
+
+```{r}
+plotOutput("ch1_power_plot", height = "350px")
+uiOutput("ch1_power_stats")
+```
+
+```{r}
+#| context: server
+
+output$ch1_power_plot <- renderPlot({
+  alpha <- input$ch1_alpha
+  d <- input$ch1_effect
+  n <- input$ch1_power_n
+  sigma <- 10
+  mu0 <- 170
+  mu1 <- mu0 + d * sigma
+
+  x <- seq(mu0 - 4 * sigma / sqrt(n), mu1 + 4 * sigma / sqrt(n), length.out = 500)
+  se <- sigma / sqrt(n)
+
+  y_h0 <- dnorm(x, mean = mu0, sd = se)
+  y_h1 <- dnorm(x, mean = mu1, sd = se)
+
+  crit <- mu0 + qnorm(1 - alpha / 2) * se
+
+  df_plot <- data.frame(
+    x = rep(x, 2),
+    y = c(y_h0, y_h1),
+    dist = rep(c("H\u2080", "H\u2081"), each = 500)
+  )
+
+  p <- ggplot(df_plot, aes(x = x, y = y, color = dist)) +
+    geom_line(linewidth = 1.2) +
+    geom_vline(xintercept = crit, linetype = "dashed", color = col_dark) +
+    scale_color_manual(values = c(col_h0, col_h1), name = "Rozkład") +
+    labs(title = paste0("Moc testu (n=", n, ", d=", d, ", \u03b1=", alpha, ")"),
+         x = expression(bar(x)), y = "Gęstość") +
+    theme_test() +
+    theme(legend.position = "top")
+
+  shade_h0 <- data.frame(x = x[x >= crit], y = y_h0[x >= crit])
+  if (nrow(shade_h0) > 0) {
+    p <- p + geom_area(data = shade_h0, aes(x = x, y = y),
+                       fill = col_reject, alpha = 0.2, inherit.aes = FALSE)
+  }
+
+  shade_h1 <- data.frame(x = x[x >= crit], y = y_h1[x >= crit])
+  if (nrow(shade_h1) > 0) {
+    p <- p + geom_area(data = shade_h1, aes(x = x, y = y),
+                       fill = col_accept, alpha = 0.2, inherit.aes = FALSE)
+  }
+
+  p
+})
+
+output$ch1_power_stats <- renderUI({
+  alpha <- input$ch1_alpha
+  d <- input$ch1_effect
+  n <- input$ch1_power_n
+  sigma <- 10
+  se <- sigma / sqrt(n)
+  mu1_offset <- d * sigma
+  power <- pnorm(mu1_offset / se - qnorm(1 - alpha / 2))
+
+  div(style = "text-align: center;",
+    stat_box(paste0("Błąd I: ", alpha * 100, "%"), col_reject),
+    stat_box(paste0("Moc: ", round(power * 100, 1), "%"), col_accept),
+    stat_box(paste0("Błąd II: ", round((1 - power) * 100, 1), "%"), col_dark)
+  )
+})
+```
+
+::: {.callout-warning}
+**Kompromis:** Zmniejszenie $\alpha$ redukuje błąd I rodzaju, ale zwiększa błąd II rodzaju. Jedyny sposób na zmniejszenie obu: zwiększenie n!
+:::
+
+## Decyzja w praktyce
+
+```{r}
+uiOutput("ch1_quiz_scenario")
+p("Twoja decyzja:")
+uiOutput("ch1_quiz_options")
+uiOutput("ch1_quiz_feedback")
+actionButton("ch1_quiz_next", "Nowy scenariusz", class = "btn-outline-secondary")
+```
+
+```{r}
+#| context: server
+
+ch1_quiz_data <- reactiveVal(NULL)
+ch1_quiz_answered <- reactiveVal(FALSE)
+ch1_quiz_selected <- reactiveVal(NULL)
+
+generate_quiz <- function() {
+  scenarios <- list(
+    list(p = 0.003, alpha = 0.05, context = "Test t dla średniej wzrostu: p = 0.003, α = 0.05"),
+    list(p = 0.12, alpha = 0.05, context = "Test chi-kwadrat: p = 0.12, α = 0.05"),
+    list(p = 0.048, alpha = 0.05, context = "Test korelacji Pearsona: p = 0.048, α = 0.05"),
+    list(p = 0.06, alpha = 0.01, context = "ANOVA: p = 0.06, α = 0.01"),
+    list(p = 0.001, alpha = 0.01, context = "Test Wilcoxona: p = 0.001, α = 0.01"),
+    list(p = 0.052, alpha = 0.05, context = "Test t niezależny: p = 0.052, α = 0.05")
+  )
+  ch1_quiz_data(scenarios[[sample(length(scenarios), 1)]])
+  ch1_quiz_answered(FALSE)
+  ch1_quiz_selected(NULL)
+}
+
+observe({ generate_quiz() })
+observeEvent(input$ch1_quiz_next, { generate_quiz() })
+
+output$ch1_quiz_scenario <- renderUI({
+  sc <- ch1_quiz_data()
+  if (is.null(sc)) return(NULL)
+  div(class = "callout-info",
+    p(tags$strong("Scenariusz:"), sc$context)
+  )
+})
+
+ch1_quiz_choices <- list(
+  list(letter = "A", value = "reject", text = "Odrzucamy H\u2080"),
+  list(letter = "B", value = "fail_to_reject", text = "Brak podstaw do odrzucenia H\u2080")
+)
+
+output$ch1_quiz_options <- renderUI({
+  ch1_quiz_data()
+  if (ch1_quiz_answered()) return(NULL)
+  div(class = "quiz-tiles quiz-cols-2",
+    lapply(ch1_quiz_choices, function(opt) {
+      actionButton(paste0("ch1_tile_", opt$value),
+        tagList(
+          div(class = "tile-letter", opt$letter),
+          div(class = "tile-text", opt$text)
+        ),
+        class = "quiz-tile"
+      )
+    })
+  )
+})
+
+observe({
+  for (opt in ch1_quiz_choices) {
+    local({
+      val <- opt$value
+      observeEvent(input[[paste0("ch1_tile_", val)]], {
+        if (ch1_quiz_answered()) return()
+        ch1_quiz_selected(val)
+        ch1_quiz_answered(TRUE)
+      }, ignoreInit = TRUE)
+    })
+  }
+})
+
+output$ch1_quiz_feedback <- renderUI({
+  req(ch1_quiz_answered())
+  sc <- ch1_quiz_data()
+  answer <- ch1_quiz_selected()
+  if (is.null(sc) || is.null(answer)) return(NULL)
+
+  correct <- if (sc$p < sc$alpha) "reject" else "fail_to_reject"
+  if (answer == correct) {
+    div(class = "callout-success",
+      tags$strong("Poprawnie!"),
+      p(paste0("p = ", sc$p, " ", ifelse(sc$p < sc$alpha, "<", "\u2265"),
+               " \u03b1 = ", sc$alpha))
+    )
+  } else {
+    div(class = "callout-danger",
+      tags$strong("Nie! "),
+      p(paste0("p = ", sc$p, " ", ifelse(sc$p < sc$alpha, "<", "\u2265"),
+               " \u03b1 = ", sc$alpha, ". Zatem: ",
+               ifelse(correct == "reject", "odrzucamy H\u2080",
+                      "brak podstaw do odrzucenia H\u2080"), "."))
+    )
+  }
+})
+```
+
+---
+
+# Formułowanie hipotez
+
+*Znamy logikę testowania: $H_0$, $H_1$, p-wartość, decyzja. Ale jak przejść od pytania badawczego do formalnej hipotezy?*
+
+## Od pytania do hipotezy
+
+W badaniach pytania są formułowane **swobodnym językiem**:
+
+- *"Czy mężczyźni są wyżsi od kobiet?"*
+- *"Czy korepetycje pomagają?"*
+- *"Czy lodów sprzedaje się więcej w ciepłe dni?"*
+
+Ale test statystyczny wymaga **formalnych hipotez**: precyzyjnych stwierdzeń o parametrach populacji, które można zweryfikować danymi.
+
+Najważniejsza zasada: **$H_0$ zawsze zawiera znak równości** (=, $\leq$, $\geq$). $H_1$ zawiera to, co chcemy wykazać ($\neq$, >, <).
+
+::: {.callout-note}
+**Szablon:**
+
+$H_0$: brak efektu / brak różnicy / brak związku
+
+$H_1$: jest efekt / jest różnica / jest związek
+:::
+
+## Galeria przykładów: pytanie → hipoteza
+
+Przeglądaj przykłady — każdy pokazuje, jak przejść od potocznego pytania do formalnych hipotez.
+
+```{r}
+selectInput("ch2h_example", "Wybierz przykład:",
+  choices = c(
+    "Wzrost mężczyzn vs kobiet" = "ex1",
+    "Czy korepetycje pomagają?" = "ex2",
+    "Skuteczność leku" = "ex3",
+    "Czy kostka jest uczciwa?" = "ex4",
+    "Związek nauki z ocenami" = "ex5",
+    "Płeć a wybór kierunku" = "ex6",
+    "Różnice między 4 grupami" = "ex7",
+    "Średni czas dojazdu = 30 min?" = "ex8",
+    "Odsetek zdań > 70%?" = "ex9",
+    "Przed vs po szkoleniu" = "ex10"
+  ),
+  selected = "ex1"
+)
+```
+
+```{r}
+uiOutput("ch2h_example_display")
+```
+
+```{r}
+#| context: server
+
+ch2h_examples <- list(
+  ex1 = list(
+    question = "\"Czy mężczyźni są wyżsi od kobiet?\"",
+    context = "Badanie wzrostu w populacji studentów. Zmienna: wzrost (cm). Grupy: płeć.",
+    h0 = "\\(H_0: \\mu_{M} = \\mu_{K}\\)",
+    h1 = "\\(H_1: \\mu_{M} \\neq \\mu_{K}\\)",
+    h1_alt = "lub jednostronnie: \\(H_1: \\mu_{M} > \\mu_{K}\\)",
+    test = "Test t niezależny (lub Mann-Whitney)",
+    tip = "Pytanie sugeruje kierunek (\"wyżsi\"), ale bezpieczniej użyć testu dwustronnego, chyba że mamy mocne podstawy teoretyczne."
+  ),
+  ex2 = list(
+    question = "\"Czy korepetycje pomagają studentom?\"",
+    context = "Mierzymy wyniki tego samego studenta PRZED i PO korepetycjach.",
+    h0 = "\\(H_0: \\mu_d = 0\\) (\\(d\\) = wynik po \u2212 wynik przed)",
+    h1 = "\\(H_1: \\mu_d \\neq 0\\)",
+    h1_alt = "lub jednostronnie: \\(H_1: \\mu_d > 0\\)",
+    test = "Test t parowy (dane zależne, te same osoby)",
+    tip = "Kluczowe: te same osoby mierzone dwa razy \u2192 test parowy, nie niezależny!"
+  ),
+  ex3 = list(
+    question = "\"Czy nowy lek obniża ciśnienie skuteczniej niż placebo?\"",
+    context = "Randomizowane badanie: grupa lekowa vs grupa placebo. Zmienna: zmiana ciśnienia.",
+    h0 = "\\(H_0: \\mu_{lek} = \\mu_{placebo}\\)",
+    h1 = "\\(H_1: \\mu_{lek} < \\mu_{placebo}\\)",
+    h1_alt = "(jednostronnie, bo obniżenie = niższe ciśnienie)",
+    test = "Test t niezależny (próby niezależne, różne osoby)",
+    tip = "Tu test jednostronny ma sens \u2014 interesuje nas tylko, czy lek OBNIŻA ciśnienie."
+  ),
+  ex4 = list(
+    question = "\"Czy ta kostka jest uczciwa?\"",
+    context = "Rzucamy kostką n razy. Zliczamy, ile razy wypadło każde oczko.",
+    h0 = "\\(H_0: p_1 = p_2 = \\ldots = p_6 = 1/6\\)",
+    h1 = "\\(H_1:\\) co najmniej jedno \\(p_i \\neq 1/6\\)",
+    h1_alt = "",
+    test = "Test \u03c7\u00b2 zgodności",
+    tip = "H\u2080 precyzyjnie określa oczekiwany rozkład. Jedna zmienna jakościowa (wynik rzutu)."
+  ),
+  ex5 = list(
+    question = "\"Czy więcej nauki = lepsze oceny?\"",
+    context = "Zmienna X: godziny nauki/tydzień. Zmienna Y: średnia ocen. Obie ilościowe.",
+    h0 = "\\(H_0: \\rho = 0\\) (brak korelacji)",
+    h1 = "\\(H_1: \\rho \\neq 0\\)",
+    h1_alt = "lub jednostronnie: \\(H_1: \\rho > 0\\)",
+    test = "Korelacja Pearsona (lub Spearman)",
+    tip = "Dwie zmienne ilościowe \u2192 korelacja. \"Więcej = lepsze\" sugeruje kierunek dodatni."
+  ),
+  ex6 = list(
+    question = "\"Czy wybór kierunku studiów zależy od płci?\"",
+    context = "Dwie zmienne jakościowe: płeć (K/M) i kierunek (Informatyka/Ekonomia/Psychologia/Biologia).",
+    h0 = "\\(H_0:\\) płeć i kierunek są niezależne",
+    h1 = "\\(H_1:\\) płeć i kierunek są powiązane",
+    h1_alt = "",
+    test = "Test \u03c7\u00b2 niezależności (lub Fisher przy małych n)",
+    tip = "Dwie jakościowe \u2192 tabela kontyngencji \u2192 \u03c7\u00b2 niezależności."
+  ),
+  ex7 = list(
+    question = "\"Czy średnie oceny różnią się między kierunkami?\"",
+    context = "Zmienna Y: średnia ocen. Grupy: 4 kierunki studiów. Jedna zmienna ilościowa, jedna jakościowa (3+ grup).",
+    h0 = "\\(H_0: \\mu_1 = \\mu_2 = \\mu_3 = \\mu_4\\)",
+    h1 = "\\(H_1:\\) co najmniej jedna para średnich się różni",
+    h1_alt = "",
+    test = "ANOVA jednoczynnikowa (lub Kruskal-Wallis)",
+    tip = "Więcej niż 2 grupy \u2192 ANOVA. NIE wykonuj wielu testów t parami!"
+  ),
+  ex8 = list(
+    question = "\"Czy średni czas dojazdu to 30 minut?\"",
+    context = "Zmienna: czas dojazdu (min). Jedna próba, porównanie z wartością referencyjną.",
+    h0 = "\\(H_0: \\mu = 30\\)",
+    h1 = "\\(H_1: \\mu \\neq 30\\)",
+    h1_alt = "",
+    test = "Test t jednej próby",
+    tip = "Jedna zmienna ilościowa, pytamy czy średnia różni się od konkretnej wartości."
+  ),
+  ex9 = list(
+    question = "\"Czy więcej niż 70% studentów zdaje egzamin?\"",
+    context = "Zmienna: zdany/niezdany (binarna). Pytanie o proporcję w populacji.",
+    h0 = "\\(H_0: p \\leq 0.7\\)",
+    h1 = "\\(H_1: p > 0.7\\)",
+    h1_alt = "",
+    test = "Test dwumianowy (lub test proporcji)",
+    tip = "Zmienna binarna, pytanie o proporcję \u2192 test dwumianowy. Jednostronny, bo \"więcej niż\"."
+  ),
+  ex10 = list(
+    question = "\"Czy szkolenie BHP zmniejszyło liczbę wypadków?\"",
+    context = "Te same zakłady, mierzone PRZED i PO szkoleniu. Zmienna: liczba wypadków/miesiąc.",
+    h0 = "\\(H_0: \\mu_d = 0\\) (d = po \u2212 przed)",
+    h1 = "\\(H_1: \\mu_d < 0\\) (zmniejszenie)",
+    h1_alt = "",
+    test = "Test t parowy (lub Wilcoxon parowy)",
+    tip = "Te same jednostki mierzone dwa razy \u2192 parowy. Jednostronny, bo \"zmniejszyło\"."
+  )
+)
+
+output$ch2h_example_display <- renderUI({
+  ex <- ch2h_examples[[input$ch2h_example]]
+  if (is.null(ex)) return(NULL)
+
+  tagList(
+    div(class = "callout-info",
+      p(tags$strong("Pytanie badawcze: "), ex$question),
+      p(tags$em("Kontekst: "), ex$context)
+    ),
+    div(class = "formula-box",
+      p(tags$strong("Hipoteza zerowa: "), withMathJax(ex$h0)),
+      p(tags$strong("Hipoteza alternatywna: "), withMathJax(ex$h1)),
+      if (nchar(ex$h1_alt) > 0) p(tags$em(withMathJax(ex$h1_alt)))
+    ),
+    div(class = "callout-success",
+      p(tags$strong("Test: "), ex$test),
+      p(tags$strong("Wskazówka: "), ex$tip)
+    )
+  )
+})
+```
+
+## Ćwiczenie: sformułuj hipotezę
+
+Dostajesz pytanie badawcze w języku potocznym. Twój cel: wybrać poprawną parę $H_0$/$H_1$.
+
+```{r}
+uiOutput("ch2h_quiz_question")
+uiOutput("ch2h_quiz_options")
+uiOutput("ch2h_quiz_feedback")
+actionButton("ch2h_quiz_next", "Następne pytanie", class = "btn-outline-secondary")
+```
+
+```{r}
+#| context: server
+
+ch2h_quiz_bank <- list(
+  list(
+    question = "Badacz chce sprawdzić, czy studenci informatyki śpią mniej niż średnio 7 godzin.",
+    options = c(
+      "A" = "H\u2080: \u03bc = 7, H\u2081: \u03bc \u2260 7",
+      "B" = "H\u2080: \u03bc \u2265 7, H\u2081: \u03bc < 7",
+      "C" = "H\u2080: \u03bc < 7, H\u2081: \u03bc \u2265 7"
+    ),
+    correct = "B",
+    explanation = "\"Mniej niż 7\" to hipoteza alternatywna (H\u2081: \u03bc < 7). H\u2080 zawiera równość (\u2265)."
+  ),
+  list(
+    question = "Firma farmaceutyczna bada, czy nowy lek różni się skutecznością od istniejącego.",
+    options = c(
+      "A" = "H\u2080: \u03bc_nowy = \u03bc_stary, H\u2081: \u03bc_nowy \u2260 \u03bc_stary",
+      "B" = "H\u2080: \u03bc_nowy \u2260 \u03bc_stary, H\u2081: \u03bc_nowy = \u03bc_stary",
+      "C" = "H\u2080: \u03bc_nowy = \u03bc_stary, H\u2081: \u03bc_nowy > \u03bc_stary"
+    ),
+    correct = "A",
+    explanation = "\"Różni się\" (bez kierunku) = test dwustronny. H\u2080: brak różnicy, H\u2081: jest różnica."
+  ),
+  list(
+    question = "Nauczyciel chce zbadać, czy rozkład ocen na egzaminie odpowiadał krzywej normalnej: 10% niedostatecznych, 20% dostatecznych, 40% dobrych, 20% bardzo dobrych, 10% celujących.",
+    options = c(
+      "A" = "H\u2080: rozkład ocen jest normalny, H\u2081: nie jest normalny",
+      "B" = "H\u2080: p\u2081=0.1, p\u2082=0.2, p\u2083=0.4, p\u2084=0.2, p\u2085=0.1; H\u2081: co najmniej jedno pi różne",
+      "C" = "H\u2080: \u03bc = 3.5, H\u2081: \u03bc \u2260 3.5"
+    ),
+    correct = "B",
+    explanation = "To test \u03c7\u00b2 zgodności \u2014 H\u2080 określa konkretne proporcje, H\u2081: rozkład się różni."
+  ),
+  list(
+    question = "Dietetyk bada, czy płeć wpływa na preferencje dietetyczne (wege/mięso/różne).",
+    options = c(
+      "A" = "H\u2080: \u03bc_K = \u03bc_M, H\u2081: \u03bc_K \u2260 \u03bc_M",
+      "B" = "H\u2080: dieta i płeć są niezależne, H\u2081: dieta i płeć są powiązane",
+      "C" = "H\u2080: proporcje diet są równe, H\u2081: nie są równe"
+    ),
+    correct = "B",
+    explanation = "Dwie zmienne jakościowe \u2192 test niezależności. H\u2080: niezależność, H\u2081: powiązanie."
+  ),
+  list(
+    question = "Producent twierdzi, że co najmniej 95% produktów spełnia normy. Kontrola chce to zweryfikować.",
+    options = c(
+      "A" = "H\u2080: p = 0.95, H\u2081: p \u2260 0.95",
+      "B" = "H\u2080: p \u2265 0.95, H\u2081: p < 0.95",
+      "C" = "H\u2080: p < 0.95, H\u2081: p \u2265 0.95"
+    ),
+    correct = "B",
+    explanation = "Kontrola chce sprawdzić, czy odsetek jest niższy niż deklarowane 95%. H\u2081: p < 0.95."
+  )
+)
+
+ch2h_quiz_idx <- reactiveVal(1)
+ch2h_quiz_answered <- reactiveVal(FALSE)
+ch2h_quiz_selected <- reactiveVal(NULL)
+
+observe({ ch2h_quiz_idx() })
+observeEvent(input$ch2h_quiz_next, {
+  ch2h_quiz_idx(sample(length(ch2h_quiz_bank), 1))
+  ch2h_quiz_answered(FALSE)
+  ch2h_quiz_selected(NULL)
+})
+
+output$ch2h_quiz_question <- renderUI({
+  q <- ch2h_quiz_bank[[ch2h_quiz_idx()]]
+  div(class = "callout-info",
+    p(tags$strong("Pytanie:"), q$question)
+  )
+})
+
+output$ch2h_quiz_options <- renderUI({
+  ch2h_quiz_idx()
+  if (ch2h_quiz_answered()) return(NULL)
+  q <- ch2h_quiz_bank[[ch2h_quiz_idx()]]
+  letters_abc <- c("A", "B", "C")
+  div(class = "quiz-tiles quiz-cols-3",
+    lapply(letters_abc, function(l) {
+      actionButton(paste0("ch2h_qtile_", l),
+        tagList(
+          div(class = "tile-letter", l),
+          div(class = "tile-text", q$options[l])
+        ),
+        class = "quiz-tile"
+      )
+    })
+  )
+})
+
+observe({
+  for (l in c("A", "B", "C")) {
+    local({
+      val <- l
+      observeEvent(input[[paste0("ch2h_qtile_", val)]], {
+        if (ch2h_quiz_answered()) return()
+        ch2h_quiz_selected(val)
+        ch2h_quiz_answered(TRUE)
+      }, ignoreInit = TRUE)
+    })
+  }
+})
+
+output$ch2h_quiz_feedback <- renderUI({
+  req(ch2h_quiz_answered())
+  q <- ch2h_quiz_bank[[ch2h_quiz_idx()]]
+  answer <- ch2h_quiz_selected()
+  if (answer == q$correct) {
+    div(class = "callout-success",
+      tags$strong("Poprawnie!"),
+      p(q$explanation))
+  } else {
+    div(class = "callout-danger",
+      tags$strong("Nie! "),
+      p("Poprawna odpowiedź: ", q$correct, "."),
+      p(q$explanation))
+  }
+})
+```
+
+## Odwrotnie: hipoteza → co badamy?
+
+Teraz odwrotnie: widzisz formalną hipotezę statystyczną. Co właściwie badamy? Jak opisać to przystępnym językiem?
+
+```{r}
+uiOutput("ch2h_rev_question")
+uiOutput("ch2h_rev_options")
+uiOutput("ch2h_rev_feedback")
+actionButton("ch2h_rev_next", "Następne pytanie", class = "btn-outline-secondary")
+```
+
+```{r}
+#| context: server
+
+ch2h_rev_bank <- list(
+  list(
+    hypothesis = "H\u2080: \u03bc = 36.6, H\u2081: \u03bc \u2260 36.6",
+    context = "Badanie grupy pacjentów. Zmienna: temperatura ciała (\u00b0C).",
+    options = c(
+      "A" = "Czy średnia temperatura pacjentów różni się od normy 36.6\u00b0C?",
+      "B" = "Czy temperatura każdego pacjenta wynosi 36.6\u00b0C?",
+      "C" = "Czy rozkład temperatury jest normalny?"
+    ),
+    correct = "A",
+    explanation = "Test t jednej próby: porównanie średniej populacyjnej z wartością referencyjną."
+  ),
+  list(
+    hypothesis = "H\u2080: \u03c1 = 0, H\u2081: \u03c1 \u2260 0",
+    context = "Dane: 200 studentów. Zmienne: godziny nauki i wyniki egzaminu.",
+    options = c(
+      "A" = "Czy godziny nauki powodują lepsze wyniki?",
+      "B" = "Czy istnieje związek liniowy między godzinami nauki a wynikami?",
+      "C" = "Czy studenci uczą się wystarczająco dużo?"
+    ),
+    correct = "B",
+    explanation = "\u03c1 = 0 to brak korelacji. Testujemy związek liniowy (Pearson). Uwaga: korelacja \u2260 przyczynowość!"
+  ),
+  list(
+    hypothesis = "H\u2080: płeć i preferencje są niezależne, H\u2081: są powiązane",
+    context = "Ankieta: 300 osób. Zmienne: płeć (K/M) i ulubiony gatunek filmu.",
+    options = c(
+      "A" = "Czy kobiety oglądają więcej filmów?",
+      "B" = "Czy płeć wpływa na preferencje filmowe?",
+      "C" = "Czy rozkład płci jest równomierny?"
+    ),
+    correct = "B",
+    explanation = "Test \u03c7\u00b2 niezależności: czy istnieje związek między dwiema zmiennymi jakościowymi."
+  ),
+  list(
+    hypothesis = "H\u2080: \u03bc\u2081 = \u03bc\u2082 = \u03bc\u2083, H\u2081: co najmniej jedna średnia różna",
+    context = "Badanie wyników egzaminu w trzech grupach ćwiczeniowych.",
+    options = c(
+      "A" = "Czy wyniki egzaminu są normalne?",
+      "B" = "Czy prowadzący wpływają na wyniki? (ANOVA)",
+      "C" = "Czy trzecia grupa jest najlepsza?"
+    ),
+    correct = "B",
+    explanation = "ANOVA: porównanie średnich w 3+ grupach. H\u2081 nie mówi, która grupa jest najlepsza \u2014 to rola post-hoc."
+  ),
+  list(
+    hypothesis = "H\u2080: \u03bc_d = 0, H\u2081: \u03bc_d > 0 (d = po \u2212 przed)",
+    context = "20 uczniów, mierzeni przed i po kursie szybkiego czytania. Zmienna: słowa/min.",
+    options = c(
+      "A" = "Czy kurs poprawił szybkość czytania?",
+      "B" = "Czy uczniowie czytają szybciej niż średnia populacyjna?",
+      "C" = "Czy różnica między uczniami jest istotna?"
+    ),
+    correct = "A",
+    explanation = "Test t parowy (jednostronny): te same osoby przed/po. \u03bc_d > 0 oznacza poprawa (po > przed)."
+  )
+)
+
+ch2h_rev_idx <- reactiveVal(1)
+ch2h_rev_answered <- reactiveVal(FALSE)
+ch2h_rev_selected <- reactiveVal(NULL)
+
+observeEvent(input$ch2h_rev_next, {
+  ch2h_rev_idx(sample(length(ch2h_rev_bank), 1))
+  ch2h_rev_answered(FALSE)
+  ch2h_rev_selected(NULL)
+})
+
+output$ch2h_rev_question <- renderUI({
+  q <- ch2h_rev_bank[[ch2h_rev_idx()]]
+  div(class = "callout-info",
+    p(tags$strong("Kontekst: "), q$context),
+    div(class = "formula-box",
+      p(tags$strong("Hipotezy: "), q$hypothesis)
+    )
+  )
+})
+
+output$ch2h_rev_options <- renderUI({
+  ch2h_rev_idx()
+  if (ch2h_rev_answered()) return(NULL)
+  q <- ch2h_rev_bank[[ch2h_rev_idx()]]
+  letters_abc <- c("A", "B", "C")
+  div(class = "quiz-tiles quiz-cols-3",
+    lapply(letters_abc, function(l) {
+      actionButton(paste0("ch2h_rtile_", l),
+        tagList(
+          div(class = "tile-letter", l),
+          div(class = "tile-text", q$options[l])
+        ),
+        class = "quiz-tile"
+      )
+    })
+  )
+})
+
+observe({
+  for (l in c("A", "B", "C")) {
+    local({
+      val <- l
+      observeEvent(input[[paste0("ch2h_rtile_", val)]], {
+        if (ch2h_rev_answered()) return()
+        ch2h_rev_selected(val)
+        ch2h_rev_answered(TRUE)
+      }, ignoreInit = TRUE)
+    })
+  }
+})
+
+output$ch2h_rev_feedback <- renderUI({
+  req(ch2h_rev_answered())
+  q <- ch2h_rev_bank[[ch2h_rev_idx()]]
+  answer <- ch2h_rev_selected()
+  if (answer == q$correct) {
+    div(class = "callout-success",
+      tags$strong("Poprawnie!"),
+      p(q$explanation))
+  } else {
+    div(class = "callout-danger",
+      tags$strong("Nie! "),
+      p("Poprawna odpowiedź: ", q$correct, "."),
+      p(q$explanation))
+  }
+})
+```
+
+## Jednostronny vs dwustronny test
+
+Sformułowanie $H_1$ decyduje, czy test jest jedno- czy dwustronny:
+
+| Typ | $H_1$ | Przykład | Kiedy? |
+|---|---|---|---|
+| **Dwustronny** | $\mu_1 \neq \mu_2$ | "Czy grupy się różnią?" | Gdy nie wiesz, w którą stronę — **domyślny wybór** |
+| **Prawostronny** | $\mu_1 > \mu_2$ | "Czy lek jest lepszy od placebo?" | Gdy masz silne podstawy teoretyczne dla kierunku |
+| **Lewostronny** | $\mu_1 < \mu_2$ | "Czy nowa metoda jest szybsza?" | Gdy oczekujesz niższej wartości |
+
+```{r}
+radioButtons("ch2h_sided", "Typ testu:",
+  choices = c(
+    "Dwustronny (\u2260)" = "two.sided",
+    "Prawostronny (>)" = "greater",
+    "Lewostronny (<)" = "less"
+  ),
+  selected = "two.sided"
+)
+sliderInput("ch2h_alpha", "\u03b1:",
+            min = 0.01, max = 0.10, value = 0.05, step = 0.01)
+```
+
+```{r}
+plotOutput("ch2h_sided_plot", height = "300px")
+```
+
+```{r}
+#| context: server
+
+output$ch2h_sided_plot <- renderPlot({
+  alpha <- input$ch2h_alpha
+  sided <- input$ch2h_sided
+  x <- seq(-4, 4, length.out = 500)
+  y <- dnorm(x)
+  df <- data.frame(x = x, y = y)
+
+  p <- ggplot(df, aes(x = x, y = y)) +
+    geom_line(color = col_h0, linewidth = 1.2)
+
+  if (sided == "two.sided") {
+    crit <- qnorm(1 - alpha / 2)
+    shade_left <- df[df$x <= -crit, ]
+    shade_right <- df[df$x >= crit, ]
+    p <- p +
+      geom_area(data = shade_left, fill = col_reject, alpha = 0.4) +
+      geom_area(data = shade_right, fill = col_reject, alpha = 0.4) +
+      geom_vline(xintercept = c(-crit, crit), linetype = "dashed", color = col_reject) +
+      labs(title = paste0("Dwustronny: \u03b1/2 = ", alpha/2, " na każdym ogonie"))
+  } else if (sided == "greater") {
+    crit <- qnorm(1 - alpha)
+    shade <- df[df$x >= crit, ]
+    p <- p +
+      geom_area(data = shade, fill = col_reject, alpha = 0.4) +
+      geom_vline(xintercept = crit, linetype = "dashed", color = col_reject) +
+      labs(title = paste0("Prawostronny: całe \u03b1 = ", alpha, " na prawym ogonie"))
+  } else {
+    crit <- qnorm(alpha)
+    shade <- df[df$x <= crit, ]
+    p <- p +
+      geom_area(data = shade, fill = col_reject, alpha = 0.4) +
+      geom_vline(xintercept = crit, linetype = "dashed", color = col_reject) +
+      labs(title = paste0("Lewostronny: całe \u03b1 = ", alpha, " na lewym ogonie"))
+  }
+
+  p +
+    labs(x = "Statystyka testowa (z)", y = "Gęstość") +
+    annotate("text", x = 0, y = max(y) * 0.5, label = "Nie odrzucamy H\u2080",
+             color = col_accept, fontface = "bold", size = 5) +
+    theme_test()
+})
+```
+
+::: {.callout-warning}
+**W wątpliwości:** Używaj testu **dwustronnego**. Test jednostronny jest mocniejszy (większa moc), ale ryzykowny: jeśli efekt jest w przeciwnym kierunku, nie możesz go wykryć. Test jednostronny powinien być zaplanowany *przed* zbieraniem danych.
+:::
+
+## Typowe błędy przy formułowaniu hipotez
+
+::: {.callout-important}
+1. **$H_0$ z nierównością:** Źle: $H_0: \mu_1 \neq \mu_2$. $H_0$ **zawsze** zawiera = (ewentualnie $\leq$ lub $\geq$).
+2. **Hipoteza o próbie zamiast populacji:** Źle: "H0: średnia w próbie = 170". Hipotezy dotyczą **parametrów populacji**, nie statystyk z próby.
+3. **Brak precyzji:** Źle: "H0: dane są dobre". Hipoteza musi precyzyjnie określać parametr i wartość.
+4. **Zmiana hipotezy po zobaczeniu danych (HARKing):** Hipotezy formułujemy PRZED analizą, nie po!
+5. **Mylące $H_0$ i $H_1$:** $H_1$ to to, co chcesz **wykazać**. $H_0$ to "stan domyślny" (brak efektu). Nie odwracaj ich.
+:::
+
+---
+
+# Jedna zmienna ilościowa
+
+*Znamy logikę testowania i formułowanie hipotez. Czas na pierwszy konkretny test: czy średnia/mediana różni się od zakładanej wartości?*
+
+## Test t jednej próby
+
+Pytanie: **Czy średnia w populacji różni się od wartości $\mu_0$?**
+
+::: {.formula-box}
+$H_0: \mu = \mu_0 \quad\text{vs}\quad H_1: \mu \neq \mu_0$
+
+$t = \frac{\bar{x} - \mu_0}{s / \sqrt{n}}, \quad df = n - 1$
+:::
+
+Wymaga: dane ilościowe, w przybliżeniu normalne (lub duże n dzięki CTG).
+
+## Interaktywny test t
+
+```{r}
+selectInput("ch2_scenario", "Scenariusz:",
+  choices = c(
+    "Wzrost studentów (\u03bc\u2080 = 170 cm)" = "height",
+    "Czas dojazdu (\u03bc\u2080 = 30 min)" = "commute",
+    "Oceny (\u03bc\u2080 = 3.5)" = "grades"
+  ),
+  selected = "height"
+)
+sliderInput("ch2_n", "Wielkość próby (n):",
+            min = 10, max = 100, value = 30, step = 5)
+actionButton("ch2_run_t", "Losuj próbę i testuj",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+plotOutput("ch2_t_hist", height = "250px")
+plotOutput("ch2_t_dist", height = "200px")
+uiOutput("ch2_t_result")
+```
+
+```{r}
+#| context: server
+
+ch2_sample <- reactiveVal(NULL)
+
+observeEvent(input$ch2_run_t, {
+  n <- input$ch2_n
+  samp <- switch(input$ch2_scenario,
+    "height"  = rnorm(n, mean = 172, sd = 10),
+    "commute" = rgamma(n, shape = 3, scale = 10),
+    "grades"  = pmin(pmax(rnorm(n, mean = 3.6, sd = 0.7), 2), 5)
+  )
+  ch2_sample(samp)
+})
+
+ch2_get_mu0 <- reactive({
+  switch(input$ch2_scenario,
+    "height" = 170, "commute" = 30, "grades" = 3.5)
+})
+
+output$ch2_t_hist <- renderPlot({
+  samp <- ch2_sample()
+  if (is.null(samp)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Losuj próbę i testuj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    mu0 <- ch2_get_mu0()
+    ggplot(data.frame(x = samp), aes(x = x)) +
+      geom_histogram(bins = 15, fill = col_h0, alpha = 0.6, color = "white") +
+      geom_vline(xintercept = mu0, color = col_reject, linewidth = 1.2,
+                 linetype = "dashed") +
+      geom_vline(xintercept = mean(samp), color = col_pvalue, linewidth = 1.2) +
+      annotate("text", x = mu0, y = Inf, vjust = 2,
+               label = paste0("\u03bc\u2080 = ", mu0), color = col_reject,
+               fontface = "bold") +
+      annotate("text", x = mean(samp), y = Inf, vjust = 3.5,
+               label = paste0("\u0304x = ", round(mean(samp), 2)),
+               color = col_pvalue, fontface = "bold") +
+      labs(title = "Histogram próby", x = "Wartość", y = "Liczba") +
+      theme_test()
+  }
+})
+
+output$ch2_t_dist <- renderPlot({
+  samp <- ch2_sample()
+  if (is.null(samp)) return(NULL)
+
+  mu0 <- ch2_get_mu0()
+  n <- length(samp)
+  t_stat <- (mean(samp) - mu0) / (sd(samp) / sqrt(n))
+
+  plot_test_distribution(t_stat, df = n - 1, test_type = "t")
+})
+
+output$ch2_t_result <- renderUI({
+  samp <- ch2_sample()
+  if (is.null(samp)) return(NULL)
+
+  mu0 <- ch2_get_mu0()
+  df_data <- data.frame(value = samp)
+  result <- rstatix::t_test(df_data, value ~ 1, mu = mu0)
+  tidy_res <- as.data.frame(result)
+
+  p_val <- tidy_res$p
+  res <- format_test_result(p_val)
+
+  div(class = "callout-info",
+    p(tags$strong("Wynik testu t jednej próby:")),
+    p(paste0("t(", length(samp) - 1, ") = ",
+             round(tidy_res$statistic, 3))),
+    p(paste0("p = ", format.pval(p_val, digits = 4))),
+    p(style = paste0("color: ", res$color, "; font-weight: bold;"),
+      res$decision),
+    p(res$explanation)
+  )
+})
+```
+
+## Test Wilcoxona jednej próby
+
+Alternatywa nieparametryczna dla testu t. Testuje, czy **mediana** różni się od wartości $\mu_0$.
+
+Nie wymaga normalności — działa na rankingach. Mniej moc gdy dane są normalne, ale odporny na outliery i skośność.
+
+```{r}
+helpText("Używa tych samych danych co test t powyżej.")
+actionButton("ch2_run_wilcox", "Testuj Wilcoxonem",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+uiOutput("ch2_wilcox_result")
+```
+
+```{r}
+#| context: server
+
+output$ch2_wilcox_result <- renderUI({
+  req(input$ch2_run_wilcox)
+  samp <- isolate(ch2_sample())
+  if (is.null(samp)) {
+    return(div(class = "callout-warning", "Najpierw wygeneruj próbę testem t."))
+  }
+
+  mu0 <- isolate(ch2_get_mu0())
+  df_data <- data.frame(value = samp)
+  result <- rstatix::wilcox_test(df_data, value ~ 1, mu = mu0)
+  tidy_res <- as.data.frame(result)
+
+  p_val <- tidy_res$p
+  res <- format_test_result(p_val)
+
+  div(class = "callout-info",
+    p(tags$strong("Wynik testu Wilcoxona jednej próby:")),
+    p(paste0("V = ", round(tidy_res$statistic, 1))),
+    p(paste0("p = ", format.pval(p_val, digits = 4))),
+    p(style = paste0("color: ", res$color, "; font-weight: bold;"),
+      res$decision),
+    p(res$explanation)
+  )
+})
+```
+
+## Porównanie: t vs Wilcoxon
+
+Który test daje lepsze wyniki? To zależy od rozkładu danych. Porównajmy oba na danych z różnych rozkładów.
+
+```{r}
+selectInput("ch2_cmp_dist", "Rozkład populacji:",
+  choices = c(
+    "Normalny"                  = "normal",
+    "Prawoskośny (Gamma)" = "skewed",
+    "Z outlierami"              = "outliers"
+  ),
+  selected = "normal"
+)
+sliderInput("ch2_cmp_n", "Wielkość próby (n):",
+            min = 10, max = 100, value = 20, step = 5)
+helpText("Generujemy 200 prób z H₁ prawdziwą (mały efekt). Porównujemy moc obu testów.")
+actionButton("ch2_cmp_run", "Symuluj",
+             class = "btn-warning", width = "100%")
+```
+
+```{r}
+uiOutput("ch2_cmp_result")
+plotOutput("ch2_cmp_plot", height = "250px")
+```
+
+```{r}
+#| context: server
+
+ch2_cmp_results <- reactiveVal(NULL)
+
+observeEvent(input$ch2_cmp_run, {
+  dist <- input$ch2_cmp_dist
+  n <- input$ch2_cmp_n
+
+  n_sims <- 200
+
+  results <- sapply(1:n_sims, function(i) {
+    samp <- switch(dist,
+      "normal"   = rnorm(n, mean = 172, sd = 10),
+      "skewed"   = rgamma(n, shape = 4, scale = 8),
+      "outliers" = c(rnorm(n - 3, mean = 172, sd = 10),
+                     rnorm(3, mean = 220, sd = 5))
+    )
+    mu0 <- switch(dist, "normal" = 170, "skewed" = 30, "outliers" = 170)
+
+    df_data <- data.frame(value = samp)
+    p_t <- rstatix::t_test(df_data, value ~ 1, mu = mu0)$p
+    p_w <- rstatix::wilcox_test(df_data, value ~ 1, mu = mu0)$p
+
+    c(p_t = p_t, p_w = p_w)
+  })
+
+  results_df <- data.frame(t(results))
+  ch2_cmp_results(results_df)
+})
+
+output$ch2_cmp_result <- renderUI({
+  df <- ch2_cmp_results()
+  if (is.null(df)) return(NULL)
+
+  power_t <- mean(df$p_t < 0.05) * 100
+  power_w <- mean(df$p_w < 0.05) * 100
+
+  div(style = "text-align: center;",
+    stat_box(paste0("Moc t: ", round(power_t, 1), "%"), col_h0),
+    stat_box(paste0("Moc Wilcoxon: ", round(power_w, 1), "%"), col_paired)
+  )
+})
+
+output$ch2_cmp_plot <- renderPlot({
+  df <- ch2_cmp_results()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Symuluj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    long <- data.frame(
+      test = rep(c("Test t", "Wilcoxon"), each = nrow(df)),
+      p = c(df$p_t, df$p_w)
+    )
+
+    ggplot(long, aes(x = p, fill = test)) +
+      geom_histogram(breaks = seq(0, 1, by = 0.05), alpha = 0.6,
+                     color = "white", position = "identity") +
+      geom_vline(xintercept = 0.05, color = col_reject, linetype = "dashed") +
+      scale_fill_manual(values = c(col_h0, col_paired), name = NULL) +
+      labs(title = "Rozkład p-wartości (H\u2081 prawdziwa)",
+           x = "p-wartość", y = "Liczba") +
+      theme_test() +
+      theme(legend.position = "top")
+  }
+})
+```
+
+::: {.callout-note}
+**Kiedy który?**
+
+- **Test t** — dane w przybliżeniu normalne, brak ekstremalnych outlierów
+- **Wilcoxon** — wyraźna skośność, outliery, mała próba + wątpliwa normalność
+:::
+
+---
+
+# Jedna zmienna jakościowa
+
+*Testowaliśmy średnią jednej zmiennej ilościowej. A co, gdy zmienna jest jakościowa (kategorialna)?*
+
+## Test chi-kwadrat zgodności
+
+Pytanie: **Czy rozkład obserwowany różni się od oczekiwanego?**
+
+Przykłady: czy kostka jest uczciwa? Czy studenci wybierają kierunki równomiernie?
+
+::: {.formula-box}
+$H_0$: rozkład zgodny z oczekiwanym
+
+$\chi^2 = \sum \frac{(O_i - E_i)^2}{E_i}$
+
+gdzie $O_i$ = liczności obserwowane, $E_i$ = liczności oczekiwane
+:::
+
+## Czy kostka jest uczciwa?
+
+```{r}
+sliderInput("ch3_n_rolls", "Liczba rzutów:",
+            min = 30, max = 500, value = 60, step = 10)
+radioButtons("ch3_fair", "Typ kostki:",
+  choices = c(
+    "Uczciwa" = "fair",
+    "Obciążona (6 częściej)" = "biased"
+  ),
+  selected = "fair", inline = TRUE
+)
+actionButton("ch3_roll", "Rzuć kostką!",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+plotOutput("ch3_dice_plot", height = "300px")
+uiOutput("ch3_dice_result")
+```
+
+```{r}
+#| context: server
+
+ch3_dice_data <- reactiveVal(NULL)
+
+observeEvent(input$ch3_roll, {
+  n <- input$ch3_n_rolls
+  probs <- if (input$ch3_fair == "fair") rep(1/6, 6) else c(rep(0.15, 5), 0.25)
+  rolls <- sample(1:6, n, replace = TRUE, prob = probs)
+  observed <- table(factor(rolls, levels = 1:6))
+  expected <- n / 6
+
+  test <- chisq.test(observed, p = rep(1/6, 6))
+
+  ch3_dice_data(list(
+    observed = as.numeric(observed),
+    expected = rep(expected, 6),
+    test = test
+  ))
+})
+
+output$ch3_dice_plot <- renderPlot({
+  dd <- ch3_dice_data()
+  if (is.null(dd)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Rzuć kostką!'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    df <- data.frame(
+      face = rep(1:6, 2),
+      count = c(dd$observed, dd$expected),
+      type = rep(c("Obserwowane", "Oczekiwane"), each = 6)
+    )
+
+    ggplot(df, aes(x = factor(face), y = count, fill = type)) +
+      geom_col(position = position_dodge(width = 0.8), width = 0.7, alpha = 0.8) +
+      geom_text(aes(label = round(count, 1)),
+                position = position_dodge(width = 0.8), vjust = -0.3, size = 4) +
+      scale_fill_manual(values = c(col_h0, col_pvalue), name = NULL) +
+      labs(title = paste0(input$ch3_n_rolls, " rzutów kostką"),
+           x = "Oczko", y = "Liczność") +
+      theme_test() +
+      theme(legend.position = "top")
+  }
+})
+
+output$ch3_dice_result <- renderUI({
+  dd <- ch3_dice_data()
+  if (is.null(dd)) return(NULL)
+
+  test <- dd$test
+  res <- format_test_result(test$p.value)
+
+  div(class = "callout-info",
+    p(tags$strong("Wynik testu \u03c7\u00b2 zgodności:")),
+    p(paste0("\u03c7\u00b2(", test$parameter, ") = ",
+             round(test$statistic, 3))),
+    p(paste0("p = ", format.pval(test$p.value, digits = 4))),
+    p(style = paste0("color:", res$color, "; font-weight: bold;"),
+      res$decision)
+  )
+})
+```
+
+::: {.callout-note}
+**Interpretacja:** Duża wartość $\chi^2$ oznacza dużą rozbieżność między tym, co zaobserwowaliśmy, a tym, czego oczekiwaliśmy. Jeśli p < 0.05, rozbieżność jest zbyt duża, by być przypadkiem.
+:::
+
+## Test dwumianowy
+
+Gdy zmienna ma dokładnie **dwie kategorie** (sukces/porażka), możemy użyć testu dwumianowego.
+
+Pytanie: **Czy proporcja sukcesów różni się od $p_0$?**
+
+Przykład: rzucamy monetą — czy jest uczciwa (p = 0.5)?
+
+```{r}
+sliderInput("ch3_coin_n", "Liczba rzutów:",
+            min = 10, max = 200, value = 50, step = 5)
+sliderInput("ch3_coin_p0", "Testowane p\u2080:",
+            min = 0.1, max = 0.9, value = 0.5, step = 0.05)
+sliderInput("ch3_coin_true_p", "Prawdziwe p (orzeł):",
+            min = 0.1, max = 0.9, value = 0.5, step = 0.05)
+actionButton("ch3_coin_flip", "Rzuć monetą!",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+plotOutput("ch3_coin_plot", height = "300px")
+uiOutput("ch3_coin_result")
+```
+
+```{r}
+#| context: server
+
+ch3_coin_data <- reactiveVal(NULL)
+
+observeEvent(input$ch3_coin_flip, {
+  n <- input$ch3_coin_n
+  true_p <- input$ch3_coin_true_p
+  p0 <- input$ch3_coin_p0
+
+  heads <- rbinom(1, n, true_p)
+  test <- binom.test(heads, n, p = p0)
+
+  ch3_coin_data(list(
+    heads = heads, n = n, phat = heads / n,
+    p0 = p0, true_p = true_p, test = test
+  ))
+})
+
+output$ch3_coin_plot <- renderPlot({
+  cd <- ch3_coin_data()
+  if (is.null(cd)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Rzuć monetą!'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    x <- 0:cd$n
+    probs <- dbinom(x, cd$n, cd$p0)
+    df <- data.frame(x = x, prob = probs)
+
+    ggplot(df, aes(x = x, y = prob)) +
+      geom_col(fill = col_h0, alpha = 0.5, width = 0.8) +
+      geom_vline(xintercept = cd$heads, color = col_reject, linewidth = 1.2) +
+      annotate("text", x = cd$heads, y = max(probs) * 0.9,
+               label = paste0("Obserwowane: ", cd$heads),
+               hjust = -0.1, color = col_reject, fontface = "bold") +
+      labs(title = paste0("Rozkład B(", cd$n, ", ", cd$p0,
+                          ") pod H\u2080"),
+           x = "Liczba orłów", y = "Prawdopodobieństwo") +
+      theme_test()
+  }
+})
+
+output$ch3_coin_result <- renderUI({
+  cd <- ch3_coin_data()
+  if (is.null(cd)) return(NULL)
+
+  test <- cd$test
+  res <- format_test_result(test$p.value)
+
+  div(class = "callout-info",
+    p(tags$strong("Wynik testu dwumianowego:")),
+    p(paste0("Obserwowane orły: ", cd$heads, " / ", cd$n,
+             " (p\u0302 = ", round(cd$phat, 3), ")")),
+    p(paste0("p = ", format.pval(test$p.value, digits = 4))),
+    p(paste0("95% CI: [", round(test$conf.int[1], 3), " ; ",
+             round(test$conf.int[2], 3), "]")),
+    p(style = paste0("color:", res$color, "; font-weight: bold;"),
+      res$decision)
+  )
+})
+```
+
+::: {.callout-warning}
+**Uwaga:** Test dwumianowy jest **dokładny** (nie opiera się na przybliżeniu) — działa nawet przy bardzo małych próbach. Test $\chi^2$ zgodności wymaga, żeby każda oczekiwana liczność $\geq$ 5.
+:::
+
+---
+
+# Dwie zmienne ilościowe (korelacja)
+
+*Dotychczas badaliśmy jedną zmienną. Teraz pytamy: czy dwie zmienne ilościowe są ze sobą powiązane?*
+
+## Korelacja Pearsona
+
+Współczynnik korelacji Pearsona $r$ mierzy **liniowy** związek między dwiema zmiennymi.
+
+::: {.formula-box}
+$H_0: \rho = 0$ (brak korelacji liniowej)
+
+$r = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum(x_i-\bar{x})^2 \cdot \sum(y_i-\bar{y})^2}}$
+:::
+
+## Interaktywna korelacja
+
+```{r}
+sliderInput("ch4_r", "Prawdziwe r:",
+            min = -1, max = 1, value = 0.7, step = 0.05)
+sliderInput("ch4_n", "Wielkość próby (n):",
+            min = 10, max = 200, value = 50, step = 10)
+actionButton("ch4_gen_pearson", "Generuj dane",
+             class = "btn-primary", width = "100%")
+checkboxInput("ch4_show_reg", "Pokaż linię regresji", value = FALSE)
+```
+
+```{r}
+plotOutput("ch4_scatter", height = "350px")
+uiOutput("ch4_pearson_result")
+```
+
+```{r}
+#| context: server
+
+ch4_pearson_data <- reactiveVal(NULL)
+
+observeEvent(input$ch4_gen_pearson, {
+  ch4_pearson_data(generate_correlation_data(input$ch4_n, input$ch4_r, "linear"))
+})
+
+output$ch4_scatter <- renderPlot({
+  df <- ch4_pearson_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    p <- ggplot(df, aes(x = x, y = y)) +
+      geom_point(color = col_h0, alpha = 0.6, size = 2.5) +
+      labs(title = "Wykres rozrzutu", x = "X", y = "Y") +
+      theme_test()
+
+    if (input$ch4_show_reg) {
+      p <- p + geom_smooth(method = "lm", se = TRUE,
+                           color = col_reject, fill = col_reject, alpha = 0.1)
+    }
+    p
+  }
+})
+
+output$ch4_pearson_result <- renderUI({
+  df <- ch4_pearson_data()
+  if (is.null(df)) return(NULL)
+
+  result <- rstatix::cor_test(df, x, y, method = "pearson")
+  tidy_res <- as.data.frame(result)
+  res <- format_test_result(tidy_res$p)
+
+  div(class = "callout-info",
+    p(tags$strong("Korelacja Pearsona:")),
+    p(paste0("r = ", round(tidy_res$cor, 3))),
+    p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
+    p(style = paste0("color:", res$color, "; font-weight: bold;"),
+      res$decision)
+  )
+})
+```
+
+## Korelacja Spearmana
+
+Korelacja Spearmana mierzy **monotoniczność** związku (niekoniecznie liniowy). Działa na **rangach** — jest odporna na outliery.
+
+Zobaczmy dane, gdzie związek jest monotoniczny, ale nie liniowy:
+
+```{r}
+selectInput("ch4_corr_type", "Typ danych:",
+  choices = c(
+    "Liniowy" = "linear",
+    "Monotoniczny (log)" = "monotonic",
+    "Brak związku" = "none"
+  ),
+  selected = "monotonic"
+)
+sliderInput("ch4_sp_n", "n:",
+            min = 20, max = 100, value = 50, step = 10)
+actionButton("ch4_gen_spearman", "Generuj dane",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+plotOutput("ch4_sp_scatter", height = "300px")
+uiOutput("ch4_sp_comparison")
+```
+
+```{r}
+#| context: server
+
+ch4_spearman_data <- reactiveVal(NULL)
+
+observeEvent(input$ch4_gen_spearman, {
+  ch4_spearman_data(generate_correlation_data(
+    input$ch4_sp_n, 0.7, input$ch4_corr_type))
+})
+
+output$ch4_sp_scatter <- renderPlot({
+  df <- ch4_spearman_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    ggplot(df, aes(x = x, y = y)) +
+      geom_point(color = col_h0, alpha = 0.6, size = 2.5) +
+      geom_smooth(method = "lm", se = FALSE, color = col_reject,
+                  linetype = "dashed", alpha = 0.5) +
+      labs(title = "Wykres rozrzutu", x = "X", y = "Y") +
+      theme_test()
+  }
+})
+
+output$ch4_sp_comparison <- renderUI({
+  df <- ch4_spearman_data()
+  if (is.null(df)) return(NULL)
+
+  res_p <- rstatix::cor_test(df, x, y, method = "pearson")
+  res_s <- rstatix::cor_test(df, x, y, method = "spearman")
+
+  div(style = "text-align: center;",
+    stat_box(paste0("Pearson r = ", round(as.data.frame(res_p)$cor, 3)), col_h0),
+    stat_box(paste0("Spearman \u03c1 = ", round(as.data.frame(res_s)$cor, 3)), col_paired),
+    stat_box(paste0("p(Pearson) = ", format.pval(as.data.frame(res_p)$p, digits = 3)), col_dark),
+    stat_box(paste0("p(Spearman) = ", format.pval(as.data.frame(res_s)$p, digits = 3)), col_dark)
+  )
+})
+```
+
+::: {.callout-note}
+**Kiedy który?**
+
+- **Pearson** — związek liniowy, dane ~normalne, brak ekstremalnych outlierów
+- **Spearman** — związek monotoniczny (niekoniecznie liniowy), dane porządkowe, outliery
+:::
+
+## Korelacja ≠ przyczynowość
+
+Wysoka korelacja nie oznacza, że jedna zmienna **powoduje** zmianę drugiej. Zobaczmy, jak **jeden outlier** może sztucznie wytworzyć korelację.
+
+```{r}
+helpText("Dane: 50 punktów bez korelacji. Kliknij, aby dodać outliera.")
+actionButton("ch4_gen_outlier", "Nowe dane (brak korelacji)",
+             class = "btn-primary", width = "100%")
+actionButton("ch4_add_outlier", "Dodaj outliera!",
+             class = "btn-danger", width = "100%")
+uiOutput("ch4_outlier_r")
+```
+
+```{r}
+plotOutput("ch4_outlier_plot", height = "350px")
+```
+
+```{r}
+#| context: server
+
+ch4_outlier_data <- reactiveVal(NULL)
+
+observeEvent(input$ch4_gen_outlier, {
+  ch4_outlier_data(generate_correlation_data(50, 0, "none"))
+})
+
+observeEvent(input$ch4_add_outlier, {
+  df <- ch4_outlier_data()
+  if (is.null(df)) return()
+  outlier <- data.frame(x = max(df$x) + 15, y = max(df$y) + 15)
+  ch4_outlier_data(rbind(df, outlier))
+})
+
+output$ch4_outlier_plot <- renderPlot({
+  df <- ch4_outlier_data()
+  if (is.null(df)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Nowe dane'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    r_val <- cor(df$x, df$y)
+
+    ggplot(df, aes(x = x, y = y)) +
+      geom_point(color = ifelse(seq_len(nrow(df)) > 50, col_reject, col_h0),
+                 size = ifelse(seq_len(nrow(df)) > 50, 4, 2.5),
+                 alpha = 0.7) +
+      geom_smooth(method = "lm", se = FALSE, color = col_reject, alpha = 0.5) +
+      labs(title = paste0("r = ", round(r_val, 3)),
+           x = "X", y = "Y") +
+      theme_test()
+  }
+})
+
+output$ch4_outlier_r <- renderUI({
+  df <- ch4_outlier_data()
+  if (is.null(df)) return(NULL)
+  r_val <- cor(df$x, df$y)
+  n_outliers <- max(0, nrow(df) - 50)
+  div(style = "text-align: center;",
+    stat_box(paste0("r = ", round(r_val, 3)), col_h0),
+    stat_box(paste0("Outlierów: ", n_outliers), col_reject)
+  )
+})
+```
+
+::: {.callout-important}
+**Pamiętaj:** Przed interpretacją korelacji **zawsze** obejrzyj wykres! Pojedynczy punkt może drastycznie zmienić wartość r.
+:::
+
+---
+
+# Dwie zmienne jakościowe
+
+*Badaliśmy korelację między zmiennymi ilościowymi. A co, gdy obie zmienne są jakościowe (kategorialne)?*
+
+## Test $\chi^2$ niezależności
+
+Pytanie: **Czy dwie zmienne jakościowe są ze sobą powiązane?**
+
+Przykłady: czy płeć wpływa na wybór kierunku? Czy grupa krwi zależy od regionu?
+
+::: {.formula-box}
+$H_0$: zmienne są niezależne
+
+$E_{ij} = \frac{n_{i \cdot} \cdot n_{\cdot j}}{n}$
+
+$\chi^2 = \sum \frac{(O_{ij} - E_{ij})^2}{E_{ij}}$
+:::
+
+## Test niezależności w akcji
+
+```{r}
+selectInput("ch5_scenario", "Scenariusz:",
+  choices = c(
+    "Płeć vs kierunek" = "gender_field",
+    "Płeć vs zdanie egzaminu" = "gender_pass",
+    "Kierunek vs zdanie egzaminu" = "field_pass"
+  ),
+  selected = "gender_field"
+)
+sliderInput("ch5_n", "Wielkość próby (n):",
+            min = 50, max = 300, value = 150, step = 25)
+actionButton("ch5_run_chi", "Generuj i testuj",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+plotOutput("ch5_mosaic_plot", height = "350px")
+uiOutput("ch5_chi_tables")
+uiOutput("ch5_chi_result")
+```
+
+```{r}
+#| context: server
+
+ch5_chi_data <- reactiveVal(NULL)
+
+observeEvent(input$ch5_run_chi, {
+  n <- input$ch5_n
+  data <- generate_student_data(n)
+
+  vars <- switch(input$ch5_scenario,
+    "gender_field" = list(var1 = data$plec, var2 = data$kierunek,
+                          lab1 = "Płeć", lab2 = "Kierunek"),
+    "gender_pass"  = list(var1 = data$plec, var2 = data$zdal_egzamin,
+                          lab1 = "Płeć", lab2 = "Zdał egzamin"),
+    "field_pass"   = list(var1 = data$kierunek, var2 = data$zdal_egzamin,
+                          lab1 = "Kierunek", lab2 = "Zdał egzamin")
+  )
+
+  tab <- table(vars$var1, vars$var2)
+  test <- chisq.test(tab)
+
+  k <- min(nrow(tab), ncol(tab))
+  cramers_v <- sqrt(test$statistic / (n * (k - 1)))
+
+  ch5_chi_data(list(
+    tab = tab, test = test, expected = test$expected,
+    var1_lab = vars$lab1, var2_lab = vars$lab2,
+    cramers_v = cramers_v
+  ))
+})
+
+output$ch5_mosaic_plot <- renderPlot({
+  dd <- ch5_chi_data()
+  if (is.null(dd)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i testuj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    df <- as.data.frame(dd$tab)
+    names(df) <- c("Var1", "Var2", "Freq")
+
+    ggplot(df, aes(x = Var1, y = Freq, fill = Var2)) +
+      geom_col(position = "dodge", alpha = 0.8) +
+      labs(title = paste0(dd$var1_lab, " vs ", dd$var2_lab),
+           x = dd$var1_lab, y = "Liczność", fill = dd$var2_lab) +
+      scale_fill_brewer(palette = "Set2") +
+      theme_test() +
+      theme(legend.position = "top")
+  }
+})
+
+output$ch5_chi_tables <- renderUI({
+  dd <- ch5_chi_data()
+  if (is.null(dd)) return(NULL)
+
+  obs_html <- knitr::kable(dd$tab, format = "html",
+                            caption = "Obserwowane liczności")
+  exp_html <- knitr::kable(round(dd$expected, 1), format = "html",
+                            caption = "Oczekiwane liczności (pod H\u2080)")
+
+  div(
+    HTML(obs_html),
+    HTML(exp_html)
+  )
+})
+
+output$ch5_chi_result <- renderUI({
+  dd <- ch5_chi_data()
+  if (is.null(dd)) return(NULL)
+
+  test <- dd$test
+  res <- format_test_result(test$p.value)
+
+  low_expected <- any(dd$expected < 5)
+
+  tagList(
+    div(class = "callout-info",
+      p(tags$strong("Wynik testu \u03c7\u00b2 niezależności:")),
+      p(paste0("\u03c7\u00b2(", test$parameter, ") = ",
+               round(test$statistic, 3))),
+      p(paste0("p = ", format.pval(test$p.value, digits = 4))),
+      p(paste0("Cram\u00e9r's V = ", round(dd$cramers_v, 3),
+               " (", effect_size_label(dd$cramers_v), ")")),
+      p(style = paste0("color:", res$color, "; font-weight: bold;"),
+        res$decision)
+    ),
+    if (low_expected) {
+      div(class = "callout-danger",
+        tags$strong("Uwaga!"),
+        " Niektóre oczekiwane liczności < 5. Rozważ test Fishera."
+      )
+    }
+  )
+})
+```
+
+::: {.callout-note}
+**Cramer's V:** Wielkość efektu dla $\chi^2$. Zakres [0, 1]: < 0.1 pomijalny, 0.1-0.3 mały, 0.3-0.5 średni, > 0.5 duży.
+:::
+
+## Test dokładny Fishera
+
+Gdy oczekiwane liczności są małe (< 5), test $\chi^2$ jest niedokładny. Wtedy używamy testu **dokładnego Fishera**.
+
+Przykład: tabela 2x2 z niewielką próbą.
+
+```{r}
+sliderInput("ch5_fisher_n", "Wielkość próby (n):",
+            min = 10, max = 100, value = 20, step = 5)
+checkboxInput("ch5_fisher_assoc", "Dodaj związek między zmiennymi",
+              value = FALSE)
+actionButton("ch5_run_fisher", "Generuj i testuj",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+uiOutput("ch5_fisher_table")
+uiOutput("ch5_fisher_result")
+```
+
+```{r}
+#| context: server
+
+ch5_fisher_data <- reactiveVal(NULL)
+
+observeEvent(input$ch5_run_fisher, {
+  n <- input$ch5_fisher_n
+
+  if (input$ch5_fisher_assoc) {
+    plec <- sample(c("K", "M"), n, replace = TRUE)
+    prob_pass <- ifelse(plec == "K", 0.8, 0.4)
+    zdal <- ifelse(runif(n) < prob_pass, "Tak", "Nie")
+  } else {
+    plec <- sample(c("K", "M"), n, replace = TRUE)
+    zdal <- sample(c("Tak", "Nie"), n, replace = TRUE, prob = c(0.6, 0.4))
+  }
+
+  tab <- table(plec, zdal)
+  test_chi <- chisq.test(tab, correct = FALSE)
+  test_fisher <- fisher.test(tab)
+  expected <- test_chi$expected
+
+  ch5_fisher_data(list(
+    tab = tab, expected = expected,
+    test_chi = test_chi, test_fisher = test_fisher
+  ))
+})
+
+output$ch5_fisher_table <- renderUI({
+  dd <- ch5_fisher_data()
+  if (is.null(dd)) return(NULL)
+
+  obs_html <- knitr::kable(dd$tab, format = "html",
+                            caption = "Obserwowane")
+  exp_html <- knitr::kable(round(dd$expected, 1), format = "html",
+                            caption = "Oczekiwane")
+
+  low <- any(dd$expected < 5)
+
+  div(
+    HTML(obs_html),
+    HTML(exp_html),
+    if (low) div(class = "callout-danger",
+      tags$strong("Oczekiwane < 5!"),
+      " Test \u03c7\u00b2 może być niedokładny.")
+  )
+})
+
+output$ch5_fisher_result <- renderUI({
+  dd <- ch5_fisher_data()
+  if (is.null(dd)) return(NULL)
+
+  res_chi <- format_test_result(dd$test_chi$p.value)
+  res_fisher <- format_test_result(dd$test_fisher$p.value)
+
+  div(class = "callout-info",
+    fluidRow(
+      column(6,
+        p(tags$strong("Test \u03c7\u00b2:")),
+        p(paste0("p = ", format.pval(dd$test_chi$p.value, digits = 4))),
+        p(style = paste0("color:", res_chi$color, "; font-weight: bold;"),
+          res_chi$decision)
+      ),
+      column(6,
+        p(tags$strong("Test Fishera:")),
+        p(paste0("p = ", format.pval(dd$test_fisher$p.value, digits = 4))),
+        p(style = paste0("color:", res_fisher$color, "; font-weight: bold;"),
+          res_fisher$decision)
+      )
+    )
+  )
+})
+```
+
+::: {.callout-warning}
+**Reguła:** Gdy którakolwiek oczekiwana liczność < 5, użyj testu Fishera. W R: `fisher.test()`. Dla tabel większych niż 2x2 można też użyć symulacji Monte Carlo: `chisq.test(simulate.p.value = TRUE)`.
+:::
+
+---
+
+# Ilościowa vs jakościowa (dwie grupy)
+
+*Badaliśmy związki dwóch zmiennych tego samego typu. Teraz klasyczne pytanie: czy dwie grupy różnią się?*
+
+## Test t dla dwóch prób niezależnych
+
+Pytanie: **Czy średnie w dwóch grupach różnią się istotnie?**
+
+Przykład: czy mężczyźni i kobiety różnią się wzrostem?
+
+::: {.formula-box}
+$H_0: \mu_1 = \mu_2 \quad\text{vs}\quad H_1: \mu_1 \neq \mu_2$
+
+$t = \frac{\bar{x}_1 - \bar{x}_2}{SE}$
+:::
+
+## Test t niezależny
+
+```{r}
+selectInput("ch6_ind_var", "Zmienna ilościowa:",
+  choices = c(
+    "Wzrost" = "wzrost",
+    "Waga" = "waga",
+    "Średnia ocen" = "srednia_ocen",
+    "Czas dojazdu" = "czas_dojazdu"
+  ),
+  selected = "wzrost"
+)
+sliderInput("ch6_ind_n", "n (na grupę):",
+            min = 15, max = 100, value = 40, step = 5)
+actionButton("ch6_run_ind_t", "Generuj i testuj",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+plotOutput("ch6_ind_boxplot", height = "300px")
+uiOutput("ch6_ind_result")
+```
+
+```{r}
+#| context: server
+
+ch6_ind_data <- reactiveVal(NULL)
+
+observeEvent(input$ch6_run_ind_t, {
+  n <- input$ch6_ind_n
+  data <- generate_student_data(n * 2)
+  ch6_ind_data(data)
+})
+
+output$ch6_ind_boxplot <- renderPlot({
+  data <- ch6_ind_data()
+  if (is.null(data)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i testuj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    var <- input$ch6_ind_var
+    var_label <- switch(var,
+      "wzrost" = "Wzrost (cm)", "waga" = "Waga (kg)",
+      "srednia_ocen" = "Średnia ocen", "czas_dojazdu" = "Czas dojazdu (min)")
+
+    ggplot(data, aes(x = plec, y = .data[[var]], fill = plec)) +
+      geom_boxplot(alpha = 0.6, outlier.alpha = 0.3) +
+      geom_jitter(width = 0.15, alpha = 0.3, size = 1.5) +
+      scale_fill_manual(values = c(col_h0, col_reject)) +
+      labs(title = paste0(var_label, " vs Płeć"),
+           x = "Płeć", y = var_label) +
+      theme_test() +
+      theme(legend.position = "none")
+  }
+})
+
+output$ch6_ind_result <- renderUI({
+  data <- ch6_ind_data()
+  if (is.null(data)) return(NULL)
+
+  var <- input$ch6_ind_var
+  formula <- as.formula(paste(var, "~ plec"))
+
+  result <- rstatix::t_test(data, formula)
+  tidy_res <- as.data.frame(result)
+
+  d_res <- rstatix::cohens_d(data, formula)
+  d_val <- as.data.frame(d_res)$effsize
+
+  res <- format_test_result(tidy_res$p)
+
+  div(class = "callout-info",
+    p(tags$strong("Wynik testu t niezależnego:")),
+    p(paste0("t(", round(tidy_res$df, 1), ") = ",
+             round(tidy_res$statistic, 3))),
+    p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
+    p(paste0("Cohen's d = ", round(d_val, 3),
+             " (", effect_size_label(d_val), ")")),
+    p(style = paste0("color:", res$color, "; font-weight: bold;"),
+      res$decision)
+  )
+})
+```
+
+## Test t dla prób zależnych (parowy)
+
+Gdy mierzymy **tych samych** osobników dwa razy (przed i po interwencji), używamy testu **parowego**.
+
+Przykład: wyniki studentów przed i po korepetycjach.
+
+Testujemy różnice: $d_i = x_{\text{po},i} - x_{\text{przed},i}$. Pytamy, czy średnia różnic $\neq$ 0.
+
+```{r}
+sliderInput("ch6_paired_n", "Liczba studentów:",
+            min = 10, max = 50, value = 25, step = 5)
+sliderInput("ch6_paired_effect", "Efekt interwencji (pkt):",
+            min = 0, max = 15, value = 5, step = 1)
+actionButton("ch6_run_paired", "Generuj i testuj",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+plotOutput("ch6_paired_plot", height = "300px")
+uiOutput("ch6_paired_result")
+```
+
+```{r}
+#| context: server
+
+ch6_paired_data <- reactiveVal(NULL)
+
+observeEvent(input$ch6_run_paired, {
+  ch6_paired_data(generate_paired_data(input$ch6_paired_n, input$ch6_paired_effect))
+})
+
+output$ch6_paired_plot <- renderPlot({
+  data <- ch6_paired_data()
+  if (is.null(data)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i testuj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    long <- data %>%
+      pivot_longer(cols = c(wynik_przed, wynik_po),
+                   names_to = "moment", values_to = "wynik") %>%
+      mutate(moment = factor(moment,
+                             levels = c("wynik_przed", "wynik_po"),
+                             labels = c("Przed", "Po")))
+
+    ggplot(long, aes(x = moment, y = wynik)) +
+      geom_line(aes(group = student), alpha = 0.3, color = col_paired) +
+      geom_point(aes(color = moment), size = 2.5, alpha = 0.7) +
+      scale_color_manual(values = c(col_h0, col_reject)) +
+      labs(title = "Wyniki przed i po interwencji",
+           x = "Moment", y = "Wynik") +
+      theme_test() +
+      theme(legend.position = "none")
+  }
+})
+
+output$ch6_paired_result <- renderUI({
+  data <- ch6_paired_data()
+  if (is.null(data)) return(NULL)
+
+  long <- data %>%
+    pivot_longer(cols = c(wynik_przed, wynik_po),
+                 names_to = "moment", values_to = "wynik")
+  long$moment <- factor(long$moment,
+                        levels = c("wynik_przed", "wynik_po"))
+
+  result <- rstatix::t_test(long, wynik ~ moment, paired = TRUE)
+  tidy_res <- as.data.frame(result)
+
+  d_val <- mean(data$wynik_po - data$wynik_przed) / sd(data$wynik_po - data$wynik_przed)
+  res <- format_test_result(tidy_res$p)
+
+  div(class = "callout-info",
+    p(tags$strong("Wynik testu t parowego:")),
+    p(paste0("Średnia różnica: ", round(mean(data$wynik_po - data$wynik_przed), 2), " pkt")),
+    p(paste0("t(", tidy_res$df, ") = ", round(tidy_res$statistic, 3))),
+    p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
+    p(paste0("Cohen's d = ", round(d_val, 3),
+             " (", effect_size_label(d_val), ")")),
+    p(style = paste0("color:", res$color, "; font-weight: bold;"),
+      res$decision)
+  )
+})
+```
+
+## Mann-Whitney U (nieparametryczny)
+
+Odpowiednik nieparametryczny testu t niezależnego. Testuje, czy rozkłady w dwóch grupach się różnią (ranga).
+
+Używaj, gdy dane nie są normalne lub są porządkowe.
+
+```{r}
+helpText("Używa tych samych danych co test t niezależny powyżej.")
+actionButton("ch6_run_mw", "Testuj Mann-Whitneyem",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+uiOutput("ch6_mw_result")
+```
+
+```{r}
+#| context: server
+
+output$ch6_mw_result <- renderUI({
+  req(input$ch6_run_mw)
+  data <- isolate(ch6_ind_data())
+  if (is.null(data)) {
+    return(div(class = "callout-warning",
+      "Najpierw wygeneruj dane testem t niezależnym."))
+  }
+
+  var <- isolate(input$ch6_ind_var)
+  formula <- as.formula(paste(var, "~ plec"))
+
+  result <- rstatix::wilcox_test(data, formula)
+  tidy_res <- as.data.frame(result)
+  res <- format_test_result(tidy_res$p)
+
+  div(class = "callout-info",
+    p(tags$strong("Wynik testu Mann-Whitney U:")),
+    p(paste0("U = ", round(tidy_res$statistic, 1))),
+    p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
+    p(style = paste0("color:", res$color, "; font-weight: bold;"),
+      res$decision)
+  )
+})
+```
+
+## Wilcoxon par znakowych (nieparametryczny parowy)
+
+Nieparametryczny odpowiednik testu t parowego. Działa na rangach różnic.
+
+```{r}
+helpText("Używa tych samych danych parowych co test t parowy powyżej.")
+actionButton("ch6_run_wilcox_paired", "Testuj Wilcoxonem",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+uiOutput("ch6_wilcox_paired_result")
+```
+
+```{r}
+#| context: server
+
+output$ch6_wilcox_paired_result <- renderUI({
+  req(input$ch6_run_wilcox_paired)
+  data <- isolate(ch6_paired_data())
+  if (is.null(data)) {
+    return(div(class = "callout-warning",
+      "Najpierw wygeneruj dane testem t parowym."))
+  }
+
+  long <- data %>%
+    pivot_longer(cols = c(wynik_przed, wynik_po),
+                 names_to = "moment", values_to = "wynik")
+  long$moment <- factor(long$moment,
+                        levels = c("wynik_przed", "wynik_po"))
+
+  result <- rstatix::wilcox_test(long, wynik ~ moment, paired = TRUE)
+  tidy_res <- as.data.frame(result)
+  res <- format_test_result(tidy_res$p)
+
+  div(class = "callout-info",
+    p(tags$strong("Wynik testu Wilcoxona par znakowych:")),
+    p(paste0("V = ", round(tidy_res$statistic, 1))),
+    p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
+    p(style = paste0("color:", res$color, "; font-weight: bold;"),
+      res$decision)
+  )
+})
+```
+
+::: {.callout-note}
+**Podsumowanie:**
+
+| Typ | Parametryczny | Nieparametryczny |
+|---|---|---|
+| Niezależne | Test t | Mann-Whitney U |
+| Parowe | Test t parowy | Wilcoxon par znakowych |
+:::
+
+---
+
+# ANOVA
+
+*Porównywaliśmy dwie grupy. A co, gdy grup jest trzy lub więcej?*
+
+## ANOVA jednoczynnikowa
+
+ANOVA (Analysis of Variance) to uogólnienie testu t na **3 lub więcej grup**.
+
+Pytanie: **Czy średnie w k grupach różnią się istotnie?**
+
+Przykład: czy średnie oceny różnią się między 4 kierunkami studiów?
+
+::: {.formula-box}
+$H_0: \mu_1 = \mu_2 = \ldots = \mu_k$
+
+$F = \frac{MS_{\text{między}}}{MS_{\text{wewnątrz}}} = \frac{\text{zmienność między grupami}}{\text{zmienność wewnątrz grup}}$
+:::
+
+Duże F oznacza: grupy różnią się bardziej niż moglibyśmy oczekiwać przypadkiem.
+
+## ANOVA w akcji
+
+```{r}
+selectInput("ch7_var", "Zmienna zależna:",
+  choices = c(
+    "Średnia ocen" = "srednia_ocen",
+    "Wzrost" = "wzrost",
+    "Czas dojazdu" = "czas_dojazdu"
+  ),
+  selected = "srednia_ocen"
+)
+sliderInput("ch7_n", "n (ogółem):",
+            min = 80, max = 300, value = 160, step = 20)
+actionButton("ch7_run_anova", "Generuj i testuj",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+plotOutput("ch7_boxplot", height = "350px")
+uiOutput("ch7_anova_result")
+```
+
+```{r}
+#| context: server
+
+ch7_data <- reactiveVal(NULL)
+
+observeEvent(input$ch7_run_anova, {
+  data <- generate_student_data(input$ch7_n)
+  ch7_data(data)
+})
+
+output$ch7_boxplot <- renderPlot({
+  data <- ch7_data()
+  if (is.null(data)) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i testuj'",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    var <- input$ch7_var
+    var_label <- switch(var,
+      "srednia_ocen" = "Średnia ocen",
+      "wzrost" = "Wzrost (cm)",
+      "czas_dojazdu" = "Czas dojazdu (min)")
+
+    ggplot(data, aes(x = kierunek, y = .data[[var]], fill = kierunek)) +
+      geom_boxplot(alpha = 0.6, outlier.alpha = 0.3) +
+      geom_jitter(width = 0.15, alpha = 0.2, size = 1) +
+      scale_fill_brewer(palette = "Set2") +
+      labs(title = paste0(var_label, " według kierunku"),
+           x = "Kierunek", y = var_label) +
+      theme_test() +
+      theme(legend.position = "none")
+  }
+})
+
+output$ch7_anova_result <- renderUI({
+  data <- ch7_data()
+  if (is.null(data)) return(NULL)
+
+  var <- input$ch7_var
+  formula <- as.formula(paste(var, "~ kierunek"))
+
+  result <- rstatix::anova_test(data, formula)
+  tidy_res <- as.data.frame(result)
+
+  eta_sq <- tidy_res$ges
+
+  p_val <- tidy_res$p
+  res <- format_test_result(p_val)
+
+  div(class = "callout-info",
+    p(tags$strong("Wynik ANOVA jednoczynnikowej:")),
+    p(paste0("F(", tidy_res$DFn, ", ", tidy_res$DFd, ") = ",
+             round(tidy_res$F, 3))),
+    p(paste0("p = ", format.pval(p_val, digits = 4))),
+    p(paste0("\u03b7\u00b2 = ", round(eta_sq, 3),
+             " (", effect_size_label(sqrt(eta_sq)), ")")),
+    p(style = paste0("color:", res$color, "; font-weight: bold;"),
+      res$decision)
+  )
+})
+```
+
+::: {.callout-note}
+**Dekompozycja wariancji:** Całkowita zmienność = zmienność między grupami + zmienność wewnątrz grup. ANOVA testuje, czy ta "między" część jest istotnie duża.
+:::
+
+## Testy post-hoc (Tukey HSD)
+
+ANOVA mówi *"grupy różnią się"*, ale nie mówi *"które"*.
+
+Do tego służą testy post-hoc. Tukey HSD porównuje **każdą parę grup** z korektą na wielokrotne porównania.
+
+```{r}
+helpText("Używa danych z ANOVA powyżej. Najpierw uruchom ANOVA!")
+actionButton("ch7_run_tukey", "Testuj Tukeyem",
+             class = "btn-warning", width = "100%")
+```
+
+```{r}
+plotOutput("ch7_tukey_plot", height = "300px")
+uiOutput("ch7_tukey_result")
+```
+
+```{r}
+#| context: server
+
+output$ch7_tukey_plot <- renderPlot({
+  req(input$ch7_run_tukey)
+  data <- isolate(ch7_data())
+  if (is.null(data)) return(NULL)
+
+  var <- isolate(input$ch7_var)
+  formula <- as.formula(paste(var, "~ kierunek"))
+
+  tukey <- rstatix::tukey_hsd(data, formula)
+  tukey_df <- as.data.frame(tukey)
+
+  tukey_df$comparison <- paste0(tukey_df$group1, " vs\n", tukey_df$group2)
+  tukey_df$significant <- tukey_df$p.adj < 0.05
+
+  ggplot(tukey_df, aes(x = estimate, y = comparison, color = significant)) +
+    geom_point(size = 3) +
+    geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
+    geom_vline(xintercept = 0, linetype = "dashed", color = col_dark) +
+    scale_color_manual(values = c("TRUE" = col_reject, "FALSE" = col_accept),
+                       labels = c("TRUE" = "p < 0.05", "FALSE" = "p \u2265 0.05"),
+                       name = NULL) +
+    labs(title = "Tukey HSD: różnice parowe z 95% CI",
+         x = "Różnica średnich", y = "Porównanie") +
+    theme_test() +
+    theme(legend.position = "top")
+})
+
+output$ch7_tukey_result <- renderUI({
+  req(input$ch7_run_tukey)
+  data <- isolate(ch7_data())
+  if (is.null(data)) {
+    return(div(class = "callout-warning", "Najpierw uruchom ANOVA."))
+  }
+
+  var <- isolate(input$ch7_var)
+  formula <- as.formula(paste(var, "~ kierunek"))
+  tukey <- rstatix::tukey_hsd(data, formula)
+  tukey_df <- as.data.frame(tukey)
+
+  sig_pairs <- tukey_df[tukey_df$p.adj < 0.05, ]
+  n_sig <- nrow(sig_pairs)
+
+  if (n_sig == 0) {
+    div(class = "callout-info",
+      p(tags$strong("Żadna para nie różni się istotnie"),
+        " (po korekcji Tukeya)."))
+  } else {
+    div(class = "callout-success",
+      p(tags$strong(paste0(n_sig, " istotna(e) różnica(e):"))),
+      tags$ul(
+        lapply(1:n_sig, function(i) {
+          tags$li(paste0(sig_pairs$group1[i], " vs ", sig_pairs$group2[i],
+                         ": \u0394 = ", round(sig_pairs$estimate[i], 2),
+                         ", p.adj = ", format.pval(sig_pairs$p.adj[i], digits = 3)))
+        })
+      )
+    )
+  }
+})
+```
+
+::: {.callout-warning}
+**Ważne:** Testy post-hoc wykonujemy **tylko** gdy ANOVA jest istotna. Bez tego korekcja na wielokrotne porównania jest niepotrzebna.
+:::
+
+## Kruskal-Wallis (nieparametryczny)
+
+Odpowiednik nieparametryczny ANOVA — test **Kruskala-Wallisa**.
+
+Działa na rangach, nie wymaga normalności. Post-hoc: test Dunna z korektą.
+
+```{r}
+helpText("Używa tych samych danych.")
+actionButton("ch7_run_kw", "Testuj Kruskalem-Wallisem",
+             class = "btn-primary", width = "100%")
+```
+
+```{r}
+uiOutput("ch7_kw_result")
+uiOutput("ch7_dunn_result")
+```
+
+```{r}
+#| context: server
+
+output$ch7_kw_result <- renderUI({
+  req(input$ch7_run_kw)
+  data <- isolate(ch7_data())
+  if (is.null(data)) {
+    return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+  }
+
+  var <- isolate(input$ch7_var)
+  formula <- as.formula(paste(var, "~ kierunek"))
+
+  result <- rstatix::kruskal_test(data, formula)
+  tidy_res <- as.data.frame(result)
+
+  res <- format_test_result(tidy_res$p)
+
+  div(class = "callout-info",
+    p(tags$strong("Wynik testu Kruskala-Wallisa:")),
+    p(paste0("H(", tidy_res$df, ") = ", round(tidy_res$statistic, 3))),
+    p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
+    p(style = paste0("color:", res$color, "; font-weight: bold;"),
+      res$decision)
+  )
+})
+
+output$ch7_dunn_result <- renderUI({
+  req(input$ch7_run_kw)
+  data <- isolate(ch7_data())
+  if (is.null(data)) return(NULL)
+
+  var <- isolate(input$ch7_var)
+  formula <- as.formula(paste(var, "~ kierunek"))
+
+  result <- rstatix::kruskal_test(data, formula)
+  if (as.data.frame(result)$p >= 0.05) {
+    return(div(class = "callout-info",
+      p("Test nieistotny \u2014 post-hoc niepotrzebny.")))
+  }
+
+  dunn <- rstatix::dunn_test(data, formula, p.adjust.method = "holm")
+  dunn_df <- as.data.frame(dunn)
+  sig <- dunn_df[dunn_df$p.adj < 0.05, ]
+
+  if (nrow(sig) == 0) {
+    div(class = "callout-info",
+      p("Test Dunna: żadna para nie jest istotna po korekcji Holma."))
+  } else {
+    div(class = "callout-success",
+      p(tags$strong("Test Dunna (post-hoc):")),
+      tags$ul(
+        lapply(1:nrow(sig), function(i) {
+          tags$li(paste0(sig$group1[i], " vs ", sig$group2[i],
+                         ": p.adj = ", format.pval(sig$p.adj[i], digits = 3)))
+        })
+      )
+    )
+  }
+})
+```
+
+::: {.callout-note}
+**Podsumowanie:**
+
+|  | Parametryczny | Nieparametryczny |
+|---|---|---|
+| Główny test | ANOVA | Kruskal-Wallis |
+| Post-hoc | Tukey HSD | Test Dunna |
+:::
+
+---
+
+# Ściąga
+
+*Kompaktowe podsumowanie wszystkich testów z tego wykładu.*
+
+## Drzewo decyzyjne: jaki test?
+
+::: {.callout-note}
+**Krok 1: Ile zmiennych?**
+
+- **Jedna zmienna** → Krok 2a
+- **Dwie zmienne** → Krok 2b
+
+**Krok 2a: Jedna zmienna — jaki typ?**
+
+- **Ilościowa** → test t jednej próby / Wilcoxon
+- **Jakościowa (2 kat.)** → test dwumianowy
+- **Jakościowa (3+ kat.)** → $\chi^2$ zgodności
+
+**Krok 2b: Dwie zmienne — jakie typy?**
+
+- **Ilościowa + ilościowa** → Pearson / Spearman
+- **Jakościowa + jakościowa** → $\chi^2$ niezależności / Fisher
+- **Ilościowa + jakościowa (2 grupy)** → Krok 3
+- **Ilościowa + jakościowa (3+ grup)** → ANOVA / Kruskal-Wallis
+
+**Krok 3: Próby niezależne czy parowe?**
+
+- **Niezależne** → test t / Mann-Whitney
+- **Parowe** → test t parowy / Wilcoxon par znakowych
+:::
+
+## Tabela testów
+
+| Sytuacja | Parametryczny | Nieparametryczny | R (rstatix) |
+|---|---|---|---|
+| 1 ilościowa vs $\mu_0$ | Test t jednej próby | Wilcoxon jednej próby | `t_test(x~1, mu=)` / `wilcox_test(x~1, mu=)` |
+| 1 jakościowa (2 kat.) | *---* | Test dwumianowy | `binom.test()` |
+| 1 jakościowa (3+ kat.) | *---* | $\chi^2$ zgodności | `chisq.test()` |
+| 2 ilościowe | Pearson | Spearman | `cor_test(method=)` |
+| 2 jakościowe | *---* | $\chi^2$ niezależn. / Fisher | `chisq.test()` / `fisher.test()` |
+| 2 grupy niezależne | Test t niezależny | Mann-Whitney U | `t_test(y~gr)` / `wilcox_test(y~gr)` |
+| 2 grupy parowe | Test t parowy | Wilcoxon par znakowych | `t_test(y~t, paired=T)` / `wilcox_test(y~t, paired=T)` |
+| 3+ grupy | ANOVA | Kruskal-Wallis | `anova_test(y~gr)` / `kruskal_test(y~gr)` |
+| Post-hoc (3+ grupy) | Tukey HSD | Test Dunna | `tukey_hsd(y~gr)` / `dunn_test(y~gr)` |
+
+## Miary wielkości efektu
+
+| Miara | Test | Mały | Średni | Duży |
+|---|---|---|---|---|
+| Cohen's d | Test t | 0.2 | 0.5 | 0.8 |
+| r (korelacja) | Pearson/Spearman | 0.1 | 0.3 | 0.5 |
+| Cramer's V | $\chi^2$ | 0.1 | 0.3 | 0.5 |
+| $\eta^2$ | ANOVA | 0.01 | 0.06 | 0.14 |
+
+## P-wartość — przypomnienie
+
+::: {.callout-tip}
+**P-wartość to:** Prawdopodobieństwo uzyskania wyniku co najmniej tak skrajnego, zakładając że $H_0$ jest prawdziwa.
+:::
+
+::: {.callout-important}
+**P-wartość NIE jest:**
+
+- Prawdopodobieństwem, że $H_0$ jest prawdziwa
+- Prawdopodobieństwem, że wynik jest przypadkowy
+- Miarą wielkości efektu (p = 0.001 $\neq$ duży efekt!)
+:::
+
+## Typowe pułapki
+
+::: {.callout-important}
+- **P-hacking:** testowanie wielu porównań i raportowanie tylko istotnych — zwiększa błąd I rodzaju
+- **Wielokrotne porównania:** przy k grupach jest k(k-1)/2 par. Bez korekcji (Bonferroni, Tukey) ryzyko fałszywych alarmów rośnie
+- **Brak istotności $\neq$ brak efektu:** może brakować mocy (za małe n)
+- **Istotność statystyczna $\neq$ istotność praktyczna:** przy n = 10 000 nawet trywialna różnica może być istotna. Zawsze podawaj wielkość efektu!
+:::
+
+## Kod R — rstatix
+
+::: {.formula-box}
+```r
+library(rstatix)
+library(broom)
+
+# === Jedna zmienna ===
+# Test t jednej próby
+data %>% t_test(oceny ~ 1, mu = 3.5)
+
+# Wilcoxon jednej próby
+data %>% wilcox_test(oceny ~ 1, mu = 3.5)
+
+# === Korelacja ===
+data %>% cor_test(wzrost, waga, method = "pearson")
+data %>% cor_test(wzrost, waga, method = "spearman")
+
+# === Dwie grupy ===
+# Niezależne
+data %>% t_test(wzrost ~ plec)
+data %>% wilcox_test(wzrost ~ plec)
+data %>% cohens_d(wzrost ~ plec)
+
+# Parowe
+data %>% t_test(wynik ~ moment, paired = TRUE)
+data %>% wilcox_test(wynik ~ moment, paired = TRUE)
+
+# === Chi-kwadrat ===
+tab <- table(data$plec, data$kierunek)
+chisq.test(tab)
+fisher.test(tab)
+
+# === ANOVA ===
+data %>% anova_test(oceny ~ kierunek)
+data %>% tukey_hsd(oceny ~ kierunek)
+
+# Kruskal-Wallis
+data %>% kruskal_test(oceny ~ kierunek)
+data %>% dunn_test(oceny ~ kierunek, p.adjust.method = "holm")
+```
+:::

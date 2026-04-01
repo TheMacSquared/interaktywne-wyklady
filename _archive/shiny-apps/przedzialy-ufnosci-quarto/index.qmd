@@ -1,0 +1,1023 @@
+---
+title: "Przedziały ufności"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-location: left
+    theme: sandstone
+    css: styles.css
+    page-layout: article
+    self-contained: true
+server: shiny
+---
+
+```{r}
+#| context: setup
+#| include: false
+
+library(ggplot2)
+library(dplyr)
+
+# Kolory
+col_primary    <- "#3498db"
+col_secondary  <- "#e74c3c"
+col_success    <- "#27ae60"
+col_warning    <- "#f39c12"
+col_dark       <- "#2c3e50"
+col_purple     <- "#9b59b6"
+col_teal       <- "#1abc9c"
+col_ci         <- "#3498db"
+col_miss       <- "#e74c3c"
+col_hit        <- "#27ae60"
+col_estimate   <- "#f39c12"
+col_true       <- "#9b59b6"
+
+# Theme
+theme_ci <- function(base_size = 14) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(face = "bold", size = base_size + 2),
+      plot.subtitle = element_text(color = "#7f8c8d"),
+      panel.grid.minor = element_blank()
+    )
+}
+
+# Generowanie danych
+generate_population_sample <- function(dist_type, n) {
+  switch(dist_type,
+    "normal"      = rnorm(n, mean = 170, sd = 10),
+    "exponential" = rexp(n, rate = 0.5),
+    "uniform"     = runif(n, min = 0, max = 10),
+    "bimodal"     = {
+      k <- rbinom(1, n, 0.5)
+      c(rnorm(k, 3, 0.8), rnorm(n - k, 7, 0.8))
+    },
+    "skewed"      = rgamma(n, shape = 2, scale = 1.5)
+  )
+}
+
+get_population_params <- function(dist_type) {
+  switch(dist_type,
+    "normal"      = list(mu = 170, sigma = 10),
+    "exponential" = list(mu = 2,   sigma = 2),
+    "uniform"     = list(mu = 5,   sigma = sqrt(100/12)),
+    "bimodal"     = list(mu = 5,   sigma = sqrt(0.64 + 4)),
+    "skewed"      = list(mu = 3,   sigma = sqrt(4.5))
+  )
+}
+
+dist_names_pl <- c(
+  "normal"      = "Normalny (wzrost)",
+  "exponential" = "Wykładniczy",
+  "uniform"     = "Jednostajny",
+  "bimodal"     = "Bimodalny",
+  "skewed"      = "Skośny (gamma)"
+)
+
+simulate_coverage <- function(dist_type, n, conf_level, n_sims, method = "t") {
+  params <- get_population_params(dist_type)
+  results <- lapply(seq_len(n_sims), function(i) {
+    samp <- generate_population_sample(dist_type, n)
+    xbar <- mean(samp)
+    s <- sd(samp)
+    if (method == "z") {
+      crit <- qnorm(1 - (1 - conf_level) / 2)
+      me <- crit * params$sigma / sqrt(n)
+    } else {
+      crit <- qt(1 - (1 - conf_level) / 2, df = n - 1)
+      me <- crit * s / sqrt(n)
+    }
+    data.frame(sim = i, xbar = xbar, lower = xbar - me, upper = xbar + me,
+               covers = (xbar - me <= params$mu) & (params$mu <= xbar + me))
+  })
+  do.call(rbind, results)
+}
+
+simulate_coverage_prop <- function(true_p, n, conf_level, n_sims, method = "wald") {
+  results <- lapply(seq_len(n_sims), function(i) {
+    x <- rbinom(1, n, true_p)
+    phat <- x / n
+    z_star <- qnorm(1 - (1 - conf_level) / 2)
+    if (method == "wald") {
+      me <- z_star * sqrt(phat * (1 - phat) / n)
+      lower <- phat - me
+      upper <- phat + me
+    } else {
+      denom <- 1 + z_star^2 / n
+      center <- (phat + z_star^2 / (2 * n)) / denom
+      me <- (z_star / denom) * sqrt(phat * (1 - phat) / n + z_star^2 / (4 * n^2))
+      lower <- center - me
+      upper <- center + me
+    }
+    data.frame(sim = i, phat = phat, lower = lower, upper = upper,
+               covers = (lower <= true_p) & (true_p <= upper))
+  })
+  do.call(rbind, results)
+}
+```
+
+
+# 1. Estymacja punktowa {#estymacja}
+
+*Wiemy, czym są rozkłady prawdopodobieństwa i jak działają. Teraz pytanie:
+jak na podstawie próby oszacować parametr populacji?*
+
+## Od próby do populacji
+
+Mamy populację (np. wzrost wszystkich studentów w Polsce) z nieznanym parametrem $\mu$.
+Pobieramy **próbę losową** o wielkości $n$ i obliczamy **statystykę** (np. średnią $\bar{x}$).
+
+Ta statystyka jest **estymatorem** — naszym najlepszym przybliżeniem prawdziwego $\mu$.
+Ale za każdym razem, gdy pobierzemy nową próbę, dostaniemy nieco inną wartość $\bar{x}$.
+
+## Estymator w akcji
+
+Losuj próby z wybranej populacji i obserwuj, jak zmienia się średnia z próby.
+Każde kliknięcie to nowa próba — linia przerywana to prawdziwe $\mu$.
+
+```{r}
+#| layout-ncol: 1
+selectInput("ch1_dist", "Rozkład populacji:",
+  choices = c("Normalny (wzrost)" = "normal",
+              "Wykładniczy" = "exponential",
+              "Jednostajny" = "uniform",
+              "Bimodalny" = "bimodal"),
+  selected = "normal", width = "100%"
+)
+sliderInput("ch1_n", "Wielkość próby (n):",
+            min = 5, max = 200, value = 30, step = 5, width = "100%")
+fluidRow(
+  column(4, actionButton("ch1_draw_1", "Losuj 1 próbę", class = "btn-primary", width = "100%")),
+  column(4, actionButton("ch1_draw_20", "Losuj 20 prób", class = "btn-warning", width = "100%")),
+  column(4, actionButton("ch1_reset", "Reset", class = "btn-outline-secondary", width = "100%"))
+)
+```
+
+```{r}
+plotOutput("ch1_estimates_plot", height = "350px")
+uiOutput("ch1_estimates_stats")
+```
+
+```{r}
+#| context: server
+
+ch1_estimates <- reactiveVal(data.frame(i = integer(0), xbar = numeric(0)))
+
+draw_samples <- function(k) {
+  dist <- input$ch1_dist
+  n <- input$ch1_n
+  old <- ch1_estimates()
+  new_rows <- lapply(seq_len(k), function(j) {
+    samp <- generate_population_sample(dist, n)
+    data.frame(i = nrow(old) + j, xbar = mean(samp))
+  })
+  ch1_estimates(rbind(old, do.call(rbind, new_rows)))
+}
+
+observeEvent(input$ch1_draw_1, draw_samples(1))
+observeEvent(input$ch1_draw_20, draw_samples(20))
+observeEvent(input$ch1_reset, {
+  ch1_estimates(data.frame(i = integer(0), xbar = numeric(0)))
+})
+
+observe({
+  input$ch1_dist
+  input$ch1_n
+  ch1_estimates(data.frame(i = integer(0), xbar = numeric(0)))
+})
+
+output$ch1_estimates_plot <- renderPlot({
+  est <- ch1_estimates()
+  params <- get_population_params(input$ch1_dist)
+
+  if (nrow(est) == 0) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij przycisk, aby losować próby",
+               size = 6, color = "#7f8c8d") +
+      theme_void()
+  } else {
+    ggplot(est, aes(x = xbar)) +
+      geom_histogram(aes(y = after_stat(density)), bins = 30,
+                     fill = col_ci, alpha = 0.6, color = "white") +
+      geom_vline(xintercept = params$mu, color = col_true,
+                 linewidth = 1.5, linetype = "dashed") +
+      annotate("text", x = params$mu, y = Inf, vjust = 2,
+               label = paste0("μ = ", params$mu),
+               color = col_true, fontface = "bold", size = 5) +
+      labs(title = paste0("Rozkład estymat średniej (n = ", nrow(est), " prób)"),
+           x = expression(bar(x)), y = "Gęstość") +
+      theme_ci()
+  }
+})
+
+output$ch1_estimates_stats <- renderUI({
+  est <- ch1_estimates()
+  if (nrow(est) < 2) return(NULL)
+  params <- get_population_params(input$ch1_dist)
+  div(style = "text-align: center; margin-top: 10px;",
+    tags$span(style = paste0("display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 6px; font-weight: bold; font-size: 16px; color: white; background: ", col_ci, ";"),
+      paste0("Średnia estymat: ", round(mean(est$xbar), 2))),
+    tags$span(style = paste0("display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 6px; font-weight: bold; font-size: 16px; color: white; background: ", col_dark, ";"),
+      paste0("SD estymat: ", round(sd(est$xbar), 2))),
+    tags$span(style = paste0("display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 6px; font-weight: bold; font-size: 16px; color: white; background: ", col_true, ";"),
+      paste0("μ = ", get_population_params(input$ch1_dist)$mu))
+  )
+})
+```
+
+::: {.callout-note}
+## Obserwacja
+Im większa próba (n), tym **mniejszy rozrzut** estymat wokół prawdziwego $\mu$.
+To jest esencja statystyki: więcej danych = precyzyjniejsze oszacowanie.
+:::
+
+## Obciążenie vs trafność
+
+Dobry estymator powinien być:
+
+1. **Nieobciążony** — średnio trafia w prawdziwy parametr
+2. **Zgodny** — przy dużych próbach coraz bliżej prawdy
+3. **Efektywny** — mały rozrzut (mała wariancja)
+
+```{r}
+selectInput("ch1_bias_dist", "Rozkład:", choices = c(
+  "Normalny (wzrost)" = "normal", "Skośny (gamma)" = "skewed"
+), width = "100%")
+sliderInput("ch1_bias_n", "Wielkość próby:", min = 5, max = 200, value = 30, step = 5, width = "100%")
+actionButton("ch1_bias_run", "Symuluj 500 prób", class = "btn-primary", width = "100%")
+```
+
+```{r}
+plotOutput("ch1_bias_plot", height = "300px")
+```
+
+```{r}
+#| context: server
+
+output$ch1_bias_plot <- renderPlot({
+  input$ch1_bias_run
+
+  isolate({
+    dist <- input$ch1_bias_dist
+    n <- input$ch1_bias_n
+    params <- get_population_params(dist)
+
+    samps <- replicate(500, generate_population_sample(dist, n), simplify = FALSE)
+    means   <- sapply(samps, mean)
+    medians <- sapply(samps, median)
+    trimmed <- sapply(samps, function(x) mean(x, trim = 0.1))
+
+    df <- data.frame(
+      value = c(means, medians, trimmed),
+      estymator = rep(c("Średnia", "Mediana", "Średnia obcięta (10%)"), each = 500)
+    )
+
+    ggplot(df, aes(x = value)) +
+      geom_histogram(aes(y = after_stat(density)), bins = 30,
+                     fill = col_ci, alpha = 0.6, color = "white") +
+      geom_vline(xintercept = params$mu, color = col_true,
+                 linewidth = 1.2, linetype = "dashed") +
+      facet_wrap(~estymator, scales = "free_y") +
+      labs(title = "Porównanie trzech estymatorów (500 symulacji)",
+           x = "Wartość estymatora", y = "Gęstość") +
+      theme_ci(base_size = 12)
+  })
+}) |> bindEvent(input$ch1_bias_run)
+```
+
+## Dlaczego sam punkt nie wystarczy?
+
+Estymata punktowa (np. $\bar{x} = 172.3$ cm) to **jedna liczba**.
+Nie mówi nic o tym, jak bardzo może się mylić.
+
+Potrzebujemy **przedziału** — zakresu wartości, który z określonym
+prawdopodobieństwem zawiera prawdziwy parametr. To właśnie **przedział ufności**.
+
+---
+
+# 2. Idea przedziałów ufności {#idea}
+
+*Estymata punktowa to za mało. Potrzebujemy zakresu, który z określoną pewnością
+zawiera prawdziwy parametr.*
+
+## Czym jest przedział ufności?
+
+Przedział ufności na poziomie 95% oznacza:
+
+> Gdybyśmy powtarzali badanie nieskończenie wiele razy, **95% tak skonstruowanych
+> przedziałów** zawierałoby prawdziwy parametr $\mu$.
+
+To **nie** znaczy, że $\mu$ leży w naszym przedziale z prawdopodobieństwem 95%.
+$\mu$ jest stałą — albo leży w przedziale, albo nie. 95% to cecha **metody**, nie wyniku.
+
+## 100 przedziałów ufności
+
+Symulujemy 100 prób z populacji i konstruujemy przedział dla każdej.
+Zielone trafiają w $\mu$, czerwone pudłują.
+
+```{r}
+fluidRow(
+  column(3, selectInput("ch2_dist", "Rozkład:", choices = c(
+    "Normalny" = "normal", "Wykładniczy" = "exponential",
+    "Jednostajny" = "uniform", "Skośny" = "skewed"
+  ), selected = "normal")),
+  column(3, sliderInput("ch2_n", "n:", min = 5, max = 100, value = 25, step = 5)),
+  column(3, sliderInput("ch2_conf", "Poziom ufności:",
+                         min = 0.80, max = 0.99, value = 0.95, step = 0.01)),
+  column(3, actionButton("ch2_sim", "Symuluj 100 CI", class = "btn-primary", width = "100%"))
+)
+```
+
+```{r}
+plotOutput("ch2_ci_plot", height = "500px")
+uiOutput("ch2_coverage_info")
+```
+
+```{r}
+#| context: server
+
+ch2_sim_data <- reactiveVal(NULL)
+
+observeEvent(input$ch2_sim, {
+  results <- simulate_coverage(input$ch2_dist, input$ch2_n, input$ch2_conf, 100)
+  ch2_sim_data(results)
+})
+
+output$ch2_ci_plot <- renderPlot({
+  df <- ch2_sim_data()
+  req(df)
+  params <- get_population_params(input$ch2_dist)
+
+  df$color <- ifelse(df$covers, col_hit, col_miss)
+
+  ggplot(df, aes(y = sim)) +
+    geom_vline(xintercept = params$mu, color = col_true, linewidth = 1.2, linetype = "dashed") +
+    geom_segment(aes(x = lower, xend = upper, yend = sim, color = covers),
+                 linewidth = 0.8) +
+    geom_point(aes(x = xbar), color = col_dark, size = 1) +
+    scale_color_manual(values = c("TRUE" = col_hit, "FALSE" = col_miss),
+                       labels = c("TRUE" = "Trafiony", "FALSE" = "Pudło"),
+                       name = "") +
+    labs(title = paste0("100 przedziałów ufności (", input$ch2_conf * 100, "%)"),
+         x = "Wartość", y = "Numer próby") +
+    theme_ci()
+})
+
+output$ch2_coverage_info <- renderUI({
+  df <- ch2_sim_data()
+  req(df)
+  actual <- mean(df$covers) * 100
+  expected <- input$ch2_conf * 100
+  color <- if (abs(actual - expected) <= 5) col_hit else col_miss
+  div(style = "text-align: center; margin-top: 10px;",
+    tags$span(style = paste0("display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 6px; font-weight: bold; font-size: 16px; color: white; background: ", color, ";"),
+      paste0("Pokrycie: ", actual, "% (oczekiwane: ", expected, "%)"))
+  )
+})
+```
+
+## Budowa przedziału — krok po kroku
+
+Przedział ufności dla średniej ma postać:
+
+$$\bar{x} \pm t^* \cdot \frac{s}{\sqrt{n}}$$
+
+gdzie:
+
+- $\bar{x}$ — średnia z próby
+- $t^*$ — wartość krytyczna z rozkładu t-Studenta
+- $s$ — odchylenie standardowe z próby
+- $n$ — wielkość próby
+
+Część $t^* \cdot \frac{s}{\sqrt{n}}$ to **margines błędu (ME)**.
+
+## Częste błędy interpretacji
+
+::: {.callout-warning}
+## Tak NIE wolno mówić
+
+- "μ leży w przedziale z prawdopodobieństwem 95%" — μ jest stałą!
+- "95% danych leży w tym przedziale" — to byłby przedział predykcji
+- "Średnia z próby leży w przedziale" — zawsze leży, z definicji
+:::
+
+::: {.callout-tip}
+## Poprawna interpretacja
+
+- "Gdybyśmy powtarzali badanie, 95% tak skonstruowanych przedziałów zawierałoby μ"
+- "Mamy 95% zaufania do **metody**, która wygenerowała ten przedział"
+:::
+
+---
+
+# 3. Przedział dla średniej {#srednia}
+
+*Najczęstszy przypadek: szacujemy średnią populacji na podstawie próby.*
+
+## Z czy t?
+
+| | z-interval | t-interval |
+|---|---|---|
+| **Kiedy?** | Znamy $\sigma$ populacji (rzadko!) | Nie znamy $\sigma$ (prawie zawsze) |
+| **Wzór** | $\bar{x} \pm z^* \cdot \frac{\sigma}{\sqrt{n}}$ | $\bar{x} \pm t^*_{n-1} \cdot \frac{s}{\sqrt{n}}$ |
+| **Rozkład** | N(0,1) | t-Studenta z df = n−1 |
+
+W praktyce **prawie zawsze** używamy t-intervalu. Rozkład t ma cięższe ogony
+niż normalny, więc daje szersze (ostrożniejsze) przedziały — zwłaszcza dla małych prób.
+
+## Porównanie rozkładów z i t
+
+```{r}
+sliderInput("ch3_df", "Stopnie swobody (df = n − 1):",
+            min = 1, max = 100, value = 5, step = 1, width = "100%")
+fluidRow(
+  column(3, actionButton("ch3_df2", "df = 2", class = "btn-outline-primary", width = "100%")),
+  column(3, actionButton("ch3_df5", "df = 5", class = "btn-outline-warning", width = "100%")),
+  column(3, actionButton("ch3_df30", "df = 30", class = "btn-outline-success", width = "100%")),
+  column(3, actionButton("ch3_df100", "df = 100", class = "btn-outline-secondary", width = "100%"))
+)
+```
+
+```{r}
+plotOutput("ch3_zt_plot", height = "350px")
+uiOutput("ch3_crit_values")
+```
+
+```{r}
+#| context: server
+
+observeEvent(input$ch3_df2,   updateSliderInput(session, "ch3_df", value = 2))
+observeEvent(input$ch3_df5,   updateSliderInput(session, "ch3_df", value = 5))
+observeEvent(input$ch3_df30,  updateSliderInput(session, "ch3_df", value = 30))
+observeEvent(input$ch3_df100, updateSliderInput(session, "ch3_df", value = 100))
+
+output$ch3_zt_plot <- renderPlot({
+  df_val <- input$ch3_df
+  x <- seq(-4, 4, length.out = 500)
+  plot_df <- data.frame(
+    x = rep(x, 2),
+    y = c(dnorm(x), dt(x, df = df_val)),
+    dist = rep(c("N(0,1)", paste0("t(df=", df_val, ")")), each = 500)
+  )
+
+  ggplot(plot_df, aes(x = x, y = y, color = dist, linetype = dist)) +
+    geom_line(linewidth = 1.2) +
+    scale_color_manual(values = c(col_ci, col_secondary)) +
+    scale_linetype_manual(values = c("solid", "dashed")) +
+    labs(title = paste0("N(0,1) vs t(df=", df_val, ")"),
+         x = "x", y = "f(x)", color = "", linetype = "") +
+    theme_ci()
+})
+
+output$ch3_crit_values <- renderUI({
+  df_val <- input$ch3_df
+  z_star <- round(qnorm(0.975), 3)
+  t_star <- round(qt(0.975, df = df_val), 3)
+  div(style = "text-align: center; margin-top: 10px;",
+    tags$span(style = paste0("display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 6px; font-weight: bold; font-size: 16px; color: white; background: ", col_ci, ";"),
+      paste0("z* (95%) = ", z_star)),
+    tags$span(style = paste0("display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 6px; font-weight: bold; font-size: 16px; color: white; background: ", col_secondary, ";"),
+      paste0("t* (95%, df=", df_val, ") = ", t_star))
+  )
+})
+```
+
+::: {.callout-note}
+Im mniej stopni swobody (mała próba), tym t jest **szerszy** od normalnego.
+Przy df > 30 różnica jest już niewielka.
+:::
+
+## Kalkulator przedziału
+
+```{r}
+selectInput("ch3_data_source", "Dane:",
+  choices = c("Wzrost (n=25)" = "height", "Dojazd do pracy (n=40)" = "commute",
+              "Oceny (n=15)" = "grades", "Własne statystyki" = "custom"),
+  selected = "height", width = "100%"
+)
+conditionalPanel(
+  condition = "input.ch3_data_source == 'custom'",
+  fluidRow(
+    column(4, numericInput("ch3_custom_xbar", "Średnia:", value = 50)),
+    column(4, numericInput("ch3_custom_s", "Odch. std.:", value = 10)),
+    column(4, numericInput("ch3_custom_n", "n:", value = 30, min = 2))
+  )
+)
+sliderInput("ch3_calc_conf", "Poziom ufności:",
+            min = 0.80, max = 0.99, value = 0.95, step = 0.01, width = "100%")
+actionButton("ch3_calc", "Oblicz przedział", class = "btn-primary", width = "100%")
+```
+
+```{r}
+plotOutput("ch3_calc_plot", height = "200px")
+uiOutput("ch3_calc_steps")
+```
+
+```{r}
+#| context: server
+
+ch3_calc_result <- reactiveVal(NULL)
+
+get_sample_stats <- function() {
+  src <- input$ch3_data_source
+  set.seed(42)
+  switch(src,
+    "height"  = { samp <- rnorm(25, 172, 8);  list(xbar = mean(samp), s = sd(samp), n = 25, label = "Wzrost") },
+    "commute" = { samp <- rgamma(40, 4, 0.1); list(xbar = mean(samp), s = sd(samp), n = 40, label = "Dojazd") },
+    "grades"  = { samp <- rnorm(15, 3.8, 0.7); list(xbar = mean(samp), s = sd(samp), n = 15, label = "Oceny") },
+    "custom"  = list(xbar = input$ch3_custom_xbar, s = input$ch3_custom_s,
+                     n = input$ch3_custom_n, label = "Własne")
+  )
+}
+
+observeEvent(input$ch3_calc, {
+  stats <- get_sample_stats()
+  conf <- input$ch3_calc_conf
+  t_star <- qt(1 - (1 - conf) / 2, df = stats$n - 1)
+  me <- t_star * stats$s / sqrt(stats$n)
+  ch3_calc_result(list(
+    xbar = stats$xbar, s = stats$s, n = stats$n,
+    t_star = t_star, me = me, conf = conf,
+    lower = stats$xbar - me, upper = stats$xbar + me,
+    label = stats$label
+  ))
+})
+
+output$ch3_calc_plot <- renderPlot({
+  r <- ch3_calc_result()
+  req(r)
+  df <- data.frame(xbar = r$xbar, lower = r$lower, upper = r$upper, y = 1)
+
+  ggplot(df, aes(y = y)) +
+    geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0.3,
+                   color = col_ci, linewidth = 2) +
+    geom_point(aes(x = xbar), color = col_estimate, size = 5, shape = 18) +
+    annotate("text", x = r$lower, y = 0.6, label = round(r$lower, 2),
+             color = col_dark, fontface = "bold") +
+    annotate("text", x = r$upper, y = 0.6, label = round(r$upper, 2),
+             color = col_dark, fontface = "bold") +
+    labs(title = paste0(r$conf * 100, "% CI: [", round(r$lower, 2), ", ", round(r$upper, 2), "]"),
+         x = r$label, y = "") +
+    theme_ci() +
+    theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+})
+
+output$ch3_calc_steps <- renderUI({
+  r <- ch3_calc_result()
+  req(r)
+  div(style = "background: #f5f0ff; border: 1px solid #d5c8f0; border-radius: 6px; padding: 12px 16px; margin: 10px 0;",
+    withMathJax(
+      p(strong("Krok po kroku:")),
+      p(paste0("1. Statystyki: x̄ = ", round(r$xbar, 2), ", s = ", round(r$s, 2), ", n = ", r$n)),
+      p(paste0("2. Stopnie swobody: df = n − 1 = ", r$n - 1)),
+      p(paste0("3. Wartość krytyczna: t* = ", round(r$t_star, 3))),
+      p(paste0("4. Margines błędu: ME = t* · s/√n = ", round(r$t_star, 3), " · ",
+               round(r$s, 2), "/√", r$n, " = ", round(r$me, 2))),
+      p(paste0("5. Przedział: [", round(r$lower, 2), ", ", round(r$upper, 2), "]"))
+    )
+  )
+})
+```
+
+## Z vs t — pokrycie
+
+Przy małych próbach z-interval daje za wąskie przedziały. Symulacja pokazuje różnicę.
+
+```{r}
+fluidRow(
+  column(6, sliderInput("ch3_cov_n", "Wielkość próby:", min = 5, max = 100, value = 10, step = 5, width = "100%")),
+  column(6, actionButton("ch3_cov_sim", "Symuluj 200 CI (z vs t)", class = "btn-primary", width = "100%"))
+)
+```
+
+```{r}
+plotOutput("ch3_cov_plot", height = "350px")
+uiOutput("ch3_cov_results")
+```
+
+```{r}
+#| context: server
+
+ch3_cov_data <- reactiveVal(NULL)
+
+observeEvent(input$ch3_cov_sim, {
+  n <- input$ch3_cov_n
+  results_z <- simulate_coverage("normal", n, 0.95, 200, method = "z")
+  results_t <- simulate_coverage("normal", n, 0.95, 200, method = "t")
+  results_z$method <- "z-interval"
+  results_t$method <- "t-interval"
+  ch3_cov_data(rbind(results_z, results_t))
+})
+
+output$ch3_cov_plot <- renderPlot({
+  df <- ch3_cov_data()
+  req(df)
+  params <- get_population_params("normal")
+
+  ggplot(df, aes(y = sim)) +
+    geom_vline(xintercept = params$mu, color = col_true, linewidth = 1, linetype = "dashed") +
+    geom_segment(aes(x = lower, xend = upper, yend = sim, color = covers),
+                 linewidth = 0.5) +
+    scale_color_manual(values = c("TRUE" = col_hit, "FALSE" = col_miss),
+                       labels = c("TRUE" = "Trafiony", "FALSE" = "Pudło"), name = "") +
+    facet_wrap(~method) +
+    labs(title = paste0("Pokrycie: z vs t (n = ", input$ch3_cov_n, ")"),
+         x = "Wartość", y = "Numer próby") +
+    theme_ci(base_size = 12)
+})
+
+output$ch3_cov_results <- renderUI({
+  df <- ch3_cov_data()
+  req(df)
+  cov_z <- round(mean(df$covers[df$method == "z-interval"]) * 100, 1)
+  cov_t <- round(mean(df$covers[df$method == "t-interval"]) * 100, 1)
+  div(style = "text-align: center; margin-top: 10px;",
+    tags$span(style = paste0("display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 6px; font-weight: bold; font-size: 16px; color: white; background: ", col_ci, ";"),
+      paste0("z-interval: ", cov_z, "%")),
+    tags$span(style = paste0("display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 6px; font-weight: bold; font-size: 16px; color: white; background: ", col_secondary, ";"),
+      paste0("t-interval: ", cov_t, "%"))
+  )
+})
+```
+
+---
+
+# 4. Przedział dla proporcji {#proporcja}
+
+*Nie zawsze szacujemy średnią. Często pytamy: jaki procent populacji ma daną cechę?*
+
+## Estymata proporcji
+
+Obserwujemy $x$ sukcesów w $n$ próbach. Estymata proporcji: $\hat{p} = \frac{x}{n}$.
+
+Dwa główne wzory na przedział:
+
+- **Wald**: $\hat{p} \pm z^* \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$ — prosty, ale zawodny dla skrajnych $p$ lub małych $n$
+- **Wilson**: korekta, która działa lepiej — używaj w praktyce
+
+## Wald vs Wilson — symulacja
+
+```{r}
+fluidRow(
+  column(3, sliderInput("ch4_true_p", "Prawdziwe p:", min = 0.01, max = 0.99, value = 0.5, step = 0.01)),
+  column(3, sliderInput("ch4_n", "n:", min = 10, max = 200, value = 30, step = 5)),
+  column(3, radioButtons("ch4_method", "Metoda:", choices = c("Wald" = "wald", "Wilson" = "wilson"), inline = TRUE)),
+  column(3, actionButton("ch4_sim", "Symuluj 100 CI", class = "btn-primary", width = "100%"))
+)
+```
+
+```{r}
+plotOutput("ch4_ci_plot", height = "500px")
+uiOutput("ch4_coverage_info")
+```
+
+```{r}
+#| context: server
+
+ch4_sim_data <- reactiveVal(NULL)
+
+observeEvent(input$ch4_sim, {
+  results <- simulate_coverage_prop(input$ch4_true_p, input$ch4_n, 0.95, 100, input$ch4_method)
+  ch4_sim_data(results)
+})
+
+output$ch4_ci_plot <- renderPlot({
+  df <- ch4_sim_data()
+  req(df)
+  true_p <- input$ch4_true_p
+
+  ggplot(df, aes(y = sim)) +
+    geom_vline(xintercept = true_p, color = col_true, linewidth = 1.2, linetype = "dashed") +
+    geom_segment(aes(x = lower, xend = upper, yend = sim, color = covers),
+                 linewidth = 0.8) +
+    geom_point(aes(x = phat), color = col_dark, size = 1) +
+    scale_color_manual(values = c("TRUE" = col_hit, "FALSE" = col_miss),
+                       labels = c("TRUE" = "Trafiony", "FALSE" = "Pudło"), name = "") +
+    coord_cartesian(xlim = c(max(0, true_p - 0.4), min(1, true_p + 0.4))) +
+    labs(title = paste0("100 przedziałów (", input$ch4_method, ", p = ", true_p, ")"),
+         x = "Proporcja", y = "Numer próby") +
+    theme_ci()
+})
+
+output$ch4_coverage_info <- renderUI({
+  df <- ch4_sim_data()
+  req(df)
+  actual <- mean(df$covers) * 100
+  color <- if (actual >= 90) col_hit else col_miss
+  div(style = "text-align: center; margin-top: 10px;",
+    tags$span(style = paste0("display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 6px; font-weight: bold; font-size: 16px; color: white; background: ", color, ";"),
+      paste0("Pokrycie: ", actual, "% (oczekiwane: 95%)"))
+  )
+})
+```
+
+::: {.callout-warning}
+## Kiedy Wald zawodzi?
+Ustaw p blisko 0 lub 1 (np. 0.05) i małe n (np. 20). Wald daje pokrycie dużo poniżej 95%.
+Wilson radzi sobie znacznie lepiej — **zawsze używaj Wilson w praktyce**.
+:::
+
+## Heatmapa pokrycia
+
+```{r}
+fluidRow(
+  column(6, radioButtons("ch4_heat_method", "Metoda:", choices = c("Wald" = "wald", "Wilson" = "wilson"), inline = TRUE)),
+  column(6, actionButton("ch4_heat_run", "Generuj heatmapę (może chwilę potrwać)",
+                          class = "btn-warning", width = "100%"))
+)
+```
+
+```{r}
+plotOutput("ch4_heat_plot", height = "400px")
+```
+
+```{r}
+#| context: server
+
+ch4_heat_data <- reactiveVal(NULL)
+
+observeEvent(input$ch4_heat_run, {
+  method <- input$ch4_heat_method
+  p_vals <- seq(0.05, 0.95, by = 0.05)
+  n_vals <- c(10, 20, 30, 50, 75, 100, 150, 200)
+  results <- expand.grid(p = p_vals, n = n_vals)
+  results$coverage <- mapply(function(p, n) {
+    sim <- simulate_coverage_prop(p, n, 0.95, 500, method)
+    mean(sim$covers)
+  }, results$p, results$n)
+  ch4_heat_data(results)
+})
+
+output$ch4_heat_plot <- renderPlot({
+  df <- ch4_heat_data()
+  req(df)
+
+  ggplot(df, aes(x = p, y = factor(n), fill = coverage)) +
+    geom_tile(color = "white", linewidth = 0.5) +
+    scale_fill_gradient2(low = col_miss, mid = col_warning, high = col_hit,
+                         midpoint = 0.95, limits = c(0.7, 1),
+                         name = "Pokrycie") +
+    geom_text(aes(label = paste0(round(coverage * 100), "%")), size = 3) +
+    labs(title = paste0("Pokrycie CI (", input$ch4_heat_method, ") — oczekiwane: 95%"),
+         x = "Prawdziwe p", y = "Wielkość próby (n)") +
+    theme_ci(base_size = 12)
+})
+```
+
+---
+
+# 5. Co wpływa na szerokość? {#czynniki}
+
+*Przedział może być wąski (precyzyjny) lub szeroki (mało informacyjny).
+Co kontroluje jego szerokość?*
+
+## Trzy czynniki
+
+Margines błędu: $ME = t^* \cdot \frac{s}{\sqrt{n}}$
+
+| Czynnik | Wzrost → | Efekt na szerokość |
+|---|---|---|
+| Wielkość próby $n$ | ↑ | ↓ (węższy) |
+| Poziom ufności | ↑ | ↑ (szerszy) |
+| Zmienność $s$ | ↑ | ↑ (szerszy) |
+
+## Interaktywna eksploracja
+
+```{r}
+sliderInput("ch5_n", "Wielkość próby (n):", min = 5, max = 500, value = 30, step = 5, width = "100%")
+sliderInput("ch5_conf", "Poziom ufności:", min = 0.80, max = 0.99, value = 0.95, step = 0.01, width = "100%")
+sliderInput("ch5_s", "Odchylenie standardowe (s):", min = 1, max = 30, value = 10, step = 1, width = "100%")
+```
+
+```{r}
+plotOutput("ch5_factors_plot", height = "350px")
+uiOutput("ch5_me_display")
+```
+
+```{r}
+#| context: server
+
+output$ch5_factors_plot <- renderPlot({
+  n <- input$ch5_n
+  conf <- input$ch5_conf
+  s <- input$ch5_s
+  t_star <- qt(1 - (1 - conf) / 2, df = max(n - 1, 1))
+  me <- t_star * s / sqrt(n)
+
+  n_seq <- seq(5, 500, by = 5)
+  me_seq <- qt(1 - (1 - conf) / 2, df = pmax(n_seq - 1, 1)) * s / sqrt(n_seq)
+  df <- data.frame(n = n_seq, me = me_seq)
+
+  ggplot(df, aes(x = n, y = me)) +
+    geom_line(color = col_ci, linewidth = 1.2) +
+    geom_point(aes(x = !!n, y = !!me), color = col_estimate, size = 5) +
+    geom_hline(yintercept = me, color = col_estimate, linetype = "dotted", alpha = 0.5) +
+    annotate("text", x = min(n + 30, 480), y = me + max(me_seq) * 0.05,
+             label = paste0("ME = ", round(me, 2)),
+             color = col_estimate, fontface = "bold", size = 5) +
+    labs(title = "Margines błędu vs wielkość próby",
+         x = "Wielkość próby (n)", y = "Margines błędu (ME)") +
+    theme_ci()
+})
+
+output$ch5_me_display <- renderUI({
+  n <- input$ch5_n
+  conf <- input$ch5_conf
+  s <- input$ch5_s
+  t_star <- qt(1 - (1 - conf) / 2, df = max(n - 1, 1))
+  me <- t_star * s / sqrt(n)
+  div(style = "text-align: center; margin-top: 10px;",
+    tags$span(style = paste0("display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 6px; font-weight: bold; font-size: 16px; color: white; background: ", col_estimate, ";"),
+      paste0("ME = ", round(me, 2))),
+    tags$span(style = paste0("display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 6px; font-weight: bold; font-size: 16px; color: white; background: ", col_dark, ";"),
+      paste0("Szerokość CI = ", round(2 * me, 2))),
+    tags$span(style = paste0("display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 6px; font-weight: bold; font-size: 16px; color: white; background: ", col_ci, ";"),
+      paste0("t* = ", round(t_star, 3)))
+  )
+})
+```
+
+## Planowanie wielkości próby
+
+Ile obserwacji potrzeba, żeby margines błędu nie przekroczył $ME_{max}$?
+
+$$n = \left(\frac{z^* \cdot s}{ME_{max}}\right)^2$$
+
+```{r}
+fluidRow(
+  column(4, numericInput("ch5_plan_me", "Maksymalny ME:", value = 2, min = 0.1, step = 0.5)),
+  column(4, numericInput("ch5_plan_s", "Oczekiwane s:", value = 10, min = 1)),
+  column(4, sliderInput("ch5_plan_conf", "Poziom ufności:", min = 0.80, max = 0.99, value = 0.95, step = 0.01))
+)
+```
+
+```{r}
+uiOutput("ch5_plan_result")
+```
+
+```{r}
+#| context: server
+
+output$ch5_plan_result <- renderUI({
+  me_max <- input$ch5_plan_me
+  s <- input$ch5_plan_s
+  conf <- input$ch5_plan_conf
+  req(me_max > 0, s > 0)
+  z_star <- qnorm(1 - (1 - conf) / 2)
+  n_req <- ceiling((z_star * s / me_max)^2)
+
+  div(class = "callout-info",
+    tags$strong("Wymagana wielkość próby: "),
+    tags$span(style = "font-size: 24px; font-weight: bold;", n_req),
+    br(),
+    tags$small(paste0("(z* = ", round(z_star, 3), ", s = ", s, ", ME_max = ", me_max, ")"))
+  )
+})
+```
+
+## Porównanie 90%, 95%, 99%
+
+```{r}
+fluidRow(
+  column(6, selectInput("ch5_cmp_data", "Dane:", choices = c(
+    "Wzrost (n=25)" = "height", "Dojazd (n=40)" = "commute", "Oceny (n=15)" = "grades"
+  ), width = "100%")),
+  column(6, actionButton("ch5_cmp_calc", "Oblicz trzy przedziały", class = "btn-primary", width = "100%"))
+)
+```
+
+```{r}
+plotOutput("ch5_cmp_plot", height = "250px")
+```
+
+```{r}
+#| context: server
+
+ch5_cmp_result <- reactiveVal(NULL)
+
+observeEvent(input$ch5_cmp_calc, {
+  set.seed(42)
+  samp <- switch(input$ch5_cmp_data,
+    "height"  = rnorm(25, 172, 8),
+    "commute" = rgamma(40, 4, 0.1),
+    "grades"  = rnorm(15, 3.8, 0.7)
+  )
+  xbar <- mean(samp); s <- sd(samp); n <- length(samp)
+
+  results <- lapply(c(0.90, 0.95, 0.99), function(conf) {
+    t_star <- qt(1 - (1 - conf) / 2, df = n - 1)
+    me <- t_star * s / sqrt(n)
+    data.frame(conf = paste0(conf * 100, "%"), xbar = xbar,
+               lower = xbar - me, upper = xbar + me, me = me)
+  })
+  ch5_cmp_result(do.call(rbind, results))
+})
+
+output$ch5_cmp_plot <- renderPlot({
+  df <- ch5_cmp_result()
+  req(df)
+
+  colors <- c("90%" = col_success, "95%" = col_ci, "99%" = col_secondary)
+
+  ggplot(df, aes(y = conf)) +
+    geom_errorbarh(aes(xmin = lower, xmax = upper, color = conf),
+                   height = 0.3, linewidth = 2) +
+    geom_point(aes(x = xbar), color = col_estimate, size = 5, shape = 18) +
+    scale_color_manual(values = colors) +
+    labs(title = "Porównanie przedziałów ufności",
+         x = "Wartość", y = "Poziom ufności") +
+    theme_ci() +
+    theme(legend.position = "none")
+})
+```
+
+---
+
+# 6. Ściąga {#sciaga}
+
+## Wzory
+
+::: {.panel-tabset}
+
+### Średnia (t-interval)
+
+$$\bar{x} \pm t^*_{\alpha/2,\, n-1} \cdot \frac{s}{\sqrt{n}}$$
+
+Używaj **prawie zawsze** — nie znamy σ populacji.
+
+### Proporcja (Wilson)
+
+Używaj `prop.test()` w R — automatycznie oblicza Wilson.
+
+$$\hat{p} \pm z^* \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$$
+
+(Wald — prosty wzór, ale zawodny dla małych n lub skrajnych p)
+
+### Wielkość próby
+
+Dla średniej: $n = \left(\frac{z^* \cdot s}{ME_{max}}\right)^2$
+
+Dla proporcji: $n = \frac{z^{*2} \cdot \hat{p}(1-\hat{p})}{ME_{max}^2}$
+
+:::
+
+## Wartości krytyczne
+
+| Poziom ufności | $z^*$ | $\alpha$ |
+|:---:|:---:|:---:|
+| 90% | 1.645 | 0.10 |
+| 95% | 1.960 | 0.05 |
+| 99% | 2.576 | 0.01 |
+
+## Drzewo decyzyjne
+
+1. **Co szacujesz?**
+   - Średnią → pkt 2
+   - Proporcję → pkt 3
+
+2. **Czy znasz σ populacji?**
+   - Tak → z-interval (rzadko w praktyce)
+   - Nie → **t-interval** (standard)
+
+3. **Czy $n\hat{p} \geq 10$ i $n(1-\hat{p}) \geq 10$?**
+   - Tak → Wald lub **Wilson**
+   - Nie → Wilson lub Clopper-Pearson (exact)
+
+## Co wpływa na szerokość?
+
+| Czynnik | Wzrost → | Efekt |
+|---|:---:|:---:|
+| Wielkość próby $n$ | ↑ | węższy |
+| Poziom ufności | ↑ | szerszy |
+| Zmienność $s$ | ↑ | szerszy |
+
+## Funkcje R
+
+```r
+# Przedział dla średniej
+t.test(x, conf.level = 0.95)
+
+# Przedział dla proporcji (Wilson)
+prop.test(x = sukcesy, n = proba, conf.level = 0.95)
+
+# Dokładny (Clopper-Pearson)
+binom.test(x = sukcesy, n = proba, conf.level = 0.95)
+```
+
+## Częste błędy
+
+::: {.callout-warning}
+## Błędne interpretacje
+
+- "μ leży w przedziale z prawdopodobieństwem 95%" — μ jest **stałą**!
+- "95% danych leży w tym przedziale" — to przedział **predykcji**
+- "Średnia z próby leży w przedziale" — zawsze leży, z definicji
+:::
+
+::: {.callout-tip}
+## Poprawne interpretacje
+
+- "Gdybyśmy powtarzali badanie, 95% tak skonstruowanych przedziałów zawierałoby μ"
+- "Mamy 95% zaufania do **metody**, która wygenerowała ten przedział"
+:::
