@@ -1,0 +1,49 @@
+---
+title: "Estymacja punktowa"
+format:
+  html:
+    theme: none
+    minimal: true
+    embed-resources: false
+    toc: false
+    title-block-style: none
+---
+
+## Od próby do populacji
+
+Mamy populację (np. wzrost wszystkich studentów w Polsce) z nieznanym parametrem $\mu$.
+Pobieramy **próbę losową** o wielkości $n$ i obliczamy **statystykę** (np. średnią $\bar{x}$).
+
+Ta statystyka jest **estymatorem** — naszym najlepszym przybliżeniem prawdziwego $\mu$.
+Ale za każdym razem, gdy pobierzemy nową próbę, dostaniemy nieco inną wartość $\bar{x}$.
+
+## Estymator w akcji
+
+Losuj próby z wybranej populacji i obserwuj, jak zmienia się średnia z próby.
+Każde kliknięcie to nowa próba — linia przerywana to prawdziwe $\mu$.
+
+<!-- widget: ch1_estimator -->
+
+::: {.callout-note}
+## Obserwacja
+Im większa próba (n), tym **mniejszy rozrzut** estymat wokół prawdziwego $\mu$.
+To jest esencja statystyki: więcej danych = precyzyjniejsze oszacowanie.
+:::
+
+## Obciążenie vs trafność
+
+Dobry estymator powinien być:
+
+1. **Nieobciążony** — średnio trafia w prawdziwy parametr
+2. **Zgodny** — przy dużych próbach coraz bliżej prawdy
+3. **Efektywny** — mały rozrzut (mała wariancja)
+
+<!-- widget: ch1_bias -->
+
+## Dlaczego sam punkt nie wystarczy?
+
+Estymata punktowa (np. $\bar{x} = 172.3$ cm) to **jedna liczba**.
+Nie mówi nic o tym, jak bardzo może się mylić.
+
+Potrzebujemy **przedziału** — zakresu wartości, który z określonym
+prawdopodobieństwem zawiera prawdziwy parametr. To właśnie **przedział ufności**.

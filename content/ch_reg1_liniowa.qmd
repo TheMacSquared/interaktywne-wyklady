@@ -1,0 +1,49 @@
+---
+title: "Regresja liniowa prosta"
+---
+
+## Idea regresji
+
+Regresja liniowa modeluje **zależność liniową** między zmienną zależną $Y$
+a predyktorem $X$:
+
+$$Y = \beta_0 + \beta_1 X + \varepsilon$$
+
+gdzie:
+
+- $\beta_0$ — wyraz wolny (intercept)
+- $\beta_1$ — nachylenie prostej (slope)
+- $\varepsilon$ — składnik losowy (reszty)
+
+## Dopasowanie prostej
+
+Metoda najmniejszych kwadratów (OLS) minimalizuje sumę kwadratów reszt:
+
+$$\text{RSS} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$
+
+Spróbuj sam — generuj dane i obserwuj, jak prosta się dopasowuje.
+
+<!-- widget: reg1_fit -->
+
+::: {.callout-note}
+## Co warto zauważyć
+
+- Im większy **rozrzut** danych (większe $\sigma$), tym gorzej prosta pasuje
+- Im większa próba ($n$), tym stabilniejsze dopasowanie
+- $R^2$ mówi, jaki procent zmienności $Y$ wyjaśnia model
+:::
+
+## Reszty
+
+Reszty $e_i = y_i - \hat{y}_i$ to różnice między obserwacjami a predykcjami.
+Powinny być losowo rozrzucone wokół zera — jeśli widać wzorzec, model jest źle dobrany.
+
+<!-- widget: reg1_residuals -->
+
+::: {.callout-warning}
+## Typowe problemy
+
+- **Wzorzec w resztach** — zależność nie jest liniowa
+- **Wachlarz** — heteroskedastyczność (nierówna wariancja)
+- **Outlier** — jedna obserwacja może drastycznie zmienić prostą
+:::

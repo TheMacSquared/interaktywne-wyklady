@@ -1,0 +1,55 @@
+---
+title: "Idea przedziałów ufności"
+---
+
+*Estymata punktowa to za mało. Potrzebujemy zakresu, który z określoną pewnością
+zawiera prawdziwy parametr.*
+
+## Czym jest przedział ufności?
+
+Przedział ufności na poziomie 95% oznacza:
+
+> Gdybyśmy powtarzali badanie nieskończenie wiele razy, **95% tak skonstruowanych
+> przedziałów** zawierałoby prawdziwy parametr $\mu$.
+
+To **nie** znaczy, że $\mu$ leży w naszym przedziale z prawdopodobieństwem 95%.
+$\mu$ jest stałą — albo leży w przedziale, albo nie. 95% to cecha **metody**, nie wyniku.
+
+## 100 przedziałów ufności
+
+Symulujemy 100 prób z populacji i konstruujemy przedział dla każdej.
+Zielone trafiają w $\mu$, czerwone pudłują.
+
+<!-- widget: ch2_ci_sim -->
+
+## Budowa przedziału — krok po kroku
+
+Przedział ufności dla średniej ma postać:
+
+$$\bar{x} \pm t^* \cdot \frac{s}{\sqrt{n}}$$
+
+gdzie:
+
+- $\bar{x}$ — średnia z próby
+- $t^*$ — wartość krytyczna z rozkładu t-Studenta
+- $s$ — odchylenie standardowe z próby
+- $n$ — wielkość próby
+
+Część $t^* \cdot \frac{s}{\sqrt{n}}$ to **margines błędu (ME)**.
+
+## Częste błędy interpretacji
+
+::: {.callout-warning}
+## Tak NIE wolno mówić
+
+- "μ leży w przedziale z prawdopodobieństwem 95%" — μ jest stałą!
+- "95% danych leży w tym przedziale" — to byłby przedział predykcji
+- "Średnia z próby leży w przedziale" — zawsze leży, z definicji
+:::
+
+::: {.callout-tip}
+## Poprawna interpretacja
+
+- "Gdybyśmy powtarzali badanie, 95% tak skonstruowanych przedziałów zawierałoby μ"
+- "Mamy 95% zaufania do **metody**, która wygenerowała ten przedział"
+:::
