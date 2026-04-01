@@ -57,9 +57,8 @@ source(file.path(app_dir, "modules", "ch3_dyskretne.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch4_ciagle.R"),    local = TRUE)
 source(file.path(app_dir, "modules", "ch5_normalny.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "ch6_ctg.R"),       local = TRUE)
-source(file.path(app_dir, "modules", "ch7_dobor.R"),     local = TRUE)
-source(file.path(app_dir, "modules", "ch8_sciaga.R"),    local = TRUE)
-source(file.path(app_dir, "modules", "ch9_quiz.R"),      local = TRUE)
+source(file.path(app_dir, "modules", "ch7_sciaga.R"),    local = TRUE)
+source(file.path(app_dir, "modules", "ch8_quiz.R"),      local = TRUE)
 
 # ============================================================================
 # GLOBAL UI HEADER (CSS, JS)
@@ -279,8 +278,7 @@ ui <- navbarPage(
   ch5_ui,
   ch6_ui,
   ch7_ui,
-  ch8_ui,
-  ch9_ui
+  ch8_ui
 )
 
 # ============================================================================
@@ -309,13 +307,10 @@ server <- function(input, output, session) {
     updateNavbarPage(session, "main_nav", selected = "6. Centralne Tw. Graniczne")
   })
   observeEvent(input$ch6_next, {
-    updateNavbarPage(session, "main_nav", selected = "7. Dob\u00f3r rozk\u0142adu")
+    updateNavbarPage(session, "main_nav", selected = "7. \u015aci\u0105ga")
   })
   observeEvent(input$ch7_next, {
-    updateNavbarPage(session, "main_nav", selected = "8. \u015aci\u0105ga")
-  })
-  observeEvent(input$ch8_next, {
-    updateNavbarPage(session, "main_nav", selected = "9. Quiz")
+    updateNavbarPage(session, "main_nav", selected = "8. Quiz")
   })
 
   # ==========================================================================
@@ -330,7 +325,6 @@ server <- function(input, output, session) {
   ch6_server(input, output, session)
   ch7_server(input, output, session)
   ch8_server(input, output, session)
-  ch9_server(input, output, session)
 
 }
 

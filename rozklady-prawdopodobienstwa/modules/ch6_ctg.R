@@ -150,9 +150,9 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
     # --- Transition ---
     div(class = "chapter-transition",
       p("CTG wyja\u015bnia, dlaczego rozk\u0142ad normalny jest tak wa\u017cny
-        dla wnioskowania statystycznego. Teraz pytanie praktyczne:
-        jak dopasowa\u0107 w\u0142a\u015bciwy rozk\u0142ad do konkretnych danych?"),
-      actionButton("ch6_next", "Dalej: 7. Dob\u00f3r rozk\u0142adu \u2192",
+        dla wnioskowania statystycznego. Na koniec \u2014 kompaktowa \u015bci\u0105ga
+        ze wszystkimi wzorami i regu\u0142ami decyzyjnymi."),
+      actionButton("ch6_next", "Dalej: 7. \u015aci\u0105ga \u2192",
                    class = "btn-primary btn-lg")
     ),
 

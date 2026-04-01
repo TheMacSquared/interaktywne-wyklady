@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 9: Quiz - dopasuj rozklad do zjawiska
+# CHAPTER 8: Quiz - dopasuj rozklad do zjawiska
 # ============================================================================
 
 # Wczytaj pytania z JSON
@@ -24,7 +24,7 @@ QUIZ_MAX_QUESTIONS <- 10
 # UI
 # ============================================================================
 
-ch9_ui <- tabPanel("9. Quiz",
+ch8_ui <- tabPanel("8. Quiz",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
@@ -48,29 +48,29 @@ ch9_ui <- tabPanel("9. Quiz",
       # Start / status bar
       fluidRow(
         column(6,
-          actionButton("ch9_start", "Rozpocznij quiz",
+          actionButton("ch8_start", "Rozpocznij quiz",
                        class = "btn-primary btn-lg", width = "100%")
         ),
         column(6,
-          uiOutput("ch9_progress")
+          uiOutput("ch8_progress")
         )
       ),
 
       hr(),
 
       # Pytanie
-      uiOutput("ch9_question_ui"),
+      uiOutput("ch8_question_ui"),
 
       # Opcje odpowiedzi (3 przyciski)
-      uiOutput("ch9_options_ui"),
+      uiOutput("ch8_options_ui"),
 
       # Feedback
-      uiOutput("ch9_feedback_ui"),
+      uiOutput("ch8_feedback_ui"),
 
       hr(),
 
       # Podsumowanie
-      uiOutput("ch9_summary_ui")
+      uiOutput("ch8_summary_ui")
     ),
 
     br(), br()
@@ -81,7 +81,7 @@ ch9_ui <- tabPanel("9. Quiz",
 # SERVER
 # ============================================================================
 
-ch9_server <- function(input, output, session) {
+ch8_server <- function(input, output, session) {
 
   # --- Stan quizu ---
   quiz_state <- reactiveValues(
@@ -99,7 +99,7 @@ ch9_server <- function(input, output, session) {
   all_questions <- NULL
 
   # --- Start quizu ---
-  observeEvent(input$ch9_start, {
+  observeEvent(input$ch8_start, {
     # Wczytaj pytania (leniwe ladowanie)
     if (is.null(all_questions)) {
       all_questions <<- .load_quiz_questions()
@@ -136,7 +136,7 @@ ch9_server <- function(input, output, session) {
   }
 
   # --- Pasek postepu ---
-  output$ch9_progress <- renderUI({
+  output$ch8_progress <- renderUI({
     if (!quiz_state$active) return(NULL)
 
     answered <- quiz_state$correct + quiz_state$wrong
@@ -163,7 +163,7 @@ ch9_server <- function(input, output, session) {
   })
 
   # --- Pytanie ---
-  output$ch9_question_ui <- renderUI({
+  output$ch8_question_ui <- renderUI({
     if (!quiz_state$active || quiz_state$finished) return(NULL)
 
     q <- quiz_state$questions[[quiz_state$current_idx]]
@@ -177,7 +177,7 @@ ch9_server <- function(input, output, session) {
   })
 
   # --- Opcje (3 przyciski) ---
-  output$ch9_options_ui <- renderUI({
+  output$ch8_options_ui <- renderUI({
     if (!quiz_state$active || quiz_state$finished) return(NULL)
     if (quiz_state$answered) return(NULL)
 
@@ -186,7 +186,7 @@ ch9_server <- function(input, output, session) {
 
     div(class = "quiz-tiles quiz-cols-3",
       lapply(seq_along(opts), function(i) {
-        btn_id <- paste0("ch9_answer_", i)
+        btn_id <- paste0("ch8_answer_", i)
         actionButton(btn_id,
           tagList(
             div(class = "tile-letter", letters[i]),
@@ -203,7 +203,7 @@ ch9_server <- function(input, output, session) {
     for (i in 1:3) {
       local({
         idx <- i
-        btn_id <- paste0("ch9_answer_", idx)
+        btn_id <- paste0("ch8_answer_", idx)
         observeEvent(input[[btn_id]], {
           if (quiz_state$answered) return()
 
@@ -228,7 +228,7 @@ ch9_server <- function(input, output, session) {
   })
 
   # --- Feedback po odpowiedzi ---
-  output$ch9_feedback_ui <- renderUI({
+  output$ch8_feedback_ui <- renderUI({
     if (!quiz_state$active || !quiz_state$answered || quiz_state$finished) return(NULL)
 
     is_correct <- quiz_state$last_correct
@@ -252,11 +252,11 @@ ch9_server <- function(input, output, session) {
 
       # Przycisk dalej
       if (quiz_state$current_idx < quiz_state$total) {
-        actionButton("ch9_next", "Nast\u0119pne pytanie \u2192",
+        actionButton("ch8_next", "Nast\u0119pne pytanie \u2192",
                      class = "btn-primary", width = "100%",
                      style = "margin-top: 10px;")
       } else {
-        actionButton("ch9_finish", "Zobacz wynik",
+        actionButton("ch8_finish", "Zobacz wynik",
                      class = "btn-success btn-lg", width = "100%",
                      style = "margin-top: 10px;")
       }
@@ -264,20 +264,20 @@ ch9_server <- function(input, output, session) {
   })
 
   # --- Nastepne pytanie ---
-  observeEvent(input$ch9_next, {
+  observeEvent(input$ch8_next, {
     quiz_state$current_idx <- quiz_state$current_idx + 1
     quiz_state$answered <- FALSE
     prepare_options()
   })
 
   # --- Zakonczenie ---
-  observeEvent(input$ch9_finish, {
+  observeEvent(input$ch8_finish, {
     quiz_state$finished <- TRUE
     quiz_state$answered <- FALSE
   })
 
   # --- Podsumowanie ---
-  output$ch9_summary_ui <- renderUI({
+  output$ch8_summary_ui <- renderUI({
     if (!quiz_state$finished) return(NULL)
 
     total <- quiz_state$total
@@ -321,17 +321,17 @@ ch9_server <- function(input, output, session) {
 
       # Przyciski
       div(style = "display: flex; gap: 10px; justify-content: center;",
-        actionButton("ch9_start", "Spr\u00f3buj ponownie",
+        actionButton("ch8_start", "Spr\u00f3buj ponownie",
                      class = "btn-primary btn-lg"),
-        actionButton("ch9_back_to_ch8", "Wr\u00f3\u0107 do \u015bci\u0105gi",
+        actionButton("ch8_back_to_ch7", "Wr\u00f3\u0107 do \u015bci\u0105gi",
                      class = "btn-outline-secondary btn-lg")
       )
     )
   })
 
   # Nawigacja powrotna
-  observeEvent(input$ch9_back_to_ch8, {
-    updateNavbarPage(session, "main_nav", selected = "8. \u015aci\u0105ga")
+  observeEvent(input$ch8_back_to_ch7, {
+    updateNavbarPage(session, "main_nav", selected = "7. \u015aci\u0105ga")
   })
 
 }
