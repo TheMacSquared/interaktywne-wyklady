@@ -164,9 +164,9 @@
     },
     {
       "id": 29,
-      "question": "Czas oczekiwania na autobus (rozkład czasu przyjazdu autobusów jest losowy wokół średniej)",
+      "question": "Czas przygotowania kawy w kawiarni (średnio 3 min z małymi odchyleniami)",
       "correct": "normalny",
-      "explanation": "Przy losowych opóźnieniach/wyprzedzeniach wokół rozkładu, czas oczekiwania może mieć rozkład normalny (jeśli autobusy jeżdżą regularnie z małymi odchyleniami)."
+      "explanation": "Czas przygotowania kawy zależy od wielu drobnych czynników (ilość mleka, temperatura, barista), które sumują się dając rozkład zbliżony do normalnego — symetryczny wokół średniej."
     },
     {
       "id": 30,
@@ -296,9 +296,9 @@
     },
     {
       "id": 51,
-      "question": "Czas oczekiwania na następny autobus, gdy autobusy przyjeżdżają losowo (średnio co 10 min)",
+      "question": "Czas oczekiwania na następną wiadomość na grupowym czacie, gdy wiadomości przychodzą losowo (średnio co 10 min)",
       "correct": "wykladniczy",
-      "explanation": "Jeśli autobusy przyjeżdżają losowo ze stałą średnią częstością (proces Poissona), to czas między kolejnymi przyjazda­mi ma rozkład wykładniczy. Kluczowa cecha: brak pamięci — nie ma znaczenia, ile już czekasz."
+      "explanation": "Wiadomości na czacie przychodzą losowo ze stałą średnią częstością (proces Poissona), więc czas między kolejnymi wiadomościami ma rozkład wykładniczy. Kluczowa cecha: brak pamięci — nie ma znaczenia, ile już czekasz."
     },
     {
       "id": 52,

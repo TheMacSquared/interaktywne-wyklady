@@ -116,7 +116,7 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
       p(tags$b("Jednostajny ci\u0105g\u0142y U(a, b)"), " \u2014 ka\u017cda warto\u015b\u0107 w przedziale
         [a, b] jest jednakowo prawdopodobna. Przyk\u0142ad: losowa liczba z generatora."),
       p(tags$b("Wyk\u0142adniczy Exp(\u03bb)"), " \u2014 modeluje czas oczekiwania mi\u0119dzy
-        zdarzeniami. Przyk\u0142ad: czas do przyjazdu autobusu, czas mi\u0119dzy awariami.")
+        zdarzeniami. Przyk\u0142ad: czas mi\u0119dzy wiadomo\u015bciami na WhatsAppie, czas mi\u0119dzy awariami maszyn.")
     ),
 
     div(class = "widget-block",
