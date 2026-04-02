@@ -21,7 +21,7 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     ),
 
     # ========================================================================
-    # WIDGET 1: Od histogramu do krzywej (krok po kroku)
+    # WIDGET 1: Od histogramu do krzywej (krok po kroku) — BEZ ZMIAN
     # ========================================================================
     div(class = "widget-block",
       h4("Od histogramu do krzywej g\u0119sto\u015bci"),
@@ -67,7 +67,7 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     ),
 
     # ========================================================================
-    # WIDGET 2: Prawdopodobienstwo = pole
+    # WIDGET 2: Prawdopodobienstwo = pole — BEZ ZMIAN
     # ========================================================================
     div(class = "section-title", "Prawdopodobie\u0144stwo = pole pod krzyw\u0105"),
 
@@ -108,46 +108,96 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     ),
 
     # ========================================================================
-    # WIDGET 3: Jednostajny ciagly i wykladniczy
+    # WIDGET 3: Jednostajny ciagly — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Dwa podstawowe rozk\u0142ady ci\u0105g\u0142e"),
+    div(class = "section-title", "Rozk\u0142ad jednostajny ci\u0105g\u0142y"),
 
     div(class = "narrative",
       p(tags$b("Jednostajny ci\u0105g\u0142y U(a, b)"), " \u2014 ka\u017cda warto\u015b\u0107 w przedziale
-        [a, b] jest jednakowo prawdopodobna. Przyk\u0142ad: losowa liczba z generatora."),
-      p(tags$b("Wyk\u0142adniczy Exp(\u03bb)"), " \u2014 modeluje czas oczekiwania mi\u0119dzy
-        zdarzeniami. Przyk\u0142ad: czas mi\u0119dzy wiadomo\u015bciami na WhatsAppie, czas mi\u0119dzy awariami maszyn.")
+        [a, b] jest jednakowo prawdopodobna. Przyk\u0142ad: losowa liczba z generatora.")
     ),
 
     div(class = "widget-block",
-      h4("Por\u00f3wnanie: jednostajny vs wyk\u0142adniczy"),
+      h4("Rozk\u0142ad jednostajny U(a, b)"),
       fluidRow(
-        column(6,
-          h5("Jednostajny U(a, b)"),
-          sliderInput("ch4_unif_a", "a:", min = 0, max = 5, value = 0, step = 0.5),
-          sliderInput("ch4_unif_b", "b:", min = 1, max = 10, value = 5, step = 0.5),
-          plotOutput("ch4_unif_plot", height = "250px"),
-          uiOutput("ch4_unif_stats")
+        column(4,
+          checkboxGroupInput("ch4_unif_scenarios", "Scenariusze:",
+            choices = c(
+              "U(0, 10)" = "unif_1",
+              "U(2, 8)" = "unif_2",
+              "U(0, 2)" = "unif_3",
+              "U(4, 6)" = "unif_4"
+            ),
+            selected = "unif_1"
+          )
         ),
-        column(6,
-          h5("Wyk\u0142adniczy Exp(\u03bb)"),
-          sliderInput("ch4_exp_lambda", "\u03bb (rate):",
-                      min = 0.1, max = 3, value = 1, step = 0.1),
-          br(),
-          plotOutput("ch4_exp_plot", height = "250px"),
-          uiOutput("ch4_exp_stats")
+        column(8,
+          plotOutput("ch4_unif_plot", height = "350px"),
+          uiOutput("ch4_unif_stats")
         )
       ),
       div(class = "formula-box",
         withMathJax(
-          helpText("Jednostajny: $$f(x) = \\frac{1}{b-a}, \\quad E(X) = \\frac{a+b}{2}, \\quad Var(X) = \\frac{(b-a)^2}{12}$$"),
-          helpText("Wyk\u0142adniczy: $$f(x) = \\lambda e^{-\\lambda x}, \\quad E(X) = \\frac{1}{\\lambda}, \\quad Var(X) = \\frac{1}{\\lambda^2}$$")
+          helpText("$$f(x) = \\frac{1}{b-a}, \\quad E(X) = \\frac{a+b}{2}, \\quad Var(X) = \\frac{(b-a)^2}{12}$$")
         )
       )
     ),
 
     # ========================================================================
-    # WIDGET 4: Rozklad t-Studenta
+    # WIDGET 3b: Wykladniczy — scenariusze overlay
+    # ========================================================================
+    div(class = "section-title", "Rozk\u0142ad wyk\u0142adniczy"),
+
+    div(class = "narrative",
+      p(tags$b("Wyk\u0142adniczy Exp(\u03bb)"), " \u2014 modeluje czas oczekiwania mi\u0119dzy
+        zdarzeniami. Przyk\u0142ad: czas mi\u0119dzy wiadomo\u015bciami na WhatsAppie, czas mi\u0119dzy awariami maszyn.")
+    ),
+
+    div(class = "widget-block",
+      h4("Rozk\u0142ad wyk\u0142adniczy Exp(\u03bb)"),
+      fluidRow(
+        column(4,
+          checkboxGroupInput("ch4_exp_scenarios", "Scenariusze:",
+            choices = c(
+              "Awarie: \u03bb = 0.3/dzie\u0144" = "exp_1",
+              "Wiadomo\u015bci: \u03bb = 1/godz" = "exp_2",
+              "Zg\u0142oszenia: \u03bb = 2/godz" = "exp_3",
+              "Po\u0142\u0105czenia: \u03bb = 5/min" = "exp_4"
+            ),
+            selected = "exp_2"
+          )
+        ),
+        column(8,
+          plotOutput("ch4_exp_plot", height = "350px"),
+          uiOutput("ch4_exp_stats")
+        )
+      ),
+      div(class = "formula-box",
+        withMathJax(
+          helpText("$$f(x) = \\lambda e^{-\\lambda x}, \\quad E(X) = \\frac{1}{\\lambda}, \\quad Var(X) = \\frac{1}{\\lambda^2}$$")
+        )
+      )
+    ),
+
+    div(class = "callout-info",
+      tags$strong("Zwi\u0105zek z rozk\u0142adem Poissona:"),
+      " Je\u015bli liczba zdarze\u0144 w ustalonym czasie ma rozk\u0142ad Poissona z parametrem \u03bb,
+        to ", tags$b("czas mi\u0119dzy kolejnymi zdarzeniami"), " ma rozk\u0142ad wyk\u0142adniczy
+        Exp(\u03bb). To dwie strony tego samego procesu \u2014 Poisson zlicza zdarzenia,
+        wyk\u0142adniczy mierzy odst\u0119py mi\u0119dzy nimi."
+    ),
+
+    div(class = "callout-warning",
+      tags$strong("Bezpami\u0119ciowo\u015b\u0107:"),
+      " Czekasz na wiadomo\u015b\u0107 ju\u017c 2 godziny. Czy nast\u0119pna przyjdzie szybciej,
+        bo \u201ej\u0105 ci si\u0119 nale\u017cy\u201d? ", tags$b("Nie."),
+      " Rozk\u0142ad wyk\u0142adniczy jest bezpami\u0119ciowy \u2014 czas ju\u017c sp\u0119dzony na czekaniu
+        nie wp\u0142ywa na to, ile jeszcze poczekasz.
+        To ci\u0105g\u0142y odpowiednik bezpami\u0119ciowo\u015bci rozk\u0142adu geometrycznego z ch. 3."
+    ),
+
+    # ========================================================================
+    # WIDGET 4: Rozklad t-Studenta — scenariusze overlay
     # ========================================================================
     div(class = "section-title", "Rozk\u0142ad t-Studenta"),
 
@@ -164,23 +214,20 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
       h4("Rozk\u0142ad t-Studenta t(df)"),
       fluidRow(
         column(4,
-          sliderInput("ch4_t_df", "df (stopnie swobody):",
-                      min = 1, max = 50, value = 5, step = 1),
-          hr(),
-          div(class = "preset-buttons",
-            actionButton("ch4_t_preset1", "df=1\n(Cauchy)",
-                         class = "btn-outline-primary"),
-            actionButton("ch4_t_preset2", "df=5",
-                         class = "btn-outline-warning"),
-            actionButton("ch4_t_preset3", "df=30\n(\u2248 normalny)",
-                         class = "btn-outline-success")
+          checkboxGroupInput("ch4_t_scenarios", "Scenariusze:",
+            choices = c(
+              "t(df=1) \u2014 Cauchy" = "t_1",
+              "t(df=3)" = "t_2",
+              "t(df=5)" = "t_3",
+              "t(df=30) \u2248 normalny" = "t_4"
+            ),
+            selected = c("t_2", "t_4")
           ),
           hr(),
-          checkboxInput("ch4_t_show_normal", "Poka\u017c N(0,1) dla por\u00f3wnania", value = TRUE),
-          checkboxInput("ch4_t_show_stats", "Poka\u017c E(X) i SD", value = FALSE)
+          checkboxInput("ch4_t_show_normal", "Poka\u017c N(0,1) jako odniesienie", value = TRUE)
         ),
         column(8,
-          plotOutput("ch4_t_plot", height = "350px"),
+          plotOutput("ch4_t_plot", height = "400px"),
           uiOutput("ch4_t_stats")
         )
       ),
@@ -199,8 +246,17 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
         r\u00f3\u017cnica jest znacz\u0105ca!"
     ),
 
+    div(class = "callout-warning",
+      tags$strong("W praktyce:"),
+      " W\u0142\u0105cz scenariusze df=3 i df=30 jednocze\u015bnie i por\u00f3wnaj z N(0,1).
+        Przy df=30 r\u00f3\u017cnica jest minimalna \u2014 dlatego przy du\u017cych pr\u00f3bach
+        test t daje prawie te same wyniki co test z rozk\u0142adu normalnego.
+        Ale przy df=3 (czyli pr\u00f3ba n=4!) ogony s\u0105 wyra\u017anie ci\u0119\u017csze \u2014
+        warto\u015bci ekstremalne s\u0105 bardziej prawdopodobne."
+    ),
+
     # ========================================================================
-    # WIDGET 5: Rozklad chi-kwadrat
+    # WIDGET 5: Rozklad chi-kwadrat — scenariusze overlay
     # ========================================================================
     div(class = "section-title", "Rozk\u0142ad chi-kwadrat (\u03c7\u00b2)"),
 
@@ -216,22 +272,18 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
       h4("Rozk\u0142ad \u03c7\u00b2(df)"),
       fluidRow(
         column(4,
-          sliderInput("ch4_chisq_df", "df (stopnie swobody):",
-                      min = 1, max = 30, value = 5, step = 1),
-          hr(),
-          div(class = "preset-buttons",
-            actionButton("ch4_chisq_preset1", "df=1",
-                         class = "btn-outline-primary"),
-            actionButton("ch4_chisq_preset2", "df=5",
-                         class = "btn-outline-warning"),
-            actionButton("ch4_chisq_preset3", "df=15",
-                         class = "btn-outline-success")
-          ),
-          hr(),
-          checkboxInput("ch4_chisq_show_stats", "Poka\u017c E(X) i SD", value = TRUE)
+          checkboxGroupInput("ch4_chisq_scenarios", "Scenariusze:",
+            choices = c(
+              "\u03c7\u00b2(df=2)" = "chisq_1",
+              "\u03c7\u00b2(df=5)" = "chisq_2",
+              "\u03c7\u00b2(df=10)" = "chisq_3",
+              "\u03c7\u00b2(df=20)" = "chisq_4"
+            ),
+            selected = "chisq_2"
+          )
         ),
         column(8,
-          plotOutput("ch4_chisq_plot", height = "350px"),
+          plotOutput("ch4_chisq_plot", height = "400px"),
           uiOutput("ch4_chisq_stats")
         )
       ),
@@ -249,8 +301,16 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
         i zbli\u017ca si\u0119 do normalnego (dzi\u0119ki CTG!)."
     ),
 
+    div(class = "callout-warning",
+      tags$strong("Intuicja:"),
+      " \u03c7\u00b2 mierzy \u201eodleg\u0142o\u015b\u0107 od idealu\u201d. Je\u015bli ka\u017cda z df zmiennych
+        normalnych odchyla si\u0119 troch\u0119 od zera, to suma ich kwadrat\u00f3w
+        m\u00f3wi, jak du\u017ce s\u0105 \u0142\u0105czne odchylenia. Dlatego test \u03c7\u00b2 sprawdza,
+        czy obserwowane cz\u0119sto\u015bci s\u0105 \u201ezbyt daleko\u201d od oczekiwanych."
+    ),
+
     # ========================================================================
-    # WIDGET 6: Rozklad log-normalny
+    # WIDGET 6: Rozklad log-normalny — scenariusze overlay
     # ========================================================================
     div(class = "section-title", "Rozk\u0142ad log-normalny"),
 
@@ -266,25 +326,18 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
       h4("Rozk\u0142ad LogN(\u03bc, \u03c3)"),
       fluidRow(
         column(4,
-          sliderInput("ch4_lnorm_mu", "\u03bc (meanlog):",
-                      min = -1, max = 3, value = 0, step = 0.1),
-          sliderInput("ch4_lnorm_sigma", "\u03c3 (sdlog):",
-                      min = 0.1, max = 2, value = 0.5, step = 0.1),
-          hr(),
-          div(class = "preset-buttons",
-            actionButton("ch4_lnorm_preset1", "Dochody\n(\u03bc=3, \u03c3=0.8)",
-                         class = "btn-outline-primary"),
-            actionButton("ch4_lnorm_preset2", "Ceny akcji\n(\u03bc=1, \u03c3=0.5)",
-                         class = "btn-outline-warning"),
-            actionButton("ch4_lnorm_preset3", "Czas reakcji\n(\u03bc=0, \u03c3=0.5)",
-                         class = "btn-outline-success")
-          ),
-          hr(),
-          checkboxInput("ch4_lnorm_show_stats", "Poka\u017c E(X) i SD", value = TRUE),
-          checkboxInput("ch4_lnorm_show_log", "Poka\u017c na skali logarytmicznej", value = FALSE)
+          checkboxGroupInput("ch4_lnorm_scenarios", "Scenariusze:",
+            choices = c(
+              "Czas reakcji: LogN(0, 0.3)" = "lnorm_1",
+              "Ceny akcji: LogN(1, 0.5)" = "lnorm_2",
+              "Dochody: LogN(2, 0.8)" = "lnorm_3",
+              "Du\u017ca zmienno\u015b\u0107: LogN(1, 1)" = "lnorm_4"
+            ),
+            selected = "lnorm_2"
+          )
         ),
         column(8,
-          plotOutput("ch4_lnorm_plot", height = "350px"),
+          plotOutput("ch4_lnorm_plot", height = "400px"),
           uiOutput("ch4_lnorm_stats")
         )
       ),
@@ -303,6 +356,14 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
         'typowego' dochodu ni\u017c \u015brednia."
     ),
 
+    div(class = "callout-info",
+      tags$strong("Jak rozpozna\u0107?"),
+      " Je\u015bli dane s\u0105 ", tags$b("zawsze dodatnie"), " i maj\u0105 ",
+      tags$b("d\u0142ugi prawy ogon"), " (kilka bardzo du\u017cych warto\u015bci) \u2014 my\u015bl log-normalny.
+        Przyk\u0142ady: dochody, ceny nieruchomo\u015bci, czasy reakcji, st\u0119\u017cenia zanieczyszcze\u0144.
+        Prosty test: je\u015bli po zlogarytmowaniu danych histogram wygl\u0105da normalnie \u2014 to log-normalny."
+    ),
+
     # --- Transition ---
     div(class = "chapter-transition",
       p("Spo\u015br\u00f3d wszystkich rozk\u0142ad\u00f3w ci\u0105g\u0142ych, jeden g\u00f3ruje nad innymi.
@@ -317,12 +378,51 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
 )
 
 # --------------------------------------------------------------------------
+# Definicje scenariuszy
+# --------------------------------------------------------------------------
+
+ch4_unif_defs <- list(
+  unif_1 = list(label = "U(0, 10)", a = 0, b = 10),
+  unif_2 = list(label = "U(2, 8)", a = 2, b = 8),
+  unif_3 = list(label = "U(0, 2)", a = 0, b = 2),
+  unif_4 = list(label = "U(4, 6)", a = 4, b = 6)
+)
+
+ch4_exp_defs <- list(
+  exp_1 = list(label = "Awarie: \u03bb = 0.3/dzie\u0144", lambda = 0.3),
+  exp_2 = list(label = "Wiadomo\u015bci: \u03bb = 1/godz", lambda = 1),
+  exp_3 = list(label = "Zg\u0142oszenia: \u03bb = 2/godz", lambda = 2),
+  exp_4 = list(label = "Po\u0142\u0105czenia: \u03bb = 5/min", lambda = 5)
+)
+
+ch4_t_defs <- list(
+  t_1 = list(label = "t(df=1) \u2014 Cauchy", df = 1),
+  t_2 = list(label = "t(df=3)", df = 3),
+  t_3 = list(label = "t(df=5)", df = 5),
+  t_4 = list(label = "t(df=30) \u2248 normalny", df = 30)
+)
+
+ch4_chisq_defs <- list(
+  chisq_1 = list(label = "\u03c7\u00b2(df=2)", df = 2),
+  chisq_2 = list(label = "\u03c7\u00b2(df=5)", df = 5),
+  chisq_3 = list(label = "\u03c7\u00b2(df=10)", df = 10),
+  chisq_4 = list(label = "\u03c7\u00b2(df=20)", df = 20)
+)
+
+ch4_lnorm_defs <- list(
+  lnorm_1 = list(label = "Czas reakcji: LogN(0, 0.3)", mu = 0, sigma = 0.3),
+  lnorm_2 = list(label = "Ceny akcji: LogN(1, 0.5)", mu = 1, sigma = 0.5),
+  lnorm_3 = list(label = "Dochody: LogN(2, 0.8)", mu = 2, sigma = 0.8),
+  lnorm_4 = list(label = "Du\u017ca zmienno\u015b\u0107: LogN(1, 1)", mu = 1, sigma = 1)
+)
+
+# --------------------------------------------------------------------------
 # Chapter 4 Server
 # --------------------------------------------------------------------------
 
 ch4_server <- function(input, output, session) {
 
-  # --- Widget 1: Krok po kroku ---
+  # --- Widget 1: Krok po kroku (bez zmian) ---
   ch4_step <- reactiveVal(0)
   ch4_sample_data <- reactiveVal(NULL)
 
@@ -421,7 +521,7 @@ ch4_server <- function(input, output, session) {
     if (step > 0) div(class = "callout-info", texts[step + 1])
   })
 
-  # --- Widget 2: Prawdopodobienstwo = pole ---
+  # --- Widget 2: Prawdopodobienstwo = pole (bez zmian) ---
   observe({
     dist <- input$ch4_area_dist
     if (dist == "norm") {
@@ -458,7 +558,6 @@ ch4_server <- function(input, output, session) {
     x_seq <- seq(x_range[1], x_range[2], length.out = 500)
     df_curve <- data.frame(x = x_seq, y = dfn(x_seq))
 
-    # Zacieniowany obszar
     shade_x <- seq(max(a, x_range[1]), min(b, x_range[2]), length.out = 300)
     shade_df <- data.frame(x = shade_x, y = dfn(shade_x))
 
@@ -498,249 +597,247 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 3: Jednostajny i wykladniczy ---
+  # --- Widget 3: Jednostajny — scenariusze overlay ---
   output$ch4_unif_plot <- renderPlot({
-    a <- input$ch4_unif_a
-    b <- input$ch4_unif_b
-    req(b > a)
+    selected <- input$ch4_unif_scenarios
+    req(length(selected) > 0)
 
-    x_seq <- seq(a - 1, b + 1, length.out = 500)
-    y_seq <- dunif(x_seq, a, b)
-    df <- data.frame(x = x_seq, y = y_seq)
+    dfs <- lapply(seq_along(selected), function(i) {
+      s <- ch4_unif_defs[[selected[i]]]
+      x_seq <- seq(-1, 12, length.out = 1000)
+      y_seq <- dunif(x_seq, s$a, s$b)
+      data.frame(x = x_seq, y = y_seq, scenario = s$label)
+    })
+    df <- do.call(rbind, dfs)
+    df$scenario <- factor(df$scenario, levels = sapply(ch4_unif_defs[selected], `[[`, "label"))
 
-    ggplot(df, aes(x = x, y = y)) +
-      geom_area(fill = col_uniform, alpha = 0.3) +
-      geom_line(color = col_uniform, linewidth = 1.2) +
-      labs(title = paste0("U(", a, ", ", b, ")"), x = "x", y = "f(x)") +
-      theme_prob(base_size = 12)
+    n_sel <- length(selected)
+    colors <- setNames(col_scenario[seq_len(n_sel)],
+                       sapply(ch4_unif_defs[selected], `[[`, "label"))
+
+    ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
+      geom_area(alpha = 0.15, position = "identity") +
+      geom_line(linewidth = 1.2) +
+      scale_color_manual(values = colors, name = NULL) +
+      scale_fill_manual(values = colors, guide = "none") +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+      labs(title = "Rozk\u0142ad jednostajny U(a, b)",
+           x = "x", y = "f(x)") +
+      theme_prob() +
+      theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
   output$ch4_unif_stats <- renderUI({
-    a <- input$ch4_unif_a
-    b <- input$ch4_unif_b
-    req(b > a)
-    mu <- (a + b) / 2
-    v <- (b - a)^2 / 12
-    div(style = "font-size: 13px;",
-      paste0("E(X) = ", round(mu, 2), " | SD = ", round(sqrt(v), 2))
+    selected <- input$ch4_unif_scenarios
+    req(length(selected) > 0)
+
+    stats <- lapply(selected, function(id) {
+      s <- ch4_unif_defs[[id]]
+      mu <- (s$a + s$b) / 2
+      sd_val <- sqrt((s$b - s$a)^2 / 12)
+      paste0(s$label, ":  E(X) = ", round(mu, 1), ",  SD = ", round(sd_val, 2))
+    })
+    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
+      lapply(stats, function(s) div(s))
     )
   })
 
+  # --- Widget 3b: Wykladniczy — scenariusze overlay ---
   output$ch4_exp_plot <- renderPlot({
-    lambda <- input$ch4_exp_lambda
-    x_seq <- seq(0, 8, length.out = 500)
-    y_seq <- dexp(x_seq, rate = lambda)
-    df <- data.frame(x = x_seq, y = y_seq)
+    selected <- input$ch4_exp_scenarios
+    req(length(selected) > 0)
 
-    ggplot(df, aes(x = x, y = y)) +
-      geom_area(fill = col_exponential, alpha = 0.3) +
-      geom_line(color = col_exponential, linewidth = 1.2) +
-      labs(title = paste0("Exp(\u03bb=", lambda, ")"), x = "x", y = "f(x)") +
-      theme_prob(base_size = 12)
+    x_max <- max(sapply(selected, function(id) qexp(0.99, ch4_exp_defs[[id]]$lambda)))
+
+    dfs <- lapply(seq_along(selected), function(i) {
+      s <- ch4_exp_defs[[selected[i]]]
+      x_seq <- seq(0, x_max, length.out = 500)
+      y_seq <- dexp(x_seq, rate = s$lambda)
+      data.frame(x = x_seq, y = y_seq, scenario = s$label)
+    })
+    df <- do.call(rbind, dfs)
+    df$scenario <- factor(df$scenario, levels = sapply(ch4_exp_defs[selected], `[[`, "label"))
+
+    n_sel <- length(selected)
+    colors <- setNames(col_scenario[seq_len(n_sel)],
+                       sapply(ch4_exp_defs[selected], `[[`, "label"))
+
+    ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
+      geom_area(alpha = 0.15, position = "identity") +
+      geom_line(linewidth = 1.2) +
+      scale_color_manual(values = colors, name = NULL) +
+      scale_fill_manual(values = colors, guide = "none") +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+      labs(title = "Rozk\u0142ad wyk\u0142adniczy Exp(\u03bb)",
+           x = "x", y = "f(x)") +
+      theme_prob() +
+      theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
   output$ch4_exp_stats <- renderUI({
-    lambda <- input$ch4_exp_lambda
-    mu <- 1 / lambda
-    sigma <- 1 / lambda
-    div(style = "font-size: 13px;",
-      paste0("E(X) = 1/\u03bb = ", round(mu, 2), " | SD = 1/\u03bb = ", round(sigma, 2))
+    selected <- input$ch4_exp_scenarios
+    req(length(selected) > 0)
+
+    stats <- lapply(selected, function(id) {
+      s <- ch4_exp_defs[[id]]
+      mu <- 1 / s$lambda
+      paste0(s$label, ":  E(X) = 1/\u03bb = ", round(mu, 2), ",  SD = ", round(mu, 2))
+    })
+    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
+      lapply(stats, function(s) div(s))
     )
   })
 
-  # --- Widget 4: t-Studenta ---
-  observeEvent(input$ch4_t_preset1, updateSliderInput(session, "ch4_t_df", value = 1))
-  observeEvent(input$ch4_t_preset2, updateSliderInput(session, "ch4_t_df", value = 5))
-  observeEvent(input$ch4_t_preset3, updateSliderInput(session, "ch4_t_df", value = 30))
-
+  # --- Widget 4: t-Studenta — scenariusze overlay ---
   output$ch4_t_plot <- renderPlot({
-    df_val <- input$ch4_t_df
+    selected <- input$ch4_t_scenarios
     show_normal <- input$ch4_t_show_normal
-    show_stats <- input$ch4_t_show_stats
+    req(length(selected) > 0 || show_normal)
 
     x_seq <- seq(-5, 5, length.out = 500)
-    y_t <- dt(x_seq, df = df_val)
-    df_plot <- data.frame(x = x_seq, y = y_t)
 
-    pl <- ggplot(df_plot, aes(x = x, y = y)) +
-      geom_area(fill = col_t_student, alpha = 0.3) +
-      geom_line(color = col_t_student, linewidth = 1.2)
+    dfs <- lapply(seq_along(selected), function(i) {
+      s <- ch4_t_defs[[selected[i]]]
+      data.frame(x = x_seq, y = dt(x_seq, df = s$df), scenario = s$label)
+    })
+    df <- do.call(rbind, dfs)
+
+    n_sel <- length(selected)
+    colors <- setNames(col_scenario[seq_len(n_sel)],
+                       sapply(ch4_t_defs[selected], `[[`, "label"))
 
     if (show_normal) {
-      y_norm <- dnorm(x_seq)
-      df_norm <- data.frame(x = x_seq, y = y_norm)
-      pl <- pl +
-        geom_line(data = df_norm, aes(x = x, y = y),
-                  color = col_normal, linewidth = 1, linetype = "dashed")
+      df_norm <- data.frame(x = x_seq, y = dnorm(x_seq), scenario = "N(0,1)")
+      df <- rbind(df, df_norm)
+      colors <- c(colors, "N(0,1)" = "#999999")
     }
 
-    if (show_stats && df_val > 2) {
-      mu <- 0
-      sigma <- sqrt(df_val / (df_val - 2))
-      pl <- pl +
-        geom_vline(xintercept = mu, color = col_secondary, linewidth = 1, linetype = "dashed") +
-        annotate("rect", xmin = mu - sigma, xmax = mu + sigma,
-                 ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
-    }
+    df$scenario <- factor(df$scenario, levels = unique(df$scenario))
 
-    pl +
-      labs(title = paste0("t(df=", df_val, ")",
-                          if (show_normal) "  vs  N(0,1)" else ""),
+    ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
+      geom_area(alpha = 0.15, position = "identity") +
+      geom_line(linewidth = 1.2) +
+      scale_color_manual(values = colors, name = NULL) +
+      scale_fill_manual(values = colors, guide = "none") +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+      labs(title = "Rozk\u0142ad t-Studenta t(df)",
            x = "x", y = "f(x)") +
-      theme_prob()
+      theme_prob() +
+      theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
   output$ch4_t_stats <- renderUI({
-    df_val <- input$ch4_t_df
-    mu_text <- if (df_val > 1) "E(X) = 0" else "E(X) = niezdef."
-    var_text <- if (df_val > 2) {
-      paste0("Var = df/(df-2) = ", round(df_val / (df_val - 2), 2))
-    } else {
-      "Var = \u221e"
-    }
-    sd_text <- if (df_val > 2) {
-      paste0("SD = ", round(sqrt(df_val / (df_val - 2)), 2))
-    } else {
-      "SD = \u221e"
-    }
+    selected <- input$ch4_t_scenarios
+    req(length(selected) > 0)
 
-    div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", col_t_student, ";"), mu_text),
-      div(class = "stat-box", style = paste0("background: ", col_dark, ";"), sd_text),
-      div(class = "stat-box", style = paste0("background: ", col_warning, ";"), var_text)
+    stats <- lapply(selected, function(id) {
+      s <- ch4_t_defs[[id]]
+      mu_text <- if (s$df > 1) "E(X) = 0" else "E(X) = niezdef."
+      sd_text <- if (s$df > 2) {
+        paste0("SD = ", round(sqrt(s$df / (s$df - 2)), 2))
+      } else "SD = \u221e"
+      paste0(s$label, ":  ", mu_text, ",  ", sd_text)
+    })
+    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
+      lapply(stats, function(s) div(s))
     )
   })
 
-  # --- Widget 5: Chi-kwadrat ---
-  observeEvent(input$ch4_chisq_preset1, updateSliderInput(session, "ch4_chisq_df", value = 1))
-  observeEvent(input$ch4_chisq_preset2, updateSliderInput(session, "ch4_chisq_df", value = 5))
-  observeEvent(input$ch4_chisq_preset3, updateSliderInput(session, "ch4_chisq_df", value = 15))
-
+  # --- Widget 5: Chi-kwadrat — scenariusze overlay ---
   output$ch4_chisq_plot <- renderPlot({
-    df_val <- input$ch4_chisq_df
-    show_stats <- input$ch4_chisq_show_stats
+    selected <- input$ch4_chisq_scenarios
+    req(length(selected) > 0)
 
-    x_max <- max(15, qchisq(0.999, df_val))
+    x_max <- max(sapply(selected, function(id) qchisq(0.99, ch4_chisq_defs[[id]]$df)))
     x_seq <- seq(0.01, x_max, length.out = 500)
-    y_seq <- dchisq(x_seq, df = df_val)
-    df_plot <- data.frame(x = x_seq, y = y_seq)
 
-    mu <- df_val
-    sigma <- sqrt(2 * df_val)
+    dfs <- lapply(seq_along(selected), function(i) {
+      s <- ch4_chisq_defs[[selected[i]]]
+      data.frame(x = x_seq, y = dchisq(x_seq, df = s$df), scenario = s$label)
+    })
+    df <- do.call(rbind, dfs)
+    df$scenario <- factor(df$scenario, levels = sapply(ch4_chisq_defs[selected], `[[`, "label"))
 
-    pl <- ggplot(df_plot, aes(x = x, y = y)) +
-      geom_area(fill = col_chi_sq, alpha = 0.3) +
-      geom_line(color = col_chi_sq, linewidth = 1.2)
+    n_sel <- length(selected)
+    colors <- setNames(col_scenario[seq_len(n_sel)],
+                       sapply(ch4_chisq_defs[selected], `[[`, "label"))
 
-    if (show_stats) {
-      pl <- pl +
-        geom_vline(xintercept = mu, color = col_secondary, linewidth = 1.2, linetype = "dashed") +
-        annotate("rect", xmin = max(0, mu - sigma), xmax = mu + sigma,
-                 ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
-    }
-
-    pl +
-      labs(title = paste0("\u03c7\u00b2(df=", df_val, ")"),
+    ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
+      geom_area(alpha = 0.15, position = "identity") +
+      geom_line(linewidth = 1.2) +
+      scale_color_manual(values = colors, name = NULL) +
+      scale_fill_manual(values = colors, guide = "none") +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+      labs(title = "Rozk\u0142ad \u03c7\u00b2(df)",
            x = "x", y = "f(x)") +
-      theme_prob()
+      theme_prob() +
+      theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
   output$ch4_chisq_stats <- renderUI({
-    df_val <- input$ch4_chisq_df
-    mu <- df_val
-    sigma <- sqrt(2 * df_val)
-    div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", col_chi_sq, ";"),
-          paste0("E(X) = df = ", mu)),
-      div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
-          paste0("SD = \u221a(2\u00b7df) = ", round(sigma, 2))),
-      div(class = "stat-box", style = paste0("background: ", col_warning, ";"),
-          paste0("Var = 2\u00b7df = ", 2 * df_val))
+    selected <- input$ch4_chisq_scenarios
+    req(length(selected) > 0)
+
+    stats <- lapply(selected, function(id) {
+      s <- ch4_chisq_defs[[id]]
+      paste0(s$label, ":  E(X) = ", s$df, ",  SD = ", round(sqrt(2 * s$df), 2))
+    })
+    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
+      lapply(stats, function(s) div(s))
     )
   })
 
-  # --- Widget 6: Log-normalny ---
-  observeEvent(input$ch4_lnorm_preset1, {
-    updateSliderInput(session, "ch4_lnorm_mu", value = 3)
-    updateSliderInput(session, "ch4_lnorm_sigma", value = 0.8)
-  })
-  observeEvent(input$ch4_lnorm_preset2, {
-    updateSliderInput(session, "ch4_lnorm_mu", value = 1)
-    updateSliderInput(session, "ch4_lnorm_sigma", value = 0.5)
-  })
-  observeEvent(input$ch4_lnorm_preset3, {
-    updateSliderInput(session, "ch4_lnorm_mu", value = 0)
-    updateSliderInput(session, "ch4_lnorm_sigma", value = 0.5)
-  })
-
+  # --- Widget 6: Log-normalny — scenariusze overlay ---
   output$ch4_lnorm_plot <- renderPlot({
-    mu <- input$ch4_lnorm_mu
-    sigma <- input$ch4_lnorm_sigma
-    show_stats <- input$ch4_lnorm_show_stats
-    show_log <- input$ch4_lnorm_show_log
+    selected <- input$ch4_lnorm_scenarios
+    req(length(selected) > 0)
 
-    x_max <- qlnorm(0.995, mu, sigma)
+    # Oblicz wspolny zakres x na podstawie wybranych scenariuszy
+    x_max <- max(sapply(selected, function(id) {
+      s <- ch4_lnorm_defs[[id]]
+      qlnorm(0.99, s$mu, s$sigma)
+    }))
+
     x_seq <- seq(0.001, x_max, length.out = 500)
-    y_seq <- dlnorm(x_seq, mu, sigma)
-    df_plot <- data.frame(x = x_seq, y = y_seq)
 
-    ev <- exp(mu + sigma^2 / 2)
-    med <- exp(mu)
-    sd_val <- sqrt((exp(sigma^2) - 1) * exp(2 * mu + sigma^2))
+    dfs <- lapply(seq_along(selected), function(i) {
+      s <- ch4_lnorm_defs[[selected[i]]]
+      data.frame(x = x_seq, y = dlnorm(x_seq, s$mu, s$sigma), scenario = s$label)
+    })
+    df <- do.call(rbind, dfs)
+    df$scenario <- factor(df$scenario, levels = sapply(ch4_lnorm_defs[selected], `[[`, "label"))
 
-    if (show_log) {
-      # Wykres na skali log — pokaz ze ln(X) jest normalny
-      log_x <- seq(mu - 4 * sigma, mu + 4 * sigma, length.out = 500)
-      log_y <- dnorm(log_x, mu, sigma)
-      df_log <- data.frame(x = log_x, y = log_y)
+    n_sel <- length(selected)
+    colors <- setNames(col_scenario[seq_len(n_sel)],
+                       sapply(ch4_lnorm_defs[selected], `[[`, "label"))
 
-      pl <- ggplot(df_log, aes(x = x, y = y)) +
-        geom_area(fill = col_normal, alpha = 0.3) +
-        geom_line(color = col_normal, linewidth = 1.2) +
-        labs(title = paste0("ln(X) ~ N(\u03bc=", mu, ", \u03c3=", sigma, ")"),
-             subtitle = "Logarytm zmiennej ma rozk\u0142ad normalny",
-             x = "ln(x)", y = "f(ln(x))") +
-        theme_prob()
-    } else {
-      pl <- ggplot(df_plot, aes(x = x, y = y)) +
-        geom_area(fill = col_lognormal, alpha = 0.3) +
-        geom_line(color = col_lognormal, linewidth = 1.2)
-
-      if (show_stats) {
-        pl <- pl +
-          geom_vline(xintercept = ev, color = col_secondary, linewidth = 1, linetype = "dashed") +
-          geom_vline(xintercept = med, color = col_primary, linewidth = 1, linetype = "dotted") +
-          annotate("text", x = ev, y = max(y_seq) * 0.9,
-                   label = paste0("\u015brednia = ", round(ev, 1)),
-                   hjust = -0.1, color = col_secondary, fontface = "bold", size = 4) +
-          annotate("text", x = med, y = max(y_seq) * 0.75,
-                   label = paste0("mediana = ", round(med, 1)),
-                   hjust = -0.1, color = col_primary, fontface = "bold", size = 4)
-      }
-
-      pl <- pl +
-        labs(title = paste0("LogN(\u03bc=", mu, ", \u03c3=", sigma, ")"),
-             x = "x", y = "f(x)") +
-        theme_prob()
-    }
-    pl
+    ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
+      geom_area(alpha = 0.15, position = "identity") +
+      geom_line(linewidth = 1.2) +
+      scale_color_manual(values = colors, name = NULL) +
+      scale_fill_manual(values = colors, guide = "none") +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+      labs(title = "Rozk\u0142ad log-normalny LogN(\u03bc, \u03c3)",
+           x = "x", y = "f(x)") +
+      theme_prob() +
+      theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
   output$ch4_lnorm_stats <- renderUI({
-    mu <- input$ch4_lnorm_mu
-    sigma <- input$ch4_lnorm_sigma
+    selected <- input$ch4_lnorm_scenarios
+    req(length(selected) > 0)
 
-    ev <- exp(mu + sigma^2 / 2)
-    med <- exp(mu)
-    sd_val <- sqrt((exp(sigma^2) - 1) * exp(2 * mu + sigma^2))
-
-    div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", col_lognormal, ";"),
-          paste0("E(X) = ", round(ev, 2))),
-      div(class = "stat-box", style = paste0("background: ", col_primary, ";"),
-          paste0("Me = e\u1d58 = ", round(med, 2))),
-      div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
-          paste0("SD = ", round(sd_val, 2)))
+    stats <- lapply(selected, function(id) {
+      s <- ch4_lnorm_defs[[id]]
+      ev <- exp(s$mu + s$sigma^2 / 2)
+      med <- exp(s$mu)
+      sd_val <- sqrt((exp(s$sigma^2) - 1) * exp(2 * s$mu + s$sigma^2))
+      paste0(s$label, ":  E(X) = ", round(ev, 1),
+             ",  Me = ", round(med, 1),
+             ",  SD = ", round(sd_val, 1))
+    })
+    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
+      lapply(stats, function(s) div(s))
     )
   })
 

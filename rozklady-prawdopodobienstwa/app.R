@@ -32,6 +32,9 @@ col_t_student  <- "#c0392b"    # ciemny czerwony - t-Studenta
 col_chi_sq     <- "#d35400"    # ciemny pomaranczowy - chi-kwadrat
 col_lognormal  <- "#16a085"    # ciemny turkusowy - log-normalny
 
+# Paleta kolorow do overlayow scenariuszy (do 5 scenariuszy na wykresie)
+col_scenario <- c("#3498db", "#e74c3c", "#27ae60", "#f39c12", "#9b59b6")
+
 # ============================================================================
 # MODULY
 # ============================================================================

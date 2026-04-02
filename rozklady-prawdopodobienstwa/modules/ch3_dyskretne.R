@@ -58,7 +58,7 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
     ),
 
     # ========================================================================
-    # WIDGET 2: Rozklad dwumianowy
+    # WIDGET 2: Rozklad dwumianowy — scenariusze overlay
     # ========================================================================
     div(class = "section-title", "Rozk\u0142ad dwumianowy (Binomial)"),
 
@@ -67,31 +67,25 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
         sukcesu ", tags$b("p"), ". Liczymy ",
         tags$b("ile razy wyst\u0105pi\u0142 sukces"), "."),
       p("Przyk\u0142ady: ile or\u0142\u00f3w w 10 rzutach monet\u0105? Ile wadliwych produkt\u00f3w
-        w partii 100? Ile poprawnych odpowiedzi na te\u015bcie wielokrotnego wyboru?")
+        w partii? Ile poprawnych odpowiedzi na te\u015bcie wielokrotnego wyboru?")
     ),
 
     div(class = "widget-block",
       h4("Rozk\u0142ad dwumianowy B(n, p)"),
       fluidRow(
         column(4,
-          sliderInput("ch3_binom_n", "n (liczba pr\u00f3b):",
-                      min = 1, max = 100, value = 20, step = 1),
-          sliderInput("ch3_binom_p", "p (prawdop. sukcesu):",
-                      min = 0, max = 1, value = 0.5, step = 0.01),
-          hr(),
-          div(class = "preset-buttons",
-            actionButton("ch3_binom_preset1", "Moneta\n(n=10, p=0.5)",
-                         class = "btn-outline-primary"),
-            actionButton("ch3_binom_preset2", "Jako\u015b\u0107\n(n=100, p=0.02)",
-                         class = "btn-outline-warning"),
-            actionButton("ch3_binom_preset3", "Egzamin\n(n=20, p=0.25)",
-                         class = "btn-outline-success")
-          ),
-          hr(),
-          checkboxInput("ch3_binom_show_stats", "Poka\u017c E(X) i SD", value = TRUE)
+          checkboxGroupInput("ch3_binom_scenarios", "Scenariusze:",
+            choices = c(
+              "Moneta: B(10, 0.5)" = "binom_1",
+              "Egzamin: B(20, 0.25)" = "binom_2",
+              "Jako\u015b\u0107: B(50, 0.1)" = "binom_3",
+              "Sukces: B(20, 0.7)" = "binom_4"
+            ),
+            selected = "binom_1"
+          )
         ),
         column(8,
-          plotOutput("ch3_binom_plot", height = "350px"),
+          plotOutput("ch3_binom_plot", height = "400px"),
           uiOutput("ch3_binom_stats")
         )
       ),
@@ -104,20 +98,26 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
 
     div(class = "callout-info",
       tags$strong("Obserwacja:"),
-      " Przesuwaj suwak p od 0 do 1 i obserwuj, jak kszta\u0142t rozk\u0142adu
-        zmienia si\u0119 z prawosko\u015bnego (p\u2248 0) przez symetryczny (p=0.5)
-        do lewosko\u015bnego (p\u2248 1). Przy du\u017cym n rozk\u0142ad staje si\u0119
-        coraz bardziej 'dzwonowaty'."
+      " Por\u00f3wnaj scenariusze i zwr\u00f3\u0107 uwag\u0119, jak zmiana p przesuwa
+        rozk\u0142ad, a wzrost n sprawia, \u017ce staje si\u0119 coraz bardziej 'dzwonowaty'."
+    ),
+
+    div(class = "callout-warning",
+      tags$strong("Jak rozpozna\u0107?"),
+      " Kiedy w zadaniu widzisz pytanie typu ",
+      tags$b("\u201eile z n...\u201d"), " \u2014 my\u015bl dwumianowy.
+        Np. \u201eile z 20 student\u00f3w zda egzamin?\u201d, \u201eile z 50 produkt\u00f3w b\u0119dzie wadliwych?\u201d.
+        Kluczowe: masz ", tags$b("ustalon\u0105 liczb\u0119 pr\u00f3b"), " i dwa wyniki (sukces/pora\u017cka)."
     ),
 
     # ========================================================================
-    # WIDGET 3: Rozklad Poissona
+    # WIDGET 3: Rozklad Poissona — scenariusze overlay
     # ========================================================================
     div(class = "section-title", "Rozk\u0142ad Poissona"),
 
     div(class = "narrative",
-      p("Zliczamy ", tags$b("rzadkie zdarzenia"), " w ustalonym czasie lub przestrzeni.
-        Parametr \u03bb (lambda) to \u015brednia liczba zdarze\u0144."),
+      p("Zliczamy ", tags$b("zdarzenia"), " zachodz\u0105ce w ustalonym przedziale czasu lub przestrzeni.
+        Parametr \u03bb (lambda) m\u00f3wi, ile \u015brednio zdarze\u0144 oczekujemy w danym przedziale."),
       p("Przyk\u0142ady: liczba b\u0142\u0119d\u00f3w na stronie, klient\u00f3w w sklepie na godzin\u0119,
         wypadk\u00f3w na skrzy\u017cowaniu w miesi\u0105cu.")
     ),
@@ -126,22 +126,18 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
       h4("Rozk\u0142ad Poissona Pois(\u03bb)"),
       fluidRow(
         column(4,
-          sliderInput("ch3_pois_lambda", "\u03bb (\u015brednia liczba zdarze\u0144):",
-                      min = 0.5, max = 20, value = 3, step = 0.5),
-          hr(),
-          div(class = "preset-buttons",
-            actionButton("ch3_pois_preset1", "B\u0142\u0119dy\n(\u03bb=2)",
-                         class = "btn-outline-primary"),
-            actionButton("ch3_pois_preset2", "Klienci\n(\u03bb=8)",
-                         class = "btn-outline-warning"),
-            actionButton("ch3_pois_preset3", "Wypadki\n(\u03bb=0.5)",
-                         class = "btn-outline-danger")
-          ),
-          hr(),
-          checkboxInput("ch3_pois_show_stats", "Poka\u017c E(X) i SD", value = TRUE)
+          checkboxGroupInput("ch3_pois_scenarios", "Scenariusze:",
+            choices = c(
+              "Wypadki: \u03bb = 0.5" = "pois_1",
+              "B\u0142\u0119dy: \u03bb = 2" = "pois_2",
+              "Klienci: \u03bb = 5" = "pois_3",
+              "Wiadomo\u015bci: \u03bb = 10" = "pois_4"
+            ),
+            selected = "pois_2"
+          )
         ),
         column(8,
-          plotOutput("ch3_pois_plot", height = "350px"),
+          plotOutput("ch3_pois_plot", height = "400px"),
           uiOutput("ch3_pois_stats")
         )
       ),
@@ -158,8 +154,17 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
         Je\u015bli w danych \u015brednia \u2248 wariancja, to dobry kandydat na model Poissona!"
     ),
 
+    div(class = "callout-warning",
+      tags$strong("Jak rozpozna\u0107?"),
+      " Kiedy w zadaniu widzisz pytanie typu ",
+      tags$b("\u201eile razy w ci\u0105gu...\u201d"), " \u2014 my\u015bl Poisson.
+        Np. \u201eile wiadomo\u015bci dostaniesz w ci\u0105gu godziny?\u201d, \u201eile b\u0142\u0119d\u00f3w na stronie?\u201d.
+        Kluczowe: zliczasz zdarzenia w ", tags$b("ustalonym czasie lub przestrzeni"),
+      ", bez g\u00f3rnego limitu."
+    ),
+
     # ========================================================================
-    # WIDGET 4: Rozklad geometryczny
+    # WIDGET 4: Rozklad geometryczny — scenariusze overlay
     # ========================================================================
     div(class = "section-title", "Rozk\u0142ad geometryczny"),
 
@@ -174,22 +179,18 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
       h4("Rozk\u0142ad geometryczny Geom(p)"),
       fluidRow(
         column(4,
-          sliderInput("ch3_geom_p", "p (prawdop. sukcesu):",
-                      min = 0.01, max = 0.9, value = 0.2, step = 0.01),
-          hr(),
-          div(class = "preset-buttons",
-            actionButton("ch3_geom_preset1", "Sz\u00f3stka na kostce\n(p=1/6)",
-                         class = "btn-outline-primary"),
-            actionButton("ch3_geom_preset2", "Moneta\n(p=0.5)",
-                         class = "btn-outline-warning"),
-            actionButton("ch3_geom_preset3", "Rzadkie\n(p=0.05)",
-                         class = "btn-outline-danger")
-          ),
-          hr(),
-          checkboxInput("ch3_geom_show_stats", "Poka\u017c E(X) i SD", value = TRUE)
+          checkboxGroupInput("ch3_geom_scenarios", "Scenariusze:",
+            choices = c(
+              "Rzadkie: p = 0.05" = "geom_1",
+              "Sz\u00f3stka: p = 1/6" = "geom_2",
+              "Cz\u0119ste: p = 0.3" = "geom_3",
+              "Moneta: p = 0.5" = "geom_4"
+            ),
+            selected = "geom_2"
+          )
         ),
         column(8,
-          plotOutput("ch3_geom_plot", height = "350px"),
+          plotOutput("ch3_geom_plot", height = "400px"),
           uiOutput("ch3_geom_stats")
         )
       ),
@@ -206,6 +207,15 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
         Rozk\u0142ad geometryczny jest ", tags$b("bezpami\u0119ciowy"),
       " \u2014 szansa sukcesu w ka\u017cdej pr\u00f3bie jest taka sama,
         niezale\u017cnie od tego ile pora\u017cek ju\u017c by\u0142o."
+    ),
+
+    div(class = "callout-warning",
+      tags$strong("Jak rozpozna\u0107?"),
+      " Kiedy w zadaniu widzisz pytanie typu ",
+      tags$b("\u201eile pr\u00f3b a\u017c do...\u201d"), " \u2014 my\u015bl geometryczny.
+        Np. \u201eile rzut\u00f3w kostk\u0105 do pierwszej sz\u00f3stki?\u201d,
+        \u201eile CV trzeba wys\u0142a\u0107, \u017ceby dosta\u0107 zaproszenie na rozmow\u0119?\u201d.
+        Kluczowe: powtarzasz pr\u00f3by a\u017c do ", tags$b("pierwszego sukcesu"), "."
     ),
 
     # ========================================================================
@@ -243,9 +253,31 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
 # Chapter 3 Server
 # --------------------------------------------------------------------------
 
+# Definicje scenariuszy
+ch3_binom_defs <- list(
+  binom_1 = list(label = "Moneta: B(10, 0.5)", n = 10, p = 0.5),
+  binom_2 = list(label = "Egzamin: B(20, 0.25)", n = 20, p = 0.25),
+  binom_3 = list(label = "Jako\u015b\u0107: B(50, 0.1)", n = 50, p = 0.1),
+  binom_4 = list(label = "Sukces: B(20, 0.7)", n = 20, p = 0.7)
+)
+
+ch3_pois_defs <- list(
+  pois_1 = list(label = "Wypadki: \u03bb = 0.5", lambda = 0.5),
+  pois_2 = list(label = "B\u0142\u0119dy: \u03bb = 2", lambda = 2),
+  pois_3 = list(label = "Klienci: \u03bb = 5", lambda = 5),
+  pois_4 = list(label = "Wiadomo\u015bci: \u03bb = 10", lambda = 10)
+)
+
+ch3_geom_defs <- list(
+  geom_1 = list(label = "Rzadkie: p = 0.05", p = 0.05),
+  geom_2 = list(label = "Sz\u00f3stka: p = 1/6", p = round(1/6, 4)),
+  geom_3 = list(label = "Cz\u0119ste: p = 0.3", p = 0.3),
+  geom_4 = list(label = "Moneta: p = 0.5", p = 0.5)
+)
+
 ch3_server <- function(input, output, session) {
 
-  # --- Widget 1: Jednostajny dyskretny ---
+  # --- Widget 1: Jednostajny dyskretny (bez zmian) ---
   ch3_unif_data <- reactiveVal(NULL)
 
   observeEvent(input$ch3_unif_sim, {
@@ -282,185 +314,150 @@ ch3_server <- function(input, output, session) {
       theme_prob()
   })
 
-  # --- Widget 2: Dwumianowy ---
-  observeEvent(input$ch3_binom_preset1, {
-    updateSliderInput(session, "ch3_binom_n", value = 10)
-    updateSliderInput(session, "ch3_binom_p", value = 0.5)
-  })
-  observeEvent(input$ch3_binom_preset2, {
-    updateSliderInput(session, "ch3_binom_n", value = 100)
-    updateSliderInput(session, "ch3_binom_p", value = 0.02)
-  })
-  observeEvent(input$ch3_binom_preset3, {
-    updateSliderInput(session, "ch3_binom_n", value = 20)
-    updateSliderInput(session, "ch3_binom_p", value = 0.25)
-  })
-
+  # --- Widget 2: Dwumianowy — scenariusze overlay ---
   output$ch3_binom_plot <- renderPlot({
-    n <- input$ch3_binom_n
-    p <- input$ch3_binom_p
-    show_stats <- input$ch3_binom_show_stats
+    selected <- input$ch3_binom_scenarios
+    req(length(selected) > 0)
 
-    x_vals <- 0:n
-    probs <- dbinom(x_vals, n, p)
+    dfs <- lapply(seq_along(selected), function(i) {
+      s <- ch3_binom_defs[[selected[i]]]
+      x_vals <- 0:s$n
+      probs <- dbinom(x_vals, s$n, s$p)
+      data.frame(x = x_vals, prob = probs, scenario = s$label)
+    })
+    df <- do.call(rbind, dfs)
+    df$scenario <- factor(df$scenario, levels = sapply(ch3_binom_defs[selected], `[[`, "label"))
 
-    # Ogranicz zakres osi x do sensownych wartosci
-    sig_range <- which(probs > 0.001)
-    if (length(sig_range) > 0) {
-      x_min <- max(0, min(sig_range) - 2)
-      x_max <- min(n, max(sig_range) + 2)
-    } else {
-      x_min <- 0; x_max <- n
-    }
-    keep <- x_vals >= x_min & x_vals <= x_max
+    n_sel <- length(selected)
+    colors <- setNames(col_scenario[seq_len(n_sel)],
+                       sapply(ch3_binom_defs[selected], `[[`, "label"))
 
-    df <- data.frame(x = x_vals[keep], prob = probs[keep])
-    mu <- n * p
-    sigma <- sqrt(n * p * (1 - p))
+    dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
 
-    pl <- ggplot(df, aes(x = x, y = prob)) +
-      geom_col(fill = col_binomial, color = "white", alpha = 0.85, width = 0.7) +
+    ggplot(df, aes(x = x, y = prob, color = scenario)) +
+      geom_point(size = 2.5, alpha = 0.8, position = dodge) +
+      geom_segment(aes(xend = x, yend = 0), linewidth = 0.6, alpha = 0.5, position = dodge) +
+      scale_color_manual(values = colors, name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = paste0("B(n=", n, ", p=", p, ")"),
+      labs(title = "Rozk\u0142ad dwumianowy B(n, p)",
            x = "Liczba sukces\u00f3w (k)", y = "P(X = k)") +
-      theme_prob()
-
-    if (show_stats) {
-      pl <- pl +
-        geom_vline(xintercept = mu, color = col_secondary, linewidth = 1.2, linetype = "dashed") +
-        annotate("rect", xmin = mu - sigma, xmax = mu + sigma,
-                 ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
-    }
-    pl
+      theme_prob() +
+      theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
   output$ch3_binom_stats <- renderUI({
-    n <- input$ch3_binom_n
-    p <- input$ch3_binom_p
-    mu <- n * p
-    sigma <- sqrt(n * p * (1 - p))
+    selected <- input$ch3_binom_scenarios
+    req(length(selected) > 0)
 
-    div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", col_secondary, ";"),
-          paste0("E(X) = np = ", round(mu, 2))),
-      div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
-          paste0("SD = \u221a(np(1-p)) = ", round(sigma, 2)))
+    stats <- lapply(selected, function(id) {
+      s <- ch3_binom_defs[[id]]
+      mu <- s$n * s$p
+      sigma <- sqrt(s$n * s$p * (1 - s$p))
+      paste0(s$label, ":  E(X) = ", round(mu, 1), ",  SD = ", round(sigma, 2))
+    })
+    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
+      lapply(stats, function(s) div(s))
     )
   })
 
-  # --- Widget 3: Poissona ---
-  observeEvent(input$ch3_pois_preset1, {
-    updateSliderInput(session, "ch3_pois_lambda", value = 2)
-  })
-  observeEvent(input$ch3_pois_preset2, {
-    updateSliderInput(session, "ch3_pois_lambda", value = 8)
-  })
-  observeEvent(input$ch3_pois_preset3, {
-    updateSliderInput(session, "ch3_pois_lambda", value = 0.5)
-  })
-
+  # --- Widget 3: Poissona — scenariusze overlay ---
   output$ch3_pois_plot <- renderPlot({
-    lambda <- input$ch3_pois_lambda
-    show_stats <- input$ch3_pois_show_stats
+    selected <- input$ch3_pois_scenarios
+    req(length(selected) > 0)
 
-    x_max <- max(20, qpois(0.999, lambda))
-    x_vals <- 0:x_max
-    probs <- dpois(x_vals, lambda)
+    # Wspolny zakres x dla wszystkich scenariuszy
+    x_max <- max(sapply(selected, function(id) qpois(0.999, ch3_pois_defs[[id]]$lambda)))
 
-    sig <- which(probs > 0.001)
-    x_show_max <- min(x_max, max(sig) + 2)
-    keep <- x_vals <= x_show_max
+    dfs <- lapply(seq_along(selected), function(i) {
+      s <- ch3_pois_defs[[selected[i]]]
+      x_vals <- 0:x_max
+      probs <- dpois(x_vals, s$lambda)
+      data.frame(x = x_vals, prob = probs, scenario = s$label)
+    })
+    df <- do.call(rbind, dfs)
+    df$scenario <- factor(df$scenario, levels = sapply(ch3_pois_defs[selected], `[[`, "label"))
 
-    df <- data.frame(x = x_vals[keep], prob = probs[keep])
-    sigma <- sqrt(lambda)
+    n_sel <- length(selected)
+    colors <- setNames(col_scenario[seq_len(n_sel)],
+                       sapply(ch3_pois_defs[selected], `[[`, "label"))
+    dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
 
-    pl <- ggplot(df, aes(x = x, y = prob)) +
-      geom_col(fill = col_poisson, color = "white", alpha = 0.85, width = 0.7) +
+    ggplot(df, aes(x = x, y = prob, color = scenario)) +
+      geom_point(size = 2.5, alpha = 0.8, position = dodge) +
+      geom_segment(aes(xend = x, yend = 0), linewidth = 0.6, alpha = 0.5, position = dodge) +
+      scale_color_manual(values = colors, name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = paste0("Pois(\u03bb=", lambda, ")"),
+      labs(title = "Rozk\u0142ad Poissona Pois(\u03bb)",
            x = "Liczba zdarze\u0144 (k)", y = "P(X = k)") +
-      theme_prob()
-
-    if (show_stats) {
-      pl <- pl +
-        geom_vline(xintercept = lambda, color = col_secondary, linewidth = 1.2, linetype = "dashed") +
-        annotate("rect", xmin = lambda - sigma, xmax = lambda + sigma,
-                 ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
-    }
-    pl
+      theme_prob() +
+      theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
   output$ch3_pois_stats <- renderUI({
-    lambda <- input$ch3_pois_lambda
-    div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", col_poisson, ";"),
-          paste0("E(X) = \u03bb = ", lambda)),
-      div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
-          paste0("SD = \u221a\u03bb = ", round(sqrt(lambda), 2))),
-      div(class = "stat-box", style = paste0("background: ", col_warning, ";"),
-          paste0("Var = \u03bb = ", lambda))
+    selected <- input$ch3_pois_scenarios
+    req(length(selected) > 0)
+
+    stats <- lapply(selected, function(id) {
+      s <- ch3_pois_defs[[id]]
+      paste0(s$label, ":  E(X) = Var(X) = ", s$lambda,
+             ",  SD = ", round(sqrt(s$lambda), 2))
+    })
+    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
+      lapply(stats, function(s) div(s))
     )
   })
 
-  # --- Widget 4: Geometryczny ---
-  observeEvent(input$ch3_geom_preset1, {
-    updateSliderInput(session, "ch3_geom_p", value = round(1/6, 2))
-  })
-  observeEvent(input$ch3_geom_preset2, {
-    updateSliderInput(session, "ch3_geom_p", value = 0.5)
-  })
-  observeEvent(input$ch3_geom_preset3, {
-    updateSliderInput(session, "ch3_geom_p", value = 0.05)
-  })
-
+  # --- Widget 4: Geometryczny — scenariusze overlay ---
   output$ch3_geom_plot <- renderPlot({
-    p <- input$ch3_geom_p
-    show_stats <- input$ch3_geom_show_stats
+    selected <- input$ch3_geom_scenarios
+    req(length(selected) > 0)
 
-    # X = numer proby (1, 2, 3, ...) — R dgeom liczy porażki (0, 1, 2, ...)
-    x_max <- max(10, qgeom(0.999, p) + 1)
-    x_vals <- 1:x_max
-    probs <- dgeom(x_vals - 1, p)  # przesunięcie: dgeom liczy od 0
+    # Wspolny zakres x, ograniczony do 40
+    x_max <- min(40, max(sapply(selected, function(id) {
+      qgeom(0.999, ch3_geom_defs[[id]]$p) + 1
+    })))
 
-    sig <- which(probs > 0.001)
-    x_show_max <- min(x_max, max(sig) + 2)
-    keep <- x_vals <= x_show_max
+    dfs <- lapply(seq_along(selected), function(i) {
+      s <- ch3_geom_defs[[selected[i]]]
+      x_vals <- 1:x_max
+      probs <- dgeom(x_vals - 1, s$p)
+      data.frame(x = x_vals, prob = probs, scenario = s$label)
+    })
+    df <- do.call(rbind, dfs)
+    df$scenario <- factor(df$scenario, levels = sapply(ch3_geom_defs[selected], `[[`, "label"))
 
-    df <- data.frame(x = x_vals[keep], prob = probs[keep])
-    mu <- 1 / p
-    sigma <- sqrt((1 - p) / p^2)
+    n_sel <- length(selected)
+    colors <- setNames(col_scenario[seq_len(n_sel)],
+                       sapply(ch3_geom_defs[selected], `[[`, "label"))
+    dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
 
-    pl <- ggplot(df, aes(x = x, y = prob)) +
-      geom_col(fill = col_geometric, color = "white", alpha = 0.85, width = 0.7) +
+    ggplot(df, aes(x = x, y = prob, color = scenario)) +
+      geom_point(size = 2.5, alpha = 0.8, position = dodge) +
+      geom_segment(aes(xend = x, yend = 0), linewidth = 0.6, alpha = 0.5, position = dodge) +
+      scale_color_manual(values = colors, name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = paste0("Geom(p=", p, ")"),
+      labs(title = "Rozk\u0142ad geometryczny Geom(p)",
            x = "Numer pr\u00f3by (k)", y = "P(X = k)") +
-      theme_prob()
-
-    if (show_stats) {
-      pl <- pl +
-        geom_vline(xintercept = mu, color = col_secondary, linewidth = 1.2, linetype = "dashed") +
-        annotate("rect", xmin = mu - sigma, xmax = mu + sigma,
-                 ymin = 0, ymax = Inf, fill = col_secondary, alpha = 0.08)
-    }
-    pl
+      theme_prob() +
+      theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
   output$ch3_geom_stats <- renderUI({
-    p <- input$ch3_geom_p
-    mu <- 1 / p
-    sigma <- sqrt((1 - p) / p^2)
-    div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", col_geometric, ";"),
-          paste0("E(X) = 1/p = ", round(mu, 2))),
-      div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
-          paste0("SD = ", round(sigma, 2))),
-      div(class = "stat-box", style = paste0("background: ", col_warning, ";"),
-          paste0("Var = (1-p)/p\u00b2 = ", round(sigma^2, 2)))
+    selected <- input$ch3_geom_scenarios
+    req(length(selected) > 0)
+
+    stats <- lapply(selected, function(id) {
+      s <- ch3_geom_defs[[id]]
+      mu <- 1 / s$p
+      sigma <- sqrt((1 - s$p) / s$p^2)
+      paste0(s$label, ":  E(X) = ", round(mu, 1), ",  SD = ", round(sigma, 2))
+    })
+    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
+      lapply(stats, function(s) div(s))
     )
   })
 
-  # --- Widget 5: Porownanie ---
+  # --- Widget 5: Porownanie (bez zmian) ---
   output$ch3_compare_plot <- renderPlot({
     show_ev <- input$ch3_compare_show_ev
     show_sd <- input$ch3_compare_show_sd
