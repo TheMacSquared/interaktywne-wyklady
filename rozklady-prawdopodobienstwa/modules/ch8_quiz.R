@@ -73,6 +73,12 @@ ch8_ui <- tabPanel("8. Quiz",
       uiOutput("ch8_summary_ui")
     ),
 
+    # --- Przejscie do cwiczen ---
+    div(class = "chapter-transition",
+      p("Czas na praktyk\u0119! Przejd\u017a do \u0107wicze\u0144 z rozk\u0142ad\u00f3w prawdopodobie\u0144stwa."),
+      actionButton("ch8_to_ch9", "Dalej: \u0106wiczenia \u2192", class = "btn-primary")
+    ),
+
     br(), br()
   ))
 )

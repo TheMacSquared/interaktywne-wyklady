@@ -335,8 +335,8 @@ ch3_server <- function(input, output, session) {
     dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
 
     ggplot(df, aes(x = x, y = prob, color = scenario)) +
-      geom_point(size = 2.5, alpha = 0.8, position = dodge) +
-      geom_segment(aes(xend = x, yend = 0), linewidth = 0.6, alpha = 0.5, position = dodge) +
+      geom_point(size = 4, alpha = 0.85, position = dodge) +
+      geom_segment(aes(xend = x, yend = 0), linewidth = 1, alpha = 0.6, position = dodge) +
       scale_color_manual(values = colors, name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozk\u0142ad dwumianowy B(n, p)",
@@ -383,8 +383,8 @@ ch3_server <- function(input, output, session) {
     dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
 
     ggplot(df, aes(x = x, y = prob, color = scenario)) +
-      geom_point(size = 2.5, alpha = 0.8, position = dodge) +
-      geom_segment(aes(xend = x, yend = 0), linewidth = 0.6, alpha = 0.5, position = dodge) +
+      geom_point(size = 4, alpha = 0.85, position = dodge) +
+      geom_segment(aes(xend = x, yend = 0), linewidth = 1, alpha = 0.6, position = dodge) +
       scale_color_manual(values = colors, name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozk\u0142ad Poissona Pois(\u03bb)",
@@ -432,8 +432,8 @@ ch3_server <- function(input, output, session) {
     dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
 
     ggplot(df, aes(x = x, y = prob, color = scenario)) +
-      geom_point(size = 2.5, alpha = 0.8, position = dodge) +
-      geom_segment(aes(xend = x, yend = 0), linewidth = 0.6, alpha = 0.5, position = dodge) +
+      geom_point(size = 4, alpha = 0.85, position = dodge) +
+      geom_segment(aes(xend = x, yend = 0), linewidth = 1, alpha = 0.6, position = dodge) +
       scale_color_manual(values = colors, name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozk\u0142ad geometryczny Geom(p)",

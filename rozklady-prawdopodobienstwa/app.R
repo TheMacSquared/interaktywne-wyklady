@@ -62,6 +62,7 @@ source(file.path(app_dir, "modules", "ch5_normalny.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "ch6_ctg.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch7_sciaga.R"),    local = TRUE)
 source(file.path(app_dir, "modules", "ch8_quiz.R"),      local = TRUE)
+source(file.path(app_dir, "modules", "ch9_cwiczenia.R"), local = TRUE)
 
 # ============================================================================
 # GLOBAL UI HEADER (CSS, JS)
@@ -281,7 +282,8 @@ ui <- navbarPage(
   ch5_ui,
   ch6_ui,
   ch7_ui,
-  ch8_ui
+  ch8_ui,
+  ch9_ui
 )
 
 # ============================================================================
@@ -315,6 +317,9 @@ server <- function(input, output, session) {
   observeEvent(input$ch7_next, {
     updateNavbarPage(session, "main_nav", selected = "8. Quiz")
   })
+  observeEvent(input$ch8_to_ch9, {
+    updateNavbarPage(session, "main_nav", selected = "9. \u0106wiczenia")
+  })
 
   # ==========================================================================
   # CHAPTER SERVERS
@@ -328,6 +333,7 @@ server <- function(input, output, session) {
   ch6_server(input, output, session)
   ch7_server(input, output, session)
   ch8_server(input, output, session)
+  ch9_server(input, output, session)
 
 }
 
