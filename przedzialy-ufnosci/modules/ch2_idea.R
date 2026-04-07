@@ -22,18 +22,22 @@ ch2_ui <- tabPanel("2. Idea przedzia\u0142\u00f3w",
     ),
 
     # ========================================================================
-    # WIDGET 1: 100 przedzialow ufnosci
+    # WIDGET 1: Symulacja przedzialow ufnosci
     # ========================================================================
-    div(class = "section-title", "100 przedzia\u0142\u00f3w ufno\u015bci"),
+    div(class = "section-title", "Wiele przedzia\u0142\u00f3w ufno\u015bci"),
 
     div(class = "narrative",
       p("To kluczowa wizualizacja. Ka\u017cdy poziomy odcinek to jeden przedzia\u0142
         ufno\u015bci \u2014 skonstruowany z osobnej pr\u00f3by. Zielone trafiaj\u0105 w ",
-        withMathJax("\\(\\mu\\)"), ", czerwone \u2014 nie.")
+        withMathJax("\\(\\mu\\)"), ", czerwone \u2014 nie."),
+      p("Klikaj ", tags$b("\"Dolosuj\""),
+        " porcjami i obserwuj, jak pokrycie zbli\u017ca si\u0119 do nominalnego poziomu ufno\u015bci.
+        Przy ma\u0142ej liczbie pr\u00f3b mo\u017cesz mie\u0107 80% lub 100%, ale przy 200+ pokrycie powinno
+        ustabilizowa\u0107 si\u0119 wok\u00f3\u0142 95%.")
     ),
 
     div(class = "widget-block",
-      h4("Symulacja 100 przedzia\u0142\u00f3w"),
+      h4("Symulacja przedzia\u0142\u00f3w ufno\u015bci"),
       fluidRow(
         column(4,
           selectInput("ch2_dist", "Rozk\u0142ad populacji:",
@@ -49,9 +53,15 @@ ch2_ui <- tabPanel("2. Idea przedzia\u0142\u00f3w",
           sliderInput("ch2_conf", "Poziom ufno\u015bci:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           hr(),
-          actionButton("ch2_sim", "Losuj 100 przedzia\u0142\u00f3w",
-                       class = "btn-primary", width = "100%"),
-          br(), br(),
+          div(style = "display: flex; flex-direction: column; gap: 8px;",
+            actionButton("ch2_sim_10", "Dolosuj 10 przedzia\u0142\u00f3w",
+                         class = "btn-primary", width = "100%"),
+            actionButton("ch2_sim_50", "Dolosuj 50 przedzia\u0142\u00f3w",
+                         class = "btn-warning", width = "100%"),
+            actionButton("ch2_sim_reset", "Reset",
+                         class = "btn-outline-secondary", width = "100%")
+          ),
+          br(),
           uiOutput("ch2_coverage_info")
         ),
         column(8,
@@ -68,35 +78,7 @@ ch2_ui <- tabPanel("2. Idea przedzia\u0142\u00f3w",
     ),
 
     # ========================================================================
-    # WIDGET 2: Jeden przedzial krok po kroku
-    # ========================================================================
-    div(class = "section-title", "Budowa przedzia\u0142u \u2014 krok po kroku"),
-
-    div(class = "narrative",
-      p("Zobaczmy, jak powstaje jeden przedzia\u0142 ufno\u015bci dla \u015bredniej.
-        Ka\u017cdy krok buduje kolejn\u0105 cz\u0119\u015b\u0107 wzoru:"),
-      div(class = "formula-box",
-        withMathJax(helpText(
-          "$$\\bar{x} \\pm t^* \\cdot \\frac{s}{\\sqrt{n}}$$"
-        ))
-      )
-    ),
-
-    div(class = "widget-block",
-      h4("Konstruowanie przedzia\u0142u"),
-      div(class = "step-buttons",
-        actionButton("ch2_step1", "1. Pr\u00f3ba", class = "btn-outline-primary"),
-        actionButton("ch2_step2", "2. Statystyki", class = "btn-outline-primary"),
-        actionButton("ch2_step3", "3. Wart. krytyczna", class = "btn-outline-primary"),
-        actionButton("ch2_step4", "4. Margines b\u0142\u0119du", class = "btn-outline-primary"),
-        actionButton("ch2_step5", "5. Przedzia\u0142!", class = "btn-outline-primary")
-      ),
-      plotOutput("ch2_step_plot", height = "300px"),
-      uiOutput("ch2_step_explanation")
-    ),
-
-    # ========================================================================
-    # WIDGET 3: Czesty blad interpretacji
+    # WIDGET 2: Czesty blad interpretacji
     # ========================================================================
     div(class = "section-title", "Jak (nie) interpretowa\u0107 przedzia\u0142 ufno\u015bci"),
 
@@ -135,41 +117,61 @@ ch2_ui <- tabPanel("2. Idea przedzia\u0142\u00f3w",
 
 ch2_server <- function(input, output, session) {
 
-  # --- Widget 1: 100 przedzialow ---
+  # --- Widget 1: Symulacja przedzialow ufnosci (akumulacja) ---
   ch2_sim_data <- reactiveVal(NULL)
 
-  observeEvent(input$ch2_sim, {
-    result <- simulate_coverage(
+  # Helper: dolosuj k przedzialow i dodaj do akumulatora
+  ch2_add_intervals <- function(k) {
+    new_result <- simulate_coverage(
       dist_type = input$ch2_dist,
       n = input$ch2_n,
       conf_level = input$ch2_conf,
-      n_sims = 100,
+      n_sims = k,
       method = "t"
     )
-    ch2_sim_data(result)
-  })
+    old <- ch2_sim_data()
+    if (is.null(old)) {
+      new_result$sim <- seq_len(nrow(new_result))
+      ch2_sim_data(new_result)
+    } else {
+      new_result$sim <- nrow(old) + seq_len(nrow(new_result))
+      ch2_sim_data(rbind(old, new_result))
+    }
+  }
+
+  observeEvent(input$ch2_sim_10, { ch2_add_intervals(10) })
+  observeEvent(input$ch2_sim_50, { ch2_add_intervals(50) })
+  observeEvent(input$ch2_sim_reset, { ch2_sim_data(NULL) })
+
+  # Reset przy zmianie parametrow (inaczej akumulujemy przedzialy z roznymi parametrami)
+  observeEvent(input$ch2_dist, { ch2_sim_data(NULL) })
+  observeEvent(input$ch2_n,    { ch2_sim_data(NULL) })
+  observeEvent(input$ch2_conf, { ch2_sim_data(NULL) })
 
   output$ch2_ci_plot <- renderPlot({
     df <- ch2_sim_data()
-    if (is.null(df)) {
+    if (is.null(df) || nrow(df) == 0) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Losuj 100 przedzia\u0142\u00f3w'",
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Dolosuj 10 przedzia\u0142\u00f3w'",
                  size = 6, color = "#7f8c8d") +
         theme_void()
     } else {
       params <- get_population_params(input$ch2_dist)
-      df$color <- ifelse(df$covers, col_hit, col_miss)
+      n_total <- nrow(df)
+      # Skaluj grubosc linii i punktow do liczby przedzialow
+      seg_lw <- if (n_total <= 50) 1.0 else if (n_total <= 150) 0.7 else 0.5
+      pt_size <- if (n_total <= 50) 2.0 else if (n_total <= 150) 1.3 else 0.8
 
       ggplot(df, aes(y = sim)) +
         geom_vline(xintercept = params$mu, color = col_true,
                    linewidth = 1.2, linetype = "dashed") +
         geom_segment(aes(x = lower, xend = upper, yend = sim, color = covers),
-                     linewidth = 0.8) +
-        geom_point(aes(x = xbar, color = covers), size = 1.5) +
+                     linewidth = seg_lw) +
+        geom_point(aes(x = xbar, color = covers), size = pt_size) +
         scale_color_manual(values = c("TRUE" = col_hit, "FALSE" = col_miss),
                            labels = c("TRUE" = "Trafiony", "FALSE" = "Chybiony"),
                            name = NULL) +
-        labs(title = paste0("100 przedzia\u0142\u00f3w ufno\u015bci (",
+        labs(title = paste0(n_total, " przedzia\u0142\u00f3w ufno\u015bci (",
                             round(input$ch2_conf * 100), "%)"),
              x = "Warto\u015b\u0107 parametru",
              y = "Numer pr\u00f3by") +
@@ -180,140 +182,24 @@ ch2_server <- function(input, output, session) {
 
   output$ch2_coverage_info <- renderUI({
     df <- ch2_sim_data()
-    if (is.null(df)) return(NULL)
-    coverage <- mean(df$covers) * 100
-    color <- if (abs(coverage - input$ch2_conf * 100) <= 5) col_hit else col_miss
+    if (is.null(df) || nrow(df) == 0) return(NULL)
+    n_total <- nrow(df)
+    n_hits <- sum(df$covers)
+    coverage <- round(n_hits / n_total * 100, 1)
+    nominal <- round(input$ch2_conf * 100)
+    # Kolor pokrycia: zielony jesli w +/- 5pp od nominalnego, czerwony w przeciwnym razie
+    color <- if (abs(coverage - nominal) <= 5) col_hit else col_miss
     tagList(
-      div(class = "stat-box", style = paste0("background:", color, ";"),
-          paste0("Pokrycie: ", coverage, "%")),
       div(class = "stat-box", style = paste0("background:", col_dark, ";"),
-          paste0("Oczekiwane: ", round(input$ch2_conf * 100), "%"))
+          paste0("Pr\u00f3b: ", n_total)),
+      div(class = "stat-box", style = paste0("background:", color, ";"),
+          paste0("Pokrycie: ", coverage, "% (", n_hits, "/", n_total, ")")),
+      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+          paste0("Oczekiwane: ", nominal, "%"))
     )
   })
 
-  # --- Widget 2: Krok po kroku ---
-  ch2_step <- reactiveVal(0)
-  ch2_sample <- reactiveVal(NULL)
-
-  observe({
-    # Reset on any step 1 click
-    if (input$ch2_step1 > 0) {
-      ch2_step()  # track dependency
-    }
-  })
-
-  observeEvent(input$ch2_step1, {
-    ch2_step(1)
-    ch2_sample(generate_population_sample("normal", 25))
-  })
-  observeEvent(input$ch2_step2, { ch2_step(2) })
-  observeEvent(input$ch2_step3, { ch2_step(3) })
-  observeEvent(input$ch2_step4, { ch2_step(4) })
-  observeEvent(input$ch2_step5, { ch2_step(5) })
-
-  output$ch2_step_plot <- renderPlot({
-    step <- ch2_step()
-    samp <- ch2_sample()
-    params <- get_population_params("normal")
-
-    if (step == 0 || is.null(samp)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij '1. Pr\u00f3ba' aby zacz\u0105\u0107",
-                 size = 6, color = "#7f8c8d") +
-        theme_void()
-    } else {
-      xbar <- mean(samp)
-      s <- sd(samp)
-      n <- length(samp)
-      t_star <- qt(0.975, df = n - 1)
-      me <- t_star * s / sqrt(n)
-
-      xlims <- c(params$mu - 4 * params$sigma / sqrt(n),
-                 params$mu + 4 * params$sigma / sqrt(n))
-
-      p <- ggplot() +
-        geom_vline(xintercept = params$mu, color = col_true,
-                   linewidth = 1, linetype = "dashed", alpha = 0.5) +
-        xlim(xlims) +
-        labs(x = "Warto\u015b\u0107", y = "") +
-        theme_ci() +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
-
-      if (step >= 1) {
-        p <- p + geom_point(aes(x = xbar, y = 0), color = col_estimate,
-                            size = 5, shape = 18)
-      }
-      if (step >= 4) {
-        p <- p + geom_errorbarh(aes(xmin = xbar - me, xmax = xbar + me, y = 0),
-                                height = 0.1, color = col_ci, linewidth = 1.5)
-      }
-      if (step >= 5) {
-        covers <- (xbar - me <= params$mu) & (params$mu <= xbar + me)
-        ci_color <- if (covers) col_hit else col_miss
-        p <- p +
-          geom_errorbarh(aes(xmin = xbar - me, xmax = xbar + me, y = 0),
-                         height = 0.1, color = ci_color, linewidth = 2) +
-          annotate("text", x = xbar, y = 0.15,
-                   label = paste0("[", round(xbar - me, 1), " ; ",
-                                  round(xbar + me, 1), "]"),
-                   size = 5, fontface = "bold", color = ci_color)
-      }
-
-      p + ggtitle(paste0("Krok ", step, " z 5"))
-    }
-  })
-
-  output$ch2_step_explanation <- renderUI({
-    step <- ch2_step()
-    samp <- ch2_sample()
-    if (step == 0 || is.null(samp)) return(NULL)
-
-    xbar <- mean(samp)
-    s <- sd(samp)
-    n <- length(samp)
-    t_star <- qt(0.975, df = n - 1)
-    me <- t_star * s / sqrt(n)
-
-    explanation <- switch(as.character(step),
-      "1" = div(class = "callout-info",
-        p(tags$strong("Krok 1:"), " Pobieramy pr\u00f3b\u0119 n = ", n, " obserwacji."),
-        p("Punkt na wykresie to \u015brednia z pr\u00f3by: ",
-          withMathJax(paste0("\\(\\bar{x} = ", round(xbar, 2), "\\)")))
-      ),
-      "2" = div(class = "callout-info",
-        p(tags$strong("Krok 2:"), " Obliczamy statystyki z pr\u00f3by:"),
-        p(withMathJax(paste0("\\(\\bar{x} = ", round(xbar, 2), "\\)"))),
-        p(withMathJax(paste0("\\(s = ", round(s, 2), "\\)"))),
-        p(withMathJax(paste0("\\(n = ", n, "\\)")))
-      ),
-      "3" = div(class = "callout-info",
-        p(tags$strong("Krok 3:"), " Warto\u015b\u0107 krytyczna z rozk\u0142adu t:"),
-        p(withMathJax(paste0("\\(t^* = t_{0.975, ", n - 1, "} = ",
-                             round(t_star, 3), "\\)")))
-      ),
-      "4" = div(class = "callout-info",
-        p(tags$strong("Krok 4:"), " Margines b\u0142\u0119du:"),
-        p(withMathJax(paste0("\\(ME = t^* \\cdot \\frac{s}{\\sqrt{n}} = ",
-                             round(t_star, 3), " \\cdot \\frac{",
-                             round(s, 2), "}{\\sqrt{", n, "}} = ",
-                             round(me, 2), "\\)")))
-      ),
-      "5" = {
-        covers <- (xbar - me <= 170) & (170 <= xbar + me)
-        div(class = if (covers) "callout-success" else "callout-danger",
-          p(tags$strong("Krok 5: Przedzia\u0142 ufno\u015bci!")),
-          p(withMathJax(paste0("\\([", round(xbar - me, 2), " \\;; \\; ",
-                               round(xbar + me, 2), "]\\)"))),
-          p(if (covers) "Przedzia\u0142 zawiera prawdziwe \u03bc = 170"
-            else "Przedzia\u0142 NIE zawiera prawdziwego \u03bc = 170")
-        )
-      }
-    )
-    explanation
-  })
-
-  # --- Widget 3: Quiz (tiles) ---
+  # --- Widget 2: Quiz (tiles) ---
   ch2_quiz_answered <- reactiveVal(FALSE)
   ch2_quiz_selected <- reactiveVal(NULL)
 
