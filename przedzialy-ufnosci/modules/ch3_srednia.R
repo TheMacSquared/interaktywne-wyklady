@@ -908,12 +908,9 @@ ch3_server <- function(input, output, session) {
       xlab = "\u015aredni wynik egzaminu (0\u201340 pkt)",
       steps = c("1. Punkty", "2. \u015arednie", "3. CI"),
       hypotheses = list(
-        list(text = "Tutoring daje \u015bredni wynik > 30 pkt",
-             bound = 30, dir = "gt", which = "Tutoring",
-             explain_yes = "Dolna granica CI dla Tutoringu (\u2248 31.4) le\u017cy powy\u017cej 30. Ca\u0142y CI w obszarze hipotezy \u2192 TAK."),
-        list(text = "Tutoring daje \u015bredni wynik > 36 pkt",
-             bound = 36, dir = "gt", which = "Tutoring",
-             explain_no = "G\u00f3rna granica CI dla Tutoringu (\u2248 35.4) le\u017cy poni\u017cej 36. Ca\u0142y CI poza obszarem hipotezy \u2192 NIE.")
+        list(kind = "pairwise",
+             text = "Kt\u00f3re metody nauczania r\u00f3\u017cni\u0105 si\u0119 istotnie?",
+             unit = "pkt")
       )
     ),
     C2 = list(
@@ -927,12 +924,9 @@ ch3_server <- function(input, output, session) {
       xlab = "\u015aredni czas oczekiwania (min)",
       steps = c("1. Punkty", "2. \u015arednie", "3. CI"),
       hypotheses = list(
-        list(text = "SOR ma \u015bredni czas oczekiwania > 60 min",
-             bound = 60, dir = "gt", which = "SOR",
-             explain_yes = "Dolna granica CI dla SOR (\u2248 69.4) le\u017cy wyra\u017anie powy\u017cej 60. Ca\u0142y CI w obszarze hipotezy. Interwencja na SOR ma sens \u2014 czas oczekiwania jest dramatycznie d\u0142u\u017cszy ni\u017c gdziekolwiek indziej."),
-        list(text = "SOR ma \u015bredni czas oczekiwania > 85 min",
-             bound = 85, dir = "gt", which = "SOR",
-             explain_no = "G\u00f3rna granica CI dla SOR (\u2248 80.6) nie si\u0119ga 85. Ca\u0142y CI poza obszarem hipotezy. Sytuacja jest z\u0142a, ale nie a\u017c tak z\u0142a.")
+        list(kind = "pairwise",
+             text = "Kt\u00f3re oddzia\u0142y r\u00f3\u017cni\u0105 si\u0119 istotnie czasem oczekiwania?",
+             unit = "min")
       )
     )
   )
@@ -1387,33 +1381,67 @@ ch3_server <- function(input, output, session) {
   # ---- Liczba "core" krokow budowy CI (bez hipotez) ----
   n_core_steps <- function(cfg) length(cfg$steps)
 
+  # ---- Dekoder fazy hipotezy ze stanu ----
+  # State po n_core: kazda hipoteza ma 2 stany (treść, werdykt).
+  #   n_core + 1 = hipoteza 1 (tylko treść)
+  #   n_core + 2 = hipoteza 1 (z werdyktem)
+  #   n_core + 3 = hipoteza 2 (tylko treść)
+  #   n_core + 4 = hipoteza 2 (z werdyktem)
+  # Zwraca NULL jezeli step jest w fazie budowy CI lub poza zakresem.
+  hyp_phase <- function(step, n_core, n_hyp) {
+    if (step <= n_core) return(NULL)
+    offset <- step - n_core
+    j <- (offset - 1) %/% 2 + 1
+    reveal <- (offset - 1) %% 2 == 1
+    if (j > n_hyp) return(NULL)
+    list(idx = j, reveal = reveal)
+  }
+  # Konwersja: idx hipotezy + reveal -> wartosc state
+  hyp_state <- function(n_core, j, reveal) {
+    n_core + (j - 1) * 2 + (if (reveal) 2 else 1)
+  }
+
   # ---- Generator przyciskow dla case'a ----
   case_buttons_ui <- function(case_id) {
     cfg <- cases_config[[case_id]]
     current <- ch3_case_state[[case_id]]
     n_core <- n_core_steps(cfg)
+    n_hyp <- length(cfg$hypotheses)
+    phase <- hyp_phase(current, n_core, n_hyp)
 
     # Przyciski budowy CI
     core_btns <- lapply(seq_along(cfg$steps), function(i) {
       btn_class <- if (current == i) "btn-primary" else "btn-outline-primary"
-      actionButton(paste0("ch3_", case_id, "_step", i),
+      actionButton(paste0("ch3_case", case_id, "_step", i),
                    cfg$steps[i], class = btn_class)
     })
 
-    # Przyciski hipotez (pojawiaja sie dopiero po wybudowaniu CI)
+    # Przyciski hipotez (pojawiaja sie dopiero po wybudowaniu CI).
+    # Hipoteza jest "aktywna" gdy state odpowiada jej idx (tresc lub werdykt).
     hyp_btns <- if (current >= n_core) {
       lapply(seq_along(cfg$hypotheses), function(j) {
-        btn_class <- if (current == n_core + j) "btn-warning" else "btn-outline-warning"
-        actionButton(paste0("ch3_", case_id, "_hyp", j),
+        is_active <- !is.null(phase) && phase$idx == j
+        btn_class <- if (is_active) "btn-warning" else "btn-outline-warning"
+        actionButton(paste0("ch3_case", case_id, "_hyp", j),
                      paste0("Hipoteza ", j), class = btn_class)
       })
     } else {
       list(helpText("Wybuduj pe\u0142ny przedzia\u0142, \u017ceby sprawdzi\u0107 hipotezy."))
     }
 
+    # Drugi rzad: przycisk "Poka\u017c werdykt" - tylko gdy hipoteza wybrana i jeszcze nie odkryta
+    reveal_row <- if (!is.null(phase) && !phase$reveal) {
+      div(class = "step-buttons", style = "margin-top: 4px;",
+        actionButton(paste0("ch3_case", case_id, "_reveal"),
+                     "\U0001f50d Poka\u017c werdykt", class = "btn-success"))
+    } else {
+      NULL
+    }
+
     tagList(
       div(class = "step-buttons", core_btns),
-      div(class = "step-buttons", style = "margin-top: 4px;", hyp_btns)
+      div(class = "step-buttons", style = "margin-top: 4px;", hyp_btns),
+      reveal_row
     )
   }
 
@@ -1434,12 +1462,20 @@ ch3_server <- function(input, output, session) {
     }
 
     # Czy jeste\u015bmy w fazie hipotezy?
+    n_hyp <- length(cfg$hypotheses)
+    phase <- hyp_phase(step, n_core, n_hyp)
     hypothesis <- NULL
     plot_step <- step
-    if (step > n_core) {
-      hyp_idx <- step - n_core
-      hypothesis <- cfg$hypotheses[[hyp_idx]]
-      plot_step <- n_core  # pe\u0142en CI w tle
+    if (!is.null(phase)) {
+      # W obu sub-fazach (tresc i werdykt) plot wyglada tak samo:
+      # pelny CI + obszar hipotezy. Werdykt jest tylko w wyjasnieniu.
+      hyp_obj <- cfg$hypotheses[[phase$idx]]
+      # Hipoteza pairwise (dla forest plot) nie ma bound/dir - nie rysujemy obszaru,
+      # studenci patrza na nakladanie sie CI poszczegolnych grup.
+      if (is.null(hyp_obj$kind) || hyp_obj$kind != "pairwise") {
+        hypothesis <- hyp_obj
+      }
+      plot_step <- n_core
     }
 
     switch(cfg$type,
@@ -1454,6 +1490,125 @@ ch3_server <- function(input, output, session) {
     )
   }
 
+  # ---- Pairwise: macierz nakladania CI dla forest plot ----
+  # Zwraca macierz logiczna NxN: TRUE = grupy roznia sie istotnie (CI nie nakladaja).
+  forest_pairwise_matrix <- function(data) {
+    k <- length(data$groups)
+    cis <- lapply(seq_len(k), function(i) {
+      ci_mean(data$means[i], data$sds[i], data$ns[i])
+    })
+    m <- matrix(FALSE, nrow = k, ncol = k,
+                dimnames = list(data$groups, data$groups))
+    for (i in seq_len(k)) for (j in seq_len(k)) {
+      if (i == j) next
+      # Roznia sie gdy CI[i] i CI[j] sie nie nakladaja
+      m[i, j] <- (cis[[i]]$upper < cis[[j]]$lower) ||
+                 (cis[[j]]$upper < cis[[i]]$lower)
+    }
+    m
+  }
+
+  # Tabelka HTML dla macierzy pairwise
+  render_pairwise_table <- function(mat) {
+    groups <- rownames(mat)
+    k <- length(groups)
+    header <- tags$tr(
+      tags$th(""),
+      lapply(groups, function(g) tags$th(g, style = "padding: 4px 8px; text-align: center; font-size: 12px;"))
+    )
+    rows <- lapply(seq_len(k), function(i) {
+      tags$tr(
+        tags$th(groups[i], style = "padding: 4px 8px; text-align: right; font-size: 12px;"),
+        lapply(seq_len(k), function(j) {
+          if (i == j) {
+            tags$td("\u2014", style = "padding: 4px 8px; text-align: center; color: #95a5a6;")
+          } else if (mat[i, j]) {
+            tags$td("\u2713", style = "padding: 4px 8px; text-align: center; color: #27ae60; font-weight: bold; font-size: 16px;")
+          } else {
+            tags$td("\u00d7", style = "padding: 4px 8px; text-align: center; color: #e74c3c; font-size: 16px;")
+          }
+        })
+      )
+    })
+    tags$table(
+      style = "border-collapse: collapse; margin: 8px auto; border: 1px solid #bdc3c7;",
+      tags$thead(header),
+      tags$tbody(rows)
+    )
+  }
+
+  # Narracja "jak w raporcie" dla pairwise
+  pairwise_narrative <- function(data, mat, unit = "") {
+    groups <- data$groups
+    means <- data$means
+    k <- length(groups)
+    unit_str <- if (nzchar(unit)) paste0(" ", unit) else ""
+
+    # Wyciagnij istotne pary z gornego trojkata, z kierunkiem (wieksza > mniejsza)
+    diff_pairs <- list()
+    for (i in seq_len(k - 1)) for (j in seq(i + 1, k)) {
+      if (mat[i, j]) {
+        if (means[i] > means[j]) {
+          diff_pairs[[length(diff_pairs) + 1]] <- list(hi = groups[i], lo = groups[j])
+        } else {
+          diff_pairs[[length(diff_pairs) + 1]] <- list(hi = groups[j], lo = groups[i])
+        }
+      }
+    }
+    n_diff <- length(diff_pairs)
+
+    if (n_diff == 0) {
+      return(paste0(
+        "\u017badna para grup nie wykaza\u0142a istotnej r\u00f3\u017cnicy \u2014 wszystkie 95% CI ",
+        "nak\u0142adaj\u0105 si\u0119 wzajemnie. Na podstawie tych danych nie mo\u017cemy ",
+        "stwierdzi\u0107 r\u00f3\u017cnic mi\u0119dzy badanymi grupami."
+      ))
+    }
+
+    # Sprawdz czy jedna grupa odstaje od WSZYSTKICH innych (np. SOR vs reszta)
+    standout_idx <- which(sapply(seq_len(k), function(i) all(mat[i, -i])))
+    if (length(standout_idx) == 1) {
+      i <- standout_idx
+      others <- means[-i]
+      direction <- if (means[i] > max(others)) "wy\u017csz\u0105" else "ni\u017csz\u0105"
+      return(paste0(
+        "Spo\u015br\u00f3d wszystkich badanych grup wyra\u017anie odstaje ",
+        tags$b(groups[i]), " (\u015brednia ", round(means[i], 1), unit_str,
+        ") \u2014 ma istotnie ", direction, " warto\u015b\u0107 ni\u017c ka\u017cda z pozosta\u0142ych grup ",
+        "(jej 95% CI nie nak\u0142ada si\u0119 z \u017cadnym innym). ",
+        "Pozosta\u0142e grupy maj\u0105 \u015brednie w przedziale ",
+        round(min(others), 1), "\u2013", round(max(others), 1), unit_str,
+        ", a ich CI nak\u0142adaj\u0105 si\u0119 \u2014 nie mo\u017cemy stwierdzi\u0107 mi\u0119dzy nimi istotnych r\u00f3\u017cnic."
+      ))
+    }
+
+    # Wymien konkretne istotne pary
+    pair_strs <- sapply(diff_pairs, function(pp) {
+      paste0(tags$b(pp$hi), " > ", tags$b(pp$lo))
+    })
+    pairs_inline <- if (length(pair_strs) == 1) {
+      pair_strs[1]
+    } else if (length(pair_strs) == 2) {
+      paste(pair_strs, collapse = " oraz ")
+    } else {
+      paste0(paste(pair_strs[-length(pair_strs)], collapse = ", "),
+             " oraz ", pair_strs[length(pair_strs)])
+    }
+
+    intro <- if (n_diff == 1) {
+      "Spo\u015br\u00f3d wszystkich por\u00f3wna\u0144 jedynie jedna para wykaza\u0142a istotn\u0105 r\u00f3\u017cnic\u0119: "
+    } else {
+      paste0("Istotne r\u00f3\u017cnice (CI nie nak\u0142adaj\u0105 si\u0119) wykaza\u0142y ",
+             n_diff, " pary: ")
+    }
+
+    paste0(
+      intro, pairs_inline, ". ",
+      "Pozosta\u0142e pary nie r\u00f3\u017cni\u0105 si\u0119 istotnie \u2014 ich 95% CI nak\u0142adaj\u0105 si\u0119, ",
+      "wi\u0119c na podstawie tych danych nie mo\u017cemy mi\u0119dzy nimi rozr\u00f3\u017cni\u0107."
+    )
+  }
+
   # ---- Render: explanation ----
   render_case_explain <- function(case_id) {
     cfg <- cases_config[[case_id]]
@@ -1463,17 +1618,44 @@ ch3_server <- function(input, output, session) {
     if (step == 0) return(NULL)
 
     # Faza hipotezy
-    if (step > n_core) {
-      hyp_idx <- step - n_core
-      hyp <- cfg$hypotheses[[hyp_idx]]
+    n_hyp <- length(cfg$hypotheses)
+    phase <- hyp_phase(step, n_core, n_hyp)
+    if (!is.null(phase)) {
+      hyp <- cfg$hypotheses[[phase$idx]]
 
-      # Oblicz werdykt
+      # Sub-faza 1: tylko tresc hipotezy (czas na dyskusje ze studentami)
+      if (!phase$reveal) {
+        return(div(class = "callout-info",
+          p(tags$strong("Hipoteza ", phase$idx, ": "), hyp$text),
+          p(tags$em("Spojrz na wykres: gdzie lezy CI wzgledem obszaru hipotezy?
+                    Co o tym sadzicie? Klikni\u0119cie ", tags$b("Poka\u017c werdykt"),
+                    " odsloni odpowied\u017a."))
+        ))
+      }
+
+      # Sub-faza 2: werdykt + wyjasnienie
+      # Specjalny przypadek: hipoteza pairwise dla forest plot
+      if (!is.null(hyp$kind) && hyp$kind == "pairwise") {
+        mat <- forest_pairwise_matrix(cfg$data)
+        narrative <- pairwise_narrative(cfg$data, mat,
+                                         unit = if (!is.null(hyp$unit)) hyp$unit else "")
+        return(div(class = "callout-success",
+          p(tags$strong("Hipoteza: "), hyp$text),
+          p(tags$strong("Werdykt \u2014 macierz par:")),
+          p(tags$em("\u2713 = grupy r\u00f3\u017cni\u0105 si\u0119 istotnie (CI nie nak\u0142adaj\u0105 si\u0119);  ",
+                    "\u00d7 = nie mo\u017cna stwierdzi\u0107 r\u00f3\u017cnicy (CI nak\u0142adaj\u0105 si\u0119)"),
+            style = "font-size: 12px; color: #7f8c8d;"),
+          render_pairwise_table(mat),
+          p(tags$strong("Jak to opisa\u0107 w raporcie:"),
+            style = "margin-top: 12px;"),
+          p(HTML(narrative), style = "font-style: italic;")
+        ))
+      }
+
       verdict <- compute_verdict_for_case(cfg, hyp)
-
       cls <- verdict_class(verdict)
       label <- verdict_label(verdict)
 
-      # Buduj tresc wyjasnienia
       body <- if (verdict == "yes" && !is.null(hyp$explain_yes)) {
         p(hyp$explain_yes)
       } else if (verdict == "no" && !is.null(hyp$explain_no)) {
@@ -1484,7 +1666,7 @@ ch3_server <- function(input, output, session) {
       }
 
       return(div(class = cls,
-        p(tags$strong("Hipoteza ", hyp_idx, ": "), hyp$text),
+        p(tags$strong("Hipoteza ", phase$idx, ": "), hyp$text),
         p(tags$strong("Werdykt: ", label)),
         body
       ))
@@ -1527,44 +1709,55 @@ ch3_server <- function(input, output, session) {
   }
 
   # ---- Podlaczenie observerow + outputow dla kazdego case'a ----
-  for (cid in names(cases_config)) {
-    local({
-      case_id <- cid
-      cfg <- cases_config[[case_id]]
-      n_core <- length(cfg$steps)
+  # case_id przekazywany jako argument funkcji = wlasciwe closure dla kazdego case'a
+  # (zastepuje wczesniejszy wzorzec for + local({}), ktory cicho gubil rejestracje).
+  register_case <- function(case_id) {
+    cfg <- cases_config[[case_id]]
+    n_core <- length(cfg$steps)
 
-      # Przyciski core step\u00f3w
-      for (i in seq_along(cfg$steps)) {
-        local({
-          step_i <- i
-          observeEvent(input[[paste0("ch3_", case_id, "_step", step_i)]], {
-            ch3_case_state[[case_id]] <- step_i
-          }, ignoreInit = TRUE)
-        })
-      }
-
-      # Przyciski hipotez
-      for (j in seq_along(cfg$hypotheses)) {
-        local({
-          hyp_j <- j
-          observeEvent(input[[paste0("ch3_", case_id, "_hyp", hyp_j)]], {
-            ch3_case_state[[case_id]] <- n_core + hyp_j
-          }, ignoreInit = TRUE)
-        })
-      }
-
-      # Rendery
-      output[[paste0("ch3_", case_id, "_buttons")]] <- renderUI({
-        ch3_case_state[[case_id]]  # reaktywna zaleznosc
-        case_buttons_ui(case_id)
-      })
-      output[[paste0("ch3_", case_id, "_plot")]] <- renderPlot({
-        render_case_plot(case_id)
-      })
-      output[[paste0("ch3_", case_id, "_explain")]] <- renderUI({
-        render_case_explain(case_id)
-      })
+    # Observery dla przyciskow core stepow
+    lapply(seq_along(cfg$steps), function(i) {
+      force(i)
+      observeEvent(input[[paste0("ch3_case", case_id, "_step", i)]], {
+        ch3_case_state[[case_id]] <- i
+      }, ignoreInit = TRUE)
     })
+
+    # Observery dla przyciskow hipotez (kazda hipoteza -> faza "tylko tresc")
+    lapply(seq_along(cfg$hypotheses), function(j) {
+      force(j)
+      observeEvent(input[[paste0("ch3_case", case_id, "_hyp", j)]], {
+        ch3_case_state[[case_id]] <- hyp_state(n_core, j, reveal = FALSE)
+      }, ignoreInit = TRUE)
+    })
+
+    # Observer dla przycisku "Pokaz werdykt" - przelacza obecna hipoteze w faze "werdykt"
+    observeEvent(input[[paste0("ch3_case", case_id, "_reveal")]], {
+      current <- ch3_case_state[[case_id]]
+      n_hyp <- length(cfg$hypotheses)
+      phase <- hyp_phase(current, n_core, n_hyp)
+      if (!is.null(phase) && !phase$reveal) {
+        ch3_case_state[[case_id]] <- hyp_state(n_core, phase$idx, reveal = TRUE)
+      }
+    }, ignoreInit = TRUE)
+
+    # Rendery z jawna reaktywna zaleznoscia na ch3_case_state[[case_id]]
+    output[[paste0("ch3_case", case_id, "_buttons")]] <- renderUI({
+      ch3_case_state[[case_id]]
+      case_buttons_ui(case_id)
+    })
+    output[[paste0("ch3_case", case_id, "_plot")]] <- renderPlot({
+      ch3_case_state[[case_id]]
+      render_case_plot(case_id)
+    })
+    output[[paste0("ch3_case", case_id, "_explain")]] <- renderUI({
+      ch3_case_state[[case_id]]
+      render_case_explain(case_id)
+    })
+  }
+
+  for (cid in names(cases_config)) {
+    register_case(cid)
   }
 
 }
