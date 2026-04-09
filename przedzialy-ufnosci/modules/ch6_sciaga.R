@@ -166,6 +166,12 @@ binom.test(x = sukcesy, n = proba, conf.level = 0.95)"
         tags$li("\"Metoda, kt\u00f3r\u0105 u\u017cyli\u015bmy, daje poprawne przedzia\u0142y w 95% przypadk\u00f3w\""),
         tags$li("\"Mamy 95% ufno\u015bci w metod\u0119, kt\u00f3ra wytworzy\u0142a ten przedzia\u0142\"")
       )
+    ),
+
+    # ========================================================================
+    div(class = "chapter-transition",
+      p("Czas zastosowa\u0107 t\u0119 wiedz\u0119 w praktyce na rzeczywistym zbiorze danych."),
+      actionButton("ch6_to_ch7", "Dalej: \u0106wiczenia \u2192", class = "btn-primary")
     )
 
   ))

@@ -52,6 +52,7 @@ source(file.path(app_dir, "modules", "ch3_srednia.R"),   local = TRUE)
 source(file.path(app_dir, "modules", "ch4_proporcja.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch5_czynniki.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "ch6_sciaga.R"),    local = TRUE)
+source(file.path(app_dir, "modules", "ch7_cwiczenia.R"), local = TRUE)
 
 # ============================================================================
 # GLOBAL UI HEADER (CSS, JS)
@@ -263,7 +264,8 @@ ui <- navbarPage(
   ch3_ui,
   ch4_ui,
   ch5_ui,
-  ch6_ui
+  ch6_ui,
+  ch7_ui
 )
 
 # ============================================================================
@@ -291,6 +293,9 @@ server <- function(input, output, session) {
   observeEvent(input$ch5_next, {
     updateNavbarPage(session, "main_nav", selected = "6. \u015aci\u0105ga")
   })
+  observeEvent(input$ch6_to_ch7, {
+    updateNavbarPage(session, "main_nav", selected = "7. \u0106wiczenia")
+  })
 
   # ==========================================================================
   # CHAPTER SERVERS
@@ -302,6 +307,7 @@ server <- function(input, output, session) {
   ch4_server(input, output, session)
   ch5_server(input, output, session)
   ch6_server(input, output, session)
+  ch7_server(input, output, session)
 
 }
 
