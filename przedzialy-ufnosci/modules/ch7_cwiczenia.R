@@ -73,19 +73,20 @@ ch7_ui <- tabPanel("7. \u0106wiczenia",
 
     # --- Zadanie 3 ---
     div(class = "widget-block",
-      h4("Zadanie 3 \u2014 Co je\u015bli mieliby\u015bmy tylko ma\u0142\u0105 pr\u00f3b\u0119?"),
+      h4("Zadanie 3 \u2014 Co je\u015bli mieliby\u015bmy tylko mniejsz\u0105 pr\u00f3b\u0119?"),
       div(class = "narrative",
-        p("Wyobra\u017a sobie inn\u0105 sytuacj\u0119: kurator dosta\u0142 dane tylko z 30 okr\u0119g\u00f3w \u2014
-          mo\u017ce z jednej, lokalnej delegatury. Za\u0142\u00f3\u017cmy, \u017ce to pierwsze 30 wierszy zbioru."),
+        p("Wyobra\u017a sobie inn\u0105 sytuacj\u0119: kurator chce spojrze\u0107 osobno na szko\u0142y
+          z klasami K\u20136 (kindergarten do 6. klasy). Przefiltruj zbi\u00f3r po ",
+          tags$code("grades == \"KK-06\""), "."),
         p("Zr\u00f3b CI dla ", tags$code("read"),
-          " na tej ma\u0142ej pr\u00f3bie i por\u00f3wnaj go z poprzednim. Zwr\u00f3\u0107 uwag\u0119,
+          " na tej podgrupie i por\u00f3wnaj go z poprzednim. Zwr\u00f3\u0107 uwag\u0119,
           \u017ce zmieni\u0142y si\u0119 ", tags$em("trzy"),
           " rzeczy naraz \u2014 i ka\u017cda z nich pcha CI w t\u0119 sam\u0105 stron\u0119.
           Spr\u00f3bujcie wskaza\u0107 wszystkie trzy zanim zajrzycie do rozwi\u0105zania."),
         p(tags$em("Bonus do dyskusji:"),
-          " czy \u015brednia z tych 30 okr\u0119g\u00f3w jest w og\u00f3le wiarygodna jako oszacowanie ca\u0142ej Kalifornii?
-          Co m\u00f3wi nam o tym sam fakt, \u017ce wzi\u0119li\u015bmy ", tags$em("pierwsze"),
-          " 30, a nie 30 losowo wybranych?")
+          " czy \u015brednia ze szk\u00f3\u0142 KK-06 jest wiarygodna jako oszacowanie ",
+          tags$em("wszystkich"), " szk\u00f3\u0142 w Kalifornii?
+          Szko\u0142y K\u20136 to inny typ plac\u00f3wek ni\u017c K\u20138 \u2014 mog\u0105 mie\u0107 systematycznie inne wyniki.")
       ),
       actionButton("ch7_ans3", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
       uiOutput("ch7_sol3")
@@ -174,32 +175,11 @@ ch7_ui <- tabPanel("7. \u0106wiczenia",
     # BLOK 3: Planowanie i interpretacja
     # ======================================================================
 
-    div(class = "section-title", "Blok 3: Planowanie pr\u00f3by i interpretacja (~20 min)"),
+    div(class = "section-title", "Blok 3: Interpretacja i my\u015blenie krytyczne (~25 min)"),
 
     # --- Zadanie 8 ---
     div(class = "widget-block",
-      h4("Zadanie 8 \u2014 Ile okr\u0119g\u00f3w nale\u017cy zbada\u0107?"),
-      div(class = "narrative",
-        p("Wyobra\u017a sobie, \u017ce kuratorium planuje nowe, pe\u0142ne badanie wynik\u00f3w czytania
-          i chce nie tyle wynik, co ", tags$b("gwarantowan\u0105 precyzj\u0119"),
-          ": margines b\u0142\u0119du nie wi\u0119kszy ni\u017c 2 punkty, przy 95% ufno\u015bci.
-          Pyta nas: ", tags$em("\u201eile okr\u0119g\u00f3w mamy w\u0142a\u015bciwie obj\u0105\u0107 badaniem?\u201d")),
-        p("Z Descriptives w Jamovi mo\u017cecie odczyta\u0107 ", tags$code("s"),
-          " dla ", tags$code("read"),
-          " z naszych 420 okr\u0119g\u00f3w \u2014 to b\u0119dzie nasze pilota\u017cowe oszacowanie zmienno\u015bci.
-          Reszta to kalkulator i wz\u00f3r z naszej \u015bci\u0105gi:",
-          withMathJax("$$n = \\left(\\frac{z^* \\cdot s}{ME_{max}}\\right)^2$$")),
-        p("Policzcie odpowied\u017a dla ME = 2. P\u00f3\u017aniej dla ", tags$em("\u017cartu"),
-          " spr\u00f3bujcie ME = 1 i ME = 5 \u2014 zobaczycie, sk\u0105d wzi\u0119\u0142a si\u0119 regu\u0142a
-          \u201echcesz po\u0142ow\u0119 b\u0142\u0119du, b\u0119dziesz mia\u0142 cztery razy wi\u0119cej roboty\u201d.")
-      ),
-      actionButton("ch7_ans8", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
-      uiOutput("ch7_sol8")
-    ),
-
-    # --- Zadanie 9 ---
-    div(class = "widget-block",
-      h4("Zadanie 9 \u2014 Prawda czy fa\u0142sz?"),
+      h4("Zadanie 8 \u2014 Prawda czy fa\u0142sz?"),
       div(class = "narrative",
         p("Przyjmijmy, \u017ce w zadaniu 1 dosta\u0142e\u015b 95% CI dla \u015bredniego ",
           tags$code("read"), " r\u00f3wny ", tags$b("[653.0, 656.9]"),
@@ -213,31 +193,70 @@ ch7_ui <- tabPanel("7. \u0106wiczenia",
           tags$li(tags$b("f)"), " \u201eGdyby\u015bmy podnie\u015bli poziom ufno\u015bci do 99%, przedzia\u0142 zw\u0119zi\u0142by si\u0119.\u201d")
         )
       ),
-      actionButton("ch7_ans9", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
-      uiOutput("ch7_sol9")
+      actionButton("ch7_ans8", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+      uiOutput("ch7_sol8")
     ),
 
-    # --- Zadanie 10 ---
+    # --- Zadanie 9 --- (wieloetapowe: lunch \u2192 income \u2192 weryfikacja)
     div(class = "widget-block",
-      h4("Zadanie 10 \u2014 Czy doch\u00f3d w okr\u0119gu ma znaczenie? (trudniejsze)"),
+      h4("Zadanie 9 \u2014 Czy dotacje do obiad\u00f3w szkodz\u0105 uczniom? (trudniejsze)"),
+
+      # --- Krok 9a ---
       div(class = "narrative",
-        p("Stare pytanie socjologii edukacji: czy dzieci z bogatszych okr\u0119g\u00f3w ucz\u0105 si\u0119 lepiej?
-          Mamy wszystko, czego trzeba: ", tags$code("read"),
-          " i ", tags$code("income"), "."),
-        p("Podzielcie okr\u0119gi na dwie po\u0142owy wzgl\u0119dem ", tags$em("mediany dochodu"),
-          " i policzcie 95% CI dla r\u00f3\u017cnicy \u015brednich wynik\u00f3w z czytania mi\u0119dzy tymi grupami
-          (Independent Samples T-Test w Jamovi pokazuje taki przedzia\u0142, je\u015bli zaznaczycie ",
-          tags$em("Mean difference"), " i ", tags$em("Confidence interval"), ")."),
-        p("Klucz interpretacyjny brzmi: ", tags$b("czy zero mie\u015bci si\u0119 w tym przedziale?"),
-          " Je\u015bli tak \u2014 nie mamy przes\u0142anek do twierdzenia, \u017ce r\u00f3\u017cnica istnieje.
-          Je\u015bli nie \u2014 mamy. Co m\u00f3wi\u0105 dane CASchools?"),
-        p(tags$em("Pytanie pu\u0142apkowe na koniec:"),
-          " nawet je\u015bli efekt jest wyra\u017any, czy mo\u017cemy z tego wywnioskowa\u0107,
-          \u017ce ", tags$em("doch\u00f3d powoduje"),
-          " lepsze wyniki w czytaniu? Co jeszcze mog\u0142oby dzia\u0142a\u0107 w tle?")
+        p(tags$b("Krok A."), " Zmienna ", tags$code("lunch"),
+          " m\u00f3wi, jaki procent uczni\u00f3w w okr\u0119gu korzysta z dotowanego obiadu
+          (program dla rodzin o niskich dochodach). Stw\u00f3rzcie now\u0105 zmienn\u0105 dziel\u0105c\u0105 okr\u0119gi na trzy grupy:"),
+        tags$ul(
+          tags$li(tags$b("ma\u0142o"), " \u2014 lunch < 33%"),
+          tags$li(tags$b("\u015brednio"), " \u2014 lunch 33\u201366%"),
+          tags$li(tags$b("du\u017co"), " \u2014 lunch > 66%")
+        ),
+        p("Policzcie 95% CI dla \u015bredniej ", tags$code("read"), " i ", tags$code("math"),
+          " w ka\u017cdej z trzech grup. Co widzicie?")
       ),
-      actionButton("ch7_ans10", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
-      uiOutput("ch7_sol10")
+      actionButton("ch7_ans9a", "Poka\u017c wyniki kroku A", class = "btn-outline-success btn-sm"),
+      uiOutput("ch7_sol9a"),
+      br(),
+
+      # --- Krok 9b --- (ukryty do momentu klikni\u0119cia 9a)
+      conditionalPanel(
+        condition = "input.ch7_ans9a % 2 == 1",
+        div(class = "narrative",
+          p(tags$b("Krok B."), " Wyniki s\u0105 dramatyczne \u2014 im wi\u0119kszy odsetek dotowanych obiad\u00f3w,
+            tym gorsze wyniki w nauce. Kto\u015b pochopny m\u00f3g\u0142by zawy\u015bredniorokowa\u0107:
+            \u201edotacje do obiad\u00f3w obni\u017caj\u0105 wyniki!\u201d"),
+          p("Ale zanim wyci\u0105gniemy wnioski, sprawd\u017amy jeszcze jedn\u0105 rzecz.
+            Podzielcie teraz okr\u0119gi wg zmiennej ", tags$code("income"),
+            " (tysi\u0105ce dolar\u00f3w) na trzy grupy:"),
+          tags$ul(
+            tags$li(tags$b("niski"), " \u2014 income < 10"),
+            tags$li(tags$b("\u015bredni"), " \u2014 income 10\u201320"),
+            tags$li(tags$b("wysoki"), " \u2014 income > 20")
+          ),
+          p("Policzcie 95% CI dla \u015bredniej ", tags$code("read"), " i ", tags$code("math"),
+            " w ka\u017cdej grupie dochodowej.")
+        ),
+        actionButton("ch7_ans9b", "Poka\u017c wyniki kroku B", class = "btn-outline-success btn-sm"),
+        uiOutput("ch7_sol9b"),
+        br(),
+
+        # --- Krok 9c --- (ukryty do momentu klikni\u0119cia 9b)
+        conditionalPanel(
+          condition = "input.ch7_ans9b % 2 == 1",
+          div(class = "narrative",
+            p(tags$b("Krok C."), " Wi\u0119c bogatsze okr\u0119gi maj\u0105 lepsze wyniki \u2014 a przecie\u017c
+              bogatsze okr\u0119gi to te, w kt\u00f3rych ", tags$em("mniej"),
+              " rodzin potrzebuje dotacji do obiad\u00f3w.
+              Mo\u017ce to nie dotacje \u201eszkodz\u0105\u201d, tylko bieda jest prawdziwym czynnikiem?"),
+            p("Sprawd\u017amy to wprost: policzcie 95% CI dla \u015bredniej ", tags$code("income"),
+              " w ka\u017cdej z trzech grup ", tags$code("lunch"),
+              " (ma\u0142o / \u015brednio / du\u017co). Je\u015bli przedzia\u0142y nie nachodz\u0105 na siebie,
+              to grupy dotacji to tak naprawd\u0119 grupy zamo\u017cno\u015bci.")
+          ),
+          actionButton("ch7_ans9c", "Poka\u017c wyniki kroku C i wnioski", class = "btn-outline-success btn-sm"),
+          uiOutput("ch7_sol9c")
+        )
+      )
     ),
 
     # ======================================================================
@@ -254,8 +273,8 @@ ch7_ui <- tabPanel("7. \u0106wiczenia",
           ", czy poziom ufno\u015bci?"),
         tags$li("Dlaczego CI dla proporcji w ma\u0142ej pr\u00f3bie (zadanie 7) by\u0142 a\u017c tak szeroki?
           Czy CI Walda da\u0142by si\u0119 tu w og\u00f3le sensownie zastosowa\u0107?"),
-        tags$li("Dlaczego stwierdzenie \u201e95% danych le\u017cy w przedziale ufno\u015bci\u201d jest fa\u0142szywe,
-          mimo \u017ce brzmi tak naturalnie?")
+        tags$li("Czego nauczy\u0142o nas zadanie 9 o interpretacji zwi\u0105zk\u00f3w mi\u0119dzy zmiennymi?
+          Dlaczego nie mo\u017cna od razu wnioskowa\u0107 o przyczynowo\u015bci?")
       )
     ),
 
@@ -326,27 +345,27 @@ ch7_server <- function(input, output, session) {
 
   # --- Zadanie 3 ---
   .solution_toggle("ch7_ans3", "ch7_sol3", withMathJax(tagList(
-    p(tags$b("Wyniki dla pierwszych 30 okr\u0119g\u00f3w "), "(", tags$code("read"), "):"),
+    p(tags$b("Wyniki dla szk\u00f3\u0142 KK-06 "), "(", tags$code("read"), "):"),
     tags$ul(
-      tags$li("n = 30"),
-      tags$li("\u015arednia \u2248 ", tags$b("622.43"),
-        " (uwaga: bardzo r\u00f3\u017cna od \u015bredniej z ca\u0142o\u015bci \u2014 pierwsze 30 okr\u0119g\u00f3w to nie pr\u00f3ba losowa!)"),
-      tags$li("s \u2248 ", tags$b("18.31")),
-      tags$li("\\(t^*_{0.975, 29} \\approx 2.045\\)"),
-      tags$li("\\(SE = 18.31/\\sqrt{30} \\approx 3.34\\)"),
-      tags$li("\\(ME \\approx 2.045 \\cdot 3.34 \\approx 6.84\\)"),
-      tags$li("95% CI: ", tags$b("[615.60, 629.27]"))
+      tags$li("n = 61"),
+      tags$li("\u015arednia \u2248 ", tags$b("662.08"),
+        " (uwaga: wy\u017csza ni\u017c \u015brednia z ca\u0142o\u015bci (655.0) \u2014 szko\u0142y K\u20136 to specyficzna podgrupa!)"),
+      tags$li("s \u2248 ", tags$b("20.51")),
+      tags$li("\\(t^*_{0.975, 60} \\approx 2.000\\)"),
+      tags$li("\\(SE = 20.51/\\sqrt{61} \\approx 2.63\\)"),
+      tags$li("\\(ME \\approx 2.000 \\cdot 2.63 \\approx 5.25\\)"),
+      tags$li("95% CI: ", tags$b("[656.82, 667.33]"))
     ),
-    p(tags$b("Por\u00f3wnanie ME:"), " ME (n=30) \u2248 6.84 vs ME (n=420) \u2248 1.93 \u2014 ",
-      tags$b("3.5\u00d7 szerszy CI"), "."),
+    p(tags$b("Por\u00f3wnanie ME:"), " ME (n=61) \u2248 5.25 vs ME (n=420) \u2248 1.93 \u2014 ",
+      tags$b("2.7\u00d7 szerszy CI"), "."),
     p(tags$b("Trzy przyczyny rozszerzenia CI w por\u00f3wnaniu z zadaniem 1:")),
     tags$ol(
-      tags$li(tags$b("Mniejsze n"), " \u2192 \\(\\sqrt{n}\\) w mianowniku jest \\(\\sqrt{14}\\)\u00d7 mniejszy
-        \u2192 SE wzros\u0142o ok. 3.74\u00d7."),
-      tags$li(tags$b("Wi\u0119kszy mno\u017cnik t*"), " \u2014 dla df = 29 wynosi 2.045 zamiast 1.966 (df = 419).
-        Nadmiar +4%."),
-      tags$li(tags$b("Inne s"), " \u2014 w pr\u00f3bie 30 okr\u0119g\u00f3w odchylenie wysz\u0142o nieco mniejsze (18.31 vs 20.11),
-        co cz\u0119\u015bciowo \u0142agodzi efekt, ale zostaje zdominowane przez \\(\\sqrt{n}\\).")
+      tags$li(tags$b("Mniejsze n"), " \u2192 \\(\\sqrt{n}\\) w mianowniku jest \\(\\sqrt{420}/\\sqrt{61} \\approx 2.62\\)\u00d7 mniejszy
+        \u2192 SE wzros\u0142o ok. 2.7\u00d7."),
+      tags$li(tags$b("Wi\u0119kszy mno\u017cnik t*"), " \u2014 dla df = 60 wynosi 2.000 zamiast 1.966 (df = 419).
+        Nadmiar +1.7%."),
+      tags$li(tags$b("Inne s"), " \u2014 w podgrupie KK-06 odchylenie wysz\u0142o nieco wi\u0119ksze (20.51 vs 20.11),
+        co lekko powi\u0119ksza efekt, ale g\u0142\u00f3wnym czynnikiem pozostaje \\(\\sqrt{n}\\).")
     ),
     p("Wniosek: ", tags$b("\\(SE \\propto 1/\\sqrt{n}\\)"),
       " \u2014 \u017ceby zmniejszy\u0107 CI o po\u0142ow\u0119 potrzeba 4\u00d7 wi\u0119cej danych.")
@@ -446,29 +465,6 @@ ch7_server <- function(input, output, session) {
 
   # --- Zadanie 8 ---
   .solution_toggle("ch7_ans8", "ch7_sol8", withMathJax(tagList(
-    p(tags$b("Z Descriptives:"), " s(read) \u2248 ", tags$b("20.11"), "."),
-    p(tags$b("Wz\u00f3r:"), " \\(n = (z^* \\cdot s / ME)^2 = (1.96 \\cdot 20.11 / 2)^2\\)."),
-    p(tags$b("Obliczenia:")),
-    tags$table(class = "table table-bordered",
-      tags$thead(tags$tr(
-        tags$th("ME"), tags$th("Wz\u00f3r"), tags$th("n (zaokr\u0105glone w g\u00f3r\u0119)")
-      )),
-      tags$tbody(
-        tags$tr(tags$td("2.0"), tags$td("\\((1.96 \\cdot 20.11 / 2)^2\\)"), tags$td("389")),
-        tags$tr(tags$td("1.0"), tags$td("\\((1.96 \\cdot 20.11 / 1)^2\\)"), tags$td("1554")),
-        tags$tr(tags$td("5.0"), tags$td("\\((1.96 \\cdot 20.11 / 5)^2\\)"), tags$td("63"))
-      )
-    ),
-    p(tags$b("Interpretacja:"),
-      " mamy 420 okr\u0119g\u00f3w, wi\u0119c dla ME=2 jeste\u015bmy ", tags$em("ju\u017c"),
-      " powy\u017cej minimum (389). Dla ME=1 trzeba by ponad 1500 okr\u0119g\u00f3w \u2014 niemal 4\u00d7 wi\u0119cej (zgodnie z regu\u0142\u0105 \u201ezmniejszenie ME o po\u0142ow\u0119 \u2192 4\u00d7 wi\u0119cej n\u201d)."),
-    p(tags$em("Uwaga praktyczna:"),
-      " formu\u0142a u\u017cywa z*, nie t*, wi\u0119c jest poprawnym przybli\u017ceniem dla du\u017cych n.
-      W praktyce planowania zwykle nie znamy s i u\u017cywamy oszacowania pilota\u017cowego.")
-  )))
-
-  # --- Zadanie 9 ---
-  .solution_toggle("ch7_ans9", "ch7_sol9", withMathJax(tagList(
     p(tags$b("Ocena zda\u0144:")),
     tags$ul(
       tags$li(tags$b("a) FA\u0141SZ."),
@@ -488,29 +484,98 @@ ch7_server <- function(input, output, session) {
     )
   )))
 
-  # --- Zadanie 10 ---
-  .solution_toggle("ch7_ans10", "ch7_sol10", withMathJax(tagList(
-    p(tags$b("Mediana "), tags$code("income"),
-      ": dzieli zbi\u00f3r na 210 okr\u0119g\u00f3w \u201elow\u201d i 210 \u201ehigh\u201d."),
-    p(tags$b("\u015arednie z czytania:")),
-    tags$ul(
-      tags$li("low: \u2248 ", tags$b("644.18")),
-      tags$li("high: \u2248 ", tags$b("665.77")),
-      tags$li("R\u00f3\u017cnica (high - low): \u2248 ", tags$b("21.59"), " punktu")
+  # --- Zadanie 9a --- (lunch vs wyniki)
+  .solution_toggle("ch7_ans9a", "ch7_sol9a", tagList(
+    p(tags$b("95% CI dla \u015bredniej read wg grup lunch:")),
+    tags$table(class = "table table-bordered table-striped",
+      tags$thead(tags$tr(
+        tags$th("Grupa lunch"), tags$th("n"), tags$th("\u015arednia read"), tags$th("95% CI")
+      )),
+      tags$tbody(
+        tags$tr(tags$td("ma\u0142o (< 33%)"), tags$td("168"), tags$td("671.8"), tags$td("[669.8, 673.8]")),
+        tags$tr(tags$td("\u015brednio (33\u201366%)"), tags$td("142"), tags$td("653.1"), tags$td("[651.3, 654.9]")),
+        tags$tr(tags$td("du\u017co (> 66%)"), tags$td("110"), tags$td("631.6"), tags$td("[629.3, 634.0]"))
+      )
     ),
-    p(tags$b("95% CI dla r\u00f3\u017cnicy \u015brednich (Welch):"),
-      tags$b("[18.33, 24.85]")),
-    p(tags$b("Czy zero le\u017cy w przedziale?"),
-      " ", tags$b("NIE"), " \u2014 ca\u0142y CI jest dodatni i zdecydowanie odsuni\u0119ty od zera."),
-    p(tags$b("Interpretacja:"),
-      " mamy bardzo silne wskazanie, \u017ce okr\u0119gi z wy\u017cszym dochodem maj\u0105 wy\u017csze \u015brednie wyniki z czytania
-      \u2014 r\u00f3\u017cnica wynosi prawdopodobnie mi\u0119dzy 18 a 25 punkt\u00f3w. To kwota du\u017ca w skali tych test\u00f3w."),
-    p(tags$em("Uwaga:"),
-      " CI dla r\u00f3\u017cnicy \u015brednich pe\u0142ni rol\u0119 testu \u2014 jest to bezpo\u015brednie pytanie ",
-      tags$em("\u201eczy efekt jest sp\u00f3jny ze zerem?\u201d"),
-      ". Tu odpowied\u017a brzmi: zdecydowanie nie. Oczywi\u015bcie z korelacji nie wynika przyczynowo\u015b\u0107 \u2014
-      doch\u00f3d wsp\u00f3\u0142wyst\u0119puje z wieloma innymi czynnikami.")
-  )))
+    p(tags$b("95% CI dla \u015bredniej math wg grup lunch:")),
+    tags$table(class = "table table-bordered table-striped",
+      tags$thead(tags$tr(
+        tags$th("Grupa lunch"), tags$th("n"), tags$th("\u015arednia math"), tags$th("95% CI")
+      )),
+      tags$tbody(
+        tags$tr(tags$td("ma\u0142o (< 33%)"), tags$td("168"), tags$td("668.6"), tags$td("[666.5, 670.8]")),
+        tags$tr(tags$td("\u015brednio (33\u201366%)"), tags$td("142"), tags$td("650.2"), tags$td("[648.2, 652.1]")),
+        tags$tr(tags$td("du\u017co (> 66%)"), tags$td("110"), tags$td("634.1"), tags$td("[632.0, 636.3]"))
+      )
+    ),
+    p(tags$b("Obserwacja:"), " przedzia\u0142y ", tags$em("nie nachodz\u0105 na siebie"),
+      " \u2014 r\u00f3\u017cnice s\u0105 ogromne. Im wi\u0119kszy odsetek dotowanych obiad\u00f3w,
+      tym ", tags$b("ni\u017csze"), " wyniki z czytania i matematyki.
+      R\u00f3\u017cnica mi\u0119dzy skrajnymi grupami to ok. 40 punkt\u00f3w!"),
+    p(tags$em("Ale zanim wyci\u0105gniesz wnioski\u2026 przejd\u017a do kroku B."))
+  ))
+
+  # --- Zadanie 9b --- (income vs wyniki)
+  .solution_toggle("ch7_ans9b", "ch7_sol9b", tagList(
+    p(tags$b("95% CI dla \u015bredniej read wg grup income:")),
+    tags$table(class = "table table-bordered table-striped",
+      tags$thead(tags$tr(
+        tags$th("Grupa income"), tags$th("n"), tags$th("\u015arednia read"), tags$th("95% CI")
+      )),
+      tags$tbody(
+        tags$tr(tags$td("niski (< 10 tys.)"), tags$td("73"), tags$td("633.9"), tags$td("[630.1, 637.7]")),
+        tags$tr(tags$td("\u015bredni (10\u201320 tys.)"), tags$td("280"), tags$td("654.7"), tags$td("[652.9, 656.5]")),
+        tags$tr(tags$td("wysoki (> 20 tys.)"), tags$td("67"), tags$td("679.1"), tags$td("[675.3, 682.8]"))
+      )
+    ),
+    p(tags$b("95% CI dla \u015bredniej math wg grup income:")),
+    tags$table(class = "table table-bordered table-striped",
+      tags$thead(tags$tr(
+        tags$th("Grupa income"), tags$th("n"), tags$th("\u015brednia math"), tags$th("95% CI")
+      )),
+      tags$tbody(
+        tags$tr(tags$td("niski (< 10 tys.)"), tags$td("73"), tags$td("636.3"), tags$td("[632.7, 640.0]")),
+        tags$tr(tags$td("\u015bredni (10\u201320 tys.)"), tags$td("280"), tags$td("652.2"), tags$td("[650.6, 653.8]")),
+        tags$tr(tags$td("wysoki (> 20 tys.)"), tags$td("67"), tags$td("676.7"), tags$td("[672.7, 680.6]"))
+      )
+    ),
+    p(tags$b("Obserwacja:"), " ten sam wz\u00f3r! Bogatsze okr\u0119gi maj\u0105 wyra\u017anie lepsze wyniki.
+      R\u00f3\u017cnica mi\u0119dzy skrajnymi grupami to ok. 40\u201345 punkt\u00f3w."),
+    p(tags$em("Hmm\u2026 mo\u017ce to, co widzieli\u015bmy w kroku A, nie ma nic wsp\u00f3lnego z obiadami?
+      Przejd\u017a do kroku C."))
+  ))
+
+  # --- Zadanie 9c --- (income w grupach lunch \u2014 weryfikacja)
+  .solution_toggle("ch7_ans9c", "ch7_sol9c", tagList(
+    p(tags$b("95% CI dla \u015bredniej income wg grup lunch:")),
+    tags$table(class = "table table-bordered table-striped",
+      tags$thead(tags$tr(
+        tags$th("Grupa lunch"), tags$th("n"), tags$th("\u015aredni income (tys. $)"), tags$th("95% CI")
+      )),
+      tags$tbody(
+        tags$tr(tags$td("ma\u0142o (< 33%)"), tags$td("168"), tags$td("20.33"), tags$td("[19.04, 21.63]")),
+        tags$tr(tags$td("\u015brednio (33\u201366%)"), tags$td("142"), tags$td("13.17"), tags$td("[12.63, 13.71]")),
+        tags$tr(tags$td("du\u017co (> 66%)"), tags$td("110"), tags$td("10.43"), tags$td("[9.91, 10.95]"))
+      )
+    ),
+    p(tags$b("Przedzia\u0142y nie nachodz\u0105 na siebie"), " \u2014 grupy wydzielone wg odsetka dotacji
+      to w praktyce ", tags$b("grupy zamo\u017cno\u015bci"),
+      ". Okr\u0119gi z du\u017cym odsetkiem dotacji to okr\u0119gi biedne (\u015br. doch\u00f3d ~10 tys. $),
+      a te z ma\u0142ym odsetkiem to okr\u0119gi zamożne (~20 tys. $)."),
+    div(class = "callout-warning",
+      p(tags$b("Wniosek:"), " to, co w kroku A wygl\u0105da\u0142o jak \u201edotacje szkodz\u0105\u201d,
+        to w rzeczywisto\u015bci efekt ubóstwa. Programy dotacji do obiad\u00f3w nie ",
+        tags$em("powoduj\u0105"), " gorszych wynik\u00f3w \u2014 wyst\u0119puj\u0105 tam, gdzie rodziny s\u0105 biedniejsze,
+        a bieda jest zwi\u0105zana z ni\u017cszymi wynikami."),
+      p("To klasyczny przyk\u0142ad ", tags$b("zmiennej zak\u0142\u00f3caj\u0105cej (confounding variable)"),
+        ". Bez spojrzenia na ", tags$code("income"),
+        " mogliby\u015bmy wyci\u0105gn\u0105\u0107 b\u0142\u0119dny wniosek i np. postulowa\u0107 likwidacj\u0119 programu,
+        kt\u00f3ry w rzeczywisto\u015bci pomaga potrzebuj\u0105cym."),
+      p(tags$em("Morał:"), " przedzia\u0142y ufno\u015bci daj\u0105 precyzj\u0119 oszacowania,
+        ale ", tags$b("nie m\u00f3wi\u0105 o przyczynowo\u015bci"),
+        ". Do tego potrzeba my\u015blenia o mechanizmach i zmiennych zak\u0142\u00f3caj\u0105cych.")
+    )
+  ))
 
   # --- Podsumowanie ---
   .solution_toggle("ch7_ans_summary", "ch7_sol_summary", tagList(
@@ -525,12 +590,11 @@ ch7_server <- function(input, output, session) {
         Wald zak\u0142ada normalne przybli\u017cenie i przy p=0.76 dawa\u0142by absurdy (g\u00f3rne ograniczenie blisko 1).
         Clopper-Pearson jest dok\u0142adny binomialnie, ale szeroki \u2014 to ", tags$em("uczciwa cena"),
         " braku danych."),
-      tags$li(tags$b("Dlaczego \u201e95% danych le\u017cy w przedziale\u201d to fa\u0142sz?"),
-        " CI dla \u015bredniej szacuje ", tags$em("po\u0142o\u017cenie \u015bredniej populacji"),
-        ", a nie zakres pojedynczych obserwacji.
-        Dla read CI jest \u2248 4 punkty szeroki, a dane rozci\u0105gaj\u0105 si\u0119 na ~80 punkt\u00f3w!
-        \u017beby opisa\u0107 zakres danych potrzebujemy ", tags$em("prediction interval"),
-        " lub po prostu \u015brednia \u00b1 2s.")
+      tags$li(tags$b("Czego uczy zadanie 9?"),
+        " Korelacja nie oznacza przyczynowo\u015bci. Zmienna zak\u0142\u00f3caj\u0105ca (tu: doch\u00f3d) mo\u017ce
+        sprawia\u0107, \u017ce dwa zjawiska wygl\u0105daj\u0105 na powi\u0105zane, cho\u0107 jedno nie powoduje drugiego.
+        CI m\u00f3wi\u0105 ", tags$em("jak du\u017ca"), " jest r\u00f3\u017cnica, ale nie m\u00f3wi\u0105 ", tags$em("dlaczego"),
+        " istnieje.")
     )
   ))
 }
