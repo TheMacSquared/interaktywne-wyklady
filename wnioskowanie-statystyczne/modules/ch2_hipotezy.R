@@ -29,7 +29,7 @@ ch2h_ui <- tabPanel("2. Formu\u0142owanie hipotez",
     div(class = "callout-info",
       tags$strong("Szablon:"),
       p(withMathJax("\\(H_0\\)"), ": brak efektu / brak r\u00f3\u017cnicy / brak zwi\u0105zku"),
-      p(withMathJax("\\(H_1\\)"), ": jest efekt / jest r\u00f3\u017cnica / jest zwi\u0105zek")
+      p(withMathJax("\\(H_a\\)"), ": jest efekt / jest r\u00f3\u017cnica / jest zwi\u0105zek")
     ),
 
     # ========================================================================
@@ -48,16 +48,16 @@ ch2h_ui <- tabPanel("2. Formu\u0142owanie hipotez",
         column(4,
           selectInput("ch2h_example", "Wybierz przyk\u0142ad:",
             choices = c(
-              "Wzrost m\u0119\u017cczyzn vs kobiet" = "ex1",
-              "Czy korepetycje pomagaj\u0105?" = "ex2",
-              "Skuteczno\u015b\u0107 leku" = "ex3",
-              "Czy kostka jest uczciwa?" = "ex4",
-              "Zwi\u0105zek nauki z ocenami" = "ex5",
-              "P\u0142e\u0107 a wyb\u00f3r kierunku" = "ex6",
-              "R\u00f3\u017cnice mi\u0119dzy 4 grupami" = "ex7",
-              "\u015aredni czas dojazdu = 30 min?" = "ex8",
-              "Odsetek zda\u0144 > 70%?" = "ex9",
-              "Przed vs po szkoleniu" = "ex10"
+              "Telefon vs koncentracja" = "ex1",
+              "Naw\u00f3z vs plony" = "ex2",
+              "Szkolenie BHP vs wypadki" = "ex3",
+              "Klasy gleby vs norma" = "ex4",
+              "Azotany wzd\u0142u\u017c rzeki" = "ex5",
+              "Zagospodarowanie vs strefa miasta" = "ex6",
+              "Opakowanie vs trwa\u0142o\u015b\u0107 jogurtu" = "ex7",
+              "Zu\u017cycie wody vs norma" = "ex8",
+              "Jako\u015b\u0107 wody > 80% normy?" = "ex9",
+              "Sen vs ocena z egzaminu" = "ex10"
             ),
             selected = "ex1"
           )
@@ -219,95 +219,94 @@ ch2h_server <- function(input, output, session) {
   # --- Baza przykaldow ---
   examples <- list(
     ex1 = list(
-      question = "\"Czy m\u0119\u017cczy\u017ani s\u0105 wy\u017csi od kobiet?\"",
-      context = "Badanie wzrostu w populacji student\u00f3w. Zmienna: wzrost (cm). Grupy: p\u0142e\u0107.",
-      h0 = "\\(H_0: \\mu_{M} = \\mu_{K}\\)",
-      h1 = "\\(H_1: \\mu_{M} \\neq \\mu_{K}\\)",
-      h1_alt = "lub jednostronnie: \\(H_1: \\mu_{M} > \\mu_{K}\\)",
-      test = "Test t niezale\u017cny (lub Mann-Whitney)",
-      tip = "Pytanie sugeruje kierunek (\"wy\u017csi\"), ale bezpieczniej u\u017cy\u0107 testu dwustronnego,
-             chyba \u017ce mamy mocne podstawy teoretyczne."
+      question = "\"Czy telefon na biurku obni\u017ca koncentracj\u0119?\"",
+      context = "Eksperyment: 40 os\u00f3b z telefonem w plecaku, 40 z telefonem na biurku. Zmienna: wynik testu koncentracji (0\u2013100 pkt).",
+      h0 = "\\(H_0: \\mu_{plecak} = \\mu_{biurko}\\)",
+      h1 = "\\(H_a: \\mu_{plecak} \\neq \\mu_{biurko}\\)",
+      h1_alt = "lub jednostronnie: \\(H_a: \\mu_{plecak} > \\mu_{biurko}\\)",
+      test = "Test t niezale\u017cny (r\u00f3\u017cne osoby w ka\u017cdej grupie)",
+      tip = "To nasz eksperyment z rozdzia\u0142u 1! Dwie niezale\u017cne grupy, zmienna ilo\u015bciowa."
     ),
     ex2 = list(
-      question = "\"Czy korepetycje pomagaj\u0105 studentom?\"",
-      context = "Mierzymy wyniki tego samego studenta PRZED i PO korepetycjach.",
-      h0 = "\\(H_0: \\mu_d = 0\\) (\\(d\\) = wynik po \u2212 wynik przed)",
-      h1 = "\\(H_1: \\mu_d \\neq 0\\)",
-      h1_alt = "lub jednostronnie: \\(H_1: \\mu_d > 0\\)",
-      test = "Test t parowy (dane zale\u017cne, te same osoby)",
-      tip = "Kluczowe: te same osoby mierzone dwa razy \u2192 test parowy, nie niezale\u017cny!"
+      question = "\"Czy nowy nawoz daje wy\u017csze plony?\"",
+      context = "Do\u015bwiadczenie polowe: 30 poletek z nowym nawozem, 30 kontrolnych. Zmienna: plon pszenicy (t/ha).",
+      h0 = "\\(H_0: \\mu_{nowy} = \\mu_{kontrola}\\)",
+      h1 = "\\(H_a: \\mu_{nowy} > \\mu_{kontrola}\\)",
+      h1_alt = "",
+      test = "Test t niezale\u017cny",
+      tip = "Jednostronny, bo interesuje nas tylko czy nowy naw\u00f3z jest LEPSZY. Dwie niezale\u017cne grupy poletek."
     ),
     ex3 = list(
-      question = "\"Czy nowy lek obni\u017ca ci\u015bnienie skuteczniej ni\u017c placebo?\"",
-      context = "Randomizowane badanie: grupa lekowa vs grupa placebo. Zmienna: zmiana ci\u015bnienia.",
-      h0 = "\\(H_0: \\mu_{lek} = \\mu_{placebo}\\)",
-      h1 = "\\(H_1: \\mu_{lek} < \\mu_{placebo}\\)",
-      h1_alt = "(jednostronnie, bo obni\u017cenie = ni\u017csze ci\u015bnienie)",
-      test = "Test t niezale\u017cny (pr\u00f3by niezale\u017cne, r\u00f3\u017cne osoby)",
-      tip = "Tu test jednostronny ma sens \u2014 interesuje nas tylko, czy lek OBNI\u017bA ci\u015bnienie."
+      question = "\"Czy szkolenie BHP zmniejszy\u0142o liczb\u0119 wypadk\u00f3w?\"",
+      context = "20 zak\u0142ad\u00f3w mierzonych PRZED i PO szkoleniu. Zmienna: liczba wypadk\u00f3w/miesi\u0105c.",
+      h0 = "\\(H_0: \\mu_d = 0\\) (\\(d\\) = po \u2212 przed)",
+      h1 = "\\(H_a: \\mu_d < 0\\) (zmniejszenie)",
+      h1_alt = "",
+      test = "Test t parowy (te same zak\u0142ady, dwa pomiary)",
+      tip = "Te same jednostki mierzone dwa razy \u2192 test parowy, nie niezale\u017cny!"
     ),
     ex4 = list(
-      question = "\"Czy ta kostka jest uczciwa?\"",
-      context = "Rzucamy kostk\u0105 n razy. Zliczamy, ile razy wypad\u0142o ka\u017cde oczko.",
-      h0 = "\\(H_0: p_1 = p_2 = \\ldots = p_6 = 1/6\\)",
-      h1 = "\\(H_1:\\) co najmniej jedno \\(p_i \\neq 1/6\\)",
+      question = "\"Czy rozk\u0142ad klas gleby odpowiada normom?\"",
+      context = "W gminie zmapowano 200 dzia\u0142ek. Klasy gleby: I\u2013VI. Norma krajowa m\u00f3wi ile % powinno by\u0107 w ka\u017cdej klasie.",
+      h0 = "\\(H_0: p_I = 0.05, p_{II} = 0.10, \\ldots\\) (zgodnie z norm\u0105)",
+      h1 = "\\(H_a:\\) co najmniej jedno \\(p_i\\) odbiega od normy",
       h1_alt = "",
       test = "Test \u03c7\u00b2 zgodno\u015bci",
-      tip = "H\u2080 precyzyjnie okre\u015bla oczekiwany rozk\u0142ad. Jedna zmienna jako\u015bciowa (wynik rzutu)."
+      tip = "H\u2080 okre\u015bla oczekiwany rozk\u0142ad. Jedna zmienna jako\u015bciowa (klasa gleby)."
     ),
     ex5 = list(
-      question = "\"Czy wi\u0119cej nauki = lepsze oceny?\"",
-      context = "Zmienna X: godziny nauki/tydzie\u0144. Zmienna Y: \u015brednia ocen. Obie ilo\u015bciowe.",
+      question = "\"Czy st\u0119\u017cenie azotanow ro\u015bnie z odleg\u0142o\u015bci\u0105 od \u017ar\u00f3d\u0142a?\"",
+      context = "Pomiary w 40 punktach wzd\u0142u\u017c rzeki. Zmienna X: km od \u017ar\u00f3d\u0142a. Zmienna Y: st\u0119\u017cenie NO\u2083 (mg/l).",
       h0 = "\\(H_0: \\rho = 0\\) (brak korelacji)",
-      h1 = "\\(H_1: \\rho \\neq 0\\)",
-      h1_alt = "lub jednostronnie: \\(H_1: \\rho > 0\\)",
+      h1 = "\\(H_a: \\rho \\neq 0\\)",
+      h1_alt = "lub jednostronnie: \\(H_a: \\rho > 0\\)",
       test = "Korelacja Pearsona (lub Spearman)",
-      tip = "Dwie zmienne ilo\u015bciowe \u2192 korelacja. \"Wi\u0119cej = lepsze\" sugeruje kierunek dodatni."
+      tip = "Dwie zmienne ilo\u015bciowe \u2192 korelacja. Uwaga: korelacja \u2260 przyczynowo\u015b\u0107 (mo\u017ce inne \u017ar\u00f3d\u0142a zanieczyszcze\u0144 le\u017c\u0105 dalej)."
     ),
     ex6 = list(
-      question = "\"Czy wyb\u00f3r kierunku studi\u00f3w zale\u017cy od p\u0142ci?\"",
-      context = "Dwie zmienne jako\u015bciowe: p\u0142e\u0107 (K/M) i kierunek (Informatyka/Ekonomia/Psychologia/Biologia).",
-      h0 = "\\(H_0:\\) p\u0142e\u0107 i kierunek s\u0105 niezale\u017cne",
-      h1 = "\\(H_1:\\) p\u0142e\u0107 i kierunek s\u0105 powi\u0105zane",
+      question = "\"Czy typ zagospodarowania dzia\u0142ki zale\u017cy od strefy miasta?\"",
+      context = "Plan zagospodarowania: 300 dzia\u0142ek. Zmienne: strefa (centrum/przedmie\u015bcia/obrze\u017ca) i typ (mieszkaniowa/us\u0142ugowa/przemys\u0142owa/zielona).",
+      h0 = "\\(H_0:\\) strefa i typ zagospodarowania s\u0105 niezale\u017cne",
+      h1 = "\\(H_a:\\) strefa i typ s\u0105 powi\u0105zane",
       h1_alt = "",
       test = "Test \u03c7\u00b2 niezale\u017cno\u015bci (lub Fisher przy ma\u0142ych n)",
       tip = "Dwie jako\u015bciowe \u2192 tabela kontyngencji \u2192 \u03c7\u00b2 niezale\u017cno\u015bci."
     ),
     ex7 = list(
-      question = "\"Czy \u015brednie oceny r\u00f3\u017cni\u0105 si\u0119 mi\u0119dzy kierunkami?\"",
-      context = "Zmienna Y: \u015brednia ocen. Grupy: 4 kierunki studi\u00f3w. Jedna zmienna ilo\u015bciowa, jedna jako\u015bciowa (3+ grup).",
-      h0 = "\\(H_0: \\mu_1 = \\mu_2 = \\mu_3 = \\mu_4\\)",
-      h1 = "\\(H_1:\\) co najmniej jedna para \u015brednich si\u0119 r\u00f3\u017cni",
+      question = "\"Czy rodzaj opakowania wp\u0142ywa na trwa\u0142o\u015b\u0107 jogurtu?\"",
+      context = "Eksperyment: 3 typy opakowa\u0144 (szk\u0142o/plastik/karton), po 20 pr\u00f3bek. Zmienna: dni do przeterminowania.",
+      h0 = "\\(H_0: \\mu_1 = \\mu_2 = \\mu_3\\)",
+      h1 = "\\(H_a:\\) co najmniej jedna para \u015brednich si\u0119 r\u00f3\u017cni",
       h1_alt = "",
       test = "ANOVA jednoczynnikowa (lub Kruskal-Wallis)",
-      tip = "Wi\u0119cej ni\u017c 2 grupy \u2192 ANOVA. NIE wykonuj wielu test\u00f3w t parami!"
+      tip = "Wi\u0119cej ni\u017c 2 grupy \u2192 ANOVA. NIE wykonuj wielu test\u00f3w t parami \u2014 to pompuje b\u0142\u0105d I rodzaju!"
     ),
     ex8 = list(
-      question = "\"Czy \u015bredni czas dojazdu to 30 minut?\"",
-      context = "Zmienna: czas dojazdu (min). Jedna pr\u00f3ba, por\u00f3wnanie z warto\u015bci\u0105 referencyjn\u0105.",
-      h0 = "\\(H_0: \\mu = 30\\)",
-      h1 = "\\(H_1: \\mu \\neq 30\\)",
+      question = "\"Czy \u015brednie zu\u017cycie wody spe\u0142nia norm\u0119 150 l/osob\u0119/dob\u0119?\"",
+      context = "Pomiary z 60 gospodarstw domowych w gminie. Zmienna: zu\u017cycie wody (l/osob\u0119/dob\u0119). Norma projektowa: 150.",
+      h0 = "\\(H_0: \\mu = 150\\)",
+      h1 = "\\(H_a: \\mu \\neq 150\\)",
       h1_alt = "",
       test = "Test t jednej pr\u00f3by",
-      tip = "Jedna zmienna ilo\u015bciowa, pytamy czy \u015brednia r\u00f3\u017cni si\u0119 od konkretnej warto\u015bci."
+      tip = "Jedna zmienna ilo\u015bciowa, pytamy czy \u015brednia r\u00f3\u017cni si\u0119 od warto\u015bci projektowej."
     ),
     ex9 = list(
-      question = "\"Czy wi\u0119cej ni\u017c 70% student\u00f3w zdaje egzamin?\"",
-      context = "Zmienna: zdany/niezdany (binarna). Pytanie o proporcj\u0119 w populacji.",
-      h0 = "\\(H_0: p \\leq 0.7\\)",
-      h1 = "\\(H_1: p > 0.7\\)",
+      question = "\"Czy ponad 80% pr\u00f3bek wody spe\u0142nia normy jako\u015bci?\"",
+      context = "Laboratorium przebada\u0142o 120 pr\u00f3bek wody pitnej. Zmienna: spe\u0142nia/nie spe\u0142nia (binarna).",
+      h0 = "\\(H_0: p \\leq 0.8\\)",
+      h1 = "\\(H_a: p > 0.8\\)",
       h1_alt = "",
       test = "Test dwumianowy (lub test proporcji)",
-      tip = "Zmienna binarna, pytanie o proporcj\u0119 \u2192 test dwumianowy. Jednostronny, bo \"wi\u0119cej ni\u017c\"."
+      tip = "Zmienna binarna, pytanie o proporcj\u0119 \u2192 test dwumianowy. Jednostronny, bo \"ponad\"."
     ),
     ex10 = list(
-      question = "\"Czy szkolenie BHP zmniejszy\u0142o liczb\u0119 wypadk\u00f3w?\"",
-      context = "Te same zak\u0142ady, mierzone PRZED i PO szkoleniu. Zmienna: liczba wypadk\u00f3w/miesi\u0105c.",
-      h0 = "\\(H_0: \\mu_d = 0\\) (d = po \u2212 przed)",
-      h1 = "\\(H_1: \\mu_d < 0\\) (zmniejszenie)",
-      h1_alt = "",
-      test = "Test t parowy (lub Wilcoxon parowy)",
-      tip = "Te same jednostki mierzone dwa razy \u2192 parowy. Jednostronny, bo \"zmniejszy\u0142o\"."
+      question = "\"Czy d\u0142u\u017cszy sen = lepsza ocena z egzaminu?\"",
+      context = "Ankieta w\u015br\u00f3d 150 student\u00f3w. Zmienna X: godziny snu przed egzaminem. Zmienna Y: ocena z egzaminu.",
+      h0 = "\\(H_0: \\rho = 0\\) (brak korelacji)",
+      h1 = "\\(H_a: \\rho \\neq 0\\)",
+      h1_alt = "lub jednostronnie: \\(H_a: \\rho > 0\\)",
+      test = "Korelacja Pearsona (lub Spearman)",
+      tip = "Dwie zmienne ilo\u015bciowe \u2192 korelacja. Ale uwaga: korelacja \u2260 przyczynowo\u015b\u0107."
     )
   )
 
