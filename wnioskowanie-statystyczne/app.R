@@ -47,6 +47,7 @@ col_paired     <- "#1abc9c"    # morski - dane parowe
   getwd()
 }
 app_dir <- .find_app_dir()
+addResourcePath("assets", file.path(app_dir, "assets"))
 
 source(file.path(app_dir, "modules", "helpers.R"),              local = TRUE)
 source(file.path(app_dir, "modules", "ch1_logika.R"),           local = TRUE)

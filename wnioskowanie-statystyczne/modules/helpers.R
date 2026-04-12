@@ -115,17 +115,92 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
     shade_df <- plot_df[plot_df$x <= stat_value, ]
   }
 
-  p <- ggplot(plot_df, aes(x = x, y = y)) +
-    geom_line(color = "#3498db", linewidth = 1.2) +
-    geom_area(data = shade_df, fill = "#f39c12", alpha = 0.4) +
-    geom_vline(xintercept = stat_value, color = "#e74c3c",
-               linewidth = 1, linetype = "dashed") +
-    annotate("text", x = stat_value, y = max(y) * 0.9,
-             label = paste0("stat = ", round(stat_value, 3)),
-             hjust = -0.1, color = "#e74c3c", fontface = "bold") +
-    labs(title = paste0("Rozk\u0142ad pod H\u2080: ", label),
-         x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
-    theme_test()
+  # Punkty krytyczne i strefy
+  alpha <- 0.05
+
+  if (test_type %in% c("chisq", "f")) {
+    if (test_type == "chisq") {
+      crit_right <- qchisq(1 - alpha, df)
+    } else {
+      crit_right <- qf(1 - alpha, df[1], df[2])
+    }
+    shade_h0 <- plot_df[plot_df$x <= crit_right, ]
+    shade_h1 <- plot_df[plot_df$x >= crit_right, ]
+
+    p <- ggplot(plot_df, aes(x = x, y = y)) +
+      geom_area(data = shade_h0, fill = "#27ae60", alpha = 0.15) +
+      geom_area(data = shade_h1, fill = "#e74c3c", alpha = 0.25) +
+      geom_line(color = "#3498db", linewidth = 1.2) +
+      geom_vline(xintercept = crit_right, color = "#2c3e50",
+                 linewidth = 0.8, linetype = "dashed") +
+      geom_vline(xintercept = stat_value, color = "#e74c3c",
+                 linewidth = 1.2) +
+      annotate("text", x = stat_value, y = max(y) * 0.85,
+               label = paste0("stat = ", round(stat_value, 3)),
+               hjust = -0.1, color = "#e74c3c", fontface = "bold") +
+      labs(title = paste0("Rozk\u0142ad pod H\u2080: ", label),
+           x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
+      theme_test()
+
+  } else if (alternative == "two.sided") {
+    crit <- qt(1 - alpha / 2, df)
+    shade_h0 <- plot_df[plot_df$x >= -crit & plot_df$x <= crit, ]
+    shade_left <- plot_df[plot_df$x <= -crit, ]
+    shade_right <- plot_df[plot_df$x >= crit, ]
+
+    p <- ggplot(plot_df, aes(x = x, y = y)) +
+      geom_area(data = shade_h0, fill = "#27ae60", alpha = 0.15) +
+      geom_area(data = shade_left, fill = "#e74c3c", alpha = 0.25) +
+      geom_area(data = shade_right, fill = "#e74c3c", alpha = 0.25) +
+      geom_line(color = "#3498db", linewidth = 1.2) +
+      geom_vline(xintercept = c(-crit, crit), color = "#2c3e50",
+                 linewidth = 0.8, linetype = "dashed") +
+      geom_vline(xintercept = stat_value, color = "#e74c3c",
+                 linewidth = 1.2) +
+      annotate("text", x = 0, y = max(y) * 0.45,
+               label = "nie odrzucamy H\u2080", color = "#27ae60",
+               fontface = "bold", size = 4) +
+      annotate("text", x = -3.3, y = max(y) * 0.25,
+               label = "Ha", color = "#e74c3c",
+               fontface = "bold", size = 4) +
+      annotate("text", x = 3.3, y = max(y) * 0.25,
+               label = "Ha", color = "#e74c3c",
+               fontface = "bold", size = 4) +
+      annotate("text", x = stat_value, y = max(y) * 0.85,
+               label = paste0("t = ", round(stat_value, 3)),
+               hjust = if (stat_value > 0) -0.1 else 1.1,
+               color = "#e74c3c", fontface = "bold") +
+      labs(title = paste0("Rozk\u0142ad pod H\u2080: ", label),
+           x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
+      theme_test()
+
+  } else {
+    # Jednostronny
+    if (alternative == "greater") {
+      crit <- qt(1 - alpha, df)
+      shade_h0 <- plot_df[plot_df$x <= crit, ]
+      shade_h1 <- plot_df[plot_df$x >= crit, ]
+    } else {
+      crit <- qt(alpha, df)
+      shade_h0 <- plot_df[plot_df$x >= crit, ]
+      shade_h1 <- plot_df[plot_df$x <= crit, ]
+    }
+    p <- ggplot(plot_df, aes(x = x, y = y)) +
+      geom_area(data = shade_h0, fill = "#27ae60", alpha = 0.15) +
+      geom_area(data = shade_h1, fill = "#e74c3c", alpha = 0.25) +
+      geom_line(color = "#3498db", linewidth = 1.2) +
+      geom_vline(xintercept = crit, color = "#2c3e50",
+                 linewidth = 0.8, linetype = "dashed") +
+      geom_vline(xintercept = stat_value, color = "#e74c3c",
+                 linewidth = 1.2) +
+      annotate("text", x = stat_value, y = max(y) * 0.85,
+               label = paste0("t = ", round(stat_value, 3)),
+               hjust = if (stat_value > 0) -0.1 else 1.1,
+               color = "#e74c3c", fontface = "bold") +
+      labs(title = paste0("Rozk\u0142ad pod H\u2080: ", label),
+           x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
+      theme_test()
+  }
 
   p
 }
@@ -158,6 +233,20 @@ effect_size_label <- function(d) {
   else if (d < 0.5) "ma\u0142y"
   else if (d < 0.8) "\u015bredni"
   else "du\u017cy"
+}
+
+# Generowanie danych: telefon vs koncentracja (case study ch1)
+# Inspirowane Ward et al. (2017) "Brain Drain"
+generate_phone_data <- function(n_per_group = 40) {
+  set.seed(NULL)
+  plecak <- rnorm(n_per_group, mean = 72, sd = 12)
+  biurko <- rnorm(n_per_group, mean = 65, sd = 14)
+  data.frame(
+    grupa = factor(rep(c("Telefon w plecaku", "Telefon na biurku"),
+                       each = n_per_group),
+                   levels = c("Telefon w plecaku", "Telefon na biurku")),
+    koncentracja = round(c(plecak, biurko), 1)
+  )
 }
 
 # Wspolny theme
