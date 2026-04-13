@@ -16,7 +16,7 @@ ch6_ui <- tabPanel("7. Ilo\u015bciowa vs jako\u015bciowa",
       p("Pytanie: ", tags$b("Czy \u015brednie w dw\u00f3ch grupach r\u00f3\u017cni\u0105 si\u0119 istotnie?"), ""),
       p("Przyk\u0142ad: czy m\u0119\u017cczy\u017ani i kobiety r\u00f3\u017cni\u0105 si\u0119 wzrostem?"),
       div(class = "formula-box",
-        p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 \\quad\\text{vs}\\quad H_1: \\mu_1 \\neq \\mu_2\\)")),
+        p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 \\quad\\text{vs}\\quad H_a: \\mu_1 \\neq \\mu_2\\)")),
         p(withMathJax("\\(t = \\frac{\\bar{x}_1 - \\bar{x}_2}{SE}\\)"))
       )
     ),
