@@ -109,34 +109,6 @@ ch7_ui <- tabPanel("7. \u015aci\u0105ga",
       )
     ),
 
-    # --- Tabela 5: Funkcje R ---
-    div(class = "section-title", "Funkcje R \u2014 rodzina d/p/q/r"),
-
-    div(class = "widget-block",
-      div(class = "callout-info",
-        tags$strong("Konwencja nazw w R:"),
-        tags$ul(
-          tags$li(tags$b("d"), " \u2014 density/PMF: prawdopodobie\u0144stwo lub g\u0119sto\u015b\u0107 w punkcie"),
-          tags$li(tags$b("p"), " \u2014 CDF: prawdopodobie\u0144stwo skumulowane P(X \u2264 x)"),
-          tags$li(tags$b("q"), " \u2014 kwantyl: odwrotno\u015b\u0107 CDF (jaki x daje P = p?)"),
-          tags$li(tags$b("r"), " \u2014 random: losowanie z rozk\u0142adu")
-        )
-      ),
-      tableOutput("ch7_r_functions_table")
-    ),
-
-    # --- Przybli\u017cenia ---
-    div(class = "section-title", "Przybli\u017cenia mi\u0119dzy rozk\u0142adami"),
-
-    div(class = "widget-block",
-      tableOutput("ch7_approx_table"),
-      div(class = "callout-warning",
-        tags$strong("Praktyczna regu\u0142a:"),
-        " Przybli\u017cenie normalnym stosuj, gdy np \u2265 5 i n(1-p) \u2265 5
-          (dla dwumianowego) lub \u03bb \u2265 20 (dla Poissona)."
-      )
-    ),
-
     # --- Transition ---
     div(class = "chapter-transition",
       p("Masz ju\u017c pe\u0142en przegl\u0105d rozk\u0142ad\u00f3w. Czas sprawdzi\u0107,
@@ -335,12 +307,14 @@ ch7_server <- function(input, output, session) {
     data.frame(
       a = c("Jednostajny dyskretny", "Dwumianowy B(n, p)", "Poissona Pois(\u03bb)", "Geometryczny Geom(p)"),
       b = c("k (liczba wynik\u00f3w)", "n (pr\u00f3by), p (prawdop.)", "\u03bb (\u015brednia zdarze\u0144)", "p (prawdop. sukcesu)"),
-      c = c("P(X=x) = 1/k", "P(X=k) = C(n,k) p^k (1-p)^(n-k)", "P(X=k) = \u03bb^k e^(-\u03bb) / k!", "P(X=k) = (1-p)^(k-1) \u00b7 p"),
-      d = c("(k+1)/2", "np", "\u03bb", "1/p"),
-      e = c("(k\u00b2-1)/12", "np(1-p)", "\u03bb", "(1-p)/p\u00b2"),
-      f = c("Kostka, losy", "Wadliwe produkty, testy", "Klienci/h, b\u0142\u0119dy/strona", "Ile pr\u00f3b do sukcesu"),
+      c = c(
+        "Rzut kostk\u0105 (ka\u017cda \u015bciana = 1/6), losowanie numeru w loterii, losowy przydzia\u0142 do grup eksperymentalnych",
+        "Liczba wadliwych produkt\u00f3w w partii 100 sztuk, ile os\u00f3b z 50 odpowie \u201etak\u201d w ankiecie, skuteczno\u015b\u0107 leku u n pacjent\u00f3w",
+        "Liczba klient\u00f3w wchodz\u0105cych do sklepu na godzin\u0119, zg\u0142oszenia na helpdesk dziennie, liter\u00f3wki na stronie tekstu",
+        "Ile razy rzuca\u0107 monet\u0105, a\u017c wypadnie orze\u0142; ile CV wys\u0142a\u0107, zanim dostaniesz zaproszenie na rozmow\u0119"
+      ),
       stringsAsFactors = FALSE
-    ) %>% setNames(c("Rozk\u0142ad", "Parametry", "PMF", "E(X)", "Var(X)", "Przyk\u0142ad"))
+    ) %>% setNames(c("Rozk\u0142ad", "Parametry", "Przyk\u0142ady zastosowa\u0144"))
   }, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
 
   output$ch7_continuous_table <- renderTable({
@@ -349,42 +323,16 @@ ch7_server <- function(input, output, session) {
             "t-Studenta t(df)", "Chi-kwadrat \u03c7\u00b2(df)", "Log-normalny LogN(\u03bc, \u03c3)"),
       b = c("a, b (granice)", "\u03bb (rate)", "\u03bc (\u015brednia), \u03c3 (odch. std.)",
             "df (stopnie swobody)", "df (stopnie swobody)", "\u03bc (meanlog), \u03c3 (sdlog)"),
-      c = c("f(x) = 1/(b-a)", "f(x) = \u03bb e^(-\u03bbx)", "f(x) = krzywa Gaussa",
-            "krzywa t (ci\u0119\u017csze ogony)", "prawosko\u015bna, nieujemna", "prawosko\u015bna, dodatnia"),
-      d = c("(a+b)/2", "1/\u03bb", "\u03bc", "0 (df>1)", "df", "exp(\u03bc+\u03c3\u00b2/2)"),
-      e = c("(b-a)\u00b2/12", "1/\u03bb\u00b2", "\u03c3\u00b2", "df/(df-2)", "2\u00b7df", "(e^\u03c3\u00b2-1)\u00b7e^(2\u03bc+\u03c3\u00b2)"),
-      f = c("Generator losowy", "Czas oczekiwania", "Wzrost, IQ, pomiary",
-            "Test t, przedzia\u0142y ufno\u015bci", "Testy \u03c7\u00b2, wariancja", "Dochody, ceny, czasy reakcji"),
+      c = c(
+        "Generator liczb pseudolosowych, czas przyjazdu autobusu w obr\u0119bie rozk\u0142adu, b\u0142\u0105d zaokr\u0105glenia",
+        "Czas do nast\u0119pnej awarii maszyny, odst\u0119p mi\u0119dzy wiadomo\u015bciami na czacie, czas oczekiwania na obs\u0142ug\u0119 w kolejce",
+        "Wzrost doros\u0142ych w populacji, wyniki testu IQ, b\u0142\u0119dy pomiarowe w laboratorium, ci\u015bnienie krwi",
+        "Wnioskowanie o \u015bredniej przy ma\u0142ych pr\u00f3bach (n < 30), przedzia\u0142y ufno\u015bci, por\u00f3wnanie \u015brednich dw\u00f3ch grup",
+        "Test niezale\u017cno\u015bci cech w tabeli krzy\u017cowej, test zgodno\u015bci rozk\u0142adu, estymacja wariancji populacji",
+        "Rozk\u0142ad dochod\u00f3w w populacji, ceny akcji na gie\u0142dzie, czasy reakcji w eksperymencie psychologicznym"
+      ),
       stringsAsFactors = FALSE
-    ) %>% setNames(c("Rozk\u0142ad", "Parametry", "PDF", "E(X)", "Var(X)", "Przyk\u0142ad"))
-  }, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
-
-  output$ch7_r_functions_table <- renderTable({
-    data.frame(
-      a = c("Normalny", "Dwumianowy", "Poissona", "Geometryczny",
-            "Wyk\u0142adniczy", "Jednostajny", "t-Studenta", "Chi-kwadrat", "Log-normalny"),
-      b = c("dnorm(x, mean, sd)", "dbinom(x, size, prob)", "dpois(x, lambda)", "dgeom(x, prob)",
-            "dexp(x, rate)", "dunif(x, min, max)", "dt(x, df)", "dchisq(x, df)", "dlnorm(x, meanlog, sdlog)"),
-      c = c("pnorm(q, mean, sd)", "pbinom(q, size, prob)", "ppois(q, lambda)", "pgeom(q, prob)",
-            "pexp(q, rate)", "punif(q, min, max)", "pt(q, df)", "pchisq(q, df)", "plnorm(q, meanlog, sdlog)"),
-      d = c("qnorm(p, mean, sd)", "qbinom(p, size, prob)", "qpois(p, lambda)", "qgeom(p, prob)",
-            "qexp(p, rate)", "qunif(p, min, max)", "qt(p, df)", "qchisq(p, df)", "qlnorm(p, meanlog, sdlog)"),
-      e = c("rnorm(n, mean, sd)", "rbinom(n, size, prob)", "rpois(n, lambda)", "rgeom(n, prob)",
-            "rexp(n, rate)", "runif(n, min, max)", "rt(n, df)", "rchisq(n, df)", "rlnorm(n, meanlog, sdlog)"),
-      stringsAsFactors = FALSE
-    ) %>% setNames(c("Rozk\u0142ad", "d (g\u0119sto\u015b\u0107/PMF)", "p (CDF)", "q (kwantyl)", "r (losowanie)"))
-  }, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
-
-  output$ch7_approx_table <- renderTable({
-    data.frame(
-      a = c("Dwumianowy \u2192 Poissona", "Dwumianowy \u2192 Normalny", "Poissona \u2192 Normalny",
-            "t-Studenta \u2192 Normalny", "\u03c7\u00b2 \u2192 Normalny"),
-      b = c("n du\u017ce, p ma\u0142e (\u03bb = np)", "np \u2265 5 i n(1-p) \u2265 5", "\u03bb \u2265 20",
-            "df \u2265 30", "df \u2265 30"),
-      c = c("B(1000, 0.002) \u2248 Pois(2)", "B(100, 0.3) \u2248 N(30, 4.58)", "Pois(25) \u2248 N(25, 5)",
-            "t(50) \u2248 N(0, 1)", "\u03c7\u00b2(40) \u2248 N(40, 8.94)"),
-      stringsAsFactors = FALSE
-    ) %>% setNames(c("Przybli\u017cenie", "Warunek", "Przyk\u0142ad"))
+    ) %>% setNames(c("Rozk\u0142ad", "Parametry", "Przyk\u0142ady zastosowa\u0144"))
   }, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
 
 }
