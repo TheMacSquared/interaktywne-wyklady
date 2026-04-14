@@ -954,24 +954,28 @@ ch9_server <- function(input, output, session) {
   }, ignoreNULL = FALSE)
 
   # Helper toggle dla kazdego zadania
-  .make_toggle <- function(sol_id, btn_id) {
-    observeEvent(input[[btn_id]], {
-      nowy_stan <- !vis[[sol_id]]()
-      vis[[sol_id]](nowy_stan)
-      updateActionButton(session, btn_id,
+  # sol_id_bare: klucz w vis i .ch9_solutions (np. "sol1")
+  # sol_id_full: nazwa output i btn w UI (np. "ch9_sol1")
+  # btn_id_full: nazwa input przycisku (np. "ch9_ans1")
+  .make_toggle <- function(sol_id_bare, sol_id_full, btn_id_full) {
+    observeEvent(input[[btn_id_full]], {
+      nowy_stan <- !vis[[sol_id_bare]]()
+      vis[[sol_id_bare]](nowy_stan)
+      updateActionButton(session, btn_id_full,
         label = if (nowy_stan) "Ukryj rozwi\u0105zanie" else "Poka\u017c rozwi\u0105zanie")
     }, ignoreInit = TRUE)
 
-    output[[sol_id]] <- renderUI({
-      if (!vis[[sol_id]]()) return(NULL)
+    output[[sol_id_full]] <- renderUI({
+      if (!vis[[sol_id_bare]]()) return(NULL)
       k <- isolate(input$ch9_kierunek)
-      sol <- .ch9_solutions[[k]][[sol_id]]
+      sol <- .ch9_solutions[[k]][[sol_id_bare]]
       div(class = "callout-success", style = "margin-top: 10px;", sol)
     })
   }
 
   mapply(.make_toggle,
-    sol_id = paste0("ch9_", sol_ids),
-    btn_id = paste0("ch9_", btn_ids)
+    sol_id_bare = sol_ids,
+    sol_id_full = paste0("ch9_", sol_ids),
+    btn_id_full = paste0("ch9_", btn_ids)
   )
 }
