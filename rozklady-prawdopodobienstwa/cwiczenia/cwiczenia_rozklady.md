@@ -26,7 +26,7 @@ a) Jaki rozkład opisuje liczbę wypadków w miesiącu? Podaj parametr.
 b) Jakie jest prawdopodobieństwo **dokładnie 5** wypadków w miesiącu?
 c) Jakie jest prawdopodobieństwo **żadnego** wypadku w miesiącu?
 d) Jakie jest prawdopodobieństwo **więcej niż 4** wypadków?
-e) *Trudniejsze:* Jeśli w kwartale (3 miesiące) — jaki rozkład i jakie P(≥10)?
+e) *Trudniejsze:* Jeśli rozpatrujemy cały kwartał (3 miesiące) — jaki rozkład opisuje liczbę wypadków i jaki ma parametr? Oblicz P(≥10 wypadków w kwartale).
 
 ### Zadanie 3 — Poziom hałasu (rozkład normalny)
 
@@ -35,7 +35,8 @@ Pomiary hałasu na stanowisku w hali montażowej mają rozkład **N(82, 4)** dB 
 a) Jaki procent pomiarów przekracza normę 85 dB?
 b) Jaki procent pomiarów mieści się w przedziale 78–86 dB?
 c) Poniżej jakiej wartości znajduje się 95% pomiarów?
-d) *Trudniejsze:* Pracodawca twierdzi, że „prawie nigdy" nie przekracza 90 dB. Zweryfikuj — jaki procent pomiarów > 90 dB?
+d) Pracodawca twierdzi, że „prawie nigdy" nie przekracza 90 dB. Zweryfikuj — jaki procent pomiarów > 90 dB?
+e) *Trudniejsze:* Pracodawca planuje wymienić wentylację, by zredukować hałas. Przy jakim poziomie średniej (przy tym samym σ = 4 dB) dokładnie 5% pomiarów przekraczałoby normę 85 dB?
 
 ### Zadanie 4 — Niezawodność czujnika dymu (rozkład wykładniczy)
 
