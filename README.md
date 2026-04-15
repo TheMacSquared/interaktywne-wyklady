@@ -31,6 +31,7 @@ shiny::runApp("regresja")
 shiny::runApp("zalozenia-testow")
 shiny::runApp("case-studies")
 shiny::runApp("dobre-dane")
+shiny::runApp("symulacje-statystyczne")
 ```
 
 ## 📚 Aplikacje
@@ -45,6 +46,7 @@ shiny::runApp("dobre-dane")
 | [zalozenia-testow](zalozenia-testow/) | Założenia testów | 6 rozdziałów: normalność, jednorodne wariancje, założenia regresji, χ²/Fisher, mapa metod z alternatywami, ściąga |
 | [case-studies](case-studies/) | Case studies | Kompletne analizy od A do Z. Każdy rozdział = jeden zbiór danych, hipotezy, analizy, wnioski. Na razie: CASchools |
 | [dobre-dane](dobre-dane/) | Jakość danych | Ocena zbiorów danych do analiz statystycznych (case studies) |
+| [symulacje-statystyczne](symulacje-statystyczne/) | Symulacje statystyczne | 10 rozdziałów: idea resamplingowa, bootstrap CI, bootstrap jednej próby, testy permutacyjne, jackknife, cross-validation, Monte Carlo (moc + H₀), kiedy stosować?, ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
 
 ## 📁 Struktura projektu
 
