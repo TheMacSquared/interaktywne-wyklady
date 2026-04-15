@@ -38,8 +38,8 @@ shiny::runApp("dobre-dane")
 | Aplikacja | Temat | Rozdziały / zakres |
 |-----------|-------|--------------------|
 | [typy-danych](typy-danych/) | Statystyka opisowa | 6 rozdziałów: typy danych, zmienne jakościowe, statystyki położenia, rozrzutu, kształt rozkładu, ściąga |
-| [rozklady-prawdopodobienstwa](rozklady-prawdopodobienstwa/) | Rozkłady prawdopodobieństwa | 8 rozdziałów: od danych do prawdopodobieństwa, wartość oczekiwana i wariancja, rozkłady dyskretne, ciągłe, normalny, CTG, dobór rozkładu, ściąga |
-| [przedzialy-ufnosci](przedzialy-ufnosci/) | Przedziały ufności | 6 rozdziałów: estymacja punktowa, idea przedziałów, przedział dla średniej, proporcji, czynniki szerokości, ściąga |
+| [rozklady-prawdopodobienstwa](rozklady-prawdopodobienstwa/) | Rozkłady prawdopodobieństwa | 9 rozdziałów: od danych do prawdopodobieństwa, wartość oczekiwana i wariancja, rozkłady dyskretne, ciągłe, normalny, CTG, dobór rozkładu, ściąga + **ćwiczenia z dropdownem kierunków** (BHP/Rolnictwo/Żywność) |
+| [przedzialy-ufnosci](przedzialy-ufnosci/) | Przedziały ufności | 7 rozdziałów: estymacja punktowa, idea przedziałów, przedział dla średniej, proporcji, czynniki szerokości, ściąga + **ćwiczenia z dropdownem kierunków** (Edukacja/BHP/Rolnictwo/Żywność) |
 | [wnioskowanie-statystyczne](wnioskowanie-statystyczne/) | Wnioskowanie statystyczne | 9 rozdziałów: logika testowania, formułowanie hipotez, jedna ilo./jako., korelacja, dwie jakościowe, dwie grupy, ANOVA, ściąga |
 | [regresja](regresja/) | Regresja | 5 rozdziałów: liniowa prosta, wieloraka, logistyczna, porównanie modeli (R², AIC, BIC, RMSE), ściąga |
 | [zalozenia-testow](zalozenia-testow/) | Założenia testów | 6 rozdziałów: normalność, jednorodne wariancje, założenia regresji, χ²/Fisher, mapa metod z alternatywami, ściąga |
@@ -71,7 +71,8 @@ interaktywne-wyklady/
 │       ├── ch5_normalny.R          # 5. Rozkład normalny (μ/σ, reguła 68-95-99.7, z-score)
 │       ├── ch6_ctg.R               # 6. Centralne Twierdzenie Graniczne
 │       ├── ch7_dobor.R             # 7. Dobór rozkładu (drzewo decyzyjne, Q-Q plot)
-│       └── ch8_sciaga.R            # 8. Ściąga (wzory, tabele, funkcje R)
+│       ├── ch8_quiz.R              # 8. Quiz
+│       └── ch9_cwiczenia.R         # 9. Ćwiczenia (dropdown: BHP/Rolnictwo/Żywność)
 ├── przedzialy-ufnosci/             # Przedziały ufności
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
 │   └── modules/
@@ -81,7 +82,8 @@ interaktywne-wyklady/
 │       ├── ch3_srednia.R           # 3. Przedział dla średniej (z vs t, kalkulator)
 │       ├── ch4_proporcja.R         # 4. Przedział dla proporcji (Wald vs Wilson)
 │       ├── ch5_czynniki.R          # 5. Co wpływa na szerokość? (n, CL, s)
-│       └── ch6_sciaga.R            # 6. Ściąga (wzory, drzewo decyzyjne, R)
+│       ├── ch6_sciaga.R            # 6. Ściąga (wzory, drzewo decyzyjne, R)
+│       └── ch7_cwiczenia.R         # 7. Ćwiczenia (dropdown: Edukacja/BHP/Rolnictwo/Żywność)
 ├── wnioskowanie-statystyczne/      # Wnioskowanie statystyczne (testy hipotez)
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
 │   └── modules/
