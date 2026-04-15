@@ -26,6 +26,18 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
         Zobaczmy to na w\u0142asne oczy!")
     ),
 
+    div(class = "widget-block",
+      h4("Wideo wprowadzaj\u0105ce"),
+      div(style = "position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;",
+        tags$iframe(
+          src = "https://www.youtube.com/embed/jvoxEYmQHNM",
+          style = "position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;",
+          allowfullscreen = NA,
+          allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        )
+      )
+    ),
+
     # ========================================================================
     # WIDGET 1: Eksperyment CLT (kluczowy!)
     # ========================================================================
