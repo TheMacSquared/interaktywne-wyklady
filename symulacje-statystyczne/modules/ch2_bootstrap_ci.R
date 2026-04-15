@@ -30,7 +30,7 @@ ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
     ),
 
     # ========================================================================
-    # WIDGET 1: Glowny engine CI
+    # WIDGET 1a: Narastajace belki CI
     # ========================================================================
     div(class = "section-title", "Bootstrap CI dla dowolnej statystyki"),
 
@@ -42,45 +42,138 @@ ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
     ),
 
     div(class = "widget-block",
-      h4("Bootstrap CI \u2014 silnik"),
+      h4("A) Narastaj\u0105ce przedzia\u0142y \u2014 jak bardzo CI skacze mi\u0119dzy pr\u00f3bami?"),
+      p(class = "text-muted",
+        "Ka\u017cde klikni\u0119cie losuje now\u0105 pr\u00f3b\u0119 i dodaje jej CI jako belk\u0119.
+         Widoczny jest rozrzut mi\u0119dzy pr\u00f3bami i asymetria CI."),
       fluidRow(
         column(4,
-          selectInput("ch2_stat", "Statystyka:",
+          selectInput("ch2a_stat", "Statystyka:",
             choices = c(
-              "\u015aredniana" = "mean",
-              "Mediana"     = "median",
-              "Odch. stand." = "sd",
-              "Sko\u015bno\u015b\u0107"   = "skewness"
+              "\u015arednia"      = "mean",
+              "Mediana"          = "median",
+              "Odch. stand."     = "sd",
+              "Sko\u015bno\u015b\u0107" = "skewness"
             ),
             selected = "mean"
           ),
-          selectInput("ch2_dist", "Rozk\u0142ad danych:",
+          selectInput("ch2a_dist", "Rozk\u0142ad danych:",
             choices = c(
-              "Normalny"               = "normal",
-              "Prawoskos\u015bny (Gamma)" = "skewed",
-              "Dwumodalny"             = "bimodal",
-              "Grube ogony"            = "heavy_tail"
+              "Normalny"                = "normal",
+              "Prawosko\u015bny (Gamma)" = "skewed",
+              "Dwumodalny"              = "bimodal",
+              "Grube ogony"             = "heavy_tail"
             ),
             selected = "skewed"
           ),
-          sliderInput("ch2_n",    "n (wielko\u015b\u0107 pr\u00f3by):",
-                      min = 10, max = 100, value = 25, step = 5),
-          sliderInput("ch2_B",    "B (pr\u00f3by bootstrapowe):",
-                      min = 200, max = 5000, value = 1000, step = 200),
-          sliderInput("ch2_conf", "Poziom ufno\u015bci:",
+          sliderInput("ch2a_n",    "n:", min = 10, max = 100, value = 25, step = 5),
+          sliderInput("ch2a_conf", "Poziom ufno\u015bci:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           hr(),
-          actionButton("ch2_run", "Uruchom bootstrap",
+          actionButton("ch2a_add", "+ Nowa pr\u00f3ba i CI",
                        class = "btn-primary", width = "100%"),
           br(), br(),
-          actionButton("ch2_new_sample", "\u21ba Nowa pr\u00f3ba",
+          actionButton("ch2a_clear", "Wyczy\u015b\u0107",
                        class = "btn-outline-secondary", width = "100%"),
           br(), br(),
-          uiOutput("ch2_ci_result")
+          uiOutput("ch2a_stats")
         ),
         column(8,
-          plotOutput("ch2_boot_dist", height = "360px")
+          plotOutput("ch2a_plot")
         )
+      )
+    ),
+
+    # ========================================================================
+    # WIDGET 1b: Belki CI + histogram aktualnej proby
+    # ========================================================================
+    div(class = "widget-block",
+      h4("B) Dane i CI razem \u2014 jak wygl\u0105daj\u0105 dane kt\u00f3re go wyg\u0119nerowa\u0142y?"),
+      p(class = "text-muted",
+        "Lewy panel: histogram aktualnej pr\u00f3by.
+         Prawy panel: narastaj\u0105ce belki CI z kolejnych pr\u00f3b.
+         Pozwala zobaczy\u0107 jak kszta\u0142t danych wp\u0142ywa na po\u0142o\u017cenie i asymetri\u0119 CI."),
+      fluidRow(
+        column(4,
+          selectInput("ch2b_stat", "Statystyka:",
+            choices = c(
+              "\u015arednia"      = "mean",
+              "Mediana"          = "median",
+              "Odch. stand."     = "sd",
+              "Sko\u015bno\u015b\u0107" = "skewness"
+            ),
+            selected = "mean"
+          ),
+          selectInput("ch2b_dist", "Rozk\u0142ad danych:",
+            choices = c(
+              "Normalny"                = "normal",
+              "Prawosko\u015bny (Gamma)" = "skewed",
+              "Dwumodalny"              = "bimodal",
+              "Grube ogony"             = "heavy_tail"
+            ),
+            selected = "skewed"
+          ),
+          sliderInput("ch2b_n",    "n:", min = 10, max = 100, value = 25, step = 5),
+          sliderInput("ch2b_conf", "Poziom ufno\u015bci:",
+                      min = 0.80, max = 0.99, value = 0.95, step = 0.01),
+          hr(),
+          actionButton("ch2b_add", "+ Nowa pr\u00f3ba i CI",
+                       class = "btn-primary", width = "100%"),
+          br(), br(),
+          actionButton("ch2b_clear", "Wyczy\u015b\u0107",
+                       class = "btn-outline-secondary", width = "100%"),
+          br(), br(),
+          uiOutput("ch2b_stats")
+        ),
+        column(8,
+          plotOutput("ch2b_plot", height = "420px")
+        )
+      )
+    ),
+
+    # ========================================================================
+    # WIDGET 1c: Symulacja pokrycia CI
+    # ========================================================================
+    div(class = "widget-block",
+      h4("C) Pokrycie CI \u2014 ile razy CI zawiera prawdziw\u0105 warto\u015b\u0107?"),
+      p(class = "text-muted",
+        "Symuluje N pr\u00f3b naraz i sprawdza ile CI zawiera prawdziw\u0105 warto\u015b\u0107 parametru.
+         Zielony = CI trafi\u0142o, czerwony = nie trafi\u0142o.
+         Teoretycznie przy CL=95% powinno trafi\u0107 ~95% CI."),
+      fluidRow(
+        column(4,
+          selectInput("ch2c_dist", "Rozk\u0142ad danych:",
+            choices = c(
+              "Normalny"                = "normal",
+              "Prawosko\u015bny (Gamma)" = "skewed",
+              "Dwumodalny"              = "bimodal",
+              "Grube ogony"             = "heavy_tail"
+            ),
+            selected = "normal"
+          ),
+          sliderInput("ch2c_n",    "n:", min = 10, max = 100, value = 25, step = 5),
+          sliderInput("ch2c_conf", "Poziom ufno\u015bci:",
+                      min = 0.80, max = 0.99, value = 0.95, step = 0.01),
+          sliderInput("ch2c_nsim", "Liczba symulacji:",
+                      min = 20, max = 100, value = 50, step = 10),
+          hr(),
+          actionButton("ch2c_run", "Symuluj pokrycie",
+                       class = "btn-primary", width = "100%"),
+          br(), br(),
+          uiOutput("ch2c_stats")
+        ),
+        column(8,
+          plotOutput("ch2c_plot", height = "500px")
+        )
+      )
+    ),
+
+    div(class = "callout-warning",
+      tags$strong("Kiedy bootstrap ma przewag\u0119:"),
+      tags$ul(
+        tags$li("Ma\u0142a pr\u00f3ba + sko\u015bny rozk\u0142ad"),
+        tags$li("Statystyki bez analitycznego wzoru na SE (mediana, sko\u015bno\u015b\u0107)"),
+        tags$li("Brak pewno\u015bci co do rozk\u0142adu")
       )
     ),
 
@@ -103,10 +196,10 @@ ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
         column(4,
           selectInput("ch2_cmp_dist", "Rozk\u0142ad:",
             choices = c(
-              "Normalny"               = "normal",
-              "Prawoskos\u015bny (Gamma)" = "skewed",
-              "Dwumodalny"             = "bimodal",
-              "Grube ogony"            = "heavy_tail"
+              "Normalny"                = "normal",
+              "Prawosko\u015bny (Gamma)" = "skewed",
+              "Dwumodalny"              = "bimodal",
+              "Grube ogony"             = "heavy_tail"
             ),
             selected = "skewed"
           ),
@@ -120,15 +213,6 @@ ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
           plotOutput("ch2_comparison_plot", height = "300px"),
           uiOutput("ch2_comparison_text")
         )
-      )
-    ),
-
-    div(class = "callout-warning",
-      tags$strong("Kiedy bootstrap ma przewag\u0119:"),
-      tags$ul(
-        tags$li("Ma\u0142a pr\u00f3ba + sko\u015bny rozk\u0142ad"),
-        tags$li("Statystyki bez analitycznego wzoru na SE (mediana, sko\u015bno\u015b\u0107)"),
-        tags$li("Brak pewno\u015bci co do rozk\u0142adu")
       )
     ),
 
@@ -180,80 +264,298 @@ ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
 
 ch2_server <- function(input, output, session) {
 
-  # --- Widget 1: Glowny engine CI ---
-  ch2_sample      <- reactiveVal(NULL)
-  ch2_boot_result <- reactiveVal(NULL)
+  # Pomocnicza: label statystyki
+  stat_label_for <- function(s) {
+    switch(s,
+      "mean"     = "\u015arednia",
+      "median"   = "Mediana",
+      "sd"       = "Odch. stand.",
+      "skewness" = "Sko\u015bno\u015b\u0107"
+    )
+  }
 
-  ch2_stat_fn <- reactive({
-    switch(input$ch2_stat,
+  stat_fn_for <- function(s) {
+    switch(s,
       "mean"     = mean,
       "median"   = median,
       "sd"       = sd,
       "skewness" = compute_skewness
     )
-  })
+  }
 
-  ch2_stat_label <- reactive({
-    switch(input$ch2_stat,
-      "mean"     = "\u015aredniana*",
-      "median"   = "Mediana*",
-      "sd"       = "Odch. stand.*",
-      "skewness" = "Sko\u015bno\u015b\u0107*"
+  # Pomocnicza: prawdziwa wartosc parametru dla danego rozkladu
+  true_param_for <- function(dist, stat) {
+    switch(dist,
+      "normal"     = switch(stat, "mean" = 0,    "median" = 0,    "sd" = 1,   "skewness" = 0),
+      "skewed"     = switch(stat, "mean" = 2,    "median" = 1.68, "sd" = 2,   "skewness" = 2),
+      "bimodal"    = switch(stat, "mean" = 0,    "median" = 0,    "sd" = 2.2, "skewness" = 0),
+      "heavy_tail" = switch(stat, "mean" = 0,    "median" = 0,    "sd" = 1.4, "skewness" = 0)
     )
-  })
+  }
 
-  observeEvent(input$ch2_run, {
-    x <- generate_sample_data(input$ch2_n, dist = input$ch2_dist)
-    ch2_sample(x)
-    result <- run_bootstrap(x, ch2_stat_fn(), B = input$ch2_B)
-    ch2_boot_result(result)
-  })
+  # Pomocnicza: wykres narastajacych belek CI
+  plot_ci_bands <- function(ci_list, stat_label, conf_level, true_val = NULL) {
+    df <- do.call(rbind, lapply(seq_along(ci_list), function(i) {
+      ci <- ci_list[[i]]
+      data.frame(
+        i     = i,
+        obs   = ci$obs,
+        lower = ci$lower,
+        upper = ci$upper
+      )
+    }))
 
-  observeEvent(input$ch2_new_sample, {
-    ch2_sample(NULL); ch2_boot_result(NULL)
-  })
+    covers <- if (!is.null(true_val)) {
+      df$lower <= true_val & true_val <= df$upper
+    } else {
+      rep(TRUE, nrow(df))
+    }
+    df$covers <- covers
+    df$color  <- ifelse(covers, "#27ae60", "#e74c3c")
 
-  # Reset przy zmianie parametrow
-  observeEvent(list(input$ch2_dist, input$ch2_n, input$ch2_stat), {
-    ch2_boot_result(NULL); ch2_sample(NULL)
+    p <- ggplot(df, aes(y = i)) +
+      geom_errorbarh(aes(xmin = lower, xmax = upper, color = covers),
+                     height = 0.4, linewidth = 1.2) +
+      geom_point(aes(x = obs, color = covers), size = 3) +
+      scale_color_manual(values = c("TRUE" = "#27ae60", "FALSE" = "#e74c3c"),
+                         labels = c("TRUE" = "Trafi\u0142o", "FALSE" = "Nie trafi\u0142o"),
+                         name = NULL) +
+      scale_y_continuous(breaks = seq_len(nrow(df)),
+                         labels = paste0("Pr\u00f3ba ", seq_len(nrow(df)))) +
+      labs(
+        title    = paste0("Bootstrap CI (", round(conf_level * 100), "%) dla ", stat_label),
+        subtitle = if (!is.null(true_val))
+                     paste0("Prawdziwa warto\u015b\u0107 = ", round(true_val, 3))
+                   else
+                     paste0("Liczba pr\u00f3b: ", nrow(df)),
+        x = stat_label, y = NULL
+      ) +
+      theme_sim() +
+      theme(axis.text.y = element_text(size = 10))
+
+    if (!is.null(true_val)) {
+      p <- p + geom_vline(xintercept = true_val, color = col_dark,
+                          linewidth = 1.2, linetype = "dashed")
+    }
+    p
+  }
+
+  # ==========================================================================
+  # Widget 1a: narastajace belki CI
+  # ==========================================================================
+  ch2a_ci_list <- reactiveVal(list())
+
+  observeEvent(list(input$ch2a_stat, input$ch2a_dist, input$ch2a_n), {
+    ch2a_ci_list(list())
   }, ignoreInit = TRUE)
 
-  output$ch2_boot_dist <- renderPlot({
-    result <- ch2_boot_result()
-    if (is.null(result)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij 'Uruchom bootstrap'",
-                 size = 6, color = "#7f8c8d") +
-        theme_void()
-    } else {
-      ci <- bootstrap_ci_percentile(result, conf_level = input$ch2_conf)
-      plot_bootstrap_distribution(result, ci,
-                                   stat_label = ch2_stat_label(),
-                                   col_primary = col_primary,
-                                   col_secondary = col_secondary,
-                                   col_success = col_success,
-                                   conf_level = input$ch2_conf)
-    }
+  observeEvent(input$ch2a_clear, { ch2a_ci_list(list()) })
+
+  observeEvent(input$ch2a_add, {
+    x      <- generate_sample_data(input$ch2a_n, dist = input$ch2a_dist)
+    result <- run_bootstrap(x, stat_fn_for(input$ch2a_stat), B = 1000)
+    ci     <- bootstrap_ci_percentile(result, conf_level = input$ch2a_conf)
+    entry  <- list(obs = result$observed, lower = ci$lower, upper = ci$upper,
+                   se = result$se)
+    current <- ch2a_ci_list()
+    if (length(current) >= 15) current <- current[-1]
+    ch2a_ci_list(c(current, list(entry)))
   })
 
-  output$ch2_ci_result <- renderUI({
-    result <- ch2_boot_result()
-    if (is.null(result)) return(NULL)
-    ci <- bootstrap_ci_percentile(result, conf_level = input$ch2_conf)
+  output$ch2a_plot <- renderPlot({
+    cis <- ch2a_ci_list()
+    if (length(cis) == 0) {
+      ggplot() +
+        annotate("text", x = 0.5, y = 0.5,
+                 label = "Kliknij '+ Nowa pr\u00f3ba i CI'",
+                 size = 6, color = "#7f8c8d") +
+        theme_void()
+      return()
+    }
+    true_val <- true_param_for(input$ch2a_dist, input$ch2a_stat)
+    plot_ci_bands(cis, stat_label_for(input$ch2a_stat),
+                  input$ch2a_conf, true_val = true_val)
+  }, height = function() max(300, 80 + length(ch2a_ci_list()) * 40))
+
+  output$ch2a_stats <- renderUI({
+    cis <- ch2a_ci_list()
+    if (length(cis) == 0) return(NULL)
+    last <- cis[[length(cis)]]
     tagList(
+      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+          paste0("Liczba pr\u00f3b: ", length(cis))),
       div(class = "stat-box", style = paste0("background:", col_success, ";"),
-          paste0("D\u00f3\u0142: ", round(ci$lower, 3))),
-      div(class = "stat-box", style = paste0("background:", col_secondary, ";"),
-          paste0("Obs: ", round(result$observed, 3))),
-      div(class = "stat-box", style = paste0("background:", col_success, ";"),
-          paste0("G\u00f3ra: ", round(ci$upper, 3))),
+          paste0("CI: [", round(last$lower, 3), ", ", round(last$upper, 3), "]")),
       div(class = "stat-box", style = paste0("background:", col_primary, ";"),
-          paste0("SE: ", round(result$se, 4)))
+          paste0("Szeroko\u015b\u0107: ", round(last$upper - last$lower, 3)))
     )
   })
 
-  # --- Widget 2: Porownanie Bootstrap vs t-CI ---
+  # ==========================================================================
+  # Widget 1b: histogram + narastajace belki
+  # ==========================================================================
+  ch2b_ci_list   <- reactiveVal(list())
+  ch2b_last_data <- reactiveVal(NULL)
+
+  observeEvent(list(input$ch2b_stat, input$ch2b_dist, input$ch2b_n), {
+    ch2b_ci_list(list()); ch2b_last_data(NULL)
+  }, ignoreInit = TRUE)
+
+  observeEvent(input$ch2b_clear, { ch2b_ci_list(list()); ch2b_last_data(NULL) })
+
+  observeEvent(input$ch2b_add, {
+    x      <- generate_sample_data(input$ch2b_n, dist = input$ch2b_dist)
+    result <- run_bootstrap(x, stat_fn_for(input$ch2b_stat), B = 1000)
+    ci     <- bootstrap_ci_percentile(result, conf_level = input$ch2b_conf)
+    entry  <- list(obs = result$observed, lower = ci$lower, upper = ci$upper,
+                   se = result$se)
+    current <- ch2b_ci_list()
+    if (length(current) >= 12) current <- current[-1]
+    ch2b_ci_list(c(current, list(entry)))
+    ch2b_last_data(x)
+  })
+
+  output$ch2b_plot <- renderPlot({
+    cis  <- ch2b_ci_list()
+    x    <- ch2b_last_data()
+
+    if (length(cis) == 0) {
+      ggplot() +
+        annotate("text", x = 0.5, y = 0.5,
+                 label = "Kliknij '+ Nowa pr\u00f3ba i CI'",
+                 size = 6, color = "#7f8c8d") +
+        theme_void()
+      return()
+    }
+
+    stat_lbl <- stat_label_for(input$ch2b_stat)
+    true_val <- true_param_for(input$ch2b_dist, input$ch2b_stat)
+
+    # Lewy panel: histogram ostatniej proby
+    last_obs <- cis[[length(cis)]]$obs
+    p_hist <- ggplot(data.frame(x = x), aes(x = x)) +
+      geom_histogram(fill = col_primary, color = "white", alpha = 0.8, bins = 15) +
+      geom_vline(xintercept = last_obs, color = "#e74c3c",
+                 linewidth = 1.3, linetype = "dashed") +
+      labs(title = "Ostatnia pr\u00f3ba",
+           subtitle = paste0(stat_lbl, " = ", round(last_obs, 3)),
+           x = "Warto\u015b\u0107", y = "Liczba") +
+      theme_sim()
+
+    # Prawy panel: belki CI
+    p_ci <- plot_ci_bands(cis, stat_lbl, input$ch2b_conf, true_val = true_val)
+
+    gridExtra::grid.arrange(p_hist, p_ci, ncol = 2, widths = c(1, 1.4))
+  }, height = function() max(360, 100 + length(ch2b_ci_list()) * 35))
+
+  output$ch2b_stats <- renderUI({
+    cis <- ch2b_ci_list()
+    if (length(cis) == 0) return(NULL)
+    last <- cis[[length(cis)]]
+    tagList(
+      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+          paste0("Liczba pr\u00f3b: ", length(cis))),
+      div(class = "stat-box", style = paste0("background:", col_success, ";"),
+          paste0("CI: [", round(last$lower, 3), ", ", round(last$upper, 3), "]")),
+      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+          paste0("SE: ", round(last$se, 4)))
+    )
+  })
+
+  # ==========================================================================
+  # Widget 1c: symulacja pokrycia
+  # ==========================================================================
+  ch2c_result <- reactiveVal(NULL)
+
+  observeEvent(input$ch2c_run, {
+    nsim     <- input$ch2c_nsim
+    n        <- input$ch2c_n
+    conf     <- input$ch2c_conf
+    dist     <- input$ch2c_dist
+    true_val <- true_param_for(dist, "mean")
+
+    withProgress(message = "Symulowanie CI...", value = 0, {
+      cis <- lapply(seq_len(nsim), function(i) {
+        setProgress(i / nsim)
+        x      <- generate_sample_data(n, dist = dist)
+        result <- run_bootstrap(x, mean, B = 500)
+        ci     <- bootstrap_ci_percentile(result, conf_level = conf)
+        list(obs = result$observed, lower = ci$lower, upper = ci$upper)
+      })
+    })
+
+    covers <- sapply(cis, function(ci) ci$lower <= true_val & true_val <= ci$upper)
+    ch2c_result(list(cis = cis, covers = covers, true_val = true_val,
+                     conf = conf, n = n))
+  })
+
+  output$ch2c_plot <- renderPlot({
+    res <- ch2c_result()
+    if (is.null(res)) {
+      ggplot() +
+        annotate("text", x = 0.5, y = 0.5,
+                 label = "Kliknij 'Symuluj pokrycie'",
+                 size = 6, color = "#7f8c8d") +
+        theme_void()
+      return()
+    }
+
+    cis      <- res$cis
+    covers   <- res$covers
+    true_val <- res$true_val
+
+    df <- do.call(rbind, lapply(seq_along(cis), function(i) {
+      data.frame(i = i, obs = cis[[i]]$obs,
+                 lower = cis[[i]]$lower, upper = cis[[i]]$upper,
+                 covers = covers[i])
+    }))
+
+    coverage_pct <- round(mean(covers) * 100, 1)
+
+    ggplot(df, aes(y = i)) +
+      geom_errorbarh(aes(xmin = lower, xmax = upper, color = covers),
+                     height = 0.5, linewidth = 0.9, alpha = 0.85) +
+      geom_point(aes(x = obs, color = covers), size = 2) +
+      geom_vline(xintercept = true_val, color = col_dark,
+                 linewidth = 1.3, linetype = "dashed") +
+      scale_color_manual(
+        values = c("TRUE" = "#27ae60", "FALSE" = "#e74c3c"),
+        labels = c("TRUE" = "Trafi\u0142o", "FALSE" = "Nie trafi\u0142o"),
+        name = NULL
+      ) +
+      scale_y_continuous(breaks = NULL) +
+      labs(
+        title    = paste0("Pokrycie CI: ", coverage_pct, "% (cel: ",
+                          round(res$conf * 100), "%)"),
+        subtitle = paste0("Prawdziwa warto\u015b\u0107 \u015bredniej = ", round(true_val, 3),
+                          "  |  n = ", res$n,
+                          "  |  ", sum(covers), " z ", length(covers), " CI trafi\u0142o"),
+        x = "\u015arednia", y = "Symulacja"
+      ) +
+      theme_sim()
+  }, height = function() {
+    res <- ch2c_result()
+    if (is.null(res)) 500 else max(400, 60 + length(res$cis) * 9)
+  })
+
+  output$ch2c_stats <- renderUI({
+    res <- ch2c_result()
+    if (is.null(res)) return(NULL)
+    coverage <- mean(res$covers)
+    col_cov  <- if (abs(coverage - res$conf) < 0.05) col_success else col_warning
+    tagList(
+      div(class = "stat-box", style = paste0("background:", col_cov, ";"),
+          paste0("Pokrycie: ", round(coverage * 100, 1), "%")),
+      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+          paste0("Cel: ", round(res$conf * 100), "%")),
+      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+          paste0("Trafi\u0142o: ", sum(res$covers), " / ", length(res$covers)))
+    )
+  })
+
+  # ==========================================================================
+  # Widget 2: Bootstrap vs t-CI
+  # ==========================================================================
   ch2_cmp_result <- reactiveVal(NULL)
 
   observeEvent(input$ch2_cmp_run, {
@@ -281,10 +583,10 @@ ch2_server <- function(input, output, session) {
     }
     ci_df <- rbind(res$ci_boot, res$ci_t)
     plot_ci_comparison(ci_df,
-                       col_primary = col_primary,
+                       col_primary   = col_primary,
                        col_secondary = col_secondary,
-                       col_success = col_success,
-                       col_warning = col_warning)
+                       col_success   = col_success,
+                       col_warning   = col_warning)
   })
 
   output$ch2_comparison_text <- renderUI({
@@ -292,8 +594,9 @@ ch2_server <- function(input, output, session) {
     if (is.null(res)) return(NULL)
     cb <- res$ci_boot
     ct <- res$ci_t
-    width_diff <- abs(cb$width - ct$width)
-    asymmetry_boot <- abs((res$boot$observed - cb$lower) - (cb$upper - res$boot$observed))
+    width_diff     <- abs(cb$width - ct$width)
+    asymmetry_boot <- abs((res$boot$observed - cb$lower) -
+                          (cb$upper - res$boot$observed))
 
     if (asymmetry_boot > 0.5 || width_diff / ct$width > 0.1) {
       div(class = "callout-warning",
@@ -312,16 +615,17 @@ ch2_server <- function(input, output, session) {
     }
   })
 
-  # --- Widget 3: CI dla proporcji ---
+  # ==========================================================================
+  # Widget 3: CI dla proporcji
+  # ==========================================================================
   ch2_prop_result <- reactiveVal(NULL)
 
   observeEvent(input$ch2_prop_run, {
-    p_true  <- input$ch2_prop_p
-    n       <- input$ch2_prop_n
-    conf    <- input$ch2_prop_conf
-    # Losuj jednorazowo sukces/porazka
-    k       <- rbinom(1, n, p_true)
-    phat    <- k / n
+    p_true <- input$ch2_prop_p
+    n      <- input$ch2_prop_n
+    conf   <- input$ch2_prop_conf
+    k      <- rbinom(1, n, p_true)
+    phat   <- k / n
     ci_classical <- classical_ci_proportion(phat, n, conf_level = conf)
     ci_boot      <- bootstrap_ci_proportion(k, n, B = 1000, conf_level = conf)
     ch2_prop_result(list(
@@ -346,11 +650,11 @@ ch2_server <- function(input, output, session) {
     }
     ci_df <- rbind(res$ci_boot, res$ci_classical)
     plot_ci_comparison(ci_df,
-                       true_value = res$p_true,
-                       col_primary = col_primary,
+                       true_value    = res$p_true,
+                       col_primary   = col_primary,
                        col_secondary = col_secondary,
-                       col_success = col_success,
-                       col_warning = col_warning)
+                       col_success   = col_success,
+                       col_warning   = col_warning)
   })
 
   output$ch2_prop_stats <- renderUI({

@@ -516,54 +516,74 @@ plot_ci_comparison <- function(ci_df, true_value = NULL,
 
 # Wykres jednego kroku bootstrapowego (dla ch1)
 # Pokazuje oryginalna probe i jedna probe bootstrapowa z kolorowaniem wg czestosci
-plot_bootstrap_step <- function(orig_data, resample, col_primary, col_warning,
+# resample_list: lista wektorow (kolejne proby bootstrapowe)
+plot_bootstrap_step <- function(orig_data, resample_list, col_primary, col_warning,
                                  col_dark = "#2c3e50") {
-  n <- length(orig_data)
-  # Policz ile razy kazdy indeks wystapil w resample
-  idx_match <- match(resample, orig_data)
+  n           <- length(orig_data)
+  freq_labels <- c("Pomini\u0119ty (0x)", "Raz (1x)", "Wielokrotnie (2x+)")
+  last_rs     <- resample_list[[length(resample_list)]]
+
+  # Kolorowanie oryginalu wg ostatniej proby bootstrapowej
+  idx_match  <- match(last_rs, orig_data)
   freq_table <- tabulate(idx_match, nbins = n)
-  freq_labels <- c("Pominięty (0x)", "Raz (1x)", "Wielokrotnie (2x+)")
 
   df_orig <- data.frame(
     x    = orig_data,
     y    = 0,
     freq = factor(
-      ifelse(freq_table == 0, "Pominięty (0x)",
+      ifelse(freq_table == 0, "Pomini\u0119ty (0x)",
       ifelse(freq_table == 1, "Raz (1x)", "Wielokrotnie (2x+)")),
       levels = freq_labels
     )
   )
-  df_boot <- data.frame(x = resample, y = 1)
 
-  ggplot() +
-    # Oryginalna proba
+  # Wszystkie proby bootstrapowe jako wiersze y = 1, 2, ...
+  df_boot <- do.call(rbind, lapply(seq_along(resample_list), function(i) {
+    data.frame(x = resample_list[[i]], y = i)
+  }))
+
+  y_labels <- c("Oryginalna pr\u00f3ba",
+                paste0("Bootstrap ", seq_along(resample_list)))
+  y_breaks <- 0:length(resample_list)
+
+  # Srednie wszystkich prob bootstrapowych
+  boot_means <- sapply(resample_list, mean)
+
+  # Wysokosc wykresu skaluje sie z liczba prob
+  plot_height_ratio <- max(1, length(resample_list) * 0.6)
+
+  p <- ggplot() +
     geom_jitter(data = df_orig, aes(x = x, y = y, color = freq),
-                height = 0.15, size = 3, alpha = 0.9) +
-    # Jedna proba bootstrapowa
+                height = 0.12, size = 3, alpha = 0.9) +
     geom_jitter(data = df_boot, aes(x = x, y = y),
-                color = col_warning, height = 0.15, size = 3, alpha = 0.85) +
-    # Srednie
+                color = col_warning, height = 0.12, size = 2.5, alpha = 0.75) +
     geom_vline(xintercept = mean(orig_data), color = col_dark,
                linewidth = 1.2, linetype = "dashed") +
-    geom_vline(xintercept = mean(resample), color = col_warning,
-               linewidth = 1.2, linetype = "dashed") +
-    scale_color_manual(
-      values = c("Pominięty (0x)" = "#bdc3c7",
-                 "Raz (1x)"       = col_primary,
-                 "Wielokrotnie (2x+)" = col_warning),
-      name = "Liczba losowa\u0144:"
+    geom_segment(
+      data = data.frame(y = seq_along(resample_list), xmean = boot_means),
+      aes(x = xmean, xend = xmean, y = y - 0.35, yend = y + 0.35),
+      color = "#e74c3c", linewidth = 1.2, linetype = "dashed"
     ) +
-    scale_y_continuous(breaks = c(0, 1),
-                       labels = c("Oryginalna pr\u00f3ba", "Pr\u00f3ba bootstrapowa")) +
+    scale_color_manual(
+      values = c("Pomini\u0119ty (0x)"      = "#bdc3c7",
+                 "Raz (1x)"                 = col_primary,
+                 "Wielokrotnie (2x+)"       = col_warning),
+      name = "Cz\u0119sto\u015b\u0107 w ostatniej pr\u00f3bie:"
+    ) +
+    scale_y_continuous(breaks = y_breaks, labels = y_labels) +
     labs(
-      title    = "Jedna pr\u00f3ba bootstrapowa",
+      title    = paste0(length(resample_list),
+                        ifelse(length(resample_list) == 1,
+                               " pr\u00f3ba bootstrapowa",
+                               " pr\u00f3by bootstrapowe")),
       subtitle = paste0("Oryginalna \u015br.: ", round(mean(orig_data), 2),
-                        "  |  Bootstrap \u015br.: ", round(mean(resample), 2)),
+                        "  |  Ostatnia bootstrap \u015br.: ", round(mean(last_rs), 2)),
       x = "Warto\u015b\u0107",
       y = NULL
     ) +
     theme_sim() +
-    theme(axis.text.y = element_text(size = 12))
+    theme(axis.text.y = element_text(size = 11))
+  p
 }
 
 # Wykres pseudowartosci jackknife

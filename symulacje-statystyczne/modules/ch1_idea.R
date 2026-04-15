@@ -137,16 +137,16 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
           actionButton("ch1_draw_orig", "Pobierz pr\u00f3b\u0119",
                        class = "btn-primary", width = "100%"),
           br(), br(),
-          actionButton("ch1_resample_one", "Jedna pr\u00f3ba bootstrapowa",
+          actionButton("ch1_resample_one", "+ Nowa pr\u00f3ba bootstrapowa",
                        class = "btn-warning", width = "100%"),
           br(), br(),
-          actionButton("ch1_resample_reset", "Reset",
+          actionButton("ch1_resample_reset", "Wyczy\u015b\u0107 pr\u00f3by",
                        class = "btn-outline-secondary", width = "100%"),
           br(), br(),
           uiOutput("ch1_demo_stats")
         ),
         column(8,
-          plotOutput("ch1_bootstrap_demo", height = "360px")
+          plotOutput("ch1_bootstrap_demo")
         )
       )
     ),
@@ -228,20 +228,24 @@ ch1_server <- function(input, output, session) {
   observeEvent(input$ch1_dist,    { ch1_orig_data(NULL); ch1_resample(NULL); ch1_boot_dist(NULL) })
   observeEvent(input$ch1_n_orig,  { ch1_orig_data(NULL); ch1_resample(NULL); ch1_boot_dist(NULL) })
   observeEvent(input$ch1_resample_reset, {
-    ch1_orig_data(NULL); ch1_resample(NULL); ch1_boot_dist(NULL)
+    ch1_resample(NULL)
   })
 
-  # --- Widget 1: jedna proba bootstrapowa ---
+  # --- Widget 1: kolejne proby bootstrapowe (lista) ---
   observeEvent(input$ch1_resample_one, {
     req(ch1_orig_data())
-    x <- ch1_orig_data()
-    rs <- sample(x, size = length(x), replace = TRUE)
-    ch1_resample(rs)
+    x        <- ch1_orig_data()
+    rs       <- sample(x, size = length(x), replace = TRUE)
+    current  <- ch1_resample()
+    if (is.null(current)) current <- list()
+    # Ogranicz do 8 prob zeby wykres pozostal czytelny
+    if (length(current) >= 8) current <- current[-1]
+    ch1_resample(c(current, list(rs)))
   })
 
   output$ch1_bootstrap_demo <- renderPlot({
     orig <- ch1_orig_data()
-    rs   <- ch1_resample()
+    rs   <- ch1_resample()  # lista wektorow lub NULL
 
     if (is.null(orig)) {
       ggplot() +
@@ -267,25 +271,31 @@ ch1_server <- function(input, output, session) {
     } else {
       plot_bootstrap_step(orig, rs, col_primary, col_warning, col_dark)
     }
+  }, height = function() {
+    rs <- ch1_resample()
+    if (is.null(rs)) 360 else max(360, 120 + length(rs) * 80)
   })
 
   output$ch1_demo_stats <- renderUI({
     orig <- ch1_orig_data()
     rs   <- ch1_resample()
     if (is.null(orig)) return(NULL)
-    tags <- list(
+    tag_list <- list(
       div(class = "stat-box", style = paste0("background:", col_dark, ";"),
           paste0("n = ", length(orig))),
       div(class = "stat-box", style = paste0("background:", col_primary, ";"),
           paste0("\u015br. oryg. = ", round(mean(orig), 2)))
     )
     if (!is.null(rs)) {
-      tags <- c(tags, list(
+      last_rs <- rs[[length(rs)]]
+      tag_list <- c(tag_list, list(
         div(class = "stat-box", style = paste0("background:", col_warning, ";"),
-            paste0("\u015br. boot. = ", round(mean(rs), 2)))
+            paste0("\u015br. boot. #", length(rs), " = ", round(mean(last_rs), 2))),
+        div(class = "stat-box", style = paste0("background:", col_dark, "; opacity:0.7;"),
+            paste0("Liczba pr\u00f3b: ", length(rs)))
       ))
     }
-    do.call(tagList, tags)
+    do.call(tagList, tag_list)
   })
 
   # --- Widget 2: rozklad bootstrapowy ---
