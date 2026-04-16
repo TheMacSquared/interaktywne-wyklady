@@ -199,9 +199,9 @@ ch3_server <- function(input, output, session) {
       newdata$pred_prob <- predict(model, newdata, type = "response")
 
       ggplot() +
-        geom_jitter(data = df, aes_string(x = pred_var, y = "zdal_num"),
+        geom_jitter(data = df, aes(x = .data[[pred_var]], y = .data[["zdal_num"]]),
                     height = 0.03, alpha = 0.3, color = col_data) +
-        geom_line(data = newdata, aes_string(x = pred_var, y = "pred_prob"),
+        geom_line(data = newdata, aes(x = .data[[pred_var]], y = .data[["pred_prob"]]),
                   color = col_logit, linewidth = 1.5) +
         geom_hline(yintercept = 0.5, linetype = "dashed", color = col_warning) +
         labs(title = paste0("Regresja logistyczna: P(zdanie) ~ ", pred_label),
