@@ -2773,16 +2773,24 @@ server <- function(input, output, session) {
   output$tab10_missing <- renderPlot({
     miss_pct <- sapply(aq, function(x) mean(is.na(x)) * 100)
     df_miss <- data.frame(variable = names(miss_pct), pct = miss_pct)
-    df_miss$color <- ifelse(df_miss$pct > 20, col_bad, ifelse(df_miss$pct > 5, col_mixed, col_good))
+    df_miss <- df_miss[df_miss$pct > 0, ]   # ukryj zmienne bez braków
+    df_miss$color <- ifelse(df_miss$pct > 20, col_bad,
+                     ifelse(df_miss$pct > 5, col_mixed, col_good))
 
     ggplot(df_miss, aes(x = reorder(variable, -pct), y = pct, fill = color)) +
       geom_col() +
       scale_fill_identity() +
-      geom_hline(yintercept = 5, linetype = "dashed", color = col_mixed) +
-      geom_hline(yintercept = 20, linetype = "dashed", color = col_bad) +
-      annotate("text", x = 1, y = 22, label = "20% - poważny problem", color = col_bad, size = 4) +
-      annotate("text", x = 1, y = 7, label = "5% - akceptowalne", color = col_mixed, size = 4) +
-      labs(title = "Procent braków danych", x = NULL, y = "% braków") +
+      geom_text(aes(label = paste0(round(pct, 1), "%")),
+                vjust = -0.4, size = 5, fontface = "bold") +
+      geom_hline(yintercept = 5,  linetype = "dashed", color = col_mixed, linewidth = 0.8) +
+      geom_hline(yintercept = 20, linetype = "dashed", color = col_bad,   linewidth = 0.8) +
+      annotate("text", x = Inf, y = 6.5,  label = "5% \u2014 akceptowalne",
+               hjust = 1.05, color = col_mixed, size = 3.8) +
+      annotate("text", x = Inf, y = 21.5, label = "20% \u2014 powa\u017cny problem",
+               hjust = 1.05, color = col_bad,   size = 3.8) +
+      scale_y_continuous(limits = c(0, 30)) +
+      labs(title = "Procent braków danych (tylko zmienne z brakami)",
+           x = NULL, y = "% braków") +
       theme_minimal(base_size = 14)
   })
 
