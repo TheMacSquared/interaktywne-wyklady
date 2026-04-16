@@ -2671,26 +2671,44 @@ server <- function(input, output, session) {
   # Quiz
   output$tab8_quiz <- renderUI({
     tagList(
-      h4("Sklasyfikuj każdą podejrzaną obserwację:"),
-      div(style = "margin: 10px 0;",
-        tags$strong("1. Cena = 45 PLN"), tags$br(),
-        radioButtons("tab8_q1", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
+      h4("Sklasyfikuj każdą podejrzaną obserwację — błąd danych czy prawdziwy outlier?"),
+      tags$p(style = "color: #7f8c8d; font-size: 13px;",
+        "Uwaga: ta sama liczba może być błędem lub outlirem zależnie od kontekstu.
+         Czytaj cały rekord."),
+
+      div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
+        tags$strong("1."),
+        " Cena: 45 PLN | Powierzchnia: 52 m\u00b2 | Pokoje: 2 | Dzielnica: Mokot\u00f3w",
+        tags$br(),
+        radioButtons("tab8_q1", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
       ),
-      div(style = "margin: 10px 0;",
-        tags$strong("2. Cena = 5 500 000 PLN"), tags$br(),
-        radioButtons("tab8_q2", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
+
+      div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
+        tags$strong("2."),
+        " Cena: 5 500 000 PLN | Powierzchnia: 35 m\u00b2 | Pokoje: 1 | Dzielnica: Praga-P\u00f3\u0142noc",
+        tags$br(),
+        radioButtons("tab8_q2", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
       ),
-      div(style = "margin: 10px 0;",
-        tags$strong("3. Cena = -300 000 PLN"), tags$br(),
-        radioButtons("tab8_q3", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
+
+      div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
+        tags$strong("3."),
+        " Cena: -300 000 PLN | Powierzchnia: 48 m\u00b2 | Pokoje: 2 | Dzielnica: Wola",
+        tags$br(),
+        radioButtons("tab8_q3", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
       ),
-      div(style = "margin: 10px 0;",
-        tags$strong("4. Powierzchnia = 1200 m\u00b2"), tags$br(),
-        radioButtons("tab8_q4", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
+
+      div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
+        tags$strong("4."),
+        " Cena: 850 000 PLN | Powierzchnia: 1 200 m\u00b2 | Pokoje: 3 | Dzielnica: Ursynów",
+        tags$br(),
+        radioButtons("tab8_q4", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
       ),
-      div(style = "margin: 10px 0;",
-        tags$strong("5. Cena = 780 000, powierzchnia = 120 m\u00b2"), tags$br(),
-        radioButtons("tab8_q5", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
+
+      div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
+        tags$strong("5."),
+        " Cena: 1 150 000 PLN | Powierzchnia: 120 m\u00b2 | Pokoje: 5 | Dzielnica: \u015ar\u00f3dmie\u015bcie | Rok budowy: 2023",
+        tags$br(),
+        radioButtons("tab8_q5", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
       )
     )
   })
@@ -2699,19 +2717,20 @@ server <- function(input, output, session) {
     req(input$tab8_check_quiz > 0)
     isolate({
       answers <- c(input$tab8_q1, input$tab8_q2, input$tab8_q3, input$tab8_q4, input$tab8_q5)
-      correct <- c("Błąd danych", "Błąd danych", "Błąd danych", "Błąd danych", "Prawdziwy outlier")
+      correct <- c("B\u0142\u0105d danych", "B\u0142\u0105d danych", "B\u0142\u0105d danych", "B\u0142\u0105d danych", "Prawdziwy outlier")
       explanations <- c(
-        "Cena 45 PLN = brak zer (powinno być ~450 000)",
-        "5 500 000 = dodatkowe zero (powinno być ~550 000)",
-        "-300 000 = błąd znaku (cena nie może być ujemna)",
-        "1200 m\u00b2 = dodatkowe zero (powinno być ~120 m\u00b2)",
-        "To drogie mieszkanie, ale realne - duze, w dobrej lokalizacji. Prawdziwy outlier!"
+        "Cena 45 PLN za 52 m\u00b2 na Mokotowie \u2014 brakuje czterech zer. Prawdopodobnie wpisano '45' zamiast '450 000 PLN'. B\u0142\u0105d danych.",
+        "5,5 mln PLN za 35 m\u00b2 na Pradze P\u00f3\u0142noc = 157 000 PLN/m\u00b2. Nierealne. Gdyby to by\u0142o 280 m\u00b2 w \u015ar\u00f3dmie\u015bciu, mog\u0142oby by\u0107 outlirem \u2014 ale ta kombinacja nie ma sensu. B\u0142\u0105d danych (prawdopodobnie jedno zero za du\u017co).",
+        "Ujemna cena jest matematycznie niemo\u017cliwa. To b\u0142\u0105d znaku przy imporcie danych lub b\u0142\u0105d oper. B\u0142\u0105d danych.",
+        "1200 m\u00b2 to wielko\u015b\u0107 biurowca, nie mieszkania. Przy 3 pokojach i cenie 850 000 PLN prawie na pewno wpisano '1200' zamiast '120 m\u00b2'. B\u0142\u0105d danych.",
+        "9 600 PLN/m\u00b2 za nowe, du\u017ce mieszkanie w \u015ar\u00f3dmie\u015bciu (rok budowy 2023) \u2014 drogo, ale taki rynek istnieje. To prawdziwy outlier: warto odnotowa\u0107, ale nie usuwa\u0107."
       )
 
       items <- sapply(1:5, function(i) {
         ok <- answers[i] == correct[i]
         icon <- if (ok) "\u2705" else "\u274c"
-        paste0("<div style='padding: 5px 0;'>", icon, " ", explanations[i], "</div>")
+        paste0("<div style='padding: 6px 0; border-bottom: 1px solid #eee;'>",
+               icon, " <b>Pyt. ", i, ":</b> ", explanations[i], "</div>")
       })
 
       score <- sum(answers == correct)
