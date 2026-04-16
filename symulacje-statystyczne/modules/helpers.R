@@ -80,6 +80,22 @@ generate_regression_data <- function(n = 60, degree_true = 2, sigma = 8, seed = 
 }
 
 # ============================================================================
+# STATYSTYKI OPISOWE (uzupelnienie base R)
+# ============================================================================
+
+# Skosnosc probki (momentowa, population-style: bez korekty n/(n-1)(n-2)).
+# Zgodnie z konwencja uzywana w wiekszosci podrecznikow wprowadzajacych.
+compute_skewness <- function(x) {
+  x <- x[!is.na(x)]
+  n <- length(x)
+  if (n < 3) return(NA_real_)
+  m <- mean(x)
+  s <- sd(x)
+  if (s == 0) return(NA_real_)
+  sum((x - m)^3) / (n * s^3)
+}
+
+# ============================================================================
 # BOOTSTRAP - RDZEN
 # ============================================================================
 
