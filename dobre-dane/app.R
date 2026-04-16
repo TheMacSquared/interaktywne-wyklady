@@ -2112,7 +2112,7 @@ server <- function(input, output, session) {
 
   output$tab2_verdict <- renderUI({
     # hipoteza, n, mix, zmiennosc, struktura, niezaleznosc | braki, definicje, bledy
-    render_verdict(c("yes", "no", "yes", "yes", "no", "yes", "yes", "yes", "yes"), "bad")
+    render_verdict(c("yes", "no", "yes", "yes", "yes", "yes", "yes", "yes", "yes"), "bad")
   })
 
   # ==========================================================================
