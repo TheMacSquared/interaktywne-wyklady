@@ -2411,8 +2411,8 @@ server <- function(input, output, session) {
 
   output$tab5_verdict <- renderUI({
     # hipoteza, n, mix, zmiennosc, struktura, niezaleznosc | braki, definicje, bledy
-    # Firma: hipoteza ok, n ok, mix ok, brak zmiennosci, struktura nie (niezbalansowane grupy), niezaleznosc ok
-    render_verdict(c("yes", "yes", "yes", "no", "no", "yes", "yes", "yes", "yes"), "bad")
+    # Firma: jedyny problem to brak zmiennosci (zadowolenie skupione, staz wąski, grupy niezbalansowane)
+    render_verdict(c("yes", "yes", "yes", "no", "yes", "yes", "yes", "yes", "yes"), "bad")
   })
 
   # ==========================================================================
