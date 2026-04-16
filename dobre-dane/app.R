@@ -2383,6 +2383,7 @@ server <- function(input, output, session) {
     ggplot(corp_data, aes(x = staz_pracy, y = wynagrodzenie)) +
       geom_point(alpha = 0.5, size = 3, color = col_dark) +
       geom_smooth(method = "lm", color = col_bad, se = TRUE) +
+      scale_x_continuous(limits = c(1, 10)) +
       labs(title = "Staż pracy vs wynagrodzenie",
            subtitle = paste0("r = ", round(cor(corp_data$staz_pracy, corp_data$wynagrodzenie), 3),
                              "  \u2014  staż w wąskim przedziale, wynagrodzenia zróżnicowane"),
