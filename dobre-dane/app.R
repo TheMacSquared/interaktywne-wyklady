@@ -1433,9 +1433,14 @@ ui <- navbarPage(
     div(class = "section-title", "Szukanie outlierów"),
 
     div(class = "widget-block",
-      selectInput("tab8_var", "Zmienna do boxplotu:",
-        choices = c("cena", "powierzchnia", "pokoje", "rok_budowy")),
-      plotOutput("tab8_boxplot", height = "300px")
+      fluidRow(
+        column(6, plotOutput("tab8_box_cena",        height = "260px")),
+        column(6, plotOutput("tab8_box_powierzchnia", height = "260px"))
+      ),
+      fluidRow(
+        column(6, plotOutput("tab8_box_pokoje",      height = "260px")),
+        column(6, plotOutput("tab8_box_rok_budowy",  height = "260px"))
+      )
     ),
 
     div(class = "widget-block",
@@ -2661,13 +2666,19 @@ server <- function(input, output, session) {
       theme_minimal(base_size = 14)
   })
 
-  output$tab8_boxplot <- renderPlot({
-    req(input$tab8_var)
-    ggplot(apt_data, aes(y = .data[[input$tab8_var]])) +
-      geom_boxplot(fill = col_mixed, alpha = 0.7, width = 0.5) +
-      labs(title = paste("Boxplot:", input$tab8_var), y = input$tab8_var) +
-      theme_minimal(base_size = 14)
-  })
+  make_boxplot <- function(var, label, unit = "") {
+    ggplot(apt_data, aes(y = .data[[var]])) +
+      geom_boxplot(fill = col_mixed, alpha = 0.7, width = 0.4) +
+      labs(title = label,
+           y = if (nchar(unit) > 0) paste0(label, " (", unit, ")") else label) +
+      theme_minimal(base_size = 13) +
+      theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+  }
+
+  output$tab8_box_cena        <- renderPlot({ make_boxplot("cena",        "Cena",        "PLN") })
+  output$tab8_box_powierzchnia <- renderPlot({ make_boxplot("powierzchnia","Powierzchnia","m\u00b2") })
+  output$tab8_box_pokoje       <- renderPlot({ make_boxplot("pokoje",      "Pokoje",      "") })
+  output$tab8_box_rok_budowy   <- renderPlot({ make_boxplot("rok_budowy",  "Rok budowy",  "") })
 
   output$tab8_scatter_clean <- renderPlot({
     d <- apt_clean()
