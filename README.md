@@ -16,7 +16,7 @@ install.packages(c("shiny", "ggplot2", "dplyr", "e1071", "gridExtra"))
 install.packages(c("rstatix", "broom", "tidyr", "knitr", "lmtest", "sandwich"))
 
 # Dodatkowe (dla dobre-dane)
-install.packages(c("DT", "AER", "palmerpenguins", "ISLR", "fivethirtyeight"))
+install.packages(c("DT", "bslib", "AER", "palmerpenguins", "ISLR", "fivethirtyeight"))
 ```
 
 ## ▶️ Uruchamianie
@@ -38,14 +38,14 @@ shiny::runApp("symulacje-statystyczne")
 
 | Aplikacja | Temat | Rozdziały / zakres |
 |-----------|-------|--------------------|
-| [typy-danych](typy-danych/) | Statystyka opisowa | 6 rozdziałów: typy danych, zmienne jakościowe, statystyki położenia, rozrzutu, kształt rozkładu, ściąga |
-| [rozklady-prawdopodobienstwa](rozklady-prawdopodobienstwa/) | Rozkłady prawdopodobieństwa | 9 rozdziałów: od danych do prawdopodobieństwa, wartość oczekiwana i wariancja, rozkłady dyskretne, ciągłe, normalny, CTG, dobór rozkładu, ściąga + **ćwiczenia z dropdownem kierunków** (BHP/Rolnictwo/Żywność) |
+| [typy-danych](typy-danych/) | Statystyka opisowa | 8 rozdziałów: typy danych, zmienne jakościowe, statystyki położenia, rozrzutu, kształt rozkładu, ściąga, quiz + **ćwiczenia z dropdownem kierunków** (BHP/Rolnictwo/Żywność) |
+| [rozklady-prawdopodobienstwa](rozklady-prawdopodobienstwa/) | Rozkłady prawdopodobieństwa | 9 rozdziałów: od danych do prawdopodobieństwa, wartość oczekiwana i wariancja, rozkłady dyskretne, ciągłe, normalny, CTG, ściąga, quiz + **ćwiczenia z dropdownem kierunków** (BHP/Rolnictwo/Żywność) |
 | [przedzialy-ufnosci](przedzialy-ufnosci/) | Przedziały ufności | 7 rozdziałów: estymacja punktowa, idea przedziałów, przedział dla średniej, proporcji, czynniki szerokości, ściąga + **ćwiczenia z dropdownem kierunków** (Edukacja/BHP/Rolnictwo/Żywność) |
 | [wnioskowanie-statystyczne](wnioskowanie-statystyczne/) | Wnioskowanie statystyczne | 9 rozdziałów: logika testowania, formułowanie hipotez, jedna ilo./jako., korelacja, dwie jakościowe, dwie grupy, ANOVA, ściąga |
 | [regresja](regresja/) | Regresja | 5 rozdziałów: liniowa prosta, wieloraka, logistyczna, porównanie modeli (R², AIC, BIC, RMSE), ściąga |
 | [zalozenia-testow](zalozenia-testow/) | Założenia testów | 6 rozdziałów: normalność, jednorodne wariancje, założenia regresji, χ²/Fisher, mapa metod z alternatywami, ściąga |
 | [case-studies](case-studies/) | Case studies | Kompletne analizy od A do Z. Każdy rozdział = jeden zbiór danych, hipotezy, analizy, wnioski. Na razie: CASchools |
-| [dobre-dane](dobre-dane/) | Jakość danych | Ocena zbiorów danych do analiz statystycznych (case studies) |
+| [dobre-dane](dobre-dane/) | Jakość danych | 11 zbiorów — kiedy dane nadają się do klasycznej statystyki? (CASchools, pingwiny, Tarantino, Wage, ankieta firmowa, mieszkania, studenci, powietrze, ankieta SU) + ściąga |
 | [symulacje-statystyczne](symulacje-statystyczne/) | Symulacje statystyczne | 10 rozdziałów: idea resamplingowa, bootstrap CI, bootstrap jednej próby, testy permutacyjne, jackknife, cross-validation, Monte Carlo (moc + H₀), kiedy stosować?, ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
 
 ## 📁 Struktura projektu
@@ -54,6 +54,7 @@ shiny::runApp("symulacje-statystyczne")
 interaktywne-wyklady/
 ├── typy-danych/                    # Statystyka opisowa
 │   ├── app.R                       # Główny plik: dane, kolory, CSS/JS, nawigacja
+│   ├── quiz_typy_zmiennych.json    # Pytania do quizu (ch7)
 │   └── modules/                    # Moduły rozdziałów
 │       ├── helpers.R               # Funkcje pomocnicze (taksonomia, wykresy good/bad)
 │       ├── ch1_typy.R              # 1. Typy danych
@@ -61,22 +62,27 @@ interaktywne-wyklady/
 │       ├── ch3_polozenie.R         # 3. Statystyki położenia
 │       ├── ch4_rozrzut.R           # 4. Statystyki rozrzutu
 │       ├── ch5_ksztalt.R           # 5. Kształt rozkładu
-│       └── ch6_sciaga.R            # 6. Ściąga
+│       ├── ch6_sciaga.R            # 6. Ściąga
+│       ├── ch7_quiz.R              # 7. Quiz (rozpoznaj typ zmiennej)
+│       └── ch8_cwiczenia.R         # 8. Ćwiczenia (dropdown: BHP/Rolnictwo/Żywność)
 ├── rozklady-prawdopodobienstwa/    # Rozkłady prawdopodobieństwa
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
+│   ├── cwiczenia/                  # Dane i opisy do ch9_cwiczenia (BHP/Rolnictwo/Żywność)
 │   └── modules/
 │       ├── helpers.R               # Funkcje symulacyjne, theme
+│       ├── quiz_rozklady.json      # Pytania do quizu (ch8)
 │       ├── ch1_most.R              # 1. Od danych do prawdopodobieństwa
 │       ├── ch2_ev_var.R            # 2. Wartość oczekiwana i wariancja
 │       ├── ch3_dyskretne.R         # 3. Rozkłady dyskretne (jednostajny, dwumianowy, Poissona)
 │       ├── ch4_ciagle.R            # 4. Rozkłady ciągłe (histogram→PDF, jednostajny, wykładniczy)
 │       ├── ch5_normalny.R          # 5. Rozkład normalny (μ/σ, reguła 68-95-99.7, z-score)
 │       ├── ch6_ctg.R               # 6. Centralne Twierdzenie Graniczne
-│       ├── ch7_dobor.R             # 7. Dobór rozkładu (drzewo decyzyjne, Q-Q plot)
+│       ├── ch7_sciaga.R            # 7. Ściąga
 │       ├── ch8_quiz.R              # 8. Quiz
 │       └── ch9_cwiczenia.R         # 9. Ćwiczenia (dropdown: BHP/Rolnictwo/Żywność)
 ├── przedzialy-ufnosci/             # Przedziały ufności
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
+│   ├── dane/                       # Zbiory CSV do ćwiczeń kierunkowych
 │   └── modules/
 │       ├── helpers.R               # Generatory danych, symulacje pokrycia, theme
 │       ├── ch1_estymacja.R         # 1. Od próby do populacji (estymacja punktowa)
@@ -88,6 +94,7 @@ interaktywne-wyklady/
 │       └── ch7_cwiczenia.R         # 7. Ćwiczenia (dropdown: Edukacja/BHP/Rolnictwo/Żywność)
 ├── wnioskowanie-statystyczne/      # Wnioskowanie statystyczne (testy hipotez)
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
+│   ├── assets/                     # Obrazki do rozdziałów (Anscombe, Simpson, itp.)
 │   └── modules/
 │       ├── helpers.R               # Dane studenckie, formatowanie wyników, theme
 │       ├── ch1_logika.R            # 1. Logika testowania (p-wartość, błędy, moc)
@@ -123,8 +130,23 @@ interaktywne-wyklady/
 │   └── modules/
 │       ├── helpers.R               # Formatowanie, theme
 │       └── ch1_caschools.R         # 1. CASchools (EDA, korelacja, t-test, ANOVA, regresja)
-├── dobre-dane/                     # Jakość danych
-│   └── app.R
+├── dobre-dane/                     # Jakość danych (case studies)
+│   └── app.R                       # Jednoplikowa aplikacja: 11 zbiorów (CASchools, n=8, pingwiny, Tarantino, ankieta firmowa, Wage, ankieta SU, mieszkania, studenci, powietrze) + wprowadzenie i ściąga
+├── symulacje-statystyczne/         # Symulacje: bootstrap, permutacje, CV, MC
+│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
+│   └── modules/
+│       ├── helpers.R               # Generatory, run_bootstrap/jackknife/permutation, compute_skewness, theme
+│       ├── ch1_idea.R              # 1. Idea resamplingu
+│       ├── ch2_bootstrap_ci.R      # 2. Bootstrap CI (percentyl, basic, klasyczny)
+│       ├── ch3_bootstrap_jednopr.R # 3. Bootstrap dla jednej próby
+│       ├── ch4_permutacje.R        # 4. Testy permutacyjne
+│       ├── ch5_jackknife.R         # 5. Jackknife (bias, SE, bias-correction)
+│       ├── ch6_cv.R                # 6. Cross-validation (K-fold, LOOCV)
+│       ├── ch7_monte_carlo.R       # 7. Monte Carlo (moc testu, rozkład pod H₀)
+│       ├── ch8_kiedy.R             # 8. Kiedy stosować?
+│       ├── ch9_sciaga.R            # 9. Ściąga
+│       └── ch10_cwiczenia.R        # 10. Ćwiczenia (dropdown: Rolnictwo/TŻ/BHP/Edukacja)
+├── R/                              # Współdzielone zasoby (shared.R, shared_styles.css, shared_toc.js)
 ├── README.md                       # Ten plik
 └── CLAUDE.md                       # Instrukcje dla AI
 ```
