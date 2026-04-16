@@ -34,6 +34,9 @@ data("penguins", package = "palmerpenguins")
 
 # --- Tab 4: tarantino (fivethirtyeight) ---
 data("tarantino", package = "fivethirtyeight")
+# Pakiet nie dostarcza kolumny `type`, tylko `profane` (TRUE/FALSE).
+# Dodajemy ja, by uzywac jednolitych etykiet "word"/"death" w analizach nizej.
+tarantino$type <- ifelse(tarantino$profane, "word", "death")
 
 # --- Tab 6: Wage (ISLR) ---
 data("Wage", package = "ISLR")
