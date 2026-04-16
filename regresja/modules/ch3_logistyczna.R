@@ -162,7 +162,7 @@ ch3_server <- function(input, output, session) {
       labs(title = paste0("Sigmoida: \u03b2\u2080 = ", b0, ", \u03b2\u2081 = ", b1),
            x = "X", y = "P(Y = 1)") +
       ylim(0, 1) +
-      theme_reg()
+      theme_educational()
   })
 
   # --- Widget 2: Model logistyczny ---
@@ -207,7 +207,7 @@ ch3_server <- function(input, output, session) {
         labs(title = paste0("Regresja logistyczna: P(zdanie) ~ ", pred_label),
              x = pred_label, y = "P(zdanie egzaminu)") +
         ylim(-0.05, 1.05) +
-        theme_reg()
+        theme_educational()
     }
   })
 

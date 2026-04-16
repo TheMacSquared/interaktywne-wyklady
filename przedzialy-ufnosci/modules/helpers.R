@@ -104,12 +104,3 @@ simulate_coverage_prop <- function(true_p, n, conf_level, n_sims = 100,
   do.call(rbind, results)
 }
 
-# Wspolny theme dla wykresow
-theme_ci <- function(base_size = 14) {
-  theme_minimal(base_size = base_size) +
-    theme(
-      plot.title = element_text(face = "bold", size = base_size + 2),
-      plot.subtitle = element_text(color = "#7f8c8d"),
-      panel.grid.minor = element_blank()
-    )
-}

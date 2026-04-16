@@ -311,7 +311,7 @@ ch7_server <- function(input, output, session) {
         x        = stat_label,
         y        = "Liczba symulacji"
       ) +
-      theme_sim()
+      theme_educational()
   })
 
   output$ch7_null_stats <- renderUI({

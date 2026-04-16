@@ -266,7 +266,7 @@ ch1_server <- function(input, output, session) {
         scale_y_continuous(breaks = 0, labels = "Oryginalna pr\u00f3ba") +
         labs(title = paste0("Pr\u00f3ba (n = ", length(orig), ")"),
              x = "Warto\u015b\u0107", y = NULL) +
-        theme_sim() +
+        theme_educational() +
         theme(axis.text.y = element_text(size = 12))
     } else {
       plot_bootstrap_step(orig, rs, col_primary, col_warning, col_dark)

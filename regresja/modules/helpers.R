@@ -104,12 +104,3 @@ compute_model_metrics <- function(model, data = NULL, y_name = NULL) {
   metrics
 }
 
-# Theme dla wykresow regresji
-theme_reg <- function(base_size = 14) {
-  theme_minimal(base_size = base_size) +
-    theme(
-      plot.title = element_text(face = "bold", size = base_size + 2),
-      plot.subtitle = element_text(color = "#7f8c8d"),
-      panel.grid.minor = element_blank()
-    )
-}

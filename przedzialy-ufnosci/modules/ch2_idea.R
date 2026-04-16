@@ -175,7 +175,7 @@ ch2_server <- function(input, output, session) {
                             round(input$ch2_conf * 100), "%)"),
              x = "Warto\u015b\u0107 parametru",
              y = "Numer pr\u00f3by") +
-        theme_ci() +
+        theme_educational() +
         theme(legend.position = "top")
     }
   })

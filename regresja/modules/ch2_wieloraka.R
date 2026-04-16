@@ -187,7 +187,7 @@ ch2_server <- function(input, output, session) {
                          name = NULL) +
       labs(title = "Wsp\u00f3\u0142czynniki regresji z 95% CI",
            x = "Estymata \u03b2", y = NULL) +
-      theme_reg() +
+      theme_educational() +
       theme(legend.position = "top")
   })
 
@@ -260,7 +260,7 @@ ch2_server <- function(input, output, session) {
         scale_color_manual(values = c(col_fit, col_predict), name = NULL) +
         labs(title = "R\u00b2 vs adj. R\u00b2 w funkcji liczby predyktor\u00f3w",
              x = "Liczba predyktor\u00f3w", y = "Warto\u015b\u0107") +
-        theme_reg() +
+        theme_educational() +
         theme(legend.position = "top")
     }
   })

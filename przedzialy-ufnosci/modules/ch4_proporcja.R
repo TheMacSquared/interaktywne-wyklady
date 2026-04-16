@@ -319,7 +319,7 @@ ch4_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
       labs(x = NULL, y = "Liczebno\u015b\u0107",
            title = paste0("Dane (n = ", n, ")")) +
-      theme_ci() +
+      theme_educational() +
       theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
 
@@ -329,7 +329,7 @@ ch4_server <- function(input, output, session) {
       ylim(-0.6, 0.6) +
       labs(x = "Proporcja", y = NULL,
            title = paste0("p\u0302 = ", round(phat, 3))) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -503,7 +503,7 @@ ch4_server <- function(input, output, session) {
                         name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
       labs(x = NULL, y = "Liczebno\u015b\u0107", title = "Dane") +
-      theme_ci() +
+      theme_educational() +
       theme(legend.position = "top",
             panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
@@ -513,7 +513,7 @@ ch4_server <- function(input, output, session) {
       xlim(0, 1) +
       ylim(0.4, 2.6) +
       labs(x = "Proporcja", y = NULL, title = "Proporcje w grupach") +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_text(face = "bold", size = 12),
             panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank()) +
@@ -542,7 +542,7 @@ ch4_server <- function(input, output, session) {
       ylim(-0.55, 0.55) +
       labs(x = "R\u00f3\u017cnica proporcji  \u2014  Grupa 1 \u2212 Grupa 2",
            y = NULL, title = "R\u00f3\u017cnica + CI") +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -830,7 +830,7 @@ ch4_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
       labs(x = NULL, y = "Liczebno\u015b\u0107",
            title = paste0("Dane (n = ", n, ")")) +
-      theme_ci() +
+      theme_educational() +
       theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
 
@@ -846,7 +846,7 @@ ch4_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(-0.6, 0.6) +
       labs(x = xlab, y = NULL, title = title) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -945,7 +945,7 @@ ch4_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(0.3, k + 0.7) +
       labs(x = xlab, y = NULL, title = title) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1023,7 +1023,7 @@ ch4_server <- function(input, output, session) {
                         name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
       labs(x = NULL, y = "Liczebno\u015b\u0107", title = "Dane") +
-      theme_ci() +
+      theme_educational() +
       theme(legend.position = "top",
             panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
@@ -1033,7 +1033,7 @@ ch4_server <- function(input, output, session) {
       xlim(0, 1) +
       ylim(0.4, 2.6) +
       labs(x = xlab, y = NULL, title = "Proporcje w grupach") +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_text(face = "bold", size = 11),
             panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank()) +
@@ -1065,7 +1065,7 @@ ch4_server <- function(input, output, session) {
       ylim(-0.55, 0.55) +
       labs(x = paste0("R\u00f3\u017cnica proporcji  \u2014  ", label1, " \u2212 ", label2),
            y = NULL, title = "R\u00f3\u017cnica + CI") +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1158,7 +1158,7 @@ ch4_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(0.3, k + 0.7) +
       labs(x = xlab, y = NULL) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),

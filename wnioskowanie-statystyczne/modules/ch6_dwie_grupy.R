@@ -195,7 +195,7 @@ ch6_server <- function(input, output, session) {
         scale_fill_manual(values = c(col_h0, col_reject)) +
         labs(title = paste0(var_label, " vs P\u0142e\u0107"),
              x = "P\u0142e\u0107", y = var_label) +
-        theme_test() +
+        theme_educational() +
         theme(legend.position = "none")
     }
   })
@@ -251,7 +251,7 @@ ch6_server <- function(input, output, session) {
         scale_color_manual(values = c(col_h0, col_reject)) +
         labs(title = "Wyniki przed i po interwencji",
              x = "Moment", y = "Wynik") +
-        theme_test() +
+        theme_educational() +
         theme(legend.position = "none")
     }
   })

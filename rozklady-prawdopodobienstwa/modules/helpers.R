@@ -41,15 +41,6 @@ dist_names_pl <- c(
   "die"         = "Kostka (dyskretny)"
 )
 
-# Wspolny theme dla wykresow
-theme_prob <- function(base_size = 14) {
-  theme_minimal(base_size = base_size) +
-    theme(
-      plot.title = element_text(face = "bold", size = base_size + 2),
-      plot.subtitle = element_text(color = "#7f8c8d"),
-      panel.grid.minor = element_blank()
-    )
-}
 
 # Rysowanie PMF rozkladu dyskretnego
 plot_pmf <- function(x_vals, probs, fill_color = "#3498db",
@@ -62,7 +53,7 @@ plot_pmf <- function(x_vals, probs, fill_color = "#3498db",
     geom_text(aes(label = round(prob, 3)), vjust = -0.5, size = 3.5) +
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     labs(title = title, x = xlab, y = ylab) +
-    theme_prob()
+    theme_educational()
 
   if (show_mean && !is.null(mu)) {
     p <- p + geom_vline(xintercept = mu, color = "#e74c3c", linewidth = 1.2, linetype = "dashed")
@@ -86,7 +77,7 @@ plot_pdf <- function(density_fn, xlim, fill_color = "#27ae60",
   p <- ggplot(df, aes(x = x, y = y)) +
     geom_line(color = fill_color, linewidth = 1.2) +
     labs(title = title, x = xlab, y = ylab) +
-    theme_prob()
+    theme_educational()
 
   if (!is.null(shade_from) && !is.null(shade_to)) {
     shade_x <- seq(max(xlim[1], shade_from), min(xlim[2], shade_to), length.out = 300)

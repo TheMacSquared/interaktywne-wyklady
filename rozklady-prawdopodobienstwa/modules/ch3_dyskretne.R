@@ -311,7 +311,7 @@ ch3_server <- function(input, output, session) {
       labs(title = paste0("Rozk\u0142ad jednostajny: ", d$n, " pr\u00f3b, ", d$k, " wynik\u00f3w"),
            subtitle = paste0("Linia: P(X=k) = 1/", d$k, " = ", round(1/d$k, 4)),
            x = "Wynik", y = "Cz\u0119sto\u015b\u0107 wzgl\u0119dna") +
-      theme_prob()
+      theme_educational()
   })
 
   # --- Widget 2: Dwumianowy — scenariusze overlay ---
@@ -341,7 +341,7 @@ ch3_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozk\u0142ad dwumianowy B(n, p)",
            x = "Liczba sukces\u00f3w (k)", y = "P(X = k)") +
-      theme_prob() +
+      theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -389,7 +389,7 @@ ch3_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozk\u0142ad Poissona Pois(\u03bb)",
            x = "Liczba zdarze\u0144 (k)", y = "P(X = k)") +
-      theme_prob() +
+      theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -438,7 +438,7 @@ ch3_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozk\u0142ad geometryczny Geom(p)",
            x = "Numer pr\u00f3by (k)", y = "P(X = k)") +
-      theme_prob() +
+      theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -502,7 +502,7 @@ ch3_server <- function(input, output, session) {
       scale_fill_manual(values = c(col_uniform, col_binomial, col_poisson, col_geometric)) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
       labs(x = "Warto\u015b\u0107", y = "Prawdopodobie\u0144stwo") +
-      theme_prob(base_size = 13)
+      theme_educational(base_size = 13)
 
     if (show_ev) {
       pl <- pl + geom_vline(data = stats_df, aes(xintercept = mu),

@@ -175,7 +175,7 @@ ch4_server <- function(input, output, session) {
         scale_fill_manual(values = c(col_test, col_alt), name = NULL) +
         labs(title = paste0("Rozk\u0142ad p-warto\u015bci (H\u2080 prawdziwa, n = ", input$ch4_n, ")"),
              x = "p-warto\u015b\u0107", y = "Liczba") +
-        theme_assumptions() +
+        theme_educational() +
         theme(legend.position = "top")
     }
   })

@@ -393,7 +393,7 @@ ch5_server <- function(input, output, session) {
           labs(title = paste0(par$lab1, " vs ", par$lab2, " (liczno\u015bci)"),
                x = par$lab1, y = "Liczno\u015b\u0107", fill = par$lab2) +
           scale_fill_brewer(palette = "Set2") +
-          theme_test() +
+          theme_educational() +
           theme(legend.position = "top")
       } else {
         # Slupki z procentami (w obr\u0119bie wiersza)
@@ -410,7 +410,7 @@ ch5_server <- function(input, output, session) {
           labs(title = paste0(par$lab1, " vs ", par$lab2, " (% w grupie)"),
                x = par$lab1, y = "Procent", fill = par$lab2) +
           scale_fill_brewer(palette = "Set2") +
-          theme_test() +
+          theme_educational() +
           theme(legend.position = "top")
       }
     } else {

@@ -335,7 +335,7 @@ ch3_server <- function(input, output, session) {
         geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold") +
         scale_fill_manual(values = c(col_accept, col_reject)) +
         labs(title = par$title, x = NULL, y = "Liczba") +
-        theme_test() +
+        theme_educational() +
         theme(legend.position = "none")
 
       if (step >= 2) {
@@ -374,7 +374,7 @@ ch3_server <- function(input, output, session) {
                  color = col_reject, fontface = "bold") +
         labs(title = paste0("Rozk\u0142ad B(", n, ", ", p0, ") pod H\u2080"),
              x = "Liczba sukces\u00f3w", y = "Prawdopodobie\u0144stwo") +
-        theme_test()
+        theme_educational()
     }
   })
 
@@ -476,7 +476,7 @@ ch3_server <- function(input, output, session) {
         geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold") +
         scale_fill_manual(values = c(col_accept, col_reject)) +
         labs(title = par$title, x = NULL, y = "Liczba") +
-        theme_test() +
+        theme_educational() +
         theme(legend.position = "none")
 
       if (step >= 2) {
@@ -517,7 +517,7 @@ ch3_server <- function(input, output, session) {
                                if (par$alt_1s == "greater") "prawy" else "lewy",
                                " ogon)"),
              x = "Liczba sukces\u00f3w", y = "Prawdopodobie\u0144stwo") +
-        theme_test()
+        theme_educational()
     }
   })
 

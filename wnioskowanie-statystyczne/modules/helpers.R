@@ -140,7 +140,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
                hjust = -0.1, color = "#e74c3c", fontface = "bold") +
       labs(title = paste0("Rozk\u0142ad pod H\u2080: ", label),
            x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
-      theme_test()
+      theme_educational()
 
   } else if (alternative == "two.sided") {
     crit <- qt(1 - alpha / 2, df)
@@ -172,7 +172,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
                color = "#e74c3c", fontface = "bold") +
       labs(title = paste0("Rozk\u0142ad pod H\u2080: ", label),
            x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
-      theme_test()
+      theme_educational()
 
   } else {
     # Jednostronny
@@ -199,7 +199,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
                color = "#e74c3c", fontface = "bold") +
       labs(title = paste0("Rozk\u0142ad pod H\u2080: ", label),
            x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
-      theme_test()
+      theme_educational()
   }
 
   p
@@ -249,12 +249,3 @@ generate_phone_data <- function(n_per_group = 40) {
   )
 }
 
-# Wspolny theme
-theme_test <- function(base_size = 14) {
-  theme_minimal(base_size = base_size) +
-    theme(
-      plot.title = element_text(face = "bold", size = base_size + 2),
-      plot.subtitle = element_text(color = "#7f8c8d"),
-      panel.grid.minor = element_blank()
-    )
-}

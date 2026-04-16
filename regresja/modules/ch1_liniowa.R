@@ -173,7 +173,7 @@ ch1_server <- function(input, output, session) {
 
       p + labs(title = paste0(df$y_label[1], " ~ ", df$x_label[1]),
                x = df$x_label[1], y = df$y_label[1]) +
-        theme_reg()
+        theme_educational()
     }
   })
 
@@ -224,14 +224,14 @@ ch1_server <- function(input, output, session) {
         geom_smooth(se = FALSE, color = col_fit, linewidth = 0.8) +
         labs(title = "Reszty vs dopasowane", x = "Warto\u015bci dopasowane",
              y = "Reszty") +
-        theme_reg()
+        theme_educational()
 
       p2 <- ggplot(df, aes(sample = std_resid)) +
         stat_qq(color = col_data, alpha = 0.5) +
         stat_qq_line(color = col_fit) +
         labs(title = "Q-Q reszty", x = "Kwantyle teoretyczne",
              y = "Kwantyle pr\u00f3bkowe") +
-        theme_reg()
+        theme_educational()
 
       gridExtra::grid.arrange(p1, p2, ncol = 2)
     }
@@ -262,7 +262,7 @@ ch1_server <- function(input, output, session) {
         labs(title = paste0("R\u00b2 = ",
                             round(summary(lm(y ~ x, data = df))$r.squared, 3)),
              x = "X", y = "Y") +
-        theme_reg()
+        theme_educational()
     }
   })
 

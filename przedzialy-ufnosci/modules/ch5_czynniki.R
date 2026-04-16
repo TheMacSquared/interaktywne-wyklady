@@ -256,7 +256,7 @@ ch5_server <- function(input, output, session) {
                           "(", round(conf * 100), "% CI, s = ", s, ")"),
            x = "Wielko\u015b\u0107 pr\u00f3by (n)",
            y = "Margines b\u0142\u0119du (ME)") +
-      theme_ci()
+      theme_educational()
 
     # ---- DOLNY PANEL: sam pasek CI na fixed osi X ----
     # Worst-case ME (n=5, conf=0.99, s=12) -> ustala stale granice osi X
@@ -268,7 +268,7 @@ ch5_server <- function(input, output, session) {
       ylim(-0.6, 0.6) +
       labs(x = "Warto\u015b\u0107 (np. wzrost w cm)", y = NULL,
            title = "Tw\u00f3j 95% CI na sta\u0142ej osi") +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -351,7 +351,7 @@ ch5_server <- function(input, output, session) {
                color = col_success, fontface = "bold", size = 5) +
       labs(title = "Margines b\u0142\u0119du vs wielko\u015b\u0107 pr\u00f3by",
            x = "n", y = "Margines b\u0142\u0119du") +
-      theme_ci()
+      theme_educational()
 
     # ---- DOLNY PANEL: pasek CI przy n_req, z dopuszczalna strefa ----
     xlims <- c(center - 3 * me_max, center + 3 * me_max)
@@ -362,7 +362,7 @@ ch5_server <- function(input, output, session) {
       labs(x = "Warto\u015b\u0107 (jednostki dowolne)", y = NULL,
            title = paste0("CI przy n = ", n_req,
                           "  \u2014  szara strefa = dopuszczalny ME = \u00b1", me_max)) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -436,7 +436,7 @@ ch5_server <- function(input, output, session) {
                  hjust = 0, size = 4) +
         labs(title = "Ten sam zbi\u00f3r \u2014 trzy poziomy ufno\u015bci",
              x = "Warto\u015b\u0107", y = "Poziom ufno\u015bci") +
-        theme_ci()
+        theme_educational()
     }
   })
 
@@ -582,7 +582,7 @@ ch5_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(-0.65, 0.65) +
       labs(x = cfg$xlab, y = NULL) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),

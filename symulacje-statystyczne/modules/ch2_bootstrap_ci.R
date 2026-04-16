@@ -330,7 +330,7 @@ ch2_server <- function(input, output, session) {
                      paste0("Liczba pr\u00f3b: ", nrow(df)),
         x = stat_label, y = NULL
       ) +
-      theme_sim() +
+      theme_educational() +
       theme(axis.text.y = element_text(size = 10))
 
     if (!is.null(true_val)) {
@@ -440,7 +440,7 @@ ch2_server <- function(input, output, session) {
       labs(title = "Ostatnia pr\u00f3ba",
            subtitle = paste0(stat_lbl, " = ", round(last_obs, 3)),
            x = "Warto\u015b\u0107", y = "Liczba") +
-      theme_sim()
+      theme_educational()
 
     # Prawy panel: belki CI
     p_ci <- plot_ci_bands(cis, stat_lbl, input$ch2b_conf, true_val = true_val)
@@ -532,7 +532,7 @@ ch2_server <- function(input, output, session) {
                           "  |  ", sum(covers), " z ", length(covers), " CI trafi\u0142o"),
         x = "\u015arednia", y = "Symulacja"
       ) +
-      theme_sim()
+      theme_educational()
   }, height = function() {
     res <- ch2c_result()
     if (is.null(res)) 500 else max(400, 60 + length(res$cis) * 9)

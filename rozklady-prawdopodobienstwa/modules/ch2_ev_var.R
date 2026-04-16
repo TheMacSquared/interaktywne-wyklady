@@ -277,7 +277,7 @@ ch2_ev_var_server <- function(input, output, session) {
         )) +
         labs(title = "\u015arednia wygrana na gr\u0119 \u2192 E(X)",
              x = "Liczba gier", y = "\u015arednia wygrana (z\u0142)") +
-        theme_prob()
+        theme_educational()
     }
   })
 
@@ -359,7 +359,7 @@ ch2_ev_var_server <- function(input, output, session) {
       scale_x_continuous(breaks = x_vals, limits = c(0, 10)) +
       labs(title = "Rozk\u0142ad na wadze \u2014 E(X) to punkt r\u00f3wnowagi",
            x = "Warto\u015b\u0107 (x)", y = "Prawdopodobie\u0144stwo P(X=x)") +
-      theme_prob()
+      theme_educational()
   })
 
   output$ch2ev_balance_text <- renderUI({
@@ -429,7 +429,7 @@ ch2_ev_var_server <- function(input, output, session) {
                color = col_secondary, fontface = "bold", size = 4, vjust = 2) +
       labs(title = paste0("Wyniki ", d$n, " gier \u2014 to samo E(X), r\u00f3\u017cne ryzyko"),
            x = "Wygrana (z\u0142)", y = "Liczebno\u015b\u0107") +
-      theme_prob(base_size = 12)
+      theme_educational(base_size = 12)
   })
 
   output$ch2ev_var_summary <- renderUI({

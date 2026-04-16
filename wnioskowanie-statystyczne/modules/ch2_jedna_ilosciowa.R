@@ -254,7 +254,7 @@ ch2_server <- function(input, output, session) {
       p <- ggplot(data.frame(x = samp), aes(x = x)) +
         geom_histogram(bins = 15, fill = col_h0, alpha = 0.6, color = "white") +
         labs(title = par$title, x = par$xlab, y = "Liczba") +
-        theme_test()
+        theme_educational()
 
       if (step >= 2) {
         # Dodaj srednia i mu0
@@ -289,7 +289,7 @@ ch2_server <- function(input, output, session) {
                  color = col_reject, fontface = "bold") +
         labs(title = paste0("Rozk\u0142ad pod H\u2080: t(", n - 1, ")"),
              x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
-        theme_test()
+        theme_educational()
 
     } else {
       # Krok 4: rozklad t z zacienionym polem p-wartosci
@@ -419,7 +419,7 @@ ch2_server <- function(input, output, session) {
       p <- ggplot(data.frame(x = samp), aes(x = x)) +
         geom_histogram(bins = 15, fill = col_h0, alpha = 0.6, color = "white") +
         labs(title = par$title, x = par$xlab, y = "Liczba") +
-        theme_test()
+        theme_educational()
 
       if (step >= 2) {
         p <- p +
@@ -453,7 +453,7 @@ ch2_server <- function(input, output, session) {
         labs(title = paste0("Rozk\u0142ad pod H\u2080: t(", n - 1, ")"),
              subtitle = "Test jednostronny \u2014 tylko jeden ogon!",
              x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
-        theme_test()
+        theme_educational()
     } else {
       n <- length(samp)
       t_stat <- (mean(samp) - mu0) / (sd(samp) / sqrt(n))

@@ -269,7 +269,7 @@ ch1_server <- function(input, output, session) {
       scale_fill_manual(values = c(col_accept, col_reject)) +
       labs(title = "Wyniki testu koncentracji",
            x = NULL, y = "Wynik (0\u2013100 pkt)") +
-      theme_test() +
+      theme_educational() +
       theme(legend.position = "none") +
       coord_cartesian(ylim = c(20, 100))
   })
@@ -357,7 +357,7 @@ ch1_server <- function(input, output, session) {
         labs(title = "R\u00f3\u017cnice \u015brednich z symulowanych eksperyment\u00f3w (H\u2080 prawdziwa)",
              subtitle = "Czerwona linia = prawdziwa r\u00f3\u017cnica z eksperymentu",
              x = "R\u00f3\u017cnica \u015brednich (grupa A \u2212 grupa B)", y = "Liczba") +
-        theme_test() +
+        theme_educational() +
         theme(legend.position = "top")
     }
   })
@@ -404,7 +404,7 @@ ch1_server <- function(input, output, session) {
       scale_color_manual(values = c(col_h0, col_h1), name = "Rozk\u0142ad") +
       labs(title = paste0("Moc testu (n=", n, " na grup\u0119, r\u00f3\u017cnica=", diff_means, " pkt, \u03b1=", alpha, ")"),
            x = "\u015arednia koncentracja w pr\u00f3bie", y = "G\u0119sto\u015b\u0107") +
-      theme_test() +
+      theme_educational() +
       theme(legend.position = "top")
 
     # Shade rejection region under H0

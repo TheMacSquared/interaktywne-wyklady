@@ -366,7 +366,7 @@ ch3_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(-0.55, 0.75) +
       labs(x = "Wzrost (cm)", y = NULL) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -565,7 +565,7 @@ ch3_server <- function(input, output, session) {
       xlim(xlims_top) +
       ylim(0.35, 2.25) +
       labs(x = "Wzrost (cm)", y = NULL) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -622,7 +622,7 @@ ch3_server <- function(input, output, session) {
       ylim(-0.55, 0.55) +
       labs(x = "R\u00f3\u017cnica \u015brednich (cm)  \u2014  M\u0119\u017cczy\u017ani \u2212 Kobiety",
            y = NULL) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -970,7 +970,7 @@ ch3_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(-0.55, 0.75) +
       labs(x = xlab, y = NULL, title = title) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1063,7 +1063,7 @@ ch3_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(0.3, length(ns) + 0.7) +
       labs(x = xlab, y = NULL) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1165,7 +1165,7 @@ ch3_server <- function(input, output, session) {
       xlim(xlims_top) +
       ylim(0.35, 2.25) +
       labs(x = xlab, y = NULL) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1217,7 +1217,7 @@ ch3_server <- function(input, output, session) {
       ylim(-0.55, 0.65) +
       labs(x = paste0("R\u00f3\u017cnica (", data$unit, ")  \u2014  ", data$diff_label),
            y = NULL) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1324,7 +1324,7 @@ ch3_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(0.3, k + 0.7) +
       labs(x = xlab, y = NULL) +
-      theme_ci() +
+      theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),

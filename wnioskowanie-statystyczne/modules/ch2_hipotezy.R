@@ -617,6 +617,6 @@ ch2h_server <- function(input, output, session) {
       labs(x = "Statystyka testowa (z)", y = "G\u0119sto\u015b\u0107") +
       annotate("text", x = 0, y = max(y) * 0.5, label = "Nie odrzucamy H\u2080",
                color = col_accept, fontface = "bold", size = 5) +
-      theme_test()
+      theme_educational()
   })
 }

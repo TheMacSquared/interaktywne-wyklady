@@ -378,12 +378,12 @@ ch1_server <- function(input, output, session) {
     p1 <- ggplot(ca, aes(x = .data[[var]])) +
       geom_histogram(bins = 30, fill = col_explore, alpha = 0.6, color = "white") +
       labs(title = paste0("Rozk\u0142ad: ", var_label), x = var_label, y = "Liczba") +
-      theme_case()
+      theme_educational()
 
     p2 <- ggplot(ca, aes(y = .data[[var]])) +
       geom_boxplot(fill = col_explore, alpha = 0.4) +
       labs(title = "Boxplot", y = var_label) +
-      theme_case()
+      theme_educational()
 
     gridExtra::grid.arrange(p1, p2, ncol = 2, widths = c(2, 1))
   })
@@ -424,7 +424,7 @@ ch1_server <- function(input, output, session) {
                            midpoint = 0, limits = c(-1, 1), name = "r") +
       labs(title = "Macierz korelacji \u2014 szukamy powi\u0105za\u0144 i potencjalnych zak\u0142\u00f3ce\u0144",
            x = NULL, y = NULL) +
-      theme_case() +
+      theme_educational() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
   })
 
@@ -446,7 +446,7 @@ ch1_server <- function(input, output, session) {
            subtitle = "Ka\u017cdy punkt = jeden dystrykt szkolny",
            x = "Uczniowie na nauczyciela (STR)",
            y = "\u015aredni wynik egzaminu") +
-      theme_case()
+      theme_educational()
   })
 
   output$ch1_str_test <- renderUI({
@@ -485,7 +485,7 @@ ch1_server <- function(input, output, session) {
       labs(title = "Warunek (a): lunch \u2192 wyniki?",
            subtitle = paste0("r = ", round(cor(ca$lunch, ca$score), 3)),
            x = "% darmowy lunch", y = "Wynik") +
-      theme_case()
+      theme_educational()
   })
 
   output$ch1_conf_b <- renderPlot({
@@ -495,7 +495,7 @@ ch1_server <- function(input, output, session) {
       labs(title = "Warunek (b): lunch \u2192 STR?",
            subtitle = paste0("r = ", round(cor(ca$lunch, ca$str), 3)),
            x = "% darmowy lunch", y = "STR") +
-      theme_case()
+      theme_educational()
   })
 
   output$ch1_conf_stats <- renderUI({
@@ -523,7 +523,7 @@ ch1_server <- function(input, output, session) {
       labs(title = "Wyniki wg poziomu biedy",
            x = "Poziom biedy (na podst. % darmowy lunch)",
            y = "\u015aredni wynik") +
-      theme_case() +
+      theme_educational() +
       theme(legend.position = "none")
   })
 
@@ -637,7 +637,7 @@ ch1_server <- function(input, output, session) {
                         name = NULL) +
       labs(title = "Jak zmienia si\u0119 efekt STR po dodaniu zmiennych kontrolnych?",
            x = NULL, y = "\u03b2 przy STR") +
-      theme_case() +
+      theme_educational() +
       theme(legend.position = "top",
             axis.text.x = element_text(angle = 20, hjust = 1))
   })
@@ -704,7 +704,7 @@ ch1_server <- function(input, output, session) {
                          labels = c("TRUE" = "p < 0.05", "FALSE" = "p \u2265 0.05"),
                          name = NULL) +
       labs(title = "Wsp\u00f3\u0142czynniki z 95% CI", x = "\u03b2", y = NULL) +
-      theme_case() + theme(legend.position = "top")
+      theme_educational() + theme(legend.position = "top")
   })
 
   output$ch1_reg_metrics <- renderUI({

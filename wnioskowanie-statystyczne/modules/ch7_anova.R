@@ -176,7 +176,7 @@ ch7_server <- function(input, output, session) {
         scale_fill_brewer(palette = "Set2") +
         labs(title = paste0(var_label, " wed\u0142ug kierunku"),
              x = "Kierunek", y = var_label) +
-        theme_test() +
+        theme_educational() +
         theme(legend.position = "none")
     }
   })
@@ -233,7 +233,7 @@ ch7_server <- function(input, output, session) {
                          name = NULL) +
       labs(title = "Tukey HSD: r\u00f3\u017cnice parowe z 95% CI",
            x = "R\u00f3\u017cnica \u015brednich", y = "Por\u00f3wnanie") +
-      theme_test() +
+      theme_educational() +
       theme(legend.position = "top")
   })
 

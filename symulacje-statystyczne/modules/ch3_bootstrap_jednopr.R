@@ -228,7 +228,7 @@ ch3_server <- function(input, output, session) {
                  vjust = -0.3, hjust = -0.1, color = col_secondary, size = 4) +
         labs(title = paste0("Krok 1: Pr\u00f3ba (n = ", length(x), ")"),
              x = params$stat_lbl, y = "Liczebno\u015b\u0107") +
-        theme_sim()
+        theme_educational()
     } else if (step == 2) {
       rs <- ch3_one_rs()
       plot_bootstrap_step(x, rs, col_primary, col_warning, col_dark)
@@ -244,7 +244,7 @@ ch3_server <- function(input, output, session) {
                      linewidth = 1.4) +
           labs(title = paste0("Krok 3: Rozk\u0142ad bootstrapowy (B = ", result$B, ")"),
                x = params$stat_lbl, y = "Liczba pr\u00f3b") +
-          theme_sim()
+          theme_educational()
       } else {
         # Krok 4: z CI
         plot_bootstrap_distribution(result, ci,
@@ -326,7 +326,7 @@ ch3_server <- function(input, output, session) {
              subtitle = "Plateau po ok. B = 1000",
              x = "B (liczba pr\u00f3b bootstrapowych)",
              y = "Szeroko\u015b\u0107 95% CI") +
-        theme_sim()
+        theme_educational()
     })
   })
 

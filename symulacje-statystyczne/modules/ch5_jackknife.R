@@ -264,7 +264,7 @@ ch5_server <- function(input, output, session) {
            subtitle = paste0("Jackknife SE = ", round(se_j, 4),
                              "  |  Bootstrap SE = ", round(se_b, 4)),
            x = "Warto\u015b\u0107 statystyki", y = NULL) +
-      theme_sim()
+      theme_educational()
   })
 
   output$ch5_cmp_stats <- renderUI({

@@ -464,30 +464,30 @@ ch4_server <- function(input, output, session) {
       ggplot(df, aes(x = x)) +
         geom_rug(color = col_primary, alpha = 0.3) +
         labs(title = "Krok 1: Surowe dane", x = "Warto\u015b\u0107", y = "") +
-        theme_prob()
+        theme_educational()
     } else if (step == 2) {
       ggplot(df, aes(x = x)) +
         geom_histogram(bins = 5, fill = col_primary, color = "white", alpha = 0.7) +
         geom_rug(alpha = 0.2) +
         labs(title = "Krok 2: Histogram (5 bin\u00f3w)", x = "Warto\u015b\u0107", y = "Liczebno\u015b\u0107") +
-        theme_prob()
+        theme_educational()
     } else if (step == 3) {
       ggplot(df, aes(x = x)) +
         geom_histogram(bins = 15, fill = col_primary, color = "white", alpha = 0.7) +
         labs(title = "Krok 3: Histogram (15 bin\u00f3w)", x = "Warto\u015b\u0107", y = "Liczebno\u015b\u0107") +
-        theme_prob()
+        theme_educational()
     } else if (step == 4) {
       ggplot(df, aes(x = x)) +
         geom_histogram(bins = 30, fill = col_primary, color = "white", alpha = 0.7) +
         labs(title = "Krok 4: Histogram (30 bin\u00f3w)", x = "Warto\u015b\u0107", y = "Liczebno\u015b\u0107") +
-        theme_prob()
+        theme_educational()
     } else if (step == 5) {
       ggplot(df, aes(x = x)) +
         geom_histogram(aes(y = after_stat(density)), bins = 30,
                        fill = col_primary, color = "white", alpha = 0.7) +
         labs(title = "Krok 5: Skala g\u0119sto\u015bci (o\u015b Y = g\u0119sto\u015b\u0107)",
              x = "Warto\u015b\u0107", y = "G\u0119sto\u015b\u0107") +
-        theme_prob()
+        theme_educational()
     } else if (step == 6) {
       ggplot(df, aes(x = x)) +
         geom_histogram(aes(y = after_stat(density)), bins = 30,
@@ -495,14 +495,14 @@ ch4_server <- function(input, output, session) {
         geom_density(color = col_secondary, linewidth = 1.5) +
         labs(title = "Krok 6: Histogram + krzywa g\u0119sto\u015bci",
              x = "Warto\u015b\u0107", y = "G\u0119sto\u015b\u0107") +
-        theme_prob()
+        theme_educational()
     } else {
       ggplot(df, aes(x = x)) +
         geom_density(fill = col_primary, color = col_dark, linewidth = 1.2, alpha = 0.3) +
         labs(title = "Krok 7: Funkcja g\u0119sto\u015bci (PDF)",
              subtitle = "Matematyczna idealizacja histogramu",
              x = "Warto\u015b\u0107", y = "G\u0119sto\u015b\u0107 f(x)") +
-        theme_prob()
+        theme_educational()
     }
   })
 
@@ -573,7 +573,7 @@ ch4_server <- function(input, output, session) {
                size = 6, fontface = "bold", color = col_dark) +
       labs(title = paste0("P(", a, " < X < ", b, ")"),
            x = "x", y = "f(x)") +
-      theme_prob()
+      theme_educational()
   })
 
   output$ch4_area_stats <- renderUI({
@@ -623,7 +623,7 @@ ch4_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozk\u0142ad jednostajny U(a, b)",
            x = "x", y = "f(x)") +
-      theme_prob() +
+      theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -670,7 +670,7 @@ ch4_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozk\u0142ad wyk\u0142adniczy Exp(\u03bb)",
            x = "x", y = "f(x)") +
-      theme_prob() +
+      theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -722,7 +722,7 @@ ch4_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozk\u0142ad t-Studenta t(df)",
            x = "x", y = "f(x)") +
-      theme_prob() +
+      theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -770,7 +770,7 @@ ch4_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozk\u0142ad \u03c7\u00b2(df)",
            x = "x", y = "f(x)") +
-      theme_prob() +
+      theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -819,7 +819,7 @@ ch4_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozk\u0142ad log-normalny LogN(\u03bc, \u03c3)",
            x = "x", y = "f(x)") +
-      theme_prob() +
+      theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 

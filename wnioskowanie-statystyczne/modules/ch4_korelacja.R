@@ -391,7 +391,7 @@ ch4_server <- function(input, output, session) {
       p <- ggplot(d, aes(x = x, y = y)) +
         geom_point(color = col_h0, alpha = 0.6, size = 2.5) +
         labs(title = par$title, x = par$xlab, y = par$ylab) +
-        theme_test()
+        theme_educational()
 
       if (step >= 2) {
         p <- p + geom_smooth(method = "lm", se = FALSE,
@@ -418,7 +418,7 @@ ch4_server <- function(input, output, session) {
                  color = col_reject, fontface = "bold") +
         labs(title = paste0("Rozk\u0142ad pod H\u2080: t(", n - 2, ")"),
              x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
-        theme_test()
+        theme_educational()
     } else {
       n <- nrow(d)
       r_val <- cor(d$x, d$y)
@@ -511,7 +511,7 @@ ch4_server <- function(input, output, session) {
       p <- ggplot(d, aes(x = x, y = y)) +
         geom_point(color = col_h0, alpha = 0.6, size = 2.5) +
         labs(title = par$title, x = par$xlab, y = par$ylab) +
-        theme_test()
+        theme_educational()
       if (step >= 2) {
         p <- p + geom_smooth(method = "lm", se = FALSE,
                              color = col_reject, linewidth = 1)
@@ -533,7 +533,7 @@ ch4_server <- function(input, output, session) {
         labs(title = paste0("Rozk\u0142ad pod H\u2080: t(", n - 2, ")"),
              subtitle = "Test jednostronny \u2014 tylko jeden ogon!",
              x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
-        theme_test()
+        theme_educational()
     } else {
       plot_test_distribution(t_stat, df = n - 2, test_type = "t",
                              alternative = par$alt_1s)
@@ -616,7 +616,7 @@ ch4_server <- function(input, output, session) {
         geom_smooth(method = "lm", se = FALSE, color = col_reject, alpha = 0.5) +
         labs(title = paste0("r = ", round(r_val, 3)),
              x = "X", y = "Y") +
-        theme_test()
+        theme_educational()
     }
   })
 

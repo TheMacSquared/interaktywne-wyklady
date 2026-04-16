@@ -181,7 +181,7 @@ ch6_server <- function(input, output, session) {
                 color = col_secondary, linewidth = 1.5) +
       labs(title = paste0("Model: wielomian stopnia ", degree),
            x = "x", y = "y") +
-      theme_sim()
+      theme_educational()
 
     # Prawy panel: bledy per fold
     n_folds <- length(result$fold_errors)
@@ -203,7 +203,7 @@ ch6_server <- function(input, output, session) {
                hjust = 0, vjust = -0.4, color = col_cv_train, size = 3.5) +
       labs(title = paste0(n_folds, "-Fold CV: b\u0142\u0105d per fold"),
            x = "Fold", y = "MSE") +
-      theme_sim()
+      theme_educational()
 
     gridExtra::grid.arrange(p1, p2, ncol = 2)
   })

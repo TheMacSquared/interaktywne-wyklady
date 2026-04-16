@@ -204,7 +204,7 @@ ch4_server <- function(input, output, session) {
         facet_wrap(~metric, scales = "free_y", ncol = 4) +
         scale_fill_manual(values = c(col_fit, col_predict, col_warning, col_logit)) +
         labs(title = "Metryki 4 modeli", x = NULL, y = "Warto\u015b\u0107") +
-        theme_reg() +
+        theme_educational() +
         theme(legend.position = "none",
               axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
     }
@@ -274,7 +274,7 @@ ch4_server <- function(input, output, session) {
         labs(title = "Regresja liniowa vs logistyczna (dane binarne)",
              x = "Godziny nauki", y = "P(zdanie)") +
         ylim(-0.2, 1.2) +
-        theme_reg()
+        theme_educational()
     }
   })
 
@@ -334,7 +334,7 @@ ch4_server <- function(input, output, session) {
         geom_line(data = pred_df, aes(x = x, y = y), color = col_fit, linewidth = 1.2) +
         labs(title = paste0("Wielomian stopnia ", degree),
              x = "X", y = "Y") +
-        theme_reg()
+        theme_educational()
     }
   })
 

@@ -308,7 +308,7 @@ ch1_server <- function(input, output, session) {
       subtitle = paste0("n = ", d$n, " | ", dist_label),
       x = "Warto\u015b\u0107", y = "G\u0119sto\u015b\u0107"
     ) +
-    theme_prob()
+    theme_educational()
   })
 
   output$ch1_emp_text <- renderUI({
@@ -375,7 +375,7 @@ ch1_server <- function(input, output, session) {
         labs(title = "Cz\u0119sto\u015bci wzgl\u0119dne", x = "\u015acianka", y = "Cz\u0119sto\u015b\u0107 wzgl\u0119dna") +
         annotate("text", x = 6.3, y = 1/6, label = "1/6", color = col_secondary,
                  fontface = "bold", size = 4, hjust = 0) +
-        theme_prob()
+        theme_educational()
     }
   })
 
@@ -406,7 +406,7 @@ ch1_server <- function(input, output, session) {
       scale_color_brewer(palette = "Set2", name = "\u015acianka") +
       labs(title = "Zbie\u017cno\u015b\u0107 cz\u0119sto\u015bci do 1/6",
            x = "Liczba rzut\u00f3w", y = "Cz\u0119sto\u015b\u0107 wzgl\u0119dna") +
-      theme_prob() +
+      theme_educational() +
       theme(legend.position = "right")
   })
 
@@ -465,7 +465,7 @@ ch1_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = paste0("n = ", length(fd$obs), " obserwacji"),
            x = "Wynik", y = "Proporcja / Prawdopodobie\u0144stwo") +
-      theme_prob() +
+      theme_educational() +
       theme(legend.position = "top")
   })
 
@@ -511,7 +511,7 @@ ch1_server <- function(input, output, session) {
       scale_y_continuous(limits = c(0, 1.1), expand = expansion(mult = c(0, 0))) +
       labs(title = if (valid) "Poprawny rozk\u0142ad!" else "Suma musi wynosi\u0107 1",
            x = "Wynik", y = "Prawdopodobie\u0144stwo") +
-      theme_prob()
+      theme_educational()
   })
 
 }

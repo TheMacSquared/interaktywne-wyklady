@@ -288,7 +288,7 @@ ch1_server <- function(input, output, session) {
                  color = col_estimate, fontface = "bold", size = 5) +
         labs(title = "Rozk\u0142ad estymat \u015bredniej",
              x = expression(bar(x)), y = "G\u0119sto\u015b\u0107") +
-        theme_ci()
+        theme_educational()
     }
   })
 
@@ -345,7 +345,7 @@ ch1_server <- function(input, output, session) {
                  vjust = -1, color = col_true, fontface = "bold") +
         labs(title = paste0("Kolejne estymaty \u015bredniej (n = ", input$ch1_fluct_n, ")"),
              x = "Numer losowania", y = expression(bar(x))) +
-        theme_ci()
+        theme_educational()
     }
   })
 }
