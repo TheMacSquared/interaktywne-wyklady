@@ -178,14 +178,14 @@ ch1_server <- function(input, output, session) {
                       color = col_ok, linewidth = 1.2, linetype = "dashed") +
         labs(title = "Histogram + krzywa normalna",
              x = "Warto\u015b\u0107", y = "G\u0119sto\u015b\u0107") +
-        theme_assumptions()
+        theme_educational()
 
       p2 <- ggplot(df, aes(sample = x)) +
         stat_qq(color = col_test, alpha = 0.6) +
         stat_qq_line(color = col_ok, linewidth = 1) +
         labs(title = "Q-Q plot",
              x = "Kwantyle teoretyczne", y = "Kwantyle pr\u00f3bkowe") +
-        theme_assumptions()
+        theme_educational()
 
       gridExtra::grid.arrange(p1, p2, ncol = 2)
     }
@@ -197,10 +197,10 @@ ch1_server <- function(input, output, session) {
     x <- isolate(ch1_data())
     if (is.null(x)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
 
-    sw <- shapiro.test(x)
+    sw <- shapiro_test(data.frame(value = x), value)
     ks <- ks.test(x, "pnorm", mean = mean(x), sd = sd(x))
 
-    sw_color <- if (sw$p.value >= 0.05) col_ok else col_fail
+    sw_color <- if (sw$p >= 0.05) col_ok else col_fail
     ks_color <- if (ks$p.value >= 0.05) col_ok else col_fail
 
     tagList(
@@ -209,9 +209,9 @@ ch1_server <- function(input, output, session) {
           column(6,
             p(tags$strong("Shapiro-Wilk:")),
             p(paste0("W = ", round(sw$statistic, 4))),
-            p(paste0("p = ", format.pval(sw$p.value, digits = 4))),
+            p(paste0("p = ", format.pval(sw$p, digits = 4))),
             p(style = paste0("color:", sw_color, "; font-weight: bold;"),
-              if (sw$p.value >= 0.05) "Brak podstaw do odrzucenia normalno\u015bci"
+              if (sw$p >= 0.05) "Brak podstaw do odrzucenia normalno\u015bci"
               else "Normalno\u015b\u0107 odrzucona!")
           ),
           column(6,
@@ -249,13 +249,13 @@ ch1_server <- function(input, output, session) {
         stat_qq(color = col_fail, alpha = 0.5) +
         stat_qq_line(color = col_fail) +
         labs(title = "Oryginalne (prawosko\u015bne)") +
-        theme_assumptions()
+        theme_educational()
 
       p2 <- ggplot(data.frame(x = log_x), aes(sample = x)) +
         stat_qq(color = col_ok, alpha = 0.5) +
         stat_qq_line(color = col_ok) +
         labs(title = "Po log()") +
-        theme_assumptions()
+        theme_educational()
 
       gridExtra::grid.arrange(p1, p2, ncol = 2)
     }
@@ -265,16 +265,16 @@ ch1_server <- function(input, output, session) {
     x <- ch1_trans_data()
     if (is.null(x)) return(NULL)
 
-    sw_orig <- shapiro.test(x)
-    sw_log <- shapiro.test(log(x))
+    sw_orig <- shapiro_test(data.frame(value = x), value)
+    sw_log <- shapiro_test(data.frame(value = log(x)), value)
 
     tagList(
       div(class = "stat-box",
-          style = paste0("background:", if (sw_orig$p.value >= 0.05) col_ok else col_fail, ";"),
-          paste0("Oryginalne: p = ", format.pval(sw_orig$p.value, digits = 3))),
+          style = paste0("background:", if (sw_orig$p >= 0.05) col_ok else col_fail, ";"),
+          paste0("Oryginalne: p = ", format.pval(sw_orig$p, digits = 3))),
       div(class = "stat-box",
-          style = paste0("background:", if (sw_log$p.value >= 0.05) col_ok else col_fail, ";"),
-          paste0("Po log(): p = ", format.pval(sw_log$p.value, digits = 3)))
+          style = paste0("background:", if (sw_log$p >= 0.05) col_ok else col_fail, ";"),
+          paste0("Po log(): p = ", format.pval(sw_log$p, digits = 3)))
     )
   })
 }

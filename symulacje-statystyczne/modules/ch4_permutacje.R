@@ -217,7 +217,7 @@ ch4_server <- function(input, output, session) {
         labs(title = "Krok 1: Dane oryginalne",
              subtitle = paste0("R\u00f3\u017cnica obserwowana: \u0394 = ", round(obs_diff, 2)),
              x = "Grupa", y = "Warto\u015b\u0107") +
-        theme_sim()
+        theme_educational()
     } else if (step == 2) {
       # Jedna permutacja
       perm_df  <- ch4_one_perm()
@@ -236,7 +236,7 @@ ch4_server <- function(input, output, session) {
         labs(title = "Krok 2: Jedna permutacja etykiet",
              subtitle = "Etykiety grup przetasowane losowo",
              x = "Grupa (przetasowana)", y = "Warto\u015b\u0107") +
-        theme_sim()
+        theme_educational()
     } else {
       # Krok 3 i 4: rozklad permutacyjny
       result <- ch4_perm_res()
@@ -273,7 +273,7 @@ ch4_server <- function(input, output, session) {
           y        = "Liczba permutacji"
         )
       }
-      p + theme_sim()
+      p + theme_educational()
     }
   })
 
@@ -311,7 +311,7 @@ ch4_server <- function(input, output, session) {
     if (!is.null(tt)) {
       out <- tagList(out,
         div(class = "stat-box", style = paste0("background:", col_classical, ";"),
-            paste0("p (t-test) = ", round(tt$p.value, 4)))
+            paste0("p (t-test) = ", round(tt$p, 4)))
       )
     }
     out
@@ -350,7 +350,7 @@ ch4_server <- function(input, output, session) {
                hjust = 0, vjust = 1, size = 5, fontface = "bold", color = col_secondary) +
       labs(title = paste0("Dane (n = ", nrow(df), ")"),
            x = "x", y = "y") +
-      theme_sim()
+      theme_educational()
 
     df_perm <- data.frame(r = res$perm_cors)
     extreme <- abs(df_perm$r) >= abs(res$observed_r)
@@ -368,7 +368,7 @@ ch4_server <- function(input, output, session) {
         x        = "Korelacja r*",
         y        = "Liczba permutacji"
       ) +
-      theme_sim()
+      theme_educational()
 
     gridExtra::grid.arrange(p1, p2, ncol = 1, heights = c(1.4, 1))
   })

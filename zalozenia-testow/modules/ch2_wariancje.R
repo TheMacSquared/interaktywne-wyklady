@@ -147,7 +147,7 @@ ch2_server <- function(input, output, session) {
         geom_jitter(width = 0.15, alpha = 0.3) +
         scale_fill_manual(values = c(col_test, col_alt)) +
         labs(title = "Dwie grupy", x = "Grupa", y = "Warto\u015b\u0107") +
-        theme_assumptions() +
+        theme_educational() +
         theme(legend.position = "none")
     }
   })
@@ -208,22 +208,22 @@ ch2_server <- function(input, output, session) {
     df <- isolate(ch2_data())
     if (is.null(df)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
 
-    t_classic <- t.test(value ~ group, data = df, var.equal = TRUE)
-    t_welch <- t.test(value ~ group, data = df, var.equal = FALSE)
+    t_classic <- t_test(df, value ~ group, var.equal = TRUE)
+    t_welch <- t_test(df, value ~ group, var.equal = FALSE)
 
     div(class = "callout-info",
       fluidRow(
         column(6,
           p(tags$strong("Test t klasyczny"), " (var.equal=TRUE):"),
-          p(paste0("t(", round(t_classic$parameter, 1), ") = ",
+          p(paste0("t(", round(t_classic$df, 1), ") = ",
                    round(t_classic$statistic, 3))),
-          p(paste0("p = ", format.pval(t_classic$p.value, digits = 4)))
+          p(paste0("p = ", format.pval(t_classic$p, digits = 4)))
         ),
         column(6,
           p(tags$strong("Test Welcha"), " (var.equal=FALSE):"),
-          p(paste0("t(", round(t_welch$parameter, 1), ") = ",
+          p(paste0("t(", round(t_welch$df, 1), ") = ",
                    round(t_welch$statistic, 3))),
-          p(paste0("p = ", format.pval(t_welch$p.value, digits = 4)))
+          p(paste0("p = ", format.pval(t_welch$p, digits = 4)))
         )
       ),
       p(style = "margin-top: 10px;",

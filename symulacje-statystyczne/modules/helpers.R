@@ -267,13 +267,9 @@ run_permutation_test_correlation <- function(data, B = 1000,
 }
 
 # Klasyczny t-test dla dwoch grup (do porownania)
-# Zwraca data.frame z broom::tidy
+# Zwraca tibble z rstatix::t_test
 classical_ttest_twosample <- function(data) {
-  groups <- levels(data$group)
-  x_a <- data$value[data$group == groups[1]]
-  x_b <- data$value[data$group == groups[2]]
-  tt  <- t.test(x_b, x_a, var.equal = FALSE)
-  broom::tidy(tt)
+  t_test(data, value ~ group, var.equal = FALSE)
 }
 
 # ============================================================================
@@ -415,15 +411,6 @@ run_mc_null <- function(observed_data, scenario, B = 5000, seed = NULL) {
 # HELPERY WIZUALIZACJI
 # ============================================================================
 
-# Wspolny theme
-theme_sim <- function(base_size = 14) {
-  theme_minimal(base_size = base_size) +
-    theme(
-      plot.title    = element_text(face = "bold", size = base_size + 2),
-      plot.subtitle = element_text(color = "#7f8c8d"),
-      panel.grid.minor = element_blank()
-    )
-}
 
 # Histogram rozkladu bootstrapowego z zaznaczonymi granicami CI
 plot_bootstrap_distribution <- function(boot_result, ci,
@@ -449,7 +436,7 @@ plot_bootstrap_distribution <- function(boot_result, ci,
       x = stat_label,
       y = "Liczba pr\u00f3b"
     ) +
-    theme_sim()
+    theme_educational()
 }
 
 # Histogram rozkladu permutacyjnego z zaznaczona obserwacja i p-wartoscia
@@ -479,7 +466,7 @@ plot_permutation_distribution <- function(perm_result,
       x = stat_label,
       y = "Liczba permutacji"
     ) +
-    theme_sim()
+    theme_educational()
 }
 
 # Nullowy operator koalescencji (jak w purrr)
@@ -502,7 +489,7 @@ plot_ci_comparison <- function(ci_df, true_value = NULL,
                        guide = "none") +
     labs(title = "Por\u00f3wnanie przedzia\u0142\u00f3w ufno\u015bci",
          x = "Warto\u015b\u0107", y = NULL) +
-    theme_sim()
+    theme_educational()
 
   if (!is.null(true_value)) {
     p <- p + geom_vline(xintercept = true_value,
@@ -581,7 +568,7 @@ plot_bootstrap_step <- function(orig_data, resample_list, col_primary, col_warni
       x = "Warto\u015b\u0107",
       y = NULL
     ) +
-    theme_sim() +
+    theme_educational() +
     theme(axis.text.y = element_text(size = 11))
   p
 }
@@ -618,7 +605,7 @@ plot_jackknife_pseudovalues <- function(jack_result, stat_label = "Statystyka",
       x = "Indeks pomini\u0119tej obserwacji",
       y = stat_label
     ) +
-    theme_sim()
+    theme_educational()
 }
 
 # Wykres wynikow K-Fold CV
@@ -646,7 +633,7 @@ plot_cv_results <- function(cv_results_list, degree_labels = NULL,
       x        = "Stopie\u0144 wielomianu",
       y        = "B\u0142\u0105d \u015bredniokwadratowy (MSE)"
     ) +
-    theme_sim() +
+    theme_educational() +
     theme(legend.position = "top")
 }
 
@@ -673,7 +660,7 @@ plot_power_histogram <- function(mc_result, col_primary, col_secondary) {
       x = "p-warto\u015b\u0107",
       y = "Liczba symulacji"
     ) +
-    theme_sim()
+    theme_educational()
 }
 
 # Krzywa mocy
@@ -697,7 +684,7 @@ plot_power_curve <- function(power_df, current_delta = NULL,
       x        = "Wielko\u015b\u0107 efektu (\u03b4)",
       y        = "Moc = P(odrzucenie H\u2080 | H\u2081 prawdziwa)"
     ) +
-    theme_sim()
+    theme_educational()
 
   if (!is.null(current_delta)) {
     p <- p + geom_vline(xintercept = current_delta,

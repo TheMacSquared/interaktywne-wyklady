@@ -142,7 +142,7 @@ ch3_server <- function(input, output, session) {
         geom_point(color = col_test, alpha = 0.5) +
         geom_smooth(method = "lm", se = TRUE, color = col_ok, fill = col_ok, alpha = 0.1) +
         labs(title = "Dane + linia regresji", x = "X", y = "Y") +
-        theme_assumptions()
+        theme_educational()
     }
   })
 
@@ -162,20 +162,20 @@ ch3_server <- function(input, output, session) {
       geom_point(color = col_test, alpha = 0.5) +
       geom_smooth(se = FALSE, color = col_fail, linewidth = 0.8) +
       labs(title = "Reszty vs dopasowane", x = "Dopasowane", y = "Reszty") +
-      theme_assumptions()
+      theme_educational()
 
     p2 <- ggplot(df, aes(sample = std_resid)) +
       stat_qq(color = col_test, alpha = 0.5) +
       stat_qq_line(color = col_ok) +
       labs(title = "Q-Q reszt") +
-      theme_assumptions()
+      theme_educational()
 
     p3 <- ggplot(df, aes(x = fitted, y = sqrt_abs_resid)) +
       geom_point(color = col_test, alpha = 0.5) +
       geom_smooth(se = FALSE, color = col_fail, linewidth = 0.8) +
       labs(title = "Scale-Location", x = "Dopasowane",
            y = expression(sqrt("|Std. reszty|"))) +
-      theme_assumptions()
+      theme_educational()
 
     gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
   })
@@ -188,7 +188,7 @@ ch3_server <- function(input, output, session) {
 
     # Shapiro-Wilk na resztach
     resid <- residuals(model)
-    sw <- shapiro.test(resid)
+    sw <- shapiro_test(data.frame(value = resid), value)
 
     # Breusch-Pagan (heteroscedastycznosc)
     bp <- lmtest::bptest(model)
@@ -199,7 +199,7 @@ ch3_server <- function(input, output, session) {
     results <- list(
       list(name = "Normalno\u015b\u0107 reszt (Shapiro-Wilk)",
            stat = paste0("W = ", round(sw$statistic, 4)),
-           p = sw$p.value,
+           p = sw$p,
            ok_msg = "Reszty normalne", fail_msg = "Reszty nienormalne!"),
       list(name = "Homoscedastyczno\u015b\u0107 (Breusch-Pagan)",
            stat = paste0("BP = ", round(bp$statistic, 3)),
