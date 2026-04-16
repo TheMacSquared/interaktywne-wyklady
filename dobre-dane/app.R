@@ -204,20 +204,17 @@ cat_timeseries <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# Problem 7: Zla struktura (event-level)
+# Problem 7: Zla struktura (event-level) — oceny uczniow
 cat_events <- data.frame(
-  film = c("Kill Bill","Kill Bill","Kill Bill","Kill Bill","Kill Bill",
-           "Pulp Fiction","Pulp Fiction","Pulp Fiction"),
-  minuta = c(5, 12, 23, 45, 67, 8, 34, 56),
-  typ = c("smierc","przeklenstwo","przeklenstwo","smierc","przeklenstwo",
-          "przeklenstwo","smierc","przeklenstwo"),
+  uczen = c("Ania","Ania","Ania","Bartek","Bartek","Celina","Celina","Celina"),
+  przedmiot = c("Mat","Pol","Ang","Mat","Pol","Mat","Pol","Ang"),
+  ocena = c(4, 5, 3, 2, 3, 5, 4, 5),
   stringsAsFactors = FALSE
 )
 cat_events_agg <- data.frame(
-  film = c("Kill Bill", "Pulp Fiction"),
-  n_smierci = c(2, 1),
-  n_przeklenstw = c(3, 2),
-  dlugosc_min = c(111, 154),
+  uczen = c("Ania", "Bartek", "Celina"),
+  srednia = c(4.0, 2.5, 4.67),
+  n_ocen = c(3L, 2L, 3L),
   stringsAsFactors = FALSE
 )
 
@@ -769,10 +766,10 @@ ui <- navbarPage(
         h3(class = "problem-name", "Zła struktura danych")
       ),
       div(class = "problem-desc",
-        "Zbiór o filmach: każdy wiersz to jedno zdarzenie (śmierć lub przekleństwo), nie obserwacja."
+        "Dziennik szkolny: każdy wiersz to jedna ocena ucznia, nie jeden uczeń."
       ),
       div(class = "toggle-pills",
-        actionButton("cat7_events", "Eventowe (surowe)", class = "pill-btn active"),
+        actionButton("cat7_events", "Oceny (surowe)", class = "pill-btn active"),
         actionButton("cat7_agg", "Zagregowane", class = "pill-btn")
       ),
       div(class = "dual-view",
@@ -786,11 +783,11 @@ ui <- navbarPage(
         )
       ),
       div(class = "callout-danger", style = "margin-top: 10px;",
-        tags$strong("Problem:"), " 8 wierszy wygląda jak n = 8, ale to zdarzenia, nie obserwacje. ",
-        "Po agregacji do poziomu filmów masz n = 2. Test t na n = 2?",
+        tags$strong("Problem:"), " 8 wierszy wygląda jak n = 8, ale to oceny, nie uczniowie. ",
+        "Po agregacji do poziomu uczniów masz n = 3. Test t na n = 3?",
         tags$br(),
-        tags$strong("Zasada:"), " Sprawdź, co jest Twoją 'jednostką obserwacji'. ",
-        "Osoba? Firma? Dzień? Wiersz w tabeli != obserwacja."
+        tags$strong("Zasada:"), " Zawsze pytaj: co jest jednostką obserwacji? ",
+        "Osoba? Firma? Dzień? Wiersz w tabeli \u2260 obserwacja."
       )
     ),
 
@@ -840,7 +837,7 @@ ui <- navbarPage(
   # ==========================================================================
   # TAB 2: SZKOLY W KALIFORNII (CASchool) - DOBRY
   # ==========================================================================
-  tabPanel("2. Szkoly",
+  tabPanel("2. Szkoły",
   fluidRow(column(8, offset = 2,
 
     div(class = "section-title", "Szkoły w Kalifornii"),
@@ -1539,7 +1536,7 @@ ui <- navbarPage(
   # ==========================================================================
   # TAB 12: SCIAGA
   # ==========================================================================
-  tabPanel("12. Sciaga",
+  tabPanel("12. Ściąga",
   fluidRow(column(8, offset = 2,
 
     div(class = "section-title", "Ściąga - jak ocenić zbiór danych"),
@@ -1608,7 +1605,7 @@ server <- function(input, output, session) {
   # ==========================================================================
 
   observeEvent(input$ch0_next, { updateNavbarPage(session, "main_nav", selected = "1. Katalog") })
-  observeEvent(input$cat_next, { updateNavbarPage(session, "main_nav", selected = "2. Szkoly") })
+  observeEvent(input$cat_next, { updateNavbarPage(session, "main_nav", selected = "2. Szkoły") })
   observeEvent(input$ch1_next, { updateNavbarPage(session, "main_nav", selected = "3. Grupa") })
   observeEvent(input$ch2_next, { updateNavbarPage(session, "main_nav", selected = "4. Pingwiny") })
   observeEvent(input$ch3_next, { updateNavbarPage(session, "main_nav", selected = "5. Tarantino") })
@@ -1618,7 +1615,7 @@ server <- function(input, output, session) {
   observeEvent(input$ch7_next, { updateNavbarPage(session, "main_nav", selected = "9. Mieszkania") })
   observeEvent(input$ch8_next, { updateNavbarPage(session, "main_nav", selected = "10. Studenci") })
   observeEvent(input$ch9_next, { updateNavbarPage(session, "main_nav", selected = "11. Powietrze") })
-  observeEvent(input$ch10_next, { updateNavbarPage(session, "main_nav", selected = "12. Sciaga") })
+  observeEvent(input$ch10_next, { updateNavbarPage(session, "main_nav", selected = "12. Ściąga") })
 
   # ==========================================================================
   # TAB 0: WPROWADZENIE
@@ -1948,9 +1945,9 @@ server <- function(input, output, session) {
       sketch <- htmltools::withTags(table(
         class = "display",
         thead(tr(
-          th("film", br(span(class = "var-type", "nominalna"))),
-          th("minuta", br(span(class = "var-type", "ciagla"))),
-          th("typ", br(span(class = "var-type", "nominalna")))
+          th("uczen", br(span(class = "var-type", "nominalna"))),
+          th("przedmiot", br(span(class = "var-type", "nominalna"))),
+          th("ocena", br(span(class = "var-type", "dyskretna")))
         ))
       ))
       datatable(cat_events, container = sketch, rownames = FALSE,
@@ -1959,10 +1956,9 @@ server <- function(input, output, session) {
       sketch <- htmltools::withTags(table(
         class = "display",
         thead(tr(
-          th("film", br(span(class = "var-type", "nominalna"))),
-          th("n_smierci", br(span(class = "var-type", "dyskretna"))),
-          th("n_przeklenstw", br(span(class = "var-type", "dyskretna"))),
-          th("dlugosc_min", br(span(class = "var-type", "ciagla")))
+          th("uczen", br(span(class = "var-type", "nominalna"))),
+          th("srednia", br(span(class = "var-type", "ciagla"))),
+          th("n_ocen", br(span(class = "var-type", "dyskretna")))
         ))
       ))
       datatable(cat_events_agg, container = sketch, rownames = FALSE,
@@ -1977,21 +1973,21 @@ server <- function(input, output, session) {
         geom_col(fill = col_mixed, width = 0.4) +
         geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold") +
         labs(title = "Ile masz 'obserwacji'?",
-             subtitle = "8 wierszy, ale to zdarzenia, nie osoby/filmy",
+             subtitle = "8 wierszy, ale to oceny, nie uczniowie",
              x = NULL, y = NULL) +
         ylim(0, 10) +
         theme_minimal(base_size = 14) +
         theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
     } else {
-      df <- data.frame(label = "Filmy\n(obserwacje)", n = nrow(cat_events_agg))
+      df <- data.frame(label = "Uczniowie\n(obserwacje)", n = nrow(cat_events_agg))
       ggplot(df, aes(x = label, y = n)) +
         geom_col(fill = col_bad, width = 0.4) +
         geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold",
                   color = col_bad) +
         labs(title = "Po agregacji",
-             subtitle = "n = 2 filmy. Test t? Nie ma szans.",
+             subtitle = "n = 3 uczni\u00f3w. Test t? Zdecydowanie za ma\u0142o.",
              x = NULL, y = NULL) +
-        ylim(0, 4) +
+        ylim(0, 5) +
         theme_minimal(base_size = 14) +
         theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
     }
