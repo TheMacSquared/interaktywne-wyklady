@@ -58,7 +58,7 @@ corp_data <- data.frame(
   zadowolenie = sample(1:5, corp_n, replace = TRUE, prob = c(0.01, 0.02, 0.02, 0.35, 0.60)),
   departament = factor(sample(c("IT", "HR", "Marketing", "Finanse"), corp_n, replace = TRUE, prob = c(0.94, 0.02, 0.02, 0.02))),
   staz_pracy = round(runif(corp_n, 2.8, 3.5), 1),
-  wynagrodzenie = round(runif(corp_n, 4800, 5200)),
+  wynagrodzenie = round(rnorm(corp_n, mean = 5500, sd = 1000)),
   plec = factor(sample(c("M", "K"), corp_n, replace = TRUE, prob = c(0.9, 0.1))),
   stringsAsFactors = FALSE
 )
@@ -134,7 +134,7 @@ cat_small <- data.frame(
 cat_novar <- data.frame(
   id = 1:12,
   zadowolenie = c(5, 5, 4, 5, 5, 5, 4, 5, 5, 5, 4, 5),
-  wynagrodzenie = c(5050, 4980, 5010, 5030, 4990, 5020, 5060, 4970, 5000, 5040, 5010, 4960),
+  wynagrodzenie = c(3200, 6800, 4500, 7200, 3800, 5500, 4100, 6200, 3600, 7500, 4800, 5100),
   staz = c(3.1, 3.0, 2.9, 3.2, 3.0, 3.1, 2.8, 3.0, 3.1, 3.0, 2.9, 3.2),
   dzial = c("IT","IT","IT","IT","IT","IT","IT","IT","IT","IT","IT","IT"),
   stringsAsFactors = FALSE
@@ -635,10 +635,10 @@ ui <- navbarPage(
         )
       ),
       div(class = "callout-danger", style = "margin-top: 10px;",
-        tags$strong("Problem:"), " Gdy SD \u2248 0, scatter plot to jedna kropka. ",
-        "Korelacja nie ma sensu - nie ma czego korelować.",
+        tags$strong("Problem: staż pracy jest prawie stały"), " (zakres 2.8\u20133.2 lata). ",
+        "Wynagrodzenia się różnią, ale nie widać żadnego wzorca \u2014 punkty tworzą pionową chmurę.",
         tags$br(),
-        tags$strong("Przyczyna:"), " Social desirability bias - ludzie odpowiadają to, co wypada."
+        "Gdy jedna zmienna nie ma żadnego rozrzutu, nie da się ocenić czy i jak wpływa na drugą."
       )
     ),
 
@@ -1120,8 +1120,8 @@ ui <- navbarPage(
     ),
     div(class = "callout-danger",
       tags$strong("Problem: brak zróżnicowania odpowiedzi."),
-      " 95% pracowników zaznaczyło 4 lub 5. To klasyczny efekt aprobaty społecznej \u2014
-      wszyscy wiedzą, że szef czyta ankietę. Skala 1\u20135 w praktyce działa tu jak skala 1\u20132."
+      " 95% pracowników zaznaczyło 4 lub 5. Skala 1\u20135 w praktyce działa tu jak skala 1\u20132 \u2014
+      kiedy wszyscy odpowiadają tak samo, zmienna nic nie mówi."
     ),
 
     div(class = "section-title", "Zmienna 2: Dział"),
@@ -1153,11 +1153,10 @@ ui <- navbarPage(
     div(class = "widget-block",
       plotOutput("tab5_plot_wynagrodzenie", height = "300px")
     ),
-    div(class = "callout-warning",
-      tags$strong("Uwaga: wąska rozpiętość wartości."),
-      " Wynagrodzenia mieszczą się w przedziale 4800\u20135200 PLN \u2014 rozstęp to tylko 400 PLN.
-      Podobnie jak ze stażem: sama w sobie to nie jest katastrofa, ale razem z pozostałymi
-      zmiennymi tworzy zbiór, w którym trudno o jakikolwiek interesujący sygnał."
+    div(class = "callout-success",
+      tags$strong("Wynagrodzenia mają normalny rozrzut."),
+      " To dobra wiadomość \u2014 ta zmienna wydaje się użyteczna.
+      Zobaczmy więc, czy możemy ją powiązać z czymś innym w tym zbiorze."
     ),
 
     div(class = "section-title", "Zmienna 5: Płeć"),
@@ -1174,8 +1173,8 @@ ui <- navbarPage(
     div(class = "section-title", "Co się dzieje gdy próbujemy szukać zależności?"),
 
     div(class = "callout-info",
-      "Weźmy dwie zmienne ilościowe \u2014 staż pracy i wynagrodzenie \u2014 i sprawdźmy
-      czy między nimi jest jakiś związek. Obie mają wąską rozpiętość, więc..."
+      "Wynagrodzenie ma dobry rozrzut. Czy możemy powiązać je ze stażem pracy? ",
+      "Sprawdźmy \u2014 pamiętaj, że staż mieści się w bardzo wąskim przedziale."
     ),
 
     div(class = "widget-block",
@@ -1185,8 +1184,8 @@ ui <- navbarPage(
     div(class = "section-title", "Co by było, gdyby dane miały normalną zmienność?"),
 
     div(class = "callout-info",
-      "Przesunięcie suwaka symuluje sytuację, w której staż i wynagrodzenia miały
-      szerszy rozrzut. Obserwuj jak zmienia się korelacja."
+      "Co by było, gdyby pracownicy różnili się stażem bardziej \u2014 np. od 1 do 15 lat?
+      Przesuń suwak i obserwuj jak pojawia się związek między stażem a wynagrodzeniem."
     ),
 
     div(class = "widget-block",
@@ -1199,9 +1198,9 @@ ui <- navbarPage(
     div(class = "callout-danger",
       tags$strong("Ten zbiór danych nie nadaje się do analizy."),
       tags$br(),
-      "Każda zmienna z osobna wygląda niegroźnie, ale łącznie: odpowiedzi skupione
-      przy maksimum, działy i płeć skrajnie niezbalansowane, zmienne ilościowe
-      bez żadnego zróżnicowania. Nie ma tu czego analizować."
+      "Wynagrodzenia mają dobry rozrzut, ale trudno to wykorzystać: odpowiedzi o zadowoleniu
+      są skupione przy maksimum, działy i płeć skrajnie niezbalansowane, a staż pracy
+      jest prawie stały. Nie ma zmiennej, którą można sensownie powiązać z wynagrodzeniem."
     ),
 
     uiOutput("tab5_verdict"),
@@ -1708,7 +1707,7 @@ server <- function(input, output, session) {
       geom_point(size = 3, alpha = 0.6, color = col_bad) +
       labs(title = paste0("Staż vs wynagrodzenie (r = ",
                           round(cor(cat_novar$staz, cat_novar$wynagrodzenie), 3), ")"),
-           subtitle = "Gdy SD \u2248 0, scatter plot to kropka",
+           subtitle = "Staż prawie stały \u2014 pionowa chmura, żadnego wzorca",
            x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
       theme_minimal(base_size = 14)
   })
@@ -2315,7 +2314,7 @@ server <- function(input, output, session) {
     med_wyn <- median(corp_data$wynagrodzenie)
     sd_wyn  <- round(sd(corp_data$wynagrodzenie))
     ggplot(corp_data, aes(x = wynagrodzenie)) +
-      geom_histogram(bins = 15, fill = col_mixed, color = "white", alpha = 0.85) +
+      geom_histogram(bins = 15, fill = col_primary, color = "white", alpha = 0.85) +
       geom_vline(xintercept = med_wyn, color = col_dark, linetype = "dashed", linewidth = 1) +
       annotate("text", x = med_wyn, y = Inf, label = paste0("mediana = ", med_wyn, " PLN"),
                vjust = 2, hjust = -0.1, size = 4, color = col_dark) +
@@ -2344,7 +2343,8 @@ server <- function(input, output, session) {
       geom_point(alpha = 0.5, size = 3, color = col_dark) +
       geom_smooth(method = "lm", color = col_bad, se = TRUE) +
       labs(title = "Staż pracy vs wynagrodzenie",
-           subtitle = paste0("r = ", round(cor(corp_data$staz_pracy, corp_data$wynagrodzenie), 3)),
+           subtitle = paste0("r = ", round(cor(corp_data$staz_pracy, corp_data$wynagrodzenie), 3),
+                             "  \u2014  staż w wąskim przedziale, wynagrodzenia zróżnicowane"),
            x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
       theme_minimal(base_size = 14)
   })
