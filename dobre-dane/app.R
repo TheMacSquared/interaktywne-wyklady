@@ -79,6 +79,29 @@ messy_data <- data.frame(
   stringsAsFactors = FALSE
 )
 
+# Tab 7b: Dane do uratowania przez kategoryzację (n=12)
+fixable_data <- data.frame(
+  id = 1:12,
+  rok_studiow = c("1", "pierwszy", "I rok", "2", "drugi", "2", "3", "III", "trzeci", "1", "2", "3"),
+  tryb = c("stacjonarny", "s", "S", "niestacjonarny", "N", "stacjonarny",
+           "zaoczny", "niestacjonarny", "stacjonarny", "s", "niestacjonarny", "Stacjonarny"),
+  godziny_nauki = c("5", "ok. 5", "4-6h", "8", "duzo", "3h", "10", "7-8h", "malo", "6", "5h", "9"),
+  stringsAsFactors = FALSE
+)
+fixable_data_cat <- data.frame(
+  id = 1:12,
+  rok_studiow = c(1L, 1L, 1L, 2L, 2L, 2L, 3L, 3L, 3L, 1L, 2L, 3L),
+  tryb = c("stacjonarny","stacjonarny","stacjonarny",
+           "niestacjonarny","niestacjonarny","stacjonarny",
+           "niestacjonarny","niestacjonarny","stacjonarny",
+           "stacjonarny","niestacjonarny","stacjonarny"),
+  nauka_kat = c("srednie (4-6h)","srednie (4-6h)","srednie (4-6h)",
+                "duzo (7h+)", NA, "malo (1-3h)",
+                "duzo (7h+)","duzo (7h+)", NA,
+                "srednie (4-6h)","srednie (4-6h)","duzo (7h+)"),
+  stringsAsFactors = FALSE
+)
+
 # Tab 8: Ceny mieszkan - outliery i bledy (n=150)
 apt_n <- 150
 apt_powierzchnia <- round(runif(apt_n, 25, 120), 1)
@@ -1345,6 +1368,34 @@ ui <- navbarPage(
 
     uiOutput("tab7_verdict"),
 
+    div(class = "section-title", "Drugi przykład: dane do uratowania"),
+
+    div(class = "narrative",
+      p("Inna ankieta o nawykach studenckich, podobny problem \u2014 respondenci odpowiadali
+        różnie na te same pytania. Ale tym razem prawie każdą odpowiedź można przypisać
+        do kategorii. Porównaj surowe dane z wersją po kategoryzacji.")
+    ),
+
+    div(class = "toggle-pills",
+      actionButton("tab7b_raw", "Surowe", class = "pill-btn active"),
+      actionButton("tab7b_cat", "Po kategoryzacji", class = "pill-btn")
+    ),
+
+    div(class = "widget-block",
+      DT::dataTableOutput("tab7b_table")
+    ),
+
+    div(class = "callout-success",
+      tags$strong("10 z 12 wierszy można uratować (83%)."),
+      tags$br(),
+      tags$b("rok_studiow:"), " \"pierwszy\", \"I rok\", \"1\" \u2192 wszystkie to rok 1.",
+      tags$br(),
+      tags$b("tryb:"), " \"s\", \"S\", \"zaoczny\" \u2192 \"stacjonarny\" lub \"niestacjonarny\".",
+      tags$br(),
+      tags$b("godziny_nauki:"), " \"ok. 5\", \"4-6h\", \"5h\" \u2192 kategoria \"srednie (4-6h)\".
+        Straty: \"duzo\" i \"malo\" \u2014 za mało informacji żeby przypisać do kategorii."
+    ),
+
     div(class = "chapter-transition",
       p("Następny zbiór ma inny rodzaj problemów - błędy w danych."),
       actionButton("ch7_next", "Dalej: 9. Ceny mieszkań \u2192",
@@ -2538,6 +2589,33 @@ server <- function(input, output, session) {
     # hipoteza, n, mix, zmiennosc, struktura, niezaleznosc | braki, definicje, bledy
     # Trudna ankieta: hipoteza ok, n ok, brak mix (bo nic nie jest liczbowe), zmiennosc ok, struktura nie, niezaleznosc ok | braki ok, definicje NO, bledy ok
     render_verdict(c("yes", "yes", "no", "yes", "no", "yes", "yes", "no", "yes"), "bad")
+  })
+
+  tab7b_view <- reactiveVal("raw")
+  observeEvent(input$tab7b_raw, {
+    tab7b_view("raw")
+    session$sendCustomMessage(type = "shinyjs-runjs", message = list(code =
+      "$('#tab7b_raw').addClass('active'); $('#tab7b_cat').removeClass('active');"))
+  })
+  observeEvent(input$tab7b_cat, {
+    tab7b_view("cat")
+    session$sendCustomMessage(type = "shinyjs-runjs", message = list(code =
+      "$('#tab7b_cat').addClass('active'); $('#tab7b_raw').removeClass('active');"))
+  })
+
+  output$tab7b_table <- DT::renderDataTable({
+    if (tab7b_view() == "raw") {
+      datatable(fixable_data,
+                options = list(dom = 't', ordering = FALSE, pageLength = 12),
+                rownames = FALSE)
+    } else {
+      datatable(fixable_data_cat,
+                options = list(dom = 't', ordering = FALSE, pageLength = 12),
+                rownames = FALSE) %>%
+        DT::formatStyle("nauka_kat",
+          backgroundColor = DT::styleEqual(NA, "#fdedec"),
+          target = "cell")
+    }
   })
 
   # ==========================================================================
