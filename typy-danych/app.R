@@ -7,6 +7,7 @@ library(ggplot2)
 library(dplyr)
 library(e1071)  # for skewness, kurtosis
 library(gridExtra)
+library(jsonlite)
 
 # ============================================================================
 # KOLORY
@@ -133,6 +134,8 @@ source(file.path(app_dir, "modules", "ch3_polozenie.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "ch4_rozrzut.R"),    local = TRUE)
 source(file.path(app_dir, "modules", "ch5_ksztalt.R"),    local = TRUE)
 source(file.path(app_dir, "modules", "ch6_sciaga.R"),     local = TRUE)
+source(file.path(app_dir, "modules", "ch7_quiz.R"),       local = TRUE)
+source(file.path(app_dir, "modules", "ch8_cwiczenia.R"),  local = TRUE)
 
 # ============================================================================
 # GLOBAL UI HEADER (CSS, JS, Chart.js)
@@ -288,6 +291,116 @@ global_header <- tagList(
     background: #fdedec; border-left: 4px solid #e74c3c;
     padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
   }
+  .callout-success {
+    background: #eafaf1; border-left: 4px solid #27ae60;
+    padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
+  }
+
+  /* Quiz tiles */
+  .quiz-tiles { display: grid; gap: 12px; margin: 15px 0; }
+  .quiz-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .quiz-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .quiz-cols-4 { grid-template-columns: repeat(2, 1fr); }
+
+  .quiz-tiles .quiz-tile {
+    background: white; border: 2px solid #dee2e6; border-radius: 12px;
+    padding: 20px 12px; text-align: center; cursor: pointer; transition: all 0.3s;
+    display: block; width: 100%; font-family: inherit; color: inherit;
+  }
+  .quiz-tiles .quiz-tile:hover {
+    border-color: #3498db; transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(52,152,219,0.2);
+  }
+  .quiz-tiles .quiz-tile:focus { outline: none; }
+  .quiz-tiles .quiz-tile .tile-letter {
+    display: inline-block; width: 36px; height: 36px; line-height: 36px;
+    border-radius: 50%; background: #3498db; color: white;
+    font-weight: 700; font-size: 16px; margin-bottom: 8px;
+  }
+  .quiz-tiles .quiz-tile .tile-text { font-size: 13px; color: #2c3e50; }
+  .quiz-cols-4 .quiz-tile .tile-text { font-size: 12px; }
+  .quiz-tile.correct { border-color: #27ae60 !important; background: #eafaf1 !important; }
+  .quiz-tile.wrong { border-color: #e74c3c !important; background: #fdedec !important; }
+  .quiz-tile.disabled { pointer-events: none; opacity: 0.7; }
+
+  /* Taxonomy tree (HTML/CSS) */
+  .taxonomy-tree { overflow-x: auto; padding: 10px 0; }
+  .taxonomy-tree, .taxonomy-tree ul, .taxonomy-tree li {
+    list-style: none; margin: 0; padding: 0;
+  }
+  .taxonomy-tree > ul { padding-top: 0; }
+  .taxonomy-tree ul {
+    display: flex; justify-content: center;
+    padding-top: 20px; position: relative;
+  }
+  .taxonomy-tree ul ul::before {
+    content: ''; position: absolute; top: 0; left: 50%;
+    border-left: 2px solid #bdc3c7; height: 20px;
+  }
+  .taxonomy-tree li {
+    display: flex; flex-direction: column; align-items: center;
+    position: relative; padding: 20px 8px 0; text-align: center;
+  }
+  .taxonomy-tree > ul > li { padding-top: 0; }
+  .taxonomy-tree li::before, .taxonomy-tree li::after {
+    content: ''; position: absolute; top: 0;
+    border-top: 2px solid #bdc3c7; width: 50%; height: 20px;
+  }
+  .taxonomy-tree li::before { right: 50%; }
+  .taxonomy-tree li::after { left: 50%; border-left: 2px solid #bdc3c7; }
+  .taxonomy-tree li:first-child::before { border: none; }
+  .taxonomy-tree li:last-child::after { border: none; }
+  .taxonomy-tree li:last-child::before {
+    border-right: 2px solid #bdc3c7; border-radius: 0 5px 0 0;
+  }
+  .taxonomy-tree li:first-child::after { border-radius: 5px 0 0 0; }
+  .taxonomy-tree li:only-child::before,
+  .taxonomy-tree li:only-child::after { display: none; }
+  .taxonomy-tree li:only-child { padding-top: 0; }
+
+  .tax-node {
+    background: #ecf0f1; border: 2px solid #2c3e50; border-radius: 8px;
+    padding: 10px 18px; font-weight: 700; font-size: 15px; color: #2c3e50;
+    white-space: nowrap;
+  }
+  .tax-node small { font-weight: 400; font-size: 12px; color: #7f8c8d; }
+  .tax-leaf {
+    border-radius: 8px; padding: 12px 16px; font-weight: 700; font-size: 14px;
+    color: white; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .tax-leaf:hover {
+    transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .tax-example {
+    font-size: 12px; color: #555; margin-top: 6px; font-style: italic;
+    white-space: normal; max-width: 130px; line-height: 1.3;
+  }
+  .tax-hint {
+    font-size: 11px; color: #bdc3c7; margin-top: 4px; font-style: italic;
+  }
+  @media (max-width: 600px) {
+    .taxonomy-tree li { padding: 16px 2px 0; }
+    .tax-node { padding: 6px 8px; font-size: 11px; }
+    .tax-node small { font-size: 9px; }
+    .tax-leaf {
+      padding: 8px 6px; font-size: 11px;
+      transform: rotate(-25deg); margin-top: 6px;
+    }
+    .tax-leaf:hover { transform: rotate(-25deg) translateY(-3px); }
+    .tax-example { font-size: 9px; max-width: 80px; margin-top: 10px; }
+    .tax-hint { font-size: 9px; margin-top: 10px; }
+  }
+
+  /* Taxonomy detail panel */
+  .tax-detail {
+    background: #f8f9fa; border-radius: 6px;
+    padding: 14px 18px; margin-top: 12px;
+    animation: taxDetailFade 0.25s ease-out;
+  }
+  @keyframes taxDetailFade {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
   /* Gallery grid */
   .example-card {
@@ -358,11 +471,45 @@ global_header <- tagList(
   }
   #sticky-toc a:hover { color: #3498db; background: #eaf4fc; }
   #sticky-toc a.toc-active { color: #3498db; font-weight: bold; background: #eaf4fc; }
-  @media (max-width: 1400px) { #sticky-toc { display: none; } }
+  @media (max-width: 1400px) { #sticky-toc { display: none !important; } }
+
+  /* Mobile TOC toggle */
+  #toc-mobile-btn {
+    display: none; position: fixed; bottom: 20px; right: 20px;
+    width: 48px; height: 48px; border-radius: 50%; background: #3498db;
+    color: white; border: none; font-size: 22px; line-height: 48px;
+    text-align: center; cursor: pointer; z-index: 1001;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+  #toc-mobile-btn:hover { background: #2980b9; }
+  #toc-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); z-index: 1000;
+  }
+  @media (max-width: 1400px) {
+    #toc-mobile-btn { display: block; }
+    #sticky-toc.toc-open {
+      display: block !important; position: fixed;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 85%; max-width: 320px; max-height: 70vh;
+      z-index: 1002; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    #toc-overlay.toc-open { display: block; }
+  }
   ")),
   tags$script(HTML("
     $(function() {
       var tocEl = $('<div id=\"sticky-toc\"></div>').appendTo('body');
+      var tocBtn = $('<button id=\"toc-mobile-btn\">\u2630</button>').appendTo('body');
+      var tocOverlay = $('<div id=\"toc-overlay\"></div>').appendTo('body');
+      tocBtn.on('click', function() {
+        tocEl.toggleClass('toc-open');
+        tocOverlay.toggleClass('toc-open');
+      });
+      tocOverlay.on('click', function() {
+        tocEl.removeClass('toc-open');
+        tocOverlay.removeClass('toc-open');
+      });
 
       function buildToc() {
         var activeTab = $('.tab-pane.active');
@@ -398,6 +545,8 @@ global_header <- tagList(
         if (target.length) {
           $('html, body').animate({ scrollTop: target.offset().top - 60 }, 300);
         }
+        tocEl.removeClass('toc-open');
+        tocOverlay.removeClass('toc-open');
       });
 
       $(document).on('shown.bs.tab', function() { setTimeout(buildToc, 150); });
@@ -421,7 +570,9 @@ ui <- navbarPage(
   ch3_ui,
   ch4_ui,
   ch5_ui,
-  ch6_ui
+  ch6_ui,
+  ch7_ui,
+  ch8_ui
 ) # end navbarPage
 
 # ============================================================================
@@ -448,6 +599,12 @@ server <- function(input, output, session) {
   })
   observeEvent(input$ch5_next, {
     updateNavbarPage(session, "main_nav", selected = "6. \u015aci\u0105ga")
+  })
+  observeEvent(input$ch6_to_ch7, {
+    updateNavbarPage(session, "main_nav", selected = "7. Quiz")
+  })
+  observeEvent(input$ch7_to_ch8, {
+    updateNavbarPage(session, "main_nav", selected = "8. \u0106wiczenia")
   })
 
   # ==========================================================================
@@ -509,6 +666,8 @@ server <- function(input, output, session) {
   ch4_server(input, output, session)
   ch5_server(input, output, session)
   ch6_server(input, output, session)
+  ch7_server(input, output, session)
+  ch8_server(input, output, session)
 
 } # end server
 

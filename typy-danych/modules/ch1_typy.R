@@ -33,14 +33,56 @@ ch1_ui <- tabPanel("1. Typy danych",
     ),
 
     div(class = "widget-block",
-      plotOutput("ch1_taxonomy_plot", click = "ch1_taxonomy_click",
-                 height = "350px"),
-      div(style = "text-align: center; margin-top: 10px;",
-        actionButton("ch1_reveal_all", "Odkryj wszystkie",
-                     class = "btn-outline-primary", style = "margin-right: 8px;"),
-        actionButton("ch1_hide_all", "Ukryj wszystkie",
-                     class = "btn-outline-secondary")
-      )
+      div(class = "taxonomy-tree",
+        tags$ul(
+          tags$li(
+            div(class = "tax-node", "Dane"),
+            tags$ul(
+              tags$li(
+                div(class = "tax-node", HTML("Ilo\u015bciowe<br><small>(liczbowe)</small>")),
+                tags$ul(
+                  tags$li(
+                    div(class = "tax-leaf", id = "ch1_leaf_ciagla",
+                      style = paste0("background:", col_continuous, ";"),
+                      onclick = "Shiny.setInputValue('ch1_leaf_click', 'ciagla', {priority:'event'})",
+                      "Ci\u0105g\u0142e"
+                    )
+                  ),
+                  tags$li(
+                    div(class = "tax-leaf", id = "ch1_leaf_dyskretna",
+                      style = paste0("background:", col_discrete, ";"),
+                      onclick = "Shiny.setInputValue('ch1_leaf_click', 'dyskretna', {priority:'event'})",
+                      "Dyskretne"
+                    )
+                  )
+                )
+              ),
+              tags$li(
+                div(class = "tax-node", HTML("Jako\u015bciowe<br><small>(kategoryczne)</small>")),
+                tags$ul(
+                  tags$li(
+                    div(class = "tax-leaf", id = "ch1_leaf_porzadkowa",
+                      style = paste0("background:", col_ordinal, ";"),
+                      onclick = "Shiny.setInputValue('ch1_leaf_click', 'porzadkowa', {priority:'event'})",
+                      "Porz\u0105dkowe"
+                    )
+                  ),
+                  tags$li(
+                    div(class = "tax-leaf", id = "ch1_leaf_nominalna",
+                      style = paste0("background:", col_nominal, ";"),
+                      onclick = "Shiny.setInputValue('ch1_leaf_click', 'nominalna', {priority:'event'})",
+                      "Nominalne"
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      ),
+      p(style = "text-align: center; font-size: 13px; color: #bdc3c7; margin: 8px 0 0;",
+        "Kliknij na kolorowy li\u015b\u0107 drzewa, aby zobaczy\u0107 przyk\u0142ady"),
+      uiOutput("ch1_leaf_detail")
     ),
 
     div(class = "callout-warning",
@@ -183,45 +225,54 @@ ch1_ui <- tabPanel("1. Typy danych",
 
 ch1_server <- function(input, output, session) {
 
-  ch1_revealed <- reactiveVal(character(0))
+  ch1_selected_leaf <- reactiveVal(NULL)
 
-  # --- Widget 1: Taxonomy tree ---
+  # --- Widget 1: Taxonomy tree (HTML) ---
 
-  output$ch1_taxonomy_plot <- renderPlot({
-    render_taxonomy(highlight = NULL, revealed = ch1_revealed())
-  })
-
-  observeEvent(input$ch1_taxonomy_click, {
-    click <- input$ch1_taxonomy_click
-    if (is.null(click)) return()
-
-    leaf_nodes <- data.frame(
-      id = c("ciagla", "dyskretna", "porzadkowa", "nominalna"),
-      x = c(1.25, 3.75, 6.25, 8.75),
-      y = c(1, 1, 1, 1),
-      stringsAsFactors = FALSE
+  .leaf_info <- list(
+    ciagla = list(
+      label = "Ci\u0105g\u0142e", color = col_continuous,
+      desc = "Warto\u015bci liczbowe, kt\u00f3re mog\u0105 przyjmowa\u0107 dowoln\u0105 warto\u015b\u0107 z przedzia\u0142u (tak\u017ce u\u0142amkowe).",
+      examples = "wzrost (cm), waga (kg), czas dojazdu (min), \u015brednia ocen"
+    ),
+    dyskretna = list(
+      label = "Dyskretne", color = col_discrete,
+      desc = "Warto\u015bci liczbowe, ale tylko ca\u0142kowite \u2014 mo\u017cna je policzy\u0107.",
+      examples = "liczba kurs\u00f3w, liczba nieobecno\u015bci"
+    ),
+    porzadkowa = list(
+      label = "Porz\u0105dkowe", color = col_ordinal,
+      desc = "Kategorie z naturalnym porz\u0105dkiem, ale odleg\u0142o\u015bci mi\u0119dzy nimi nie s\u0105 znane.",
+      examples = "rok studi\u00f3w (1 < 2 < 3 < ...), zadowolenie ze studi\u00f3w, ocena wyk\u0142adowcy"
+    ),
+    nominalna = list(
+      label = "Nominalne", color = col_nominal,
+      desc = "Kategorie bez naturalnego porz\u0105dku \u2014 mo\u017cna je tylko liczy\u0107.",
+      examples = "p\u0142e\u0107, kierunek studi\u00f3w, grupa krwi"
     )
+  )
 
-    distances <- sqrt((leaf_nodes$x - click$x)^2 + (leaf_nodes$y - click$y)^2)
-    nearest_idx <- which.min(distances)
-
-    if (distances[nearest_idx] < 1.5) {
-      nearest_id <- leaf_nodes$id[nearest_idx]
-      current <- ch1_revealed()
-      if (nearest_id %in% current) {
-        ch1_revealed(setdiff(current, nearest_id))
-      } else {
-        ch1_revealed(c(current, nearest_id))
-      }
+  observeEvent(input$ch1_leaf_click, {
+    leaf_id <- input$ch1_leaf_click
+    if (identical(ch1_selected_leaf(), leaf_id)) {
+      ch1_selected_leaf(NULL)
+    } else {
+      ch1_selected_leaf(leaf_id)
     }
   })
 
-  observeEvent(input$ch1_reveal_all, {
-    ch1_revealed(c("ciagla", "dyskretna", "porzadkowa", "nominalna"))
-  })
-
-  observeEvent(input$ch1_hide_all, {
-    ch1_revealed(character(0))
+  output$ch1_leaf_detail <- renderUI({
+    sel <- ch1_selected_leaf()
+    if (is.null(sel)) return(NULL)
+    info <- .leaf_info[[sel]]
+    div(class = "tax-detail",
+      style = paste0("border-left: 4px solid ", info$color, ";"),
+      tags$strong(style = paste0("color: ", info$color, "; font-size: 16px;"),
+        info$label),
+      p(style = "margin: 6px 0 4px; font-size: 14px;", info$desc),
+      p(style = "margin: 0; font-size: 13px; color: #7f8c8d;",
+        tags$em("W naszych danych: "), info$examples)
+    )
   })
 
   # --- Widget 2: Examples gallery ---

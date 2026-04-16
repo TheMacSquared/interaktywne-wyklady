@@ -75,6 +75,12 @@ ch6_ui <- tabPanel("6. \u015aci\u0105ga",
       )
     ),
 
+    # --- Przejscie do quizu ---
+    div(class = "chapter-transition",
+      p("Czas sprawdzi\u0107 si\u0119! Przejd\u017a do quizu z typ\u00f3w zmiennych."),
+      actionButton("ch6_to_ch7", "Dalej: Quiz \u2192", class = "btn-primary")
+    ),
+
     br(), br()
   ))
 ) # end ch6 tabPanel

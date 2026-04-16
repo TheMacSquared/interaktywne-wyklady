@@ -174,7 +174,30 @@ global_header <- tagList(
   }
   #sticky-toc a:hover { color: #3498db; background: #eaf4fc; }
   #sticky-toc a.toc-active { color: #3498db; font-weight: bold; background: #eaf4fc; }
-  @media (max-width: 1400px) { #sticky-toc { display: none; } }
+  @media (max-width: 1400px) { #sticky-toc { display: none !important; } }
+  /* Mobile TOC toggle */
+  #toc-mobile-btn {
+    display: none; position: fixed; bottom: 20px; right: 20px;
+    width: 48px; height: 48px; border-radius: 50%; background: #3498db;
+    color: white; border: none; font-size: 22px; line-height: 48px;
+    text-align: center; cursor: pointer; z-index: 1001;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+  #toc-mobile-btn:hover { background: #2980b9; }
+  #toc-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); z-index: 1000;
+  }
+  @media (max-width: 1400px) {
+    #toc-mobile-btn { display: block; }
+    #sticky-toc.toc-open {
+      display: block !important; position: fixed;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 85%; max-width: 320px; max-height: 70vh;
+      z-index: 1002; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    #toc-overlay.toc-open { display: block; }
+  }
 
   /* Quiz tiles */
   .quiz-tiles { display: grid; gap: 12px; margin: 15px 0; }
@@ -241,6 +264,8 @@ global_header <- tagList(
         if (target.length) {
           $('html, body').animate({ scrollTop: target.offset().top - 60 }, 300);
         }
+        tocEl.removeClass('toc-open');
+        tocOverlay.removeClass('toc-open');
       });
 
       $(document).on('shown.bs.tab', function() { setTimeout(buildToc, 150); });
