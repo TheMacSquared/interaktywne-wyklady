@@ -2065,7 +2065,7 @@ server <- function(input, output, session) {
   output$tab2_hist <- renderPlot({
     d <- sim_data()
     ggplot(d, aes(x = oceny)) +
-      geom_histogram(bins = max(5, input$tab2_n / 5), fill = col_primary, color = "white", alpha = 0.8) +
+      geom_histogram(bins = max(5L, round(input$tab2_n / 5)), fill = col_primary, color = "white", alpha = 0.8) +
       labs(title = paste0("Histogram (n = ", input$tab2_n, ")"), x = "Średnia ocen", y = "Liczebność") +
       theme_minimal(base_size = 14)
   })
