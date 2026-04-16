@@ -1,5 +1,5 @@
-# Co czyni dobry zbior danych?
-# Interaktywny wyklad oparty o case studies - ocena jakosci danych do analiz statystycznych
+# Co czyni dobry zbiór danych?
+# Interaktywny wykład oparty o case studies - ocena jakości danych do analiz statystycznych
 
 library(shiny)
 library(bslib)
@@ -117,6 +117,111 @@ survey_data <- data.frame(
 )
 
 # ============================================================================
+# KATALOG PROBLEMOW - mini-zbiory demonstracyjne
+# ============================================================================
+
+# Problem 1: Za malo danych (n=6)
+cat_small <- data.frame(
+  id = 1:6,
+  plec = c("K", "M", "K", "K", "M", "K"),
+  wiek = c(21, 23, 20, 22, 24, 21),
+  stres = c(7, 4, 8, 6, 3, 7),
+  oceny = c(4.2, 3.5, 4.8, 3.9, 3.1, 4.0),
+  stringsAsFactors = FALSE
+)
+
+# Problem 2: Brak zmiennosci
+cat_novar <- data.frame(
+  id = 1:12,
+  zadowolenie = c(5, 5, 4, 5, 5, 5, 4, 5, 5, 5, 4, 5),
+  wynagrodzenie = c(5050, 4980, 5010, 5030, 4990, 5020, 5060, 4970, 5000, 5040, 5010, 4960),
+  staz = c(3.1, 3.0, 2.9, 3.2, 3.0, 3.1, 2.8, 3.0, 3.1, 3.0, 2.9, 3.2),
+  dzial = c("IT","IT","IT","IT","IT","IT","IT","IT","IT","IT","IT","IT"),
+  stringsAsFactors = FALSE
+)
+
+# Problem 3: Bledy i literowki
+cat_errors <- data.frame(
+  id = 1:12,
+  cena = c(350000, 420000, 45, 510000, 280000, 390000,
+           -300000, 470000, 5500000, 310000, 440000, 360000),
+  powierzchnia = c(55, 72, 48, 85, 40, 64, 52, 78, 90, 1200, 68, 58),
+  pokoje = c(2, 3, 2, 4, 1, 3, 2, 3, 42, 2, 3, 2),
+  dzielnica = c("Mokotow","Wola","Praga","Srodmiescie","Ursynow","Bielany",
+                "Mokotow","Wola","Srodmiescie","Praga","Mokotow","Ursynow"),
+  stringsAsFactors = FALSE
+)
+cat_errors_clean <- data.frame(
+  id = 1:12,
+  cena = c(350000, 420000, 450000, 510000, 280000, 390000,
+           300000, 470000, 550000, 310000, 440000, 360000),
+  powierzchnia = c(55, 72, 48, 85, 40, 64, 52, 78, 90, 120, 68, 58),
+  pokoje = c(2, 3, 2, 4, 1, 3, 2, 3, 4, 2, 3, 2),
+  dzielnica = c("Mokotow","Wola","Praga","Srodmiescie","Ursynow","Bielany",
+                "Mokotow","Wola","Srodmiescie","Praga","Mokotow","Ursynow"),
+  stringsAsFactors = FALSE
+)
+
+# Problem 4: Zle zdefiniowane zmienne
+cat_messy <- data.frame(
+  id = 1:10,
+  czas_nauki = c("duzo", "3-4h", "5", "caly dzien", "malo",
+                 "ok. 2 godziny", "nie wiem", "3", "6h dziennie", "weekendy"),
+  ocena_kursu = c("8/10", "dobrze", "4", "B+", "7.5",
+                  "srednia", "9", "bardzo dobrze", "6/10", "slabo"),
+  aktywnosc = c("tak", "nie", "czasami", "3 razy/tyg", "rzadko",
+                "codziennie", "2x", "nie wiem", "tak", "nie"),
+  stringsAsFactors = FALSE
+)
+cat_messy_clean <- data.frame(
+  id = 1:10,
+  czas_nauki_h = c(NA, 3.5, 5, NA, NA, 2, NA, 3, 6, NA),
+  ocena_kursu_1_10 = c(8, NA, 4, NA, 7.5, NA, 9, NA, 6, NA),
+  aktywnosc_razy_tyg = c(NA, 0, NA, 3, NA, 7, 2, NA, NA, 0),
+  stringsAsFactors = FALSE
+)
+
+# Problem 5: Braki danych
+cat_missing <- data.frame(
+  id = 1:12,
+  wiek = c(21, 23, NA, 22, 24, 21, NA, 25, 22, 20, NA, 23),
+  stres = c(7, NA, 8, 6, NA, 7, 5, NA, 4, 8, 6, NA),
+  oceny = c(4.2, 3.5, NA, 3.9, 3.1, NA, 4.5, 3.8, NA, 4.0, 3.6, NA),
+  kierunek = c("Bio", NA, "Psych", "Ekon", "Info", "Bio", NA, "Info", "Psych", NA, "Ekon", "Bio"),
+  stringsAsFactors = FALSE
+)
+
+# Problem 6: Brak niezaleznosci (dane dzienne)
+cat_timeseries <- data.frame(
+  dzien = 1:20,
+  data = format(seq(as.Date("2024-06-01"), by = "day", length.out = 20), "%d.%m"),
+  temperatura = c(22.1, 23.5, 24.8, 25.2, 26.1, 27.3, 28.0, 27.5,
+                  26.8, 25.1, 23.4, 22.0, 21.5, 22.8, 24.1, 25.6,
+                  27.2, 28.5, 29.1, 28.3),
+  ozon_ppb = c(35, 42, 51, 58, 67, 78, 85, 80,
+               72, 55, 40, 33, 28, 38, 48, 60,
+               75, 88, 95, 87),
+  stringsAsFactors = FALSE
+)
+
+# Problem 7: Zla struktura (event-level)
+cat_events <- data.frame(
+  film = c("Kill Bill","Kill Bill","Kill Bill","Kill Bill","Kill Bill",
+           "Pulp Fiction","Pulp Fiction","Pulp Fiction"),
+  minuta = c(5, 12, 23, 45, 67, 8, 34, 56),
+  typ = c("smierc","przeklenstwo","przeklenstwo","smierc","przeklenstwo",
+          "przeklenstwo","smierc","przeklenstwo"),
+  stringsAsFactors = FALSE
+)
+cat_events_agg <- data.frame(
+  film = c("Kill Bill", "Pulp Fiction"),
+  n_smierci = c(2, 1),
+  n_przeklenstw = c(3, 2),
+  dlugosc_min = c(111, 154),
+  stringsAsFactors = FALSE
+)
+
+# ============================================================================
 # FUNKCJE POMOCNICZE
 # ============================================================================
 
@@ -184,7 +289,7 @@ round_df <- function(df, digits = 2) {
 # ============================================================================
 
 ui <- navbarPage(
-  "Co czyni dobry zbior danych?",
+  "Co czyni dobry zbiór danych?",
   id = "main_nav",
   theme = bs_theme(bootswatch = "sandstone"),
 
@@ -298,6 +403,65 @@ ui <- navbarPage(
     #toc-overlay.toc-open { display: block; }
   }
 
+    /* Jamovi-style data table */
+    .jamovi-table .dataTables_wrapper { font-family: 'Segoe UI', Roboto, sans-serif; }
+    .jamovi-table table.dataTable thead th {
+      background: #f0f0f0; border-bottom: 2px solid #bbb;
+      font-weight: 600; font-size: 13px; padding: 8px 10px;
+      text-align: center; vertical-align: bottom;
+    }
+    .jamovi-table table.dataTable thead th .var-type {
+      display: block; font-size: 10px; font-weight: 400;
+      color: #888; margin-top: 2px; font-style: italic;
+    }
+    .jamovi-table table.dataTable tbody td {
+      padding: 6px 10px; font-size: 13px; text-align: center;
+      border-right: 1px solid #eee;
+    }
+    .jamovi-table table.dataTable tbody tr:nth-child(odd) { background: #fafafa; }
+    .jamovi-table table.dataTable tbody tr:nth-child(even) { background: #fff; }
+    .cell-error { background: #fdedec !important; color: #c0392b; font-weight: 600; }
+    .cell-na { background: #f5f5f5 !important; color: #bbb; font-style: italic; }
+    .cell-messy { background: #fef9e7 !important; color: #7d6608; }
+    .cell-ok { background: #eafaf1 !important; }
+
+    /* Problem card in catalog */
+    .problem-card {
+      background: #fff; border: 1px solid #dee2e6; border-radius: 10px;
+      padding: 25px; margin: 25px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .problem-card .problem-header {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 15px;
+    }
+    .problem-card .problem-number {
+      display: inline-flex; width: 36px; height: 36px; border-radius: 50%;
+      background: #e74c3c; color: white; font-weight: 700; font-size: 16px;
+      align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .problem-card .problem-name {
+      font-size: 20px; font-weight: 700; color: #2c3e50; margin: 0;
+    }
+    .problem-card .problem-desc {
+      font-size: 15px; color: #555; line-height: 1.6; margin-bottom: 15px;
+    }
+    .dual-view { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0; }
+    .dual-view .view-panel { min-width: 0; }
+    .view-label {
+      font-size: 12px; font-weight: 600; color: #7f8c8d;
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+    }
+    @media (max-width: 992px) { .dual-view { grid-template-columns: 1fr; } }
+
+    /* Toggle pill buttons */
+    .toggle-pills { display: inline-flex; border: 2px solid #3498db; border-radius: 20px; overflow: hidden; margin: 10px 0; }
+    .toggle-pills .pill-btn {
+      border: none; background: white; color: #3498db; padding: 6px 18px;
+      font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .toggle-pills .pill-btn.active { background: #3498db; color: white; }
+    .toggle-pills .pill-btn:hover:not(.active) { background: #eaf4fc; }
+
     /* Quiz tiles */
     .quiz-tiles { display: grid; gap: 12px; margin: 15px 0; }
     .quiz-cols-2 { grid-template-columns: repeat(2, 1fr); }
@@ -326,6 +490,10 @@ ui <- navbarPage(
     .quiz-tile.disabled { pointer-events: none; opacity: 0.7; }
   ")),
   tags$script(HTML("
+    // Custom message handler for toggle button styling
+    Shiny.addCustomMessageHandler('shinyjs-runjs', function(message) {
+      eval(message.code);
+    });
     $(function() {
       var tocEl = $('<div id=\"sticky-toc\"></div>').appendTo('body');
       function buildToc() {
@@ -368,50 +536,37 @@ ui <- navbarPage(
   tabPanel("0. Wprowadzenie",
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Zanim zaczniesz analize - ocen swoje dane"),
+    div(class = "section-title", "Zanim zaczniesz analizę..."),
 
     div(class = "narrative",
-      p("Na tym kursie bedziemy wykonywac rozne analizy statystyczne: testy hipotez,
-        korelacje, regresje. Kazda z tych metod wymaga, zeby dane spelnialy okreslone warunki."),
-      p("Zanim zaczniesz liczyc - zatrzymaj sie i ocen swoj zbior danych.
-        Ponizszy checklist pomoze Ci to zrobic systematycznie.")
+      p("Na tym kursie będziemy wykonywać różne analizy statystyczne: testy hipotez,
+        korelacje, regresje. Każda z tych metod wymaga, żeby dane spełniały określone warunki."),
+      p("Złe dane = złe wyniki. Nawet najlepsza analiza nie uratuje danych, które
+        mają fundamentalne problemy. Dlatego zanim zaczniesz liczyć - zatrzymaj się
+        i oceń swój zbiór danych.")
     ),
 
-    div(class = "widget-block",
-      h4("Checklist jakosci danych"),
-      tags$p(tags$strong(style = "color: #e74c3c;", "KRYTYCZNE"),
-        " - jesli nie spelniasz, szukaj innego zbioru:"),
-      checkboxGroupInput("intro_critical", NULL,
-        choices = c(
-          "Dane odpowiadaja hipotezie badawczej (mierza to, co chcesz badac)" = "hyp",
-          "Wystarczajaca liczba obserwacji (n \u2265 20-30 na grupe/podgrupe)" = "n",
-          "Mix typow zmiennych (ilosciowe + jakosciowe)" = "mix",
-          "Zmiennosc w danych (nie wszystko takie samo)" = "var",
-          "Struktura danych pasuje do planowanych analiz" = "fit",
-          "Niezaleznosc obserwacji (lub mozliwosc agregacji)" = "indep"
-        )
-      ),
-      tags$p(tags$strong(style = "color: #f39c12;", "NAPRAWIALNE"),
-        " - wymagaja pracy, ale sie da:"),
-      checkboxGroupInput("intro_fixable", NULL,
-        choices = c(
-          "Malo brakow danych (< 5%)" = "missing",
-          "Jednoznaczne definicje zmiennych" = "def",
-          "Brak bledow i podejrzanych wartosci" = "errors"
-        )
-      ),
-      uiOutput("intro_thermometer")
+    div(class = "callout-warning",
+      tags$strong("Pytanie do grupy:"),
+      " Wyobraźcie sobie, że otworzyliście zbiór danych w jamovi.",
+      " Na co zwracacie uwagę? Co może pójść nie tak?",
+      tags$br(), tags$br(),
+      tags$em("(Porozmawiajmy o tym, a potem pokażę Wam katalog typowych problemów.)")
     ),
 
     div(class = "callout-info",
-      tags$strong("Zadanie:"),
-      " W kolejnych zakladkach zobaczysz 10 zbiorow danych. ",
-      "Sprobuj sam ocenic kazdy, zanim zobaczysz werdykt."
+      tags$strong("Plan wykładu:"),
+      tags$br(),
+      "1. Katalog problemów - zobaczysz 7 typów błędów w danych (jak wyglądają w tabeli i na wykresie)",
+      tags$br(),
+      "2. Case studies - 10 prawdziwych zbiorów do samodzielnej oceny",
+      tags$br(),
+      "3. Ściąga - checklist i podsumowanie"
     ),
 
     div(class = "chapter-transition",
-      p("Zaczynamy od wzorcowego zbioru danych."),
-      actionButton("ch0_next", "Dalej: 1. Szkoly w Kalifornii \u2192",
+      p("Zobaczmy, co może pójść nie tak z danymi."),
+      actionButton("ch0_next", "Dalej: 1. Katalog problemów \u2192",
                    class = "btn-primary btn-lg")
     ),
 
@@ -419,20 +574,283 @@ ui <- navbarPage(
   ))),
 
   # ==========================================================================
-  # TAB 1: SZKOLY W KALIFORNII (CASchool) - DOBRY
+  # TAB 1: KATALOG PROBLEMOW
   # ==========================================================================
-  tabPanel("1. Szkoly",
-  fluidRow(column(8, offset = 2,
+  tabPanel("1. Katalog",
+  fluidRow(column(10, offset = 1,
 
-    div(class = "section-title", "Szkoly w Kalifornii"),
+    div(class = "section-title", "Katalog problemów w danych"),
 
     div(class = "narrative",
-      p("Zbior danych z 420 okregow szkolnych w Kalifornii. Zawiera wyniki testow
-        standaryzowanych, wydatki na ucznia, dochody w okregu i dane demograficzne."),
-      p("Zrodlo: pakiet AER w R (Academic Economic Research).")
+      p("Poniżej zobaczysz 7 typowych problemów, które mogą dyskwalifikować zbiór danych.
+        Każdy problem pokazujemy tak, jak wyglądałoby to w jamovi lub Excelu (tabela)
+        oraz na wykresie. Gdzie to możliwe - pokaz surowe vs oczyszczone dane.")
     ),
 
-    div(class = "section-title", "Podglad danych"),
+    # --- Problem 1: Za mało danych ---
+    div(class = "problem-card",
+      div(class = "problem-header",
+        span(class = "problem-number", "1"),
+        h3(class = "problem-name", "Za mało danych")
+      ),
+      div(class = "problem-desc",
+        "Kolega przepytał 6 znajomych i chce robić test t. Czy to wystarczy?"
+      ),
+      div(class = "dual-view",
+        div(class = "view-panel",
+          div(class = "view-label", "Widok danych"),
+          div(class = "jamovi-table", DT::dataTableOutput("cat1_table"))
+        ),
+        div(class = "view-panel",
+          div(class = "view-label", "Co widać na wykresie"),
+          plotOutput("cat1_plot", height = "280px")
+        )
+      ),
+      div(class = "callout-danger", style = "margin-top: 10px;",
+        tags$strong("Problem:"), " Przy n = 6 histogram ma ogromne dziury, ",
+        "przedział ufności jest bardzo szeroki, a moc testu < 10%. ",
+        "Nawet duży efekt będzie nieistotny statystycznie.",
+        tags$br(),
+        tags$strong("Zasada:"), " Minimum 20-30 obserwacji na grupę."
+      )
+    ),
+
+    # --- Problem 2: Brak zmienności ---
+    div(class = "problem-card",
+      div(class = "problem-header",
+        span(class = "problem-number", "2"),
+        h3(class = "problem-name", "Brak zmienności")
+      ),
+      div(class = "problem-desc",
+        "Firma przeprowadziła ankietę zadowolenia. Ale wszyscy wiedzą, że szef ją czyta..."
+      ),
+      div(class = "dual-view",
+        div(class = "view-panel",
+          div(class = "view-label", "Widok danych"),
+          div(class = "jamovi-table", DT::dataTableOutput("cat2_table"))
+        ),
+        div(class = "view-panel",
+          div(class = "view-label", "Co widać na wykresie"),
+          plotOutput("cat2_plot", height = "280px")
+        )
+      ),
+      div(class = "callout-danger", style = "margin-top: 10px;",
+        tags$strong("Problem:"), " Gdy SD \u2248 0, scatter plot to jedna kropka. ",
+        "Korelacja nie ma sensu - nie ma czego korelować.",
+        tags$br(),
+        tags$strong("Przyczyna:"), " Social desirability bias - ludzie odpowiadają to, co wypada."
+      )
+    ),
+
+    # --- Problem 3: Błędy i literówki ---
+    div(class = "problem-card",
+      div(class = "problem-header",
+        span(class = "problem-number", "3"),
+        h3(class = "problem-name", "Błędy i literówki w danych")
+      ),
+      div(class = "problem-desc",
+        "Dane z portalu nieruchomości skopiowane do Excela. Wszystko wygląda OK... na pierwszy rzut oka."
+      ),
+      div(class = "toggle-pills",
+        actionButton("cat3_raw", "Surowe", class = "pill-btn active"),
+        actionButton("cat3_clean", "Oczyszczone", class = "pill-btn")
+      ),
+      div(class = "dual-view",
+        div(class = "view-panel",
+          div(class = "view-label", "Widok danych"),
+          div(class = "jamovi-table", DT::dataTableOutput("cat3_table"))
+        ),
+        div(class = "view-panel",
+          div(class = "view-label", "Cena vs powierzchnia"),
+          plotOutput("cat3_plot", height = "280px")
+        )
+      ),
+      div(class = "callout-warning", style = "margin-top: 10px;",
+        tags$strong("Typowe błędy:"),
+        " brak zer (45 zamiast 450 000), dodatkowe zero (5 500 000 zamiast 550 000), ",
+        "ujemna cena (-300 000), literówka w pokojach (42 zamiast 4).",
+        tags$br(),
+        tags$strong("Zasada:"), " Zawsze sprawdź zakresy zmiennych (min, max) zanim zaczniesz analizę."
+      )
+    ),
+
+    # --- Problem 4: Źle zdefiniowane zmienne ---
+    div(class = "problem-card",
+      div(class = "problem-header",
+        span(class = "problem-number", "4"),
+        h3(class = "problem-name", "Źle zdefiniowane zmienne")
+      ),
+      div(class = "problem-desc",
+        "Student zrobił ankietę z pytaniami otwartymi. Każdy odpowiedział po swojemu."
+      ),
+      div(class = "toggle-pills",
+        actionButton("cat4_raw", "Surowe", class = "pill-btn active"),
+        actionButton("cat4_clean", "Oczyszczone", class = "pill-btn")
+      ),
+      div(class = "dual-view",
+        div(class = "view-panel",
+          div(class = "view-label", "Widok danych"),
+          div(class = "jamovi-table", DT::dataTableOutput("cat4_table"))
+        ),
+        div(class = "view-panel",
+          div(class = "view-label", "Próba zrobienia histogramu"),
+          plotOutput("cat4_plot", height = "280px")
+        )
+      ),
+      div(class = "callout-warning", style = "margin-top: 10px;",
+        tags$strong("Problem:"), " R/jamovi nie wie, co zrobić z '3-4h' albo 'dobrze'. ",
+        "Czyszczenie jest możliwe, ale tracimy dużo danych (NA).",
+        tags$br(),
+        tags$strong("Zasada:"), " Zamknięte pytania + spójne skale + pilotaż ankiety."
+      )
+    ),
+
+    # --- Problem 5: Braki danych ---
+    div(class = "problem-card",
+      div(class = "problem-header",
+        span(class = "problem-number", "5"),
+        h3(class = "problem-name", "Braki danych (NA)")
+      ),
+      div(class = "problem-desc",
+        "Ankieta ze 12 odpowiedziami. Nie każdy odpowiedział na wszystkie pytania."
+      ),
+      div(class = "dual-view",
+        div(class = "view-panel",
+          div(class = "view-label", "Widok danych"),
+          div(class = "jamovi-table", DT::dataTableOutput("cat5_table"))
+        ),
+        div(class = "view-panel",
+          div(class = "view-label", "Procent brakow na zmienna"),
+          plotOutput("cat5_plot", height = "280px")
+        )
+      ),
+      div(class = "callout-info", style = "margin-top: 10px;",
+        tags$strong("Progi:"),
+        " < 5% braków = OK (usuń wiersze). 5-20% = ostrożnie (rozważ imputację). ",
+        "> 20% = zmienna może odpaść z analizy.",
+        tags$br(),
+        tags$strong("Uwaga:"), " Braki rzadko są losowe! Może ludzie pomijali trudne pytania?"
+      )
+    ),
+
+    # --- Problem 6: Brak niezależności ---
+    div(class = "problem-card",
+      div(class = "problem-header",
+        span(class = "problem-number", "6"),
+        h3(class = "problem-name", "Brak niezależności obserwacji")
+      ),
+      div(class = "problem-desc",
+        "Dane o temperaturze i ozonie - 20 dni pomiarów. W tabeli wygląda normalnie..."
+      ),
+      div(class = "dual-view",
+        div(class = "view-panel",
+          div(class = "view-label", "Widok danych"),
+          div(class = "jamovi-table", DT::dataTableOutput("cat6_table"))
+        ),
+        div(class = "view-panel",
+          div(class = "view-label", "Dane w kolejności (liniowy)"),
+          plotOutput("cat6_plot", height = "280px")
+        )
+      ),
+      div(class = "callout-danger", style = "margin-top: 10px;",
+        tags$strong("Problem:"), " W tabeli te dane wyglądają jak 20 niezależnych pomiarów. ",
+        "Ale wykres liniowy zdradza sezonowość - każdy dzień zależy od poprzedniego.",
+        tags$br(),
+        tags$strong("Konsekwencja:"), " Test t i korelacja Pearsona zakładają niezależność. ",
+        "Złam to założenie = fałszywie istotne wyniki."
+      )
+    ),
+
+    # --- Problem 7: Zła struktura ---
+    div(class = "problem-card",
+      div(class = "problem-header",
+        span(class = "problem-number", "7"),
+        h3(class = "problem-name", "Zła struktura danych")
+      ),
+      div(class = "problem-desc",
+        "Zbiór o filmach: każdy wiersz to jedno zdarzenie (śmierć lub przekleństwo), nie obserwacja."
+      ),
+      div(class = "toggle-pills",
+        actionButton("cat7_events", "Eventowe (surowe)", class = "pill-btn active"),
+        actionButton("cat7_agg", "Zagregowane", class = "pill-btn")
+      ),
+      div(class = "dual-view",
+        div(class = "view-panel",
+          div(class = "view-label", "Widok danych"),
+          div(class = "jamovi-table", DT::dataTableOutput("cat7_table"))
+        ),
+        div(class = "view-panel",
+          div(class = "view-label", "Ile masz obserwacji?"),
+          plotOutput("cat7_plot", height = "280px")
+        )
+      ),
+      div(class = "callout-danger", style = "margin-top: 10px;",
+        tags$strong("Problem:"), " 8 wierszy wygląda jak n = 8, ale to zdarzenia, nie obserwacje. ",
+        "Po agregacji do poziomu filmów masz n = 2. Test t na n = 2?",
+        tags$br(),
+        tags$strong("Zasada:"), " Sprawdź, co jest Twoją 'jednostką obserwacji'. ",
+        "Osoba? Firma? Dzień? Wiersz w tabeli != obserwacja."
+      )
+    ),
+
+    # --- Podsumowanie: Checklist ---
+    div(class = "section-title", "Podsumowanie: Checklist jakości danych"),
+
+    div(class = "narrative",
+      p("Teraz już znasz typowe problemy. Użyj poniższego checklistu,
+        żeby systematycznie oceniać każdy zbiór danych.")
+    ),
+
+    div(class = "widget-block",
+      h4("Checklist jakości danych"),
+      tags$p(tags$strong(style = "color: #e74c3c;", "KRYTYCZNE"),
+        " - jeśli nie spełniasz, szukaj innego zbioru:"),
+      checkboxGroupInput("intro_critical", NULL,
+        choices = c(
+          "Dane odpowiadają hipotezie badawczej (mierzą to, co chcesz badać)" = "hyp",
+          "Wystarczająca liczba obserwacji (n \u2265 20-30 na grupę/podgrupę)" = "n",
+          "Mix typów zmiennych (ilościowe + jakościowe)" = "mix",
+          "Zmienność w danych (nie wszystko takie samo)" = "var",
+          "Struktura danych pasuje do planowanych analiz" = "fit",
+          "Niezależność obserwacji (lub możliwość agregacji)" = "indep"
+        )
+      ),
+      tags$p(tags$strong(style = "color: #f39c12;", "NAPRAWIALNE"),
+        " - wymagają pracy, ale się da:"),
+      checkboxGroupInput("intro_fixable", NULL,
+        choices = c(
+          "Mało braków danych (< 5%)" = "missing",
+          "Jednoznaczne definicje zmiennych" = "def",
+          "Brak błędów i podejrzanych wartości" = "errors"
+        )
+      ),
+      uiOutput("intro_thermometer")
+    ),
+
+    div(class = "chapter-transition",
+      p("Pora przetestować tę wiedzę na prawdziwych zbiorach danych."),
+      actionButton("cat_next", "Dalej: 2. Szkoły w Kalifornii \u2192",
+                   class = "btn-primary btn-lg")
+    ),
+
+    div(style = "height: 40px;")
+  ))),
+
+  # ==========================================================================
+  # TAB 2: SZKOLY W KALIFORNII (CASchool) - DOBRY
+  # ==========================================================================
+  tabPanel("2. Szkoly",
+  fluidRow(column(8, offset = 2,
+
+    div(class = "section-title", "Szkoły w Kalifornii"),
+
+    div(class = "narrative",
+      p("Zbiór danych z 420 okręgów szkolnych w Kalifornii. Zawiera wyniki testów
+        standaryzowanych, wydatki na ucznia, dochody w okręgu i dane demograficzne."),
+      p("Źródło: pakiet AER w R (Academic Economic Research).")
+    ),
+
+    div(class = "section-title", "Podgląd danych"),
 
     div(class = "widget-block",
       DT::dataTableOutput("tab1_table")
@@ -440,17 +858,17 @@ ui <- navbarPage(
 
     div(class = "callout-info",
       tags$strong("Zmienne:"), " district, school (identyfikatory), ",
-      "students, teachers (liczebnosci), expenditure (wydatki/ucznia $), ",
-      "income (sredni dochod w okregu $tys.), english (% uczniow uczacych sie angielskiego), ",
-      "lunch (% uczniow z darmowym lunchem), calworks (% rodzin na zasilku), ",
-      "read, math (wyniki testow Stanford 9)."
+      "students, teachers (liczebności), expenditure (wydatki/ucznia $), ",
+      "income (średni dochód w okręgu $tys.), english (% uczniów uczących się angielskiego), ",
+      "lunch (% uczniów z darmowym lunchem), calworks (% rodzin na zasiłku), ",
+      "read, math (wyniki testów Stanford 9)."
     ),
 
     div(class = "section-title", "Eksploracja zmiennych"),
 
     div(class = "widget-block",
       fluidRow(
-        column(4, selectInput("tab1_var", "Wybierz zmienna:",
+        column(4, selectInput("tab1_var", "Wybierz zmienną:",
           choices = c("read", "math", "expenditure", "income", "english", "lunch",
                       "students", "teachers", "calworks"))),
         column(8, plotOutput("tab1_hist", height = "300px"))
@@ -458,7 +876,7 @@ ui <- navbarPage(
       verbatimTextOutput("tab1_summary")
     ),
 
-    div(class = "section-title", "Zaleznosci miedzy zmiennymi"),
+    div(class = "section-title", "Zależności między zmiennymi"),
 
     div(class = "widget-block",
       fluidRow(
@@ -473,8 +891,8 @@ ui <- navbarPage(
     uiOutput("tab1_verdict"),
 
     div(class = "chapter-transition",
-      p("To byl wzorcowy zbior. Nastepny bedzie... inny."),
-      actionButton("ch1_next", "Dalej: 2. Ankieta na grupie \u2192",
+      p("To był wzorcowy zbiór. Następny będzie... inny."),
+      actionButton("ch1_next", "Dalej: 3. Ankieta na grupie \u2192",
                    class = "btn-primary btn-lg")
     ),
 
@@ -482,25 +900,25 @@ ui <- navbarPage(
   ))),
 
   # ==========================================================================
-  # TAB 2: ZA MALO DANYCH - ZLY
+  # TAB 3: ZA MALO DANYCH - ZLY
   # ==========================================================================
-  tabPanel("2. Grupa",
+  tabPanel("3. Grupa",
   fluidRow(column(8, offset = 2,
 
     div(class = "section-title", "Ankieta na grupie"),
 
     div(class = "narrative",
-      p("Kolega zbiera dane do projektu. Dzien przed deadline'em pyta 8 znajomych
-        ze swojej grupy. Oto co uzyskal:")
+      p("Kolega zbiera dane do projektu. Dzień przed deadline'em pyta 8 znajomych
+        ze swojej grupy. Oto co uzyskał:")
     ),
 
-    div(class = "section-title", "Podglad danych"),
+    div(class = "section-title", "Podgląd danych"),
 
     div(class = "widget-block",
       DT::dataTableOutput("tab2_table")
     ),
 
-    div(class = "section-title", "Ile obserwacji naprawde potrzebujesz?"),
+    div(class = "section-title", "Ile obserwacji naprawdę potrzebujesz?"),
 
     div(class = "widget-block",
       sliderInput("tab2_n", "Liczba obserwacji:", min = 5, max = 200, value = 8, step = 1),
@@ -514,23 +932,23 @@ ui <- navbarPage(
     div(class = "section-title", "Werdykt"),
 
     div(class = "callout-danger",
-      tags$strong("Problem:"), " n = 8 to zdecydowanie za malo.",
+      tags$strong("Problem:"), " n = 8 to zdecydowanie za mało.",
       tags$br(),
-      "Przy tak malej probie moc testu wynosi ok. 10-15% - nawet duza roznica ",
-      "miedzy grupami bedzie nieistotna statystycznie.",
+      "Przy tak małej próbie moc testu wynosi ok. 10-15% - nawet duża różnica ",
+      "między grupami będzie nieistotna statystycznie.",
       tags$br(), tags$br(),
-      tags$strong("Zasada:"), " Liczy sie n na grupe, nie n ogolne! ",
-      "Jesli porownujesz 3 grupy i masz n = 30, to tylko 10 na grupe - wciaz za malo.",
+      tags$strong("Zasada:"), " Liczy się n na grupę, nie n ogólne! ",
+      "Jeśli porównujesz 3 grupy i masz n = 30, to tylko 10 na grupę - wciąż za mało.",
       tags$br(),
-      "Minimum 20-30 obserwacji w kazdej podgrupie, ktora chcesz analizowac. ",
+      "Minimum 20-30 obserwacji w każdej podgrupie, którą chcesz analizować. ",
       "Regresja z k predyktorami potrzebuje n > 10k + 50."
     ),
 
     uiOutput("tab2_verdict"),
 
     div(class = "chapter-transition",
-      p("Zobaczmy teraz zbior, ktory radzi sobie lepiej."),
-      actionButton("ch2_next", "Dalej: 3. Pingwiny \u2192",
+      p("Zobaczmy teraz zbiór, który radzi sobie lepiej."),
+      actionButton("ch2_next", "Dalej: 4. Pingwiny \u2192",
                    class = "btn-primary btn-lg")
     ),
 
@@ -538,27 +956,27 @@ ui <- navbarPage(
   ))),
 
   # ==========================================================================
-  # TAB 3: PINGWINY (palmerpenguins) - DOBRY
+  # TAB 4: PINGWINY (palmerpenguins) - DOBRY
   # ==========================================================================
-  tabPanel("3. Pingwiny",
+  tabPanel("4. Pingwiny",
   fluidRow(column(8, offset = 2,
 
     div(class = "section-title", "Pingwiny z Antarktydy"),
 
     div(class = "narrative",
-      p("Dane z badania 344 pingwinow trzech gatunkow (Adelie, Chinstrap, Gentoo)
+      p("Dane z badania 344 pingwinów trzech gatunków (Adelie, Chinstrap, Gentoo)
         na trzech wyspach archipelagu Palmera na Antarktydzie.
-        Pomiary ciala: dziob, pletwy, masa."),
-      p("Zrodlo: pakiet palmerpenguins w R (Horst, Hill & Gorman, 2020).")
+        Pomiary ciała: dziób, płetwy, masa."),
+      p("Źródło: pakiet palmerpenguins w R (Horst, Hill & Gorman, 2020).")
     ),
 
-    div(class = "section-title", "Podglad danych"),
+    div(class = "section-title", "Podgląd danych"),
 
     div(class = "widget-block",
       DT::dataTableOutput("tab3_table")
     ),
 
-    div(class = "section-title", "Czy sa braki danych?"),
+    div(class = "section-title", "Czy są braki danych?"),
 
     div(class = "widget-block",
       plotOutput("tab3_missing", height = "250px"),
@@ -578,19 +996,19 @@ ui <- navbarPage(
     div(class = "section-title", "Werdykt"),
 
     div(class = "callout-success",
-      tags$strong("Dobry zbior!"),
-      " n = 344, trzy zbalansowane grupy gatunkow, jasno zdefiniowane zmienne pomiarowe.",
+      tags$strong("Dobry zbiór!"),
+      " n = 344, trzy zbalansowane grupy gatunków, jasno zdefiniowane zmienne pomiarowe.",
       tags$br(),
-      "Niewielkie braki danych (< 3%) - mozna je bezpiecznie usunac (listwise deletion).",
+      "Niewielkie braki danych (< 3%) - można je bezpiecznie usunąć (listwise deletion).",
       tags$br(),
-      "Mozliwe analizy: test t, ANOVA, korelacja, regresja, chi-kwadrat."
+      "Możliwe analizy: test t, ANOVA, korelacja, regresja, chi-kwadrat."
     ),
 
     uiOutput("tab3_verdict"),
 
     div(class = "chapter-transition",
-      p("Nastepny zbior wyglada ciekawie... ale czy nadaje sie do analizy?"),
-      actionButton("ch3_next", "Dalej: 4. Filmy Tarantino \u2192",
+      p("Następny zbiór wygląda ciekawie... ale czy nadaje się do analizy?"),
+      actionButton("ch3_next", "Dalej: 5. Filmy Tarantino \u2192",
                    class = "btn-primary btn-lg")
     ),
 
@@ -598,21 +1016,21 @@ ui <- navbarPage(
   ))),
 
   # ==========================================================================
-  # TAB 4: FILMY TARANTINO - ZLY
+  # TAB 5: FILMY TARANTINO - ZLY
   # ==========================================================================
-  tabPanel("4. Tarantino",
+  tabPanel("5. Tarantino",
   fluidRow(column(8, offset = 2,
 
     div(class = "section-title", "Filmy Tarantino"),
 
     div(class = "narrative",
-      p("Kolega znalazl ciekawy zbior danych o filmach Quentina Tarantino.
-        Zawiera informacje o kazdym przeklenstwie i kazdej smierci w jego filmach.
-        'Super temat na projekt!' - mowi."),
-      p("Zrodlo: pakiet fivethirtyeight w R.")
+      p("Kolega znalazł ciekawy zbiór danych o filmach Quentina Tarantino.
+        Zawiera informacje o każdym przekleństwie i każdej śmierci w jego filmach.
+        'Super temat na projekt!' - mówi."),
+      p("Źródło: pakiet fivethirtyeight w R.")
     ),
 
-    div(class = "section-title", "Podglad danych"),
+    div(class = "section-title", "Podgląd danych"),
 
     div(class = "widget-block",
       DT::dataTableOutput("tab4_table")
@@ -620,8 +1038,8 @@ ui <- navbarPage(
 
     div(class = "callout-info",
       tags$strong("Zmienne:"),
-      " movie (tytul filmu), type ('word' lub 'death'), ",
-      "word (konkretne slowo, jesli type='word'), minutes_in (minuta filmu)."
+      " movie (tytuł filmu), type ('word' lub 'death'), ",
+      "word (konkretne słowo, jeśli type='word'), minutes_in (minuta filmu)."
     ),
 
     div(class = "section-title", "Eksploracja"),
@@ -629,12 +1047,12 @@ ui <- navbarPage(
     div(class = "widget-block",
       fluidRow(
         column(6, actionButton("tab4_hist", "Histogram: minutes_in", class = "btn-outline-primary", width = "100%")),
-        column(6, actionButton("tab4_bar", "Porownanie filmow", class = "btn-outline-primary", width = "100%"))
+        column(6, actionButton("tab4_bar", "Porównanie filmów", class = "btn-outline-primary", width = "100%"))
       ),
       plotOutput("tab4_explore_plot", height = "350px")
     ),
 
-    div(class = "section-title", "Proba analiz"),
+    div(class = "section-title", "Próba analiz"),
 
     div(class = "widget-block",
       h4("Jaka analiza tu pasuje?"),
@@ -643,10 +1061,10 @@ ui <- navbarPage(
     ),
 
     div(class = "widget-block",
-      h4("Moze agregacja pomoze?"),
+      h4("Może agregacja pomoże?"),
       div(class = "narrative",
-        p("Kazdy wiersz to jedno zdarzenie (przeklenstwo lub smierc). Aby uzywac klasycznej
-          statystyki, musielibysmy zagregowac dane do poziomu filmow.")
+        p("Każdy wiersz to jedno zdarzenie (przekleństwo lub śmierć). Aby używać klasycznej
+          statystyki, musielibyśmy zagregować dane do poziomu filmów.")
       ),
       actionButton("tab4_aggregate", "Zagreguj dane", class = "btn-warning"),
       uiOutput("tab4_agg_result")
@@ -655,20 +1073,20 @@ ui <- navbarPage(
     div(class = "section-title", "Werdykt"),
 
     div(class = "callout-danger",
-      tags$strong("Zly zbior do klasycznej statystyki!"),
+      tags$strong("Zły zbiór do klasycznej statystyki!"),
       tags$br(),
-      tags$strong("Problem 1:"), " Dane eventowe - kazdy wiersz to zdarzenie, nie obserwacja w sensie statystycznym.",
+      tags$strong("Problem 1:"), " Dane eventowe - każdy wiersz to zdarzenie, nie obserwacja w sensie statystycznym.",
       tags$br(),
-      tags$strong("Problem 2:"), " Po agregacji do poziomu filmow mamy n = 7. To za malo na jakakolwiek analize.",
+      tags$strong("Problem 2:"), " Po agregacji do poziomu filmów mamy n = 7. To za mało na jakąkolwiek analizę.",
       tags$br(),
-      tags$strong("Problem 3:"), " Brak zmiennych ilosciowych do korelacji/regresji."
+      tags$strong("Problem 3:"), " Brak zmiennych ilościowych do korelacji/regresji."
     ),
 
     uiOutput("tab4_verdict"),
 
     div(class = "chapter-transition",
-      p("Czasem dane maja odpowiednia wielkosc, ale inny problem..."),
-      actionButton("ch4_next", "Dalej: 5. Ankieta firmowa \u2192",
+      p("Czasem dane mają odpowiednią wielkość, ale inny problem..."),
+      actionButton("ch4_next", "Dalej: 6. Ankieta firmowa \u2192",
                    class = "btn-primary btn-lg")
     ),
 
@@ -676,20 +1094,20 @@ ui <- navbarPage(
   ))),
 
   # ==========================================================================
-  # TAB 5: ANKIETA FIRMOWA - ZLY (brak zmiennosci)
+  # TAB 6: ANKIETA FIRMOWA - ZŁY (brak zmienności)
   # ==========================================================================
-  tabPanel("5. Firma",
+  tabPanel("6. Firma",
   fluidRow(column(8, offset = 2,
 
     div(class = "section-title", "Ankieta firmowa"),
 
     div(class = "narrative",
-      p("Firma przeprowadza anonimowa ankiete zadowolenia pracownikow.
-        Problem w tym, ze wszyscy wiedza, ze szef ja czyta...
-        Zebrano dane od 80 pracownikow.")
+      p("Firma przeprowadza anonimową ankietę zadowolenia pracowników.
+        Problem w tym, że wszyscy wiedzą, że szef ją czyta...
+        Zebrano dane od 80 pracowników.")
     ),
 
-    div(class = "section-title", "Podglad danych"),
+    div(class = "section-title", "Podgląd danych"),
 
     div(class = "widget-block",
       DT::dataTableOutput("tab5_table")
@@ -701,32 +1119,32 @@ ui <- navbarPage(
       plotOutput("tab5_plot_zadowolenie", height = "300px")
     ),
     div(class = "callout-danger",
-      tags$strong("Problem: brak zroznicowania odpowiedzi."),
-      " 95% pracownikow zaznaczylo 4 lub 5. To klasyczny efekt aprobaty spolecznej \u2014
-      wszyscy wiedza, ze szef czyta ankiete. Skala 1\u20135 w praktyce dziala tu jak skala 1\u20132."
+      tags$strong("Problem: brak zróżnicowania odpowiedzi."),
+      " 95% pracowników zaznaczyło 4 lub 5. To klasyczny efekt aprobaty społecznej \u2014
+      wszyscy wiedzą, że szef czyta ankietę. Skala 1\u20135 w praktyce działa tu jak skala 1\u20132."
     ),
 
-    div(class = "section-title", "Zmienna 2: Dzial"),
+    div(class = "section-title", "Zmienna 2: Dział"),
 
     div(class = "widget-block",
       plotOutput("tab5_plot_departament", height = "300px")
     ),
     div(class = "callout-danger",
       tags$strong("Problem: niezbalansowane grupy."),
-      " 94% respondentow to dzial IT. Pozostale dzialy maja po 1\u20132 osoby \u2014
-      jakiekolwiek porownanie miedzy dzialami bedzie niemozliwe."
+      " 94% respondentów to dział IT. Pozostałe działy mają po 1\u20132 osoby \u2014
+      jakiekolwiek porównanie między działami będzie niemożliwe."
     ),
 
-    div(class = "section-title", "Zmienna 3: Staz pracy"),
+    div(class = "section-title", "Zmienna 3: Staż pracy"),
 
     div(class = "widget-block",
       plotOutput("tab5_plot_staz", height = "300px")
     ),
     div(class = "callout-warning",
-      tags$strong("Uwaga: waska rozpitosc wartosci."),
-      " Wszyscy pracownicy maja staz w przedziale 2.8\u20133.5 roku. Sama w sobie mala zmiennosc
-      nie jest bledem \u2014 zdarzaja sie takie dane. Ale gdy ",
-      tags$em("caly zbior"), " wyglada podobnie, wykrycie jakichkolwiek zaleznosci staje sie
+      tags$strong("Uwaga: wąska rozpiętość wartości."),
+      " Wszyscy pracownicy mają staż w przedziale 2.8\u20133.5 roku. Sama w sobie mała zmienność
+      nie jest błędem \u2014 zdarzają się takie dane. Ale gdy ",
+      tags$em("cały zbiór"), " wygląda podobnie, wykrycie jakichkolwiek zależności staje się
       bardzo trudne."
     ),
 
@@ -736,61 +1154,61 @@ ui <- navbarPage(
       plotOutput("tab5_plot_wynagrodzenie", height = "300px")
     ),
     div(class = "callout-warning",
-      tags$strong("Uwaga: waska rozpitosc wartosci."),
-      " Wynagrodzenia mieszcza sie w przedziale 4800\u20135200 PLN \u2014 rozstep to tylko 400 PLN.
-      Podobnie jak ze stazem: sama w sobie to nie jest katastrofa, ale razem z pozostalymi
-      zmiennymi tworzy zbior, w ktorym trudno o jakikolwiek interesujacy sygnal."
+      tags$strong("Uwaga: wąska rozpiętość wartości."),
+      " Wynagrodzenia mieszczą się w przedziale 4800\u20135200 PLN \u2014 rozstęp to tylko 400 PLN.
+      Podobnie jak ze stażem: sama w sobie to nie jest katastrofa, ale razem z pozostałymi
+      zmiennymi tworzy zbiór, w którym trudno o jakikolwiek interesujący sygnał."
     ),
 
-    div(class = "section-title", "Zmienna 5: Plec"),
+    div(class = "section-title", "Zmienna 5: Płeć"),
 
     div(class = "widget-block",
       plotOutput("tab5_plot_plec", height = "300px")
     ),
     div(class = "callout-danger",
       tags$strong("Problem: niezbalansowane grupy."),
-      " 90% respondentow to mezczyzni (ok. 72 os.), kobiet jest ok. 8. Porownanie
-      wedlug plci nie ma sensu przy takiej dysproporcji."
+      " 90% respondentów to mężczyźni (ok. 72 os.), kobiet jest ok. 8. Porównanie
+      według płci nie ma sensu przy takiej dysproporcji."
     ),
 
-    div(class = "section-title", "Co sie dzieje gdy probujemy szukac zaleznosci?"),
+    div(class = "section-title", "Co się dzieje gdy próbujemy szukać zależności?"),
 
     div(class = "callout-info",
-      "Wezmy dwie zmienne ilosciowe \u2014 staz pracy i wynagrodzenie \u2014 i sprawdzmy
-      czy miedzy nimi jest jakis zwiazek. Obie maja waska rozpitosc, wiec..."
+      "Weźmy dwie zmienne ilościowe \u2014 staż pracy i wynagrodzenie \u2014 i sprawdźmy
+      czy między nimi jest jakiś związek. Obie mają wąską rozpiętość, więc..."
     ),
 
     div(class = "widget-block",
       plotOutput("tab5_scatter", height = "300px")
     ),
 
-    div(class = "section-title", "Co by bylo, gdyby dane mialy normalna zmiennosc?"),
+    div(class = "section-title", "Co by było, gdyby dane miały normalną zmienność?"),
 
     div(class = "callout-info",
-      "Przesuniecie suwaka symuluje sytuacje, w ktorej staz i wynagrodzenia mialy
-      szerszy rozrzut. Obserwuj jak zmienia sie korelacja."
+      "Przesunięcie suwaka symuluje sytuację, w której staż i wynagrodzenia miały
+      szerszy rozrzut. Obserwuj jak zmienia się korelacja."
     ),
 
     div(class = "widget-block",
-      sliderInput("tab5_sd_mult", "Mnoznik rozrzutu danych:", min = 1, max = 5, value = 1, step = 0.5),
+      sliderInput("tab5_sd_mult", "Mnożnik rozrzutu danych:", min = 1, max = 5, value = 1, step = 0.5),
       plotOutput("tab5_scatter_sim", height = "300px")
     ),
 
     div(class = "section-title", "Werdykt"),
 
     div(class = "callout-danger",
-      tags$strong("Ten zbior danych nie nadaje sie do analizy."),
+      tags$strong("Ten zbiór danych nie nadaje się do analizy."),
       tags$br(),
-      "Kazda zmienna z osobna wyglada niegroznie, ale lacznie: odpowiedzi skupione
-      przy maksimum, dzialy i plec skrajnie niezbalansowane, zmienne ilosciowe
-      bez zadnego zroznicowania. Nie ma tu czego analizowac."
+      "Każda zmienna z osobna wygląda niegroźnie, ale łącznie: odpowiedzi skupione
+      przy maksimum, działy i płeć skrajnie niezbalansowane, zmienne ilościowe
+      bez żadnego zróżnicowania. Nie ma tu czego analizować."
     ),
 
     uiOutput("tab5_verdict"),
 
     div(class = "chapter-transition",
-      p("Pora na duzy, dobry zbior danych."),
-      actionButton("ch5_next", "Dalej: 6. Wynagrodzenia \u2192",
+      p("Pora na duży, dobry zbiór danych."),
+      actionButton("ch5_next", "Dalej: 7. Wynagrodzenia \u2192",
                    class = "btn-primary btn-lg")
     ),
 
@@ -798,20 +1216,20 @@ ui <- navbarPage(
   ))),
 
   # ==========================================================================
-  # TAB 6: WYNAGRODZENIA (Wage) - DOBRY
+  # TAB 7: WYNAGRODZENIA (Wage) - DOBRY
   # ==========================================================================
-  tabPanel("6. Wynagrodzenia",
+  tabPanel("7. Wynagrodzenia",
   fluidRow(column(8, offset = 2,
 
     div(class = "section-title", "Wynagrodzenia w USA"),
 
     div(class = "narrative",
-      p("Dane z Current Population Survey: 3000 mezczyzn z regionu Mid-Atlantic.
-        Informacje o zarobkach, wyksztalceniu, zawodzie, wieku i zdrowiu."),
-      p("Zrodlo: pakiet ISLR w R (Introduction to Statistical Learning).")
+      p("Dane z Current Population Survey: 3000 mężczyzn z regionu Mid-Atlantic.
+        Informacje o zarobkach, wykształceniu, zawodzie, wieku i zdrowiu."),
+      p("Źródło: pakiet ISLR w R (Introduction to Statistical Learning).")
     ),
 
-    div(class = "section-title", "Podglad danych"),
+    div(class = "section-title", "Podgląd danych"),
 
     div(class = "widget-block",
       DT::dataTableOutput("tab6_table")
@@ -821,7 +1239,7 @@ ui <- navbarPage(
 
     div(class = "widget-block",
       fluidRow(
-        column(4, selectInput("tab6_var", "Wybierz zmienna:",
+        column(4, selectInput("tab6_var", "Wybierz zmienną:",
           choices = c("wage", "age", "education", "jobclass", "health", "maritl", "race"))),
         column(8, plotOutput("tab6_hist", height = "300px"))
       )
@@ -830,20 +1248,20 @@ ui <- navbarPage(
     div(class = "section-title", "Werdykt"),
 
     div(class = "callout-success",
-      tags$strong("Bardzo dobry zbior!"),
-      " n = 3000, kompletne dane, bogaty mix zmiennych ilosciowych i jakosciowych.",
+      tags$strong("Bardzo dobry zbiór!"),
+      " n = 3000, kompletne dane, bogaty mix zmiennych ilościowych i jakościowych.",
       tags$br(),
-      "Mozliwe analizy: test t, ANOVA, korelacja, regresja wieloraka, chi-kwadrat.",
+      "Możliwe analizy: test t, ANOVA, korelacja, regresja wieloraka, chi-kwadrat.",
       tags$br(),
-      tags$em("Ale uwaga: dane tylko dla mezczyzn z jednego regionu USA - ",
-              "ograniczona generalizowalnosc.")
+      tags$em("Ale uwaga: dane tylko dla mężczyzn z jednego regionu USA - ",
+              "ograniczona generalizowalność.")
     ),
 
     uiOutput("tab6_verdict"),
 
     div(class = "chapter-transition",
-      p("Nastepny zbior to przyklad zlej ankiety."),
-      actionButton("ch6_next", "Dalej: 7. Trudna ankieta \u2192",
+      p("Następny zbiór to przykład złej ankiety."),
+      actionButton("ch6_next", "Dalej: 8. Trudna ankieta \u2192",
                    class = "btn-primary btn-lg")
     ),
 
@@ -851,34 +1269,34 @@ ui <- navbarPage(
   ))),
 
   # ==========================================================================
-  # TAB 7: TRUDNA ANKIETA - ZLY (zle zmienne)
+  # TAB 8: TRUDNA ANKIETA - ZŁY (złe zmienne)
   # ==========================================================================
-  tabPanel("7. Ankieta",
+  tabPanel("8. Ankieta",
   fluidRow(column(8, offset = 2,
 
     div(class = "section-title", "Trudna ankieta"),
 
     div(class = "narrative",
-      p("Student zaprojektowal ankiete bez konsultacji z prowadzacym i bez pilotazu.
-        Rozeslal ja na grupie i zebrala 90 odpowiedzi. Oto wynik:")
+      p("Student zaprojektował ankietę bez konsultacji z prowadzącym i bez pilotażu.
+        Rozesłał ją na grupie i zebrała 90 odpowiedzi. Oto wynik:")
     ),
 
-    div(class = "section-title", "Podglad danych"),
+    div(class = "section-title", "Podgląd danych"),
 
     div(class = "widget-block",
       DT::dataTableOutput("tab7_table")
     ),
 
-    div(class = "section-title", "Sprobuj policzyc srednia"),
+    div(class = "section-title", "Spróbuj policzyć średnią"),
 
     div(class = "widget-block",
-      selectInput("tab7_var", "Wybierz zmienna:",
+      selectInput("tab7_var", "Wybierz zmienną:",
         choices = c("czas_na_studia", "ocena_kursu", "aktywnosc", "samopoczucie", "ulubiony_kolor")),
-      actionButton("tab7_mean", "Policz srednia", class = "btn-primary"),
+      actionButton("tab7_mean", "Policz średnią", class = "btn-primary"),
       uiOutput("tab7_mean_result")
     ),
 
-    div(class = "section-title", "Jak to naprawic?"),
+    div(class = "section-title", "Jak to naprawić?"),
 
     div(class = "widget-block",
       radioButtons("tab7_toggle", "Widok danych:", choices = c("Surowe", "Oczyszczone"), inline = TRUE),
@@ -887,34 +1305,34 @@ ui <- navbarPage(
     ),
 
     div(class = "callout-info",
-      tags$strong("Jak tego uniknac:"),
+      tags$strong("Jak tego uniknąć:"),
       tags$br(),
-      "1. Zamkniete pytania (gotowe opcje do wyboru)",
+      "1. Zamknięte pytania (gotowe opcje do wyboru)",
       tags$br(),
-      "2. Spojne skale (np. zawsze 1-10 albo zawsze 1-5)",
+      "2. Spójne skale (np. zawsze 1-10 albo zawsze 1-5)",
       tags$br(),
-      "3. Pilotaz ankiety (przetestuj na 5 osobach przed rozeslaniem)",
+      "3. Pilotaż ankiety (przetestuj na 5 osobach przed rozesłaniem)",
       tags$br(),
-      "4. Jasna instrukcja (np. 'podaj liczbe godzin tygodniowo')"
+      "4. Jasna instrukcja (np. 'podaj liczbę godzin tygodniowo')"
     ),
 
     div(class = "section-title", "Werdykt"),
 
     div(class = "callout-danger",
-      tags$strong("Dane wymagaja gruntownego czyszczenia!"),
+      tags$strong("Dane wymagają gruntownego czyszczenia!"),
       tags$br(),
-      "Zmienne tekstowe zamiast liczbowych, niespojne skale, brak kodowania.",
+      "Zmienne tekstowe zamiast liczbowych, niespójne skale, brak kodowania.",
       tags$br(),
-      "Zmienna 'ulubiony_kolor' jest irrelewantna - nie wiaze sie z zadnym pytaniem badawczym.",
+      "Zmienna 'ulubiony_kolor' jest irrelewantna - nie wiąże się z żadnym pytaniem badawczym.",
       tags$br(),
-      "R nie wie, co zrobic z '3-4h' albo 'dobrze' jako wartoscia liczbowa."
+      "R nie wie, co zrobić z '3-4h' albo 'dobrze' jako wartością liczbową."
     ),
 
     uiOutput("tab7_verdict"),
 
     div(class = "chapter-transition",
-      p("Nastepny zbior ma inny rodzaj problemow - bledy w danych."),
-      actionButton("ch7_next", "Dalej: 8. Ceny mieszkan \u2192",
+      p("Następny zbiór ma inny rodzaj problemów - błędy w danych."),
+      actionButton("ch7_next", "Dalej: 9. Ceny mieszkań \u2192",
                    class = "btn-primary btn-lg")
     ),
 
@@ -922,19 +1340,19 @@ ui <- navbarPage(
   ))),
 
   # ==========================================================================
-  # TAB 8: CENY MIESZKAN - MIESZANY (outliery)
+  # TAB 9: CENY MIESZKAN - MIESZANY (outliery)
   # ==========================================================================
-  tabPanel("8. Mieszkania",
+  tabPanel("9. Mieszkania",
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Ceny mieszkan"),
+    div(class = "section-title", "Ceny mieszkań"),
 
     div(class = "narrative",
-      p("Dane z portalu z ogloszeniami nieruchomosci - 150 ofert skopiowanych do Excela.
-        Chcemy zbadac zaleznosc ceny od powierzchni.")
+      p("Dane z portalu z ogłoszeniami nieruchomości - 150 ofert skopiowanych do Excela.
+        Chcemy zbadać zależność ceny od powierzchni.")
     ),
 
-    div(class = "section-title", "Podglad danych"),
+    div(class = "section-title", "Podgląd danych"),
 
     div(class = "widget-block",
       DT::dataTableOutput("tab8_table")
@@ -946,7 +1364,7 @@ ui <- navbarPage(
       plotOutput("tab8_scatter_raw", height = "350px")
     ),
 
-    div(class = "section-title", "Szukanie outlierow"),
+    div(class = "section-title", "Szukanie outlierów"),
 
     div(class = "widget-block",
       selectInput("tab8_var", "Zmienna do boxplotu:",
@@ -955,17 +1373,17 @@ ui <- navbarPage(
     ),
 
     div(class = "widget-block",
-      checkboxInput("tab8_clean", "Usun podejrzane obserwacje", value = FALSE),
+      checkboxInput("tab8_clean", "Usuń podejrzane obserwacje", value = FALSE),
       conditionalPanel("input.tab8_clean",
         plotOutput("tab8_scatter_clean", height = "350px")
       )
     ),
 
-    div(class = "section-title", "Quiz: blad czy prawdziwy outlier?"),
+    div(class = "section-title", "Quiz: błąd czy prawdziwy outlier?"),
 
     div(class = "widget-block",
       uiOutput("tab8_quiz"),
-      actionButton("tab8_check_quiz", "Sprawdz odpowiedzi", class = "btn-primary"),
+      actionButton("tab8_check_quiz", "Sprawdź odpowiedzi", class = "btn-primary"),
       uiOutput("tab8_quiz_result")
     ),
 
@@ -974,18 +1392,18 @@ ui <- navbarPage(
     div(class = "callout-warning",
       tags$strong("Dane dobre po czyszczeniu!"),
       tags$br(),
-      "Podstawowa struktura zbioru jest dobra (n=150, zroznicowane zmienne, jasne definicje).",
+      "Podstawowa struktura zbioru jest dobra (n=150, zróżnicowane zmienne, jasne definicje).",
       tags$br(),
-      "Ale bledy wprowadzania danych drastycznie zaburzaja wyniki (R\u00b2 skacze po ich usunieciu).",
+      "Ale błędy wprowadzania danych drastycznie zaburzają wyniki (R\u00b2 skacze po ich usunięciu).",
       tags$br(),
-      tags$strong("Klucz:"), " Rozroznij blad danych (usun) od prawdziwego outliera (przemysl zachowanie)."
+      tags$strong("Klucz:"), " Rozróżnij błąd danych (usuń) od prawdziwego outliera (przemyśl zachowanie)."
     ),
 
     uiOutput("tab8_verdict"),
 
     div(class = "chapter-transition",
-      p("Nastepny zbior to przyklad dobrze zaprojektowanej ankiety."),
-      actionButton("ch8_next", "Dalej: 9. Ankieta studencka \u2192",
+      p("Następny zbiór to przykład dobrze zaprojektowanej ankiety."),
+      actionButton("ch8_next", "Dalej: 10. Ankieta studencka \u2192",
                    class = "btn-primary btn-lg")
     ),
 
@@ -993,19 +1411,19 @@ ui <- navbarPage(
   ))),
 
   # ==========================================================================
-  # TAB 9: ANKIETA STUDENCKA - DOBRY
+  # TAB 10: ANKIETA STUDENCKA - DOBRY
   # ==========================================================================
-  tabPanel("9. Studenci",
+  tabPanel("10. Studenci",
   fluidRow(column(8, offset = 2,
 
     div(class = "section-title", "Ankieta studencka"),
 
     div(class = "narrative",
-      p("Wyobraz sobie, ze projektujesz ankiete do projektu koncowego.
-        Oto przyklad dobrze zaprojektowanej ankiety z 150 respondentami.")
+      p("Wyobraź sobie, że projektujesz ankietę do projektu końcowego.
+        Oto przykład dobrze zaprojektowanej ankiety z 150 respondentami.")
     ),
 
-    div(class = "section-title", "Podglad danych"),
+    div(class = "section-title", "Podgląd danych"),
 
     div(class = "widget-block",
       DT::dataTableOutput("tab9_table")
@@ -1014,9 +1432,9 @@ ui <- navbarPage(
     div(class = "callout-info",
       tags$strong("Zmienne i ich typy:"),
       tags$br(),
-      "plec (nominalna) | kierunek (nominalna) | rok_studiow (porzadkowa)",
+      "plec (nominalna) | kierunek (nominalna) | rok_studiow (porządkowa)",
       tags$br(),
-      "godziny_nauki (ciagla) | stres (porzadkowa/Likert 1-10) | srednia_ocen (ciagla) | liczba_kursow (dyskretna)"
+      "godziny_nauki (ciągła) | stres (porządkowa/Likert 1-10) | srednia_ocen (ciągła) | liczba_kursow (dyskretna)"
     ),
 
     div(class = "section-title", "Werdykt"),
@@ -1024,18 +1442,18 @@ ui <- navbarPage(
     div(class = "callout-success",
       tags$strong("Wzorcowa ankieta!"),
       tags$br(),
-      "Zamkniete pytania, spojne skale, jasne kodowanie.",
+      "Zamknięte pytania, spójne skale, jasne kodowanie.",
       tags$br(),
-      "n = 150, mix typow zmiennych, kazda analiza z kursu jest mozliwa.",
+      "n = 150, mix typów zmiennych, każda analiza z kursu jest możliwa.",
       tags$br(),
-      tags$em("Porownaj z Trudna ankieta (tab 7) - te same tematy, ale swiat roznic w jakosci!")
+      tags$em("Porównaj z Trudną ankietą (tab 7) - te same tematy, ale świat różnic w jakości!")
     ),
 
     uiOutput("tab9_verdict"),
 
     div(class = "chapter-transition",
-      p("Ostatni zbior - wyglada dobrze, ale ma ukryty problem..."),
-      actionButton("ch9_next", "Dalej: 10. Jakosc powietrza \u2192",
+      p("Ostatni zbiór - wygląda dobrze, ale ma ukryty problem..."),
+      actionButton("ch9_next", "Dalej: 11. Jakość powietrza \u2192",
                    class = "btn-primary btn-lg")
     ),
 
@@ -1043,26 +1461,26 @@ ui <- navbarPage(
   ))),
 
   # ==========================================================================
-  # TAB 10: JAKOSC POWIETRZA (airquality) - ZLY
+  # TAB 11: JAKOSC POWIETRZA (airquality) - ZLY
   # ==========================================================================
-  tabPanel("10. Powietrze",
+  tabPanel("11. Powietrze",
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Jakosc powietrza w Nowym Jorku"),
+    div(class = "section-title", "Jakość powietrza w Nowym Jorku"),
 
     div(class = "narrative",
-      p("Dane o jakosci powietrza w Nowym Jorku. 153 pomiary z lata 1973.
+      p("Dane o jakości powietrza w Nowym Jorku. 153 pomiary z lata 1973.
         Zmienne: Ozone (ppb), Solar.R (promieniowanie), Wind (mph), Temp (F)."),
-      p("Zrodlo: wbudowany zbior 'airquality' w R.")
+      p("Źródło: wbudowany zbiór 'airquality' w R.")
     ),
 
-    div(class = "section-title", "Podglad danych"),
+    div(class = "section-title", "Podgląd danych"),
 
     div(class = "widget-block",
       DT::dataTableOutput("tab10_table")
     ),
 
-    div(class = "section-title", "Czy sa braki danych?"),
+    div(class = "section-title", "Czy są braki danych?"),
 
     div(class = "widget-block",
       plotOutput("tab10_missing", height = "300px"),
@@ -1072,21 +1490,21 @@ ui <- navbarPage(
     div(class = "section-title", "Odkryj ukryty problem"),
 
     div(class = "widget-block",
-      actionButton("tab10_reveal", "Pokaz dane w kolejnosci", class = "btn-warning btn-lg", width = "100%"),
+      actionButton("tab10_reveal", "Pokaż dane w kolejności", class = "btn-warning btn-lg", width = "100%"),
       conditionalPanel("input.tab10_reveal > 0",
         plotOutput("tab10_lineplot", height = "350px"),
         div(class = "callout-danger",
-          tags$strong("To nie sa niezalezne obserwacje!"),
-          " To pomiary dzienne - widac wyrazna sezonowosc.",
+          tags$strong("To nie są niezależne obserwacje!"),
+          " To pomiary dzienne - widać wyraźną sezonowość.",
           tags$br(),
-          "Temperatura i ozon zmieniaja sie sezonowo - kazdy dzien zalezy od poprzedniego."
+          "Temperatura i ozon zmieniają się sezonowo - każdy dzień zależy od poprzedniego."
         )
       )
     ),
 
     conditionalPanel("input.tab10_reveal > 0",
       div(class = "widget-block",
-        h4("Autokorelacja - dowod braku niezaleznosci"),
+        h4("Autokorelacja - dowód braku niezależności"),
         plotOutput("tab10_lag", height = "300px"),
         uiOutput("tab10_autocorr_info")
       )
@@ -1095,23 +1513,23 @@ ui <- navbarPage(
     div(class = "section-title", "Werdykt"),
 
     div(class = "callout-danger",
-      tags$strong("DWA powazne problemy:"),
+      tags$strong("DWA poważne problemy:"),
       tags$br(),
-      tags$strong("1. Braki danych:"), " Ozone ma 24% brakow (37 z 153). ",
-      "Po usunieciu brakow zostaje 111 obserwacji.",
+      tags$strong("1. Braki danych:"), " Ozone ma 24% braków (37 z 153). ",
+      "Po usunięciu braków zostaje 111 obserwacji.",
       tags$br(),
-      tags$strong("2. Brak niezaleznosci:"), " To szereg czasowy! ",
-      "Obserwacje dzienne sa silnie autokorelowane.",
+      tags$strong("2. Brak niezależności:"), " To szereg czasowy! ",
+      "Obserwacje dzienne są silnie autokorelowane.",
       tags$br(),
-      "Klasyczne testy (t-test, korelacja Pearsona) zakladaja niezaleznosc obserwacji - ",
-      "tutaj to zalozenie jest zlamane."
+      "Klasyczne testy (t-test, korelacja Pearsona) zakładają niezależność obserwacji - ",
+      "tutaj to założenie jest złamane."
     ),
 
     uiOutput("tab10_verdict"),
 
     div(class = "chapter-transition",
-      p("To byl ostatni zbior danych. Zobaczmy podsumowanie."),
-      actionButton("ch10_next", "Dalej: Sciaga \u2192",
+      p("To był ostatni zbiór danych. Zobaczmy podsumowanie."),
+      actionButton("ch10_next", "Dalej: 12. Ściąga \u2192",
                    class = "btn-primary btn-lg")
     ),
 
@@ -1119,42 +1537,42 @@ ui <- navbarPage(
   ))),
 
   # ==========================================================================
-  # TAB 11: SCIAGA
+  # TAB 12: SCIAGA
   # ==========================================================================
-  tabPanel("11. Sciaga",
+  tabPanel("12. Sciaga",
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Sciaga - jak ocenic zbior danych"),
+    div(class = "section-title", "Ściąga - jak ocenić zbiór danych"),
 
-    div(class = "section-title", "Podsumowanie 10 zbiorow"),
+    div(class = "section-title", "Podsumowanie 10 zbiorów"),
 
     div(class = "widget-block",
       tableOutput("tab11_summary")
     ),
 
-    div(class = "section-title", "Checklist jakosci danych"),
+    div(class = "section-title", "Checklist jakości danych"),
 
     div(class = "callout-danger",
       HTML("
-        <strong style='font-size: 15px;'>KRYTYCZNE - jesli nie spelniasz, szukaj innego zbioru:</strong>
+        <strong style='font-size: 15px;'>KRYTYCZNE - jeśli nie spełniasz, szukaj innego zbioru:</strong>
         <ol>
-          <li><strong>Czy dane odpowiadaja hipotezie badawczej?</strong> Najpierw sformuluj co chcesz badac, potem sprawdz czy dane to mierza.</li>
-          <li><strong>Czy masz n &ge; 20-30 na grupe?</strong> Liczy sie n w kazdej podgrupie. Porownujesz 3 grupy? Potrzebujesz 3 &times; 30 = 90.</li>
-          <li><strong>Czy masz mix typow zmiennych?</strong> Ilosciowe do korelacji/regresji, jakosciowe do t-testow i chi-kwadrat.</li>
-          <li><strong>Czy jest zmiennosc?</strong> SD &asymp; 0 oznacza brak mozliwosci analizy.</li>
-          <li><strong>Czy struktura danych pasuje do analiz?</strong> Sprawdz czy masz odpowiednie zmienne do kazdej planowanej analizy.</li>
-          <li><strong>Czy obserwacje sa niezalezne?</strong> Dane czasowe lub z klastrow wymagaja specjalnych metod (lub agregacji).</li>
+          <li><strong>Czy dane odpowiadają hipotezie badawczej?</strong> Najpierw sformułuj co chcesz badać, potem sprawdź czy dane to mierzą.</li>
+          <li><strong>Czy masz n &ge; 20-30 na grupę?</strong> Liczy się n w każdej podgrupie. Porównujesz 3 grupy? Potrzebujesz 3 &times; 30 = 90.</li>
+          <li><strong>Czy masz mix typów zmiennych?</strong> Ilościowe do korelacji/regresji, jakościowe do t-testów i chi-kwadrat.</li>
+          <li><strong>Czy jest zmienność?</strong> SD &asymp; 0 oznacza brak możliwości analizy.</li>
+          <li><strong>Czy struktura danych pasuje do analiz?</strong> Sprawdź czy masz odpowiednie zmienne do każdej planowanej analizy.</li>
+          <li><strong>Czy obserwacje są niezależne?</strong> Dane czasowe lub z klastrów wymagają specjalnych metod (lub agregacji).</li>
         </ol>
       ")
     ),
 
     div(class = "callout-warning",
       HTML("
-        <strong style='font-size: 15px;'>NAPRAWIALNE - wymagaja pracy, ale sie da:</strong>
+        <strong style='font-size: 15px;'>NAPRAWIALNE - wymagają pracy, ale się da:</strong>
         <ol start='7'>
-          <li><strong>Czy braki &lt; 5%?</strong> Mozna usunac obserwacje z brakami lub imputowac. Powyzej 20-30% w zmiennej - ta zmienna moze odpasc.</li>
-          <li><strong>Czy zmienne sa jednoznacznie zdefiniowane?</strong> Mozna rekodowac, przejsc na rangi - ale kazda decyzja ma konsekwencje.</li>
-          <li><strong>Czy nie ma bledow i outlierow?</strong> Sprawdz zakresy, literowki. Odrozniaj bledy (usun) od prawdziwych outlierow (przemysl).</li>
+          <li><strong>Czy braki &lt; 5%?</strong> Można usunąć obserwacje z brakami lub imputować. Powyżej 20-30% w zmiennej - ta zmienna może odpaść.</li>
+          <li><strong>Czy zmienne są jednoznacznie zdefiniowane?</strong> Można rekodować, przejść na rangi - ale każda decyzja ma konsekwencje.</li>
+          <li><strong>Czy nie ma błędów i outlierów?</strong> Sprawdź zakresy, literówki. Odróżniaj błędy (usuń) od prawdziwych outlierów (przemyśl).</li>
         </ol>
       ")
     ),
@@ -1166,12 +1584,12 @@ ui <- navbarPage(
     ),
 
     div(class = "callout-info",
-      tags$strong("Wskazowka:"),
-      " Uzyj tego checklistu oceniajac dane do swojego projektu koncowego.",
+      tags$strong("Wskazówka:"),
+      " Użyj tego checklistu oceniając dane do swojego projektu końcowego.",
       tags$br(),
-      "Jesli nie spelniasz kryteriow krytycznych - szukaj innego zbioru.",
+      "Jeśli nie spełniasz kryteriów krytycznych - szukaj innego zbioru.",
       tags$br(),
-      "Jesli masz problemy naprawialne - mozesz pracowac z tymi danymi, ale zaplanuj czas na czyszczenie."
+      "Jeśli masz problemy naprawialne - możesz pracować z tymi danymi, ale zaplanuj czas na czyszczenie."
     ),
 
     div(style = "height: 60px;")
@@ -1189,17 +1607,18 @@ server <- function(input, output, session) {
   # NAWIGACJA
   # ==========================================================================
 
-  observeEvent(input$ch0_next, { updateNavbarPage(session, "main_nav", selected = "1. Szkoly") })
-  observeEvent(input$ch1_next, { updateNavbarPage(session, "main_nav", selected = "2. Grupa") })
-  observeEvent(input$ch2_next, { updateNavbarPage(session, "main_nav", selected = "3. Pingwiny") })
-  observeEvent(input$ch3_next, { updateNavbarPage(session, "main_nav", selected = "4. Tarantino") })
-  observeEvent(input$ch4_next, { updateNavbarPage(session, "main_nav", selected = "5. Firma") })
-  observeEvent(input$ch5_next, { updateNavbarPage(session, "main_nav", selected = "6. Wynagrodzenia") })
-  observeEvent(input$ch6_next, { updateNavbarPage(session, "main_nav", selected = "7. Ankieta") })
-  observeEvent(input$ch7_next, { updateNavbarPage(session, "main_nav", selected = "8. Mieszkania") })
-  observeEvent(input$ch8_next, { updateNavbarPage(session, "main_nav", selected = "9. Studenci") })
-  observeEvent(input$ch9_next, { updateNavbarPage(session, "main_nav", selected = "10. Powietrze") })
-  observeEvent(input$ch10_next, { updateNavbarPage(session, "main_nav", selected = "11. Sciaga") })
+  observeEvent(input$ch0_next, { updateNavbarPage(session, "main_nav", selected = "1. Katalog") })
+  observeEvent(input$cat_next, { updateNavbarPage(session, "main_nav", selected = "2. Szkoly") })
+  observeEvent(input$ch1_next, { updateNavbarPage(session, "main_nav", selected = "3. Grupa") })
+  observeEvent(input$ch2_next, { updateNavbarPage(session, "main_nav", selected = "4. Pingwiny") })
+  observeEvent(input$ch3_next, { updateNavbarPage(session, "main_nav", selected = "5. Tarantino") })
+  observeEvent(input$ch4_next, { updateNavbarPage(session, "main_nav", selected = "6. Firma") })
+  observeEvent(input$ch5_next, { updateNavbarPage(session, "main_nav", selected = "7. Wynagrodzenia") })
+  observeEvent(input$ch6_next, { updateNavbarPage(session, "main_nav", selected = "8. Ankieta") })
+  observeEvent(input$ch7_next, { updateNavbarPage(session, "main_nav", selected = "9. Mieszkania") })
+  observeEvent(input$ch8_next, { updateNavbarPage(session, "main_nav", selected = "10. Studenci") })
+  observeEvent(input$ch9_next, { updateNavbarPage(session, "main_nav", selected = "11. Powietrze") })
+  observeEvent(input$ch10_next, { updateNavbarPage(session, "main_nav", selected = "12. Sciaga") })
 
   # ==========================================================================
   # TAB 0: WPROWADZENIE
@@ -1214,10 +1633,10 @@ server <- function(input, output, session) {
     # Krytyczne decyduja o kolorze
     if (n_critical <= 3) {
       color <- col_bad
-      label <- "Dane wymagaja pracy - problemy krytyczne!"
+      label <- "Dane wymagają pracy - problemy krytyczne!"
     } else if (n_critical <= 4 || n_total <= 6) {
       color <- col_mixed
-      label <- "Dane OK z zastrzezeniami"
+      label <- "Dane OK z zastrzeżeniami"
     } else {
       color <- col_good
       label <- "Dane gotowe do analizy!"
@@ -1233,12 +1652,342 @@ server <- function(input, output, session) {
       div(style = paste0("text-align: center; margin-top: 8px; font-weight: bold; color: ", color, ";"), label),
       if (n_critical < 6 && n_fixable > 0)
         div(style = "text-align: center; margin-top: 4px; font-size: 13px; color: #7f8c8d;",
-          "Naprawialne kryteria nie ratuja krytycznych problemow!")
+          "Naprawialne kryteria nie ratują krytycznych problemów!")
     )
   })
 
   # ==========================================================================
-  # TAB 1: SZKOLY W KALIFORNII
+  # TAB 1: KATALOG PROBLEMOW
+  # ==========================================================================
+
+  # --- Problem 1: Za malo danych ---
+  output$cat1_table <- DT::renderDataTable({
+    sketch <- htmltools::withTags(table(
+      class = "display",
+      thead(tr(
+        th("id", br(span(class = "var-type", "id"))),
+        th("plec", br(span(class = "var-type", "nominalna"))),
+        th("wiek", br(span(class = "var-type", "ciagla"))),
+        th("stres", br(span(class = "var-type", "porzadkowa"))),
+        th("oceny", br(span(class = "var-type", "ciagla")))
+      ))
+    ))
+    datatable(cat_small, container = sketch, rownames = FALSE,
+              options = list(dom = 't', ordering = FALSE, pageLength = 10))
+  })
+
+  output$cat1_plot <- renderPlot({
+    ggplot(cat_small, aes(x = oceny)) +
+      geom_histogram(bins = 4, fill = col_bad, color = "white", alpha = 0.8) +
+      geom_vline(xintercept = mean(cat_small$oceny), linetype = "dashed", color = col_dark, linewidth = 1) +
+      annotate("text", x = mean(cat_small$oceny) + 0.15, y = 2.2,
+               label = paste0("M = ", round(mean(cat_small$oceny), 2)), hjust = 0, size = 4.5) +
+      scale_y_continuous(breaks = 0:3) +
+      labs(title = "Histogram ocen (n = 6)", x = "Średnia ocen", y = "Liczebność") +
+      theme_minimal(base_size = 14)
+  })
+
+  # --- Problem 2: Brak zmiennosci ---
+  output$cat2_table <- DT::renderDataTable({
+    sketch <- htmltools::withTags(table(
+      class = "display",
+      thead(tr(
+        th("id", br(span(class = "var-type", "id"))),
+        th("zadowolenie", br(span(class = "var-type", "porzadkowa"))),
+        th("wynagrodzenie", br(span(class = "var-type", "ciagla"))),
+        th("staz", br(span(class = "var-type", "ciagla"))),
+        th("dzial", br(span(class = "var-type", "nominalna")))
+      ))
+    ))
+    datatable(cat_novar, container = sketch, rownames = FALSE,
+              options = list(dom = 't', ordering = FALSE, pageLength = 12))
+  })
+
+  output$cat2_plot <- renderPlot({
+    ggplot(cat_novar, aes(x = staz, y = wynagrodzenie)) +
+      geom_point(size = 3, alpha = 0.6, color = col_bad) +
+      labs(title = paste0("Staż vs wynagrodzenie (r = ",
+                          round(cor(cat_novar$staz, cat_novar$wynagrodzenie), 3), ")"),
+           subtitle = "Gdy SD \u2248 0, scatter plot to kropka",
+           x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
+      theme_minimal(base_size = 14)
+  })
+
+  # --- Problem 3: Bledy i literowki (toggle) ---
+  cat3_view <- reactiveVal("raw")
+  observeEvent(input$cat3_raw, {
+    cat3_view("raw")
+    shinyjs_js <- paste0(
+      "$('#cat3_raw').addClass('active'); $('#cat3_clean').removeClass('active');"
+    )
+    session$sendCustomMessage(type = "shinyjs-runjs", message = list(code = shinyjs_js))
+  })
+  observeEvent(input$cat3_clean, {
+    cat3_view("clean")
+    shinyjs_js <- paste0(
+      "$('#cat3_clean').addClass('active'); $('#cat3_raw').removeClass('active');"
+    )
+    session$sendCustomMessage(type = "shinyjs-runjs", message = list(code = shinyjs_js))
+  })
+
+  output$cat3_table <- DT::renderDataTable({
+    if (cat3_view() == "raw") {
+      d <- cat_errors
+    } else {
+      d <- cat_errors_clean
+    }
+    sketch <- htmltools::withTags(table(
+      class = "display",
+      thead(tr(
+        th("id", br(span(class = "var-type", "id"))),
+        th("cena", br(span(class = "var-type", "ciagla"))),
+        th("powierzchnia", br(span(class = "var-type", "ciagla"))),
+        th("pokoje", br(span(class = "var-type", "dyskretna"))),
+        th("dzielnica", br(span(class = "var-type", "nominalna")))
+      ))
+    ))
+    dt <- datatable(d, container = sketch, rownames = FALSE,
+                    options = list(dom = 't', ordering = FALSE, pageLength = 12))
+    if (cat3_view() == "raw") {
+      dt <- dt %>%
+        formatStyle("cena", backgroundColor = styleInterval(
+          c(0, 1000000), c("#fdedec", "white", "#fdedec"))) %>%
+        formatStyle("powierzchnia", backgroundColor = styleInterval(
+          c(500), c("white", "#fdedec"))) %>%
+        formatStyle("pokoje", backgroundColor = styleInterval(
+          c(10), c("white", "#fdedec")))
+    }
+    dt
+  })
+
+  output$cat3_plot <- renderPlot({
+    if (cat3_view() == "raw") {
+      d <- cat_errors
+      title_txt <- "Z błędami"
+      col <- col_bad
+    } else {
+      d <- cat_errors_clean
+      title_txt <- "Po oczyszczeniu"
+      col <- col_good
+    }
+    model <- lm(cena ~ powierzchnia, data = d)
+    r2 <- round(summary(model)$r.squared, 3)
+    ggplot(d, aes(x = powierzchnia, y = cena)) +
+      geom_point(size = 3, alpha = 0.7, color = col_dark) +
+      geom_smooth(method = "lm", color = col, se = TRUE) +
+      labs(title = paste0(title_txt, " (R\u00b2 = ", r2, ")"),
+           x = "Powierzchnia (m\u00b2)", y = "Cena (PLN)") +
+      theme_minimal(base_size = 14)
+  })
+
+  # --- Problem 4: Zle zdefiniowane zmienne (toggle) ---
+  cat4_view <- reactiveVal("raw")
+  observeEvent(input$cat4_raw, {
+    cat4_view("raw")
+    session$sendCustomMessage(type = "shinyjs-runjs",
+      message = list(code = "$('#cat4_raw').addClass('active'); $('#cat4_clean').removeClass('active');"))
+  })
+  observeEvent(input$cat4_clean, {
+    cat4_view("clean")
+    session$sendCustomMessage(type = "shinyjs-runjs",
+      message = list(code = "$('#cat4_clean').addClass('active'); $('#cat4_raw').removeClass('active');"))
+  })
+
+  output$cat4_table <- DT::renderDataTable({
+    if (cat4_view() == "raw") {
+      d <- cat_messy
+      sketch <- htmltools::withTags(table(
+        class = "display",
+        thead(tr(
+          th("id", br(span(class = "var-type", "id"))),
+          th("czas_nauki", br(span(class = "var-type", "tekst?!"))),
+          th("ocena_kursu", br(span(class = "var-type", "tekst?!"))),
+          th("aktywnosc", br(span(class = "var-type", "tekst?!")))
+        ))
+      ))
+      datatable(d, container = sketch, rownames = FALSE,
+                options = list(dom = 't', ordering = FALSE, pageLength = 10)) %>%
+        formatStyle(c("czas_nauki", "ocena_kursu", "aktywnosc"),
+                    backgroundColor = "#fef9e7")
+    } else {
+      d <- cat_messy_clean
+      sketch <- htmltools::withTags(table(
+        class = "display",
+        thead(tr(
+          th("id", br(span(class = "var-type", "id"))),
+          th("czas_nauki_h", br(span(class = "var-type", "ciagla"))),
+          th("ocena_kursu_1_10", br(span(class = "var-type", "ciagla"))),
+          th("aktywnosc_razy_tyg", br(span(class = "var-type", "ciagla")))
+        ))
+      ))
+      datatable(d, container = sketch, rownames = FALSE,
+                options = list(dom = 't', ordering = FALSE, pageLength = 10))
+    }
+  })
+
+  output$cat4_plot <- renderPlot({
+    if (cat4_view() == "raw") {
+      nums <- suppressWarnings(as.numeric(cat_messy$czas_nauki))
+      n_ok <- sum(!is.na(nums))
+      n_fail <- sum(is.na(nums))
+      df <- data.frame(
+        status = c("Rozpoznane\njako liczba", "Nie da się\nprzeczytać"),
+        n = c(n_ok, n_fail)
+      )
+      ggplot(df, aes(x = status, y = n, fill = status)) +
+        geom_col(width = 0.6) +
+        scale_fill_manual(values = c(col_good, col_bad)) +
+        geom_text(aes(label = n), vjust = -0.5, size = 6, fontface = "bold") +
+        labs(title = "czas_nauki: próba konwersji na liczby",
+             subtitle = paste0(n_fail, " z ", nrow(cat_messy), " odpowiedzi nie da się użyć"),
+             x = NULL, y = "Liczba odpowiedzi") +
+        theme_minimal(base_size = 14) +
+        theme(legend.position = "none") +
+        ylim(0, max(df$n) + 1)
+    } else {
+      d <- cat_messy_clean[!is.na(cat_messy_clean$czas_nauki_h), ]
+      ggplot(d, aes(x = czas_nauki_h)) +
+        geom_histogram(bins = 5, fill = col_good, color = "white", alpha = 0.8) +
+        labs(title = paste0("Histogram (n = ", nrow(d), " z ", nrow(cat_messy_clean), ")"),
+             subtitle = "Po oczyszczeniu - ale straciliśmy połowę danych",
+             x = "Godziny nauki/tydzień", y = "Liczebność") +
+        theme_minimal(base_size = 14)
+    }
+  })
+
+  # --- Problem 5: Braki danych ---
+  output$cat5_table <- DT::renderDataTable({
+    sketch <- htmltools::withTags(table(
+      class = "display",
+      thead(tr(
+        th("id", br(span(class = "var-type", "id"))),
+        th("wiek", br(span(class = "var-type", "ciagla"))),
+        th("stres", br(span(class = "var-type", "porzadkowa"))),
+        th("oceny", br(span(class = "var-type", "ciagla"))),
+        th("kierunek", br(span(class = "var-type", "nominalna")))
+      ))
+    ))
+    # Replace NA with styled text for visibility
+    d <- cat_missing
+    datatable(d, container = sketch, rownames = FALSE,
+              options = list(dom = 't', ordering = FALSE, pageLength = 12)) %>%
+      formatStyle(names(d)[-1],
+        backgroundColor = styleEqual(NA, "#f5f5f5"),
+        color = styleEqual(NA, "#bbb"))
+  })
+
+  output$cat5_plot <- renderPlot({
+    miss_pct <- sapply(cat_missing[, -1], function(x) mean(is.na(x)) * 100)
+    df_miss <- data.frame(variable = names(miss_pct), pct = miss_pct)
+    df_miss$color <- ifelse(df_miss$pct > 20, col_bad, ifelse(df_miss$pct > 5, col_mixed, col_good))
+
+    ggplot(df_miss, aes(x = reorder(variable, -pct), y = pct, fill = color)) +
+      geom_col(width = 0.6) +
+      scale_fill_identity() +
+      geom_text(aes(label = paste0(round(pct), "%")), vjust = -0.5, size = 5, fontface = "bold") +
+      geom_hline(yintercept = 5, linetype = "dashed", color = col_mixed) +
+      geom_hline(yintercept = 20, linetype = "dashed", color = col_bad) +
+      annotate("text", x = 3.5, y = 7, label = "5% = OK", color = col_mixed, size = 3.5) +
+      annotate("text", x = 3.5, y = 22, label = "20% = problem", color = col_bad, size = 3.5) +
+      labs(title = "Procent braków na zmienną", x = NULL, y = "% braków (NA)") +
+      theme_minimal(base_size = 14) +
+      ylim(0, 35)
+  })
+
+  # --- Problem 6: Brak niezaleznosci ---
+  output$cat6_table <- DT::renderDataTable({
+    sketch <- htmltools::withTags(table(
+      class = "display",
+      thead(tr(
+        th("dzien", br(span(class = "var-type", "id"))),
+        th("data", br(span(class = "var-type", "data"))),
+        th("temperatura", br(span(class = "var-type", "ciagla"))),
+        th("ozon_ppb", br(span(class = "var-type", "ciagla")))
+      ))
+    ))
+    datatable(cat_timeseries, container = sketch, rownames = FALSE,
+              options = list(dom = 't', ordering = FALSE, pageLength = 20, scrollY = "260px"))
+  })
+
+  output$cat6_plot <- renderPlot({
+    ggplot(cat_timeseries, aes(x = dzien, y = temperatura)) +
+      geom_line(color = col_bad, linewidth = 1.2) +
+      geom_point(color = col_bad, size = 2.5) +
+      labs(title = "Temperatura w kolejności pomiarów",
+           subtitle = "Wyraźna fala - każdy dzień zależy od poprzedniego!",
+           x = "Dzień pomiaru", y = "Temperatura (\u00b0C)") +
+      theme_minimal(base_size = 14)
+  })
+
+  # --- Problem 7: Zla struktura (toggle) ---
+  cat7_view <- reactiveVal("events")
+  observeEvent(input$cat7_events, {
+    cat7_view("events")
+    session$sendCustomMessage(type = "shinyjs-runjs",
+      message = list(code = "$('#cat7_events').addClass('active'); $('#cat7_agg').removeClass('active');"))
+  })
+  observeEvent(input$cat7_agg, {
+    cat7_view("agg")
+    session$sendCustomMessage(type = "shinyjs-runjs",
+      message = list(code = "$('#cat7_agg').addClass('active'); $('#cat7_events').removeClass('active');"))
+  })
+
+  output$cat7_table <- DT::renderDataTable({
+    if (cat7_view() == "events") {
+      sketch <- htmltools::withTags(table(
+        class = "display",
+        thead(tr(
+          th("film", br(span(class = "var-type", "nominalna"))),
+          th("minuta", br(span(class = "var-type", "ciagla"))),
+          th("typ", br(span(class = "var-type", "nominalna")))
+        ))
+      ))
+      datatable(cat_events, container = sketch, rownames = FALSE,
+                options = list(dom = 't', ordering = FALSE, pageLength = 10))
+    } else {
+      sketch <- htmltools::withTags(table(
+        class = "display",
+        thead(tr(
+          th("film", br(span(class = "var-type", "nominalna"))),
+          th("n_smierci", br(span(class = "var-type", "dyskretna"))),
+          th("n_przeklenstw", br(span(class = "var-type", "dyskretna"))),
+          th("dlugosc_min", br(span(class = "var-type", "ciagla")))
+        ))
+      ))
+      datatable(cat_events_agg, container = sketch, rownames = FALSE,
+                options = list(dom = 't', ordering = FALSE, pageLength = 10))
+    }
+  })
+
+  output$cat7_plot <- renderPlot({
+    if (cat7_view() == "events") {
+      df <- data.frame(label = "Wiersze\nw tabeli", n = nrow(cat_events))
+      ggplot(df, aes(x = label, y = n)) +
+        geom_col(fill = col_mixed, width = 0.4) +
+        geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold") +
+        labs(title = "Ile masz 'obserwacji'?",
+             subtitle = "8 wierszy, ale to zdarzenia, nie osoby/filmy",
+             x = NULL, y = NULL) +
+        ylim(0, 10) +
+        theme_minimal(base_size = 14) +
+        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+    } else {
+      df <- data.frame(label = "Filmy\n(obserwacje)", n = nrow(cat_events_agg))
+      ggplot(df, aes(x = label, y = n)) +
+        geom_col(fill = col_bad, width = 0.4) +
+        geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold",
+                  color = col_bad) +
+        labs(title = "Po agregacji",
+             subtitle = "n = 2 filmy. Test t? Nie ma szans.",
+             x = NULL, y = NULL) +
+        ylim(0, 4) +
+        theme_minimal(base_size = 14) +
+        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+    }
+  })
+
+  # ==========================================================================
+  # TAB 2: SZKOLY W KALIFORNII
   # ==========================================================================
 
   output$tab1_table <- DT::renderDataTable({
@@ -1251,7 +2000,7 @@ server <- function(input, output, session) {
     req(input$tab1_var)
     ggplot(CASchools, aes(x = .data[[input$tab1_var]])) +
       geom_histogram(bins = 25, fill = col_primary, color = "white", alpha = 0.8) +
-      labs(title = paste("Rozklad:", input$tab1_var), x = input$tab1_var, y = "Liczebnosc") +
+      labs(title = paste("Rozkład:", input$tab1_var), x = input$tab1_var, y = "Liczebność") +
       theme_minimal(base_size = 14)
   })
 
@@ -1275,7 +2024,7 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # TAB 2: ZA MALO DANYCH
+  # TAB 3: ZA MALO DANYCH
   # ==========================================================================
 
   output$tab2_table <- DT::renderDataTable({
@@ -1296,7 +2045,7 @@ server <- function(input, output, session) {
     d <- sim_data()
     ggplot(d, aes(x = oceny)) +
       geom_histogram(bins = max(5, input$tab2_n / 5), fill = col_primary, color = "white", alpha = 0.8) +
-      labs(title = paste0("Histogram (n = ", input$tab2_n, ")"), x = "Srednia ocen", y = "Liczebnosc") +
+      labs(title = paste0("Histogram (n = ", input$tab2_n, ")"), x = "Średnia ocen", y = "Liczebność") +
       theme_minimal(base_size = 14)
   })
 
@@ -1310,8 +2059,8 @@ server <- function(input, output, session) {
       geom_point(data = df_ci[df_ci$n == max(ns[ns <= input$tab2_n]), ],
                  color = col_bad, size = 4) +
       geom_hline(yintercept = 0.5, linetype = "dashed", color = col_good) +
-      annotate("text", x = 150, y = 0.55, label = "Akceptowalna szerokosc", color = col_good, size = 4) +
-      labs(title = "Szerokosc 95% CI", x = "Liczba obserwacji (n)", y = "Szerokosc CI") +
+      annotate("text", x = 150, y = 0.55, label = "Akceptowalna szerokość", color = col_good, size = 4) +
+      labs(title = "Szerokość 95% CI", x = "Liczba obserwacji (n)", y = "Szerokość CI") +
       theme_minimal(base_size = 14)
   })
 
@@ -1346,7 +2095,7 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # TAB 3: PINGWINY
+  # TAB 4: PINGWINY
   # ==========================================================================
 
   output$tab3_table <- DT::renderDataTable({
@@ -1362,8 +2111,8 @@ server <- function(input, output, session) {
       geom_col() +
       scale_fill_identity() +
       geom_hline(yintercept = 5, linetype = "dashed", color = col_bad) +
-      annotate("text", x = 2, y = 6, label = "Prog 5%", color = col_bad, size = 4) +
-      labs(title = "Procent brakow danych", x = NULL, y = "% brakow") +
+      annotate("text", x = 2, y = 6, label = "Próg 5%", color = col_bad, size = 4) +
+      labs(title = "Procent braków danych", x = NULL, y = "% braków") +
       theme_minimal(base_size = 14) +
       theme(axis.text.x = element_text(angle = 30, hjust = 1))
   })
@@ -1374,7 +2123,7 @@ server <- function(input, output, session) {
     div(class = "callout-info",
       paste0("Kompletne obserwacje: ", n_complete, " z ", n_total,
              " (", round(n_complete / n_total * 100, 1), "%). ",
-             "Braki dotycza glownie zmiennej sex (", sum(is.na(penguins$sex)), " NA).")
+             "Braki dotyczą głównie zmiennej sex (", sum(is.na(penguins$sex)), " NA).")
     )
   })
 
@@ -1395,7 +2144,7 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # TAB 4: FILMY TARANTINO
+  # TAB 5: FILMY TARANTINO
   # ==========================================================================
 
   output$tab4_table <- DT::renderDataTable({
@@ -1406,7 +2155,7 @@ server <- function(input, output, session) {
     output$tab4_explore_plot <- renderPlot({
       ggplot(tarantino, aes(x = minutes_in)) +
         geom_histogram(bins = 30, fill = col_primary, color = "white", alpha = 0.8) +
-        labs(title = "Rozklad minutes_in", x = "Minuta filmu", y = "Liczba zdarzen") +
+        labs(title = "Rozkład minutes_in", x = "Minuta filmu", y = "Liczba zdarzeń") +
         theme_minimal(base_size = 14)
     })
   })
@@ -1468,16 +2217,16 @@ server <- function(input, output, session) {
     answer <- tab4_quiz_selected()
     if (answer == "Zadna z klasycznych") {
       div(class = "callout-success", style = "margin-top: 10px;",
-        tags$strong("Dokladnie!"),
-        " Dane eventowe nie nadaja sie do klasycznych testow.",
-        " Kazdy wiersz to zdarzenie, nie niezalezna obserwacja."
+        tags$strong("Dokładnie!"),
+        " Dane eventowe nie nadają się do klasycznych testów.",
+        " Każdy wiersz to zdarzenie, nie niezależna obserwacja."
       )
     } else {
       div(class = "callout-danger", style = "margin-top: 10px;",
-        tags$strong("Nie do konca."),
-        paste0(" ", answer, " wymaga zmiennych odpowiedniego typu i niezaleznych obserwacji. "),
-        "Tutaj mamy dane eventowe - kazdy wiersz to jedno przeklenstwo lub smierc w filmie. ",
-        "Poprawna odpowiedz: 'Zadna z klasycznych'."
+        tags$strong("Nie do końca."),
+        paste0(" ", answer, " wymaga zmiennych odpowiedniego typu i niezależnych obserwacji. "),
+        "Tutaj mamy dane eventowe - każdy wiersz to jedno przekleństwo lub śmierć w filmie. ",
+        "Poprawna odpowiedź: 'Żadna z klasycznych'."
       )
     }
   })
@@ -1500,8 +2249,8 @@ server <- function(input, output, session) {
       ),
       div(class = "callout-danger", style = "margin-top: 15px;",
         tags$strong("Problem:"),
-        paste0(" Po agregacji mamy n = ", nrow(agg), " filmow. "),
-        "To zdecydowanie za malo na jakakolwiek analize statystyczna.",
+        paste0(" Po agregacji mamy n = ", nrow(agg), " filmów. "),
+        "To zdecydowanie za mało na jakąkolwiek analizę statystyczną.",
         tags$br(),
         "Korelacja n_profanity vs n_deaths przy n=7 nie ma mocy statystycznej."
       )
@@ -1515,7 +2264,7 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # TAB 5: ANKIETA FIRMOWA
+  # TAB 6: ANKIETA FIRMOWA
   # ==========================================================================
 
   output$tab5_table <- DT::renderDataTable({
@@ -1528,7 +2277,7 @@ server <- function(input, output, session) {
       geom_bar(fill = col_bad, alpha = 0.85) +
       labs(
         title = paste0("Zadowolenie z pracy (skala 1\u20135): ", pct_45, "% odpowiedzi to 4 lub 5"),
-        x = "Ocena zadowolenia", y = "Liczba pracownikow"
+        x = "Ocena zadowolenia", y = "Liczba pracowników"
       ) +
       theme_minimal(base_size = 14)
   })
@@ -1541,8 +2290,8 @@ server <- function(input, output, session) {
     ggplot(dept_counts, aes(x = departament, y = n)) +
       geom_col(fill = col_bad, alpha = 0.85) +
       geom_text(aes(label = paste0(pct, "%")), vjust = -0.4, size = 4.5) +
-      labs(title = "Rozklad pracownikow wedlug dzialu",
-           x = "Dzial", y = "Liczba pracownikow") +
+      labs(title = "Rozkład pracowników według działu",
+           x = "Dział", y = "Liczba pracowników") +
       theme_minimal(base_size = 14)
   })
 
@@ -1555,9 +2304,9 @@ server <- function(input, output, session) {
       annotate("text", x = med_staz, y = Inf, label = paste0("mediana = ", med_staz),
                vjust = 2, hjust = -0.1, size = 4, color = col_dark) +
       labs(
-        title = paste0("Staz pracy  |  zakres: ", min(corp_data$staz_pracy),
+        title = paste0("Staż pracy  |  zakres: ", min(corp_data$staz_pracy),
                        "\u2013", max(corp_data$staz_pracy), " lat  |  SD = ", sd_staz),
-        x = "Staz pracy (lata)", y = "Liczba pracownikow"
+        x = "Staż pracy (lata)", y = "Liczba pracowników"
       ) +
       theme_minimal(base_size = 14)
   })
@@ -1573,7 +2322,7 @@ server <- function(input, output, session) {
       labs(
         title = paste0("Wynagrodzenie  |  zakres: ", min(corp_data$wynagrodzenie),
                        "\u2013", max(corp_data$wynagrodzenie), " PLN  |  SD = ", sd_wyn, " PLN"),
-        x = "Wynagrodzenie (PLN)", y = "Liczba pracownikow"
+        x = "Wynagrodzenie (PLN)", y = "Liczba pracowników"
       ) +
       theme_minimal(base_size = 14)
   })
@@ -1585,8 +2334,8 @@ server <- function(input, output, session) {
     ggplot(plec_counts, aes(x = plec, y = n)) +
       geom_col(fill = col_bad, alpha = 0.85) +
       geom_text(aes(label = paste0(pct, "%  (n=", n, ")")), vjust = -0.4, size = 4.5) +
-      labs(title = "Rozklad pracownikow wedlug plci",
-           x = "Plec", y = "Liczba pracownikow") +
+      labs(title = "Rozkład pracowników według płci",
+           x = "Płeć", y = "Liczba pracowników") +
       theme_minimal(base_size = 14)
   })
 
@@ -1594,9 +2343,9 @@ server <- function(input, output, session) {
     ggplot(corp_data, aes(x = staz_pracy, y = wynagrodzenie)) +
       geom_point(alpha = 0.5, size = 3, color = col_dark) +
       geom_smooth(method = "lm", color = col_bad, se = TRUE) +
-      labs(title = "Staz pracy vs wynagrodzenie",
+      labs(title = "Staż pracy vs wynagrodzenie",
            subtitle = paste0("r = ", round(cor(corp_data$staz_pracy, corp_data$wynagrodzenie), 3)),
-           x = "Staz pracy (lata)", y = "Wynagrodzenie (PLN)") +
+           x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
       theme_minimal(base_size = 14)
   })
 
@@ -1614,7 +2363,7 @@ server <- function(input, output, session) {
       geom_smooth(method = "lm", color = col_primary, se = TRUE) +
       labs(title = paste0("Symulacja z SD \u00d7 ", mult),
            subtitle = paste0("r = ", r),
-           x = "Staz pracy (lata)", y = "Wynagrodzenie (PLN)") +
+           x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
       theme_minimal(base_size = 14)
   })
 
@@ -1625,7 +2374,7 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # TAB 6: WYNAGRODZENIA (Wage)
+  # TAB 7: WYNAGRODZENIA (Wage)
   # ==========================================================================
 
   output$tab6_table <- DT::renderDataTable({
@@ -1639,12 +2388,12 @@ server <- function(input, output, session) {
     if (var %in% c("wage", "age")) {
       ggplot(Wage, aes(x = .data[[var]])) +
         geom_histogram(bins = 30, fill = col_primary, color = "white", alpha = 0.8) +
-        labs(title = paste("Rozklad:", var), x = var, y = "Liczebnosc") +
+        labs(title = paste("Rozkład:", var), x = var, y = "Liczebność") +
         theme_minimal(base_size = 14)
     } else {
       ggplot(Wage, aes(x = .data[[var]])) +
         geom_bar(fill = col_primary, alpha = 0.8) +
-        labs(title = paste("Rozklad:", var), x = var, y = "Liczebnosc") +
+        labs(title = paste("Rozkład:", var), x = var, y = "Liczebność") +
         theme_minimal(base_size = 14) +
         theme(axis.text.x = element_text(angle = 30, hjust = 1))
     }
@@ -1656,7 +2405,7 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # TAB 7: TRUDNA ANKIETA
+  # TAB 8: TRUDNA ANKIETA
   # ==========================================================================
 
   output$tab7_table <- DT::renderDataTable({
@@ -1672,13 +2421,13 @@ server <- function(input, output, session) {
       if (var == "samopoczucie") {
         # This one is numeric already
         div(class = "callout-info", style = "margin-top: 10px;",
-          paste0("Srednia samopoczucia: ", round(mean(vals), 1),
-                 " (ale uwaga: wszyscy zaokraglaja do 10 - to nie jest prawdziwa skala ciagla)")
+          paste0("Średnia samopoczucia: ", round(mean(vals), 1),
+                 " (ale uwaga: wszyscy zaokrąglają do 10 - to nie jest prawdziwa skala ciągła)")
         )
       } else if (var == "ulubiony_kolor") {
         div(class = "callout-warning", style = "margin-top: 10px;",
-          "Ulubiony kolor to zmienna nominalna - srednia nie ma sensu. ",
-          "A poza tym: jak ta zmienna wiaze sie z Twoim pytaniem badawczym?"
+          "Ulubiony kolor to zmienna nominalna - średnia nie ma sensu. ",
+          "A poza tym: jak ta zmienna wiąże się z Twoim pytaniem badawczym?"
         )
       } else {
         nums <- safe_numeric(vals)
@@ -1687,16 +2436,16 @@ server <- function(input, output, session) {
 
         if (n_na == 0) {
           div(class = "callout-info", style = "margin-top: 10px;",
-            paste0("Srednia: ", round(mean(nums, na.rm = TRUE), 2))
+            paste0("Średnia: ", round(mean(nums, na.rm = TRUE), 2))
           )
         } else {
           div(class = "callout-danger", style = "margin-top: 10px;",
-            tags$strong(paste0(n_na, " z ", length(nums), " wartosci (", pct_na, "%) nie dalo sie przekonwertowac na liczby!")),
+            tags$strong(paste0(n_na, " z ", length(nums), " wartości (", pct_na, "%) nie dało się przekonwertować na liczby!")),
             tags$br(),
-            "Przyklady problematycznych wartosci: ",
+            "Przykłady problematycznych wartości: ",
             paste(head(vals[is.na(nums)], 5), collapse = ", "),
             tags$br(), tags$br(),
-            "R nie wie, co zrobic z tekstem jak '3-4h' albo 'dobrze'."
+            "R nie wie, co zrobić z tekstem jak '3-4h' albo 'dobrze'."
           )
         }
       }
@@ -1732,13 +2481,13 @@ server <- function(input, output, session) {
     if (input$tab7_toggle == "Oczyszczone") {
       div(class = "callout-info", style = "margin-top: 10px;",
         tags$strong("Zmiany:"),
-        tags$br(), "- czas_na_studia: zamieniono na godziny (ale duzo wartosci to NA - niejednoznaczne odpowiedzi)",
+        tags$br(), "- czas_na_studia: zamieniono na godziny (ale dużo wartości to NA - niejednoznaczne odpowiedzi)",
         tags$br(), "- ocena_kursu: ujednolicono do skali 1-10 (tekst -> NA)",
-        tags$br(), "- aktywnosc: zamieniono na razy/tydzien (duzo NA)",
+        tags$br(), "- aktywnosc: zamieniono na razy/tydzień (dużo NA)",
         tags$br(), "- samopoczucie: przeskalowano 1-100 -> 1-10",
-        tags$br(), "- ulubiony_kolor: USUNIETO (irrelewantna zmienna)",
+        tags$br(), "- ulubiony_kolor: USUNIĘTO (irrelewantna zmienna)",
         tags$br(), tags$br(),
-        tags$em("Wniosek: czyszczenie jest mozliwe, ale tracimy duzo danych. Lepiej zaprojektowac ankiete poprawnie od poczatku.")
+        tags$em("Wniosek: czyszczenie jest możliwe, ale tracimy dużo danych. Lepiej zaprojektować ankietę poprawnie od początku.")
       )
     }
   })
@@ -1750,7 +2499,7 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # TAB 8: CENY MIESZKAN
+  # TAB 9: CENY MIESZKAN
   # ==========================================================================
 
   output$tab8_table <- DT::renderDataTable({
@@ -1802,26 +2551,26 @@ server <- function(input, output, session) {
   # Quiz
   output$tab8_quiz <- renderUI({
     tagList(
-      h4("Sklasyfikuj kazda podejrzana obserwacje:"),
+      h4("Sklasyfikuj każdą podejrzaną obserwację:"),
       div(style = "margin: 10px 0;",
         tags$strong("1. Cena = 45 PLN"), tags$br(),
-        radioButtons("tab8_q1", NULL, choices = c("Blad danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q1", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       ),
       div(style = "margin: 10px 0;",
         tags$strong("2. Cena = 5 500 000 PLN"), tags$br(),
-        radioButtons("tab8_q2", NULL, choices = c("Blad danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q2", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       ),
       div(style = "margin: 10px 0;",
         tags$strong("3. Cena = -300 000 PLN"), tags$br(),
-        radioButtons("tab8_q3", NULL, choices = c("Blad danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q3", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       ),
       div(style = "margin: 10px 0;",
         tags$strong("4. Powierzchnia = 1200 m\u00b2"), tags$br(),
-        radioButtons("tab8_q4", NULL, choices = c("Blad danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q4", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       ),
       div(style = "margin: 10px 0;",
         tags$strong("5. Cena = 780 000, powierzchnia = 120 m\u00b2"), tags$br(),
-        radioButtons("tab8_q5", NULL, choices = c("Blad danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q5", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       )
     )
   })
@@ -1830,12 +2579,12 @@ server <- function(input, output, session) {
     req(input$tab8_check_quiz > 0)
     isolate({
       answers <- c(input$tab8_q1, input$tab8_q2, input$tab8_q3, input$tab8_q4, input$tab8_q5)
-      correct <- c("Blad danych", "Blad danych", "Blad danych", "Blad danych", "Prawdziwy outlier")
+      correct <- c("Błąd danych", "Błąd danych", "Błąd danych", "Błąd danych", "Prawdziwy outlier")
       explanations <- c(
-        "Cena 45 PLN = brak zer (powinno byc ~450 000)",
-        "5 500 000 = dodatkowe zero (powinno byc ~550 000)",
-        "-300 000 = blad znaku (cena nie moze byc ujemna)",
-        "1200 m\u00b2 = dodatkowe zero (powinno byc ~120 m\u00b2)",
+        "Cena 45 PLN = brak zer (powinno być ~450 000)",
+        "5 500 000 = dodatkowe zero (powinno być ~550 000)",
+        "-300 000 = błąd znaku (cena nie może być ujemna)",
+        "1200 m\u00b2 = dodatkowe zero (powinno być ~120 m\u00b2)",
         "To drogie mieszkanie, ale realne - duze, w dobrej lokalizacji. Prawdziwy outlier!"
       )
 
@@ -1860,7 +2609,7 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # TAB 9: ANKIETA STUDENCKA
+  # TAB 10: ANKIETA STUDENCKA
   # ==========================================================================
 
   output$tab9_table <- DT::renderDataTable({
@@ -1873,7 +2622,7 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # TAB 10: JAKOSC POWIETRZA
+  # TAB 11: JAKOSC POWIETRZA
   # ==========================================================================
 
   aq <- airquality
@@ -1892,9 +2641,9 @@ server <- function(input, output, session) {
       scale_fill_identity() +
       geom_hline(yintercept = 5, linetype = "dashed", color = col_mixed) +
       geom_hline(yintercept = 20, linetype = "dashed", color = col_bad) +
-      annotate("text", x = 1, y = 22, label = "20% - powazny problem", color = col_bad, size = 4) +
+      annotate("text", x = 1, y = 22, label = "20% - poważny problem", color = col_bad, size = 4) +
       annotate("text", x = 1, y = 7, label = "5% - akceptowalne", color = col_mixed, size = 4) +
-      labs(title = "Procent brakow danych", x = NULL, y = "% brakow") +
+      labs(title = "Procent braków danych", x = NULL, y = "% braków") +
       theme_minimal(base_size = 14)
   })
 
@@ -1903,8 +2652,8 @@ server <- function(input, output, session) {
     solar_na <- sum(is.na(aq$Solar.R))
     n_complete <- sum(complete.cases(aq))
     div(class = "callout-warning",
-      paste0("Ozone: ", ozone_na, " brakow (", round(ozone_na / nrow(aq) * 100, 1), "%), ",
-             "Solar.R: ", solar_na, " brakow (", round(solar_na / nrow(aq) * 100, 1), "%). ",
+      paste0("Ozone: ", ozone_na, " braków (", round(ozone_na / nrow(aq) * 100, 1), "%), ",
+             "Solar.R: ", solar_na, " braków (", round(solar_na / nrow(aq) * 100, 1), "%). ",
              "Kompletne obserwacje: ", n_complete, " z ", nrow(aq), ".")
     )
   })
@@ -1914,8 +2663,8 @@ server <- function(input, output, session) {
     ggplot(aq, aes(x = row, y = Ozone)) +
       geom_line(color = col_primary, alpha = 0.7) +
       geom_point(color = col_primary, size = 1.5, alpha = 0.5) +
-      labs(title = "Ozone w kolejnosci obserwacji",
-           subtitle = "Widac wyrazna sezonowosc - to nie sa niezalezne pomiary!",
+      labs(title = "Ozone w kolejności obserwacji",
+           subtitle = "Widać wyraźną sezonowość - to nie są niezależne pomiary!",
            x = "Numer obserwacji (= dzien)", y = "Ozone (ppb)") +
       theme_minimal(base_size = 14)
   })
@@ -1931,7 +2680,7 @@ server <- function(input, output, session) {
       geom_point(alpha = 0.4, color = col_dark) +
       geom_smooth(method = "lm", color = col_bad, se = TRUE) +
       labs(title = paste0("Autokorelacja lag-1 (r = ", r, ")"),
-           subtitle = "Jesli obserwacje sa niezalezne, nie powinno byc korelacji",
+           subtitle = "Jeśli obserwacje są niezależne, nie powinno być korelacji",
            x = "Ozone(t)", y = "Ozone(t+1)") +
       theme_minimal(base_size = 14)
   })
@@ -1942,8 +2691,8 @@ server <- function(input, output, session) {
     r <- cor(oz[-n], oz[-1])
     div(class = "callout-danger",
       paste0("Autokorelacja lag-1: r = ", round(r, 3), ". ",
-             "Gdyby obserwacje byly niezalezne, oczekiwalismy r bliskiego 0. ",
-             "Wartosc ", round(r, 2), " oznacza silna zaleznosc miedzy kolejnymi dniami.")
+             "Gdyby obserwacje były niezależne, oczekiwaliśmy r bliskiego 0. ",
+             "Wartość ", round(r, 2), " oznacza silną zależność między kolejnymi dniami.")
     )
   })
 
@@ -1954,20 +2703,20 @@ server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # TAB 11: SCIAGA
+  # TAB 12: SCIAGA
   # ==========================================================================
 
   output$tab11_summary <- renderTable({
     data.frame(
-      Nr = 1:10,
-      Zbior = c("Szkoly w Kalifornii", "Ankieta na grupie", "Pingwiny",
+      Nr = 2:11,
+      Zbior = c("Szkoły w Kalifornii", "Ankieta na grupie", "Pingwiny",
                 "Filmy Tarantino", "Ankieta firmowa", "Wynagrodzenia USA",
-                "Trudna ankieta", "Ceny mieszkan", "Ankieta studencka", "Jakosc powietrza"),
-      n = c(420, 8, 344, "~1800 zdarzen", 80, 3000, 90, 150, 150, 153),
-      Werdykt = c("DOBRY", "ZLY", "DOBRY", "ZLY", "ZLY", "DOBRY", "ZLY", "MIESZANY", "DOBRY", "ZLY"),
-      Problem = c("Brak", "Za mala proba", "Niewielkie braki", "Zla struktura, n=7 po agregacji",
-                  "Brak zmiennosci", "Brak", "Zle zdefiniowane zmienne",
-                  "Outliery i bledy", "Brak", "Braki danych + szereg czasowy"),
+                "Trudna ankieta", "Ceny mieszkań", "Ankieta studencka", "Jakość powietrza"),
+      n = c(420, 8, 344, "~1800 zdarzeń", 80, 3000, 90, 150, 150, 153),
+      Werdykt = c("DOBRY", "ZŁY", "DOBRY", "ZŁY", "ZŁY", "DOBRY", "ZŁY", "MIESZANY", "DOBRY", "ZŁY"),
+      Problem = c("Brak", "Za mała próba", "Niewielkie braki", "Zła struktura, n=7 po agregacji",
+                  "Brak zmienności", "Brak", "Źle zdefiniowane zmienne",
+                  "Outliery i błędy", "Brak", "Braki danych + szereg czasowy"),
       stringsAsFactors = FALSE
     )
   }, striped = TRUE, hover = TRUE, bordered = TRUE)
@@ -1975,11 +2724,11 @@ server <- function(input, output, session) {
   output$tab11_analysis_table <- renderTable({
     data.frame(
       Analiza = c("Test t", "Korelacja Pearsona", "Regresja liniowa", "Test chi-kwadrat"),
-      Min_n = c("20-30 na grupe", "30 ogolnie", "10k + 50 (k = predyktory)", "5 w kazdej komorce tabeli"),
-      Zmienne = c("1 ilosciowa + 1 jakosciowa (2 grupy)", "2 ilosciowe (ciagle)",
-                  "1 ilosciowa (Y) + k ilosciowych/jakosciowych (X)", "2 jakosciowe"),
-      Dodatkowe = c("Normalnosc, rownosc wariancji", "Liniowosc, normalnosc",
-                    "Liniowosc, normalnosc reszt, homoskedastycznosc", "Niezaleznosc obserwacji"),
+      Min_n = c("20-30 na grupę", "30 ogólnie", "10k + 50 (k = predyktory)", "5 w każdej komórce tabeli"),
+      Zmienne = c("1 ilościowa + 1 jakościowa (2 grupy)", "2 ilościowe (ciągłe)",
+                  "1 ilościowa (Y) + k ilościowych/jakościowych (X)", "2 jakościowe"),
+      Dodatkowe = c("Normalność, równość wariancji", "Liniowość, normalność",
+                    "Liniowość, normalność reszt, homoskedastyczność", "Niezależność obserwacji"),
       stringsAsFactors = FALSE
     )
   }, striped = TRUE, hover = TRUE, bordered = TRUE)
