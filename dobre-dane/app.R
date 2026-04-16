@@ -2296,6 +2296,7 @@ server <- function(input, output, session) {
     pct_45 <- round(100 * mean(corp_data$zadowolenie >= 4))
     ggplot(corp_data, aes(x = factor(zadowolenie))) +
       geom_bar(fill = col_bad, alpha = 0.85) +
+      scale_x_discrete(limits = c("1","2","3","4","5")) +
       labs(
         title = paste0("Zadowolenie z pracy (skala 1\u20135): ", pct_45, "% odpowiedzi to 4 lub 5"),
         x = "Ocena zadowolenia", y = "Liczba pracowników"
