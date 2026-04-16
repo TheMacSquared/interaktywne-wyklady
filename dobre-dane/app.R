@@ -695,39 +695,95 @@ ui <- navbarPage(
       DT::dataTableOutput("tab5_table")
     ),
 
-    div(class = "section-title", "Eksploracja zmiennych"),
+    div(class = "section-title", "Zmienna 1: Zadowolenie z pracy"),
 
     div(class = "widget-block",
-      fluidRow(
-        column(4, selectInput("tab5_var", "Wybierz zmienna:",
-          choices = c("zadowolenie", "staz_pracy", "wynagrodzenie"))),
-        column(8, plotOutput("tab5_hist", height = "300px"))
-      )
+      plotOutput("tab5_plot_zadowolenie", height = "300px")
+    ),
+    div(class = "callout-danger",
+      tags$strong("Problem: brak zroznicowania odpowiedzi."),
+      " 95% pracownikow zaznaczylo 4 lub 5. To klasyczny efekt aprobaty spolecznej \u2014
+      wszyscy wiedza, ze szef czyta ankiete. Skala 1\u20135 w praktyce dziala tu jak skala 1\u20132."
     ),
 
-    div(class = "section-title", "Staz pracy vs wynagrodzenie"),
+    div(class = "section-title", "Zmienna 2: Dzial"),
+
+    div(class = "widget-block",
+      plotOutput("tab5_plot_departament", height = "300px")
+    ),
+    div(class = "callout-danger",
+      tags$strong("Problem: niezbalansowane grupy."),
+      " 94% respondentow to dzial IT. Pozostale dzialy maja po 1\u20132 osoby \u2014
+      jakiekolwiek porownanie miedzy dzialami bedzie niemozliwe."
+    ),
+
+    div(class = "section-title", "Zmienna 3: Staz pracy"),
+
+    div(class = "widget-block",
+      plotOutput("tab5_plot_staz", height = "300px")
+    ),
+    div(class = "callout-warning",
+      tags$strong("Uwaga: waska rozpitosc wartosci."),
+      " Wszyscy pracownicy maja staz w przedziale 2.8\u20133.5 roku. Sama w sobie mala zmiennosc
+      nie jest bledem \u2014 zdarzaja sie takie dane. Ale gdy ",
+      tags$em("caly zbior"), " wyglada podobnie, wykrycie jakichkolwiek zaleznosci staje sie
+      bardzo trudne."
+    ),
+
+    div(class = "section-title", "Zmienna 4: Wynagrodzenie"),
+
+    div(class = "widget-block",
+      plotOutput("tab5_plot_wynagrodzenie", height = "300px")
+    ),
+    div(class = "callout-warning",
+      tags$strong("Uwaga: waska rozpitosc wartosci."),
+      " Wynagrodzenia mieszcza sie w przedziale 4800\u20135200 PLN \u2014 rozstep to tylko 400 PLN.
+      Podobnie jak ze stazem: sama w sobie to nie jest katastrofa, ale razem z pozostalymi
+      zmiennymi tworzy zbior, w ktorym trudno o jakikolwiek interesujacy sygnal."
+    ),
+
+    div(class = "section-title", "Zmienna 5: Plec"),
+
+    div(class = "widget-block",
+      plotOutput("tab5_plot_plec", height = "300px")
+    ),
+    div(class = "callout-danger",
+      tags$strong("Problem: niezbalansowane grupy."),
+      " 90% respondentow to mezczyzni (ok. 72 os.), kobiet jest ok. 8. Porownanie
+      wedlug plci nie ma sensu przy takiej dysproporcji."
+    ),
+
+    div(class = "section-title", "Co sie dzieje gdy probujemy szukac zaleznosci?"),
+
+    div(class = "callout-info",
+      "Wezmy dwie zmienne ilosciowe \u2014 staz pracy i wynagrodzenie \u2014 i sprawdzmy
+      czy miedzy nimi jest jakis zwiazek. Obie maja waska rozpitosc, wiec..."
+    ),
 
     div(class = "widget-block",
       plotOutput("tab5_scatter", height = "300px")
     ),
 
-    div(class = "section-title", "Co by bylo, gdyby dane mialy zmiennosc?"),
+    div(class = "section-title", "Co by bylo, gdyby dane mialy normalna zmiennosc?"),
+
+    div(class = "callout-info",
+      "Przesuniecie suwaka symuluje sytuacje, w ktorej staz i wynagrodzenia mialy
+      szerszy rozrzut. Obserwuj jak zmienia sie korelacja."
+    ),
 
     div(class = "widget-block",
-      sliderInput("tab5_sd_mult", "Mnoznik odchylenia standardowego:", min = 1, max = 5, value = 1, step = 0.5),
+      sliderInput("tab5_sd_mult", "Mnoznik rozrzutu danych:", min = 1, max = 5, value = 1, step = 0.5),
       plotOutput("tab5_scatter_sim", height = "300px")
     ),
 
     div(class = "section-title", "Werdykt"),
 
     div(class = "callout-danger",
-      tags$strong("Brak zmiennosci = brak mozliwosci analizy!"),
+      tags$strong("Ten zbior danych nie nadaje sie do analizy."),
       tags$br(),
-      "Gdy SD \u2248 0, korelacja nie ma sensu - nie ma czego korelowac.",
-      tags$br(),
-      "Social desirability bias sprawia, ze 95% odpowiedzi to 4 lub 5.",
-      tags$br(),
-      "Dodatkowo: niezbalansowane grupy (90% mezczyzn, 94% jeden dzial)."
+      "Kazda zmienna z osobna wyglada niegroznie, ale lacznie: odpowiedzi skupione
+      przy maksimum, dzialy i plec skrajnie niezbalansowane, zmienne ilosciowe
+      bez zadnego zroznicowania. Nie ma tu czego analizowac."
     ),
 
     uiOutput("tab5_verdict"),
@@ -1466,21 +1522,72 @@ server <- function(input, output, session) {
     datatable(round_df(corp_data), options = list(pageLength = 10, scrollX = TRUE), rownames = FALSE)
   })
 
-  output$tab5_hist <- renderPlot({
-    req(input$tab5_var)
-    var <- input$tab5_var
-    if (var == "zadowolenie") {
-      ggplot(corp_data, aes(x = factor(zadowolenie))) +
-        geom_bar(fill = col_bad, alpha = 0.8) +
-        labs(title = paste("Rozklad:", var), x = var, y = "Liczebnosc") +
-        theme_minimal(base_size = 14)
-    } else {
-      ggplot(corp_data, aes(x = .data[[var]])) +
-        geom_histogram(bins = 15, fill = col_bad, color = "white", alpha = 0.8) +
-        labs(title = paste("Rozklad:", var, "(SD =", round(sd(corp_data[[var]]), 2), ")"),
-             x = var, y = "Liczebnosc") +
-        theme_minimal(base_size = 14)
-    }
+  output$tab5_plot_zadowolenie <- renderPlot({
+    pct_45 <- round(100 * mean(corp_data$zadowolenie >= 4))
+    ggplot(corp_data, aes(x = factor(zadowolenie))) +
+      geom_bar(fill = col_bad, alpha = 0.85) +
+      labs(
+        title = paste0("Zadowolenie z pracy (skala 1\u20135): ", pct_45, "% odpowiedzi to 4 lub 5"),
+        x = "Ocena zadowolenia", y = "Liczba pracownikow"
+      ) +
+      theme_minimal(base_size = 14)
+  })
+
+  output$tab5_plot_departament <- renderPlot({
+    dept_counts <- corp_data %>%
+      count(departament) %>%
+      mutate(pct = round(100 * n / sum(n)),
+             departament = reorder(departament, -n))
+    ggplot(dept_counts, aes(x = departament, y = n)) +
+      geom_col(fill = col_bad, alpha = 0.85) +
+      geom_text(aes(label = paste0(pct, "%")), vjust = -0.4, size = 4.5) +
+      labs(title = "Rozklad pracownikow wedlug dzialu",
+           x = "Dzial", y = "Liczba pracownikow") +
+      theme_minimal(base_size = 14)
+  })
+
+  output$tab5_plot_staz <- renderPlot({
+    med_staz <- median(corp_data$staz_pracy)
+    sd_staz  <- round(sd(corp_data$staz_pracy), 2)
+    ggplot(corp_data, aes(x = staz_pracy)) +
+      geom_histogram(bins = 15, fill = col_mixed, color = "white", alpha = 0.85) +
+      geom_vline(xintercept = med_staz, color = col_dark, linetype = "dashed", linewidth = 1) +
+      annotate("text", x = med_staz, y = Inf, label = paste0("mediana = ", med_staz),
+               vjust = 2, hjust = -0.1, size = 4, color = col_dark) +
+      labs(
+        title = paste0("Staz pracy  |  zakres: ", min(corp_data$staz_pracy),
+                       "\u2013", max(corp_data$staz_pracy), " lat  |  SD = ", sd_staz),
+        x = "Staz pracy (lata)", y = "Liczba pracownikow"
+      ) +
+      theme_minimal(base_size = 14)
+  })
+
+  output$tab5_plot_wynagrodzenie <- renderPlot({
+    med_wyn <- median(corp_data$wynagrodzenie)
+    sd_wyn  <- round(sd(corp_data$wynagrodzenie))
+    ggplot(corp_data, aes(x = wynagrodzenie)) +
+      geom_histogram(bins = 15, fill = col_mixed, color = "white", alpha = 0.85) +
+      geom_vline(xintercept = med_wyn, color = col_dark, linetype = "dashed", linewidth = 1) +
+      annotate("text", x = med_wyn, y = Inf, label = paste0("mediana = ", med_wyn, " PLN"),
+               vjust = 2, hjust = -0.1, size = 4, color = col_dark) +
+      labs(
+        title = paste0("Wynagrodzenie  |  zakres: ", min(corp_data$wynagrodzenie),
+                       "\u2013", max(corp_data$wynagrodzenie), " PLN  |  SD = ", sd_wyn, " PLN"),
+        x = "Wynagrodzenie (PLN)", y = "Liczba pracownikow"
+      ) +
+      theme_minimal(base_size = 14)
+  })
+
+  output$tab5_plot_plec <- renderPlot({
+    plec_counts <- corp_data %>%
+      count(plec) %>%
+      mutate(pct = round(100 * n / sum(n)))
+    ggplot(plec_counts, aes(x = plec, y = n)) +
+      geom_col(fill = col_bad, alpha = 0.85) +
+      geom_text(aes(label = paste0(pct, "%  (n=", n, ")")), vjust = -0.4, size = 4.5) +
+      labs(title = "Rozklad pracownikow wedlug plci",
+           x = "Plec", y = "Liczba pracownikow") +
+      theme_minimal(base_size = 14)
   })
 
   output$tab5_scatter <- renderPlot({
