@@ -1591,6 +1591,19 @@ ui <- navbarPage(
       "tutaj to założenie jest złamane."
     ),
 
+    div(class = "callout-info",
+      tags$strong("Czy można to uratować?"),
+      tags$br(),
+      "Agregacja miesięczna rozwiązałaby problem niezniezależności \u2014 średnia z całego
+      miesiąca to jedna obserwacja, a kolejne miesiące są od siebie mniej zależne.",
+      tags$br(),
+      "Problem: ten zbiór obejmuje tylko 5 miesięcy (maj\u2013wrzesień 1973).
+      Po agregacji zostaje n\u00a0=\u00a05 \u2014 za mało na jakąkolwiek analizę.",
+      tags$br(),
+      tags$em("Gdyby dane obejmowały wiele lat, agregacja miesięczna (np. średni ozon
+      w każdym miesiącu roku przez 20 lat = 240 obserwacji) byłaby sensownym wyjściem.")
+    ),
+
     uiOutput("tab10_verdict"),
 
     div(class = "chapter-transition",
