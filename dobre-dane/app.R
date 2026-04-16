@@ -630,8 +630,9 @@ ui <- navbarPage(
           div(class = "jamovi-table", DT::dataTableOutput("cat2_table"))
         ),
         div(class = "view-panel",
-          div(class = "view-label", "Co widać na wykresie"),
-          plotOutput("cat2_plot", height = "280px")
+          div(class = "view-label", "Co widać na wykresach"),
+          plotOutput("cat2_plot_zadowolenie", height = "200px"),
+          plotOutput("cat2_plot", height = "200px")
         )
       ),
       div(class = "callout-danger", style = "margin-top: 10px;",
@@ -1702,14 +1703,25 @@ server <- function(input, output, session) {
               options = list(dom = 't', ordering = FALSE, pageLength = 12))
   })
 
+  output$cat2_plot_zadowolenie <- renderPlot({
+    pct_45 <- round(100 * mean(cat_novar$zadowolenie >= 4))
+    ggplot(cat_novar, aes(x = factor(zadowolenie))) +
+      geom_bar(fill = col_bad, alpha = 0.85) +
+      scale_x_discrete(limits = c("1","2","3","4","5")) +
+      labs(title = paste0("Zadowolenie: ", pct_45, "% odpowiedzi to 4 lub 5"),
+           x = "Ocena (1\u20135)", y = "Liczba") +
+      theme_minimal(base_size = 13)
+  })
+
   output$cat2_plot <- renderPlot({
     ggplot(cat_novar, aes(x = staz, y = wynagrodzenie)) +
       geom_point(size = 3, alpha = 0.6, color = col_bad) +
-      labs(title = paste0("Staż vs wynagrodzenie (r = ",
+      scale_x_continuous(limits = c(1, 10)) +
+      labs(title = paste0("Sta\u017c vs wynagrodzenie (r = ",
                           round(cor(cat_novar$staz, cat_novar$wynagrodzenie), 3), ")"),
-           subtitle = "Staż prawie stały \u2014 pionowa chmura, żadnego wzorca",
-           x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
-      theme_minimal(base_size = 14)
+           subtitle = "Sta\u017c skupiony w w\u0105skim fragmencie osi",
+           x = "Sta\u017c pracy (lata)", y = "Wynagrodzenie (PLN)") +
+      theme_minimal(base_size = 13)
   })
 
   # --- Problem 3: Bledy i literowki (toggle) ---
