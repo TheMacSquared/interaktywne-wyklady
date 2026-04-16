@@ -1,0 +1,2 @@
+# Wymuszaj LF we wszystkich plikach tekstowych (Windows + WSL)
+* text=auto eol=lf
