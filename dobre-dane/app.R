@@ -1149,6 +1149,10 @@ ui <- navbarPage(
 
     div(class = "section-title", "Zmienna 3: Staż pracy"),
 
+    div(class = "toggle-pills",
+      actionButton("tab5_staz_normal", "Dane", class = "pill-btn active"),
+      actionButton("tab5_staz_wide", "Pełna skala (1\u201310 lat)", class = "pill-btn")
+    ),
     div(class = "widget-block",
       plotOutput("tab5_plot_staz", height = "300px")
     ),
@@ -2317,10 +2321,22 @@ server <- function(input, output, session) {
       theme_minimal(base_size = 14)
   })
 
+  tab5_staz_view <- reactiveVal("normal")
+  observeEvent(input$tab5_staz_normal, {
+    tab5_staz_view("normal")
+    session$sendCustomMessage(type = "shinyjs-runjs", message = list(code =
+      "$('#tab5_staz_normal').addClass('active'); $('#tab5_staz_wide').removeClass('active');"))
+  })
+  observeEvent(input$tab5_staz_wide, {
+    tab5_staz_view("wide")
+    session$sendCustomMessage(type = "shinyjs-runjs", message = list(code =
+      "$('#tab5_staz_wide').addClass('active'); $('#tab5_staz_normal').removeClass('active');"))
+  })
+
   output$tab5_plot_staz <- renderPlot({
     med_staz <- median(corp_data$staz_pracy)
     sd_staz  <- round(sd(corp_data$staz_pracy), 2)
-    ggplot(corp_data, aes(x = staz_pracy)) +
+    p <- ggplot(corp_data, aes(x = staz_pracy)) +
       geom_histogram(bins = 15, fill = col_mixed, color = "white", alpha = 0.85) +
       geom_vline(xintercept = med_staz, color = col_dark, linetype = "dashed", linewidth = 1) +
       annotate("text", x = med_staz, y = Inf, label = paste0("mediana = ", med_staz),
@@ -2331,6 +2347,8 @@ server <- function(input, output, session) {
         x = "Staż pracy (lata)", y = "Liczba pracowników"
       ) +
       theme_minimal(base_size = 14)
+    if (tab5_staz_view() == "wide") p <- p + scale_x_continuous(limits = c(1, 10))
+    p
   })
 
   output$tab5_plot_wynagrodzenie <- renderPlot({
