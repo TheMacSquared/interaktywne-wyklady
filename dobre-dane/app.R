@@ -1338,7 +1338,7 @@ ui <- navbarPage(
       tags$br(),
       "Zmienne tekstowe zamiast liczbowych, niespójne skale, brak kodowania.",
       tags$br(),
-      "Zmienna 'ulubiony_kolor' jest irrelewantna - nie wiąże się z żadnym pytaniem badawczym.",
+      "Zmienna 'ulubiony_kolor' jest nieistotna - nie wiąże się z żadnym pytaniem badawczym.",
       tags$br(),
       "R nie wie, co zrobić z '3-4h' albo 'dobrze' jako wartością liczbową."
     ),
@@ -2527,7 +2527,7 @@ server <- function(input, output, session) {
         tags$br(), "- ocena_kursu: ujednolicono do skali 1-10 (tekst -> NA)",
         tags$br(), "- aktywnosc: zamieniono na razy/tydzień (dużo NA)",
         tags$br(), "- samopoczucie: przeskalowano 1-100 -> 1-10",
-        tags$br(), "- ulubiony_kolor: USUNIĘTO (irrelewantna zmienna)",
+        tags$br(), "- ulubiony_kolor: USUNIĘTO (nieistotna zmienna)",
         tags$br(), tags$br(),
         tags$em("Wniosek: czyszczenie jest możliwe, ale tracimy dużo danych. Lepiej zaprojektować ankietę poprawnie od początku.")
       )
