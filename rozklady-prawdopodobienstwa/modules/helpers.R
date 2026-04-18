@@ -1,46 +1,7 @@
 # ============================================================================
 # FUNKCJE POMOCNICZE
+# generate_population_sample(), get_population_params(), dist_names_pl -> R/shared.R
 # ============================================================================
-
-# Generowanie proby z wybranego rozkladu
-generate_population_sample <- function(dist_type, n) {
-  switch(dist_type,
-    "uniform"     = runif(n, min = 0, max = 10),
-    "exponential" = rexp(n, rate = 0.5),
-    "bimodal"     = {
-      k <- rbinom(n, 1, 0.5)
-      ifelse(k == 1, rnorm(n, mean = 3, sd = 0.8), rnorm(n, mean = 7, sd = 0.8))
-    },
-    "u_shape"     = rbeta(n, 0.5, 0.5) * 10,
-    "skewed_left" = 10 - rgamma(n, shape = 2, scale = 1.5),
-    "die"         = sample(1:6, n, replace = TRUE),
-    rnorm(n)
-  )
-}
-
-# Parametry populacji dla roznych rozkladow
-get_population_params <- function(dist_type) {
-  switch(dist_type,
-    "uniform"     = list(mu = 5, sigma = sqrt(100/12)),
-    "exponential" = list(mu = 2, sigma = 2),
-    "bimodal"     = list(mu = 5, sigma = sqrt(0.8^2 + 4)),
-    "u_shape"     = list(mu = 5, sigma = sqrt(10^2 / 4)),
-    "skewed_left" = list(mu = 10 - 2*1.5, sigma = sqrt(2) * 1.5),
-    "die"         = list(mu = 3.5, sigma = sqrt(35/12)),
-    list(mu = 0, sigma = 1)
-  )
-}
-
-# Nazwy rozkladow po polsku
-dist_names_pl <- c(
-  "uniform"     = "Jednostajny",
-  "exponential" = "Wyk\u0142adniczy (prawosko\u015bny)",
-  "bimodal"     = "Dwumodalny",
-  "u_shape"     = "U-kszta\u0142tny (Beta)",
-  "skewed_left" = "Lewosko\u015bny",
-  "die"         = "Kostka (dyskretny)"
-)
-
 
 # Rysowanie PMF rozkladu dyskretnego
 plot_pmf <- function(x_vals, probs, fill_color = "#3498db",

@@ -1,42 +1,7 @@
 # ============================================================================
 # FUNKCJE POMOCNICZE - Przedzialy ufnosci
+# generate_population_sample(), get_population_params(), dist_names_pl -> R/shared.R
 # ============================================================================
-
-# Generowanie proby z wybranego rozkladu
-generate_population_sample <- function(dist_type, n) {
-  switch(dist_type,
-    "normal"      = rnorm(n, mean = 170, sd = 10),
-    "exponential" = rexp(n, rate = 0.5),
-    "uniform"     = runif(n, min = 0, max = 10),
-    "bimodal"     = {
-      k <- rbinom(n, 1, 0.5)
-      ifelse(k == 1, rnorm(n, mean = 3, sd = 0.8), rnorm(n, mean = 7, sd = 0.8))
-    },
-    "skewed"      = rgamma(n, shape = 2, scale = 1.5),
-    rnorm(n)
-  )
-}
-
-# Parametry populacji
-get_population_params <- function(dist_type) {
-  switch(dist_type,
-    "normal"      = list(mu = 170, sigma = 10),
-    "exponential" = list(mu = 2, sigma = 2),
-    "uniform"     = list(mu = 5, sigma = sqrt(100/12)),
-    "bimodal"     = list(mu = 5, sigma = sqrt(0.8^2 + 4)),
-    "skewed"      = list(mu = 3, sigma = sqrt(2) * 1.5),
-    list(mu = 0, sigma = 1)
-  )
-}
-
-# Nazwy rozkladow po polsku
-dist_names_pl <- c(
-  "normal"      = "Normalny (wzrost)",
-  "exponential" = "Wyk\u0142adniczy (prawosko\u015bny)",
-  "uniform"     = "Jednostajny",
-  "bimodal"     = "Dwumodalny",
-  "skewed"      = "Prawoskos\u0144ny (Gamma)"
-)
 
 # Symulacja pokrycia przedzialow ufnosci
 simulate_coverage <- function(dist_type, n, conf_level, n_sims = 100,

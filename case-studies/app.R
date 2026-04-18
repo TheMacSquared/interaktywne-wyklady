@@ -14,14 +14,6 @@ library(AER)
 # KOLORY
 # ============================================================================
 
-col_primary    <- "#3498db"
-col_secondary  <- "#e74c3c"
-col_success    <- "#27ae60"
-col_warning    <- "#f39c12"
-col_dark       <- "#2c3e50"
-col_purple     <- "#9b59b6"
-col_teal       <- "#1abc9c"
-
 # Kolory specyficzne dla case studies
 col_explore    <- "#3498db"    # eksploracja danych
 col_test       <- "#9b59b6"    # testowanie hipotez
