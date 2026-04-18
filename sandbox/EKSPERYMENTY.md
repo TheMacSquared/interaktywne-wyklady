@@ -82,3 +82,15 @@ celu edukacyjnego.
 
 **Następny krok:** przenieść Atkinson do produkcyjnego `R/shared_styles.css`
 (sekcja fontu), usunąć/zakomentować pozostałe opcje w `experimental.css`.
+
+---
+
+### Pomysły do zrealizowania później
+
+**Rozwijane callouty à la Tufte (collapsible sidenotes)**
+- Nowy typ `callout-note` (dygresje/uzupełnienia), domyślnie zwinięty, ikona do kliknięcia.
+- Desktop (>1200px): po kliknięciu rozwija się na prawym marginesie jako sidenote (absolute position).
+- Mobile (<1200px): inline push-down akordeon, tap target ≥44px, animacja max-height 0.2s.
+- NIE konwertować istniejących info/warning/danger/success — one mają natychmiastowe znaczenie sygnalizacyjne. Tylko nowy typ dla treści rozszerzającej.
+- Ryzyko: jeśli >5 ikon blisko, tekst staje się "dziurawy" — używać oszczędnie.
+- Prototyp: `sandbox/testowy-wyklad/` przed wdrożeniem do `shared_styles.css`.

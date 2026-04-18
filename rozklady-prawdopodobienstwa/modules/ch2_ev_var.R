@@ -22,8 +22,8 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
           " \u2014 'jak bardzo wyniki rozpraszaj\u0105 si\u0119 wok\u00f3\u0142 oczekiwania?'")
       ),
       p("To rozszerzenie poj\u0119\u0107, kt\u00f3re ju\u017c znasz ze statystyki opisowej
-        (\u015brednia i odchylenie standardowe), ale teraz stosujemy je do ",
-        tags$b("modeli teoretycznych"), ", a nie do danych.")
+        (\u015brednia i odchylenie standardowe), ale teraz stosujemy je do
+        modeli teoretycznych, a nie do danych.")
     ),
 
     # ========================================================================
@@ -35,7 +35,7 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
       p("Wyobra\u017a sobie, \u017ce mo\u017cesz gra\u0107 w jedn\u0105 z trzech loterii.
         Ka\u017cda ma inne wygrane i szanse. Kt\u00f3ra op\u0142aca si\u0119 najbardziej?"),
       p("Zagraj wiele razy i obserwuj, jak \u015brednia wygrana na gr\u0119
-        stabilizuje si\u0119 \u2014 to w\u0142a\u015bnie ", tags$b("warto\u015b\u0107 oczekiwana"), ".")
+        stabilizuje si\u0119 \u2014 to w\u0142a\u015bnie warto\u015b\u0107 oczekiwana.")
     ),
 
     div(class = "widget-block",
@@ -88,9 +88,8 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
     div(class = "section-title", "E(X) jako punkt r\u00f3wnowagi"),
 
     div(class = "narrative",
-      p("Warto\u015b\u0107 oczekiwana to ", tags$b("punkt r\u00f3wnowagi"),
-        " rozk\u0142adu \u2014 gdyby\u015b po\u0142o\u017cy\u0142(a) s\u0142upki PMF na wadze,
-        E(X) by\u0142oby miejscem podparcia."),
+      p("Warto\u015b\u0107 oczekiwana to punkt r\u00f3wnowagi rozk\u0142adu \u2014 gdyby\u015b po\u0142o\u017cy\u0142(a)
+        s\u0142upki PMF na wadze, E(X) by\u0142oby miejscem podparcia."),
       p("Spr\u00f3buj ustawi\u0107 prawdopodobie\u0144stwa i obserwuj,
         jak przesuwa si\u0119 punkt r\u00f3wnowagi.")
     ),
@@ -124,9 +123,8 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
 
     div(class = "callout-warning",
       tags$strong("Pami\u0119taj:"),
-      " E(X) to \u015brednia ", tags$b("wa\u017cona prawdopodobie\u0144stwami"),
-      ". Wynik o du\u017cym prawdopodobie\u0144stwie ci\u0105gnie E(X) w swoj\u0105
-        stron\u0119 \u2014 podobnie jak ci\u0119\u017cki przedmiot na wadze."
+      " E(X) to \u015brednia wa\u017cona prawdopodobie\u0144stwami. Wynik o du\u017cym prawdopodobie\u0144stwie
+        ci\u0105gnie E(X) w swoj\u0105 stron\u0119 \u2014 podobnie jak ci\u0119\u017cki przedmiot na wadze."
     ),
 
     # ========================================================================
@@ -135,10 +133,9 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
     div(class = "section-title", "Wariancja \u2014 rozrzut wok\u00f3\u0142 oczekiwania"),
 
     div(class = "narrative",
-      p("Dwie loterie mog\u0105 mie\u0107 ", tags$b("t\u0119 sam\u0105 warto\u015b\u0107 oczekiwan\u0105"),
-        ", ale zupe\u0142nie r\u00f3\u017cne ryzyko. Wariancja (i odchylenie standardowe)
-        mierzy w\u0142a\u015bnie to: ", tags$b("jak bardzo wyniki rozpraszaj\u0105 si\u0119"),
-        " wok\u00f3\u0142 E(X)."),
+      p("Dwie loterie mog\u0105 mie\u0107 t\u0119 sam\u0105 warto\u015b\u0107 oczekiwan\u0105, ale zupe\u0142nie r\u00f3\u017cne ryzyko.
+        Wariancja (i odchylenie standardowe) mierzy w\u0142a\u015bnie to: jak bardzo wyniki
+        rozpraszaj\u0105 si\u0119 wok\u00f3\u0142 E(X)."),
       p("Por\u00f3wnaj trzy loterie \u2014 wszystkie maj\u0105 E(X) = 50 z\u0142:")
     ),
 

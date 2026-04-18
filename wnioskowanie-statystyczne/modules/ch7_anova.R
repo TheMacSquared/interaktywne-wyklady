@@ -12,9 +12,8 @@ ch7_ui <- tabPanel("8. ANOVA",
     div(class = "section-title", "ANOVA jednoczynnikowa"),
 
     div(class = "narrative",
-      p("ANOVA (Analysis of Variance) to uog\u00f3lnienie testu t na ",
-        tags$b("3 lub wi\u0119cej grup"), "."),
-      p("Pytanie: ", tags$b("Czy \u015brednie w k grupach r\u00f3\u017cni\u0105 si\u0119 istotnie?"), ""),
+      p("ANOVA (Analysis of Variance) to uog\u00f3lnienie testu t na 3 lub wi\u0119cej grup."),
+      p("Pytanie: Czy \u015brednie w k grupach r\u00f3\u017cni\u0105 si\u0119 istotnie?"),
       p("Przyk\u0142ad: czy \u015brednie oceny r\u00f3\u017cni\u0105 si\u0119 mi\u0119dzy 4 kierunkami studi\u00f3w?"),
       div(class = "formula-box",
         p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 = \\ldots = \\mu_k\\)")),
@@ -66,9 +65,8 @@ ch7_ui <- tabPanel("8. ANOVA",
     div(class = "narrative",
       p("ANOVA m\u00f3wi ", tags$em("\"grupy r\u00f3\u017cni\u0105 si\u0119\""),
         ", ale nie m\u00f3wi ", tags$em("\"kt\u00f3re\""), "."),
-      p("Do tego s\u0142u\u017c\u0105 testy post-hoc. Tukey HSD por\u00f3wnuje ",
-        tags$b("ka\u017cd\u0105 par\u0119 grup"),
-        " z korekt\u0105 na wielokrotne por\u00f3wnania.")
+      p("Do tego s\u0142u\u017c\u0105 testy post-hoc. Tukey HSD por\u00f3wnuje ka\u017cd\u0105 par\u0119 grup
+        z korekt\u0105 na wielokrotne por\u00f3wnania.")
     ),
 
     div(class = "widget-block",

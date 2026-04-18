@@ -171,6 +171,16 @@ Aplikacje są zaprojektowane do:
 2. **Samodzielnej eksploracji** — studenci uruchamiają lokalnie i eksperymentują w swoim tempie
 3. **Materiałów do powtórki** — ściąga (rozdział 6) jako kompaktowe podsumowanie
 
+## 🎨 Wspólny styl wizualny
+
+Wszystkie aplikacje korzystają z centralnego stylu:
+
+- **`R/shared_styles.css`** — wspólny CSS (font Atkinson Hyperlegible dla dostępności, hierarchia H1/H2/H3, max-width narracji, callout-y z ikonami Bootstrap, quiz tiles, sticky TOC)
+- **`R/shared.R`** — `theme_educational()` dla ggplot2 + `scale_color_lecture()` / `scale_fill_lecture()` ze spójną paletą semantyczną
+- **`sandbox/`** — piaskownica do eksperymentów graficznych przed wdrożeniem do produkcji (log decyzji w `sandbox/EKSPERYMENTY.md`)
+
+Dzięki temu globalne zmiany wizualne (font, kolory, typografia) wymagają edycji w jednym miejscu.
+
 ## 🛠️ Dodawanie nowej aplikacji
 
 1. Utwórz folder z nazwą w formacie `nazwa-aplikacji/`

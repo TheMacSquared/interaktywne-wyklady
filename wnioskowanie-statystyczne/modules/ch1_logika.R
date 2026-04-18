@@ -45,12 +45,11 @@ ch1_ui <- tabPanel("1. Logika testowania",
 
     div(class = "callout-warning",
       p(tags$b("Pytanie kluczowe:"), " \u015arednia w grupie \u201ebiurko\u201d jest ni\u017csza.
-        Ale czy to nie mo\u017ce by\u0107 ", tags$b("przypadek"), "?"),
+        Ale czy to nie mo\u017ce by\u0107 przypadek?"),
       p("Mo\u017ce gdyby\u015bmy powt\u00f3rzyli eksperyment z innymi 80 osobami,
         r\u00f3\u017cnica by\u0142aby w drug\u0105 stron\u0119? Mo\u017ce po prostu trafili\u015bmy na
         s\u0142abszych student\u00f3w w grupie B?"),
-      p(tags$b("W\u0142a\u015bnie do tego s\u0142u\u017cy testowanie hipotez"),
-        " \u2014 daje nam narz\u0119dzie do odpowiedzi na pytanie:
+      p("W\u0142a\u015bnie do tego s\u0142u\u017cy testowanie hipotez \u2014 daje nam narz\u0119dzie do odpowiedzi na pytanie:
         czy obserwowana r\u00f3\u017cnica jest zbyt du\u017ca, \u017ceby by\u0107 przypadkiem?")
     ),
 
@@ -60,7 +59,7 @@ ch1_ui <- tabPanel("1. Logika testowania",
     div(class = "section-title", "Testowanie hipotez \u2014 logika rozumowania"),
 
     div(class = "narrative",
-      p("Testowanie hipotez statystycznych przypomina ", tags$b("proces s\u0105dowy"), ":"),
+      p("Testowanie hipotez statystycznych przypomina proces s\u0105dowy:"),
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th("Element"), tags$th("S\u0105d"), tags$th("Nasz eksperyment z telefonem"))
@@ -140,8 +139,7 @@ ch1_ui <- tabPanel("1. Logika testowania",
       tags$strong("Jak to czyta\u0107:"),
       " Ka\u017cdy s\u0142upek to r\u00f3\u017cnica \u015brednich z jednego symulowanego eksperymentu,
       w kt\u00f3rym telefon nie ma wp\u0142ywu. Czerwona linia to r\u00f3\u017cnica z prawdziwego eksperymentu.
-      ", tags$b("p-warto\u015b\u0107 = jaki odsetek tych s\u0142upk\u00f3w jest co najmniej tak daleko od zera"),
-      " jak nasza czerwona linia?"
+      p-warto\u015b\u0107 = jaki odsetek tych s\u0142upk\u00f3w jest co najmniej tak daleko od zera jak nasza czerwona linia?"
     ),
 
     # ========================================================================

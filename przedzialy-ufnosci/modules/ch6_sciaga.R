@@ -68,17 +68,17 @@ ch6_ui <- tabPanel("6. \u015aci\u0105ga",
     div(class = "section-title", "Drzewo decyzyjne: kt\u00f3ry przedzia\u0142?"),
 
     div(class = "callout-info",
-      tags$strong("1. Co szacujesz?"),
+      tags$strong("1."), " Co szacujesz?",
       tags$ul(
         tags$li(tags$b("\u015aredni\u0105"), " \u2192 przejd\u017a do pytania 2"),
         tags$li(tags$b("Proporcj\u0119"), " \u2192 przejd\u017a do pytania 3")
       ),
-      tags$strong("2. Czy znasz \u03c3 populacji?"),
+      tags$strong("2."), " Czy znasz \u03c3 populacji?",
       tags$ul(
         tags$li(tags$b("Tak"), " \u2192 z-interval (rzadko)"),
         tags$li(tags$b("Nie"), " \u2192 t-interval (prawie zawsze)")
       ),
-      tags$strong("3. Czy np \u2265 10 i n(1\u2212p) \u2265 10?"),
+      tags$strong("3."), " Czy np \u2265 10 i n(1\u2212p) \u2265 10?",
       tags$ul(
         tags$li(tags$b("Tak"), " \u2192 Wald lub Wilson"),
         tags$li(tags$b("Nie"), " \u2192 Wilson lub Clopper-Pearson (dok\u0142adny)")

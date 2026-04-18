@@ -13,7 +13,7 @@ ch6_ui <- tabPanel("7. Ilo\u015bciowa vs jako\u015bciowa",
     div(class = "section-title", "Test t dla dw\u00f3ch pr\u00f3b niezale\u017cnych"),
 
     div(class = "narrative",
-      p("Pytanie: ", tags$b("Czy \u015brednie w dw\u00f3ch grupach r\u00f3\u017cni\u0105 si\u0119 istotnie?"), ""),
+      p("Pytanie: Czy \u015brednie w dw\u00f3ch grupach r\u00f3\u017cni\u0105 si\u0119 istotnie?"),
       p("Przyk\u0142ad: czy m\u0119\u017cczy\u017ani i kobiety r\u00f3\u017cni\u0105 si\u0119 wzrostem?"),
       div(class = "formula-box",
         p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 \\quad\\text{vs}\\quad H_a: \\mu_1 \\neq \\mu_2\\)")),
@@ -57,8 +57,8 @@ ch6_ui <- tabPanel("7. Ilo\u015bciowa vs jako\u015bciowa",
     div(class = "section-title", "Test t dla pr\u00f3b zale\u017cnych (parowy)"),
 
     div(class = "narrative",
-      p("Gdy mierzymy ", tags$b("tych samych"), " osobnik\u00f3w dwa razy
-        (przed i po interwencji), u\u017cywamy testu ", tags$b("parowego"), "."),
+      p("Gdy mierzymy tych samych osobnik\u00f3w dwa razy
+        (przed i po interwencji), u\u017cywamy testu parowego."),
       p("Przyk\u0142ad: wyniki student\u00f3w przed i po korepetycjach."),
       p("Testujemy r\u00f3\u017cnice: ", withMathJax("\\(d_i = x_{\\text{po},i} - x_{\\text{przed},i}\\)"),
         ". Pytamy, czy \u015brednia r\u00f3\u017cnic \u2260 0.")

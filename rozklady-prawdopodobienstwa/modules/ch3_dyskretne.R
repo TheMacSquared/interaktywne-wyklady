@@ -15,7 +15,7 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
 
     div(class = "narrative",
       p("Rozk\u0142ad dyskretny opisuje zmienn\u0105, kt\u00f3ra przyjmuje ",
-        tags$b("sko\u0144czon\u0105 lub przeliczaln\u0105"), " liczb\u0119 warto\u015bci
+        "sko\u0144czon\u0105 lub przeliczaln\u0105 liczb\u0119 warto\u015bci
         (np. 0, 1, 2, 3...). Ka\u017cdej warto\u015bci przypisujemy prawdopodobie\u0144stwo."),
       p("Poznamy trzy najwa\u017cniejsze:")
     ),
@@ -26,9 +26,8 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
     div(class = "section-title", "Rozk\u0142ad jednostajny dyskretny"),
 
     div(class = "narrative",
-      p("Najprostszy rozk\u0142ad: ka\u017cdy wynik jest ",
-        tags$b("jednakowo prawdopodobny"), ". Przyk\u0142ady: rzut kostk\u0105,
-        losowanie cyfry, losowanie karty z talii.")
+      p("Najprostszy rozk\u0142ad: ka\u017cdy wynik jest jednakowo prawdopodobny.
+        Przyk\u0142ady: rzut kostk\u0105, losowanie cyfry, losowanie karty z talii.")
     ),
 
     div(class = "widget-block",
@@ -63,9 +62,8 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
     div(class = "section-title", "Rozk\u0142ad dwumianowy (Binomial)"),
 
     div(class = "narrative",
-      p("Powtarzamy ", tags$b("n niezale\u017cnych pr\u00f3b"), ", ka\u017cda z prawdopodobie\u0144stwem
-        sukcesu ", tags$b("p"), ". Liczymy ",
-        tags$b("ile razy wyst\u0105pi\u0142 sukces"), "."),
+      p("Powtarzamy n niezale\u017cnych pr\u00f3b, ka\u017cda z prawdopodobie\u0144stwem
+        sukcesu p. Liczymy, ile razy wyst\u0105pi\u0142 sukces."),
       p("Przyk\u0142ady: ile or\u0142\u00f3w w 10 rzutach monet\u0105? Ile wadliwych produkt\u00f3w
         w partii? Ile poprawnych odpowiedzi na te\u015bcie wielokrotnego wyboru?")
     ),
@@ -105,9 +103,9 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
     div(class = "callout-warning",
       tags$strong("Jak rozpozna\u0107?"),
       " Kiedy w zadaniu widzisz pytanie typu ",
-      tags$b("\u201eile z n...\u201d"), " \u2014 my\u015bl dwumianowy.
+      "\u201eile z n...\u201d \u2014 my\u015bl dwumianowy.
         Np. \u201eile z 20 student\u00f3w zda egzamin?\u201d, \u201eile z 50 produkt\u00f3w b\u0119dzie wadliwych?\u201d.
-        Kluczowe: masz ", tags$b("ustalon\u0105 liczb\u0119 pr\u00f3b"), " i dwa wyniki (sukces/pora\u017cka)."
+        Kluczowe: masz ustalon\u0105 liczb\u0119 pr\u00f3b i dwa wyniki (sukces/pora\u017cka)."
     ),
 
     # ========================================================================
@@ -116,7 +114,7 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
     div(class = "section-title", "Rozk\u0142ad Poissona"),
 
     div(class = "narrative",
-      p("Zliczamy ", tags$b("zdarzenia"), " zachodz\u0105ce w ustalonym przedziale czasu lub przestrzeni.
+      p("Zliczamy zdarzenia zachodz\u0105ce w ustalonym przedziale czasu lub przestrzeni.
         Parametr \u03bb (lambda) m\u00f3wi, ile \u015brednio zdarze\u0144 oczekujemy w danym przedziale."),
       p("Przyk\u0142ady: liczba b\u0142\u0119d\u00f3w na stronie, klient\u00f3w w sklepie na godzin\u0119,
         wypadk\u00f3w na skrzy\u017cowaniu w miesi\u0105cu.")
@@ -157,10 +155,9 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
     div(class = "callout-warning",
       tags$strong("Jak rozpozna\u0107?"),
       " Kiedy w zadaniu widzisz pytanie typu ",
-      tags$b("\u201eile razy w ci\u0105gu...\u201d"), " \u2014 my\u015bl Poisson.
+      "\u201eile razy w ci\u0105gu...\u201d \u2014 my\u015bl Poisson.
         Np. \u201eile wiadomo\u015bci dostaniesz w ci\u0105gu godziny?\u201d, \u201eile b\u0142\u0119d\u00f3w na stronie?\u201d.
-        Kluczowe: zliczasz zdarzenia w ", tags$b("ustalonym czasie lub przestrzeni"),
-      ", bez g\u00f3rnego limitu."
+        Kluczowe: zliczasz zdarzenia w ustalonym czasie lub przestrzeni, bez g\u00f3rnego limitu."
     ),
 
     # ========================================================================
@@ -169,8 +166,7 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
     div(class = "section-title", "Rozk\u0142ad geometryczny"),
 
     div(class = "narrative",
-      p("Powtarzamy pr\u00f3by a\u017c do ", tags$b("pierwszego sukcesu"),
-        ". Pytamy: ile pr\u00f3b to zajmie?"),
+      p("Powtarzamy pr\u00f3by a\u017c do pierwszego sukcesu. Pytamy: ile pr\u00f3b to zajmie?"),
       p("Przyk\u0142ady: ile rzut\u00f3w kostk\u0105 do pierwszej sz\u00f3stki?
         Ile losowa\u0144 do trafienia nagrody? Ile pr\u00f3b egzaminu do zdania?")
     ),
@@ -204,18 +200,17 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
     div(class = "callout-info",
       tags$strong("Uwaga:"),
       " Im mniejsze p, tym d\u0142u\u017cej (przeci\u0119tnie) czekamy na sukces.
-        Rozk\u0142ad geometryczny jest ", tags$b("bezpami\u0119ciowy"),
-      " \u2014 szansa sukcesu w ka\u017cdej pr\u00f3bie jest taka sama,
+        Rozk\u0142ad geometryczny jest bezpami\u0119ciowy \u2014 szansa sukcesu w ka\u017cdej pr\u00f3bie jest taka sama,
         niezale\u017cnie od tego ile pora\u017cek ju\u017c by\u0142o."
     ),
 
     div(class = "callout-warning",
       tags$strong("Jak rozpozna\u0107?"),
       " Kiedy w zadaniu widzisz pytanie typu ",
-      tags$b("\u201eile pr\u00f3b a\u017c do...\u201d"), " \u2014 my\u015bl geometryczny.
+      "\u201eile pr\u00f3b a\u017c do...\u201d \u2014 my\u015bl geometryczny.
         Np. \u201eile rzut\u00f3w kostk\u0105 do pierwszej sz\u00f3stki?\u201d,
         \u201eile CV trzeba wys\u0142a\u0107, \u017ceby dosta\u0107 zaproszenie na rozmow\u0119?\u201d.
-        Kluczowe: powtarzasz pr\u00f3by a\u017c do ", tags$b("pierwszego sukcesu"), "."
+        Kluczowe: powtarzasz pr\u00f3by a\u017c do pierwszego sukcesu."
     ),
 
     # ========================================================================
@@ -239,8 +234,8 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
     # --- Transition ---
     div(class = "chapter-transition",
       p("Rozk\u0142ady dyskretne opisuj\u0105 wyniki, kt\u00f3re mo\u017cna policzy\u0107.
-        Ale co, gdy zmienna mo\u017ce przyj\u0105\u0107 ", tags$b("dowoln\u0105 warto\u015b\u0107"),
-        " z pewnego przedzia\u0142u? Wtedy potrzebujemy rozk\u0142ad\u00f3w ci\u0105g\u0142ych."),
+        Ale co, gdy zmienna mo\u017ce przyj\u0105\u0107 dowoln\u0105 warto\u015b\u0107 z pewnego przedzia\u0142u?
+        Wtedy potrzebujemy rozk\u0142ad\u00f3w ci\u0105g\u0142ych."),
       actionButton("ch3_next", "Dalej: 4. Rozk\u0142ady ci\u0105g\u0142e \u2192",
                    class = "btn-primary btn-lg")
     ),

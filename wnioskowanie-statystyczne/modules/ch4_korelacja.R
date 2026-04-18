@@ -17,8 +17,7 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilo\u015bciowe",
 
     div(class = "narrative",
       p("Wsp\u00f3\u0142czynnik korelacji Pearsona ", withMathJax("\\(r\\)"),
-        " mierzy ", tags$b("si\u0142\u0119 i kierunek liniowego zwi\u0105zku"),
-        " mi\u0119dzy dwiema zmiennymi ilo\u015bciowymi."),
+        " mierzy si\u0142\u0119 i kierunek liniowego zwi\u0105zku mi\u0119dzy dwiema zmiennymi ilo\u015bciowymi."),
       p("Przyjmuje warto\u015bci od ", tags$b("\u22121"), " do ", tags$b("+1"), ":"),
       tags$ul(
         tags$li(tags$b("r = +1"), " \u2014 doskona\u0142a korelacja dodatnia (wzrost jednej = wzrost drugiej)"),
@@ -57,11 +56,9 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilo\u015bciowe",
       tags$img(src = "assets/correlation-scatter.png",
                style = "width: 100%; border-radius: 4px;"),
       p(class = "narrative", style = "margin-top: 8px;",
-        "Wszystkie trzy panele maj\u0105 ", tags$b("ten sam trend wzrostowy"),
-        " (podobne nachylenie prostej). Ale im wi\u0119kszy ",
-        tags$b("rozrzut punkt\u00f3w wok\u00f3\u0142 prostej"),
-        ", tym ni\u017csze r. Korelacja \u0142\u0105czy obie cechy: kierunek trendu ",
-        tags$em("i"), " to, jak cia\u015bno punkty go trzymaj\u0105.")
+        "Wszystkie trzy panele maj\u0105 ten sam trend wzrostowy (podobne nachylenie prostej).
+        Ale im wi\u0119kszy rozrzut punkt\u00f3w wok\u00f3\u0142 prostej, tym ni\u017csze r.
+        Korelacja \u0142\u0105czy obie cechy: kierunek trendu ", tags$em("i"), " to, jak cia\u015bno punkty go trzymaj\u0105.")
     ),
 
     # ========================================================================
@@ -168,10 +165,10 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilo\u015bciowe",
       tags$img(src = "assets/anscombe-quartet.png",
                style = "width: 100%; border-radius: 4px;"),
       p(class = "narrative", style = "margin-top: 8px;",
-        "Cztery zbiory danych z ", tags$b("identyczn\u0105 korelacj\u0105"), " (~0.82),
+        "Cztery zbiory danych z identyczn\u0105 korelacj\u0105 (~0.82),
         t\u0105 sam\u0105 \u015bredni\u0105 i wariancj\u0105 \u2014 ale zupe\u0142nie inn\u0105 struktur\u0105.
         Tylko wykres pozwala odklei\u0107 statystyk\u0119 od rzeczywisto\u015bci.
-        To argument za tym, \u017ceby ", tags$b("zawsze rysowa\u0107 wykres"), " przed interpretacj\u0105 r.")
+        To argument za tym, \u017ceby zawsze rysowa\u0107 wykres przed interpretacj\u0105 r.")
     ),
 
     # --- 2. Korelacja pozorna (spurious) ---
@@ -180,7 +177,7 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilo\u015bciowe",
       div(class = "narrative",
         p("Spo\u017cycie lod\u00f3w i liczba utoni\u0119\u0107 koreluj\u0105 dodatnio.
           Czy lody zabijaj\u0105? Oczywi\u015bcie nie \u2014 obie zmienne zale\u017c\u0105 od ",
-          tags$b("temperatury"), " (zmienna ukryta / konfounder)."),
+          "temperatury (zmienna ukryta / konfounder)."),
         p("Korelacja mi\u0119dzy X i Y mo\u017ce wynika\u0107 z tego,
           \u017ce obie zale\u017c\u0105 od Z. Bez kontroli zmiennych zak\u0142\u00f3caj\u0105cych
           nie mo\u017cna wnioskowa\u0107 o przyczynowo\u015bci."),
@@ -223,9 +220,8 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilo\u015bciowe",
                style = "max-width: 500px; width: 100%; border-radius: 4px;"),
       p(class = "narrative", style = "margin-top: 8px;",
         "Zale\u017cno\u015b\u0107 kwadratowa (U-kszta\u0142tna) daje r bliskie zeru,
-        cho\u0107 zwi\u0105zek jest ", tags$b("silny i deterministyczny"),
-        ". Pearson mierzy wy\u0142\u0105cznie zale\u017cno\u015b\u0107 ",
-        tags$b("liniow\u0105"), " \u2014 nie ka\u017cd\u0105.")
+        cho\u0107 zwi\u0105zek jest silny i deterministyczny.
+        Pearson mierzy wy\u0142\u0105cznie zale\u017cno\u015b\u0107 liniow\u0105 \u2014 nie ka\u017cd\u0105.")
     ),
 
     # --- 5. Outlier (widget interaktywny) ---
@@ -233,7 +229,7 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilo\u015bciowe",
       h4("5. Wp\u0142yw outliery na r"),
       div(class = "narrative",
         p("Jeden punkt odleg\u0142y od reszty mo\u017ce ",
-          tags$b("sztucznie wytworzy\u0107 korelacj\u0119"), " tam, gdzie jej nie ma.")
+          "sztucznie wytworzy\u0107 korelacj\u0119 tam, gdzie jej nie ma.")
       ),
       fluidRow(
         column(4,
@@ -253,11 +249,11 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilo\u015bciowe",
     div(class = "callout-danger",
       tags$strong("Podsumowanie pu\u0142apek:"),
       tags$ol(
-        tags$li("Zawsze ", tags$b("rysuj wykres"), " przed interpretacj\u0105 r (Anscombe)"),
-        tags$li("Korelacja ", tags$b("nie oznacza przyczynowo\u015bci"), " \u2014 szukaj konfounder\u00f3w"),
-        tags$li("Agregacja danych mo\u017ce ", tags$b("odwr\u00f3ci\u0107 kierunek"), " zale\u017cno\u015bci (Simpson)"),
-        tags$li("r mierzy tylko zale\u017cno\u015b\u0107 ", tags$b("liniow\u0105"), " (nieliniowo\u015b\u0107)"),
-        tags$li("Jeden ", tags$b("outlier"), " mo\u017ce drastycznie zmieni\u0107 r")
+        tags$li("Zawsze rysuj wykres przed interpretacj\u0105 r (Anscombe)"),
+        tags$li("Korelacja nie oznacza przyczynowo\u015bci \u2014 szukaj konfounder\u00f3w"),
+        tags$li("Agregacja danych mo\u017ce odwr\u00f3ci\u0107 kierunek zale\u017cno\u015bci (Simpson)"),
+        tags$li("r mierzy tylko zale\u017cno\u015b\u0107 liniow\u0105 (nieliniowo\u015b\u0107)"),
+        tags$li("Jeden outlier mo\u017ce drastycznie zmieni\u0107 r")
       )
     ),
 

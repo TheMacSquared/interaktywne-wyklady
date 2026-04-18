@@ -16,14 +16,13 @@ ch2_ui <- tabPanel("3. Jedna zmienna ilo\u015bciowa",
     div(class = "section-title", "Od pytania do testu"),
 
     div(class = "narrative",
-      p("Statystyk nie zaczyna od wzor\u00f3w \u2014 zaczyna od ", tags$b("pytania"),
-        ". Kto\u015b przychodzi i pyta w j\u0119zyku potocznym:"),
+      p("Statystyk nie zaczyna od wzor\u00f3w \u2014 zaczyna od pytania. Kto\u015b przychodzi i pyta w j\u0119zyku potocznym:"),
       div(class = "callout-info", style = "font-size: 18px; text-align: center;",
         tags$em("\u201eCzy nasi studenci maj\u0105 typowy poziom koncentracji?
         Bo wydaje mi si\u0119, \u017ce co\u015b z nimi jest nie tak.\u201d")
       ),
-      p("Zadanie statystyka: prze\u0142o\u017cy\u0107 to na ", tags$b("formaln\u0105 hipotez\u0119"),
-        " i doda\u0107 kontekst \u2014 typowy to ile? Mamy warto\u015b\u0107 referencyjn\u0105
+      p("Zadanie statystyka: prze\u0142o\u017cy\u0107 to na formaln\u0105 hipotez\u0119 i doda\u0107 kontekst \u2014
+        typowy to ile? Mamy warto\u015b\u0107 referencyjn\u0105
         z pilota\u017cu: \u015bredni wynik testu koncentracji w populacji = 70 pkt."),
       p("Wi\u0119c pytanie potoczne zamienia si\u0119 w:"),
       div(class = "formula-box",
@@ -99,13 +98,11 @@ ch2_ui <- tabPanel("3. Jedna zmienna ilo\u015bciowa",
     div(class = "section-title", "A je\u015bli znamy kierunek? Test jednostronny"),
 
     div(class = "narrative",
-      p("W pierwszym te\u015bcie pytali\u015bmy: \u201eczy \u015brednia ", tags$b("r\u00f3\u017cni si\u0119"),
-        " od \u03bc\u2080?\u201d (dwustronny, \u2260). Ale czasem mamy silniejsze podejrzenie \u2014
-        nie tylko \u201eczy r\u00f3\u017cni si\u0119\u201d, ale \u201eczy jest ",
-        tags$b("wi\u0119ksza"), " / ", tags$b("mniejsza"), "\u201d."),
-      p("U\u017cyjemy ", tags$b("tych samych danych"), " co powy\u017cej,
-        ale zmienimy pytanie na kierunkowe. Zobaczcie, jak zmienia si\u0119
-        hipoteza i wykres.")
+      p("W pierwszym te\u015bcie pytali\u015bmy: \u201eczy \u015brednia r\u00f3\u017cni si\u0119 od \u03bc\u2080?\u201d (dwustronny, \u2260).
+        Ale czasem mamy silniejsze podejrzenie \u2014 nie tylko \u201eczy r\u00f3\u017cni si\u0119\u201d,
+        ale \u201eczy jest wi\u0119ksza / mniejsza\u201d."),
+      p("U\u017cyjemy tych samych danych co powy\u017cej, ale zmienimy pytanie na kierunkowe.
+        Zobaczcie, jak zmienia si\u0119 hipoteza i wykres.")
     ),
 
     div(class = "widget-block",
@@ -140,8 +137,7 @@ ch2_ui <- tabPanel("3. Jedna zmienna ilo\u015bciowa",
           Punkt krytyczny dalej od zera \u2014 trudniej odrzuci\u0107 H\u2080."),
         tags$li(tags$b("Jednostronny (> lub <):"), " mocniejszy w jednym kierunku, ale ",
           tags$em("\u015blepy"), " na efekt w drugim. Punkt krytyczny bli\u017cej zera \u2014 \u0142atwiej odrzuci\u0107 H\u2080."),
-        tags$li("Regu\u0142a: test jednostronny decydujemy ", tags$b("przed"),
-          " zbieraniem danych, nie po zobaczeniu wynik\u00f3w!")
+        tags$li("Regu\u0142a: test jednostronny decydujemy przed zbieraniem danych, nie po zobaczeniu wynik\u00f3w!")
       )
     ),
 

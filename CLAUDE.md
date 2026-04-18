@@ -114,6 +114,25 @@ library(lmtest)     # Testy diagnostyczne regresji
 | ANOVA | `rstatix::anova_test()` | `aov()` |
 | Porządkowanie modeli | `broom::tidy()`, `broom::glance()` | ręczne wyciąganie |
 
+## Pogrubienia w tekście (bold)
+
+Używaj `tags$strong()` / `strong()` **oszczędnie** — tylko jako wizualnej nawigacji, nie jako emfazy. Za dużo boldów rozprasza i zmniejsza ich skuteczność.
+
+**ZOSTAW bold** gdy to:
+- Krótka etykieta z dwukropkiem: `strong("Problem:")`, `strong("Zasada:")`, `strong("Uwaga:")`, `strong("Wniosek:")`, `strong("Wskazówka:")`, `strong("Interpretacja:")`, `strong("Przykład:")`, `strong("Krok 1:")`
+- Numerowany marker listy: `strong("1.")`, `strong("2.")`
+- Jedno-słowo werdykt quiz-feedback: `strong("Dokładnie!")`, `strong("Nie do końca.")`
+- Krótki status-tag na początku callout-u: `strong("Dobry zbiór!")`, `strong("KRYTYCZNE")`
+
+**NIE używaj bold** dla:
+- Całych zdań opisowych — wystarczy, że są w `callout-*` (tam jest już wizualny sygnał)
+- Emfazy w środku paragrafu narracji — lepiej przeformułować zdanie
+- Markdown `**tekst**` w narracji — zwykły tekst
+
+**Pattern `strong("Label: treść")`** → rozbij na `strong("Label:"), " treść"` — pogrubiona ma być tylko etykieta.
+
+Uwaga: globalny CSS (`R/shared_styles.css`) ustawia `strong { font-weight: 600 }` — boldy są już wyciszone do półgrubej wagi. Nie próbuj tego obchodzić przez `style="font-weight: 700"`.
+
 ## Styl wizualizacji
 
 ```r

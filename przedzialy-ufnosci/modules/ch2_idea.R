@@ -14,11 +14,10 @@ ch2_ui <- tabPanel("2. Idea przedzia\u0142\u00f3w",
 
     div(class = "narrative",
       p("Przedzia\u0142 ufno\u015bci (CI \u2014 confidence interval) to zakres warto\u015bci,
-        kt\u00f3ry z okre\u015blonym ", tags$b("poziomem ufno\u015bci"),
-        " (np. 95%) zawiera prawdziwy parametr populacji."),
+        kt\u00f3ry z okre\u015blonym poziomem ufno\u015bci (np. 95%) zawiera prawdziwy parametr populacji."),
       p("Kluczowa idea: gdyby\u015bmy powtarzali eksperyment wiele razy,
-        to ", tags$b("95% skonstruowanych przedzia\u0142\u00f3w"),
-        " zawiera\u0142oby prawdziwe ", withMathJax("\\(\\mu\\)"), ".")
+        to 95% skonstruowanych przedzia\u0142\u00f3w zawiera\u0142oby prawdziwe ",
+        withMathJax("\\(\\mu\\)"), ".")
     ),
 
     # ========================================================================
@@ -30,8 +29,7 @@ ch2_ui <- tabPanel("2. Idea przedzia\u0142\u00f3w",
       p("To kluczowa wizualizacja. Ka\u017cdy poziomy odcinek to jeden przedzia\u0142
         ufno\u015bci \u2014 skonstruowany z osobnej pr\u00f3by. Zielone trafiaj\u0105 w ",
         withMathJax("\\(\\mu\\)"), ", czerwone \u2014 nie."),
-      p("Klikaj ", tags$b("\"Dolosuj\""),
-        " porcjami i obserwuj, jak pokrycie zbli\u017ca si\u0119 do nominalnego poziomu ufno\u015bci.
+      p("Klikaj \"Dolosuj\" porcjami i obserwuj, jak pokrycie zbli\u017ca si\u0119 do nominalnego poziomu ufno\u015bci.
         Przy ma\u0142ej liczbie pr\u00f3b mo\u017cesz mie\u0107 80% lub 100%, ale przy 200+ pokrycie powinno
         ustabilizowa\u0107 si\u0119 wok\u00f3\u0142 95%.")
     ),
@@ -72,9 +70,8 @@ ch2_ui <- tabPanel("2. Idea przedzia\u0142\u00f3w",
 
     div(class = "callout-success",
       tags$strong("Aha-moment:"),
-      " Przy 95% poziomie ufno\u015bci oko\u0142o 5 z 100 przedzia\u0142\u00f3w ",
-      tags$b("nie trafi"), " w prawdziwe \u03bc. To nie b\u0142\u0105d \u2014 to w\u0142a\u015bnie ",
-      "znaczenie \"95% ufno\u015bci\"!"
+      " Przy 95% poziomie ufno\u015bci oko\u0142o 5 z 100 przedzia\u0142\u00f3w nie trafi
+      w prawdziwe \u03bc. To nie b\u0142\u0105d \u2014 to w\u0142a\u015bnie znaczenie \"95% ufno\u015bci\"!"
     ),
 
     # ========================================================================
@@ -96,8 +93,7 @@ ch2_ui <- tabPanel("2. Idea przedzia\u0142\u00f3w",
 
     div(class = "callout-danger",
       tags$strong("Cz\u0119sty b\u0142\u0105d:"),
-      " Przedzia\u0142 ufno\u015bci ", tags$b("nie m\u00f3wi"),
-      " o prawdopodobie\u0144stwie, \u017ce parametr le\u017cy w konkretnym przedziale.
+      " Przedzia\u0142 ufno\u015bci nie m\u00f3wi o prawdopodobie\u0144stwie, \u017ce parametr le\u017cy w konkretnym przedziale.
         Parametr jest sta\u0142y \u2014 to przedzia\u0142 jest losowy!
         Poprawnie: \"metoda daje przedzia\u0142y, kt\u00f3re w 95% przypadk\u00f3w trafaj\u0105\"."
     ),

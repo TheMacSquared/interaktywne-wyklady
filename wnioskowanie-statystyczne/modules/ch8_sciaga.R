@@ -13,20 +13,20 @@ ch8_ui <- tabPanel("9. \u015aci\u0105ga",
     div(class = "section-title", "Drzewo decyzyjne: jaki test?"),
 
     div(class = "callout-info",
-      tags$strong("Krok 1: Ile zmiennych?"),
+      tags$strong("Krok 1:"), " Ile zmiennych?",
       tags$ul(
         tags$li(tags$b("Jedna zmienna"), " \u2192 Krok 2a"),
         tags$li(tags$b("Dwie zmienne"), " \u2192 Krok 2b")
       ),
 
-      tags$strong("Krok 2a: Jedna zmienna \u2014 jaki typ?"),
+      tags$strong("Krok 2a:"), " Jedna zmienna \u2014 jaki typ?",
       tags$ul(
         tags$li(tags$b("Ilo\u015bciowa"), " \u2192 test t jednej pr\u00f3by / Wilcoxon"),
         tags$li(tags$b("Jako\u015bciowa (2 kat.)"), " \u2192 test dwumianowy"),
         tags$li(tags$b("Jako\u015bciowa (3+ kat.)"), " \u2192 \u03c7\u00b2 zgodno\u015bci")
       ),
 
-      tags$strong("Krok 2b: Dwie zmienne \u2014 jakie typy?"),
+      tags$strong("Krok 2b:"), " Dwie zmienne \u2014 jakie typy?",
       tags$ul(
         tags$li(tags$b("Ilo\u015bciowa + ilo\u015bciowa"), " \u2192 Pearson / Spearman"),
         tags$li(tags$b("Jako\u015bciowa + jako\u015bciowa"), " \u2192 \u03c7\u00b2 niezale\u017cno\u015bci / Fisher"),
@@ -34,7 +34,7 @@ ch8_ui <- tabPanel("9. \u015aci\u0105ga",
         tags$li(tags$b("Ilo\u015bciowa + jako\u015bciowa (3+ grup)"), " \u2192 ANOVA / Kruskal-Wallis")
       ),
 
-      tags$strong("Krok 3: Pr\u00f3by niezale\u017cne czy parowe?"),
+      tags$strong("Krok 3:"), " Pr\u00f3by niezale\u017cne czy parowe?",
       tags$ul(
         tags$li(tags$b("Niezale\u017cne"), " \u2192 test t / Mann-Whitney"),
         tags$li(tags$b("Parowe"), " \u2192 test t parowy / Wilcoxon par znakowych")

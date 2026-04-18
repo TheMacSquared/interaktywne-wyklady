@@ -22,9 +22,8 @@ ch1_ui <- tabPanel("1. CASchools",
 
     div(class = "narrative",
       p("Jeste\u015bmy analitykami w kalifornijskim departamencie edukacji.
-        Polityk proponuje ", tags$b("zmniejszenie liczebno\u015bci klas"),
-        " jako spos\u00f3b na popraw\u0119 wynik\u00f3w egzaminacyjnych.
-        Program b\u0119dzie kosztowa\u0107 miliardy dolar\u00f3w."),
+        Polityk proponuje zmniejszenie liczebno\u015bci klas jako spos\u00f3b na popraw\u0119
+        wynik\u00f3w egzaminacyjnych. Program b\u0119dzie kosztowa\u0107 miliardy dolar\u00f3w."),
       p("Naszym zadaniem jest zbada\u0107 na dost\u0119pnych danych:"),
       div(class = "callout-info",
         tags$strong("G\u0142\u00f3wne pytanie badawcze:"),
@@ -61,8 +60,8 @@ ch1_ui <- tabPanel("1. CASchools",
 
     div(class = "analysis-step",
       span(class = "step-number", "1"),
-      tags$strong("Zanim zaczniemy analizowa\u0107, musimy rozumie\u0107,
-                   czym dysponujemy. Jakie zmienne mog\u0105 by\u0107 istotne?")
+      "Zanim zaczniemy analizowa\u0107, musimy rozumie\u0107,
+                   czym dysponujemy. Jakie zmienne mog\u0105 by\u0107 istotne?"
     ),
 
     div(class = "widget-block",
@@ -106,11 +105,11 @@ ch1_ui <- tabPanel("1. CASchools",
       tags$strong("Czerwona flaga!"),
       p("Zmienne spo\u0142eczno-ekonomiczne (lunch, calworks, income) s\u0105:"),
       tags$ul(
-        tags$li("silnie skorelowane z ", tags$b("wynikami"), " (r \u2248 \u22120.87 dla lunch)"),
-        tags$li("skorelowane z ", tags$b("STR"), " (biedniejsze dystrykty maj\u0105 wi\u0119ksze klasy)")
+        tags$li("silnie skorelowane z wynikami (r \u2248 \u22120.87 dla lunch)"),
+        tags$li("skorelowane z STR (biedniejsze dystrykty maj\u0105 wi\u0119ksze klasy)")
       ),
-      p("To oznacza, \u017ce prosty zwi\u0105zek STR\u2192wyniki mo\u017ce by\u0107 ",
-        tags$b("artefaktem biedy"), ". Musimy to rozsupla\u0107.")
+      p("To oznacza, \u017ce prosty zwi\u0105zek STR\u2192wyniki mo\u017ce by\u0107 artefaktem biedy.
+        Musimy to rozsupla\u0107.")
     ),
 
     # ========================================================================
@@ -120,8 +119,8 @@ ch1_ui <- tabPanel("1. CASchools",
 
     div(class = "analysis-step",
       span(class = "step-number", "2"),
-      tags$strong("Najpierw sprawd\u017amy naiwny zwi\u0105zek \u2014 bez kontroli czegokolwiek.
-                   To b\u0119dzie nasz punkt wyj\u015bcia.")
+      "Najpierw sprawd\u017amy naiwny zwi\u0105zek \u2014 bez kontroli czegokolwiek.
+                   To b\u0119dzie nasz punkt wyj\u015bcia."
     ),
 
     div(class = "narrative",
@@ -151,9 +150,8 @@ ch1_ui <- tabPanel("1. CASchools",
       tags$strong("Na tym etapie polityk powiedzia\u0142by:"),
       p(tags$em("\"Widzicie? Mniejsze klasy = lepsze wyniki! Dajcie mi bud\u017cet.\"")),
       p("Ale my wiemy, \u017ce to mo\u017ce by\u0107 pozorna korelacja.
-        W\u0142\u0105czmy kolorowanie wg biedy \u2014 ",
-        tags$b("wida\u0107, \u017ce biedne dystrykty (czerwone) skupiaj\u0105 si\u0119
-        w prawym dolnym rogu"), " (du\u017ce klasy, niskie wyniki).
+        W\u0142\u0105czmy kolorowanie wg biedy \u2014 wida\u0107, \u017ce biedne dystrykty (czerwone)
+        skupiaj\u0105 si\u0119 w prawym dolnym rogu (du\u017ce klasy, niskie wyniki).
         Bieda mo\u017ce t\u0142umaczy\u0107 oba zjawiska.")
     ),
 
@@ -164,9 +162,9 @@ ch1_ui <- tabPanel("1. CASchools",
 
     div(class = "analysis-step",
       span(class = "step-number", "3"),
-      tags$strong("Aby zmienna Z by\u0142a zak\u0142\u00f3caj\u0105c\u0105, musi spe\u0142nia\u0107 dwa warunki:
+      "Aby zmienna Z by\u0142a zak\u0142\u00f3caj\u0105c\u0105, musi spe\u0142nia\u0107 dwa warunki:
                    (a) wp\u0142ywa\u0107 na Y i (b) by\u0107 skorelowana z X.
-                   Sprawdzamy oba.")
+                   Sprawdzamy oba."
     ),
 
     div(class = "narrative",
@@ -191,8 +189,8 @@ ch1_ui <- tabPanel("1. CASchools",
     ),
 
     div(class = "narrative",
-      p("Oba warunki spe\u0142nione. ", tags$b("Lunch (bieda) jest confoundem."),
-        " Teraz kluczowe pytanie: czy efekt STR przetrwa, gdy skontrolujemy bied\u0119?")
+      p("Oba warunki spe\u0142nione. Lunch (bieda) jest confoundem.
+        Teraz kluczowe pytanie: czy efekt STR przetrwa, gdy skontrolujemy bied\u0119?")
     ),
 
     div(class = "widget-block",
@@ -220,15 +218,14 @@ ch1_ui <- tabPanel("1. CASchools",
 
     div(class = "analysis-step",
       span(class = "step-number", "4"),
-      tags$strong("Budujemy modele regresji, stopniowo dodaj\u0105c zmienne kontrolne.
-                   Obserwujemy, co dzieje si\u0119 z wsp\u00f3\u0142czynnikiem STR.")
+      "Budujemy modele regresji, stopniowo dodaj\u0105c zmienne kontrolne.
+                   Obserwujemy, co dzieje si\u0119 z wsp\u00f3\u0142czynnikiem STR."
     ),
 
     div(class = "narrative",
       p("Strategia: zaczynamy od prostego modelu (sam STR) i dodajemy
         zmienne, kt\u00f3re podejrzewamy o zak\u0142\u00f3canie. Je\u015bli \u03b2 przy STR
-        ", tags$b("znacznie zmaleje lub straci istotno\u015b\u0107"),
-        ", to prosty zwi\u0105zek by\u0142 pozorny.")
+        znacznie zmaleje lub straci istotno\u015b\u0107, to prosty zwi\u0105zek by\u0142 pozorny.")
     ),
 
     div(class = "widget-block",
@@ -242,13 +239,11 @@ ch1_ui <- tabPanel("1. CASchools",
 
     div(class = "callout-success",
       tags$strong("Kluczowe odkrycie:"),
-      p("Wsp\u00f3\u0142czynnik \u03b2 przy STR ", tags$b("maleje"),
-        " po dodaniu zmiennych kontrolnych, ale ",
-        tags$b("nie zanika ca\u0142kowicie"), "."),
+      p("Wsp\u00f3\u0142czynnik \u03b2 przy STR maleje po dodaniu zmiennych kontrolnych,
+        ale nie zanika ca\u0142kowicie."),
       p("To sugeruje, \u017ce cz\u0119\u015b\u0107 oryginalnego efektu by\u0142a pozorna
-        (napedzana bied\u0105), ale mniejsze klasy mog\u0105 mie\u0107 ",
-        tags$b("niewielki realny efekt"), " \u2014 rz\u0119du ~1 punkt
-        na ka\u017cdego dodatkowego ucznia na nauczyciela.")
+        (napedzana bied\u0105), ale mniejsze klasy mog\u0105 mie\u0107 niewielki realny efekt
+        \u2014 rz\u0119du ~1 punkt na ka\u017cdego dodatkowego ucznia na nauczyciela.")
     ),
 
     # ========================================================================
@@ -258,8 +253,8 @@ ch1_ui <- tabPanel("1. CASchools",
 
     div(class = "analysis-step",
       span(class = "step-number", "5"),
-      tags$strong("Zbadajmy szczeg\u00f3\u0142owo najlepszy model.
-                   Mo\u017cesz sam wybra\u0107 predyktory.")
+      "Zbadajmy szczeg\u00f3\u0142owo najlepszy model.
+                   Mo\u017cesz sam wybra\u0107 predyktory."
     ),
 
     div(class = "widget-block",
@@ -305,16 +300,15 @@ ch1_ui <- tabPanel("1. CASchools",
 
     div(class = "analysis-step",
       span(class = "step-number", "6"),
-      tags$strong("Wracamy do oryginalnego pytania: czy zmniejszenie klas to dobra inwestycja?")
+      "Wracamy do oryginalnego pytania: czy zmniejszenie klas to dobra inwestycja?"
     ),
 
     div(class = "callout-success",
       tags$strong("Co m\u00f3wi\u0105 dane:"),
       tags$ol(
         tags$li(tags$b("Prosty zwi\u0105zek STR\u2192wyniki istnieje"),
-                " (r \u2248 \u22120.23), ale jest w du\u017cej mierze ",
-                tags$b("napedzany bied\u0105"),
-                " \u2014 biedniejsze dystrykty maj\u0105 wi\u0119ksze klasy I gorsze wyniki."),
+                " (r \u2248 \u22120.23), ale jest w du\u017cej mierze nap\u0119dzany bied\u0105
+                \u2014 biedniejsze dystrykty maj\u0105 wi\u0119ksze klasy I gorsze wyniki."),
         tags$li(tags$b("Po kontroli biedy i ELL efekt STR maleje"),
                 ", ale nie zanika \u2014 oko\u0142o \u22121 punkt na ka\u017cdego dodatkowego
                 ucznia na nauczyciela."),
@@ -328,12 +322,10 @@ ch1_ui <- tabPanel("1. CASchools",
 
     div(class = "callout-warning",
       tags$strong("Rekomendacja (gdyby to by\u0142 raport):"),
-      p("Zmniejszenie klas mo\u017ce mie\u0107 niewielki pozytywny efekt, ale ",
-        tags$b("nie jest \"silver bullet\""),
-        ". Za miliardy dolar\u00f3w uzyska si\u0119 poprawk\u0119 rz\u0119du kilku punkt\u00f3w."),
-      p("Bardziej efektywne mog\u0105 by\u0107 interwencje celowane w ",
-        tags$b("przyczyny biedy edukacyjnej"),
-        ": wsparcie j\u0119zykowe dla ELL, programy \u017cywieniowe, wsparcie rodzin.")
+      p("Zmniejszenie klas mo\u017ce mie\u0107 niewielki pozytywny efekt, ale nie jest
+        \"silver bullet\". Za miliardy dolar\u00f3w uzyska si\u0119 poprawk\u0119 rz\u0119du kilku punkt\u00f3w."),
+      p("Bardziej efektywne mog\u0105 by\u0107 interwencje celowane w przyczyny biedy edukacyjnej:
+        wsparcie j\u0119zykowe dla ELL, programy \u017cywieniowe, wsparcie rodzin.")
     ),
 
     div(class = "callout-danger",

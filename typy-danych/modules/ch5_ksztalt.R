@@ -18,8 +18,7 @@ ch5_ui <- tabPanel("5. Kształt rozkładu",
         a wyglądać zupełnie inaczej. Kształt rozkładu mówi nam o asymetrii
         i 'ciężkości' ogonów."),
       p("W tym rozdziale poznasz dwie miary kształtu:",
-        tags$strong("skośność"), "(asymetria) i",
-        tags$strong("kurtoze"), "(ciężkość ogonów).")
+        "skośność (asymetria) i kurtozę (ciężkość ogonów).")
     ),
 
     # --- Widget 1: Skewness ---
@@ -231,7 +230,7 @@ ch5_server <- function(input, output, session) {
     m <- mean(vals)
     med <- median(vals)
 
-    p(tags$strong("Skośność = ", round(sk, 3)),
+    p(paste0("Skośność = ", round(sk, 3)),
       " | Średnia = ", round(m, 2),
       ", Mediana = ", round(med, 2))
   })

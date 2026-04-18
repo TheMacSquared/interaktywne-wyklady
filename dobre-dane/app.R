@@ -314,98 +314,8 @@ ui <- navbarPage(
   theme = bs_theme(bootswatch = "sandstone"),
 
   header = tagList(
-    tags$head(
-    tags$link(rel = "stylesheet",
-              href = "https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap&subset=latin-ext"),
-    tags$link(rel = "stylesheet",
-              href = "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"),
+    includeCSS("../R/shared_styles.css"),
     tags$style(HTML("
-    /* Font Atkinson Hyperlegible - wybrany dla dostepnosci */
-    body, .shiny-text-output, .tab-content,
-    .navbar, .navbar a, .btn, input, select, textarea,
-    h1, h2, h3, h4, h5, h6, .narrative, .narrative p {
-      font-family: 'Atkinson Hyperlegible', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-    code, pre, .verbatim {
-      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-      font-size: 0.92em;
-    }
-
-    /* Narrative text */
-    .narrative { font-size: 16px; line-height: 1.7; color: #2c3e50; margin-bottom: 15px; }
-    .narrative p { margin-bottom: 12px; }
-
-    /* Widget containers */
-    .widget-block {
-      background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;
-      padding: 20px; margin: 25px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    }
-
-    /* Headings */
-    .chapter-title {
-      font-size: 30px; font-weight: 700; color: #2c3e50;
-      margin: 10px 0 20px 0;
-      border-bottom: 4px solid #3498db; padding-bottom: 8px;
-      line-height: 1.2;
-    }
-    .section-title {
-      font-size: 24px; font-weight: 700; color: #34495e;
-      margin-top: 40px; margin-bottom: 15px;
-      border-left: 4px solid #3498db; padding-left: 12px;
-      line-height: 1.3;
-    }
-    .subsection-title, h3.problem-name {
-      font-size: 18px; font-weight: 600; color: #34495e;
-      margin-top: 24px; margin-bottom: 10px;
-      line-height: 1.3;
-    }
-    .narrative p { max-width: 72ch; }
-    .narrative ul, .narrative ol { max-width: 72ch; }
-
-    /* Alert/callout boxes */
-    .callout-info {
-      background: #eaf4fc; border-left: 4px solid #3498db;
-      padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
-    }
-    .callout-warning {
-      background: #fef9e7; border-left: 4px solid #f39c12;
-      padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
-    }
-    .callout-danger {
-      background: #fdedec; border-left: 4px solid #e74c3c;
-      padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
-    }
-    .callout-success {
-      background: #eafaf1; border-left: 4px solid #27ae60;
-      padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
-    }
-
-    /* Ikony dla callout-ow (Bootstrap Icons via ::before) */
-    .callout-info::before, .callout-warning::before,
-    .callout-danger::before, .callout-success::before {
-      font-family: \"bootstrap-icons\" !important;
-      font-weight: normal; font-style: normal;
-      font-size: 1.15em; margin-right: 8px;
-      vertical-align: -2px; display: inline-block;
-    }
-    .callout-info::before    { content: \"\\f431\"; color: #3498db; }
-    .callout-warning::before { content: \"\\f33a\"; color: #f39c12; }
-    .callout-danger::before  { content: \"\\f622\"; color: #e74c3c; }
-    .callout-success::before { content: \"\\f26b\"; color: #27ae60; }
-
-    /* Chapter navigation */
-    .chapter-transition {
-      background: linear-gradient(135deg, #eaf4fc, #f0f7ee);
-      border: 1px solid #b8d4e8; border-radius: 8px;
-      padding: 20px; margin: 30px 0 15px 0; text-align: center;
-    }
-    .chapter-transition p {
-      font-size: 16px; color: #2c3e50; margin-bottom: 12px;
-    }
-    .chapter-transition .btn {
-      font-size: 16px; padding: 10px 30px;
-    }
-
     /* Verdict badge */
     .verdict-badge {
       display: inline-block; padding: 4px 12px; border-radius: 12px;
@@ -420,50 +330,6 @@ ui <- navbarPage(
       border: 2px dashed #3498db; border-radius: 8px;
       padding: 15px; margin: 15px 0; background: #f0f8ff;
     }
-
-    /* Sticky TOC */
-    #sticky-toc {
-      position: fixed; top: 70px; left: 10px; width: 180px;
-      max-height: calc(100vh - 90px); overflow-y: auto;
-      background: rgba(255,255,255,0.95); border: 1px solid #dee2e6;
-      border-radius: 8px; padding: 10px 8px; font-size: 12px;
-      z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    #sticky-toc .toc-title {
-      font-weight: bold; color: #2c3e50; margin-bottom: 6px;
-      font-size: 13px; padding-bottom: 4px; border-bottom: 1px solid #dee2e6;
-    }
-    #sticky-toc a {
-      display: block; padding: 3px 6px; color: #7f8c8d;
-      text-decoration: none; border-radius: 4px; line-height: 1.3;
-      margin-bottom: 2px;
-    }
-    #sticky-toc a:hover { color: #3498db; background: #eaf4fc; }
-    #sticky-toc a.toc-active { color: #3498db; font-weight: bold; background: #eaf4fc; }
-    @media (max-width: 1400px) { #sticky-toc { display: none !important; } }
-  /* Mobile TOC toggle */
-  #toc-mobile-btn {
-    display: none; position: fixed; bottom: 20px; right: 20px;
-    width: 48px; height: 48px; border-radius: 50%; background: #3498db;
-    color: white; border: none; font-size: 22px; line-height: 48px;
-    text-align: center; cursor: pointer; z-index: 1001;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-  }
-  #toc-mobile-btn:hover { background: #2980b9; }
-  #toc-overlay {
-    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.4); z-index: 1000;
-  }
-  @media (max-width: 1400px) {
-    #toc-mobile-btn { display: block; }
-    #sticky-toc.toc-open {
-      display: block !important; position: fixed;
-      top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 85%; max-width: 320px; max-height: 70vh;
-      z-index: 1002; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    }
-    #toc-overlay.toc-open { display: block; }
-  }
 
     /* Jamovi-style data table */
     .jamovi-table .dataTables_wrapper { font-family: 'Segoe UI', Roboto, sans-serif; }
@@ -523,33 +389,6 @@ ui <- navbarPage(
     }
     .toggle-pills .pill-btn.active { background: #3498db; color: white; }
     .toggle-pills .pill-btn:hover:not(.active) { background: #eaf4fc; }
-
-    /* Quiz tiles */
-    .quiz-tiles { display: grid; gap: 12px; margin: 15px 0; }
-    .quiz-cols-2 { grid-template-columns: repeat(2, 1fr); }
-    .quiz-cols-3 { grid-template-columns: repeat(3, 1fr); }
-    .quiz-cols-4 { grid-template-columns: repeat(2, 1fr); }
-
-    .quiz-tiles .quiz-tile {
-      background: white; border: 2px solid #dee2e6; border-radius: 12px;
-      padding: 20px 12px; text-align: center; cursor: pointer; transition: all 0.3s;
-      display: block; width: 100%; font-family: inherit; color: inherit;
-    }
-    .quiz-tiles .quiz-tile:hover {
-      border-color: #3498db; transform: translateY(-4px);
-      box-shadow: 0 8px 25px rgba(52,152,219,0.2);
-    }
-    .quiz-tiles .quiz-tile:focus { outline: none; }
-    .quiz-tiles .quiz-tile .tile-letter {
-      display: inline-block; width: 36px; height: 36px; line-height: 36px;
-      border-radius: 50%; background: #3498db; color: white;
-      font-weight: 700; font-size: 16px; margin-bottom: 8px;
-    }
-    .quiz-tiles .quiz-tile .tile-text { font-size: 13px; color: #2c3e50; }
-    .quiz-cols-4 .quiz-tile .tile-text { font-size: 12px; }
-    .quiz-tile.correct { border-color: #27ae60 !important; background: #eafaf1 !important; }
-    .quiz-tile.wrong { border-color: #e74c3c !important; background: #fdedec !important; }
-    .quiz-tile.disabled { pointer-events: none; opacity: 0.7; }
   ")),
   tags$script(HTML("
     // Custom message handler for toggle button styling
@@ -606,7 +445,7 @@ ui <- navbarPage(
         czy szukamy związku między dwiema rzeczami? Porównujemy grupy? Sprawdzamy
         czy coś się zmienia w czasie? To nie musi być formalna hipoteza statystyczna
         \u2014 wystarczy jasny pomysł w języku potocznym."),
-      p(tags$strong("Zachęcam do wybierania tematów, które Was naprawdę interesują."),
+      p("Zachęcam do wybierania tematów, które Was naprawdę interesują.",
         " Jeśli piszecie pracę o czymś, na czym Wam zależy, naturalnie zadajecie
         lepsze pytania, szybciej wyłapujecie absurdalne wyniki, łatwiej tworzycie
         sensowne hipotezy. Analiza zyska niuans i dojrzałość, której nie da żaden
@@ -712,7 +551,7 @@ ui <- navbarPage(
         )
       ),
       div(class = "callout-danger", style = "margin-top: 10px;",
-        tags$strong("Problem: staż pracy jest prawie stały"), " (zakres 2.8\u20133.2 lata). ",
+        tags$strong("Problem:"), " staż pracy jest prawie stały (zakres 2.8\u20133.2 lata). ",
         "Wynagrodzenia się różnią, ale nie widać żadnego wzorca \u2014 punkty tworzą pionową chmurę.",
         tags$br(),
         "Gdy jedna zmienna nie ma żadnego rozrzutu, nie da się ocenić czy i jak wpływa na drugą."
@@ -1150,7 +989,7 @@ ui <- navbarPage(
     div(class = "section-title", "Werdykt"),
 
     div(class = "callout-danger",
-      tags$strong("Zły zbiór do klasycznej statystyki!"),
+      "Zły zbiór do klasycznej statystyki!",
       tags$br(),
       tags$strong("Problem 1:"), " Dane eventowe - każdy wiersz to zdarzenie, nie obserwacja w sensie statystycznym.",
       tags$br(),
@@ -1196,7 +1035,7 @@ ui <- navbarPage(
       plotOutput("tab5_plot_zadowolenie", height = "300px")
     ),
     div(class = "callout-danger",
-      tags$strong("Problem: brak zróżnicowania odpowiedzi."),
+      tags$strong("Problem:"), " brak zróżnicowania odpowiedzi.",
       " 95% pracowników zaznaczyło 4 lub 5. Skala 1\u20135 w praktyce działa tu jak skala 1\u20132 \u2014
       kiedy wszyscy odpowiadają tak samo, zmienna nic nie mówi."
     ),
@@ -1207,7 +1046,7 @@ ui <- navbarPage(
       plotOutput("tab5_plot_departament", height = "300px")
     ),
     div(class = "callout-danger",
-      tags$strong("Problem: niezbalansowane grupy."),
+      tags$strong("Problem:"), " niezbalansowane grupy.",
       " 94% respondentów to dział IT. Pozostałe działy mają po 1\u20132 osoby \u2014
       jakiekolwiek porównanie między działami będzie niemożliwe."
     ),
@@ -1222,7 +1061,7 @@ ui <- navbarPage(
       plotOutput("tab5_plot_staz", height = "300px")
     ),
     div(class = "callout-warning",
-      tags$strong("Uwaga: wąska rozpiętość wartości."),
+      tags$strong("Uwaga:"), " wąska rozpiętość wartości.",
       " Wszyscy pracownicy mają staż w przedziale 2.8\u20133.5 roku. Sama w sobie mała zmienność
       nie jest błędem \u2014 zdarzają się takie dane. Ale gdy ",
       tags$em("cały zbiór"), " wygląda podobnie, wykrycie jakichkolwiek zależności staje się
@@ -1235,7 +1074,7 @@ ui <- navbarPage(
       plotOutput("tab5_plot_wynagrodzenie", height = "300px")
     ),
     div(class = "callout-success",
-      tags$strong("Wynagrodzenia mają normalny rozrzut."),
+      "Wynagrodzenia mają normalny rozrzut.",
       " To dobra wiadomość \u2014 ta zmienna wydaje się użyteczna.
       Zobaczmy więc, czy możemy ją powiązać z czymś innym w tym zbiorze."
     ),
@@ -1246,7 +1085,7 @@ ui <- navbarPage(
       plotOutput("tab5_plot_plec", height = "300px")
     ),
     div(class = "callout-danger",
-      tags$strong("Problem: niezbalansowane grupy."),
+      tags$strong("Problem:"), " niezbalansowane grupy.",
       " 90% respondentów to mężczyźni (ok. 72 os.), kobiet jest ok. 8. Porównanie
       według płci nie ma sensu przy takiej dysproporcji."
     ),
@@ -1277,7 +1116,7 @@ ui <- navbarPage(
     div(class = "section-title", "Werdykt"),
 
     div(class = "callout-danger",
-      tags$strong("Ten zbiór danych nie nadaje się do analizy."),
+      "Ten zbiór danych nie nadaje się do analizy.",
       tags$br(),
       "Wynagrodzenia mają dobry rozrzut, ale trudno to wykorzystać: odpowiedzi o zadowoleniu
       są skupione przy maksimum, działy i płeć skrajnie niezbalansowane, a staż pracy
@@ -1399,7 +1238,7 @@ ui <- navbarPage(
     div(class = "section-title", "Werdykt"),
 
     div(class = "callout-danger",
-      tags$strong("Dane wymagają gruntownego czyszczenia!"),
+      "Dane wymagają gruntownego czyszczenia!",
       tags$br(),
       "Zmienne tekstowe zamiast liczbowych, niespójne skale, brak kodowania.",
       tags$br(),
@@ -1428,7 +1267,7 @@ ui <- navbarPage(
     ),
 
     div(class = "callout-success",
-      tags$strong("10 z 12 wierszy można uratować (83%)."),
+      "10 z 12 wierszy można uratować (83%).",
       tags$br(),
       tags$b("rok_studiow:"), " \"pierwszy\", \"I rok\", \"1\" \u2192 wszystkie to rok 1.",
       tags$br(),
@@ -1607,7 +1446,7 @@ ui <- navbarPage(
       conditionalPanel("input.tab10_reveal > 0",
         plotOutput("tab10_lineplot", height = "350px"),
         div(class = "callout-danger",
-          tags$strong("To nie są niezależne obserwacje!"),
+          "To nie są niezależne obserwacje!",
           " To pomiary dzienne - widać wyraźną sezonowość.",
           tags$br(),
           "Temperatura i ozon zmieniają się sezonowo - każdy dzień zależy od poprzedniego."
@@ -2593,7 +2432,7 @@ server <- function(input, output, session) {
           )
         } else {
           div(class = "callout-danger", style = "margin-top: 10px;",
-            tags$strong(paste0(n_na, " z ", length(nums), " wartości (", pct_na, "%) nie dało się przekonwertować na liczby!")),
+            paste0(n_na, " z ", length(nums), " wartości (", pct_na, "%) nie dało się przekonwertować na liczby!"),
             tags$br(),
             "Przykłady problematycznych wartości: ",
             paste(head(vals[is.na(nums)], 5), collapse = ", "),
