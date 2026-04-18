@@ -1,0 +1,133 @@
+/* ============================================================================
+   EXPERIMENTAL CSS — tylko dla sandbox/testowy-wyklad/
+   Testujemy tu: fonty, hierarchię H1/H2/H3, max-width narracji, nowe widget-box.
+   Nic z tego nie trafia do produkcji dopóki nie zostanie zaakceptowane.
+
+   Zmiana fontu: odkomentuj JEDEN z bloków @import poniżej.
+   ============================================================================ */
+
+/* --- FONT OPCJA 1: Inter (neutralny sans) --- */
+/*
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap&subset=latin-ext');
+body, .shiny-text-output, .tab-content { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+*/
+
+/* --- FONT OPCJA 2: Source Sans + Source Serif --- */
+/*
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap&subset=latin-ext');
+body, .shiny-text-output, .tab-content,
+.navbar, .btn, input, select, textarea {
+  font-family: 'Source Sans 3', -apple-system, sans-serif;
+}
+.narrative, .narrative p, p.demo {
+  font-family: 'Source Serif 4', Georgia, serif;
+}
+*/
+
+/* --- FONT OPCJA 3: Atkinson Hyperlegible (WYBRANY) --- */
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap&subset=latin-ext');
+body, .shiny-text-output, .tab-content,
+.navbar, .btn, input, select, textarea,
+.narrative, .narrative p {
+  font-family: 'Atkinson Hyperlegible', -apple-system, sans-serif;
+}
+
+/* --- FONT OPCJA 4: Lato (polski autor) --- */
+/*
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=JetBrains+Mono:wght@400;500&display=swap&subset=latin-ext');
+body { font-family: 'Lato', sans-serif; }
+*/
+
+/* Kod zawsze monospace */
+code, pre, .verbatim, .shiny-code {
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  font-size: 0.92em;
+}
+
+/* ============================================================================
+   HIERARCHIA TYPOGRAFICZNA
+   ============================================================================ */
+
+/* Wrapper dla kolumny narracyjnej — ogranicza szerokość dla czytelności */
+.narrative, .lecture-body {
+  max-width: 72ch;         /* ok. 760px dla 16px fontu */
+  margin-left: 0;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #2c3e50;
+}
+
+/* H1 — tytuł rozdziału */
+h1, .h1-chapter {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2c3e50;
+  border-bottom: 4px solid #3498db;
+  padding-bottom: 8px;
+  margin: 2em 0 1em 0;
+  line-height: 1.2;
+}
+
+/* H2 — sekcja (zastępuje stare .section-title) */
+h2, .h2-section, .section-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #34495e;
+  margin: 2em 0 0.75em 0;
+  padding-left: 0;         /* usuwamy lewy pasek — teraz jest w H1 */
+  border-left: none;
+  line-height: 1.3;
+}
+
+/* H3 — podsekcja */
+h3, .h3-subsection {
+  font-size: 18px;
+  font-weight: 600;
+  color: #34495e;
+  margin: 1.5em 0 0.5em 0;
+  line-height: 1.3;
+}
+
+/* H4 — mniejsze pod-pod-nagłówki */
+h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 1.2em 0 0.5em 0;
+}
+
+/* ============================================================================
+   WIDGET-BLOCK — lekkie ulepszenie: border-left w kolorze primary
+   ============================================================================ */
+.widget-block {
+  background: #fafbfc;
+  border: 1px solid #dee2e6;
+  border-left: 4px solid #3498db;
+  border-radius: 4px 8px 8px 4px;
+  padding: 22px 24px;
+  margin: 25px 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  max-width: 100%;         /* widgety szersze niż narracja */
+}
+.widget-block::before {
+  content: "⚙ Widget interaktywny";
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #3498db;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+/* ============================================================================
+   CALLOUTS — dodajemy ikony emoji (bez zależności)
+   W następnej iteracji: Bootstrap Icons przez bsicons::bs_icon()
+   ============================================================================ */
+.callout-info::before    { content: "ℹ  ";  font-weight: bold; color: #3498db; }
+.callout-warning::before { content: "⚠  "; font-weight: bold; color: #f39c12; }
+.callout-danger::before  { content: "✕  "; font-weight: bold; color: #e74c3c; }
+.callout-success::before { content: "✓  "; font-weight: bold; color: #27ae60; }
