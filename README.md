@@ -124,7 +124,22 @@ interaktywne-wyklady/
 │       ├── helpers.R               # Formatowanie, theme
 │       └── ch1_caschools.R         # 1. CASchools (EDA, korelacja, t-test, ANOVA, regresja)
 ├── dobre-dane/                     # Jakość danych
-│   └── app.R
+│   ├── app.R                       # Główny plik: CSS/JS, nawigacja
+│   └── modules/
+│       ├── helpers.R               # Dane (CASchools, penguins, apt…), katalog problemów, render_verdict()
+│       ├── ch0_wprowadzenie.R      # 0. Wprowadzenie
+│       ├── ch1_katalog.R           # 1. Katalog problemów (7 kategorii z przykładami)
+│       ├── ch2_szkoly.R            # 2. Szkoły w Kalifornii — dobry zbiór wzorcowy
+│       ├── ch3_grupa.R             # 3. Za mało danych — zły (n=8)
+│       ├── ch4_pingwiny.R          # 4. Pingwiny — dobry (palmerpenguins)
+│       ├── ch5_tarantino.R         # 5. Tarantino — zły (brak zmienności pytania)
+│       ├── ch6_firma.R             # 6. Ankieta firmowa — zły (brak zmienności w zmiennych)
+│       ├── ch7_wynagrodzenia.R     # 7. Wynagrodzenia — dobry (Wage/ISLR)
+│       ├── ch8_ankieta.R           # 8. Trudna ankieta — zły (źle zdefiniowane zmienne)
+│       ├── ch9_mieszkania.R        # 9. Ceny mieszkań — mieszany (outliery i błędy)
+│       ├── ch10_studenci.R         # 10. Ankieta studencka — dobry (wzorcowa)
+│       ├── ch11_powietrze.R        # 11. Jakość powietrza — zły (brak niezależności)
+│       └── ch12_sciaga.R           # 12. Ściąga (checklista 9 kryteriów)
 ├── README.md                       # Ten plik
 └── CLAUDE.md                       # Instrukcje dla AI
 ```
@@ -176,7 +191,7 @@ Aplikacje są zaprojektowane do:
 Wszystkie aplikacje korzystają z centralnego stylu:
 
 - **`R/shared_styles.css`** — wspólny CSS (font Atkinson Hyperlegible dla dostępności, hierarchia H1/H2/H3, max-width narracji, callout-y z ikonami Bootstrap, quiz tiles, sticky TOC)
-- **`R/shared.R`** — `theme_educational()` dla ggplot2 + `scale_color_lecture()` / `scale_fill_lecture()` ze spójną paletą semantyczną
+- **`R/shared.R`** — kolory bazowe (`col_primary`…`col_teal`), `theme_educational()` dla ggplot2, `scale_color_lecture()` / `scale_fill_lecture()` ze spójną paletą semantyczną, wspólne funkcje generowania danych (`generate_population_sample()`, `get_population_params()`, `dist_names_pl`)
 - **`sandbox/`** — piaskownica do eksperymentów graficznych przed wdrożeniem do produkcji (log decyzji w `sandbox/EKSPERYMENTY.md`)
 
 Dzięki temu globalne zmiany wizualne (font, kolory, typografia) wymagają edycji w jednym miejscu.
