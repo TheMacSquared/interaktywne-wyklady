@@ -315,7 +315,20 @@ ui <- navbarPage(
 
   header = tagList(
     tags$head(
+    tags$link(rel = "stylesheet",
+              href = "https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap&subset=latin-ext"),
     tags$style(HTML("
+    /* Font Atkinson Hyperlegible - wybrany dla dostepnosci */
+    body, .shiny-text-output, .tab-content,
+    .navbar, .navbar a, .btn, input, select, textarea,
+    h1, h2, h3, h4, h5, h6, .narrative, .narrative p {
+      font-family: 'Atkinson Hyperlegible', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    code, pre, .verbatim {
+      font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+      font-size: 0.92em;
+    }
+
     /* Narrative text */
     .narrative { font-size: 16px; line-height: 1.7; color: #2c3e50; margin-bottom: 15px; }
     .narrative p { margin-bottom: 12px; }
