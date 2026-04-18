@@ -38,49 +38,63 @@ small_data <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# Tab 5: Ankieta firmowa - brak zmiennosci (n=80)
-corp_n <- 80
-corp_data <- data.frame(
-  zadowolenie = sample(1:5, corp_n, replace = TRUE, prob = c(0.01, 0.02, 0.02, 0.35, 0.60)),
-  departament = factor(sample(c("IT", "HR", "Marketing", "Finanse"), corp_n, replace = TRUE, prob = c(0.94, 0.02, 0.02, 0.02))),
-  staz_pracy = round(runif(corp_n, 2.8, 3.5), 1),
-  wynagrodzenie = round(rnorm(corp_n, mean = 5500, sd = 1000)),
-  plec = factor(sample(c("M", "K"), corp_n, replace = TRUE, prob = c(0.9, 0.1))),
+# Tab 5: Oceny hotelu - brak zmiennosci (n=80)
+hotel_n <- 80
+hotel_data <- data.frame(
+  ocena_ogolna   = sample(1:5, hotel_n, replace = TRUE,
+                          prob = c(0.01, 0.01, 0.06, 0.32, 0.60)),
+  typ_pokoju     = factor(sample(c("Apartament Premium", "Pokoj standardowy", "Pokoj ekonomiczny"),
+                                 hotel_n, replace = TRUE, prob = c(0.84, 0.09, 0.07))),
+  dlugosc_pobytu = sample(1:3, hotel_n, replace = TRUE, prob = c(0.50, 0.35, 0.15)),
+  cena_za_noc    = round(rnorm(hotel_n, mean = 450, sd = 85)),
+  kraj_goscia    = factor(sample(c("Polska", "Niemcy", "UK", "Francja", "Inne"),
+                                 hotel_n, replace = TRUE, prob = c(0.87, 0.05, 0.03, 0.03, 0.02))),
   stringsAsFactors = FALSE
 )
 
-# Tab 7: Trudna ankieta - zle zdefiniowane zmienne (n=90)
-messy_n <- 90
-messy_data <- data.frame(
-  czas_na_studia = sample(c("duzo", "3-4h", "5", "caly dzien", "malo", "ok. 2 godziny",
-                            "nie wiem", "3", "6h dziennie", "weekendy"), messy_n, replace = TRUE),
-  ocena_kursu = sample(c("8/10", "dobrze", "4", "B+", "7.5", "srednia", "9", "bardzo dobrze",
-                         "6/10", "slabo", "10", "ok"), messy_n, replace = TRUE),
-  aktywnosc = sample(c("tak", "nie", "czasami", "3 razy w tygodniu", "rzadko",
-                       "codziennie", "2x", "nie wiem"), messy_n, replace = TRUE),
-  samopoczucie = sample(seq(10, 100, by = 10), messy_n, replace = TRUE,
-                        prob = c(0.02, 0.03, 0.05, 0.08, 0.15, 0.20, 0.20, 0.15, 0.08, 0.04)),
-  ulubiony_kolor = sample(c("niebieski", "czerwony", "zielony", "czarny", "bialy",
-                            "rozowy", "fioletowy"), messy_n, replace = TRUE),
+# Tab 7: Formularz rejestracyjny kursu - zmienne dobre i zle (n=90)
+reg_n <- 90
+reg_data <- data.frame(
+  wiek = sample(19:36, reg_n, replace = TRUE),
+  wyksztalcenie = sample(c("technikum", "licencjat", "inzynier", "magister"),
+                         reg_n, replace = TRUE, prob = c(0.12, 0.38, 0.22, 0.28)),
+  doswiadczenie = sample(c("troche", "5 lat", "tak mam", "licencjat znam",
+                            "3", "ponad rok", "nie mam", "duzo", "pare miesiecy", "brak"),
+                          reg_n, replace = TRUE),
+  dostepnosc = sample(c("weekendy", "nie w piatki", "elastycznie", "kiedy trzeba",
+                         "tylko rano", "po 16:00", "zawsze", "pon-sr"),
+                       reg_n, replace = TRUE),
+  ocena_umiejetnosci = sample(c("7", "dobry", "8/10", "6", "bardzo dobry",
+                                 "4", "B+", "9", "sredni", "7.5"),
+                               reg_n, replace = TRUE),
   stringsAsFactors = FALSE
 )
 
-# Tab 7b: Dane do uratowania przez kategoryzację (n=12)
+# Tab 7b: Dane do uratowania przez kategoryzację (n=12) — formularz kursu
 fixable_data <- data.frame(
   id = 1:12,
-  rok_studiow = c("1", "pierwszy", "I rok", "2", "drugi", "2", "3", "III", "trzeci", "1", "2", "3"),
-  tryb = c("stacjonarny", "s", "S", "niestacjonarny", "N", "stacjonarny",
-           "zaoczny", "niestacjonarny", "stacjonarny", "s", "niestacjonarny", "Stacjonarny"),
-  godziny_nauki = c("5", "ok. 5", "4-6h", "8", "duzo", "3h", "10", "7-8h", "malo", "6", "5h", "9"),
+  poziom = c("podstawowy", "podst.", "PODSTAWOWY",
+             "sredniozaawansowany", "srednio zaawans.", "srednio-zaawansowany",
+             "zaawansowany", "zaawans.", "expert",
+             "podstawowy", "sred. zaawans.", "Zaawansowany"),
+  platnosc = c("przelew", "przel.", "przelew bankowy",
+               "gotowka", "gotowka", "Gotowka",
+               "karta", "karta kredytowa", "paypal",
+               "przelew", "gotowka", "PRZELEW"),
+  godziny_tyg = c("5", "ok. 5", "4-6h", "8", "duzo", "3h",
+                  "10", "7-8h", "malo", "6", "5h", "9"),
   stringsAsFactors = FALSE
 )
 fixable_data_cat <- data.frame(
   id = 1:12,
-  rok_studiow = c(1L, 1L, 1L, 2L, 2L, 2L, 3L, 3L, 3L, 1L, 2L, 3L),
-  tryb = c("stacjonarny","stacjonarny","stacjonarny",
-           "niestacjonarny","niestacjonarny","stacjonarny",
-           "niestacjonarny","niestacjonarny","stacjonarny",
-           "stacjonarny","niestacjonarny","stacjonarny"),
+  poziom_kat = c("podstawowy","podstawowy","podstawowy",
+                 "srednio-zaaw.","srednio-zaaw.","srednio-zaaw.",
+                 "zaawansowany","zaawansowany","zaawansowany",
+                 "podstawowy","srednio-zaaw.","zaawansowany"),
+  platnosc_kat = c("przelew","przelew","przelew",
+                   "gotowka","gotowka","gotowka",
+                   "karta","karta","karta",
+                   "przelew","gotowka","przelew"),
   nauka_kat = c("srednie (4-6h)","srednie (4-6h)","srednie (4-6h)",
                 "duzo (7h+)", NA, "malo (1-3h)",
                 "duzo (7h+)","duzo (7h+)", NA,
@@ -88,26 +102,52 @@ fixable_data_cat <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# Tab 8: Ceny mieszkan - outliery i bledy (n=150)
-apt_n <- 150
-apt_powierzchnia <- round(runif(apt_n, 25, 120), 1)
-apt_cena <- round(apt_powierzchnia * runif(apt_n, 4000, 7000) + rnorm(apt_n, 0, 20000))
-apt_data <- data.frame(
-  cena = apt_cena,
-  powierzchnia = apt_powierzchnia,
-  pokoje = pmin(5, pmax(1, round(apt_powierzchnia / 25))),
-  dzielnica = factor(sample(c("Srodmiescie", "Mokotow", "Wola", "Praga", "Ursynow", "Bielany"),
-                            apt_n, replace = TRUE)),
-  rok_budowy = sample(1960:2024, apt_n, replace = TRUE),
+# Tab 8: Badania laboratoryjne - bledy danych (n=150)
+lab_n   <- 150
+lab_wiek <- sample(22:77, lab_n, replace = TRUE)
+lab_hem  <- round(pmax(10.5, pmin(19.0,
+              15.8 - (lab_wiek - 22) * 0.045 + rnorm(lab_n, 0, 1.4))), 1)
+lab_gluk <- round(pmax(60, pmin(180, rnorm(lab_n, 90, 20))), 0)
+lab_cisc <- round(pmax(85, pmin(175, rnorm(lab_n, 122, 17))), 0)
+lab_data <- data.frame(
+  wiek        = lab_wiek,
+  plec        = factor(sample(c("K", "M"), lab_n, replace = TRUE)),
+  hemoglobina = lab_hem,
+  glukoza     = lab_gluk,
+  cisnienie   = lab_cisc,
   stringsAsFactors = FALSE
 )
-# Wprowadzenie bledow
-apt_data$cena[3] <- 45           # brak zer
-apt_data$cena[17] <- 5500000     # dodatkowe zero
-apt_data$cena[42] <- -300000     # znak
-apt_data$powierzchnia[28] <- 1200 # dodatkowe zero
-apt_data$pokoje[55] <- 42        # blad klawiatury
-apt_data$rok_budowy[71] <- 2204  # literowka
+# Prawdziwy outlier (nie blad): pacjent z niekontrolowana cukrzyca
+lab_data$glukoza[100] <- 310
+# Bledy wprowadzania danych
+lab_data$hemoglobina[3]  <- -14.2   # ujemna — niemozliwa
+lab_data$hemoglobina[17] <- 1420    # brak przecinka (powinno byc 14.20)
+lab_data$cisnienie[42]   <- -70     # ujemne cisnienie — niemozliwe
+lab_data$glukoza[28]     <- 11000   # 3 zera za duzo (powinno byc 110)
+lab_data$hemoglobina[55] <- 0       # 0 = blad kodowania braków
+lab_data$wiek[71]        <- 108     # prawdopodobny blad wpisania
+
+# Tab 10: Kawiarnia studencka - sprzedaz dzienna (~rok akademicki = 245 dni)
+cafe_n     <- 245
+cafe_dates <- seq(as.Date("2023-10-01"), by = "day", length.out = cafe_n)
+cafe_dow   <- as.integer(format(cafe_dates, "%u"))  # 1=Pon, 7=Nd
+cafe_dow_effect <- c(75, 70, 80, 68, 58, 28, 20)[cafe_dow]
+cafe_sem_idx    <- seq_len(cafe_n)
+cafe_sem_effect <- 15 * sin(2 * pi * cafe_sem_idx / 245)
+cafe_base <- 60 + cafe_dow_effect + cafe_sem_effect
+cafe_kawy <- round(cafe_base + rnorm(cafe_n, 0, 10))
+cafe_kawy <- pmax(8, cafe_kawy)
+cafe_kawy[sort(sample(cafe_n, round(0.13 * cafe_n)))] <- NA   # ~13% brakow
+cafe_temp <- round(12 - 10 * cos(2 * pi * cafe_sem_idx / 365) + rnorm(cafe_n, 0, 3.5), 1)
+cafe_temp[sample(cafe_n, round(0.03 * cafe_n))] <- NA         # ~3% brakow
+cafe_data <- data.frame(
+  dzien       = cafe_sem_idx,
+  data        = format(cafe_dates, "%d.%m"),
+  dzien_tyg   = c("Pon", "Wt", "Sr", "Czw", "Pt", "Sob", "Nd")[cafe_dow],
+  kawy        = cafe_kawy,
+  temperatura = cafe_temp,
+  stringsAsFactors = FALSE
+)
 
 # Tab 9: Ankieta studencka - wzorcowa (n=150)
 surv_n <- 150

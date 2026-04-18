@@ -1,14 +1,13 @@
-# Tab 6: Firma — ankieta firmowa, brak zmienności
+# Tab 6: Hotel — oceny hotelu boutique, brak zmienności
 
-ch6_ui <- tabPanel("6. Firma",
+ch6_ui <- tabPanel("6. Hotel",
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Ankieta firmowa"),
+    div(class = "section-title", "Oceny hotelu boutique"),
 
     div(class = "narrative",
-      p("Firma przeprowadza anonimową ankietę zadowolenia pracowników.
-        Problem w tym, że wszyscy wiedzą, że szef ją czyta...
-        Zebrano dane od 80 pracowników.")
+      p("Portal rezerwacyjny zebrał opinie gości ekskluzywnego hotelu boutique.
+        80 recenzji po ostatnim sezonie. Chcemy zbadać, co wpływa na ocenę hotelu.")
     ),
 
     div(class = "section-title", "Podgląd danych"),
@@ -17,72 +16,72 @@ ch6_ui <- tabPanel("6. Firma",
       DT::dataTableOutput("tab5_table")
     ),
 
-    div(class = "section-title", "Zmienna 1: Zadowolenie z pracy"),
+    div(class = "section-title", "Zmienna 1: Ocena ogólna"),
 
     div(class = "widget-block",
       plotOutput("tab5_plot_zadowolenie", height = "300px")
     ),
     div(class = "callout-danger",
       tags$strong("Problem:"), " brak zróżnicowania odpowiedzi.",
-      " 95% pracowników zaznaczyło 4 lub 5. Skala 1\u20135 w praktyce działa tu jak skala 1\u20132 \u2014
-      kiedy wszyscy odpowiadają tak samo, zmienna nic nie mówi."
+      " 92% gości wystawiło ocenę 4 lub 5. Skala 1\u20135 w praktyce działa tu jak skala 1\u20132 \u2014
+      kiedy wszyscy odpowiadają tak samo, zmienna nic nie mówi o tym, co różnicuje pobyt."
     ),
 
-    div(class = "section-title", "Zmienna 2: Dział"),
+    div(class = "section-title", "Zmienna 2: Typ pokoju"),
 
     div(class = "widget-block",
       plotOutput("tab5_plot_departament", height = "300px")
     ),
     div(class = "callout-danger",
       tags$strong("Problem:"), " niezbalansowane grupy.",
-      " 94% respondentów to dział IT. Pozostałe działy mają po 1\u20132 osoby \u2014
-      jakiekolwiek porównanie między działami będzie niemożliwe."
+      " 84% gości nocowało w Apartamencie Premium. Pozostałe typy pokojów mają po kilka obserwacji \u2014
+      porównanie satysfakcji między typami pokojów będzie niemożliwe."
     ),
 
-    div(class = "section-title", "Zmienna 3: Staż pracy"),
+    div(class = "section-title", "Zmienna 3: Długość pobytu"),
 
     div(class = "toggle-pills",
       actionButton("tab5_staz_normal", "Dane", class = "pill-btn active"),
-      actionButton("tab5_staz_wide", "Pełna skala (1\u201310 lat)", class = "pill-btn")
+      actionButton("tab5_staz_wide", "Pe\u0142na skala (1\u201314 nocy)", class = "pill-btn")
     ),
     div(class = "widget-block",
       plotOutput("tab5_plot_staz", height = "300px")
     ),
     div(class = "callout-warning",
       tags$strong("Uwaga:"), " wąska rozpiętość wartości.",
-      " Wszyscy pracownicy mają staż w przedziale 2.8\u20133.5 roku. Sama w sobie mała zmienność
-      nie jest błędem \u2014 zdarzają się takie dane. Ale gdy ",
-      tags$em("cały zbiór"), " wygląda podobnie, wykrycie jakichkolwiek zależności staje się
-      bardzo trudne."
+      " Wszyscy goście zatrzymali się na 1\u20133 noce. Sama w sobie ograniczona rozpiętość nie jest błędem
+      \u2014 może tak wyglądał ten segment hotelu. Ale gdy ", tags$em("cały zbiór"),
+      " jest skupiony w tak wąskim przedziale, wykrycie zależności między długością pobytu
+      a innymi zmiennymi staje się bardzo trudne."
     ),
 
-    div(class = "section-title", "Zmienna 4: Wynagrodzenie"),
+    div(class = "section-title", "Zmienna 4: Cena za noc"),
 
     div(class = "widget-block",
       plotOutput("tab5_plot_wynagrodzenie", height = "300px")
     ),
     div(class = "callout-success",
-      "Wynagrodzenia mają normalny rozrzut.",
+      "Ceny za noc mają dobry rozrzut.",
       " To dobra wiadomość \u2014 ta zmienna wydaje się użyteczna.
       Zobaczmy więc, czy możemy ją powiązać z czymś innym w tym zbiorze."
     ),
 
-    div(class = "section-title", "Zmienna 5: Płeć"),
+    div(class = "section-title", "Zmienna 5: Kraj gościa"),
 
     div(class = "widget-block",
       plotOutput("tab5_plot_plec", height = "300px")
     ),
     div(class = "callout-danger",
       tags$strong("Problem:"), " niezbalansowane grupy.",
-      " 90% respondentów to mężczyźni (ok. 72 os.), kobiet jest ok. 8. Porównanie
-      według płci nie ma sensu przy takiej dysproporcji."
+      " 87% gości to turyści z Polski. Pozostałe kraje mają po 1\u20134 osoby \u2014
+      jakiekolwiek porównanie między krajami nie ma sensu przy takiej dysproporcji."
     ),
 
     div(class = "section-title", "Co się dzieje gdy próbujemy szukać zależności?"),
 
     div(class = "callout-info",
-      "Wynagrodzenie ma dobry rozrzut. Czy możemy powiązać je ze stażem pracy? ",
-      "Sprawdźmy \u2014 pamiętaj, że staż mieści się w bardzo wąskim przedziale."
+      "Cena za noc ma dobry rozrzut. Czy możemy powiązać ją z długością pobytu? ",
+      "Sprawdźmy \u2014 pamiętaj, że długość pobytu mieści się w bardzo wąskim przedziale."
     ),
 
     div(class = "widget-block",
@@ -92,8 +91,9 @@ ch6_ui <- tabPanel("6. Firma",
     div(class = "section-title", "Co by było, gdyby dane miały normalną zmienność?"),
 
     div(class = "callout-info",
-      "Co by było, gdyby pracownicy różnili się stażem bardziej \u2014 np. od 1 do 15 lat?
-      Przesuń suwak i obserwuj jak pojawia się związek między stażem a wynagrodzeniem."
+      "Co by było, gdyby goście różnili się długością pobytu bardziej \u2014 np. od 1 do 14 nocy?
+      Przesuń suwak i obserwuj jak pojawia się zależność: dłuższy pobyt \u2014 niższa cena za noc
+      (zniżki za dłuższe rezerwacje)."
     ),
 
     div(class = "widget-block",
@@ -106,9 +106,9 @@ ch6_ui <- tabPanel("6. Firma",
     div(class = "callout-danger",
       "Ten zbiór danych nie nadaje się do analizy.",
       tags$br(),
-      "Wynagrodzenia mają dobry rozrzut, ale trudno to wykorzystać: odpowiedzi o zadowoleniu
-      są skupione przy maksimum, działy i płeć skrajnie niezbalansowane, a staż pracy
-      jest prawie stały. Nie ma zmiennej, którą można sensownie powiązać z wynagrodzeniem."
+      "Ceny za noc mają dobry rozrzut, ale trudno to wykorzystać: oceny skupione przy maksimum,
+      typy pokojów i kraje skrajnie niezbalansowane, a długość pobytu prawie stała.
+      Nie ma zmiennej, z którą można sensownie powiązać cenę za noc."
     ),
 
     uiOutput("tab5_verdict"),
@@ -125,31 +125,31 @@ ch6_ui <- tabPanel("6. Firma",
 ch6_server <- function(input, output, session) {
 
   output$tab5_table <- DT::renderDataTable({
-    datatable(round_df(corp_data), options = list(pageLength = 10, scrollX = TRUE), rownames = FALSE)
+    datatable(round_df(hotel_data), options = list(pageLength = 10, scrollX = TRUE), rownames = FALSE)
   })
 
   output$tab5_plot_zadowolenie <- renderPlot({
-    pct_45 <- round(100 * mean(corp_data$zadowolenie >= 4))
-    ggplot(corp_data, aes(x = factor(zadowolenie))) +
+    pct_45 <- round(100 * mean(hotel_data$ocena_ogolna >= 4))
+    ggplot(hotel_data, aes(x = factor(ocena_ogolna))) +
       geom_bar(fill = col_bad, alpha = 0.85) +
       scale_x_discrete(limits = c("1","2","3","4","5")) +
       labs(
-        title = paste0("Zadowolenie z pracy (skala 1\u20135): ", pct_45, "% odpowiedzi to 4 lub 5"),
-        x = "Ocena zadowolenia", y = "Liczba pracowników"
+        title = paste0("Ocena ogólna hotelu (skala 1\u20135): ", pct_45, "% odpowiedzi to 4 lub 5"),
+        x = "Ocena ogólna", y = "Liczba gości"
       ) +
       theme_minimal(base_size = 14)
   })
 
   output$tab5_plot_departament <- renderPlot({
-    dept_counts <- corp_data %>%
-      count(departament) %>%
+    typ_counts <- hotel_data %>%
+      count(typ_pokoju) %>%
       mutate(pct = round(100 * n / sum(n)),
-             departament = reorder(departament, -n))
-    ggplot(dept_counts, aes(x = departament, y = n)) +
+             typ_pokoju = reorder(typ_pokoju, -n))
+    ggplot(typ_counts, aes(x = typ_pokoju, y = n)) +
       geom_col(fill = col_bad, alpha = 0.85) +
       geom_text(aes(label = paste0(pct, "%")), vjust = -0.4, size = 4.5) +
-      labs(title = "Rozkład pracowników według działu",
-           x = "Dział", y = "Liczba pracowników") +
+      labs(title = "Rozkład gości według typu pokoju",
+           x = "Typ pokoju", y = "Liczba gości") +
       theme_minimal(base_size = 14)
   })
 
@@ -166,84 +166,82 @@ ch6_server <- function(input, output, session) {
   })
 
   output$tab5_plot_staz <- renderPlot({
-    med_staz <- median(corp_data$staz_pracy)
-    sd_staz  <- round(sd(corp_data$staz_pracy), 2)
-    p <- ggplot(corp_data, aes(x = staz_pracy)) +
-      geom_histogram(bins = 15, fill = col_mixed, color = "white", alpha = 0.85) +
-      geom_vline(xintercept = med_staz, color = col_dark, linetype = "dashed", linewidth = 1) +
-      annotate("text", x = med_staz, y = Inf, label = paste0("mediana = ", med_staz),
+    med_pobytu <- median(hotel_data$dlugosc_pobytu)
+    p <- ggplot(hotel_data, aes(x = dlugosc_pobytu)) +
+      geom_bar(fill = col_mixed, alpha = 0.85, width = 0.6) +
+      geom_vline(xintercept = med_pobytu, color = col_dark, linetype = "dashed", linewidth = 1) +
+      annotate("text", x = med_pobytu, y = Inf, label = paste0("mediana = ", med_pobytu, " noc"),
                vjust = 2, hjust = -0.1, size = 4, color = col_dark) +
+      scale_x_continuous(breaks = 1:14) +
       labs(
-        title = paste0("Staż pracy  |  zakres: ", min(corp_data$staz_pracy),
-                       "\u2013", max(corp_data$staz_pracy), " lat  |  SD = ", sd_staz),
-        x = "Staż pracy (lata)", y = "Liczba pracowników"
+        title = paste0("D\u0142ugo\u015b\u0107 pobytu  |  zakres: ", min(hotel_data$dlugosc_pobytu),
+                       "\u2013", max(hotel_data$dlugosc_pobytu), " noce"),
+        x = "D\u0142ugo\u015b\u0107 pobytu (noce)", y = "Liczba go\u015bci"
       ) +
       theme_minimal(base_size = 14)
-    if (tab5_staz_view() == "wide") p <- p + scale_x_continuous(limits = c(1, 10))
+    if (tab5_staz_view() == "wide") p <- p + scale_x_continuous(limits = c(1, 14), breaks = seq(1, 14, 2))
     p
   })
 
   output$tab5_plot_wynagrodzenie <- renderPlot({
-    med_wyn <- median(corp_data$wynagrodzenie)
-    sd_wyn  <- round(sd(corp_data$wynagrodzenie))
-    ggplot(corp_data, aes(x = wynagrodzenie)) +
+    med_cena <- median(hotel_data$cena_za_noc)
+    sd_cena  <- round(sd(hotel_data$cena_za_noc))
+    ggplot(hotel_data, aes(x = cena_za_noc)) +
       geom_histogram(bins = 15, fill = col_primary, color = "white", alpha = 0.85) +
-      geom_vline(xintercept = med_wyn, color = col_dark, linetype = "dashed", linewidth = 1) +
-      annotate("text", x = med_wyn, y = Inf, label = paste0("mediana = ", med_wyn, " PLN"),
+      geom_vline(xintercept = med_cena, color = col_dark, linetype = "dashed", linewidth = 1) +
+      annotate("text", x = med_cena, y = Inf, label = paste0("mediana = ", med_cena, " PLN"),
                vjust = 2, hjust = -0.1, size = 4, color = col_dark) +
       labs(
-        title = paste0("Wynagrodzenie  |  zakres: ", min(corp_data$wynagrodzenie),
-                       "\u2013", max(corp_data$wynagrodzenie), " PLN  |  SD = ", sd_wyn, " PLN"),
-        x = "Wynagrodzenie (PLN)", y = "Liczba pracowników"
+        title = paste0("Cena za noc  |  zakres: ", min(hotel_data$cena_za_noc),
+                       "\u2013", max(hotel_data$cena_za_noc), " PLN  |  SD = ", sd_cena, " PLN"),
+        x = "Cena za noc (PLN)", y = "Liczba go\u015bci"
       ) +
       theme_minimal(base_size = 14)
   })
 
   output$tab5_plot_plec <- renderPlot({
-    plec_counts <- corp_data %>%
-      count(plec) %>%
+    kraj_counts <- hotel_data %>%
+      count(kraj_goscia) %>%
       mutate(pct = round(100 * n / sum(n)))
-    ggplot(plec_counts, aes(x = plec, y = n)) +
+    ggplot(kraj_counts, aes(x = reorder(kraj_goscia, -n), y = n)) +
       geom_col(fill = col_bad, alpha = 0.85) +
       geom_text(aes(label = paste0(pct, "%  (n=", n, ")")), vjust = -0.4, size = 4.5) +
-      labs(title = "Rozkład pracowników według płci",
-           x = "Płeć", y = "Liczba pracowników") +
+      labs(title = "Rozkład gości według kraju",
+           x = "Kraj go\u015bcia", y = "Liczba go\u015bci") +
       theme_minimal(base_size = 14)
   })
 
   output$tab5_scatter <- renderPlot({
-    ggplot(corp_data, aes(x = staz_pracy, y = wynagrodzenie)) +
+    ggplot(hotel_data, aes(x = dlugosc_pobytu, y = cena_za_noc)) +
       geom_point(alpha = 0.5, size = 3, color = col_dark) +
       geom_smooth(method = "lm", color = col_bad, se = TRUE) +
-      scale_x_continuous(limits = c(1, 10)) +
-      labs(title = "Staż pracy vs wynagrodzenie",
-           subtitle = paste0("r = ", round(cor(corp_data$staz_pracy, corp_data$wynagrodzenie), 3),
-                             "  \u2014  staż w wąskim przedziale, wynagrodzenia zróżnicowane"),
-           x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
+      scale_x_continuous(limits = c(1, 14), breaks = seq(1, 14, 2)) +
+      labs(title = "D\u0142ugo\u015b\u0107 pobytu vs cena za noc",
+           subtitle = paste0("r = ", round(cor(hotel_data$dlugosc_pobytu, hotel_data$cena_za_noc), 3),
+                             "  \u2014  pobyt w w\u0105skim przedziale 1\u20133 noce"),
+           x = "D\u0142ugo\u015b\u0107 pobytu (noce)", y = "Cena za noc (PLN)") +
       theme_minimal(base_size = 14)
   })
 
   output$tab5_scatter_sim <- renderPlot({
     mult <- input$tab5_sd_mult
-    sim_staz <- mean(corp_data$staz_pracy) + (corp_data$staz_pracy - mean(corp_data$staz_pracy)) * mult
-    sim_wyn <- mean(corp_data$wynagrodzenie) + (corp_data$wynagrodzenie - mean(corp_data$wynagrodzenie)) * mult
-    # Add true correlation
     set.seed(42)
-    sim_wyn <- sim_wyn + (sim_staz - mean(sim_staz)) * 200 + rnorm(corp_n, 0, 100 * mult)
-    r <- round(cor(sim_staz, sim_wyn), 3)
+    spread <- (mult - 1) * 3
+    sim_pobytu <- pmax(1, hotel_data$dlugosc_pobytu + runif(hotel_n, -spread, spread))
+    sim_cena   <- hotel_data$cena_za_noc - (sim_pobytu - mean(sim_pobytu)) * 25 +
+                    rnorm(hotel_n, 0, 40)
+    r <- round(cor(sim_pobytu, sim_cena), 3)
 
-    ggplot(data.frame(x = sim_staz, y = sim_wyn), aes(x, y)) +
+    ggplot(data.frame(x = sim_pobytu, y = sim_cena), aes(x, y)) +
       geom_point(alpha = 0.5, size = 3, color = col_dark) +
       geom_smooth(method = "lm", color = col_primary, se = TRUE) +
-      labs(title = paste0("Symulacja z SD \u00d7 ", mult),
-           subtitle = paste0("r = ", r),
-           x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
+      labs(title = paste0("Symulacja z rozrzutem \u00d7", mult),
+           subtitle = paste0("r = ", r, "  \u2014  d\u0142u\u017cszy pobyt = ni\u017csza cena za noc (znizka wolumenowa)"),
+           x = "D\u0142ugo\u015b\u0107 pobytu (symulowane noce)", y = "Cena za noc (PLN)") +
       theme_minimal(base_size = 14)
   })
 
   output$tab5_verdict <- renderUI({
-    # hipoteza, n, mix, zmiennosc, struktura, niezaleznosc | braki, definicje, bledy
-    # Firma: jedyny problem to brak zmiennosci (zadowolenie skupione, staz wąski, grupy niezbalansowane)
     render_verdict(c("yes", "yes", "yes", "no", "yes", "yes", "yes", "yes", "yes"), "bad")
   })
 }
