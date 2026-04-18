@@ -340,11 +340,25 @@ ui <- navbarPage(
     }
 
     /* Headings */
-    .section-title {
-      font-size: 22px; font-weight: bold; color: #34495e;
-      margin-top: 35px; margin-bottom: 15px;
-      border-left: 4px solid #3498db; padding-left: 12px;
+    .chapter-title {
+      font-size: 30px; font-weight: 700; color: #2c3e50;
+      margin: 10px 0 20px 0;
+      border-bottom: 4px solid #3498db; padding-bottom: 8px;
+      line-height: 1.2;
     }
+    .section-title {
+      font-size: 24px; font-weight: 700; color: #34495e;
+      margin-top: 40px; margin-bottom: 15px;
+      border-left: 4px solid #3498db; padding-left: 12px;
+      line-height: 1.3;
+    }
+    .subsection-title, h3.problem-name {
+      font-size: 18px; font-weight: 600; color: #34495e;
+      margin-top: 24px; margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .narrative p { max-width: 72ch; }
+    .narrative ul, .narrative ol { max-width: 72ch; }
 
     /* Alert/callout boxes */
     .callout-info {
