@@ -317,6 +317,8 @@ ui <- navbarPage(
     tags$head(
     tags$link(rel = "stylesheet",
               href = "https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap&subset=latin-ext"),
+    tags$link(rel = "stylesheet",
+              href = "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"),
     tags$style(HTML("
     /* Font Atkinson Hyperlegible - wybrany dla dostepnosci */
     body, .shiny-text-output, .tab-content,
@@ -377,6 +379,19 @@ ui <- navbarPage(
       background: #eafaf1; border-left: 4px solid #27ae60;
       padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
     }
+
+    /* Ikony dla callout-ow (Bootstrap Icons via ::before) */
+    .callout-info::before, .callout-warning::before,
+    .callout-danger::before, .callout-success::before {
+      font-family: \"bootstrap-icons\" !important;
+      font-weight: normal; font-style: normal;
+      font-size: 1.15em; margin-right: 8px;
+      vertical-align: -2px; display: inline-block;
+    }
+    .callout-info::before    { content: \"\\f431\"; color: #3498db; }
+    .callout-warning::before { content: \"\\f33a\"; color: #f39c12; }
+    .callout-danger::before  { content: \"\\f622\"; color: #e74c3c; }
+    .callout-success::before { content: \"\\f26b\"; color: #27ae60; }
 
     /* Chapter navigation */
     .chapter-transition {
