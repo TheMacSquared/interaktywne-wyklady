@@ -322,6 +322,16 @@ ch4_server <- function(input, output, session) {
             panel.grid.minor.x = element_blank())
 
     # ---- PRAWY PANEL: os proporcji z p_hat, SE, CI ----
+    # Oddzielne poziomy Y - kazdy element na swojej linii
+    Y_EST <- 0.30
+    Y_SE  <- 0.05
+    Y_CI  <- -0.25
+
+    # Wyszarzanie poprzednich elementow
+    col_faded <- "#adb5bd"
+    c_est <- if (step >= 3) col_faded else col_estimate
+    c_se  <- if (step >= 4) col_faded else col_success
+
     p_right <- ggplot() +
       xlim(0, 1) +
       ylim(-0.6, 0.6) +
@@ -333,32 +343,34 @@ ch4_server <- function(input, output, session) {
             panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank())
 
-    # Krok 2+: punkt p_hat
+    # Krok 2+: pionowa linia prowadzaca + punkt p_hat
     if (step >= 2) {
       p_right <- p_right +
-        geom_point(aes(x = phat, y = 0), color = col_estimate,
+        geom_vline(xintercept = phat, color = "#adb5bd",
+                   linewidth = 0.8, linetype = "dotted") +
+        geom_point(aes(x = phat, y = Y_EST), color = c_est,
                    size = 7, shape = 18) +
-        annotate("text", x = phat, y = -0.22,
+        annotate("text", x = phat, y = Y_EST - 0.13,
                  label = paste0("p\u0302 = ", round(phat, 3)),
-                 color = col_estimate, fontface = "bold", size = 5)
+                 color = c_est, fontface = "bold", size = 5)
     }
 
     # Krok 3+: waski przedzial SE
     if (step >= 3) {
       p_right <- p_right +
-        geom_errorbarh(aes(xmin = phat - se, xmax = phat + se, y = 0),
-                       height = 0.08, color = col_success, linewidth = 1.8) +
-        annotate("text", x = phat, y = 0.20,
+        geom_errorbarh(aes(xmin = phat - se, xmax = phat + se, y = Y_SE),
+                       height = 0.08, color = c_se, linewidth = 1.8) +
+        annotate("text", x = phat, y = Y_SE - 0.12,
                  label = paste0("\u00b1 SE = \u00b1", round(se, 3)),
-                 color = col_success, fontface = "bold", size = 4.2)
+                 color = c_se, fontface = "bold", size = 4.2)
     }
 
     # Krok 4: pelen CI
     if (step >= 4) {
       p_right <- p_right +
-        geom_errorbarh(aes(xmin = phat - me, xmax = phat + me, y = 0),
-                       height = 0.14, color = col_ci, linewidth = 2.2, alpha = 0.6) +
-        annotate("text", x = phat, y = -0.45,
+        geom_errorbarh(aes(xmin = phat - me, xmax = phat + me, y = Y_CI),
+                       height = 0.12, color = col_ci, linewidth = 2.2) +
+        annotate("text", x = phat, y = Y_CI - 0.13,
                  label = paste0("95% CI: [", round(phat - me, 3),
                                 " ; ", round(phat + me, 3), "]"),
                  color = col_ci, fontface = "bold", size = 5)

@@ -355,12 +355,22 @@ ch3_server <- function(input, output, session) {
 
     # Jitter punktow na Y (deterministyczny na podstawie wartosci)
     set.seed(42)
-    jitter_y <- runif(n, min = 0.15, max = 0.55)
+    jitter_y <- runif(n, min = 0.55, max = 0.90)
     samp_df <- data.frame(x = samp, y = jitter_y)
+
+    # Oddzielne poziomy Y - kazdy element na swojej linii
+    Y_MEAN <- 0.38
+    Y_SE   <- 0.12
+    Y_CI   <- -0.18
+
+    # Wyszarzanie poprzednich elementow
+    col_faded <- "#adb5bd"
+    c_mean <- if (step >= 3) col_faded else col_estimate
+    c_se   <- if (step >= 4) col_faded else col_success
 
     p <- ggplot() +
       xlim(xlims) +
-      ylim(-0.55, 0.75) +
+      ylim(-0.45, 0.98) +
       labs(x = "Wzrost (cm)", y = NULL) +
       theme_educational() +
       theme(axis.text.y = element_blank(),
@@ -374,35 +384,34 @@ ch3_server <- function(input, output, session) {
                           color = col_primary, size = 3, alpha = 0.7)
     }
 
-    # Krok 2+: linia pionowa i diament srednia
+    # Krok 2+: pionowa linia prowadzaca + diament sredniej
     if (step >= 2) {
       p <- p +
-        geom_vline(xintercept = xbar, color = col_estimate,
-                   linewidth = 1, linetype = "dotted") +
-        geom_point(aes(x = xbar, y = 0), color = col_estimate,
+        geom_vline(xintercept = xbar, color = "#adb5bd",
+                   linewidth = 0.8, linetype = "dotted") +
+        geom_point(aes(x = xbar, y = Y_MEAN), color = c_mean,
                    size = 7, shape = 18) +
-        annotate("text", x = xbar, y = -0.18,
+        annotate("text", x = xbar, y = Y_MEAN - 0.13,
                  label = paste0("x\u0304 = ", round(xbar, 2)),
-                 color = col_estimate, fontface = "bold", size = 5)
+                 color = c_mean, fontface = "bold", size = 5)
     }
 
-    # Krok 3: przedzial +/- SE (zielony, wezszy)
+    # Krok 3+: przedzial +/- SE (zielony, wezszy)
     if (step >= 3) {
       p <- p +
-        geom_errorbarh(aes(xmin = xbar - se, xmax = xbar + se, y = 0),
-                       height = 0.06, color = col_success, linewidth = 1.8) +
-        annotate("text", x = xbar, y = 0.14,
+        geom_errorbarh(aes(xmin = xbar - se, xmax = xbar + se, y = Y_SE),
+                       height = 0.07, color = c_se, linewidth = 1.8) +
+        annotate("text", x = xbar, y = Y_SE - 0.10,
                  label = paste0("\u00b1 SE = \u00b1", round(se, 2)),
-                 color = col_success, fontface = "bold", size = 4.5)
+                 color = c_se, fontface = "bold", size = 4.5)
     }
 
     # Krok 4: pelny CI (t* * SE, szerszy, niebieski)
     if (step >= 4) {
       p <- p +
-        geom_errorbarh(aes(xmin = xbar - me, xmax = xbar + me, y = 0),
-                       height = 0.12, color = col_ci, linewidth = 2.2,
-                       alpha = 0.6) +
-        annotate("text", x = xbar, y = -0.38,
+        geom_errorbarh(aes(xmin = xbar - me, xmax = xbar + me, y = Y_CI),
+                       height = 0.10, color = col_ci, linewidth = 2.2) +
+        annotate("text", x = xbar, y = Y_CI - 0.13,
                  label = paste0("95% CI: [", round(xbar - me, 2),
                                 " ; ", round(xbar + me, 2), "]"),
                  color = col_ci, fontface = "bold", size = 5)
