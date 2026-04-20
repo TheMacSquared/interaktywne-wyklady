@@ -165,7 +165,11 @@ ch1_ui <- tabPanel("1. Katalog",
         h3(class = "problem-name", "Brak niezależności obserwacji")
       ),
       div(class = "problem-desc",
-        "Dane o temperaturze i ozonie - 20 dni pomiarów. W tabeli wygląda normalnie..."
+        "Temperatura - pół roku pomiarów dziennych (październik 2023 - marzec 2024). W tabeli wygląda normalnie..."
+      ),
+      div(class = "toggle-pills",
+        actionButton("cat6_daily", "Dzienne (surowe)", class = "pill-btn active"),
+        actionButton("cat6_monthly", "Miesięczne (agregat)", class = "pill-btn")
       ),
       div(class = "dual-view",
         div(class = "view-panel",
@@ -173,16 +177,16 @@ ch1_ui <- tabPanel("1. Katalog",
           div(class = "jamovi-table", DT::dataTableOutput("cat6_table"))
         ),
         div(class = "view-panel",
-          div(class = "view-label", "Dane w kolejności (liniowy)"),
+          div(class = "view-label", "Dane w kolejności"),
           plotOutput("cat6_plot", height = "280px")
         )
       ),
       div(class = "callout-danger", style = "margin-top: 10px;",
-        tags$strong("Problem:"), " W tabeli te dane wyglądają jak 20 niezależnych pomiarów. ",
+        tags$strong("Problem:"), " W tabeli te dane wyglądają jak 183 niezależne pomiary. ",
         "Ale wykres liniowy zdradza sezonowość - każdy dzień zależy od poprzedniego.",
         tags$br(),
-        tags$strong("Konsekwencja:"), " Test t i korelacja Pearsona zakładają niezależność. ",
-        "Złam to założenie = fałszywie istotne wyniki."
+        tags$strong("Po agregacji do miesięcy:"), " znika problem zależności w obrębie miesiąca, ",
+        "ale zostaje nam tylko 6 obserwacji. Agregacja to wybór, nie darmowa naprawa."
       )
     ),
 
@@ -193,11 +197,11 @@ ch1_ui <- tabPanel("1. Katalog",
         h3(class = "problem-name", "Zła struktura danych")
       ),
       div(class = "problem-desc",
-        "Dziennik szkolny: każdy wiersz to jedna ocena ucznia, nie jeden uczeń."
+        "Ciśnienie skurczowe u pacjentów - 30 pacjentów, każdy był na kilku wizytach. Każdy wiersz to jedna wizyta, nie jeden pacjent."
       ),
       div(class = "toggle-pills",
-        actionButton("cat7_events", "Oceny (surowe)", class = "pill-btn active"),
-        actionButton("cat7_agg", "Zagregowane", class = "pill-btn")
+        actionButton("cat7_events", "Wizyty (surowe)", class = "pill-btn active"),
+        actionButton("cat7_agg", "Pacjenci (agregat)", class = "pill-btn")
       ),
       div(class = "dual-view",
         div(class = "view-panel",
@@ -210,8 +214,10 @@ ch1_ui <- tabPanel("1. Katalog",
         )
       ),
       div(class = "callout-danger", style = "margin-top: 10px;",
-        tags$strong("Problem:"), " 8 wierszy wygląda jak n = 8, ale to oceny, nie uczniowie. ",
-        "Po agregacji do poziomu uczniów masz n = 3. Test t na n = 3?",
+        tags$strong("Problem:"), " Wierszy jest ", nrow(cat_patients_visits),
+        ", ale to wizyty - ten sam pacjent pojawia się wielokrotnie. ",
+        "Jeśli pytamy o różnice między pacjentami (np. kobiety vs mężczyźni), jednostką obserwacji jest pacjent (n = ",
+        nrow(cat_patients_agg), ").",
         tags$br(),
         tags$strong("Zasada:"), " Zawsze pytaj: co jest jednostką obserwacji? ",
         "Osoba? Firma? Dzień? Wiersz w tabeli \u2260 obserwacja."
@@ -508,29 +514,72 @@ ch1_server <- function(input, output, session) {
       ylim(0, 35)
   })
 
-  # --- Problem 6: Brak niezaleznosci ---
+  # --- Problem 6: Brak niezaleznosci (toggle) ---
+  cat6_view <- reactiveVal("daily")
+  observeEvent(input$cat6_daily, {
+    cat6_view("daily")
+    session$sendCustomMessage(type = "shinyjs-runjs",
+      message = list(code = "$('#cat6_daily').addClass('active'); $('#cat6_monthly').removeClass('active');"))
+  })
+  observeEvent(input$cat6_monthly, {
+    cat6_view("monthly")
+    session$sendCustomMessage(type = "shinyjs-runjs",
+      message = list(code = "$('#cat6_monthly').addClass('active'); $('#cat6_daily').removeClass('active');"))
+  })
+
   output$cat6_table <- DT::renderDataTable({
-    sketch <- htmltools::withTags(table(
-      class = "display",
-      thead(tr(
-        th("dzien", br(span(class = "var-type", "id"))),
-        th("data", br(span(class = "var-type", "data"))),
-        th("temperatura", br(span(class = "var-type", "ciagla"))),
-        th("ozon_ppb", br(span(class = "var-type", "ciagla")))
+    if (cat6_view() == "daily") {
+      sketch <- htmltools::withTags(table(
+        class = "display",
+        thead(tr(
+          th("data", br(span(class = "var-type", "data"))),
+          th("miesiac", br(span(class = "var-type", "nominalna"))),
+          th("temperatura", br(span(class = "var-type", "ciagla")))
+        ))
       ))
-    ))
-    datatable(cat_timeseries, container = sketch, rownames = FALSE,
-              options = list(dom = 't', ordering = FALSE, pageLength = 20, scrollY = "260px"))
+      df_show <- cat_timeseries
+      df_show$data <- format(df_show$data, "%Y-%m-%d")
+      datatable(df_show, container = sketch, rownames = FALSE,
+                options = list(dom = 't', ordering = FALSE,
+                               pageLength = nrow(df_show), scrollY = "260px"))
+    } else {
+      sketch <- htmltools::withTags(table(
+        class = "display",
+        thead(tr(
+          th("miesiac", br(span(class = "var-type", "nominalna"))),
+          th("srednia_temp", br(span(class = "var-type", "ciagla"))),
+          th("n_dni", br(span(class = "var-type", "dyskretna")))
+        ))
+      ))
+      datatable(cat_timeseries_monthly, container = sketch, rownames = FALSE,
+                options = list(dom = 't', ordering = FALSE, pageLength = 10))
+    }
   })
 
   output$cat6_plot <- renderPlot({
-    ggplot(cat_timeseries, aes(x = dzien, y = temperatura)) +
-      geom_line(color = col_bad, linewidth = 1.2) +
-      geom_point(color = col_bad, size = 2.5) +
-      labs(title = "Temperatura w kolejności pomiarów",
-           subtitle = "Wyraźna fala - każdy dzień zależy od poprzedniego!",
-           x = "Dzień pomiaru", y = "Temperatura (\u00b0C)") +
-      theme_minimal(base_size = 14)
+    if (cat6_view() == "daily") {
+      ggplot(cat_timeseries, aes(x = data, y = temperatura)) +
+        geom_line(color = col_bad, linewidth = 0.8) +
+        geom_point(color = col_bad, size = 1.2, alpha = 0.6) +
+        labs(title = "Temperatura w kolejności pomiarów (183 dni)",
+             subtitle = "Wyraźna fala sezonowa - każdy dzień zależy od poprzedniego",
+             x = "Data", y = "Temperatura (\u00b0C)") +
+        theme_minimal(base_size = 14)
+    } else {
+      df_m <- cat_timeseries_monthly
+      df_m$idx <- seq_len(nrow(df_m))
+      ggplot(df_m, aes(x = idx, y = srednia_temp)) +
+        geom_line(color = col_bad, linewidth = 1) +
+        geom_point(color = col_bad, size = 4) +
+        geom_text(aes(label = paste0(srednia_temp, "\u00b0C")),
+                  vjust = -1.2, size = 4.5, fontface = "bold") +
+        scale_x_continuous(breaks = df_m$idx, labels = df_m$miesiac) +
+        labs(title = "\u015arednia temperatura miesi\u0119czna (n = 6)",
+             subtitle = "Agregacja u\u015bmierza zale\u017cno\u015b\u0107 dzie\u0144-do-dnia, ale zostaje 6 punkt\u00f3w",
+             x = NULL, y = "\u015arednia temperatura (\u00b0C)") +
+        theme_minimal(base_size = 14) +
+        theme(axis.text.x = element_text(angle = 30, hjust = 1))
+    }
   })
 
   # --- Problem 7: Zla struktura (toggle) ---
@@ -551,49 +600,56 @@ ch1_server <- function(input, output, session) {
       sketch <- htmltools::withTags(table(
         class = "display",
         thead(tr(
-          th("uczen", br(span(class = "var-type", "nominalna"))),
-          th("przedmiot", br(span(class = "var-type", "nominalna"))),
-          th("ocena", br(span(class = "var-type", "dyskretna")))
+          th("id_pacjenta", br(span(class = "var-type", "id"))),
+          th("plec", br(span(class = "var-type", "nominalna"))),
+          th("data_wizyty", br(span(class = "var-type", "data"))),
+          th("cisnienie_skurczowe", br(span(class = "var-type", "ciagla")))
         ))
       ))
-      datatable(cat_events, container = sketch, rownames = FALSE,
-                options = list(dom = 't', ordering = FALSE, pageLength = 10))
+      df_show <- cat_patients_visits
+      df_show$data_wizyty <- format(df_show$data_wizyty, "%Y-%m-%d")
+      datatable(df_show, container = sketch, rownames = FALSE,
+                options = list(dom = 't', ordering = FALSE,
+                               pageLength = nrow(df_show), scrollY = "260px"))
     } else {
       sketch <- htmltools::withTags(table(
         class = "display",
         thead(tr(
-          th("uczen", br(span(class = "var-type", "nominalna"))),
-          th("srednia", br(span(class = "var-type", "ciagla"))),
-          th("n_ocen", br(span(class = "var-type", "dyskretna")))
+          th("id_pacjenta", br(span(class = "var-type", "id"))),
+          th("plec", br(span(class = "var-type", "nominalna"))),
+          th("srednie_cisnienie", br(span(class = "var-type", "ciagla"))),
+          th("n_wizyt", br(span(class = "var-type", "dyskretna")))
         ))
       ))
-      datatable(cat_events_agg, container = sketch, rownames = FALSE,
-                options = list(dom = 't', ordering = FALSE, pageLength = 10))
+      datatable(cat_patients_agg, container = sketch, rownames = FALSE,
+                options = list(dom = 't', ordering = FALSE,
+                               pageLength = nrow(cat_patients_agg), scrollY = "260px"))
     }
   })
 
   output$cat7_plot <- renderPlot({
     if (cat7_view() == "events") {
-      df <- data.frame(label = "Wiersze\nw tabeli", n = nrow(cat_events))
+      df <- data.frame(label = "Wiersze\nw tabeli", n = nrow(cat_patients_visits))
       ggplot(df, aes(x = label, y = n)) +
         geom_col(fill = col_mixed, width = 0.4) +
         geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold") +
         labs(title = "Ile masz 'obserwacji'?",
-             subtitle = "8 wierszy, ale to oceny, nie uczniowie",
+             subtitle = paste0(nrow(cat_patients_visits),
+                               " wierszy, ale to wizyty - ten sam pacjent wraca"),
              x = NULL, y = NULL) +
-        ylim(0, 10) +
+        ylim(0, ceiling(nrow(cat_patients_visits) * 1.15)) +
         theme_minimal(base_size = 14) +
         theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
     } else {
-      df <- data.frame(label = "Uczniowie\n(obserwacje)", n = nrow(cat_events_agg))
+      df <- data.frame(label = "Pacjenci\n(obserwacje)", n = nrow(cat_patients_agg))
       ggplot(df, aes(x = label, y = n)) +
         geom_col(fill = col_bad, width = 0.4) +
         geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold",
                   color = col_bad) +
         labs(title = "Po agregacji",
-             subtitle = "n = 3 uczni\u00f3w. Test t? Zdecydowanie za ma\u0142o.",
+             subtitle = "n = 30 pacjent\u00f3w - jednostka obserwacji zgodna z pytaniem",
              x = NULL, y = NULL) +
-        ylim(0, 5) +
+        ylim(0, 40) +
         theme_minimal(base_size = 14) +
         theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
     }

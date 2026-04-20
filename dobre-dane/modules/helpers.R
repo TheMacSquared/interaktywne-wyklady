@@ -20,6 +20,9 @@ data("penguins", package = "palmerpenguins")
 
 # --- Tab 4: tarantino (fivethirtyeight) ---
 data("tarantino", package = "fivethirtyeight")
+# Pakiet nie dostarcza kolumny `type`, tylko `profane` (TRUE/FALSE).
+# Dodajemy ja, by uzywac jednolitych etykiet "word"/"death" w analizach nizej.
+tarantino$type <- ifelse(tarantino$profane, "word", "death")
 
 # --- Tab 6: Wage (ISLR) ---
 data("Wage", package = "ISLR")
@@ -240,32 +243,67 @@ cat_missing <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# Problem 6: Brak niezaleznosci (dane dzienne)
-cat_timeseries <- data.frame(
-  dzien = 1:20,
-  data = format(seq(as.Date("2024-06-01"), by = "day", length.out = 20), "%d.%m"),
-  temperatura = c(22.1, 23.5, 24.8, 25.2, 26.1, 27.3, 28.0, 27.5,
-                  26.8, 25.1, 23.4, 22.0, 21.5, 22.8, 24.1, 25.6,
-                  27.2, 28.5, 29.1, 28.3),
-  ozon_ppb = c(35, 42, 51, 58, 67, 78, 85, 80,
-               72, 55, 40, 33, 28, 38, 48, 60,
-               75, 88, 95, 87),
-  stringsAsFactors = FALSE
-)
+# Problem 6: Brak niezaleznosci (temperatura dzienna, pol roku + agregat miesieczny)
+local({
+  set.seed(42)
+  daty <- seq(as.Date("2023-10-01"), as.Date("2024-03-31"), by = "day")
+  n <- length(daty)
+  doy <- as.numeric(format(daty, "%j"))
+  trend <- 8 + 12 * cos(2 * pi * (doy - 196) / 365)  # max ~lipiec, min ~styczen
+  temp <- round(trend + rnorm(n, 0, 2.2), 1)
+  cat_timeseries <<- data.frame(
+    data = daty,
+    miesiac = format(daty, "%Y-%m"),
+    temperatura = temp,
+    stringsAsFactors = FALSE
+  )
+})
+cat_timeseries_monthly <- cat_timeseries |>
+  dplyr::group_by(miesiac) |>
+  dplyr::summarise(
+    srednia_temp = round(mean(temperatura), 1),
+    n_dni = dplyr::n(),
+    .groups = "drop"
+  ) |>
+  as.data.frame()
 
-# Problem 7: Zla struktura (event-level) — oceny uczniow
-cat_events <- data.frame(
-  uczen = c("Ania","Ania","Ania","Bartek","Bartek","Celina","Celina","Celina"),
-  przedmiot = c("Mat","Pol","Ang","Mat","Pol","Mat","Pol","Ang"),
-  ocena = c(4, 5, 3, 2, 3, 5, 4, 5),
-  stringsAsFactors = FALSE
-)
-cat_events_agg <- data.frame(
-  uczen = c("Ania", "Bartek", "Celina"),
-  srednia = c(4.0, 2.5, 4.67),
-  n_ocen = c(3L, 2L, 3L),
-  stringsAsFactors = FALSE
-)
+# Problem 7: Zla struktura (pacjenci vs wizyty)
+local({
+  set.seed(123)
+  n_pacjentow <- 30
+  # Kazdy pacjent ma 3-6 wizyt (srednio 4) -> okolo 120 wizyt
+  liczby_wizyt <- sample(3:6, n_pacjentow, replace = TRUE, prob = c(0.15, 0.35, 0.35, 0.15))
+  plec_pacjenta <- sample(c("K", "M"), n_pacjentow, replace = TRUE, prob = c(0.55, 0.45))
+  # Bazowe cisnienie pacjenta (kobiety nieco nizsze, ale z duzym rozrzutem)
+  baseline <- ifelse(plec_pacjenta == "K", 128, 134) + round(rnorm(n_pacjentow, 0, 10))
+
+  id_v <- integer(0); plec_v <- character(0); data_v <- as.Date(character(0)); cisn_v <- integer(0)
+  for (i in seq_len(n_pacjentow)) {
+    k <- liczby_wizyt[i]
+    daty_wizyt <- sort(sample(seq(as.Date("2024-01-15"), as.Date("2024-09-30"), by = "day"), k))
+    szum <- round(rnorm(k, 0, 5))
+    cisnienia <- pmax(95, pmin(185, baseline[i] + szum))
+    id_v <- c(id_v, rep(i, k))
+    plec_v <- c(plec_v, rep(plec_pacjenta[i], k))
+    data_v <- c(data_v, daty_wizyt)
+    cisn_v <- c(cisn_v, cisnienia)
+  }
+  cat_patients_visits <<- data.frame(
+    id_pacjenta = id_v,
+    plec = plec_v,
+    data_wizyty = data_v,
+    cisnienie_skurczowe = cisn_v,
+    stringsAsFactors = FALSE
+  )
+})
+cat_patients_agg <- cat_patients_visits |>
+  dplyr::group_by(id_pacjenta, plec) |>
+  dplyr::summarise(
+    srednie_cisnienie = round(mean(cisnienie_skurczowe), 1),
+    n_wizyt = dplyr::n(),
+    .groups = "drop"
+  ) |>
+  as.data.frame()
 
 # ============================================================================
 # FUNKCJE POMOCNICZE
