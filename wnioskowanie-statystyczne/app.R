@@ -111,7 +111,7 @@ server <- function(input, output, session) {
     updateNavbarPage(session, "main_nav", selected = "6. Dwie zmienne jako\u015bciowe")
   })
   observeEvent(input$ch5_next, {
-    updateNavbarPage(session, "main_nav", selected = "7. Ilo\u015bciowa vs jako\u015bciowa")
+    updateNavbarPage(session, "main_nav", selected = "7. Ilo\u015bciowa i jako\u015bciowa")
   })
   observeEvent(input$ch6_next, {
     updateNavbarPage(session, "main_nav", selected = "8. ANOVA")

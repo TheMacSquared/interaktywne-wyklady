@@ -23,7 +23,8 @@ ch3_ui <- tabPanel("4. Jedna zmienna jako\u015bciowa",
       p("Test dwumianowy jest dok\u0142adny \u2014 nie opiera si\u0119 na przybli\u017ceniu normalnym,
         dzia\u0142a nawet przy ma\u0142ych pr\u00f3bach."),
       div(class = "formula-box",
-        p(withMathJax("\\(H_0: p = p_0 \\quad\\text{vs}\\quad H_a: p \\neq p_0\\)")),
+        p(withMathJax("\\(H_0: p = p_0\\)"), " \u2014 ",
+          withMathJax("\\(H_a: p \\neq p_0\\)")),
         p(withMathJax("\\(\\text{Statystyka: } k \\text{ (liczba sukces\u00f3w w } n \\text{ pr\u00f3bach)}\\)")),
         p(withMathJax("\\(\\text{p-warto\u015b\u0107: } P(K \\leq k \\text{ lub } K \\geq k) \\text{ przy } K \\sim B(n, p_0)\\)"))
       )
@@ -118,7 +119,7 @@ ch3_ui <- tabPanel("4. Jedna zmienna jako\u015bciowa",
     ),
 
     div(class = "callout-warning",
-      tags$strong("Dwustronny vs jednostronny \u2014 proporcje:"),
+      tags$strong("Dwustronny a jednostronny \u2014 proporcje:"),
       tags$ul(
         tags$li(tags$b("Dwustronny (\u2260):"),
           " p-warto\u015b\u0107 liczymy po obu stronach rozk\u0142adu. Bezpieczniejszy."),
@@ -132,7 +133,7 @@ ch3_ui <- tabPanel("4. Jedna zmienna jako\u015bciowa",
     # ========================================================================
     # WIDGET 3: Porownanie — test dwumianowy vs test proporcji
     # ========================================================================
-    div(class = "section-title", "Test dwumianowy vs test proporcji"),
+    div(class = "section-title", "Test dwumianowy a test proporcji"),
 
     div(class = "narrative",
       p("W Jamovi i wielu podr\u0119cznikach spotkasz te\u017c ",

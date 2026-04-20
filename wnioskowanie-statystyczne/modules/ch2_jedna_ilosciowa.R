@@ -131,7 +131,7 @@ ch2_ui <- tabPanel("3. Jedna zmienna ilo\u015bciowa",
     ),
 
     div(class = "callout-warning",
-      tags$strong("Dwustronny vs jednostronny:"),
+      tags$strong("Dwustronny a jednostronny:"),
       tags$ul(
         tags$li(tags$b("Dwustronny (\u2260):"), " bezpieczniejszy, wykrywa efekt w obie strony.
           Punkt krytyczny dalej od zera \u2014 trudniej odrzuci\u0107 H\u2080."),

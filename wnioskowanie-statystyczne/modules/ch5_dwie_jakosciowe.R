@@ -22,7 +22,8 @@ ch5_ui <- tabPanel("6. Dwie zmienne jako\u015bciowe",
       p("Idea: por\u00f3wnujemy to, co ", tags$b("zaobserwowali\u015bmy"),
         " z tym, czego ", tags$b("oczekiwaliby\u015bmy, gdyby zmienne by\u0142y niezale\u017cne"), "."),
       div(class = "formula-box",
-        p(withMathJax("\\(H_0:\\) zmienne s\u0105 niezale\u017cne \\(\\quad\\text{vs}\\quad H_a:\\) zmienne s\u0105 powi\u0105zane")),
+        p(withMathJax("\\(H_0:\\) zmienne s\u0105 niezale\u017cne \u2014 ",
+                      "\\(H_a:\\) zmienne s\u0105 powi\u0105zane")),
         p("Liczno\u015bci oczekiwane: ", withMathJax("\\(E_{ij} = \\frac{n_{i\\cdot} \\cdot n_{\\cdot j}}{n}\\)")),
         p("Statystyka testowa: ", withMathJax("\\(\\chi^2 = \\sum \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}\\)"))
       )
@@ -59,7 +60,7 @@ ch5_ui <- tabPanel("6. Dwie zmienne jako\u015bciowe",
 
         conditionalPanel(
           condition = "input.ch5_narr_step2 % 2 == 1",
-          actionButton("ch5_narr_step3", "3. Por\u00f3wnaj: obserwowane vs oczekiwane",
+          actionButton("ch5_narr_step3", "3. Por\u00f3wnaj: obserwowane i oczekiwane",
                        class = "btn-outline-primary", width = "100%"),
           uiOutput("ch5_narr3")
         )
@@ -76,10 +77,10 @@ ch5_ui <- tabPanel("6. Dwie zmienne jako\u015bciowe",
         column(4,
           selectInput("ch5_scenario", "Scenariusz:",
             choices = c(
-              "Opakowanie vs ple\u015b\u0144 (T\u017b)" = "packaging",
-              "Strefa miasta vs ogrzewanie (GP)" = "heating",
-              "Typ gleby vs kategoria plonu (R)" = "soil",
-              "Zabezpieczenie vs wypadek (IB)" = "safety"
+              "Opakowanie a ple\u015b\u0144 (T\u017b)" = "packaging",
+              "Atmosfera pakowania a \u015bwie\u017co\u015b\u0107 mi\u0119sa (T\u017b)" = "atmosphere",
+              "Typ gleby a kategoria plonu (R)" = "soil",
+              "Metoda pasteryzacji mleka a liczebno\u015b\u0107 bakterii (T\u017b)" = "pasteurization"
             ),
             selected = "packaging"
           ),
@@ -111,7 +112,7 @@ ch5_ui <- tabPanel("6. Dwie zmienne jako\u015bciowe",
     # ========================================================================
     # WIDGET 2: Chi-kwadrat vs Fisher (porownanie)
     # ========================================================================
-    div(class = "section-title", "Test \u03c7\u00b2 vs test Fishera"),
+    div(class = "section-title", "Test \u03c7\u00b2 a test Fishera"),
 
     div(class = "narrative",
       p("Test \u03c7\u00b2 opiera si\u0119 na przybli\u017ceniu. Gdy pr\u00f3ba jest ma\u0142a,
@@ -122,7 +123,7 @@ ch5_ui <- tabPanel("6. Dwie zmienne jako\u015bciowe",
 
     div(class = "widget-block",
       h4("Por\u00f3wnanie wynik\u00f3w"),
-      actionButton("ch5_compare", "Por\u00f3wnaj \u03c7\u00b2 vs Fisher (na tych samych danych)",
+      actionButton("ch5_compare", "Por\u00f3wnaj \u03c7\u00b2 i Fishera (na tych samych danych)",
                    class = "btn-primary", width = "100%"),
       br(), br(),
       uiOutput("ch5_compare_result")
@@ -185,8 +186,8 @@ ch5_ui <- tabPanel("6. Dwie zmienne jako\u015bciowe",
     div(class = "callout-info",
       p(tags$b("Jak czyta\u0107 si\u0142\u0119 zwi\u0105zku:")),
       p("1. ", tags$b("Procenty w grupach"), " \u2014 najlepsza intuicja.
-        Je\u015bli odsetek to 45% vs 47% \u2014 nawet przy p < 0.05 r\u00f3\u017cnica jest praktycznie \u017cadna.
-        Je\u015bli 30% vs 70% \u2014 efekt jest ogromny."),
+        Je\u015bli odsetek to 45% wobec 47% \u2014 nawet przy p < 0.05 r\u00f3\u017cnica jest praktycznie \u017cadna.
+        Je\u015bli 30% wobec 70% \u2014 efekt jest ogromny."),
       p("2. ", tags$b("Cram\u00e9r's V"), " \u2014 wsp\u00f3\u0142czynnik si\u0142y zwi\u0105zku [0\u20131]:"),
       div(class = "formula-box",
         p(withMathJax("\\(V = \\sqrt{\\frac{\\chi^2}{n \\cdot (k - 1)}}\\)"),
@@ -199,8 +200,8 @@ ch5_ui <- tabPanel("6. Dwie zmienne jako\u015bciowe",
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: por\u00f3wnywanie dw\u00f3ch grup (zmienna ilo\u015bciowa vs jako\u015bciowa)"),
-      actionButton("ch5_next", "Dalej \u2192 7. Ilo\u015bciowa vs jako\u015bciowa",
+      p("Dalej: por\u00f3wnywanie dw\u00f3ch grup (zmienna ilo\u015bciowa i jako\u015bciowa)"),
+      actionButton("ch5_next", "Dalej \u2192 7. Ilo\u015bciowa i jako\u015bciowa",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -222,16 +223,16 @@ ch5_server <- function(input, output, session) {
       question = "Czy typ opakowania wp\u0142ywa na wyst\u0119powanie ple\u015bni?",
       h0_text = "\\(H_0:\\) typ opakowania i wyst\u0119powanie ple\u015bni s\u0105 niezale\u017cne",
       h1_text = "\\(H_a:\\) typ opakowania i wyst\u0119powanie ple\u015bni s\u0105 powi\u0105zane"),
-    heating = list(
-      lab1 = "Strefa", lab2 = "Ogrzewanie",
-      cats1 = c("Centrum", "Przedmie\u015bcia", "Obrze\u017ca"),
-      cats2 = c("Gaz", "W\u0119giel", "Pompa ciep\u0142a"),
-      probs = matrix(c(0.50, 0.10, 0.40,
-                        0.30, 0.35, 0.35,
-                        0.15, 0.55, 0.30), nrow = 3, byrow = TRUE),
-      question = "Czy spos\u00f3b ogrzewania zale\u017cy od strefy miasta?",
-      h0_text = "\\(H_0:\\) strefa i spos\u00f3b ogrzewania s\u0105 niezale\u017cne",
-      h1_text = "\\(H_a:\\) strefa i spos\u00f3b ogrzewania s\u0105 powi\u0105zane"),
+    atmosphere = list(
+      lab1 = "Atmosfera pakowania", lab2 = "Ocena \u015bwie\u017co\u015bci po 7 dniach",
+      cats1 = c("Powietrze", "MAP (modyfikowana)", "Pr\u00f3\u017cnia"),
+      cats2 = c("\u015awie\u017ce", "\u015aredniej jako\u015bci", "Zepsute"),
+      probs = matrix(c(0.15, 0.40, 0.45,
+                        0.55, 0.35, 0.10,
+                        0.70, 0.25, 0.05), nrow = 3, byrow = TRUE),
+      question = "Czy atmosfera pakowania wp\u0142ywa na \u015bwie\u017co\u015b\u0107 mi\u0119sa po 7 dniach?",
+      h0_text = "\\(H_0:\\) atmosfera pakowania i ocena \u015bwie\u017co\u015bci s\u0105 niezale\u017cne",
+      h1_text = "\\(H_a:\\) atmosfera pakowania i ocena \u015bwie\u017co\u015bci s\u0105 powi\u0105zane"),
     soil = list(
       lab1 = "Typ gleby", lab2 = "Plon",
       cats1 = c("Piaszczysta", "Gliniasta", "Czarnoziemna"),
@@ -240,14 +241,16 @@ ch5_server <- function(input, output, session) {
       question = "Czy typ gleby wp\u0142ywa na kategori\u0119 plonu?",
       h0_text = "\\(H_0:\\) typ gleby i kategoria plonu s\u0105 niezale\u017cne",
       h1_text = "\\(H_a:\\) typ gleby i kategoria plonu s\u0105 powi\u0105zane"),
-    safety = list(
-      lab1 = "Zabezpieczenie", lab2 = "Wypadek",
-      cats1 = c("Kask", "Szelki", "Brak"),
-      cats2 = c("Tak", "Nie"),
-      probs = matrix(c(0.05, 0.95, 0.08, 0.92, 0.22, 0.78), nrow = 3, byrow = TRUE),
-      question = "Czy rodzaj zabezpieczenia wp\u0142ywa na wyst\u0119powanie wypadk\u00f3w?",
-      h0_text = "\\(H_0:\\) zabezpieczenie i wypadki s\u0105 niezale\u017cne",
-      h1_text = "\\(H_a:\\) zabezpieczenie i wypadki s\u0105 powi\u0105zane")
+    pasteurization = list(
+      lab1 = "Metoda pasteryzacji", lab2 = "Liczba bakterii po 7 dniach",
+      cats1 = c("Niska (63\u00b0C, 30 min)", "Wysoka (72\u00b0C, 15 s)", "UHT (135\u00b0C, 2 s)"),
+      cats2 = c("Niska (< norma)", "\u015arednia", "Wysoka (> norma)"),
+      probs = matrix(c(0.35, 0.40, 0.25,
+                        0.60, 0.30, 0.10,
+                        0.90, 0.08, 0.02), nrow = 3, byrow = TRUE),
+      question = "Czy metoda pasteryzacji mleka wp\u0142ywa na liczebno\u015b\u0107 bakterii po 7 dniach?",
+      h0_text = "\\(H_0:\\) metoda pasteryzacji i liczebno\u015b\u0107 bakterii s\u0105 niezale\u017cne",
+      h1_text = "\\(H_a:\\) metoda pasteryzacji i liczebno\u015b\u0107 bakterii s\u0105 powi\u0105zane")
   )
 
   # --- Wspoldzielone dane ---
@@ -322,7 +325,7 @@ ch5_server <- function(input, output, session) {
     req(input$ch5_narr_step3 %% 2 == 1)
 
     div(class = "callout-success", style = "margin-top: 10px;",
-      p(tags$b("Por\u00f3wnanie: obserwowane vs oczekiwane")),
+      p(tags$b("Por\u00f3wnanie: obserwowane i oczekiwane")),
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
         tags$thead(tags$tr(tags$th(""), tags$th("Mandat (obs.)"), tags$th("Mandat (oczek.)"), tags$th("R\u00f3\u017cnica"))),
         tags$tbody(
@@ -390,7 +393,7 @@ ch5_server <- function(input, output, session) {
           geom_col(position = "dodge", alpha = 0.8) +
           geom_text(aes(label = Freq), position = position_dodge(width = 0.9),
                     vjust = -0.3, size = 4) +
-          labs(title = paste0(par$lab1, " vs ", par$lab2, " (liczno\u015bci)"),
+          labs(title = paste0(par$lab1, " a ", par$lab2, " (liczno\u015bci)"),
                x = par$lab1, y = "Liczno\u015b\u0107", fill = par$lab2) +
           scale_fill_brewer(palette = "Set2") +
           theme_educational() +
@@ -407,7 +410,7 @@ ch5_server <- function(input, output, session) {
           geom_text(aes(label = paste0(pct, "%")),
                     position = position_dodge(width = 0.9),
                     vjust = -0.3, size = 4) +
-          labs(title = paste0(par$lab1, " vs ", par$lab2, " (% w grupie)"),
+          labs(title = paste0(par$lab1, " a ", par$lab2, " (% w grupie)"),
                x = par$lab1, y = "Procent", fill = par$lab2) +
           scale_fill_brewer(palette = "Set2") +
           theme_educational() +

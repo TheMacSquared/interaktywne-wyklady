@@ -235,6 +235,42 @@ effect_size_label <- function(d) {
   else "du\u017cy"
 }
 
+# Praktyczna interpretacja Cohen's d (sensoryka / konsumenci)
+interpret_cohens_d <- function(d) {
+  ad <- abs(d)
+  if (ad < 0.2) {
+    "Efekt pomijalny: r\u00f3\u017cnica praktycznie nieuchwytna, nawet wyszkolony panel sensoryczny mia\u0142by problem j\u0105 wykry\u0107."
+  } else if (ad < 0.5) {
+    "Efekt ma\u0142y: r\u00f3\u017cnica ledwie uchwytna; konsument w te\u015bcie \u015blepym prawdopodobnie nie rozr\u00f3\u017cni, wyszkolony panel \u2014 czasem."
+  } else if (ad < 0.8) {
+    "Efekt \u015bredni: r\u00f3\u017cnica, kt\u00f3r\u0105 dobrze wytrenowany panel sensoryczny rozr\u00f3\u017cni; konsument \u2014 bywa \u017ce zauwa\u017cy."
+  } else {
+    "Efekt du\u017cy: r\u00f3\u017cnica wyra\u017ana, rozpozna j\u0105 nawet konsument w te\u015bcie \u015blepym."
+  }
+}
+
+# Generowanie danych: fermentacja jogurtu w 3 temperaturach (ANOVA ch7)
+# Zmienna: pH po 6h fermentacji; grupy: 20/25/30 stopni C
+generate_fermentation_data <- function(n = 160) {
+  set.seed(NULL)
+  groups <- c("20\u00b0C", "25\u00b0C", "30\u00b0C")
+  temp <- sample(groups, n, replace = TRUE)
+  # \u015arednie pH: wy\u017csza temperatura -> szybsze zakwaszenie -> ni\u017csze pH
+  base_pH <- sapply(temp, function(t) switch(t, "20\u00b0C" = 4.55, "25\u00b0C" = 4.30, "30\u00b0C" = 4.05))
+  pH <- round(base_pH + rnorm(n, 0, 0.14), 2)
+
+  # Druga zmienna: kwasowo\u015b\u0107 miareczkowa (\u00b0SH) \u2014 alternatywa do pH
+  base_sh <- sapply(temp, function(t) switch(t, "20\u00b0C" = 28, "25\u00b0C" = 33, "30\u00b0C" = 38))
+  kwasowosc_SH <- round(base_sh + rnorm(n, 0, 3.5), 1)
+
+  data.frame(
+    temperatura = factor(temp, levels = groups),
+    pH = pH,
+    kwasowosc_SH = kwasowosc_SH,
+    stringsAsFactors = FALSE
+  )
+}
+
 # Generowanie danych: telefon vs koncentracja (case study ch1)
 # Inspirowane Ward et al. (2017) "Brain Drain"
 generate_phone_data <- function(n_per_group = 40) {

@@ -1,8 +1,8 @@
 # ============================================================================
-# CHAPTER 6: Ilosciowa vs jakosciowa (2 grupy)
+# CHAPTER 6: Ilosciowa i jakosciowa (2 grupy)
 # ============================================================================
 
-ch6_ui <- tabPanel("7. Ilo\u015bciowa vs jako\u015bciowa",
+ch6_ui <- tabPanel("7. Ilo\u015bciowa i jako\u015bciowa",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
@@ -16,7 +16,8 @@ ch6_ui <- tabPanel("7. Ilo\u015bciowa vs jako\u015bciowa",
       p("Pytanie: Czy \u015brednie w dw\u00f3ch grupach r\u00f3\u017cni\u0105 si\u0119 istotnie?"),
       p("Przyk\u0142ad: czy m\u0119\u017cczy\u017ani i kobiety r\u00f3\u017cni\u0105 si\u0119 wzrostem?"),
       div(class = "formula-box",
-        p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 \\quad\\text{vs}\\quad H_a: \\mu_1 \\neq \\mu_2\\)")),
+        p(withMathJax("\\(H_0: \\mu_1 = \\mu_2\\)"), " \u2014 ",
+          withMathJax("\\(H_a: \\mu_1 \\neq \\mu_2\\)")),
         p(withMathJax("\\(t = \\frac{\\bar{x}_1 - \\bar{x}_2}{SE}\\)"))
       )
     ),
@@ -65,7 +66,7 @@ ch6_ui <- tabPanel("7. Ilo\u015bciowa vs jako\u015bciowa",
     ),
 
     div(class = "widget-block",
-      h4("Test parowy: przed vs po"),
+      h4("Test parowy: przed i po"),
       fluidRow(
         column(4,
           sliderInput("ch6_paired_n", "Liczba student\u00f3w:",
@@ -193,7 +194,7 @@ ch6_server <- function(input, output, session) {
         geom_boxplot(alpha = 0.6, outlier.alpha = 0.3) +
         geom_jitter(width = 0.15, alpha = 0.3, size = 1.5) +
         scale_fill_manual(values = c(col_h0, col_reject)) +
-        labs(title = paste0(var_label, " vs P\u0142e\u0107"),
+        labs(title = paste0(var_label, " wed\u0142ug p\u0142ci"),
              x = "P\u0142e\u0107", y = var_label) +
         theme_educational() +
         theme(legend.position = "none")
@@ -205,6 +206,9 @@ ch6_server <- function(input, output, session) {
     if (is.null(data)) return(NULL)
 
     var <- input$ch6_ind_var
+    var_label <- switch(var,
+      "wzrost" = "wzrost", "waga" = "waga",
+      "srednia_ocen" = "\u015brednia ocen", "czas_dojazdu" = "czas dojazdu", var)
     formula <- as.formula(paste(var, "~ plec"))
 
     result <- rstatix::t_test(data, formula)
@@ -214,6 +218,13 @@ ch6_server <- function(input, output, session) {
     d_res <- rstatix::cohens_d(data, formula)
     d_val <- as.data.frame(d_res)$effsize
 
+    # Konkretny werdykt: kt\u00f3ra grupa wy\u017csza, o ile
+    means <- data %>% dplyr::group_by(plec) %>%
+      dplyr::summarise(m = mean(.data[[var]], na.rm = TRUE), .groups = "drop")
+    higher <- means$plec[which.max(means$m)]
+    lower <- means$plec[which.min(means$m)]
+    diff_val <- round(max(means$m) - min(means$m), 2)
+
     res <- format_test_result(tidy_res$p)
 
     div(class = "callout-info",
@@ -222,9 +233,14 @@ ch6_server <- function(input, output, session) {
                round(tidy_res$statistic, 3))),
       p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
       p(paste0("Cohen's d = ", round(d_val, 3),
-               " (", effect_size_label(d_val), ")")),
+               " (efekt ", effect_size_label(d_val), ")")),
+      p(tags$em(interpret_cohens_d(d_val))),
       p(style = paste0("color:", res$color, "; font-weight: bold;"),
-        res$decision)
+        res$decision),
+      p(tags$strong("Werdykt: "),
+        "\u015brednia ", var_label, " w grupie ", tags$b(as.character(higher)),
+        " by\u0142a wy\u017csza od grupy ", tags$b(as.character(lower)),
+        " o ", tags$b(diff_val), ".")
     )
   })
 
@@ -270,17 +286,22 @@ ch6_server <- function(input, output, session) {
     tidy_res <- as.data.frame(result)
 
     d_val <- mean(data$wynik_po - data$wynik_przed) / sd(data$wynik_po - data$wynik_przed)
+    mean_diff <- mean(data$wynik_po - data$wynik_przed)
     res <- format_test_result(tidy_res$p)
+    direction <- if (mean_diff > 0) "wzros\u0142y" else if (mean_diff < 0) "spad\u0142y" else "nie zmieni\u0142y si\u0119"
 
     div(class = "callout-info",
       p(tags$strong("Wynik testu t parowego:")),
-      p(paste0("\u015arednia r\u00f3\u017cnica: ", round(mean(data$wynik_po - data$wynik_przed), 2), " pkt")),
+      p(paste0("\u015arednia r\u00f3\u017cnica: ", round(mean_diff, 2), " pkt")),
       p(paste0("t(", tidy_res$df, ") = ", round(tidy_res$statistic, 3))),
       p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
       p(paste0("Cohen's d = ", round(d_val, 3),
-               " (", effect_size_label(d_val), ")")),
+               " (efekt ", effect_size_label(d_val), ")")),
+      p(tags$em(interpret_cohens_d(d_val))),
       p(style = paste0("color:", res$color, "; font-weight: bold;"),
-        res$decision)
+        res$decision),
+      p(tags$strong("Werdykt: "),
+        "wyniki \u015brednio ", tags$b(direction), " o ", tags$b(round(abs(mean_diff), 2)), " pkt.")
     )
   })
 

@@ -72,7 +72,8 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilo\u015bciowe",
         Pytanie: czy obserwowane ", withMathJax("\\(r\\)"),
         " jest wystarczaj\u0105co dalekie od zera, by odrzuci\u0107 brak zwi\u0105zku?"),
       div(class = "formula-box",
-        p(withMathJax("\\(H_0: \\rho = 0 \\quad\\text{vs}\\quad H_a: \\rho \\neq 0\\)")),
+        p(withMathJax("\\(H_0: \\rho = 0\\)"), " \u2014 ",
+          withMathJax("\\(H_a: \\rho \\neq 0\\)")),
         p(withMathJax("\\(t = \\frac{r\\sqrt{n-2}}{\\sqrt{1-r^2}}, \\quad df = n - 2\\)"))
       )
     ),
@@ -82,10 +83,10 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilo\u015bciowe",
         column(4,
           selectInput("ch4_scenario", "Scenariusz:",
             choices = c(
-              "Sen vs ocena z egzaminu" = "sleep_grade",
-              "Azotany vs odleg\u0142o\u015b\u0107 od \u017ar\u00f3d\u0142a" = "nitrate_dist",
-              "Nawadnianie vs plon" = "irrigation_yield",
-              "St\u0119\u017cenie konserwantu vs trwa\u0142o\u015b\u0107" = "preserv_shelf"
+              "Sen a ocena z egzaminu" = "sleep_grade",
+              "Azotany a odleg\u0142o\u015b\u0107 od \u017ar\u00f3d\u0142a" = "nitrate_dist",
+              "Nawadnianie a plon" = "irrigation_yield",
+              "St\u0119\u017cenie konserwantu a trwa\u0142o\u015b\u0107" = "preserv_shelf"
             ),
             selected = "sleep_grade"
           ),
@@ -276,7 +277,7 @@ ch4_server <- function(input, output, session) {
   scenario_params <- list(
     sleep_grade = list(
       r_true = 0.45, xlab = "Godziny snu", ylab = "Ocena z egzaminu",
-      title = "Sen vs ocena",
+      title = "Sen a ocena",
       question = "Czy istnieje zwi\u0105zek mi\u0119dzy ilo\u015bci\u0105 snu a ocen\u0105 z egzaminu?",
       h0_text = "\\(H_0: \\rho = 0\\) (brak zwi\u0105zku liniowego)",
       h1_text = "\\(H_a: \\rho \\neq 0\\) (jest zwi\u0105zek)",
@@ -296,7 +297,7 @@ ch4_server <- function(input, output, session) {
       alt_1s = "greater"),
     irrigation_yield = list(
       r_true = 0.60, xlab = "Nawadnianie (mm/tydzie\u0144)", ylab = "Plon (t/ha)",
-      title = "Nawadnianie vs plon",
+      title = "Nawadnianie a plon",
       question = "Czy ilo\u015b\u0107 nawadniania jest powi\u0105zana z plonem?",
       h0_text = "\\(H_0: \\rho = 0\\) (brak zwi\u0105zku)",
       h1_text = "\\(H_a: \\rho \\neq 0\\) (jest zwi\u0105zek)",
@@ -306,7 +307,7 @@ ch4_server <- function(input, output, session) {
       alt_1s = "greater"),
     preserv_shelf = list(
       r_true = 0.50, xlab = "St\u0119\u017cenie konserwantu (mg/kg)", ylab = "Trwa\u0142o\u015b\u0107 (dni)",
-      title = "Konserwant vs trwa\u0142o\u015b\u0107",
+      title = "Konserwant a trwa\u0142o\u015b\u0107",
       question = "Czy st\u0119\u017cenie konserwantu wp\u0142ywa na trwa\u0142o\u015b\u0107 produktu?",
       h0_text = "\\(H_0: \\rho = 0\\) (brak zwi\u0105zku)",
       h1_text = "\\(H_a: \\rho \\neq 0\\) (jest zwi\u0105zek)",

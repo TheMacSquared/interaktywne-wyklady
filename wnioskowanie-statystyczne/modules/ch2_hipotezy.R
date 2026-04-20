@@ -48,16 +48,16 @@ ch2h_ui <- tabPanel("2. Formu\u0142owanie hipotez",
         column(4,
           selectInput("ch2h_example", "Wybierz przyk\u0142ad:",
             choices = c(
-              "Telefon vs koncentracja" = "ex1",
-              "Naw\u00f3z vs plony" = "ex2",
-              "Szkolenie BHP vs wypadki" = "ex3",
-              "Klasy gleby vs norma" = "ex4",
+              "Telefon a koncentracja" = "ex1",
+              "Naw\u00f3z a plony" = "ex2",
+              "Szkolenie BHP a wypadki" = "ex3",
+              "Klasy gleby a norma" = "ex4",
               "Azotany wzd\u0142u\u017c rzeki" = "ex5",
-              "Zagospodarowanie vs strefa miasta" = "ex6",
-              "Opakowanie vs trwa\u0142o\u015b\u0107 jogurtu" = "ex7",
-              "Zu\u017cycie wody vs norma" = "ex8",
+              "Zagospodarowanie a strefa miasta" = "ex6",
+              "Opakowanie a trwa\u0142o\u015b\u0107 jogurtu" = "ex7",
+              "Zu\u017cycie wody wobec normy" = "ex8",
               "Jako\u015b\u0107 wody > 80% normy?" = "ex9",
-              "Sen vs ocena z egzaminu" = "ex10"
+              "Sen a ocena z egzaminu" = "ex10"
             ),
             selected = "ex1"
           )
@@ -107,7 +107,7 @@ ch2h_ui <- tabPanel("2. Formu\u0142owanie hipotez",
     # ========================================================================
     # WIDGET 4: Jednostronny vs dwustronny
     # ========================================================================
-    div(class = "section-title", "Jednostronny vs dwustronny test"),
+    div(class = "section-title", "Test jednostronny a dwustronny"),
 
     div(class = "narrative",
       p("Sformu\u0142owanie H\u2081 decyduje, czy test jest jedno- czy dwustronny:"),
@@ -139,7 +139,7 @@ ch2h_ui <- tabPanel("2. Formu\u0142owanie hipotez",
     ),
 
     div(class = "widget-block",
-      h4("Wizualizacja: jedno- vs dwustronny"),
+      h4("Wizualizacja: jedno- i dwustronny"),
       fluidRow(
         column(4,
           radioButtons("ch2h_sided", "Typ testu:",
