@@ -46,6 +46,18 @@ ch4_ui <- tabPanel("4. Przedzia\u0142 dla proporcji",
         withMathJax("\\(n(1-p) \\geq 10\\)"), ".")
     ),
 
+    div(class = "callout-info",
+      tags$strong("W jamovi:"),
+      " ", tags$b("Analyses \u2192 Frequencies \u2192 2 Outcomes \u2014 Binomial test"),
+      " \u2192 przeci\u0105gnij zmienn\u0105 binarn\u0105 (np. zdany/niezdany) do pola zmiennych
+      \u2192 zaznacz ", tags$b("Confidence interval"),
+      " (domy\u015blnie 95%, metoda Cloppera-Pearsona \u2014 bezpieczniejsza ni\u017c Wald).
+      W tabeli odczytasz kolumny ", tags$code("Proportion"), ", ",
+      tags$code("Lower"), ", ", tags$code("Upper"), ".
+      Dla por\u00f3wnania dw\u00f3ch grup: ", tags$b("\u03c7\u00b2 test of association"),
+      " lub dwa osobne CI obok siebie."
+    ),
+
     # ========================================================================
     # WIDGET 1: Budowa przedzialu dla proporcji krok po kroku
     # ========================================================================

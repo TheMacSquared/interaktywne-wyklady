@@ -39,6 +39,19 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
         do wyboru. Ten rozdzia\u0142 nauczy Ci\u0119 interpretowa\u0107 gotowe przedzia\u0142y \u2014 a nie liczy\u0107 je r\u0119cznie.")
     ),
 
+    div(class = "callout-info",
+      tags$strong("W jamovi:"),
+      " ", tags$b("Analyses \u2192 T-Tests \u2192 One Sample T-Test"),
+      " \u2192 przeci\u0105gnij zmienn\u0105 ilo\u015bciow\u0105 do ", tags$em("Dependent Variables"),
+      " \u2192 w panelu ", tags$em("Additional Statistics"), " zaznacz ",
+      tags$b("Confidence interval"), " (domy\u015blnie 95%).
+      W tabeli wynik\u00f3w odczytasz kolumny ",
+      tags$code("Mean"), ", ", tags$code("Lower"), ", ", tags$code("Upper"), ".
+      Dla r\u00f3\u017cnicy dw\u00f3ch \u015brednich: ",
+      tags$b("Independent Samples T-Test"), " \u2192 zaznacz ",
+      tags$b("Mean difference"), " + ", tags$b("Confidence interval"), "."
+    ),
+
     # ========================================================================
     # WIDGET 1: Budowa przedzialu krok po kroku
     # ========================================================================
@@ -94,6 +107,83 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
       ),
       plotOutput("ch3_dstep_plot", height = "420px"),
       uiOutput("ch3_dstep_explanation")
+    ),
+
+    # ========================================================================
+    # WIDGET 2B: NAKLADAJACE SIE CI GRUP vs CI ROZNICY
+    # ========================================================================
+    div(class = "section-title",
+        "Dwa CI grup czy CI r\u00f3\u017cnicy? \u2014 trzy scenariusze"),
+
+    div(class = "narrative",
+      p("Gdy por\u00f3wnujesz dwie grupy, masz dwa sposoby, \u017ceby spojrze\u0107 na wynik:"),
+      tags$ol(
+        tags$li(tags$b("Dwa osobne CI"),
+                " \u2014 rysujemy CI dla ka\u017cdej grupy i patrzymy, czy si\u0119 nakrywaj\u0105."),
+        tags$li(tags$b("CI r\u00f3\u017cnicy"),
+                " \u2014 liczymy bezpo\u015brednio CI dla ", withMathJax("\\(\\mu_1 - \\mu_2\\)"),
+                " i patrzymy, czy zawiera 0.")
+      ),
+      p("Zwykle daj\u0105 t\u0119 sam\u0105 odpowied\u017a. Ale nie zawsze \u2014 zobacz trzy przyk\u0142ady
+        z technologii \u017cywno\u015bci.")
+    ),
+
+    # --- Scenariusz A ---
+    tags$details(class = "case-study", open = NA,
+      tags$summary(
+        span(class = "case-icon", "\U0001f33e"),
+        "A. Dwaj dostawcy m\u0105ki \u2014 zgodne sygna\u0142y, r\u00f3\u017cnica istotna"
+      ),
+      div(class = "case-body",
+        div(class = "case-scenario",
+          p("Zak\u0142ad piekarniczy por\u00f3wnuje dw\u00f3ch dostawc\u00f3w m\u0105ki pszennej typu 550
+            pod wzgl\u0119dem zawarto\u015bci bia\u0142ka (%). Pobrano po 40 partii od ka\u017cdego dostawcy.")
+        ),
+        plotOutput("ch3_comp_A_plot", height = "340px"),
+        uiOutput("ch3_comp_A_verdict")
+      )
+    ),
+
+    # --- Scenariusz B ---
+    tags$details(class = "case-study",
+      tags$summary(
+        span(class = "case-icon", "\U0001f964"),
+        "B. Jogurt w szkle vs w plastiku \u2014 zgodne sygna\u0142y, brak r\u00f3\u017cnicy"
+      ),
+      div(class = "case-body",
+        div(class = "case-scenario",
+          p("Technolog sprawdza, czy materia\u0142 opakowania wp\u0142ywa na zawarto\u015b\u0107 t\u0142uszczu (%)
+            w jogurcie naturalnym po 7 dniach przechowywania. Po 30 pr\u00f3bek z ka\u017cdego typu.")
+        ),
+        plotOutput("ch3_comp_B_plot", height = "340px"),
+        uiOutput("ch3_comp_B_verdict")
+      )
+    ),
+
+    # --- Scenariusz C (PULAPKA) ---
+    tags$details(class = "case-study",
+      tags$summary(
+        span(class = "case-icon", "\U000026a0\ufe0f"),
+        "C. Dwie linie p\u0142atk\u00f3w \u2014 UWAGA, pu\u0142apka wzrokowa"
+      ),
+      div(class = "case-body",
+        div(class = "case-scenario",
+          p("Zak\u0142ad sprawdza, czy dwie linie produkcyjne p\u0142atk\u00f3w \u015bniadaniowych
+            daj\u0105 produkt o tej samej zawarto\u015bci b\u0142onnika (g / 100 g).
+            Po 120 partii z ka\u017cdej linii.")
+        ),
+        plotOutput("ch3_comp_C_plot", height = "340px"),
+        uiOutput("ch3_comp_C_verdict")
+      )
+    ),
+
+    div(class = "callout-info",
+      tags$strong("Zasada praktyczna:"),
+      " Kiedy por\u00f3wnujesz grupy, patrz przede wszystkim na ", tags$b("CI r\u00f3\u017cnicy"),
+      " \u2014 to liczba, kt\u00f3ra uwzgl\u0119dnia niepewno\u015b\u0107 obu pomiar\u00f3w naraz.
+      Por\u00f3wnywanie dw\u00f3ch osobnych CI na oko to szybki skr\u00f3t \u2014 cz\u0119sto dzia\u0142a,
+      ale przy granicznych r\u00f3\u017cnicach potrafi wprowadzi\u0107 w b\u0142\u0105d
+      (tak jak w scenariuszu C)."
     ),
 
     # ========================================================================
@@ -1764,5 +1854,239 @@ ch3_server <- function(input, output, session) {
   for (cid in names(cases_config)) {
     register_case(cid)
   }
+
+  # ==========================================================================
+  # WIDGET 2B: NAKLADAJACE SIE CI GRUP vs CI ROZNICY
+  # Trzy statyczne scenariusze z dziedziny technologii zywnosci
+  # ==========================================================================
+
+  # --- Dane (statyczne, przygotowane z ustalonymi seedami) ---
+  ch3_comp_data <- list(
+    A = list(
+      g1_name = "Dostawca A",
+      g2_name = "Dostawca B",
+      unit    = "zawarto\u015b\u0107 bia\u0142ka (%)",
+      g1 = c(13.17,11.08,11.38,11.55,11.22,11.23,12.25,11.73,11.89,13.11,
+             12.01,13.43,13.17,11.99,12.94,12.08,11.26,11.62,11.80,12.39,
+             12.30,12.22,12.58,10.97,12.56,11.91,12.25,12.16,11.21,11.63,
+             11.28,12.23,11.87,11.75,11.55,11.46,12.40,11.14,11.71,11.99),
+      g2 = c(11.63,10.48,10.73,10.11,10.67,10.66,11.71,11.25,10.96,11.46,
+             10.74,10.90,11.12,11.92,11.33,11.19, 9.96,11.09,11.00,10.36,
+             10.95,11.00,11.23,11.32,11.09,11.57,11.36,11.59,11.66,11.32,
+             11.16,10.35,10.53,10.38, 9.92,10.10,10.37,10.57,10.86,12.35)
+    ),
+    B = list(
+      g1_name = "Szk\u0142o",
+      g2_name = "Plastik",
+      unit    = "zawarto\u015b\u0107 t\u0142uszczu (%)",
+      g1 = c(3.03,3.19,2.80,2.84,3.47,2.95,3.51,3.34,3.17,2.93,
+             2.97,3.09,2.80,3.12,2.89,3.18,3.12,3.40,3.03,3.02,
+             3.01,3.18,3.07,3.27,3.20,3.18,3.13,2.99,3.12,2.93),
+      g2 = c(2.93,2.98,3.38,2.82,2.99,3.33,3.16,3.60,3.06,3.12,
+             2.80,3.22,3.43,2.99,3.43,3.12,2.66,3.43,3.39,3.26,
+             3.41,3.15,3.01,3.33,3.25,3.35,3.17,3.32,3.58,3.23)
+    ),
+    C = list(
+      g1_name = "Linia 1",
+      g2_name = "Linia 2",
+      unit    = "zawarto\u015b\u0107 b\u0142onnika (g / 100 g)",
+      # Wygenerowane: set.seed(3); round(rnorm(120, 9.3, 1.0), 2), round(rnorm(120, 9.0, 1.0), 2)
+      g1 = c(8.34,8.99,10.62,7.52,9.70,10.56,10.25, 9.04, 8.49,10.13,
+             7.94,10.82,10.78, 7.98,11.47, 9.16,10.82, 8.87, 7.83, 8.53,
+             8.35,12.44, 9.78, 9.70,11.17, 8.54, 9.25, 8.43,10.52, 8.06,
+             8.64, 8.22,10.67, 9.71, 9.80,10.42,10.19,11.20,10.62, 9.83,
+             8.61, 9.36, 9.62, 9.18, 9.76, 9.53,10.91,10.57, 9.08, 9.46,
+             10.25, 7.21, 9.78, 9.64, 8.19,10.27, 9.46, 9.29,10.25, 7.76,
+             11.24, 9.04, 9.85,10.18,11.01, 8.86, 9.24, 9.28, 9.09, 8.29,
+             9.87,10.10, 9.17, 9.41,11.07, 9.18, 9.19,10.50, 9.79, 8.65,
+             8.85, 9.22,10.81,10.12, 8.36, 8.92, 8.70,10.63, 9.81, 9.07,
+             9.44, 9.43, 8.67,11.13, 7.88,10.15, 9.56, 9.78, 8.75, 9.82,
+             8.51, 8.41, 9.77, 9.08, 7.55, 9.04,10.43, 7.98, 7.29, 8.58,
+             8.12, 8.16, 9.74, 9.25, 8.69,10.36, 7.22,10.15, 9.52, 8.95),
+      g2 = c(8.30,10.15, 9.77, 7.74, 9.45, 7.68, 7.64, 9.92, 9.36, 8.28,
+             9.14,10.19, 9.85, 7.83, 9.09, 9.45, 7.63, 9.09, 8.52, 9.26,
+             8.20,10.05,11.76, 8.75,10.03, 9.95, 9.54, 8.60, 8.70, 7.74,
+             8.94, 9.74, 9.41,10.51, 7.75, 7.99, 9.08, 9.20, 8.13, 7.76,
+             8.31, 9.10, 9.40,10.24, 9.16,11.00, 9.25,10.82, 8.96, 9.42,
+             8.10,10.32, 9.01, 8.35, 9.36,10.20, 9.71, 7.18, 8.33, 8.24,
+             9.56, 8.10, 8.83, 9.32, 8.00, 8.33, 8.20,10.19,10.94, 8.35,
+             8.87, 7.86, 9.56, 9.09,10.51, 9.30, 7.26, 8.50, 8.16, 8.30,
+             8.45, 8.04,10.66, 7.19,10.16, 8.73, 8.61, 9.17, 8.85, 9.57,
+             9.28, 9.64,10.54, 8.79,11.00,10.24, 9.75,10.32, 8.96, 7.31,
+             9.35, 8.64, 9.17,10.40, 7.64, 9.23, 9.86, 9.59, 9.48, 9.27,
+             8.32, 8.92, 9.76, 9.57, 8.72, 8.07, 7.55, 9.74, 9.43, 9.32)
+    )
+  )
+
+  # Helper: liczy CI dla dwoch grup + CI roznicy (Welch)
+  ch3_comp_cis <- function(g1, g2, conf = 0.95) {
+    alpha <- 1 - conf
+    n1 <- length(g1); n2 <- length(g2)
+    m1 <- mean(g1);   m2 <- mean(g2)
+    s1 <- sd(g1);     s2 <- sd(g2)
+    se1 <- s1 / sqrt(n1); se2 <- s2 / sqrt(n2)
+    ci1 <- m1 + c(-1, 1) * qt(1 - alpha / 2, n1 - 1) * se1
+    ci2 <- m2 + c(-1, 1) * qt(1 - alpha / 2, n2 - 1) * se2
+    se_d <- sqrt(se1^2 + se2^2)
+    df_w <- (se1^2 + se2^2)^2 / (se1^4 / (n1 - 1) + se2^4 / (n2 - 1))
+    ci_d <- (m1 - m2) + c(-1, 1) * qt(1 - alpha / 2, df_w) * se_d
+    list(m1 = m1, m2 = m2, ci1 = ci1, ci2 = ci2,
+         md = m1 - m2, ci_d = ci_d,
+         overlap_lo = max(ci1[1], ci2[1]),
+         overlap_hi = min(ci1[2], ci2[2]))
+  }
+
+  # Helper: plot trzech CI (grupa 1, grupa 2, roznica) z paskiem nakladania
+  ch3_comp_plot <- function(scenario_key) {
+    dat <- ch3_comp_data[[scenario_key]]
+    cis <- ch3_comp_cis(dat$g1, dat$g2)
+
+    # Rama wykresu: lewy panel (CI grup), prawy panel (CI roznicy)
+    # Zrobimy w jednym plocie z facet_grid
+    df_groups <- data.frame(
+      row   = c(2, 1),
+      label = c(dat$g1_name, dat$g2_name),
+      mean  = c(cis$m1, cis$m2),
+      lo    = c(cis$ci1[1], cis$ci2[1]),
+      hi    = c(cis$ci1[2], cis$ci2[2]),
+      panel = "CI grup (osobno)"
+    )
+    df_diff <- data.frame(
+      row   = 1.5,
+      label = paste0(dat$g1_name, " \u2212 ", dat$g2_name),
+      mean  = cis$md,
+      lo    = cis$ci_d[1],
+      hi    = cis$ci_d[2],
+      panel = "CI r\u00f3\u017cnicy"
+    )
+
+    overlap_present <- cis$overlap_lo <= cis$overlap_hi
+    df_overlap <- if (overlap_present) {
+      data.frame(xmin = cis$overlap_lo, xmax = cis$overlap_hi, panel = "CI grup (osobno)")
+    } else {
+      NULL
+    }
+
+    p_groups <- ggplot(df_groups, aes(y = row)) +
+      { if (!is.null(df_overlap))
+          geom_rect(data = df_overlap,
+                    aes(xmin = xmin, xmax = xmax, ymin = -Inf, ymax = Inf),
+                    inherit.aes = FALSE,
+                    fill = "#f1c40f", alpha = 0.25)
+      } +
+      geom_errorbarh(aes(xmin = lo, xmax = hi), height = 0.18,
+                     color = col_ci, linewidth = 1.4) +
+      geom_point(aes(x = mean), color = col_estimate, size = 4) +
+      geom_text(aes(x = mean, label = sprintf("%.2f", mean)),
+                vjust = -1.2, color = col_estimate, fontface = "bold", size = 4.2) +
+      scale_y_continuous(breaks = df_groups$row, labels = df_groups$label,
+                         limits = c(0.5, 2.5)) +
+      labs(title = "CI grup (osobno)", x = dat$unit, y = NULL) +
+      theme_educational() +
+      theme(plot.title = element_text(size = 13, face = "bold"))
+
+    p_diff <- ggplot(df_diff, aes(y = row)) +
+      geom_vline(xintercept = 0, color = col_true,
+                 linewidth = 1.0, linetype = "dashed") +
+      annotate("text", x = 0, y = 2.3, label = "0",
+               color = col_true, fontface = "bold", size = 4.5) +
+      geom_errorbarh(aes(xmin = lo, xmax = hi), height = 0.18,
+                     color = col_ci, linewidth = 1.4) +
+      geom_point(aes(x = mean), color = col_estimate, size = 4) +
+      geom_text(aes(x = mean, label = sprintf("%.2f", mean)),
+                vjust = -1.2, color = col_estimate, fontface = "bold", size = 4.2) +
+      scale_y_continuous(breaks = df_diff$row, labels = df_diff$label,
+                         limits = c(0.5, 2.5)) +
+      labs(title = paste0("CI r\u00f3\u017cnicy (", dat$g1_name, " \u2212 ", dat$g2_name, ")"),
+           x = paste("r\u00f3\u017cnica \u2014", dat$unit), y = NULL) +
+      theme_educational() +
+      theme(plot.title = element_text(size = 13, face = "bold"))
+
+    # Uklad jeden pod drugim
+    gridExtra::grid.arrange(p_groups, p_diff, ncol = 1, heights = c(1, 1))
+  }
+
+  # Helper: werdykt tekstowy
+  ch3_comp_verdict <- function(scenario_key) {
+    dat <- ch3_comp_data[[scenario_key]]
+    cis <- ch3_comp_cis(dat$g1, dat$g2)
+    overlap_present <- cis$overlap_lo <= cis$overlap_hi
+    diff_excludes_0 <- !(cis$ci_d[1] <= 0 & 0 <= cis$ci_d[2])
+    overlap_w <- if (overlap_present) cis$overlap_hi - cis$overlap_lo else 0
+
+    fmt <- function(x) sprintf("%.2f", x)
+    ci_txt <- function(ci) paste0("[", fmt(ci[1]), "; ", fmt(ci[2]), "]")
+
+    # Wspolna czesc opisu
+    facts <- tagList(
+      p(tags$b("Co widzimy:")),
+      tags$ul(
+        tags$li(dat$g1_name, ": \u015brednia ", fmt(cis$m1),
+                ", 95% CI ", ci_txt(cis$ci1)),
+        tags$li(dat$g2_name, ": \u015brednia ", fmt(cis$m2),
+                ", 95% CI ", ci_txt(cis$ci2)),
+        tags$li(tags$b("CI r\u00f3\u017cnicy"), " (",
+                dat$g1_name, " \u2212 ", dat$g2_name, "): ",
+                ci_txt(cis$ci_d))
+      ),
+      tags$ul(
+        tags$li("Czy CI grup si\u0119 nakrywaj\u0105? ",
+                tags$b(if (overlap_present)
+                  paste0("TAK (na odcinku szeroko\u015bci ", fmt(overlap_w), ")")
+                else "NIE")),
+        tags$li("Czy CI r\u00f3\u017cnicy zawiera 0? ",
+                tags$b(if (diff_excludes_0) "NIE" else "TAK"))
+      )
+    )
+
+    # Werdykt w zaleznosci od scenariusza
+    if (scenario_key == "A") {
+      div(class = "callout-success",
+        facts,
+        p(tags$b("Werdykt:"),
+          " Oba spojrzenia zgodne. CI grup si\u0119 nie nakrywaj\u0105, a CI r\u00f3\u017cnicy
+          nie zawiera 0 \u2014 \u015brednia zawarto\u015b\u0107 bia\u0142ka r\u00f3\u017cni si\u0119 istotnie.
+          Najlepsze oszacowanie: m\u0105ka Dostawcy A ma o ",
+          fmt(cis$ci_d[1]), "\u2013", fmt(cis$ci_d[2]),
+          " punktu procentowego wi\u0119cej bia\u0142ka.")
+      )
+    } else if (scenario_key == "B") {
+      div(class = "callout-success",
+        facts,
+        p(tags$b("Werdykt:"),
+          " Oba spojrzenia zgodne. CI grup mocno si\u0119 nakrywaj\u0105, a CI r\u00f3\u017cnicy
+          zawiera 0 \u2014 nie mamy podstaw m\u00f3wi\u0107, \u017ce materia\u0142 opakowania
+          wp\u0142ywa na zawarto\u015b\u0107 t\u0142uszczu w jogurcie.")
+      )
+    } else {
+      div(class = "callout-warning",
+        facts,
+        p(tags$b("Spojrzenia si\u0119 rozje\u017cd\u017caj\u0105:")),
+        tags$ul(
+          tags$li("Wzrokiem: CI grup ledwo si\u0119 stykaj\u0105 (nakrywaj\u0105 si\u0119 na odcinku ",
+                  fmt(overlap_w),
+                  " g) \u2014 naiwnie powiedzieliby\u015bmy \"linie produkuj\u0105 podobne p\u0142atki\"."),
+          tags$li("Liczbowo: CI r\u00f3\u017cnicy to ", ci_txt(cis$ci_d),
+                  " \u2014 nie zawiera 0, wi\u0119c r\u00f3\u017cnica jest istotna.
+                   Linia 1 produkuje p\u0142atki o ",
+                   fmt(cis$ci_d[1]), "\u2013", fmt(cis$ci_d[2]),
+                   " g / 100 g bogatsze w b\u0142onnik.")
+        ),
+        p(tags$b("Dlaczego CI r\u00f3\u017cnicy jest w\u0119\u017csze ni\u017c suma CI grup?"),
+          " Bo b\u0142\u0105d standardowy r\u00f3\u017cnicy to ",
+          withMathJax("\\(\\sqrt{SE_1^2 + SE_2^2}\\)"),
+          ", a nie ", withMathJax("\\(SE_1 + SE_2\\)"),
+          ". Matematyka \u0142\u0105czy niepewno\u015bci \"po pitagorasie\", nie przez sumowanie \u2014
+          dlatego CI r\u00f3\u017cnicy jest ostrzejszym narz\u0119dziem ni\u017c por\u00f3wnywanie CI grup na oko.")
+      )
+    }
+  }
+
+  output$ch3_comp_A_plot <- renderPlot({ ch3_comp_plot("A") })
+  output$ch3_comp_B_plot <- renderPlot({ ch3_comp_plot("B") })
+  output$ch3_comp_C_plot <- renderPlot({ ch3_comp_plot("C") })
+  output$ch3_comp_A_verdict <- renderUI({ ch3_comp_verdict("A") })
+  output$ch3_comp_B_verdict <- renderUI({ ch3_comp_verdict("B") })
+  output$ch3_comp_C_verdict <- renderUI({ ch3_comp_verdict("C") })
 
 }
