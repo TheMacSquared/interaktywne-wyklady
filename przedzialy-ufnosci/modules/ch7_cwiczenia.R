@@ -87,11 +87,9 @@ ch7_ui <- tabPanel("7. \u0106wiczenia",
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 3 \u2014 Co je\u015bli mieliby\u015bmy tylko mniejsz\u0105 pr\u00f3b\u0119?"),
+    h4("Zadanie 3 \u2014 CI dla ka\u017cdej grupy"),
     div(class = "narrative",
-      p("Przefiltruj zbi\u00f3r po ", tags$code("grades == \"KK-06\""), ".
-        Zr\u00f3b CI dla ", tags$code("read"), " na tej podgrupie i por\u00f3wnaj z poprzednim.
-        Wska\u017c ", tags$em("trzy"), " rzeczy, kt\u00f3re naraz zmieniaj\u0105 CI.")
+      p("Wyznacz CI dla ", tags$code("read"), " dla ka\u017cdej z grup ", tags$code("grades"), " osobno.")
     ),
     actionButton("ch7_ans3", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch7_sol3")
@@ -253,11 +251,9 @@ ch7_ui <- tabPanel("7. \u0106wiczenia",
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 3 \u2014 Duże zak\u0142ady osobno"),
+    h4("Zadanie 3 \u2014 CI wed\u0142ug wielko\u015bci zak\u0142adu"),
     div(class = "narrative",
-      p("Przefiltruj dane do zak\u0142ad\u00f3w du\u017cych (", tags$code("wielkosc == \"duzy\""), ").
-        Policz CI dla ", tags$code("wskaznik_wypadkow"), " na tej podgrupie.
-        Wska\u017c ", tags$em("trzy"), " rzeczy, kt\u00f3re zmieniaj\u0105 CI wzgl\u0119dem pe\u0142nej pr\u00f3by.")
+      p("Wyznacz CI dla ", tags$code("wskaznik_wypadkow"), " dla ka\u017cdej kategorii ", tags$code("wielkosc"), " osobno.")
     ),
     actionButton("ch7_ans3", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch7_sol3")
@@ -421,11 +417,9 @@ ch7_ui <- tabPanel("7. \u0106wiczenia",
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 3 \u2014 Pola klasy I osobno"),
+    h4("Zadanie 3 \u2014 CI wed\u0142ug klasy gleby"),
     div(class = "narrative",
-      p("Przefiltruj dane do p\u00f3l klasy I (", tags$code("klasa_gleby == \"I\""), ").
-        Policz CI dla ", tags$code("plon_pszenicy"), " na tej podgrupie.
-        Wska\u017c ", tags$em("trzy"), " rzeczy, kt\u00f3re zmieniaj\u0105 CI wzgl\u0119dem pe\u0142nej pr\u00f3by.")
+      p("Wyznacz CI dla ", tags$code("plon_pszenicy"), " dla ka\u017cdej klasy gleby (", tags$code("klasa_gleby"), ") osobno.")
     ),
     actionButton("ch7_ans3", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch7_sol3")
@@ -587,11 +581,9 @@ ch7_ui <- tabPanel("7. \u0106wiczenia",
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 3 \u2014 Linia A osobno"),
+    h4("Zadanie 3 \u2014 CI wed\u0142ug linii"),
     div(class = "narrative",
-      p("Przefiltruj dane do linii A (", tags$code("linia == \"A\""), ").
-        Policz CI dla ", tags$code("zawartosc_bialka"), " na tej podgrupie.
-        Wska\u017c ", tags$em("trzy"), " rzeczy, kt\u00f3re zmieniaj\u0105 CI wzgl\u0119dem pe\u0142nej pr\u00f3by.")
+      p("Wyznacz CI dla ", tags$code("zawartosc_bialka"), " dla ka\u017cdej linii (", tags$code("linia"), ") osobno.")
     ),
     actionButton("ch7_ans3", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch7_sol3")

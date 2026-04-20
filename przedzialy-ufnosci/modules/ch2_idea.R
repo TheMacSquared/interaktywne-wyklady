@@ -68,12 +68,6 @@ ch2_ui <- tabPanel("2. Idea przedzia\u0142\u00f3w",
       )
     ),
 
-    div(class = "callout-success",
-      tags$strong("Aha-moment:"),
-      " Przy 95% poziomie ufno\u015bci oko\u0142o 5 z 100 przedzia\u0142\u00f3w nie trafi
-      w prawdziwe \u03bc. To nie b\u0142\u0105d \u2014 to w\u0142a\u015bnie znaczenie \"95% ufno\u015bci\"!"
-    ),
-
     # ========================================================================
     # WIDGET 2: Czesty blad interpretacji
     # ========================================================================
