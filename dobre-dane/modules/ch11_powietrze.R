@@ -75,8 +75,6 @@ ch11_ui <- tabPanel("11. Kawiarnia",
       obserwacji \u2014 wtedy analiza sezonowości i trendów byłaby pełnoprawna.")
     ),
 
-    uiOutput("tab10_verdict"),
-
     div(class = "chapter-transition",
       p("To był ostatni zbiór danych. Zobaczmy podsumowanie."),
       actionButton("ch10_next", "Dalej: 12. Ściąga \u2192",
@@ -173,7 +171,4 @@ ch11_server <- function(input, output, session) {
     )
   })
 
-  output$tab10_verdict <- renderUI({
-    render_verdict(c("yes", "yes", "yes", "yes", "warn", "no", "no", "yes", "yes"), "bad")
-  })
 }

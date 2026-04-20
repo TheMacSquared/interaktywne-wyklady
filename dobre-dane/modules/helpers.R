@@ -309,52 +309,6 @@ cat_patients_agg <- cat_patients_visits |>
 # FUNKCJE POMOCNICZE
 # ============================================================================
 
-# Render verdict checklist
-render_verdict <- function(criteria, type = "good") {
-  bg_color <- switch(type, good = "#eafaf1", mixed = "#fef9e7", bad = "#fdedec")
-  border_color <- switch(type, good = col_good, mixed = col_mixed, bad = col_bad)
-  icon_yes <- "\u2705"
-  icon_no <- "\u274c"
-  icon_warn <- "\u26a0\ufe0f"
-
-  critical_criteria <- c(
-    "Dane odpowiadaja hipotezie badawczej",
-    "Wystarczajaca liczba obserwacji (n \u2265 20-30 na grupe)",
-    "Mix typow zmiennych (ilosciowe + jakosciowe)",
-    "Zmiennosc w danych",
-    "Struktura danych pasuje do planowanych analiz",
-    "Niezaleznosc obserwacji"
-  )
-
-  fixable_criteria <- c(
-    "Malo brakow danych (< 5%)",
-    "Jednoznaczne definicje zmiennych",
-    "Brak bledow i podejrzanych wartosci"
-  )
-
-  render_items <- function(criteria_labels, statuses, start_idx) {
-    sapply(seq_along(criteria_labels), function(i) {
-      status <- statuses[start_idx + i - 1]
-      icon <- if (status == "yes") icon_yes else if (status == "warn") icon_warn else icon_no
-      paste0("<div style='padding: 3px 0;'>", icon, " ", criteria_labels[i], "</div>")
-    })
-  }
-
-  critical_items <- render_items(critical_criteria, criteria, 1)
-  fixable_items <- render_items(fixable_criteria, criteria, 7)
-
-  HTML(paste0(
-    "<div style='background: ", bg_color, "; border-left: 4px solid ", border_color,
-    "; padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;'>",
-    "<strong>Werdykt:</strong>",
-    "<div style='margin-top: 8px; font-size: 13px; color: #7f8c8d; font-weight: bold;'>KRYTYCZNE (wymagaja nowego zbioru):</div>",
-    paste(critical_items, collapse = ""),
-    "<div style='margin-top: 8px; font-size: 13px; color: #7f8c8d; font-weight: bold;'>NAPRAWIALNE (wymagaja pracy, ale sie da):</div>",
-    paste(fixable_items, collapse = ""),
-    "</div>"
-  ))
-}
-
 # Safe as.numeric with error counting
 safe_numeric <- function(x) {
   suppressWarnings(as.numeric(x))

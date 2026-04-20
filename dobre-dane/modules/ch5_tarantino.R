@@ -64,8 +64,6 @@ ch5_ui <- tabPanel("5. Tarantino",
       tags$strong("Problem 3:"), " Brak zmiennych ilościowych do korelacji/regresji."
     ),
 
-    uiOutput("tab4_verdict"),
-
     div(class = "chapter-transition",
       p("Czasem dane mają odpowiednią wielkość, ale inny problem..."),
       actionButton("ch4_next", "Dalej: 6. Ankieta firmowa \u2192",
@@ -187,9 +185,4 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  output$tab4_verdict <- renderUI({
-    # hipoteza, n, mix, zmiennosc, struktura, niezaleznosc | braki, definicje, bledy
-    # Tarantino: dane nie odpowiadaja hipotezie, n=7 po agregacji, brak mix, zla struktura, brak niezaleznosci
-    render_verdict(c("no", "no", "no", "yes", "no", "no", "yes", "yes", "yes"), "bad")
-  })
 }

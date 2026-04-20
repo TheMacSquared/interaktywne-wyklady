@@ -46,8 +46,6 @@ ch4_ui <- tabPanel("4. Pingwiny",
       "Możliwe analizy: test t, ANOVA, korelacja, regresja, chi-kwadrat."
     ),
 
-    uiOutput("tab3_verdict"),
-
     div(class = "chapter-transition",
       p("Następny zbiór wygląda ciekawie... ale czy nadaje się do analizy?"),
       actionButton("ch3_next", "Dalej: 5. Filmy Tarantino \u2192",
@@ -99,8 +97,4 @@ ch4_server <- function(input, output, session) {
       theme(legend.position = "none")
   })
 
-  output$tab3_verdict <- renderUI({
-    # hipoteza, n, mix, zmiennosc, struktura, niezaleznosc | braki, definicje, bledy
-    render_verdict(c("yes", "yes", "yes", "yes", "yes", "yes", "warn", "yes", "yes"), "good")
-  })
 }

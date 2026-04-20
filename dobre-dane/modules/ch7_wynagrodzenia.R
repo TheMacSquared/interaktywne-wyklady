@@ -33,13 +33,11 @@ ch7_ui <- tabPanel("7. Wynagrodzenia",
       tags$strong("Bardzo dobry zbiór!"),
       " n = 3000, kompletne dane, bogaty mix zmiennych ilościowych i jakościowych.",
       tags$br(),
-      "Możliwe analizy: test t, ANOVA, korelacja, regresja wieloraka, chi-kwadrat.",
+      "Można zapytać: czy wykształcenie przekłada się na zarobki? Czy zawód różnicuje wynagrodzenie?",
+      " Czy starsi mężczyźni zarabiają więcej niż młodsi?",
       tags$br(),
-      tags$em("Ale uwaga: dane tylko dla mężczyzn z jednego regionu USA - ",
-              "ograniczona generalizowalność.")
+      tags$em("Uwaga: dane tylko dla mężczyzn z jednego regionu USA — wyniki nie generalizują się na inne grupy.")
     ),
-
-    uiOutput("tab6_verdict"),
 
     div(class = "chapter-transition",
       p("Następny zbiór to przykład złej ankiety."),
@@ -74,8 +72,4 @@ ch7_server <- function(input, output, session) {
     }
   })
 
-  output$tab6_verdict <- renderUI({
-    # hipoteza, n, mix, zmiennosc, struktura, niezaleznosc | braki, definicje, bledy
-    render_verdict(rep("yes", 9), "good")
-  })
 }

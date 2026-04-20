@@ -111,8 +111,6 @@ ch6_ui <- tabPanel("6. Hotel",
       Nie ma zmiennej, z którą można sensownie powiązać cenę za noc."
     ),
 
-    uiOutput("tab5_verdict"),
-
     div(class = "chapter-transition",
       p("Pora na duży, dobry zbiór danych."),
       actionButton("ch5_next", "Dalej: 7. Wynagrodzenia \u2192",
@@ -241,7 +239,4 @@ ch6_server <- function(input, output, session) {
       theme_minimal(base_size = 14)
   })
 
-  output$tab5_verdict <- renderUI({
-    render_verdict(c("yes", "yes", "yes", "no", "yes", "yes", "yes", "yes", "yes"), "bad")
-  })
 }

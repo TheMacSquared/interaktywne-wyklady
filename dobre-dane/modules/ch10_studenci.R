@@ -36,8 +36,6 @@ ch10_ui <- tabPanel("10. Studenci",
       tags$em("Porównaj z Trudną ankietą (tab 7) - te same tematy, ale świat różnic w jakości!")
     ),
 
-    uiOutput("tab9_verdict"),
-
     div(class = "chapter-transition",
       p("Ostatni zbiór - wygląda dobrze, ale ma ukryty problem..."),
       actionButton("ch9_next", "Dalej: 11. Jakość powietrza \u2192",
@@ -53,8 +51,4 @@ ch10_server <- function(input, output, session) {
     datatable(round_df(survey_data), options = list(pageLength = 8, scrollX = TRUE), rownames = FALSE)
   })
 
-  output$tab9_verdict <- renderUI({
-    # hipoteza, n, mix, zmiennosc, struktura, niezaleznosc | braki, definicje, bledy
-    render_verdict(rep("yes", 9), "good")
-  })
 }

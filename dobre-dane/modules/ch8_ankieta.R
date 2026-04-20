@@ -59,8 +59,6 @@ ch8_ui <- tabPanel("8. Formularz",
       "R nie wie, co zrobić z 'trochę' albo 'elastycznie' jako wartością liczbową."
     ),
 
-    uiOutput("tab7_verdict"),
-
     div(class = "section-title", "Drugi przykład: dane do uratowania"),
 
     div(class = "narrative",
@@ -177,9 +175,7 @@ ch8_server <- function(input, output, session) {
     }
   })
 
-  output$tab7_verdict <- renderUI({
-    render_verdict(c("yes", "yes", "no", "yes", "no", "yes", "yes", "no", "yes"), "bad")
-  })
+
 
   tab7b_view <- reactiveVal("raw")
   observeEvent(input$tab7b_raw, {

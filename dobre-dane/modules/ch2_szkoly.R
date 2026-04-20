@@ -49,7 +49,15 @@ ch2_ui <- tabPanel("2. Szkoły",
 
     div(class = "section-title", "Werdykt"),
 
-    uiOutput("tab1_verdict"),
+    div(class = "callout-success",
+      tags$strong("Bardzo dobry zbiór!"),
+      " 420 okręgów szkolnych — wystarczy do każdej analizy.",
+      tags$br(),
+      "Można zapytać: czy wyższe wydatki na ucznia przekładają się na lepsze wyniki testów?",
+      " Czy ubóstwo w okręgu koreluje z wynikami? Czy są różnice między okręgami?",
+      tags$br(),
+      tags$em("Uwaga: to dane dla okręgów szkolnych USA — wyniki nie dotyczą Polski.")
+    ),
 
     div(class = "chapter-transition",
       p("To był wzorcowy zbiór. Następny będzie... inny."),
@@ -90,8 +98,4 @@ ch2_server <- function(input, output, session) {
       theme_minimal(base_size = 14)
   })
 
-  output$tab1_verdict <- renderUI({
-    # hipoteza, n, mix, zmiennosc, struktura, niezaleznosc | braki, definicje, bledy
-    render_verdict(rep("yes", 9), "good")
-  })
 }

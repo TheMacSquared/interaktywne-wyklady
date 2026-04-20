@@ -62,8 +62,6 @@ ch9_ui <- tabPanel("9. Laboratorium",
       tags$strong("Klucz:"), " Rozróżnij błąd danych (usuń) od prawdziwego outliera (przemyśl zachowanie)."
     ),
 
-    uiOutput("tab8_verdict"),
-
     div(class = "chapter-transition",
       p("Następny zbiór to przykład dobrze zaprojektowanej ankiety."),
       actionButton("ch8_next", "Dalej: 10. Ankieta studencka \u2192",
@@ -195,7 +193,4 @@ ch9_server <- function(input, output, session) {
     })
   })
 
-  output$tab8_verdict <- renderUI({
-    render_verdict(c("yes", "yes", "yes", "yes", "yes", "yes", "yes", "yes", "no"), "mixed")
-  })
 }

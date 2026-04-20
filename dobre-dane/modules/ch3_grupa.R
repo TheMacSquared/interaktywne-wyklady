@@ -42,8 +42,6 @@ ch3_ui <- tabPanel("3. Grupa",
       "Regresja z k predyktorami potrzebuje n > 10k + 50."
     ),
 
-    uiOutput("tab2_verdict"),
-
     div(class = "chapter-transition",
       p("Zobaczmy teraz zbiór, który radzi sobie lepiej."),
       actionButton("ch2_next", "Dalej: 4. Pingwiny \u2192",
@@ -117,8 +115,4 @@ ch3_server <- function(input, output, session) {
       theme_minimal(base_size = 14)
   })
 
-  output$tab2_verdict <- renderUI({
-    # hipoteza, n, mix, zmiennosc, struktura, niezaleznosc | braki, definicje, bledy
-    render_verdict(c("yes", "no", "yes", "yes", "yes", "yes", "yes", "yes", "yes"), "bad")
-  })
 }
