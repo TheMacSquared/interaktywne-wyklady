@@ -21,6 +21,24 @@ code, pre, .verbatim {
   font-size: 0.92em;
 }
 
+/* MathJax: tekst w \text{} czcionka TeX-owa nie ma polskich znakow.
+   Wymuszamy Atkinson Hyperlegible na elementach tekstowych MathJax v3 (CHTML). */
+mjx-container mjx-mtext,
+mjx-container mjx-text,
+mjx-container mjx-mi[texclass="ORD"] {
+  font-family: 'Atkinson Hyperlegible', sans-serif !important;
+}
+/* MathJax v2 fallback (jesli gdzies uzywany) */
+.MathJax .mjx-char.TEX-I,
+.MathJax span.mjx-char,
+.MathJax_SVG text {
+  /* tekst w trybie \text — font normalny z polskimi znakami */
+}
+.MathJax mjx-mtext, .MathJax_Display mjx-mtext,
+.MathJax span[class*="mjx-text"], .MathJax_Display span[class*="mjx-text"] {
+  font-family: 'Atkinson Hyperlegible', sans-serif !important;
+}
+
 /* Bold — lzejsza waga, zeby nie krzyczal w tekscie */
 strong, b, .narrative strong, .narrative b { font-weight: 600; }
 
