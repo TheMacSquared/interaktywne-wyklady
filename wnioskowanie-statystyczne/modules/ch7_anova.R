@@ -95,15 +95,16 @@ ch7_ui <- tabPanel("8. ANOVA",
     ),
 
     # ========================================================================
-    # WIDGET 2: Post-hoc Tukey
+    # WIDGET 2: Post-hoc Games-Howell
     # ========================================================================
-    div(class = "section-title", "Testy post-hoc (Tukey HSD)"),
+    div(class = "section-title", "Testy post-hoc (Games-Howell)"),
 
     div(class = "narrative",
       p("ANOVA m\u00f3wi ", tags$em("\"grupy r\u00f3\u017cni\u0105 si\u0119\""),
         ", ale nie m\u00f3wi ", tags$em("\"kt\u00f3re\""), "."),
-      p("Do tego s\u0142u\u017c\u0105 testy post-hoc. Tukey HSD por\u00f3wnuje ka\u017cd\u0105 par\u0119 grup
-        z korekt\u0105 na wielokrotne por\u00f3wnania.")
+      p("Do tego s\u0142u\u017c\u0105 testy post-hoc. ", tags$b("Games-Howell"),
+        " por\u00f3wnuje ka\u017cd\u0105 par\u0119 grup z korekt\u0105 na wielokrotne por\u00f3wnania.
+         Nie wymaga r\u00f3wnych wariancji w grupach \u2014 jest bezpiecznym domy\u015blnym wyborem.")
     ),
 
     div(class = "callout-warning",
@@ -119,16 +120,16 @@ ch7_ui <- tabPanel("8. ANOVA",
           tags$tr(tags$td("5"), tags$td("10"), tags$td("~40%"))
         )
       ),
-      p("Tukey/Dunn trzymaj\u0105 to ryzyko na 5% dla ", tags$b("ca\u0142ej rodziny"),
-        " por\u00f3wna\u0144 \u2014 to ich zadanie.")
+      p("Games-Howell trzyma to ryzyko na 5% dla ", tags$b("ca\u0142ej rodziny"),
+        " por\u00f3wna\u0144 \u2014 to jego zadanie.")
     ),
 
     div(class = "widget-block",
-      h4("Tukey HSD"),
+      h4("Games-Howell"),
       fluidRow(
         column(4,
           helpText("U\u017cywa danych z ANOVA powy\u017cej. Najpierw uruchom ANOVA!"),
-          actionButton("ch7_run_tukey", "Testuj Tukeyem",
+          actionButton("ch7_run_tukey", "Testuj Games-Howellem",
                        class = "btn-warning", width = "100%")
         ),
         column(8,
@@ -144,56 +145,10 @@ ch7_ui <- tabPanel("8. ANOVA",
         Bez tego korekcja na wielokrotne por\u00f3wnania jest niepotrzebna."
     ),
 
-    # ========================================================================
-    # WIDGET 3: Kruskal-Wallis
-    # ========================================================================
-    div(class = "section-title", "Kruskal-Wallis (nieparametryczny)"),
-
-    div(class = "narrative",
-      p("Odpowiednik nieparametryczny ANOVA \u2014 test ",
-        tags$b("Kruskala-Wallisa"), "."),
-      p("Dzia\u0142a na rangach, nie wymaga normalno\u015bci.
-        Post-hoc: test Dunna z korekt\u0105.")
-    ),
-
     div(class = "callout-info",
-      tags$strong("Kiedy Tukey, a kiedy Dunn?"),
-      p("Do ka\u017cdego g\u0142\u00f3wnego testu pasuje ", tags$em("sw\u00f3j"), " post-hoc:"),
-      tags$ul(
-        tags$li(tags$strong("Po ANOVA \u2192 Tukey HSD"),
-                " (parametryczny, por\u00f3wnuje \u015brednie, r\u00f3wnoliczne grupy)."),
-        tags$li(tags$strong("Po Kruskalu-Wallisie \u2192 Test Dunna"),
-                " (nieparametryczny, por\u00f3wnuje rangi, odporny na ma\u0142e pr\u00f3bki i sko\u015bno\u015b\u0107).")
-      ),
-      p("Prosta regu\u0142a: ", tags$em("\u201eTym samym narz\u0119dziem, kt\u00f3rym bada\u0142e\u015b ca\u0142o\u015b\u0107, sprawd\u017a pary.\u201d"))
-    ),
-
-    div(class = "widget-block",
-      h4("Kruskal-Wallis + Dunn"),
-      fluidRow(
-        column(4,
-          helpText("U\u017cywa tych samych danych."),
-          actionButton("ch7_run_kw", "Testuj Kruskalem-Wallisem",
-                       class = "btn-primary", width = "100%")
-        ),
-        column(8,
-          uiOutput("ch7_kw_result"),
-          uiOutput("ch7_dunn_result")
-        )
-      )
-    ),
-
-    div(class = "callout-info",
-      tags$strong("Podsumowanie:"),
-      tags$table(class = "table table-bordered", style = "font-size: 14px;",
-        tags$thead(
-          tags$tr(tags$th(""), tags$th("Parametryczny"), tags$th("Nieparametryczny"))
-        ),
-        tags$tbody(
-          tags$tr(tags$td("G\u0142\u00f3wny test"), tags$td("ANOVA"), tags$td("Kruskal-Wallis")),
-          tags$tr(tags$td("Post-hoc"), tags$td("Tukey HSD"), tags$td("Test Dunna"))
-        )
-      )
+      tags$strong("W jamovi: "),
+      "w panelu One-Way ANOVA sekcja ", tags$em("Post-Hoc Tests"),
+      " \u2192 zaznacz ", tags$b("Games-Howell"), "."
     ),
 
     # Chapter transition
@@ -315,7 +270,7 @@ ch7_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 2: Tukey post-hoc ---
+  # --- Widget 2: Games-Howell post-hoc ---
   output$ch7_tukey_plot <- renderPlot({
     req(input$ch7_run_tukey)
     data <- isolate(ch7_data())
@@ -326,20 +281,20 @@ ch7_server <- function(input, output, session) {
     req(var %in% names(data))
     formula <- as.formula(paste(var, "~", cfg$group_col))
 
-    tukey <- rstatix::tukey_hsd(data, formula)
-    tukey_df <- as.data.frame(tukey)
+    gh <- rstatix::games_howell_test(data, formula)
+    gh_df <- as.data.frame(gh)
 
-    tukey_df$comparison <- paste0(tukey_df$group1, "\n\u2014 ", tukey_df$group2)
-    tukey_df$significant <- tukey_df$p.adj < 0.05
+    gh_df$comparison <- paste0(gh_df$group1, "\n\u2014 ", gh_df$group2)
+    gh_df$significant <- gh_df$p.adj < 0.05
 
-    ggplot(tukey_df, aes(x = estimate, y = comparison, color = significant)) +
+    ggplot(gh_df, aes(x = estimate, y = comparison, color = significant)) +
       geom_point(size = 3) +
       geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
       geom_vline(xintercept = 0, linetype = "dashed", color = col_dark) +
       scale_color_manual(values = c("TRUE" = col_reject, "FALSE" = col_accept),
                          labels = c("TRUE" = "p < 0.05", "FALSE" = "p \u2265 0.05"),
                          name = NULL) +
-      labs(title = "Tukey HSD: r\u00f3\u017cnice parowe z 95% CI",
+      labs(title = "Games-Howell: r\u00f3\u017cnice parowe z 95% CI",
            x = "R\u00f3\u017cnica \u015brednich", y = "Por\u00f3wnanie") +
       theme_educational() +
       theme(legend.position = "top")
@@ -356,16 +311,16 @@ ch7_server <- function(input, output, session) {
     var <- isolate(input$ch7_var)
     req(var %in% names(data))
     formula <- as.formula(paste(var, "~", cfg$group_col))
-    tukey <- rstatix::tukey_hsd(data, formula)
-    tukey_df <- as.data.frame(tukey)
+    gh <- rstatix::games_howell_test(data, formula)
+    gh_df <- as.data.frame(gh)
 
-    sig_pairs <- tukey_df[tukey_df$p.adj < 0.05, ]
+    sig_pairs <- gh_df[gh_df$p.adj < 0.05, ]
     n_sig <- nrow(sig_pairs)
 
     if (n_sig == 0) {
       div(class = "callout-info",
         p(tags$strong("\u017badna para nie r\u00f3\u017cni si\u0119 istotnie"),
-          " (po korekcji Tukeya)."))
+          " (po korekcji Games-Howell)."))
     } else {
       div(class = "callout-success",
         p(tags$strong(paste0(n_sig, " istotna(e) r\u00f3\u017cnica(e):"))),
@@ -374,69 +329,6 @@ ch7_server <- function(input, output, session) {
             tags$li(paste0(sig_pairs$group1[i], " \u2014 ", sig_pairs$group2[i],
                            ": \u0394 = ", round(sig_pairs$estimate[i], 2),
                            ", p.adj = ", format.pval(sig_pairs$p.adj[i], digits = 3)))
-          })
-        )
-      )
-    }
-  })
-
-  # --- Widget 3: Kruskal-Wallis ---
-  output$ch7_kw_result <- renderUI({
-    req(input$ch7_run_kw)
-    data <- isolate(ch7_data())
-    if (is.null(data)) {
-      return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
-    }
-
-    cfg <- ch7_scenario_cfg(isolate(input$ch7_scenario))
-    var <- isolate(input$ch7_var)
-    req(var %in% names(data))
-    formula <- as.formula(paste(var, "~", cfg$group_col))
-
-    result <- rstatix::kruskal_test(data, formula)
-    tidy_res <- as.data.frame(result)
-
-    res <- format_test_result(tidy_res$p)
-
-    div(class = "callout-info",
-      p(tags$strong("Wynik testu Kruskala-Wallisa:")),
-      p(paste0("H(", tidy_res$df, ") = ", round(tidy_res$statistic, 3))),
-      p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
-      p(style = paste0("color:", res$color, "; font-weight: bold;"),
-        res$decision)
-    )
-  })
-
-  output$ch7_dunn_result <- renderUI({
-    req(input$ch7_run_kw)
-    data <- isolate(ch7_data())
-    if (is.null(data)) return(NULL)
-
-    cfg <- ch7_scenario_cfg(isolate(input$ch7_scenario))
-    var <- isolate(input$ch7_var)
-    req(var %in% names(data))
-    formula <- as.formula(paste(var, "~", cfg$group_col))
-
-    result <- rstatix::kruskal_test(data, formula)
-    if (as.data.frame(result)$p >= 0.05) {
-      return(div(class = "callout-info",
-        p("Test nieistotny \u2014 post-hoc niepotrzebny.")))
-    }
-
-    dunn <- rstatix::dunn_test(data, formula, p.adjust.method = "holm")
-    dunn_df <- as.data.frame(dunn)
-    sig <- dunn_df[dunn_df$p.adj < 0.05, ]
-
-    if (nrow(sig) == 0) {
-      div(class = "callout-info",
-        p("Test Dunna: \u017cadna para nie jest istotna po korekcji Holma."))
-    } else {
-      div(class = "callout-success",
-        p(tags$strong("Test Dunna (post-hoc):")),
-        tags$ul(
-          lapply(1:nrow(sig), function(i) {
-            tags$li(paste0(sig$group1[i], " \u2014 ", sig$group2[i],
-                           ": p.adj = ", format.pval(sig$p.adj[i], digits = 3)))
           })
         )
       )

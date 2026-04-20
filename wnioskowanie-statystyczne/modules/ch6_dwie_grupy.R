@@ -83,66 +83,10 @@ ch6_ui <- tabPanel("7. Ilo\u015bciowa i jako\u015bciowa",
       )
     ),
 
-    # ========================================================================
-    # WIDGET 3: Mann-Whitney
-    # ========================================================================
-    div(class = "section-title", "Mann-Whitney U (nieparametryczny)"),
-
-    div(class = "narrative",
-      p("Odpowiednik nieparametryczny testu t niezale\u017cnego.
-        Testuje, czy rozk\u0142ady w dw\u00f3ch grupach si\u0119 r\u00f3\u017cni\u0105 (ranga)."),
-      p("U\u017cywaj, gdy dane nie s\u0105 normalne lub s\u0105 porz\u0105dkowe.")
-    ),
-
-    div(class = "widget-block",
-      h4("Mann-Whitney U"),
-      fluidRow(
-        column(4,
-          helpText("U\u017cywa tych samych danych co test t niezale\u017cny powy\u017cej."),
-          actionButton("ch6_run_mw", "Testuj Mann-Whitneyem",
-                       class = "btn-primary", width = "100%")
-        ),
-        column(8,
-          uiOutput("ch6_mw_result")
-        )
-      )
-    ),
-
-    # ========================================================================
-    # WIDGET 4: Wilcoxon par
-    # ========================================================================
-    div(class = "section-title", "Wilcoxon par znakowych (nieparametryczny parowy)"),
-
-    div(class = "narrative",
-      p("Nieparametryczny odpowiednik testu t parowego.
-        Dzia\u0142a na rangach r\u00f3\u017cnic.")
-    ),
-
-    div(class = "widget-block",
-      h4("Wilcoxon par znakowych"),
-      fluidRow(
-        column(4,
-          helpText("U\u017cywa tych samych danych parowych co test t parowy powy\u017cej."),
-          actionButton("ch6_run_wilcox_paired", "Testuj Wilcoxonem",
-                       class = "btn-primary", width = "100%")
-        ),
-        column(8,
-          uiOutput("ch6_wilcox_paired_result")
-        )
-      )
-    ),
-
     div(class = "callout-info",
-      tags$strong("Podsumowanie:"),
-      tags$table(class = "table table-bordered", style = "font-size: 14px;",
-        tags$thead(
-          tags$tr(tags$th("Typ"), tags$th("Parametryczny"), tags$th("Nieparametryczny"))
-        ),
-        tags$tbody(
-          tags$tr(tags$td("Niezale\u017cne"), tags$td("Test t"), tags$td("Mann-Whitney U")),
-          tags$tr(tags$td("Parowe"), tags$td("Test t parowy"), tags$td("Wilcoxon par znakowych"))
-        )
-      )
+      tags$strong("Uwaga: "),
+      "gdy za\u0142o\u017cenia testu t nie s\u0105 spe\u0142nione (skrajne odstaj\u0105ce, mocno sko\u015bny rozk\u0142ad,
+       ma\u0142e n), stosuje si\u0119 testy nieparametryczne \u2014 om\u00f3wimy je w osobnym wyk\u0142adzie."
     ),
 
     # Chapter transition
@@ -305,56 +249,4 @@ ch6_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 3: Mann-Whitney ---
-  output$ch6_mw_result <- renderUI({
-    req(input$ch6_run_mw)
-    data <- isolate(ch6_ind_data())
-    if (is.null(data)) {
-      return(div(class = "callout-warning",
-        "Najpierw wygeneruj dane testem t niezale\u017cnym."))
-    }
-
-    var <- isolate(input$ch6_ind_var)
-    formula <- as.formula(paste(var, "~ plec"))
-
-    result <- rstatix::wilcox_test(data, formula)
-    tidy_res <- as.data.frame(result)
-    res <- format_test_result(tidy_res$p)
-
-    div(class = "callout-info",
-      p(tags$strong("Wynik testu Mann-Whitney U:")),
-      p(paste0("U = ", round(tidy_res$statistic, 1))),
-      p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
-      p(style = paste0("color:", res$color, "; font-weight: bold;"),
-        res$decision)
-    )
-  })
-
-  # --- Widget 4: Wilcoxon parowy ---
-  output$ch6_wilcox_paired_result <- renderUI({
-    req(input$ch6_run_wilcox_paired)
-    data <- isolate(ch6_paired_data())
-    if (is.null(data)) {
-      return(div(class = "callout-warning",
-        "Najpierw wygeneruj dane testem t parowym."))
-    }
-
-    long <- data %>%
-      pivot_longer(cols = c(wynik_przed, wynik_po),
-                   names_to = "moment", values_to = "wynik")
-    long$moment <- factor(long$moment,
-                          levels = c("wynik_przed", "wynik_po"))
-
-    result <- rstatix::wilcox_test(long, wynik ~ moment, paired = TRUE)
-    tidy_res <- as.data.frame(result)
-    res <- format_test_result(tidy_res$p)
-
-    div(class = "callout-info",
-      p(tags$strong("Wynik testu Wilcoxona par znakowych:")),
-      p(paste0("V = ", round(tidy_res$statistic, 1))),
-      p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
-      p(style = paste0("color:", res$color, "; font-weight: bold;"),
-        res$decision)
-    )
-  })
 }

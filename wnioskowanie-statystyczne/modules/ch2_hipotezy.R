@@ -275,7 +275,7 @@ ch2h_server <- function(input, output, session) {
       h0 = "\\(H_0: \\mu_1 = \\mu_2 = \\mu_3\\)",
       h1 = "\\(H_a:\\) co najmniej jedna para \u015brednich si\u0119 r\u00f3\u017cni",
       h1_alt = "",
-      test = "ANOVA jednoczynnikowa (lub Kruskal-Wallis)",
+      test = "ANOVA jednoczynnikowa",
       tip = "Wi\u0119cej ni\u017c 2 grupy \u2192 ANOVA. NIE wykonuj wielu test\u00f3w t parami \u2014 to pompuje b\u0142\u0105d I rodzaju!"
     ),
     ex8 = list(
