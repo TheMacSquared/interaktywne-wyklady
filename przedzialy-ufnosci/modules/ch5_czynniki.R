@@ -105,10 +105,17 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
       fluidRow(
         column(4,
           selectInput("ch5_cmp_data", "Dane:",
-            choices = c(
-              "Wzrost student\u00f3w (n=30)" = "height",
-              "Czas dojazdu (n=50)" = "commute",
-              "Oceny z egzaminu (n=40)" = "grades"
+            choices = list(
+              "Przyk\u0142ady og\u00f3lne" = c(
+                "Wzrost student\u00f3w (n=30)" = "height",
+                "Czas dojazdu (n=50)" = "commute",
+                "Oceny z egzaminu (n=40)" = "grades"
+              ),
+              "Dane kierunkowe" = c(
+                "IB: wska\u017anik wypadk\u00f3w (n=320)" = "ib_wypadki",
+                "ROL: plon pszenicy (n=280)" = "rol_plon",
+                "TZ: zawarto\u015b\u0107 bia\u0142ka (n=350)" = "tz_bialko"
+              )
             ),
             selected = "height"
           ),
@@ -391,9 +398,12 @@ ch5_server <- function(input, output, session) {
   observeEvent(input$ch5_cmp_calc, {
     set.seed(42)
     samp <- switch(input$ch5_cmp_data,
-      "height"  = rnorm(30, mean = 170, sd = 10),
-      "commute" = rgamma(50, shape = 4, scale = 7.5),
-      "grades"  = pmin(pmax(rnorm(40, mean = 3.5, sd = 0.7), 2), 5)
+      "height"     = rnorm(30, mean = 170, sd = 10),
+      "commute"    = rgamma(50, shape = 4, scale = 7.5),
+      "grades"     = pmin(pmax(rnorm(40, mean = 3.5, sd = 0.7), 2), 5),
+      "ib_wypadki" = read.csv("dane/bhp_zaklady.csv")$wskaznik_wypadkow,
+      "rol_plon"   = read.csv("dane/rolnictwo_pola.csv")$plon_pszenicy,
+      "tz_bialko"  = read.csv("dane/zywnosc_partie.csv")$zawartosc_bialka
     )
     xbar <- mean(samp)
     s <- sd(samp)
