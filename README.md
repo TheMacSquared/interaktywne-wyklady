@@ -17,6 +17,9 @@ install.packages(c("rstatix", "broom", "tidyr", "knitr", "lmtest", "sandwich"))
 
 # Dodatkowe (dla dobre-dane)
 install.packages(c("DT", "bslib", "AER", "palmerpenguins", "ISLR", "fivethirtyeight"))
+
+# Dodatkowe (dla metody-bayesowskie)
+install.packages(c("BayesFactor", "rstanarm"))
 ```
 
 ## ▶️ Uruchamianie
@@ -32,6 +35,7 @@ shiny::runApp("zalozenia-testow")
 shiny::runApp("case-studies")
 shiny::runApp("dobre-dane")
 shiny::runApp("symulacje-statystyczne")
+shiny::runApp("metody-bayesowskie")
 ```
 
 ## 📚 Aplikacje
@@ -47,6 +51,7 @@ shiny::runApp("symulacje-statystyczne")
 | [case-studies](case-studies/) | Case studies | Kompletne analizy od A do Z. Każdy rozdział = jeden zbiór danych, hipotezy, analizy, wnioski. Na razie: CASchools |
 | [dobre-dane](dobre-dane/) | Jakość danych | 11 zbiorów — kiedy dane nadają się do klasycznej statystyki? (CASchools, pingwiny, Tarantino, Wage, ankieta firmowa, mieszkania, studenci, powietrze, ankieta SU) + ściąga |
 | [symulacje-statystyczne](symulacje-statystyczne/) | Symulacje statystyczne | 10 rozdziałów: idea resamplingowa, bootstrap CI, bootstrap jednej próby, testy permutacyjne, jackknife, cross-validation, Monte Carlo (moc + H₀), kiedy stosować?, ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
+| [metody-bayesowskie](metody-bayesowskie/) | Metody bayesowskie | 12 rozdziałów z **konsekwentnym dwukolumnowym porównaniem freq vs Bayes**: intuicja (prior→posterior), BF vs p, HDI vs CI, jedna próba, dwie grupy, ANOVA, tabele krzyżowe, korelacja, regresja liniowa i logistyczna (rstanarm), ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
 
 ## 📁 Struktura projektu
 
@@ -161,6 +166,22 @@ interaktywne-wyklady/
 │       ├── ch8_kiedy.R             # 8. Kiedy stosować?
 │       ├── ch9_sciaga.R            # 9. Ściąga
 │       └── ch10_cwiczenia.R        # 10. Ćwiczenia (dropdown: Rolnictwo/TŻ/BHP/Edukacja)
+├── metody-bayesowskie/             # Metody bayesowskie (porównanie freq vs Bayes)
+│   ├── app.R                       # Główny plik: kolory (freq czerwony/bayes fioletowy), CSS/JS, nawigacja
+│   └── modules/
+│       ├── helpers.R               # Beta-binomial, HDI, wrappery BayesFactor i rstanarm, wizualizacje
+│       ├── ch1_intuicja.R          # 1. Prior → Likelihood → Posterior (beta-binomial, moneta)
+│       ├── ch2_bf_vs_p.R           # 2. BF vs p-value (paradoks Lindleya, skala Jeffreysa)
+│       ├── ch3_hdi_vs_ci.R         # 3. HDI vs CI (ten sam przedział, różna interpretacja)
+│       ├── ch4_jedna_proba.R       # 4. Jedna próba: t.test vs ttestBF + posterior μ
+│       ├── ch5_dwie_grupy.R        # 5. Dwie grupy: Welch vs ttestBF + posterior różnicy
+│       ├── ch6_anova.R             # 6. ANOVA: F-test vs anovaBF
+│       ├── ch7_tabele.R            # 7. Tabele krzyżowe: χ² vs contingencyTableBF + posterior OR
+│       ├── ch8_korelacja.R         # 8. Korelacja: cor.test vs correlationBF + posterior ρ
+│       ├── ch9_regresja_lin.R      # 9. Regresja liniowa: lm vs stan_glm
+│       ├── ch10_regresja_log.R     # 10. Regresja logistyczna: glm(binom) vs stan_glm(binom) + OR
+│       ├── ch11_sciaga.R           # 11. Ściąga (tabela paradygmat↔paradygmat, kiedy który)
+│       └── ch12_cwiczenia.R        # 12. Ćwiczenia (dropdown: Rolnictwo/TŻ/BHP/Edukacja)
 ├── R/                              # Współdzielone zasoby (shared.R, shared_styles.css, shared_toc.js)
 ├── README.md                       # Ten plik
 └── CLAUDE.md                       # Instrukcje dla AI

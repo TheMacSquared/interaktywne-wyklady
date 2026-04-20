@@ -165,6 +165,21 @@ strong, b, .narrative strong, .narrative b { font-weight: 600; }
   #toc-overlay.toc-open { display: block; }
 }
 
+/* Paradigm panels (metody-bayesowskie) */
+.panel-frequentist {
+  background: #fdedec; border-left: 4px solid #e74c3c;
+  border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 10px 0;
+}
+.panel-bayesian {
+  background: #f5f0ff; border-left: 4px solid #9b59b6;
+  border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 10px 0;
+}
+.panel-frequentist h5, .panel-bayesian h5 {
+  margin-top: 0; margin-bottom: 10px; font-weight: bold;
+}
+.panel-frequentist h5 { color: #c0392b; }
+.panel-bayesian h5 { color: #8e44ad; }
+
 /* Quiz tiles */
 .quiz-tiles { display: grid; gap: 12px; margin: 15px 0; }
 .quiz-cols-2 { grid-template-columns: repeat(2, 1fr); }

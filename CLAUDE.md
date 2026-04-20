@@ -102,6 +102,13 @@ library(broom)      # Porządkowanie wyników modeli
 library(lmtest)     # Testy diagnostyczne regresji
 ```
 
+### Bayesowskie (dla metody-bayesowskie/)
+
+```r
+library(BayesFactor)  # ttestBF, anovaBF, correlationBF, contingencyTableBF
+library(rstanarm)     # stan_glm (regresja bayesowska, MCMC pod maską)
+```
+
 ### Mapowanie funkcji statystycznych
 
 | Zadanie | Używaj | Zamiast |
