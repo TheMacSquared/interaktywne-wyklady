@@ -13,14 +13,6 @@ library(lmtest)
 # KOLORY
 # ============================================================================
 
-col_primary    <- "#3498db"
-col_secondary  <- "#e74c3c"
-col_success    <- "#27ae60"
-col_warning    <- "#f39c12"
-col_dark       <- "#2c3e50"
-col_purple     <- "#9b59b6"
-col_teal       <- "#1abc9c"
-
 col_ok         <- "#27ae60"    # zielony - zalozenie spelnione
 col_fail       <- "#e74c3c"    # czerwony - zalozenie naruszone
 col_test       <- "#3498db"    # niebieski - dane/test

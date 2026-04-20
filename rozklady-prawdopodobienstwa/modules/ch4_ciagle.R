@@ -14,8 +14,7 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
 
     div(class = "narrative",
       p("Znasz ju\u017c histogramy ze statystyki opisowej. Teraz zobaczymy,
-        jak histogram ", tags$b("przechodzi w g\u0142adk\u0105 krzyw\u0105"),
-        " gdy zwi\u0119kszamy pr\u00f3b\u0119 i zw\u0119\u017camy przedzia\u0142y.
+        jak histogram przechodzi w g\u0142adk\u0105 krzyw\u0105 gdy zwi\u0119kszamy pr\u00f3b\u0119 i zw\u0119\u017camy przedzia\u0142y.
         Ta krzywa to ", tags$b("funkcja g\u0119sto\u015bci prawdopodobie\u0144stwa (PDF)"),
         " \u2014 ci\u0105g\u0142y odpowiednik PMF.")
     ),
@@ -182,7 +181,7 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     div(class = "callout-info",
       tags$strong("Zwi\u0105zek z rozk\u0142adem Poissona:"),
       " Je\u015bli liczba zdarze\u0144 w ustalonym czasie ma rozk\u0142ad Poissona z parametrem \u03bb,
-        to ", tags$b("czas mi\u0119dzy kolejnymi zdarzeniami"), " ma rozk\u0142ad wyk\u0142adniczy
+        to czas mi\u0119dzy kolejnymi zdarzeniami ma rozk\u0142ad wyk\u0142adniczy
         Exp(\u03bb). To dwie strony tego samego procesu \u2014 Poisson zlicza zdarzenia,
         wyk\u0142adniczy mierzy odst\u0119py mi\u0119dzy nimi."
     ),
@@ -202,10 +201,9 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     div(class = "section-title", "Rozk\u0142ad t-Studenta"),
 
     div(class = "narrative",
-      p("Rozk\u0142ad t-Studenta wygl\u0105da jak normalny, ale ma ",
-        tags$b("ci\u0119\u017csze ogony"), " \u2014 warto\u015bci ekstremalne s\u0105 bardziej
-        prawdopodobne. Jest kluczowy we ", tags$b("wnioskowaniu statystycznym"),
-        " (test t, przedzia\u0142y ufno\u015bci)."),
+      p("Rozk\u0142ad t-Studenta wygl\u0105da jak normalny, ale ma ci\u0119\u017csze ogony \u2014
+        warto\u015bci ekstremalne s\u0105 bardziej prawdopodobne. Jest kluczowy we
+        wnioskowaniu statystycznym (test t, przedzia\u0142y ufno\u015bci)."),
       p("Parametr ", tags$b("df"), " (stopnie swobody) kontroluje 'grubo\u015b\u0107' ogon\u00f3w.
         Im wi\u0119cej df, tym bli\u017cej do rozk\u0142adu normalnego.")
     ),
@@ -261,9 +259,8 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     div(class = "section-title", "Rozk\u0142ad chi-kwadrat (\u03c7\u00b2)"),
 
     div(class = "narrative",
-      p("Rozk\u0142ad chi-kwadrat powstaje jako ", tags$b("suma kwadrat\u00f3w"),
-        " niezale\u017cnych zmiennych N(0,1). Jest zawsze ",
-        tags$b("nieujemny i prawosko\u015bny"), "."),
+      p("Rozk\u0142ad chi-kwadrat powstaje jako suma kwadrat\u00f3w niezale\u017cnych zmiennych N(0,1).
+        Jest zawsze nieujemny i prawosko\u015bny."),
       p("Zastosowania: testy niezale\u017cno\u015bci, testy dopasowania,
         estymacja wariancji.")
     ),
@@ -316,10 +313,9 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
 
     div(class = "narrative",
       p("Je\u015bli ", tags$b("ln(X) ~ N(\u03bc, \u03c3)"), ", to X ma rozk\u0142ad log-normalny.
-        Zmienna jest zawsze ", tags$b("dodatnia i prawosko\u015bna"), "."),
-      p("Pojawia si\u0119 wsz\u0119dzie tam, gdzie dane rosn\u0105 ",
-        tags$b("multiplikatywnie"), ": dochody, ceny akcji,
-        czasy reakcji, st\u0119\u017cenia substancji.")
+        Zmienna jest zawsze dodatnia i prawosko\u015bna."),
+      p("Pojawia si\u0119 wsz\u0119dzie tam, gdzie dane rosn\u0105 multiplikatywnie:
+        dochody, ceny akcji, czasy reakcji, st\u0119\u017cenia substancji.")
     ),
 
     div(class = "widget-block",
@@ -352,14 +348,13 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
       tags$strong("Uwaga na \u015bredni\u0105!"),
       " W rozk\u0142adzie log-normalnym \u015brednia jest zawsze wi\u0119ksza od mediany.
         Mediana = e^\u03bc, \u015brednia = e^(\u03bc + \u03c3\u00b2/2).
-        Dlatego ", tags$b("mediana dochod\u00f3w"), " jest lepsz\u0105 miar\u0105
-        'typowego' dochodu ni\u017c \u015brednia."
+        Dlatego mediana dochod\u00f3w jest lepsz\u0105 miar\u0105 'typowego' dochodu ni\u017c \u015brednia."
     ),
 
     div(class = "callout-info",
       tags$strong("Jak rozpozna\u0107?"),
-      " Je\u015bli dane s\u0105 ", tags$b("zawsze dodatnie"), " i maj\u0105 ",
-      tags$b("d\u0142ugi prawy ogon"), " (kilka bardzo du\u017cych warto\u015bci) \u2014 my\u015bl log-normalny.
+      " Je\u015bli dane s\u0105 zawsze dodatnie i maj\u0105 d\u0142ugi prawy ogon
+        (kilka bardzo du\u017cych warto\u015bci) \u2014 my\u015bl log-normalny.
         Przyk\u0142ady: dochody, ceny nieruchomo\u015bci, czasy reakcji, st\u0119\u017cenia zanieczyszcze\u0144.
         Prosty test: je\u015bli po zlogarytmowaniu danych histogram wygl\u0105da normalnie \u2014 to log-normalny."
     ),
@@ -368,7 +363,7 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     div(class = "chapter-transition",
       p("Spo\u015br\u00f3d wszystkich rozk\u0142ad\u00f3w ci\u0105g\u0142ych, jeden g\u00f3ruje nad innymi.
         Pojawia si\u0119 wsz\u0119dzie w naturze i statystyce.
-        Czas pozna\u0107 ", tags$b("rozk\u0142ad normalny"), " dogł\u0119bnie."),
+        Czas pozna\u0107 rozk\u0142ad normalny dog\u0142\u0119bnie."),
       actionButton("ch4_next", "Dalej: 5. Rozk\u0142ad normalny \u2192",
                    class = "btn-primary btn-lg")
     ),

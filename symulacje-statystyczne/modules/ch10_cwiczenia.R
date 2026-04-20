@@ -20,7 +20,7 @@ ch10_ui <- tabPanel("10. \u0106wiczenia",
         tags$b("Narz\u0119dzie:"), " Jamovi (z pakietem bootstrap/permutacje)"),
       p("Trzy bloki zada\u0144 na kierunek: bootstrap CI, test permutacyjny
          i my\u015blenie krytyczne (kiedy/dlaczego). Ka\u017cde zadanie ma ",
-        tags$b("ukryte rozwi\u0105zanie"), ".")
+        "ukryte rozwi\u0105zanie.")
     ),
 
     div(class = "callout-info",

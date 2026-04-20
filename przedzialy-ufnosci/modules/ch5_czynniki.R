@@ -63,8 +63,8 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
     div(class = "section-title", "Planowanie wielko\u015bci pr\u00f3by"),
 
     div(class = "narrative",
-      p("Odwr\u00f3\u0107my pytanie: ", tags$b("ile obserwacji potrzebuj\u0119"),
-        ", \u017ceby margines b\u0142\u0119du by\u0142 nie wi\u0119kszy ni\u017c zak\u0142adany?"),
+      p("Odwr\u00f3\u0107my pytanie: ile obserwacji potrzebuj\u0119,
+        \u017ceby margines b\u0142\u0119du by\u0142 nie wi\u0119kszy ni\u017c zak\u0142adany?"),
       div(class = "formula-box",
         withMathJax(helpText(
           "$$n = \\left(\\frac{z^* \\cdot s}{ME_{\\text{max}}}\\right)^2$$"
@@ -136,11 +136,11 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
     div(class = "section-title", "Edge case: kiedy poziom ufno\u015bci zmienia wniosek"),
 
     div(class = "narrative",
-      p("Czasami ten sam zbi\u00f3r danych ", tags$b("pozwala stwierdzi\u0107 hipotez\u0119"),
-        " przy 90% ufno\u015bci, a ", tags$b("nie pozwala"), " przy 95%. To jest cz\u0119sto
-        nieintuicyjne \u2014 student my\u015bli, \u017ce skoro ", tags$em("p\u0302 jest powy\u017cej granicy"),
-        ", to wniosek jest oczywisty. Nie jest. Liczy si\u0119 ", tags$b("ca\u0142y przedzia\u0142"),
-        " wzgl\u0119dem granicy hipotezy, a szeroko\u015b\u0107 przedzia\u0142u zale\u017cy od poziomu ufno\u015bci."),
+      p("Czasami ten sam zbi\u00f3r danych pozwala stwierdzi\u0107 hipotez\u0119
+        przy 90% ufno\u015bci, a nie pozwala przy 95%. To jest cz\u0119sto nieintuicyjne \u2014
+        student my\u015bli, \u017ce skoro ", tags$em("p\u0302 jest powy\u017cej granicy"),
+        ", to wniosek jest oczywisty. Nie jest. Liczy si\u0119 ca\u0142y przedzia\u0142
+        wzgl\u0119dem granicy hipotezy, a szeroko\u015b\u0107 przedzia\u0142u zale\u017cy od poziomu ufno\u015bci."),
       p("Poni\u017cej trzy case'y. W ka\u017cdym kliknij ", tags$b("90%"), ", ", tags$b("95%"),
         " i ", tags$b("99%"), " i obserwuj, jak werdykt si\u0119 zmienia.")
     ),
@@ -152,8 +152,8 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Zmierzono czas dojazdu dla ", tags$b("40 pracownik\u00f3w"),
-            ". \u015arednia z pr\u00f3by ", withMathJax("\\(\\bar{x} = 28.5\\)"), " min,
+          p("Zmierzono czas dojazdu dla 40 pracownik\u00f3w. \u015arednia z pr\u00f3by ",
+            withMathJax("\\(\\bar{x} = 28.5\\)"), " min,
             odchylenie standardowe ", withMathJax("\\(s = 8\\)"), " min.
             Hipoteza: \u015bredni czas dojazdu w populacji przekracza 26 min.")
         ),
@@ -170,9 +170,8 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Pracownia sonda\u017cowa zapyta\u0142a ", tags$b("1000 wyborc\u00f3w"),
-            ", czy poprze parti\u0119 X. ", tags$b("540 odpowiedzi TAK"),
-            " (", withMathJax("\\(\\hat{p} = 0.54\\)"), ").
+          p("Pracownia sonda\u017cowa zapyta\u0142a 1000 wyborc\u00f3w, czy poprze parti\u0119 X.
+            540 odpowiedzi TAK (", withMathJax("\\(\\hat{p} = 0.54\\)"), ").
             Hipoteza: poparcie w populacji przekracza pr\u00f3g 50%.")
         ),
         uiOutput("ch5_edge2_buttons"),
@@ -188,8 +187,8 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("W szkoleniu BHP ", tags$b("20 pracownik\u00f3w"),
-            " uzyska\u0142o \u015bredni wynik ", withMathJax("\\(\\bar{x} = 68\\)"), " pkt
+          p("W szkoleniu BHP 20 pracownik\u00f3w uzyska\u0142o \u015bredni wynik ",
+            withMathJax("\\(\\bar{x} = 68\\)"), " pkt
             (na 100), ", withMathJax("\\(s = 10\\)"), " pkt.
             Hipoteza: \u015bredni wynik w populacji przekracza pr\u00f3g 65 pkt.")
         ),
@@ -202,8 +201,8 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
     div(class = "callout-info",
       tags$strong("Dlaczego to jest nieintuicyjne?"),
       " Bo w codziennym my\u015bleniu nie odr\u00f3\u017cniamy 95% od 93% \u2014 dla nas jest
-        \"du\u017co\", \"\u015brednio\", \"ma\u0142o\". Statystyka pozwala na ", tags$b("precyzyjne kwantyfikowanie pewno\u015bci"),
-      " i to jest jej moc, nie wada. Stwierdzenie ",
+        \"du\u017co\", \"\u015brednio\", \"ma\u0142o\". Statystyka pozwala na precyzyjne kwantyfikowanie pewno\u015bci
+      i to jest jej moc, nie wada. Stwierdzenie ",
       tags$em("\"nie mo\u017cemy by\u0107 pewni z 95%, ale mo\u017cemy z 93%\""),
       " nie jest sprzeczno\u015bci\u0105 \u2014 to jest dok\u0142adnie ten poziom precyzji,
         do kt\u00f3rego s\u0142u\u017cy ten aparat matematyczny. ",
@@ -212,8 +211,8 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
       " 95% to umowny standard. Je\u015bli wiesz, \u017ce ", tags$em("Tw\u00f3j problem"),
       " toleruje wi\u0119cej ryzyka (np. wst\u0119pna eksploracja, niskie koszty b\u0142\u0119du), mo\u017cesz
         legalnie u\u017cy\u0107 90%. Je\u015bli mniej (np. badania medyczne, kontrola jako\u015bci),
-        u\u017cyj 99%. Wa\u017cne jest tylko, \u017ceby poziom ufno\u015bci ", tags$b("wybra\u0107 zanim"),
-      " spojrzysz na wyniki \u2014 i potem ten wyb\u00f3r jasno raportowa\u0107."
+        u\u017cyj 99%. Wa\u017cne jest tylko, \u017ceby poziom ufno\u015bci wybra\u0107 zanim
+      spojrzysz na wyniki \u2014 i potem ten wyb\u00f3r jasno raportowa\u0107."
     ),
 
     # Chapter transition

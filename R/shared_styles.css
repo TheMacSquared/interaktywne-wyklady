@@ -3,21 +3,55 @@
    Dolaczane przez includeCSS() w kazdym app.R
    ============================================================================ */
 
+/* Font: Atkinson Hyperlegible (Latin Extended wspiera polskie znaki)
+   Wybrany dla dostepnosci - rozrozniane znaki podobne (I/l/1, O/0) */
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap&subset=latin-ext');
+
+/* Bootstrap Icons - ikony dla callout-ow (automatycznie via ::before) */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
+
+body, .shiny-text-output, .tab-content,
+.navbar, .navbar a, .btn, input, select, textarea,
+h1, h2, h3, h4, h5, h6, .narrative, .narrative p {
+  font-family: 'Atkinson Hyperlegible', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+code, pre, .verbatim {
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  font-size: 0.92em;
+}
+
+/* Bold — lzejsza waga, zeby nie krzyczal w tekscie */
+strong, b, .narrative strong, .narrative b { font-weight: 600; }
+
 /* Narrative text */
 .narrative { font-size: 16px; line-height: 1.7; color: #2c3e50; margin-bottom: 15px; }
-.narrative p { margin-bottom: 12px; }
+.narrative p { margin-bottom: 12px; max-width: 72ch; }
+.narrative ul, .narrative ol { max-width: 72ch; }
 
-/* Widget containers */
+/* Widget containers - szersze niz narracja */
 .widget-block {
   background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;
   padding: 20px; margin: 25px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
-/* Headings */
+/* Headings - hierarchia H1 -> H2 -> H3 */
+.chapter-title {
+  font-size: 30px; font-weight: 700; color: #2c3e50;
+  margin: 10px 0 20px 0;
+  border-bottom: 4px solid #3498db; padding-bottom: 8px;
+  line-height: 1.2;
+}
 .section-title {
-  font-size: 22px; font-weight: bold; color: #34495e;
-  margin-top: 35px; margin-bottom: 15px;
+  font-size: 24px; font-weight: 700; color: #34495e;
+  margin-top: 40px; margin-bottom: 15px;
   border-left: 4px solid #3498db; padding-left: 12px;
+  line-height: 1.3;
+}
+.subsection-title, h3.problem-name {
+  font-size: 18px; font-weight: 600; color: #34495e;
+  margin-top: 24px; margin-bottom: 10px;
+  line-height: 1.3;
 }
 
 /* Step buttons row */
@@ -48,6 +82,22 @@
   background: #eafaf1; border-left: 4px solid #27ae60;
   padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
 }
+
+/* Ikony dla callout-ow (Bootstrap Icons via ::before) */
+.callout-info::before, .callout-warning::before,
+.callout-danger::before, .callout-success::before {
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.15em;
+  margin-right: 8px;
+  vertical-align: -2px;
+  display: inline-block;
+}
+.callout-info::before    { content: "\00f431"; color: #3498db; } /* info-circle-fill */
+.callout-warning::before { content: "\00f33a"; color: #f39c12; } /* exclamation-triangle-fill */
+.callout-danger::before  { content: "\00f622"; color: #e74c3c; } /* x-circle-fill */
+.callout-success::before { content: "\00f26b"; color: #27ae60; } /* check-circle-fill */
 
 /* Chapter navigation */
 .chapter-transition {

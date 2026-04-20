@@ -13,14 +13,6 @@ library(broom)
 # KOLORY
 # ============================================================================
 
-col_primary    <- "#3498db"    # niebieski
-col_secondary  <- "#e74c3c"    # czerwony
-col_success    <- "#27ae60"    # zielony
-col_warning    <- "#f39c12"    # pomaranczowy
-col_dark       <- "#2c3e50"    # ciemny
-col_purple     <- "#9b59b6"    # fioletowy
-col_teal       <- "#1abc9c"    # morski
-
 # Kolory specyficzne dla symulacji statystycznych
 col_bootstrap  <- "#3498db"    # niebieski  -- bootstrap / jackknife
 col_classical  <- "#f39c12"    # pomaranczowy -- klasyczne metody (kontrast)

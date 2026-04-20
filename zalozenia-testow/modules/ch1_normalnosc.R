@@ -94,7 +94,7 @@ ch1_ui <- tabPanel("1. Normalno\u015b\u0107 rozk\u0142adu",
       tags$strong("Problem z testami formalnymi:"),
       " Przy du\u017cym n test Shapiro-Wilka odrzuci normalno\u015b\u0107 nawet dla
         nieistotnych odchyle\u0144. Przy ma\u0142ym n nie ma mocy.
-        ", tags$b("Zawsze \u0142\u0105cz test z wizualizacj\u0105 (Q-Q plot)!"))
+        "Zawsze \u0142\u0105cz test z wizualizacj\u0105 (Q-Q plot)!")
     ,
 
     # ========================================================================

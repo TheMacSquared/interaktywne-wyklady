@@ -13,9 +13,8 @@ ch4_ui <- tabPanel("4. Przedzia\u0142 dla proporcji",
     div(class = "section-title", "Wz\u00f3r"),
 
     div(class = "narrative",
-      p("Cz\u0119sto chcemy oszacowa\u0107 ", tags$b("odsetek"),
-        " \u2014 jaki procent student\u00f3w zda\u0142 egzamin, jaki odsetek wyborc\u00f3w
-        g\u0142osuje na parti\u0119 X, jaki procent produkt\u00f3w jest wadliwy."),
+      p("Cz\u0119sto chcemy oszacowa\u0107 odsetek \u2014 jaki procent student\u00f3w zda\u0142 egzamin,
+        jaki odsetek wyborc\u00f3w g\u0142osuje na parti\u0119 X, jaki procent produkt\u00f3w jest wadliwy."),
       p("Estymator punktowy to proporcja z pr\u00f3by:"),
       div(class = "formula-box",
         withMathJax("$$\\hat{p} = \\frac{x}{n}$$")
@@ -37,8 +36,8 @@ ch4_ui <- tabPanel("4. Przedzia\u0142 dla proporcji",
         " Bo proporcja \u2014 inaczej ni\u017c \u015brednia \u2014 nie wymaga osobnego oszacowania
         \"odchylenia standardowego\". Wariancja proporcji to ", withMathJax("\\(p(1-p)\\)"),
         ", wi\u0119c jest jednoznacznie wyznaczona przez sam\u0105 ", withMathJax("\\(p\\)"), "."),
-      p(tags$b("Uwaga \u2014 Wald nie zawsze dzia\u0142a dobrze."),
-        " Gdy ", withMathJax("\\(n\\)"), " jest ma\u0142e lub ", withMathJax("\\(\\hat{p}\\)"),
+      p("Uwaga \u2014 Wald nie zawsze dzia\u0142a dobrze. Gdy ",
+        withMathJax("\\(n\\)"), " jest ma\u0142e lub ", withMathJax("\\(\\hat{p}\\)"),
         " bardzo bliskie 0 lub 1, przedzia\u0142 Walda mo\u017ce mie\u0107 zaskakuj\u0105co niskie
         pokrycie. W takich sytuacjach lepiej u\u017cy\u0107 ", tags$b("przedzia\u0142u Wilsona"),
         ", kt\u00f3ry koryguje wz\u00f3r. W tym wyk\u0142adzie skupiamy si\u0119 na Waldzie \u2014
@@ -112,8 +111,8 @@ ch4_ui <- tabPanel("4. Przedzia\u0142 dla proporcji",
     div(class = "section-title", "Case studies \u2014 jak interpretowa\u0107 CI w praktyce"),
 
     div(class = "narrative",
-      p("Poni\u017cej kilka realistycznych sytuacji. W ka\u017cdej ", tags$b("budujesz CI krok po kroku"),
-        " (jak w poprzednich sekcjach), a na ko\u0144cu weryfikujesz dwie hipotezy:
+      p("Poni\u017cej kilka realistycznych sytuacji. W ka\u017cdej budujesz CI krok po kroku
+        (jak w poprzednich sekcjach), a na ko\u0144cu weryfikujesz dwie hipotezy:
         jedn\u0105, kt\u00f3ra jest prawdziwa, i jedn\u0105, kt\u00f3ra nie jest. Klikaj nag\u0142\u00f3wki,
         \u017ceby rozwija\u0107 case'y.")
     ),
@@ -129,10 +128,9 @@ ch4_ui <- tabPanel("4. Przedzia\u0142 dla proporcji",
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Pracownia sonda\u017cowa zapyta\u0142a ", tags$b("400 wyborc\u00f3w"),
-            ", czy poprze parti\u0119 X. ", tags$b("212 odpowiedzi TAK"),
-            " (czyli ", withMathJax("\\(\\hat{p} = 0.53\\)"), "). Zbudujmy CI dla
-            poparcia w populacji i sprawd\u017amy dwie hipotezy.")
+          p("Pracownia sonda\u017cowa zapyta\u0142a 400 wyborc\u00f3w, czy poprze parti\u0119 X.
+            212 odpowiedzi TAK (czyli ", withMathJax("\\(\\hat{p} = 0.53\\)"),
+            "). Zbudujmy CI dla poparcia w populacji i sprawd\u017amy dwie hipotezy.")
         ),
         uiOutput("ch4_caseA1_buttons"),
         plotOutput("ch4_caseA1_plot", height = "260px"),
@@ -324,6 +322,16 @@ ch4_server <- function(input, output, session) {
             panel.grid.minor.x = element_blank())
 
     # ---- PRAWY PANEL: os proporcji z p_hat, SE, CI ----
+    # Oddzielne poziomy Y - kazdy element na swojej linii
+    Y_EST <- 0.30
+    Y_SE  <- 0.05
+    Y_CI  <- -0.25
+
+    # Wyszarzanie poprzednich elementow
+    col_faded <- "#adb5bd"
+    c_est <- if (step >= 3) col_faded else col_estimate
+    c_se  <- if (step >= 4) col_faded else col_success
+
     p_right <- ggplot() +
       xlim(0, 1) +
       ylim(-0.6, 0.6) +
@@ -335,32 +343,34 @@ ch4_server <- function(input, output, session) {
             panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank())
 
-    # Krok 2+: punkt p_hat
+    # Krok 2+: pionowa linia prowadzaca + punkt p_hat
     if (step >= 2) {
       p_right <- p_right +
-        geom_point(aes(x = phat, y = 0), color = col_estimate,
+        geom_vline(xintercept = phat, color = "#adb5bd",
+                   linewidth = 0.8, linetype = "dotted") +
+        geom_point(aes(x = phat, y = Y_EST), color = c_est,
                    size = 7, shape = 18) +
-        annotate("text", x = phat, y = -0.22,
+        annotate("text", x = phat, y = Y_EST - 0.13,
                  label = paste0("p\u0302 = ", round(phat, 3)),
-                 color = col_estimate, fontface = "bold", size = 5)
+                 color = c_est, fontface = "bold", size = 5)
     }
 
     # Krok 3+: waski przedzial SE
     if (step >= 3) {
       p_right <- p_right +
-        geom_errorbarh(aes(xmin = phat - se, xmax = phat + se, y = 0),
-                       height = 0.08, color = col_success, linewidth = 1.8) +
-        annotate("text", x = phat, y = 0.20,
+        geom_errorbarh(aes(xmin = phat - se, xmax = phat + se, y = Y_SE),
+                       height = 0.08, color = c_se, linewidth = 1.8) +
+        annotate("text", x = phat, y = Y_SE - 0.12,
                  label = paste0("\u00b1 SE = \u00b1", round(se, 3)),
-                 color = col_success, fontface = "bold", size = 4.2)
+                 color = c_se, fontface = "bold", size = 4.2)
     }
 
     # Krok 4: pelen CI
     if (step >= 4) {
       p_right <- p_right +
-        geom_errorbarh(aes(xmin = phat - me, xmax = phat + me, y = 0),
-                       height = 0.14, color = col_ci, linewidth = 2.2, alpha = 0.6) +
-        annotate("text", x = phat, y = -0.45,
+        geom_errorbarh(aes(xmin = phat - me, xmax = phat + me, y = Y_CI),
+                       height = 0.12, color = col_ci, linewidth = 2.2) +
+        annotate("text", x = phat, y = Y_CI - 0.13,
                  label = paste0("95% CI: [", round(phat - me, 3),
                                 " ; ", round(phat + me, 3), "]"),
                  color = col_ci, fontface = "bold", size = 5)
@@ -384,13 +394,13 @@ ch4_server <- function(input, output, session) {
 
     switch(as.character(step),
       "1" = div(class = "callout-info",
-        p(tags$strong("Krok 1: Pr\u00f3ba."),
+        p(tags$strong("Krok 1:"), " Pr\u00f3ba.",
           " Mamy ", tags$b(n), " obserwacji TAK/NIE: ", tags$b(x), " razy TAK, ",
           tags$b(n - x), " razy NIE. Niebieskie punkty (TAK) po prawej, czerwone (NIE)
           po lewej. Sama tabelka liczb \u2014 jeszcze nie zacz\u0119li\u015bmy estymowa\u0107.")
       ),
       "2" = div(class = "callout-info",
-        p(tags$strong("Krok 2: Estymacja punktowa p\u0302."),
+        p(tags$strong("Krok 2:"), " Estymacja punktowa p\u0302.",
           " Liczymy proporcj\u0119 z pr\u00f3by:"),
         p(withMathJax(paste0("\\(\\hat{p} = \\frac{x}{n} = \\frac{", x, "}{", n,
                              "} = ", round(phat, 3), "\\)"))),
@@ -398,7 +408,7 @@ ch4_server <- function(input, output, session) {
           jeszcze wiedzie\u0107, jak bardzo niepewna jest ta estymata.")
       ),
       "3" = div(class = "callout-info",
-        p(tags$strong("Krok 3: B\u0142\u0105d standardowy (\u00b1 SE)."),
+        p(tags$strong("Krok 3:"), " B\u0142\u0105d standardowy (\u00b1 SE).",
           " Niepewno\u015b\u0107 oszacowania proporcji liczymy ze wzoru:"),
         p(withMathJax(paste0(
           "\\(SE = \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}} = \\sqrt{\\frac{",
@@ -410,7 +420,7 @@ ch4_server <- function(input, output, session) {
       ),
       "4" = {
         div(class = "callout-success",
-          p(tags$strong("Krok 4: Przedzia\u0142 ufno\u015bci.")),
+          p(tags$strong("Krok 4:"), " Przedzia\u0142 ufno\u015bci."),
           p("Warto\u015b\u0107 krytyczna z rozk\u0142adu normalnego: ",
             withMathJax("\\(z^* = 1.96\\)")),
           p(withMathJax(paste0("\\(ME = z^* \\cdot SE = 1.96 \\cdot ",
@@ -604,7 +614,7 @@ ch4_server <- function(input, output, session) {
 
     switch(as.character(step),
       "1" = div(class = "callout-info",
-        p(tags$strong("Krok 1: Dwie pr\u00f3by."),
+        p(tags$strong("Krok 1:"), " Dwie pr\u00f3by.",
           " Mamy odpowiedzi TAK/NIE z dw\u00f3ch grup: ", tags$b(n1),
           " os\u00f3b w grupie 1 (", x1, " TAK / ", n1 - x1, " NIE) i ",
           tags$b(n2), " w grupie 2 (", x2, " TAK / ", n2 - x2, " NIE).
@@ -612,7 +622,7 @@ ch4_server <- function(input, output, session) {
           r\u00f3\u017cnica i czy istotna?")
       ),
       "2" = div(class = "callout-info",
-        p(tags$strong("Krok 2: Dwie proporcje."),
+        p(tags$strong("Krok 2:"), " Dwie proporcje.",
           " Obliczamy proporcj\u0119 TAK\u00f3w w ka\u017cdej grupie:"),
         p(withMathJax(paste0("\\(\\hat{p}_1 = ", x1, "/", n1, " = ", round(p1, 3), "\\)"))),
         p(withMathJax(paste0("\\(\\hat{p}_2 = ", x2, "/", n2, " = ", round(p2, 3), "\\)"))),
@@ -620,7 +630,7 @@ ch4_server <- function(input, output, session) {
           ", tags$b("r\u00f3\u017cnica mi\u0119dzy nimi"), ".")
       ),
       "3" = div(class = "callout-info",
-        p(tags$strong("Krok 3: R\u00f3\u017cnica."),
+        p(tags$strong("Krok 3:"), " R\u00f3\u017cnica.",
           " Estymator punktowy r\u00f3\u017cnicy:"),
         p(withMathJax(paste0("\\(\\hat{p}_1 - \\hat{p}_2 = ", round(p1, 3),
                              " - ", round(p2, 3), " = ",
@@ -631,7 +641,7 @@ ch4_server <- function(input, output, session) {
           ". Teraz musimy otoczy\u0107 nasz\u0105 r\u00f3\u017cnic\u0119 przedzia\u0142em niepewno\u015bci.")
       ),
       "4" = div(class = "callout-info",
-        p(tags$strong("Krok 4: B\u0142\u0105d standardowy r\u00f3\u017cnicy (\u00b1 SE)."),
+        p(tags$strong("Krok 4:"), " B\u0142\u0105d standardowy r\u00f3\u017cnicy (\u00b1 SE).",
           " SE r\u00f3\u017cnicy proporcji \u0142\u0105czy niepewno\u015bci z obu grup:"),
         p(withMathJax(paste0(
           "\\(SE = \\sqrt{\\frac{\\hat{p}_1(1-\\hat{p}_1)}{n_1} + \\frac{\\hat{p}_2(1-\\hat{p}_2)}{n_2}} = ",
@@ -643,7 +653,7 @@ ch4_server <- function(input, output, session) {
       "5" = {
         covers_zero <- (diff_val - me <= 0) & (0 <= diff_val + me)
         div(class = if (covers_zero) "callout-warning" else "callout-success",
-          p(tags$strong("Krok 5: Przedzia\u0142 ufno\u015bci dla r\u00f3\u017cnicy.")),
+          p(tags$strong("Krok 5:"), " Przedzia\u0142 ufno\u015bci dla r\u00f3\u017cnicy."),
           p("Warto\u015b\u0107 krytyczna z rozk\u0142adu normalnego: ",
             withMathJax("\\(z^* = 1.96\\)")),
           p(withMathJax(paste0("\\(ME = z^* \\cdot SE = 1.96 \\cdot ",

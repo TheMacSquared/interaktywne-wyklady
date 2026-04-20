@@ -130,8 +130,23 @@ interaktywne-wyklady/
 │   └── modules/
 │       ├── helpers.R               # Formatowanie, theme
 │       └── ch1_caschools.R         # 1. CASchools (EDA, korelacja, t-test, ANOVA, regresja)
-├── dobre-dane/                     # Jakość danych (case studies)
-│   └── app.R                       # Jednoplikowa aplikacja: 11 zbiorów (CASchools, n=8, pingwiny, Tarantino, ankieta firmowa, Wage, ankieta SU, mieszkania, studenci, powietrze) + wprowadzenie i ściąga
+├── dobre-dane/                     # Jakość danych
+│   ├── app.R                       # Główny plik: CSS/JS, nawigacja
+│   └── modules/
+│       ├── helpers.R               # Dane (CASchools, penguins, apt…), katalog problemów, render_verdict()
+│       ├── ch0_wprowadzenie.R      # 0. Wprowadzenie
+│       ├── ch1_katalog.R           # 1. Katalog problemów (7 kategorii z przykładami)
+│       ├── ch2_szkoly.R            # 2. Szkoły w Kalifornii — dobry zbiór wzorcowy
+│       ├── ch3_grupa.R             # 3. Za mało danych — zły (n=8)
+│       ├── ch4_pingwiny.R          # 4. Pingwiny — dobry (palmerpenguins)
+│       ├── ch5_tarantino.R         # 5. Tarantino — zły (brak zmienności pytania)
+│       ├── ch6_firma.R             # 6. Ankieta firmowa — zły (brak zmienności w zmiennych)
+│       ├── ch7_wynagrodzenia.R     # 7. Wynagrodzenia — dobry (Wage/ISLR)
+│       ├── ch8_ankieta.R           # 8. Trudna ankieta — zły (źle zdefiniowane zmienne)
+│       ├── ch9_mieszkania.R        # 9. Ceny mieszkań — mieszany (outliery i błędy)
+│       ├── ch10_studenci.R         # 10. Ankieta studencka — dobry (wzorcowa)
+│       ├── ch11_powietrze.R        # 11. Jakość powietrza — zły (brak niezależności)
+│       └── ch12_sciaga.R           # 12. Ściąga (checklista 9 kryteriów)
 ├── symulacje-statystyczne/         # Symulacje: bootstrap, permutacje, CV, MC
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
 │   └── modules/
@@ -192,6 +207,16 @@ Aplikacje są zaprojektowane do:
 1. **Demonstracji na wykładach** — prowadzący scrolluje i omawia, studenci widzą na projektorze
 2. **Samodzielnej eksploracji** — studenci uruchamiają lokalnie i eksperymentują w swoim tempie
 3. **Materiałów do powtórki** — ściąga (rozdział 6) jako kompaktowe podsumowanie
+
+## 🎨 Wspólny styl wizualny
+
+Wszystkie aplikacje korzystają z centralnego stylu:
+
+- **`R/shared_styles.css`** — wspólny CSS (font Atkinson Hyperlegible dla dostępności, hierarchia H1/H2/H3, max-width narracji, callout-y z ikonami Bootstrap, quiz tiles, sticky TOC)
+- **`R/shared.R`** — kolory bazowe (`col_primary`…`col_teal`), `theme_educational()` dla ggplot2, `scale_color_lecture()` / `scale_fill_lecture()` ze spójną paletą semantyczną, wspólne funkcje generowania danych (`generate_population_sample()`, `get_population_params()`, `dist_names_pl`)
+- **`sandbox/`** — piaskownica do eksperymentów graficznych przed wdrożeniem do produkcji (log decyzji w `sandbox/EKSPERYMENTY.md`)
+
+Dzięki temu globalne zmiany wizualne (font, kolory, typografia) wymagają edycji w jednym miejscu.
 
 ## 🛠️ Dodawanie nowej aplikacji
 

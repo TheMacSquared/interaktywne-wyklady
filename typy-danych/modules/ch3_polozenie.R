@@ -15,9 +15,8 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
 
     div(class = "narrative",
       p("Zmienne ilo\u015bciowe wymagaj\u0105 nowych narz\u0119dzi. Zanim przejdziemy do
-        statystyk, poznajmy podstawow\u0105 wizualizacj\u0119 \u2014 ", tags$b("histogram"),
-        ". Potem zbadamy miary po\u0142o\u017cenia: ", tags$b("\u015bredni\u0105"), ", ",
-        tags$b("median\u0119"), " i ", tags$b("percentyle"), ".")
+        statystyk, poznajmy podstawow\u0105 wizualizacj\u0119 \u2014 histogram.
+        Potem zbadamy miary po\u0142o\u017cenia: \u015bredni\u0105, median\u0119 i percentyle.")
     ),
 
     # ========================================================================
@@ -27,9 +26,8 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
 
     div(class = "narrative",
       p("Histogram to podstawowy wykres dla zmiennych ci\u0105g\u0142ych. Pokazuje
-        jak cz\u0119sto wyst\u0119puj\u0105 warto\u015bci w poszczeg\u00f3lnych ",
-        tags$b("przedzia\u0142ach (binach)"),
-        ". Zbudujmy go krok po kroku.")
+        jak cz\u0119sto wyst\u0119puj\u0105 warto\u015bci w poszczeg\u00f3lnych
+        przedzia\u0142ach (binach). Zbudujmy go krok po kroku.")
     ),
 
     div(class = "widget-block",
@@ -86,8 +84,7 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     div(class = "narrative",
       p("Histogram pokazuje kszta\u0142t rozk\u0142adu, ale nie daje jednej liczby
         opisuj\u0105cej '\u015brodek'. Do tego s\u0142u\u017c\u0105 statystyki po\u0142o\u017cenia:
-        ", tags$b("\u015brednia"), ", ", tags$b("mediana"), " i ",
-        tags$b("percentyle"), ". Ka\u017cda odpowiada na to pytanie inaczej.")
+        \u015brednia, mediana i percentyle. Ka\u017cda odpowiada na to pytanie inaczej.")
     ),
 
     # ========================================================================
@@ -241,9 +238,9 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
 
     div(class = "narrative",
       p("Dotychczas uzywalismy zmiennych ciągłych (wzrost, zarobki). Ale co ze
-        zmiennymi ", tags$b("dyskretnymi"), " -- takimi jak liczba kursow czy
+        zmiennymi dyskretnymi -- takimi jak liczba kursow czy
         liczba nieobecnosci? Statystyki polozenia (średnia, mediana) obliczamy
-        tak samo, ale ", tags$b("wizualizacja"), " wymaga uwagi.")
+        tak samo, ale wizualizacja wymaga uwagi.")
     ),
 
     div(class = "widget-block",
@@ -276,10 +273,8 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
       p("W rozdziale o zmiennych jako\u015bciowych poznali\u015bmy dominant\u0119 -- najcz\u0119stsz\u0105
         kategori\u0119. Dla danych ci\u0105g\u0142ych dominanta pojedynczej warto\u015bci nie ma sensu
         (prawie ka\u017cda warto\u015b\u0107 jest unikatowa). Ale poj\u0119cie ",
-        tags$b("mody"), " dzia\u0142a na ", tags$b("przedzia\u0142ach"),
-        " -- szukamy, kt\u00f3ry bin histogramu jest najwy\u017cszy."),
-      p("Co wa\u017cniejsze, rozk\u0142ad mo\u017ce mie\u0107 ",
-        tags$b("wi\u0119cej ni\u017c jeden szczyt"), " (mod\u0119). To cz\u0119sto
+        "mody dzia\u0142a na przedzia\u0142ach -- szukamy, kt\u00f3ry bin histogramu jest najwy\u017cszy."),
+      p("Co wa\u017cniejsze, rozk\u0142ad mo\u017ce mie\u0107 wi\u0119cej ni\u017c jeden szczyt (mod\u0119). To cz\u0119sto
         sygna\u0142, \u017ce dane pochodz\u0105 z kilku r\u00f3\u017cnych grup.")
     ),
 
@@ -352,8 +347,7 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
 
     div(class = "narrative",
       p("Sprawdzmy Twoją intuicję! Na histogramie zobaczysz rozkład danych.
-        Kliknij na wykres, aby postawić swój typ: najpierw ", tags$b("średnia"),
-        ", potem ", tags$b("mediana"), ". Czy potrafisz je odroznic?")
+        "Kliknij na wykres, aby postawić swój typ: najpierw średnia, potem mediana. Czy potrafisz je odroznic?")
     ),
 
     div(class = "widget-block",
@@ -771,7 +765,7 @@ ch3_server <- function(input, output, session) {
     diff <- abs(m - med)
 
     div(class = "callout-info",
-      tags$b("Mediana = ", round(med, 1)),
+      paste0("Mediana = ", round(med, 1)),
       " | Średnia = ", round(m, 2),
       " | Różnica = ", round(diff, 2)
     )
@@ -1126,7 +1120,7 @@ ch3_server <- function(input, output, session) {
       div(class = "callout-warning",
         tags$b("Rozk\u0142ad bimodalny: "), "dwa szczyty! ",
         "To sygna\u0142, \u017ce dane prawdopodobnie pochodz\u0105 z ",
-        tags$b("dw\u00f3ch r\u00f3\u017cnych grup"), ". ",
+        "dw\u00f3ch r\u00f3\u017cnych grup. ",
         "Podawanie jednej \u015bredniej dla ca\u0142o\u015bci jest mylace -- ",
         "\u015brednia wyl\u0105duje mi\u0119dzy szczytami, gdzie prawie nikt nie jest!",
         tags$br(), tags$br(),
@@ -1214,7 +1208,7 @@ ch3_server <- function(input, output, session) {
     actual_pct <- round(100 * mean(wzrost <= q_val), 1)
 
     div(style = "font-size: 18px; color: #2c3e50; padding: 10px;",
-      tags$strong(paste0(input$ch3_q_pct, "% studentow")),
+      paste0(input$ch3_q_pct, "% studentow"),
       paste0(" ma wzrost poniżej ", q_val, " cm."),
       br(),
       tags$span(style = "font-size: 14px; color: #7f8c8d;",

@@ -90,9 +90,9 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
 
     div(class = "narrative",
       p("Wiemy juz jak obliczyć odchylenie standardowe. Ale co ono oznacza
-        w praktyce? Dla rozkładow zbliżonych do normalnego obowiązuje ",
-        tags$b("regula empiryczna"), ": okolo 68% danych miesci sie w zakresie
-        średnia \u00B11 SD, 95% w \u00B12 SD, a 99.7% w \u00B13 SD.")
+        w praktyce? Dla rozkładow zbliżonych do normalnego obowiązuje
+        regula empiryczna: okolo 68% danych miesci sie w zakresie
+        srednia \u00B11 SD, 95% w \u00B12 SD, a 99.7% w \u00B13 SD.")
     ),
 
     div(class = "widget-block",
@@ -149,8 +149,8 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
 
     div(class = "narrative",
       p("Dotychczas analizowalismy caly zbior danych naraz. Ale jednym z
-        najczestszych pytan w statystyce jest: ", tags$b("czy grupy sie roznia?"),
-        " Boxploty obok siebie to doskonałe narzędzie do porównywania rozkładow
+        najczestszych pytan w statystyce jest: czy grupy sie roznia?
+        Boxploty obok siebie to doskonałe narzędzie do porównywania rozkładow
         miedzy grupami.")
     ),
 
@@ -221,8 +221,8 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
     div(class = "narrative",
       p("Odchylenie standardowe mówi o rozrzucie, ale w jakich jednostkach?
         SD wzrostu (w cm) i SD wagi (w kg) nie są porownywalne!
-        Aby porownac zmiennosc zmiennych w roznych skalach, uzywamy ",
-        tags$b("współczynnika zmienności"), " (CV = SD / średnia \u00D7 100%).")
+        Aby porownac zmiennosc zmiennych w roznych skalach, uzywamy
+        współczynnika zmienności (CV = SD / średnia \u00D7 100%).")
     ),
 
     div(class = "widget-block",
@@ -236,8 +236,8 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
         tags$strong("Interpretacja: "),
         "Lewy wykres pokazuje SD w oryginalnych jednostkach -- wartości są nieporównywalne,
          bo każda zmienna ma inna skalę. Prawy wykres pokazuje CV (%), które normalizuje
-         rozrzut wzgledem średniej -- teraz widać, że ", tags$b("czas dojazdu"),
-        " ma największa względna zmienność, choć jego SD nie jest największe."
+         rozrzut wzgledem średniej -- teraz widać, że czas dojazdu
+        ma największa względna zmienność, choć jego SD nie jest największe."
       )
     ),
 
@@ -421,15 +421,15 @@ ch4_server <- function(input, output, session) {
       mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
       lbl <- if (buffer == 0) "na st\u00f3wk\u0119" else paste0(buffer, " min wcze\u015bniej")
       div(class = "callout-info",
-          tags$strong("Krok 4: Konsekwencje"),
+          tags$strong("Krok 4:"), " Konsekwencje",
           tags$br(),
           paste0("Wychodzisz ", lbl, ":"),
           tags$br(),
-          tags$strong(paste0("Linia A: zd\u0105\u017cysz na ", round(prob_a * 100, 1),
-                             "% kurs\u00f3w.")),
+          paste0("Linia A: zd\u0105\u017cysz na ", round(prob_a * 100, 1),
+                             "% kurs\u00f3w."),
           tags$br(),
-          tags$strong(paste0("Linia B: zd\u0105\u017cysz na ", round(prob_b * 100, 1),
-                             "% kurs\u00f3w.")),
+          paste0("Linia B: zd\u0105\u017cysz na ", round(prob_b * 100, 1),
+                             "% kurs\u00f3w."),
           tags$br(), tags$br(),
           if (pct_10_b > 0) tagList(
             tags$em(paste0("A gdy linia B si\u0119 sp\u00f3\u017ani powa\u017cnie (>10 min, ",
@@ -627,8 +627,8 @@ ch4_server <- function(input, output, session) {
                  round(sum(sq_deviations), 2), " / ", n - 1, " = ",
                  round(variance, 2)),
           tags$br(),
-          tags$strong(paste0("Odchylenie standardowe \\(s = \\sqrt{",
-                             round(variance, 2), "} = ", round(s, 2), "\\) cm")),
+          paste0("Odchylenie standardowe \\(s = \\sqrt{",
+                             round(variance, 2), "} = ", round(s, 2), "\\) cm"),
           tags$br(), tags$br(),
           "Zielony pas na wykresie oznacza przedzia\u0142 \\(\\bar{x} \\pm s\\).
           W rozk\u0142adzie normalnym ok. 68% danych le\u017cy w tym przedziale.")
@@ -705,7 +705,7 @@ ch4_server <- function(input, output, session) {
       div(class = "callout-warning",
         tags$strong("S\u0142aba zgodno\u015b\u0107 z regu\u0142\u0105! "),
         paste0("W przedziale \u00B11 SD le\u017cy ", pct_in[1], "% danych (teoria: 68%). "),
-        tags$b("Dlaczego?"), " Regu\u0142a 68-95-99.7 zak\u0142ada rozk\u0142ad symetryczny ",
+        "Dlaczego? Regu\u0142a 68-95-99.7 zak\u0142ada rozk\u0142ad symetryczny ",
         "(zbli\u017cony do normalnego). Gdy rozk\u0142ad jest sko\u015bny, dane koncentruj\u0105 si\u0119 ",
         "asymetrycznie wok\u00f3\u0142 \u015bredniej -- wi\u0119cej obserwacji le\u017cy po jednej stronie ",
         "ni\u017c po drugiej, co \u0142amie za\u0142o\u017cenie regu\u0142y. ",

@@ -13,17 +13,17 @@ ch2h_ui <- tabPanel("2. Formu\u0142owanie hipotez",
     div(class = "section-title", "Od pytania do hipotezy"),
 
     div(class = "narrative",
-      p("W badaniach pytania s\u0105 formu\u0142owane ", tags$b("swobodnym j\u0119zykiem"), ":"),
+      p("W badaniach pytania s\u0105 formu\u0142owane swobodnym j\u0119zykiem:"),
       tags$ul(
         tags$li(em("\"Czy m\u0119\u017cczy\u017ani s\u0105 wy\u017csi od kobiet?\"")),
         tags$li(em("\"Czy korepetycje pomagaj\u0105?\"")),
         tags$li(em("\"Czy lod\u00f3w sprzedaje si\u0119 wi\u0119cej w ciep\u0142e dni?\""))
       ),
-      p("Ale test statystyczny wymaga ", tags$b("formalnych hipotez"), ":
+      p("Ale test statystyczny wymaga formalnych hipotez:
         precyzyjnych stwierdze\u0144 o parametrach populacji, kt\u00f3re mo\u017cna
         zweryfikowa\u0107 danymi."),
-      p("Najwa\u017cniejsza zasada: ", tags$b("H\u2080 zawsze zawiera znak r\u00f3wno\u015bci"),
-        " (=, \u2264, \u2265). H\u2081 zawiera to, co chcemy wykaza\u0107 (\u2260, >, <).")
+      p("Najwa\u017cniejsza zasada: H\u2080 zawsze zawiera znak r\u00f3wno\u015bci
+        (=, \u2264, \u2265). H\u2081 zawiera to, co chcemy wykaza\u0107 (\u2260, >, <).")
     ),
 
     div(class = "callout-info",
@@ -120,7 +120,7 @@ ch2h_ui <- tabPanel("2. Formu\u0142owanie hipotez",
             tags$td(tags$strong("Dwustronny")),
             tags$td(withMathJax("\\(\\mu_1 \\neq \\mu_2\\)")),
             tags$td("\"Czy grupy si\u0119 r\u00f3\u017cni\u0105?\""),
-            tags$td("Gdy nie wiesz, w kt\u00f3r\u0105 stron\u0119 \u2014 ", tags$b("domy\u015blny wyb\u00f3r"))
+            tags$td("Gdy nie wiesz, w kt\u00f3r\u0105 stron\u0119 \u2014 domy\u015blny wyb\u00f3r")
           ),
           tags$tr(
             tags$td(tags$strong("Prawostronny")),
@@ -161,11 +161,10 @@ ch2h_ui <- tabPanel("2. Formu\u0142owanie hipotez",
 
     div(class = "callout-warning",
       tags$strong("W w\u0105tpliwo\u015bci:"),
-      " U\u017cywaj testu ", tags$b("dwustronnego"),
-      ". Test jednostronny jest mocniejszy (wi\u0119ksza moc), ale ryzykowny:
+      " U\u017cywaj testu dwustronnego.
+        Test jednostronny jest mocniejszy (wi\u0119ksza moc), ale ryzykowny:
         je\u015bli efekt jest w przeciwnym kierunku, nie mo\u017cesz go wykry\u0107.
-        Test jednostronny powinien by\u0107 zaplanowany ", tags$em("przed"),
-      " zbieraniem danych."
+        Test jednostronny powinien by\u0107 zaplanowany przed zbieraniem danych."
     ),
 
     # ========================================================================
@@ -178,12 +177,11 @@ ch2h_ui <- tabPanel("2. Formu\u0142owanie hipotez",
         tags$li(
           tags$b("H\u2080 z nier\u00f3wno\u015bci\u0105:"),
           " \u017ale: ", withMathJax("\\(H_0: \\mu_1 \\neq \\mu_2\\)"),
-          ". H\u2080 ", tags$b("zawsze"), " zawiera = (ewentualnie \u2264 lub \u2265)."
+          ". H\u2080 zawsze zawiera = (ewentualnie \u2264 lub \u2265)."
         ),
         tags$li(
           tags$b("Hipoteza o pr\u00f3bie zamiast populacji:"),
-          " \u017ale: \"H\u2080: \u015brednia w pr\u00f3bie = 170\". Hipotezy dotycz\u0105 ",
-          tags$b("parametr\u00f3w populacji"), ", nie statystyk z pr\u00f3by."
+          " \u017ale: \"H\u2080: \u015brednia w pr\u00f3bie = 170\". Hipotezy dotycz\u0105 parametr\u00f3w populacji, nie statystyk z pr\u00f3by."
         ),
         tags$li(
           tags$b("Brak precyzji:"),
@@ -195,8 +193,7 @@ ch2h_ui <- tabPanel("2. Formu\u0142owanie hipotez",
         ),
         tags$li(
           tags$b("Myl\u0105ce H\u2080 i H\u2081:"),
-          " H\u2081 to to, co chcesz ", tags$b("wykaza\u0107"),
-          ". H\u2080 to \"stan domy\u015blny\" (brak efektu). Nie odwracaj ich."
+          " H\u2081 to to, co chcesz wykaza\u0107. H\u2080 to \"stan domy\u015blny\" (brak efektu). Nie odwracaj ich."
         )
       )
     ),

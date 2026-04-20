@@ -33,11 +33,10 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
         Im wi\u0119ksze ", withMathJax("\\(n\\)"),
         ", tym lepsze oszacowanie ", withMathJax("\\(\\sigma\\)"),
         " i tym bardziej rozk\u0142ad t przypomina normalny."),
-      p(tags$b("W praktyce nie musisz si\u0119 tym przejmowa\u0107."),
-        " Programy statystyczne (jamovi, SPSS, R) ", tags$em("zawsze"),
+      p("W praktyce nie musisz si\u0119 tym przejmowa\u0107. Programy statystyczne (jamovi, SPSS, R) ",
+        tags$em("zawsze"),
         " licz\u0105 CI dla \u015bredniej u\u017cywaj\u0105c rozk\u0142adu t. Nie ma osobnego \"z-przedzia\u0142u\"
-        do wyboru. Ten rozdzia\u0142 nauczy Ci\u0119 ", tags$b("interpretowa\u0107"),
-        " gotowe przedzia\u0142y \u2014 a nie liczy\u0107 je r\u0119cznie.")
+        do wyboru. Ten rozdzia\u0142 nauczy Ci\u0119 interpretowa\u0107 gotowe przedzia\u0142y \u2014 a nie liczy\u0107 je r\u0119cznie.")
     ),
 
     # ========================================================================
@@ -103,8 +102,8 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
     div(class = "section-title", "Case studies \u2014 jak interpretowa\u0107 CI w praktyce"),
 
     div(class = "narrative",
-      p("Poni\u017cej kilka realistycznych sytuacji. W ka\u017cdej ", tags$b("budujesz CI krok po kroku"),
-        " (jak w poprzednich sekcjach), a na ko\u0144cu weryfikujesz dwie hipotezy:
+      p("Poni\u017cej kilka realistycznych sytuacji. W ka\u017cdej budujesz CI krok po kroku
+        (jak w poprzednich sekcjach), a na ko\u0144cu weryfikujesz dwie hipotezy:
         jedn\u0105, kt\u00f3ra jest prawdziwa, i jedn\u0105, kt\u00f3ra nie jest. Klikaj nag\u0142\u00f3wki,
         \u017ceby rozwija\u0107 case'y.")
     ),
@@ -120,8 +119,8 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Zmierzy\u0142e\u015b wzrost ", tags$b("30 student\u00f3w"),
-            ". \u015arednia z pr\u00f3by ", withMathJax("\\(\\bar{x} = 173.4\\)"), " cm,
+          p("Zmierzy\u0142e\u015b wzrost 30 student\u00f3w. \u015arednia z pr\u00f3by ",
+            withMathJax("\\(\\bar{x} = 173.4\\)"), " cm,
             odchylenie standardowe ", withMathJax("\\(s = 8.2\\)"), " cm.
             Zbudujmy CI dla \u015bredniego wzrostu i sprawd\u017amy dwie hipotezy.")
         ),
@@ -263,16 +262,13 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
     div(class = "callout-info",
       tags$strong("Najwa\u017cniejsze do zapami\u0119tania:"),
       tags$ol(
-        tags$li("CI ", tags$b("dla r\u00f3\u017cnicy"),
-                " m\u00f3wi czy r\u00f3\u017cnica jest istotna \u2014 sprawd\u017a czy zawiera 0."),
+        tags$li("CI dla r\u00f3\u017cnicy m\u00f3wi czy r\u00f3\u017cnica jest istotna \u2014 sprawd\u017a czy zawiera 0."),
         tags$li("Nie por\u00f3wnuj nak\u0142adania si\u0119 CI poszczeg\u00f3lnych grup \u2014
-                to MO\u017bE da\u0107 mylny obraz. Zawsze patrz na CI ",
-                tags$b("dla r\u00f3\u017cnicy"), "."),
+                to MO\u017bE da\u0107 mylny obraz. Zawsze patrz na CI dla r\u00f3\u017cnicy."),
         tags$li("\"Istotne statystycznie\" \u2260 \"wa\u017cne praktycznie\".
                 Przy bardzo du\u017cym n nawet trywialne r\u00f3\u017cnice b\u0119d\u0105 istotne."),
         tags$li("Forest plot to standardowy spos\u00f3b por\u00f3wnania wielu grup.
-                Patrz nie tylko na \u015brednie, ale przede wszystkim na ", tags$b("d\u0142ugo\u015b\u0107"),
-                " ka\u017cdego CI.")
+                Patrz nie tylko na \u015brednie, ale przede wszystkim na d\u0142ugo\u015b\u0107 ka\u017cdego CI.")
       )
     ),
 
@@ -359,12 +355,22 @@ ch3_server <- function(input, output, session) {
 
     # Jitter punktow na Y (deterministyczny na podstawie wartosci)
     set.seed(42)
-    jitter_y <- runif(n, min = 0.15, max = 0.55)
+    jitter_y <- runif(n, min = 0.55, max = 0.90)
     samp_df <- data.frame(x = samp, y = jitter_y)
+
+    # Oddzielne poziomy Y - kazdy element na swojej linii
+    Y_MEAN <- 0.38
+    Y_SE   <- 0.12
+    Y_CI   <- -0.18
+
+    # Wyszarzanie poprzednich elementow
+    col_faded <- "#adb5bd"
+    c_mean <- if (step >= 3) col_faded else col_estimate
+    c_se   <- if (step >= 4) col_faded else col_success
 
     p <- ggplot() +
       xlim(xlims) +
-      ylim(-0.55, 0.75) +
+      ylim(-0.45, 0.98) +
       labs(x = "Wzrost (cm)", y = NULL) +
       theme_educational() +
       theme(axis.text.y = element_blank(),
@@ -378,35 +384,34 @@ ch3_server <- function(input, output, session) {
                           color = col_primary, size = 3, alpha = 0.7)
     }
 
-    # Krok 2+: linia pionowa i diament srednia
+    # Krok 2+: pionowa linia prowadzaca + diament sredniej
     if (step >= 2) {
       p <- p +
-        geom_vline(xintercept = xbar, color = col_estimate,
-                   linewidth = 1, linetype = "dotted") +
-        geom_point(aes(x = xbar, y = 0), color = col_estimate,
+        geom_vline(xintercept = xbar, color = "#adb5bd",
+                   linewidth = 0.8, linetype = "dotted") +
+        geom_point(aes(x = xbar, y = Y_MEAN), color = c_mean,
                    size = 7, shape = 18) +
-        annotate("text", x = xbar, y = -0.18,
+        annotate("text", x = xbar, y = Y_MEAN - 0.13,
                  label = paste0("x\u0304 = ", round(xbar, 2)),
-                 color = col_estimate, fontface = "bold", size = 5)
+                 color = c_mean, fontface = "bold", size = 5)
     }
 
-    # Krok 3: przedzial +/- SE (zielony, wezszy)
+    # Krok 3+: przedzial +/- SE (zielony, wezszy)
     if (step >= 3) {
       p <- p +
-        geom_errorbarh(aes(xmin = xbar - se, xmax = xbar + se, y = 0),
-                       height = 0.06, color = col_success, linewidth = 1.8) +
-        annotate("text", x = xbar, y = 0.14,
+        geom_errorbarh(aes(xmin = xbar - se, xmax = xbar + se, y = Y_SE),
+                       height = 0.07, color = c_se, linewidth = 1.8) +
+        annotate("text", x = xbar, y = Y_SE - 0.10,
                  label = paste0("\u00b1 SE = \u00b1", round(se, 2)),
-                 color = col_success, fontface = "bold", size = 4.5)
+                 color = c_se, fontface = "bold", size = 4.5)
     }
 
     # Krok 4: pelny CI (t* * SE, szerszy, niebieski)
     if (step >= 4) {
       p <- p +
-        geom_errorbarh(aes(xmin = xbar - me, xmax = xbar + me, y = 0),
-                       height = 0.12, color = col_ci, linewidth = 2.2,
-                       alpha = 0.6) +
-        annotate("text", x = xbar, y = -0.38,
+        geom_errorbarh(aes(xmin = xbar - me, xmax = xbar + me, y = Y_CI),
+                       height = 0.10, color = col_ci, linewidth = 2.2) +
+        annotate("text", x = xbar, y = Y_CI - 0.13,
                  label = paste0("95% CI: [", round(xbar - me, 2),
                                 " ; ", round(xbar + me, 2), "]"),
                  color = col_ci, fontface = "bold", size = 5)
@@ -429,7 +434,7 @@ ch3_server <- function(input, output, session) {
 
     switch(as.character(step),
       "1" = div(class = "callout-info",
-        p(tags$strong("Krok 1: Pr\u00f3ba."),
+        p(tags$strong("Krok 1:"), " Pr\u00f3ba.",
           " Pobrali\u015bmy ", tags$b(n), " pomiar\u00f3w wzrostu. Ka\u017cda kropka to jedna osoba.
           Zauwa\u017c, jak bardzo surowe obserwacje s\u0105 ", tags$b("rozrzucone"),
           " \u2014 rozrzut indywidualny w populacji jest du\u017cy."),
@@ -441,7 +446,7 @@ ch3_server <- function(input, output, session) {
           withMathJax(paste0("\\(n = ", n, "\\)")), ".")
       ),
       "2" = div(class = "callout-info",
-        p(tags$strong("Krok 2: \u015arednia z pr\u00f3by."),
+        p(tags$strong("Krok 2:"), " \u015arednia z pr\u00f3by.",
           " Obliczamy ",
           withMathJax(paste0("\\(\\bar{x} = ", round(xbar, 2), "\\)")), " cm.
           To nasz ", tags$b("estymator punktowy"),
@@ -450,7 +455,7 @@ ch3_server <- function(input, output, session) {
           Musimy wyrazi\u0107 ", tags$b("niepewno\u015b\u0107"), " tego oszacowania.")
       ),
       "3" = div(class = "callout-info",
-        p(tags$strong("Krok 3: B\u0142\u0105d standardowy (\u00b1 SE)."),
+        p(tags$strong("Krok 3:"), " B\u0142\u0105d standardowy (\u00b1 SE).",
           " B\u0142\u0105d standardowy \u015bredniej to:"),
         p(withMathJax(paste0("\\(SE = \\frac{s}{\\sqrt{n}} = \\frac{", round(s, 2),
                              "}{\\sqrt{", n, "}} = ", round(se, 2), "\\)"))),
@@ -466,7 +471,7 @@ ch3_server <- function(input, output, session) {
       "4" = {
         covers <- (xbar - me <= 170) & (170 <= xbar + me)
         div(class = if (covers) "callout-success" else "callout-danger",
-          p(tags$strong("Krok 4: Przedzia\u0142 ufno\u015bci (\u00b1 t* \u00b7 SE).")),
+          p(tags$strong("Krok 4:"), " Przedzia\u0142 ufno\u015bci (\u00b1 t* \u00b7 SE)."),
           p("Mno\u017cymy SE przez warto\u015b\u0107 krytyczn\u0105 ",
             withMathJax(paste0("\\(t^*_{0.975, ", n - 1, "} = ",
                                round(t_star, 3), "\\)")), ":"),
@@ -687,14 +692,14 @@ ch3_server <- function(input, output, session) {
 
     switch(as.character(step),
       "1" = div(class = "callout-info",
-        p(tags$strong("Krok 1: Dwie pr\u00f3by."),
+        p(tags$strong("Krok 1:"), " Dwie pr\u00f3by.",
           " Mierzymy wzrost w obu grupach: ", tags$b(n1), " m\u0119\u017cczyzn i ",
           tags$b(n2), " kobiet. Ka\u017cdy punkt to jedna osoba.
           Zauwa\u017c \u2014 rozrzut surowych danych jest du\u017cy, ale wyra\u017anie wida\u0107,
           \u017ce \u015brednia \"niebieska\" le\u017cy na prawo od \u015bredniej \"czerwonej\".")
       ),
       "2" = div(class = "callout-info",
-        p(tags$strong("Krok 2: Dwie \u015brednie."),
+        p(tags$strong("Krok 2:"), " Dwie \u015brednie.",
           " Obliczamy \u015bredni\u0105 w ka\u017cdej grupie:"),
         p(withMathJax(paste0("\\(\\bar{x}_1 = ", round(x1, 2), "\\)"))),
         p(withMathJax(paste0("\\(\\bar{x}_2 = ", round(x2, 2), "\\)"))),
@@ -702,7 +707,7 @@ ch3_server <- function(input, output, session) {
           nie ka\u017cda z osobna, tylko ", tags$b("r\u00f3\u017cnica mi\u0119dzy nimi"), ".")
       ),
       "3" = div(class = "callout-info",
-        p(tags$strong("Krok 3: R\u00f3\u017cnica."),
+        p(tags$strong("Krok 3:"), " R\u00f3\u017cnica.",
           " Estymator punktowy r\u00f3\u017cnicy: ",
           withMathJax(paste0("\\(\\bar{x}_1 - \\bar{x}_2 = ", round(x1, 2),
                              " - ", round(x2, 2), " = ",
@@ -713,7 +718,7 @@ ch3_server <- function(input, output, session) {
           ". Teraz musimy otoczy\u0107 nasz\u0105 r\u00f3\u017cnic\u0119 przedzia\u0142em niepewno\u015bci.")
       ),
       "4" = div(class = "callout-info",
-        p(tags$strong("Krok 4: B\u0142\u0105d standardowy r\u00f3\u017cnicy (\u00b1 SE)."),
+        p(tags$strong("Krok 4:"), " B\u0142\u0105d standardowy r\u00f3\u017cnicy (\u00b1 SE).",
           " SE r\u00f3\u017cnicy \u0142\u0105czy niepewno\u015bci z obu pr\u00f3b:"),
         p(withMathJax(paste0(
           "\\(SE_{r\u00f3\u017cnicy} = \\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}} = ",
@@ -728,7 +733,7 @@ ch3_server <- function(input, output, session) {
       "5" = {
         covers_zero <- (diff_val - me <= 0) & (0 <= diff_val + me)
         div(class = if (covers_zero) "callout-warning" else "callout-success",
-          p(tags$strong("Krok 5: Przedzia\u0142 ufno\u015bci dla r\u00f3\u017cnicy.")),
+          p(tags$strong("Krok 5:"), " Przedzia\u0142 ufno\u015bci dla r\u00f3\u017cnicy."),
           p("Warto\u015b\u0107 krytyczna z rozk\u0142adu t (df Welcha \u2248 ",
             round(df_w, 1), "): ",
             withMathJax(paste0("\\(t^* = ", round(t_star, 3), "\\)"))),

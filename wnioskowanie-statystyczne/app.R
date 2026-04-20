@@ -13,14 +13,6 @@ library(tidyr)
 # KOLORY
 # ============================================================================
 
-col_primary    <- "#3498db"    # niebieski
-col_secondary  <- "#e74c3c"    # czerwony
-col_success    <- "#27ae60"    # zielony
-col_warning    <- "#f39c12"    # pomaranczowy
-col_dark       <- "#2c3e50"    # ciemny
-col_purple     <- "#9b59b6"    # fioletowy
-col_teal       <- "#1abc9c"    # morski
-
 # Kolory specyficzne dla testowania hipotez
 col_h0         <- "#3498db"    # niebieski - hipoteza zerowa / rozklad pod H0
 col_h1         <- "#e74c3c"    # czerwony - hipoteza alternatywna / obszar odrzucenia
