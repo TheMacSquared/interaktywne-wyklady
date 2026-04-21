@@ -131,10 +131,15 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 7 — Co jeśli mamy tylko 25 okręgów?"),
+    h4("Zadanie 7 — Czy wysoki odsetek ELL idzie w parze z wysokim odsetkiem dotacji do obiadów?"),
     div(class = "narrative",
-      p("Przefiltruj do pierwszych 25 okręgów. Policz CI dla ", tags$code("english > 20"),
-        ". Dlaczego CI jest tak szeroki? Czy pierwsze 25 wierszy to losowa próba?")
+      p("Weź dwie zmienne jakościowe zbudowane z danych: ",
+        tags$code("english > 20"), " (dużo uczniów uczących się angielskiego jako drugiego języka) oraz ",
+        tags$code("lunch > 50"), " (dużo uczniów z dotacjami na obiady). Oszacuj 95% CI dla ",
+        tags$b("różnicy proporcji"),
+        " okręgów z dotacjami wśród okręgów z wysokim ELL i bez. Na tej podstawie oceń, czy można stwierdzić związek między tymi zmiennymi."),
+      p(tags$em("Wskazówka:"), " zacznij od tabeli krzyżowej ",
+        tags$code("table(english > 20, lunch > 50)"), ".")
     ),
     actionButton("ch7_ans7", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch7_sol7")
@@ -148,63 +153,21 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
       p("Przyjmijmy, że w zadaniu 1 dostałeś 95% CI dla średniej ",
         tags$code("read"), " równy ", tags$b("[653.0, 656.9]"), ". Oceń każde stwierdzenie:"),
       tags$ol(
-        tags$li(tags$b("a)"), " „Z prawdopodobieństwem 95% prawdziwa średnia μ leży między 653.0 a 656.9.”"),
-        tags$li(tags$b("b)"), " „95% wszystkich okręgów ma wynik z czytania między 653.0 a 656.9.”"),
-        tags$li(tags$b("c)"), " „Gdybyśmy powtarzali badanie, ~95% tak skonstruowanych przedziałów zawierałoby prawdziwą średnią.”"),
-        tags$li(tags$b("d)"), " „Średnia z próby leży w przedziale [653.0, 656.9].”"),
-        tags$li(tags$b("e)"), " „Mamy 95% ufności w metodę, która wyprodukowała ten przedział.”"),
-        tags$li(tags$b("f)"), " „Gdybyśmy podnieśli poziom ufności do 99%, przedział zwęziłby się.”")
+        tags$li("„Z prawdopodobieństwem 95% prawdziwa średnia μ leży między 653.0 a 656.9.”"),
+        tags$li("„95% wszystkich okręgów ma wynik z czytania między 653.0 a 656.9.”"),
+        tags$li("„Gdybyśmy powtarzali badanie, ~95% tak skonstruowanych przedziałów zawierałoby prawdziwą średnią.”"),
+        tags$li("„Średnia z próby leży w przedziale [653.0, 656.9].”"),
+        tags$li("„Mamy 95% ufności w metodę, która wyprodukowała ten przedział.”"),
+        tags$li("„Gdybyśmy podnieśli poziom ufności do 99%, przedział zwęziłby się.”"),
+        tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny wynik z czytania w populacji przekracza 650 punktów.”"),
+        tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny wynik z czytania przekracza 655 punktów.”"),
+        tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny wynik z czytania przekracza 660 punktów.”")
       )
     ),
     actionButton("ch7_ans8", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch7_sol8")
   ),
 
-  div(class = "widget-block",
-    h4("Zadanie 9 — Czy dotacje do obiadów szkodzą uczniom? (trudniejsze)"),
-
-    div(class = "narrative",
-      p(tags$b("Krok A."), " Podziel okręgi wg ", tags$code("lunch"),
-        " (dotacje do obiadów) na trzy grupy: mało (<33%), średnio (33–66%), dużo (>66%).
-        Policz 95% CI dla średniej ", tags$code("read"), " i ", tags$code("math"), " w każdej grupie.")
-    ),
-    actionButton("ch7_ans9a", "Pokaż wyniki kroku A", class = "btn-outline-success btn-sm"),
-    uiOutput("ch7_sol9a"),
-    br(),
-
-    conditionalPanel(condition = "input.ch7_ans9a % 2 == 1",
-      div(class = "narrative",
-        p(tags$b("Krok B."), " Wyniki są dramatyczne. Ale zanim wyciągniesz wnioski:
-          podziel okręgi wg ", tags$code("income"),
-          " (niski <10, średni 10–20, wysoki >20 tys. $) i policz CI dla tych samych wyników.")
-      ),
-      actionButton("ch7_ans9b", "Pokaż wyniki kroku B", class = "btn-outline-success btn-sm"),
-      uiOutput("ch7_sol9b"),
-      br(),
-
-      conditionalPanel(condition = "input.ch7_ans9b % 2 == 1",
-        div(class = "narrative",
-          p(tags$b("Krok C."), " Policz 95% CI dla średniej ", tags$code("income"),
-            " w każdej z grup lunch. Jeśli przedziały nie nachodzą na siebie,
-            grupy dotacji to w rzeczywistości grupy zamożności.")
-        ),
-        actionButton("ch7_ans9c", "Pokaż wyniki kroku C i wnioski", class = "btn-outline-success btn-sm"),
-        uiOutput("ch7_sol9c")
-      )
-    )
-  ),
-
-  div(class = "section-title", "Podsumowanie"),
-  div(class = "callout-warning",
-    p(tags$b("Po zakończeniu ćwiczeń odpowiedz:")),
-    tags$ol(
-      tags$li("Co najsilniej wpłynęło na szerokość CI — n, s, czy poziom ufności?"),
-      tags$li("Dlaczego CI dla proporcji w zadaniu 7 był tak szeroki?"),
-      tags$li("Czego nauczyło nas zadanie 9 o interpretacji związków między zmiennymi?")
-    )
-  ),
-  actionButton("ch7_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
-  uiOutput("ch7_sol_summary"),
   br()
 )
 
@@ -295,11 +258,15 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 7 — Co jeśli mamy tylko 30 zakładów?"),
+    h4("Zadanie 7 — Czy przekroczona norma hałasu idzie w parze z wysokim odsetkiem naruszeń procedur?"),
     div(class = "narrative",
-      p("Przefiltruj do pierwszych 30 zakładów. Policz CI dla ",
-        tags$code("ponad_norma_halas"), ". Dlaczego CI jest tak szeroki?
-        Czy pierwsze 30 zakładów to reprezentatywna próba?")
+      p("Weź dwie zmienne jakościowe: ", tags$code("ponad_norma_halas"),
+        " (hałas powyżej normy) oraz ", tags$code("naruszen_proc > 20"),
+        " (wysoki odsetek naruszeń procedur). Oszacuj 95% CI dla ",
+        tags$b("różnicy proporcji"),
+        " zakładów z wysokimi naruszeniami wśród zakładów hałaśliwych i niehałaśliwych. Na tej podstawie oceń, czy można stwierdzić związek między tymi zmiennymi."),
+      p(tags$em("Wskazówka:"), " zacznij od tabeli krzyżowej ",
+        tags$code("table(ponad_norma_halas, naruszen_proc > 20)"), ".")
     ),
     actionButton("ch7_ans7", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch7_sol7")
@@ -314,64 +281,21 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
         tags$code("wskaznik_wypadkow"), " równy ", tags$b("[9.33, 10.15]"),
         ". Oceń każde stwierdzenie:"),
       tags$ol(
-        tags$li(tags$b("a)"), " „Z prawdopodobieństwem 95% prawdziwy średni wskaźnik wypadków leży między 9.33 a 10.15.”"),
-        tags$li(tags$b("b)"), " „95% zakładów ma wskaźnik wypadków między 9.33 a 10.15.”"),
-        tags$li(tags$b("c)"), " „Gdybyśmy powtarzali badanie, ~95% tak skonstruowanych przedziałów zawierałoby prawdziwą średnią.”"),
-        tags$li(tags$b("d)"), " „Średnia z próby leży w przedziale [9.33, 10.15].”"),
-        tags$li(tags$b("e)"), " „Mamy 95% ufności w metodę, która wyprodukowała ten przedział.”"),
-        tags$li(tags$b("f)"), " „Gdybyśmy podnieśli poziom ufności do 99%, przedział zwęziłby się.”")
+        tags$li("„Z prawdopodobieństwem 95% prawdziwy średni wskaźnik wypadków leży między 9.33 a 10.15.”"),
+        tags$li("„95% zakładów ma wskaźnik wypadków między 9.33 a 10.15.”"),
+        tags$li("„Gdybyśmy powtarzali badanie, ~95% tak skonstruowanych przedziałów zawierałoby prawdziwą średnią.”"),
+        tags$li("„Średnia z próby leży w przedziale [9.33, 10.15].”"),
+        tags$li("„Mamy 95% ufności w metodę, która wyprodukowała ten przedział.”"),
+        tags$li("„Gdybyśmy podnieśli poziom ufności do 99%, przedział zwęziłby się.”"),
+        tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny wskaźnik wypadków w populacji zakładów przekracza 9 na 1000 pracowników.”"),
+        tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny wskaźnik wypadków przekracza 10 na 1000 pracowników.”"),
+        tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny wskaźnik wypadków przekracza 11 na 1000 pracowników.”")
       )
     ),
     actionButton("ch7_ans8", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch7_sol8")
   ),
 
-  div(class = "widget-block",
-    h4("Zadanie 9 — Czy zmianowość naprawdę powoduje więcej wypadków? (trudniejsze)"),
-
-    div(class = "narrative",
-      p(tags$b("Krok A."), " Podziel zakłady wg ", tags$code("zmiany"),
-        " (jedna/dwie/trzy zmiany). Policz 95% CI dla średniej ",
-        tags$code("wskaznik_wypadkow"), " w każdej grupie.")
-    ),
-    actionButton("ch7_ans9a", "Pokaż wyniki kroku A", class = "btn-outline-success btn-sm"),
-    uiOutput("ch7_sol9a"),
-    br(),
-
-    conditionalPanel(condition = "input.ch7_ans9a % 2 == 1",
-      div(class = "narrative",
-        p(tags$b("Krok B."), " Wyniki sugerują więcej wypadków przy trzech zmianach. Ale:
-          podziel zakłady wg ", tags$code("branza"),
-          " (spożywcza/metalowa/chemiczna) i policz CI dla wskaźnika wypadków.")
-      ),
-      actionButton("ch7_ans9b", "Pokaż wyniki kroku B", class = "btn-outline-success btn-sm"),
-      uiOutput("ch7_sol9b"),
-      br(),
-
-      conditionalPanel(condition = "input.ch7_ans9b % 2 == 1",
-        div(class = "narrative",
-          p(tags$b("Krok C."), " Sprawdź: policz CI dla wskaźnika wypadków wg ",
-            tags$code("branza"), " w każdej grupie ", tags$code("zmiany"),
-            ". Czy metalowe i chemiczne częściej pracują na 3 zmiany?
-            Jeśli tak — to branża (a nie zmianowość) może być prawdziwym czynnikiem.")
-        ),
-        actionButton("ch7_ans9c", "Pokaż wyniki kroku C i wnioski", class = "btn-outline-success btn-sm"),
-        uiOutput("ch7_sol9c")
-      )
-    )
-  ),
-
-  div(class = "section-title", "Podsumowanie"),
-  div(class = "callout-warning",
-    p(tags$b("Po zakończeniu ćwiczeń odpowiedz:")),
-    tags$ol(
-      tags$li("Co najsilniej wpłynęło na szerokość CI — n, s, czy poziom ufności?"),
-      tags$li("Dlaczego CI dla proporcji w zadaniu 7 był tak szeroki?"),
-      tags$li("Czego nauczyło nas zadanie 9 o interpretacji związków między zmiennymi?")
-    )
-  ),
-  actionButton("ch7_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
-  uiOutput("ch7_sol_summary"),
   br()
 )
 
@@ -461,11 +385,15 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 7 — Co jeśli mamy tylko 30 pól?"),
+    h4("Zadanie 7 — Czy niski plon idzie w parze z nadmierną wilgotnością?"),
     div(class = "narrative",
-      p("Przefiltruj do pierwszych 30 pól. Policz CI dla ",
-        tags$code("plon_ponizej_5"), ". Dlaczego CI jest tak szeroki?
-        Czy pierwsze 30 pól to reprezentatywna próba?")
+      p("Weź dwie zmienne jakościowe: ", tags$code("plon_ponizej_5"),
+        " (plon poniżej progu opłacalności) oraz ", tags$code("wilg_powyzej_70"),
+        " (nadmierna wilgotność). Oszacuj 95% CI dla ",
+        tags$b("różnicy proporcji"),
+        " pól z nadmierną wilgotnością wśród pól z niskim plonem i pól z plonem normalnym. Na tej podstawie oceń, czy można stwierdzić związek między tymi zmiennymi."),
+      p(tags$em("Wskazówka:"), " zacznij od tabeli krzyżowej ",
+        tags$code("table(plon_ponizej_5, wilg_powyzej_70)"), ".")
     ),
     actionButton("ch7_ans7", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch7_sol7")
@@ -480,63 +408,21 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
         tags$code("plon_pszenicy"), " równy ", tags$b("[6.03, 6.31]"),
         ". Oceń każde stwierdzenie:"),
       tags$ol(
-        tags$li(tags$b("a)"), " „Z prawdopodobieństwem 95% prawdziwy średni plon leży między 6.03 a 6.31.”"),
-        tags$li(tags$b("b)"), " „95% pól ma plon między 6.03 a 6.31 t/ha.”"),
-        tags$li(tags$b("c)"), " „Gdybyśmy powtarzali badanie, ~95% tak skonstruowanych przedziałów zawierałoby prawdziwą średnią.”"),
-        tags$li(tags$b("d)"), " „Średnia z próby leży w przedziale [6.03, 6.31].”"),
-        tags$li(tags$b("e)"), " „Mamy 95% ufności w metodę, która wyprodukowała ten przedział.”"),
-        tags$li(tags$b("f)"), " „Gdybyśmy podnieśli poziom ufności do 99%, przedział zwęziłby się.”")
+        tags$li("„Z prawdopodobieństwem 95% prawdziwy średni plon leży między 6.03 a 6.31.”"),
+        tags$li("„95% pól ma plon między 6.03 a 6.31 t/ha.”"),
+        tags$li("„Gdybyśmy powtarzali badanie, ~95% tak skonstruowanych przedziałów zawierałoby prawdziwą średnią.”"),
+        tags$li("„Średnia z próby leży w przedziale [6.03, 6.31].”"),
+        tags$li("„Mamy 95% ufności w metodę, która wyprodukowała ten przedział.”"),
+        tags$li("„Gdybyśmy podnieśli poziom ufności do 99%, przedział zwęziłby się.”"),
+        tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny plon pszenicy w populacji pól przekracza 6 t/ha.”"),
+        tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny plon pszenicy przekracza 6.2 t/ha.”"),
+        tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny plon pszenicy przekracza 6.5 t/ha.”")
       )
     ),
     actionButton("ch7_ans8", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch7_sol8")
   ),
 
-  div(class = "widget-block",
-    h4("Zadanie 9 — Czy nawożenie naprawdę poprawia plony? (trudniejsze)"),
-
-    div(class = "narrative",
-      p(tags$b("Krok A."), " Podziel pola wg ", tags$code("nawozenie"),
-        " (niskie/średnie/wysokie). Policz 95% CI dla średniej ",
-        tags$code("plon_pszenicy"), " w każdej grupie.")
-    ),
-    actionButton("ch7_ans9a", "Pokaż wyniki kroku A", class = "btn-outline-success btn-sm"),
-    uiOutput("ch7_sol9a"),
-    br(),
-
-    conditionalPanel(condition = "input.ch7_ans9a % 2 == 1",
-      div(class = "narrative",
-        p(tags$b("Krok B."), " Wyniki sugerują wyższe nawożenie = wyższy plon. Ale:
-          podziel pola wg ", tags$code("klasa_gleby"),
-          " (I/II/III) i policz CI dla plonu pszenicy.")
-      ),
-      actionButton("ch7_ans9b", "Pokaż wyniki kroku B", class = "btn-outline-success btn-sm"),
-      uiOutput("ch7_sol9b"),
-      br(),
-
-      conditionalPanel(condition = "input.ch7_ans9b % 2 == 1",
-        div(class = "narrative",
-          p(tags$b("Krok C."), " Sprawdź: policz ćrednią ", tags$code("plon_pszenicy"),
-            " wg klasy gleby w każdej grupie nawożenia. Czy pola z wysokim nawożeniem
-            to częściej klasa I i II? Jeśli tak — klasa gleby może być prawdziwym czynnikiem.")
-        ),
-        actionButton("ch7_ans9c", "Pokaż wyniki kroku C i wnioski", class = "btn-outline-success btn-sm"),
-        uiOutput("ch7_sol9c")
-      )
-    )
-  ),
-
-  div(class = "section-title", "Podsumowanie"),
-  div(class = "callout-warning",
-    p(tags$b("Po zakończeniu ćwiczeń odpowiedz:")),
-    tags$ol(
-      tags$li("Co najsilniej wpłynęło na szerokość CI — n, s, czy poziom ufności?"),
-      tags$li("Dlaczego CI dla proporcji w zadaniu 7 był tak szeroki?"),
-      tags$li("Czego nauczyło nas zadanie 9 o interpretacji związków między zmiennymi?")
-    )
-  ),
-  actionButton("ch7_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
-  uiOutput("ch7_sol_summary"),
   br()
 )
 
@@ -625,11 +511,15 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 7 — Co jeśli mamy tylko 30 partii?"),
+    h4("Zadanie 7 — Czy niedobór białka idzie w parze z przekroczoną normą tłuszczu?"),
     div(class = "narrative",
-      p("Przefiltruj do pierwszych 30 partii. Policz CI dla ",
-        tags$code("bialko_ponizej_normy"), ". Dlaczego CI jest tak szeroki?
-        Czy pierwsze 30 partii to reprezentatywna próba?")
+      p("Weź dwie zmienne jakościowe: ", tags$code("bialko_ponizej_normy"),
+        " (za mało białka) oraz ", tags$code("tluszcz_powyzej_normy"),
+        " (za dużo tłuszczu). Oszacuj 95% CI dla ",
+        tags$b("różnicy proporcji"),
+        " partii z przekroczoną normą tłuszczu wśród partii z niedoborem białka i partii z białkiem w normie. Na tej podstawie oceń, czy można stwierdzić związek między tymi zmiennymi."),
+      p(tags$em("Wskazówka:"), " zacznij od tabeli krzyżowej ",
+        tags$code("table(bialko_ponizej_normy, tluszcz_powyzej_normy)"), ".")
     ),
     actionButton("ch7_ans7", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch7_sol7")
@@ -644,63 +534,21 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
         tags$code("zawartosc_bialka"), " równy ", tags$b("[26.57, 26.85]"),
         ". Oceń każde stwierdzenie:"),
       tags$ol(
-        tags$li(tags$b("a)"), " „Z prawdopodobieństwem 95% prawdziwa średnia zawartość białka leży między 26.57 a 26.85.”"),
-        tags$li(tags$b("b)"), " „95% partii ma zawartość białka między 26.57 a 26.85%.”"),
-        tags$li(tags$b("c)"), " „Gdybyśmy powtarzali badanie, ~95% tak skonstruowanych przedziałów zawierałoby prawdziwą średnią.”"),
-        tags$li(tags$b("d)"), " „Średnia z próby leży w przedziale [26.57, 26.85].”"),
-        tags$li(tags$b("e)"), " „Mamy 95% ufności w metodę, która wyprodukowała ten przedział.”"),
-        tags$li(tags$b("f)"), " „Gdybyśmy podnieśli poziom ufności do 99%, przedział zwęziłby się.”")
+        tags$li("„Z prawdopodobieństwem 95% prawdziwa średnia zawartość białka leży między 26.57 a 26.85.”"),
+        tags$li("„95% partii ma zawartość białka między 26.57 a 26.85%.”"),
+        tags$li("„Gdybyśmy powtarzali badanie, ~95% tak skonstruowanych przedziałów zawierałoby prawdziwą średnią.”"),
+        tags$li("„Średnia z próby leży w przedziale [26.57, 26.85].”"),
+        tags$li("„Mamy 95% ufności w metodę, która wyprodukowała ten przedział.”"),
+        tags$li("„Gdybyśmy podnieśli poziom ufności do 99%, przedział zwęziłby się.”"),
+        tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętna zawartość białka w populacji partii przekracza 25%.”"),
+        tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętna zawartość białka przekracza 26.7%.”"),
+        tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętna zawartość białka przekracza 27%.”")
       )
     ),
     actionButton("ch7_ans8", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch7_sol8")
   ),
 
-  div(class = "widget-block",
-    h4("Zadanie 9 — Czy dostawca naprawdę wpływa na jakość? (trudniejsze)"),
-
-    div(class = "narrative",
-      p(tags$b("Krok A."), " Podziel partie wg ", tags$code("dostawca"),
-        " (lokalny/krajowy/importowany). Policz 95% CI dla średniej ",
-        tags$code("zawartosc_bialka"), " w każdej grupie.")
-    ),
-    actionButton("ch7_ans9a", "Pokaż wyniki kroku A", class = "btn-outline-success btn-sm"),
-    uiOutput("ch7_sol9a"),
-    br(),
-
-    conditionalPanel(condition = "input.ch7_ans9a % 2 == 1",
-      div(class = "narrative",
-        p(tags$b("Krok B."), " Wyniki sugerują, że importowany dostawca daje więcej białka. Ale:
-          podziel partie wg ", tags$code("linia"),
-          " (A/B/C) i policz CI dla zawartości białka.")
-      ),
-      actionButton("ch7_ans9b", "Pokaż wyniki kroku B", class = "btn-outline-success btn-sm"),
-      uiOutput("ch7_sol9b"),
-      br(),
-
-      conditionalPanel(condition = "input.ch7_ans9b % 2 == 1",
-        div(class = "narrative",
-          p(tags$b("Krok C."), " Sprawdź: policz średnią ", tags$code("zawartosc_bialka"),
-            " wg linii w każdej grupie dostawcy. Czy importowany dostawca częściej
-            zasila linię A? Jeśli tak — linia produkcyjna może być prawdziwym czynnikiem.")
-        ),
-        actionButton("ch7_ans9c", "Pokaż wyniki kroku C i wnioski", class = "btn-outline-success btn-sm"),
-        uiOutput("ch7_sol9c")
-      )
-    )
-  ),
-
-  div(class = "section-title", "Podsumowanie"),
-  div(class = "callout-warning",
-    p(tags$b("Po zakończeniu ćwiczeń odpowiedz:")),
-    tags$ol(
-      tags$li("Co najsilniej wpłynęło na szerokość CI — n, s, czy poziom ufności?"),
-      tags$li("Dlaczego CI dla proporcji w zadaniu 7 był tak szeroki?"),
-      tags$li("Czego nauczyło nas zadanie 9 o interpretacji związków między zmiennymi?")
-    )
-  ),
-  actionButton("ch7_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
-  uiOutput("ch7_sol_summary"),
   br()
 )
 
@@ -716,6 +564,75 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
   rol = read.csv(file.path(app_dir, "dane", "rolnictwo_pola.csv")),
   zyw = read.csv(file.path(app_dir, "dane", "zywnosc_partie.csv"))
 )
+
+# Helper dla zadania 7: tabela krzyżowa 2x2 + 95% CI dla różnicy proporcji
+# (Wald przez prop.test, correct = FALSE). Wnioski: kierunek zależności
+# formułowany w kategoriach jednostek danego kierunku.
+.ch7_sol7_tab_diff <- function(x, y, x_lab, y_lab,
+                               unit_plural_gen,  # np. "okręgów", "zakładów", "pól", "partii"
+                               y_event_phrase) { # np. "z dotacjami do obiadów"
+  x <- as.logical(x); y <- as.logical(y)
+  tab <- table(X = x, Y = y)
+  k1 <- tab["TRUE",  "TRUE"]; n1 <- sum(tab["TRUE",  ])
+  k2 <- tab["FALSE", "TRUE"]; n2 <- sum(tab["FALSE", ])
+  pt <- prop.test(c(k1, k2), c(n1, n2), correct = FALSE)
+  p1 <- k1 / n1; p2 <- k2 / n2
+  diff <- p1 - p2
+  ci <- pt$conf.int
+
+  verdict <- if (ci[1] <= 0 && 0 <= ci[2]) {
+    tagList(
+      tags$b("Wniosek:"),
+      sprintf(" 95%% CI dla różnicy proporcji zawiera 0 ([%.3f, %.3f]). Nie ma podstaw, by stwierdzić związek między %s a %s.",
+              ci[1], ci[2], x_lab, y_lab)
+    )
+  } else if (ci[1] > 0) {
+    tagList(
+      tags$b("Wniosek:"),
+      sprintf(" 95%% CI dla różnicy proporcji leży powyżej 0 ([%.3f, %.3f]). Odsetek %s wśród %s z „%s = TRUE\" jest wyższy o %.1f–%.1f pp niż wśród pozostałych — jest związek.",
+              ci[1], ci[2], y_event_phrase, unit_plural_gen, x_lab,
+              100 * ci[1], 100 * ci[2])
+    )
+  } else {
+    tagList(
+      tags$b("Wniosek:"),
+      sprintf(" 95%% CI dla różnicy proporcji leży poniżej 0 ([%.3f, %.3f]). Odsetek %s wśród %s z „%s = TRUE\" jest niższy o %.1f–%.1f pp niż wśród pozostałych — jest związek.",
+              ci[1], ci[2], y_event_phrase, unit_plural_gen, x_lab,
+              -100 * ci[2], -100 * ci[1])
+    )
+  }
+
+  tagList(
+    p(tags$b("Tabela krzyżowa "), tags$code(x_lab), tags$b(" × "), tags$code(y_lab), tags$b(":")),
+    tags$table(class = "table table-bordered table-striped",
+      tags$thead(tags$tr(
+        tags$th(""),
+        tags$th(sprintf("%s = FALSE", y_lab)),
+        tags$th(sprintf("%s = TRUE",  y_lab)),
+        tags$th("suma")
+      )),
+      tags$tbody(
+        tags$tr(tags$td(sprintf("%s = FALSE", x_lab)),
+                tags$td(tab["FALSE","FALSE"]),
+                tags$td(tab["FALSE","TRUE"]),
+                tags$td(n2)),
+        tags$tr(tags$td(sprintf("%s = TRUE", x_lab)),
+                tags$td(tab["TRUE","FALSE"]),
+                tags$td(tab["TRUE","TRUE"]),
+                tags$td(n1))
+      )
+    ),
+    tags$ul(
+      tags$li(sprintf("p₁ = p(%s=TRUE | %s=TRUE)  = %d/%d ≈ %.3f",
+                      y_lab, x_lab, k1, n1, p1)),
+      tags$li(sprintf("p₂ = p(%s=TRUE | %s=FALSE) = %d/%d ≈ %.3f",
+                      y_lab, x_lab, k2, n2, p2)),
+      tags$li(sprintf("Różnica proporcji p₁ − p₂ ≈ %.3f", diff)),
+      tags$li(sprintf("95%% CI dla różnicy: [%.3f, %.3f]", ci[1], ci[2]))
+    ),
+    p(verdict)
+  )
+}
 
 # ============================================================================
 # ROZWIAZANIA — listy per kierunek
@@ -815,19 +732,14 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
       )
     }),
     sol7 = withMathJax({
-      x <- head(.ch7_data$edu$english > 20, 25)
-      k <- sum(x); n <- length(x); p <- k / n
-      cp <- binom.test(k, n)$conf.int
-      tagList(
-        p(tags$b("Pierwsze 25 okręgów, english > 20:"),
-          sprintf(" p = %d/%d ≈ ", k, n), tags$b(sprintf("%.3f", p))),
-        tags$ul(
-          tags$li("95% CI Clopper-Pearson: ",
-                  tags$b(sprintf("[%.3f, %.3f]", cp[1], cp[2])),
-                  sprintf(" — szerokość ≈ %.3f", cp[2] - cp[1]))
-        ),
-        p(tags$b("Uwaga:"), " pierwsze 25 to nie jest losowa próba — może być obciążona."),
-        p(tags$b("Dlaczego Clopper-Pearson?"), " Przy małym n i p blisko 1 Wald jest niedokładny.")
+      d <- .ch7_data$edu
+      .ch7_sol7_tab_diff(
+        x = d$english > 20,
+        y = d$lunch > 50,
+        x_lab = "english > 20",
+        y_lab = "lunch > 50",
+        unit_plural_gen = "okręgów",
+        y_event_phrase = "okręgów z wysokim odsetkiem dotacji do obiadów"
       )
     }),
     sol8 = withMathJax(tagList(
@@ -837,78 +749,13 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
         tags$li(tags$b("c) PRAWDA."), " Poprawna interpretacja częstotliwościowa."),
         tags$li(tags$b("d) PRAWDA, ale trywialna."), " Średnia próby zawsze leży w środku CI z definicji."),
         tags$li(tags$b("e) PRAWDA."), " Standardowe sformułowanie ufności."),
-        tags$li(tags$b("f) FAŁSZ."), " Wyższy poziom ufności → szerszy CI, nie węższy.")
+        tags$li(tags$b("f) FAŁSZ."), " Wyższy poziom ufności → szerszy CI, nie węższy."),
+        tags$li(tags$b("g) TAK."), " Cały 95% CI leży powyżej 650 — z ufnością 95% przeciętny wynik przekracza 650 punktów."),
+        tags$li(tags$b("h) NIE."), " 655 leży wewnątrz CI — nie mamy podstaw, by stwierdzić, że średnia przekracza 655 (ani że jej nie przekracza)."),
+        tags$li(tags$b("i) NIE."), " Cały CI leży poniżej 660 — wręcz przeciwnie, z ufnością 95% możemy stwierdzić, że przeciętny wynik ",
+                tags$em("nie"), " przekracza 660.")
       )
-    )),
-    sol9a = {
-      d <- .ch7_data$edu
-      grp <- cut(d$lunch, breaks = c(-Inf, 33, 66, Inf),
-                 labels = c("mało (<33%)", "średnio (33–66%)", "dużo (>66%)"))
-      rows <- lapply(levels(grp), function(lvl) {
-        ci <- .ci_mean(d$read[grp == lvl])
-        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 1)), tags$td(.fmt_ci(ci, 1)))
-      })
-      tagList(
-        p(tags$b("95% CI dla średniej read wg grup lunch:")),
-        tags$table(class = "table table-bordered table-striped",
-          tags$thead(tags$tr(tags$th("Grupa lunch"), tags$th("n"),
-                             tags$th("Średnia read"), tags$th("95% CI"))),
-          tags$tbody(rows)
-        ),
-        p(tags$em("Zanim wyciągniesz wnioski — przejdź do kroku B."))
-      )
-    },
-    sol9b = {
-      d <- .ch7_data$edu
-      grp <- cut(d$income, breaks = c(-Inf, 10, 20, Inf),
-                 labels = c("niski (<10 tys.)", "średni (10–20 tys.)", "wysoki (>20 tys.)"))
-      rows <- lapply(levels(grp), function(lvl) {
-        ci <- .ci_mean(d$read[grp == lvl])
-        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 1)), tags$td(.fmt_ci(ci, 1)))
-      })
-      tagList(
-        p(tags$b("95% CI dla średniej read wg grup income:")),
-        tags$table(class = "table table-bordered table-striped",
-          tags$thead(tags$tr(tags$th("Grupa income"), tags$th("n"),
-                             tags$th("Średnia read"), tags$th("95% CI"))),
-          tags$tbody(rows)
-        ),
-        p(tags$em("Przejdź do kroku C."))
-      )
-    },
-    sol9c = {
-      d <- .ch7_data$edu
-      grp <- cut(d$lunch, breaks = c(-Inf, 33, 66, Inf),
-                 labels = c("mało (<33%)", "średnio (33–66%)", "dużo (>66%)"))
-      rows <- lapply(levels(grp), function(lvl) {
-        ci <- .ci_mean(d$income[grp == lvl])
-        tags$tr(tags$td(lvl), tags$td(ci$n),
-                tags$td(sprintf("%.2f tys. $", ci$mean)), tags$td(.fmt_ci(ci, 2)))
-      })
-      tagList(
-        p(tags$b("95% CI dla średniej income wg grup lunch:")),
-        tags$table(class = "table table-bordered table-striped",
-          tags$thead(tags$tr(tags$th("Grupa lunch"), tags$th("n"),
-                             tags$th("Średni income"), tags$th("95% CI"))),
-          tags$tbody(rows)
-        ),
-        div(class = "callout-warning",
-          p(tags$b("Wniosek:"), " grupy dotacji pokrywają się z grupami zamożności — zmienna zakłócająca."),
-          p(tags$em("Morał:"), " CI dają precyzję oszacowania, ale nie mówią o przyczynowości.")
-        )
-      )
-    },
-    sol_summary = tagList(
-      tags$ol(
-        tags$li(tags$b("Co wpływa na CI?"),
-          " Najsilniej n (przez \\(\\sqrt{n}\\), zad. 3). Potem s (zad. 2). Poziom ufności — słabiej (zad. 4)."),
-        tags$li(tags$b("CI w zad. 7:"),
-          " n=25 to mała próba; p blisko 1 powoduje niestabilność Walda.
-          Clopper-Pearson jest szeroki, ale uczciwy."),
-        tags$li(tags$b("Zad. 9:"),
-          " Korelacja ≠ przyczynowość. Zmienna zakłócająca może ukryć prawdziwy mechanizm.")
-      )
-    )
+    ))
   ),
 
   bhp = list(
@@ -1003,18 +850,14 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
       )
     }),
     sol7 = withMathJax({
-      x <- head(.ch7_data$bhp$ponad_norma_halas, 30)
-      k <- sum(x); n <- length(x); p <- k / n
-      cp <- binom.test(k, n)$conf.int
-      tagList(
-        p(tags$b("Pierwsze 30 zakładów, ponad_norma_halas:"),
-          sprintf(" p = %d/%d ≈ ", k, n), tags$b(sprintf("%.3f", p))),
-        tags$ul(
-          tags$li("95% CI Clopper-Pearson: ",
-                  tags$b(sprintf("[%.3f, %.3f]", cp[1], cp[2])),
-                  sprintf(" — szerokość ≈ %.3f", cp[2] - cp[1]))
-        ),
-        p(tags$b("Uwaga:"), " pierwsze 30 zakładów to nie losowa próba.")
+      d <- .ch7_data$bhp
+      .ch7_sol7_tab_diff(
+        x = d$ponad_norma_halas,
+        y = d$naruszen_proc > 20,
+        x_lab = "ponad_norma_halas",
+        y_lab = "naruszen_proc > 20",
+        unit_plural_gen = "zakładów",
+        y_event_phrase = "zakładów z wysokim odsetkiem naruszeń procedur"
       )
     }),
     sol8 = withMathJax(tagList(
@@ -1024,71 +867,13 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
         tags$li(tags$b("c) PRAWDA."), " Poprawna interpretacja częstotliwościowa."),
         tags$li(tags$b("d) PRAWDA, ale trywialna."), " Średnia próby zawsze leży w środku CI."),
         tags$li(tags$b("e) PRAWDA."), " Standardowe sformułowanie ufności."),
-        tags$li(tags$b("f) FAŁSZ."), " Wyższy poziom ufności → szerszy CI.")
+        tags$li(tags$b("f) FAŁSZ."), " Wyższy poziom ufności → szerszy CI."),
+        tags$li(tags$b("g) TAK."), " Cały 95% CI leży powyżej 9 — z ufnością 95% przeciętny wskaźnik przekracza 9."),
+        tags$li(tags$b("h) NIE."), " 10 leży wewnątrz CI — nie mamy podstaw, by stwierdzić, że średnia przekracza 10 (ani że jej nie przekracza)."),
+        tags$li(tags$b("i) NIE."), " Cały CI leży poniżej 11 — wręcz przeciwnie, z ufnością 95% możemy stwierdzić, że przeciętny wskaźnik ",
+                tags$em("nie"), " przekracza 11.")
       )
-    )),
-    sol9a = {
-      d <- .ch7_data$bhp
-      rows <- lapply(sort(unique(d$zmiany)), function(lvl) {
-        ci <- .ci_mean(d$wskaznik_wypadkow[d$zmiany == lvl])
-        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 1)), tags$td(.fmt_ci(ci, 1)))
-      })
-      tagList(
-        p(tags$b("95% CI dla wskaznik_wypadkow wg zmianowości:")),
-        tags$table(class = "table table-bordered table-striped",
-          tags$thead(tags$tr(tags$th("Zmiany"), tags$th("n"),
-                             tags$th("Średnia"), tags$th("95% CI"))),
-          tags$tbody(rows)
-        ),
-        p(tags$em("Przejdź do kroku B."))
-      )
-    },
-    sol9b = {
-      d <- .ch7_data$bhp
-      rows <- lapply(sort(unique(d$branza)), function(lvl) {
-        ci <- .ci_mean(d$wskaznik_wypadkow[d$branza == lvl])
-        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 1)), tags$td(.fmt_ci(ci, 1)))
-      })
-      tagList(
-        p(tags$b("95% CI dla wskaznik_wypadkow wg branży:")),
-        tags$table(class = "table table-bordered table-striped",
-          tags$thead(tags$tr(tags$th("Branża"), tags$th("n"),
-                             tags$th("Średnia"), tags$th("95% CI"))),
-          tags$tbody(rows)
-        ),
-        p(tags$em("Przejdź do kroku C."))
-      )
-    },
-    sol9c = {
-      d <- .ch7_data$bhp
-      tab <- table(d$branza, d$zmiany)
-      rows <- lapply(rownames(tab), function(br) {
-        tags$tr(tags$td(br),
-                lapply(colnames(tab), function(zm) tags$td(tab[br, zm])))
-      })
-      tagList(
-        p(tags$b("Tabela: branża × zmianowość (liczność):")),
-        tags$table(class = "table table-bordered table-striped",
-          tags$thead(tags$tr(tags$th("Branża"),
-                             lapply(colnames(tab), function(zm) tags$th(zm)))),
-          tags$tbody(rows)
-        ),
-        div(class = "callout-warning",
-          p(tags$b("Wniosek:"), " branża jest zmienną zakłócającą dla związku zmianowość–wypadki."),
-          p(tags$em("Morał:"), " CI mierzą precyzję, ale nie zastępują analizy mechanizmu.")
-        )
-      )
-    },
-    sol_summary = tagList(
-      tags$ol(
-        tags$li(tags$b("Co wpływa na CI?"),
-          " Najsilniej n (zad. 3). Potem s (zad. 2). Poziom ufności — słabiej (zad. 4)."),
-        tags$li(tags$b("CI w zad. 7:"),
-          " n=30 to za mało; pierwsze 30 to próba nielosowa, więc CI jest szeroki i obciążony."),
-        tags$li(tags$b("Zad. 9:"),
-          " Branża jest zmienną zakłócającą (confounding) dla związku zmianowość–wypadki.")
-      )
-    )
+    ))
   ),
 
   rol = list(
@@ -1182,18 +967,14 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
       )
     }),
     sol7 = withMathJax({
-      x <- head(.ch7_data$rol$plon_ponizej_5, 30)
-      k <- sum(x); n <- length(x); p <- k / n
-      cp <- binom.test(k, n)$conf.int
-      tagList(
-        p(tags$b("Pierwsze 30 pól, plon_ponizej_5:"),
-          sprintf(" p = %d/%d ≈ ", k, n), tags$b(sprintf("%.3f", p))),
-        tags$ul(
-          tags$li("95% CI Clopper-Pearson: ",
-                  tags$b(sprintf("[%.3f, %.3f]", cp[1], cp[2])),
-                  sprintf(" — szerokość ≈ %.3f", cp[2] - cp[1]))
-        ),
-        p(tags$b("Uwaga:"), " pierwsze 30 pól to nie losowa próba.")
+      d <- .ch7_data$rol
+      .ch7_sol7_tab_diff(
+        x = d$plon_ponizej_5,
+        y = d$wilg_powyzej_70,
+        x_lab = "plon_ponizej_5",
+        y_lab = "wilg_powyzej_70",
+        unit_plural_gen = "pól",
+        y_event_phrase = "pól z nadmierną wilgotnością"
       )
     }),
     sol8 = withMathJax(tagList(
@@ -1203,71 +984,13 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
         tags$li(tags$b("c) PRAWDA."), " Poprawna interpretacja częstotliwościowa."),
         tags$li(tags$b("d) PRAWDA, ale trywialna."), " Średnia próby zawsze leży w środku CI."),
         tags$li(tags$b("e) PRAWDA."), " Standardowe sformułowanie ufności."),
-        tags$li(tags$b("f) FAŁSZ."), " Wyższy poziom ufności → szerszy CI.")
+        tags$li(tags$b("f) FAŁSZ."), " Wyższy poziom ufności → szerszy CI."),
+        tags$li(tags$b("g) TAK."), " Cały 95% CI leży powyżej 6 — z ufnością 95% przeciętny plon przekracza 6 t/ha."),
+        tags$li(tags$b("h) NIE."), " 6.2 leży wewnątrz CI — nie mamy podstaw, by stwierdzić, że średnia przekracza 6.2 (ani że jej nie przekracza)."),
+        tags$li(tags$b("i) NIE."), " Cały CI leży poniżej 6.5 — wręcz przeciwnie, z ufnością 95% możemy stwierdzić, że przeciętny plon ",
+                tags$em("nie"), " przekracza 6.5 t/ha.")
       )
-    )),
-    sol9a = {
-      d <- .ch7_data$rol
-      rows <- lapply(c("niskie", "srednie", "wysokie"), function(lvl) {
-        ci <- .ci_mean(d$plon_pszenicy[d$nawozenie == lvl])
-        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 2)), tags$td(.fmt_ci(ci, 2)))
-      })
-      tagList(
-        p(tags$b("95% CI dla plon_pszenicy wg nawożenia:")),
-        tags$table(class = "table table-bordered table-striped",
-          tags$thead(tags$tr(tags$th("Nawożenie"), tags$th("n"),
-                             tags$th("Średnia (t/ha)"), tags$th("95% CI"))),
-          tags$tbody(rows)
-        ),
-        p(tags$em("Przejdź do kroku B."))
-      )
-    },
-    sol9b = {
-      d <- .ch7_data$rol
-      rows <- lapply(c("I", "II", "III"), function(lvl) {
-        ci <- .ci_mean(d$plon_pszenicy[d$klasa_gleby == lvl])
-        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 2)), tags$td(.fmt_ci(ci, 2)))
-      })
-      tagList(
-        p(tags$b("95% CI dla plon_pszenicy wg klasy gleby:")),
-        tags$table(class = "table table-bordered table-striped",
-          tags$thead(tags$tr(tags$th("Klasa gleby"), tags$th("n"),
-                             tags$th("Średnia (t/ha)"), tags$th("95% CI"))),
-          tags$tbody(rows)
-        ),
-        p(tags$em("Przejdź do kroku C."))
-      )
-    },
-    sol9c = {
-      d <- .ch7_data$rol
-      tab <- table(d$klasa_gleby, d$nawozenie)
-      rows <- lapply(rownames(tab), function(kl) {
-        tags$tr(tags$td(kl),
-                lapply(colnames(tab), function(nw) tags$td(tab[kl, nw])))
-      })
-      tagList(
-        p(tags$b("Tabela: klasa gleby × nawożenie (liczność):")),
-        tags$table(class = "table table-bordered table-striped",
-          tags$thead(tags$tr(tags$th("Klasa gleby"),
-                             lapply(colnames(tab), function(nw) tags$th(nw)))),
-          tags$tbody(rows)
-        ),
-        div(class = "callout-warning",
-          p(tags$b("Wniosek:"), " klasa gleby jest zmienną zakłócającą dla związku nawożenie–plon."),
-          p(tags$em("Morał:"), " CI dają precyzję, ale bez kontroli zmiennej zakłócającej wnioski o przyczynach mogą być błędne.")
-        )
-      )
-    },
-    sol_summary = tagList(
-      tags$ol(
-        tags$li(tags$b("Co wpływa na CI?"),
-          " Najsilniej n (zad. 3). Potem s (zad. 2). Poziom ufności — słabiej (zad. 4)."),
-        tags$li(tags$b("CI w zad. 7:"),
-          " n=30 to za mało; pierwsze 30 pól to próba nielosowa."),
-        tags$li(tags$b("Zad. 9:"),
-          " Klasa gleby jest zmienną zakłócającą dla związku nawożenie–plon.")
-      )
-    )
+    ))
   ),
 
   zyw = list(
@@ -1361,18 +1084,14 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
       )
     }),
     sol7 = withMathJax({
-      x <- head(.ch7_data$zyw$bialko_ponizej_normy, 30)
-      k <- sum(x); n <- length(x); p <- k / n
-      cp <- binom.test(k, n)$conf.int
-      tagList(
-        p(tags$b("Pierwsze 30 partii, bialko_ponizej_normy:"),
-          sprintf(" p = %d/%d ≈ ", k, n), tags$b(sprintf("%.3f", p))),
-        tags$ul(
-          tags$li("95% CI Clopper-Pearson: ",
-                  tags$b(sprintf("[%.3f, %.3f]", cp[1], cp[2])),
-                  sprintf(" — szerokość ≈ %.3f", cp[2] - cp[1]))
-        ),
-        p(tags$b("Uwaga:"), " pierwsze 30 partii to nie losowa próba.")
+      d <- .ch7_data$zyw
+      .ch7_sol7_tab_diff(
+        x = d$bialko_ponizej_normy,
+        y = d$tluszcz_powyzej_normy,
+        x_lab = "bialko_ponizej_normy",
+        y_lab = "tluszcz_powyzej_normy",
+        unit_plural_gen = "partii",
+        y_event_phrase = "partii z przekroczoną normą tłuszczu"
       )
     }),
     sol8 = withMathJax(tagList(
@@ -1382,71 +1101,13 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
         tags$li(tags$b("c) PRAWDA."), " Poprawna interpretacja częstotliwościowa."),
         tags$li(tags$b("d) PRAWDA, ale trywialna."), " Średnia próby zawsze leży w środku CI."),
         tags$li(tags$b("e) PRAWDA."), " Standardowe sformułowanie ufności."),
-        tags$li(tags$b("f) FAŁSZ."), " Wyższy poziom ufności → szerszy CI.")
+        tags$li(tags$b("f) FAŁSZ."), " Wyższy poziom ufności → szerszy CI."),
+        tags$li(tags$b("g) TAK."), " Cały 95% CI leży powyżej 25 — z ufnością 95% przeciętna zawartość białka przekracza 25%."),
+        tags$li(tags$b("h) NIE."), " 26.7 leży wewnątrz CI — nie mamy podstaw, by stwierdzić, że średnia przekracza 26.7% (ani że jej nie przekracza)."),
+        tags$li(tags$b("i) NIE."), " Cały CI leży poniżej 27 — wręcz przeciwnie, z ufnością 95% możemy stwierdzić, że przeciętna zawartość białka ",
+                tags$em("nie"), " przekracza 27%.")
       )
-    )),
-    sol9a = {
-      d <- .ch7_data$zyw
-      rows <- lapply(c("lokalny", "krajowy", "importowany"), function(lvl) {
-        ci <- .ci_mean(d$zawartosc_bialka[d$dostawca == lvl])
-        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 2)), tags$td(.fmt_ci(ci, 2)))
-      })
-      tagList(
-        p(tags$b("95% CI dla zawartosc_bialka wg dostawcy:")),
-        tags$table(class = "table table-bordered table-striped",
-          tags$thead(tags$tr(tags$th("Dostawca"), tags$th("n"),
-                             tags$th("Średnia (%)"), tags$th("95% CI"))),
-          tags$tbody(rows)
-        ),
-        p(tags$em("Przejdź do kroku B."))
-      )
-    },
-    sol9b = {
-      d <- .ch7_data$zyw
-      rows <- lapply(c("A", "B", "C"), function(lvl) {
-        ci <- .ci_mean(d$zawartosc_bialka[d$linia == lvl])
-        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 2)), tags$td(.fmt_ci(ci, 2)))
-      })
-      tagList(
-        p(tags$b("95% CI dla zawartosc_bialka wg linii:")),
-        tags$table(class = "table table-bordered table-striped",
-          tags$thead(tags$tr(tags$th("Linia"), tags$th("n"),
-                             tags$th("Średnia (%)"), tags$th("95% CI"))),
-          tags$tbody(rows)
-        ),
-        p(tags$em("Przejdź do kroku C."))
-      )
-    },
-    sol9c = {
-      d <- .ch7_data$zyw
-      tab <- table(d$linia, d$dostawca)
-      rows <- lapply(rownames(tab), function(ln) {
-        tags$tr(tags$td(ln),
-                lapply(colnames(tab), function(ds) tags$td(tab[ln, ds])))
-      })
-      tagList(
-        p(tags$b("Tabela: linia × dostawca (liczność):")),
-        tags$table(class = "table table-bordered table-striped",
-          tags$thead(tags$tr(tags$th("Linia"),
-                             lapply(colnames(tab), function(ds) tags$th(ds)))),
-          tags$tbody(rows)
-        ),
-        div(class = "callout-warning",
-          p(tags$b("Wniosek:"), " linia produkcyjna jest zmienną zakłócającą dla związku dostawca–białko."),
-          p(tags$em("Morał:"), " CI precyzyjnie mierzą różnice, ale bez kontroli zmiennej zakłócającej wnioski o przyczynach mogą być mylne.")
-        )
-      )
-    },
-    sol_summary = tagList(
-      tags$ol(
-        tags$li(tags$b("Co wpływa na CI?"),
-          " Najsilniej n (zad. 3). Potem s (zad. 2). Poziom ufności — słabiej (zad. 4)."),
-        tags$li(tags$b("CI w zad. 7:"),
-          " n=30 to za mało; pierwsze 30 partii to próba nielosowa."),
-        tags$li(tags$b("Zad. 9:"),
-          " Linia produkcyjna jest zmienną zakłócającą dla związku dostawca–białko.")
-      )
-    )
+    ))
   )
 )
 
@@ -1456,10 +1117,8 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
 
 ch7_server <- function(input, output, session) {
 
-  sol_ids <- c("sol1","sol2","sol3","sol4","sol5","sol6","sol7","sol8",
-               "sol9a","sol9b","sol9c","sol_summary")
-  btn_ids <- c("ans1","ans2","ans3","ans4","ans5","ans6","ans7","ans8",
-               "ans9a","ans9b","ans9c","ans_summary")
+  sol_ids <- c("sol1","sol2","sol3","sol4","sol5","sol6","sol7","sol8")
+  btn_ids <- c("ans1","ans2","ans3","ans4","ans5","ans6","ans7","ans8")
 
   # Stan widocznosci
   vis <- lapply(sol_ids, function(x) reactiveVal(FALSE))
@@ -1472,9 +1131,6 @@ ch7_server <- function(input, output, session) {
     for (bid in btn_ids) {
       updateActionButton(session, paste0("ch7_", bid), label = "Pokaż rozwiązanie")
     }
-    updateActionButton(session, "ch7_ans9a", label = "Pokaż wyniki kroku A")
-    updateActionButton(session, "ch7_ans9b", label = "Pokaż wyniki kroku B")
-    updateActionButton(session, "ch7_ans9c", label = "Pokaż wyniki kroku C i wnioski")
     output$ch7_content <- renderUI({
       switch(k,
         edu = .ch7_content_edu(),
