@@ -44,7 +44,7 @@ ch3_ui <- tabPanel("3. Grupa",
 
     div(class = "chapter-transition",
       p("Zobaczmy teraz zbiór, który radzi sobie lepiej."),
-      actionButton("ch2_next", "Dalej: 4. Pingwiny \u2192",
+      actionButton("ch2_next", "Dalej: 4. Pingwiny →",
                    class = "btn-primary btn-lg")
     ),
 

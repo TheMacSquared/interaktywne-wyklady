@@ -60,8 +60,8 @@ ch1_ui <- tabPanel("1. Katalog",
         )
       ),
       div(class = "callout-danger", style = "margin-top: 10px;",
-        tags$strong("Problem:"), " staż pracy jest prawie stały (zakres 2.8\u20133.2 lata). ",
-        "Wynagrodzenia się różnią, ale nie widać żadnego wzorca \u2014 punkty tworzą pionową chmurę.",
+        tags$strong("Problem:"), " staż pracy jest prawie stały (zakres 2.8–3.2 lata). ",
+        "Wynagrodzenia się różnią, ale nie widać żadnego wzorca — punkty tworzą pionową chmurę.",
         tags$br(),
         "Gdy jedna zmienna nie ma żadnego rozrzutu, nie da się ocenić czy i jak wpływa na drugą."
       )
@@ -220,7 +220,7 @@ ch1_ui <- tabPanel("1. Katalog",
         nrow(cat_patients_agg), ").",
         tags$br(),
         tags$strong("Zasada:"), " Zawsze pytaj: co jest jednostką obserwacji? ",
-        "Osoba? Firma? Dzień? Wiersz w tabeli \u2260 obserwacja."
+        "Osoba? Firma? Dzień? Wiersz w tabeli ≠ obserwacja."
       )
     ),
 
@@ -239,7 +239,7 @@ ch1_ui <- tabPanel("1. Katalog",
       checkboxGroupInput("intro_critical", NULL,
         choices = c(
           "Dane odpowiadają hipotezie badawczej (mierzą to, co chcesz badać)" = "hyp",
-          "Wystarczająca liczba obserwacji (n \u2265 20-30 na grupę/podgrupę)" = "n",
+          "Wystarczająca liczba obserwacji (n ≥ 20-30 na grupę/podgrupę)" = "n",
           "Mix typów zmiennych (ilościowe + jakościowe)" = "mix",
           "Zmienność w danych (nie wszystko takie samo)" = "var",
           "Struktura danych pasuje do planowanych analiz" = "fit",
@@ -260,7 +260,7 @@ ch1_ui <- tabPanel("1. Katalog",
 
     div(class = "chapter-transition",
       p("Pora przetestować tę wiedzę na prawdziwych zbiorach danych."),
-      actionButton("cat_next", "Dalej: 2. Szkoły w Kalifornii \u2192",
+      actionButton("cat_next", "Dalej: 2. Szkoły w Kalifornii →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -318,7 +318,7 @@ ch1_server <- function(input, output, session) {
       geom_bar(fill = col_bad, alpha = 0.85) +
       scale_x_discrete(limits = c("1","2","3","4","5")) +
       labs(title = paste0("Zadowolenie: ", pct_45, "% odpowiedzi to 4 lub 5"),
-           x = "Ocena (1\u20135)", y = "Liczba") +
+           x = "Ocena (1–5)", y = "Liczba") +
       theme_minimal(base_size = 13)
   })
 
@@ -326,10 +326,10 @@ ch1_server <- function(input, output, session) {
     ggplot(cat_novar, aes(x = staz, y = wynagrodzenie)) +
       geom_point(size = 3, alpha = 0.6, color = col_bad) +
       scale_x_continuous(limits = c(1, 10)) +
-      labs(title = paste0("Sta\u017c vs wynagrodzenie (r = ",
+      labs(title = paste0("Staż vs wynagrodzenie (r = ",
                           round(cor(cat_novar$staz, cat_novar$wynagrodzenie), 3), ")"),
-           subtitle = "Sta\u017c skupiony w w\u0105skim fragmencie osi",
-           x = "Sta\u017c pracy (lata)", y = "Wynagrodzenie (PLN)") +
+           subtitle = "Staż skupiony w wąskim fragmencie osi",
+           x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
       theme_minimal(base_size = 13)
   })
 
@@ -395,8 +395,8 @@ ch1_server <- function(input, output, session) {
     ggplot(d, aes(x = powierzchnia, y = cena)) +
       geom_point(size = 3, alpha = 0.7, color = col_dark) +
       geom_smooth(method = "lm", color = col, se = TRUE) +
-      labs(title = paste0(title_txt, " (R\u00b2 = ", r2, ")"),
-           x = "Powierzchnia (m\u00b2)", y = "Cena (PLN)") +
+      labs(title = paste0(title_txt, " (R² = ", r2, ")"),
+           x = "Powierzchnia (m²)", y = "Cena (PLN)") +
       theme_minimal(base_size = 14)
   })
 
@@ -563,7 +563,7 @@ ch1_server <- function(input, output, session) {
         geom_point(color = col_bad, size = 1.2, alpha = 0.6) +
         labs(title = "Temperatura w kolejności pomiarów (183 dni)",
              subtitle = "Wyraźna fala sezonowa - każdy dzień zależy od poprzedniego",
-             x = "Data", y = "Temperatura (\u00b0C)") +
+             x = "Data", y = "Temperatura (°C)") +
         theme_minimal(base_size = 14)
     } else {
       df_m <- cat_timeseries_monthly
@@ -571,12 +571,12 @@ ch1_server <- function(input, output, session) {
       ggplot(df_m, aes(x = idx, y = srednia_temp)) +
         geom_line(color = col_bad, linewidth = 1) +
         geom_point(color = col_bad, size = 4) +
-        geom_text(aes(label = paste0(srednia_temp, "\u00b0C")),
+        geom_text(aes(label = paste0(srednia_temp, "°C")),
                   vjust = -1.2, size = 4.5, fontface = "bold") +
         scale_x_continuous(breaks = df_m$idx, labels = df_m$miesiac) +
-        labs(title = "\u015arednia temperatura miesi\u0119czna (n = 6)",
-             subtitle = "Agregacja u\u015bmierza zale\u017cno\u015b\u0107 dzie\u0144-do-dnia, ale zostaje 6 punkt\u00f3w",
-             x = NULL, y = "\u015arednia temperatura (\u00b0C)") +
+        labs(title = "Średnia temperatura miesięczna (n = 6)",
+             subtitle = "Agregacja uśmierza zależność dzień-do-dnia, ale zostaje 6 punktów",
+             x = NULL, y = "Średnia temperatura (°C)") +
         theme_minimal(base_size = 14) +
         theme(axis.text.x = element_text(angle = 30, hjust = 1))
     }
@@ -647,7 +647,7 @@ ch1_server <- function(input, output, session) {
         geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold",
                   color = col_bad) +
         labs(title = "Po agregacji",
-             subtitle = "n = 30 pacjent\u00f3w - jednostka obserwacji zgodna z pytaniem",
+             subtitle = "n = 30 pacjentów - jednostka obserwacji zgodna z pytaniem",
              x = NULL, y = NULL) +
         ylim(0, 40) +
         theme_minimal(base_size = 14) +

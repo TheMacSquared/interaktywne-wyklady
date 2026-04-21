@@ -54,7 +54,7 @@ ch8_ui <- tabPanel("8. Formularz",
       tags$br(),
       tags$strong("Złe zmienne:"), " doświadczenie i dostępność — tekst bez struktury, nieprzeliczalny.",
       tags$br(),
-      "ocena_umiejętności \u2014 mieszanka liczb i tekstu, ~50% można uratować.",
+      "ocena_umiejętności — mieszanka liczb i tekstu, ~50% można uratować.",
       tags$br(),
       "R nie wie, co zrobić z 'trochę' albo 'elastycznie' jako wartością liczbową."
     ),
@@ -62,7 +62,7 @@ ch8_ui <- tabPanel("8. Formularz",
     div(class = "section-title", "Drugi przykład: dane do uratowania"),
 
     div(class = "narrative",
-      p("Inny formularz kursu, podobny problem \u2014 respondenci odpowiadali różnie na te same pola.
+      p("Inny formularz kursu, podobny problem — respondenci odpowiadali różnie na te same pola.
         Ale tym razem prawie każdą odpowiedź można przypisać do kategorii.
         Porównaj surowe dane z wersją po standaryzacji.")
     ),
@@ -79,17 +79,17 @@ ch8_ui <- tabPanel("8. Formularz",
     div(class = "callout-success",
       "10 z 12 wierszy można uratować (83%).",
       tags$br(),
-      tags$b("poziom:"), " \"podst.\", \"PODSTAWOWY\" \u2192 wszystkie to \"podstawowy\".",
+      tags$b("poziom:"), " \"podst.\", \"PODSTAWOWY\" → wszystkie to \"podstawowy\".",
       tags$br(),
-      tags$b("platnosc:"), " \"przel.\", \"przelew bankowy\" \u2192 \"przelew\"; \"paypal\" \u2192 \"karta\".",
+      tags$b("platnosc:"), " \"przel.\", \"przelew bankowy\" → \"przelew\"; \"paypal\" → \"karta\".",
       tags$br(),
-      tags$b("godziny_tyg:"), " \"ok. 5\", \"4-6h\", \"5h\" \u2192 kategoria \"srednie (4-6h)\".
-        Straty: \"duzo\" i \"malo\" \u2014 za mało informacji żeby przypisać do kategorii."
+      tags$b("godziny_tyg:"), " \"ok. 5\", \"4-6h\", \"5h\" → kategoria \"srednie (4-6h)\".
+        Straty: \"duzo\" i \"malo\" — za mało informacji żeby przypisać do kategorii."
     ),
 
     div(class = "chapter-transition",
-      p("Następny zbiór ma inny rodzaj problemów \u2014 błędy w danych."),
-      actionButton("ch7_next", "Dalej: 9. Badania laboratoryjne \u2192",
+      p("Następny zbiór ma inny rodzaj problemów — błędy w danych."),
+      actionButton("ch7_next", "Dalej: 9. Badania laboratoryjne →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -111,11 +111,11 @@ ch8_server <- function(input, output, session) {
       if (var == "wiek") {
         div(class = "callout-success", style = "margin-top: 10px;",
           paste0("Średnia wieku: ", round(mean(vals, na.rm = TRUE), 1), " lat. "),
-          "Ta zmienna jest czysta i liczbowa \u2014 nie ma problemów z kodowaniem."
+          "Ta zmienna jest czysta i liczbowa — nie ma problemów z kodowaniem."
         )
       } else if (var == "wyksztalcenie") {
         div(class = "callout-info", style = "margin-top: 10px;",
-          "Wykształcenie to zmienna kategoryczna \u2014 średnia nie ma matematycznego sensu. ",
+          "Wykształcenie to zmienna kategoryczna — średnia nie ma matematycznego sensu. ",
           "Ale przynajmniej jest dobrze zakodowana: gotowe, spójne kategorie."
         )
       } else {
@@ -163,11 +163,11 @@ ch8_server <- function(input, output, session) {
     if (input$tab7_toggle == "Oczyszczone") {
       div(class = "callout-info", style = "margin-top: 10px;",
         tags$strong("Zmiany:"),
-        tags$br(), "- wiek: bez zmian \u2014 już był czysty",
-        tags$br(), "- wyksztalcenie: bez zmian \u2014 już były spójne kategorie",
-        tags$br(), "- doswiadczenie_lat: tylko wpisy numeryczne i kilka słów kluczowych \u2192 reszta NA",
-        tags$br(), "- ocena_1_10: słowne oceny zamienione na liczby ('dobry' \u2192 7 itd.) \u2014 ~50% odzyskane",
-        tags$br(), "- dostepnosc: USUNIĘTO \u2014 nie da się zakodować",
+        tags$br(), "- wiek: bez zmian — już był czysty",
+        tags$br(), "- wyksztalcenie: bez zmian — już były spójne kategorie",
+        tags$br(), "- doswiadczenie_lat: tylko wpisy numeryczne i kilka słów kluczowych → reszta NA",
+        tags$br(), "- ocena_1_10: słowne oceny zamienione na liczby ('dobry' → 7 itd.) — ~50% odzyskane",
+        tags$br(), "- dostepnosc: USUNIĘTO — nie da się zakodować",
         tags$br(), tags$br(),
         tags$em("Wniosek: dwie zmienne są od razu użyteczne, dwie wymagają pracy i tracą dane,
                  jedna jest nie do odratowania. Lepiej zaprojektować formularz poprawnie od początku.")

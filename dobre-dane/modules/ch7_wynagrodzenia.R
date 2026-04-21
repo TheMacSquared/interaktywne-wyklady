@@ -41,7 +41,7 @@ ch7_ui <- tabPanel("7. Wynagrodzenia",
 
     div(class = "chapter-transition",
       p("Następny zbiór to przykład złej ankiety."),
-      actionButton("ch6_next", "Dalej: 8. Trudna ankieta \u2192",
+      actionButton("ch6_next", "Dalej: 8. Trudna ankieta →",
                    class = "btn-primary btn-lg")
     ),
 

@@ -7,7 +7,7 @@ ch11_ui <- tabPanel("11. Kawiarnia",
 
     div(class = "narrative",
       p("Dane ze sprzedaży kawiarni działającej w kampusie uczelni. 245 dni obserwacji
-        (rok akademicki: październik\u2013czerwiec). Zmienne: data, dzień tygodnia,
+        (rok akademicki: październik–czerwiec). Zmienne: data, dzień tygodnia,
         liczba sprzedanych kaw i temperatura zewnętrzna."),
       p("Chcemy zbadać, czy temperatura wpływa na sprzedaż.")
     ),
@@ -33,17 +33,17 @@ ch11_ui <- tabPanel("11. Kawiarnia",
         plotOutput("tab10_lineplot", height = "350px"),
         div(class = "callout-danger",
           "To nie są niezależne obserwacje!",
-          " Widać wyraźną periodyczność tygodniową \u2014 każdy poniedziałek wysoki,
+          " Widać wyraźną periodyczność tygodniową — każdy poniedziałek wysoki,
           każdy weekend niski. Każdy dzień jest podobny do poprzedniego.",
           tags$br(),
-          "Testy statystyczne zakładają niezależność obserwacji \u2014 to założenie jest tutaj złamane."
+          "Testy statystyczne zakładają niezależność obserwacji — to założenie jest tutaj złamane."
         )
       )
     ),
 
     conditionalPanel("input.tab10_reveal > 0",
       div(class = "widget-block",
-        h4("Autokorelacja \u2014 dowód braku niezależności"),
+        h4("Autokorelacja — dowód braku niezależności"),
         plotOutput("tab10_lag", height = "300px"),
         uiOutput("tab10_autocorr_info")
       )
@@ -58,7 +58,7 @@ ch11_ui <- tabPanel("11. Kawiarnia",
       (kawiarnia zamknięta w święta, awarie systemu).",
       tags$br(),
       tags$strong("2. Brak niezależności:"), " To szereg czasowy! ",
-      "Obserwacje dzienne są silnie autokorelowane \u2014 głównie przez cotygodniową periodyczność.",
+      "Obserwacje dzienne są silnie autokorelowane — głównie przez cotygodniową periodyczność.",
       tags$br(),
       "Korelacja Pearsona między temperaturą a sprzedażą byłaby błędem metodologicznym."
     ),
@@ -66,18 +66,18 @@ ch11_ui <- tabPanel("11. Kawiarnia",
     div(class = "callout-info",
       tags$strong("Czy można to uratować?"),
       tags$br(),
-      "Agregacja tygodniowa rozwiązałaby problem zależności \u2014 średnia sprzedaż z całego tygodnia
+      "Agregacja tygodniowa rozwiązałaby problem zależności — średnia sprzedaż z całego tygodnia
       to jedna obserwacja, a kolejne tygodnie są od siebie znacznie mniej zależne.",
       tags$br(),
-      "Po agregacji: n = ~35 tygodni \u2014 skromnie, ale możliwe do analizy.",
+      "Po agregacji: n = ~35 tygodni — skromnie, ale możliwe do analizy.",
       tags$br(),
       tags$em("Gdyby dane obejmowały kilka lat akademickich, mielibyśmy 35 tyg. × 3 lata = ok. 105
-      obserwacji \u2014 wtedy analiza sezonowości i trendów byłaby pełnoprawna.")
+      obserwacji — wtedy analiza sezonowości i trendów byłaby pełnoprawna.")
     ),
 
     div(class = "chapter-transition",
       p("To był ostatni zbiór danych. Zobaczmy podsumowanie."),
-      actionButton("ch10_next", "Dalej: 12. Ściąga \u2192",
+      actionButton("ch10_next", "Dalej: 12. Ściąga →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -104,9 +104,9 @@ ch11_server <- function(input, output, session) {
                 vjust = -0.4, size = 5, fontface = "bold") +
       geom_hline(yintercept = 5,  linetype = "dashed", color = col_mixed, linewidth = 0.8) +
       geom_hline(yintercept = 20, linetype = "dashed", color = col_bad,   linewidth = 0.8) +
-      annotate("text", x = Inf, y = 6.5,  label = "5% \u2014 akceptowalne",
+      annotate("text", x = Inf, y = 6.5,  label = "5% — akceptowalne",
                hjust = 1.05, color = col_mixed, size = 3.8) +
-      annotate("text", x = Inf, y = 21.5, label = "20% \u2014 powa\u017cny problem",
+      annotate("text", x = Inf, y = 21.5, label = "20% — poważny problem",
                hjust = 1.05, color = col_bad,   size = 3.8) +
       scale_y_continuous(limits = c(0, 30)) +
       labs(title = "Procent braków danych (tylko zmienne z brakami)",
@@ -119,9 +119,9 @@ ch11_server <- function(input, output, session) {
     temp_na <- sum(is.na(cafe_data$temperatura))
     n_comp  <- sum(complete.cases(cafe_data[, c("kawy", "temperatura")]))
     div(class = "callout-warning",
-      paste0("kawy: ", kawy_na, " braków (", round(kawy_na / nrow(cafe_data) * 100, 1), "%) \u2014 ",
+      paste0("kawy: ", kawy_na, " braków (", round(kawy_na / nrow(cafe_data) * 100, 1), "%) — ",
              "zamknięcia i awarie. ",
-             "temperatura: ", temp_na, " braków (", round(temp_na / nrow(cafe_data) * 100, 1), "%) \u2014 ",
+             "temperatura: ", temp_na, " braków (", round(temp_na / nrow(cafe_data) * 100, 1), "%) — ",
              "akceptowalne. ",
              "Kompletne obserwacje: ", n_comp, " z ", nrow(cafe_data), ".")
     )
@@ -139,7 +139,7 @@ ch11_server <- function(input, output, session) {
       geom_line(color = col_primary, alpha = 0.6) +
       geom_point(color = col_primary, size = 1.2, alpha = 0.4) +
       labs(title = "Sprzedaż kaw w kolejności dni",
-           subtitle = "Widoczna periodyczność tygodniowa \u2014 obserwacje nie są niezależne!",
+           subtitle = "Widoczna periodyczność tygodniowa — obserwacje nie są niezależne!",
            x = "Numer dnia (= kolejność w roku akademickim)", y = "Liczba sprzedanych kaw") +
       theme_minimal(base_size = 14)
   })
@@ -154,7 +154,7 @@ ch11_server <- function(input, output, session) {
       geom_point(alpha = 0.4, color = col_dark) +
       geom_smooth(method = "lm", color = col_bad, se = TRUE) +
       labs(title = paste0("Autokorelacja lag-1 (r = ", r, ")"),
-           subtitle = "Je\u015bli obserwacje s\u0105 niezale\u017cne, nie powinno by\u0107 korelacji",
+           subtitle = "Jeśli obserwacje są niezależne, nie powinno być korelacji",
            x = "Kawy(t)", y = "Kawy(t+1)") +
       theme_minimal(base_size = 14)
   })
@@ -166,7 +166,7 @@ ch11_server <- function(input, output, session) {
     div(class = "callout-danger",
       paste0("Autokorelacja lag-1: r = ", round(r, 3), ". ",
              "Gdyby obserwacje były niezależne, oczekiwaliśmy r bliskiego 0. ",
-             "Wartość ", round(r, 2), " oznacza silną zależność między kolejnymi dniami \u2014 ",
+             "Wartość ", round(r, 2), " oznacza silną zależność między kolejnymi dniami — ",
              "głównie przez powtarzający się rytm tygodnia.")
     )
   })

@@ -66,7 +66,7 @@ ch5_ui <- tabPanel("5. Tarantino",
 
     div(class = "chapter-transition",
       p("Czasem dane mają odpowiednią wielkość, ale inny problem..."),
-      actionButton("ch4_next", "Dalej: 6. Ankieta firmowa \u2192",
+      actionButton("ch4_next", "Dalej: 6. Ankieta firmowa →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -108,7 +108,7 @@ ch5_server <- function(input, output, session) {
     list(letter = "A", value = "Test t", text = "Test t"),
     list(letter = "B", value = "Korelacja", text = "Korelacja"),
     list(letter = "C", value = "Regresja", text = "Regresja"),
-    list(letter = "D", value = "Zadna z klasycznych", text = "\u017badna z klasycznych")
+    list(letter = "D", value = "Zadna z klasycznych", text = "Żadna z klasycznych")
   )
 
   output$tab4_quiz_options <- renderUI({

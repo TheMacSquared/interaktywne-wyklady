@@ -61,7 +61,7 @@ ch2_ui <- tabPanel("2. Szkoły",
 
     div(class = "chapter-transition",
       p("To był wzorcowy zbiór. Następny będzie... inny."),
-      actionButton("ch1_next", "Dalej: 3. Ankieta na grupie \u2192",
+      actionButton("ch1_next", "Dalej: 3. Ankieta na grupie →",
                    class = "btn-primary btn-lg")
     ),
 

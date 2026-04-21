@@ -6,7 +6,7 @@ ch9_ui <- tabPanel("9. Laboratorium",
     div(class = "section-title", "Badania laboratoryjne"),
 
     div(class = "narrative",
-      p("Wyniki badań laboratoryjnych 150 pacjentów \u2014 dane przepisane ręcznie z kart do Excela.
+      p("Wyniki badań laboratoryjnych 150 pacjentów — dane przepisane ręcznie z kart do Excela.
         Chcemy zbadać zależność hemoglobiny od wieku.")
     ),
 
@@ -57,14 +57,14 @@ ch9_ui <- tabPanel("9. Laboratorium",
       tags$br(),
       "Podstawowa struktura zbioru jest dobra (n=150, zróżnicowane zmienne, jasne definicje).",
       tags$br(),
-      "Ale błędy ręcznego przepisywania drastycznie zaburzają wyniki (R\u00b2 skacze po ich usunięciu).",
+      "Ale błędy ręcznego przepisywania drastycznie zaburzają wyniki (R² skacze po ich usunięciu).",
       tags$br(),
       tags$strong("Klucz:"), " Rozróżnij błąd danych (usuń) od prawdziwego outliera (przemyśl zachowanie)."
     ),
 
     div(class = "chapter-transition",
       p("Następny zbiór to przykład dobrze zaprojektowanej ankiety."),
-      actionButton("ch8_next", "Dalej: 10. Ankieta studencka \u2192",
+      actionButton("ch8_next", "Dalej: 10. Ankieta studencka →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -89,7 +89,7 @@ ch9_server <- function(input, output, session) {
     ggplot(lab_data, aes(x = wiek, y = hemoglobina)) +
       geom_point(alpha = 0.5, color = col_dark) +
       geom_smooth(method = "lm", color = col_bad, se = TRUE) +
-      labs(title = paste0("Wiek vs hemoglobina (R\u00b2 = ", r2, ")"),
+      labs(title = paste0("Wiek vs hemoglobina (R² = ", r2, ")"),
            x = "Wiek (lata)", y = "Hemoglobina (g/dL)") +
       theme_minimal(base_size = 14)
   })
@@ -106,7 +106,7 @@ ch9_server <- function(input, output, session) {
   output$tab8_box_hemoglobina <- renderPlot({ make_boxplot("hemoglobina", "Hemoglobina", "g/dL") })
   output$tab8_box_glukoza     <- renderPlot({ make_boxplot("glukoza",     "Glukoza",     "mg/dL") })
   output$tab8_box_wiek        <- renderPlot({ make_boxplot("wiek",        "Wiek",        "lata") })
-  output$tab8_box_cisnienie   <- renderPlot({ make_boxplot("cisnienie",   "Ci\u015bnienie skurczowe", "mmHg") })
+  output$tab8_box_cisnienie   <- renderPlot({ make_boxplot("cisnienie",   "Ciśnienie skurczowe", "mmHg") })
 
   output$tab8_scatter_clean <- renderPlot({
     d     <- lab_clean()
@@ -115,51 +115,51 @@ ch9_server <- function(input, output, session) {
     ggplot(d, aes(x = wiek, y = hemoglobina)) +
       geom_point(alpha = 0.5, color = col_dark) +
       geom_smooth(method = "lm", color = col_good, se = TRUE) +
-      labs(title = paste0("Po czyszczeniu (R\u00b2 = ", r2, ")"),
+      labs(title = paste0("Po czyszczeniu (R² = ", r2, ")"),
            x = "Wiek (lata)", y = "Hemoglobina (g/dL)") +
       theme_minimal(base_size = 14)
   })
 
   output$tab8_quiz <- renderUI({
     tagList(
-      h4("Sklasyfikuj każdą podejrzaną obserwację \u2014 błąd danych czy prawdziwy outlier?"),
+      h4("Sklasyfikuj każdą podejrzaną obserwację — błąd danych czy prawdziwy outlier?"),
       tags$p(style = "color: #7f8c8d; font-size: 13px;",
         "Ta sama wartość może być błędem lub outlirem zależnie od kontekstu. Czytaj cały rekord."),
 
       div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
         tags$strong("1."),
-        paste0(" Hemoglobina: -14.2 g/dL | Wiek: ", lab_data$wiek[3], " lat | P\u0142e\u0107: ", lab_data$plec[3]),
+        paste0(" Hemoglobina: -14.2 g/dL | Wiek: ", lab_data$wiek[3], " lat | Płeć: ", lab_data$plec[3]),
         tags$br(),
-        radioButtons("tab8_q1", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q1", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       ),
 
       div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
         tags$strong("2."),
-        paste0(" Hemoglobina: 1420 g/dL | Wiek: ", lab_data$wiek[17], " lat | P\u0142e\u0107: ", lab_data$plec[17]),
+        paste0(" Hemoglobina: 1420 g/dL | Wiek: ", lab_data$wiek[17], " lat | Płeć: ", lab_data$plec[17]),
         tags$br(),
-        radioButtons("tab8_q2", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q2", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       ),
 
       div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
         tags$strong("3."),
-        paste0(" Ci\u015bnienie skurczowe: -70 mmHg | Wiek: ", lab_data$wiek[42], " lat | P\u0142e\u0107: ", lab_data$plec[42]),
+        paste0(" Ciśnienie skurczowe: -70 mmHg | Wiek: ", lab_data$wiek[42], " lat | Płeć: ", lab_data$plec[42]),
         tags$br(),
-        radioButtons("tab8_q3", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q3", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       ),
 
       div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
         tags$strong("4."),
-        paste0(" Glukoza: 11 000 mg/dL | Wiek: ", lab_data$wiek[28], " lat | P\u0142e\u0107: ", lab_data$plec[28]),
+        paste0(" Glukoza: 11 000 mg/dL | Wiek: ", lab_data$wiek[28], " lat | Płeć: ", lab_data$plec[28]),
         tags$br(),
-        radioButtons("tab8_q4", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q4", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       ),
 
       div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
         tags$strong("5."),
-        paste0(" Glukoza: 310 mg/dL | Wiek: ", lab_data$wiek[100], " lat | P\u0142e\u0107: ", lab_data$plec[100],
+        paste0(" Glukoza: 310 mg/dL | Wiek: ", lab_data$wiek[100], " lat | Płeć: ", lab_data$plec[100],
                " | Hemoglobina: ", lab_data$hemoglobina[100], " g/dL"),
         tags$br(),
-        radioButtons("tab8_q5", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q5", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       )
     )
   })
@@ -168,19 +168,19 @@ ch9_server <- function(input, output, session) {
     req(input$tab8_check_quiz > 0)
     isolate({
       answers <- c(input$tab8_q1, input$tab8_q2, input$tab8_q3, input$tab8_q4, input$tab8_q5)
-      correct <- c("B\u0142\u0105d danych", "B\u0142\u0105d danych", "B\u0142\u0105d danych",
-                   "B\u0142\u0105d danych", "Prawdziwy outlier")
+      correct <- c("Błąd danych", "Błąd danych", "Błąd danych",
+                   "Błąd danych", "Prawdziwy outlier")
       explanations <- c(
         "Ujemna hemoglobina jest fizycznie niemożliwa. Prawdopodobnie minus pojawił się przez błąd klawiatury lub importu. Błąd danych.",
-        "Hemoglobina 1420 g/dL \u2014 norma to 12\u201317 g/dL. Brakuje przecinka dziesiętnego: powinno być 14,20. Błąd danych (błąd zapisu).",
+        "Hemoglobina 1420 g/dL — norma to 12–17 g/dL. Brakuje przecinka dziesiętnego: powinno być 14,20. Błąd danych (błąd zapisu).",
         "Ujemne ciśnienie tętnicze jest niemożliwe fizjologicznie. Znak minus musiał pojawić się przez błąd wprowadzania. Błąd danych.",
-        "Glukoza 11 000 mg/dL \u2014 norma to 70\u2013110 mg/dL, a nawet w śpiączce cukrzycowej nie przekracza ~1000. Powinno być 110 mg/dL (3 zera za dużo). Błąd danych.",
-        "Glukoza 310 mg/dL jest wysoka, ale medycznie możliwa \u2014 taki poziom zdarza się u pacjentów z niekontrolowaną cukrzycą. Reszta parametrów wygląda spójnie. Prawdziwy outlier: warto odnotować, ale nie usuwać."
+        "Glukoza 11 000 mg/dL — norma to 70–110 mg/dL, a nawet w śpiączce cukrzycowej nie przekracza ~1000. Powinno być 110 mg/dL (3 zera za dużo). Błąd danych.",
+        "Glukoza 310 mg/dL jest wysoka, ale medycznie możliwa — taki poziom zdarza się u pacjentów z niekontrolowaną cukrzycą. Reszta parametrów wygląda spójnie. Prawdziwy outlier: warto odnotować, ale nie usuwać."
       )
 
       items <- sapply(1:5, function(i) {
         ok   <- answers[i] == correct[i]
-        icon <- if (ok) "\u2705" else "\u274c"
+        icon <- if (ok) "✅" else "❌"
         paste0("<div style='padding: 6px 0; border-bottom: 1px solid #eee;'>",
                icon, " <b>Pyt. ", i, ":</b> ", explanations[i], "</div>")
       })

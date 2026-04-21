@@ -213,7 +213,7 @@ server <- function(input, output, session) {
   observeEvent(input$ch7_next,  { updateNavbarPage(session, "main_nav", selected = "9. Laboratorium") })
   observeEvent(input$ch8_next,  { updateNavbarPage(session, "main_nav", selected = "10. Studenci") })
   observeEvent(input$ch9_next,  { updateNavbarPage(session, "main_nav", selected = "11. Kawiarnia") })
-  observeEvent(input$ch10_next, { updateNavbarPage(session, "main_nav", selected = "12. \u015aci\u0105ga") })
+  observeEvent(input$ch10_next, { updateNavbarPage(session, "main_nav", selected = "12. Ściąga") })
 
   ch0_server(input, output, session)
   ch1_server(input, output, session)

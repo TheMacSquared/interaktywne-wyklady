@@ -38,7 +38,7 @@ ch10_ui <- tabPanel("10. Studenci",
 
     div(class = "chapter-transition",
       p("Ostatni zbiór - wygląda dobrze, ale ma ukryty problem..."),
-      actionButton("ch9_next", "Dalej: 11. Jakość powietrza \u2192",
+      actionButton("ch9_next", "Dalej: 11. Jakość powietrza →",
                    class = "btn-primary btn-lg")
     ),
 

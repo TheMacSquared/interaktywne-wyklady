@@ -23,7 +23,7 @@ ch6_ui <- tabPanel("6. Hotel",
     ),
     div(class = "callout-danger",
       tags$strong("Problem:"), " brak zróżnicowania odpowiedzi.",
-      " 92% gości wystawiło ocenę 4 lub 5. Skala 1\u20135 w praktyce działa tu jak skala 1\u20132 \u2014
+      " 92% gości wystawiło ocenę 4 lub 5. Skala 1–5 w praktyce działa tu jak skala 1–2 —
       kiedy wszyscy odpowiadają tak samo, zmienna nic nie mówi o tym, co różnicuje pobyt."
     ),
 
@@ -34,7 +34,7 @@ ch6_ui <- tabPanel("6. Hotel",
     ),
     div(class = "callout-danger",
       tags$strong("Problem:"), " niezbalansowane grupy.",
-      " 84% gości nocowało w Apartamencie Premium. Pozostałe typy pokojów mają po kilka obserwacji \u2014
+      " 84% gości nocowało w Apartamencie Premium. Pozostałe typy pokojów mają po kilka obserwacji —
       porównanie satysfakcji między typami pokojów będzie niemożliwe."
     ),
 
@@ -42,15 +42,15 @@ ch6_ui <- tabPanel("6. Hotel",
 
     div(class = "toggle-pills",
       actionButton("tab5_staz_normal", "Dane", class = "pill-btn active"),
-      actionButton("tab5_staz_wide", "Pe\u0142na skala (1\u201314 nocy)", class = "pill-btn")
+      actionButton("tab5_staz_wide", "Pełna skala (1–14 nocy)", class = "pill-btn")
     ),
     div(class = "widget-block",
       plotOutput("tab5_plot_staz", height = "300px")
     ),
     div(class = "callout-warning",
       tags$strong("Uwaga:"), " wąska rozpiętość wartości.",
-      " Wszyscy goście zatrzymali się na 1\u20133 noce. Sama w sobie ograniczona rozpiętość nie jest błędem
-      \u2014 może tak wyglądał ten segment hotelu. Ale gdy ", tags$em("cały zbiór"),
+      " Wszyscy goście zatrzymali się na 1–3 noce. Sama w sobie ograniczona rozpiętość nie jest błędem
+      — może tak wyglądał ten segment hotelu. Ale gdy ", tags$em("cały zbiór"),
       " jest skupiony w tak wąskim przedziale, wykrycie zależności między długością pobytu
       a innymi zmiennymi staje się bardzo trudne."
     ),
@@ -62,7 +62,7 @@ ch6_ui <- tabPanel("6. Hotel",
     ),
     div(class = "callout-success",
       "Ceny za noc mają dobry rozrzut.",
-      " To dobra wiadomość \u2014 ta zmienna wydaje się użyteczna.
+      " To dobra wiadomość — ta zmienna wydaje się użyteczna.
       Zobaczmy więc, czy możemy ją powiązać z czymś innym w tym zbiorze."
     ),
 
@@ -73,7 +73,7 @@ ch6_ui <- tabPanel("6. Hotel",
     ),
     div(class = "callout-danger",
       tags$strong("Problem:"), " niezbalansowane grupy.",
-      " 87% gości to turyści z Polski. Pozostałe kraje mają po 1\u20134 osoby \u2014
+      " 87% gości to turyści z Polski. Pozostałe kraje mają po 1–4 osoby —
       jakiekolwiek porównanie między krajami nie ma sensu przy takiej dysproporcji."
     ),
 
@@ -81,7 +81,7 @@ ch6_ui <- tabPanel("6. Hotel",
 
     div(class = "callout-info",
       "Cena za noc ma dobry rozrzut. Czy możemy powiązać ją z długością pobytu? ",
-      "Sprawdźmy \u2014 pamiętaj, że długość pobytu mieści się w bardzo wąskim przedziale."
+      "Sprawdźmy — pamiętaj, że długość pobytu mieści się w bardzo wąskim przedziale."
     ),
 
     div(class = "widget-block",
@@ -91,8 +91,8 @@ ch6_ui <- tabPanel("6. Hotel",
     div(class = "section-title", "Co by było, gdyby dane miały normalną zmienność?"),
 
     div(class = "callout-info",
-      "Co by było, gdyby goście różnili się długością pobytu bardziej \u2014 np. od 1 do 14 nocy?
-      Przesuń suwak i obserwuj jak pojawia się zależność: dłuższy pobyt \u2014 niższa cena za noc
+      "Co by było, gdyby goście różnili się długością pobytu bardziej — np. od 1 do 14 nocy?
+      Przesuń suwak i obserwuj jak pojawia się zależność: dłuższy pobyt — niższa cena za noc
       (zniżki za dłuższe rezerwacje)."
     ),
 
@@ -113,7 +113,7 @@ ch6_ui <- tabPanel("6. Hotel",
 
     div(class = "chapter-transition",
       p("Pora na duży, dobry zbiór danych."),
-      actionButton("ch5_next", "Dalej: 7. Wynagrodzenia \u2192",
+      actionButton("ch5_next", "Dalej: 7. Wynagrodzenia →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -132,7 +132,7 @@ ch6_server <- function(input, output, session) {
       geom_bar(fill = col_bad, alpha = 0.85) +
       scale_x_discrete(limits = c("1","2","3","4","5")) +
       labs(
-        title = paste0("Ocena ogólna hotelu (skala 1\u20135): ", pct_45, "% odpowiedzi to 4 lub 5"),
+        title = paste0("Ocena ogólna hotelu (skala 1–5): ", pct_45, "% odpowiedzi to 4 lub 5"),
         x = "Ocena ogólna", y = "Liczba gości"
       ) +
       theme_minimal(base_size = 14)
@@ -172,9 +172,9 @@ ch6_server <- function(input, output, session) {
                vjust = 2, hjust = -0.1, size = 4, color = col_dark) +
       scale_x_continuous(breaks = 1:14) +
       labs(
-        title = paste0("D\u0142ugo\u015b\u0107 pobytu  |  zakres: ", min(hotel_data$dlugosc_pobytu),
-                       "\u2013", max(hotel_data$dlugosc_pobytu), " noce"),
-        x = "D\u0142ugo\u015b\u0107 pobytu (noce)", y = "Liczba go\u015bci"
+        title = paste0("Długość pobytu  |  zakres: ", min(hotel_data$dlugosc_pobytu),
+                       "–", max(hotel_data$dlugosc_pobytu), " noce"),
+        x = "Długość pobytu (noce)", y = "Liczba gości"
       ) +
       theme_minimal(base_size = 14)
     if (tab5_staz_view() == "wide") p <- p + scale_x_continuous(limits = c(1, 14), breaks = seq(1, 14, 2))
@@ -191,8 +191,8 @@ ch6_server <- function(input, output, session) {
                vjust = 2, hjust = -0.1, size = 4, color = col_dark) +
       labs(
         title = paste0("Cena za noc  |  zakres: ", min(hotel_data$cena_za_noc),
-                       "\u2013", max(hotel_data$cena_za_noc), " PLN  |  SD = ", sd_cena, " PLN"),
-        x = "Cena za noc (PLN)", y = "Liczba go\u015bci"
+                       "–", max(hotel_data$cena_za_noc), " PLN  |  SD = ", sd_cena, " PLN"),
+        x = "Cena za noc (PLN)", y = "Liczba gości"
       ) +
       theme_minimal(base_size = 14)
   })
@@ -205,7 +205,7 @@ ch6_server <- function(input, output, session) {
       geom_col(fill = col_bad, alpha = 0.85) +
       geom_text(aes(label = paste0(pct, "%  (n=", n, ")")), vjust = -0.4, size = 4.5) +
       labs(title = "Rozkład gości według kraju",
-           x = "Kraj go\u015bcia", y = "Liczba go\u015bci") +
+           x = "Kraj gościa", y = "Liczba gości") +
       theme_minimal(base_size = 14)
   })
 
@@ -214,10 +214,10 @@ ch6_server <- function(input, output, session) {
       geom_point(alpha = 0.5, size = 3, color = col_dark) +
       geom_smooth(method = "lm", color = col_bad, se = TRUE) +
       scale_x_continuous(limits = c(1, 14), breaks = seq(1, 14, 2)) +
-      labs(title = "D\u0142ugo\u015b\u0107 pobytu vs cena za noc",
+      labs(title = "Długość pobytu vs cena za noc",
            subtitle = paste0("r = ", round(cor(hotel_data$dlugosc_pobytu, hotel_data$cena_za_noc), 3),
-                             "  \u2014  pobyt w w\u0105skim przedziale 1\u20133 noce"),
-           x = "D\u0142ugo\u015b\u0107 pobytu (noce)", y = "Cena za noc (PLN)") +
+                             "  —  pobyt w wąskim przedziale 1–3 noce"),
+           x = "Długość pobytu (noce)", y = "Cena za noc (PLN)") +
       theme_minimal(base_size = 14)
   })
 
@@ -233,9 +233,9 @@ ch6_server <- function(input, output, session) {
     ggplot(data.frame(x = sim_pobytu, y = sim_cena), aes(x, y)) +
       geom_point(alpha = 0.5, size = 3, color = col_dark) +
       geom_smooth(method = "lm", color = col_primary, se = TRUE) +
-      labs(title = paste0("Symulacja z rozrzutem \u00d7", mult),
-           subtitle = paste0("r = ", r, "  \u2014  d\u0142u\u017cszy pobyt = ni\u017csza cena za noc (znizka wolumenowa)"),
-           x = "D\u0142ugo\u015b\u0107 pobytu (symulowane noce)", y = "Cena za noc (PLN)") +
+      labs(title = paste0("Symulacja z rozrzutem ×", mult),
+           subtitle = paste0("r = ", r, "  —  dłuższy pobyt = niższa cena za noc (znizka wolumenowa)"),
+           x = "Długość pobytu (symulowane noce)", y = "Cena za noc (PLN)") +
       theme_minimal(base_size = 14)
   })
 

@@ -6,16 +6,16 @@ ch0_ui <- tabPanel("0. Wprowadzenie",
     div(class = "section-title", "Od pomysłu do danych"),
 
     div(class = "narrative",
-      p("Każda analiza zaczyna się od pomysłu i pytań \u2014 jeszcze zanim otworzycie
+      p("Każda analiza zaczyna się od pomysłu i pytań — jeszcze zanim otworzycie
         jakikolwiek plik. Musicie wiedzieć co chcecie zbadać i jak to opisać:
         czy szukamy związku między dwiema rzeczami? Porównujemy grupy? Sprawdzamy
         czy coś się zmienia w czasie? To nie musi być formalna hipoteza statystyczna
-        \u2014 wystarczy jasny pomysł w języku potocznym."),
+        — wystarczy jasny pomysł w języku potocznym."),
       p("Zachęcam do wybierania tematów, które Was naprawdę interesują.",
         " Jeśli piszecie pracę o czymś, na czym Wam zależy, naturalnie zadajecie
         lepsze pytania, szybciej wyłapujecie absurdalne wyniki, łatwiej tworzycie
         sensowne hipotezy. Analiza zyska niuans i dojrzałość, której nie da żaden
-        podręcznik \u2014 bo będziecie rozumieć kontekst.")
+        podręcznik — bo będziecie rozumieć kontekst.")
     ),
 
     div(class = "section-title", "Drugi krok: dane"),
@@ -23,7 +23,7 @@ ch0_ui <- tabPanel("0. Wprowadzenie",
     div(class = "narrative",
       p("Kiedy macie już pomysł, trzeba znaleźć (albo zebrać) dane. I tu zaczyna się
         pierwsza pułapka: nie każdy zbiór danych nadaje się do planowanej analizy.
-        Na tym wykładzie pokażę Wam na co zwracać uwagę \u2014 co dyskwalifikuje dane
+        Na tym wykładzie pokażę Wam na co zwracać uwagę — co dyskwalifikuje dane
         od razu, a co można naprawić.")
     ),
 
@@ -38,16 +38,16 @@ ch0_ui <- tabPanel("0. Wprowadzenie",
     div(class = "callout-info",
       tags$strong("Plan wykładu:"),
       tags$br(),
-      "1. Katalog problemów \u2014 7 typów błędów w danych (jak wyglądają w tabeli i na wykresie)",
+      "1. Katalog problemów — 7 typów błędów w danych (jak wyglądają w tabeli i na wykresie)",
       tags$br(),
-      "2. Case studies \u2014 10 zbiorów do samodzielnej oceny",
+      "2. Case studies — 10 zbiorów do samodzielnej oceny",
       tags$br(),
-      "3. Ściąga \u2014 checklist i podsumowanie"
+      "3. Ściąga — checklist i podsumowanie"
     ),
 
     div(class = "chapter-transition",
       p("Zobaczmy, co może pójść nie tak z danymi."),
-      actionButton("ch0_next", "Dalej: 1. Katalog problemów \u2192",
+      actionButton("ch0_next", "Dalej: 1. Katalog problemów →",
                    class = "btn-primary btn-lg")
     ),
 

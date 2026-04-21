@@ -48,7 +48,7 @@ ch4_ui <- tabPanel("4. Pingwiny",
 
     div(class = "chapter-transition",
       p("Następny zbiór wygląda ciekawie... ale czy nadaje się do analizy?"),
-      actionButton("ch3_next", "Dalej: 5. Filmy Tarantino \u2192",
+      actionButton("ch3_next", "Dalej: 5. Filmy Tarantino →",
                    class = "btn-primary btn-lg")
     ),
 
