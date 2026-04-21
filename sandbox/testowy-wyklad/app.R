@@ -249,13 +249,13 @@ cat_events_agg <- data.frame(
 render_verdict <- function(criteria, type = "good") {
   bg_color <- switch(type, good = "#eafaf1", mixed = "#fef9e7", bad = "#fdedec")
   border_color <- switch(type, good = col_good, mixed = col_mixed, bad = col_bad)
-  icon_yes <- "\u2705"
-  icon_no <- "\u274c"
-  icon_warn <- "\u26a0\ufe0f"
+  icon_yes <- "✅"
+  icon_no <- "❌"
+  icon_warn <- "⚠️"
 
   critical_criteria <- c(
     "Dane odpowiadaja hipotezie badawczej",
-    "Wystarczajaca liczba obserwacji (n \u2265 20-30 na grupe)",
+    "Wystarczajaca liczba obserwacji (n ≥ 20-30 na grupe)",
     "Mix typow zmiennych (ilosciowe + jakosciowe)",
     "Zmiennosc w danych",
     "Struktura danych pasuje do planowanych analiz",
@@ -560,16 +560,16 @@ ui <- navbarPage(
     div(class = "section-title", "Od pomysłu do danych"),
 
     div(class = "narrative",
-      p("Każda analiza zaczyna się od pomysłu i pytań \u2014 jeszcze zanim otworzycie
+      p("Każda analiza zaczyna się od pomysłu i pytań — jeszcze zanim otworzycie
         jakikolwiek plik. Musicie wiedzieć co chcecie zbadać i jak to opisać:
         czy szukamy związku między dwiema rzeczami? Porównujemy grupy? Sprawdzamy
         czy coś się zmienia w czasie? To nie musi być formalna hipoteza statystyczna
-        \u2014 wystarczy jasny pomysł w języku potocznym."),
+        — wystarczy jasny pomysł w języku potocznym."),
       p(tags$strong("Zachęcam do wybierania tematów, które Was naprawdę interesują."),
         " Jeśli piszecie pracę o czymś, na czym Wam zależy, naturalnie zadajecie
         lepsze pytania, szybciej wyłapujecie absurdalne wyniki, łatwiej tworzycie
         sensowne hipotezy. Analiza zyska niuans i dojrzałość, której nie da żaden
-        podręcznik \u2014 bo będziecie rozumieć kontekst.")
+        podręcznik — bo będziecie rozumieć kontekst.")
     ),
 
     div(class = "section-title", "Drugi krok: dane"),
@@ -577,7 +577,7 @@ ui <- navbarPage(
     div(class = "narrative",
       p("Kiedy macie już pomysł, trzeba znaleźć (albo zebrać) dane. I tu zaczyna się
         pierwsza pułapka: nie każdy zbiór danych nadaje się do planowanej analizy.
-        Na tym wykładzie pokażę Wam na co zwracać uwagę \u2014 co dyskwalifikuje dane
+        Na tym wykładzie pokażę Wam na co zwracać uwagę — co dyskwalifikuje dane
         od razu, a co można naprawić.")
     ),
 
@@ -592,16 +592,16 @@ ui <- navbarPage(
     div(class = "callout-info",
       tags$strong("Plan wykładu:"),
       tags$br(),
-      "1. Katalog problemów \u2014 7 typów błędów w danych (jak wyglądają w tabeli i na wykresie)",
+      "1. Katalog problemów — 7 typów błędów w danych (jak wyglądają w tabeli i na wykresie)",
       tags$br(),
-      "2. Case studies \u2014 10 zbiorów do samodzielnej oceny",
+      "2. Case studies — 10 zbiorów do samodzielnej oceny",
       tags$br(),
-      "3. Ściąga \u2014 checklist i podsumowanie"
+      "3. Ściąga — checklist i podsumowanie"
     ),
 
     div(class = "chapter-transition",
       p("Zobaczmy, co może pójść nie tak z danymi."),
-      actionButton("ch0_next", "Dalej: 1. Katalog problemów \u2192",
+      actionButton("ch0_next", "Dalej: 1. Katalog problemów →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -671,8 +671,8 @@ ui <- navbarPage(
         )
       ),
       div(class = "callout-danger", style = "margin-top: 10px;",
-        tags$strong("Problem: staż pracy jest prawie stały"), " (zakres 2.8\u20133.2 lata). ",
-        "Wynagrodzenia się różnią, ale nie widać żadnego wzorca \u2014 punkty tworzą pionową chmurę.",
+        tags$strong("Problem: staż pracy jest prawie stały"), " (zakres 2.8–3.2 lata). ",
+        "Wynagrodzenia się różnią, ale nie widać żadnego wzorca — punkty tworzą pionową chmurę.",
         tags$br(),
         "Gdy jedna zmienna nie ma żadnego rozrzutu, nie da się ocenić czy i jak wpływa na drugą."
       )
@@ -825,7 +825,7 @@ ui <- navbarPage(
         "Po agregacji do poziomu uczniów masz n = 3. Test t na n = 3?",
         tags$br(),
         tags$strong("Zasada:"), " Zawsze pytaj: co jest jednostką obserwacji? ",
-        "Osoba? Firma? Dzień? Wiersz w tabeli \u2260 obserwacja."
+        "Osoba? Firma? Dzień? Wiersz w tabeli ≠ obserwacja."
       )
     ),
 
@@ -844,7 +844,7 @@ ui <- navbarPage(
       checkboxGroupInput("intro_critical", NULL,
         choices = c(
           "Dane odpowiadają hipotezie badawczej (mierzą to, co chcesz badać)" = "hyp",
-          "Wystarczająca liczba obserwacji (n \u2265 20-30 na grupę/podgrupę)" = "n",
+          "Wystarczająca liczba obserwacji (n ≥ 20-30 na grupę/podgrupę)" = "n",
           "Mix typów zmiennych (ilościowe + jakościowe)" = "mix",
           "Zmienność w danych (nie wszystko takie samo)" = "var",
           "Struktura danych pasuje do planowanych analiz" = "fit",
@@ -865,7 +865,7 @@ ui <- navbarPage(
 
     div(class = "chapter-transition",
       p("Pora przetestować tę wiedzę na prawdziwych zbiorach danych."),
-      actionButton("cat_next", "Dalej: 2. Szkoły w Kalifornii \u2192",
+      actionButton("cat_next", "Dalej: 2. Szkoły w Kalifornii →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -928,7 +928,7 @@ ui <- navbarPage(
 
     div(class = "chapter-transition",
       p("To był wzorcowy zbiór. Następny będzie... inny."),
-      actionButton("ch1_next", "Dalej: 3. Ankieta na grupie \u2192",
+      actionButton("ch1_next", "Dalej: 3. Ankieta na grupie →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -984,7 +984,7 @@ ui <- navbarPage(
 
     div(class = "chapter-transition",
       p("Zobaczmy teraz zbiór, który radzi sobie lepiej."),
-      actionButton("ch2_next", "Dalej: 4. Pingwiny \u2192",
+      actionButton("ch2_next", "Dalej: 4. Pingwiny →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -1044,7 +1044,7 @@ ui <- navbarPage(
 
     div(class = "chapter-transition",
       p("Następny zbiór wygląda ciekawie... ale czy nadaje się do analizy?"),
-      actionButton("ch3_next", "Dalej: 5. Filmy Tarantino \u2192",
+      actionButton("ch3_next", "Dalej: 5. Filmy Tarantino →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -1122,7 +1122,7 @@ ui <- navbarPage(
 
     div(class = "chapter-transition",
       p("Czasem dane mają odpowiednią wielkość, ale inny problem..."),
-      actionButton("ch4_next", "Dalej: 6. Ankieta firmowa \u2192",
+      actionButton("ch4_next", "Dalej: 6. Ankieta firmowa →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -1156,7 +1156,7 @@ ui <- navbarPage(
     ),
     div(class = "callout-danger",
       tags$strong("Problem: brak zróżnicowania odpowiedzi."),
-      " 95% pracowników zaznaczyło 4 lub 5. Skala 1\u20135 w praktyce działa tu jak skala 1\u20132 \u2014
+      " 95% pracowników zaznaczyło 4 lub 5. Skala 1–5 w praktyce działa tu jak skala 1–2 —
       kiedy wszyscy odpowiadają tak samo, zmienna nic nie mówi."
     ),
 
@@ -1167,7 +1167,7 @@ ui <- navbarPage(
     ),
     div(class = "callout-danger",
       tags$strong("Problem: niezbalansowane grupy."),
-      " 94% respondentów to dział IT. Pozostałe działy mają po 1\u20132 osoby \u2014
+      " 94% respondentów to dział IT. Pozostałe działy mają po 1–2 osoby —
       jakiekolwiek porównanie między działami będzie niemożliwe."
     ),
 
@@ -1175,15 +1175,15 @@ ui <- navbarPage(
 
     div(class = "toggle-pills",
       actionButton("tab5_staz_normal", "Dane", class = "pill-btn active"),
-      actionButton("tab5_staz_wide", "Pełna skala (1\u201310 lat)", class = "pill-btn")
+      actionButton("tab5_staz_wide", "Pełna skala (1–10 lat)", class = "pill-btn")
     ),
     div(class = "widget-block",
       plotOutput("tab5_plot_staz", height = "300px")
     ),
     div(class = "callout-warning",
       tags$strong("Uwaga: wąska rozpiętość wartości."),
-      " Wszyscy pracownicy mają staż w przedziale 2.8\u20133.5 roku. Sama w sobie mała zmienność
-      nie jest błędem \u2014 zdarzają się takie dane. Ale gdy ",
+      " Wszyscy pracownicy mają staż w przedziale 2.8–3.5 roku. Sama w sobie mała zmienność
+      nie jest błędem — zdarzają się takie dane. Ale gdy ",
       tags$em("cały zbiór"), " wygląda podobnie, wykrycie jakichkolwiek zależności staje się
       bardzo trudne."
     ),
@@ -1195,7 +1195,7 @@ ui <- navbarPage(
     ),
     div(class = "callout-success",
       tags$strong("Wynagrodzenia mają normalny rozrzut."),
-      " To dobra wiadomość \u2014 ta zmienna wydaje się użyteczna.
+      " To dobra wiadomość — ta zmienna wydaje się użyteczna.
       Zobaczmy więc, czy możemy ją powiązać z czymś innym w tym zbiorze."
     ),
 
@@ -1214,7 +1214,7 @@ ui <- navbarPage(
 
     div(class = "callout-info",
       "Wynagrodzenie ma dobry rozrzut. Czy możemy powiązać je ze stażem pracy? ",
-      "Sprawdźmy \u2014 pamiętaj, że staż mieści się w bardzo wąskim przedziale."
+      "Sprawdźmy — pamiętaj, że staż mieści się w bardzo wąskim przedziale."
     ),
 
     div(class = "widget-block",
@@ -1224,7 +1224,7 @@ ui <- navbarPage(
     div(class = "section-title", "Co by było, gdyby dane miały normalną zmienność?"),
 
     div(class = "callout-info",
-      "Co by było, gdyby pracownicy różnili się stażem bardziej \u2014 np. od 1 do 15 lat?
+      "Co by było, gdyby pracownicy różnili się stażem bardziej — np. od 1 do 15 lat?
       Przesuń suwak i obserwuj jak pojawia się związek między stażem a wynagrodzeniem."
     ),
 
@@ -1247,7 +1247,7 @@ ui <- navbarPage(
 
     div(class = "chapter-transition",
       p("Pora na duży, dobry zbiór danych."),
-      actionButton("ch5_next", "Dalej: 7. Wynagrodzenia \u2192",
+      actionButton("ch5_next", "Dalej: 7. Wynagrodzenia →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -1300,7 +1300,7 @@ ui <- navbarPage(
 
     div(class = "chapter-transition",
       p("Następny zbiór to przykład złej ankiety."),
-      actionButton("ch6_next", "Dalej: 8. Trudna ankieta \u2192",
+      actionButton("ch6_next", "Dalej: 8. Trudna ankieta →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -1372,7 +1372,7 @@ ui <- navbarPage(
     div(class = "section-title", "Drugi przykład: dane do uratowania"),
 
     div(class = "narrative",
-      p("Inna ankieta o nawykach studenckich, podobny problem \u2014 respondenci odpowiadali
+      p("Inna ankieta o nawykach studenckich, podobny problem — respondenci odpowiadali
         różnie na te same pytania. Ale tym razem prawie każdą odpowiedź można przypisać
         do kategorii. Porównaj surowe dane z wersją po kategoryzacji.")
     ),
@@ -1389,17 +1389,17 @@ ui <- navbarPage(
     div(class = "callout-success",
       tags$strong("10 z 12 wierszy można uratować (83%)."),
       tags$br(),
-      tags$b("rok_studiow:"), " \"pierwszy\", \"I rok\", \"1\" \u2192 wszystkie to rok 1.",
+      tags$b("rok_studiow:"), " \"pierwszy\", \"I rok\", \"1\" → wszystkie to rok 1.",
       tags$br(),
-      tags$b("tryb:"), " \"s\", \"S\", \"zaoczny\" \u2192 \"stacjonarny\" lub \"niestacjonarny\".",
+      tags$b("tryb:"), " \"s\", \"S\", \"zaoczny\" → \"stacjonarny\" lub \"niestacjonarny\".",
       tags$br(),
-      tags$b("godziny_nauki:"), " \"ok. 5\", \"4-6h\", \"5h\" \u2192 kategoria \"srednie (4-6h)\".
-        Straty: \"duzo\" i \"malo\" \u2014 za mało informacji żeby przypisać do kategorii."
+      tags$b("godziny_nauki:"), " \"ok. 5\", \"4-6h\", \"5h\" → kategoria \"srednie (4-6h)\".
+        Straty: \"duzo\" i \"malo\" — za mało informacji żeby przypisać do kategorii."
     ),
 
     div(class = "chapter-transition",
       p("Następny zbiór ma inny rodzaj problemów - błędy w danych."),
-      actionButton("ch7_next", "Dalej: 9. Ceny mieszkań \u2192",
+      actionButton("ch7_next", "Dalej: 9. Ceny mieszkań →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -1466,7 +1466,7 @@ ui <- navbarPage(
       tags$br(),
       "Podstawowa struktura zbioru jest dobra (n=150, zróżnicowane zmienne, jasne definicje).",
       tags$br(),
-      "Ale błędy wprowadzania danych drastycznie zaburzają wyniki (R\u00b2 skacze po ich usunięciu).",
+      "Ale błędy wprowadzania danych drastycznie zaburzają wyniki (R² skacze po ich usunięciu).",
       tags$br(),
       tags$strong("Klucz:"), " Rozróżnij błąd danych (usuń) od prawdziwego outliera (przemyśl zachowanie)."
     ),
@@ -1475,7 +1475,7 @@ ui <- navbarPage(
 
     div(class = "chapter-transition",
       p("Następny zbiór to przykład dobrze zaprojektowanej ankiety."),
-      actionButton("ch8_next", "Dalej: 10. Ankieta studencka \u2192",
+      actionButton("ch8_next", "Dalej: 10. Ankieta studencka →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -1525,7 +1525,7 @@ ui <- navbarPage(
 
     div(class = "chapter-transition",
       p("Ostatni zbiór - wygląda dobrze, ale ma ukryty problem..."),
-      actionButton("ch9_next", "Dalej: 11. Jakość powietrza \u2192",
+      actionButton("ch9_next", "Dalej: 11. Jakość powietrza →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -1600,11 +1600,11 @@ ui <- navbarPage(
     div(class = "callout-info",
       tags$strong("Czy można to uratować?"),
       tags$br(),
-      "Agregacja miesięczna rozwiązałaby problem niezniezależności \u2014 średnia z całego
+      "Agregacja miesięczna rozwiązałaby problem niezniezależności — średnia z całego
       miesiąca to jedna obserwacja, a kolejne miesiące są od siebie mniej zależne.",
       tags$br(),
-      "Problem: ten zbiór obejmuje tylko 5 miesięcy (maj\u2013wrzesień 1973).
-      Po agregacji zostaje n\u00a0=\u00a05 \u2014 za mało na jakąkolwiek analizę.",
+      "Problem: ten zbiór obejmuje tylko 5 miesięcy (maj–wrzesień 1973).
+      Po agregacji zostaje n = 5 — za mało na jakąkolwiek analizę.",
       tags$br(),
       tags$em("Gdyby dane obejmowały wiele lat, agregacja miesięczna (np. średni ozon
       w każdym miesiącu roku przez 20 lat = 240 obserwacji) byłaby sensownym wyjściem.")
@@ -1614,7 +1614,7 @@ ui <- navbarPage(
 
     div(class = "chapter-transition",
       p("To był ostatni zbiór danych. Zobaczmy podsumowanie."),
-      actionButton("ch10_next", "Dalej: 12. Ściąga \u2192",
+      actionButton("ch10_next", "Dalej: 12. Ściąga →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -1794,7 +1794,7 @@ server <- function(input, output, session) {
       geom_bar(fill = col_bad, alpha = 0.85) +
       scale_x_discrete(limits = c("1","2","3","4","5")) +
       labs(title = paste0("Zadowolenie: ", pct_45, "% odpowiedzi to 4 lub 5"),
-           x = "Ocena (1\u20135)", y = "Liczba") +
+           x = "Ocena (1–5)", y = "Liczba") +
       theme_minimal(base_size = 13)
   })
 
@@ -1802,10 +1802,10 @@ server <- function(input, output, session) {
     ggplot(cat_novar, aes(x = staz, y = wynagrodzenie)) +
       geom_point(size = 3, alpha = 0.6, color = col_bad) +
       scale_x_continuous(limits = c(1, 10)) +
-      labs(title = paste0("Sta\u017c vs wynagrodzenie (r = ",
+      labs(title = paste0("Staż vs wynagrodzenie (r = ",
                           round(cor(cat_novar$staz, cat_novar$wynagrodzenie), 3), ")"),
-           subtitle = "Sta\u017c skupiony w w\u0105skim fragmencie osi",
-           x = "Sta\u017c pracy (lata)", y = "Wynagrodzenie (PLN)") +
+           subtitle = "Staż skupiony w wąskim fragmencie osi",
+           x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
       theme_minimal(base_size = 13)
   })
 
@@ -1871,8 +1871,8 @@ server <- function(input, output, session) {
     ggplot(d, aes(x = powierzchnia, y = cena)) +
       geom_point(size = 3, alpha = 0.7, color = col_dark) +
       geom_smooth(method = "lm", color = col, se = TRUE) +
-      labs(title = paste0(title_txt, " (R\u00b2 = ", r2, ")"),
-           x = "Powierzchnia (m\u00b2)", y = "Cena (PLN)") +
+      labs(title = paste0(title_txt, " (R² = ", r2, ")"),
+           x = "Powierzchnia (m²)", y = "Cena (PLN)") +
       theme_minimal(base_size = 14)
   })
 
@@ -2011,7 +2011,7 @@ server <- function(input, output, session) {
       geom_point(color = col_bad, size = 2.5) +
       labs(title = "Temperatura w kolejności pomiarów",
            subtitle = "Wyraźna fala - każdy dzień zależy od poprzedniego!",
-           x = "Dzień pomiaru", y = "Temperatura (\u00b0C)") +
+           x = "Dzień pomiaru", y = "Temperatura (°C)") +
       theme_minimal(base_size = 14)
   })
 
@@ -2073,7 +2073,7 @@ server <- function(input, output, session) {
         geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold",
                   color = col_bad) +
         labs(title = "Po agregacji",
-             subtitle = "n = 3 uczni\u00f3w. Test t? Zdecydowanie za ma\u0142o.",
+             subtitle = "n = 3 uczniów. Test t? Zdecydowanie za mało.",
              x = NULL, y = NULL) +
         ylim(0, 5) +
         theme_minimal(base_size = 14) +
@@ -2275,7 +2275,7 @@ server <- function(input, output, session) {
     list(letter = "A", value = "Test t", text = "Test t"),
     list(letter = "B", value = "Korelacja", text = "Korelacja"),
     list(letter = "C", value = "Regresja", text = "Regresja"),
-    list(letter = "D", value = "Zadna z klasycznych", text = "\u017badna z klasycznych")
+    list(letter = "D", value = "Zadna z klasycznych", text = "Żadna z klasycznych")
   )
 
   output$tab4_quiz_options <- renderUI({
@@ -2372,7 +2372,7 @@ server <- function(input, output, session) {
       geom_bar(fill = col_bad, alpha = 0.85) +
       scale_x_discrete(limits = c("1","2","3","4","5")) +
       labs(
-        title = paste0("Zadowolenie z pracy (skala 1\u20135): ", pct_45, "% odpowiedzi to 4 lub 5"),
+        title = paste0("Zadowolenie z pracy (skala 1–5): ", pct_45, "% odpowiedzi to 4 lub 5"),
         x = "Ocena zadowolenia", y = "Liczba pracowników"
       ) +
       theme_minimal(base_size = 14)
@@ -2413,7 +2413,7 @@ server <- function(input, output, session) {
                vjust = 2, hjust = -0.1, size = 4, color = col_dark) +
       labs(
         title = paste0("Staż pracy  |  zakres: ", min(corp_data$staz_pracy),
-                       "\u2013", max(corp_data$staz_pracy), " lat  |  SD = ", sd_staz),
+                       "–", max(corp_data$staz_pracy), " lat  |  SD = ", sd_staz),
         x = "Staż pracy (lata)", y = "Liczba pracowników"
       ) +
       theme_minimal(base_size = 14)
@@ -2431,7 +2431,7 @@ server <- function(input, output, session) {
                vjust = 2, hjust = -0.1, size = 4, color = col_dark) +
       labs(
         title = paste0("Wynagrodzenie  |  zakres: ", min(corp_data$wynagrodzenie),
-                       "\u2013", max(corp_data$wynagrodzenie), " PLN  |  SD = ", sd_wyn, " PLN"),
+                       "–", max(corp_data$wynagrodzenie), " PLN  |  SD = ", sd_wyn, " PLN"),
         x = "Wynagrodzenie (PLN)", y = "Liczba pracowników"
       ) +
       theme_minimal(base_size = 14)
@@ -2456,7 +2456,7 @@ server <- function(input, output, session) {
       scale_x_continuous(limits = c(1, 10)) +
       labs(title = "Staż pracy vs wynagrodzenie",
            subtitle = paste0("r = ", round(cor(corp_data$staz_pracy, corp_data$wynagrodzenie), 3),
-                             "  \u2014  staż w wąskim przedziale, wynagrodzenia zróżnicowane"),
+                             "  —  staż w wąskim przedziale, wynagrodzenia zróżnicowane"),
            x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
       theme_minimal(base_size = 14)
   })
@@ -2473,7 +2473,7 @@ server <- function(input, output, session) {
     ggplot(data.frame(x = sim_staz, y = sim_wyn), aes(x, y)) +
       geom_point(alpha = 0.5, size = 3, color = col_dark) +
       geom_smooth(method = "lm", color = col_primary, se = TRUE) +
-      labs(title = paste0("Symulacja z SD \u00d7 ", mult),
+      labs(title = paste0("Symulacja z SD × ", mult),
            subtitle = paste0("r = ", r),
            x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
       theme_minimal(base_size = 14)
@@ -2662,8 +2662,8 @@ server <- function(input, output, session) {
     ggplot(apt_data, aes(x = powierzchnia, y = cena)) +
       geom_point(alpha = 0.5, color = col_dark) +
       geom_smooth(method = "lm", color = col_bad, se = TRUE) +
-      labs(title = paste0("Cena vs powierzchnia (R\u00b2 = ", r2, ")"),
-           x = "Powierzchnia (m\u00b2)", y = "Cena (PLN)") +
+      labs(title = paste0("Cena vs powierzchnia (R² = ", r2, ")"),
+           x = "Powierzchnia (m²)", y = "Cena (PLN)") +
       theme_minimal(base_size = 14)
   })
 
@@ -2677,7 +2677,7 @@ server <- function(input, output, session) {
   }
 
   output$tab8_box_cena        <- renderPlot({ make_boxplot("cena",        "Cena",        "PLN") })
-  output$tab8_box_powierzchnia <- renderPlot({ make_boxplot("powierzchnia","Powierzchnia","m\u00b2") })
+  output$tab8_box_powierzchnia <- renderPlot({ make_boxplot("powierzchnia","Powierzchnia","m²") })
   output$tab8_box_pokoje       <- renderPlot({ make_boxplot("pokoje",      "Pokoje",      "") })
   output$tab8_box_rok_budowy   <- renderPlot({ make_boxplot("rok_budowy",  "Rok budowy",  "") })
 
@@ -2688,8 +2688,8 @@ server <- function(input, output, session) {
     ggplot(d, aes(x = powierzchnia, y = cena)) +
       geom_point(alpha = 0.5, color = col_dark) +
       geom_smooth(method = "lm", color = col_good, se = TRUE) +
-      labs(title = paste0("Po czyszczeniu (R\u00b2 = ", r2, ")"),
-           x = "Powierzchnia (m\u00b2)", y = "Cena (PLN)") +
+      labs(title = paste0("Po czyszczeniu (R² = ", r2, ")"),
+           x = "Powierzchnia (m²)", y = "Cena (PLN)") +
       theme_minimal(base_size = 14)
   })
 
@@ -2703,37 +2703,37 @@ server <- function(input, output, session) {
 
       div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
         tags$strong("1."),
-        " Cena: 45 PLN | Powierzchnia: 52 m\u00b2 | Pokoje: 2 | Dzielnica: Mokot\u00f3w",
+        " Cena: 45 PLN | Powierzchnia: 52 m² | Pokoje: 2 | Dzielnica: Mokotów",
         tags$br(),
-        radioButtons("tab8_q1", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q1", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       ),
 
       div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
         tags$strong("2."),
-        " Cena: 5 500 000 PLN | Powierzchnia: 35 m\u00b2 | Pokoje: 1 | Dzielnica: Praga-P\u00f3\u0142noc",
+        " Cena: 5 500 000 PLN | Powierzchnia: 35 m² | Pokoje: 1 | Dzielnica: Praga-Północ",
         tags$br(),
-        radioButtons("tab8_q2", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q2", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       ),
 
       div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
         tags$strong("3."),
-        " Cena: -300 000 PLN | Powierzchnia: 48 m\u00b2 | Pokoje: 2 | Dzielnica: Wola",
+        " Cena: -300 000 PLN | Powierzchnia: 48 m² | Pokoje: 2 | Dzielnica: Wola",
         tags$br(),
-        radioButtons("tab8_q3", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q3", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       ),
 
       div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
         tags$strong("4."),
-        " Cena: 850 000 PLN | Powierzchnia: 1 200 m\u00b2 | Pokoje: 3 | Dzielnica: Ursynów",
+        " Cena: 850 000 PLN | Powierzchnia: 1 200 m² | Pokoje: 3 | Dzielnica: Ursynów",
         tags$br(),
-        radioButtons("tab8_q4", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q4", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       ),
 
       div(style = "margin: 14px 0; padding: 10px; background: #f8f9fa; border-radius: 6px;",
         tags$strong("5."),
-        " Cena: 1 150 000 PLN | Powierzchnia: 120 m\u00b2 | Pokoje: 5 | Dzielnica: \u015ar\u00f3dmie\u015bcie | Rok budowy: 2023",
+        " Cena: 1 150 000 PLN | Powierzchnia: 120 m² | Pokoje: 5 | Dzielnica: Śródmieście | Rok budowy: 2023",
         tags$br(),
-        radioButtons("tab8_q5", NULL, choices = c("B\u0142\u0105d danych", "Prawdziwy outlier"), inline = TRUE)
+        radioButtons("tab8_q5", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
       )
     )
   })
@@ -2742,18 +2742,18 @@ server <- function(input, output, session) {
     req(input$tab8_check_quiz > 0)
     isolate({
       answers <- c(input$tab8_q1, input$tab8_q2, input$tab8_q3, input$tab8_q4, input$tab8_q5)
-      correct <- c("B\u0142\u0105d danych", "B\u0142\u0105d danych", "B\u0142\u0105d danych", "B\u0142\u0105d danych", "Prawdziwy outlier")
+      correct <- c("Błąd danych", "Błąd danych", "Błąd danych", "Błąd danych", "Prawdziwy outlier")
       explanations <- c(
-        "Cena 45 PLN za 52 m\u00b2 na Mokotowie \u2014 brakuje czterech zer. Prawdopodobnie wpisano '45' zamiast '450 000 PLN'. B\u0142\u0105d danych.",
-        "5,5 mln PLN za 35 m\u00b2 na Pradze P\u00f3\u0142noc = 157 000 PLN/m\u00b2. Nierealne. Gdyby to by\u0142o 280 m\u00b2 w \u015ar\u00f3dmie\u015bciu, mog\u0142oby by\u0107 outlirem \u2014 ale ta kombinacja nie ma sensu. B\u0142\u0105d danych (prawdopodobnie jedno zero za du\u017co).",
-        "Ujemna cena jest matematycznie niemo\u017cliwa. To b\u0142\u0105d znaku przy imporcie danych lub b\u0142\u0105d oper. B\u0142\u0105d danych.",
-        "1200 m\u00b2 to wielko\u015b\u0107 biurowca, nie mieszkania. Przy 3 pokojach i cenie 850 000 PLN prawie na pewno wpisano '1200' zamiast '120 m\u00b2'. B\u0142\u0105d danych.",
-        "9 600 PLN/m\u00b2 za nowe, du\u017ce mieszkanie w \u015ar\u00f3dmie\u015bciu (rok budowy 2023) \u2014 drogo, ale taki rynek istnieje. To prawdziwy outlier: warto odnotowa\u0107, ale nie usuwa\u0107."
+        "Cena 45 PLN za 52 m² na Mokotowie — brakuje czterech zer. Prawdopodobnie wpisano '45' zamiast '450 000 PLN'. Błąd danych.",
+        "5,5 mln PLN za 35 m² na Pradze Północ = 157 000 PLN/m². Nierealne. Gdyby to było 280 m² w Śródmieściu, mogłoby być outlirem — ale ta kombinacja nie ma sensu. Błąd danych (prawdopodobnie jedno zero za dużo).",
+        "Ujemna cena jest matematycznie niemożliwa. To błąd znaku przy imporcie danych lub błąd oper. Błąd danych.",
+        "1200 m² to wielkość biurowca, nie mieszkania. Przy 3 pokojach i cenie 850 000 PLN prawie na pewno wpisano '1200' zamiast '120 m²'. Błąd danych.",
+        "9 600 PLN/m² za nowe, duże mieszkanie w Śródmieściu (rok budowy 2023) — drogo, ale taki rynek istnieje. To prawdziwy outlier: warto odnotować, ale nie usuwać."
       )
 
       items <- sapply(1:5, function(i) {
         ok <- answers[i] == correct[i]
-        icon <- if (ok) "\u2705" else "\u274c"
+        icon <- if (ok) "✅" else "❌"
         paste0("<div style='padding: 6px 0; border-bottom: 1px solid #eee;'>",
                icon, " <b>Pyt. ", i, ":</b> ", explanations[i], "</div>")
       })
@@ -2809,9 +2809,9 @@ server <- function(input, output, session) {
                 vjust = -0.4, size = 5, fontface = "bold") +
       geom_hline(yintercept = 5,  linetype = "dashed", color = col_mixed, linewidth = 0.8) +
       geom_hline(yintercept = 20, linetype = "dashed", color = col_bad,   linewidth = 0.8) +
-      annotate("text", x = Inf, y = 6.5,  label = "5% \u2014 akceptowalne",
+      annotate("text", x = Inf, y = 6.5,  label = "5% — akceptowalne",
                hjust = 1.05, color = col_mixed, size = 3.8) +
-      annotate("text", x = Inf, y = 21.5, label = "20% \u2014 powa\u017cny problem",
+      annotate("text", x = Inf, y = 21.5, label = "20% — poważny problem",
                hjust = 1.05, color = col_bad,   size = 3.8) +
       scale_y_continuous(limits = c(0, 30)) +
       labs(title = "Procent braków danych (tylko zmienne z brakami)",

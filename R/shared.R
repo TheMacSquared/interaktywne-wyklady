@@ -94,11 +94,11 @@ get_population_params <- function(dist_type) {
 # Nazwy rozkladow po polsku (superset wszystkich aplikacji)
 dist_names_pl <- c(
   "normal"      = "Normalny (wzrost)",
-  "exponential" = "Wyk\u0142adniczy (prawosko\u015bny)",
+  "exponential" = "Wykładniczy (prawoskośny)",
   "uniform"     = "Jednostajny",
   "bimodal"     = "Dwumodalny",
-  "skewed"      = "Prawoskos\u0144ny (Gamma)",
-  "u_shape"     = "U-kszta\u0142tny (Beta)",
-  "skewed_left" = "Lewosko\u015bny",
+  "skewed"      = "Prawoskosńny (Gamma)",
+  "u_shape"     = "U-kształtny (Beta)",
+  "skewed_left" = "Lewoskośny",
   "die"         = "Kostka (dyskretny)"
 )
