@@ -30,7 +30,7 @@ generate_sample_data <- function(n, dist = "skewed", seed = NULL) {
 # Nazwy rozkladow po polsku
 dist_names_pl_sim <- c(
   "normal"     = "Normalny",
-  "skewed"     = "Prawosk\u0119tny (Gamma)",
+  "skewed"     = "Prawoskętny (Gamma)",
   "bimodal"    = "Dwumodalny",
   "heavy_tail" = "Grube ogony (t-Studenta)",
   "uniform"    = "Jednostajny"
@@ -446,11 +446,11 @@ plot_bootstrap_distribution <- function(boot_result, ci,
              label = paste0("obs = ", round(boot_result$observed, 2)),
              vjust = -0.3, hjust = -0.1, color = col_secondary, size = 4) +
     labs(
-      title   = paste0("Rozk\u0142ad bootstrapowy (B = ", boot_result$B, ")"),
+      title   = paste0("Rozkład bootstrapowy (B = ", boot_result$B, ")"),
       subtitle = paste0(round(conf_level * 100), "% CI: [",
                         round(ci$lower, 2), ", ", round(ci$upper, 2), "]"),
       x = stat_label,
-      y = "Liczba pr\u00f3b"
+      y = "Liczba prób"
     ) +
     theme_educational()
 }
@@ -476,9 +476,9 @@ plot_permutation_distribution <- function(perm_result,
              label = paste0("obs = ", round(obs, 3)),
              vjust = -0.3, hjust = -0.1, color = col_secondary, size = 4) +
     labs(
-      title    = paste0("Rozk\u0142ad permutacyjny (B = ", length(df$stat), ")"),
-      subtitle = paste0("p-warto\u015b\u0107 = ", round(p_val, 4),
-                        " (czerwone = r\u00f3wnie ekstremalne lub bardziej)"),
+      title    = paste0("Rozkład permutacyjny (B = ", length(df$stat), ")"),
+      subtitle = paste0("p-wartość = ", round(p_val, 4),
+                        " (czerwone = równie ekstremalne lub bardziej)"),
       x = stat_label,
       y = "Liczba permutacji"
     ) +
@@ -503,15 +503,15 @@ plot_ci_comparison <- function(ci_df, true_value = NULL,
     geom_point(aes(x = (lower + upper) / 2), size = 4) +
     scale_color_manual(values = setNames(cols, levels(ci_df$method)),
                        guide = "none") +
-    labs(title = "Por\u00f3wnanie przedzia\u0142\u00f3w ufno\u015bci",
-         x = "Warto\u015b\u0107", y = NULL) +
+    labs(title = "Porównanie przedziałów ufności",
+         x = "Wartość", y = NULL) +
     theme_educational()
 
   if (!is.null(true_value)) {
     p <- p + geom_vline(xintercept = true_value,
                         color = "#2c3e50", linewidth = 1, linetype = "dotted") +
       annotate("text", x = true_value, y = Inf,
-               label = paste0("\u03bc = ", round(true_value, 2)),
+               label = paste0("μ = ", round(true_value, 2)),
                vjust = -0.3, hjust = -0.1, color = "#2c3e50", size = 3.5)
   }
   p
@@ -523,7 +523,7 @@ plot_ci_comparison <- function(ci_df, true_value = NULL,
 plot_bootstrap_step <- function(orig_data, resample_list, col_primary, col_warning,
                                  col_dark = "#2c3e50") {
   n           <- length(orig_data)
-  freq_labels <- c("Pomini\u0119ty (0x)", "Raz (1x)", "Wielokrotnie (2x+)")
+  freq_labels <- c("Pominięty (0x)", "Raz (1x)", "Wielokrotnie (2x+)")
   last_rs     <- resample_list[[length(resample_list)]]
 
   # Kolorowanie oryginalu wg ostatniej proby bootstrapowej
@@ -534,7 +534,7 @@ plot_bootstrap_step <- function(orig_data, resample_list, col_primary, col_warni
     x    = orig_data,
     y    = 0,
     freq = factor(
-      ifelse(freq_table == 0, "Pomini\u0119ty (0x)",
+      ifelse(freq_table == 0, "Pominięty (0x)",
       ifelse(freq_table == 1, "Raz (1x)", "Wielokrotnie (2x+)")),
       levels = freq_labels
     )
@@ -545,7 +545,7 @@ plot_bootstrap_step <- function(orig_data, resample_list, col_primary, col_warni
     data.frame(x = resample_list[[i]], y = i)
   }))
 
-  y_labels <- c("Oryginalna pr\u00f3ba",
+  y_labels <- c("Oryginalna próba",
                 paste0("Bootstrap ", seq_along(resample_list)))
   y_breaks <- 0:length(resample_list)
 
@@ -568,20 +568,20 @@ plot_bootstrap_step <- function(orig_data, resample_list, col_primary, col_warni
       color = "#e74c3c", linewidth = 1.2, linetype = "dashed"
     ) +
     scale_color_manual(
-      values = c("Pomini\u0119ty (0x)"      = "#bdc3c7",
+      values = c("Pominięty (0x)"      = "#bdc3c7",
                  "Raz (1x)"                 = col_primary,
                  "Wielokrotnie (2x+)"       = col_warning),
-      name = "Cz\u0119sto\u015b\u0107 w ostatniej pr\u00f3bie:"
+      name = "Częstość w ostatniej próbie:"
     ) +
     scale_y_continuous(breaks = y_breaks, labels = y_labels) +
     labs(
       title    = paste0(length(resample_list),
                         ifelse(length(resample_list) == 1,
-                               " pr\u00f3ba bootstrapowa",
-                               " pr\u00f3by bootstrapowe")),
-      subtitle = paste0("Oryginalna \u015br.: ", round(mean(orig_data), 2),
-                        "  |  Ostatnia bootstrap \u015br.: ", round(mean(last_rs), 2)),
-      x = "Warto\u015b\u0107",
+                               " próba bootstrapowa",
+                               " próby bootstrapowe")),
+      subtitle = paste0("Oryginalna śr.: ", round(mean(orig_data), 2),
+                        "  |  Ostatnia bootstrap śr.: ", round(mean(last_rs), 2)),
+      x = "Wartość",
       y = NULL
     ) +
     theme_educational() +
@@ -615,10 +615,10 @@ plot_jackknife_pseudovalues <- function(jack_result, stat_label = "Statystyka",
              label = paste0("BC = ", round(bc, 3)),
              hjust = 0, vjust = -0.5, color = col_success, size = 3.5) +
     labs(
-      title    = paste0("Pseudowarto\u015bci jackknife (n = ", n, ")"),
-      subtitle = paste0("Obci\u0105\u017cenie = ", round(jack_result$bias, 4),
+      title    = paste0("Pseudowartości jackknife (n = ", n, ")"),
+      subtitle = paste0("Obciążenie = ", round(jack_result$bias, 4),
                         "  |  SE = ", round(se, 4)),
-      x = "Indeks pomini\u0119tej obserwacji",
+      x = "Indeks pominiętej obserwacji",
       y = stat_label
     ) +
     theme_educational()
@@ -635,19 +635,19 @@ plot_cv_results <- function(cv_results_list, degree_labels = NULL,
                                   names_to = "type", values_to = "mse")
   df_long$type <- factor(df_long$type,
                           levels = c("train_mse", "cv_mse"),
-                          labels = c("MSE treningowy", "CV MSE (uog\u00f3lnienie)"))
+                          labels = c("MSE treningowy", "CV MSE (uogólnienie)"))
 
   ggplot(df_long, aes(x = degree, y = mse, color = type, group = type)) +
     geom_line(linewidth = 1.5) +
     geom_point(size = 3) +
     scale_color_manual(values = c("MSE treningowy" = col_cv_train,
-                                   "CV MSE (uog\u00f3lnienie)" = col_cv_test),
+                                   "CV MSE (uogólnienie)" = col_cv_test),
                        name = NULL) +
     labs(
-      title    = "MSE treningowy vs CV MSE wed\u0142ug stopnia wielomianu",
-      subtitle = "Optymalny stopie\u0144: gdzie CV MSE jest najni\u017cszy",
-      x        = "Stopie\u0144 wielomianu",
-      y        = "B\u0142\u0105d \u015bredniokwadratowy (MSE)"
+      title    = "MSE treningowy vs CV MSE według stopnia wielomianu",
+      subtitle = "Optymalny stopień: gdzie CV MSE jest najniższy",
+      x        = "Stopień wielomianu",
+      y        = "Błąd średniokwadratowy (MSE)"
     ) +
     theme_educational() +
     theme(legend.position = "top")
@@ -667,13 +667,13 @@ plot_power_histogram <- function(mc_result, col_primary, col_secondary) {
     geom_vline(xintercept = alpha, color = col_secondary,
                linewidth = 1.5, linetype = "dashed") +
     annotate("text", x = alpha, y = Inf,
-             label = paste0("\u03b1 = ", alpha),
+             label = paste0("α = ", alpha),
              vjust = -0.3, hjust = -0.1, color = col_secondary, size = 4) +
     labs(
-      title    = paste0("Rozk\u0142ad p-warto\u015bci z B = ", n_total, " symulacji"),
+      title    = paste0("Rozkład p-wartości z B = ", n_total, " symulacji"),
       subtitle = paste0("Moc = ", round(mc_result$power * 100, 1),
                         "% (odrzucono ", n_rej, " z ", n_total, ")"),
-      x = "p-warto\u015b\u0107",
+      x = "p-wartość",
       y = "Liczba symulacji"
     ) +
     theme_educational()
@@ -696,9 +696,9 @@ plot_power_curve <- function(power_df, current_delta = NULL,
     labs(
       title    = "Krzywa mocy testu",
       subtitle = paste0("n = ", attr(power_df, "n") %||%
-                          "?", "  |  \u03b1 = ", alpha),
-      x        = "Wielko\u015b\u0107 efektu (\u03b4)",
-      y        = "Moc = P(odrzucenie H\u2080 | H\u2081 prawdziwa)"
+                          "?", "  |  α = ", alpha),
+      x        = "Wielkość efektu (δ)",
+      y        = "Moc = P(odrzucenie H₀ | H₁ prawdziwa)"
     ) +
     theme_educational()
 
@@ -760,15 +760,15 @@ format_pval_pl <- function(p, alpha = 0.05) {
   p_txt <- if (p < 0.001) "p < 0.001" else paste0("p = ", round(p, 4))
   if (p < alpha) {
     list(
-      decision    = paste0(p_txt, " \u2014 odrzucamy H\u2080 (\u03b1 = ", alpha, ")"),
+      decision    = paste0(p_txt, " — odrzucamy H₀ (α = ", alpha, ")"),
       color       = "#27ae60",
       explanation = "Wynik jest istotny statystycznie."
     )
   } else {
     list(
-      decision    = paste0(p_txt, " \u2014 brak podstaw do odrzucenia H\u2080"),
+      decision    = paste0(p_txt, " — brak podstaw do odrzucenia H₀"),
       color       = "#e74c3c",
-      explanation = "Brak istotno\u015bci statystycznej."
+      explanation = "Brak istotności statystycznej."
     )
   }
 }

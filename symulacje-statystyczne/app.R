@@ -103,11 +103,11 @@ server <- function(input, output, session) {
 
   observeEvent(input$ch1_next, {
     updateNavbarPage(session, "main_nav",
-                     selected = "2. Bootstrap \u2014 przedzia\u0142y")
+                     selected = "2. Bootstrap — przedziały")
   })
   observeEvent(input$ch2_next, {
     updateNavbarPage(session, "main_nav",
-                     selected = "3. Bootstrap jednej pr\u00f3by")
+                     selected = "3. Bootstrap jednej próby")
   })
   observeEvent(input$ch3_next, {
     updateNavbarPage(session, "main_nav",
@@ -127,15 +127,15 @@ server <- function(input, output, session) {
   })
   observeEvent(input$ch7_next, {
     updateNavbarPage(session, "main_nav",
-                     selected = "8. Kiedy stosowa\u0107?")
+                     selected = "8. Kiedy stosować?")
   })
   observeEvent(input$ch8_next, {
     updateNavbarPage(session, "main_nav",
-                     selected = "9. \u015aci\u0105ga")
+                     selected = "9. Ściąga")
   })
   observeEvent(input$ch9_to_ch10, {
     updateNavbarPage(session, "main_nav",
-                     selected = "10. \u0106wiczenia")
+                     selected = "10. Ćwiczenia")
   })
 
   # ==========================================================================

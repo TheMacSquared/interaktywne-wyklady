@@ -6,9 +6,9 @@ ch5_ui <- tabPanel("5. Jackknife",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Bootstrap daje CI. Jackknife robi co\u015b innego:
-       szacuje, jak bardzo statystyka jest ", tags$em("obci\u0105\u017cona"),
-      " i jaki jest jej b\u0142\u0105d standardowy \u2014 przez usuni\u0119cie
+      "Bootstrap daje CI. Jackknife robi coś innego:
+       szacuje, jak bardzo statystyka jest ", tags$em("obciążona"),
+      " i jaki jest jej błąd standardowy — przez usunięcie
        kolejnych obserwacji."
     ),
 
@@ -16,11 +16,11 @@ ch5_ui <- tabPanel("5. Jackknife",
 
     div(class = "narrative",
       p("Jackknife to starsza metoda resamplingowa (Quenouille, 1949).
-         Idea: oblicz statystyk\u0119 n razy, za ka\u017cdym razem pomijaj\u0105c
-         inn\u0105 obserwacj\u0119."),
-      p("W ten spos\u00f3b uzyskujemy n ", tags$b("pseudowarto\u015bci"),
-        " \u03b8\u0302\u208b\u1d35 \u2014 rozk\u0142ad statystyki, gdy ka\u017cda obserwacja
-        jest kolejno \u201evykluczona\u201f. To pozwala oszacowa\u0107 obci\u0105\u017cenie i SE.")
+         Idea: oblicz statystykę n razy, za każdym razem pomijając
+         inną obserwację."),
+      p("W ten sposób uzyskujemy n ", tags$b("pseudowartości"),
+        " θ̂₋ᴵ — rozkład statystyki, gdy każda obserwacja
+        jest kolejno „vykluczona‟. To pozwala oszacować obciążenie i SE.")
     ),
 
     div(class = "callout-info",
@@ -35,9 +35,9 @@ ch5_ui <- tabPanel("5. Jackknife",
         )
       ),
       p(style = "font-size:13px;",
-        "gdzie \u03b8\u0302\u208b\u1d35 = statystyka z pr\u00f3by bez i-tej obserwacji,
-         \u03b8\u0305\u208b = \u015brednia z n pseudowarto\u015bci,
-         \u03b8\u0302 = oryginalna statystyka.")
+        "gdzie θ̂₋ᴵ = statystyka z próby bez i-tej obserwacji,
+         θ̅₋ = średnia z n pseudowartości,
+         θ̂ = oryginalna statystyka.")
     ),
 
     # ========================================================================
@@ -46,22 +46,22 @@ ch5_ui <- tabPanel("5. Jackknife",
     div(class = "section-title", "Jackknife w akcji"),
 
     div(class = "widget-block",
-      h4("Pseudowarto\u015bci i estymacja obci\u0105\u017cenia"),
+      h4("Pseudowartości i estymacja obciążenia"),
       fluidRow(
         column(4,
           selectInput("ch5_stat", "Statystyka:",
             choices = c(
-              "\u015aredniana" = "mean",
+              "Średniana" = "mean",
               "Mediana"     = "median",
               "Odch. stand." = "sd",
-              "Sko\u015bno\u015b\u0107"   = "skewness"
+              "Skośność"   = "skewness"
             ),
             selected = "mean"
           ),
-          selectInput("ch5_dist", "Rozk\u0142ad:",
+          selectInput("ch5_dist", "Rozkład:",
             choices = c(
               "Normalny"               = "normal",
-              "Prawoskos\u015bny (Gamma)" = "skewed",
+              "Prawoskosśny (Gamma)" = "skewed",
               "Dwumodalny"             = "bimodal",
               "Grube ogony"            = "heavy_tail"
             ),
@@ -83,42 +83,42 @@ ch5_ui <- tabPanel("5. Jackknife",
     # ========================================================================
     # WIDGET 2: Bootstrap vs Jackknife SE
     # ========================================================================
-    div(class = "section-title", "Bootstrap vs Jackknife \u2014 por\u00f3wnanie SE"),
+    div(class = "section-title", "Bootstrap vs Jackknife — porównanie SE"),
 
     div(class = "narrative",
-      p("Dla wi\u0119kszo\u015bci statystyk przy du\u017cych pr\u00f3bach oba podej\u015bcia daj\u0105
-         podobne SE. Rozchodz\u0105 si\u0119 przy:",
+      p("Dla większości statystyk przy dużych próbach oba podejścia dają
+         podobne SE. Rozchodzą się przy:",
         tags$ul(
-          tags$li("Silnie sko\u015bnych rozk\u0142adach"),
-          tags$li("Statystykach nieliniowych (mediana, sko\u015bno\u015b\u0107)"),
-          tags$li("Ma\u0142ych pr\u00f3bach")
+          tags$li("Silnie skośnych rozkładach"),
+          tags$li("Statystykach nieliniowych (mediana, skośność)"),
+          tags$li("Małych próbach")
         )),
-      p("Bootstrap jest wtedy bardziej wiarygodny \u2014
-         jackknife mo\u017ce nie\u0142apiwa\u0107 niestabilno\u015bci mediany.")
+      p("Bootstrap jest wtedy bardziej wiarygodny —
+         jackknife może niełapiwać niestabilności mediany.")
     ),
 
     div(class = "widget-block",
-      h4("Por\u00f3wnanie SE: Bootstrap vs Jackknife"),
+      h4("Porównanie SE: Bootstrap vs Jackknife"),
       fluidRow(
         column(4,
           selectInput("ch5_cmp_stat", "Statystyka:",
             choices = c(
-              "\u015aredniana" = "mean",
+              "Średniana" = "mean",
               "Mediana"     = "median",
-              "Sko\u015bno\u015b\u0107"   = "skewness"
+              "Skośność"   = "skewness"
             ),
             selected = "mean"
           ),
-          selectInput("ch5_cmp_dist", "Rozk\u0142ad:",
+          selectInput("ch5_cmp_dist", "Rozkład:",
             choices = c(
               "Normalny"               = "normal",
-              "Prawoskos\u015bny (Gamma)" = "skewed",
+              "Prawoskosśny (Gamma)" = "skewed",
               "Grube ogony"            = "heavy_tail"
             ),
             selected = "normal"
           ),
           sliderInput("ch5_cmp_n", "n:", min = 10, max = 100, value = 30, step = 5),
-          actionButton("ch5_cmp_run", "Por\u00f3wnaj",
+          actionButton("ch5_cmp_run", "Porównaj",
                        class = "btn-warning", width = "100%"),
           br(), br(),
           uiOutput("ch5_cmp_stats")
@@ -130,18 +130,18 @@ ch5_ui <- tabPanel("5. Jackknife",
     ),
 
     div(class = "callout-warning",
-      tags$strong("Kiedy bootstrap jest lepszy ni\u017c jackknife:"),
+      tags$strong("Kiedy bootstrap jest lepszy niż jackknife:"),
       tags$ul(
-        tags$li("Mediana i inne statystyki oparte na rangach (jackknife mo\u017ce nie dzia\u0142a\u0107 dobrze)"),
-        tags$li("Silna sko\u015bno\u015b\u0107 danych"),
-        tags$li("Potrzebujesz pe\u0142nego CI, nie tylko SE")
+        tags$li("Mediana i inne statystyki oparte na rangach (jackknife może nie działać dobrze)"),
+        tags$li("Silna skośność danych"),
+        tags$li("Potrzebujesz pełnego CI, nie tylko SE")
       )
     ),
 
     div(class = "chapter-transition",
-      p("Dalej: cross-validation \u2014 jak oceni\u0107 jako\u015b\u0107 modelu predykcyjnego"),
+      p("Dalej: cross-validation — jak ocenić jakość modelu predykcyjnego"),
       actionButton("ch5_next",
-                   "Dalej \u2192 6. Cross-validation",
+                   "Dalej → 6. Cross-validation",
                    class = "btn-primary btn-lg")
     )
 
@@ -168,10 +168,10 @@ ch5_server <- function(input, output, session) {
 
   ch5_stat_label <- reactive({
     switch(input$ch5_stat,
-      "mean"     = "\u015aredniana",
+      "mean"     = "Średniana",
       "median"   = "Mediana",
       "sd"       = "Odch. stand.",
-      "skewness" = "Sko\u015bno\u015b\u0107"
+      "skewness" = "Skośność"
     )
   })
 
@@ -207,7 +207,7 @@ ch5_server <- function(input, output, session) {
       div(class = "stat-box", style = paste0("background:", col_primary, ";"),
           paste0("SE = ", round(result$se, 4))),
       div(class = "stat-box", style = paste0("background:", col_warning, ";"),
-          paste0("Obci\u0105\u017cenie = ", round(result$bias, 4))),
+          paste0("Obciążenie = ", round(result$bias, 4))),
       div(class = "stat-box", style = paste0("background:", col_success, ";"),
           paste0("BC = ", round(result$bias_corrected, 4)))
     )
@@ -236,7 +236,7 @@ ch5_server <- function(input, output, session) {
     if (is.null(res)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij 'Por\u00f3wnaj'",
+                 label = "Kliknij 'Porównaj'",
                  size = 6, color = "#7f8c8d") +
         theme_void()
       return()
@@ -260,10 +260,10 @@ ch5_server <- function(input, output, session) {
       geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0.3, linewidth = 2) +
       scale_color_manual(values = c("Jackknife" = col_primary, "Bootstrap" = col_warning),
                          guide  = "none") +
-      labs(title = "Szacunki \u00b1 1.96 SE",
+      labs(title = "Szacunki ± 1.96 SE",
            subtitle = paste0("Jackknife SE = ", round(se_j, 4),
                              "  |  Bootstrap SE = ", round(se_b, 4)),
-           x = "Warto\u015b\u0107 statystyki", y = NULL) +
+           x = "Wartość statystyki", y = NULL) +
       theme_educational()
   })
 

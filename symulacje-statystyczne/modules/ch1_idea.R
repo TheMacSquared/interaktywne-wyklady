@@ -6,63 +6,63 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Znamy ju\u017c klasyczne testy i przedzia\u0142y ufno\u015bci oparte na za\u0142o\u017ceniach o rozk\u0142adach.
-       Czas pozna\u0107 podej\u015bcie, kt\u00f3re z tych za\u0142o\u017ce\u0144 rezygnuje."
+      "Znamy już klasyczne testy i przedziały ufności oparte na założeniach o rozkładach.
+       Czas poznać podejście, które z tych założeń rezygnuje."
     ),
 
     div(class = "section-title",
-        "Sk\u0105d bior\u0105 si\u0119 klasyczne metody?"),
+        "Skąd biorą się klasyczne metody?"),
 
     div(class = "narrative",
-      p("Klasyczna statystyka opiera si\u0119 na ", tags$b("za\u0142o\u017ceniach o rozk\u0142adzie"),
-        " populacji lub na Centralnym Twierdzeniu Granicznym (CTG). Na przyk\u0142ad:"),
+      p("Klasyczna statystyka opiera się na ", tags$b("założeniach o rozkładzie"),
+        " populacji lub na Centralnym Twierdzeniu Granicznym (CTG). Na przykład:"),
       tags$ul(
-        tags$li("Test t wymaga normalno\u015bci lub du\u017cej pr\u00f3by (CTG)"),
-        tags$li("Przedzia\u0142 ufno\u015bci dla \u015bredniej zakada symetri\u0119 b\u0142\u0119du"),
-        tags$li("Wzory na b\u0142\u0105d standardowy dotycz\u0105 konkretnych statystyk (mean, proportion)")
+        tags$li("Test t wymaga normalności lub dużej próby (CTG)"),
+        tags$li("Przedział ufności dla średniej zakada symetrię błędu"),
+        tags$li("Wzory na błąd standardowy dotyczą konkretnych statystyk (mean, proportion)")
       )
     ),
 
     div(class = "callout-warning",
       tags$strong("Problem:"),
-      " Co je\u015bli dane s\u0105 silnie sko\u015bne i pr\u00f3ba ma\u0142a? Co je\u015bli chcemy przedzia\u0142 ufno\u015bci
+      " Co jeśli dane są silnie skośne i próba mała? Co jeśli chcemy przedział ufności
        dla mediany albo percentyla? Klasyczne wzory ",
-      tags$b("nie istniej\u0105"), " lub s\u0105 niedok\u0142adne."
+      tags$b("nie istnieją"), " lub są niedokładne."
     ),
 
     div(class = "section-title", "Idea resamplingowa"),
 
     div(class = "narrative",
-      p("Kluczowy pomys\u0142: ", tags$b("traktuj pr\u00f3b\u0119 jako mini-populacj\u0119"),
+      p("Kluczowy pomysł: ", tags$b("traktuj próbę jako mini-populację"),
         " i losuj z niej wielokrotnie."),
-      p("Je\u015bli pr\u00f3ba jest reprezentatywna dla populacji, to losowanie z pr\u00f3by
-        imituje losowanie z populacji. Mo\u017cemy wtedy:", tags$b(" symulacyjnie "),
-        "uzyska\u0107 to, co klasyczna statystyka oblicza analitycznie.")
+      p("Jeśli próba jest reprezentatywna dla populacji, to losowanie z próby
+        imituje losowanie z populacji. Możemy wtedy:", tags$b(" symulacyjnie "),
+        "uzyskać to, co klasyczna statystyka oblicza analitycznie.")
     ),
 
     div(class = "callout-info",
-      tags$strong("S\u0142owniczek:"),
+      tags$strong("Słowniczek:"),
       tags$ul(
-        tags$li(tags$b("Pr\u00f3ba bootstrapowa:"),
-                " losowanie ze zwracaniem z oryginalnej pr\u00f3by (n obserwacji \u2192 n obserwacji,
-                  cz\u0119\u015b\u0107 si\u0119 powtarza)"),
-        tags$li(tags$b("Rozk\u0142ad bootstrapowy:"),
-                " empiryczny rozk\u0142ad statystyki z wielu pr\u00f3b bootstrapowych"),
+        tags$li(tags$b("Próba bootstrapowa:"),
+                " losowanie ze zwracaniem z oryginalnej próby (n obserwacji → n obserwacji,
+                  część się powtarza)"),
+        tags$li(tags$b("Rozkład bootstrapowy:"),
+                " empiryczny rozkład statystyki z wielu prób bootstrapowych"),
         tags$li(tags$b("Test permutacyjny:"),
-                " przetasowanie etykiet grup, aby zasymulowa\u0107 \u015bwiat H\u2080"),
+                " przetasowanie etykiet grup, aby zasymulować świat H₀"),
         tags$li(tags$b("Jackknife:"),
-                " leave-one-out \u2014 n pr\u00f3b, ka\u017cda bez jednej obserwacji"),
+                " leave-one-out — n prób, każda bez jednej obserwacji"),
         tags$li(tags$b("Cross-validation:"),
-                " k-krotny podzia\u0142 na trening/test do oceny modelu"),
+                " k-krotny podział na trening/test do oceny modelu"),
         tags$li(tags$b("Monte Carlo:"),
-                " symulacja z rozk\u0142adu (np. mocy testu lub rozk\u0142adu pod H\u2080)")
+                " symulacja z rozkładu (np. mocy testu lub rozkładu pod H₀)")
       )
     ),
 
     div(class = "section-title", "Mapa metod resamplingowych"),
 
     div(class = "narrative",
-      p("Pi\u0119\u0107 metod, kt\u00f3re poznamy w tym rozdziale, r\u00f3\u017cni\u0105 si\u0119 celem
+      p("Pięć metod, które poznamy w tym rozdziale, różnią się celem
         i sposobem resamplingu:")
     ),
 
@@ -70,33 +70,33 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
       tags$thead(tags$tr(
         tags$th("Metoda"),
         tags$th("Cel"),
-        tags$th("Spos\u00f3b resamplingu")
+        tags$th("Sposób resamplingu")
       )),
       tags$tbody(
         tags$tr(
           tags$td(tags$b("Bootstrap")),
-          tags$td("Przedzia\u0142 ufno\u015bci dla dowolnej statystyki"),
-          tags$td("Losowanie ze zwracaniem z pr\u00f3by")
+          tags$td("Przedział ufności dla dowolnej statystyki"),
+          tags$td("Losowanie ze zwracaniem z próby")
         ),
         tags$tr(
           tags$td(tags$b("Jackknife")),
-          tags$td("Estymacja obci\u0105\u017cenia i SE"),
-          tags$td("Leave-one-out: n pr\u00f3b bez kolejnych obserwacji")
+          tags$td("Estymacja obciążenia i SE"),
+          tags$td("Leave-one-out: n prób bez kolejnych obserwacji")
         ),
         tags$tr(
           tags$td(tags$b("Test permutacyjny")),
-          tags$td("Test hipotezy bez za\u0142o\u017ce\u0144"),
+          tags$td("Test hipotezy bez założeń"),
           tags$td("Przetasowanie etykiet grup")
         ),
         tags$tr(
           tags$td(tags$b("Cross-validation")),
-          tags$td("Ocena jako\u015bci modelu predykcyjnego"),
-          tags$td("k-krotny podzia\u0142 trening/test")
+          tags$td("Ocena jakości modelu predykcyjnego"),
+          tags$td("k-krotny podział trening/test")
         ),
         tags$tr(
           tags$td(tags$b("Monte Carlo")),
-          tags$td("Moc testu lub rozk\u0142ad pod H\u2080"),
-          tags$td("Losowanie z parametrycznego rozk\u0142adu")
+          tags$td("Moc testu lub rozkład pod H₀"),
+          tags$td("Losowanie z parametrycznego rozkładu")
         )
       )
     ),
@@ -104,43 +104,43 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
     # ========================================================================
     # WIDGET 1: Proba bootstrapowa w akcji
     # ========================================================================
-    div(class = "section-title", "Pr\u00f3ba bootstrapowa w akcji"),
+    div(class = "section-title", "Próba bootstrapowa w akcji"),
 
     div(class = "narrative",
-      p("Zacznijmy od najmniejszego kroku: jednej pr\u00f3by bootstrapowej.
-        Pobierz pr\u00f3b\u0119 z populacji, a nast\u0119pnie wylosuj z niej jedn\u0105 pr\u00f3b\u0119
-        bootstrapow\u0105 (losowanie ze zwracaniem)."),
-      p("Kolor kropek pokazuje, ile razy dana obserwacja zosta\u0142a wylosowana:",
+      p("Zacznijmy od najmniejszego kroku: jednej próby bootstrapowej.
+        Pobierz próbę z populacji, a następnie wylosuj z niej jedną próbę
+        bootstrapową (losowanie ze zwracaniem)."),
+      p("Kolor kropek pokazuje, ile razy dana obserwacja została wylosowana:",
         tags$span(style = "color:#bdc3c7; font-weight:bold;", " szara"),
-        " = pomin\u0105\u0142 (0 razy),",
+        " = pominął (0 razy),",
         tags$span(style = "color:#3498db; font-weight:bold;", " niebieska"),
         " = raz,",
-        tags$span(style = "color:#f39c12; font-weight:bold;", " pomara\u0144czowa"),
-        " = dwa razy lub wi\u0119cej.")
+        tags$span(style = "color:#f39c12; font-weight:bold;", " pomarańczowa"),
+        " = dwa razy lub więcej.")
     ),
 
     div(class = "widget-block",
-      h4("Jedna pr\u00f3ba bootstrapowa"),
+      h4("Jedna próba bootstrapowa"),
       fluidRow(
         column(4,
-          selectInput("ch1_dist", "Kszta\u0142t danych:",
+          selectInput("ch1_dist", "Kształt danych:",
             choices = c(
-              "Prawoskos\u015bny (Gamma)" = "skewed",
+              "Prawoskosśny (Gamma)" = "skewed",
               "Normalny"               = "normal",
               "Dwumodalny"             = "bimodal"
             ),
             selected = "skewed"
           ),
-          sliderInput("ch1_n_orig", "Wielko\u015b\u0107 pr\u00f3by (n):",
+          sliderInput("ch1_n_orig", "Wielkość próby (n):",
                       min = 8, max = 30, value = 15, step = 1),
           hr(),
-          actionButton("ch1_draw_orig", "Pobierz pr\u00f3b\u0119",
+          actionButton("ch1_draw_orig", "Pobierz próbę",
                        class = "btn-primary", width = "100%"),
           br(), br(),
-          actionButton("ch1_resample_one", "+ Nowa pr\u00f3ba bootstrapowa",
+          actionButton("ch1_resample_one", "+ Nowa próba bootstrapowa",
                        class = "btn-warning", width = "100%"),
           br(), br(),
-          actionButton("ch1_resample_reset", "Wyczy\u015b\u0107 pr\u00f3by",
+          actionButton("ch1_resample_reset", "Wyczyść próby",
                        class = "btn-outline-secondary", width = "100%"),
           br(), br(),
           uiOutput("ch1_demo_stats")
@@ -154,25 +154,25 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
     # ========================================================================
     # WIDGET 2: Budowanie rozkladu bootstrapowego
     # ========================================================================
-    div(class = "section-title", "Rozk\u0142ad bootstrapowy"),
+    div(class = "section-title", "Rozkład bootstrapowy"),
 
     div(class = "narrative",
-      p("Jedna pr\u00f3ba bootstrapowa daje jedn\u0105 warto\u015b\u0107 \u015bredniej.
-        Tysi\u0105c pr\u00f3b daje rozk\u0142ad \u015bredniej. To w\u0142a\u015bnie ",
-        tags$b("rozk\u0142ad bootstrapowy"), "."),
+      p("Jedna próba bootstrapowa daje jedną wartość średniej.
+        Tysiąc prób daje rozkład średniej. To właśnie ",
+        tags$b("rozkład bootstrapowy"), "."),
       p("Jego odchylenie standardowe jest ",
-        tags$b("b\u0142\u0119dem standardowym"),
-        " statystyki \u2014 dok\u0142adnie to, co wzory analityczne
-        pr\u00f3buj\u0105 obliczy\u0107.")
+        tags$b("błędem standardowym"),
+        " statystyki — dokładnie to, co wzory analityczne
+        próbują obliczyć.")
     ),
 
     div(class = "widget-block",
-      h4("Budowanie rozk\u0142adu bootstrapowego"),
+      h4("Budowanie rozkładu bootstrapowego"),
       p(class = "text-muted",
-        "Najpierw pobierz pr\u00f3b\u0119 (powy\u017cej), nast\u0119pnie kliknij \"Uruchom\"."),
+        "Najpierw pobierz próbę (powyżej), następnie kliknij \"Uruchom\"."),
       fluidRow(
         column(4,
-          sliderInput("ch1_B", "Liczba pr\u00f3b bootstrapowych (B):",
+          sliderInput("ch1_B", "Liczba prób bootstrapowych (B):",
                       min = 50, max = 2000, value = 500, step = 50),
           actionButton("ch1_build_dist", "Uruchom bootstrap",
                        class = "btn-primary", width = "100%"),
@@ -190,16 +190,16 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
 
     div(class = "callout-success",
       tags$strong("Aha-moment:"),
-      " Odchylenie standardowe rozk\u0142adu bootstrapowego = ",
-      tags$b("b\u0142\u0105d standardowy statystyki"),
-      ". W\u0142a\u015bnie to klasyczne wzory pr\u00f3buj\u0105 obliczy\u0107 analitycznie \u2014
+      " Odchylenie standardowe rozkładu bootstrapowego = ",
+      tags$b("błąd standardowy statystyki"),
+      ". Właśnie to klasyczne wzory próbują obliczyć analitycznie —
        bootstrap oblicza to symulacyjnie!"
     ),
 
     div(class = "chapter-transition",
-      p("Dalej: jak z rozk\u0142adu bootstrapowego budowa\u0107 przedzia\u0142y ufno\u015bci"),
+      p("Dalej: jak z rozkładu bootstrapowego budować przedziały ufności"),
       actionButton("ch1_next",
-                   "Dalej \u2192 2. Bootstrap \u2014 przedzia\u0142y",
+                   "Dalej → 2. Bootstrap — przedziały",
                    class = "btn-primary btn-lg")
     )
 
@@ -250,7 +250,7 @@ ch1_server <- function(input, output, session) {
     if (is.null(orig)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij 'Pobierz pr\u00f3b\u0119'",
+                 label = "Kliknij 'Pobierz próbę'",
                  size = 6, color = "#7f8c8d") +
         theme_void()
     } else if (is.null(rs)) {
@@ -261,11 +261,11 @@ ch1_server <- function(input, output, session) {
         geom_vline(xintercept = mean(orig), color = col_dark,
                    linewidth = 1.2, linetype = "dashed") +
         annotate("text", x = mean(orig), y = Inf,
-                 label = paste0("\u015br. = ", round(mean(orig), 2)),
+                 label = paste0("śr. = ", round(mean(orig), 2)),
                  vjust = -0.3, hjust = -0.1, color = col_dark, size = 4) +
-        scale_y_continuous(breaks = 0, labels = "Oryginalna pr\u00f3ba") +
-        labs(title = paste0("Pr\u00f3ba (n = ", length(orig), ")"),
-             x = "Warto\u015b\u0107", y = NULL) +
+        scale_y_continuous(breaks = 0, labels = "Oryginalna próba") +
+        labs(title = paste0("Próba (n = ", length(orig), ")"),
+             x = "Wartość", y = NULL) +
         theme_educational() +
         theme(axis.text.y = element_text(size = 12))
     } else {
@@ -284,15 +284,15 @@ ch1_server <- function(input, output, session) {
       div(class = "stat-box", style = paste0("background:", col_dark, ";"),
           paste0("n = ", length(orig))),
       div(class = "stat-box", style = paste0("background:", col_primary, ";"),
-          paste0("\u015br. oryg. = ", round(mean(orig), 2)))
+          paste0("śr. oryg. = ", round(mean(orig), 2)))
     )
     if (!is.null(rs)) {
       last_rs <- rs[[length(rs)]]
       tag_list <- c(tag_list, list(
         div(class = "stat-box", style = paste0("background:", col_warning, ";"),
-            paste0("\u015br. boot. #", length(rs), " = ", round(mean(last_rs), 2))),
+            paste0("śr. boot. #", length(rs), " = ", round(mean(last_rs), 2))),
         div(class = "stat-box", style = paste0("background:", col_dark, "; opacity:0.7;"),
-            paste0("Liczba pr\u00f3b: ", length(rs)))
+            paste0("Liczba prób: ", length(rs)))
       ))
     }
     do.call(tagList, tag_list)
@@ -321,7 +321,7 @@ ch1_server <- function(input, output, session) {
     } else {
       ci <- bootstrap_ci_percentile(result, conf_level = 0.95)
       plot_bootstrap_distribution(result, ci,
-                                   stat_label = "\u015aredniane bootstrapowe",
+                                   stat_label = "Średniane bootstrapowe",
                                    col_primary = col_primary,
                                    col_secondary = col_secondary,
                                    col_success = col_success)

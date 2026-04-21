@@ -6,8 +6,8 @@ ch6_ui <- tabPanel("6. Cross-validation",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Bootstrap i jackknife mierzy\u0142y niepewno\u015b\u0107 statystyk z pr\u00f3by.
-       Cross-validation mierzy co\u015b innego: jak dobry jest model
+      "Bootstrap i jackknife mierzyły niepewność statystyk z próby.
+       Cross-validation mierzy coś innego: jak dobry jest model
        predykcyjny na ", tags$em("nowych"), " danych?"
     ),
 
@@ -15,8 +15,8 @@ ch6_ui <- tabPanel("6. Cross-validation",
 
     div(class = "narrative",
       p("Mamy model regresji. MSE treningowy (na tych samych danych,
-         na kt\u00f3rych model by\u0142 uczony) jest zawsze zbyt optymistyczny \u2014
-         model \u201ezapami\u0119ta\u0142\u201f dane."),
+         na których model był uczony) jest zawsze zbyt optymistyczny —
+         model „zapamiętał‟ dane."),
       p("Pytanie: jak dobrze model przewiduje ", tags$b("nowe obserwacje"),
         "? CV odpowiada na to pytanie bez potrzeby posiadania osobnego
          zbioru testowego.")
@@ -25,11 +25,11 @@ ch6_ui <- tabPanel("6. Cross-validation",
     div(class = "callout-info",
       tags$strong("Algorytm K-Fold CV:"),
       tags$ol(
-        tags$li("Podziel dane losowo na k r\u00f3wnych cz\u0119\u015bci (fold\u00f3w)"),
-        tags$li("Dla ka\u017cdego foldu: wyucz model na pozosta\u0142ych k-1 foldach,
-                oblicz b\u0142\u0105d predykcji na wybranym"),
-        tags$li("CV MSE = \u015brednia b\u0142\u0119d\u00f3w z k fold\u00f3w"),
-        tags$li("Powtarzaj dla r\u00f3\u017cnych z\u0142o\u017cono\u015bci modelu \u2014 wybierz najlepsz\u0105")
+        tags$li("Podziel dane losowo na k równych części (foldów)"),
+        tags$li("Dla każdego foldu: wyucz model na pozostałych k-1 foldach,
+                oblicz błąd predykcji na wybranym"),
+        tags$li("CV MSE = średnia błędów z k foldów"),
+        tags$li("Powtarzaj dla różnych złożoności modelu — wybierz najlepszą")
       )
     ),
 
@@ -39,30 +39,30 @@ ch6_ui <- tabPanel("6. Cross-validation",
     div(class = "section-title", "K-Fold CV w praktyce"),
 
     div(class = "narrative",
-      p("Poni\u017cej dane wygenerowane z kwadratowej zale\u017cno\u015bci + szum.
-         Dopasujemy wielomiany r\u00f3\u017cnych stopni i sprawdzimy,
-         kt\u00f3ry ma najni\u017csze CV MSE.")
+      p("Poniżej dane wygenerowane z kwadratowej zależności + szum.
+         Dopasujemy wielomiany różnych stopni i sprawdzimy,
+         który ma najniższe CV MSE.")
     ),
 
     div(class = "widget-block",
-      h4("K-Fold CV \u2014 demo"),
+      h4("K-Fold CV — demo"),
       fluidRow(
         column(4,
-          selectInput("ch6_degree", "Stopie\u0144 wielomianu:",
+          selectInput("ch6_degree", "Stopień wielomianu:",
             choices = c(
-              "1 \u2014 liniowy"             = "1",
-              "2 \u2014 kwadratowy (prawdziwy)" = "2",
-              "3 \u2014 sze\u015bcian"          = "3",
-              "5 \u2014 prze-fitowany"      = "5",
-              "10 \u2014 silnie prze-fitowany" = "10"
+              "1 — liniowy"             = "1",
+              "2 — kwadratowy (prawdziwy)" = "2",
+              "3 — sześcian"          = "3",
+              "5 — prze-fitowany"      = "5",
+              "10 — silnie prze-fitowany" = "10"
             ),
             selected = "2"
           ),
-          sliderInput("ch6_k", "k (liczba fold\u00f3w):",
+          sliderInput("ch6_k", "k (liczba foldów):",
                       min = 2, max = 20, value = 5, step = 1),
           sliderInput("ch6_n", "n (rozmiar zbioru):",
                       min = 30, max = 200, value = 80, step = 10),
-          sliderInput("ch6_sigma", "Szum (\u03c3):",
+          sliderInput("ch6_sigma", "Szum (σ):",
                       min = 1, max = 20, value = 8, step = 1),
           hr(),
           actionButton("ch6_run", "Uruchom CV",
@@ -78,19 +78,19 @@ ch6_ui <- tabPanel("6. Cross-validation",
 
     div(class = "callout-success",
       tags$strong("Aha-moment:"),
-      " Model 10. stopnia ma niski MSE treningowy, ale wysoki CV MSE \u2014
-       to w\u0142a\u015bnie ", tags$b("prze-uczenie (overfitting)"),
-      ". Model \u201ezapami\u0119ta\u0142\u201f szum zamiast wzorca."
+      " Model 10. stopnia ma niski MSE treningowy, ale wysoki CV MSE —
+       to właśnie ", tags$b("prze-uczenie (overfitting)"),
+      ". Model „zapamiętał‟ szum zamiast wzorca."
     ),
 
     # ========================================================================
     # WIDGET 2: Porownanie wszystkich stopni
     # ========================================================================
-    div(class = "section-title", "Optymalny stopie\u0144 wielomianu"),
+    div(class = "section-title", "Optymalny stopień wielomianu"),
 
     div(class = "narrative",
-      p("Uruchom CV dla wszystkich stopni naraz i por\u00f3wnaj MSE treningowe
-         i CV na jednym wykresie. Optymalny model ma najni\u017csze CV MSE.")
+      p("Uruchom CV dla wszystkich stopni naraz i porównaj MSE treningowe
+         i CV na jednym wykresie. Optymalny model ma najniższe CV MSE.")
     ),
 
     div(class = "widget-block",
@@ -98,9 +98,9 @@ ch6_ui <- tabPanel("6. Cross-validation",
       fluidRow(
         column(4,
           sliderInput("ch6_cmp_n",     "n:", min = 40, max = 150, value = 80, step = 10),
-          sliderInput("ch6_cmp_sigma", "\u03c3:", min = 2, max = 20, value = 8, step = 1),
+          sliderInput("ch6_cmp_sigma", "σ:", min = 2, max = 20, value = 8, step = 1),
           sliderInput("ch6_cmp_k",     "k (folds):", min = 3, max = 15, value = 5, step = 1),
-          actionButton("ch6_cmp_run", "Por\u00f3wnaj wszystkie stopnie",
+          actionButton("ch6_cmp_run", "Porównaj wszystkie stopnie",
                        class = "btn-warning", width = "100%")
         ),
         column(8,
@@ -111,16 +111,16 @@ ch6_ui <- tabPanel("6. Cross-validation",
 
     div(class = "callout-warning",
       tags$strong("LOOCV (Leave-One-Out CV):"),
-      " szczeg\u00f3lny przypadek k = n.
-       Daje prawie nieprzychylne (unbiased) szacunki b\u0142\u0119du, ale:
-       (1) wysoka wariancja estymaty, (2) d\u0142ugie obliczenia.
+      " szczególny przypadek k = n.
+       Daje prawie nieprzychylne (unbiased) szacunki błędu, ale:
+       (1) wysoka wariancja estymaty, (2) długie obliczenia.
        W praktyce k = 5 lub k = 10 jest zwykle lepszym kompromisem."
     ),
 
     div(class = "chapter-transition",
-      p("Dalej: Monte Carlo \u2014 symulacja mocy testu i rozk\u0142ad\u00f3w pod H\u2080"),
+      p("Dalej: Monte Carlo — symulacja mocy testu i rozkładów pod H₀"),
       actionButton("ch6_next",
-                   "Dalej \u2192 7. Monte Carlo",
+                   "Dalej → 7. Monte Carlo",
                    class = "btn-primary btn-lg")
     )
 
@@ -201,7 +201,7 @@ ch6_server <- function(input, output, session) {
       annotate("text", x = 0.6, y = result$train_mse,
                label = paste0("Train MSE = ", round(result$train_mse, 1)),
                hjust = 0, vjust = -0.4, color = col_cv_train, size = 3.5) +
-      labs(title = paste0(n_folds, "-Fold CV: b\u0142\u0105d per fold"),
+      labs(title = paste0(n_folds, "-Fold CV: błąd per fold"),
            x = "Fold", y = "MSE") +
       theme_educational()
 
@@ -244,7 +244,7 @@ ch6_server <- function(input, output, session) {
     if (is.null(results)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij 'Por\u00f3wnaj wszystkie stopnie'",
+                 label = "Kliknij 'Porównaj wszystkie stopnie'",
                  size = 6, color = "#7f8c8d") +
         theme_void()
       return()

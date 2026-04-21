@@ -2,20 +2,20 @@
 # CHAPTER 2: Bootstrap — przedzialy ufnosci
 # ============================================================================
 
-ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
+ch2_ui <- tabPanel("2. Bootstrap — przedziały",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Wiemy ju\u017c, \u017ce rozk\u0142ad bootstrapowy odzwierciedla zmienno\u015b\u0107 statystyki.
-       Czas zobaczy\u0107, jak go zamieni\u0107 w przedzia\u0142 ufno\u015bci."
+      "Wiemy już, że rozkład bootstrapowy odzwierciedla zmienność statystyki.
+       Czas zobaczyć, jak go zamienić w przedział ufności."
     ),
 
     div(class = "section-title", "Metoda percentylowa"),
 
     div(class = "narrative",
-      p("Najprostrzy spos\u00f3b: we\u017a rozk\u0142ad bootstrapowy i obetnij ogony."),
-      p("Dla 95% CI: we\u017a 2.5. i 97.5. percentyl z ",
-        withMathJax("\\(B\\)"), " warto\u015bci bootstrapowych.")
+      p("Najprostrzy sposób: weź rozkład bootstrapowy i obetnij ogony."),
+      p("Dla 95% CI: weź 2.5. i 97.5. percentyl z ",
+        withMathJax("\\(B\\)"), " wartości bootstrapowych.")
     ),
 
     div(class = "formula-box",
@@ -25,8 +25,8 @@ ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
       ),
       p(style = "font-size:13px; margin-top:8px;",
         "gdzie ", withMathJax("\\(\\theta^*_b\\)"),
-        " to warto\u015b\u0107 statystyki z ", withMathJax("\\(b\\)"),
-        "-tej pr\u00f3by bootstrapowej.")
+        " to wartość statystyki z ", withMathJax("\\(b\\)"),
+        "-tej próby bootstrapowej.")
     ),
 
     # ========================================================================
@@ -35,45 +35,45 @@ ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
     div(class = "section-title", "Bootstrap CI dla dowolnej statystyki"),
 
     div(class = "narrative",
-      p("Kluczowa zaleta bootstrapu: dzia\u0142a tak samo dla ",
-        tags$b("ka\u017cdej statystyki"),
-        " \u2014 \u015bredniej, mediany, odchylenia standardowego, sko\u015bno\u015bci.
+      p("Kluczowa zaleta bootstrapu: działa tak samo dla ",
+        tags$b("każdej statystyki"),
+        " — średniej, mediany, odchylenia standardowego, skośności.
          Nie potrzebujemy wzoru analitycznego.")
     ),
 
     div(class = "widget-block",
-      h4("A) Narastaj\u0105ce przedzia\u0142y \u2014 jak bardzo CI skacze mi\u0119dzy pr\u00f3bami?"),
+      h4("A) Narastające przedziały — jak bardzo CI skacze między próbami?"),
       p(class = "text-muted",
-        "Ka\u017cde klikni\u0119cie losuje now\u0105 pr\u00f3b\u0119 i dodaje jej CI jako belk\u0119.
-         Widoczny jest rozrzut mi\u0119dzy pr\u00f3bami i asymetria CI."),
+        "Każde kliknięcie losuje nową próbę i dodaje jej CI jako belkę.
+         Widoczny jest rozrzut między próbami i asymetria CI."),
       fluidRow(
         column(4,
           selectInput("ch2a_stat", "Statystyka:",
             choices = c(
-              "\u015arednia"      = "mean",
+              "Średnia"      = "mean",
               "Mediana"          = "median",
               "Odch. stand."     = "sd",
-              "Sko\u015bno\u015b\u0107" = "skewness"
+              "Skośność" = "skewness"
             ),
             selected = "mean"
           ),
-          selectInput("ch2a_dist", "Rozk\u0142ad danych:",
+          selectInput("ch2a_dist", "Rozkład danych:",
             choices = c(
               "Normalny"                = "normal",
-              "Prawosko\u015bny (Gamma)" = "skewed",
+              "Prawoskośny (Gamma)" = "skewed",
               "Dwumodalny"              = "bimodal",
               "Grube ogony"             = "heavy_tail"
             ),
             selected = "skewed"
           ),
           sliderInput("ch2a_n",    "n:", min = 10, max = 100, value = 25, step = 5),
-          sliderInput("ch2a_conf", "Poziom ufno\u015bci:",
+          sliderInput("ch2a_conf", "Poziom ufności:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           hr(),
-          actionButton("ch2a_add", "+ Nowa pr\u00f3ba i CI",
+          actionButton("ch2a_add", "+ Nowa próba i CI",
                        class = "btn-primary", width = "100%"),
           br(), br(),
-          actionButton("ch2a_clear", "Wyczy\u015b\u0107",
+          actionButton("ch2a_clear", "Wyczyść",
                        class = "btn-outline-secondary", width = "100%"),
           br(), br(),
           uiOutput("ch2a_stats")
@@ -88,39 +88,39 @@ ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
     # WIDGET 1b: Belki CI + histogram aktualnej proby
     # ========================================================================
     div(class = "widget-block",
-      h4("B) Dane i CI razem \u2014 jak wygl\u0105daj\u0105 dane kt\u00f3re go wyg\u0119nerowa\u0142y?"),
+      h4("B) Dane i CI razem — jak wyglądają dane które go wygęnerowały?"),
       p(class = "text-muted",
-        "Lewy panel: histogram aktualnej pr\u00f3by.
-         Prawy panel: narastaj\u0105ce belki CI z kolejnych pr\u00f3b.
-         Pozwala zobaczy\u0107 jak kszta\u0142t danych wp\u0142ywa na po\u0142o\u017cenie i asymetri\u0119 CI."),
+        "Lewy panel: histogram aktualnej próby.
+         Prawy panel: narastające belki CI z kolejnych prób.
+         Pozwala zobaczyć jak kształt danych wpływa na położenie i asymetrię CI."),
       fluidRow(
         column(4,
           selectInput("ch2b_stat", "Statystyka:",
             choices = c(
-              "\u015arednia"      = "mean",
+              "Średnia"      = "mean",
               "Mediana"          = "median",
               "Odch. stand."     = "sd",
-              "Sko\u015bno\u015b\u0107" = "skewness"
+              "Skośność" = "skewness"
             ),
             selected = "mean"
           ),
-          selectInput("ch2b_dist", "Rozk\u0142ad danych:",
+          selectInput("ch2b_dist", "Rozkład danych:",
             choices = c(
               "Normalny"                = "normal",
-              "Prawosko\u015bny (Gamma)" = "skewed",
+              "Prawoskośny (Gamma)" = "skewed",
               "Dwumodalny"              = "bimodal",
               "Grube ogony"             = "heavy_tail"
             ),
             selected = "skewed"
           ),
           sliderInput("ch2b_n",    "n:", min = 10, max = 100, value = 25, step = 5),
-          sliderInput("ch2b_conf", "Poziom ufno\u015bci:",
+          sliderInput("ch2b_conf", "Poziom ufności:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           hr(),
-          actionButton("ch2b_add", "+ Nowa pr\u00f3ba i CI",
+          actionButton("ch2b_add", "+ Nowa próba i CI",
                        class = "btn-primary", width = "100%"),
           br(), br(),
-          actionButton("ch2b_clear", "Wyczy\u015b\u0107",
+          actionButton("ch2b_clear", "Wyczyść",
                        class = "btn-outline-secondary", width = "100%"),
           br(), br(),
           uiOutput("ch2b_stats")
@@ -135,24 +135,24 @@ ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
     # WIDGET 1c: Symulacja pokrycia CI
     # ========================================================================
     div(class = "widget-block",
-      h4("C) Pokrycie CI \u2014 ile razy CI zawiera prawdziw\u0105 warto\u015b\u0107?"),
+      h4("C) Pokrycie CI — ile razy CI zawiera prawdziwą wartość?"),
       p(class = "text-muted",
-        "Symuluje N pr\u00f3b naraz i sprawdza ile CI zawiera prawdziw\u0105 warto\u015b\u0107 parametru.
-         Zielony = CI trafi\u0142o, czerwony = nie trafi\u0142o.
-         Teoretycznie przy CL=95% powinno trafi\u0107 ~95% CI."),
+        "Symuluje N prób naraz i sprawdza ile CI zawiera prawdziwą wartość parametru.
+         Zielony = CI trafiło, czerwony = nie trafiło.
+         Teoretycznie przy CL=95% powinno trafić ~95% CI."),
       fluidRow(
         column(4,
-          selectInput("ch2c_dist", "Rozk\u0142ad danych:",
+          selectInput("ch2c_dist", "Rozkład danych:",
             choices = c(
               "Normalny"                = "normal",
-              "Prawosko\u015bny (Gamma)" = "skewed",
+              "Prawoskośny (Gamma)" = "skewed",
               "Dwumodalny"              = "bimodal",
               "Grube ogony"             = "heavy_tail"
             ),
             selected = "normal"
           ),
           sliderInput("ch2c_n",    "n:", min = 10, max = 100, value = 25, step = 5),
-          sliderInput("ch2c_conf", "Poziom ufno\u015bci:",
+          sliderInput("ch2c_conf", "Poziom ufności:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           sliderInput("ch2c_nsim", "Liczba symulacji:",
                       min = 20, max = 100, value = 50, step = 10),
@@ -169,44 +169,44 @@ ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
     ),
 
     div(class = "callout-warning",
-      tags$strong("Kiedy bootstrap ma przewag\u0119:"),
+      tags$strong("Kiedy bootstrap ma przewagę:"),
       tags$ul(
-        tags$li("Ma\u0142a pr\u00f3ba + sko\u015bny rozk\u0142ad"),
-        tags$li("Statystyki bez analitycznego wzoru na SE (mediana, sko\u015bno\u015b\u0107)"),
-        tags$li("Brak pewno\u015bci co do rozk\u0142adu")
+        tags$li("Mała próba + skośny rozkład"),
+        tags$li("Statystyki bez analitycznego wzoru na SE (mediana, skośność)"),
+        tags$li("Brak pewności co do rozkładu")
       )
     ),
 
     # ========================================================================
     # WIDGET 2: Bootstrap vs t-CI
     # ========================================================================
-    div(class = "section-title", "Bootstrap vs klasyczny przedzia\u0142 t"),
+    div(class = "section-title", "Bootstrap vs klasyczny przedział t"),
 
     div(class = "narrative",
-      p("Kiedy dane s\u0105 normalne i pr\u00f3ba du\u017ca, bootstrap i t-CI daj\u0105 prawie identyczne wyniki.
-         Kiedy dane s\u0105 sko\u015bne i pr\u00f3ba ma\u0142a \u2014 rozchodz\u0105 si\u0119."),
+      p("Kiedy dane są normalne i próba duża, bootstrap i t-CI dają prawie identyczne wyniki.
+         Kiedy dane są skośne i próba mała — rozchodzą się."),
       p("Bootstrap CI jest wtedy ", tags$b("asymetryczny"),
-        ", bo odzwierciedla asymetri\u0119 danych.
-         T-CI jest symetryczny z za\u0142o\u017cenia.")
+        ", bo odzwierciedla asymetrię danych.
+         T-CI jest symetryczny z założenia.")
     ),
 
     div(class = "widget-block",
-      h4("Por\u00f3wnanie: Bootstrap vs t-Student"),
+      h4("Porównanie: Bootstrap vs t-Student"),
       fluidRow(
         column(4,
-          selectInput("ch2_cmp_dist", "Rozk\u0142ad:",
+          selectInput("ch2_cmp_dist", "Rozkład:",
             choices = c(
               "Normalny"                = "normal",
-              "Prawosko\u015bny (Gamma)" = "skewed",
+              "Prawoskośny (Gamma)" = "skewed",
               "Dwumodalny"              = "bimodal",
               "Grube ogony"             = "heavy_tail"
             ),
             selected = "skewed"
           ),
           sliderInput("ch2_cmp_n", "n:", min = 8, max = 100, value = 20, step = 2),
-          sliderInput("ch2_cmp_conf", "Poziom ufno\u015bci:",
+          sliderInput("ch2_cmp_conf", "Poziom ufności:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
-          actionButton("ch2_cmp_run", "Por\u00f3wnaj metody",
+          actionButton("ch2_cmp_run", "Porównaj metody",
                        class = "btn-warning", width = "100%")
         ),
         column(8,
@@ -222,21 +222,21 @@ ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
     div(class = "section-title", "Bootstrap CI dla proporcji"),
 
     div(class = "narrative",
-      p("Dla proporcji mamy trzy konkurencyjne metody: Wald (prosta formu\u0142a),
-         Wilson (dok\u0142adniejszy), Bootstrap (symulacyjny)."),
-      p("Przy skrajnych proporcjach (bliskie 0 lub 1) i ma\u0142ym n: ",
-        tags$b("Wald zawodzi"), " (mo\u017ce wyj\u015b\u0107 poza [0,1]),
-         Wilson i Bootstrap s\u0105 lepsze.")
+      p("Dla proporcji mamy trzy konkurencyjne metody: Wald (prosta formuła),
+         Wilson (dokładniejszy), Bootstrap (symulacyjny)."),
+      p("Przy skrajnych proporcjach (bliskie 0 lub 1) i małym n: ",
+        tags$b("Wald zawodzi"), " (może wyjść poza [0,1]),
+         Wilson i Bootstrap są lepsze.")
     ),
 
     div(class = "widget-block",
-      h4("Por\u00f3wnanie CI dla proporcji"),
+      h4("Porównanie CI dla proporcji"),
       fluidRow(
         column(4,
           sliderInput("ch2_prop_p", "Prawdziwe p (proporcja):",
                       min = 0.02, max = 0.98, value = 0.10, step = 0.01),
           sliderInput("ch2_prop_n", "n:", min = 10, max = 200, value = 30, step = 5),
-          sliderInput("ch2_prop_conf", "Poziom ufno\u015bci:",
+          sliderInput("ch2_prop_conf", "Poziom ufności:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           actionButton("ch2_prop_run", "Uruchom",
                        class = "btn-primary", width = "100%")
@@ -249,9 +249,9 @@ ch2_ui <- tabPanel("2. Bootstrap \u2014 przedzia\u0142y",
     ),
 
     div(class = "chapter-transition",
-      p("Dalej: bootstrap dla jednej ma\u0142ej pr\u00f3by \u2014 krok po kroku"),
+      p("Dalej: bootstrap dla jednej małej próby — krok po kroku"),
       actionButton("ch2_next",
-                   "Dalej \u2192 3. Bootstrap jednej pr\u00f3by",
+                   "Dalej → 3. Bootstrap jednej próby",
                    class = "btn-primary btn-lg")
     )
 
@@ -267,10 +267,10 @@ ch2_server <- function(input, output, session) {
   # Pomocnicza: label statystyki
   stat_label_for <- function(s) {
     switch(s,
-      "mean"     = "\u015arednia",
+      "mean"     = "Średnia",
       "median"   = "Mediana",
       "sd"       = "Odch. stand.",
-      "skewness" = "Sko\u015bno\u015b\u0107"
+      "skewness" = "Skośność"
     )
   }
 
@@ -318,16 +318,16 @@ ch2_server <- function(input, output, session) {
                      height = 0.4, linewidth = 1.2) +
       geom_point(aes(x = obs, color = covers), size = 3) +
       scale_color_manual(values = c("TRUE" = "#27ae60", "FALSE" = "#e74c3c"),
-                         labels = c("TRUE" = "Trafi\u0142o", "FALSE" = "Nie trafi\u0142o"),
+                         labels = c("TRUE" = "Trafiło", "FALSE" = "Nie trafiło"),
                          name = NULL) +
       scale_y_continuous(breaks = seq_len(nrow(df)),
-                         labels = paste0("Pr\u00f3ba ", seq_len(nrow(df)))) +
+                         labels = paste0("Próba ", seq_len(nrow(df)))) +
       labs(
         title    = paste0("Bootstrap CI (", round(conf_level * 100), "%) dla ", stat_label),
         subtitle = if (!is.null(true_val))
-                     paste0("Prawdziwa warto\u015b\u0107 = ", round(true_val, 3))
+                     paste0("Prawdziwa wartość = ", round(true_val, 3))
                    else
-                     paste0("Liczba pr\u00f3b: ", nrow(df)),
+                     paste0("Liczba prób: ", nrow(df)),
         x = stat_label, y = NULL
       ) +
       theme_educational() +
@@ -367,7 +367,7 @@ ch2_server <- function(input, output, session) {
     if (length(cis) == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij '+ Nowa pr\u00f3ba i CI'",
+                 label = "Kliknij '+ Nowa próba i CI'",
                  size = 6, color = "#7f8c8d") +
         theme_void()
       return()
@@ -383,11 +383,11 @@ ch2_server <- function(input, output, session) {
     last <- cis[[length(cis)]]
     tagList(
       div(class = "stat-box", style = paste0("background:", col_dark, ";"),
-          paste0("Liczba pr\u00f3b: ", length(cis))),
+          paste0("Liczba prób: ", length(cis))),
       div(class = "stat-box", style = paste0("background:", col_success, ";"),
           paste0("CI: [", round(last$lower, 3), ", ", round(last$upper, 3), "]")),
       div(class = "stat-box", style = paste0("background:", col_primary, ";"),
-          paste0("Szeroko\u015b\u0107: ", round(last$upper - last$lower, 3)))
+          paste0("Szerokość: ", round(last$upper - last$lower, 3)))
     )
   })
 
@@ -422,7 +422,7 @@ ch2_server <- function(input, output, session) {
     if (length(cis) == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij '+ Nowa pr\u00f3ba i CI'",
+                 label = "Kliknij '+ Nowa próba i CI'",
                  size = 6, color = "#7f8c8d") +
         theme_void()
       return()
@@ -437,9 +437,9 @@ ch2_server <- function(input, output, session) {
       geom_histogram(fill = col_primary, color = "white", alpha = 0.8, bins = 15) +
       geom_vline(xintercept = last_obs, color = "#e74c3c",
                  linewidth = 1.3, linetype = "dashed") +
-      labs(title = "Ostatnia pr\u00f3ba",
+      labs(title = "Ostatnia próba",
            subtitle = paste0(stat_lbl, " = ", round(last_obs, 3)),
-           x = "Warto\u015b\u0107", y = "Liczba") +
+           x = "Wartość", y = "Liczba") +
       theme_educational()
 
     # Prawy panel: belki CI
@@ -454,7 +454,7 @@ ch2_server <- function(input, output, session) {
     last <- cis[[length(cis)]]
     tagList(
       div(class = "stat-box", style = paste0("background:", col_dark, ";"),
-          paste0("Liczba pr\u00f3b: ", length(cis))),
+          paste0("Liczba prób: ", length(cis))),
       div(class = "stat-box", style = paste0("background:", col_success, ";"),
           paste0("CI: [", round(last$lower, 3), ", ", round(last$upper, 3), "]")),
       div(class = "stat-box", style = paste0("background:", col_primary, ";"),
@@ -520,17 +520,17 @@ ch2_server <- function(input, output, session) {
                  linewidth = 1.3, linetype = "dashed") +
       scale_color_manual(
         values = c("TRUE" = "#27ae60", "FALSE" = "#e74c3c"),
-        labels = c("TRUE" = "Trafi\u0142o", "FALSE" = "Nie trafi\u0142o"),
+        labels = c("TRUE" = "Trafiło", "FALSE" = "Nie trafiło"),
         name = NULL
       ) +
       scale_y_continuous(breaks = NULL) +
       labs(
         title    = paste0("Pokrycie CI: ", coverage_pct, "% (cel: ",
                           round(res$conf * 100), "%)"),
-        subtitle = paste0("Prawdziwa warto\u015b\u0107 \u015bredniej = ", round(true_val, 3),
+        subtitle = paste0("Prawdziwa wartość średniej = ", round(true_val, 3),
                           "  |  n = ", res$n,
-                          "  |  ", sum(covers), " z ", length(covers), " CI trafi\u0142o"),
-        x = "\u015arednia", y = "Symulacja"
+                          "  |  ", sum(covers), " z ", length(covers), " CI trafiło"),
+        x = "Średnia", y = "Symulacja"
       ) +
       theme_educational()
   }, height = function() {
@@ -549,7 +549,7 @@ ch2_server <- function(input, output, session) {
       div(class = "stat-box", style = paste0("background:", col_dark, ";"),
           paste0("Cel: ", round(res$conf * 100), "%")),
       div(class = "stat-box", style = paste0("background:", col_primary, ";"),
-          paste0("Trafi\u0142o: ", sum(res$covers), " / ", length(res$covers)))
+          paste0("Trafiło: ", sum(res$covers), " / ", length(res$covers)))
     )
   })
 
@@ -576,7 +576,7 @@ ch2_server <- function(input, output, session) {
     if (is.null(res)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij 'Por\u00f3wnaj metody'",
+                 label = "Kliknij 'Porównaj metody'",
                  size = 6, color = "#7f8c8d") +
         theme_void()
       return()
@@ -600,17 +600,17 @@ ch2_server <- function(input, output, session) {
 
     if (asymmetry_boot > 0.5 || width_diff / ct$width > 0.1) {
       div(class = "callout-warning",
-        tags$strong("Rozbie\u017cno\u015b\u0107:"),
-        paste0(" Bootstrap CI jest asymetryczny (r\u00f3\u017cnica lewej/prawej ramki: ",
-               round(asymmetry_boot, 2), "). T-CI by\u0142by symetryczny z za\u0142o\u017cenia.
-               Przy sko\u015bnych danych lub ma\u0142ej pr\u00f3bie bootstrap lepiej odzwierciedla
-               niepewno\u015b\u0107.")
+        tags$strong("Rozbieżność:"),
+        paste0(" Bootstrap CI jest asymetryczny (różnica lewej/prawej ramki: ",
+               round(asymmetry_boot, 2), "). T-CI byłby symetryczny z założenia.
+               Przy skośnych danych lub małej próbie bootstrap lepiej odzwierciedla
+               niepewność.")
       )
     } else {
       div(class = "callout-success",
-        tags$strong("Zgodno\u015b\u0107:"),
-        " Oba metody daj\u0105 zbli\u017cone wyniki. Przy normalnych danych lub du\u017cym n
-         t-CI i bootstrap s\u0105 r\u00f3wnowa\u017cne."
+        tags$strong("Zgodność:"),
+        " Oba metody dają zbliżone wyniki. Przy normalnych danych lub dużym n
+         t-CI i bootstrap są równoważne."
       )
     }
   })
@@ -664,7 +664,7 @@ ch2_server <- function(input, output, session) {
       div(class = "stat-box", style = paste0("background:", col_dark, ";"),
           paste0("n = ", res$n, ", k = ", res$k)),
       div(class = "stat-box", style = paste0("background:", col_primary, ";"),
-          paste0("p\u0302 = ", round(res$phat, 3))),
+          paste0("p̂ = ", round(res$phat, 3))),
       div(class = "stat-box", style = paste0("background:", col_success, ";"),
           paste0("p (prawdziwe) = ", round(res$p_true, 3)))
     )

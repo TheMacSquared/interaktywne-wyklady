@@ -2,18 +2,18 @@
 # CHAPTER 8: Kiedy stosowac?
 # ============================================================================
 
-ch8_ui <- tabPanel("8. Kiedy stosowa\u0107?",
+ch8_ui <- tabPanel("8. Kiedy stosować?",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Poznali\u015bmy pi\u0119\u0107 metod: Bootstrap, Jackknife, Permutacje, CV, Monte Carlo.
+      "Poznaliśmy pięć metod: Bootstrap, Jackknife, Permutacje, CV, Monte Carlo.
        Teraz: praktyczny przewodnik decyzyjny."
     ),
 
     div(class = "section-title", "Mapa decyzji"),
 
     div(class = "narrative",
-      p("Poni\u017csza tabela podsumowuje, kiedy ka\u017cda metoda jest w\u0142a\u015bciwym wyb\u00f3rem.")
+      p("Poniższa tabela podsumowuje, kiedy każda metoda jest właściwym wybórem.")
     ),
 
     tags$table(class = "decision-table",
@@ -24,44 +24,44 @@ ch8_ui <- tabPanel("8. Kiedy stosowa\u0107?",
       )),
       tags$tbody(
         tags$tr(
-          tags$td("CI dla \u015bredniej, du\u017ce n, dane normalne"),
+          tags$td("CI dla średniej, duże n, dane normalne"),
           tags$td(tags$b("t-CI (klasyczny)")),
-          tags$td("Bootstrap te\u017c dzia\u0142a, ale zbyteczny")
+          tags$td("Bootstrap też działa, ale zbyteczny")
         ),
         tags$tr(
-          tags$td("CI dla mediany / sko\u015bny rozk\u0142ad"),
+          tags$td("CI dla mediany / skośny rozkład"),
           tags$td(tags$b("Bootstrap percentylowy")),
-          tags$td("Nie istnieje prosty wz\u00f3r analityczny")
+          tags$td("Nie istnieje prosty wzór analityczny")
         ),
         tags$tr(
-          tags$td("Estymacja obci\u0105\u017cenia statystyki"),
+          tags$td("Estymacja obciążenia statystyki"),
           tags$td(tags$b("Jackknife")),
-          tags$td("Szybki, prostszy ni\u017c bootstrap dla obci\u0105\u017cenia")
+          tags$td("Szybki, prostszy niż bootstrap dla obciążenia")
         ),
         tags$tr(
-          tags$td("Test r\u00f3\u017cnicy grup, brak normalno\u015bci"),
+          tags$td("Test różnicy grup, brak normalności"),
           tags$td(tags$b("Test permutacyjny")),
-          tags$td("Testuje t\u0119 sam\u0105 H\u2080 co t-test, bez za\u0142o\u017ce\u0144")
+          tags$td("Testuje tę samą H₀ co t-test, bez założeń")
         ),
         tags$tr(
-          tags$td("Korelacja z obserwacjami odstaj\u0105cymi"),
+          tags$td("Korelacja z obserwacjami odstającymi"),
           tags$td(tags$b("Test perm. korelacji")),
-          tags$td("Pearson wymaga normalno\u015bci dwuwymiarowej")
+          tags$td("Pearson wymaga normalności dwuwymiarowej")
         ),
         tags$tr(
-          tags$td("Ocena jako\u015bci modelu predykcyjnego"),
+          tags$td("Ocena jakości modelu predykcyjnego"),
           tags$td(tags$b("K-Fold CV")),
-          tags$td("k=5 lub k=10 \u2014 dobry kompromis obci\u0105\u017cenie/wariancja")
+          tags$td("k=5 lub k=10 — dobry kompromis obciążenie/wariancja")
         ),
         tags$tr(
-          tags$td("Planowanie bada\u0144 (ile n?)"),
+          tags$td("Planowanie badań (ile n?)"),
           tags$td(tags$b("MC symulacja mocy")),
-          tags$td("Daje dok\u0142adny wynik bez tabel mocy")
+          tags$td("Daje dokładny wynik bez tabel mocy")
         ),
         tags$tr(
-          tags$td("Test gdy nie mo\u017cna przetasowa\u0107 etykiet"),
-          tags$td(tags$b("MC pod H\u2080")),
-          tags$td("Gdy H\u2080 okre\u015bla parametryczny rozk\u0142ad")
+          tags$td("Test gdy nie można przetasować etykiet"),
+          tags$td(tags$b("MC pod H₀")),
+          tags$td("Gdy H₀ określa parametryczny rozkład")
         )
       )
     ),
@@ -74,35 +74,35 @@ ch8_ui <- tabPanel("8. Kiedy stosowa\u0107?",
 
     div(class = "narrative",
       tags$ul(
-        tags$li(tags$b("Jackknife"), " daje obci\u0105\u017cenie i SE, ale ", tags$b("nie daje CI"),
-                ". To nie jest zast\u0119pstwo dla bootstrap CI."),
-        tags$li(tags$b("Bootstrap"), " daje pe\u0142ne CI dla dowolnej statystyki.
-                Dla obci\u0105\u017cenia i SE: r\u00f3wnie\u017c, ale jackknife jest szybszy."),
-        tags$li("Jackknife ", tags$b("nie dzia\u0142a dobrze"), " dla mediany i kwantyli
-                przy ma\u0142ym n \u2014 u\u017cyj bootstrap.")
+        tags$li(tags$b("Jackknife"), " daje obciążenie i SE, ale ", tags$b("nie daje CI"),
+                ". To nie jest zastępstwo dla bootstrap CI."),
+        tags$li(tags$b("Bootstrap"), " daje pełne CI dla dowolnej statystyki.
+                Dla obciążenia i SE: również, ale jackknife jest szybszy."),
+        tags$li("Jackknife ", tags$b("nie działa dobrze"), " dla mediany i kwantyli
+                przy małym n — użyj bootstrap.")
       )
     ),
 
     div(class = "callout-warning",
-      tags$strong("Wa\u017cne:"),
-      " Mann-Whitney U testuje inne H\u2080 ni\u017c test t (przesuni\u0119cie rozk\u0142adu,
-       nie r\u00f3\u017cnica \u015brednich). Bootstrap test r\u00f3\u017cnicy \u015brednich testuje
-       dok\u0142adnie to samo H\u2080 co t-test, ale bez za\u0142o\u017cenia o normalno\u015bci."
+      tags$strong("Ważne:"),
+      " Mann-Whitney U testuje inne H₀ niż test t (przesunięcie rozkładu,
+       nie różnica średnich). Bootstrap test różnicy średnich testuje
+       dokładnie to samo H₀ co t-test, ale bez założenia o normalności."
     ),
 
     # ========================================================================
     # Rozroznienie: Permutacje vs MC pod H0
     # ========================================================================
     div(class = "section-title",
-        "Test permutacyjny vs Monte Carlo pod H\u2080"),
+        "Test permutacyjny vs Monte Carlo pod H₀"),
 
     div(class = "narrative",
       p(tags$b("Test permutacyjny"), ": przetasowuje etykiety grup.
-         Wymaga, \u017ceby H\u2080 m\u00f3wi\u0142a, \u017ce obserwacje s\u0105 wymienne mi\u0119dzy grupami
-         (np. H\u2080: brak r\u00f3\u017cnicy mi\u0119dzy grupami)."),
-      p(tags$b("MC pod H\u2080"), ": losuje z parametrycznego rozk\u0142adu.
-         Gdy H\u2080 okre\u015bla konkretny rozk\u0142ad (np. H\u2080: \u03bc = 100),
-         nie mo\u017cna \u201eprzetasowywa\u0107\u201f \u2014 trzeba symulowa\u0107.")
+         Wymaga, żeby H₀ mówiła, że obserwacje są wymienne między grupami
+         (np. H₀: brak różnicy między grupami)."),
+      p(tags$b("MC pod H₀"), ": losuje z parametrycznego rozkładu.
+         Gdy H₀ określa konkretny rozkład (np. H₀: μ = 100),
+         nie można „przetasowywać‟ — trzeba symulować.")
     ),
 
     # ========================================================================
@@ -113,24 +113,24 @@ ch8_ui <- tabPanel("8. Kiedy stosowa\u0107?",
     div(class = "callout-danger",
       tags$strong("Czego resampling nie naprawi:"),
       tags$ul(
-        tags$li(tags$b("B\u0142\u0105d doboru pr\u00f3by (selection bias)"),
-                ": bootstrap nie pomo\u017ce, je\u015bli pr\u00f3ba nie jest reprezentatywna"),
-        tags$li(tags$b("Ma\u0142e n przy medianie (jackknife)"),
-                ": jackknife mo\u017ce by\u0107 niestabilny"),
-        tags$li(tags$b("CV przy zale\u017cnych obserwacjach"),
-                ": CV wymaga niezale\u017cno\u015bci \u2014 nie stosuj dla danych szereg\u00f3w czasowych"),
-        tags$li(tags$b("MC pod H\u2080"),
-                ": wymaga prawid\u0142owego sformu\u0142owania rozk\u0142adu pod H\u2080")
+        tags$li(tags$b("Błąd doboru próby (selection bias)"),
+                ": bootstrap nie pomoże, jeśli próba nie jest reprezentatywna"),
+        tags$li(tags$b("Małe n przy medianie (jackknife)"),
+                ": jackknife może być niestabilny"),
+        tags$li(tags$b("CV przy zależnych obserwacjach"),
+                ": CV wymaga niezależności — nie stosuj dla danych szeregów czasowych"),
+        tags$li(tags$b("MC pod H₀"),
+                ": wymaga prawidłowego sformułowania rozkładu pod H₀")
       )
     ),
 
     # ========================================================================
     # WIDGET: Quiz scenariuszy
     # ========================================================================
-    div(class = "section-title", "Quiz: kt\u00f3ra metoda?"),
+    div(class = "section-title", "Quiz: która metoda?"),
 
     div(class = "widget-block",
-      h4("Wybierz odpowiedni\u0105 metod\u0119 dla ka\u017cdego scenariusza:"),
+      h4("Wybierz odpowiednią metodę dla każdego scenariusza:"),
       selectInput("ch8_scenario", "Scenariusz:",
         choices = list(
           "1. CI dla mediany czasu kielkowania (n=12, silna skosnosc)" = "s1",
@@ -139,23 +139,23 @@ ch8_ui <- tabPanel("8. Kiedy stosowa\u0107?",
           "4. Korelacja masa ciala - cisnienie (n=25, outliery)" = "s4",
           "5. Jaki model regresji najlepiej prognozuje plony?" = "s5",
           "6. Ile n potrzeba aby wykryc roznice 5kg? (planowanie)" = "s6",
-          "7. Estymacja obci\u0105\u017cenia \u015bredniej (czy pr\u00f3bka jest reprezentatywna?)" = "s7",
+          "7. Estymacja obciążenia średniej (czy próbka jest reprezentatywna?)" = "s7",
           "8. Test czy proporcja wadliwych != 0.02 (Bernoulli)" = "s8"
         ),
         selected = "s1",
         width = "100%"
       ),
       br(),
-      actionButton("ch8_show", "Poka\u017c odpowied\u017a",
+      actionButton("ch8_show", "Pokaż odpowiedź",
                    class = "btn-outline-success"),
       br(), br(),
       uiOutput("ch8_scenario_answer")
     ),
 
     div(class = "chapter-transition",
-      p("Dalej: \u015bci\u0105ga ze wszystkimi algorytmami"),
+      p("Dalej: ściąga ze wszystkimi algorytmami"),
       actionButton("ch8_next",
-                   "Dalej \u2192 9. \u015aci\u0105ga",
+                   "Dalej → 9. Ściąga",
                    class = "btn-primary btn-lg")
     )
 
@@ -172,51 +172,51 @@ ch8_server <- function(input, output, session) {
     s1 = list(
       cls   = "callout-success",
       title = "Zalecany: Bootstrap CI dla mediany",
-      body  = "Nie istnieje prosty wz\u00f3r analityczny na CI dla mediany.
-               Bootstrap dzia\u0142a dla ka\u017cdej statystyki.
-               Jackknife da SE, ale nie pe\u0142ny CI."
+      body  = "Nie istnieje prosty wzór analityczny na CI dla mediany.
+               Bootstrap działa dla każdej statystyki.
+               Jackknife da SE, ale nie pełny CI."
     ),
     s2 = list(
       cls   = "callout-info",
       title = "Wystarczy: klasyczny t-CI",
-      body  = "Du\u017ce n, dane normalne \u2014 CTG zapewnia dok\u0142adno\u015b\u0107 t-CI.
-               Bootstrap r\u00f3wnie\u017c zadziala, ale jest zbyteczny."
+      body  = "Duże n, dane normalne — CTG zapewnia dokładność t-CI.
+               Bootstrap również zadziala, ale jest zbyteczny."
     ),
     s3 = list(
       cls   = "callout-success",
-      title = "Zalecany: test permutacyjny (lub bootstrap CI r\u00f3\u017cnicy)",
-      body  = "Brak normalno\u015bci: test permutacyjny testuje dok\u0142adnie t\u0119 sam\u0105 H\u2080
-               co t-test (r\u00f3\u017cnica \u015brednich), ale bez za\u0142o\u017ce\u0144.
-               Mann-Whitney U by\u0142by alternatyw\u0105, ale testuje inne H\u2080."
+      title = "Zalecany: test permutacyjny (lub bootstrap CI różnicy)",
+      body  = "Brak normalności: test permutacyjny testuje dokładnie tę samą H₀
+               co t-test (różnica średnich), ale bez założeń.
+               Mann-Whitney U byłby alternatywą, ale testuje inne H₀."
     ),
     s4 = list(
       cls   = "callout-success",
       title = "Zalecany: Bootstrap CI dla r lub test permutacyjny korelacji",
-      body  = "Outliery zaburzaj\u0105 Pearsona. Bootstrap/permutacja s\u0105 odporne."
+      body  = "Outliery zaburzają Pearsona. Bootstrap/permutacja są odporne."
     ),
     s5 = list(
       cls   = "callout-success",
       title = "Zalecany: K-Fold CV",
-      body  = "CV mierzy b\u0142\u0105d predykcji out-of-sample.
-               MSE treningowy zawsze preferuje bardziej z\u0142o\u017cony model \u2014
+      body  = "CV mierzy błąd predykcji out-of-sample.
+               MSE treningowy zawsze preferuje bardziej złożony model —
                CV wybiera optymalny."
     ),
     s6 = list(
       cls   = "callout-success",
       title = "Zalecany: MC symulacja mocy",
-      body  = "Podajesz \u03b4 = 5 kg i \u03c3 szacowane ze wst\u0119pnych danych.
-               MC daje dok\u0142adny wynik n dla osi\u0105gni\u0119cia mocy 80%."
+      body  = "Podajesz δ = 5 kg i σ szacowane ze wstępnych danych.
+               MC daje dokładny wynik n dla osiągnięcia mocy 80%."
     ),
     s7 = list(
       cls   = "callout-info",
       title = "Jackknife",
-      body  = "Jackknife oblicza obci\u0105\u017cenie statystyki \u2014 odchylenie estymaty
-               od warto\u015bci oczekiwanej. Szybszy i prostszy ni\u017c bootstrap dla tego celu."
+      body  = "Jackknife oblicza obciążenie statystyki — odchylenie estymaty
+               od wartości oczekiwanej. Szybszy i prostszy niż bootstrap dla tego celu."
     ),
     s8 = list(
       cls   = "callout-info",
-      title = "MC pod H\u2080 lub klasyczny test z (proporcja)",
-      body  = "H\u2080: p = 0.02 okre\u015bla rozk\u0142ad Bernoulli \u2014 mo\u017cna zasymulowa\u0107 MC.
+      title = "MC pod H₀ lub klasyczny test z (proporcja)",
+      body  = "H₀: p = 0.02 określa rozkład Bernoulli — można zasymulować MC.
                Test permutacyjny nie ma tu zastosowania (brak etykiet grup do tasowania)."
     )
   )

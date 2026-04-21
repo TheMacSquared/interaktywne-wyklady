@@ -6,46 +6,46 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Mamy przedzia\u0142y ufno\u015bci bez za\u0142o\u017ce\u0144.
-       Teraz testy hipotez bez za\u0142o\u017ce\u0144 \u2014 przez przetasowanie etykiet."
+      "Mamy przedziały ufności bez założeń.
+       Teraz testy hipotez bez założeń — przez przetasowanie etykiet."
     ),
 
     div(class = "section-title", "Idea testu permutacyjnego"),
 
     div(class = "narrative",
-      p("Wyobra\u017amy sobie eksperyment: dwie grupy ro\u015blin, naw\u00f3z A i naw\u00f3z B.
-         Pytamy: czy naw\u00f3z wp\u0142ywa na plony?"),
-      p("H\u2080 m\u00f3wi: naw\u00f3z nie ma wp\u0142ywu. Je\u015bli tak, to do kt\u00f3rej grupy trafi\u0142a
-         dana ro\u015blina jest ", tags$b("bez znaczenia"),
-        " \u2014 plony by\u0142yby takie same niezale\u017cnie od przypisania.")
+      p("Wyobraźmy sobie eksperyment: dwie grupy roślin, nawóz A i nawóz B.
+         Pytamy: czy nawóz wpływa na plony?"),
+      p("H₀ mówi: nawóz nie ma wpływu. Jeśli tak, to do której grupy trafiła
+         dana roślina jest ", tags$b("bez znaczenia"),
+        " — plony byłyby takie same niezależnie od przypisania.")
     ),
 
     div(class = "callout-info",
       tags$strong("Kluczowa idea:"),
-      " H\u2080 m\u00f3wi, \u017ce grupy s\u0105 jednorodne. Je\u015bli tak, przypisanie
-      \u201eGrupa A\u201f vs \u201eGrupa B\u201f jest arbitralne \u2014 mo\u017cemy je losowo zamieni\u0107.
-      Test permutacyjny sprawdza: jak ekstremalna jest nasza obserwowana r\u00f3\u017cnica,
+      " H₀ mówi, że grupy są jednorodne. Jeśli tak, przypisanie
+      „Grupa A‟ vs „Grupa B‟ jest arbitralne — możemy je losowo zamienić.
+      Test permutacyjny sprawdza: jak ekstremalna jest nasza obserwowana różnica,
       gdy losujemy takie zamiany?"
     ),
 
     # ========================================================================
     # WIDGET 1: Test permutacyjny 5 krokow (showpiece)
     # ========================================================================
-    div(class = "section-title", "Test permutacyjny \u2014 krok po kroku"),
+    div(class = "section-title", "Test permutacyjny — krok po kroku"),
 
     div(class = "widget-block",
-      h4("Permutacyjny test r\u00f3\u017cnicy \u015brednich"),
+      h4("Permutacyjny test różnicy średnich"),
       fluidRow(
         column(4,
-          sliderInput("ch4_n_per_group", "n na grup\u0119:",
+          sliderInput("ch4_n_per_group", "n na grupę:",
                       min = 10, max = 50, value = 20, step = 5),
-          sliderInput("ch4_true_diff", "Prawdziwa r\u00f3\u017cnica \u015brednich (efekt):",
+          sliderInput("ch4_true_diff", "Prawdziwa różnica średnich (efekt):",
                       min = 0, max = 20, value = 0, step = 1),
           sliderInput("ch4_n_perms", "Liczba permutacji (B):",
                       min = 200, max = 5000, value = 1000, step = 200),
-          selectInput("ch4_dist", "Rozk\u0142ad:",
+          selectInput("ch4_dist", "Rozkład:",
             choices = c(
-              "Prawoskos\u015bny (Gamma)" = "skewed",
+              "Prawoskosśny (Gamma)" = "skewed",
               "Normalny"               = "normal",
               "Grube ogony"            = "heavy_tail"
             ),
@@ -59,13 +59,13 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
                          class = "btn-outline-primary")
           ),
           div(class = "step-buttons",
-            actionButton("ch4_perm_step3", "3. Rozk\u0142ad",
+            actionButton("ch4_perm_step3", "3. Rozkład",
                          class = "btn-outline-primary"),
-            actionButton("ch4_perm_step4", "4. p-warto\u015b\u0107",
+            actionButton("ch4_perm_step4", "4. p-wartość",
                          class = "btn-outline-success")
           ),
           br(),
-          actionButton("ch4_perm_new", "\u21ba Nowe dane",
+          actionButton("ch4_perm_new", "↺ Nowe dane",
                        class = "btn-outline-secondary btn-sm", width = "100%"),
           br(), br(),
           uiOutput("ch4_perm_explanation")
@@ -79,8 +79,8 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
 
     div(class = "callout-success",
       tags$strong("Aha-moment:"),
-      " Rozk\u0142ad permutacyjny to empiryczny rozk\u0142ad pod H\u2080.
-       Nie zak\u0142adamy \u017cadnego rozk\u0142adu analitycznego \u2014 \u201ebudujemy\u201f H\u2080 z danych."
+      " Rozkład permutacyjny to empiryczny rozkład pod H₀.
+       Nie zakładamy żadnego rozkładu analitycznego — „budujemy‟ H₀ z danych."
     ),
 
     # ========================================================================
@@ -89,9 +89,9 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
     div(class = "section-title", "Permutacyjny test korelacji"),
 
     div(class = "narrative",
-      p("To samo podej\u015bcie dzia\u0142a dla korelacji.
-         Je\u015bli H\u2080: brak zwi\u0105zku mi\u0119dzy x i y, to kolejno\u015b\u0107 x wzgl\u0119dem y
-         jest dowolna \u2014 mo\u017cemy przetasowywa\u0107 jedn\u0105 zmienn\u0105.")
+      p("To samo podejście działa dla korelacji.
+         Jeśli H₀: brak związku między x i y, to kolejność x względem y
+         jest dowolna — możemy przetasowywać jedną zmienną.")
     ),
 
     div(class = "widget-block",
@@ -99,7 +99,7 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
       fluidRow(
         column(4,
           sliderInput("ch4_cor_n",      "n:", min = 15, max = 80, value = 30, step = 5),
-          sliderInput("ch4_cor_true_r", "Prawdziwa korelacja \u03c1:",
+          sliderInput("ch4_cor_true_r", "Prawdziwa korelacja ρ:",
                       min = 0, max = 0.8, value = 0.4, step = 0.1),
           sliderInput("ch4_cor_B",      "B permutacji:",
                       min = 500, max = 5000, value = 1000, step = 500),
@@ -115,16 +115,16 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
     ),
 
     div(class = "callout-warning",
-      tags$strong("Kiedy stosowa\u0107 test permutacyjny dla korelacji:"),
-      " gdy mamy obserwacje odstaj\u0105ce, rozk\u0142ady dalekie od normalnych lub
-       ma\u0142\u0105 pr\u00f3b\u0119. Klasyczny Pearson wymaga normalno\u015bci dwuwymiarowej \u2014
+      tags$strong("Kiedy stosować test permutacyjny dla korelacji:"),
+      " gdy mamy obserwacje odstające, rozkłady dalekie od normalnych lub
+       małą próbę. Klasyczny Pearson wymaga normalności dwuwymiarowej —
        test permutacyjny nie."
     ),
 
     div(class = "chapter-transition",
-      p("Dalej: jackknife \u2014 estymacja obci\u0105\u017cenia i SE przez leave-one-out"),
+      p("Dalej: jackknife — estymacja obciążenia i SE przez leave-one-out"),
       actionButton("ch4_next",
-                   "Dalej \u2192 5. Jackknife",
+                   "Dalej → 5. Jackknife",
                    class = "btn-primary btn-lg")
     )
 
@@ -174,7 +174,7 @@ ch4_server <- function(input, output, session) {
   # Krok 3: pokazuje, ze uruchomimy duzo permutacji (uruchamia je)
   observeEvent(input$ch4_perm_step3, {
     req(ch4_data())
-    withProgress(message = "Wykonuj\u0119 permutacje...", value = 0, {
+    withProgress(message = "Wykonuję permutacje...", value = 0, {
       result <- run_permutation_test_twosample(ch4_data(), B = input$ch4_n_perms)
       setProgress(1)
     })
@@ -212,11 +212,11 @@ ch4_server <- function(input, output, session) {
         scale_color_manual(values = c("A" = col_primary,  "B" = col_warning),
                            guide  = "none") +
         annotate("text", x = 1.5, y = max(df$value) * 1.05,
-                 label = paste0("\u0394 obs = ", round(obs_diff, 2)),
+                 label = paste0("Δ obs = ", round(obs_diff, 2)),
                  size = 5, fontface = "bold", color = col_secondary) +
         labs(title = "Krok 1: Dane oryginalne",
-             subtitle = paste0("R\u00f3\u017cnica obserwowana: \u0394 = ", round(obs_diff, 2)),
-             x = "Grupa", y = "Warto\u015b\u0107") +
+             subtitle = paste0("Różnica obserwowana: Δ = ", round(obs_diff, 2)),
+             x = "Grupa", y = "Wartość") +
         theme_educational()
     } else if (step == 2) {
       # Jedna permutacja
@@ -231,11 +231,11 @@ ch4_server <- function(input, output, session) {
         scale_color_manual(values = c("A" = col_primary, "B" = col_warning),
                            guide  = "none") +
         annotate("text", x = 1.5, y = max(perm_df$value) * 1.05,
-                 label = paste0("\u0394 perm = ", round(perm_diff, 2)),
+                 label = paste0("Δ perm = ", round(perm_diff, 2)),
                  size = 5, fontface = "bold", color = col_success) +
         labs(title = "Krok 2: Jedna permutacja etykiet",
              subtitle = "Etykiety grup przetasowane losowo",
-             x = "Grupa (przetasowana)", y = "Warto\u015b\u0107") +
+             x = "Grupa (przetasowana)", y = "Wartość") +
         theme_educational()
     } else {
       # Krok 3 i 4: rozklad permutacyjny
@@ -256,20 +256,20 @@ ch4_server <- function(input, output, session) {
       if (step == 4) {
         p_val <- result$p_value
         p <- p + annotate("text", x = obs_diff, y = Inf,
-                           label = paste0("obs \u0394 = ", round(obs_diff, 2)),
+                           label = paste0("obs Δ = ", round(obs_diff, 2)),
                            vjust = -0.3, hjust = -0.1,
                            color = col_secondary, size = 4.5, fontface = "bold") +
           labs(
-            title    = paste0("Krok 4: Rozk\u0142ad permutacyjny (B = ", length(result$perm_diffs), ")"),
-            subtitle = paste0("p-warto\u015b\u0107 permutacyjna = ", round(p_val, 4)),
-            x        = "Permutacyjna r\u00f3\u017cnica \u015brednich (\u0394*)",
+            title    = paste0("Krok 4: Rozkład permutacyjny (B = ", length(result$perm_diffs), ")"),
+            subtitle = paste0("p-wartość permutacyjna = ", round(p_val, 4)),
+            x        = "Permutacyjna różnica średnich (Δ*)",
             y        = "Liczba permutacji"
           )
       } else {
         p <- p + labs(
-          title    = paste0("Krok 3: Rozk\u0142ad permutacyjny (B = ", length(result$perm_diffs), ")"),
-          subtitle = "Czerwone s\u0142upki = wyniki r\u00f3wnie lub bardziej ekstremalne",
-          x        = "Permutacyjna r\u00f3\u017cnica \u015brednich (\u0394*)",
+          title    = paste0("Krok 3: Rozkład permutacyjny (B = ", length(result$perm_diffs), ")"),
+          subtitle = "Czerwone słupki = wyniki równie lub bardziej ekstremalne",
+          x        = "Permutacyjna różnica średnich (Δ*)",
           y        = "Liczba permutacji"
         )
       }
@@ -281,10 +281,10 @@ ch4_server <- function(input, output, session) {
     step <- ch4_step()
     txt <- switch(as.character(step),
       "0" = "Ustaw parametry i kliknij kolejne kroki.",
-      "1" = "Dane pobrane. Obserwujemy r\u00f3\u017cnic\u0119 \u015brednich mi\u0119dzy grupami.",
-      "2" = "Jedna permutacja: etykiety grup przetasowane losowo pod H\u2080.",
-      "3" = paste0("Rozk\u0142ad z B = ", input$ch4_n_perms,
-                   " permutacji gotowy. To empiryczny rozk\u0142ad pod H\u2080."),
+      "1" = "Dane pobrane. Obserwujemy różnicę średnich między grupami.",
+      "2" = "Jedna permutacja: etykiety grup przetasowane losowo pod H₀.",
+      "3" = paste0("Rozkład z B = ", input$ch4_n_perms,
+                   " permutacji gotowy. To empiryczny rozkład pod H₀."),
       "4" = {
         res <- ch4_perm_res()
         pv  <- format_pval_pl(res$p_value)
@@ -303,7 +303,7 @@ ch4_server <- function(input, output, session) {
 
     out <- tagList(
       div(class = "stat-box", style = paste0("background:", col_secondary, ";"),
-          paste0("\u0394 obs = ", round(result$observed_diff, 3))),
+          paste0("Δ obs = ", round(result$observed_diff, 3))),
       div(class = "stat-box",
           style = paste0("background:", format_pval_pl(result$p_value)$color, ";"),
           paste0("p (perm) = ", round(result$p_value, 4)))
@@ -363,7 +363,7 @@ ch4_server <- function(input, output, session) {
       geom_vline(xintercept = -abs(res$observed_r), color = col_secondary,
                  linewidth = 1.2, linetype = "dashed") +
       labs(
-        title    = paste0("Rozk\u0142ad permutacyjny (B = ", length(res$perm_cors), ")"),
+        title    = paste0("Rozkład permutacyjny (B = ", length(res$perm_cors), ")"),
         subtitle = paste0("p = ", round(res$p_value, 4)),
         x        = "Korelacja r*",
         y        = "Liczba permutacji"
