@@ -25,29 +25,29 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
     # ====================================================================
     # WIDGET 1: Bus scenario - "Mean is not everything"
     # ====================================================================
-    div(class = "section-title", "\u015arednia to nie wszystko"),
+    div(class = "section-title", "Średnia to nie wszystko"),
 
     div(class = "narrative",
-      p("Wyobra\u017a sobie dwie linie autobusowe. Obie maj\u0105 takie samo
-        \u015brednie sp\u00f3\u017anienie -- oko\u0142o 2 minuty. Kt\u00f3r\u0105 wybierzesz?"),
-      p("Wi\u0119kszo\u015b\u0107 autobus\u00f3w jest blisko rozk\u0142adu (0-4 min sp\u00f3\u017anienia),
-        rzadko kt\u00f3ry przyje\u017cd\u017ca za wcze\u015bnie, a od czasu do czasu
-        zdarza si\u0119 du\u017ce sp\u00f3\u017anienie. Ale rozrzut tych sp\u00f3\u017anie\u0144
-        mo\u017ce by\u0107 bardzo r\u00f3\u017cny.")
+      p("Wyobraź sobie dwie linie autobusowe. Obie mają takie samo
+        średnie spóźnienie -- około 2 minuty. Którą wybierzesz?"),
+      p("Większość autobusów jest blisko rozkładu (0-4 min spóźnienia),
+        rzadko który przyjeżdża za wcześnie, a od czasu do czasu
+        zdarza się duże spóźnienie. Ale rozrzut tych spóźnień
+        może być bardzo różny.")
     ),
 
     div(class = "widget-block",
       div(class = "step-buttons",
         actionButton("ch4_spread_s1", "1. Dwie linie",
                      class = "btn-outline-primary"),
-        actionButton("ch4_spread_s2", "2. Ta sama \u015brednia, ale...",
+        actionButton("ch4_spread_s2", "2. Ta sama średnia, ale...",
                      class = "btn-outline-primary"),
-        actionButton("ch4_spread_s3", "3. Wychodzisz wcze\u015bniej",
+        actionButton("ch4_spread_s3", "3. Wychodzisz wcześniej",
                      class = "btn-outline-primary"),
         actionButton("ch4_spread_s4", "4. Konsekwencje",
                      class = "btn-outline-primary")
       ),
-      sliderInput("ch4_spread_buffer", "Wychodzisz wcze\u015bniej o (minuty):",
+      sliderInput("ch4_spread_buffer", "Wychodzisz wcześniej o (minuty):",
                   min = 0, max = 10, value = 0, step = 1, width = "100%"),
       plotOutput("ch4_spread_plot", height = "450px"),
       uiOutput("ch4_spread_text")
@@ -92,7 +92,7 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
       p("Wiemy juz jak obliczyć odchylenie standardowe. Ale co ono oznacza
         w praktyce? Dla rozkładow zbliżonych do normalnego obowiązuje
         regula empiryczna: okolo 68% danych miesci sie w zakresie
-        srednia \u00B11 SD, 95% w \u00B12 SD, a 99.7% w \u00B13 SD.")
+        srednia ±1 SD, 95% w ±2 SD, a 99.7% w ±3 SD.")
     ),
 
     div(class = "widget-block",
@@ -222,7 +222,7 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
       p("Odchylenie standardowe mówi o rozrzucie, ale w jakich jednostkach?
         SD wzrostu (w cm) i SD wagi (w kg) nie są porownywalne!
         Aby porownac zmiennosc zmiennych w roznych skalach, uzywamy
-        współczynnika zmienności (CV = SD / średnia \u00D7 100%).")
+        współczynnika zmienności (CV = SD / średnia × 100%).")
     ),
 
     div(class = "widget-block",
@@ -245,7 +245,7 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
       p("Położenie i rozrzut to nie wszystko. Dwa rozkłady z ta sama średnia i
         odchyleniem standardowym mogą mieć zupełnie inny kształt -- asymetrię
         i różna 'ciężkość' ogonów."),
-      actionButton("ch4_next", "Dalej: 5. Kształt rozkładu \u2192",
+      actionButton("ch4_next", "Dalej: 5. Kształt rozkładu →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -307,16 +307,16 @@ ch4_server <- function(input, output, session) {
       geom_vline(xintercept = 2, linetype = "dashed", color = "#2c3e50",
                  linewidth = 0.8) +
       annotate("text", x = 2, y = max(df_a$y) * 1.08,
-               label = "\u015arednie sp\u00f3\u017anienie = 2 min",
+               label = "Średnie spóźnienie = 2 min",
                hjust = 0.5, size = 4.5, color = "#2c3e50", fontface = "bold") +
       geom_vline(xintercept = 0, linetype = "solid", color = "#95a5a6",
                  linewidth = 0.5, alpha = 0.5) +
       annotate("text", x = -0.3, y = max(df_a$y) * 0.3,
                label = "punktualny", angle = 90,
                size = 3.5, color = "#95a5a6") +
-      labs(x = "Sp\u00f3\u017anienie (minuty)    \u2190 za wcze\u015bnie | za p\u00f3\u017ano \u2192",
-           y = "G\u0119sto\u015b\u0107",
-           title = "Rozk\u0142ad sp\u00f3\u017anie\u0144 dw\u00f3ch linii autobusowych",
+      labs(x = "Spóźnienie (minuty)    ← za wcześnie | za późno →",
+           y = "Gęstość",
+           title = "Rozkład spóźnień dwóch linii autobusowych",
            color = NULL, fill = NULL) +
       coord_cartesian(xlim = c(-3, 25)) +
       theme_minimal(base_size = 14) +
@@ -334,12 +334,12 @@ ch4_server <- function(input, output, session) {
 
     if (step >= 3) {
       cutoff <- -buffer  # wychodzisz buffer min wczesniej = jestes na -buffer
-      # Zdazysz na autobus jesli delay >= -buffer (jeszcze nie odjecha\u0142)
+      # Zdazysz na autobus jesli delay >= -buffer (jeszcze nie odjechał)
       shade_a <- df_a[df_a$x >= cutoff, ]
       shade_b <- df_b[df_b$x >= cutoff, ]
 
-      lbl <- if (buffer == 0) "Wychodzisz\nna st\u00f3wk\u0119"
-             else paste0("Wychodzisz\n", buffer, " min wcze\u015bniej")
+      lbl <- if (buffer == 0) "Wychodzisz\nna stówkę"
+             else paste0("Wychodzisz\n", buffer, " min wcześniej")
 
       p <- p +
         geom_area(data = shade_a, aes(x = x, y = y), alpha = 0.25) +
@@ -357,12 +357,12 @@ ch4_server <- function(input, output, session) {
 
       p <- p +
         annotate("label", x = 18, y = max(df_a$y) * 0.85,
-                 label = paste0("P(zd\u0105\u017cysz) A = ",
+                 label = paste0("P(zdążysz) A = ",
                                 round(prob_a * 100, 1), "%"),
                  size = 4.5, fill = "#eaf4fc", color = col_a,
                  fontface = "bold", label.size = 0.5) +
         annotate("label", x = 18, y = max(df_a$y) * 0.70,
-                 label = paste0("P(zd\u0105\u017cysz) B = ",
+                 label = paste0("P(zdążysz) B = ",
                                 round(prob_b * 100, 1), "%"),
                  size = 4.5, fill = "#fdedec", color = col_b,
                  fontface = "bold", label.size = 0.5)
@@ -378,13 +378,13 @@ ch4_server <- function(input, output, session) {
 
     if (step == 0) {
       div(class = "callout-info",
-          "Kliknij przycisk kroku, aby rozpocz\u0105\u0107.")
+          "Kliknij przycisk kroku, aby rozpocząć.")
     } else if (step == 1) {
       div(class = "callout-info",
           tags$strong("Krok 1:"),
-          " Obie linie maj\u0105 \u015brednie sp\u00f3\u017anienie oko\u0142o 2 minut.
-          Patrz\u0105c tylko na \u015bredni\u0105, s\u0105 identyczne.
-          Warto\u015bci ujemne = przyjazd przed czasem (rzadko si\u0119 zdarza).")
+          " Obie linie mają średnie spóźnienie około 2 minut.
+          Patrząc tylko na średnią, są identyczne.
+          Wartości ujemne = przyjazd przed czasem (rzadko się zdarza).")
     } else if (step == 2) {
       pct_10_a <- round(mean(bus$a > 10) * 100, 1)
       pct_10_b <- round(mean(bus$b > 10) * 100, 1)
@@ -392,53 +392,53 @@ ch4_server <- function(input, output, session) {
       mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
       div(class = "callout-info",
           tags$strong("Krok 2:"),
-          paste0(" Linia A ma SD = ", bus$sd_a, " min (sp\u00f3\u017anienia skupione 0-4 min),
-          a linia B ma SD = ", bus$sd_b, " min (zdarza si\u0119 i punktualnie,
-          i 10+ min sp\u00f3\u017anienia)."),
+          paste0(" Linia A ma SD = ", bus$sd_a, " min (spóźnienia skupione 0-4 min),
+          a linia B ma SD = ", bus$sd_b, " min (zdarza się i punktualnie,
+          i 10+ min spóźnienia)."),
           tags$br(), tags$br(),
-          tags$strong("Sp\u00f3\u017anienia >10 min: "),
-          paste0("Linia A: ", pct_10_a, "% kurs\u00f3w",
-                 if (pct_10_a > 0) paste0(" (\u015br. ", mean_late_a, " min)") else "",
-                 "; Linia B: ", pct_10_b, "% kurs\u00f3w",
-                 if (pct_10_b > 0) paste0(" (\u015br. ", mean_late_b, " min)") else "",
+          tags$strong("Spóźnienia >10 min: "),
+          paste0("Linia A: ", pct_10_a, "% kursów",
+                 if (pct_10_a > 0) paste0(" (śr. ", mean_late_a, " min)") else "",
+                 "; Linia B: ", pct_10_b, "% kursów",
+                 if (pct_10_b > 0) paste0(" (śr. ", mean_late_b, " min)") else "",
                  "."))
     } else if (step == 3) {
-      lbl <- if (buffer == 0) "na st\u00f3wk\u0119 (0 min zapasu)"
-             else paste0(buffer, " min wcze\u015bniej")
+      lbl <- if (buffer == 0) "na stówkę (0 min zapasu)"
+             else paste0(buffer, " min wcześniej")
       div(class = "callout-info",
           tags$strong("Krok 3:"),
           paste0(" Wychodzisz ", lbl,
-                 ". Jeste\u015b na przystanku o ", buffer,
-                 " min przed rozk\u0142adem. Zd\u0105\u017cysz na ka\u017cdy autobus,
-                 kt\u00f3ry nie odjedzie wcze\u015bniej ni\u017c ", buffer,
-                 " min przed rozk\u0142adem. Zacieniowany obszar = kursy,
-                 na kt\u00f3re zd\u0105\u017cysz. Przesu\u0144 suwak!"))
+                 ". Jesteś na przystanku o ", buffer,
+                 " min przed rozkładem. Zdążysz na każdy autobus,
+                 który nie odjedzie wcześniej niż ", buffer,
+                 " min przed rozkładem. Zacieniowany obszar = kursy,
+                 na które zdążysz. Przesuń suwak!"))
     } else if (step == 4) {
       prob_a <- mean(bus$a >= -buffer)
       prob_b <- mean(bus$b >= -buffer)
       pct_10_a <- round(mean(bus$a > 10) * 100, 1)
       pct_10_b <- round(mean(bus$b > 10) * 100, 1)
       mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
-      lbl <- if (buffer == 0) "na st\u00f3wk\u0119" else paste0(buffer, " min wcze\u015bniej")
+      lbl <- if (buffer == 0) "na stówkę" else paste0(buffer, " min wcześniej")
       div(class = "callout-info",
           tags$strong("Krok 4:"), " Konsekwencje",
           tags$br(),
           paste0("Wychodzisz ", lbl, ":"),
           tags$br(),
-          paste0("Linia A: zd\u0105\u017cysz na ", round(prob_a * 100, 1),
-                             "% kurs\u00f3w."),
+          paste0("Linia A: zdążysz na ", round(prob_a * 100, 1),
+                             "% kursów."),
           tags$br(),
-          paste0("Linia B: zd\u0105\u017cysz na ", round(prob_b * 100, 1),
-                             "% kurs\u00f3w."),
+          paste0("Linia B: zdążysz na ", round(prob_b * 100, 1),
+                             "% kursów."),
           tags$br(), tags$br(),
           if (pct_10_b > 0) tagList(
-            tags$em(paste0("A gdy linia B si\u0119 sp\u00f3\u017ani powa\u017cnie (>10 min, ",
-                           pct_10_b, "% kurs\u00f3w), \u015brednie czekasz ",
+            tags$em(paste0("A gdy linia B się spóźni poważnie (>10 min, ",
+                           pct_10_b, "% kursów), średnie czekasz ",
                            mean_late_b, " min. ",
-                           "Linia A praktycznie nigdy tak si\u0119 nie sp\u00f3\u017ania.")),
+                           "Linia A praktycznie nigdy tak się nie spóźnia.")),
             tags$br(), tags$br()
           ),
-          "To dlatego sama \u015brednia nie wystarczy -- rozrzut danych
+          "To dlatego sama średnia nie wystarczy -- rozrzut danych
           ma realne konsekwencje!")
     }
   })
@@ -486,13 +486,13 @@ ch4_server <- function(input, output, session) {
         scale_y_continuous(limits = c(-0.3, 0.3))
 
     } else {
-      # Kroki 2-3: punkty jedna pod drug\u0105, posortowane wg odleg\u0142o\u015bci od \u015bredniej
+      # Kroki 2-3: punkty jedna pod drugą, posortowane wg odległości od średniej
       deviations <- vals - x_bar
       ord <- order(abs(deviations), decreasing = TRUE)
       df <- data.frame(
         x = vals[ord],
         dev = deviations[ord],
-        y = seq(n, 1)  # najdalszy na g\u00f3rze
+        y = seq(n, 1)  # najdalszy na górze
       )
 
       p <- ggplot(df, aes(x = x, y = y)) +
@@ -507,10 +507,10 @@ ch4_server <- function(input, output, session) {
                   hjust = ifelse(df$dev >= 0, -0.3, 1.3),
                   size = 3.5, color = "#7f8c8d") +
         annotate("text", x = x_bar, y = n + 0.8,
-                 label = paste0("\u015brednia = ", round(x_bar, 2)),
+                 label = paste0("średnia = ", round(x_bar, 2)),
                  color = "#e74c3c", size = 5, fontface = "bold") +
         labs(x = "Wzrost (cm)", y = "",
-             title = "Odchylenia od \u015bredniej (posortowane wg odleg\u0142o\u015bci)") +
+             title = "Odchylenia od średniej (posortowane wg odległości)") +
         theme_minimal(base_size = 14) +
         theme(axis.text.y = element_blank(),
               axis.ticks.y = element_blank(),
@@ -527,10 +527,10 @@ ch4_server <- function(input, output, session) {
           geom_vline(xintercept = x_bar + s, linetype = "dotted",
                      color = "#27ae60", linewidth = 0.8) +
           annotate("text", x = x_bar - s, y = 0.3,
-                   label = paste0("\u015br. - SD\n", round(x_bar - s, 1)),
+                   label = paste0("śr. - SD\n", round(x_bar - s, 1)),
                    color = "#27ae60", size = 3.5, fontface = "bold", vjust = 0) +
           annotate("text", x = x_bar + s, y = 0.3,
-                   label = paste0("\u015br. + SD\n", round(x_bar + s, 1)),
+                   label = paste0("śr. + SD\n", round(x_bar + s, 1)),
                    color = "#27ae60", size = 3.5, fontface = "bold", vjust = 0) +
           annotate("text", x = x_bar, y = 0.5,
                    label = paste0("SD = ", round(s, 2), " cm"),
@@ -602,7 +602,7 @@ ch4_server <- function(input, output, session) {
       x_bar <- mean(vals)
       div(class = "callout-info",
           tags$strong("Krok 2:"),
-          paste0(" Obliczamy srednia: x\u0304 = ", round(x_bar, 2),
+          paste0(" Obliczamy srednia: x̄ = ", round(x_bar, 2),
                  " cm. Nastepnie liczymy odchylenie każdego punktu od średniej
                  (strzalki na wykresie). W tabeli widzisz odchylenia i ich kwadraty.
                  Kwadraty gwarantuja, ze odchylenia dodatnie i ujemne sie nie
@@ -621,7 +621,7 @@ ch4_server <- function(input, output, session) {
           withMathJax(helpText(
             "$$s = \\sqrt{\\frac{1}{n-1} \\sum_{i=1}^{n} (x_i - \\bar{x})^2}$$"
           )),
-          paste0("Suma kwadrat\u00f3w odchyle\u0144 = ", round(sum(sq_deviations), 2)),
+          paste0("Suma kwadratów odchyleń = ", round(sum(sq_deviations), 2)),
           tags$br(),
           paste0("Wariancja \\(s^2\\) = suma / (n-1) = ",
                  round(sum(sq_deviations), 2), " / ", n - 1, " = ",
@@ -630,8 +630,8 @@ ch4_server <- function(input, output, session) {
           paste0("Odchylenie standardowe \\(s = \\sqrt{",
                              round(variance, 2), "} = ", round(s, 2), "\\) cm"),
           tags$br(), tags$br(),
-          "Zielony pas na wykresie oznacza przedzia\u0142 \\(\\bar{x} \\pm s\\).
-          W rozk\u0142adzie normalnym ok. 68% danych le\u017cy w tym przedziale.")
+          "Zielony pas na wykresie oznacza przedział \\(\\bar{x} \\pm s\\).
+          W rozkładzie normalnym ok. 68% danych leży w tym przedziale.")
     }
   })
 
@@ -646,7 +646,7 @@ ch4_server <- function(input, output, session) {
 
     band_colors <- c("#3498db", "#f39c12", "#e74c3c")
     band_alphas <- c(0.25, 0.15, 0.10)
-    band_labels <- c("\u00B11 SD", "\u00B12 SD", "\u00B13 SD")
+    band_labels <- c("±1 SD", "±2 SD", "±3 SD")
 
     pct_in <- sapply(1:3, function(k) {
       round(mean(vals >= m - k * s & vals <= m + k * s) * 100, 1)
@@ -666,7 +666,7 @@ ch4_server <- function(input, output, session) {
 
     p <- p +
       geom_vline(xintercept = m, color = "#e74c3c", linewidth = 1.2, linetype = "solid") +
-      annotate("text", x = m, y = Inf, label = paste0("x\u0304 = ", round(m, 1)),
+      annotate("text", x = m, y = Inf, label = paste0("x̄ = ", round(m, 1)),
                vjust = -0.5, color = "#e74c3c", fontface = "bold", size = 4.5) +
       labs(
         title = paste0("Regula empiryczna: ", pct_in[1], "% / ",
@@ -696,20 +696,20 @@ ch4_server <- function(input, output, session) {
 
     if (diff_1sd < 5) {
       div(class = "callout-info",
-        tags$strong("Dobra zgodno\u015b\u0107 z regu\u0142\u0105! "),
-        paste0("W przedziale \u00B11 SD le\u017cy ", pct_in[1], "% danych (teoria: 68%). "),
-        "To oznacza, \u017ce rozk\u0142ad tej zmiennej jest zbli\u017cony do normalnego. ",
+        tags$strong("Dobra zgodność z regułą! "),
+        paste0("W przedziale ±1 SD leży ", pct_in[1], "% danych (teoria: 68%). "),
+        "To oznacza, że rozkład tej zmiennej jest zbliżony do normalnego. ",
         "Odchylenie standardowe dobrze podsumowuje rozrzut."
       )
     } else {
       div(class = "callout-warning",
-        tags$strong("S\u0142aba zgodno\u015b\u0107 z regu\u0142\u0105! "),
-        paste0("W przedziale \u00B11 SD le\u017cy ", pct_in[1], "% danych (teoria: 68%). "),
-        "Dlaczego? Regu\u0142a 68-95-99.7 zak\u0142ada rozk\u0142ad symetryczny ",
-        "(zbli\u017cony do normalnego). Gdy rozk\u0142ad jest sko\u015bny, dane koncentruj\u0105 si\u0119 ",
-        "asymetrycznie wok\u00f3\u0142 \u015bredniej -- wi\u0119cej obserwacji le\u017cy po jednej stronie ",
-        "ni\u017c po drugiej, co \u0142amie za\u0142o\u017cenie regu\u0142y. ",
-        "W takim przypadku IQR lepiej opisuje rozrzut ni\u017c odchylenie standardowe."
+        tags$strong("Słaba zgodność z regułą! "),
+        paste0("W przedziale ±1 SD leży ", pct_in[1], "% danych (teoria: 68%). "),
+        "Dlaczego? Reguła 68-95-99.7 zakłada rozkład symetryczny ",
+        "(zbliżony do normalnego). Gdy rozkład jest skośny, dane koncentrują się ",
+        "asymetrycznie wokół średniej -- więcej obserwacji leży po jednej stronie ",
+        "niż po drugiej, co łamie założenie reguły. ",
+        "W takim przypadku IQR lepiej opisuje rozrzut niż odchylenie standardowe."
       )
     }
   })
@@ -1113,7 +1113,7 @@ ch4_server <- function(input, output, session) {
 
   output$ch4_sd_compare_plot <- renderPlot({
     vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")
-    labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "\u015arednia ocen")
+    labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "Średnia ocen")
 
     stats <- data.frame(
       Zmienna = factor(labels, levels = rev(labels)),
@@ -1133,7 +1133,7 @@ ch4_server <- function(input, output, session) {
 
   output$ch4_cv_plot <- renderPlot({
     vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")
-    labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "\u015arednia ocen")
+    labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "Średnia ocen")
 
     stats <- data.frame(
       Zmienna = factor(labels, levels = rev(labels)),

@@ -55,20 +55,20 @@ ch5_ui <- tabPanel("5. Kształt rozkładu",
     ),
 
     # --- Widget 2: Kurtosis ---
-    div(class = "section-title", h3("5.2 Kurtoza (ci\u0119\u017cko\u015b\u0107 ogon\u00f3w)")),
+    div(class = "section-title", h3("5.2 Kurtoza (ciężkość ogonów)")),
 
     div(class = "narrative",
-      p("Kurtoza mierzy, jak 'ci\u0119\u017ckie' s\u0105 ogony rozk\u0142adu \u2014 czyli
-        jak cz\u0119sto pojawiaj\u0105 si\u0119 warto\u015bci ekstremalne. Nie chodzi
-        o 'sp\u0142aszczenie' szczytu, lecz o to, ile obserwacji le\u017cy daleko
-        od \u015bredniej.")
+      p("Kurtoza mierzy, jak 'ciężkie' są ogony rozkładu — czyli
+        jak często pojawiają się wartości ekstremalne. Nie chodzi
+        o 'spłaszczenie' szczytu, lecz o to, ile obserwacji leży daleko
+        od średniej.")
     ),
 
     div(class = "widget-block",
-      h4("Por\u00f3wnaj rozk\u0142ady o r\u00f3\u017cnej kurtozie"),
+      h4("Porównaj rozkłady o różnej kurtozie"),
       fluidRow(
         column(8,
-          sliderInput("ch5_kurt_val", "Nadwy\u017ckowa kurtoza:",
+          sliderInput("ch5_kurt_val", "Nadwyżkowa kurtoza:",
             min = -1.2, max = 6, value = 0, step = 0.2
           )
         ),
@@ -114,10 +114,10 @@ ch5_ui <- tabPanel("5. Kształt rozkładu",
 
     # --- Transition to ch6 ---
     div(class = "chapter-transition",
-      p("Teraz potrafisz opisac rozk\u0142ad zmiennej ilo\u015bciowej w trzech wymiarach:
-        po\u0142o\u017cenie, rozrzut i kszta\u0142t. Czas na podsumowanie -- \u015bci\u0105ga
-        ze wszystkimi narz\u0119dziami w jednym miejscu."),
-      actionButton("ch5_next", "Dalej: 6. \u015aci\u0105ga \u2192",
+      p("Teraz potrafisz opisac rozkład zmiennej ilościowej w trzech wymiarach:
+        położenie, rozrzut i kształt. Czas na podsumowanie -- ściąga
+        ze wszystkimi narzędziami w jednym miejscu."),
+      actionButton("ch5_next", "Dalej: 6. Ściąga →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -236,7 +236,7 @@ ch5_server <- function(input, output, session) {
   })
 
   # --------------------------------------------------------------------------
-  # Widget 2: Kurtosis (suwak kurtozy, bez t-rozk\u0142adu)
+  # Widget 2: Kurtosis (suwak kurtozy, bez t-rozkładu)
   # --------------------------------------------------------------------------
 
   observeEvent(input$ch5_kurt_platy, { updateSliderInput(session, "ch5_kurt_val", value = -1.0) })
@@ -289,10 +289,10 @@ ch5_server <- function(input, output, session) {
         label = paste0(type_name, " (kurtoza = ", round(ek, 1), ")"),
         color = type_color, hjust = 0, size = 5, fontface = "bold") +
       annotate("text", x = -4.5, y = max(df$dens) * 0.85,
-        label = "Rozk\u0142ad normalny (kurtoza = 0)",
+        label = "Rozkład normalny (kurtoza = 0)",
         color = "#95a5a6", hjust = 0, size = 4) +
-      labs(x = "x", y = "G\u0119sto\u015b\u0107",
-        title = "Jak kurtoza wp\u0142ywa na kszta\u0142t rozk\u0142adu?") +
+      labs(x = "x", y = "Gęstość",
+        title = "Jak kurtoza wpływa na kształt rozkładu?") +
       theme_minimal(base_size = 14)
   })
 
@@ -308,8 +308,8 @@ ch5_server <- function(input, output, session) {
       geom_line(aes(y = norm), color = "#95a5a6", linewidth = 1, linetype = "dashed") +
       geom_area(aes(y = dens), fill = type_color, alpha = 0.3) +
       geom_line(aes(y = dens), color = type_color, linewidth = 1.2) +
-      labs(x = "x", y = "G\u0119sto\u015b\u0107",
-        title = "Powi\u0119kszenie prawego ogona (x > 2.5)") +
+      labs(x = "x", y = "Gęstość",
+        title = "Powiększenie prawego ogona (x > 2.5)") +
       theme_minimal(base_size = 14)
   })
 
@@ -320,31 +320,31 @@ ch5_server <- function(input, output, session) {
     if (ek < -0.5) {
       type_class <- "callout-warning"
       type_name <- "Platykurtyczny"
-      desc <- "Rozk\u0142ad ma l\u017cejsze ogony ni\u017c normalny \u2014 warto\u015bci ekstremalne
-               s\u0105 rzadsze. Dane s\u0105 bardziej 'skoncentrowane' w okolicy \u015bredniej,
+      desc <- "Rozkład ma lżejsze ogony niż normalny — wartości ekstremalne
+               są rzadsze. Dane są bardziej 'skoncentrowane' w okolicy średniej,
                bez dalekich obserwacji."
     } else if (ek < 0.5) {
       type_class <- "callout-info"
       type_name <- "Mezokurtyczny"
-      desc <- "Rozk\u0142ad jest zbli\u017cony do normalnego \u2014 ogony maj\u0105 'typow\u0105'
-               ci\u0119\u017cko\u015b\u0107. To punkt odniesienia, wzgl\u0119dem kt\u00f3rego por\u00f3wnujemy
-               inne rozk\u0142ady."
+      desc <- "Rozkład jest zbliżony do normalnego — ogony mają 'typową'
+               ciężkość. To punkt odniesienia, względem którego porównujemy
+               inne rozkłady."
     } else {
       type_class <- "callout-danger"
       type_name <- "Leptokurtyczny"
-      desc <- paste0("Rozk\u0142ad ma ci\u0119\u017csze ogony ni\u017c normalny \u2014 warto\u015bci
-               ekstremalne pojawiaj\u0105 si\u0119 cz\u0119\u015bciej ni\u017c by\u015bmy oczekiwali.
-               W finansach to oznacza wi\u0119ksze ryzyko ekstremalnych strat
-               ('czarne \u0142ab\u0119dzie').")
+      desc <- paste0("Rozkład ma cięższe ogony niż normalny — wartości
+               ekstremalne pojawiają się częściej niż byśmy oczekiwali.
+               W finansach to oznacza większe ryzyko ekstremalnych strat
+               ('czarne łabędzie').")
     }
 
     div(class = type_class,
-      tags$strong(paste0(type_name, " (nadwy\u017ckowa kurtoza = ", round(ek, 1), ")")),
+      tags$strong(paste0(type_name, " (nadwyżkowa kurtoza = ", round(ek, 1), ")")),
       p(desc),
       tags$ul(
-        tags$li(tags$b("Platykurtyczny"), " (kurtoza < 0): lekkie ogony, mniej ekstrema\u0142\u00f3w"),
-        tags$li(tags$b("Mezokurtyczny"), " (kurtoza \u2248 0): rozk\u0142ad normalny \u2014 punkt odniesienia"),
-        tags$li(tags$b("Leptokurtyczny"), " (kurtoza > 0): ci\u0119\u017ckie ogony, wi\u0119cej ekstrema\u0142\u00f3w")
+        tags$li(tags$b("Platykurtyczny"), " (kurtoza < 0): lekkie ogony, mniej ekstremałów"),
+        tags$li(tags$b("Mezokurtyczny"), " (kurtoza ≈ 0): rozkład normalny — punkt odniesienia"),
+        tags$li(tags$b("Leptokurtyczny"), " (kurtoza > 0): ciężkie ogony, więcej ekstremałów")
       )
     )
   })

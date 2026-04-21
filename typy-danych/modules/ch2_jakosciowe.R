@@ -22,11 +22,11 @@ ch2_ui <- tabPanel("2. Zmienne jakościowe",
     # WIDGET 1: Frequency table step-by-step
     # ========================================================================
     div(class = "widget-block",
-      h4("Tabela cz\u0119sto\u015bci - krok po kroku"),
-      radioButtons("ch2_freq_var", "Wybierz zmienn\u0105:",
+      h4("Tabela częstości - krok po kroku"),
+      radioButtons("ch2_freq_var", "Wybierz zmienną:",
         choices = c(
-          "Kierunek studi\u00f3w (nominalna)" = "kierunek",
-          "Zadowolenie ze studi\u00f3w (porz\u0105dkowa)" = "zadowolenie"
+          "Kierunek studiów (nominalna)" = "kierunek",
+          "Zadowolenie ze studiów (porządkowa)" = "zadowolenie"
         ),
         selected = "kierunek", inline = TRUE
       ),
@@ -35,7 +35,7 @@ ch2_ui <- tabPanel("2. Zmienne jakościowe",
                      class = "btn-outline-primary"),
         actionButton("ch2_freq_s2", "2. Zliczanie",
                      class = "btn-outline-primary"),
-        actionButton("ch2_freq_s3", "3. Cz\u0119sto\u015bci wzgl\u0119dne",
+        actionButton("ch2_freq_s3", "3. Częstości względne",
                      class = "btn-outline-primary"),
         actionButton("ch2_freq_s4", "4. Skumulowane",
                      class = "btn-outline-primary")
@@ -137,11 +137,11 @@ ch2_ui <- tabPanel("2. Zmienne jakościowe",
       h4("Jak kolory zmieniaja percepcje danych"),
       fluidRow(
         column(4,
-          selectInput("ch2_color_palette", "Paleta kolor\u00f3w:",
+          selectInput("ch2_color_palette", "Paleta kolorów:",
             choices = c(
               "Neutralna (szara)" = "neutral",
-              "Ciep\u0142a (podkre\u015bla Informatyk\u0119)" = "warm",
-              "Zimna (podkre\u015bla Biologi\u0119)" = "cool",
+              "Ciepła (podkreśla Informatykę)" = "warm",
+              "Zimna (podkreśla Biologię)" = "cool",
               "Stronnicza" = "biased",
               "--- Klasyczne palety R ---" = "sep1",
               "Viridis" = "viridis",
@@ -157,23 +157,23 @@ ch2_ui <- tabPanel("2. Zmienne jakościowe",
         column(8, plotOutput("ch2_color_plot", height = "380px"))
       ),
       div(class = "callout-warning",
-        tags$b("Pami\u0119taj: "),
-        "Wyb\u00f3r kolor\u00f3w nie jest neutralny. Intensywne, cieplejsze barwy
-         przyci\u0105gaj\u0105 uwag\u0119, a jasne/szare marginalizuj\u0105 kategorie.",
+        tags$b("Pamiętaj: "),
+        "Wybór kolorów nie jest neutralny. Intensywne, cieplejsze barwy
+         przyciągają uwagę, a jasne/szare marginalizują kategorie.",
         tags$br(), tags$br(),
         tags$b("Dobre praktyki: "),
         tags$ul(
-          tags$li(tags$b("Viridis"), " -- percepcyjnie r\u00f3wnomierna (r\u00f3\u017cnice
-            warto\u015bci = r\u00f3\u017cnice w kolorze), czytelna w skali szaro\u015bci
-            i bezpieczna dla daltonist\u00f3w. Domy\u015blna w wielu pakietach R."),
+          tags$li(tags$b("Viridis"), " -- percepcyjnie równomierna (różnice
+            wartości = różnice w kolorze), czytelna w skali szarości
+            i bezpieczna dla daltonistów. Domyślna w wielu pakietach R."),
           tags$li(tags$b("Okabe-Ito"), " -- paleta zaprojektowana specjalnie
-            pod k\u0105tem daltoni\u015bt\u00f3w (ok. 8% m\u0119\u017cczyzn). Klasyczny wyb\u00f3r
+            pod kątem daltoniśtów (ok. 8% mężczyzn). Klasyczny wybór
             w publikacjach naukowych."),
           tags$li(tags$b("ColorBrewer (Set2, Set3, Paired...)"), " -- rodzina palet
-            stworzonych przez kartograf\u0119 Cynthia Brewer. W R dost\u0119pne przez ",
+            stworzonych przez kartografę Cynthia Brewer. W R dostępne przez ",
             tags$code("scale_fill_brewer()"), "."),
-          tags$li(tags$b("Tableau 10"), " -- standard w narz\u0119dziach BI,
-            zbalansowana jasno\u015b\u0107 i kontrast.")
+          tags$li(tags$b("Tableau 10"), " -- standard w narzędziach BI,
+            zbalansowana jasność i kontrast.")
         )
       )
     ),
@@ -240,7 +240,7 @@ ch2_ui <- tabPanel("2. Zmienne jakościowe",
     # WIDGET 5: Mode (dominanta)
     # ========================================================================
     div(class = "widget-block",
-      h4("Dominanta - najcz\u0119\u015bciej wyst\u0119puj\u0105ca kategoria"),
+      h4("Dominanta - najczęściej występująca kategoria"),
       actionButton("ch2_mode_resample", "Losuj nowe proporcje",
                    class = "btn-primary"),
       plotOutput("ch2_mode_plot", height = "350px"),
@@ -250,7 +250,7 @@ ch2_ui <- tabPanel("2. Zmienne jakościowe",
     div(class = "chapter-transition",
       p("Zmienne jakościowe opisaliśmy tabelami częstości i dominanta.
         A co ze zmiennymi ilościowymi? Potrzebujemy nowych narzedzi -- statystyk polozenia."),
-      actionButton("ch2_next", "Dalej: 3. Statystyki polozenia \u2192",
+      actionButton("ch2_next", "Dalej: 3. Statystyki polozenia →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -297,61 +297,61 @@ ch2_server <- function(input, output, session) {
 
     if (step == 0) {
       div(class = "callout-info",
-          "Kliknij kolejne przyciski, aby zbudowa\u0107 tabel\u0119 cz\u0119sto\u015bci krok po kroku.")
+          "Kliknij kolejne przyciski, aby zbudować tabelę częstości krok po kroku.")
     } else if (step == 1) {
       div(class = "callout-info",
           tags$b("Krok 1: Surowe dane. "),
-          "Tak wygl\u0105daj\u0105 pierwsze obserwacje zmiennej ",
-          tags$code(var_label), ". Ka\u017cdy wiersz to odpowied\u017a jednego studenta.",
+          "Tak wyglądają pierwsze obserwacje zmiennej ",
+          tags$code(var_label), ". Każdy wiersz to odpowiedź jednego studenta.",
           if (is_ord) tagList(
             tags$br(),
-            tags$em("Uwaga: kategorie maj\u0105 naturaln\u0105 kolejno\u015b\u0107 -- od
+            tags$em("Uwaga: kategorie mają naturalną kolejność -- od
                     'Bardzo niezadowolony' do 'Bardzo zadowolony'.")
           )
       )
     } else if (step == 2) {
       div(class = "callout-info",
           tags$b("Krok 2: Zliczanie. "),
-          "Liczymy, ile razy wyst\u0119puje ka\u017cda kategoria. To s\u0105 ",
-          tags$b("cz\u0119sto\u015bci bezwzgl\u0119dne"), " (liczebno\u015bci).",
+          "Liczymy, ile razy występuje każda kategoria. To są ",
+          tags$b("częstości bezwzględne"), " (liczebności).",
           if (is_ord) tagList(
             tags$br(),
-            tags$em("Kategorie s\u0105 uporz\u0105dkowane -- ich kolejno\u015b\u0107 w tabeli
+            tags$em("Kategorie są uporządkowane -- ich kolejność w tabeli
                     ma znaczenie.")
           )
       )
     } else if (step == 3) {
       div(class = "callout-info",
-          tags$b("Krok 3: Cz\u0119sto\u015bci wzgl\u0119dne. "),
-          "Dzielimy ka\u017cd\u0105 liczebno\u015b\u0107 przez ca\u0142kowit\u0105 liczb\u0119 obserwacji (n = ",
-          nrow(student_data), "). Wynik mo\u017cemy wyrazi\u0107 jako u\u0142amek lub procent.")
+          tags$b("Krok 3: Częstości względne. "),
+          "Dzielimy każdą liczebność przez całkowitą liczbę obserwacji (n = ",
+          nrow(student_data), "). Wynik możemy wyrazić jako ułamek lub procent.")
     } else if (step == 4) {
       if (is_ord) {
         div(class = "callout-success",
-          tags$b("Krok 4: Cz\u0119sto\u015bci skumulowane. "),
-          "Sumujemy cz\u0119sto\u015bci narastaj\u0105co. ",
-          tags$b("Dla zmiennej porz\u0105dkowej to ma g\u0142\u0119boki sens!"),
+          tags$b("Krok 4: Częstości skumulowane. "),
+          "Sumujemy częstości narastająco. ",
+          tags$b("Dla zmiennej porządkowej to ma głęboki sens!"),
           tags$br(), tags$br(),
-          "Mo\u017cemy powiedzie\u0107 np.: ",
-          tags$em("'X% student\u00f3w jest neutralnych lub bardziej zadowolonych'"),
+          "Możemy powiedzieć np.: ",
+          tags$em("'X% studentów jest neutralnych lub bardziej zadowolonych'"),
           " albo ",
-          tags$em("'Y% student\u00f3w jest niezadowolonych lub bardzo niezadowolonych'"),
+          tags$em("'Y% studentów jest niezadowolonych lub bardzo niezadowolonych'"),
           ".",
           tags$br(), tags$br(),
-          "Skumulowany procent daje sensown\u0105 interpretacj\u0119 ",
-          tags$b("tylko wtedy, gdy kategorie maj\u0105 naturaln\u0105 kolejno\u015b\u0107."))
+          "Skumulowany procent daje sensowną interpretację ",
+          tags$b("tylko wtedy, gdy kategorie mają naturalną kolejność."))
       } else {
         div(class = "callout-warning",
-          tags$b("Krok 4: Cz\u0119sto\u015bci skumulowane. "),
-          "Sumujemy cz\u0119sto\u015bci narastaj\u0105co. ",
+          tags$b("Krok 4: Częstości skumulowane. "),
+          "Sumujemy częstości narastająco. ",
           tags$b("Ale uwaga!"), " Dla zmiennej ",
-          tags$b("nominalnej"), " kolejno\u015b\u0107 kategorii jest umowna.",
+          tags$b("nominalnej"), " kolejność kategorii jest umowna.",
           tags$br(), tags$br(),
-          "Stwierdzenie '72% student\u00f3w studiuje Informatyk\u0119 lub wcze\u015bniej'
-           nie ma sensu -- bo co znaczy 'wcze\u015bniej' w li\u015bcie kierunk\u00f3w?",
+          "Stwierdzenie '72% studentów studiuje Informatykę lub wcześniej'
+           nie ma sensu -- bo co znaczy 'wcześniej' w liście kierunków?",
           tags$br(), tags$br(),
-          tags$em("Prze\u0142\u0105cz na zmienn\u0105 porz\u0105dkow\u0105 (Zadowolenie), \u017ceby
-                  zobaczy\u0107, kiedy skumulowany procent jest naprawd\u0119 przydatny."))
+          tags$em("Przełącz na zmienną porządkową (Zadowolenie), żeby
+                  zobaczyć, kiedy skumulowany procent jest naprawdę przydatny."))
       }
     }
   })
@@ -377,16 +377,16 @@ ch2_server <- function(input, output, session) {
       Kategoria = names(counts),
       Liczebnosc = as.integer(counts)
     )
-    names(df) <- c("Kategoria", "Liczebno\u015b\u0107")
+    names(df) <- c("Kategoria", "Liczebność")
 
     if (step >= 3) {
-      df[["Cz\u0119st. wzgl\u0119dna"]] <- round(df[["Liczebno\u015b\u0107"]] / sum(df[["Liczebno\u015b\u0107"]]), 3)
-      df[["Procent (%)"]] <- round(df[["Cz\u0119st. wzgl\u0119dna"]] * 100, 1)
+      df[["Częst. względna"]] <- round(df[["Liczebność"]] / sum(df[["Liczebność"]]), 3)
+      df[["Procent (%)"]] <- round(df[["Częst. względna"]] * 100, 1)
     }
 
     if (step >= 4) {
-      df[["Skumul. liczebno\u015b\u0107"]] <- cumsum(df[["Liczebno\u015b\u0107"]])
-      df[["Skumul. procent (%)"]] <- round(cumsum(df[["Cz\u0119st. wzgl\u0119dna"]]) * 100, 1)
+      df[["Skumul. liczebność"]] <- cumsum(df[["Liczebność"]])
+      df[["Skumul. procent (%)"]] <- round(cumsum(df[["Częst. względna"]]) * 100, 1)
     }
 
     df
@@ -513,7 +513,7 @@ ch2_server <- function(input, output, session) {
   # ========================================================================
 
   observeEvent(input$ch2_color_random, {
-    # Paleta o gwarantowanym kontra\u015bcie na bia\u0142ym tle
+    # Paleta o gwarantowanym kontraście na białym tle
     safe_colors <- c(
       "#e6194B", "#3cb44b", "#4363d8", "#f58231", "#911eb4",
       "#42d4f4", "#f032e6", "#bfef45", "#fabed4", "#469990",
@@ -565,22 +565,22 @@ ch2_server <- function(input, output, session) {
       cols[as.character(smallest)] <- "#2c3e50"
       fill_colors <- cols
       subtitle <- paste0("Stronnicza - ", biggest,
-                         " wyr\u00f3\u017cniona, ", smallest, " wyciszona")
+                         " wyróżniona, ", smallest, " wyciszona")
     } else if (palette_choice == "viridis") {
       fill_colors <- setNames(
         c("#440154", "#31688e", "#35b779", "#fde725")[1:length(levels_order)],
         levels_order)
-      subtitle <- "Viridis -- percepcyjnie r\u00f3wnomierna, colorblind-safe"
+      subtitle <- "Viridis -- percepcyjnie równomierna, colorblind-safe"
     } else if (palette_choice == "set2") {
       fill_colors <- setNames(
         c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3")[1:length(levels_order)],
         levels_order)
-      subtitle <- "Set2 (ColorBrewer) -- popularny domy\u015blny wyb\u00f3r"
+      subtitle <- "Set2 (ColorBrewer) -- popularny domyślny wybór"
     } else if (palette_choice == "okabe_ito") {
       fill_colors <- setNames(
         c("#E69F00", "#56B4E9", "#009E73", "#CC79A7")[1:length(levels_order)],
         levels_order)
-      subtitle <- "Okabe-Ito -- zaprojektowana specjalnie dla daltonist\u00f3w"
+      subtitle <- "Okabe-Ito -- zaprojektowana specjalnie dla daltonistów"
     } else if (palette_choice == "tableau") {
       fill_colors <- setNames(
         c("#4e79a7", "#f28e2b", "#e15759", "#76b7b2")[1:length(levels_order)],
@@ -643,7 +643,7 @@ ch2_server <- function(input, output, session) {
       col = student_data[[col_var]]
     )
 
-    row_label <- c("plec" = "P\u0142e\u0107", "kierunek" = "Kierunek", "grupa_krwi" = "Grupa krwi")
+    row_label <- c("plec" = "Płeć", "kierunek" = "Kierunek", "grupa_krwi" = "Grupa krwi")
     col_label <- row_label
 
     if (!is.null(chart_type) && chart_type == "heatmap") {
@@ -658,7 +658,7 @@ ch2_server <- function(input, output, session) {
         fill_label <- "% kolumnowy"
         fmt <- function(x) paste0(round(x, 1), "%")
       } else {
-        fill_label <- "Liczebno\u015b\u0107"
+        fill_label <- "Liczebność"
         fmt <- function(x) as.character(x)
       }
       heat_df <- as.data.frame(as.table(tbl))
@@ -679,7 +679,7 @@ ch2_server <- function(input, output, session) {
       ggplot(df, aes(x = row, fill = col)) +
         geom_bar(position = "dodge", alpha = 0.85, color = "white") +
         scale_fill_brewer(palette = "Set2") +
-        labs(x = row_label[row_var], y = "Liczebno\u015b\u0107", fill = col_label[col_var]) +
+        labs(x = row_label[row_var], y = "Liczebność", fill = col_label[col_var]) +
         theme_minimal(base_size = 14) +
         theme(legend.position = "top")
     }

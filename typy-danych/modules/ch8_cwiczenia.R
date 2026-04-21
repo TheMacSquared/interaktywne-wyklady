@@ -7,28 +7,28 @@
 # UI
 # ============================================================================
 
-ch8_ui <- tabPanel("8. \u0106wiczenia",
+ch8_ui <- tabPanel("8. Ćwiczenia",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Poprzednio: quiz z rozpoznawania typ\u00f3w zmiennych"
+      "Poprzednio: quiz z rozpoznawania typów zmiennych"
     ),
 
-    div(class = "section-title", "\u0106wiczenia praktyczne \u2014 typy danych i statystyka opisowa"),
+    div(class = "section-title", "Ćwiczenia praktyczne — typy danych i statystyka opisowa"),
 
     div(class = "narrative",
-      p(tags$b("Czas:"), " 90 minut | ", tags$b("Narz\u0119dzie:"), " Jamovi"),
-      p("Trzy bloki zada\u0144 \u2014 od rozpoznawania typ\u00f3w zmiennych przez dob\u00f3r narz\u0119dzi
-        po analiz\u0119 prawdziwych danych. Ka\u017cde zadanie ma ",
-        tags$b("ukryte rozwi\u0105zanie"), " \u2014 kliknij przycisk, aby je zobaczy\u0107.")
+      p(tags$b("Czas:"), " 90 minut | ", tags$b("Narzędzie:"), " Jamovi"),
+      p("Trzy bloki zadań — od rozpoznawania typów zmiennych przez dobór narzędzi
+        po analizę prawdziwych danych. Każde zadanie ma ",
+        tags$b("ukryte rozwiązanie"), " — kliknij przycisk, aby je zobaczyć.")
     ),
 
     div(class = "callout-info",
       selectInput("ch8_kierunek", tags$b("Wybierz wariant dla kierunku:"),
         choices = list(
-          "In\u017cynieria Bezpiecze\u0144stwa (BHP)" = "bhp",
+          "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
           "Rolnictwo"                                = "rol",
-          "Technologia \u017cywno\u015bci"            = "zyw"
+          "Technologia żywności"            = "zyw"
         ),
         selected = "bhp",
         width = "100%"
@@ -51,24 +51,24 @@ ch8_ui <- tabPanel("8. \u0106wiczenia",
 
 .ch8_content_bhp <- function() tagList(
 
-  div(class = "section-title", "Blok 1: Rozpoznawanie typ\u00f3w zmiennych (20 min)"),
+  div(class = "section-title", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
   div(class = "callout-info",
-    p("W Jamovi: ", tags$b("Data \u2192 Setup"), " \u2014 sprawd\u017a, jak Jamovi automatycznie rozpozna\u0142 typy zmiennych.
-      Czy ma racj\u0119? Popraw, je\u015bli trzeba.")
+    p("W Jamovi: ", tags$b("Data → Setup"), " — sprawdź, jak Jamovi automatycznie rozpoznał typy zmiennych.
+      Czy ma rację? Popraw, jeśli trzeba.")
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 1 \u2014 Klasyfikacja zmiennych BHP"),
+    h4("Zadanie 1 — Klasyfikacja zmiennych BHP"),
     div(class = "narrative",
-      p("Otw\u00f3rz plik ", tags$code("dane/bhp_zaklady.csv"), " w Jamovi.
-        Dla ka\u017cdej zmiennej w zbiorze okre\u015bl:"),
+      p("Otwórz plik ", tags$code("dane/bhp_zaklady.csv"), " w Jamovi.
+        Dla każdej zmiennej w zbiorze określ:"),
       tags$ol(
-        tags$li("Jaki to typ zmiennej? (nominalna, porz\u0105dkowa, dyskretna, ci\u0105g\u0142a)"),
-        tags$li("Czy Jamovi poprawnie rozpozna\u0142 typ? (sprawd\u017a ikon\u0119 przy nazwie zmiennej)"),
-        tags$li("Jakie statystyki opisowe s\u0105 sensowne dla tej zmiennej?"),
+        tags$li("Jaki to typ zmiennej? (nominalna, porządkowa, dyskretna, ciągła)"),
+        tags$li("Czy Jamovi poprawnie rozpoznał typ? (sprawdź ikonę przy nazwie zmiennej)"),
+        tags$li("Jakie statystyki opisowe są sensowne dla tej zmiennej?"),
         tags$li("Jaki wykres jest odpowiedni?")
       ),
-      p("Wype\u0142nij tabel\u0119:"),
+      p("Wypełnij tabelę:"),
       tags$table(class = "table table-striped table-bordered",
         tags$thead(tags$tr(
           tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
@@ -83,122 +83,122 @@ ch8_ui <- tabPanel("8. \u0106wiczenia",
         )
       )
     ),
-    actionButton("ch8_ans1", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol1")
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 2 \u2014 Pu\u0142apki typowania"),
+    h4("Zadanie 2 — Pułapki typowania"),
     div(class = "narrative",
       p("Odpowiedz na pytania:"),
       tags$ol(
-        tags$li("Zmienna ", tags$code("kategoria_ryzyka"), " przyjmuje warto\u015bci 1, 2, 3.
-          Czy to zmienna ilo\u015bciowa? Uzasadnij."),
+        tags$li("Zmienna ", tags$code("kategoria_ryzyka"), " przyjmuje wartości 1, 2, 3.
+          Czy to zmienna ilościowa? Uzasadnij."),
         tags$li("Zmienna ", tags$code("ma_certyfikat_iso"), " jest zakodowana jako 0/1.
           Jaki to faktycznie typ zmiennej?"),
-        tags$li("Gdyby zmienna ", tags$code("liczba_wypadkow"), " mia\u0142a warto\u015bci 0\u2013300,
-          czy zmieni\u0142oby to jej typ? A gdyby\u015bmy j\u0105 przekszta\u0142cili na kategorie:
-          \u201ema\u0142o\u201d, \u201e\u015brednio\u201d, \u201edu\u017co\u201d?"),
-        tags$li("Czy \u015brednia z ", tags$code("kategoria_ryzyka"), " (np. 1.87) ma sens?
-          Co by\u015b u\u017cy\u0142/a zamiast tego?")
+        tags$li("Gdyby zmienna ", tags$code("liczba_wypadkow"), " miała wartości 0–300,
+          czy zmieniłoby to jej typ? A gdybyśmy ją przekształcili na kategorie:
+          „mało”, „średnio”, „dużo”?"),
+        tags$li("Czy średnia z ", tags$code("kategoria_ryzyka"), " (np. 1.87) ma sens?
+          Co byś użył/a zamiast tego?")
       )
     ),
-    actionButton("ch8_ans2", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol2")
   ),
 
-  div(class = "section-title", "Blok 2: Dob\u00f3r narz\u0119dzi statystycznych (25 min)"),
+  div(class = "section-title", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
 
   div(class = "widget-block",
-    h4("Zadanie 3 \u2014 Statystyki dla ka\u017cdego typu"),
+    h4("Zadanie 3 — Statystyki dla każdego typu"),
     div(class = "narrative",
-      p("W Jamovi: ", tags$b("Analyses \u2192 Exploration \u2192 Descriptives"), ".
-        Dla ka\u017cdej zmiennej oblicz ", tags$b("odpowiednie"), " statystyki opisowe."),
+      p("W Jamovi: ", tags$b("Analyses → Exploration → Descriptives"), ".
+        Dla każdej zmiennej oblicz ", tags$b("odpowiednie"), " statystyki opisowe."),
       tags$ol(
-        tags$li("Dla ", tags$code("branza"), ": tabela cz\u0119sto\u015bci i wykres s\u0142upkowy.
-          Kt\u00f3ra bran\u017ca dominuje?"),
-        tags$li("Dla ", tags$code("kategoria_ryzyka"), ": tabela cz\u0119sto\u015bci skumulowanych.
-          Jaki procent zak\u0142ad\u00f3w ma ryzyko \u2264 2?"),
-        tags$li("Dla ", tags$code("liczba_wypadkow"), ": \u015brednia, mediana, SD, IQR.
-          Czy \u015brednia i mediana s\u0105 bliskie? Co to m\u00f3wi o kszta\u0142cie rozk\u0142adu?"),
-        tags$li("Dla ", tags$code("sredni_halas_db"), ": \u015brednia, SD, histogram.
-          Jaki kszta\u0142t ma rozk\u0142ad?"),
-        tags$li(tags$em("Refleksja:"), " Kt\u00f3re statystyki Jamovi ",
-          tags$b("pozwala"), " obliczy\u0107, ale kt\u00f3re s\u0105 ",
-          tags$b("bezsensowne"), "? Podaj przyk\u0142ad.")
+        tags$li("Dla ", tags$code("branza"), ": tabela częstości i wykres słupkowy.
+          Która branża dominuje?"),
+        tags$li("Dla ", tags$code("kategoria_ryzyka"), ": tabela częstości skumulowanych.
+          Jaki procent zakładów ma ryzyko ≤ 2?"),
+        tags$li("Dla ", tags$code("liczba_wypadkow"), ": średnia, mediana, SD, IQR.
+          Czy średnia i mediana są bliskie? Co to mówi o kształcie rozkładu?"),
+        tags$li("Dla ", tags$code("sredni_halas_db"), ": średnia, SD, histogram.
+          Jaki kształt ma rozkład?"),
+        tags$li(tags$em("Refleksja:"), " Które statystyki Jamovi ",
+          tags$b("pozwala"), " obliczyć, ale które są ",
+          tags$b("bezsensowne"), "? Podaj przykład.")
       )
     ),
-    actionButton("ch8_ans3", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol3")
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 4 \u2014 Wykres dobierz do typu"),
+    h4("Zadanie 4 — Wykres dobierz do typu"),
     div(class = "narrative",
-      p("Stw\u00f3rz w Jamovi po jednym wykresie dla ka\u017cdego typu zmiennej:"),
+      p("Stwórz w Jamovi po jednym wykresie dla każdego typu zmiennej:"),
       tags$ol(
-        tags$li(tags$b("Nominalna"), " (", tags$code("branza"), "): wykres s\u0142upkowy"),
-        tags$li(tags$b("Porz\u0105dkowa"), " (", tags$code("kategoria_ryzyka"), "): wykres s\u0142upkowy z zachowan\u0105 kolejno\u015bci\u0105"),
-        tags$li(tags$b("Dyskretna"), " (", tags$code("liczba_wypadkow"), "): wykres s\u0142upkowy lub punktowy"),
-        tags$li(tags$b("Ci\u0105g\u0142a"), " (", tags$code("sredni_halas_db"), "): histogram + boxplot")
+        tags$li(tags$b("Nominalna"), " (", tags$code("branza"), "): wykres słupkowy"),
+        tags$li(tags$b("Porządkowa"), " (", tags$code("kategoria_ryzyka"), "): wykres słupkowy z zachowaną kolejnością"),
+        tags$li(tags$b("Dyskretna"), " (", tags$code("liczba_wypadkow"), "): wykres słupkowy lub punktowy"),
+        tags$li(tags$b("Ciągła"), " (", tags$code("sredni_halas_db"), "): histogram + boxplot")
       ),
       p(tags$em("Pytanie:"), " Dlaczego histogram dla ", tags$code("liczba_wypadkow"),
-        " mo\u017ce by\u0107 mylący? (Podpowied\u017a: ile r\u00f3\u017cnych warto\u015bci ma ta zmienna?)")
+        " może być mylący? (Podpowiedź: ile różnych wartości ma ta zmienna?)")
     ),
-    actionButton("ch8_ans4", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol4")
   ),
 
   div(class = "section-title", "Blok 3: Analiza kompleksowa (45 min)"),
 
   div(class = "widget-block",
-    h4("Zadanie 5 \u2014 Profil zak\u0142adu pracy"),
+    h4("Zadanie 5 — Profil zakładu pracy"),
     div(class = "narrative",
-      p("Przygotuj kr\u00f3tki raport opisowy dla zbioru ", tags$code("bhp_zaklady.csv"),
-        ". Raport powinien zawiera\u0107:"),
+      p("Przygotuj krótki raport opisowy dla zbioru ", tags$code("bhp_zaklady.csv"),
+        ". Raport powinien zawierać:"),
       tags$ol(
-        tags$li("Ile zak\u0142ad\u00f3w jest w zbiorze? Ile zmiennych?"),
-        tags$li("Rozbicie bran\u017cowe: tabela cz\u0119sto\u015bci + wykres s\u0142upkowy"),
-        tags$li("Wypadkowo\u015b\u0107: \u015brednia, mediana, SD, min, max, histogram"),
-        tags$li("Poziom ha\u0142asu: \u015brednia, SD, odsetek zak\u0142ad\u00f3w powy\u017cej normy 85 dB"),
-        tags$li("Por\u00f3wnanie: ha\u0142as wg kategorii ryzyka (boxplot)")
+        tags$li("Ile zakładów jest w zbiorze? Ile zmiennych?"),
+        tags$li("Rozbicie branżowe: tabela częstości + wykres słupkowy"),
+        tags$li("Wypadkowość: średnia, mediana, SD, min, max, histogram"),
+        tags$li("Poziom hałasu: średnia, SD, odsetek zakładów powyżej normy 85 dB"),
+        tags$li("Porównanie: hałas wg kategorii ryzyka (boxplot)")
       ),
-      p(tags$em("Wskaz\u00f3wka:"), " W Jamovi mo\u017cesz rozbi\u0107 analiz\u0119 na grupy przez ",
+      p(tags$em("Wskazówka:"), " W Jamovi możesz rozbić analizę na grupy przez ",
         tags$b("Split by"), " w Descriptives.")
     ),
-    actionButton("ch8_ans5", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol5")
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 6 \u2014 Decyzja na podstawie danych"),
+    h4("Zadanie 6 — Decyzja na podstawie danych"),
     div(class = "narrative",
-      p("Inspektor BHP musi zdecydowa\u0107, w kt\u00f3rych bran\u017cach przeprowadzi\u0107 dodatkowe kontrole.
+      p("Inspektor BHP musi zdecydować, w których branżach przeprowadzić dodatkowe kontrole.
         Na podstawie danych odpowiedz:"),
       tags$ol(
-        tags$li("W kt\u00f3rej bran\u017cy jest najwy\u017csza ", tags$b("mediana"), " liczby wypadk\u00f3w?
-          Dlaczego mediana, a nie \u015brednia?"),
-        tags$li("W kt\u00f3rej bran\u017cy jest najwy\u017cszy ", tags$b("odsetek"), " zak\u0142ad\u00f3w z ha\u0142asem > 85 dB?"),
-        tags$li("Czy istnieje zwi\u0105zek mi\u0119dzy kategori\u0105 ryzyka a liczb\u0105 wypadk\u00f3w?
-          (Sprawd\u017a boxplot: ", tags$code("liczba_wypadkow"), " ~ ", tags$code("kategoria_ryzyka"), ")"),
-        tags$li("Sformu\u0142uj rekomendacj\u0119 jednym zdaniem: kt\u00f3ra bran\u017ca wymaga pilnej kontroli i dlaczego?")
+        tags$li("W której branży jest najwyższa ", tags$b("mediana"), " liczby wypadków?
+          Dlaczego mediana, a nie średnia?"),
+        tags$li("W której branży jest najwyższy ", tags$b("odsetek"), " zakładów z hałasem > 85 dB?"),
+        tags$li("Czy istnieje związek między kategorią ryzyka a liczbą wypadków?
+          (Sprawdź boxplot: ", tags$code("liczba_wypadkow"), " ~ ", tags$code("kategoria_ryzyka"), ")"),
+        tags$li("Sformułuj rekomendację jednym zdaniem: która branża wymaga pilnej kontroli i dlaczego?")
       )
     ),
-    actionButton("ch8_ans6", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol6")
   ),
 
   div(class = "section-title", "Podsumowanie"),
   div(class = "callout-warning",
-    p(tags$b("Po zako\u0144czeniu \u0107wicze\u0144 odpowiedz na pytania:")),
+    p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
     tags$ol(
-      tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest wa\u017cna ",
-              tags$em("zanim"), " zaczniemy analiz\u0119?"),
-      tags$li("Podaj przyk\u0142ad zmiennej, kt\u00f3r\u0105 Jamovi automatycznie \u017ale zaklasyfikuje. Dlaczego?"),
-      tags$li("Jaki jest najcz\u0119stszy b\u0142\u0105d zwi\u0105zany z typem zmiennej, kt\u00f3ry zaobserwowa\u0142e\u015b/a\u015b na zaj\u0119ciach?")
+      tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest ważna ",
+              tags$em("zanim"), " zaczniemy analizę?"),
+      tags$li("Podaj przykład zmiennej, którą Jamovi automatycznie źle zaklasyfikuje. Dlaczego?"),
+      tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
     )
   ),
-  actionButton("ch8_ans_summary", "Poka\u017c odpowiedzi", class = "btn-outline-success btn-sm"),
+  actionButton("ch8_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
   uiOutput("ch8_sol_summary")
 )
 
@@ -209,24 +209,24 @@ ch8_ui <- tabPanel("8. \u0106wiczenia",
 
 .ch8_content_rol <- function() tagList(
 
-  div(class = "section-title", "Blok 1: Rozpoznawanie typ\u00f3w zmiennych (20 min)"),
+  div(class = "section-title", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
   div(class = "callout-info",
-    p("W Jamovi: ", tags$b("Data \u2192 Setup"), " \u2014 sprawd\u017a, jak Jamovi automatycznie rozpozna\u0142 typy zmiennych.
-      Czy ma racj\u0119? Popraw, je\u015bli trzeba.")
+    p("W Jamovi: ", tags$b("Data → Setup"), " — sprawdź, jak Jamovi automatycznie rozpoznał typy zmiennych.
+      Czy ma rację? Popraw, jeśli trzeba.")
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 1 \u2014 Klasyfikacja zmiennych rolniczych"),
+    h4("Zadanie 1 — Klasyfikacja zmiennych rolniczych"),
     div(class = "narrative",
-      p("Otw\u00f3rz plik ", tags$code("dane/rolnictwo_pola.csv"), " w Jamovi.
-        Dla ka\u017cdej zmiennej w zbiorze okre\u015bl:"),
+      p("Otwórz plik ", tags$code("dane/rolnictwo_pola.csv"), " w Jamovi.
+        Dla każdej zmiennej w zbiorze określ:"),
       tags$ol(
-        tags$li("Jaki to typ zmiennej? (nominalna, porz\u0105dkowa, dyskretna, ci\u0105g\u0142a)"),
-        tags$li("Czy Jamovi poprawnie rozpozna\u0142 typ?"),
-        tags$li("Jakie statystyki opisowe s\u0105 sensowne?"),
+        tags$li("Jaki to typ zmiennej? (nominalna, porządkowa, dyskretna, ciągła)"),
+        tags$li("Czy Jamovi poprawnie rozpoznał typ?"),
+        tags$li("Jakie statystyki opisowe są sensowne?"),
         tags$li("Jaki wykres jest odpowiedni?")
       ),
-      p("Wype\u0142nij tabel\u0119:"),
+      p("Wypełnij tabelę:"),
       tags$table(class = "table table-striped table-bordered",
         tags$thead(tags$tr(
           tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
@@ -241,113 +241,113 @@ ch8_ui <- tabPanel("8. \u0106wiczenia",
         )
       )
     ),
-    actionButton("ch8_ans1", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol1")
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 2 \u2014 Pu\u0142apki typowania"),
+    h4("Zadanie 2 — Pułapki typowania"),
     div(class = "narrative",
       tags$ol(
-        tags$li("Zmienna ", tags$code("klasa_gleby"), " przyjmuje warto\u015bci I, II, III, IV, V, VI.
+        tags$li("Zmienna ", tags$code("klasa_gleby"), " przyjmuje wartości I, II, III, IV, V, VI.
           Czy to zmienna nominalna? Uzasadnij."),
         tags$li("Zmienna ", tags$code("nawozenie_organiczne"), " jest zakodowana jako 0/1.
           Jaki to faktycznie typ zmiennej?"),
-        tags$li("Gdyby\u015bmy plon przekszta\u0142cili na kategorie: \u201eniski\u201d, \u201e\u015bredni\u201d, \u201ewysoki\u201d
-          \u2014 jak zmieni\u0142by si\u0119 typ zmiennej?"),
-        tags$li("Czy \u015brednia z ", tags$code("klasa_gleby"), " (np. 3.2) ma sens?
-          Co by\u015b u\u017cy\u0142/a zamiast tego?")
+        tags$li("Gdybyśmy plon przekształcili na kategorie: „niski”, „średni”, „wysoki”
+          — jak zmieniłby się typ zmiennej?"),
+        tags$li("Czy średnia z ", tags$code("klasa_gleby"), " (np. 3.2) ma sens?
+          Co byś użył/a zamiast tego?")
       )
     ),
-    actionButton("ch8_ans2", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol2")
   ),
 
-  div(class = "section-title", "Blok 2: Dob\u00f3r narz\u0119dzi statystycznych (25 min)"),
+  div(class = "section-title", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
 
   div(class = "widget-block",
-    h4("Zadanie 3 \u2014 Statystyki dla ka\u017cdego typu"),
+    h4("Zadanie 3 — Statystyki dla każdego typu"),
     div(class = "narrative",
-      p("W Jamovi: ", tags$b("Analyses \u2192 Exploration \u2192 Descriptives"), "."),
+      p("W Jamovi: ", tags$b("Analyses → Exploration → Descriptives"), "."),
       tags$ol(
-        tags$li("Dla ", tags$code("uprawa"), ": tabela cz\u0119sto\u015bci i wykres s\u0142upkowy.
-          Kt\u00f3ra uprawa dominuje?"),
-        tags$li("Dla ", tags$code("klasa_gleby"), ": tabela cz\u0119sto\u015bci skumulowanych.
-          Jaki procent p\u00f3l ma gleb\u0119 klasy I\u2013III?"),
-        tags$li("Dla ", tags$code("liczba_zabiegow"), ": \u015brednia, mediana, SD, IQR.
-          Czy rozk\u0142ad jest symetryczny?"),
-        tags$li("Dla ", tags$code("plon_t_ha"), ": \u015brednia, SD, histogram.
-          Jak wygl\u0105da rozk\u0142ad?"),
-        tags$li(tags$em("Refleksja:"), " Co si\u0119 stanie, gdy policzysz \u015bredni\u0105 z ",
+        tags$li("Dla ", tags$code("uprawa"), ": tabela częstości i wykres słupkowy.
+          Która uprawa dominuje?"),
+        tags$li("Dla ", tags$code("klasa_gleby"), ": tabela częstości skumulowanych.
+          Jaki procent pól ma glebę klasy I–III?"),
+        tags$li("Dla ", tags$code("liczba_zabiegow"), ": średnia, mediana, SD, IQR.
+          Czy rozkład jest symetryczny?"),
+        tags$li("Dla ", tags$code("plon_t_ha"), ": średnia, SD, histogram.
+          Jak wygląda rozkład?"),
+        tags$li(tags$em("Refleksja:"), " Co się stanie, gdy policzysz średnią z ",
           tags$code("uprawa"), " w Jamovi? Czy program Ci na to pozwoli?")
       )
     ),
-    actionButton("ch8_ans3", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol3")
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 4 \u2014 Wykres dobierz do typu"),
+    h4("Zadanie 4 — Wykres dobierz do typu"),
     div(class = "narrative",
-      p("Stw\u00f3rz w Jamovi po jednym wykresie dla ka\u017cdego typu zmiennej:"),
+      p("Stwórz w Jamovi po jednym wykresie dla każdego typu zmiennej:"),
       tags$ol(
-        tags$li(tags$b("Nominalna"), " (", tags$code("uprawa"), "): wykres s\u0142upkowy"),
-        tags$li(tags$b("Porz\u0105dkowa"), " (", tags$code("klasa_gleby"), "): wykres s\u0142upkowy z kolejno\u015bci\u0105"),
-        tags$li(tags$b("Dyskretna"), " (", tags$code("liczba_zabiegow"), "): wykres s\u0142upkowy"),
-        tags$li(tags$b("Ci\u0105g\u0142a"), " (", tags$code("plon_t_ha"), "): histogram + boxplot")
+        tags$li(tags$b("Nominalna"), " (", tags$code("uprawa"), "): wykres słupkowy"),
+        tags$li(tags$b("Porządkowa"), " (", tags$code("klasa_gleby"), "): wykres słupkowy z kolejnością"),
+        tags$li(tags$b("Dyskretna"), " (", tags$code("liczba_zabiegow"), "): wykres słupkowy"),
+        tags$li(tags$b("Ciągła"), " (", tags$code("plon_t_ha"), "): histogram + boxplot")
       ),
-      p(tags$em("Pytanie:"), " Dlaczego wykres ko\u0142owy dla ",
-        tags$code("uprawa"), " by\u0142by z\u0142ym wyborem, je\u015bli upraw jest 6+?")
+      p(tags$em("Pytanie:"), " Dlaczego wykres kołowy dla ",
+        tags$code("uprawa"), " byłby złym wyborem, jeśli upraw jest 6+?")
     ),
-    actionButton("ch8_ans4", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol4")
   ),
 
   div(class = "section-title", "Blok 3: Analiza kompleksowa (45 min)"),
 
   div(class = "widget-block",
-    h4("Zadanie 5 \u2014 Profil gospodarstwa"),
+    h4("Zadanie 5 — Profil gospodarstwa"),
     div(class = "narrative",
-      p("Przygotuj kr\u00f3tki raport opisowy dla zbioru ", tags$code("rolnictwo_pola.csv"), ":"),
+      p("Przygotuj krótki raport opisowy dla zbioru ", tags$code("rolnictwo_pola.csv"), ":"),
       tags$ol(
-        tags$li("Ile p\u00f3l jest w zbiorze? Ile zmiennych?"),
-        tags$li("Struktura upraw: tabela cz\u0119sto\u015bci + wykres s\u0142upkowy"),
-        tags$li("Plonowanie: \u015brednia, mediana, SD, min, max, histogram"),
-        tags$li("Powierzchnia: \u015brednia, SD, histogram. Czy s\u0105 pola wyj\u0105tkowo du\u017ce?"),
-        tags$li("Por\u00f3wnanie: plon wg klasy gleby (boxplot)")
+        tags$li("Ile pól jest w zbiorze? Ile zmiennych?"),
+        tags$li("Struktura upraw: tabela częstości + wykres słupkowy"),
+        tags$li("Plonowanie: średnia, mediana, SD, min, max, histogram"),
+        tags$li("Powierzchnia: średnia, SD, histogram. Czy są pola wyjątkowo duże?"),
+        tags$li("Porównanie: plon wg klasy gleby (boxplot)")
       )
     ),
-    actionButton("ch8_ans5", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol5")
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 6 \u2014 Decyzja agronomiczna"),
+    h4("Zadanie 6 — Decyzja agronomiczna"),
     div(class = "narrative",
-      p("Doradca rolniczy musi zdecydowa\u0107, kt\u00f3re pola wymagaj\u0105 interwencji. Na podstawie danych:"),
+      p("Doradca rolniczy musi zdecydować, które pola wymagają interwencji. Na podstawie danych:"),
       tags$ol(
-        tags$li("Kt\u00f3ra uprawa ma najni\u017csz\u0105 ", tags$b("median\u0119"), " plonu? Dlaczego mediana?"),
-        tags$li("Kt\u00f3ra klasa gleby ma najwi\u0119kszy ", tags$b("rozrzut"), " plon\u00f3w (IQR)?"),
-        tags$li("Czy pola z nawozeniem organicznym maj\u0105 wy\u017csze plony?
+        tags$li("Która uprawa ma najniższą ", tags$b("medianę"), " plonu? Dlaczego mediana?"),
+        tags$li("Która klasa gleby ma największy ", tags$b("rozrzut"), " plonów (IQR)?"),
+        tags$li("Czy pola z nawozeniem organicznym mają wyższe plony?
           (Boxplot: ", tags$code("plon_t_ha"), " ~ ", tags$code("nawozenie_organiczne"), ")"),
-        tags$li("Sformu\u0142uj rekomendacj\u0119: kt\u00f3re pola wymagaj\u0105 uwagi i dlaczego?")
+        tags$li("Sformułuj rekomendację: które pola wymagają uwagi i dlaczego?")
       )
     ),
-    actionButton("ch8_ans6", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol6")
   ),
 
   div(class = "section-title", "Podsumowanie"),
   div(class = "callout-warning",
-    p(tags$b("Po zako\u0144czeniu \u0107wicze\u0144 odpowiedz na pytania:")),
+    p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
     tags$ol(
-      tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest wa\u017cna ",
-              tags$em("zanim"), " zaczniemy analiz\u0119?"),
-      tags$li("Podaj przyk\u0142ad zmiennej, kt\u00f3r\u0105 Jamovi automatycznie \u017ale zaklasyfikuje. Dlaczego?"),
-      tags$li("Jaki jest najcz\u0119stszy b\u0142\u0105d zwi\u0105zany z typem zmiennej, kt\u00f3ry zaobserwowa\u0142e\u015b/a\u015b na zaj\u0119ciach?")
+      tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest ważna ",
+              tags$em("zanim"), " zaczniemy analizę?"),
+      tags$li("Podaj przykład zmiennej, którą Jamovi automatycznie źle zaklasyfikuje. Dlaczego?"),
+      tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
     )
   ),
-  actionButton("ch8_ans_summary", "Poka\u017c odpowiedzi", class = "btn-outline-success btn-sm"),
+  actionButton("ch8_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
   uiOutput("ch8_sol_summary")
 )
 
@@ -358,24 +358,24 @@ ch8_ui <- tabPanel("8. \u0106wiczenia",
 
 .ch8_content_zyw <- function() tagList(
 
-  div(class = "section-title", "Blok 1: Rozpoznawanie typ\u00f3w zmiennych (20 min)"),
+  div(class = "section-title", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
   div(class = "callout-info",
-    p("W Jamovi: ", tags$b("Data \u2192 Setup"), " \u2014 sprawd\u017a, jak Jamovi automatycznie rozpozna\u0142 typy zmiennych.
-      Czy ma racj\u0119? Popraw, je\u015bli trzeba.")
+    p("W Jamovi: ", tags$b("Data → Setup"), " — sprawdź, jak Jamovi automatycznie rozpoznał typy zmiennych.
+      Czy ma rację? Popraw, jeśli trzeba.")
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 1 \u2014 Klasyfikacja zmiennych technologicznych"),
+    h4("Zadanie 1 — Klasyfikacja zmiennych technologicznych"),
     div(class = "narrative",
-      p("Otw\u00f3rz plik ", tags$code("dane/zywnosc_partie.csv"), " w Jamovi.
-        Dla ka\u017cdej zmiennej w zbiorze okre\u015bl:"),
+      p("Otwórz plik ", tags$code("dane/zywnosc_partie.csv"), " w Jamovi.
+        Dla każdej zmiennej w zbiorze określ:"),
       tags$ol(
         tags$li("Jaki to typ zmiennej?"),
-        tags$li("Czy Jamovi poprawnie rozpozna\u0142 typ?"),
-        tags$li("Jakie statystyki opisowe s\u0105 sensowne?"),
+        tags$li("Czy Jamovi poprawnie rozpoznał typ?"),
+        tags$li("Jakie statystyki opisowe są sensowne?"),
         tags$li("Jaki wykres jest odpowiedni?")
       ),
-      p("Wype\u0142nij tabel\u0119:"),
+      p("Wypełnij tabelę:"),
       tags$table(class = "table table-striped table-bordered",
         tags$thead(tags$tr(
           tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
@@ -390,114 +390,114 @@ ch8_ui <- tabPanel("8. \u0106wiczenia",
         )
       )
     ),
-    actionButton("ch8_ans1", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol1")
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 2 \u2014 Pu\u0142apki typowania"),
+    h4("Zadanie 2 — Pułapki typowania"),
     div(class = "narrative",
       tags$ol(
-        tags$li("Zmienna ", tags$code("klasa_jakosci"), " przyjmuje warto\u015bci Premium, Standard, Ekonomiczna.
+        tags$li("Zmienna ", tags$code("klasa_jakosci"), " przyjmuje wartości Premium, Standard, Ekonomiczna.
           Czy to zmienna nominalna? Uzasadnij."),
         tags$li("Zmienna ", tags$code("spelnia_norme"), " jest zakodowana jako TAK/NIE.
           Jaki to faktycznie typ zmiennej?"),
-        tags$li("Gdyby\u015bmy zawarto\u015b\u0107 soli przekszta\u0142cili na kategorie:
-          \u201eniska\u201d, \u201enormalna\u201d, \u201ewysoka\u201d \u2014 jak zmieni\u0142by si\u0119 typ zmiennej?"),
-        tags$li("Czy \u015brednia z ", tags$code("klasa_jakosci"), " ma sens? Dlaczego?")
+        tags$li("Gdybyśmy zawartość soli przekształcili na kategorie:
+          „niska”, „normalna”, „wysoka” — jak zmieniłby się typ zmiennej?"),
+        tags$li("Czy średnia z ", tags$code("klasa_jakosci"), " ma sens? Dlaczego?")
       )
     ),
-    actionButton("ch8_ans2", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol2")
   ),
 
-  div(class = "section-title", "Blok 2: Dob\u00f3r narz\u0119dzi statystycznych (25 min)"),
+  div(class = "section-title", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
 
   div(class = "widget-block",
-    h4("Zadanie 3 \u2014 Statystyki dla ka\u017cdego typu"),
+    h4("Zadanie 3 — Statystyki dla każdego typu"),
     div(class = "narrative",
-      p("W Jamovi: ", tags$b("Analyses \u2192 Exploration \u2192 Descriptives"), "."),
+      p("W Jamovi: ", tags$b("Analyses → Exploration → Descriptives"), "."),
       tags$ol(
-        tags$li("Dla ", tags$code("typ_produktu"), ": tabela cz\u0119sto\u015bci + wykres s\u0142upkowy.
-          Kt\u00f3ry typ dominuje?"),
-        tags$li("Dla ", tags$code("klasa_jakosci"), ": tabela cz\u0119sto\u015bci skumulowanych.
+        tags$li("Dla ", tags$code("typ_produktu"), ": tabela częstości + wykres słupkowy.
+          Który typ dominuje?"),
+        tags$li("Dla ", tags$code("klasa_jakosci"), ": tabela częstości skumulowanych.
           Jaki procent partii to klasa Premium lub Standard?"),
-        tags$li("Dla ", tags$code("liczba_reklamacji"), ": \u015brednia, mediana, SD, IQR.
-          Czy rozk\u0142ad jest symetryczny?"),
-        tags$li("Dla ", tags$code("zawartosc_soli_pct"), ": \u015brednia, SD, histogram.
-          Jaki procent partii przekracza norm\u0119 2.5%?"),
-        tags$li(tags$em("Refleksja:"), " Jakie statystyki Jamovi pozwala obliczy\u0107 dla ",
-          tags$code("typ_produktu"), ", ale kt\u00f3re s\u0105 bezsensowne?")
+        tags$li("Dla ", tags$code("liczba_reklamacji"), ": średnia, mediana, SD, IQR.
+          Czy rozkład jest symetryczny?"),
+        tags$li("Dla ", tags$code("zawartosc_soli_pct"), ": średnia, SD, histogram.
+          Jaki procent partii przekracza normę 2.5%?"),
+        tags$li(tags$em("Refleksja:"), " Jakie statystyki Jamovi pozwala obliczyć dla ",
+          tags$code("typ_produktu"), ", ale które są bezsensowne?")
       )
     ),
-    actionButton("ch8_ans3", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol3")
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 4 \u2014 Wykres dobierz do typu"),
+    h4("Zadanie 4 — Wykres dobierz do typu"),
     div(class = "narrative",
-      p("Stw\u00f3rz po jednym wykresie dla ka\u017cdego typu zmiennej:"),
+      p("Stwórz po jednym wykresie dla każdego typu zmiennej:"),
       tags$ol(
-        tags$li(tags$b("Nominalna"), " (", tags$code("typ_produktu"), "): wykres s\u0142upkowy"),
-        tags$li(tags$b("Porz\u0105dkowa"), " (", tags$code("klasa_jakosci"), "): wykres s\u0142upkowy z kolejno\u015bci\u0105"),
-        tags$li(tags$b("Dyskretna"), " (", tags$code("liczba_reklamacji"), "): wykres s\u0142upkowy"),
-        tags$li(tags$b("Ci\u0105g\u0142a"), " (", tags$code("zawartosc_soli_pct"), "): histogram + boxplot")
+        tags$li(tags$b("Nominalna"), " (", tags$code("typ_produktu"), "): wykres słupkowy"),
+        tags$li(tags$b("Porządkowa"), " (", tags$code("klasa_jakosci"), "): wykres słupkowy z kolejnością"),
+        tags$li(tags$b("Dyskretna"), " (", tags$code("liczba_reklamacji"), "): wykres słupkowy"),
+        tags$li(tags$b("Ciągła"), " (", tags$code("zawartosc_soli_pct"), "): histogram + boxplot")
       ),
-      p(tags$em("Pytanie:"), " Gdyby\u015b chcia\u0142/a por\u00f3wna\u0107 zawarto\u015b\u0107 soli mi\u0119dzy typami produkt\u00f3w,
-        jaki wykres by\u015b wybra\u0142/a?")
+      p(tags$em("Pytanie:"), " Gdybyś chciał/a porównać zawartość soli między typami produktów,
+        jaki wykres byś wybrał/a?")
     ),
-    actionButton("ch8_ans4", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol4")
   ),
 
   div(class = "section-title", "Blok 3: Analiza kompleksowa (45 min)"),
 
   div(class = "widget-block",
-    h4("Zadanie 5 \u2014 Profil produkcji"),
+    h4("Zadanie 5 — Profil produkcji"),
     div(class = "narrative",
       p("Przygotuj raport opisowy dla zbioru ", tags$code("zywnosc_partie.csv"), ":"),
       tags$ol(
         tags$li("Ile partii jest w zbiorze? Ile zmiennych?"),
-        tags$li("Struktura produkcji: tabela cz\u0119sto\u015bci typ\u00f3w + wykres s\u0142upkowy"),
-        tags$li("Jako\u015b\u0107: rozk\u0142ad klas jako\u015bci + odsetek partii spe\u0142niaj\u0105cych norm\u0119"),
-        tags$li("Masa netto: \u015brednia, SD, histogram. Czy masy skupiaj\u0105 si\u0119 wok\u00f3\u0142 warto\u015bci nominalnej?"),
-        tags$li("Por\u00f3wnanie: zawarto\u015b\u0107 soli wg typu produktu (boxplot)")
+        tags$li("Struktura produkcji: tabela częstości typów + wykres słupkowy"),
+        tags$li("Jakość: rozkład klas jakości + odsetek partii spełniających normę"),
+        tags$li("Masa netto: średnia, SD, histogram. Czy masy skupiają się wokół wartości nominalnej?"),
+        tags$li("Porównanie: zawartość soli wg typu produktu (boxplot)")
       )
     ),
-    actionButton("ch8_ans5", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol5")
   ),
 
   div(class = "widget-block",
-    h4("Zadanie 6 \u2014 Decyzja technologa"),
+    h4("Zadanie 6 — Decyzja technologa"),
     div(class = "narrative",
-      p("Technolog musi zdecydowa\u0107, kt\u00f3re linie produkcyjne wymagaj\u0105 korekty:"),
+      p("Technolog musi zdecydować, które linie produkcyjne wymagają korekty:"),
       tags$ol(
-        tags$li("Kt\u00f3ry typ produktu ma najwy\u017csz\u0105 ", tags$b("median\u0119"),
-          " liczby reklamacji? Dlaczego mediana, a nie \u015brednia?"),
-        tags$li("Kt\u00f3ry typ produktu ma najwi\u0119kszy ", tags$b("rozrzut"),
+        tags$li("Który typ produktu ma najwyższą ", tags$b("medianę"),
+          " liczby reklamacji? Dlaczego mediana, a nie średnia?"),
+        tags$li("Który typ produktu ma największy ", tags$b("rozrzut"),
           " masy netto (SD lub IQR)?"),
-        tags$li("Czy partie klasy Premium r\u00f3\u017cni\u0105 si\u0119 zawarto\u015bci\u0105 soli od klasy Ekonomicznej?
+        tags$li("Czy partie klasy Premium różnią się zawartością soli od klasy Ekonomicznej?
           (Boxplot: ", tags$code("zawartosc_soli_pct"), " ~ ", tags$code("klasa_jakosci"), ")"),
-        tags$li("Sformu\u0142uj rekomendacj\u0119: kt\u00f3ra linia wymaga korekty i dlaczego?")
+        tags$li("Sformułuj rekomendację: która linia wymaga korekty i dlaczego?")
       )
     ),
-    actionButton("ch8_ans6", "Poka\u017c rozwi\u0105zanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
     uiOutput("ch8_sol6")
   ),
 
   div(class = "section-title", "Podsumowanie"),
   div(class = "callout-warning",
-    p(tags$b("Po zako\u0144czeniu \u0107wicze\u0144 odpowiedz na pytania:")),
+    p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
     tags$ol(
-      tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest wa\u017cna ",
-              tags$em("zanim"), " zaczniemy analiz\u0119?"),
-      tags$li("Podaj przyk\u0142ad zmiennej, kt\u00f3r\u0105 Jamovi automatycznie \u017ale zaklasyfikuje. Dlaczego?"),
-      tags$li("Jaki jest najcz\u0119stszy b\u0142\u0105d zwi\u0105zany z typem zmiennej, kt\u00f3ry zaobserwowa\u0142e\u015b/a\u015b na zaj\u0119ciach?")
+      tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest ważna ",
+              tags$em("zanim"), " zaczniemy analizę?"),
+      tags$li("Podaj przykład zmiennej, którą Jamovi automatycznie źle zaklasyfikuje. Dlaczego?"),
+      tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
     )
   ),
-  actionButton("ch8_ans_summary", "Poka\u017c odpowiedzi", class = "btn-outline-success btn-sm"),
+  actionButton("ch8_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
   uiOutput("ch8_sol_summary")
 )
 
@@ -516,60 +516,60 @@ ch8_ui <- tabPanel("8. \u0106wiczenia",
         )),
         tags$tbody(
           tags$tr(tags$td(tags$code("branza")), tags$td("Nominalna"),
-            tags$td("Moda, cz\u0119sto\u015bci, proporcje"), tags$td("S\u0142upkowy")),
+            tags$td("Moda, częstości, proporcje"), tags$td("Słupkowy")),
           tags$tr(tags$td(tags$code("liczba_pracownikow")), tags$td("Dyskretna"),
-            tags$td("\u015arednia, mediana, SD, IQR"), tags$td("Histogram lub s\u0142upkowy")),
+            tags$td("Średnia, mediana, SD, IQR"), tags$td("Histogram lub słupkowy")),
           tags$tr(tags$td(tags$code("liczba_wypadkow")), tags$td("Dyskretna"),
-            tags$td("\u015arednia, mediana, SD, IQR"), tags$td("S\u0142upkowy")),
-          tags$tr(tags$td(tags$code("kategoria_ryzyka")), tags$td("Porz\u0105dkowa"),
-            tags$td("Moda, cz\u0119sto\u015bci, cz. skumulowane"), tags$td("S\u0142upkowy (z kolejno\u015bci\u0105)")),
-          tags$tr(tags$td(tags$code("sredni_halas_db")), tags$td("Ci\u0105g\u0142a"),
-            tags$td("\u015arednia, mediana, SD, sko\u015bno\u015b\u0107"), tags$td("Histogram, boxplot")),
+            tags$td("Średnia, mediana, SD, IQR"), tags$td("Słupkowy")),
+          tags$tr(tags$td(tags$code("kategoria_ryzyka")), tags$td("Porządkowa"),
+            tags$td("Moda, częstości, cz. skumulowane"), tags$td("Słupkowy (z kolejnością)")),
+          tags$tr(tags$td(tags$code("sredni_halas_db")), tags$td("Ciągła"),
+            tags$td("Średnia, mediana, SD, skośność"), tags$td("Histogram, boxplot")),
           tags$tr(tags$td(tags$code("ma_certyfikat_iso")), tags$td("Nominalna (binarna)"),
-            tags$td("Cz\u0119sto\u015bci, proporcje"), tags$td("S\u0142upkowy"))
+            tags$td("Częstości, proporcje"), tags$td("Słupkowy"))
         )
       )
     ),
     sol2 = tagList(
-      tags$b("1."), " Nie \u2014 to zmienna ", tags$b("porz\u0105dkowa"),
-        ". Liczby 1, 2, 3 oznaczaj\u0105 kategorie ryzyka z porz\u0105dkiem, ale r\u00f3\u017cnica
-        mi\u0119dzy 1 a 2 nie jest taka sama jak mi\u0119dzy 2 a 3.", tags$br(),
-      tags$b("2."), " Nominalna (binarna) \u2014 0/1 to tylko kody dla TAK/NIE,
-        nie warto\u015bci liczbowe.", tags$br(),
-      tags$b("3."), " Zakres 0\u2013300 nie zmienia typu \u2014 nadal dyskretna (liczby ca\u0142kowite).
-        Ale po przekszta\u0142ceniu na \u201ema\u0142o/\u015brednio/du\u017co\u201d staje si\u0119 ",
-        tags$b("porz\u0105dkowa"), ".", tags$br(),
+      tags$b("1."), " Nie — to zmienna ", tags$b("porządkowa"),
+        ". Liczby 1, 2, 3 oznaczają kategorie ryzyka z porządkiem, ale różnica
+        między 1 a 2 nie jest taka sama jak między 2 a 3.", tags$br(),
+      tags$b("2."), " Nominalna (binarna) — 0/1 to tylko kody dla TAK/NIE,
+        nie wartości liczbowe.", tags$br(),
+      tags$b("3."), " Zakres 0–300 nie zmienia typu — nadal dyskretna (liczby całkowite).
+        Ale po przekształceniu na „mało/średnio/dużo” staje się ",
+        tags$b("porządkowa"), ".", tags$br(),
       tags$b("4."), " Nie ma sensu! Kategorie 1, 2, 3 to etykiety, nie liczby.
-        Lepiej: ", tags$b("moda"), " (najcz\u0119stsza kategoria) lub tabela cz\u0119sto\u015bci."
+        Lepiej: ", tags$b("moda"), " (najczęstsza kategoria) lub tabela częstości."
     ),
     sol3 = tagList(
-      tags$b("1."), " Moda = dominuj\u0105ca bran\u017ca (np. \u201eProdukcja\u201d). Proporcje z tabeli cz\u0119sto\u015bci.", tags$br(),
-      tags$b("2."), " Cz\u0119sto\u015bci skumulowane: np. 72% zak\u0142ad\u00f3w ma ryzyko \u2264 2.", tags$br(),
-      tags$b("3."), " Je\u015bli \u015brednia > mediana \u2192 sko\u015bno\u015b\u0107 prawostronna (du\u017ce zak\u0142ady z wieloma wypadkami ci\u0105gn\u0105 \u015bredni\u0105 w g\u00f3r\u0119).", tags$br(),
-      tags$b("4."), " Rozk\u0142ad prawdopodobnie zbli\u017cony do normalnego z lekk\u0105 sko\u015bno\u015bci\u0105.", tags$br(),
-      tags$b("5."), " Jamovi pozwoli obliczy\u0107 \u015bredni\u0105 z ", tags$code("kategoria_ryzyka"),
-        " je\u015bli jest zakodowana jako liczba \u2014 ale wynik jest ", tags$b("bezsensowny"), "."
+      tags$b("1."), " Moda = dominująca branża (np. „Produkcja”). Proporcje z tabeli częstości.", tags$br(),
+      tags$b("2."), " Częstości skumulowane: np. 72% zakładów ma ryzyko ≤ 2.", tags$br(),
+      tags$b("3."), " Jeśli średnia > mediana → skośność prawostronna (duże zakłady z wieloma wypadkami ciągną średnią w górę).", tags$br(),
+      tags$b("4."), " Rozkład prawdopodobnie zbliżony do normalnego z lekką skośnością.", tags$br(),
+      tags$b("5."), " Jamovi pozwoli obliczyć średnią z ", tags$code("kategoria_ryzyka"),
+        " jeśli jest zakodowana jako liczba — ale wynik jest ", tags$b("bezsensowny"), "."
     ),
     sol4 = tagList(
-      p("Histogram dla ", tags$code("liczba_wypadkow"), " mo\u017ce by\u0107 mylący, bo zmienna dyskretna
-        ma niewiele unikalnych warto\u015bci. Biny histogramu \u0142\u0105cz\u0105 s\u0105siednie warto\u015bci,
-        co zniekszta\u0142ca obraz. Lepszy jest wykres s\u0142upkowy (ka\u017cda warto\u015b\u0107 = osobny s\u0142upek).")
+      p("Histogram dla ", tags$code("liczba_wypadkow"), " może być mylący, bo zmienna dyskretna
+        ma niewiele unikalnych wartości. Biny histogramu łączą sąsiednie wartości,
+        co zniekształca obraz. Lepszy jest wykres słupkowy (każda wartość = osobny słupek).")
     ),
     sol5 = tagList(
-      p("Raport powinien opisywa\u0107 ka\u017cd\u0105 zmienn\u0105 narz\u0119dziami odpowiednimi do jej typu.
-        Kluczowe: boxplot ha\u0142asu wg kategorii ryzyka poka\u017ce, czy wy\u017csze ryzyko
-        koreluje z wy\u017cszym ha\u0142asem.")
+      p("Raport powinien opisywać każdą zmienną narzędziami odpowiednimi do jej typu.
+        Kluczowe: boxplot hałasu wg kategorii ryzyka pokaże, czy wyższe ryzyko
+        koreluje z wyższym hałasem.")
     ),
     sol6 = tagList(
-      tags$b("1."), " Mediana, bo rozkład wypadków jest skośny \u2014 pojedyncze zakłady z wieloma wypadkami zawyżają średnią.", tags$br(),
+      tags$b("1."), " Mediana, bo rozkład wypadków jest skośny — pojedyncze zakłady z wieloma wypadkami zawyżają średnią.", tags$br(),
       tags$b("2."), " Sprawdź proporcje per branża (filtr + Descriptives).", tags$br(),
       tags$b("3."), " Boxplot pokaże, czy mediany rosną z kategorią ryzyka.", tags$br(),
-      tags$b("4."), " Np. \u201eBranża X wymaga pilnej kontroli: najwyższa mediana wypadków i najwyższy odsetek przekroczeń normy hałasu.\u201d"
+      tags$b("4."), " Np. „Branża X wymaga pilnej kontroli: najwyższa mediana wypadków i najwyższy odsetek przekroczeń normy hałasu.”"
     ),
     sol_summary = tagList(
       tags$b("1."), " Bo typ zmiennej determinuje, jakie statystyki i wykresy mają sens.
         Średnia z kodów kategorii to bezsensowna liczba.", tags$br(), tags$br(),
-      tags$b("2."), " Np. ", tags$code("kategoria_ryzyka"), " zakodowana jako 1/2/3 \u2014 Jamovi uzna ją za ilościową,
+      tags$b("2."), " Np. ", tags$code("kategoria_ryzyka"), " zakodowana jako 1/2/3 — Jamovi uzna ją za ilościową,
         a to porządkowa.", tags$br(), tags$br(),
       tags$b("3."), " Obliczanie średniej z danych porządkowych lub nominalnych (np. średnia ocen w skali Likerta traktowana jako ciągła)."
     )
@@ -598,41 +598,41 @@ ch8_ui <- tabPanel("8. \u0106wiczenia",
       )
     ),
     sol2 = tagList(
-      tags$b("1."), " Nie nominalna \u2014 to ", tags$b("porz\u0105dkowa"), "! Klasy I\u2013VI maj\u0105
-        naturalny porz\u0105dek (I = najlepsza), ale r\u00f3\u017cnice mi\u0119dzy klasami nie s\u0105 r\u00f3wne.", tags$br(),
-      tags$b("2."), " Nominalna (binarna) \u2014 0/1 koduje TAK/NIE.", tags$br(),
-      tags$b("3."), " Z ci\u0105g\u0142ej staje si\u0119 ", tags$b("porz\u0105dkowa"),
-        " \u2014 tracimy precyzj\u0119 pomiaru, ale zyskujemy prostot\u0119 interpretacji.", tags$br(),
+      tags$b("1."), " Nie nominalna — to ", tags$b("porządkowa"), "! Klasy I–VI mają
+        naturalny porządek (I = najlepsza), ale różnice między klasami nie są równe.", tags$br(),
+      tags$b("2."), " Nominalna (binarna) — 0/1 koduje TAK/NIE.", tags$br(),
+      tags$b("3."), " Z ciągłej staje się ", tags$b("porządkowa"),
+        " — tracimy precyzję pomiaru, ale zyskujemy prostotę interpretacji.", tags$br(),
       tags$b("4."), " Nie ma sensu! Klasy to kategorie, nie liczby.
-        U\u017cyj mody lub tabeli cz\u0119sto\u015bci."
+        Użyj mody lub tabeli częstości."
     ),
     sol3 = tagList(
-      tags$b("1."), " Moda = dominuj\u0105ca uprawa. Proporcje z tabeli cz\u0119sto\u015bci.", tags$br(),
-      tags$b("2."), " Cz\u0119sto\u015bci skumulowane: np. 45% p\u00f3l ma gleb\u0119 I\u2013III.", tags$br(),
-      tags$b("3."), " Je\u015bli \u015brednia \u2248 mediana \u2192 symetryczny. Je\u015bli r\u00f3\u017cne \u2192 sko\u015bny.", tags$br(),
-      tags$b("4."), " Typowo rozk\u0142ad plon\u00f3w jest zbli\u017cony do normalnego.", tags$br(),
-      tags$b("5."), " Jamovi nie pozwoli obliczy\u0107 \u015bredniej z nominalnej (je\u015bli poprawnie ustawiona).
-        Ale je\u015bli zmienisz typ na Continuous \u2014 policzy bezsensown\u0105 \u015bredni\u0105."
+      tags$b("1."), " Moda = dominująca uprawa. Proporcje z tabeli częstości.", tags$br(),
+      tags$b("2."), " Częstości skumulowane: np. 45% pól ma glebę I–III.", tags$br(),
+      tags$b("3."), " Jeśli średnia ≈ mediana → symetryczny. Jeśli różne → skośny.", tags$br(),
+      tags$b("4."), " Typowo rozkład plonów jest zbliżony do normalnego.", tags$br(),
+      tags$b("5."), " Jamovi nie pozwoli obliczyć średniej z nominalnej (jeśli poprawnie ustawiona).
+        Ale jeśli zmienisz typ na Continuous — policzy bezsensowną średnią."
     ),
     sol4 = tagList(
-      p("Wykres ko\u0142owy jest z\u0142y dla wielu kategorii, bo ludzkie oko nie odr\u00f3\u017cnia
-        k\u0105t\u00f3w r\u00f3\u017cni\u0105cych si\u0119 o 2\u20133%. Wykres s\u0142upkowy pozwala dok\u0142adnie por\u00f3wna\u0107 d\u0142ugo\u015bci.")
+      p("Wykres kołowy jest zły dla wielu kategorii, bo ludzkie oko nie odróżnia
+        kątów różniących się o 2–3%. Wykres słupkowy pozwala dokładnie porównać długości.")
     ),
     sol5 = tagList(
-      p("Kluczowe: boxplot plonu wg klasy gleby poka\u017ce, czy lepsza gleba = wy\u017cszy plon.
-        Outliery w powierzchni mog\u0105 wskazywa\u0107 na du\u017ce gospodarstwa intensywne.")
+      p("Kluczowe: boxplot plonu wg klasy gleby pokaże, czy lepsza gleba = wyższy plon.
+        Outliery w powierzchni mogą wskazywać na duże gospodarstwa intensywne.")
     ),
     sol6 = tagList(
-      tags$b("1."), " Mediana, bo plon jest cz\u0119sto sko\u015bny (susze, gradobicia obni\u017caj\u0105 plony nielicznych p\u00f3l).", tags$br(),
-      tags$b("2."), " IQR wg klasy gleby \u2014 s\u0142absze gleby maj\u0105 zwykle wi\u0119kszy rozrzut.", tags$br(),
-      tags$b("3."), " Boxplot: por\u00f3wnaj mediany i IQR obu grup.", tags$br(),
-      tags$b("4."), " Np. \u201ePola na glebie V\u2013VI z nisk\u0105 liczb\u0105 zabieg\u00f3w wymagaj\u0105 uwagi \u2014 najni\u017csze plony i najwi\u0119kszy rozrzut.\u201d"
+      tags$b("1."), " Mediana, bo plon jest często skośny (susze, gradobicia obniżają plony nielicznych pól).", tags$br(),
+      tags$b("2."), " IQR wg klasy gleby — słabsze gleby mają zwykle większy rozrzut.", tags$br(),
+      tags$b("3."), " Boxplot: porównaj mediany i IQR obu grup.", tags$br(),
+      tags$b("4."), " Np. „Pola na glebie V–VI z niską liczbą zabiegów wymagają uwagi — najniższe plony i największy rozrzut.”"
     ),
     sol_summary = tagList(
-      tags$b("1."), " Bo typ zmiennej determinuje, jakie statystyki i wykresy maj\u0105 sens.", tags$br(), tags$br(),
-      tags$b("2."), " Np. ", tags$code("klasa_gleby"), " zakodowana jako I\u2013VI \u2014 Jamovi mo\u017ce j\u0105 potraktowa\u0107
-        jako nominalna (bez porz\u0105dku) lub ilo\u015bciowa.", tags$br(), tags$br(),
-      tags$b("3."), " Obliczanie \u015bredniej z danych porz\u0105dkowych (np. \u015brednia klasy gleby = 2.8 \u2014 co to znaczy?)."
+      tags$b("1."), " Bo typ zmiennej determinuje, jakie statystyki i wykresy mają sens.", tags$br(), tags$br(),
+      tags$b("2."), " Np. ", tags$code("klasa_gleby"), " zakodowana jako I–VI — Jamovi może ją potraktować
+        jako nominalna (bez porządku) lub ilościowa.", tags$br(), tags$br(),
+      tags$b("3."), " Obliczanie średniej z danych porządkowych (np. średnia klasy gleby = 2.8 — co to znaczy?)."
     )
   ),
 
@@ -644,56 +644,56 @@ ch8_ui <- tabPanel("8. \u0106wiczenia",
         )),
         tags$tbody(
           tags$tr(tags$td(tags$code("typ_produktu")), tags$td("Nominalna"),
-            tags$td("Moda, cz\u0119sto\u015bci, proporcje"), tags$td("S\u0142upkowy")),
-          tags$tr(tags$td(tags$code("masa_netto_g")), tags$td("Ci\u0105g\u0142a"),
-            tags$td("\u015arednia, mediana, SD, IQR"), tags$td("Histogram, boxplot")),
+            tags$td("Moda, częstości, proporcje"), tags$td("Słupkowy")),
+          tags$tr(tags$td(tags$code("masa_netto_g")), tags$td("Ciągła"),
+            tags$td("Średnia, mediana, SD, IQR"), tags$td("Histogram, boxplot")),
           tags$tr(tags$td(tags$code("liczba_reklamacji")), tags$td("Dyskretna"),
-            tags$td("\u015arednia, mediana, SD, IQR"), tags$td("S\u0142upkowy")),
-          tags$tr(tags$td(tags$code("klasa_jakosci")), tags$td("Porz\u0105dkowa"),
-            tags$td("Moda, cz\u0119sto\u015bci, cz. skumulowane"), tags$td("S\u0142upkowy (z kolejno\u015bci\u0105)")),
-          tags$tr(tags$td(tags$code("zawartosc_soli_pct")), tags$td("Ci\u0105g\u0142a"),
-            tags$td("\u015arednia, mediana, SD, sko\u015bno\u015b\u0107"), tags$td("Histogram, boxplot")),
+            tags$td("Średnia, mediana, SD, IQR"), tags$td("Słupkowy")),
+          tags$tr(tags$td(tags$code("klasa_jakosci")), tags$td("Porządkowa"),
+            tags$td("Moda, częstości, cz. skumulowane"), tags$td("Słupkowy (z kolejnością)")),
+          tags$tr(tags$td(tags$code("zawartosc_soli_pct")), tags$td("Ciągła"),
+            tags$td("Średnia, mediana, SD, skośność"), tags$td("Histogram, boxplot")),
           tags$tr(tags$td(tags$code("spelnia_norme")), tags$td("Nominalna (binarna)"),
-            tags$td("Cz\u0119sto\u015bci, proporcje"), tags$td("S\u0142upkowy"))
+            tags$td("Częstości, proporcje"), tags$td("Słupkowy"))
         )
       )
     ),
     sol2 = tagList(
-      tags$b("1."), " Nie nominalna \u2014 to ", tags$b("porz\u0105dkowa"), "!
-        Premium > Standard > Ekonomiczna ma naturalny porz\u0105dek jako\u015bci.", tags$br(),
-      tags$b("2."), " Nominalna (binarna) \u2014 TAK/NIE to dwie kategorie bez porz\u0105dku.", tags$br(),
-      tags$b("3."), " Z ci\u0105g\u0142ej staje si\u0119 ", tags$b("porz\u0105dkowa"),
-        " \u2014 tracimy dok\u0142adny pomiar.", tags$br(),
-      tags$b("4."), " Nie \u2014 nie mo\u017cna u\u015brednia\u0107 kategorii.
-        U\u017cyj mody (najcz\u0119stsza klasa) lub tabeli cz\u0119sto\u015bci."
+      tags$b("1."), " Nie nominalna — to ", tags$b("porządkowa"), "!
+        Premium > Standard > Ekonomiczna ma naturalny porządek jakości.", tags$br(),
+      tags$b("2."), " Nominalna (binarna) — TAK/NIE to dwie kategorie bez porządku.", tags$br(),
+      tags$b("3."), " Z ciągłej staje się ", tags$b("porządkowa"),
+        " — tracimy dokładny pomiar.", tags$br(),
+      tags$b("4."), " Nie — nie można uśredniać kategorii.
+        Użyj mody (najczęstsza klasa) lub tabeli częstości."
     ),
     sol3 = tagList(
-      tags$b("1."), " Moda = dominuj\u0105cy typ produktu.", tags$br(),
-      tags$b("2."), " Cz\u0119sto\u015bci skumulowane: np. 85% partii to Premium lub Standard.", tags$br(),
-      tags$b("3."), " Liczba reklamacji \u2014 prawdopodobnie sko\u015bna prawo (wi\u0119kszo\u015b\u0107 ma ma\u0142o, kilka \u2014 du\u017co).", tags$br(),
-      tags$b("4."), " Sprawd\u017a: odsetek partii z sol\u0105 > 2.5% to np. 15%.", tags$br(),
-      tags$b("5."), " Jamovi pozwoli na \u015bredni\u0105 z nominalnej, je\u015bli niepoprawnie ustawiona \u2014 ale wynik nie ma sensu."
+      tags$b("1."), " Moda = dominujący typ produktu.", tags$br(),
+      tags$b("2."), " Częstości skumulowane: np. 85% partii to Premium lub Standard.", tags$br(),
+      tags$b("3."), " Liczba reklamacji — prawdopodobnie skośna prawo (większość ma mało, kilka — dużo).", tags$br(),
+      tags$b("4."), " Sprawdź: odsetek partii z solą > 2.5% to np. 15%.", tags$br(),
+      tags$b("5."), " Jamovi pozwoli na średnią z nominalnej, jeśli niepoprawnie ustawiona — ale wynik nie ma sensu."
     ),
     sol4 = tagList(
       p("Boxplot grupowy (", tags$code("zawartosc_soli_pct"), " ~ ", tags$code("typ_produktu"),
-        ") \u2014 por\u00f3wnanie rozk\u0142ad\u00f3w jednej zmiennej ci\u0105g\u0142ej mi\u0119dzy kategoriami nominalnej.")
+        ") — porównanie rozkładów jednej zmiennej ciągłej między kategoriami nominalnej.")
     ),
     sol5 = tagList(
-      p("Kluczowe: boxplot zawarto\u015bci soli wg typu produktu poka\u017ce, kt\u00f3re produkty
-        maj\u0105 problem z przekroczeniem normy. Masa netto powinna skupia\u0107 si\u0119 wok\u00f3\u0142
-        warto\u015bci nominalnej z ma\u0142ym SD.")
+      p("Kluczowe: boxplot zawartości soli wg typu produktu pokaże, które produkty
+        mają problem z przekroczeniem normy. Masa netto powinna skupiać się wokół
+        wartości nominalnej z małym SD.")
     ),
     sol6 = tagList(
-      tags$b("1."), " Mediana, bo reklamacje s\u0105 sko\u015bne \u2014 kilka partii z wieloma reklamacjami zawy\u017ca \u015bredni\u0105.", tags$br(),
-      tags$b("2."), " SD lub IQR masy netto \u2014 wy\u017cszy rozrzut = gorsza powtarzalno\u015b\u0107 procesu.", tags$br(),
-      tags$b("3."), " Boxplot poka\u017ce, czy Premium faktycznie ma ni\u017csz\u0105 s\u00f3l.", tags$br(),
-      tags$b("4."), " Np. \u201eLinia produkcyjna X wymaga kalibracji wagi \u2014 najwy\u017cszy rozrzut masy netto i najwi\u0119cej reklamacji.\u201d"
+      tags$b("1."), " Mediana, bo reklamacje są skośne — kilka partii z wieloma reklamacjami zawyża średnią.", tags$br(),
+      tags$b("2."), " SD lub IQR masy netto — wyższy rozrzut = gorsza powtarzalność procesu.", tags$br(),
+      tags$b("3."), " Boxplot pokaże, czy Premium faktycznie ma niższą sól.", tags$br(),
+      tags$b("4."), " Np. „Linia produkcyjna X wymaga kalibracji wagi — najwyższy rozrzut masy netto i najwięcej reklamacji.”"
     ),
     sol_summary = tagList(
-      tags$b("1."), " Bo typ zmiennej determinuje, jakie statystyki i wykresy maj\u0105 sens.", tags$br(), tags$br(),
-      tags$b("2."), " Np. ", tags$code("klasa_jakosci"), " \u2014 Jamovi mo\u017ce j\u0105 potraktowa\u0107 jako tekst (nominalna)
-        bez uwzgl\u0119dnienia porz\u0105dku Premium > Standard > Ekonomiczna.", tags$br(), tags$br(),
-      tags$b("3."), " Obliczanie \u015bredniej z danych porz\u0105dkowych lub nominalnych."
+      tags$b("1."), " Bo typ zmiennej determinuje, jakie statystyki i wykresy mają sens.", tags$br(), tags$br(),
+      tags$b("2."), " Np. ", tags$code("klasa_jakosci"), " — Jamovi może ją potraktować jako tekst (nominalna)
+        bez uwzględnienia porządku Premium > Standard > Ekonomiczna.", tags$br(), tags$br(),
+      tags$b("3."), " Obliczanie średniej z danych porządkowych lub nominalnych."
     )
   )
 )
@@ -718,7 +718,7 @@ ch8_server <- function(input, output, session) {
 
     for (sid in sol_ids) vis[[sid]](FALSE)
     for (bid in btn_ids) {
-      updateActionButton(session, paste0("ch8_", bid), label = "Poka\u017c rozwi\u0105zanie")
+      updateActionButton(session, paste0("ch8_", bid), label = "Pokaż rozwiązanie")
     }
 
     output$ch8_content <- renderUI({
@@ -736,7 +736,7 @@ ch8_server <- function(input, output, session) {
       nowy_stan <- !vis[[sol_id_bare]]()
       vis[[sol_id_bare]](nowy_stan)
       updateActionButton(session, btn_id_full,
-        label = if (nowy_stan) "Ukryj rozwi\u0105zanie" else "Poka\u017c rozwi\u0105zanie")
+        label = if (nowy_stan) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
     }, ignoreInit = TRUE)
 
     output[[sol_id_full]] <- renderUI({

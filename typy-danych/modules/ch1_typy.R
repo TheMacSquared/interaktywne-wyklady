@@ -39,13 +39,13 @@ ch1_ui <- tabPanel("1. Typy danych",
             div(class = "tax-node", "Dane"),
             tags$ul(
               tags$li(
-                div(class = "tax-node", HTML("Ilo\u015bciowe<br><small>(liczbowe)</small>")),
+                div(class = "tax-node", HTML("Ilościowe<br><small>(liczbowe)</small>")),
                 tags$ul(
                   tags$li(
                     div(class = "tax-leaf", id = "ch1_leaf_ciagla",
                       style = paste0("background:", col_continuous, ";"),
                       onclick = "Shiny.setInputValue('ch1_leaf_click', 'ciagla', {priority:'event'})",
-                      "Ci\u0105g\u0142e"
+                      "Ciągłe"
                     )
                   ),
                   tags$li(
@@ -58,13 +58,13 @@ ch1_ui <- tabPanel("1. Typy danych",
                 )
               ),
               tags$li(
-                div(class = "tax-node", HTML("Jako\u015bciowe<br><small>(kategoryczne)</small>")),
+                div(class = "tax-node", HTML("Jakościowe<br><small>(kategoryczne)</small>")),
                 tags$ul(
                   tags$li(
                     div(class = "tax-leaf", id = "ch1_leaf_porzadkowa",
                       style = paste0("background:", col_ordinal, ";"),
                       onclick = "Shiny.setInputValue('ch1_leaf_click', 'porzadkowa', {priority:'event'})",
-                      "Porz\u0105dkowe"
+                      "Porządkowe"
                     )
                   ),
                   tags$li(
@@ -81,7 +81,7 @@ ch1_ui <- tabPanel("1. Typy danych",
         )
       ),
       p(style = "text-align: center; font-size: 13px; color: #bdc3c7; margin: 8px 0 0;",
-        "Kliknij na kolorowy li\u015b\u0107 drzewa, aby zobaczy\u0107 przyk\u0142ady"),
+        "Kliknij na kolorowy liść drzewa, aby zobaczyć przykłady"),
       uiOutput("ch1_leaf_detail")
     ),
 
@@ -209,7 +209,7 @@ ch1_ui <- tabPanel("1. Typy danych",
     div(class = "chapter-transition",
       p("Wiemy jakie typy zmiennych mamy w naszych danych. Zaczynamy od zmiennych
         jakościowych -- są prostsze i stanowia naturalny punkt wyjscia."),
-      actionButton("ch1_next", "Dalej: 2. Zmienne jakościowe \u2192",
+      actionButton("ch1_next", "Dalej: 2. Zmienne jakościowe →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -231,24 +231,24 @@ ch1_server <- function(input, output, session) {
 
   .leaf_info <- list(
     ciagla = list(
-      label = "Ci\u0105g\u0142e", color = col_continuous,
-      desc = "Warto\u015bci liczbowe, kt\u00f3re mog\u0105 przyjmowa\u0107 dowoln\u0105 warto\u015b\u0107 z przedzia\u0142u (tak\u017ce u\u0142amkowe).",
-      examples = "wzrost (cm), waga (kg), czas dojazdu (min), \u015brednia ocen"
+      label = "Ciągłe", color = col_continuous,
+      desc = "Wartości liczbowe, które mogą przyjmować dowolną wartość z przedziału (także ułamkowe).",
+      examples = "wzrost (cm), waga (kg), czas dojazdu (min), średnia ocen"
     ),
     dyskretna = list(
       label = "Dyskretne", color = col_discrete,
-      desc = "Warto\u015bci liczbowe, ale tylko ca\u0142kowite \u2014 mo\u017cna je policzy\u0107.",
-      examples = "liczba kurs\u00f3w, liczba nieobecno\u015bci"
+      desc = "Wartości liczbowe, ale tylko całkowite — można je policzyć.",
+      examples = "liczba kursów, liczba nieobecności"
     ),
     porzadkowa = list(
-      label = "Porz\u0105dkowe", color = col_ordinal,
-      desc = "Kategorie z naturalnym porz\u0105dkiem, ale odleg\u0142o\u015bci mi\u0119dzy nimi nie s\u0105 znane.",
-      examples = "rok studi\u00f3w (1 < 2 < 3 < ...), zadowolenie ze studi\u00f3w, ocena wyk\u0142adowcy"
+      label = "Porządkowe", color = col_ordinal,
+      desc = "Kategorie z naturalnym porządkiem, ale odległości między nimi nie są znane.",
+      examples = "rok studiów (1 < 2 < 3 < ...), zadowolenie ze studiów, ocena wykładowcy"
     ),
     nominalna = list(
       label = "Nominalne", color = col_nominal,
-      desc = "Kategorie bez naturalnego porz\u0105dku \u2014 mo\u017cna je tylko liczy\u0107.",
-      examples = "p\u0142e\u0107, kierunek studi\u00f3w, grupa krwi"
+      desc = "Kategorie bez naturalnego porządku — można je tylko liczyć.",
+      examples = "płeć, kierunek studiów, grupa krwi"
     )
   )
 

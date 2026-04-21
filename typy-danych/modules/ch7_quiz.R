@@ -10,10 +10,10 @@
 
 # Opcje (labele) dla typow zmiennych — zawsze te same 4
 QUIZ_TYPE_OPTIONS <- list(
-  ilosciowa_ciagla    = "Ilo\u015bciowa ci\u0105g\u0142a",
-  ilosciowa_dyskretna = "Ilo\u015bciowa dyskretna",
-  jakosciowa_porzadkowa = "Jako\u015bciowa porz\u0105dkowa",
-  jakosciowa_nominalna  = "Jako\u015bciowa nominalna"
+  ilosciowa_ciagla    = "Ilościowa ciągła",
+  ilosciowa_dyskretna = "Ilościowa dyskretna",
+  jakosciowa_porzadkowa = "Jakościowa porządkowa",
+  jakosciowa_nominalna  = "Jakościowa nominalna"
 )
 
 QUIZ_TYPE_COLORS <- list(
@@ -33,34 +33,34 @@ ch7_ui <- tabPanel("7. Quiz",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Poprzednio: \u015bci\u0105ga ze statystyki opisowej"
+      "Poprzednio: ściąga ze statystyki opisowej"
     ),
 
     div(class = "section-title", "Quiz: rozpoznaj typ zmiennej"),
 
     div(class = "narrative",
-      p("Przeczytaj opis zmiennej i wybierz jej typ. Ka\u017cde pytanie ma ",
-        tags$b("4 opcje"), " \u2014 dok\u0142adnie jedn\u0105 poprawn\u0105."),
-      p("Quiz losuje ", tags$b("15 pyta\u0144"), " z puli 75. Mo\u017cesz go powtarza\u0107
-        wielokrotnie \u2014 za ka\u017cdym razem dostaniesz inny zestaw.")
+      p("Przeczytaj opis zmiennej i wybierz jej typ. Każde pytanie ma ",
+        tags$b("4 opcje"), " — dokładnie jedną poprawną."),
+      p("Quiz losuje ", tags$b("15 pytań"), " z puli 75. Możesz go powtarzać
+        wielokrotnie — za każdym razem dostaniesz inny zestaw.")
     ),
 
     # Legenda typow
     div(class = "widget-block",
-      h4("Przypomnienie typ\u00f3w zmiennych"),
+      h4("Przypomnienie typów zmiennych"),
       fluidRow(
         column(3, div(class = "type-badge",
           style = paste0("background: ", col_nominal, ";"), "Nominalna")),
         column(3, div(class = "type-badge",
-          style = paste0("background: ", col_ordinal, ";"), "Porz\u0105dkowa")),
+          style = paste0("background: ", col_ordinal, ";"), "Porządkowa")),
         column(3, div(class = "type-badge",
           style = paste0("background: ", col_discrete, ";"), "Dyskretna")),
         column(3, div(class = "type-badge",
-          style = paste0("background: ", col_continuous, ";"), "Ci\u0105g\u0142a"))
+          style = paste0("background: ", col_continuous, ";"), "Ciągła"))
       ),
       p(style = "margin-top: 10px; font-size: 13px; color: #777;",
-        "Nominalna = kategorie bez porz\u0105dku | Porz\u0105dkowa = kategorie z porz\u0105dkiem | ",
-        "Dyskretna = liczby ca\u0142kowite | Ci\u0105g\u0142a = pomiary z dok\u0142adno\u015bci\u0105")
+        "Nominalna = kategorie bez porządku | Porządkowa = kategorie z porządkiem | ",
+        "Dyskretna = liczby całkowite | Ciągła = pomiary z dokładnością")
     ),
 
     # --- Quiz widget ---
@@ -97,8 +97,8 @@ ch7_ui <- tabPanel("7. Quiz",
 
     # --- Przejscie do cwiczen ---
     div(class = "chapter-transition",
-      p("Czas na praktyk\u0119! Przejd\u017a do \u0107wicze\u0144 z typ\u00f3w danych."),
-      actionButton("ch7_to_ch8", "Dalej: \u0106wiczenia \u2192", class = "btn-primary")
+      p("Czas na praktykę! Przejdź do ćwiczeń z typów danych."),
+      actionButton("ch7_to_ch8", "Dalej: Ćwiczenia →", class = "btn-primary")
     ),
 
     br(), br()
@@ -264,7 +264,7 @@ ch7_server <- function(input, output, session) {
         tags$strong(if (is_correct) "Dobrze!" else "Nie tym razem."),
         if (!is_correct) {
           tagList(
-            " Poprawna odpowied\u017a: ",
+            " Poprawna odpowiedź: ",
             span(style = paste0("font-weight: bold; color: ", correct_color, ";"),
                  correct_label)
           )
@@ -277,7 +277,7 @@ ch7_server <- function(input, output, session) {
       ),
 
       if (quiz_state$current_idx < quiz_state$total) {
-        actionButton("ch7_next", "Nast\u0119pne pytanie \u2192",
+        actionButton("ch7_next", "Następne pytanie →",
                      class = "btn-primary", width = "100%",
                      style = "margin-top: 10px;")
       } else {
@@ -313,10 +313,10 @@ ch7_server <- function(input, output, session) {
                     else if (pct >= 50) col_ordinal
                     else col_nominal
 
-    result_text <- if (pct >= 90) "\u0106wiczenie zako\u0144czone celuj\u0105co!"
+    result_text <- if (pct >= 90) "Ćwiczenie zakończone celująco!"
                    else if (pct >= 70) "Dobry wynik!"
-                   else if (pct >= 50) "Nie\u017ale, ale warto powt\u00f3rzy\u0107."
-                   else "Powt\u00f3rz materia\u0142 z wcze\u015bniejszych rozdzia\u0142\u00f3w."
+                   else if (pct >= 50) "Nieźle, ale warto powtórzyć."
+                   else "Powtórz materiał z wcześniejszych rozdziałów."
 
     div(style = "text-align: center; padding: 30px;",
       div(style = paste0(
@@ -341,9 +341,9 @@ ch7_server <- function(input, output, session) {
       ),
 
       div(style = "display: flex; gap: 10px; justify-content: center;",
-        actionButton("ch7_start", "Spr\u00f3buj ponownie",
+        actionButton("ch7_start", "Spróbuj ponownie",
                      class = "btn-primary btn-lg"),
-        actionButton("ch7_back_to_ch6", "Wr\u00f3\u0107 do \u015bci\u0105gi",
+        actionButton("ch7_back_to_ch6", "Wróć do ściągi",
                      class = "btn-outline-secondary btn-lg")
       )
     )
@@ -351,7 +351,7 @@ ch7_server <- function(input, output, session) {
 
   # Nawigacja powrotna
   observeEvent(input$ch7_back_to_ch6, {
-    updateNavbarPage(session, "main_nav", selected = "6. \u015aci\u0105ga")
+    updateNavbarPage(session, "main_nav", selected = "6. Ściąga")
   })
 
 }

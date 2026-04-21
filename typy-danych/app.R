@@ -91,18 +91,18 @@ student_data <- data.frame(
 # ============================================================================
 
 variable_meta <- list(
-  plec = list(label = "P\u0142e\u0107", type = "nominalna"),
-  kierunek = list(label = "Kierunek studi\u00f3w", type = "nominalna"),
+  plec = list(label = "Płeć", type = "nominalna"),
+  kierunek = list(label = "Kierunek studiów", type = "nominalna"),
   grupa_krwi = list(label = "Grupa krwi", type = "nominalna"),
-  rok_studiow = list(label = "Rok studi\u00f3w", type = "porzadkowa"),
-  zadowolenie = list(label = "Zadowolenie ze studi\u00f3w", type = "porzadkowa"),
-  liczba_kursow = list(label = "Liczba kurs\u00f3w", type = "ilosciowa_dyskretna"),
-  liczba_nieobecnosci = list(label = "Liczba nieobecno\u015bci", type = "ilosciowa_dyskretna"),
+  rok_studiow = list(label = "Rok studiów", type = "porzadkowa"),
+  zadowolenie = list(label = "Zadowolenie ze studiów", type = "porzadkowa"),
+  liczba_kursow = list(label = "Liczba kursów", type = "ilosciowa_dyskretna"),
+  liczba_nieobecnosci = list(label = "Liczba nieobecności", type = "ilosciowa_dyskretna"),
   wzrost = list(label = "Wzrost (cm)", type = "ilosciowa_ciagla"),
-  srednia_ocen = list(label = "\u015arednia ocen", type = "ilosciowa_ciagla"),
+  srednia_ocen = list(label = "Średnia ocen", type = "ilosciowa_ciagla"),
   czas_dojazdu = list(label = "Czas dojazdu (min)", type = "ilosciowa_ciagla"),
   waga = list(label = "Waga (kg)", type = "ilosciowa_ciagla"),
-  ocena_wykladowcy = list(label = "Ocena wyk\u0142adowcy (1-10)", type = "porzadkowa")
+  ocena_wykladowcy = list(label = "Ocena wykładowcy (1-10)", type = "porzadkowa")
 )
 
 # ============================================================================
@@ -390,13 +390,13 @@ server <- function(input, output, session) {
     updateNavbarPage(session, "main_nav", selected = "5. Kształt rozkładu")
   })
   observeEvent(input$ch5_next, {
-    updateNavbarPage(session, "main_nav", selected = "6. \u015aci\u0105ga")
+    updateNavbarPage(session, "main_nav", selected = "6. Ściąga")
   })
   observeEvent(input$ch6_to_ch7, {
     updateNavbarPage(session, "main_nav", selected = "7. Quiz")
   })
   observeEvent(input$ch7_to_ch8, {
-    updateNavbarPage(session, "main_nav", selected = "8. \u0106wiczenia")
+    updateNavbarPage(session, "main_nav", selected = "8. Ćwiczenia")
   })
 
   # ==========================================================================
@@ -426,7 +426,7 @@ server <- function(input, output, session) {
     div(class = "tracker-panel",
       tags$strong(paste0("\U0001F50D Sledzona zmienna: ", label)),
       " | Położenie: ",
-      paste0("x\u0304 = ", round(mean(vals), 2), ", Me = ", round(median(vals), 2)),
+      paste0("x̄ = ", round(mean(vals), 2), ", Me = ", round(median(vals), 2)),
       " | Rozrzut: ",
       paste0("SD = ", round(sd(vals), 2), ", IQR = ", round(IQR(vals), 2))
     )
@@ -442,7 +442,7 @@ server <- function(input, output, session) {
 
     div(class = "tracker-panel",
       tags$strong(paste0("\U0001F50D Sledzona zmienna: ", label)),
-      " | x\u0304 = ", round(mean(vals), 2),
+      " | x̄ = ", round(mean(vals), 2),
       ", SD = ", round(sd(vals), 2),
       " | Kształt: skośność = ", sk, ", kurtoza = ", ku
     )

@@ -14,20 +14,20 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     div(class = "section-title", "Statystyki polozenia"),
 
     div(class = "narrative",
-      p("Zmienne ilo\u015bciowe wymagaj\u0105 nowych narz\u0119dzi. Zanim przejdziemy do
-        statystyk, poznajmy podstawow\u0105 wizualizacj\u0119 \u2014 histogram.
-        Potem zbadamy miary po\u0142o\u017cenia: \u015bredni\u0105, median\u0119 i percentyle.")
+      p("Zmienne ilościowe wymagają nowych narzędzi. Zanim przejdziemy do
+        statystyk, poznajmy podstawową wizualizację — histogram.
+        Potem zbadamy miary położenia: średnią, medianę i percentyle.")
     ),
 
     # ========================================================================
     # WIDGET: Histogram krok po kroku
     # ========================================================================
-    div(class = "section-title", "Histogram \u2014 krok po kroku"),
+    div(class = "section-title", "Histogram — krok po kroku"),
 
     div(class = "narrative",
-      p("Histogram to podstawowy wykres dla zmiennych ci\u0105g\u0142ych. Pokazuje
-        jak cz\u0119sto wyst\u0119puj\u0105 warto\u015bci w poszczeg\u00f3lnych
-        przedzia\u0142ach (binach). Zbudujmy go krok po kroku.")
+      p("Histogram to podstawowy wykres dla zmiennych ciągłych. Pokazuje
+        jak często występują wartości w poszczególnych
+        przedziałach (binach). Zbudujmy go krok po kroku.")
     ),
 
     div(class = "widget-block",
@@ -37,7 +37,7 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
           selectInput("ch3_hist_var", "Zmienna:",
             choices = c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
                         "Czas dojazdu (min)" = "czas_dojazdu",
-                        "\u015arednia ocen" = "srednia_ocen"),
+                        "Średnia ocen" = "srednia_ocen"),
             selected = "wzrost"
           ),
           uiOutput("ch3_hist_bin_slider"),
@@ -47,22 +47,22 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
           actionButton("ch3_hist_step2", "2. Posortuj dane",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
-          actionButton("ch3_hist_step3", "3. Podziel na przedzia\u0142y",
+          actionButton("ch3_hist_step3", "3. Podziel na przedziały",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
-          actionButton("ch3_hist_step4", "4. Przypisz do bin\u00f3w",
+          actionButton("ch3_hist_step4", "4. Przypisz do binów",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
           actionButton("ch3_hist_step5", "5. Zlicz obserwacje",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
-          actionButton("ch3_hist_step6", "6. Zbuduj s\u0142upki",
+          actionButton("ch3_hist_step6", "6. Zbuduj słupki",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
           actionButton("ch3_hist_step7", "7. Gotowy histogram",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
-          actionButton("ch3_hist_step8", "8. Wp\u0142yw szeroko\u015bci binu",
+          actionButton("ch3_hist_step8", "8. Wpływ szerokości binu",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
           actionButton("ch3_hist_reset", "Reset",
@@ -79,33 +79,33 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     # ========================================================================
     # Transition to location statistics
     # ========================================================================
-    div(class = "section-title", "Statystyki po\u0142o\u017cenia"),
+    div(class = "section-title", "Statystyki położenia"),
 
     div(class = "narrative",
-      p("Histogram pokazuje kszta\u0142t rozk\u0142adu, ale nie daje jednej liczby
-        opisuj\u0105cej '\u015brodek'. Do tego s\u0142u\u017c\u0105 statystyki po\u0142o\u017cenia:
-        \u015brednia, mediana i percentyle. Ka\u017cda odpowiada na to pytanie inaczej.")
+      p("Histogram pokazuje kształt rozkładu, ale nie daje jednej liczby
+        opisującej 'środek'. Do tego służą statystyki położenia:
+        średnia, mediana i percentyle. Każda odpowiada na to pytanie inaczej.")
     ),
 
     # ========================================================================
     # WIDGET 0a: Mean introduction
     # ========================================================================
-    div(class = "section-title", "\u015arednia arytmetyczna"),
+    div(class = "section-title", "Średnia arytmetyczna"),
 
     div(class = "narrative",
-      p("\u015arednia arytmetyczna to suma wszystkich warto\u015bci podzielona
-        przez ich liczb\u0119. Jest to 'punkt r\u00f3wnowagi' danych -- gdyby\u015bmy
-        po\u0142o\u017cyli dane na wadze, \u015brednia by\u0142aby punktem podparcia."),
+      p("Średnia arytmetyczna to suma wszystkich wartości podzielona
+        przez ich liczbę. Jest to 'punkt równowagi' danych -- gdybyśmy
+        położyli dane na wadze, średnia byłaby punktem podparcia."),
       withMathJax(helpText(
         "$$\\bar{x} = \\frac{1}{n} \\sum_{i=1}^{n} x_i = \\frac{x_1 + x_2 + \\ldots + x_n}{n}$$"
       ))
     ),
 
     div(class = "widget-block",
-      h4("\u015arednia jako punkt r\u00f3wnowagi"),
+      h4("Średnia jako punkt równowagi"),
       selectInput("ch3_mean_var", "Zmienna:",
         choices = c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
-                    "\u015arednia ocen" = "srednia_ocen"),
+                    "Średnia ocen" = "srednia_ocen"),
         selected = "wzrost"
       ),
       plotOutput("ch3_mean_plot", height = "300px"),
@@ -118,17 +118,17 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     div(class = "section-title", "Mediana"),
 
     div(class = "narrative",
-      p("Mediana to warto\u015b\u0107, kt\u00f3ra dzieli posortowane dane na dwie
-        r\u00f3wne po\u0142owy: 50% obserwacji le\u017cy poni\u017cej, 50% powy\u017cej.
-        Nie zale\u017cy od tego, jak bardzo skrajne s\u0105 warto\u015bci
-        na ko\u0144cach -- liczy si\u0119 tylko pozycja \u015brodkowa.")
+      p("Mediana to wartość, która dzieli posortowane dane na dwie
+        równe połowy: 50% obserwacji leży poniżej, 50% powyżej.
+        Nie zależy od tego, jak bardzo skrajne są wartości
+        na końcach -- liczy się tylko pozycja środkowa.")
     ),
 
     div(class = "widget-block",
-      h4("Mediana dzieli dane na p\u00f3\u0142"),
+      h4("Mediana dzieli dane na pół"),
       selectInput("ch3_median_var", "Zmienna:",
         choices = c("Wzrost (cm)" = "wzrost", "Czas dojazdu (min)" = "czas_dojazdu",
-                    "\u015arednia ocen" = "srednia_ocen"),
+                    "Średnia ocen" = "srednia_ocen"),
         selected = "czas_dojazdu"
       ),
       plotOutput("ch3_median_plot", height = "300px"),
@@ -138,29 +138,29 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     # ========================================================================
     # WIDGET 1: Mean vs Median -- comparison
     # ========================================================================
-    div(class = "section-title", "\u015arednia vs mediana -- kiedy si\u0119 r\u00f3\u017cni\u0105?"),
+    div(class = "section-title", "Średnia vs mediana -- kiedy się różnią?"),
 
     div(class = "narrative",
-      p("Dla danych symetrycznych \u015brednia i mediana s\u0105 blisko siebie.
-        Ale co si\u0119 dzieje, gdy rozk\u0142ad jest sko\u015bny lub pojawi si\u0119
-        warto\u015b\u0107 odstaj\u0105ca?"),
-      p("Wyobra\u017amy sobie zarobki w pewnej firmie. Wi\u0119kszo\u015b\u0107 pracownik\u00f3w
-        zarabia umiarkowanie, ale s\u0105 te\u017c osoby z bardzo wysokimi pensjami.
-        Zobaczmy, jak \u015brednia i mediana reaguj\u0105 na nowe warto\u015bci.")
+      p("Dla danych symetrycznych średnia i mediana są blisko siebie.
+        Ale co się dzieje, gdy rozkład jest skośny lub pojawi się
+        wartość odstająca?"),
+      p("Wyobraźmy sobie zarobki w pewnej firmie. Większość pracowników
+        zarabia umiarkowanie, ale są też osoby z bardzo wysokimi pensjami.
+        Zobaczmy, jak średnia i mediana reagują na nowe wartości.")
     ),
 
     div(class = "widget-block",
-      h4("Zarobki w firmie: \u015brednia vs mediana"),
+      h4("Zarobki w firmie: średnia vs mediana"),
 
       fluidRow(
         column(5,
-          sliderInput("ch3_svm_new_value", "Nowa warto\u015b\u0107:",
+          sliderInput("ch3_svm_new_value", "Nowa wartość:",
                       min = 2000, max = 25000, value = 5000, step = 500,
-                      pre = "", post = " z\u0142", width = "100%")
+                      pre = "", post = " zł", width = "100%")
         ),
         column(7,
           div(style = "display: flex; gap: 8px; margin-top: 25px;",
-            actionButton("ch3_svm_add", "Dodaj warto\u015b\u0107",
+            actionButton("ch3_svm_add", "Dodaj wartość",
                          class = "btn-primary"),
             actionButton("ch3_svm_outlier", "Dodaj outlier (CEO)",
                          class = "btn-danger"),
@@ -182,25 +182,25 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
 
     div(class = "callout-info",
       tags$strong("Obserwacja:"),
-      " Dodaj kilka 'normalnych' zarobk\u00f3w -- \u015brednia i mediana b\u0119d\u0105 blisko
-        siebie. Teraz kliknij 'Dodaj outlier (CEO)' -- zobacz, jak \u015brednia
-        skacze w g\u00f3r\u0119, a mediana prawie si\u0119 nie zmienia!"
+      " Dodaj kilka 'normalnych' zarobków -- średnia i mediana będą blisko
+        siebie. Teraz kliknij 'Dodaj outlier (CEO)' -- zobacz, jak średnia
+        skacze w górę, a mediana prawie się nie zmienia!"
     ),
 
     # ========================================================================
     # WIDGET 2: Robustness mini-demo
     # ========================================================================
-    div(class = "section-title", "Odporno\u015b\u0107 miar na outliery"),
+    div(class = "section-title", "Odporność miar na outliery"),
 
     div(class = "narrative",
-      p("Kt\u00f3ra statystyka jest bardziej odporna na outliery? \u015arednia
-        arytmetyczna bierze pod uwag\u0119 ka\u017cd\u0105 warto\u015b\u0107 -- wi\u0119c jedna
-        ekstremalna obserwacja mo\u017ce j\u0105 znacz\u0105co przesun\u0105\u0107. Mediana
-        ignoruje skrajne warto\u015bci, patrz\u0105c tylko na '\u015brodek' danych."),
-      p("\u015arednia ucinana (trimmed mean) to kompromis: odrzuca pewien
-        procent najbardziej skrajnych obserwacji z obu stron, a nast\u0119pnie
-        oblicza \u015bredni\u0105 z pozosta\u0142ych. Dodajmy kilka ekstremalnych
-        zarobk\u00f3w i zobaczmy, co si\u0119 stanie.")
+      p("Która statystyka jest bardziej odporna na outliery? Średnia
+        arytmetyczna bierze pod uwagę każdą wartość -- więc jedna
+        ekstremalna obserwacja może ją znacząco przesunąć. Mediana
+        ignoruje skrajne wartości, patrząc tylko na 'środek' danych."),
+      p("Średnia ucinana (trimmed mean) to kompromis: odrzuca pewien
+        procent najbardziej skrajnych obserwacji z obu stron, a następnie
+        oblicza średnią z pozostałych. Dodajmy kilka ekstremalnych
+        zarobków i zobaczmy, co się stanie.")
     ),
 
     div(class = "widget-block",
@@ -267,15 +267,15 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     # ========================================================================
     # WIDGET 2c: Multimodality in continuous distributions
     # ========================================================================
-    div(class = "section-title", "Modalno\u015b\u0107 rozk\u0142adu -- ile 'g\u00f3rek' ma histogram?"),
+    div(class = "section-title", "Modalność rozkładu -- ile 'górek' ma histogram?"),
 
     div(class = "narrative",
-      p("W rozdziale o zmiennych jako\u015bciowych poznali\u015bmy dominant\u0119 -- najcz\u0119stsz\u0105
-        kategori\u0119. Dla danych ci\u0105g\u0142ych dominanta pojedynczej warto\u015bci nie ma sensu
-        (prawie ka\u017cda warto\u015b\u0107 jest unikatowa). Ale poj\u0119cie ",
-        "mody dzia\u0142a na przedzia\u0142ach -- szukamy, kt\u00f3ry bin histogramu jest najwy\u017cszy."),
-      p("Co wa\u017cniejsze, rozk\u0142ad mo\u017ce mie\u0107 wi\u0119cej ni\u017c jeden szczyt (mod\u0119). To cz\u0119sto
-        sygna\u0142, \u017ce dane pochodz\u0105 z kilku r\u00f3\u017cnych grup.")
+      p("W rozdziale o zmiennych jakościowych poznaliśmy dominantę -- najczęstszą
+        kategorię. Dla danych ciągłych dominanta pojedynczej wartości nie ma sensu
+        (prawie każda wartość jest unikatowa). Ale pojęcie ",
+        "mody działa na przedziałach -- szukamy, który bin histogramu jest najwyższy."),
+      p("Co ważniejsze, rozkład może mieć więcej niż jeden szczyt (modę). To często
+        sygnał, że dane pochodzą z kilku różnych grup.")
     ),
 
     div(class = "widget-block",
@@ -283,7 +283,7 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
       radioButtons("ch3_modal_scenario", "Scenariusz:",
         choices = c(
           "Unimodalny -- wzrost kobiet" = "unimodal",
-          "Bimodalny -- wzrost (kobiety + m\u0119\u017cczy\u017ani)" = "bimodal",
+          "Bimodalny -- wzrost (kobiety + mężczyźni)" = "bimodal",
           "Wielomodalny -- czas dojazdu (autobus vs rower vs auto)" = "multimodal"
         ),
         selected = "unimodal"
@@ -346,16 +346,16 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     div(class = "section-title", "Gra: Zgadnij średnia i mediane!"),
 
     div(class = "narrative",
-      p("Sprawdzmy Twoją intuicję! Na histogramie zobaczysz rozkład danych.
+      p("Sprawdzmy Twoją intuicję! Na histogramie zobaczysz rozkład danych. ",
         "Kliknij na wykres, aby postawić swój typ: najpierw średnia, potem mediana. Czy potrafisz je odroznic?")
     ),
 
     div(class = "widget-block",
-      h4("Kliknij na wykres, aby umie\u015bci\u0107 \u015bredni\u0105 i median\u0119"),
+      h4("Kliknij na wykres, aby umieścić średnią i medianę"),
       div(style = "margin-bottom: 10px;",
         actionButton("ch3_game_new", "Nowa runda",
                      class = "btn-primary", style = "margin-right: 6px;"),
-        actionButton("ch3_game_reveal", "Poka\u017c odpowied\u017a",
+        actionButton("ch3_game_reveal", "Pokaż odpowiedź",
                      class = "btn-success", style = "margin-right: 6px;")
       ),
       uiOutput("ch3_game_status_banner"),
@@ -373,7 +373,7 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     div(class = "chapter-transition",
       p("Wiemy gdzie jest 'środek' danych. Ale dwie grupy z ta sama srednia
         mogą wyglądać zupełnie inaczej -- rozni je rozrzut. Jak go mierzyc i wizualizować?"),
-      actionButton("ch3_next", "Dalej: 4. Statystyki rozrzutu \u2192",
+      actionButton("ch3_next", "Dalej: 4. Statystyki rozrzutu →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -417,7 +417,7 @@ ch3_server <- function(input, output, session) {
   output$ch3_hist_bin_slider <- renderUI({
     d <- ch3_hist_defaults[[input$ch3_hist_var]]
     sliderInput("ch3_hist_bin_width",
-                "Szeroko\u015b\u0107 binu:",
+                "Szerokość binu:",
                 min = d$min, max = d$max,
                 value = d$value, step = d$step)
   })
@@ -473,7 +473,7 @@ ch3_server <- function(input, output, session) {
   ch3_hist_var_labels <- c(
     "wzrost" = "Wzrost (cm)", "waga" = "Waga (kg)",
     "czas_dojazdu" = "Czas dojazdu (min)",
-    "srednia_ocen" = "\u015arednia ocen"
+    "srednia_ocen" = "Średnia ocen"
   )
 
   output$ch3_hist_plot <- renderPlot({
@@ -600,7 +600,7 @@ ch3_server <- function(input, output, session) {
                        color = "#2c3e50", linewidth = 0.3) +
         labs(x = x_label, y = "Liczba obserwacji",
              title = paste0("Histogram: ", x_label),
-             subtitle = paste0("n = ", n, " | szeroko\u015b\u0107 binu = ", w)) +
+             subtitle = paste0("n = ", n, " | szerokość binu = ", w)) +
         theme_minimal(base_size = 14)
 
     } else if (step == 8) {
@@ -636,22 +636,22 @@ ch3_server <- function(input, output, session) {
     unit <- ch3_hist_defaults[[var_name]]$unit
 
     txt <- switch(as.character(step),
-      "0" = "Kliknij Krok 1, aby rozpocz\u0105\u0107 budow\u0119 histogramu.",
-      "1" = paste0("Mamy ", n, " obserwacji \u2014 ka\u017cdy punkt to jedna warto\u015b\u0107. ",
-                   "Trudno z tego odczyta\u0107 rozk\u0142ad, prawda?"),
+      "0" = "Kliknij Krok 1, aby rozpocząć budowę histogramu.",
+      "1" = paste0("Mamy ", n, " obserwacji — każdy punkt to jedna wartość. ",
+                   "Trudno z tego odczytać rozkład, prawda?"),
       "2" = paste0("Sortujemy od min = ", round(min(x), 1),
                    " do max = ", round(max(x), 1), " ", unit,
-                   ". Wida\u0107 zag\u0119szczenia, ale wci\u0105\u017c nieczytelne."),
-      "3" = paste0("Dzielimy o\u015b na r\u00f3wne przedzia\u0142y (biny) o szeroko\u015bci ",
+                   ". Widać zagęszczenia, ale wciąż nieczytelne."),
+      "3" = paste0("Dzielimy oś na równe przedziały (biny) o szerokości ",
                    input$ch3_hist_bin_width, " ", unit,
-                   ". Ka\u017cdy bin to 'koszyk' na obserwacje."),
-      "4" = "Ka\u017cda obserwacja trafia do swojego binu \u2014 kolor = przynale\u017cno\u015b\u0107.",
-      "5" = "Liczymy obserwacje w ka\u017cdym binie. Te liczby stan\u0105 si\u0119 wysoko\u015bci\u0105 s\u0142upk\u00f3w.",
-      "6" = "Zamieniamy punkty na s\u0142upki \u2014 wysoko\u015b\u0107 = liczba obserwacji. To ju\u017c prawie histogram!",
+                   ". Każdy bin to 'koszyk' na obserwacje."),
+      "4" = "Każda obserwacja trafia do swojego binu — kolor = przynależność.",
+      "5" = "Liczymy obserwacje w każdym binie. Te liczby staną się wysokością słupków.",
+      "6" = "Zamieniamy punkty na słupki — wysokość = liczba obserwacji. To już prawie histogram!",
       "7" = paste0("Gotowy histogram (n = ", n, ", bin = ", input$ch3_hist_bin_width,
-                   " ", unit, "). Spr\u00f3buj zmieni\u0107 szeroko\u015b\u0107 binu suwakiem!"),
-      "8" = paste0("Te same dane z trzema szeroko\u015bciami binu. ",
-                   "Za w\u0105skie \u2192 szum. Za szerokie \u2192 utrata szczeg\u00f3\u0142\u00f3w.")
+                   " ", unit, "). Spróbuj zmienić szerokość binu suwakiem!"),
+      "8" = paste0("Te same dane z trzema szerokościami binu. ",
+                   "Za wąskie → szum. Za szerokie → utrata szczegółów.")
     )
     div(class = "callout-info", p(txt))
   })
@@ -668,7 +668,7 @@ ch3_server <- function(input, output, session) {
       b = result$count,
       c = paste0(result$pct, "%")
     )
-    names(out) <- c("Przedzia\u0142", "Liczba obs.", "Procent")
+    names(out) <- c("Przedział", "Liczba obs.", "Procent")
     out
   }, striped = TRUE, hover = TRUE, bordered = TRUE)
 
@@ -682,13 +682,13 @@ ch3_server <- function(input, output, session) {
     x <- student_data[[var_name]]
     m <- mean(x)
     var_labels <- c("wzrost" = "Wzrost (cm)", "waga" = "Waga (kg)",
-                    "srednia_ocen" = "\u015arednia ocen")
+                    "srednia_ocen" = "Średnia ocen")
     df <- data.frame(val = x)
 
     ggplot(df, aes(x = val)) +
       geom_histogram(bins = 25, fill = "#d5d8dc", color = "white", alpha = 0.8) +
       geom_vline(xintercept = m, color = "#e74c3c", linewidth = 1.5, linetype = "solid") +
-      annotate("text", x = m, y = Inf, label = paste0("\u015arednia = ", round(m, 2)),
+      annotate("text", x = m, y = Inf, label = paste0("Średnia = ", round(m, 2)),
                vjust = 2, hjust = -0.1, color = "#e74c3c", size = 5, fontface = "bold") +
       annotate("segment", x = min(x), xend = m, y = -0.5, yend = -0.5,
                color = "#3498db", linewidth = 2,
@@ -696,8 +696,8 @@ ch3_server <- function(input, output, session) {
       annotate("segment", x = max(x), xend = m, y = -0.5, yend = -0.5,
                color = "#3498db", linewidth = 2,
                arrow = arrow(length = unit(0.2, "cm"), ends = "last")) +
-      labs(x = var_labels[var_name], y = "Liczebno\u015b\u0107",
-           title = "\u015arednia jako punkt r\u00f3wnowagi") +
+      labs(x = var_labels[var_name], y = "Liczebność",
+           title = "Średnia jako punkt równowagi") +
       theme_minimal(base_size = 14)
   })
 
@@ -712,8 +712,8 @@ ch3_server <- function(input, output, session) {
       withMathJax(paste0(
         "$$\\bar{x} = \\frac{", round(s, 1), "}{", n, "} = ", round(m, 2), "$$"
       )),
-      tags$em("\u015arednia uwzgl\u0119dnia ka\u017cd\u0105 warto\u015b\u0107 -- jest wra\u017cliwa
-              na warto\u015bci skrajne, bo przeci\u0105ga j\u0105 w ich stron\u0119.")
+      tags$em("Średnia uwzględnia każdą wartość -- jest wrażliwa
+              na wartości skrajne, bo przeciąga ją w ich stronę.")
     )
   })
 
@@ -731,7 +731,7 @@ ch3_server <- function(input, output, session) {
     n_below <- sum(x_sorted < med)
     n_above <- sum(x_sorted > med)
     var_labels <- c("wzrost" = "Wzrost (cm)", "czas_dojazdu" = "Czas dojazdu (min)",
-                    "srednia_ocen" = "\u015arednia ocen")
+                    "srednia_ocen" = "Średnia ocen")
     df <- data.frame(val = x)
 
     ggplot(df, aes(x = val)) +
@@ -751,8 +751,8 @@ ch3_server <- function(input, output, session) {
                vjust = 4, hjust = -0.1, color = "#2980b9", size = 5, fontface = "bold") +
       geom_histogram(bins = 25, fill = "#d5d8dc", color = "white", alpha = 0.8) +
       geom_vline(xintercept = med, color = "#2980b9", linewidth = 1.5) +
-      labs(x = var_labels[var_name], y = "Liczebno\u015b\u0107",
-           title = "Mediana dzieli dane na dwie r\u00f3wne po\u0142owy") +
+      labs(x = var_labels[var_name], y = "Liczebność",
+           title = "Mediana dzieli dane na dwie równe połowy") +
       theme_minimal(base_size = 14)
   })
 
@@ -1066,25 +1066,25 @@ ch3_server <- function(input, output, session) {
                        fill = "#3498db", color = "white", alpha = 0.7) +
         geom_density(linewidth = 1.2, color = "#2c3e50") +
         geom_vline(xintercept = mean(x), color = "#e74c3c", linewidth = 1, linetype = "dashed") +
-        annotate("text", x = mean(x) + 1, y = Inf, label = "moda \u2248 \u015brednia \u2248 mediana",
+        annotate("text", x = mean(x) + 1, y = Inf, label = "moda ≈ średnia ≈ mediana",
                  hjust = 0, vjust = 2, color = "#e74c3c", size = 4.5, fontface = "bold") +
-        labs(title = "Unimodalny -- jeden wyra\u017any szczyt",
-             x = "Wzrost kobiet (cm)", y = "G\u0119sto\u015b\u0107") +
+        labs(title = "Unimodalny -- jeden wyraźny szczyt",
+             x = "Wzrost kobiet (cm)", y = "Gęstość") +
         theme_minimal(base_size = 14)
 
     } else if (scenario == "bimodal") {
       x_k <- rnorm(250, mean = 162, sd = 5)
       x_m <- rnorm(250, mean = 182, sd = 5)
       df <- data.frame(val = c(x_k, x_m),
-                       grupa = rep(c("Kobiety", "M\u0119\u017cczy\u017ani"), each = 250))
+                       grupa = rep(c("Kobiety", "Mężczyźni"), each = 250))
       ggplot(df, aes(x = val)) +
         geom_histogram(aes(y = after_stat(density)), bins = 35,
                        fill = "#95a5a6", color = "white", alpha = 0.5) +
         geom_density(linewidth = 1.2, color = "#2c3e50") +
         geom_density(aes(color = grupa), linewidth = 0.8, linetype = "dashed") +
-        scale_color_manual(values = c("Kobiety" = "#e74c3c", "M\u0119\u017cczy\u017ani" = "#3498db")) +
+        scale_color_manual(values = c("Kobiety" = "#e74c3c", "Mężczyźni" = "#3498db")) +
         labs(title = "Bimodalny -- dwa szczyty (dwie grupy!)",
-             x = "Wzrost (cm)", y = "G\u0119sto\u015b\u0107", color = NULL) +
+             x = "Wzrost (cm)", y = "Gęstość", color = NULL) +
         theme_minimal(base_size = 14) +
         theme(legend.position = "top")
 
@@ -1100,8 +1100,8 @@ ch3_server <- function(input, output, session) {
         geom_density(linewidth = 1.2, color = "#2c3e50") +
         geom_density(aes(color = grupa), linewidth = 0.8, linetype = "dashed") +
         scale_color_manual(values = c("Rower" = "#27ae60", "Autobus" = "#f39c12", "Auto" = "#e74c3c")) +
-        labs(title = "Wielomodalny -- trzy szczyty (trzy \u015brodki transportu)",
-             x = "Czas dojazdu (min)", y = "G\u0119sto\u015b\u0107", color = NULL) +
+        labs(title = "Wielomodalny -- trzy szczyty (trzy środki transportu)",
+             x = "Czas dojazdu (min)", y = "Gęstość", color = NULL) +
         theme_minimal(base_size = 14) +
         theme(legend.position = "top")
     }
@@ -1113,27 +1113,27 @@ ch3_server <- function(input, output, session) {
 
     if (scenario == "unimodal") {
       div(class = "callout-info",
-        tags$b("Rozk\u0142ad unimodalny: "), "jeden szczyt, jedna 'g\u00f3rka'. ",
-        "Dla rozk\u0142adu symetrycznego moda \u2248 \u015brednia \u2248 mediana. ",
-        "Wi\u0119kszo\u015b\u0107 statystyk opisowych zak\u0142ada w\u0142a\u015bnie taki rozk\u0142ad.")
+        tags$b("Rozkład unimodalny: "), "jeden szczyt, jedna 'górka'. ",
+        "Dla rozkładu symetrycznego moda ≈ średnia ≈ mediana. ",
+        "Większość statystyk opisowych zakłada właśnie taki rozkład.")
     } else if (scenario == "bimodal") {
       div(class = "callout-warning",
-        tags$b("Rozk\u0142ad bimodalny: "), "dwa szczyty! ",
-        "To sygna\u0142, \u017ce dane prawdopodobnie pochodz\u0105 z ",
-        "dw\u00f3ch r\u00f3\u017cnych grup. ",
-        "Podawanie jednej \u015bredniej dla ca\u0142o\u015bci jest mylace -- ",
-        "\u015brednia wyl\u0105duje mi\u0119dzy szczytami, gdzie prawie nikt nie jest!",
+        tags$b("Rozkład bimodalny: "), "dwa szczyty! ",
+        "To sygnał, że dane prawdopodobnie pochodzą z ",
+        "dwóch różnych grup. ",
+        "Podawanie jednej średniej dla całości jest mylace -- ",
+        "średnia wyląduje między szczytami, gdzie prawie nikt nie jest!",
         tags$br(), tags$br(),
         tags$em("Praktyka: rozdziel grupy i analizuj osobno."))
     } else {
       div(class = "callout-warning",
-        tags$b("Rozk\u0142ad wielomodalny: "), "trzy szczyty = trzy podgrupy. ",
-        "Ka\u017cda podgrupa (rowerzy\u015bci, pasa\u017cerowie autobus\u00f3w, kierowcy) ",
-        "ma w\u0142asn\u0105 'typow\u0105' warto\u015b\u0107. ",
+        tags$b("Rozkład wielomodalny: "), "trzy szczyty = trzy podgrupy. ",
+        "Każda podgrupa (rowerzyści, pasażerowie autobusów, kierowcy) ",
+        "ma własną 'typową' wartość. ",
         tags$br(), tags$br(),
-        tags$em("Wielomodalno\u015b\u0107 to jeden z najwa\u017cniejszych sygna\u0142\u00f3w w danych -- ",
-                "m\u00f3wi, \u017ce patrzenie na ca\u0142o\u015b\u0107 bez podzia\u0142u na grupy ",
-                "mo\u017ce prowadzi\u0107 do b\u0142\u0119dnych wniosk\u00f3w."))
+        tags$em("Wielomodalność to jeden z najważniejszych sygnałów w danych -- ",
+                "mówi, że patrzenie na całość bez podziału na grupy ",
+                "może prowadzić do błędnych wniosków."))
     }
   })
 
@@ -1285,19 +1285,19 @@ ch3_server <- function(input, output, session) {
       div(style = "text-align: center; padding: 12px; margin-bottom: 10px;
                     background: #fdedec; border-radius: 8px; font-size: 18px;
                     font-weight: bold; color: #e74c3c;",
-        "\u2193 Kliknij na wykres, aby postawi\u0107 \u015aREDNI\u0104"
+        "↓ Kliknij na wykres, aby postawić ŚREDNIĄ"
       )
     } else if (is.null(g$median)) {
       div(style = "text-align: center; padding: 12px; margin-bottom: 10px;
                     background: #eaf4fc; border-radius: 8px; font-size: 18px;
                     font-weight: bold; color: #3498db;",
-        "\u2193 Teraz kliknij, aby postawi\u0107 MEDIAN\u0118"
+        "↓ Teraz kliknij, aby postawić MEDIANĘ"
       )
     } else if (!ch3_game_revealed()) {
       div(style = "text-align: center; padding: 12px; margin-bottom: 10px;
                     background: #eafaf1; border-radius: 8px; font-size: 18px;
                     font-weight: bold; color: #27ae60;",
-        "Gotowe! Kliknij 'Poka\u017c odpowied\u017a'"
+        "Gotowe! Kliknij 'Pokaż odpowiedź'"
       )
     } else {
       sc <- ch3_game_score()
