@@ -82,7 +82,7 @@ global_header <- tagList(
 # ============================================================================
 
 ui <- navbarPage(
-  "Rozk\u0142ady prawdopodobie\u0144stwa",
+  "Rozkłady prawdopodobieństwa",
   id = "main_nav",
   theme = bs_theme(bootswatch = "sandstone"),
   header = global_header,
@@ -111,25 +111,25 @@ server <- function(input, output, session) {
     updateNavbarPage(session, "main_nav", selected = "2. Wart. oczekiwana i wariancja")
   })
   observeEvent(input$ch2ev_next, {
-    updateNavbarPage(session, "main_nav", selected = "3. Rozk\u0142ady dyskretne")
+    updateNavbarPage(session, "main_nav", selected = "3. Rozkłady dyskretne")
   })
   observeEvent(input$ch3_next, {
-    updateNavbarPage(session, "main_nav", selected = "4. Rozk\u0142ady ci\u0105g\u0142e")
+    updateNavbarPage(session, "main_nav", selected = "4. Rozkłady ciągłe")
   })
   observeEvent(input$ch4_next, {
-    updateNavbarPage(session, "main_nav", selected = "5. Rozk\u0142ad normalny")
+    updateNavbarPage(session, "main_nav", selected = "5. Rozkład normalny")
   })
   observeEvent(input$ch5_next, {
     updateNavbarPage(session, "main_nav", selected = "6. Centralne Tw. Graniczne")
   })
   observeEvent(input$ch6_next, {
-    updateNavbarPage(session, "main_nav", selected = "7. \u015aci\u0105ga")
+    updateNavbarPage(session, "main_nav", selected = "7. Ściąga")
   })
   observeEvent(input$ch7_next, {
     updateNavbarPage(session, "main_nav", selected = "8. Quiz")
   })
   observeEvent(input$ch8_to_ch9, {
-    updateNavbarPage(session, "main_nav", selected = "9. \u0106wiczenia")
+    updateNavbarPage(session, "main_nav", selected = "9. Ćwiczenia")
   })
 
   # ==========================================================================
