@@ -2,18 +2,18 @@
 # CHAPTER 1: Od danych do prawdopodobienstwa
 # ============================================================================
 
-ch1_ui <- tabPanel("1. Od danych do prawdopodobie\u0144stwa",
+ch1_ui <- tabPanel("1. Od danych do prawdopodobieństwa",
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Od danych do prawdopodobie\u0144stwa"),
+    div(class = "section-title", "Od danych do prawdopodobieństwa"),
 
     div(class = "narrative",
-      p("W statystyce opisowej nauczyli\u015bmy si\u0119 liczy\u0107 cz\u0119sto\u015bci, oblicza\u0107
-        \u015brednie i rysowa\u0107 histogramy. Ale co, je\u015bli chcemy ",
-        tags$b("przewidywa\u0107"), " przysz\u0142e obserwacje?"),
-      p("Klucz le\u017cy w poj\u0119ciu ", tags$b("prawdopodobie\u0144stwa"),
-        ". W tym rozdziale zobaczymy, jak cz\u0119sto\u015bci wzgl\u0119dne
-        zbiegaj\u0105 do prawdopodobie\u0144stw i czym jest rozk\u0142ad prawdopodobie\u0144stwa.")
+      p("W statystyce opisowej nauczyliśmy się liczyć częstości, obliczać
+        średnie i rysować histogramy. Ale co, jeśli chcemy ",
+        tags$b("przewidywać"), " przyszłe obserwacje?"),
+      p("Klucz leży w pojęciu ", tags$b("prawdopodobieństwa"),
+        ". W tym rozdziale zobaczymy, jak częstości względne
+        zbiegają do prawdopodobieństw i czym jest rozkład prawdopodobieństwa.")
     ),
 
     # ========================================================================
@@ -22,23 +22,23 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobie\u0144stwa",
     div(class = "section-title", "Prawo wielkich liczb w akcji"),
 
     div(class = "narrative",
-      p("Wyobra\u017a sobie, \u017ce rzucasz kostk\u0105. Jak cz\u0119sto wypada ka\u017cda \u015bcianka?
-        Przy kilku rzutach wyniki s\u0105 chaotyczne, ale im wi\u0119cej rzut\u00f3w,
-        tym cz\u0119sto\u015bci wzgl\u0119dne staj\u0105 si\u0119 bardziej stabilne.")
+      p("Wyobraź sobie, że rzucasz kostką. Jak często wypada każda ścianka?
+        Przy kilku rzutach wyniki są chaotyczne, ale im więcej rzutów,
+        tym częstości względne stają się bardziej stabilne.")
     ),
 
     div(class = "widget-block",
-      h4("Rzuty kostk\u0105 \u2014 stabilizacja cz\u0119sto\u015bci"),
+      h4("Rzuty kostką — stabilizacja częstości"),
       fluidRow(
         column(4,
           div(style = "display: flex; flex-direction: column; gap: 8px;",
-            actionButton("ch1_roll_1", "Rzu\u0107 1x",
+            actionButton("ch1_roll_1", "Rzuć 1x",
                          class = "btn-primary", width = "100%"),
-            actionButton("ch1_roll_10", "Rzu\u0107 10x",
+            actionButton("ch1_roll_10", "Rzuć 10x",
                          class = "btn-primary", width = "100%"),
-            actionButton("ch1_roll_100", "Rzu\u0107 100x",
+            actionButton("ch1_roll_100", "Rzuć 100x",
                          class = "btn-primary", width = "100%"),
-            actionButton("ch1_roll_1000", "Rzu\u0107 1000x",
+            actionButton("ch1_roll_1000", "Rzuć 1000x",
                          class = "btn-primary", width = "100%"),
             hr(),
             actionButton("ch1_roll_reset", "Reset",
@@ -56,46 +56,46 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobie\u0144stwa",
 
     div(class = "callout-info",
       tags$strong("Prawo wielkich liczb:"),
-      " Wraz ze wzrostem liczby obserwacji, cz\u0119sto\u015b\u0107 wzgl\u0119dna ka\u017cdego
-        wyniku zbiega do jego prawdopodobie\u0144stwa teoretycznego.
-        Dla uczciwej kostki ka\u017cda \u015bcianka ma P = 1/6 \u2248 0.167."
+      " Wraz ze wzrostem liczby obserwacji, częstość względna każdego
+        wyniku zbiega do jego prawdopodobieństwa teoretycznego.
+        Dla uczciwej kostki każda ścianka ma P = 1/6 ≈ 0.167."
     ),
 
     # ========================================================================
     # WIDGET 0: Rozklad empiryczny vs teoretyczny
     # ========================================================================
-    div(class = "section-title", "Rozk\u0142ad empiryczny vs teoretyczny"),
+    div(class = "section-title", "Rozkład empiryczny vs teoretyczny"),
 
     div(class = "narrative",
-      p("Kostka to prosty przyk\u0142ad, ale ten sam mechanizm dzia\u0142a dla ka\u017cdej
-        zmiennej losowej. Znasz ju\u017c histogram \u2014 pokazuje, jak cz\u0119sto dane
-        przyjmuj\u0105 r\u00f3\u017cne warto\u015bci. To jest ", tags$b("rozk\u0142ad empiryczny"),
-        " \u2014 oparty na obserwacjach."),
-      p("A gdyby\u015bmy znali ", tags$b("regu\u0142\u0119 generuj\u0105c\u0105 dane"),
-        "? Wtedy zamiast histogramu mieliby\u015bmy g\u0142adk\u0105 krzyw\u0105 \u2014 ",
-        tags$b("rozk\u0142ad teoretyczny"),
+      p("Kostka to prosty przykład, ale ten sam mechanizm działa dla każdej
+        zmiennej losowej. Znasz już histogram — pokazuje, jak często dane
+        przyjmują różne wartości. To jest ", tags$b("rozkład empiryczny"),
+        " — oparty na obserwacjach."),
+      p("A gdybyśmy znali ", tags$b("regułę generującą dane"),
+        "? Wtedy zamiast histogramu mielibyśmy gładką krzywą — ",
+        tags$b("rozkład teoretyczny"),
         ". Zobaczmy, jak jedno przechodzi w drugie.")
     ),
 
     div(class = "widget-block",
-      h4("Histogram (dane) vs krzywa g\u0119sto\u015bci (model)"),
+      h4("Histogram (dane) vs krzywa gęstości (model)"),
       fluidRow(
         column(4,
-          selectInput("ch1_emp_dist", "Rozk\u0142ad \u017ar\u00f3d\u0142owy:",
+          selectInput("ch1_emp_dist", "Rozkład źródłowy:",
             choices = c(
-              "Wzrost student\u00f3w (normalny)" = "normal",
-              "Czas dojazdu (sko\u015bny)"       = "skewed",
+              "Wzrost studentów (normalny)" = "normal",
+              "Czas dojazdu (skośny)"       = "skewed",
               "Ocena losowa (jednostajny)"   = "uniform"
             ),
             selected = "normal"
           ),
-          sliderInput("ch1_emp_n", "Wielko\u015b\u0107 pr\u00f3by:",
+          sliderInput("ch1_emp_n", "Wielkość próby:",
                       min = 20, max = 5000, value = 200, step = 20),
-          actionButton("ch1_emp_resample", "Losuj now\u0105 pr\u00f3b\u0119",
+          actionButton("ch1_emp_resample", "Losuj nową próbę",
                        class = "btn-primary", width = "100%"),
           hr(),
           checkboxInput("ch1_show_hist", "Histogram (dane empiryczne)", value = TRUE),
-          checkboxInput("ch1_show_density", "Krzywa g\u0119sto\u015bci (model teoretyczny)", value = FALSE)
+          checkboxInput("ch1_show_density", "Krzywa gęstości (model teoretyczny)", value = FALSE)
         ),
         column(8,
           plotOutput("ch1_emp_vs_theo", height = "380px"),
@@ -106,32 +106,32 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobie\u0144stwa",
 
     div(class = "callout-info",
       tags$strong("Kluczowa idea:"),
-      " W\u0142\u0105cz obie warstwy i zwi\u0119kszaj pr\u00f3b\u0119. Im wi\u0119cej danych,
-        tym lepiej histogram przybli\u017ca krzyw\u0105.
-        Rozk\u0142ad teoretyczny to ", tags$b("idea\u0142"), " \u2014 dane to jego ",
-        tags$b("niedoskona\u0142e odbicie"), "."
+      " Włącz obie warstwy i zwiększaj próbę. Im więcej danych,
+        tym lepiej histogram przybliża krzywą.
+        Rozkład teoretyczny to ", tags$b("ideał"), " — dane to jego ",
+        tags$b("niedoskonałe odbicie"), "."
     ),
 
     # ========================================================================
     # WIDGET 2: Czestosci vs prawdopodobienstwo
     # ========================================================================
-    div(class = "section-title", "Cz\u0119sto\u015bci vs prawdopodobie\u0144stwo"),
+    div(class = "section-title", "Częstości vs prawdopodobieństwo"),
 
     div(class = "narrative",
-      p("Prawdopodobie\u0144stwo to ", tags$b("teoretyczny model"),
-        " opisuj\u0105cy, jak cz\u0119sto powinny wyst\u0119powa\u0107 r\u00f3\u017cne wyniki.
-        Cz\u0119sto\u015bci wzgl\u0119dne z danych to ", tags$b("empiryczne przybli\u017cenie"),
+      p("Prawdopodobieństwo to ", tags$b("teoretyczny model"),
+        " opisujący, jak często powinny występować różne wyniki.
+        Częstości względne z danych to ", tags$b("empiryczne przybliżenie"),
         " tego modelu.")
     ),
 
     div(class = "widget-block",
-      h4("Por\u00f3wnanie: teoria vs obserwacja"),
+      h4("Porównanie: teoria vs obserwacja"),
       fluidRow(
         column(4,
           radioButtons("ch1_scenario", "Scenariusz:",
             choices = c(
               "Uczciwa kostka"   = "fair",
-              "Obci\u0105\u017cona kostka" = "loaded",
+              "Obciążona kostka" = "loaded",
               "Moneta"           = "coin"
             ),
             selected = "fair"
@@ -151,22 +151,22 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobie\u0144stwa",
     # ========================================================================
     # WIDGET 3: Czym jest rozklad?
     # ========================================================================
-    div(class = "section-title", "Czym jest rozk\u0142ad prawdopodobie\u0144stwa?"),
+    div(class = "section-title", "Czym jest rozkład prawdopodobieństwa?"),
 
     div(class = "narrative",
-      p("Rozk\u0142ad prawdopodobie\u0144stwa to ", tags$b("kompletny opis"),
-        " wszystkich mo\u017cliwych wynik\u00f3w i ich prawdopodobie\u0144stw.
-        Musi spe\u0142nia\u0107 dwa warunki:"),
+      p("Rozkład prawdopodobieństwa to ", tags$b("kompletny opis"),
+        " wszystkich możliwych wyników i ich prawdopodobieństw.
+        Musi spełniać dwa warunki:"),
       tags$ol(
-        tags$li("Ka\u017cde prawdopodobie\u0144stwo jest nieujemne: P(x) \u2265 0"),
-        tags$li("Suma wszystkich prawdopodobie\u0144stw wynosi 1")
+        tags$li("Każde prawdopodobieństwo jest nieujemne: P(x) ≥ 0"),
+        tags$li("Suma wszystkich prawdopodobieństw wynosi 1")
       ),
-      p("Spr\u00f3buj sam(a) zbudowa\u0107 rozk\u0142ad \u2014 ustaw prawdopodobie\u0144stwa
-        czterech wynik\u00f3w tak, \u017ceby sumowa\u0142y si\u0119 do 1.")
+      p("Spróbuj sam(a) zbudować rozkład — ustaw prawdopodobieństwa
+        czterech wyników tak, żeby sumowały się do 1.")
     ),
 
     div(class = "widget-block",
-      h4("Zbuduj w\u0142asny rozk\u0142ad"),
+      h4("Zbuduj własny rozkład"),
       fluidRow(
         column(6,
           sliderInput("ch1_p1", "P(Wynik A):", min = 0, max = 1, value = 0.25, step = 0.01),
@@ -182,18 +182,18 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobie\u0144stwa",
     ),
 
     div(class = "callout-warning",
-      tags$strong("Zapami\u0119taj:"),
-      " Rozk\u0142ad prawdopodobie\u0144stwa to nie dane \u2014 to ", tags$b("model matematyczny"),
-      ". Dane to pr\u00f3bka z tego modelu. Im wi\u0119ksza pr\u00f3bka,
-        tym lepiej przybli\u017ca model."
+      tags$strong("Zapamiętaj:"),
+      " Rozkład prawdopodobieństwa to nie dane — to ", tags$b("model matematyczny"),
+      ". Dane to próbka z tego modelu. Im większa próbka,
+        tym lepiej przybliża model."
     ),
 
     # --- Transition ---
     div(class = "chapter-transition",
-      p("Wiemy ju\u017c, czym jest rozk\u0142ad prawdopodobie\u0144stwa.
-        Zanim poznamy konkretne rozk\u0142ady, odpowiedzmy na dwa kluczowe
-        pytania: czego si\u0119 spodziewa\u0107 i jak bardzo wyniki mog\u0105 si\u0119 r\u00f3\u017cni\u0107?"),
-      actionButton("ch1_next", "Dalej: 2. Warto\u015b\u0107 oczekiwana i wariancja \u2192",
+      p("Wiemy już, czym jest rozkład prawdopodobieństwa.
+        Zanim poznamy konkretne rozkłady, odpowiedzmy na dwa kluczowe
+        pytania: czego się spodziewać i jak bardzo wyniki mogą się różnić?"),
+      actionButton("ch1_next", "Dalej: 2. Wartość oczekiwana i wariancja →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -238,7 +238,7 @@ ch1_server <- function(input, output, session) {
     if (!show_hist && !show_dens) {
       return(ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "W\u0142\u0105cz przynajmniej jedn\u0105 warstw\u0119",
+                 label = "Włącz przynajmniej jedną warstwę",
                  size = 6, color = "#7f8c8d") +
         theme_void())
     }
@@ -280,9 +280,9 @@ ch1_server <- function(input, output, session) {
     fixed_ymax <- max(theo_ymax, hist_ymax) * 1.08
 
     dist_label <- switch(d$dist,
-      "normal"  = "Rozk\u0142ad normalny N(170, 8)",
-      "skewed"  = "Rozk\u0142ad gamma (sko\u015bny)",
-      "uniform" = "Rozk\u0142ad jednostajny U(1, 6)"
+      "normal"  = "Rozkład normalny N(170, 8)",
+      "skewed"  = "Rozkład gamma (skośny)",
+      "uniform" = "Rozkład jednostajny U(1, 6)"
     )
 
     p <- ggplot()
@@ -306,7 +306,7 @@ ch1_server <- function(input, output, session) {
                      else if (show_hist) "Dane empiryczne (histogram)"
                      else "Model teoretyczny (krzywa)"),
       subtitle = paste0("n = ", d$n, " | ", dist_label),
-      x = "Warto\u015b\u0107", y = "G\u0119sto\u015b\u0107"
+      x = "Wartość", y = "Gęstość"
     ) +
     theme_educational()
   })
@@ -318,15 +318,15 @@ ch1_server <- function(input, output, session) {
     if (show_hist && show_dens) {
       div(class = "callout-success",
         "Widzisz obie warstwy. Histogram to dane, krzywa to model.
-         Zwi\u0119kszaj pr\u00f3b\u0119 \u2014 histogram coraz lepiej przybli\u017ca krzyw\u0105!")
+         Zwiększaj próbę — histogram coraz lepiej przybliża krzywą!")
     } else if (show_hist) {
       div(class = "callout-info",
-        "To histogram \u2014 rozk\u0142ad empiryczny oparty na danych.
-         W\u0142\u0105cz krzyw\u0105 g\u0119sto\u015bci, \u017ceby zobaczy\u0107 model teoretyczny.")
+        "To histogram — rozkład empiryczny oparty na danych.
+         Włącz krzywą gęstości, żeby zobaczyć model teoretyczny.")
     } else if (show_dens) {
       div(class = "callout-info",
-        "To krzywa g\u0119sto\u015bci \u2014 model teoretyczny.
-         W\u0142\u0105cz histogram, \u017ceby por\u00f3wna\u0107 z danymi.")
+        "To krzywa gęstości — model teoretyczny.
+         Włącz histogram, żeby porównać z danymi.")
     }
   })
 
@@ -352,14 +352,14 @@ ch1_server <- function(input, output, session) {
   output$ch1_roll_count <- renderUI({
     n <- length(dice_rolls())
     div(class = "stat-box", style = paste0("background: ", col_primary, ";"),
-        paste0("Rzut\u00f3w: ", n))
+        paste0("Rzutów: ", n))
   })
 
   output$ch1_freq_bar <- renderPlot({
     rolls <- dice_rolls()
     if (length(rolls) == 0) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij przycisk, aby rzuci\u0107 kostk\u0105",
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij przycisk, aby rzucić kostką",
                  size = 6, color = "#7f8c8d") +
         theme_void()
     } else {
@@ -372,7 +372,7 @@ ch1_server <- function(input, output, session) {
         geom_text(aes(label = sprintf("%.3f", rel_freq)), vjust = -0.5, size = 4) +
         scale_y_continuous(limits = c(0, max(0.35, max(freq_df$rel_freq) * 1.15)),
                            expand = expansion(mult = c(0, 0.05))) +
-        labs(title = "Cz\u0119sto\u015bci wzgl\u0119dne", x = "\u015acianka", y = "Cz\u0119sto\u015b\u0107 wzgl\u0119dna") +
+        labs(title = "Częstości względne", x = "Ścianka", y = "Częstość względna") +
         annotate("text", x = 6.3, y = 1/6, label = "1/6", color = col_secondary,
                  fontface = "bold", size = 4, hjust = 0) +
         theme_educational()
@@ -403,9 +403,9 @@ ch1_server <- function(input, output, session) {
     ggplot(conv_data, aes(x = n, y = rel_freq, color = face)) +
       geom_line(linewidth = 0.8, alpha = 0.7) +
       geom_hline(yintercept = 1/6, color = "gray40", linewidth = 0.8, linetype = "dashed") +
-      scale_color_brewer(palette = "Set2", name = "\u015acianka") +
-      labs(title = "Zbie\u017cno\u015b\u0107 cz\u0119sto\u015bci do 1/6",
-           x = "Liczba rzut\u00f3w", y = "Cz\u0119sto\u015b\u0107 wzgl\u0119dna") +
+      scale_color_brewer(palette = "Set2", name = "Ścianka") +
+      labs(title = "Zbieżność częstości do 1/6",
+           x = "Liczba rzutów", y = "Częstość względna") +
       theme_educational() +
       theme(legend.position = "right")
   })
@@ -431,7 +431,7 @@ ch1_server <- function(input, output, session) {
     } else {
       obs <- sample(c(1, 2), n, replace = TRUE)
       theo <- c(0.5, 0.5)
-      labels <- c("Orze\u0142", "Reszka")
+      labels <- c("Orzeł", "Reszka")
     }
 
     freq_data(list(obs = obs, theo = theo, labels = labels))
@@ -464,7 +464,7 @@ ch1_server <- function(input, output, session) {
       scale_color_manual(values = c("Teoretyczne" = col_secondary), name = "") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = paste0("n = ", length(fd$obs), " obserwacji"),
-           x = "Wynik", y = "Proporcja / Prawdopodobie\u0144stwo") +
+           x = "Wynik", y = "Proporcja / Prawdopodobieństwo") +
       theme_educational() +
       theme(legend.position = "top")
   })
@@ -476,9 +476,9 @@ ch1_server <- function(input, output, session) {
     max_diff <- max(abs(table(factor(fd$obs, levels = 1:length(fd$labels))) / n - fd$theo))
 
     div(class = if (max_diff < 0.05) "callout-success" else "callout-info",
-      paste0("Maksymalna r\u00f3\u017cnica mi\u0119dzy cz\u0119sto\u015bci\u0105 a prawdopodobie\u0144stwem: ",
+      paste0("Maksymalna różnica między częstością a prawdopodobieństwem: ",
              sprintf("%.3f", max_diff),
-             if (max_diff < 0.05) " \u2014 dobra zgodno\u015b\u0107!" else " \u2014 spr\u00f3buj zwi\u0119kszy\u0107 n")
+             if (max_diff < 0.05) " — dobra zgodność!" else " — spróbuj zwiększyć n")
     )
   })
 
@@ -487,10 +487,10 @@ ch1_server <- function(input, output, session) {
     s <- input$ch1_p1 + input$ch1_p2 + input$ch1_p3 + input$ch1_p4
     if (abs(s - 1) < 0.005) {
       div(class = "stat-box", style = paste0("background: ", col_success, ";"),
-          paste0("\u2211 = ", sprintf("%.2f", s), " \u2714"))
+          paste0("∑ = ", sprintf("%.2f", s), " ✔"))
     } else {
       div(class = "stat-box", style = paste0("background: ", col_secondary, ";"),
-          paste0("\u2211 = ", sprintf("%.2f", s), " \u2260 1 \u2718"))
+          paste0("∑ = ", sprintf("%.2f", s), " ≠ 1 ✘"))
     }
   })
 
@@ -509,8 +509,8 @@ ch1_server <- function(input, output, session) {
                color = "white", alpha = 0.85, width = 0.6) +
       geom_text(aes(label = sprintf("%.2f", prob)), vjust = -0.5, size = 5) +
       scale_y_continuous(limits = c(0, 1.1), expand = expansion(mult = c(0, 0))) +
-      labs(title = if (valid) "Poprawny rozk\u0142ad!" else "Suma musi wynosi\u0107 1",
-           x = "Wynik", y = "Prawdopodobie\u0144stwo") +
+      labs(title = if (valid) "Poprawny rozkład!" else "Suma musi wynosić 1",
+           x = "Wynik", y = "Prawdopodobieństwo") +
       theme_educational()
   })
 

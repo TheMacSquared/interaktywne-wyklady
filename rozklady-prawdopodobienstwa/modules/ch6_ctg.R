@@ -6,28 +6,28 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Rozk\u0142ad normalny pojawia si\u0119 wsz\u0119dzie. Ale dlaczego?
-       Odpowied\u017a to jedno z najwa\u017cniejszych twierdze\u0144 w statystyce."
+      "Rozkład normalny pojawia się wszędzie. Ale dlaczego?
+       Odpowiedź to jedno z najważniejszych twierdzeń w statystyce."
     ),
 
     div(class = "section-title", "Centralne Twierdzenie Graniczne (CTG)"),
 
     div(class = "narrative",
-      p("Centralne Twierdzenie Graniczne m\u00f3wi, \u017ce:"),
+      p("Centralne Twierdzenie Graniczne mówi, że:"),
       div(class = "callout-success",
         tags$strong("CTG:"),
-        " Je\u015bli wezmiesz pr\u00f3b\u0119 n obserwacji z ", tags$b("dowolnego"),
-        " rozk\u0142adu (o sko\u0144czonej wariancji) i obliczysz \u015bredni\u0105,
-        to rozk\u0142ad tej \u015bredniej b\u0119dzie zbiega\u0142 do ", tags$b("normalnego"),
+        " Jeśli wezmiesz próbę n obserwacji z ", tags$b("dowolnego"),
+        " rozkładu (o skończonej wariancji) i obliczysz średnią,
+        to rozkład tej średniej będzie zbiegał do ", tags$b("normalnego"),
         " wraz ze wzrostem n."
       ),
-      p("To wyja\u015bnia, dlaczego rozk\u0142ad normalny jest wsz\u0119dzie \u2014 wiele
-        zjawisk naturalnych to suma wielu drobnych, niezale\u017cnych czynnik\u00f3w.
-        Zobaczmy to na w\u0142asne oczy!")
+      p("To wyjaśnia, dlaczego rozkład normalny jest wszędzie — wiele
+        zjawisk naturalnych to suma wielu drobnych, niezależnych czynników.
+        Zobaczmy to na własne oczy!")
     ),
 
     div(class = "widget-block",
-      h4("Wideo wprowadzaj\u0105ce"),
+      h4("Wideo wprowadzające"),
       div(style = "position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;",
         tags$iframe(
           src = "https://www.youtube.com/embed/jvoxEYmQHNM",
@@ -44,28 +44,28 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
     div(class = "section-title", "Eksperyment CLT"),
 
     div(class = "widget-block",
-      h4("Symulacja: \u015brednie z dowolnego rozk\u0142adu \u2192 normalny"),
+      h4("Symulacja: średnie z dowolnego rozkładu → normalny"),
       fluidRow(
         column(4,
-          selectInput("ch6_pop_dist", "Rozk\u0142ad populacji:",
+          selectInput("ch6_pop_dist", "Rozkład populacji:",
             choices = c(
               "Jednostajny"         = "uniform",
-              "Wyk\u0142adniczy (sko\u015bny)" = "exponential",
+              "Wykładniczy (skośny)" = "exponential",
               "Dwumodalny"          = "bimodal",
-              "U-kszta\u0142tny"          = "u_shape",
+              "U-kształtny"          = "u_shape",
               "Kostka (dyskretny)"  = "die"
             ),
             selected = "exponential"
           ),
-          sliderInput("ch6_sample_size", "Wielko\u015b\u0107 pr\u00f3by (n):",
+          sliderInput("ch6_sample_size", "Wielkość próby (n):",
                       min = 1, max = 100, value = 5, step = 1),
           hr(),
           div(style = "display: flex; flex-direction: column; gap: 8px;",
-            actionButton("ch6_take_1", "Pobierz 1 pr\u00f3b\u0119",
+            actionButton("ch6_take_1", "Pobierz 1 próbę",
                          class = "btn-primary", width = "100%"),
-            actionButton("ch6_take_100", "Pobierz 100 pr\u00f3b",
+            actionButton("ch6_take_100", "Pobierz 100 prób",
                          class = "btn-primary", width = "100%"),
-            actionButton("ch6_take_1000", "Pobierz 1000 pr\u00f3b",
+            actionButton("ch6_take_1000", "Pobierz 1000 prób",
                          class = "btn-warning", width = "100%"),
             hr(),
             actionButton("ch6_reset", "Reset",
@@ -84,28 +84,28 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
 
     div(class = "callout-info",
       tags$strong("Aha-moment:"),
-      " Zmie\u0144 rozk\u0142ad populacji na najbardziej 'dziki' jaki znajdziesz
-        (U-kszta\u0142tny, dwumodalny). Potem zbi\u00f3r 1000 pr\u00f3b.
-        Histogram \u015brednich i tak stanie si\u0119 dzwonem!"
+      " Zmień rozkład populacji na najbardziej 'dziki' jaki znajdziesz
+        (U-kształtny, dwumodalny). Potem zbiór 1000 prób.
+        Histogram średnich i tak stanie się dzwonem!"
     ),
 
     # ========================================================================
     # WIDGET 2: Wplyw wielkosci proby
     # ========================================================================
-    div(class = "section-title", "Wp\u0142yw wielko\u015bci pr\u00f3by"),
+    div(class = "section-title", "Wpływ wielkości próby"),
 
     div(class = "narrative",
-      p("Im wi\u0119ksza pr\u00f3ba n, tym szybciej rozk\u0142ad \u015brednich staje si\u0119
-        normalny. Zobaczmy to por\u00f3wnuj\u0105c r\u00f3\u017cne n obok siebie.")
+      p("Im większa próba n, tym szybciej rozkład średnich staje się
+        normalny. Zobaczmy to porównując różne n obok siebie.")
     ),
 
     div(class = "widget-block",
-      h4("Rozk\u0142ad \u015brednich z Exp(\u03bb=0.5) dla r\u00f3\u017cnych n"),
-      selectInput("ch6_effect_dist", "Rozk\u0142ad populacji:",
+      h4("Rozkład średnich z Exp(λ=0.5) dla różnych n"),
+      selectInput("ch6_effect_dist", "Rozkład populacji:",
         choices = c(
-          "Wyk\u0142adniczy" = "exponential",
+          "Wykładniczy" = "exponential",
           "Jednostajny"  = "uniform",
-          "U-kszta\u0142tny"  = "u_shape"
+          "U-kształtny"  = "u_shape"
         ),
         selected = "exponential"
       ),
@@ -115,22 +115,22 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
     # ========================================================================
     # WIDGET 3: Dlaczego to dziala?
     # ========================================================================
-    div(class = "section-title", "Dlaczego to dzia\u0142a? \u2014 intuicja"),
+    div(class = "section-title", "Dlaczego to działa? — intuicja"),
 
     div(class = "widget-block",
-      h4("Od jednej obserwacji do \u015bredniej z 30"),
+      h4("Od jednej obserwacji do średniej z 30"),
       fluidRow(
         column(4,
           actionButton("ch6_why_step1", "1. Jedna obserwacja",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
-          actionButton("ch6_why_step2", "2. \u015arednia z 2",
+          actionButton("ch6_why_step2", "2. Średnia z 2",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
-          actionButton("ch6_why_step3", "3. \u015arednia z 5",
+          actionButton("ch6_why_step3", "3. Średnia z 5",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
-          actionButton("ch6_why_step4", "4. \u015arednia z 30",
+          actionButton("ch6_why_step4", "4. Średnia z 30",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
           actionButton("ch6_why_reset", "Reset",
@@ -145,9 +145,9 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
 
     div(class = "callout-success",
       tags$strong("Kluczowa intuicja:"),
-      " U\u015brednianie 'wyg\u0142adza' indywidualne dziwactwa. Ekstrema w jednym
-        kierunku s\u0105 niwelowane przez ekstrema w drugim. Im wi\u0119cej
-        u\u015bredniamy, tym bli\u017cej \u015brodka l\u0105dujemy."
+      " Uśrednianie 'wygładza' indywidualne dziwactwa. Ekstrema w jednym
+        kierunku są niwelowane przez ekstrema w drugim. Im więcej
+        uśredniamy, tym bliżej środka lądujemy."
     ),
 
     div(class = "formula-box",
@@ -155,16 +155,16 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
         "$$\\bar{X}_n \\xrightarrow{d} N\\left(\\mu, \\frac{\\sigma}{\\sqrt{n}}\\right)$$"
       )),
       p(style = "font-size: 13px; color: #7f8c8d;",
-        "Rozk\u0142ad \u015bredniej ma t\u0119 sam\u0105 \u015bredni\u0105 \u03bc co populacja, ale
-         odchylenie standardowe maleje jak 1/\u221an.")
+        "Rozkład średniej ma tę samą średnią μ co populacja, ale
+         odchylenie standardowe maleje jak 1/√n.")
     ),
 
     # --- Transition ---
     div(class = "chapter-transition",
-      p("CTG wyja\u015bnia, dlaczego rozk\u0142ad normalny jest tak wa\u017cny
-        dla wnioskowania statystycznego. Na koniec \u2014 kompaktowa \u015bci\u0105ga
-        ze wszystkimi wzorami i regu\u0142ami decyzyjnymi."),
-      actionButton("ch6_next", "Dalej: 7. \u015aci\u0105ga \u2192",
+      p("CTG wyjaśnia, dlaczego rozkład normalny jest tak ważny
+        dla wnioskowania statystycznego. Na koniec — kompaktowa ściąga
+        ze wszystkimi wzorami i regułami decyzyjnymi."),
+      actionButton("ch6_next", "Dalej: 7. Ściąga →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -204,7 +204,7 @@ ch6_server <- function(input, output, session) {
   output$ch6_sample_count <- renderUI({
     n <- length(collected_means())
     div(class = "stat-box", style = paste0("background: ", col_primary, ";"),
-        paste0("Pr\u00f3b: ", n))
+        paste0("Prób: ", n))
   })
 
   output$ch6_pop_plot <- renderPlot({
@@ -227,7 +227,7 @@ ch6_server <- function(input, output, session) {
         geom_density(fill = col_warning, color = col_dark, alpha = 0.5, linewidth = 0.8) +
         labs(title = paste0("Populacja: ", dist_label),
              subtitle = "To NIE jest normalny!",
-             x = "", y = "G\u0119sto\u015b\u0107") +
+             x = "", y = "Gęstość") +
         theme_educational(base_size = 11)
     }
   })
@@ -238,7 +238,7 @@ ch6_server <- function(input, output, session) {
     if (length(means) == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij 'Pobierz pr\u00f3b\u0119', aby rozpocz\u0105\u0107",
+                 label = "Kliknij 'Pobierz próbę', aby rozpocząć",
                  size = 6, color = "#7f8c8d") +
         theme_void()
     } else {
@@ -268,10 +268,10 @@ ch6_server <- function(input, output, session) {
       }
 
       p + geom_vline(xintercept = theo_mu, color = col_secondary, linetype = "dashed") +
-        labs(title = paste0("Rozk\u0142ad \u015brednich (n=", n, ", ", length(means), " pr\u00f3b)"),
+        labs(title = paste0("Rozkład średnich (n=", n, ", ", length(means), " prób)"),
              subtitle = paste0("Krzywa: N(", round(theo_mu, 2), ", ",
                                round(theo_sd, 2), ")"),
-             x = "\u015arednia z pr\u00f3by", y = "G\u0119sto\u015b\u0107") +
+             x = "Średnia z próby", y = "Gęstość") +
         theme_educational()
     }
   })
@@ -287,11 +287,11 @@ ch6_server <- function(input, output, session) {
 
     div(style = "text-align: center; margin-top: 10px;",
       div(class = "stat-box", style = paste0("background: ", col_primary, ";"),
-          paste0("\u015ar. \u015brednich = ", round(mean(means), 3))),
+          paste0("Śr. średnich = ", round(mean(means), 3))),
       div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
-          paste0("SD \u015brednich = ", round(sd(means), 3))),
+          paste0("SD średnich = ", round(sd(means), 3))),
       div(class = "stat-box", style = paste0("background: ", col_warning, ";"),
-          paste0("Teor. SD = \u03c3/\u221an = ", round(theo_sd, 3)))
+          paste0("Teor. SD = σ/√n = ", round(theo_sd, 3)))
     )
   })
 
@@ -329,9 +329,9 @@ ch6_server <- function(input, output, session) {
       geom_line(data = norm_data, aes(x = x, y = y),
                 color = col_secondary, linewidth = 1.2) +
       facet_wrap(~n_label, scales = "free") +
-      labs(title = paste0("2000 \u015brednich z rozk\u0142adu: ",
+      labs(title = paste0("2000 średnich z rozkładu: ",
                           dist_names_pl[dist]),
-           x = "\u015arednia z pr\u00f3by", y = "G\u0119sto\u015b\u0107") +
+           x = "Średnia z próby", y = "Gęstość") +
       theme_educational(base_size = 12)
   })
 
@@ -350,7 +350,7 @@ ch6_server <- function(input, output, session) {
     if (step == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij krok 1, aby zacz\u0105\u0107",
+                 label = "Kliknij krok 1, aby zacząć",
                  size = 6, color = "#7f8c8d") +
         theme_void()
     } else {
@@ -372,13 +372,13 @@ ch6_server <- function(input, output, session) {
                            color = col_secondary, linewidth = 1.5)
       }
 
-      p + labs(title = paste0("Rozk\u0142ad \u015bredniej z ", n_val,
+      p + labs(title = paste0("Rozkład średniej z ", n_val,
                               if (n_val == 1) " obserwacji" else " obserwacji",
-                              " (wyk\u0142adniczy)"),
-               subtitle = if (n_val == 1) "Identyczny z rozk\u0142adem populacji"
+                              " (wykładniczy)"),
+               subtitle = if (n_val == 1) "Identyczny z rozkładem populacji"
                            else paste0("Krzywa: N(", round(params$mu, 2), ", ",
                                        round(theo_sd, 2), ")"),
-               x = "\u015arednia", y = "G\u0119sto\u015b\u0107") +
+               x = "Średnia", y = "Gęstość") +
         theme_educational()
     }
   })
@@ -387,10 +387,10 @@ ch6_server <- function(input, output, session) {
     step <- ch6_why_step()
     texts <- list(
       NULL,
-      "Pojedyncza obserwacja z rozk\u0142adu wyk\u0142adniczego \u2014 wyra\u017anie prawosko\u015bny!",
-      "\u015arednia z 2: ju\u017c mniej skrajnych warto\u015bci, lewa strona zaczyna si\u0119 wype\u0142nia\u0107.",
-      "\u015arednia z 5: kszta\u0142t staje si\u0119 bardziej symetryczny. Ekstrema si\u0119 niweluj\u0105.",
-      "\u015arednia z 30: praktycznie normalny! Krzywa gaussowska pasuje niemal idealnie."
+      "Pojedyncza obserwacja z rozkładu wykładniczego — wyraźnie prawoskośny!",
+      "Średnia z 2: już mniej skrajnych wartości, lewa strona zaczyna się wypełniać.",
+      "Średnia z 5: kształt staje się bardziej symetryczny. Ekstrema się niwelują.",
+      "Średnia z 30: praktycznie normalny! Krzywa gaussowska pasuje niemal idealnie."
     )
     if (step > 0) div(class = "callout-info", texts[[step + 1]])
   })

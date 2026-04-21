@@ -84,6 +84,22 @@ shinyApp(ui = ui, server = server)
 | Zmienne reactive | snake_case | `collected_data`, `current_step` |
 | Identyfikatory UI | snake_case | `main_plot`, `step_explanation` |
 
+## Polskie znaki w plikach R
+
+Pisz polskie znaki **bezpośrednio jako UTF-8** (`ó`, `ą`, `ę`, `ł`, `ś`, `ż`, `ź`, `ć`, `ń`), nie jako escape'y `\uXXXX`.
+
+```r
+# DOBRZE
+p("Średnia próby wynosi 42")
+
+# ŹLE — escape'y \uXXXX
+p("Średnia próby wynosi 42")
+```
+
+To dotyczy też znaków typograficznych: `≥` (nie `≥`), `—` (nie `—`), `×` (nie `×`), `μ`, `σ`, `λ`.
+
+Powód: escape'y są nieczytelne w edytorze, utrudniają `grep`, sed i Edit, dają nieczytelne diffy w git. Środowisko (Linux/WSL, R ≥ 4.0, locale UTF-8) obsługuje surowe UTF-8 bez problemu.
+
 ## Preferowane pakiety R
 
 ### Podstawowe (używaj zawsze)

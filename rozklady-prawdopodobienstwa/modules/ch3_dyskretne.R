@@ -2,32 +2,32 @@
 # CHAPTER 3: Rozklady dyskretne
 # ============================================================================
 
-ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
+ch3_ui <- tabPanel("3. Rozkłady dyskretne",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Wiemy ju\u017c, czym jest warto\u015b\u0107 oczekiwana i wariancja.
-       Teraz poznamy trzy klasyczne rozk\u0142ady dyskretne i zobaczymy,
-       jak ich E(X) i Var(X) zale\u017c\u0105 od parametr\u00f3w."
+      "Wiemy już, czym jest wartość oczekiwana i wariancja.
+       Teraz poznamy trzy klasyczne rozkłady dyskretne i zobaczymy,
+       jak ich E(X) i Var(X) zależą od parametrów."
     ),
 
-    div(class = "section-title", "Rozk\u0142ady dyskretne"),
+    div(class = "section-title", "Rozkłady dyskretne"),
 
     div(class = "narrative",
-      p("Rozk\u0142ad dyskretny opisuje zmienn\u0105, kt\u00f3ra przyjmuje ",
-        "sko\u0144czon\u0105 lub przeliczaln\u0105 liczb\u0119 warto\u015bci
-        (np. 0, 1, 2, 3...). Ka\u017cdej warto\u015bci przypisujemy prawdopodobie\u0144stwo."),
-      p("Poznamy trzy najwa\u017cniejsze:")
+      p("Rozkład dyskretny opisuje zmienną, która przyjmuje ",
+        "skończoną lub przeliczalną liczbę wartości
+        (np. 0, 1, 2, 3...). Każdej wartości przypisujemy prawdopodobieństwo."),
+      p("Poznamy trzy najważniejsze:")
     ),
 
     # ========================================================================
     # WIDGET 1: Rozklad jednostajny dyskretny
     # ========================================================================
-    div(class = "section-title", "Rozk\u0142ad jednostajny dyskretny"),
+    div(class = "section-title", "Rozkład jednostajny dyskretny"),
 
     div(class = "narrative",
-      p("Najprostszy rozk\u0142ad: ka\u017cdy wynik jest jednakowo prawdopodobny.
-        Przyk\u0142ady: rzut kostk\u0105, losowanie cyfry, losowanie karty z talii.")
+      p("Najprostszy rozkład: każdy wynik jest jednakowo prawdopodobny.
+        Przykłady: rzut kostką, losowanie cyfry, losowanie karty z talii.")
     ),
 
     div(class = "widget-block",
@@ -36,11 +36,11 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
         column(4,
           radioButtons("ch3_unif_type", "Eksperyment:",
             choices = c("Moneta (2 wyniki)" = "coin",
-                        "Kostka (6 wynik\u00f3w)" = "die",
-                        "Kostka 12-\u015bcienna" = "d12"),
+                        "Kostka (6 wyników)" = "die",
+                        "Kostka 12-ścienna" = "d12"),
             selected = "die"
           ),
-          sliderInput("ch3_unif_n", "Liczba pr\u00f3b:",
+          sliderInput("ch3_unif_n", "Liczba prób:",
                       min = 10, max = 5000, value = 100, step = 10),
           actionButton("ch3_unif_sim", "Symuluj!",
                        class = "btn-primary", width = "100%")
@@ -59,24 +59,24 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
     # ========================================================================
     # WIDGET 2: Rozklad dwumianowy — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozk\u0142ad dwumianowy (Binomial)"),
+    div(class = "section-title", "Rozkład dwumianowy (Binomial)"),
 
     div(class = "narrative",
-      p("Powtarzamy n niezale\u017cnych pr\u00f3b, ka\u017cda z prawdopodobie\u0144stwem
-        sukcesu p. Liczymy, ile razy wyst\u0105pi\u0142 sukces."),
-      p("Przyk\u0142ady: ile or\u0142\u00f3w w 10 rzutach monet\u0105? Ile wadliwych produkt\u00f3w
-        w partii? Ile poprawnych odpowiedzi na te\u015bcie wielokrotnego wyboru?")
+      p("Powtarzamy n niezależnych prób, każda z prawdopodobieństwem
+        sukcesu p. Liczymy, ile razy wystąpił sukces."),
+      p("Przykłady: ile orłów w 10 rzutach monetą? Ile wadliwych produktów
+        w partii? Ile poprawnych odpowiedzi na teście wielokrotnego wyboru?")
     ),
 
     div(class = "widget-block",
-      h4("Rozk\u0142ad dwumianowy B(n, p)"),
+      h4("Rozkład dwumianowy B(n, p)"),
       fluidRow(
         column(4,
           checkboxGroupInput("ch3_binom_scenarios", "Scenariusze:",
             choices = c(
               "Moneta: B(10, 0.5)" = "binom_1",
               "Egzamin: B(20, 0.25)" = "binom_2",
-              "Jako\u015b\u0107: B(50, 0.1)" = "binom_3",
+              "Jakość: B(50, 0.1)" = "binom_3",
               "Sukces: B(20, 0.7)" = "binom_4"
             ),
             selected = "binom_1"
@@ -96,40 +96,40 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
 
     div(class = "callout-info",
       tags$strong("Obserwacja:"),
-      " Por\u00f3wnaj scenariusze i zwr\u00f3\u0107 uwag\u0119, jak zmiana p przesuwa
-        rozk\u0142ad, a wzrost n sprawia, \u017ce staje si\u0119 coraz bardziej 'dzwonowaty'."
+      " Porównaj scenariusze i zwróć uwagę, jak zmiana p przesuwa
+        rozkład, a wzrost n sprawia, że staje się coraz bardziej 'dzwonowaty'."
     ),
 
     div(class = "callout-warning",
-      tags$strong("Jak rozpozna\u0107?"),
+      tags$strong("Jak rozpoznać?"),
       " Kiedy w zadaniu widzisz pytanie typu ",
-      "\u201eile z n...\u201d \u2014 my\u015bl dwumianowy.
-        Np. \u201eile z 20 student\u00f3w zda egzamin?\u201d, \u201eile z 50 produkt\u00f3w b\u0119dzie wadliwych?\u201d.
-        Kluczowe: masz ustalon\u0105 liczb\u0119 pr\u00f3b i dwa wyniki (sukces/pora\u017cka)."
+      "„ile z n...” — myśl dwumianowy.
+        Np. „ile z 20 studentów zda egzamin?”, „ile z 50 produktów będzie wadliwych?”.
+        Kluczowe: masz ustaloną liczbę prób i dwa wyniki (sukces/porażka)."
     ),
 
     # ========================================================================
     # WIDGET 3: Rozklad Poissona — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozk\u0142ad Poissona"),
+    div(class = "section-title", "Rozkład Poissona"),
 
     div(class = "narrative",
-      p("Zliczamy zdarzenia zachodz\u0105ce w ustalonym przedziale czasu lub przestrzeni.
-        Parametr \u03bb (lambda) m\u00f3wi, ile \u015brednio zdarze\u0144 oczekujemy w danym przedziale."),
-      p("Przyk\u0142ady: liczba b\u0142\u0119d\u00f3w na stronie, klient\u00f3w w sklepie na godzin\u0119,
-        wypadk\u00f3w na skrzy\u017cowaniu w miesi\u0105cu.")
+      p("Zliczamy zdarzenia zachodzące w ustalonym przedziale czasu lub przestrzeni.
+        Parametr λ (lambda) mówi, ile średnio zdarzeń oczekujemy w danym przedziale."),
+      p("Przykłady: liczba błędów na stronie, klientów w sklepie na godzinę,
+        wypadków na skrzyżowaniu w miesiącu.")
     ),
 
     div(class = "widget-block",
-      h4("Rozk\u0142ad Poissona Pois(\u03bb)"),
+      h4("Rozkład Poissona Pois(λ)"),
       fluidRow(
         column(4,
           checkboxGroupInput("ch3_pois_scenarios", "Scenariusze:",
             choices = c(
-              "Wypadki: \u03bb = 0.5" = "pois_1",
-              "B\u0142\u0119dy: \u03bb = 2" = "pois_2",
-              "Klienci: \u03bb = 5" = "pois_3",
-              "Wiadomo\u015bci: \u03bb = 10" = "pois_4"
+              "Wypadki: λ = 0.5" = "pois_1",
+              "Błędy: λ = 2" = "pois_2",
+              "Klienci: λ = 5" = "pois_3",
+              "Wiadomości: λ = 10" = "pois_4"
             ),
             selected = "pois_2"
           )
@@ -148,38 +148,38 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
 
     div(class = "callout-info",
       tags$strong("Ciekawostka:"),
-      " W rozk\u0142adzie Poissona warto\u015b\u0107 oczekiwana = wariancja = \u03bb.
-        Je\u015bli w danych \u015brednia \u2248 wariancja, to dobry kandydat na model Poissona!"
+      " W rozkładzie Poissona wartość oczekiwana = wariancja = λ.
+        Jeśli w danych średnia ≈ wariancja, to dobry kandydat na model Poissona!"
     ),
 
     div(class = "callout-warning",
-      tags$strong("Jak rozpozna\u0107?"),
+      tags$strong("Jak rozpoznać?"),
       " Kiedy w zadaniu widzisz pytanie typu ",
-      "\u201eile razy w ci\u0105gu...\u201d \u2014 my\u015bl Poisson.
-        Np. \u201eile wiadomo\u015bci dostaniesz w ci\u0105gu godziny?\u201d, \u201eile b\u0142\u0119d\u00f3w na stronie?\u201d.
-        Kluczowe: zliczasz zdarzenia w ustalonym czasie lub przestrzeni, bez g\u00f3rnego limitu."
+      "„ile razy w ciągu...” — myśl Poisson.
+        Np. „ile wiadomości dostaniesz w ciągu godziny?”, „ile błędów na stronie?”.
+        Kluczowe: zliczasz zdarzenia w ustalonym czasie lub przestrzeni, bez górnego limitu."
     ),
 
     # ========================================================================
     # WIDGET 4: Rozklad geometryczny — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozk\u0142ad geometryczny"),
+    div(class = "section-title", "Rozkład geometryczny"),
 
     div(class = "narrative",
-      p("Powtarzamy pr\u00f3by a\u017c do pierwszego sukcesu. Pytamy: ile pr\u00f3b to zajmie?"),
-      p("Przyk\u0142ady: ile rzut\u00f3w kostk\u0105 do pierwszej sz\u00f3stki?
-        Ile losowa\u0144 do trafienia nagrody? Ile pr\u00f3b egzaminu do zdania?")
+      p("Powtarzamy próby aż do pierwszego sukcesu. Pytamy: ile prób to zajmie?"),
+      p("Przykłady: ile rzutów kostką do pierwszej szóstki?
+        Ile losowań do trafienia nagrody? Ile prób egzaminu do zdania?")
     ),
 
     div(class = "widget-block",
-      h4("Rozk\u0142ad geometryczny Geom(p)"),
+      h4("Rozkład geometryczny Geom(p)"),
       fluidRow(
         column(4,
           checkboxGroupInput("ch3_geom_scenarios", "Scenariusze:",
             choices = c(
               "Rzadkie: p = 0.05" = "geom_1",
-              "Sz\u00f3stka: p = 1/6" = "geom_2",
-              "Cz\u0119ste: p = 0.3" = "geom_3",
+              "Szóstka: p = 1/6" = "geom_2",
+              "Częste: p = 0.3" = "geom_3",
               "Moneta: p = 0.5" = "geom_4"
             ),
             selected = "geom_2"
@@ -199,44 +199,44 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
 
     div(class = "callout-info",
       tags$strong("Uwaga:"),
-      " Im mniejsze p, tym d\u0142u\u017cej (przeci\u0119tnie) czekamy na sukces.
-        Rozk\u0142ad geometryczny jest bezpami\u0119ciowy \u2014 szansa sukcesu w ka\u017cdej pr\u00f3bie jest taka sama,
-        niezale\u017cnie od tego ile pora\u017cek ju\u017c by\u0142o."
+      " Im mniejsze p, tym dłużej (przeciętnie) czekamy na sukces.
+        Rozkład geometryczny jest bezpamięciowy — szansa sukcesu w każdej próbie jest taka sama,
+        niezależnie od tego ile porażek już było."
     ),
 
     div(class = "callout-warning",
-      tags$strong("Jak rozpozna\u0107?"),
+      tags$strong("Jak rozpoznać?"),
       " Kiedy w zadaniu widzisz pytanie typu ",
-      "\u201eile pr\u00f3b a\u017c do...\u201d \u2014 my\u015bl geometryczny.
-        Np. \u201eile rzut\u00f3w kostk\u0105 do pierwszej sz\u00f3stki?\u201d,
-        \u201eile CV trzeba wys\u0142a\u0107, \u017ceby dosta\u0107 zaproszenie na rozmow\u0119?\u201d.
-        Kluczowe: powtarzasz pr\u00f3by a\u017c do pierwszego sukcesu."
+      "„ile prób aż do...” — myśl geometryczny.
+        Np. „ile rzutów kostką do pierwszej szóstki?”,
+        „ile CV trzeba wysłać, żeby dostać zaproszenie na rozmowę?”.
+        Kluczowe: powtarzasz próby aż do pierwszego sukcesu."
     ),
 
     # ========================================================================
     # WIDGET 5: Porownanie czterech rozkladow
     # ========================================================================
-    div(class = "section-title", "Por\u00f3wnanie czterech rozk\u0142ad\u00f3w"),
+    div(class = "section-title", "Porównanie czterech rozkładów"),
 
     div(class = "narrative",
-      p("Zobaczmy wszystkie cztery rozk\u0142ady obok siebie. Zwr\u00f3\u0107 uwag\u0119 na
-        r\u00f3\u017cnice w kszta\u0142tach i na to, kiedy rozk\u0142ad dyskretny zaczyna
-        wygl\u0105da\u0107 jak g\u0142adki 'dzwon'.")
+      p("Zobaczmy wszystkie cztery rozkłady obok siebie. Zwróć uwagę na
+        różnice w kształtach i na to, kiedy rozkład dyskretny zaczyna
+        wyglądać jak gładki 'dzwon'.")
     ),
 
     div(class = "widget-block",
-      h4("Cztery rozk\u0142ady obok siebie"),
-      checkboxInput("ch3_compare_show_ev", "Poka\u017c warto\u015b\u0107 oczekiwan\u0105 (linia)", value = FALSE),
-      checkboxInput("ch3_compare_show_sd", "Poka\u017c \u00b1 odchylenie standardowe (pas)", value = FALSE),
+      h4("Cztery rozkłady obok siebie"),
+      checkboxInput("ch3_compare_show_ev", "Pokaż wartość oczekiwaną (linia)", value = FALSE),
+      checkboxInput("ch3_compare_show_sd", "Pokaż ± odchylenie standardowe (pas)", value = FALSE),
       plotOutput("ch3_compare_plot", height = "350px")
     ),
 
     # --- Transition ---
     div(class = "chapter-transition",
-      p("Rozk\u0142ady dyskretne opisuj\u0105 wyniki, kt\u00f3re mo\u017cna policzy\u0107.
-        Ale co, gdy zmienna mo\u017ce przyj\u0105\u0107 dowoln\u0105 warto\u015b\u0107 z pewnego przedzia\u0142u?
-        Wtedy potrzebujemy rozk\u0142ad\u00f3w ci\u0105g\u0142ych."),
-      actionButton("ch3_next", "Dalej: 4. Rozk\u0142ady ci\u0105g\u0142e \u2192",
+      p("Rozkłady dyskretne opisują wyniki, które można policzyć.
+        Ale co, gdy zmienna może przyjąć dowolną wartość z pewnego przedziału?
+        Wtedy potrzebujemy rozkładów ciągłych."),
+      actionButton("ch3_next", "Dalej: 4. Rozkłady ciągłe →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -252,21 +252,21 @@ ch3_ui <- tabPanel("3. Rozk\u0142ady dyskretne",
 ch3_binom_defs <- list(
   binom_1 = list(label = "Moneta: B(10, 0.5)", n = 10, p = 0.5),
   binom_2 = list(label = "Egzamin: B(20, 0.25)", n = 20, p = 0.25),
-  binom_3 = list(label = "Jako\u015b\u0107: B(50, 0.1)", n = 50, p = 0.1),
+  binom_3 = list(label = "Jakość: B(50, 0.1)", n = 50, p = 0.1),
   binom_4 = list(label = "Sukces: B(20, 0.7)", n = 20, p = 0.7)
 )
 
 ch3_pois_defs <- list(
-  pois_1 = list(label = "Wypadki: \u03bb = 0.5", lambda = 0.5),
-  pois_2 = list(label = "B\u0142\u0119dy: \u03bb = 2", lambda = 2),
-  pois_3 = list(label = "Klienci: \u03bb = 5", lambda = 5),
-  pois_4 = list(label = "Wiadomo\u015bci: \u03bb = 10", lambda = 10)
+  pois_1 = list(label = "Wypadki: λ = 0.5", lambda = 0.5),
+  pois_2 = list(label = "Błędy: λ = 2", lambda = 2),
+  pois_3 = list(label = "Klienci: λ = 5", lambda = 5),
+  pois_4 = list(label = "Wiadomości: λ = 10", lambda = 10)
 )
 
 ch3_geom_defs <- list(
   geom_1 = list(label = "Rzadkie: p = 0.05", p = 0.05),
-  geom_2 = list(label = "Sz\u00f3stka: p = 1/6", p = round(1/6, 4)),
-  geom_3 = list(label = "Cz\u0119ste: p = 0.3", p = 0.3),
+  geom_2 = list(label = "Szóstka: p = 1/6", p = round(1/6, 4)),
+  geom_3 = list(label = "Częste: p = 0.3", p = 0.3),
   geom_4 = list(label = "Moneta: p = 0.5", p = 0.5)
 )
 
@@ -303,9 +303,9 @@ ch3_server <- function(input, output, session) {
       geom_hline(yintercept = 1/d$k, color = col_secondary, linewidth = 1, linetype = "dashed") +
       geom_point(aes(y = 1/d$k), color = col_secondary, size = 3) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = paste0("Rozk\u0142ad jednostajny: ", d$n, " pr\u00f3b, ", d$k, " wynik\u00f3w"),
+      labs(title = paste0("Rozkład jednostajny: ", d$n, " prób, ", d$k, " wyników"),
            subtitle = paste0("Linia: P(X=k) = 1/", d$k, " = ", round(1/d$k, 4)),
-           x = "Wynik", y = "Cz\u0119sto\u015b\u0107 wzgl\u0119dna") +
+           x = "Wynik", y = "Częstość względna") +
       theme_educational()
   })
 
@@ -334,8 +334,8 @@ ch3_server <- function(input, output, session) {
       geom_segment(aes(xend = x, yend = 0), linewidth = 1, alpha = 0.6, position = dodge) +
       scale_color_manual(values = colors, name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozk\u0142ad dwumianowy B(n, p)",
-           x = "Liczba sukces\u00f3w (k)", y = "P(X = k)") +
+      labs(title = "Rozkład dwumianowy B(n, p)",
+           x = "Liczba sukcesów (k)", y = "P(X = k)") +
       theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
@@ -382,8 +382,8 @@ ch3_server <- function(input, output, session) {
       geom_segment(aes(xend = x, yend = 0), linewidth = 1, alpha = 0.6, position = dodge) +
       scale_color_manual(values = colors, name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozk\u0142ad Poissona Pois(\u03bb)",
-           x = "Liczba zdarze\u0144 (k)", y = "P(X = k)") +
+      labs(title = "Rozkład Poissona Pois(λ)",
+           x = "Liczba zdarzeń (k)", y = "P(X = k)") +
       theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
@@ -431,8 +431,8 @@ ch3_server <- function(input, output, session) {
       geom_segment(aes(xend = x, yend = 0), linewidth = 1, alpha = 0.6, position = dodge) +
       scale_color_manual(values = colors, name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozk\u0142ad geometryczny Geom(p)",
-           x = "Numer pr\u00f3by (k)", y = "P(X = k)") +
+      labs(title = "Rozkład geometryczny Geom(p)",
+           x = "Numer próby (k)", y = "P(X = k)") +
       theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
@@ -496,7 +496,7 @@ ch3_server <- function(input, output, session) {
       facet_wrap(~dist, scales = "free_x", nrow = 2) +
       scale_fill_manual(values = c(col_uniform, col_binomial, col_poisson, col_geometric)) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-      labs(x = "Warto\u015b\u0107", y = "Prawdopodobie\u0144stwo") +
+      labs(x = "Wartość", y = "Prawdopodobieństwo") +
       theme_educational(base_size = 13)
 
     if (show_ev) {

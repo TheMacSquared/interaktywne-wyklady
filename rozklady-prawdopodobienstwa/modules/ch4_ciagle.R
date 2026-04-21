@@ -2,54 +2,54 @@
 # CHAPTER 4: Rozklady ciagle
 # ============================================================================
 
-ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
+ch4_ui <- tabPanel("4. Rozkłady ciągłe",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Rozk\u0142ady dyskretne opisuj\u0105 zmienne o sko\u0144czonej liczbie warto\u015bci.
-       Ale co, gdy zmienna mo\u017ce przyj\u0105\u0107 dowoln\u0105 warto\u015b\u0107 z przedzia\u0142u?"
+      "Rozkłady dyskretne opisują zmienne o skończonej liczbie wartości.
+       Ale co, gdy zmienna może przyjąć dowolną wartość z przedziału?"
     ),
 
-    div(class = "section-title", "Od histogramu do krzywej g\u0119sto\u015bci"),
+    div(class = "section-title", "Od histogramu do krzywej gęstości"),
 
     div(class = "narrative",
-      p("Znasz ju\u017c histogramy ze statystyki opisowej. Teraz zobaczymy,
-        jak histogram przechodzi w g\u0142adk\u0105 krzyw\u0105 gdy zwi\u0119kszamy pr\u00f3b\u0119 i zw\u0119\u017camy przedzia\u0142y.
-        Ta krzywa to ", tags$b("funkcja g\u0119sto\u015bci prawdopodobie\u0144stwa (PDF)"),
-        " \u2014 ci\u0105g\u0142y odpowiednik PMF.")
+      p("Znasz już histogramy ze statystyki opisowej. Teraz zobaczymy,
+        jak histogram przechodzi w gładką krzywą gdy zwiększamy próbę i zwężamy przedziały.
+        Ta krzywa to ", tags$b("funkcja gęstości prawdopodobieństwa (PDF)"),
+        " — ciągły odpowiednik PMF.")
     ),
 
     # ========================================================================
     # WIDGET 1: Od histogramu do krzywej (krok po kroku) — BEZ ZMIAN
     # ========================================================================
     div(class = "widget-block",
-      h4("Od histogramu do krzywej g\u0119sto\u015bci"),
+      h4("Od histogramu do krzywej gęstości"),
       fluidRow(
         column(4,
-          selectInput("ch4_step_dist", "Rozk\u0142ad \u017ar\u00f3d\u0142owy:",
-            choices = c("Normalny" = "normal", "Wyk\u0142adniczy" = "exp",
+          selectInput("ch4_step_dist", "Rozkład źródłowy:",
+            choices = c("Normalny" = "normal", "Wykładniczy" = "exp",
                         "Jednostajny" = "unif"),
             selected = "normal"
           ),
-          sliderInput("ch4_step_n", "Wielko\u015b\u0107 pr\u00f3by:",
+          sliderInput("ch4_step_n", "Wielkość próby:",
                       min = 50, max = 10000, value = 500, step = 50),
           hr(),
           actionButton("ch4_step1", "1. Surowe dane (rug)",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
-          actionButton("ch4_step2", "2. Histogram (5 bin\u00f3w)",
+          actionButton("ch4_step2", "2. Histogram (5 binów)",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
-          actionButton("ch4_step3", "3. Wi\u0119cej bin\u00f3w (15)",
+          actionButton("ch4_step3", "3. Więcej binów (15)",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
-          actionButton("ch4_step4", "4. Jeszcze wi\u0119cej (30)",
+          actionButton("ch4_step4", "4. Jeszcze więcej (30)",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
-          actionButton("ch4_step5", "5. Skala g\u0119sto\u015bci",
+          actionButton("ch4_step5", "5. Skala gęstości",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
-          actionButton("ch4_step6", "6. Krzywa g\u0119sto\u015bci",
+          actionButton("ch4_step6", "6. Krzywa gęstości",
                        class = "btn-outline-primary", width = "100%"),
           br(), br(),
           actionButton("ch4_step7", "7. Tylko PDF",
@@ -68,29 +68,29 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     # ========================================================================
     # WIDGET 2: Prawdopodobienstwo = pole — BEZ ZMIAN
     # ========================================================================
-    div(class = "section-title", "Prawdopodobie\u0144stwo = pole pod krzyw\u0105"),
+    div(class = "section-title", "Prawdopodobieństwo = pole pod krzywą"),
 
     div(class = "narrative",
-      p("W rozk\u0142adach ci\u0105g\u0142ych prawdopodobie\u0144stwo to ",
-        tags$b("pole pod krzyw\u0105 g\u0119sto\u015bci"), " w danym przedziale.
-        Wysoko\u015b\u0107 krzywej to NIE prawdopodobie\u0144stwo!"),
-      p("Wa\u017cna konsekwencja: ", tags$b("P(X = dok\u0142adnie 5.0) = 0"),
-        " dla rozk\u0142ad\u00f3w ci\u0105g\u0142ych. Sens ma tylko pytanie o przedzia\u0142y.")
+      p("W rozkładach ciągłych prawdopodobieństwo to ",
+        tags$b("pole pod krzywą gęstości"), " w danym przedziale.
+        Wysokość krzywej to NIE prawdopodobieństwo!"),
+      p("Ważna konsekwencja: ", tags$b("P(X = dokładnie 5.0) = 0"),
+        " dla rozkładów ciągłych. Sens ma tylko pytanie o przedziały.")
     ),
 
     div(class = "widget-block",
-      h4("Zacieniuj przedzia\u0142 i odczytaj prawdopodobie\u0144stwo"),
+      h4("Zacieniuj przedział i odczytaj prawdopodobieństwo"),
       fluidRow(
         column(4,
-          selectInput("ch4_area_dist", "Rozk\u0142ad:",
+          selectInput("ch4_area_dist", "Rozkład:",
             choices = c("Normalny N(0,1)" = "norm",
-                        "Wyk\u0142adniczy Exp(1)" = "exp",
+                        "Wykładniczy Exp(1)" = "exp",
                         "Jednostajny U(0,10)" = "unif"),
             selected = "norm"
           ),
           sliderInput("ch4_area_a", "Dolna granica (a):",
                       min = -4, max = 4, value = -1, step = 0.1),
-          sliderInput("ch4_area_b", "G\u00f3rna granica (b):",
+          sliderInput("ch4_area_b", "Górna granica (b):",
                       min = -4, max = 4, value = 1, step = 0.1)
         ),
         column(8,
@@ -101,23 +101,23 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     ),
 
     div(class = "callout-warning",
-      tags$strong("Zapami\u0119taj:"),
-      " W rozk\u0142adzie ci\u0105g\u0142ym g\u0119sto\u015b\u0107 f(x) mo\u017ce by\u0107 > 1 (np. U(0, 0.5) ma f(x) = 2),
-        ale ", tags$b("pole pod ca\u0142\u0105 krzyw\u0105 zawsze wynosi 1"), "."
+      tags$strong("Zapamiętaj:"),
+      " W rozkładzie ciągłym gęstość f(x) może być > 1 (np. U(0, 0.5) ma f(x) = 2),
+        ale ", tags$b("pole pod całą krzywą zawsze wynosi 1"), "."
     ),
 
     # ========================================================================
     # WIDGET 3: Jednostajny ciagly — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozk\u0142ad jednostajny ci\u0105g\u0142y"),
+    div(class = "section-title", "Rozkład jednostajny ciągły"),
 
     div(class = "narrative",
-      p(tags$b("Jednostajny ci\u0105g\u0142y U(a, b)"), " \u2014 ka\u017cda warto\u015b\u0107 w przedziale
-        [a, b] jest jednakowo prawdopodobna. Przyk\u0142ad: losowa liczba z generatora.")
+      p(tags$b("Jednostajny ciągły U(a, b)"), " — każda wartość w przedziale
+        [a, b] jest jednakowo prawdopodobna. Przykład: losowa liczba z generatora.")
     ),
 
     div(class = "widget-block",
-      h4("Rozk\u0142ad jednostajny U(a, b)"),
+      h4("Rozkład jednostajny U(a, b)"),
       fluidRow(
         column(4,
           checkboxGroupInput("ch4_unif_scenarios", "Scenariusze:",
@@ -145,23 +145,23 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     # ========================================================================
     # WIDGET 3b: Wykladniczy — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozk\u0142ad wyk\u0142adniczy"),
+    div(class = "section-title", "Rozkład wykładniczy"),
 
     div(class = "narrative",
-      p(tags$b("Wyk\u0142adniczy Exp(\u03bb)"), " \u2014 modeluje czas oczekiwania mi\u0119dzy
-        zdarzeniami. Przyk\u0142ad: czas mi\u0119dzy wiadomo\u015bciami na WhatsAppie, czas mi\u0119dzy awariami maszyn.")
+      p(tags$b("Wykładniczy Exp(λ)"), " — modeluje czas oczekiwania między
+        zdarzeniami. Przykład: czas między wiadomościami na WhatsAppie, czas między awariami maszyn.")
     ),
 
     div(class = "widget-block",
-      h4("Rozk\u0142ad wyk\u0142adniczy Exp(\u03bb)"),
+      h4("Rozkład wykładniczy Exp(λ)"),
       fluidRow(
         column(4,
           checkboxGroupInput("ch4_exp_scenarios", "Scenariusze:",
             choices = c(
-              "Awarie: \u03bb = 0.3/dzie\u0144" = "exp_1",
-              "Wiadomo\u015bci: \u03bb = 1/godz" = "exp_2",
-              "Zg\u0142oszenia: \u03bb = 2/godz" = "exp_3",
-              "Po\u0142\u0105czenia: \u03bb = 5/min" = "exp_4"
+              "Awarie: λ = 0.3/dzień" = "exp_1",
+              "Wiadomości: λ = 1/godz" = "exp_2",
+              "Zgłoszenia: λ = 2/godz" = "exp_3",
+              "Połączenia: λ = 5/min" = "exp_4"
             ),
             selected = "exp_2"
           )
@@ -179,50 +179,50 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     ),
 
     div(class = "callout-info",
-      tags$strong("Zwi\u0105zek z rozk\u0142adem Poissona:"),
-      " Je\u015bli liczba zdarze\u0144 w ustalonym czasie ma rozk\u0142ad Poissona z parametrem \u03bb,
-        to czas mi\u0119dzy kolejnymi zdarzeniami ma rozk\u0142ad wyk\u0142adniczy
-        Exp(\u03bb). To dwie strony tego samego procesu \u2014 Poisson zlicza zdarzenia,
-        wyk\u0142adniczy mierzy odst\u0119py mi\u0119dzy nimi."
+      tags$strong("Związek z rozkładem Poissona:"),
+      " Jeśli liczba zdarzeń w ustalonym czasie ma rozkład Poissona z parametrem λ,
+        to czas między kolejnymi zdarzeniami ma rozkład wykładniczy
+        Exp(λ). To dwie strony tego samego procesu — Poisson zlicza zdarzenia,
+        wykładniczy mierzy odstępy między nimi."
     ),
 
     div(class = "callout-warning",
-      tags$strong("Bezpami\u0119ciowo\u015b\u0107:"),
-      " Czekasz na wiadomo\u015b\u0107 ju\u017c 2 godziny. Czy nast\u0119pna przyjdzie szybciej,
-        bo \u201ej\u0105 ci si\u0119 nale\u017cy\u201d? ", tags$b("Nie."),
-      " Rozk\u0142ad wyk\u0142adniczy jest bezpami\u0119ciowy \u2014 czas ju\u017c sp\u0119dzony na czekaniu
-        nie wp\u0142ywa na to, ile jeszcze poczekasz.
-        To ci\u0105g\u0142y odpowiednik bezpami\u0119ciowo\u015bci rozk\u0142adu geometrycznego z ch. 3."
+      tags$strong("Bezpamięciowość:"),
+      " Czekasz na wiadomość już 2 godziny. Czy następna przyjdzie szybciej,
+        bo „ją ci się należy”? ", tags$b("Nie."),
+      " Rozkład wykładniczy jest bezpamięciowy — czas już spędzony na czekaniu
+        nie wpływa na to, ile jeszcze poczekasz.
+        To ciągły odpowiednik bezpamięciowości rozkładu geometrycznego z ch. 3."
     ),
 
     # ========================================================================
     # WIDGET 4: Rozklad t-Studenta — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozk\u0142ad t-Studenta"),
+    div(class = "section-title", "Rozkład t-Studenta"),
 
     div(class = "narrative",
-      p("Rozk\u0142ad t-Studenta wygl\u0105da jak normalny, ale ma ci\u0119\u017csze ogony \u2014
-        warto\u015bci ekstremalne s\u0105 bardziej prawdopodobne. Jest kluczowy we
-        wnioskowaniu statystycznym (test t, przedzia\u0142y ufno\u015bci)."),
-      p("Parametr ", tags$b("df"), " (stopnie swobody) kontroluje 'grubo\u015b\u0107' ogon\u00f3w.
-        Im wi\u0119cej df, tym bli\u017cej do rozk\u0142adu normalnego.")
+      p("Rozkład t-Studenta wygląda jak normalny, ale ma cięższe ogony —
+        wartości ekstremalne są bardziej prawdopodobne. Jest kluczowy we
+        wnioskowaniu statystycznym (test t, przedziały ufności)."),
+      p("Parametr ", tags$b("df"), " (stopnie swobody) kontroluje 'grubość' ogonów.
+        Im więcej df, tym bliżej do rozkładu normalnego.")
     ),
 
     div(class = "widget-block",
-      h4("Rozk\u0142ad t-Studenta t(df)"),
+      h4("Rozkład t-Studenta t(df)"),
       fluidRow(
         column(4,
           checkboxGroupInput("ch4_t_scenarios", "Scenariusze:",
             choices = c(
-              "t(df=1) \u2014 Cauchy" = "t_1",
+              "t(df=1) — Cauchy" = "t_1",
               "t(df=3)" = "t_2",
               "t(df=5)" = "t_3",
-              "t(df=30) \u2248 normalny" = "t_4"
+              "t(df=30) ≈ normalny" = "t_4"
             ),
             selected = c("t_2", "t_4")
           ),
           hr(),
-          checkboxInput("ch4_t_show_normal", "Poka\u017c N(0,1) jako odniesienie", value = TRUE)
+          checkboxInput("ch4_t_show_normal", "Pokaż N(0,1) jako odniesienie", value = TRUE)
         ),
         column(8,
           plotOutput("ch4_t_plot", height = "400px"),
@@ -239,42 +239,42 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     div(class = "callout-info",
       tags$strong("Dlaczego t-Studenta?"),
       " Gdy nie znamy prawdziwego odchylenia standardowego populacji
-        i szacujemy je z pr\u00f3by, rozk\u0142ad statystyki testowej nie jest
-        normalny, ale w\u0142a\u015bnie t-Studenta. Przy ma\u0142ych pr\u00f3bach (n < 30)
-        r\u00f3\u017cnica jest znacz\u0105ca!"
+        i szacujemy je z próby, rozkład statystyki testowej nie jest
+        normalny, ale właśnie t-Studenta. Przy małych próbach (n < 30)
+        różnica jest znacząca!"
     ),
 
     div(class = "callout-warning",
       tags$strong("W praktyce:"),
-      " W\u0142\u0105cz scenariusze df=3 i df=30 jednocze\u015bnie i por\u00f3wnaj z N(0,1).
-        Przy df=30 r\u00f3\u017cnica jest minimalna \u2014 dlatego przy du\u017cych pr\u00f3bach
-        test t daje prawie te same wyniki co test z rozk\u0142adu normalnego.
-        Ale przy df=3 (czyli pr\u00f3ba n=4!) ogony s\u0105 wyra\u017anie ci\u0119\u017csze \u2014
-        warto\u015bci ekstremalne s\u0105 bardziej prawdopodobne."
+      " Włącz scenariusze df=3 i df=30 jednocześnie i porównaj z N(0,1).
+        Przy df=30 różnica jest minimalna — dlatego przy dużych próbach
+        test t daje prawie te same wyniki co test z rozkładu normalnego.
+        Ale przy df=3 (czyli próba n=4!) ogony są wyraźnie cięższe —
+        wartości ekstremalne są bardziej prawdopodobne."
     ),
 
     # ========================================================================
     # WIDGET 5: Rozklad chi-kwadrat — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozk\u0142ad chi-kwadrat (\u03c7\u00b2)"),
+    div(class = "section-title", "Rozkład chi-kwadrat (χ²)"),
 
     div(class = "narrative",
-      p("Rozk\u0142ad chi-kwadrat powstaje jako suma kwadrat\u00f3w niezale\u017cnych zmiennych N(0,1).
-        Jest zawsze nieujemny i prawosko\u015bny."),
-      p("Zastosowania: testy niezale\u017cno\u015bci, testy dopasowania,
+      p("Rozkład chi-kwadrat powstaje jako suma kwadratów niezależnych zmiennych N(0,1).
+        Jest zawsze nieujemny i prawoskośny."),
+      p("Zastosowania: testy niezależności, testy dopasowania,
         estymacja wariancji.")
     ),
 
     div(class = "widget-block",
-      h4("Rozk\u0142ad \u03c7\u00b2(df)"),
+      h4("Rozkład χ²(df)"),
       fluidRow(
         column(4,
           checkboxGroupInput("ch4_chisq_scenarios", "Scenariusze:",
             choices = c(
-              "\u03c7\u00b2(df=2)" = "chisq_1",
-              "\u03c7\u00b2(df=5)" = "chisq_2",
-              "\u03c7\u00b2(df=10)" = "chisq_3",
-              "\u03c7\u00b2(df=20)" = "chisq_4"
+              "χ²(df=2)" = "chisq_1",
+              "χ²(df=5)" = "chisq_2",
+              "χ²(df=10)" = "chisq_3",
+              "χ²(df=20)" = "chisq_4"
             ),
             selected = "chisq_2"
           )
@@ -293,33 +293,33 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
 
     div(class = "callout-info",
       tags$strong("Obserwacja:"),
-      " Przy ma\u0142ym df rozk\u0142ad jest mocno prawosko\u015bny.
-        Gdy df ro\u015bnie, rozk\u0142ad staje si\u0119 coraz bardziej symetryczny
-        i zbli\u017ca si\u0119 do normalnego (dzi\u0119ki CTG!)."
+      " Przy małym df rozkład jest mocno prawoskośny.
+        Gdy df rośnie, rozkład staje się coraz bardziej symetryczny
+        i zbliża się do normalnego (dzięki CTG!)."
     ),
 
     div(class = "callout-warning",
       tags$strong("Intuicja:"),
-      " \u03c7\u00b2 mierzy \u201eodleg\u0142o\u015b\u0107 od idealu\u201d. Je\u015bli ka\u017cda z df zmiennych
-        normalnych odchyla si\u0119 troch\u0119 od zera, to suma ich kwadrat\u00f3w
-        m\u00f3wi, jak du\u017ce s\u0105 \u0142\u0105czne odchylenia. Dlatego test \u03c7\u00b2 sprawdza,
-        czy obserwowane cz\u0119sto\u015bci s\u0105 \u201ezbyt daleko\u201d od oczekiwanych."
+      " χ² mierzy „odległość od idealu”. Jeśli każda z df zmiennych
+        normalnych odchyla się trochę od zera, to suma ich kwadratów
+        mówi, jak duże są łączne odchylenia. Dlatego test χ² sprawdza,
+        czy obserwowane częstości są „zbyt daleko” od oczekiwanych."
     ),
 
     # ========================================================================
     # WIDGET 6: Rozklad log-normalny — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozk\u0142ad log-normalny"),
+    div(class = "section-title", "Rozkład log-normalny"),
 
     div(class = "narrative",
-      p("Je\u015bli ", tags$b("ln(X) ~ N(\u03bc, \u03c3)"), ", to X ma rozk\u0142ad log-normalny.
-        Zmienna jest zawsze dodatnia i prawosko\u015bna."),
-      p("Pojawia si\u0119 wsz\u0119dzie tam, gdzie dane rosn\u0105 multiplikatywnie:
-        dochody, ceny akcji, czasy reakcji, st\u0119\u017cenia substancji.")
+      p("Jeśli ", tags$b("ln(X) ~ N(μ, σ)"), ", to X ma rozkład log-normalny.
+        Zmienna jest zawsze dodatnia i prawoskośna."),
+      p("Pojawia się wszędzie tam, gdzie dane rosną multiplikatywnie:
+        dochody, ceny akcji, czasy reakcji, stężenia substancji.")
     ),
 
     div(class = "widget-block",
-      h4("Rozk\u0142ad LogN(\u03bc, \u03c3)"),
+      h4("Rozkład LogN(μ, σ)"),
       fluidRow(
         column(4,
           checkboxGroupInput("ch4_lnorm_scenarios", "Scenariusze:",
@@ -327,7 +327,7 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
               "Czas reakcji: LogN(0, 0.3)" = "lnorm_1",
               "Ceny akcji: LogN(1, 0.5)" = "lnorm_2",
               "Dochody: LogN(2, 0.8)" = "lnorm_3",
-              "Du\u017ca zmienno\u015b\u0107: LogN(1, 1)" = "lnorm_4"
+              "Duża zmienność: LogN(1, 1)" = "lnorm_4"
             ),
             selected = "lnorm_2"
           )
@@ -345,26 +345,26 @@ ch4_ui <- tabPanel("4. Rozk\u0142ady ci\u0105g\u0142e",
     ),
 
     div(class = "callout-warning",
-      tags$strong("Uwaga na \u015bredni\u0105!"),
-      " W rozk\u0142adzie log-normalnym \u015brednia jest zawsze wi\u0119ksza od mediany.
-        Mediana = e^\u03bc, \u015brednia = e^(\u03bc + \u03c3\u00b2/2).
-        Dlatego mediana dochod\u00f3w jest lepsz\u0105 miar\u0105 'typowego' dochodu ni\u017c \u015brednia."
+      tags$strong("Uwaga na średnią!"),
+      " W rozkładzie log-normalnym średnia jest zawsze większa od mediany.
+        Mediana = e^μ, średnia = e^(μ + σ²/2).
+        Dlatego mediana dochodów jest lepszą miarą 'typowego' dochodu niż średnia."
     ),
 
     div(class = "callout-info",
-      tags$strong("Jak rozpozna\u0107?"),
-      " Je\u015bli dane s\u0105 zawsze dodatnie i maj\u0105 d\u0142ugi prawy ogon
-        (kilka bardzo du\u017cych warto\u015bci) \u2014 my\u015bl log-normalny.
-        Przyk\u0142ady: dochody, ceny nieruchomo\u015bci, czasy reakcji, st\u0119\u017cenia zanieczyszcze\u0144.
-        Prosty test: je\u015bli po zlogarytmowaniu danych histogram wygl\u0105da normalnie \u2014 to log-normalny."
+      tags$strong("Jak rozpoznać?"),
+      " Jeśli dane są zawsze dodatnie i mają długi prawy ogon
+        (kilka bardzo dużych wartości) — myśl log-normalny.
+        Przykłady: dochody, ceny nieruchomości, czasy reakcji, stężenia zanieczyszczeń.
+        Prosty test: jeśli po zlogarytmowaniu danych histogram wygląda normalnie — to log-normalny."
     ),
 
     # --- Transition ---
     div(class = "chapter-transition",
-      p("Spo\u015br\u00f3d wszystkich rozk\u0142ad\u00f3w ci\u0105g\u0142ych, jeden g\u00f3ruje nad innymi.
-        Pojawia si\u0119 wsz\u0119dzie w naturze i statystyce.
-        Czas pozna\u0107 rozk\u0142ad normalny dog\u0142\u0119bnie."),
-      actionButton("ch4_next", "Dalej: 5. Rozk\u0142ad normalny \u2192",
+      p("Spośród wszystkich rozkładów ciągłych, jeden góruje nad innymi.
+        Pojawia się wszędzie w naturze i statystyce.
+        Czas poznać rozkład normalny dogłębnie."),
+      actionButton("ch4_next", "Dalej: 5. Rozkład normalny →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -384,31 +384,31 @@ ch4_unif_defs <- list(
 )
 
 ch4_exp_defs <- list(
-  exp_1 = list(label = "Awarie: \u03bb = 0.3/dzie\u0144", lambda = 0.3),
-  exp_2 = list(label = "Wiadomo\u015bci: \u03bb = 1/godz", lambda = 1),
-  exp_3 = list(label = "Zg\u0142oszenia: \u03bb = 2/godz", lambda = 2),
-  exp_4 = list(label = "Po\u0142\u0105czenia: \u03bb = 5/min", lambda = 5)
+  exp_1 = list(label = "Awarie: λ = 0.3/dzień", lambda = 0.3),
+  exp_2 = list(label = "Wiadomości: λ = 1/godz", lambda = 1),
+  exp_3 = list(label = "Zgłoszenia: λ = 2/godz", lambda = 2),
+  exp_4 = list(label = "Połączenia: λ = 5/min", lambda = 5)
 )
 
 ch4_t_defs <- list(
-  t_1 = list(label = "t(df=1) \u2014 Cauchy", df = 1),
+  t_1 = list(label = "t(df=1) — Cauchy", df = 1),
   t_2 = list(label = "t(df=3)", df = 3),
   t_3 = list(label = "t(df=5)", df = 5),
-  t_4 = list(label = "t(df=30) \u2248 normalny", df = 30)
+  t_4 = list(label = "t(df=30) ≈ normalny", df = 30)
 )
 
 ch4_chisq_defs <- list(
-  chisq_1 = list(label = "\u03c7\u00b2(df=2)", df = 2),
-  chisq_2 = list(label = "\u03c7\u00b2(df=5)", df = 5),
-  chisq_3 = list(label = "\u03c7\u00b2(df=10)", df = 10),
-  chisq_4 = list(label = "\u03c7\u00b2(df=20)", df = 20)
+  chisq_1 = list(label = "χ²(df=2)", df = 2),
+  chisq_2 = list(label = "χ²(df=5)", df = 5),
+  chisq_3 = list(label = "χ²(df=10)", df = 10),
+  chisq_4 = list(label = "χ²(df=20)", df = 20)
 )
 
 ch4_lnorm_defs <- list(
   lnorm_1 = list(label = "Czas reakcji: LogN(0, 0.3)", mu = 0, sigma = 0.3),
   lnorm_2 = list(label = "Ceny akcji: LogN(1, 0.5)", mu = 1, sigma = 0.5),
   lnorm_3 = list(label = "Dochody: LogN(2, 0.8)", mu = 2, sigma = 0.8),
-  lnorm_4 = list(label = "Du\u017ca zmienno\u015b\u0107: LogN(1, 1)", mu = 1, sigma = 1)
+  lnorm_4 = list(label = "Duża zmienność: LogN(1, 1)", mu = 1, sigma = 1)
 )
 
 # --------------------------------------------------------------------------
@@ -452,51 +452,51 @@ ch4_server <- function(input, output, session) {
     if (step == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij krok 1, aby zacz\u0105\u0107",
+                 label = "Kliknij krok 1, aby zacząć",
                  size = 6, color = "#7f8c8d") +
         theme_void()
     } else if (step == 1) {
       ggplot(df, aes(x = x)) +
         geom_rug(color = col_primary, alpha = 0.3) +
-        labs(title = "Krok 1: Surowe dane", x = "Warto\u015b\u0107", y = "") +
+        labs(title = "Krok 1: Surowe dane", x = "Wartość", y = "") +
         theme_educational()
     } else if (step == 2) {
       ggplot(df, aes(x = x)) +
         geom_histogram(bins = 5, fill = col_primary, color = "white", alpha = 0.7) +
         geom_rug(alpha = 0.2) +
-        labs(title = "Krok 2: Histogram (5 bin\u00f3w)", x = "Warto\u015b\u0107", y = "Liczebno\u015b\u0107") +
+        labs(title = "Krok 2: Histogram (5 binów)", x = "Wartość", y = "Liczebność") +
         theme_educational()
     } else if (step == 3) {
       ggplot(df, aes(x = x)) +
         geom_histogram(bins = 15, fill = col_primary, color = "white", alpha = 0.7) +
-        labs(title = "Krok 3: Histogram (15 bin\u00f3w)", x = "Warto\u015b\u0107", y = "Liczebno\u015b\u0107") +
+        labs(title = "Krok 3: Histogram (15 binów)", x = "Wartość", y = "Liczebność") +
         theme_educational()
     } else if (step == 4) {
       ggplot(df, aes(x = x)) +
         geom_histogram(bins = 30, fill = col_primary, color = "white", alpha = 0.7) +
-        labs(title = "Krok 4: Histogram (30 bin\u00f3w)", x = "Warto\u015b\u0107", y = "Liczebno\u015b\u0107") +
+        labs(title = "Krok 4: Histogram (30 binów)", x = "Wartość", y = "Liczebność") +
         theme_educational()
     } else if (step == 5) {
       ggplot(df, aes(x = x)) +
         geom_histogram(aes(y = after_stat(density)), bins = 30,
                        fill = col_primary, color = "white", alpha = 0.7) +
-        labs(title = "Krok 5: Skala g\u0119sto\u015bci (o\u015b Y = g\u0119sto\u015b\u0107)",
-             x = "Warto\u015b\u0107", y = "G\u0119sto\u015b\u0107") +
+        labs(title = "Krok 5: Skala gęstości (oś Y = gęstość)",
+             x = "Wartość", y = "Gęstość") +
         theme_educational()
     } else if (step == 6) {
       ggplot(df, aes(x = x)) +
         geom_histogram(aes(y = after_stat(density)), bins = 30,
                        fill = col_primary, color = "white", alpha = 0.5) +
         geom_density(color = col_secondary, linewidth = 1.5) +
-        labs(title = "Krok 6: Histogram + krzywa g\u0119sto\u015bci",
-             x = "Warto\u015b\u0107", y = "G\u0119sto\u015b\u0107") +
+        labs(title = "Krok 6: Histogram + krzywa gęstości",
+             x = "Wartość", y = "Gęstość") +
         theme_educational()
     } else {
       ggplot(df, aes(x = x)) +
         geom_density(fill = col_primary, color = col_dark, linewidth = 1.2, alpha = 0.3) +
-        labs(title = "Krok 7: Funkcja g\u0119sto\u015bci (PDF)",
+        labs(title = "Krok 7: Funkcja gęstości (PDF)",
              subtitle = "Matematyczna idealizacja histogramu",
-             x = "Warto\u015b\u0107", y = "G\u0119sto\u015b\u0107 f(x)") +
+             x = "Wartość", y = "Gęstość f(x)") +
         theme_educational()
     }
   })
@@ -505,13 +505,13 @@ ch4_server <- function(input, output, session) {
     step <- ch4_step()
     texts <- c(
       "",
-      "Ka\u017cda kreska to jedna obserwacja. Trudno co\u015b z tego odczyta\u0107.",
-      "5 bin\u00f3w \u2014 widzimy og\u00f3lny zarys, ale ma\u0142o szczeg\u00f3\u0142\u00f3w.",
-      "15 bin\u00f3w \u2014 kszta\u0142t staje si\u0119 wyra\u017aniejszy.",
-      "30 bin\u00f3w \u2014 jeszcze wi\u0119cej szczeg\u00f3\u0142\u00f3w, ale s\u0142upki s\u0105 nier\u00f3wne.",
-      "Zmiana osi Y na g\u0119sto\u015b\u0107 \u2014 teraz pole s\u0142upk\u00f3w = 1.",
-      "Nak\u0142adamy g\u0142adk\u0105 krzyw\u0105, kt\u00f3ra przybli\u017ca kszta\u0142t danych.",
-      "To jest PDF \u2014 teoretyczny model opisuj\u0105cy rozk\u0142ad. Pole pod krzyw\u0105 = 1."
+      "Każda kreska to jedna obserwacja. Trudno coś z tego odczytać.",
+      "5 binów — widzimy ogólny zarys, ale mało szczegółów.",
+      "15 binów — kształt staje się wyraźniejszy.",
+      "30 binów — jeszcze więcej szczegółów, ale słupki są nierówne.",
+      "Zmiana osi Y na gęstość — teraz pole słupków = 1.",
+      "Nakładamy gładką krzywą, która przybliża kształt danych.",
+      "To jest PDF — teoretyczny model opisujący rozkład. Pole pod krzywą = 1."
     )
     if (step > 0) div(class = "callout-info", texts[step + 1])
   })
@@ -616,7 +616,7 @@ ch4_server <- function(input, output, session) {
       scale_color_manual(values = colors, name = NULL) +
       scale_fill_manual(values = colors, guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozk\u0142ad jednostajny U(a, b)",
+      labs(title = "Rozkład jednostajny U(a, b)",
            x = "x", y = "f(x)") +
       theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
@@ -663,7 +663,7 @@ ch4_server <- function(input, output, session) {
       scale_color_manual(values = colors, name = NULL) +
       scale_fill_manual(values = colors, guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozk\u0142ad wyk\u0142adniczy Exp(\u03bb)",
+      labs(title = "Rozkład wykładniczy Exp(λ)",
            x = "x", y = "f(x)") +
       theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
@@ -676,7 +676,7 @@ ch4_server <- function(input, output, session) {
     stats <- lapply(selected, function(id) {
       s <- ch4_exp_defs[[id]]
       mu <- 1 / s$lambda
-      paste0(s$label, ":  E(X) = 1/\u03bb = ", round(mu, 2), ",  SD = ", round(mu, 2))
+      paste0(s$label, ":  E(X) = 1/λ = ", round(mu, 2), ",  SD = ", round(mu, 2))
     })
     div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
       lapply(stats, function(s) div(s))
@@ -715,7 +715,7 @@ ch4_server <- function(input, output, session) {
       scale_color_manual(values = colors, name = NULL) +
       scale_fill_manual(values = colors, guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozk\u0142ad t-Studenta t(df)",
+      labs(title = "Rozkład t-Studenta t(df)",
            x = "x", y = "f(x)") +
       theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
@@ -730,7 +730,7 @@ ch4_server <- function(input, output, session) {
       mu_text <- if (s$df > 1) "E(X) = 0" else "E(X) = niezdef."
       sd_text <- if (s$df > 2) {
         paste0("SD = ", round(sqrt(s$df / (s$df - 2)), 2))
-      } else "SD = \u221e"
+      } else "SD = ∞"
       paste0(s$label, ":  ", mu_text, ",  ", sd_text)
     })
     div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
@@ -763,7 +763,7 @@ ch4_server <- function(input, output, session) {
       scale_color_manual(values = colors, name = NULL) +
       scale_fill_manual(values = colors, guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozk\u0142ad \u03c7\u00b2(df)",
+      labs(title = "Rozkład χ²(df)",
            x = "x", y = "f(x)") +
       theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
@@ -812,7 +812,7 @@ ch4_server <- function(input, output, session) {
       scale_color_manual(values = colors, name = NULL) +
       scale_fill_manual(values = colors, guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozk\u0142ad log-normalny LogN(\u03bc, \u03c3)",
+      labs(title = "Rozkład log-normalny LogN(μ, σ)",
            x = "x", y = "f(x)") +
       theme_educational() +
       theme(legend.position = "top", legend.text = element_text(size = 11))

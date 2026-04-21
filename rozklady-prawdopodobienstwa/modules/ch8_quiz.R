@@ -10,12 +10,12 @@
 
 # Opcje (labele) dla rozkladow
 QUIZ_OPTIONS <- list(
-  dwumianowy   = "Rozk\u0142ad dwumianowy",
-  poissona     = "Rozk\u0142ad Poissona",
-  normalny     = "Rozk\u0142ad normalny",
-  geometryczny = "Rozk\u0142ad geometryczny",
-  lognormalny  = "Rozk\u0142ad log-normalny",
-  wykladniczy  = "Rozk\u0142ad wyk\u0142adniczy"
+  dwumianowy   = "Rozkład dwumianowy",
+  poissona     = "Rozkład Poissona",
+  normalny     = "Rozkład normalny",
+  geometryczny = "Rozkład geometryczny",
+  lognormalny  = "Rozkład log-normalny",
+  wykladniczy  = "Rozkład wykładniczy"
 )
 
 QUIZ_MAX_QUESTIONS <- 10
@@ -28,17 +28,17 @@ ch8_ui <- tabPanel("8. Quiz",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Czas sprawdzi\u0107, czy potrafisz rozpozna\u0107 rozk\u0142ady w praktyce!"
+      "Czas sprawdzić, czy potrafisz rozpoznać rozkłady w praktyce!"
     ),
 
-    div(class = "section-title", "Quiz: dopasuj rozk\u0142ad do zjawiska"),
+    div(class = "section-title", "Quiz: dopasuj rozkład do zjawiska"),
 
     div(class = "narrative",
-      p("Przeczytaj opis zjawiska i wybierz rozk\u0142ad, kt\u00f3ry najlepiej je modeluje.
-        W ka\u017cdym pytaniu zobaczysz ", tags$b("3 opcje"),
-        " \u2014 jedn\u0105 poprawn\u0105 i dwie losowo wybrane b\u0142\u0119dne."),
-      p("Quiz losuje ", tags$b("10 pyta\u0144"), " z puli 60. Mo\u017cesz go powtarza\u0107
-        wielokrotnie \u2014 za ka\u017cdym razem dostaniesz inny zestaw.")
+      p("Przeczytaj opis zjawiska i wybierz rozkład, który najlepiej je modeluje.
+        W każdym pytaniu zobaczysz ", tags$b("3 opcje"),
+        " — jedną poprawną i dwie losowo wybrane błędne."),
+      p("Quiz losuje ", tags$b("10 pytań"), " z puli 60. Możesz go powtarzać
+        wielokrotnie — za każdym razem dostaniesz inny zestaw.")
     ),
 
     # --- Quiz widget ---
@@ -75,8 +75,8 @@ ch8_ui <- tabPanel("8. Quiz",
 
     # --- Przejscie do cwiczen ---
     div(class = "chapter-transition",
-      p("Czas na praktyk\u0119! Przejd\u017a do \u0107wicze\u0144 z rozk\u0142ad\u00f3w prawdopodobie\u0144stwa."),
-      actionButton("ch8_to_ch9", "Dalej: \u0106wiczenia \u2192", class = "btn-primary")
+      p("Czas na praktykę! Przejdź do ćwiczeń z rozkładów prawdopodobieństwa."),
+      actionButton("ch8_to_ch9", "Dalej: Ćwiczenia →", class = "btn-primary")
     ),
 
     br(), br()
@@ -246,7 +246,7 @@ ch8_server <- function(input, output, session) {
       div(class = if (is_correct) "callout-success" else "callout-danger",
         tags$strong(if (is_correct) "Dobrze!" else "Nie tym razem."),
         if (!is_correct) {
-          paste0(" Poprawna odpowied\u017a: ", correct_label)
+          paste0(" Poprawna odpowiedź: ", correct_label)
         }
       ),
 
@@ -258,7 +258,7 @@ ch8_server <- function(input, output, session) {
 
       # Przycisk dalej
       if (quiz_state$current_idx < quiz_state$total) {
-        actionButton("ch8_next", "Nast\u0119pne pytanie \u2192",
+        actionButton("ch8_next", "Następne pytanie →",
                      class = "btn-primary", width = "100%",
                      style = "margin-top: 10px;")
       } else {
@@ -294,10 +294,10 @@ ch8_server <- function(input, output, session) {
                     else if (pct >= 50) col_warning
                     else col_secondary
 
-    result_text <- if (pct >= 90) "\u0106wiczenie zakończone celuj\u0105co!"
+    result_text <- if (pct >= 90) "Ćwiczenie zakończone celująco!"
                    else if (pct >= 70) "Dobry wynik!"
-                   else if (pct >= 50) "Nie\u017ale, ale warto powt\u00f3rzy\u0107."
-                   else "Powt\u00f3rz materia\u0142 z wcze\u015bniejszych rozdzia\u0142\u00f3w."
+                   else if (pct >= 50) "Nieźle, ale warto powtórzyć."
+                   else "Powtórz materiał z wcześniejszych rozdziałów."
 
     div(style = "text-align: center; padding: 30px;",
       # Procent
@@ -327,9 +327,9 @@ ch8_server <- function(input, output, session) {
 
       # Przyciski
       div(style = "display: flex; gap: 10px; justify-content: center;",
-        actionButton("ch8_start", "Spr\u00f3buj ponownie",
+        actionButton("ch8_start", "Spróbuj ponownie",
                      class = "btn-primary btn-lg"),
-        actionButton("ch8_back_to_ch7", "Wr\u00f3\u0107 do \u015bci\u0105gi",
+        actionButton("ch8_back_to_ch7", "Wróć do ściągi",
                      class = "btn-outline-secondary btn-lg")
       )
     )
@@ -337,7 +337,7 @@ ch8_server <- function(input, output, session) {
 
   # Nawigacja powrotna
   observeEvent(input$ch8_back_to_ch7, {
-    updateNavbarPage(session, "main_nav", selected = "7. \u015aci\u0105ga")
+    updateNavbarPage(session, "main_nav", selected = "7. Ściąga")
   })
 
 }

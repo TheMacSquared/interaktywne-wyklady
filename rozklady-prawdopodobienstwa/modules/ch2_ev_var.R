@@ -6,48 +6,48 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Wiemy ju\u017c, czym jest rozk\u0142ad prawdopodobie\u0144stwa. Teraz dwa kluczowe pytania:
-       czego mo\u017cemy si\u0119 spodziewa\u0107 i jak bardzo wyniki mog\u0105 si\u0119 r\u00f3\u017cni\u0107?"
+      "Wiemy już, czym jest rozkład prawdopodobieństwa. Teraz dwa kluczowe pytania:
+       czego możemy się spodziewać i jak bardzo wyniki mogą się różnić?"
     ),
 
-    div(class = "section-title", "Warto\u015b\u0107 oczekiwana i wariancja"),
+    div(class = "section-title", "Wartość oczekiwana i wariancja"),
 
     div(class = "narrative",
-      p("Ka\u017cdy rozk\u0142ad prawdopodobie\u0144stwa mo\u017cna opisa\u0107 dwoma kluczowymi
+      p("Każdy rozkład prawdopodobieństwa można opisać dwoma kluczowymi
         liczbami:"),
       tags$ul(
-        tags$li(tags$b("Warto\u015b\u0107 oczekiwana E(X)"),
-          " \u2014 'na co mog\u0119 liczy\u0107 w d\u0142u\u017cszej perspektywie?'"),
+        tags$li(tags$b("Wartość oczekiwana E(X)"),
+          " — 'na co mogę liczyć w dłuższej perspektywie?'"),
         tags$li(tags$b("Wariancja / odchylenie standardowe"),
-          " \u2014 'jak bardzo wyniki rozpraszaj\u0105 si\u0119 wok\u00f3\u0142 oczekiwania?'")
+          " — 'jak bardzo wyniki rozpraszają się wokół oczekiwania?'")
       ),
-      p("To rozszerzenie poj\u0119\u0107, kt\u00f3re ju\u017c znasz ze statystyki opisowej
-        (\u015brednia i odchylenie standardowe), ale teraz stosujemy je do
+      p("To rozszerzenie pojęć, które już znasz ze statystyki opisowej
+        (średnia i odchylenie standardowe), ale teraz stosujemy je do
         modeli teoretycznych, a nie do danych.")
     ),
 
     # ========================================================================
     # WIDGET 1: Loterie -- symulacja wartosci oczekiwanej
     # ========================================================================
-    div(class = "section-title", "Czego si\u0119 spodziewa\u0107? \u2014 gra w loterie"),
+    div(class = "section-title", "Czego się spodziewać? — gra w loterie"),
 
     div(class = "narrative",
-      p("Wyobra\u017a sobie, \u017ce mo\u017cesz gra\u0107 w jedn\u0105 z trzech loterii.
-        Ka\u017cda ma inne wygrane i szanse. Kt\u00f3ra op\u0142aca si\u0119 najbardziej?"),
-      p("Zagraj wiele razy i obserwuj, jak \u015brednia wygrana na gr\u0119
-        stabilizuje si\u0119 \u2014 to w\u0142a\u015bnie warto\u015b\u0107 oczekiwana.")
+      p("Wyobraź sobie, że możesz grać w jedną z trzech loterii.
+        Każda ma inne wygrane i szanse. Która opłaca się najbardziej?"),
+      p("Zagraj wiele razy i obserwuj, jak średnia wygrana na grę
+        stabilizuje się — to właśnie wartość oczekiwana.")
     ),
 
     div(class = "widget-block",
       h4("Gra w loterie"),
       fluidRow(
         column(4,
-          radioButtons("ch2ev_lottery", "Wybierz loteri\u0119:",
+          radioButtons("ch2ev_lottery", "Wybierz loterię:",
             choices = c(
-              "A: 50% \u2192 10 z\u0142, 50% \u2192 0 z\u0142"     = "A",
-              "B: 100% \u2192 4 z\u0142 (pewna)"              = "B",
-              "C: 10% \u2192 100 z\u0142, 90% \u2192 0 z\u0142"    = "C",
-              "D: 60% \u2192 8 z\u0142, 40% \u2192 \u22125 z\u0142"    = "D"
+              "A: 50% → 10 zł, 50% → 0 zł"     = "A",
+              "B: 100% → 4 zł (pewna)"              = "B",
+              "C: 10% → 100 zł, 90% → 0 zł"    = "C",
+              "D: 60% → 8 zł, 40% → −5 zł"    = "D"
             ),
             selected = "A"
           ),
@@ -76,29 +76,29 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
     ),
 
     div(class = "callout-info",
-      tags$strong("Warto\u015b\u0107 oczekiwana:"),
-      " To 'd\u0142ugoterminowa \u015brednia' \u2014 wynik, wok\u00f3\u0142 kt\u00f3rego oscyluje
-        \u015brednia po wielu powtorzeniach. Nie musi by\u0107 r\u00f3wna \u017cadnemu
-        konkretnemu wynikowi! (np. E(kostki) = 3.5, cho\u0107 3.5 nigdy nie wypada)"
+      tags$strong("Wartość oczekiwana:"),
+      " To 'długoterminowa średnia' — wynik, wokół którego oscyluje
+        średnia po wielu powtorzeniach. Nie musi być równa żadnemu
+        konkretnemu wynikowi! (np. E(kostki) = 3.5, choć 3.5 nigdy nie wypada)"
     ),
 
     # ========================================================================
     # WIDGET 2: Punkt rownowagi
     # ========================================================================
-    div(class = "section-title", "E(X) jako punkt r\u00f3wnowagi"),
+    div(class = "section-title", "E(X) jako punkt równowagi"),
 
     div(class = "narrative",
-      p("Warto\u015b\u0107 oczekiwana to punkt r\u00f3wnowagi rozk\u0142adu \u2014 gdyby\u015b po\u0142o\u017cy\u0142(a)
-        s\u0142upki PMF na wadze, E(X) by\u0142oby miejscem podparcia."),
-      p("Spr\u00f3buj ustawi\u0107 prawdopodobie\u0144stwa i obserwuj,
-        jak przesuwa si\u0119 punkt r\u00f3wnowagi.")
+      p("Wartość oczekiwana to punkt równowagi rozkładu — gdybyś położył(a)
+        słupki PMF na wadze, E(X) byłoby miejscem podparcia."),
+      p("Spróbuj ustawić prawdopodobieństwa i obserwuj,
+        jak przesuwa się punkt równowagi.")
     ),
 
     div(class = "widget-block",
-      h4("Punkt r\u00f3wnowagi rozk\u0142adu"),
+      h4("Punkt równowagi rozkładu"),
       fluidRow(
         column(4,
-          h5("Prawdopodobie\u0144stwa:"),
+          h5("Prawdopodobieństwa:"),
           sliderInput("ch2ev_bal_p1", "P(X = 1):", min = 0, max = 1, value = 0.25, step = 0.01),
           sliderInput("ch2ev_bal_p2", "P(X = 3):", min = 0, max = 1, value = 0.25, step = 0.01),
           sliderInput("ch2ev_bal_p3", "P(X = 5):", min = 0, max = 1, value = 0.25, step = 0.01),
@@ -108,7 +108,7 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
           div(class = "preset-buttons",
             actionButton("ch2ev_bal_sym", "Symetryczny",
                          class = "btn-outline-primary"),
-            actionButton("ch2ev_bal_skew", "Sko\u015bny",
+            actionButton("ch2ev_bal_skew", "Skośny",
                          class = "btn-outline-warning"),
             actionButton("ch2ev_bal_bimod", "Dwumodalny",
                          class = "btn-outline-success")
@@ -122,28 +122,28 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
     ),
 
     div(class = "callout-warning",
-      tags$strong("Pami\u0119taj:"),
-      " E(X) to \u015brednia wa\u017cona prawdopodobie\u0144stwami. Wynik o du\u017cym prawdopodobie\u0144stwie
-        ci\u0105gnie E(X) w swoj\u0105 stron\u0119 \u2014 podobnie jak ci\u0119\u017cki przedmiot na wadze."
+      tags$strong("Pamiętaj:"),
+      " E(X) to średnia ważona prawdopodobieństwami. Wynik o dużym prawdopodobieństwie
+        ciągnie E(X) w swoją stronę — podobnie jak ciężki przedmiot na wadze."
     ),
 
     # ========================================================================
     # WIDGET 3: Ryzyko a rozrzut -- intuicja wariancji
     # ========================================================================
-    div(class = "section-title", "Wariancja \u2014 rozrzut wok\u00f3\u0142 oczekiwania"),
+    div(class = "section-title", "Wariancja — rozrzut wokół oczekiwania"),
 
     div(class = "narrative",
-      p("Dwie loterie mog\u0105 mie\u0107 t\u0119 sam\u0105 warto\u015b\u0107 oczekiwan\u0105, ale zupe\u0142nie r\u00f3\u017cne ryzyko.
-        Wariancja (i odchylenie standardowe) mierzy w\u0142a\u015bnie to: jak bardzo wyniki
-        rozpraszaj\u0105 si\u0119 wok\u00f3\u0142 E(X)."),
-      p("Por\u00f3wnaj trzy loterie \u2014 wszystkie maj\u0105 E(X) = 50 z\u0142:")
+      p("Dwie loterie mogą mieć tę samą wartość oczekiwaną, ale zupełnie różne ryzyko.
+        Wariancja (i odchylenie standardowe) mierzy właśnie to: jak bardzo wyniki
+        rozpraszają się wokół E(X)."),
+      p("Porównaj trzy loterie — wszystkie mają E(X) = 50 zł:")
     ),
 
     div(class = "widget-block",
-      h4("Trzy loterie, jedno E(X), r\u00f3\u017cne ryzyko"),
+      h4("Trzy loterie, jedno E(X), różne ryzyko"),
       fluidRow(
         column(4,
-          sliderInput("ch2ev_var_n", "Ile razy zagra\u0107?",
+          sliderInput("ch2ev_var_n", "Ile razy zagrać?",
                       min = 10, max = 2000, value = 200, step = 10),
           actionButton("ch2ev_var_sim", "Symuluj!",
                        class = "btn-primary", width = "100%"),
@@ -159,12 +159,12 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
     div(class = "callout-success",
       tags$strong("Kluczowa intuicja:"),
       tags$ul(
-        tags$li(tags$b("Ma\u0142a wariancja"), " = wyniki skupione blisko E(X), ma\u0142e ryzyko"),
-        tags$li(tags$b("Du\u017ca wariancja"), " = wyniki rozrzucone szeroko, du\u017ce ryzyko"),
-        tags$li(tags$b("Wariancja = 0"), " = brak losowo\u015bci, wynik pewny")
+        tags$li(tags$b("Mała wariancja"), " = wyniki skupione blisko E(X), małe ryzyko"),
+        tags$li(tags$b("Duża wariancja"), " = wyniki rozrzucone szeroko, duże ryzyko"),
+        tags$li(tags$b("Wariancja = 0"), " = brak losowości, wynik pewny")
       ),
-      p("Odchylenie standardowe SD = \u221aVar ma t\u0119 sam\u0105 jednostk\u0119 co dane
-        (np. z\u0142ot\u00f3wki), dlatego jest \u0142atwiejsze w interpretacji.")
+      p("Odchylenie standardowe SD = √Var ma tę samą jednostkę co dane
+        (np. złotówki), dlatego jest łatwiejsze w interpretacji.")
     ),
 
     # ========================================================================
@@ -173,30 +173,30 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
     div(class = "section-title", "Od danych do modelu"),
 
     div(class = "narrative",
-      p("Zwr\u00f3\u0107 uwag\u0119 na analogi\u0119:"),
+      p("Zwróć uwagę na analogię:"),
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(
             tags$th("Statystyka opisowa (dane)"),
-            tags$th("Rachunek prawdopodobie\u0144stwa (model)")
+            tags$th("Rachunek prawdopodobieństwa (model)")
           )
         ),
         tags$tbody(
-          tags$tr(tags$td("\u015arednia z pr\u00f3by x\u0304"), tags$td("Warto\u015b\u0107 oczekiwana E(X)")),
-          tags$tr(tags$td("Wariancja z pr\u00f3by s\u00b2"), tags$td("Wariancja Var(X)")),
+          tags$tr(tags$td("Średnia z próby x̄"), tags$td("Wartość oczekiwana E(X)")),
+          tags$tr(tags$td("Wariancja z próby s²"), tags$td("Wariancja Var(X)")),
           tags$tr(tags$td("Odchylenie standardowe s"), tags$td("Odchylenie standardowe SD(X)")),
-          tags$tr(tags$td("Obliczane z danych"), tags$td("Obliczane z modelu (rozk\u0142adu)"))
+          tags$tr(tags$td("Obliczane z danych"), tags$td("Obliczane z modelu (rozkładu)"))
         )
       ),
-      p("Prawo wielkich liczb gwarantuje, \u017ce x\u0304 \u2192 E(X) wraz ze wzrostem pr\u00f3by.")
+      p("Prawo wielkich liczb gwarantuje, że x̄ → E(X) wraz ze wzrostem próby.")
     ),
 
     # --- Transition ---
     div(class = "chapter-transition",
-      p("Wiemy ju\u017c, czym s\u0105 warto\u015b\u0107 oczekiwana i wariancja.
-        Teraz poznamy konkretne rozk\u0142ady dyskretne i zobaczymy,
-        jak E(X) i Var(X) zale\u017c\u0105 od ich parametr\u00f3w."),
-      actionButton("ch2ev_next", "Dalej: 3. Rozk\u0142ady dyskretne \u2192",
+      p("Wiemy już, czym są wartość oczekiwana i wariancja.
+        Teraz poznamy konkretne rozkłady dyskretne i zobaczymy,
+        jak E(X) i Var(X) zależą od ich parametrów."),
+      actionButton("ch2ev_next", "Dalej: 3. Rozkłady dyskretne →",
                    class = "btn-primary btn-lg")
     ),
 
@@ -213,13 +213,13 @@ ch2_ev_var_server <- function(input, output, session) {
   # --- Definicje loterii ---
   lottery_defs <- list(
     A = list(outcomes = c(10, 0), probs = c(0.5, 0.5), ev = 5,
-             label = "A: 50/50 na 10 z\u0142 lub 0 z\u0142"),
+             label = "A: 50/50 na 10 zł lub 0 zł"),
     B = list(outcomes = c(4), probs = c(1), ev = 4,
-             label = "B: Pewne 4 z\u0142"),
+             label = "B: Pewne 4 zł"),
     C = list(outcomes = c(100, 0), probs = c(0.1, 0.9), ev = 10,
-             label = "C: 10% na 100 z\u0142"),
+             label = "C: 10% na 100 zł"),
     D = list(outcomes = c(8, -5), probs = c(0.6, 0.4), ev = 2.8,
-             label = "D: 60% na 8 z\u0142, 40% na \u22125 z\u0142")
+             label = "D: 60% na 8 zł, 40% na −5 zł")
   )
 
   # --- Widget 1: Loterie ---
@@ -252,7 +252,7 @@ ch2_ev_var_server <- function(input, output, session) {
     if (length(results) == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij 'Graj', aby rozpocz\u0105\u0107",
+                 label = "Kliknij 'Graj', aby rozpocząć",
                  size = 6, color = "#7f8c8d") +
         theme_void()
     } else {
@@ -272,8 +272,8 @@ ch2_ev_var_server <- function(input, output, session) {
           min(min(running_mean), lot$ev) - abs(lot$ev) * 0.3,
           max(max(running_mean), lot$ev) + abs(lot$ev) * 0.3
         )) +
-        labs(title = "\u015arednia wygrana na gr\u0119 \u2192 E(X)",
-             x = "Liczba gier", y = "\u015arednia wygrana (z\u0142)") +
+        labs(title = "Średnia wygrana na grę → E(X)",
+             x = "Liczba gier", y = "Średnia wygrana (zł)") +
         theme_educational()
     }
   })
@@ -288,12 +288,12 @@ ch2_ev_var_server <- function(input, output, session) {
 
     div(style = "text-align: center; margin-top: 10px;",
       div(class = "stat-box", style = paste0("background: ", col_primary, ";"),
-          paste0("\u015ar. dotychczasowa = ", obs_mean, " z\u0142")),
+          paste0("Śr. dotychczasowa = ", obs_mean, " zł")),
       div(class = "stat-box", style = paste0("background: ", col_secondary, ";"),
-          paste0("E(X) = ", lot$ev, " z\u0142")),
+          paste0("E(X) = ", lot$ev, " zł")),
       div(class = "stat-box",
           style = paste0("background: ", if (diff < 0.5) col_success else col_warning, ";"),
-          paste0("R\u00f3\u017cnica: ", round(diff, 2), " z\u0142"))
+          paste0("Różnica: ", round(diff, 2), " zł"))
     )
   })
 
@@ -321,10 +321,10 @@ ch2_ev_var_server <- function(input, output, session) {
     s <- input$ch2ev_bal_p1 + input$ch2ev_bal_p2 + input$ch2ev_bal_p3 + input$ch2ev_bal_p4
     if (abs(s - 1) < 0.005) {
       div(class = "stat-box", style = paste0("background: ", col_success, ";"),
-          paste0("\u2211P = ", sprintf("%.2f", s), " \u2714"))
+          paste0("∑P = ", sprintf("%.2f", s), " ✔"))
     } else {
       div(class = "stat-box", style = paste0("background: ", col_secondary, ";"),
-          paste0("\u2211P = ", sprintf("%.2f", s), " \u2260 1"))
+          paste0("∑P = ", sprintf("%.2f", s), " ≠ 1"))
     }
   })
 
@@ -354,8 +354,8 @@ ch2_ev_var_server <- function(input, output, session) {
       scale_y_continuous(limits = c(-0.08, max(probs) * 1.3),
                          expand = expansion(mult = c(0, 0.05))) +
       scale_x_continuous(breaks = x_vals, limits = c(0, 10)) +
-      labs(title = "Rozk\u0142ad na wadze \u2014 E(X) to punkt r\u00f3wnowagi",
-           x = "Warto\u015b\u0107 (x)", y = "Prawdopodobie\u0144stwo P(X=x)") +
+      labs(title = "Rozkład na wadze — E(X) to punkt równowagi",
+           x = "Wartość (x)", y = "Prawdopodobieństwo P(X=x)") +
       theme_educational()
   })
 
@@ -369,7 +369,7 @@ ch2_ev_var_server <- function(input, output, session) {
 
     calc_parts <- paste(
       sapply(seq_along(x_vals), function(i) {
-        paste0(x_vals[i], "\u00b7", sprintf("%.2f", probs[i]))
+        paste0(x_vals[i], "·", sprintf("%.2f", probs[i]))
       }),
       collapse = " + "
     )
@@ -411,9 +411,9 @@ ch2_ev_var_server <- function(input, output, session) {
 
     df <- data.frame(
       value = c(d$a, d$b, d$c),
-      lottery = rep(c("A: Pewne 50 z\u0142\n(Var = 0)",
-                       "B: 0 lub 100 z\u0142\n(Var = 2500)",
-                       "C: Losowe 0-100 z\u0142\n(Var \u2248 833)"),
+      lottery = rep(c("A: Pewne 50 zł\n(Var = 0)",
+                       "B: 0 lub 100 zł\n(Var = 2500)",
+                       "C: Losowe 0-100 zł\n(Var ≈ 833)"),
                     each = d$n)
     )
     df$lottery <- factor(df$lottery, levels = unique(df$lottery))
@@ -424,8 +424,8 @@ ch2_ev_var_server <- function(input, output, session) {
       facet_wrap(~lottery, ncol = 3) +
       annotate("text", x = 50, y = Inf, label = "E(X) = 50",
                color = col_secondary, fontface = "bold", size = 4, vjust = 2) +
-      labs(title = paste0("Wyniki ", d$n, " gier \u2014 to samo E(X), r\u00f3\u017cne ryzyko"),
-           x = "Wygrana (z\u0142)", y = "Liczebno\u015b\u0107") +
+      labs(title = paste0("Wyniki ", d$n, " gier — to samo E(X), różne ryzyko"),
+           x = "Wygrana (zł)", y = "Liczebność") +
       theme_educational(base_size = 12)
   })
 
@@ -436,7 +436,7 @@ ch2_ev_var_server <- function(input, output, session) {
     div(
       h5("Statystyki:"),
       tags$table(class = "table table-bordered table-sm", style = "font-size: 13px;",
-        tags$thead(tags$tr(tags$th("Loteria"), tags$th("SD"), tags$th("\u015ar."))),
+        tags$thead(tags$tr(tags$th("Loteria"), tags$th("SD"), tags$th("Śr."))),
         tags$tbody(
           tags$tr(
             tags$td("A: Pewna"),
