@@ -5,7 +5,7 @@
 # Generowanie danych studenckich (n=200)
 generate_student_data <- function(n = 200) {
   set.seed(NULL)
-  plec <- sample(c("Kobieta", "M\u0119\u017cczyzna"), n, replace = TRUE, prob = c(0.55, 0.45))
+  plec <- sample(c("Kobieta", "Mężczyzna"), n, replace = TRUE, prob = c(0.55, 0.45))
   kierunek <- sample(c("Informatyka", "Ekonomia", "Psychologia", "Biologia"),
                      n, replace = TRUE, prob = c(0.3, 0.25, 0.25, 0.2))
 
@@ -90,7 +90,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
   } else if (test_type == "chisq") {
     x <- seq(0, max(stat_value * 2, 15), length.out = 500)
     y <- dchisq(x, df)
-    label <- paste0("\u03c7\u00b2(", df, ")")
+    label <- paste0("χ²(", df, ")")
   } else if (test_type == "f") {
     x <- seq(0, max(stat_value * 2, 8), length.out = 500)
     df1 <- df[1]; df2 <- df[2]
@@ -138,8 +138,8 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
       annotate("text", x = stat_value, y = max(y) * 0.85,
                label = paste0("stat = ", round(stat_value, 3)),
                hjust = -0.1, color = "#e74c3c", fontface = "bold") +
-      labs(title = paste0("Rozk\u0142ad pod H\u2080: ", label),
-           x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
+      labs(title = paste0("Rozkład pod H₀: ", label),
+           x = "Statystyka testowa", y = "Gęstość") +
       theme_educational()
 
   } else if (alternative == "two.sided") {
@@ -158,7 +158,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
       geom_vline(xintercept = stat_value, color = "#e74c3c",
                  linewidth = 1.2) +
       annotate("text", x = 0, y = max(y) * 0.45,
-               label = "nie odrzucamy H\u2080", color = "#27ae60",
+               label = "nie odrzucamy H₀", color = "#27ae60",
                fontface = "bold", size = 4) +
       annotate("text", x = -3.3, y = max(y) * 0.25,
                label = "Ha", color = "#e74c3c",
@@ -170,8 +170,8 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
                label = paste0("t = ", round(stat_value, 3)),
                hjust = if (stat_value > 0) -0.1 else 1.1,
                color = "#e74c3c", fontface = "bold") +
-      labs(title = paste0("Rozk\u0142ad pod H\u2080: ", label),
-           x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
+      labs(title = paste0("Rozkład pod H₀: ", label),
+           x = "Statystyka testowa", y = "Gęstość") +
       theme_educational()
 
   } else {
@@ -197,8 +197,8 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
                label = paste0("t = ", round(stat_value, 3)),
                hjust = if (stat_value > 0) -0.1 else 1.1,
                color = "#e74c3c", fontface = "bold") +
-      labs(title = paste0("Rozk\u0142ad pod H\u2080: ", label),
-           x = "Statystyka testowa", y = "G\u0119sto\u015b\u0107") +
+      labs(title = paste0("Rozkład pod H₀: ", label),
+           x = "Statystyka testowa", y = "Gęstość") +
       theme_educational()
   }
 
@@ -209,19 +209,19 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
 format_test_result <- function(p_value, alpha = 0.05) {
   if (p_value < alpha) {
     list(
-      decision = "Odrzucamy H\u2080",
+      decision = "Odrzucamy H₀",
       color = "#e74c3c",
       explanation = paste0("p = ", format.pval(p_value, digits = 4),
-                           " < \u03b1 = ", alpha,
-                           " \u2014 wynik istotny statystycznie")
+                           " < α = ", alpha,
+                           " — wynik istotny statystycznie")
     )
   } else {
     list(
-      decision = "Brak podstaw do odrzucenia H\u2080",
+      decision = "Brak podstaw do odrzucenia H₀",
       color = "#27ae60",
       explanation = paste0("p = ", format.pval(p_value, digits = 4),
-                           " \u2265 \u03b1 = ", alpha,
-                           " \u2014 wynik nieistotny statystycznie")
+                           " ≥ α = ", alpha,
+                           " — wynik nieistotny statystycznie")
     )
   }
 }
@@ -230,22 +230,22 @@ format_test_result <- function(p_value, alpha = 0.05) {
 effect_size_label <- function(d) {
   d <- abs(d)
   if (d < 0.2) "pomijalny"
-  else if (d < 0.5) "ma\u0142y"
-  else if (d < 0.8) "\u015bredni"
-  else "du\u017cy"
+  else if (d < 0.5) "mały"
+  else if (d < 0.8) "średni"
+  else "duży"
 }
 
 # Praktyczna interpretacja Cohen's d (sensoryka / konsumenci)
 interpret_cohens_d <- function(d) {
   ad <- abs(d)
   if (ad < 0.2) {
-    "Efekt pomijalny: r\u00f3\u017cnica praktycznie nieuchwytna, nawet wyszkolony panel sensoryczny mia\u0142by problem j\u0105 wykry\u0107."
+    "Efekt pomijalny: różnica praktycznie nieuchwytna, nawet wyszkolony panel sensoryczny miałby problem ją wykryć."
   } else if (ad < 0.5) {
-    "Efekt ma\u0142y: r\u00f3\u017cnica ledwie uchwytna; konsument w te\u015bcie \u015blepym prawdopodobnie nie rozr\u00f3\u017cni, wyszkolony panel \u2014 czasem."
+    "Efekt mały: różnica ledwie uchwytna; konsument w teście ślepym prawdopodobnie nie rozróżni, wyszkolony panel — czasem."
   } else if (ad < 0.8) {
-    "Efekt \u015bredni: r\u00f3\u017cnica, kt\u00f3r\u0105 dobrze wytrenowany panel sensoryczny rozr\u00f3\u017cni; konsument \u2014 bywa \u017ce zauwa\u017cy."
+    "Efekt średni: różnica, którą dobrze wytrenowany panel sensoryczny rozróżni; konsument — bywa że zauważy."
   } else {
-    "Efekt du\u017cy: r\u00f3\u017cnica wyra\u017ana, rozpozna j\u0105 nawet konsument w te\u015bcie \u015blepym."
+    "Efekt duży: różnica wyraźna, rozpozna ją nawet konsument w teście ślepym."
   }
 }
 
@@ -253,14 +253,14 @@ interpret_cohens_d <- function(d) {
 # Zmienna: pH po 6h fermentacji; grupy: 20/25/30 stopni C
 generate_fermentation_data <- function(n = 160) {
   set.seed(NULL)
-  groups <- c("20\u00b0C", "25\u00b0C", "30\u00b0C")
+  groups <- c("20°C", "25°C", "30°C")
   temp <- sample(groups, n, replace = TRUE)
-  # \u015arednie pH: wy\u017csza temperatura -> szybsze zakwaszenie -> ni\u017csze pH
-  base_pH <- sapply(temp, function(t) switch(t, "20\u00b0C" = 4.55, "25\u00b0C" = 4.30, "30\u00b0C" = 4.05))
+  # Średnie pH: wyższa temperatura -> szybsze zakwaszenie -> niższe pH
+  base_pH <- sapply(temp, function(t) switch(t, "20°C" = 4.55, "25°C" = 4.30, "30°C" = 4.05))
   pH <- round(base_pH + rnorm(n, 0, 0.14), 2)
 
-  # Druga zmienna: kwasowo\u015b\u0107 miareczkowa (\u00b0SH) \u2014 alternatywa do pH
-  base_sh <- sapply(temp, function(t) switch(t, "20\u00b0C" = 28, "25\u00b0C" = 33, "30\u00b0C" = 38))
+  # Druga zmienna: kwasowość miareczkowa (°SH) — alternatywa do pH
+  base_sh <- sapply(temp, function(t) switch(t, "20°C" = 28, "25°C" = 33, "30°C" = 38))
   kwasowosc_SH <- round(base_sh + rnorm(n, 0, 3.5), 1)
 
   data.frame(

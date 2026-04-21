@@ -96,28 +96,28 @@ server <- function(input, output, session) {
   # ==========================================================================
 
   observeEvent(input$ch1_next, {
-    updateNavbarPage(session, "main_nav", selected = "2. Formu\u0142owanie hipotez")
+    updateNavbarPage(session, "main_nav", selected = "2. Formułowanie hipotez")
   })
   observeEvent(input$ch2h_next, {
-    updateNavbarPage(session, "main_nav", selected = "3. Jedna zmienna ilo\u015bciowa")
+    updateNavbarPage(session, "main_nav", selected = "3. Jedna zmienna ilościowa")
   })
   observeEvent(input$ch2_next, {
-    updateNavbarPage(session, "main_nav", selected = "4. Jedna zmienna jako\u015bciowa")
+    updateNavbarPage(session, "main_nav", selected = "4. Jedna zmienna jakościowa")
   })
   observeEvent(input$ch3_next, {
-    updateNavbarPage(session, "main_nav", selected = "5. Dwie zmienne ilo\u015bciowe")
+    updateNavbarPage(session, "main_nav", selected = "5. Dwie zmienne ilościowe")
   })
   observeEvent(input$ch4_next, {
-    updateNavbarPage(session, "main_nav", selected = "6. Dwie zmienne jako\u015bciowe")
+    updateNavbarPage(session, "main_nav", selected = "6. Dwie zmienne jakościowe")
   })
   observeEvent(input$ch5_next, {
-    updateNavbarPage(session, "main_nav", selected = "7. Ilo\u015bciowa i jako\u015bciowa")
+    updateNavbarPage(session, "main_nav", selected = "7. Ilościowa i jakościowa")
   })
   observeEvent(input$ch6_next, {
     updateNavbarPage(session, "main_nav", selected = "8. ANOVA")
   })
   observeEvent(input$ch7_next, {
-    updateNavbarPage(session, "main_nav", selected = "9. \u015aci\u0105ga")
+    updateNavbarPage(session, "main_nav", selected = "9. Ściąga")
   })
 
   # ==========================================================================

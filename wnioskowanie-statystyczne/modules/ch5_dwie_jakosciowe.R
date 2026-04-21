@@ -2,29 +2,29 @@
 # CHAPTER 6: Dwie zmienne jakosciowe (chi-kwadrat, Fisher)
 # ============================================================================
 
-ch5_ui <- tabPanel("6. Dwie zmienne jako\u015bciowe",
+ch5_ui <- tabPanel("6. Dwie zmienne jakościowe",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Badali\u015bmy korelacj\u0119 mi\u0119dzy zmiennymi ilo\u015bciowymi.
-       A co, gdy obie zmienne s\u0105 jako\u015bciowe (kategorialne)?"
+      "Badaliśmy korelację między zmiennymi ilościowymi.
+       A co, gdy obie zmienne są jakościowe (kategorialne)?"
     ),
 
     # ========================================================================
     # Wprowadzenie
     # ========================================================================
-    div(class = "section-title", "Tabela kontyngencji i test \u03c7\u00b2"),
+    div(class = "section-title", "Tabela kontyngencji i test χ²"),
 
     div(class = "narrative",
-      p("Gdy mamy dwie zmienne jako\u015bciowe, pytamy: ",
-        tags$b("czy s\u0105 ze sob\u0105 powi\u0105zane?"),
-        " Narz\u0119dzie: tabela kontyngencji (krzy\u017cowa) + test \u03c7\u00b2 niezale\u017cno\u015bci."),
-      p("Idea: por\u00f3wnujemy to, co ", tags$b("zaobserwowali\u015bmy"),
-        " z tym, czego ", tags$b("oczekiwaliby\u015bmy, gdyby zmienne by\u0142y niezale\u017cne"), "."),
+      p("Gdy mamy dwie zmienne jakościowe, pytamy: ",
+        tags$b("czy są ze sobą powiązane?"),
+        " Narzędzie: tabela kontyngencji (krzyżowa) + test χ² niezależności."),
+      p("Idea: porównujemy to, co ", tags$b("zaobserwowaliśmy"),
+        " z tym, czego ", tags$b("oczekiwalibyśmy, gdyby zmienne były niezależne"), "."),
       div(class = "formula-box",
-        p(withMathJax("\\(H_0:\\) zmienne s\u0105 niezale\u017cne \u2014 ",
-                      "\\(H_a:\\) zmienne s\u0105 powi\u0105zane")),
-        p("Liczno\u015bci oczekiwane: ", withMathJax("\\(E_{ij} = \\frac{n_{i\\cdot} \\cdot n_{\\cdot j}}{n}\\)")),
+        p(withMathJax("\\(H_0:\\) zmienne są niezależne — ",
+                      "\\(H_a:\\) zmienne są powiązane")),
+        p("Liczności oczekiwane: ", withMathJax("\\(E_{ij} = \\frac{n_{i\\cdot} \\cdot n_{\\cdot j}}{n}\\)")),
         p("Statystyka testowa: ", withMathJax("\\(\\chi^2 = \\sum \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}\\)"))
       )
     ),
@@ -32,35 +32,35 @@ ch5_ui <- tabPanel("6. Dwie zmienne jako\u015bciowe",
     # ========================================================================
     # WIDGET 0: Budowanie intuicji — co to znaczy niezaleznosc?
     # ========================================================================
-    div(class = "section-title", "Budowanie intuicji: co to znaczy \u201eniezale\u017cno\u015b\u0107\u201d?"),
+    div(class = "section-title", "Budowanie intuicji: co to znaczy „niezależność”?"),
 
     div(class = "narrative",
-      p("Zanim przejdziemy do wzor\u00f3w, zbudujmy intuicj\u0119 na przyk\u0142adzie:")
+      p("Zanim przejdziemy do wzorów, zbudujmy intuicję na przykładzie:")
     ),
 
     div(class = "widget-block",
-      h4("Przyk\u0142ad: czy p\u0142e\u0107 wp\u0142ywa na dostawanie mandat\u00f3w?"),
+      h4("Przykład: czy płeć wpływa na dostawanie mandatów?"),
 
       div(class = "narrative",
         p("Mamy dane z 200 kontroli drogowych. Pytanie: ",
-          tags$em("\u201eCzy szansa dostania mandatu jest niezale\u017cna od p\u0142ci?\u201d"))
+          tags$em("„Czy szansa dostania mandatu jest niezależna od płci?”"))
       ),
 
-      actionButton("ch5_narr_step1", "1. Poka\u017c dane",
+      actionButton("ch5_narr_step1", "1. Pokaż dane",
                    class = "btn-outline-primary", width = "100%"),
       uiOutput("ch5_narr1"),
       br(),
 
       conditionalPanel(
         condition = "input.ch5_narr_step1 % 2 == 1",
-        actionButton("ch5_narr_step2", "2. Za\u0142\u00f3\u017cmy niezale\u017cno\u015b\u0107 \u2014 co by by\u0142o?",
+        actionButton("ch5_narr_step2", "2. Załóżmy niezależność — co by było?",
                      class = "btn-outline-primary", width = "100%"),
         uiOutput("ch5_narr2"),
         br(),
 
         conditionalPanel(
           condition = "input.ch5_narr_step2 % 2 == 1",
-          actionButton("ch5_narr_step3", "3. Por\u00f3wnaj: obserwowane i oczekiwane",
+          actionButton("ch5_narr_step3", "3. Porównaj: obserwowane i oczekiwane",
                        class = "btn-outline-primary", width = "100%"),
           uiOutput("ch5_narr3")
         )
@@ -70,34 +70,34 @@ ch5_ui <- tabPanel("6. Dwie zmienne jako\u015bciowe",
     # ========================================================================
     # WIDGET 1: Chi-kwadrat krokowy
     # ========================================================================
-    div(class = "section-title", "Test \u03c7\u00b2 niezale\u017cno\u015bci \u2014 krok po kroku"),
+    div(class = "section-title", "Test χ² niezależności — krok po kroku"),
 
     div(class = "widget-block",
       fluidRow(
         column(4,
           selectInput("ch5_scenario", "Scenariusz:",
             choices = c(
-              "Opakowanie a ple\u015b\u0144 (T\u017b)" = "packaging",
-              "Atmosfera pakowania a \u015bwie\u017co\u015b\u0107 mi\u0119sa (T\u017b)" = "atmosphere",
+              "Opakowanie a pleśń (TŻ)" = "packaging",
+              "Atmosfera pakowania a świeżość mięsa (TŻ)" = "atmosphere",
               "Typ gleby a kategoria plonu (R)" = "soil",
-              "Metoda pasteryzacji mleka a liczebno\u015b\u0107 bakterii (T\u017b)" = "pasteurization"
+              "Metoda pasteryzacji mleka a liczebność bakterii (TŻ)" = "pasteurization"
             ),
             selected = "packaging"
           ),
-          sliderInput("ch5_n", "Wielko\u015b\u0107 pr\u00f3by (n):",
+          sliderInput("ch5_n", "Wielkość próby (n):",
                       min = 50, max = 300, value = 120, step = 10),
-          actionButton("ch5_new_sample", "Losuj pr\u00f3b\u0119",
+          actionButton("ch5_new_sample", "Losuj próbę",
                        class = "btn-primary", width = "100%"),
           hr(),
           h5("Kroki testu:"),
           div(style = "display: flex; flex-direction: column; gap: 6px;",
             actionButton("ch5_step1", "1. Tabela obserwowana",
                          class = "btn-outline-primary", width = "100%"),
-            actionButton("ch5_step2", "2. Procenty \u2014 co widzimy?",
+            actionButton("ch5_step2", "2. Procenty — co widzimy?",
                          class = "btn-outline-primary", width = "100%"),
-            actionButton("ch5_step3", "3. Tabela oczekiwana + \u03c7\u00b2",
+            actionButton("ch5_step3", "3. Tabela oczekiwana + χ²",
                          class = "btn-outline-primary", width = "100%"),
-            actionButton("ch5_step4", "4. p-warto\u015b\u0107 i decyzja",
+            actionButton("ch5_step4", "4. p-wartość i decyzja",
                          class = "btn-outline-primary", width = "100%")
           )
         ),
@@ -112,53 +112,53 @@ ch5_ui <- tabPanel("6. Dwie zmienne jako\u015bciowe",
     # ========================================================================
     # WIDGET 2: Chi-kwadrat vs Fisher (porownanie)
     # ========================================================================
-    div(class = "section-title", "Test \u03c7\u00b2 a test Fishera"),
+    div(class = "section-title", "Test χ² a test Fishera"),
 
     div(class = "narrative",
-      p("Test \u03c7\u00b2 opiera si\u0119 na przybli\u017ceniu. Gdy pr\u00f3ba jest ma\u0142a,
-        niekt\u00f3re oczekiwane liczno\u015bci mog\u0105 by\u0107 < 5 \u2014 wtedy przybli\u017cenie zawodzi."),
-      p("Alternatywa: ", tags$b("test dok\u0142adny Fishera"),
-        " \u2014 liczy p-warto\u015b\u0107 dok\u0142adnie, jak test dwumianowy dla proporcji.")
+      p("Test χ² opiera się na przybliżeniu. Gdy próba jest mała,
+        niektóre oczekiwane liczności mogą być < 5 — wtedy przybliżenie zawodzi."),
+      p("Alternatywa: ", tags$b("test dokładny Fishera"),
+        " — liczy p-wartość dokładnie, jak test dwumianowy dla proporcji.")
     ),
 
     div(class = "widget-block",
-      h4("Por\u00f3wnanie wynik\u00f3w"),
-      actionButton("ch5_compare", "Por\u00f3wnaj \u03c7\u00b2 i Fishera (na tych samych danych)",
+      h4("Porównanie wyników"),
+      actionButton("ch5_compare", "Porównaj χ² i Fishera (na tych samych danych)",
                    class = "btn-primary", width = "100%"),
       br(), br(),
       uiOutput("ch5_compare_result")
     ),
 
     div(class = "callout-info",
-      tags$strong("Kiedy kt\u00f3ry?"),
+      tags$strong("Kiedy który?"),
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
         tags$thead(
-          tags$tr(tags$th(""), tags$th("Test \u03c7\u00b2"), tags$th("Test Fishera"))
+          tags$tr(tags$th(""), tags$th("Test χ²"), tags$th("Test Fishera"))
         ),
         tags$tbody(
           tags$tr(
             tags$td(tags$b("Metoda")),
-            tags$td("Przybli\u017cony (rozk\u0142ad \u03c7\u00b2)"),
-            tags$td("Dok\u0142adny (kombinatoryka)")
+            tags$td("Przybliżony (rozkład χ²)"),
+            tags$td("Dokładny (kombinatoryka)")
           ),
           tags$tr(
             tags$td(tags$b("Warunek")),
-            tags$td("Wszystkie E\u2080 \u2265 5"),
-            tags$td("Dzia\u0142a zawsze")
+            tags$td("Wszystkie E₀ ≥ 5"),
+            tags$td("Działa zawsze")
           ),
           tags$tr(
-            tags$td(tags$b("Du\u017ce n")),
+            tags$td(tags$b("Duże n")),
             tags$td(style = "background: #eafaf1;", "Szybki, praktycznie identyczny wynik"),
-            tags$td("Dzia\u0142a, ale wolniejszy")
+            tags$td("Działa, ale wolniejszy")
           ),
           tags$tr(
-            tags$td(tags$b("Ma\u0142e n")),
-            tags$td(style = "background: #fdedec;", "Mo\u017ce by\u0107 niedok\u0142adny"),
-            tags$td(style = "background: #eafaf1;", "Bezpieczny wyb\u00f3r")
+            tags$td(tags$b("Małe n")),
+            tags$td(style = "background: #fdedec;", "Może być niedokładny"),
+            tags$td(style = "background: #eafaf1;", "Bezpieczny wybór")
           ),
           tags$tr(
             tags$td(tags$b("W Jamovi")),
-            tags$td("\u03c7\u00b2 (domy\u015blnie)"),
+            tags$td("χ² (domyślnie)"),
             tags$td("Zaznacz: Fisher's exact test")
           )
         )
@@ -168,40 +168,40 @@ ch5_ui <- tabPanel("6. Dwie zmienne jako\u015bciowe",
     # ========================================================================
     # Jak interpretowac sile zwiazku
     # ========================================================================
-    div(class = "section-title", "Jak du\u017ca jest r\u00f3\u017cnica? Si\u0142a zwi\u0105zku"),
+    div(class = "section-title", "Jak duża jest różnica? Siła związku"),
 
     div(class = "narrative",
-      p("P-warto\u015b\u0107 m\u00f3wi ", tags$em("czy"), " zwi\u0105zek istnieje, ale nie ",
-        tags$em("jak du\u017cy"), " jest. Zobaczmy to na naszych danych:")
+      p("P-wartość mówi ", tags$em("czy"), " związek istnieje, ale nie ",
+        tags$em("jak duży"), " jest. Zobaczmy to na naszych danych:")
     ),
 
     div(class = "widget-block",
-      h4("Si\u0142a zwi\u0105zku \u2014 na naszych danych"),
-      actionButton("ch5_effect", "Poka\u017c si\u0142\u0119 zwi\u0105zku",
+      h4("Siła związku — na naszych danych"),
+      actionButton("ch5_effect", "Pokaż siłę związku",
                    class = "btn-primary", width = "100%"),
       br(), br(),
       uiOutput("ch5_effect_result")
     ),
 
     div(class = "callout-info",
-      p(tags$b("Jak czyta\u0107 si\u0142\u0119 zwi\u0105zku:")),
-      p("1. ", tags$b("Procenty w grupach"), " \u2014 najlepsza intuicja.
-        Je\u015bli odsetek to 45% wobec 47% \u2014 nawet przy p < 0.05 r\u00f3\u017cnica jest praktycznie \u017cadna.
-        Je\u015bli 30% wobec 70% \u2014 efekt jest ogromny."),
-      p("2. ", tags$b("Cram\u00e9r's V"), " \u2014 wsp\u00f3\u0142czynnik si\u0142y zwi\u0105zku [0\u20131]:"),
+      p(tags$b("Jak czytać siłę związku:")),
+      p("1. ", tags$b("Procenty w grupach"), " — najlepsza intuicja.
+        Jeśli odsetek to 45% wobec 47% — nawet przy p < 0.05 różnica jest praktycznie żadna.
+        Jeśli 30% wobec 70% — efekt jest ogromny."),
+      p("2. ", tags$b("Cramér's V"), " — współczynnik siły związku [0–1]:"),
       div(class = "formula-box",
         p(withMathJax("\\(V = \\sqrt{\\frac{\\chi^2}{n \\cdot (k - 1)}}\\)"),
           " gdzie k = min(wiersze, kolumny)")
       ),
-      p("Interpretacja: < 0.1 pomijalny, 0.1\u20130.3 ma\u0142y, 0.3\u20130.5 \u015bredni, > 0.5 du\u017cy."),
-      p("Zawsze ", tags$b("zacznij od procent\u00f3w"),
-        " \u2014 to j\u0119zyk zrozumia\u0142y dla ka\u017cdego odbiorcy.")
+      p("Interpretacja: < 0.1 pomijalny, 0.1–0.3 mały, 0.3–0.5 średni, > 0.5 duży."),
+      p("Zawsze ", tags$b("zacznij od procentów"),
+        " — to język zrozumiały dla każdego odbiorcy.")
     ),
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: por\u00f3wnywanie dw\u00f3ch grup (zmienna ilo\u015bciowa i jako\u015bciowa)"),
-      actionButton("ch5_next", "Dalej \u2192 7. Ilo\u015bciowa i jako\u015bciowa",
+      p("Dalej: porównywanie dwóch grup (zmienna ilościowa i jakościowa)"),
+      actionButton("ch5_next", "Dalej → 7. Ilościowa i jakościowa",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -216,41 +216,41 @@ ch5_server <- function(input, output, session) {
   # --- Parametry scenariuszy ---
   scenario_params <- list(
     packaging = list(
-      lab1 = "Opakowanie", lab2 = "Ple\u015b\u0144",
-      cats1 = c("Szk\u0142o", "Plastik", "Karton"),
+      lab1 = "Opakowanie", lab2 = "Pleśń",
+      cats1 = c("Szkło", "Plastik", "Karton"),
       cats2 = c("Tak", "Nie"),
       probs = matrix(c(0.05, 0.95, 0.12, 0.88, 0.20, 0.80), nrow = 3, byrow = TRUE),
-      question = "Czy typ opakowania wp\u0142ywa na wyst\u0119powanie ple\u015bni?",
-      h0_text = "\\(H_0:\\) typ opakowania i wyst\u0119powanie ple\u015bni s\u0105 niezale\u017cne",
-      h1_text = "\\(H_a:\\) typ opakowania i wyst\u0119powanie ple\u015bni s\u0105 powi\u0105zane"),
+      question = "Czy typ opakowania wpływa na występowanie pleśni?",
+      h0_text = "\\(H_0:\\) typ opakowania i występowanie pleśni są niezależne",
+      h1_text = "\\(H_a:\\) typ opakowania i występowanie pleśni są powiązane"),
     atmosphere = list(
-      lab1 = "Atmosfera pakowania", lab2 = "Ocena \u015bwie\u017co\u015bci po 7 dniach",
-      cats1 = c("Powietrze", "MAP (modyfikowana)", "Pr\u00f3\u017cnia"),
-      cats2 = c("\u015awie\u017ce", "\u015aredniej jako\u015bci", "Zepsute"),
+      lab1 = "Atmosfera pakowania", lab2 = "Ocena świeżości po 7 dniach",
+      cats1 = c("Powietrze", "MAP (modyfikowana)", "Próżnia"),
+      cats2 = c("Świeże", "Średniej jakości", "Zepsute"),
       probs = matrix(c(0.15, 0.40, 0.45,
                         0.55, 0.35, 0.10,
                         0.70, 0.25, 0.05), nrow = 3, byrow = TRUE),
-      question = "Czy atmosfera pakowania wp\u0142ywa na \u015bwie\u017co\u015b\u0107 mi\u0119sa po 7 dniach?",
-      h0_text = "\\(H_0:\\) atmosfera pakowania i ocena \u015bwie\u017co\u015bci s\u0105 niezale\u017cne",
-      h1_text = "\\(H_a:\\) atmosfera pakowania i ocena \u015bwie\u017co\u015bci s\u0105 powi\u0105zane"),
+      question = "Czy atmosfera pakowania wpływa na świeżość mięsa po 7 dniach?",
+      h0_text = "\\(H_0:\\) atmosfera pakowania i ocena świeżości są niezależne",
+      h1_text = "\\(H_a:\\) atmosfera pakowania i ocena świeżości są powiązane"),
     soil = list(
       lab1 = "Typ gleby", lab2 = "Plon",
       cats1 = c("Piaszczysta", "Gliniasta", "Czarnoziemna"),
       cats2 = c("Niski", "Wysoki"),
       probs = matrix(c(0.65, 0.35, 0.45, 0.55, 0.25, 0.75), nrow = 3, byrow = TRUE),
-      question = "Czy typ gleby wp\u0142ywa na kategori\u0119 plonu?",
-      h0_text = "\\(H_0:\\) typ gleby i kategoria plonu s\u0105 niezale\u017cne",
-      h1_text = "\\(H_a:\\) typ gleby i kategoria plonu s\u0105 powi\u0105zane"),
+      question = "Czy typ gleby wpływa na kategorię plonu?",
+      h0_text = "\\(H_0:\\) typ gleby i kategoria plonu są niezależne",
+      h1_text = "\\(H_a:\\) typ gleby i kategoria plonu są powiązane"),
     pasteurization = list(
       lab1 = "Metoda pasteryzacji", lab2 = "Liczba bakterii po 7 dniach",
-      cats1 = c("Niska (63\u00b0C, 30 min)", "Wysoka (72\u00b0C, 15 s)", "UHT (135\u00b0C, 2 s)"),
-      cats2 = c("Niska (< norma)", "\u015arednia", "Wysoka (> norma)"),
+      cats1 = c("Niska (63°C, 30 min)", "Wysoka (72°C, 15 s)", "UHT (135°C, 2 s)"),
+      cats2 = c("Niska (< norma)", "Średnia", "Wysoka (> norma)"),
       probs = matrix(c(0.35, 0.40, 0.25,
                         0.60, 0.30, 0.10,
                         0.90, 0.08, 0.02), nrow = 3, byrow = TRUE),
-      question = "Czy metoda pasteryzacji mleka wp\u0142ywa na liczebno\u015b\u0107 bakterii po 7 dniach?",
-      h0_text = "\\(H_0:\\) metoda pasteryzacji i liczebno\u015b\u0107 bakterii s\u0105 niezale\u017cne",
-      h1_text = "\\(H_a:\\) metoda pasteryzacji i liczebno\u015b\u0107 bakterii s\u0105 powi\u0105zane")
+      question = "Czy metoda pasteryzacji mleka wpływa na liczebność bakterii po 7 dniach?",
+      h0_text = "\\(H_0:\\) metoda pasteryzacji i liczebność bakterii są niezależne",
+      h1_text = "\\(H_a:\\) metoda pasteryzacji i liczebność bakterii są powiązane")
   )
 
   # --- Wspoldzielone dane ---
@@ -278,7 +278,7 @@ ch5_server <- function(input, output, session) {
   # --- Widget 0: Narracja niezaleznosci (mandaty) ---
   # Stale dane do narracji (nie losowane)
   narr_tab <- matrix(c(30, 70, 50, 50), nrow = 2, byrow = TRUE,
-    dimnames = list(c("Kobiety", "M\u0119\u017cczy\u017ani"),
+    dimnames = list(c("Kobiety", "Mężczyźni"),
                     c("Mandat", "Brak mandatu")))
 
   output$ch5_narr1 <- renderUI({
@@ -290,12 +290,12 @@ ch5_server <- function(input, output, session) {
         tags$thead(tags$tr(tags$th(""), tags$th("Mandat"), tags$th("Brak mandatu"), tags$th("Razem"))),
         tags$tbody(
           tags$tr(tags$td(tags$b("Kobiety")), tags$td("30"), tags$td("70"), tags$td("100")),
-          tags$tr(tags$td(tags$b("M\u0119\u017cczy\u017ani")), tags$td("50"), tags$td("50"), tags$td("100")),
+          tags$tr(tags$td(tags$b("Mężczyźni")), tags$td("50"), tags$td("50"), tags$td("100")),
           tags$tr(tags$td(tags$b("Razem")), tags$td("80"), tags$td("120"), tags$td("200"))
         )
       ),
-      p("Kobiety: 30% dosta\u0142o mandat. M\u0119\u017cczy\u017ani: 50%. Wygl\u0105da na r\u00f3\u017cnic\u0119.
-        Ale czy to mo\u017ce by\u0107 przypadek?")
+      p("Kobiety: 30% dostało mandat. Mężczyźni: 50%. Wygląda na różnicę.
+        Ale czy to może być przypadek?")
     )
   })
 
@@ -303,21 +303,21 @@ ch5_server <- function(input, output, session) {
     req(input$ch5_narr_step2 %% 2 == 1)
 
     div(class = "callout-warning", style = "margin-top: 10px;",
-      p(tags$b("Za\u0142\u00f3\u017cmy, \u017ce p\u0142e\u0107 NIE ma znaczenia (H\u2080).")),
-      p("Skoro p\u0142e\u0107 nie wp\u0142ywa na mandaty, to nie musimy dzieli\u0107 danych na kobiety i m\u0119\u017cczyzn.
-        Patrzymy na ", tags$b("ca\u0142o\u015b\u0107"), ": 80 mandat\u00f3w na 200 kontroli = ",
+      p(tags$b("Załóżmy, że płeć NIE ma znaczenia (H₀).")),
+      p("Skoro płeć nie wpływa na mandaty, to nie musimy dzielić danych na kobiety i mężczyzn.
+        Patrzymy na ", tags$b("całość"), ": 80 mandatów na 200 kontroli = ",
         tags$b("40%"), "."),
-      p("Je\u015bli p\u0142e\u0107 jest niezale\u017cna, to te 40% powinno by\u0107 ",
-        tags$b("takie samo"), " dla kobiet i m\u0119\u017cczyzn:"),
+      p("Jeśli płeć jest niezależna, to te 40% powinno być ",
+        tags$b("takie samo"), " dla kobiet i mężczyzn:"),
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
         tags$thead(tags$tr(tags$th(""), tags$th("Mandat"), tags$th("Brak mandatu"), tags$th("Razem"))),
         tags$tbody(
           tags$tr(tags$td(tags$b("Kobiety")), tags$td(tags$em("40")), tags$td(tags$em("60")), tags$td("100")),
-          tags$tr(tags$td(tags$b("M\u0119\u017cczy\u017ani")), tags$td(tags$em("40")), tags$td(tags$em("60")), tags$td("100")),
+          tags$tr(tags$td(tags$b("Mężczyźni")), tags$td(tags$em("40")), tags$td(tags$em("60")), tags$td("100")),
           tags$tr(tags$td(tags$b("Razem")), tags$td("80"), tags$td("120"), tags$td("200"))
         )
       ),
-      p("To jest ", tags$b("tabela oczekiwana"), " \u2014 ile by by\u0142o, gdyby p\u0142e\u0107 nie mia\u0142a wp\u0142ywu.")
+      p("To jest ", tags$b("tabela oczekiwana"), " — ile by było, gdyby płeć nie miała wpływu.")
     )
   })
 
@@ -325,20 +325,20 @@ ch5_server <- function(input, output, session) {
     req(input$ch5_narr_step3 %% 2 == 1)
 
     div(class = "callout-success", style = "margin-top: 10px;",
-      p(tags$b("Por\u00f3wnanie: obserwowane i oczekiwane")),
+      p(tags$b("Porównanie: obserwowane i oczekiwane")),
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
-        tags$thead(tags$tr(tags$th(""), tags$th("Mandat (obs.)"), tags$th("Mandat (oczek.)"), tags$th("R\u00f3\u017cnica"))),
+        tags$thead(tags$tr(tags$th(""), tags$th("Mandat (obs.)"), tags$th("Mandat (oczek.)"), tags$th("Różnica"))),
         tags$tbody(
-          tags$tr(tags$td(tags$b("Kobiety")), tags$td("30"), tags$td("40"), tags$td(tags$b("\u221210"))),
-          tags$tr(tags$td(tags$b("M\u0119\u017cczy\u017ani")), tags$td("50"), tags$td("40"), tags$td(tags$b("+10")))
+          tags$tr(tags$td(tags$b("Kobiety")), tags$td("30"), tags$td("40"), tags$td(tags$b("−10"))),
+          tags$tr(tags$td(tags$b("Mężczyźni")), tags$td("50"), tags$td("40"), tags$td(tags$b("+10")))
         )
       ),
-      p("Kobiety dosta\u0142y ", tags$b("10 mandat\u00f3w mniej"), " ni\u017c oczekiwano,
-        m\u0119\u017cczy\u017ani ", tags$b("10 wi\u0119cej"), "."),
-      p("Test \u03c7\u00b2 bierze te r\u00f3\u017cnice, podnosi do kwadratu, dzieli przez oczekiwane
-        i sumuje po wszystkich kom\u00f3rkach. Im wi\u0119ksza ta suma, tym trudniej
-        wyt\u0142umaczy\u0107 r\u00f3\u017cnice przypadkiem."),
-      p(tags$em("To w\u0142a\u015bnie robi wz\u00f3r: "),
+      p("Kobiety dostały ", tags$b("10 mandatów mniej"), " niż oczekiwano,
+        mężczyźni ", tags$b("10 więcej"), "."),
+      p("Test χ² bierze te różnice, podnosi do kwadratu, dzieli przez oczekiwane
+        i sumuje po wszystkich komórkach. Im większa ta suma, tym trudniej
+        wytłumaczyć różnice przypadkiem."),
+      p(tags$em("To właśnie robi wzór: "),
         withMathJax("\\(\\chi^2 = \\sum \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}\\)"))
     )
   })
@@ -360,7 +360,7 @@ ch5_server <- function(input, output, session) {
     tagList(
       div(class = "callout-info", style = "font-size: 16px;",
         p(tags$b("Pytanie potoczne:")),
-        p(tags$em(paste0("\u201e", par$question, "\u201d")))
+        p(tags$em(paste0("„", par$question, "”")))
       ),
       div(class = "formula-box",
         p(tags$b("Hipoteza formalna:")),
@@ -369,7 +369,7 @@ ch5_server <- function(input, output, session) {
       ),
       if (is.null(tab)) {
         div(style = "text-align: center; margin: 10px 0; color: #7f8c8d;",
-          p(tags$em("Kliknij \u201eLosuj pr\u00f3b\u0119\u201d"))
+          p(tags$em("Kliknij „Losuj próbę”"))
         )
       }
     )
@@ -393,13 +393,13 @@ ch5_server <- function(input, output, session) {
           geom_col(position = "dodge", alpha = 0.8) +
           geom_text(aes(label = Freq), position = position_dodge(width = 0.9),
                     vjust = -0.3, size = 4) +
-          labs(title = paste0(par$lab1, " a ", par$lab2, " (liczno\u015bci)"),
-               x = par$lab1, y = "Liczno\u015b\u0107", fill = par$lab2) +
+          labs(title = paste0(par$lab1, " a ", par$lab2, " (liczności)"),
+               x = par$lab1, y = "Liczność", fill = par$lab2) +
           scale_fill_brewer(palette = "Set2") +
           theme_educational() +
           theme(legend.position = "top")
       } else {
-        # Slupki z procentami (w obr\u0119bie wiersza)
+        # Slupki z procentami (w obrębie wiersza)
         df_pct <- df %>%
           group_by(Var1) %>%
           mutate(pct = round(Freq / sum(Freq) * 100, 1)) %>%
@@ -457,19 +457,19 @@ ch5_server <- function(input, output, session) {
       "1" = tagList(
         div(class = "stat-box", style = paste0("background:", col_h0, ";"),
             paste0("n = ", n_total)),
-        .html_table(tab, paste0("Tabela krzy\u017cowa: ", par$lab1, " \u00d7 ", par$lab2)),
-        p("To s\u0105 obserwowane liczno\u015bci. Ale same liczby trudno por\u00f3wna\u0107,
-          bo grupy mog\u0105 mie\u0107 r\u00f3\u017cne rozmiary. Kliknij krok 2.")
+        .html_table(tab, paste0("Tabela krzyżowa: ", par$lab1, " × ", par$lab2)),
+        p("To są obserwowane liczności. Ale same liczby trudno porównać,
+          bo grupy mogą mieć różne rozmiary. Kliknij krok 2.")
       ),
       "2" = {
         pct_tab <- round(prop.table(tab, margin = 1) * 100, 1)
         pct_mat <- matrix(paste0(pct_tab, "%"), nrow = nrow(pct_tab),
                           dimnames = dimnames(pct_tab))
         tagList(
-          .html_table(pct_mat, "Procenty w ka\u017cdej grupie (wierszu):"),
-          p("Gdyby zmienne by\u0142y niezale\u017cne, procenty by\u0142yby ",
-            tags$b("takie same"), " w ka\u017cdym wierszu.
-            Czy widzisz r\u00f3\u017cnice?")
+          .html_table(pct_mat, "Procenty w każdej grupie (wierszu):"),
+          p("Gdyby zmienne były niezależne, procenty byłyby ",
+            tags$b("takie same"), " w każdym wierszu.
+            Czy widzisz różnice?")
         )
       },
       "3" = {
@@ -478,13 +478,13 @@ ch5_server <- function(input, output, session) {
         exp_mat <- round(test$expected, 1)
         low_exp <- any(test$expected < 5)
         tagList(
-          .html_table(exp_mat, "Liczno\u015bci oczekiwane (gdyby H\u2080 prawdziwa):"),
+          .html_table(exp_mat, "Liczności oczekiwane (gdyby H₀ prawdziwa):"),
           div(class = "stat-box", style = paste0("background:", col_effect, ";"),
-              paste0("\u03c7\u00b2(", df_val, ") = ", round(chi_stat, 3))),
-          p("Statystyka \u03c7\u00b2 mierzy \u0142\u0105czn\u0105 rozbie\u017cno\u015b\u0107 mi\u0119dzy tabel\u0105 obserwowanc\u0105
-            a tabel\u0105 oczekiwan\u0105."),
+              paste0("χ²(", df_val, ") = ", round(chi_stat, 3))),
+          p("Statystyka χ² mierzy łączną rozbieżność między tabelą obserwowancą
+            a tabelą oczekiwaną."),
           if (low_exp) p(style = "color: #e74c3c; font-weight: bold;",
-            "\u26a0 Uwaga: niekt\u00f3re oczekiwane liczno\u015bci < 5!")
+            "⚠ Uwaga: niektóre oczekiwane liczności < 5!")
         )
       },
       "4" = {
@@ -506,10 +506,10 @@ ch5_server <- function(input, output, session) {
             res$decision),
           p(res$explanation),
           hr(),
-          p(tags$b("Si\u0142a zwi\u0105zku:")),
-          p("Cram\u00e9r's V = ", tags$b(round(v, 3)),
+          p(tags$b("Siła związku:")),
+          p("Cramér's V = ", tags$b(round(v, 3)),
             " (", effect_size_label(v), ")"),
-          p("Rozrzut procent\u00f3w mi\u0119dzy grupami: ",
+          p("Rozrzut procentów między grupami: ",
             paste(colnames(pct_tab), "od", pct_cols[1, ], "do", pct_cols[2, ], "%",
                   collapse = "; "))
         )
@@ -525,7 +525,7 @@ ch5_server <- function(input, output, session) {
 
     if (is.null(tab)) {
       return(div(class = "callout-warning",
-        "Najpierw wylosuj pr\u00f3b\u0119 w widgecie powy\u017cej."))
+        "Najpierw wylosuj próbę w widgecie powyżej."))
     }
 
     test_chi <- chisq.test(tab)
@@ -540,11 +540,11 @@ ch5_server <- function(input, output, session) {
     div(
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
         tags$thead(
-          tags$tr(tags$th(""), tags$th("Test \u03c7\u00b2"), tags$th("Test Fishera"))
+          tags$tr(tags$th(""), tags$th("Test χ²"), tags$th("Test Fishera"))
         ),
         tags$tbody(
           tags$tr(
-            tags$td(tags$b("p-warto\u015b\u0107")),
+            tags$td(tags$b("p-wartość")),
             tags$td(tags$b(format.pval(test_chi$p.value, digits = 4))),
             tags$td(tags$b(format.pval(test_fisher$p.value, digits = 4)))
           ),
@@ -558,9 +558,9 @@ ch5_server <- function(input, output, session) {
         )
       ),
       div(class = if (low_exp) "callout-danger" else "callout-success",
-        p(tags$b("Oczekiwane liczno\u015bci < 5: "),
-          if (low_exp) paste0("TAK (", n_low, " kom\u00f3rek) \u2014 \u03c7\u00b2 mo\u017ce by\u0107 niedok\u0142adny, preferuj Fishera!")
-          else "NIE \u2014 oba testy daj\u0105 wiarygodne wyniki.")
+        p(tags$b("Oczekiwane liczności < 5: "),
+          if (low_exp) paste0("TAK (", n_low, " komórek) — χ² może być niedokładny, preferuj Fishera!")
+          else "NIE — oba testy dają wiarygodne wyniki.")
       )
     )
   })
@@ -573,7 +573,7 @@ ch5_server <- function(input, output, session) {
 
     if (is.null(tab)) {
       return(div(class = "callout-warning",
-        "Najpierw wylosuj pr\u00f3b\u0119 w widgecie powy\u017cej."))
+        "Najpierw wylosuj próbę w widgecie powyżej."))
     }
 
     test <- chisq.test(tab)
@@ -603,7 +603,7 @@ ch5_server <- function(input, output, session) {
     })
 
     div(
-      p(tags$b("Procenty w ka\u017cdej grupie ", par$lab1, ":")),
+      p(tags$b("Procenty w każdej grupie ", par$lab1, ":")),
       tags$table(class = "table table-bordered table-striped", style = "font-size: 15px;",
         tags$thead(tags$tr(
           tags$th(par$lab1),
@@ -612,11 +612,11 @@ ch5_server <- function(input, output, session) {
         tags$tbody(pct_rows)
       ),
       div(class = "callout-info",
-        p(tags$b("Rozrzut procent\u00f3w mi\u0119dzy grupami:")),
+        p(tags$b("Rozrzut procentów między grupami:")),
         tags$ul(lapply(range_info, function(ri) tags$li(ri))),
-        p("Im wi\u0119kszy rozrzut, tym silniejszy zwi\u0105zek praktyczny."),
+        p("Im większy rozrzut, tym silniejszy związek praktyczny."),
         hr(),
-        p(tags$b("Cram\u00e9r's V = ", round(v, 3)),
+        p(tags$b("Cramér's V = ", round(v, 3)),
           " (", effect_size_label(v), ")")
       )
     )

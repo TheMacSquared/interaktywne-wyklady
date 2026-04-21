@@ -6,23 +6,23 @@ ch7_ui <- tabPanel("8. ANOVA",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Por\u00f3wnywali\u015bmy dwie grupy. A co, gdy grup jest trzy lub wi\u0119cej?"
+      "Porównywaliśmy dwie grupy. A co, gdy grup jest trzy lub więcej?"
     ),
 
     div(class = "section-title", "ANOVA jednoczynnikowa"),
 
     div(class = "narrative",
-      p("ANOVA (Analysis of Variance) to uog\u00f3lnienie testu t na 3 lub wi\u0119cej grup."),
-      p("Pytanie: Czy \u015brednie w k grupach r\u00f3\u017cni\u0105 si\u0119 istotnie?"),
-      p("Przyk\u0142ad z technologii \u017cywno\u015bci: czy pH jogurtu r\u00f3\u017cni si\u0119 mi\u0119dzy trzema temperaturami fermentacji (20\u00b0C, 25\u00b0C, 30\u00b0C)?"),
+      p("ANOVA (Analysis of Variance) to uogólnienie testu t na 3 lub więcej grup."),
+      p("Pytanie: Czy średnie w k grupach różnią się istotnie?"),
+      p("Przykład z technologii żywności: czy pH jogurtu różni się między trzema temperaturami fermentacji (20°C, 25°C, 30°C)?"),
       div(class = "formula-box",
-        p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 = \\ldots = \\mu_k\\) \u2014 wszystkie \u015brednie s\u0105 r\u00f3wne")),
-        p("ANOVA testuje ", tags$b("jedn\u0105"), " hipotez\u0119 zerow\u0105 \u2014 \u017ce wszystkie \u015brednie s\u0105 r\u00f3wne.
-           Odrzucenie H\u2080 m\u00f3wi ", tags$em("\u201eco najmniej jedna \u015brednia odstaje od pozosta\u0142ych\u201d"),
-          ", ale nie m\u00f3wi ", tags$b("kt\u00f3ra"),
-          " \u2014 do tego s\u0142u\u017cy post-hoc.")
+        p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 = \\ldots = \\mu_k\\) — wszystkie średnie są równe")),
+        p("ANOVA testuje ", tags$b("jedną"), " hipotezę zerową — że wszystkie średnie są równe.
+           Odrzucenie H₀ mówi ", tags$em("„co najmniej jedna średnia odstaje od pozostałych”"),
+          ", ale nie mówi ", tags$b("która"),
+          " — do tego służy post-hoc.")
       ),
-      p("Du\u017ca statystyka F oznacza: r\u00f3\u017cnice mi\u0119dzy grupami s\u0105 wi\u0119ksze ni\u017c mogliby\u015bmy oczekiwa\u0107 przypadkiem.")
+      p("Duża statystyka F oznacza: różnice między grupami są większe niż moglibyśmy oczekiwać przypadkiem.")
     ),
 
     # ========================================================================
@@ -36,13 +36,13 @@ ch7_ui <- tabPanel("8. ANOVA",
         column(4,
           selectInput("ch7_scenario", "Scenariusz:",
             choices = c(
-              "Fermentacja jogurtu (T\u017b)" = "fermentation",
-              "Kierunki studi\u00f3w" = "students"
+              "Fermentacja jogurtu (TŻ)" = "fermentation",
+              "Kierunki studiów" = "students"
             ),
             selected = "fermentation"
           ),
           uiOutput("ch7_var_ui"),
-          sliderInput("ch7_n", "n (og\u00f3\u0142em):",
+          sliderInput("ch7_n", "n (ogółem):",
                       min = 80, max = 300, value = 160, step = 20),
           actionButton("ch7_run_anova", "Generuj i testuj",
                        class = "btn-primary", width = "100%")
@@ -56,42 +56,42 @@ ch7_ui <- tabPanel("8. ANOVA",
 
     div(class = "callout-info",
       tags$strong("Dekompozycja wariancji:"),
-      " Ca\u0142kowita zmienno\u015b\u0107 = zmienno\u015b\u0107 mi\u0119dzy grupami + zmienno\u015b\u0107 wewn\u0105trz grup.
-        ANOVA testuje, czy ta \"mi\u0119dzy\" cz\u0119\u015b\u0107 jest istotnie du\u017ca."
+      " Całkowita zmienność = zmienność między grupami + zmienność wewnątrz grup.
+        ANOVA testuje, czy ta \"między\" część jest istotnie duża."
     ),
 
     # ========================================================================
     # Intuicja eta^2
     # ========================================================================
-    div(class = "section-title", "Jak czyta\u0107 si\u0142\u0119 efektu (\u03b7\u00b2)?"),
+    div(class = "section-title", "Jak czytać siłę efektu (η²)?"),
 
     div(class = "narrative",
-      p("P-warto\u015b\u0107 m\u00f3wi ", tags$em("czy"), " r\u00f3\u017cnice istniej\u0105.
-        ", tags$b("\u03b7\u00b2 (eta kwadrat)"), " m\u00f3wi ", tags$em("jak du\u017ce"), " s\u0105
-        \u2014 jaki u\u0142amek ca\u0142ej zmienno\u015bci wyja\u015bnia czynnik grupuj\u0105cy.")
+      p("P-wartość mówi ", tags$em("czy"), " różnice istnieją.
+        ", tags$b("η² (eta kwadrat)"), " mówi ", tags$em("jak duże"), " są
+        — jaki ułamek całej zmienności wyjaśnia czynnik grupujący.")
     ),
 
     div(class = "callout-success",
-      tags$strong("\u201eIle procent r\u00f3\u017cnic mi\u0119dzy pr\u00f3bkami t\u0142umaczy ten czynnik, a ile zostaje na inne rzeczy?\u201d"),
+      tags$strong("„Ile procent różnic między próbkami tłumaczy ten czynnik, a ile zostaje na inne rzeczy?”"),
       tags$table(class = "table table-bordered", style = "font-size: 15px; margin-top: 10px;",
         tags$thead(
-          tags$tr(tags$th("\u03b7\u00b2"), tags$th("Jak to czyta\u0107"), tags$th("Efekt"))
+          tags$tr(tags$th("η²"), tags$th("Jak to czytać"), tags$th("Efekt"))
         ),
         tags$tbody(
-          tags$tr(tags$td("0.01"), tags$td("~1% zmienno\u015bci wyja\u015bnione \u2014 wp\u0142yw symboliczny"), tags$td("ma\u0142y")),
-          tags$tr(tags$td("0.06"), tags$td("~6% zmienno\u015bci wyja\u015bnione \u2014 czynnik liczy si\u0119"), tags$td("\u015bredni")),
-          tags$tr(tags$td("0.14"), tags$td("~14% zmienno\u015bci wyja\u015bnione \u2014 czynnik dominuj\u0105cy"), tags$td("du\u017cy"))
+          tags$tr(tags$td("0.01"), tags$td("~1% zmienności wyjaśnione — wpływ symboliczny"), tags$td("mały")),
+          tags$tr(tags$td("0.06"), tags$td("~6% zmienności wyjaśnione — czynnik liczy się"), tags$td("średni")),
+          tags$tr(tags$td("0.14"), tags$td("~14% zmienności wyjaśnione — czynnik dominujący"), tags$td("duży"))
         )
       ),
-      p(tags$strong("Przyk\u0142ad (fermentacja):"),
-        " \u03b7\u00b2 = 0.23 oznacza, \u017ce oko\u0142o 23% r\u00f3\u017cnic w pH jogurtu t\u0142umaczy temperatura fermentacji.
-          Pozosta\u0142e 77% to inne czynniki: drobnoustroje startowe, czysto\u015b\u0107 surowca, czas, partia mleka.")
+      p(tags$strong("Przykład (fermentacja):"),
+        " η² = 0.23 oznacza, że około 23% różnic w pH jogurtu tłumaczy temperatura fermentacji.
+          Pozostałe 77% to inne czynniki: drobnoustroje startowe, czystość surowca, czas, partia mleka.")
     ),
 
     div(class = "callout-info",
       tags$strong("Uwaga praktyczna: "),
-      "ma\u0142e p przy ma\u0142ym \u03b7\u00b2 oznacza cz\u0119sto tylko ", tags$em("du\u017c\u0105 pr\u00f3b\u0119"),
-      ", nie du\u017cy efekt. Zawsze raportuj ", tags$b("oba"), "."
+      "małe p przy małym η² oznacza często tylko ", tags$em("dużą próbę"),
+      ", nie duży efekt. Zawsze raportuj ", tags$b("oba"), "."
     ),
 
     # ========================================================================
@@ -100,35 +100,35 @@ ch7_ui <- tabPanel("8. ANOVA",
     div(class = "section-title", "Testy post-hoc (Games-Howell)"),
 
     div(class = "narrative",
-      p("ANOVA m\u00f3wi ", tags$em("\"grupy r\u00f3\u017cni\u0105 si\u0119\""),
-        ", ale nie m\u00f3wi ", tags$em("\"kt\u00f3re\""), "."),
-      p("Do tego s\u0142u\u017c\u0105 testy post-hoc. ", tags$b("Games-Howell"),
-        " por\u00f3wnuje ka\u017cd\u0105 par\u0119 grup z korekt\u0105 na wielokrotne por\u00f3wnania.
-         Nie wymaga r\u00f3wnych wariancji w grupach \u2014 jest bezpiecznym domy\u015blnym wyborem.")
+      p("ANOVA mówi ", tags$em("\"grupy różnią się\""),
+        ", ale nie mówi ", tags$em("\"które\""), "."),
+      p("Do tego służą testy post-hoc. ", tags$b("Games-Howell"),
+        " porównuje każdą parę grup z korektą na wielokrotne porównania.
+         Nie wymaga równych wariancji w grupach — jest bezpiecznym domyślnym wyborem.")
     ),
 
     div(class = "callout-warning",
-      tags$strong("Dlaczego nie testowa\u0107 par pojedynczo testem t?"),
-      p("Gdy zrobisz wiele por\u00f3wna\u0144, ryzyko ", tags$em("fa\u0142szywego alarmu"),
-        " (odrzucenia H\u2080 gdy nie powinno) narasta:"),
+      tags$strong("Dlaczego nie testować par pojedynczo testem t?"),
+      p("Gdy zrobisz wiele porównań, ryzyko ", tags$em("fałszywego alarmu"),
+        " (odrzucenia H₀ gdy nie powinno) narasta:"),
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
         tags$thead(tags$tr(tags$th("Liczba grup"), tags$th("Liczba par"),
-                           tags$th("Ryzyko \u2265 1 fa\u0142szywego alarmu"))),
+                           tags$th("Ryzyko ≥ 1 fałszywego alarmu"))),
         tags$tbody(
           tags$tr(tags$td("3"), tags$td("3"), tags$td("~14%")),
           tags$tr(tags$td("4"), tags$td("6"), tags$td("~26%")),
           tags$tr(tags$td("5"), tags$td("10"), tags$td("~40%"))
         )
       ),
-      p("Games-Howell trzyma to ryzyko na 5% dla ", tags$b("ca\u0142ej rodziny"),
-        " por\u00f3wna\u0144 \u2014 to jego zadanie.")
+      p("Games-Howell trzyma to ryzyko na 5% dla ", tags$b("całej rodziny"),
+        " porównań — to jego zadanie.")
     ),
 
     div(class = "widget-block",
       h4("Games-Howell"),
       fluidRow(
         column(4,
-          helpText("U\u017cywa danych z ANOVA powy\u017cej. Najpierw uruchom ANOVA!"),
+          helpText("Używa danych z ANOVA powyżej. Najpierw uruchom ANOVA!"),
           actionButton("ch7_run_tukey", "Testuj Games-Howellem",
                        class = "btn-warning", width = "100%")
         ),
@@ -140,21 +140,21 @@ ch7_ui <- tabPanel("8. ANOVA",
     ),
 
     div(class = "callout-warning",
-      tags$strong("Wa\u017cne:"),
+      tags$strong("Ważne:"),
       " Testy post-hoc wykonujemy ", tags$b("tylko"), " gdy ANOVA jest istotna.
-        Bez tego korekcja na wielokrotne por\u00f3wnania jest niepotrzebna."
+        Bez tego korekcja na wielokrotne porównania jest niepotrzebna."
     ),
 
     div(class = "callout-info",
       tags$strong("W jamovi: "),
       "w panelu One-Way ANOVA sekcja ", tags$em("Post-Hoc Tests"),
-      " \u2192 zaznacz ", tags$b("Games-Howell"), "."
+      " → zaznacz ", tags$b("Games-Howell"), "."
     ),
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: podsumowanie wszystkich test\u00f3w"),
-      actionButton("ch7_next", "Dalej \u2192 9. \u015aci\u0105ga",
+      p("Dalej: podsumowanie wszystkich testów"),
+      actionButton("ch7_next", "Dalej → 9. Ściąga",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -169,28 +169,28 @@ ch7_server <- function(input, output, session) {
   # Shared ANOVA data
   ch7_data <- reactiveVal(NULL)
 
-  # Konfiguracja scenariuszy: jakie zmienne zale\u017cne, jaka kolumna grupuj\u0105ca, etykiety
+  # Konfiguracja scenariuszy: jakie zmienne zależne, jaka kolumna grupująca, etykiety
   ch7_scenario_cfg <- function(scenario) {
     if (identical(scenario, "fermentation")) {
       list(
         group_col = "temperatura",
         group_label = "Temperatura fermentacji",
-        vars = c("pH jogurtu" = "pH", "Kwasowo\u015b\u0107 miareczkowa (\u00b0SH)" = "kwasowosc_SH"),
-        var_labels = c(pH = "pH jogurtu", kwasowosc_SH = "Kwasowo\u015b\u0107 (\u00b0SH)")
+        vars = c("pH jogurtu" = "pH", "Kwasowość miareczkowa (°SH)" = "kwasowosc_SH"),
+        var_labels = c(pH = "pH jogurtu", kwasowosc_SH = "Kwasowość (°SH)")
       )
     } else {
       list(
         group_col = "kierunek",
         group_label = "Kierunek",
-        vars = c("\u015arednia ocen" = "srednia_ocen", "Wzrost" = "wzrost", "Czas dojazdu" = "czas_dojazdu"),
-        var_labels = c(srednia_ocen = "\u015arednia ocen", wzrost = "Wzrost (cm)", czas_dojazdu = "Czas dojazdu (min)")
+        vars = c("Średnia ocen" = "srednia_ocen", "Wzrost" = "wzrost", "Czas dojazdu" = "czas_dojazdu"),
+        var_labels = c(srednia_ocen = "Średnia ocen", wzrost = "Wzrost (cm)", czas_dojazdu = "Czas dojazdu (min)")
       )
     }
   }
 
   output$ch7_var_ui <- renderUI({
     cfg <- ch7_scenario_cfg(input$ch7_scenario)
-    selectInput("ch7_var", "Zmienna zale\u017cna:",
+    selectInput("ch7_var", "Zmienna zależna:",
                 choices = cfg$vars,
                 selected = unname(cfg$vars[1]))
   })
@@ -226,7 +226,7 @@ ch7_server <- function(input, output, session) {
         geom_boxplot(alpha = 0.6, outlier.alpha = 0.3) +
         geom_jitter(width = 0.15, alpha = 0.2, size = 1) +
         scale_fill_brewer(palette = "Set2") +
-        labs(title = paste0(var_label, " wed\u0142ug: ", cfg$group_label),
+        labs(title = paste0(var_label, " według: ", cfg$group_label),
              x = cfg$group_label, y = var_label) +
         theme_educational() +
         theme(legend.position = "none")
@@ -248,11 +248,11 @@ ch7_server <- function(input, output, session) {
     # Eta-squared jest w wyniku rstatix (generalized eta squared)
     eta_sq <- tidy_res$ges
 
-    # Etykieta efektu dla \u03b7\u00b2 (progi Cohena: 0.01 ma\u0142y, 0.06 \u015bredni, 0.14 du\u017cy)
+    # Etykieta efektu dla η² (progi Cohena: 0.01 mały, 0.06 średni, 0.14 duży)
     eta_label <- if (eta_sq < 0.01) "pomijalny"
-      else if (eta_sq < 0.06) "ma\u0142y"
-      else if (eta_sq < 0.14) "\u015bredni"
-      else "du\u017cy"
+      else if (eta_sq < 0.06) "mały"
+      else if (eta_sq < 0.14) "średni"
+      else "duży"
 
     p_val <- tidy_res$p
     res <- format_test_result(p_val)
@@ -262,9 +262,9 @@ ch7_server <- function(input, output, session) {
       p(paste0("F(", tidy_res$DFn, ", ", tidy_res$DFd, ") = ",
                round(tidy_res$F, 3))),
       p(paste0("p = ", format.pval(p_val, digits = 4))),
-      p(paste0("\u03b7\u00b2 = ", round(eta_sq, 3),
+      p(paste0("η² = ", round(eta_sq, 3),
                " (efekt ", eta_label, ", ok. ",
-               round(eta_sq * 100), "% zmienno\u015bci wyja\u015bnione)")),
+               round(eta_sq * 100), "% zmienności wyjaśnione)")),
       p(style = paste0("color:", res$color, "; font-weight: bold;"),
         res$decision)
     )
@@ -284,7 +284,7 @@ ch7_server <- function(input, output, session) {
     gh <- rstatix::games_howell_test(data, formula)
     gh_df <- as.data.frame(gh)
 
-    gh_df$comparison <- paste0(gh_df$group1, "\n\u2014 ", gh_df$group2)
+    gh_df$comparison <- paste0(gh_df$group1, "\n— ", gh_df$group2)
     gh_df$significant <- gh_df$p.adj < 0.05
 
     ggplot(gh_df, aes(x = estimate, y = comparison, color = significant)) +
@@ -292,10 +292,10 @@ ch7_server <- function(input, output, session) {
       geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
       geom_vline(xintercept = 0, linetype = "dashed", color = col_dark) +
       scale_color_manual(values = c("TRUE" = col_reject, "FALSE" = col_accept),
-                         labels = c("TRUE" = "p < 0.05", "FALSE" = "p \u2265 0.05"),
+                         labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),
                          name = NULL) +
-      labs(title = "Games-Howell: r\u00f3\u017cnice parowe z 95% CI",
-           x = "R\u00f3\u017cnica \u015brednich", y = "Por\u00f3wnanie") +
+      labs(title = "Games-Howell: różnice parowe z 95% CI",
+           x = "Różnica średnich", y = "Porównanie") +
       theme_educational() +
       theme(legend.position = "top")
   })
@@ -319,15 +319,15 @@ ch7_server <- function(input, output, session) {
 
     if (n_sig == 0) {
       div(class = "callout-info",
-        p(tags$strong("\u017badna para nie r\u00f3\u017cni si\u0119 istotnie"),
+        p(tags$strong("Żadna para nie różni się istotnie"),
           " (po korekcji Games-Howell)."))
     } else {
       div(class = "callout-success",
-        p(tags$strong(paste0(n_sig, " istotna(e) r\u00f3\u017cnica(e):"))),
+        p(tags$strong(paste0(n_sig, " istotna(e) różnica(e):"))),
         tags$ul(
           lapply(1:n_sig, function(i) {
-            tags$li(paste0(sig_pairs$group1[i], " \u2014 ", sig_pairs$group2[i],
-                           ": \u0394 = ", round(sig_pairs$estimate[i], 2),
+            tags$li(paste0(sig_pairs$group1[i], " — ", sig_pairs$group2[i],
+                           ": Δ = ", round(sig_pairs$estimate[i], 2),
                            ", p.adj = ", format.pval(sig_pairs$p.adj[i], digits = 3)))
           })
         )
