@@ -6,18 +6,18 @@ ch3_ui <- tabPanel("3. Regresja logistyczna",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Regresja liniowa wymaga ci\u0105g\u0142ej zmiennej zale\u017cnej.
-       A co, gdy Y to 0 lub 1 (sukces/pora\u017cka)?"
+      "Regresja liniowa wymaga ciągłej zmiennej zależnej.
+       A co, gdy Y to 0 lub 1 (sukces/porażka)?"
     ),
 
     div(class = "section-title", "Dlaczego nie regresja liniowa?"),
 
     div(class = "narrative",
-      p("Gdy zmienna zale\u017cna jest ", tags$b("binarna"),
+      p("Gdy zmienna zależna jest ", tags$b("binarna"),
         " (np. zdany/niezdany egzamin), regresja liniowa daje przewidywania
-        spoza zakresu [0, 1]. Rozwi\u0105zanie: ", tags$b("regresja logistyczna"), "."),
-      p("Zamiast modelowa\u0107 Y bezpo\u015brednio, modelujemy ",
-        tags$b("prawdopodobie\u0144stwo"), " sukcesu:"),
+        spoza zakresu [0, 1]. Rozwiązanie: ", tags$b("regresja logistyczna"), "."),
+      p("Zamiast modelować Y bezpośrednio, modelujemy ",
+        tags$b("prawdopodobieństwo"), " sukcesu:"),
       div(class = "formula-box",
         withMathJax(helpText(
           "$$P(Y=1) = \\frac{1}{1 + e^{-(\\beta_0 + \\beta_1 X_1 + \\ldots + \\beta_k X_k)}}$$"
@@ -35,15 +35,15 @@ ch3_ui <- tabPanel("3. Regresja logistyczna",
       h4("Sigmoida w akcji"),
       fluidRow(
         column(4,
-          sliderInput("ch3_b0", "\u03b2\u2080 (intercept):",
+          sliderInput("ch3_b0", "β₀ (intercept):",
                       min = -10, max = 10, value = -4, step = 0.5),
-          sliderInput("ch3_b1", "\u03b2\u2081 (slope):",
+          sliderInput("ch3_b1", "β₁ (slope):",
                       min = -3, max = 3, value = 0.2, step = 0.05),
           hr(),
           div(class = "preset-buttons",
             actionButton("ch3_preset_steep", "Stromy",
                          class = "btn-outline-primary"),
-            actionButton("ch3_preset_flat", "P\u0142aski",
+            actionButton("ch3_preset_flat", "Płaski",
                          class = "btn-outline-secondary"),
             actionButton("ch3_preset_neg", "Odwrotny",
                          class = "btn-outline-danger")
@@ -61,7 +61,7 @@ ch3_ui <- tabPanel("3. Regresja logistyczna",
     div(class = "section-title", "Model logistyczny na danych"),
 
     div(class = "narrative",
-      p("Scenariusz: czy student zda egzamin? Predyktory: godziny nauki i \u015brednia ocen.")
+      p("Scenariusz: czy student zda egzamin? Predyktory: godziny nauki i średnia ocen.")
     ),
 
     div(class = "widget-block",
@@ -72,7 +72,7 @@ ch3_ui <- tabPanel("3. Regresja logistyczna",
           selectInput("ch3_predictor", "Prezentowany predyktor:",
             choices = c(
               "Godziny nauki" = "godziny_nauki",
-              "\u015arednia ocen" = "srednia_ocen"
+              "Średnia ocen" = "srednia_ocen"
             ),
             selected = "godziny_nauki"
           ),
@@ -81,7 +81,7 @@ ch3_ui <- tabPanel("3. Regresja logistyczna",
           hr(),
           h5("Predykcja dla nowego studenta:"),
           numericInput("ch3_pred_hours", "Godziny nauki:", value = 20, min = 0, max = 40),
-          numericInput("ch3_pred_gpa", "\u015arednia ocen:", value = 3.5, min = 2, max = 5, step = 0.1),
+          numericInput("ch3_pred_gpa", "Średnia ocen:", value = 3.5, min = 2, max = 5, step = 0.1),
           uiOutput("ch3_prediction")
         ),
         column(8,
@@ -97,11 +97,11 @@ ch3_ui <- tabPanel("3. Regresja logistyczna",
     div(class = "section-title", "Interpretacja: iloraz szans"),
 
     div(class = "narrative",
-      p("W regresji logistycznej wsp\u00f3\u0142czynniki interpretujemy przez ",
+      p("W regresji logistycznej współczynniki interpretujemy przez ",
         tags$b("iloraz szans (odds ratio)"), ":"),
       div(class = "formula-box",
         withMathJax(helpText("$$OR = e^{\\beta_j}$$")),
-        p("OR = 1.5 oznacza: wzrost X o 1 zwi\u0119ksza szanse sukcesu 1.5-krotnie.")
+        p("OR = 1.5 oznacza: wzrost X o 1 zwiększa szanse sukcesu 1.5-krotnie.")
       )
     ),
 
@@ -109,7 +109,7 @@ ch3_ui <- tabPanel("3. Regresja logistyczna",
       h4("Odds ratio"),
       fluidRow(
         column(12,
-          helpText("U\u017cywa modelu dopasowanego powy\u017cej."),
+          helpText("Używa modelu dopasowanego powyżej."),
           uiOutput("ch3_odds_ratios")
         )
       )
@@ -117,14 +117,14 @@ ch3_ui <- tabPanel("3. Regresja logistyczna",
 
     div(class = "callout-info",
       tags$strong("Ocena modelu logistycznego:"),
-      " Nie u\u017cywamy R\u00b2 w sensie liniowym. Zamiast tego: AIC, BIC, oraz
-        macierz pomy\u0142ek (confusion matrix) z dok\u0142adno\u015bci\u0105, czu\u0142o\u015bci\u0105 i swoisto\u015bci\u0105."
+      " Nie używamy R² w sensie liniowym. Zamiast tego: AIC, BIC, oraz
+        macierz pomyłek (confusion matrix) z dokładnością, czułością i swoistością."
     ),
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: jak por\u00f3wna\u0107 modele i wybra\u0107 najlepszy?"),
-      actionButton("ch3_next", "Dalej \u2192 4. Por\u00f3wnanie modeli",
+      p("Dalej: jak porównać modele i wybrać najlepszy?"),
+      actionButton("ch3_next", "Dalej → 4. Porównanie modeli",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -159,7 +159,7 @@ ch3_server <- function(input, output, session) {
     ggplot(data.frame(x = x, p = p), aes(x = x, y = p)) +
       geom_line(color = col_logit, linewidth = 1.5) +
       geom_hline(yintercept = 0.5, linetype = "dashed", color = col_dark, alpha = 0.5) +
-      labs(title = paste0("Sigmoida: \u03b2\u2080 = ", b0, ", \u03b2\u2081 = ", b1),
+      labs(title = paste0("Sigmoida: β₀ = ", b0, ", β₁ = ", b1),
            x = "X", y = "P(Y = 1)") +
       ylim(0, 1) +
       theme_educational()
@@ -187,7 +187,7 @@ ch3_server <- function(input, output, session) {
         theme_void()
     } else {
       pred_var <- input$ch3_predictor
-      pred_label <- if (pred_var == "godziny_nauki") "Godziny nauki" else "\u015arednia ocen"
+      pred_label <- if (pred_var == "godziny_nauki") "Godziny nauki" else "Średnia ocen"
 
       # Predykcja dla wykresu (trzymajac drugi predyktor na sredniej)
       other_var <- setdiff(c("godziny_nauki", "srednia_ocen"), pred_var)
@@ -229,7 +229,7 @@ ch3_server <- function(input, output, session) {
       div(class = "stat-box", style = paste0("background:", col_data, ";"),
           paste0("BIC = ", round(g$BIC, 1))),
       div(class = "stat-box", style = paste0("background:", col_predict, ";"),
-          paste0("Dok\u0142adno\u015b\u0107 = ", round(accuracy, 1), "%"))
+          paste0("Dokładność = ", round(accuracy, 1), "%"))
     )
   })
 
@@ -265,7 +265,7 @@ ch3_server <- function(input, output, session) {
     labels_pl <- c(
       "(Intercept)" = "Wyraz wolny",
       "godziny_nauki" = "Godziny nauki (+1h)",
-      "srednia_ocen" = "\u015arednia ocen (+1 pkt)"
+      "srednia_ocen" = "Średnia ocen (+1 pkt)"
     )
 
     coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
@@ -286,15 +286,15 @@ ch3_server <- function(input, output, session) {
       tags$table(class = "table table-bordered",
         style = "font-size: 14px;",
         tags$thead(
-          tags$tr(tags$th("Zmienna"), tags$th("\u03b2"), tags$th("OR"),
+          tags$tr(tags$th("Zmienna"), tags$th("β"), tags$th("OR"),
                   tags$th("95% CI (OR)"), tags$th("p"))
         ),
         tags$tbody(rows)
       ),
       div(class = "callout-info",
         p(tags$strong("Interpretacja OR:"),
-          " OR > 1 oznacza, \u017ce wzrost predyktora o 1 zwi\u0119ksza szanse sukcesu.
-            OR < 1 \u2014 zmniejsza. OR = 1 \u2014 brak wp\u0142ywu.")
+          " OR > 1 oznacza, że wzrost predyktora o 1 zwiększa szanse sukcesu.
+            OR < 1 — zmniejsza. OR = 1 — brak wpływu.")
       )
     )
   })

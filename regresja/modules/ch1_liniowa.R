@@ -6,20 +6,20 @@ ch1_ui <- tabPanel("1. Regresja liniowa prosta",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Korelacja m\u00f3wi\u0142a, czy dwie zmienne s\u0105 powi\u0105zane.
-       Regresja idzie dalej: modeluje ten zwi\u0105zek i pozwala predykowa\u0107."
+      "Korelacja mówiła, czy dwie zmienne są powiązane.
+       Regresja idzie dalej: modeluje ten związek i pozwala predykować."
     ),
 
     div(class = "section-title", "Od korelacji do regresji"),
 
     div(class = "narrative",
-      p("Regresja liniowa prosta opisuje zwi\u0105zek mi\u0119dzy jedn\u0105 zmienn\u0105
-        obja\u015bniaj\u0105c\u0105 (X) a zmienn\u0105 zale\u017cn\u0105 (Y) za pomoc\u0105 linii prostej:"),
+      p("Regresja liniowa prosta opisuje związek między jedną zmienną
+        objaśniającą (X) a zmienną zależną (Y) za pomocą linii prostej:"),
       div(class = "formula-box",
         withMathJax(helpText("$$Y = \\beta_0 + \\beta_1 X + \\varepsilon$$")),
-        p(withMathJax("\\(\\beta_0\\)"), " \u2014 wyraz wolny (intercept): warto\u015b\u0107 Y gdy X = 0"),
-        p(withMathJax("\\(\\beta_1\\)"), " \u2014 nachylenie (slope): o ile zmieni si\u0119 Y, gdy X wzro\u015bnie o 1"),
-        p(withMathJax("\\(\\varepsilon\\)"), " \u2014 b\u0142\u0105d losowy (reszty)")
+        p(withMathJax("\\(\\beta_0\\)"), " — wyraz wolny (intercept): wartość Y gdy X = 0"),
+        p(withMathJax("\\(\\beta_1\\)"), " — nachylenie (slope): o ile zmieni się Y, gdy X wzrośnie o 1"),
+        p(withMathJax("\\(\\varepsilon\\)"), " — błąd losowy (reszty)")
       )
     ),
 
@@ -40,13 +40,13 @@ ch1_ui <- tabPanel("1. Regresja liniowa prosta",
             ),
             selected = "height_weight"
           ),
-          sliderInput("ch1_n", "Wielko\u015b\u0107 pr\u00f3by (n):",
+          sliderInput("ch1_n", "Wielkość próby (n):",
                       min = 20, max = 200, value = 80, step = 10),
           actionButton("ch1_gen", "Generuj dane i dopasuj",
                        class = "btn-primary", width = "100%"),
           hr(),
-          checkboxInput("ch1_show_residuals", "Poka\u017c reszty", value = FALSE),
-          checkboxInput("ch1_show_ci", "Poka\u017c pasmo ufno\u015bci", value = TRUE)
+          checkboxInput("ch1_show_residuals", "Pokaż reszty", value = FALSE),
+          checkboxInput("ch1_show_ci", "Pokaż pasmo ufności", value = TRUE)
         ),
         column(8,
           plotOutput("ch1_scatter", height = "380px"),
@@ -61,11 +61,11 @@ ch1_ui <- tabPanel("1. Regresja liniowa prosta",
     div(class = "section-title", "Reszty (residuals)"),
 
     div(class = "narrative",
-      p("Reszta to r\u00f3\u017cnica mi\u0119dzy warto\u015bci\u0105 zaobserwowan\u0105 a przewidywan\u0105:"),
+      p("Reszta to różnica między wartością zaobserwowaną a przewidywaną:"),
       div(class = "formula-box",
         withMathJax(helpText("$$e_i = y_i - \\hat{y}_i$$"))
       ),
-      p("Dobry model ma reszty ", tags$b("ma\u0142e"), ", ",
+      p("Dobry model ma reszty ", tags$b("małe"), ", ",
         tags$b("losowe"), " i ", tags$b("bez wzorca"), ".")
     ),
 
@@ -73,7 +73,7 @@ ch1_ui <- tabPanel("1. Regresja liniowa prosta",
       h4("Analiza reszt"),
       fluidRow(
         column(12,
-          helpText("U\u017cywa danych z widgetu powy\u017cej."),
+          helpText("Używa danych z widgetu powyżej."),
           plotOutput("ch1_resid_plots", height = "300px")
         )
       )
@@ -82,24 +82,24 @@ ch1_ui <- tabPanel("1. Regresja liniowa prosta",
     # ========================================================================
     # WIDGET 3: R-kwadrat
     # ========================================================================
-    div(class = "section-title", withMathJax("R\u00b2 \u2014 ile model wyja\u015bnia?")),
+    div(class = "section-title", withMathJax("R² — ile model wyjaśnia?")),
 
     div(class = "narrative",
-      p("Wsp\u00f3\u0142czynnik determinacji ", withMathJax("\\(R^2\\)"),
-        " m\u00f3wi, jaki odsetek zmienno\u015bci Y jest wyja\u015bniony przez model."),
+      p("Współczynnik determinacji ", withMathJax("\\(R^2\\)"),
+        " mówi, jaki odsetek zmienności Y jest wyjaśniony przez model."),
       div(class = "formula-box",
         withMathJax(helpText("$$R^2 = 1 - \\frac{SS_{res}}{SS_{tot}} = 1 - \\frac{\\sum(y_i - \\hat{y}_i)^2}{\\sum(y_i - \\bar{y})^2}$$"))
       ),
-      p("Zakres [0, 1]: 0 = model nic nie wyja\u015bnia, 1 = idealne dopasowanie.")
+      p("Zakres [0, 1]: 0 = model nic nie wyjaśnia, 1 = idealne dopasowanie.")
     ),
 
     div(class = "widget-block",
-      h4("Wizualizacja R\u00b2"),
+      h4("Wizualizacja R²"),
       fluidRow(
         column(4,
-          sliderInput("ch1_r2_noise", "Szum (\u03c3):",
+          sliderInput("ch1_r2_noise", "Szum (σ):",
                       min = 0.5, max = 20, value = 5, step = 0.5),
-          sliderInput("ch1_r2_slope", "Nachylenie (\u03b2\u2081):",
+          sliderInput("ch1_r2_slope", "Nachylenie (β₁):",
                       min = 0, max = 5, value = 2, step = 0.25),
           actionButton("ch1_r2_gen", "Generuj",
                        class = "btn-primary", width = "100%")
@@ -113,15 +113,15 @@ ch1_ui <- tabPanel("1. Regresja liniowa prosta",
 
     div(class = "callout-warning",
       tags$strong("Uwaga:"),
-      " Wysokie R\u00b2 nie oznacza, \u017ce model jest \"dobry\" \u2014 mo\u017ce by\u0107 przeuczony.
-        Niskie R\u00b2 nie oznacza, \u017ce model jest bezwarto\u015bciowy \u2014 w naukach spo\u0142ecznych
-        R\u00b2 = 0.3 jest cz\u0119sto bardzo dobre."
+      " Wysokie R² nie oznacza, że model jest \"dobry\" — może być przeuczony.
+        Niskie R² nie oznacza, że model jest bezwartościowy — w naukach społecznych
+        R² = 0.3 jest często bardzo dobre."
     ),
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: wiele zmiennych obja\u015bniaj\u0105cych"),
-      actionButton("ch1_next", "Dalej \u2192 2. Regresja wieloraka",
+      p("Dalej: wiele zmiennych objaśniających"),
+      actionButton("ch1_next", "Dalej → 2. Regresja wieloraka",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -187,17 +187,17 @@ ch1_server <- function(input, output, session) {
 
     tagList(
       div(class = "stat-box", style = paste0("background:", col_fit, ";"),
-          paste0("R\u00b2 = ", round(g$r.squared, 3))),
+          paste0("R² = ", round(g$r.squared, 3))),
       div(class = "stat-box", style = paste0("background:", col_data, ";"),
-          paste0("\u03b2\u2080 = ", round(coefs$estimate[1], 2))),
+          paste0("β₀ = ", round(coefs$estimate[1], 2))),
       div(class = "stat-box", style = paste0("background:", col_predict, ";"),
-          paste0("\u03b2\u2081 = ", round(coefs$estimate[2], 3))),
+          paste0("β₁ = ", round(coefs$estimate[2], 3))),
       div(class = "stat-box", style = paste0("background:", col_residual, ";"),
           paste0("RMSE = ", round(sqrt(mean(residuals(model)^2)), 2))),
       div(class = "callout-info", style = "margin-top: 10px;",
         p(tags$strong("Interpretacja:"),
           paste0(" Gdy ", ch1_data()$x_label[1], " wzrasta o 1, ",
-                 ch1_data()$y_label[1], " zmienia si\u0119 \u015brednio o ",
+                 ch1_data()$y_label[1], " zmienia się średnio o ",
                  round(coefs$estimate[2], 3), "."))
       )
     )
@@ -222,7 +222,7 @@ ch1_server <- function(input, output, session) {
         geom_hline(yintercept = 0, linetype = "dashed", color = col_dark) +
         geom_point(color = col_residual, alpha = 0.5) +
         geom_smooth(se = FALSE, color = col_fit, linewidth = 0.8) +
-        labs(title = "Reszty vs dopasowane", x = "Warto\u015bci dopasowane",
+        labs(title = "Reszty vs dopasowane", x = "Wartości dopasowane",
              y = "Reszty") +
         theme_educational()
 
@@ -230,7 +230,7 @@ ch1_server <- function(input, output, session) {
         stat_qq(color = col_data, alpha = 0.5) +
         stat_qq_line(color = col_fit) +
         labs(title = "Q-Q reszty", x = "Kwantyle teoretyczne",
-             y = "Kwantyle pr\u00f3bkowe") +
+             y = "Kwantyle próbkowe") +
         theme_educational()
 
       gridExtra::grid.arrange(p1, p2, ncol = 2)
@@ -259,7 +259,7 @@ ch1_server <- function(input, output, session) {
       ggplot(df, aes(x = x, y = y)) +
         geom_point(color = col_data, alpha = 0.5) +
         geom_smooth(method = "lm", se = FALSE, color = col_fit, linewidth = 1.2) +
-        labs(title = paste0("R\u00b2 = ",
+        labs(title = paste0("R² = ",
                             round(summary(lm(y ~ x, data = df))$r.squared, 3)),
              x = "X", y = "Y") +
         theme_educational()
@@ -273,9 +273,9 @@ ch1_server <- function(input, output, session) {
     r2 <- summary(model)$r.squared
     tagList(
       div(class = "stat-box", style = paste0("background:", col_fit, ";"),
-          paste0("R\u00b2 = ", round(r2, 3))),
+          paste0("R² = ", round(r2, 3))),
       div(class = "stat-box", style = paste0("background:", col_data, ";"),
-          paste0(round(r2 * 100, 1), "% zmienno\u015bci wyja\u015bnione"))
+          paste0(round(r2 * 100, 1), "% zmienności wyjaśnione"))
     )
   })
 }

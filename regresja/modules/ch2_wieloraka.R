@@ -6,22 +6,22 @@ ch2_ui <- tabPanel("2. Regresja wieloraka",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Regresja prosta u\u017cywa\u0142a jednego predyktora.
-       W rzeczywisto\u015bci na Y wp\u0142ywa wiele czynnik\u00f3w jednocze\u015bnie."
+      "Regresja prosta używała jednego predyktora.
+       W rzeczywistości na Y wpływa wiele czynników jednocześnie."
     ),
 
-    div(class = "section-title", "Wiele predyktor\u00f3w naraz"),
+    div(class = "section-title", "Wiele predyktorów naraz"),
 
     div(class = "narrative",
-      p("Regresja wieloraka rozszerza model o ", tags$b("k predyktor\u00f3w"), ":"),
+      p("Regresja wieloraka rozszerza model o ", tags$b("k predyktorów"), ":"),
       div(class = "formula-box",
         withMathJax(helpText(
           "$$Y = \\beta_0 + \\beta_1 X_1 + \\beta_2 X_2 + \\ldots + \\beta_k X_k + \\varepsilon$$"
         ))
       ),
-      p("Ka\u017cde ", withMathJax("\\(\\beta_j\\)"), " m\u00f3wi:
-        o ile zmieni si\u0119 Y, gdy ", withMathJax("\\(X_j\\)"),
-        " wzro\u015bnie o 1, ", tags$b("przy sta\u0142ych pozosta\u0142ych zmiennych"), ".")
+      p("Każde ", withMathJax("\\(\\beta_j\\)"), " mówi:
+        o ile zmieni się Y, gdy ", withMathJax("\\(X_j\\)"),
+        " wzrośnie o 1, ", tags$b("przy stałych pozostałych zmiennych"), ".")
     ),
 
     # ========================================================================
@@ -30,16 +30,16 @@ ch2_ui <- tabPanel("2. Regresja wieloraka",
     div(class = "section-title", "Budowanie modelu wielorakiego"),
 
     div(class = "widget-block",
-      h4("Predykcja \u015bredniej ocen"),
+      h4("Predykcja średniej ocen"),
       fluidRow(
         column(4,
-          helpText("Dane: 150 student\u00f3w. Zmienna zale\u017cna: \u015brednia ocen."),
+          helpText("Dane: 150 studentów. Zmienna zależna: średnia ocen."),
           checkboxGroupInput("ch2_predictors", "Predyktory:",
             choices = c(
               "Godziny nauki/tydz." = "godziny_nauki",
               "Frekwencja (%)" = "frekwencja",
               "Poziom stresu (1-10)" = "stres",
-              "Sen (h/dob\u0119)" = "sen_h"
+              "Sen (h/dobę)" = "sen_h"
             ),
             selected = c("godziny_nauki", "frekwencja")
           ),
@@ -55,9 +55,9 @@ ch2_ui <- tabPanel("2. Regresja wieloraka",
     ),
 
     div(class = "callout-info",
-      tags$strong("Skorygowane R\u00b2:"),
-      " Zwyk\u0142e R\u00b2 zawsze ro\u015bnie z ka\u017cdym dodanym predyktorem (nawet bezu\u017cytecznym!).
-        Adjusted R\u00b2 koryguje ten efekt \u2014 karze za zb\u0119dne zmienne."
+      tags$strong("Skorygowane R²:"),
+      " Zwykłe R² zawsze rośnie z każdym dodanym predyktorem (nawet bezużytecznym!).
+        Adjusted R² koryguje ten efekt — karze za zbędne zmienne."
     ),
 
     # ========================================================================
@@ -66,15 +66,15 @@ ch2_ui <- tabPanel("2. Regresja wieloraka",
     div(class = "section-title", "Efekt dodawania zmiennych"),
 
     div(class = "narrative",
-      p("Zobaczmy, jak zmieniaj\u0105 si\u0119 metryki modelu, gdy dodajemy
-        kolejne predyktory. Czy ka\u017cda zmienna poprawia model?")
+      p("Zobaczmy, jak zmieniają się metryki modelu, gdy dodajemy
+        kolejne predyktory. Czy każda zmienna poprawia model?")
     ),
 
     div(class = "widget-block",
       h4("Krok po kroku"),
       fluidRow(
         column(4,
-          helpText("Modele z 1, 2, 3 i 4 predyktorami \u2014 por\u00f3wnanie metryk."),
+          helpText("Modele z 1, 2, 3 i 4 predyktorami — porównanie metryk."),
           actionButton("ch2_stepwise", "Buduj modele krok po kroku",
                        class = "btn-warning", width = "100%")
         ),
@@ -86,15 +86,15 @@ ch2_ui <- tabPanel("2. Regresja wieloraka",
     ),
 
     div(class = "callout-warning",
-      tags$strong("Ostro\u017cnie z dodawaniem zmiennych!"),
-      " Wi\u0119cej zmiennych = wi\u0119ksze R\u00b2, ale nie zawsze lepszy model.
-        Przeuczone modele s\u0142abo generalizuj\u0105. U\u017cywaj adj. R\u00b2, AIC, BIC."
+      tags$strong("Ostrożnie z dodawaniem zmiennych!"),
+      " Więcej zmiennych = większe R², ale nie zawsze lepszy model.
+        Przeuczone modele słabo generalizują. Używaj adj. R², AIC, BIC."
     ),
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: gdy zmienna zale\u017cna jest binarna"),
-      actionButton("ch2_next", "Dalej \u2192 3. Regresja logistyczna",
+      p("Dalej: gdy zmienna zależna jest binarna"),
+      actionButton("ch2_next", "Dalej → 3. Regresja logistyczna",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -183,10 +183,10 @@ ch2_server <- function(input, output, session) {
       geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
       geom_vline(xintercept = 0, linetype = "dashed", color = col_dark) +
       scale_color_manual(values = c("TRUE" = col_fit, "FALSE" = col_residual),
-                         labels = c("TRUE" = "p < 0.05", "FALSE" = "p \u2265 0.05"),
+                         labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),
                          name = NULL) +
-      labs(title = "Wsp\u00f3\u0142czynniki regresji z 95% CI",
-           x = "Estymata \u03b2", y = NULL) +
+      labs(title = "Współczynniki regresji z 95% CI",
+           x = "Estymata β", y = NULL) +
       theme_educational() +
       theme(legend.position = "top")
   })
@@ -197,9 +197,9 @@ ch2_server <- function(input, output, session) {
     metrics <- compute_model_metrics(model)
     tagList(
       div(class = "stat-box", style = paste0("background:", col_fit, ";"),
-          paste0("R\u00b2 = ", round(metrics$r_squared, 3))),
+          paste0("R² = ", round(metrics$r_squared, 3))),
       div(class = "stat-box", style = paste0("background:", col_predict, ";"),
-          paste0("adj.R\u00b2 = ", round(metrics$adj_r_squared, 3))),
+          paste0("adj.R² = ", round(metrics$adj_r_squared, 3))),
       div(class = "stat-box", style = paste0("background:", col_warning, ";"),
           paste0("AIC = ", round(metrics$aic, 1))),
       div(class = "stat-box", style = paste0("background:", col_residual, ";"),
@@ -250,7 +250,7 @@ ch2_server <- function(input, output, session) {
         select(k, r_squared, adj_r_squared) %>%
         tidyr::pivot_longer(cols = c(r_squared, adj_r_squared),
                             names_to = "metric", values_to = "value") %>%
-        mutate(metric = ifelse(metric == "r_squared", "R\u00b2", "adj. R\u00b2"))
+        mutate(metric = ifelse(metric == "r_squared", "R²", "adj. R²"))
 
       ggplot(long, aes(x = k, y = value, color = metric)) +
         geom_line(linewidth = 1.2) +
@@ -258,8 +258,8 @@ ch2_server <- function(input, output, session) {
         scale_x_continuous(breaks = 1:4,
                            labels = paste0(1:4, " pred.")) +
         scale_color_manual(values = c(col_fit, col_predict), name = NULL) +
-        labs(title = "R\u00b2 vs adj. R\u00b2 w funkcji liczby predyktor\u00f3w",
-             x = "Liczba predyktor\u00f3w", y = "Warto\u015b\u0107") +
+        labs(title = "R² vs adj. R² w funkcji liczby predyktorów",
+             x = "Liczba predyktorów", y = "Wartość") +
         theme_educational() +
         theme(legend.position = "top")
     }
@@ -283,7 +283,7 @@ ch2_server <- function(input, output, session) {
     tags$table(class = "table table-bordered table-striped",
       style = "font-size: 13px;",
       tags$thead(
-        tags$tr(tags$th("Predyktory"), tags$th("R\u00b2"), tags$th("adj.R\u00b2"),
+        tags$tr(tags$th("Predyktory"), tags$th("R²"), tags$th("adj.R²"),
                 tags$th("AIC"), tags$th("BIC"), tags$th("RMSE"))
       ),
       tags$tbody(rows)

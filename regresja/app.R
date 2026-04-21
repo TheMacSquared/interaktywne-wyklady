@@ -89,10 +89,10 @@ server <- function(input, output, session) {
     updateNavbarPage(session, "main_nav", selected = "3. Regresja logistyczna")
   })
   observeEvent(input$ch3_next, {
-    updateNavbarPage(session, "main_nav", selected = "4. Por\u00f3wnanie modeli")
+    updateNavbarPage(session, "main_nav", selected = "4. Porównanie modeli")
   })
   observeEvent(input$ch4_next, {
-    updateNavbarPage(session, "main_nav", selected = "5. \u015aci\u0105ga")
+    updateNavbarPage(session, "main_nav", selected = "5. Ściąga")
   })
 
   ch1_server(input, output, session)

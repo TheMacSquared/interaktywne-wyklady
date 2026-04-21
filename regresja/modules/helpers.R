@@ -16,13 +16,13 @@ generate_regression_data <- function(n = 100, beta0 = 10, beta1 = 2, sigma = 5,
     y <- 2.0 + 0.06 * x + rnorm(n, 0, 0.5)
     y <- pmin(pmax(y, 2), 5)
     data.frame(x = round(x, 1), y = round(y, 2),
-               x_label = "Godziny nauki/tydz.", y_label = "\u015arednia ocen")
+               x_label = "Godziny nauki/tydz.", y_label = "Średnia ocen")
   } else if (scenario == "temp_icecream") {
     x <- rnorm(n, mean = 20, sd = 7)
     y <- 50 + 15 * x + rnorm(n, 0, 40)
     y <- pmax(y, 0)
     data.frame(x = round(x, 1), y = round(y, 0),
-               x_label = "Temperatura (\u00b0C)", y_label = "Sprzeda\u017c lod\u00f3w")
+               x_label = "Temperatura (°C)", y_label = "Sprzedaż lodów")
   } else {
     x <- rnorm(n, mean = 0, sd = 3)
     y <- beta0 + beta1 * x + rnorm(n, 0, sigma)

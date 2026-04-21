@@ -2,38 +2,38 @@
 # CHAPTER 4: Porownanie modeli
 # ============================================================================
 
-ch4_ui <- tabPanel("4. Por\u00f3wnanie modeli",
+ch4_ui <- tabPanel("4. Porównanie modeli",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Zbudowali\u015bmy r\u00f3\u017cne modele. Jak wybra\u0107 najlepszy?
-       Poznajmy metryki por\u00f3wnawcze."
+      "Zbudowaliśmy różne modele. Jak wybrać najlepszy?
+       Poznajmy metryki porównawcze."
     ),
 
-    div(class = "section-title", "Metryki jako\u015bci modelu"),
+    div(class = "section-title", "Metryki jakości modelu"),
 
     div(class = "narrative",
-      p("Nie ma jednej uniwersalnej miary. Ka\u017cda odpowiada na inne pytanie:"),
+      p("Nie ma jednej uniwersalnej miary. Każda odpowiada na inne pytanie:"),
       tags$table(class = "table table-bordered", style = "font-size: 14px;",
         tags$thead(
           tags$tr(tags$th("Metryka"), tags$th("Co mierzy"), tags$th("Lepiej gdy"))
         ),
         tags$tbody(
           tags$tr(tags$td(withMathJax("\\(R^2\\)")),
-                  tags$td("Odsetek wyja\u015bnionej zmienno\u015bci"),
-                  tags$td("wy\u017csze")),
+                  tags$td("Odsetek wyjaśnionej zmienności"),
+                  tags$td("wyższe")),
           tags$tr(tags$td(withMathJax("\\(R^2_{adj}\\)")),
-                  tags$td("R\u00b2 skorygowane za liczb\u0119 predyktor\u00f3w"),
-                  tags$td("wy\u017csze")),
+                  tags$td("R² skorygowane za liczbę predyktorów"),
+                  tags$td("wyższe")),
           tags$tr(tags$td("AIC"),
-                  tags$td("Jako\u015b\u0107 + z\u0142o\u017cono\u015b\u0107 (kara za parametry)"),
-                  tags$td("ni\u017csze")),
+                  tags$td("Jakość + złożoność (kara za parametry)"),
+                  tags$td("niższe")),
           tags$tr(tags$td("BIC"),
                   tags$td("Jak AIC, ale silniejsza kara za parametry"),
-                  tags$td("ni\u017csze")),
+                  tags$td("niższe")),
           tags$tr(tags$td("RMSE"),
-                  tags$td("\u015aredni b\u0142\u0105d predykcji (w jednostkach Y)"),
-                  tags$td("ni\u017csze"))
+                  tags$td("Średni błąd predykcji (w jednostkach Y)"),
+                  tags$td("niższe"))
         )
       )
     ),
@@ -42,7 +42,7 @@ ch4_ui <- tabPanel("4. Por\u00f3wnanie modeli",
       p(tags$strong("AIC:"), withMathJax("\\(AIC = -2 \\ln(L) + 2k\\)")),
       p(tags$strong("BIC:"), withMathJax("\\(BIC = -2 \\ln(L) + k \\ln(n)\\)")),
       p(tags$strong("RMSE:"), withMathJax("\\(RMSE = \\sqrt{\\frac{1}{n}\\sum(y_i - \\hat{y}_i)^2}\\)")),
-      p("gdzie L = wiarygodno\u015b\u0107, k = liczba parametr\u00f3w, n = liczba obserwacji")
+      p("gdzie L = wiarygodność, k = liczba parametrów, n = liczba obserwacji")
     ),
 
     # ========================================================================
@@ -51,12 +51,12 @@ ch4_ui <- tabPanel("4. Por\u00f3wnanie modeli",
     div(class = "section-title", "Arena modeli liniowych"),
 
     div(class = "widget-block",
-      h4("Por\u00f3wnanie modeli regresji"),
+      h4("Porównanie modeli regresji"),
       fluidRow(
         column(4,
-          helpText("Generujemy dane i budujemy 4 modele z r\u00f3\u017cn\u0105 liczb\u0105 predyktor\u00f3w."),
+          helpText("Generujemy dane i budujemy 4 modele z różną liczbą predyktorów."),
           sliderInput("ch4_n", "n:", min = 50, max = 300, value = 150, step = 25),
-          actionButton("ch4_compare", "Buduj i por\u00f3wnaj modele",
+          actionButton("ch4_compare", "Buduj i porównaj modele",
                        class = "btn-primary", width = "100%")
         ),
         column(8,
@@ -68,9 +68,9 @@ ch4_ui <- tabPanel("4. Por\u00f3wnanie modeli",
 
     div(class = "callout-info",
       tags$strong("AIC vs BIC:"),
-      " AIC faworyzuje modele z lepsz\u0105 predykcj\u0105 (nawet z\u0142o\u017cone).
-        BIC mocniej karze za z\u0142o\u017cono\u015b\u0107 \u2014 preferuje prostsze modele.
-        Gdy si\u0119 nie zgadzaj\u0105, AIC jest lepszy do predykcji, BIC do wyja\u015bnienia."
+      " AIC faworyzuje modele z lepszą predykcją (nawet złożone).
+        BIC mocniej karze za złożoność — preferuje prostsze modele.
+        Gdy się nie zgadzają, AIC jest lepszy do predykcji, BIC do wyjaśnienia."
     ),
 
     # ========================================================================
@@ -79,15 +79,15 @@ ch4_ui <- tabPanel("4. Por\u00f3wnanie modeli",
     div(class = "section-title", "Liniowy vs logistyczny"),
 
     div(class = "narrative",
-      p("Co si\u0119 stanie, je\u015bli spr\u00f3bujemy u\u017cy\u0107 regresji liniowej
-        do predykcji zmiennej binarnej? Por\u00f3wnajmy z logistyczn\u0105.")
+      p("Co się stanie, jeśli spróbujemy użyć regresji liniowej
+        do predykcji zmiennej binarnej? Porównajmy z logistyczną.")
     ),
 
     div(class = "widget-block",
       h4("Liniowy vs logistyczny (dane binarne)"),
       fluidRow(
         column(4,
-          actionButton("ch4_lin_vs_log", "Generuj por\u00f3wnanie",
+          actionButton("ch4_lin_vs_log", "Generuj porównanie",
                        class = "btn-warning", width = "100%")
         ),
         column(8,
@@ -100,8 +100,8 @@ ch4_ui <- tabPanel("4. Por\u00f3wnanie modeli",
     div(class = "callout-danger",
       tags$strong("Wniosek:"),
       " Regresja liniowa na danych binarnych daje predykcje poza [0, 1]
-        i nie jest poprawnym modelem. Zawsze u\u017cywaj regresji logistycznej
-        dla zmiennej zale\u017cnej 0/1."
+        i nie jest poprawnym modelem. Zawsze używaj regresji logistycznej
+        dla zmiennej zależnej 0/1."
     ),
 
     # ========================================================================
@@ -110,17 +110,17 @@ ch4_ui <- tabPanel("4. Por\u00f3wnanie modeli",
     div(class = "section-title", "Przeucz enie (overfitting)"),
 
     div(class = "narrative",
-      p("Model z wieloma parametrami mo\u017ce idealnie dopasowa\u0107 si\u0119 do danych
-        treningowych, ale \u017ale generalizowa\u0107. Zobaczmy to na wielomianach.")
+      p("Model z wieloma parametrami może idealnie dopasować się do danych
+        treningowych, ale źle generalizować. Zobaczmy to na wielomianach.")
     ),
 
     div(class = "widget-block",
       h4("Wielomian: dopasowanie vs generalizacja"),
       fluidRow(
         column(4,
-          sliderInput("ch4_poly_degree", "Stopie\u0144 wielomianu:",
+          sliderInput("ch4_poly_degree", "Stopień wielomianu:",
                       min = 1, max = 15, value = 1, step = 1),
-          sliderInput("ch4_poly_n", "n (punkt\u00f3w):",
+          sliderInput("ch4_poly_n", "n (punktów):",
                       min = 15, max = 100, value = 30, step = 5),
           actionButton("ch4_poly_gen", "Generuj",
                        class = "btn-primary", width = "100%")
@@ -133,16 +133,16 @@ ch4_ui <- tabPanel("4. Por\u00f3wnanie modeli",
     ),
 
     div(class = "callout-warning",
-      tags$strong("Z\u0142ota regu\u0142a:"),
-      " Najlepszy model to nie ten z najwy\u017cszym R\u00b2, ale ten, kt\u00f3ry
+      tags$strong("Złota reguła:"),
+      " Najlepszy model to nie ten z najwyższym R², ale ten, który
         najlepiej ", tags$b("generalizuje"), " na nowe dane.
-        U\u017cywaj AIC/BIC do wyboru z\u0142o\u017cono\u015bci."
+        Używaj AIC/BIC do wyboru złożoności."
     ),
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: podsumowanie wzor\u00f3w i zasad"),
-      actionButton("ch4_next", "Dalej \u2192 5. \u015aci\u0105ga",
+      p("Dalej: podsumowanie wzorów i zasad"),
+      actionButton("ch4_next", "Dalej → 5. Ściąga",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -187,7 +187,7 @@ ch4_server <- function(input, output, session) {
     df <- ch4_models()
     if (is.null(df)) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Buduj i por\u00f3wnaj'",
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Buduj i porównaj'",
                  size = 6, color = "#7f8c8d") +
         theme_void()
     } else {
@@ -197,13 +197,13 @@ ch4_server <- function(input, output, session) {
         tidyr::pivot_longer(-model, names_to = "metric", values_to = "value") %>%
         mutate(metric = factor(metric,
           levels = c("adj_r_squared", "aic", "bic", "rmse"),
-          labels = c("adj. R\u00b2", "AIC", "BIC", "RMSE")))
+          labels = c("adj. R²", "AIC", "BIC", "RMSE")))
 
       ggplot(long, aes(x = model, y = value, fill = model)) +
         geom_col(alpha = 0.8) +
         facet_wrap(~metric, scales = "free_y", ncol = 4) +
         scale_fill_manual(values = c(col_fit, col_predict, col_warning, col_logit)) +
-        labs(title = "Metryki 4 modeli", x = NULL, y = "Warto\u015b\u0107") +
+        labs(title = "Metryki 4 modeli", x = NULL, y = "Wartość") +
         theme_educational() +
         theme(legend.position = "none",
               axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
@@ -238,7 +238,7 @@ ch4_server <- function(input, output, session) {
     tags$table(class = "table table-bordered table-striped",
       style = "font-size: 13px;",
       tags$thead(
-        tags$tr(tags$th("Model"), tags$th("R\u00b2"), tags$th("adj.R\u00b2"),
+        tags$tr(tags$th("Model"), tags$th("R²"), tags$th("adj.R²"),
                 tags$th("AIC"), tags$th("BIC"), tags$th("RMSE"))
       ),
       tags$tbody(rows)
@@ -347,9 +347,9 @@ ch4_server <- function(input, output, session) {
 
     tagList(
       div(class = "stat-box", style = paste0("background:", col_fit, ";"),
-          paste0("R\u00b2 = ", round(metrics$r_squared, 3))),
+          paste0("R² = ", round(metrics$r_squared, 3))),
       div(class = "stat-box", style = paste0("background:", col_predict, ";"),
-          paste0("adj.R\u00b2 = ", round(metrics$adj_r_squared, 3))),
+          paste0("adj.R² = ", round(metrics$adj_r_squared, 3))),
       div(class = "stat-box", style = paste0("background:", col_warning, ";"),
           paste0("AIC = ", round(metrics$aic, 1))),
       div(class = "stat-box", style = paste0("background:", col_data, ";"),
