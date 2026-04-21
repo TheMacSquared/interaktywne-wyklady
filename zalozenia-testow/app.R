@@ -76,7 +76,7 @@ global_header <- tagList(
 # ============================================================================
 
 ui <- navbarPage(
-  "Za\u0142o\u017cenia test\u00f3w",
+  "Założenia testów",
   id = "main_nav",
   theme = bs_theme(bootswatch = "sandstone"),
   header = global_header,
@@ -93,16 +93,16 @@ server <- function(input, output, session) {
     updateNavbarPage(session, "main_nav", selected = "2. Jednorodne wariancje")
   })
   observeEvent(input$ch2_next, {
-    updateNavbarPage(session, "main_nav", selected = "3. Za\u0142o\u017cenia regresji")
+    updateNavbarPage(session, "main_nav", selected = "3. Założenia regresji")
   })
   observeEvent(input$ch3_next, {
-    updateNavbarPage(session, "main_nav", selected = "4. Za\u0142o\u017cenia \u03c7\u00b2 i Fishera")
+    updateNavbarPage(session, "main_nav", selected = "4. Założenia χ² i Fishera")
   })
   observeEvent(input$ch4_next, {
     updateNavbarPage(session, "main_nav", selected = "5. Mapa metod")
   })
   observeEvent(input$ch5_next, {
-    updateNavbarPage(session, "main_nav", selected = "6. \u015aci\u0105ga")
+    updateNavbarPage(session, "main_nav", selected = "6. Ściąga")
   })
 
   ch1_server(input, output, session)

@@ -6,11 +6,11 @@ ch5_ui <- tabPanel("5. Mapa metod",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Zbierzmy wszystko w jedn\u0105 map\u0119: ka\u017cda metoda, jej za\u0142o\u017cenia
-       i co robi\u0107, gdy s\u0105 naruszone."
+      "Zbierzmy wszystko w jedną mapę: każda metoda, jej założenia
+       i co robić, gdy są naruszone."
     ),
 
-    div(class = "section-title", "Kompletna mapa: metoda \u2192 za\u0142o\u017cenia \u2192 alternatywa"),
+    div(class = "section-title", "Kompletna mapa: metoda → założenia → alternatywa"),
 
     # ========================================================================
     # Testy parametryczne
@@ -20,37 +20,37 @@ ch5_ui <- tabPanel("5. Mapa metod",
     tags$table(class = "table table-bordered table-striped",
       style = "font-size: 13px;",
       tags$thead(
-        tags$tr(tags$th("Metoda"), tags$th("Za\u0142o\u017cenia"), tags$th("Jak sprawdzi\u0107"),
-                tags$th("Gdy naruszone \u2192 alternatywa"))
+        tags$tr(tags$th("Metoda"), tags$th("Założenia"), tags$th("Jak sprawdzić"),
+                tags$th("Gdy naruszone → alternatywa"))
       ),
       tags$tbody(
         tags$tr(
           tags$td(tags$strong("Test t jednej pr.")),
-          tags$td("Normalno\u015b\u0107 danych (lub n > 30)"),
+          tags$td("Normalność danych (lub n > 30)"),
           tags$td("Q-Q plot, Shapiro-Wilk"),
-          tags$td("Wilcoxon jednej pr\u00f3by")
+          tags$td("Wilcoxon jednej próby")
         ),
         tags$tr(
-          tags$td(tags$strong("Test t niezale\u017cny")),
-          tags$td("Normalno\u015b\u0107 w grupach, r\u00f3wne wariancje"),
+          tags$td(tags$strong("Test t niezależny")),
+          tags$td("Normalność w grupach, równe wariancje"),
           tags$td("Shapiro + Levene"),
-          tags$td("Welch t (nier\u00f3wne war.), Mann-Whitney U (brak norm.)")
+          tags$td("Welch t (nierówne war.), Mann-Whitney U (brak norm.)")
         ),
         tags$tr(
           tags$td(tags$strong("Test t parowy")),
-          tags$td("Normalno\u015b\u0107 r\u00f3\u017cnic"),
-          tags$td("Shapiro na r\u00f3\u017cnicach"),
+          tags$td("Normalność różnic"),
+          tags$td("Shapiro na różnicach"),
           tags$td("Wilcoxon par znakowych")
         ),
         tags$tr(
           tags$td(tags$strong("ANOVA")),
-          tags$td("Normalno\u015b\u0107 reszt, r\u00f3wne wariancje"),
+          tags$td("Normalność reszt, równe wariancje"),
           tags$td("Shapiro + Levene"),
           tags$td("Welch ANOVA (war.), Kruskal-Wallis (norm.)")
         ),
         tags$tr(
           tags$td(tags$strong("Pearson")),
-          tags$td("Liniowo\u015b\u0107, normalno\u015b\u0107 2D, brak outlier\u00f3w"),
+          tags$td("Liniowość, normalność 2D, brak outlierów"),
           tags$td("Scatterplot, Q-Q obu zmiennych"),
           tags$td("Spearman (monotoniczny), Kendall (odporny)")
         )
@@ -65,23 +65,23 @@ ch5_ui <- tabPanel("5. Mapa metod",
     tags$table(class = "table table-bordered table-striped",
       style = "font-size: 13px;",
       tags$thead(
-        tags$tr(tags$th("Metoda"), tags$th("Za\u0142o\u017cenia"), tags$th("Uwagi"))
+        tags$tr(tags$th("Metoda"), tags$th("Założenia"), tags$th("Uwagi"))
       ),
       tags$tbody(
         tags$tr(
           tags$td(tags$strong("Wilcoxon / Mann-Whitney")),
-          tags$td("Niezale\u017cno\u015b\u0107 obserwacji, symetryczne rozk\u0142ady (dla mediany)"),
-          tags$td("Nie wymaga normalno\u015bci. Testuje r\u00f3\u017cnic\u0119 rozk\u0142ad\u00f3w, nie \u015brednich.")
+          tags$td("Niezależność obserwacji, symetryczne rozkłady (dla mediany)"),
+          tags$td("Nie wymaga normalności. Testuje różnicę rozkładów, nie średnich.")
         ),
         tags$tr(
           tags$td(tags$strong("Kruskal-Wallis")),
-          tags$td("Niezale\u017cno\u015b\u0107, podobne kszta\u0142ty rozk\u0142ad\u00f3w w grupach"),
-          tags$td("Post-hoc: test Dunna z korekt\u0105")
+          tags$td("Niezależność, podobne kształty rozkładów w grupach"),
+          tags$td("Post-hoc: test Dunna z korektą")
         ),
         tags$tr(
           tags$td(tags$strong("Spearman")),
-          tags$td("Monotoniczno\u015b\u0107 zwi\u0105zku"),
-          tags$td("Dzia\u0142a na rangach, odporny na outliery")
+          tags$td("Monotoniczność związku"),
+          tags$td("Działa na rangach, odporny na outliery")
         )
       )
     ),
@@ -89,33 +89,33 @@ ch5_ui <- tabPanel("5. Mapa metod",
     # ========================================================================
     # Testy dla jakosciowych
     # ========================================================================
-    div(class = "section-title", "Testy dla zmiennych jako\u015bciowych"),
+    div(class = "section-title", "Testy dla zmiennych jakościowych"),
 
     tags$table(class = "table table-bordered table-striped",
       style = "font-size: 13px;",
       tags$thead(
-        tags$tr(tags$th("Metoda"), tags$th("Za\u0142o\u017cenia"), tags$th("Gdy naruszone"))
+        tags$tr(tags$th("Metoda"), tags$th("Założenia"), tags$th("Gdy naruszone"))
       ),
       tags$tbody(
         tags$tr(
-          tags$td(tags$strong("\u03c7\u00b2 zgodno\u015bci")),
-          tags$td("Oczekiwane \u2265 5 w ka\u017cdej kategorii"),
+          tags$td(tags$strong("χ² zgodności")),
+          tags$td("Oczekiwane ≥ 5 w każdej kategorii"),
           tags$td("Test dwumianowy (2 kat.), symulacja MC")
         ),
         tags$tr(
-          tags$td(tags$strong("\u03c7\u00b2 niezale\u017cno\u015bci")),
-          tags$td("Oczekiwane \u2265 5 w ka\u017cdej kom\u00f3rce"),
-          tags$td("Test Fishera (dok\u0142adny)")
+          tags$td(tags$strong("χ² niezależności")),
+          tags$td("Oczekiwane ≥ 5 w każdej komórce"),
+          tags$td("Test Fishera (dokładny)")
         ),
         tags$tr(
           tags$td(tags$strong("Test Fishera")),
-          tags$td("Niezale\u017cno\u015b\u0107 obserwacji"),
-          tags$td("Brak \u2014 to ju\u017c metoda dok\u0142adna")
+          tags$td("Niezależność obserwacji"),
+          tags$td("Brak — to już metoda dokładna")
         ),
         tags$tr(
           tags$td(tags$strong("Test dwumianowy")),
-          tags$td("Niezale\u017cno\u015b\u0107, binarne dane"),
-          tags$td("Brak \u2014 to metoda dok\u0142adna")
+          tags$td("Niezależność, binarne dane"),
+          tags$td("Brak — to metoda dokładna")
         )
       )
     ),
@@ -128,20 +128,20 @@ ch5_ui <- tabPanel("5. Mapa metod",
     tags$table(class = "table table-bordered table-striped",
       style = "font-size: 13px;",
       tags$thead(
-        tags$tr(tags$th("Metoda"), tags$th("Za\u0142o\u017cenia"), tags$th("Diagnostyka"), tags$th("Alternatywy"))
+        tags$tr(tags$th("Metoda"), tags$th("Założenia"), tags$th("Diagnostyka"), tags$th("Alternatywy"))
       ),
       tags$tbody(
         tags$tr(
           tags$td(tags$strong("Regresja liniowa")),
-          tags$td("Liniowo\u015b\u0107, normalno\u015b\u0107 reszt, homoscedastyczno\u015b\u0107, niezale\u017cno\u015b\u0107 reszt, brak wsp\u00f3\u0142liniowo\u015bci"),
+          tags$td("Liniowość, normalność reszt, homoscedastyczność, niezależność reszt, brak współliniowości"),
           tags$td("Reszty vs fitted, Q-Q, Scale-Location, Breusch-Pagan, Durbin-Watson, VIF"),
           tags$td("Transformacje, odporne SE (HC), WLS, GLM, GAM, bootstrap")
         ),
         tags$tr(
           tags$td(tags$strong("Regresja logistyczna")),
-          tags$td("Liniowo\u015b\u0107 logit\u00f3w, niezale\u017cno\u015b\u0107 obserwacji, brak wsp\u00f3\u0142liniowo\u015bci, wystarczaj\u0105co du\u017co zdarze\u0144 na predyktor (regu\u0142a EPV \u2265 10)"),
+          tags$td("Liniowość logitów, niezależność obserwacji, brak współliniowości, wystarczająco dużo zdarzeń na predyktor (reguła EPV ≥ 10)"),
           tags$td("Test Hosmera-Lemeshowa, residuals deviance, VIF"),
-          tags$td("Dok\u0142adna regresja logistyczna (Firtha), regularyzacja, drzewa decyzyjne")
+          tags$td("Dokładna regresja logistyczna (Firtha), regularyzacja, drzewa decyzyjne")
         )
       )
     ),
@@ -149,23 +149,23 @@ ch5_ui <- tabPanel("5. Mapa metod",
     # ========================================================================
     # WIDGET: Interaktywny selektor
     # ========================================================================
-    div(class = "section-title", "Selektor: mam t\u0119 metod\u0119 \u2014 co sprawdzi\u0107?"),
+    div(class = "section-title", "Selektor: mam tę metodę — co sprawdzić?"),
 
     div(class = "widget-block",
-      h4("Sprawdzarka za\u0142o\u017ce\u0144"),
+      h4("Sprawdzarka założeń"),
       fluidRow(
         column(4,
           selectInput("ch5_method", "Metoda:",
             choices = c(
-              "Test t jednej pr\u00f3by" = "t_one",
-              "Test t niezale\u017cny" = "t_ind",
+              "Test t jednej próby" = "t_one",
+              "Test t niezależny" = "t_ind",
               "Test t parowy" = "t_paired",
               "ANOVA" = "anova",
               "Korelacja Pearsona" = "pearson",
               "Korelacja Spearmana" = "spearman",
               "Mann-Whitney U" = "mann_whitney",
               "Kruskal-Wallis" = "kruskal",
-              "\u03c7\u00b2 niezale\u017cno\u015bci" = "chi_sq",
+              "χ² niezależności" = "chi_sq",
               "Test Fishera" = "fisher",
               "Regresja liniowa" = "lm",
               "Regresja logistyczna" = "glm"
@@ -181,8 +181,8 @@ ch5_ui <- tabPanel("5. Mapa metod",
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: kompaktowa \u015bci\u0105ga"),
-      actionButton("ch5_next", "Dalej \u2192 6. \u015aci\u0105ga",
+      p("Dalej: kompaktowa ściąga"),
+      actionButton("ch5_next", "Dalej → 6. Ściąga",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -196,86 +196,86 @@ ch5_server <- function(input, output, session) {
 
   method_info <- list(
     t_one = list(
-      name = "Test t jednej pr\u00f3by",
-      assumptions = c("Dane ilo\u015bciowe", "Normalno\u015b\u0107 danych (lub n > 30)"),
+      name = "Test t jednej próby",
+      assumptions = c("Dane ilościowe", "Normalność danych (lub n > 30)"),
       checks = c("Q-Q plot", "shapiro_test()"),
-      alternatives = c("Wilcoxon jednej pr\u00f3by: wilcox_test(x ~ 1, mu = ...)"),
+      alternatives = c("Wilcoxon jednej próby: wilcox_test(x ~ 1, mu = ...)"),
       r_code = "rstatix::t_test(data, var ~ 1, mu = wartość)"
     ),
     t_ind = list(
-      name = "Test t niezale\u017cny",
-      assumptions = c("Dane ilo\u015bciowe", "Normalno\u015b\u0107 w ka\u017cdej grupie (lub n > 30)", "R\u00f3wne wariancje (lub u\u017cyj Welcha)"),
+      name = "Test t niezależny",
+      assumptions = c("Dane ilościowe", "Normalność w każdej grupie (lub n > 30)", "Równe wariancje (lub użyj Welcha)"),
       checks = c("Q-Q per group", "shapiro_test() per group", "levene_test()"),
-      alternatives = c("Welch t (domy\u015blny!): t_test(var.equal = FALSE)", "Mann-Whitney U: wilcox_test()"),
+      alternatives = c("Welch t (domyślny!): t_test(var.equal = FALSE)", "Mann-Whitney U: wilcox_test()"),
       r_code = "rstatix::t_test(data, var ~ group)"
     ),
     t_paired = list(
       name = "Test t parowy",
-      assumptions = c("Dane ilo\u015bciowe", "Normalno\u015b\u0107 r\u00f3\u017cnic"),
-      checks = c("shapiro_test() na r\u00f3\u017cnicach"),
+      assumptions = c("Dane ilościowe", "Normalność różnic"),
+      checks = c("shapiro_test() na różnicach"),
       alternatives = c("Wilcoxon par znakowych: wilcox_test(paired = TRUE)"),
       r_code = "rstatix::t_test(data, var ~ time, paired = TRUE)"
     ),
     anova = list(
       name = "ANOVA jednoczynnikowa",
-      assumptions = c("Normalno\u015b\u0107 reszt w grupach", "R\u00f3wne wariancje mi\u0119dzy grupami"),
+      assumptions = c("Normalność reszt w grupach", "Równe wariancje między grupami"),
       checks = c("shapiro_test() per group", "levene_test()"),
       alternatives = c("Welch ANOVA: oneway.test()", "Kruskal-Wallis: kruskal_test()"),
       r_code = "rstatix::anova_test(data, var ~ group)"
     ),
     pearson = list(
       name = "Korelacja Pearsona",
-      assumptions = c("Liniowo\u015b\u0107 zwi\u0105zku", "Normalno\u015b\u0107 dwuwymiarowa", "Brak ekstremalnych outlier\u00f3w"),
+      assumptions = c("Liniowość związku", "Normalność dwuwymiarowa", "Brak ekstremalnych outlierów"),
       checks = c("Scatterplot!", "shapiro_test() na obu zmiennych"),
       alternatives = c("Spearman: cor_test(method='spearman')", "Kendall: cor_test(method='kendall')"),
       r_code = "rstatix::cor_test(data, x, y, method = 'pearson')"
     ),
     spearman = list(
       name = "Korelacja Spearmana",
-      assumptions = c("Monotoniczno\u015b\u0107 zwi\u0105zku"),
+      assumptions = c("Monotoniczność związku"),
       checks = c("Scatterplot"),
       alternatives = c("Kendall tau (bardziej odporny, wolniejszy)"),
       r_code = "rstatix::cor_test(data, x, y, method = 'spearman')"
     ),
     mann_whitney = list(
       name = "Mann-Whitney U",
-      assumptions = c("Niezale\u017cno\u015b\u0107 obserwacji", "Dane co najmniej porz\u0105dkowe"),
+      assumptions = c("Niezależność obserwacji", "Dane co najmniej porządkowe"),
       checks = c("Sprawdzenie projektu badawczego"),
       alternatives = c("Test permutacyjny"),
       r_code = "rstatix::wilcox_test(data, var ~ group)"
     ),
     kruskal = list(
       name = "Kruskal-Wallis",
-      assumptions = c("Niezale\u017cno\u015b\u0107 obserwacji", "Podobne kszta\u0142ty rozk\u0142ad\u00f3w w grupach"),
+      assumptions = c("Niezależność obserwacji", "Podobne kształty rozkładów w grupach"),
       checks = c("Boxploty, histogramy per grupa"),
       alternatives = c("Test permutacyjny, bootstrap ANOVA"),
       r_code = "rstatix::kruskal_test(data, var ~ group)"
     ),
     chi_sq = list(
-      name = "\u03c7\u00b2 niezale\u017cno\u015bci",
-      assumptions = c("Niezale\u017cno\u015b\u0107 obserwacji", "Oczekiwane liczno\u015bci \u2265 5 w ka\u017cdej kom\u00f3rce"),
-      checks = c("chisq.test()$expected \u2014 sprawd\u017a warto\u015bci"),
-      alternatives = c("Test Fishera: fisher.test()", "\u03c7\u00b2 z MC: chisq.test(simulate.p.value=TRUE)"),
+      name = "χ² niezależności",
+      assumptions = c("Niezależność obserwacji", "Oczekiwane liczności ≥ 5 w każdej komórce"),
+      checks = c("chisq.test()$expected — sprawdź wartości"),
+      alternatives = c("Test Fishera: fisher.test()", "χ² z MC: chisq.test(simulate.p.value=TRUE)"),
       r_code = "chisq.test(table(var1, var2))"
     ),
     fisher = list(
       name = "Test Fishera",
-      assumptions = c("Niezale\u017cno\u015b\u0107 obserwacji"),
-      checks = c("Brak specjalnych wymaga\u0144"),
-      alternatives = c("Brak \u2014 to metoda dok\u0142adna"),
+      assumptions = c("Niezależność obserwacji"),
+      checks = c("Brak specjalnych wymagań"),
+      alternatives = c("Brak — to metoda dokładna"),
       r_code = "fisher.test(table(var1, var2))"
     ),
     lm = list(
       name = "Regresja liniowa",
-      assumptions = c("Liniowo\u015b\u0107 zwi\u0105zku", "Normalno\u015b\u0107 reszt", "Homoscedastyczno\u015b\u0107 reszt", "Niezale\u017cno\u015b\u0107 reszt", "Brak wsp\u00f3\u0142liniowo\u015bci (wieloraka)"),
+      assumptions = c("Liniowość związku", "Normalność reszt", "Homoscedastyczność reszt", "Niezależność reszt", "Brak współliniowości (wieloraka)"),
       checks = c("Reszty vs fitted", "Q-Q reszt", "Scale-Location", "Breusch-Pagan: bptest()", "Durbin-Watson: dwtest()", "VIF: car::vif()"),
       alternatives = c("Transformacja Y lub X", "Odporne SE: sandwich::vcovHC()", "WLS: lm(weights=)", "GLM, GAM, bootstrap"),
       r_code = "model <- lm(y ~ x1 + x2, data = dane); summary(model)"
     ),
     glm = list(
       name = "Regresja logistyczna",
-      assumptions = c("Liniowo\u015b\u0107 logit\u00f3w", "Niezale\u017cno\u015b\u0107 obserwacji", "Brak wsp\u00f3\u0142liniowo\u015bci", "EPV \u2265 10 (zdarze\u0144 na predyktor)"),
-      checks = c("Hosmer-Lemeshow: hoslem.test()", "VIF: car::vif()", "Sprawd\u017a EPV"),
+      assumptions = c("Liniowość logitów", "Niezależność obserwacji", "Brak współliniowości", "EPV ≥ 10 (zdarzeń na predyktor)"),
+      checks = c("Hosmer-Lemeshow: hoslem.test()", "VIF: car::vif()", "Sprawdź EPV"),
       alternatives = c("Firth logistic: logistf::logistf()", "Regularyzacja: glmnet", "Drzewa decyzyjne"),
       r_code = "model <- glm(y ~ x1 + x2, family = binomial, data = dane)"
     )
@@ -288,11 +288,11 @@ ch5_server <- function(input, output, session) {
     tagList(
       h4(info$name),
       div(class = "callout-warning",
-        tags$strong("Za\u0142o\u017cenia:"),
+        tags$strong("Założenia:"),
         tags$ul(lapply(info$assumptions, tags$li))
       ),
       div(class = "callout-info",
-        tags$strong("Jak sprawdzi\u0107:"),
+        tags$strong("Jak sprawdzić:"),
         tags$ul(lapply(info$checks, function(c) tags$li(tags$code(c))))
       ),
       div(class = "callout-success",

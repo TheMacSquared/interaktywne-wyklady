@@ -2,25 +2,25 @@
 # CHAPTER 3: Zalozenia regresji liniowej
 # ============================================================================
 
-ch3_ui <- tabPanel("3. Za\u0142o\u017cenia regresji",
+ch3_ui <- tabPanel("3. Założenia regresji",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Regresja liniowa ma w\u0142asny zestaw za\u0142o\u017ce\u0144. Naruszenie ka\u017cdego
-       prowadzi do innego typu problem\u00f3w."
+      "Regresja liniowa ma własny zestaw założeń. Naruszenie każdego
+       prowadzi do innego typu problemów."
     ),
 
-    div(class = "section-title", "Pi\u0119\u0107 za\u0142o\u017ce\u0144 regresji liniowej"),
+    div(class = "section-title", "Pięć założeń regresji liniowej"),
 
     div(class = "narrative",
       tags$ol(
-        tags$li(tags$b("Liniowo\u015b\u0107"), " \u2014 zwi\u0105zek Y~X jest liniowy"),
-        tags$li(tags$b("Niezale\u017cno\u015b\u0107 reszt"), " \u2014 reszty nie s\u0105 skorelowane"),
-        tags$li(tags$b("Homoscedastyczno\u015b\u0107"), " \u2014 wariancja reszt sta\u0142a"),
-        tags$li(tags$b("Normalno\u015b\u0107 reszt"), " \u2014 reszty ~N(0, \u03c3)"),
-        tags$li(tags$b("Brak wsp\u00f3\u0142liniowo\u015bci"), " \u2014 predyktory nie s\u0105 silnie skorelowane")
+        tags$li(tags$b("Liniowość"), " — związek Y~X jest liniowy"),
+        tags$li(tags$b("Niezależność reszt"), " — reszty nie są skorelowane"),
+        tags$li(tags$b("Homoscedastyczność"), " — wariancja reszt stała"),
+        tags$li(tags$b("Normalność reszt"), " — reszty ~N(0, σ)"),
+        tags$li(tags$b("Brak współliniowości"), " — predyktory nie są silnie skorelowane")
       ),
-      p("Kluczowe: za\u0142o\u017cenia dotycz\u0105 ", tags$b("reszt"), ", nie surowych danych!")
+      p("Kluczowe: założenia dotyczą ", tags$b("reszt"), ", nie surowych danych!")
     ),
 
     # ========================================================================
@@ -35,8 +35,8 @@ ch3_ui <- tabPanel("3. Za\u0142o\u017cenia regresji",
           selectInput("ch3_violation", "Typ naruszenia:",
             choices = c(
               "Brak (dane OK)" = "none",
-              "Heteroscedastyczno\u015b\u0107" = "heteroscedasticity",
-              "Nieliniowo\u015b\u0107" = "nonlinear",
+              "Heteroscedastyczność" = "heteroscedasticity",
+              "Nieliniowość" = "nonlinear",
               "Nienormalne reszty" = "non_normal_resid",
               "Autokorelacja" = "autocorrelation"
             ),
@@ -54,25 +54,25 @@ ch3_ui <- tabPanel("3. Za\u0142o\u017cenia regresji",
     ),
 
     div(class = "callout-info",
-      tags$strong("Jak czyta\u0107 wykresy diagnostyczne:"),
+      tags$strong("Jak czytać wykresy diagnostyczne:"),
       tags$ul(
-        tags$li(tags$b("Reszty vs dopasowane:"), " losowy rozrzut = OK, wz\u00f3r = problem"),
-        tags$li(tags$b("Q-Q reszt:"), " punkty na linii = normalno\u015b\u0107 OK"),
-        tags$li(tags$b("Scale-Location:"), " p\u0142aska linia = homoscedastyczno\u015b\u0107 OK")
+        tags$li(tags$b("Reszty vs dopasowane:"), " losowy rozrzut = OK, wzór = problem"),
+        tags$li(tags$b("Q-Q reszt:"), " punkty na linii = normalność OK"),
+        tags$li(tags$b("Scale-Location:"), " płaska linia = homoscedastyczność OK")
       )
     ),
 
     # ========================================================================
     # WIDGET 2: Testy formalne
     # ========================================================================
-    div(class = "section-title", "Testy formalne za\u0142o\u017ce\u0144 regresji"),
+    div(class = "section-title", "Testy formalne założeń regresji"),
 
     div(class = "widget-block",
       h4("Testy diagnostyczne"),
       fluidRow(
         column(4,
-          helpText("U\u017cywa modelu z widgetu powy\u017cej."),
-          actionButton("ch3_run_tests", "Uruchom diagnostyk\u0119",
+          helpText("Używa modelu z widgetu powyżej."),
+          actionButton("ch3_run_tests", "Uruchom diagnostykę",
                        class = "btn-primary", width = "100%")
         ),
         column(8,
@@ -84,32 +84,32 @@ ch3_ui <- tabPanel("3. Za\u0142o\u017cenia regresji",
     # ========================================================================
     # WIDGET 3: Alternatywy
     # ========================================================================
-    div(class = "section-title", "Gdy za\u0142o\u017cenia s\u0105 naruszone"),
+    div(class = "section-title", "Gdy założenia są naruszone"),
 
     div(class = "callout-success",
       tags$table(class = "table table-bordered", style = "font-size: 14px;",
         tags$thead(
-          tags$tr(tags$th("Naruszenie"), tags$th("Rozwi\u0105zanie"))
+          tags$tr(tags$th("Naruszenie"), tags$th("Rozwiązanie"))
         ),
         tags$tbody(
-          tags$tr(tags$td("Nieliniowo\u015b\u0107"),
-                  tags$td("Dodaj sk\u0142adnik kwadratowy, transformuj X, u\u017cyj GAM")),
-          tags$tr(tags$td("Heteroscedastyczno\u015b\u0107"),
-                  tags$td("Odporne b\u0142\u0119dy std. (HC), WLS, transformacja log(Y)")),
+          tags$tr(tags$td("Nieliniowość"),
+                  tags$td("Dodaj składnik kwadratowy, transformuj X, użyj GAM")),
+          tags$tr(tags$td("Heteroscedastyczność"),
+                  tags$td("Odporne błędy std. (HC), WLS, transformacja log(Y)")),
           tags$tr(tags$td("Nienormalne reszty"),
                   tags$td("Transformacja Y, bootstrap CI, GLM")),
           tags$tr(tags$td("Autokorelacja"),
-                  tags$td("Modele szereg\u00f3w czasowych (ARIMA), GLS")),
-          tags$tr(tags$td("Wsp\u00f3\u0142liniowo\u015b\u0107"),
-                  tags$td("Usu\u0144 skorelowane predyktory, PCA, regularyzacja (ridge/lasso)"))
+                  tags$td("Modele szeregów czasowych (ARIMA), GLS")),
+          tags$tr(tags$td("Współliniowość"),
+                  tags$td("Usuń skorelowane predyktory, PCA, regularyzacja (ridge/lasso)"))
         )
       )
     ),
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: za\u0142o\u017cenia test\u00f3w chi-kwadrat i Fishera"),
-      actionButton("ch3_next", "Dalej \u2192 4. Za\u0142o\u017cenia \u03c7\u00b2 i Fishera",
+      p("Dalej: założenia testów chi-kwadrat i Fishera"),
+      actionButton("ch3_next", "Dalej → 4. Założenia χ² i Fishera",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -197,15 +197,15 @@ ch3_server <- function(input, output, session) {
     dw <- lmtest::dwtest(model)
 
     results <- list(
-      list(name = "Normalno\u015b\u0107 reszt (Shapiro-Wilk)",
+      list(name = "Normalność reszt (Shapiro-Wilk)",
            stat = paste0("W = ", round(sw$statistic, 4)),
            p = sw$p,
            ok_msg = "Reszty normalne", fail_msg = "Reszty nienormalne!"),
-      list(name = "Homoscedastyczno\u015b\u0107 (Breusch-Pagan)",
+      list(name = "Homoscedastyczność (Breusch-Pagan)",
            stat = paste0("BP = ", round(bp$statistic, 3)),
            p = bp$p.value,
-           ok_msg = "Wariancja sta\u0142a", fail_msg = "Heteroscedastyczno\u015b\u0107!"),
-      list(name = "Niezale\u017cno\u015b\u0107 reszt (Durbin-Watson)",
+           ok_msg = "Wariancja stała", fail_msg = "Heteroscedastyczność!"),
+      list(name = "Niezależność reszt (Durbin-Watson)",
            stat = paste0("DW = ", round(dw$statistic, 3)),
            p = dw$p.value,
            ok_msg = "Brak autokorelacji", fail_msg = "Autokorelacja!")

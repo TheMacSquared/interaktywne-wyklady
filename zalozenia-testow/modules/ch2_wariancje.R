@@ -6,33 +6,33 @@ ch2_ui <- tabPanel("2. Jednorodne wariancje",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Normalno\u015b\u0107 to nie jedyne za\u0142o\u017cenie.
-       Wiele test\u00f3w por\u00f3wnawczych wymaga r\u00f3wnych wariancji mi\u0119dzy grupami."
+      "Normalność to nie jedyne założenie.
+       Wiele testów porównawczych wymaga równych wariancji między grupami."
     ),
 
-    div(class = "section-title", "Homoscedastyczno\u015b\u0107 \u2014 r\u00f3wne wariancje"),
+    div(class = "section-title", "Homoscedastyczność — równe wariancje"),
 
     div(class = "narrative",
-      p("Za\u0142o\u017cenie jednorodnych wariancji (homoscedastyczno\u015b\u0107) dotyczy:"),
+      p("Założenie jednorodnych wariancji (homoscedastyczność) dotyczy:"),
       tags$ul(
-        tags$li(tags$b("Test t niezale\u017cny"), " \u2014 wariancje w obu grupach powinny by\u0107 podobne"),
-        tags$li(tags$b("ANOVA"), " \u2014 wariancje we wszystkich grupach por\u00f3wnywalne"),
-        tags$li(tags$b("Regresja liniowa"), " \u2014 wariancja reszt sta\u0142a (homoscedastyczno\u015b\u0107 reszt)")
+        tags$li(tags$b("Test t niezależny"), " — wariancje w obu grupach powinny być podobne"),
+        tags$li(tags$b("ANOVA"), " — wariancje we wszystkich grupach porównywalne"),
+        tags$li(tags$b("Regresja liniowa"), " — wariancja reszt stała (homoscedastyczność reszt)")
       )
     ),
 
     # ========================================================================
     # WIDGET 1: Wizualizacja
     # ========================================================================
-    div(class = "section-title", "Jak wygl\u0105da naruszenie?"),
+    div(class = "section-title", "Jak wygląda naruszenie?"),
 
     div(class = "widget-block",
-      h4("Dwie grupy o r\u00f3\u017cnej wariancji"),
+      h4("Dwie grupy o różnej wariancji"),
       fluidRow(
         column(4,
           sliderInput("ch2_sd1", "SD grupy A:", min = 2, max = 30, value = 10, step = 1),
           sliderInput("ch2_sd2", "SD grupy B:", min = 2, max = 30, value = 10, step = 1),
-          sliderInput("ch2_n_per", "n (na grup\u0119):", min = 15, max = 100, value = 40, step = 5),
+          sliderInput("ch2_n_per", "n (na grupę):", min = 15, max = 100, value = 40, step = 5),
           actionButton("ch2_gen", "Generuj dane",
                        class = "btn-primary", width = "100%")
         ),
@@ -51,17 +51,17 @@ ch2_ui <- tabPanel("2. Jednorodne wariancje",
     div(class = "narrative",
       p("Dwa popularne testy:"),
       tags$ul(
-        tags$li(tags$b("Test Levene'a"), " \u2014 odporny na naruszenie normalno\u015bci, zalecany"),
-        tags$li(tags$b("Test Bartletta"), " \u2014 mocniejszy, ale wra\u017cliwy na brak normalno\u015bci")
+        tags$li(tags$b("Test Levene'a"), " — odporny na naruszenie normalności, zalecany"),
+        tags$li(tags$b("Test Bartletta"), " — mocniejszy, ale wrażliwy na brak normalności")
       ),
-      p(withMathJax("\\(H_0\\)"), ": wariancje s\u0105 r\u00f3wne we wszystkich grupach.")
+      p(withMathJax("\\(H_0\\)"), ": wariancje są równe we wszystkich grupach.")
     ),
 
     div(class = "widget-block",
       h4("Levene i Bartlett"),
       fluidRow(
         column(4,
-          helpText("U\u017cywa danych z widgetu powy\u017cej."),
+          helpText("Używa danych z widgetu powyżej."),
           actionButton("ch2_test_var", "Testuj",
                        class = "btn-primary", width = "100%")
         ),
@@ -74,16 +74,16 @@ ch2_ui <- tabPanel("2. Jednorodne wariancje",
     # ========================================================================
     # WIDGET 3: Co robic?
     # ========================================================================
-    div(class = "section-title", "Gdy wariancje s\u0105 nier\u00f3wne"),
+    div(class = "section-title", "Gdy wariancje są nierówne"),
 
     div(class = "narrative",
       p("Opcje:"),
       tags$ol(
-        tags$li(tags$b("Test t Welcha"), " \u2014 domy\u015blny w R! Nie zak\u0142ada r\u00f3wnych wariancji.
-                 W praktyce zawsze mo\u017cna u\u017cywa\u0107 Welcha zamiast klasycznego t."),
-        tags$li(tags$b("Mann-Whitney U"), " \u2014 nieparametryczny, nie zak\u0142ada r\u00f3wnych wariancji"),
-        tags$li(tags$b("ANOVA Welcha"), " \u2014 odpowiednik dla 3+ grup (", tags$code("oneway.test()"), ")"),
-        tags$li(tags$b("Regresja: odporne b\u0142\u0119dy std."), " \u2014 ",
+        tags$li(tags$b("Test t Welcha"), " — domyślny w R! Nie zakłada równych wariancji.
+                 W praktyce zawsze można używać Welcha zamiast klasycznego t."),
+        tags$li(tags$b("Mann-Whitney U"), " — nieparametryczny, nie zakłada równych wariancji"),
+        tags$li(tags$b("ANOVA Welcha"), " — odpowiednik dla 3+ grup (", tags$code("oneway.test()"), ")"),
+        tags$li(tags$b("Regresja: odporne błędy std."), " — ",
                 tags$code("sandwich::vcovHC()"), " + ", tags$code("lmtest::coeftest()"))
       )
     ),
@@ -92,9 +92,9 @@ ch2_ui <- tabPanel("2. Jednorodne wariancje",
       h4("Test t klasyczny vs Welcha"),
       fluidRow(
         column(4,
-          helpText("Por\u00f3wnanie wyniku: klasyczny test t (zak\u0142ada r\u00f3wne wariancje)
-                    vs test Welcha (nie zak\u0142ada)."),
-          actionButton("ch2_compare_t", "Por\u00f3wnaj testy",
+          helpText("Porównanie wyniku: klasyczny test t (zakłada równe wariancje)
+                    vs test Welcha (nie zakłada)."),
+          actionButton("ch2_compare_t", "Porównaj testy",
                        class = "btn-warning", width = "100%")
         ),
         column(8,
@@ -105,15 +105,15 @@ ch2_ui <- tabPanel("2. Jednorodne wariancje",
 
     div(class = "callout-success",
       tags$strong("Praktyczna rada:"),
-      " Zawsze u\u017cywaj testu Welcha (", tags$code("t.test(var.equal = FALSE)"),
-      ") \u2014 to domy\u015blne zachowanie w R. Klasyczny test t z r\u00f3wnymi wariancjami
-        ma sens tylko gdy masz pewno\u015b\u0107, \u017ce wariancje s\u0105 r\u00f3wne."
+      " Zawsze używaj testu Welcha (", tags$code("t.test(var.equal = FALSE)"),
+      ") — to domyślne zachowanie w R. Klasyczny test t z równymi wariancjami
+        ma sens tylko gdy masz pewność, że wariancje są równe."
     ),
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: za\u0142o\u017cenia regresji"),
-      actionButton("ch2_next", "Dalej \u2192 3. Za\u0142o\u017cenia regresji",
+      p("Dalej: założenia regresji"),
+      actionButton("ch2_next", "Dalej → 3. Założenia regresji",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -146,7 +146,7 @@ ch2_server <- function(input, output, session) {
         geom_boxplot(alpha = 0.6) +
         geom_jitter(width = 0.15, alpha = 0.3) +
         scale_fill_manual(values = c(col_test, col_alt)) +
-        labs(title = "Dwie grupy", x = "Grupa", y = "Warto\u015b\u0107") +
+        labs(title = "Dwie grupy", x = "Grupa", y = "Wartość") +
         theme_educational() +
         theme(legend.position = "none")
     }
@@ -189,14 +189,14 @@ ch2_server <- function(input, output, session) {
           p(paste0("F = ", round(lev$statistic, 3))),
           p(paste0("p = ", format.pval(lev$p, digits = 4))),
           p(style = paste0("color:", lev_color, "; font-weight: bold;"),
-            if (lev$p >= 0.05) "Wariancje jednorodne" else "Wariancje nier\u00f3wne!")
+            if (lev$p >= 0.05) "Wariancje jednorodne" else "Wariancje nierówne!")
         ),
         column(6,
           p(tags$strong("Test Bartletta:")),
-          p(paste0("\u03c7\u00b2 = ", round(bart$statistic, 3))),
+          p(paste0("χ² = ", round(bart$statistic, 3))),
           p(paste0("p = ", format.pval(bart$p.value, digits = 4))),
           p(style = paste0("color:", bart_color, "; font-weight: bold;"),
-            if (bart$p.value >= 0.05) "Wariancje jednorodne" else "Wariancje nier\u00f3wne!")
+            if (bart$p.value >= 0.05) "Wariancje jednorodne" else "Wariancje nierówne!")
         )
       )
     )
@@ -227,7 +227,7 @@ ch2_server <- function(input, output, session) {
         )
       ),
       p(style = "margin-top: 10px;",
-        tags$em("Przy nier\u00f3wnych wariancjach wyniki mog\u0105 si\u0119 r\u00f3\u017cni\u0107.
+        tags$em("Przy nierównych wariancjach wyniki mogą się różnić.
                  Welch jest bezpieczniejszy."))
     )
   })

@@ -49,8 +49,8 @@ generate_reg_violations <- function(n = 100, violation = "none") {
 # Nazwy rozkladow
 dist_names_pl <- c(
   "normal"     = "Normalny",
-  "skewed"     = "Prawosko\u015bny (Gamma)",
-  "heavy_tail" = "Ci\u0119\u017ckie ogony (t)",
+  "skewed"     = "Prawoskośny (Gamma)",
+  "heavy_tail" = "Ciężkie ogony (t)",
   "bimodal"    = "Dwumodalny",
   "uniform"    = "Jednostajny"
 )
