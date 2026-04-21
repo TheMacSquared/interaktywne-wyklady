@@ -6,45 +6,45 @@ ch3_ui <- tabPanel("3. HDI vs CI",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "BF vs p-value porównali\u015bmy.
-       Teraz dwa rodzaje przedzia\u0142\u00f3w: cz\u0119sto\u015bciowy CI i bayesowski HDI."
+      "BF vs p-value porównaliśmy.
+       Teraz dwa rodzaje przedziałów: częstościowy CI i bayesowski HDI."
     ),
 
-    div(class = "section-title", "CI i HDI maj\u0105 t\u0119 sam\u0105 nazw\u0119, inne znaczenie"),
+    div(class = "section-title", "CI i HDI mają tę samą nazwę, inne znaczenie"),
 
     div(class = "narrative",
-      p(tags$b("Cz\u0119sto\u015bciowy 95% CI:"),
-         " je\u015bli powt\u00f3rzymy eksperyment bardzo wiele razy, to 95% tak skonstruowanych przedzia\u0142\u00f3w
-         pokryje prawdziwy parametr. O ", tags$em("tym konkretnym"), " przedziale nie mo\u017cemy tak powiedzie\u0107 \u2014
-         on albo obejmuje prawd\u0119, albo nie."),
+      p(tags$b("Częstościowy 95% CI:"),
+         " jeśli powtórzymy eksperyment bardzo wiele razy, to 95% tak skonstruowanych przedziałów
+         pokryje prawdziwy parametr. O ", tags$em("tym konkretnym"), " przedziale nie możemy tak powiedzieć —
+         on albo obejmuje prawdę, albo nie."),
       p(tags$b("Bayesowski 95% HDI"), " (Highest Density Interval):
-         z prawdopodobie\u0144stwem 95% parametr le\u017cy w tym przedziale (warunkowo na danych i priorze).
+         z prawdopodobieństwem 95% parametr leży w tym przedziale (warunkowo na danych i priorze).
          To jest stwierdzenie o ", tags$em("tym konkretnym"), " przedziale.")
     ),
 
     div(class = "callout-warning",
-      tags$b("Pu\u0142apka j\u0119zykowa:"),
-      " studenci cz\u0119sto m\u00f3wi\u0105 o CI to, co jest prawd\u0105 o HDI (\u201edaj\u0119 95% pewno\u015bci, \u017ce
-       \u03bc jest tu\u201f). To cz\u0119sty b\u0142\u0105d interpretacyjny w cz\u0119sto\u015bciowej statystyce,
-       kt\u00f3ry w bayesowskim \u015bwiecie po prostu ", tags$em("jest prawdziwy"), "."
+      tags$b("Pułapka językowa:"),
+      " studenci często mówią o CI to, co jest prawdą o HDI („daję 95% pewności, że
+       μ jest tu‟). To częsty błąd interpretacyjny w częstościowej statystyce,
+       który w bayesowskim świecie po prostu ", tags$em("jest prawdziwy"), "."
     ),
 
     div(class = "section-title", "Pokaz na jednej próbie"),
 
     div(class = "widget-block",
-      h4("Te same dane, dwa rodzaje przedzia\u0142\u00f3w"),
+      h4("Te same dane, dwa rodzaje przedziałów"),
       fluidRow(column(12,
         fluidRow(
           column(4,
             sliderInput("ch3_n", "n:", min = 5, max = 200, value = 30, step = 5)
           ),
           column(4,
-            sliderInput("ch3_true_mu", "Prawdziwe \u03bc:",
+            sliderInput("ch3_true_mu", "Prawdziwe μ:",
                         min = -1, max = 2, value = 0.5, step = 0.1)
           ),
           column(4,
             br(),
-            actionButton("ch3_draw", "\u21bb Nowa pr\u00f3ba",
+            actionButton("ch3_draw", "↻ Nowa próba",
                          class = "btn-primary", width = "100%")
           )
         )
@@ -53,7 +53,7 @@ ch3_ui <- tabPanel("3. HDI vs CI",
       fluidRow(
         column(6,
           div(class = "panel-frequentist",
-            h5("95% CI (cz\u0119sto\u015bciowy)"),
+            h5("95% CI (częstościowy)"),
             plotOutput("ch3_freq_plot", height = "280px"),
             uiOutput("ch3_freq_result")
           )
@@ -72,20 +72,20 @@ ch3_ui <- tabPanel("3. HDI vs CI",
       )
     ),
 
-    div(class = "section-title", "Kiedy CI \u2248 HDI?"),
+    div(class = "section-title", "Kiedy CI ≈ HDI?"),
 
     div(class = "narrative",
-      p("Przy ", tags$b("nieinformatywnym priorze"), " i ", tags$b("du\u017cej pr\u00f3bie"),
-         " oba przedzia\u0142y s\u0105 niemal identyczne numerycznie \u2014 ale interpretacja zostaje r\u00f3\u017cna."),
-      p("Gdy prior jest silny lub pr\u00f3ba ma\u0142a, HDI \u201e\u015bci\u0105ga\u201f si\u0119 w stron\u0119 priora,
-         a CI pozostaje oparty wy\u0142\u0105cznie na danych.")
+      p("Przy ", tags$b("nieinformatywnym priorze"), " i ", tags$b("dużej próbie"),
+         " oba przedziały są niemal identyczne numerycznie — ale interpretacja zostaje różna."),
+      p("Gdy prior jest silny lub próba mała, HDI „ściąga‟ się w stronę priora,
+         a CI pozostaje oparty wyłącznie na danych.")
     ),
 
     div(class = "chapter-transition",
-      p("Teorii wystarczy. Wchodzimy w konkret \u2014 te same zastosowania, co we wnioskowaniu,
+      p("Teorii wystarczy. Wchodzimy w konkret — te same zastosowania, co we wnioskowaniu,
          ale z bayesowskim odpowiednikiem obok."),
       actionButton("ch3_next",
-                   "Dalej: Jedna pr\u00f3ba \u2192",
+                   "Dalej: Jedna próba →",
                    class = "btn-primary btn-lg")
     )
 
@@ -134,8 +134,8 @@ ch3_server <- function(input, output, session) {
       annotate("text", x = ci[2], y = Inf, label = round(ci[2], 2),
                vjust = -0.3, hjust = -0.1, color = col_frequentist, size = 3.5) +
       labs(title = "Dane + 95% CI (t-Studenta)",
-           subtitle = "Przedzia\u0142 zbudowany metod\u0105, kt\u00f3ra w 95% przypadk\u00f3w pokrywa prawd\u0119",
-           x = "Warto\u015b\u0107", y = "Liczno\u015b\u0107") +
+           subtitle = "Przedział zbudowany metodą, która w 95% przypadków pokrywa prawdę",
+           x = "Wartość", y = "Liczność") +
       theme_educational()
   })
 
@@ -143,10 +143,10 @@ ch3_server <- function(input, output, session) {
     r <- bf_result()
     ci <- r$ci_freq
     div(class = "callout-info",
-      tags$b("\u015arednia pr\u00f3by: "), round(r$mean_x, 3), tags$br(),
+      tags$b("Średnia próby: "), round(r$mean_x, 3), tags$br(),
       tags$b("95% CI: "), "[", round(ci[1], 3), ", ", round(ci[2], 3), "]", tags$br(),
-      tags$em("Interpretacja: je\u015bli powt\u00f3rzymy eksperyment wiele razy,
-               95% takich przedzia\u0142\u00f3w pokryje \u03bc.")
+      tags$em("Interpretacja: jeśli powtórzymy eksperyment wiele razy,
+               95% takich przedziałów pokryje μ.")
     )
   })
 
@@ -157,8 +157,8 @@ ch3_server <- function(input, output, session) {
       r$posterior_mu,
       hdi = r$hdi,
       ref_value = 0,
-      x_label = "\u03bc (posterior)",
-      title = "Posterior dla \u03bc + 95% HDI",
+      x_label = "μ (posterior)",
+      title = "Posterior dla μ + 95% HDI",
       col_posterior = col_posterior,
       col_hdi = col_hdi
     )
@@ -171,8 +171,8 @@ ch3_server <- function(input, output, session) {
       tags$b("Mediana posterior: "), round(r$posterior_median, 3), tags$br(),
       tags$b("95% HDI: "), "[", round(hdi["lower"], 3), ", ",
       round(hdi["upper"], 3), "]", tags$br(),
-      tags$em("Interpretacja: przy danych i priorze z prawdopodobie\u0144stwem 95%
-               \u03bc le\u017cy w tym przedziale.")
+      tags$em("Interpretacja: przy danych i priorze z prawdopodobieństwem 95%
+               μ leży w tym przedziale.")
     )
   })
 
@@ -182,13 +182,13 @@ ch3_server <- function(input, output, session) {
     hdi_width <- r$hdi["upper"] - r$hdi["lower"]
     ratio <- hdi_width / ci_width
     tagList(
-      tags$b("Por\u00f3wnanie szeroko\u015bci: "),
+      tags$b("Porównanie szerokości: "),
       "CI = ", round(ci_width, 3),
       "  |  HDI = ", round(hdi_width, 3),
       "  |  stosunek HDI/CI = ", round(ratio, 2),
       tags$br(),
-      tags$em("Przy nieinformatywnym priorze i dostatecznie du\u017cej pr\u00f3bie te dwa przedzia\u0142y
-               s\u0105 niemal to\u017csame numerycznie \u2014 r\u00f3\u017cni\u0105 si\u0119 tylko interpretacj\u0105.")
+      tags$em("Przy nieinformatywnym priorze i dostatecznie dużej próbie te dwa przedziały
+               są niemal tożsame numerycznie — różnią się tylko interpretacją.")
     )
   })
 }

@@ -114,13 +114,13 @@ server <- function(input, output, session) {
 
   # NAWIGACJA MIEDZY ROZDZIALAMI
   observeEvent(input$ch1_next, {
-    updateNavbarPage(session, "main_nav", selected = "2. BF vs p-warto\u015b\u0107")
+    updateNavbarPage(session, "main_nav", selected = "2. BF vs p-wartość")
   })
   observeEvent(input$ch2_next, {
     updateNavbarPage(session, "main_nav", selected = "3. HDI vs CI")
   })
   observeEvent(input$ch3_next, {
-    updateNavbarPage(session, "main_nav", selected = "4. Jedna pr\u00f3ba")
+    updateNavbarPage(session, "main_nav", selected = "4. Jedna próba")
   })
   observeEvent(input$ch4_next, {
     updateNavbarPage(session, "main_nav", selected = "5. Dwie grupy")
@@ -129,7 +129,7 @@ server <- function(input, output, session) {
     updateNavbarPage(session, "main_nav", selected = "6. ANOVA")
   })
   observeEvent(input$ch6_next, {
-    updateNavbarPage(session, "main_nav", selected = "7. Tabele krzy\u017cowe")
+    updateNavbarPage(session, "main_nav", selected = "7. Tabele krzyżowe")
   })
   observeEvent(input$ch7_next, {
     updateNavbarPage(session, "main_nav", selected = "8. Korelacja")
@@ -141,10 +141,10 @@ server <- function(input, output, session) {
     updateNavbarPage(session, "main_nav", selected = "10. Regresja logistyczna")
   })
   observeEvent(input$ch10_next, {
-    updateNavbarPage(session, "main_nav", selected = "11. \u015aci\u0105ga")
+    updateNavbarPage(session, "main_nav", selected = "11. Ściąga")
   })
   observeEvent(input$ch11_to_ch12, {
-    updateNavbarPage(session, "main_nav", selected = "12. \u0106wiczenia")
+    updateNavbarPage(session, "main_nav", selected = "12. Ćwiczenia")
   })
 
   # CHAPTER SERVERS

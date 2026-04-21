@@ -363,7 +363,7 @@ plot_contingency_table <- function(observed, title = "Tabela 2x2 (obserwowane)",
     geom_text(aes(label = count), position = position_dodge(width = 0.9),
               vjust = -0.3, size = 4, fontface = "bold") +
     scale_fill_manual(values = c(col_a, col_b), name = NULL) +
-    labs(title = title, x = NULL, y = "Liczno\u015b\u0107") +
+    labs(title = title, x = NULL, y = "Liczność") +
     theme_educational() +
     theme(legend.position = "top")
 }
@@ -398,7 +398,7 @@ plot_posterior_or <- function(post_or_result,
                         "  |  95% HDI OR: [",
                         round(post_or_result$or_hdi["lower"], 2), ", ",
                         round(post_or_result$or_hdi["upper"], 2), "]"),
-      y = "G\u0119sto\u015b\u0107"
+      y = "Gęstość"
     ) +
     theme_educational()
 }
@@ -520,12 +520,12 @@ interpret_bf <- function(bf) {
   # Wartosci odnosza sie do log10(BF) wg Jeffreysa; podajemy w skali BF
   if (bf < 1) {
     inv <- 1 / bf
-    dir <- "dla H\u2080"
+    dir <- "dla H₀"
   } else {
     inv <- bf
-    dir <- "dla H\u2081"
+    dir <- "dla H₁"
   }
-  level <- if (inv < 3) "anekdotyczny (s\u0142aby)"
+  level <- if (inv < 3) "anekdotyczny (słaby)"
            else if (inv < 10) "umiarkowany"
            else if (inv < 30) "silny"
            else if (inv < 100) "bardzo silny"
@@ -535,13 +535,13 @@ interpret_bf <- function(bf) {
     bf_inv        = inv,
     direction     = dir,
     level         = level,
-    short_summary = paste0(level, " dow\u00f3d ", dir)
+    short_summary = paste0(level, " dowód ", dir)
   )
 }
 
-# Formatowanie liczby BF do wy\u015bwietlenia
+# Formatowanie liczby BF do wyświetlenia
 format_bf <- function(bf) {
-  if (!is.finite(bf)) return("\u221e")
+  if (!is.finite(bf)) return("∞")
   if (bf >= 1000) return(format(bf, digits = 3, scientific = TRUE))
   if (bf >= 10)   return(format(round(bf, 1), nsmall = 1))
   if (bf >= 0.01) return(format(round(bf, 3), nsmall = 3))
@@ -556,15 +556,15 @@ format_pval_pl <- function(p, alpha = 0.05) {
   p_txt <- if (p < 0.001) "p < 0.001" else paste0("p = ", round(p, 4))
   if (p < alpha) {
     list(
-      decision    = paste0(p_txt, " \u2014 odrzucamy H\u2080 (\u03b1 = ", alpha, ")"),
+      decision    = paste0(p_txt, " — odrzucamy H₀ (α = ", alpha, ")"),
       color       = "#27ae60",
       explanation = "Wynik jest istotny statystycznie."
     )
   } else {
     list(
-      decision    = paste0(p_txt, " \u2014 brak podstaw do odrzucenia H\u2080"),
+      decision    = paste0(p_txt, " — brak podstaw do odrzucenia H₀"),
       color       = "#e74c3c",
-      explanation = "Brak istotno\u015bci statystycznej."
+      explanation = "Brak istotności statystycznej."
     )
   }
 }
@@ -574,7 +574,7 @@ format_pval_pl <- function(p, alpha = 0.05) {
 # ============================================================================
 
 # Prior, likelihood, posterior na jednej osi (ch1)
-plot_prior_likelihood_posterior <- function(df, theta_label = "\u03b8",
+plot_prior_likelihood_posterior <- function(df, theta_label = "θ",
                                              show_prior = TRUE,
                                              show_likelihood = TRUE,
                                              show_posterior = TRUE) {
@@ -604,9 +604,9 @@ plot_prior_likelihood_posterior <- function(df, theta_label = "\u03b8",
                                   "Posterior" = "#9b59b6"),
                       name = NULL) +
     labs(
-      title = "Prior \u2192 Likelihood \u2192 Posterior",
+      title = "Prior → Likelihood → Posterior",
       x = theta_label,
-      y = "G\u0119sto\u015b\u0107 (znormalizowana)"
+      y = "Gęstość (znormalizowana)"
     ) +
     theme_educational() +
     theme(legend.position = "top")
@@ -614,8 +614,8 @@ plot_prior_likelihood_posterior <- function(df, theta_label = "\u03b8",
 
 # Posterior z HDI i punktem odniesienia (0 lub mu0)
 plot_posterior_density <- function(samples, hdi, ref_value = 0,
-                                    x_label = "Warto\u015b\u0107 parametru",
-                                    title = "Rozk\u0142ad a posteriori",
+                                    x_label = "Wartość parametru",
+                                    title = "Rozkład a posteriori",
                                     col_posterior = "#9b59b6",
                                     col_hdi = "#f39c12") {
   df <- data.frame(x = samples)
@@ -640,7 +640,7 @@ plot_posterior_density <- function(samples, hdi, ref_value = 0,
       title    = title,
       subtitle = paste0("95% HDI: [", round(hdi["lower"], 2),
                         ", ", round(hdi["upper"], 2), "]"),
-      x = x_label, y = "G\u0119sto\u015b\u0107"
+      x = x_label, y = "Gęstość"
     ) +
     theme_educational()
 }
@@ -674,12 +674,12 @@ plot_bf_scale <- function(bf) {
     scale_fill_identity() +
     geom_vline(xintercept = bf_log, color = "#c0392b", linewidth = 2) +
     annotate("text", x = bf_log, y = 1.35,
-             label = paste0("BF\u2081\u2080 = ", format_bf(bf)),
+             label = paste0("BF₁₀ = ", format_bf(bf)),
              color = "#c0392b", fontface = "bold", size = 5) +
     geom_text(data = labels_df, aes(x = x, y = -0.25, label = label), size = 3.3) +
-    annotate("text", x = -1.5, y = 0.5, label = "dla H\u2080",
+    annotate("text", x = -1.5, y = 0.5, label = "dla H₀",
              color = "white", fontface = "bold", size = 4) +
-    annotate("text", x = 1.5, y = 0.5, label = "dla H\u2081",
+    annotate("text", x = 1.5, y = 0.5, label = "dla H₁",
              color = "white", fontface = "bold", size = 4) +
     scale_x_continuous(limits = c(-2.7, 2.7), breaks = NULL) +
     scale_y_continuous(limits = c(-0.5, 1.6), breaks = NULL) +
@@ -701,16 +701,16 @@ plot_sample_data <- function(x, mu0 = NULL, mean_obs = NULL,
     geom_vline(xintercept = mean_x, color = "#2c3e50",
                linewidth = 1.3, linetype = "solid") +
     annotate("text", x = mean_x, y = Inf,
-             label = paste0("\u0078\u0304 = ", round(mean_x, 2)),
+             label = paste0("x̄ = ", round(mean_x, 2)),
              vjust = -0.3, hjust = -0.1, color = "#2c3e50", size = 4) +
-    labs(title = title, x = "Warto\u015b\u0107", y = "Liczno\u015b\u0107") +
+    labs(title = title, x = "Wartość", y = "Liczność") +
     theme_educational()
 
   if (!is.null(mu0)) {
     p <- p + geom_vline(xintercept = mu0, color = col_freq,
                          linewidth = 1.2, linetype = "dashed") +
       annotate("text", x = mu0, y = Inf,
-               label = paste0("\u03bc\u2080 = ", round(mu0, 2)),
+               label = paste0("μ₀ = ", round(mu0, 2)),
                vjust = -1.5, hjust = -0.1, color = col_freq, size = 4)
   }
   p
@@ -725,7 +725,7 @@ plot_two_groups_box <- function(data, col_a = "#3498db", col_b = "#e67e22",
     geom_boxplot(alpha = 0.55, width = 0.5, outlier.shape = NA) +
     scale_fill_manual(values = c(col_a, col_b), guide = "none") +
     scale_color_manual(values = c(col_a, col_b), guide = "none") +
-    labs(title = title, x = "Grupa", y = "Warto\u015b\u0107") +
+    labs(title = title, x = "Grupa", y = "Wartość") +
     theme_educational()
 }
 
@@ -752,7 +752,7 @@ plot_coef_forest <- function(coefs_df, paradigm_label,
     coefs_df <- coefs_df[!grepl("(Intercept)", coefs_df$term), , drop = FALSE]
   }
   coefs_df$term <- factor(coefs_df$term, levels = rev(coefs_df$term))
-  col_use <- if (paradigm_label == "Cz\u0119sto\u015bciowo") col_freq else col_bayes
+  col_use <- if (paradigm_label == "Częstościowo") col_freq else col_bayes
 
   ggplot(coefs_df, aes(y = term)) +
     geom_vline(xintercept = 0, color = "#2c3e50",
@@ -765,7 +765,7 @@ plot_coef_forest <- function(coefs_df, paradigm_label,
                                   " [", round(lower, 2), ", ",
                                   round(upper, 2), "]")),
                vjust = -0.8, size = 3.2, color = "#2c3e50") +
-    labs(title = paradigm_label, x = "Wsp\u00f3\u0142czynnik", y = NULL) +
+    labs(title = paradigm_label, x = "Współczynnik", y = NULL) +
     theme_educational()
 }
 

@@ -6,23 +6,23 @@ ch9_ui <- tabPanel("9. Regresja liniowa",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Zamiast jednej liczby (r) albo \u015bredniej \u2014 model:
-       y = \u03b2\u2080 + \u03b2\u2081 x + \u03b5. Kt\u00f3re \u03b2 s\u0105 istotne? Jakie maj\u0105 warto\u015bci?"
+      "Zamiast jednej liczby (r) albo średniej — model:
+       y = β₀ + β₁ x + ε. Które β są istotne? Jakie mają wartości?"
     ),
 
     div(class = "section-title", "lm() vs stan_glm()"),
 
     div(class = "narrative",
-      p(tags$b("Cz\u0119sto\u015bciowo: "), "lm(y ~ x) estymuje \u03b2 metod\u0105 najmniejszych kwadrat\u00f3w,
-         zwraca p-warto\u015bci dla ka\u017cdego wsp\u00f3\u0142czynnika i 95% CI."),
-      p(tags$b("Bayesowsko: "), "stan_glm(y ~ x, family = gaussian) pr\u00f3bkuje posterior
-         dla ka\u017cdego \u03b2. Dostajemy median\u0119 + 95% HDI \u2014 plausible range dla si\u0142y efektu.")
+      p(tags$b("Częstościowo: "), "lm(y ~ x) estymuje β metodą najmniejszych kwadratów,
+         zwraca p-wartości dla każdego współczynnika i 95% CI."),
+      p(tags$b("Bayesowsko: "), "stan_glm(y ~ x, family = gaussian) próbkuje posterior
+         dla każdego β. Dostajemy medianę + 95% HDI — plausible range dla siły efektu.")
     ),
 
     div(class = "callout-warning",
-      tags$b("Uwaga wydajno\u015bciowa: "),
-      "stan_glm uruchamia sampler MCMC \u2014 pierwszy fit trwa 5-15 sekund.
-       Kolejne fitowania tego samego modelu s\u0105 szybsze dzi\u0119ki cache."
+      tags$b("Uwaga wydajnościowa: "),
+      "stan_glm uruchamia sampler MCMC — pierwszy fit trwa 5-15 sekund.
+       Kolejne fitowania tego samego modelu są szybsze dzięki cache."
     ),
 
     div(class = "widget-block",
@@ -35,7 +35,7 @@ ch9_ui <- tabPanel("9. Regresja liniowa",
                         min = 20, max = 200, value = 50, step = 10)
           ),
           column(3,
-            sliderInput("ch9_slope", "Prawdziwy \u03b2\u2081 (nachylenie):",
+            sliderInput("ch9_slope", "Prawdziwy β₁ (nachylenie):",
                         min = -3, max = 3, value = 1.2, step = 0.1)
           ),
           column(3,
@@ -50,7 +50,7 @@ ch9_ui <- tabPanel("9. Regresja liniowa",
         ),
         fluidRow(
           column(12,
-            actionButton("ch9_draw", "\u21bb Nowa pr\u00f3ba",
+            actionButton("ch9_draw", "↻ Nowa próba",
                          class = "btn-primary", width = "200px"),
             actionButton("ch9_fit", "Dopasuj modele",
                          class = "btn-success", width = "200px")
@@ -64,14 +64,14 @@ ch9_ui <- tabPanel("9. Regresja liniowa",
       fluidRow(
         column(6,
           div(class = "panel-frequentist",
-            h5("lm() \u2014 estymator OLS"),
+            h5("lm() — estymator OLS"),
             plotOutput("ch9_freq_forest", height = "180px"),
             uiOutput("ch9_freq_result")
           )
         ),
         column(6,
           div(class = "panel-bayesian",
-            h5("stan_glm() \u2014 posterior \u03b2"),
+            h5("stan_glm() — posterior β"),
             plotOutput("ch9_bayes_forest", height = "180px"),
             uiOutput("ch9_bayes_result")
           )
@@ -83,22 +83,22 @@ ch9_ui <- tabPanel("9. Regresja liniowa",
       )
     ),
 
-    div(class = "section-title", "Wp\u0142yw priora na estymacj\u0119"),
+    div(class = "section-title", "Wpływ priora na estymację"),
 
     div(class = "narrative",
-      p("Suwak \u201eSkala priora\u201f kontroluje, jak \u201eoptymistyczny\u201f jest prior.
-         Ma\u0142e warto\u015bci (np. 0.5) \u201e\u015bci\u0105gaj\u0105\u201f \u03b2 w kierunku zera
-         \u2014 to ", tags$em("regularyzacja"), " bayesowska.
-         Du\u017ce warto\u015bci (np. 10) \u2014 prior niemal nieinformatywny, wyniki podobne do lm()."),
-      p("Dla ma\u0142ych pr\u00f3b i podejrzanie du\u017cych efekt\u00f3w regularyzacja jest zdrowa \u2014
-         chroni przed nadinterpretacj\u0105 losowego szumu jako efektu.")
+      p("Suwak „Skala priora‟ kontroluje, jak „optymistyczny‟ jest prior.
+         Małe wartości (np. 0.5) „ściągają‟ β w kierunku zera
+         — to ", tags$em("regularyzacja"), " bayesowska.
+         Duże wartości (np. 10) — prior niemal nieinformatywny, wyniki podobne do lm()."),
+      p("Dla małych prób i podejrzanie dużych efektów regularyzacja jest zdrowa —
+         chroni przed nadinterpretacją losowego szumu jako efektu.")
     ),
 
     div(class = "chapter-transition",
-      p("Regresja liniowa do odpowiedzi ilo\u015bciowych.
-         A dla binarnej odpowiedzi \u2014 regresja logistyczna."),
+      p("Regresja liniowa do odpowiedzi ilościowych.
+         A dla binarnej odpowiedzi — regresja logistyczna."),
       actionButton("ch9_next",
-                   "Dalej: Regresja logistyczna \u2192",
+                   "Dalej: Regresja logistyczna →",
                    class = "btn-primary btn-lg")
     )
 
@@ -158,10 +158,10 @@ ch9_server <- function(input, output, session) {
     r <- fit_result()
     if (is.null(r)) {
       return(ggplot() + annotate("text", x = 0, y = 0,
-        label = "Kliknij \u201eDopasuj modele\u201f \u2192") +
+        label = "Kliknij „Dopasuj modele‟ →") +
         theme_void())
     }
-    plot_coef_forest(r$freq_coefs, "Cz\u0119sto\u015bciowo",
+    plot_coef_forest(r$freq_coefs, "Częstościowo",
                      col_freq = col_frequentist,
                      col_bayes = col_bayesian)
   })
@@ -169,17 +169,17 @@ ch9_server <- function(input, output, session) {
   output$ch9_freq_result <- renderUI({
     r <- fit_result()
     if (is.null(r)) return(div(class = "callout-warning",
-                                 "Brak wynik\u00f3w \u2014 kliknij \u201eDopasuj modele\u201f."))
+                                 "Brak wyników — kliknij „Dopasuj modele‟."))
     fc <- r$freq_coefs
     slope_row <- fc[fc$term == "x", ]
     div(class = "callout-info",
-      tags$b("Intercept (\u03b2\u2080): "), round(fc$estimate[1], 3),
+      tags$b("Intercept (β₀): "), round(fc$estimate[1], 3),
       "  95% CI: [", round(fc$lower[1], 3), ", ",
       round(fc$upper[1], 3), "]", tags$br(),
-      tags$b("Slope (\u03b2\u2081): "), round(slope_row$estimate, 3),
+      tags$b("Slope (β₁): "), round(slope_row$estimate, 3),
       "  95% CI: [", round(slope_row$lower, 3), ", ",
       round(slope_row$upper, 3), "]", tags$br(),
-      tags$b("R\u00b2: "), round(r$r_squared, 3)
+      tags$b("R²: "), round(r$r_squared, 3)
     )
   })
 
@@ -200,13 +200,13 @@ ch9_server <- function(input, output, session) {
     post_slope <- r$posterior[, "x"]
     prob_positive <- mean(post_slope > 0)
     div(class = "callout-info",
-      tags$b("Intercept (\u03b2\u2080): "), round(bc$estimate[1], 3),
+      tags$b("Intercept (β₀): "), round(bc$estimate[1], 3),
       "  95% HDI: [", round(bc$lower[1], 3), ", ",
       round(bc$upper[1], 3), "]", tags$br(),
-      tags$b("Slope (\u03b2\u2081): "), round(slope_row$estimate, 3),
+      tags$b("Slope (β₁): "), round(slope_row$estimate, 3),
       "  95% HDI: [", round(slope_row$lower, 3), ", ",
       round(slope_row$upper, 3), "]", tags$br(),
-      tags$b("P(\u03b2\u2081 > 0 | dane) = "),
+      tags$b("P(β₁ > 0 | dane) = "),
       paste0(round(prob_positive * 100, 1), "%")
     )
   })
@@ -215,24 +215,24 @@ ch9_server <- function(input, output, session) {
     r <- fit_result()
     if (is.null(r)) return(tagList(
       tags$b("Oczekuje na fit..."), tags$br(),
-      "Po klikni\u0119ciu \u201eDopasuj modele\u201f zobaczysz forest plot
-       wsp\u00f3\u0142czynnik\u00f3w w obu paradygmatach."
+      "Po kliknięciu „Dopasuj modele‟ zobaczysz forest plot
+       współczynników w obu paradygmatach."
     ))
     fc_slope <- r$freq_coefs[r$freq_coefs$term == "x", ]
     bc_slope <- r$bayes_coefs[r$bayes_coefs$term == "x", ]
     diff <- abs(fc_slope$estimate - bc_slope$estimate)
     pct_diff <- 100 * diff / abs(fc_slope$estimate)
-    closeness <- if (pct_diff < 3) "niemal to\u017csame"
-                 else if (pct_diff < 10) "bardzo zbli\u017cone"
-                 else "wyra\u017anie r\u00f3\u017cne"
+    closeness <- if (pct_diff < 3) "niemal tożsame"
+                 else if (pct_diff < 10) "bardzo zbliżone"
+                 else "wyraźnie różne"
     tagList(
       tags$b("Werdykt: "),
-      "Estymaty slope s\u0105 ", closeness,
+      "Estymaty slope są ", closeness,
       " (lm = ", round(fc_slope$estimate, 3),
       ", bayes = ", round(bc_slope$estimate, 3), ").",
       tags$br(),
-      tags$em("Przy nieinformatywnym priorze i du\u017cej pr\u00f3bie
-               oba podej\u015bcia daj\u0105 zwykle te same liczby \u2014 r\u00f3\u017cni je interpretacja.")
+      tags$em("Przy nieinformatywnym priorze i dużej próbie
+               oba podejścia dają zwykle te same liczby — różni je interpretacja.")
     )
   })
 }

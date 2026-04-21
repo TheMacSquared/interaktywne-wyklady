@@ -6,17 +6,17 @@ ch10_ui <- tabPanel("10. Regresja logistyczna",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Odpowied\u017a binarna (sukces/pora\u017cka). Model przewiduje prawdopodobie\u0144stwo,
-       a wsp\u00f3\u0142czynniki interpretujemy jako Odds Ratio (OR)."
+      "Odpowiedź binarna (sukces/porażka). Model przewiduje prawdopodobieństwo,
+       a współczynniki interpretujemy jako Odds Ratio (OR)."
     ),
 
-    div(class = "section-title", "OR w dw\u00f3ch szko\u0142ach"),
+    div(class = "section-title", "OR w dwóch szkołach"),
 
     div(class = "narrative",
-      p(tags$b("Cz\u0119sto\u015bciowo: "), "glm(y ~ x, family = binomial). Wsp\u00f3\u0142czynniki na skali logit;
-         po eksponencjacji dostajemy OR. 95% CI \u2192 95% CI dla OR."),
-      p(tags$b("Bayesowsko: "), "stan_glm(y ~ x, family = binomial). Posterior dla ka\u017cdego \u03b2;
-         eksponencjujemy \u2192 posterior dla OR. 95% HDI OR \u2014 wiarygodny przedzia\u0142.")
+      p(tags$b("Częstościowo: "), "glm(y ~ x, family = binomial). Współczynniki na skali logit;
+         po eksponencjacji dostajemy OR. 95% CI → 95% CI dla OR."),
+      p(tags$b("Bayesowsko: "), "stan_glm(y ~ x, family = binomial). Posterior dla każdego β;
+         eksponencjujemy → posterior dla OR. 95% HDI OR — wiarygodny przedział.")
     ),
 
     div(class = "widget-block",
@@ -30,16 +30,16 @@ ch10_ui <- tabPanel("10. Regresja logistyczna",
           ),
           column(3,
             sliderInput("ch10_beta1",
-                        "Prawdziwe \u03b2\u2081 (logit-skala):",
+                        "Prawdziwe β₁ (logit-skala):",
                         min = -2, max = 2, value = 1, step = 0.1)
           ),
           column(3,
-            sliderInput("ch10_beta0", "Prawdziwe \u03b2\u2080:",
+            sliderInput("ch10_beta0", "Prawdziwe β₀:",
                         min = -2, max = 2, value = -0.5, step = 0.1)
           ),
           column(3,
             br(),
-            actionButton("ch10_draw", "\u21bb Nowa pr\u00f3ba",
+            actionButton("ch10_draw", "↻ Nowa próba",
                          class = "btn-primary", width = "100%")
           )
         ),
@@ -77,16 +77,16 @@ ch10_ui <- tabPanel("10. Regresja logistyczna",
 
     div(class = "callout-success",
       tags$b("Bonus bayesowski: "),
-      "z posteriora dla OR mo\u017cna liczy\u0107 odpowiedzi typu
-       \u201eP(OR > 2 | dane)\u201f \u2014 jak prawdopodobne, \u017ce efekt jest przynajmniej dwukrotny.
-       W cz\u0119sto\u015bciowym \u015bwiecie takie pytanie nie ma prostej odpowiedzi."
+      "z posteriora dla OR można liczyć odpowiedzi typu
+       „P(OR > 2 | dane)‟ — jak prawdopodobne, że efekt jest przynajmniej dwukrotny.
+       W częstościowym świecie takie pytanie nie ma prostej odpowiedzi."
     ),
 
     div(class = "chapter-transition",
-      p("Prze\u015bli\u015bmy przez wszystkie typowe modele.
-         Czas podsumowa\u0107: kiedy ktory paradygmat?"),
+      p("Prześliśmy przez wszystkie typowe modele.
+         Czas podsumować: kiedy ktory paradygmat?"),
       actionButton("ch10_next",
-                   "Dalej: \u015aci\u0105ga \u2192",
+                   "Dalej: Ściąga →",
                    class = "btn-primary btn-lg")
     )
 
@@ -141,7 +141,7 @@ ch10_server <- function(input, output, session) {
                    se = TRUE, color = col_frequentist,
                    fill = col_frequentist, alpha = 0.15) +
       scale_y_continuous(breaks = c(0, 1), limits = c(-0.1, 1.1)) +
-      labs(title = paste0("Dane (n = ", nrow(d), ", odpowied\u017a binarna)"),
+      labs(title = paste0("Dane (n = ", nrow(d), ", odpowiedź binarna)"),
            x = "x", y = "y (0 / 1)") +
       theme_educational()
   })
@@ -149,11 +149,11 @@ ch10_server <- function(input, output, session) {
   output$ch10_freq_result <- renderUI({
     r <- fit_result()
     if (is.null(r)) return(div(class = "callout-warning",
-                                 "Brak wynik\u00f3w \u2014 kliknij \u201eDopasuj modele\u201f."))
+                                 "Brak wyników — kliknij „Dopasuj modele‟."))
     fc <- r$freq_coefs
     slope_row <- fc[fc$term == "x", ]
     div(class = "callout-info",
-      tags$b("\u03b2\u2081 (logit): "), round(slope_row$estimate, 3),
+      tags$b("β₁ (logit): "), round(slope_row$estimate, 3),
       "  95% CI: [", round(slope_row$lower, 3), ", ",
       round(slope_row$upper, 3), "]", tags$br(),
       tags$b("OR: "), round(slope_row$or, 2),
@@ -191,13 +191,13 @@ ch10_server <- function(input, output, session) {
     prob_pos <- mean(post_slope > 0)
     prob_or2 <- mean(exp(post_slope) > 2)
     div(class = "callout-info",
-      tags$b("\u03b2\u2081 (logit): "), round(slope_row$estimate, 3),
+      tags$b("β₁ (logit): "), round(slope_row$estimate, 3),
       "  95% HDI: [", round(slope_row$lower, 3), ", ",
       round(slope_row$upper, 3), "]", tags$br(),
       tags$b("OR: "), round(slope_row$or, 2),
       "  95% HDI OR: [", round(slope_row$or_lower, 2), ", ",
       round(slope_row$or_upper, 2), "]", tags$br(),
-      tags$b("P(\u03b2\u2081 > 0 | dane) = "),
+      tags$b("P(β₁ > 0 | dane) = "),
       paste0(round(prob_pos * 100, 1), "%"),
       "  |  P(OR > 2) = ", paste0(round(prob_or2 * 100, 1), "%")
     )
@@ -207,22 +207,22 @@ ch10_server <- function(input, output, session) {
     r <- fit_result()
     if (is.null(r)) return(tagList(
       tags$b("Oczekuje na fit..."), tags$br(),
-      "Dopasuj modele \u2014 wtedy zobaczysz por\u00f3wnanie OR w obu paradygmatach."
+      "Dopasuj modele — wtedy zobaczysz porównanie OR w obu paradygmatach."
     ))
     fc_slope <- r$freq_coefs[r$freq_coefs$term == "x", ]
     bc_slope <- r$bayes_coefs[r$bayes_coefs$term == "x", ]
     tagList(
       tags$b("Werdykt: "),
-      "OR cz\u0119sto\u015bciowe = ", round(fc_slope$or, 2),
+      "OR częstościowe = ", round(fc_slope$or, 2),
       " [", round(fc_slope$or_lower, 2), ", ",
       round(fc_slope$or_upper, 2), "]",
       " vs OR bayesowskie = ", round(bc_slope$or, 2),
       " [", round(bc_slope$or_lower, 2), ", ",
       round(bc_slope$or_upper, 2), "]",
       tags$br(),
-      tags$em("Przy n \u2265 100 i Beta-nieinformatywnym priorze r\u00f3\u017cnice numeryczne s\u0105 niewielkie.
-               R\u00f3\u017cni si\u0119 interpretacja (CI vs HDI) oraz mo\u017cliwo\u015b\u0107 bezpo\u015brednich pyta\u0144
-               o warto\u015bci praktyczne.")
+      tags$em("Przy n ≥ 100 i Beta-nieinformatywnym priorze różnice numeryczne są niewielkie.
+               Różni się interpretacja (CI vs HDI) oraz możliwość bezpośrednich pytań
+               o wartości praktyczne.")
     )
   })
 }

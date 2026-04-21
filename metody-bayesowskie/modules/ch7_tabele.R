@@ -2,58 +2,58 @@
 # CHAPTER 7: Tabele krzyzowe - chi-kwadrat vs contingencyTableBF + OR
 # ============================================================================
 
-ch7_ui <- tabPanel("7. Tabele krzy\u017cowe",
+ch7_ui <- tabPanel("7. Tabele krzyżowe",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Dwie zmienne jako\u015bciowe \u2014 klasyczne pytanie: czy grupa A r\u00f3\u017cni si\u0119 od grupy B
-       pod wzgl\u0119dem cz\u0119sto\u015bci pewnej cechy? (np. skuteczno\u015b\u0107 leku vs placebo)."
+      "Dwie zmienne jakościowe — klasyczne pytanie: czy grupa A różni się od grupy B
+       pod względem częstości pewnej cechy? (np. skuteczność leku vs placebo)."
     ),
 
     div(class = "section-title", "Chi-kwadrat vs BF dla tabeli"),
 
     div(class = "narrative",
-      p(tags$b("Cz\u0119sto\u015bciowo: "), "test \u03c7\u00b2 niezale\u017cno\u015bci porownuje obserwowane
-         liczno\u015bci z oczekiwanymi pod H\u2080 (niezale\u017cno\u015b\u0107 zmiennych). Zwraca p-warto\u015b\u0107."),
-      p(tags$b("Bayesowsko: "), "contingencyTableBF zwraca BF\u2081\u2080 mi\u0119dzy modelem
-         zale\u017cno\u015bci a modelem niezale\u017cno\u015bci. Dla 2\u00d72 dodatkowo mo\u017cemy policzy\u0107
-         posterior dla OR \u2014 widzimy nie tylko ", tags$em("czy"),
-         " zale\u017cno\u015b\u0107 istnieje, ale te\u017c ", tags$em("jak silna"), " i ", tags$em("w kt\u00f3r\u0105 stron\u0119"), ".")
+      p(tags$b("Częstościowo: "), "test χ² niezależności porownuje obserwowane
+         liczności z oczekiwanymi pod H₀ (niezależność zmiennych). Zwraca p-wartość."),
+      p(tags$b("Bayesowsko: "), "contingencyTableBF zwraca BF₁₀ między modelem
+         zależności a modelem niezależności. Dla 2×2 dodatkowo możemy policzyć
+         posterior dla OR — widzimy nie tylko ", tags$em("czy"),
+         " zależność istnieje, ale też ", tags$em("jak silna"), " i ", tags$em("w którą stronę"), ".")
     ),
 
     div(class = "callout-info",
-      tags$b("Model pr\u00f3bkowania:"),
+      tags$b("Model próbkowania:"),
       " w BayesFactor wybieramy ", tags$em("sampleType"),
-       ". Najcz\u0119\u015bciej \u201eindepMulti\u201f (grupy maj\u0105 ustalone sumy wierszy \u2014
-       np. ustalone n w grupie leczonej i kontrolnej), czasem \u201epoisson\u201f
-       (\u017cadne brzegi nie s\u0105 ustalone)."
+       ". Najczęściej „indepMulti‟ (grupy mają ustalone sumy wierszy —
+       np. ustalone n w grupie leczonej i kontrolnej), czasem „poisson‟
+       (żadne brzegi nie są ustalone)."
     ),
 
-    div(class = "section-title", "Tabela 2x2: skuteczno\u015b\u0107 leku vs placebo"),
+    div(class = "section-title", "Tabela 2x2: skuteczność leku vs placebo"),
 
     div(class = "widget-block",
-      h4("Tabela 2\u00d72: sukces / pora\u017cka w dw\u00f3ch grupach"),
+      h4("Tabela 2×2: sukces / porażka w dwóch grupach"),
 
       fluidRow(column(12,
         fluidRow(
           column(3,
             h6("Grupa A (lek)"),
-            numericInput("ch7_a_success", "Sukces\u00f3w:",
+            numericInput("ch7_a_success", "Sukcesów:",
                          value = 40, min = 0, max = 500, step = 1),
-            numericInput("ch7_a_fail", "Pora\u017cek:",
+            numericInput("ch7_a_fail", "Porażek:",
                          value = 60, min = 0, max = 500, step = 1)
           ),
           column(3,
             h6("Grupa B (placebo)"),
-            numericInput("ch7_b_success", "Sukces\u00f3w:",
+            numericInput("ch7_b_success", "Sukcesów:",
                          value = 25, min = 0, max = 500, step = 1),
-            numericInput("ch7_b_fail", "Pora\u017cek:",
+            numericInput("ch7_b_fail", "Porażek:",
                          value = 75, min = 0, max = 500, step = 1)
           ),
           column(3,
             h6("Presety"),
             div(class = "preset-buttons",
-              actionButton("ch7_preset_balanced", "Brak r\u00f3\u017cnicy",
+              actionButton("ch7_preset_balanced", "Brak różnicy",
                            class = "btn-outline-secondary btn-sm"),
               actionButton("ch7_preset_moderate", "Umiarkowany efekt",
                            class = "btn-outline-secondary btn-sm"),
@@ -63,9 +63,9 @@ ch7_ui <- tabPanel("7. Tabele krzy\u017cowe",
           ),
           column(3,
             h6("Prior"),
-            sliderInput("ch7_prior_alpha", "\u03b1, \u03b2 (Beta prior):",
+            sliderInput("ch7_prior_alpha", "α, β (Beta prior):",
                         min = 0.5, max = 10, value = 1, step = 0.5),
-            helpText("\u03b1 = \u03b2 = 1: Beta(1,1) = rozk\u0142ad p\u0142aski, nieinformatywny")
+            helpText("α = β = 1: Beta(1,1) = rozkład płaski, nieinformatywny")
           )
         )
       )),
@@ -76,7 +76,7 @@ ch7_ui <- tabPanel("7. Tabele krzy\u017cowe",
       fluidRow(
         column(6,
           div(class = "panel-frequentist",
-            h5("Test \u03c7\u00b2 niezale\u017cno\u015bci"),
+            h5("Test χ² niezależności"),
             uiOutput("ch7_freq_result")
           )
         ),
@@ -94,30 +94,30 @@ ch7_ui <- tabPanel("7. Tabele krzy\u017cowe",
       )
     ),
 
-    div(class = "section-title", "Co zyskuj\u0119 bayesowsko (dla 2\u00d72)?"),
+    div(class = "section-title", "Co zyskuję bayesowsko (dla 2×2)?"),
 
     div(class = "narrative",
-      p("Klasyczny test \u03c7\u00b2 m\u00f3wi \u201etak/nie\u201f o zale\u017cno\u015bci.
-         Bayes \u2014 dla tabeli 2\u00d72 \u2014 daje nam bezpo\u015brednio:"),
+      p("Klasyczny test χ² mówi „tak/nie‟ o zależności.
+         Bayes — dla tabeli 2×2 — daje nam bezpośrednio:"),
       tags$ul(
-        tags$li("BF\u2081\u2080: si\u0142\u0119 dowodu za zale\u017cno\u015bci\u0105"),
-        tags$li("Posterior OR: rozk\u0142ad mo\u017cliwych warto\u015bci \u201eilu razy skuteczniej\u201f"),
-        tags$li("HDI OR: wiarygodny przedzia\u0142 dla efektu"),
-        tags$li("P(OR > 1): prawdopodobie\u0144stwo, \u017ce grupa A jest lepsza")
+        tags$li("BF₁₀: siłę dowodu za zależnością"),
+        tags$li("Posterior OR: rozkład możliwych wartości „ilu razy skuteczniej‟"),
+        tags$li("HDI OR: wiarygodny przedział dla efektu"),
+        tags$li("P(OR > 1): prawdopodobieństwo, że grupa A jest lepsza")
       )
     ),
 
     div(class = "callout-warning",
-      tags$b("Ma\u0142e liczno\u015bci: "),
-      "gdy komorki maj\u0105 < 5 oczekiwanych obserwacji, klasyczny \u03c7\u00b2 traci wa\u017cno\u015b\u0107
-       (p-warto\u015b\u0107 aproksymacyjna). BF obliczony analitycznie nie ma tego problemu."
+      tags$b("Małe liczności: "),
+      "gdy komorki mają < 5 oczekiwanych obserwacji, klasyczny χ² traci ważność
+       (p-wartość aproksymacyjna). BF obliczony analitycznie nie ma tego problemu."
     ),
 
     div(class = "chapter-transition",
-      p("Od tabel przechodzimy do zmiennych ilo\u015bciowych zwi\u0105zanych ze sob\u0105 liniowo
-         \u2014 korelacja i jej bayesowski odpowiednik."),
+      p("Od tabel przechodzimy do zmiennych ilościowych związanych ze sobą liniowo
+         — korelacja i jej bayesowski odpowiednik."),
       actionButton("ch7_next",
-                   "Dalej: Korelacja \u2192",
+                   "Dalej: Korelacja →",
                    class = "btn-primary btn-lg")
     )
 
@@ -151,7 +151,7 @@ ch7_server <- function(input, output, session) {
                    input$ch7_b_success, input$ch7_b_fail),
                  nrow = 2, byrow = TRUE)
     rownames(m) <- c("Lek (A)", "Placebo (B)")
-    colnames(m) <- c("Sukces", "Pora\u017cka")
+    colnames(m) <- c("Sukces", "Porażka")
     m
   })
 
@@ -168,7 +168,7 @@ ch7_server <- function(input, output, session) {
 
   output$ch7_data_plot <- renderPlot({
     plot_contingency_table(table_mat(),
-                            title = "Obserwowane liczno\u015bci",
+                            title = "Obserwowane liczności",
                             col_a = col_success, col_b = col_secondary)
   })
 
@@ -178,11 +178,11 @@ ch7_server <- function(input, output, session) {
     tab <- table_mat()
     or_classical <- (tab[1,1] * tab[2,2]) / (tab[1,2] * tab[2,1])
     warning_msg <- if (r$low_expected_pct > 0) {
-      paste0(" \u26a0 ", round(r$low_expected_pct, 0),
-             "% kom\u00f3rek ma oczekiwan\u0105 liczno\u015b\u0107 < 5 \u2014 p mo\u017ce by\u0107 niedok\u0142adne.")
+      paste0(" ⚠ ", round(r$low_expected_pct, 0),
+             "% komórek ma oczekiwaną liczność < 5 — p może być niedokładne.")
     } else ""
     div(class = "callout-info",
-      tags$b("\u03c7\u00b2 = "), round(r$chi_statistic, 3),
+      tags$b("χ² = "), round(r$chi_statistic, 3),
       " | df = ", r$df, tags$br(),
       HTML(p_info$decision), tags$br(),
       tags$b("OR obserwowany: "), round(or_classical, 2),
@@ -200,7 +200,7 @@ ch7_server <- function(input, output, session) {
     orr <- or_res()
     interp <- interpret_bf(r$bf10)
     div(class = "callout-info",
-      tags$b("BF\u2081\u2080 (zale\u017cno\u015b\u0107 vs niezale\u017cno\u015b\u0107): "),
+      tags$b("BF₁₀ (zależność vs niezależność): "),
       format_bf(r$bf10), tags$br(),
       tags$b("Interpretacja: "), interp$short_summary, tags$br(),
       tags$b("Mediana OR: "), round(orr$or_median, 2),
@@ -208,23 +208,23 @@ ch7_server <- function(input, output, session) {
       ", ", round(orr$or_hdi["upper"], 2), "]", tags$br(),
       tags$b("P(OR > 1 | dane) = "),
       paste0(round(orr$p_direction * 100, 1), "%"),
-      tags$em(" (tj. \u017ce lek lepszy ni\u017c placebo)")
+      tags$em(" (tj. że lek lepszy niż placebo)")
     )
   })
 
   output$ch7_comparison <- renderUI({
     r <- freq_res()
     orr <- or_res()
-    direction <- if (orr$or_median > 1) "wi\u0119ksze szanse sukcesu" else "mniejsze szanse sukcesu"
+    direction <- if (orr$or_median > 1) "większe szanse sukcesu" else "mniejsze szanse sukcesu"
     verdict <- if (r$p_value < 0.05 && r$bf10 > 3) {
-      paste0("Oba podej\u015bcia zgodne: lek daje ", direction,
-             " ni\u017c placebo. Mediana OR = ", round(orr$or_median, 2), ".")
+      paste0("Oba podejścia zgodne: lek daje ", direction,
+             " niż placebo. Mediana OR = ", round(orr$or_median, 2), ".")
     } else if (r$p_value >= 0.05 && r$bf10 < 1/3) {
-      "Oba podej\u015bcia zgodne: brak przes\u0142anek do r\u00f3\u017cnicowania skuteczno\u015bci lek vs placebo."
+      "Oba podejścia zgodne: brak przesłanek do różnicowania skuteczności lek vs placebo."
     } else {
-      paste0("Dow\u00f3d niejednoznaczny. Mediana OR = ",
+      paste0("Dowód niejednoznaczny. Mediana OR = ",
              round(orr$or_median, 2),
-             ", ale HDI obejmuje 1 \u2014 nie mo\u017cemy wykluczy\u0107 braku r\u00f3\u017cnicy.")
+             ", ale HDI obejmuje 1 — nie możemy wykluczyć braku różnicy.")
     }
     tagList(tags$b("Werdykt: "), verdict)
   })
