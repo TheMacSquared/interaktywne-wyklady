@@ -2,7 +2,7 @@
 # CHAPTER 8: Sciaga - podsumowanie wnioskowania statystycznego
 # ============================================================================
 
-ch8_ui <- tabPanel("9. Ściąga",
+ch8_ui <- tabPanel("10. Ściąga",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",

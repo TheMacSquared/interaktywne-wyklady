@@ -52,6 +52,7 @@ source(file.path(app_dir, "modules", "ch4_korelacja.R"),        local = TRUE)
 source(file.path(app_dir, "modules", "ch5_dwie_jakosciowe.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "ch6_dwie_grupy.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch7_anova.R"),            local = TRUE)
+source(file.path(app_dir, "modules", "ch_drzewo.R"),            local = TRUE)
 source(file.path(app_dir, "modules", "ch8_sciaga.R"),           local = TRUE)
 
 # ============================================================================
@@ -82,6 +83,7 @@ ui <- navbarPage(
   ch5_ui,
   ch6_ui,
   ch7_ui,
+  ch_drzewo_ui,
   ch8_ui
 )
 
@@ -117,7 +119,10 @@ server <- function(input, output, session) {
     updateNavbarPage(session, "main_nav", selected = "8. ANOVA")
   })
   observeEvent(input$ch7_next, {
-    updateNavbarPage(session, "main_nav", selected = "9. Ściąga")
+    updateNavbarPage(session, "main_nav", selected = "9. Drzewo decyzyjne")
+  })
+  observeEvent(input$ch_drzewo_next, {
+    updateNavbarPage(session, "main_nav", selected = "10. Ściąga")
   })
 
   # ==========================================================================
@@ -132,6 +137,7 @@ server <- function(input, output, session) {
   ch5_server(input, output, session)
   ch6_server(input, output, session)
   ch7_server(input, output, session)
+  ch_drzewo_server(input, output, session)
   ch8_server(input, output, session)
 
 }
