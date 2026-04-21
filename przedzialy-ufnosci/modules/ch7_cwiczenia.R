@@ -705,98 +705,131 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
 )
 
 # ============================================================================
+# DANE — wczytane raz przy ladowaniu modulu
+# Wyniki w .ch7_solutions sa liczone inline z tych ramek, by uniknac
+# rozjazdu "wartosc w kodzie vs wartosc w danych" przy regeneracji CSV.
+# ============================================================================
+
+.ch7_data <- list(
+  edu = read.csv(file.path(app_dir, "dane", "caschools.csv")),
+  bhp = read.csv(file.path(app_dir, "dane", "bhp_zaklady.csv")),
+  rol = read.csv(file.path(app_dir, "dane", "rolnictwo_pola.csv")),
+  zyw = read.csv(file.path(app_dir, "dane", "zywnosc_partie.csv"))
+)
+
+# ============================================================================
 # ROZWIAZANIA — listy per kierunek
 # ============================================================================
 
 .ch7_solutions <- list(
 
   edu = list(
-    sol1 = withMathJax(tagList(
-      p(tags$b("Wyniki z Jamovi dla zmiennej "), tags$code("read"), ":"),
-      tags$ul(
-        tags$li("n = 420"),
-        tags$li("Średnia ≈ ", tags$b("654.97")),
-        tags$li("Odchylenie std s ≈ ", tags$b("20.11")),
-        tags$li("95% CI: ", tags$b("[653.04, 656.90]")),
-        tags$li("Margines błędu ME ≈ ", tags$b("1.93"))
-      ),
-      p(tags$b("Sprawdzenie ręczne:"),
-        " \\(t^*_{0.975,\\,419} \\approx 1.966\\),",
-        " \\(SE = 20.11/\\sqrt{420} \\approx 0.981\\),",
-        " \\(ME = 1.966 \\cdot 0.981 \\approx 1.93\\)."),
-      p(tags$b("Interpretacja:"),
-        " mamy 95% ufności, że średnia populacji wyników z czytania leży w okolicach 653–657 punktów.")
-    )),
-    sol2 = withMathJax(tagList(
-      p(tags$b("Wyniki dla zmiennej "), tags$code("math"), ":"),
-      tags$ul(
-        tags$li("Średnia ≈ ", tags$b("653.34")),
-        tags$li("s ≈ ", tags$b("18.75")),
-        tags$li("95% CI: ", tags$b("[651.54, 655.14]"), ", ME ≈ ", tags$b("1.80"))
-      ),
-      p(tags$b("Dlaczego CI dla math jest węższy?"),
-        " n jest takie samo (420), różnica wynika wyłącznie z ", tags$em("zmienności"),
-        ": s(math) = 18.75 < s(read) = 20.11. Mniejsza zmienność → mniejsze SE → ciąśniejszy CI.")
-    )),
-    sol3 = withMathJax(tagList(
-      p(tags$b("Wyniki dla szkół KK-06"), " (", tags$code("read"), "):"),
-      tags$ul(
-        tags$li("n = 61"),
-        tags$li("Średnia ≈ ", tags$b("662.08"), " (wyższa niż ogół!)"),
-        tags$li("s ≈ ", tags$b("20.51")),
-        tags$li("95% CI: ", tags$b("[656.82, 667.33]"), ", ME ≈ ", tags$b("5.25"))
-      ),
-      p(tags$b("Trzy przyczyny szerszego CI:")),
-      tags$ol(
-        tags$li(tags$b("Mniejsze n"), " — główny czynnik: \\(\\sqrt{420}/\\sqrt{61} \\approx 2.62\\)× większe SE."),
-        tags$li(tags$b("Większy t*"), " — dla df = 60: t* ≈ 2.000 vs 1.966 dla df = 419."),
-        tags$li(tags$b("Nieznacznie większe s"), " — 20.51 vs 20.11, efekt marginalny.")
-      ),
-      p("Wniosek: ", tags$b("\\(SE \\propto 1/\\sqrt{n}\\)"),
-        " — żeby zmniejszyć CI o połowę potrzeba 4× więcej danych.")
-    )),
-    sol4 = withMathJax(tagList(
-      p(tags$b("CI dla "), tags$code("read"), tags$b(" przy różnych poziomach ufności"), " (n=420):"),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
-        tags$tbody(
-          tags$tr(tags$td("90%"), tags$td("653.35"), tags$td("656.59"), tags$td("1.62")),
-          tags$tr(tags$td("95%"), tags$td("653.04"), tags$td("656.90"), tags$td("1.93")),
-          tags$tr(tags$td("99%"), tags$td("652.43"), tags$td("657.51"), tags$td("2.54"))
-        )
-      ),
-      p("ME(99%)/ME(90%) ≈ 2.54/1.62 ≈ ", tags$b("1.57"),
-        " — 9 pp więcej ufności kosztuje ~57% szerszy CI.")
-    )),
-    sol5 = withMathJax(tagList(
-      p(tags$b("Wyniki dla STR > 20:"), " p = 177/420 ≈ ", tags$b("0.421")),
-      tags$ul(
-        tags$li("95% CI (Clopper-Pearson): ", tags$b("[0.374, 0.470]")),
-        tags$li("Warunki: np = 177 ≥ 10 ✓, n(1−p) = 243 ≥ 10 ✓")
-      ),
-      p(tags$b("Interpretacja:"), " szacujemy, że w populacji podobnych okręgów
-        37–47% miałoby STR > 20.")
-    )),
-    sol6 = withMathJax(tagList(
-      p(tags$b("Wyniki dla english > 20:"), " p = 118/420 ≈ ", tags$b("0.281")),
-      tags$ul(
-        tags$li("95% CI: ", tags$b("[0.239, 0.327]")),
-        tags$li("Szerokość ≈ 0.088 vs 0.097 w zad. 5")
-      ),
-      p(tags$b("Dlaczego węższy?"), " Im dalej p od 0.5, tym mniejsza wariancja \\(p(1-p)\\).",
-        " Dla p = 0.28: \\(p(1-p) \\approx 0.20\\), dla p = 0.42: \\(p(1-p) \\approx 0.244\\).")
-    )),
-    sol7 = withMathJax(tagList(
-      p(tags$b("Pierwsze 25 okręgów, english > 20:"), " p = 19/25 ≈ ", tags$b("0.76")),
-      tags$ul(
-        tags$li("95% CI Clopper-Pearson: ", tags$b("[0.549, 0.906]"), " — szerokość ~0.36!")
-      ),
-      p(tags$b("Dwa efekty:"), " (1) małe n, (2) pierwsze 25 to ",
-        tags$em("próba obciążona"), " — inne hrabstwa, inna charakterystyka.
-        Dlatego p = 0.76 dramatycznie różni się od populacyjnego ~0.28."),
-      p(tags$b("Dlaczego Clopper-Pearson, a nie Wald?"), " Przy n=25 i p blisko 1
-        Wald jest niedokładny i mógłby dać górne ograniczenie > 1.")
-    )),
+    sol1 = withMathJax({
+      ci <- .ci_mean(.ch7_data$edu$read)
+      tagList(
+        p(tags$b("Wyniki dla zmiennej "), tags$code("read"), ":"),
+        tags$ul(
+          tags$li(sprintf("n = %d", ci$n)),
+          tags$li("Średnia ≈ ", tags$b(.fmt_mean(ci))),
+          tags$li("s ≈ ", tags$b(.fmt_sd(ci))),
+          tags$li("95% CI: ", tags$b(.fmt_ci(ci))),
+          tags$li("ME ≈ ", tags$b(.fmt_me(ci)))
+        ),
+        p(tags$b("Interpretacja:"),
+          sprintf(" 95%% CI dla średniej populacji: od %.2f do %.2f.", ci$lo, ci$hi))
+      )
+    }),
+    sol2 = withMathJax({
+      ci <- .ci_mean(.ch7_data$edu$math)
+      tagList(
+        p(tags$b("Wyniki dla zmiennej "), tags$code("math"), ":"),
+        tags$ul(
+          tags$li(sprintf("n = %d", ci$n)),
+          tags$li("Średnia ≈ ", tags$b(.fmt_mean(ci))),
+          tags$li("s ≈ ", tags$b(.fmt_sd(ci))),
+          tags$li("95% CI: ", tags$b(.fmt_ci(ci)), ", ME ≈ ", tags$b(.fmt_me(ci)))
+        ),
+        p(tags$b("Uwaga:"), " n identyczne jak w zad. 1, różnica w szerokości CI wynika ze zmienności s.")
+      )
+    }),
+    sol3 = withMathJax({
+      ci <- .ci_mean(.ch7_data$edu$read[.ch7_data$edu$grades == "KK-06"])
+      tagList(
+        p(tags$b("Wyniki dla szkół KK-06"), " (", tags$code("read"), "):"),
+        tags$ul(
+          tags$li(sprintf("n = %d", ci$n)),
+          tags$li("Średnia ≈ ", tags$b(.fmt_mean(ci))),
+          tags$li("s ≈ ", tags$b(.fmt_sd(ci))),
+          tags$li("95% CI: ", tags$b(.fmt_ci(ci)), ", ME ≈ ", tags$b(.fmt_me(ci)))
+        ),
+        p(tags$b("Wniosek:"), " \\(SE \\propto 1/\\sqrt{n}\\) — mniejsze n → szerszy CI.")
+      )
+    }),
+    sol4 = withMathJax({
+      ci90 <- .ci_mean(.ch7_data$edu$read, level = 0.90)
+      ci95 <- .ci_mean(.ch7_data$edu$read, level = 0.95)
+      ci99 <- .ci_mean(.ch7_data$edu$read, level = 0.99)
+      tagList(
+        p(tags$b("CI dla "), tags$code("read"), tags$b(" przy różnych poziomach ufności"),
+          sprintf(" (n=%d):", ci95$n)),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
+          tags$tbody(
+            tags$tr(tags$td("90%"), tags$td(.fmt_mean(list(mean = ci90$lo))),
+                    tags$td(.fmt_mean(list(mean = ci90$hi))), tags$td(.fmt_me(ci90))),
+            tags$tr(tags$td("95%"), tags$td(.fmt_mean(list(mean = ci95$lo))),
+                    tags$td(.fmt_mean(list(mean = ci95$hi))), tags$td(.fmt_me(ci95))),
+            tags$tr(tags$td("99%"), tags$td(.fmt_mean(list(mean = ci99$lo))),
+                    tags$td(.fmt_mean(list(mean = ci99$hi))), tags$td(.fmt_me(ci99)))
+          )
+        ),
+        p(sprintf("ME(99%%)/ME(90%%) ≈ %.2f/%.2f ≈ ", ci99$me, ci90$me),
+          tags$b(sprintf("%.2f", ci99$me / ci90$me)), ".")
+      )
+    }),
+    sol5 = withMathJax({
+      ci <- .ci_prop(.ch7_data$edu$student_teacher_ratio > 20)
+      tagList(
+        p(tags$b("Wyniki dla STR > 20:"),
+          sprintf(" p = %d/%d ≈ ", ci$k, ci$n), tags$b(.fmt_prop(ci))),
+        tags$ul(
+          tags$li("95% CI: ", tags$b(sprintf("[%.3f, %.3f]", ci$lo, ci$hi))),
+          tags$li(sprintf("Warunki: np = %d ≥ 10 ✓, n(1−p) = %d ≥ 10 ✓", ci$k, ci$n - ci$k))
+        ),
+        p(tags$b("Interpretacja:"),
+          sprintf(" szacujemy, że w populacji podobnych okręgów od %.1f%% do %.1f%% miałoby STR > 20.",
+                  100 * ci$lo, 100 * ci$hi))
+      )
+    }),
+    sol6 = withMathJax({
+      ci <- .ci_prop(.ch7_data$edu$english > 20)
+      ci5 <- .ci_prop(.ch7_data$edu$student_teacher_ratio > 20)
+      tagList(
+        p(tags$b("Wyniki dla english > 20:"),
+          sprintf(" p = %d/%d ≈ ", ci$k, ci$n), tags$b(.fmt_prop(ci))),
+        tags$ul(
+          tags$li("95% CI: ", tags$b(sprintf("[%.3f, %.3f]", ci$lo, ci$hi))),
+          tags$li(sprintf("Szerokość ≈ %.3f vs %.3f w zad. 5", ci$hi - ci$lo, ci5$hi - ci5$lo))
+        ),
+        p(tags$b("Uwaga:"), " im dalej p od 0.5, tym mniejsza wariancja \\(p(1-p)\\) → węższy CI.")
+      )
+    }),
+    sol7 = withMathJax({
+      x <- head(.ch7_data$edu$english > 20, 25)
+      k <- sum(x); n <- length(x); p <- k / n
+      cp <- binom.test(k, n)$conf.int
+      tagList(
+        p(tags$b("Pierwsze 25 okręgów, english > 20:"),
+          sprintf(" p = %d/%d ≈ ", k, n), tags$b(sprintf("%.3f", p))),
+        tags$ul(
+          tags$li("95% CI Clopper-Pearson: ",
+                  tags$b(sprintf("[%.3f, %.3f]", cp[1], cp[2])),
+                  sprintf(" — szerokość ≈ %.3f", cp[2] - cp[1]))
+        ),
+        p(tags$b("Uwaga:"), " pierwsze 25 to nie jest losowa próba — może być obciążona."),
+        p(tags$b("Dlaczego Clopper-Pearson?"), " Przy małym n i p blisko 1 Wald jest niedokładny.")
+      )
+    }),
     sol8 = withMathJax(tagList(
       tags$ul(
         tags$li(tags$b("a) FAŁSZ."), " μ jest stałe. To metoda ma 95% szans wyprodukować CI zawierający μ."),
@@ -807,50 +840,64 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
         tags$li(tags$b("f) FAŁSZ."), " Wyższy poziom ufności → szerszy CI, nie węższy.")
       )
     )),
-    sol9a = tagList(
-      p(tags$b("95% CI dla średniej read wg grup lunch:")),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Grupa lunch"), tags$th("n"), tags$th("Średnia read"), tags$th("95% CI"))),
-        tags$tbody(
-          tags$tr(tags$td("mało (<33%)"), tags$td("168"), tags$td("671.8"), tags$td("[669.8, 673.8]")),
-          tags$tr(tags$td("średnio (33–66%)"), tags$td("142"), tags$td("653.1"), tags$td("[651.3, 654.9]")),
-          tags$tr(tags$td("dużo (>66%)"), tags$td("110"), tags$td("631.6"), tags$td("[629.3, 634.0]"))
-        )
-      ),
-      p(tags$b("Obserwacja:"), " przedziały nie nachodzą na siebie — różnica ~40 pkt między skrajnymi grupami."),
-      p(tags$em("Ale zanim wyciągniesz wnioski… przejdź do kroku B."))
-    ),
-    sol9b = tagList(
-      p(tags$b("95% CI dla średniej read wg grup income:")),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Grupa income"), tags$th("n"), tags$th("Średnia read"), tags$th("95% CI"))),
-        tags$tbody(
-          tags$tr(tags$td("niski (<10 tys.)"), tags$td("73"), tags$td("633.9"), tags$td("[630.1, 637.7]")),
-          tags$tr(tags$td("średni (10–20 tys.)"), tags$td("280"), tags$td("654.7"), tags$td("[652.9, 656.5]")),
-          tags$tr(tags$td("wysoki (>20 tys.)"), tags$td("67"), tags$td("679.1"), tags$td("[675.3, 682.8]"))
-        )
-      ),
-      p(tags$b("Ten sam wzorzec!"), " Bogatsze okręgi → lepsze wyniki. Różnica ~45 pkt."),
-      p(tags$em("Może to, co widzieliśmy w kroku A, nie ma nic wspólnego z obiadami? Przejdź do kroku C."))
-    ),
-    sol9c = tagList(
-      p(tags$b("95% CI dla średniej income wg grup lunch:")),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Grupa lunch"), tags$th("n"), tags$th("Średni income"), tags$th("95% CI"))),
-        tags$tbody(
-          tags$tr(tags$td("mało (<33%)"), tags$td("168"), tags$td("20.33 tys. $"), tags$td("[19.04, 21.63]")),
-          tags$tr(tags$td("średnio (33–66%)"), tags$td("142"), tags$td("13.17 tys. $"), tags$td("[12.63, 13.71]")),
-          tags$tr(tags$td("dużo (>66%)"), tags$td("110"), tags$td("10.43 tys. $"), tags$td("[9.91, 10.95]"))
-        )
-      ),
-      div(class = "callout-warning",
-        p(tags$b("Wniosek:"), " grupy dotacji = grupy zamożności. Okręgi z dużymi dotacjami są biedne (~10 tys. $)."),
-        p("To klasyczny przykład ", tags$b("zmiennej zakłócającej (confounding)"),
-          ". Dochód powoduje gorsze wyniki — nie dotacje do obiadów.
-          Likwidacja programu pogorszyłaby sytuację potrzebujących."),
-        p(tags$em("Morał:"), " CI dają precyzję oszacowania, ale nie mówią o przyczynowości.")
+    sol9a = {
+      d <- .ch7_data$edu
+      grp <- cut(d$lunch, breaks = c(-Inf, 33, 66, Inf),
+                 labels = c("mało (<33%)", "średnio (33–66%)", "dużo (>66%)"))
+      rows <- lapply(levels(grp), function(lvl) {
+        ci <- .ci_mean(d$read[grp == lvl])
+        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 1)), tags$td(.fmt_ci(ci, 1)))
+      })
+      tagList(
+        p(tags$b("95% CI dla średniej read wg grup lunch:")),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Grupa lunch"), tags$th("n"),
+                             tags$th("Średnia read"), tags$th("95% CI"))),
+          tags$tbody(rows)
+        ),
+        p(tags$em("Zanim wyciągniesz wnioski — przejdź do kroku B."))
       )
-    ),
+    },
+    sol9b = {
+      d <- .ch7_data$edu
+      grp <- cut(d$income, breaks = c(-Inf, 10, 20, Inf),
+                 labels = c("niski (<10 tys.)", "średni (10–20 tys.)", "wysoki (>20 tys.)"))
+      rows <- lapply(levels(grp), function(lvl) {
+        ci <- .ci_mean(d$read[grp == lvl])
+        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 1)), tags$td(.fmt_ci(ci, 1)))
+      })
+      tagList(
+        p(tags$b("95% CI dla średniej read wg grup income:")),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Grupa income"), tags$th("n"),
+                             tags$th("Średnia read"), tags$th("95% CI"))),
+          tags$tbody(rows)
+        ),
+        p(tags$em("Przejdź do kroku C."))
+      )
+    },
+    sol9c = {
+      d <- .ch7_data$edu
+      grp <- cut(d$lunch, breaks = c(-Inf, 33, 66, Inf),
+                 labels = c("mało (<33%)", "średnio (33–66%)", "dużo (>66%)"))
+      rows <- lapply(levels(grp), function(lvl) {
+        ci <- .ci_mean(d$income[grp == lvl])
+        tags$tr(tags$td(lvl), tags$td(ci$n),
+                tags$td(sprintf("%.2f tys. $", ci$mean)), tags$td(.fmt_ci(ci, 2)))
+      })
+      tagList(
+        p(tags$b("95% CI dla średniej income wg grup lunch:")),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Grupa lunch"), tags$th("n"),
+                             tags$th("Średni income"), tags$th("95% CI"))),
+          tags$tbody(rows)
+        ),
+        div(class = "callout-warning",
+          p(tags$b("Wniosek:"), " grupy dotacji pokrywają się z grupami zamożności — zmienna zakłócająca."),
+          p(tags$em("Morał:"), " CI dają precyzję oszacowania, ale nie mówią o przyczynowości.")
+        )
+      )
+    },
     sol_summary = tagList(
       tags$ol(
         tags$li(tags$b("Co wpływa na CI?"),
@@ -865,85 +912,111 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
   ),
 
   bhp = list(
-    sol1 = withMathJax(tagList(
-      p(tags$b("Wyniki dla zmiennej "), tags$code("wskaznik_wypadkow"), ":"),
-      tags$ul(
-        tags$li("n = 320"),
-        tags$li("Średnia ≈ ", tags$b("9.74")),
-        tags$li("s ≈ ", tags$b("3.67")),
-        tags$li("95% CI: ", tags$b("[9.33, 10.15]"), ", ME ≈ ", tags$b("0.41"))
-      ),
-      p(tags$b("Interpretacja:"),
-        " szacujemy, że w populacji podobnych zakładów średni wskaźnik wypadków
-        wynosi od 9.3 do 10.2 wypadków na 1000 pracowników rocznie.")
-    )),
-    sol2 = withMathJax(tagList(
-      p(tags$b("Wyniki dla zmiennej "), tags$code("absencja_dni"), ":"),
-      tags$ul(
-        tags$li("Średnia ≈ ", tags$b("14.27")),
-        tags$li("s ≈ ", tags$b("4.79")),
-        tags$li("95% CI: ", tags$b("[13.74, 14.80]"), ", ME ≈ ", tags$b("0.53"))
-      ),
-      p(tags$b("Dlaczego CI dla absencji jest szerszy?"),
-        " n = 320 takie samo, ale s(absencja) = 4.79 > s(wypadki) = 3.67.
-        Większa zmienność → większe SE → szerszy CI.")
-    )),
-    sol3 = withMathJax(tagList(
-      p(tags$b("Wyniki dla dużych zakładów"), " (wielkosc == \"duzy\"):"),
-      tags$ul(
-        tags$li("n ≈ 64"),
-        tags$li("Średnia ≈ ", tags$b("10.8")),
-        tags$li("95% CI: ", tags$b("[9.8, 11.8]"), ", ME ≈ ", tags$b("1.0"))
-      ),
-      p(tags$b("Trzy przyczyny szerszego CI:")),
-      tags$ol(
-        tags$li(tags$b("Mniejsze n"), " — główny czynnik: \\(\\sqrt{320}/\\sqrt{64} = 2.24\\)× większe SE."),
-        tags$li(tags$b("Większy t*"), " — dla df ≈ 63: t* ≈ 2.00 vs 1.967 dla df = 319."),
-        tags$li(tags$b("Możliwe inne s"), " — duże zakłady mogą mieć inną zmienność.")
+    sol1 = withMathJax({
+      ci <- .ci_mean(.ch7_data$bhp$wskaznik_wypadkow)
+      tagList(
+        p(tags$b("Wyniki dla zmiennej "), tags$code("wskaznik_wypadkow"), ":"),
+        tags$ul(
+          tags$li(sprintf("n = %d", ci$n)),
+          tags$li("Średnia ≈ ", tags$b(.fmt_mean(ci))),
+          tags$li("s ≈ ", tags$b(.fmt_sd(ci))),
+          tags$li("95% CI: ", tags$b(.fmt_ci(ci)), ", ME ≈ ", tags$b(.fmt_me(ci)))
+        ),
+        p(tags$b("Interpretacja:"),
+          sprintf(" szacujemy, że w populacji podobnych zakładów średni wskaźnik wypadków wynosi od %.1f do %.1f wypadków na 1000 pracowników rocznie.",
+                  ci$lo, ci$hi))
       )
-    )),
-    sol4 = withMathJax(tagList(
-      p(tags$b("CI dla wskaznik_wypadkow przy różnych poziomach ufności"), " (n=320):"),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
-        tags$tbody(
-          tags$tr(tags$td("90%"), tags$td("9.40"), tags$td("10.08"), tags$td("0.34")),
-          tags$tr(tags$td("95%"), tags$td("9.33"), tags$td("10.15"), tags$td("0.41")),
-          tags$tr(tags$td("99%"), tags$td("9.20"), tags$td("10.28"), tags$td("0.54"))
-        )
-      ),
-      p("ME(99%)/ME(90%) ≈ 1.59. W BHP i inspekcji pracy żąda się często 99%,
-        bo konsekwencje błędu są poważne.")
-    )),
-    sol5 = withMathJax(tagList(
-      p(tags$b("Wyniki dla ponad_norma_halas:"), " p = 0.312 (n=320)"),
-      tags$ul(
-        tags$li("Sukcesów: ~100"),
-        tags$li("95% CI: ", tags$b("[0.261, 0.366]")),
-        tags$li("Warunki: np ≈ 100 ≥ 10 ✓, n(1−p) ≈ 220 ≥ 10 ✓")
-      ),
-      p(tags$b("Interpretacja:"),
-        " w populacji podobnych zakładów 26–37% miałoby przekroczony próg hałasu.")
-    )),
-    sol6 = withMathJax(tagList(
-      p(tags$b("Wyniki dla naruszen_proc > 20:"), " p = 0.162 (n=320)"),
-      tags$ul(
-        tags$li("95% CI: ", tags$b("[0.124, 0.206]")),
-        tags$li("Szerokość ≈ 0.082 vs 0.105 w zad. 5")
-      ),
-      p(tags$b("Dlaczego węższy?"), " p = 0.162 jest dalej od 0.5 niż p = 0.312.",
-        " Dla p = 0.16: \\(p(1-p) \\approx 0.135\\), dla p = 0.31: \\(p(1-p) \\approx 0.215\\).")
-    )),
-    sol7 = withMathJax(tagList(
-      p(tags$b("Pierwsze 30 zakładów, ponad_norma_halas:")),
-      tags$ul(
-        tags$li("n = 30, p empiryczne zależy od danych"),
-        tags$li("95% CI: drastycznie szerszy niż dla pełnych 320"),
-        tags$li("Szerokość CI ∝ \\(1/\\sqrt{n}\\): \\(\\sqrt{320}/\\sqrt{30} \\approx 3.27\\)× większa")
-      ),
-      p(tags$b("Uwaga:"), " pierwsze 30 zakładów to nie losowa próba —
-        mogą być zakłady z jednego regionu lub branży, co wprowadza obciążenie.")
-    )),
+    }),
+    sol2 = withMathJax({
+      ci <- .ci_mean(.ch7_data$bhp$absencja_dni)
+      tagList(
+        p(tags$b("Wyniki dla zmiennej "), tags$code("absencja_dni"), ":"),
+        tags$ul(
+          tags$li(sprintf("n = %d", ci$n)),
+          tags$li("Średnia ≈ ", tags$b(.fmt_mean(ci))),
+          tags$li("s ≈ ", tags$b(.fmt_sd(ci))),
+          tags$li("95% CI: ", tags$b(.fmt_ci(ci)), ", ME ≈ ", tags$b(.fmt_me(ci)))
+        ),
+        p(tags$b("Uwaga:"), " n identyczne jak w zad. 1, różnica w szerokości CI wynika ze zmienności s.")
+      )
+    }),
+    sol3 = withMathJax({
+      ci <- .ci_mean(.ch7_data$bhp$wskaznik_wypadkow[.ch7_data$bhp$wielkosc == "duzy"])
+      tagList(
+        p(tags$b("Wyniki dla dużych zakładów"), " (wielkosc == \"duzy\"):"),
+        tags$ul(
+          tags$li(sprintf("n = %d", ci$n)),
+          tags$li("Średnia ≈ ", tags$b(.fmt_mean(ci))),
+          tags$li("s ≈ ", tags$b(.fmt_sd(ci))),
+          tags$li("95% CI: ", tags$b(.fmt_ci(ci)), ", ME ≈ ", tags$b(.fmt_me(ci)))
+        ),
+        p(tags$b("Wniosek:"), " \\(SE \\propto 1/\\sqrt{n}\\) — mniejsze n → szerszy CI.")
+      )
+    }),
+    sol4 = withMathJax({
+      ci90 <- .ci_mean(.ch7_data$bhp$wskaznik_wypadkow, level = 0.90)
+      ci95 <- .ci_mean(.ch7_data$bhp$wskaznik_wypadkow, level = 0.95)
+      ci99 <- .ci_mean(.ch7_data$bhp$wskaznik_wypadkow, level = 0.99)
+      tagList(
+        p(tags$b("CI dla wskaznik_wypadkow przy różnych poziomach ufności"),
+          sprintf(" (n=%d):", ci95$n)),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
+          tags$tbody(
+            tags$tr(tags$td("90%"), tags$td(sprintf("%.2f", ci90$lo)),
+                    tags$td(sprintf("%.2f", ci90$hi)), tags$td(.fmt_me(ci90))),
+            tags$tr(tags$td("95%"), tags$td(sprintf("%.2f", ci95$lo)),
+                    tags$td(sprintf("%.2f", ci95$hi)), tags$td(.fmt_me(ci95))),
+            tags$tr(tags$td("99%"), tags$td(sprintf("%.2f", ci99$lo)),
+                    tags$td(sprintf("%.2f", ci99$hi)), tags$td(.fmt_me(ci99)))
+          )
+        ),
+        p(sprintf("ME(99%%)/ME(90%%) ≈ %.2f.", ci99$me / ci90$me))
+      )
+    }),
+    sol5 = withMathJax({
+      ci <- .ci_prop(.ch7_data$bhp$ponad_norma_halas)
+      tagList(
+        p(tags$b("Wyniki dla ponad_norma_halas:"),
+          sprintf(" p = %d/%d ≈ ", ci$k, ci$n), tags$b(.fmt_prop(ci))),
+        tags$ul(
+          tags$li(sprintf("Sukcesów: %d", ci$k)),
+          tags$li("95% CI: ", tags$b(sprintf("[%.3f, %.3f]", ci$lo, ci$hi))),
+          tags$li(sprintf("Warunki: np = %d ≥ 10 ✓, n(1−p) = %d ≥ 10 ✓", ci$k, ci$n - ci$k))
+        ),
+        p(tags$b("Interpretacja:"),
+          sprintf(" w populacji podobnych zakładów od %.1f%% do %.1f%% miałoby przekroczony próg hałasu.",
+                  100 * ci$lo, 100 * ci$hi))
+      )
+    }),
+    sol6 = withMathJax({
+      ci <- .ci_prop(.ch7_data$bhp$naruszen_proc > 20)
+      ci5 <- .ci_prop(.ch7_data$bhp$ponad_norma_halas)
+      tagList(
+        p(tags$b("Wyniki dla naruszen_proc > 20:"),
+          sprintf(" p = %d/%d ≈ ", ci$k, ci$n), tags$b(.fmt_prop(ci))),
+        tags$ul(
+          tags$li("95% CI: ", tags$b(sprintf("[%.3f, %.3f]", ci$lo, ci$hi))),
+          tags$li(sprintf("Szerokość ≈ %.3f vs %.3f w zad. 5", ci$hi - ci$lo, ci5$hi - ci5$lo))
+        ),
+        p(tags$b("Uwaga:"), " im dalej p od 0.5, tym mniejsza wariancja \\(p(1-p)\\) → węższy CI.")
+      )
+    }),
+    sol7 = withMathJax({
+      x <- head(.ch7_data$bhp$ponad_norma_halas, 30)
+      k <- sum(x); n <- length(x); p <- k / n
+      cp <- binom.test(k, n)$conf.int
+      tagList(
+        p(tags$b("Pierwsze 30 zakładów, ponad_norma_halas:"),
+          sprintf(" p = %d/%d ≈ ", k, n), tags$b(sprintf("%.3f", p))),
+        tags$ul(
+          tags$li("95% CI Clopper-Pearson: ",
+                  tags$b(sprintf("[%.3f, %.3f]", cp[1], cp[2])),
+                  sprintf(" — szerokość ≈ %.3f", cp[2] - cp[1]))
+        ),
+        p(tags$b("Uwaga:"), " pierwsze 30 zakładów to nie losowa próba.")
+      )
+    }),
     sol8 = withMathJax(tagList(
       tags$ul(
         tags$li(tags$b("a) FAŁSZ."), " μ jest stałe. To metoda ma 95% szans wyprodukować CI zawierający μ."),
@@ -954,45 +1027,58 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
         tags$li(tags$b("f) FAŁSZ."), " Wyższy poziom ufności → szerszy CI.")
       )
     )),
-    sol9a = tagList(
-      p(tags$b("95% CI dla wskaznik_wypadkow wg zmianowości:")),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Zmiany"), tags$th("n"), tags$th("Średnia"), tags$th("95% CI"))),
-        tags$tbody(
-          tags$tr(tags$td("jedna"), tags$td("≤96"), tags$td("9.1"), tags$td("[8.4, 9.8]")),
-          tags$tr(tags$td("dwie"), tags$td("≤144"), tags$td("10.2"), tags$td("[9.7, 10.7]")),
-          tags$tr(tags$td("trzy"), tags$td("≤80"), tags$td("12.1"), tags$td("[11.3, 12.9]"))
-        )
-      ),
-      p(tags$b("Obserwacja:"), " więcej zmian → więcej wypadków. Przedziały nie nachodzą na siebie."),
-      p(tags$em("Ale czy to zmianowość sama w sobie? Przejdź do kroku B."))
-    ),
-    sol9b = tagList(
-      p(tags$b("95% CI dla wskaznik_wypadkow wg branży:")),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Branża"), tags$th("n"), tags$th("Średnia"), tags$th("95% CI"))),
-        tags$tbody(
-          tags$tr(tags$td("spożywcza"), tags$td("≤112"), tags$td("7.8"), tags$td("[7.2, 8.4]")),
-          tags$tr(tags$td("metalowa"), tags$td("≤128"), tags$td("11.6"), tags$td("[11.0, 12.2]")),
-          tags$tr(tags$td("chemiczna"), tags$td("≤80"), tags$td("10.3"), tags$td("[9.5, 11.1]"))
-        )
-      ),
-      p(tags$b("Ten sam wzorzec!"), " Metalowa i chemiczna mają wyższe wskaźniki wypadków."),
-      p(tags$em("Może to branża (a nie zmianowość) jest prawdziwym czynnikiem? Przejdź do kroku C."))
-    ),
-    sol9c = tagList(
-      p(tags$b("Weryfikacja:"), " metalowe i chemiczne zakłady częściej pracują na 3 zmiany
-        (ze względu na technologię procesu — ciągła produkcja)."),
-      div(class = "callout-warning",
-        p(tags$b("Wniosek:"), " zmianowość i wypadkowość są powiązane,
-          ale czynnikiem zakłócającym jest ", tags$b("branża"),
-          ". Zakłady metalowe i chemiczne są bardziej niebezpieczne z natury procesu,
-          a jednocześnie częściej wymagają pracy ciągłej."),
-        p("Wniosek inspekcji: poprawa BHP w metalowej/chemicznej może być skuteczniejsza
-          niż skracanie zmian."),
-        p(tags$em("Morał:"), " CI mierzą precyzję, ale nie zasteptą analizy mechanizmu przyczynowego.")
+    sol9a = {
+      d <- .ch7_data$bhp
+      rows <- lapply(sort(unique(d$zmiany)), function(lvl) {
+        ci <- .ci_mean(d$wskaznik_wypadkow[d$zmiany == lvl])
+        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 1)), tags$td(.fmt_ci(ci, 1)))
+      })
+      tagList(
+        p(tags$b("95% CI dla wskaznik_wypadkow wg zmianowości:")),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Zmiany"), tags$th("n"),
+                             tags$th("Średnia"), tags$th("95% CI"))),
+          tags$tbody(rows)
+        ),
+        p(tags$em("Przejdź do kroku B."))
       )
-    ),
+    },
+    sol9b = {
+      d <- .ch7_data$bhp
+      rows <- lapply(sort(unique(d$branza)), function(lvl) {
+        ci <- .ci_mean(d$wskaznik_wypadkow[d$branza == lvl])
+        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 1)), tags$td(.fmt_ci(ci, 1)))
+      })
+      tagList(
+        p(tags$b("95% CI dla wskaznik_wypadkow wg branży:")),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Branża"), tags$th("n"),
+                             tags$th("Średnia"), tags$th("95% CI"))),
+          tags$tbody(rows)
+        ),
+        p(tags$em("Przejdź do kroku C."))
+      )
+    },
+    sol9c = {
+      d <- .ch7_data$bhp
+      tab <- table(d$branza, d$zmiany)
+      rows <- lapply(rownames(tab), function(br) {
+        tags$tr(tags$td(br),
+                lapply(colnames(tab), function(zm) tags$td(tab[br, zm])))
+      })
+      tagList(
+        p(tags$b("Tabela: branża × zmianowość (liczność):")),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Branża"),
+                             lapply(colnames(tab), function(zm) tags$th(zm)))),
+          tags$tbody(rows)
+        ),
+        div(class = "callout-warning",
+          p(tags$b("Wniosek:"), " branża jest zmienną zakłócającą dla związku zmianowość–wypadki."),
+          p(tags$em("Morał:"), " CI mierzą precyzję, ale nie zastępują analizy mechanizmu.")
+        )
+      )
+    },
     sol_summary = tagList(
       tags$ol(
         tags$li(tags$b("Co wpływa na CI?"),
@@ -1006,84 +1092,110 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
   ),
 
   rol = list(
-    sol1 = withMathJax(tagList(
-      p(tags$b("Wyniki dla zmiennej "), tags$code("plon_pszenicy"), ":"),
-      tags$ul(
-        tags$li("n = 280"),
-        tags$li("Średnia ≈ ", tags$b("6.17")),
-        tags$li("s ≈ ", tags$b("1.20")),
-        tags$li("95% CI: ", tags$b("[6.03, 6.31]"), ", ME ≈ ", tags$b("0.14"))
-      ),
-      p(tags$b("Interpretacja:"),
-        " szacujemy, że w populacji podobnych pól średni plon pszenicy wynosi 6.0–6.3 t/ha.")
-    )),
-    sol2 = withMathJax(tagList(
-      p(tags$b("Wyniki dla zmiennej "), tags$code("plon_rzepa"), ":"),
-      tags$ul(
-        tags$li("Średnia ≈ ", tags$b("4.21")),
-        tags$li("s ≈ ", tags$b("0.72")),
-        tags$li("95% CI: ", tags$b("[4.13, 4.29]"), ", ME ≈ ", tags$b("0.08"))
-      ),
-      p(tags$b("Dlaczego CI dla rzepaku jest węższy?"),
-        " n = 280 takie samo, ale s(rzepa) = 0.72 < s(pszenica) = 1.20.",
-        " Mniejsza zmienność plonu rzepaku → mniejsze SE → ciąśniejszy CI.")
-    )),
-    sol3 = withMathJax(tagList(
-      p(tags$b("Wyniki dla pól klasy I"), " (klasa_gleby == \"I\"):"),
-      tags$ul(
-        tags$li("n ≈ 70"),
-        tags$li("Średnia ≈ ", tags$b("7.12"), " (wyższa niż ogół!)"),
-        tags$li("95% CI: ", tags$b("[6.89, 7.45]"), ", ME ≈ ", tags$b("0.28"))
-      ),
-      p(tags$b("Trzy przyczyny szerszego CI:")),
-      tags$ol(
-        tags$li(tags$b("Mniejsze n"), " — \\(\\sqrt{280}/\\sqrt{70} = 2\\)× większe SE."),
-        tags$li(tags$b("Większy t*"), " — dla df ≈ 69: t* ≈ 2.00 vs 1.968 dla df = 279."),
-        tags$li(tags$b("Możliwa inna zmienność"), " — pola klasy I mogą mieć inne s.")
+    sol1 = withMathJax({
+      ci <- .ci_mean(.ch7_data$rol$plon_pszenicy)
+      tagList(
+        p(tags$b("Wyniki dla zmiennej "), tags$code("plon_pszenicy"), ":"),
+        tags$ul(
+          tags$li(sprintf("n = %d", ci$n)),
+          tags$li("Średnia ≈ ", tags$b(.fmt_mean(ci))),
+          tags$li("s ≈ ", tags$b(.fmt_sd(ci))),
+          tags$li("95% CI: ", tags$b(.fmt_ci(ci)), ", ME ≈ ", tags$b(.fmt_me(ci)))
+        ),
+        p(tags$b("Interpretacja:"),
+          sprintf(" 95%% CI dla średniego plonu pszenicy: od %.2f do %.2f t/ha.", ci$lo, ci$hi))
       )
-    )),
-    sol4 = withMathJax(tagList(
-      p(tags$b("CI dla plon_pszenicy przy różnych poziomach ufności"), " (n=280):"),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
-        tags$tbody(
-          tags$tr(tags$td("90%"), tags$td("6.05"), tags$td("6.29"), tags$td("0.12")),
-          tags$tr(tags$td("95%"), tags$td("6.03"), tags$td("6.31"), tags$td("0.14")),
-          tags$tr(tags$td("99%"), tags$td("5.99"), tags$td("6.35"), tags$td("0.18"))
-        )
-      ),
-      p("Przy normach skupu agencja rolna może preferować 95% lub 99%,
-        bo konsekwencje błędnego szacunku są finansowe.")
-    )),
-    sol5 = withMathJax(tagList(
-      p(tags$b("Wyniki dla plon_ponizej_5:"), " p = 0.154 (n=280)"),
-      tags$ul(
-        tags$li("Sukcesów: ~43"),
-        tags$li("95% CI: ", tags$b("[0.113, 0.202]")),
-        tags$li("Warunki: np ≈ 43 ≥ 10 ✓, n(1−p) ≈ 237 ≥ 10 ✓")
-      ),
-      p(tags$b("Interpretacja:"),
-        " szacujemy, że w populacji podobnych pól 11–20% nie osiąga progu opłacalności 5 t/ha.")
-    )),
-    sol6 = withMathJax(tagList(
-      p(tags$b("Wyniki dla wilg_powyzej_70:"), " p = 0.161 (n=280)"),
-      tags$ul(
-        tags$li("95% CI: ", tags$b("[0.119, 0.209]")),
-        tags$li("Szerokość ≈ 0.090 vs 0.089 w zad. 5 — bardzo podobne")
-      ),
-      p(tags$b("Dlaczego podobna szerokość?"), " p = 0.154 i p = 0.161 są prawie takie same,
-        więc wariancja \\(p(1-p)\\) jest podobna. CI będą zbliżzone.")
-    )),
-    sol7 = withMathJax(tagList(
-      p(tags$b("Pierwsze 30 pól, plon_ponizej_5:")),
-      tags$ul(
-        tags$li("n = 30, p empiryczne zależy od danych"),
-        tags$li("95% CI: drastycznie szerszy niż dla pełnych 280"),
-        tags$li("Szerokość CI ∝ \\(1/\\sqrt{n}\\): \\(\\sqrt{280}/\\sqrt{30} \\approx 3.06\\)× większa")
-      ),
-      p(tags$b("Uwaga:"), " pierwsze 30 pól to nie losowa próba —
-        mogą pochodzić z jednego rejonu, o podobnej klasie gleby.")
-    )),
+    }),
+    sol2 = withMathJax({
+      ci <- .ci_mean(.ch7_data$rol$plon_rzepa)
+      tagList(
+        p(tags$b("Wyniki dla zmiennej "), tags$code("plon_rzepa"), ":"),
+        tags$ul(
+          tags$li(sprintf("n = %d", ci$n)),
+          tags$li("Średnia ≈ ", tags$b(.fmt_mean(ci))),
+          tags$li("s ≈ ", tags$b(.fmt_sd(ci))),
+          tags$li("95% CI: ", tags$b(.fmt_ci(ci)), ", ME ≈ ", tags$b(.fmt_me(ci)))
+        ),
+        p(tags$b("Uwaga:"), " n identyczne jak w zad. 1; różnica w szerokości CI wynika ze zmienności s.")
+      )
+    }),
+    sol3 = withMathJax({
+      ci <- .ci_mean(.ch7_data$rol$plon_pszenicy[.ch7_data$rol$klasa_gleby == "I"])
+      tagList(
+        p(tags$b("Wyniki dla pól klasy I"), " (klasa_gleby == \"I\"):"),
+        tags$ul(
+          tags$li(sprintf("n = %d", ci$n)),
+          tags$li("Średnia ≈ ", tags$b(.fmt_mean(ci))),
+          tags$li("s ≈ ", tags$b(.fmt_sd(ci))),
+          tags$li("95% CI: ", tags$b(.fmt_ci(ci)), ", ME ≈ ", tags$b(.fmt_me(ci)))
+        ),
+        p(tags$b("Wniosek:"), " \\(SE \\propto 1/\\sqrt{n}\\) — mniejsze n → szerszy CI.")
+      )
+    }),
+    sol4 = withMathJax({
+      ci90 <- .ci_mean(.ch7_data$rol$plon_pszenicy, level = 0.90)
+      ci95 <- .ci_mean(.ch7_data$rol$plon_pszenicy, level = 0.95)
+      ci99 <- .ci_mean(.ch7_data$rol$plon_pszenicy, level = 0.99)
+      tagList(
+        p(tags$b("CI dla plon_pszenicy przy różnych poziomach ufności"),
+          sprintf(" (n=%d):", ci95$n)),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
+          tags$tbody(
+            tags$tr(tags$td("90%"), tags$td(sprintf("%.2f", ci90$lo)),
+                    tags$td(sprintf("%.2f", ci90$hi)), tags$td(.fmt_me(ci90))),
+            tags$tr(tags$td("95%"), tags$td(sprintf("%.2f", ci95$lo)),
+                    tags$td(sprintf("%.2f", ci95$hi)), tags$td(.fmt_me(ci95))),
+            tags$tr(tags$td("99%"), tags$td(sprintf("%.2f", ci99$lo)),
+                    tags$td(sprintf("%.2f", ci99$hi)), tags$td(.fmt_me(ci99)))
+          )
+        ),
+        p(sprintf("ME(99%%)/ME(90%%) ≈ %.2f.", ci99$me / ci90$me))
+      )
+    }),
+    sol5 = withMathJax({
+      ci <- .ci_prop(.ch7_data$rol$plon_ponizej_5)
+      tagList(
+        p(tags$b("Wyniki dla plon_ponizej_5:"),
+          sprintf(" p = %d/%d ≈ ", ci$k, ci$n), tags$b(.fmt_prop(ci))),
+        tags$ul(
+          tags$li(sprintf("Sukcesów: %d", ci$k)),
+          tags$li("95% CI: ", tags$b(sprintf("[%.3f, %.3f]", ci$lo, ci$hi))),
+          tags$li(sprintf("Warunki: np = %d ≥ 10 ✓, n(1−p) = %d ≥ 10 ✓", ci$k, ci$n - ci$k))
+        ),
+        p(tags$b("Interpretacja:"),
+          sprintf(" szacujemy, że od %.1f%% do %.1f%% pól nie osiąga progu 5 t/ha.",
+                  100 * ci$lo, 100 * ci$hi))
+      )
+    }),
+    sol6 = withMathJax({
+      ci <- .ci_prop(.ch7_data$rol$wilg_powyzej_70)
+      ci5 <- .ci_prop(.ch7_data$rol$plon_ponizej_5)
+      tagList(
+        p(tags$b("Wyniki dla wilg_powyzej_70:"),
+          sprintf(" p = %d/%d ≈ ", ci$k, ci$n), tags$b(.fmt_prop(ci))),
+        tags$ul(
+          tags$li("95% CI: ", tags$b(sprintf("[%.3f, %.3f]", ci$lo, ci$hi))),
+          tags$li(sprintf("Szerokość ≈ %.3f vs %.3f w zad. 5", ci$hi - ci$lo, ci5$hi - ci5$lo))
+        ),
+        p(tags$b("Uwaga:"), " szerokości są podobne, bo p bliskie sobie → wariancja \\(p(1-p)\\) zbliżona.")
+      )
+    }),
+    sol7 = withMathJax({
+      x <- head(.ch7_data$rol$plon_ponizej_5, 30)
+      k <- sum(x); n <- length(x); p <- k / n
+      cp <- binom.test(k, n)$conf.int
+      tagList(
+        p(tags$b("Pierwsze 30 pól, plon_ponizej_5:"),
+          sprintf(" p = %d/%d ≈ ", k, n), tags$b(sprintf("%.3f", p))),
+        tags$ul(
+          tags$li("95% CI Clopper-Pearson: ",
+                  tags$b(sprintf("[%.3f, %.3f]", cp[1], cp[2])),
+                  sprintf(" — szerokość ≈ %.3f", cp[2] - cp[1]))
+        ),
+        p(tags$b("Uwaga:"), " pierwsze 30 pól to nie losowa próba.")
+      )
+    }),
     sol8 = withMathJax(tagList(
       tags$ul(
         tags$li(tags$b("a) FAŁSZ."), " μ jest stałe. To metoda ma 95% szans wyprodukować CI zawierający μ."),
@@ -1094,46 +1206,58 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
         tags$li(tags$b("f) FAŁSZ."), " Wyższy poziom ufności → szerszy CI.")
       )
     )),
-    sol9a = tagList(
-      p(tags$b("95% CI dla plon_pszenicy wg nawożenia:")),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Nawożenie"), tags$th("n"), tags$th("Średnia (t/ha)"), tags$th("95% CI"))),
-        tags$tbody(
-          tags$tr(tags$td("niskie"), tags$td("≤70"), tags$td("5.5"), tags$td("[5.2, 5.8]")),
-          tags$tr(tags$td("średnie"), tags$td("≤140"), tags$td("6.3"), tags$td("[6.1, 6.5]")),
-          tags$tr(tags$td("wysokie"), tags$td("≤70"), tags$td("6.9"), tags$td("[6.6, 7.2]"))
-        )
-      ),
-      p(tags$b("Obserwacja:"), " wyższe nawożenie → wyższy plon. Przedziały nie nachodzą na siebie."),
-      p(tags$em("Ale czy to nawożenie samo w sobie? Przejdź do kroku B."))
-    ),
-    sol9b = tagList(
-      p(tags$b("95% CI dla plon_pszenicy wg klasy gleby:")),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Klasa gleby"), tags$th("n"), tags$th("Średnia (t/ha)"), tags$th("95% CI"))),
-        tags$tbody(
-          tags$tr(tags$td("I"), tags$td("≤70"), tags$td("7.1"), tags$td("[6.9, 7.4]")),
-          tags$tr(tags$td("II"), tags$td("≤126"), tags$td("6.1"), tags$td("[5.9, 6.3]")),
-          tags$tr(tags$td("III"), tags$td("≤84"), tags$td("5.0"), tags$td("[4.8, 5.2]"))
-        )
-      ),
-      p(tags$b("Ten sam wzorzem!"), " Lepsza klasa gleby → wyższy plon. Różnica ~2 t/ha między I a III."),
-      p(tags$em("Czy rolnicy z lepszą glebą więcej nawożą? Przejdź do kroku C."))
-    ),
-    sol9c = tagList(
-      p(tags$b("Weryfikacja:"), " pola z wysokim nawożeniem to częściej klasy I i II
-        (lepsi rolnicy inwestują w obie metody, lub lepsza gleba opłaca się nawożić)."),
-      div(class = "callout-warning",
-        p(tags$b("Wniosek:"), " nawożenie i plon są powiązane, ale czynnikiem zakłócającym jest ",
-          tags$b("klasa gleby"),
-          ". Pola z lepszą glebą dają wyższy plon niezależnie od nawożenia,
-          a jednocześnie są częściej intensywnie nawożone."),
-        p("Aby ocenić efekt samego nawożenia, należałoby porównać pola ",
-          tags$em("tej samej klasy gleby"), " z różnym nawożeniem."),
-        p(tags$em("Morał:"), " CI dają precyzję, ale bez kontroli zmiennej zakłócającej
-          wnioski o przyczynach mogą być błędne.")
+    sol9a = {
+      d <- .ch7_data$rol
+      rows <- lapply(c("niskie", "srednie", "wysokie"), function(lvl) {
+        ci <- .ci_mean(d$plon_pszenicy[d$nawozenie == lvl])
+        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 2)), tags$td(.fmt_ci(ci, 2)))
+      })
+      tagList(
+        p(tags$b("95% CI dla plon_pszenicy wg nawożenia:")),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Nawożenie"), tags$th("n"),
+                             tags$th("Średnia (t/ha)"), tags$th("95% CI"))),
+          tags$tbody(rows)
+        ),
+        p(tags$em("Przejdź do kroku B."))
       )
-    ),
+    },
+    sol9b = {
+      d <- .ch7_data$rol
+      rows <- lapply(c("I", "II", "III"), function(lvl) {
+        ci <- .ci_mean(d$plon_pszenicy[d$klasa_gleby == lvl])
+        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 2)), tags$td(.fmt_ci(ci, 2)))
+      })
+      tagList(
+        p(tags$b("95% CI dla plon_pszenicy wg klasy gleby:")),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Klasa gleby"), tags$th("n"),
+                             tags$th("Średnia (t/ha)"), tags$th("95% CI"))),
+          tags$tbody(rows)
+        ),
+        p(tags$em("Przejdź do kroku C."))
+      )
+    },
+    sol9c = {
+      d <- .ch7_data$rol
+      tab <- table(d$klasa_gleby, d$nawozenie)
+      rows <- lapply(rownames(tab), function(kl) {
+        tags$tr(tags$td(kl),
+                lapply(colnames(tab), function(nw) tags$td(tab[kl, nw])))
+      })
+      tagList(
+        p(tags$b("Tabela: klasa gleby × nawożenie (liczność):")),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Klasa gleby"),
+                             lapply(colnames(tab), function(nw) tags$th(nw)))),
+          tags$tbody(rows)
+        ),
+        div(class = "callout-warning",
+          p(tags$b("Wniosek:"), " klasa gleby jest zmienną zakłócającą dla związku nawożenie–plon."),
+          p(tags$em("Morał:"), " CI dają precyzję, ale bez kontroli zmiennej zakłócającej wnioski o przyczynach mogą być błędne.")
+        )
+      )
+    },
     sol_summary = tagList(
       tags$ol(
         tags$li(tags$b("Co wpływa na CI?"),
@@ -1147,85 +1271,110 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
   ),
 
   zyw = list(
-    sol1 = withMathJax(tagList(
-      p(tags$b("Wyniki dla zmiennej "), tags$code("zawartosc_bialka"), ":"),
-      tags$ul(
-        tags$li("n = 350"),
-        tags$li("Średnia ≈ ", tags$b("26.71")),
-        tags$li("s ≈ ", tags$b("1.32")),
-        tags$li("95% CI: ", tags$b("[26.57, 26.85]"), ", ME ≈ ", tags$b("0.14"))
-      ),
-      p(tags$b("Interpretacja:"),
-        " szacujemy, że w populacji podobnych partii średnia zawartość białka
-        wynosi 26.57–26.85%.")
-    )),
-    sol2 = withMathJax(tagList(
-      p(tags$b("Wyniki dla zmiennej "), tags$code("zawartosc_tluszczu"), ":"),
-      tags$ul(
-        tags$li("Średnia ≈ ", tags$b("2.781")),
-        tags$li("s ≈ ", tags$b("0.244")),
-        tags$li("95% CI: ", tags$b("[2.755, 2.807]"), ", ME ≈ ", tags$b("0.026"))
-      ),
-      p(tags$b("Dlaczego CI dla tłuszczu jest węższy?"),
-        " n = 350 takie samo, ale s(tłuszcz) = 0.244 < s(białko) = 1.32.",
-        " Mniejsza zmienność tłuszczu → mniejsze SE → ciąśniejszy CI.")
-    )),
-    sol3 = withMathJax(tagList(
-      p(tags$b("Wyniki dla linii A"), " (linia == \"A\"):"),
-      tags$ul(
-        tags$li("n ≈ 140"),
-        tags$li("Średnia ≈ ", tags$b("27.1")),
-        tags$li("95% CI: ", tags$b("[26.9, 27.3]"), ", ME ≈ ", tags$b("0.20"))
-      ),
-      p(tags$b("Trzy przyczyny szerszego CI:")),
-      tags$ol(
-        tags$li(tags$b("Mniejsze n"), " — \\(\\sqrt{350}/\\sqrt{140} = 1.58\\)× większe SE."),
-        tags$li(tags$b("Większy t*"), " — dla df ≈ 139: t* ≈ 1.977 vs 1.967 dla df = 349."),
-        tags$li(tags$b("Możliwa inna zmienność"), " — linia A może mieć inne s.")
+    sol1 = withMathJax({
+      ci <- .ci_mean(.ch7_data$zyw$zawartosc_bialka)
+      tagList(
+        p(tags$b("Wyniki dla zmiennej "), tags$code("zawartosc_bialka"), ":"),
+        tags$ul(
+          tags$li(sprintf("n = %d", ci$n)),
+          tags$li("Średnia ≈ ", tags$b(.fmt_mean(ci))),
+          tags$li("s ≈ ", tags$b(.fmt_sd(ci))),
+          tags$li("95% CI: ", tags$b(.fmt_ci(ci)), ", ME ≈ ", tags$b(.fmt_me(ci)))
+        ),
+        p(tags$b("Interpretacja:"),
+          sprintf(" 95%% CI dla średniej zawartości białka: od %.2f do %.2f%%.", ci$lo, ci$hi))
       )
-    )),
-    sol4 = withMathJax(tagList(
-      p(tags$b("CI dla zawartosc_bialka przy różnych poziomach ufności"), " (n=350):"),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
-        tags$tbody(
-          tags$tr(tags$td("90%"), tags$td("26.59"), tags$td("26.83"), tags$td("0.12")),
-          tags$tr(tags$td("95%"), tags$td("26.57"), tags$td("26.85"), tags$td("0.14")),
-          tags$tr(tags$td("99%"), tags$td("26.53"), tags$td("26.89"), tags$td("0.18"))
-        )
-      ),
-      p("Dział jakości zwykle używa 95%; przy normach prawnych (etykiety) może być 99%.")
-    )),
-    sol5 = withMathJax(tagList(
-      p(tags$b("Wyniki dla bialko_ponizej_normy:"), " p = 0.291 (n=350)"),
-      tags$ul(
-        tags$li("Sukcesów: ~102"),
-        tags$li("95% CI: ", tags$b("[0.245, 0.341]")),
-        tags$li("Warunki: np ≈ 102 ≥ 10 ✓, n(1−p) ≈ 248 ≥ 10 ✓")
-      ),
-      p(tags$b("Interpretacja:"),
-        " szacujemy, że w populacji podobnych partii 24–34% nie spełnia normy białka.",
-        " To poważny problem jakościowy.")
-    )),
-    sol6 = withMathJax(tagList(
-      p(tags$b("Wyniki dla tluszcz_powyzej_normy:"), " p = 0.189 (n=350)"),
-      tags$ul(
-        tags$li("95% CI: ", tags$b("[0.149, 0.233]")),
-        tags$li("Szerokość ≈ 0.084 vs 0.096 w zad. 5")
-      ),
-      p(tags$b("Dlaczego węższy?"), " p = 0.189 jest dalej od 0.5 niż p = 0.291.",
-        " Dla p = 0.19: \\(p(1-p) \\approx 0.153\\), dla p = 0.29: \\(p(1-p) \\approx 0.206\\).")
-    )),
-    sol7 = withMathJax(tagList(
-      p(tags$b("Pierwsze 30 partii, bialko_ponizej_normy:")),
-      tags$ul(
-        tags$li("n = 30, p empiryczne zależy od danych"),
-        tags$li("95% CI: drastycznie szerszy niż dla pełnych 350"),
-        tags$li("Szerokość CI ∝ \\(1/\\sqrt{n}\\): \\(\\sqrt{350}/\\sqrt{30} \\approx 3.42\\)× większa")
-      ),
-      p(tags$b("Uwaga:"), " pierwsze 30 partii to nie losowa próba —
-        mogą pochodzić z jednej linii lub jednego dostawcy.")
-    )),
+    }),
+    sol2 = withMathJax({
+      ci <- .ci_mean(.ch7_data$zyw$zawartosc_tluszczu)
+      tagList(
+        p(tags$b("Wyniki dla zmiennej "), tags$code("zawartosc_tluszczu"), ":"),
+        tags$ul(
+          tags$li(sprintf("n = %d", ci$n)),
+          tags$li("Średnia ≈ ", tags$b(.fmt_mean(ci, 3))),
+          tags$li("s ≈ ", tags$b(.fmt_sd(ci, 3))),
+          tags$li("95% CI: ", tags$b(.fmt_ci(ci, 3)), ", ME ≈ ", tags$b(.fmt_me(ci, 3)))
+        ),
+        p(tags$b("Uwaga:"), " n identyczne jak w zad. 1; różnica w szerokości CI wynika ze zmienności s.")
+      )
+    }),
+    sol3 = withMathJax({
+      ci <- .ci_mean(.ch7_data$zyw$zawartosc_bialka[.ch7_data$zyw$linia == "A"])
+      tagList(
+        p(tags$b("Wyniki dla linii A"), " (linia == \"A\"):"),
+        tags$ul(
+          tags$li(sprintf("n = %d", ci$n)),
+          tags$li("Średnia ≈ ", tags$b(.fmt_mean(ci))),
+          tags$li("s ≈ ", tags$b(.fmt_sd(ci))),
+          tags$li("95% CI: ", tags$b(.fmt_ci(ci)), ", ME ≈ ", tags$b(.fmt_me(ci)))
+        ),
+        p(tags$b("Wniosek:"), " \\(SE \\propto 1/\\sqrt{n}\\) — mniejsze n → szerszy CI.")
+      )
+    }),
+    sol4 = withMathJax({
+      ci90 <- .ci_mean(.ch7_data$zyw$zawartosc_bialka, level = 0.90)
+      ci95 <- .ci_mean(.ch7_data$zyw$zawartosc_bialka, level = 0.95)
+      ci99 <- .ci_mean(.ch7_data$zyw$zawartosc_bialka, level = 0.99)
+      tagList(
+        p(tags$b("CI dla zawartosc_bialka przy różnych poziomach ufności"),
+          sprintf(" (n=%d):", ci95$n)),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
+          tags$tbody(
+            tags$tr(tags$td("90%"), tags$td(sprintf("%.2f", ci90$lo)),
+                    tags$td(sprintf("%.2f", ci90$hi)), tags$td(.fmt_me(ci90))),
+            tags$tr(tags$td("95%"), tags$td(sprintf("%.2f", ci95$lo)),
+                    tags$td(sprintf("%.2f", ci95$hi)), tags$td(.fmt_me(ci95))),
+            tags$tr(tags$td("99%"), tags$td(sprintf("%.2f", ci99$lo)),
+                    tags$td(sprintf("%.2f", ci99$hi)), tags$td(.fmt_me(ci99)))
+          )
+        ),
+        p(sprintf("ME(99%%)/ME(90%%) ≈ %.2f.", ci99$me / ci90$me))
+      )
+    }),
+    sol5 = withMathJax({
+      ci <- .ci_prop(.ch7_data$zyw$bialko_ponizej_normy)
+      tagList(
+        p(tags$b("Wyniki dla bialko_ponizej_normy:"),
+          sprintf(" p = %d/%d ≈ ", ci$k, ci$n), tags$b(.fmt_prop(ci))),
+        tags$ul(
+          tags$li(sprintf("Sukcesów: %d", ci$k)),
+          tags$li("95% CI: ", tags$b(sprintf("[%.3f, %.3f]", ci$lo, ci$hi))),
+          tags$li(sprintf("Warunki: np = %d ≥ 10 ✓, n(1−p) = %d ≥ 10 ✓", ci$k, ci$n - ci$k))
+        ),
+        p(tags$b("Interpretacja:"),
+          sprintf(" szacujemy, że od %.1f%% do %.1f%% partii nie spełnia normy białka.",
+                  100 * ci$lo, 100 * ci$hi))
+      )
+    }),
+    sol6 = withMathJax({
+      ci <- .ci_prop(.ch7_data$zyw$tluszcz_powyzej_normy)
+      ci5 <- .ci_prop(.ch7_data$zyw$bialko_ponizej_normy)
+      tagList(
+        p(tags$b("Wyniki dla tluszcz_powyzej_normy:"),
+          sprintf(" p = %d/%d ≈ ", ci$k, ci$n), tags$b(.fmt_prop(ci))),
+        tags$ul(
+          tags$li("95% CI: ", tags$b(sprintf("[%.3f, %.3f]", ci$lo, ci$hi))),
+          tags$li(sprintf("Szerokość ≈ %.3f vs %.3f w zad. 5", ci$hi - ci$lo, ci5$hi - ci5$lo))
+        ),
+        p(tags$b("Uwaga:"), " im dalej p od 0.5, tym mniejsza wariancja \\(p(1-p)\\) → węższy CI.")
+      )
+    }),
+    sol7 = withMathJax({
+      x <- head(.ch7_data$zyw$bialko_ponizej_normy, 30)
+      k <- sum(x); n <- length(x); p <- k / n
+      cp <- binom.test(k, n)$conf.int
+      tagList(
+        p(tags$b("Pierwsze 30 partii, bialko_ponizej_normy:"),
+          sprintf(" p = %d/%d ≈ ", k, n), tags$b(sprintf("%.3f", p))),
+        tags$ul(
+          tags$li("95% CI Clopper-Pearson: ",
+                  tags$b(sprintf("[%.3f, %.3f]", cp[1], cp[2])),
+                  sprintf(" — szerokość ≈ %.3f", cp[2] - cp[1]))
+        ),
+        p(tags$b("Uwaga:"), " pierwsze 30 partii to nie losowa próba.")
+      )
+    }),
     sol8 = withMathJax(tagList(
       tags$ul(
         tags$li(tags$b("a) FAŁSZ."), " μ jest stałe. To metoda ma 95% szans wyprodukować CI zawierający μ."),
@@ -1236,46 +1385,58 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
         tags$li(tags$b("f) FAŁSZ."), " Wyższy poziom ufności → szerszy CI.")
       )
     )),
-    sol9a = tagList(
-      p(tags$b("95% CI dla zawartosc_bialka wg dostawcy:")),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Dostawca"), tags$th("n"), tags$th("Średnia (%)"), tags$th("95% CI"))),
-        tags$tbody(
-          tags$tr(tags$td("lokalny"), tags$td("≤123"), tags$td("26.3"), tags$td("[26.1, 26.5]")),
-          tags$tr(tags$td("krajowy"), tags$td("≤158"), tags$td("26.9"), tags$td("[26.7, 27.1]")),
-          tags$tr(tags$td("importowany"), tags$td("≤70"), tags$td("27.8"), tags$td("[27.5, 28.1]"))
-        )
-      ),
-      p(tags$b("Obserwacja:"), " importowany dostawca → wyższa zawartość białka. Przedziały nie nachodzą."),
-      p(tags$em("Ale czy to dostawca sam w sobie? Przejdź do kroku B."))
-    ),
-    sol9b = tagList(
-      p(tags$b("95% CI dla zawartosc_bialka wg linii:")),
-      tags$table(class = "table table-bordered table-striped",
-        tags$thead(tags$tr(tags$th("Linia"), tags$th("n"), tags$th("Średnia (%)"), tags$th("95% CI"))),
-        tags$tbody(
-          tags$tr(tags$td("A"), tags$td("≤140"), tags$td("27.1"), tags$td("[26.9, 27.3]")),
-          tags$tr(tags$td("B"), tags$td("≤123"), tags$td("26.9"), tags$td("[26.7, 27.1]")),
-          tags$tr(tags$td("C"), tags$td("≤88"), tags$td("26.3"), tags$td("[26.0, 26.6]"))
-        )
-      ),
-      p(tags$b("Ten sam wzorzec!"), " Linia A ma najwyższe białko. Linia C — najniższe."),
-      p(tags$em("Czy importowany dostawca częściej zasila linię A? Przejdź do kroku C."))
-    ),
-    sol9c = tagList(
-      p(tags$b("Weryfikacja:"), " importowany dostawca częściej zasila linię A
-        (umowy kontraktowe, specyfikacje jakościowe)."),
-      div(class = "callout-warning",
-        p(tags$b("Wniosek:"), " dostawca i białko są powiązane, ale czynnikiem zakłócającym jest ",
-          tags$b("linia produkcyjna"),
-          ". Linia A ma wyższe białko ze względu na swoje parametry technologiczne,
-          a jednocześnie jest częściej zasilana przez importowanego dostawcę."),
-        p("Aby ocenić efekt samego dostawcy, należałoby porównać partie ",
-          tags$em("tej samej linii"), " od różnych dostawców."),
-        p(tags$em("Morał:"), " CI precyzyjnie mierzą różnice, ale bez kontroli zmiennej
-          zakłócającej wnioski o przyczynach mogą być mylne.")
+    sol9a = {
+      d <- .ch7_data$zyw
+      rows <- lapply(c("lokalny", "krajowy", "importowany"), function(lvl) {
+        ci <- .ci_mean(d$zawartosc_bialka[d$dostawca == lvl])
+        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 2)), tags$td(.fmt_ci(ci, 2)))
+      })
+      tagList(
+        p(tags$b("95% CI dla zawartosc_bialka wg dostawcy:")),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Dostawca"), tags$th("n"),
+                             tags$th("Średnia (%)"), tags$th("95% CI"))),
+          tags$tbody(rows)
+        ),
+        p(tags$em("Przejdź do kroku B."))
       )
-    ),
+    },
+    sol9b = {
+      d <- .ch7_data$zyw
+      rows <- lapply(c("A", "B", "C"), function(lvl) {
+        ci <- .ci_mean(d$zawartosc_bialka[d$linia == lvl])
+        tags$tr(tags$td(lvl), tags$td(ci$n), tags$td(.fmt_mean(ci, 2)), tags$td(.fmt_ci(ci, 2)))
+      })
+      tagList(
+        p(tags$b("95% CI dla zawartosc_bialka wg linii:")),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Linia"), tags$th("n"),
+                             tags$th("Średnia (%)"), tags$th("95% CI"))),
+          tags$tbody(rows)
+        ),
+        p(tags$em("Przejdź do kroku C."))
+      )
+    },
+    sol9c = {
+      d <- .ch7_data$zyw
+      tab <- table(d$linia, d$dostawca)
+      rows <- lapply(rownames(tab), function(ln) {
+        tags$tr(tags$td(ln),
+                lapply(colnames(tab), function(ds) tags$td(tab[ln, ds])))
+      })
+      tagList(
+        p(tags$b("Tabela: linia × dostawca (liczność):")),
+        tags$table(class = "table table-bordered table-striped",
+          tags$thead(tags$tr(tags$th("Linia"),
+                             lapply(colnames(tab), function(ds) tags$th(ds)))),
+          tags$tbody(rows)
+        ),
+        div(class = "callout-warning",
+          p(tags$b("Wniosek:"), " linia produkcyjna jest zmienną zakłócającą dla związku dostawca–białko."),
+          p(tags$em("Morał:"), " CI precyzyjnie mierzą różnice, ale bez kontroli zmiennej zakłócającej wnioski o przyczynach mogą być mylne.")
+        )
+      )
+    },
     sol_summary = tagList(
       tags$ol(
         tags$li(tags$b("Co wpływa na CI?"),

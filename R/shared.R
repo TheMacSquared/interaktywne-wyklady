@@ -102,3 +102,39 @@ dist_names_pl <- c(
   "skewed_left" = "Lewoskośny",
   "die"         = "Kostka (dyskretny)"
 )
+
+# ============================================================================
+# FORMATOWANIE WYNIKOW STATYSTYCZNYCH
+# Helpery uzywane w rozwiazaniach cwiczen — zapewniaja ze wartosci w UI
+# sa liczone z danych/parametrow, a nie wpisane na staie.
+# ============================================================================
+
+# Formatuje prawdopodobienstwo jako "0.2392 (~23.9%)"
+.fmt_p <- function(p) sprintf("%.4f (~%.1f%%)", p, 100 * p)
+
+# CI dla sredniej — zwraca named list: mean, sd, n, lo, hi, me
+.ci_mean <- function(x, level = 0.95) {
+  x <- x[!is.na(x)]
+  n <- length(x)
+  m <- mean(x); s <- sd(x)
+  se <- s / sqrt(n)
+  me <- qt((1 + level) / 2, df = n - 1) * se
+  list(n = n, mean = m, sd = s, se = se, me = me, lo = m - me, hi = m + me)
+}
+
+# CI dla proporcji — Wald. Zwraca named list: p, n, k, lo, hi, me
+.ci_prop <- function(x, level = 0.95) {
+  x <- x[!is.na(x)]
+  if (is.logical(x)) x <- as.integer(x)
+  n <- length(x); k <- sum(x); p <- k / n
+  se <- sqrt(p * (1 - p) / n)
+  me <- qnorm((1 + level) / 2) * se
+  list(n = n, k = k, p = p, se = se, me = me, lo = p - me, hi = p + me)
+}
+
+# Skrotowe formattery — wywolania inline w tagach shiny
+.fmt_mean <- function(ci, digits = 2) sprintf("%.*f", digits, ci$mean)
+.fmt_sd   <- function(ci, digits = 2) sprintf("%.*f", digits, ci$sd)
+.fmt_me   <- function(ci, digits = 2) sprintf("%.*f", digits, ci$me)
+.fmt_ci   <- function(ci, digits = 2) sprintf("[%.*f, %.*f]", digits, ci$lo, digits, ci$hi)
+.fmt_prop <- function(ci, digits = 3) sprintf("%.*f", digits, ci$p)
