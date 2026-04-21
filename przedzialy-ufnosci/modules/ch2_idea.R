@@ -2,59 +2,59 @@
 # CHAPTER 2: Idea przedzialow ufnosci
 # ============================================================================
 
-ch2_ui <- tabPanel("2. Idea przedzia\u0142\u00f3w",
+ch2_ui <- tabPanel("2. Idea przedziałów",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Estymata punktowa zmienia si\u0119 z pr\u00f3by na pr\u00f3b\u0119.
-       Czas doda\u0107 do niej zakres niepewno\u015bci."
+      "Estymata punktowa zmienia się z próby na próbę.
+       Czas dodać do niej zakres niepewności."
     ),
 
-    div(class = "section-title", "Czym jest przedzia\u0142 ufno\u015bci?"),
+    div(class = "section-title", "Czym jest przedział ufności?"),
 
     div(class = "narrative",
-      p("Przedzia\u0142 ufno\u015bci (CI \u2014 confidence interval) to zakres warto\u015bci,
-        kt\u00f3ry z okre\u015blonym poziomem ufno\u015bci (np. 95%) zawiera prawdziwy parametr populacji."),
-      p("Kluczowa idea: gdyby\u015bmy powtarzali eksperyment wiele razy,
-        to 95% skonstruowanych przedzia\u0142\u00f3w zawiera\u0142oby prawdziwe ",
+      p("Przedział ufności (CI — confidence interval) to zakres wartości,
+        który z określonym poziomem ufności (np. 95%) zawiera prawdziwy parametr populacji."),
+      p("Kluczowa idea: gdybyśmy powtarzali eksperyment wiele razy,
+        to 95% skonstruowanych przedziałów zawierałoby prawdziwe ",
         withMathJax("\\(\\mu\\)"), ".")
     ),
 
     # ========================================================================
     # WIDGET 1: Symulacja przedzialow ufnosci
     # ========================================================================
-    div(class = "section-title", "Wiele przedzia\u0142\u00f3w ufno\u015bci"),
+    div(class = "section-title", "Wiele przedziałów ufności"),
 
     div(class = "narrative",
-      p("To kluczowa wizualizacja. Ka\u017cdy poziomy odcinek to jeden przedzia\u0142
-        ufno\u015bci \u2014 skonstruowany z osobnej pr\u00f3by. Zielone trafiaj\u0105 w ",
-        withMathJax("\\(\\mu\\)"), ", czerwone \u2014 nie."),
-      p("Klikaj \"Dolosuj\" porcjami i obserwuj, jak pokrycie zbli\u017ca si\u0119 do nominalnego poziomu ufno\u015bci.
-        Przy ma\u0142ej liczbie pr\u00f3b mo\u017cesz mie\u0107 80% lub 100%, ale przy 200+ pokrycie powinno
-        ustabilizowa\u0107 si\u0119 wok\u00f3\u0142 95%.")
+      p("To kluczowa wizualizacja. Każdy poziomy odcinek to jeden przedział
+        ufności — skonstruowany z osobnej próby. Zielone trafiają w ",
+        withMathJax("\\(\\mu\\)"), ", czerwone — nie."),
+      p("Klikaj \"Dolosuj\" porcjami i obserwuj, jak pokrycie zbliża się do nominalnego poziomu ufności.
+        Przy małej liczbie prób możesz mieć 80% lub 100%, ale przy 200+ pokrycie powinno
+        ustabilizować się wokół 95%.")
     ),
 
     div(class = "widget-block",
-      h4("Symulacja przedzia\u0142\u00f3w ufno\u015bci"),
+      h4("Symulacja przedziałów ufności"),
       fluidRow(
         column(4,
-          selectInput("ch2_dist", "Rozk\u0142ad populacji:",
+          selectInput("ch2_dist", "Rozkład populacji:",
             choices = c(
               "Normalny (wzrost)"           = "normal",
-              "Wyk\u0142adniczy (prawosko\u015bny)" = "exponential",
+              "Wykładniczy (prawoskośny)" = "exponential",
               "Jednostajny"                 = "uniform"
             ),
             selected = "normal"
           ),
-          sliderInput("ch2_n", "Wielko\u015b\u0107 pr\u00f3by (n):",
+          sliderInput("ch2_n", "Wielkość próby (n):",
                       min = 5, max = 100, value = 30, step = 5),
-          sliderInput("ch2_conf", "Poziom ufno\u015bci:",
+          sliderInput("ch2_conf", "Poziom ufności:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           hr(),
           div(style = "display: flex; flex-direction: column; gap: 8px;",
-            actionButton("ch2_sim_10", "Dolosuj 10 przedzia\u0142\u00f3w",
+            actionButton("ch2_sim_10", "Dolosuj 10 przedziałów",
                          class = "btn-primary", width = "100%"),
-            actionButton("ch2_sim_50", "Dolosuj 50 przedzia\u0142\u00f3w",
+            actionButton("ch2_sim_50", "Dolosuj 50 przedziałów",
                          class = "btn-warning", width = "100%"),
             actionButton("ch2_sim_reset", "Reset",
                          class = "btn-outline-secondary", width = "100%")
@@ -71,31 +71,31 @@ ch2_ui <- tabPanel("2. Idea przedzia\u0142\u00f3w",
     # ========================================================================
     # WIDGET 2: Czesty blad interpretacji
     # ========================================================================
-    div(class = "section-title", "Jak (nie) interpretowa\u0107 przedzia\u0142 ufno\u015bci"),
+    div(class = "section-title", "Jak (nie) interpretować przedział ufności"),
 
     div(class = "narrative",
-      p("95% przedzia\u0142 ufno\u015bci [165, 175] dla \u015bredniej wzrostu.
-        Kt\u00f3ra interpretacja jest poprawna?")
+      p("95% przedział ufności [165, 175] dla średniej wzrostu.
+        Która interpretacja jest poprawna?")
     ),
 
     div(class = "widget-block",
       h4("Quiz: interpretacja CI"),
-      p("Wybierz poprawn\u0105 interpretacj\u0119:"),
+      p("Wybierz poprawną interpretację:"),
       uiOutput("ch2_quiz_options"),
       uiOutput("ch2_quiz_feedback")
     ),
 
     div(class = "callout-danger",
-      tags$strong("Cz\u0119sty b\u0142\u0105d:"),
-      " Przedzia\u0142 ufno\u015bci nie m\u00f3wi o prawdopodobie\u0144stwie, \u017ce parametr le\u017cy w konkretnym przedziale.
-        Parametr jest sta\u0142y \u2014 to przedzia\u0142 jest losowy!
-        Poprawnie: \"metoda daje przedzia\u0142y, kt\u00f3re w 95% przypadk\u00f3w trafaj\u0105\"."
+      tags$strong("Częsty błąd:"),
+      " Przedział ufności nie mówi o prawdopodobieństwie, że parametr leży w konkretnym przedziale.
+        Parametr jest stały — to przedział jest losowy!
+        Poprawnie: \"metoda daje przedziały, które w 95% przypadków trafają\"."
     ),
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: konkretne wzory \u2014 przedzia\u0142 dla \u015bredniej"),
-      actionButton("ch2_next", "Dalej \u2192 3. Przedzia\u0142 dla \u015bredniej",
+      p("Dalej: konkretne wzory — przedział dla średniej"),
+      actionButton("ch2_next", "Dalej → 3. Przedział dla średniej",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -142,7 +142,7 @@ ch2_server <- function(input, output, session) {
     df <- ch2_sim_data()
     if (is.null(df) || nrow(df) == 0) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Dolosuj 10 przedzia\u0142\u00f3w'",
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Dolosuj 10 przedziałów'",
                  size = 6, color = "#7f8c8d") +
         theme_void()
     } else {
@@ -161,10 +161,10 @@ ch2_server <- function(input, output, session) {
         scale_color_manual(values = c("TRUE" = col_hit, "FALSE" = col_miss),
                            labels = c("TRUE" = "Trafiony", "FALSE" = "Chybiony"),
                            name = NULL) +
-        labs(title = paste0(n_total, " przedzia\u0142\u00f3w ufno\u015bci (",
+        labs(title = paste0(n_total, " przedziałów ufności (",
                             round(input$ch2_conf * 100), "%)"),
-             x = "Warto\u015b\u0107 parametru",
-             y = "Numer pr\u00f3by") +
+             x = "Wartość parametru",
+             y = "Numer próby") +
         theme_educational() +
         theme(legend.position = "top")
     }
@@ -181,7 +181,7 @@ ch2_server <- function(input, output, session) {
     color <- if (abs(coverage - nominal) <= 5) col_hit else col_miss
     tagList(
       div(class = "stat-box", style = paste0("background:", col_dark, ";"),
-          paste0("Pr\u00f3b: ", n_total)),
+          paste0("Prób: ", n_total)),
       div(class = "stat-box", style = paste0("background:", color, ";"),
           paste0("Pokrycie: ", coverage, "% (", n_hits, "/", n_total, ")")),
       div(class = "stat-box", style = paste0("background:", col_primary, ";"),
@@ -195,13 +195,13 @@ ch2_server <- function(input, output, session) {
 
   ch2_quiz_choices <- list(
     list(letter = "A", value = "A",
-         text = "Jest 95% prawdopodobie\u0144stwa, \u017ce \u03bc le\u017cy w [165, 175]"),
+         text = "Jest 95% prawdopodobieństwa, że μ leży w [165, 175]"),
     list(letter = "B", value = "B",
-         text = "95% danych z populacji le\u017cy w [165, 175]"),
+         text = "95% danych z populacji leży w [165, 175]"),
     list(letter = "C", value = "C",
-         text = "Gdyby\u015bmy powtarzali badanie, 95% tak skonstruowanych przedzia\u0142\u00f3w zawiera\u0142oby \u03bc"),
+         text = "Gdybyśmy powtarzali badanie, 95% tak skonstruowanych przedziałów zawierałoby μ"),
     list(letter = "D", value = "D",
-         text = "Jeste\u015bmy w 95% pewni, \u017ce \u015brednia z pr\u00f3by le\u017cy w [165, 175]")
+         text = "Jesteśmy w 95% pewni, że średnia z próby leży w [165, 175]")
   )
 
   output$ch2_quiz_options <- renderUI({
@@ -238,20 +238,20 @@ ch2_server <- function(input, output, session) {
     if (answer == "C") {
       div(class = "callout-success",
         tags$strong("Poprawnie!"),
-        p("Przedzia\u0142 ufno\u015bci opisuje ",
-          tags$b("metod\u0119"), ", nie konkretny wynik.
-          95% przedzia\u0142\u00f3w skonstruowanych t\u0105 metod\u0105 zawiera prawdziwe \u03bc.")
+        p("Przedział ufności opisuje ",
+          tags$b("metodę"), ", nie konkretny wynik.
+          95% przedziałów skonstruowanych tą metodą zawiera prawdziwe μ.")
       )
     } else {
       feedback <- switch(answer,
-        "A" = "To najcz\u0119stszy b\u0142\u0105d! \u03bc jest sta\u0142e, nie losowe. To przedzia\u0142 jest losowy, nie parametr.",
-        "B" = "Nie \u2014 przedzia\u0142 dotyczy parametru (\u015bredniej), nie poszczeg\u00f3lnych obserwacji.",
-        "D" = "Nie \u2014 \u015brednia z pr\u00f3by zawsze le\u017cy w \u015brodku przedzia\u0142u (jest punktem wyj\u015bcia)."
+        "A" = "To najczęstszy błąd! μ jest stałe, nie losowe. To przedział jest losowy, nie parametr.",
+        "B" = "Nie — przedział dotyczy parametru (średniej), nie poszczególnych obserwacji.",
+        "D" = "Nie — średnia z próby zawsze leży w środku przedziału (jest punktem wyjścia)."
       )
       div(class = "callout-danger",
-        tags$strong("Nie do ko\u0144ca!"),
+        tags$strong("Nie do końca!"),
         p(feedback),
-        p("Poprawna odpowied\u017a to C.")
+        p("Poprawna odpowiedź to C.")
       )
     }
   })

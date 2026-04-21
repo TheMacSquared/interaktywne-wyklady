@@ -2,85 +2,85 @@
 # CHAPTER 6: Sciaga - podsumowanie przedzialow ufnosci
 # ============================================================================
 
-ch6_ui <- tabPanel("6. \u015aci\u0105ga",
+ch6_ui <- tabPanel("6. Ściąga",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Praktyczna \u015bci\u0105ga: jak klika\u0107 CI w jamovi, jak odczyta\u0107 wynik
-       i jak sformu\u0142owa\u0107 wniosek. Wzory \u2014 na ko\u0144cu, dla zainteresowanych."
+      "Praktyczna ściąga: jak klikać CI w jamovi, jak odczytać wynik
+       i jak sformułować wniosek. Wzory — na końcu, dla zainteresowanych."
     ),
 
     # ========================================================================
-    div(class = "section-title", "Jak zrobi\u0107 przedzia\u0142 ufno\u015bci w jamovi"),
+    div(class = "section-title", "Jak zrobić przedział ufności w jamovi"),
 
     div(class = "narrative",
-      p("W jamovi nie musisz niczego liczy\u0107 \u2014 CI pojawia si\u0119 w raporcie,
-        gdy zaznaczysz jeden checkbox. Twoja robota: nazwa\u0107 go, zinterpretowa\u0107,
-        wyci\u0105gn\u0105\u0107 wniosek.")
+      p("W jamovi nie musisz niczego liczyć — CI pojawia się w raporcie,
+        gdy zaznaczysz jeden checkbox. Twoja robota: nazwać go, zinterpretować,
+        wyciągnąć wniosek.")
     ),
 
     div(class = "callout-info",
-      tags$strong("Przedzia\u0142 dla \u015bredniej (jedna zmienna ilo\u015bciowa):"),
+      tags$strong("Przedział dla średniej (jedna zmienna ilościowa):"),
       tags$ol(
-        tags$li(tags$b("Analyses \u2192 T-Tests \u2192 One Sample T-Test")),
-        tags$li("Przeci\u0105gnij zmienn\u0105 ilo\u015bciow\u0105 (np. wzrost, plon, czas reakcji) do ",
+        tags$li(tags$b("Analyses → T-Tests → One Sample T-Test")),
+        tags$li("Przeciągnij zmienną ilościową (np. wzrost, plon, czas reakcji) do ",
                 tags$em("Dependent Variables")),
         tags$li("W panelu ", tags$em("Additional Statistics"), " zaznacz ",
-                tags$b("Confidence interval"), " \u2014 domy\u015blnie 95%"),
-        tags$li("W tabeli wynik\u00f3w odczytasz kolumny ",
+                tags$b("Confidence interval"), " — domyślnie 95%"),
+        tags$li("W tabeli wyników odczytasz kolumny ",
                 tags$code("Mean"), ", ", tags$code("Lower"), ", ", tags$code("Upper"))
       ),
-      p(tags$em("jamovi zawsze u\u017cywa rozk\u0142adu t \u2014 nie musisz wybiera\u0107 mi\u0119dzy z a t."))
+      p(tags$em("jamovi zawsze używa rozkładu t — nie musisz wybierać między z a t."))
     ),
 
     div(class = "callout-info",
-      tags$strong("Przedzia\u0142 dla r\u00f3\u017cnicy \u015brednich (dwie grupy):"),
+      tags$strong("Przedział dla różnicy średnich (dwie grupy):"),
       tags$ol(
-        tags$li(tags$b("Analyses \u2192 T-Tests \u2192 Independent Samples T-Test")),
-        tags$li("Zmienna ilo\u015bciowa \u2192 ", tags$em("Dependent Variable"),
-                ", zmienna grupuj\u0105ca \u2192 ", tags$em("Grouping Variable")),
+        tags$li(tags$b("Analyses → T-Tests → Independent Samples T-Test")),
+        tags$li("Zmienna ilościowa → ", tags$em("Dependent Variable"),
+                ", zmienna grupująca → ", tags$em("Grouping Variable")),
         tags$li("W panelu ", tags$em("Additional Statistics"), " zaznacz ",
                 tags$b("Mean difference"), " i ", tags$b("Confidence interval")),
-        tags$li("CI dla r\u00f3\u017cnicy \u015brednich pojawia si\u0119 w wierszu ",
-                tags$code("Mean difference"), " \u2014 kolumny ",
+        tags$li("CI dla różnicy średnich pojawia się w wierszu ",
+                tags$code("Mean difference"), " — kolumny ",
                 tags$code("Lower"), " / ", tags$code("Upper"))
       ),
-      p(tags$strong("Kluczowe:"), " je\u015bli przedzia\u0142 nie zawiera ", tags$b("0"),
-        " \u2014 grupy r\u00f3\u017cni\u0105 si\u0119 istotnie.")
+      p(tags$strong("Kluczowe:"), " jeśli przedział nie zawiera ", tags$b("0"),
+        " — grupy różnią się istotnie.")
     ),
 
     div(class = "callout-info",
-      tags$strong("Przedzia\u0142 dla proporcji (jedna zmienna kategorialna, 2 kategorie):"),
+      tags$strong("Przedział dla proporcji (jedna zmienna kategorialna, 2 kategorie):"),
       tags$ol(
-        tags$li(tags$b("Analyses \u2192 Frequencies \u2192 2 Outcomes \u2014 Binomial test")),
-        tags$li("Przeci\u0105gnij zmienn\u0105 binarn\u0105 (np. zdany/niezdany) do pola zmiennych"),
+        tags$li(tags$b("Analyses → Frequencies → 2 Outcomes — Binomial test")),
+        tags$li("Przeciągnij zmienną binarną (np. zdany/niezdany) do pola zmiennych"),
         tags$li("Zaznacz ", tags$b("Confidence interval"),
-                " \u2014 domy\u015blnie 95%, metoda Cloppera-Pearsona (bezpieczna)"),
+                " — domyślnie 95%, metoda Cloppera-Pearsona (bezpieczna)"),
         tags$li("W tabeli odczytasz ", tags$code("Proportion"), ", ",
                 tags$code("Lower"), ", ", tags$code("Upper"))
       )
     ),
 
     div(class = "callout-info",
-      tags$strong("Przedzia\u0142 dla r\u00f3\u017cnicy proporcji (dwie grupy):"),
+      tags$strong("Przedział dla różnicy proporcji (dwie grupy):"),
       tags$ol(
-        tags$li(tags$b("Analyses \u2192 Frequencies \u2192 Independent Samples \u2014 \u03c7\u00b2 test of association")),
+        tags$li(tags$b("Analyses → Frequencies → Independent Samples — χ² test of association")),
         tags$li("Dwie zmienne kategorialne w polach ", tags$em("Rows"), " i ", tags$em("Columns")),
         tags$li("W panelu ", tags$em("Statistics"), " zaznacz ", tags$b("Log odds ratio"),
-                " lub dla r\u00f3\u017cnicy \u2014 u\u017cyj modu\u0142u ", tags$em("jmv::propTest2"),
-                " (R) albo policzmy r\u00f3\u017cnic\u0119 r\u0119cznie z dw\u00f3ch CI")
+                " lub dla różnicy — użyj modułu ", tags$em("jmv::propTest2"),
+                " (R) albo policzmy różnicę ręcznie z dwóch CI")
       ),
-      p(tags$em("W praktyce: dla por\u00f3wnania dw\u00f3ch odsetk\u00f3w w jamovi najpro\u015bciej
-                odczyta\u0107 dwa osobne CI i zobaczy\u0107, czy si\u0119 nakrywaj\u0105
-                (ale pami\u0119taj: nakrywanie CI nie jest r\u00f3wnoznaczne z brakiem istotno\u015bci \u2014
-                sprawd\u017a test \u03c7\u00b2)."))
+      p(tags$em("W praktyce: dla porównania dwóch odsetków w jamovi najprościej
+                odczytać dwa osobne CI i zobaczyć, czy się nakrywają
+                (ale pamiętaj: nakrywanie CI nie jest równoznaczne z brakiem istotności —
+                sprawdź test χ²)."))
     ),
 
     # ========================================================================
-    div(class = "section-title", "Jak czyta\u0107 wynik jamovi"),
+    div(class = "section-title", "Jak czytać wynik jamovi"),
 
     div(class = "narrative",
-      p("Za\u0142\u00f3\u017cmy, \u017ce jamovi poda\u0142:"),
+      p("Załóżmy, że jamovi podał:"),
       tags$pre(style = "background: #f8f9fa; padding: 12px; border-radius: 6px;",
         tags$code(
 "Mean       Lower (95%)   Upper (95%)
@@ -90,156 +90,156 @@ ch6_ui <- tabPanel("6. \u015aci\u0105ga",
       p("To czytasz tak:"),
       tags$ul(
         tags$li(tags$b("Estymata punktowa:"),
-                " w badanej pr\u00f3bie \u015brednia wynios\u0142a ", tags$code("171.3"), "."),
-        tags$li(tags$b("Przedzia\u0142 ufno\u015bci:"),
-                " nasze najlepsze oszacowanie \u015bredniej w ca\u0142ej populacji mie\u015bci si\u0119
-                 mi\u0119dzy ", tags$code("168.4"), " a ", tags$code("174.2"), "."),
-        tags$li(tags$b("Ufno\u015b\u0107 95%:"),
-                " metoda, kt\u00f3r\u0105 u\u017cyli\u015bmy, w 95% powt\u00f3rze\u0144 badania
-                 wyprodukuje przedzia\u0142 obejmuj\u0105cy prawdziw\u0105 \u015bredni\u0105.")
+                " w badanej próbie średnia wyniosła ", tags$code("171.3"), "."),
+        tags$li(tags$b("Przedział ufności:"),
+                " nasze najlepsze oszacowanie średniej w całej populacji mieści się
+                 między ", tags$code("168.4"), " a ", tags$code("174.2"), "."),
+        tags$li(tags$b("Ufność 95%:"),
+                " metoda, którą użyliśmy, w 95% powtórzeń badania
+                 wyprodukuje przedział obejmujący prawdziwą średnią.")
       )
     ),
 
     # ========================================================================
-    div(class = "section-title", "Szablony wniosk\u00f3w \u2014 co napisa\u0107 w raporcie"),
+    div(class = "section-title", "Szablony wniosków — co napisać w raporcie"),
 
     div(class = "callout-success",
-      tags$strong("\u015arednia (pojedyncza zmienna):"),
-      p(tags$em("\"\u015aredni wzrost student\u00f3w wyni\u00f3s\u0142 171,3 cm
+      tags$strong("Średnia (pojedyncza zmienna):"),
+      p(tags$em("\"Średni wzrost studentów wyniósł 171,3 cm
                 (95% CI: [168,4; 174,2]).\"")),
-      p("Trzy liczby \u2014 i gotowe. Je\u015bli masz warto\u015b\u0107 odniesienia (np. norma = 170):"),
-      p(tags$em("\"Przedzia\u0142 nie zawiera warto\u015bci 170, co sugeruje,
-                \u017ce \u015brednia w populacji r\u00f3\u017cni si\u0119 od normy.\""))
+      p("Trzy liczby — i gotowe. Jeśli masz wartość odniesienia (np. norma = 170):"),
+      p(tags$em("\"Przedział nie zawiera wartości 170, co sugeruje,
+                że średnia w populacji różni się od normy.\""))
     ),
 
     div(class = "callout-success",
-      tags$strong("R\u00f3\u017cnica \u015brednich (dwie grupy):"),
-      p(tags$em("\"Grupa eksperymentalna osi\u0105gn\u0119\u0142a \u015bredni wynik
-                 wy\u017cszy o 4,7 punktu od grupy kontrolnej
-                 (95% CI r\u00f3\u017cnicy: [1,2; 8,2]).\"")),
-      p(tags$strong("Sprawd\u017a zero:"),
-        " przedzia\u0142 nie zawiera 0 \u2014 r\u00f3\u017cnica istotna.
-        Je\u015bli zawiera\u0142by 0 \u2014 nie mamy podstaw m\u00f3wi\u0107 o r\u00f3\u017cnicy.")
+      tags$strong("Różnica średnich (dwie grupy):"),
+      p(tags$em("\"Grupa eksperymentalna osiągnęła średni wynik
+                 wyższy o 4,7 punktu od grupy kontrolnej
+                 (95% CI różnicy: [1,2; 8,2]).\"")),
+      p(tags$strong("Sprawdź zero:"),
+        " przedział nie zawiera 0 — różnica istotna.
+        Jeśli zawierałby 0 — nie mamy podstaw mówić o różnicy.")
     ),
 
     div(class = "callout-success",
       tags$strong("Proporcja:"),
-      p(tags$em("\"Odsetek zdaj\u0105cych egzamin wyni\u00f3s\u0142 68%
+      p(tags$em("\"Odsetek zdających egzamin wyniósł 68%
                 (95% CI: [62%; 73%]).\"")),
-      p(tags$strong("Sprawd\u017a warto\u015b\u0107 progow\u0105:"),
-        " je\u015bli interesuje ci\u0119 pytanie \"czy wi\u0119cej ni\u017c po\u0142owa?\" \u2014
-        patrz czy 50% le\u017cy w CI. Je\u015bli nie \u2014 masz odpowied\u017a z 95% ufno\u015bci\u0105.")
+      p(tags$strong("Sprawdź wartość progową:"),
+        " jeśli interesuje cię pytanie \"czy więcej niż połowa?\" —
+        patrz czy 50% leży w CI. Jeśli nie — masz odpowiedź z 95% ufnością.")
     ),
 
     # ========================================================================
-    div(class = "section-title", "Kiedy CI daje odpowied\u017a na hipotez\u0119?"),
+    div(class = "section-title", "Kiedy CI daje odpowiedź na hipotezę?"),
 
     div(class = "callout-warning",
-      tags$strong("Zasada pro\u015bcie:"),
+      tags$strong("Zasada proście:"),
       tags$ul(
-        tags$li(tags$b("CI dla \u015bredniej"), " vs warto\u015b\u0107 hipotetyczna ",
-                tags$code("\u03bc\u2080"), ": je\u015bli ",
-                tags$code("\u03bc\u2080"), " le\u017cy ", tags$em("poza"),
-                " CI \u2014 odrzucasz hipotez\u0119 \"\u015brednia = \u03bc\u2080\"."),
-        tags$li(tags$b("CI dla r\u00f3\u017cnicy \u015brednich"),
-                ": je\u015bli ", tags$b("0"), " le\u017cy ", tags$em("poza"),
-                " CI \u2014 grupy r\u00f3\u017cni\u0105 si\u0119 istotnie."),
+        tags$li(tags$b("CI dla średniej"), " vs wartość hipotetyczna ",
+                tags$code("μ₀"), ": jeśli ",
+                tags$code("μ₀"), " leży ", tags$em("poza"),
+                " CI — odrzucasz hipotezę \"średnia = μ₀\"."),
+        tags$li(tags$b("CI dla różnicy średnich"),
+                ": jeśli ", tags$b("0"), " leży ", tags$em("poza"),
+                " CI — grupy różnią się istotnie."),
         tags$li(tags$b("CI dla proporcji"),
-                " vs warto\u015b\u0107 progowa (np. 0.5): je\u015bli pr\u00f3g le\u017cy ",
+                " vs wartość progowa (np. 0.5): jeśli próg leży ",
                 tags$em("poza"),
-                " CI \u2014 mamy rozstrzygni\u0119cie z 95% ufno\u015bci\u0105.")
+                " CI — mamy rozstrzygnięcie z 95% ufnością.")
       )
     ),
 
     # ========================================================================
-    div(class = "section-title", "Typowe b\u0142\u0119dy interpretacji"),
+    div(class = "section-title", "Typowe błędy interpretacji"),
 
     div(class = "callout-danger",
-      tags$strong("B\u0141\u0118DNE:"),
+      tags$strong("BŁĘDNE:"),
       tags$ul(
-        tags$li("\"\u015arednia populacji le\u017cy w tym przedziale z 95% prawdopodobie\u0144stwem\" \u2014 ",
-                tags$em("\u015brednia populacji jest sta\u0142a, nie losowa!"),
-                " To przedzia\u0142 jest losowy (zale\u017cy od pr\u00f3by)."),
-        tags$li("\"95% danych le\u017cy w tym przedziale\" \u2014 ",
+        tags$li("\"Średnia populacji leży w tym przedziale z 95% prawdopodobieństwem\" — ",
+                tags$em("średnia populacji jest stała, nie losowa!"),
+                " To przedział jest losowy (zależy od próby)."),
+        tags$li("\"95% danych leży w tym przedziale\" — ",
                 tags$em("to nie jest zakres danych!"),
-                " CI dotyczy parametru populacji (np. \u015bredniej), nie pojedynczych obserwacji."),
-        tags$li("\"\u015arednia z pr\u00f3by le\u017cy w przedziale\" \u2014 ",
-                tags$em("oczywi\u015bcie \u017ce tak \u2014 jest w \u015brodku, z definicji."))
+                " CI dotyczy parametru populacji (np. średniej), nie pojedynczych obserwacji."),
+        tags$li("\"Średnia z próby leży w przedziale\" — ",
+                tags$em("oczywiście że tak — jest w środku, z definicji."))
       )
     ),
 
     div(class = "callout-success",
       tags$strong("POPRAWNE:"),
       tags$ul(
-        tags$li("\"Gdyby\u015bmy powtarzali badanie, 95% tak skonstruowanych przedzia\u0142\u00f3w
-                 zawiera\u0142oby prawdziw\u0105 \u015bredni\u0105 populacji.\""),
-        tags$li("\"Metoda, kt\u00f3rej u\u017cyli\u015bmy, daje poprawne przedzia\u0142y
-                 w 95% przypadk\u00f3w.\""),
-        tags$li("\"Najlepsze oszacowanie \u015bredniej populacji wskazuje,
-                 \u017ce le\u017cy ona mi\u0119dzy ... a ..., z ufno\u015bci\u0105 95%.\"")
+        tags$li("\"Gdybyśmy powtarzali badanie, 95% tak skonstruowanych przedziałów
+                 zawierałoby prawdziwą średnią populacji.\""),
+        tags$li("\"Metoda, której użyliśmy, daje poprawne przedziały
+                 w 95% przypadków.\""),
+        tags$li("\"Najlepsze oszacowanie średniej populacji wskazuje,
+                 że leży ona między ... a ..., z ufnością 95%.\"")
       )
     ),
 
     # ========================================================================
-    div(class = "section-title", "Drzewo decyzyjne \u2014 kt\u00f3ry CI wybra\u0107?"),
+    div(class = "section-title", "Drzewo decyzyjne — który CI wybrać?"),
 
     div(class = "callout-info",
-      tags$strong("1. Co chcesz oszacowa\u0107?"),
+      tags$strong("1. Co chcesz oszacować?"),
       tags$ul(
-        tags$li(tags$b("Liczb\u0119"), " (\u015bredni\u0105, np. wzrost, plon, czas) \u2192 CI dla \u015bredniej"),
-        tags$li(tags$b("Odsetek / proporcj\u0119"), " (np. % zdaj\u0105cych, % wadliwych) \u2192 CI dla proporcji"),
-        tags$li(tags$b("R\u00f3\u017cnic\u0119 mi\u0119dzy grupami"), " \u2192 CI dla r\u00f3\u017cnicy \u015brednich lub proporcji")
+        tags$li(tags$b("Liczbę"), " (średnią, np. wzrost, plon, czas) → CI dla średniej"),
+        tags$li(tags$b("Odsetek / proporcję"), " (np. % zdających, % wadliwych) → CI dla proporcji"),
+        tags$li(tags$b("Różnicę między grupami"), " → CI dla różnicy średnich lub proporcji")
       ),
       tags$strong("2. Ile masz grup?"),
       tags$ul(
-        tags$li(tags$b("Jedna"), " \u2192 jeden CI (np. One Sample T-Test)"),
-        tags$li(tags$b("Dwie"), " \u2192 CI dla r\u00f3\u017cnicy (Independent Samples T-Test)
-                 \u2014 sprawdzasz, czy zawiera 0"),
-        tags$li(tags$b("Wi\u0119cej ni\u017c dwie"), " \u2192 ANOVA + osobne CI dla ka\u017cdej pary")
+        tags$li(tags$b("Jedna"), " → jeden CI (np. One Sample T-Test)"),
+        tags$li(tags$b("Dwie"), " → CI dla różnicy (Independent Samples T-Test)
+                 — sprawdzasz, czy zawiera 0"),
+        tags$li(tags$b("Więcej niż dwie"), " → ANOVA + osobne CI dla każdej pary")
       ),
-      tags$strong("3. Jaki poziom ufno\u015bci?"),
+      tags$strong("3. Jaki poziom ufności?"),
       tags$ul(
-        tags$li("Standard: ", tags$b("95%"), " (zaznaczony domy\u015blnie w jamovi)"),
-        tags$li("Chcesz by\u0107 bardziej ostro\u017cny (np. medycyna) \u2192 99% (szerszy przedzia\u0142)"),
-        tags$li("Wystarczy zgrubny obraz \u2192 90% (w\u0119\u017cszy przedzia\u0142)")
+        tags$li("Standard: ", tags$b("95%"), " (zaznaczony domyślnie w jamovi)"),
+        tags$li("Chcesz być bardziej ostrożny (np. medycyna) → 99% (szerszy przedział)"),
+        tags$li("Wystarczy zgrubny obraz → 90% (węższy przedział)")
       ),
-      p(tags$em("Wa\u017cne: wybieraj poziom ufno\u015bci ",
+      p(tags$em("Ważne: wybieraj poziom ufności ",
                 tags$b("zanim"), " zobaczysz wynik.
-               Potem mo\u017cesz pokaza\u0107 wi\u0119cej poziom\u00f3w naraz (90%, 95%, 99%),
-               ale nie wolno wybiera\u0107 \"tego, kt\u00f3ry pasuje do oczekiwanej konkluzji\"."))
+               Potem możesz pokazać więcej poziomów naraz (90%, 95%, 99%),
+               ale nie wolno wybierać \"tego, który pasuje do oczekiwanej konkluzji\"."))
     ),
 
     # ========================================================================
-    div(class = "section-title", "Co wp\u0142ywa na szeroko\u015b\u0107 CI"),
+    div(class = "section-title", "Co wpływa na szerokość CI"),
 
     tags$table(class = "table table-bordered",
       style = "font-size: 15px;",
       tags$thead(
         tags$tr(
           tags$th("Czynnik"),
-          tags$th("Wzrost \u2192"),
+          tags$th("Wzrost →"),
           tags$th("Efekt na CI"),
-          tags$th("Co z tym zrobi\u0107?")
+          tags$th("Co z tym zrobić?")
         )
       ),
       tags$tbody(
         tags$tr(
-          tags$td("Wielko\u015b\u0107 pr\u00f3by (n)"),
-          tags$td("\u2191"),
-          tags$td("\u2193 w\u0119\u017cszy (dok\u0142adniejszy)"),
-          tags$td("Zbierz wi\u0119cej danych \u2014 ale 4\u00d7 wi\u0119cej, by zaw\u0119zi\u0107 CI o po\u0142ow\u0119")
+          tags$td("Wielkość próby (n)"),
+          tags$td("↑"),
+          tags$td("↓ węższy (dokładniejszy)"),
+          tags$td("Zbierz więcej danych — ale 4× więcej, by zawęzić CI o połowę")
         ),
         tags$tr(
-          tags$td("Poziom ufno\u015bci"),
-          tags$td("\u2191"),
-          tags$td("\u2191 szerszy (bardziej ostro\u017cny)"),
-          tags$td("Wybierz \u015bwiadomie, ", tags$em("przed"), " patrzeniem na wyniki")
+          tags$td("Poziom ufności"),
+          tags$td("↑"),
+          tags$td("↑ szerszy (bardziej ostrożny)"),
+          tags$td("Wybierz świadomie, ", tags$em("przed"), " patrzeniem na wyniki")
         ),
         tags$tr(
-          tags$td("Zmienno\u015b\u0107 danych"),
-          tags$td("\u2191"),
-          tags$td("\u2191 szerszy (wi\u0119cej szumu)"),
-          tags$td("Kontroluj warunki pomiaru, sprawd\u017a outliery")
+          tags$td("Zmienność danych"),
+          tags$td("↑"),
+          tags$td("↑ szerszy (więcej szumu)"),
+          tags$td("Kontroluj warunki pomiaru, sprawdź outliery")
         )
       )
     ),
@@ -250,32 +250,32 @@ ch6_ui <- tabPanel("6. \u015aci\u0105ga",
     div(class = "section-title", "Dla zainteresowanych: wzory"),
 
     div(class = "narrative",
-      p(tags$em("Poni\u017csze wzory s\u0105 tym, co jamovi liczy pod spodem.
-                Nie musisz ich pami\u0119ta\u0107 \u2014 ale je\u015bli chcesz zobaczy\u0107, sk\u0105d bior\u0105
-                si\u0119 liczby w kolumnach ", tags$code("Lower"), " / ", tags$code("Upper"),
-                ", rozwi\u0144 kt\u00f3r\u0105\u015b z sekcji."))
+      p(tags$em("Poniższe wzory są tym, co jamovi liczy pod spodem.
+                Nie musisz ich pamiętać — ale jeśli chcesz zobaczyć, skąd biorą
+                się liczby w kolumnach ", tags$code("Lower"), " / ", tags$code("Upper"),
+                ", rozwiń którąś z sekcji."))
     ),
 
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f4d0"),
-        "Wz\u00f3r dla \u015bredniej"
+        "Wzór dla średniej"
       ),
       div(class = "case-body",
         div(class = "formula-box",
-          h4("Przedzia\u0142 dla \u015bredniej (nieznane \u03c3 \u2014 STANDARDOWY)"),
+          h4("Przedział dla średniej (nieznane σ — STANDARDOWY)"),
           withMathJax(helpText(
             "$$\\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$"
           )),
-          p("Wymaga: dane ilo\u015bciowe, w przybli\u017ceniu normalne (lub du\u017ce n).
-            To wz\u00f3r, kt\u00f3rego u\u017cywa jamovi w One Sample T-Test.")
+          p("Wymaga: dane ilościowe, w przybliżeniu normalne (lub duże n).
+            To wzór, którego używa jamovi w One Sample T-Test.")
         ),
         div(class = "formula-box",
-          h4("Je\u015bli znamy \u03c3 populacji (rzadko)"),
+          h4("Jeśli znamy σ populacji (rzadko)"),
           withMathJax(helpText(
             "$$\\bar{x} \\pm z^* \\cdot \\frac{\\sigma}{\\sqrt{n}}$$"
           )),
-          p("W praktyce prawie nigdy nie u\u017cywany \u2014 \u03c3 zwykle jest nieznane.")
+          p("W praktyce prawie nigdy nie używany — σ zwykle jest nieznane.")
         )
       )
     ),
@@ -287,20 +287,20 @@ ch6_ui <- tabPanel("6. \u015aci\u0105ga",
       ),
       div(class = "case-body",
         div(class = "formula-box",
-          h4("Przedzia\u0142 Walda (prosty, ale niedok\u0142adny)"),
+          h4("Przedział Walda (prosty, ale niedokładny)"),
           withMathJax(helpText(
             "$$\\hat{p} \\pm z^* \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$$"
           )),
-          p("Dzia\u0142a \u017ale przy ma\u0142ych n lub skrajnych p (blisko 0 albo 1).")
+          p("Działa źle przy małych n lub skrajnych p (blisko 0 albo 1).")
         ),
         div(class = "formula-box",
-          h4("Przedzia\u0142 Wilsona (zalecany)"),
-          p("Lepsze pokrycie ni\u017c Wald. U\u017cywa go ", tags$code("prop.test()"),
+          h4("Przedział Wilsona (zalecany)"),
+          p("Lepsze pokrycie niż Wald. Używa go ", tags$code("prop.test()"),
             " w R.")
         ),
         div(class = "formula-box",
-          h4("Przedzia\u0142 Cloppera-Pearsona (dok\u0142adny)"),
-          p("Najbezpieczniejszy \u2014 u\u017cywa dwumianu bez aproksymacji.
+          h4("Przedział Cloppera-Pearsona (dokładny)"),
+          p("Najbezpieczniejszy — używa dwumianu bez aproksymacji.
             jamovi stosuje go w Binomial test.")
         )
       )
@@ -309,14 +309,14 @@ ch6_ui <- tabPanel("6. \u015aci\u0105ga",
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f4cf"),
-        "Warto\u015bci krytyczne (dla poziom\u00f3w ufno\u015bci)"
+        "Wartości krytyczne (dla poziomów ufności)"
       ),
       div(class = "case-body",
         tags$table(class = "table table-bordered table-striped",
           style = "font-size: 15px;",
           tags$thead(
             tags$tr(
-              tags$th("Poziom ufno\u015bci"),
+              tags$th("Poziom ufności"),
               tags$th(withMathJax("\\(z^*\\)")),
               tags$th(withMathJax("\\(\\alpha\\)"))
             )
@@ -328,19 +328,19 @@ ch6_ui <- tabPanel("6. \u015aci\u0105ga",
           )
         ),
         p(style = "color: #7f8c8d; font-size: 14px;",
-          "Dla rozk\u0142adu t warto\u015bci zale\u017c\u0105 od df = n\u22121; dla du\u017cych n s\u0105 bardzo bliskie z.")
+          "Dla rozkładu t wartości zależą od df = n−1; dla dużych n są bardzo bliskie z.")
       )
     ),
 
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f4bb"),
-        "Jak policzy\u0107 CI w R (zamiast jamovi)"
+        "Jak policzyć CI w R (zamiast jamovi)"
       ),
       div(class = "case-body",
         tags$pre(style = "background: #f8f9fa; padding: 12px; border-radius: 6px;",
           tags$code(
-"# Przedzial dla sredniej (rstatix \u2014 preferowany)
+"# Przedzial dla sredniej (rstatix — preferowany)
 library(rstatix)
 dane %>% t_test(zmienna ~ 1, mu = 0, conf.level = 0.95)
 
@@ -360,33 +360,33 @@ binom.test(x = liczba_sukcesow, n = liczba_prob, conf.level = 0.95)"
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f522"),
-        "Planowanie wielko\u015bci pr\u00f3by"
+        "Planowanie wielkości próby"
       ),
       div(class = "case-body",
         div(class = "formula-box",
-          h4("Dla \u015bredniej"),
+          h4("Dla średniej"),
           withMathJax(helpText(
             "$$n = \\left(\\frac{z^* \\cdot s}{ME_{max}}\\right)^2$$"
           )),
-          p("Podaj oczekiwany margines b\u0142\u0119du ",
+          p("Podaj oczekiwany margines błędu ",
             withMathJax("\\(ME_{max}\\)"),
-            " i przybli\u017conej zmienno\u015bci ",
-            withMathJax("\\(s\\)"), " \u2014 dostaniesz minimalne n.")
+            " i przybliżonej zmienności ",
+            withMathJax("\\(s\\)"), " — dostaniesz minimalne n.")
         ),
         div(class = "formula-box",
           h4("Dla proporcji"),
           withMathJax(helpText(
             "$$n = \\frac{z^{*2} \\cdot \\hat{p}(1-\\hat{p})}{ME_{max}^2}$$"
           )),
-          p("Gdy nie znamy p, u\u017cywamy p = 0.5 (daje maksymalne n).")
+          p("Gdy nie znamy p, używamy p = 0.5 (daje maksymalne n).")
         )
       )
     ),
 
     # ========================================================================
     div(class = "chapter-transition",
-      p("Czas zastosowa\u0107 t\u0119 wiedz\u0119 w praktyce na rzeczywistym zbiorze danych."),
-      actionButton("ch6_to_ch7", "Dalej: \u0106wiczenia \u2192", class = "btn-primary")
+      p("Czas zastosować tę wiedzę w praktyce na rzeczywistym zbiorze danych."),
+      actionButton("ch6_to_ch7", "Dalej: Ćwiczenia →", class = "btn-primary")
     )
 
   ))

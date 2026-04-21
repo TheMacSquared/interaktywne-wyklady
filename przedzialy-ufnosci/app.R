@@ -65,7 +65,7 @@ global_header <- tagList(
 # ============================================================================
 
 ui <- navbarPage(
-  "Przedzia\u0142y ufno\u015bci",
+  "Przedziały ufności",
   id = "main_nav",
   theme = bs_theme(bootswatch = "sandstone"),
   header = global_header,
@@ -89,22 +89,22 @@ server <- function(input, output, session) {
   # ==========================================================================
 
   observeEvent(input$ch1_next, {
-    updateNavbarPage(session, "main_nav", selected = "2. Idea przedzia\u0142\u00f3w")
+    updateNavbarPage(session, "main_nav", selected = "2. Idea przedziałów")
   })
   observeEvent(input$ch2_next, {
-    updateNavbarPage(session, "main_nav", selected = "3. Przedzia\u0142 dla \u015bredniej")
+    updateNavbarPage(session, "main_nav", selected = "3. Przedział dla średniej")
   })
   observeEvent(input$ch3_next, {
-    updateNavbarPage(session, "main_nav", selected = "4. Przedzia\u0142 dla proporcji")
+    updateNavbarPage(session, "main_nav", selected = "4. Przedział dla proporcji")
   })
   observeEvent(input$ch4_next, {
-    updateNavbarPage(session, "main_nav", selected = "5. Co wp\u0142ywa na szeroko\u015b\u0107?")
+    updateNavbarPage(session, "main_nav", selected = "5. Co wpływa na szerokość?")
   })
   observeEvent(input$ch5_next, {
-    updateNavbarPage(session, "main_nav", selected = "6. \u015aci\u0105ga")
+    updateNavbarPage(session, "main_nav", selected = "6. Ściąga")
   })
   observeEvent(input$ch6_to_ch7, {
-    updateNavbarPage(session, "main_nav", selected = "7. \u0106wiczenia")
+    updateNavbarPage(session, "main_nav", selected = "7. Ćwiczenia")
   })
 
   # ==========================================================================

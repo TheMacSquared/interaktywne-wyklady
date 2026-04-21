@@ -2,27 +2,27 @@
 # CHAPTER 5: Co wplywa na szerokosc przedzialu?
 # ============================================================================
 
-ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
+ch5_ui <- tabPanel("5. Co wpływa na szerokość?",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Umiemy ju\u017c budowa\u0107 przedzia\u0142y dla \u015bredniej i proporcji.
+      "Umiemy już budować przedziały dla średniej i proporcji.
        Teraz zbadamy, co decyduje o ich precyzji."
     ),
 
-    div(class = "section-title", "Trzy czynniki szeroko\u015bci przedzia\u0142u"),
+    div(class = "section-title", "Trzy czynniki szerokości przedziału"),
 
     div(class = "narrative",
-      p("Margines b\u0142\u0119du (a wi\u0119c szeroko\u015b\u0107 przedzia\u0142u) zale\u017cy od trzech rzeczy:"),
+      p("Margines błędu (a więc szerokość przedziału) zależy od trzech rzeczy:"),
       div(class = "formula-box",
         withMathJax(helpText(
           "$$ME = t^* \\cdot \\frac{s}{\\sqrt{n}}$$"
         ))
       ),
       tags$ol(
-        tags$li(tags$b("Wielko\u015b\u0107 pr\u00f3by (n)"), " \u2014 wi\u0119cej danych = w\u0119\u017cszy przedzia\u0142"),
-        tags$li(tags$b("Poziom ufno\u015bci"), " \u2014 wi\u0119ksza pewno\u015b\u0107 = szerszy przedzia\u0142"),
-        tags$li(tags$b("Zmienno\u015b\u0107 danych (s)"), " \u2014 wi\u0119ksze rozproszenie = szerszy przedzia\u0142")
+        tags$li(tags$b("Wielkość próby (n)"), " — więcej danych = węższy przedział"),
+        tags$li(tags$b("Poziom ufności"), " — większa pewność = szerszy przedział"),
+        tags$li(tags$b("Zmienność danych (s)"), " — większe rozproszenie = szerszy przedział")
       )
     ),
 
@@ -32,12 +32,12 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
     div(class = "section-title", "Interaktywna eksploracja"),
 
     div(class = "widget-block",
-      h4("Jak zmienia si\u0119 szeroko\u015b\u0107 przedzia\u0142u?"),
+      h4("Jak zmienia się szerokość przedziału?"),
       fluidRow(
         column(4,
-          sliderInput("ch5_n", "Wielko\u015b\u0107 pr\u00f3by (n):",
+          sliderInput("ch5_n", "Wielkość próby (n):",
                       min = 5, max = 100, value = 30, step = 1),
-          sliderInput("ch5_conf", "Poziom ufno\u015bci:",
+          sliderInput("ch5_conf", "Poziom ufności:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           sliderInput("ch5_s", "Odchylenie std. (s):",
                       min = 1, max = 12, value = 8, step = 1),
@@ -51,20 +51,20 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
     ),
 
     div(class = "callout-info",
-      tags$strong("Malej\u0105ce korzy\u015bci:"),
-      " Zwi\u0119kszenie n z 25 do 100 (4\u00d7) skraca przedzia\u0142 o po\u0142ow\u0119 (2\u00d7).
-        Ale z 100 do 400 (4\u00d7) te\u017c tylko o po\u0142ow\u0119. To efekt ",
+      tags$strong("Malejące korzyści:"),
+      " Zwiększenie n z 25 do 100 (4×) skraca przedział o połowę (2×).
+        Ale z 100 do 400 (4×) też tylko o połowę. To efekt ",
       withMathJax("\\(\\frac{1}{\\sqrt{n}}\\)"), "."
     ),
 
     # ========================================================================
     # WIDGET 2: Planowanie wielkosci proby
     # ========================================================================
-    div(class = "section-title", "Planowanie wielko\u015bci pr\u00f3by"),
+    div(class = "section-title", "Planowanie wielkości próby"),
 
     div(class = "narrative",
-      p("Odwr\u00f3\u0107my pytanie: ile obserwacji potrzebuj\u0119,
-        \u017ceby margines b\u0142\u0119du by\u0142 nie wi\u0119kszy ni\u017c zak\u0142adany?"),
+      p("Odwróćmy pytanie: ile obserwacji potrzebuję,
+        żeby margines błędu był nie większy niż zakładany?"),
       div(class = "formula-box",
         withMathJax(helpText(
           "$$n = \\left(\\frac{z^* \\cdot s}{ME_{\\text{max}}}\\right)^2$$"
@@ -73,14 +73,14 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
     ),
 
     div(class = "widget-block",
-      h4("Kalkulator wielko\u015bci pr\u00f3by"),
+      h4("Kalkulator wielkości próby"),
       fluidRow(
         column(4,
-          numericInput("ch5_plan_me", "Po\u017c\u0105dany margines b\u0142\u0119du:",
+          numericInput("ch5_plan_me", "Pożądany margines błędu:",
                        value = 2, min = 0.1, step = 0.1),
           numericInput("ch5_plan_s", "Spodziewane s:",
                        value = 10, min = 0.1, step = 0.5),
-          sliderInput("ch5_plan_conf", "Poziom ufno\u015bci:",
+          sliderInput("ch5_plan_conf", "Poziom ufności:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01)
         ),
         column(8,
@@ -96,30 +96,30 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
     div(class = "section-title", "90% vs 95% vs 99%"),
 
     div(class = "narrative",
-      p("Zobaczmy jak wygl\u0105daj\u0105 trzy przedzia\u0142y z tych samych danych,
-        ale przy r\u00f3\u017cnych poziomach ufno\u015bci.")
+      p("Zobaczmy jak wyglądają trzy przedziały z tych samych danych,
+        ale przy różnych poziomach ufności.")
     ),
 
     div(class = "widget-block",
-      h4("Trzy poziomy ufno\u015bci"),
+      h4("Trzy poziomy ufności"),
       fluidRow(
         column(4,
           selectInput("ch5_cmp_data", "Dane:",
             choices = list(
-              "Przyk\u0142ady og\u00f3lne" = c(
-                "Wzrost student\u00f3w (n=30)" = "height",
+              "Przykłady ogólne" = c(
+                "Wzrost studentów (n=30)" = "height",
                 "Czas dojazdu (n=50)" = "commute",
                 "Oceny z egzaminu (n=40)" = "grades"
               ),
               "Dane kierunkowe" = c(
-                "IB: wska\u017anik wypadk\u00f3w (n=320)" = "ib_wypadki",
+                "IB: wskaźnik wypadków (n=320)" = "ib_wypadki",
                 "ROL: plon pszenicy (n=280)" = "rol_plon",
-                "TZ: zawarto\u015b\u0107 bia\u0142ka (n=350)" = "tz_bialko"
+                "TZ: zawartość białka (n=350)" = "tz_bialko"
               )
             ),
             selected = "height"
           ),
-          actionButton("ch5_cmp_calc", "Oblicz 3 przedzia\u0142y",
+          actionButton("ch5_cmp_calc", "Oblicz 3 przedziały",
                        class = "btn-primary", width = "100%"),
           br(), br(),
           uiOutput("ch5_cmp_stats")
@@ -132,37 +132,37 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
 
     div(class = "callout-success",
       tags$strong("Kompromis:"),
-      " 95% to standardowy wyb\u00f3r \u2014 rozs\u0105dna r\u00f3wnowaga mi\u0119dzy
-        pewno\u015bci\u0105 a precyzj\u0105. 99% daje szerszy przedzia\u0142 (wi\u0119ksza pewno\u015b\u0107,
-        mniejsza precyzja), 90% w\u0119\u017cszy (mniej pewny, bardziej precyzyjny)."
+      " 95% to standardowy wybór — rozsądna równowaga między
+        pewnością a precyzją. 99% daje szerszy przedział (większa pewność,
+        mniejsza precyzja), 90% węższy (mniej pewny, bardziej precyzyjny)."
     ),
 
     # ========================================================================
     # WIDGET 4: Edge case'y - jak poziom ufnosci zmienia werdykt
     # ========================================================================
-    div(class = "section-title", "Edge case: kiedy poziom ufno\u015bci zmienia wniosek"),
+    div(class = "section-title", "Edge case: kiedy poziom ufności zmienia wniosek"),
 
     div(class = "narrative",
-      p("Czasami ten sam zbi\u00f3r danych pozwala stwierdzi\u0107 hipotez\u0119
-        przy 90% ufno\u015bci, a nie pozwala przy 95%. To jest cz\u0119sto nieintuicyjne \u2014
-        student my\u015bli, \u017ce skoro ", tags$em("p\u0302 jest powy\u017cej granicy"),
-        ", to wniosek jest oczywisty. Nie jest. Liczy si\u0119 ca\u0142y przedzia\u0142
-        wzgl\u0119dem granicy hipotezy, a szeroko\u015b\u0107 przedzia\u0142u zale\u017cy od poziomu ufno\u015bci."),
-      p("Poni\u017cej trzy case'y. W ka\u017cdym kliknij ", tags$b("90%"), ", ", tags$b("95%"),
-        " i ", tags$b("99%"), " i obserwuj, jak werdykt si\u0119 zmienia.")
+      p("Czasami ten sam zbiór danych pozwala stwierdzić hipotezę
+        przy 90% ufności, a nie pozwala przy 95%. To jest często nieintuicyjne —
+        student myśli, że skoro ", tags$em("p̂ jest powyżej granicy"),
+        ", to wniosek jest oczywisty. Nie jest. Liczy się cały przedział
+        względem granicy hipotezy, a szerokość przedziału zależy od poziomu ufności."),
+      p("Poniżej trzy case'y. W każdym kliknij ", tags$b("90%"), ", ", tags$b("95%"),
+        " i ", tags$b("99%"), " i obserwuj, jak werdykt się zmienia.")
     ),
 
     tags$details(class = "case-study", open = NA,
       tags$summary(
         span(class = "case-icon", "\U0001f697"),
-        "Edge 1. Czas dojazdu \u2014 czy \u015bredni czas przekracza 26 min?"
+        "Edge 1. Czas dojazdu — czy średni czas przekracza 26 min?"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Zmierzono czas dojazdu dla 40 pracownik\u00f3w. \u015arednia z pr\u00f3by ",
+          p("Zmierzono czas dojazdu dla 40 pracowników. Średnia z próby ",
             withMathJax("\\(\\bar{x} = 28.5\\)"), " min,
             odchylenie standardowe ", withMathJax("\\(s = 8\\)"), " min.
-            Hipoteza: \u015bredni czas dojazdu w populacji przekracza 26 min.")
+            Hipoteza: średni czas dojazdu w populacji przekracza 26 min.")
         ),
         uiOutput("ch5_edge1_buttons"),
         plotOutput("ch5_edge1_plot", height = "240px"),
@@ -172,14 +172,14 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
 
     tags$details(class = "case-study",
       tags$summary(
-        span(class = "case-icon", "\U0001f5f3\ufe0f"),
-        "Edge 2. Sonda\u017c \u2014 czy poparcie przekracza 50%?"
+        span(class = "case-icon", "\U0001f5f3️"),
+        "Edge 2. Sondaż — czy poparcie przekracza 50%?"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Pracownia sonda\u017cowa zapyta\u0142a 1000 wyborc\u00f3w, czy poprze parti\u0119 X.
+          p("Pracownia sondażowa zapytała 1000 wyborców, czy poprze partię X.
             540 odpowiedzi TAK (", withMathJax("\\(\\hat{p} = 0.54\\)"), ").
-            Hipoteza: poparcie w populacji przekracza pr\u00f3g 50%.")
+            Hipoteza: poparcie w populacji przekracza próg 50%.")
         ),
         uiOutput("ch5_edge2_buttons"),
         plotOutput("ch5_edge2_plot", height = "240px"),
@@ -190,14 +190,14 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f4d8"),
-        "Edge 3. Wynik szkolenia \u2014 czy \u015brednia przekracza 65 pkt?"
+        "Edge 3. Wynik szkolenia — czy średnia przekracza 65 pkt?"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("W szkoleniu BHP 20 pracownik\u00f3w uzyska\u0142o \u015bredni wynik ",
+          p("W szkoleniu BHP 20 pracowników uzyskało średni wynik ",
             withMathJax("\\(\\bar{x} = 68\\)"), " pkt
             (na 100), ", withMathJax("\\(s = 10\\)"), " pkt.
-            Hipoteza: \u015bredni wynik w populacji przekracza pr\u00f3g 65 pkt.")
+            Hipoteza: średni wynik w populacji przekracza próg 65 pkt.")
         ),
         uiOutput("ch5_edge3_buttons"),
         plotOutput("ch5_edge3_plot", height = "240px"),
@@ -207,25 +207,25 @@ ch5_ui <- tabPanel("5. Co wp\u0142ywa na szeroko\u015b\u0107?",
 
     div(class = "callout-info",
       tags$strong("Dlaczego to jest nieintuicyjne?"),
-      " Bo w codziennym my\u015bleniu nie odr\u00f3\u017cniamy 95% od 93% \u2014 dla nas jest
-        \"du\u017co\", \"\u015brednio\", \"ma\u0142o\". Statystyka pozwala na precyzyjne kwantyfikowanie pewno\u015bci
+      " Bo w codziennym myśleniu nie odróżniamy 95% od 93% — dla nas jest
+        \"dużo\", \"średnio\", \"mało\". Statystyka pozwala na precyzyjne kwantyfikowanie pewności
       i to jest jej moc, nie wada. Stwierdzenie ",
-      tags$em("\"nie mo\u017cemy by\u0107 pewni z 95%, ale mo\u017cemy z 93%\""),
-      " nie jest sprzeczno\u015bci\u0105 \u2014 to jest dok\u0142adnie ten poziom precyzji,
-        do kt\u00f3rego s\u0142u\u017cy ten aparat matematyczny. ",
+      tags$em("\"nie możemy być pewni z 95%, ale możemy z 93%\""),
+      " nie jest sprzecznością — to jest dokładnie ten poziom precyzji,
+        do którego służy ten aparat matematyczny. ",
       tags$br(), tags$br(),
       tags$strong("W praktyce:"),
-      " 95% to umowny standard. Je\u015bli wiesz, \u017ce ", tags$em("Tw\u00f3j problem"),
-      " toleruje wi\u0119cej ryzyka (np. wst\u0119pna eksploracja, niskie koszty b\u0142\u0119du), mo\u017cesz
-        legalnie u\u017cy\u0107 90%. Je\u015bli mniej (np. badania medyczne, kontrola jako\u015bci),
-        u\u017cyj 99%. Wa\u017cne jest tylko, \u017ceby poziom ufno\u015bci wybra\u0107 zanim
-      spojrzysz na wyniki \u2014 i potem ten wyb\u00f3r jasno raportowa\u0107."
+      " 95% to umowny standard. Jeśli wiesz, że ", tags$em("Twój problem"),
+      " toleruje więcej ryzyka (np. wstępna eksploracja, niskie koszty błędu), możesz
+        legalnie użyć 90%. Jeśli mniej (np. badania medyczne, kontrola jakości),
+        użyj 99%. Ważne jest tylko, żeby poziom ufności wybrać zanim
+      spojrzysz na wyniki — i potem ten wybór jasno raportować."
     ),
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: podsumowanie wzor\u00f3w i zasad"),
-      actionButton("ch5_next", "Dalej \u2192 6. \u015aci\u0105ga",
+      p("Dalej: podsumowanie wzorów i zasad"),
+      actionButton("ch5_next", "Dalej → 6. Ściąga",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -258,10 +258,10 @@ ch5_server <- function(input, output, session) {
       annotate("text", x = n + 4, y = me + 0.3,
                label = paste0("ME = ", round(me, 2)),
                color = col_estimate, fontface = "bold", size = 4.5) +
-      labs(title = paste0("Margines b\u0142\u0119du w funkcji n ",
+      labs(title = paste0("Margines błędu w funkcji n ",
                           "(", round(conf * 100), "% CI, s = ", s, ")"),
-           x = "Wielko\u015b\u0107 pr\u00f3by (n)",
-           y = "Margines b\u0142\u0119du (ME)") +
+           x = "Wielkość próby (n)",
+           y = "Margines błędu (ME)") +
       theme_educational()
 
     # ---- DOLNY PANEL: sam pasek CI na fixed osi X ----
@@ -272,8 +272,8 @@ ch5_server <- function(input, output, session) {
     p_bot <- ggplot() +
       xlim(xlims) +
       ylim(-0.6, 0.6) +
-      labs(x = "Warto\u015b\u0107 (np. wzrost w cm)", y = NULL,
-           title = "Tw\u00f3j 95% CI na sta\u0142ej osi") +
+      labs(x = "Wartość (np. wzrost w cm)", y = NULL,
+           title = "Twój 95% CI na stałej osi") +
       theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
@@ -281,7 +281,7 @@ ch5_server <- function(input, output, session) {
             panel.grid.minor.y = element_blank()) +
       geom_vline(xintercept = xbar, color = "#7f8c8d",
                  linetype = "dashed", linewidth = 0.6) +
-      annotate("text", x = xbar, y = 0.5, label = paste0("\u015brodek = ", xbar),
+      annotate("text", x = xbar, y = 0.5, label = paste0("środek = ", xbar),
                color = "#7f8c8d", size = 4, hjust = -0.1) +
       geom_point(aes(x = xbar, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
@@ -324,7 +324,7 @@ ch5_server <- function(input, output, session) {
     n_req <- ceiling((z_star * s / me_max)^2)
 
     div(class = "callout-success",
-      p(tags$strong("Wymagana wielko\u015b\u0107 pr\u00f3by:")),
+      p(tags$strong("Wymagana wielkość próby:")),
       p(withMathJax(paste0(
         "\\(n = \\left(\\frac{", round(z_star, 3), " \\cdot ", s, "}{",
         me_max, "}\\right)^2 = ", round((z_star * s / me_max)^2, 1),
@@ -355,8 +355,8 @@ ch5_server <- function(input, output, session) {
       annotate("text", x = n_req, y = me_max + 0.3,
                label = paste0("n = ", n_req),
                color = col_success, fontface = "bold", size = 5) +
-      labs(title = "Margines b\u0142\u0119du vs wielko\u015b\u0107 pr\u00f3by",
-           x = "n", y = "Margines b\u0142\u0119du") +
+      labs(title = "Margines błędu vs wielkość próby",
+           x = "n", y = "Margines błędu") +
       theme_educational()
 
     # ---- DOLNY PANEL: pasek CI przy n_req, z dopuszczalna strefa ----
@@ -365,9 +365,9 @@ ch5_server <- function(input, output, session) {
     p_bot <- ggplot() +
       xlim(xlims) +
       ylim(-0.6, 0.6) +
-      labs(x = "Warto\u015b\u0107 (jednostki dowolne)", y = NULL,
+      labs(x = "Wartość (jednostki dowolne)", y = NULL,
            title = paste0("CI przy n = ", n_req,
-                          "  \u2014  szara strefa = dopuszczalny ME = \u00b1", me_max)) +
+                          "  —  szara strefa = dopuszczalny ME = ±", me_max)) +
       theme_educational() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
@@ -384,8 +384,8 @@ ch5_server <- function(input, output, session) {
       geom_errorbarh(aes(xmin = center - me_actual, xmax = center + me_actual, y = 0),
                      height = 0.18, color = col_success, linewidth = 2.4, alpha = 0.8) +
       annotate("text", x = center, y = -0.42,
-               label = paste0("Osi\u0105gni\u0119te ME = \u00b1", round(me_actual, 3),
-                              "  \u2264  ", me_max, " \u2713"),
+               label = paste0("Osiągnięte ME = ±", round(me_actual, 3),
+                              "  ≤  ", me_max, " ✓"),
                color = col_success, fontface = "bold", size = 4.8)
 
     library(patchwork)
@@ -443,8 +443,8 @@ ch5_server <- function(input, output, session) {
                  label = paste0("[", round(df$lower, 2), " ; ",
                                 round(df$upper, 2), "]"),
                  hjust = 0, size = 4) +
-        labs(title = "Ten sam zbi\u00f3r \u2014 trzy poziomy ufno\u015bci",
-             x = "Warto\u015b\u0107", y = "Poziom ufno\u015bci") +
+        labs(title = "Ten sam zbiór — trzy poziomy ufności",
+             x = "Wartość", y = "Poziom ufności") +
         theme_educational()
     }
   })
@@ -456,7 +456,7 @@ ch5_server <- function(input, output, session) {
       lapply(1:3, function(i) {
         div(class = "stat-box",
             style = paste0("background:", c(col_warning, col_ci, col_purple)[i], ";"),
-            paste0(df$conf[i], ": \u00b1", round(df$me[i], 2)))
+            paste0(df$conf[i], ": ±", round(df$me[i], 2)))
       })
     )
   })
@@ -503,9 +503,9 @@ ch5_server <- function(input, output, session) {
     edge1 = list(
       kind = "mean",
       data = list(xbar = 28.5, s = 8, n = 40),
-      hypothesis = list(text = "\u015aredni czas dojazdu przekracza 26 min",
+      hypothesis = list(text = "Średni czas dojazdu przekracza 26 min",
                         bound = 26, dir = "gt"),
-      xlab = "\u015aredni czas dojazdu (min)"
+      xlab = "Średni czas dojazdu (min)"
     ),
     edge2 = list(
       kind = "prop",
@@ -517,15 +517,15 @@ ch5_server <- function(input, output, session) {
     edge3 = list(
       kind = "mean",
       data = list(xbar = 68, s = 10, n = 20),
-      hypothesis = list(text = "\u015aredni wynik szkolenia przekracza 65 pkt",
+      hypothesis = list(text = "Średni wynik szkolenia przekracza 65 pkt",
                         bound = 65, dir = "gt"),
-      xlab = "\u015aredni wynik (pkt)"
+      xlab = "Średni wynik (pkt)"
     )
   )
 
   # State per case: lista (conf, revealed)
   #   conf:     NA (nic nie wybrane) lub 0.90 / 0.95 / 0.99
-  #   revealed: FALSE (tylko CI + tre\u015b\u0107 hipotezy) / TRUE (z werdyktem)
+  #   revealed: FALSE (tylko CI + treść hipotezy) / TRUE (z werdyktem)
   ch5_edge_state <- reactiveValues()
   for (cid in names(edge_cases)) {
     ch5_edge_state[[cid]] <- list(conf = NA_real_, revealed = FALSE)
@@ -560,7 +560,7 @@ ch5_server <- function(input, output, session) {
     reveal_row <- if (!is.na(current_conf) && !revealed) {
       div(class = "step-buttons", style = "margin-top: 4px;",
         actionButton(paste0("ch5_", case_id, "_reveal"),
-                     "\U0001f50d Poka\u017c werdykt", class = "btn-success"))
+                     "\U0001f50d Pokaż werdykt", class = "btn-success"))
     } else {
       NULL
     }
@@ -613,7 +613,7 @@ ch5_server <- function(input, output, session) {
       geom_vline(xintercept = bound, color = col_hyp,
                  linewidth = 1, linetype = "solid") +
       annotate("text", x = bound, y = 0.55,
-               label = paste0(if (cfg$hypothesis$dir == "gt") "\u2265 " else "\u2264 ",
+               label = paste0(if (cfg$hypothesis$dir == "gt") "≥ " else "≤ ",
                               bound),
                color = col_hyp, fontface = "bold", size = 4.5, hjust = -0.1)
 
@@ -622,7 +622,7 @@ ch5_server <- function(input, output, session) {
       geom_point(aes(x = center, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
       annotate("text", x = center, y = -0.22,
-               label = paste0(if (cfg$kind == "mean") "x\u0304 = " else "p\u0302 = ",
+               label = paste0(if (cfg$kind == "mean") "x̄ = " else "p̂ = ",
                               round(center, 3)),
                color = col_estimate, fontface = "bold", size = 4.5)
 
@@ -638,7 +638,7 @@ ch5_server <- function(input, output, session) {
                  color = col_ci, fontface = "bold", size = 4.8)
     } else {
       p <- p + annotate("text", x = mean(xlims), y = 0.35,
-                        label = "Wybierz poziom ufno\u015bci powy\u017cej",
+                        label = "Wybierz poziom ufności powyżej",
                         color = "#7f8c8d", size = 4.5, fontface = "italic")
     }
 
@@ -655,8 +655,8 @@ ch5_server <- function(input, output, session) {
     if (is.na(conf)) {
       return(div(class = "callout-info",
         p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
-        p(tags$em("Kliknij jeden z przycisk\u00f3w 90% / 95% / 99% \u017ceby zobaczy\u0107
-                  przedzia\u0142 ufno\u015bci."))
+        p(tags$em("Kliknij jeden z przycisków 90% / 95% / 99% żeby zobaczyć
+                  przedział ufności."))
       ))
     }
 
@@ -664,10 +664,10 @@ ch5_server <- function(input, output, session) {
     if (!revealed) {
       return(div(class = "callout-info",
         p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
-        p("Wybrany poziom ufno\u015bci: ", tags$b(round(conf * 100), "%")),
-        p(tags$em("Spojrz na wykres: gdzie le\u017cy CI wzgl\u0119dem granicy hipotezy?
-                  Co o tym s\u0105dzicie? Klikni\u0119cie ", tags$b("Poka\u017c werdykt"),
-                  " odsloni odpowied\u017a."))
+        p("Wybrany poziom ufności: ", tags$b(round(conf * 100), "%")),
+        p(tags$em("Spojrz na wykres: gdzie leży CI względem granicy hipotezy?
+                  Co o tym sądzicie? Kliknięcie ", tags$b("Pokaż werdykt"),
+                  " odsloni odpowiedź."))
       ))
     }
 
@@ -679,25 +679,25 @@ ch5_server <- function(input, output, session) {
     label <- verdict_label_edge(verdict)
 
     body <- if (verdict == "yes") {
-      p("Ca\u0142y ", round(conf * 100), "% CI le\u017cy w obszarze hipotezy. Mo\u017cemy ",
-        tags$b("z ", round(conf * 100), "% pewno\u015bci\u0105"), " stwierdzi\u0107, \u017ce ",
+      p("Cały ", round(conf * 100), "% CI leży w obszarze hipotezy. Możemy ",
+        tags$b("z ", round(conf * 100), "% pewnością"), " stwierdzić, że ",
         cfg$hypothesis$text, ".")
     } else if (verdict == "no") {
-      p("Ca\u0142y ", round(conf * 100), "% CI le\u017cy poza obszarem hipotezy. Z ",
-        round(conf * 100), "% pewno\u015bci\u0105 ", tags$b("nie mo\u017cemy"),
-        " stwierdzi\u0107 hipotezy \u2014 dane przemawiaj\u0105 wr\u0119cz przeciwko niej.")
+      p("Cały ", round(conf * 100), "% CI leży poza obszarem hipotezy. Z ",
+        round(conf * 100), "% pewnością ", tags$b("nie możemy"),
+        " stwierdzić hipotezy — dane przemawiają wręcz przeciwko niej.")
     } else {
-      p(round(conf * 100), "% CI ", tags$b("przecina granic\u0119 hipotezy"),
-        " (", round(cfg$hypothesis$bound, 3), "). Cz\u0119\u015b\u0107 przedzia\u0142u jest w obszarze
-        hipotezy, cz\u0119\u015b\u0107 poza. Z ", round(conf * 100), "% pewno\u015bci\u0105 ",
-        tags$b("nie mo\u017cemy stwierdzi\u0107"),
-        ", \u017ce hipoteza jest prawdziwa \u2014 ale te\u017c nie mo\u017cemy jej odrzuci\u0107.
-        Spr\u00f3buj zmieni\u0107 poziom ufno\u015bci i zobacz, jak werdykt si\u0119 zmienia.")
+      p(round(conf * 100), "% CI ", tags$b("przecina granicę hipotezy"),
+        " (", round(cfg$hypothesis$bound, 3), "). Część przedziału jest w obszarze
+        hipotezy, część poza. Z ", round(conf * 100), "% pewnością ",
+        tags$b("nie możemy stwierdzić"),
+        ", że hipoteza jest prawdziwa — ale też nie możemy jej odrzucić.
+        Spróbuj zmienić poziom ufności i zobacz, jak werdykt się zmienia.")
     }
 
     div(class = cls,
       p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
-      p(tags$strong("Werdykt przy ", round(conf * 100), "% ufno\u015bci: ", label)),
+      p(tags$strong("Werdykt przy ", round(conf * 100), "% ufności: ", label)),
       body
     )
   }

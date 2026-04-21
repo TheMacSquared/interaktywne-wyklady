@@ -2,76 +2,76 @@
 # CHAPTER 3: Przedzial dla sredniej
 # ============================================================================
 
-ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
+ch3_ui <- tabPanel("3. Przedział dla średniej",
   fluidRow(column(8, offset = 2,
 
     div(class = "chapter-recap",
-      "Wiemy ju\u017c, czym jest przedzia\u0142 ufno\u015bci i jak go interpretowa\u0107.
-       Czas na konkrety: wz\u00f3r i obliczenia."
+      "Wiemy już, czym jest przedział ufności i jak go interpretować.
+       Czas na konkrety: wzór i obliczenia."
     ),
 
-    div(class = "section-title", "Wz\u00f3r"),
+    div(class = "section-title", "Wzór"),
 
     div(class = "narrative",
-      p("Przedzia\u0142 ufno\u015bci dla \u015bredniej populacji wygl\u0105da tak:"),
+      p("Przedział ufności dla średniej populacji wygląda tak:"),
       div(class = "formula-box",
         withMathJax("$$CI = \\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$")
       ),
-      p("Trzy sk\u0142adniki:"),
+      p("Trzy składniki:"),
       tags$ul(
         tags$li(withMathJax("\\(\\bar{x}\\)"),
-                " \u2014 \u015brednia z pr\u00f3by (\u015brodek przedzia\u0142u)"),
+                " — średnia z próby (środek przedziału)"),
         tags$li(withMathJax("\\(s/\\sqrt{n}\\)"),
-                " \u2014 b\u0142\u0105d standardowy \u015bredniej (jak bardzo \u015brednia z pr\u00f3by waha si\u0119 z pr\u00f3by na pr\u00f3b\u0119)"),
+                " — błąd standardowy średniej (jak bardzo średnia z próby waha się z próby na próbę)"),
         tags$li(withMathJax("\\(t^*\\)"),
-                " \u2014 warto\u015b\u0107 krytyczna z rozk\u0142adu t-Studenta zale\u017cna od poziomu ufno\u015bci i ", withMathJax("\\(n-1\\)"), " stopni swobody")
+                " — wartość krytyczna z rozkładu t-Studenta zależna od poziomu ufności i ", withMathJax("\\(n-1\\)"), " stopni swobody")
       ),
-      p(tags$b("Dlaczego rozk\u0142ad t, a nie normalny (z)?"),
-        " Bo ", withMathJax("\\(\\sigma\\)"), " populacji nie znamy \u2014 szacujemy je z pr\u00f3by jako ",
+      p(tags$b("Dlaczego rozkład t, a nie normalny (z)?"),
+        " Bo ", withMathJax("\\(\\sigma\\)"), " populacji nie znamy — szacujemy je z próby jako ",
         withMathJax("\\(s\\)"),
-        ". To dodaje niepewno\u015bci, dlatego u\u017cywamy szerszego rozk\u0142adu (t ma \"grubsze ogony\" ni\u017c normalny).
-        Im wi\u0119ksze ", withMathJax("\\(n\\)"),
+        ". To dodaje niepewności, dlatego używamy szerszego rozkładu (t ma \"grubsze ogony\" niż normalny).
+        Im większe ", withMathJax("\\(n\\)"),
         ", tym lepsze oszacowanie ", withMathJax("\\(\\sigma\\)"),
-        " i tym bardziej rozk\u0142ad t przypomina normalny."),
-      p("W praktyce nie musisz si\u0119 tym przejmowa\u0107. Programy statystyczne (jamovi, SPSS, R) ",
+        " i tym bardziej rozkład t przypomina normalny."),
+      p("W praktyce nie musisz się tym przejmować. Programy statystyczne (jamovi, SPSS, R) ",
         tags$em("zawsze"),
-        " licz\u0105 CI dla \u015bredniej u\u017cywaj\u0105c rozk\u0142adu t. Nie ma osobnego \"z-przedzia\u0142u\"
-        do wyboru. Ten rozdzia\u0142 nauczy Ci\u0119 interpretowa\u0107 gotowe przedzia\u0142y \u2014 a nie liczy\u0107 je r\u0119cznie.")
+        " liczą CI dla średniej używając rozkładu t. Nie ma osobnego \"z-przedziału\"
+        do wyboru. Ten rozdział nauczy Cię interpretować gotowe przedziały — a nie liczyć je ręcznie.")
     ),
 
     div(class = "callout-info",
       tags$strong("W jamovi:"),
-      " ", tags$b("Analyses \u2192 T-Tests \u2192 One Sample T-Test"),
-      " \u2192 przeci\u0105gnij zmienn\u0105 ilo\u015bciow\u0105 do ", tags$em("Dependent Variables"),
-      " \u2192 w panelu ", tags$em("Additional Statistics"), " zaznacz ",
-      tags$b("Confidence interval"), " (domy\u015blnie 95%).
-      W tabeli wynik\u00f3w odczytasz kolumny ",
+      " ", tags$b("Analyses → T-Tests → One Sample T-Test"),
+      " → przeciągnij zmienną ilościową do ", tags$em("Dependent Variables"),
+      " → w panelu ", tags$em("Additional Statistics"), " zaznacz ",
+      tags$b("Confidence interval"), " (domyślnie 95%).
+      W tabeli wyników odczytasz kolumny ",
       tags$code("Mean"), ", ", tags$code("Lower"), ", ", tags$code("Upper"), ".
-      Dla r\u00f3\u017cnicy dw\u00f3ch \u015brednich: ",
-      tags$b("Independent Samples T-Test"), " \u2192 zaznacz ",
+      Dla różnicy dwóch średnich: ",
+      tags$b("Independent Samples T-Test"), " → zaznacz ",
       tags$b("Mean difference"), " + ", tags$b("Confidence interval"), "."
     ),
 
     # ========================================================================
     # WIDGET 1: Budowa przedzialu krok po kroku
     # ========================================================================
-    div(class = "section-title", "Budowa przedzia\u0142u \u2014 krok po kroku"),
+    div(class = "section-title", "Budowa przedziału — krok po kroku"),
 
     div(class = "narrative",
-      p("Zobaczmy, jak z konkretnej pr\u00f3by (25 pomiar\u00f3w wzrostu) powstaje przedzia\u0142 ufno\u015bci.
-        Przejd\u017a przez 4 kroki, obserwuj\u0105c co pojawia si\u0119 na wykresie.")
+      p("Zobaczmy, jak z konkretnej próby (25 pomiarów wzrostu) powstaje przedział ufności.
+        Przejdź przez 4 kroki, obserwując co pojawia się na wykresie.")
     ),
 
     div(class = "widget-block",
-      h4("Konstruowanie przedzia\u0142u"),
+      h4("Konstruowanie przedziału"),
       div(class = "step-buttons",
-        actionButton("ch3_step1", "1. Pr\u00f3ba",    class = "btn-outline-primary"),
-        actionButton("ch3_step2", "2. \u015arednia",  class = "btn-outline-primary"),
-        actionButton("ch3_step3", "3. \u00b1 SE",     class = "btn-outline-primary"),
-        actionButton("ch3_step4", "4. Przedzia\u0142", class = "btn-outline-primary")
+        actionButton("ch3_step1", "1. Próba",    class = "btn-outline-primary"),
+        actionButton("ch3_step2", "2. Średnia",  class = "btn-outline-primary"),
+        actionButton("ch3_step3", "3. ± SE",     class = "btn-outline-primary"),
+        actionButton("ch3_step4", "4. Przedział", class = "btn-outline-primary")
       ),
       div(style = "display: flex; gap: 8px; margin-top: 8px;",
-        actionButton("ch3_step_new_sample", "\u21bb Nowa pr\u00f3ba",
+        actionButton("ch3_step_new_sample", "↻ Nowa próba",
                      class = "btn-outline-secondary btn-sm")
       ),
       plotOutput("ch3_step_plot", height = "340px"),
@@ -81,28 +81,28 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
     # ========================================================================
     # WIDGET 2: Budowa przedzialu dla roznicy srednich
     # ========================================================================
-    div(class = "section-title", "Budowa przedzia\u0142u dla r\u00f3\u017cnicy \u015brednich"),
+    div(class = "section-title", "Budowa przedziału dla różnicy średnich"),
 
     div(class = "narrative",
-      p("CI dla r\u00f3\u017cnicy dw\u00f3ch \u015brednich buduje si\u0119 analogicznie, ale b\u0142\u0105d standardowy
-        jest inny \u2014 trzeba po\u0142\u0105czy\u0107 niepewno\u015b\u0107 z obu pr\u00f3b:"),
+      p("CI dla różnicy dwóch średnich buduje się analogicznie, ale błąd standardowy
+        jest inny — trzeba połączyć niepewność z obu prób:"),
       div(class = "formula-box",
         withMathJax("$$CI = (\\bar{x}_1 - \\bar{x}_2) \\pm t^* \\cdot \\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}}$$")
       ),
-      p("Por\u00f3wnamy wzrost m\u0119\u017cczyzn i kobiet \u2014 po 25 os\u00f3b w ka\u017cdej grupie.")
+      p("Porównamy wzrost mężczyzn i kobiet — po 25 osób w każdej grupie.")
     ),
 
     div(class = "widget-block",
-      h4("Konstruowanie CI dla r\u00f3\u017cnicy"),
+      h4("Konstruowanie CI dla różnicy"),
       div(class = "step-buttons",
-        actionButton("ch3_dstep1", "1. Dwie pr\u00f3by",   class = "btn-outline-primary"),
-        actionButton("ch3_dstep2", "2. Dwie \u015brednie", class = "btn-outline-primary"),
-        actionButton("ch3_dstep3", "3. R\u00f3\u017cnica",     class = "btn-outline-primary"),
-        actionButton("ch3_dstep4", "4. \u00b1 SE",          class = "btn-outline-primary"),
-        actionButton("ch3_dstep5", "5. Przedzia\u0142",    class = "btn-outline-primary")
+        actionButton("ch3_dstep1", "1. Dwie próby",   class = "btn-outline-primary"),
+        actionButton("ch3_dstep2", "2. Dwie średnie", class = "btn-outline-primary"),
+        actionButton("ch3_dstep3", "3. Różnica",     class = "btn-outline-primary"),
+        actionButton("ch3_dstep4", "4. ± SE",          class = "btn-outline-primary"),
+        actionButton("ch3_dstep5", "5. Przedział",    class = "btn-outline-primary")
       ),
       div(style = "display: flex; gap: 8px; margin-top: 8px;",
-        actionButton("ch3_dstep_new_sample", "\u21bb Nowe pr\u00f3by",
+        actionButton("ch3_dstep_new_sample", "↻ Nowe próby",
                      class = "btn-outline-secondary btn-sm")
       ),
       plotOutput("ch3_dstep_plot", height = "420px"),
@@ -113,31 +113,31 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
     # WIDGET 2B: NAKLADAJACE SIE CI GRUP vs CI ROZNICY
     # ========================================================================
     div(class = "section-title",
-        "Dwa CI grup czy CI r\u00f3\u017cnicy? \u2014 trzy scenariusze"),
+        "Dwa CI grup czy CI różnicy? — trzy scenariusze"),
 
     div(class = "narrative",
-      p("Gdy por\u00f3wnujesz dwie grupy, masz dwa sposoby, \u017ceby spojrze\u0107 na wynik:"),
+      p("Gdy porównujesz dwie grupy, masz dwa sposoby, żeby spojrzeć na wynik:"),
       tags$ol(
         tags$li(tags$b("Dwa osobne CI"),
-                " \u2014 rysujemy CI dla ka\u017cdej grupy i patrzymy, czy si\u0119 nakrywaj\u0105."),
-        tags$li(tags$b("CI r\u00f3\u017cnicy"),
-                " \u2014 liczymy bezpo\u015brednio CI dla ", withMathJax("\\(\\mu_1 - \\mu_2\\)"),
+                " — rysujemy CI dla każdej grupy i patrzymy, czy się nakrywają."),
+        tags$li(tags$b("CI różnicy"),
+                " — liczymy bezpośrednio CI dla ", withMathJax("\\(\\mu_1 - \\mu_2\\)"),
                 " i patrzymy, czy zawiera 0.")
       ),
-      p("Zwykle daj\u0105 t\u0119 sam\u0105 odpowied\u017a. Ale nie zawsze \u2014 zobacz trzy przyk\u0142ady
-        z technologii \u017cywno\u015bci.")
+      p("Zwykle dają tę samą odpowiedź. Ale nie zawsze — zobacz trzy przykłady
+        z technologii żywności.")
     ),
 
     # --- Scenariusz A ---
     tags$details(class = "case-study", open = NA,
       tags$summary(
         span(class = "case-icon", "\U0001f33e"),
-        "A. Dwaj dostawcy m\u0105ki \u2014 zgodne sygna\u0142y, r\u00f3\u017cnica istotna"
+        "A. Dwaj dostawcy mąki — zgodne sygnały, różnica istotna"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Zak\u0142ad piekarniczy por\u00f3wnuje dw\u00f3ch dostawc\u00f3w m\u0105ki pszennej typu 550
-            pod wzgl\u0119dem zawarto\u015bci bia\u0142ka (%). Pobrano po 40 partii od ka\u017cdego dostawcy.")
+          p("Zakład piekarniczy porównuje dwóch dostawców mąki pszennej typu 550
+            pod względem zawartości białka (%). Pobrano po 40 partii od każdego dostawcy.")
         ),
         plotOutput("ch3_comp_A_plot", height = "340px"),
         uiOutput("ch3_comp_A_verdict")
@@ -148,12 +148,12 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f964"),
-        "B. Jogurt w szkle vs w plastiku \u2014 zgodne sygna\u0142y, brak r\u00f3\u017cnicy"
+        "B. Jogurt w szkle vs w plastiku — zgodne sygnały, brak różnicy"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Technolog sprawdza, czy materia\u0142 opakowania wp\u0142ywa na zawarto\u015b\u0107 t\u0142uszczu (%)
-            w jogurcie naturalnym po 7 dniach przechowywania. Po 30 pr\u00f3bek z ka\u017cdego typu.")
+          p("Technolog sprawdza, czy materiał opakowania wpływa na zawartość tłuszczu (%)
+            w jogurcie naturalnym po 7 dniach przechowywania. Po 30 próbek z każdego typu.")
         ),
         plotOutput("ch3_comp_B_plot", height = "340px"),
         uiOutput("ch3_comp_B_verdict")
@@ -163,14 +163,14 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
     # --- Scenariusz C (PULAPKA) ---
     tags$details(class = "case-study",
       tags$summary(
-        span(class = "case-icon", "\U000026a0\ufe0f"),
-        "C. Dwie linie p\u0142atk\u00f3w \u2014 UWAGA, pu\u0142apka wzrokowa"
+        span(class = "case-icon", "\U000026a0️"),
+        "C. Dwie linie płatków — UWAGA, pułapka wzrokowa"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Zak\u0142ad sprawdza, czy dwie linie produkcyjne p\u0142atk\u00f3w \u015bniadaniowych
-            daj\u0105 produkt o tej samej zawarto\u015bci b\u0142onnika (g / 100 g).
-            Po 120 partii z ka\u017cdej linii.")
+          p("Zakład sprawdza, czy dwie linie produkcyjne płatków śniadaniowych
+            dają produkt o tej samej zawartości błonnika (g / 100 g).
+            Po 120 partii z każdej linii.")
         ),
         plotOutput("ch3_comp_C_plot", height = "340px"),
         uiOutput("ch3_comp_C_verdict")
@@ -179,40 +179,40 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
 
     div(class = "callout-info",
       tags$strong("Zasada praktyczna:"),
-      " Kiedy por\u00f3wnujesz grupy, patrz przede wszystkim na ", tags$b("CI r\u00f3\u017cnicy"),
-      " \u2014 to liczba, kt\u00f3ra uwzgl\u0119dnia niepewno\u015b\u0107 obu pomiar\u00f3w naraz.
-      Por\u00f3wnywanie dw\u00f3ch osobnych CI na oko to szybki skr\u00f3t \u2014 cz\u0119sto dzia\u0142a,
-      ale przy granicznych r\u00f3\u017cnicach potrafi wprowadzi\u0107 w b\u0142\u0105d
+      " Kiedy porównujesz grupy, patrz przede wszystkim na ", tags$b("CI różnicy"),
+      " — to liczba, która uwzględnia niepewność obu pomiarów naraz.
+      Porównywanie dwóch osobnych CI na oko to szybki skrót — często działa,
+      ale przy granicznych różnicach potrafi wprowadzić w błąd
       (tak jak w scenariuszu C)."
     ),
 
     # ========================================================================
     # WIDGET 3: CASE STUDIES (konstruktory + hipotezy)
     # ========================================================================
-    div(class = "section-title", "Case studies \u2014 jak interpretowa\u0107 CI w praktyce"),
+    div(class = "section-title", "Case studies — jak interpretować CI w praktyce"),
 
     div(class = "narrative",
-      p("Poni\u017cej kilka realistycznych sytuacji. W ka\u017cdej budujesz CI krok po kroku
-        (jak w poprzednich sekcjach), a na ko\u0144cu weryfikujesz dwie hipotezy:
-        jedn\u0105, kt\u00f3ra jest prawdziwa, i jedn\u0105, kt\u00f3ra nie jest. Klikaj nag\u0142\u00f3wki,
-        \u017ceby rozwija\u0107 case'y.")
+      p("Poniżej kilka realistycznych sytuacji. W każdej budujesz CI krok po kroku
+        (jak w poprzednich sekcjach), a na końcu weryfikujesz dwie hipotezy:
+        jedną, która jest prawdziwa, i jedną, która nie jest. Klikaj nagłówki,
+        żeby rozwijać case'y.")
     ),
 
     # ----- GRUPA A: JEDNA SREDNIA -----
     div(class = "section-title", style = "font-size: 18px; margin-top: 25px;",
-        "A. Przedzia\u0142 dla jednej \u015bredniej"),
+        "A. Przedział dla jednej średniej"),
 
     tags$details(class = "case-study", open = NA,
       tags$summary(
         span(class = "case-icon", "\U0001f4cf"),
-        "A1. Wzrost student\u00f3w \u2014 czytanie pojedynczego CI"
+        "A1. Wzrost studentów — czytanie pojedynczego CI"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Zmierzy\u0142e\u015b wzrost 30 student\u00f3w. \u015arednia z pr\u00f3by ",
+          p("Zmierzyłeś wzrost 30 studentów. Średnia z próby ",
             withMathJax("\\(\\bar{x} = 173.4\\)"), " cm,
             odchylenie standardowe ", withMathJax("\\(s = 8.2\\)"), " cm.
-            Zbudujmy CI dla \u015bredniego wzrostu i sprawd\u017amy dwie hipotezy.")
+            Zbudujmy CI dla średniego wzrostu i sprawdźmy dwie hipotezy.")
         ),
         uiOutput("ch3_caseA1_buttons"),
         plotOutput("ch3_caseA1_plot", height = "260px"),
@@ -223,14 +223,14 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f50d"),
-        "A2. Ten sam pomiar, trzy r\u00f3\u017cne wielko\u015bci pr\u00f3by"
+        "A2. Ten sam pomiar, trzy różne wielkości próby"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Por\u00f3wnaj trzy badania mierz\u0105ce st\u0119\u017cenie zanieczyszczenia
-            (\u00b5g/m\u00b3). \u015arednia = 32.0, s = 8.0, ale ",
-            tags$b("n r\u00f3\u017cne"), " (10, 50, 200). Dodawaj CI jeden po drugim
-            i patrz, jak si\u0119 zw\u0119\u017caj\u0105.")
+          p("Porównaj trzy badania mierzące stężenie zanieczyszczenia
+            (µg/m³). Średnia = 32.0, s = 8.0, ale ",
+            tags$b("n różne"), " (10, 50, 200). Dodawaj CI jeden po drugim
+            i patrz, jak się zwężają.")
         ),
         uiOutput("ch3_caseA2_buttons"),
         plotOutput("ch3_caseA2_plot", height = "260px"),
@@ -240,18 +240,18 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
 
     # ----- GRUPA B: ROZNICA SREDNICH -----
     div(class = "section-title", style = "font-size: 18px; margin-top: 25px;",
-        "B. Przedzia\u0142 dla r\u00f3\u017cnicy \u015brednich"),
+        "B. Przedział dla różnicy średnich"),
 
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f48a"),
-        "B1. Test leku na ci\u015bnienie \u2014 CI dla r\u00f3\u017cnicy nie obejmuje 0"
+        "B1. Test leku na ciśnienie — CI dla różnicy nie obejmuje 0"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Badamy nowy lek na obni\u017cenie ci\u015bnienia krwi.
-            ", tags$b("Lek:"), " n=40, \u015brednie obni\u017cenie 12.3 mmHg, s=4.5.
-            ", tags$b("Placebo:"), " n=40, \u015brednie obni\u017cenie 4.1 mmHg, s=4.2.")
+          p("Badamy nowy lek na obniżenie ciśnienia krwi.
+            ", tags$b("Lek:"), " n=40, średnie obniżenie 12.3 mmHg, s=4.5.
+            ", tags$b("Placebo:"), " n=40, średnie obniżenie 4.1 mmHg, s=4.2.")
         ),
         uiOutput("ch3_caseB1_buttons"),
         plotOutput("ch3_caseB1_plot", height = "380px"),
@@ -262,13 +262,13 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f33f"),
-        "B2. Dwa nawozy \u2014 CI dla r\u00f3\u017cnicy obejmuje 0"
+        "B2. Dwa nawozy — CI dla różnicy obejmuje 0"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Por\u00f3wnujesz plon kukurydzy dla dw\u00f3ch nawoz\u00f3w.
-            ", tags$b("Nawoz X:"), " n=25, \u015brednia 8.4 t/ha, s=1.2.
-            ", tags$b("Nawoz Y:"), " n=25, \u015brednia 8.1 t/ha, s=1.3.")
+          p("Porównujesz plon kukurydzy dla dwóch nawozów.
+            ", tags$b("Nawoz X:"), " n=25, średnia 8.4 t/ha, s=1.2.
+            ", tags$b("Nawoz Y:"), " n=25, średnia 8.1 t/ha, s=1.3.")
         ),
         uiOutput("ch3_caseB2_buttons"),
         plotOutput("ch3_caseB2_plot", height = "380px"),
@@ -278,15 +278,15 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
 
     tags$details(class = "case-study",
       tags$summary(
-        span(class = "case-icon", "\u26a0\ufe0f"),
-        "B3. Pu\u0142apka nak\u0142adaj\u0105cych si\u0119 CI"
+        span(class = "case-icon", "⚠️"),
+        "B3. Pułapka nakładających się CI"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Mierzysz czas reakcji w dw\u00f3ch grupach (n=150 ka\u017cda).
-            ", tags$b("Grupa A:"), " \u015brednia 350 ms, s=45.
-            ", tags$b("Grupa B:"), " \u015brednia 362 ms, s=45.
-            CI ka\u017cdej grupy osobno si\u0119 nak\u0142adaj\u0105 \u2014 czy r\u00f3\u017cnica jest istotna?")
+          p("Mierzysz czas reakcji w dwóch grupach (n=150 każda).
+            ", tags$b("Grupa A:"), " średnia 350 ms, s=45.
+            ", tags$b("Grupa B:"), " średnia 362 ms, s=45.
+            CI każdej grupy osobno się nakładają — czy różnica jest istotna?")
         ),
         uiOutput("ch3_caseB3_buttons"),
         plotOutput("ch3_caseB3_plot", height = "380px"),
@@ -297,14 +297,14 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f4ca"),
-        "B4. Istotne statystycznie \u2260 wa\u017cne praktycznie"
+        "B4. Istotne statystycznie ≠ ważne praktycznie"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Bardzo du\u017ce badanie por\u00f3wnuje IQ w dw\u00f3ch wojew\u00f3dztwach.
-            ", tags$b("Wojew. A:"), " n=20\u202f000, \u015brednia 100.4, s=15.
-            ", tags$b("Wojew. B:"), " n=20\u202f000, \u015brednia 100.0, s=15.
-            R\u00f3\u017cnica 0.4 pkt IQ \u2014 du\u017co czy ma\u0142o?")
+          p("Bardzo duże badanie porównuje IQ w dwóch województwach.
+            ", tags$b("Wojew. A:"), " n=20 000, średnia 100.4, s=15.
+            ", tags$b("Wojew. B:"), " n=20 000, średnia 100.0, s=15.
+            Różnica 0.4 pkt IQ — dużo czy mało?")
         ),
         uiOutput("ch3_caseB4_buttons"),
         plotOutput("ch3_caseB4_plot", height = "380px"),
@@ -314,17 +314,17 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
 
     # ----- GRUPA C: WIELE GRUP -----
     div(class = "section-title", style = "font-size: 18px; margin-top: 25px;",
-        "C. Wiele grup \u2014 forest plot"),
+        "C. Wiele grup — forest plot"),
 
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f3eb"),
-        "C1. Cztery metody nauczania \u2014 czy kt\u00f3ra\u015b wystaje?"
+        "C1. Cztery metody nauczania — czy któraś wystaje?"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Por\u00f3wnujesz \u015bredni wynik egzaminu (0\u201340 pkt) dla student\u00f3w
-            ucz\u0105cych si\u0119 czterema metodami (po 25 student\u00f3w w ka\u017cdej).
+          p("Porównujesz średni wynik egzaminu (0–40 pkt) dla studentów
+            uczących się czterema metodami (po 25 studentów w każdej).
             Dodawaj CI jeden po drugim i obserwuj.")
         ),
         uiOutput("ch3_caseC1_buttons"),
@@ -336,12 +336,12 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f3e5"),
-        "C2. Pi\u0119\u0107 oddzia\u0142\u00f3w szpitalnych \u2014 czas oczekiwania"
+        "C2. Pięć oddziałów szpitalnych — czas oczekiwania"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Mierzysz \u015bredni czas oczekiwania na konsultacj\u0119 (minuty) w pi\u0119ciu
-            oddzia\u0142ach szpitala. Kt\u00f3ry wymaga interwencji?")
+          p("Mierzysz średni czas oczekiwania na konsultację (minuty) w pięciu
+            oddziałach szpitala. Który wymaga interwencji?")
         ),
         uiOutput("ch3_caseC2_buttons"),
         plotOutput("ch3_caseC2_plot", height = "340px"),
@@ -350,22 +350,22 @@ ch3_ui <- tabPanel("3. Przedzia\u0142 dla \u015bredniej",
     ),
 
     div(class = "callout-info",
-      tags$strong("Najwa\u017cniejsze do zapami\u0119tania:"),
+      tags$strong("Najważniejsze do zapamiętania:"),
       tags$ol(
-        tags$li("CI dla r\u00f3\u017cnicy m\u00f3wi czy r\u00f3\u017cnica jest istotna \u2014 sprawd\u017a czy zawiera 0."),
-        tags$li("Nie por\u00f3wnuj nak\u0142adania si\u0119 CI poszczeg\u00f3lnych grup \u2014
-                to MO\u017bE da\u0107 mylny obraz. Zawsze patrz na CI dla r\u00f3\u017cnicy."),
-        tags$li("\"Istotne statystycznie\" \u2260 \"wa\u017cne praktycznie\".
-                Przy bardzo du\u017cym n nawet trywialne r\u00f3\u017cnice b\u0119d\u0105 istotne."),
-        tags$li("Forest plot to standardowy spos\u00f3b por\u00f3wnania wielu grup.
-                Patrz nie tylko na \u015brednie, ale przede wszystkim na d\u0142ugo\u015b\u0107 ka\u017cdego CI.")
+        tags$li("CI dla różnicy mówi czy różnica jest istotna — sprawdź czy zawiera 0."),
+        tags$li("Nie porównuj nakładania się CI poszczególnych grup —
+                to MOŻE dać mylny obraz. Zawsze patrz na CI dla różnicy."),
+        tags$li("\"Istotne statystycznie\" ≠ \"ważne praktycznie\".
+                Przy bardzo dużym n nawet trywialne różnice będą istotne."),
+        tags$li("Forest plot to standardowy sposób porównania wielu grup.
+                Patrz nie tylko na średnie, ale przede wszystkim na długość każdego CI.")
       )
     ),
 
     # Chapter transition
     div(class = "chapter-transition",
-      p("Dalej: przedzia\u0142 ufno\u015bci dla proporcji"),
-      actionButton("ch3_next", "Dalej \u2192 4. Przedzia\u0142 dla proporcji",
+      p("Dalej: przedział ufności dla proporcji"),
+      actionButton("ch3_next", "Dalej → 4. Przedział dla proporcji",
                    class = "btn-primary btn-lg")
     )
   ))
@@ -425,7 +425,7 @@ ch3_server <- function(input, output, session) {
       return(
         ggplot() +
           annotate("text", x = 0.5, y = 0.5,
-                   label = "Kliknij '1. Pr\u00f3ba' aby zacz\u0105\u0107",
+                   label = "Kliknij '1. Próba' aby zacząć",
                    size = 6, color = "#7f8c8d") +
           theme_void()
       )
@@ -482,7 +482,7 @@ ch3_server <- function(input, output, session) {
         geom_point(aes(x = xbar, y = Y_MEAN), color = c_mean,
                    size = 7, shape = 18) +
         annotate("text", x = xbar, y = Y_MEAN - 0.13,
-                 label = paste0("x\u0304 = ", round(xbar, 2)),
+                 label = paste0("x̄ = ", round(xbar, 2)),
                  color = c_mean, fontface = "bold", size = 5)
     }
 
@@ -492,7 +492,7 @@ ch3_server <- function(input, output, session) {
         geom_errorbarh(aes(xmin = xbar - se, xmax = xbar + se, y = Y_SE),
                        height = 0.07, color = c_se, linewidth = 1.8) +
         annotate("text", x = xbar, y = Y_SE - 0.10,
-                 label = paste0("\u00b1 SE = \u00b1", round(se, 2)),
+                 label = paste0("± SE = ±", round(se, 2)),
                  color = c_se, fontface = "bold", size = 4.5)
     }
 
@@ -524,11 +524,11 @@ ch3_server <- function(input, output, session) {
 
     switch(as.character(step),
       "1" = div(class = "callout-info",
-        p(tags$strong("Krok 1:"), " Pr\u00f3ba.",
-          " Pobrali\u015bmy ", tags$b(n), " pomiar\u00f3w wzrostu. Ka\u017cda kropka to jedna osoba.
-          Zauwa\u017c, jak bardzo surowe obserwacje s\u0105 ", tags$b("rozrzucone"),
-          " \u2014 rozrzut indywidualny w populacji jest du\u017cy."),
-        p("Statystyki z pr\u00f3by: ",
+        p(tags$strong("Krok 1:"), " Próba.",
+          " Pobraliśmy ", tags$b(n), " pomiarów wzrostu. Każda kropka to jedna osoba.
+          Zauważ, jak bardzo surowe obserwacje są ", tags$b("rozrzucone"),
+          " — rozrzut indywidualny w populacji jest duży."),
+        p("Statystyki z próby: ",
           withMathJax(paste0("\\(\\bar{x} = ", round(xbar, 2), "\\)")),
           ", ",
           withMathJax(paste0("\\(s = ", round(s, 2), "\\)")),
@@ -536,45 +536,45 @@ ch3_server <- function(input, output, session) {
           withMathJax(paste0("\\(n = ", n, "\\)")), ".")
       ),
       "2" = div(class = "callout-info",
-        p(tags$strong("Krok 2:"), " \u015arednia z pr\u00f3by.",
+        p(tags$strong("Krok 2:"), " Średnia z próby.",
           " Obliczamy ",
           withMathJax(paste0("\\(\\bar{x} = ", round(xbar, 2), "\\)")), " cm.
           To nasz ", tags$b("estymator punktowy"),
-          " \u2014 najlepsze pojedyncze oszacowanie prawdziwej \u015bredniej populacji."),
-        p("Ale pojedyncza liczba nie wystarczy. Inna pr\u00f3ba da\u0142aby inn\u0105 \u015bredni\u0105.
-          Musimy wyrazi\u0107 ", tags$b("niepewno\u015b\u0107"), " tego oszacowania.")
+          " — najlepsze pojedyncze oszacowanie prawdziwej średniej populacji."),
+        p("Ale pojedyncza liczba nie wystarczy. Inna próba dałaby inną średnią.
+          Musimy wyrazić ", tags$b("niepewność"), " tego oszacowania.")
       ),
       "3" = div(class = "callout-info",
-        p(tags$strong("Krok 3:"), " B\u0142\u0105d standardowy (\u00b1 SE).",
-          " B\u0142\u0105d standardowy \u015bredniej to:"),
+        p(tags$strong("Krok 3:"), " Błąd standardowy (± SE).",
+          " Błąd standardowy średniej to:"),
         p(withMathJax(paste0("\\(SE = \\frac{s}{\\sqrt{n}} = \\frac{", round(s, 2),
                              "}{\\sqrt{", n, "}} = ", round(se, 2), "\\)"))),
-        p("SE m\u00f3wi, jak bardzo ", withMathJax("\\(\\bar{x}\\)"),
-          " waha si\u0119 z pr\u00f3by na pr\u00f3b\u0119. Zauwa\u017c \u2014 jest ",
+        p("SE mówi, jak bardzo ", withMathJax("\\(\\bar{x}\\)"),
+          " waha się z próby na próbę. Zauważ — jest ",
           tags$b("znacznie mniejszy"),
-          " ni\u017c rozrzut surowych danych! To dlatego, \u017ce \u015brednia z pr\u00f3by \"u\u015brednia\"
-          losowe odchylenia poszczeg\u00f3lnych obserwacji."),
-        p("Ale ", tags$b("\u00b1 1 SE"), " to tylko oko\u0142o 68% ufno\u015bci.
-          \u017beby dosta\u0107 95%, trzeba t\u0119 szeroko\u015b\u0107 ", tags$em("powi\u0119kszy\u0107"),
-          " przez warto\u015b\u0107 krytyczn\u0105.")
+          " niż rozrzut surowych danych! To dlatego, że średnia z próby \"uśrednia\"
+          losowe odchylenia poszczególnych obserwacji."),
+        p("Ale ", tags$b("± 1 SE"), " to tylko około 68% ufności.
+          Żeby dostać 95%, trzeba tę szerokość ", tags$em("powiększyć"),
+          " przez wartość krytyczną.")
       ),
       "4" = {
         covers <- (xbar - me <= 170) & (170 <= xbar + me)
         div(class = if (covers) "callout-success" else "callout-danger",
-          p(tags$strong("Krok 4:"), " Przedzia\u0142 ufno\u015bci (\u00b1 t* \u00b7 SE)."),
-          p("Mno\u017cymy SE przez warto\u015b\u0107 krytyczn\u0105 ",
+          p(tags$strong("Krok 4:"), " Przedział ufności (± t* · SE)."),
+          p("Mnożymy SE przez wartość krytyczną ",
             withMathJax(paste0("\\(t^*_{0.975, ", n - 1, "} = ",
                                round(t_star, 3), "\\)")), ":"),
           p(withMathJax(paste0("\\(ME = t^* \\cdot SE = ", round(t_star, 3),
                                " \\cdot ", round(se, 2), " = ", round(me, 2), "\\)"))),
           p(tags$b("95% CI: ["),
             round(xbar - me, 2), " ; ", round(xbar + me, 2), tags$b("]")),
-          p("Zauwa\u017c, jak niebieski (pe\u0142ny) przedzia\u0142 jest ",
-            tags$b("szerszy"), " ni\u017c zielony (\u00b1 SE) \u2014 dok\u0142adnie ",
-            round(t_star, 2), "\u00d7 szerszy. To dodatkowa niepewno\u015b\u0107 z tego,
-            \u017ce szacujemy \u03c3 z pr\u00f3by (a nie znamy go)."),
-          p(tags$em(if (covers) "Ten przedzia\u0142 zawiera prawdziw\u0105 \u015bredni\u0105 populacji (\u03bc = 170 cm)."
-                    else "Ten przedzia\u0142 NIE zawiera prawdziwej \u015bredniej populacji (\u03bc = 170 cm) \u2014 klikaj 'Nowa pr\u00f3ba', \u017ceby zobaczy\u0107 jak rzadko to si\u0119 zdarza."))
+          p("Zauważ, jak niebieski (pełny) przedział jest ",
+            tags$b("szerszy"), " niż zielony (± SE) — dokładnie ",
+            round(t_star, 2), "× szerszy. To dodatkowa niepewność z tego,
+            że szacujemy σ z próby (a nie znamy go)."),
+          p(tags$em(if (covers) "Ten przedział zawiera prawdziwą średnią populacji (μ = 170 cm)."
+                    else "Ten przedział NIE zawiera prawdziwej średniej populacji (μ = 170 cm) — klikaj 'Nowa próba', żeby zobaczyć jak rzadko to się zdarza."))
         )
       }
     )
@@ -624,7 +624,7 @@ ch3_server <- function(input, output, session) {
       return(
         ggplot() +
           annotate("text", x = 0.5, y = 0.5,
-                   label = "Kliknij '1. Dwie pr\u00f3by' aby zacz\u0105\u0107",
+                   label = "Kliknij '1. Dwie próby' aby zacząć",
                    size = 6, color = "#7f8c8d") +
           theme_void()
       )
@@ -668,7 +668,7 @@ ch3_server <- function(input, output, session) {
 
     # Etykiety grup po lewej
     p_top <- p_top +
-      annotate("text", x = xlims_top[1], y = 1.8, label = "M\u0119\u017cczy\u017ani",
+      annotate("text", x = xlims_top[1], y = 1.8, label = "Mężczyźni",
                hjust = 0, fontface = "bold", size = 4.5, color = col_men) +
       annotate("text", x = xlims_top[1], y = 1.0, label = "Kobiety",
                hjust = 0, fontface = "bold", size = 4.5, color = col_women)
@@ -694,10 +694,10 @@ ch3_server <- function(input, output, session) {
         geom_point(aes(x = x2, y = 1.0), color = col_women,
                    size = 7, shape = 18) +
         annotate("text", x = x1, y = 2.15,
-                 label = paste0("x\u0304\u2081 = ", round(x1, 2)),
+                 label = paste0("x̄₁ = ", round(x1, 2)),
                  color = col_men, fontface = "bold", size = 4.5) +
         annotate("text", x = x2, y = 0.55,
-                 label = paste0("x\u0304\u2082 = ", round(x2, 2)),
+                 label = paste0("x̄₂ = ", round(x2, 2)),
                  color = col_women, fontface = "bold", size = 4.5)
     }
 
@@ -715,7 +715,7 @@ ch3_server <- function(input, output, session) {
     p_bot <- ggplot() +
       xlim(xlims_bot) +
       ylim(-0.55, 0.55) +
-      labs(x = "R\u00f3\u017cnica \u015brednich (cm)  \u2014  M\u0119\u017cczy\u017ani \u2212 Kobiety",
+      labs(x = "Różnica średnich (cm)  —  Mężczyźni − Kobiety",
            y = NULL) +
       theme_educational() +
       theme(axis.text.y = element_blank(),
@@ -724,7 +724,7 @@ ch3_server <- function(input, output, session) {
             panel.grid.minor.y = element_blank()) +
       geom_vline(xintercept = 0, color = col_true,
                  linewidth = 1, linetype = "dashed") +
-      annotate("text", x = 0, y = 0.45, label = "0 = brak r\u00f3\u017cnicy",
+      annotate("text", x = 0, y = 0.45, label = "0 = brak różnicy",
                color = col_true, fontface = "bold", size = 4, hjust = -0.1)
 
     # Krok 3+: punkt roznicy
@@ -732,7 +732,7 @@ ch3_server <- function(input, output, session) {
       geom_point(aes(x = diff_val, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
       annotate("text", x = diff_val, y = -0.22,
-               label = paste0("x\u0304\u2081 \u2212 x\u0304\u2082 = ", round(diff_val, 2)),
+               label = paste0("x̄₁ − x̄₂ = ", round(diff_val, 2)),
                color = col_estimate, fontface = "bold", size = 4.5)
 
     # Krok 4+: waski przedzial SE
@@ -741,7 +741,7 @@ ch3_server <- function(input, output, session) {
         geom_errorbarh(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
                        height = 0.08, color = col_success, linewidth = 1.8) +
         annotate("text", x = diff_val, y = 0.17,
-                 label = paste0("\u00b1 SE = \u00b1", round(se, 2)),
+                 label = paste0("± SE = ±", round(se, 2)),
                  color = col_success, fontface = "bold", size = 4)
     }
 
@@ -782,49 +782,49 @@ ch3_server <- function(input, output, session) {
 
     switch(as.character(step),
       "1" = div(class = "callout-info",
-        p(tags$strong("Krok 1:"), " Dwie pr\u00f3by.",
-          " Mierzymy wzrost w obu grupach: ", tags$b(n1), " m\u0119\u017cczyzn i ",
-          tags$b(n2), " kobiet. Ka\u017cdy punkt to jedna osoba.
-          Zauwa\u017c \u2014 rozrzut surowych danych jest du\u017cy, ale wyra\u017anie wida\u0107,
-          \u017ce \u015brednia \"niebieska\" le\u017cy na prawo od \u015bredniej \"czerwonej\".")
+        p(tags$strong("Krok 1:"), " Dwie próby.",
+          " Mierzymy wzrost w obu grupach: ", tags$b(n1), " mężczyzn i ",
+          tags$b(n2), " kobiet. Każdy punkt to jedna osoba.
+          Zauważ — rozrzut surowych danych jest duży, ale wyraźnie widać,
+          że średnia \"niebieska\" leży na prawo od średniej \"czerwonej\".")
       ),
       "2" = div(class = "callout-info",
-        p(tags$strong("Krok 2:"), " Dwie \u015brednie.",
-          " Obliczamy \u015bredni\u0105 w ka\u017cdej grupie:"),
+        p(tags$strong("Krok 2:"), " Dwie średnie.",
+          " Obliczamy średnią w każdej grupie:"),
         p(withMathJax(paste0("\\(\\bar{x}_1 = ", round(x1, 2), "\\)"))),
         p(withMathJax(paste0("\\(\\bar{x}_2 = ", round(x2, 2), "\\)"))),
-        p("Ka\u017cda \u015brednia ma w\u0142asn\u0105 niepewno\u015b\u0107 \u2014 ale interesuje nas
-          nie ka\u017cda z osobna, tylko ", tags$b("r\u00f3\u017cnica mi\u0119dzy nimi"), ".")
+        p("Każda średnia ma własną niepewność — ale interesuje nas
+          nie każda z osobna, tylko ", tags$b("różnica między nimi"), ".")
       ),
       "3" = div(class = "callout-info",
-        p(tags$strong("Krok 3:"), " R\u00f3\u017cnica.",
-          " Estymator punktowy r\u00f3\u017cnicy: ",
+        p(tags$strong("Krok 3:"), " Różnica.",
+          " Estymator punktowy różnicy: ",
           withMathJax(paste0("\\(\\bar{x}_1 - \\bar{x}_2 = ", round(x1, 2),
                              " - ", round(x2, 2), " = ",
                              round(diff_val, 2), "\\)")), " cm."),
-        p("W dolnym panelu przenosimy si\u0119 do nowej skali \u2014 ", tags$b("skali r\u00f3\u017cnicy"),
-          ". Punkt = nasze oszacowanie r\u00f3\u017cnicy. Pionowa linia na 0 oznacza ",
-          tags$em("\"gdyby r\u00f3\u017cnicy nie by\u0142o\""),
-          ". Teraz musimy otoczy\u0107 nasz\u0105 r\u00f3\u017cnic\u0119 przedzia\u0142em niepewno\u015bci.")
+        p("W dolnym panelu przenosimy się do nowej skali — ", tags$b("skali różnicy"),
+          ". Punkt = nasze oszacowanie różnicy. Pionowa linia na 0 oznacza ",
+          tags$em("\"gdyby różnicy nie było\""),
+          ". Teraz musimy otoczyć naszą różnicę przedziałem niepewności.")
       ),
       "4" = div(class = "callout-info",
-        p(tags$strong("Krok 4:"), " B\u0142\u0105d standardowy r\u00f3\u017cnicy (\u00b1 SE).",
-          " SE r\u00f3\u017cnicy \u0142\u0105czy niepewno\u015bci z obu pr\u00f3b:"),
+        p(tags$strong("Krok 4:"), " Błąd standardowy różnicy (± SE).",
+          " SE różnicy łączy niepewności z obu prób:"),
         p(withMathJax(paste0(
-          "\\(SE_{r\u00f3\u017cnicy} = \\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}} = ",
+          "\\(SE_{różnicy} = \\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}} = ",
           "\\sqrt{\\frac{", round(s1, 2), "^2}{", n1, "} + \\frac{",
           round(s2, 2), "^2}{", n2, "}} = ", round(se, 2), "\\)"))),
-        p(tags$b("Wa\u017cne:"), " wariancje si\u0119 ", tags$em("dodaj\u0105"),
-          ", nie SE. Dlatego SE r\u00f3\u017cnicy jest ", tags$em("mniejszy"),
-          " ni\u017c suma SE poszczeg\u00f3lnych \u015brednich \u2014 to w\u0142a\u015bnie \u017ar\u00f3d\u0142o ",
-          tags$b("pu\u0142apki nak\u0142adaj\u0105cych si\u0119 CI"),
-          " (patrz case B3 poni\u017cej).")
+        p(tags$b("Ważne:"), " wariancje się ", tags$em("dodają"),
+          ", nie SE. Dlatego SE różnicy jest ", tags$em("mniejszy"),
+          " niż suma SE poszczególnych średnich — to właśnie źródło ",
+          tags$b("pułapki nakładających się CI"),
+          " (patrz case B3 poniżej).")
       ),
       "5" = {
         covers_zero <- (diff_val - me <= 0) & (0 <= diff_val + me)
         div(class = if (covers_zero) "callout-warning" else "callout-success",
-          p(tags$strong("Krok 5:"), " Przedzia\u0142 ufno\u015bci dla r\u00f3\u017cnicy."),
-          p("Warto\u015b\u0107 krytyczna z rozk\u0142adu t (df Welcha \u2248 ",
+          p(tags$strong("Krok 5:"), " Przedział ufności dla różnicy."),
+          p("Wartość krytyczna z rozkładu t (df Welcha ≈ ",
             round(df_w, 1), "): ",
             withMathJax(paste0("\\(t^* = ", round(t_star, 3), "\\)"))),
           p(withMathJax(paste0("\\(ME = t^* \\cdot SE = ", round(t_star, 3),
@@ -834,12 +834,12 @@ ch3_server <- function(input, output, session) {
             round(diff_val - me, 2), " ; ", round(diff_val + me, 2),
             tags$b("] cm")),
           p(tags$em(if (covers_zero)
-              "CI obejmuje 0 \u2014 nie mo\u017cemy stwierdzi\u0107, \u017ce r\u00f3\u017cnica jest istotna."
+              "CI obejmuje 0 — nie możemy stwierdzić, że różnica jest istotna."
             else
-              paste0("CI nie obejmuje 0 \u2014 r\u00f3\u017cnica jest istotna. ",
-                     "Mo\u017cemy stwierdzi\u0107 z 95% ufno\u015bci\u0105, \u017ce m\u0119\u017cczy\u017ani s\u0105 \u015brednio ",
+              paste0("CI nie obejmuje 0 — różnica jest istotna. ",
+                     "Możemy stwierdzić z 95% ufnością, że mężczyźni są średnio ",
                      "o co najmniej ", round(diff_val - me, 1),
-                     " cm wy\u017csi od kobiet.")))
+                     " cm wyżsi od kobiet.")))
         )
       }
     )
@@ -904,92 +904,92 @@ ch3_server <- function(input, output, session) {
       type = "single_mean",
       data = list(xbar = 173.4, s = 8.2, n = 30),
       xlab = "Wzrost (cm)",
-      steps = c("1. Pr\u00f3ba", "2. \u015arednia", "3. \u00b1 SE", "4. Przedzia\u0142"),
+      steps = c("1. Próba", "2. Średnia", "3. ± SE", "4. Przedział"),
       hypotheses = list(
-        list(text = "\u015aredni wzrost przekracza 168 cm",
+        list(text = "Średni wzrost przekracza 168 cm",
              bound = 168, dir = "gt",
-             explain_yes = "Dolna granica CI (\u2248 170.3) le\u017cy powy\u017cej 168. Ca\u0142y CI jest w obszarze hipotezy \u2014 z 95% ufno\u015bci\u0105 \u015bredni wzrost w populacji przekracza 168 cm."),
-        list(text = "\u015aredni wzrost przekracza 180 cm",
+             explain_yes = "Dolna granica CI (≈ 170.3) leży powyżej 168. Cały CI jest w obszarze hipotezy — z 95% ufnością średni wzrost w populacji przekracza 168 cm."),
+        list(text = "Średni wzrost przekracza 180 cm",
              bound = 180, dir = "gt",
-             explain_no = "G\u00f3rna granica CI (\u2248 176.5) le\u017cy poni\u017cej 180. Ca\u0142y CI jest poza obszarem hipotezy \u2014 nie mo\u017cemy stwierdzi\u0107, \u017ce \u015brednia wzrostu przekracza 180 cm.")
+             explain_no = "Górna granica CI (≈ 176.5) leży poniżej 180. Cały CI jest poza obszarem hipotezy — nie możemy stwierdzić, że średnia wzrostu przekracza 180 cm.")
       )
     ),
     A2 = list(
       type = "compare_n",
       data = list(xbar = 32.0, s = 8.0, ns = c(10, 50, 200)),
-      xlab = "St\u0119\u017cenie (\u00b5g/m\u00b3)",
+      xlab = "Stężenie (µg/m³)",
       steps = c("1. n = 10", "2. n = 50", "3. n = 200"),
       hypotheses = list(
-        list(text = "St\u0119\u017cenie przekracza 25 \u00b5g/m\u00b3",
+        list(text = "Stężenie przekracza 25 µg/m³",
              bound = 25, dir = "gt",
-             explain_yes = "Wszystkie trzy CI le\u017c\u0105 powy\u017cej 25 \u2014 nawet najszerszy (n=10) ma doln\u0105 granic\u0119 \u2248 26.3. Ka\u017cde z badan potwierdza hipotez\u0119. Wi\u0119ksze n daje tylko bardziej precyzyjne oszacowanie, ale wniosek jest ten sam."),
-        list(text = "St\u0119\u017cenie przekracza 35 \u00b5g/m\u00b3",
+             explain_yes = "Wszystkie trzy CI leżą powyżej 25 — nawet najszerszy (n=10) ma dolną granicę ≈ 26.3. Każde z badan potwierdza hipotezę. Większe n daje tylko bardziej precyzyjne oszacowanie, ale wniosek jest ten sam."),
+        list(text = "Stężenie przekracza 35 µg/m³",
              bound = 35, dir = "gt",
-             explain_no = "G\u00f3rna granica CI nawet dla n=200 (\u2248 33.1) le\u017cy poni\u017cej 35 \u2014 nawet najdok\u0142adniejsze badanie nie pozwala stwierdzi\u0107, \u017ce st\u0119\u017cenie przekracza 35. Zauwa\u017c: dla n=10 CI si\u0119ga a\u017c do 37.7 i przecina 35, wi\u0119c tam sytuacja by\u0142aby niepewna \u2014 to pokazuje, dlaczego du\u017cy n jest cenny: daje bardziej definitywn\u0105 odpowied\u017a.")
+             explain_no = "Górna granica CI nawet dla n=200 (≈ 33.1) leży poniżej 35 — nawet najdokładniejsze badanie nie pozwala stwierdzić, że stężenie przekracza 35. Zauważ: dla n=10 CI sięga aż do 37.7 i przecina 35, więc tam sytuacja byłaby niepewna — to pokazuje, dlaczego duży n jest cenny: daje bardziej definitywną odpowiedź.")
       )
     ),
     B1 = list(
       type = "diff_means",
       data = list(x1 = 12.3, s1 = 4.5, n1 = 40, x2 = 4.1, s2 = 4.2, n2 = 40,
                   label1 = "Lek", label2 = "Placebo",
-                  unit = "mmHg", diff_label = "Lek \u2212 placebo"),
-      xlab = "Obni\u017cenie ci\u015bnienia (mmHg)",
-      steps = c("1. Pr\u00f3by", "2. \u015arednie", "3. R\u00f3\u017cnica", "4. \u00b1 SE", "5. Przedzia\u0142"),
+                  unit = "mmHg", diff_label = "Lek − placebo"),
+      xlab = "Obniżenie ciśnienia (mmHg)",
+      steps = c("1. Próby", "2. Średnie", "3. Różnica", "4. ± SE", "5. Przedział"),
       hypotheses = list(
-        list(text = "Lek skuteczniej obni\u017ca ci\u015bnienie ni\u017c placebo (r\u00f3\u017cnica > 0)",
+        list(text = "Lek skuteczniej obniża ciśnienie niż placebo (różnica > 0)",
              bound = 0, dir = "gt",
-             explain_yes = "Ca\u0142y CI dla r\u00f3\u017cnicy le\u017cy powy\u017cej 0 \u2014 lek rzeczywi\u015bcie obni\u017ca ci\u015bnienie skuteczniej ni\u017c placebo. To ten sam wniosek co \"r\u00f3\u017cnica istotna statystycznie\"."),
-        list(text = "Lek dzia\u0142a o wi\u0119cej ni\u017c 12 mmHg lepiej ni\u017c placebo",
+             explain_yes = "Cały CI dla różnicy leży powyżej 0 — lek rzeczywiście obniża ciśnienie skuteczniej niż placebo. To ten sam wniosek co \"różnica istotna statystycznie\"."),
+        list(text = "Lek działa o więcej niż 12 mmHg lepiej niż placebo",
              bound = 12, dir = "gt",
-             explain_no = "G\u00f3rna granica CI (\u2248 10.1) le\u017cy poni\u017cej 12. Ca\u0142y CI jest w przedziale 6\u201310 mmHg \u2014 efekt leku jest wyra\u017any, ale nie tak du\u017cy jak g\u0142osi hipoteza.")
+             explain_no = "Górna granica CI (≈ 10.1) leży poniżej 12. Cały CI jest w przedziale 6–10 mmHg — efekt leku jest wyraźny, ale nie tak duży jak głosi hipoteza.")
       )
     ),
     B2 = list(
       type = "diff_means",
       data = list(x1 = 8.4, s1 = 1.2, n1 = 25, x2 = 8.1, s2 = 1.3, n2 = 25,
                   label1 = "Nawoz X", label2 = "Nawoz Y",
-                  unit = "t/ha", diff_label = "X \u2212 Y"),
+                  unit = "t/ha", diff_label = "X − Y"),
       xlab = "Plon (t/ha)",
-      steps = c("1. Pr\u00f3by", "2. \u015arednie", "3. R\u00f3\u017cnica", "4. \u00b1 SE", "5. Przedzia\u0142"),
+      steps = c("1. Próby", "2. Średnie", "3. Różnica", "4. ± SE", "5. Przedział"),
       hypotheses = list(
-        list(text = "R\u00f3\u017cnica plon\u00f3w jest mniejsza ni\u017c 2 t/ha",
+        list(text = "Różnica plonów jest mniejsza niż 2 t/ha",
              bound = 2, dir = "lt",
-             explain_yes = "Ca\u0142y CI dla r\u00f3\u017cnicy le\u017cy poni\u017cej 2 t/ha. Mo\u017cemy by\u0107 pewni, \u017ce nawet je\u015bli kt\u00f3ry\u015b nawoz jest lepszy, to r\u00f3\u017cnica nie jest du\u017ca (mniej ni\u017c 2 t/ha)."),
-        list(text = "Nawoz X daje wi\u0119cej ni\u017c 2 t/ha wi\u0119kszy plon ni\u017c Y",
+             explain_yes = "Cały CI dla różnicy leży poniżej 2 t/ha. Możemy być pewni, że nawet jeśli któryś nawoz jest lepszy, to różnica nie jest duża (mniej niż 2 t/ha)."),
+        list(text = "Nawoz X daje więcej niż 2 t/ha większy plon niż Y",
              bound = 2, dir = "gt",
-             explain_no = "G\u00f3rna granica CI (\u2248 1.0) le\u017cy poni\u017cej 2 \u2014 nawet najbardziej optymistyczny scenariusz nie przewiduje tak du\u017cej przewagi X nad Y. Uwaga: to nie znaczy, \u017ce X jest lepszy od Y \u2014 CI obejmuje te\u017c warto\u015bci ujemne, wi\u0119c nie wiemy nawet, kt\u00f3ry nawoz jest lepszy.")
+             explain_no = "Górna granica CI (≈ 1.0) leży poniżej 2 — nawet najbardziej optymistyczny scenariusz nie przewiduje tak dużej przewagi X nad Y. Uwaga: to nie znaczy, że X jest lepszy od Y — CI obejmuje też wartości ujemne, więc nie wiemy nawet, który nawoz jest lepszy.")
       )
     ),
     B3 = list(
       type = "diff_means",
       data = list(x1 = 350, s1 = 45, n1 = 150, x2 = 362, s2 = 45, n2 = 150,
                   label1 = "Grupa A", label2 = "Grupa B",
-                  unit = "ms", diff_label = "A \u2212 B"),
+                  unit = "ms", diff_label = "A − B"),
       xlab = "Czas reakcji (ms)",
-      steps = c("1. Pr\u00f3by", "2. \u015arednie", "3. R\u00f3\u017cnica", "4. \u00b1 SE", "5. Przedzia\u0142"),
+      steps = c("1. Próby", "2. Średnie", "3. Różnica", "4. ± SE", "5. Przedział"),
       hypotheses = list(
-        list(text = "Grupa A reaguje szybciej ni\u017c B (r\u00f3\u017cnica < 0)",
+        list(text = "Grupa A reaguje szybciej niż B (różnica < 0)",
              bound = 0, dir = "lt",
-             explain_yes = "Mimo \u017ce CI ka\u017cdej grupy osobno si\u0119 nak\u0142adaj\u0105 (zobacz g\u00f3rny panel!), CI dla r\u00f3\u017cnicy ca\u0142y le\u017cy poni\u017cej 0. To jest w\u0142a\u015bnie pu\u0142apka nak\u0142adaj\u0105cych si\u0119 CI: SE r\u00f3\u017cnicy jest mniejszy ni\u017c suma SE pojedynczych \u015brednich, dlatego CI dla r\u00f3\u017cnicy bywa w\u0119\u017cszy ni\u017c by sugerowa\u0142y nak\u0142adaj\u0105ce si\u0119 CI grup."),
+             explain_yes = "Mimo że CI każdej grupy osobno się nakładają (zobacz górny panel!), CI dla różnicy cały leży poniżej 0. To jest właśnie pułapka nakładających się CI: SE różnicy jest mniejszy niż suma SE pojedynczych średnich, dlatego CI dla różnicy bywa węższy niż by sugerowały nakładające się CI grup."),
         list(text = "Grupa A jest szybsza o co najmniej 25 ms",
              bound = -25, dir = "lt",
-             explain_no = "Dolna granica CI (\u2248 -22) nie dosi\u0119ga -25 \u2014 ca\u0142y CI jest powy\u017cej tej warto\u015bci. Nie mo\u017cemy stwierdzi\u0107, \u017ce r\u00f3\u017cnica wynosi co najmniej 25 ms. Wiemy tylko, \u017ce r\u00f3\u017cnica jest istotna (A szybsza) i mie\u015bci si\u0119 mi\u0119dzy 2 a 22 ms.")
+             explain_no = "Dolna granica CI (≈ -22) nie dosięga -25 — cały CI jest powyżej tej wartości. Nie możemy stwierdzić, że różnica wynosi co najmniej 25 ms. Wiemy tylko, że różnica jest istotna (A szybsza) i mieści się między 2 a 22 ms.")
       )
     ),
     B4 = list(
       type = "diff_means",
       data = list(x1 = 100.4, s1 = 15, n1 = 20000, x2 = 100.0, s2 = 15, n2 = 20000,
                   label1 = "Wojew. A", label2 = "Wojew. B",
-                  unit = "pkt IQ", diff_label = "A \u2212 B"),
+                  unit = "pkt IQ", diff_label = "A − B"),
       xlab = "IQ (punkty)",
-      steps = c("1. Pr\u00f3by", "2. \u015arednie", "3. R\u00f3\u017cnica", "4. \u00b1 SE", "5. Przedzia\u0142"),
+      steps = c("1. Próby", "2. Średnie", "3. Różnica", "4. ± SE", "5. Przedział"),
       hypotheses = list(
-        list(text = "Wojew\u00f3dztwo A ma wy\u017csze \u015brednie IQ ni\u017c B (r\u00f3\u017cnica > 0)",
+        list(text = "Województwo A ma wyższe średnie IQ niż B (różnica > 0)",
              bound = 0, dir = "gt",
-             explain_yes = "Dzi\u0119ki ogromnej pr\u00f3bie (n=20000 w ka\u017cdej grupie) CI jest bardzo w\u0105ski i nie obejmuje 0. Formalnie: r\u00f3\u017cnica jest istotna statystycznie."),
-        list(text = "R\u00f3\u017cnica wynosi co najmniej 1 punkt IQ",
+             explain_yes = "Dzięki ogromnej próbie (n=20000 w każdej grupie) CI jest bardzo wąski i nie obejmuje 0. Formalnie: różnica jest istotna statystycznie."),
+        list(text = "Różnica wynosi co najmniej 1 punkt IQ",
              bound = 1, dir = "gt",
-             explain_no = "Ca\u0142y CI le\u017cy poni\u017cej 1 (g\u00f3rna granica \u2248 0.7). R\u00f3\u017cnica jest statystycznie istotna, ale rozmiarowo trywialna \u2014 0.4 punktu IQ to ~0.03 SD, nic zauwa\u017calnego w \u017cyciu. To klasyczna ilustracja, \u017ce istotno\u015b\u0107 statystyczna \u2260 wa\u017cno\u015b\u0107 praktyczna.")
+             explain_no = "Cały CI leży poniżej 1 (górna granica ≈ 0.7). Różnica jest statystycznie istotna, ale rozmiarowo trywialna — 0.4 punktu IQ to ~0.03 SD, nic zauważalnego w życiu. To klasyczna ilustracja, że istotność statystyczna ≠ ważność praktyczna.")
       )
     ),
     C1 = list(
@@ -1000,11 +1000,11 @@ ch3_server <- function(input, output, session) {
         sds    = c(5.2, 5.8, 5.5, 4.9),
         ns     = c(25, 25, 25, 25)
       ),
-      xlab = "\u015aredni wynik egzaminu (0\u201340 pkt)",
-      steps = c("1. Punkty", "2. \u015arednie", "3. CI"),
+      xlab = "Średni wynik egzaminu (0–40 pkt)",
+      steps = c("1. Punkty", "2. Średnie", "3. CI"),
       hypotheses = list(
         list(kind = "pairwise",
-             text = "Kt\u00f3re metody nauczania r\u00f3\u017cni\u0105 si\u0119 istotnie?",
+             text = "Które metody nauczania różnią się istotnie?",
              unit = "pkt")
       )
     ),
@@ -1016,11 +1016,11 @@ ch3_server <- function(input, output, session) {
         sds    = c(8, 10, 9, 11, 25),
         ns     = c(60, 55, 70, 50, 80)
       ),
-      xlab = "\u015aredni czas oczekiwania (min)",
-      steps = c("1. Punkty", "2. \u015arednie", "3. CI"),
+      xlab = "Średni czas oczekiwania (min)",
+      steps = c("1. Punkty", "2. Średnie", "3. CI"),
       hypotheses = list(
         list(kind = "pairwise",
-             text = "Kt\u00f3re oddzia\u0142y r\u00f3\u017cni\u0105 si\u0119 istotnie czasem oczekiwania?",
+             text = "Które oddziały różnią się istotnie czasem oczekiwania?",
              unit = "min")
       )
     )
@@ -1088,7 +1088,7 @@ ch3_server <- function(input, output, session) {
         geom_vline(xintercept = hypothesis$bound, color = col_hyp,
                    linewidth = 1, linetype = "solid") +
         annotate("text", x = hypothesis$bound, y = 0.68,
-                 label = paste0(if (hypothesis$dir == "gt") "\u2265 " else "\u2264 ",
+                 label = paste0(if (hypothesis$dir == "gt") "≥ " else "≤ ",
                                 hypothesis$bound),
                  color = col_hyp, fontface = "bold", size = 4.5, hjust = -0.1)
     }
@@ -1104,7 +1104,7 @@ ch3_server <- function(input, output, session) {
         geom_point(aes(x = xbar, y = 0), color = col_estimate,
                    size = 7, shape = 18) +
         annotate("text", x = xbar, y = -0.18,
-                 label = paste0("x\u0304 = ", round(xbar, 2)),
+                 label = paste0("x̄ = ", round(xbar, 2)),
                  color = col_estimate, fontface = "bold", size = 5)
     }
     if (step >= 3) {
@@ -1112,7 +1112,7 @@ ch3_server <- function(input, output, session) {
         geom_errorbarh(aes(xmin = xbar - se, xmax = xbar + se, y = 0),
                        height = 0.06, color = col_success, linewidth = 1.8) +
         annotate("text", x = xbar, y = 0.14,
-                 label = paste0("\u00b1 SE = \u00b1", round(se, 2)),
+                 label = paste0("± SE = ±", round(se, 2)),
                  color = col_success, fontface = "bold", size = 4)
     }
     if (step >= 4) {
@@ -1180,7 +1180,7 @@ ch3_server <- function(input, output, session) {
         geom_vline(xintercept = hypothesis$bound, color = col_hyp,
                    linewidth = 1, linetype = "solid") +
         annotate("text", x = hypothesis$bound, y = length(ns) + 0.5,
-                 label = paste0(if (hypothesis$dir == "gt") "\u2265 " else "\u2264 ",
+                 label = paste0(if (hypothesis$dir == "gt") "≥ " else "≤ ",
                                 hypothesis$bound),
                  color = col_hyp, fontface = "bold", size = 4.5, hjust = -0.1)
     }
@@ -1288,10 +1288,10 @@ ch3_server <- function(input, output, session) {
         geom_point(aes(x = x2, y = 1.0), color = col_g2,
                    size = 7, shape = 18) +
         annotate("text", x = x1, y = 2.15,
-                 label = paste0("x\u0304\u2081 = ", round(x1, 2)),
+                 label = paste0("x̄₁ = ", round(x1, 2)),
                  color = col_g1, fontface = "bold", size = 4.5) +
         annotate("text", x = x2, y = 0.55,
-                 label = paste0("x\u0304\u2082 = ", round(x2, 2)),
+                 label = paste0("x̄₂ = ", round(x2, 2)),
                  color = col_g2, fontface = "bold", size = 4.5)
     }
 
@@ -1310,7 +1310,7 @@ ch3_server <- function(input, output, session) {
     p_bot <- ggplot() +
       xlim(xlims_bot) +
       ylim(-0.55, 0.65) +
-      labs(x = paste0("R\u00f3\u017cnica (", data$unit, ")  \u2014  ", data$diff_label),
+      labs(x = paste0("Różnica (", data$unit, ")  —  ", data$diff_label),
            y = NULL) +
       theme_educational() +
       theme(axis.text.y = element_blank(),
@@ -1335,7 +1335,7 @@ ch3_server <- function(input, output, session) {
         geom_vline(xintercept = hypothesis$bound, color = col_hyp,
                    linewidth = 1, linetype = "solid") +
         annotate("text", x = hypothesis$bound, y = 0.55,
-                 label = paste0(if (hypothesis$dir == "gt") "\u2265 " else "\u2264 ",
+                 label = paste0(if (hypothesis$dir == "gt") "≥ " else "≤ ",
                                 hypothesis$bound),
                  color = col_hyp, fontface = "bold", size = 4.5, hjust = -0.1)
     } else {
@@ -1343,7 +1343,7 @@ ch3_server <- function(input, output, session) {
       p_bot <- p_bot +
         geom_vline(xintercept = 0, color = col_true,
                    linewidth = 1, linetype = "dashed") +
-        annotate("text", x = 0, y = 0.55, label = "0 = brak r\u00f3\u017cnicy",
+        annotate("text", x = 0, y = 0.55, label = "0 = brak różnicy",
                  color = col_true, fontface = "bold", size = 4, hjust = -0.1)
     }
 
@@ -1351,7 +1351,7 @@ ch3_server <- function(input, output, session) {
       geom_point(aes(x = diff_val, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
       annotate("text", x = diff_val, y = -0.22,
-               label = paste0("x\u0304\u2081 \u2212 x\u0304\u2082 = ", round(diff_val, 2)),
+               label = paste0("x̄₁ − x̄₂ = ", round(diff_val, 2)),
                color = col_estimate, fontface = "bold", size = 4.5)
 
     if (step >= 4) {
@@ -1359,7 +1359,7 @@ ch3_server <- function(input, output, session) {
         geom_errorbarh(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
                        height = 0.08, color = col_success, linewidth = 1.8) +
         annotate("text", x = diff_val, y = 0.17,
-                 label = paste0("\u00b1 SE = \u00b1", round(se, 2)),
+                 label = paste0("± SE = ±", round(se, 2)),
                  color = col_success, fontface = "bold", size = 4)
     }
     if (step >= 5) {
@@ -1448,7 +1448,7 @@ ch3_server <- function(input, output, session) {
         geom_vline(xintercept = hypothesis$bound, color = col_hyp,
                    linewidth = 1, linetype = "solid") +
         annotate("text", x = hypothesis$bound, y = k + 0.45,
-                 label = paste0(if (hypothesis$dir == "gt") "\u2265 " else "\u2264 ",
+                 label = paste0(if (hypothesis$dir == "gt") "≥ " else "≤ ",
                                 hypothesis$bound),
                  color = col_hyp, fontface = "bold", size = 4.5, hjust = -0.1)
     }
@@ -1521,14 +1521,14 @@ ch3_server <- function(input, output, session) {
                      paste0("Hipoteza ", j), class = btn_class)
       })
     } else {
-      list(helpText("Wybuduj pe\u0142ny przedzia\u0142, \u017ceby sprawdzi\u0107 hipotezy."))
+      list(helpText("Wybuduj pełny przedział, żeby sprawdzić hipotezy."))
     }
 
-    # Drugi rzad: przycisk "Poka\u017c werdykt" - tylko gdy hipoteza wybrana i jeszcze nie odkryta
+    # Drugi rzad: przycisk "Pokaż werdykt" - tylko gdy hipoteza wybrana i jeszcze nie odkryta
     reveal_row <- if (!is.null(phase) && !phase$reveal) {
       div(class = "step-buttons", style = "margin-top: 4px;",
         actionButton(paste0("ch3_case", case_id, "_reveal"),
-                     "\U0001f50d Poka\u017c werdykt", class = "btn-success"))
+                     "\U0001f50d Pokaż werdykt", class = "btn-success"))
     } else {
       NULL
     }
@@ -1550,13 +1550,13 @@ ch3_server <- function(input, output, session) {
       return(
         ggplot() +
           annotate("text", x = 0.5, y = 0.5,
-                   label = "Kliknij pierwszy krok, \u017ceby zacz\u0105\u0107",
+                   label = "Kliknij pierwszy krok, żeby zacząć",
                    size = 5, color = "#7f8c8d") +
           theme_void()
       )
     }
 
-    # Czy jeste\u015bmy w fazie hipotezy?
+    # Czy jesteśmy w fazie hipotezy?
     n_hyp <- length(cfg$hypotheses)
     phase <- hyp_phase(step, n_core, n_hyp)
     hypothesis <- NULL
@@ -1616,11 +1616,11 @@ ch3_server <- function(input, output, session) {
         tags$th(groups[i], style = "padding: 4px 8px; text-align: right; font-size: 12px;"),
         lapply(seq_len(k), function(j) {
           if (i == j) {
-            tags$td("\u2014", style = "padding: 4px 8px; text-align: center; color: #95a5a6;")
+            tags$td("—", style = "padding: 4px 8px; text-align: center; color: #95a5a6;")
           } else if (mat[i, j]) {
-            tags$td("\u2713", style = "padding: 4px 8px; text-align: center; color: #27ae60; font-weight: bold; font-size: 16px;")
+            tags$td("✓", style = "padding: 4px 8px; text-align: center; color: #27ae60; font-weight: bold; font-size: 16px;")
           } else {
-            tags$td("\u00d7", style = "padding: 4px 8px; text-align: center; color: #e74c3c; font-size: 16px;")
+            tags$td("×", style = "padding: 4px 8px; text-align: center; color: #e74c3c; font-size: 16px;")
           }
         })
       )
@@ -1654,9 +1654,9 @@ ch3_server <- function(input, output, session) {
 
     if (n_diff == 0) {
       return(paste0(
-        "\u017badna para grup nie wykaza\u0142a istotnej r\u00f3\u017cnicy \u2014 wszystkie 95% CI ",
-        "nak\u0142adaj\u0105 si\u0119 wzajemnie. Na podstawie tych danych nie mo\u017cemy ",
-        "stwierdzi\u0107 r\u00f3\u017cnic mi\u0119dzy badanymi grupami."
+        "Żadna para grup nie wykazała istotnej różnicy — wszystkie 95% CI ",
+        "nakładają się wzajemnie. Na podstawie tych danych nie możemy ",
+        "stwierdzić różnic między badanymi grupami."
       ))
     }
 
@@ -1665,15 +1665,15 @@ ch3_server <- function(input, output, session) {
     if (length(standout_idx) == 1) {
       i <- standout_idx
       others <- means[-i]
-      direction <- if (means[i] > max(others)) "wy\u017csz\u0105" else "ni\u017csz\u0105"
+      direction <- if (means[i] > max(others)) "wyższą" else "niższą"
       return(paste0(
-        "Spo\u015br\u00f3d wszystkich badanych grup wyra\u017anie odstaje ",
-        tags$b(groups[i]), " (\u015brednia ", round(means[i], 1), unit_str,
-        ") \u2014 ma istotnie ", direction, " warto\u015b\u0107 ni\u017c ka\u017cda z pozosta\u0142ych grup ",
-        "(jej 95% CI nie nak\u0142ada si\u0119 z \u017cadnym innym). ",
-        "Pozosta\u0142e grupy maj\u0105 \u015brednie w przedziale ",
-        round(min(others), 1), "\u2013", round(max(others), 1), unit_str,
-        ", a ich CI nak\u0142adaj\u0105 si\u0119 \u2014 nie mo\u017cemy stwierdzi\u0107 mi\u0119dzy nimi istotnych r\u00f3\u017cnic."
+        "Spośród wszystkich badanych grup wyraźnie odstaje ",
+        tags$b(groups[i]), " (średnia ", round(means[i], 1), unit_str,
+        ") — ma istotnie ", direction, " wartość niż każda z pozostałych grup ",
+        "(jej 95% CI nie nakłada się z żadnym innym). ",
+        "Pozostałe grupy mają średnie w przedziale ",
+        round(min(others), 1), "–", round(max(others), 1), unit_str,
+        ", a ich CI nakładają się — nie możemy stwierdzić między nimi istotnych różnic."
       ))
     }
 
@@ -1691,16 +1691,16 @@ ch3_server <- function(input, output, session) {
     }
 
     intro <- if (n_diff == 1) {
-      "Spo\u015br\u00f3d wszystkich por\u00f3wna\u0144 jedynie jedna para wykaza\u0142a istotn\u0105 r\u00f3\u017cnic\u0119: "
+      "Spośród wszystkich porównań jedynie jedna para wykazała istotną różnicę: "
     } else {
-      paste0("Istotne r\u00f3\u017cnice (CI nie nak\u0142adaj\u0105 si\u0119) wykaza\u0142y ",
+      paste0("Istotne różnice (CI nie nakładają się) wykazały ",
              n_diff, " pary: ")
     }
 
     paste0(
       intro, pairs_inline, ". ",
-      "Pozosta\u0142e pary nie r\u00f3\u017cni\u0105 si\u0119 istotnie \u2014 ich 95% CI nak\u0142adaj\u0105 si\u0119, ",
-      "wi\u0119c na podstawie tych danych nie mo\u017cemy mi\u0119dzy nimi rozr\u00f3\u017cni\u0107."
+      "Pozostałe pary nie różnią się istotnie — ich 95% CI nakładają się, ",
+      "więc na podstawie tych danych nie możemy między nimi rozróżnić."
     )
   }
 
@@ -1723,8 +1723,8 @@ ch3_server <- function(input, output, session) {
         return(div(class = "callout-info",
           p(tags$strong("Hipoteza ", phase$idx, ": "), hyp$text),
           p(tags$em("Spojrz na wykres: gdzie lezy CI wzgledem obszaru hipotezy?
-                    Co o tym sadzicie? Klikni\u0119cie ", tags$b("Poka\u017c werdykt"),
-                    " odsloni odpowied\u017a."))
+                    Co o tym sadzicie? Kliknięcie ", tags$b("Pokaż werdykt"),
+                    " odsloni odpowiedź."))
         ))
       }
 
@@ -1736,12 +1736,12 @@ ch3_server <- function(input, output, session) {
                                          unit = if (!is.null(hyp$unit)) hyp$unit else "")
         return(div(class = "callout-success",
           p(tags$strong("Hipoteza: "), hyp$text),
-          p(tags$strong("Werdykt \u2014 macierz par:")),
-          p(tags$em("\u2713 = grupy r\u00f3\u017cni\u0105 si\u0119 istotnie (CI nie nak\u0142adaj\u0105 si\u0119);  ",
-                    "\u00d7 = nie mo\u017cna stwierdzi\u0107 r\u00f3\u017cnicy (CI nak\u0142adaj\u0105 si\u0119)"),
+          p(tags$strong("Werdykt — macierz par:")),
+          p(tags$em("✓ = grupy różnią się istotnie (CI nie nakładają się);  ",
+                    "× = nie można stwierdzić różnicy (CI nakładają się)"),
             style = "font-size: 12px; color: #7f8c8d;"),
           render_pairwise_table(mat),
-          p(tags$strong("Jak to opisa\u0107 w raporcie:"),
+          p(tags$strong("Jak to opisać w raporcie:"),
             style = "margin-top: 12px;"),
           p(HTML(narrative), style = "font-style: italic;")
         ))
@@ -1756,8 +1756,8 @@ ch3_server <- function(input, output, session) {
       } else if (verdict == "no" && !is.null(hyp$explain_no)) {
         p(hyp$explain_no)
       } else {
-        p("CI przecina granic\u0119 hipotezy \u2014 nie mo\u017cemy jednoznacznie
-          stwierdzi\u0107, czy jest prawdziwa.")
+        p("CI przecina granicę hipotezy — nie możemy jednoznacznie
+          stwierdzić, czy jest prawdziwa.")
       }
 
       return(div(class = cls,
@@ -1767,8 +1767,8 @@ ch3_server <- function(input, output, session) {
       ))
     }
 
-    # Faza budowy CI \u2014 wyja\u015bnienie ostatniego kroku
-    # Dla uproszczenia: callout-info z kr\u00f3tkim opisem
+    # Faza budowy CI — wyjaśnienie ostatniego kroku
+    # Dla uproszczenia: callout-info z krótkim opisem
     div(class = "callout-info",
       p(tags$strong(cfg$steps[step])),
       p("Krok ", step, " z ", n_core, ".")
@@ -1865,7 +1865,7 @@ ch3_server <- function(input, output, session) {
     A = list(
       g1_name = "Dostawca A",
       g2_name = "Dostawca B",
-      unit    = "zawarto\u015b\u0107 bia\u0142ka (%)",
+      unit    = "zawartość białka (%)",
       g1 = c(13.17,11.08,11.38,11.55,11.22,11.23,12.25,11.73,11.89,13.11,
              12.01,13.43,13.17,11.99,12.94,12.08,11.26,11.62,11.80,12.39,
              12.30,12.22,12.58,10.97,12.56,11.91,12.25,12.16,11.21,11.63,
@@ -1876,9 +1876,9 @@ ch3_server <- function(input, output, session) {
              11.16,10.35,10.53,10.38, 9.92,10.10,10.37,10.57,10.86,12.35)
     ),
     B = list(
-      g1_name = "Szk\u0142o",
+      g1_name = "Szkło",
       g2_name = "Plastik",
-      unit    = "zawarto\u015b\u0107 t\u0142uszczu (%)",
+      unit    = "zawartość tłuszczu (%)",
       g1 = c(3.03,3.19,2.80,2.84,3.47,2.95,3.51,3.34,3.17,2.93,
              2.97,3.09,2.80,3.12,2.89,3.18,3.12,3.40,3.03,3.02,
              3.01,3.18,3.07,3.27,3.20,3.18,3.13,2.99,3.12,2.93),
@@ -1889,7 +1889,7 @@ ch3_server <- function(input, output, session) {
     C = list(
       g1_name = "Linia 1",
       g2_name = "Linia 2",
-      unit    = "zawarto\u015b\u0107 b\u0142onnika (g / 100 g)",
+      unit    = "zawartość błonnika (g / 100 g)",
       # Wygenerowane: set.seed(3); round(rnorm(120, 9.3, 1.0), 2), round(rnorm(120, 9.0, 1.0), 2)
       g1 = c(8.34,8.99,10.62,7.52,9.70,10.56,10.25, 9.04, 8.49,10.13,
              7.94,10.82,10.78, 7.98,11.47, 9.16,10.82, 8.87, 7.83, 8.53,
@@ -1953,11 +1953,11 @@ ch3_server <- function(input, output, session) {
     )
     df_diff <- data.frame(
       row   = 1.5,
-      label = paste0(dat$g1_name, " \u2212 ", dat$g2_name),
+      label = paste0(dat$g1_name, " − ", dat$g2_name),
       mean  = cis$md,
       lo    = cis$ci_d[1],
       hi    = cis$ci_d[2],
-      panel = "CI r\u00f3\u017cnicy"
+      panel = "CI różnicy"
     )
 
     overlap_present <- cis$overlap_lo <= cis$overlap_hi
@@ -1997,8 +1997,8 @@ ch3_server <- function(input, output, session) {
                 vjust = -1.2, color = col_estimate, fontface = "bold", size = 4.2) +
       scale_y_continuous(breaks = df_diff$row, labels = df_diff$label,
                          limits = c(0.5, 2.5)) +
-      labs(title = paste0("CI r\u00f3\u017cnicy (", dat$g1_name, " \u2212 ", dat$g2_name, ")"),
-           x = paste("r\u00f3\u017cnica \u2014", dat$unit), y = NULL) +
+      labs(title = paste0("CI różnicy (", dat$g1_name, " − ", dat$g2_name, ")"),
+           x = paste("różnica —", dat$unit), y = NULL) +
       theme_educational() +
       theme(plot.title = element_text(size = 13, face = "bold"))
 
@@ -2021,20 +2021,20 @@ ch3_server <- function(input, output, session) {
     facts <- tagList(
       p(tags$b("Co widzimy:")),
       tags$ul(
-        tags$li(dat$g1_name, ": \u015brednia ", fmt(cis$m1),
+        tags$li(dat$g1_name, ": średnia ", fmt(cis$m1),
                 ", 95% CI ", ci_txt(cis$ci1)),
-        tags$li(dat$g2_name, ": \u015brednia ", fmt(cis$m2),
+        tags$li(dat$g2_name, ": średnia ", fmt(cis$m2),
                 ", 95% CI ", ci_txt(cis$ci2)),
-        tags$li(tags$b("CI r\u00f3\u017cnicy"), " (",
-                dat$g1_name, " \u2212 ", dat$g2_name, "): ",
+        tags$li(tags$b("CI różnicy"), " (",
+                dat$g1_name, " − ", dat$g2_name, "): ",
                 ci_txt(cis$ci_d))
       ),
       tags$ul(
-        tags$li("Czy CI grup si\u0119 nakrywaj\u0105? ",
+        tags$li("Czy CI grup się nakrywają? ",
                 tags$b(if (overlap_present)
-                  paste0("TAK (na odcinku szeroko\u015bci ", fmt(overlap_w), ")")
+                  paste0("TAK (na odcinku szerokości ", fmt(overlap_w), ")")
                 else "NIE")),
-        tags$li("Czy CI r\u00f3\u017cnicy zawiera 0? ",
+        tags$li("Czy CI różnicy zawiera 0? ",
                 tags$b(if (diff_excludes_0) "NIE" else "TAK"))
       )
     )
@@ -2044,40 +2044,40 @@ ch3_server <- function(input, output, session) {
       div(class = "callout-success",
         facts,
         p(tags$b("Werdykt:"),
-          " Oba spojrzenia zgodne. CI grup si\u0119 nie nakrywaj\u0105, a CI r\u00f3\u017cnicy
-          nie zawiera 0 \u2014 \u015brednia zawarto\u015b\u0107 bia\u0142ka r\u00f3\u017cni si\u0119 istotnie.
-          Najlepsze oszacowanie: m\u0105ka Dostawcy A ma o ",
-          fmt(cis$ci_d[1]), "\u2013", fmt(cis$ci_d[2]),
-          " punktu procentowego wi\u0119cej bia\u0142ka.")
+          " Oba spojrzenia zgodne. CI grup się nie nakrywają, a CI różnicy
+          nie zawiera 0 — średnia zawartość białka różni się istotnie.
+          Najlepsze oszacowanie: mąka Dostawcy A ma o ",
+          fmt(cis$ci_d[1]), "–", fmt(cis$ci_d[2]),
+          " punktu procentowego więcej białka.")
       )
     } else if (scenario_key == "B") {
       div(class = "callout-success",
         facts,
         p(tags$b("Werdykt:"),
-          " Oba spojrzenia zgodne. CI grup mocno si\u0119 nakrywaj\u0105, a CI r\u00f3\u017cnicy
-          zawiera 0 \u2014 nie mamy podstaw m\u00f3wi\u0107, \u017ce materia\u0142 opakowania
-          wp\u0142ywa na zawarto\u015b\u0107 t\u0142uszczu w jogurcie.")
+          " Oba spojrzenia zgodne. CI grup mocno się nakrywają, a CI różnicy
+          zawiera 0 — nie mamy podstaw mówić, że materiał opakowania
+          wpływa na zawartość tłuszczu w jogurcie.")
       )
     } else {
       div(class = "callout-warning",
         facts,
-        p(tags$b("Spojrzenia si\u0119 rozje\u017cd\u017caj\u0105:")),
+        p(tags$b("Spojrzenia się rozjeżdżają:")),
         tags$ul(
-          tags$li("Wzrokiem: CI grup ledwo si\u0119 stykaj\u0105 (nakrywaj\u0105 si\u0119 na odcinku ",
+          tags$li("Wzrokiem: CI grup ledwo się stykają (nakrywają się na odcinku ",
                   fmt(overlap_w),
-                  " g) \u2014 naiwnie powiedzieliby\u015bmy \"linie produkuj\u0105 podobne p\u0142atki\"."),
-          tags$li("Liczbowo: CI r\u00f3\u017cnicy to ", ci_txt(cis$ci_d),
-                  " \u2014 nie zawiera 0, wi\u0119c r\u00f3\u017cnica jest istotna.
-                   Linia 1 produkuje p\u0142atki o ",
-                   fmt(cis$ci_d[1]), "\u2013", fmt(cis$ci_d[2]),
-                   " g / 100 g bogatsze w b\u0142onnik.")
+                  " g) — naiwnie powiedzielibyśmy \"linie produkują podobne płatki\"."),
+          tags$li("Liczbowo: CI różnicy to ", ci_txt(cis$ci_d),
+                  " — nie zawiera 0, więc różnica jest istotna.
+                   Linia 1 produkuje płatki o ",
+                   fmt(cis$ci_d[1]), "–", fmt(cis$ci_d[2]),
+                   " g / 100 g bogatsze w błonnik.")
         ),
-        p(tags$b("Dlaczego CI r\u00f3\u017cnicy jest w\u0119\u017csze ni\u017c suma CI grup?"),
-          " Bo b\u0142\u0105d standardowy r\u00f3\u017cnicy to ",
+        p(tags$b("Dlaczego CI różnicy jest węższe niż suma CI grup?"),
+          " Bo błąd standardowy różnicy to ",
           withMathJax("\\(\\sqrt{SE_1^2 + SE_2^2}\\)"),
           ", a nie ", withMathJax("\\(SE_1 + SE_2\\)"),
-          ". Matematyka \u0142\u0105czy niepewno\u015bci \"po pitagorasie\", nie przez sumowanie \u2014
-          dlatego CI r\u00f3\u017cnicy jest ostrzejszym narz\u0119dziem ni\u017c por\u00f3wnywanie CI grup na oko.")
+          ". Matematyka łączy niepewności \"po pitagorasie\", nie przez sumowanie —
+          dlatego CI różnicy jest ostrzejszym narzędziem niż porównywanie CI grup na oko.")
       )
     }
   }
