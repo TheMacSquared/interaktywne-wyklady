@@ -87,6 +87,39 @@ ch4_ui <- list(
       )
     ),
 
+    # ========================================================================
+    # Cwiczenie: sformuluj hipotezy
+    # ========================================================================
+    h2(id = "ch4-cwiczenie", class = "section-title", "Ćwiczenie: sformułuj hipotezy"),
+
+    div(class = "narrative",
+      p("Jak wyglądają H₀ i Hₐ w poniższych sytuacjach? Zastanów się i sprawdź.")
+    ),
+
+    hypothesis_practice("ch4", list(
+      list(
+        question = "Producent lodów podejrzewa, że sprzedaż rośnie wraz
+                    ze średnią temperaturą dnia. Zbiera dane z 60 dni.",
+        h0 = "\\(H_0: \\rho \\leq 0\\) (brak dodatniego związku)",
+        ha = "\\(H_a: \\rho > 0\\) (wyższa temperatura → wyższa sprzedaż)",
+        note = "Jednostronny — pytanie jest kierunkowe („rośnie wraz z”)."
+      ),
+      list(
+        question = "Czy istnieje jakikolwiek związek między liczbą godzin snu
+                    a oceną z egzaminu?",
+        h0 = "\\(H_0: \\rho = 0\\) (brak związku liniowego)",
+        ha = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
+        note = "Dwustronny — pytamy neutralnie, bez zakładania kierunku."
+      ),
+      list(
+        question = "Inżynier bada, czy większe stężenie dodatku X skraca
+                    trwałość produktu na półce.",
+        h0 = "\\(H_0: \\rho \\geq 0\\)",
+        ha = "\\(H_a: \\rho < 0\\) (więcej dodatku → krótsza trwałość)",
+        note = "Jednostronny (lewostronny) — hipoteza kierunkowa ujemna."
+      )
+    )),
+
     figure_panel(
       label = "Ryc. 5.4",
       title = "Test korelacji — krok po kroku",
@@ -431,7 +464,7 @@ ch4_server <- function(input, output, session) {
                  label = paste0("t = ", round(t_stat, 3)),
                  hjust = if (t_stat > 0) -0.1 else 1.1,
                  color = col_reject, fontface = "bold") +
-        labs(title = paste0("Rozkład pod H₀: t(", n - 2, ")"),
+        labs(title = paste0("Rozkład pod H0: t(", n - 2, ")"),
              x = "Statystyka testowa", y = "Gęstość") +
         theme()
     } else {
@@ -457,26 +490,26 @@ ch4_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_h0, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
             paste0("n = ", n, " par obserwacji")),
         p("Każdy punkt to jedna obserwacja z dwiema wartościami: ",
           par$xlab, " i ", par$ylab, ". Czy widać trend?")
       ),
       "2" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
             paste0("r = ", round(r_val, 3))),
         p("Korelacja z próby: ", tags$b(round(r_val, 3)),
           ". Ale czy to wystarczająco daleko od zera, by odrzucić H₀?")
       ),
       "3" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_effect, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_effect, ";"),
             paste0("t = ", round(r_val, 3), " · √", n - 2,
                    " / √(1 − ", round(r_val^2, 3),
                    ") = ", round(t_stat, 3))),
         p("Zamieniamy r na statystykę t, żeby móc porównać z rozkładem t(", n - 2, ").")
       ),
       "4" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
             paste0("p = ", format.pval(p_val, digits = 4))),
         p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
           res$decision),
@@ -545,7 +578,7 @@ ch4_server <- function(input, output, session) {
                  label = paste0("t = ", round(t_stat, 3)),
                  hjust = if (t_stat > 0) -0.1 else 1.1,
                  color = col_reject, fontface = "bold") +
-        labs(title = paste0("Rozkład pod H₀: t(", n - 2, ")"),
+        labs(title = paste0("Rozkład pod H0: t(", n - 2, ")"),
              subtitle = "Test jednostronny — tylko jeden ogon!",
              x = "Statystyka testowa", y = "Gęstość") +
         theme()
@@ -570,23 +603,23 @@ ch4_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_h0, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
             paste0("n = ", n, " (te same dane co wyżej)")),
         p("Te same obserwacje, ale pytamy o kierunek związku.")
       ),
       "2" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
             paste0("r = ", round(r_val, 3), " (ta sama wartość!)")),
         p("Korelacja się nie zmieniła. Zmieniło się pytanie.")
       ),
       "3" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_effect, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_effect, ";"),
             paste0("t = ", round(t_stat, 3), " (ta sama wartość!)")),
         p("W teście jednostronnym patrzymy tylko na ",
           tags$b(if (par$alt_1s == "greater") "prawy" else "lewy"), " ogon.")
       ),
       "4" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
             paste0("p = ", format.pval(p_val, digits = 4), " (jednostronnie!)")),
         p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
           res$decision),
@@ -641,9 +674,9 @@ ch4_server <- function(input, output, session) {
     r_val <- cor(df$x, df$y)
     n_outliers <- max(0, nrow(df) - 50)
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_h0, ";"),
+      div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
           paste0("r = ", round(r_val, 3))),
-      div(class = "stat-box", style = paste0("background:", col_reject, ";"),
+      div(class = "stat-box", style = paste0("border-left-color:", col_reject, ";"),
           paste0("Outlierów: ", n_outliers))
     )
   })

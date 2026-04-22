@@ -32,14 +32,52 @@ ch2_ui <- list(
         z pilotażu: średni wynik testu koncentracji w populacji = 70 pkt."),
       p("Więc pytanie potoczne zamienia się w:"),
       div(class = "formula-box",
-        p(withMathJax("\\(H_0: \\mu = 70 \\quad\\text{(średnia jest typowa)}\\)")),
-        p(withMathJax("\\(H_a: \\mu \\neq 70 \\quad\\text{(średnia odbiega od normy)}\\)"))
+        p(withMathJax("\\(H_0: \\mu = 70\\)"), " (średnia jest typowa)"),
+        p(withMathJax("\\(H_a: \\mu \\neq 70\\)"), " (średnia odbiega od normy)")
       ),
       p("Teraz potrzebujemy danych i wzoru na ", tags$b("test t jednej próby"), ":"),
       div(class = "formula-box",
         p(withMathJax("\\(t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}}, \\quad df = n - 1\\)"))
       )
     ),
+
+    # ========================================================================
+    # Cwiczenie: sformuluj hipotezy
+    # ========================================================================
+    h2(id = "ch2-cwiczenie", class = "section-title", "Ćwiczenie: sformułuj hipotezy"),
+
+    div(class = "narrative",
+      p("Zanim zobaczysz test w działaniu — spróbuj sam. Dla każdego pytania
+        badawczego zastanów się, jak wyglądałyby ", tags$b("H₀"), " i ", tags$b("Hₐ"),
+        ". Przedyskutuj w grupie, a potem kliknij „Pokaż odpowiedź”.")
+    ),
+
+    hypothesis_practice("ch2", list(
+      list(
+        question = "Producent deklaruje, że średnia zawartość soli w chlebie
+                    wynosi 1,2 g / 100 g. Chcemy sprawdzić, czy jego deklaracja
+                    pasuje do rzeczywistości.",
+        h0 = "\\(H_0: \\mu = 1{,}2\\) (zgodnie z deklaracją)",
+        ha = "\\(H_a: \\mu \\neq 1{,}2\\) (odbiega od deklaracji)",
+        note = "Dwustronny — nie wiemy, w którą stronę może odbiegać."
+      ),
+      list(
+        question = "Norma technologiczna przewiduje, że dojrzewanie sera trwa
+                    średnio 45 dni. Producent twierdzi, że jego nowa metoda
+                    skraca ten czas.",
+        h0 = "\\(H_0: \\mu \\geq 45\\) (nie krócej niż norma)",
+        ha = "\\(H_a: \\mu < 45\\) (krócej)",
+        note = "Jednostronny (lewostronny) — hipoteza kierunkowa wynika z treści pytania."
+      ),
+      list(
+        question = "Sprawdzamy, czy średnia waga paczki kawy (deklarowana 250 g)
+                    jest zgodna z normą. Dla konsumenta ważne jest wykrycie
+                    odchyłek w obie strony.",
+        h0 = "\\(H_0: \\mu = 250\\)",
+        ha = "\\(H_a: \\mu \\neq 250\\)",
+        note = "Dwustronny — interesuje nas każde odchylenie, nie tylko niższa waga."
+      )
+    )),
 
     # ========================================================================
     # WIDGET 1: Krokowy test t jednej proby
@@ -298,7 +336,7 @@ ch2_server <- function(input, output, session) {
                  label = paste0("t = ", round(t_stat, 3)),
                  hjust = if (t_stat > 0) -0.1 else 1.1,
                  color = col_reject, fontface = "bold") +
-        labs(title = paste0("Rozkład pod H₀: t(", n - 1, ")"),
+        labs(title = paste0("Rozkład pod H0: t(", n - 1, ")"),
              x = "Statystyka testowa", y = "Gęstość") +
         theme()
 
@@ -329,22 +367,22 @@ ch2_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_h0, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
             paste0("n = ", n)),
         p("Mamy próbę ", n, " obserwacji. Chcemy sprawdzić, czy średnia różni się od μ₀ = ", mu0, ".")
       ),
       "2" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
             paste0("x̄ = ", round(x_bar, 2))),
-        div(class = "stat-box", style = paste0("background:", col_h0, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
             paste0("s = ", round(s, 2))),
-        div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", upwr_secondary, ";"),
             paste0("SE = s/√n = ", round(se, 2))),
         p("Różnica między x̄ a μ₀: ", tags$b(round(x_bar - mu0, 2)),
           ". Ale czy to dużo? Musimy to odnieść do zmienności (SE).")
       ),
       "3" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_effect, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_effect, ";"),
             paste0("t = (", round(x_bar, 2), " − ", mu0, ") / ",
                    round(se, 2), " = ", round(t_stat, 3))),
         p("Statystyka t mówi: średnia z próby jest ",
@@ -352,7 +390,7 @@ ch2_server <- function(input, output, session) {
           if (abs(t_stat) > 2) " To sporo!" else " To niewiele.")
       ),
       "4" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
             paste0("p = ", format.pval(p_val, digits = 4))),
         p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
           res$decision),
@@ -461,7 +499,7 @@ ch2_server <- function(input, output, session) {
                  label = paste0("t = ", round(t_stat, 3)),
                  hjust = if (t_stat > 0) -0.1 else 1.1,
                  color = col_reject, fontface = "bold") +
-        labs(title = paste0("Rozkład pod H₀: t(", n - 1, ")"),
+        labs(title = paste0("Rozkład pod H0: t(", n - 1, ")"),
              subtitle = "Test jednostronny — tylko jeden ogon!",
              x = "Statystyka testowa", y = "Gęstość") +
         theme()
@@ -501,29 +539,29 @@ ch2_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_h0, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
             paste0("n = ", n, " (te same dane co wyżej)")),
         p("Pytamy, czy średnia jest ",
           dir_label, " niż μ₀ = ", mu0, ".")
       ),
       "2" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
             paste0("x̄ = ", round(x_bar, 2))),
-        div(class = "stat-box", style = paste0("background:", col_h0, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
             paste0("s = ", round(s, 2))),
-        div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", upwr_secondary, ";"),
             paste0("SE = s/√n = ", round(se, 2))),
         p("Statystyki takie same jak wyżej — dane się nie zmieniły.
           Zmieniło się tylko pytanie (kierunek).")
       ),
       "3" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_effect, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_effect, ";"),
             paste0("t = ", round(t_stat, 3), " (taka sama wartość!)")),
         p("Statystyka t jest identyczna. Ale w teście jednostronnym patrzymy tylko na ",
           tags$b(if (par1s$alt == "less") "lewy" else "prawy"), " ogon rozkładu.")
       ),
       "4" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
             paste0("p = ", format.pval(p_val, digits = 4),
                    " (jednostronnie!)")),
         p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),

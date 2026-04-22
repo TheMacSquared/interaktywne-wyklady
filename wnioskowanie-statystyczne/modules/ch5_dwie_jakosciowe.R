@@ -75,6 +75,38 @@ ch5_ui <- list(
     ),
 
     # ========================================================================
+    # Cwiczenie: sformuluj hipotezy
+    # ========================================================================
+    h2(id = "ch5-cwiczenie", class = "section-title", "Ćwiczenie: sformułuj hipotezy"),
+
+    div(class = "narrative",
+      p("Jak wyglądają H₀ i Hₐ dla pytań o związek dwóch zmiennych jakościowych?")
+    ),
+
+    hypothesis_practice("ch5", list(
+      list(
+        question = "Czy wybór kierunku studiów zależy od płci?",
+        h0 = "\\(H_0:\\) kierunek i płeć są niezależne",
+        ha = "\\(H_a:\\) kierunek i płeć są powiązane",
+        note = "Test χ² niezależności zawsze testuje niezależność vs. związek — nie mówi nic o kierunku zależności."
+      ),
+      list(
+        question = "Czy typ opakowania (szkło / plastik / karton) ma związek
+                    z występowaniem pleśni w sokach?",
+        h0 = "\\(H_0:\\) typ opakowania i występowanie pleśni są niezależne",
+        ha = "\\(H_a:\\) są powiązane",
+        note = "Choć merytorycznie spodziewamy się kierunku (niektóre opakowania pleśnieją częściej), test χ² jest zawsze dwustronny."
+      ),
+      list(
+        question = "Czy preferencje konsumentów (lubi / nie lubi) zależą od regionu
+                    Polski (płd. / pn. / centr. / wsch. / zach.)?",
+        h0 = "\\(H_0:\\) preferencja i region są niezależne",
+        ha = "\\(H_a:\\) są powiązane",
+        note = "Tabela 2 × 5. Test χ² działa na dowolne wymiary tabeli kontyngencji."
+      )
+    )),
+
+    # ========================================================================
     # WIDGET 1: Chi-kwadrat krokowy
     # ========================================================================
     h2(id = "ch5-krok", class = "section-title", "Test χ² niezależności — krok po kroku"),
@@ -464,7 +496,7 @@ ch5_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_h0, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
             paste0("n = ", n_total)),
         .html_table(tab, paste0("Tabela krzyżowa: ", par$lab1, " × ", par$lab2)),
         p("To są obserwowane liczności. Ale same liczby trudno porównać,
@@ -488,7 +520,7 @@ ch5_server <- function(input, output, session) {
         low_exp <- any(test$expected < 5)
         tagList(
           .html_table(exp_mat, "Liczności oczekiwane (gdyby H₀ prawdziwa):"),
-          div(class = "stat-box", style = paste0("background:", col_effect, ";"),
+          div(class = "stat-box", style = paste0("border-left-color:", col_effect, ";"),
               paste0("χ²(", df_val, ") = ", round(chi_stat, 3))),
           p("Statystyka χ² mierzy łączną rozbieżność między tabelą obserwowancą
             a tabelą oczekiwaną."),
@@ -509,7 +541,7 @@ ch5_server <- function(input, output, session) {
         pct_cols <- apply(pct_tab, 2, function(col) round(range(col), 1))
 
         tagList(
-          div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+          div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
               paste0("p = ", format.pval(p_val, digits = 4))),
           p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
             res$decision),

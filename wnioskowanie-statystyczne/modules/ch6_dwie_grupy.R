@@ -29,6 +29,38 @@ ch6_ui <- list(
     ),
 
     # ========================================================================
+    # Cwiczenie: sformuluj hipotezy
+    # ========================================================================
+    h2(id = "ch6-cwiczenie", class = "section-title", "Ćwiczenie: sformułuj hipotezy"),
+
+    div(class = "narrative",
+      p("Porównanie dwóch grup — jak zapisać H₀ i Hₐ?")
+    ),
+
+    hypothesis_practice("ch6", list(
+      list(
+        question = "Czy mężczyźni jeżdżą szybciej niż kobiety? (średnia prędkość
+                    przekroczenia limitu z fotoradarów, próba 200 kierowców)",
+        h0 = "\\(H_0: \\mu_M \\leq \\mu_K\\)",
+        ha = "\\(H_a: \\mu_M > \\mu_K\\) (mężczyźni szybciej)",
+        note = "Jednostronny — pytanie jest kierunkowe."
+      ),
+      list(
+        question = "Czy średni plon pszenicy odmiany X różni się od odmiany Y?",
+        h0 = "\\(H_0: \\mu_X = \\mu_Y\\)",
+        ha = "\\(H_a: \\mu_X \\neq \\mu_Y\\)",
+        note = "Dwustronny — pytanie neutralne, nie wskazuje kierunku."
+      ),
+      list(
+        question = "20 uczniów zmierzono przed i po kursie szybkiego czytania
+                    (słowa na minutę). Czy kurs poprawił wyniki?",
+        h0 = "\\(H_0: \\mu_d \\leq 0\\) (d = po − przed)",
+        ha = "\\(H_a: \\mu_d > 0\\) (poprawa)",
+        note = "Test parowy (nie niezależny!) — te same osoby mierzone dwa razy. Analizujemy różnice."
+      )
+    )),
+
+    # ========================================================================
     # WIDGET 1: Test t niezalezny
     # ========================================================================
     h2(id = "ch6-niezalezny", class = "section-title", "Test t niezależny"),

@@ -30,10 +30,48 @@ ch3_ui <- list(
       div(class = "formula-box",
         p(withMathJax("\\(H_0: p = p_0\\)"), " — ",
           withMathJax("\\(H_a: p \\neq p_0\\)")),
-        p(withMathJax("\\(\\text{Statystyka: } k \\text{ (liczba sukcesów w } n \\text{ próbach)}\\)")),
-        p(withMathJax("\\(\\text{p-wartość: } P(K \\leq k \\text{ lub } K \\geq k) \\text{ przy } K \\sim B(n, p_0)\\)"))
+        p("Statystyka: ", withMathJax("\\(k\\)"),
+          " (liczba sukcesów w ", withMathJax("\\(n\\)"), " próbach)"),
+        p("p-wartość: ", withMathJax("\\(P(K \\leq k\\ \\text{lub}\\ K \\geq k)\\)"),
+          " przy ", withMathJax("\\(K \\sim B(n, p_0)\\)"))
       )
     ),
+
+    # ========================================================================
+    # Cwiczenie: sformuluj hipotezy
+    # ========================================================================
+    h2(id = "ch3-cwiczenie", class = "section-title", "Ćwiczenie: sformułuj hipotezy"),
+
+    div(class = "narrative",
+      p("Spróbuj sam przełożyć pytanie potoczne na H₀ i Hₐ. Przedyskutuj
+        w grupie, a potem sprawdź.")
+    ),
+
+    hypothesis_practice("ch3", list(
+      list(
+        question = "Producent deklaruje, że 80% słoików jego dżemu spełnia
+                    wymóg minimalnej zawartości owoców. Kontrola sprawdza,
+                    czy ten odsetek się zgadza.",
+        h0 = "\\(H_0: p = 0{,}80\\)",
+        ha = "\\(H_a: p \\neq 0{,}80\\)",
+        note = "Dwustronny — interesuje nas każde odchylenie od deklaracji."
+      ),
+      list(
+        question = "W standardowej produkcji 3% opakowań jest wadliwych.
+                    Sprawdzamy, czy nowa linia produkcyjna generuje więcej braków.",
+        h0 = "\\(H_0: p \\leq 0{,}03\\) (nie gorzej niż standard)",
+        ha = "\\(H_a: p > 0{,}03\\) (więcej wadliwych)",
+        note = "Jednostronny (prawostronny) — pytamy tylko o pogorszenie."
+      ),
+      list(
+        question = "Rolnik twierdzi, że kiełkuje mu co najmniej 90% nasion.
+                    Chcemy sprawdzić, czy ta deklaracja jest prawdziwa
+                    (z perspektywy klienta — ryzykujemy kupując słabsze nasiona).",
+        h0 = "\\(H_0: p \\geq 0{,}90\\)",
+        ha = "\\(H_a: p < 0{,}90\\)",
+        note = "Jednostronny (lewostronny) — klienta martwi tylko, że jest gorzej."
+      )
+    )),
 
     # ========================================================================
     # WIDGET 1: Test dwumianowy dwustronny (krokowy)
@@ -165,8 +203,8 @@ ch3_ui <- list(
       uiOutput("ch3_compare_result")
     ),
 
-    div(class = "callout-info",
-      tags$strong("Kiedy który?"),
+    div(class = "narrative",
+      p(tags$b("Kiedy który?")),
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th(""), tags$th("Test dwumianowy"), tags$th("Test proporcji (z-test)"))
@@ -194,7 +232,8 @@ ch3_ui <- list(
           )
         )
       ),
-      p("Reguła kciuka: jeśli ", withMathJax("\\(np_0 \\geq 10\\)"), " i ",
+      p(tags$b("Reguła kciuka:"),
+        " jeśli ", withMathJax("\\(np_0 \\geq 10\\)"), " i ",
         withMathJax("\\(n(1-p_0) \\geq 10\\)"),
         " — oba testy dadzą praktycznie ten sam wynik.")
     ),
@@ -382,7 +421,7 @@ ch3_server <- function(input, output, session) {
                  label = paste0("k = ", k),
                  hjust = if (k > n * p0) -0.2 else 1.2,
                  color = col_reject, fontface = "bold") +
-        labs(title = paste0("Rozkład B(", n, ", ", p0, ") pod H₀"),
+        labs(title = paste0("Rozkład B(", n, ", ", p0, ") pod H0"),
              x = "Liczba sukcesów", y = "Prawdopodobieństwo") +
         theme()
     }
@@ -399,18 +438,18 @@ ch3_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_h0, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
             paste0("n = ", n)),
-        div(class = "stat-box", style = paste0("background:", col_accept, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_accept, ";"),
             paste0(par$success_label, ": ", k)),
-        div(class = "stat-box", style = paste0("background:", col_reject, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_reject, ";"),
             paste0(par$failure_label, ": ", n - k)),
         p("Mamy ", n, " obserwacji. Ile z nich to sukcesy?")
       ),
       "2" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
             paste0("p̂ = ", k, "/", n, " = ", round(phat, 3))),
-        div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", upwr_secondary, ";"),
             paste0("p₀ = ", p0)),
         p("Proporcja z próby: ", tags$b(round(phat, 3)),
           ". Wartość referencyjna: ", tags$b(p0),
@@ -428,7 +467,7 @@ ch3_server <- function(input, output, session) {
         test <- binom.test(k, n, p0, alternative = "two.sided")
         res <- format_test_result(test$p.value)
         tagList(
-          div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+          div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
               paste0("p = ", format.pval(test$p.value, digits = 4))),
           p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
             res$decision),
@@ -521,7 +560,7 @@ ch3_server <- function(input, output, session) {
                  label = paste0("k = ", k),
                  hjust = if (k > n * p0) -0.2 else 1.2,
                  color = col_reject, fontface = "bold") +
-        labs(title = paste0("Rozkład B(", n, ", ", p0, ") pod H₀"),
+        labs(title = paste0("Rozkład B(", n, ", ", p0, ") pod H0"),
              subtitle = paste0("Test jednostronny (",
                                if (par$alt_1s == "greater") "prawy" else "lewy",
                                " ogon)"),
@@ -542,12 +581,12 @@ ch3_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_h0, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
             paste0("n = ", n, " (te same dane co wyżej)")),
         p("Pytamy, czy proporcja sukcesów jest ", dir_label, " niż p₀ = ", p0, ".")
       ),
       "2" = tagList(
-        div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
             paste0("p̂ = ", round(phat, 3), " (ta sama wartość!)")),
         p("Statystyki takie same — dane się nie zmieniły.
           Zmieniło się tylko pytanie (kierunek).")
@@ -561,7 +600,7 @@ ch3_server <- function(input, output, session) {
         test <- binom.test(k, n, p0, alternative = par$alt_1s)
         res <- format_test_result(test$p.value)
         tagList(
-          div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+          div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
               paste0("p = ", format.pval(test$p.value, digits = 4),
                      " (jednostronnie!)")),
           p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),

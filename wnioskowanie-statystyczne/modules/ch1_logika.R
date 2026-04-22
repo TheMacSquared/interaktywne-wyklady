@@ -109,11 +109,44 @@ ch1_ui <- list(
     h2(id = "ch1-pvalue", class = "section-title", "Co to jest p-wartość?"),
 
     div(class = "narrative",
-      p("Wyobraź sobie, że telefon ", tags$em("naprawdę nie ma wpływu"),
-        " na koncentrację i powtarzamy eksperyment z nowymi ludźmi."),
-      p("Każdy eksperyment da inną różnicę średnich — czasem na plus,
-        czasem na minus, zwykle niewielką. Jeśli różnica z prawdziwego eksperymentu
-        wypada daleko od tego, co powstaje przypadkiem — mamy powód, by odrzucić H₀.")
+      p("Eksperyment dał różnicę −0,7 pkt na korzyść grupy „plecak”.
+        Czy to dowód, że telefon rozprasza? A może gdybyśmy powtórzyli badanie
+        z innymi studentami, różnica wyszłaby w drugą stronę? ",
+        tags$b("p-wartość"), " to narzędzie, które formalizuje tę intuicję."),
+      p(tags$b("Definicja formalna:")),
+      div(class = "formula-box",
+        p(withMathJax(
+          "\\(p = P(|\\bar{X}_A - \\bar{X}_B| \\geq |d_{\\text{obs}}| \\mid H_0)\\)"
+        )),
+        p("czyli: prawdopodobieństwo zaobserwowania różnicy co najmniej tak
+          skrajnej jak nasza (", withMathJax("\\(d_{\\text{obs}}\\)"), "), ",
+          tags$em("gdyby H₀ była prawdziwa"), ".")
+      ),
+      p("Dla dwustronnego testu „co najmniej tak skrajnej” oznacza ",
+        tags$em("w obie strony"), " — i na plus, i na minus.
+        Jeśli test jest jednostronny (pytamy np. „czy telefon ",
+        tags$em("obniża"), " koncentrację?”), liczymy tylko jedną stronę:"),
+      div(class = "formula-box",
+        p(withMathJax(
+          "\\(p_{\\text{1-stronny}} = P(\\bar{X}_A - \\bar{X}_B \\leq d_{\\text{obs}} \\mid H_0)\\)"
+        ))
+      ),
+      p(tags$b("Jak to obliczyć?"),
+        " W praktyce używamy statystyki testowej (np. t, χ², F) i znanych rozkładów
+        pod H₀ — ale dla intuicji najlepiej wyobrazić sobie, że ",
+        tags$em("wielokrotnie powtarzamy eksperyment"),
+        " w świecie, gdzie H₀ jest prawdziwa. Każdy powtórzony eksperyment da inną
+        różnicę średnich — losowy szum. Rozkład tych różnic ",
+        tags$b("pod H₀"), " pokazuje, co „normalne” bez żadnego efektu."),
+      p(tags$b("Reguła decyzyjna:"),
+        " jeśli ", withMathJax("\\(p < \\alpha\\)"), " — zwykle ", withMathJax("\\(\\alpha = 0{,}05\\)"),
+        " — mówimy, że zaobserwowana różnica jest ", tags$em("zbyt skrajna"),
+        ", by ją wytłumaczyć samym przypadkiem i odrzucamy H₀. W przeciwnym razie brak podstaw
+        do odrzucenia — co ", tags$em("nie"), " znaczy „H₀ jest prawdziwa”,
+        tylko „nasze dane jej nie wykluczają”."),
+      p("Poniższy widget pokazuje tę intuicję wizualnie: symulujemy setki eksperymentów
+        w świecie bez efektu i patrzymy, jak daleko od zera naprawdę „nasza” różnica wypada
+        na tle rozkładu losowych różnic.")
     ),
 
     figure_panel(
@@ -121,7 +154,7 @@ ch1_ui <- list(
       title = "Powtórzone eksperymenty pod H₀",
       fluidRow(
         column(4,
-          sliderInput("ch1_sim_n", "Wielkość próby (n na grupę):",
+          sliderInput("ch1_sim_n", "n (na grupę):",
                       min = 10, max = 100, value = 40, step = 5),
           hr(),
           div(style = "display: flex; flex-direction: column; gap: 8px;",
@@ -156,7 +189,10 @@ ch1_ui <- list(
     h2(id = "ch1-bledy", class = "section-title", "Błędy I i II rodzaju"),
 
     div(class = "narrative",
-      p("Każda decyzja może być błędna:"),
+      p("Testowanie hipotez to decyzja pod niepewnością. Mamy dwie możliwe
+        decyzje („odrzucamy H₀” albo „brak podstaw do odrzucenia”) i dwa możliwe
+        stany świata (H₀ jest prawdziwa albo fałszywa). Cztery kombinacje — dwie
+        dobre, dwie błędne:"),
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th(""), tags$th("H₀ prawdziwa"),
@@ -165,7 +201,7 @@ ch1_ui <- list(
         tags$tbody(
           tags$tr(
             tags$td(tags$strong("Nie odrzucamy H₀")),
-            tags$td(style = "background: var(--upwr-sage-tint);", "OK"),
+            tags$td(style = "background: var(--upwr-sage-tint);", "OK (trafna negacja)"),
             tags$td(style = "background: var(--upwr-accent-tint);", "Błąd II rodzaju (β)")
           ),
           tags$tr(
@@ -174,7 +210,45 @@ ch1_ui <- list(
             tags$td(style = "background: var(--upwr-sage-tint);", "OK (moc = 1−β)")
           )
         )
-      )
+      ),
+      p(tags$b("Błąd I rodzaju (α):"),
+        " odrzucamy H₀, choć jest prawdziwa — fałszywy alarm.
+        W analogii sądowej: skazujemy niewinnego. W nauce: publikujemy odkrycie,
+        którego ", tags$em("nie"), " ma. Ryzyko tego błędu kontrolujemy sami,
+        ustalając poziom istotności ", withMathJax("\\(\\alpha\\)"),
+        " — zwykle 0,05 (5%)."),
+      p(tags$b("Błąd II rodzaju (β):"),
+        " nie odrzucamy H₀, choć jest fałszywa — przegapiony efekt.
+        W analogii sądowej: uniewinniamy winnego. W nauce: nie wykrywamy
+        realnej zależności. Ryzyko tego błędu (", withMathJax("\\(\\beta\\)"),
+        ") zależy od wielkości efektu, rozrzutu danych i wielkości próby."),
+      p(tags$b("Moc testu "), withMathJax("\\(1 - \\beta\\)"),
+        ": prawdopodobieństwo wykrycia efektu, gdy ten ", tags$em("naprawdę"),
+        " istnieje. Moc rośnie z: (1) większą próbą n, (2) większym efektem
+        (różnicą rzeczywistą między grupami), (3) mniejszym rozrzutem w grupach."),
+      div(class = "formula-box",
+        p(withMathJax("\\(\\alpha\\)"),
+          " = P(odrzucamy ", withMathJax("\\(H_0\\)"), " | ",
+          withMathJax("\\(H_0\\)"), " prawdziwa)"),
+        p(withMathJax("\\(\\beta\\)"),
+          " = P(nie odrzucamy ", withMathJax("\\(H_0\\)"), " | ",
+          withMathJax("\\(H_0\\)"), " fałszywa)"),
+        p("Moc = ", withMathJax("\\(1 - \\beta\\)"),
+          " = P(odrzucamy ", withMathJax("\\(H_0\\)"), " | ",
+          withMathJax("\\(H_0\\)"), " fałszywa)")
+      ),
+      p(tags$b("Kompromis α–β:"),
+        " te dwa ryzyka są ze sobą związane — zmniejszenie ",
+        withMathJax("\\(\\alpha\\)"),
+        " (np. z 0,05 do 0,01) redukuje fałszywe alarmy, ale zwiększa ryzyko
+        przegapiania prawdziwych efektów (", withMathJax("\\(\\beta\\)"),
+        " rośnie). Jedyny sposób, by zmniejszyć oba jednocześnie — zwiększyć n."),
+      p("Konwencje: w badaniach stosuje się ",
+        withMathJax("\\(\\alpha = 0{,}05\\)"),
+        " i planuje próbę tak, by moc ", withMathJax("\\(1 - \\beta \\geq 0{,}80\\)"),
+        " (czyli ", withMathJax("\\(\\beta \\leq 0{,}20\\)"),
+        "). Poniżej możesz pobawić się tymi wartościami i zobaczyć, jak zmienia się
+        obszar błędów dla różnych poziomów istotności, wielkości efektu i n.")
     ),
 
     margin_callout(
@@ -191,6 +265,47 @@ ch1_ui <- list(
       tags$img(src = "assets/type-error.jpg", style = "width: 100%; border-radius: 8px;")
     ),
 
+    h2(id = "ch1-moc", class = "section-title", "Wizualizacja α, β i mocy testu"),
+
+    div(class = "narrative",
+      p("Żeby zobaczyć, co kryje się pod literami α i β, rozrysujmy ",
+        tags$b("dwa rozkłady"), " obok siebie — rozkłady ",
+        tags$em("średniej z próby"), ":"),
+      tags$ul(
+        tags$li(tags$b("Niebieski"), " — rozkład średniej, gdy H₀ jest prawdziwa
+                (telefon nie ma wpływu; średnia populacyjna = wartość referencyjna)."),
+        tags$li(tags$b("Burgundowy"), " — rozkład średniej, gdy Hₐ jest prawdziwa
+                (telefon ", tags$em("naprawdę"), " rozprasza o konkretną liczbę punktów).")
+      ),
+      p(tags$b("Punkt krytyczny"), " (czarna przerywana pionowa linia) to wartość
+        na osi średnich, powyżej której odrzucamy H₀ — wynika on bezpośrednio z ",
+        withMathJax("\\(\\alpha\\)"),
+        ": to kwantyl rozkładu niebieskiego odcinający 5% w prawym ogonie."),
+      p(tags$b("Cztery obszary na wykresie:")),
+      tags$ul(
+        tags$li(tags$b("α (szary w niebieskim, prawy ogon):"),
+                " pole pod niebieskim rozkładem na prawo od punktu krytycznego
+                — fałszywe alarmy, gdy H₀ jest prawdziwa."),
+        tags$li(tags$b("1 − α (niebieski, lewa strona):"),
+                " trafne negacje — H₀ prawdziwa i nie odrzucamy."),
+        tags$li(tags$b("β (burgundowy, lewa strona punktu krytycznego):"),
+                " pole pod burgundowym rozkładem po złej stronie — przegapione efekty."),
+        tags$li(tags$b("Moc (zielony obszar, prawa strona):"),
+                " pole pod burgundowym rozkładem po prawej stronie punktu krytycznego
+                — trafne wykrycia efektu.")
+      ),
+      p("Przesuwając suwaki zauważysz kilka mechanik:"),
+      tags$ul(
+        tags$li("Zmniejszenie ", withMathJax("\\(\\alpha\\)"),
+                " przesuwa punkt krytyczny w prawo → mniej fałszywych alarmów,
+                ale ", tags$em("więcej"), " przegapionych efektów (β rośnie, moc spada)."),
+        tags$li("Większa różnica średnich oddala od siebie oba rozkłady → moc rośnie,
+                β maleje."),
+        tags$li("Większa próba n zwęża oba rozkłady (błąd standardowy ∝ 1/√n) →
+                znów rośnie moc.")
+      )
+    ),
+
     figure_panel(
       label = "Ryc. 1.3",
       title = "Moc testu i błędy",
@@ -204,7 +319,7 @@ ch1_ui <- list(
                       min = 0, max = 15, value = 7, step = 1)
         ),
         column(4,
-          sliderInput("ch1_power_n", "Wielkość próby (n na grupę):",
+          sliderInput("ch1_power_n", "n (na grupę):",
                       min = 10, max = 200, value = 40, step = 5)
         )
       ),
@@ -274,13 +389,14 @@ ch1_server <- function(input, output, session) {
     d <- ch1_case_data()
     if (is.null(d)) return(NULL)
 
-    ggplot(d, aes(x = grupa, y = koncentracja, fill = grupa)) +
-      geom_boxplot(alpha = 0.7, outlier.shape = NA, width = 0.5) +
-      geom_jitter(width = 0.15, alpha = 0.4, size = 2) +
-      scale_fill_manual(values = c(col_accept, col_reject)) +
+    ggplot(d, aes(x = grupa, y = koncentracja, fill = grupa, color = grupa)) +
+      geom_boxplot(alpha = 0.6, outlier.shape = NA, width = 0.5) +
+      geom_jitter(width = 0.15, alpha = 0.5, size = 2) +
+      scale_fill_manual(values = c(col_accept, col_pvalue)) +
+      scale_color_manual(values = c(col_accept, col_pvalue)) +
       labs(title = "Wyniki testu koncentracji",
            x = NULL, y = "Wynik (0–100 pkt)") +
-            theme(legend.position = "none") +
+      theme(legend.position = "none") +
       coord_cartesian(ylim = c(20, 100))
   })
 
@@ -297,11 +413,11 @@ ch1_server <- function(input, output, session) {
     diff_val <- round(stats$m[1] - stats$m[2], 1)
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_accept, ";"),
+      div(class = "stat-box", style = paste0("border-left-color:", col_accept, ";"),
           paste0("Plecak: ", stats$m[1], " pkt (s=", stats$s[1], ")")),
-      div(class = "stat-box", style = paste0("background:", col_reject, ";"),
+      div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
           paste0("Biurko: ", stats$m[2], " pkt (s=", stats$s[2], ")")),
-      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
+      div(class = "stat-box", style = paste0("border-left-color:", upwr_secondary, ";"),
           paste0("Różnica: ", diff_val, " pkt"))
     )
   })
@@ -335,9 +451,9 @@ ch1_server <- function(input, output, session) {
     n_s <- length(ch1_sim_diffs())
     obs <- round(ch1_observed_diff(), 1)
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_h0, ";"),
+      div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
           paste0("Eksperymentów: ", n_s)),
-      div(class = "stat-box", style = paste0("background:", col_reject, ";"),
+      div(class = "stat-box", style = paste0("border-left-color:", col_reject, ";"),
           paste0("Obs. różnica: ", obs, " pkt"))
     )
   })
@@ -364,7 +480,7 @@ ch1_server <- function(input, output, session) {
                           labels = c("TRUE" = "co najmniej tak skrajne",
                                      "FALSE" = "bliżej zera"),
                           name = NULL) +
-        labs(title = "Różnice średnich z symulowanych eksperymentów (H₀ prawdziwa)",
+        labs(title = expression(paste("Różnice średnich z symulowanych eksperymentów (", H[0], " prawdziwa)")),
              subtitle = "Czerwona linia = prawdziwa różnica z eksperymentu",
              x = "Różnica średnich (grupa A − grupa B)", y = "Liczba") +
                 theme(legend.position = "top")
@@ -378,7 +494,7 @@ ch1_server <- function(input, output, session) {
     n_extreme <- sum(abs(diffs) >= abs(obs))
     pval <- n_extreme / length(diffs)
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
+      div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
           paste0("p ≈ ", round(pval, 3),
                  " (", n_extreme, "/", length(diffs), " eksperymentów co najmniej tak skrajnych)"))
     )
@@ -404,16 +520,17 @@ ch1_server <- function(input, output, session) {
     df_plot <- data.frame(
       x = rep(x, 2),
       y = c(y_h0, y_h1),
-      dist = rep(c("H₀: brak efektu", "Hₐ: telefon rozprasza"), each = 500)
+      dist = rep(c("H0: brak efektu", "Ha: telefon rozprasza"), each = 500)
     )
 
     p <- ggplot(df_plot, aes(x = x, y = y, color = dist)) +
       geom_line(linewidth = 1.2) +
       geom_vline(xintercept = crit, linetype = "dashed", color = upwr_secondary) +
       scale_color_manual(values = c(col_h0, col_h1), name = "Rozkład") +
-      labs(title = paste0("Moc testu (n=", n, " na grupę, różnica=", diff_means, " pkt, α=", alpha, ")"),
+      labs(title = paste0("Moc testu (n = ", n, " na grupę, różnica = ", diff_means,
+                          " pkt, alpha = ", alpha, ")"),
            x = "Średnia koncentracja w próbie", y = "Gęstość") +
-            theme(legend.position = "top")
+      theme(legend.position = "top")
 
     # Shade rejection region under H0
     shade_h0 <- data.frame(x = x[x >= crit], y = y_h0[x >= crit])
@@ -441,11 +558,11 @@ ch1_server <- function(input, output, session) {
     power <- pnorm(diff_means / se - qnorm(1 - alpha / 2))
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_reject, ";"),
+      div(class = "stat-box", style = paste0("border-left-color:", col_reject, ";"),
           paste0("Błąd I: ", alpha * 100, "%")),
-      div(class = "stat-box", style = paste0("background:", col_accept, ";"),
+      div(class = "stat-box", style = paste0("border-left-color:", col_accept, ";"),
           paste0("Moc: ", round(power * 100, 1), "%")),
-      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
+      div(class = "stat-box", style = paste0("border-left-color:", upwr_secondary, ";"),
           paste0("Błąd II: ", round((1 - power) * 100, 1), "%"))
     )
   })
