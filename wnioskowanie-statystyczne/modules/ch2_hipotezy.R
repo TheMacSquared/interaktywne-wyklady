@@ -2,15 +2,21 @@
 # CHAPTER 2: Formulowanie hipotez statystycznych
 # ============================================================================
 
-ch2h_ui <- tabPanel("2. Formułowanie hipotez",
-  fluidRow(column(8, offset = 2,
+ch2h_ui <- list(
+  id = "ch-hipotezy", num = "02", title = "Od pytania do hipotezy",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Znamy logikę testowania: H₀, H₁, p-wartość, decyzja.
-       Ale jak przejść od pytania badawczego do formalnej hipotezy?"
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 02 · Wnioskowanie statystyczne",
+      num    = "02",
+      title  = "Od pytania do hipotezy.",
+      lead   = "„Wydaje mi się, że coś z nimi jest nie tak — co robić?” Sformalizowanie
+                potocznego pytania w parę H₀ / Hₐ to pierwszy krok każdego testu.
+                Ćwiczymy tłumaczenie z języka codziennego."
     ),
 
-    div(class = "section-title", "Od pytania do hipotezy"),
+    h2(id = "ch2h-zasada", class = "section-title", "Zasada: od potocznego do formalnego"),
 
     div(class = "narrative",
       p("W badaniach pytania są formułowane swobodnym językiem:"),
@@ -23,27 +29,30 @@ ch2h_ui <- tabPanel("2. Formułowanie hipotez",
         precyzyjnych stwierdzeń o parametrach populacji, które można
         zweryfikować danymi."),
       p("Najważniejsza zasada: H₀ zawsze zawiera znak równości
-        (=, ≤, ≥). H₁ zawiera to, co chcemy wykazać (≠, >, <).")
+        (=, ≤, ≥). Hₐ zawiera to, co chcemy wykazać (≠, >, <).")
     ),
 
-    div(class = "callout-info",
-      tags$strong("Szablon:"),
-      p(withMathJax("\\(H_0\\)"), ": brak efektu / brak różnicy / brak związku"),
-      p(withMathJax("\\(H_a\\)"), ": jest efekt / jest różnica / jest związek")
+    margin_callout(
+      label = "Szablon",
+      tagList(
+        tags$p(withMathJax("\\(H_0\\)"), ": brak efektu / brak różnicy / brak związku"),
+        tags$p(withMathJax("\\(H_a\\)"), ": jest efekt / jest różnica / jest związek")
+      )
     ),
 
     # ========================================================================
     # WIDGET 1: Pytanie badawcze -> hipoteza (galeria przykladow)
     # ========================================================================
-    div(class = "section-title", "Galeria przykładów: pytanie → hipoteza"),
+    h2(id = "ch2h-galeria", class = "section-title", "Galeria przykładów: pytanie → hipoteza"),
 
     div(class = "narrative",
       p("Przeglądaj przykłady — każdy pokazuje, jak przejść
         od potocznego pytania do formalnych hipotez.")
     ),
 
-    div(class = "widget-block",
-      h4("Przykłady formułowania hipotez"),
+    figure_panel(
+      label = "Ryc. 2.1",
+      title = "Przykłady formułowania hipotez",
       fluidRow(
         column(4,
           selectInput("ch2h_example", "Wybierz przykład:",
@@ -71,15 +80,16 @@ ch2h_ui <- tabPanel("2. Formułowanie hipotez",
     # ========================================================================
     # WIDGET 2: Cwiczenie - sformuluj hipoteze (potoczne -> formalne)
     # ========================================================================
-    div(class = "section-title", "Ćwiczenie: sformułuj hipotezę"),
+    h2(id = "ch2h-cwiczenie", class = "section-title", "Ćwiczenie: sformułuj hipotezę"),
 
     div(class = "narrative",
       p("Dostajesz pytanie badawcze w języku potocznym.
-        Twój cel: wybrać poprawną parę H₀/H₁.")
+        Twój cel: wybrać poprawną parę H₀/Hₐ.")
     ),
 
-    div(class = "widget-block",
-      h4("Quiz: pytanie → hipoteza"),
+    figure_panel(
+      label = "Ryc. 2.2",
+      title = "Quiz: pytanie → hipoteza",
       uiOutput("ch2h_quiz_question"),
       uiOutput("ch2h_quiz_options"),
       uiOutput("ch2h_quiz_feedback"),
@@ -89,15 +99,16 @@ ch2h_ui <- tabPanel("2. Formułowanie hipotez",
     # ========================================================================
     # WIDGET 3: Hipoteza -> co badamy? (odwrotny kierunek)
     # ========================================================================
-    div(class = "section-title", "Odwrotnie: hipoteza → co badamy?"),
+    h2(id = "ch2h-odwrotnie", class = "section-title", "Odwrotnie: hipoteza → co badamy?"),
 
     div(class = "narrative",
       p("Teraz odwrotnie: widzisz formalną hipotezę statystyczną.
         Co właściwie badamy? Jak opisać to przystępnym językiem?")
     ),
 
-    div(class = "widget-block",
-      h4("Quiz: hipoteza → interpretacja"),
+    figure_panel(
+      label = "Ryc. 2.3",
+      title = "Quiz: hipoteza → interpretacja",
       uiOutput("ch2h_rev_question"),
       uiOutput("ch2h_rev_options"),
       uiOutput("ch2h_rev_feedback"),
@@ -107,13 +118,13 @@ ch2h_ui <- tabPanel("2. Formułowanie hipotez",
     # ========================================================================
     # WIDGET 4: Jednostronny vs dwustronny
     # ========================================================================
-    div(class = "section-title", "Test jednostronny a dwustronny"),
+    h2(id = "ch2h-jedno-dwustronny", class = "section-title", "Test jednostronny a dwustronny"),
 
     div(class = "narrative",
-      p("Sformułowanie H₁ decyduje, czy test jest jedno- czy dwustronny:"),
+      p("Sformułowanie Hₐ decyduje, czy test jest jedno- czy dwustronny:"),
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
         tags$thead(
-          tags$tr(tags$th("Typ"), tags$th("H₁"), tags$th("Przykład"), tags$th("Kiedy?"))
+          tags$tr(tags$th("Typ"), tags$th("Hₐ"), tags$th("Przykład"), tags$th("Kiedy?"))
         ),
         tags$tbody(
           tags$tr(
@@ -138,8 +149,9 @@ ch2h_ui <- tabPanel("2. Formułowanie hipotez",
       )
     ),
 
-    div(class = "widget-block",
-      h4("Wizualizacja: jedno- i dwustronny"),
+    figure_panel(
+      label = "Ryc. 2.4",
+      title = "Wizualizacja: jedno- i dwustronny",
       fluidRow(
         column(4,
           radioButtons("ch2h_sided", "Typ testu:",
@@ -159,18 +171,19 @@ ch2h_ui <- tabPanel("2. Formułowanie hipotez",
       )
     ),
 
-    div(class = "callout-warning",
-      tags$strong("W wątpliwości:"),
-      " Używaj testu dwustronnego.
-        Test jednostronny jest mocniejszy (większa moc), ale ryzykowny:
-        jeśli efekt jest w przeciwnym kierunku, nie możesz go wykryć.
-        Test jednostronny powinien być zaplanowany przed zbieraniem danych."
+    margin_callout(
+      label = "W wątpliwości",
+      "Używaj testu dwustronnego. Test jednostronny jest mocniejszy
+       (większa moc), ale ryzykowny: jeśli efekt jest w przeciwnym kierunku,
+       nie możesz go wykryć. Test jednostronny powinien być zaplanowany
+       przed zbieraniem danych.",
+      color = "uwaga"
     ),
 
     # ========================================================================
     # Typowe bledy
     # ========================================================================
-    div(class = "section-title", "Typowe błędy przy formułowaniu hipotez"),
+    h2(id = "ch2h-bledy", class = "section-title", "Typowe błędy przy formułowaniu hipotez"),
 
     div(class = "callout-danger",
       tags$ol(
@@ -192,19 +205,19 @@ ch2h_ui <- tabPanel("2. Formułowanie hipotez",
           " Hipotezy formułujemy PRZED analizą, nie po!"
         ),
         tags$li(
-          tags$b("Mylące H₀ i H₁:"),
-          " H₁ to to, co chcesz wykazać. H₀ to \"stan domyślny\" (brak efektu). Nie odwracaj ich."
+          tags$b("Mylące H₀ i Hₐ:"),
+          " Hₐ to to, co chcesz wykazać. H₀ to \"stan domyślny\" (brak efektu). Nie odwracaj ich."
         )
       )
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: pierwszy test — jedna zmienna ilościowa"),
-      actionButton("ch2h_next", "Dalej → 3. Jedna zmienna ilościowa",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "03",
+      title     = "Test t jednej próby",
+      lead      = "pierwszy konkretny test — średnia wobec wartości referencyjnej.",
+      target_id = "ch-jedna-ilosciowa"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -334,52 +347,52 @@ ch2h_server <- function(input, output, session) {
     list(
       question = "Badacz chce sprawdzić, czy studenci informatyki śpią mniej niż średnio 7 godzin.",
       options = c(
-        "A" = "H₀: μ = 7, H₁: μ ≠ 7",
-        "B" = "H₀: μ ≥ 7, H₁: μ < 7",
-        "C" = "H₀: μ < 7, H₁: μ ≥ 7"
+        "A" = "H₀: μ = 7, Hₐ: μ ≠ 7",
+        "B" = "H₀: μ ≥ 7, Hₐ: μ < 7",
+        "C" = "H₀: μ < 7, Hₐ: μ ≥ 7"
       ),
       correct = "B",
-      explanation = "\"Mniej niż 7\" to hipoteza alternatywna (H₁: μ < 7). H₀ zawiera równość (≥)."
+      explanation = "\"Mniej niż 7\" to hipoteza alternatywna (Hₐ: μ < 7). H₀ zawiera równość (≥)."
     ),
     list(
       question = "Firma farmaceutyczna bada, czy nowy lek różni się skutecznością od istniejącego.",
       options = c(
-        "A" = "H₀: μ_nowy = μ_stary, H₁: μ_nowy ≠ μ_stary",
-        "B" = "H₀: μ_nowy ≠ μ_stary, H₁: μ_nowy = μ_stary",
-        "C" = "H₀: μ_nowy = μ_stary, H₁: μ_nowy > μ_stary"
+        "A" = "H₀: μ_nowy = μ_stary, Hₐ: μ_nowy ≠ μ_stary",
+        "B" = "H₀: μ_nowy ≠ μ_stary, Hₐ: μ_nowy = μ_stary",
+        "C" = "H₀: μ_nowy = μ_stary, Hₐ: μ_nowy > μ_stary"
       ),
       correct = "A",
-      explanation = "\"Różni się\" (bez kierunku) = test dwustronny. H₀: brak różnicy, H₁: jest różnica."
+      explanation = "\"Różni się\" (bez kierunku) = test dwustronny. H₀: brak różnicy, Hₐ: jest różnica."
     ),
     list(
       question = "Nauczyciel chce zbadać, czy rozkład ocen na egzaminie odpowiadał krzywej normalnej: 10% niedostatecznych, 20% dostatecznych, 40% dobrych, 20% bardzo dobrych, 10% celujących.",
       options = c(
-        "A" = "H₀: rozkład ocen jest normalny, H₁: nie jest normalny",
-        "B" = "H₀: p₁=0.1, p₂=0.2, p₃=0.4, p₄=0.2, p₅=0.1; H₁: co najmniej jedno pi różne",
-        "C" = "H₀: μ = 3.5, H₁: μ ≠ 3.5"
+        "A" = "H₀: rozkład ocen jest normalny, Hₐ: nie jest normalny",
+        "B" = "H₀: p₁=0.1, p₂=0.2, p₃=0.4, p₄=0.2, p₅=0.1; Hₐ: co najmniej jedno pi różne",
+        "C" = "H₀: μ = 3.5, Hₐ: μ ≠ 3.5"
       ),
       correct = "B",
-      explanation = "To test χ² zgodności — H₀ określa konkretne proporcje, H₁: rozkład się różni."
+      explanation = "To test χ² zgodności — H₀ określa konkretne proporcje, Hₐ: rozkład się różni."
     ),
     list(
       question = "Dietetyk bada, czy płeć wpływa na preferencje dietetyczne (wege/mięso/różne).",
       options = c(
-        "A" = "H₀: μ_K = μ_M, H₁: μ_K ≠ μ_M",
-        "B" = "H₀: dieta i płeć są niezależne, H₁: dieta i płeć są powiązane",
-        "C" = "H₀: proporcje diet są równe, H₁: nie są równe"
+        "A" = "H₀: μ_K = μ_M, Hₐ: μ_K ≠ μ_M",
+        "B" = "H₀: dieta i płeć są niezależne, Hₐ: dieta i płeć są powiązane",
+        "C" = "H₀: proporcje diet są równe, Hₐ: nie są równe"
       ),
       correct = "B",
-      explanation = "Dwie zmienne jakościowe → test niezależności. H₀: niezależność, H₁: powiązanie."
+      explanation = "Dwie zmienne jakościowe → test niezależności. H₀: niezależność, Hₐ: powiązanie."
     ),
     list(
       question = "Producent twierdzi, że co najmniej 95% produktów spełnia normy. Kontrola chce to zweryfikować.",
       options = c(
-        "A" = "H₀: p = 0.95, H₁: p ≠ 0.95",
-        "B" = "H₀: p ≥ 0.95, H₁: p < 0.95",
-        "C" = "H₀: p < 0.95, H₁: p ≥ 0.95"
+        "A" = "H₀: p = 0.95, Hₐ: p ≠ 0.95",
+        "B" = "H₀: p ≥ 0.95, Hₐ: p < 0.95",
+        "C" = "H₀: p < 0.95, Hₐ: p ≥ 0.95"
       ),
       correct = "B",
-      explanation = "Kontrola chce sprawdzić, czy odsetek jest niższy niż deklarowane 95%. H₁: p < 0.95."
+      explanation = "Kontrola chce sprawdzić, czy odsetek jest niższy niż deklarowane 95%. Hₐ: p < 0.95."
     )
   )
 
@@ -451,7 +464,7 @@ ch2h_server <- function(input, output, session) {
   # --- Widget 3: Quiz hipoteza -> interpretacja ---
   rev_bank <- list(
     list(
-      hypothesis = "H₀: μ = 36.6, H₁: μ ≠ 36.6",
+      hypothesis = "H₀: μ = 36.6, Hₐ: μ ≠ 36.6",
       context = "Badanie grupy pacjentów. Zmienna: temperatura ciała (°C).",
       options = c(
         "A" = "Czy średnia temperatura pacjentów różni się od normy 36.6°C?",
@@ -462,7 +475,7 @@ ch2h_server <- function(input, output, session) {
       explanation = "Test t jednej próby: porównanie średniej populacyjnej z wartością referencyjną."
     ),
     list(
-      hypothesis = "H₀: ρ = 0, H₁: ρ ≠ 0",
+      hypothesis = "H₀: ρ = 0, Hₐ: ρ ≠ 0",
       context = "Dane: 200 studentów. Zmienne: godziny nauki i wyniki egzaminu.",
       options = c(
         "A" = "Czy godziny nauki powodują lepsze wyniki?",
@@ -473,7 +486,7 @@ ch2h_server <- function(input, output, session) {
       explanation = "ρ = 0 to brak korelacji. Testujemy związek liniowy (Pearson). Uwaga: korelacja ≠ przyczynowość!"
     ),
     list(
-      hypothesis = "H₀: płeć i preferencje są niezależne, H₁: są powiązane",
+      hypothesis = "H₀: płeć i preferencje są niezależne, Hₐ: są powiązane",
       context = "Ankieta: 300 osób. Zmienne: płeć (K/M) i ulubiony gatunek filmu.",
       options = c(
         "A" = "Czy kobiety oglądają więcej filmów?",
@@ -484,7 +497,7 @@ ch2h_server <- function(input, output, session) {
       explanation = "Test χ² niezależności: czy istnieje związek między dwiema zmiennymi jakościowymi."
     ),
     list(
-      hypothesis = "H₀: μ₁ = μ₂ = μ₃, H₁: co najmniej jedna średnia różna",
+      hypothesis = "H₀: μ₁ = μ₂ = μ₃, Hₐ: co najmniej jedna średnia różna",
       context = "Badanie wyników egzaminu w trzech grupach ćwiczeniowych.",
       options = c(
         "A" = "Czy wyniki egzaminu są normalne?",
@@ -492,10 +505,10 @@ ch2h_server <- function(input, output, session) {
         "C" = "Czy trzecia grupa jest najlepsza?"
       ),
       correct = "B",
-      explanation = "ANOVA: porównanie średnich w 3+ grupach. H₁ nie mówi, która grupa jest najlepsza — to rola post-hoc."
+      explanation = "ANOVA: porównanie średnich w 3+ grupach. Hₐ nie mówi, która grupa jest najlepsza — to rola post-hoc."
     ),
     list(
-      hypothesis = "H₀: μ_d = 0, H₁: μ_d > 0 (d = po − przed)",
+      hypothesis = "H₀: μ_d = 0, Hₐ: μ_d > 0 (d = po − przed)",
       context = "20 uczniów, mierzeni przed i po kursie szybkiego czytania. Zmienna: słowa/min.",
       options = c(
         "A" = "Czy kurs poprawił szybkość czytania?",
@@ -614,6 +627,6 @@ ch2h_server <- function(input, output, session) {
       labs(x = "Statystyka testowa (z)", y = "Gęstość") +
       annotate("text", x = 0, y = max(y) * 0.5, label = "Nie odrzucamy H₀",
                color = col_accept, fontface = "bold", size = 5) +
-      theme_educational()
+      theme()
   })
 }

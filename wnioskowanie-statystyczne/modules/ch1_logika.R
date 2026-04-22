@@ -2,21 +2,27 @@
 # CHAPTER 1: Logika testowania hipotez
 # ============================================================================
 
-ch1_ui <- tabPanel("1. Logika testowania",
-  fluidRow(column(8, offset = 2,
+ch1_ui <- list(
+  id = "ch-logika", num = "01", title = "Logika testowania",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Przedziały ufności mierzą niepewność estymacji.
-       Teraz przejdziemy do pytania: czy zaobserwowany efekt jest rzeczywisty?"
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 01 · Wnioskowanie statystyczne",
+      num    = "01",
+      title  = "Logika testowania.",
+      lead   = "„Czy telefon na biurku obniża koncentrację?” — statystyk zaczyna nie
+                od wzorów, tylko od pytania. Zobaczymy, jak przełożyć je na formalną
+                decyzję: hipotezy, p-wartość, błędy I i II rodzaju."
     ),
 
     # ========================================================================
     # SEKCJA 0: Case study otwierajacy
     # ========================================================================
-    div(class = "section-title", "Czy telefon na biurku obniża koncentrację?"),
+    h2(id = "ch1-case", class = "section-title", "Case study: telefon a koncentracja"),
 
     div(class = "narrative",
-      p("Wyobraźci sobie następujący eksperyment na waszej uczelni
+      p("Wyobraźcie sobie następujący eksperyment na waszej uczelni
         (inspirowany badaniem Ward et al., 2017):"),
       tags$ul(
         tags$li("80 studentów losowo przydzielonych do dwóch grup po 40 osób"),
@@ -28,8 +34,9 @@ ch1_ui <- tabPanel("1. Logika testowania",
         tags$em("tylko"), " w tym, czy telefon leży w zasięgu wzroku.")
     ),
 
-    div(class = "widget-block",
-      h4("Wyniki eksperymentu"),
+    figure_panel(
+      label = "Ryc. 1.1",
+      title = "Wyniki eksperymentu",
       fluidRow(
         column(4,
           actionButton("ch1_case_generate", "Przeprowadź eksperyment",
@@ -43,20 +50,19 @@ ch1_ui <- tabPanel("1. Logika testowania",
       )
     ),
 
-    div(class = "callout-warning",
-      p(tags$b("Pytanie kluczowe:"), " Średnia w grupie „biurko” jest niższa.
-        Ale czy to nie może być przypadek?"),
-      p("Może gdybyśmy powtórzyli eksperyment z innymi 80 osobami,
-        różnica byłaby w drugą stronę? Może po prostu trafiliśmy na
-        słabszych studentów w grupie B?"),
-      p("Właśnie do tego służy testowanie hipotez — daje nam narzędzie do odpowiedzi na pytanie:
-        czy obserwowana różnica jest zbyt duża, żeby być przypadkiem?")
+    margin_callout(
+      label = "Pytanie kluczowe",
+      "Średnia w grupie „biurko” jest niższa. Ale czy to nie może być przypadek?
+       Gdybyśmy powtórzyli eksperyment z innymi 80 osobami, różnica mogłaby być
+       w drugą stronę. Testowanie hipotez rozstrzyga: czy obserwowana różnica
+       jest zbyt duża, żeby być przypadkiem?",
+      color = "uwaga"
     ),
 
     # ========================================================================
     # SEKCJA 1: Logika testowania z odniesieniem do case study
     # ========================================================================
-    div(class = "section-title", "Testowanie hipotez — logika rozumowania"),
+    h2(id = "ch1-logika", class = "section-title", "Testowanie hipotez — logika rozumowania"),
 
     div(class = "narrative",
       p("Testowanie hipotez statystycznych przypomina proces sądowy:"),
@@ -71,7 +77,7 @@ ch1_ui <- tabPanel("1. Logika testowania",
             tags$td("Telefon NIE wpływa na koncentrację (różnica = 0)")
           ),
           tags$tr(
-            tags$td(tags$b("H₁")),
+            tags$td(tags$b("Hₐ")),
             tags$td("Oskarżony jest winny"),
             tags$td("Telefon OBNIŻA koncentrację (różnica > 0)")
           ),
@@ -94,13 +100,13 @@ ch1_ui <- tabPanel("1. Logika testowania",
       ),
       p("Jeśli p-wartość jest mniejsza niż przyjęty ",
         tags$b("poziom istotności α"), " (zwykle 0.05),
-        odrzucamy H₀ na korzyść H₁.")
+        odrzucamy H₀ na korzyść Hₐ.")
     ),
 
     # ========================================================================
     # WIDGET 1: Powtorzone eksperymenty pod H0
     # ========================================================================
-    div(class = "section-title", "Co to jest p-wartość?"),
+    h2(id = "ch1-pvalue", class = "section-title", "Co to jest p-wartość?"),
 
     div(class = "narrative",
       p("Wyobraź sobie, że telefon ", tags$em("naprawdę nie ma wpływu"),
@@ -110,8 +116,9 @@ ch1_ui <- tabPanel("1. Logika testowania",
         wypada daleko od tego, co powstaje przypadkiem — mamy powód, by odrzucić H₀.")
     ),
 
-    div(class = "widget-block",
-      h4("Powtórzone eksperymenty pod H₀"),
+    figure_panel(
+      label = "Ryc. 1.2",
+      title = "Powtórzone eksperymenty pod H₀",
       fluidRow(
         column(4,
           sliderInput("ch1_sim_n", "Wielkość próby (n na grupę):",
@@ -135,17 +142,18 @@ ch1_ui <- tabPanel("1. Logika testowania",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Jak to czytać:"),
-      " Każdy słupek to różnica średnich z jednego symulowanego eksperymentu,
-      w którym telefon nie ma wpływu. Czerwona linia to różnica z prawdziwego eksperymentu.
-      p-wartość = jaki odsetek tych słupków jest co najmniej tak daleko od zera jak nasza czerwona linia?"
+    margin_callout(
+      label = "Jak to czytać",
+      "Każdy słupek to różnica średnich z jednego symulowanego eksperymentu,
+       w którym telefon nie ma wpływu. Czerwona linia to różnica z prawdziwego
+       eksperymentu. p-wartość = jaki odsetek tych słupków jest co najmniej tak
+       daleko od zera jak nasza czerwona linia?"
     ),
 
     # ========================================================================
     # WIDGET 2: Bledy I i II rodzaju
     # ========================================================================
-    div(class = "section-title", "Błędy I i II rodzaju"),
+    h2(id = "ch1-bledy", class = "section-title", "Błędy I i II rodzaju"),
 
     div(class = "narrative",
       p("Każda decyzja może być błędna:"),
@@ -169,13 +177,13 @@ ch1_ui <- tabPanel("1. Logika testowania",
       )
     ),
 
-    div(class = "callout-info",
-      p("W naszym eksperymencie z telefonem:"),
-      tags$ul(
-        tags$li(tags$b("Błąd I rodzaju:"), " stwierdzamy, że telefon rozprasza,
-          choć ", tags$em("naprawdę nie rozprasza"), ". Fałszywy alarm."),
-        tags$li(tags$b("Błąd II rodzaju:"), " nie wykrywamy wpływu telefonu,
-          choć ", tags$em("naprawdę rozprasza"), ". Przegapiony efekt.")
+    margin_callout(
+      label = "W naszym eksperymencie",
+      tagList(
+        tags$p(tags$b("Błąd I rodzaju:"), " stwierdzamy, że telefon rozprasza,
+               choć ", tags$em("naprawdę nie rozprasza"), ". Fałszywy alarm."),
+        tags$p(tags$b("Błąd II rodzaju:"), " nie wykrywamy wpływu telefonu,
+               choć ", tags$em("naprawdę rozprasza"), ". Przegapiony efekt.")
       )
     ),
 
@@ -183,8 +191,9 @@ ch1_ui <- tabPanel("1. Logika testowania",
       tags$img(src = "assets/type-error.jpg", style = "width: 100%; border-radius: 8px;")
     ),
 
-    div(class = "widget-block",
-      h4("Moc testu i błędy"),
+    figure_panel(
+      label = "Ryc. 1.3",
+      title = "Moc testu i błędy",
       fluidRow(
         column(4,
           sliderInput("ch1_alpha", "α (poziom istotności):",
@@ -203,24 +212,28 @@ ch1_ui <- tabPanel("1. Logika testowania",
       uiOutput("ch1_power_stats")
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Kompromis:"),
-      " Zmniejszenie α redukuje błąd I rodzaju, ale zwiększa błąd II rodzaju.
-        Jedyny sposób na zmniejszenie obu naraz: ", tags$b("zwiększenie n"), "!"
+    margin_callout(
+      label = "Kompromis",
+      tagList(
+        "Zmniejszenie α redukuje błąd I rodzaju, ale zwiększa błąd II rodzaju. ",
+        "Jedyny sposób na zmniejszenie obu naraz: ", tags$b("zwiększenie n"), "!"
+      ),
+      color = "uwaga"
     ),
 
     # ========================================================================
     # WIDGET 3: Quiz - decyzja
     # ========================================================================
-    div(class = "section-title", "Decyzja w praktyce"),
+    h2(id = "ch1-decyzja", class = "section-title", "Decyzja w praktyce"),
 
     div(class = "narrative",
       p("Znów wracamy do kluczowej reguły: ", tags$b("p < α → odrzucamy H₀"),
         ". Spróbujcie sami na kilku scenariuszach:")
     ),
 
-    div(class = "widget-block",
-      h4("Quiz: odrzucić czy nie?"),
+    figure_panel(
+      label = "Ryc. 1.4",
+      title = "Quiz: odrzucić czy nie?",
       uiOutput("ch1_quiz_scenario"),
       p("Twoja decyzja:"),
       uiOutput("ch1_quiz_options"),
@@ -228,13 +241,13 @@ ch1_ui <- tabPanel("1. Logika testowania",
       actionButton("ch1_quiz_next", "Nowy scenariusz", class = "btn-outline-secondary")
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: jak formułować hipotezy?"),
-      actionButton("ch1_next", "Dalej → 2. Formułowanie hipotez",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "02",
+      title     = "Od pytania do hipotezy",
+      lead      = "jak sformalizować „wydaje mi się” w parę H₀ / Hₐ.",
+      target_id = "ch-hipotezy"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -267,8 +280,7 @@ ch1_server <- function(input, output, session) {
       scale_fill_manual(values = c(col_accept, col_reject)) +
       labs(title = "Wyniki testu koncentracji",
            x = NULL, y = "Wynik (0–100 pkt)") +
-      theme_educational() +
-      theme(legend.position = "none") +
+            theme(legend.position = "none") +
       coord_cartesian(ylim = c(20, 100))
   })
 
@@ -289,7 +301,7 @@ ch1_server <- function(input, output, session) {
           paste0("Plecak: ", stats$m[1], " pkt (s=", stats$s[1], ")")),
       div(class = "stat-box", style = paste0("background:", col_reject, ";"),
           paste0("Biurko: ", stats$m[2], " pkt (s=", stats$s[2], ")")),
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
           paste0("Różnica: ", diff_val, " pkt"))
     )
   })
@@ -355,8 +367,7 @@ ch1_server <- function(input, output, session) {
         labs(title = "Różnice średnich z symulowanych eksperymentów (H₀ prawdziwa)",
              subtitle = "Czerwona linia = prawdziwa różnica z eksperymentu",
              x = "Różnica średnich (grupa A − grupa B)", y = "Liczba") +
-        theme_educational() +
-        theme(legend.position = "top")
+                theme(legend.position = "top")
     }
   })
 
@@ -393,17 +404,16 @@ ch1_server <- function(input, output, session) {
     df_plot <- data.frame(
       x = rep(x, 2),
       y = c(y_h0, y_h1),
-      dist = rep(c("H₀: brak efektu", "H₁: telefon rozprasza"), each = 500)
+      dist = rep(c("H₀: brak efektu", "Hₐ: telefon rozprasza"), each = 500)
     )
 
     p <- ggplot(df_plot, aes(x = x, y = y, color = dist)) +
       geom_line(linewidth = 1.2) +
-      geom_vline(xintercept = crit, linetype = "dashed", color = col_dark) +
+      geom_vline(xintercept = crit, linetype = "dashed", color = upwr_secondary) +
       scale_color_manual(values = c(col_h0, col_h1), name = "Rozkład") +
       labs(title = paste0("Moc testu (n=", n, " na grupę, różnica=", diff_means, " pkt, α=", alpha, ")"),
            x = "Średnia koncentracja w próbie", y = "Gęstość") +
-      theme_educational() +
-      theme(legend.position = "top")
+            theme(legend.position = "top")
 
     # Shade rejection region under H0
     shade_h0 <- data.frame(x = x[x >= crit], y = y_h0[x >= crit])
@@ -435,7 +445,7 @@ ch1_server <- function(input, output, session) {
           paste0("Błąd I: ", alpha * 100, "%")),
       div(class = "stat-box", style = paste0("background:", col_accept, ";"),
           paste0("Moc: ", round(power * 100, 1), "%")),
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
           paste0("Błąd II: ", round((1 - power) * 100, 1), "%"))
     )
   })

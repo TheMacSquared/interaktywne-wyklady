@@ -2,18 +2,24 @@
 # CHAPTER 3: Jedna zmienna ilosciowa — test t jednej proby
 # ============================================================================
 
-ch2_ui <- tabPanel("3. Jedna zmienna ilościowa",
-  fluidRow(column(8, offset = 2,
+ch2_ui <- list(
+  id = "ch-jedna-ilosciowa", num = "03", title = "Test t jednej próby",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Znamy logikę testowania i formułowanie hipotez.
-       Czas na pierwszy konkretny test: czy średnia różni się od zakładanej wartości?"
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 03 · Wnioskowanie statystyczne",
+      num    = "03",
+      title  = "Test t jednej próby.",
+      lead   = "„Czy nasi studenci mają typowy poziom koncentracji?” Jeden pomiar na
+                osobie, porównanie średniej z wartością referencyjną — od danych, przez
+                statystykę testową, do p-wartości."
     ),
 
     # ========================================================================
     # Case study otwierajacy
     # ========================================================================
-    div(class = "section-title", "Od pytania do testu"),
+    h2(id = "ch2-pytanie", class = "section-title", "Od pytania do testu"),
 
     div(class = "narrative",
       p("Statystyk nie zaczyna od wzorów — zaczyna od pytania. Ktoś przychodzi i pyta w języku potocznym:"),
@@ -38,9 +44,11 @@ ch2_ui <- tabPanel("3. Jedna zmienna ilościowa",
     # ========================================================================
     # WIDGET 1: Krokowy test t jednej proby
     # ========================================================================
-    div(class = "section-title", "Test t jednej próby — krok po kroku"),
+    h2(id = "ch2-krok", class = "section-title", "Test t jednej próby — krok po kroku"),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 3.1",
+      title = "Test t jednej próby — krok po kroku",
       fluidRow(
         column(4,
           selectInput("ch2_scenario", "Scenariusz:",
@@ -80,22 +88,24 @@ ch2_ui <- tabPanel("3. Jedna zmienna ilościowa",
     # ========================================================================
     # Interpretacja
     # ========================================================================
-    div(class = "callout-info",
-      tags$strong("Co zrobiliśmy?"),
-      tags$ol(
-        tags$li("Zebraliśmy dane (próbę)"),
-        tags$li("Obliczyliśmy średnią i odchylenie standardowe"),
-        tags$li("Policzylimy, jak daleko średnia z próby jest od μ₀ (w jednostkach błędu standardowego) — to jest statystyka t"),
-        tags$li("Sprawdziliśmy, czy taka wartość t jest zaskakująca (p-wartość)")
-      ),
-      p("Jeśli p < 0.05, różnica między naszą próbą a wartością referencyjną
-        jest zbyt duża, by ją wytłumaczyć przypadkiem.")
+    margin_callout(
+      label = "Co zrobiliśmy?",
+      tagList(
+        tags$ol(
+          tags$li("Zebraliśmy dane (próbę)"),
+          tags$li("Obliczyliśmy średnią i odchylenie standardowe"),
+          tags$li("Policzyliśmy, jak daleko średnia z próby jest od μ₀ — to statystyka t"),
+          tags$li("Sprawdziliśmy, czy taka wartość t jest zaskakująca (p-wartość)")
+        ),
+        tags$p("Jeśli p < 0.05, różnica między naszą próbą a wartością referencyjną
+               jest zbyt duża, by ją wytłumaczyć przypadkiem.")
+      )
     ),
 
     # ========================================================================
     # WIDGET 2: Test jednostronny — to samo pytanie, ale z kierunkiem
     # ========================================================================
-    div(class = "section-title", "A jeśli znamy kierunek? Test jednostronny"),
+    h2(id = "ch2-jednostronny", class = "section-title", "A jeśli znamy kierunek? Test jednostronny"),
 
     div(class = "narrative",
       p("W pierwszym teście pytaliśmy: „czy średnia różni się od μ₀?” (dwustronny, ≠).
@@ -105,7 +115,9 @@ ch2_ui <- tabPanel("3. Jedna zmienna ilościowa",
         Zobaczcie, jak zmienia się hipoteza i wykres.")
     ),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 3.2",
+      title = "Test t jednostronny — krok po kroku",
       fluidRow(
         column(4,
           helpText("Dane: te same co w teście dwustronnym powyżej."),
@@ -130,24 +142,27 @@ ch2_ui <- tabPanel("3. Jedna zmienna ilościowa",
       )
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Dwustronny a jednostronny:"),
-      tags$ul(
-        tags$li(tags$b("Dwustronny (≠):"), " bezpieczniejszy, wykrywa efekt w obie strony.
-          Punkt krytyczny dalej od zera — trudniej odrzucić H₀."),
-        tags$li(tags$b("Jednostronny (> lub <):"), " mocniejszy w jednym kierunku, ale ",
-          tags$em("ślepy"), " na efekt w drugim. Punkt krytyczny bliżej zera — łatwiej odrzucić H₀."),
-        tags$li("Reguła: test jednostronny decydujemy przed zbieraniem danych, nie po zobaczeniu wyników!")
-      )
+    margin_callout(
+      label = "Dwustronny a jednostronny",
+      tagList(
+        tags$ul(
+          tags$li(tags$b("Dwustronny (≠):"), " bezpieczniejszy, wykrywa efekt w obie strony.
+            Punkt krytyczny dalej od zera — trudniej odrzucić H₀."),
+          tags$li(tags$b("Jednostronny (> lub <):"), " mocniejszy w jednym kierunku,
+            ale ", tags$em("ślepy"), " na efekt w drugim."),
+          tags$li("Regułą: jednostronny decydujemy przed zbieraniem danych!")
+        )
+      ),
+      color = "uwaga"
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: testy dla jednej zmiennej jakościowej"),
-      actionButton("ch2_next", "Dalej → 4. Jedna zmienna jakościowa",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "04",
+      title     = "Test proporcji",
+      lead      = "a co gdy pytamy nie o średnią, lecz o procent?",
+      target_id = "ch-jedna-jakosciowa"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -250,7 +265,7 @@ ch2_server <- function(input, output, session) {
       p <- ggplot(data.frame(x = samp), aes(x = x)) +
         geom_histogram(bins = 15, fill = col_h0, alpha = 0.6, color = "white") +
         labs(title = par$title, x = par$xlab, y = "Liczba") +
-        theme_educational()
+        theme()
 
       if (step >= 2) {
         # Dodaj srednia i mu0
@@ -285,7 +300,7 @@ ch2_server <- function(input, output, session) {
                  color = col_reject, fontface = "bold") +
         labs(title = paste0("Rozkład pod H₀: t(", n - 1, ")"),
              x = "Statystyka testowa", y = "Gęstość") +
-        theme_educational()
+        theme()
 
     } else {
       # Krok 4: rozklad t z zacienionym polem p-wartosci
@@ -323,7 +338,7 @@ ch2_server <- function(input, output, session) {
             paste0("x̄ = ", round(x_bar, 2))),
         div(class = "stat-box", style = paste0("background:", col_h0, ";"),
             paste0("s = ", round(s, 2))),
-        div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+        div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
             paste0("SE = s/√n = ", round(se, 2))),
         p("Różnica między x̄ a μ₀: ", tags$b(round(x_bar - mu0, 2)),
           ". Ale czy to dużo? Musimy to odnieść do zmienności (SE).")
@@ -415,7 +430,7 @@ ch2_server <- function(input, output, session) {
       p <- ggplot(data.frame(x = samp), aes(x = x)) +
         geom_histogram(bins = 15, fill = col_h0, alpha = 0.6, color = "white") +
         labs(title = par$title, x = par$xlab, y = "Liczba") +
-        theme_educational()
+        theme()
 
       if (step >= 2) {
         p <- p +
@@ -449,7 +464,7 @@ ch2_server <- function(input, output, session) {
         labs(title = paste0("Rozkład pod H₀: t(", n - 1, ")"),
              subtitle = "Test jednostronny — tylko jeden ogon!",
              x = "Statystyka testowa", y = "Gęstość") +
-        theme_educational()
+        theme()
     } else {
       n <- length(samp)
       t_stat <- (mean(samp) - mu0) / (sd(samp) / sqrt(n))
@@ -496,7 +511,7 @@ ch2_server <- function(input, output, session) {
             paste0("x̄ = ", round(x_bar, 2))),
         div(class = "stat-box", style = paste0("background:", col_h0, ";"),
             paste0("s = ", round(s, 2))),
-        div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+        div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
             paste0("SE = s/√n = ", round(se, 2))),
         p("Statystyki takie same jak wyżej — dane się nie zmieniły.
           Zmieniło się tylko pytanie (kierunek).")

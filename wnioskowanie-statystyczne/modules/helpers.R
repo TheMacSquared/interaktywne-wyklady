@@ -156,19 +156,19 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
     shade_h1 <- plot_df[plot_df$x >= crit_right, ]
 
     p <- ggplot(plot_df, aes(x = x, y = y)) +
-      geom_area(data = shade_h0, fill = "#27ae60", alpha = 0.15) +
-      geom_area(data = shade_h1, fill = "#e74c3c", alpha = 0.25) +
-      geom_line(color = "#3498db", linewidth = 1.2) +
-      geom_vline(xintercept = crit_right, color = "#2c3e50",
+      geom_area(data = shade_h0, fill = unname(upwr_cat["szalwia"]), alpha = 0.15) +
+      geom_area(data = shade_h1, fill = upwr_accent, alpha = 0.25) +
+      geom_line(color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
+      geom_vline(xintercept = crit_right, color = upwr_secondary,
                  linewidth = 0.8, linetype = "dashed") +
-      geom_vline(xintercept = stat_value, color = "#e74c3c",
+      geom_vline(xintercept = stat_value, color = upwr_accent,
                  linewidth = 1.2) +
       annotate("text", x = stat_value, y = max(y) * 0.85,
                label = paste0("stat = ", round(stat_value, 3)),
-               hjust = -0.1, color = "#e74c3c", fontface = "bold") +
+               hjust = -0.1, color = upwr_accent, fontface = "bold") +
       labs(title = paste0("Rozkład pod H₀: ", label),
            x = "Statystyka testowa", y = "Gęstość") +
-      theme_educational()
+      theme()
 
   } else if (alternative == "two.sided") {
     crit <- qt(1 - alpha / 2, df)
@@ -177,30 +177,30 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
     shade_right <- plot_df[plot_df$x >= crit, ]
 
     p <- ggplot(plot_df, aes(x = x, y = y)) +
-      geom_area(data = shade_h0, fill = "#27ae60", alpha = 0.15) +
-      geom_area(data = shade_left, fill = "#e74c3c", alpha = 0.25) +
-      geom_area(data = shade_right, fill = "#e74c3c", alpha = 0.25) +
-      geom_line(color = "#3498db", linewidth = 1.2) +
-      geom_vline(xintercept = c(-crit, crit), color = "#2c3e50",
+      geom_area(data = shade_h0, fill = unname(upwr_cat["szalwia"]), alpha = 0.15) +
+      geom_area(data = shade_left, fill = upwr_accent, alpha = 0.25) +
+      geom_area(data = shade_right, fill = upwr_accent, alpha = 0.25) +
+      geom_line(color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
+      geom_vline(xintercept = c(-crit, crit), color = upwr_secondary,
                  linewidth = 0.8, linetype = "dashed") +
-      geom_vline(xintercept = stat_value, color = "#e74c3c",
+      geom_vline(xintercept = stat_value, color = upwr_accent,
                  linewidth = 1.2) +
       annotate("text", x = 0, y = max(y) * 0.45,
-               label = "nie odrzucamy H₀", color = "#27ae60",
+               label = "nie odrzucamy H₀", color = unname(upwr_cat["szalwia"]),
                fontface = "bold", size = 4) +
       annotate("text", x = -3.3, y = max(y) * 0.25,
-               label = "Ha", color = "#e74c3c",
+               label = "Ha", color = upwr_accent,
                fontface = "bold", size = 4) +
       annotate("text", x = 3.3, y = max(y) * 0.25,
-               label = "Ha", color = "#e74c3c",
+               label = "Ha", color = upwr_accent,
                fontface = "bold", size = 4) +
       annotate("text", x = stat_value, y = max(y) * 0.85,
                label = paste0("t = ", round(stat_value, 3)),
                hjust = if (stat_value > 0) -0.1 else 1.1,
-               color = "#e74c3c", fontface = "bold") +
+               color = upwr_accent, fontface = "bold") +
       labs(title = paste0("Rozkład pod H₀: ", label),
            x = "Statystyka testowa", y = "Gęstość") +
-      theme_educational()
+      theme()
 
   } else {
     # Jednostronny
@@ -214,20 +214,20 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
       shade_h1 <- plot_df[plot_df$x <= crit, ]
     }
     p <- ggplot(plot_df, aes(x = x, y = y)) +
-      geom_area(data = shade_h0, fill = "#27ae60", alpha = 0.15) +
-      geom_area(data = shade_h1, fill = "#e74c3c", alpha = 0.25) +
-      geom_line(color = "#3498db", linewidth = 1.2) +
-      geom_vline(xintercept = crit, color = "#2c3e50",
+      geom_area(data = shade_h0, fill = unname(upwr_cat["szalwia"]), alpha = 0.15) +
+      geom_area(data = shade_h1, fill = upwr_accent, alpha = 0.25) +
+      geom_line(color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
+      geom_vline(xintercept = crit, color = upwr_secondary,
                  linewidth = 0.8, linetype = "dashed") +
-      geom_vline(xintercept = stat_value, color = "#e74c3c",
+      geom_vline(xintercept = stat_value, color = upwr_accent,
                  linewidth = 1.2) +
       annotate("text", x = stat_value, y = max(y) * 0.85,
                label = paste0("t = ", round(stat_value, 3)),
                hjust = if (stat_value > 0) -0.1 else 1.1,
-               color = "#e74c3c", fontface = "bold") +
+               color = upwr_accent, fontface = "bold") +
       labs(title = paste0("Rozkład pod H₀: ", label),
            x = "Statystyka testowa", y = "Gęstość") +
-      theme_educational()
+      theme()
   }
 
   p
@@ -238,7 +238,7 @@ format_test_result <- function(p_value, alpha = 0.05) {
   if (p_value < alpha) {
     list(
       decision = "Odrzucamy H₀",
-      color = "#e74c3c",
+      color = upwr_accent,
       explanation = paste0("p = ", format.pval(p_value, digits = 4),
                            " < α = ", alpha,
                            " — wynik istotny statystycznie")
@@ -246,7 +246,7 @@ format_test_result <- function(p_value, alpha = 0.05) {
   } else {
     list(
       decision = "Brak podstaw do odrzucenia H₀",
-      color = "#27ae60",
+      color = unname(upwr_cat["szalwia"]),
       explanation = paste0("p = ", format.pval(p_value, digits = 4),
                            " ≥ α = ", alpha,
                            " — wynik nieistotny statystycznie")
