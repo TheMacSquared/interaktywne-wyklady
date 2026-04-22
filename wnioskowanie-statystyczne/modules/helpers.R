@@ -30,6 +30,69 @@ col_effect <- unname(test_colors["effect"])
 col_paired <- unname(test_colors["paired"])
 
 
+# ----------------------------------------------------------------------------
+# hypothesis_practice() — widget „Sformułuj hipotezy”.
+# Wyświetla listę pytań potocznych. Dla każdego przycisk „Pokaż odpowiedź”
+# odkrywa poprawną parę H0/Ha. Wbudowane do użycia w rozdziałach konkretnych
+# testów (po definicji testu, przed widgetem krok-po-kroku) oraz w ch2h
+# (jako galeria pytanie → hipoteza w języku naturalnym).
+#
+# Argumenty:
+#   prefix    — unikalny prefiks inputów (np. "ch2h"), żeby ID nie kolidowały
+#   questions — lista list(question=..., h0=..., ha=..., note=...)
+#               question — potoczne pytanie (str lub tagi shiny)
+#               h0, ha   — hipotezy; mogą być:
+#                          • stringiem (prosty tekst, bez MathJax)
+#                          • stringiem z MathJax \\(...\\) — auto-render
+#                          • tagami shiny (gdy chcesz mieszać formatowanie)
+#               note     — opcjonalny komentarz metodyczny
+# ----------------------------------------------------------------------------
+
+hypothesis_practice <- function(prefix, questions) {
+  items <- lapply(seq_along(questions), function(i) {
+    q <- questions[[i]]
+    btn_id <- paste0(prefix, "_hp_btn_", i)
+
+    # h0/ha: jeśli string z MathJax (\\(...\\)) — wrap w withMathJax,
+    # jeśli zwykły tekst lub tagi — przekaż jak jest
+    render_hyp <- function(x) {
+      if (is.character(x) && length(x) == 1 && grepl("\\\\\\(", x)) {
+        withMathJax(x)
+      } else {
+        x
+      }
+    }
+
+    tags$div(
+      class = "hp-item",
+      tags$div(class = "hp-question",
+        tags$span(class = "hp-num", paste0(i, ".")),
+        if (inherits(q$question, "html") || inherits(q$question, "shiny.tag") ||
+            inherits(q$question, "shiny.tag.list")) q$question
+        else tags$span(q$question)
+      ),
+      tags$div(class = "hp-controls",
+        actionButton(btn_id, "Pokaż odpowiedź",
+                     class = "btn-outline-secondary btn-sm")
+      ),
+      conditionalPanel(
+        condition = paste0("input['", btn_id, "'] % 2 === 1"),
+        tags$div(class = "hp-answer",
+          tags$div(class = "hp-hypotheses",
+            tags$div(tags$b("H₀: "), render_hyp(q$h0)),
+            tags$div(tags$b("Hₐ: "), render_hyp(q$ha))
+          ),
+          if (!is.null(q$note))
+            tags$div(class = "hp-note", tags$em(q$note))
+        )
+      )
+    )
+  })
+
+  tags$div(class = "hypothesis-practice", items)
+}
+
+
 # Generowanie danych studenckich (n=200)
 generate_student_data <- function(n = 200) {
   set.seed(NULL)
@@ -166,7 +229,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
       annotate("text", x = stat_value, y = max(y) * 0.85,
                label = paste0("stat = ", round(stat_value, 3)),
                hjust = -0.1, color = upwr_accent, fontface = "bold") +
-      labs(title = paste0("Rozkład pod H₀: ", label),
+      labs(title = paste0("Rozkład pod H0: ", label),
            x = "Statystyka testowa", y = "Gęstość") +
       theme()
 
@@ -186,7 +249,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
       geom_vline(xintercept = stat_value, color = upwr_accent,
                  linewidth = 1.2) +
       annotate("text", x = 0, y = max(y) * 0.45,
-               label = "nie odrzucamy H₀", color = unname(upwr_cat["szalwia"]),
+               label = "nie odrzucamy H0", color = unname(upwr_cat["szalwia"]),
                fontface = "bold", size = 4) +
       annotate("text", x = -3.3, y = max(y) * 0.25,
                label = "Ha", color = upwr_accent,
@@ -198,7 +261,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
                label = paste0("t = ", round(stat_value, 3)),
                hjust = if (stat_value > 0) -0.1 else 1.1,
                color = upwr_accent, fontface = "bold") +
-      labs(title = paste0("Rozkład pod H₀: ", label),
+      labs(title = paste0("Rozkład pod H0: ", label),
            x = "Statystyka testowa", y = "Gęstość") +
       theme()
 
@@ -225,7 +288,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
                label = paste0("t = ", round(stat_value, 3)),
                hjust = if (stat_value > 0) -0.1 else 1.1,
                color = upwr_accent, fontface = "bold") +
-      labs(title = paste0("Rozkład pod H₀: ", label),
+      labs(title = paste0("Rozkład pod H0: ", label),
            x = "Statystyka testowa", y = "Gęstość") +
       theme()
   }
