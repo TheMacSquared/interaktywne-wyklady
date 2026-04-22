@@ -169,7 +169,7 @@ W `R/lecture_layout.R`, lista `.LC_MODULES` i mapa `.LC_LECTURE_MODULE`:
 | Statystyka opisowa | `typy-danych/` | ✅ zmigrowany |
 | Rozkłady | `rozklady-prawdopodobienstwa/` | ⬜ do zmigrowania |
 | Przedziały ufności | `przedzialy-ufnosci/` | ⬜ do zmigrowania |
-| Wnioskowanie | `wnioskowanie-statystyczne/` | ⬜ do zmigrowania |
+| Wnioskowanie | `wnioskowanie-statystyczne/` | ✅ zmigrowany |
 | Założenia testów | `zalozenia-testow/` | ⬜ do zmigrowania |
 | Regresja | `regresja/` | ⬜ do zmigrowania |
 | Metody bayesowskie | `metody-bayesowskie/` | ⬜ do zmigrowania |
