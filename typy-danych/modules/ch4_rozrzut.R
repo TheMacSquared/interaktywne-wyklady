@@ -6,21 +6,22 @@ ch4_ui <- list(
   id = "ch-rozrzut", num = "04", title = "Statystyki rozrzutu",
   content = tagList(
 
-    # --- Introduction ---
-    div(class = "chapter-recap",
-      "Średnia, mediana, percentyle -- wiemy jak znalezc 'środek'. Ale środek to nie wszystko.
-       Pora zmierzyc, jak bardzo dane są rozproszone wokol tego srodka."
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 04 · Statystyka opisowa",
+      num    = "04",
+      title  = "Statystyki rozrzutu.",
+      lead   = "Średnia mówi gdzie jest środek, ale nic o tym, jak bardzo dane są
+                rozproszone. Dwie grupy mogą mieć tę samą średnią, a wyglądać
+                zupełnie inaczej — pora zmierzyć rozrzut."
     ),
+
     uiOutput("tracker_ch4"),
-    div(class = "section-title", "Statystyki rozrzutu"),
 
     div(class = "narrative",
-      p("Średnia mówi gdzie jest środek, ale nic o tym jak bardzo dane sa
-        rozproszone. Dwie grupy mogą mieć te sama średnia, a wyglądać
-        zupełnie inaczej."),
       p("W tym rozdziale poznamy miary rozrzutu: odchylenie standardowe,
-        wariancje, rozstęp, rozstęp międzykwartylowy (IQR) oraz
-        współczynnik zmienności. Nauczymy sie tez budowac boxplot od podstaw.")
+        wariancję, rozstęp, rozstęp międzykwartylowy (IQR) oraz
+        współczynnik zmienności. Nauczymy się też budować boxplot od podstaw.")
     ),
 
     # ====================================================================
@@ -37,7 +38,9 @@ ch4_ui <- list(
         może być bardzo różny.")
     ),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 4.1",
+      title = "Dwie linie autobusowe — ta sama średnia, inny rozrzut",
       div(class = "step-buttons",
         actionButton("ch4_spread_s1", "1. Dwie linie",
                      class = "btn-outline-primary"),
@@ -64,7 +67,9 @@ ch4_ui <- list(
         Zobaczmy to na przykładzie 10 pomiarów wzrostu.")
     ),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 4.2",
+      title = "Obliczanie odchylenia standardowego",
       div(class = "step-buttons",
         actionButton("ch4_sd_s1", "1. Dane",
                      class = "btn-outline-primary"),
@@ -96,8 +101,9 @@ ch4_ui <- list(
         srednia ±1 SD, 95% w ±2 SD, a 99.7% w ±3 SD.")
     ),
 
-    div(class = "widget-block",
-      h4("Regula 68-95-99.7 -- czy zawsze dziala?"),
+    figure_panel(
+      label = "Ryc. 4.3",
+      title = "Regula 68-95-99.7 -- czy zawsze dziala?",
       selectInput("ch4_emp_var", "Wybierz zmienna:",
         choices = c("Wzrost (cm)" = "wzrost",
                     "Waga (kg)" = "waga",
@@ -120,7 +126,9 @@ ch4_ui <- list(
         oznacza każdy element tego wykresu.")
     ),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 4.4",
+      title = "Boxplot — budowa krok po kroku",
       div(class = "step-buttons",
         actionButton("ch4_bp_s1", "1. Surowe dane",
                      class = "btn-outline-primary"),
@@ -155,8 +163,9 @@ ch4_ui <- list(
         miedzy grupami.")
     ),
 
-    div(class = "widget-block",
-      h4("Boxploty grupowane"),
+    figure_panel(
+      label = "Ryc. 4.5",
+      title = "Boxploty grupowane",
       fluidRow(
         column(4,
           selectInput("ch4_grp_var", "Zmienna ilościowa:",
@@ -194,7 +203,9 @@ ch4_ui <- list(
         a ktore pozostaja stabilne.")
     ),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 4.6",
+      title = "Porównanie miar rozrzutu i ich odporności",
       div(style = "margin-bottom: 10px;",
         actionButton("ch4_comp_add1", "Dodaj outlier (+30 cm)",
                      class = "btn-warning", style = "margin-right: 6px;"),
@@ -207,11 +218,12 @@ ch4_ui <- list(
       tableOutput("ch4_comp_table")
     ),
 
-    div(class = "callout-info",
-      tags$strong("Wniosek:"),
-      " Rozstęp jest bardzo wrażliwy na outlierow - wystarczy jedna wartosc
-      odstająca, aby go zmienić. IQR i odchylenie standardowe są bardziej
-      odporne, a IQR jest z nich najbardziej stabilne."
+    margin_callout(
+      label = "Wniosek",
+      "Rozstęp jest bardzo wrażliwy na outliery — wystarczy jedna wartość
+       odstająca, aby go zmienić. IQR i odchylenie standardowe są bardziej
+       odporne, a IQR jest z nich najbardziej stabilny.",
+      color = "uwaga"
     ),
 
     # ====================================================================
@@ -226,8 +238,9 @@ ch4_ui <- list(
         współczynnika zmienności (CV = SD / średnia × 100%).")
     ),
 
-    div(class = "widget-block",
-      h4("Porównanie zmienności miedzy zmiennymi"),
+    figure_panel(
+      label = "Ryc. 4.7",
+      title = "Porównanie zmienności miedzy zmiennymi",
       fluidRow(
         column(6, plotOutput("ch4_sd_compare_plot", height = "350px")),
         column(6, plotOutput("ch4_cv_plot", height = "350px"))
@@ -242,12 +255,11 @@ ch4_ui <- list(
       )
     ),
 
-    div(class = "chapter-transition",
-      p("Położenie i rozrzut to nie wszystko. Dwa rozkłady z ta sama średnia i
-        odchyleniem standardowym mogą mieć zupełnie inny kształt -- asymetrię
-        i różna 'ciężkość' ogonów."),
-      actionButton("ch4_next", "Dalej: 5. Kształt rozkładu →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "05",
+      title     = "Kształt rozkładu",
+      lead      = "dwa rozkłady z tą samą średnią i SD mogą mieć zupełnie inny kształt — asymetrię i ciężkość ogonów.",
+      target_id = "ch-ksztalt"
     ),
 
     # Bottom spacing
@@ -297,7 +309,7 @@ ch4_server <- function(input, output, session) {
                        linia = paste0("Linia B (SD = ", bus$sd_b, ")"))
     df_all <- rbind(df_a, df_b)
 
-    col_a <- "#3498db"; col_b <- "#e74c3c"
+    col_a <- upwr_cat["niebo"]; col_b <- upwr_accent
     lbl_a <- paste0("Linia A (SD = ", bus$sd_a, ")")
     lbl_b <- paste0("Linia B (SD = ", bus$sd_b, ")")
 
@@ -305,23 +317,22 @@ ch4_server <- function(input, output, session) {
       geom_line(linewidth = 1.2) +
       scale_color_manual(values = setNames(c(col_a, col_b), c(lbl_a, lbl_b))) +
       scale_fill_manual(values = setNames(c(col_a, col_b), c(lbl_a, lbl_b))) +
-      geom_vline(xintercept = 2, linetype = "dashed", color = "#2c3e50",
+      geom_vline(xintercept = 2, linetype = "dashed", color = upwr_secondary,
                  linewidth = 0.8) +
       annotate("text", x = 2, y = max(df_a$y) * 1.08,
                label = "Średnie spóźnienie = 2 min",
-               hjust = 0.5, size = 4.5, color = "#2c3e50", fontface = "bold") +
-      geom_vline(xintercept = 0, linetype = "solid", color = "#95a5a6",
+               hjust = 0.5, size = 4.5, color = upwr_secondary, fontface = "bold") +
+      geom_vline(xintercept = 0, linetype = "solid", color = upwr_reference,
                  linewidth = 0.5, alpha = 0.5) +
       annotate("text", x = -0.3, y = max(df_a$y) * 0.3,
                label = "punktualny", angle = 90,
-               size = 3.5, color = "#95a5a6") +
+               size = 3.5, color = upwr_reference) +
       labs(x = "Spóźnienie (minuty)    ← za wcześnie | za późno →",
            y = "Gęstość",
            title = "Rozkład spóźnień dwóch linii autobusowych",
            color = NULL, fill = NULL) +
       coord_cartesian(xlim = c(-3, 25)) +
-      theme_minimal(base_size = 14) +
-      theme(legend.position = "top")
+            theme(legend.position = "top")
 
     if (step >= 2) {
       p <- p +
@@ -346,10 +357,10 @@ ch4_server <- function(input, output, session) {
         geom_area(data = shade_a, aes(x = x, y = y), alpha = 0.25) +
         geom_area(data = shade_b, aes(x = x, y = y), alpha = 0.15) +
         geom_vline(xintercept = cutoff, linetype = "dotted",
-                   color = "#27ae60", linewidth = 1) +
+                   color = upwr_cat["szalwia"], linewidth = 1) +
         annotate("text", x = cutoff, y = max(df_a$y) * 0.95,
                  label = lbl,
-                 hjust = 1.1, size = 3.8, color = "#27ae60", fontface = "bold")
+                 hjust = 1.1, size = 3.8, color = upwr_cat["szalwia"], fontface = "bold")
     }
 
     if (step >= 4) {
@@ -360,12 +371,12 @@ ch4_server <- function(input, output, session) {
         annotate("label", x = 18, y = max(df_a$y) * 0.85,
                  label = paste0("P(zdążysz) A = ",
                                 round(prob_a * 100, 1), "%"),
-                 size = 4.5, fill = "#eaf4fc", color = col_a,
+                 size = 4.5, fill = upwr_seq_burgundy[2], color = col_a,
                  fontface = "bold", label.size = 0.5) +
         annotate("label", x = 18, y = max(df_a$y) * 0.70,
                  label = paste0("P(zdążysz) B = ",
                                 round(prob_b * 100, 1), "%"),
-                 size = 4.5, fill = "#fdedec", color = col_b,
+                 size = 4.5, fill = upwr_seq_burgundy[2], color = col_b,
                  fontface = "bold", label.size = 0.5)
     }
 
@@ -476,11 +487,10 @@ ch4_server <- function(input, output, session) {
       # Krok 1: punkty na osi liczbowej
       df <- data.frame(x = vals)
       p <- ggplot(df, aes(x = x, y = 0)) +
-        geom_point(size = 4, color = "#3498db") +
+        geom_point(size = 4, color = upwr_cat["niebo"]) +
         labs(x = "Wzrost (cm)", y = "",
              title = "Pomiary wzrostu (n = 10)") +
-        theme_minimal(base_size = 14) +
-        theme(axis.text.y = element_blank(),
+                theme(axis.text.y = element_blank(),
               axis.ticks.y = element_blank(),
               panel.grid.major.y = element_blank(),
               panel.grid.minor.y = element_blank()) +
@@ -497,23 +507,22 @@ ch4_server <- function(input, output, session) {
       )
 
       p <- ggplot(df, aes(x = x, y = y)) +
-        geom_vline(xintercept = x_bar, linetype = "dashed", color = "#e74c3c",
+        geom_vline(xintercept = x_bar, linetype = "dashed", color = upwr_accent,
                    linewidth = 1) +
         geom_segment(aes(x = x_bar, xend = x, y = y, yend = y),
-                     color = "#f39c12", linewidth = 0.8,
+                     color = upwr_cat["bursztyn"], linewidth = 0.8,
                      arrow = arrow(length = unit(0.15, "cm"), type = "closed")) +
-        geom_point(size = 4, color = "#3498db") +
+        geom_point(size = 4, color = upwr_cat["niebo"]) +
         geom_text(aes(label = paste0(ifelse(dev > 0, "+", ""),
                                      round(dev, 1))),
                   hjust = ifelse(df$dev >= 0, -0.3, 1.3),
-                  size = 3.5, color = "#7f8c8d") +
+                  size = 3.5, color = upwr_ink_soft) +
         annotate("text", x = x_bar, y = n + 0.8,
                  label = paste0("średnia = ", round(x_bar, 2)),
-                 color = "#e74c3c", size = 5, fontface = "bold") +
+                 color = upwr_accent, size = 5, fontface = "bold") +
         labs(x = "Wzrost (cm)", y = "",
              title = "Odchylenia od średniej (posortowane wg odległości)") +
-        theme_minimal(base_size = 14) +
-        theme(axis.text.y = element_blank(),
+                theme(axis.text.y = element_blank(),
               axis.ticks.y = element_blank(),
               panel.grid.major.y = element_blank(),
               panel.grid.minor.y = element_blank()) +
@@ -522,20 +531,20 @@ ch4_server <- function(input, output, session) {
       if (step >= 3) {
         p <- p +
           annotate("rect", xmin = x_bar - s, xmax = x_bar + s,
-                   ymin = 0, ymax = n + 0.3, fill = "#27ae60", alpha = 0.08) +
+                   ymin = 0, ymax = n + 0.3, fill = upwr_cat["szalwia"], alpha = 0.08) +
           geom_vline(xintercept = x_bar - s, linetype = "dotted",
-                     color = "#27ae60", linewidth = 0.8) +
+                     color = upwr_cat["szalwia"], linewidth = 0.8) +
           geom_vline(xintercept = x_bar + s, linetype = "dotted",
-                     color = "#27ae60", linewidth = 0.8) +
+                     color = upwr_cat["szalwia"], linewidth = 0.8) +
           annotate("text", x = x_bar - s, y = 0.3,
                    label = paste0("śr. - SD\n", round(x_bar - s, 1)),
-                   color = "#27ae60", size = 3.5, fontface = "bold", vjust = 0) +
+                   color = upwr_cat["szalwia"], size = 3.5, fontface = "bold", vjust = 0) +
           annotate("text", x = x_bar + s, y = 0.3,
                    label = paste0("śr. + SD\n", round(x_bar + s, 1)),
-                   color = "#27ae60", size = 3.5, fontface = "bold", vjust = 0) +
+                   color = upwr_cat["szalwia"], size = 3.5, fontface = "bold", vjust = 0) +
           annotate("text", x = x_bar, y = 0.5,
                    label = paste0("SD = ", round(s, 2), " cm"),
-                   color = "#27ae60", size = 4.5, fontface = "bold")
+                   color = upwr_cat["szalwia"], size = 4.5, fontface = "bold")
       }
     }
 
@@ -645,7 +654,7 @@ ch4_server <- function(input, output, session) {
     m <- mean(vals)
     s <- sd(vals)
 
-    band_colors <- c("#3498db", "#f39c12", "#e74c3c")
+    band_colors <- c(upwr_cat["niebo"], upwr_cat["bursztyn"], upwr_accent)
     band_alphas <- c(0.25, 0.15, 0.10)
     band_labels <- c("±1 SD", "±2 SD", "±3 SD")
 
@@ -666,9 +675,9 @@ ch4_server <- function(input, output, session) {
     }
 
     p <- p +
-      geom_vline(xintercept = m, color = "#e74c3c", linewidth = 1.2, linetype = "solid") +
+      geom_vline(xintercept = m, color = upwr_accent, linewidth = 1.2, linetype = "solid") +
       annotate("text", x = m, y = Inf, label = paste0("x̄ = ", round(m, 1)),
-               vjust = -0.5, color = "#e74c3c", fontface = "bold", size = 4.5) +
+               vjust = -0.5, color = upwr_accent, fontface = "bold", size = 4.5) +
       labs(
         title = paste0("Regula empiryczna: ", pct_in[1], "% / ",
                         pct_in[2], "% / ", pct_in[3], "%",
@@ -676,8 +685,7 @@ ch4_server <- function(input, output, session) {
         x = variable_meta[[var_name]]$label,
         y = "Gęstość"
       ) +
-      theme_minimal(base_size = 14) +
-      theme(plot.title = element_text(face = "bold", size = 13))
+            theme(plot.title = element_text(face = "bold", size = 13))
 
     p
   })
@@ -756,26 +764,25 @@ ch4_server <- function(input, output, session) {
       # Final: clean boxplot + histogram for comparison
       df <- data.frame(x = vals)
       p_box <- ggplot(df, aes(y = x, x = "")) +
-        geom_boxplot(fill = "#3498db", alpha = 0.5, color = "#2c3e50",
-                     outlier.color = "#e74c3c", outlier.size = 3,
+        geom_boxplot(fill = upwr_cat["niebo"], alpha = 0.5, color = upwr_secondary,
+                     outlier.color = upwr_accent, outlier.size = 3,
                      width = 0.4) +
-        geom_jitter(width = 0.05, alpha = 0.4, size = 2, color = "#2c3e50") +
+        geom_jitter(width = 0.05, alpha = 0.4, size = 2, color = upwr_secondary) +
         coord_flip() +
         labs(x = "", y = "Wzrost (cm)", title = "Gotowy boxplot (geom_boxplot)") +
-        theme_minimal(base_size = 14) +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+                theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
 
       p_hist <- ggplot(df, aes(x = x)) +
-        geom_histogram(bins = 15, fill = "#3498db", color = "white", alpha = 0.7) +
-        geom_vline(xintercept = med, color = "#e74c3c", linewidth = 1,
+        geom_histogram(bins = 15, fill = upwr_cat["niebo"], color = "white", alpha = 0.7) +
+        geom_vline(xintercept = med, color = upwr_accent, linewidth = 1,
                    linetype = "dashed") +
-        geom_vline(xintercept = q1, color = "#f39c12", linewidth = 0.8,
+        geom_vline(xintercept = q1, color = upwr_cat["bursztyn"], linewidth = 0.8,
                    linetype = "dotted") +
-        geom_vline(xintercept = q3, color = "#f39c12", linewidth = 0.8,
+        geom_vline(xintercept = q3, color = upwr_cat["bursztyn"], linewidth = 0.8,
                    linetype = "dotted") +
         labs(x = "Wzrost (cm)", y = "Liczebność",
              title = "Histogram (do porównania)") +
-        theme_minimal(base_size = 14)
+        theme()
 
       gridExtra::grid.arrange(p_box, p_hist, nrow = 2, heights = c(1, 1.2))
       return()
@@ -790,11 +797,10 @@ ch4_server <- function(input, output, session) {
       df$y_jit <- runif(nrow(df), -0.3, 0.3)
 
       ggplot(df, aes(x = x, y = y_jit)) +
-        geom_point(size = 3, color = "#3498db", alpha = 0.7) +
+        geom_point(size = 3, color = upwr_cat["niebo"], alpha = 0.7) +
         labs(x = "Wzrost (cm)", y = "",
              title = "Krok 1: Surowe dane (n = 30)") +
-        theme_minimal(base_size = 14) +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+                theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
               panel.grid.major.y = element_blank(),
               panel.grid.minor.y = element_blank()) +
         scale_y_continuous(limits = c(-0.8, 0.8))
@@ -804,15 +810,14 @@ ch4_server <- function(input, output, session) {
       df$y_jit <- runif(nrow(df), -0.3, 0.3)
 
       ggplot(df, aes(x = x, y = y_jit)) +
-        geom_point(size = 3, color = "#3498db", alpha = 0.7) +
-        geom_vline(xintercept = med, color = "#e74c3c", linewidth = 1.5) +
+        geom_point(size = 3, color = upwr_cat["niebo"], alpha = 0.7) +
+        geom_vline(xintercept = med, color = upwr_accent, linewidth = 1.5) +
         annotate("text", x = med, y = 0.65,
                  label = paste0("Mediana = ", round(med, 1)),
-                 color = "#e74c3c", size = 5, fontface = "bold") +
+                 color = upwr_accent, size = 5, fontface = "bold") +
         labs(x = "Wzrost (cm)", y = "",
              title = "Krok 2: Mediana dzieli dane na polowy") +
-        theme_minimal(base_size = 14) +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+                theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
               panel.grid.major.y = element_blank(),
               panel.grid.minor.y = element_blank()) +
         scale_y_continuous(limits = c(-0.8, 0.8))
@@ -824,31 +829,30 @@ ch4_server <- function(input, output, session) {
       ggplot(df, aes(x = x, y = y_jit)) +
         # IQR box
         annotate("rect", xmin = q1, xmax = q3, ymin = -0.5, ymax = 0.5,
-                 fill = "#3498db", alpha = 0.2, color = "#3498db",
+                 fill = upwr_cat["niebo"], alpha = 0.2, color = upwr_cat["niebo"],
                  linewidth = 1) +
-        geom_point(size = 3, color = "#3498db", alpha = 0.7) +
-        geom_vline(xintercept = med, color = "#e74c3c", linewidth = 1.5) +
-        geom_vline(xintercept = q1, color = "#f39c12", linewidth = 1,
+        geom_point(size = 3, color = upwr_cat["niebo"], alpha = 0.7) +
+        geom_vline(xintercept = med, color = upwr_accent, linewidth = 1.5) +
+        geom_vline(xintercept = q1, color = upwr_cat["bursztyn"], linewidth = 1,
                    linetype = "dashed") +
-        geom_vline(xintercept = q3, color = "#f39c12", linewidth = 1,
+        geom_vline(xintercept = q3, color = upwr_cat["bursztyn"], linewidth = 1,
                    linetype = "dashed") +
         annotate("text", x = med, y = 0.7,
                  label = paste0("Me = ", round(med, 1)),
-                 color = "#e74c3c", size = 4.5, fontface = "bold") +
+                 color = upwr_accent, size = 4.5, fontface = "bold") +
         annotate("text", x = q1, y = -0.65,
                  label = paste0("Q1 = ", round(q1, 1)),
-                 color = "#f39c12", size = 4, fontface = "bold") +
+                 color = upwr_cat["bursztyn"], size = 4, fontface = "bold") +
         annotate("text", x = q3, y = -0.65,
                  label = paste0("Q3 = ", round(q3, 1)),
-                 color = "#f39c12", size = 4, fontface = "bold") +
+                 color = upwr_cat["bursztyn"], size = 4, fontface = "bold") +
         annotate("text", x = (q1 + q3) / 2, y = 0.7,
                  label = paste0("IQR = ", round(iqr_val, 1)),
-                 color = "#3498db", size = 4, fontface = "bold",
+                 color = upwr_cat["niebo"], size = 4, fontface = "bold",
                  hjust = ifelse(abs(med - (q1 + q3) / 2) < 3, 2, 0.5)) +
         labs(x = "Wzrost (cm)", y = "",
              title = "Krok 3: Kwartyle Q1, Q3 i pudełko (IQR)") +
-        theme_minimal(base_size = 14) +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+                theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
               panel.grid.major.y = element_blank(),
               panel.grid.minor.y = element_blank()) +
         scale_y_continuous(limits = c(-0.9, 0.9))
@@ -862,38 +866,37 @@ ch4_server <- function(input, output, session) {
       p <- ggplot(df) +
         # IQR box
         annotate("rect", xmin = q1, xmax = q3, ymin = -0.4, ymax = 0.4,
-                 fill = "#3498db", alpha = 0.2, color = "#3498db",
+                 fill = upwr_cat["niebo"], alpha = 0.2, color = upwr_cat["niebo"],
                  linewidth = 1) +
         # Median line inside box
         geom_segment(aes(x = med, xend = med, y = -0.4, yend = 0.4),
-                     color = "#e74c3c", linewidth = 1.5) +
+                     color = upwr_accent, linewidth = 1.5) +
         # Left whisker
         geom_segment(aes(x = whisker_low, xend = q1, y = 0, yend = 0),
-                     color = "#2c3e50", linewidth = 0.8) +
+                     color = upwr_secondary, linewidth = 0.8) +
         geom_segment(aes(x = whisker_low, xend = whisker_low, y = -0.2, yend = 0.2),
-                     color = "#2c3e50", linewidth = 0.8) +
+                     color = upwr_secondary, linewidth = 0.8) +
         # Right whisker
         geom_segment(aes(x = q3, xend = whisker_high, y = 0, yend = 0),
-                     color = "#2c3e50", linewidth = 0.8) +
+                     color = upwr_secondary, linewidth = 0.8) +
         geom_segment(aes(x = whisker_high, xend = whisker_high, y = -0.2, yend = 0.2),
-                     color = "#2c3e50", linewidth = 0.8) +
+                     color = upwr_secondary, linewidth = 0.8) +
         # Points: normal
         geom_point(data = df[!df$outlier, ], aes(x = x, y = y_jit),
-                   size = 2.5, color = "#3498db", alpha = 0.5) +
+                   size = 2.5, color = upwr_cat["niebo"], alpha = 0.5) +
         # Points: outliers
         geom_point(data = df[df$outlier, ], aes(x = x, y = y_jit),
-                   size = 4, color = "#e74c3c", shape = 18) +
+                   size = 4, color = upwr_accent, shape = 18) +
         # Fence annotations
         annotate("text", x = lower_fence, y = -0.55,
                  label = paste0("Q1 - 1.5*IQR\n= ", round(lower_fence, 1)),
-                 color = "#7f8c8d", size = 3.5) +
+                 color = upwr_ink_soft, size = 3.5) +
         annotate("text", x = upper_fence, y = -0.55,
                  label = paste0("Q3 + 1.5*IQR\n= ", round(upper_fence, 1)),
-                 color = "#7f8c8d", size = 3.5) +
+                 color = upwr_ink_soft, size = 3.5) +
         labs(x = "Wzrost (cm)", y = "",
              title = "Krok 4: Wąsy i wartości odstające") +
-        theme_minimal(base_size = 14) +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+                theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
               panel.grid.major.y = element_blank(),
               panel.grid.minor.y = element_blank()) +
         scale_y_continuous(limits = c(-0.8, 0.7))
@@ -902,7 +905,7 @@ ch4_server <- function(input, output, session) {
         p <- p +
           annotate("label", x = mean(outliers), y = 0.55,
                    label = paste0(length(outliers), " outlier(s)"),
-                   fill = "#fdedec", color = "#e74c3c", size = 4,
+                   fill = upwr_seq_burgundy[2], color = upwr_accent, size = 4,
                    fontface = "bold", label.size = 0.5)
       }
 
@@ -990,17 +993,16 @@ ch4_server <- function(input, output, session) {
       p <- p + geom_violin(alpha = 0.4, color = NA) +
         geom_boxplot(width = 0.2, alpha = 0.8, outlier.shape = NA)
     } else {
-      p <- p + geom_boxplot(alpha = 0.7, outlier.color = "#e74c3c", outlier.size = 3)
+      p <- p + geom_boxplot(alpha = 0.7, outlier.color = upwr_accent, outlier.size = 3)
     }
 
     if (isTRUE(input$ch4_grp_points)) {
       p <- p + geom_jitter(width = 0.15, alpha = 0.3, size = 1.5)
     }
 
-    p + scale_fill_brewer(palette = "Set2") +
+    p + scale_fill_upwr() +
       labs(x = grp_label, y = var_label) +
-      theme_minimal(base_size = 14) +
-      theme(legend.position = "none")
+            theme(legend.position = "none")
   })
 
   output$ch4_grp_table <- renderTable({
@@ -1064,24 +1066,23 @@ ch4_server <- function(input, output, session) {
     iqr_val <- q3 - q1
 
     ggplot(df, aes(x = x)) +
-      geom_histogram(bins = 30, fill = "#3498db", color = "white", alpha = 0.7) +
+      geom_histogram(bins = 30, fill = upwr_cat["niebo"], color = "white", alpha = 0.7) +
       # Range
       annotate("segment", x = data_range[1], xend = data_range[2],
-               y = -2, yend = -2, color = "#e74c3c", linewidth = 2) +
+               y = -2, yend = -2, color = upwr_accent, linewidth = 2) +
       annotate("text",
                x = (data_range[1] + data_range[2]) / 2, y = -3.5,
                label = paste0("Rozstęp = ", round(diff(data_range), 1)),
-               color = "#e74c3c", size = 4, fontface = "bold") +
+               color = upwr_accent, size = 4, fontface = "bold") +
       # IQR
       annotate("segment", x = q1, xend = q3, y = -6, yend = -6,
-               color = "#27ae60", linewidth = 2) +
+               color = upwr_cat["szalwia"], linewidth = 2) +
       annotate("text", x = (q1 + q3) / 2, y = -7.5,
                label = paste0("IQR = ", round(iqr_val, 1)),
-               color = "#27ae60", size = 4, fontface = "bold") +
+               color = upwr_cat["szalwia"], size = 4, fontface = "bold") +
       labs(x = "Wzrost (cm)", y = "Liczebność",
            title = paste0("Histogram wzrostu (n = ", length(vals), ")")) +
-      theme_minimal(base_size = 14) +
-      coord_cartesian(clip = "off") +
+            coord_cartesian(clip = "off") +
       theme(plot.margin = margin(10, 10, 50, 10))
   })
 
@@ -1124,12 +1125,12 @@ ch4_server <- function(input, output, session) {
     ggplot(stats, aes(x = Zmienna, y = SD, fill = SD)) +
       geom_col(alpha = 0.85, width = 0.6) +
       geom_text(aes(label = round(SD, 2)), hjust = -0.1, size = 5) +
-      scale_fill_gradient(low = "#85c1e9", high = "#2980b9", guide = "none") +
+      scale_fill_upwr_seq(variant = "burgundy", guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
       coord_flip() +
       labs(x = NULL, y = "Odchylenie standardowe (oryg. jednostki)",
            title = "SD -- nieporównywalne") +
-      theme_minimal(base_size = 14)
+      theme()
   })
 
   output$ch4_cv_plot <- renderPlot({
@@ -1144,12 +1145,12 @@ ch4_server <- function(input, output, session) {
     ggplot(stats, aes(x = Zmienna, y = CV, fill = CV)) +
       geom_col(alpha = 0.85, width = 0.6) +
       geom_text(aes(label = paste0(round(CV, 1), "%")), hjust = -0.1, size = 5) +
-      scale_fill_gradient(low = "#3498db", high = "#e74c3c", guide = "none") +
+      scale_fill_upwr_seq(variant = "burgundy", guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
       coord_flip() +
       labs(x = NULL, y = "Współczynnik zmienności (%)",
            title = "CV -- porównywalne") +
-      theme_minimal(base_size = 14)
+      theme()
   })
 
   output$ch4_cv_table <- renderTable({

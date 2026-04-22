@@ -6,21 +6,17 @@ ch5_ui <- list(
   id = "ch-ksztalt", num = "05", title = "Kształt rozkładu",
   content = tagList(
 
-    # --- Introduction ---
-    div(class = "chapter-recap",
-      "Znamy juz położenie i rozrzut. Ostatni element układanki: jaki kształt ma rozkład?
-       Czy jest symetryczny, czy moze ma 'długi ogon' w jedna strone?"
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 05 · Statystyka opisowa",
+      num    = "05",
+      title  = "Kształt rozkładu.",
+      lead   = "Dwa rozkłady mogą mieć tę samą średnią i odchylenie standardowe,
+                a wyglądać zupełnie inaczej. Kształt rozkładu mówi nam o asymetrii
+                i „ciężkości” ogonów — poznasz dwie miary: skośność i kurtozę."
     ),
-    uiOutput("tracker_ch5"),
-    h2(id = "ch5-intro", class = "section-title", "Kształt rozkładu"),
 
-    div(class = "narrative",
-      p("Dwa rozkłady mogą mieć ta sama średnia i odchylenie standardowe,
-        a wyglądać zupełnie inaczej. Kształt rozkładu mówi nam o asymetrii
-        i 'ciężkości' ogonów."),
-      p("W tym rozdziale poznasz dwie miary kształtu:",
-        "skośność (asymetria) i kurtozę (ciężkość ogonów).")
-    ),
+    uiOutput("tracker_ch5"),
 
     # --- Widget 1: Skewness ---
     h2(id = "ch5-skosnosc", class = "section-title", "Skośność (asymetria)"),
@@ -31,8 +27,9 @@ ch5_ui <- list(
         a ujemne — w lewo.")
     ),
 
-    div(class = "widget-block",
-      h4("Porównanie trzech typów skośności"),
+    figure_panel(
+      label = "Ryc. 5.1",
+      title = "Porównanie trzech typów skośności",
       plotOutput("ch5_skew_comparison", height = "300px"),
       div(class = "callout-info",
         tags$strong("Trzy typy rozkładów: "),
@@ -40,8 +37,9 @@ ch5_ui <- list(
       )
     ),
 
-    div(class = "widget-block",
-      h4("Sprawdź skośność w naszych danych"),
+    figure_panel(
+      label = "Ryc. 5.2",
+      title = "Sprawdź skośność w naszych danych",
       selectInput("ch5_skew_var", "Wybierz zmienną:",
         choices = c(
           "Wzrost" = "wzrost",
@@ -65,8 +63,9 @@ ch5_ui <- list(
         od średniej.")
     ),
 
-    div(class = "widget-block",
-      h4("Porównaj rozkłady o różnej kurtozie"),
+    figure_panel(
+      label = "Ryc. 5.3",
+      title = "Porównaj rozkłady o różnej kurtozie",
       fluidRow(
         column(8,
           sliderInput("ch5_kurt_val", "Nadwyżkowa kurtoza:",
@@ -97,7 +96,9 @@ ch5_ui <- list(
         opisać jej położenie, rozrzut i kształt.")
     ),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 5.4",
+      title = "Pełna charakterystyka rozkładu",
       selectInput("ch5_full_var", "Wybierz zmienna:",
         choices = c(
           "Wzrost" = "wzrost",
@@ -113,13 +114,11 @@ ch5_ui <- list(
       uiOutput("ch5_full_interpretation")
     ),
 
-    # --- Transition to ch6 ---
-    div(class = "chapter-transition",
-      p("Teraz potrafisz opisac rozkład zmiennej ilościowej w trzech wymiarach:
-        położenie, rozrzut i kształt. Czas na podsumowanie -- ściąga
-        ze wszystkimi narzędziami w jednym miejscu."),
-      actionButton("ch5_next", "Dalej: 6. Ściąga →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "06",
+      title     = "Ściąga",
+      lead      = "wszystkie narzędzia (położenie, rozrzut, kształt) w jednym miejscu.",
+      target_id = "ch-sciaga"
     ),
 
     br(), br()
@@ -175,21 +174,20 @@ ch5_server <- function(input, output, session) {
     )
 
     ggplot(df_cmp, aes(x = x)) +
-      geom_density(aes(fill = typ), alpha = 0.5, color = "#2c3e50", linewidth = 0.8) +
+      geom_density(aes(fill = typ), alpha = 0.5, color = upwr_secondary, linewidth = 0.8) +
       geom_text(data = label_df,
         aes(label = label), x = 0, y = Inf, vjust = 1.5,
-        size = 4, fontface = "italic", color = "#2c3e50",
+        size = 4, fontface = "italic", color = upwr_secondary,
         inherit.aes = FALSE) +
       facet_wrap(~typ, scales = "free_x") +
       scale_fill_manual(values = c(
-        "Lewostronnie skośny" = "#e74c3c",
-        "Symetryczny" = "#27ae60",
-        "Prawostronnie skośny" = "#3498db"
+        "Lewostronnie skośny" = upwr_accent,
+        "Symetryczny" = upwr_cat["szalwia"],
+        "Prawostronnie skośny" = upwr_cat["niebo"]
       )) +
       labs(x = "Wartość", y = "Gęstość",
         title = "Trzy typy skośności rozkładu") +
-      theme_minimal(base_size = 14) +
-      theme(legend.position = "none",
+            theme(legend.position = "none",
             strip.text = element_text(face = "bold", size = 12))
   })
 
@@ -204,24 +202,24 @@ ch5_server <- function(input, output, session) {
 
     ggplot(df, aes(x = x)) +
       geom_histogram(aes(y = after_stat(density)),
-        bins = 20, fill = "#3498db", color = "white", alpha = 0.6) +
-      geom_density(color = "#2c3e50", linewidth = 1) +
-      geom_vline(xintercept = m, color = "#e74c3c", linewidth = 1.2, linetype = "solid") +
-      geom_vline(xintercept = med, color = "#3498db", linewidth = 1.2, linetype = "dashed") +
+        bins = 20, fill = upwr_cat["niebo"], color = "white", alpha = 0.6) +
+      geom_density(color = upwr_secondary, linewidth = 1) +
+      geom_vline(xintercept = m, color = upwr_accent, linewidth = 1.2, linetype = "solid") +
+      geom_vline(xintercept = med, color = upwr_cat["niebo"], linewidth = 1.2, linetype = "dashed") +
       annotate("text",
         x = m, y = -Inf, vjust = -0.5,
         label = paste0("Średnia = ", round(m, 2)),
-        color = "#e74c3c", size = 3.5, fontface = "bold") +
+        color = upwr_accent, size = 3.5, fontface = "bold") +
       annotate("text",
         x = med, y = -Inf, vjust = -2,
         label = paste0("Mediana = ", round(med, 2)),
-        color = "#3498db", size = 3.5, fontface = "bold") +
+        color = upwr_cat["niebo"], size = 3.5, fontface = "bold") +
       labs(
         title = paste0(d$label, " — skośność = ", round(sk, 3)),
         x = d$label,
         y = "Gęstość"
       ) +
-      theme_minimal(base_size = 14)
+      theme()
   })
 
   output$ch5_skew_info <- renderUI({
@@ -280,10 +278,10 @@ ch5_server <- function(input, output, session) {
     ek <- input$ch5_kurt_val
 
     type_name <- if (ek < -0.1) "Platykurtyczny" else if (ek > 0.1) "Leptokurtyczny" else "Mezokurtyczny"
-    type_color <- if (ek < -0.1) "#f39c12" else if (ek > 0.1) "#e74c3c" else "#27ae60"
+    type_color <- if (ek < -0.1) upwr_cat["bursztyn"] else if (ek > 0.1) upwr_accent else upwr_cat["szalwia"]
 
     ggplot(df, aes(x = x)) +
-      geom_line(aes(y = norm), color = "#95a5a6", linewidth = 1, linetype = "dashed") +
+      geom_line(aes(y = norm), color = upwr_reference, linewidth = 1, linetype = "dashed") +
       geom_area(aes(y = dens), fill = type_color, alpha = 0.35) +
       geom_line(aes(y = dens), color = type_color, linewidth = 1.2) +
       annotate("text", x = -4.5, y = max(df$dens) * 0.95,
@@ -291,27 +289,27 @@ ch5_server <- function(input, output, session) {
         color = type_color, hjust = 0, size = 5, fontface = "bold") +
       annotate("text", x = -4.5, y = max(df$dens) * 0.85,
         label = "Rozkład normalny (kurtoza = 0)",
-        color = "#95a5a6", hjust = 0, size = 4) +
+        color = upwr_reference, hjust = 0, size = 4) +
       labs(x = "x", y = "Gęstość",
         title = "Jak kurtoza wpływa na kształt rozkładu?") +
-      theme_minimal(base_size = 14)
+      theme()
   })
 
   output$ch5_kurt_tails <- renderPlot({
     df <- ch5_kurt_density()
     ek <- input$ch5_kurt_val
-    type_color <- if (ek < -0.1) "#f39c12" else if (ek > 0.1) "#e74c3c" else "#27ae60"
+    type_color <- if (ek < -0.1) upwr_cat["bursztyn"] else if (ek > 0.1) upwr_accent else upwr_cat["szalwia"]
 
     tail_df <- df[df$x >= 2.5, ]
 
     ggplot(tail_df, aes(x = x)) +
-      geom_area(aes(y = norm), fill = "#95a5a6", alpha = 0.15) +
-      geom_line(aes(y = norm), color = "#95a5a6", linewidth = 1, linetype = "dashed") +
+      geom_area(aes(y = norm), fill = upwr_reference, alpha = 0.15) +
+      geom_line(aes(y = norm), color = upwr_reference, linewidth = 1, linetype = "dashed") +
       geom_area(aes(y = dens), fill = type_color, alpha = 0.3) +
       geom_line(aes(y = dens), color = type_color, linewidth = 1.2) +
       labs(x = "x", y = "Gęstość",
         title = "Powiększenie prawego ogona (x > 2.5)") +
-      theme_minimal(base_size = 14)
+      theme()
   })
 
   output$ch5_kurt_text <- renderUI({
@@ -374,23 +372,23 @@ ch5_server <- function(input, output, session) {
 
     ggplot(df, aes(x = x)) +
       geom_histogram(aes(y = after_stat(density)),
-        bins = 20, fill = "#3498db", color = "white", alpha = 0.5) +
-      geom_density(color = "#2c3e50", linewidth = 1) +
-      geom_rug(color = "#2c3e50", alpha = 0.5) +
-      geom_vline(xintercept = m, color = "#e74c3c", linewidth = 1.1) +
-      geom_vline(xintercept = med, color = "#3498db", linewidth = 1.1, linetype = "dashed") +
+        bins = 20, fill = upwr_cat["niebo"], color = "white", alpha = 0.5) +
+      geom_density(color = upwr_secondary, linewidth = 1) +
+      geom_rug(color = upwr_secondary, alpha = 0.5) +
+      geom_vline(xintercept = m, color = upwr_accent, linewidth = 1.1) +
+      geom_vline(xintercept = med, color = upwr_cat["niebo"], linewidth = 1.1, linetype = "dashed") +
       annotate("text", x = m, y = Inf, vjust = 2, hjust = -0.1,
         label = paste0("Średnia = ", round(m, 2)),
-        color = "#e74c3c", size = 3.8, fontface = "bold") +
+        color = upwr_accent, size = 3.8, fontface = "bold") +
       annotate("text", x = med, y = Inf, vjust = 3.5, hjust = -0.1,
         label = paste0("Mediana = ", round(med, 2)),
-        color = "#3498db", size = 3.8, fontface = "bold") +
+        color = upwr_cat["niebo"], size = 3.8, fontface = "bold") +
       labs(
         title = paste0("Rozkład zmiennej: ", d$label),
         x = d$label,
         y = "Gęstość"
       ) +
-      theme_minimal(base_size = 14)
+      theme()
   })
 
   output$ch5_full_box <- renderPlot({
@@ -398,11 +396,10 @@ ch5_server <- function(input, output, session) {
     df <- data.frame(x = d$values)
 
     ggplot(df, aes(x = x)) +
-      geom_boxplot(fill = "#3498db", alpha = 0.4, color = "#2c3e50",
-        outlier.color = "#e74c3c", outlier.size = 3) +
+      geom_boxplot(fill = upwr_cat["niebo"], alpha = 0.4, color = upwr_secondary,
+        outlier.color = upwr_accent, outlier.size = 3) +
       labs(x = d$label) +
-      theme_minimal(base_size = 14) +
-      theme(
+            theme(
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank(),
         axis.title.y = element_blank(),

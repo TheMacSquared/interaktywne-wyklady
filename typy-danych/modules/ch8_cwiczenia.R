@@ -7,27 +7,28 @@
 # UI
 # ============================================================================
 
-ch8_ui <- tabPanel("8. Ćwiczenia",
-  fluidRow(column(8, offset = 2,
+ch8_ui <- list(
+  id = "ch-cwiczenia", num = "08", title = "Ćwiczenia",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Poprzednio: quiz z rozpoznawania typów zmiennych"
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 08 · Statystyka opisowa",
+      num    = "08",
+      title  = "Ćwiczenia.",
+      lead   = "Czas na praktykę — trzy bloki zadań w Jamovi: rozpoznawanie
+                typów zmiennych, dobór narzędzi, analiza prawdziwych danych.
+                Planowany czas: 90 minut. Każde zadanie ma ukryte rozwiązanie."
     ),
 
-    div(class = "section-title", "Ćwiczenia praktyczne — typy danych i statystyka opisowa"),
-
-    div(class = "narrative",
-      p(tags$b("Czas:"), " 90 minut | ", tags$b("Narzędzie:"), " Jamovi"),
-      p("Trzy bloki zadań — od rozpoznawania typów zmiennych przez dobór narzędzi
-        po analizę prawdziwych danych. Każde zadanie ma ",
-        tags$b("ukryte rozwiązanie"), " — kliknij przycisk, aby je zobaczyć.")
-    ),
-
-    div(class = "callout-info",
-      selectInput("ch8_kierunek", tags$b("Wybierz wariant dla kierunku:"),
+    figure_panel(
+      label = "Wariant",
+      title = "Wybierz wariant dla kierunku",
+      color = upwr_single_alt,
+      selectInput("ch8_kierunek", NULL,
         choices = list(
           "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
-          "Rolnictwo"                                = "rol",
+          "Rolnictwo"                       = "rol",
           "Technologia żywności"            = "zyw"
         ),
         selected = "bhp",
@@ -38,7 +39,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
     uiOutput("ch8_content"),
 
     br(), br(), br()
-  ))
+  )
 )
 
 # ============================================================================

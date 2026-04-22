@@ -44,12 +44,17 @@
 
     if (!sidebar) return;
 
-    sidebar.querySelectorAll("[data-lc-chapter]").forEach(function (navCh) {
+    var activeIdx = 0;
+    var total = 0;
+    var navChapters = sidebar.querySelectorAll("[data-lc-chapter]");
+    navChapters.forEach(function (navCh, idx) {
+      total += 1;
       var chId  = navCh.getAttribute("data-lc-chapter");
       var btn   = navCh.querySelector(".lc-nav-chapter-btn");
       var toc   = navCh.querySelector(".lc-nav-toc");
       var isAct = (chId === chapterId);
 
+      if (isAct) activeIdx = idx + 1;
       if (btn) btn.classList.toggle("lc-active", isAct);
       // TOC zawsze zamykamy — buildTOC otworzy właściwy po wczytaniu DOM
       if (toc) {
@@ -57,6 +62,14 @@
         toc.innerHTML = "";
       }
     });
+
+    // Update progress bar (X/N + wypełnienie)
+    if (total > 0 && activeIdx > 0) {
+      var fill = document.getElementById("lc-nav-progress-fill");
+      var current = document.getElementById("lc-nav-progress-current");
+      if (fill) fill.style.width = (activeIdx / total * 100) + "%";
+      if (current) current.textContent = String(activeIdx);
+    }
 
     scrollSpyChapterId = null; // zatrzymaj stary scroll-spy
   }

@@ -123,6 +123,7 @@ lecture_page <- function(lecture_id      = NULL,
         id    = paste0("lc__nav_", i),
         class = "lc-nav-chapter-btn action-button",
         type  = "button",
+        title = ch$title,  # natywny tooltip kiedy tytuł jest schowany (minimalist sidebar)
         tags$div(
           class = "lc-nav-chapter-inner",
           tags$span(class = "lc-nav-chapter-num",   ch$num),
@@ -135,6 +136,26 @@ lecture_page <- function(lecture_id      = NULL,
       tags$ul(class = "lc-nav-toc", `data-lc-toc-for` = ch$id)
     )
   })
+
+  # Progress bar: "X/N" pod listą rozdziałów (aktualizowany przez JS)
+  n_chapters <- length(chapters)
+  progress_block <- tags$div(
+    class = "lc-nav-progress",
+    tags$div(
+      class = "lc-nav-progress-bar",
+      tags$div(
+        class = "lc-nav-progress-fill",
+        id    = "lc-nav-progress-fill",
+        style = paste0("width:", round(100 / n_chapters, 2), "%;")
+      )
+    ),
+    tags$div(
+      class = "lc-nav-progress-text",
+      tags$span(id = "lc-nav-progress-current", "1"),
+      " / ",
+      tags$span(as.character(n_chapters))
+    )
+  )
 
   bootstrapPage(
     # ---- HEAD ----
@@ -153,6 +174,10 @@ lecture_page <- function(lecture_id      = NULL,
       ),
       withMathJax(),
       includeCSS(file.path(proj_root, "R", "shared_styles.css")),
+      # Paleta UPWr jako CSS custom properties — źródło wartości: R/palette.R.
+      # Wstrzyknięte po shared_styles.css, żeby wartości z palette.R miały
+      # pierwszeństwo nad ewentualnymi starymi wartościami w CSS.
+      .lc_palette_css(),
       includeScript(file.path(proj_root, "R", "shared_toc.js")),
       header_extras
     ),
@@ -176,7 +201,8 @@ lecture_page <- function(lecture_id      = NULL,
             tags$div(class = "lc-nav-module-label", module_label),
           if (nchar(lecture_title) > 0)
             tags$div(class = "lc-nav-module-title", lecture_title),
-          nav_chapters
+          nav_chapters,
+          progress_block
         ),
 
         # Główna treść — jeden rozdział na raz (renderUI po stronie serwera)
@@ -309,15 +335,17 @@ margin_note <- function(...) {
   tags$div(
     class = "lc-margin",
     tags$div(
-      style = "font-family:var(--lc-serif);font-size:13px;line-height:1.5;color:var(--lc-ink-faded);font-style:italic;",
+      style = "font-family:var(--upwr-serif);font-size:13px;line-height:1.5;color:var(--upwr-reference);font-style:italic;",
       ...
     )
   )
 }
 
 # Ramka z plakietką (wykresy, ćwiczenia, ściągi)
+# Domyślnie: szerokość kolumny tekstu (lepszy kontrast z narracją).
+# full_width = TRUE tylko gdy wykres naprawdę potrzebuje pełnej szerokości.
 figure_panel <- function(label, ..., title = NULL, color = "#6b1a26",
-                          full_width = TRUE) {
+                          full_width = FALSE) {
   outer_class <- if (full_width) "lc-figure-panel lc-full" else "lc-figure-panel"
   tags$div(
     class = outer_class,
@@ -335,6 +363,136 @@ figure_panel <- function(label, ..., title = NULL, color = "#6b1a26",
 # Wrapper dla całej siatki treści rozdziału (tekst + prawy margines)
 lc_grid <- function(...) {
   tags$div(class = "lc-grid", ...)
+}
+
+# ============================================================================
+# lc_chapter_hero() — okładka rozdziału: kicker + duża cyfra + tytuł + squiggle + lead
+# Wypełnia istniejący CSS: .lc-chapter-header / .lc-chapter-hero / .lc-chapter-num
+#   / .lc-chapter-title / .lc-chapter-kicker / .lc-chapter-lead
+# ============================================================================
+
+lc_chapter_hero <- function(kicker = NULL, num, title, lead = NULL) {
+  tags$header(
+    class = "lc-chapter-header",
+    if (!is.null(kicker) && nchar(kicker) > 0)
+      tags$div(class = "lc-chapter-kicker", kicker),
+    tags$div(
+      class = "lc-chapter-hero",
+      tags$div(class = "lc-chapter-num", num),
+      tags$h1(class = "lc-chapter-title", title)
+    ),
+    if (!is.null(lead) && (is.list(lead) || nchar(as.character(lead)) > 0))
+      tags$p(class = "lc-chapter-lead", lead)
+  )
+}
+
+# ============================================================================
+# margin_code_note() — callout "W kodzie" z blokiem monospace
+# ============================================================================
+
+margin_code_note <- function(code, description = NULL, label = "W kodzie") {
+  tags$div(
+    class = "lc-margin lc-margin-callout lc-callout-kod",
+    tags$div(class = "lc-margin-callout-label", label),
+    tags$div(
+      class = "lc-margin-callout-body",
+      tags$pre(class = "lc-margin-code", tags$code(code)),
+      if (!is.null(description))
+        tags$div(class = "lc-margin-code-desc", description)
+    )
+  )
+}
+
+# ============================================================================
+# lc_chapter_next() — navigational "→ Dalej — 02 · Tytuł" na marginesie.
+# Klika → session$sendCustomMessage("switchToChapter", target_id) przez JS.
+# ============================================================================
+
+lc_chapter_next <- function(num, title, lead = NULL, target_id) {
+  tags$a(
+    class = "lc-margin lc-margin-callout lc-callout-next",
+    href  = "#",
+    `data-lc-next-target` = target_id,
+    onclick = paste0(
+      "event.preventDefault();",
+      "Shiny.setInputValue('lc__switch_chapter', '", target_id,
+      "', {priority:'event'});"
+    ),
+    tags$div(class = "lc-margin-callout-label", "Dalej"),
+    tags$div(
+      class = "lc-margin-callout-body",
+      tags$div(class = "lc-chapter-next-title",
+        tags$span(class = "lc-chapter-next-num", num), " · ", title
+      ),
+      if (!is.null(lead) && nchar(lead) > 0)
+        tags$div(class = "lc-chapter-next-lead", lead)
+    )
+  )
+}
+
+# ============================================================================
+# .lc_palette_css() — generuje blok <style> z tokenami --upwr-* pobieranymi
+# z R/palette.R. Wstrzykiwane w tags$head przez lecture_page() po includeCSS.
+# Jedno źródło prawdy dla wszystkich kolorów projektu (ggplot + CSS + inline).
+#
+# Tokeny pochodne (tints/hovers) są wyliczane z palet sekwencyjnych, żeby nie
+# duplikować hex-ów w palette.R — paleta ma zostać czysto semantyczna (role),
+# a zmienne UI pomocnicze są wariantami tych ról.
+# ============================================================================
+
+.lc_palette_css <- function() {
+  # Tokeny pochodne — wyliczone z palety sekwencyjnej i kat.
+  panel_sunken     <- "#ece6d8"   # ciemniejsza wersja upwr_panel (dla tła wciśniętych elementów UI)
+  ink_subtle       <- "#b8b1a5"   # jaśniejsza niż reference (dla subtelnego tekstu)
+  rule_soft        <- "#e8e1d2"   # jaśniejsza niż upwr_rule (dla miękkich dividerów)
+  accent_hover     <- upwr_seq_burgundy[6]   # ciemniejszy burgund na hover
+  accent_tint      <- upwr_seq_burgundy[2]   # jasne tło dla callout-uwaga
+  alt_tint         <- upwr_seq_gold[2]       # jasne tło dla callout-kod
+  sage             <- unname(upwr_cat["szalwia"])
+  sage_tint        <- "#dee8de"              # jasne tło dla callout-ok
+
+  css <- sprintf(
+    ":root {
+  --upwr-bg:                %s;
+  --upwr-panel:             %s;
+  --upwr-surface:           #ffffff;
+  --upwr-surface-sunken:    %s;
+  --upwr-ink:               %s;
+  --upwr-ink-soft:          %s;
+  --upwr-ink-subtle:        %s;
+  --upwr-reference:         %s;
+  --upwr-rule:              %s;
+  --upwr-rule-soft:         %s;
+  --upwr-accent:            %s;
+  --upwr-accent-hover:      %s;
+  --upwr-accent-tint:       %s;
+  --upwr-single-alt:        %s;
+  --upwr-single-alt-tint:   %s;
+  --upwr-sage:              %s;
+  --upwr-sage-tint:         %s;
+  --upwr-secondary:         %s;
+  --upwr-cat-grafit:        %s;
+  --upwr-cat-bursztyn:      %s;
+  --upwr-cat-niebo:         %s;
+  --upwr-cat-szalwia:       %s;
+  --upwr-cat-kurkuma:       %s;
+  --upwr-cat-indygo:        %s;
+  --upwr-cat-terakota:      %s;
+  --upwr-cat-wrzos:         %s;
+}",
+    upwr_bg, upwr_panel, panel_sunken,
+    upwr_ink, upwr_ink_soft, ink_subtle, upwr_reference,
+    upwr_rule, rule_soft,
+    upwr_accent, accent_hover, accent_tint,
+    upwr_single_alt, alt_tint,
+    sage, sage_tint,
+    upwr_secondary,
+    unname(upwr_cat["grafit"]),   unname(upwr_cat["bursztyn"]),
+    unname(upwr_cat["niebo"]),    unname(upwr_cat["szalwia"]),
+    unname(upwr_cat["kurkuma"]),  unname(upwr_cat["indygo"]),
+    unname(upwr_cat["terakota"]), unname(upwr_cat["wrzos"])
+  )
+  tags$style(HTML(css))
 }
 
 # Helper: NULL coalescing

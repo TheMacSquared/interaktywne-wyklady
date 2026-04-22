@@ -20,7 +20,7 @@ render_taxonomy <- function(highlight = NULL, revealed = character(0)) {
   )
 
   nodes$fill <- sapply(nodes$type, function(t) {
-    if (is.na(t)) return("#ecf0f1")
+    if (is.na(t)) return(upwr_rule)
     type_colors[t]
   })
   nodes$alpha <- sapply(nodes$type, function(t) {
@@ -38,20 +38,20 @@ render_taxonomy <- function(highlight = NULL, revealed = character(0)) {
   ggplot() +
     geom_segment(data = edges,
                  aes(x = x, y = y, xend = xend, yend = yend),
-                 color = "#bdc3c7", linewidth = 1.2) +
+                 color = upwr_rule, linewidth = 1.2) +
     geom_tile(data = nodes,
               aes(x = x, y = y, width = 2, height = 0.45),
               fill = nodes$fill, alpha = nodes$alpha,
-              color = col_dark, linewidth = 0.5) +
+              color = upwr_secondary, linewidth = 0.5) +
     geom_text(data = nodes,
               aes(x = x, y = y, label = label),
-              size = 5, fontface = "bold", color = col_dark) +
+              size = 5, fontface = "bold", color = upwr_secondary) +
     geom_text(data = nodes %>% filter(id %in% revealed),
               aes(x = x, y = y - 0.35, label = example),
-              size = 3.5, color = "#7f8c8d", lineheight = 0.9) +
+              size = 3.5, color = upwr_ink_soft, lineheight = 0.9) +
     geom_text(data = nodes %>% filter(example != "", !id %in% revealed),
               aes(x = x, y = y - 0.35, label = "kliknij aby odkryc"),
-              size = 3, color = "#bdc3c7", fontface = "italic") +
+              size = 3, color = upwr_reference, fontface = "italic") +
     coord_cartesian(xlim = c(-0.2, 10.2), ylim = c(0.3, 3.5)) +
     theme_void() +
     theme(plot.margin = margin(10, 10, 10, 10))
@@ -63,25 +63,22 @@ render_good_plot <- function(x, label, type) {
 
   if (type %in% c("nominalna", "porzadkowa")) {
     ggplot(df, aes(x = x)) +
-      geom_bar(fill = col, color = "white", alpha = 0.85) +
+      geom_bar(fill = col, color = NA) +
       geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 4.5) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
       labs(title = paste0("Wykres słupkowy: ", label), x = label, y = "Liczebność") +
-      theme_minimal(base_size = 14) +
       theme(axis.text.x = element_text(angle = if (nlevels(factor(x)) > 4) 30 else 0, hjust = 1))
   } else if (type == "ilosciowa_dyskretna") {
     ggplot(df, aes(x = factor(x))) +
-      geom_bar(fill = col, color = "white", alpha = 0.85) +
+      geom_bar(fill = col, color = NA) +
       geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 4.5) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-      labs(title = paste0("Wykres słupkowy: ", label), x = label, y = "Liczebność") +
-      theme_minimal(base_size = 14)
+      labs(title = paste0("Wykres słupkowy: ", label), x = label, y = "Liczebność")
   } else {
     ggplot(df, aes(x = x)) +
-      geom_histogram(aes(y = after_stat(density)), bins = 20, fill = col, color = "white", alpha = 0.7) +
-      geom_density(color = col, linewidth = 1.2) +
-      labs(title = paste0("Histogram z gęstościa: ", label), x = label, y = "Gęstość") +
-      theme_minimal(base_size = 14)
+      geom_histogram(aes(y = after_stat(density)), bins = 20, fill = col, color = NA, alpha = 0.7) +
+      geom_density(color = col, fill = NA, linewidth = 1.2) +
+      labs(title = paste0("Histogram z gęstościa: ", label), x = label, y = "Gęstość")
   }
 }
 
@@ -90,23 +87,21 @@ render_bad_plot <- function(x, label, type) {
   if (type %in% c("nominalna", "porzadkowa")) {
     df$x_num <- as.numeric(factor(x))
     ggplot(df, aes(x = x_num)) +
-      geom_histogram(bins = 10, fill = "#95a5a6", color = "white") +
+      geom_histogram(bins = 10, fill = upwr_reference, color = NA) +
       labs(title = paste0("Histogram (NIEODPOWIEDNI): ", label),
            subtitle = "Histogram wymaga danych liczbowych - tu mamy kategorie!",
            x = paste0(label, " (zakodowane jako liczby)"), y = "Liczebność") +
-      theme_minimal(base_size = 14) +
-      theme(plot.title = element_text(color = "#e74c3c"),
-            plot.subtitle = element_text(color = "#e74c3c", face = "italic"))
+      theme(plot.title = element_text(color = upwr_accent),
+            plot.subtitle = element_text(color = upwr_accent, face = "italic"))
   } else {
     n_unique <- length(unique(x))
     ggplot(df, aes(x = x)) +
-      geom_bar(fill = "#95a5a6", width = 0.3) +
+      geom_bar(fill = upwr_reference, width = 0.3) +
       labs(title = paste0("Wykres słupkowy (NIEODPOWIEDNI): ", label),
            subtitle = paste0(n_unique, " unikalnych wartości - wykres słupkowy jest nieczytelny!"),
            x = label, y = "Liczebność") +
-      theme_minimal(base_size = 14) +
-      theme(plot.title = element_text(color = "#e74c3c"),
-            plot.subtitle = element_text(color = "#e74c3c", face = "italic"),
+      theme(plot.title = element_text(color = upwr_accent),
+            plot.subtitle = element_text(color = upwr_accent, face = "italic"),
             axis.text.x = element_text(size = 5, angle = 90))
   }
 }
@@ -116,7 +111,7 @@ pie_vs_bar_scenarios <- list(
     name = "Duze różnice",
     labels = c("Produkt A", "Produkt B", "Produkt C", "Produkt D", "Produkt E"),
     data = c(45, 25, 15, 10, 5),
-    colors = c("#3266ad", "#1D9E75", "#BA7517", "#D85A30", "#993556"),
+    colors = upwr_cat_n(5),
     pie_verdict = "Różnice widoczne, ale porównanie kątów jest trudniejsze niż długości",
     bar_verdict = "Natychmiastowe porównanie -- różnice czytelne od razu",
     pie_ok = TRUE
@@ -125,7 +120,7 @@ pie_vs_bar_scenarios <- list(
     name = "Podobne wartości",
     labels = c("Produkt A", "Produkt B", "Produkt C", "Produkt D", "Produkt E"),
     data = c(22, 21, 20, 19, 18),
-    colors = c("#3266ad", "#1D9E75", "#BA7517", "#D85A30", "#993556"),
+    colors = upwr_cat_n(5),
     pie_verdict = "Wycinki prawie identyczne -- nie widać która kategoria prowadzi",
     bar_verdict = "Różnice 1-2 pp. wciąż czytelne dzięki wspólnej osi",
     pie_ok = FALSE
@@ -134,7 +129,9 @@ pie_vs_bar_scenarios <- list(
     name = "Podobne + zle kolory",
     labels = c("Produkt A", "Produkt B", "Produkt C", "Produkt D", "Produkt E"),
     data = c(22, 21, 20, 19, 18),
-    colors = c("#3266ad", "#4a7abf", "#6290d0", "#7aa6e0", "#93bcf0"),
+    # Świadomie zły dobór kolorów — pięć odcieni tego samego niebieskiego.
+    # Ilustracja problemu: "zbliżone wielkości + zbliżone kolory = nieczytelny wykres".
+    colors = upwr_seq_burgundy[3:7],
     pie_verdict = "Zblizone wielkości + zbliżone kolory = nieczytelny wykres",
     bar_verdict = "Nawet przy podobnych kolorach pozycja na osi ratuje czytelnosc",
     pie_ok = FALSE

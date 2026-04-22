@@ -136,12 +136,15 @@ div(class = "widget-block lc-wide", plotOutput("plot"))
 Bez `lc-wide` wykres mieści się w kolumnie tekstu (~680px). Z `lc-wide` czyści floaty i rozciąga się do pełnej szerokości kontentu.
 
 ### Nowe komponenty (opcjonalne)
-Dostępne w `lecture_layout.R`, na razie nieużywane w rozdziałach:
+Dostępne w `lecture_layout.R`:
+- `lc_chapter_hero(kicker, num, title, lead)` — okładka rozdziału z dużą cyfrą, tytułem, squiggle-underline i leadem. Używaj jako pierwszy element `content` rozdziału (zamiast `section-title`).
 - `lc_h2(id, num, title)` — nagłówek sekcji z numerem §N w sidebarze
 - `lc_grid(...)` — jawna siatka tekst + prawy margines
-- `margin_callout(label, ..., color)` — callout na prawym marginesie z etykietą
+- `margin_callout(label, ..., color)` — callout na prawym marginesie z etykietą. Warianty `color`: `"uwaga"` (burgundy, `※`), `"ok"` (sage, `✓`), `"wskazowka"` (gold, `ℓ` — domyślny)
+- `margin_code_note(code, description, label)` — callout "W kodzie" z blokiem monospace (gold, `⌘`)
 - `margin_note(...)` — lżejsza notka marginalna
-- `figure_panel(label, ...)` — ramka z plakietką
+- `figure_panel(label, ..., title, color)` — ramka z plakietką (np. `label = "Ryc. 1.1"`)
+- `lc_chapter_next(num, title, lead, target_id)` — navigational link "→ Dalej" do następnego rozdziału (na marginesie)
 
 ### Dodawanie nowego wykładu do górnego paska
 W `R/lecture_layout.R`, lista `.LC_MODULES` i mapa `.LC_LECTURE_MODULE`:

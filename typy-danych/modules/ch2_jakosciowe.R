@@ -6,24 +6,22 @@ ch2_ui <- list(
   id = "ch-jakosciowe", num = "02", title = "Zmienne jakościowe",
   content = tagList(
 
-    # --- Introduction ---
-    div(class = "chapter-recap",
-      "W poprzednim rozdziale poznalismy cztery typy zmiennych. Teraz zajmiemy sie
-       pierwszym z nich -- zmiennymi jakościowymi."
-    ),
-    div(class = "section-title", "Zmienne jakościowe"),
-
-    div(class = "narrative",
-      p("Zmienne jakościowe opisują cechy, nie liczby. Podstawowym narzędziem
-        ich opisu jest tabela częstości. Zobaczmy krok po kroku, jak ja
-        zbudować na przykładzie zmiennej ", tags$b("kierunek studiow"), ".")
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 02 · Statystyka opisowa",
+      num    = "02",
+      title  = "Zmienne jakościowe.",
+      lead   = "Zmienne jakościowe opisują cechy, nie liczby. Podstawowym narzędziem
+                ich opisu jest tabela częstości — zobaczmy krok po kroku, jak ją
+                zbudować na przykładzie zmiennej „kierunek studiów”."
     ),
 
     # ========================================================================
     # WIDGET 1: Frequency table step-by-step
     # ========================================================================
-    div(class = "widget-block",
-      h4("Tabela częstości - krok po kroku"),
+    figure_panel(
+      label = "Ryc. 2.1",
+      title = "Tabela częstości — krok po kroku",
       radioButtons("ch2_freq_var", "Wybierz zmienną:",
         choices = c(
           "Kierunek studiów (nominalna)" = "kierunek",
@@ -58,24 +56,24 @@ ch2_ui <- list(
         Ta roznica ma praktyczne konsekwencje.")
     ),
 
-    div(class = "widget-block",
-      h4("Czy kolejność kategorii ma znaczenie?"),
+    figure_panel(
+      label = "Ryc. 2.2",
+      title = "Czy kolejność kategorii ma znaczenie?",
 
       checkboxInput("ch2_ord_shuffle", "Losowa kolejność kategorii", value = FALSE),
 
       fluidRow(
         column(6,
-          h5(style = "text-align: center; color: #e74c3c;", "Nominalna: Kierunek studiów"),
+          h5(style = paste0("text-align: center; color: ", type_colors["nominalna"], ";"), "Nominalna: Kierunek studiów"),
           plotOutput("ch2_ord_nom_plot", height = "300px")
         ),
         column(6,
-          h5(style = "text-align: center; color: #f39c12;", "Porzadkowa: Zadowolenie"),
+          h5(style = paste0("text-align: center; color: ", type_colors["porzadkowa"], ";"), "Porzadkowa: Zadowolenie"),
           plotOutput("ch2_ord_ord_plot", height = "300px")
         )
       ),
 
-      uiOutput("ch2_ord_explanation"),
-
+      uiOutput("ch2_ord_explanation")
     ),
 
     # --- Narrative before Widget 2 ---
@@ -90,8 +88,9 @@ ch2_ui <- list(
     # ========================================================================
     # WIDGET 2: Pie vs Bar -- scenario comparison
     # ========================================================================
-    div(class = "widget-block",
-      h4("Trzy scenariusze porównawcze"),
+    figure_panel(
+      label = "Ryc. 2.3",
+      title = "Pie vs Bar — trzy scenariusze porównawcze",
       div(style = "display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;",
         actionButton("ch2_sc1", "1. Duze różnice",
                      class = "btn-outline-primary"),
@@ -102,21 +101,21 @@ ch2_ui <- list(
       ),
       fluidRow(
         column(6,
-          h5(style = "text-align: center; color: #5f5e5a;", "Wykres kołowy"),
+          h5(style = "text-align: center; color: var(--upwr-reference);", "Wykres kołowy"),
           div(style = "position: relative; width: 100%; height: 320px;",
             tags$canvas(id = "ch2_pie_canvas")
           ),
           uiOutput("ch2_scenario_pie_verdict")
         ),
         column(6,
-          h5(style = "text-align: center; color: #5f5e5a;", "Wykres słupkowy -- te same dane"),
+          h5(style = "text-align: center; color: var(--upwr-reference);", "Wykres słupkowy -- te same dane"),
           div(style = "position: relative; width: 100%; height: 320px;",
             tags$canvas(id = "ch2_bar_canvas")
           ),
           uiOutput("ch2_scenario_bar_verdict")
         )
       ),
-      div(style = "display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #5f5e5a; margin-top: 8px;",
+      div(style = "display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--upwr-reference); margin-top: 8px;",
         id = "ch2_legend",
         uiOutput("ch2_scenario_legend")
       )
@@ -134,8 +133,9 @@ ch2_ui <- list(
     # ========================================================================
     # WIDGET 4: Color manipulation demo
     # ========================================================================
-    div(class = "widget-block",
-      h4("Jak kolory zmieniaja percepcje danych"),
+    figure_panel(
+      label = "Ryc. 2.4",
+      title = "Jak kolory zmieniają percepcję danych",
       fluidRow(
         column(4,
           selectInput("ch2_color_palette", "Paleta kolorów:",
@@ -190,8 +190,9 @@ ch2_ui <- list(
         ". Sluzy do tego tabela krzyzowa (kontyngencji).")
     ),
 
-    div(class = "widget-block",
-      h4("Tabela krzyzowa"),
+    figure_panel(
+      label = "Ryc. 2.5",
+      title = "Tabela krzyżowa",
       fluidRow(
         column(4,
           selectInput("ch2_cross_row", "Zmienna w wierszach:",
@@ -240,19 +241,20 @@ ch2_ui <- list(
     # ========================================================================
     # WIDGET 5: Mode (dominanta)
     # ========================================================================
-    div(class = "widget-block",
-      h4("Dominanta - najczęściej występująca kategoria"),
+    figure_panel(
+      label = "Ryc. 2.6",
+      title = "Dominanta — najczęściej występująca kategoria",
       actionButton("ch2_mode_resample", "Losuj nowe proporcje",
                    class = "btn-primary"),
       plotOutput("ch2_mode_plot", height = "350px"),
       uiOutput("ch2_mode_text")
     ),
 
-    div(class = "chapter-transition",
-      p("Zmienne jakościowe opisaliśmy tabelami częstości i dominanta.
-        A co ze zmiennymi ilościowymi? Potrzebujemy nowych narzedzi -- statystyk polozenia."),
-      actionButton("ch2_next", "Dalej: 3. Statystyki polozenia →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "03",
+      title     = "Statystyki położenia",
+      lead      = "zmienne jakościowe mamy za sobą — pora na narzędzia dla ilościowych.",
+      target_id = "ch-polozenie"
     ),
 
     # Bottom spacer
@@ -406,12 +408,12 @@ ch2_server <- function(input, output, session) {
     }
     df$kierunek <- factor(df$kierunek, levels = lvls)
     ggplot(df, aes(x = kierunek)) +
-      geom_bar(fill = col_nominal, color = "white", alpha = 0.85) +
+      geom_bar(fill = type_colors["nominalna"], color = "white", alpha = 0.85) +
       geom_text(stat = "count", aes(label = after_stat(count)),
                 vjust = -0.5, size = 5) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
       labs(x = "Kierunek", y = "Liczebność") +
-      theme_minimal(base_size = 14)
+      theme()
   })
 
   output$ch2_ord_ord_plot <- renderPlot({
@@ -422,13 +424,13 @@ ch2_server <- function(input, output, session) {
     }
     df$zadowolenie <- factor(df$zadowolenie, levels = lvls)
     ggplot(df, aes(x = zadowolenie)) +
-      geom_bar(fill = col_ordinal, color = "white", alpha = 0.85) +
+      geom_bar(fill = type_colors["porzadkowa"], color = "white", alpha = 0.85) +
       geom_text(stat = "count", aes(label = after_stat(count)),
                 vjust = -0.5, size = 5) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
       scale_x_discrete(labels = function(x) gsub(" ", "\n", x)) +
       labs(x = "Zadowolenie", y = "Liczebność") +
-      theme_minimal(base_size = 14)
+      theme()
   })
 
   output$ch2_ord_explanation <- renderUI({
@@ -476,10 +478,10 @@ ch2_server <- function(input, output, session) {
 
   output$ch2_scenario_pie_verdict <- renderUI({
     s <- ch2_current_scenario()
-    badge_style <- if (s$pie_ok) "background: #EAF3DE; color: #3B6D11;" else
-                                 "background: #FCEBEB; color: #A32D2D;"
+    badge_style <- if (s$pie_ok) "background: var(--upwr-sage-tint); color: var(--upwr-sage);" else
+                                 "background: var(--upwr-accent-tint); color: var(--upwr-accent);"
     badge_text  <- if (s$pie_ok) "OK" else "Problem"
-    div(style = "text-align: center; font-size: 13px; color: #5f5e5a; margin-top: 6px;",
+    div(style = "text-align: center; font-size: 13px; color: var(--upwr-reference); margin-top: 6px;",
       tags$span(style = paste0("display: inline-block; font-size: 11px; padding: 2px 8px;
                                  border-radius: 6px; font-weight: 500; margin-right: 4px; ",
                                 badge_style), badge_text),
@@ -489,10 +491,10 @@ ch2_server <- function(input, output, session) {
 
   output$ch2_scenario_bar_verdict <- renderUI({
     s <- ch2_current_scenario()
-    div(style = "text-align: center; font-size: 13px; color: #5f5e5a; margin-top: 6px;",
+    div(style = "text-align: center; font-size: 13px; color: var(--upwr-reference); margin-top: 6px;",
       tags$span(style = "display: inline-block; font-size: 11px; padding: 2px 8px;
                          border-radius: 6px; font-weight: 500; margin-right: 4px;
-                         background: #EAF3DE; color: #3B6D11;", "OK"),
+                         background: var(--upwr-sage-tint); color: var(--upwr-sage);", "OK"),
       s$bar_verdict
     )
   })
@@ -544,26 +546,26 @@ ch2_server <- function(input, output, session) {
       fill_colors <- setNames(rand_cols, levels_order)
       subtitle <- "Losowa paleta kolorow"
     } else if (palette_choice == "neutral") {
-      fill_colors <- setNames(rep("#95a5a6", 4), levels_order)
+      fill_colors <- setNames(rep(upwr_reference, 4), levels_order)
       subtitle <- "Neutralna - wszystkie kategorie rowne"
     } else if (palette_choice == "warm") {
       fill_colors <- setNames(
-        ifelse(levels_order == "Informatyka", "#e74c3c", "#d5d8dc"),
+        ifelse(levels_order == "Informatyka", upwr_accent, upwr_rule),
         levels_order
       )
       subtitle <- "Ciepla paleta - uwaga przyciagana do Informatyki"
     } else if (palette_choice == "cool") {
       fill_colors <- setNames(
-        ifelse(levels_order == "Biologia", "#2980b9", "#d5d8dc"),
+        ifelse(levels_order == "Biologia", upwr_cat["indygo"], upwr_rule),
         levels_order
       )
       subtitle <- "Zimna paleta - uwaga przyciagana do Biologii"
     } else if (palette_choice == "biased") {
       biggest <- df_counts$Kierunek[which.max(df_counts$n)]
       smallest <- df_counts$Kierunek[which.min(df_counts$n)]
-      cols <- setNames(rep("#bdc3c7", 4), levels_order)
-      cols[as.character(biggest)]  <- "#e74c3c"
-      cols[as.character(smallest)] <- "#2c3e50"
+      cols <- setNames(rep(upwr_reference, 4), levels_order)
+      cols[as.character(biggest)]  <- upwr_accent
+      cols[as.character(smallest)] <- upwr_secondary
       fill_colors <- cols
       subtitle <- paste0("Stronnicza - ", biggest,
                          " wyróżniona, ", smallest, " wyciszona")
@@ -588,7 +590,7 @@ ch2_server <- function(input, output, session) {
         levels_order)
       subtitle <- "Tableau 10 -- standard w wizualizacji danych"
     } else {
-      fill_colors <- setNames(rep("#95a5a6", length(levels_order)), levels_order)
+      fill_colors <- setNames(rep(upwr_reference, length(levels_order)), levels_order)
       subtitle <- ""
     }
 
@@ -600,9 +602,8 @@ ch2_server <- function(input, output, session) {
       labs(title = "Kierunek studiów",
            subtitle = subtitle,
            x = "Kierunek", y = "Liczebność") +
-      theme_minimal(base_size = 14) +
-      theme(plot.title = element_text(face = "bold"),
-            plot.subtitle = element_text(color = "#7f8c8d", face = "italic"))
+            theme(plot.title = element_text(face = "bold"),
+            plot.subtitle = element_text(color = upwr_ink_soft, face = "italic"))
   })
 
 
@@ -668,10 +669,9 @@ ch2_server <- function(input, output, session) {
       ggplot(heat_df, aes(x = Kolumna, y = Wiersz, fill = Wartosc)) +
         geom_tile(color = "white", linewidth = 1.5) +
         geom_text(aes(label = fmt(Wartosc)), size = 5, fontface = "bold") +
-        scale_fill_gradient(low = "#eaf2f8", high = "#2980b9", name = fill_label) +
+        scale_fill_upwr_seq(variant = "burgundy", name = fill_label) +
         labs(x = col_label[col_var], y = row_label[row_var]) +
-        theme_minimal(base_size = 14) +
-        theme(
+                theme(
           panel.grid = element_blank(),
           axis.text = element_text(size = 12)
         )
@@ -679,10 +679,9 @@ ch2_server <- function(input, output, session) {
       # Grouped bar chart
       ggplot(df, aes(x = row, fill = col)) +
         geom_bar(position = "dodge", alpha = 0.85, color = "white") +
-        scale_fill_brewer(palette = "Set2") +
+        scale_fill_upwr() +
         labs(x = row_label[row_var], y = "Liczebność", fill = col_label[col_var]) +
-        theme_minimal(base_size = 14) +
-        theme(legend.position = "top")
+                theme(legend.position = "top")
     }
   })
 
@@ -715,13 +714,12 @@ ch2_server <- function(input, output, session) {
       geom_text(aes(label = n), vjust = -0.5, size = 5, fontface = "bold") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
       scale_fill_manual(
-        values = c("Dominanta" = col_nominal, "Inne" = "#d5d8dc"),
+        values = c("Dominanta" = type_colors["nominalna"], "Inne" = upwr_rule),
         guide = "none"
       ) +
       labs(title = "Kierunek studiów - dominanta",
            x = "Kierunek", y = "Liczebność") +
-      theme_minimal(base_size = 14) +
-      theme(plot.title = element_text(face = "bold"))
+            theme(plot.title = element_text(face = "bold"))
   })
 
   output$ch2_mode_text <- renderUI({

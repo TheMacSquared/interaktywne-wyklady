@@ -3,54 +3,42 @@
 # Zrodlowane przez kazdy app.R po ustaleniu app_dir i project_root
 # ============================================================================
 
-# Kolory bazowe projektu (zgodne z shared_styles.css)
-col_primary    <- "#3498db"    # niebieski
-col_secondary  <- "#e74c3c"    # czerwony
-col_success    <- "#27ae60"    # zielony
-col_warning    <- "#f39c12"    # pomaranczowy
-col_dark       <- "#2c3e50"    # ciemny
-col_purple     <- "#9b59b6"    # fioletowy
-col_teal       <- "#1abc9c"    # morski
+# Paleta kolorów UPWr + motyw ggplot2 są sourcowane z R/palette.R i
+# R/theme_upwr.R. Role semantyczne (upwr_accent/single/secondary/reference),
+# paleta kategoryczna (upwr_cat), skale ciągłe (upwr_seq_*, upwr_div,
+# upwr_ord*), theme_upwr(). Sourcowanie odbywa się w app.R po ustaleniu
+# project_root — patrz typy-danych/app.R.
 
-# Theme dla wszystkich wykresow w projekcie.
-# base_family = "" -> ggplot uzyje domyslnego fontu systemowego (Arial/sans).
-# Jesli uzytkownik zarejestruje Atkinson Hyperlegible przez showtext, mozna
-# wywolac theme_educational(base_family = "Atkinson Hyperlegible").
-theme_educational <- function(base_size = 14, base_family = "") {
-  theme_minimal(base_size = base_size, base_family = base_family) +
-    theme(
-      plot.title        = element_text(face = "bold", size = base_size + 2,
-                                       color = "#2c3e50"),
-      plot.title.position = "plot",
-      plot.subtitle     = element_text(color = "#7f8c8d", size = base_size - 1),
-      plot.caption      = element_text(color = "#95a5a6", size = base_size - 2),
-      axis.title        = element_text(color = "#34495e"),
-      axis.text         = element_text(color = "#5d6d7e"),
-      panel.grid.minor  = element_blank(),
-      panel.grid.major  = element_line(color = "#ecf0f1"),
-      strip.background  = element_blank(),
-      strip.text        = element_text(face = "bold", color = "#34495e"),
-      legend.position   = "bottom",
-      legend.title      = element_text(face = "bold")
-    )
-}
-
-# Paleta semantyczna projektu (kolory zgodne z shared_styles.css)
-lecture_palette <- c(
-  primary   = "#3498db",  # niebieski
-  secondary = "#e74c3c",  # czerwony
-  success   = "#27ae60",  # zielony
-  warning   = "#f39c12",  # pomaranczowy
-  dark      = "#2c3e50",  # ciemny
-  purple    = "#9b59b6",
-  teal      = "#1abc9c"
-)
-
-scale_color_lecture <- function(...) {
-  ggplot2::scale_color_manual(values = unname(lecture_palette), ...)
-}
-scale_fill_lecture <- function(...) {
-  ggplot2::scale_fill_manual(values = unname(lecture_palette), ...)
+#' Ustaw globalny motyw i defaulty geom-ów dla całej apki.
+#' Wywołać raz w app.R po sourcowaniu palette.R + theme_upwr.R.
+lc_apply_ggplot_defaults <- function() {
+  # Zarejestruj Atkinson Hyperlegible w ggplot przez showtext (jeśli dostępne).
+  # Bez showtext ggplot nie wyrenderuje fontu webowego — spadnie na systemowy sans.
+  base_family <- ""
+  if (requireNamespace("showtext", quietly = TRUE) &&
+      requireNamespace("sysfonts", quietly = TRUE)) {
+    if (!"Atkinson Hyperlegible" %in% sysfonts::font_families()) {
+      try(sysfonts::font_add_google("Atkinson Hyperlegible", "Atkinson Hyperlegible"),
+          silent = TRUE)
+    }
+    if ("Atkinson Hyperlegible" %in% sysfonts::font_families()) {
+      showtext::showtext_auto()
+      showtext::showtext_opts(dpi = 96)
+      base_family <- "Atkinson Hyperlegible"
+    }
+  }
+  ggplot2::theme_set(theme_upwr(base_family = base_family))
+  ggplot2::update_geom_defaults("point",   list(colour = upwr_single))
+  ggplot2::update_geom_defaults("line",    list(colour = upwr_single))
+  ggplot2::update_geom_defaults("bar",     list(fill   = upwr_single))
+  ggplot2::update_geom_defaults("col",     list(fill   = upwr_single))
+  ggplot2::update_geom_defaults("histogram", list(fill = upwr_single, colour = NA))
+  ggplot2::update_geom_defaults("density", list(colour = upwr_single, fill = NA))
+  ggplot2::update_geom_defaults("boxplot", list(fill   = upwr_panel,  colour = upwr_single))
+  ggplot2::update_geom_defaults("smooth",  list(colour = upwr_accent, fill = upwr_seq_burgundy[3]))
+  ggplot2::update_geom_defaults("vline",   list(colour = upwr_reference, linetype = "dashed"))
+  ggplot2::update_geom_defaults("hline",   list(colour = upwr_reference, linetype = "dashed"))
+  invisible(NULL)
 }
 
 # ============================================================================

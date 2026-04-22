@@ -6,29 +6,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap&subset=latin-ext');
 @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
 
-/* === Tokeny === */
+/* === Tokeny typograficzne === */
+/* Kolorowe tokeny --upwr-* są generowane dynamicznie z R/palette.R przez
+   .lc_palette_css() w lecture_layout.R (wstrzykiwane w tags$head po tym CSS).
+   Jedno źródło prawdy dla wszystkich kolorów — ggplot, CSS i inline style
+   używają tych samych wartości z palette.R. */
 :root {
-  --lc-bg:           #fafaf7;
-  --lc-paper:        #f7f4ec;
-  --lc-surface:      #ffffff;
-  --lc-surface2:     #f3f1ea;
-  --lc-ink:          #1a1a1a;
-  --lc-ink-soft:     #3d3d3a;
-  --lc-ink-faded:    #8a8780;
-  --lc-ink-subtle:   #b8b5ad;
-  --lc-rule:         #d9d5cc;
-  --lc-rule-soft:    #e8e5de;
-  --lc-burgundy:     #6b1a26;
-  --lc-burgundy-b:   #8a2535;
-  --lc-burgundy-t:   #f4e8ea;
-  --lc-gold:         #b8893a;
-  --lc-gold-t:       #f5ecd8;
-  --lc-sage:         #5a7a5a;
-  --lc-sage-t:       #e8f0e5;
-  --lc-serif:        'Source Serif 4', Georgia, serif;
-  --lc-mono:         'JetBrains Mono', ui-monospace, monospace;
-  --lc-sans:         'Atkinson Hyperlegible', -apple-system, sans-serif;
-  --lc-nav-w:        280px;
+  --upwr-sans:   'Atkinson Hyperlegible', -apple-system, sans-serif;
+  --upwr-mono:   'JetBrains Mono', ui-monospace, monospace;
+  /* --upwr-serif mapowane na sans — Atkinson jako domyślna czcionka wszędzie.
+     Zmienna zostaje w CSS, żeby nie łamać istniejących reguł font-family;
+     efektywnie cały tekst jest teraz Atkinson Hyperlegible. */
+  --upwr-serif:  var(--upwr-sans);
+  --upwr-nav-w:  280px;
 }
 
 /* === Reset dla pełnoekranowego layoutu === */
@@ -37,9 +27,9 @@ html, body {
   margin: 0;
   padding: 0 !important;
   overflow: hidden;
-  background: var(--lc-bg);
-  font-family: var(--lc-sans);
-  color: var(--lc-ink);
+  background: var(--upwr-bg);
+  font-family: var(--upwr-sans);
+  color: var(--upwr-ink);
 }
 
 /* Shiny wrappers — nie przeszkadzają w full-height */
@@ -55,8 +45,8 @@ html, body {
 
 /* === Górny pasek modułów === */
 .lc-tabs {
-  background: var(--lc-surface);
-  border-bottom: 1px solid var(--lc-rule);
+  background: var(--upwr-surface);
+  border-bottom: 1px solid var(--upwr-rule);
   padding: 0 32px;
   display: flex;
   align-items: stretch;
@@ -70,7 +60,7 @@ html, body {
   align-items: center;
   gap: 10px;
   padding-right: 24px;
-  border-right: 1px solid var(--lc-rule-soft);
+  border-right: 1px solid var(--upwr-rule-soft);
   margin-right: 16px;
   text-decoration: none;
 }
@@ -78,12 +68,12 @@ html, body {
 .lc-tabs-logo-mark {
   width: 30px;
   height: 30px;
-  background: var(--lc-burgundy);
+  background: var(--upwr-accent);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-weight: 700;
   font-size: 16px;
   flex-shrink: 0;
@@ -96,19 +86,19 @@ html, body {
 }
 
 .lc-tabs-logo-title {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-style: italic;
   font-size: 16px;
-  color: var(--lc-ink);
+  color: var(--upwr-ink);
   line-height: 1;
 }
 
 .lc-tabs-logo-sub {
-  font-family: var(--lc-mono);
+  font-family: var(--upwr-mono);
   font-size: 9px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--lc-ink-faded);
+  color: var(--upwr-reference);
   margin-top: 2px;
 }
 
@@ -118,9 +108,9 @@ html, body {
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
   padding: 14px 20px;
-  font-family: var(--lc-sans);
+  font-family: var(--upwr-sans);
   font-size: 14px;
-  color: var(--lc-ink-faded);
+  color: var(--upwr-reference);
   font-weight: 400;
   cursor: pointer;
   display: flex;
@@ -131,24 +121,24 @@ html, body {
   white-space: nowrap;
 }
 
-.lc-tab:hover { color: var(--lc-ink); }
+.lc-tab:hover { color: var(--upwr-ink); }
 
 .lc-tab.lc-tab-active {
-  color: var(--lc-ink);
+  color: var(--upwr-ink);
   font-weight: 600;
-  border-bottom-color: var(--lc-burgundy);
+  border-bottom-color: var(--upwr-accent);
 }
 
 .lc-tab-num {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 13px;
   font-weight: 700;
   font-style: italic;
-  color: var(--lc-burgundy);
+  color: var(--upwr-accent);
 }
 
 .lc-tab:not(.lc-tab-active) .lc-tab-num {
-  color: var(--lc-ink-subtle);
+  color: var(--upwr-ink-subtle);
 }
 
 /* === Body (sidebar + main) === */
@@ -161,34 +151,34 @@ html, body {
 
 /* === Lewy sidebar === */
 .lc-nav {
-  width: var(--lc-nav-w);
+  width: var(--upwr-nav-w);
   flex-shrink: 0;
-  background: var(--lc-paper);
-  border-right: 1px solid var(--lc-rule-soft);
+  background: var(--upwr-panel);
+  border-right: 1px solid var(--upwr-rule-soft);
   padding: 24px 18px;
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 .lc-nav-module-label {
-  font-family: var(--lc-mono);
+  font-family: var(--upwr-mono);
   font-size: 9px;
   letter-spacing: 2.5px;
   text-transform: uppercase;
-  color: var(--lc-ink-faded);
+  color: var(--upwr-reference);
   font-weight: 700;
   margin-bottom: 4px;
 }
 
 .lc-nav-module-title {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 18px;
   font-weight: 700;
-  color: var(--lc-ink);
+  color: var(--upwr-ink);
   line-height: 1.2;
   margin-bottom: 18px;
   padding-bottom: 16px;
-  border-bottom: 1px solid var(--lc-rule-soft);
+  border-bottom: 1px solid var(--upwr-rule-soft);
 }
 
 /* Rozdział w sidebarze */
@@ -205,20 +195,20 @@ html, body {
   border-left: 3px solid transparent;
   padding: 9px 10px;
   cursor: pointer;
-  font-family: var(--lc-sans);
+  font-family: var(--upwr-sans);
   font-size: 14px;
-  color: var(--lc-ink);
+  color: var(--upwr-ink);
   transition: background 0.1s;
 }
 
 .lc-nav-chapter-btn:hover {
-  background: var(--lc-surface2);
+  background: var(--upwr-surface-sunken);
 }
 
 .lc-nav-chapter-btn.lc-active {
-  background: var(--lc-surface);
-  border-color: var(--lc-rule);
-  border-left-color: var(--lc-burgundy);
+  background: var(--upwr-surface);
+  border-color: var(--upwr-rule);
+  border-left-color: var(--upwr-accent);
 }
 
 .lc-nav-chapter-inner {
@@ -228,32 +218,39 @@ html, body {
 }
 
 .lc-nav-chapter-num {
-  font-family: var(--lc-mono);
-  font-size: 10px;
+  font-family: var(--upwr-mono);
+  font-size: 11px;
   font-weight: 700;
-  color: var(--lc-ink-faded);
+  color: var(--upwr-reference);
   flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
 }
 
 .lc-nav-chapter-btn.lc-active .lc-nav-chapter-num {
-  color: var(--lc-burgundy);
+  color: var(--upwr-accent);
 }
 
 .lc-nav-chapter-title {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 14px;
   font-weight: 500;
-  color: var(--lc-ink);
+  color: var(--upwr-reference);
   line-height: 1.25;
+}
+
+.lc-nav-chapter-btn:hover .lc-nav-chapter-title {
+  color: var(--upwr-ink);
 }
 
 .lc-nav-chapter-btn.lc-active .lc-nav-chapter-title {
   font-weight: 700;
+  color: var(--upwr-ink);
 }
 
 .lc-nav-chapter-dur {
   font-size: 11px;
-  color: var(--lc-ink-faded);
+  color: var(--upwr-reference);
   margin-top: 3px;
   margin-left: 24px;
   line-height: 1.3;
@@ -264,7 +261,7 @@ html, body {
   list-style: none;
   margin: 3px 0 8px 0;
   padding: 4px 0 4px 14px;
-  border-left: 1px solid var(--lc-rule-soft);
+  border-left: 1px solid var(--upwr-rule-soft);
   margin-left: 14px;
   display: none; /* pokazywany przez JS dla aktywnego rozdziału */
 }
@@ -277,30 +274,30 @@ html, body {
   margin-left: -1px;
   border-left: 2px solid transparent;
   text-decoration: none;
-  font-family: var(--lc-sans);
+  font-family: var(--upwr-sans);
   font-size: 12px;
-  color: var(--lc-ink-faded);
+  color: var(--upwr-reference);
   font-weight: 400;
   line-height: 1.35;
   transition: color 0.1s, border-color 0.1s;
 }
 
-.lc-nav-toc a:hover { color: var(--lc-ink); }
+.lc-nav-toc a:hover { color: var(--upwr-ink); }
 
 .lc-nav-toc a.lc-active {
-  color: var(--lc-burgundy);
+  color: var(--upwr-accent);
   font-weight: 600;
-  border-left-color: var(--lc-burgundy);
+  border-left-color: var(--upwr-accent);
 }
 
 .lc-nav-toc-num {
-  font-family: var(--lc-mono);
+  font-family: var(--upwr-mono);
   font-size: 10px;
   margin-right: 6px;
-  color: var(--lc-ink-subtle);
+  color: var(--upwr-ink-subtle);
 }
 
-.lc-nav-toc a.lc-active .lc-nav-toc-num { color: var(--lc-burgundy); }
+.lc-nav-toc a.lc-active .lc-nav-toc-num { color: var(--upwr-accent); }
 
 /* === Główna obszar treści === */
 .lc-main {
@@ -309,7 +306,7 @@ html, body {
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
-  background: var(--lc-bg);
+  background: var(--upwr-bg);
 }
 
 /* === Wrapper treści wewnątrz .lc-main === */
@@ -328,16 +325,16 @@ html, body {
 /* === Header rozdziału === */
 .lc-chapter-header {
   padding-bottom: 40px;
-  border-bottom: 1px solid var(--lc-rule-soft);
+  border-bottom: 1px solid var(--upwr-rule-soft);
   margin-bottom: 16px;
 }
 
 .lc-chapter-kicker {
-  font-family: var(--lc-mono);
+  font-family: var(--upwr-mono);
   font-size: 11px;
   letter-spacing: 2.5px;
   text-transform: uppercase;
-  color: var(--lc-ink-faded);
+  color: var(--upwr-reference);
   margin-bottom: 20px;
 }
 
@@ -350,31 +347,31 @@ html, body {
 }
 
 .lc-chapter-num {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-weight: 700;
   font-size: 120px;
   line-height: 0.88;
-  color: var(--lc-burgundy);
+  color: var(--upwr-accent);
   letter-spacing: -4px;
   flex-shrink: 0;
   opacity: 0.85;
 }
 
 .lc-chapter-title {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-weight: 700;
   font-size: 52px;
   line-height: 0.98;
   margin: 0;
-  color: var(--lc-ink);
+  color: var(--upwr-ink);
   letter-spacing: -1.5px;
 }
 
 .lc-chapter-lead {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 20px;
   line-height: 1.5;
-  color: var(--lc-ink-soft);
+  color: var(--upwr-ink-soft);
   max-width: 600px;
   margin: 0;
 }
@@ -408,20 +405,20 @@ html, body {
 
 /* === Treść narracyjna (kolumna 1) === */
 .lc-p {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 18px;
   line-height: 1.65;
-  color: var(--lc-ink-soft);
+  color: var(--upwr-ink-soft);
   margin: 0 0 1.1em;
   max-width: 680px;
 }
 
 .lc-h2 {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 30px;
   font-weight: 700;
   line-height: 1.15;
-  color: var(--lc-ink);
+  color: var(--upwr-ink);
   letter-spacing: -0.5px;
   margin: 3em 0 0.5em;
   scroll-margin-top: 80px;
@@ -429,27 +426,27 @@ html, body {
 
 .lc-h2-kicker {
   display: block;
-  font-family: var(--lc-mono);
+  font-family: var(--upwr-mono);
   font-size: 10px;
   letter-spacing: 2.5px;
   text-transform: uppercase;
-  color: var(--lc-burgundy);
+  color: var(--upwr-accent);
   font-weight: 700;
   margin-bottom: 6px;
 }
 
 .lc-h3 {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 20px;
   font-weight: 600;
   font-style: italic;
-  color: var(--lc-ink);
+  color: var(--upwr-ink);
   margin: 2em 0 0.4em;
 }
 
 /* Inicjał (drop cap) */
 .lc-drop {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-weight: 700;
   font-size: 60px;
   float: left;
@@ -457,23 +454,23 @@ html, body {
   margin-right: 8px;
   margin-top: 6px;
   margin-bottom: -4px;
-  color: var(--lc-burgundy);
+  color: var(--upwr-accent);
 }
 
 /* === Margin callouts === */
 .lc-margin-callout {
-  border-left: 2px solid var(--lc-gold);
+  border-left: 2px solid var(--upwr-single-alt);
   padding-left: 12px;
   margin-bottom: 20px;
 }
 
 .lc-margin-callout-label {
-  font-family: var(--lc-mono);
+  font-family: var(--upwr-mono);
   font-size: 9px;
   letter-spacing: 2px;
   text-transform: uppercase;
   font-weight: 700;
-  color: var(--lc-gold);
+  color: var(--upwr-single-alt);
   margin-bottom: 6px;
 }
 
@@ -482,48 +479,52 @@ html, body {
 }
 
 .lc-margin-callout-body {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 13px;
   line-height: 1.5;
-  color: var(--lc-ink-soft);
+  color: var(--upwr-ink-soft);
   font-style: italic;
 }
 
 /* Wariant: uwaga (burgundy) */
 .lc-margin-callout.lc-callout-uwaga {
-  border-left-color: var(--lc-burgundy);
+  border-left-color: var(--upwr-accent);
 }
 .lc-margin-callout.lc-callout-uwaga .lc-margin-callout-label {
-  color: var(--lc-burgundy);
+  color: var(--upwr-accent);
 }
 
 /* Wariant: wskazówka/kod (gold) — domyślny */
 
 /* Wariant: sukces (sage) */
 .lc-margin-callout.lc-callout-ok {
-  border-left-color: var(--lc-sage);
+  border-left-color: var(--upwr-sage);
 }
 .lc-margin-callout.lc-callout-ok .lc-margin-callout-label {
-  color: var(--lc-sage);
+  color: var(--upwr-sage);
 }
 
 /* === Figure panel (ramka z plakietką) === */
 .lc-figure-panel {
   position: relative;
-  background: var(--lc-surface);
-  border: 1px solid var(--lc-rule);
+  background: var(--upwr-surface);
+  border: 1px solid var(--upwr-rule);
   padding: 28px 28px 24px;
   margin: 2em 0;
+  max-width: 680px;  /* zgodność z .lc-p — domyślnie w kolumnie tekstu */
   box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
+
+/* Pełna szerokość — opt-in przez full_width = TRUE */
+.lc-figure-panel.lc-full { max-width: none; }
 
 .lc-figure-panel-badge {
   position: absolute;
   top: -9px;
   left: 20px;
-  background: var(--lc-burgundy);
+  background: var(--upwr-accent);
   color: #fff;
-  font-family: var(--lc-mono);
+  font-family: var(--upwr-mono);
   font-size: 10px;
   font-weight: 700;
   padding: 2px 10px;
@@ -532,35 +533,35 @@ html, body {
 }
 
 .lc-figure-panel-title {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 19px;
   font-weight: 600;
-  color: var(--lc-ink);
+  color: var(--upwr-ink);
   margin-bottom: 16px;
   padding-top: 4px;
 }
 
 /* === Callout — bazowe style (inline, wewnątrz widget-block itp.) === */
 .callout-info {
-  background: var(--lc-gold-t);
-  border-left: 3px solid var(--lc-gold);
+  background: var(--upwr-single-alt-tint);
+  border-left: 3px solid var(--upwr-single-alt);
   padding: 10px 14px;
   margin: 14px 0;
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 14px;
   line-height: 1.5;
-  color: var(--lc-ink-soft);
+  color: var(--upwr-ink-soft);
   border-radius: 2px;
 }
 .callout-warning {
-  background: var(--lc-burgundy-t);
-  border-left: 3px solid var(--lc-burgundy);
+  background: var(--upwr-accent-tint);
+  border-left: 3px solid var(--upwr-accent);
   padding: 10px 14px;
   margin: 14px 0;
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 14px;
   line-height: 1.5;
-  color: var(--lc-ink-soft);
+  color: var(--upwr-ink-soft);
   border-radius: 2px;
 }
 .callout-danger {
@@ -568,21 +569,21 @@ html, body {
   border-left: 3px solid #c0392b;
   padding: 10px 14px;
   margin: 14px 0;
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 14px;
   line-height: 1.5;
-  color: var(--lc-ink-soft);
+  color: var(--upwr-ink-soft);
   border-radius: 2px;
 }
 .callout-success {
-  background: var(--lc-sage-t);
-  border-left: 3px solid var(--lc-sage);
+  background: var(--upwr-sage-tint);
+  border-left: 3px solid var(--upwr-sage);
   padding: 10px 14px;
   margin: 14px 0;
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 14px;
   line-height: 1.5;
-  color: var(--lc-ink-soft);
+  color: var(--upwr-ink-soft);
   border-radius: 2px;
 }
 
@@ -602,8 +603,20 @@ html, body {
     padding: 9px 11px;
   }
 
-  /* Nagłówki sekcji i bloki struktury resetują flow */
-  .lc-chapter > h2.section-title,
+  /* Nowe margin-callouty (margin_callout, margin_code_note, lc_chapter_next) */
+  .lc-chapter > .lc-margin {
+    float: right;
+    clear: right;
+    width: 224px;
+    margin: 6px 0 18px 28px;
+  }
+
+  /* Bloki struktury resetują flow (wymuszają rozpoczęcie poniżej floatujących callout-ów).
+     Nagłówki h2/section-title i zwykłe figure_panel NIE czyszczą — niech mogą być
+     równolegle do długich callout-ów, inaczej zostawiają puste pole w treści po lewej.
+     Tylko .lc-full (opt-in "pełna szerokość") i struktury na granicy rozdziałów czyszczą. */
+  .lc-chapter > .lc-chapter-header,
+  .lc-chapter > .lc-figure-panel.lc-full,
   .lc-chapter > .chapter-recap,
   .lc-chapter > .chapter-transition,
   .lc-chapter > hr {
@@ -624,62 +637,191 @@ html, body {
   }
 }
 
+/* === Progress bar w sidebarze (X / N) === */
+.lc-nav-progress {
+  margin: 20px 12px 8px;
+  padding-top: 18px;
+  border-top: 1px solid var(--upwr-rule-soft);
+}
+
+.lc-nav-progress-bar {
+  height: 2px;
+  background: var(--upwr-rule-soft);
+  margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.lc-nav-progress-fill {
+  height: 100%;
+  background: var(--upwr-accent);
+  transition: width 0.3s ease;
+}
+
+.lc-nav-progress-text {
+  font-family: var(--upwr-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--upwr-reference);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+  text-align: right;
+}
+
+#lc-nav-progress-current { color: var(--upwr-accent); }
+
+/* === Per-typ ikony w margin-callout (override domyślnego ※) === */
+.lc-margin-callout-label::before { content: none; }
+
+.lc-margin-callout .lc-margin-callout-label::before { content: "ℓ  "; }
+.lc-margin-callout.lc-callout-uwaga .lc-margin-callout-label::before { content: "※  "; }
+.lc-margin-callout.lc-callout-ok    .lc-margin-callout-label::before { content: "✓  "; }
+.lc-margin-callout.lc-callout-kod   .lc-margin-callout-label::before { content: "⌘  "; }
+.lc-margin-callout.lc-callout-next  .lc-margin-callout-label::before { content: "→  "; }
+
+/* === Margin callout: wariant "W kodzie" (gold, blok monospace) === */
+.lc-margin-callout.lc-callout-kod {
+  border-left-color: var(--upwr-single-alt);
+}
+.lc-margin-callout.lc-callout-kod .lc-margin-callout-label {
+  color: var(--upwr-single-alt);
+}
+
+.lc-margin-code {
+  background: var(--upwr-surface-sunken);
+  font-family: var(--upwr-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 6px 8px;
+  margin: 4px 0 6px;
+  border-radius: 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--upwr-ink);
+}
+
+.lc-margin-code-desc {
+  font-family: var(--upwr-serif);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--upwr-ink-soft);
+  font-style: italic;
+}
+
+/* === Margin callout: wariant "Dalej" (navigational link do następnego rozdziału) === */
+.lc-margin-callout.lc-callout-next {
+  display: block;
+  text-decoration: none;
+  border-left-color: var(--upwr-reference);
+  transition: border-color 0.15s, background 0.15s;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-right: 6px;
+}
+.lc-margin-callout.lc-callout-next:hover {
+  border-left-color: var(--upwr-accent);
+  background: var(--upwr-rule-soft);
+}
+.lc-margin-callout.lc-callout-next .lc-margin-callout-label {
+  color: var(--upwr-reference);
+}
+.lc-margin-callout.lc-callout-next:hover .lc-margin-callout-label {
+  color: var(--upwr-accent);
+}
+
+.lc-chapter-next-title {
+  font-family: var(--upwr-serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--upwr-ink);
+  line-height: 1.25;
+  font-style: normal;
+}
+
+.lc-chapter-next-num {
+  font-family: var(--upwr-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--upwr-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.lc-chapter-next-lead {
+  font-family: var(--upwr-serif);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--upwr-reference);
+  font-style: italic;
+  margin-top: 3px;
+}
+
+/* === Tabular numerals dla cyfr w nagłówkach/tabach === */
+.lc-tab-num,
+.lc-nav-toc-num,
+.lc-chapter-num {
+  font-variant-numeric: tabular-nums;
+}
+
 /* === Stary .narrative — uproszczony === */
 .narrative {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 17px;
   line-height: 1.65;
-  color: var(--lc-ink-soft);
+  color: var(--upwr-ink-soft);
   margin-bottom: 14px;
 }
 .narrative p { margin-bottom: 12px; max-width: 680px; }
 
 /* === Stare .chapter-title, .section-title — nowy wygląd === */
 .chapter-title {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 28px;
   font-weight: 700;
-  color: var(--lc-ink);
+  color: var(--upwr-ink);
   margin: 10px 0 20px;
-  border-bottom: 2px solid var(--lc-burgundy);
+  border-bottom: 2px solid var(--upwr-accent);
   padding-bottom: 8px;
   letter-spacing: -0.3px;
 }
 
 .section-title {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 22px;
   font-weight: 600;
-  color: var(--lc-ink);
+  color: var(--upwr-ink);
   margin-top: 36px;
   margin-bottom: 14px;
   padding-left: 14px;
-  border-left: 3px solid var(--lc-burgundy);
+  border-left: 3px solid var(--upwr-accent);
 }
 
 .subsection-title, h3.problem-name {
-  font-family: var(--lc-serif);
+  font-family: var(--upwr-serif);
   font-size: 17px;
   font-weight: 600;
-  color: var(--lc-ink);
+  color: var(--upwr-ink);
   margin-top: 22px;
   margin-bottom: 8px;
 }
 
 /* === Widget block === */
 .widget-block {
-  background: var(--lc-surface);
-  border: 1px solid var(--lc-rule);
+  background: var(--upwr-surface);
+  border: 1px solid var(--upwr-rule);
   padding: 20px;
   margin: 20px 0;
+  max-width: 680px;  /* zgodność z .lc-p / .lc-figure-panel — lepszy kontrast z narracją */
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 
+/* Opt-in: pełna szerokość widgetu */
+.widget-block.lc-wide { max-width: none; }
+
 /* === Kod === */
 code, pre, .verbatim {
-  font-family: var(--lc-mono);
+  font-family: var(--upwr-mono);
   font-size: 0.88em;
-  background: var(--lc-surface2);
+  background: var(--upwr-surface-sunken);
   border-radius: 2px;
   padding: 1px 5px;
 }
@@ -687,23 +829,215 @@ code, pre, .verbatim {
 pre { padding: 12px 16px; }
 
 /* === Przyciski — nowy styl === */
-.btn-primary {
-  background: var(--lc-burgundy) !important;
-  border-color: var(--lc-burgundy) !important;
-  font-family: var(--lc-sans) !important;
-}
-.btn-primary:hover {
-  background: var(--lc-burgundy-b) !important;
-  border-color: var(--lc-burgundy-b) !important;
+/* === sliderInput (IonRangeSlider) — przemalowanie na paletę UPWr === */
+/* Shiny slider używa klas .irs-* z pakietu ionRangeSlider (domyślnie niebieski). */
+
+/* Wypełnienie zakresu (wybrany zakres) */
+.irs--shiny .irs-bar,
+.irs--shiny .irs-from,
+.irs--shiny .irs-to,
+.irs--shiny .irs-single {
+  background: var(--upwr-accent) !important;
 }
 
-.btn-outline-primary {
-  color: var(--lc-burgundy) !important;
-  border-color: var(--lc-burgundy) !important;
+/* Trójkątny „dziób" nad etykietą with value */
+.irs--shiny .irs-from::before,
+.irs--shiny .irs-to::before,
+.irs--shiny .irs-single::before {
+  border-top-color: var(--upwr-accent) !important;
 }
-.btn-outline-primary:hover {
-  background: var(--lc-burgundy) !important;
+
+/* Uchwyt (handle) — kółko przesuwania */
+.irs--shiny .irs-handle {
+  border-color: var(--upwr-accent) !important;
+}
+.irs--shiny .irs-handle > i:nth-child(1) {
+  background-color: var(--upwr-accent) !important;
+}
+
+/* Tło szyny (nieaktywny zakres) */
+.irs--shiny .irs-line {
+  background: var(--upwr-rule) !important;
+  border-color: var(--upwr-rule) !important;
+}
+
+/* Liczby min/max po bokach i pod szyną */
+.irs--shiny .irs-min,
+.irs--shiny .irs-max,
+.irs--shiny .irs-grid-text {
+  color: var(--upwr-reference) !important;
+  background: transparent !important;
+}
+
+/* === checkboxy, radio buttons, inputy — kolor akcentu === */
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"] {
+  accent-color: var(--upwr-accent);
+}
+
+/* Bootstrap focus ring — żeby niebieski border na focus nie wracał */
+.form-control:focus,
+.form-select:focus,
+.btn:focus,
+.btn-check:focus + .btn {
+  border-color: var(--upwr-accent) !important;
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--upwr-accent) 25%, transparent) !important;
+}
+
+/* === Przyciski Bootstrap — przemalowanie na paletę UPWr ===
+   Mapowanie ról semantycznych na kolory UPWr:
+   - primary  → upwr-accent (burgund) — główna akcja
+   - success  → upwr-sage   (zielony) — potwierdzenie, "pokaż odpowiedź"
+   - danger   → upwr-accent (burgund) — akcja destrukcyjna/ostrzegawcza
+   - warning  → upwr-single-alt (złoto) — zwróć uwagę
+   - info     → upwr-cat-niebo (niebieski) — informacja neutralna
+   - secondary → szary z palety — akcja wtórna */
+
+.btn {
+  font-family: var(--upwr-sans) !important;
+}
+
+/* Primary — burgund (akcent) */
+.btn-primary {
+  background: var(--upwr-accent) !important;
+  border-color: var(--upwr-accent) !important;
   color: #fff !important;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background: var(--upwr-accent-hover) !important;
+  border-color: var(--upwr-accent-hover) !important;
+  color: #fff !important;
+}
+.btn-outline-primary {
+  color: var(--upwr-accent) !important;
+  border-color: var(--upwr-accent) !important;
+  background: transparent !important;
+}
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background: var(--upwr-accent) !important;
+  color: #fff !important;
+}
+
+/* Success — szałwia */
+.btn-success {
+  background: var(--upwr-sage) !important;
+  border-color: var(--upwr-sage) !important;
+  color: #fff !important;
+}
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active {
+  background: var(--upwr-cat-szalwia) !important;
+  border-color: var(--upwr-cat-szalwia) !important;
+  filter: brightness(0.9);
+  color: #fff !important;
+}
+.btn-outline-success {
+  color: var(--upwr-sage) !important;
+  border-color: var(--upwr-sage) !important;
+  background: transparent !important;
+}
+.btn-outline-success:hover {
+  background: var(--upwr-sage) !important;
+  color: #fff !important;
+}
+
+/* Danger — burgund (akcent) jak primary, ale semantyka destrukcyjna */
+.btn-danger {
+  background: var(--upwr-accent) !important;
+  border-color: var(--upwr-accent) !important;
+  color: #fff !important;
+}
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+  background: var(--upwr-accent-hover) !important;
+  border-color: var(--upwr-accent-hover) !important;
+  color: #fff !important;
+}
+.btn-outline-danger {
+  color: var(--upwr-accent) !important;
+  border-color: var(--upwr-accent) !important;
+  background: transparent !important;
+}
+.btn-outline-danger:hover {
+  background: var(--upwr-accent) !important;
+  color: #fff !important;
+}
+
+/* Warning — złoto (single-alt) */
+.btn-warning {
+  background: var(--upwr-single-alt) !important;
+  border-color: var(--upwr-single-alt) !important;
+  color: #fff !important;
+}
+.btn-warning:hover,
+.btn-warning:focus,
+.btn-warning:active {
+  background: var(--upwr-single-alt) !important;
+  border-color: var(--upwr-single-alt) !important;
+  filter: brightness(0.9);
+  color: #fff !important;
+}
+.btn-outline-warning {
+  color: var(--upwr-single-alt) !important;
+  border-color: var(--upwr-single-alt) !important;
+  background: transparent !important;
+}
+.btn-outline-warning:hover {
+  background: var(--upwr-single-alt) !important;
+  color: #fff !important;
+}
+
+/* Info — niebo */
+.btn-info {
+  background: var(--upwr-cat-niebo) !important;
+  border-color: var(--upwr-cat-niebo) !important;
+  color: #fff !important;
+}
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active {
+  background: var(--upwr-cat-indygo) !important;
+  border-color: var(--upwr-cat-indygo) !important;
+  color: #fff !important;
+}
+.btn-outline-info {
+  color: var(--upwr-cat-niebo) !important;
+  border-color: var(--upwr-cat-niebo) !important;
+  background: transparent !important;
+}
+.btn-outline-info:hover {
+  background: var(--upwr-cat-niebo) !important;
+  color: #fff !important;
+}
+
+/* Secondary — neutralny szary (reference/rule) */
+.btn-secondary {
+  background: var(--upwr-reference) !important;
+  border-color: var(--upwr-reference) !important;
+  color: #fff !important;
+}
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active {
+  background: var(--upwr-ink-soft) !important;
+  border-color: var(--upwr-ink-soft) !important;
+  color: #fff !important;
+}
+.btn-outline-secondary {
+  color: var(--upwr-ink-soft) !important;
+  border-color: var(--upwr-rule) !important;
+  background: transparent !important;
+}
+.btn-outline-secondary:hover {
+  background: var(--upwr-rule) !important;
+  color: var(--upwr-ink) !important;
 }
 
 /* === Pasek kroków === */
@@ -717,29 +1051,29 @@ pre { padding: 12px 16px; }
 .quiz-cols-4 { grid-template-columns: repeat(2, 1fr); }
 
 .quiz-tiles .quiz-tile {
-  background: var(--lc-surface);
-  border: 1px solid var(--lc-rule);
+  background: var(--upwr-surface);
+  border: 1px solid var(--upwr-rule);
   padding: 16px 12px;
   text-align: center;
   cursor: pointer;
   transition: all 0.15s;
   display: block;
   width: 100%;
-  font-family: var(--lc-sans);
-  color: var(--lc-ink);
+  font-family: var(--upwr-sans);
+  color: var(--upwr-ink);
 }
 
 .quiz-tiles .quiz-tile:hover {
-  border-color: var(--lc-burgundy);
-  background: var(--lc-burgundy-t);
+  border-color: var(--upwr-accent);
+  background: var(--upwr-accent-tint);
 }
 
 .quiz-tiles .quiz-tile .tile-letter {
   display: inline-block;
   width: 32px; height: 32px; line-height: 32px;
-  background: var(--lc-burgundy);
+  background: var(--upwr-accent);
   color: #fff;
-  font-family: var(--lc-mono);
+  font-family: var(--upwr-mono);
   font-weight: 700;
   font-size: 14px;
   margin-bottom: 6px;
@@ -747,27 +1081,27 @@ pre { padding: 12px 16px; }
 
 .quiz-tiles .quiz-tile .tile-text {
   font-size: 13px;
-  color: var(--lc-ink-soft);
+  color: var(--upwr-ink-soft);
 }
 
-.quiz-tile.correct { border-color: var(--lc-sage) !important; background: var(--lc-sage-t) !important; }
-.quiz-tile.wrong   { border-color: var(--lc-burgundy) !important; background: var(--lc-burgundy-t) !important; }
+.quiz-tile.correct { border-color: var(--upwr-sage) !important; background: var(--upwr-sage-tint) !important; }
+.quiz-tile.wrong   { border-color: var(--upwr-accent) !important; background: var(--upwr-accent-tint) !important; }
 .quiz-tile.disabled { pointer-events: none; opacity: 0.65; }
 
 /* === Formulas === */
 .formula-box {
-  background: var(--lc-gold-t);
+  background: var(--upwr-single-alt-tint);
   border: 1px solid #e8d5a8;
   padding: 12px 16px;
   margin: 10px 0;
-  font-family: var(--lc-mono);
+  font-family: var(--upwr-mono);
   font-size: 14px;
 }
 
 /* === MathJax override === */
 mjx-container mjx-mtext,
 mjx-container mjx-text {
-  font-family: var(--lc-sans) !important;
+  font-family: var(--upwr-sans) !important;
 }
 
 /* === Stat box === */

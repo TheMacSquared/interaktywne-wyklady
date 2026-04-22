@@ -6,22 +6,27 @@ ch1_ui <- list(
   id = "ch-typy", num = "01", title = "Typy danych",
   content = tagList(
 
-    # --- Section: Introduction ---
-    div(class = "section-title", "Typy danych - fundament analizy statystycznej"),
-
-    div(class = "narrative",
-      p("Pierwszym krokiem w analizie danych jest rozpoznanie typu zmiennej,
-        z która mamy do czynienia. To nie jest formalność - typ zmiennej
-        determinuje jakie statystyki mozemy obliczyć, jakie wykresy narysowac
-        i jakie testy statystyczne zastosować."),
-      p("Błędne rozpoznanie typu zmiennej prowadzi do błędnych analiz.
-        Na przykład, obliczanie średniej z kodow pocztowych nie ma sensu,
-        mimo ze są to liczby.")
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 01 · Statystyka opisowa",
+      num    = "01",
+      title  = "Typy danych.",
+      lead   = "Pierwszym krokiem w analizie danych jest rozpoznanie typu zmiennej,
+               z którą mamy do czynienia. To nie jest formalność — typ zmiennej
+               determinuje jakie statystyki możemy obliczyć, jakie wykresy narysować
+               i jakie testy statystyczne zastosować."
     ),
 
-    div(class = "callout-info",
-      tags$strong("Zasada:"),
-      " Zanim zaczniesz analize - zawsze okresl typ każdej zmiennej."
+    div(class = "narrative",
+      p("Błędne rozpoznanie typu zmiennej prowadzi do błędnych analiz.
+        Na przykład, obliczanie średniej z kodów pocztowych nie ma sensu,
+        mimo że są to liczby.")
+    ),
+
+    margin_callout(
+      label = "Zasada",
+      "Zanim zaczniesz analizę — zawsze określ typ każdej zmiennej.",
+      color = "uwaga"
     ),
 
     # --- Widget 1: Taxonomy tree ---
@@ -33,7 +38,9 @@ ch1_ui <- list(
         przyklady zmiennych każdego typu z naszego zbioru danych.")
     ),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 1.1",
+      title = "Taksonomia typów danych",
       div(class = "taxonomy-tree",
         tags$ul(
           tags$li(
@@ -44,14 +51,14 @@ ch1_ui <- list(
                 tags$ul(
                   tags$li(
                     div(class = "tax-leaf", id = "ch1_leaf_ciagla",
-                      style = paste0("background:", col_continuous, ";"),
+                      style = paste0("background:", type_colors["ilosciowa_ciagla"], ";"),
                       onclick = "Shiny.setInputValue('ch1_leaf_click', 'ciagla', {priority:'event'})",
                       "Ciągłe"
                     )
                   ),
                   tags$li(
                     div(class = "tax-leaf", id = "ch1_leaf_dyskretna",
-                      style = paste0("background:", col_discrete, ";"),
+                      style = paste0("background:", type_colors["ilosciowa_dyskretna"], ";"),
                       onclick = "Shiny.setInputValue('ch1_leaf_click', 'dyskretna', {priority:'event'})",
                       "Dyskretne"
                     )
@@ -63,14 +70,14 @@ ch1_ui <- list(
                 tags$ul(
                   tags$li(
                     div(class = "tax-leaf", id = "ch1_leaf_porzadkowa",
-                      style = paste0("background:", col_ordinal, ";"),
+                      style = paste0("background:", type_colors["porzadkowa"], ";"),
                       onclick = "Shiny.setInputValue('ch1_leaf_click', 'porzadkowa', {priority:'event'})",
                       "Porządkowe"
                     )
                   ),
                   tags$li(
                     div(class = "tax-leaf", id = "ch1_leaf_nominalna",
-                      style = paste0("background:", col_nominal, ";"),
+                      style = paste0("background:", type_colors["nominalna"], ";"),
                       onclick = "Shiny.setInputValue('ch1_leaf_click', 'nominalna', {priority:'event'})",
                       "Nominalne"
                     )
@@ -81,16 +88,17 @@ ch1_ui <- list(
           )
         )
       ),
-      p(style = "text-align: center; font-size: 13px; color: #bdc3c7; margin: 8px 0 0;",
+      p(style = "text-align: center; font-size: 13px; color: var(--upwr-reference); margin: 8px 0 0;",
         "Kliknij na kolorowy liść drzewa, aby zobaczyć przykłady"),
       uiOutput("ch1_leaf_detail")
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Uwaga:"),
-      " Granica miedzy typami nie zawsze jest ostra. Na przykład ocena wykładowcy
-      w skali 1-10 moze byc traktowana jako porządkowa lub dyskretna,
-      w zależności od kontekstu i celu analizy."
+    margin_callout(
+      label = "Uwaga",
+      "Granica między typami nie zawsze jest ostra. Na przykład ocena wykładowcy
+       w skali 1–10 może być traktowana jako porządkowa lub dyskretna,
+       w zależności od kontekstu i celu analizy.",
+      color = "uwaga"
     ),
 
     # --- Widget 2: Examples gallery ---
@@ -104,19 +112,21 @@ ch1_ui <- list(
         gdy uzyjemy nieodpowiedniego wykresu.")
     ),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 1.2",
+      title = "Cztery typy zmiennych — jeden wykres na typ",
       checkboxInput("ch1_show_bad",
-                    "Pokaz nieodpowiednie wykresy (przykład czego NIE robic)",
+                    "Pokaż nieodpowiednie wykresy (przykład czego NIE robić)",
                     value = FALSE),
       fluidRow(
         column(6,
           div(class = "example-card",
-              style = paste0("border-color: ", col_nominal, ";"),
+              style = paste0("border-color: ", type_colors["nominalna"], ";"),
             span(class = "type-badge",
-                 style = paste0("background: ", col_nominal, ";"),
+                 style = paste0("background: ", type_colors["nominalna"], ";"),
                  "Jakościowa nominalna"),
             tags$h4("Płeć"),
-            tags$p(style = "color: #7f8c8d; font-size: 13px;",
+            tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
               "Kategorie bez naturalnego porzadku. Mozemy liczyc ile jest
                obserwacji w każdej kategorii, ale nie mozemy ich uporządkowac
                ani uśredniać."),
@@ -125,12 +135,12 @@ ch1_ui <- list(
         ),
         column(6,
           div(class = "example-card",
-              style = paste0("border-color: ", col_ordinal, ";"),
+              style = paste0("border-color: ", type_colors["porzadkowa"], ";"),
             span(class = "type-badge",
-                 style = paste0("background: ", col_ordinal, ";"),
+                 style = paste0("background: ", type_colors["porzadkowa"], ";"),
                  "Jakościowa porządkowa"),
             tags$h4("Zadowolenie ze studiów"),
-            tags$p(style = "color: #7f8c8d; font-size: 13px;",
+            tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
               "Kategorie z naturalnym porzadkiem. Wiemy ze 'Bardzo zadowolony'
                jest wyzej niż 'Zadowolony', ale nie znamy dokladnych odleglosci
                miedzy kategoriami."),
@@ -141,12 +151,12 @@ ch1_ui <- list(
       fluidRow(
         column(6,
           div(class = "example-card",
-              style = paste0("border-color: ", col_discrete, ";"),
+              style = paste0("border-color: ", type_colors["ilosciowa_dyskretna"], ";"),
             span(class = "type-badge",
-                 style = paste0("background: ", col_discrete, ";"),
+                 style = paste0("background: ", type_colors["ilosciowa_dyskretna"], ";"),
                  "Ilościowa dyskretna"),
             tags$h4("Liczba kursów"),
-            tags$p(style = "color: #7f8c8d; font-size: 13px;",
+            tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
               "Wartości liczbowe, ale tylko całkowite. Mozemy obliczać srednia
                i odchylenie standardowe. Wykres słupkowy jest tu odpowiedni,
                bo mamy skończoną liczbę wartości."),
@@ -155,12 +165,12 @@ ch1_ui <- list(
         ),
         column(6,
           div(class = "example-card",
-              style = paste0("border-color: ", col_continuous, ";"),
+              style = paste0("border-color: ", type_colors["ilosciowa_ciagla"], ";"),
             span(class = "type-badge",
-                 style = paste0("background: ", col_continuous, ";"),
+                 style = paste0("background: ", type_colors["ilosciowa_ciagla"], ";"),
                  "Ilościowa ciągła"),
             tags$h4("Wzrost (cm)"),
-            tags$p(style = "color: #7f8c8d; font-size: 13px;",
+            tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
               "Wartości liczbowe, ktore mogą przyjmowac dowolne wartości
                z pewnego przedzialu (takze ulamkowe). Histogram grupuje
                wartości w przedziały, gęstość wygładza rozkład."),
@@ -179,26 +189,35 @@ ch1_ui <- list(
         w dalszej czesci kursu. Ponizej pierwszych 10 obserwacji.")
     ),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 1.3",
+      title = "Pierwsze 10 obserwacji — nasz zbiór danych",
       div(style = "overflow-x: auto; font-size: 12px;",
         tableOutput("ch1_data_preview")
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Zwroc uwage:"),
-      " Zbior zawiera zmienne wszystkich czterech typow. W kolejnych
-      rozdzialach nauczymy sie jak je podsumowywać i wizualizować."
+    margin_callout(
+      label = "Zwróć uwagę",
+      "Zbiór zawiera zmienne wszystkich czterech typów. W kolejnych
+       rozdziałach nauczymy się, jak je podsumowywać i wizualizować."
+    ),
+
+    margin_code_note(
+      code = "str(student_data)\nsummary(student_data)",
+      description = "Dwa podstawowe narzędzia do podglądu struktury zbioru w R."
     ),
 
     # --- Variable tracker selector ---
-    div(class = "widget-block", style = "background: #eaf4fc; border: 2px solid #3498db;",
-      h4("\U0001F50D Sledz zmienna przez caly kurs"),
-      p(style = "font-size: 14px; color: #2c3e50;",
-        "Wybierz jedna zmienna ilościowa. W każdym kolejnym rozdziale zobaczysz,
-         jakie nowe informacje daja Ci kolejne narzedzia statystyczne zastosowane
+    figure_panel(
+      label = "Narzędzie",
+      title = "🔍 Śledź zmienną przez cały kurs",
+      color = upwr_single_alt,
+      p(style = "font-family: var(--upwr-serif); font-size: 15px; color: var(--upwr-ink-soft); margin-bottom: 14px;",
+        "Wybierz jedną zmienną ilościową. W każdym kolejnym rozdziale zobaczysz,
+         jakie nowe informacje dają Ci kolejne narzędzia statystyczne zastosowane
          do tej samej zmiennej."),
-      selectInput("tracked_var", "Wybierz zmienna do sledzenia:",
+      selectInput("tracked_var", "Wybierz zmienną do śledzenia:",
         choices = c("Wzrost (cm)" = "wzrost",
                     "Waga (kg)" = "waga",
                     "Czas dojazdu (min)" = "czas_dojazdu",
@@ -207,11 +226,11 @@ ch1_ui <- list(
       )
     ),
 
-    div(class = "chapter-transition",
-      p("Wiemy jakie typy zmiennych mamy w naszych danych. Zaczynamy od zmiennych
-        jakościowych -- są prostsze i stanowia naturalny punkt wyjscia."),
-      actionButton("ch1_next", "Dalej: 2. Zmienne jakościowe →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "02",
+      title     = "Zmienne jakościowe",
+      lead      = "Jak podsumować kategorie — są prostsze i stanowią naturalny punkt wyjścia.",
+      target_id = "ch-jakosciowe"
     ),
 
     # Bottom spacing
@@ -232,22 +251,22 @@ ch1_server <- function(input, output, session) {
 
   .leaf_info <- list(
     ciagla = list(
-      label = "Ciągłe", color = col_continuous,
+      label = "Ciągłe", color = type_colors["ilosciowa_ciagla"],
       desc = "Wartości liczbowe, które mogą przyjmować dowolną wartość z przedziału (także ułamkowe).",
       examples = "wzrost (cm), waga (kg), czas dojazdu (min), średnia ocen"
     ),
     dyskretna = list(
-      label = "Dyskretne", color = col_discrete,
+      label = "Dyskretne", color = type_colors["ilosciowa_dyskretna"],
       desc = "Wartości liczbowe, ale tylko całkowite — można je policzyć.",
       examples = "liczba kursów, liczba nieobecności"
     ),
     porzadkowa = list(
-      label = "Porządkowe", color = col_ordinal,
+      label = "Porządkowe", color = type_colors["porzadkowa"],
       desc = "Kategorie z naturalnym porządkiem, ale odległości między nimi nie są znane.",
       examples = "rok studiów (1 < 2 < 3 < ...), zadowolenie ze studiów, ocena wykładowcy"
     ),
     nominalna = list(
-      label = "Nominalne", color = col_nominal,
+      label = "Nominalne", color = type_colors["nominalna"],
       desc = "Kategorie bez naturalnego porządku — można je tylko liczyć.",
       examples = "płeć, kierunek studiów, grupa krwi"
     )
@@ -271,7 +290,7 @@ ch1_server <- function(input, output, session) {
       tags$strong(style = paste0("color: ", info$color, "; font-size: 16px;"),
         info$label),
       p(style = "margin: 6px 0 4px; font-size: 14px;", info$desc),
-      p(style = "margin: 0; font-size: 13px; color: #7f8c8d;",
+      p(style = "margin: 0; font-size: 13px; color: var(--upwr-ink-soft);",
         tags$em("W naszych danych: "), info$examples)
     )
   })

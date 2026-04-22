@@ -10,21 +10,9 @@ library(gridExtra)
 library(jsonlite)
 
 # ============================================================================
-# KOLORY
+# ETYKIETY TYPÓW ZMIENNYCH
+# (kolory: type_colors z R/palette.R)
 # ============================================================================
-
-col_nominal    <- "#e74c3c"
-col_ordinal    <- "#f39c12"
-col_discrete   <- "#3498db"
-col_continuous <- "#27ae60"
-col_dark       <- "#2c3e50"
-
-type_colors <- c(
-  "nominalna"           = col_nominal,
-  "porzadkowa"          = col_ordinal,
-  "ilosciowa_dyskretna" = col_discrete,
-  "ilosciowa_ciagla"    = col_continuous
-)
 
 type_labels <- c(
   "nominalna"           = "Jakościowa nominalna",
@@ -129,8 +117,13 @@ app_dir <- .find_app_dir()
 
 project_root <- dirname(app_dir)
 
+source(file.path(project_root, "R", "palette.R"),          local = TRUE)
+source(file.path(project_root, "R", "theme_upwr.R"),       local = TRUE)
 source(file.path(project_root, "R", "shared.R"),           local = TRUE)
 source(file.path(project_root, "R", "lecture_layout.R"),   local = TRUE)
+
+# Globalne defaulty ggplot2 — motyw + kolory geom-ów (upwr_single = burgund)
+lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),        local = TRUE)
 source(file.path(app_dir, "modules", "ch1_typy.R"),       local = TRUE)
@@ -375,13 +368,9 @@ server <- function(input, output, session) {
 
   lc <- lecture_server(.chapters, input, output, session)
 
-  observeEvent(input$ch1_next,    { lc$switch_to("ch-jakosciowe") })
-  observeEvent(input$ch2_next,    { lc$switch_to("ch-polozenie")  })
-  observeEvent(input$ch3_next,    { lc$switch_to("ch-rozrzut")    })
-  observeEvent(input$ch4_next,    { lc$switch_to("ch-ksztalt")    })
-  observeEvent(input$ch5_next,    { lc$switch_to("ch-sciaga")     })
-  observeEvent(input$ch6_to_ch7,  { lc$switch_to("ch-quiz")       })
-  observeEvent(input$ch7_to_ch8,  { lc$switch_to("ch-cwiczenia")  })
+  # Nawigacja między rozdziałami idzie przez lc_chapter_next() w modułach
+  # (sendCustomMessage("switchToChapter", ...) → lc__switch_chapter).
+  # Stare observeEvent(input$chN_next) zostały usunięte razem z buttonami.
 
   # ==========================================================================
   # VARIABLE TRACKER

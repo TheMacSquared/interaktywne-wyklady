@@ -17,10 +17,10 @@ QUIZ_TYPE_OPTIONS <- list(
 )
 
 QUIZ_TYPE_COLORS <- list(
-  ilosciowa_ciagla      = col_continuous,
-  ilosciowa_dyskretna   = col_discrete,
-  jakosciowa_porzadkowa = col_ordinal,
-  jakosciowa_nominalna  = col_nominal
+  ilosciowa_ciagla      = type_colors["ilosciowa_ciagla"],
+  ilosciowa_dyskretna   = type_colors["ilosciowa_dyskretna"],
+  jakosciowa_porzadkowa = type_colors["porzadkowa"],
+  jakosciowa_nominalna  = type_colors["nominalna"]
 )
 
 QUIZ_TYPE_MAX_QUESTIONS <- 15
@@ -33,40 +33,39 @@ ch7_ui <- list(
   id = "ch-quiz", num = "07", title = "Quiz",
   content = tagList(
 
-    div(class = "chapter-recap",
-      "Poprzednio: ściąga ze statystyki opisowej"
-    ),
-
-    h2(id = "ch7-quiz", class = "section-title", "Quiz: rozpoznaj typ zmiennej"),
-
-    div(class = "narrative",
-      p("Przeczytaj opis zmiennej i wybierz jej typ. Każde pytanie ma ",
-        tags$b("4 opcje"), " — dokładnie jedną poprawną."),
-      p("Quiz losuje ", tags$b("15 pytań"), " z puli 75. Możesz go powtarzać
-        wielokrotnie — za każdym razem dostaniesz inny zestaw.")
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 07 · Statystyka opisowa",
+      num    = "07",
+      title  = "Quiz.",
+      lead   = "Przeczytaj opis zmiennej i wybierz jej typ. Każde pytanie ma
+                cztery opcje — dokładnie jedną poprawną. Quiz losuje 15 pytań
+                z puli 75; możesz go powtarzać wielokrotnie."
     ),
 
     # Legenda typow
-    div(class = "widget-block",
-      h4("Przypomnienie typów zmiennych"),
+    figure_panel(
+      label = "Ryc. 7.1",
+      title = "Przypomnienie typów zmiennych",
       fluidRow(
         column(3, div(class = "type-badge",
-          style = paste0("background: ", col_nominal, ";"), "Nominalna")),
+          style = paste0("background: ", type_colors["nominalna"], ";"), "Nominalna")),
         column(3, div(class = "type-badge",
-          style = paste0("background: ", col_ordinal, ";"), "Porządkowa")),
+          style = paste0("background: ", type_colors["porzadkowa"], ";"), "Porządkowa")),
         column(3, div(class = "type-badge",
-          style = paste0("background: ", col_discrete, ";"), "Dyskretna")),
+          style = paste0("background: ", type_colors["ilosciowa_dyskretna"], ";"), "Dyskretna")),
         column(3, div(class = "type-badge",
-          style = paste0("background: ", col_continuous, ";"), "Ciągła"))
+          style = paste0("background: ", type_colors["ilosciowa_ciagla"], ";"), "Ciągła"))
       ),
-      p(style = "margin-top: 10px; font-size: 13px; color: #777;",
+      p(style = "margin-top: 10px; font-size: 13px; color: var(--upwr-reference);",
         "Nominalna = kategorie bez porządku | Porządkowa = kategorie z porządkiem | ",
         "Dyskretna = liczby całkowite | Ciągła = pomiary z dokładnością")
     ),
 
     # --- Quiz widget ---
-    div(class = "widget-block",
-      h4("Quiz"),
+    figure_panel(
+      label = "Ryc. 7.2",
+      title = "Quiz",
 
       # Start / status bar
       fluidRow(
@@ -96,10 +95,11 @@ ch7_ui <- list(
       uiOutput("ch7_summary_ui")
     ),
 
-    # --- Przejscie do cwiczen ---
-    div(class = "chapter-transition",
-      p("Czas na praktykę! Przejdź do ćwiczeń z typów danych."),
-      actionButton("ch7_to_ch8", "Dalej: Ćwiczenia →", class = "btn-primary")
+    lc_chapter_next(
+      num       = "08",
+      title     = "Ćwiczenia",
+      lead      = "czas na praktykę — zadania z typów danych i statystyki opisowej.",
+      target_id = "ch-cwiczenia"
     ),
 
     br(), br()
@@ -170,14 +170,14 @@ ch7_server <- function(input, output, session) {
         span(paste0("Pytanie ", quiz_state$current_idx, " / ", total)),
         span(paste0("Wynik: ", quiz_state$correct, " / ", answered),
              style = paste0("font-weight: bold; color: ",
-                            if (answered == 0) col_dark
-                            else if (quiz_state$correct / answered >= 0.7) col_continuous
-                            else if (quiz_state$correct / answered >= 0.5) col_ordinal
-                            else col_nominal))
+                            if (answered == 0) upwr_secondary
+                            else if (quiz_state$correct / answered >= 0.7) type_colors["ilosciowa_ciagla"]
+                            else if (quiz_state$correct / answered >= 0.5) type_colors["porzadkowa"]
+                            else type_colors["nominalna"]))
       ),
-      div(style = "background: #e9ecef; border-radius: 6px; height: 8px; overflow: hidden;",
+      div(style = "background: var(--upwr-rule); border-radius: 6px; height: 8px; overflow: hidden;",
         div(style = paste0(
-          "background: ", col_discrete, "; height: 100%; width: ", pct, "%;",
+          "background: ", type_colors["ilosciowa_dyskretna"], "; height: 100%; width: ", pct, "%;",
           "border-radius: 6px; transition: width 0.3s;"
         ))
       )
@@ -191,9 +191,9 @@ ch7_server <- function(input, output, session) {
     q <- quiz_state$questions[[quiz_state$current_idx]]
 
     div(
-      style = "font-size: 18px; font-weight: 500; color: #2c3e50;
+      style = "font-size: 18px; font-weight: 500; color: var(--upwr-ink);
                padding: 20px; background: white; border-radius: 8px;
-               border-left: 4px solid #3498db; margin: 15px 0;",
+               border-left: 4px solid var(--upwr-cat-niebo); margin: 15px 0;",
       q$question
     )
   })
@@ -272,8 +272,8 @@ ch7_server <- function(input, output, session) {
         }
       ),
 
-      div(style = "background: #f8f9fa; border-radius: 6px; padding: 12px 16px;
-                   margin: 10px 0; font-size: 14px; color: #555;",
+      div(style = "background: var(--upwr-surface-sunken); border-radius: 6px; padding: 12px 16px;
+                   margin: 10px 0; font-size: 14px; color: var(--upwr-reference);",
         explanation
       ),
 
@@ -310,9 +310,9 @@ ch7_server <- function(input, output, session) {
     correct <- quiz_state$correct
     pct <- round(correct / total * 100)
 
-    result_color <- if (pct >= 70) col_continuous
-                    else if (pct >= 50) col_ordinal
-                    else col_nominal
+    result_color <- if (pct >= 70) type_colors["ilosciowa_ciagla"]
+                    else if (pct >= 50) type_colors["porzadkowa"]
+                    else type_colors["nominalna"]
 
     result_text <- if (pct >= 90) "Ćwiczenie zakończone celująco!"
                    else if (pct >= 70) "Dobry wynik!"
@@ -324,11 +324,11 @@ ch7_server <- function(input, output, session) {
         "font-size: 64px; font-weight: bold; color: ", result_color, ";"
       ), paste0(pct, "%")),
 
-      div(style = "font-size: 18px; color: #555; margin: 10px 0;",
+      div(style = "font-size: 18px; color: var(--upwr-reference); margin: 10px 0;",
         paste0("Poprawne odpowiedzi: ", correct, " / ", total)
       ),
 
-      div(style = "max-width: 300px; margin: 15px auto; background: #e9ecef;
+      div(style = "max-width: 300px; margin: 15px auto; background: var(--upwr-rule);
                    border-radius: 10px; height: 16px; overflow: hidden;",
         div(style = paste0(
           "background: ", result_color, "; height: 100%; width: ", pct, "%;

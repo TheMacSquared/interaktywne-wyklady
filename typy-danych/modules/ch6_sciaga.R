@@ -6,31 +6,39 @@ ch6_ui <- list(
   id = "ch-sciaga", num = "06", title = "Ściąga",
   content = tagList(
 
-    div(class = "section-title", "Podsumowanie -- narzędzia statystyki opisowej"),
-
-    div(class = "narrative",
-      p("Poniżej kompletna ściąga ze wszystkimi pojęciami i narzędziami
-        omówionymi w trakcie wykładu. Warto ją mieć pod ręką podczas analiz.")
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 06 · Statystyka opisowa",
+      num    = "06",
+      title  = "Ściąga.",
+      lead   = "Kompletne podsumowanie — wszystkie pojęcia i narzędzia
+                omówione w trakcie wykładu w jednym miejscu. Warto ją mieć
+                pod ręką podczas analiz."
     ),
 
     # --- Cheat sheet 1: Tools by variable type ---
     h2(id = "ch6-narzedzia", class = "section-title", "Narzędzia wg typu zmiennej"),
 
-    div(class = "widget-block",
-      tableOutput("ch6_ref_table")
+    margin_callout(
+      label = "Najczęstszy błąd",
+      "Obliczanie średniej z danych nominalnych lub porządkowych
+       (np. średnia z kodów kierunków). Wynik będzie liczbą, ale
+       nie będzie miał żadnego sensu!",
+      color = "uwaga"
     ),
 
-    div(class = "callout-danger",
-      tags$strong("Najczęstszy błąd:"),
-      " Obliczanie średniej z danych nominalnych lub porządkowych
-      (np. średnia z kodów kierunków). Wynik będzie liczbą, ale
-      nie będzie miał żadnego sensu!"
+    figure_panel(
+      label = "Ryc. 6.1",
+      title = "Narzędzia wg typu zmiennej",
+      tableOutput("ch6_ref_table")
     ),
 
     # --- Cheat sheet 2: Measures summary ---
     h2(id = "ch6-miary", class = "section-title", "Miary statystyczne — kiedy co stosować"),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 6.2",
+      title = "Miary statystyczne",
       h4("Miary położenia (rozdział 3)"),
       tableOutput("ch6_location_table"),
       hr(),
@@ -44,21 +52,27 @@ ch6_ui <- list(
     # --- Cheat sheet 3: Visualization guide ---
     h2(id = "ch6-wykresy", class = "section-title", "Przewodnik po wykresach"),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 6.3",
+      title = "Przewodnik po wykresach",
       tableOutput("ch6_plots_table")
     ),
 
     # --- Cheat sheet 4: Common mistakes ---
     h2(id = "ch6-bledy", class = "section-title", "Typowe błędy"),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 6.4",
+      title = "Typowe błędy",
       tableOutput("ch6_mistakes_table")
     ),
 
     # --- Formulas ---
     h2(id = "ch6-wzory", class = "section-title", "Wzory"),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 6.5",
+      title = "Wzory",
       withMathJax(
         h4("Miary położenia"),
         helpText("$$\\bar{x} = \\frac{1}{n} \\sum_{i=1}^{n} x_i$$"),
@@ -76,10 +90,11 @@ ch6_ui <- list(
       )
     ),
 
-    # --- Przejscie do quizu ---
-    div(class = "chapter-transition",
-      p("Czas sprawdzić się! Przejdź do quizu z typów zmiennych."),
-      actionButton("ch6_to_ch7", "Dalej: Quiz →", class = "btn-primary")
+    lc_chapter_next(
+      num       = "07",
+      title     = "Quiz",
+      lead      = "sprawdź się — rozpoznawanie typów zmiennych w praktyce.",
+      target_id = "ch-quiz"
     ),
 
     br(), br()
