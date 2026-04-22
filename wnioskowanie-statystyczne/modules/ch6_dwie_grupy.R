@@ -2,15 +2,21 @@
 # CHAPTER 6: Ilosciowa i jakosciowa (2 grupy)
 # ============================================================================
 
-ch6_ui <- tabPanel("7. Ilościowa i jakościowa",
-  fluidRow(column(8, offset = 2,
+ch6_ui <- list(
+  id = "ch-dwie-grupy", num = "07", title = "Test t dwóch grup",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Badaliśmy związki dwóch zmiennych tego samego typu.
-       Teraz klasyczne pytanie: czy dwie grupy różnią się?"
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 07 · Wnioskowanie statystyczne",
+      num    = "07",
+      title  = "Test t dwóch grup.",
+      lead   = "„Czy mężczyźni jeżdżą szybciej niż kobiety?” Porównanie średnich między
+                dwiema grupami — czy obserwowana różnica jest realna, czy wynika
+                z losowości próby."
     ),
 
-    div(class = "section-title", "Test t dla dwóch prób niezależnych"),
+    h2(id = "ch6-intro", class = "section-title", "Test t dla dwóch prób niezależnych"),
 
     div(class = "narrative",
       p("Pytanie: Czy średnie w dwóch grupach różnią się istotnie?"),
@@ -25,10 +31,11 @@ ch6_ui <- tabPanel("7. Ilościowa i jakościowa",
     # ========================================================================
     # WIDGET 1: Test t niezalezny
     # ========================================================================
-    div(class = "section-title", "Test t niezależny"),
+    h2(id = "ch6-niezalezny", class = "section-title", "Test t niezależny"),
 
-    div(class = "widget-block",
-      h4("Porównanie dwóch grup"),
+    figure_panel(
+      label = "Ryc. 7.1",
+      title = "Porównanie dwóch grup",
       fluidRow(
         column(4,
           selectInput("ch6_ind_var", "Zmienna ilościowa:",
@@ -55,7 +62,7 @@ ch6_ui <- tabPanel("7. Ilościowa i jakościowa",
     # ========================================================================
     # WIDGET 2: Test t parowy
     # ========================================================================
-    div(class = "section-title", "Test t dla prób zależnych (parowy)"),
+    h2(id = "ch6-parowy", class = "section-title", "Test t dla prób zależnych (parowy)"),
 
     div(class = "narrative",
       p("Gdy mierzymy tych samych osobników dwa razy
@@ -65,8 +72,9 @@ ch6_ui <- tabPanel("7. Ilościowa i jakościowa",
         ". Pytamy, czy średnia różnic ≠ 0.")
     ),
 
-    div(class = "widget-block",
-      h4("Test parowy: przed i po"),
+    figure_panel(
+      label = "Ryc. 7.2",
+      title = "Test parowy: przed i po",
       fluidRow(
         column(4,
           sliderInput("ch6_paired_n", "Liczba studentów:",
@@ -83,19 +91,21 @@ ch6_ui <- tabPanel("7. Ilościowa i jakościowa",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Uwaga: "),
-      "gdy założenia testu t nie są spełnione (skrajne odstające, mocno skośny rozkład,
-       małe n), stosuje się testy nieparametryczne — omówimy je w osobnym wykładzie."
+    margin_callout(
+      label = "Uwaga",
+      "gdy założenia testu t nie są spełnione (skrajne odstające, mocno skośny
+       rozkład, małe n), stosuje się testy nieparametryczne — omówimy je w osobnym
+       wykładzie.",
+      color = "uwaga"
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: a co gdy grup jest więcej niż dwie?"),
-      actionButton("ch6_next", "Dalej → 8. ANOVA",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "08",
+      title     = "ANOVA",
+      lead      = "a gdy grup jest więcej niż dwie?",
+      target_id = "ch-anova"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -140,8 +150,7 @@ ch6_server <- function(input, output, session) {
         scale_fill_manual(values = c(col_h0, col_reject)) +
         labs(title = paste0(var_label, " według płci"),
              x = "Płeć", y = var_label) +
-        theme_educational() +
-        theme(legend.position = "none")
+                theme(legend.position = "none")
     }
   })
 
@@ -211,8 +220,7 @@ ch6_server <- function(input, output, session) {
         scale_color_manual(values = c(col_h0, col_reject)) +
         labs(title = "Wyniki przed i po interwencji",
              x = "Moment", y = "Wynik") +
-        theme_educational() +
-        theme(legend.position = "none")
+                theme(legend.position = "none")
     }
   })
 

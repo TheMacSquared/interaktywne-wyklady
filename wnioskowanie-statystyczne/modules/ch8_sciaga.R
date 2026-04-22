@@ -2,15 +2,21 @@
 # CHAPTER 8: Sciaga - podsumowanie wnioskowania statystycznego
 # ============================================================================
 
-ch8_ui <- tabPanel("10. Ściąga",
-  fluidRow(column(8, offset = 2,
+ch8_ui <- list(
+  id = "ch-sciaga", num = "10", title = "Ściąga",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Kompaktowe podsumowanie wszystkich testów z tego wykładu."
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 10 · Wnioskowanie statystyczne",
+      num    = "10",
+      title  = "Ściąga.",
+      lead   = "Kompaktowe podsumowanie wszystkich testów omówionych w wykładzie —
+                tabele referencyjne do trzymania pod ręką podczas analiz w Jamovi."
     ),
 
     # ========================================================================
-    div(class = "section-title", "Drzewo decyzyjne: jaki test?"),
+    h2(id = "ch8-drzewo", class = "section-title", "Drzewo decyzyjne: jaki test?"),
 
     div(class = "callout-info",
       tags$strong("Krok 1:"), " Ile zmiennych?",
@@ -42,7 +48,7 @@ ch8_ui <- tabPanel("10. Ściąga",
     ),
 
     # ========================================================================
-    div(class = "section-title", "Tabela testów"),
+    h2(id = "ch8-tabela", class = "section-title", "Tabela testów"),
 
     tags$table(class = "table table-bordered table-striped",
       style = "font-size: 13px;",
@@ -110,7 +116,7 @@ ch8_ui <- tabPanel("10. Ściąga",
     ),
 
     # ========================================================================
-    div(class = "section-title", "Jamovi ↔ testy z tego wykładu"),
+    h2(id = "ch8-jamovi", class = "section-title", "Jamovi ↔ testy z tego wykładu"),
 
     div(class = "narrative",
       p("Liczymy w ", tags$b("jamovi"),
@@ -195,7 +201,7 @@ ch8_ui <- tabPanel("10. Ściąga",
     ),
 
     # ========================================================================
-    div(class = "section-title", "Miary wielkości efektu"),
+    h2(id = "ch8-efekt", class = "section-title", "Miary wielkości efektu"),
 
     tags$table(class = "table table-bordered",
       style = "font-size: 14px;",
@@ -237,7 +243,7 @@ ch8_ui <- tabPanel("10. Ściąga",
     ),
 
     # ========================================================================
-    div(class = "section-title", "P-wartość — przypomnienie"),
+    h2(id = "ch8-pvalue", class = "section-title", "P-wartość — przypomnienie"),
 
     div(class = "callout-success",
       tags$strong("P-wartość to:"),
@@ -255,7 +261,7 @@ ch8_ui <- tabPanel("10. Ściąga",
     ),
 
     # ========================================================================
-    div(class = "section-title", "Typowe pułapki"),
+    h2(id = "ch8-pulapki", class = "section-title", "Typowe pułapki"),
 
     div(class = "callout-danger",
       tags$ul(
@@ -276,7 +282,7 @@ ch8_ui <- tabPanel("10. Ściąga",
     ),
 
     # ========================================================================
-    div(class = "section-title", "Kod R — rstatix"),
+    h2(id = "ch8-kod", class = "section-title", "Kod R — rstatix"),
 
     div(class = "formula-box",
       tags$pre(style = "background: var(--upwr-surface-sunken); padding: 12px; border-radius: 6px; font-size: 13px;",
@@ -312,7 +318,7 @@ data %>% games_howell_test(oceny ~ kierunek)"
       )
     )
 
-  ))
+  )
 )
 
 # ============================================================================

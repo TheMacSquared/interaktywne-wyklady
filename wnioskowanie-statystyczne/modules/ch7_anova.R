@@ -2,14 +2,21 @@
 # CHAPTER 7: ANOVA
 # ============================================================================
 
-ch7_ui <- tabPanel("8. ANOVA",
-  fluidRow(column(8, offset = 2,
+ch7_ui <- list(
+  id = "ch-anova", num = "08", title = "ANOVA",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Porównywaliśmy dwie grupy. A co, gdy grup jest trzy lub więcej?"
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 08 · Wnioskowanie statystyczne",
+      num    = "08",
+      title  = "ANOVA.",
+      lead   = "„Czy średnia cena posiłku różni się między Spiżem, budką z knyszą a Pasibusem?”
+                Gdy grup jest trzy lub więcej, analiza wariancji porównuje wszystkie jednym
+                testem — bez inflacji błędu I rodzaju."
     ),
 
-    div(class = "section-title", "ANOVA jednoczynnikowa"),
+    h2(id = "ch7-intro", class = "section-title", "ANOVA jednoczynnikowa"),
 
     div(class = "narrative",
       p("ANOVA (Analysis of Variance) to uogólnienie testu t na 3 lub więcej grup."),
@@ -28,10 +35,11 @@ ch7_ui <- tabPanel("8. ANOVA",
     # ========================================================================
     # WIDGET 1: ANOVA jednoczynnikowa
     # ========================================================================
-    div(class = "section-title", "ANOVA w akcji"),
+    h2(id = "ch7-akcja", class = "section-title", "ANOVA w akcji"),
 
-    div(class = "widget-block",
-      h4("ANOVA jednoczynnikowa"),
+    figure_panel(
+      label = "Ryc. 8.1",
+      title = "ANOVA jednoczynnikowa",
       fluidRow(
         column(4,
           selectInput("ch7_scenario", "Scenariusz:",
@@ -54,16 +62,16 @@ ch7_ui <- tabPanel("8. ANOVA",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Dekompozycja wariancji:"),
-      " Całkowita zmienność = zmienność między grupami + zmienność wewnątrz grup.
-        ANOVA testuje, czy ta \"między\" część jest istotnie duża."
+    margin_callout(
+      label = "Dekompozycja wariancji",
+      "Całkowita zmienność = zmienność między grupami + zmienność wewnątrz grup.
+       ANOVA testuje, czy ta „między” część jest istotnie duża."
     ),
 
     # ========================================================================
     # Intuicja eta^2
     # ========================================================================
-    div(class = "section-title", "Jak czytać siłę efektu (η²)?"),
+    h2(id = "ch7-eta", class = "section-title", "Jak czytać siłę efektu (η²)?"),
 
     div(class = "narrative",
       p("P-wartość mówi ", tags$em("czy"), " różnice istnieją.
@@ -88,16 +96,18 @@ ch7_ui <- tabPanel("8. ANOVA",
           Pozostałe 77% to inne czynniki: drobnoustroje startowe, czystość surowca, czas, partia mleka.")
     ),
 
-    div(class = "callout-info",
-      tags$strong("Uwaga praktyczna: "),
-      "małe p przy małym η² oznacza często tylko ", tags$em("dużą próbę"),
-      ", nie duży efekt. Zawsze raportuj ", tags$b("oba"), "."
+    margin_callout(
+      label = "Uwaga praktyczna",
+      tagList(
+        "małe p przy małym η² oznacza często tylko ", tags$em("dużą próbę"),
+        ", nie duży efekt. Zawsze raportuj ", tags$b("oba"), "."
+      )
     ),
 
     # ========================================================================
     # WIDGET 2: Post-hoc Games-Howell
     # ========================================================================
-    div(class = "section-title", "Testy post-hoc (Games-Howell)"),
+    h2(id = "ch7-posthoc", class = "section-title", "Testy post-hoc (Games-Howell)"),
 
     div(class = "narrative",
       p("ANOVA mówi ", tags$em("\"grupy różnią się\""),
@@ -124,8 +134,9 @@ ch7_ui <- tabPanel("8. ANOVA",
         " porównań — to jego zadanie.")
     ),
 
-    div(class = "widget-block",
-      h4("Games-Howell"),
+    figure_panel(
+      label = "Ryc. 8.2",
+      title = "Games-Howell",
       fluidRow(
         column(4,
           helpText("Używa danych z ANOVA powyżej. Najpierw uruchom ANOVA!"),
@@ -139,25 +150,27 @@ ch7_ui <- tabPanel("8. ANOVA",
       )
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Ważne:"),
-      " Testy post-hoc wykonujemy ", tags$b("tylko"), " gdy ANOVA jest istotna.
-        Bez tego korekcja na wielokrotne porównania jest niepotrzebna."
+    margin_callout(
+      label = "Ważne",
+      tagList(
+        "Testy post-hoc wykonujemy ", tags$b("tylko"), " gdy ANOVA jest istotna.
+         Bez tego korekcja na wielokrotne porównania jest niepotrzebna."
+      ),
+      color = "uwaga"
     ),
 
-    div(class = "callout-info",
-      tags$strong("W jamovi: "),
-      "w panelu One-Way ANOVA sekcja ", tags$em("Post-Hoc Tests"),
-      " → zaznacz ", tags$b("Games-Howell"), "."
+    margin_code_note(
+      code = "jamovi: One-Way ANOVA\n→ Post-Hoc Tests\n→ ✓ Games-Howell",
+      description = "Ścieżka w jamovi dla testu post-hoc po ANOVA."
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: podsumowanie wszystkich testów"),
-      actionButton("ch7_next", "Dalej → 9. Ściąga",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "09",
+      title     = "Drzewo decyzyjne",
+      lead      = "mapa wyboru testu — od typu zmiennych do konkretnego testu.",
+      target_id = "ch-drzewo"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -228,8 +241,7 @@ ch7_server <- function(input, output, session) {
         scale_fill_upwr() +
         labs(title = paste0(var_label, " według: ", cfg$group_label),
              x = cfg$group_label, y = var_label) +
-        theme_educational() +
-        theme(legend.position = "none")
+                theme(legend.position = "none")
     }
   })
 
@@ -290,14 +302,13 @@ ch7_server <- function(input, output, session) {
     ggplot(gh_df, aes(x = estimate, y = comparison, color = significant)) +
       geom_point(size = 3) +
       geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
-      geom_vline(xintercept = 0, linetype = "dashed", color = col_dark) +
+      geom_vline(xintercept = 0, linetype = "dashed", color = upwr_secondary) +
       scale_color_manual(values = c("TRUE" = col_reject, "FALSE" = col_accept),
                          labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),
                          name = NULL) +
       labs(title = "Games-Howell: różnice parowe z 95% CI",
            x = "Różnica średnich", y = "Porównanie") +
-      theme_educational() +
-      theme(legend.position = "top")
+            theme(legend.position = "top")
   })
 
   output$ch7_tukey_result <- renderUI({

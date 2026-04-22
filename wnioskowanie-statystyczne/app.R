@@ -73,17 +73,8 @@ server <- function(input, output, session) {
 
   lc <- lecture_server(.chapters, input, output, session)
 
-  # Stara nawigacja z przycisków chapter-transition — tymczasowo utrzymana,
-  # zanim zmigrujemy moduły na lc_chapter_next() (Etap 3).
-  observeEvent(input$ch1_next,        { lc$switch_to("ch-hipotezy")         })
-  observeEvent(input$ch2h_next,       { lc$switch_to("ch-jedna-ilosciowa")  })
-  observeEvent(input$ch2_next,        { lc$switch_to("ch-jedna-jakosciowa") })
-  observeEvent(input$ch3_next,        { lc$switch_to("ch-korelacja")        })
-  observeEvent(input$ch4_next,        { lc$switch_to("ch-dwie-jakosciowe")  })
-  observeEvent(input$ch5_next,        { lc$switch_to("ch-dwie-grupy")       })
-  observeEvent(input$ch6_next,        { lc$switch_to("ch-anova")            })
-  observeEvent(input$ch7_next,        { lc$switch_to("ch-drzewo")           })
-  observeEvent(input$ch_drzewo_next,  { lc$switch_to("ch-sciaga")           })
+  # Nawigacja między rozdziałami idzie przez lc_chapter_next() w modułach
+  # (sendCustomMessage("switchToChapter", ...) → lc__switch_chapter).
 
   # ==========================================================================
   # CHAPTER SERVERS
