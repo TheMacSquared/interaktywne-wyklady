@@ -1,56 +1,193 @@
-$(function() {
-  var tocEl = $('<div id="sticky-toc"></div>').appendTo('body');
-  var tocBtn = $('<button id="toc-mobile-btn">\u2630</button>').appendTo('body');
-  var tocOverlay = $('<div id="toc-overlay"></div>').appendTo('body');
+// lecture_nav.js
+// Per-chapter navigation: setActiveChapter + TOC discovery + within-chapter scroll-spy
 
-  tocBtn.on('click', function() {
-    tocEl.toggleClass('toc-open');
-    tocOverlay.toggleClass('toc-open');
-  });
-  tocOverlay.on('click', function() {
-    tocEl.removeClass('toc-open');
-    tocOverlay.removeClass('toc-open');
-  });
+(function () {
+  "use strict";
 
-  function buildToc() {
-    var activeTab = $('.tab-pane.active');
-    if (!activeTab.length) return;
-    var sections = activeTab.find('.section-title');
-    if (sections.length < 2) { tocEl.hide(); return; }
+  var sidebar = null;
+  var main    = null;
+  var scrollSpyChapterId = null;
+  var scrollTicking = false;
 
-    var html = '<div class="toc-title">Spis tre\u015bci</div>';
-    sections.each(function(i) {
-      var el = $(this);
-      var id = 'toc-sec-' + i;
-      el.attr('id', id);
-      var text = el.text().trim();
-      if (text.length > 35) text = text.substring(0, 33) + '...';
-      html += '<a href="#' + id + '" data-idx="' + i + '">' + text + '</a>';
+  // -------------------------------------------------------------------------
+  // Init — ustawia scroll-spy na #lc-main
+  // -------------------------------------------------------------------------
+  function init() {
+    sidebar = document.getElementById("lc-sidebar");
+    main    = document.getElementById("lc-main");
+    if (!main) return;
+
+    main.addEventListener("scroll", function () {
+      if (!scrollTicking) {
+        window.requestAnimationFrame(function () {
+          updateScrollSpy();
+          scrollTicking = false;
+        });
+        scrollTicking = true;
+      }
     });
-    tocEl.html(html).show();
   }
 
-  function updateActive() {
-    var scrollTop = $(window).scrollTop();
-    var current = null;
-    $('.tab-pane.active .section-title').each(function() {
-      if ($(this).offset().top - 100 <= scrollTop) current = $(this).attr('id');
-    });
-    tocEl.find('a').removeClass('toc-active');
-    if (current) tocEl.find('a[href="#' + current + '"]').addClass('toc-active');
-  }
-
-  tocEl.on('click', 'a', function(e) {
-    e.preventDefault();
-    var target = $($(this).attr('href'));
-    if (target.length) {
-      $('html, body').animate({ scrollTop: target.offset().top - 60 }, 300);
+  // -------------------------------------------------------------------------
+  // setActiveChapter — aktualizuje sidebar (aktywny przycisk), resetuje TOC
+  // -------------------------------------------------------------------------
+  function setActiveChapter(chapterId) {
+    if (!sidebar) {
+      sidebar = document.getElementById("lc-sidebar");
     }
-    tocEl.removeClass('toc-open');
-    tocOverlay.removeClass('toc-open');
-  });
+    if (!main) {
+      main = document.getElementById("lc-main");
+    }
 
-  $(document).on('shown.bs.tab', function() { setTimeout(buildToc, 150); });
-  $(window).on('scroll', updateActive);
-  setTimeout(buildToc, 500);
-});
+    // Scroll do góry przy zmianie rozdziału
+    if (main) main.scrollTop = 0;
+
+    if (!sidebar) return;
+
+    sidebar.querySelectorAll("[data-lc-chapter]").forEach(function (navCh) {
+      var chId  = navCh.getAttribute("data-lc-chapter");
+      var btn   = navCh.querySelector(".lc-nav-chapter-btn");
+      var toc   = navCh.querySelector(".lc-nav-toc");
+      var isAct = (chId === chapterId);
+
+      if (btn) btn.classList.toggle("lc-active", isAct);
+      // TOC zawsze zamykamy — buildTOC otworzy właściwy po wczytaniu DOM
+      if (toc) {
+        toc.classList.remove("lc-toc-open");
+        toc.innerHTML = "";
+      }
+    });
+
+    scrollSpyChapterId = null; // zatrzymaj stary scroll-spy
+  }
+
+  // -------------------------------------------------------------------------
+  // buildTOC — odkrywa h2 w aktywnym rozdziale i wypełnia TOC w sidebarze
+  // Wywoływane z opóźnieniem po renderUI Shiny (DOM musi być gotowy)
+  // -------------------------------------------------------------------------
+  function buildTOC(chapterId) {
+    if (!sidebar) sidebar = document.getElementById("lc-sidebar");
+    if (!main)    main    = document.getElementById("lc-main");
+    if (!sidebar || !main) return;
+
+    var tocList = sidebar.querySelector("[data-lc-toc-for='" + chapterId + "']");
+    if (!tocList) return;
+
+    // Szukaj sekcji rozdziału w #lc-main (renderUI może wstawić wrapper div)
+    var section = main.querySelector("[data-lc-chapter-content]");
+
+    var headings = section
+      ? Array.from(section.querySelectorAll(
+          "h2[data-lc-section], h2.lc-h2[id], h2.section-title[id]"
+        ))
+      : [];
+
+    headings.forEach(function (h) {
+      var secId    = h.getAttribute("data-lc-section") || h.id;
+      var secNum   = h.getAttribute("data-lc-section-num")   || "";
+      var secTitle = h.getAttribute("data-lc-section-title") || h.textContent.trim();
+
+      var li = document.createElement("li");
+      var a  = document.createElement("a");
+      a.href = "#" + secId;
+      a.setAttribute("data-lc-sec-target", secId);
+
+      if (secNum) {
+        var numSpan = document.createElement("span");
+        numSpan.className = "lc-nav-toc-num";
+        numSpan.textContent = "§ " + secNum;
+        a.appendChild(numSpan);
+      }
+      a.appendChild(document.createTextNode(secTitle));
+
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        var target = document.getElementById(secId);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      li.appendChild(a);
+      tocList.appendChild(li);
+    });
+
+    if (headings.length > 0) {
+      tocList.classList.add("lc-toc-open");
+    }
+
+    scrollSpyChapterId = chapterId;
+    updateScrollSpy();
+  }
+
+  // -------------------------------------------------------------------------
+  // Scroll-spy — podświetla aktywną sekcję w TOC aktywnego rozdziału
+  // -------------------------------------------------------------------------
+  function updateScrollSpy() {
+    if (!main || !sidebar || !scrollSpyChapterId) return;
+
+    var scrollTop = main.scrollTop + 80;
+    var section   = main.querySelector("[data-lc-chapter-content]");
+    if (!section) return;
+
+    var headings = Array.from(
+      section.querySelectorAll(
+        "h2[data-lc-section], h2.lc-h2[id], h2.section-title[id]"
+      )
+    );
+
+    var activeSectionId = null;
+    headings.forEach(function (h) {
+      if (h.offsetTop <= scrollTop) {
+        activeSectionId = h.getAttribute("data-lc-section") || h.id;
+      }
+    });
+
+    sidebar
+      .querySelectorAll("[data-lc-toc-for='" + scrollSpyChapterId + "'] a")
+      .forEach(function (a) {
+        a.classList.toggle(
+          "lc-active",
+          a.getAttribute("data-lc-sec-target") === activeSectionId
+        );
+      });
+  }
+
+  // -------------------------------------------------------------------------
+  // Shiny message handlers
+  // -------------------------------------------------------------------------
+  function setupShinyHandlers() {
+    // Serwer → klient: przełącz aktywny rozdział i po 250ms zbuduj TOC
+    Shiny.addCustomMessageHandler("setActiveChapter", function (chapterId) {
+      setActiveChapter(chapterId);
+      setTimeout(function () { buildTOC(chapterId); }, 250);
+    });
+
+    // Serwer → klient: wymuś przełączenie rozdziału przez Shiny input
+    // (używane przez session$sendCustomMessage("switchToChapter", id) w modułach)
+    Shiny.addCustomMessageHandler("switchToChapter", function (chapterId) {
+      Shiny.setInputValue("lc__switch_chapter", chapterId, { priority: "event" });
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // Bootstrap
+  // -------------------------------------------------------------------------
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    init();
+  } else {
+    document.addEventListener("DOMContentLoaded", init);
+  }
+
+  // Shiny.addCustomMessageHandler można wywołać przed inicjalizacją Shiny
+  if (window.Shiny) {
+    setupShinyHandlers();
+  } else {
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.Shiny) {
+        setupShinyHandlers();
+      } else {
+        $(document).one("shiny:idle", setupShinyHandlers);
+      }
+    });
+  }
+
+})();

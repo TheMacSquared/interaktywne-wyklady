@@ -152,8 +152,8 @@ lecture_page <- function(lecture_id      = NULL,
         )
       ),
       withMathJax(),
-      includeCSS(file.path(proj_root, "R", "lecture_theme.css")),
-      includeScript(file.path(proj_root, "R", "lecture_nav.js")),
+      includeCSS(file.path(proj_root, "R", "shared_styles.css")),
+      includeScript(file.path(proj_root, "R", "shared_toc.js")),
       header_extras
     ),
 

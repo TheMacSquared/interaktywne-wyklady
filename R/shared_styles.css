@@ -1,226 +1,801 @@
 /* ============================================================================
-   WSPOLNE STYLE DLA WSZYSTKICH APLIKACJI
-   Dolaczane przez includeCSS() w kazdym app.R
+   LECTURE THEME — nowy design system dla interaktywnych wykładów
+   Używany przez lecture_layout.R; shared_styles.css pozostaje dla starych apek.
    ============================================================================ */
 
-/* Font: Atkinson Hyperlegible (Latin Extended wspiera polskie znaki)
-   Wybrany dla dostepnosci - rozrozniane znaki podobne (I/l/1, O/0) */
-@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap&subset=latin-ext');
-
-/* Bootstrap Icons - ikony dla callout-ow (automatycznie via ::before) */
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap&subset=latin-ext');
 @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
 
-body, .shiny-text-output, .tab-content,
-.navbar, .navbar a, .btn, input, select, textarea,
-h1, h2, h3, h4, h5, h6, .narrative, .narrative p {
-  font-family: 'Atkinson Hyperlegible', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+/* === Tokeny === */
+:root {
+  --lc-bg:           #fafaf7;
+  --lc-paper:        #f7f4ec;
+  --lc-surface:      #ffffff;
+  --lc-surface2:     #f3f1ea;
+  --lc-ink:          #1a1a1a;
+  --lc-ink-soft:     #3d3d3a;
+  --lc-ink-faded:    #8a8780;
+  --lc-ink-subtle:   #b8b5ad;
+  --lc-rule:         #d9d5cc;
+  --lc-rule-soft:    #e8e5de;
+  --lc-burgundy:     #6b1a26;
+  --lc-burgundy-b:   #8a2535;
+  --lc-burgundy-t:   #f4e8ea;
+  --lc-gold:         #b8893a;
+  --lc-gold-t:       #f5ecd8;
+  --lc-sage:         #5a7a5a;
+  --lc-sage-t:       #e8f0e5;
+  --lc-serif:        'Source Serif 4', Georgia, serif;
+  --lc-mono:         'JetBrains Mono', ui-monospace, monospace;
+  --lc-sans:         'Atkinson Hyperlegible', -apple-system, sans-serif;
+  --lc-nav-w:        280px;
 }
 
-code, pre, .verbatim {
-  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-  font-size: 0.92em;
+/* === Reset dla pełnoekranowego layoutu === */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0 !important;
+  overflow: hidden;
+  background: var(--lc-bg);
+  font-family: var(--lc-sans);
+  color: var(--lc-ink);
 }
 
-/* MathJax: tekst w \text{} czcionka TeX-owa nie ma polskich znakow.
-   Wymuszamy Atkinson Hyperlegible na elementach tekstowych MathJax v3 (CHTML). */
-mjx-container mjx-mtext,
-mjx-container mjx-text,
-mjx-container mjx-mi[texclass="ORD"] {
-  font-family: 'Atkinson Hyperlegible', sans-serif !important;
-}
-/* MathJax v2 fallback (jesli gdzies uzywany) */
-.MathJax .mjx-char.TEX-I,
-.MathJax span.mjx-char,
-.MathJax_SVG text {
-  /* tekst w trybie \text — font normalny z polskimi znakami */
-}
-.MathJax mjx-mtext, .MathJax_Display mjx-mtext,
-.MathJax span[class*="mjx-text"], .MathJax_Display span[class*="mjx-text"] {
-  font-family: 'Atkinson Hyperlegible', sans-serif !important;
+/* Shiny wrappers — nie przeszkadzają w full-height */
+#shiny-wrapper, .shiny-html-output, #shiny-app { height: 100%; }
+
+/* === Shell === */
+.lc-shell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-/* Bold — lzejsza waga, zeby nie krzyczal w tekscie */
-strong, b, .narrative strong, .narrative b { font-weight: 600; }
-
-/* Narrative text */
-.narrative { font-size: 16px; line-height: 1.7; color: #2c3e50; margin-bottom: 15px; }
-.narrative p { margin-bottom: 12px; max-width: 72ch; }
-.narrative ul, .narrative ol { max-width: 72ch; }
-
-/* Widget containers - szersze niz narracja */
-.widget-block {
-  background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;
-  padding: 20px; margin: 25px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+/* === Górny pasek modułów === */
+.lc-tabs {
+  background: var(--lc-surface);
+  border-bottom: 1px solid var(--lc-rule);
+  padding: 0 32px;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  flex-shrink: 0;
+  z-index: 100;
 }
 
-/* Headings - hierarchia H1 -> H2 -> H3 */
-.chapter-title {
-  font-size: 30px; font-weight: 700; color: #2c3e50;
-  margin: 10px 0 20px 0;
-  border-bottom: 4px solid #3498db; padding-bottom: 8px;
+.lc-tabs-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 24px;
+  border-right: 1px solid var(--lc-rule-soft);
+  margin-right: 16px;
+  text-decoration: none;
+}
+
+.lc-tabs-logo-mark {
+  width: 30px;
+  height: 30px;
+  background: var(--lc-burgundy);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--lc-serif);
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.lc-tabs-logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.lc-tabs-logo-title {
+  font-family: var(--lc-serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--lc-ink);
+  line-height: 1;
+}
+
+.lc-tabs-logo-sub {
+  font-family: var(--lc-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--lc-ink-faded);
+  margin-top: 2px;
+}
+
+.lc-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 14px 20px;
+  font-family: var(--lc-sans);
+  font-size: 14px;
+  color: var(--lc-ink-faded);
+  font-weight: 400;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  transition: color 0.15s;
+  white-space: nowrap;
+}
+
+.lc-tab:hover { color: var(--lc-ink); }
+
+.lc-tab.lc-tab-active {
+  color: var(--lc-ink);
+  font-weight: 600;
+  border-bottom-color: var(--lc-burgundy);
+}
+
+.lc-tab-num {
+  font-family: var(--lc-serif);
+  font-size: 13px;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--lc-burgundy);
+}
+
+.lc-tab:not(.lc-tab-active) .lc-tab-num {
+  color: var(--lc-ink-subtle);
+}
+
+/* === Body (sidebar + main) === */
+.lc-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+/* === Lewy sidebar === */
+.lc-nav {
+  width: var(--lc-nav-w);
+  flex-shrink: 0;
+  background: var(--lc-paper);
+  border-right: 1px solid var(--lc-rule-soft);
+  padding: 24px 18px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.lc-nav-module-label {
+  font-family: var(--lc-mono);
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--lc-ink-faded);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.lc-nav-module-title {
+  font-family: var(--lc-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--lc-ink);
   line-height: 1.2;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--lc-rule-soft);
 }
-.section-title {
-  font-size: 24px; font-weight: 700; color: #34495e;
-  margin-top: 40px; margin-bottom: 15px;
-  border-left: 4px solid #3498db; padding-left: 12px;
+
+/* Rozdział w sidebarze */
+.lc-nav-chapter {
+  margin-bottom: 2px;
+}
+
+.lc-nav-chapter-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-left: 3px solid transparent;
+  padding: 9px 10px;
+  cursor: pointer;
+  font-family: var(--lc-sans);
+  font-size: 14px;
+  color: var(--lc-ink);
+  transition: background 0.1s;
+}
+
+.lc-nav-chapter-btn:hover {
+  background: var(--lc-surface2);
+}
+
+.lc-nav-chapter-btn.lc-active {
+  background: var(--lc-surface);
+  border-color: var(--lc-rule);
+  border-left-color: var(--lc-burgundy);
+}
+
+.lc-nav-chapter-inner {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.lc-nav-chapter-num {
+  font-family: var(--lc-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--lc-ink-faded);
+  flex-shrink: 0;
+}
+
+.lc-nav-chapter-btn.lc-active .lc-nav-chapter-num {
+  color: var(--lc-burgundy);
+}
+
+.lc-nav-chapter-title {
+  font-family: var(--lc-serif);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--lc-ink);
+  line-height: 1.25;
+}
+
+.lc-nav-chapter-btn.lc-active .lc-nav-chapter-title {
+  font-weight: 700;
+}
+
+.lc-nav-chapter-dur {
+  font-size: 11px;
+  color: var(--lc-ink-faded);
+  margin-top: 3px;
+  margin-left: 24px;
   line-height: 1.3;
 }
-.subsection-title, h3.problem-name {
-  font-size: 18px; font-weight: 600; color: #34495e;
-  margin-top: 24px; margin-bottom: 10px;
-  line-height: 1.3;
+
+/* TOC w sidebarze (sekcje aktywnego rozdziału) */
+.lc-nav-toc {
+  list-style: none;
+  margin: 3px 0 8px 0;
+  padding: 4px 0 4px 14px;
+  border-left: 1px solid var(--lc-rule-soft);
+  margin-left: 14px;
+  display: none; /* pokazywany przez JS dla aktywnego rozdziału */
 }
 
-/* Step buttons row */
-.step-buttons { display: flex; gap: 6px; margin-bottom: 15px; flex-wrap: wrap; }
-.step-buttons .btn { flex: 1; min-width: 120px; }
+.lc-nav-toc.lc-toc-open { display: block; }
 
-/* Inline stats */
-.stat-box {
-  display: inline-block; padding: 8px 16px; margin: 4px;
-  border-radius: 6px; font-weight: bold; font-size: 16px;
-  color: white; min-width: 100px; text-align: center;
+.lc-nav-toc a {
+  display: block;
+  padding: 4px 10px 4px 12px;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
+  text-decoration: none;
+  font-family: var(--lc-sans);
+  font-size: 12px;
+  color: var(--lc-ink-faded);
+  font-weight: 400;
+  line-height: 1.35;
+  transition: color 0.1s, border-color 0.1s;
 }
 
-/* Alert/callout boxes */
+.lc-nav-toc a:hover { color: var(--lc-ink); }
+
+.lc-nav-toc a.lc-active {
+  color: var(--lc-burgundy);
+  font-weight: 600;
+  border-left-color: var(--lc-burgundy);
+}
+
+.lc-nav-toc-num {
+  font-family: var(--lc-mono);
+  font-size: 10px;
+  margin-right: 6px;
+  color: var(--lc-ink-subtle);
+}
+
+.lc-nav-toc a.lc-active .lc-nav-toc-num { color: var(--lc-burgundy); }
+
+/* === Główna obszar treści === */
+.lc-main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  background: var(--lc-bg);
+}
+
+/* === Wrapper treści wewnątrz .lc-main === */
+.lc-content-wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 48px 120px;
+}
+
+/* === Sekcja rozdziału === */
+.lc-chapter {
+  padding-top: 48px;
+  padding-bottom: 20px;
+}
+
+/* === Header rozdziału === */
+.lc-chapter-header {
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--lc-rule-soft);
+  margin-bottom: 16px;
+}
+
+.lc-chapter-kicker {
+  font-family: var(--lc-mono);
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--lc-ink-faded);
+  margin-bottom: 20px;
+}
+
+.lc-chapter-hero {
+  display: flex;
+  align-items: baseline;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.lc-chapter-num {
+  font-family: var(--lc-serif);
+  font-weight: 700;
+  font-size: 120px;
+  line-height: 0.88;
+  color: var(--lc-burgundy);
+  letter-spacing: -4px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.lc-chapter-title {
+  font-family: var(--lc-serif);
+  font-weight: 700;
+  font-size: 52px;
+  line-height: 0.98;
+  margin: 0;
+  color: var(--lc-ink);
+  letter-spacing: -1.5px;
+}
+
+.lc-chapter-lead {
+  font-family: var(--lc-serif);
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--lc-ink-soft);
+  max-width: 600px;
+  margin: 0;
+}
+
+/* === Siatka treści: tekst (1fr) + margines prawy (240px) === */
+.lc-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  column-gap: 36px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .lc-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lc-margin { display: none; }
+}
+
+/* Elementy domyślnie w kolumnie 1 */
+.lc-grid > * { grid-column: 1; }
+
+/* Full-width (wykresy, ściąga) */
+.lc-full { grid-column: 1 / -1 !important; }
+
+/* Prawy margines */
+.lc-margin {
+  grid-column: 2;
+  align-self: start;
+}
+
+/* === Treść narracyjna (kolumna 1) === */
+.lc-p {
+  font-family: var(--lc-serif);
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--lc-ink-soft);
+  margin: 0 0 1.1em;
+  max-width: 680px;
+}
+
+.lc-h2 {
+  font-family: var(--lc-serif);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--lc-ink);
+  letter-spacing: -0.5px;
+  margin: 3em 0 0.5em;
+  scroll-margin-top: 80px;
+}
+
+.lc-h2-kicker {
+  display: block;
+  font-family: var(--lc-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--lc-burgundy);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.lc-h3 {
+  font-family: var(--lc-serif);
+  font-size: 20px;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--lc-ink);
+  margin: 2em 0 0.4em;
+}
+
+/* Inicjał (drop cap) */
+.lc-drop {
+  font-family: var(--lc-serif);
+  font-weight: 700;
+  font-size: 60px;
+  float: left;
+  line-height: 0.82;
+  margin-right: 8px;
+  margin-top: 6px;
+  margin-bottom: -4px;
+  color: var(--lc-burgundy);
+}
+
+/* === Margin callouts === */
+.lc-margin-callout {
+  border-left: 2px solid var(--lc-gold);
+  padding-left: 12px;
+  margin-bottom: 20px;
+}
+
+.lc-margin-callout-label {
+  font-family: var(--lc-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--lc-gold);
+  margin-bottom: 6px;
+}
+
+.lc-margin-callout-label::before {
+  content: "※ ";
+}
+
+.lc-margin-callout-body {
+  font-family: var(--lc-serif);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--lc-ink-soft);
+  font-style: italic;
+}
+
+/* Wariant: uwaga (burgundy) */
+.lc-margin-callout.lc-callout-uwaga {
+  border-left-color: var(--lc-burgundy);
+}
+.lc-margin-callout.lc-callout-uwaga .lc-margin-callout-label {
+  color: var(--lc-burgundy);
+}
+
+/* Wariant: wskazówka/kod (gold) — domyślny */
+
+/* Wariant: sukces (sage) */
+.lc-margin-callout.lc-callout-ok {
+  border-left-color: var(--lc-sage);
+}
+.lc-margin-callout.lc-callout-ok .lc-margin-callout-label {
+  color: var(--lc-sage);
+}
+
+/* === Figure panel (ramka z plakietką) === */
+.lc-figure-panel {
+  position: relative;
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-rule);
+  padding: 28px 28px 24px;
+  margin: 2em 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.lc-figure-panel-badge {
+  position: absolute;
+  top: -9px;
+  left: 20px;
+  background: var(--lc-burgundy);
+  color: #fff;
+  font-family: var(--lc-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 10px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.lc-figure-panel-title {
+  font-family: var(--lc-serif);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--lc-ink);
+  margin-bottom: 16px;
+  padding-top: 4px;
+}
+
+/* === Callout — bazowe style (inline, wewnątrz widget-block itp.) === */
 .callout-info {
-  background: #eaf4fc; border-left: 4px solid #3498db;
-  padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
+  background: var(--lc-gold-t);
+  border-left: 3px solid var(--lc-gold);
+  padding: 10px 14px;
+  margin: 14px 0;
+  font-family: var(--lc-serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--lc-ink-soft);
+  border-radius: 2px;
 }
 .callout-warning {
-  background: #fef9e7; border-left: 4px solid #f39c12;
-  padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
+  background: var(--lc-burgundy-t);
+  border-left: 3px solid var(--lc-burgundy);
+  padding: 10px 14px;
+  margin: 14px 0;
+  font-family: var(--lc-serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--lc-ink-soft);
+  border-radius: 2px;
 }
 .callout-danger {
-  background: #fdedec; border-left: 4px solid #e74c3c;
-  padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
+  background: #fdedec;
+  border-left: 3px solid #c0392b;
+  padding: 10px 14px;
+  margin: 14px 0;
+  font-family: var(--lc-serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--lc-ink-soft);
+  border-radius: 2px;
 }
 .callout-success {
-  background: #eafaf1; border-left: 4px solid #27ae60;
-  padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
+  background: var(--lc-sage-t);
+  border-left: 3px solid var(--lc-sage);
+  padding: 10px 14px;
+  margin: 14px 0;
+  font-family: var(--lc-serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--lc-ink-soft);
+  border-radius: 2px;
 }
 
-/* Ikony dla callout-ow (Bootstrap Icons via ::before) */
-.callout-info::before, .callout-warning::before,
-.callout-danger::before, .callout-success::before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal;
-  font-style: normal;
-  font-size: 1.15em;
-  margin-right: 8px;
-  vertical-align: -2px;
-  display: inline-block;
-}
-.callout-info::before    { content: "\00f431"; color: #3498db; } /* info-circle-fill */
-.callout-warning::before { content: "\00f33a"; color: #f39c12; } /* exclamation-triangle-fill */
-.callout-danger::before  { content: "\00f622"; color: #e74c3c; } /* x-circle-fill */
-.callout-success::before { content: "\00f26b"; color: #27ae60; } /* check-circle-fill */
-
-/* Chapter navigation */
-.chapter-transition {
-  background: linear-gradient(135deg, #eaf4fc, #f0f7ee);
-  border: 1px solid #b8d4e8; border-radius: 8px;
-  padding: 20px; margin: 30px 0 15px 0; text-align: center;
-}
-.chapter-transition p { font-size: 16px; color: #2c3e50; margin-bottom: 12px; }
-.chapter-transition .btn { font-size: 16px; padding: 10px 30px; }
-
-/* Chapter opening reference */
-.chapter-recap { font-size: 14px; color: #7f8c8d; font-style: italic; margin-bottom: 5px; }
-
-/* Formula callout */
-.formula-box {
-  background: #f5f0ff; border: 1px solid #d5c8f0; border-radius: 6px;
-  padding: 12px 16px; margin: 10px 0;
-}
-
-/* Preset buttons */
-.preset-buttons { display: flex; gap: 6px; margin-bottom: 15px; flex-wrap: wrap; }
-.preset-buttons .btn { flex: 1; min-width: 100px; font-size: 13px; }
-
-/* Sticky TOC */
-#sticky-toc {
-  position: fixed; top: 70px; left: 10px; width: 180px;
-  max-height: calc(100vh - 90px); overflow-y: auto;
-  background: rgba(255,255,255,0.95); border: 1px solid #dee2e6;
-  border-radius: 8px; padding: 10px 8px; font-size: 12px;
-  z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: opacity 0.3s;
-}
-#sticky-toc .toc-title {
-  font-weight: bold; color: #2c3e50; margin-bottom: 6px;
-  font-size: 13px; padding-bottom: 4px; border-bottom: 1px solid #dee2e6;
-}
-#sticky-toc a {
-  display: block; padding: 3px 6px; color: #7f8c8d; text-decoration: none;
-  border-radius: 4px; line-height: 1.3; margin-bottom: 2px; transition: all 0.2s;
-}
-#sticky-toc a:hover { color: #3498db; background: #eaf4fc; }
-#sticky-toc a.toc-active { color: #3498db; font-weight: bold; background: #eaf4fc; }
-@media (max-width: 1400px) { #sticky-toc { display: none !important; } }
-
-/* Mobile TOC toggle */
-#toc-mobile-btn {
-  display: none; position: fixed; bottom: 20px; right: 20px;
-  width: 48px; height: 48px; border-radius: 50%; background: #3498db;
-  color: white; border: none; font-size: 22px; line-height: 48px;
-  text-align: center; cursor: pointer; z-index: 1001;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-#toc-mobile-btn:hover { background: #2980b9; }
-#toc-overlay {
-  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.4); z-index: 1000;
-}
-@media (max-width: 1400px) {
-  #toc-mobile-btn { display: block; }
-  #sticky-toc.toc-open {
-    display: block !important; position: fixed;
-    top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 85%; max-width: 320px; max-height: 70vh;
-    z-index: 1002; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+/* === Callout jako margines prawy — bezpośrednie dzieci .lc-chapter === */
+/* Tekst (narrative, widget) oblewa je z lewej. clear:right = stackują się. */
+@media (min-width: 900px) {
+  .lc-chapter > .callout-info,
+  .lc-chapter > .callout-warning,
+  .lc-chapter > .callout-danger,
+  .lc-chapter > .callout-success {
+    float: right;
+    clear: right;
+    width: 224px;
+    margin: 6px 0 18px 28px;
+    font-size: 12.5px;
+    line-height: 1.45;
+    padding: 9px 11px;
   }
-  #toc-overlay.toc-open { display: block; }
+
+  /* Nagłówki sekcji i bloki struktury resetują flow */
+  .lc-chapter > h2.section-title,
+  .lc-chapter > .chapter-recap,
+  .lc-chapter > .chapter-transition,
+  .lc-chapter > hr {
+    clear: both;
+  }
+
+  /* Opt-in: pełna szerokość (wykresy gridowe, szerokie tabele itp.) */
+  .lc-chapter > .lc-wide {
+    clear: both;
+    width: 100%;
+  }
+
+  /* Clearfix na końcu sekcji */
+  .lc-chapter::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
 }
 
-/* Paradigm panels (metody-bayesowskie) */
-.panel-frequentist {
-  background: #fdedec; border-left: 4px solid #e74c3c;
-  border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 10px 0;
+/* === Stary .narrative — uproszczony === */
+.narrative {
+  font-family: var(--lc-serif);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--lc-ink-soft);
+  margin-bottom: 14px;
 }
-.panel-bayesian {
-  background: #f5f0ff; border-left: 4px solid #9b59b6;
-  border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 10px 0;
-}
-.panel-frequentist h5, .panel-bayesian h5 {
-  margin-top: 0; margin-bottom: 10px; font-weight: bold;
-}
-.panel-frequentist h5 { color: #c0392b; }
-.panel-bayesian h5 { color: #8e44ad; }
+.narrative p { margin-bottom: 12px; max-width: 680px; }
 
-/* Quiz tiles */
-.quiz-tiles { display: grid; gap: 12px; margin: 15px 0; }
+/* === Stare .chapter-title, .section-title — nowy wygląd === */
+.chapter-title {
+  font-family: var(--lc-serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--lc-ink);
+  margin: 10px 0 20px;
+  border-bottom: 2px solid var(--lc-burgundy);
+  padding-bottom: 8px;
+  letter-spacing: -0.3px;
+}
+
+.section-title {
+  font-family: var(--lc-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--lc-ink);
+  margin-top: 36px;
+  margin-bottom: 14px;
+  padding-left: 14px;
+  border-left: 3px solid var(--lc-burgundy);
+}
+
+.subsection-title, h3.problem-name {
+  font-family: var(--lc-serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--lc-ink);
+  margin-top: 22px;
+  margin-bottom: 8px;
+}
+
+/* === Widget block === */
+.widget-block {
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-rule);
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+/* === Kod === */
+code, pre, .verbatim {
+  font-family: var(--lc-mono);
+  font-size: 0.88em;
+  background: var(--lc-surface2);
+  border-radius: 2px;
+  padding: 1px 5px;
+}
+
+pre { padding: 12px 16px; }
+
+/* === Przyciski — nowy styl === */
+.btn-primary {
+  background: var(--lc-burgundy) !important;
+  border-color: var(--lc-burgundy) !important;
+  font-family: var(--lc-sans) !important;
+}
+.btn-primary:hover {
+  background: var(--lc-burgundy-b) !important;
+  border-color: var(--lc-burgundy-b) !important;
+}
+
+.btn-outline-primary {
+  color: var(--lc-burgundy) !important;
+  border-color: var(--lc-burgundy) !important;
+}
+.btn-outline-primary:hover {
+  background: var(--lc-burgundy) !important;
+  color: #fff !important;
+}
+
+/* === Pasek kroków === */
+.step-buttons { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.step-buttons .btn { flex: 1; min-width: 110px; }
+
+/* === Quiz tiles — nowy wygląd === */
+.quiz-tiles { display: grid; gap: 10px; margin: 14px 0; }
 .quiz-cols-2 { grid-template-columns: repeat(2, 1fr); }
 .quiz-cols-3 { grid-template-columns: repeat(3, 1fr); }
 .quiz-cols-4 { grid-template-columns: repeat(2, 1fr); }
 
 .quiz-tiles .quiz-tile {
-  background: white; border: 2px solid #dee2e6; border-radius: 12px;
-  padding: 20px 12px; text-align: center; cursor: pointer; transition: all 0.3s;
-  display: block; width: 100%; font-family: inherit; color: inherit;
+  background: var(--lc-surface);
+  border: 1px solid var(--lc-rule);
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: block;
+  width: 100%;
+  font-family: var(--lc-sans);
+  color: var(--lc-ink);
 }
+
 .quiz-tiles .quiz-tile:hover {
-  border-color: #3498db; transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(52,152,219,0.2);
+  border-color: var(--lc-burgundy);
+  background: var(--lc-burgundy-t);
 }
-.quiz-tiles .quiz-tile:focus { outline: none; }
+
 .quiz-tiles .quiz-tile .tile-letter {
-  display: inline-block; width: 36px; height: 36px; line-height: 36px;
-  border-radius: 50%; background: #3498db; color: white;
-  font-weight: 700; font-size: 16px; margin-bottom: 8px;
+  display: inline-block;
+  width: 32px; height: 32px; line-height: 32px;
+  background: var(--lc-burgundy);
+  color: #fff;
+  font-family: var(--lc-mono);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
 }
-.quiz-tiles .quiz-tile .tile-text { font-size: 13px; color: #2c3e50; }
-.quiz-cols-4 .quiz-tile .tile-text { font-size: 12px; }
-.quiz-tile.correct { border-color: #27ae60 !important; background: #eafaf1 !important; }
-.quiz-tile.wrong { border-color: #e74c3c !important; background: #fdedec !important; }
-.quiz-tile.disabled { pointer-events: none; opacity: 0.7; }
+
+.quiz-tiles .quiz-tile .tile-text {
+  font-size: 13px;
+  color: var(--lc-ink-soft);
+}
+
+.quiz-tile.correct { border-color: var(--lc-sage) !important; background: var(--lc-sage-t) !important; }
+.quiz-tile.wrong   { border-color: var(--lc-burgundy) !important; background: var(--lc-burgundy-t) !important; }
+.quiz-tile.disabled { pointer-events: none; opacity: 0.65; }
+
+/* === Formulas === */
+.formula-box {
+  background: var(--lc-gold-t);
+  border: 1px solid #e8d5a8;
+  padding: 12px 16px;
+  margin: 10px 0;
+  font-family: var(--lc-mono);
+  font-size: 14px;
+}
+
+/* === MathJax override === */
+mjx-container mjx-mtext,
+mjx-container mjx-text {
+  font-family: var(--lc-sans) !important;
+}
+
+/* === Stat box === */
+.stat-box {
+  display: inline-block;
+  padding: 8px 16px;
+  margin: 4px;
+  font-weight: bold;
+  font-size: 15px;
+  color: white;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* === Responsywność === */
+@media (max-width: 768px) {
+  .lc-nav { display: none; }
+  .lc-content-wrap { padding: 0 20px 80px; }
+  .lc-chapter-num { font-size: 72px; }
+  .lc-chapter-title { font-size: 34px; }
+  .lc-tabs { padding: 0 16px; overflow-x: auto; }
+}
+
+/* === Koniec panelu bootstrap (sandstone override) === */
+/* Ukryj bootstrap navbar tylko w apkach z nowym layoutem (lecture_page) */
+body:has(.lc-shell) .navbar { display: none !important; }
+body:has(.lc-shell) { padding-top: 0 !important; }
+
+/* Shiny tab panels — widoczne, ale bez zakładek bslib */
+.tab-content { padding: 0 !important; border: none !important; }
+.nav-tabs { display: none !important; }
