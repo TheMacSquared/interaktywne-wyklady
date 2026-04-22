@@ -2,18 +2,24 @@
 # CHAPTER 6: Dwie zmienne jakosciowe (chi-kwadrat, Fisher)
 # ============================================================================
 
-ch5_ui <- tabPanel("6. Dwie zmienne jakościowe",
-  fluidRow(column(8, offset = 2,
+ch5_ui <- list(
+  id = "ch-dwie-jakosciowe", num = "06", title = "Test χ² niezależności",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Badaliśmy korelację między zmiennymi ilościowymi.
-       A co, gdy obie zmienne są jakościowe (kategorialne)?"
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 06 · Wnioskowanie statystyczne",
+      num    = "06",
+      title  = "Test χ² niezależności.",
+      lead   = "„Czy wybór kierunku studiów zależy od płci?” Dwie zmienne jakościowe —
+                tabela kontyngencji, liczebności oczekiwane i statystyka χ² rozstrzygają,
+                czy to niezależność czy zależność."
     ),
 
     # ========================================================================
     # Wprowadzenie
     # ========================================================================
-    div(class = "section-title", "Tabela kontyngencji i test χ²"),
+    h2(id = "ch5-intro", class = "section-title", "Tabela kontyngencji i test χ²"),
 
     div(class = "narrative",
       p("Gdy mamy dwie zmienne jakościowe, pytamy: ",
@@ -32,14 +38,15 @@ ch5_ui <- tabPanel("6. Dwie zmienne jakościowe",
     # ========================================================================
     # WIDGET 0: Budowanie intuicji — co to znaczy niezaleznosc?
     # ========================================================================
-    div(class = "section-title", "Budowanie intuicji: co to znaczy „niezależność”?"),
+    h2(id = "ch5-intuicja", class = "section-title", "Budowanie intuicji: co to znaczy „niezależność”?"),
 
     div(class = "narrative",
       p("Zanim przejdziemy do wzorów, zbudujmy intuicję na przykładzie:")
     ),
 
-    div(class = "widget-block",
-      h4("Przykład: czy płeć wpływa na dostawanie mandatów?"),
+    figure_panel(
+      label = "Ryc. 6.1",
+      title = "Przykład: czy płeć wpływa na dostawanie mandatów?",
 
       div(class = "narrative",
         p("Mamy dane z 200 kontroli drogowych. Pytanie: ",
@@ -70,9 +77,11 @@ ch5_ui <- tabPanel("6. Dwie zmienne jakościowe",
     # ========================================================================
     # WIDGET 1: Chi-kwadrat krokowy
     # ========================================================================
-    div(class = "section-title", "Test χ² niezależności — krok po kroku"),
+    h2(id = "ch5-krok", class = "section-title", "Test χ² niezależności — krok po kroku"),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 6.2",
+      title = "Test χ² niezależności — krok po kroku",
       fluidRow(
         column(4,
           selectInput("ch5_scenario", "Scenariusz:",
@@ -112,7 +121,7 @@ ch5_ui <- tabPanel("6. Dwie zmienne jakościowe",
     # ========================================================================
     # WIDGET 2: Chi-kwadrat vs Fisher (porownanie)
     # ========================================================================
-    div(class = "section-title", "Test χ² a test Fishera"),
+    h2(id = "ch5-fisher", class = "section-title", "Test χ² a test Fishera"),
 
     div(class = "narrative",
       p("Test χ² opiera się na przybliżeniu. Gdy próba jest mała,
@@ -121,8 +130,9 @@ ch5_ui <- tabPanel("6. Dwie zmienne jakościowe",
         " — liczy p-wartość dokładnie, jak test dwumianowy dla proporcji.")
     ),
 
-    div(class = "widget-block",
-      h4("Porównanie wyników"),
+    figure_panel(
+      label = "Ryc. 6.3",
+      title = "Porównanie: χ² vs Fisher",
       actionButton("ch5_compare", "Porównaj χ² i Fishera (na tych samych danych)",
                    class = "btn-primary", width = "100%"),
       br(), br(),
@@ -168,15 +178,16 @@ ch5_ui <- tabPanel("6. Dwie zmienne jakościowe",
     # ========================================================================
     # Jak interpretowac sile zwiazku
     # ========================================================================
-    div(class = "section-title", "Jak duża jest różnica? Siła związku"),
+    h2(id = "ch5-sila", class = "section-title", "Jak duża jest różnica? Siła związku"),
 
     div(class = "narrative",
       p("P-wartość mówi ", tags$em("czy"), " związek istnieje, ale nie ",
         tags$em("jak duży"), " jest. Zobaczmy to na naszych danych:")
     ),
 
-    div(class = "widget-block",
-      h4("Siła związku — na naszych danych"),
+    figure_panel(
+      label = "Ryc. 6.4",
+      title = "Siła związku — na naszych danych",
       actionButton("ch5_effect", "Pokaż siłę związku",
                    class = "btn-primary", width = "100%"),
       br(), br(),
@@ -198,13 +209,13 @@ ch5_ui <- tabPanel("6. Dwie zmienne jakościowe",
         " — to język zrozumiały dla każdego odbiorcy.")
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: porównywanie dwóch grup (zmienna ilościowa i jakościowa)"),
-      actionButton("ch5_next", "Dalej → 7. Ilościowa i jakościowa",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "07",
+      title     = "Test t dwóch grup",
+      lead      = "porównanie średnich między dwiema grupami — czy różnica jest realna?",
+      target_id = "ch-dwie-grupy"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -396,8 +407,7 @@ ch5_server <- function(input, output, session) {
           labs(title = paste0(par$lab1, " a ", par$lab2, " (liczności)"),
                x = par$lab1, y = "Liczność", fill = par$lab2) +
           scale_fill_upwr() +
-          theme_educational() +
-          theme(legend.position = "top")
+                    theme(legend.position = "top")
       } else {
         # Slupki z procentami (w obrębie wiersza)
         df_pct <- df %>%
@@ -413,8 +423,7 @@ ch5_server <- function(input, output, session) {
           labs(title = paste0(par$lab1, " a ", par$lab2, " (% w grupie)"),
                x = par$lab1, y = "Procent", fill = par$lab2) +
           scale_fill_upwr() +
-          theme_educational() +
-          theme(legend.position = "top")
+                    theme(legend.position = "top")
       }
     } else {
       # Krok 3-4: rozklad chi-kwadrat

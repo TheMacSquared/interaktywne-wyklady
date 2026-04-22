@@ -2,18 +2,24 @@
 # CHAPTER 5: Dwie zmienne ilosciowe (korelacja Pearsona)
 # ============================================================================
 
-ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
-  fluidRow(column(8, offset = 2,
+ch4_ui <- list(
+  id = "ch-korelacja", num = "05", title = "Korelacja",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Dotychczas badaliśmy jedną zmienną.
-       Teraz pytamy: czy dwie zmienne ilościowe są ze sobą powiązane?"
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 05 · Wnioskowanie statystyczne",
+      num    = "05",
+      title  = "Korelacja.",
+      lead   = "„Czy wraz ze wzrostem temperatury rośnie sprzedaż lodów?” Współczynnik
+                Pearsona pokazuje kierunek i siłę zależności między dwiema zmiennymi
+                ilościowymi — a test istotności mówi, czy to nie przypadek."
     ),
 
     # ========================================================================
     # Wprowadzenie: wspolczynnik korelacji
     # ========================================================================
-    div(class = "section-title", "Współczynnik korelacji Pearsona"),
+    h2(id = "ch4-pearson", class = "section-title", "Współczynnik korelacji Pearsona"),
 
     div(class = "narrative",
       p("Współczynnik korelacji Pearsona ", withMathJax("\\(r\\)"),
@@ -30,8 +36,9 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
     ),
 
     # --- Wykres 1: sila korelacji (statyczny obrazek) ---
-    div(class = "widget-block",
-      h4("Siła korelacji"),
+    figure_panel(
+      label = "Ryc. 5.1",
+      title = "Siła korelacji",
       tags$img(src = "assets/correlation-strength.png",
                style = "width: 100%; border-radius: 4px;"),
       p(class = "narrative", style = "margin-top: 8px;",
@@ -40,8 +47,9 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
     ),
 
     # --- Wykres 2: kierunek korelacji (statyczny obrazek) ---
-    div(class = "widget-block",
-      h4("Kierunek korelacji"),
+    figure_panel(
+      label = "Ryc. 5.2",
+      title = "Kierunek korelacji",
       tags$img(src = "assets/correlation-direction.png",
                style = "width: 100%; border-radius: 4px;"),
       p(class = "narrative", style = "margin-top: 8px;",
@@ -51,8 +59,9 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
     ),
 
     # --- Wykres 3: rozrzut vs r (statyczny obrazek) ---
-    div(class = "widget-block",
-      h4("Uwaga: r to nie nachylenie!"),
+    figure_panel(
+      label = "Ryc. 5.3",
+      title = "Uwaga: r to nie nachylenie!",
       tags$img(src = "assets/correlation-scatter.png",
                style = "width: 100%; border-radius: 4px;"),
       p(class = "narrative", style = "margin-top: 8px;",
@@ -64,7 +73,7 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
     # ========================================================================
     # WIDGET 1: Test korelacji dwustronny (krokowy)
     # ========================================================================
-    div(class = "section-title", "Test korelacji — krok po kroku"),
+    h2(id = "ch4-krok", class = "section-title", "Test korelacji — krok po kroku"),
 
     div(class = "narrative",
       p("Korelacja z próby (", withMathJax("\\(r\\)"),
@@ -78,7 +87,9 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
       )
     ),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 5.4",
+      title = "Test korelacji — krok po kroku",
       fluidRow(
         column(4,
           selectInput("ch4_scenario", "Scenariusz:",
@@ -118,14 +129,16 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
     # ========================================================================
     # WIDGET 2: Test jednostronny (te same dane)
     # ========================================================================
-    div(class = "section-title", "A jeśli znamy kierunek?"),
+    h2(id = "ch4-jednostronny", class = "section-title", "A jeśli znamy kierunek?"),
 
     div(class = "narrative",
       p("Tak jak wcześniej — czasem nie pytamy „czy jest związek?”,
         ale „czy więcej X = więcej Y?” Te same dane, zmienione pytanie.")
     ),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 5.5",
+      title = "Test korelacji jednostronny",
       fluidRow(
         column(4,
           helpText("Dane: te same co w teście dwustronnym powyżej."),
@@ -153,7 +166,7 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
     # ========================================================================
     # Pulapki korelacji
     # ========================================================================
-    div(class = "section-title", "Pułapki korelacji"),
+    h2(id = "ch4-pulapki", class = "section-title", "Pułapki korelacji"),
 
     div(class = "narrative",
       p("Współczynnik korelacji to potężne narzędzie, ale łatwo go
@@ -161,8 +174,9 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
     ),
 
     # --- 1. Kwartet Anscombe'a ---
-    div(class = "widget-block",
-      h4("1. Kwartet Anscombe’a — te same statystyki, różne dane"),
+    figure_panel(
+      label = "Ryc. 5.6",
+      title = "1. Kwartet Anscombe’a — te same statystyki, różne dane",
       tags$img(src = "assets/anscombe-quartet.png",
                style = "width: 100%; border-radius: 4px;"),
       p(class = "narrative", style = "margin-top: 8px;",
@@ -173,8 +187,9 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
     ),
 
     # --- 2. Korelacja pozorna (spurious) ---
-    div(class = "widget-block",
-      h4("2. Korelacja pozorna (spurious correlation)"),
+    figure_panel(
+      label = "Ryc. 5.7",
+      title = "2. Korelacja pozorna (spurious correlation)",
       div(class = "narrative",
         p("Spożycie lodów i liczba utonięć korelują dodatnio.
           Czy lody zabijają? Oczywiście nie — obie zmienne zależą od ",
@@ -190,8 +205,9 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
     ),
 
     # --- 3. Paradoks Simpsona ---
-    div(class = "widget-block",
-      h4("3. Paradoks Simpsona"),
+    figure_panel(
+      label = "Ryc. 5.8",
+      title = "3. Paradoks Simpsona",
       tags$img(src = "assets/simpson-paradox.png",
                style = "width: 100%; max-width: 650px; border-radius: 4px;"),
       div(class = "narrative", style = "margin-top: 8px;",
@@ -215,8 +231,9 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
     ),
 
     # --- 4. Nieliniowość przy r ~ 0 ---
-    div(class = "widget-block",
-      h4("4. Nieliniowość przy r ≈ 0"),
+    figure_panel(
+      label = "Ryc. 5.9",
+      title = "4. Nieliniowość przy r ≈ 0",
       tags$img(src = "assets/correlation-nonlinear.png",
                style = "max-width: 500px; width: 100%; border-radius: 4px;"),
       p(class = "narrative", style = "margin-top: 8px;",
@@ -226,8 +243,9 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
     ),
 
     # --- 5. Outlier (widget interaktywny) ---
-    div(class = "widget-block",
-      h4("5. Wpływ outliery na r"),
+    figure_panel(
+      label = "Ryc. 5.10",
+      title = "5. Wpływ outliery na r",
       div(class = "narrative",
         p("Jeden punkt odległy od reszty może ",
           "sztucznie wytworzyć korelację tam, gdzie jej nie ma.")
@@ -258,13 +276,13 @@ ch4_ui <- tabPanel("5. Dwie zmienne ilościowe",
       )
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: związek między dwiema zmiennymi jakościowymi"),
-      actionButton("ch4_next", "Dalej → 6. Dwie zmienne jakościowe",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "06",
+      title     = "Test χ² niezależności",
+      lead      = "związek między dwiema zmiennymi jakościowymi.",
+      target_id = "ch-dwie-jakosciowe"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -388,7 +406,7 @@ ch4_server <- function(input, output, session) {
       p <- ggplot(d, aes(x = x, y = y)) +
         geom_point(color = col_h0, alpha = 0.6, size = 2.5) +
         labs(title = par$title, x = par$xlab, y = par$ylab) +
-        theme_educational()
+        theme()
 
       if (step >= 2) {
         p <- p + geom_smooth(method = "lm", se = FALSE,
@@ -415,7 +433,7 @@ ch4_server <- function(input, output, session) {
                  color = col_reject, fontface = "bold") +
         labs(title = paste0("Rozkład pod H₀: t(", n - 2, ")"),
              x = "Statystyka testowa", y = "Gęstość") +
-        theme_educational()
+        theme()
     } else {
       n <- nrow(d)
       r_val <- cor(d$x, d$y)
@@ -508,7 +526,7 @@ ch4_server <- function(input, output, session) {
       p <- ggplot(d, aes(x = x, y = y)) +
         geom_point(color = col_h0, alpha = 0.6, size = 2.5) +
         labs(title = par$title, x = par$xlab, y = par$ylab) +
-        theme_educational()
+        theme()
       if (step >= 2) {
         p <- p + geom_smooth(method = "lm", se = FALSE,
                              color = col_reject, linewidth = 1)
@@ -530,7 +548,7 @@ ch4_server <- function(input, output, session) {
         labs(title = paste0("Rozkład pod H₀: t(", n - 2, ")"),
              subtitle = "Test jednostronny — tylko jeden ogon!",
              x = "Statystyka testowa", y = "Gęstość") +
-        theme_educational()
+        theme()
     } else {
       plot_test_distribution(t_stat, df = n - 2, test_type = "t",
                              alternative = par$alt_1s)
@@ -613,7 +631,7 @@ ch4_server <- function(input, output, session) {
         geom_smooth(method = "lm", se = FALSE, color = col_reject, alpha = 0.5) +
         labs(title = paste0("r = ", round(r_val, 3)),
              x = "X", y = "Y") +
-        theme_educational()
+        theme()
     }
   })
 

@@ -2,18 +2,23 @@
 # CHAPTER 4: Jedna zmienna jakosciowa — test dwumianowy
 # ============================================================================
 
-ch3_ui <- tabPanel("4. Jedna zmienna jakościowa",
-  fluidRow(column(8, offset = 2,
+ch3_ui <- list(
+  id = "ch-jedna-jakosciowa", num = "04", title = "Test proporcji",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Testowaliśmy średnią jednej zmiennej ilościowej.
-       A co, gdy zmienna jest jakościowa — binarna (tak/nie, spełnia/nie spełnia)?"
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 04 · Wnioskowanie statystyczne",
+      num    = "04",
+      title  = "Test proporcji.",
+      lead   = "„Czy w naszej populacji faktycznie 30% osób to leworęczni?” Gdy pytanie
+                dotyczy odsetka, nie średniej — test dwumianowy i jego z-przybliżenie."
     ),
 
     # ========================================================================
     # Wprowadzenie
     # ========================================================================
-    div(class = "section-title", "Od pytania do testu dwumianowego"),
+    h2(id = "ch3-pytanie", class = "section-title", "Od pytania do testu dwumianowego"),
 
     div(class = "narrative",
       p("Gdy zmienna ma dwie kategorie (sukces/porażka, tak/nie, spełnia/nie spełnia),
@@ -33,9 +38,11 @@ ch3_ui <- tabPanel("4. Jedna zmienna jakościowa",
     # ========================================================================
     # WIDGET 1: Test dwumianowy dwustronny (krokowy)
     # ========================================================================
-    div(class = "section-title", "Test dwumianowy — krok po kroku"),
+    h2(id = "ch3-krok", class = "section-title", "Test dwumianowy — krok po kroku"),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 4.1",
+      title = "Test dwumianowy — krok po kroku",
       fluidRow(
         column(4,
           selectInput("ch3_scenario", "Scenariusz:",
@@ -72,20 +79,22 @@ ch3_ui <- tabPanel("4. Jedna zmienna jakościowa",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Co zrobiliśmy?"),
-      tags$ol(
-        tags$li("Zebraliśmy dane — ile sukcesów w n próbach"),
-        tags$li("Obliczyliśmy proporcję z próby: ", withMathJax("\\(\\hat{p} = k/n\\)")),
-        tags$li("Sprawdziliśmy jak wygląda rozkład dwumianowy pod H₀"),
-        tags$li("Policzyliśmy p-wartość — jak prawdopodobny jest nasz wynik (lub bardziej skrajny) jeśli H₀ prawdziwa")
+    margin_callout(
+      label = "Co zrobiliśmy?",
+      tagList(
+        tags$ol(
+          tags$li("Zebraliśmy dane — ile sukcesów w n próbach"),
+          tags$li("Obliczyliśmy proporcję z próby: ", withMathJax("\\(\\hat{p} = k/n\\)")),
+          tags$li("Sprawdziliśmy jak wygląda rozkład dwumianowy pod H₀"),
+          tags$li("Policzyliśmy p-wartość — jak prawdopodobny jest nasz wynik jeśli H₀ prawdziwa")
+        )
       )
     ),
 
     # ========================================================================
     # WIDGET 2: Test dwumianowy jednostronny (te same dane)
     # ========================================================================
-    div(class = "section-title", "A jeśli znamy kierunek?"),
+    h2(id = "ch3-jednostronny", class = "section-title", "A jeśli znamy kierunek?"),
 
     div(class = "narrative",
       p("Tak jak przy teście t — czasem nie pytamy „czy różni się?”,
@@ -93,7 +102,9 @@ ch3_ui <- tabPanel("4. Jedna zmienna jakościowa",
       p("Użyjemy tych samych danych co powyżej, ale zmienimy pytanie na kierunkowe.")
     ),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Ryc. 4.2",
+      title = "Test dwumianowy jednostronny",
       fluidRow(
         column(4,
           helpText("Dane: te same co w teście dwustronnym powyżej."),
@@ -118,22 +129,23 @@ ch3_ui <- tabPanel("4. Jedna zmienna jakościowa",
       )
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Dwustronny a jednostronny — proporcje:"),
-      tags$ul(
-        tags$li(tags$b("Dwustronny (≠):"),
-          " p-wartość liczymy po obu stronach rozkładu. Bezpieczniejszy."),
-        tags$li(tags$b("Jednostronny (> lub <):"),
-          " p-wartość liczymy tylko po jednej stronie. Mocniejszy, ale ślepy na efekt w drugą stronę.")
+    margin_callout(
+      label = "Dwu- a jednostronny",
+      tagList(
+        tags$ul(
+          tags$li(tags$b("Dwustronny (≠):"), " p-wartość liczymy po obu stronach. Bezpieczniejszy."),
+          tags$li(tags$b("Jednostronny (> lub <):"), " p-wartość tylko po jednej stronie. Mocniejszy, ale ślepy na efekt w drugą stronę.")
+        ),
+        tags$p("Te same dane, ten sam wynik k/n, ale ", tags$b("inna p-wartość"),
+               " — bo inaczej zadane pytanie!")
       ),
-      p("Te same dane, ten sam wynik k/n, ale ", tags$b("inna p-wartość"),
-        " — bo inaczej zadane pytanie!")
+      color = "uwaga"
     ),
 
     # ========================================================================
     # WIDGET 3: Porownanie — test dwumianowy vs test proporcji
     # ========================================================================
-    div(class = "section-title", "Test dwumianowy a test proporcji"),
+    h2(id = "ch3-porownanie", class = "section-title", "Test dwumianowy a test proporcji"),
 
     div(class = "narrative",
       p("W Jamovi i wielu podręcznikach spotkasz też ",
@@ -145,8 +157,9 @@ ch3_ui <- tabPanel("4. Jedna zmienna jakościowa",
       p("Porównajmy oba testy na tych samych danych:")
     ),
 
-    div(class = "widget-block",
-      h4("Porównanie wyników"),
+    figure_panel(
+      label = "Ryc. 4.3",
+      title = "Porównanie wyników: dwumianowy vs z-test",
       actionButton("ch3_compare", "Porównaj testy", class = "btn-primary", width = "100%"),
       br(), br(),
       uiOutput("ch3_compare_result")
@@ -186,13 +199,13 @@ ch3_ui <- tabPanel("4. Jedna zmienna jakościowa",
         " — oba testy dadzą praktycznie ten sam wynik.")
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: związek między dwiema zmiennymi ilościowymi"),
-      actionButton("ch3_next", "Dalej → 5. Dwie zmienne ilościowe",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "05",
+      title     = "Korelacja",
+      lead      = "związek między dwiema zmiennymi ilościowymi.",
+      target_id = "ch-korelacja"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -333,8 +346,7 @@ ch3_server <- function(input, output, session) {
         geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold") +
         scale_fill_manual(values = c(col_accept, col_reject)) +
         labs(title = par$title, x = NULL, y = "Liczba") +
-        theme_educational() +
-        theme(legend.position = "none")
+                theme(legend.position = "none")
 
       if (step >= 2) {
         phat <- k / n
@@ -372,7 +384,7 @@ ch3_server <- function(input, output, session) {
                  color = col_reject, fontface = "bold") +
         labs(title = paste0("Rozkład B(", n, ", ", p0, ") pod H₀"),
              x = "Liczba sukcesów", y = "Prawdopodobieństwo") +
-        theme_educational()
+        theme()
     }
   })
 
@@ -398,7 +410,7 @@ ch3_server <- function(input, output, session) {
       "2" = tagList(
         div(class = "stat-box", style = paste0("background:", col_pvalue, ";"),
             paste0("p̂ = ", k, "/", n, " = ", round(phat, 3))),
-        div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+        div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
             paste0("p₀ = ", p0)),
         p("Proporcja z próby: ", tags$b(round(phat, 3)),
           ". Wartość referencyjna: ", tags$b(p0),
@@ -474,8 +486,7 @@ ch3_server <- function(input, output, session) {
         geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold") +
         scale_fill_manual(values = c(col_accept, col_reject)) +
         labs(title = par$title, x = NULL, y = "Liczba") +
-        theme_educational() +
-        theme(legend.position = "none")
+                theme(legend.position = "none")
 
       if (step >= 2) {
         phat <- k / n
@@ -515,7 +526,7 @@ ch3_server <- function(input, output, session) {
                                if (par$alt_1s == "greater") "prawy" else "lewy",
                                " ogon)"),
              x = "Liczba sukcesów", y = "Prawdopodobieństwo") +
-        theme_educational()
+        theme()
     }
   })
 
