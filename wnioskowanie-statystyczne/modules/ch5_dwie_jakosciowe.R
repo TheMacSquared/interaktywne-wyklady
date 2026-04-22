@@ -148,13 +148,13 @@ ch5_ui <- tabPanel("6. Dwie zmienne jakościowe",
           ),
           tags$tr(
             tags$td(tags$b("Duże n")),
-            tags$td(style = "background: #eafaf1;", "Szybki, praktycznie identyczny wynik"),
+            tags$td(style = "background: var(--upwr-sage-tint);", "Szybki, praktycznie identyczny wynik"),
             tags$td("Działa, ale wolniejszy")
           ),
           tags$tr(
             tags$td(tags$b("Małe n")),
-            tags$td(style = "background: #fdedec;", "Może być niedokładny"),
-            tags$td(style = "background: #eafaf1;", "Bezpieczny wybór")
+            tags$td(style = "background: var(--upwr-accent-tint);", "Może być niedokładny"),
+            tags$td(style = "background: var(--upwr-sage-tint);", "Bezpieczny wybór")
           ),
           tags$tr(
             tags$td(tags$b("W Jamovi")),
@@ -368,7 +368,7 @@ ch5_server <- function(input, output, session) {
         p(withMathJax(par$h1_text))
       ),
       if (is.null(tab)) {
-        div(style = "text-align: center; margin: 10px 0; color: #7f8c8d;",
+        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
           p(tags$em("Kliknij „Losuj próbę”"))
         )
       }
@@ -395,7 +395,7 @@ ch5_server <- function(input, output, session) {
                     vjust = -0.3, size = 4) +
           labs(title = paste0(par$lab1, " a ", par$lab2, " (liczności)"),
                x = par$lab1, y = "Liczność", fill = par$lab2) +
-          scale_fill_brewer(palette = "Set2") +
+          scale_fill_upwr() +
           theme_educational() +
           theme(legend.position = "top")
       } else {
@@ -412,7 +412,7 @@ ch5_server <- function(input, output, session) {
                     vjust = -0.3, size = 4) +
           labs(title = paste0(par$lab1, " a ", par$lab2, " (% w grupie)"),
                x = par$lab1, y = "Procent", fill = par$lab2) +
-          scale_fill_brewer(palette = "Set2") +
+          scale_fill_upwr() +
           theme_educational() +
           theme(legend.position = "top")
       }
@@ -483,7 +483,7 @@ ch5_server <- function(input, output, session) {
               paste0("χ²(", df_val, ") = ", round(chi_stat, 3))),
           p("Statystyka χ² mierzy łączną rozbieżność między tabelą obserwowancą
             a tabelą oczekiwaną."),
-          if (low_exp) p(style = "color: #e74c3c; font-weight: bold;",
+          if (low_exp) p(style = "color: var(--upwr-accent); font-weight: bold;",
             "⚠ Uwaga: niektóre oczekiwane liczności < 5!")
         )
       },

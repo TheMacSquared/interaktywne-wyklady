@@ -18,16 +18,16 @@ test_colors <- c(
   paired = unname(upwr_cat["kurkuma"])      # dane parowe
 )
 
-# Aliasy zgodności — stare nazwy col_* z app.R działały też w zamkniętym
-# środowisku źródłowym; po ich usunięciu moduły potrzebują tych stałych.
-# Po migracji ggplot/ggstyle modułów (Etap 2) te aliasy znikną.
-col_h0     <- test_colors["h0"]
-col_h1     <- test_colors["h1"]
-col_pvalue <- test_colors["pvalue"]
-col_accept <- test_colors["accept"]
-col_reject <- test_colors["reject"]
-col_effect <- test_colors["effect"]
-col_paired <- test_colors["paired"]
+# Aliasy: nazwy domenowe używane w modułach wykładu (col_h0 = rozkład pod H0,
+# col_reject = obszar odrzucenia itd.). Dają czytelniejszy kod w wykresach
+# niż test_colors["..."]. Same wartości pochodzą z test_colors.
+col_h0     <- unname(test_colors["h0"])
+col_h1     <- unname(test_colors["h1"])
+col_pvalue <- unname(test_colors["pvalue"])
+col_accept <- unname(test_colors["accept"])
+col_reject <- unname(test_colors["reject"])
+col_effect <- unname(test_colors["effect"])
+col_paired <- unname(test_colors["paired"])
 
 
 # Generowanie danych studenckich (n=200)

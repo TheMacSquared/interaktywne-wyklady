@@ -157,13 +157,13 @@ ch1_ui <- tabPanel("1. Logika testowania",
         tags$tbody(
           tags$tr(
             tags$td(tags$strong("Nie odrzucamy H₀")),
-            tags$td(style = "background: #eafaf1;", "OK"),
-            tags$td(style = "background: #fdedec;", "Błąd II rodzaju (β)")
+            tags$td(style = "background: var(--upwr-sage-tint);", "OK"),
+            tags$td(style = "background: var(--upwr-accent-tint);", "Błąd II rodzaju (β)")
           ),
           tags$tr(
             tags$td(tags$strong("Odrzucamy H₀")),
-            tags$td(style = "background: #fdedec;", "Błąd I rodzaju (α)"),
-            tags$td(style = "background: #eafaf1;", "OK (moc = 1−β)")
+            tags$td(style = "background: var(--upwr-accent-tint);", "Błąd I rodzaju (α)"),
+            tags$td(style = "background: var(--upwr-sage-tint);", "OK (moc = 1−β)")
           )
         )
       )
@@ -338,7 +338,7 @@ ch1_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij „Powtórz” —\nsymulujemy eksperymenty bez efektu",
-                 size = 5, color = "#7f8c8d") +
+                 size = 5, color = upwr_reference) +
         theme_void()
     } else {
       df <- data.frame(diff = diffs, extreme = abs(diffs) >= abs(obs))

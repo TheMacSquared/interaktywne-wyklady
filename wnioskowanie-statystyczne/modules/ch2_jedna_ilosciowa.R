@@ -223,7 +223,7 @@ ch2_server <- function(input, output, session) {
         p(withMathJax(par$h1_text))
       ),
       if (is.null(samp)) {
-        div(style = "text-align: center; margin: 10px 0; color: #7f8c8d;",
+        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
           p(tags$em("Kliknij „Losuj próbę”, żeby zebrać dane"))
         )
       }
@@ -243,7 +243,7 @@ ch2_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Próba gotowa! Klikaj kroki po kolei.",
-                 size = 5, color = "#7f8c8d") +
+                 size = 5, color = upwr_reference) +
         theme_void()
     } else if (step <= 2) {
       # Krok 1-2: histogram danych
@@ -394,7 +394,7 @@ ch2_server <- function(input, output, session) {
         p(withMathJax(par1s$h1_text))
       ),
       if (is.null(samp)) {
-        div(style = "text-align: center; margin: 10px 0; color: #7f8c8d;",
+        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
           p(tags$em("Najpierw wylosuj próbę w teście dwustronnym powyżej"))
         )
       }

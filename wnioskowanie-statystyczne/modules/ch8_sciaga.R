@@ -279,7 +279,7 @@ ch8_ui <- tabPanel("10. Ściąga",
     div(class = "section-title", "Kod R — rstatix"),
 
     div(class = "formula-box",
-      tags$pre(style = "background: #f8f9fa; padding: 12px; border-radius: 6px; font-size: 13px;",
+      tags$pre(style = "background: var(--upwr-surface-sunken); padding: 12px; border-radius: 6px; font-size: 13px;",
         tags$code(
 "library(rstatix)
 library(broom)

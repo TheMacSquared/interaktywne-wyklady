@@ -166,13 +166,13 @@ ch3_ui <- tabPanel("4. Jedna zmienna jakościowa",
           ),
           tags$tr(
             tags$td(tags$b("Małe n")),
-            tags$td(style = "background: #eafaf1;", "Działa zawsze"),
-            tags$td(style = "background: #fdedec;", "Może być niedokładny")
+            tags$td(style = "background: var(--upwr-sage-tint);", "Działa zawsze"),
+            tags$td(style = "background: var(--upwr-accent-tint);", "Może być niedokładny")
           ),
           tags$tr(
             tags$td(tags$b("Duże n")),
             tags$td("Działa, ale wolniejszy"),
-            tags$td(style = "background: #eafaf1;", "Daje praktycznie ten sam wynik")
+            tags$td(style = "background: var(--upwr-sage-tint);", "Daje praktycznie ten sam wynik")
           ),
           tags$tr(
             tags$td(tags$b("W Jamovi")),
@@ -298,7 +298,7 @@ ch3_server <- function(input, output, session) {
         p(withMathJax(par$h1_text))
       ),
       if (is.null(d)) {
-        div(style = "text-align: center; margin: 10px 0; color: #7f8c8d;",
+        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
           p(tags$em("Kliknij „Losuj próbę”"))
         )
       }
@@ -318,7 +318,7 @@ ch3_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Próba gotowa! Klikaj kroki po kolei.",
-                 size = 5, color = "#7f8c8d") +
+                 size = 5, color = upwr_reference) +
         theme_void()
     } else if (step <= 2) {
       # Krok 1-2: slupki sukces/porazka
@@ -446,7 +446,7 @@ ch3_server <- function(input, output, session) {
         p(withMathJax(par$h1_text_1s))
       ),
       if (is.null(d)) {
-        div(style = "text-align: center; margin: 10px 0; color: #7f8c8d;",
+        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
           p(tags$em("Najpierw wylosuj próbę w teście dwustronnym powyżej"))
         )
       }

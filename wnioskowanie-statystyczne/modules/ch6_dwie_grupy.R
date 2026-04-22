@@ -126,7 +126,7 @@ ch6_server <- function(input, output, session) {
     if (is.null(data)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i testuj'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       var <- input$ch6_ind_var
@@ -194,7 +194,7 @@ ch6_server <- function(input, output, session) {
     if (is.null(data)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i testuj'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       # Connected dot plot

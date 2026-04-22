@@ -213,7 +213,7 @@ ch7_server <- function(input, output, session) {
     if (is.null(data)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i testuj'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       cfg <- ch7_scenario_cfg(input$ch7_scenario)
@@ -225,7 +225,7 @@ ch7_server <- function(input, output, session) {
       ggplot(data, aes(x = .data[[group_col]], y = .data[[var]], fill = .data[[group_col]])) +
         geom_boxplot(alpha = 0.6, outlier.alpha = 0.3) +
         geom_jitter(width = 0.15, alpha = 0.2, size = 1) +
-        scale_fill_brewer(palette = "Set2") +
+        scale_fill_upwr() +
         labs(title = paste0(var_label, " według: ", cfg$group_label),
              x = cfg$group_label, y = var_label) +
         theme_educational() +

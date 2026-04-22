@@ -364,7 +364,7 @@ ch4_server <- function(input, output, session) {
         p(withMathJax(par$h1_text))
       ),
       if (is.null(d)) {
-        div(style = "text-align: center; margin: 10px 0; color: #7f8c8d;",
+        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
           p(tags$em("Kliknij „Losuj próbę”"))
         )
       }
@@ -382,7 +382,7 @@ ch4_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Próba gotowa! Klikaj kroki po kolei.",
-                 size = 5, color = "#7f8c8d") +
+                 size = 5, color = upwr_reference) +
         theme_void()
     } else if (step <= 2) {
       p <- ggplot(d, aes(x = x, y = y)) +
@@ -486,7 +486,7 @@ ch4_server <- function(input, output, session) {
         p(withMathJax(par$h1_text_1s))
       ),
       if (is.null(d)) {
-        div(style = "text-align: center; margin: 10px 0; color: #7f8c8d;",
+        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
           p(tags$em("Najpierw wylosuj próbę w teście dwustronnym powyżej"))
         )
       }
@@ -600,7 +600,7 @@ ch4_server <- function(input, output, session) {
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Nowe dane”",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       n_base <- 50
