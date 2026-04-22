@@ -2,8 +2,9 @@
 # CHAPTER 6: Ściąga
 # ============================================================================
 
-ch6_ui <- tabPanel("6. Ściąga",
-  fluidRow(column(8, offset = 2,
+ch6_ui <- list(
+  id = "ch-sciaga", num = "06", title = "Ściąga",
+  content = tagList(
 
     div(class = "section-title", "Podsumowanie -- narzędzia statystyki opisowej"),
 
@@ -13,7 +14,7 @@ ch6_ui <- tabPanel("6. Ściąga",
     ),
 
     # --- Cheat sheet 1: Tools by variable type ---
-    div(class = "section-title", "Narzędzia wg typu zmiennej"),
+    h2(id = "ch6-narzedzia", class = "section-title", "Narzędzia wg typu zmiennej"),
 
     div(class = "widget-block",
       tableOutput("ch6_ref_table")
@@ -27,7 +28,7 @@ ch6_ui <- tabPanel("6. Ściąga",
     ),
 
     # --- Cheat sheet 2: Measures summary ---
-    div(class = "section-title", "Miary statystyczne -- kiedy co stosować"),
+    h2(id = "ch6-miary", class = "section-title", "Miary statystyczne — kiedy co stosować"),
 
     div(class = "widget-block",
       h4("Miary położenia (rozdział 3)"),
@@ -41,21 +42,21 @@ ch6_ui <- tabPanel("6. Ściąga",
     ),
 
     # --- Cheat sheet 3: Visualization guide ---
-    div(class = "section-title", "Przewodnik po wykresach"),
+    h2(id = "ch6-wykresy", class = "section-title", "Przewodnik po wykresach"),
 
     div(class = "widget-block",
       tableOutput("ch6_plots_table")
     ),
 
     # --- Cheat sheet 4: Common mistakes ---
-    div(class = "section-title", "Typowe błędy"),
+    h2(id = "ch6-bledy", class = "section-title", "Typowe błędy"),
 
     div(class = "widget-block",
       tableOutput("ch6_mistakes_table")
     ),
 
     # --- Formulas ---
-    div(class = "section-title", "Wzory"),
+    h2(id = "ch6-wzory", class = "section-title", "Wzory"),
 
     div(class = "widget-block",
       withMathJax(
@@ -82,8 +83,8 @@ ch6_ui <- tabPanel("6. Ściąga",
     ),
 
     br(), br()
-  ))
-) # end ch6 tabPanel
+  )
+)
 
 # --------------------------------------------------------------------------
 # Chapter 6 Server

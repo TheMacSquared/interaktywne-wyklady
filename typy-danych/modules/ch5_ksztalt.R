@@ -2,8 +2,9 @@
 # CHAPTER 5: Kształt rozkładu
 # ============================================================================
 
-ch5_ui <- tabPanel("5. Kształt rozkładu",
-  fluidRow(column(8, offset = 2,
+ch5_ui <- list(
+  id = "ch-ksztalt", num = "05", title = "Kształt rozkładu",
+  content = tagList(
 
     # --- Introduction ---
     div(class = "chapter-recap",
@@ -11,7 +12,7 @@ ch5_ui <- tabPanel("5. Kształt rozkładu",
        Czy jest symetryczny, czy moze ma 'długi ogon' w jedna strone?"
     ),
     uiOutput("tracker_ch5"),
-    div(class = "section-title", h2("5. Kształt rozkładu")),
+    h2(id = "ch5-intro", class = "section-title", "Kształt rozkładu"),
 
     div(class = "narrative",
       p("Dwa rozkłady mogą mieć ta sama średnia i odchylenie standardowe,
@@ -22,7 +23,7 @@ ch5_ui <- tabPanel("5. Kształt rozkładu",
     ),
 
     # --- Widget 1: Skewness ---
-    div(class = "section-title", h3("5.1 Skośność (asymetria)")),
+    h2(id = "ch5-skosnosc", class = "section-title", "Skośność (asymetria)"),
 
     div(class = "narrative",
       p("Skośność mierzy asymetrię rozkładu. Wartość skośności = 0 oznacza
@@ -55,7 +56,7 @@ ch5_ui <- tabPanel("5. Kształt rozkładu",
     ),
 
     # --- Widget 2: Kurtosis ---
-    div(class = "section-title", h3("5.2 Kurtoza (ciężkość ogonów)")),
+    h2(id = "ch5-kurtoza", class = "section-title", "Kurtoza (ciężkość ogonów)"),
 
     div(class = "narrative",
       p("Kurtoza mierzy, jak 'ciężkie' są ogony rozkładu — czyli
@@ -89,7 +90,7 @@ ch5_ui <- tabPanel("5. Kształt rozkładu",
     ),
 
     # --- Widget 3: Full picture ---
-    div(class = "section-title", h3("5.3 Pelny obraz")),
+    h2(id = "ch5-pelny-obraz", class = "section-title", "Pełny obraz"),
 
     div(class = "narrative",
       p("Na koniec - pelny obraz. Dla każdej zmiennej ilościowej mozemy
@@ -122,8 +123,8 @@ ch5_ui <- tabPanel("5. Kształt rozkładu",
     ),
 
     br(), br()
-  ))
-) # end ch5 tabPanel
+  )
+)
 
 # --------------------------------------------------------------------------
 # Chapter 5 Server

@@ -51,7 +51,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
 
 .ch8_content_bhp <- function() tagList(
 
-  div(class = "section-title", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
+  h2(id = "ch8-blok1", class = "section-title", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
   div(class = "callout-info",
     p("W Jamovi: ", tags$b("Data → Setup"), " — sprawdź, jak Jamovi automatycznie rozpoznał typy zmiennych.
       Czy ma rację? Popraw, jeśli trzeba.")
@@ -107,7 +107,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
     uiOutput("ch8_sol2")
   ),
 
-  div(class = "section-title", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
+  h2(id = "ch8-blok2", class = "section-title", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
 
   div(class = "widget-block",
     h4("Zadanie 3 — Statystyki dla każdego typu"),
@@ -149,7 +149,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
     uiOutput("ch8_sol4")
   ),
 
-  div(class = "section-title", "Blok 3: Analiza kompleksowa (45 min)"),
+  h2(id = "ch8-blok3", class = "section-title", "Blok 3: Analiza kompleksowa (45 min)"),
 
   div(class = "widget-block",
     h4("Zadanie 5 — Profil zakładu pracy"),
@@ -188,7 +188,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
     uiOutput("ch8_sol6")
   ),
 
-  div(class = "section-title", "Podsumowanie"),
+  h2(id = "ch8-podsumowanie", class = "section-title", "Podsumowanie"),
   div(class = "callout-warning",
     p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
     tags$ol(
@@ -209,7 +209,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
 
 .ch8_content_rol <- function() tagList(
 
-  div(class = "section-title", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
+  h2(id = "ch8-blok1", class = "section-title", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
   div(class = "callout-info",
     p("W Jamovi: ", tags$b("Data → Setup"), " — sprawdź, jak Jamovi automatycznie rozpoznał typy zmiennych.
       Czy ma rację? Popraw, jeśli trzeba.")
@@ -263,7 +263,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
     uiOutput("ch8_sol2")
   ),
 
-  div(class = "section-title", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
+  h2(id = "ch8-blok2", class = "section-title", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
 
   div(class = "widget-block",
     h4("Zadanie 3 — Statystyki dla każdego typu"),
@@ -303,7 +303,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
     uiOutput("ch8_sol4")
   ),
 
-  div(class = "section-title", "Blok 3: Analiza kompleksowa (45 min)"),
+  h2(id = "ch8-blok3", class = "section-title", "Blok 3: Analiza kompleksowa (45 min)"),
 
   div(class = "widget-block",
     h4("Zadanie 5 — Profil gospodarstwa"),
@@ -337,7 +337,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
     uiOutput("ch8_sol6")
   ),
 
-  div(class = "section-title", "Podsumowanie"),
+  h2(id = "ch8-podsumowanie", class = "section-title", "Podsumowanie"),
   div(class = "callout-warning",
     p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
     tags$ol(
@@ -358,7 +358,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
 
 .ch8_content_zyw <- function() tagList(
 
-  div(class = "section-title", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
+  h2(id = "ch8-blok1", class = "section-title", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
   div(class = "callout-info",
     p("W Jamovi: ", tags$b("Data → Setup"), " — sprawdź, jak Jamovi automatycznie rozpoznał typy zmiennych.
       Czy ma rację? Popraw, jeśli trzeba.")
@@ -411,7 +411,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
     uiOutput("ch8_sol2")
   ),
 
-  div(class = "section-title", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
+  h2(id = "ch8-blok2", class = "section-title", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
 
   div(class = "widget-block",
     h4("Zadanie 3 — Statystyki dla każdego typu"),
@@ -451,7 +451,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
     uiOutput("ch8_sol4")
   ),
 
-  div(class = "section-title", "Blok 3: Analiza kompleksowa (45 min)"),
+  h2(id = "ch8-blok3", class = "section-title", "Blok 3: Analiza kompleksowa (45 min)"),
 
   div(class = "widget-block",
     h4("Zadanie 5 — Profil produkcji"),
@@ -487,7 +487,7 @@ ch8_ui <- tabPanel("8. Ćwiczenia",
     uiOutput("ch8_sol6")
   ),
 
-  div(class = "section-title", "Podsumowanie"),
+  h2(id = "ch8-podsumowanie", class = "section-title", "Podsumowanie"),
   div(class = "callout-warning",
     p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
     tags$ol(

@@ -2,8 +2,9 @@
 # CHAPTER 3: Statystyki położenia
 # ============================================================================
 
-ch3_ui <- tabPanel("3. Statystyki polozenia",
-  fluidRow(column(8, offset = 2,
+ch3_ui <- list(
+  id = "ch-polozenie", num = "03", title = "Statystyki położenia",
+  content = tagList(
 
     # --- Introduction ---
     div(class = "chapter-recap",
@@ -22,7 +23,7 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     # ========================================================================
     # WIDGET: Histogram krok po kroku
     # ========================================================================
-    div(class = "section-title", "Histogram — krok po kroku"),
+    h2(id = "ch3-histogram", class = "section-title", "Histogram — krok po kroku"),
 
     div(class = "narrative",
       p("Histogram to podstawowy wykres dla zmiennych ciągłych. Pokazuje
@@ -90,7 +91,7 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     # ========================================================================
     # WIDGET 0a: Mean introduction
     # ========================================================================
-    div(class = "section-title", "Średnia arytmetyczna"),
+    h2(id = "ch3-srednia", class = "section-title", "Średnia arytmetyczna"),
 
     div(class = "narrative",
       p("Średnia arytmetyczna to suma wszystkich wartości podzielona
@@ -115,7 +116,7 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     # ========================================================================
     # WIDGET 0b: Median introduction
     # ========================================================================
-    div(class = "section-title", "Mediana"),
+    h2(id = "ch3-mediana", class = "section-title", "Mediana"),
 
     div(class = "narrative",
       p("Mediana to wartość, która dzieli posortowane dane na dwie
@@ -138,7 +139,7 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     # ========================================================================
     # WIDGET 1: Mean vs Median -- comparison
     # ========================================================================
-    div(class = "section-title", "Średnia vs mediana -- kiedy się różnią?"),
+    h2(id = "ch3-srednia-vs-mediana", class = "section-title", "Średnia vs mediana — kiedy się różnią?"),
 
     div(class = "narrative",
       p("Dla danych symetrycznych średnia i mediana są blisko siebie.
@@ -190,7 +191,7 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     # ========================================================================
     # WIDGET 2: Robustness mini-demo
     # ========================================================================
-    div(class = "section-title", "Odporność miar na outliery"),
+    h2(id = "ch3-odpornosc", class = "section-title", "Odporność miar na outliery"),
 
     div(class = "narrative",
       p("Która statystyka jest bardziej odporna na outliery? Średnia
@@ -295,7 +296,7 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     # ========================================================================
     # WIDGET 3: Percentile explorer
     # ========================================================================
-    div(class = "section-title", "Percentyle i kwantyle"),
+    h2(id = "ch3-percentyle", class = "section-title", "Percentyle i kwantyle"),
 
     div(class = "narrative",
       p("Kwantyle i percentyle dziela dane na czesci. Percentyl mówi nam,
@@ -343,7 +344,7 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     # ====================================================================
     # WIDGET 4: Guess the statistic game
     # ====================================================================
-    div(class = "section-title", "Gra: Zgadnij średnia i mediane!"),
+    h2(id = "ch3-gra", class = "section-title", "Gra: Zgadnij średnią i medianę!"),
 
     div(class = "narrative",
       p("Sprawdzmy Twoją intuicję! Na histogramie zobaczysz rozkład danych. ",
@@ -380,8 +381,8 @@ ch3_ui <- tabPanel("3. Statystyki polozenia",
     # Spacer at bottom
     div(style = "height: 60px;")
 
-  ))
-) # end ch3 tabPanel
+  )
+)
 
 # --------------------------------------------------------------------------
 # Chapter 3 Server

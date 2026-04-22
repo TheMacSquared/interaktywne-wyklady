@@ -29,14 +29,15 @@ QUIZ_TYPE_MAX_QUESTIONS <- 15
 # UI
 # ============================================================================
 
-ch7_ui <- tabPanel("7. Quiz",
-  fluidRow(column(8, offset = 2,
+ch7_ui <- list(
+  id = "ch-quiz", num = "07", title = "Quiz",
+  content = tagList(
 
     div(class = "chapter-recap",
       "Poprzednio: ściąga ze statystyki opisowej"
     ),
 
-    div(class = "section-title", "Quiz: rozpoznaj typ zmiennej"),
+    h2(id = "ch7-quiz", class = "section-title", "Quiz: rozpoznaj typ zmiennej"),
 
     div(class = "narrative",
       p("Przeczytaj opis zmiennej i wybierz jej typ. Każde pytanie ma ",
@@ -102,8 +103,8 @@ ch7_ui <- tabPanel("7. Quiz",
     ),
 
     br(), br()
-  ))
-)
+  )
+) # end ch7_ui
 
 # ============================================================================
 # SERVER
@@ -351,7 +352,7 @@ ch7_server <- function(input, output, session) {
 
   # Nawigacja powrotna
   observeEvent(input$ch7_back_to_ch6, {
-    updateNavbarPage(session, "main_nav", selected = "6. Ściąga")
+    session$sendCustomMessage("switchToChapter", "ch-sciaga")
   })
 
 }

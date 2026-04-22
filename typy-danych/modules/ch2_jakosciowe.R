@@ -2,8 +2,9 @@
 # CHAPTER 2: Zmienne jakościowe
 # ============================================================================
 
-ch2_ui <- tabPanel("2. Zmienne jakościowe",
-  fluidRow(column(8, offset = 2,
+ch2_ui <- list(
+  id = "ch-jakosciowe", num = "02", title = "Zmienne jakościowe",
+  content = tagList(
 
     # --- Introduction ---
     div(class = "chapter-recap",
@@ -48,7 +49,7 @@ ch2_ui <- tabPanel("2. Zmienne jakościowe",
     # ========================================================================
     # WIDGET 1b: Nominal vs Ordinal comparison
     # ========================================================================
-    div(class = "section-title", "Nominalna vs porządkowa -- czy kolejność ma znaczenie?"),
+    h2(id = "ch2-nominalna-vs-porzadkowa", class = "section-title", "Nominalna vs porządkowa — czy kolejność ma znaczenie?"),
 
     div(class = "narrative",
       p("Zanim przejdziemy do wizualizacji, zatrzymajmy sie na waznym rozróżnieniu.
@@ -78,7 +79,7 @@ ch2_ui <- tabPanel("2. Zmienne jakościowe",
     ),
 
     # --- Narrative before Widget 2 ---
-    div(class = "section-title", "Wykres kołowy vs słupkowy"),
+    h2(id = "ch2-kolowy-vs-slupkowy", class = "section-title", "Wykres kołowy vs słupkowy"),
 
     div(class = "narrative",
       p("Jak wizualizować zmienne jakościowe? Porównajmy wykres kołowy ze słupkowym
@@ -122,7 +123,7 @@ ch2_ui <- tabPanel("2. Zmienne jakościowe",
     ),
 
     # --- Narrative before Widget 4 ---
-    div(class = "section-title", "Manipulacja kolorami"),
+    h2(id = "ch2-kolory", class = "section-title", "Manipulacja kolorami"),
 
     div(class = "narrative",
       p("Kolory na wykresie mogą manipulowac odbiorem danych. Zobaczmy,
@@ -181,7 +182,7 @@ ch2_ui <- tabPanel("2. Zmienne jakościowe",
     # ========================================================================
     # WIDGET 4b: Cross-tabulation
     # ========================================================================
-    div(class = "section-title", "Tabela krzyzowa -- dwie zmienne jednoczesnie"),
+    h2(id = "ch2-krzyzowa", class = "section-title", "Tabela krzyżowa — dwie zmienne jednocześnie"),
 
     div(class = "narrative",
       p("Dotychczas analizowalismy po jednej zmiennej. Ale często chcemy
@@ -228,7 +229,7 @@ ch2_ui <- tabPanel("2. Zmienne jakościowe",
     ),
 
     # --- Narrative before Widget 5 ---
-    div(class = "section-title", "Dominanta (moda)"),
+    h2(id = "ch2-dominanta", class = "section-title", "Dominanta (moda)"),
 
     div(class = "narrative",
       p("Dominanta (moda) to jedyna miara tendencji centralnej dla
@@ -257,8 +258,8 @@ ch2_ui <- tabPanel("2. Zmienne jakościowe",
     # Bottom spacer
     div(style = "height: 60px;")
 
-  )) # end column / fluidRow
-) # end ch2 tabPanel
+  )
+)
 
 # --------------------------------------------------------------------------
 # Chapter 2 Server

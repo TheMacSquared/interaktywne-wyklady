@@ -2,8 +2,9 @@
 # CHAPTER 1: Typy danych
 # ============================================================================
 
-ch1_ui <- tabPanel("1. Typy danych",
-  fluidRow(column(8, offset = 2,
+ch1_ui <- list(
+  id = "ch-typy", num = "01", title = "Typy danych",
+  content = tagList(
 
     # --- Section: Introduction ---
     div(class = "section-title", "Typy danych - fundament analizy statystycznej"),
@@ -24,7 +25,7 @@ ch1_ui <- tabPanel("1. Typy danych",
     ),
 
     # --- Widget 1: Taxonomy tree ---
-    div(class = "section-title", "Taksonomia typow danych"),
+    h2(id = "ch1-taksonomia", class = "section-title", "Taksonomia typów danych"),
 
     div(class = "narrative",
       p("Ponizszy diagram przedstawia hierarchie typow danych.
@@ -93,7 +94,7 @@ ch1_ui <- tabPanel("1. Typy danych",
     ),
 
     # --- Widget 2: Examples gallery ---
-    div(class = "section-title", "Przyklady typow zmiennych"),
+    h2(id = "ch1-przyklady", class = "section-title", "Przykłady typów zmiennych"),
 
     div(class = "narrative",
       p("Zobaczmy jak wyglada każdy typ zmiennej w praktyce.
@@ -170,7 +171,7 @@ ch1_ui <- tabPanel("1. Typy danych",
     ),
 
     # --- Widget 4: Dataset preview ---
-    div(class = "section-title", "Nasze dane - ankieta studencka"),
+    h2(id = "ch1-dane", class = "section-title", "Nasze dane — ankieta studencka"),
 
     div(class = "narrative",
       p("A tak wyglądają nasze dane - ankieta 200 studentow.
@@ -216,8 +217,8 @@ ch1_ui <- tabPanel("1. Typy danych",
     # Bottom spacing
     div(style = "height: 40px;")
 
-  ))
-) # end ch1 tabPanel
+  )
+)
 
 # --------------------------------------------------------------------------
 # Chapter 1 Server

@@ -130,6 +130,7 @@ app_dir <- .find_app_dir()
 project_root <- dirname(app_dir)
 
 source(file.path(project_root, "R", "shared.R"),           local = TRUE)
+source(file.path(project_root, "R", "lecture_layout.R"),   local = TRUE)
 
 source(file.path(app_dir, "modules", "helpers.R"),        local = TRUE)
 source(file.path(app_dir, "modules", "ch1_typy.R"),       local = TRUE)
@@ -145,9 +146,9 @@ source(file.path(app_dir, "modules", "ch8_cwiczenia.R"),  local = TRUE)
 # GLOBAL UI HEADER (CSS, JS, Chart.js)
 # ============================================================================
 
-global_header <- tagList(
-  withMathJax(),
-  tags$head(
+# App-specyficzne extras — przekazywane do lecture_page() jako header_extras
+# (CSS i JS layoutu są już inkludowane przez lecture_page)
+app_extras <- tagList(
   tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
   tags$script(HTML("
     var pieChartJS = null, barChartJS = null;
@@ -245,7 +246,6 @@ global_header <- tagList(
       }
     });
   ")),
-  includeCSS(file.path(project_root, "R", "shared_styles.css")),
   tags$style(HTML("
   /* Type badges */
   .type-badge {
@@ -344,28 +344,24 @@ global_header <- tagList(
     padding: 10px 14px; margin-bottom: 15px; font-size: 13px;
   }
   .tracker-panel strong { color: #2c3e50; }
-  ")),
-  includeScript(file.path(project_root, "R", "shared_toc.js"))
-  ))
+  "))
+) # end app_extras
 
 # ============================================================================
 # UI
 # ============================================================================
 
-ui <- navbarPage(
-  "Statystyka opisowa",
-  id = "main_nav",
-  theme = bs_theme(bootswatch = "sandstone"),
-  header = global_header,
-  ch1_ui,
-  ch2_ui,
-  ch3_ui,
-  ch4_ui,
-  ch5_ui,
-  ch6_ui,
-  ch7_ui,
-  ch8_ui
-) # end navbarPage
+.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui,
+                  ch5_ui, ch6_ui, ch7_ui, ch8_ui)
+
+ui <- lecture_page(
+  lecture_id    = "typy-danych",
+  lecture_num   = "01",
+  lecture_title = "Statystyka opisowa",
+  module_label  = "Moduł I",
+  chapters      = .chapters,
+  header_extras = app_extras
+)
 
 # ============================================================================
 # SERVER
@@ -377,27 +373,15 @@ server <- function(input, output, session) {
   # NAWIGACJA MIEDZY ROZDZIALAMI
   # ==========================================================================
 
-  observeEvent(input$ch1_next, {
-    updateNavbarPage(session, "main_nav", selected = "2. Zmienne jakościowe")
-  })
-  observeEvent(input$ch2_next, {
-    updateNavbarPage(session, "main_nav", selected = "3. Statystyki polozenia")
-  })
-  observeEvent(input$ch3_next, {
-    updateNavbarPage(session, "main_nav", selected = "4. Statystyki rozrzutu")
-  })
-  observeEvent(input$ch4_next, {
-    updateNavbarPage(session, "main_nav", selected = "5. Kształt rozkładu")
-  })
-  observeEvent(input$ch5_next, {
-    updateNavbarPage(session, "main_nav", selected = "6. Ściąga")
-  })
-  observeEvent(input$ch6_to_ch7, {
-    updateNavbarPage(session, "main_nav", selected = "7. Quiz")
-  })
-  observeEvent(input$ch7_to_ch8, {
-    updateNavbarPage(session, "main_nav", selected = "8. Ćwiczenia")
-  })
+  lc <- lecture_server(.chapters, input, output, session)
+
+  observeEvent(input$ch1_next,    { lc$switch_to("ch-jakosciowe") })
+  observeEvent(input$ch2_next,    { lc$switch_to("ch-polozenie")  })
+  observeEvent(input$ch3_next,    { lc$switch_to("ch-rozrzut")    })
+  observeEvent(input$ch4_next,    { lc$switch_to("ch-ksztalt")    })
+  observeEvent(input$ch5_next,    { lc$switch_to("ch-sciaga")     })
+  observeEvent(input$ch6_to_ch7,  { lc$switch_to("ch-quiz")       })
+  observeEvent(input$ch7_to_ch8,  { lc$switch_to("ch-cwiczenia")  })
 
   # ==========================================================================
   # VARIABLE TRACKER

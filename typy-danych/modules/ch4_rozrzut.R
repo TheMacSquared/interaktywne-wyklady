@@ -2,8 +2,9 @@
 # CHAPTER 4: Statystyki rozrzutu
 # ============================================================================
 
-ch4_ui <- tabPanel("4. Statystyki rozrzutu",
-  fluidRow(column(8, offset = 2,
+ch4_ui <- list(
+  id = "ch-rozrzut", num = "04", title = "Statystyki rozrzutu",
+  content = tagList(
 
     # --- Introduction ---
     div(class = "chapter-recap",
@@ -25,7 +26,7 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
     # ====================================================================
     # WIDGET 1: Bus scenario - "Mean is not everything"
     # ====================================================================
-    div(class = "section-title", "Średnia to nie wszystko"),
+    h2(id = "ch4-srednia", class = "section-title", "Średnia to nie wszystko"),
 
     div(class = "narrative",
       p("Wyobraź sobie dwie linie autobusowe. Obie mają takie samo
@@ -56,7 +57,7 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
     # ====================================================================
     # WIDGET 2: SD step-by-step
     # ====================================================================
-    div(class = "section-title", "Odchylenie standardowe krok po kroku"),
+    h2(id = "ch4-odchylenie", class = "section-title", "Odchylenie standardowe krok po kroku"),
 
     div(class = "narrative",
       p("Jak obliczamy odchylenie standardowe? Krok po kroku.
@@ -86,7 +87,7 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
     # ====================================================================
     # WIDGET 2b: Empirical rule (68-95-99.7)
     # ====================================================================
-    div(class = "section-title", "Regula empiryczna (68-95-99.7)"),
+    h2(id = "ch4-regula", class = "section-title", "Reguła empiryczna (68-95-99.7)"),
 
     div(class = "narrative",
       p("Wiemy juz jak obliczyć odchylenie standardowe. Ale co ono oznacza
@@ -111,7 +112,7 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
     # ====================================================================
     # WIDGET 3: Boxplot builder
     # ====================================================================
-    div(class = "section-title", "Budujemy boxplot od podstaw"),
+    h2(id = "ch4-boxplot", class = "section-title", "Budujemy boxplot od podstaw"),
 
     div(class = "narrative",
       p("Boxplot to wizualne podsumowanie rozkładu oparte na kwartylach.
@@ -145,7 +146,7 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
     # ====================================================================
     # WIDGET 3b: Group comparison -- side-by-side boxplots
     # ====================================================================
-    div(class = "section-title", "Porównanie grup"),
+    h2(id = "ch4-porownanie", class = "section-title", "Porównanie grup"),
 
     div(class = "narrative",
       p("Dotychczas analizowalismy caly zbior danych naraz. Ale jednym z
@@ -185,7 +186,7 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
     # ====================================================================
     # WIDGET 4: Spread measures comparison
     # ====================================================================
-    div(class = "section-title", "Porównanie miar rozrzutu"),
+    h2(id = "ch4-miary", class = "section-title", "Porównanie miar rozrzutu"),
 
     div(class = "narrative",
       p("Porównajmy rozne miary rozrzutu i ich odporność na wartości
@@ -216,7 +217,7 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
     # ====================================================================
     # WIDGET 5: Coefficient of Variation
     # ====================================================================
-    div(class = "section-title", "Współczynnik zmienności (CV)"),
+    h2(id = "ch4-cv", class = "section-title", "Współczynnik zmienności (CV)"),
 
     div(class = "narrative",
       p("Odchylenie standardowe mówi o rozrzucie, ale w jakich jednostkach?
@@ -252,8 +253,8 @@ ch4_ui <- tabPanel("4. Statystyki rozrzutu",
     # Bottom spacing
     div(style = "height: 40px;")
 
-  ))
-) # end ch4 tabPanel
+  )
+)
 
 # --------------------------------------------------------------------------
 # Chapter 4 Server
