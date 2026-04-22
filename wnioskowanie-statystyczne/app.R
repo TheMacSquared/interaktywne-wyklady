@@ -10,19 +10,6 @@ library(broom)
 library(tidyr)
 
 # ============================================================================
-# KOLORY
-# ============================================================================
-
-# Kolory specyficzne dla testowania hipotez
-col_h0         <- "#3498db"    # niebieski - hipoteza zerowa / rozklad pod H0
-col_h1         <- "#e74c3c"    # czerwony - hipoteza alternatywna / obszar odrzucenia
-col_pvalue     <- "#f39c12"    # pomaranczowy - p-wartosc
-col_accept     <- "#27ae60"    # zielony - brak podstaw do odrzucenia
-col_reject     <- "#e74c3c"    # czerwony - odrzucenie H0
-col_effect     <- "#9b59b6"    # fioletowy - wielkosc efektu
-col_paired     <- "#1abc9c"    # morski - dane parowe
-
-# ============================================================================
 # MODULY
 # ============================================================================
 
@@ -40,7 +27,15 @@ col_paired     <- "#1abc9c"    # morski - dane parowe
 }
 app_dir <- .find_app_dir()
 project_root <- dirname(app_dir)
+
+source(file.path(project_root, "R", "palette.R"),          local = TRUE)
+source(file.path(project_root, "R", "theme_upwr.R"),       local = TRUE)
 source(file.path(project_root, "R", "shared.R"),           local = TRUE)
+source(file.path(project_root, "R", "lecture_layout.R"),   local = TRUE)
+
+# Globalne defaulty ggplot2 — motyw upwr + Atkinson + kolory geom-ów
+lc_apply_ggplot_defaults()
+
 addResourcePath("assets", file.path(app_dir, "assets"))
 
 source(file.path(app_dir, "modules", "helpers.R"),              local = TRUE)
@@ -56,35 +51,18 @@ source(file.path(app_dir, "modules", "ch_drzewo.R"),            local = TRUE)
 source(file.path(app_dir, "modules", "ch8_sciaga.R"),           local = TRUE)
 
 # ============================================================================
-# GLOBAL UI HEADER (CSS, JS)
-# ============================================================================
-
-global_header <- tagList(
-  withMathJax(),
-  tags$head(
-    includeCSS(file.path(project_root, "R", "shared_styles.css")),
-    includeScript(file.path(project_root, "R", "shared_toc.js"))
-  ))
-
-# ============================================================================
 # UI
 # ============================================================================
 
-ui <- navbarPage(
-  "Wnioskowanie statystyczne",
-  id = "main_nav",
-  theme = bs_theme(bootswatch = "sandstone"),
-  header = global_header,
-  ch1_ui,
-  ch2h_ui,
-  ch2_ui,
-  ch3_ui,
-  ch4_ui,
-  ch5_ui,
-  ch6_ui,
-  ch7_ui,
-  ch_drzewo_ui,
-  ch8_ui
+.chapters <- list(ch1_ui, ch2h_ui, ch2_ui, ch3_ui, ch4_ui,
+                  ch5_ui, ch6_ui, ch7_ui, ch_drzewo_ui, ch8_ui)
+
+ui <- lecture_page(
+  lecture_id    = "wnioskowanie-statystyczne",
+  lecture_num   = "03",
+  lecture_title = "Wnioskowanie statystyczne",
+  module_label  = "Moduł III",
+  chapters      = .chapters
 )
 
 # ============================================================================
@@ -93,37 +71,19 @@ ui <- navbarPage(
 
 server <- function(input, output, session) {
 
-  # ==========================================================================
-  # NAWIGACJA MIEDZY ROZDZIALAMI
-  # ==========================================================================
+  lc <- lecture_server(.chapters, input, output, session)
 
-  observeEvent(input$ch1_next, {
-    updateNavbarPage(session, "main_nav", selected = "2. Formułowanie hipotez")
-  })
-  observeEvent(input$ch2h_next, {
-    updateNavbarPage(session, "main_nav", selected = "3. Jedna zmienna ilościowa")
-  })
-  observeEvent(input$ch2_next, {
-    updateNavbarPage(session, "main_nav", selected = "4. Jedna zmienna jakościowa")
-  })
-  observeEvent(input$ch3_next, {
-    updateNavbarPage(session, "main_nav", selected = "5. Dwie zmienne ilościowe")
-  })
-  observeEvent(input$ch4_next, {
-    updateNavbarPage(session, "main_nav", selected = "6. Dwie zmienne jakościowe")
-  })
-  observeEvent(input$ch5_next, {
-    updateNavbarPage(session, "main_nav", selected = "7. Ilościowa i jakościowa")
-  })
-  observeEvent(input$ch6_next, {
-    updateNavbarPage(session, "main_nav", selected = "8. ANOVA")
-  })
-  observeEvent(input$ch7_next, {
-    updateNavbarPage(session, "main_nav", selected = "9. Drzewo decyzyjne")
-  })
-  observeEvent(input$ch_drzewo_next, {
-    updateNavbarPage(session, "main_nav", selected = "10. Ściąga")
-  })
+  # Stara nawigacja z przycisków chapter-transition — tymczasowo utrzymana,
+  # zanim zmigrujemy moduły na lc_chapter_next() (Etap 3).
+  observeEvent(input$ch1_next,        { lc$switch_to("ch-hipotezy")         })
+  observeEvent(input$ch2h_next,       { lc$switch_to("ch-jedna-ilosciowa")  })
+  observeEvent(input$ch2_next,        { lc$switch_to("ch-jedna-jakosciowa") })
+  observeEvent(input$ch3_next,        { lc$switch_to("ch-korelacja")        })
+  observeEvent(input$ch4_next,        { lc$switch_to("ch-dwie-jakosciowe")  })
+  observeEvent(input$ch5_next,        { lc$switch_to("ch-dwie-grupy")       })
+  observeEvent(input$ch6_next,        { lc$switch_to("ch-anova")            })
+  observeEvent(input$ch7_next,        { lc$switch_to("ch-drzewo")           })
+  observeEvent(input$ch_drzewo_next,  { lc$switch_to("ch-sciaga")           })
 
   # ==========================================================================
   # CHAPTER SERVERS

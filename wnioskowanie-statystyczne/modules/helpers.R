@@ -2,6 +2,34 @@
 # FUNKCJE POMOCNICZE - Wnioskowanie statystyczne
 # ============================================================================
 
+# ----------------------------------------------------------------------------
+# Kolory domenowe dla testowania hipotez, mapowane na paletę UPWr.
+# Używane w modułach zamiast ad-hoc hex-ów; role semantyczne zachowane
+# dla czytelności kodu i spójności wykresów w całym wykładzie.
+# ----------------------------------------------------------------------------
+
+test_colors <- c(
+  h0     = unname(upwr_cat["niebo"]),      # rozkład pod H0
+  h1     = upwr_accent,                     # obszar odrzucenia / H1
+  pvalue = unname(upwr_cat["bursztyn"]),    # p-wartość
+  accept = unname(upwr_cat["szalwia"]),     # brak podstaw do odrzucenia
+  reject = upwr_accent,                     # odrzucenie H0 (= h1)
+  effect = unname(upwr_cat["wrzos"]),       # wielkość efektu
+  paired = unname(upwr_cat["kurkuma"])      # dane parowe
+)
+
+# Aliasy zgodności — stare nazwy col_* z app.R działały też w zamkniętym
+# środowisku źródłowym; po ich usunięciu moduły potrzebują tych stałych.
+# Po migracji ggplot/ggstyle modułów (Etap 2) te aliasy znikną.
+col_h0     <- test_colors["h0"]
+col_h1     <- test_colors["h1"]
+col_pvalue <- test_colors["pvalue"]
+col_accept <- test_colors["accept"]
+col_reject <- test_colors["reject"]
+col_effect <- test_colors["effect"]
+col_paired <- test_colors["paired"]
+
+
 # Generowanie danych studenckich (n=200)
 generate_student_data <- function(n = 200) {
   set.seed(NULL)
