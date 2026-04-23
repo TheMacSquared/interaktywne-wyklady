@@ -104,95 +104,36 @@ ch1_ui <- list(
     ),
 
     # ========================================================================
-    # WIDGET 1: Powtorzone eksperymenty pod H0
-    # ========================================================================
-    h2(id = "ch1-pvalue", class = "section-title", "Co to jest p-wartość?"),
-
-    div(class = "narrative",
-      p("Eksperyment dał różnicę −0,7 pkt na korzyść grupy „plecak”.
-        Czy to dowód, że telefon rozprasza? A może gdybyśmy powtórzyli badanie
-        z innymi studentami, różnica wyszłaby w drugą stronę? ",
-        tags$b("p-wartość"), " to narzędzie, które formalizuje tę intuicję."),
-      p(tags$b("Definicja formalna:")),
-      div(class = "formula-box",
-        p(withMathJax(
-          "\\(p = P(|\\bar{X}_A - \\bar{X}_B| \\geq |d_{\\text{obs}}| \\mid H_0)\\)"
-        )),
-        p("czyli: prawdopodobieństwo zaobserwowania różnicy co najmniej tak
-          skrajnej jak nasza (", withMathJax("\\(d_{\\text{obs}}\\)"), "), ",
-          tags$em("gdyby H₀ była prawdziwa"), ".")
-      ),
-      p("Dla dwustronnego testu „co najmniej tak skrajnej” oznacza ",
-        tags$em("w obie strony"), " — i na plus, i na minus.
-        Jeśli test jest jednostronny (pytamy np. „czy telefon ",
-        tags$em("obniża"), " koncentrację?”), liczymy tylko jedną stronę:"),
-      div(class = "formula-box",
-        p(withMathJax(
-          "\\(p_{\\text{1-stronny}} = P(\\bar{X}_A - \\bar{X}_B \\leq d_{\\text{obs}} \\mid H_0)\\)"
-        ))
-      ),
-      p(tags$b("Jak to obliczyć?"),
-        " W praktyce używamy statystyki testowej (np. t, χ², F) i znanych rozkładów
-        pod H₀ — ale dla intuicji najlepiej wyobrazić sobie, że ",
-        tags$em("wielokrotnie powtarzamy eksperyment"),
-        " w świecie, gdzie H₀ jest prawdziwa. Każdy powtórzony eksperyment da inną
-        różnicę średnich — losowy szum. Rozkład tych różnic ",
-        tags$b("pod H₀"), " pokazuje, co „normalne” bez żadnego efektu."),
-      p(tags$b("Reguła decyzyjna:"),
-        " jeśli ", withMathJax("\\(p < \\alpha\\)"), " — zwykle ", withMathJax("\\(\\alpha = 0{,}05\\)"),
-        " — mówimy, że zaobserwowana różnica jest ", tags$em("zbyt skrajna"),
-        ", by ją wytłumaczyć samym przypadkiem i odrzucamy H₀. W przeciwnym razie brak podstaw
-        do odrzucenia — co ", tags$em("nie"), " znaczy „H₀ jest prawdziwa”,
-        tylko „nasze dane jej nie wykluczają”."),
-      p("Poniższy widget pokazuje tę intuicję wizualnie: symulujemy setki eksperymentów
-        w świecie bez efektu i patrzymy, jak daleko od zera naprawdę „nasza” różnica wypada
-        na tle rozkładu losowych różnic.")
-    ),
-
-    figure_panel(
-      label = "Ryc. 1.2",
-      title = "Powtórzone eksperymenty pod H₀",
-      fluidRow(
-        column(4,
-          sliderInput("ch1_sim_n", "n (na grupę):",
-                      min = 10, max = 100, value = 40, step = 5),
-          hr(),
-          div(style = "display: flex; flex-direction: column; gap: 8px;",
-            actionButton("ch1_sim_10", "Powtórz 10 razy",
-                         class = "btn-primary", width = "100%"),
-            actionButton("ch1_sim_200", "Powtórz 200 razy",
-                         class = "btn-warning", width = "100%"),
-            actionButton("ch1_sim_reset", "Reset",
-                         class = "btn-outline-secondary", width = "100%")
-          ),
-          br(),
-          uiOutput("ch1_sim_info")
-        ),
-        column(8,
-          plotOutput("ch1_sim_plot", height = "350px"),
-          uiOutput("ch1_sim_stats")
-        )
-      )
-    ),
-
-    margin_callout(
-      label = "Jak to czytać",
-      "Każdy słupek to różnica średnich z jednego symulowanego eksperymentu,
-       w którym telefon nie ma wpływu. Czerwona linia to różnica z prawdziwego
-       eksperymentu. p-wartość = jaki odsetek tych słupków jest co najmniej tak
-       daleko od zera jak nasza czerwona linia?"
-    ),
-
-    # ========================================================================
-    # WIDGET 2: Bledy I i II rodzaju
+    # WIDGET 1: Bledy I i II rodzaju
     # ========================================================================
     h2(id = "ch1-bledy", class = "section-title", "Błędy I i II rodzaju"),
 
     div(class = "narrative",
-      p("Testowanie hipotez to decyzja pod niepewnością. Mamy dwie możliwe
-        decyzje („odrzucamy H₀” albo „brak podstaw do odrzucenia”) i dwa możliwe
-        stany świata (H₀ jest prawdziwa albo fałszywa). Cztery kombinacje — dwie
-        dobre, dwie błędne:"),
+      p("Zanim nauczymy się podejmować decyzje w testach hipotez, musimy
+        zauważyć coś fundamentalnego: ", tags$b("rzeczywistość i nasza decyzja
+        to dwie różne rzeczy"), ". Test statystyczny daje nam werdykt —
+        ale werdykt może się nie zgadzać z tym, co naprawdę jest w świecie."),
+      p(tags$b("Analogia: alarm przeciwpożarowy.")),
+      p("Wyobraź sobie czujnik dymu. W świecie są dwa możliwe stany: ",
+        tags$em("pożar faktycznie trwa"), " albo ", tags$em("nic się nie pali"),
+        ". Czujnik może podjąć dwie decyzje: ",
+        tags$em("włączyć alarm"), " albo ", tags$em("milczeć"),
+        ". To daje cztery kombinacje — dwie trafne i ", tags$b("dwa błędy"), ":"),
+      tags$ul(
+        tags$li(tags$b("Fałszywy alarm"), " — czujnik wyje, choć nie ma pożaru.
+                Przykry, ale bezpieczny błąd."),
+        tags$li(tags$b("Przegapiony pożar"), " — czujnik milczy, choć pali się
+                naprawdę. Groźny błąd.")
+      ),
+      p("Zauważ, że nie możemy wyeliminować obu błędów jednocześnie:
+        jeśli zwiększymy czułość czujnika (więcej fałszywych alarmów),
+        rzadziej będzie przegapiał pożar. Jeśli zmniejszymy czułość
+        (mniej fałszywych alarmów), częściej przegapi prawdziwy pożar.
+        To ten sam kompromis, który pojawi się w testach statystycznych."),
+      p("W testowaniu hipotez mamy dokładnie tę samą strukturę: dwa możliwe
+        stany świata (H₀ prawdziwa / H₀ fałszywa) i dwie możliwe decyzje
+        (nie odrzucamy / odrzucamy H₀). Cztery kombinacje — dwie dobre,
+        dwie błędne:"),
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th(""), tags$th("H₀ prawdziwa"),
@@ -251,16 +192,6 @@ ch1_ui <- list(
         obszar błędów dla różnych poziomów istotności, wielkości efektu i n.")
     ),
 
-    margin_callout(
-      label = "W naszym eksperymencie",
-      tagList(
-        tags$p(tags$b("Błąd I rodzaju:"), " stwierdzamy, że telefon rozprasza,
-               choć ", tags$em("naprawdę nie rozprasza"), ". Fałszywy alarm."),
-        tags$p(tags$b("Błąd II rodzaju:"), " nie wykrywamy wpływu telefonu,
-               choć ", tags$em("naprawdę rozprasza"), ". Przegapiony efekt.")
-      )
-    ),
-
     div(style = "text-align: center; margin: 15px 0;",
       tags$img(src = "assets/type-error.jpg", style = "width: 100%; border-radius: 8px;")
     ),
@@ -307,7 +238,7 @@ ch1_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 1.3",
+      label = "Ryc. 1.2",
       title = "Moc testu i błędy",
       fluidRow(
         column(4,
@@ -337,13 +268,126 @@ ch1_ui <- list(
     ),
 
     # ========================================================================
+    # WIDGET 2: P-wartość (po błędach — bo α jest już zdefiniowane)
+    # ========================================================================
+    h2(id = "ch1-pvalue", class = "section-title", "Co to jest p-wartość?"),
+
+    div(class = "narrative",
+      p("Wiemy już, że ryzyko błędu I rodzaju ", withMathJax("\\(\\alpha\\)"),
+        " ustalamy sami — zwykle na 5%. Ale jak z danego eksperymentu wyciągnąć ",
+        tags$em("decyzję"), ": odrzucić H₀ czy nie? Służy do tego ",
+        tags$b("p-wartość"), "."),
+      p("Eksperyment z telefonem dał różnicę −0,7 pkt na korzyść grupy „plecak”.
+        Czy to dowód, że telefon rozprasza? A może gdybyśmy powtórzyli badanie
+        z innymi studentami, różnica wyszłaby w drugą stronę?
+        p-wartość formalizuje tę intuicję — mierzy, jak ",
+        tags$em("zaskakująca"),
+        " jest nasza obserwacja w świecie, w którym H₀ byłaby prawdziwa."),
+      p(tags$b("Definicja formalna:")),
+      div(class = "formula-box",
+        p(withMathJax(
+          "\\(p = P(|\\bar{X}_A - \\bar{X}_B| \\geq |d_{\\text{obs}}| \\mid H_0)\\)"
+        )),
+        p("czyli: prawdopodobieństwo zaobserwowania różnicy co najmniej tak
+          skrajnej jak nasza (", withMathJax("\\(d_{\\text{obs}}\\)"), "), ",
+          tags$em("gdyby H₀ była prawdziwa"), ".")
+      ),
+      p("Dla dwustronnego testu „co najmniej tak skrajnej” oznacza ",
+        tags$em("w obie strony"), " — i na plus, i na minus.
+        Jeśli test jest jednostronny (pytamy np. „czy telefon ",
+        tags$em("obniża"), " koncentrację?”), liczymy tylko jedną stronę:"),
+      div(class = "formula-box",
+        p(withMathJax(
+          "\\(p_{\\text{1-stronny}} = P(\\bar{X}_A - \\bar{X}_B \\leq d_{\\text{obs}} \\mid H_0)\\)"
+        ))
+      ),
+      p(tags$b("Jak to obliczyć?"),
+        " W praktyce używamy statystyki testowej (np. t, χ², F) i znanych rozkładów
+        pod H₀ — ale dla intuicji najlepiej wyobrazić sobie, że ",
+        tags$em("wielokrotnie powtarzamy eksperyment"),
+        " w świecie, gdzie H₀ jest prawdziwa. Każdy powtórzony eksperyment da inną
+        różnicę średnich — losowy szum. Rozkład tych różnic ",
+        tags$b("pod H₀"), " pokazuje, co „normalne” bez żadnego efektu."),
+      p(tags$b("Reguła decyzyjna:"),
+        " jeśli ", withMathJax("\\(p < \\alpha\\)"), " — mówimy, że zaobserwowana
+        różnica jest ", tags$em("zbyt skrajna"),
+        ", by ją wytłumaczyć samym przypadkiem i odrzucamy H₀. W przeciwnym razie
+        brak podstaw do odrzucenia — co ", tags$em("nie"), " znaczy „H₀ jest prawdziwa”,
+        tylko „nasze dane jej nie wykluczają”."),
+      p("Poniższy widget pokazuje tę intuicję wizualnie: symulujemy setki eksperymentów
+        w świecie bez efektu i patrzymy, jak daleko od zera naprawdę „nasza” różnica wypada
+        na tle rozkładu losowych różnic.")
+    ),
+
+    figure_panel(
+      label = "Ryc. 1.3",
+      title = "Powtórzone eksperymenty pod H₀",
+      fluidRow(
+        column(4,
+          sliderInput("ch1_sim_n", "n (na grupę):",
+                      min = 10, max = 100, value = 40, step = 5),
+          hr(),
+          div(style = "display: flex; flex-direction: column; gap: 8px;",
+            actionButton("ch1_sim_10", "Powtórz 10 razy",
+                         class = "btn-primary", width = "100%"),
+            actionButton("ch1_sim_200", "Powtórz 200 razy",
+                         class = "btn-warning", width = "100%"),
+            actionButton("ch1_sim_reset", "Reset",
+                         class = "btn-outline-secondary", width = "100%")
+          ),
+          br(),
+          uiOutput("ch1_sim_info")
+        ),
+        column(8,
+          plotOutput("ch1_sim_plot", height = "350px"),
+          uiOutput("ch1_sim_stats")
+        )
+      )
+    ),
+
+    margin_callout(
+      label = "Jak to czytać",
+      "Każdy słupek to różnica średnich z jednego symulowanego eksperymentu,
+       w którym telefon nie ma wpływu. Czerwona linia to różnica z prawdziwego
+       eksperymentu. p-wartość = jaki odsetek tych słupków jest co najmniej tak
+       daleko od zera jak nasza czerwona linia?"
+    ),
+
+    # ========================================================================
     # WIDGET 3: Quiz - decyzja
     # ========================================================================
     h2(id = "ch1-decyzja", class = "section-title", "Decyzja w praktyce"),
 
     div(class = "narrative",
-      p("Znów wracamy do kluczowej reguły: ", tags$b("p < α → odrzucamy H₀"),
-        ". Spróbujcie sami na kilku scenariuszach:")
+      p("Znamy już regułę porównania p-wartości z poziomem istotności.
+        Ale sama decyzja „odrzucamy / nie odrzucamy” to nie wszystko —
+        trzeba ją też poprawnie sformułować słowami. Dwa możliwe werdykty:"),
+      p(tags$b("Jeśli "), withMathJax("\\(p < \\alpha\\)"), tags$b(":")),
+      div(class = "formula-box",
+        tags$em("„Na przyjętym poziomie istotności α odrzucamy hipotezę zerową
+                na rzecz hipotezy alternatywnej.”")
+      ),
+      p(tags$b("Jeśli "), withMathJax("\\(p \\geq \\alpha\\)"), tags$b(":")),
+      div(class = "formula-box",
+        tags$em("„Na przyjętym poziomie istotności α nie mamy podstaw do
+                odrzucenia hipotezy zerowej.”")
+      ),
+      p("Zwróć uwagę na szczegół w drugim werdykcie: mówimy ",
+        tags$em("„nie mamy podstaw do odrzucenia”"), ", a ", tags$b("nie"),
+        tags$em(" „H₀ jest prawdziwa”"),
+        ". Brak dowodu to nie dowód braku — może efekt istnieje, ale nasza próba
+        była za mała albo efekt za słaby, żeby go wykryć. Stąd tak ostrożny język."),
+      p(tags$b("Ale to jeszcze nie koniec interpretacji."),
+        " Werdykt o hipotezach to krok formalny — trzeba go dodatkowo ",
+        tags$em("przetłumaczyć z powrotem na język pytania badawczego"),
+        ". Jeśli H₀ brzmiała „średni czas dojazdu jest równy 30 minut”, a Hₐ
+        „różni się od 30 minut”, to po odrzuceniu H₀ mówimy: ",
+        tags$em("„średni czas dojazdu statystycznie istotnie różni się od 30 minut”"),
+        " — a nie: „odrzuciliśmy hipotezę zerową”. W raportach i publikacjach
+        zawsze wracamy do języka problemu."),
+      p("Tę drugą część — jak sformułować hipotezy i jak wrócić z werdyktu do
+        języka badania — omówimy w kolejnych rozdziałach. Na razie poćwiczmy
+        samo podjęcie decyzji na podstawie p-wartości:")
     ),
 
     figure_panel(
