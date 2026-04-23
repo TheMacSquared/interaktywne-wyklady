@@ -283,7 +283,7 @@ ch2_ev_var_server <- function(input, output, session) {
         )) +
         labs(title = "Średnia wygrana na grę → E(X)",
              x = "Liczba gier", y = "Średnia wygrana (zł)") +
-        theme_educational()
+        theme_upwr()
     }
   })
 
@@ -365,7 +365,7 @@ ch2_ev_var_server <- function(input, output, session) {
       scale_x_continuous(breaks = x_vals, limits = c(0, 10)) +
       labs(title = "Rozkład na wadze — E(X) to punkt równowagi",
            x = "Wartość (x)", y = "Prawdopodobieństwo P(X=x)") +
-      theme_educational()
+      theme_upwr()
   })
 
   output$ch2ev_balance_text <- renderUI({
@@ -436,7 +436,7 @@ ch2_ev_var_server <- function(input, output, session) {
                color = col_secondary, fontface = "bold", size = 4, vjust = 2) +
       labs(title = paste0("Wyniki ", d$n, " gier — to samo E(X), różne ryzyko"),
            x = "Wygrana (zł)", y = "Liczebność") +
-      theme_educational(base_size = 12)
+      theme_upwr(base_size = 12)
   })
 
   output$ch2ev_var_summary <- renderUI({

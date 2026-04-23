@@ -471,30 +471,30 @@ ch4_server <- function(input, output, session) {
       ggplot(df, aes(x = x)) +
         geom_rug(color = col_primary, alpha = 0.3) +
         labs(title = "Krok 1: Surowe dane", x = "Wartość", y = "") +
-        theme_educational()
+        theme_upwr()
     } else if (step == 2) {
       ggplot(df, aes(x = x)) +
         geom_histogram(bins = 5, fill = col_primary, color = "white", alpha = 0.7) +
         geom_rug(alpha = 0.2) +
         labs(title = "Krok 2: Histogram (5 binów)", x = "Wartość", y = "Liczebność") +
-        theme_educational()
+        theme_upwr()
     } else if (step == 3) {
       ggplot(df, aes(x = x)) +
         geom_histogram(bins = 15, fill = col_primary, color = "white", alpha = 0.7) +
         labs(title = "Krok 3: Histogram (15 binów)", x = "Wartość", y = "Liczebność") +
-        theme_educational()
+        theme_upwr()
     } else if (step == 4) {
       ggplot(df, aes(x = x)) +
         geom_histogram(bins = 30, fill = col_primary, color = "white", alpha = 0.7) +
         labs(title = "Krok 4: Histogram (30 binów)", x = "Wartość", y = "Liczebność") +
-        theme_educational()
+        theme_upwr()
     } else if (step == 5) {
       ggplot(df, aes(x = x)) +
         geom_histogram(aes(y = after_stat(density)), bins = 30,
                        fill = col_primary, color = "white", alpha = 0.7) +
         labs(title = "Krok 5: Skala gęstości (oś Y = gęstość)",
              x = "Wartość", y = "Gęstość") +
-        theme_educational()
+        theme_upwr()
     } else if (step == 6) {
       ggplot(df, aes(x = x)) +
         geom_histogram(aes(y = after_stat(density)), bins = 30,
@@ -502,14 +502,14 @@ ch4_server <- function(input, output, session) {
         geom_density(color = col_secondary, linewidth = 1.5) +
         labs(title = "Krok 6: Histogram + krzywa gęstości",
              x = "Wartość", y = "Gęstość") +
-        theme_educational()
+        theme_upwr()
     } else {
       ggplot(df, aes(x = x)) +
         geom_density(fill = col_primary, color = col_dark, linewidth = 1.2, alpha = 0.3) +
         labs(title = "Krok 7: Funkcja gęstości (PDF)",
              subtitle = "Matematyczna idealizacja histogramu",
              x = "Wartość", y = "Gęstość f(x)") +
-        theme_educational()
+        theme_upwr()
     }
   })
 
@@ -581,7 +581,7 @@ ch4_server <- function(input, output, session) {
                size = 6, fontface = "bold", color = col_dark) +
       labs(title = paste0("P(", a, " < X < ", b, ")"),
            x = "x", y = "f(x)") +
-      theme_educational()
+      theme_upwr()
   })
 
   output$ch4_area_stats <- renderUI({
@@ -631,7 +631,7 @@ ch4_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozkład jednostajny U(a, b)",
            x = "x", y = "f(x)") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -678,7 +678,7 @@ ch4_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozkład wykładniczy Exp(λ)",
            x = "x", y = "f(x)") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -730,7 +730,7 @@ ch4_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozkład t-Studenta t(df)",
            x = "x", y = "f(x)") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -778,7 +778,7 @@ ch4_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozkład χ²(df)",
            x = "x", y = "f(x)") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -827,7 +827,7 @@ ch4_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozkład log-normalny LogN(μ, σ)",
            x = "x", y = "f(x)") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 

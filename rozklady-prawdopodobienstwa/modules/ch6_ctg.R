@@ -227,7 +227,7 @@ ch6_server <- function(input, output, session) {
         labs(title = paste0("Populacja: ", dist_label),
              subtitle = "To NIE jest normalny!",
              x = "", y = "P(X=k)") +
-        theme_educational(base_size = 11)
+        theme_upwr(base_size = 11)
     } else {
       data <- generate_population_sample(dist, 10000)
       df <- data.frame(x = data)
@@ -236,7 +236,7 @@ ch6_server <- function(input, output, session) {
         labs(title = paste0("Populacja: ", dist_label),
              subtitle = "To NIE jest normalny!",
              x = "", y = "Gęstość") +
-        theme_educational(base_size = 11)
+        theme_upwr(base_size = 11)
     }
   })
 
@@ -280,7 +280,7 @@ ch6_server <- function(input, output, session) {
              subtitle = paste0("Krzywa: N(", round(theo_mu, 2), ", ",
                                round(theo_sd, 2), ")"),
              x = "Średnia z próby", y = "Gęstość") +
-        theme_educational()
+        theme_upwr()
     }
   })
 
@@ -340,7 +340,7 @@ ch6_server <- function(input, output, session) {
       labs(title = paste0("2000 średnich z rozkładu: ",
                           dist_names_pl[dist]),
            x = "Średnia z próby", y = "Gęstość") +
-      theme_educational(base_size = 12)
+      theme_upwr(base_size = 12)
   })
 
   # --- Widget 3: Dlaczego to dziala? ---
@@ -387,7 +387,7 @@ ch6_server <- function(input, output, session) {
                            else paste0("Krzywa: N(", round(params$mu, 2), ", ",
                                        round(theo_sd, 2), ")"),
                x = "Średnia", y = "Gęstość") +
-        theme_educational()
+        theme_upwr()
     }
   })
 

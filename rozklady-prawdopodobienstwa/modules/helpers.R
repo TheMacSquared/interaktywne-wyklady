@@ -3,9 +3,6 @@
 # generate_population_sample(), get_population_params(), dist_names_pl -> R/shared.R
 # ============================================================================
 
-# Alias dla zgodnosci ze starym kodem — nowa nazwa to theme_upwr()
-theme_educational <- theme_upwr
-
 # Kolory ogolne — aliasy do palety upwr (uzywane w serwerach rozdzialow)
 col_primary   <- unname(upwr_cat["niebo"])      # niebieski
 col_secondary <- unname(upwr_cat["terakota"])   # czerwono-ceglany
@@ -39,7 +36,7 @@ plot_pmf <- function(x_vals, probs, fill_color = "#3498db",
     geom_text(aes(label = round(prob, 3)), vjust = -0.5, size = 3.5) +
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     labs(title = title, x = xlab, y = ylab) +
-    theme_educational()
+    theme_upwr()
 
   if (show_mean && !is.null(mu)) {
     p <- p + geom_vline(xintercept = mu, color = "#e74c3c", linewidth = 1.2, linetype = "dashed")
@@ -63,7 +60,7 @@ plot_pdf <- function(density_fn, xlim, fill_color = "#27ae60",
   p <- ggplot(df, aes(x = x, y = y)) +
     geom_line(color = fill_color, linewidth = 1.2) +
     labs(title = title, x = xlab, y = ylab) +
-    theme_educational()
+    theme_upwr()
 
   if (!is.null(shade_from) && !is.null(shade_to)) {
     shade_x <- seq(max(xlim[1], shade_from), min(xlim[2], shade_to), length.out = 300)

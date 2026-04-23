@@ -313,7 +313,7 @@ ch3_server <- function(input, output, session) {
       labs(title = paste0("Rozkład jednostajny: ", d$n, " prób, ", d$k, " wyników"),
            subtitle = paste0("Linia: P(X=k) = 1/", d$k, " = ", round(1/d$k, 4)),
            x = "Wynik", y = "Częstość względna") +
-      theme_educational()
+      theme_upwr()
   })
 
   # --- Widget 2: Dwumianowy — scenariusze overlay ---
@@ -343,7 +343,7 @@ ch3_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozkład dwumianowy B(n, p)",
            x = "Liczba sukcesów (k)", y = "P(X = k)") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -391,7 +391,7 @@ ch3_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozkład Poissona Pois(λ)",
            x = "Liczba zdarzeń (k)", y = "P(X = k)") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -440,7 +440,7 @@ ch3_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = "Rozkład geometryczny Geom(p)",
            x = "Numer próby (k)", y = "P(X = k)") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
   })
 
@@ -504,7 +504,7 @@ ch3_server <- function(input, output, session) {
       scale_fill_manual(values = c(col_uniform, col_binomial, col_poisson, col_geometric)) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
       labs(x = "Wartość", y = "Prawdopodobieństwo") +
-      theme_educational(base_size = 13)
+      theme_upwr(base_size = 13)
 
     if (show_ev) {
       pl <- pl + geom_vline(data = stats_df, aes(xintercept = mu),

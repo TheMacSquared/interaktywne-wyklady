@@ -229,7 +229,7 @@ ch7_server <- function(input, output, session) {
         ggplot(df, aes(x = factor(x), y = p)) +
           geom_col(fill = col_uniform, color = "white", alpha = 0.85, width = 0.6) +
           labs(title = "Jednostajny dyskretny (kostka)", x = "k", y = "P(X=k)") +
-          theme_educational(base_size = 12)
+          theme_upwr(base_size = 12)
       },
       "d_binomial" = {
         x <- 0:20; p <- dbinom(x, 20, 0.3)
@@ -237,7 +237,7 @@ ch7_server <- function(input, output, session) {
         ggplot(df, aes(x = x, y = p)) +
           geom_col(fill = col_binomial, color = "white", alpha = 0.85, width = 0.7) +
           labs(title = "B(20, 0.3)", x = "k", y = "P(X=k)") +
-          theme_educational(base_size = 12)
+          theme_upwr(base_size = 12)
       },
       "d_poisson" = {
         x <- 0:15; p <- dpois(x, 4)
@@ -245,7 +245,7 @@ ch7_server <- function(input, output, session) {
         ggplot(df, aes(x = x, y = p)) +
           geom_col(fill = col_poisson, color = "white", alpha = 0.85, width = 0.7) +
           labs(title = "Pois(4)", x = "k", y = "P(X=k)") +
-          theme_educational(base_size = 12)
+          theme_upwr(base_size = 12)
       },
       "c_normal" = {
         x <- seq(-4, 4, length.out = 500)
@@ -254,7 +254,7 @@ ch7_server <- function(input, output, session) {
           geom_area(fill = col_normal, alpha = 0.3) +
           geom_line(color = col_normal, linewidth = 1.2) +
           labs(title = "N(0, 1)", x = "x", y = "f(x)") +
-          theme_educational(base_size = 12)
+          theme_upwr(base_size = 12)
       },
       "c_exponential" = {
         x <- seq(0, 8, length.out = 500)
@@ -263,7 +263,7 @@ ch7_server <- function(input, output, session) {
           geom_area(fill = col_exponential, alpha = 0.3) +
           geom_line(color = col_exponential, linewidth = 1.2) +
           labs(title = "Exp(1)", x = "x", y = "f(x)") +
-          theme_educational(base_size = 12)
+          theme_upwr(base_size = 12)
       },
       "c_uniform" = {
         x <- seq(-1, 11, length.out = 500)
@@ -272,7 +272,7 @@ ch7_server <- function(input, output, session) {
           geom_area(fill = col_uniform, alpha = 0.3) +
           geom_line(color = col_uniform, linewidth = 1.2) +
           labs(title = "U(0, 10)", x = "x", y = "f(x)") +
-          theme_educational(base_size = 12)
+          theme_upwr(base_size = 12)
       },
       "d_geometric" = {
         x <- 1:20; p <- dgeom(x - 1, 0.2)
@@ -280,7 +280,7 @@ ch7_server <- function(input, output, session) {
         ggplot(df, aes(x = x, y = p)) +
           geom_col(fill = col_geometric, color = "white", alpha = 0.85, width = 0.7) +
           labs(title = "Geom(0.2)", x = "k", y = "P(X=k)") +
-          theme_educational(base_size = 12)
+          theme_upwr(base_size = 12)
       },
       "c_t_student" = {
         x <- seq(-5, 5, length.out = 500)
@@ -289,7 +289,7 @@ ch7_server <- function(input, output, session) {
           geom_area(fill = col_t_student, alpha = 0.3) +
           geom_line(color = col_t_student, linewidth = 1.2) +
           labs(title = "t(df=3)", x = "x", y = "f(x)") +
-          theme_educational(base_size = 12)
+          theme_upwr(base_size = 12)
       },
       "c_chi_sq" = {
         x <- seq(0.01, 20, length.out = 500)
@@ -298,7 +298,7 @@ ch7_server <- function(input, output, session) {
           geom_area(fill = col_chi_sq, alpha = 0.3) +
           geom_line(color = col_chi_sq, linewidth = 1.2) +
           labs(title = "χ²(df=5)", x = "x", y = "f(x)") +
-          theme_educational(base_size = 12)
+          theme_upwr(base_size = 12)
       },
       "c_lognormal" = {
         x <- seq(0.01, 10, length.out = 500)
@@ -307,7 +307,7 @@ ch7_server <- function(input, output, session) {
           geom_area(fill = col_lognormal, alpha = 0.3) +
           geom_line(color = col_lognormal, linewidth = 1.2) +
           labs(title = "LogN(0, 0.6)", x = "x", y = "f(x)") +
-          theme_educational(base_size = 12)
+          theme_upwr(base_size = 12)
       }
     )
   })

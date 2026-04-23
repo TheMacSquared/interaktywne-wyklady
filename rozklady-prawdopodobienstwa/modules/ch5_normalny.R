@@ -265,7 +265,7 @@ ch5_server <- function(input, output, session) {
     p + geom_vline(xintercept = mu, color = col_dark, linetype = "dashed") +
       labs(title = paste0("N(μ=", mu, ", σ=", sigma, ")"),
            x = "x", y = "f(x)") +
-      theme_educational()
+      theme_upwr()
   })
 
   output$ch5_explore_stats <- renderUI({
@@ -314,7 +314,7 @@ ch5_server <- function(input, output, session) {
                         guide = "none") +
       labs(title = "Porównanie dwóch rozkładów normalnych",
            x = "x", y = "f(x)") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top")
   })
 
@@ -364,7 +364,7 @@ ch5_server <- function(input, output, session) {
                size = 4, fontface = "bold", vjust = -0.5) +
       labs(title = paste0("Oryginalna skala: N(", mu, ", ", sigma, ")"),
            x = "x", y = "f(x)") +
-      theme_educational(base_size = 12)
+      theme_upwr(base_size = 12)
 
     p2 <- ggplot(df_std, aes(x = x, y = y)) +
       geom_line(color = col_normal, linewidth = 1.2) +
@@ -375,7 +375,7 @@ ch5_server <- function(input, output, session) {
                size = 4, fontface = "bold", vjust = -0.5) +
       labs(title = "Standaryzowana skala: N(0, 1)",
            x = "z", y = "f(z)") +
-      theme_educational(base_size = 12)
+      theme_upwr(base_size = 12)
 
     gridExtra::grid.arrange(p1, p2, ncol = 1)
   })
@@ -415,7 +415,7 @@ ch5_server <- function(input, output, session) {
                  label = sprintf("P = %.4f", prob),
                  size = 6, fontface = "bold", color = col_dark) +
       labs(title = "Rozkład standardowy N(0, 1)", x = "z", y = "f(z)") +
-      theme_educational()
+      theme_upwr()
   })
 
   output$ch5_prob_result <- renderUI({
