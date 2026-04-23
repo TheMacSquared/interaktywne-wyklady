@@ -27,12 +27,36 @@ ch3_ui <- list(
         " — porównuje obserwowany odsetek z wartością referencyjną p₀."),
       p("Test dwumianowy jest dokładny — nie opiera się na przybliżeniu normalnym,
         działa nawet przy małych próbach."),
+      p("Trzy warianty par hipotez — zależnie od brzmienia pytania:"),
       div(class = "formula-box",
-        p(withMathJax("\\(H_0: p = p_0\\)"), " — ",
-          withMathJax("\\(H_a: p \\neq p_0\\)")),
+        p(tags$b("Dwustronna"), " (proporcja różni się od ",
+          withMathJax("\\(p_0\\)"), "):"),
+        p(withMathJax("\\(H_0: p = p_0 \\quad\\)"),
+          withMathJax("\\(H_a: p \\neq p_0\\)"))
+      ),
+      div(class = "formula-box",
+        p(tags$b("Prawostronna"), " (proporcja ",
+          tags$em("wyższa"), " niż ", withMathJax("\\(p_0\\)"), "):"),
+        p(withMathJax("\\(H_0: p \\leq p_0 \\quad\\)"),
+          withMathJax("\\(H_a: p > p_0\\)"))
+      ),
+      div(class = "formula-box",
+        p(tags$b("Lewostronna"), " (proporcja ",
+          tags$em("niższa"), " niż ", withMathJax("\\(p_0\\)"), "):"),
+        p(withMathJax("\\(H_0: p \\geq p_0 \\quad\\)"),
+          withMathJax("\\(H_a: p < p_0\\)"))
+      ),
+      p("W teście dwumianowym statystyką testową jest sama liczba sukcesów ",
+        withMathJax("\\(k\\)"),
+        " — nie trzeba jej standaryzować, bo pod H₀ zna jej rozkład dokładnie
+        (to rozkład dwumianowy ", withMathJax("\\(B(n, p_0)\\)"),
+        "). p-wartość liczymy bezpośrednio jako prawdopodobieństwo wyniku co najmniej
+        tak skrajnego jak obserwowany:"),
+      div(class = "formula-box",
         p("Statystyka: ", withMathJax("\\(k\\)"),
           " (liczba sukcesów w ", withMathJax("\\(n\\)"), " próbach)"),
-        p("p-wartość: ", withMathJax("\\(P(K \\leq k\\ \\text{lub}\\ K \\geq k)\\)"),
+        p("p-wartość (dwustronna): ",
+          withMathJax("\\(P(K \\leq k\\ \\text{lub}\\ K \\geq k)\\)"),
           " przy ", withMathJax("\\(K \\sim B(n, p_0)\\)"))
       )
     ),

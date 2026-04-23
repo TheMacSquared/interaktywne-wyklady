@@ -154,11 +154,13 @@ generate_paired_data <- function(n = 30, effect = 5) {
 }
 
 # Generowanie danych do korelacji
-generate_correlation_data <- function(n = 50, r = 0.7, type = "linear") {
+generate_correlation_data <- function(n = 50, r = 0.7, type = "linear",
+                                      x_mean = 170, x_sd = 10,
+                                      y_mean = 70, y_sd = 12) {
   set.seed(NULL)
   if (type == "linear") {
-    x <- rnorm(n, mean = 170, sd = 10)
-    y <- r * scale(x) * 12 + sqrt(1 - r^2) * rnorm(n) * 12 + 70
+    x <- rnorm(n, mean = x_mean, sd = x_sd)
+    y <- r * scale(x) * y_sd + sqrt(1 - r^2) * rnorm(n) * y_sd + y_mean
     data.frame(x = round(x, 1), y = round(y, 1))
   } else if (type == "monotonic") {
     x <- runif(n, 1, 10)

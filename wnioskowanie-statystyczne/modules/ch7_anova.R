@@ -181,6 +181,20 @@ ch7_ui <- list(
         w grupach, więc jest bezpiecznym wyborem domyślnym.")
     ),
 
+    margin_callout(
+      label = "Ważne",
+      tagList(
+        "Testy post-hoc wykonujemy ", tags$b("tylko"), " gdy ANOVA jest istotna.
+         Bez tego korekcja na wielokrotne porównania jest niepotrzebna."
+      ),
+      color = "uwaga"
+    ),
+
+    margin_code_note(
+      code = "jamovi: One-Way ANOVA\n→ Post-Hoc Tests\n→ ✓ Games-Howell",
+      description = "Ścieżka w jamovi dla testu post-hoc po ANOVA."
+    ),
+
     figure_panel(
       label = "Ryc. 8.2",
       title = "Games-Howell",
@@ -200,20 +214,6 @@ ch7_ui <- list(
       plotOutput("ch7_tukey_plot", height = "260px"),
 
       uiOutput("ch7_tukey_result")
-    ),
-
-    margin_callout(
-      label = "Ważne",
-      tagList(
-        "Testy post-hoc wykonujemy ", tags$b("tylko"), " gdy ANOVA jest istotna.
-         Bez tego korekcja na wielokrotne porównania jest niepotrzebna."
-      ),
-      color = "uwaga"
-    ),
-
-    margin_code_note(
-      code = "jamovi: One-Way ANOVA\n→ Post-Hoc Tests\n→ ✓ Games-Howell",
-      description = "Ścieżka w jamovi dla testu post-hoc po ANOVA."
     ),
 
     lc_chapter_next(

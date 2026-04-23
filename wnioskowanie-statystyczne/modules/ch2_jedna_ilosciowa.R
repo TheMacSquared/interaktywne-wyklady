@@ -30,12 +30,33 @@ ch2_ui <- list(
       p("Zadanie statystyka: przełożyć to na formalną hipotezę i dodać kontekst —
         typowy to ile? Mamy wartość referencyjną
         z pilotażu: średni wynik testu koncentracji w populacji = 70 pkt."),
-      p("Więc pytanie potoczne zamienia się w:"),
+      p("Pytanie potoczne zamienia się w jedną z trzech par hipotez
+        — zależnie od tego, w którą stronę pytamy:"),
       div(class = "formula-box",
-        p(withMathJax("\\(H_0: \\mu = 70\\)"), " (średnia jest typowa)"),
-        p(withMathJax("\\(H_a: \\mu \\neq 70\\)"), " (średnia odbiega od normy)")
+        p(tags$b("Dwustronna"), " (sprawdzamy, czy średnia w ogóle się różni):"),
+        p(withMathJax("\\(H_0: \\mu = 70 \\quad\\)"),
+          withMathJax("\\(H_a: \\mu \\neq 70\\)"))
       ),
-      p("Teraz potrzebujemy danych i wzoru na ", tags$b("test t jednej próby"), ":"),
+      div(class = "formula-box",
+        p(tags$b("Prawostronna"), " (pytamy, czy średnia jest ",
+          tags$em("wyższa"), " niż norma):"),
+        p(withMathJax("\\(H_0: \\mu \\leq 70 \\quad\\)"),
+          withMathJax("\\(H_a: \\mu > 70\\)"))
+      ),
+      div(class = "formula-box",
+        p(tags$b("Lewostronna"), " (pytamy, czy średnia jest ",
+          tags$em("niższa"), " niż norma):"),
+        p(withMathJax("\\(H_0: \\mu \\geq 70 \\quad\\)"),
+          withMathJax("\\(H_a: \\mu < 70\\)"))
+      ),
+      p("Wybór wariantu wynika z brzmienia pytania badawczego i musi być
+        ", tags$b("zdecydowany przed zbieraniem danych"), "."),
+      p("Niezależnie od wybranego wariantu, liczymy tę samą ",
+        tags$b("statystykę testową"), " — mierzy ona, ile błędów standardowych
+        dzieli średnią z próby od wartości referencyjnej ",
+        withMathJax("\\(\\mu_0\\)"),
+        ". Różni się tylko sposób liczenia p-wartości (po jednej albo po obu stronach rozkładu)."),
+      p("Wzór na ", tags$b("test t jednej próby"), ":"),
       div(class = "formula-box",
         p(withMathJax("\\(t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}}, \\quad df = n - 1\\)"))
       )

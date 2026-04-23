@@ -171,8 +171,8 @@ ch5_ui <- list(
       uiOutput("ch5_compare_result")
     ),
 
-    div(class = "callout-info",
-      tags$strong("Kiedy który?"),
+    div(class = "narrative",
+      p(tags$b("Kiedy który?")),
       tags$table(class = "table table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th(""), tags$th("Test χ²"), tags$th("Test Fishera"))
@@ -226,17 +226,18 @@ ch5_ui <- list(
       uiOutput("ch5_effect_result")
     ),
 
-    div(class = "callout-info",
+    div(class = "narrative",
       p(tags$b("Jak czytać siłę związku:")),
-      p("1. ", tags$b("Procenty w grupach"), " — najlepsza intuicja.
-        Jeśli odsetek to 45% wobec 47% — nawet przy p < 0.05 różnica jest praktycznie żadna.
-        Jeśli 30% wobec 70% — efekt jest ogromny."),
-      p("2. ", tags$b("Cramér's V"), " — współczynnik siły związku [0–1]:"),
+      p(tags$b("1. Procenty w grupach"), " — najlepsza intuicja.
+        Jeśli odsetek to 45% wobec 47% — nawet przy p < 0,05 różnica jest
+        praktycznie żadna. Jeśli 30% wobec 70% — efekt jest ogromny."),
+      p(tags$b("2. Cramér's V"), " — współczynnik siły związku [0–1]:"),
       div(class = "formula-box",
         p(withMathJax("\\(V = \\sqrt{\\frac{\\chi^2}{n \\cdot (k - 1)}}\\)"),
           " gdzie k = min(wiersze, kolumny)")
       ),
-      p("Interpretacja: < 0.1 pomijalny, 0.1–0.3 mały, 0.3–0.5 średni, > 0.5 duży."),
+      p("Interpretacja: < 0,1 pomijalny, 0,1–0,3 mały, 0,3–0,5 średni,
+        > 0,5 duży."),
       p("Zawsze ", tags$b("zacznij od procentów"),
         " — to język zrozumiały dla każdego odbiorcy.")
     ),

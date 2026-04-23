@@ -36,38 +36,45 @@ ch4_ui <- list(
     ),
 
     # --- Wykres 1: sila korelacji (statyczny obrazek) ---
+    div(class = "narrative",
+      p("Im większe ", withMathJax("\\(|r|\\)"),
+        ", tym ciaśniej punkty grupują się wokół prostej — poniżej trzy
+        zbiory o różnej sile korelacji.")
+    ),
     figure_panel(
       label = "Ryc. 5.1",
       title = "Siła korelacji",
       tags$img(src = "assets/correlation-strength.png",
-               style = "width: 100%; border-radius: 4px;"),
-      p(class = "narrative", style = "margin-top: 8px;",
-        "Im większe ", withMathJax("\\(|r|\\)"),
-        ", tym ciaśniej punkty grupują się wokół prostej.")
+               style = "width: 100%; border-radius: 4px;")
     ),
 
     # --- Wykres 2: kierunek korelacji (statyczny obrazek) ---
+    div(class = "narrative",
+      p("Znak ", withMathJax("\\(r\\)"),
+        " mówi o kierunku: dodatni oznacza, że obie zmienne rosną razem;
+        ujemny — jedna rośnie, druga maleje; zero — brak trendu liniowego.")
+    ),
     figure_panel(
       label = "Ryc. 5.2",
       title = "Kierunek korelacji",
       tags$img(src = "assets/correlation-direction.png",
-               style = "width: 100%; border-radius: 4px;"),
-      p(class = "narrative", style = "margin-top: 8px;",
-        "Znak ", withMathJax("\\(r\\)"),
-        " mówi o kierunku: dodatni = obie rosną razem, ujemny = jedna rośnie, druga maleje,
-        zero = brak trendu liniowego.")
+               style = "width: 100%; border-radius: 4px;")
     ),
 
     # --- Wykres 3: rozrzut vs r (statyczny obrazek) ---
+    div(class = "narrative",
+      p("Warto odróżnić korelację od nachylenia prostej. Wszystkie trzy
+        panele poniżej mają ten sam trend wzrostowy (podobne nachylenie),
+        ale im większy rozrzut punktów wokół prostej, tym niższe ",
+        withMathJax("\\(r\\)"),
+        ". Korelacja łączy obie cechy: kierunek trendu ", tags$em("i"),
+        " to, jak ciaśno punkty go trzymają.")
+    ),
     figure_panel(
       label = "Ryc. 5.3",
       title = "Uwaga: r to nie nachylenie!",
       tags$img(src = "assets/correlation-scatter.png",
-               style = "width: 100%; border-radius: 4px;"),
-      p(class = "narrative", style = "margin-top: 8px;",
-        "Wszystkie trzy panele mają ten sam trend wzrostowy (podobne nachylenie prostej).
-        Ale im większy rozrzut punktów wokół prostej, tym niższe r.
-        Korelacja łączy obie cechy: kierunek trendu ", tags$em("i"), " to, jak ciaśno punkty go trzymają.")
+               style = "width: 100%; border-radius: 4px;")
     ),
 
     # ========================================================================
@@ -80,10 +87,30 @@ ch4_ui <- list(
         ") prawie nigdy nie wynosi dokładnie zero, nawet gdy w populacji związku nie ma.
         Pytanie: czy obserwowane ", withMathJax("\\(r\\)"),
         " jest wystarczająco dalekie od zera, by odrzucić brak związku?"),
+      p("Trzy warianty par hipotez:"),
       div(class = "formula-box",
-        p(withMathJax("\\(H_0: \\rho = 0\\)"), " — ",
-          withMathJax("\\(H_a: \\rho \\neq 0\\)")),
-        p(withMathJax("\\(t = \\frac{r\\sqrt{n-2}}{\\sqrt{1-r^2}}, \\quad df = n - 2\\)"))
+        p(tags$b("Dwustronna"), " (jakikolwiek związek liniowy):"),
+        p(withMathJax("\\(H_0: \\rho = 0 \\quad\\)"),
+          withMathJax("\\(H_a: \\rho \\neq 0\\)"))
+      ),
+      div(class = "formula-box",
+        p(tags$b("Prawostronna"), " (dodatni związek — obie rosną razem):"),
+        p(withMathJax("\\(H_0: \\rho \\leq 0 \\quad\\)"),
+          withMathJax("\\(H_a: \\rho > 0\\)"))
+      ),
+      div(class = "formula-box",
+        p(tags$b("Lewostronna"), " (ujemny związek — jedna rośnie, druga maleje):"),
+        p(withMathJax("\\(H_0: \\rho \\geq 0 \\quad\\)"),
+          withMathJax("\\(H_a: \\rho < 0\\)"))
+      ),
+      p("Dla wszystkich trzech wariantów używamy tej samej statystyki testowej —
+        transformacja ", withMathJax("\\(r\\)"),
+        " na skalę rozkładu t o ", withMathJax("\\(n-2\\)"),
+        " stopniach swobody. Im dalej od zera, tym bardziej nieprawdopodobny jest
+        taki wynik gdy w populacji korelacji nie ma."),
+      div(class = "formula-box",
+        p("Statystyka testowa: ",
+          withMathJax("\\(t = \\frac{r\\sqrt{n-2}}{\\sqrt{1-r^2}}, \\quad df = n - 2\\)"))
       )
     ),
 
@@ -207,82 +234,85 @@ ch4_ui <- list(
     ),
 
     # --- 1. Kwartet Anscombe'a ---
+    div(class = "narrative",
+      p(tags$b("1. Kwartet Anscombe’a — te same statystyki, różne dane.")),
+      p("Poniższe cztery zbiory danych mają identyczną korelację (~0,82),
+        tę samą średnią i wariancję — a zupełnie inną strukturę. Tylko wykres
+        pozwala odkleić statystykę od rzeczywistości. To najmocniejszy argument
+        za tym, żeby zawsze rysować wykres przed interpretacją r.")
+    ),
     figure_panel(
       label = "Ryc. 5.6",
-      title = "1. Kwartet Anscombe’a — te same statystyki, różne dane",
+      title = "Kwartet Anscombe’a",
       tags$img(src = "assets/anscombe-quartet.png",
-               style = "width: 100%; border-radius: 4px;"),
-      p(class = "narrative", style = "margin-top: 8px;",
-        "Cztery zbiory danych z identyczną korelacją (~0.82),
-        tą samą średnią i wariancją — ale zupełnie inną strukturą.
-        Tylko wykres pozwala odkleić statystykę od rzeczywistości.
-        To argument za tym, żeby zawsze rysować wykres przed interpretacją r.")
+               style = "width: 100%; border-radius: 4px;")
     ),
 
     # --- 2. Korelacja pozorna (spurious) ---
-    figure_panel(
-      label = "Ryc. 5.7",
-      title = "2. Korelacja pozorna (spurious correlation)",
-      div(class = "narrative",
-        p("Spożycie lodów i liczba utonięć korelują dodatnio.
-          Czy lody zabijają? Oczywiście nie — obie zmienne zależą od ",
-          "temperatury (zmienna ukryta / konfounder)."),
-        p("Korelacja między X i Y może wynikać z tego,
-          że obie zależą od Z. Bez kontroli zmiennych zakłócających
-          nie można wnioskować o przyczynowości."),
-        p("Więcej absurdalnych przykładów:"),
-        p(tags$a(href = "https://www.tylervigen.com/spurious-correlations",
-                 target = "_blank", style = "font-size: 16px;",
-                 "Spurious Correlations (Tyler Vigen) →"))
-      )
+    div(class = "narrative",
+      p(tags$b("2. Korelacja pozorna (spurious correlation).")),
+      p("Spożycie lodów i liczba utonięć korelują dodatnio. Czy lody zabijają?
+        Oczywiście nie — obie zmienne zależą od temperatury (zmienna ukryta /
+        konfounder). Korelacja między X i Y może wynikać z tego, że obie
+        zależą od Z. Bez kontroli zmiennych zakłócających nie można wnioskować
+        o przyczynowości."),
+      p("Więcej absurdalnych przykładów: ",
+        tags$a(href = "https://www.tylervigen.com/spurious-correlations",
+               target = "_blank",
+               "Spurious Correlations (Tyler Vigen) →"))
     ),
 
     # --- 3. Paradoks Simpsona ---
+    div(class = "narrative",
+      p(tags$b("3. Paradoks Simpsona.")),
+      p("Globalnie: więcej nauki wydaje się obniżać wyniki (r ujemne, czarna
+        linia). Ale w każdej szkole z osobna więcej nauki daje ",
+        tags$b("wyższy"), " wynik (r dodatnie, kolorowe linie). Jak to
+        możliwe? Uczniowie słabej szkoły uczą się dużo (materiał jest dla nich
+        trudniejszy), ale mimo to mają niskie wyniki. Uczniowie silnej szkoły
+        uczą się mniej (materiał przychodzi łatwiej) i mają wysokie wyniki.
+        Po połączeniu danych „wychodzi”, że nauka obniża wyniki."),
+      p(tags$em("Zmienna ukryta:"), " poziom szkoły (konfounder). Agregacja
+        danych bez uwzględnienia grup może ", tags$b("odwrócić"),
+        " rzeczywisty kierunek zależności."),
+      p("Więcej: ",
+        tags$a(href = "https://en.wikipedia.org/wiki/Simpson%27s_paradox",
+               target = "_blank", "Wikipedia →"), " | ",
+        tags$a(href = "https://www.youtube.com/watch?v=ebEkn-BiW5k",
+               target = "_blank", "Film TED-Ed →"))
+    ),
     figure_panel(
       label = "Ryc. 5.8",
-      title = "3. Paradoks Simpsona",
+      title = "Paradoks Simpsona",
       tags$img(src = "assets/simpson-paradox.png",
-               style = "width: 100%; max-width: 650px; border-radius: 4px;"),
-      div(class = "narrative", style = "margin-top: 8px;",
-        p(tags$b("Czarna linia"), " (globalna): więcej nauki → ",
-          tags$b("niższy"), " wynik (r = −0.75). Nauka szkodzi?!"),
-        p(tags$b("Kolorowe linie"), " (per szkoła): w każdej szkole z osobna więcej nauki → ",
-          tags$b("wyższy"), " wynik (r dodatnie). Nauka pomaga!"),
-        p("Jak to możliwe? Uczniowie słabej szkoły uczą się dużo
-          (materiał jest dla nich trudniejszy), ale mimo to mają niskie wyniki.
-          Uczniowie silnej szkoły uczą się mniej (materiał przychodzi łatwiej)
-          i mają wysokie wyniki. Po połączeniu danych „wychodzi”, że nauka obniża wyniki."),
-        p(tags$em("Zmienna ukryta:"), " poziom szkoły (konfounder).",
-          " Agregacja danych maskuje rzeczywisty kierunek zależności."),
-        p(tags$a(href = "https://en.wikipedia.org/wiki/Simpson%27s_paradox",
-                 target = "_blank",
-                 "Więcej: Wikipedia →"), " | ",
-          tags$a(href = "https://www.youtube.com/watch?v=ebEkn-BiW5k",
-                 target = "_blank",
-                 "Film TED-Ed →"))
-      )
+               style = "width: 100%; max-width: 650px; border-radius: 4px;")
     ),
 
     # --- 4. Nieliniowość przy r ~ 0 ---
+    div(class = "narrative",
+      p(tags$b("4. Nieliniowość przy r ≈ 0.")),
+      p("Zależność kwadratowa (U-kształtna) daje r bliskie zeru, choć związek
+        jest silny i deterministyczny. Pearson mierzy wyłącznie zależność
+        liniową — nie każdą.")
+    ),
     figure_panel(
       label = "Ryc. 5.9",
-      title = "4. Nieliniowość przy r ≈ 0",
+      title = "Nieliniowość przy r ≈ 0",
       tags$img(src = "assets/correlation-nonlinear.png",
-               style = "max-width: 500px; width: 100%; border-radius: 4px;"),
-      p(class = "narrative", style = "margin-top: 8px;",
-        "Zależność kwadratowa (U-kształtna) daje r bliskie zeru,
-        choć związek jest silny i deterministyczny.
-        Pearson mierzy wyłącznie zależność liniową — nie każdą.")
+               style = "max-width: 500px; width: 100%; border-radius: 4px;")
     ),
 
     # --- 5. Outlier (widget interaktywny) ---
+    div(class = "narrative",
+      p(tags$b("5. Wpływ outliera na r.")),
+      p("Jeden punkt odległy od reszty może sztucznie wytworzyć korelację tam,
+        gdzie jej nie ma — albo drastycznie ją zmienić. Pobaw się poniższym
+        widgetem: wygeneruj dane bez korelacji, potem dodaj outliera i zobacz,
+        jak r skacze.")
+    ),
     figure_panel(
       label = "Ryc. 5.10",
-      title = "5. Wpływ outliery na r",
-      div(class = "narrative",
-        p("Jeden punkt odległy od reszty może ",
-          "sztucznie wytworzyć korelację tam, gdzie jej nie ma.")
-      ),
+      title = "Wpływ outliera na r",
       fluidRow(
         column(4,
           actionButton("ch4_gen_outlier", "Nowe dane (brak korelacji)",
@@ -298,14 +328,14 @@ ch4_ui <- list(
       )
     ),
 
-    div(class = "callout-danger",
-      tags$strong("Podsumowanie pułapek:"),
+    div(class = "narrative",
+      p(tags$b("Podsumowanie pułapek:")),
       tags$ol(
-        tags$li("Zawsze rysuj wykres przed interpretacją r (Anscombe)"),
-        tags$li("Korelacja nie oznacza przyczynowości — szukaj konfounderów"),
-        tags$li("Agregacja danych może odwrócić kierunek zależności (Simpson)"),
-        tags$li("r mierzy tylko zależność liniową (nieliniowość)"),
-        tags$li("Jeden outlier może drastycznie zmienić r")
+        tags$li("Zawsze rysuj wykres przed interpretacją r (Anscombe)."),
+        tags$li("Korelacja nie oznacza przyczynowości — szukaj konfounderów."),
+        tags$li("Agregacja danych może odwrócić kierunek zależności (Simpson)."),
+        tags$li("r mierzy tylko zależność liniową (nieliniowość)."),
+        tags$li("Jeden outlier może drastycznie zmienić r.")
       )
     ),
 
@@ -328,6 +358,8 @@ ch4_server <- function(input, output, session) {
   scenario_params <- list(
     sleep_grade = list(
       r_true = 0.45, xlab = "Godziny snu", ylab = "Ocena z egzaminu",
+      x_mean = 7,   x_sd = 1.5,
+      y_mean = 70,  y_sd = 12,
       title = "Sen a ocena",
       question = "Czy istnieje związek między ilością snu a oceną z egzaminu?",
       h0_text = "\\(H_0: \\rho = 0\\) (brak związku liniowego)",
@@ -337,7 +369,9 @@ ch4_server <- function(input, output, session) {
       h1_text_1s = "\\(H_a: \\rho > 0\\)",
       alt_1s = "greater"),
     nitrate_dist = list(
-      r_true = 0.55, xlab = "Odległość od źródła (km)", ylab = "NO₃ (mg/l)",
+      r_true = 0.55, xlab = "Odległość od źródła (km)", ylab = "Stężenie azotanów (mg/l)",
+      x_mean = 15,  x_sd = 8,
+      y_mean = 30,  y_sd = 12,
       title = "Azotany wzdłuż rzeki",
       question = "Czy stężenie azotanow jest powiązane z odległością od źródła?",
       h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
@@ -348,6 +382,8 @@ ch4_server <- function(input, output, session) {
       alt_1s = "greater"),
     irrigation_yield = list(
       r_true = 0.60, xlab = "Nawadnianie (mm/tydzień)", ylab = "Plon (t/ha)",
+      x_mean = 25,  x_sd = 10,
+      y_mean = 6,   y_sd = 1.5,
       title = "Nawadnianie a plon",
       question = "Czy ilość nawadniania jest powiązana z plonem?",
       h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
@@ -358,6 +394,8 @@ ch4_server <- function(input, output, session) {
       alt_1s = "greater"),
     preserv_shelf = list(
       r_true = 0.50, xlab = "Stężenie konserwantu (mg/kg)", ylab = "Trwałość (dni)",
+      x_mean = 200, x_sd = 60,
+      y_mean = 30,  y_sd = 8,
       title = "Konserwant a trwałość",
       question = "Czy stężenie konserwantu wpływa na trwałość produktu?",
       h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
@@ -376,7 +414,9 @@ ch4_server <- function(input, output, session) {
   observeEvent(input$ch4_new_sample, {
     par <- scenario_params[[input$ch4_scenario]]
     n <- input$ch4_n
-    ch4_data(generate_correlation_data(n, par$r_true, "linear"))
+    ch4_data(generate_correlation_data(n, par$r_true, "linear",
+                                       x_mean = par$x_mean, x_sd = par$x_sd,
+                                       y_mean = par$y_mean, y_sd = par$y_sd))
     ch4_step(0)
     ch4b_step(0)
   })

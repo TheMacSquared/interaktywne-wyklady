@@ -19,12 +19,33 @@ ch6_ui <- list(
     h2(id = "ch6-intro", class = "section-title", "Test t dla dwóch prób niezależnych"),
 
     div(class = "narrative",
-      p("Pytanie: Czy średnie w dwóch grupach różnią się istotnie?"),
+      p("Pytanie: czy średnie w dwóch grupach różnią się istotnie?"),
       p("Przykład: czy mężczyźni i kobiety różnią się wzrostem?"),
+      p("Trzy warianty par hipotez:"),
       div(class = "formula-box",
-        p(withMathJax("\\(H_0: \\mu_1 = \\mu_2\\)"), " — ",
-          withMathJax("\\(H_a: \\mu_1 \\neq \\mu_2\\)")),
-        p(withMathJax("\\(t = \\frac{\\bar{x}_1 - \\bar{x}_2}{SE}\\)"))
+        p(tags$b("Dwustronna"), " (grupy różnią się):"),
+        p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 \\quad\\)"),
+          withMathJax("\\(H_a: \\mu_1 \\neq \\mu_2\\)"))
+      ),
+      div(class = "formula-box",
+        p(tags$b("Prawostronna"), " (grupa 1 ma ",
+          tags$em("wyższą"), " średnią):"),
+        p(withMathJax("\\(H_0: \\mu_1 \\leq \\mu_2 \\quad\\)"),
+          withMathJax("\\(H_a: \\mu_1 > \\mu_2\\)"))
+      ),
+      div(class = "formula-box",
+        p(tags$b("Lewostronna"), " (grupa 1 ma ",
+          tags$em("niższą"), " średnią):"),
+        p(withMathJax("\\(H_0: \\mu_1 \\geq \\mu_2 \\quad\\)"),
+          withMathJax("\\(H_a: \\mu_1 < \\mu_2\\)"))
+      ),
+      p("Statystyka testowa mierzy różnicę średnich wyrażoną w jednostkach błędu
+        standardowego. Im większa wartość bezwzględna ", withMathJax("\\(|t|\\)"),
+        ", tym bardziej nieprawdopodobne jest zobaczenie takiej różnicy gdy
+        H₀ jest prawdziwa."),
+      div(class = "formula-box",
+        p("Statystyka testowa: ",
+          withMathJax("\\(t = \\frac{\\bar{x}_1 - \\bar{x}_2}{SE}\\)"))
       )
     ),
 
