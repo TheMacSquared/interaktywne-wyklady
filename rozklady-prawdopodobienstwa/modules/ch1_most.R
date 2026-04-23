@@ -218,6 +218,7 @@ ch1_server <- function(input, output, session) {
   ch1_emp_data <- reactiveVal(NULL)
 
   generate_emp_data <- function() {
+    req(input$ch1_emp_n, input$ch1_emp_dist)
     n <- input$ch1_emp_n
     dist <- input$ch1_emp_dist
     data <- switch(dist,
@@ -423,6 +424,7 @@ ch1_server <- function(input, output, session) {
   observe({
     input$ch1_resample
     input$ch1_scenario
+    req(input$ch1_n_obs, input$ch1_scenario)
     n <- input$ch1_n_obs
 
     scenario <- input$ch1_scenario

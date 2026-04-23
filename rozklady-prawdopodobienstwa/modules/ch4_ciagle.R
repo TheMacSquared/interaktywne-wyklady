@@ -433,6 +433,7 @@ ch4_server <- function(input, output, session) {
   ch4_sample_data <- reactiveVal(NULL)
 
   observe({
+    req(input$ch4_step_n, input$ch4_step_dist)
     n <- input$ch4_step_n
     dist <- input$ch4_step_dist
     data <- switch(dist,
@@ -529,6 +530,7 @@ ch4_server <- function(input, output, session) {
 
   # --- Widget 2: Prawdopodobienstwo = pole (bez zmian) ---
   observe({
+    req(input$ch4_area_dist)
     dist <- input$ch4_area_dist
     if (dist == "norm") {
       updateSliderInput(session, "ch4_area_a", min = -4, max = 4, value = -1, step = 0.1)

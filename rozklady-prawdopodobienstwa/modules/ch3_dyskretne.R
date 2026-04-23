@@ -282,15 +282,16 @@ ch3_server <- function(input, output, session) {
   ch3_unif_data <- reactiveVal(NULL)
 
   observeEvent(input$ch3_unif_sim, {
+    req(input$ch3_unif_n, input$ch3_unif_type)
     n <- input$ch3_unif_n
     type <- input$ch3_unif_type
     k <- switch(type, "coin" = 2, "die" = 6, "d12" = 12)
     obs <- sample(1:k, n, replace = TRUE)
     ch3_unif_data(list(obs = obs, k = k, n = n))
-  }, ignoreNULL = FALSE)
+  })
 
   observe({
-    input$ch3_unif_type
+    req(input$ch3_unif_type, input$ch3_unif_n)
     type <- input$ch3_unif_type
     k <- switch(type, "coin" = 2, "die" = 6, "d12" = 12)
     ch3_unif_data(list(obs = sample(1:k, input$ch3_unif_n, replace = TRUE),

@@ -393,6 +393,7 @@ ch2_ev_var_server <- function(input, output, session) {
   ch2ev_var_data <- reactiveVal(NULL)
 
   generate_var_sim <- function() {
+    req(input$ch2ev_var_n)
     n <- input$ch2ev_var_n
 
     # Loteria A: zawsze 50 zl (Var = 0)
