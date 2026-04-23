@@ -2,15 +2,24 @@
 # CHAPTER 5: Sciaga - podsumowanie regresji
 # ============================================================================
 
-ch5_ui <- tabPanel("5. Ściąga",
-  fluidRow(column(8, offset = 2,
+ch5_ui <- list(
+  id    = "ch-sciaga",
+  num   = "05",
+  title = "Ściąga",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Kompaktowe podsumowanie regresji liniowej, wielorakiej i logistycznej."
+    lc_chapter_hero(
+      kicker = "Rozdział 05 · Regresja",
+      num    = "05",
+      title  = "Ściąga.",
+      lead   = "Kompaktowe podsumowanie regresji liniowej, wielorakiej
+                i logistycznej."
     ),
 
-    # ========================================================================
-    div(class = "section-title", "Trzy typy regresji"),
+    h2(id = "ch5-trzy-typy", class = "section-title",
+       "Trzy typy regresji"),
+
+    div(class = "narrative",
 
     tags$table(class = "table table-bordered table-striped",
       style = "font-size: 14px;",
@@ -33,8 +42,12 @@ ch5_ui <- tabPanel("5. Ściąga",
       )
     ),
 
-    # ========================================================================
-    div(class = "section-title", "Metryki porównawcze"),
+    ),
+
+    h2(id = "ch5-metryki", class = "section-title",
+       "Metryki porównawcze"),
+
+    div(class = "narrative",
 
     tags$table(class = "table table-bordered",
       style = "font-size: 14px;",
@@ -75,8 +88,12 @@ ch5_ui <- tabPanel("5. Ściąga",
       )
     ),
 
-    # ========================================================================
-    div(class = "section-title", "Interpretacja współczynników"),
+    ),
+
+    h2(id = "ch5-interpretacja", class = "section-title",
+       "Interpretacja współczynników"),
+
+    div(class = "narrative",
 
     div(class = "callout-info",
       tags$strong("Regresja liniowa:"),
@@ -91,8 +108,12 @@ ch5_ui <- tabPanel("5. Ściąga",
         " istotnie wpływa na Y (przy kontroli pozostałych).")
     ),
 
-    # ========================================================================
-    div(class = "section-title", "Kiedy która regresja?"),
+    ),
+
+    h2(id = "ch5-kiedy", class = "section-title",
+       "Kiedy która regresja?"),
+
+    div(class = "narrative",
 
     div(class = "callout-success",
       tags$ul(
@@ -104,8 +125,11 @@ ch5_ui <- tabPanel("5. Ściąga",
       )
     ),
 
-    # ========================================================================
-    div(class = "section-title", "Funkcje R"),
+    ),
+
+    h2(id = "ch5-funkcje-r", class = "section-title", "Funkcje R"),
+
+    div(class = "narrative",
 
     div(class = "formula-box",
       tags$pre(style = "background: #f8f9fa; padding: 12px; border-radius: 6px; font-size: 13px;",
@@ -135,8 +159,11 @@ predict(model_log, newdata = ..., type = 'response')  # prawdopodobienstwa"
       )
     ),
 
-    # ========================================================================
-    div(class = "section-title", "Typowe pułapki"),
+    ),
+
+    h2(id = "ch5-pulapki", class = "section-title", "Typowe pułapki"),
+
+    div(class = "narrative",
 
     div(class = "callout-danger",
       tags$ul(
@@ -147,7 +174,8 @@ predict(model_log, newdata = ..., type = 'response')  # prawdopodobienstwa"
       )
     )
 
-  ))
+    )
+  )
 )
 
 ch5_server <- function(input, output, session) {

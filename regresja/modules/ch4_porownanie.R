@@ -2,15 +2,22 @@
 # CHAPTER 4: Porownanie modeli
 # ============================================================================
 
-ch4_ui <- tabPanel("4. Porównanie modeli",
-  fluidRow(column(8, offset = 2,
+ch4_ui <- list(
+  id    = "ch-porownanie",
+  num   = "04",
+  title = "Porównanie modeli",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Zbudowaliśmy różne modele. Jak wybrać najlepszy?
-       Poznajmy metryki porównawcze."
+    lc_chapter_hero(
+      kicker = "Rozdział 04 · Regresja",
+      num    = "04",
+      title  = "Porównanie modeli.",
+      lead   = "Zbudowaliśmy różne modele. Jak wybrać najlepszy?
+                Poznajmy metryki porównawcze."
     ),
 
-    div(class = "section-title", "Metryki jakości modelu"),
+    h2(id = "ch4-metryki", class = "section-title",
+       "Metryki jakości modelu"),
 
     div(class = "narrative",
       p("Nie ma jednej uniwersalnej miary. Każda odpowiada na inne pytanie:"),
@@ -45,16 +52,16 @@ ch4_ui <- tabPanel("4. Porównanie modeli",
       p("gdzie L = wiarygodność, k = liczba parametrów, n = liczba obserwacji")
     ),
 
-    # ========================================================================
-    # WIDGET 1: Porownanie modeli liniowych
-    # ========================================================================
-    div(class = "section-title", "Arena modeli liniowych"),
+    h2(id = "ch4-arena", class = "section-title",
+       "Arena modeli liniowych"),
 
-    div(class = "widget-block",
-      h4("Porównanie modeli regresji"),
+    figure_panel(
+      label = "Ryc. 4.1", title = "Porównanie modeli regresji",
+      full_width = TRUE,
       fluidRow(
         column(4,
-          helpText("Generujemy dane i budujemy 4 modele z różną liczbą predyktorów."),
+          helpText("Generujemy dane i budujemy 4 modele z różną
+                    liczbą predyktorów."),
           sliderInput("ch4_n", "n:", min = 50, max = 300, value = 150, step = 25),
           actionButton("ch4_compare", "Buduj i porównaj modele",
                        class = "btn-primary", width = "100%")
@@ -66,25 +73,24 @@ ch4_ui <- tabPanel("4. Porównanie modeli",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("AIC vs BIC:"),
-      " AIC faworyzuje modele z lepszą predykcją (nawet złożone).
-        BIC mocniej karze za złożoność — preferuje prostsze modele.
-        Gdy się nie zgadzają, AIC jest lepszy do predykcji, BIC do wyjaśnienia."
+    margin_callout(label = "AIC vs BIC", color = "wskazowka",
+      "AIC faworyzuje modele z lepszą predykcją (nawet złożone).
+       BIC mocniej karze za złożoność — preferuje prostsze modele.
+       Gdy się nie zgadzają, AIC jest lepszy do predykcji, BIC do
+       wyjaśnienia."
     ),
 
-    # ========================================================================
-    # WIDGET 2: Porownanie liniowy vs logistyczny
-    # ========================================================================
-    div(class = "section-title", "Liniowy vs logistyczny"),
+    h2(id = "ch4-liniowy-vs-logistyczny", class = "section-title",
+       "Liniowy vs logistyczny"),
 
     div(class = "narrative",
       p("Co się stanie, jeśli spróbujemy użyć regresji liniowej
         do predykcji zmiennej binarnej? Porównajmy z logistyczną.")
     ),
 
-    div(class = "widget-block",
-      h4("Liniowy vs logistyczny (dane binarne)"),
+    figure_panel(
+      label = "Ryc. 4.2", title = "Liniowy vs logistyczny (dane binarne)",
+      full_width = TRUE,
       fluidRow(
         column(4,
           actionButton("ch4_lin_vs_log", "Generuj porównanie",
@@ -97,25 +103,24 @@ ch4_ui <- tabPanel("4. Porównanie modeli",
       )
     ),
 
-    div(class = "callout-danger",
-      tags$strong("Wniosek:"),
-      " Regresja liniowa na danych binarnych daje predykcje poza [0, 1]
-        i nie jest poprawnym modelem. Zawsze używaj regresji logistycznej
-        dla zmiennej zależnej 0/1."
+    margin_callout(label = "Wniosek", color = "uwaga",
+      "Regresja liniowa na danych binarnych daje predykcje poza [0, 1]
+       i nie jest poprawnym modelem. Zawsze używaj regresji logistycznej
+       dla zmiennej zależnej 0/1."
     ),
 
-    # ========================================================================
-    # WIDGET 3: Overfitting
-    # ========================================================================
-    div(class = "section-title", "Przeucz enie (overfitting)"),
+    h2(id = "ch4-overfitting", class = "section-title",
+       "Przeuczenie (overfitting)"),
 
     div(class = "narrative",
-      p("Model z wieloma parametrami może idealnie dopasować się do danych
-        treningowych, ale źle generalizować. Zobaczmy to na wielomianach.")
+      p("Model z wieloma parametrami może idealnie dopasować się do
+        danych treningowych, ale źle generalizować. Zobaczmy to
+        na wielomianach.")
     ),
 
-    div(class = "widget-block",
-      h4("Wielomian: dopasowanie vs generalizacja"),
+    figure_panel(
+      label = "Ryc. 4.3", title = "Wielomian: dopasowanie vs generalizacja",
+      full_width = TRUE,
       fluidRow(
         column(4,
           sliderInput("ch4_poly_degree", "Stopień wielomianu:",
@@ -132,20 +137,19 @@ ch4_ui <- tabPanel("4. Porównanie modeli",
       )
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Złota reguła:"),
-      " Najlepszy model to nie ten z najwyższym R², ale ten, który
-        najlepiej ", tags$b("generalizuje"), " na nowe dane.
-        Używaj AIC/BIC do wyboru złożoności."
+    margin_callout(label = "Złota reguła", color = "uwaga",
+      "Najlepszy model to nie ten z najwyższym R², ale ten, który
+       najlepiej generalizuje na nowe dane. Używaj AIC/BIC do wyboru
+       złożoności."
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: podsumowanie wzorów i zasad"),
-      actionButton("ch4_next", "Dalej → 5. Ściąga",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "05",
+      title     = "Ściąga",
+      lead      = "podsumowanie wzorów i zasad",
+      target_id = "ch-sciaga"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -202,9 +206,9 @@ ch4_server <- function(input, output, session) {
       ggplot(long, aes(x = model, y = value, fill = model)) +
         geom_col(alpha = 0.8) +
         facet_wrap(~metric, scales = "free_y", ncol = 4) +
-        scale_fill_manual(values = c(col_fit, col_predict, col_warning, col_logit)) +
+        scale_fill_manual(values = c(unname(upwr_cat["niebo"]), unname(upwr_cat["szalwia"]), unname(upwr_cat["bursztyn"]), unname(upwr_cat["wrzos"]))) +
         labs(title = "Metryki 4 modeli", x = NULL, y = "Wartość") +
-        theme_educational() +
+        theme_upwr() +
         theme(legend.position = "none",
               axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
     }
@@ -261,20 +265,20 @@ ch4_server <- function(input, output, session) {
         theme_void()
     } else {
       ggplot(df, aes(x = godziny_nauki, y = zdal_num)) +
-        geom_jitter(height = 0.03, alpha = 0.3, color = col_data) +
-        geom_smooth(method = "lm", se = FALSE, color = col_model_a,
+        geom_jitter(height = 0.03, alpha = 0.3, color = upwr_secondary) +
+        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]),
                     linewidth = 1, linetype = "dashed") +
         geom_smooth(method = "glm", method.args = list(family = "binomial"),
-                    se = FALSE, color = col_logit, linewidth = 1.2) +
+                    se = FALSE, color = unname(upwr_cat["wrzos"]), linewidth = 1.2) +
         geom_hline(yintercept = c(0, 1), linetype = "dotted", color = "#bdc3c7") +
-        annotate("text", x = 5, y = 0.85, label = "Logistyczny", color = col_logit,
+        annotate("text", x = 5, y = 0.85, label = "Logistyczny", color = unname(upwr_cat["wrzos"]),
                  fontface = "bold") +
-        annotate("text", x = 35, y = 0.85, label = "Liniowy", color = col_model_a,
+        annotate("text", x = 35, y = 0.85, label = "Liniowy", color = unname(upwr_cat["niebo"]),
                  fontface = "bold") +
         labs(title = "Regresja liniowa vs logistyczna (dane binarne)",
              x = "Godziny nauki", y = "P(zdanie)") +
         ylim(-0.2, 1.2) +
-        theme_educational()
+        theme_upwr()
     }
   })
 
@@ -294,11 +298,11 @@ ch4_server <- function(input, output, session) {
     outside <- mean(fitted(lin) < 0 | fitted(lin) > 1) * 100
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_model_a, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["niebo"]), ";"),
           paste0("Liniowy: ", round(acc_lin, 1), "%")),
-      div(class = "stat-box", style = paste0("background:", col_logit, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["wrzos"]), ";"),
           paste0("Logistyczny: ", round(acc_log, 1), "%")),
-      div(class = "stat-box", style = paste0("background:", col_residual, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["terakota"]), ";"),
           paste0("Liniowy poza [0,1]: ", round(outside, 1), "%"))
     )
   })
@@ -330,11 +334,11 @@ ch4_server <- function(input, output, session) {
       pred_df <- data.frame(x = x_pred, y = y_pred)
 
       ggplot() +
-        geom_point(data = df, aes(x = x, y = y), color = col_data, alpha = 0.5) +
-        geom_line(data = pred_df, aes(x = x, y = y), color = col_fit, linewidth = 1.2) +
+        geom_point(data = df, aes(x = x, y = y), color = upwr_secondary, alpha = 0.5) +
+        geom_line(data = pred_df, aes(x = x, y = y), color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
         labs(title = paste0("Wielomian stopnia ", degree),
              x = "X", y = "Y") +
-        theme_educational()
+        theme_upwr()
     }
   })
 
@@ -346,13 +350,13 @@ ch4_server <- function(input, output, session) {
     metrics <- compute_model_metrics(model)
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_fit, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["niebo"]), ";"),
           paste0("R² = ", round(metrics$r_squared, 3))),
-      div(class = "stat-box", style = paste0("background:", col_predict, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["szalwia"]), ";"),
           paste0("adj.R² = ", round(metrics$adj_r_squared, 3))),
-      div(class = "stat-box", style = paste0("background:", col_warning, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["bursztyn"]), ";"),
           paste0("AIC = ", round(metrics$aic, 1))),
-      div(class = "stat-box", style = paste0("background:", col_data, ";"),
+      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
           paste0("BIC = ", round(metrics$bic, 1)))
     )
   })

@@ -287,7 +287,7 @@ Polskie cudzysłowy typograficzne `„..."` (U+201E/U+201D) mogą być **wewnąt
 | Wnioskowanie statystyczne | `wnioskowanie-statystyczne/` | ✅ |
 | Przedziały ufności | `przedzialy-ufnosci/` | ✅ |
 | Założenia testów | `zalozenia-testow/` | ⬜ |
-| Regresja | `regresja/` | ⬜ |
+| Regresja | `regresja/` | ✅ |
 | Metody bayesowskie | `metody-bayesowskie/` | ⬜ |
 | Symulacje | `symulacje-statystyczne/` | ⬜ |
 | Case studies | `case-studies/` | ⬜ |

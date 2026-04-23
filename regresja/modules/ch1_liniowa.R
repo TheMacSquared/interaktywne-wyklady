@@ -2,15 +2,22 @@
 # CHAPTER 1: Regresja liniowa prosta
 # ============================================================================
 
-ch1_ui <- tabPanel("1. Regresja liniowa prosta",
-  fluidRow(column(8, offset = 2,
+ch1_ui <- list(
+  id    = "ch-liniowa",
+  num   = "01",
+  title = "Regresja liniowa prosta",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Korelacja mówiła, czy dwie zmienne są powiązane.
-       Regresja idzie dalej: modeluje ten związek i pozwala predykować."
+    lc_chapter_hero(
+      kicker = "Rozdział 01 · Regresja",
+      num    = "01",
+      title  = "Regresja liniowa prosta.",
+      lead   = "Korelacja mówiła, czy dwie zmienne są powiązane.
+                Regresja idzie dalej: modeluje ten związek i pozwala predykować."
     ),
 
-    div(class = "section-title", "Od korelacji do regresji"),
+    h2(id = "ch1-od-korelacji", class = "section-title",
+       "Od korelacji do regresji"),
 
     div(class = "narrative",
       p("Regresja liniowa prosta opisuje związek między jedną zmienną
@@ -23,19 +30,18 @@ ch1_ui <- tabPanel("1. Regresja liniowa prosta",
       )
     ),
 
-    # ========================================================================
-    # WIDGET 1: Interaktywna regresja
-    # ========================================================================
-    div(class = "section-title", "Dopasowanie linii regresji"),
+    h2(id = "ch1-dopasowanie", class = "section-title",
+       "Dopasowanie linii regresji"),
 
-    div(class = "widget-block",
-      h4("Regresja liniowa prosta"),
+    figure_panel(
+      label = "Ryc. 1.1", title = "Regresja liniowa prosta",
+      full_width = TRUE,
       fluidRow(
         column(4,
           selectInput("ch1_scenario", "Scenariusz:",
             choices = c(
-              "Wzrost vs waga" = "height_weight",
-              "Nauka vs oceny" = "study_grade",
+              "Wzrost vs waga"      = "height_weight",
+              "Nauka vs oceny"      = "study_grade",
               "Temperatura vs lody" = "temp_icecream"
             ),
             selected = "height_weight"
@@ -55,34 +61,27 @@ ch1_ui <- tabPanel("1. Regresja liniowa prosta",
       )
     ),
 
-    # ========================================================================
-    # WIDGET 2: Reszty - czym sa?
-    # ========================================================================
-    div(class = "section-title", "Reszty (residuals)"),
+    h2(id = "ch1-reszty", class = "section-title",
+       "Reszty (residuals)"),
 
     div(class = "narrative",
       p("Reszta to różnica między wartością zaobserwowaną a przewidywaną:"),
       div(class = "formula-box",
         withMathJax(helpText("$$e_i = y_i - \\hat{y}_i$$"))
       ),
-      p("Dobry model ma reszty ", tags$b("małe"), ", ",
-        tags$b("losowe"), " i ", tags$b("bez wzorca"), ".")
+      p("Dobry model ma reszty ", tags$strong("małe"), ", ",
+        tags$strong("losowe"), " i ", tags$strong("bez wzorca"), ".")
     ),
 
-    div(class = "widget-block",
-      h4("Analiza reszt"),
-      fluidRow(
-        column(12,
-          helpText("Używa danych z widgetu powyżej."),
-          plotOutput("ch1_resid_plots", height = "300px")
-        )
-      )
+    figure_panel(
+      label = "Ryc. 1.2", title = "Analiza reszt",
+      full_width = TRUE,
+      helpText("Używa danych z widgetu powyżej."),
+      plotOutput("ch1_resid_plots", height = "300px")
     ),
 
-    # ========================================================================
-    # WIDGET 3: R-kwadrat
-    # ========================================================================
-    div(class = "section-title", withMathJax("R² — ile model wyjaśnia?")),
+    h2(id = "ch1-r2", class = "section-title",
+       "R² — ile model wyjaśnia?"),
 
     div(class = "narrative",
       p("Współczynnik determinacji ", withMathJax("\\(R^2\\)"),
@@ -93,8 +92,9 @@ ch1_ui <- tabPanel("1. Regresja liniowa prosta",
       p("Zakres [0, 1]: 0 = model nic nie wyjaśnia, 1 = idealne dopasowanie.")
     ),
 
-    div(class = "widget-block",
-      h4("Wizualizacja R²"),
+    figure_panel(
+      label = "Ryc. 1.3", title = "Wizualizacja R²",
+      full_width = TRUE,
       fluidRow(
         column(4,
           sliderInput("ch1_r2_noise", "Szum (σ):",
@@ -111,20 +111,19 @@ ch1_ui <- tabPanel("1. Regresja liniowa prosta",
       )
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Uwaga:"),
-      " Wysokie R² nie oznacza, że model jest \"dobry\" — może być przeuczony.
-        Niskie R² nie oznacza, że model jest bezwartościowy — w naukach społecznych
-        R² = 0.3 jest często bardzo dobre."
+    margin_callout(label = "Uwaga", color = "uwaga",
+      "Wysokie R² nie oznacza, że model jest „dobry” — może być przeuczony.
+       Niskie R² nie oznacza, że model jest bezwartościowy — w naukach
+       społecznych R² = 0.3 jest często bardzo dobre."
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: wiele zmiennych objaśniających"),
-      actionButton("ch1_next", "Dalej → 2. Regresja wieloraka",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "02",
+      title     = "Regresja wieloraka",
+      lead      = "wiele zmiennych objaśniających naraz",
+      target_id = "ch-wieloraka"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -157,23 +156,23 @@ ch1_server <- function(input, output, session) {
       df$resid <- residuals(model)
 
       p <- ggplot(df, aes(x = x, y = y)) +
-        geom_point(color = col_data, alpha = 0.5, size = 2)
+        geom_point(color = upwr_secondary, alpha = 0.5, size = 2)
 
       if (input$ch1_show_residuals) {
         p <- p + geom_segment(aes(xend = x, yend = fitted),
-                              color = col_residual, alpha = 0.3)
+                              color = unname(upwr_cat["terakota"]), alpha = 0.3)
       }
 
       if (input$ch1_show_ci) {
         p <- p + geom_smooth(method = "lm", se = TRUE,
-                             color = col_fit, fill = col_ci_band, alpha = 0.15)
+                             color = unname(upwr_cat["niebo"]), fill = unname(upwr_cat["niebo"]), alpha = 0.15)
       } else {
-        p <- p + geom_smooth(method = "lm", se = FALSE, color = col_fit)
+        p <- p + geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]))
       }
 
       p + labs(title = paste0(df$y_label[1], " ~ ", df$x_label[1]),
                x = df$x_label[1], y = df$y_label[1]) +
-        theme_educational()
+        theme_upwr()
     }
   })
 
@@ -186,13 +185,13 @@ ch1_server <- function(input, output, session) {
     g <- broom::glance(model)
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_fit, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["niebo"]), ";"),
           paste0("R² = ", round(g$r.squared, 3))),
-      div(class = "stat-box", style = paste0("background:", col_data, ";"),
+      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
           paste0("β₀ = ", round(coefs$estimate[1], 2))),
-      div(class = "stat-box", style = paste0("background:", col_predict, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["szalwia"]), ";"),
           paste0("β₁ = ", round(coefs$estimate[2], 3))),
-      div(class = "stat-box", style = paste0("background:", col_residual, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["terakota"]), ";"),
           paste0("RMSE = ", round(sqrt(mean(residuals(model)^2)), 2))),
       div(class = "callout-info", style = "margin-top: 10px;",
         p(tags$strong("Interpretacja:"),
@@ -219,19 +218,19 @@ ch1_server <- function(input, output, session) {
       )
 
       p1 <- ggplot(df, aes(x = fitted, y = residuals)) +
-        geom_hline(yintercept = 0, linetype = "dashed", color = col_dark) +
-        geom_point(color = col_residual, alpha = 0.5) +
-        geom_smooth(se = FALSE, color = col_fit, linewidth = 0.8) +
+        geom_hline(yintercept = 0, linetype = "dashed", color = upwr_secondary) +
+        geom_point(color = unname(upwr_cat["terakota"]), alpha = 0.5) +
+        geom_smooth(se = FALSE, color = unname(upwr_cat["niebo"]), linewidth = 0.8) +
         labs(title = "Reszty vs dopasowane", x = "Wartości dopasowane",
              y = "Reszty") +
-        theme_educational()
+        theme_upwr()
 
       p2 <- ggplot(df, aes(sample = std_resid)) +
-        stat_qq(color = col_data, alpha = 0.5) +
-        stat_qq_line(color = col_fit) +
+        stat_qq(color = upwr_secondary, alpha = 0.5) +
+        stat_qq_line(color = unname(upwr_cat["niebo"])) +
         labs(title = "Q-Q reszty", x = "Kwantyle teoretyczne",
              y = "Kwantyle próbkowe") +
-        theme_educational()
+        theme_upwr()
 
       gridExtra::grid.arrange(p1, p2, ncol = 2)
     }
@@ -257,12 +256,12 @@ ch1_server <- function(input, output, session) {
         theme_void()
     } else {
       ggplot(df, aes(x = x, y = y)) +
-        geom_point(color = col_data, alpha = 0.5) +
-        geom_smooth(method = "lm", se = FALSE, color = col_fit, linewidth = 1.2) +
+        geom_point(color = upwr_secondary, alpha = 0.5) +
+        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
         labs(title = paste0("R² = ",
                             round(summary(lm(y ~ x, data = df))$r.squared, 3)),
              x = "X", y = "Y") +
-        theme_educational()
+        theme_upwr()
     }
   })
 
@@ -272,9 +271,9 @@ ch1_server <- function(input, output, session) {
     model <- lm(y ~ x, data = df)
     r2 <- summary(model)$r.squared
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_fit, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["niebo"]), ";"),
           paste0("R² = ", round(r2, 3))),
-      div(class = "stat-box", style = paste0("background:", col_data, ";"),
+      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
           paste0(round(r2 * 100, 1), "% zmienności wyjaśnione"))
     )
   })

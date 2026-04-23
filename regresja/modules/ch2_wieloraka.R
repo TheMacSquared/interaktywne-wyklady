@@ -2,15 +2,22 @@
 # CHAPTER 2: Regresja wieloraka
 # ============================================================================
 
-ch2_ui <- tabPanel("2. Regresja wieloraka",
-  fluidRow(column(8, offset = 2,
+ch2_ui <- list(
+  id    = "ch-wieloraka",
+  num   = "02",
+  title = "Regresja wieloraka",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Regresja prosta używała jednego predyktora.
-       W rzeczywistości na Y wpływa wiele czynników jednocześnie."
+    lc_chapter_hero(
+      kicker = "Rozdział 02 · Regresja",
+      num    = "02",
+      title  = "Regresja wieloraka.",
+      lead   = "Regresja prosta używała jednego predyktora.
+                W rzeczywistości na Y wpływa wiele czynników jednocześnie."
     ),
 
-    div(class = "section-title", "Wiele predyktorów naraz"),
+    h2(id = "ch2-wiele-predyktorow", class = "section-title",
+       "Wiele predyktorów naraz"),
 
     div(class = "narrative",
       p("Regresja wieloraka rozszerza model o ", tags$b("k predyktorów"), ":"),
@@ -24,22 +31,21 @@ ch2_ui <- tabPanel("2. Regresja wieloraka",
         " wzrośnie o 1, ", tags$b("przy stałych pozostałych zmiennych"), ".")
     ),
 
-    # ========================================================================
-    # WIDGET 1: Regresja wieloraka
-    # ========================================================================
-    div(class = "section-title", "Budowanie modelu wielorakiego"),
+    h2(id = "ch2-budowanie", class = "section-title",
+       "Budowanie modelu wielorakiego"),
 
-    div(class = "widget-block",
-      h4("Predykcja średniej ocen"),
+    figure_panel(
+      label = "Ryc. 2.1", title = "Predykcja średniej ocen",
+      full_width = TRUE,
       fluidRow(
         column(4,
           helpText("Dane: 150 studentów. Zmienna zależna: średnia ocen."),
           checkboxGroupInput("ch2_predictors", "Predyktory:",
             choices = c(
               "Godziny nauki/tydz." = "godziny_nauki",
-              "Frekwencja (%)" = "frekwencja",
+              "Frekwencja (%)"      = "frekwencja",
               "Poziom stresu (1-10)" = "stres",
-              "Sen (h/dobę)" = "sen_h"
+              "Sen (h/dobę)"        = "sen_h"
             ),
             selected = c("godziny_nauki", "frekwencja")
           ),
@@ -54,24 +60,23 @@ ch2_ui <- tabPanel("2. Regresja wieloraka",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Skorygowane R²:"),
-      " Zwykłe R² zawsze rośnie z każdym dodanym predyktorem (nawet bezużytecznym!).
-        Adjusted R² koryguje ten efekt — karze za zbędne zmienne."
+    margin_callout(label = "Skorygowane R²", color = "wskazowka",
+      "Zwykłe R² zawsze rośnie z każdym dodanym predyktorem (nawet
+       bezużytecznym!). Adjusted R² koryguje ten efekt — karze
+       za zbędne zmienne."
     ),
 
-    # ========================================================================
-    # WIDGET 2: Dodawanie zmiennych krok po kroku
-    # ========================================================================
-    div(class = "section-title", "Efekt dodawania zmiennych"),
+    h2(id = "ch2-krok-po-kroku", class = "section-title",
+       "Efekt dodawania zmiennych"),
 
     div(class = "narrative",
       p("Zobaczmy, jak zmieniają się metryki modelu, gdy dodajemy
         kolejne predyktory. Czy każda zmienna poprawia model?")
     ),
 
-    div(class = "widget-block",
-      h4("Krok po kroku"),
+    figure_panel(
+      label = "Ryc. 2.2", title = "Krok po kroku",
+      full_width = TRUE,
       fluidRow(
         column(4,
           helpText("Modele z 1, 2, 3 i 4 predyktorami — porównanie metryk."),
@@ -85,19 +90,18 @@ ch2_ui <- tabPanel("2. Regresja wieloraka",
       )
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Ostrożnie z dodawaniem zmiennych!"),
-      " Więcej zmiennych = większe R², ale nie zawsze lepszy model.
-        Przeuczone modele słabo generalizują. Używaj adj. R², AIC, BIC."
+    margin_callout(label = "Ostrożnie!", color = "uwaga",
+      "Więcej zmiennych = większe R², ale nie zawsze lepszy model.
+       Przeuczone modele słabo generalizują. Używaj adj. R², AIC, BIC."
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: gdy zmienna zależna jest binarna"),
-      actionButton("ch2_next", "Dalej → 3. Regresja logistyczna",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "03",
+      title     = "Regresja logistyczna",
+      lead      = "gdy zmienna zależna jest binarna",
+      target_id = "ch-logistyczna"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -181,13 +185,13 @@ ch2_server <- function(input, output, session) {
     ggplot(coefs, aes(x = estimate, y = term_pl, color = significant)) +
       geom_point(size = 3) +
       geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
-      geom_vline(xintercept = 0, linetype = "dashed", color = col_dark) +
-      scale_color_manual(values = c("TRUE" = col_fit, "FALSE" = col_residual),
+      geom_vline(xintercept = 0, linetype = "dashed", color = upwr_secondary) +
+      scale_color_manual(values = c("TRUE" = unname(upwr_cat["niebo"]), "FALSE" = unname(upwr_cat["terakota"])),
                          labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),
                          name = NULL) +
       labs(title = "Współczynniki regresji z 95% CI",
            x = "Estymata β", y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top")
   })
 
@@ -196,13 +200,13 @@ ch2_server <- function(input, output, session) {
     if (is.null(model)) return(NULL)
     metrics <- compute_model_metrics(model)
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_fit, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["niebo"]), ";"),
           paste0("R² = ", round(metrics$r_squared, 3))),
-      div(class = "stat-box", style = paste0("background:", col_predict, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["szalwia"]), ";"),
           paste0("adj.R² = ", round(metrics$adj_r_squared, 3))),
-      div(class = "stat-box", style = paste0("background:", col_warning, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["bursztyn"]), ";"),
           paste0("AIC = ", round(metrics$aic, 1))),
-      div(class = "stat-box", style = paste0("background:", col_residual, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["terakota"]), ";"),
           paste0("RMSE = ", round(metrics$rmse, 3)))
     )
   })
@@ -257,10 +261,10 @@ ch2_server <- function(input, output, session) {
         geom_point(size = 3) +
         scale_x_continuous(breaks = 1:4,
                            labels = paste0(1:4, " pred.")) +
-        scale_color_manual(values = c(col_fit, col_predict), name = NULL) +
+        scale_color_manual(values = c(unname(upwr_cat["niebo"]), unname(upwr_cat["szalwia"])), name = NULL) +
         labs(title = "R² vs adj. R² w funkcji liczby predyktorów",
              x = "Liczba predyktorów", y = "Wartość") +
-        theme_educational() +
+        theme_upwr() +
         theme(legend.position = "top")
     }
   })

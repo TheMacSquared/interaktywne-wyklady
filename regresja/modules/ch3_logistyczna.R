@@ -2,15 +2,22 @@
 # CHAPTER 3: Regresja logistyczna
 # ============================================================================
 
-ch3_ui <- tabPanel("3. Regresja logistyczna",
-  fluidRow(column(8, offset = 2,
+ch3_ui <- list(
+  id    = "ch-logistyczna",
+  num   = "03",
+  title = "Regresja logistyczna",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Regresja liniowa wymaga ciągłej zmiennej zależnej.
-       A co, gdy Y to 0 lub 1 (sukces/porażka)?"
+    lc_chapter_hero(
+      kicker = "Rozdział 03 · Regresja",
+      num    = "03",
+      title  = "Regresja logistyczna.",
+      lead   = "Regresja liniowa wymaga ciągłej zmiennej zależnej.
+                A co, gdy Y to 0 lub 1 (sukces/porażka)?"
     ),
 
-    div(class = "section-title", "Dlaczego nie regresja liniowa?"),
+    h2(id = "ch3-dlaczego", class = "section-title",
+       "Dlaczego nie regresja liniowa?"),
 
     div(class = "narrative",
       p("Gdy zmienna zależna jest ", tags$b("binarna"),
@@ -26,13 +33,11 @@ ch3_ui <- tabPanel("3. Regresja logistyczna",
       )
     ),
 
-    # ========================================================================
-    # WIDGET 1: Wizualizacja krzywej logistycznej
-    # ========================================================================
-    div(class = "section-title", "Krzywa logistyczna"),
+    h2(id = "ch3-krzywa", class = "section-title", "Krzywa logistyczna"),
 
-    div(class = "widget-block",
-      h4("Sigmoida w akcji"),
+    figure_panel(
+      label = "Ryc. 3.1", title = "Sigmoida w akcji",
+      full_width = TRUE,
       fluidRow(
         column(4,
           sliderInput("ch3_b0", "β₀ (intercept):",
@@ -55,24 +60,24 @@ ch3_ui <- tabPanel("3. Regresja logistyczna",
       )
     ),
 
-    # ========================================================================
-    # WIDGET 2: Regresja logistyczna na danych
-    # ========================================================================
-    div(class = "section-title", "Model logistyczny na danych"),
+    h2(id = "ch3-model-dane", class = "section-title",
+       "Model logistyczny na danych"),
 
     div(class = "narrative",
-      p("Scenariusz: czy student zda egzamin? Predyktory: godziny nauki i średnia ocen.")
+      p("Scenariusz: czy student zda egzamin? Predyktory: godziny nauki
+        i średnia ocen.")
     ),
 
-    div(class = "widget-block",
-      h4("Predykcja zdania egzaminu"),
+    figure_panel(
+      label = "Ryc. 3.2", title = "Predykcja zdania egzaminu",
+      full_width = TRUE,
       fluidRow(
         column(4,
           sliderInput("ch3_n", "n:", min = 50, max = 300, value = 150, step = 25),
           selectInput("ch3_predictor", "Prezentowany predyktor:",
             choices = c(
               "Godziny nauki" = "godziny_nauki",
-              "Średnia ocen" = "srednia_ocen"
+              "Średnia ocen"  = "srednia_ocen"
             ),
             selected = "godziny_nauki"
           ),
@@ -91,43 +96,39 @@ ch3_ui <- tabPanel("3. Regresja logistyczna",
       )
     ),
 
-    # ========================================================================
-    # WIDGET 3: Interpretacja wspolczynnikow (odds ratio)
-    # ========================================================================
-    div(class = "section-title", "Interpretacja: iloraz szans"),
+    h2(id = "ch3-iloraz-szans", class = "section-title",
+       "Interpretacja: iloraz szans"),
 
     div(class = "narrative",
       p("W regresji logistycznej współczynniki interpretujemy przez ",
-        tags$b("iloraz szans (odds ratio)"), ":"),
+        tags$strong("iloraz szans (odds ratio)"), ":"),
       div(class = "formula-box",
         withMathJax(helpText("$$OR = e^{\\beta_j}$$")),
-        p("OR = 1.5 oznacza: wzrost X o 1 zwiększa szanse sukcesu 1.5-krotnie.")
+        p("OR = 1.5 oznacza: wzrost X o 1 zwiększa szanse sukcesu
+          1.5-krotnie.")
       )
     ),
 
-    div(class = "widget-block",
-      h4("Odds ratio"),
-      fluidRow(
-        column(12,
-          helpText("Używa modelu dopasowanego powyżej."),
-          uiOutput("ch3_odds_ratios")
-        )
-      )
+    figure_panel(
+      label = "Ryc. 3.3", title = "Odds ratio",
+      full_width = TRUE,
+      helpText("Używa modelu dopasowanego powyżej."),
+      uiOutput("ch3_odds_ratios")
     ),
 
-    div(class = "callout-info",
-      tags$strong("Ocena modelu logistycznego:"),
-      " Nie używamy R² w sensie liniowym. Zamiast tego: AIC, BIC, oraz
-        macierz pomyłek (confusion matrix) z dokładnością, czułością i swoistością."
+    margin_callout(label = "Ocena modelu", color = "wskazowka",
+      "Nie używamy R² w sensie liniowym. Zamiast tego: AIC, BIC, oraz
+       macierz pomyłek (confusion matrix) z dokładnością, czułością
+       i swoistością."
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: jak porównać modele i wybrać najlepszy?"),
-      actionButton("ch3_next", "Dalej → 4. Porównanie modeli",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "04",
+      title     = "Porównanie modeli",
+      lead      = "jak porównać modele i wybrać najlepszy",
+      target_id = "ch-porownanie"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -157,12 +158,12 @@ ch3_server <- function(input, output, session) {
     p <- 1 / (1 + exp(-(b0 + b1 * x)))
 
     ggplot(data.frame(x = x, p = p), aes(x = x, y = p)) +
-      geom_line(color = col_logit, linewidth = 1.5) +
-      geom_hline(yintercept = 0.5, linetype = "dashed", color = col_dark, alpha = 0.5) +
+      geom_line(color = unname(upwr_cat["wrzos"]), linewidth = 1.5) +
+      geom_hline(yintercept = 0.5, linetype = "dashed", color = upwr_secondary, alpha = 0.5) +
       labs(title = paste0("Sigmoida: β₀ = ", b0, ", β₁ = ", b1),
            x = "X", y = "P(Y = 1)") +
       ylim(0, 1) +
-      theme_educational()
+      theme_upwr()
   })
 
   # --- Widget 2: Model logistyczny ---
@@ -200,14 +201,14 @@ ch3_server <- function(input, output, session) {
 
       ggplot() +
         geom_jitter(data = df, aes(x = .data[[pred_var]], y = .data[["zdal_num"]]),
-                    height = 0.03, alpha = 0.3, color = col_data) +
+                    height = 0.03, alpha = 0.3, color = upwr_secondary) +
         geom_line(data = newdata, aes(x = .data[[pred_var]], y = .data[["pred_prob"]]),
-                  color = col_logit, linewidth = 1.5) +
-        geom_hline(yintercept = 0.5, linetype = "dashed", color = col_warning) +
+                  color = unname(upwr_cat["wrzos"]), linewidth = 1.5) +
+        geom_hline(yintercept = 0.5, linetype = "dashed", color = unname(upwr_cat["bursztyn"])) +
         labs(title = paste0("Regresja logistyczna: P(zdanie) ~ ", pred_label),
              x = pred_label, y = "P(zdanie egzaminu)") +
         ylim(-0.05, 1.05) +
-        theme_educational()
+        theme_upwr()
     }
   })
 
@@ -224,11 +225,11 @@ ch3_server <- function(input, output, session) {
     accuracy <- mean(pred_class == df$zdal_num) * 100
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_logit, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["wrzos"]), ";"),
           paste0("AIC = ", round(g$AIC, 1))),
-      div(class = "stat-box", style = paste0("background:", col_data, ";"),
+      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
           paste0("BIC = ", round(g$BIC, 1))),
-      div(class = "stat-box", style = paste0("background:", col_predict, ";"),
+      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["szalwia"]), ";"),
           paste0("Dokładność = ", round(accuracy, 1), "%"))
     )
   })
@@ -243,7 +244,7 @@ ch3_server <- function(input, output, session) {
     )
     prob <- predict(model, newdata, type = "response")
 
-    color <- if (prob >= 0.5) col_predict else col_residual
+    color <- if (prob >= 0.5) unname(upwr_cat["szalwia"]) else unname(upwr_cat["terakota"])
     decision <- if (prob >= 0.5) "Prawdopodobnie zda" else "Raczej nie zda"
 
     div(class = "stat-box", style = paste0("background:", color, "; display: block;"),
