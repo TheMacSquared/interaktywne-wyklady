@@ -3,6 +3,9 @@
 # generate_population_sample(), get_population_params(), dist_names_pl -> R/shared.R
 # ============================================================================
 
+# Alias dla zgodnosci ze starym kodem — nowa nazwa to theme_upwr()
+theme_educational <- theme_upwr
+
 # Kolory ogolne — aliasy do palety upwr (uzywane w serwerach rozdzialow)
 col_primary   <- unname(upwr_cat["niebo"])      # niebieski
 col_secondary <- unname(upwr_cat["terakota"])   # czerwono-ceglany
