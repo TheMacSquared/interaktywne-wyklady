@@ -250,7 +250,7 @@ ch2_ev_var_server <- function(input, output, session) {
 
   output$ch2ev_play_count <- renderUI({
     n <- length(lottery_results())
-    div(class = "stat-box", style = paste0("background: ", col_primary, ";"),
+    div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["niebo"]), ";"),
         paste0("Gier: ", n))
   })
 
@@ -270,12 +270,12 @@ ch2_ev_var_server <- function(input, output, session) {
       df <- data.frame(n = seq_along(results), mean = running_mean)
 
       ggplot(df, aes(x = n, y = mean)) +
-        geom_line(color = col_primary, linewidth = 1) +
-        geom_hline(yintercept = lot$ev, color = col_secondary,
+        geom_line(color = unname(upwr_cat["niebo"]), linewidth = 1) +
+        geom_hline(yintercept = lot$ev, color = unname(upwr_cat["terakota"]),
                    linewidth = 1.2, linetype = "dashed") +
         annotate("text", x = max(df$n) * 0.95, y = lot$ev,
                  label = paste0("E(X) = ", lot$ev),
-                 color = col_secondary, fontface = "bold", size = 5,
+                 color = unname(upwr_cat["terakota"]), fontface = "bold", size = 5,
                  vjust = -1) +
         scale_y_continuous(limits = c(
           min(min(running_mean), lot$ev) - abs(lot$ev) * 0.3,
@@ -296,12 +296,12 @@ ch2_ev_var_server <- function(input, output, session) {
     diff <- abs(obs_mean - lot$ev)
 
     div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", col_primary, ";"),
+      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["niebo"]), ";"),
           paste0("Śr. dotychczasowa = ", obs_mean, " zł")),
-      div(class = "stat-box", style = paste0("background: ", col_secondary, ";"),
+      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["terakota"]), ";"),
           paste0("E(X) = ", lot$ev, " zł")),
       div(class = "stat-box",
-          style = paste0("background: ", if (diff < 0.5) col_success else col_warning, ";"),
+          style = paste0("background: ", if (diff < 0.5) unname(upwr_cat["szalwia"]) else unname(upwr_cat["bursztyn"]), ";"),
           paste0("Różnica: ", round(diff, 2), " zł"))
     )
   })
@@ -329,10 +329,10 @@ ch2_ev_var_server <- function(input, output, session) {
   output$ch2ev_bal_sum <- renderUI({
     s <- input$ch2ev_bal_p1 + input$ch2ev_bal_p2 + input$ch2ev_bal_p3 + input$ch2ev_bal_p4
     if (abs(s - 1) < 0.005) {
-      div(class = "stat-box", style = paste0("background: ", col_success, ";"),
+      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["szalwia"]), ";"),
           paste0("∑P = ", sprintf("%.2f", s), " ✔"))
     } else {
-      div(class = "stat-box", style = paste0("background: ", col_secondary, ";"),
+      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["terakota"]), ";"),
           paste0("∑P = ", sprintf("%.2f", s), " ≠ 1"))
     }
   })
@@ -349,17 +349,17 @@ ch2_ev_var_server <- function(input, output, session) {
     df <- data.frame(x = x_vals, prob = probs)
 
     ggplot(df, aes(x = x, y = prob)) +
-      geom_col(fill = col_primary, color = "white", alpha = 0.85, width = 0.6) +
+      geom_col(fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.85, width = 0.6) +
       geom_text(aes(label = sprintf("%.2f", prob)), vjust = -0.5, size = 4.5) +
       # Os belki
       geom_segment(aes(x = 0, xend = 10, y = -0.01, yend = -0.01),
-                   color = col_dark, linewidth = 1.5) +
+                   color = upwr_secondary, linewidth = 1.5) +
       # Trojkat - punkt rownowagi
       annotate("point", x = ev, y = -0.03,
-               shape = 17, size = 6, color = col_secondary) +
+               shape = 17, size = 6, color = unname(upwr_cat["terakota"])) +
       annotate("text", x = ev, y = -0.06,
                label = paste0("E(X) = ", round(ev, 2)),
-               color = col_secondary, fontface = "bold", size = 5) +
+               color = unname(upwr_cat["terakota"]), fontface = "bold", size = 5) +
       scale_y_continuous(limits = c(-0.08, max(probs) * 1.3),
                          expand = expansion(mult = c(0, 0.05))) +
       scale_x_continuous(breaks = x_vals, limits = c(0, 10)) +
@@ -429,11 +429,11 @@ ch2_ev_var_server <- function(input, output, session) {
     df$lottery <- factor(df$lottery, levels = unique(df$lottery))
 
     ggplot(df, aes(x = value)) +
-      geom_histogram(bins = 30, fill = col_primary, color = "white", alpha = 0.7) +
-      geom_vline(xintercept = 50, color = col_secondary, linewidth = 1.2, linetype = "dashed") +
+      geom_histogram(bins = 30, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
+      geom_vline(xintercept = 50, color = unname(upwr_cat["terakota"]), linewidth = 1.2, linetype = "dashed") +
       facet_wrap(~lottery, ncol = 3) +
       annotate("text", x = 50, y = Inf, label = "E(X) = 50",
-               color = col_secondary, fontface = "bold", size = 4, vjust = 2) +
+               color = unname(upwr_cat["terakota"]), fontface = "bold", size = 4, vjust = 2) +
       labs(title = paste0("Wyniki ", d$n, " gier — to samo E(X), różne ryzyko"),
            x = "Wygrana (zł)", y = "Liczebność") +
       theme_upwr(base_size = 12)

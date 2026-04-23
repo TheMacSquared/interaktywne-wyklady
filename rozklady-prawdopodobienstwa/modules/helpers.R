@@ -3,13 +3,6 @@
 # generate_population_sample(), get_population_params(), dist_names_pl -> R/shared.R
 # ============================================================================
 
-# Kolory ogolne — aliasy do palety upwr (uzywane w serwerach rozdzialow)
-col_primary   <- unname(upwr_cat["niebo"])      # niebieski
-col_secondary <- unname(upwr_cat["terakota"])   # czerwono-ceglany
-col_success   <- unname(upwr_cat["szalwia"])    # zielony
-col_warning   <- unname(upwr_cat["bursztyn"])   # pomaranczowy
-col_dark      <- upwr_secondary                  # ciemny grafit
-
 # Kolory semantyczne dla typow rozkladow — z palety upwr
 col_discrete    <- unname(upwr_cat["niebo"])      # rozklady dyskretne
 col_continuous  <- unname(upwr_cat["szalwia"])    # rozklady ciagle
@@ -23,7 +16,6 @@ col_t_student   <- upwr_accent                    # t-Studenta (burgund)
 col_chi_sq      <- unname(upwr_cat["kurkuma"])    # chi-kwadrat
 col_lognormal   <- unname(upwr_cat["szalwia"])    # log-normalny
 
-col_scenario <- unname(upwr_cat[c("niebo", "terakota", "szalwia", "bursztyn", "wrzos")])
 
 # Rysowanie PMF rozkladu dyskretnego
 plot_pmf <- function(x_vals, probs, fill_color = "#3498db",

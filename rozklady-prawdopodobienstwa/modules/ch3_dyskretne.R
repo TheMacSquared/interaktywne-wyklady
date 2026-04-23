@@ -307,8 +307,8 @@ ch3_server <- function(input, output, session) {
 
     ggplot(freq_df, aes(x = x, y = rel)) +
       geom_col(fill = col_uniform, color = "white", alpha = 0.7) +
-      geom_hline(yintercept = 1/d$k, color = col_secondary, linewidth = 1, linetype = "dashed") +
-      geom_point(aes(y = 1/d$k), color = col_secondary, size = 3) +
+      geom_hline(yintercept = 1/d$k, color = unname(upwr_cat["terakota"]), linewidth = 1, linetype = "dashed") +
+      geom_point(aes(y = 1/d$k), color = unname(upwr_cat["terakota"]), size = 3) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = paste0("Rozkład jednostajny: ", d$n, " prób, ", d$k, " wyników"),
            subtitle = paste0("Linia: P(X=k) = 1/", d$k, " = ", round(1/d$k, 4)),
@@ -331,7 +331,7 @@ ch3_server <- function(input, output, session) {
     df$scenario <- factor(df$scenario, levels = sapply(ch3_binom_defs[selected], `[[`, "label"))
 
     n_sel <- length(selected)
-    colors <- setNames(col_scenario[seq_len(n_sel)],
+    colors <- setNames(upwr_cat_n(n_sel),
                        sapply(ch3_binom_defs[selected], `[[`, "label"))
 
     dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
@@ -380,7 +380,7 @@ ch3_server <- function(input, output, session) {
     df$scenario <- factor(df$scenario, levels = sapply(ch3_pois_defs[selected], `[[`, "label"))
 
     n_sel <- length(selected)
-    colors <- setNames(col_scenario[seq_len(n_sel)],
+    colors <- setNames(upwr_cat_n(n_sel),
                        sapply(ch3_pois_defs[selected], `[[`, "label"))
     dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
 
@@ -429,7 +429,7 @@ ch3_server <- function(input, output, session) {
     df$scenario <- factor(df$scenario, levels = sapply(ch3_geom_defs[selected], `[[`, "label"))
 
     n_sel <- length(selected)
-    colors <- setNames(col_scenario[seq_len(n_sel)],
+    colors <- setNames(upwr_cat_n(n_sel),
                        sapply(ch3_geom_defs[selected], `[[`, "label"))
     dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
 
@@ -508,12 +508,12 @@ ch3_server <- function(input, output, session) {
 
     if (show_ev) {
       pl <- pl + geom_vline(data = stats_df, aes(xintercept = mu),
-                            color = col_secondary, linewidth = 1, linetype = "dashed")
+                            color = unname(upwr_cat["terakota"]), linewidth = 1, linetype = "dashed")
     }
     if (show_sd) {
       pl <- pl + geom_rect(data = stats_df,
                            aes(xmin = mu - sd, xmax = mu + sd, ymin = 0, ymax = Inf),
-                           inherit.aes = FALSE, fill = col_secondary, alpha = 0.08)
+                           inherit.aes = FALSE, fill = unname(upwr_cat["terakota"]), alpha = 0.08)
     }
     pl
   })

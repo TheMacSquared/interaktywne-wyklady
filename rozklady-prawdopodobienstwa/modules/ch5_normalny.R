@@ -255,14 +255,14 @@ ch5_server <- function(input, output, session) {
       y_top <- dnorm(mu, mu, sigma)
       p <- p +
         annotate("text", x = mu, y = y_top * 0.6, label = "68%",
-                 size = 5, fontface = "bold", color = col_dark) +
+                 size = 5, fontface = "bold", color = upwr_secondary) +
         annotate("text", x = mu, y = y_top * 0.35, label = "95%",
-                 size = 4.5, color = col_dark) +
+                 size = 4.5, color = upwr_secondary) +
         annotate("text", x = mu, y = y_top * 0.15, label = "99.7%",
                  size = 4, color = "#7f8c8d")
     }
 
-    p + geom_vline(xintercept = mu, color = col_dark, linetype = "dashed") +
+    p + geom_vline(xintercept = mu, color = upwr_secondary, linetype = "dashed") +
       labs(title = paste0("N(μ=", mu, ", σ=", sigma, ")"),
            x = "x", y = "f(x)") +
       theme_upwr()
@@ -274,9 +274,9 @@ ch5_server <- function(input, output, session) {
     div(style = "text-align: center; margin-top: 10px;",
       div(class = "stat-box", style = paste0("background: ", col_normal, ";"),
           paste0("μ = ", mu)),
-      div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
+      div(class = "stat-box", style = paste0("background: ", upwr_secondary, ";"),
           paste0("σ = ", sigma)),
-      div(class = "stat-box", style = paste0("background: ", col_warning, ";"),
+      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["bursztyn"]), ";"),
           paste0("68%: [", round(mu - sigma, 1), ", ", round(mu + sigma, 1), "]"))
     )
   })
@@ -306,11 +306,11 @@ ch5_server <- function(input, output, session) {
     ggplot(df, aes(x = x, y = y, color = group, fill = group)) +
       geom_line(linewidth = 1.2) +
       geom_area(alpha = 0.15, position = "identity") +
-      scale_color_manual(values = c("A" = col_primary, "B" = col_secondary),
+      scale_color_manual(values = c("A" = unname(upwr_cat["niebo"]), "B" = unname(upwr_cat["terakota"])),
                          labels = c(paste0("A: N(", mu1, ", ", s1, ")"),
                                     paste0("B: N(", mu2, ", ", s2, ")")),
                          name = "") +
-      scale_fill_manual(values = c("A" = col_primary, "B" = col_secondary),
+      scale_fill_manual(values = c("A" = unname(upwr_cat["niebo"]), "B" = unname(upwr_cat["terakota"])),
                         guide = "none") +
       labs(title = "Porównanie dwóch rozkładów normalnych",
            x = "x", y = "f(x)") +
@@ -355,12 +355,12 @@ ch5_server <- function(input, output, session) {
     df_std <- data.frame(x = z_seq, y = dnorm(z_seq))
 
     p1 <- ggplot(df_orig, aes(x = x, y = y)) +
-      geom_line(color = col_primary, linewidth = 1.2) +
-      geom_vline(xintercept = x, color = col_secondary, linewidth = 1.2) +
+      geom_line(color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
+      geom_vline(xintercept = x, color = unname(upwr_cat["terakota"]), linewidth = 1.2) +
       annotate("point", x = x, y = dnorm(x, mu, sigma),
-               color = col_secondary, size = 4) +
+               color = unname(upwr_cat["terakota"]), size = 4) +
       annotate("text", x = x, y = dnorm(x, mu, sigma) * 1.2,
-               label = paste0("x = ", x), color = col_secondary,
+               label = paste0("x = ", x), color = unname(upwr_cat["terakota"]),
                size = 4, fontface = "bold", vjust = -0.5) +
       labs(title = paste0("Oryginalna skala: N(", mu, ", ", sigma, ")"),
            x = "x", y = "f(x)") +
@@ -368,10 +368,10 @@ ch5_server <- function(input, output, session) {
 
     p2 <- ggplot(df_std, aes(x = x, y = y)) +
       geom_line(color = col_normal, linewidth = 1.2) +
-      geom_vline(xintercept = z, color = col_secondary, linewidth = 1.2) +
-      annotate("point", x = z, y = dnorm(z), color = col_secondary, size = 4) +
+      geom_vline(xintercept = z, color = unname(upwr_cat["terakota"]), linewidth = 1.2) +
+      annotate("point", x = z, y = dnorm(z), color = unname(upwr_cat["terakota"]), size = 4) +
       annotate("text", x = z, y = dnorm(z) * 1.2,
-               label = paste0("z = ", round(z, 2)), color = col_secondary,
+               label = paste0("z = ", round(z, 2)), color = unname(upwr_cat["terakota"]),
                size = 4, fontface = "bold", vjust = -0.5) +
       labs(title = "Standaryzowana skala: N(0, 1)",
            x = "z", y = "f(z)") +
@@ -390,30 +390,30 @@ ch5_server <- function(input, output, session) {
     df <- data.frame(x = x_seq, y = dnorm(x_seq))
 
     p <- ggplot(df, aes(x = x, y = y)) +
-      geom_line(color = col_dark, linewidth = 1.2)
+      geom_line(color = upwr_secondary, linewidth = 1.2)
 
     if (type == "less") {
       shade <- data.frame(x = x_seq[x_seq <= a], y = dnorm(x_seq[x_seq <= a]))
       prob <- pnorm(a)
-      p <- p + geom_area(data = shade, fill = col_primary, alpha = 0.4) +
-        geom_vline(xintercept = a, color = col_secondary, linetype = "dashed")
+      p <- p + geom_area(data = shade, fill = unname(upwr_cat["niebo"]), alpha = 0.4) +
+        geom_vline(xintercept = a, color = unname(upwr_cat["terakota"]), linetype = "dashed")
     } else if (type == "greater") {
       shade <- data.frame(x = x_seq[x_seq >= a], y = dnorm(x_seq[x_seq >= a]))
       prob <- 1 - pnorm(a)
-      p <- p + geom_area(data = shade, fill = col_secondary, alpha = 0.4) +
-        geom_vline(xintercept = a, color = col_secondary, linetype = "dashed")
+      p <- p + geom_area(data = shade, fill = unname(upwr_cat["terakota"]), alpha = 0.4) +
+        geom_vline(xintercept = a, color = unname(upwr_cat["terakota"]), linetype = "dashed")
     } else {
       shade <- data.frame(x = x_seq[x_seq >= a & x_seq <= b],
                           y = dnorm(x_seq[x_seq >= a & x_seq <= b]))
       prob <- pnorm(b) - pnorm(a)
       p <- p + geom_area(data = shade, fill = col_normal, alpha = 0.4) +
-        geom_vline(xintercept = a, color = col_secondary, linetype = "dashed") +
-        geom_vline(xintercept = b, color = col_secondary, linetype = "dashed")
+        geom_vline(xintercept = a, color = unname(upwr_cat["terakota"]), linetype = "dashed") +
+        geom_vline(xintercept = b, color = unname(upwr_cat["terakota"]), linetype = "dashed")
     }
 
     p + annotate("text", x = 0, y = 0.2,
                  label = sprintf("P = %.4f", prob),
-                 size = 6, fontface = "bold", color = col_dark) +
+                 size = 6, fontface = "bold", color = upwr_secondary) +
       labs(title = "Rozkład standardowy N(0, 1)", x = "z", y = "f(z)") +
       theme_upwr()
   })
@@ -444,7 +444,7 @@ ch5_server <- function(input, output, session) {
     div(style = "text-align: center; margin-top: 10px;",
       div(class = "stat-box", style = paste0("background: ", col_normal, ";"),
           paste0(label, " = ", sprintf("%.4f", prob))),
-      div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
+      div(class = "stat-box", style = paste0("background: ", upwr_secondary, ";"),
           paste0(sprintf("%.2f", prob * 100), "%")),
       div(style = "margin-top: 8px; font-size: 13px; color: #7f8c8d;",
           paste0("W R: ", r_code))

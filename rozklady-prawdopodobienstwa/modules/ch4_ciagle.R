@@ -469,43 +469,43 @@ ch4_server <- function(input, output, session) {
         theme_void()
     } else if (step == 1) {
       ggplot(df, aes(x = x)) +
-        geom_rug(color = col_primary, alpha = 0.3) +
+        geom_rug(color = unname(upwr_cat["niebo"]), alpha = 0.3) +
         labs(title = "Krok 1: Surowe dane", x = "Wartość", y = "") +
         theme_upwr()
     } else if (step == 2) {
       ggplot(df, aes(x = x)) +
-        geom_histogram(bins = 5, fill = col_primary, color = "white", alpha = 0.7) +
+        geom_histogram(bins = 5, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
         geom_rug(alpha = 0.2) +
         labs(title = "Krok 2: Histogram (5 binów)", x = "Wartość", y = "Liczebność") +
         theme_upwr()
     } else if (step == 3) {
       ggplot(df, aes(x = x)) +
-        geom_histogram(bins = 15, fill = col_primary, color = "white", alpha = 0.7) +
+        geom_histogram(bins = 15, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
         labs(title = "Krok 3: Histogram (15 binów)", x = "Wartość", y = "Liczebność") +
         theme_upwr()
     } else if (step == 4) {
       ggplot(df, aes(x = x)) +
-        geom_histogram(bins = 30, fill = col_primary, color = "white", alpha = 0.7) +
+        geom_histogram(bins = 30, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
         labs(title = "Krok 4: Histogram (30 binów)", x = "Wartość", y = "Liczebność") +
         theme_upwr()
     } else if (step == 5) {
       ggplot(df, aes(x = x)) +
         geom_histogram(aes(y = after_stat(density)), bins = 30,
-                       fill = col_primary, color = "white", alpha = 0.7) +
+                       fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
         labs(title = "Krok 5: Skala gęstości (oś Y = gęstość)",
              x = "Wartość", y = "Gęstość") +
         theme_upwr()
     } else if (step == 6) {
       ggplot(df, aes(x = x)) +
         geom_histogram(aes(y = after_stat(density)), bins = 30,
-                       fill = col_primary, color = "white", alpha = 0.5) +
-        geom_density(color = col_secondary, linewidth = 1.5) +
+                       fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.5) +
+        geom_density(color = unname(upwr_cat["terakota"]), linewidth = 1.5) +
         labs(title = "Krok 6: Histogram + krzywa gęstości",
              x = "Wartość", y = "Gęstość") +
         theme_upwr()
     } else {
       ggplot(df, aes(x = x)) +
-        geom_density(fill = col_primary, color = col_dark, linewidth = 1.2, alpha = 0.3) +
+        geom_density(fill = unname(upwr_cat["niebo"]), color = upwr_secondary, linewidth = 1.2, alpha = 0.3) +
         labs(title = "Krok 7: Funkcja gęstości (PDF)",
              subtitle = "Matematyczna idealizacja histogramu",
              x = "Wartość", y = "Gęstość f(x)") +
@@ -571,14 +571,14 @@ ch4_server <- function(input, output, session) {
 
     ggplot() +
       geom_area(data = shade_df, aes(x = x, y = y),
-                fill = col_primary, alpha = 0.35) +
+                fill = unname(upwr_cat["niebo"]), alpha = 0.35) +
       geom_line(data = df_curve, aes(x = x, y = y),
-                color = col_dark, linewidth = 1.2) +
-      geom_vline(xintercept = a, color = col_secondary, linetype = "dashed") +
-      geom_vline(xintercept = b, color = col_secondary, linetype = "dashed") +
+                color = upwr_secondary, linewidth = 1.2) +
+      geom_vline(xintercept = a, color = unname(upwr_cat["terakota"]), linetype = "dashed") +
+      geom_vline(xintercept = b, color = unname(upwr_cat["terakota"]), linetype = "dashed") +
       annotate("text", x = (a + b) / 2, y = max(dfn(x_seq)) * 0.5,
                label = sprintf("P = %.4f", prob),
-               size = 6, fontface = "bold", color = col_dark) +
+               size = 6, fontface = "bold", color = upwr_secondary) +
       labs(title = paste0("P(", a, " < X < ", b, ")"),
            x = "x", y = "f(x)") +
       theme_upwr()
@@ -598,9 +598,9 @@ ch4_server <- function(input, output, session) {
     }
 
     div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", col_primary, ";"),
+      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["niebo"]), ";"),
           paste0("P(", a, " < X < ", b, ") = ", sprintf("%.4f", max(0, prob)))),
-      div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
+      div(class = "stat-box", style = paste0("background: ", upwr_secondary, ";"),
           paste0(sprintf("%.1f", max(0, prob) * 100), "%"))
     )
   })
@@ -620,7 +620,7 @@ ch4_server <- function(input, output, session) {
     df$scenario <- factor(df$scenario, levels = sapply(ch4_unif_defs[selected], `[[`, "label"))
 
     n_sel <- length(selected)
-    colors <- setNames(col_scenario[seq_len(n_sel)],
+    colors <- setNames(upwr_cat_n(n_sel),
                        sapply(ch4_unif_defs[selected], `[[`, "label"))
 
     ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
@@ -667,7 +667,7 @@ ch4_server <- function(input, output, session) {
     df$scenario <- factor(df$scenario, levels = sapply(ch4_exp_defs[selected], `[[`, "label"))
 
     n_sel <- length(selected)
-    colors <- setNames(col_scenario[seq_len(n_sel)],
+    colors <- setNames(upwr_cat_n(n_sel),
                        sapply(ch4_exp_defs[selected], `[[`, "label"))
 
     ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
@@ -711,7 +711,7 @@ ch4_server <- function(input, output, session) {
     df <- do.call(rbind, dfs)
 
     n_sel <- length(selected)
-    colors <- setNames(col_scenario[seq_len(n_sel)],
+    colors <- setNames(upwr_cat_n(n_sel),
                        sapply(ch4_t_defs[selected], `[[`, "label"))
 
     if (show_normal) {
@@ -767,7 +767,7 @@ ch4_server <- function(input, output, session) {
     df$scenario <- factor(df$scenario, levels = sapply(ch4_chisq_defs[selected], `[[`, "label"))
 
     n_sel <- length(selected)
-    colors <- setNames(col_scenario[seq_len(n_sel)],
+    colors <- setNames(upwr_cat_n(n_sel),
                        sapply(ch4_chisq_defs[selected], `[[`, "label"))
 
     ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
@@ -816,7 +816,7 @@ ch4_server <- function(input, output, session) {
     df$scenario <- factor(df$scenario, levels = sapply(ch4_lnorm_defs[selected], `[[`, "label"))
 
     n_sel <- length(selected)
-    colors <- setNames(col_scenario[seq_len(n_sel)],
+    colors <- setNames(upwr_cat_n(n_sel),
                        sapply(ch4_lnorm_defs[selected], `[[`, "label"))
 
     ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +

@@ -158,14 +158,14 @@ ch8_server <- function(input, output, session) {
         span(paste0("Pytanie ", quiz_state$current_idx, " / ", total)),
         span(paste0("Wynik: ", quiz_state$correct, " / ", answered),
              style = paste0("font-weight: bold; color: ",
-                            if (answered == 0) col_dark
-                            else if (quiz_state$correct / answered >= 0.7) col_success
-                            else if (quiz_state$correct / answered >= 0.5) col_warning
-                            else col_secondary))
+                            if (answered == 0) upwr_secondary
+                            else if (quiz_state$correct / answered >= 0.7) unname(upwr_cat["szalwia"])
+                            else if (quiz_state$correct / answered >= 0.5) unname(upwr_cat["bursztyn"])
+                            else unname(upwr_cat["terakota"])))
       ),
       div(style = "background: #e9ecef; border-radius: 6px; height: 8px; overflow: hidden;",
         div(style = paste0(
-          "background: ", col_primary, "; height: 100%; width: ", pct, "%;",
+          "background: ", unname(upwr_cat["niebo"]), "; height: 100%; width: ", pct, "%;",
           "border-radius: 6px; transition: width 0.3s;"
         ))
       )
@@ -294,9 +294,9 @@ ch8_server <- function(input, output, session) {
     correct <- quiz_state$correct
     pct <- round(correct / total * 100)
 
-    result_color <- if (pct >= 70) col_success
-                    else if (pct >= 50) col_warning
-                    else col_secondary
+    result_color <- if (pct >= 70) unname(upwr_cat["szalwia"])
+                    else if (pct >= 50) unname(upwr_cat["bursztyn"])
+                    else unname(upwr_cat["terakota"])
 
     result_text <- if (pct >= 90) "Ćwiczenie zakończone celująco!"
                    else if (pct >= 70) "Dobry wynik!"

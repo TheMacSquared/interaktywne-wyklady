@@ -211,7 +211,7 @@ ch6_server <- function(input, output, session) {
 
   output$ch6_sample_count <- renderUI({
     n <- length(collected_means())
-    div(class = "stat-box", style = paste0("background: ", col_primary, ";"),
+    div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["niebo"]), ";"),
         paste0("Prób: ", n))
   })
 
@@ -222,7 +222,7 @@ ch6_server <- function(input, output, session) {
     if (dist == "die") {
       df <- data.frame(x = 1:6, prob = rep(1/6, 6))
       ggplot(df, aes(x = factor(x), y = prob)) +
-        geom_col(fill = col_warning, color = "white", alpha = 0.85, width = 0.6) +
+        geom_col(fill = unname(upwr_cat["bursztyn"]), color = "white", alpha = 0.85, width = 0.6) +
         scale_y_continuous(limits = c(0, 0.3), expand = expansion(mult = c(0, 0))) +
         labs(title = paste0("Populacja: ", dist_label),
              subtitle = "To NIE jest normalny!",
@@ -232,7 +232,7 @@ ch6_server <- function(input, output, session) {
       data <- generate_population_sample(dist, 10000)
       df <- data.frame(x = data)
       ggplot(df, aes(x = x)) +
-        geom_density(fill = col_warning, color = col_dark, alpha = 0.5, linewidth = 0.8) +
+        geom_density(fill = unname(upwr_cat["bursztyn"]), color = upwr_secondary, alpha = 0.5, linewidth = 0.8) +
         labs(title = paste0("Populacja: ", dist_label),
              subtitle = "To NIE jest normalny!",
              x = "", y = "Gęstość") +
@@ -263,19 +263,19 @@ ch6_server <- function(input, output, session) {
       if (length(means) >= 5) {
         p <- p + geom_histogram(aes(y = after_stat(density)),
                                 bins = min(50, max(10, length(means) / 5)),
-                                fill = col_primary, color = "white", alpha = 0.7)
+                                fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7)
       } else {
-        p <- p + geom_dotplot(fill = col_primary, alpha = 0.7, binwidth = theo_sd / 3)
+        p <- p + geom_dotplot(fill = unname(upwr_cat["niebo"]), alpha = 0.7, binwidth = theo_sd / 3)
       }
 
       if (length(means) >= 30 && theo_sd > 0) {
         x_range <- seq(min(means) - theo_sd, max(means) + theo_sd, length.out = 200)
         norm_df <- data.frame(x = x_range, y = dnorm(x_range, theo_mu, theo_sd))
         p <- p + geom_line(data = norm_df, aes(x = x, y = y),
-                           color = col_secondary, linewidth = 1.5, linetype = "solid")
+                           color = unname(upwr_cat["terakota"]), linewidth = 1.5, linetype = "solid")
       }
 
-      p + geom_vline(xintercept = theo_mu, color = col_secondary, linetype = "dashed") +
+      p + geom_vline(xintercept = theo_mu, color = unname(upwr_cat["terakota"]), linetype = "dashed") +
         labs(title = paste0("Rozkład średnich (n=", n, ", ", length(means), " prób)"),
              subtitle = paste0("Krzywa: N(", round(theo_mu, 2), ", ",
                                round(theo_sd, 2), ")"),
@@ -294,11 +294,11 @@ ch6_server <- function(input, output, session) {
     theo_sd <- params$sigma / sqrt(n)
 
     div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", col_primary, ";"),
+      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["niebo"]), ";"),
           paste0("Śr. średnich = ", round(mean(means), 3))),
-      div(class = "stat-box", style = paste0("background: ", col_dark, ";"),
+      div(class = "stat-box", style = paste0("background: ", upwr_secondary, ";"),
           paste0("SD średnich = ", round(sd(means), 3))),
-      div(class = "stat-box", style = paste0("background: ", col_warning, ";"),
+      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["bursztyn"]), ";"),
           paste0("Teor. SD = σ/√n = ", round(theo_sd, 3)))
     )
   })
@@ -333,9 +333,9 @@ ch6_server <- function(input, output, session) {
 
     ggplot(plot_data, aes(x = mean_val)) +
       geom_histogram(aes(y = after_stat(density)),
-                     bins = 40, fill = col_primary, color = "white", alpha = 0.6) +
+                     bins = 40, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.6) +
       geom_line(data = norm_data, aes(x = x, y = y),
-                color = col_secondary, linewidth = 1.2) +
+                color = unname(upwr_cat["terakota"]), linewidth = 1.2) +
       facet_wrap(~n_label, scales = "free") +
       labs(title = paste0("2000 średnich z rozkładu: ",
                           dist_names_pl[dist]),
@@ -370,14 +370,14 @@ ch6_server <- function(input, output, session) {
 
       p <- ggplot(df, aes(x = x)) +
         geom_histogram(aes(y = after_stat(density)),
-                       bins = 50, fill = col_primary, color = "white", alpha = 0.7)
+                       bins = 50, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7)
 
       if (n_val >= 2) {
         x_range <- seq(min(means), max(means), length.out = 200)
         norm_df <- data.frame(x = x_range,
                               y = dnorm(x_range, params$mu, theo_sd))
         p <- p + geom_line(data = norm_df, aes(x = x, y = y),
-                           color = col_secondary, linewidth = 1.5)
+                           color = unname(upwr_cat["terakota"]), linewidth = 1.5)
       }
 
       p + labs(title = paste0("Rozkład średniej z ", n_val,

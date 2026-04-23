@@ -298,14 +298,14 @@ ch1_server <- function(input, output, session) {
     if (show_hist) {
       p <- p + geom_histogram(data = df, aes(x = x, y = after_stat(density)),
                                breaks = bin_breaks,
-                               fill = col_primary, color = "white", alpha = 0.6)
+                               fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.6)
     }
 
     if (show_dens) {
       p <- p + geom_line(data = df_theo, aes(x = x, y = y),
-                          color = col_secondary, linewidth = 1.8) +
+                          color = unname(upwr_cat["terakota"]), linewidth = 1.8) +
         geom_area(data = df_theo, aes(x = x, y = y),
-                  fill = col_secondary, alpha = 0.1)
+                  fill = unname(upwr_cat["terakota"]), alpha = 0.1)
     }
 
     p + coord_cartesian(xlim = fixed_xlim, ylim = c(0, fixed_ymax)) +
@@ -359,7 +359,7 @@ ch1_server <- function(input, output, session) {
 
   output$ch1_roll_count <- renderUI({
     n <- length(dice_rolls())
-    div(class = "stat-box", style = paste0("background: ", col_primary, ";"),
+    div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["niebo"]), ";"),
         paste0("Rzutów: ", n))
   })
 
@@ -375,13 +375,13 @@ ch1_server <- function(input, output, session) {
       freq_df <- df %>% count(face, .drop = FALSE) %>%
         mutate(rel_freq = n / sum(n))
       ggplot(freq_df, aes(x = face, y = rel_freq)) +
-        geom_col(fill = col_primary, color = "white", alpha = 0.85) +
-        geom_hline(yintercept = 1/6, color = col_secondary, linewidth = 1, linetype = "dashed") +
+        geom_col(fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.85) +
+        geom_hline(yintercept = 1/6, color = unname(upwr_cat["terakota"]), linewidth = 1, linetype = "dashed") +
         geom_text(aes(label = sprintf("%.3f", rel_freq)), vjust = -0.5, size = 4) +
         scale_y_continuous(limits = c(0, max(0.35, max(freq_df$rel_freq) * 1.15)),
                            expand = expansion(mult = c(0, 0.05))) +
         labs(title = "Częstości względne", x = "Ścianka", y = "Częstość względna") +
-        annotate("text", x = 6.3, y = 1/6, label = "1/6", color = col_secondary,
+        annotate("text", x = 6.3, y = 1/6, label = "1/6", color = unname(upwr_cat["terakota"]),
                  fontface = "bold", size = 4, hjust = 0) +
         theme_upwr()
     }
@@ -469,8 +469,8 @@ ch1_server <- function(input, output, session) {
                 linewidth = 1.2) +
       geom_point(data = df_theo, aes(x = outcome, y = value, color = "Teoretyczne"),
                  size = 4) +
-      scale_fill_manual(values = c("Obserwowane" = col_primary), name = "") +
-      scale_color_manual(values = c("Teoretyczne" = col_secondary), name = "") +
+      scale_fill_manual(values = c("Obserwowane" = unname(upwr_cat["niebo"])), name = "") +
+      scale_color_manual(values = c("Teoretyczne" = unname(upwr_cat["terakota"])), name = "") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
       labs(title = paste0("n = ", length(fd$obs), " obserwacji"),
            x = "Wynik", y = "Proporcja / Prawdopodobieństwo") +
@@ -495,10 +495,10 @@ ch1_server <- function(input, output, session) {
   output$ch1_sum_check <- renderUI({
     s <- input$ch1_p1 + input$ch1_p2 + input$ch1_p3 + input$ch1_p4
     if (abs(s - 1) < 0.005) {
-      div(class = "stat-box", style = paste0("background: ", col_success, ";"),
+      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["szalwia"]), ";"),
           paste0("∑ = ", sprintf("%.2f", s), " ✔"))
     } else {
-      div(class = "stat-box", style = paste0("background: ", col_secondary, ";"),
+      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["terakota"]), ";"),
           paste0("∑ = ", sprintf("%.2f", s), " ≠ 1 ✘"))
     }
   })
@@ -514,7 +514,7 @@ ch1_server <- function(input, output, session) {
     )
 
     ggplot(df, aes(x = outcome, y = prob)) +
-      geom_col(fill = if (valid) col_success else "#95a5a6",
+      geom_col(fill = if (valid) unname(upwr_cat["szalwia"]) else "#95a5a6",
                color = "white", alpha = 0.85, width = 0.6) +
       geom_text(aes(label = sprintf("%.2f", prob)), vjust = -0.5, size = 5) +
       scale_y_continuous(limits = c(0, 1.1), expand = expansion(mult = c(0, 0))) +
