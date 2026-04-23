@@ -364,6 +364,33 @@ generate_fermentation_data <- function(n = 160) {
   )
 }
 
+# Generowanie danych: stanowiska pracy a wypadki / stres (IB)
+# Trzy stanowiska (budowa / magazyn / biuro) × dwie zmienne zależne:
+#   nieobecnosci — liczba dni nieobecności w roku z powodu urazu
+#   stres        — poziom stresu w pracy (skala 0–100)
+generate_workplace_data <- function(n = 160) {
+  set.seed(NULL)
+  groups <- c("Budowa", "Magazyn", "Biuro")
+  stanowisko <- sample(groups, n, replace = TRUE)
+
+  # Dni nieobecności: budowa > magazyn > biuro
+  base_abs <- sapply(stanowisko, function(s)
+    switch(s, "Budowa" = 9, "Magazyn" = 5, "Biuro" = 2))
+  nieobecnosci <- pmax(0, round(base_abs + rnorm(n, 0, 3)))
+
+  # Stres: magazyn i budowa wyższy, biuro niższy
+  base_stres <- sapply(stanowisko, function(s)
+    switch(s, "Budowa" = 62, "Magazyn" = 58, "Biuro" = 48))
+  stres <- pmin(100, pmax(0, round(base_stres + rnorm(n, 0, 12))))
+
+  data.frame(
+    stanowisko = factor(stanowisko, levels = groups),
+    nieobecnosci = nieobecnosci,
+    stres = stres,
+    stringsAsFactors = FALSE
+  )
+}
+
 # Generowanie danych: telefon vs koncentracja (case study ch1)
 # Inspirowane Ward et al. (2017) "Brain Drain"
 generate_phone_data <- function(n_per_group = 40) {

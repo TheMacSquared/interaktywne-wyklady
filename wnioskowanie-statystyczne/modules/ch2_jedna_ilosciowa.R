@@ -115,7 +115,8 @@ ch2_ui <- list(
               "Koncentracja (μ₀ = 70 pkt)" = "concentration",
               "Zużycie wody (μ₀ = 150 l)" = "water",
               "Plon pszenicy (μ₀ = 5 t/ha)" = "yield",
-              "Trwałość jogurtu (μ₀ = 14 dni)" = "yogurt"
+              "Trwałość jogurtu (μ₀ = 14 dni)" = "yogurt",
+              "Hałas w hali (μ₀ = 85 dB, IB)" = "noise"
             ),
             selected = "concentration"
           ),
@@ -255,7 +256,13 @@ ch2_server <- function(input, output, session) {
                   title = "Trwałość jogurtu naturalnego",
                   question = "Czy trwałość naszego jogurtu spełnia deklarowane 14 dni?",
                   h0_text = "\\(H_0: \\mu = 14\\) (trwałość zgodna z deklaracją)",
-                  h1_text = "\\(H_a: \\mu \\neq 14\\) (trwałość odbiega od deklaracji)")
+                  h1_text = "\\(H_a: \\mu \\neq 14\\) (trwałość odbiega od deklaracji)"),
+    noise  = list(mu0 = 85, mu_true = 87.5, sd = 4,
+                  xlab = "Poziom hałasu (dB)",
+                  title = "Hałas w hali produkcyjnej",
+                  question = "Czy średni poziom hałasu w hali mieści się w normie NDS 85 dB?",
+                  h0_text = "\\(H_0: \\mu = 85\\) (hałas zgodny z normą)",
+                  h1_text = "\\(H_a: \\mu \\neq 85\\) (hałas odbiega od normy)")
   )
 
   # --- Shared state ---
@@ -438,7 +445,11 @@ ch2_server <- function(input, output, session) {
     yogurt = list(alt = "greater",
                   question = "Czy trwałość jogurtu jest dłuższa niż deklarowane 14 dni?",
                   h0_text = "\\(H_0: \\mu \\leq 14\\) (trwałość nie przekracza deklaracji)",
-                  h1_text = "\\(H_a: \\mu > 14\\) (trwałość jest dłuższa niż deklarowana)")
+                  h1_text = "\\(H_a: \\mu > 14\\) (trwałość jest dłuższa niż deklarowana)"),
+    noise  = list(alt = "greater",
+                  question = "Czy średni poziom hałasu w hali przekracza normę NDS 85 dB?",
+                  h0_text = "\\(H_0: \\mu \\leq 85\\) (hałas w normie)",
+                  h1_text = "\\(H_a: \\mu > 85\\) (hałas przekracza normę)")
   )
 
   ch2b_step <- reactiveVal(0)

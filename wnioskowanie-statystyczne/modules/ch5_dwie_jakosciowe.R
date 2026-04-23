@@ -116,12 +116,11 @@ ch5_ui <- list(
       title = "Test χ² niezależności — krok po kroku",
       fluidRow(
         column(4,
-          selectInput("ch5_scenario", "Scenariusz:",
+          selectInput("ch5_scenario", "Scenariusz (2×2):",
             choices = c(
               "Opakowanie a pleśń (TŻ)" = "packaging",
-              "Atmosfera pakowania a świeżość mięsa (TŻ)" = "atmosphere",
               "Typ gleby a kategoria plonu (R)" = "soil",
-              "Metoda pasteryzacji mleka a liczebność bakterii (TŻ)" = "pasteurization"
+              "Środki ochrony a uraz (IB)" = "ppe_accident"
             ),
             selected = "packaging"
           ),
@@ -294,7 +293,16 @@ ch5_server <- function(input, output, session) {
                         0.90, 0.08, 0.02), nrow = 3, byrow = TRUE),
       question = "Czy metoda pasteryzacji mleka wpływa na liczebność bakterii po 7 dniach?",
       h0_text = "\\(H_0:\\) metoda pasteryzacji i liczebność bakterii są niezależne",
-      h1_text = "\\(H_a:\\) metoda pasteryzacji i liczebność bakterii są powiązane")
+      h1_text = "\\(H_a:\\) metoda pasteryzacji i liczebność bakterii są powiązane"),
+    ppe_accident = list(
+      lab1 = "Środki ochrony (SOI)", lab2 = "Ciężkość wypadku",
+      cats1 = c("Niepełne", "Pełne"),
+      cats2 = c("Brak urazu", "Uraz lekki", "Uraz ciężki"),
+      probs = matrix(c(0.45, 0.35, 0.20,
+                        0.80, 0.17, 0.03), nrow = 2, byrow = TRUE),
+      question = "Czy stosowanie pełnych środków ochrony indywidualnej wpływa na ciężkość wypadku przy pracy?",
+      h0_text = "\\(H_0:\\) stosowanie SOI i ciężkość wypadku są niezależne",
+      h1_text = "\\(H_a:\\) stosowanie SOI i ciężkość wypadku są powiązane")
   )
 
   # --- Wspoldzielone dane ---

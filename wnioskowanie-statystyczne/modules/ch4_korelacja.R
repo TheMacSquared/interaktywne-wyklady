@@ -157,7 +157,8 @@ ch4_ui <- list(
               "Sen a ocena z egzaminu" = "sleep_grade",
               "Azotany a odległość od źródła" = "nitrate_dist",
               "Nawadnianie a plon" = "irrigation_yield",
-              "Stężenie konserwantu a trwałość" = "preserv_shelf"
+              "Stężenie konserwantu a trwałość" = "preserv_shelf",
+              "Szkolenie BHP a wypadki (IB)" = "training_accidents"
             ),
             selected = "sleep_grade"
           ),
@@ -403,7 +404,21 @@ ch4_server <- function(input, output, session) {
       question_1s = "Czy większe stężenie konserwantu wydłuża trwałość?",
       h0_text_1s = "\\(H_0: \\rho \\leq 0\\)",
       h1_text_1s = "\\(H_a: \\rho > 0\\)",
-      alt_1s = "greater")
+      alt_1s = "greater"),
+    training_accidents = list(
+      r_true = -0.55,
+      xlab = "Godziny szkolenia BHP / rok",
+      ylab = "Liczba wypadków / 100 prac. / rok",
+      x_mean = 20,  x_sd = 7,
+      y_mean = 8,   y_sd = 3,
+      title = "Szkolenie BHP a wypadki",
+      question = "Czy liczba godzin szkolenia BHP wiąże się z liczbą wypadków?",
+      h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
+      h1_text = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
+      question_1s = "Czy więcej godzin szkolenia BHP wiąże się z mniejszą liczbą wypadków?",
+      h0_text_1s = "\\(H_0: \\rho \\geq 0\\)",
+      h1_text_1s = "\\(H_a: \\rho < 0\\)",
+      alt_1s = "less")
   )
 
   # --- Wspoldzielone dane ---

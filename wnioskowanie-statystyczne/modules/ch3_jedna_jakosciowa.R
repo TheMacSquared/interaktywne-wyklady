@@ -111,8 +111,9 @@ ch3_ui <- list(
             choices = c(
               "Jakość wody (p₀ = 80%)" = "water_quality",
               "Zdawalność egzaminu (p₀ = 60%)" = "exam_pass",
-              "Kiedyłkość nasion (p₀ = 90%)" = "germination",
-              "Produkty poza normą (p₀ = 3%)" = "defects"
+              "Kiełkowalność nasion (p₀ = 90%)" = "germination",
+              "Produkty poza normą (p₀ = 3%)" = "defects",
+              "Używanie kasków na budowie (p₀ = 95%, IB)" = "helmets"
             ),
             selected = "water_quality"
           ),
@@ -322,7 +323,18 @@ ch3_server <- function(input, output, session) {
       question_1s = "Czy odsetek produktów poza normą przekracza dopuszczalne 3%?",
       h0_text_1s = "\\(H_0: p \\leq 0.03\\)",
       h1_text_1s = "\\(H_a: p > 0.03\\)",
-      alt_1s = "greater")
+      alt_1s = "greater"),
+    helmets = list(
+      p0 = 0.95, p_true = 0.88, n_default = 80,
+      success_label = "nosi kask", failure_label = "bez kasku",
+      title = "Używanie kasków na budowie",
+      question = "Czy odsetek pracowników używających kasków odbiega od zakładanych 95%?",
+      h0_text = "\\(H_0: p = 0.95\\) (odsetek zgodny z wymaganiem)",
+      h1_text = "\\(H_a: p \\neq 0.95\\) (odsetek odbiega od wymagania)",
+      question_1s = "Czy odsetek pracowników używających kasków jest niższy niż wymagane 95%?",
+      h0_text_1s = "\\(H_0: p \\geq 0.95\\)",
+      h1_text_1s = "\\(H_a: p < 0.95\\)",
+      alt_1s = "less")
   )
 
   # --- Wspoldzielone dane ---

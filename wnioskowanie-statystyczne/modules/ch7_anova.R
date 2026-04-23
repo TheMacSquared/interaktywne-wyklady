@@ -115,7 +115,8 @@ ch7_ui <- list(
           selectInput("ch7_scenario", "Scenariusz:",
             choices = c(
               "Fermentacja jogurtu (TŻ)" = "fermentation",
-              "Kierunki studiów" = "students"
+              "Kierunki studiów" = "students",
+              "Stanowisko pracy a wypadki/stres (IB)" = "workplace"
             ),
             selected = "fermentation"
           ),
@@ -243,6 +244,15 @@ ch7_server <- function(input, output, session) {
         vars = c("pH jogurtu" = "pH", "Kwasowość miareczkowa (°SH)" = "kwasowosc_SH"),
         var_labels = c(pH = "pH jogurtu", kwasowosc_SH = "Kwasowość (°SH)")
       )
+    } else if (identical(scenario, "workplace")) {
+      list(
+        group_col = "stanowisko",
+        group_label = "Stanowisko pracy",
+        vars = c("Dni nieobecności (urazy) / rok" = "nieobecnosci",
+                 "Poziom stresu (0–100)" = "stres"),
+        var_labels = c(nieobecnosci = "Dni nieobecności / rok",
+                       stres = "Poziom stresu (0–100)")
+      )
     } else {
       list(
         group_col = "kierunek",
@@ -267,6 +277,8 @@ ch7_server <- function(input, output, session) {
   observeEvent(input$ch7_run_anova, {
     if (identical(input$ch7_scenario, "fermentation")) {
       ch7_data(generate_fermentation_data(input$ch7_n))
+    } else if (identical(input$ch7_scenario, "workplace")) {
+      ch7_data(generate_workplace_data(input$ch7_n))
     } else {
       ch7_data(generate_student_data(input$ch7_n))
     }
