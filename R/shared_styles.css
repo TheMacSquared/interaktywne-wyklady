@@ -771,6 +771,33 @@ html, body {
   margin-bottom: 14px;
 }
 .narrative p { margin-bottom: 12px; max-width: 680px; }
+.narrative ol,
+.narrative ul { max-width: 680px; }
+
+/* === Drzewo decyzyjne: fullscreen toggle (ch_drzewo visNetwork) === */
+.drzewo-wrap {
+  position: relative;
+  background: var(--upwr-surface);
+}
+.drzewo-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+/* W trybie pełnoekranowym: wrapper zajmuje całe okno, widget dostosowuje się */
+.drzewo-wrap:fullscreen,
+.drzewo-wrap:-webkit-full-screen {
+  padding: 16px 24px;
+  background: var(--upwr-surface);
+  overflow: auto;
+}
+.drzewo-wrap:fullscreen .visNetwork,
+.drzewo-wrap:fullscreen > div[id$="_visnet"],
+.drzewo-wrap:-webkit-full-screen .visNetwork,
+.drzewo-wrap:-webkit-full-screen > div[id$="_visnet"] {
+  height: calc(100vh - 60px) !important;
+}
 
 /* Callouty osadzone inline w narracji (nie jako direct-child .lc-chapter)
    — zachowują szerokość kolumny tekstu zamiast rozciągać się na całą stronę. */
