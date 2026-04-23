@@ -2,15 +2,22 @@
 # CHAPTER 5: Co wplywa na szerokosc przedzialu?
 # ============================================================================
 
-ch5_ui <- tabPanel("5. Co wpływa na szerokość?",
-  fluidRow(column(8, offset = 2,
+ch5_ui <- list(
+  id    = "ch-czynniki",
+  num   = "05",
+  title = "Co wpływa na szerokość?",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Umiemy już budować przedziały dla średniej i proporcji.
-       Teraz zbadamy, co decyduje o ich precyzji."
+    lc_chapter_hero(
+      kicker = "Rozdział 05 · Przedziały ufności",
+      num    = "05",
+      title  = "Co wpływa na szerokość przedziału?",
+      lead   = "Umiemy już budować przedziały dla średniej i proporcji.
+                Teraz zbadamy, co decyduje o ich precyzji."
     ),
 
-    div(class = "section-title", "Trzy czynniki szerokości przedziału"),
+    h2(id = "ch5-czynniki", class = "section-title",
+       "Trzy czynniki szerokości przedziału"),
 
     div(class = "narrative",
       p("Margines błędu (a więc szerokość przedziału) zależy od trzech rzeczy:"),
@@ -26,13 +33,12 @@ ch5_ui <- tabPanel("5. Co wpływa na szerokość?",
       )
     ),
 
-    # ========================================================================
-    # WIDGET 1: Trzy suwaki
-    # ========================================================================
-    div(class = "section-title", "Interaktywna eksploracja"),
+    h2(id = "ch5-eksploracja", class = "section-title",
+       "Interaktywna eksploracja"),
 
-    div(class = "widget-block",
-      h4("Jak zmienia się szerokość przedziału?"),
+    figure_panel(
+      label = "Ryc. 5.1", title = "Jak zmienia się szerokość przedziału?",
+      full_width = TRUE,
       fluidRow(
         column(4,
           sliderInput("ch5_n", "Wielkość próby (n):",
@@ -50,17 +56,13 @@ ch5_ui <- tabPanel("5. Co wpływa na szerokość?",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Malejące korzyści:"),
-      " Zwiększenie n z 25 do 100 (4×) skraca przedział o połowę (2×).
-        Ale z 100 do 400 (4×) też tylko o połowę. To efekt ",
-      withMathJax("\\(\\frac{1}{\\sqrt{n}}\\)"), "."
+    margin_callout(label = "Malejące korzyści", color = "wskazowka",
+      "Zwiększenie n z 25 do 100 (4×) skraca przedział o połowę (2×).
+       Ale z 100 do 400 (4×) też tylko o połowę. To efekt 1/√n."
     ),
 
-    # ========================================================================
-    # WIDGET 2: Planowanie wielkosci proby
-    # ========================================================================
-    div(class = "section-title", "Planowanie wielkości próby"),
+    h2(id = "ch5-planowanie", class = "section-title",
+       "Planowanie wielkości próby"),
 
     div(class = "narrative",
       p("Odwróćmy pytanie: ile obserwacji potrzebuję,
@@ -72,8 +74,9 @@ ch5_ui <- tabPanel("5. Co wpływa na szerokość?",
       )
     ),
 
-    div(class = "widget-block",
-      h4("Kalkulator wielkości próby"),
+    figure_panel(
+      label = "Ryc. 5.2", title = "Kalkulator wielkości próby",
+      full_width = TRUE,
       fluidRow(
         column(4,
           numericInput("ch5_plan_me", "Pożądany margines błędu:",
@@ -90,18 +93,17 @@ ch5_ui <- tabPanel("5. Co wpływa na szerokość?",
       )
     ),
 
-    # ========================================================================
-    # WIDGET 3: Porownanie przedzialow
-    # ========================================================================
-    div(class = "section-title", "90% vs 95% vs 99%"),
+    h2(id = "ch5-porownanie", class = "section-title",
+       "90% vs 95% vs 99%"),
 
     div(class = "narrative",
       p("Zobaczmy jak wyglądają trzy przedziały z tych samych danych,
         ale przy różnych poziomach ufności.")
     ),
 
-    div(class = "widget-block",
-      h4("Trzy poziomy ufności"),
+    figure_panel(
+      label = "Ryc. 5.3", title = "Trzy poziomy ufności",
+      full_width = TRUE,
       fluidRow(
         column(4,
           selectInput("ch5_cmp_data", "Dane:",
@@ -130,17 +132,14 @@ ch5_ui <- tabPanel("5. Co wpływa na szerokość?",
       )
     ),
 
-    div(class = "callout-success",
-      tags$strong("Kompromis:"),
-      " 95% to standardowy wybór — rozsądna równowaga między
-        pewnością a precyzją. 99% daje szerszy przedział (większa pewność,
-        mniejsza precyzja), 90% węższy (mniej pewny, bardziej precyzyjny)."
+    margin_callout(label = "Kompromis", color = "ok",
+      "95% to standardowy wybór — rozsądna równowaga między pewnością
+       a precyzją. 99% daje szerszy przedział (większa pewność, mniejsza
+       precyzja), 90% węższy (mniej pewny, bardziej precyzyjny)."
     ),
 
-    # ========================================================================
-    # WIDGET 4: Edge case'y - jak poziom ufnosci zmienia werdykt
-    # ========================================================================
-    div(class = "section-title", "Edge case: kiedy poziom ufności zmienia wniosek"),
+    h2(id = "ch5-edge-case", class = "section-title",
+       "Edge case: kiedy poziom ufności zmienia wniosek"),
 
     div(class = "narrative",
       p("Czasami ten sam zbiór danych pozwala stwierdzić hipotezę
@@ -205,30 +204,31 @@ ch5_ui <- tabPanel("5. Co wpływa na szerokość?",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Dlaczego to jest nieintuicyjne?"),
-      " Bo w codziennym myśleniu nie odróżniamy 95% od 93% — dla nas jest
-        \"dużo\", \"średnio\", \"mało\". Statystyka pozwala na precyzyjne kwantyfikowanie pewności
-      i to jest jej moc, nie wada. Stwierdzenie ",
-      tags$em("\"nie możemy być pewni z 95%, ale możemy z 93%\""),
-      " nie jest sprzecznością — to jest dokładnie ten poziom precyzji,
-        do którego służy ten aparat matematyczny. ",
-      tags$br(), tags$br(),
-      tags$strong("W praktyce:"),
-      " 95% to umowny standard. Jeśli wiesz, że ", tags$em("Twój problem"),
-      " toleruje więcej ryzyka (np. wstępna eksploracja, niskie koszty błędu), możesz
-        legalnie użyć 90%. Jeśli mniej (np. badania medyczne, kontrola jakości),
-        użyj 99%. Ważne jest tylko, żeby poziom ufności wybrać zanim
-      spojrzysz na wyniki — i potem ten wybór jasno raportować."
+    div(class = "narrative",
+      p(tags$strong("Dlaczego to jest nieintuicyjne?"),
+        " Bo w codziennym myśleniu nie odróżniamy 95% od 93% — dla nas
+        jest „dużo”, „średnio”, „mało”. Statystyka pozwala na precyzyjne
+        kwantyfikowanie pewności i to jest jej moc, nie wada.
+        Stwierdzenie ",
+        tags$em("„nie możemy być pewni z 95%, ale możemy z 93%”"),
+        " nie jest sprzecznością — to jest dokładnie ten poziom precyzji,
+        do którego służy ten aparat matematyczny."),
+      p(tags$strong("W praktyce:"),
+        " 95% to umowny standard. Jeśli wiesz, że ", tags$em("Twój problem"),
+        " toleruje więcej ryzyka (np. wstępna eksploracja, niskie koszty
+        błędu), możesz legalnie użyć 90%. Jeśli mniej (np. badania
+        medyczne, kontrola jakości), użyj 99%. Ważne jest tylko, żeby
+        poziom ufności wybrać zanim spojrzysz na wyniki — i potem ten
+        wybór jasno raportować.")
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: podsumowanie wzorów i zasad"),
-      actionButton("ch5_next", "Dalej → 6. Ściąga",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "06",
+      title     = "Ściąga",
+      lead      = "podsumowanie wzorów i zasad",
+      target_id = "ch-sciaga"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -262,7 +262,7 @@ ch5_server <- function(input, output, session) {
                           "(", round(conf * 100), "% CI, s = ", s, ")"),
            x = "Wielkość próby (n)",
            y = "Margines błędu (ME)") +
-      theme_educational()
+      theme_upwr()
 
     # ---- DOLNY PANEL: sam pasek CI na fixed osi X ----
     # Worst-case ME (n=5, conf=0.99, s=12) -> ustala stale granice osi X
@@ -274,7 +274,7 @@ ch5_server <- function(input, output, session) {
       ylim(-0.6, 0.6) +
       labs(x = "Wartość (np. wzrost w cm)", y = NULL,
            title = "Twój 95% CI na stałej osi") +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -308,7 +308,7 @@ ch5_server <- function(input, output, session) {
     tagList(
       div(class = "stat-box", style = paste0("background:", col_ci, ";"),
           paste0("ME = ", round(me, 2))),
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
           paste0("Szer. = ", round(width, 2))),
       div(class = "stat-box", style = paste0("background:", col_estimate, ";"),
           paste0("t* = ", round(t_star, 3)))
@@ -349,15 +349,15 @@ ch5_server <- function(input, output, session) {
 
     p_top <- ggplot(df, aes(x = n, y = me)) +
       geom_line(color = col_ci, linewidth = 1.2) +
-      geom_hline(yintercept = me_max, color = col_secondary, linetype = "dashed",
+      geom_hline(yintercept = me_max, color = col_miss, linetype = "dashed",
                  linewidth = 1) +
-      geom_point(aes(x = n_req, y = me_max), color = col_success, size = 5) +
+      geom_point(aes(x = n_req, y = me_max), color = col_hit, size = 5) +
       annotate("text", x = n_req, y = me_max + 0.3,
                label = paste0("n = ", n_req),
-               color = col_success, fontface = "bold", size = 5) +
+               color = col_hit, fontface = "bold", size = 5) +
       labs(title = "Margines błędu vs wielkość próby",
            x = "n", y = "Margines błędu") +
-      theme_educational()
+      theme_upwr()
 
     # ---- DOLNY PANEL: pasek CI przy n_req, z dopuszczalna strefa ----
     xlims <- c(center - 3 * me_max, center + 3 * me_max)
@@ -368,7 +368,7 @@ ch5_server <- function(input, output, session) {
       labs(x = "Wartość (jednostki dowolne)", y = NULL,
            title = paste0("CI przy n = ", n_req,
                           "  —  szara strefa = dopuszczalny ME = ±", me_max)) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -382,11 +382,11 @@ ch5_server <- function(input, output, session) {
       geom_point(aes(x = center, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
       geom_errorbarh(aes(xmin = center - me_actual, xmax = center + me_actual, y = 0),
-                     height = 0.18, color = col_success, linewidth = 2.4, alpha = 0.8) +
+                     height = 0.18, color = col_hit, linewidth = 2.4, alpha = 0.8) +
       annotate("text", x = center, y = -0.42,
                label = paste0("Osiągnięte ME = ±", round(me_actual, 3),
                               "  ≤  ", me_max, " ✓"),
-               color = col_success, fontface = "bold", size = 4.8)
+               color = col_hit, fontface = "bold", size = 4.8)
 
     library(patchwork)
     (p_top / p_bot) + plot_layout(heights = c(2, 1))
@@ -431,7 +431,7 @@ ch5_server <- function(input, output, session) {
         theme_void()
     } else {
       df$y <- c(3, 2, 1)
-      colors <- c(col_warning, col_ci, col_purple)
+      colors <- c(col_estimate, col_ci, col_true)
 
       ggplot(df, aes(y = y)) +
         geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0.3,
@@ -445,7 +445,7 @@ ch5_server <- function(input, output, session) {
                  hjust = 0, size = 4) +
         labs(title = "Ten sam zbiór — trzy poziomy ufności",
              x = "Wartość", y = "Poziom ufności") +
-        theme_educational()
+        theme_upwr()
     }
   })
 
@@ -455,7 +455,7 @@ ch5_server <- function(input, output, session) {
     tagList(
       lapply(1:3, function(i) {
         div(class = "stat-box",
-            style = paste0("background:", c(col_warning, col_ci, col_purple)[i], ";"),
+            style = paste0("background:", c(col_estimate, col_ci, col_true)[i], ";"),
             paste0(df$conf[i], ": ±", round(df$me[i], 2)))
       })
     )
@@ -591,7 +591,7 @@ ch5_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(-0.65, 0.65) +
       labs(x = cfg$xlab, y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),

@@ -2,15 +2,21 @@
 # CHAPTER 4: Przedzial dla proporcji
 # ============================================================================
 
-ch4_ui <- tabPanel("4. Przedział dla proporcji",
-  fluidRow(column(8, offset = 2,
+ch4_ui <- list(
+  id    = "ch-proporcja",
+  num   = "04",
+  title = "Przedział dla proporcji",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Umiemy już budować przedział dla średniej.
-       A co, gdy interesuje nas odsetek (proporcja)?"
+    lc_chapter_hero(
+      kicker = "Rozdział 04 · Przedziały ufności",
+      num    = "04",
+      title  = "Przedział dla proporcji.",
+      lead   = "Umiemy już budować przedział dla średniej.
+                A co, gdy interesuje nas odsetek (proporcja)?"
     ),
 
-    div(class = "section-title", "Wzór"),
+    h2(id = "ch4-wzor", class = "section-title", "Wzór"),
 
     div(class = "narrative",
       p("Często chcemy oszacować odsetek — jaki procent studentów zdał egzamin,
@@ -46,31 +52,29 @@ ch4_ui <- tabPanel("4. Przedział dla proporcji",
         withMathJax("\\(n(1-p) \\geq 10\\)"), ".")
     ),
 
-    div(class = "callout-info",
-      tags$strong("W jamovi:"),
-      " ", tags$b("Analyses → Frequencies → 2 Outcomes — Binomial test"),
-      " → przeciągnij zmienną binarną (np. zdany/niezdany) do pola zmiennych
-      → zaznacz ", tags$b("Confidence interval"),
-      " (domyślnie 95%, metoda Cloppera-Pearsona — bezpieczniejsza niż Wald).
-      W tabeli odczytasz kolumny ", tags$code("Proportion"), ", ",
-      tags$code("Lower"), ", ", tags$code("Upper"), ".
-      Dla porównania dwóch grup: ", tags$b("χ² test of association"),
-      " lub dwa osobne CI obok siebie."
+    margin_callout(label = "W jamovi", color = "wskazowka",
+      tagList(
+        "Analyses → Frequencies → 2 Outcomes — Binomial test → przeciągnij
+         zmienną binarną (np. zdany/niezdany) do pola zmiennych → zaznacz
+         Confidence interval (domyślnie 95%, metoda Cloppera-Pearsona
+         — bezpieczniejsza niż Wald). W tabeli odczytasz kolumny ",
+        tags$code("Proportion"), ", ", tags$code("Lower"), ", ",
+        tags$code("Upper"), "."
+      )
     ),
 
-    # ========================================================================
-    # WIDGET 1: Budowa przedzialu dla proporcji krok po kroku
-    # ========================================================================
-    div(class = "section-title", "Budowa przedziału — krok po kroku"),
+    h2(id = "ch4-budowa", class = "section-title",
+       "Budowa przedziału — krok po kroku"),
 
     div(class = "narrative",
-      p("Zobaczmy, jak z konkretnej próby (50 odpowiedzi TAK/NIE) powstaje przedział
-        ufności dla proporcji. Pytamy 50 studentów, czy zdali egzamin, i estymujemy
-        odsetek zdających w całej populacji.")
+      p("Zobaczmy, jak z konkretnej próby (50 odpowiedzi TAK/NIE) powstaje
+        przedział ufności dla proporcji. Pytamy 50 studentów, czy zdali
+        egzamin, i estymujemy odsetek zdających w całej populacji.")
     ),
 
-    div(class = "widget-block",
-      h4("Konstruowanie przedziału"),
+    figure_panel(
+      label = "Ryc. 4.1", title = "Konstruowanie przedziału",
+      full_width = TRUE,
       div(class = "step-buttons",
         actionButton("ch4_step1", "1. Próba",     class = "btn-outline-primary"),
         actionButton("ch4_step2", "2. p̂",        class = "btn-outline-primary"),
@@ -85,10 +89,8 @@ ch4_ui <- tabPanel("4. Przedział dla proporcji",
       uiOutput("ch4_step_explanation")
     ),
 
-    # ========================================================================
-    # WIDGET 2: Budowa przedzialu dla roznicy proporcji
-    # ========================================================================
-    div(class = "section-title", "Budowa przedziału dla różnicy proporcji"),
+    h2(id = "ch4-roznica", class = "section-title",
+       "Budowa przedziału dla różnicy proporcji"),
 
     div(class = "narrative",
       p("CI dla różnicy dwóch proporcji buduje się analogicznie do różnicy
@@ -100,14 +102,15 @@ ch4_ui <- tabPanel("4. Przedział dla proporcji",
         po 60 osób w każdej.")
     ),
 
-    div(class = "widget-block",
-      h4("Konstruowanie CI dla różnicy"),
+    figure_panel(
+      label = "Ryc. 4.2", title = "Konstruowanie CI dla różnicy",
+      full_width = TRUE,
       div(class = "step-buttons",
         actionButton("ch4_dstep1", "1. Dwie próby",   class = "btn-outline-primary"),
-        actionButton("ch4_dstep2", "2. Dwie p̂",     class = "btn-outline-primary"),
-        actionButton("ch4_dstep3", "3. Różnica", class = "btn-outline-primary"),
+        actionButton("ch4_dstep2", "2. Dwie p̂",      class = "btn-outline-primary"),
+        actionButton("ch4_dstep3", "3. Różnica",      class = "btn-outline-primary"),
         actionButton("ch4_dstep4", "4. ± SE",         class = "btn-outline-primary"),
-        actionButton("ch4_dstep5", "5. Przedział",   class = "btn-outline-primary")
+        actionButton("ch4_dstep5", "5. Przedział",    class = "btn-outline-primary")
       ),
       div(style = "display: flex; gap: 8px; margin-top: 8px;",
         actionButton("ch4_dstep_new_sample", "↻ Nowe próby",
@@ -117,10 +120,8 @@ ch4_ui <- tabPanel("4. Przedział dla proporcji",
       uiOutput("ch4_dstep_explanation")
     ),
 
-    # ========================================================================
-    # WIDGET 3: CASE STUDIES (konstruktory + hipotezy)
-    # ========================================================================
-    div(class = "section-title", "Case studies — jak interpretować CI w praktyce"),
+    h2(id = "ch4-case-studies", class = "section-title",
+       "Case studies — jak interpretować CI w praktyce"),
 
     div(class = "narrative",
       p("Poniżej kilka realistycznych sytuacji. W każdej budujesz CI krok po kroku
@@ -129,9 +130,7 @@ ch4_ui <- tabPanel("4. Przedział dla proporcji",
         żeby rozwijać case'y.")
     ),
 
-    # ----- GRUPA A: JEDNA PROPORCJA -----
-    div(class = "section-title", style = "font-size: 18px; margin-top: 25px;",
-        "A. Przedział dla jednej proporcji"),
+    lc_h3("A. Przedział dla jednej proporcji"),
 
     tags$details(class = "case-study", open = NA,
       tags$summary(
@@ -168,9 +167,7 @@ ch4_ui <- tabPanel("4. Przedział dla proporcji",
       )
     ),
 
-    # ----- GRUPA B: ROZNICA PROPORCJI -----
-    div(class = "section-title", style = "font-size: 18px; margin-top: 25px;",
-        "B. Przedział dla różnicy proporcji"),
+    lc_h3("B. Przedział dla różnicy proporcji"),
 
     tags$details(class = "case-study",
       tags$summary(
@@ -225,9 +222,7 @@ ch4_ui <- tabPanel("4. Przedział dla proporcji",
       )
     ),
 
-    # ----- GRUPA C: WIELE GRUP -----
-    div(class = "section-title", style = "font-size: 18px; margin-top: 25px;",
-        "C. Wiele grup — forest plot"),
+    lc_h3("C. Wiele grup — forest plot"),
 
     tags$details(class = "case-study",
       tags$summary(
@@ -246,13 +241,13 @@ ch4_ui <- tabPanel("4. Przedział dla proporcji",
       )
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: co decyduje o szerokości przedziału?"),
-      actionButton("ch4_next", "Dalej → 5. Co wpływa na szerokość?",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "05",
+      title     = "Co wpływa na szerokość?",
+      lead      = "co decyduje o szerokości przedziału",
+      target_id = "ch-czynniki"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -323,13 +318,13 @@ ch4_server <- function(input, output, session) {
     p_left <- ggplot(bar_df, aes(x = val, y = count, fill = val)) +
       geom_col(width = 0.6) +
       geom_text(aes(label = count), vjust = -0.4, fontface = "bold",
-                size = 5, color = col_dark) +
-      scale_fill_manual(values = c("NIE" = col_secondary, "TAK" = col_primary),
+                size = 5, color = upwr_secondary) +
+      scale_fill_manual(values = c("NIE" = col_miss, "TAK" = col_ci),
                         guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
       labs(x = NULL, y = "Liczebność",
            title = paste0("Dane (n = ", n, ")")) +
-      theme_educational() +
+      theme_upwr() +
       theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
 
@@ -340,16 +335,16 @@ ch4_server <- function(input, output, session) {
     Y_CI  <- -0.25
 
     # Wyszarzanie poprzednich elementow
-    col_faded <- "#adb5bd"
-    c_est <- if (step >= 3) col_faded else col_estimate
-    c_se  <- if (step >= 4) col_faded else col_success
+    c_faded <- "#adb5bd"
+    c_est <- if (step >= 3) c_faded else col_estimate
+    c_se  <- if (step >= 4) c_faded else col_hit
 
     p_right <- ggplot() +
       xlim(0, 1) +
       ylim(-0.6, 0.6) +
       labs(x = "Proporcja", y = NULL,
            title = paste0("p̂ = ", round(phat, 3))) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -520,12 +515,12 @@ ch4_server <- function(input, output, session) {
       geom_col(position = position_dodge(width = 0.75), width = 0.65) +
       geom_text(aes(label = count),
                 position = position_dodge(width = 0.75),
-                vjust = -0.4, fontface = "bold", size = 4.5, color = col_dark) +
-      scale_fill_manual(values = c("NIE" = col_secondary, "TAK" = col_primary),
+                vjust = -0.4, fontface = "bold", size = 4.5, color = upwr_secondary) +
+      scale_fill_manual(values = c("NIE" = col_miss, "TAK" = col_ci),
                         name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
       labs(x = NULL, y = "Liczebność", title = "Dane") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top",
             panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
@@ -535,7 +530,7 @@ ch4_server <- function(input, output, session) {
       xlim(0, 1) +
       ylim(0.4, 2.6) +
       labs(x = "Proporcja", y = NULL, title = "Proporcje w grupach") +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_text(face = "bold", size = 12),
             panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank()) +
@@ -564,7 +559,7 @@ ch4_server <- function(input, output, session) {
       ylim(-0.55, 0.55) +
       labs(x = "Różnica proporcji  —  Grupa 1 − Grupa 2",
            y = NULL, title = "Różnica + CI") +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -586,10 +581,10 @@ ch4_server <- function(input, output, session) {
     if (step >= 4) {
       p_bot <- p_bot +
         geom_errorbarh(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
-                       height = 0.08, color = col_success, linewidth = 1.8) +
+                       height = 0.08, color = col_hit, linewidth = 1.8) +
         annotate("text", x = diff_val, y = 0.17,
                  label = paste0("± SE = ±", round(se, 3)),
-                 color = col_success, fontface = "bold", size = 4)
+                 color = col_hit, fontface = "bold", size = 4)
     }
 
     if (step >= 5) {
@@ -846,13 +841,13 @@ ch4_server <- function(input, output, session) {
     p_left <- ggplot(bar_df, aes(x = val, y = count, fill = val)) +
       geom_col(width = 0.6) +
       geom_text(aes(label = count), vjust = -0.4, fontface = "bold",
-                size = 5, color = col_dark) +
-      scale_fill_manual(values = c("NIE" = col_secondary, "TAK" = col_primary),
+                size = 5, color = upwr_secondary) +
+      scale_fill_manual(values = c("NIE" = col_miss, "TAK" = col_ci),
                         guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
       labs(x = NULL, y = "Liczebność",
            title = paste0("Dane (n = ", n, ")")) +
-      theme_educational() +
+      theme_upwr() +
       theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
 
@@ -868,7 +863,7 @@ ch4_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(-0.6, 0.6) +
       labs(x = xlab, y = NULL, title = title) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -909,10 +904,10 @@ ch4_server <- function(input, output, session) {
     if (step >= 3) {
       p_right <- p_right +
         geom_errorbarh(aes(xmin = phat - se, xmax = phat + se, y = 0),
-                       height = 0.08, color = col_success, linewidth = 1.8) +
+                       height = 0.08, color = col_hit, linewidth = 1.8) +
         annotate("text", x = phat, y = 0.20,
                  label = paste0("± SE = ±", round(se, 3)),
-                 color = col_success, fontface = "bold", size = 4)
+                 color = col_hit, fontface = "bold", size = 4)
     }
 
     # Krok 4: CI
@@ -967,7 +962,7 @@ ch4_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(0.3, k + 0.7) +
       labs(x = xlab, y = NULL, title = title) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -976,7 +971,7 @@ ch4_server <- function(input, output, session) {
     p <- p +
       annotate("text", x = xlims[1], y = y_positions,
                label = df$label, hjust = 0, fontface = "bold", size = 4.5,
-               color = col_dark)
+               color = upwr_secondary)
 
     if (!is.null(hypothesis)) {
       if (hypothesis$dir == "gt") {
@@ -1040,12 +1035,12 @@ ch4_server <- function(input, output, session) {
       geom_col(position = position_dodge(width = 0.75), width = 0.65) +
       geom_text(aes(label = count),
                 position = position_dodge(width = 0.75),
-                vjust = -0.4, fontface = "bold", size = 4.2, color = col_dark) +
-      scale_fill_manual(values = c("NIE" = col_secondary, "TAK" = col_primary),
+                vjust = -0.4, fontface = "bold", size = 4.2, color = upwr_secondary) +
+      scale_fill_manual(values = c("NIE" = col_miss, "TAK" = col_ci),
                         name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
       labs(x = NULL, y = "Liczebność", title = "Dane") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top",
             panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
@@ -1055,7 +1050,7 @@ ch4_server <- function(input, output, session) {
       xlim(0, 1) +
       ylim(0.4, 2.6) +
       labs(x = xlab, y = NULL, title = "Proporcje w grupach") +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_text(face = "bold", size = 11),
             panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank()) +
@@ -1087,7 +1082,7 @@ ch4_server <- function(input, output, session) {
       ylim(-0.55, 0.55) +
       labs(x = paste0("Różnica proporcji  —  ", label1, " − ", label2),
            y = NULL, title = "Różnica + CI") +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1131,10 +1126,10 @@ ch4_server <- function(input, output, session) {
     if (step >= 4) {
       p_bot <- p_bot +
         geom_errorbarh(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
-                       height = 0.08, color = col_success, linewidth = 1.8) +
+                       height = 0.08, color = col_hit, linewidth = 1.8) +
         annotate("text", x = diff_val, y = 0.17,
                  label = paste0("± SE = ±", round(se, 3)),
-                 color = col_success, fontface = "bold", size = 4)
+                 color = col_hit, fontface = "bold", size = 4)
     }
 
     if (step >= 5) {
@@ -1180,7 +1175,7 @@ ch4_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(0.3, k + 0.7) +
       labs(x = xlab, y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1190,14 +1185,14 @@ ch4_server <- function(input, output, session) {
     p <- p +
       annotate("text", x = xlims[1], y = y_positions,
                label = groups, hjust = 0, fontface = "bold", size = 4.5,
-               color = col_dark)
+               color = upwr_secondary)
 
     # Krok 1+: surowe liczby x/n
     if (step >= 1) {
       p <- p +
         annotate("text", x = xlims[2], y = y_positions,
                  label = group_df$label, hjust = 1, size = 4,
-                 color = col_dark, fontface = "italic")
+                 color = upwr_secondary, fontface = "italic")
     }
 
     # Krok 2+: punkty p_hat

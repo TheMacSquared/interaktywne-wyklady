@@ -2,47 +2,56 @@
 # CHAPTER 2: Idea przedzialow ufnosci
 # ============================================================================
 
-ch2_ui <- tabPanel("2. Idea przedziałów",
-  fluidRow(column(8, offset = 2,
+ch2_ui <- list(
+  id    = "ch-idea",
+  num   = "02",
+  title = "Idea przedziałów",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Estymata punktowa zmienia się z próby na próbę.
-       Czas dodać do niej zakres niepewności."
+    lc_chapter_hero(
+      kicker = "Rozdział 02 · Przedziały ufności",
+      num    = "02",
+      title  = "Idea przedziałów.",
+      lead   = "Estymata punktowa zmienia się z próby na próbę.
+                Czas dodać do niej zakres niepewności."
     ),
 
-    div(class = "section-title", "Czym jest przedział ufności?"),
+    h2(id = "ch2-czym-jest", class = "section-title",
+       "Czym jest przedział ufności?"),
 
     div(class = "narrative",
-      p("Przedział ufności (CI — confidence interval) to zakres wartości,
-        który z określonym poziomem ufności (np. 95%) zawiera prawdziwy parametr populacji."),
+      p("Przedział ufności (CI — ", tags$em("confidence interval"),
+        ") to zakres wartości, który z określonym poziomem ufności
+        (np. 95%) zawiera prawdziwy parametr populacji."),
       p("Kluczowa idea: gdybyśmy powtarzali eksperyment wiele razy,
         to 95% skonstruowanych przedziałów zawierałoby prawdziwe ",
         withMathJax("\\(\\mu\\)"), ".")
     ),
 
-    # ========================================================================
-    # WIDGET 1: Symulacja przedzialow ufnosci
-    # ========================================================================
-    div(class = "section-title", "Wiele przedziałów ufności"),
+    h2(id = "ch2-wiele-ci", class = "section-title",
+       "Wiele przedziałów ufności"),
 
     div(class = "narrative",
-      p("To kluczowa wizualizacja. Każdy poziomy odcinek to jeden przedział
-        ufności — skonstruowany z osobnej próby. Zielone trafiają w ",
-        withMathJax("\\(\\mu\\)"), ", czerwone — nie."),
-      p("Klikaj \"Dolosuj\" porcjami i obserwuj, jak pokrycie zbliża się do nominalnego poziomu ufności.
-        Przy małej liczbie prób możesz mieć 80% lub 100%, ale przy 200+ pokrycie powinno
+      p("To kluczowa wizualizacja. Każdy poziomy odcinek to jeden
+        przedział ufności — skonstruowany z osobnej próby.
+        Szałwiowe trafiają w ", withMathJax("\\(\\mu\\)"),
+        ", terakotowe — nie."),
+      p("Klikaj „Dolosuj” porcjami i obserwuj, jak pokrycie zbliża się
+        do nominalnego poziomu ufności. Przy małej liczbie prób
+        możesz mieć 80% lub 100%, ale przy 200+ pokrycie powinno
         ustabilizować się wokół 95%.")
     ),
 
-    div(class = "widget-block",
-      h4("Symulacja przedziałów ufności"),
+    figure_panel(
+      label = "Ryc. 2.1", title = "Symulacja przedziałów ufności",
+      full_width = TRUE,
       fluidRow(
         column(4,
           selectInput("ch2_dist", "Rozkład populacji:",
             choices = c(
-              "Normalny (wzrost)"           = "normal",
+              "Normalny (wzrost)"         = "normal",
               "Wykładniczy (prawoskośny)" = "exponential",
-              "Jednostajny"                 = "uniform"
+              "Jednostajny"               = "uniform"
             ),
             selected = "normal"
           ),
@@ -68,37 +77,36 @@ ch2_ui <- tabPanel("2. Idea przedziałów",
       )
     ),
 
-    # ========================================================================
-    # WIDGET 2: Czesty blad interpretacji
-    # ========================================================================
-    div(class = "section-title", "Jak (nie) interpretować przedział ufności"),
+    h2(id = "ch2-jak-interpretowac", class = "section-title",
+       "Jak (nie) interpretować przedział ufności"),
 
     div(class = "narrative",
       p("95% przedział ufności [165, 175] dla średniej wzrostu.
         Która interpretacja jest poprawna?")
     ),
 
-    div(class = "widget-block",
-      h4("Quiz: interpretacja CI"),
+    figure_panel(
+      label = "Ryc. 2.2", title = "Quiz: interpretacja CI",
+      full_width = TRUE,
       p("Wybierz poprawną interpretację:"),
       uiOutput("ch2_quiz_options"),
       uiOutput("ch2_quiz_feedback")
     ),
 
-    div(class = "callout-danger",
-      tags$strong("Częsty błąd:"),
-      " Przedział ufności nie mówi o prawdopodobieństwie, że parametr leży w konkretnym przedziale.
-        Parametr jest stały — to przedział jest losowy!
-        Poprawnie: \"metoda daje przedziały, które w 95% przypadków trafają\"."
+    margin_callout(label = "Częsty błąd", color = "uwaga",
+      "Przedział ufności nie mówi o prawdopodobieństwie, że parametr
+       leży w konkretnym przedziale. Parametr jest stały — to przedział
+       jest losowy. Poprawnie: „metoda daje przedziały, które w 95%
+       przypadków trafiają”."
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: konkretne wzory — przedział dla średniej"),
-      actionButton("ch2_next", "Dalej → 3. Przedział dla średniej",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "03",
+      title     = "Przedział dla średniej",
+      lead      = "konkretne wzory: x̄ ± t·s/√n i jak je liczyć",
+      target_id = "ch-srednia"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -165,7 +173,7 @@ ch2_server <- function(input, output, session) {
                             round(input$ch2_conf * 100), "%)"),
              x = "Wartość parametru",
              y = "Numer próby") +
-        theme_educational() +
+        theme_upwr() +
         theme(legend.position = "top")
     }
   })
@@ -180,11 +188,11 @@ ch2_server <- function(input, output, session) {
     # Kolor pokrycia: zielony jesli w +/- 5pp od nominalnego, czerwony w przeciwnym razie
     color <- if (abs(coverage - nominal) <= 5) col_hit else col_miss
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
           paste0("Prób: ", n_total)),
       div(class = "stat-box", style = paste0("background:", color, ";"),
           paste0("Pokrycie: ", coverage, "% (", n_hits, "/", n_total, ")")),
-      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+      div(class = "stat-box", style = paste0("background:", col_ci, ";"),
           paste0("Oczekiwane: ", nominal, "%"))
     )
   })

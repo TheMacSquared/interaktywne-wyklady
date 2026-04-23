@@ -3,6 +3,14 @@
 # generate_population_sample(), get_population_params(), dist_names_pl -> R/shared.R
 # ============================================================================
 
+# Semantyczne kolory wykładu — z palety upwr_cat.
+# Używane w chapterach 1–7 do plotów CI/estymacji.
+col_ci       <- unname(upwr_cat["niebo"])      # przedział ufności
+col_miss     <- unname(upwr_cat["terakota"])   # przedział nie trafił
+col_hit      <- unname(upwr_cat["szalwia"])    # przedział trafił
+col_estimate <- unname(upwr_cat["bursztyn"])   # estymata punktowa
+col_true     <- unname(upwr_cat["wrzos"])      # prawdziwy parametr
+
 # Symulacja pokrycia przedzialow ufnosci
 simulate_coverage <- function(dist_type, n, conf_level, n_sims = 100,
                               method = "t") {

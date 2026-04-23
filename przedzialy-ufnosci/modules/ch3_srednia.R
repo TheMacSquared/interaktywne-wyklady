@@ -2,15 +2,21 @@
 # CHAPTER 3: Przedzial dla sredniej
 # ============================================================================
 
-ch3_ui <- tabPanel("3. Przedział dla średniej",
-  fluidRow(column(8, offset = 2,
+ch3_ui <- list(
+  id    = "ch-srednia",
+  num   = "03",
+  title = "Przedział dla średniej",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Wiemy już, czym jest przedział ufności i jak go interpretować.
-       Czas na konkrety: wzór i obliczenia."
+    lc_chapter_hero(
+      kicker = "Rozdział 03 · Przedziały ufności",
+      num    = "03",
+      title  = "Przedział dla średniej.",
+      lead   = "Wiemy już, czym jest przedział ufności i jak go
+                interpretować. Czas na konkrety: wzór i obliczenia."
     ),
 
-    div(class = "section-title", "Wzór"),
+    h2(id = "ch3-wzor", class = "section-title", "Wzór"),
 
     div(class = "narrative",
       p("Przedział ufności dla średniej populacji wygląda tak:"),
@@ -39,31 +45,29 @@ ch3_ui <- tabPanel("3. Przedział dla średniej",
         do wyboru. Ten rozdział nauczy Cię interpretować gotowe przedziały — a nie liczyć je ręcznie.")
     ),
 
-    div(class = "callout-info",
-      tags$strong("W jamovi:"),
-      " ", tags$b("Analyses → T-Tests → One Sample T-Test"),
-      " → przeciągnij zmienną ilościową do ", tags$em("Dependent Variables"),
-      " → w panelu ", tags$em("Additional Statistics"), " zaznacz ",
-      tags$b("Confidence interval"), " (domyślnie 95%).
-      W tabeli wyników odczytasz kolumny ",
-      tags$code("Mean"), ", ", tags$code("Lower"), ", ", tags$code("Upper"), ".
-      Dla różnicy dwóch średnich: ",
-      tags$b("Independent Samples T-Test"), " → zaznacz ",
-      tags$b("Mean difference"), " + ", tags$b("Confidence interval"), "."
+    margin_callout(label = "W jamovi", color = "wskazowka",
+      tagList(
+        "Analyses → T-Tests → One Sample T-Test → przeciągnij zmienną
+         ilościową do Dependent Variables → w panelu Additional
+         Statistics zaznacz Confidence interval (domyślnie 95%).
+         W tabeli wyników odczytasz kolumny ",
+        tags$code("Mean"), ", ", tags$code("Lower"), ", ",
+        tags$code("Upper"), "."
+      )
     ),
 
-    # ========================================================================
-    # WIDGET 1: Budowa przedzialu krok po kroku
-    # ========================================================================
-    div(class = "section-title", "Budowa przedziału — krok po kroku"),
+    h2(id = "ch3-budowa", class = "section-title",
+       "Budowa przedziału — krok po kroku"),
 
     div(class = "narrative",
-      p("Zobaczmy, jak z konkretnej próby (25 pomiarów wzrostu) powstaje przedział ufności.
-        Przejdź przez 4 kroki, obserwując co pojawia się na wykresie.")
+      p("Zobaczmy, jak z konkretnej próby (25 pomiarów wzrostu) powstaje
+        przedział ufności. Przejdź przez 4 kroki, obserwując co pojawia
+        się na wykresie.")
     ),
 
-    div(class = "widget-block",
-      h4("Konstruowanie przedziału"),
+    figure_panel(
+      label = "Ryc. 3.1", title = "Konstruowanie przedziału",
+      full_width = TRUE,
       div(class = "step-buttons",
         actionButton("ch3_step1", "1. Próba",    class = "btn-outline-primary"),
         actionButton("ch3_step2", "2. Średnia",  class = "btn-outline-primary"),
@@ -78,27 +82,26 @@ ch3_ui <- tabPanel("3. Przedział dla średniej",
       uiOutput("ch3_step_explanation")
     ),
 
-    # ========================================================================
-    # WIDGET 2: Budowa przedzialu dla roznicy srednich
-    # ========================================================================
-    div(class = "section-title", "Budowa przedziału dla różnicy średnich"),
+    h2(id = "ch3-roznica", class = "section-title",
+       "Budowa przedziału dla różnicy średnich"),
 
     div(class = "narrative",
-      p("CI dla różnicy dwóch średnich buduje się analogicznie, ale błąd standardowy
-        jest inny — trzeba połączyć niepewność z obu prób:"),
+      p("CI dla różnicy dwóch średnich buduje się analogicznie, ale błąd
+        standardowy jest inny — trzeba połączyć niepewność z obu prób:"),
       div(class = "formula-box",
         withMathJax("$$CI = (\\bar{x}_1 - \\bar{x}_2) \\pm t^* \\cdot \\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}}$$")
       ),
       p("Porównamy wzrost mężczyzn i kobiet — po 25 osób w każdej grupie.")
     ),
 
-    div(class = "widget-block",
-      h4("Konstruowanie CI dla różnicy"),
+    figure_panel(
+      label = "Ryc. 3.2", title = "Konstruowanie CI dla różnicy",
+      full_width = TRUE,
       div(class = "step-buttons",
         actionButton("ch3_dstep1", "1. Dwie próby",   class = "btn-outline-primary"),
         actionButton("ch3_dstep2", "2. Dwie średnie", class = "btn-outline-primary"),
-        actionButton("ch3_dstep3", "3. Różnica",     class = "btn-outline-primary"),
-        actionButton("ch3_dstep4", "4. ± SE",          class = "btn-outline-primary"),
+        actionButton("ch3_dstep3", "3. Różnica",      class = "btn-outline-primary"),
+        actionButton("ch3_dstep4", "4. ± SE",         class = "btn-outline-primary"),
         actionButton("ch3_dstep5", "5. Przedział",    class = "btn-outline-primary")
       ),
       div(style = "display: flex; gap: 8px; margin-top: 8px;",
@@ -109,11 +112,8 @@ ch3_ui <- tabPanel("3. Przedział dla średniej",
       uiOutput("ch3_dstep_explanation")
     ),
 
-    # ========================================================================
-    # WIDGET 2B: NAKLADAJACE SIE CI GRUP vs CI ROZNICY
-    # ========================================================================
-    div(class = "section-title",
-        "Dwa CI grup czy CI różnicy? — trzy scenariusze"),
+    h2(id = "ch3-scenariusze", class = "section-title",
+       "Dwa CI grup czy CI różnicy? — trzy scenariusze"),
 
     div(class = "narrative",
       p("Gdy porównujesz dwie grupy, masz dwa sposoby, żeby spojrzeć na wynik:"),
@@ -177,19 +177,16 @@ ch3_ui <- tabPanel("3. Przedział dla średniej",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Zasada praktyczna:"),
-      " Kiedy porównujesz grupy, patrz przede wszystkim na ", tags$b("CI różnicy"),
-      " — to liczba, która uwzględnia niepewność obu pomiarów naraz.
-      Porównywanie dwóch osobnych CI na oko to szybki skrót — często działa,
-      ale przy granicznych różnicach potrafi wprowadzić w błąd
-      (tak jak w scenariuszu C)."
+    margin_callout(label = "Zasada praktyczna", color = "uwaga",
+      "Kiedy porównujesz grupy, patrz przede wszystkim na CI różnicy —
+       to liczba, która uwzględnia niepewność obu pomiarów naraz.
+       Porównywanie dwóch osobnych CI na oko to szybki skrót — często
+       działa, ale przy granicznych różnicach potrafi wprowadzić w błąd
+       (tak jak w scenariuszu C)."
     ),
 
-    # ========================================================================
-    # WIDGET 3: CASE STUDIES (konstruktory + hipotezy)
-    # ========================================================================
-    div(class = "section-title", "Case studies — jak interpretować CI w praktyce"),
+    h2(id = "ch3-case-studies", class = "section-title",
+       "Case studies — jak interpretować CI w praktyce"),
 
     div(class = "narrative",
       p("Poniżej kilka realistycznych sytuacji. W każdej budujesz CI krok po kroku
@@ -198,9 +195,7 @@ ch3_ui <- tabPanel("3. Przedział dla średniej",
         żeby rozwijać case'y.")
     ),
 
-    # ----- GRUPA A: JEDNA SREDNIA -----
-    div(class = "section-title", style = "font-size: 18px; margin-top: 25px;",
-        "A. Przedział dla jednej średniej"),
+    lc_h3("A. Przedział dla jednej średniej"),
 
     tags$details(class = "case-study", open = NA,
       tags$summary(
@@ -238,9 +233,7 @@ ch3_ui <- tabPanel("3. Przedział dla średniej",
       )
     ),
 
-    # ----- GRUPA B: ROZNICA SREDNICH -----
-    div(class = "section-title", style = "font-size: 18px; margin-top: 25px;",
-        "B. Przedział dla różnicy średnich"),
+    lc_h3("B. Przedział dla różnicy średnich"),
 
     tags$details(class = "case-study",
       tags$summary(
@@ -312,9 +305,7 @@ ch3_ui <- tabPanel("3. Przedział dla średniej",
       )
     ),
 
-    # ----- GRUPA C: WIELE GRUP -----
-    div(class = "section-title", style = "font-size: 18px; margin-top: 25px;",
-        "C. Wiele grup — forest plot"),
+    lc_h3("C. Wiele grup — forest plot"),
 
     tags$details(class = "case-study",
       tags$summary(
@@ -349,26 +340,32 @@ ch3_ui <- tabPanel("3. Przedział dla średniej",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Najważniejsze do zapamiętania:"),
-      tags$ol(
-        tags$li("CI dla różnicy mówi czy różnica jest istotna — sprawdź czy zawiera 0."),
-        tags$li("Nie porównuj nakładania się CI poszczególnych grup —
-                to MOŻE dać mylny obraz. Zawsze patrz na CI dla różnicy."),
-        tags$li("\"Istotne statystycznie\" ≠ \"ważne praktycznie\".
-                Przy bardzo dużym n nawet trywialne różnice będą istotne."),
-        tags$li("Forest plot to standardowy sposób porównania wielu grup.
-                Patrz nie tylko na średnie, ale przede wszystkim na długość każdego CI.")
+    div(class = "narrative",
+      div(class = "callout-info",
+        tags$strong("Najważniejsze do zapamiętania:"),
+        tags$ol(
+          tags$li("CI dla różnicy mówi czy różnica jest istotna — sprawdź
+                   czy zawiera 0."),
+          tags$li("Nie porównuj nakładania się CI poszczególnych grup —
+                   to MOŻE dać mylny obraz. Zawsze patrz na CI
+                   dla różnicy."),
+          tags$li("„Istotne statystycznie” ≠ „ważne praktycznie”.
+                   Przy bardzo dużym n nawet trywialne różnice
+                   będą istotne."),
+          tags$li("Forest plot to standardowy sposób porównania wielu
+                   grup. Patrz nie tylko na średnie, ale przede
+                   wszystkim na długość każdego CI.")
+        )
       )
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: przedział ufności dla proporcji"),
-      actionButton("ch3_next", "Dalej → 4. Przedział dla proporcji",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num       = "04",
+      title     = "Przedział dla proporcji",
+      lead      = "CI dla odsetków: Wald, Wilson, Clopper-Pearson",
+      target_id = "ch-proporcja"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -454,15 +451,15 @@ ch3_server <- function(input, output, session) {
     Y_CI   <- -0.18
 
     # Wyszarzanie poprzednich elementow
-    col_faded <- "#adb5bd"
-    c_mean <- if (step >= 3) col_faded else col_estimate
-    c_se   <- if (step >= 4) col_faded else col_success
+    c_faded <- "#adb5bd"
+    c_mean <- if (step >= 3) c_faded else col_estimate
+    c_se   <- if (step >= 4) c_faded else col_hit
 
     p <- ggplot() +
       xlim(xlims) +
       ylim(-0.45, 0.98) +
       labs(x = "Wzrost (cm)", y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -471,7 +468,7 @@ ch3_server <- function(input, output, session) {
     # Krok 1+: surowe punkty z proby
     if (step >= 1) {
       p <- p + geom_point(data = samp_df, aes(x = x, y = y),
-                          color = col_primary, size = 3, alpha = 0.7)
+                          color = col_ci, size = 3, alpha = 0.7)
     }
 
     # Krok 2+: pionowa linia prowadzaca + diament sredniej
@@ -642,8 +639,8 @@ ch3_server <- function(input, output, session) {
     t_star <- qt(0.975, df = df_w)
     me <- t_star * se
 
-    col_men <- col_primary      # niebieski
-    col_women <- col_secondary  # czerwony
+    col_men <- col_ci      # niebieski
+    col_women <- col_miss  # czerwony
 
     # ---- GORNY PANEL: dwie grupy na skali wzrostu ----
     xlims_top <- range(c(men, women))
@@ -660,7 +657,7 @@ ch3_server <- function(input, output, session) {
       xlim(xlims_top) +
       ylim(0.35, 2.25) +
       labs(x = "Wzrost (cm)", y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -717,7 +714,7 @@ ch3_server <- function(input, output, session) {
       ylim(-0.55, 0.55) +
       labs(x = "Różnica średnich (cm)  —  Mężczyźni − Kobiety",
            y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -739,10 +736,10 @@ ch3_server <- function(input, output, session) {
     if (step >= 4) {
       p_bot <- p_bot +
         geom_errorbarh(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
-                       height = 0.08, color = col_success, linewidth = 1.8) +
+                       height = 0.08, color = col_hit, linewidth = 1.8) +
         annotate("text", x = diff_val, y = 0.17,
                  label = paste0("± SE = ±", round(se, 2)),
-                 color = col_success, fontface = "bold", size = 4)
+                 color = col_hit, fontface = "bold", size = 4)
     }
 
     # Krok 5: pelen CI
@@ -1065,7 +1062,7 @@ ch3_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(-0.55, 0.75) +
       labs(x = xlab, y = NULL, title = title) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1095,7 +1092,7 @@ ch3_server <- function(input, output, session) {
 
     if (step >= 1) {
       p <- p + geom_point(data = samp_df, aes(x = x, y = y),
-                          color = col_primary, size = 3, alpha = 0.7)
+                          color = col_ci, size = 3, alpha = 0.7)
     }
     if (step >= 2) {
       p <- p +
@@ -1110,10 +1107,10 @@ ch3_server <- function(input, output, session) {
     if (step >= 3) {
       p <- p +
         geom_errorbarh(aes(xmin = xbar - se, xmax = xbar + se, y = 0),
-                       height = 0.06, color = col_success, linewidth = 1.8) +
+                       height = 0.06, color = col_hit, linewidth = 1.8) +
         annotate("text", x = xbar, y = 0.14,
                  label = paste0("± SE = ±", round(se, 2)),
-                 color = col_success, fontface = "bold", size = 4)
+                 color = col_hit, fontface = "bold", size = 4)
     }
     if (step >= 4) {
       p <- p +
@@ -1158,7 +1155,7 @@ ch3_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(0.3, length(ns) + 0.7) +
       labs(x = xlab, y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1208,7 +1205,7 @@ ch3_server <- function(input, output, session) {
           annotate("text", x = xlims[1], y = y,
                    label = paste0("n = ", ci$n),
                    hjust = 0, fontface = "bold", size = 4.5,
-                   color = col_dark) +
+                   color = upwr_secondary) +
           annotate("text", x = ci$upper, y = y + 0.22,
                    label = paste0("[", round(ci$lower, 2), " ; ",
                                   round(ci$upper, 2), "]"),
@@ -1230,8 +1227,8 @@ ch3_server <- function(input, output, session) {
     diff_val <- cid$diff
     se <- cid$se; me <- cid$me
 
-    col_g1 <- col_primary
-    col_g2 <- col_secondary
+    col_g1 <- col_ci
+    col_g2 <- col_miss
 
     # Generuj reprezentatywne probki z parametrow
     set.seed(11)
@@ -1260,7 +1257,7 @@ ch3_server <- function(input, output, session) {
       xlim(xlims_top) +
       ylim(0.35, 2.25) +
       labs(x = xlab, y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1312,7 +1309,7 @@ ch3_server <- function(input, output, session) {
       ylim(-0.55, 0.65) +
       labs(x = paste0("Różnica (", data$unit, ")  —  ", data$diff_label),
            y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1357,10 +1354,10 @@ ch3_server <- function(input, output, session) {
     if (step >= 4) {
       p_bot <- p_bot +
         geom_errorbarh(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
-                       height = 0.08, color = col_success, linewidth = 1.8) +
+                       height = 0.08, color = col_hit, linewidth = 1.8) +
         annotate("text", x = diff_val, y = 0.17,
                  label = paste0("± SE = ±", round(se, 2)),
-                 color = col_success, fontface = "bold", size = 4)
+                 color = col_hit, fontface = "bold", size = 4)
     }
     if (step >= 5) {
       p_bot <- p_bot +
@@ -1419,7 +1416,7 @@ ch3_server <- function(input, output, session) {
       xlim(xlims) +
       ylim(0.3, k + 0.7) +
       labs(x = xlab, y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -1429,7 +1426,7 @@ ch3_server <- function(input, output, session) {
     p <- p +
       annotate("text", x = xlims[1], y = y_positions,
                label = groups, hjust = 0, fontface = "bold", size = 4.5,
-               color = col_dark)
+               color = upwr_secondary)
 
     # Obszar hipotezy
     if (!is.null(hypothesis)) {
@@ -1456,7 +1453,7 @@ ch3_server <- function(input, output, session) {
     # Krok 1+: punkty
     if (step >= 1) {
       p <- p + geom_point(data = points_df, aes(x = x, y = y),
-                          color = col_primary, size = 2.3, alpha = 0.55)
+                          color = col_ci, size = 2.3, alpha = 0.55)
     }
     # Krok 2+: srednie
     if (step >= 2) {
@@ -1982,7 +1979,7 @@ ch3_server <- function(input, output, session) {
       scale_y_continuous(breaks = df_groups$row, labels = df_groups$label,
                          limits = c(0.5, 2.5)) +
       labs(title = "CI grup (osobno)", x = dat$unit, y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(plot.title = element_text(size = 13, face = "bold"))
 
     p_diff <- ggplot(df_diff, aes(y = row)) +
@@ -1999,7 +1996,7 @@ ch3_server <- function(input, output, session) {
                          limits = c(0.5, 2.5)) +
       labs(title = paste0("CI różnicy (", dat$g1_name, " − ", dat$g2_name, ")"),
            x = paste("różnica —", dat$unit), y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(plot.title = element_text(size = 13, face = "bold"))
 
     # Uklad jeden pod drugim

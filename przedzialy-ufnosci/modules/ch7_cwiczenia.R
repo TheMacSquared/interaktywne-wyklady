@@ -7,40 +7,47 @@
 # UI
 # ============================================================================
 
-ch7_ui <- tabPanel("7. Ćwiczenia",
-  fluidRow(column(8, offset = 2,
+ch7_ui <- list(
+  id    = "ch-cwiczenia",
+  num   = "07",
+  title = "Ćwiczenia",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Czas zastosować wszystko, co poznaliśmy o przedziałach ufności na rzeczywistych danych."
+    lc_chapter_hero(
+      kicker = "Rozdział 07 · Przedziały ufności",
+      num    = "07",
+      title  = "Ćwiczenia praktyczne.",
+      lead   = "Czas zastosować wszystko, co poznaliśmy o przedziałach
+                ufności na rzeczywistych danych."
     ),
 
-    div(class = "section-title", "Ćwiczenia praktyczne — przedziały ufności"),
+    h2(id = "ch7-cwiczenia", class = "section-title",
+       "Ćwiczenia praktyczne — przedziały ufności"),
 
     div(class = "narrative",
       p(tags$b("Czas trwania:"), " ~ 90 minut · ",
         tags$b("Narzędzie:"), " Jamovi"),
-      p("Trzy bloki zadań — CI dla średniej, CI dla proporcji, interpretacja i myślenie krytyczne.
-        Każde zadanie ma ", tags$b("ukryte rozwiązanie"),
-        " — kliknij przycisk, aby je zobaczyć.")
-    ),
+      p("Trzy bloki zadań — CI dla średniej, CI dla proporcji,
+        interpretacja i myślenie krytyczne. Każde zadanie ma ",
+        tags$b("ukryte rozwiązanie"),
+        " — kliknij przycisk, aby je zobaczyć."),
 
-    div(class = "callout-info",
-      selectInput("ch7_kierunek", tags$b("Wybierz wariant dla kierunku:"),
-        choices = list(
-          "Edukacja (CASchools)" = "edu",
-          "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
-          "Rolnictwo" = "rol",
-          "Technologia żywności" = "zyw"
-        ),
-        selected = "edu",
-        width = "100%"
+      div(class = "callout-info",
+        selectInput("ch7_kierunek", tags$b("Wybierz wariant dla kierunku:"),
+          choices = list(
+            "Edukacja (CASchools)" = "edu",
+            "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
+            "Rolnictwo" = "rol",
+            "Technologia żywności" = "zyw"
+          ),
+          selected = "edu",
+          width = "100%"
+        )
       )
     ),
 
-    uiOutput("ch7_content"),
-
-    br(), br(), br()
-  ))
+    uiOutput("ch7_content")
+  )
 )
 
 # ============================================================================
@@ -589,14 +596,14 @@ ch7_ui <- tabPanel("7. Ćwiczenia",
   } else if (ci[1] > 0) {
     tagList(
       tags$b("Wniosek:"),
-      sprintf(" 95%% CI dla różnicy proporcji leży powyżej 0 ([%.3f, %.3f]). Odsetek %s wśród %s z „%s = TRUE\" jest wyższy o %.1f–%.1f pp niż wśród pozostałych — jest związek.",
+      sprintf(" 95%% CI dla różnicy proporcji leży powyżej 0 ([%.3f, %.3f]). Odsetek %s wśród %s z „%s = TRUE” jest wyższy o %.1f–%.1f pp niż wśród pozostałych — jest związek.",
               ci[1], ci[2], y_event_phrase, unit_plural_gen, x_lab,
               100 * ci[1], 100 * ci[2])
     )
   } else {
     tagList(
       tags$b("Wniosek:"),
-      sprintf(" 95%% CI dla różnicy proporcji leży poniżej 0 ([%.3f, %.3f]). Odsetek %s wśród %s z „%s = TRUE\" jest niższy o %.1f–%.1f pp niż wśród pozostałych — jest związek.",
+      sprintf(" 95%% CI dla różnicy proporcji leży poniżej 0 ([%.3f, %.3f]). Odsetek %s wśród %s z „%s = TRUE” jest niższy o %.1f–%.1f pp niż wśród pozostałych — jest związek.",
               ci[1], ci[2], y_event_phrase, unit_plural_gen, x_lab,
               -100 * ci[2], -100 * ci[1])
     )
