@@ -1,14 +1,8 @@
 # ============================================================================
 # CHAPTER: Drzewo decyzyjne - mapa wyboru testu statystycznego
 # ============================================================================
-# Dwie równoległe implementacje tego samego diagramu:
-#   - Wariant A: DiagrammeR (Graphviz) - statyczny, wierne odwzorowanie
-#                screenshota z zajęć (dwa drzewka)
-#   - Wariant B: visNetwork - interaktywny, jedno drzewo z wspólnym
-#                korzeniem "Ile mamy zmiennych?"
-#
-# Dane grafu i konstruktor widgetu visNetwork są w modules/drzewo_data.R,
-# żeby móc ich używać także ze skryptu eksportu (../export_drzewo.R).
+# Interaktywne drzewo przez visNetwork. Dane grafu i konstruktor widgetu
+# w modules/drzewo_data.R — używane też przez ../export_drzewo.R.
 
 source(file.path(app_dir, "modules", "drzewo_data.R"), local = TRUE)
 
@@ -28,42 +22,36 @@ ch_drzewo_ui <- list(
                 i liczby grup do konkretnego testu. Jedno spojrzenie na cały wykład."
     ),
 
-    # ----------------------- WARIANT A: Graphviz -----------------------
-    h2(id = "ch-drzewo-graphviz", class = "section-title",
-       "Wariant A — statyczny diagram (DiagrammeR / Graphviz)"),
-
     div(class = "narrative",
-      p("Wierne odwzorowanie diagramu z zajęć. Dwa osobne drzewka: dla testów
-         ", tags$b("jednej zmiennej"), " (na górze) oraz ", tags$b("dwóch zmiennych"),
-        " (poniżej). Kolor zielony = dane ilościowe/ciągłe, niebieski = nominalne/porządkowe.")
+      p("Jedno drzewo zaczynające się od pytania „ile mamy zmiennych?”.
+        Diagram jest interaktywny — możesz przeciągać węzły, powiększać scrollem,
+        a także ", tags$b("kliknąć"),
+        " dowolny węzeł, żeby podświetlić jego ścieżkę decyzyjną."),
+      p("Gdy drzewo robi się za ciasne w kolumnie treści, kliknij przycisk ",
+        tags$b("Pełny ekran"), " — rozszerzy widget na całe okno przeglądarki.
+        Wyjście: przycisk ", tags$em("Zamknij"), " lub klawisz Esc.")
     ),
 
     figure_panel(
       label = "Ryc. 9.1",
-      title = "Drzewo decyzyjne — wariant statyczny",
-      full_width = TRUE,
-      DiagrammeR::grVizOutput("drzewo_graphviz", height = "1400px", width = "100%")
-    ),
-
-    # ----------------------- WARIANT B: visNetwork ---------------------
-    h2(id = "ch-drzewo-visnet", class = "section-title",
-       "Wariant B — diagram interaktywny (visNetwork)"),
-
-    div(class = "narrative",
-      p("Ten sam zestaw decyzji, ale jako ", tags$b("jedno drzewo"),
-        " zaczynające się od pytania „ile mamy zmiennych?”. Diagram jest
-         interaktywny — możesz przeciągać węzły, powiększać scrollem, a także
-         ", tags$b("kliknąć"), " dowolny węzeł, żeby podświetlić jego ścieżkę decyzyjną.")
-    ),
-
-    figure_panel(
-      label = "Ryc. 9.2",
       title = "Drzewo decyzyjne — wariant interaktywny",
       full_width = TRUE,
-      visNetwork::visNetworkOutput("drzewo_visnet", height = "1000px", width = "100%")
+      div(id = "drzewo-fullscreen-wrap", class = "drzewo-wrap",
+        div(class = "drzewo-toolbar",
+          tags$button(type = "button", class = "btn btn-outline-secondary btn-sm",
+            onclick = paste0(
+              "var el = document.getElementById('drzewo-fullscreen-wrap');",
+              "if (document.fullscreenElement) { document.exitFullscreen(); }",
+              "else if (el.requestFullscreen) { el.requestFullscreen(); }",
+              "else if (el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); }"
+            ),
+            HTML("&#x26F6; Pełny ekran")
+          )
+        ),
+        visNetwork::visNetworkOutput("drzewo_visnet", height = "1000px", width = "100%")
+      )
     ),
 
-    # ----------------------- Legenda / kiedy który ---------------------
     margin_callout(
       label = "Jak używać",
       tagList(
@@ -89,10 +77,6 @@ ch_drzewo_ui <- list(
 # SERVER
 # ----------------------------------------------------------------------------
 ch_drzewo_server <- function(input, output, session) {
-
-  output$drzewo_graphviz <- DiagrammeR::renderGrViz({
-    DiagrammeR::grViz(drzewo_dot)
-  })
 
   output$drzewo_visnet <- visNetwork::renderVisNetwork({
     build_drzewo_visnet()

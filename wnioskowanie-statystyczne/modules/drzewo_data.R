@@ -339,13 +339,13 @@ build_drzewo_visnet <- function() {
       shape = "box",
       margin = 12,
       widthConstraint = list(minimum = 180, maximum = 320),
-      font = list(multi = "html", size = 13,
+      font = list(multi = "html", size = 15,
                   face = "Helvetica", align = "left")
     ) |>
     visNetwork::visHierarchicalLayout(
       direction = "UD",
       sortMethod = "directed",
-      levelSeparation = 220,
+      levelSeparation = 160,
       nodeSpacing = 360,
       treeSpacing = 260,
       blockShifting = TRUE,
@@ -355,44 +355,44 @@ build_drzewo_visnet <- function() {
     visNetwork::visGroups(groupname = "root",
                           color = list(background = "#ffffff",
                                        border = "#2c3e50"),
-                          font = list(multi = "html", size = 18,
+                          font = list(multi = "html", size = 20,
                                       face = "Helvetica", align = "center")) |>
     visNetwork::visGroups(groupname = "decision",
                           shape = "ellipse",
                           color = list(background = "#ffffff",
                                        border = "#7f8c8d"),
-                          font = list(multi = "html", size = 14,
+                          font = list(multi = "html", size = 16,
                                       face = "Helvetica", align = "center")) |>
     visNetwork::visGroups(groupname = "branch",
                           color = list(background = "#ecf0f1",
                                        border = "#2c3e50"),
-                          font = list(multi = "html", size = 15,
+                          font = list(multi = "html", size = 17,
                                       face = "Helvetica", align = "center")) |>
     visNetwork::visGroups(groupname = "cat_ilo",
                           color = list(background = "#d5f5e3",
                                        border = "#27ae60"),
-                          font = list(multi = "html", size = 13,
+                          font = list(multi = "html", size = 15,
                                       face = "Helvetica", align = "center")) |>
     visNetwork::visGroups(groupname = "cat_nom",
                           color = list(background = "#d6eaf8",
                                        border = "#2980b9"),
-                          font = list(multi = "html", size = 13,
+                          font = list(multi = "html", size = 15,
                                       face = "Helvetica", align = "center")) |>
     visNetwork::visGroups(groupname = "test_ilo",
                           color = list(background = "#eafaf1",
                                        border = "#27ae60"),
-                          font = list(multi = "html", size = 12,
+                          font = list(multi = "html", size = 14,
                                       face = "Helvetica", align = "left")) |>
     visNetwork::visGroups(groupname = "test_nom",
                           color = list(background = "#eaf3fa",
                                        border = "#2980b9"),
-                          font = list(multi = "html", size = 12,
+                          font = list(multi = "html", size = 14,
                                       face = "Helvetica", align = "left")) |>
     visNetwork::visEdges(arrows = "to",
                          color = list(color = "#2c3e50"),
                          smooth = list(enabled = TRUE, type = "cubicBezier",
                                        roundness = 0.4),
-                         font = list(size = 11, align = "middle",
+                         font = list(size = 13, align = "middle",
                                      background = "#ffffff")) |>
     visNetwork::visOptions(highlightNearest = list(enabled = TRUE,
                                                    degree = 2,
