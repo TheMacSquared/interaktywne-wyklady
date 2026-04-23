@@ -8,7 +8,7 @@ ch6_ui <- list(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 07 · Wnioskowanie statystyczne",
+      kicker = "Rozdział 07 · Testowanie hipotez",
       num    = "07",
       title  = "Test t dwóch grup.",
       lead   = "„Czy mężczyźni jeżdżą szybciej niż kobiety?” Porównanie średnich między

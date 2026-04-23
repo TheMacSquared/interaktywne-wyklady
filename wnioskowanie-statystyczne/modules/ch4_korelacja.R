@@ -8,7 +8,7 @@ ch4_ui <- list(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 05 · Wnioskowanie statystyczne",
+      kicker = "Rozdział 05 · Testowanie hipotez",
       num    = "05",
       title  = "Korelacja.",
       lead   = "„Czy wraz ze wzrostem temperatury rośnie sprzedaż lodów?” Współczynnik

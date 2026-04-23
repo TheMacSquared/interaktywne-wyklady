@@ -15,7 +15,7 @@ ch9_ui <- list(
   content = tagList(
 
     lc_chapter_hero(
-      kicker = "Rozdział 11 · Wnioskowanie statystyczne",
+      kicker = "Rozdział 11 · Testowanie hipotez",
       num    = "11",
       title  = "Ćwiczenia z danymi.",
       lead   = "420 okręgów szkolnych Kalifornii — dane przekrojowe ze zmiennymi

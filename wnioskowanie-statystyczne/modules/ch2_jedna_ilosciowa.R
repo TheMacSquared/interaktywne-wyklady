@@ -8,7 +8,7 @@ ch2_ui <- list(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 03 · Wnioskowanie statystyczne",
+      kicker = "Rozdział 03 · Testowanie hipotez",
       num    = "03",
       title  = "Test t jednej próby.",
       lead   = "„Czy nasi studenci mają typowy poziom koncentracji?” Jeden pomiar na

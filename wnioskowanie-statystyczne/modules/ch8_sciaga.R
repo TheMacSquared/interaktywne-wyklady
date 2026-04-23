@@ -8,7 +8,7 @@ ch8_ui <- list(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 10 · Wnioskowanie statystyczne",
+      kicker = "Rozdział 10 · Testowanie hipotez",
       num    = "10",
       title  = "Ściąga.",
       lead   = "Kompaktowe podsumowanie wszystkich testów omówionych w wykładzie —

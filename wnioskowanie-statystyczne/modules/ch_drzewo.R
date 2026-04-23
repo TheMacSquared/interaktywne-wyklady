@@ -15,7 +15,7 @@ ch_drzewo_ui <- list(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 09 · Wnioskowanie statystyczne",
+      kicker = "Rozdział 09 · Testowanie hipotez",
       num    = "09",
       title  = "Drzewo decyzyjne.",
       lead   = "„Mam dane — jaki test zastosować?” Mapa decyzji: od typu zmiennych

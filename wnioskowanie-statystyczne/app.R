@@ -1,4 +1,4 @@
-# Wnioskowanie statystyczne - interaktywny przewodnik
+# Testowanie hipotez - interaktywny przewodnik
 # Scrollowalny skrypt z osadzonymi widgetami do nauczania testow hipotez
 
 library(shiny)
@@ -60,9 +60,9 @@ source(file.path(app_dir, "modules", "ch9_cwiczenia.R"),        local = TRUE)
 
 ui <- lecture_page(
   lecture_id    = "wnioskowanie-statystyczne",
-  lecture_num   = "03",
-  lecture_title = "Wnioskowanie statystyczne",
-  module_label  = "Moduł III",
+  lecture_num   = "04",
+  lecture_title = "Testowanie hipotez",
+  module_label  = "Moduł IV",
   chapters      = .chapters
 )
 

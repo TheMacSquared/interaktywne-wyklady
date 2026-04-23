@@ -8,7 +8,7 @@ ch3_ui <- list(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 04 · Wnioskowanie statystyczne",
+      kicker = "Rozdział 04 · Testowanie hipotez",
       num    = "04",
       title  = "Test proporcji.",
       lead   = "„Czy w naszej populacji faktycznie 30% osób to leworęczni?” Gdy pytanie

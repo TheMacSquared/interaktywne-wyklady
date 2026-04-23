@@ -8,7 +8,7 @@ ch1_ui <- list(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 01 · Wnioskowanie statystyczne",
+      kicker = "Rozdział 01 · Testowanie hipotez",
       num    = "01",
       title  = "Logika testowania.",
       lead   = "„Czy telefon na biurku obniża koncentrację?” — statystyk zaczyna nie

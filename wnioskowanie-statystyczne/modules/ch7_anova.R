@@ -8,7 +8,7 @@ ch7_ui <- list(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 08 · Wnioskowanie statystyczne",
+      kicker = "Rozdział 08 · Testowanie hipotez",
       num    = "08",
       title  = "ANOVA.",
       lead   = "„Czy średnia cena posiłku różni się między Spiżem, budką z knyszą a Pasibusem?”

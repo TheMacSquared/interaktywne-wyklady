@@ -8,7 +8,7 @@ ch5_ui <- list(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 06 · Wnioskowanie statystyczne",
+      kicker = "Rozdział 06 · Testowanie hipotez",
       num    = "06",
       title  = "Test χ² niezależności.",
       lead   = "„Czy wybór kierunku studiów zależy od płci?” Dwie zmienne jakościowe —

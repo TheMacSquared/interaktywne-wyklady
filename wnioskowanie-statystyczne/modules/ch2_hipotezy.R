@@ -8,7 +8,7 @@ ch2h_ui <- list(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 02 · Wnioskowanie statystyczne",
+      kicker = "Rozdział 02 · Testowanie hipotez",
       num    = "02",
       title  = "Od pytania do hipotezy.",
       lead   = "„Wydaje mi się, że coś z nimi jest nie tak — co robić?” Sformalizowanie
