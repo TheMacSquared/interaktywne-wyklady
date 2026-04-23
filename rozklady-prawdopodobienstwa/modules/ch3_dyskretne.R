@@ -2,16 +2,20 @@
 # CHAPTER 3: Rozklady dyskretne
 # ============================================================================
 
-ch3_ui <- tabPanel("3. Rozkłady dyskretne",
-  fluidRow(column(8, offset = 2,
+ch3_ui <- list(
+  id = "ch-dyskretne", num = "03", title = "Rozkłady dyskretne",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Wiemy już, czym jest wartość oczekiwana i wariancja.
-       Teraz poznamy trzy klasyczne rozkłady dyskretne i zobaczymy,
-       jak ich E(X) i Var(X) zależą od parametrów."
+    lc_chapter_hero(
+      kicker = "Rozdział 03 · Rozkłady prawdopodobieństwa",
+      num    = "03",
+      title  = "Rozkłady dyskretne.",
+      lead   = "Wiemy już, czym jest wartość oczekiwana i wariancja.
+                Teraz poznamy cztery klasyczne rozkłady dyskretne i zobaczymy,
+                jak ich E(X) i Var(X) zależą od parametrów."
     ),
 
-    div(class = "section-title", "Rozkłady dyskretne"),
+    h2(id = "ch3-intro", class = "section-title", "Rozkłady dyskretne"),
 
     div(class = "narrative",
       p("Rozkład dyskretny opisuje zmienną, która przyjmuje ",
@@ -23,15 +27,17 @@ ch3_ui <- tabPanel("3. Rozkłady dyskretne",
     # ========================================================================
     # WIDGET 1: Rozklad jednostajny dyskretny
     # ========================================================================
-    div(class = "section-title", "Rozkład jednostajny dyskretny"),
+    h2(id = "ch3-jednostajny", class = "section-title", "Rozkład jednostajny dyskretny"),
 
     div(class = "narrative",
       p("Najprostszy rozkład: każdy wynik jest jednakowo prawdopodobny.
         Przykłady: rzut kostką, losowanie cyfry, losowanie karty z talii.")
     ),
 
-    div(class = "widget-block",
-      h4("Symulacja: moneta i kostka"),
+    figure_panel(
+      label = "Ryc. 3.1",
+      title = "Symulacja: moneta i kostka",
+      full_width = TRUE,
       fluidRow(
         column(4,
           radioButtons("ch3_unif_type", "Eksperyment:",
@@ -59,7 +65,7 @@ ch3_ui <- tabPanel("3. Rozkłady dyskretne",
     # ========================================================================
     # WIDGET 2: Rozklad dwumianowy — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozkład dwumianowy (Binomial)"),
+    h2(id = "ch3-dwumianowy", class = "section-title", "Rozkład dwumianowy (Binomial)"),
 
     div(class = "narrative",
       p("Powtarzamy n niezależnych prób, każda z prawdopodobieństwem
@@ -68,8 +74,10 @@ ch3_ui <- tabPanel("3. Rozkłady dyskretne",
         w partii? Ile poprawnych odpowiedzi na teście wielokrotnego wyboru?")
     ),
 
-    div(class = "widget-block",
-      h4("Rozkład dwumianowy B(n, p)"),
+    figure_panel(
+      label = "Ryc. 3.2",
+      title = "Rozkład dwumianowy B(n, p)",
+      full_width = TRUE,
       fluidRow(
         column(4,
           checkboxGroupInput("ch3_binom_scenarios", "Scenariusze:",
@@ -94,24 +102,23 @@ ch3_ui <- tabPanel("3. Rozkłady dyskretne",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Obserwacja:"),
-      " Porównaj scenariusze i zwróć uwagę, jak zmiana p przesuwa
-        rozkład, a wzrost n sprawia, że staje się coraz bardziej 'dzwonowaty'."
+    margin_callout(
+      label = "Obserwacja",
+      "Porównaj scenariusze i zwróć uwagę, jak zmiana p przesuwa
+       rozkład, a wzrost n sprawia, że staje się coraz bardziej 'dzwonowaty'."
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Jak rozpoznać?"),
-      " Kiedy w zadaniu widzisz pytanie typu ",
-      "„ile z n...” — myśl dwumianowy.
-        Np. „ile z 20 studentów zda egzamin?”, „ile z 50 produktów będzie wadliwych?”.
-        Kluczowe: masz ustaloną liczbę prób i dwa wyniki (sukces/porażka)."
+    margin_callout(
+      label = "Jak rozpoznać?",
+      "Kiedy w zadaniu widzisz pytanie: ile z n... — mysl dwumianowy.
+       Np. ile z 20 studentow zda egzamin? Kluczowe: ustalona liczba prob i dwa wyniki.",
+      color = "uwaga"
     ),
 
     # ========================================================================
     # WIDGET 3: Rozklad Poissona — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozkład Poissona"),
+    h2(id = "ch3-poisson", class = "section-title", "Rozkład Poissona"),
 
     div(class = "narrative",
       p("Zliczamy zdarzenia zachodzące w ustalonym przedziale czasu lub przestrzeni.
@@ -120,8 +127,10 @@ ch3_ui <- tabPanel("3. Rozkłady dyskretne",
         wypadków na skrzyżowaniu w miesiącu.")
     ),
 
-    div(class = "widget-block",
-      h4("Rozkład Poissona Pois(λ)"),
+    figure_panel(
+      label = "Ryc. 3.3",
+      title = "Rozkład Poissona Pois(λ)",
+      full_width = TRUE,
       fluidRow(
         column(4,
           checkboxGroupInput("ch3_pois_scenarios", "Scenariusze:",
@@ -146,24 +155,23 @@ ch3_ui <- tabPanel("3. Rozkłady dyskretne",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Ciekawostka:"),
-      " W rozkładzie Poissona wartość oczekiwana = wariancja = λ.
-        Jeśli w danych średnia ≈ wariancja, to dobry kandydat na model Poissona!"
+    margin_callout(
+      label = "Ciekawostka",
+      "W rozkładzie Poissona wartość oczekiwana = wariancja = λ.
+       Jeśli w danych średnia ≈ wariancja, to dobry kandydat na model Poissona!"
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Jak rozpoznać?"),
-      " Kiedy w zadaniu widzisz pytanie typu ",
-      "„ile razy w ciągu...” — myśl Poisson.
-        Np. „ile wiadomości dostaniesz w ciągu godziny?”, „ile błędów na stronie?”.
-        Kluczowe: zliczasz zdarzenia w ustalonym czasie lub przestrzeni, bez górnego limitu."
+    margin_callout(
+      label = "Jak rozpoznać?",
+      "Kiedy w zadaniu widzisz pytanie: ile razy w ciagu... — mysl Poisson.
+       Kluczowe: zliczasz zdarzenia w ustalonym czasie lub przestrzeni, bez gornego limitu.",
+      color = "uwaga"
     ),
 
     # ========================================================================
     # WIDGET 4: Rozklad geometryczny — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozkład geometryczny"),
+    h2(id = "ch3-geometryczny", class = "section-title", "Rozkład geometryczny"),
 
     div(class = "narrative",
       p("Powtarzamy próby aż do pierwszego sukcesu. Pytamy: ile prób to zajmie?"),
@@ -171,8 +179,10 @@ ch3_ui <- tabPanel("3. Rozkłady dyskretne",
         Ile losowań do trafienia nagrody? Ile prób egzaminu do zdania?")
     ),
 
-    div(class = "widget-block",
-      h4("Rozkład geometryczny Geom(p)"),
+    figure_panel(
+      label = "Ryc. 3.4",
+      title = "Rozkład geometryczny Geom(p)",
+      full_width = TRUE,
       fluidRow(
         column(4,
           checkboxGroupInput("ch3_geom_scenarios", "Scenariusze:",
@@ -197,26 +207,24 @@ ch3_ui <- tabPanel("3. Rozkłady dyskretne",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Uwaga:"),
-      " Im mniejsze p, tym dłużej (przeciętnie) czekamy na sukces.
-        Rozkład geometryczny jest bezpamięciowy — szansa sukcesu w każdej próbie jest taka sama,
-        niezależnie od tego ile porażek już było."
+    margin_callout(
+      label = "Bezpamięciowość",
+      "Im mniejsze p, tym dłużej (przeciętnie) czekamy na sukces.
+       Rozkład geometryczny jest bezpamięciowy — szansa sukcesu w każdej próbie jest taka sama,
+       niezależnie od liczby dotychczasowych porażek."
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Jak rozpoznać?"),
-      " Kiedy w zadaniu widzisz pytanie typu ",
-      "„ile prób aż do...” — myśl geometryczny.
-        Np. „ile rzutów kostką do pierwszej szóstki?”,
-        „ile CV trzeba wysłać, żeby dostać zaproszenie na rozmowę?”.
-        Kluczowe: powtarzasz próby aż do pierwszego sukcesu."
+    margin_callout(
+      label = "Jak rozpoznać?",
+      "Kiedy w zadaniu widzisz pytanie: ile prob az do... — mysl geometryczny.
+       Kluczowe: powtarzasz proby az do pierwszego sukcesu.",
+      color = "uwaga"
     ),
 
     # ========================================================================
     # WIDGET 5: Porownanie czterech rozkladow
     # ========================================================================
-    div(class = "section-title", "Porównanie czterech rozkładów"),
+    h2(id = "ch3-porownanie", class = "section-title", "Porównanie czterech rozkładów"),
 
     div(class = "narrative",
       p("Zobaczmy wszystkie cztery rozkłady obok siebie. Zwróć uwagę na
@@ -224,24 +232,22 @@ ch3_ui <- tabPanel("3. Rozkłady dyskretne",
         wyglądać jak gładki 'dzwon'.")
     ),
 
-    div(class = "widget-block",
-      h4("Cztery rozkłady obok siebie"),
+    figure_panel(
+      label = "Ryc. 3.5",
+      title = "Cztery rozkłady obok siebie",
+      full_width = TRUE,
       checkboxInput("ch3_compare_show_ev", "Pokaż wartość oczekiwaną (linia)", value = FALSE),
       checkboxInput("ch3_compare_show_sd", "Pokaż ± odchylenie standardowe (pas)", value = FALSE),
       plotOutput("ch3_compare_plot", height = "350px")
     ),
 
-    # --- Transition ---
-    div(class = "chapter-transition",
-      p("Rozkłady dyskretne opisują wyniki, które można policzyć.
-        Ale co, gdy zmienna może przyjąć dowolną wartość z pewnego przedziału?
-        Wtedy potrzebujemy rozkładów ciągłych."),
-      actionButton("ch3_next", "Dalej: 4. Rozkłady ciągłe →",
-                   class = "btn-primary btn-lg")
-    ),
-
-    br(), br()
-  ))
+    lc_chapter_next(
+      num       = "04",
+      title     = "Rozkłady ciągłe",
+      lead      = "gdy zmienna może przyjąć dowolną wartość z pewnego przedziału.",
+      target_id = "ch-ciagle"
+    )
+  )
 )
 
 # --------------------------------------------------------------------------

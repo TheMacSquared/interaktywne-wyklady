@@ -2,34 +2,45 @@
 # CHAPTER 7: Sciaga
 # ============================================================================
 
-ch7_ui <- tabPanel("7. Ściąga",
-  fluidRow(column(8, offset = 2,
+ch7_ui <- list(
+  id = "ch-sciaga", num = "07", title = "Ściąga",
+  content = tagList(
 
-    div(class = "section-title", "Podsumowanie — rozkłady prawdopodobieństwa"),
-
-    div(class = "narrative",
-      p("Kompletna ściąga ze wszystkimi rozkładami, wzorami i regułami
-        decyzyjnymi omówionymi w trakcie wykładu.")
+    lc_chapter_hero(
+      kicker = "Rozdział 07 · Rozkłady prawdopodobieństwa",
+      num    = "07",
+      title  = "Ściąga.",
+      lead   = "Kompletna ściąga ze wszystkimi rozkładami, wzorami
+                i regułami decyzyjnymi omówionymi w trakcie wykładu."
     ),
 
     # --- Tabela 1: Rozklady dyskretne ---
-    div(class = "section-title", "Rozkłady dyskretne"),
+    h2(id = "ch7-dyskretne", class = "section-title", "Rozkłady dyskretne"),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Tab. 7.1",
+      title = "Rozkłady dyskretne — zestawienie",
+      full_width = TRUE,
       tableOutput("ch7_discrete_table")
     ),
 
     # --- Tabela 2: Rozklady ciagle ---
-    div(class = "section-title", "Rozkłady ciągłe"),
+    h2(id = "ch7-ciagle", class = "section-title", "Rozkłady ciągłe"),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Tab. 7.2",
+      title = "Rozkłady ciągłe — zestawienie",
+      full_width = TRUE,
       tableOutput("ch7_continuous_table")
     ),
 
     # --- Tabela 3: Kluczowe wzory ---
-    div(class = "section-title", "Kluczowe wzory"),
+    h2(id = "ch7-wzory", class = "section-title", "Kluczowe wzory"),
 
-    div(class = "widget-block",
+    figure_panel(
+      label = "Wzory",
+      title = "Kluczowe wzory",
+      full_width = TRUE,
       withMathJax(
         h4("Aksjomaty prawdopodobieństwa"),
         tags$ol(
@@ -55,7 +66,7 @@ ch7_ui <- tabPanel("7. Ściąga",
     ),
 
     # --- Interaktywne drzewo decyzyjne ---
-    div(class = "section-title", "Drzewo decyzyjne — który rozkład?"),
+    h2(id = "ch7-drzewo", class = "section-title", "Drzewo decyzyjne — który rozkład?"),
 
     div(class = "narrative",
       p("Każdy rozkład ma swój 'naturalny habitat'. Kluczowe pytania przy doborze:"),
@@ -66,8 +77,10 @@ ch7_ui <- tabPanel("7. Ściąga",
       )
     ),
 
-    div(class = "widget-block",
-      h4("Który rozkład wybrać?"),
+    figure_panel(
+      label = "Ryc. 7.1",
+      title = "Który rozkład wybrać?",
+      full_width = TRUE,
       fluidRow(
         column(4,
           radioButtons("ch7_tree_choice", "Wybierz typ zmiennej:",
@@ -109,16 +122,13 @@ ch7_ui <- tabPanel("7. Ściąga",
       )
     ),
 
-    # --- Transition ---
-    div(class = "chapter-transition",
-      p("Masz już pełen przegląd rozkładów. Czas sprawdzić,
-        czy potrafisz rozpoznać je w praktyce!"),
-      actionButton("ch7_next", "Dalej: 8. Quiz →",
-                   class = "btn-primary btn-lg")
-    ),
-
-    br(), br()
-  ))
+    lc_chapter_next(
+      num       = "08",
+      title     = "Quiz",
+      lead      = "sprawdź, czy potrafisz rozpoznać rozkłady w praktyce.",
+      target_id = "ch-quiz"
+    )
+  )
 )
 
 # --------------------------------------------------------------------------

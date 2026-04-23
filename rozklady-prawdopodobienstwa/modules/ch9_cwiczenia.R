@@ -7,27 +7,31 @@
 # UI
 # ============================================================================
 
-ch9_ui <- tabPanel("9. Ćwiczenia",
-  fluidRow(column(8, offset = 2,
+ch9_ui <- list(
+  id = "ch-cwiczenia", num = "09", title = "Ćwiczenia",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Poprzednio: quiz z rozpoznawania rozkładów"
+    lc_chapter_hero(
+      kicker = "Rozdział 09 · Rozkłady prawdopodobieństwa",
+      num    = "09",
+      title  = "Ćwiczenia.",
+      lead   = "Trzy bloki zadań — od obliczeń przez rozpoznawanie rozkładów
+                po analizę prawdziwych danych. Narzędzie: Jamovi (90 min)."
     ),
 
-    div(class = "section-title", "Ćwiczenia: Rozkłady prawdopodobieństwa"),
+    h2(id = "ch9-cwiczenia", class = "section-title", "Ćwiczenia: Rozkłady prawdopodobieństwa"),
 
     div(class = "narrative",
       p(tags$b("Czas:"), " 90 minut | ", tags$b("Narzędzie:"), " Jamovi"),
-      p("Trzy bloki zadań — od obliczeń przez rozpoznawanie rozkładów
-        po analizę prawdziwych danych. Każde zadanie ma ",
-        tags$b("ukryte rozwiązanie"), " — kliknij przycisk, aby je zobaczyć.")
+      p("Każde zadanie ma ", tags$b("ukryte rozwiązanie"),
+        " — kliknij przycisk, aby je zobaczyć.")
     ),
 
-    div(class = "callout-info",
+    div(class = "widget-block",
       selectInput("ch9_kierunek", tags$b("Wybierz wariant dla kierunku:"),
         choices = list(
           "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
-          "Rolnictwo"                                = "rol",
+          "Rolnictwo"                       = "rol",
           "Technologia żywności"            = "zyw"
         ),
         selected = "bhp",
@@ -35,10 +39,8 @@ ch9_ui <- tabPanel("9. Ćwiczenia",
       )
     ),
 
-    uiOutput("ch9_content"),
-
-    br(), br(), br()
-  ))
+    uiOutput("ch9_content")
+  )
 )
 
 # ============================================================================

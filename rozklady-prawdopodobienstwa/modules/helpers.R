@@ -3,6 +3,21 @@
 # generate_population_sample(), get_population_params(), dist_names_pl -> R/shared.R
 # ============================================================================
 
+# Kolory semantyczne dla typow rozkladow
+col_discrete   <- "#3498db"    # niebieski - rozklady dyskretne
+col_continuous <- "#27ae60"    # zielony - rozklady ciagle
+col_normal     <- "#9b59b6"    # fioletowy - rozklad normalny
+col_binomial   <- "#e67e22"    # pomaranczowy - dwumianowy
+col_poisson    <- "#1abc9c"    # morski - Poissona
+col_uniform    <- "#3498db"    # niebieski - jednostajny
+col_exponential <- "#e74c3c"   # czerwony - wykladniczy
+col_geometric  <- "#8e44ad"    # ciemny fiolet - geometryczny
+col_t_student  <- "#c0392b"    # ciemny czerwony - t-Studenta
+col_chi_sq     <- "#d35400"    # ciemny pomaranczowy - chi-kwadrat
+col_lognormal  <- "#16a085"    # ciemny turkusowy - log-normalny
+
+col_scenario <- c("#3498db", "#e74c3c", "#27ae60", "#f39c12", "#9b59b6")
+
 # Rysowanie PMF rozkladu dyskretnego
 plot_pmf <- function(x_vals, probs, fill_color = "#3498db",
                      title = "", xlab = "x", ylab = "P(X = x)",

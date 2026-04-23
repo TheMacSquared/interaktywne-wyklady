@@ -2,15 +2,19 @@
 # CHAPTER 5: Rozklad normalny
 # ============================================================================
 
-ch5_ui <- tabPanel("5. Rozkład normalny",
-  fluidRow(column(8, offset = 2,
+ch5_ui <- list(
+  id = "ch-normalny", num = "05", title = "Rozkład normalny",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Wiemy już, czym są rozkłady ciągłe i jak interpretować gęstość.
-       Teraz poznamy najważniejszy ze wszystkich rozkładów."
+    lc_chapter_hero(
+      kicker = "Rozdział 05 · Rozkłady prawdopodobieństwa",
+      num    = "05",
+      title  = "Rozkład normalny.",
+      lead   = "Wiemy już, czym są rozkłady ciągłe i jak interpretować gęstość.
+                Teraz poznamy najważniejszy ze wszystkich rozkładów."
     ),
 
-    div(class = "section-title", "Rozkład normalny — królowa rozkładów"),
+    h2(id = "ch5-intro", class = "section-title", "Rozkład normalny — królowa rozkładów"),
 
     div(class = "narrative",
       p("Rozkład normalny (Gaussa) to ", tags$b("najczęściej spotykany"),
@@ -24,10 +28,12 @@ ch5_ui <- tabPanel("5. Rozkład normalny",
     # ========================================================================
     # WIDGET 1: Dwa parametry, nieskonczone mozliwosci
     # ========================================================================
-    div(class = "section-title", "Dwa parametry — nieskończone możliwości"),
+    h2(id = "ch5-parametry", class = "section-title", "Dwa parametry — nieskończone możliwości"),
 
-    div(class = "widget-block",
-      h4("Eksploracja N(μ, σ)"),
+    figure_panel(
+      label = "Ryc. 5.1",
+      title = "Eksploracja N(μ, σ)",
+      full_width = TRUE,
       fluidRow(
         column(4,
           sliderInput("ch5_mu", "μ (średnia):",
@@ -55,19 +61,20 @@ ch5_ui <- tabPanel("5. Rozkład normalny",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Reguła empiryczna (68-95-99.7):"),
-      " Około 68% danych leży w przedziale μ±σ,
-        95% w przedziale μ±2σ, a 99.7% w przedziale μ±3σ."
+    margin_callout(
+      label = "Reguła 68-95-99.7",
+      "Około 68% danych leży w μ±σ, 95% w μ±2σ, a 99.7% w μ±3σ."
     ),
 
     # ========================================================================
     # WIDGET 2: Porownanie rozkladow
     # ========================================================================
-    div(class = "section-title", "Porównanie dwóch rozkładów normalnych"),
+    h2(id = "ch5-porownanie", class = "section-title", "Porównanie dwóch rozkładów normalnych"),
 
-    div(class = "widget-block",
-      h4("Dwie krzywe normalne"),
+    figure_panel(
+      label = "Ryc. 5.2",
+      title = "Dwie krzywe normalne",
+      full_width = TRUE,
       fluidRow(
         column(3,
           h5("Rozkład A", style = "color: #3498db;"),
@@ -91,7 +98,7 @@ ch5_ui <- tabPanel("5. Rozkład normalny",
     # ========================================================================
     # WIDGET 3: Standaryzacja (z-score)
     # ========================================================================
-    div(class = "section-title", "Standaryzacja (z-score)"),
+    h2(id = "ch5-standaryzacja", class = "section-title", "Standaryzacja (z-score)"),
 
     div(class = "narrative",
       p("Każdy rozkład normalny można sprowadzić do ",
@@ -103,8 +110,10 @@ ch5_ui <- tabPanel("5. Rozkład normalny",
         " dana wartość leży od średniej.")
     ),
 
-    div(class = "widget-block",
-      h4("Kalkulator z-score"),
+    figure_panel(
+      label = "Ryc. 5.3",
+      title = "Kalkulator z-score",
+      full_width = TRUE,
       fluidRow(
         column(4,
           numericInput("ch5_z_mu", "μ (np. średnia egzaminu):", value = 65),
@@ -122,15 +131,17 @@ ch5_ui <- tabPanel("5. Rozkład normalny",
     # ========================================================================
     # WIDGET 4: Obliczanie prawdopodobienstw
     # ========================================================================
-    div(class = "section-title", "Obliczanie prawdopodobieństw"),
+    h2(id = "ch5-prawdop", class = "section-title", "Obliczanie prawdopodobieństw"),
 
     div(class = "narrative",
       p("Znając z-score, możemy obliczyć prawdopodobieństwo dowolnego
         przedziału. W R używamy funkcji ", tags$code("pnorm()"), ".")
     ),
 
-    div(class = "widget-block",
-      h4("Kalkulator prawdopodobieństw N(0, 1)"),
+    figure_panel(
+      label = "Ryc. 5.4",
+      title = "Kalkulator prawdopodobieństw N(0, 1)",
+      full_width = TRUE,
       fluidRow(
         column(4,
           radioButtons("ch5_prob_type", "Typ pytania:",
@@ -160,17 +171,13 @@ ch5_ui <- tabPanel("5. Rozkład normalny",
       ))
     ),
 
-    # --- Transition ---
-    div(class = "chapter-transition",
-      p("Rozkład normalny jest wszędzie. Ale ", tags$b("dlaczego"),
-        "? Co sprawia, że tak wiele zjawisk ma rozkład zbliżony do normalnego?
-        Odpowiedź to jedno z najważniejszych twierdzeń statystyki."),
-      actionButton("ch5_next", "Dalej: 6. Centralne Tw. Graniczne →",
-                   class = "btn-primary btn-lg")
-    ),
-
-    br(), br()
-  ))
+    lc_chapter_next(
+      num       = "06",
+      title     = "Centralne Twierdzenie Graniczne",
+      lead      = "dlaczego rozkład normalny pojawia się wszędzie w naturze.",
+      target_id = "ch-ctg"
+    )
+  )
 )
 
 # --------------------------------------------------------------------------

@@ -2,15 +2,19 @@
 # CHAPTER 2: Wartosc oczekiwana i wariancja
 # ============================================================================
 
-ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
-  fluidRow(column(8, offset = 2,
+ch2_ev_var_ui <- list(
+  id = "ch-ev-var", num = "02", title = "Wartość oczekiwana i wariancja",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Wiemy już, czym jest rozkład prawdopodobieństwa. Teraz dwa kluczowe pytania:
-       czego możemy się spodziewać i jak bardzo wyniki mogą się różnić?"
+    lc_chapter_hero(
+      kicker = "Rozdział 02 · Rozkłady prawdopodobieństwa",
+      num    = "02",
+      title  = "Wartość oczekiwana i wariancja.",
+      lead   = "Wiemy już, czym jest rozkład prawdopodobieństwa. Teraz dwa kluczowe pytania:
+                czego możemy się spodziewać i jak bardzo wyniki mogą się różnić?"
     ),
 
-    div(class = "section-title", "Wartość oczekiwana i wariancja"),
+    h2(id = "ch2-ev-intro", class = "section-title", "Wartość oczekiwana i wariancja"),
 
     div(class = "narrative",
       p("Każdy rozkład prawdopodobieństwa można opisać dwoma kluczowymi
@@ -29,7 +33,7 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
     # ========================================================================
     # WIDGET 1: Loterie -- symulacja wartosci oczekiwanej
     # ========================================================================
-    div(class = "section-title", "Czego się spodziewać? — gra w loterie"),
+    h2(id = "ch2-loterie", class = "section-title", "Czego się spodziewać? — gra w loterie"),
 
     div(class = "narrative",
       p("Wyobraź sobie, że możesz grać w jedną z trzech loterii.
@@ -38,8 +42,10 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
         stabilizuje się — to właśnie wartość oczekiwana.")
     ),
 
-    div(class = "widget-block",
-      h4("Gra w loterie"),
+    figure_panel(
+      label = "Ryc. 2.1",
+      title = "Gra w loterie",
+      full_width = TRUE,
       fluidRow(
         column(4,
           radioButtons("ch2ev_lottery", "Wybierz loterię:",
@@ -75,17 +81,17 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Wartość oczekiwana:"),
-      " To 'długoterminowa średnia' — wynik, wokół którego oscyluje
-        średnia po wielu powtorzeniach. Nie musi być równa żadnemu
-        konkretnemu wynikowi! (np. E(kostki) = 3.5, choć 3.5 nigdy nie wypada)"
+    margin_callout(
+      label = "Wartość oczekiwana",
+      "To 'długoterminowa średnia' — wynik, wokół którego oscyluje
+       średnia po wielu powtorzeniach. Nie musi być równa żadnemu
+       konkretnemu wynikowi! (np. E(kostki) = 3.5, choć 3.5 nigdy nie wypada)"
     ),
 
     # ========================================================================
     # WIDGET 2: Punkt rownowagi
     # ========================================================================
-    div(class = "section-title", "E(X) jako punkt równowagi"),
+    h2(id = "ch2-rownowaga", class = "section-title", "E(X) jako punkt równowagi"),
 
     div(class = "narrative",
       p("Wartość oczekiwana to punkt równowagi rozkładu — gdybyś położył(a)
@@ -94,8 +100,10 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
         jak przesuwa się punkt równowagi.")
     ),
 
-    div(class = "widget-block",
-      h4("Punkt równowagi rozkładu"),
+    figure_panel(
+      label = "Ryc. 2.2",
+      title = "Punkt równowagi rozkładu",
+      full_width = TRUE,
       fluidRow(
         column(4,
           h5("Prawdopodobieństwa:"),
@@ -121,16 +129,17 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
       )
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Pamiętaj:"),
-      " E(X) to średnia ważona prawdopodobieństwami. Wynik o dużym prawdopodobieństwie
-        ciągnie E(X) w swoją stronę — podobnie jak ciężki przedmiot na wadze."
+    margin_callout(
+      label = "Pamiętaj",
+      "E(X) to średnia ważona prawdopodobieństwami. Wynik o dużym prawdopodobieństwie
+       ciągnie E(X) w swoją stronę — podobnie jak ciężki przedmiot na wadze.",
+      color = "uwaga"
     ),
 
     # ========================================================================
     # WIDGET 3: Ryzyko a rozrzut -- intuicja wariancji
     # ========================================================================
-    div(class = "section-title", "Wariancja — rozrzut wokół oczekiwania"),
+    h2(id = "ch2-wariancja", class = "section-title", "Wariancja — rozrzut wokół oczekiwania"),
 
     div(class = "narrative",
       p("Dwie loterie mogą mieć tę samą wartość oczekiwaną, ale zupełnie różne ryzyko.
@@ -139,8 +148,10 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
       p("Porównaj trzy loterie — wszystkie mają E(X) = 50 zł:")
     ),
 
-    div(class = "widget-block",
-      h4("Trzy loterie, jedno E(X), różne ryzyko"),
+    figure_panel(
+      label = "Ryc. 2.3",
+      title = "Trzy loterie, jedno E(X), różne ryzyko",
+      full_width = TRUE,
       fluidRow(
         column(4,
           sliderInput("ch2ev_var_n", "Ile razy zagrać?",
@@ -156,21 +167,23 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
       )
     ),
 
-    div(class = "callout-success",
-      tags$strong("Kluczowa intuicja:"),
-      tags$ul(
-        tags$li(tags$b("Mała wariancja"), " = wyniki skupione blisko E(X), małe ryzyko"),
-        tags$li(tags$b("Duża wariancja"), " = wyniki rozrzucone szeroko, duże ryzyko"),
-        tags$li(tags$b("Wariancja = 0"), " = brak losowości, wynik pewny")
+    margin_callout(
+      label = "Kluczowa intuicja",
+      tagList(
+        tags$ul(
+          tags$li(tags$b("Mała wariancja"), " = wyniki skupione blisko E(X), małe ryzyko"),
+          tags$li(tags$b("Duża wariancja"), " = wyniki rozrzucone szeroko, duże ryzyko"),
+          tags$li(tags$b("Wariancja = 0"), " = brak losowości, wynik pewny")
+        ),
+        "SD = √Var ma tę samą jednostkę co dane — łatwiejsza w interpretacji."
       ),
-      p("Odchylenie standardowe SD = √Var ma tę samą jednostkę co dane
-        (np. złotówki), dlatego jest łatwiejsze w interpretacji.")
+      color = "ok"
     ),
 
     # ========================================================================
     # Podsumowanie
     # ========================================================================
-    div(class = "section-title", "Od danych do modelu"),
+    h2(id = "ch2-od-danych", class = "section-title", "Od danych do modelu"),
 
     div(class = "narrative",
       p("Zwróć uwagę na analogię:"),
@@ -191,17 +204,13 @@ ch2_ev_var_ui <- tabPanel("2. Wart. oczekiwana i wariancja",
       p("Prawo wielkich liczb gwarantuje, że x̄ → E(X) wraz ze wzrostem próby.")
     ),
 
-    # --- Transition ---
-    div(class = "chapter-transition",
-      p("Wiemy już, czym są wartość oczekiwana i wariancja.
-        Teraz poznamy konkretne rozkłady dyskretne i zobaczymy,
-        jak E(X) i Var(X) zależą od ich parametrów."),
-      actionButton("ch2ev_next", "Dalej: 3. Rozkłady dyskretne →",
-                   class = "btn-primary btn-lg")
-    ),
-
-    br(), br()
-  ))
+    lc_chapter_next(
+      num       = "03",
+      title     = "Rozkłady dyskretne",
+      lead      = "jak E(X) i Var(X) zależą od parametrów konkretnych rozkładów.",
+      target_id = "ch-dyskretne"
+    )
+  )
 )
 
 # --------------------------------------------------------------------------

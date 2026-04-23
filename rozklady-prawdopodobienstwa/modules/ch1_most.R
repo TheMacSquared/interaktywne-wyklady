@@ -2,24 +2,23 @@
 # CHAPTER 1: Od danych do prawdopodobienstwa
 # ============================================================================
 
-ch1_ui <- tabPanel("1. Od danych do prawdopodobieństwa",
-  fluidRow(column(8, offset = 2,
+ch1_ui <- list(
+  id = "ch-most", num = "01", title = "Od danych do prawdopodobieństwa",
+  content = tagList(
 
-    div(class = "section-title", "Od danych do prawdopodobieństwa"),
-
-    div(class = "narrative",
-      p("W statystyce opisowej nauczyliśmy się liczyć częstości, obliczać
-        średnie i rysować histogramy. Ale co, jeśli chcemy ",
-        tags$b("przewidywać"), " przyszłe obserwacje?"),
-      p("Klucz leży w pojęciu ", tags$b("prawdopodobieństwa"),
-        ". W tym rozdziale zobaczymy, jak częstości względne
-        zbiegają do prawdopodobieństw i czym jest rozkład prawdopodobieństwa.")
+    lc_chapter_hero(
+      kicker = "Rozdział 01 · Rozkłady prawdopodobieństwa",
+      num    = "01",
+      title  = "Od danych do prawdopodobieństwa.",
+      lead   = "W statystyce opisowej nauczyliśmy się liczyć częstości, obliczać
+                średnie i rysować histogramy. Teraz zobaczymy, jak częstości względne
+                zbiegają do prawdopodobieństw i czym jest rozkład prawdopodobieństwa."
     ),
 
     # ========================================================================
     # WIDGET 1: Stabilizacja czestosci (rzut kostka)
     # ========================================================================
-    div(class = "section-title", "Prawo wielkich liczb w akcji"),
+    h2(id = "ch1-pwl", class = "section-title", "Prawo wielkich liczb w akcji"),
 
     div(class = "narrative",
       p("Wyobraź sobie, że rzucasz kostką. Jak często wypada każda ścianka?
@@ -27,8 +26,10 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobieństwa",
         tym częstości względne stają się bardziej stabilne.")
     ),
 
-    div(class = "widget-block",
-      h4("Rzuty kostką — stabilizacja częstości"),
+    figure_panel(
+      label = "Ryc. 1.1",
+      title = "Rzuty kostką — stabilizacja częstości",
+      full_width = TRUE,
       fluidRow(
         column(4,
           div(style = "display: flex; flex-direction: column; gap: 8px;",
@@ -64,7 +65,7 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobieństwa",
     # ========================================================================
     # WIDGET 0: Rozklad empiryczny vs teoretyczny
     # ========================================================================
-    div(class = "section-title", "Rozkład empiryczny vs teoretyczny"),
+    h2(id = "ch1-rozklad-emp", class = "section-title", "Rozkład empiryczny vs teoretyczny"),
 
     div(class = "narrative",
       p("Kostka to prosty przykład, ale ten sam mechanizm działa dla każdej
@@ -77,8 +78,10 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobieństwa",
         ". Zobaczmy, jak jedno przechodzi w drugie.")
     ),
 
-    div(class = "widget-block",
-      h4("Histogram (dane) vs krzywa gęstości (model)"),
+    figure_panel(
+      label = "Ryc. 1.2",
+      title = "Histogram (dane) vs krzywa gęstości (model)",
+      full_width = TRUE,
       fluidRow(
         column(4,
           selectInput("ch1_emp_dist", "Rozkład źródłowy:",
@@ -104,18 +107,20 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobieństwa",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Kluczowa idea:"),
-      " Włącz obie warstwy i zwiększaj próbę. Im więcej danych,
+    margin_callout(
+      label = "Kluczowa idea",
+      tagList(
+        "Włącz obie warstwy i zwiększaj próbę. Im więcej danych,
         tym lepiej histogram przybliża krzywą.
         Rozkład teoretyczny to ", tags$b("ideał"), " — dane to jego ",
         tags$b("niedoskonałe odbicie"), "."
+      )
     ),
 
     # ========================================================================
     # WIDGET 2: Czestosci vs prawdopodobienstwo
     # ========================================================================
-    div(class = "section-title", "Częstości vs prawdopodobieństwo"),
+    h2(id = "ch1-czestosci", class = "section-title", "Częstości vs prawdopodobieństwo"),
 
     div(class = "narrative",
       p("Prawdopodobieństwo to ", tags$b("teoretyczny model"),
@@ -124,8 +129,10 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobieństwa",
         " tego modelu.")
     ),
 
-    div(class = "widget-block",
-      h4("Porównanie: teoria vs obserwacja"),
+    figure_panel(
+      label = "Ryc. 1.3",
+      title = "Porównanie: teoria vs obserwacja",
+      full_width = TRUE,
       fluidRow(
         column(4,
           radioButtons("ch1_scenario", "Scenariusz:",
@@ -151,7 +158,7 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobieństwa",
     # ========================================================================
     # WIDGET 3: Czym jest rozklad?
     # ========================================================================
-    div(class = "section-title", "Czym jest rozkład prawdopodobieństwa?"),
+    h2(id = "ch1-rozklad", class = "section-title", "Czym jest rozkład prawdopodobieństwa?"),
 
     div(class = "narrative",
       p("Rozkład prawdopodobieństwa to ", tags$b("kompletny opis"),
@@ -165,8 +172,10 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobieństwa",
         czterech wyników tak, żeby sumowały się do 1.")
     ),
 
-    div(class = "widget-block",
-      h4("Zbuduj własny rozkład"),
+    figure_panel(
+      label = "Ryc. 1.4",
+      title = "Zbuduj własny rozkład",
+      full_width = TRUE,
       fluidRow(
         column(6,
           sliderInput("ch1_p1", "P(Wynik A):", min = 0, max = 1, value = 0.25, step = 0.01),
@@ -181,24 +190,22 @@ ch1_ui <- tabPanel("1. Od danych do prawdopodobieństwa",
       )
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Zapamiętaj:"),
-      " Rozkład prawdopodobieństwa to nie dane — to ", tags$b("model matematyczny"),
-      ". Dane to próbka z tego modelu. Im większa próbka,
-        tym lepiej przybliża model."
+    margin_callout(
+      label = "Zapamiętaj",
+      tagList(
+        "Rozkład prawdopodobieństwa to nie dane — to ", tags$b("model matematyczny"),
+        ". Dane to próbka z tego modelu. Im większa próbka, tym lepiej przybliża model."
+      ),
+      color = "uwaga"
     ),
 
-    # --- Transition ---
-    div(class = "chapter-transition",
-      p("Wiemy już, czym jest rozkład prawdopodobieństwa.
-        Zanim poznamy konkretne rozkłady, odpowiedzmy na dwa kluczowe
-        pytania: czego się spodziewać i jak bardzo wyniki mogą się różnić?"),
-      actionButton("ch1_next", "Dalej: 2. Wartość oczekiwana i wariancja →",
-                   class = "btn-primary btn-lg")
-    ),
-
-    br(), br()
-  ))
+    lc_chapter_next(
+      num       = "02",
+      title     = "Wartość oczekiwana i wariancja",
+      lead      = "czego się spodziewać i jak mierzyć rozrzut wyników.",
+      target_id = "ch-ev-var"
+    )
+  )
 )
 
 # --------------------------------------------------------------------------

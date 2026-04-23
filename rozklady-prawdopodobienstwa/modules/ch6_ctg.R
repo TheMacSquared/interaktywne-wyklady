@@ -2,15 +2,19 @@
 # CHAPTER 6: Centralne Twierdzenie Graniczne
 # ============================================================================
 
-ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
-  fluidRow(column(8, offset = 2,
+ch6_ui <- list(
+  id = "ch-ctg", num = "06", title = "Centralne Twierdzenie Graniczne",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Rozkład normalny pojawia się wszędzie. Ale dlaczego?
-       Odpowiedź to jedno z najważniejszych twierdzeń w statystyce."
+    lc_chapter_hero(
+      kicker = "Rozdział 06 · Rozkłady prawdopodobieństwa",
+      num    = "06",
+      title  = "Centralne Twierdzenie Graniczne.",
+      lead   = "Rozkład normalny pojawia się wszędzie. Ale dlaczego?
+                Odpowiedź to jedno z najważniejszych twierdzeń w statystyce."
     ),
 
-    div(class = "section-title", "Centralne Twierdzenie Graniczne (CTG)"),
+    h2(id = "ch6-ctg", class = "section-title", "Centralne Twierdzenie Graniczne (CTG)"),
 
     div(class = "narrative",
       p("Centralne Twierdzenie Graniczne mówi, że:"),
@@ -26,8 +30,10 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
         Zobaczmy to na własne oczy!")
     ),
 
-    div(class = "widget-block",
-      h4("Wideo wprowadzające"),
+    figure_panel(
+      label = "Film",
+      title = "Wideo wprowadzające",
+      full_width = TRUE,
       div(style = "position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;",
         tags$iframe(
           src = "https://www.youtube.com/embed/jvoxEYmQHNM",
@@ -41,10 +47,12 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
     # ========================================================================
     # WIDGET 1: Eksperyment CLT (kluczowy!)
     # ========================================================================
-    div(class = "section-title", "Eksperyment CLT"),
+    h2(id = "ch6-eksperyment", class = "section-title", "Eksperyment CLT"),
 
-    div(class = "widget-block",
-      h4("Symulacja: średnie z dowolnego rozkładu → normalny"),
+    figure_panel(
+      label = "Ryc. 6.1",
+      title = "Symulacja: średnie z dowolnego rozkładu → normalny",
+      full_width = TRUE,
       fluidRow(
         column(4,
           selectInput("ch6_pop_dist", "Rozkład populacji:",
@@ -82,25 +90,26 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Aha-moment:"),
-      " Zmień rozkład populacji na najbardziej 'dziki' jaki znajdziesz
-        (U-kształtny, dwumodalny). Potem zbiór 1000 prób.
-        Histogram średnich i tak stanie się dzwonem!"
+    margin_callout(
+      label = "Aha-moment",
+      "Zmień rozkład na najbardziej 'dziki' (U-kształtny, dwumodalny),
+       pobierz 1000 prób — histogram średnich i tak stanie się dzwonem!"
     ),
 
     # ========================================================================
     # WIDGET 2: Wplyw wielkosci proby
     # ========================================================================
-    div(class = "section-title", "Wpływ wielkości próby"),
+    h2(id = "ch6-wielkosc-proby", class = "section-title", "Wpływ wielkości próby"),
 
     div(class = "narrative",
       p("Im większa próba n, tym szybciej rozkład średnich staje się
         normalny. Zobaczmy to porównując różne n obok siebie.")
     ),
 
-    div(class = "widget-block",
-      h4("Rozkład średnich z Exp(λ=0.5) dla różnych n"),
+    figure_panel(
+      label = "Ryc. 6.2",
+      title = "Rozkład średnich dla różnych n",
+      full_width = TRUE,
       selectInput("ch6_effect_dist", "Rozkład populacji:",
         choices = c(
           "Wykładniczy" = "exponential",
@@ -115,10 +124,12 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
     # ========================================================================
     # WIDGET 3: Dlaczego to dziala?
     # ========================================================================
-    div(class = "section-title", "Dlaczego to działa? — intuicja"),
+    h2(id = "ch6-dlaczego", class = "section-title", "Dlaczego to działa? — intuicja"),
 
-    div(class = "widget-block",
-      h4("Od jednej obserwacji do średniej z 30"),
+    figure_panel(
+      label = "Ryc. 6.3",
+      title = "Od jednej obserwacji do średniej z 30",
+      full_width = TRUE,
       fluidRow(
         column(4,
           actionButton("ch6_why_step1", "1. Jedna obserwacja",
@@ -143,11 +154,12 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
       )
     ),
 
-    div(class = "callout-success",
-      tags$strong("Kluczowa intuicja:"),
-      " Uśrednianie 'wygładza' indywidualne dziwactwa. Ekstrema w jednym
-        kierunku są niwelowane przez ekstrema w drugim. Im więcej
-        uśredniamy, tym bliżej środka lądujemy."
+    margin_callout(
+      label = "Kluczowa intuicja",
+      "Uśrednianie 'wygładza' indywidualne dziwactwa. Ekstrema w jednym
+       kierunku są niwelowane przez ekstrema w drugim. Im więcej uśredniamy,
+       tym bliżej środka lądujemy.",
+      color = "ok"
     ),
 
     div(class = "formula-box",
@@ -159,17 +171,13 @@ ch6_ui <- tabPanel("6. Centralne Tw. Graniczne",
          odchylenie standardowe maleje jak 1/√n.")
     ),
 
-    # --- Transition ---
-    div(class = "chapter-transition",
-      p("CTG wyjaśnia, dlaczego rozkład normalny jest tak ważny
-        dla wnioskowania statystycznego. Na koniec — kompaktowa ściąga
-        ze wszystkimi wzorami i regułami decyzyjnymi."),
-      actionButton("ch6_next", "Dalej: 7. Ściąga →",
-                   class = "btn-primary btn-lg")
-    ),
-
-    br(), br()
-  ))
+    lc_chapter_next(
+      num       = "07",
+      title     = "Ściąga",
+      lead      = "kompaktowe podsumowanie wszystkich wzorów i rozkładów.",
+      target_id = "ch-sciaga"
+    )
+  )
 )
 
 # --------------------------------------------------------------------------

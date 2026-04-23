@@ -24,14 +24,18 @@ QUIZ_MAX_QUESTIONS <- 10
 # UI
 # ============================================================================
 
-ch8_ui <- tabPanel("8. Quiz",
-  fluidRow(column(8, offset = 2,
+ch8_ui <- list(
+  id = "ch-quiz", num = "08", title = "Quiz",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Czas sprawdzić, czy potrafisz rozpoznać rozkłady w praktyce!"
+    lc_chapter_hero(
+      kicker = "Rozdział 08 · Rozkłady prawdopodobieństwa",
+      num    = "08",
+      title  = "Quiz.",
+      lead   = "Czas sprawdzić, czy potrafisz rozpoznać rozkłady w praktyce!"
     ),
 
-    div(class = "section-title", "Quiz: dopasuj rozkład do zjawiska"),
+    h2(id = "ch8-quiz", class = "section-title", "Quiz: dopasuj rozkład do zjawiska"),
 
     div(class = "narrative",
       p("Przeczytaj opis zjawiska i wybierz rozkład, który najlepiej je modeluje.
@@ -41,9 +45,10 @@ ch8_ui <- tabPanel("8. Quiz",
         wielokrotnie — za każdym razem dostaniesz inny zestaw.")
     ),
 
-    # --- Quiz widget ---
-    div(class = "widget-block",
-      h4("Quiz"),
+    figure_panel(
+      label = "Quiz",
+      title = "Dopasuj rozkład do zjawiska",
+      full_width = TRUE,
 
       # Start / status bar
       fluidRow(
@@ -73,14 +78,13 @@ ch8_ui <- tabPanel("8. Quiz",
       uiOutput("ch8_summary_ui")
     ),
 
-    # --- Przejscie do cwiczen ---
-    div(class = "chapter-transition",
-      p("Czas na praktykę! Przejdź do ćwiczeń z rozkładów prawdopodobieństwa."),
-      actionButton("ch8_to_ch9", "Dalej: Ćwiczenia →", class = "btn-primary")
-    ),
-
-    br(), br()
-  ))
+    lc_chapter_next(
+      num       = "09",
+      title     = "Ćwiczenia",
+      lead      = "zadania z rozkładów prawdopodobieństwa do samodzielnego rozwiązania.",
+      target_id = "ch-cwiczenia"
+    )
+  )
 )
 
 # ============================================================================

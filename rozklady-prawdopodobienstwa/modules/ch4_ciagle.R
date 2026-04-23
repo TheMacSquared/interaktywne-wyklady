@@ -2,15 +2,19 @@
 # CHAPTER 4: Rozklady ciagle
 # ============================================================================
 
-ch4_ui <- tabPanel("4. Rozkłady ciągłe",
-  fluidRow(column(8, offset = 2,
+ch4_ui <- list(
+  id = "ch-ciagle", num = "04", title = "Rozkłady ciągłe",
+  content = tagList(
 
-    div(class = "chapter-recap",
-      "Rozkłady dyskretne opisują zmienne o skończonej liczbie wartości.
-       Ale co, gdy zmienna może przyjąć dowolną wartość z przedziału?"
+    lc_chapter_hero(
+      kicker = "Rozdział 04 · Rozkłady prawdopodobieństwa",
+      num    = "04",
+      title  = "Rozkłady ciągłe.",
+      lead   = "Rozkłady dyskretne opisują zmienne o skończonej liczbie wartości.
+                Ale co, gdy zmienna może przyjąć dowolną wartość z pewnego przedziału?"
     ),
 
-    div(class = "section-title", "Od histogramu do krzywej gęstości"),
+    h2(id = "ch4-histogram", class = "section-title", "Od histogramu do krzywej gęstości"),
 
     div(class = "narrative",
       p("Znasz już histogramy ze statystyki opisowej. Teraz zobaczymy,
@@ -22,8 +26,10 @@ ch4_ui <- tabPanel("4. Rozkłady ciągłe",
     # ========================================================================
     # WIDGET 1: Od histogramu do krzywej (krok po kroku) — BEZ ZMIAN
     # ========================================================================
-    div(class = "widget-block",
-      h4("Od histogramu do krzywej gęstości"),
+    figure_panel(
+      label = "Ryc. 4.1",
+      title = "Od histogramu do krzywej gęstości",
+      full_width = TRUE,
       fluidRow(
         column(4,
           selectInput("ch4_step_dist", "Rozkład źródłowy:",
@@ -68,7 +74,7 @@ ch4_ui <- tabPanel("4. Rozkłady ciągłe",
     # ========================================================================
     # WIDGET 2: Prawdopodobienstwo = pole — BEZ ZMIAN
     # ========================================================================
-    div(class = "section-title", "Prawdopodobieństwo = pole pod krzywą"),
+    h2(id = "ch4-pole", class = "section-title", "Prawdopodobieństwo = pole pod krzywą"),
 
     div(class = "narrative",
       p("W rozkładach ciągłych prawdopodobieństwo to ",
@@ -78,8 +84,10 @@ ch4_ui <- tabPanel("4. Rozkłady ciągłe",
         " dla rozkładów ciągłych. Sens ma tylko pytanie o przedziały.")
     ),
 
-    div(class = "widget-block",
-      h4("Zacieniuj przedział i odczytaj prawdopodobieństwo"),
+    figure_panel(
+      label = "Ryc. 4.2",
+      title = "Zacieniuj przedział i odczytaj prawdopodobieństwo",
+      full_width = TRUE,
       fluidRow(
         column(4,
           selectInput("ch4_area_dist", "Rozkład:",
@@ -100,24 +108,29 @@ ch4_ui <- tabPanel("4. Rozkłady ciągłe",
       )
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Zapamiętaj:"),
-      " W rozkładzie ciągłym gęstość f(x) może być > 1 (np. U(0, 0.5) ma f(x) = 2),
+    margin_callout(
+      label = "Zapamiętaj",
+      tagList(
+        "W rozkładzie ciągłym gęstość f(x) może być > 1 (np. U(0, 0.5) ma f(x) = 2),
         ale ", tags$b("pole pod całą krzywą zawsze wynosi 1"), "."
+      ),
+      color = "uwaga"
     ),
 
     # ========================================================================
     # WIDGET 3: Jednostajny ciagly — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozkład jednostajny ciągły"),
+    h2(id = "ch4-jednostajny", class = "section-title", "Rozkład jednostajny ciągły"),
 
     div(class = "narrative",
       p(tags$b("Jednostajny ciągły U(a, b)"), " — każda wartość w przedziale
         [a, b] jest jednakowo prawdopodobna. Przykład: losowa liczba z generatora.")
     ),
 
-    div(class = "widget-block",
-      h4("Rozkład jednostajny U(a, b)"),
+    figure_panel(
+      label = "Ryc. 4.3",
+      title = "Rozkład jednostajny U(a, b)",
+      full_width = TRUE,
       fluidRow(
         column(4,
           checkboxGroupInput("ch4_unif_scenarios", "Scenariusze:",
@@ -145,15 +158,17 @@ ch4_ui <- tabPanel("4. Rozkłady ciągłe",
     # ========================================================================
     # WIDGET 3b: Wykladniczy — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozkład wykładniczy"),
+    h2(id = "ch4-wykladniczy", class = "section-title", "Rozkład wykładniczy"),
 
     div(class = "narrative",
       p(tags$b("Wykładniczy Exp(λ)"), " — modeluje czas oczekiwania między
         zdarzeniami. Przykład: czas między wiadomościami na WhatsAppie, czas między awariami maszyn.")
     ),
 
-    div(class = "widget-block",
-      h4("Rozkład wykładniczy Exp(λ)"),
+    figure_panel(
+      label = "Ryc. 4.4",
+      title = "Rozkład wykładniczy Exp(λ)",
+      full_width = TRUE,
       fluidRow(
         column(4,
           checkboxGroupInput("ch4_exp_scenarios", "Scenariusze:",
@@ -178,27 +193,26 @@ ch4_ui <- tabPanel("4. Rozkłady ciągłe",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Związek z rozkładem Poissona:"),
-      " Jeśli liczba zdarzeń w ustalonym czasie ma rozkład Poissona z parametrem λ,
-        to czas między kolejnymi zdarzeniami ma rozkład wykładniczy
-        Exp(λ). To dwie strony tego samego procesu — Poisson zlicza zdarzenia,
-        wykładniczy mierzy odstępy między nimi."
+    margin_callout(
+      label = "Związek z Poissonem",
+      "Jeśli liczba zdarzeń w czasie ma rozkład Poissona(λ),
+       to czas między zdarzeniami ma rozkład Exp(λ) — dwie strony tego samego procesu."
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Bezpamięciowość:"),
-      " Czekasz na wiadomość już 2 godziny. Czy następna przyjdzie szybciej,
-        bo „ją ci się należy”? ", tags$b("Nie."),
-      " Rozkład wykładniczy jest bezpamięciowy — czas już spędzony na czekaniu
-        nie wpływa na to, ile jeszcze poczekasz.
-        To ciągły odpowiednik bezpamięciowości rozkładu geometrycznego z ch. 3."
+    margin_callout(
+      label = "Bezpamięciowość",
+      tagList(
+        "Czekasz na wiadomość już 2 godziny. Czy następna przyjdzie szybciej?",
+        tags$b(" Nie."),
+        " Czas już spędzony nie wpływa na dalsze oczekiwanie."
+      ),
+      color = "uwaga"
     ),
 
     # ========================================================================
     # WIDGET 4: Rozklad t-Studenta — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozkład t-Studenta"),
+    h2(id = "ch4-t-studenta", class = "section-title", "Rozkład t-Studenta"),
 
     div(class = "narrative",
       p("Rozkład t-Studenta wygląda jak normalny, ale ma cięższe ogony —
@@ -208,8 +222,10 @@ ch4_ui <- tabPanel("4. Rozkłady ciągłe",
         Im więcej df, tym bliżej do rozkładu normalnego.")
     ),
 
-    div(class = "widget-block",
-      h4("Rozkład t-Studenta t(df)"),
+    figure_panel(
+      label = "Ryc. 4.5",
+      title = "Rozkład t-Studenta t(df)",
+      full_width = TRUE,
       fluidRow(
         column(4,
           checkboxGroupInput("ch4_t_scenarios", "Scenariusze:",
@@ -236,27 +252,24 @@ ch4_ui <- tabPanel("4. Rozkłady ciągłe",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Dlaczego t-Studenta?"),
-      " Gdy nie znamy prawdziwego odchylenia standardowego populacji
-        i szacujemy je z próby, rozkład statystyki testowej nie jest
-        normalny, ale właśnie t-Studenta. Przy małych próbach (n < 30)
-        różnica jest znacząca!"
+    margin_callout(
+      label = "Dlaczego t-Studenta?",
+      "Gdy nie znamy prawdziwego σ populacji i szacujemy je z próby,
+       rozkład statystyki testowej to t-Studenta, nie normalny.
+       Przy małych próbach (n < 30) różnica jest znacząca!"
     ),
 
-    div(class = "callout-warning",
-      tags$strong("W praktyce:"),
-      " Włącz scenariusze df=3 i df=30 jednocześnie i porównaj z N(0,1).
-        Przy df=30 różnica jest minimalna — dlatego przy dużych próbach
-        test t daje prawie te same wyniki co test z rozkładu normalnego.
-        Ale przy df=3 (czyli próba n=4!) ogony są wyraźnie cięższe —
-        wartości ekstremalne są bardziej prawdopodobne."
+    margin_callout(
+      label = "W praktyce",
+      "Przy df=30 krzywa t jest już prawie normalną. Przy df=3 (n=4!)
+       ogony są wyraźnie cięższe — wartości ekstremalne bardziej prawdopodobne.",
+      color = "uwaga"
     ),
 
     # ========================================================================
     # WIDGET 5: Rozklad chi-kwadrat — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozkład chi-kwadrat (χ²)"),
+    h2(id = "ch4-chi-kwadrat", class = "section-title", "Rozkład chi-kwadrat (χ²)"),
 
     div(class = "narrative",
       p("Rozkład chi-kwadrat powstaje jako suma kwadratów niezależnych zmiennych N(0,1).
@@ -265,8 +278,10 @@ ch4_ui <- tabPanel("4. Rozkłady ciągłe",
         estymacja wariancji.")
     ),
 
-    div(class = "widget-block",
-      h4("Rozkład χ²(df)"),
+    figure_panel(
+      label = "Ryc. 4.6",
+      title = "Rozkład χ²(df)",
+      full_width = TRUE,
       fluidRow(
         column(4,
           checkboxGroupInput("ch4_chisq_scenarios", "Scenariusze:",
@@ -291,25 +306,23 @@ ch4_ui <- tabPanel("4. Rozkłady ciągłe",
       )
     ),
 
-    div(class = "callout-info",
-      tags$strong("Obserwacja:"),
-      " Przy małym df rozkład jest mocno prawoskośny.
-        Gdy df rośnie, rozkład staje się coraz bardziej symetryczny
-        i zbliża się do normalnego (dzięki CTG!)."
+    margin_callout(
+      label = "Obserwacja",
+      "Przy małym df rozkład jest mocno prawoskośny.
+       Gdy df rośnie, staje się coraz bardziej symetryczny i zbliża się do normalnego (CTG!)."
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Intuicja:"),
-      " χ² mierzy „odległość od idealu”. Jeśli każda z df zmiennych
-        normalnych odchyla się trochę od zera, to suma ich kwadratów
-        mówi, jak duże są łączne odchylenia. Dlatego test χ² sprawdza,
-        czy obserwowane częstości są „zbyt daleko” od oczekiwanych."
+    margin_callout(
+      label = "Intuicja",
+      "χ² mierzy odleglosc od idealu. Test χ² sprawdza, czy obserwowane
+       czestosci sa zbyt daleko od oczekiwanych.",
+      color = "uwaga"
     ),
 
     # ========================================================================
     # WIDGET 6: Rozklad log-normalny — scenariusze overlay
     # ========================================================================
-    div(class = "section-title", "Rozkład log-normalny"),
+    h2(id = "ch4-lognormalny", class = "section-title", "Rozkład log-normalny"),
 
     div(class = "narrative",
       p("Jeśli ", tags$b("ln(X) ~ N(μ, σ)"), ", to X ma rozkład log-normalny.
@@ -318,8 +331,10 @@ ch4_ui <- tabPanel("4. Rozkłady ciągłe",
         dochody, ceny akcji, czasy reakcji, stężenia substancji.")
     ),
 
-    div(class = "widget-block",
-      h4("Rozkład LogN(μ, σ)"),
+    figure_panel(
+      label = "Ryc. 4.7",
+      title = "Rozkład LogN(μ, σ)",
+      full_width = TRUE,
       fluidRow(
         column(4,
           checkboxGroupInput("ch4_lnorm_scenarios", "Scenariusze:",
@@ -344,32 +359,28 @@ ch4_ui <- tabPanel("4. Rozkłady ciągłe",
       )
     ),
 
-    div(class = "callout-warning",
-      tags$strong("Uwaga na średnią!"),
-      " W rozkładzie log-normalnym średnia jest zawsze większa od mediany.
-        Mediana = e^μ, średnia = e^(μ + σ²/2).
-        Dlatego mediana dochodów jest lepszą miarą 'typowego' dochodu niż średnia."
+    margin_callout(
+      label = "Uwaga na średnią!",
+      tagList(
+        "Średnia > mediana. Mediana = e^μ, średnia = e^(μ + σ²/2).
+         Dlatego ", tags$b("mediana"), " dochodów lepiej opisuje 'typowego' pracownika niż średnia."
+      ),
+      color = "uwaga"
     ),
 
-    div(class = "callout-info",
-      tags$strong("Jak rozpoznać?"),
-      " Jeśli dane są zawsze dodatnie i mają długi prawy ogon
-        (kilka bardzo dużych wartości) — myśl log-normalny.
-        Przykłady: dochody, ceny nieruchomości, czasy reakcji, stężenia zanieczyszczeń.
-        Prosty test: jeśli po zlogarytmowaniu danych histogram wygląda normalnie — to log-normalny."
+    margin_callout(
+      label = "Jak rozpoznać?",
+      "Dane zawsze dodatnie + długi prawy ogon → myśl log-normalny.
+       Prosty test: jeśli po zlogarytmowaniu histogram wygląda normalnie — to log-normalny."
     ),
 
-    # --- Transition ---
-    div(class = "chapter-transition",
-      p("Spośród wszystkich rozkładów ciągłych, jeden góruje nad innymi.
-        Pojawia się wszędzie w naturze i statystyce.
-        Czas poznać rozkład normalny dogłębnie."),
-      actionButton("ch4_next", "Dalej: 5. Rozkład normalny →",
-                   class = "btn-primary btn-lg")
-    ),
-
-    br(), br()
-  ))
+    lc_chapter_next(
+      num       = "05",
+      title     = "Rozkład normalny",
+      lead      = "królowa rozkładów — dlaczego pojawia się wszędzie.",
+      target_id = "ch-normalny"
+    )
+  )
 )
 
 # --------------------------------------------------------------------------
