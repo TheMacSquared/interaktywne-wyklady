@@ -32,7 +32,6 @@ lc_apply_ggplot_defaults <- function() {
   ggplot2::update_geom_defaults("line",    list(colour = upwr_single))
   ggplot2::update_geom_defaults("bar",     list(fill   = upwr_single))
   ggplot2::update_geom_defaults("col",     list(fill   = upwr_single))
-  ggplot2::update_geom_defaults("histogram", list(fill = upwr_single, colour = NA))
   ggplot2::update_geom_defaults("density", list(colour = upwr_single, fill = NA))
   ggplot2::update_geom_defaults("boxplot", list(fill   = upwr_panel,  colour = upwr_single))
   ggplot2::update_geom_defaults("smooth",  list(colour = upwr_accent, fill = upwr_seq_burgundy[3]))
