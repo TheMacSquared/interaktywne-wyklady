@@ -390,34 +390,20 @@ ch2_ev_var_server <- function(input, output, session) {
   })
 
   # --- Widget 3: Ryzyko a rozrzut ---
-  ch2ev_var_data <- reactiveVal(NULL)
-
-  generate_var_sim <- function() {
+  ch2ev_var_data <- reactive({
+    input$ch2ev_var_sim
     req(input$ch2ev_var_n)
     n <- input$ch2ev_var_n
-
-    # Loteria A: zawsze 50 zl (Var = 0)
-    a <- rep(50, n)
-    # Loteria B: 50% szans na 0 zl, 50% na 100 zl (Var = 2500)
-    b <- sample(c(0, 100), n, replace = TRUE)
-    # Loteria C: rownomiernie 0-100 (Var ~ 833)
-    cc <- runif(n, 0, 100)
-
-    ch2ev_var_data(list(a = a, b = b, c = cc, n = n))
-  }
-
-  observeEvent(input$ch2ev_var_sim, generate_var_sim())
-
-  # Inicjalizacja
-  observe({
-    if (is.null(ch2ev_var_data())) {
-      isolate(generate_var_sim())
-    }
+    list(
+      a  = rep(50, n),
+      b  = sample(c(0, 100), n, replace = TRUE),
+      c  = runif(n, 0, 100),
+      n  = n
+    )
   })
 
   output$ch2ev_var_plot <- renderPlot({
     d <- ch2ev_var_data()
-    req(d)
 
     df <- data.frame(
       value = c(d$a, d$b, d$c),
@@ -441,7 +427,6 @@ ch2_ev_var_server <- function(input, output, session) {
 
   output$ch2ev_var_summary <- renderUI({
     d <- ch2ev_var_data()
-    req(d)
 
     div(
       h5("Statystyki:"),

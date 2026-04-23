@@ -430,20 +430,19 @@ ch4_server <- function(input, output, session) {
 
   # --- Widget 1: Krok po kroku (bez zmian) ---
   ch4_step <- reactiveVal(0)
-  ch4_sample_data <- reactiveVal(NULL)
 
-  observe({
+  ch4_sample_data <- reactive({
     req(input$ch4_step_n, input$ch4_step_dist)
-    n <- input$ch4_step_n
-    dist <- input$ch4_step_dist
-    data <- switch(dist,
-      "normal" = rnorm(n, mean = 5, sd = 1.5),
-      "exp"    = rexp(n, rate = 0.5),
-      "unif"   = runif(n, min = 0, max = 10)
+    switch(input$ch4_step_dist,
+      "normal" = rnorm(input$ch4_step_n, mean = 5, sd = 1.5),
+      "exp"    = rexp(input$ch4_step_n, rate = 0.5),
+      "unif"   = runif(input$ch4_step_n, min = 0, max = 10)
     )
-    ch4_sample_data(data)
-    ch4_step(0)
   })
+
+  observeEvent(list(input$ch4_step_dist, input$ch4_step_n), {
+    ch4_step(0)
+  }, ignoreInit = TRUE)
 
   observeEvent(input$ch4_step1, ch4_step(1))
   observeEvent(input$ch4_step2, ch4_step(2))
@@ -457,7 +456,6 @@ ch4_server <- function(input, output, session) {
   output$ch4_step_plot <- renderPlot({
     step <- ch4_step()
     data <- ch4_sample_data()
-    req(data)
 
     df <- data.frame(x = data)
 
@@ -529,13 +527,11 @@ ch4_server <- function(input, output, session) {
   })
 
   # --- Widget 2: Prawdopodobienstwo = pole (bez zmian) ---
-  observe({
-    req(input$ch4_area_dist)
-    dist <- input$ch4_area_dist
-    if (dist == "norm") {
+  observeEvent(input$ch4_area_dist, {
+    if (input$ch4_area_dist == "norm") {
       updateSliderInput(session, "ch4_area_a", min = -4, max = 4, value = -1, step = 0.1)
       updateSliderInput(session, "ch4_area_b", min = -4, max = 4, value = 1, step = 0.1)
-    } else if (dist == "exp") {
+    } else if (input$ch4_area_dist == "exp") {
       updateSliderInput(session, "ch4_area_a", min = 0, max = 8, value = 0, step = 0.1)
       updateSliderInput(session, "ch4_area_b", min = 0, max = 8, value = 2, step = 0.1)
     } else {

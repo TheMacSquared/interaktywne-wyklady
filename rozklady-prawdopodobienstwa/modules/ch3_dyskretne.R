@@ -279,28 +279,16 @@ ch3_geom_defs <- list(
 ch3_server <- function(input, output, session) {
 
   # --- Widget 1: Jednostajny dyskretny (bez zmian) ---
-  ch3_unif_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch3_unif_sim, {
-    req(input$ch3_unif_n, input$ch3_unif_type)
-    n <- input$ch3_unif_n
-    type <- input$ch3_unif_type
-    k <- switch(type, "coin" = 2, "die" = 6, "d12" = 12)
-    obs <- sample(1:k, n, replace = TRUE)
-    ch3_unif_data(list(obs = obs, k = k, n = n))
-  })
-
-  observe({
+  ch3_unif_data <- reactive({
+    input$ch3_unif_sim
     req(input$ch3_unif_type, input$ch3_unif_n)
     type <- input$ch3_unif_type
-    k <- switch(type, "coin" = 2, "die" = 6, "d12" = 12)
-    ch3_unif_data(list(obs = sample(1:k, input$ch3_unif_n, replace = TRUE),
-                       k = k, n = input$ch3_unif_n))
+    k    <- switch(type, "coin" = 2, "die" = 6, "d12" = 12)
+    list(obs = sample(1:k, input$ch3_unif_n, replace = TRUE), k = k, n = input$ch3_unif_n)
   })
 
   output$ch3_unif_plot <- renderPlot({
     d <- ch3_unif_data()
-    req(d)
 
     df <- data.frame(x = factor(d$obs, levels = 1:d$k))
     freq_df <- df %>% count(x, .drop = FALSE) %>% mutate(rel = n / sum(n))

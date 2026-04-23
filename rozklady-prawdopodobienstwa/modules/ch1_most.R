@@ -215,9 +215,11 @@ ch1_ui <- list(
 ch1_server <- function(input, output, session) {
 
   # --- Widget 0: Rozklad empiryczny vs teoretyczny ---
-  ch1_emp_data <- reactiveVal(NULL)
+  emp_resample_trigger <- reactiveVal(0)
+  observeEvent(input$ch1_emp_resample, emp_resample_trigger(emp_resample_trigger() + 1))
 
-  generate_emp_data <- function() {
+  ch1_emp_data <- reactive({
+    emp_resample_trigger()
     req(input$ch1_emp_n, input$ch1_emp_dist)
     n <- input$ch1_emp_n
     dist <- input$ch1_emp_dist
@@ -226,19 +228,11 @@ ch1_server <- function(input, output, session) {
       "skewed"  = rgamma(n, shape = 3, scale = 10) + 5,
       "uniform" = runif(n, min = 1, max = 6)
     )
-    ch1_emp_data(list(data = data, dist = dist, n = n))
-  }
-
-  observe({
-    input$ch1_emp_dist
-    input$ch1_emp_n
-    generate_emp_data()
+    list(data = data, dist = dist, n = n)
   })
-  observeEvent(input$ch1_emp_resample, generate_emp_data())
 
   output$ch1_emp_vs_theo <- renderPlot({
     d <- ch1_emp_data()
-    req(d)
 
     show_hist <- input$ch1_show_hist
     show_dens <- input$ch1_show_density
@@ -419,36 +413,23 @@ ch1_server <- function(input, output, session) {
   })
 
   # --- Widget 2: Czestosci vs prawdopodobienstwo ---
-  freq_data <- reactiveVal(NULL)
-
-  observe({
+  freq_data <- reactive({
     input$ch1_resample
-    input$ch1_scenario
     req(input$ch1_n_obs, input$ch1_scenario)
-    n <- input$ch1_n_obs
-
+    n        <- input$ch1_n_obs
     scenario <- input$ch1_scenario
     if (scenario == "fair") {
-      obs <- sample(1:6, n, replace = TRUE)
-      theo <- rep(1/6, 6)
-      labels <- as.character(1:6)
+      list(obs = sample(1:6, n, replace = TRUE), theo = rep(1/6, 6), labels = as.character(1:6))
     } else if (scenario == "loaded") {
       probs <- c(0.1, 0.1, 0.1, 0.1, 0.1, 0.5)
-      obs <- sample(1:6, n, replace = TRUE, prob = probs)
-      theo <- probs
-      labels <- as.character(1:6)
+      list(obs = sample(1:6, n, replace = TRUE, prob = probs), theo = probs, labels = as.character(1:6))
     } else {
-      obs <- sample(c(1, 2), n, replace = TRUE)
-      theo <- c(0.5, 0.5)
-      labels <- c("Orzeł", "Reszka")
+      list(obs = sample(c(1, 2), n, replace = TRUE), theo = c(0.5, 0.5), labels = c("Orzeł", "Reszka"))
     }
-
-    freq_data(list(obs = obs, theo = theo, labels = labels))
   })
 
   output$ch1_freq_vs_prob <- renderPlot({
     fd <- freq_data()
-    req(fd)
 
     n_levels <- length(fd$labels)
     tab <- table(factor(fd$obs, levels = 1:n_levels)) / length(fd$obs)
@@ -480,7 +461,6 @@ ch1_server <- function(input, output, session) {
 
   output$ch1_freq_vs_prob_text <- renderUI({
     fd <- freq_data()
-    req(fd)
     n <- length(fd$obs)
     max_diff <- max(abs(table(factor(fd$obs, levels = 1:length(fd$labels))) / n - fd$theo))
 

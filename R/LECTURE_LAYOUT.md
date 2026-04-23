@@ -173,34 +173,61 @@ Zamieniaj bezpośrednio, bez aliasów. `lc_apply_ggplot_defaults()` ustawia `the
 
 ---
 
-## 6. Pułapka: `observe({})` a lazy rendering
+## 6. Reactive zamiast observe + reactiveVal
 
-`lecture_page` renderuje tylko aktywny rozdział. Przy starcie inputy nieaktywnych rozdziałów są `NULL`. Bloki `observe({})` (nie `observeEvent`) strzelają natychmiast i crashują przy `switch(NULL, ...)` lub `rep(50, NULL)`.
+`lecture_page` renderuje tylko aktywny rozdział — przy starcie inputy nieaktywnych rozdziałów są `NULL`. `observe({})` strzela natychmiast i crashuje przy `switch(NULL,...)`.
 
-**Reguła:** każda funkcja lub `observe` który czyta `input$*` musi zaczynać się od `req()`:
+**Właściwy wzorzec: `reactive()` zamiast `reactiveVal + observe`.**
 
 ```r
-# ŹRÓDŁO PROBLEMU
+# ŹLE — observe strzela przy starcie z NULL inputem
+data <- reactiveVal(NULL)
 observe({
-  dist <- input$ch4_step_dist
-  data <- switch(dist, "normal" = rnorm(n), ...)  # crash gdy dist == NULL
+  n    <- input$n        # NULL → crash
+  data(rnorm(n))
 })
 
-# POPRAWKA
-observe({
-  req(input$ch4_step_dist, input$ch4_step_n)
-  dist <- input$ch4_step_dist
-  data <- switch(dist, "normal" = rnorm(n), ...)
+# DOBRZE — reactive() propaguje NULL naturalnie i jest keszowany
+data <- reactive({
+  req(input$n)
+  rnorm(input$n)
 })
-
-# ALBO w helper-funkcji wywoływanej z observe
-generate_data <- function() {
-  req(input$ch4_step_dist, input$ch4_step_n)   # ← na samym początku
-  ...
-}
 ```
 
-Szczególnie niebezpieczne: `observeEvent(..., ignoreNULL = FALSE)` — ten wariant strzela nawet gdy input jest `NULL`. Usuń `ignoreNULL = FALSE` jeśli nie jest celowo potrzebne.
+**Przycisk "Symuluj ponownie"** — dodaj trigger:
+
+```r
+sim_trigger <- reactiveVal(0)
+observeEvent(input$simulate, sim_trigger(sim_trigger() + 1))
+
+data <- reactive({
+  sim_trigger()          # zależy od przycisku
+  req(input$n, input$dist)
+  switch(input$dist, "normal" = rnorm(input$n), ...)
+})
+```
+
+**Aktualizacja slidera przy zmianie inputu** (side effect) — użyj `observeEvent`, nie `observe`:
+
+```r
+# ŹLE
+observe({ req(input$dist); if (input$dist == "norm") updateSliderInput(...) })
+
+# DOBRZE — observeEvent ma ignoreNULL=TRUE domyślnie
+observeEvent(input$dist, {
+  if (input$dist == "norm") updateSliderInput(session, ...)
+})
+```
+
+**Reset stanu przy zmianie danych** — osobny `observeEvent`:
+
+```r
+step <- reactiveVal(0)
+data <- reactive({ req(input$n, input$dist); switch(input$dist, ...) })
+observeEvent(list(input$dist, input$n), step(0), ignoreInit = TRUE)
+```
+
+Nie używaj `ignoreNULL = FALSE` w `observeEvent` — powoduje strzał przy NULL na starcie.
 
 ---
 
