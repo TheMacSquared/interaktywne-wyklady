@@ -2,17 +2,22 @@
 # CHAPTER 6: Sciaga - podsumowanie zalozen
 # ============================================================================
 
-ch6_ui <- tabPanel("6. Ściąga",
-  fluidRow(column(8, offset = 2,
-
-    div(class = "chapter-recap",
-      "Kompaktowe podsumowanie: założenia, testy diagnostyczne i alternatywy."
+ch6_ui <- lecture_chapter(
+  id = "ch-sciaga",
+  num = "06",
+  title = "Ściąga",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 06 · Założenia testów",
+      num    = "06",
+      title  = "Ściąga.",
+      lead   = "Kompaktowe podsumowanie: założenia, testy diagnostyczne i alternatywy."
     ),
 
     # ========================================================================
-    div(class = "section-title", "Schemat postępowania"),
+    lc_h2("ch6-schemat", "Schemat postępowania"),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Krok 1:"), " Wybierz metodę na podstawie typu zmiennych i pytania badawczego.",
       br(), br(),
       tags$strong("Krok 2:"), " Sprawdź założenia wizualnie (wykresy) i formalnie (testy).",
@@ -25,9 +30,9 @@ ch6_ui <- tabPanel("6. Ściąga",
     ),
 
     # ========================================================================
-    div(class = "section-title", "Testy diagnostyczne — szybka referencja"),
+    lc_h2("ch6-testy", "Testy diagnostyczne — szybka referencja"),
 
-    tags$table(class = "table table-bordered table-striped",
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
       tags$thead(
         tags$tr(tags$th("Założenie"), tags$th("Test"), tags$th("R"), tags$th("H₀"))
@@ -79,9 +84,9 @@ ch6_ui <- tabPanel("6. Ściąga",
     ),
 
     # ========================================================================
-    div(class = "section-title", "Metoda → alternatywa (quick reference)"),
+    lc_h2("ch6-alternatywy", "Metoda → alternatywa (quick reference)"),
 
-    tags$table(class = "table table-bordered",
+    tags$table(class = "lc-table lc-table-bordered",
       style = "font-size: 13px;",
       tags$thead(
         tags$tr(tags$th("Metoda parametryczna"), tags$th("→ Alternatywa nieparametryczna"))
@@ -99,9 +104,9 @@ ch6_ui <- tabPanel("6. Ściąga",
     ),
 
     # ========================================================================
-    div(class = "section-title", "Praktyczne rady"),
+    lc_h2("ch6-rady", "Praktyczne rady"),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$ul(
         tags$li(tags$b("Wizualizacja > testy formalne."),
                 " Wykresy dają intuicję, testy dają liczbę. Używaj obu."),
@@ -117,10 +122,10 @@ ch6_ui <- tabPanel("6. Ściąga",
     ),
 
     # ========================================================================
-    div(class = "section-title", "Kod R — diagnostyka"),
+    lc_h2("ch6-kod", "Kod R — diagnostyka"),
 
-    div(class = "formula-box",
-      tags$pre(style = "background: #f8f9fa; padding: 12px; border-radius: 6px; font-size: 13px;",
+    lc_formula_box(
+      tags$pre(style = "background: var(--upwr-surface-sunken); padding: 12px; border-radius: 6px; font-size: 13px;",
         tags$code(
 "library(rstatix)
 library(lmtest)
@@ -150,7 +155,7 @@ oneway.test(var ~ group, data = data)"
       )
     )
 
-  ))
+  )
 )
 
 ch6_server <- function(input, output, session) {

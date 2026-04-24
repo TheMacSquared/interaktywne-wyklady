@@ -2,6 +2,12 @@
 # FUNKCJE POMOCNICZE - Zalozenia testow
 # ============================================================================
 
+# Kolory domenowe dla założeń testów. Wartości pochodzą z palety UPWr.
+col_ok   <- unname(upwr_cat["szalwia"])   # założenie spełnione
+col_fail <- upwr_accent                    # założenie naruszone
+col_test <- unname(upwr_cat["niebo"])      # dane/test
+col_alt  <- unname(upwr_cat["wrzos"])      # alternatywa
+
 # Generowanie danych o roznych rozkladach
 generate_test_data <- function(n = 50, dist = "normal") {
   set.seed(NULL)
@@ -54,4 +60,3 @@ dist_names_pl <- c(
   "bimodal"    = "Dwumodalny",
   "uniform"    = "Jednostajny"
 )
-

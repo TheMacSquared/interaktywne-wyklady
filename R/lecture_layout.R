@@ -26,7 +26,8 @@
   list(num = "II",  slug = "rozklady",   title = "Rozkłady prawdopodobieństwa", href = "#"),
   list(num = "III", slug = "przedzialy", title = "Przedziały ufności",          href = "#"),
   list(num = "IV",  slug = "testowanie", title = "Testowanie",                  href = "#"),
-  list(num = "V",   slug = "regresja",   title = "Regresja",                    href = "#")
+  list(num = "V",   slug = "regresja",   title = "Regresja",                    href = "#"),
+  list(num = "IVa", slug = "zalozenia",  title = "Założenia testów",            href = "#")
 )
 
 # Mapowanie lecture_id → slug modułu
@@ -35,7 +36,7 @@
   "rozklady-prawdopodobienstwa" = "rozklady",
   "przedzialy-ufnosci"          = "przedzialy",
   "wnioskowanie-statystyczne"   = "testowanie",
-  "zalozenia-testow"            = "testowanie",
+  "zalozenia-testow"            = "zalozenia",
   "regresja"                    = "regresja"
 )
 

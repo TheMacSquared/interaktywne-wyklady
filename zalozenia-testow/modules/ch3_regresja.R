@@ -2,17 +2,21 @@
 # CHAPTER 3: Zalozenia regresji liniowej
 # ============================================================================
 
-ch3_ui <- tabPanel("3. Założenia regresji",
-  fluidRow(column(8, offset = 2,
-
-    div(class = "chapter-recap",
-      "Regresja liniowa ma własny zestaw założeń. Naruszenie każdego
-       prowadzi do innego typu problemów."
+ch3_ui <- lecture_chapter(
+  id = "ch-regresja",
+  num = "03",
+  title = "Założenia regresji",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 03 · Założenia testów",
+      num    = "03",
+      title  = "Założenia regresji.",
+      lead   = "Regresja liniowa ma własny zestaw założeń. Naruszenie każdego prowadzi do innego typu problemów."
     ),
 
-    div(class = "section-title", "Pięć założeń regresji liniowej"),
+    lc_h2("ch3-piec-zalozen", "Pięć założeń regresji liniowej"),
 
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li(tags$b("Liniowość"), " — związek Y~X jest liniowy"),
         tags$li(tags$b("Niezależność reszt"), " — reszty nie są skorelowane"),
@@ -26,10 +30,11 @@ ch3_ui <- tabPanel("3. Założenia regresji",
     # ========================================================================
     # WIDGET 1: Diagnostyka wizualna
     # ========================================================================
-    div(class = "section-title", "Diagnostyka wizualna"),
+    lc_h2("ch3-diagnostyka", "Diagnostyka wizualna"),
 
-    div(class = "widget-block",
-      h4("Wykresy diagnostyczne"),
+    figure_panel(
+      label = "Ryc. 3.1",
+      title = "Wykresy diagnostyczne",
       fluidRow(
         column(4,
           selectInput("ch3_violation", "Typ naruszenia:",
@@ -44,7 +49,7 @@ ch3_ui <- tabPanel("3. Założenia regresji",
           ),
           sliderInput("ch3_n", "n:", min = 50, max = 200, value = 100, step = 25),
           actionButton("ch3_gen", "Generuj dane",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch3_scatter", height = "250px"),
@@ -53,7 +58,7 @@ ch3_ui <- tabPanel("3. Założenia regresji",
       )
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Jak czytać wykresy diagnostyczne:"),
       tags$ul(
         tags$li(tags$b("Reszty vs dopasowane:"), " losowy rozrzut = OK, wzór = problem"),
@@ -65,15 +70,16 @@ ch3_ui <- tabPanel("3. Założenia regresji",
     # ========================================================================
     # WIDGET 2: Testy formalne
     # ========================================================================
-    div(class = "section-title", "Testy formalne założeń regresji"),
+    lc_h2("ch3-testy", "Testy formalne założeń regresji"),
 
-    div(class = "widget-block",
-      h4("Testy diagnostyczne"),
+    figure_panel(
+      label = "Ryc. 3.2",
+      title = "Testy diagnostyczne",
       fluidRow(
         column(4,
           helpText("Używa modelu z widgetu powyżej."),
           actionButton("ch3_run_tests", "Uruchom diagnostykę",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           uiOutput("ch3_diag_results")
@@ -84,10 +90,10 @@ ch3_ui <- tabPanel("3. Założenia regresji",
     # ========================================================================
     # WIDGET 3: Alternatywy
     # ========================================================================
-    div(class = "section-title", "Gdy założenia są naruszone"),
+    lc_h2("ch3-naruszenia", "Gdy założenia są naruszone"),
 
-    div(class = "callout-success",
-      tags$table(class = "table table-bordered", style = "font-size: 14px;",
+    lc_feedback(type = "ok",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 14px;",
         tags$thead(
           tags$tr(tags$th("Naruszenie"), tags$th("Rozwiązanie"))
         ),
@@ -106,13 +112,13 @@ ch3_ui <- tabPanel("3. Założenia regresji",
       )
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: założenia testów chi-kwadrat i Fishera"),
-      actionButton("ch3_next", "Dalej → 4. Założenia χ² i Fishera",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "04",
+      title = "Założenia χ² i Fishera",
+      lead = "minimalne liczności i wybór testu dla tabel.",
+      target_id = "ch-chi-fisher"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -135,14 +141,14 @@ ch3_server <- function(input, output, session) {
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       ggplot(df, aes(x = x, y = y)) +
         geom_point(color = col_test, alpha = 0.5) +
         geom_smooth(method = "lm", se = TRUE, color = col_ok, fill = col_ok, alpha = 0.1) +
         labs(title = "Dane + linia regresji", x = "X", y = "Y") +
-        theme_educational()
+        theme_upwr()
     }
   })
 
@@ -158,24 +164,24 @@ ch3_server <- function(input, output, session) {
     )
 
     p1 <- ggplot(df, aes(x = fitted, y = residuals)) +
-      geom_hline(yintercept = 0, linetype = "dashed", color = col_dark) +
+      geom_hline(yintercept = 0, linetype = "dashed", color = upwr_secondary) +
       geom_point(color = col_test, alpha = 0.5) +
       geom_smooth(se = FALSE, color = col_fail, linewidth = 0.8) +
       labs(title = "Reszty vs dopasowane", x = "Dopasowane", y = "Reszty") +
-      theme_educational()
+      theme_upwr()
 
     p2 <- ggplot(df, aes(sample = std_resid)) +
       stat_qq(color = col_test, alpha = 0.5) +
       stat_qq_line(color = col_ok) +
       labs(title = "Q-Q reszt") +
-      theme_educational()
+      theme_upwr()
 
     p3 <- ggplot(df, aes(x = fitted, y = sqrt_abs_resid)) +
       geom_point(color = col_test, alpha = 0.5) +
       geom_smooth(se = FALSE, color = col_fail, linewidth = 0.8) +
       labs(title = "Scale-Location", x = "Dopasowane",
            y = expression(sqrt("|Std. reszty|"))) +
-      theme_educational()
+      theme_upwr()
 
     gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
   })
@@ -184,7 +190,7 @@ ch3_server <- function(input, output, session) {
   output$ch3_diag_results <- renderUI({
     req(input$ch3_run_tests)
     model <- isolate(ch3_model())
-    if (is.null(model)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+    if (is.null(model)) return(lc_feedback(type = "warning", "Najpierw wygeneruj dane."))
 
     # Shapiro-Wilk na resztach
     resid <- residuals(model)
@@ -211,7 +217,7 @@ ch3_server <- function(input, output, session) {
            ok_msg = "Brak autokorelacji", fail_msg = "Autokorelacja!")
     )
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       lapply(results, function(r) {
         color <- if (r$p >= 0.05) col_ok else col_fail
         msg <- if (r$p >= 0.05) r$ok_msg else r$fail_msg

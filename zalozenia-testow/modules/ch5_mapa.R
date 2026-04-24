@@ -2,22 +2,26 @@
 # CHAPTER 5: Mapa metod - kompletna tablica zalozenia -> alternatywa
 # ============================================================================
 
-ch5_ui <- tabPanel("5. Mapa metod",
-  fluidRow(column(8, offset = 2,
-
-    div(class = "chapter-recap",
-      "Zbierzmy wszystko w jedną mapę: każda metoda, jej założenia
-       i co robić, gdy są naruszone."
+ch5_ui <- lecture_chapter(
+  id = "ch-mapa",
+  num = "05",
+  title = "Mapa metod",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 05 · Założenia testów",
+      num    = "05",
+      title  = "Mapa metod.",
+      lead   = "Zbierzmy wszystko w jedną mapę: każda metoda, jej założenia i co robić, gdy są naruszone."
     ),
 
-    div(class = "section-title", "Kompletna mapa: metoda → założenia → alternatywa"),
+    lc_h2("ch5-kompletna-mapa", "Kompletna mapa: metoda → założenia → alternatywa"),
 
     # ========================================================================
     # Testy parametryczne
     # ========================================================================
-    div(class = "section-title", "Testy parametryczne"),
+    lc_h2("ch5-parametryczne", "Testy parametryczne"),
 
-    tags$table(class = "table table-bordered table-striped",
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
       tags$thead(
         tags$tr(tags$th("Metoda"), tags$th("Założenia"), tags$th("Jak sprawdzić"),
@@ -60,9 +64,9 @@ ch5_ui <- tabPanel("5. Mapa metod",
     # ========================================================================
     # Testy nieparametryczne
     # ========================================================================
-    div(class = "section-title", "Testy nieparametryczne"),
+    lc_h2("ch5-nieparametryczne", "Testy nieparametryczne"),
 
-    tags$table(class = "table table-bordered table-striped",
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
       tags$thead(
         tags$tr(tags$th("Metoda"), tags$th("Założenia"), tags$th("Uwagi"))
@@ -89,9 +93,9 @@ ch5_ui <- tabPanel("5. Mapa metod",
     # ========================================================================
     # Testy dla jakosciowych
     # ========================================================================
-    div(class = "section-title", "Testy dla zmiennych jakościowych"),
+    lc_h2("ch5-jakosciowe", "Testy dla zmiennych jakościowych"),
 
-    tags$table(class = "table table-bordered table-striped",
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
       tags$thead(
         tags$tr(tags$th("Metoda"), tags$th("Założenia"), tags$th("Gdy naruszone"))
@@ -123,9 +127,9 @@ ch5_ui <- tabPanel("5. Mapa metod",
     # ========================================================================
     # Regresja
     # ========================================================================
-    div(class = "section-title", "Regresja"),
+    lc_h2("ch5-regresja", "Regresja"),
 
-    tags$table(class = "table table-bordered table-striped",
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
       tags$thead(
         tags$tr(tags$th("Metoda"), tags$th("Założenia"), tags$th("Diagnostyka"), tags$th("Alternatywy"))
@@ -149,10 +153,11 @@ ch5_ui <- tabPanel("5. Mapa metod",
     # ========================================================================
     # WIDGET: Interaktywny selektor
     # ========================================================================
-    div(class = "section-title", "Selektor: mam tę metodę — co sprawdzić?"),
+    lc_h2("ch5-selektor", "Selektor: mam tę metodę — co sprawdzić?"),
 
-    div(class = "widget-block",
-      h4("Sprawdzarka założeń"),
+    figure_panel(
+      label = "Ryc. 5.1",
+      title = "Sprawdzarka założeń",
       fluidRow(
         column(4,
           selectInput("ch5_method", "Metoda:",
@@ -179,13 +184,13 @@ ch5_ui <- tabPanel("5. Mapa metod",
       )
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: kompaktowa ściąga"),
-      actionButton("ch5_next", "Dalej → 6. Ściąga",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "06",
+      title = "Ściąga",
+      lead = "kompaktowa referencja do diagnostyki i alternatyw.",
+      target_id = "ch-sciaga"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -287,19 +292,19 @@ ch5_server <- function(input, output, session) {
 
     tagList(
       h4(info$name),
-      div(class = "callout-warning",
+      lc_feedback(type = "warning",
         tags$strong("Założenia:"),
         tags$ul(lapply(info$assumptions, tags$li))
       ),
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         tags$strong("Jak sprawdzić:"),
         tags$ul(lapply(info$checks, function(c) tags$li(tags$code(c))))
       ),
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Alternatywy:"),
         tags$ul(lapply(info$alternatives, tags$li))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         tags$strong("Kod R:"),
         tags$pre(style = "margin-top: 5px;", tags$code(info$r_code))
       )

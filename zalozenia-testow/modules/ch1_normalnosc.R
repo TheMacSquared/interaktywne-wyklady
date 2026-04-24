@@ -2,17 +2,21 @@
 # CHAPTER 1: Normalnosc rozkladu
 # ============================================================================
 
-ch1_ui <- tabPanel("1. Normalność rozkładu",
-  fluidRow(column(8, offset = 2,
-
-    div(class = "chapter-recap",
-      "Wiele testów statystycznych zakłada normalność danych.
-       Jak to sprawdzić i co zrobić, gdy założenie jest naruszone?"
+ch1_ui <- lecture_chapter(
+  id = "ch-normalnosc",
+  num = "01",
+  title = "Normalność rozkładu",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 01 · Założenia testów",
+      num    = "01",
+      title  = "Normalność rozkładu.",
+      lead   = "Wiele testów statystycznych zakłada normalność danych. Jak to sprawdzić i co zrobić, gdy założenie jest naruszone?"
     ),
 
-    div(class = "section-title", "Które metody wymagają normalności?"),
+    lc_h2("ch1-metody", "Które metody wymagają normalności?"),
 
-    div(class = "narrative",
+    tagList(
       p("Założenie normalności dotyczy:"),
       tags$ul(
         tags$li(tags$b("Test t"), " (jednej próby, niezależny, parowy) — normalność danych (lub reszt)"),
@@ -27,10 +31,11 @@ ch1_ui <- tabPanel("1. Normalność rozkładu",
     # ========================================================================
     # WIDGET 1: Wizualne sprawdzanie normalnosci
     # ========================================================================
-    div(class = "section-title", "Wizualne sprawdzanie normalności"),
+    lc_h2("ch1-wizualnie", "Wizualne sprawdzanie normalności"),
 
-    div(class = "widget-block",
-      h4("Histogram + Q-Q plot"),
+    figure_panel(
+      label = "Ryc. 1.1",
+      title = "Histogram + Q-Q plot",
       fluidRow(
         column(4,
           selectInput("ch1_dist", "Rozkład danych:",
@@ -46,7 +51,7 @@ ch1_ui <- tabPanel("1. Normalność rozkładu",
           sliderInput("ch1_n", "Wielkość próby (n):",
                       min = 10, max = 200, value = 50, step = 10),
           actionButton("ch1_gen", "Generuj dane",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch1_normality_plots", height = "350px")
@@ -54,7 +59,7 @@ ch1_ui <- tabPanel("1. Normalność rozkładu",
       )
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Jak czytać Q-Q plot:"),
       " Jeśli punkty leżą na linii — dane są normalne.
         Odchylenia na końcach — ciężkie/lekkie ogony.
@@ -64,9 +69,9 @@ ch1_ui <- tabPanel("1. Normalność rozkładu",
     # ========================================================================
     # WIDGET 2: Testy normalnosci
     # ========================================================================
-    div(class = "section-title", "Testy formalne"),
+    lc_h2("ch1-testy-formalne", "Testy formalne"),
 
-    div(class = "narrative",
+    tagList(
       p("Dwa najczęściej używane testy:"),
       tags$ul(
         tags$li(tags$b("Shapiro-Wilk"), " — najlepszy dla n < 50, najczęściej używany"),
@@ -76,13 +81,14 @@ ch1_ui <- tabPanel("1. Normalność rozkładu",
         "p < 0.05 → odrzucamy normalność.")
     ),
 
-    div(class = "widget-block",
-      h4("Shapiro-Wilk i K-S"),
+    figure_panel(
+      label = "Ryc. 1.2",
+      title = "Shapiro-Wilk i K-S",
       fluidRow(
         column(4,
           helpText("Używa danych z widgetu powyżej."),
           actionButton("ch1_test_norm", "Testuj normalność",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           uiOutput("ch1_norm_results")
@@ -90,7 +96,7 @@ ch1_ui <- tabPanel("1. Normalność rozkładu",
       )
     ),
 
-    div(class = "callout-warning",
+    lc_feedback(type = "warning",
       tags$strong("Problem z testami formalnymi:"),
       " Przy dużym n test Shapiro-Wilka odrzuci normalność nawet dla
         nieistotnych odchyleń. Przy małym n nie ma mocy. ",
@@ -100,9 +106,9 @@ ch1_ui <- tabPanel("1. Normalność rozkładu",
     # ========================================================================
     # WIDGET 3: Co robic gdy naruszone?
     # ========================================================================
-    div(class = "section-title", "Gdy normalność jest naruszona"),
+    lc_h2("ch1-naruszenia", "Gdy normalność jest naruszona"),
 
-    div(class = "narrative",
+    tagList(
       p("Opcje:"),
       tags$ol(
         tags$li(tags$b("Zignoruj"), " — przy dużym n (> 30) testy parametryczne są odporne"),
@@ -111,14 +117,15 @@ ch1_ui <- tabPanel("1. Normalność rozkładu",
       )
     ),
 
-    div(class = "widget-block",
-      h4("Efekt transformacji logarytmicznej"),
+    figure_panel(
+      label = "Ryc. 1.3",
+      title = "Efekt transformacji logarytmicznej",
       fluidRow(
         column(4,
           helpText("Generujemy dane prawoskośne i stosujemy log()."),
           sliderInput("ch1_trans_n", "n:", min = 30, max = 200, value = 80, step = 10),
           actionButton("ch1_transform", "Generuj i transformuj",
-                       class = "btn-warning", width = "100%")
+                       class = "lc-btn-warning", width = "100%")
         ),
         column(8,
           plotOutput("ch1_transform_plots", height = "300px"),
@@ -127,9 +134,9 @@ ch1_ui <- tabPanel("1. Normalność rozkładu",
       )
     ),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$strong("Alternatywy nieparametryczne:"),
-      tags$table(class = "table table-bordered", style = "font-size: 14px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 14px;",
         tags$tbody(
           tags$tr(tags$td("Test t jednej próby"), tags$td("→ Wilcoxon jednej próby")),
           tags$tr(tags$td("Test t niezależny"), tags$td("→ Mann-Whitney U")),
@@ -140,13 +147,13 @@ ch1_ui <- tabPanel("1. Normalność rozkładu",
       )
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: założenie jednorodnych wariancji"),
-      actionButton("ch1_next", "Dalej → 2. Jednorodne wariancje",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "02",
+      title = "Jednorodne wariancje",
+      lead = "założenie równego rozrzutu między porównywanymi grupami.",
+      target_id = "ch-wariancje"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -166,7 +173,7 @@ ch1_server <- function(input, output, session) {
     if (is.null(x)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       df <- data.frame(x = x)
@@ -178,14 +185,14 @@ ch1_server <- function(input, output, session) {
                       color = col_ok, linewidth = 1.2, linetype = "dashed") +
         labs(title = "Histogram + krzywa normalna",
              x = "Wartość", y = "Gęstość") +
-        theme_educational()
+        theme_upwr()
 
       p2 <- ggplot(df, aes(sample = x)) +
         stat_qq(color = col_test, alpha = 0.6) +
         stat_qq_line(color = col_ok, linewidth = 1) +
         labs(title = "Q-Q plot",
              x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
-        theme_educational()
+        theme_upwr()
 
       gridExtra::grid.arrange(p1, p2, ncol = 2)
     }
@@ -195,7 +202,7 @@ ch1_server <- function(input, output, session) {
   output$ch1_norm_results <- renderUI({
     req(input$ch1_test_norm)
     x <- isolate(ch1_data())
-    if (is.null(x)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+    if (is.null(x)) return(lc_feedback(type = "warning", "Najpierw wygeneruj dane."))
 
     sw <- shapiro_test(data.frame(value = x), value)
     ks <- ks.test(x, "pnorm", mean = mean(x), sd = sd(x))
@@ -204,7 +211,7 @@ ch1_server <- function(input, output, session) {
     ks_color <- if (ks$p.value >= 0.05) col_ok else col_fail
 
     tagList(
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         fluidRow(
           column(6,
             p(tags$strong("Shapiro-Wilk:")),
@@ -240,7 +247,7 @@ ch1_server <- function(input, output, session) {
     if (is.null(x)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i transformuj'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       log_x <- log(x)
@@ -249,13 +256,13 @@ ch1_server <- function(input, output, session) {
         stat_qq(color = col_fail, alpha = 0.5) +
         stat_qq_line(color = col_fail) +
         labs(title = "Oryginalne (prawoskośne)") +
-        theme_educational()
+        theme_upwr()
 
       p2 <- ggplot(data.frame(x = log_x), aes(sample = x)) +
         stat_qq(color = col_ok, alpha = 0.5) +
         stat_qq_line(color = col_ok) +
         labs(title = "Po log()") +
-        theme_educational()
+        theme_upwr()
 
       gridExtra::grid.arrange(p1, p2, ncol = 2)
     }
@@ -269,12 +276,16 @@ ch1_server <- function(input, output, session) {
     sw_log <- shapiro_test(data.frame(value = log(x)), value)
 
     tagList(
-      div(class = "stat-box",
-          style = paste0("background:", if (sw_orig$p >= 0.05) col_ok else col_fail, ";"),
-          paste0("Oryginalne: p = ", format.pval(sw_orig$p, digits = 3))),
-      div(class = "stat-box",
-          style = paste0("background:", if (sw_log$p >= 0.05) col_ok else col_fail, ";"),
-          paste0("Po log(): p = ", format.pval(sw_log$p, digits = 3)))
+      lc_stat_box(
+        "Oryginalne",
+        paste0("p = ", format.pval(sw_orig$p, digits = 3)),
+        color = if (sw_orig$p >= 0.05) col_ok else col_fail
+      ),
+      lc_stat_box(
+        "Po log()",
+        paste0("p = ", format.pval(sw_log$p, digits = 3)),
+        color = if (sw_log$p >= 0.05) col_ok else col_fail
+      )
     )
   })
 }

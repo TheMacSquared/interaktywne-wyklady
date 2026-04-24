@@ -14,6 +14,7 @@ migrated_lectures <- c(
   "rozklady-prawdopodobienstwa",
   "przedzialy-ufnosci",
   "wnioskowanie-statystyczne",
+  "zalozenia-testow",
   "regresja"
 )
 

@@ -10,6 +10,7 @@ Kontrakt dotyczy wykładów opartych o `lecture_page()`:
 - `rozklady-prawdopodobienstwa/`
 - `przedzialy-ufnosci/`
 - `wnioskowanie-statystyczne/`
+- `zalozenia-testow/`
 - `regresja/`
 
 Niezmigrowane wykłady mogą być zepsute po usunięciu starych aliasów i stylów. Nie naprawiamy ich przy pracy nad kontraktem nowego systemu.

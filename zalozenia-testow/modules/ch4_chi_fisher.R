@@ -2,17 +2,21 @@
 # CHAPTER 4: Zalozenia chi-kwadrat i Fishera
 # ============================================================================
 
-ch4_ui <- tabPanel("4. Założenia χ² i Fishera",
-  fluidRow(column(8, offset = 2,
-
-    div(class = "chapter-recap",
-      "Testy dla zmiennych jakościowych mają prostsze, ale ważne założenia
-       dotyczące minimalnych liczności."
+ch4_ui <- lecture_chapter(
+  id = "ch-chi-fisher",
+  num = "04",
+  title = "Założenia χ² i Fishera",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 04 · Założenia testów",
+      num    = "04",
+      title  = "Założenia χ² i Fishera.",
+      lead   = "Testy dla zmiennych jakościowych mają prostsze, ale ważne założenia dotyczące minimalnych liczności."
     ),
 
-    div(class = "section-title", "Założenia testu χ²"),
+    lc_h2("ch4-zalozenia-chi", "Założenia testu χ²"),
 
-    div(class = "narrative",
+    tagList(
       p("Test chi-kwadrat (zgodności i niezależności) wymaga:"),
       tags$ol(
         tags$li(tags$b("Niezależność obserwacji"), " — każda obserwacja należy do jednej kategorii"),
@@ -25,17 +29,18 @@ ch4_ui <- tabPanel("4. Założenia χ² i Fishera",
     # ========================================================================
     # WIDGET 1: Wizualizacja efektu malych licznosci
     # ========================================================================
-    div(class = "section-title", "Efekt małych liczności"),
+    lc_h2("ch4-male-licznosci", "Efekt małych liczności"),
 
-    div(class = "widget-block",
-      h4("Symulacja: χ² vs Fisher przy małych n"),
+    figure_panel(
+      label = "Ryc. 4.1",
+      title = "Symulacja: χ² vs Fisher przy małych n",
       fluidRow(
         column(4,
           sliderInput("ch4_n", "Wielkość próby:", min = 10, max = 200, value = 20, step = 5),
           helpText("Generujemy 500 prób z H₀ prawdziwą (brak związku).
                     Sprawdzamy, jak często każdy test fałszywie odrzuci H₀."),
           actionButton("ch4_sim", "Symuluj",
-                       class = "btn-warning", width = "100%")
+                       class = "lc-btn-warning", width = "100%")
         ),
         column(8,
           uiOutput("ch4_sim_results"),
@@ -44,7 +49,7 @@ ch4_ui <- tabPanel("4. Założenia χ² i Fishera",
       )
     ),
 
-    div(class = "callout-danger",
+    lc_feedback(type = "danger",
       tags$strong("Problem:"),
       " Przy małych n, test χ² może dawać za dużo lub za mało fałszywych alarmów
         (niekontrolowany błąd I rodzaju). Test Fishera zachowuje się poprawnie."
@@ -53,9 +58,9 @@ ch4_ui <- tabPanel("4. Założenia χ² i Fishera",
     # ========================================================================
     # WIDGET 2: Kiedy ktory?
     # ========================================================================
-    div(class = "section-title", "Kiedy χ², kiedy Fisher?"),
+    lc_h2("ch4-kiedy", "Kiedy χ², kiedy Fisher?"),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$strong("Zasady:"),
       tags$ul(
         tags$li("Wszystkie oczekiwane ≥ 5 → ", tags$b("test χ²")),
@@ -67,7 +72,7 @@ ch4_ui <- tabPanel("4. Założenia χ² i Fishera",
       )
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Założenia testu Fishera:"),
       p("Test Fishera nie ma założeń dotyczących minimalnych liczności —
         jest testem ", tags$b("dokładnym"), ". Wymaga jedynie niezależności obserwacji
@@ -75,10 +80,10 @@ ch4_ui <- tabPanel("4. Założenia χ² i Fishera",
     ),
 
     # ========================================================================
-    div(class = "section-title", "Założenia korelacji"),
+    lc_h2("ch4-korelacja", "Założenia korelacji"),
 
-    div(class = "narrative",
-      tags$table(class = "table table-bordered", style = "font-size: 14px;",
+    tagList(
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 14px;",
         tags$thead(
           tags$tr(tags$th("Test"), tags$th("Założenia"), tags$th("Alternatywa"))
         ),
@@ -97,13 +102,13 @@ ch4_ui <- tabPanel("4. Założenia χ² i Fishera",
       )
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: kompleksowa mapa metod z założeniami"),
-      actionButton("ch4_next", "Dalej → 5. Mapa metod",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "05",
+      title = "Mapa metod",
+      lead = "szybkie przejście od metody do założeń i alternatyw.",
+      target_id = "ch-mapa"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -145,12 +150,9 @@ ch4_server <- function(input, output, session) {
     fisher_color <- if (abs(fpr_fisher - 5) <= 2) col_ok else col_fail
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", chi_color, ";"),
-          paste0("χ²: ", round(fpr_chi, 1), "% fałszywych alarmów")),
-      div(class = "stat-box", style = paste0("background:", fisher_color, ";"),
-          paste0("Fisher: ", round(fpr_fisher, 1), "% fałszywych alarmów")),
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
-          "Oczekiwane: 5%")
+      lc_stat_box("χ²", round(fpr_chi, 1), "% fałszywych alarmów", color = chi_color),
+      lc_stat_box("Fisher", round(fpr_fisher, 1), "% fałszywych alarmów", color = fisher_color),
+      lc_stat_box("Oczekiwane", "5%", color = upwr_secondary)
     )
   })
 
@@ -159,7 +161,7 @@ ch4_server <- function(input, output, session) {
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Symuluj'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       long <- data.frame(
@@ -175,7 +177,7 @@ ch4_server <- function(input, output, session) {
         scale_fill_manual(values = c(col_test, col_alt), name = NULL) +
         labs(title = paste0("Rozkład p-wartości (H₀ prawdziwa, n = ", input$ch4_n, ")"),
              x = "p-wartość", y = "Liczba") +
-        theme_educational() +
+        theme_upwr() +
         theme(legend.position = "top")
     }
   })

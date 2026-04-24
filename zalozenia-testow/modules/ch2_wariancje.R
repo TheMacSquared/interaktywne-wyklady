@@ -2,17 +2,21 @@
 # CHAPTER 2: Jednorodnosc wariancji
 # ============================================================================
 
-ch2_ui <- tabPanel("2. Jednorodne wariancje",
-  fluidRow(column(8, offset = 2,
-
-    div(class = "chapter-recap",
-      "Normalność to nie jedyne założenie.
-       Wiele testów porównawczych wymaga równych wariancji między grupami."
+ch2_ui <- lecture_chapter(
+  id = "ch-wariancje",
+  num = "02",
+  title = "Jednorodne wariancje",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 02 · Założenia testów",
+      num    = "02",
+      title  = "Jednorodne wariancje.",
+      lead   = "Normalność to nie jedyne założenie. Wiele testów porównawczych wymaga równych wariancji między grupami."
     ),
 
-    div(class = "section-title", "Homoscedastyczność — równe wariancje"),
+    lc_h2("ch2-homoscedastycznosc", "Homoscedastyczność — równe wariancje"),
 
-    div(class = "narrative",
+    tagList(
       p("Założenie jednorodnych wariancji (homoscedastyczność) dotyczy:"),
       tags$ul(
         tags$li(tags$b("Test t niezależny"), " — wariancje w obu grupach powinny być podobne"),
@@ -24,17 +28,18 @@ ch2_ui <- tabPanel("2. Jednorodne wariancje",
     # ========================================================================
     # WIDGET 1: Wizualizacja
     # ========================================================================
-    div(class = "section-title", "Jak wygląda naruszenie?"),
+    lc_h2("ch2-naruszenie", "Jak wygląda naruszenie?"),
 
-    div(class = "widget-block",
-      h4("Dwie grupy o różnej wariancji"),
+    figure_panel(
+      label = "Ryc. 2.1",
+      title = "Dwie grupy o różnej wariancji",
       fluidRow(
         column(4,
           sliderInput("ch2_sd1", "SD grupy A:", min = 2, max = 30, value = 10, step = 1),
           sliderInput("ch2_sd2", "SD grupy B:", min = 2, max = 30, value = 10, step = 1),
           sliderInput("ch2_n_per", "n (na grupę):", min = 15, max = 100, value = 40, step = 5),
           actionButton("ch2_gen", "Generuj dane",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch2_boxplot", height = "300px"),
@@ -46,9 +51,9 @@ ch2_ui <- tabPanel("2. Jednorodne wariancje",
     # ========================================================================
     # WIDGET 2: Testy
     # ========================================================================
-    div(class = "section-title", "Testy jednorodnych wariancji"),
+    lc_h2("ch2-testy", "Testy jednorodnych wariancji"),
 
-    div(class = "narrative",
+    tagList(
       p("Dwa popularne testy:"),
       tags$ul(
         tags$li(tags$b("Test Levene'a"), " — odporny na naruszenie normalności, zalecany"),
@@ -57,13 +62,14 @@ ch2_ui <- tabPanel("2. Jednorodne wariancje",
       p(withMathJax("\\(H_0\\)"), ": wariancje są równe we wszystkich grupach.")
     ),
 
-    div(class = "widget-block",
-      h4("Levene i Bartlett"),
+    figure_panel(
+      label = "Ryc. 2.2",
+      title = "Levene i Bartlett",
       fluidRow(
         column(4,
           helpText("Używa danych z widgetu powyżej."),
           actionButton("ch2_test_var", "Testuj",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           uiOutput("ch2_test_results")
@@ -74,9 +80,9 @@ ch2_ui <- tabPanel("2. Jednorodne wariancje",
     # ========================================================================
     # WIDGET 3: Co robic?
     # ========================================================================
-    div(class = "section-title", "Gdy wariancje są nierówne"),
+    lc_h2("ch2-nierowne", "Gdy wariancje są nierówne"),
 
-    div(class = "narrative",
+    tagList(
       p("Opcje:"),
       tags$ol(
         tags$li(tags$b("Test t Welcha"), " — domyślny w R! Nie zakłada równych wariancji.
@@ -88,14 +94,15 @@ ch2_ui <- tabPanel("2. Jednorodne wariancje",
       )
     ),
 
-    div(class = "widget-block",
-      h4("Test t klasyczny vs Welcha"),
+    figure_panel(
+      label = "Ryc. 2.3",
+      title = "Test t klasyczny vs Welcha",
       fluidRow(
         column(4,
           helpText("Porównanie wyniku: klasyczny test t (zakłada równe wariancje)
                     vs test Welcha (nie zakłada)."),
           actionButton("ch2_compare_t", "Porównaj testy",
-                       class = "btn-warning", width = "100%")
+                       class = "lc-btn-warning", width = "100%")
         ),
         column(8,
           uiOutput("ch2_t_comparison")
@@ -103,20 +110,20 @@ ch2_ui <- tabPanel("2. Jednorodne wariancje",
       )
     ),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$strong("Praktyczna rada:"),
       " Zawsze używaj testu Welcha (", tags$code("t.test(var.equal = FALSE)"),
       ") — to domyślne zachowanie w R. Klasyczny test t z równymi wariancjami
         ma sens tylko gdy masz pewność, że wariancje są równe."
     ),
 
-    # Chapter transition
-    div(class = "chapter-transition",
-      p("Dalej: założenia regresji"),
-      actionButton("ch2_next", "Dalej → 3. Założenia regresji",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "03",
+      title = "Założenia regresji",
+      lead = "diagnostyka reszt, liniowości i homoscedastyczności.",
+      target_id = "ch-regresja"
     )
-  ))
+  )
 )
 
 # ============================================================================
@@ -139,7 +146,7 @@ ch2_server <- function(input, output, session) {
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       ggplot(df, aes(x = group, y = value, fill = group)) +
@@ -147,7 +154,7 @@ ch2_server <- function(input, output, session) {
         geom_jitter(width = 0.15, alpha = 0.3) +
         scale_fill_manual(values = c(col_test, col_alt)) +
         labs(title = "Dwie grupy", x = "Grupa", y = "Wartość") +
-        theme_educational() +
+        theme_upwr() +
         theme(legend.position = "none")
     }
   })
@@ -160,13 +167,10 @@ ch2_server <- function(input, output, session) {
     ratio <- max(stats$var) / min(stats$var)
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_test, ";"),
-          paste0("SD(A) = ", round(stats$sd[1], 2))),
-      div(class = "stat-box", style = paste0("background:", col_alt, ";"),
-          paste0("SD(B) = ", round(stats$sd[2], 2))),
-      div(class = "stat-box",
-          style = paste0("background:", if (ratio < 4) col_ok else col_fail, ";"),
-          paste0("Ratio var: ", round(ratio, 2)))
+      lc_stat_box("SD(A)", round(stats$sd[1], 2), color = col_test),
+      lc_stat_box("SD(B)", round(stats$sd[2], 2), color = col_alt),
+      lc_stat_box("Ratio var", round(ratio, 2),
+                  color = if (ratio < 4) col_ok else col_fail)
     )
   })
 
@@ -174,7 +178,7 @@ ch2_server <- function(input, output, session) {
   output$ch2_test_results <- renderUI({
     req(input$ch2_test_var)
     df <- isolate(ch2_data())
-    if (is.null(df)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+    if (is.null(df)) return(lc_feedback(type = "warning", "Najpierw wygeneruj dane."))
 
     lev <- rstatix::levene_test(df, value ~ group)
     bart <- bartlett.test(value ~ group, data = df)
@@ -182,7 +186,7 @@ ch2_server <- function(input, output, session) {
     lev_color <- if (lev$p >= 0.05) col_ok else col_fail
     bart_color <- if (bart$p.value >= 0.05) col_ok else col_fail
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       fluidRow(
         column(6,
           p(tags$strong("Test Levene'a:")),
@@ -206,12 +210,12 @@ ch2_server <- function(input, output, session) {
   output$ch2_t_comparison <- renderUI({
     req(input$ch2_compare_t)
     df <- isolate(ch2_data())
-    if (is.null(df)) return(div(class = "callout-warning", "Najpierw wygeneruj dane."))
+    if (is.null(df)) return(lc_feedback(type = "warning", "Najpierw wygeneruj dane."))
 
     t_classic <- t_test(df, value ~ group, var.equal = TRUE)
     t_welch <- t_test(df, value ~ group, var.equal = FALSE)
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       fluidRow(
         column(6,
           p(tags$strong("Test t klasyczny"), " (var.equal=TRUE):"),
