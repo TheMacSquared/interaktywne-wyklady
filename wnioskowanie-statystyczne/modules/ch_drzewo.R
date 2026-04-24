@@ -22,7 +22,7 @@ ch_drzewo_ui <- list(
                 i liczby grup do konkretnego testu. Jedno spojrzenie na cały wykład."
     ),
 
-    div(class = "narrative",
+    tagList(
       p("Jedno drzewo zaczynające się od pytania „ile mamy zmiennych?”.
         Diagram jest interaktywny — możesz przeciągać węzły, powiększać scrollem,
         a także ", tags$b("kliknąć"),
@@ -38,14 +38,14 @@ ch_drzewo_ui <- list(
       full_width = TRUE,
       div(id = "drzewo-fullscreen-wrap", class = "drzewo-wrap",
         div(class = "drzewo-toolbar",
-          tags$button(type = "button", class = "btn btn-outline-secondary btn-sm",
+          actionButton("drzewo_fullscreen", HTML("&#x26F6; Pełny ekran"),
+            class = "lc-btn-secondary-outline lc-btn-sm",
             onclick = paste0(
               "var el = document.getElementById('drzewo-fullscreen-wrap');",
               "if (document.fullscreenElement) { document.exitFullscreen(); }",
               "else if (el.requestFullscreen) { el.requestFullscreen(); }",
               "else if (el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); }"
-            ),
-            HTML("&#x26F6; Pełny ekran")
+            )
           )
         ),
         visNetwork::visNetworkOutput("drzewo_visnet", height = "1000px", width = "100%")

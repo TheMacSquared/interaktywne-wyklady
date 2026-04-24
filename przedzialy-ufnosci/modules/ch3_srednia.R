@@ -16,11 +16,11 @@ ch3_ui <- list(
                 interpretować. Czas na konkrety: wzór i obliczenia."
     ),
 
-    h2(id = "ch3-wzor", class = "section-title", "Wzór"),
+    lc_h2("ch3-wzor", "Wzór"),
 
-    div(class = "narrative",
+    tagList(
       p("Przedział ufności dla średniej populacji wygląda tak:"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax("$$CI = \\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$")
       ),
       p("Trzy składniki:"),
@@ -56,10 +56,9 @@ ch3_ui <- list(
       )
     ),
 
-    h2(id = "ch3-budowa", class = "section-title",
-       "Budowa przedziału — krok po kroku"),
+    lc_h2("ch3-budowa", "Budowa przedziału — krok po kroku"),
 
-    div(class = "narrative",
+    tagList(
       p("Zobaczmy, jak z konkretnej próby (25 pomiarów wzrostu) powstaje
         przedział ufności. Przejdź przez 4 kroki, obserwując co pojawia
         się na wykresie.")
@@ -69,26 +68,25 @@ ch3_ui <- list(
       label = "Ryc. 3.1", title = "Konstruowanie przedziału",
       full_width = TRUE,
       div(class = "step-buttons",
-        actionButton("ch3_step1", "1. Próba",    class = "btn-outline-primary"),
-        actionButton("ch3_step2", "2. Średnia",  class = "btn-outline-primary"),
-        actionButton("ch3_step3", "3. ± SE",     class = "btn-outline-primary"),
-        actionButton("ch3_step4", "4. Przedział", class = "btn-outline-primary")
+        actionButton("ch3_step1", "1. Próba",    class = "lc-btn-outline"),
+        actionButton("ch3_step2", "2. Średnia",  class = "lc-btn-outline"),
+        actionButton("ch3_step3", "3. ± SE",     class = "lc-btn-outline"),
+        actionButton("ch3_step4", "4. Przedział", class = "lc-btn-outline")
       ),
-      div(style = "display: flex; gap: 8px; margin-top: 8px;",
+      lc_inline_row(gap = "md",
         actionButton("ch3_step_new_sample", "↻ Nowa próba",
-                     class = "btn-outline-secondary btn-sm")
+                     class = "lc-btn-secondary-outline lc-btn-sm")
       ),
       plotOutput("ch3_step_plot", height = "340px"),
       uiOutput("ch3_step_explanation")
     ),
 
-    h2(id = "ch3-roznica", class = "section-title",
-       "Budowa przedziału dla różnicy średnich"),
+    lc_h2("ch3-roznica", "Budowa przedziału dla różnicy średnich"),
 
-    div(class = "narrative",
+    tagList(
       p("CI dla różnicy dwóch średnich buduje się analogicznie, ale błąd
         standardowy jest inny — trzeba połączyć niepewność z obu prób:"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax("$$CI = (\\bar{x}_1 - \\bar{x}_2) \\pm t^* \\cdot \\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}}$$")
       ),
       p("Porównamy wzrost mężczyzn i kobiet — po 25 osób w każdej grupie.")
@@ -98,24 +96,23 @@ ch3_ui <- list(
       label = "Ryc. 3.2", title = "Konstruowanie CI dla różnicy",
       full_width = TRUE,
       div(class = "step-buttons",
-        actionButton("ch3_dstep1", "1. Dwie próby",   class = "btn-outline-primary"),
-        actionButton("ch3_dstep2", "2. Dwie średnie", class = "btn-outline-primary"),
-        actionButton("ch3_dstep3", "3. Różnica",      class = "btn-outline-primary"),
-        actionButton("ch3_dstep4", "4. ± SE",         class = "btn-outline-primary"),
-        actionButton("ch3_dstep5", "5. Przedział",    class = "btn-outline-primary")
+        actionButton("ch3_dstep1", "1. Dwie próby",   class = "lc-btn-outline"),
+        actionButton("ch3_dstep2", "2. Dwie średnie", class = "lc-btn-outline"),
+        actionButton("ch3_dstep3", "3. Różnica",      class = "lc-btn-outline"),
+        actionButton("ch3_dstep4", "4. ± SE",         class = "lc-btn-outline"),
+        actionButton("ch3_dstep5", "5. Przedział",    class = "lc-btn-outline")
       ),
-      div(style = "display: flex; gap: 8px; margin-top: 8px;",
+      lc_inline_row(gap = "md",
         actionButton("ch3_dstep_new_sample", "↻ Nowe próby",
-                     class = "btn-outline-secondary btn-sm")
+                     class = "lc-btn-secondary-outline lc-btn-sm")
       ),
       plotOutput("ch3_dstep_plot", height = "420px"),
       uiOutput("ch3_dstep_explanation")
     ),
 
-    h2(id = "ch3-scenariusze", class = "section-title",
-       "Dwa CI grup czy CI różnicy? — trzy scenariusze"),
+    lc_h2("ch3-scenariusze", "Dwa CI grup czy CI różnicy? — trzy scenariusze"),
 
-    div(class = "narrative",
+    tagList(
       p("Gdy porównujesz dwie grupy, masz dwa sposoby, żeby spojrzeć na wynik:"),
       tags$ol(
         tags$li(tags$b("Dwa osobne CI"),
@@ -185,10 +182,9 @@ ch3_ui <- list(
        (tak jak w scenariuszu C)."
     ),
 
-    h2(id = "ch3-case-studies", class = "section-title",
-       "Case studies — jak interpretować CI w praktyce"),
+    lc_h2("ch3-case-studies", "Case studies — jak interpretować CI w praktyce"),
 
-    div(class = "narrative",
+    tagList(
       p("Poniżej kilka realistycznych sytuacji. W każdej budujesz CI krok po kroku
         (jak w poprzednich sekcjach), a na końcu weryfikujesz dwie hipotezy:
         jedną, która jest prawdziwa, i jedną, która nie jest. Klikaj nagłówki,
@@ -340,8 +336,8 @@ ch3_ui <- list(
       )
     ),
 
-    div(class = "narrative",
-      div(class = "callout-info",
+    tagList(
+      lc_feedback(type = "info",
         tags$strong("Najważniejsze do zapamiętania:"),
         tags$ol(
           tags$li("CI dla różnicy mówi czy różnica jest istotna — sprawdź
@@ -423,7 +419,7 @@ ch3_server <- function(input, output, session) {
         ggplot() +
           annotate("text", x = 0.5, y = 0.5,
                    label = "Kliknij '1. Próba' aby zacząć",
-                   size = 6, color = "#7f8c8d") +
+                   size = 6, color = upwr_reference) +
           theme_void()
       )
     }
@@ -520,7 +516,7 @@ ch3_server <- function(input, output, session) {
     me <- t_star * se
 
     switch(as.character(step),
-      "1" = div(class = "callout-info",
+      "1" = lc_feedback(type = "info",
         p(tags$strong("Krok 1:"), " Próba.",
           " Pobraliśmy ", tags$b(n), " pomiarów wzrostu. Każda kropka to jedna osoba.
           Zauważ, jak bardzo surowe obserwacje są ", tags$b("rozrzucone"),
@@ -532,7 +528,7 @@ ch3_server <- function(input, output, session) {
           ", ",
           withMathJax(paste0("\\(n = ", n, "\\)")), ".")
       ),
-      "2" = div(class = "callout-info",
+      "2" = lc_feedback(type = "info",
         p(tags$strong("Krok 2:"), " Średnia z próby.",
           " Obliczamy ",
           withMathJax(paste0("\\(\\bar{x} = ", round(xbar, 2), "\\)")), " cm.
@@ -541,7 +537,7 @@ ch3_server <- function(input, output, session) {
         p("Ale pojedyncza liczba nie wystarczy. Inna próba dałaby inną średnią.
           Musimy wyrazić ", tags$b("niepewność"), " tego oszacowania.")
       ),
-      "3" = div(class = "callout-info",
+      "3" = lc_feedback(type = "info",
         p(tags$strong("Krok 3:"), " Błąd standardowy (± SE).",
           " Błąd standardowy średniej to:"),
         p(withMathJax(paste0("\\(SE = \\frac{s}{\\sqrt{n}} = \\frac{", round(s, 2),
@@ -557,7 +553,7 @@ ch3_server <- function(input, output, session) {
       ),
       "4" = {
         covers <- (xbar - me <= 170) & (170 <= xbar + me)
-        div(class = if (covers) "callout-success" else "callout-danger",
+        lc_feedback(type = if (covers) "ok" else "danger",
           p(tags$strong("Krok 4:"), " Przedział ufności (± t* · SE)."),
           p("Mnożymy SE przez wartość krytyczną ",
             withMathJax(paste0("\\(t^*_{0.975, ", n - 1, "} = ",
@@ -622,7 +618,7 @@ ch3_server <- function(input, output, session) {
         ggplot() +
           annotate("text", x = 0.5, y = 0.5,
                    label = "Kliknij '1. Dwie próby' aby zacząć",
-                   size = 6, color = "#7f8c8d") +
+                   size = 6, color = upwr_reference) +
           theme_void()
       )
     }
@@ -778,14 +774,14 @@ ch3_server <- function(input, output, session) {
     me <- t_star * se
 
     switch(as.character(step),
-      "1" = div(class = "callout-info",
+      "1" = lc_feedback(type = "info",
         p(tags$strong("Krok 1:"), " Dwie próby.",
           " Mierzymy wzrost w obu grupach: ", tags$b(n1), " mężczyzn i ",
           tags$b(n2), " kobiet. Każdy punkt to jedna osoba.
           Zauważ — rozrzut surowych danych jest duży, ale wyraźnie widać,
           że średnia \"niebieska\" leży na prawo od średniej \"czerwonej\".")
       ),
-      "2" = div(class = "callout-info",
+      "2" = lc_feedback(type = "info",
         p(tags$strong("Krok 2:"), " Dwie średnie.",
           " Obliczamy średnią w każdej grupie:"),
         p(withMathJax(paste0("\\(\\bar{x}_1 = ", round(x1, 2), "\\)"))),
@@ -793,7 +789,7 @@ ch3_server <- function(input, output, session) {
         p("Każda średnia ma własną niepewność — ale interesuje nas
           nie każda z osobna, tylko ", tags$b("różnica między nimi"), ".")
       ),
-      "3" = div(class = "callout-info",
+      "3" = lc_feedback(type = "info",
         p(tags$strong("Krok 3:"), " Różnica.",
           " Estymator punktowy różnicy: ",
           withMathJax(paste0("\\(\\bar{x}_1 - \\bar{x}_2 = ", round(x1, 2),
@@ -804,7 +800,7 @@ ch3_server <- function(input, output, session) {
           tags$em("\"gdyby różnicy nie było\""),
           ". Teraz musimy otoczyć naszą różnicę przedziałem niepewności.")
       ),
-      "4" = div(class = "callout-info",
+      "4" = lc_feedback(type = "info",
         p(tags$strong("Krok 4:"), " Błąd standardowy różnicy (± SE).",
           " SE różnicy łączy niepewności z obu prób:"),
         p(withMathJax(paste0(
@@ -819,7 +815,7 @@ ch3_server <- function(input, output, session) {
       ),
       "5" = {
         covers_zero <- (diff_val - me <= 0) & (0 <= diff_val + me)
-        div(class = if (covers_zero) "callout-warning" else "callout-success",
+        lc_feedback(type = if (covers_zero) "warning" else "ok",
           p(tags$strong("Krok 5:"), " Przedział ufności dla różnicy."),
           p("Wartość krytyczna z rozkładu t (df Welcha ≈ ",
             round(df_w, 1), "): ",
@@ -880,8 +876,8 @@ ch3_server <- function(input, output, session) {
   }
 
   verdict_class <- function(v) {
-    switch(v, "yes" = "callout-success", "no" = "callout-danger",
-           "maybe" = "callout-warning")
+    switch(v, "yes" = "ok", "no" = "danger",
+           "maybe" = "warning")
   }
   verdict_label <- function(v) {
     switch(v, "yes" = "TAK", "no" = "NIE", "maybe" = "NIEPEWNE")
@@ -1503,7 +1499,7 @@ ch3_server <- function(input, output, session) {
 
     # Przyciski budowy CI
     core_btns <- lapply(seq_along(cfg$steps), function(i) {
-      btn_class <- if (current == i) "btn-primary" else "btn-outline-primary"
+      btn_class <- if (current == i) "lc-btn-primary" else "lc-btn-outline"
       actionButton(paste0("ch3_case", case_id, "_step", i),
                    cfg$steps[i], class = btn_class)
     })
@@ -1513,7 +1509,7 @@ ch3_server <- function(input, output, session) {
     hyp_btns <- if (current >= n_core) {
       lapply(seq_along(cfg$hypotheses), function(j) {
         is_active <- !is.null(phase) && phase$idx == j
-        btn_class <- if (is_active) "btn-warning" else "btn-outline-warning"
+        btn_class <- if (is_active) "lc-btn-warning" else "lc-btn-warning-outline"
         actionButton(paste0("ch3_case", case_id, "_hyp", j),
                      paste0("Hipoteza ", j), class = btn_class)
       })
@@ -1523,16 +1519,16 @@ ch3_server <- function(input, output, session) {
 
     # Drugi rzad: przycisk "Pokaż werdykt" - tylko gdy hipoteza wybrana i jeszcze nie odkryta
     reveal_row <- if (!is.null(phase) && !phase$reveal) {
-      div(class = "step-buttons", style = "margin-top: 4px;",
+      div(class = "step-buttons lc-mt-xs",
         actionButton(paste0("ch3_case", case_id, "_reveal"),
-                     "\U0001f50d Pokaż werdykt", class = "btn-success"))
+                     "\U0001f50d Pokaż werdykt", class = "lc-btn-ok"))
     } else {
       NULL
     }
 
     tagList(
       div(class = "step-buttons", core_btns),
-      div(class = "step-buttons", style = "margin-top: 4px;", hyp_btns),
+      div(class = "step-buttons lc-mt-xs", hyp_btns),
       reveal_row
     )
   }
@@ -1548,7 +1544,7 @@ ch3_server <- function(input, output, session) {
         ggplot() +
           annotate("text", x = 0.5, y = 0.5,
                    label = "Kliknij pierwszy krok, żeby zacząć",
-                   size = 5, color = "#7f8c8d") +
+                   size = 5, color = upwr_reference) +
           theme_void()
       )
     }
@@ -1613,17 +1609,17 @@ ch3_server <- function(input, output, session) {
         tags$th(groups[i], style = "padding: 4px 8px; text-align: right; font-size: 12px;"),
         lapply(seq_len(k), function(j) {
           if (i == j) {
-            tags$td("—", style = "padding: 4px 8px; text-align: center; color: #95a5a6;")
+            tags$td("—", style = "padding: 4px 8px; text-align: center; color: var(--upwr-reference);")
           } else if (mat[i, j]) {
-            tags$td("✓", style = "padding: 4px 8px; text-align: center; color: #27ae60; font-weight: bold; font-size: 16px;")
+            tags$td("✓", style = "padding: 4px 8px; text-align: center; color: var(--upwr-sage); font-weight: bold; font-size: 16px;")
           } else {
-            tags$td("×", style = "padding: 4px 8px; text-align: center; color: #e74c3c; font-size: 16px;")
+            tags$td("×", style = "padding: 4px 8px; text-align: center; color: var(--upwr-accent); font-size: 16px;")
           }
         })
       )
     })
     tags$table(
-      style = "border-collapse: collapse; margin: 8px auto; border: 1px solid #bdc3c7;",
+      style = "border-collapse: collapse; margin: 8px auto; border: 1px solid var(--upwr-rule);",
       tags$thead(header),
       tags$tbody(rows)
     )
@@ -1717,7 +1713,7 @@ ch3_server <- function(input, output, session) {
 
       # Sub-faza 1: tylko tresc hipotezy (czas na dyskusje ze studentami)
       if (!phase$reveal) {
-        return(div(class = "callout-info",
+        return(lc_feedback(type = "info",
           p(tags$strong("Hipoteza ", phase$idx, ": "), hyp$text),
           p(tags$em("Spojrz na wykres: gdzie lezy CI wzgledem obszaru hipotezy?
                     Co o tym sadzicie? Kliknięcie ", tags$b("Pokaż werdykt"),
@@ -1731,12 +1727,12 @@ ch3_server <- function(input, output, session) {
         mat <- forest_pairwise_matrix(cfg$data)
         narrative <- pairwise_narrative(cfg$data, mat,
                                          unit = if (!is.null(hyp$unit)) hyp$unit else "")
-        return(div(class = "callout-success",
+        return(lc_feedback(type = "ok",
           p(tags$strong("Hipoteza: "), hyp$text),
           p(tags$strong("Werdykt — macierz par:")),
           p(tags$em("✓ = grupy różnią się istotnie (CI nie nakładają się);  ",
                     "× = nie można stwierdzić różnicy (CI nakładają się)"),
-            style = "font-size: 12px; color: #7f8c8d;"),
+            style = "font-size: 12px; color: var(--upwr-reference);"),
           render_pairwise_table(mat),
           p(tags$strong("Jak to opisać w raporcie:"),
             style = "margin-top: 12px;"),
@@ -1757,7 +1753,7 @@ ch3_server <- function(input, output, session) {
           stwierdzić, czy jest prawdziwa.")
       }
 
-      return(div(class = cls,
+      return(lc_feedback(type = cls,
         p(tags$strong("Hipoteza ", phase$idx, ": "), hyp$text),
         p(tags$strong("Werdykt: ", label)),
         body
@@ -1765,8 +1761,8 @@ ch3_server <- function(input, output, session) {
     }
 
     # Faza budowy CI — wyjaśnienie ostatniego kroku
-    # Dla uproszczenia: callout-info z krótkim opisem
-    div(class = "callout-info",
+    # Dla uproszczenia: krótki neutralny feedback.
+    lc_feedback(type = "info",
       p(tags$strong(cfg$steps[step])),
       p("Krok ", step, " z ", n_core, ".")
     )
@@ -2038,7 +2034,7 @@ ch3_server <- function(input, output, session) {
 
     # Werdykt w zaleznosci od scenariusza
     if (scenario_key == "A") {
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         facts,
         p(tags$b("Werdykt:"),
           " Oba spojrzenia zgodne. CI grup się nie nakrywają, a CI różnicy
@@ -2048,7 +2044,7 @@ ch3_server <- function(input, output, session) {
           " punktu procentowego więcej białka.")
       )
     } else if (scenario_key == "B") {
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         facts,
         p(tags$b("Werdykt:"),
           " Oba spojrzenia zgodne. CI grup mocno się nakrywają, a CI różnicy
@@ -2056,7 +2052,7 @@ ch3_server <- function(input, output, session) {
           wpływa na zawartość tłuszczu w jogurcie.")
       )
     } else {
-      div(class = "callout-warning",
+      lc_feedback(type = "warning",
         facts,
         p(tags$b("Spojrzenia się rozjeżdżają:")),
         tags$ul(

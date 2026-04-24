@@ -14,9 +14,9 @@ ch2_ev_var_ui <- list(
                 czego możemy się spodziewać i jak bardzo wyniki mogą się różnić?"
     ),
 
-    h2(id = "ch2-ev-intro", class = "section-title", "Wartość oczekiwana i wariancja"),
+    lc_h2("ch2-ev-intro", "Wartość oczekiwana i wariancja"),
 
-    div(class = "narrative",
+    tagList(
       p("Każdy rozkład prawdopodobieństwa można opisać dwoma kluczowymi
         liczbami:"),
       tags$ul(
@@ -33,9 +33,9 @@ ch2_ev_var_ui <- list(
     # ========================================================================
     # WIDGET 1: Loterie -- symulacja wartosci oczekiwanej
     # ========================================================================
-    h2(id = "ch2-loterie", class = "section-title", "Czego się spodziewać? — gra w loterie"),
+    lc_h2("ch2-loterie", "Czego się spodziewać? — gra w loterie"),
 
-    div(class = "narrative",
+    tagList(
       p("Wyobraź sobie, że możesz grać w jedną z trzech loterii.
         Każda ma inne wygrane i szanse. Która opłaca się najbardziej?"),
       p("Zagraj wiele razy i obserwuj, jak średnia wygrana na grę
@@ -58,18 +58,18 @@ ch2_ev_var_ui <- list(
             selected = "A"
           ),
           hr(),
-          div(style = "display: flex; flex-direction: column; gap: 8px;",
+          lc_stack(gap = "md",
             actionButton("ch2ev_play_1", "Graj 1x",
-                         class = "btn-primary", width = "100%"),
+                         class = "lc-btn-primary", width = "100%"),
             actionButton("ch2ev_play_10", "Graj 10x",
-                         class = "btn-primary", width = "100%"),
+                         class = "lc-btn-primary", width = "100%"),
             actionButton("ch2ev_play_100", "Graj 100x",
-                         class = "btn-primary", width = "100%"),
+                         class = "lc-btn-primary", width = "100%"),
             actionButton("ch2ev_play_1000", "Graj 1000x",
-                         class = "btn-warning", width = "100%"),
+                         class = "lc-btn-warning", width = "100%"),
             hr(),
             actionButton("ch2ev_reset_lottery", "Reset",
-                         class = "btn-outline-secondary", width = "100%")
+                         class = "lc-btn-secondary-outline", width = "100%")
           ),
           br(),
           uiOutput("ch2ev_play_count")
@@ -91,9 +91,9 @@ ch2_ev_var_ui <- list(
     # ========================================================================
     # WIDGET 2: Punkt rownowagi
     # ========================================================================
-    h2(id = "ch2-rownowaga", class = "section-title", "E(X) jako punkt równowagi"),
+    lc_h2("ch2-rownowaga", "E(X) jako punkt równowagi"),
 
-    div(class = "narrative",
+    tagList(
       p("Wartość oczekiwana to punkt równowagi rozkładu — gdybyś położył(a)
         słupki PMF na wadze, E(X) byłoby miejscem podparcia."),
       p("Spróbuj ustawić prawdopodobieństwa i obserwuj,
@@ -115,11 +115,11 @@ ch2_ev_var_ui <- list(
           hr(),
           div(class = "preset-buttons",
             actionButton("ch2ev_bal_sym", "Symetryczny",
-                         class = "btn-outline-primary"),
+                         class = "lc-btn-outline"),
             actionButton("ch2ev_bal_skew", "Skośny",
-                         class = "btn-outline-warning"),
+                         class = "lc-btn-warning-outline"),
             actionButton("ch2ev_bal_bimod", "Dwumodalny",
-                         class = "btn-outline-success")
+                         class = "lc-btn-ok-outline")
           )
         ),
         column(8,
@@ -139,9 +139,9 @@ ch2_ev_var_ui <- list(
     # ========================================================================
     # WIDGET 3: Ryzyko a rozrzut -- intuicja wariancji
     # ========================================================================
-    h2(id = "ch2-wariancja", class = "section-title", "Wariancja — rozrzut wokół oczekiwania"),
+    lc_h2("ch2-wariancja", "Wariancja — rozrzut wokół oczekiwania"),
 
-    div(class = "narrative",
+    tagList(
       p("Dwie loterie mogą mieć tę samą wartość oczekiwaną, ale zupełnie różne ryzyko.
         Wariancja (i odchylenie standardowe) mierzy właśnie to: jak bardzo wyniki
         rozpraszają się wokół E(X)."),
@@ -157,7 +157,7 @@ ch2_ev_var_ui <- list(
           sliderInput("ch2ev_var_n", "Ile razy zagrać?",
                       min = 10, max = 2000, value = 200, step = 10),
           actionButton("ch2ev_var_sim", "Symuluj!",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           uiOutput("ch2ev_var_summary")
         ),
@@ -183,11 +183,11 @@ ch2_ev_var_ui <- list(
     # ========================================================================
     # Podsumowanie
     # ========================================================================
-    h2(id = "ch2-od-danych", class = "section-title", "Od danych do modelu"),
+    lc_h2("ch2-od-danych", "Od danych do modelu"),
 
-    div(class = "narrative",
+    tagList(
       p("Zwróć uwagę na analogię:"),
-      tags$table(class = "table table-bordered", style = "font-size: 15px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(
             tags$th("Statystyka opisowa (dane)"),
@@ -250,8 +250,7 @@ ch2_ev_var_server <- function(input, output, session) {
 
   output$ch2ev_play_count <- renderUI({
     n <- length(lottery_results())
-    div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["niebo"]), ";"),
-        paste0("Gier: ", n))
+    lc_stat_box("Gier", n, color = unname(upwr_cat["niebo"]))
   })
 
   output$ch2ev_convergence_plot <- renderPlot({
@@ -262,7 +261,7 @@ ch2_ev_var_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Graj', aby rozpocząć",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       # Srednia kroczaca
@@ -295,14 +294,13 @@ ch2_ev_var_server <- function(input, output, session) {
     obs_mean <- round(mean(results), 2)
     diff <- abs(obs_mean - lot$ev)
 
-    div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["niebo"]), ";"),
-          paste0("Śr. dotychczasowa = ", obs_mean, " zł")),
-      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["terakota"]), ";"),
-          paste0("E(X) = ", lot$ev, " zł")),
-      div(class = "stat-box",
-          style = paste0("background: ", if (diff < 0.5) unname(upwr_cat["szalwia"]) else unname(upwr_cat["bursztyn"]), ";"),
-          paste0("Różnica: ", round(diff, 2), " zł"))
+    lc_center(
+      lc_stat_box("Śr. dotychczasowa", obs_mean, " zł",
+                  color = unname(upwr_cat["niebo"])),
+      lc_stat_box("E(X)", lot$ev, " zł",
+                  color = unname(upwr_cat["terakota"])),
+      lc_stat_box("Różnica", round(diff, 2), " zł",
+                  color = if (diff < 0.5) unname(upwr_cat["szalwia"]) else unname(upwr_cat["bursztyn"]))
     )
   })
 
@@ -329,11 +327,9 @@ ch2_ev_var_server <- function(input, output, session) {
   output$ch2ev_bal_sum <- renderUI({
     s <- input$ch2ev_bal_p1 + input$ch2ev_bal_p2 + input$ch2ev_bal_p3 + input$ch2ev_bal_p4
     if (abs(s - 1) < 0.005) {
-      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["szalwia"]), ";"),
-          paste0("∑P = ", sprintf("%.2f", s), " ✔"))
+      lc_stat_box("∑P", sprintf("%.2f", s), " ✔", color = unname(upwr_cat["szalwia"]))
     } else {
-      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["terakota"]), ";"),
-          paste0("∑P = ", sprintf("%.2f", s), " ≠ 1"))
+      lc_stat_box("∑P", sprintf("%.2f", s), " ≠ 1", color = unname(upwr_cat["terakota"]))
     }
   })
 
@@ -383,7 +379,7 @@ ch2_ev_var_server <- function(input, output, session) {
       collapse = " + "
     )
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Obliczenie: "),
       paste0("E(X) = ", calc_parts, " = ", round(ev, 2))
     )
@@ -430,7 +426,7 @@ ch2_ev_var_server <- function(input, output, session) {
 
     div(
       h5("Statystyki:"),
-      tags$table(class = "table table-bordered table-sm", style = "font-size: 13px;",
+      tags$table(class = "lc-table lc-table-bordered lc-table-sm", style = "font-size: 13px;",
         tags$thead(tags$tr(tags$th("Loteria"), tags$th("SD"), tags$th("Śr."))),
         tags$tbody(
           tags$tr(

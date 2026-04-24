@@ -17,7 +17,7 @@ ch6_ui <- list(
     ),
 
     # --- Cheat sheet 1: Tools by variable type ---
-    h2(id = "ch6-narzedzia", class = "section-title", "Narzędzia wg typu zmiennej"),
+    lc_h2("ch6-narzedzia", "Narzędzia wg typu zmiennej"),
 
     margin_callout(
       label = "Najczęstszy błąd",
@@ -34,7 +34,7 @@ ch6_ui <- list(
     ),
 
     # --- Cheat sheet 2: Measures summary ---
-    h2(id = "ch6-miary", class = "section-title", "Miary statystyczne — kiedy co stosować"),
+    lc_h2("ch6-miary", "Miary statystyczne — kiedy co stosować"),
 
     figure_panel(
       label = "Ryc. 6.2",
@@ -50,7 +50,7 @@ ch6_ui <- list(
     ),
 
     # --- Cheat sheet 3: Visualization guide ---
-    h2(id = "ch6-wykresy", class = "section-title", "Przewodnik po wykresach"),
+    lc_h2("ch6-wykresy", "Przewodnik po wykresach"),
 
     figure_panel(
       label = "Ryc. 6.3",
@@ -59,7 +59,7 @@ ch6_ui <- list(
     ),
 
     # --- Cheat sheet 4: Common mistakes ---
-    h2(id = "ch6-bledy", class = "section-title", "Typowe błędy"),
+    lc_h2("ch6-bledy", "Typowe błędy"),
 
     figure_panel(
       label = "Ryc. 6.4",
@@ -68,7 +68,7 @@ ch6_ui <- list(
     ),
 
     # --- Formulas ---
-    h2(id = "ch6-wzory", class = "section-title", "Wzory"),
+    lc_h2("ch6-wzory", "Wzory"),
 
     figure_panel(
       label = "Ryc. 6.5",

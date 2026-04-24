@@ -19,15 +19,15 @@ ch9_ui <- list(
                 po analizę prawdziwych danych. Narzędzie: Jamovi (90 min)."
     ),
 
-    h2(id = "ch9-cwiczenia", class = "section-title", "Ćwiczenia: Rozkłady prawdopodobieństwa"),
+    lc_h2("ch9-cwiczenia", "Ćwiczenia: Rozkłady prawdopodobieństwa"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Czas:"), " 90 minut | ", tags$b("Narzędzie:"), " Jamovi"),
       p("Każde zadanie ma ", tags$b("ukryte rozwiązanie"),
         " — kliknij przycisk, aby je zobaczyć.")
     ),
 
-    div(class = "widget-block",
+    figure_panel(label = "Ćwiczenie",
       selectInput("ch9_kierunek", tags$b("Wybierz wariant dla kierunku:"),
         choices = list(
           "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
@@ -58,16 +58,16 @@ ch9_ui <- list(
 
 .ch9_content_bhp <- function() tagList(
 
-  div(class = "section-title", "Blok 1: Kalkulator rozkładów (25 min)"),
-  div(class = "callout-info",
+  lc_h3("Blok 1: Kalkulator rozkładów (25 min)"),
+  lc_feedback(type = "info",
     p("W Jamovi: ", tags$b("Analyses → Exploration → Distribution"),
       " (lub moduł ", tags$code("distrACTION"), ")."),
     p("Dla każdego zadania: wybierz odpowiedni rozkład, ustaw parametry, odczytaj prawdopodobieństwo.")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 1 — Szkolenie BHP"),
-    div(class = "narrative",
+    tagList(
       p("Test BHP składa się z 25 pytań prawda/fałsz. Zaliczenie wymaga ",
         tags$b("minimum 20 poprawnych"), " odpowiedzi. Pracownik nie uczył się i odpowiada losowo."),
       tags$ol(
@@ -77,13 +77,13 @@ ch9_ui <- list(
         tags$li("Gdyby próg zaliczenia obniżono do 15 — jak zmieniłoby się prawdopodobieństwo?")
       )
     ),
-    actionButton("ch9_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol1")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 2 — Wypadki przy pracy"),
-    div(class = "narrative",
+    tagList(
       p("W zakładzie produkcyjnym dochodzi średnio do ",
         tags$b("2.5 wypadku przy pracy miesięcznie"), "."),
       tags$ol(
@@ -94,13 +94,13 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Jeśli rozpatrujemy cały kwartał (3 miesiące) — jaki rozkład opisuje liczbę wypadków i jaki ma parametr? Oblicz P(≥10 wypadków w kwartale).")
       )
     ),
-    actionButton("ch9_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol2")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 3 — Poziom hałasu"),
-    div(class = "narrative",
+    tagList(
       p("Pomiary hałasu na stanowisku w hali montażowej mają rozkład ",
         tags$b("N(82, 4)"), " dB (średnia 82 dB, odchylenie standardowe 4 dB). Norma BHP: ", tags$b("85 dB"), "."),
       tags$ol(
@@ -111,13 +111,13 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Pracodawca planuje wymienić wentylację. Przy jakim poziomie średniej (przy tym samym σ = 4 dB) dokładnie 5% pomiarów przekraczałoby normę 85 dB?")
       )
     ),
-    actionButton("ch9_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol3")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 4 — Niezawodność czujnika dymu"),
-    div(class = "narrative",
+    tagList(
       p("Czujnik dymu ma średni czas bezawaryjnej pracy (", tags$b("MTBF"), ") wynoszący ",
         tags$b("365 dni"), ". Czas do awarii ma rozkład wykładniczy."),
       tags$ol(
@@ -127,19 +127,19 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Czujnik pracuje już 200 dni bez awarii. Czy to zmienia prawdopodobieństwo awarii w następnych 180 dniach? Uzasadnij (bezpamięciowość).")
       )
     ),
-    actionButton("ch9_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol4")
   ),
 
-  div(class = "section-title", "Blok 2: Rozpoznawanie rozkładów (25 min)"),
+  lc_h3("Blok 2: Rozpoznawanie rozkładów (25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 5 — Który to rozkład?"),
-    div(class = "narrative",
+    tagList(
       p("Dla każdej sytuacji: ", tags$b("nazwij rozkład"), " i ", tags$b("podaj parametry"),
         ". Pracujcie w parach, potem dyskusja.")
     ),
-    tags$table(class = "table table-striped table-bordered",
+    tags$table(class = "lc-table lc-table-striped lc-table-bordered",
       tags$thead(tags$tr(tags$th(""), tags$th("Sytuacja"), tags$th("Rozkład"), tags$th("Parametry"))),
       tags$tbody(
         .z5row("a)", "Inspektor BHP sprawdza 20 stanowisk. Każde ma 10% szans na naruszenie przepisów. Ile naruszeń znajdzie?"),
@@ -152,13 +152,13 @@ ch9_ui <- list(
         .z5row("h)", "Waga ładunku na palecie — średnia 500 kg, odch. std. 30 kg")
       )
     ),
-    actionButton("ch9_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol5")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 6 — Trudniejsze: powiązania między rozkładami"),
-    div(class = "narrative",
+    tagList(
       tags$b("6a)"), " W firmie kurierskiej średnio dochodzi do ", tags$b("4 kolizji drogowych miesięcznie"), ".",
       tags$ul(
         tags$li("Jaki rozkład opisuje ", tags$b("liczbę"), " kolizji w miesiącu?"),
@@ -177,19 +177,19 @@ ch9_ui <- list(
         tags$li("Pracodawca musi zapewnić, że ", tags$b("mniej niż 5% pomiarów"), " przekracza normę. Do jakiej wartości musiałby obniżyć średnie stężenie (przy tym samym σ)?")
       )
     ),
-    actionButton("ch9_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol6")
   ),
 
-  div(class = "section-title", "Blok 3: Analiza danych w Jamowi (40 min)"),
-  div(class = "callout-info",
+  lc_h3("Blok 3: Analiza danych w Jamowi (40 min)"),
+  lc_feedback(type = "info",
     p("Otwórz pliki CSV z folderu ", tags$code("cwiczenia/dane/"), " w Jamovi.")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 7 — Wypadki miesięcznie"),
     p(class = "text-muted", tags$code("wypadki_miesiecznie.csv")),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Otwórz plik. Zrób ", tags$b("histogram"), " zmiennej ", tags$code("liczba_wypadkow"), " (Exploration → Descriptives → Plots → Histogram)."),
         tags$li("Oblicz ", tags$b("średnią"), " i ", tags$b("wariancję"), ". Czy są zbliżone do siebie?"),
@@ -198,14 +198,14 @@ ch9_ui <- list(
         tags$li("Porównaj teoretyczne prawdopodobieństwa z empirycznymi częstościami w danych.")
       )
     ),
-    actionButton("ch9_ans7", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans7", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol7")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 8 — Hałas na stanowiskach"),
     p(class = "text-muted", tags$code("halas_stanowiska.csv")),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Rozdziel dane na dwa stanowiska (Data → Filters: ", tags$code("stanowisko == \"A_montaz\""), ")."),
         tags$li("Dla każdego stanowiska zrób ", tags$b("histogram"), " i oblicz ", tags$b("statystyki opisowe"), " (średnia, mediana, odch. std., skosność)."),
@@ -214,14 +214,14 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Dlaczego stanowisko B mogłoby mieć rozkład skośny? Podaj hipotezę techniczną.")
       )
     ),
-    actionButton("ch9_ans8", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans8", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol8")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 9 — Kontrola kasków"),
     p(class = "text-muted", tags$code("kontrola_kaskow.csv")),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Zrób ", tags$b("histogram"), " zmiennej ", tags$code("liczba_wadliwych"), "."),
         tags$li("Oblicz średnią liczbę wadliwych kasków na partię."),
@@ -230,14 +230,14 @@ ch9_ui <- list(
         tags$li("Kierownik jakości chce odrzucać partię, jeśli jest ≥ 4 wadliwych. Jak często partia zostanie odrzucona?")
       )
     ),
-    actionButton("ch9_ans9", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans9", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol9")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 10 — Czas między incydentami"),
     p(class = "text-muted", tags$code("czas_miedzy_incydentami.csv")),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Zrób ", tags$b("histogram"), " zmiennej ", tags$code("dni_od_poprzedniego"), ". Jaki kształt ma rozkład?"),
         tags$li("Oblicz ", tags$b("średnią"), " i ", tags$b("odchylenie standardowe"), ". Czy są do siebie zbliżone?"),
@@ -246,12 +246,12 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Jeśli średni czas między incydentami wynosi X dni, ile incydentów oczekujemy w ciągu 30 dni? Jaki rozkład to opisuje? Oblicz P(≥ 3 incydenty w miesiącu).")
       )
     ),
-    actionButton("ch9_ans10", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans10", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol10")
   ),
 
-  div(class = "section-title", "Podsumowanie"),
-  div(class = "callout-warning",
+  lc_h3("Podsumowanie"),
+  lc_feedback(type = "warning",
     p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
     tags$ol(
       tags$li("Który rozkład najczęściej widzisz w kontekście BHP i dlaczego?"),
@@ -259,7 +259,7 @@ ch9_ui <- list(
       tags$li("Jaki jest praktyczny sens „bezpamięciowości” rozkładu wykładniczego dla bezpieczeństwa?")
     )
   ),
-  actionButton("ch9_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
+  actionButton("ch9_ans_summary", "Pokaż odpowiedzi", class = "lc-btn-ok-outline lc-btn-sm"),
   uiOutput("ch9_sol_summary")
 )
 
@@ -269,16 +269,16 @@ ch9_ui <- list(
 
 .ch9_content_rol <- function() tagList(
 
-  div(class = "section-title", "Blok 1: Kalkulator rozkładów (25 min)"),
-  div(class = "callout-info",
+  lc_h3("Blok 1: Kalkulator rozkładów (25 min)"),
+  lc_feedback(type = "info",
     p("W Jamovi: ", tags$b("Analyses → Exploration → Distribution"),
       " (lub moduł ", tags$code("distrACTION"), ")."),
     p("Dla każdego zadania: wybierz odpowiedni rozkład, ustaw parametry, odczytaj prawdopodobieństwo.")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 1 — Zaraza ziemniaka"),
-    div(class = "narrative",
+    tagList(
       p("Losowo wybrano ", tags$b("30 roślin ziemniaka"), " z dużego pola. Na podstawie wieloletnich obserwacji wiadomo, że ",
         tags$b("20% roślin"), " na tym polu jest zainfekowanych zar azą."),
       tags$ol(
@@ -288,13 +288,13 @@ ch9_ui <- list(
         tags$li("Gdyby poziom infekcji wzrósł do 40% — jak zmieni się prawdopodobieństwo z punktu 2?")
       )
     ),
-    actionButton("ch9_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol1")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 2 — Połamania gałęzi po burzy"),
-    div(class = "narrative",
+    tagList(
       p("Po sierpniowych burzach na plantacji jabłoni notuje się średnio ",
         tags$b("2 połamania gałęzi na drzewo"), "."),
       tags$ol(
@@ -305,13 +305,13 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Sad złożony z 3 kwater (każda jak osobne drzewo) — jaki rozkład i jakie P(≥10 połamań łącznie)?")
       )
     ),
-    actionButton("ch9_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol2")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 3 — Plon pszenicy"),
-    div(class = "narrative",
+    tagList(
       p("Plony pszenicy w regionie mają rozkład ", tags$b("N(6.2, 0.8)"), " t/ha. Minimalna norma skupu: ", tags$b("5 t/ha"), "."),
       tags$ol(
         tags$li("Jaki procent pól osiąga plon poniżej normy skupu 5 t/ha?"),
@@ -321,13 +321,13 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Przy tym samym σ = 0.8 t/ha — do jakiej średniej należałoby dążyć, żeby tylko 1% pól było poniżej normy 5 t/ha?")
       )
     ),
-    actionButton("ch9_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol3")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 4 — Czas między opadami deszczu"),
-    div(class = "narrative",
+    tagList(
       p("W lipcu w regionie rolniczym średni czas między opadami wynosi ", tags$b("10 dni"), ". Rozkład wykładniczy."),
       tags$ol(
         tags$li("Jaki jest parametr λ (rate) tego rozkładu?"),
@@ -336,18 +336,18 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Minęło już 12 dni bez deszczu. Czy to zmienia prawdopodobieństwo suszy w następnych 10 dniach? Uzasadnij (bezpamięciowość).")
       )
     ),
-    actionButton("ch9_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol4")
   ),
 
-  div(class = "section-title", "Blok 2: Rozpoznawanie rozkładów (25 min)"),
+  lc_h3("Blok 2: Rozpoznawanie rozkładów (25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 5 — Który to rozkład?"),
-    div(class = "narrative",
+    tagList(
       p("Dla każdej sytuacji: ", tags$b("nazwij rozkład"), " i ", tags$b("podaj parametry"), ". Pracujcie w parach, potem dyskusja.")
     ),
-    tags$table(class = "table table-striped table-bordered",
+    tags$table(class = "lc-table lc-table-striped lc-table-bordered",
       tags$thead(tags$tr(tags$th(""), tags$th("Sytuacja"), tags$th("Rozkład"), tags$th("Parametry"))),
       tags$tbody(
         .z5row("a)", "Agrotechnik sprawdza 15 próbek gleby. Każda ma 25% szans na zakwaszenie poniżej normy. Ile próbek będzie zakwaszonych?"),
@@ -360,13 +360,13 @@ ch9_ui <- list(
         .z5row("h)", "Wilgotność gleby na polu — średnia 35%, odch. std. 5%")
       )
     ),
-    actionButton("ch9_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol5")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 6 — Trudniejsze: powiązania między rozkładami"),
-    div(class = "narrative",
+    tagList(
       tags$b("6a)"), " Na dużym polu kukurydzy średnio występuje ", tags$b("5 ognisk chwastów tygodniowo"), ".",
       tags$ul(
         tags$li("Jaki rozkład opisuje ", tags$b("liczbę"), " ognisk w tygodniu?"),
@@ -385,19 +385,19 @@ ch9_ui <- list(
         tags$li("Agrotechnik chce, żeby ", tags$b("co najmniej 99% pól"), " spełniało normę. Do jakiej wartości musi wzrosnąć średnia (przy tym samym σ = 0.4)?")
       )
     ),
-    actionButton("ch9_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol6")
   ),
 
-  div(class = "section-title", "Blok 3: Analiza danych w Jamovi (40 min)"),
-  div(class = "callout-info",
+  lc_h3("Blok 3: Analiza danych w Jamovi (40 min)"),
+  lc_feedback(type = "info",
     p("Otwórz pliki CSV z folderu ", tags$code("cwiczenia/rolnictwo/dane/"), " w Jamovi.")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 7 — Wystąpienia szkodników"),
     p(class = "text-muted", tags$code("szkodniki_tygodniowo.csv")),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Otwórz plik. Zrób ", tags$b("histogram"), " zmiennej ", tags$code("liczba_wystapien"), " (Exploration → Descriptives → Plots → Histogram)."),
         tags$li("Oblicz ", tags$b("średnią"), " i ", tags$b("wariancję"), ". Czy są zbliżone do siebie?"),
@@ -406,14 +406,14 @@ ch9_ui <- list(
         tags$li("Porównaj teoretyczne prawdopodobieństwa z empirycznymi częstościami w danych.")
       )
     ),
-    actionButton("ch9_ans7", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans7", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol7")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 8 — Plony na dwóch odmianach"),
     p(class = "text-muted", tags$code("plony_odmiany.csv")),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Rozdziel dane na dwie odmiany pszenicy."),
         tags$li("Dla każdej odmiany zrób ", tags$b("histogram"), " i oblicz ", tags$b("statystyki opisowe"), " (średnia, mediana, odch. std., kwartyle)."),
@@ -422,14 +422,14 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Dlaczego druga odmiana mogłaby mieć rozkład skośny? Podaj hipotezę agronomiczną.")
       )
     ),
-    actionButton("ch9_ans8", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans8", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol8")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 9 — Kontrola jakości nasion"),
     p(class = "text-muted", tags$code("kontrola_nasion.csv")),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Zrób ", tags$b("histogram"), " zmiennej ", tags$code("liczba_wadliwych"), "."),
         tags$li("Oblicz średnią liczbę wadliwych nasion na partię."),
@@ -438,14 +438,14 @@ ch9_ui <- list(
         tags$li("Magazynier odrzuca partię, jeśli jest ≥ 5 wadliwych nasion. Jak często partia zostanie odrzucona?")
       )
     ),
-    actionButton("ch9_ans9", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans9", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol9")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 10 — Czas między deszczami"),
     p(class = "text-muted", tags$code("czas_miedzy_deszczami.csv")),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Zrób ", tags$b("histogram"), " zmiennej ", tags$code("dni_od_poprzedniego"), ". Jaki kształt ma rozkład?"),
         tags$li("Oblicz ", tags$b("średnią"), " i ", tags$b("odchylenie standardowe"), ". Czy są zbliżone do siebie?"),
@@ -454,12 +454,12 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Ile opadów oczekujemy w sezonie 90-dniowym? Jaki rozkład i jaki λ? Oblicz P(≥ 15 opadów w sezonie).")
       )
     ),
-    actionButton("ch9_ans10", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans10", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol10")
   ),
 
-  div(class = "section-title", "Podsumowanie"),
-  div(class = "callout-warning",
+  lc_h3("Podsumowanie"),
+  lc_feedback(type = "warning",
     p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
     tags$ol(
       tags$li("Który rozkład najczęściej pojawia się w kontekście rolniczym i dlaczego?"),
@@ -467,7 +467,7 @@ ch9_ui <- list(
       tags$li("Dlaczego bezpamięciowość rozkładu wykładniczego jest zaskakująca w kontekście suszy?")
     )
   ),
-  actionButton("ch9_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
+  actionButton("ch9_ans_summary", "Pokaż odpowiedzi", class = "lc-btn-ok-outline lc-btn-sm"),
   uiOutput("ch9_sol_summary")
 )
 
@@ -477,16 +477,16 @@ ch9_ui <- list(
 
 .ch9_content_zyw <- function() tagList(
 
-  div(class = "section-title", "Blok 1: Kalkulator rozkładów (25 min)"),
-  div(class = "callout-info",
+  lc_h3("Blok 1: Kalkulator rozkładów (25 min)"),
+  lc_feedback(type = "info",
     p("W Jamovi: ", tags$b("Analyses → Exploration → Distribution"),
       " (lub moduł ", tags$code("distrACTION"), ")."),
     p("Dla każdego zadania: wybierz odpowiedni rozkład, ustaw parametry, odczytaj prawdopodobieństwo.")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 1 — Kontrola szczelności opakowań"),
-    div(class = "narrative",
+    tagList(
       p("W linii produkcyjnej dżemów losowo pobierana jest próbka ", tags$b("40 słoików"), ". Wiadomo, że średnio ",
         tags$b("8% słoików"), " ma nieszczelną zakrętkę."),
       tags$ol(
@@ -496,13 +496,13 @@ ch9_ui <- list(
         tags$li("Gdyby wadliwość spadła do 3% po naprawie maszyny — jak zmieni się prawdopodobieństwo z punktu 2?")
       )
     ),
-    actionButton("ch9_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol1")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 2 — Reklamacje konsumentów"),
-    div(class = "narrative",
+    tagList(
       p("Producent napojów energetycznych otrzymuje średnio ", tags$b("4 reklamacje tygodniowo"), " dotyczące jakości smaku."),
       tags$ol(
         tags$li("Jaki rozkład opisuje liczbę reklamacji w tygodniu? Podaj parametr."),
@@ -512,13 +512,13 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Jeśli badamy cały miesiąc (4 tygodnie) — jaki rozkład i jakie P(≥20 reklamacji)?")
       )
     ),
-    actionButton("ch9_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol2")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 3 — Zawartość soli w wędlinie"),
-    div(class = "narrative",
+    tagList(
       p("Pomiary zawartości soli w partiach szynki mają rozkład ", tags$b("N(2.1, 0.3)"), " g/100g. Norma maksymalna: ", tags$b("2.5 g/100g"), "."),
       tags$ol(
         tags$li("Jaki procent partii przekracza normę maksymalną 2.5 g/100g?"),
@@ -528,13 +528,13 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Inspektor sanitarny wymaga, żeby ", tags$b("mniej niż 5% partii"), " przekraczało normę 2.5 g/100g. Do jakiej wartości musiałaby spaść średnia (przy tym samym σ = 0.3)?")
       )
     ),
-    actionButton("ch9_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol3")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 4 — Trwałość jogurtu po otwarciu"),
-    div(class = "narrative",
+    tagList(
       p("Czas do zepsucia jogurtu po otwarciu (w warunkach lodowki) ma rozkład wykładniczy ze średnią ", tags$b("8 dni"), "."),
       tags$ol(
         tags$li("Jaki jest parametr λ (rate) tego rozkładu?"),
@@ -543,18 +543,18 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Konsument otworzył jogurt 5 dni temu i nadal nie jest zepsuty. Czy zmienia to prawdopodobieństwo zepsucia w ciągu kolejnych 3 dni? Uzasadnij (bezpamięciowość).")
       )
     ),
-    actionButton("ch9_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol4")
   ),
 
-  div(class = "section-title", "Blok 2: Rozpoznawanie rozkładów (25 min)"),
+  lc_h3("Blok 2: Rozpoznawanie rozkładów (25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 5 — Który to rozkład?"),
-    div(class = "narrative",
+    tagList(
       p("Dla każdej sytuacji: ", tags$b("nazwij rozkład"), " i ", tags$b("podaj parametry"), ". Pracujcie w parach, potem dyskusja.")
     ),
-    tags$table(class = "table table-striped table-bordered",
+    tags$table(class = "lc-table lc-table-striped lc-table-bordered",
       tags$thead(tags$tr(tags$th(""), tags$th("Sytuacja"), tags$th("Rozkład"), tags$th("Parametry"))),
       tags$tbody(
         .z5row("a)", "Kontroler sprawdza 25 butelek soku. Każda ma 5% szans na błąd napełnienia. Ile błędnych?"),
@@ -567,13 +567,13 @@ ch9_ui <- list(
         .z5row("h)", "Zawartość białka w proszku mlecznym — średnia 26%, odch. std. 1.5%")
       )
     ),
-    actionButton("ch9_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol5")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 6 — Trudniejsze: powiązania między rozkładami"),
-    div(class = "narrative",
+    tagList(
       tags$b("6a)"), " Na linii produkcyjnej serka topionego średnio występuje ", tags$b("6 usterek opakowania dziennie"), ".",
       tags$ul(
         tags$li("Jaki rozkład opisuje ", tags$b("liczbę"), " usterek dziennie?"),
@@ -592,19 +592,19 @@ ch9_ui <- list(
         tags$li("Producent chce zapewnić, że ", tags$b("mniej niż 1% partii"), " nie spełnia normy. Jaka minimalna średnia jest potrzebna (przy tym samym σ = 0.2)?")
       )
     ),
-    actionButton("ch9_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol6")
   ),
 
-  div(class = "section-title", "Blok 3: Analiza danych w Jamovi (40 min)"),
-  div(class = "callout-info",
+  lc_h3("Blok 3: Analiza danych w Jamovi (40 min)"),
+  lc_feedback(type = "info",
     p("Otwórz pliki CSV z folderu ", tags$code("cwiczenia/zywnosc/dane/"), " w Jamovi.")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 7 — Reklamacje tygodniowo"),
     p(class = "text-muted", tags$code("reklamacje_tygodniowo.csv")),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Otwórz plik. Zrób ", tags$b("histogram"), " zmiennej ", tags$code("liczba_reklamacji"), " (Exploration → Descriptives → Plots → Histogram)."),
         tags$li("Oblicz ", tags$b("średnią"), " i ", tags$b("wariancję"), ". Czy są zbliżone do siebie?"),
@@ -613,14 +613,14 @@ ch9_ui <- list(
         tags$li("Porównaj teoretyczne prawdopodobieństwa z empirycznymi częstościami w danych.")
       )
     ),
-    actionButton("ch9_ans7", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans7", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol7")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 8 — Masa netto dwóch linii produkcyjnych"),
     p(class = "text-muted", tags$code("masa_netto_linie.csv")),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Rozdziel dane na dwie linie produkcyjne."),
         tags$li("Dla każdej linii zrób ", tags$b("histogram"), " i oblicz ", tags$b("statystyki opisowe"), " (średnia, mediana, odch. std., kwartyle)."),
@@ -629,14 +629,14 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Dlaczego druga linia mogłaby mieć rozkład skośny? Podaj hipotezę technologiczną.")
       )
     ),
-    actionButton("ch9_ans8", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans8", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol8")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 9 — Kontrola wadliwości opakowań"),
     p(class = "text-muted", tags$code("kontrola_opakowania.csv")),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Zrób ", tags$b("histogram"), " zmiennej ", tags$code("liczba_wadliwych"), "."),
         tags$li("Oblicz średnią liczbę wadliwych opakowań na partię."),
@@ -645,14 +645,14 @@ ch9_ui <- list(
         tags$li("Kierownik jakości odrzuca partię, jeśli jest ≥ 5 wadliwych. Jak często partia zostanie odrzucona?")
       )
     ),
-    actionButton("ch9_ans9", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans9", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol9")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 10 — Czas między awariami linii"),
     p(class = "text-muted", tags$code("czas_miedzy_awariami.csv")),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Zrób ", tags$b("histogram"), " zmiennej ", tags$code("godziny_od_poprzedniej"), ". Jaki kształt ma rozkład?"),
         tags$li("Oblicz ", tags$b("średnią"), " i ", tags$b("odchylenie standardowe"), ". Czy są zbliżone do siebie?"),
@@ -661,12 +661,12 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Ile awarii oczekujemy w ciągu tygodnia pracy (40 godzin)? Jaki rozkład i jaki λ? Oblicz P(≥ 5 awarii w tygodniu).")
       )
     ),
-    actionButton("ch9_ans10", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch9_ans10", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol10")
   ),
 
-  div(class = "section-title", "Podsumowanie"),
-  div(class = "callout-warning",
+  lc_h3("Podsumowanie"),
+  lc_feedback(type = "warning",
     p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
     tags$ol(
       tags$li("Który rozkład najczęściej pojawia się w kontroli jakości żywności i dlaczego?"),
@@ -674,7 +674,7 @@ ch9_ui <- list(
       tags$li("Jaki jest praktyczny sens bezpamięciowości rozkładu wykładniczego dla trwałości produktów?")
     )
   ),
-  actionButton("ch9_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
+  actionButton("ch9_ans_summary", "Pokaż odpowiedzi", class = "lc-btn-ok-outline lc-btn-sm"),
   uiOutput("ch9_sol_summary")
 )
 
@@ -716,7 +716,7 @@ ch9_ui <- list(
       tags$b("d)"), " ", tags$b("Nie zmienia"), " — rozkład wykładniczy jest ", tags$b("bezpamięciowy"),
         sprintf(". P(X > 200+180 | X > 200) = P(X > 180) = %.4f.", 1 - pexp(180, 1/365))
     )),
-    sol5 = tags$table(class = "table table-striped table-bordered",
+    sol5 = tags$table(class = "lc-table lc-table-striped lc-table-bordered",
       tags$thead(tags$tr(tags$th(""), tags$th("Rozkład"), tags$th("Parametry"))),
       tags$tbody(
         tags$tr(tags$td("a)"), tags$td("Dwumianowy"), tags$td("B(20, 0.1)")),
@@ -796,7 +796,7 @@ ch9_ui <- list(
       tags$b("c)"), " P(X ≤ 5) = 1 − e^(−5/10) = ", .fmt_p(pexp(5, 0.1)), tags$br(),
       tags$b("d)"), " ", tags$b("Nie zmienia"), sprintf(" — P(X > 12+10 | X > 12) = P(X > 10) = %.4f.", 1 - pexp(10, 0.1))
     )),
-    sol5 = tags$table(class = "table table-striped table-bordered",
+    sol5 = tags$table(class = "lc-table lc-table-striped lc-table-bordered",
       tags$thead(tags$tr(tags$th(""), tags$th("Rozkład"), tags$th("Parametry"))),
       tags$tbody(
         tags$tr(tags$td("a)"), tags$td("Dwumianowy"), tags$td("B(15, 0.25)")),
@@ -876,7 +876,7 @@ ch9_ui <- list(
       tags$b("c)"), " P(X > 10) = e^(−10/8) = ", .fmt_p(1 - pexp(10, 1/8)), tags$br(),
       tags$b("d)"), " ", tags$b("Nie zmienia"), sprintf(" — P(X > 5+3 | X > 5) = P(X > 3) = %.4f.", 1 - pexp(3, 1/8))
     )),
-    sol5 = tags$table(class = "table table-striped table-bordered",
+    sol5 = tags$table(class = "lc-table lc-table-striped lc-table-bordered",
       tags$thead(tags$tr(tags$th(""), tags$th("Rozkład"), tags$th("Parametry"))),
       tags$tbody(
         tags$tr(tags$td("a)"), tags$td("Dwumianowy"), tags$td("B(25, 0.05)")),
@@ -981,7 +981,7 @@ ch9_server <- function(input, output, session) {
       if (!vis[[sol_id_bare]]()) return(NULL)
       k <- isolate(input$ch9_kierunek)
       sol <- .ch9_solutions[[k]][[sol_id_bare]]
-      div(class = "callout-success", style = "margin-top: 10px;", sol)
+      lc_feedback(type = "ok", style = "margin-top: 10px;", sol)
     })
   }
 

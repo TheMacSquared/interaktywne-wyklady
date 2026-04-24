@@ -21,10 +21,9 @@ ch7_ui <- list(
                 ufności na rzeczywistych danych."
     ),
 
-    h2(id = "ch7-cwiczenia", class = "section-title",
-       "Ćwiczenia praktyczne — przedziały ufności"),
+    lc_h2("ch7-cwiczenia", "Ćwiczenia praktyczne — przedziały ufności"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Czas trwania:"), " ~ 90 minut · ",
         tags$b("Narzędzie:"), " Jamovi"),
       p("Trzy bloki zadań — CI dla średniej, CI dla proporcji,
@@ -32,7 +31,7 @@ ch7_ui <- list(
         tags$b("ukryte rozwiązanie"),
         " — kliknij przycisk, aby je zobaczyć."),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         selectInput("ch7_kierunek", tags$b("Wybierz wariant dla kierunku:"),
           choices = list(
             "Edukacja (CASchools)" = "edu",
@@ -60,7 +59,7 @@ ch7_ui <- list(
 
 .ch7_content_edu <- function() tagList(
 
-  div(class = "callout-info",
+  lc_feedback(type = "info",
     p(tags$b("Otwórz plik "), tags$code("dane/caschools.csv"), tags$b(" w Jamovi"), "."),
     p("Dane ze 420 okręgów szkolnych w Kalifornii. Zmienne: wyniki z czytania (",
       tags$code("read"), ") i matematyki (", tags$code("math"),
@@ -70,76 +69,76 @@ ch7_ui <- list(
       tags$code("lunch"), "), typ szkoły (", tags$code("grades"), ").")
   ),
 
-  div(class = "section-title", "Blok 1: Przedział ufności dla średniej (~25 min)"),
+  lc_h3("Blok 1: Przedział ufności dla średniej (~25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 1 — Jak czytają dzieci w Kalifornii?"),
-    div(class = "narrative",
+    tagList(
       p("Kuratorium oświaty pyta: ", tags$em("„jaki jest typowy średni wynik z czytania w kalifornijskim okręgu?”"),
         " Wyznacz 95% CI dla średniej zmiennej ", tags$code("read"),
         ". Zanim klikniesz rozwiązanie: ile wynosi średnia, granice CI i co powiedzielibyś kuratorium jednym zdaniem?")
     ),
-    actionButton("ch7_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol1")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 2 — A z matematyką lepiej czy gorzej?"),
-    div(class = "narrative",
+    tagList(
       p("Powtórz analizę dla zmiennej ", tags$code("math"),
         ". Dlaczego ", tags$b("przedziały"), " mają różną szerokość? n jest takie samo, więc co decyduje?")
     ),
-    actionButton("ch7_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol2")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 3 — CI dla każdej grupy"),
-    div(class = "narrative",
+    tagList(
       p("Wyznacz CI dla ", tags$code("read"), " dla każdej z grup ", tags$code("grades"), " osobno.")
     ),
-    actionButton("ch7_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol3")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 4 — Ile ufności kupujemy za szerokość?"),
-    div(class = "narrative",
+    tagList(
       p("Wróć do pełnych 420 okręgów. Policz CI dla ", tags$code("read"),
         " przy poziomach ufności: 90%, 95%, 99%. Zapisz marginesy błędu i porównaj."),
       p(tags$em("Dyskusja:"), " kto żądałby 99% — statystyk akademicki czy inżynier od bezpieczeństwa lotów?")
     ),
-    actionButton("ch7_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol4")
   ),
 
-  div(class = "section-title", "Blok 2: Przedział ufności dla proporcji (~20 min)"),
+  lc_h3("Blok 2: Przedział ufności dla proporcji (~20 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 5 — Przepełnione klasy"),
-    div(class = "narrative",
+    tagList(
       p("Przy stosunku students/teachers > 20 trudno o indywidualne podejście.
         Stwórz zmienną binarną i wyznacz 95% CI dla proporcji okręgów z STR > 20.
         Sprawdź warunki sensowności przed interpretacją.")
     ),
-    actionButton("ch7_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol5")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 6 — Dystrykty z dużym odsetkiem English learners"),
-    div(class = "narrative",
+    tagList(
       p("Okręgi z ", tags$code("english > 20%"), " są „językowo wymagające”.
         Wyznacz 95% CI dla tej proporcji i porównaj szerokość z zadaniem 5.
         Dlaczego jeden jest ciasniejszy, skoro n jest takie samo?")
     ),
-    actionButton("ch7_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol6")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 7 — Czy wysoki odsetek ELL idzie w parze z wysokim odsetkiem dotacji do obiadów?"),
-    div(class = "narrative",
+    tagList(
       p("Weź dwie zmienne jakościowe zbudowane z danych: ",
         tags$code("english > 20"), " (dużo uczniów uczących się angielskiego jako drugiego języka) oraz ",
         tags$code("lunch > 50"), " (dużo uczniów z dotacjami na obiady). Oszacuj 95% CI dla ",
@@ -148,15 +147,15 @@ ch7_ui <- list(
       p(tags$em("Wskazówka:"), " zacznij od tabeli krzyżowej ",
         tags$code("table(english > 20, lunch > 50)"), ".")
     ),
-    actionButton("ch7_ans7", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans7", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol7")
   ),
 
-  div(class = "section-title", "Blok 3: Interpretacja i myślenie krytyczne (~25 min)"),
+  lc_h3("Blok 3: Interpretacja i myślenie krytyczne (~25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 8 — Prawda czy fałsz?"),
-    div(class = "narrative",
+    tagList(
       p("Przyjmijmy, że w zadaniu 1 dostałeś 95% CI dla średniej ",
         tags$code("read"), " równy ", tags$b("[653.0, 656.9]"), ". Oceń każde stwierdzenie:"),
       tags$ol(
@@ -171,7 +170,7 @@ ch7_ui <- list(
         tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny wynik z czytania przekracza 660 punktów.”")
       )
     ),
-    actionButton("ch7_ans8", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans8", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol8")
   ),
 
@@ -184,7 +183,7 @@ ch7_ui <- list(
 
 .ch7_content_bhp <- function() tagList(
 
-  div(class = "callout-info",
+  lc_feedback(type = "info",
     p(tags$b("Otwórz plik "), tags$code("dane/bhp_zaklady.csv"), tags$b(" w Jamovi"), "."),
     p("Dane z 320 zakładów produkcyjnych. Zmienne: wskaźnik wypadków (",
       tags$code("wskaznik_wypadkow"), "), absencja (",
@@ -196,77 +195,77 @@ ch7_ui <- list(
       tags$code("zmiany"), ").")
   ),
 
-  div(class = "section-title", "Blok 1: Przedział ufności dla średniej (~25 min)"),
+  lc_h3("Blok 1: Przedział ufności dla średniej (~25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 1 — Typowy wskaźnik wypadków w polskich zakładach"),
-    div(class = "narrative",
+    tagList(
       p("Inspekcja pracy chce wiedzieć: ", tags$em("„jaki jest typowy wskaźnik wypadków w polskim zakładzie produkcyjnym?”"),
         " Wyznacz 95% CI dla średniej zmiennej ", tags$code("wskaznik_wypadkow"),
         ". Przed sprawdzeniem odpowiedzi: ile wynosi średnia i granice CI?
         Jak powiedzielibyś inspekcji jednym zdaniem?")
     ),
-    actionButton("ch7_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol1")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 2 — A jak wygląda absencja?"),
-    div(class = "narrative",
+    tagList(
       p("Powtórz analizę dla zmiennej ", tags$code("absencja_dni"),
         ". Porównaj szerokość obu przedziałów. n jest takie samo — co decyduje o różnicy?")
     ),
-    actionButton("ch7_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol2")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 3 — CI według wielkości zakładu"),
-    div(class = "narrative",
+    tagList(
       p("Wyznacz CI dla ", tags$code("wskaznik_wypadkow"), " dla każdej kategorii ", tags$code("wielkosc"), " osobno.")
     ),
-    actionButton("ch7_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol3")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 4 — Ile ufności kupujemy za szerokość?"),
-    div(class = "narrative",
+    tagList(
       p("Wróć do pełnych 320 zakładów. Policz CI dla ", tags$code("wskaznik_wypadkow"),
         " przy 90%, 95%, 99%. Zapisz marginesy błędu."),
       p(tags$em("Dyskusja:"), " przy jakim poziomie ufności raportowałaby inspekcja pracy?")
     ),
-    actionButton("ch7_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol4")
   ),
 
-  div(class = "section-title", "Blok 2: Przedział ufności dla proporcji (~20 min)"),
+  lc_h3("Blok 2: Przedział ufności dla proporcji (~20 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 5 — Jaki odsetek zakładów przekracza normę hałasu?"),
-    div(class = "narrative",
+    tagList(
       p("Zmienna ", tags$code("ponad_norma_halas"),
         " mówi, czy hałas przekracza 85 dB. Wyznacz 95% CI dla proporcji takich zakładów.
         Sprawdź warunki sensowności.")
     ),
-    actionButton("ch7_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol5")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 6 — Częste naruszenia przepisów"),
-    div(class = "narrative",
+    tagList(
       p("Utwórz zmienną binarną: ", tags$code("naruszen_proc > 20"),
         " (więcej niż 20% kontroli kończy się naruszeniem).
         Wyznacz 95% CI i porównaj szerokość z zadaniem 5. Dlaczego różnica?")
     ),
-    actionButton("ch7_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol6")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 7 — Czy przekroczona norma hałasu idzie w parze z wysokim odsetkiem naruszeń procedur?"),
-    div(class = "narrative",
+    tagList(
       p("Weź dwie zmienne jakościowe: ", tags$code("ponad_norma_halas"),
         " (hałas powyżej normy) oraz ", tags$code("naruszen_proc > 20"),
         " (wysoki odsetek naruszeń procedur). Oszacuj 95% CI dla ",
@@ -275,15 +274,15 @@ ch7_ui <- list(
       p(tags$em("Wskazówka:"), " zacznij od tabeli krzyżowej ",
         tags$code("table(ponad_norma_halas, naruszen_proc > 20)"), ".")
     ),
-    actionButton("ch7_ans7", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans7", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol7")
   ),
 
-  div(class = "section-title", "Blok 3: Interpretacja i myślenie krytyczne (~25 min)"),
+  lc_h3("Blok 3: Interpretacja i myślenie krytyczne (~25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 8 — Prawda czy fałsz?"),
-    div(class = "narrative",
+    tagList(
       p("Przyjmijmy, że w zadaniu 1 dostałeś 95% CI dla średniej ",
         tags$code("wskaznik_wypadkow"), " równy ", tags$b("[9.33, 10.15]"),
         ". Oceń każde stwierdzenie:"),
@@ -299,7 +298,7 @@ ch7_ui <- list(
         tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny wskaźnik wypadków przekracza 11 na 1000 pracowników.”")
       )
     ),
-    actionButton("ch7_ans8", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans8", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol8")
   ),
 
@@ -312,7 +311,7 @@ ch7_ui <- list(
 
 .ch7_content_rol <- function() tagList(
 
-  div(class = "callout-info",
+  lc_feedback(type = "info",
     p(tags$b("Otwórz plik "), tags$code("dane/rolnictwo_pola.csv"), tags$b(" w Jamovi"), "."),
     p("Dane z 280 pól uprawnych. Zmienne: plon pszenicy (",
       tags$code("plon_pszenicy"), " t/ha), plon rzepaku (",
@@ -324,76 +323,76 @@ ch7_ui <- list(
       tags$code("wilg_powyzej_70"), ").")
   ),
 
-  div(class = "section-title", "Blok 1: Przedział ufności dla średniej (~25 min)"),
+  lc_h3("Blok 1: Przedział ufności dla średniej (~25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 1 — Typowy plon pszenicy w Polsce"),
-    div(class = "narrative",
+    tagList(
       p("Agencja rolna pyta: ", tags$em("„jaki jest typowy plon pszenicy na polskim polu uprawnym?”"),
         " Wyznacz 95% CI dla średniej zmiennej ", tags$code("plon_pszenicy"),
         ". Co powiedzielibyś agencji jednym zdaniem?")
     ),
-    actionButton("ch7_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol1")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 2 — A jak wypada rzepak?"),
-    div(class = "narrative",
+    tagList(
       p("Powtórz analizę dla zmiennej ", tags$code("plon_rzepa"),
         ". Porównaj szerokość obu przedziałów. n jest takie samo — co decyduje?")
     ),
-    actionButton("ch7_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol2")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 3 — CI według klasy gleby"),
-    div(class = "narrative",
+    tagList(
       p("Wyznacz CI dla ", tags$code("plon_pszenicy"), " dla każdej klasy gleby (", tags$code("klasa_gleby"), ") osobno.")
     ),
-    actionButton("ch7_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol3")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 4 — Ile ufności kupujemy za szerokość?"),
-    div(class = "narrative",
+    tagList(
       p("Wróć do pełnych 280 pól. Policz CI dla ", tags$code("plon_pszenicy"),
         " przy 90%, 95%, 99%. Zapisz marginesy błędu."),
       p(tags$em("Dyskusja:"), " przy jakim poziomie ufności raportowałaby agencja rolna?")
     ),
-    actionButton("ch7_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol4")
   ),
 
-  div(class = "section-title", "Blok 2: Przedział ufności dla proporcji (~20 min)"),
+  lc_h3("Blok 2: Przedział ufności dla proporcji (~20 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 5 — Jaki odsetek pól ma plon poniżej opłacalności?"),
-    div(class = "narrative",
+    tagList(
       p("Zmienna ", tags$code("plon_ponizej_5"),
         " mówi, czy plon pszenicy wynosi mniej niż 5 t/ha (próg opłacalności).
         Wyznacz 95% CI dla proporcji takich pól. Sprawdź warunki sensowności.")
     ),
-    actionButton("ch7_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol5")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 6 — Pola z nadmierną wilgotnością"),
-    div(class = "narrative",
+    tagList(
       p("Zmienna ", tags$code("wilg_powyzej_70"),
         " mówi, czy wilgotność gleby przekracza 70% (ryzyko grzybów).
         Wyznacz 95% CI i porównaj szerokość z zadaniem 5. Dlaczego różnica?")
     ),
-    actionButton("ch7_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol6")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 7 — Czy niski plon idzie w parze z nadmierną wilgotnością?"),
-    div(class = "narrative",
+    tagList(
       p("Weź dwie zmienne jakościowe: ", tags$code("plon_ponizej_5"),
         " (plon poniżej progu opłacalności) oraz ", tags$code("wilg_powyzej_70"),
         " (nadmierna wilgotność). Oszacuj 95% CI dla ",
@@ -402,15 +401,15 @@ ch7_ui <- list(
       p(tags$em("Wskazówka:"), " zacznij od tabeli krzyżowej ",
         tags$code("table(plon_ponizej_5, wilg_powyzej_70)"), ".")
     ),
-    actionButton("ch7_ans7", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans7", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol7")
   ),
 
-  div(class = "section-title", "Blok 3: Interpretacja i myślenie krytyczne (~25 min)"),
+  lc_h3("Blok 3: Interpretacja i myślenie krytyczne (~25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 8 — Prawda czy fałsz?"),
-    div(class = "narrative",
+    tagList(
       p("Przyjmijmy, że w zadaniu 1 dostałeś 95% CI dla średniej ",
         tags$code("plon_pszenicy"), " równy ", tags$b("[6.03, 6.31]"),
         ". Oceń każde stwierdzenie:"),
@@ -426,7 +425,7 @@ ch7_ui <- list(
         tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny plon pszenicy przekracza 6.5 t/ha.”")
       )
     ),
-    actionButton("ch7_ans8", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans8", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol8")
   ),
 
@@ -439,7 +438,7 @@ ch7_ui <- list(
 
 .ch7_content_zyw <- function() tagList(
 
-  div(class = "callout-info",
+  lc_feedback(type = "info",
     p(tags$b("Otwórz plik "), tags$code("dane/zywnosc_partie.csv"), tags$b(" w Jamovi"), "."),
     p("Dane z 350 partii produkcyjnych. Zmienne: zawartość białka (",
       tags$code("zawartosc_bialka"), " %), tłuszczu (",
@@ -450,76 +449,76 @@ ch7_ui <- list(
       tags$code("tluszcz_powyzej_normy"), ").")
   ),
 
-  div(class = "section-title", "Blok 1: Przedział ufności dla średniej (~25 min)"),
+  lc_h3("Blok 1: Przedział ufności dla średniej (~25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 1 — Typowa zawartość białka w produkcie"),
-    div(class = "narrative",
+    tagList(
       p("Dział jakości pyta: ", tags$em("„jaka jest typowa zawartość białka w naszych partiach?”"),
         " Wyznacz 95% CI dla średniej zmiennej ", tags$code("zawartosc_bialka"),
         ". Co powiedzielibyś działowi jakości jednym zdaniem?")
     ),
-    actionButton("ch7_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol1")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 2 — A jak wygląda zawartość tłuszczu?"),
-    div(class = "narrative",
+    tagList(
       p("Powtórz analizę dla zmiennej ", tags$code("zawartosc_tluszczu"),
         ". Porównaj szerokość obu przedziałów. n jest takie samo — co decyduje?")
     ),
-    actionButton("ch7_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol2")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 3 — CI według linii"),
-    div(class = "narrative",
+    tagList(
       p("Wyznacz CI dla ", tags$code("zawartosc_bialka"), " dla każdej linii (", tags$code("linia"), ") osobno.")
     ),
-    actionButton("ch7_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol3")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 4 — Ile ufności kupujemy za szerokość?"),
-    div(class = "narrative",
+    tagList(
       p("Wróć do pełnych 350 partii. Policz CI dla ", tags$code("zawartosc_bialka"),
         " przy 90%, 95%, 99%. Zapisz marginesy błędu."),
       p(tags$em("Dyskusja:"), " przy jakim poziomie ufności raportowałby dział jakości?")
     ),
-    actionButton("ch7_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol4")
   ),
 
-  div(class = "section-title", "Blok 2: Przedział ufności dla proporcji (~20 min)"),
+  lc_h3("Blok 2: Przedział ufności dla proporcji (~20 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 5 — Jaki odsetek partii nie spełnia normy białka?"),
-    div(class = "narrative",
+    tagList(
       p("Zmienna ", tags$code("bialko_ponizej_normy"),
         " mówi, czy zawartość białka spada poniżej 26% (norma jakościowa).
         Wyznacz 95% CI dla proporcji takich partii. Sprawdź warunki sensowności.")
     ),
-    actionButton("ch7_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol5")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 6 — Partie z za dużym tłuszczem"),
-    div(class = "narrative",
+    tagList(
       p("Zmienna ", tags$code("tluszcz_powyzej_normy"),
         " mówi, czy zawartość tłuszczu przekracza 3.0% (norma).
         Wyznacz 95% CI i porównaj szerokość z zadaniem 5. Dlaczego różnica?")
     ),
-    actionButton("ch7_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol6")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 7 — Czy niedobór białka idzie w parze z przekroczoną normą tłuszczu?"),
-    div(class = "narrative",
+    tagList(
       p("Weź dwie zmienne jakościowe: ", tags$code("bialko_ponizej_normy"),
         " (za mało białka) oraz ", tags$code("tluszcz_powyzej_normy"),
         " (za dużo tłuszczu). Oszacuj 95% CI dla ",
@@ -528,15 +527,15 @@ ch7_ui <- list(
       p(tags$em("Wskazówka:"), " zacznij od tabeli krzyżowej ",
         tags$code("table(bialko_ponizej_normy, tluszcz_powyzej_normy)"), ".")
     ),
-    actionButton("ch7_ans7", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans7", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol7")
   ),
 
-  div(class = "section-title", "Blok 3: Interpretacja i myślenie krytyczne (~25 min)"),
+  lc_h3("Blok 3: Interpretacja i myślenie krytyczne (~25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 8 — Prawda czy fałsz?"),
-    div(class = "narrative",
+    tagList(
       p("Przyjmijmy, że w zadaniu 1 dostałeś 95% CI dla średniej ",
         tags$code("zawartosc_bialka"), " równy ", tags$b("[26.57, 26.85]"),
         ". Oceń każde stwierdzenie:"),
@@ -552,7 +551,7 @@ ch7_ui <- list(
         tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętna zawartość białka przekracza 27%.”")
       )
     ),
-    actionButton("ch7_ans8", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch7_ans8", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch7_sol8")
   ),
 
@@ -611,7 +610,7 @@ ch7_ui <- list(
 
   tagList(
     p(tags$b("Tabela krzyżowa "), tags$code(x_lab), tags$b(" × "), tags$code(y_lab), tags$b(":")),
-    tags$table(class = "table table-bordered table-striped",
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       tags$thead(tags$tr(
         tags$th(""),
         tags$th(sprintf("%s = FALSE", y_lab)),
@@ -696,7 +695,7 @@ ch7_ui <- list(
       tagList(
         p(tags$b("CI dla "), tags$code("read"), tags$b(" przy różnych poziomach ufności"),
           sprintf(" (n=%d):", ci95$n)),
-        tags$table(class = "table table-bordered table-striped",
+        tags$table(class = "lc-table lc-table-bordered lc-table-striped",
           tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
           tags$tbody(
             tags$tr(tags$td("90%"), tags$td(.fmt_mean(list(mean = ci90$lo))),
@@ -814,7 +813,7 @@ ch7_ui <- list(
       tagList(
         p(tags$b("CI dla wskaznik_wypadkow przy różnych poziomach ufności"),
           sprintf(" (n=%d):", ci95$n)),
-        tags$table(class = "table table-bordered table-striped",
+        tags$table(class = "lc-table lc-table-bordered lc-table-striped",
           tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
           tags$tbody(
             tags$tr(tags$td("90%"), tags$td(sprintf("%.2f", ci90$lo)),
@@ -931,7 +930,7 @@ ch7_ui <- list(
       tagList(
         p(tags$b("CI dla plon_pszenicy przy różnych poziomach ufności"),
           sprintf(" (n=%d):", ci95$n)),
-        tags$table(class = "table table-bordered table-striped",
+        tags$table(class = "lc-table lc-table-bordered lc-table-striped",
           tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
           tags$tbody(
             tags$tr(tags$td("90%"), tags$td(sprintf("%.2f", ci90$lo)),
@@ -1048,7 +1047,7 @@ ch7_ui <- list(
       tagList(
         p(tags$b("CI dla zawartosc_bialka przy różnych poziomach ufności"),
           sprintf(" (n=%d):", ci95$n)),
-        tags$table(class = "table table-bordered table-striped",
+        tags$table(class = "lc-table lc-table-bordered lc-table-striped",
           tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
           tags$tbody(
             tags$tr(tags$td("90%"), tags$td(sprintf("%.2f", ci90$lo)),
@@ -1161,7 +1160,7 @@ ch7_server <- function(input, output, session) {
       if (!vis[[sol_id_bare]]()) return(NULL)
       k <- isolate(input$ch7_kierunek)
       sol <- .ch7_solutions[[k]][[sol_id_bare]]
-      div(class = "callout-success", style = "margin-top: 10px;", sol)
+      lc_feedback(type = "ok", style = "margin-top: 10px;", sol)
     })
   }
 

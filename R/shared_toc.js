@@ -71,7 +71,7 @@
       if (current) current.textContent = String(activeIdx);
     }
 
-    scrollSpyChapterId = null; // zatrzymaj stary scroll-spy
+    scrollSpyChapterId = null; // zatrzymaj poprzedni scroll-spy
   }
 
   // -------------------------------------------------------------------------
@@ -91,7 +91,7 @@
 
     var headings = section
       ? Array.from(section.querySelectorAll(
-          "h2[data-lc-section], h2.lc-h2[id], h2.section-title[id]"
+          "h2[data-lc-section], h2.lc-h2[id]"
         ))
       : [];
 
@@ -143,7 +143,7 @@
 
     var headings = Array.from(
       section.querySelectorAll(
-        "h2[data-lc-section], h2.lc-h2[id], h2.section-title[id]"
+        "h2[data-lc-section], h2.lc-h2[id]"
       )
     );
 
@@ -182,7 +182,7 @@
   }
 
   // -------------------------------------------------------------------------
-  // Bootstrap
+  // Start
   // -------------------------------------------------------------------------
   if (document.readyState === "complete" || document.readyState === "interactive") {
     init();

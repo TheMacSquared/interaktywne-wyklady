@@ -14,9 +14,9 @@ ch4_ui <- list(
                 Ale co, gdy zmienna może przyjąć dowolną wartość z pewnego przedziału?"
     ),
 
-    h2(id = "ch4-histogram", class = "section-title", "Od histogramu do krzywej gęstości"),
+    lc_h2("ch4-histogram", "Od histogramu do krzywej gęstości"),
 
-    div(class = "narrative",
+    tagList(
       p("Znasz już histogramy ze statystyki opisowej. Teraz zobaczymy,
         jak histogram przechodzi w gładką krzywą gdy zwiększamy próbę i zwężamy przedziały.
         Ta krzywa to ", tags$b("funkcja gęstości prawdopodobieństwa (PDF)"),
@@ -41,28 +41,28 @@ ch4_ui <- list(
                       min = 50, max = 10000, value = 500, step = 50),
           hr(),
           actionButton("ch4_step1", "1. Surowe dane (rug)",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch4_step2", "2. Histogram (5 binów)",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch4_step3", "3. Więcej binów (15)",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch4_step4", "4. Jeszcze więcej (30)",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch4_step5", "5. Skala gęstości",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch4_step6", "6. Krzywa gęstości",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch4_step7", "7. Tylko PDF",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch4_step_reset", "Reset",
-                       class = "btn-outline-secondary", width = "100%")
+                       class = "lc-btn-secondary-outline", width = "100%")
         ),
         column(8,
           plotOutput("ch4_step_plot", height = "400px"),
@@ -74,9 +74,9 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 2: Prawdopodobienstwo = pole — BEZ ZMIAN
     # ========================================================================
-    h2(id = "ch4-pole", class = "section-title", "Prawdopodobieństwo = pole pod krzywą"),
+    lc_h2("ch4-pole", "Prawdopodobieństwo = pole pod krzywą"),
 
-    div(class = "narrative",
+    tagList(
       p("W rozkładach ciągłych prawdopodobieństwo to ",
         tags$b("pole pod krzywą gęstości"), " w danym przedziale.
         Wysokość krzywej to NIE prawdopodobieństwo!"),
@@ -120,9 +120,9 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 3: Jednostajny ciagly — scenariusze overlay
     # ========================================================================
-    h2(id = "ch4-jednostajny", class = "section-title", "Rozkład jednostajny ciągły"),
+    lc_h2("ch4-jednostajny", "Rozkład jednostajny ciągły"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Jednostajny ciągły U(a, b)"), " — każda wartość w przedziale
         [a, b] jest jednakowo prawdopodobna. Przykład: losowa liczba z generatora.")
     ),
@@ -148,7 +148,7 @@ ch4_ui <- list(
           uiOutput("ch4_unif_stats")
         )
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(
           helpText("$$f(x) = \\frac{1}{b-a}, \\quad E(X) = \\frac{a+b}{2}, \\quad Var(X) = \\frac{(b-a)^2}{12}$$")
         )
@@ -158,9 +158,9 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 3b: Wykladniczy — scenariusze overlay
     # ========================================================================
-    h2(id = "ch4-wykladniczy", class = "section-title", "Rozkład wykładniczy"),
+    lc_h2("ch4-wykladniczy", "Rozkład wykładniczy"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Wykładniczy Exp(λ)"), " — modeluje czas oczekiwania między
         zdarzeniami. Przykład: czas między wiadomościami na WhatsAppie, czas między awariami maszyn.")
     ),
@@ -186,7 +186,7 @@ ch4_ui <- list(
           uiOutput("ch4_exp_stats")
         )
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(
           helpText("$$f(x) = \\lambda e^{-\\lambda x}, \\quad E(X) = \\frac{1}{\\lambda}, \\quad Var(X) = \\frac{1}{\\lambda^2}$$")
         )
@@ -212,9 +212,9 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 4: Rozklad t-Studenta — scenariusze overlay
     # ========================================================================
-    h2(id = "ch4-t-studenta", class = "section-title", "Rozkład t-Studenta"),
+    lc_h2("ch4-t-studenta", "Rozkład t-Studenta"),
 
-    div(class = "narrative",
+    tagList(
       p("Rozkład t-Studenta wygląda jak normalny, ale ma cięższe ogony —
         wartości ekstremalne są bardziej prawdopodobne. Jest kluczowy we
         wnioskowaniu statystycznym (test t, przedziały ufności)."),
@@ -245,7 +245,7 @@ ch4_ui <- list(
           uiOutput("ch4_t_stats")
         )
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText(
           "$$E(X) = 0 \\; (df > 1), \\quad Var(X) = \\frac{df}{df - 2} \\; (df > 2)$$"
         ))
@@ -269,9 +269,9 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 5: Rozklad chi-kwadrat — scenariusze overlay
     # ========================================================================
-    h2(id = "ch4-chi-kwadrat", class = "section-title", "Rozkład chi-kwadrat (χ²)"),
+    lc_h2("ch4-chi-kwadrat", "Rozkład chi-kwadrat (χ²)"),
 
-    div(class = "narrative",
+    tagList(
       p("Rozkład chi-kwadrat powstaje jako suma kwadratów niezależnych zmiennych N(0,1).
         Jest zawsze nieujemny i prawoskośny."),
       p("Zastosowania: testy niezależności, testy dopasowania,
@@ -299,7 +299,7 @@ ch4_ui <- list(
           uiOutput("ch4_chisq_stats")
         )
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText(
           "$$E(X) = df, \\quad Var(X) = 2 \\cdot df$$"
         ))
@@ -322,9 +322,9 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 6: Rozklad log-normalny — scenariusze overlay
     # ========================================================================
-    h2(id = "ch4-lognormalny", class = "section-title", "Rozkład log-normalny"),
+    lc_h2("ch4-lognormalny", "Rozkład log-normalny"),
 
-    div(class = "narrative",
+    tagList(
       p("Jeśli ", tags$b("ln(X) ~ N(μ, σ)"), ", to X ma rozkład log-normalny.
         Zmienna jest zawsze dodatnia i prawoskośna."),
       p("Pojawia się wszędzie tam, gdzie dane rosną multiplikatywnie:
@@ -352,7 +352,7 @@ ch4_ui <- list(
           uiOutput("ch4_lnorm_stats")
         )
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText(
           "$$E(X) = e^{\\mu + \\sigma^2/2}, \\quad Var(X) = \\left(e^{\\sigma^2} - 1\\right) \\cdot e^{2\\mu + \\sigma^2}$$"
         ))
@@ -463,7 +463,7 @@ ch4_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij krok 1, aby zacząć",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else if (step == 1) {
       ggplot(df, aes(x = x)) +
@@ -523,7 +523,7 @@ ch4_server <- function(input, output, session) {
       "Nakładamy gładką krzywą, która przybliża kształt danych.",
       "To jest PDF — teoretyczny model opisujący rozkład. Pole pod krzywą = 1."
     )
-    if (step > 0) div(class = "callout-info", texts[step + 1])
+    if (step > 0) lc_feedback(type = "info", texts[step + 1])
   })
 
   # --- Widget 2: Prawdopodobienstwo = pole (bez zmian) ---
@@ -593,11 +593,12 @@ ch4_server <- function(input, output, session) {
       prob <- punif(b, 0, 10) - punif(a, 0, 10)
     }
 
-    div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["niebo"]), ";"),
-          paste0("P(", a, " < X < ", b, ") = ", sprintf("%.4f", max(0, prob)))),
-      div(class = "stat-box", style = paste0("background: ", upwr_secondary, ";"),
-          paste0(sprintf("%.1f", max(0, prob) * 100), "%"))
+    lc_center(
+      lc_stat_box(paste0("P(", a, " < X < ", b, ")"),
+                  sprintf("%.4f", max(0, prob)),
+                  color = unname(upwr_cat["niebo"])),
+      lc_stat_box("Procent", sprintf("%.1f", max(0, prob) * 100), "%",
+                  color = upwr_secondary)
     )
   })
 

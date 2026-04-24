@@ -18,7 +18,7 @@ col_lognormal   <- unname(upwr_cat["szalwia"])    # log-normalny
 
 
 # Rysowanie PMF rozkladu dyskretnego
-plot_pmf <- function(x_vals, probs, fill_color = "#3498db",
+plot_pmf <- function(x_vals, probs, fill_color = unname(upwr_cat["niebo"]),
                      title = "", xlab = "x", ylab = "P(X = x)",
                      show_mean = FALSE, show_sd = FALSE, mu = NULL, sigma = NULL) {
   df <- data.frame(x = x_vals, prob = probs)
@@ -31,18 +31,18 @@ plot_pmf <- function(x_vals, probs, fill_color = "#3498db",
     theme_upwr()
 
   if (show_mean && !is.null(mu)) {
-    p <- p + geom_vline(xintercept = mu, color = "#e74c3c", linewidth = 1.2, linetype = "dashed")
+    p <- p + geom_vline(xintercept = mu, color = upwr_accent, linewidth = 1.2, linetype = "dashed")
   }
   if (show_sd && !is.null(mu) && !is.null(sigma)) {
     p <- p +
       annotate("rect", xmin = mu - sigma, xmax = mu + sigma,
-               ymin = 0, ymax = Inf, fill = "#e74c3c", alpha = 0.1)
+               ymin = 0, ymax = Inf, fill = upwr_accent, alpha = 0.1)
   }
   p
 }
 
 # Rysowanie PDF rozkladu ciaglego
-plot_pdf <- function(density_fn, xlim, fill_color = "#27ae60",
+plot_pdf <- function(density_fn, xlim, fill_color = unname(upwr_cat["szalwia"]),
                      title = "", xlab = "x", ylab = "f(x)",
                      shade_from = NULL, shade_to = NULL, n_points = 500) {
   x_seq <- seq(xlim[1], xlim[2], length.out = n_points)

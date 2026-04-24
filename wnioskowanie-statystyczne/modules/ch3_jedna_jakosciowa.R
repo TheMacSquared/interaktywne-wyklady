@@ -18,9 +18,9 @@ ch3_ui <- list(
     # ========================================================================
     # Wprowadzenie
     # ========================================================================
-    h2(id = "ch3-pytanie", class = "section-title", "Od pytania do testu dwumianowego"),
+    lc_h2("ch3-pytanie", "Od pytania do testu dwumianowego"),
 
-    div(class = "narrative",
+    tagList(
       p("Gdy zmienna ma dwie kategorie (sukces/porażka, tak/nie, spełnia/nie spełnia),
         pytamy o proporcję w populacji."),
       p("Narzędzie: ", tags$b("test dwumianowy"),
@@ -28,19 +28,19 @@ ch3_ui <- list(
       p("Test dwumianowy jest dokładny — nie opiera się na przybliżeniu normalnym,
         działa nawet przy małych próbach."),
       p("Trzy warianty par hipotez — zależnie od brzmienia pytania:"),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Dwustronna"), " (proporcja różni się od ",
           withMathJax("\\(p_0\\)"), "):"),
         p(withMathJax("\\(H_0: p = p_0 \\quad\\)"),
           withMathJax("\\(H_a: p \\neq p_0\\)"))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Prawostronna"), " (proporcja ",
           tags$em("wyższa"), " niż ", withMathJax("\\(p_0\\)"), "):"),
         p(withMathJax("\\(H_0: p \\leq p_0 \\quad\\)"),
           withMathJax("\\(H_a: p > p_0\\)"))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Lewostronna"), " (proporcja ",
           tags$em("niższa"), " niż ", withMathJax("\\(p_0\\)"), "):"),
         p(withMathJax("\\(H_0: p \\geq p_0 \\quad\\)"),
@@ -52,7 +52,7 @@ ch3_ui <- list(
         (to rozkład dwumianowy ", withMathJax("\\(B(n, p_0)\\)"),
         "). p-wartość liczymy bezpośrednio jako prawdopodobieństwo wyniku co najmniej
         tak skrajnego jak obserwowany:"),
-      div(class = "formula-box",
+      lc_formula_box(
         p("Statystyka: ", withMathJax("\\(k\\)"),
           " (liczba sukcesów w ", withMathJax("\\(n\\)"), " próbach)"),
         p("p-wartość (dwustronna): ",
@@ -64,9 +64,9 @@ ch3_ui <- list(
     # ========================================================================
     # Cwiczenie: sformuluj hipotezy
     # ========================================================================
-    h2(id = "ch3-cwiczenie", class = "section-title", "Ćwiczenie: sformułuj hipotezy"),
+    lc_h2("ch3-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    div(class = "narrative",
+    tagList(
       p("Spróbuj sam przełożyć pytanie potoczne na H₀ i Hₐ. Przedyskutuj
         w grupie, a potem sprawdź.")
     ),
@@ -100,7 +100,7 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 1: Test dwumianowy dwustronny (krokowy)
     # ========================================================================
-    h2(id = "ch3-krok", class = "section-title", "Test dwumianowy — krok po kroku"),
+    lc_h2("ch3-krok", "Test dwumianowy — krok po kroku"),
 
     figure_panel(
       label = "Ryc. 4.1",
@@ -120,18 +120,18 @@ ch3_ui <- list(
           sliderInput("ch3_n", "Wielkość próby (n):",
                       min = 20, max = 200, value = 50, step = 10),
           actionButton("ch3_new_sample", "Losuj próbę",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           hr(),
           h5("Kroki testu:"),
-          div(style = "display: flex; flex-direction: column; gap: 6px;",
+          lc_stack(gap = "sm",
             actionButton("ch3_step1", "1. Dane",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch3_step2", "2. Proporcja z próby",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch3_step3", "3. Rozkład pod H₀",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch3_step4", "4. p-wartość i decyzja",
-                         class = "btn-outline-primary", width = "100%")
+                         class = "lc-btn-outline", width = "100%")
           )
         ),
         column(8,
@@ -157,9 +157,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 2: Test dwumianowy jednostronny (te same dane)
     # ========================================================================
-    h2(id = "ch3-jednostronny", class = "section-title", "A jeśli znamy kierunek?"),
+    lc_h2("ch3-jednostronny", "A jeśli znamy kierunek?"),
 
-    div(class = "narrative",
+    tagList(
       p("Tak jak przy teście t — czasem nie pytamy „czy różni się?”,
         ale „czy jest większa / mniejsza niż p₀?”"),
       p("Użyjemy tych samych danych co powyżej, ale zmienimy pytanie na kierunkowe.")
@@ -173,15 +173,15 @@ ch3_ui <- list(
           helpText("Dane: te same co w teście dwustronnym powyżej."),
           hr(),
           h5("Kroki testu:"),
-          div(style = "display: flex; flex-direction: column; gap: 6px;",
+          lc_stack(gap = "sm",
             actionButton("ch3b_step1", "1. Dane",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch3b_step2", "2. Proporcja z próby",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch3b_step3", "3. Rozkład pod H₀",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch3b_step4", "4. p-wartość i decyzja",
-                         class = "btn-outline-primary", width = "100%")
+                         class = "lc-btn-outline", width = "100%")
           )
         ),
         column(8,
@@ -208,13 +208,13 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 3: Porownanie — test dwumianowy vs test proporcji
     # ========================================================================
-    h2(id = "ch3-porownanie", class = "section-title", "Test dwumianowy a test proporcji"),
+    lc_h2("ch3-porownanie", "Test dwumianowy a test proporcji"),
 
-    div(class = "narrative",
+    tagList(
       p("W Jamovi i wielu podręcznikach spotkasz też ",
         tags$b("test proporcji (z-test)"),
         ". Działa na przybliżeniu normalnym:"),
-      div(class = "formula-box",
+      lc_formula_box(
         p(withMathJax("\\(z = \\frac{\\hat{p} - p_0}{\\sqrt{p_0(1-p_0)/n}}\\)"))
       ),
       p("Porównajmy oba testy na tych samych danych:")
@@ -223,14 +223,14 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 4.3",
       title = "Porównanie wyników: dwumianowy vs z-test",
-      actionButton("ch3_compare", "Porównaj testy", class = "btn-primary", width = "100%"),
+      actionButton("ch3_compare", "Porównaj testy", class = "lc-btn-primary", width = "100%"),
       br(), br(),
       uiOutput("ch3_compare_result")
     ),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Kiedy który?")),
-      tags$table(class = "table table-bordered", style = "font-size: 15px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th(""), tags$th("Test dwumianowy"), tags$th("Test proporcji (z-test)"))
         ),
@@ -376,11 +376,11 @@ ch3_server <- function(input, output, session) {
     d <- ch3_data()
 
     tagList(
-      div(class = "callout-info", style = "font-size: 16px;",
+      lc_feedback(type = "info", style = "font-size: 16px;",
         p(tags$b("Pytanie potoczne:")),
         p(tags$em(paste0("„", par$question, "”")))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Hipoteza formalna (dwustronna):")),
         p(withMathJax(par$h0_text)),
         p(withMathJax(par$h1_text))
@@ -474,19 +474,15 @@ ch3_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
-            paste0("n = ", n)),
-        div(class = "stat-box", style = paste0("border-left-color:", col_accept, ";"),
-            paste0(par$success_label, ": ", k)),
-        div(class = "stat-box", style = paste0("border-left-color:", col_reject, ";"),
-            paste0(par$failure_label, ": ", n - k)),
+        lc_stat_box("n", n, color = col_h0),
+        lc_stat_box("p̂", k, "/", n, " = ", round(phat, 3),
+                    caption = paste0(par$success_label, ": ", k),
+                    color = col_accept),
+        lc_stat_box(par$failure_label, n - k, color = col_reject),
         p("Mamy ", n, " obserwacji. Ile z nich to sukcesy?")
       ),
       "2" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-            paste0("p̂ = ", k, "/", n, " = ", round(phat, 3))),
-        div(class = "stat-box", style = paste0("border-left-color:", upwr_secondary, ";"),
-            paste0("p₀ = ", p0)),
+        lc_stat_box("p₀", p0, color = upwr_secondary),
         p("Proporcja z próby: ", tags$b(round(phat, 3)),
           ". Wartość referencyjna: ", tags$b(p0),
           ". Różnica: ", tags$b(round(phat - p0, 3)),
@@ -503,15 +499,14 @@ ch3_server <- function(input, output, session) {
         test <- binom.test(k, n, p0, alternative = "two.sided")
         res <- format_test_result(test$p.value)
         tagList(
-          div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-              paste0("p = ", format.pval(test$p.value, digits = 4))),
+          lc_stat_box("p", format.pval(test$p.value, digits = 4), color = col_pvalue),
           p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
             res$decision),
           p(res$explanation)
         )
       }
     )
-    div(class = "callout-info", info)
+    lc_feedback(type = "info", info)
   })
 
   # =============================================
@@ -523,11 +518,11 @@ ch3_server <- function(input, output, session) {
     d <- ch3_data()
 
     tagList(
-      div(class = "callout-info", style = "font-size: 16px;",
+      lc_feedback(type = "info", style = "font-size: 16px;",
         p(tags$b("Pytanie potoczne (kierunkowe):")),
         p(tags$em(paste0("„", par$question_1s, "”")))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Hipoteza formalna (jednostronna!):")),
         p(withMathJax(par$h0_text_1s)),
         p(withMathJax(par$h1_text_1s))
@@ -617,13 +612,11 @@ ch3_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
-            paste0("n = ", n, " (te same dane co wyżej)")),
+        lc_stat_box("n", n, " (te same dane co wyżej)", color = col_h0),
         p("Pytamy, czy proporcja sukcesów jest ", dir_label, " niż p₀ = ", p0, ".")
       ),
       "2" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-            paste0("p̂ = ", round(phat, 3), " (ta sama wartość!)")),
+        lc_stat_box("p̂", round(phat, 3), " (ta sama wartość!)", color = col_pvalue),
         p("Statystyki takie same — dane się nie zmieniły.
           Zmieniło się tylko pytanie (kierunek).")
       ),
@@ -636,9 +629,8 @@ ch3_server <- function(input, output, session) {
         test <- binom.test(k, n, p0, alternative = par$alt_1s)
         res <- format_test_result(test$p.value)
         tagList(
-          div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-              paste0("p = ", format.pval(test$p.value, digits = 4),
-                     " (jednostronnie!)")),
+          lc_stat_box("p", format.pval(test$p.value, digits = 4),
+                     " (jednostronnie!)", color = col_pvalue),
           p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
             res$decision),
           p(res$explanation),
@@ -647,7 +639,7 @@ ch3_server <- function(input, output, session) {
         )
       }
     )
-    div(class = "callout-info", info)
+    lc_feedback(type = "info", info)
   })
 
   # =============================================
@@ -660,7 +652,7 @@ ch3_server <- function(input, output, session) {
     par <- isolate(scenario_params[[input$ch3_scenario]])
 
     if (is.null(d)) {
-      return(div(class = "callout-warning",
+      return(lc_feedback(type = "warning",
         "Najpierw wylosuj próbę w widgecie powyżej."))
     }
 
@@ -681,7 +673,7 @@ ch3_server <- function(input, output, session) {
     ok <- np0 >= 10 && nq0 >= 10
 
     div(
-      tags$table(class = "table table-bordered", style = "font-size: 15px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th(""), tags$th("Test dwumianowy"), tags$th("Test proporcji (z)"))
         ),
@@ -710,7 +702,7 @@ ch3_server <- function(input, output, session) {
           )
         )
       ),
-      div(class = if (ok) "callout-success" else "callout-danger",
+      lc_feedback(type = if (ok) "ok" else "danger",
         p(tags$b("Warunki przybliżenia normalnego: "),
           withMathJax(paste0("\\(np_0 = ", round(np0, 1), "\\)")),
           " i ",

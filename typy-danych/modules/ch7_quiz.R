@@ -49,13 +49,13 @@ ch7_ui <- list(
       title = "Przypomnienie typów zmiennych",
       fluidRow(
         column(3, div(class = "type-badge",
-          style = paste0("background: ", type_colors["nominalna"], ";"), "Nominalna")),
+          style = paste0("background:", type_colors["nominalna"], ";"), "Nominalna")),
         column(3, div(class = "type-badge",
-          style = paste0("background: ", type_colors["porzadkowa"], ";"), "Porządkowa")),
+          style = paste0("background:", type_colors["porzadkowa"], ";"), "Porządkowa")),
         column(3, div(class = "type-badge",
-          style = paste0("background: ", type_colors["ilosciowa_dyskretna"], ";"), "Dyskretna")),
+          style = paste0("background:", type_colors["ilosciowa_dyskretna"], ";"), "Dyskretna")),
         column(3, div(class = "type-badge",
-          style = paste0("background: ", type_colors["ilosciowa_ciagla"], ";"), "Ciągła"))
+          style = paste0("background:", type_colors["ilosciowa_ciagla"], ";"), "Ciągła"))
       ),
       p(style = "margin-top: 10px; font-size: 13px; color: var(--upwr-reference);",
         "Nominalna = kategorie bez porządku | Porządkowa = kategorie z porządkiem | ",
@@ -71,7 +71,7 @@ ch7_ui <- list(
       fluidRow(
         column(6,
           actionButton("ch7_start", "Rozpocznij quiz",
-                       class = "btn-primary btn-lg", width = "100%")
+                       class = "lc-btn-primary lc-btn-lg", width = "100%")
         ),
         column(6,
           uiOutput("ch7_progress")
@@ -212,7 +212,7 @@ ch7_server <- function(input, output, session) {
         type_color <- QUIZ_TYPE_COLORS[[opts[[i]]$value]]
         actionButton(btn_id,
           tagList(
-            div(class = "tile-letter", style = paste0("background: ", type_color, ";"),
+            div(class = "tile-letter", style = paste0("background:", type_color, ";"),
                 letters[i]),
             div(class = "tile-text", opts[[i]]$label)
           ),
@@ -261,7 +261,7 @@ ch7_server <- function(input, output, session) {
     correct_color <- QUIZ_TYPE_COLORS[[quiz_state$last_correct_val]]
 
     tagList(
-      div(class = if (is_correct) "callout-success" else "callout-danger",
+      lc_feedback(type = if (is_correct) "ok" else "danger",
         tags$strong(if (is_correct) "Dobrze!" else "Nie tym razem."),
         if (!is_correct) {
           tagList(
@@ -279,11 +279,11 @@ ch7_server <- function(input, output, session) {
 
       if (quiz_state$current_idx < quiz_state$total) {
         actionButton("ch7_next", "Następne pytanie →",
-                     class = "btn-primary", width = "100%",
+                     class = "lc-btn-primary", width = "100%",
                      style = "margin-top: 10px;")
       } else {
         actionButton("ch7_finish", "Zobacz wynik",
-                     class = "btn-success btn-lg", width = "100%",
+                     class = "lc-btn-ok lc-btn-lg", width = "100%",
                      style = "margin-top: 10px;")
       }
     )
@@ -343,9 +343,9 @@ ch7_server <- function(input, output, session) {
 
       div(style = "display: flex; gap: 10px; justify-content: center;",
         actionButton("ch7_start", "Spróbuj ponownie",
-                     class = "btn-primary btn-lg"),
+                     class = "lc-btn-primary lc-btn-lg"),
         actionButton("ch7_back_to_ch6", "Wróć do ściągi",
-                     class = "btn-outline-secondary btn-lg")
+                     class = "lc-btn-secondary-outline lc-btn-lg")
       )
     )
   })

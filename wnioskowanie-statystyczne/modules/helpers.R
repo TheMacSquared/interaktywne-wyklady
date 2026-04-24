@@ -73,7 +73,7 @@ hypothesis_practice <- function(prefix, questions) {
       ),
       tags$div(class = "hp-controls",
         actionButton(btn_id, "Pokaż odpowiedź",
-                     class = "btn-outline-secondary btn-sm")
+                     class = "lc-btn-secondary-outline lc-btn-sm")
       ),
       conditionalPanel(
         condition = paste0("input['", btn_id, "'] % 2 === 1"),

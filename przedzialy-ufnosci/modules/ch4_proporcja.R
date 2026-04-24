@@ -16,17 +16,17 @@ ch4_ui <- list(
                 A co, gdy interesuje nas odsetek (proporcja)?"
     ),
 
-    h2(id = "ch4-wzor", class = "section-title", "Wzór"),
+    lc_h2("ch4-wzor", "Wzór"),
 
-    div(class = "narrative",
+    tagList(
       p("Często chcemy oszacować odsetek — jaki procent studentów zdał egzamin,
         jaki odsetek wyborców głosuje na partię X, jaki procent produktów jest wadliwy."),
       p("Estymator punktowy to proporcja z próby:"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax("$$\\hat{p} = \\frac{x}{n}$$")
       ),
       p("Najprostszy przedział ufności dla proporcji to ", tags$b("przedział Walda"), ":"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax("$$CI = \\hat{p} \\pm z^*_{\\alpha/2} \\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$$")
       ),
       p("Składniki:"),
@@ -63,10 +63,9 @@ ch4_ui <- list(
       )
     ),
 
-    h2(id = "ch4-budowa", class = "section-title",
-       "Budowa przedziału — krok po kroku"),
+    lc_h2("ch4-budowa", "Budowa przedziału — krok po kroku"),
 
-    div(class = "narrative",
+    tagList(
       p("Zobaczmy, jak z konkretnej próby (50 odpowiedzi TAK/NIE) powstaje
         przedział ufności dla proporcji. Pytamy 50 studentów, czy zdali
         egzamin, i estymujemy odsetek zdających w całej populacji.")
@@ -76,26 +75,25 @@ ch4_ui <- list(
       label = "Ryc. 4.1", title = "Konstruowanie przedziału",
       full_width = TRUE,
       div(class = "step-buttons",
-        actionButton("ch4_step1", "1. Próba",     class = "btn-outline-primary"),
-        actionButton("ch4_step2", "2. p̂",        class = "btn-outline-primary"),
-        actionButton("ch4_step3", "3. ± SE",      class = "btn-outline-primary"),
-        actionButton("ch4_step4", "4. Przedział", class = "btn-outline-primary")
+        actionButton("ch4_step1", "1. Próba",     class = "lc-btn-outline"),
+        actionButton("ch4_step2", "2. p̂",        class = "lc-btn-outline"),
+        actionButton("ch4_step3", "3. ± SE",      class = "lc-btn-outline"),
+        actionButton("ch4_step4", "4. Przedział", class = "lc-btn-outline")
       ),
-      div(style = "display: flex; gap: 8px; margin-top: 8px;",
+      lc_inline_row(gap = "md",
         actionButton("ch4_step_new_sample", "↻ Nowa próba",
-                     class = "btn-outline-secondary btn-sm")
+                     class = "lc-btn-secondary-outline lc-btn-sm")
       ),
       plotOutput("ch4_step_plot", height = "340px"),
       uiOutput("ch4_step_explanation")
     ),
 
-    h2(id = "ch4-roznica", class = "section-title",
-       "Budowa przedziału dla różnicy proporcji"),
+    lc_h2("ch4-roznica", "Budowa przedziału dla różnicy proporcji"),
 
-    div(class = "narrative",
+    tagList(
       p("CI dla różnicy dwóch proporcji buduje się analogicznie do różnicy
         średnich — trzeba połączyć niepewność z obu prób:"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax("$$CI = (\\hat{p}_1 - \\hat{p}_2) \\pm z^* \\cdot \\sqrt{\\frac{\\hat{p}_1(1-\\hat{p}_1)}{n_1} + \\frac{\\hat{p}_2(1-\\hat{p}_2)}{n_2}}$$")
       ),
       p("Porównamy odsetek osób zadowolonych z usługi w dwóch grupach —
@@ -106,24 +104,23 @@ ch4_ui <- list(
       label = "Ryc. 4.2", title = "Konstruowanie CI dla różnicy",
       full_width = TRUE,
       div(class = "step-buttons",
-        actionButton("ch4_dstep1", "1. Dwie próby",   class = "btn-outline-primary"),
-        actionButton("ch4_dstep2", "2. Dwie p̂",      class = "btn-outline-primary"),
-        actionButton("ch4_dstep3", "3. Różnica",      class = "btn-outline-primary"),
-        actionButton("ch4_dstep4", "4. ± SE",         class = "btn-outline-primary"),
-        actionButton("ch4_dstep5", "5. Przedział",    class = "btn-outline-primary")
+        actionButton("ch4_dstep1", "1. Dwie próby",   class = "lc-btn-outline"),
+        actionButton("ch4_dstep2", "2. Dwie p̂",      class = "lc-btn-outline"),
+        actionButton("ch4_dstep3", "3. Różnica",      class = "lc-btn-outline"),
+        actionButton("ch4_dstep4", "4. ± SE",         class = "lc-btn-outline"),
+        actionButton("ch4_dstep5", "5. Przedział",    class = "lc-btn-outline")
       ),
-      div(style = "display: flex; gap: 8px; margin-top: 8px;",
+      lc_inline_row(gap = "md",
         actionButton("ch4_dstep_new_sample", "↻ Nowe próby",
-                     class = "btn-outline-secondary btn-sm")
+                     class = "lc-btn-secondary-outline lc-btn-sm")
       ),
       plotOutput("ch4_dstep_plot", height = "420px"),
       uiOutput("ch4_dstep_explanation")
     ),
 
-    h2(id = "ch4-case-studies", class = "section-title",
-       "Case studies — jak interpretować CI w praktyce"),
+    lc_h2("ch4-case-studies", "Case studies — jak interpretować CI w praktyce"),
 
-    div(class = "narrative",
+    tagList(
       p("Poniżej kilka realistycznych sytuacji. W każdej budujesz CI krok po kroku
         (jak w poprzednich sekcjach), a na końcu weryfikujesz dwie hipotezy:
         jedną, która jest prawdziwa, i jedną, która nie jest. Klikaj nagłówki,
@@ -298,7 +295,7 @@ ch4_server <- function(input, output, session) {
         ggplot() +
           annotate("text", x = 0.5, y = 0.5,
                    label = "Kliknij '1. Próba' żeby zacząć",
-                   size = 6, color = "#7f8c8d") +
+                   size = 6, color = upwr_reference) +
           theme_void()
       )
     }
@@ -400,13 +397,13 @@ ch4_server <- function(input, output, session) {
     me <- z_star * se
 
     switch(as.character(step),
-      "1" = div(class = "callout-info",
+      "1" = lc_feedback(type = "info",
         p(tags$strong("Krok 1:"), " Próba.",
           " Mamy ", tags$b(n), " obserwacji TAK/NIE: ", tags$b(x), " razy TAK, ",
           tags$b(n - x), " razy NIE. Niebieskie punkty (TAK) po prawej, czerwone (NIE)
           po lewej. Sama tabelka liczb — jeszcze nie zaczęliśmy estymować.")
       ),
-      "2" = div(class = "callout-info",
+      "2" = lc_feedback(type = "info",
         p(tags$strong("Krok 2:"), " Estymacja punktowa p̂.",
           " Liczymy proporcję z próby:"),
         p(withMathJax(paste0("\\(\\hat{p} = \\frac{x}{n} = \\frac{", x, "}{", n,
@@ -414,7 +411,7 @@ ch4_server <- function(input, output, session) {
         p("To nasza najlepsza pojedyncza wartość — ale potrzebujemy
           jeszcze wiedzieć, jak bardzo niepewna jest ta estymata.")
       ),
-      "3" = div(class = "callout-info",
+      "3" = lc_feedback(type = "info",
         p(tags$strong("Krok 3:"), " Błąd standardowy (± SE).",
           " Niepewność oszacowania proporcji liczymy ze wzoru:"),
         p(withMathJax(paste0(
@@ -426,7 +423,7 @@ ch4_server <- function(input, output, session) {
           " (dokładniej: 1.96).")
       ),
       "4" = {
-        div(class = "callout-success",
+        lc_feedback(type = "ok",
           p(tags$strong("Krok 4:"), " Przedział ufności."),
           p("Wartość krytyczna z rozkładu normalnego: ",
             withMathJax("\\(z^* = 1.96\\)")),
@@ -490,7 +487,7 @@ ch4_server <- function(input, output, session) {
         ggplot() +
           annotate("text", x = 0.5, y = 0.5,
                    label = "Kliknij '1. Dwie próby' aby zacząć",
-                   size = 6, color = "#7f8c8d") +
+                   size = 6, color = upwr_reference) +
           theme_void()
       )
     }
@@ -620,7 +617,7 @@ ch4_server <- function(input, output, session) {
     me <- z_star * se
 
     switch(as.character(step),
-      "1" = div(class = "callout-info",
+      "1" = lc_feedback(type = "info",
         p(tags$strong("Krok 1:"), " Dwie próby.",
           " Mamy odpowiedzi TAK/NIE z dwóch grup: ", tags$b(n1),
           " osób w grupie 1 (", x1, " TAK / ", n1 - x1, " NIE) i ",
@@ -628,7 +625,7 @@ ch4_server <- function(input, output, session) {
           Widać już, że w grupie 1 jest więcej TAKów, ale jak duża to
           różnica i czy istotna?")
       ),
-      "2" = div(class = "callout-info",
+      "2" = lc_feedback(type = "info",
         p(tags$strong("Krok 2:"), " Dwie proporcje.",
           " Obliczamy proporcję TAKów w każdej grupie:"),
         p(withMathJax(paste0("\\(\\hat{p}_1 = ", x1, "/", n1, " = ", round(p1, 3), "\\)"))),
@@ -636,7 +633,7 @@ ch4_server <- function(input, output, session) {
         p("Każda proporcja ma własną niepewność — ale interesuje nas
           ", tags$b("różnica między nimi"), ".")
       ),
-      "3" = div(class = "callout-info",
+      "3" = lc_feedback(type = "info",
         p(tags$strong("Krok 3:"), " Różnica.",
           " Estymator punktowy różnicy:"),
         p(withMathJax(paste0("\\(\\hat{p}_1 - \\hat{p}_2 = ", round(p1, 3),
@@ -647,7 +644,7 @@ ch4_server <- function(input, output, session) {
           tags$em("\"gdyby różnicy nie było\""),
           ". Teraz musimy otoczyć naszą różnicę przedziałem niepewności.")
       ),
-      "4" = div(class = "callout-info",
+      "4" = lc_feedback(type = "info",
         p(tags$strong("Krok 4:"), " Błąd standardowy różnicy (± SE).",
           " SE różnicy proporcji łączy niepewności z obu grup:"),
         p(withMathJax(paste0(
@@ -659,7 +656,7 @@ ch4_server <- function(input, output, session) {
       ),
       "5" = {
         covers_zero <- (diff_val - me <= 0) & (0 <= diff_val + me)
-        div(class = if (covers_zero) "callout-warning" else "callout-success",
+        lc_feedback(type = if (covers_zero) "warning" else "ok",
           p(tags$strong("Krok 5:"), " Przedział ufności dla różnicy."),
           p("Wartość krytyczna z rozkładu normalnego: ",
             withMathJax("\\(z^* = 1.96\\)")),
@@ -717,8 +714,8 @@ ch4_server <- function(input, output, session) {
   }
 
   verdict_class <- function(v) {
-    switch(v, "yes" = "callout-success", "no" = "callout-danger",
-           "maybe" = "callout-warning")
+    switch(v, "yes" = "ok", "no" = "danger",
+           "maybe" = "warning")
   }
   verdict_label <- function(v) {
     switch(v, "yes" = "TAK", "no" = "NIE", "maybe" = "NIEPEWNE")
@@ -1235,7 +1232,7 @@ ch4_server <- function(input, output, session) {
     phase <- hyp_phase(current, n_core, n_hyp)
 
     core_btns <- lapply(seq_along(cfg$steps), function(i) {
-      btn_class <- if (current == i) "btn-primary" else "btn-outline-primary"
+      btn_class <- if (current == i) "lc-btn-primary" else "lc-btn-outline"
       actionButton(paste0("ch4_case", case_id, "_step", i),
                    cfg$steps[i], class = btn_class)
     })
@@ -1243,7 +1240,7 @@ ch4_server <- function(input, output, session) {
     hyp_btns <- if (current >= n_core) {
       lapply(seq_along(cfg$hypotheses), function(j) {
         is_active <- !is.null(phase) && phase$idx == j
-        btn_class <- if (is_active) "btn-warning" else "btn-outline-warning"
+        btn_class <- if (is_active) "lc-btn-warning" else "lc-btn-warning-outline"
         actionButton(paste0("ch4_case", case_id, "_hyp", j),
                      paste0("Hipoteza ", j), class = btn_class)
       })
@@ -1252,16 +1249,16 @@ ch4_server <- function(input, output, session) {
     }
 
     reveal_row <- if (!is.null(phase) && !phase$reveal) {
-      div(class = "step-buttons", style = "margin-top: 4px;",
+      div(class = "step-buttons lc-mt-xs",
         actionButton(paste0("ch4_case", case_id, "_reveal"),
-                     "\U0001f50d Pokaż werdykt", class = "btn-success"))
+                     "\U0001f50d Pokaż werdykt", class = "lc-btn-ok"))
     } else {
       NULL
     }
 
     tagList(
       div(class = "step-buttons", core_btns),
-      div(class = "step-buttons", style = "margin-top: 4px;", hyp_btns),
+      div(class = "step-buttons lc-mt-xs", hyp_btns),
       reveal_row
     )
   }
@@ -1277,7 +1274,7 @@ ch4_server <- function(input, output, session) {
         ggplot() +
           annotate("text", x = 0.5, y = 0.5,
                    label = "Kliknij pierwszy krok, żeby zacząć",
-                   size = 5, color = "#7f8c8d") +
+                   size = 5, color = upwr_reference) +
           theme_void()
       )
     }
@@ -1332,17 +1329,17 @@ ch4_server <- function(input, output, session) {
         tags$th(groups[i], style = "padding: 4px 8px; text-align: right; font-size: 12px;"),
         lapply(seq_len(k), function(j) {
           if (i == j) {
-            tags$td("—", style = "padding: 4px 8px; text-align: center; color: #95a5a6;")
+            tags$td("—", style = "padding: 4px 8px; text-align: center; color: var(--upwr-reference);")
           } else if (mat[i, j]) {
-            tags$td("✓", style = "padding: 4px 8px; text-align: center; color: #27ae60; font-weight: bold; font-size: 16px;")
+            tags$td("✓", style = "padding: 4px 8px; text-align: center; color: var(--upwr-sage); font-weight: bold; font-size: 16px;")
           } else {
-            tags$td("×", style = "padding: 4px 8px; text-align: center; color: #e74c3c; font-size: 16px;")
+            tags$td("×", style = "padding: 4px 8px; text-align: center; color: var(--upwr-accent); font-size: 16px;")
           }
         })
       )
     })
     tags$table(
-      style = "border-collapse: collapse; margin: 8px auto; border: 1px solid #bdc3c7;",
+      style = "border-collapse: collapse; margin: 8px auto; border: 1px solid var(--upwr-rule);",
       tags$thead(header),
       tags$tbody(rows)
     )
@@ -1432,7 +1429,7 @@ ch4_server <- function(input, output, session) {
 
       # Sub-faza 1: tylko tresc hipotezy
       if (!phase$reveal) {
-        return(div(class = "callout-info",
+        return(lc_feedback(type = "info",
           p(tags$strong("Hipoteza ", phase$idx, ": "), hyp$text),
           p(tags$em("Spojrz na wykres: gdzie lezy CI wzgledem obszaru hipotezy?
                     Co o tym sadzicie? Kliknięcie ", tags$b("Pokaż werdykt"),
@@ -1444,12 +1441,12 @@ ch4_server <- function(input, output, session) {
       if (!is.null(hyp$kind) && hyp$kind == "pairwise") {
         mat <- forest_prop_pairwise_matrix(cfg$data)
         narrative <- pairwise_narrative(cfg$data, mat)
-        return(div(class = "callout-success",
+        return(lc_feedback(type = "ok",
           p(tags$strong("Hipoteza: "), hyp$text),
           p(tags$strong("Werdykt — macierz par:")),
           p(tags$em("✓ = grupy różnią się istotnie (CI nie nakładają się);  ",
                     "× = nie można stwierdzić różnicy (CI nakładają się)"),
-            style = "font-size: 12px; color: #7f8c8d;"),
+            style = "font-size: 12px; color: var(--upwr-reference);"),
           render_pairwise_table(mat),
           p(tags$strong("Jak to opisać w raporcie:"),
             style = "margin-top: 12px;"),
@@ -1470,7 +1467,7 @@ ch4_server <- function(input, output, session) {
           stwierdzić, czy jest prawdziwa.")
       }
 
-      return(div(class = cls,
+      return(lc_feedback(type = cls,
         p(tags$strong("Hipoteza ", phase$idx, ": "), hyp$text),
         p(tags$strong("Werdykt: ", label)),
         body
@@ -1478,7 +1475,7 @@ ch4_server <- function(input, output, session) {
     }
 
     # Faza budowy CI — wyjasnienie ostatniego kroku
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       p(tags$strong(cfg$steps[step])),
       p("Krok ", step, " z ", n_core, ".")
     )

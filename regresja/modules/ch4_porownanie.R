@@ -16,12 +16,11 @@ ch4_ui <- list(
                 Poznajmy metryki porównawcze."
     ),
 
-    h2(id = "ch4-metryki", class = "section-title",
-       "Metryki jakości modelu"),
+    lc_h2("ch4-metryki", "Metryki jakości modelu"),
 
-    div(class = "narrative",
+    tagList(
       p("Nie ma jednej uniwersalnej miary. Każda odpowiada na inne pytanie:"),
-      tags$table(class = "table table-bordered", style = "font-size: 14px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 14px;",
         tags$thead(
           tags$tr(tags$th("Metryka"), tags$th("Co mierzy"), tags$th("Lepiej gdy"))
         ),
@@ -45,15 +44,14 @@ ch4_ui <- list(
       )
     ),
 
-    div(class = "formula-box",
+    lc_formula_box(
       p(tags$strong("AIC:"), withMathJax("\\(AIC = -2 \\ln(L) + 2k\\)")),
       p(tags$strong("BIC:"), withMathJax("\\(BIC = -2 \\ln(L) + k \\ln(n)\\)")),
       p(tags$strong("RMSE:"), withMathJax("\\(RMSE = \\sqrt{\\frac{1}{n}\\sum(y_i - \\hat{y}_i)^2}\\)")),
       p("gdzie L = wiarygodność, k = liczba parametrów, n = liczba obserwacji")
     ),
 
-    h2(id = "ch4-arena", class = "section-title",
-       "Arena modeli liniowych"),
+    lc_h2("ch4-arena", "Arena modeli liniowych"),
 
     figure_panel(
       label = "Ryc. 4.1", title = "Porównanie modeli regresji",
@@ -64,7 +62,7 @@ ch4_ui <- list(
                     liczbą predyktorów."),
           sliderInput("ch4_n", "n:", min = 50, max = 300, value = 150, step = 25),
           actionButton("ch4_compare", "Buduj i porównaj modele",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch4_metrics_plot", height = "350px"),
@@ -80,10 +78,9 @@ ch4_ui <- list(
        wyjaśnienia."
     ),
 
-    h2(id = "ch4-liniowy-vs-logistyczny", class = "section-title",
-       "Liniowy vs logistyczny"),
+    lc_h2("ch4-liniowy-vs-logistyczny", "Liniowy vs logistyczny"),
 
-    div(class = "narrative",
+    tagList(
       p("Co się stanie, jeśli spróbujemy użyć regresji liniowej
         do predykcji zmiennej binarnej? Porównajmy z logistyczną.")
     ),
@@ -94,7 +91,7 @@ ch4_ui <- list(
       fluidRow(
         column(4,
           actionButton("ch4_lin_vs_log", "Generuj porównanie",
-                       class = "btn-warning", width = "100%")
+                       class = "lc-btn-warning", width = "100%")
         ),
         column(8,
           plotOutput("ch4_lin_log_plot", height = "300px"),
@@ -109,10 +106,9 @@ ch4_ui <- list(
        dla zmiennej zależnej 0/1."
     ),
 
-    h2(id = "ch4-overfitting", class = "section-title",
-       "Przeuczenie (overfitting)"),
+    lc_h2("ch4-overfitting", "Przeuczenie (overfitting)"),
 
-    div(class = "narrative",
+    tagList(
       p("Model z wieloma parametrami może idealnie dopasować się do
         danych treningowych, ale źle generalizować. Zobaczmy to
         na wielomianach.")
@@ -128,7 +124,7 @@ ch4_ui <- list(
           sliderInput("ch4_poly_n", "n (punktów):",
                       min = 15, max = 100, value = 30, step = 5),
           actionButton("ch4_poly_gen", "Generuj",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch4_poly_plot", height = "300px"),
@@ -192,7 +188,7 @@ ch4_server <- function(input, output, session) {
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Buduj i porównaj'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       # Normalize metrics for comparison
@@ -228,18 +224,18 @@ ch4_server <- function(input, output, session) {
       tags$tr(
         tags$td(df$model[i]),
         tags$td(round(df$r_squared[i], 3)),
-        tags$td(style = if (i == best_adj_r2) "font-weight:bold; color:#27ae60;" else "",
+        tags$td(style = if (i == best_adj_r2) "font-weight:bold; color:var(--upwr-sage);" else "",
                 round(df$adj_r_squared[i], 3)),
-        tags$td(style = if (i == best_aic) "font-weight:bold; color:#27ae60;" else "",
+        tags$td(style = if (i == best_aic) "font-weight:bold; color:var(--upwr-sage);" else "",
                 round(df$aic[i], 1)),
-        tags$td(style = if (i == best_bic) "font-weight:bold; color:#27ae60;" else "",
+        tags$td(style = if (i == best_bic) "font-weight:bold; color:var(--upwr-sage);" else "",
                 round(df$bic[i], 1)),
-        tags$td(style = if (i == best_rmse) "font-weight:bold; color:#27ae60;" else "",
+        tags$td(style = if (i == best_rmse) "font-weight:bold; color:var(--upwr-sage);" else "",
                 round(df$rmse[i], 3))
       )
     })
 
-    tags$table(class = "table table-bordered table-striped",
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
       tags$thead(
         tags$tr(tags$th("Model"), tags$th("R²"), tags$th("adj.R²"),
@@ -261,7 +257,7 @@ ch4_server <- function(input, output, session) {
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       ggplot(df, aes(x = godziny_nauki, y = zdal_num)) +
@@ -270,7 +266,7 @@ ch4_server <- function(input, output, session) {
                     linewidth = 1, linetype = "dashed") +
         geom_smooth(method = "glm", method.args = list(family = "binomial"),
                     se = FALSE, color = unname(upwr_cat["wrzos"]), linewidth = 1.2) +
-        geom_hline(yintercept = c(0, 1), linetype = "dotted", color = "#bdc3c7") +
+        geom_hline(yintercept = c(0, 1), linetype = "dotted", color = upwr_rule) +
         annotate("text", x = 5, y = 0.85, label = "Logistyczny", color = unname(upwr_cat["wrzos"]),
                  fontface = "bold") +
         annotate("text", x = 35, y = 0.85, label = "Liniowy", color = unname(upwr_cat["niebo"]),
@@ -298,12 +294,9 @@ ch4_server <- function(input, output, session) {
     outside <- mean(fitted(lin) < 0 | fitted(lin) > 1) * 100
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["niebo"]), ";"),
-          paste0("Liniowy: ", round(acc_lin, 1), "%")),
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["wrzos"]), ";"),
-          paste0("Logistyczny: ", round(acc_log, 1), "%")),
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["terakota"]), ";"),
-          paste0("Liniowy poza [0,1]: ", round(outside, 1), "%"))
+      lc_stat_box("Liniowy", round(acc_lin, 1), "%", color = unname(upwr_cat["niebo"])),
+      lc_stat_box("Logistyczny", round(acc_log, 1), "%", color = unname(upwr_cat["wrzos"])),
+      lc_stat_box("Liniowy poza [0,1]", round(outside, 1), "%", color = unname(upwr_cat["terakota"]))
     )
   })
 
@@ -322,7 +315,7 @@ ch4_server <- function(input, output, session) {
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       degree <- input$ch4_poly_degree
@@ -350,14 +343,10 @@ ch4_server <- function(input, output, session) {
     metrics <- compute_model_metrics(model)
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["niebo"]), ";"),
-          paste0("R² = ", round(metrics$r_squared, 3))),
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["szalwia"]), ";"),
-          paste0("adj.R² = ", round(metrics$adj_r_squared, 3))),
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["bursztyn"]), ";"),
-          paste0("AIC = ", round(metrics$aic, 1))),
-      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
-          paste0("BIC = ", round(metrics$bic, 1)))
+      lc_stat_box("R²", round(metrics$r_squared, 3), color = unname(upwr_cat["niebo"])),
+      lc_stat_box("adj.R²", round(metrics$adj_r_squared, 3), color = unname(upwr_cat["szalwia"])),
+      lc_stat_box("AIC", round(metrics$aic, 1), color = unname(upwr_cat["bursztyn"])),
+      lc_stat_box("BIC", round(metrics$bic, 1), color = upwr_secondary)
     )
   })
 }

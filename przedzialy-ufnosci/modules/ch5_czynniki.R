@@ -16,12 +16,11 @@ ch5_ui <- list(
                 Teraz zbadamy, co decyduje o ich precyzji."
     ),
 
-    h2(id = "ch5-czynniki", class = "section-title",
-       "Trzy czynniki szerokości przedziału"),
+    lc_h2("ch5-czynniki", "Trzy czynniki szerokości przedziału"),
 
-    div(class = "narrative",
+    tagList(
       p("Margines błędu (a więc szerokość przedziału) zależy od trzech rzeczy:"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText(
           "$$ME = t^* \\cdot \\frac{s}{\\sqrt{n}}$$"
         ))
@@ -33,8 +32,7 @@ ch5_ui <- list(
       )
     ),
 
-    h2(id = "ch5-eksploracja", class = "section-title",
-       "Interaktywna eksploracja"),
+    lc_h2("ch5-eksploracja", "Interaktywna eksploracja"),
 
     figure_panel(
       label = "Ryc. 5.1", title = "Jak zmienia się szerokość przedziału?",
@@ -61,13 +59,12 @@ ch5_ui <- list(
        Ale z 100 do 400 (4×) też tylko o połowę. To efekt 1/√n."
     ),
 
-    h2(id = "ch5-planowanie", class = "section-title",
-       "Planowanie wielkości próby"),
+    lc_h2("ch5-planowanie", "Planowanie wielkości próby"),
 
-    div(class = "narrative",
+    tagList(
       p("Odwróćmy pytanie: ile obserwacji potrzebuję,
         żeby margines błędu był nie większy niż zakładany?"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText(
           "$$n = \\left(\\frac{z^* \\cdot s}{ME_{\\text{max}}}\\right)^2$$"
         ))
@@ -93,10 +90,9 @@ ch5_ui <- list(
       )
     ),
 
-    h2(id = "ch5-porownanie", class = "section-title",
-       "90% vs 95% vs 99%"),
+    lc_h2("ch5-porownanie", "90% vs 95% vs 99%"),
 
-    div(class = "narrative",
+    tagList(
       p("Zobaczmy jak wyglądają trzy przedziały z tych samych danych,
         ale przy różnych poziomach ufności.")
     ),
@@ -122,7 +118,7 @@ ch5_ui <- list(
             selected = "height"
           ),
           actionButton("ch5_cmp_calc", "Oblicz 3 przedziały",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           uiOutput("ch5_cmp_stats")
         ),
@@ -138,10 +134,9 @@ ch5_ui <- list(
        precyzja), 90% węższy (mniej pewny, bardziej precyzyjny)."
     ),
 
-    h2(id = "ch5-edge-case", class = "section-title",
-       "Edge case: kiedy poziom ufności zmienia wniosek"),
+    lc_h2("ch5-edge-case", "Edge case: kiedy poziom ufności zmienia wniosek"),
 
-    div(class = "narrative",
+    tagList(
       p("Czasami ten sam zbiór danych pozwala stwierdzić hipotezę
         przy 90% ufności, a nie pozwala przy 95%. To jest często nieintuicyjne —
         student myśli, że skoro ", tags$em("p̂ jest powyżej granicy"),
@@ -204,7 +199,7 @@ ch5_ui <- list(
       )
     ),
 
-    div(class = "narrative",
+    tagList(
       p(tags$strong("Dlaczego to jest nieintuicyjne?"),
         " Bo w codziennym myśleniu nie odróżniamy 95% od 93% — dla nas
         jest „dużo”, „średnio”, „mało”. Statystyka pozwala na precyzyjne
@@ -279,10 +274,10 @@ ch5_server <- function(input, output, session) {
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank()) +
-      geom_vline(xintercept = xbar, color = "#7f8c8d",
+      geom_vline(xintercept = xbar, color = upwr_reference,
                  linetype = "dashed", linewidth = 0.6) +
       annotate("text", x = xbar, y = 0.5, label = paste0("środek = ", xbar),
-               color = "#7f8c8d", size = 4, hjust = -0.1) +
+               color = upwr_reference, size = 4, hjust = -0.1) +
       geom_point(aes(x = xbar, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
       geom_errorbarh(aes(xmin = xbar - me, xmax = xbar + me, y = 0),
@@ -306,12 +301,9 @@ ch5_server <- function(input, output, session) {
     width <- 2 * me
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_ci, ";"),
-          paste0("ME = ", round(me, 2))),
-      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
-          paste0("Szer. = ", round(width, 2))),
-      div(class = "stat-box", style = paste0("background:", col_estimate, ";"),
-          paste0("t* = ", round(t_star, 3)))
+      lc_stat_box("ME", round(me, 2), color = col_ci),
+      lc_stat_box("Szer.", round(width, 2), color = upwr_secondary),
+      lc_stat_box("t*", round(t_star, 3), color = col_estimate)
     )
   })
 
@@ -323,7 +315,7 @@ ch5_server <- function(input, output, session) {
     z_star <- qnorm(1 - (1 - conf) / 2)
     n_req <- ceiling((z_star * s / me_max)^2)
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       p(tags$strong("Wymagana wielkość próby:")),
       p(withMathJax(paste0(
         "\\(n = \\left(\\frac{", round(z_star, 3), " \\cdot ", s, "}{",
@@ -376,8 +368,8 @@ ch5_server <- function(input, output, session) {
       annotate("rect",
                xmin = center - me_max, xmax = center + me_max,
                ymin = -Inf, ymax = Inf,
-               fill = "#bdc3c7", alpha = 0.4) +
-      geom_vline(xintercept = center, color = "#7f8c8d",
+               fill = upwr_rule, alpha = 0.4) +
+      geom_vline(xintercept = center, color = upwr_reference,
                  linetype = "dashed", linewidth = 0.6) +
       geom_point(aes(x = center, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
@@ -427,7 +419,7 @@ ch5_server <- function(input, output, session) {
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Oblicz'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       df$y <- c(3, 2, 1)
@@ -454,9 +446,8 @@ ch5_server <- function(input, output, session) {
     if (is.null(df)) return(NULL)
     tagList(
       lapply(1:3, function(i) {
-        div(class = "stat-box",
-            style = paste0("background:", c(col_estimate, col_ci, col_true)[i], ";"),
-            paste0(df$conf[i], ": ±", round(df$me[i], 2)))
+        lc_stat_box(df$conf[i], "±", round(df$me[i], 2),
+                    color = c(col_estimate, col_ci, col_true)[i])
       })
     )
   })
@@ -491,8 +482,8 @@ ch5_server <- function(input, output, session) {
     }
   }
   verdict_class_edge <- function(v) {
-    switch(v, "yes" = "callout-success", "no" = "callout-danger",
-           "maybe" = "callout-warning")
+    switch(v, "yes" = "ok", "no" = "danger",
+           "maybe" = "warning")
   }
   verdict_label_edge <- function(v) {
     switch(v, "yes" = "TAK", "no" = "NIE", "maybe" = "NIEPEWNE")
@@ -551,16 +542,16 @@ ch5_server <- function(input, output, session) {
     levels <- c(0.90, 0.95, 0.99)
     btns <- lapply(levels, function(lv) {
       is_active <- !is.na(current_conf) && abs(current_conf - lv) < 1e-9
-      btn_class <- if (is_active) "btn-warning" else "btn-outline-warning"
+      btn_class <- if (is_active) "lc-btn-warning" else "lc-btn-warning-outline"
       actionButton(paste0("ch5_", case_id, "_conf", round(lv * 100)),
                    paste0(round(lv * 100), "%"), class = btn_class)
     })
 
     # Drugi rzad: przycisk "Pokaz werdykt" - tylko gdy conf wybrany i jeszcze nie odkryty
     reveal_row <- if (!is.na(current_conf) && !revealed) {
-      div(class = "step-buttons", style = "margin-top: 4px;",
+      div(class = "step-buttons lc-mt-xs",
         actionButton(paste0("ch5_", case_id, "_reveal"),
-                     "\U0001f50d Pokaż werdykt", class = "btn-success"))
+                     "\U0001f50d Pokaż werdykt", class = "lc-btn-ok"))
     } else {
       NULL
     }
@@ -639,7 +630,7 @@ ch5_server <- function(input, output, session) {
     } else {
       p <- p + annotate("text", x = mean(xlims), y = 0.35,
                         label = "Wybierz poziom ufności powyżej",
-                        color = "#7f8c8d", size = 4.5, fontface = "italic")
+                        color = upwr_reference, size = 4.5, fontface = "italic")
     }
 
     p
@@ -653,7 +644,7 @@ ch5_server <- function(input, output, session) {
     revealed <- state$revealed
 
     if (is.na(conf)) {
-      return(div(class = "callout-info",
+      return(lc_feedback(type = "info",
         p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
         p(tags$em("Kliknij jeden z przycisków 90% / 95% / 99% żeby zobaczyć
                   przedział ufności."))
@@ -662,7 +653,7 @@ ch5_server <- function(input, output, session) {
 
     # Faza 1: tylko CI + tresc hipotezy, czas na dyskusje
     if (!revealed) {
-      return(div(class = "callout-info",
+      return(lc_feedback(type = "info",
         p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
         p("Wybrany poziom ufności: ", tags$b(round(conf * 100), "%")),
         p(tags$em("Spojrz na wykres: gdzie leży CI względem granicy hipotezy?
@@ -695,7 +686,7 @@ ch5_server <- function(input, output, session) {
         Spróbuj zmienić poziom ufności i zobacz, jak werdykt się zmienia.")
     }
 
-    div(class = cls,
+    lc_feedback(type = cls,
       p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
       p(tags$strong("Werdykt przy ", round(conf * 100), "% ufności: ", label)),
       body

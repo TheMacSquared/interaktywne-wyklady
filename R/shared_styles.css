@@ -1,6 +1,6 @@
 /* ============================================================================
-   LECTURE THEME — nowy design system dla interaktywnych wykładów
-   Używany przez lecture_layout.R; shared_styles.css pozostaje dla starych apek.
+   LECTURE THEME — kanoniczny design system dla interaktywnych wykładów
+   Używany przez lecture_layout.R.
    ============================================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap&subset=latin-ext');
@@ -541,69 +541,7 @@ html, body {
   padding-top: 4px;
 }
 
-/* === Callout — bazowe style (inline, wewnątrz widget-block itp.) === */
-.callout-info {
-  background: var(--upwr-single-alt-tint);
-  border-left: 3px solid var(--upwr-single-alt);
-  padding: 10px 14px;
-  margin: 14px 0;
-  font-family: var(--upwr-serif);
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--upwr-ink-soft);
-  border-radius: 2px;
-}
-.callout-warning {
-  background: var(--upwr-accent-tint);
-  border-left: 3px solid var(--upwr-accent);
-  padding: 10px 14px;
-  margin: 14px 0;
-  font-family: var(--upwr-serif);
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--upwr-ink-soft);
-  border-radius: 2px;
-}
-.callout-danger {
-  background: #fdedec;
-  border-left: 3px solid #c0392b;
-  padding: 10px 14px;
-  margin: 14px 0;
-  font-family: var(--upwr-serif);
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--upwr-ink-soft);
-  border-radius: 2px;
-}
-.callout-success {
-  background: var(--upwr-sage-tint);
-  border-left: 3px solid var(--upwr-sage);
-  padding: 10px 14px;
-  margin: 14px 0;
-  font-family: var(--upwr-serif);
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--upwr-ink-soft);
-  border-radius: 2px;
-}
-
-/* === Callout jako margines prawy — bezpośrednie dzieci .lc-chapter === */
-/* Tekst (narrative, widget) oblewa je z lewej. clear:right = stackują się. */
 @media (min-width: 900px) {
-  .lc-chapter > .callout-info,
-  .lc-chapter > .callout-warning,
-  .lc-chapter > .callout-danger,
-  .lc-chapter > .callout-success {
-    float: right;
-    clear: right;
-    width: 224px;
-    margin: 6px 0 18px 28px;
-    font-size: 12.5px;
-    line-height: 1.45;
-    padding: 9px 11px;
-  }
-
-  /* Nowe margin-callouty (margin_callout, margin_code_note, lc_chapter_next) */
   .lc-chapter > .lc-margin {
     float: right;
     clear: right;
@@ -611,14 +549,8 @@ html, body {
     margin: 6px 0 18px 28px;
   }
 
-  /* Bloki struktury resetują flow (wymuszają rozpoczęcie poniżej floatujących callout-ów).
-     Nagłówki h2/section-title i zwykłe figure_panel NIE czyszczą — niech mogą być
-     równolegle do długich callout-ów, inaczej zostawiają puste pole w treści po lewej.
-     Tylko .lc-full (opt-in "pełna szerokość") i struktury na granicy rozdziałów czyszczą. */
   .lc-chapter > .lc-chapter-header,
   .lc-chapter > .lc-figure-panel.lc-full,
-  .lc-chapter > .chapter-recap,
-  .lc-chapter > .chapter-transition,
   .lc-chapter > hr {
     clear: both;
   }
@@ -762,18 +694,6 @@ html, body {
   font-variant-numeric: tabular-nums;
 }
 
-/* === Stary .narrative — uproszczony === */
-.narrative {
-  font-family: var(--upwr-serif);
-  font-size: 17px;
-  line-height: 1.65;
-  color: var(--upwr-ink-soft);
-  margin-bottom: 14px;
-}
-.narrative p { margin-bottom: 12px; max-width: 680px; }
-.narrative ol,
-.narrative ul { max-width: 680px; }
-
 /* === Drzewo decyzyjne: fullscreen toggle (ch_drzewo visNetwork) === */
 .drzewo-wrap {
   position: relative;
@@ -799,74 +719,70 @@ html, body {
   height: calc(100vh - 60px) !important;
 }
 
-/* Callouty osadzone inline w narracji (nie jako direct-child .lc-chapter)
-   — zachowują szerokość kolumny tekstu zamiast rozciągać się na całą stronę. */
-.narrative > .callout-info,
-.narrative > .callout-warning,
-.narrative > .callout-danger,
-.narrative > .callout-success {
-  max-width: 680px;
-}
-
-/* === Stare .chapter-title, .section-title — nowy wygląd === */
-.chapter-title {
-  font-family: var(--upwr-serif);
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--upwr-ink);
-  margin: 10px 0 20px;
-  border-bottom: 2px solid var(--upwr-accent);
-  padding-bottom: 8px;
-  letter-spacing: -0.3px;
-}
-
-.section-title {
-  font-family: var(--upwr-serif);
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--upwr-ink);
-  margin-top: 36px;
-  margin-bottom: 14px;
-  padding-left: 14px;
-  border-left: 3px solid var(--upwr-accent);
-}
-
-.subsection-title, h3.problem-name {
-  font-family: var(--upwr-serif);
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--upwr-ink);
-  margin-top: 22px;
-  margin-bottom: 8px;
-}
-
-/* === Widget block === */
-.widget-block {
-  background: var(--upwr-surface);
-  border: 1px solid var(--upwr-rule);
-  padding: 20px;
-  margin: 20px 0;
-  max-width: 680px;  /* zgodność z .lc-p / .lc-figure-panel — lepszy kontrast z narracją */
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-}
-
-/* Opt-in: pełna szerokość widgetu */
-.widget-block.lc-wide { max-width: none; }
-
 /* Tabele wbudowane w narrację — rozciągamy na pełną szerokość kolumny tekstu.
-   Bez tego Bootstrap-owy <table> kurczy się do zawartości komórek. */
-.lc-chapter table.table,
-.lc-chapter .narrative table {
+   Bez tego domyślny styl tabeli kurczy ją do zawartości komórek. */
+.lc-chapter table.lc-table {
   width: 100%;
   max-width: 680px;
   margin: 14px 0;
+  border-collapse: collapse;
+  color: var(--upwr-ink);
 }
 
 /* Opt-in: tabela na pełną szerokość kontentu (poza kolumną tekstu) */
-.lc-chapter table.table.lc-wide,
-.lc-chapter .narrative table.lc-wide {
+.lc-chapter table.lc-table.lc-wide {
   max-width: none;
 }
+
+.lc-table th,
+.lc-table td {
+  padding: 8px 10px;
+  vertical-align: top;
+}
+
+.lc-table-bordered th,
+.lc-table-bordered td {
+  border: 1px solid var(--upwr-rule);
+}
+
+.lc-table-striped tbody tr:nth-child(odd) {
+  background: var(--upwr-surface-sunken);
+}
+
+.lc-table-sm th,
+.lc-table-sm td {
+  padding: 4px 8px;
+}
+
+/* === Utility layoutu treści === */
+.lc-stack {
+  display: flex;
+  flex-direction: column;
+}
+.lc-stack-sm { gap: 6px; }
+.lc-stack-md { gap: 8px; }
+
+.lc-inline-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.lc-inline-row-sm { gap: 6px; }
+.lc-inline-row-md { gap: 8px; }
+.lc-align-start { align-items: flex-start; }
+.lc-align-center { align-items: center; }
+
+.lc-center {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.lc-spacer { flex: 0 0 auto; }
+.lc-spacer-md { height: 40px; }
+.lc-spacer-lg { height: 60px; }
+
+.lc-mt-xs { margin-top: 4px; }
+.lc-mt-sm { margin-top: 8px; }
+.lc-mt-md { margin-top: 10px; }
 
 /* === Kod === */
 code, pre, .verbatim {
@@ -878,6 +794,13 @@ code, pre, .verbatim {
 }
 
 pre { padding: 12px 16px; }
+
+.lc-code-block {
+  background: var(--upwr-surface-sunken);
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
 
 /* === Przyciski — nowy styl === */
 /* === sliderInput (IonRangeSlider) — przemalowanie na paletę UPWr === */
@@ -927,173 +850,185 @@ input[type="range"] {
   accent-color: var(--upwr-accent);
 }
 
-/* Bootstrap focus ring — żeby niebieski border na focus nie wracał */
+/* Focus ring formularzy i przycisków zgodny z paletą UPWr */
 .form-control:focus,
-.form-select:focus,
-.btn:focus,
-.btn-check:focus + .btn {
+.form-select:focus {
   border-color: var(--upwr-accent) !important;
   box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--upwr-accent) 25%, transparent) !important;
 }
 
-/* === Przyciski Bootstrap — przemalowanie na paletę UPWr ===
-   Mapowanie ról semantycznych na kolory UPWr:
-   - primary  → upwr-accent (burgund) — główna akcja
-   - success  → upwr-sage   (zielony) — potwierdzenie, "pokaż odpowiedź"
-   - danger   → upwr-accent (burgund) — akcja destrukcyjna/ostrzegawcza
-   - warning  → upwr-single-alt (złoto) — zwróć uwagę
-   - info     → upwr-cat-niebo (niebieski) — informacja neutralna
-   - secondary → szary z palety — akcja wtórna */
-
-.btn {
-  font-family: var(--upwr-sans) !important;
+.lc-btn:focus,
+[class*="lc-btn-"]:focus {
+  border-color: var(--upwr-accent) !important;
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--upwr-accent) 25%, transparent) !important;
 }
 
-/* Primary — burgund (akcent) */
-.btn-primary {
+/* === Przyciski lecture components ===
+   Mapowanie ról semantycznych na kolory UPWr:
+   - primary   → upwr-accent (burgund) — główna akcja
+   - ok        → upwr-sage   (zielony) — potwierdzenie, "pokaż odpowiedź"
+   - danger    → upwr-accent (burgund) — akcja destrukcyjna/ostrzegawcza
+   - warning   → upwr-single-alt (złoto) — zwróć uwagę
+   - info      → upwr-cat-niebo (niebieski) — informacja neutralna
+   - secondary → szary z palety — akcja wtórna */
+
+.lc-btn,
+[class*="lc-btn-"] {
+  font-family: var(--upwr-sans) !important;
+  border-radius: 4px !important;
+  font-weight: 700 !important;
+}
+
+.lc-btn-sm {
+  font-size: 12px !important;
+  padding: 4px 9px !important;
+}
+
+.lc-btn-lg {
+  font-size: 16px !important;
+  padding: 10px 16px !important;
+}
+
+.lc-btn-primary {
   background: var(--upwr-accent) !important;
   border-color: var(--upwr-accent) !important;
   color: #fff !important;
 }
-.btn-primary:hover,
-.btn-primary:focus,
-.btn-primary:active {
+.lc-btn-primary:hover,
+.lc-btn-primary:focus,
+.lc-btn-primary:active {
   background: var(--upwr-accent-hover) !important;
   border-color: var(--upwr-accent-hover) !important;
   color: #fff !important;
 }
-.btn-outline-primary {
+.lc-btn-outline {
   color: var(--upwr-accent) !important;
   border-color: var(--upwr-accent) !important;
   background: transparent !important;
 }
-.btn-outline-primary:hover,
-.btn-outline-primary:focus,
-.btn-outline-primary:active {
+.lc-btn-outline:hover,
+.lc-btn-outline:focus,
+.lc-btn-outline:active {
   background: var(--upwr-accent) !important;
   color: #fff !important;
 }
 
-/* Success — szałwia */
-.btn-success {
+.lc-btn-ok {
   background: var(--upwr-sage) !important;
   border-color: var(--upwr-sage) !important;
   color: #fff !important;
 }
-.btn-success:hover,
-.btn-success:focus,
-.btn-success:active {
+.lc-btn-ok:hover,
+.lc-btn-ok:focus,
+.lc-btn-ok:active {
   background: var(--upwr-cat-szalwia) !important;
   border-color: var(--upwr-cat-szalwia) !important;
   filter: brightness(0.9);
   color: #fff !important;
 }
-.btn-outline-success {
+.lc-btn-ok-outline {
   color: var(--upwr-sage) !important;
   border-color: var(--upwr-sage) !important;
   background: transparent !important;
 }
-.btn-outline-success:hover {
+.lc-btn-ok-outline:hover {
   background: var(--upwr-sage) !important;
   color: #fff !important;
 }
 
-/* Danger — burgund (akcent) jak primary, ale semantyka destrukcyjna */
-.btn-danger {
+.lc-btn-danger {
   background: var(--upwr-accent) !important;
   border-color: var(--upwr-accent) !important;
   color: #fff !important;
 }
-.btn-danger:hover,
-.btn-danger:focus,
-.btn-danger:active {
+.lc-btn-danger:hover,
+.lc-btn-danger:focus,
+.lc-btn-danger:active {
   background: var(--upwr-accent-hover) !important;
   border-color: var(--upwr-accent-hover) !important;
   color: #fff !important;
 }
-.btn-outline-danger {
+.lc-btn-danger-outline {
   color: var(--upwr-accent) !important;
   border-color: var(--upwr-accent) !important;
   background: transparent !important;
 }
-.btn-outline-danger:hover {
+.lc-btn-danger-outline:hover {
   background: var(--upwr-accent) !important;
   color: #fff !important;
 }
 
-/* Warning — złoto (single-alt) */
-.btn-warning {
+.lc-btn-warning {
   background: var(--upwr-single-alt) !important;
   border-color: var(--upwr-single-alt) !important;
   color: #fff !important;
 }
-.btn-warning:hover,
-.btn-warning:focus,
-.btn-warning:active {
+.lc-btn-warning:hover,
+.lc-btn-warning:focus,
+.lc-btn-warning:active {
   background: var(--upwr-single-alt) !important;
   border-color: var(--upwr-single-alt) !important;
   filter: brightness(0.9);
   color: #fff !important;
 }
-.btn-outline-warning {
+.lc-btn-warning-outline {
   color: var(--upwr-single-alt) !important;
   border-color: var(--upwr-single-alt) !important;
   background: transparent !important;
 }
-.btn-outline-warning:hover {
+.lc-btn-warning-outline:hover {
   background: var(--upwr-single-alt) !important;
   color: #fff !important;
 }
 
-/* Info — niebo */
-.btn-info {
+.lc-btn-info {
   background: var(--upwr-cat-niebo) !important;
   border-color: var(--upwr-cat-niebo) !important;
   color: #fff !important;
 }
-.btn-info:hover,
-.btn-info:focus,
-.btn-info:active {
+.lc-btn-info:hover,
+.lc-btn-info:focus,
+.lc-btn-info:active {
   background: var(--upwr-cat-indygo) !important;
   border-color: var(--upwr-cat-indygo) !important;
   color: #fff !important;
 }
-.btn-outline-info {
+.lc-btn-info-outline {
   color: var(--upwr-cat-niebo) !important;
   border-color: var(--upwr-cat-niebo) !important;
   background: transparent !important;
 }
-.btn-outline-info:hover {
+.lc-btn-info-outline:hover {
   background: var(--upwr-cat-niebo) !important;
   color: #fff !important;
 }
 
-/* Secondary — neutralny szary (reference/rule) */
-.btn-secondary {
+.lc-btn-secondary {
   background: var(--upwr-reference) !important;
   border-color: var(--upwr-reference) !important;
   color: #fff !important;
 }
-.btn-secondary:hover,
-.btn-secondary:focus,
-.btn-secondary:active {
+.lc-btn-secondary:hover,
+.lc-btn-secondary:focus,
+.lc-btn-secondary:active {
   background: var(--upwr-ink-soft) !important;
   border-color: var(--upwr-ink-soft) !important;
   color: #fff !important;
 }
-.btn-outline-secondary {
+.lc-btn-secondary-outline {
   color: var(--upwr-ink-soft) !important;
   border-color: var(--upwr-rule) !important;
   background: transparent !important;
 }
-.btn-outline-secondary:hover {
+.lc-btn-secondary-outline:hover {
   background: var(--upwr-rule) !important;
   color: var(--upwr-ink) !important;
 }
 
 /* === Pasek kroków === */
 .step-buttons { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
-.step-buttons .btn { flex: 1; min-width: 110px; }
+.step-buttons .lc-btn,
+.step-buttons [class*="lc-btn-"] { flex: 1; min-width: 110px; }
 
 /* === Quiz tiles — nowy wygląd === */
 .quiz-tiles { display: grid; gap: 10px; margin: 14px 0; }
@@ -1113,7 +1048,7 @@ input[type="range"] {
   display: block;
   width: 100%;
   min-width: 0;              /* pozwala zwężać się wewnątrz grid-minmax(0,1fr) */
-  white-space: normal;       /* Bootstrap button ma nowrap — wymuszamy łamanie tekstu */
+  white-space: normal;       /* wymuszamy łamanie dłuższego tekstu odpowiedzi */
   overflow-wrap: break-word;
   font-family: var(--upwr-sans);
   color: var(--upwr-ink);
@@ -1145,7 +1080,7 @@ input[type="range"] {
 .quiz-tile.disabled { pointer-events: none; opacity: 0.65; }
 
 /* === Formulas === */
-.formula-box {
+.lc-formula-box {
   background: var(--upwr-single-alt-tint);
   border: 1px solid #e8d5a8;
   padding: 12px 16px;
@@ -1153,6 +1088,36 @@ input[type="range"] {
   max-width: 680px;  /* zgodność z .lc-p — nie wychodzi poza kolumnę tekstu */
   font-family: var(--upwr-mono);
   font-size: 14px;
+}
+
+.lc-feedback {
+  max-width: 680px;
+  padding: 10px 14px;
+  margin: 14px 0;
+  font-family: var(--upwr-serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--upwr-ink-soft);
+  background: var(--upwr-surface);
+  border: 1px solid var(--upwr-rule);
+  border-left: 4px solid var(--upwr-reference);
+  border-radius: 2px;
+}
+
+.lc-feedback-info {
+  background: var(--upwr-single-alt-tint);
+  border-left-color: var(--upwr-single-alt);
+}
+
+.lc-feedback-ok {
+  background: var(--upwr-sage-tint);
+  border-left-color: var(--upwr-sage);
+}
+
+.lc-feedback-warning,
+.lc-feedback-danger {
+  background: var(--upwr-accent-tint);
+  border-left-color: var(--upwr-accent);
 }
 
 /* === Widget „Sformułuj hipotezy” (helpers.R::hypothesis_practice) === */
@@ -1209,25 +1174,80 @@ mjx-container mjx-text {
   font-family: var(--upwr-sans) !important;
 }
 
-/* === Stat box === */
-/* Stonowany stat-box: zamiast pełnego koloru tła używamy ciemnego lewego
-   bordera i kolorowego tekstu na delikatnym tle. Kolor inline `background:`
-   z R jest przejmowany jako kolor `border-left` i `color` przez CSS var,
-   tło jest neutralne. */
-.stat-box {
-  display: inline-block;
-  padding: 8px 14px;
-  margin: 4px;
-  font-weight: 600;
-  font-size: 15px;
-  min-width: 100px;
-  text-align: center;
-  background: var(--upwr-surface) !important;
-  color: var(--upwr-ink) !important;
+/* === Stat boxes === */
+.lc-stat-grid {
+  --lc-stat-cols: 3;
+  display: grid;
+  grid-template-columns: repeat(var(--lc-stat-cols), minmax(0, 1fr));
+  gap: 8px;
+  max-width: 680px;
+  margin: 12px 0;
+}
+
+.lc-stat-box {
+  --lc-stat-color: var(--upwr-accent);
+  font-family: var(--upwr-serif);
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 10px 12px;
+  background: var(--upwr-surface);
+  color: var(--upwr-ink);
   border: 1px solid var(--upwr-rule);
+  border-left-color: var(--lc-stat-color);
   border-left-width: 4px;
   border-radius: 2px;
-  /* inline "background: #xyz" z R zostaje jako CSS variable — używamy go dla bordera */
+  min-width: 0;
+}
+
+.lc-stat-box > :first-child { margin-top: 0; }
+.lc-stat-box > :last-child { margin-bottom: 0; }
+
+.lc-stat-box > h3,
+.lc-stat-box > h4 {
+  font-family: var(--upwr-sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--upwr-ink);
+  margin: 0 0 4px;
+}
+
+.lc-stat-box > p {
+  margin: 4px 0;
+  color: var(--upwr-ink-soft);
+}
+
+.lc-stat-label {
+  font-family: var(--upwr-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lc-stat-color);
+  overflow-wrap: break-word;
+}
+
+.lc-stat-value {
+  font-family: var(--upwr-sans);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--upwr-ink);
+  margin-top: 3px;
+  overflow-wrap: break-word;
+}
+
+.lc-stat-caption {
+  font-family: var(--upwr-serif);
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--upwr-reference);
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .lc-stat-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* === Responsywność === */
@@ -1238,12 +1258,3 @@ mjx-container mjx-text {
   .lc-chapter-title { font-size: 34px; }
   .lc-tabs { padding: 0 16px; overflow-x: auto; }
 }
-
-/* === Koniec panelu bootstrap (sandstone override) === */
-/* Ukryj bootstrap navbar tylko w apkach z nowym layoutem (lecture_page) */
-body:has(.lc-shell) .navbar { display: none !important; }
-body:has(.lc-shell) { padding-top: 0 !important; }
-
-/* Shiny tab panels — widoczne, ale bez zakładek bslib */
-.tab-content { padding: 0 !important; border: none !important; }
-.nav-tabs { display: none !important; }

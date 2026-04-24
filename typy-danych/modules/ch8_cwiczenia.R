@@ -52,15 +52,15 @@ ch8_ui <- list(
 
 .ch8_content_bhp <- function() tagList(
 
-  h2(id = "ch8-blok1", class = "section-title", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
-  div(class = "callout-info",
+  lc_h2("ch8-blok1", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
+  lc_feedback(type = "info",
     p("W Jamovi: ", tags$b("Data → Setup"), " — sprawdź, jak Jamovi automatycznie rozpoznał typy zmiennych.
       Czy ma rację? Popraw, jeśli trzeba.")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 1 — Klasyfikacja zmiennych BHP"),
-    div(class = "narrative",
+    tagList(
       p("Otwórz plik ", tags$code("dane/bhp_zaklady.csv"), " w Jamovi.
         Dla każdej zmiennej w zbiorze określ:"),
       tags$ol(
@@ -70,7 +70,7 @@ ch8_ui <- list(
         tags$li("Jaki wykres jest odpowiedni?")
       ),
       p("Wypełnij tabelę:"),
-      tags$table(class = "table table-striped table-bordered",
+      tags$table(class = "lc-table lc-table-striped lc-table-bordered",
         tags$thead(tags$tr(
           tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
         )),
@@ -84,13 +84,13 @@ ch8_ui <- list(
         )
       )
     ),
-    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol1")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 2 — Pułapki typowania"),
-    div(class = "narrative",
+    tagList(
       p("Odpowiedz na pytania:"),
       tags$ol(
         tags$li("Zmienna ", tags$code("kategoria_ryzyka"), " przyjmuje wartości 1, 2, 3.
@@ -104,15 +104,15 @@ ch8_ui <- list(
           Co byś użył/a zamiast tego?")
       )
     ),
-    actionButton("ch8_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol2")
   ),
 
-  h2(id = "ch8-blok2", class = "section-title", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
+  lc_h2("ch8-blok2", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 3 — Statystyki dla każdego typu"),
-    div(class = "narrative",
+    tagList(
       p("W Jamovi: ", tags$b("Analyses → Exploration → Descriptives"), ".
         Dla każdej zmiennej oblicz ", tags$b("odpowiednie"), " statystyki opisowe."),
       tags$ol(
@@ -129,13 +129,13 @@ ch8_ui <- list(
           tags$b("bezsensowne"), "? Podaj przykład.")
       )
     ),
-    actionButton("ch8_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol3")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 4 — Wykres dobierz do typu"),
-    div(class = "narrative",
+    tagList(
       p("Stwórz w Jamovi po jednym wykresie dla każdego typu zmiennej:"),
       tags$ol(
         tags$li(tags$b("Nominalna"), " (", tags$code("branza"), "): wykres słupkowy"),
@@ -146,15 +146,15 @@ ch8_ui <- list(
       p(tags$em("Pytanie:"), " Dlaczego histogram dla ", tags$code("liczba_wypadkow"),
         " może być mylący? (Podpowiedź: ile różnych wartości ma ta zmienna?)")
     ),
-    actionButton("ch8_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol4")
   ),
 
-  h2(id = "ch8-blok3", class = "section-title", "Blok 3: Analiza kompleksowa (45 min)"),
+  lc_h2("ch8-blok3", "Blok 3: Analiza kompleksowa (45 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 5 — Profil zakładu pracy"),
-    div(class = "narrative",
+    tagList(
       p("Przygotuj krótki raport opisowy dla zbioru ", tags$code("bhp_zaklady.csv"),
         ". Raport powinien zawierać:"),
       tags$ol(
@@ -167,13 +167,13 @@ ch8_ui <- list(
       p(tags$em("Wskazówka:"), " W Jamovi możesz rozbić analizę na grupy przez ",
         tags$b("Split by"), " w Descriptives.")
     ),
-    actionButton("ch8_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol5")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 6 — Decyzja na podstawie danych"),
-    div(class = "narrative",
+    tagList(
       p("Inspektor BHP musi zdecydować, w których branżach przeprowadzić dodatkowe kontrole.
         Na podstawie danych odpowiedz:"),
       tags$ol(
@@ -185,12 +185,12 @@ ch8_ui <- list(
         tags$li("Sformułuj rekomendację jednym zdaniem: która branża wymaga pilnej kontroli i dlaczego?")
       )
     ),
-    actionButton("ch8_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol6")
   ),
 
-  h2(id = "ch8-podsumowanie", class = "section-title", "Podsumowanie"),
-  div(class = "callout-warning",
+  lc_h2("ch8-podsumowanie", "Podsumowanie"),
+  lc_feedback(type = "warning",
     p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
     tags$ol(
       tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest ważna ",
@@ -199,7 +199,7 @@ ch8_ui <- list(
       tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
     )
   ),
-  actionButton("ch8_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
+  actionButton("ch8_ans_summary", "Pokaż odpowiedzi", class = "lc-btn-ok-outline lc-btn-sm"),
   uiOutput("ch8_sol_summary")
 )
 
@@ -210,15 +210,15 @@ ch8_ui <- list(
 
 .ch8_content_rol <- function() tagList(
 
-  h2(id = "ch8-blok1", class = "section-title", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
-  div(class = "callout-info",
+  lc_h2("ch8-blok1", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
+  lc_feedback(type = "info",
     p("W Jamovi: ", tags$b("Data → Setup"), " — sprawdź, jak Jamovi automatycznie rozpoznał typy zmiennych.
       Czy ma rację? Popraw, jeśli trzeba.")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 1 — Klasyfikacja zmiennych rolniczych"),
-    div(class = "narrative",
+    tagList(
       p("Otwórz plik ", tags$code("dane/rolnictwo_pola.csv"), " w Jamovi.
         Dla każdej zmiennej w zbiorze określ:"),
       tags$ol(
@@ -228,7 +228,7 @@ ch8_ui <- list(
         tags$li("Jaki wykres jest odpowiedni?")
       ),
       p("Wypełnij tabelę:"),
-      tags$table(class = "table table-striped table-bordered",
+      tags$table(class = "lc-table lc-table-striped lc-table-bordered",
         tags$thead(tags$tr(
           tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
         )),
@@ -242,13 +242,13 @@ ch8_ui <- list(
         )
       )
     ),
-    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol1")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 2 — Pułapki typowania"),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Zmienna ", tags$code("klasa_gleby"), " przyjmuje wartości I, II, III, IV, V, VI.
           Czy to zmienna nominalna? Uzasadnij."),
@@ -260,15 +260,15 @@ ch8_ui <- list(
           Co byś użył/a zamiast tego?")
       )
     ),
-    actionButton("ch8_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol2")
   ),
 
-  h2(id = "ch8-blok2", class = "section-title", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
+  lc_h2("ch8-blok2", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 3 — Statystyki dla każdego typu"),
-    div(class = "narrative",
+    tagList(
       p("W Jamovi: ", tags$b("Analyses → Exploration → Descriptives"), "."),
       tags$ol(
         tags$li("Dla ", tags$code("uprawa"), ": tabela częstości i wykres słupkowy.
@@ -283,13 +283,13 @@ ch8_ui <- list(
           tags$code("uprawa"), " w Jamovi? Czy program Ci na to pozwoli?")
       )
     ),
-    actionButton("ch8_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol3")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 4 — Wykres dobierz do typu"),
-    div(class = "narrative",
+    tagList(
       p("Stwórz w Jamovi po jednym wykresie dla każdego typu zmiennej:"),
       tags$ol(
         tags$li(tags$b("Nominalna"), " (", tags$code("uprawa"), "): wykres słupkowy"),
@@ -300,15 +300,15 @@ ch8_ui <- list(
       p(tags$em("Pytanie:"), " Dlaczego wykres kołowy dla ",
         tags$code("uprawa"), " byłby złym wyborem, jeśli upraw jest 6+?")
     ),
-    actionButton("ch8_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol4")
   ),
 
-  h2(id = "ch8-blok3", class = "section-title", "Blok 3: Analiza kompleksowa (45 min)"),
+  lc_h2("ch8-blok3", "Blok 3: Analiza kompleksowa (45 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 5 — Profil gospodarstwa"),
-    div(class = "narrative",
+    tagList(
       p("Przygotuj krótki raport opisowy dla zbioru ", tags$code("rolnictwo_pola.csv"), ":"),
       tags$ol(
         tags$li("Ile pól jest w zbiorze? Ile zmiennych?"),
@@ -318,13 +318,13 @@ ch8_ui <- list(
         tags$li("Porównanie: plon wg klasy gleby (boxplot)")
       )
     ),
-    actionButton("ch8_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol5")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 6 — Decyzja agronomiczna"),
-    div(class = "narrative",
+    tagList(
       p("Doradca rolniczy musi zdecydować, które pola wymagają interwencji. Na podstawie danych:"),
       tags$ol(
         tags$li("Która uprawa ma najniższą ", tags$b("medianę"), " plonu? Dlaczego mediana?"),
@@ -334,12 +334,12 @@ ch8_ui <- list(
         tags$li("Sformułuj rekomendację: które pola wymagają uwagi i dlaczego?")
       )
     ),
-    actionButton("ch8_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol6")
   ),
 
-  h2(id = "ch8-podsumowanie", class = "section-title", "Podsumowanie"),
-  div(class = "callout-warning",
+  lc_h2("ch8-podsumowanie", "Podsumowanie"),
+  lc_feedback(type = "warning",
     p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
     tags$ol(
       tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest ważna ",
@@ -348,7 +348,7 @@ ch8_ui <- list(
       tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
     )
   ),
-  actionButton("ch8_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
+  actionButton("ch8_ans_summary", "Pokaż odpowiedzi", class = "lc-btn-ok-outline lc-btn-sm"),
   uiOutput("ch8_sol_summary")
 )
 
@@ -359,15 +359,15 @@ ch8_ui <- list(
 
 .ch8_content_zyw <- function() tagList(
 
-  h2(id = "ch8-blok1", class = "section-title", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
-  div(class = "callout-info",
+  lc_h2("ch8-blok1", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
+  lc_feedback(type = "info",
     p("W Jamovi: ", tags$b("Data → Setup"), " — sprawdź, jak Jamovi automatycznie rozpoznał typy zmiennych.
       Czy ma rację? Popraw, jeśli trzeba.")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 1 — Klasyfikacja zmiennych technologicznych"),
-    div(class = "narrative",
+    tagList(
       p("Otwórz plik ", tags$code("dane/zywnosc_partie.csv"), " w Jamovi.
         Dla każdej zmiennej w zbiorze określ:"),
       tags$ol(
@@ -377,7 +377,7 @@ ch8_ui <- list(
         tags$li("Jaki wykres jest odpowiedni?")
       ),
       p("Wypełnij tabelę:"),
-      tags$table(class = "table table-striped table-bordered",
+      tags$table(class = "lc-table lc-table-striped lc-table-bordered",
         tags$thead(tags$tr(
           tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
         )),
@@ -391,13 +391,13 @@ ch8_ui <- list(
         )
       )
     ),
-    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol1")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 2 — Pułapki typowania"),
-    div(class = "narrative",
+    tagList(
       tags$ol(
         tags$li("Zmienna ", tags$code("klasa_jakosci"), " przyjmuje wartości Premium, Standard, Ekonomiczna.
           Czy to zmienna nominalna? Uzasadnij."),
@@ -408,15 +408,15 @@ ch8_ui <- list(
         tags$li("Czy średnia z ", tags$code("klasa_jakosci"), " ma sens? Dlaczego?")
       )
     ),
-    actionButton("ch8_ans2", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol2")
   ),
 
-  h2(id = "ch8-blok2", class = "section-title", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
+  lc_h2("ch8-blok2", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 3 — Statystyki dla każdego typu"),
-    div(class = "narrative",
+    tagList(
       p("W Jamovi: ", tags$b("Analyses → Exploration → Descriptives"), "."),
       tags$ol(
         tags$li("Dla ", tags$code("typ_produktu"), ": tabela częstości + wykres słupkowy.
@@ -431,13 +431,13 @@ ch8_ui <- list(
           tags$code("typ_produktu"), ", ale które są bezsensowne?")
       )
     ),
-    actionButton("ch8_ans3", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol3")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 4 — Wykres dobierz do typu"),
-    div(class = "narrative",
+    tagList(
       p("Stwórz po jednym wykresie dla każdego typu zmiennej:"),
       tags$ol(
         tags$li(tags$b("Nominalna"), " (", tags$code("typ_produktu"), "): wykres słupkowy"),
@@ -448,15 +448,15 @@ ch8_ui <- list(
       p(tags$em("Pytanie:"), " Gdybyś chciał/a porównać zawartość soli między typami produktów,
         jaki wykres byś wybrał/a?")
     ),
-    actionButton("ch8_ans4", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol4")
   ),
 
-  h2(id = "ch8-blok3", class = "section-title", "Blok 3: Analiza kompleksowa (45 min)"),
+  lc_h2("ch8-blok3", "Blok 3: Analiza kompleksowa (45 min)"),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 5 — Profil produkcji"),
-    div(class = "narrative",
+    tagList(
       p("Przygotuj raport opisowy dla zbioru ", tags$code("zywnosc_partie.csv"), ":"),
       tags$ol(
         tags$li("Ile partii jest w zbiorze? Ile zmiennych?"),
@@ -466,13 +466,13 @@ ch8_ui <- list(
         tags$li("Porównanie: zawartość soli wg typu produktu (boxplot)")
       )
     ),
-    actionButton("ch8_ans5", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol5")
   ),
 
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4("Zadanie 6 — Decyzja technologa"),
-    div(class = "narrative",
+    tagList(
       p("Technolog musi zdecydować, które linie produkcyjne wymagają korekty:"),
       tags$ol(
         tags$li("Który typ produktu ma najwyższą ", tags$b("medianę"),
@@ -484,12 +484,12 @@ ch8_ui <- list(
         tags$li("Sformułuj rekomendację: która linia wymaga korekty i dlaczego?")
       )
     ),
-    actionButton("ch8_ans6", "Pokaż rozwiązanie", class = "btn-outline-success btn-sm"),
+    actionButton("ch8_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch8_sol6")
   ),
 
-  h2(id = "ch8-podsumowanie", class = "section-title", "Podsumowanie"),
-  div(class = "callout-warning",
+  lc_h2("ch8-podsumowanie", "Podsumowanie"),
+  lc_feedback(type = "warning",
     p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
     tags$ol(
       tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest ważna ",
@@ -498,7 +498,7 @@ ch8_ui <- list(
       tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
     )
   ),
-  actionButton("ch8_ans_summary", "Pokaż odpowiedzi", class = "btn-outline-success btn-sm"),
+  actionButton("ch8_ans_summary", "Pokaż odpowiedzi", class = "lc-btn-ok-outline lc-btn-sm"),
   uiOutput("ch8_sol_summary")
 )
 
@@ -511,7 +511,7 @@ ch8_ui <- list(
 
   bhp = list(
     sol1 = tagList(
-      tags$table(class = "table table-striped table-bordered",
+      tags$table(class = "lc-table lc-table-striped lc-table-bordered",
         tags$thead(tags$tr(
           tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
         )),
@@ -578,7 +578,7 @@ ch8_ui <- list(
 
   rol = list(
     sol1 = tagList(
-      tags$table(class = "table table-striped table-bordered",
+      tags$table(class = "lc-table lc-table-striped lc-table-bordered",
         tags$thead(tags$tr(
           tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
         )),
@@ -639,7 +639,7 @@ ch8_ui <- list(
 
   zyw = list(
     sol1 = tagList(
-      tags$table(class = "table table-striped table-bordered",
+      tags$table(class = "lc-table lc-table-striped lc-table-bordered",
         tags$thead(tags$tr(
           tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
         )),
@@ -744,7 +744,7 @@ ch8_server <- function(input, output, session) {
       if (!vis[[sol_id_bare]]()) return(NULL)
       k <- isolate(input$ch8_kierunek)
       sol <- .ch8_solutions[[k]][[sol_id_bare]]
-      div(class = "callout-success", style = "margin-top: 10px;", sol)
+      lc_feedback(type = "ok", style = "margin-top: 10px;", sol)
     })
   }
 

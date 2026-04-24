@@ -162,12 +162,16 @@ upwr_show_palette <- function(palette = upwr_cat) {
   if (is.character(palette) && length(palette) == 1) {
     palette <- get(palette, envir = globalenv())
   }
+  palette_names <- names(palette)
+  if (is.null(palette_names)) {
+    palette_names <- seq_along(palette)
+  }
   graphics::barplot(
     rep(1, length(palette)),
     col    = palette,
     border = NA,
     axes   = FALSE,
-    names.arg = names(palette) %||% seq_along(palette),
+    names.arg = palette_names,
     las    = 2
   )
 }

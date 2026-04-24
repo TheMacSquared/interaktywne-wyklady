@@ -19,9 +19,9 @@ ch1_ui <- list(
     # ========================================================================
     # SEKCJA 0: Case study otwierajacy
     # ========================================================================
-    h2(id = "ch1-case", class = "section-title", "Case study: telefon a koncentracja"),
+    lc_h2("ch1-case", "Case study: telefon a koncentracja"),
 
-    div(class = "narrative",
+    tagList(
       p("Wyobraźcie sobie następujący eksperyment na waszej uczelni
         (inspirowany badaniem Ward et al., 2017):"),
       tags$ul(
@@ -40,7 +40,7 @@ ch1_ui <- list(
       fluidRow(
         column(4,
           actionButton("ch1_case_generate", "Przeprowadź eksperyment",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           uiOutput("ch1_case_stats")
         ),
@@ -62,11 +62,11 @@ ch1_ui <- list(
     # ========================================================================
     # SEKCJA 1: Logika testowania z odniesieniem do case study
     # ========================================================================
-    h2(id = "ch1-logika", class = "section-title", "Testowanie hipotez — logika rozumowania"),
+    lc_h2("ch1-logika", "Testowanie hipotez — logika rozumowania"),
 
-    div(class = "narrative",
+    tagList(
       p("Testowanie hipotez statystycznych przypomina proces sądowy:"),
-      tags$table(class = "table table-bordered", style = "font-size: 15px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th("Element"), tags$th("Sąd"), tags$th("Nasz eksperyment z telefonem"))
         ),
@@ -106,9 +106,9 @@ ch1_ui <- list(
     # ========================================================================
     # WIDGET 1: Bledy I i II rodzaju
     # ========================================================================
-    h2(id = "ch1-bledy", class = "section-title", "Błędy I i II rodzaju"),
+    lc_h2("ch1-bledy", "Błędy I i II rodzaju"),
 
-    div(class = "narrative",
+    tagList(
       p("Zanim nauczymy się podejmować decyzje w testach hipotez, musimy
         zauważyć coś fundamentalnego: ", tags$b("rzeczywistość i nasza decyzja
         to dwie różne rzeczy"), ". Test statystyczny daje nam werdykt —
@@ -134,7 +134,7 @@ ch1_ui <- list(
         stany świata (H₀ prawdziwa / H₀ fałszywa) i dwie możliwe decyzje
         (nie odrzucamy / odrzucamy H₀). Cztery kombinacje — dwie dobre,
         dwie błędne:"),
-      tags$table(class = "table table-bordered", style = "font-size: 15px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th(""), tags$th("H₀ prawdziwa"),
                   tags$th("H₀ fałszywa"))
@@ -167,7 +167,7 @@ ch1_ui <- list(
         ": prawdopodobieństwo wykrycia efektu, gdy ten ", tags$em("naprawdę"),
         " istnieje. Moc rośnie z: (1) większą próbą n, (2) większym efektem
         (różnicą rzeczywistą między grupami), (3) mniejszym rozrzutem w grupach."),
-      div(class = "formula-box",
+      lc_formula_box(
         p(withMathJax("\\(\\alpha\\)"),
           " = P(odrzucamy ", withMathJax("\\(H_0\\)"), " | ",
           withMathJax("\\(H_0\\)"), " prawdziwa)"),
@@ -196,9 +196,9 @@ ch1_ui <- list(
       tags$img(src = "assets/type-error.jpg", style = "width: 100%; border-radius: 8px;")
     ),
 
-    h2(id = "ch1-moc", class = "section-title", "Wizualizacja α, β i mocy testu"),
+    lc_h2("ch1-moc", "Wizualizacja α, β i mocy testu"),
 
-    div(class = "narrative",
+    tagList(
       p("Żeby zobaczyć, co kryje się pod literami α i β, rozrysujmy ",
         tags$b("dwa rozkłady"), " obok siebie — rozkłady ",
         tags$em("średniej z próby"), ":"),
@@ -270,9 +270,9 @@ ch1_ui <- list(
     # ========================================================================
     # WIDGET 2: P-wartość (po błędach — bo α jest już zdefiniowane)
     # ========================================================================
-    h2(id = "ch1-pvalue", class = "section-title", "Co to jest p-wartość?"),
+    lc_h2("ch1-pvalue", "Co to jest p-wartość?"),
 
-    div(class = "narrative",
+    tagList(
       p("Wiemy już, że ryzyko błędu I rodzaju ", withMathJax("\\(\\alpha\\)"),
         " ustalamy sami — zwykle na 5%. Ale jak z danego eksperymentu wyciągnąć ",
         tags$em("decyzję"), ": odrzucić H₀ czy nie? Służy do tego ",
@@ -284,7 +284,7 @@ ch1_ui <- list(
         tags$em("zaskakująca"),
         " jest nasza obserwacja w świecie, w którym H₀ byłaby prawdziwa."),
       p(tags$b("Definicja formalna:")),
-      div(class = "formula-box",
+      lc_formula_box(
         p(withMathJax(
           "\\(p = P(|\\bar{X}_A - \\bar{X}_B| \\geq |d_{\\text{obs}}| \\mid H_0)\\)"
         )),
@@ -296,7 +296,7 @@ ch1_ui <- list(
         tags$em("w obie strony"), " — i na plus, i na minus.
         Jeśli test jest jednostronny (pytamy np. „czy telefon ",
         tags$em("obniża"), " koncentrację?”), liczymy tylko jedną stronę:"),
-      div(class = "formula-box",
+      lc_formula_box(
         p(withMathJax(
           "\\(p_{\\text{1-stronny}} = P(\\bar{X}_A - \\bar{X}_B \\leq d_{\\text{obs}} \\mid H_0)\\)"
         ))
@@ -327,13 +327,13 @@ ch1_ui <- list(
           sliderInput("ch1_sim_n", "n (na grupę):",
                       min = 10, max = 100, value = 40, step = 5),
           hr(),
-          div(style = "display: flex; flex-direction: column; gap: 8px;",
+          lc_stack(gap = "md",
             actionButton("ch1_sim_10", "Powtórz 10 razy",
-                         class = "btn-primary", width = "100%"),
+                         class = "lc-btn-primary", width = "100%"),
             actionButton("ch1_sim_200", "Powtórz 200 razy",
-                         class = "btn-warning", width = "100%"),
+                         class = "lc-btn-warning", width = "100%"),
             actionButton("ch1_sim_reset", "Reset",
-                         class = "btn-outline-secondary", width = "100%")
+                         class = "lc-btn-secondary-outline", width = "100%")
           ),
           br(),
           uiOutput("ch1_sim_info")
@@ -356,19 +356,19 @@ ch1_ui <- list(
     # ========================================================================
     # WIDGET 3: Quiz - decyzja
     # ========================================================================
-    h2(id = "ch1-decyzja", class = "section-title", "Decyzja w praktyce"),
+    lc_h2("ch1-decyzja", "Decyzja w praktyce"),
 
-    div(class = "narrative",
+    tagList(
       p("Znamy już regułę porównania p-wartości z poziomem istotności.
         Ale sama decyzja „odrzucamy / nie odrzucamy” to nie wszystko —
         trzeba ją też poprawnie sformułować słowami. Dwa możliwe werdykty:"),
       p(tags$b("Jeśli "), withMathJax("\\(p < \\alpha\\)"), tags$b(":")),
-      div(class = "formula-box",
+      lc_formula_box(
         tags$em("„Na przyjętym poziomie istotności α odrzucamy hipotezę zerową
                 na rzecz hipotezy alternatywnej.”")
       ),
       p(tags$b("Jeśli "), withMathJax("\\(p \\geq \\alpha\\)"), tags$b(":")),
-      div(class = "formula-box",
+      lc_formula_box(
         tags$em("„Na przyjętym poziomie istotności α nie mamy podstaw do
                 odrzucenia hipotezy zerowej.”")
       ),
@@ -397,7 +397,7 @@ ch1_ui <- list(
       p("Twoja decyzja:"),
       uiOutput("ch1_quiz_options"),
       uiOutput("ch1_quiz_feedback"),
-      actionButton("ch1_quiz_next", "Nowy scenariusz", class = "btn-outline-secondary")
+      actionButton("ch1_quiz_next", "Nowy scenariusz", class = "lc-btn-secondary-outline")
     ),
 
     lc_chapter_next(
@@ -457,12 +457,9 @@ ch1_server <- function(input, output, session) {
     diff_val <- round(stats$m[1] - stats$m[2], 1)
 
     tagList(
-      div(class = "stat-box", style = paste0("border-left-color:", col_accept, ";"),
-          paste0("Plecak: ", stats$m[1], " pkt (s=", stats$s[1], ")")),
-      div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-          paste0("Biurko: ", stats$m[2], " pkt (s=", stats$s[2], ")")),
-      div(class = "stat-box", style = paste0("border-left-color:", upwr_secondary, ";"),
-          paste0("Różnica: ", diff_val, " pkt"))
+      lc_stat_box("Plecak", stats$m[1], " pkt (s=", stats$s[1], ")", color = col_accept),
+      lc_stat_box("Biurko", stats$m[2], " pkt (s=", stats$s[2], ")", color = col_pvalue),
+      lc_stat_box("Różnica", diff_val, " pkt", color = upwr_secondary)
     )
   })
 
@@ -495,10 +492,8 @@ ch1_server <- function(input, output, session) {
     n_s <- length(ch1_sim_diffs())
     obs <- round(ch1_observed_diff(), 1)
     tagList(
-      div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
-          paste0("Eksperymentów: ", n_s)),
-      div(class = "stat-box", style = paste0("border-left-color:", col_reject, ";"),
-          paste0("Obs. różnica: ", obs, " pkt"))
+      lc_stat_box("Eksperymentów", n_s, color = col_h0),
+      lc_stat_box("Obs. różnica", obs, " pkt", color = col_reject)
     )
   })
 
@@ -535,12 +530,19 @@ ch1_server <- function(input, output, session) {
     diffs <- ch1_sim_diffs()
     if (length(diffs) == 0) return(NULL)
     obs <- ch1_observed_diff()
+    alpha <- input$ch1_alpha
+    if (is.null(alpha)) alpha <- 0.05
     n_extreme <- sum(abs(diffs) >= abs(obs))
     pval <- n_extreme / length(diffs)
     tagList(
-      div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-          paste0("p ≈ ", round(pval, 3),
-                 " (", n_extreme, "/", length(diffs), " eksperymentów co najmniej tak skrajnych)"))
+      lc_stat_box(
+        "Błąd I",
+        alpha * 100, "%",
+        caption = paste0("p ≈ ", round(pval, 3),
+                         " (", n_extreme, "/", length(diffs),
+                         " eksperymentów co najmniej tak skrajnych)"),
+        color = col_pvalue
+      )
     )
   })
 
@@ -602,12 +604,8 @@ ch1_server <- function(input, output, session) {
     power <- pnorm(diff_means / se - qnorm(1 - alpha / 2))
 
     tagList(
-      div(class = "stat-box", style = paste0("border-left-color:", col_reject, ";"),
-          paste0("Błąd I: ", alpha * 100, "%")),
-      div(class = "stat-box", style = paste0("border-left-color:", col_accept, ";"),
-          paste0("Moc: ", round(power * 100, 1), "%")),
-      div(class = "stat-box", style = paste0("border-left-color:", upwr_secondary, ";"),
-          paste0("Błąd II: ", round((1 - power) * 100, 1), "%"))
+      lc_stat_box("Moc", round(power * 100, 1), "%", color = col_accept),
+      lc_stat_box("Błąd II", round((1 - power) * 100, 1), "%", color = upwr_secondary)
     )
   })
 
@@ -642,7 +640,7 @@ ch1_server <- function(input, output, session) {
   output$ch1_quiz_scenario <- renderUI({
     sc <- ch1_quiz_data()
     if (is.null(sc)) return(NULL)
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       p(tags$strong("Scenariusz:"), sc$context)
     )
   })
@@ -689,13 +687,13 @@ ch1_server <- function(input, output, session) {
 
     correct <- if (sc$p < sc$alpha) "reject" else "fail_to_reject"
     if (answer == correct) {
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Poprawnie!"),
         p(paste0("p = ", sc$p, " ", ifelse(sc$p < sc$alpha, "<", "≥"),
                  " α = ", sc$alpha))
       )
     } else {
-      div(class = "callout-danger",
+      lc_feedback(type = "danger",
         tags$strong("Nie! "),
         p(paste0("p = ", sc$p, " ", ifelse(sc$p < sc$alpha, "<", "≥"),
                  " α = ", sc$alpha, ". Zatem: ",

@@ -18,7 +18,7 @@ ch4_ui <- list(
 
     uiOutput("tracker_ch4"),
 
-    div(class = "narrative",
+    tagList(
       p("W tym rozdziale poznamy miary rozrzutu: odchylenie standardowe,
         wariancję, rozstęp, rozstęp międzykwartylowy (IQR) oraz
         współczynnik zmienności. Nauczymy się też budować boxplot od podstaw.")
@@ -27,9 +27,9 @@ ch4_ui <- list(
     # ====================================================================
     # WIDGET 1: Bus scenario - "Mean is not everything"
     # ====================================================================
-    h2(id = "ch4-srednia", class = "section-title", "Średnia to nie wszystko"),
+    lc_h2("ch4-srednia", "Średnia to nie wszystko"),
 
-    div(class = "narrative",
+    tagList(
       p("Wyobraź sobie dwie linie autobusowe. Obie mają takie samo
         średnie spóźnienie -- około 2 minuty. Którą wybierzesz?"),
       p("Większość autobusów jest blisko rozkładu (0-4 min spóźnienia),
@@ -43,13 +43,13 @@ ch4_ui <- list(
       title = "Dwie linie autobusowe — ta sama średnia, inny rozrzut",
       div(class = "step-buttons",
         actionButton("ch4_spread_s1", "1. Dwie linie",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch4_spread_s2", "2. Ta sama średnia, ale...",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch4_spread_s3", "3. Wychodzisz wcześniej",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch4_spread_s4", "4. Konsekwencje",
-                     class = "btn-outline-primary")
+                     class = "lc-btn-outline")
       ),
       sliderInput("ch4_spread_buffer", "Wychodzisz wcześniej o (minuty):",
                   min = 0, max = 10, value = 0, step = 1, width = "100%"),
@@ -60,9 +60,9 @@ ch4_ui <- list(
     # ====================================================================
     # WIDGET 2: SD step-by-step
     # ====================================================================
-    h2(id = "ch4-odchylenie", class = "section-title", "Odchylenie standardowe krok po kroku"),
+    lc_h2("ch4-odchylenie", "Odchylenie standardowe krok po kroku"),
 
-    div(class = "narrative",
+    tagList(
       p("Jak obliczamy odchylenie standardowe? Krok po kroku.
         Zobaczmy to na przykładzie 10 pomiarów wzrostu.")
     ),
@@ -72,17 +72,17 @@ ch4_ui <- list(
       title = "Obliczanie odchylenia standardowego",
       div(class = "step-buttons",
         actionButton("ch4_sd_s1", "1. Dane",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch4_sd_s2", "2. Odchylenia od średniej",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch4_sd_s3", "3. Wariancja i SD",
-                     class = "btn-outline-primary")
+                     class = "lc-btn-outline")
       ),
       div(style = "margin-bottom: 10px;",
         actionButton("ch4_sd_new", "Losuj nowy zestaw",
-                     class = "btn-success btn-sm", style = "margin-right: 6px;"),
+                     class = "lc-btn-ok lc-btn-sm", style = "margin-right: 6px;"),
         actionButton("ch4_sd_reset", "Reset",
-                     class = "btn-secondary btn-sm")
+                     class = "lc-btn-secondary lc-btn-sm")
       ),
       plotOutput("ch4_sd_plot", height = "400px"),
       tableOutput("ch4_sd_table"),
@@ -92,9 +92,9 @@ ch4_ui <- list(
     # ====================================================================
     # WIDGET 2b: Empirical rule (68-95-99.7)
     # ====================================================================
-    h2(id = "ch4-regula", class = "section-title", "Reguła empiryczna (68-95-99.7)"),
+    lc_h2("ch4-regula", "Reguła empiryczna (68-95-99.7)"),
 
-    div(class = "narrative",
+    tagList(
       p("Wiemy juz jak obliczyć odchylenie standardowe. Ale co ono oznacza
         w praktyce? Dla rozkładow zbliżonych do normalnego obowiązuje
         regula empiryczna: okolo 68% danych miesci sie w zakresie
@@ -118,9 +118,9 @@ ch4_ui <- list(
     # ====================================================================
     # WIDGET 3: Boxplot builder
     # ====================================================================
-    h2(id = "ch4-boxplot", class = "section-title", "Budujemy boxplot od podstaw"),
+    lc_h2("ch4-boxplot", "Budujemy boxplot od podstaw"),
 
-    div(class = "narrative",
+    tagList(
       p("Boxplot to wizualne podsumowanie rozkładu oparte na kwartylach.
         Zbudujmy go od podstaw, krok po kroku, aby zrozumieć co
         oznacza każdy element tego wykresu.")
@@ -131,21 +131,21 @@ ch4_ui <- list(
       title = "Boxplot — budowa krok po kroku",
       div(class = "step-buttons",
         actionButton("ch4_bp_s1", "1. Surowe dane",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch4_bp_s2", "2. Mediana",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch4_bp_s3", "3. Kwartyle i pudełko",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch4_bp_s4", "4. Wąsy i outliers",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch4_bp_s5", "5. Gotowy boxplot",
-                     class = "btn-outline-primary")
+                     class = "lc-btn-outline")
       ),
       div(style = "margin-bottom: 10px;",
         actionButton("ch4_bp_new", "Losuj nowe dane",
-                     class = "btn-success btn-sm", style = "margin-right: 6px;"),
+                     class = "lc-btn-ok lc-btn-sm", style = "margin-right: 6px;"),
         actionButton("ch4_bp_reset", "Reset",
-                     class = "btn-secondary btn-sm")
+                     class = "lc-btn-secondary lc-btn-sm")
       ),
       plotOutput("ch4_bp_plot", height = "350px"),
       uiOutput("ch4_bp_text")
@@ -154,9 +154,9 @@ ch4_ui <- list(
     # ====================================================================
     # WIDGET 3b: Group comparison -- side-by-side boxplots
     # ====================================================================
-    h2(id = "ch4-porownanie", class = "section-title", "Porównanie grup"),
+    lc_h2("ch4-porownanie", "Porównanie grup"),
 
-    div(class = "narrative",
+    tagList(
       p("Dotychczas analizowalismy caly zbior danych naraz. Ale jednym z
         najczestszych pytan w statystyce jest: czy grupy sie roznia?
         Boxploty obok siebie to doskonałe narzędzie do porównywania rozkładow
@@ -195,9 +195,9 @@ ch4_ui <- list(
     # ====================================================================
     # WIDGET 4: Spread measures comparison
     # ====================================================================
-    h2(id = "ch4-miary", class = "section-title", "Porównanie miar rozrzutu"),
+    lc_h2("ch4-miary", "Porównanie miar rozrzutu"),
 
-    div(class = "narrative",
+    tagList(
       p("Porównajmy rozne miary rozrzutu i ich odporność na wartości
         odstające. Dodaj outliera i obserwuj, ktore miary sie zmieniaja,
         a ktore pozostaja stabilne.")
@@ -208,11 +208,11 @@ ch4_ui <- list(
       title = "Porównanie miar rozrzutu i ich odporności",
       div(style = "margin-bottom: 10px;",
         actionButton("ch4_comp_add1", "Dodaj outlier (+30 cm)",
-                     class = "btn-warning", style = "margin-right: 6px;"),
+                     class = "lc-btn-warning", style = "margin-right: 6px;"),
         actionButton("ch4_comp_add5", "Dodaj 5 outlierow",
-                     class = "btn-danger", style = "margin-right: 6px;"),
+                     class = "lc-btn-danger", style = "margin-right: 6px;"),
         actionButton("ch4_comp_reset", "Reset",
-                     class = "btn-secondary")
+                     class = "lc-btn-secondary")
       ),
       plotOutput("ch4_comp_plot", height = "350px"),
       tableOutput("ch4_comp_table")
@@ -229,9 +229,9 @@ ch4_ui <- list(
     # ====================================================================
     # WIDGET 5: Coefficient of Variation
     # ====================================================================
-    h2(id = "ch4-cv", class = "section-title", "Współczynnik zmienności (CV)"),
+    lc_h2("ch4-cv", "Współczynnik zmienności (CV)"),
 
-    div(class = "narrative",
+    tagList(
       p("Odchylenie standardowe mówi o rozrzucie, ale w jakich jednostkach?
         SD wzrostu (w cm) i SD wagi (w kg) nie są porownywalne!
         Aby porownac zmiennosc zmiennych w roznych skalach, uzywamy
@@ -246,7 +246,7 @@ ch4_ui <- list(
         column(6, plotOutput("ch4_cv_plot", height = "350px"))
       ),
       tableOutput("ch4_cv_table"),
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         tags$strong("Interpretacja: "),
         "Lewy wykres pokazuje SD w oryginalnych jednostkach -- wartości są nieporównywalne,
          bo każda zmienna ma inna skalę. Prawy wykres pokazuje CV (%), które normalizuje
@@ -263,7 +263,7 @@ ch4_ui <- list(
     ),
 
     # Bottom spacing
-    div(style = "height: 40px;")
+    lc_spacer("md")
 
   )
 )
@@ -389,10 +389,10 @@ ch4_server <- function(input, output, session) {
     bus <- ch4_bus_data()
 
     if (step == 0) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           "Kliknij przycisk kroku, aby rozpocząć.")
     } else if (step == 1) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$strong("Krok 1:"),
           " Obie linie mają średnie spóźnienie około 2 minut.
           Patrząc tylko na średnią, są identyczne.
@@ -402,7 +402,7 @@ ch4_server <- function(input, output, session) {
       pct_10_b <- round(mean(bus$b > 10) * 100, 1)
       mean_late_a <- if (any(bus$a > 10)) round(mean(bus$a[bus$a > 10]), 1) else 0
       mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$strong("Krok 2:"),
           paste0(" Linia A ma SD = ", bus$sd_a, " min (spóźnienia skupione 0-4 min),
           a linia B ma SD = ", bus$sd_b, " min (zdarza się i punktualnie,
@@ -417,7 +417,7 @@ ch4_server <- function(input, output, session) {
     } else if (step == 3) {
       lbl <- if (buffer == 0) "na stówkę (0 min zapasu)"
              else paste0(buffer, " min wcześniej")
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$strong("Krok 3:"),
           paste0(" Wychodzisz ", lbl,
                  ". Jesteś na przystanku o ", buffer,
@@ -432,7 +432,7 @@ ch4_server <- function(input, output, session) {
       pct_10_b <- round(mean(bus$b > 10) * 100, 1)
       mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
       lbl <- if (buffer == 0) "na stówkę" else paste0(buffer, " min wcześniej")
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$strong("Krok 4:"), " Konsekwencje",
           tags$br(),
           paste0("Wychodzisz ", lbl, ":"),
@@ -600,17 +600,17 @@ ch4_server <- function(input, output, session) {
     step <- ch4_sd_step()
 
     if (step == 0) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           "Kliknij przycisk kroku, aby rozpoczac obliczanie odchylenia standardowego.")
     } else if (step == 1) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$strong("Krok 1:"),
           " Mamy 10 pomiarów wzrostu. Na osi liczbowej każdy punkt to jedna
           obserwacja. Jak bardzo są rozproszone?")
     } else if (step == 2) {
       vals <- ch4_sd_data()
       x_bar <- mean(vals)
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$strong("Krok 2:"),
           paste0(" Obliczamy srednia: x̄ = ", round(x_bar, 2),
                  " cm. Nastepnie liczymy odchylenie każdego punktu od średniej
@@ -625,7 +625,7 @@ ch4_server <- function(input, output, session) {
       sq_deviations <- deviations^2
       variance <- sum(sq_deviations) / (n - 1)
       s <- sqrt(variance)
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$strong("Krok 3:"),
           tags$br(), tags$br(),
           withMathJax(helpText(
@@ -704,14 +704,14 @@ ch4_server <- function(input, output, session) {
     diff_1sd <- abs(pct_in[1] - 68)
 
     if (diff_1sd < 5) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         tags$strong("Dobra zgodność z regułą! "),
         paste0("W przedziale ±1 SD leży ", pct_in[1], "% danych (teoria: 68%). "),
         "To oznacza, że rozkład tej zmiennej jest zbliżony do normalnego. ",
         "Odchylenie standardowe dobrze podsumowuje rozrzut."
       )
     } else {
-      div(class = "callout-warning",
+      lc_feedback(type = "warning",
         tags$strong("Słaba zgodność z regułą! "),
         paste0("W przedziale ±1 SD leży ", pct_in[1], "% danych (teoria: 68%). "),
         "Dlaczego? Reguła 68-95-99.7 zakłada rozkład symetryczny ",
@@ -916,17 +916,17 @@ ch4_server <- function(input, output, session) {
   output$ch4_bp_text <- renderUI({
     step <- ch4_bp_step()
     if (step == 0) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           "Kliknij przycisk kroku, aby zacząć budowę boxplota.")
     } else if (step == 1) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$strong("Krok 1:"),
           " Zaczynamy od surowych danych. 30 pomiarów wzrostu rozrzuconych
           na osi liczbowej. Widać ogolny zakres, ale ciężko wyciagnac
           szybkie wnioski.")
     } else if (step == 2) {
       vals <- ch4_bp_data()
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$strong("Krok 2:"),
           paste0(" Sortujemy dane i wyznaczamy mediane = ", round(median(vals), 1),
                  " cm. Mediana dzieli posortowane dane na dwie rowne polowy."))
@@ -934,7 +934,7 @@ ch4_server <- function(input, output, session) {
       vals <- ch4_bp_data()
       q1 <- quantile(vals, 0.25)
       q3 <- quantile(vals, 0.75)
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$strong("Krok 3:"),
           paste0(" Wyznaczamy kwartyle: Q1 = ", round(q1, 1),
                  " (25% danych poniżej), Q3 = ", round(q3, 1),
@@ -947,7 +947,7 @@ ch4_server <- function(input, output, session) {
       q3 <- quantile(vals, 0.75)
       iqr_val <- q3 - q1
       outliers <- vals[vals < q1 - 1.5 * iqr_val | vals > q3 + 1.5 * iqr_val]
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$strong("Krok 4:"),
           paste0(" Wąsy siagaja do najdalszych punktow w granicach
                  1.5 * IQR od pudełka. Wszystko poza wąsami to wartości
@@ -960,7 +960,7 @@ ch4_server <- function(input, output, session) {
             "Brak wartości odstających."
           })
     } else if (step == 5) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$strong("Krok 5:"),
           " Gotowy boxplot (gora) w porownaniu z histogramem (dol).
           Boxplot kompaktowo podsumowuje rozkład: mediana, kwartyle,

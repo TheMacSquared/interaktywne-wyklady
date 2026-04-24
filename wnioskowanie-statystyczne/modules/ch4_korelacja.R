@@ -19,9 +19,9 @@ ch4_ui <- list(
     # ========================================================================
     # Wprowadzenie: wspolczynnik korelacji
     # ========================================================================
-    h2(id = "ch4-pearson", class = "section-title", "Współczynnik korelacji Pearsona"),
+    lc_h2("ch4-pearson", "Współczynnik korelacji Pearsona"),
 
-    div(class = "narrative",
+    tagList(
       p("Współczynnik korelacji Pearsona ", withMathJax("\\(r\\)"),
         " mierzy siłę i kierunek liniowego związku między dwiema zmiennymi ilościowymi."),
       p("Przyjmuje wartości od ", tags$b("−1"), " do ", tags$b("+1"), ":"),
@@ -30,13 +30,13 @@ ch4_ui <- list(
         tags$li(tags$b("r = 0"), " — brak korelacji liniowej"),
         tags$li(tags$b("r = −1"), " — doskonała korelacja ujemna (wzrost jednej = spadek drugiej)")
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(withMathJax("\\(r = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum(x_i-\\bar{x})^2 \\cdot \\sum(y_i-\\bar{y})^2}}\\)"))
       )
     ),
 
     # --- Wykres 1: sila korelacji (statyczny obrazek) ---
-    div(class = "narrative",
+    tagList(
       p("Im większe ", withMathJax("\\(|r|\\)"),
         ", tym ciaśniej punkty grupują się wokół prostej — poniżej trzy
         zbiory o różnej sile korelacji.")
@@ -49,7 +49,7 @@ ch4_ui <- list(
     ),
 
     # --- Wykres 2: kierunek korelacji (statyczny obrazek) ---
-    div(class = "narrative",
+    tagList(
       p("Znak ", withMathJax("\\(r\\)"),
         " mówi o kierunku: dodatni oznacza, że obie zmienne rosną razem;
         ujemny — jedna rośnie, druga maleje; zero — brak trendu liniowego.")
@@ -62,7 +62,7 @@ ch4_ui <- list(
     ),
 
     # --- Wykres 3: rozrzut vs r (statyczny obrazek) ---
-    div(class = "narrative",
+    tagList(
       p("Warto odróżnić korelację od nachylenia prostej. Wszystkie trzy
         panele poniżej mają ten sam trend wzrostowy (podobne nachylenie),
         ale im większy rozrzut punktów wokół prostej, tym niższe ",
@@ -80,25 +80,25 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 1: Test korelacji dwustronny (krokowy)
     # ========================================================================
-    h2(id = "ch4-krok", class = "section-title", "Test korelacji — krok po kroku"),
+    lc_h2("ch4-krok", "Test korelacji — krok po kroku"),
 
-    div(class = "narrative",
+    tagList(
       p("Korelacja z próby (", withMathJax("\\(r\\)"),
         ") prawie nigdy nie wynosi dokładnie zero, nawet gdy w populacji związku nie ma.
         Pytanie: czy obserwowane ", withMathJax("\\(r\\)"),
         " jest wystarczająco dalekie od zera, by odrzucić brak związku?"),
       p("Trzy warianty par hipotez:"),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Dwustronna"), " (jakikolwiek związek liniowy):"),
         p(withMathJax("\\(H_0: \\rho = 0 \\quad\\)"),
           withMathJax("\\(H_a: \\rho \\neq 0\\)"))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Prawostronna"), " (dodatni związek — obie rosną razem):"),
         p(withMathJax("\\(H_0: \\rho \\leq 0 \\quad\\)"),
           withMathJax("\\(H_a: \\rho > 0\\)"))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Lewostronna"), " (ujemny związek — jedna rośnie, druga maleje):"),
         p(withMathJax("\\(H_0: \\rho \\geq 0 \\quad\\)"),
           withMathJax("\\(H_a: \\rho < 0\\)"))
@@ -108,7 +108,7 @@ ch4_ui <- list(
         " na skalę rozkładu t o ", withMathJax("\\(n-2\\)"),
         " stopniach swobody. Im dalej od zera, tym bardziej nieprawdopodobny jest
         taki wynik gdy w populacji korelacji nie ma."),
-      div(class = "formula-box",
+      lc_formula_box(
         p("Statystyka testowa: ",
           withMathJax("\\(t = \\frac{r\\sqrt{n-2}}{\\sqrt{1-r^2}}, \\quad df = n - 2\\)"))
       )
@@ -117,9 +117,9 @@ ch4_ui <- list(
     # ========================================================================
     # Cwiczenie: sformuluj hipotezy
     # ========================================================================
-    h2(id = "ch4-cwiczenie", class = "section-title", "Ćwiczenie: sformułuj hipotezy"),
+    lc_h2("ch4-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    div(class = "narrative",
+    tagList(
       p("Jak wyglądają H₀ i Hₐ w poniższych sytuacjach? Zastanów się i sprawdź.")
     ),
 
@@ -165,18 +165,18 @@ ch4_ui <- list(
           sliderInput("ch4_n", "Wielkość próby (n):",
                       min = 15, max = 100, value = 40, step = 5),
           actionButton("ch4_new_sample", "Losuj próbę",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           hr(),
           h5("Kroki testu:"),
-          div(style = "display: flex; flex-direction: column; gap: 6px;",
+          lc_stack(gap = "sm",
             actionButton("ch4_step1", "1. Dane (wykres rozrzutu)",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch4_step2", "2. Korelacja z próby",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch4_step3", "3. Statystyka testowa",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch4_step4", "4. p-wartość i decyzja",
-                         class = "btn-outline-primary", width = "100%")
+                         class = "lc-btn-outline", width = "100%")
           )
         ),
         column(8,
@@ -190,9 +190,9 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 2: Test jednostronny (te same dane)
     # ========================================================================
-    h2(id = "ch4-jednostronny", class = "section-title", "A jeśli znamy kierunek?"),
+    lc_h2("ch4-jednostronny", "A jeśli znamy kierunek?"),
 
-    div(class = "narrative",
+    tagList(
       p("Tak jak wcześniej — czasem nie pytamy „czy jest związek?”,
         ale „czy więcej X = więcej Y?” Te same dane, zmienione pytanie.")
     ),
@@ -205,15 +205,15 @@ ch4_ui <- list(
           helpText("Dane: te same co w teście dwustronnym powyżej."),
           hr(),
           h5("Kroki testu:"),
-          div(style = "display: flex; flex-direction: column; gap: 6px;",
+          lc_stack(gap = "sm",
             actionButton("ch4b_step1", "1. Dane",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch4b_step2", "2. Korelacja z próby",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch4b_step3", "3. Statystyka testowa",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch4b_step4", "4. p-wartość i decyzja",
-                         class = "btn-outline-primary", width = "100%")
+                         class = "lc-btn-outline", width = "100%")
           )
         ),
         column(8,
@@ -227,15 +227,15 @@ ch4_ui <- list(
     # ========================================================================
     # Pulapki korelacji
     # ========================================================================
-    h2(id = "ch4-pulapki", class = "section-title", "Pułapki korelacji"),
+    lc_h2("ch4-pulapki", "Pułapki korelacji"),
 
-    div(class = "narrative",
+    tagList(
       p("Współczynnik korelacji to potężne narzędzie, ale łatwo go
         źle zinterpretować. Oto cztery klasyczne pułapki:")
     ),
 
     # --- 1. Kwartet Anscombe'a ---
-    div(class = "narrative",
+    tagList(
       p(tags$b("1. Kwartet Anscombe’a — te same statystyki, różne dane.")),
       p("Poniższe cztery zbiory danych mają identyczną korelację (~0,82),
         tę samą średnią i wariancję — a zupełnie inną strukturę. Tylko wykres
@@ -250,7 +250,7 @@ ch4_ui <- list(
     ),
 
     # --- 2. Korelacja pozorna (spurious) ---
-    div(class = "narrative",
+    tagList(
       p(tags$b("2. Korelacja pozorna (spurious correlation).")),
       p("Spożycie lodów i liczba utonięć korelują dodatnio. Czy lody zabijają?
         Oczywiście nie — obie zmienne zależą od temperatury (zmienna ukryta /
@@ -264,7 +264,7 @@ ch4_ui <- list(
     ),
 
     # --- 3. Paradoks Simpsona ---
-    div(class = "narrative",
+    tagList(
       p(tags$b("3. Paradoks Simpsona.")),
       p("Globalnie: więcej nauki wydaje się obniżać wyniki (r ujemne, czarna
         linia). Ale w każdej szkole z osobna więcej nauki daje ",
@@ -290,7 +290,7 @@ ch4_ui <- list(
     ),
 
     # --- 4. Nieliniowość przy r ~ 0 ---
-    div(class = "narrative",
+    tagList(
       p(tags$b("4. Nieliniowość przy r ≈ 0.")),
       p("Zależność kwadratowa (U-kształtna) daje r bliskie zeru, choć związek
         jest silny i deterministyczny. Pearson mierzy wyłącznie zależność
@@ -304,7 +304,7 @@ ch4_ui <- list(
     ),
 
     # --- 5. Outlier (widget interaktywny) ---
-    div(class = "narrative",
+    tagList(
       p(tags$b("5. Wpływ outliera na r.")),
       p("Jeden punkt odległy od reszty może sztucznie wytworzyć korelację tam,
         gdzie jej nie ma — albo drastycznie ją zmienić. Pobaw się poniższym
@@ -317,9 +317,9 @@ ch4_ui <- list(
       fluidRow(
         column(4,
           actionButton("ch4_gen_outlier", "Nowe dane (brak korelacji)",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           actionButton("ch4_add_outlier", "Dodaj outliera!",
-                       class = "btn-danger", width = "100%"),
+                       class = "lc-btn-danger", width = "100%"),
           br(), br(),
           uiOutput("ch4_outlier_r")
         ),
@@ -329,7 +329,7 @@ ch4_ui <- list(
       )
     ),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Podsumowanie pułapek:")),
       tags$ol(
         tags$li("Zawsze rysuj wykres przed interpretacją r (Anscombe)."),
@@ -460,11 +460,11 @@ ch4_server <- function(input, output, session) {
     par <- scenario_params[[input$ch4_scenario]]
     d <- ch4_data()
     tagList(
-      div(class = "callout-info", style = "font-size: 16px;",
+      lc_feedback(type = "info", style = "font-size: 16px;",
         p(tags$b("Pytanie potoczne:")),
         p(tags$em(paste0("„", par$question, "”")))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Hipoteza formalna (dwustronna):")),
         p(withMathJax(par$h0_text)),
         p(withMathJax(par$h1_text))
@@ -545,33 +545,36 @@ ch4_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
-            paste0("n = ", n, " par obserwacji")),
+        lc_stat_box("Outlierów", n_outliers,
+                    caption = paste0("n = ", n, " par obserwacji"),
+                    color = col_h0),
         p("Każdy punkt to jedna obserwacja z dwiema wartościami: ",
           par$xlab, " i ", par$ylab, ". Czy widać trend?")
       ),
       "2" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-            paste0("r = ", round(r_val, 3))),
+        lc_stat_box("r", round(r_val, 3), color = col_pvalue),
         p("Korelacja z próby: ", tags$b(round(r_val, 3)),
           ". Ale czy to wystarczająco daleko od zera, by odrzucić H₀?")
       ),
       "3" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_effect, ";"),
-            paste0("t = ", round(r_val, 3), " · √", n - 2,
-                   " / √(1 − ", round(r_val^2, 3),
-                   ") = ", round(t_stat, 3))),
+        lc_stat_box(
+          "p",
+          format.pval(p_val, digits = 4),
+          caption = paste0("t = ", round(r_val, 3), " · √", n - 2,
+                           " / √(1 − ", round(r_val^2, 3),
+                           ") = ", round(t_stat, 3)),
+          color = col_effect
+        ),
         p("Zamieniamy r na statystykę t, żeby móc porównać z rozkładem t(", n - 2, ").")
       ),
       "4" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-            paste0("p = ", format.pval(p_val, digits = 4))),
+        lc_stat_box("p", format.pval(p_val, digits = 4), color = col_pvalue),
         p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
           res$decision),
         p(res$explanation)
       )
     )
-    div(class = "callout-info", info)
+    lc_feedback(type = "info", info)
   })
 
   # =============================================
@@ -582,11 +585,11 @@ ch4_server <- function(input, output, session) {
     par <- scenario_params[[input$ch4_scenario]]
     d <- ch4_data()
     tagList(
-      div(class = "callout-info", style = "font-size: 16px;",
+      lc_feedback(type = "info", style = "font-size: 16px;",
         p(tags$b("Pytanie potoczne (kierunkowe):")),
         p(tags$em(paste0("„", par$question_1s, "”")))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Hipoteza formalna (jednostronna!):")),
         p(withMathJax(par$h0_text_1s)),
         p(withMathJax(par$h1_text_1s))
@@ -658,31 +661,27 @@ ch4_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
-            paste0("n = ", n, " (te same dane co wyżej)")),
+        lc_stat_box("n", n, " (te same dane co wyżej)", color = col_h0),
         p("Te same obserwacje, ale pytamy o kierunek związku.")
       ),
       "2" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-            paste0("r = ", round(r_val, 3), " (ta sama wartość!)")),
+        lc_stat_box("r", round(r_val, 3), " (ta sama wartość!)", color = col_pvalue),
         p("Korelacja się nie zmieniła. Zmieniło się pytanie.")
       ),
       "3" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_effect, ";"),
-            paste0("t = ", round(t_stat, 3), " (ta sama wartość!)")),
+        lc_stat_box("t", round(t_stat, 3), " (ta sama wartość!)", color = col_effect),
         p("W teście jednostronnym patrzymy tylko na ",
           tags$b(if (par$alt_1s == "greater") "prawy" else "lewy"), " ogon.")
       ),
       "4" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-            paste0("p = ", format.pval(p_val, digits = 4), " (jednostronnie!)")),
+        lc_stat_box("p", format.pval(p_val, digits = 4), " (jednostronnie!)", color = col_pvalue),
         p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
           res$decision),
         p(res$explanation),
         p(tags$em("Porównaj z testem dwustronnym wyżej — te same dane, ten sam r i t, ale inna p-wartość!"))
       )
     )
-    div(class = "callout-info", info)
+    lc_feedback(type = "info", info)
   })
 
   # =============================================
@@ -729,10 +728,8 @@ ch4_server <- function(input, output, session) {
     r_val <- cor(df$x, df$y)
     n_outliers <- max(0, nrow(df) - 50)
     tagList(
-      div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
-          paste0("r = ", round(r_val, 3))),
-      div(class = "stat-box", style = paste0("border-left-color:", col_reject, ";"),
-          paste0("Outlierów: ", n_outliers))
+      lc_stat_box("r", round(r_val, 3), color = col_h0),
+      lc_stat_box("Outlierów", n_outliers, color = col_reject)
     )
   })
 }

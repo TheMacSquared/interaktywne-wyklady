@@ -15,7 +15,7 @@ ch7_ui <- list(
     ),
 
     # --- Tabela 1: Rozklady dyskretne ---
-    h2(id = "ch7-dyskretne", class = "section-title", "Rozkłady dyskretne"),
+    lc_h2("ch7-dyskretne", "Rozkłady dyskretne"),
 
     figure_panel(
       label = "Tab. 7.1",
@@ -25,7 +25,7 @@ ch7_ui <- list(
     ),
 
     # --- Tabela 2: Rozklady ciagle ---
-    h2(id = "ch7-ciagle", class = "section-title", "Rozkłady ciągłe"),
+    lc_h2("ch7-ciagle", "Rozkłady ciągłe"),
 
     figure_panel(
       label = "Tab. 7.2",
@@ -35,7 +35,7 @@ ch7_ui <- list(
     ),
 
     # --- Tabela 3: Kluczowe wzory ---
-    h2(id = "ch7-wzory", class = "section-title", "Kluczowe wzory"),
+    lc_h2("ch7-wzory", "Kluczowe wzory"),
 
     figure_panel(
       label = "Wzory",
@@ -66,9 +66,9 @@ ch7_ui <- list(
     ),
 
     # --- Interaktywne drzewo decyzyjne ---
-    h2(id = "ch7-drzewo", class = "section-title", "Drzewo decyzyjne — który rozkład?"),
+    lc_h2("ch7-drzewo", "Drzewo decyzyjne — który rozkład?"),
 
-    div(class = "narrative",
+    tagList(
       p("Każdy rozkład ma swój 'naturalny habitat'. Kluczowe pytania przy doborze:"),
       tags$ol(
         tags$li("Czy zmienna jest ", tags$b("dyskretna"), " czy ", tags$b("ciągła"), "?"),

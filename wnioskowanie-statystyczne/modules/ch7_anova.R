@@ -19,9 +19,9 @@ ch7_ui <- list(
     # ========================================================================
     # SEKCJA 1: Motywacja — dlaczego nie kilka testów t?
     # ========================================================================
-    h2(id = "ch7-motywacja", class = "section-title", "Dlaczego nie kilka testów t?"),
+    lc_h2("ch7-motywacja", "Dlaczego nie kilka testów t?"),
 
-    div(class = "narrative",
+    tagList(
       p("Mamy trzy grupy i chcemy porównać ich średnie. Naturalny odruch:
         przeprowadzić trzy testy t — A vs B, A vs C, B vs C — i zobaczyć,
         które pary się różnią. Dlaczego to zły pomysł?"),
@@ -30,7 +30,7 @@ ch7_ui <- list(
         " — odrzucenia H₀ gdy w rzeczywistości różnicy nie ma.
         Gdy testów jest więcej, to ryzyko ", tags$b("składa się"),
         " — pojawia się tzw. inflacja błędu I rodzaju:"),
-      tags$table(class = "table table-bordered", style = "font-size: 15px; margin: 10px 0;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px; margin: 10px 0;",
         tags$thead(tags$tr(tags$th("Liczba grup"), tags$th("Liczba par"),
                            tags$th("Ryzyko ≥ 1 fałszywego alarmu"))),
         tags$tbody(
@@ -48,13 +48,13 @@ ch7_ui <- list(
     # ========================================================================
     # SEKCJA 2: Wprowadzenie ANOVA
     # ========================================================================
-    h2(id = "ch7-intro", class = "section-title", "ANOVA jednoczynnikowa"),
+    lc_h2("ch7-intro", "ANOVA jednoczynnikowa"),
 
-    div(class = "narrative",
+    tagList(
       p("ANOVA (Analysis of Variance) to uogólnienie testu t na 3 lub więcej grup.
         Zadaje ", tags$b("jedno"), " pytanie: czy średnie w k grupach różnią się między sobą?"),
       p("Przykład: czy pH jogurtu różni się między trzema temperaturami fermentacji (20°C, 25°C, 30°C)?"),
-      div(class = "formula-box",
+      lc_formula_box(
         p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 = \\ldots = \\mu_k\\) — wszystkie średnie są równe")),
         p(withMathJax("\\(H_a:\\) co najmniej jedna średnia różni się od pozostałych"))
       ),
@@ -71,9 +71,9 @@ ch7_ui <- list(
     # ========================================================================
     # Cwiczenie: sformuluj hipotezy
     # ========================================================================
-    h2(id = "ch7-cwiczenie", class = "section-title", "Ćwiczenie: sformułuj hipotezy"),
+    lc_h2("ch7-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    div(class = "narrative",
+    tagList(
       p("ANOVA ma zawsze jedną H₀ i jedną Hₐ, niezależnie od liczby grup.
         Sprawdź, czy potrafisz je zapisać dla poniższych sytuacji.")
     ),
@@ -105,7 +105,7 @@ ch7_ui <- list(
     # ========================================================================
     # WIDGET 1: ANOVA jednoczynnikowa
     # ========================================================================
-    h2(id = "ch7-akcja", class = "section-title", "ANOVA w akcji"),
+    lc_h2("ch7-akcja", "ANOVA w akcji"),
 
     figure_panel(
       label = "Ryc. 8.1",
@@ -124,7 +124,7 @@ ch7_ui <- list(
           sliderInput("ch7_n", "n (ogółem):",
                       min = 80, max = 300, value = 160, step = 20),
           actionButton("ch7_run_anova", "Generuj i testuj",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch7_boxplot", height = "350px"),
@@ -136,15 +136,15 @@ ch7_ui <- list(
     # ========================================================================
     # Intuicja eta^2
     # ========================================================================
-    h2(id = "ch7-eta", class = "section-title", "Jak czytać siłę efektu (η²)?"),
+    lc_h2("ch7-eta", "Jak czytać siłę efektu (η²)?"),
 
-    div(class = "narrative",
+    tagList(
       p("P-wartość mówi ", tags$em("czy"), " różnice istnieją, ale nie mówi, ",
         tags$em("jak duże"), " są. ", tags$b("η² (eta kwadrat)"),
         " odpowiada na to drugie pytanie — mówi, jaki ułamek całej zmienności
         wyjaśnia czynnik grupujący. Innymi słowy: ile procent różnic między
         próbkami tłumaczy ten czynnik, a ile zostaje na „inne rzeczy”?"),
-      tags$table(class = "table table-bordered", style = "font-size: 15px; margin: 10px 0;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px; margin: 10px 0;",
         tags$thead(
           tags$tr(tags$th("η²"), tags$th("Jak to czytać"), tags$th("Efekt"))
         ),
@@ -170,9 +170,9 @@ ch7_ui <- list(
     # ========================================================================
     # WIDGET 2: Post-hoc Games-Howell
     # ========================================================================
-    h2(id = "ch7-posthoc", class = "section-title", "Testy post-hoc (Games-Howell)"),
+    lc_h2("ch7-posthoc", "Testy post-hoc (Games-Howell)"),
 
-    div(class = "narrative",
+    tagList(
       p("ANOVA mówi „grupy różnią się”, ale nie mówi „które”. Wracamy więc
         do porównań parami — ale tym razem z kontrolowanym ryzykiem fałszywego alarmu
         na poziomie całej rodziny testów, a nie pojedynczego testu."),
@@ -201,7 +201,7 @@ ch7_ui <- list(
       title = "Games-Howell",
       helpText("Używa danych z ANOVA powyżej. Najpierw uruchom ANOVA!"),
       actionButton("ch7_run_tukey", "Testuj Games-Howellem",
-                   class = "btn-warning"),
+                   class = "lc-btn-warning"),
       br(), br(),
 
       h5("Macierz p-wartości"),
@@ -333,7 +333,7 @@ ch7_server <- function(input, output, session) {
     p_val <- tidy_res$p
     res <- format_test_result(p_val)
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       p(tags$strong("Wynik ANOVA jednoczynnikowej:")),
       p(paste0("F(", tidy_res$DFn, ", ", tidy_res$DFd, ") = ",
                round(tidy_res$F, 3))),
@@ -397,7 +397,7 @@ ch7_server <- function(input, output, session) {
           color <- if (fp$sig) "var(--upwr-accent)" else "var(--upwr-ink-soft)"
           weight <- if (fp$sig) "600" else "400"
           tags$td(
-            style = paste0("background: ", bg, "; color: ", color,
+            style = paste0("background:", bg, "; color: ", color,
                            "; font-weight: ", weight,
                            "; text-align: right; font-variant-numeric: tabular-nums;"),
             fp$txt, tags$span(style = "color: var(--upwr-accent);", fp$stars)
@@ -411,7 +411,7 @@ ch7_server <- function(input, output, session) {
     })
 
     tags$table(
-      class = "table table-bordered",
+      class = "lc-table lc-table-bordered",
       style = "font-size: 14px; max-width: 560px;",
       tags$thead(
         tags$tr(
@@ -450,18 +450,18 @@ ch7_server <- function(input, output, session) {
   output$ch7_tukey_result <- renderUI({
     gd <- ch7_gh_data()
     if (is.null(gd)) {
-      return(div(class = "callout-warning", "Najpierw uruchom ANOVA."))
+      return(lc_feedback(type = "warning", "Najpierw uruchom ANOVA."))
     }
     gh_df <- gd$gh
     sig_pairs <- gh_df[gh_df$p.adj < 0.05, ]
     n_sig <- nrow(sig_pairs)
 
     if (n_sig == 0) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         p(tags$strong("Żadna para nie różni się istotnie"),
           " (po korekcji Games-Howell)."))
     } else {
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         p(tags$strong(paste0(n_sig, " istotna(e) różnica(e):"))),
         tags$ul(
           lapply(1:n_sig, function(i) {

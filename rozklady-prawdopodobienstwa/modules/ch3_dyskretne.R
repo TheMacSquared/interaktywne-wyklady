@@ -15,9 +15,9 @@ ch3_ui <- list(
                 jak ich E(X) i Var(X) zależą od parametrów."
     ),
 
-    h2(id = "ch3-intro", class = "section-title", "Rozkłady dyskretne"),
+    lc_h2("ch3-intro", "Rozkłady dyskretne"),
 
-    div(class = "narrative",
+    tagList(
       p("Rozkład dyskretny opisuje zmienną, która przyjmuje ",
         "skończoną lub przeliczalną liczbę wartości
         (np. 0, 1, 2, 3...). Każdej wartości przypisujemy prawdopodobieństwo."),
@@ -27,9 +27,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 1: Rozklad jednostajny dyskretny
     # ========================================================================
-    h2(id = "ch3-jednostajny", class = "section-title", "Rozkład jednostajny dyskretny"),
+    lc_h2("ch3-jednostajny", "Rozkład jednostajny dyskretny"),
 
-    div(class = "narrative",
+    tagList(
       p("Najprostszy rozkład: każdy wynik jest jednakowo prawdopodobny.
         Przykłady: rzut kostką, losowanie cyfry, losowanie karty z talii.")
     ),
@@ -49,13 +49,13 @@ ch3_ui <- list(
           sliderInput("ch3_unif_n", "Liczba prób:",
                       min = 10, max = 5000, value = 100, step = 10),
           actionButton("ch3_unif_sim", "Symuluj!",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch3_unif_plot", height = "350px")
         )
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText(
           "$$P(X = k) = \\frac{1}{n}, \\quad E(X) = \\frac{n+1}{2}, \\quad Var(X) = \\frac{n^2 - 1}{12}$$"
         ))
@@ -65,9 +65,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 2: Rozklad dwumianowy — scenariusze overlay
     # ========================================================================
-    h2(id = "ch3-dwumianowy", class = "section-title", "Rozkład dwumianowy (Binomial)"),
+    lc_h2("ch3-dwumianowy", "Rozkład dwumianowy (Binomial)"),
 
-    div(class = "narrative",
+    tagList(
       p("Powtarzamy n niezależnych prób, każda z prawdopodobieństwem
         sukcesu p. Liczymy, ile razy wystąpił sukces."),
       p("Przykłady: ile orłów w 10 rzutach monetą? Ile wadliwych produktów
@@ -95,7 +95,7 @@ ch3_ui <- list(
           uiOutput("ch3_binom_stats")
         )
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText(
           "$$P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k}, \\quad E(X) = np, \\quad Var(X) = np(1-p)$$"
         ))
@@ -118,9 +118,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 3: Rozklad Poissona — scenariusze overlay
     # ========================================================================
-    h2(id = "ch3-poisson", class = "section-title", "Rozkład Poissona"),
+    lc_h2("ch3-poisson", "Rozkład Poissona"),
 
-    div(class = "narrative",
+    tagList(
       p("Zliczamy zdarzenia zachodzące w ustalonym przedziale czasu lub przestrzeni.
         Parametr λ (lambda) mówi, ile średnio zdarzeń oczekujemy w danym przedziale."),
       p("Przykłady: liczba błędów na stronie, klientów w sklepie na godzinę,
@@ -148,7 +148,7 @@ ch3_ui <- list(
           uiOutput("ch3_pois_stats")
         )
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText(
           "$$P(X = k) = \\frac{\\lambda^k e^{-\\lambda}}{k!}, \\quad E(X) = \\lambda, \\quad Var(X) = \\lambda$$"
         ))
@@ -171,9 +171,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 4: Rozklad geometryczny — scenariusze overlay
     # ========================================================================
-    h2(id = "ch3-geometryczny", class = "section-title", "Rozkład geometryczny"),
+    lc_h2("ch3-geometryczny", "Rozkład geometryczny"),
 
-    div(class = "narrative",
+    tagList(
       p("Powtarzamy próby aż do pierwszego sukcesu. Pytamy: ile prób to zajmie?"),
       p("Przykłady: ile rzutów kostką do pierwszej szóstki?
         Ile losowań do trafienia nagrody? Ile prób egzaminu do zdania?")
@@ -200,7 +200,7 @@ ch3_ui <- list(
           uiOutput("ch3_geom_stats")
         )
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText(
           "$$P(X = k) = (1-p)^{k-1} \\cdot p, \\quad E(X) = \\frac{1}{p}, \\quad Var(X) = \\frac{1-p}{p^2}$$"
         ))
@@ -224,9 +224,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 5: Porownanie czterech rozkladow
     # ========================================================================
-    h2(id = "ch3-porownanie", class = "section-title", "Porównanie czterech rozkładów"),
+    lc_h2("ch3-porownanie", "Porównanie czterech rozkładów"),
 
-    div(class = "narrative",
+    tagList(
       p("Zobaczmy wszystkie cztery rozkłady obok siebie. Zwróć uwagę na
         różnice w kształtach i na to, kiedy rozkład dyskretny zaczyna
         wyglądać jak gładki 'dzwon'.")

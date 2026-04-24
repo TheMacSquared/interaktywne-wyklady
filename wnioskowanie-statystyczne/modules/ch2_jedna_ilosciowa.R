@@ -19,11 +19,11 @@ ch2_ui <- list(
     # ========================================================================
     # Case study otwierajacy
     # ========================================================================
-    h2(id = "ch2-pytanie", class = "section-title", "Od pytania do testu"),
+    lc_h2("ch2-pytanie", "Od pytania do testu"),
 
-    div(class = "narrative",
+    tagList(
       p("Statystyk nie zaczyna od wzorów — zaczyna od pytania. Ktoś przychodzi i pyta w języku potocznym:"),
-      div(class = "callout-info", style = "font-size: 18px; text-align: center;",
+      lc_feedback(type = "info", style = "font-size: 18px; text-align: center;",
         tags$em("„Czy nasi studenci mają typowy poziom koncentracji?
         Bo wydaje mi się, że coś z nimi jest nie tak.”")
       ),
@@ -32,18 +32,18 @@ ch2_ui <- list(
         z pilotażu: średni wynik testu koncentracji w populacji = 70 pkt."),
       p("Pytanie potoczne zamienia się w jedną z trzech par hipotez
         — zależnie od tego, w którą stronę pytamy:"),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Dwustronna"), " (sprawdzamy, czy średnia w ogóle się różni):"),
         p(withMathJax("\\(H_0: \\mu = 70 \\quad\\)"),
           withMathJax("\\(H_a: \\mu \\neq 70\\)"))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Prawostronna"), " (pytamy, czy średnia jest ",
           tags$em("wyższa"), " niż norma):"),
         p(withMathJax("\\(H_0: \\mu \\leq 70 \\quad\\)"),
           withMathJax("\\(H_a: \\mu > 70\\)"))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Lewostronna"), " (pytamy, czy średnia jest ",
           tags$em("niższa"), " niż norma):"),
         p(withMathJax("\\(H_0: \\mu \\geq 70 \\quad\\)"),
@@ -57,7 +57,7 @@ ch2_ui <- list(
         withMathJax("\\(\\mu_0\\)"),
         ". Różni się tylko sposób liczenia p-wartości (po jednej albo po obu stronach rozkładu)."),
       p("Wzór na ", tags$b("test t jednej próby"), ":"),
-      div(class = "formula-box",
+      lc_formula_box(
         p(withMathJax("\\(t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}}, \\quad df = n - 1\\)"))
       )
     ),
@@ -65,9 +65,9 @@ ch2_ui <- list(
     # ========================================================================
     # Cwiczenie: sformuluj hipotezy
     # ========================================================================
-    h2(id = "ch2-cwiczenie", class = "section-title", "Ćwiczenie: sformułuj hipotezy"),
+    lc_h2("ch2-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    div(class = "narrative",
+    tagList(
       p("Zanim zobaczysz test w działaniu — spróbuj sam. Dla każdego pytania
         badawczego zastanów się, jak wyglądałyby ", tags$b("H₀"), " i ", tags$b("Hₐ"),
         ". Przedyskutuj w grupie, a potem kliknij „Pokaż odpowiedź”.")
@@ -103,7 +103,7 @@ ch2_ui <- list(
     # ========================================================================
     # WIDGET 1: Krokowy test t jednej proby
     # ========================================================================
-    h2(id = "ch2-krok", class = "section-title", "Test t jednej próby — krok po kroku"),
+    lc_h2("ch2-krok", "Test t jednej próby — krok po kroku"),
 
     figure_panel(
       label = "Ryc. 3.1",
@@ -123,18 +123,18 @@ ch2_ui <- list(
           sliderInput("ch2_n", "Wielkość próby (n):",
                       min = 10, max = 100, value = 40, step = 5),
           actionButton("ch2_new_sample", "Losuj próbę",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           hr(),
           h5("Kroki testu:"),
-          div(style = "display: flex; flex-direction: column; gap: 6px;",
+          lc_stack(gap = "sm",
             actionButton("ch2_step1", "1. Dane",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch2_step2", "2. Statystyki opisowe",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch2_step3", "3. Statystyka testowa",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch2_step4", "4. p-wartość i decyzja",
-                         class = "btn-outline-primary", width = "100%")
+                         class = "lc-btn-outline", width = "100%")
           )
         ),
         column(8,
@@ -165,9 +165,9 @@ ch2_ui <- list(
     # ========================================================================
     # WIDGET 2: Test jednostronny — to samo pytanie, ale z kierunkiem
     # ========================================================================
-    h2(id = "ch2-jednostronny", class = "section-title", "A jeśli znamy kierunek? Test jednostronny"),
+    lc_h2("ch2-jednostronny", "A jeśli znamy kierunek? Test jednostronny"),
 
-    div(class = "narrative",
+    tagList(
       p("W pierwszym teście pytaliśmy: „czy średnia różni się od μ₀?” (dwustronny, ≠).
         Ale czasem mamy silniejsze podejrzenie — nie tylko „czy różni się”,
         ale „czy jest większa / mniejsza”."),
@@ -183,15 +183,15 @@ ch2_ui <- list(
           helpText("Dane: te same co w teście dwustronnym powyżej."),
           hr(),
           h5("Kroki testu:"),
-          div(style = "display: flex; flex-direction: column; gap: 6px;",
+          lc_stack(gap = "sm",
             actionButton("ch2b_step1", "1. Dane",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch2b_step2", "2. Statystyki opisowe",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch2b_step3", "3. Statystyka testowa",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch2b_step4", "4. p-wartość i decyzja",
-                         class = "btn-outline-primary", width = "100%")
+                         class = "lc-btn-outline", width = "100%")
           )
         ),
         column(8,
@@ -294,11 +294,11 @@ ch2_server <- function(input, output, session) {
     samp <- ch2_sample()
 
     tagList(
-      div(class = "callout-info", style = "font-size: 16px;",
+      lc_feedback(type = "info", style = "font-size: 16px;",
         p(tags$b("Pytanie potoczne:")),
         p(tags$em(paste0("„", par$question, "”")))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Hipoteza formalna (dwustronna):")),
         p(withMathJax(par$h0_text)),
         p(withMathJax(par$h1_text))
@@ -395,37 +395,40 @@ ch2_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
-            paste0("n = ", n)),
+        lc_stat_box("n", n, color = col_h0),
         p("Mamy próbę ", n, " obserwacji. Chcemy sprawdzić, czy średnia różni się od μ₀ = ", mu0, ".")
       ),
       "2" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-            paste0("x̄ = ", round(x_bar, 2))),
-        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
-            paste0("s = ", round(s, 2))),
-        div(class = "stat-box", style = paste0("border-left-color:", upwr_secondary, ";"),
-            paste0("SE = s/√n = ", round(se, 2))),
+        lc_stat_box("x̄", round(x_bar, 2), color = col_pvalue),
+        lc_stat_box("s", round(s, 2), color = col_h0),
+        lc_stat_box(
+          "p",
+          format.pval(p_val, digits = 4),
+          caption = paste0("SE = s/√n = ", round(se, 2)),
+          color = upwr_secondary
+        ),
         p("Różnica między x̄ a μ₀: ", tags$b(round(x_bar - mu0, 2)),
           ". Ale czy to dużo? Musimy to odnieść do zmienności (SE).")
       ),
       "3" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_effect, ";"),
-            paste0("t = (", round(x_bar, 2), " − ", mu0, ") / ",
-                   round(se, 2), " = ", round(t_stat, 3))),
+        lc_stat_box(
+          "t",
+          round(t_stat, 3),
+          caption = paste0("(", round(x_bar, 2), " − ", mu0, ") / ", round(se, 2)),
+          color = col_effect
+        ),
         p("Statystyka t mówi: średnia z próby jest ",
           tags$b(round(abs(t_stat), 1)), " błędów standardowych od μ₀.",
           if (abs(t_stat) > 2) " To sporo!" else " To niewiele.")
       ),
       "4" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-            paste0("p = ", format.pval(p_val, digits = 4))),
+        lc_stat_box("p", format.pval(p_val, digits = 4), color = col_pvalue),
         p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
           res$decision),
         p(res$explanation)
       )
     )
-    div(class = "callout-info", info)
+    lc_feedback(type = "info", info)
   })
 
   # --- Widget 2: Test jednostronny (te same dane co Widget 1) ---
@@ -469,11 +472,11 @@ ch2_server <- function(input, output, session) {
     samp <- ch2_sample()
 
     tagList(
-      div(class = "callout-info", style = "font-size: 16px;",
+      lc_feedback(type = "info", style = "font-size: 16px;",
         p(tags$b("Pytanie potoczne (kierunkowe):")),
         p(tags$em(paste0("„", par1s$question, "”")))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Hipoteza formalna (jednostronna!):")),
         p(withMathJax(par1s$h0_text)),
         p(withMathJax(par1s$h1_text))
@@ -571,31 +574,30 @@ ch2_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
-            paste0("n = ", n, " (te same dane co wyżej)")),
+        lc_stat_box("n", n, caption = "te same dane co wyżej", color = col_h0),
         p("Pytamy, czy średnia jest ",
           dir_label, " niż μ₀ = ", mu0, ".")
       ),
       "2" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-            paste0("x̄ = ", round(x_bar, 2))),
-        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
-            paste0("s = ", round(s, 2))),
-        div(class = "stat-box", style = paste0("border-left-color:", upwr_secondary, ";"),
-            paste0("SE = s/√n = ", round(se, 2))),
+        lc_stat_box("x̄", round(x_bar, 2), color = col_pvalue),
+        lc_stat_box("s", round(s, 2), color = col_h0),
+        lc_stat_box(
+          "t",
+          round(t_stat, 3),
+          caption = paste0("SE = s/√n = ", round(se, 2), "; taka sama wartość"),
+          color = upwr_secondary
+        ),
         p("Statystyki takie same jak wyżej — dane się nie zmieniły.
           Zmieniło się tylko pytanie (kierunek).")
       ),
       "3" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_effect, ";"),
-            paste0("t = ", round(t_stat, 3), " (taka sama wartość!)")),
+        lc_stat_box("t", round(t_stat, 3), color = col_effect),
         p("Statystyka t jest identyczna. Ale w teście jednostronnym patrzymy tylko na ",
           tags$b(if (par1s$alt == "less") "lewy" else "prawy"), " ogon rozkładu.")
       ),
       "4" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-            paste0("p = ", format.pval(p_val, digits = 4),
-                   " (jednostronnie!)")),
+        lc_stat_box("p", format.pval(p_val, digits = 4),
+                    caption = "jednostronnie", color = col_pvalue),
         p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
           res$decision),
         p(res$explanation),
@@ -603,6 +605,6 @@ ch2_server <- function(input, output, session) {
           ten sam t, ale inna p-wartość!"))
       )
     )
-    div(class = "callout-info", info)
+    lc_feedback(type = "info", info)
   })
 }

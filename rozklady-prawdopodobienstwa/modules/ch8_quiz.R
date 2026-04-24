@@ -35,9 +35,9 @@ ch8_ui <- list(
       lead   = "Czas sprawdzić, czy potrafisz rozpoznać rozkłady w praktyce!"
     ),
 
-    h2(id = "ch8-quiz", class = "section-title", "Quiz: dopasuj rozkład do zjawiska"),
+    lc_h2("ch8-quiz", "Quiz: dopasuj rozkład do zjawiska"),
 
-    div(class = "narrative",
+    tagList(
       p("Przeczytaj opis zjawiska i wybierz rozkład, który najlepiej je modeluje.
         W każdym pytaniu zobaczysz ", tags$b("3 opcje"),
         " — jedną poprawną i dwie losowo wybrane błędne."),
@@ -54,7 +54,7 @@ ch8_ui <- list(
       fluidRow(
         column(6,
           actionButton("ch8_start", "Rozpocznij quiz",
-                       class = "btn-primary btn-lg", width = "100%")
+                       class = "lc-btn-primary lc-btn-lg", width = "100%")
         ),
         column(6,
           uiOutput("ch8_progress")
@@ -163,7 +163,7 @@ ch8_server <- function(input, output, session) {
                             else if (quiz_state$correct / answered >= 0.5) unname(upwr_cat["bursztyn"])
                             else unname(upwr_cat["terakota"])))
       ),
-      div(style = "background: #e9ecef; border-radius: 6px; height: 8px; overflow: hidden;",
+      div(style = "background: var(--upwr-rule); border-radius: 6px; height: 8px; overflow: hidden;",
         div(style = paste0(
           "background: ", unname(upwr_cat["niebo"]), "; height: 100%; width: ", pct, "%;",
           "border-radius: 6px; transition: width 0.3s;"
@@ -179,9 +179,9 @@ ch8_server <- function(input, output, session) {
     q <- quiz_state$questions[[quiz_state$current_idx]]
 
     div(
-      style = "font-size: 18px; font-weight: 500; color: #2c3e50;
+      style = "font-size: 18px; font-weight: 500; color: var(--upwr-ink);
                padding: 20px; background: white; border-radius: 8px;
-               border-left: 4px solid #3498db; margin: 15px 0;",
+               border-left: 4px solid var(--upwr-cat-niebo); margin: 15px 0;",
       q$question
     )
   })
@@ -247,7 +247,7 @@ ch8_server <- function(input, output, session) {
 
     tagList(
       # Wynik
-      div(class = if (is_correct) "callout-success" else "callout-danger",
+      lc_feedback(type = if (is_correct) "ok" else "danger",
         tags$strong(if (is_correct) "Dobrze!" else "Nie tym razem."),
         if (!is_correct) {
           paste0(" Poprawna odpowiedź: ", correct_label)
@@ -255,19 +255,19 @@ ch8_server <- function(input, output, session) {
       ),
 
       # Wyjasnienie
-      div(style = "background: #f8f9fa; border-radius: 6px; padding: 12px 16px;
-                   margin: 10px 0; font-size: 14px; color: #555;",
+      div(style = "background: var(--upwr-surface-sunken); border-radius: 6px; padding: 12px 16px;
+                   margin: 10px 0; font-size: 14px; color: var(--upwr-reference);",
         explanation
       ),
 
       # Przycisk dalej
       if (quiz_state$current_idx < quiz_state$total) {
         actionButton("ch8_next", "Następne pytanie →",
-                     class = "btn-primary", width = "100%",
+                     class = "lc-btn-primary", width = "100%",
                      style = "margin-top: 10px;")
       } else {
         actionButton("ch8_finish", "Zobacz wynik",
-                     class = "btn-success btn-lg", width = "100%",
+                     class = "lc-btn-ok lc-btn-lg", width = "100%",
                      style = "margin-top: 10px;")
       }
     )
@@ -310,12 +310,12 @@ ch8_server <- function(input, output, session) {
       ), paste0(pct, "%")),
 
       # Szczegoly
-      div(style = "font-size: 18px; color: #555; margin: 10px 0;",
+      div(style = "font-size: 18px; color: var(--upwr-reference); margin: 10px 0;",
         paste0("Poprawne odpowiedzi: ", correct, " / ", total)
       ),
 
       # Pasek wyniku
-      div(style = "max-width: 300px; margin: 15px auto; background: #e9ecef;
+      div(style = "max-width: 300px; margin: 15px auto; background: var(--upwr-rule);
                    border-radius: 10px; height: 16px; overflow: hidden;",
         div(style = paste0(
           "background: ", result_color, "; height: 100%; width: ", pct, "%;
@@ -332,9 +332,9 @@ ch8_server <- function(input, output, session) {
       # Przyciski
       div(style = "display: flex; gap: 10px; justify-content: center;",
         actionButton("ch8_start", "Spróbuj ponownie",
-                     class = "btn-primary btn-lg"),
+                     class = "lc-btn-primary lc-btn-lg"),
         actionButton("ch8_back_to_ch7", "Wróć do ściągi",
-                     class = "btn-outline-secondary btn-lg")
+                     class = "lc-btn-secondary-outline lc-btn-lg")
       )
     )
   })

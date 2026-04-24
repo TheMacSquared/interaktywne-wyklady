@@ -18,9 +18,9 @@ ch1_ui <- list(
     # ========================================================================
     # WIDGET 1: Stabilizacja czestosci (rzut kostka)
     # ========================================================================
-    h2(id = "ch1-pwl", class = "section-title", "Prawo wielkich liczb w akcji"),
+    lc_h2("ch1-pwl", "Prawo wielkich liczb w akcji"),
 
-    div(class = "narrative",
+    tagList(
       p("Wyobraź sobie, że rzucasz kostką. Jak często wypada każda ścianka?
         Przy kilku rzutach wyniki są chaotyczne, ale im więcej rzutów,
         tym częstości względne stają się bardziej stabilne.")
@@ -32,18 +32,18 @@ ch1_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          div(style = "display: flex; flex-direction: column; gap: 8px;",
+          lc_stack(gap = "md",
             actionButton("ch1_roll_1", "Rzuć 1x",
-                         class = "btn-primary", width = "100%"),
+                         class = "lc-btn-primary", width = "100%"),
             actionButton("ch1_roll_10", "Rzuć 10x",
-                         class = "btn-primary", width = "100%"),
+                         class = "lc-btn-primary", width = "100%"),
             actionButton("ch1_roll_100", "Rzuć 100x",
-                         class = "btn-primary", width = "100%"),
+                         class = "lc-btn-primary", width = "100%"),
             actionButton("ch1_roll_1000", "Rzuć 1000x",
-                         class = "btn-primary", width = "100%"),
+                         class = "lc-btn-primary", width = "100%"),
             hr(),
             actionButton("ch1_roll_reset", "Reset",
-                         class = "btn-outline-secondary", width = "100%")
+                         class = "lc-btn-secondary-outline", width = "100%")
           ),
           br(),
           uiOutput("ch1_roll_count")
@@ -55,7 +55,7 @@ ch1_ui <- list(
       )
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Prawo wielkich liczb:"),
       " Wraz ze wzrostem liczby obserwacji, częstość względna każdego
         wyniku zbiega do jego prawdopodobieństwa teoretycznego.
@@ -65,9 +65,9 @@ ch1_ui <- list(
     # ========================================================================
     # WIDGET 0: Rozklad empiryczny vs teoretyczny
     # ========================================================================
-    h2(id = "ch1-rozklad-emp", class = "section-title", "Rozkład empiryczny vs teoretyczny"),
+    lc_h2("ch1-rozklad-emp", "Rozkład empiryczny vs teoretyczny"),
 
-    div(class = "narrative",
+    tagList(
       p("Kostka to prosty przykład, ale ten sam mechanizm działa dla każdej
         zmiennej losowej. Znasz już histogram — pokazuje, jak często dane
         przyjmują różne wartości. To jest ", tags$b("rozkład empiryczny"),
@@ -95,7 +95,7 @@ ch1_ui <- list(
           sliderInput("ch1_emp_n", "Wielkość próby:",
                       min = 20, max = 5000, value = 200, step = 20),
           actionButton("ch1_emp_resample", "Losuj nową próbę",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           hr(),
           checkboxInput("ch1_show_hist", "Histogram (dane empiryczne)", value = TRUE),
           checkboxInput("ch1_show_density", "Krzywa gęstości (model teoretyczny)", value = FALSE)
@@ -120,9 +120,9 @@ ch1_ui <- list(
     # ========================================================================
     # WIDGET 2: Czestosci vs prawdopodobienstwo
     # ========================================================================
-    h2(id = "ch1-czestosci", class = "section-title", "Częstości vs prawdopodobieństwo"),
+    lc_h2("ch1-czestosci", "Częstości vs prawdopodobieństwo"),
 
-    div(class = "narrative",
+    tagList(
       p("Prawdopodobieństwo to ", tags$b("teoretyczny model"),
         " opisujący, jak często powinny występować różne wyniki.
         Częstości względne z danych to ", tags$b("empiryczne przybliżenie"),
@@ -146,7 +146,7 @@ ch1_ui <- list(
           sliderInput("ch1_n_obs", "Liczba obserwacji:",
                       min = 10, max = 5000, value = 100, step = 10),
           actionButton("ch1_resample", "Losuj ponownie",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch1_freq_vs_prob", height = "350px"),
@@ -158,9 +158,9 @@ ch1_ui <- list(
     # ========================================================================
     # WIDGET 3: Czym jest rozklad?
     # ========================================================================
-    h2(id = "ch1-rozklad", class = "section-title", "Czym jest rozkład prawdopodobieństwa?"),
+    lc_h2("ch1-rozklad", "Czym jest rozkład prawdopodobieństwa?"),
 
-    div(class = "narrative",
+    tagList(
       p("Rozkład prawdopodobieństwa to ", tags$b("kompletny opis"),
         " wszystkich możliwych wyników i ich prawdopodobieństw.
         Musi spełniać dwa warunki:"),
@@ -241,7 +241,7 @@ ch1_server <- function(input, output, session) {
       return(ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Włącz przynajmniej jedną warstwę",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void())
     }
 
@@ -318,15 +318,15 @@ ch1_server <- function(input, output, session) {
     show_dens <- input$ch1_show_density
 
     if (show_hist && show_dens) {
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         "Widzisz obie warstwy. Histogram to dane, krzywa to model.
          Zwiększaj próbę — histogram coraz lepiej przybliża krzywą!")
     } else if (show_hist) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         "To histogram — rozkład empiryczny oparty na danych.
          Włącz krzywą gęstości, żeby zobaczyć model teoretyczny.")
     } else if (show_dens) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         "To krzywa gęstości — model teoretyczny.
          Włącz histogram, żeby porównać z danymi.")
     }
@@ -353,8 +353,7 @@ ch1_server <- function(input, output, session) {
 
   output$ch1_roll_count <- renderUI({
     n <- length(dice_rolls())
-    div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["niebo"]), ";"),
-        paste0("Rzutów: ", n))
+    lc_stat_box("Rzutów", n, color = unname(upwr_cat["niebo"]))
   })
 
   output$ch1_freq_bar <- renderPlot({
@@ -362,7 +361,7 @@ ch1_server <- function(input, output, session) {
     if (length(rolls) == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij przycisk, aby rzucić kostką",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       df <- data.frame(face = factor(rolls, levels = 1:6))
@@ -464,7 +463,7 @@ ch1_server <- function(input, output, session) {
     n <- length(fd$obs)
     max_diff <- max(abs(table(factor(fd$obs, levels = 1:length(fd$labels))) / n - fd$theo))
 
-    div(class = if (max_diff < 0.05) "callout-success" else "callout-info",
+    lc_feedback(type = if (max_diff < 0.05) "ok" else "info",
       paste0("Maksymalna różnica między częstością a prawdopodobieństwem: ",
              sprintf("%.3f", max_diff),
              if (max_diff < 0.05) " — dobra zgodność!" else " — spróbuj zwiększyć n")
@@ -475,11 +474,9 @@ ch1_server <- function(input, output, session) {
   output$ch1_sum_check <- renderUI({
     s <- input$ch1_p1 + input$ch1_p2 + input$ch1_p3 + input$ch1_p4
     if (abs(s - 1) < 0.005) {
-      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["szalwia"]), ";"),
-          paste0("∑ = ", sprintf("%.2f", s), " ✔"))
+      lc_stat_box("∑", sprintf("%.2f", s), " ✔", color = unname(upwr_cat["szalwia"]))
     } else {
-      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["terakota"]), ";"),
-          paste0("∑ = ", sprintf("%.2f", s), " ≠ 1 ✘"))
+      lc_stat_box("∑", sprintf("%.2f", s), " ≠ 1 ✘", color = unname(upwr_cat["terakota"]))
     }
   })
 
@@ -494,7 +491,7 @@ ch1_server <- function(input, output, session) {
     )
 
     ggplot(df, aes(x = outcome, y = prob)) +
-      geom_col(fill = if (valid) unname(upwr_cat["szalwia"]) else "#95a5a6",
+      geom_col(fill = if (valid) unname(upwr_cat["szalwia"]) else upwr_reference,
                color = "white", alpha = 0.85, width = 0.6) +
       geom_text(aes(label = sprintf("%.2f", prob)), vjust = -0.5, size = 5) +
       scale_y_continuous(limits = c(0, 1.1), expand = expansion(mult = c(0, 0))) +

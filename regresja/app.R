@@ -2,7 +2,6 @@
 # Scrollowalny skrypt z osadzonymi widgetami do nauczania regresji liniowej i logistycznej
 
 library(shiny)
-library(bslib)
 library(ggplot2)
 library(dplyr)
 library(rstatix)

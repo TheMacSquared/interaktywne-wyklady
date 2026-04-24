@@ -16,16 +16,15 @@ ch3_ui <- list(
                 A co, gdy Y to 0 lub 1 (sukces/porażka)?"
     ),
 
-    h2(id = "ch3-dlaczego", class = "section-title",
-       "Dlaczego nie regresja liniowa?"),
+    lc_h2("ch3-dlaczego", "Dlaczego nie regresja liniowa?"),
 
-    div(class = "narrative",
+    tagList(
       p("Gdy zmienna zależna jest ", tags$b("binarna"),
         " (np. zdany/niezdany egzamin), regresja liniowa daje przewidywania
         spoza zakresu [0, 1]. Rozwiązanie: ", tags$b("regresja logistyczna"), "."),
       p("Zamiast modelować Y bezpośrednio, modelujemy ",
         tags$b("prawdopodobieństwo"), " sukcesu:"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText(
           "$$P(Y=1) = \\frac{1}{1 + e^{-(\\beta_0 + \\beta_1 X_1 + \\ldots + \\beta_k X_k)}}$$"
         )),
@@ -33,7 +32,7 @@ ch3_ui <- list(
       )
     ),
 
-    h2(id = "ch3-krzywa", class = "section-title", "Krzywa logistyczna"),
+    lc_h2("ch3-krzywa", "Krzywa logistyczna"),
 
     figure_panel(
       label = "Ryc. 3.1", title = "Sigmoida w akcji",
@@ -47,11 +46,11 @@ ch3_ui <- list(
           hr(),
           div(class = "preset-buttons",
             actionButton("ch3_preset_steep", "Stromy",
-                         class = "btn-outline-primary"),
+                         class = "lc-btn-outline"),
             actionButton("ch3_preset_flat", "Płaski",
-                         class = "btn-outline-secondary"),
+                         class = "lc-btn-secondary-outline"),
             actionButton("ch3_preset_neg", "Odwrotny",
-                         class = "btn-outline-danger")
+                         class = "lc-btn-danger-outline")
           )
         ),
         column(8,
@@ -60,10 +59,9 @@ ch3_ui <- list(
       )
     ),
 
-    h2(id = "ch3-model-dane", class = "section-title",
-       "Model logistyczny na danych"),
+    lc_h2("ch3-model-dane", "Model logistyczny na danych"),
 
-    div(class = "narrative",
+    tagList(
       p("Scenariusz: czy student zda egzamin? Predyktory: godziny nauki
         i średnia ocen.")
     ),
@@ -82,7 +80,7 @@ ch3_ui <- list(
             selected = "godziny_nauki"
           ),
           actionButton("ch3_fit", "Dopasuj model",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           hr(),
           h5("Predykcja dla nowego studenta:"),
           numericInput("ch3_pred_hours", "Godziny nauki:", value = 20, min = 0, max = 40),
@@ -96,13 +94,12 @@ ch3_ui <- list(
       )
     ),
 
-    h2(id = "ch3-iloraz-szans", class = "section-title",
-       "Interpretacja: iloraz szans"),
+    lc_h2("ch3-iloraz-szans", "Interpretacja: iloraz szans"),
 
-    div(class = "narrative",
+    tagList(
       p("W regresji logistycznej współczynniki interpretujemy przez ",
         tags$strong("iloraz szans (odds ratio)"), ":"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText("$$OR = e^{\\beta_j}$$")),
         p("OR = 1.5 oznacza: wzrost X o 1 zwiększa szanse sukcesu
           1.5-krotnie.")
@@ -184,7 +181,7 @@ ch3_server <- function(input, output, session) {
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Dopasuj model'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       pred_var <- input$ch3_predictor
@@ -225,12 +222,9 @@ ch3_server <- function(input, output, session) {
     accuracy <- mean(pred_class == df$zdal_num) * 100
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["wrzos"]), ";"),
-          paste0("AIC = ", round(g$AIC, 1))),
-      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
-          paste0("BIC = ", round(g$BIC, 1))),
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["szalwia"]), ";"),
-          paste0("Dokładność = ", round(accuracy, 1), "%"))
+      lc_stat_box("AIC", round(g$AIC, 1), color = unname(upwr_cat["wrzos"])),
+      lc_stat_box("BIC", round(g$BIC, 1), color = upwr_secondary),
+      lc_stat_box("Dokładność", round(accuracy, 1), "%", color = unname(upwr_cat["szalwia"]))
     )
   })
 
@@ -247,15 +241,14 @@ ch3_server <- function(input, output, session) {
     color <- if (prob >= 0.5) unname(upwr_cat["szalwia"]) else unname(upwr_cat["terakota"])
     decision <- if (prob >= 0.5) "Prawdopodobnie zda" else "Raczej nie zda"
 
-    div(class = "stat-box", style = paste0("background:", color, "; display: block;"),
-        paste0("P(zdanie) = ", round(prob, 3), "\n", decision))
+    lc_stat_box("P(zdanie)", round(prob, 3), caption = decision, color = color)
   })
 
   # --- Widget 3: Odds ratios ---
   output$ch3_odds_ratios <- renderUI({
     model <- ch3_model()
     if (is.null(model)) {
-      return(div(class = "callout-warning", "Najpierw dopasuj model."))
+      return(lc_feedback(type = "warning", "Najpierw dopasuj model."))
     }
 
     coefs <- broom::tidy(model, conf.int = TRUE)
@@ -284,7 +277,7 @@ ch3_server <- function(input, output, session) {
     })
 
     tagList(
-      tags$table(class = "table table-bordered",
+      tags$table(class = "lc-table lc-table-bordered",
         style = "font-size: 14px;",
         tags$thead(
           tags$tr(tags$th("Zmienna"), tags$th("β"), tags$th("OR"),
@@ -292,7 +285,7 @@ ch3_server <- function(input, output, session) {
         ),
         tags$tbody(rows)
       ),
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         p(tags$strong("Interpretacja OR:"),
           " OR > 1 oznacza, że wzrost predyktora o 1 zwiększa szanse sukcesu.
             OR < 1 — zmniejsza. OR = 1 — brak wpływu.")

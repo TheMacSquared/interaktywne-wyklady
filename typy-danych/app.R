@@ -2,7 +2,6 @@
 # Scrollowalny skrypt z osadzonymi widgetami do nauczania statystyk opisowych
 
 library(shiny)
-library(bslib)
 library(ggplot2)
 library(dplyr)
 library(e1071)  # for skewness, kurtosis
@@ -258,7 +257,7 @@ app_extras <- tagList(
   }
   .taxonomy-tree ul ul::before {
     content: ''; position: absolute; top: 0; left: 50%;
-    border-left: 2px solid #bdc3c7; height: 20px;
+    border-left: 2px solid var(--upwr-rule); height: 20px;
   }
   .taxonomy-tree li {
     display: flex; flex-direction: column; align-items: center;
@@ -267,14 +266,14 @@ app_extras <- tagList(
   .taxonomy-tree > ul > li { padding-top: 0; }
   .taxonomy-tree li::before, .taxonomy-tree li::after {
     content: ''; position: absolute; top: 0;
-    border-top: 2px solid #bdc3c7; width: 50%; height: 20px;
+    border-top: 2px solid var(--upwr-rule); width: 50%; height: 20px;
   }
   .taxonomy-tree li::before { right: 50%; }
-  .taxonomy-tree li::after { left: 50%; border-left: 2px solid #bdc3c7; }
+  .taxonomy-tree li::after { left: 50%; border-left: 2px solid var(--upwr-rule); }
   .taxonomy-tree li:first-child::before { border: none; }
   .taxonomy-tree li:last-child::after { border: none; }
   .taxonomy-tree li:last-child::before {
-    border-right: 2px solid #bdc3c7; border-radius: 0 5px 0 0;
+    border-right: 2px solid var(--upwr-rule); border-radius: 0 5px 0 0;
   }
   .taxonomy-tree li:first-child::after { border-radius: 5px 0 0 0; }
   .taxonomy-tree li:only-child::before,
@@ -282,11 +281,11 @@ app_extras <- tagList(
   .taxonomy-tree li:only-child { padding-top: 0; }
 
   .tax-node {
-    background: #ecf0f1; border: 2px solid #2c3e50; border-radius: 8px;
-    padding: 10px 18px; font-weight: 700; font-size: 15px; color: #2c3e50;
+    background: var(--upwr-surface-sunken); border: 2px solid var(--upwr-ink-soft); border-radius: 8px;
+    padding: 10px 18px; font-weight: 700; font-size: 15px; color: var(--upwr-ink);
     white-space: nowrap;
   }
-  .tax-node small { font-weight: 400; font-size: 12px; color: #7f8c8d; }
+  .tax-node small { font-weight: 400; font-size: 12px; color: var(--upwr-reference); }
   .tax-leaf {
     border-radius: 8px; padding: 12px 16px; font-weight: 700; font-size: 14px;
     color: white; cursor: pointer; transition: all 0.2s; white-space: nowrap;
@@ -295,11 +294,11 @@ app_extras <- tagList(
     transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   }
   .tax-example {
-    font-size: 12px; color: #555; margin-top: 6px; font-style: italic;
+    font-size: 12px; color: var(--upwr-reference); margin-top: 6px; font-style: italic;
     white-space: normal; max-width: 130px; line-height: 1.3;
   }
   .tax-hint {
-    font-size: 11px; color: #bdc3c7; margin-top: 4px; font-style: italic;
+    font-size: 11px; color: var(--upwr-ink-subtle); margin-top: 4px; font-style: italic;
   }
   @media (max-width: 600px) {
     .taxonomy-tree li { padding: 16px 2px 0; }
@@ -316,7 +315,7 @@ app_extras <- tagList(
 
   /* Taxonomy detail panel */
   .tax-detail {
-    background: #f8f9fa; border-radius: 6px;
+    background: var(--upwr-surface-sunken); border-radius: 6px;
     padding: 14px 18px; margin-top: 12px;
     animation: taxDetailFade 0.25s ease-out;
   }
@@ -327,16 +326,16 @@ app_extras <- tagList(
 
   /* Gallery grid */
   .example-card {
-    border: 2px solid #dee2e6; border-radius: 8px;
+    border: 2px solid var(--upwr-rule); border-radius: 8px;
     padding: 12px; margin-bottom: 15px; background: white;
   }
 
   /* Variable tracker panel */
   .tracker-panel {
-    background: #eaf4fc; border: 1px solid #3498db; border-radius: 6px;
+    background: color-mix(in srgb, var(--upwr-cat-niebo) 16%, var(--upwr-surface)); border: 1px solid var(--upwr-cat-niebo); border-radius: 6px;
     padding: 10px 14px; margin-bottom: 15px; font-size: 13px;
   }
-  .tracker-panel strong { color: #2c3e50; }
+  .tracker-panel strong { color: var(--upwr-ink); }
   "))
 ) # end app_extras
 

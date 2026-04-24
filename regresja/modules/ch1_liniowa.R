@@ -16,13 +16,12 @@ ch1_ui <- list(
                 Regresja idzie dalej: modeluje ten związek i pozwala predykować."
     ),
 
-    h2(id = "ch1-od-korelacji", class = "section-title",
-       "Od korelacji do regresji"),
+    lc_h2("ch1-od-korelacji", "Od korelacji do regresji"),
 
-    div(class = "narrative",
+    tagList(
       p("Regresja liniowa prosta opisuje związek między jedną zmienną
         objaśniającą (X) a zmienną zależną (Y) za pomocą linii prostej:"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText("$$Y = \\beta_0 + \\beta_1 X + \\varepsilon$$")),
         p(withMathJax("\\(\\beta_0\\)"), " — wyraz wolny (intercept): wartość Y gdy X = 0"),
         p(withMathJax("\\(\\beta_1\\)"), " — nachylenie (slope): o ile zmieni się Y, gdy X wzrośnie o 1"),
@@ -30,8 +29,7 @@ ch1_ui <- list(
       )
     ),
 
-    h2(id = "ch1-dopasowanie", class = "section-title",
-       "Dopasowanie linii regresji"),
+    lc_h2("ch1-dopasowanie", "Dopasowanie linii regresji"),
 
     figure_panel(
       label = "Ryc. 1.1", title = "Regresja liniowa prosta",
@@ -49,7 +47,7 @@ ch1_ui <- list(
           sliderInput("ch1_n", "Wielkość próby (n):",
                       min = 20, max = 200, value = 80, step = 10),
           actionButton("ch1_gen", "Generuj dane i dopasuj",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           hr(),
           checkboxInput("ch1_show_residuals", "Pokaż reszty", value = FALSE),
           checkboxInput("ch1_show_ci", "Pokaż pasmo ufności", value = TRUE)
@@ -61,12 +59,11 @@ ch1_ui <- list(
       )
     ),
 
-    h2(id = "ch1-reszty", class = "section-title",
-       "Reszty (residuals)"),
+    lc_h2("ch1-reszty", "Reszty (residuals)"),
 
-    div(class = "narrative",
+    tagList(
       p("Reszta to różnica między wartością zaobserwowaną a przewidywaną:"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText("$$e_i = y_i - \\hat{y}_i$$"))
       ),
       p("Dobry model ma reszty ", tags$strong("małe"), ", ",
@@ -80,13 +77,12 @@ ch1_ui <- list(
       plotOutput("ch1_resid_plots", height = "300px")
     ),
 
-    h2(id = "ch1-r2", class = "section-title",
-       "R² — ile model wyjaśnia?"),
+    lc_h2("ch1-r2", "R² — ile model wyjaśnia?"),
 
-    div(class = "narrative",
+    tagList(
       p("Współczynnik determinacji ", withMathJax("\\(R^2\\)"),
         " mówi, jaki odsetek zmienności Y jest wyjaśniony przez model."),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText("$$R^2 = 1 - \\frac{SS_{res}}{SS_{tot}} = 1 - \\frac{\\sum(y_i - \\hat{y}_i)^2}{\\sum(y_i - \\bar{y})^2}$$"))
       ),
       p("Zakres [0, 1]: 0 = model nic nie wyjaśnia, 1 = idealne dopasowanie.")
@@ -102,7 +98,7 @@ ch1_ui <- list(
           sliderInput("ch1_r2_slope", "Nachylenie (β₁):",
                       min = 0, max = 5, value = 2, step = 0.25),
           actionButton("ch1_r2_gen", "Generuj",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch1_r2_plot", height = "300px"),
@@ -149,7 +145,7 @@ ch1_server <- function(input, output, session) {
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane i dopasuj'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       df$fitted <- fitted(model)
@@ -185,15 +181,12 @@ ch1_server <- function(input, output, session) {
     g <- broom::glance(model)
 
     tagList(
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["niebo"]), ";"),
-          paste0("R² = ", round(g$r.squared, 3))),
-      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
-          paste0("β₀ = ", round(coefs$estimate[1], 2))),
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["szalwia"]), ";"),
-          paste0("β₁ = ", round(coefs$estimate[2], 3))),
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["terakota"]), ";"),
-          paste0("RMSE = ", round(sqrt(mean(residuals(model)^2)), 2))),
-      div(class = "callout-info", style = "margin-top: 10px;",
+      lc_stat_box("R²", round(g$r.squared, 3), color = unname(upwr_cat["niebo"])),
+      lc_stat_box("β₀", round(coefs$estimate[1], 2), color = upwr_secondary),
+      lc_stat_box("β₁", round(coefs$estimate[2], 3), color = unname(upwr_cat["szalwia"])),
+      lc_stat_box("RMSE", round(sqrt(mean(residuals(model)^2)), 2),
+                  color = unname(upwr_cat["terakota"])),
+      lc_feedback(type = "info", style = "margin-top: 10px;",
         p(tags$strong("Interpretacja:"),
           paste0(" Gdy ", ch1_data()$x_label[1], " wzrasta o 1, ",
                  ch1_data()$y_label[1], " zmienia się średnio o ",
@@ -208,7 +201,7 @@ ch1_server <- function(input, output, session) {
     if (is.null(model)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Najpierw dopasuj model",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       df <- data.frame(
@@ -252,7 +245,7 @@ ch1_server <- function(input, output, session) {
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       ggplot(df, aes(x = x, y = y)) +
@@ -271,10 +264,10 @@ ch1_server <- function(input, output, session) {
     model <- lm(y ~ x, data = df)
     r2 <- summary(model)$r.squared
     tagList(
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["niebo"]), ";"),
-          paste0("R² = ", round(r2, 3))),
-      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
-          paste0(round(r2 * 100, 1), "% zmienności wyjaśnione"))
+      lc_stat_box("R²", round(r2, 3), color = unname(upwr_cat["niebo"])),
+      lc_stat_box("Wyjaśnione", round(r2 * 100, 1), "%",
+                  caption = "zmienności",
+                  color = upwr_secondary)
     )
   })
 }

@@ -14,11 +14,11 @@ ch6_ui <- list(
                 Odpowiedź to jedno z najważniejszych twierdzeń w statystyce."
     ),
 
-    h2(id = "ch6-ctg", class = "section-title", "Centralne Twierdzenie Graniczne (CTG)"),
+    lc_h2("ch6-ctg", "Centralne Twierdzenie Graniczne (CTG)"),
 
-    div(class = "narrative",
+    tagList(
       p("Centralne Twierdzenie Graniczne mówi, że:"),
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("CTG:"),
         " Jeśli wezmiesz próbę n obserwacji z ", tags$b("dowolnego"),
         " rozkładu (o skończonej wariancji) i obliczysz średnią,
@@ -47,7 +47,7 @@ ch6_ui <- list(
     # ========================================================================
     # WIDGET 1: Eksperyment CLT (kluczowy!)
     # ========================================================================
-    h2(id = "ch6-eksperyment", class = "section-title", "Eksperyment CLT"),
+    lc_h2("ch6-eksperyment", "Eksperyment CLT"),
 
     figure_panel(
       label = "Ryc. 6.1",
@@ -68,16 +68,16 @@ ch6_ui <- list(
           sliderInput("ch6_sample_size", "Wielkość próby (n):",
                       min = 1, max = 100, value = 5, step = 1),
           hr(),
-          div(style = "display: flex; flex-direction: column; gap: 8px;",
+          lc_stack(gap = "md",
             actionButton("ch6_take_1", "Pobierz 1 próbę",
-                         class = "btn-primary", width = "100%"),
+                         class = "lc-btn-primary", width = "100%"),
             actionButton("ch6_take_100", "Pobierz 100 prób",
-                         class = "btn-primary", width = "100%"),
+                         class = "lc-btn-primary", width = "100%"),
             actionButton("ch6_take_1000", "Pobierz 1000 prób",
-                         class = "btn-warning", width = "100%"),
+                         class = "lc-btn-warning", width = "100%"),
             hr(),
             actionButton("ch6_reset", "Reset",
-                         class = "btn-outline-secondary", width = "100%")
+                         class = "lc-btn-secondary-outline", width = "100%")
           ),
           br(),
           uiOutput("ch6_sample_count")
@@ -99,9 +99,9 @@ ch6_ui <- list(
     # ========================================================================
     # WIDGET 2: Wplyw wielkosci proby
     # ========================================================================
-    h2(id = "ch6-wielkosc-proby", class = "section-title", "Wpływ wielkości próby"),
+    lc_h2("ch6-wielkosc-proby", "Wpływ wielkości próby"),
 
-    div(class = "narrative",
+    tagList(
       p("Im większa próba n, tym szybciej rozkład średnich staje się
         normalny. Zobaczmy to porównując różne n obok siebie.")
     ),
@@ -124,7 +124,7 @@ ch6_ui <- list(
     # ========================================================================
     # WIDGET 3: Dlaczego to dziala?
     # ========================================================================
-    h2(id = "ch6-dlaczego", class = "section-title", "Dlaczego to działa? — intuicja"),
+    lc_h2("ch6-dlaczego", "Dlaczego to działa? — intuicja"),
 
     figure_panel(
       label = "Ryc. 6.3",
@@ -133,19 +133,19 @@ ch6_ui <- list(
       fluidRow(
         column(4,
           actionButton("ch6_why_step1", "1. Jedna obserwacja",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch6_why_step2", "2. Średnia z 2",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch6_why_step3", "3. Średnia z 5",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch6_why_step4", "4. Średnia z 30",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch6_why_reset", "Reset",
-                       class = "btn-outline-secondary", width = "100%")
+                       class = "lc-btn-secondary-outline", width = "100%")
         ),
         column(8,
           plotOutput("ch6_why_plot", height = "350px"),
@@ -162,11 +162,11 @@ ch6_ui <- list(
       color = "ok"
     ),
 
-    div(class = "formula-box",
+    lc_formula_box(
       withMathJax(helpText(
         "$$\\bar{X}_n \\xrightarrow{d} N\\left(\\mu, \\frac{\\sigma}{\\sqrt{n}}\\right)$$"
       )),
-      p(style = "font-size: 13px; color: #7f8c8d;",
+      p(style = "font-size: 13px; color: var(--upwr-reference);",
         "Rozkład średniej ma tę samą średnią μ co populacja, ale
          odchylenie standardowe maleje jak 1/√n.")
     ),
@@ -211,8 +211,7 @@ ch6_server <- function(input, output, session) {
 
   output$ch6_sample_count <- renderUI({
     n <- length(collected_means())
-    div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["niebo"]), ";"),
-        paste0("Prób: ", n))
+    lc_stat_box("Prób", n, color = unname(upwr_cat["niebo"]))
   })
 
   output$ch6_pop_plot <- renderPlot({
@@ -247,7 +246,7 @@ ch6_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Pobierz próbę', aby rozpocząć",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       dist <- input$ch6_pop_dist
@@ -293,13 +292,14 @@ ch6_server <- function(input, output, session) {
     params <- get_population_params(dist)
     theo_sd <- params$sigma / sqrt(n)
 
-    div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["niebo"]), ";"),
-          paste0("Śr. średnich = ", round(mean(means), 3))),
-      div(class = "stat-box", style = paste0("background: ", upwr_secondary, ";"),
-          paste0("SD średnich = ", round(sd(means), 3))),
-      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["bursztyn"]), ";"),
-          paste0("Teor. SD = σ/√n = ", round(theo_sd, 3)))
+    lc_center(
+      lc_stat_box("Śr. średnich", round(mean(means), 3),
+                  color = unname(upwr_cat["niebo"])),
+      lc_stat_box("SD średnich", round(sd(means), 3),
+                  color = upwr_secondary),
+      lc_stat_box("Teor. SD", round(theo_sd, 3),
+                  caption = "σ/√n",
+                  color = unname(upwr_cat["bursztyn"]))
     )
   })
 
@@ -359,7 +359,7 @@ ch6_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij krok 1, aby zacząć",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       n_val <- c(1, 2, 5, 30)[step]
@@ -400,7 +400,7 @@ ch6_server <- function(input, output, session) {
       "Średnia z 5: kształt staje się bardziej symetryczny. Ekstrema się niwelują.",
       "Średnia z 30: praktycznie normalny! Krzywa gaussowska pasuje niemal idealnie."
     )
-    if (step > 0) div(class = "callout-info", texts[[step + 1]])
+    if (step > 0) lc_feedback(type = "info", texts[[step + 1]])
   })
 
 }

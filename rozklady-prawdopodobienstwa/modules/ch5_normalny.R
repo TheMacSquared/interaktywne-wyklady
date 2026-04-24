@@ -14,9 +14,9 @@ ch5_ui <- list(
                 Teraz poznamy najważniejszy ze wszystkich rozkładów."
     ),
 
-    h2(id = "ch5-intro", class = "section-title", "Rozkład normalny — królowa rozkładów"),
+    lc_h2("ch5-intro", "Rozkład normalny — królowa rozkładów"),
 
-    div(class = "narrative",
+    tagList(
       p("Rozkład normalny (Gaussa) to ", tags$b("najczęściej spotykany"),
         " rozkład w statystyce. Opisuje go tylko ",
         tags$b("dwa parametry"), ": średnia μ (gdzie jest środek)
@@ -28,7 +28,7 @@ ch5_ui <- list(
     # ========================================================================
     # WIDGET 1: Dwa parametry, nieskonczone mozliwosci
     # ========================================================================
-    h2(id = "ch5-parametry", class = "section-title", "Dwa parametry — nieskończone możliwości"),
+    lc_h2("ch5-parametry", "Dwa parametry — nieskończone możliwości"),
 
     figure_panel(
       label = "Ryc. 5.1",
@@ -43,13 +43,13 @@ ch5_ui <- list(
           hr(),
           div(class = "preset-buttons",
             actionButton("ch5_preset_std", "N(0,1)\nStandardowy",
-                         class = "btn-outline-primary"),
+                         class = "lc-btn-outline"),
             actionButton("ch5_preset_wzrost_k", "Wzrost\nkobiet",
-                         class = "btn-outline-success"),
+                         class = "lc-btn-ok-outline"),
             actionButton("ch5_preset_iq", "IQ",
-                         class = "btn-outline-warning"),
+                         class = "lc-btn-warning-outline"),
             actionButton("ch5_preset_temp", "Temp.\nciała",
-                         class = "btn-outline-danger")
+                         class = "lc-btn-danger-outline")
           ),
           hr(),
           checkboxInput("ch5_show_empirical", "Pokaż regułę 68-95-99.7", value = TRUE)
@@ -69,7 +69,7 @@ ch5_ui <- list(
     # ========================================================================
     # WIDGET 2: Porownanie rozkladow
     # ========================================================================
-    h2(id = "ch5-porownanie", class = "section-title", "Porównanie dwóch rozkładów normalnych"),
+    lc_h2("ch5-porownanie", "Porównanie dwóch rozkładów normalnych"),
 
     figure_panel(
       label = "Ryc. 5.2",
@@ -77,17 +77,17 @@ ch5_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(3,
-          h5("Rozkład A", style = "color: #3498db;"),
+          h5("Rozkład A", style = "color: var(--upwr-cat-niebo);"),
           sliderInput("ch5_cmp_mu1", "μ₁:", min = -5, max = 15, value = 5, step = 0.5),
           sliderInput("ch5_cmp_s1", "σ₁:", min = 0.5, max = 5, value = 1.5, step = 0.1)
         ),
         column(3,
-          h5("Rozkład B", style = "color: #e74c3c;"),
+          h5("Rozkład B", style = "color: var(--upwr-accent);"),
           sliderInput("ch5_cmp_mu2", "μ₂:", min = -5, max = 15, value = 8, step = 0.5),
           sliderInput("ch5_cmp_s2", "σ₂:", min = 0.5, max = 5, value = 2, step = 0.1),
           hr(),
           actionButton("ch5_cmp_preset", "Mężczyźni vs\nkobiety (wzrost)",
-                       class = "btn-outline-primary", width = "100%")
+                       class = "lc-btn-outline", width = "100%")
         ),
         column(6,
           plotOutput("ch5_compare_plot", height = "350px")
@@ -98,12 +98,12 @@ ch5_ui <- list(
     # ========================================================================
     # WIDGET 3: Standaryzacja (z-score)
     # ========================================================================
-    h2(id = "ch5-standaryzacja", class = "section-title", "Standaryzacja (z-score)"),
+    lc_h2("ch5-standaryzacja", "Standaryzacja (z-score)"),
 
-    div(class = "narrative",
+    tagList(
       p("Każdy rozkład normalny można sprowadzić do ",
         tags$b("standardowego N(0, 1)"), " za pomocą transformacji:"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText("$$z = \\frac{x - \\mu}{\\sigma}$$"))
       ),
       p("Z-score mówi nam: ", tags$b("ile odchyleń standardowych"),
@@ -131,9 +131,9 @@ ch5_ui <- list(
     # ========================================================================
     # WIDGET 4: Obliczanie prawdopodobienstw
     # ========================================================================
-    h2(id = "ch5-prawdop", class = "section-title", "Obliczanie prawdopodobieństw"),
+    lc_h2("ch5-prawdop", "Obliczanie prawdopodobieństw"),
 
-    div(class = "narrative",
+    tagList(
       p("Znając z-score, możemy obliczyć prawdopodobieństwo dowolnego
         przedziału. W R używamy funkcji ", tags$code("pnorm()"), ".")
     ),
@@ -165,7 +165,7 @@ ch5_ui <- list(
       )
     ),
 
-    div(class = "formula-box",
+    lc_formula_box(
       withMathJax(helpText(
         "$$f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}, \\quad E(X) = \\mu, \\quad Var(X) = \\sigma^2$$"
       ))
@@ -259,7 +259,7 @@ ch5_server <- function(input, output, session) {
         annotate("text", x = mu, y = y_top * 0.35, label = "95%",
                  size = 4.5, color = upwr_secondary) +
         annotate("text", x = mu, y = y_top * 0.15, label = "99.7%",
-                 size = 4, color = "#7f8c8d")
+                 size = 4, color = upwr_reference)
     }
 
     p + geom_vline(xintercept = mu, color = upwr_secondary, linetype = "dashed") +
@@ -271,13 +271,12 @@ ch5_server <- function(input, output, session) {
   output$ch5_explore_stats <- renderUI({
     mu <- input$ch5_mu
     sigma <- input$ch5_sigma
-    div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", col_normal, ";"),
-          paste0("μ = ", mu)),
-      div(class = "stat-box", style = paste0("background: ", upwr_secondary, ";"),
-          paste0("σ = ", sigma)),
-      div(class = "stat-box", style = paste0("background: ", unname(upwr_cat["bursztyn"]), ";"),
-          paste0("68%: [", round(mu - sigma, 1), ", ", round(mu + sigma, 1), "]"))
+    lc_center(
+      lc_stat_box("μ", mu, color = col_normal),
+      lc_stat_box("σ", sigma, color = upwr_secondary),
+      lc_stat_box("68%", paste0("[", round(mu - sigma, 1), ", ",
+                                round(mu + sigma, 1), "]"),
+                  color = unname(upwr_cat["bursztyn"]))
     )
   })
 
@@ -328,10 +327,10 @@ ch5_server <- function(input, output, session) {
     z <- (x - mu) / sigma
 
     div(
-      div(class = "stat-box",
-          style = paste0("background: ", col_normal, "; display: block; margin-bottom: 8px;"),
-          paste0("z = (", x, " - ", mu, ") / ", sigma, " = ", round(z, 2))),
-      div(class = "callout-info", style = "margin-top: 8px;",
+      lc_stat_box("z", round(z, 2),
+                  caption = paste0("(", x, " - ", mu, ") / ", sigma),
+                  color = col_normal),
+      lc_feedback(type = "info", style = "margin-top: 8px;",
         paste0("Wartość ", x, " leży ", round(abs(z), 2),
                " odchyleń standardowych ",
                if (z >= 0) "powyżej" else "poniżej", " średniej."))
@@ -441,12 +440,11 @@ ch5_server <- function(input, output, session) {
       "between" = paste0("pnorm(", b, ") - pnorm(", a, ")")
     )
 
-    div(style = "text-align: center; margin-top: 10px;",
-      div(class = "stat-box", style = paste0("background: ", col_normal, ";"),
-          paste0(label, " = ", sprintf("%.4f", prob))),
-      div(class = "stat-box", style = paste0("background: ", upwr_secondary, ";"),
-          paste0(sprintf("%.2f", prob * 100), "%")),
-      div(style = "margin-top: 8px; font-size: 13px; color: #7f8c8d;",
+    lc_center(
+      lc_stat_box(label, sprintf("%.4f", prob), color = col_normal),
+      lc_stat_box("Procent", sprintf("%.2f", prob * 100), "%",
+                  color = upwr_secondary),
+      div(style = "margin-top: 8px; font-size: 13px; color: var(--upwr-reference);",
           paste0("W R: ", r_code))
     )
   })

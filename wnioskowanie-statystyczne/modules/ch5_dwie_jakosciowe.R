@@ -19,15 +19,15 @@ ch5_ui <- list(
     # ========================================================================
     # Wprowadzenie
     # ========================================================================
-    h2(id = "ch5-intro", class = "section-title", "Tabela kontyngencji i test χ²"),
+    lc_h2("ch5-intro", "Tabela kontyngencji i test χ²"),
 
-    div(class = "narrative",
+    tagList(
       p("Gdy mamy dwie zmienne jakościowe, pytamy: ",
         tags$b("czy są ze sobą powiązane?"),
         " Narzędzie: tabela kontyngencji (krzyżowa) + test χ² niezależności."),
       p("Idea: porównujemy to, co ", tags$b("zaobserwowaliśmy"),
         " z tym, czego ", tags$b("oczekiwalibyśmy, gdyby zmienne były niezależne"), "."),
-      div(class = "formula-box",
+      lc_formula_box(
         p(withMathJax("\\(H_0:\\) zmienne są niezależne — ",
                       "\\(H_a:\\) zmienne są powiązane")),
         p("Liczności oczekiwane: ", withMathJax("\\(E_{ij} = \\frac{n_{i\\cdot} \\cdot n_{\\cdot j}}{n}\\)")),
@@ -38,9 +38,9 @@ ch5_ui <- list(
     # ========================================================================
     # WIDGET 0: Budowanie intuicji — co to znaczy niezaleznosc?
     # ========================================================================
-    h2(id = "ch5-intuicja", class = "section-title", "Budowanie intuicji: co to znaczy „niezależność”?"),
+    lc_h2("ch5-intuicja", "Budowanie intuicji: co to znaczy „niezależność”?"),
 
-    div(class = "narrative",
+    tagList(
       p("Zanim przejdziemy do wzorów, zbudujmy intuicję na przykładzie:")
     ),
 
@@ -48,27 +48,27 @@ ch5_ui <- list(
       label = "Ryc. 6.1",
       title = "Przykład: czy płeć wpływa na dostawanie mandatów?",
 
-      div(class = "narrative",
+      tagList(
         p("Mamy dane z 200 kontroli drogowych. Pytanie: ",
           tags$em("„Czy szansa dostania mandatu jest niezależna od płci?”"))
       ),
 
       actionButton("ch5_narr_step1", "1. Pokaż dane",
-                   class = "btn-outline-primary", width = "100%"),
+                   class = "lc-btn-outline", width = "100%"),
       uiOutput("ch5_narr1"),
       br(),
 
       conditionalPanel(
         condition = "input.ch5_narr_step1 % 2 == 1",
         actionButton("ch5_narr_step2", "2. Załóżmy niezależność — co by było?",
-                     class = "btn-outline-primary", width = "100%"),
+                     class = "lc-btn-outline", width = "100%"),
         uiOutput("ch5_narr2"),
         br(),
 
         conditionalPanel(
           condition = "input.ch5_narr_step2 % 2 == 1",
           actionButton("ch5_narr_step3", "3. Porównaj: obserwowane i oczekiwane",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           uiOutput("ch5_narr3")
         )
       )
@@ -77,9 +77,9 @@ ch5_ui <- list(
     # ========================================================================
     # Cwiczenie: sformuluj hipotezy
     # ========================================================================
-    h2(id = "ch5-cwiczenie", class = "section-title", "Ćwiczenie: sformułuj hipotezy"),
+    lc_h2("ch5-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    div(class = "narrative",
+    tagList(
       p("Jak wyglądają H₀ i Hₐ dla pytań o związek dwóch zmiennych jakościowych?")
     ),
 
@@ -109,7 +109,7 @@ ch5_ui <- list(
     # ========================================================================
     # WIDGET 1: Chi-kwadrat krokowy
     # ========================================================================
-    h2(id = "ch5-krok", class = "section-title", "Test χ² niezależności — krok po kroku"),
+    lc_h2("ch5-krok", "Test χ² niezależności — krok po kroku"),
 
     figure_panel(
       label = "Ryc. 6.2",
@@ -127,18 +127,18 @@ ch5_ui <- list(
           sliderInput("ch5_n", "Wielkość próby (n):",
                       min = 50, max = 300, value = 120, step = 10),
           actionButton("ch5_new_sample", "Losuj próbę",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           hr(),
           h5("Kroki testu:"),
-          div(style = "display: flex; flex-direction: column; gap: 6px;",
+          lc_stack(gap = "sm",
             actionButton("ch5_step1", "1. Tabela obserwowana",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch5_step2", "2. Procenty — co widzimy?",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch5_step3", "3. Tabela oczekiwana + χ²",
-                         class = "btn-outline-primary", width = "100%"),
+                         class = "lc-btn-outline", width = "100%"),
             actionButton("ch5_step4", "4. p-wartość i decyzja",
-                         class = "btn-outline-primary", width = "100%")
+                         class = "lc-btn-outline", width = "100%")
           )
         ),
         column(8,
@@ -152,9 +152,9 @@ ch5_ui <- list(
     # ========================================================================
     # WIDGET 2: Chi-kwadrat vs Fisher (porownanie)
     # ========================================================================
-    h2(id = "ch5-fisher", class = "section-title", "Test χ² a test Fishera"),
+    lc_h2("ch5-fisher", "Test χ² a test Fishera"),
 
-    div(class = "narrative",
+    tagList(
       p("Test χ² opiera się na przybliżeniu. Gdy próba jest mała,
         niektóre oczekiwane liczności mogą być < 5 — wtedy przybliżenie zawodzi."),
       p("Alternatywa: ", tags$b("test dokładny Fishera"),
@@ -165,14 +165,14 @@ ch5_ui <- list(
       label = "Ryc. 6.3",
       title = "Porównanie: χ² vs Fisher",
       actionButton("ch5_compare", "Porównaj χ² i Fishera (na tych samych danych)",
-                   class = "btn-primary", width = "100%"),
+                   class = "lc-btn-primary", width = "100%"),
       br(), br(),
       uiOutput("ch5_compare_result")
     ),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Kiedy który?")),
-      tags$table(class = "table table-bordered", style = "font-size: 15px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th(""), tags$th("Test χ²"), tags$th("Test Fishera"))
         ),
@@ -209,9 +209,9 @@ ch5_ui <- list(
     # ========================================================================
     # Jak interpretowac sile zwiazku
     # ========================================================================
-    h2(id = "ch5-sila", class = "section-title", "Jak duża jest różnica? Siła związku"),
+    lc_h2("ch5-sila", "Jak duża jest różnica? Siła związku"),
 
-    div(class = "narrative",
+    tagList(
       p("P-wartość mówi ", tags$em("czy"), " związek istnieje, ale nie ",
         tags$em("jak duży"), " jest. Zobaczmy to na naszych danych:")
     ),
@@ -220,18 +220,18 @@ ch5_ui <- list(
       label = "Ryc. 6.4",
       title = "Siła związku — na naszych danych",
       actionButton("ch5_effect", "Pokaż siłę związku",
-                   class = "btn-primary", width = "100%"),
+                   class = "lc-btn-primary", width = "100%"),
       br(), br(),
       uiOutput("ch5_effect_result")
     ),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Jak czytać siłę związku:")),
       p(tags$b("1. Procenty w grupach"), " — najlepsza intuicja.
         Jeśli odsetek to 45% wobec 47% — nawet przy p < 0,05 różnica jest
         praktycznie żadna. Jeśli 30% wobec 70% — efekt jest ogromny."),
       p(tags$b("2. Cramér's V"), " — współczynnik siły związku [0–1]:"),
-      div(class = "formula-box",
+      lc_formula_box(
         p(withMathJax("\\(V = \\sqrt{\\frac{\\chi^2}{n \\cdot (k - 1)}}\\)"),
           " gdzie k = min(wiersze, kolumny)")
       ),
@@ -336,9 +336,9 @@ ch5_server <- function(input, output, session) {
   output$ch5_narr1 <- renderUI({
     req(input$ch5_narr_step1 %% 2 == 1)
 
-    div(class = "callout-info", style = "margin-top: 10px;",
+    lc_feedback(type = "info", style = "margin-top: 10px;",
       p(tags$b("Dane z 200 kontroli:")),
-      tags$table(class = "table table-bordered", style = "font-size: 15px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(tags$tr(tags$th(""), tags$th("Mandat"), tags$th("Brak mandatu"), tags$th("Razem"))),
         tags$tbody(
           tags$tr(tags$td(tags$b("Kobiety")), tags$td("30"), tags$td("70"), tags$td("100")),
@@ -354,14 +354,14 @@ ch5_server <- function(input, output, session) {
   output$ch5_narr2 <- renderUI({
     req(input$ch5_narr_step2 %% 2 == 1)
 
-    div(class = "callout-warning", style = "margin-top: 10px;",
+    lc_feedback(type = "warning", style = "margin-top: 10px;",
       p(tags$b("Załóżmy, że płeć NIE ma znaczenia (H₀).")),
       p("Skoro płeć nie wpływa na mandaty, to nie musimy dzielić danych na kobiety i mężczyzn.
         Patrzymy na ", tags$b("całość"), ": 80 mandatów na 200 kontroli = ",
         tags$b("40%"), "."),
       p("Jeśli płeć jest niezależna, to te 40% powinno być ",
         tags$b("takie samo"), " dla kobiet i mężczyzn:"),
-      tags$table(class = "table table-bordered", style = "font-size: 15px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(tags$tr(tags$th(""), tags$th("Mandat"), tags$th("Brak mandatu"), tags$th("Razem"))),
         tags$tbody(
           tags$tr(tags$td(tags$b("Kobiety")), tags$td(tags$em("40")), tags$td(tags$em("60")), tags$td("100")),
@@ -376,9 +376,9 @@ ch5_server <- function(input, output, session) {
   output$ch5_narr3 <- renderUI({
     req(input$ch5_narr_step3 %% 2 == 1)
 
-    div(class = "callout-success", style = "margin-top: 10px;",
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
       p(tags$b("Porównanie: obserwowane i oczekiwane")),
-      tags$table(class = "table table-bordered", style = "font-size: 15px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(tags$tr(tags$th(""), tags$th("Mandat (obs.)"), tags$th("Mandat (oczek.)"), tags$th("Różnica"))),
         tags$tbody(
           tags$tr(tags$td(tags$b("Kobiety")), tags$td("30"), tags$td("40"), tags$td(tags$b("−10"))),
@@ -410,11 +410,11 @@ ch5_server <- function(input, output, session) {
     par <- scenario_params[[input$ch5_scenario]]
     tab <- ch5_tab()
     tagList(
-      div(class = "callout-info", style = "font-size: 16px;",
+      lc_feedback(type = "info", style = "font-size: 16px;",
         p(tags$b("Pytanie potoczne:")),
         p(tags$em(paste0("„", par$question, "”")))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Hipoteza formalna:")),
         p(withMathJax(par$h0_text)),
         p(withMathJax(par$h1_text))
@@ -496,7 +496,7 @@ ch5_server <- function(input, output, session) {
       })
       div(
         if (nchar(caption) > 0) p(tags$b(caption)),
-        tags$table(class = "table table-bordered table-striped",
+        tags$table(class = "lc-table lc-table-bordered lc-table-striped",
                    style = "font-size: 14px;",
           tags$thead(header),
           tags$tbody(rows))
@@ -505,8 +505,7 @@ ch5_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        div(class = "stat-box", style = paste0("border-left-color:", col_h0, ";"),
-            paste0("n = ", n_total)),
+        lc_stat_box("n", n_total, color = col_h0),
         .html_table(tab, paste0("Tabela krzyżowa: ", par$lab1, " × ", par$lab2)),
         p("To są obserwowane liczności. Ale same liczby trudno porównać,
           bo grupy mogą mieć różne rozmiary. Kliknij krok 2.")
@@ -529,8 +528,12 @@ ch5_server <- function(input, output, session) {
         low_exp <- any(test$expected < 5)
         tagList(
           .html_table(exp_mat, "Liczności oczekiwane (gdyby H₀ prawdziwa):"),
-          div(class = "stat-box", style = paste0("border-left-color:", col_effect, ";"),
-              paste0("χ²(", df_val, ") = ", round(chi_stat, 3))),
+          lc_stat_box(
+            "p",
+            format.pval(p_val, digits = 4),
+            caption = paste0("χ²(", df_val, ") = ", round(chi_stat, 3)),
+            color = col_effect
+          ),
           p("Statystyka χ² mierzy łączną rozbieżność między tabelą obserwowancą
             a tabelą oczekiwaną."),
           if (low_exp) p(style = "color: var(--upwr-accent); font-weight: bold;",
@@ -550,22 +553,23 @@ ch5_server <- function(input, output, session) {
         pct_cols <- apply(pct_tab, 2, function(col) round(range(col), 1))
 
         tagList(
-          div(class = "stat-box", style = paste0("border-left-color:", col_pvalue, ";"),
-              paste0("p = ", format.pval(p_val, digits = 4))),
+          lc_stat_box(
+            "Cramér's V",
+            round(v, 3),
+            caption = effect_size_label(v),
+            color = col_pvalue
+          ),
           p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
             res$decision),
           p(res$explanation),
           hr(),
-          p(tags$b("Siła związku:")),
-          p("Cramér's V = ", tags$b(round(v, 3)),
-            " (", effect_size_label(v), ")"),
           p("Rozrzut procentów między grupami: ",
             paste(colnames(pct_tab), "od", pct_cols[1, ], "do", pct_cols[2, ], "%",
                   collapse = "; "))
         )
       }
     )
-    div(class = "callout-info", info)
+    lc_feedback(type = "info", info)
   })
 
   # --- Widget 2: Porownanie chi-kwadrat vs Fisher ---
@@ -574,7 +578,7 @@ ch5_server <- function(input, output, session) {
     tab <- isolate(ch5_tab())
 
     if (is.null(tab)) {
-      return(div(class = "callout-warning",
+      return(lc_feedback(type = "warning",
         "Najpierw wylosuj próbę w widgecie powyżej."))
     }
 
@@ -588,7 +592,7 @@ ch5_server <- function(input, output, session) {
     n_low <- sum(test_chi$expected < 5)
 
     div(
-      tags$table(class = "table table-bordered", style = "font-size: 15px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th(""), tags$th("Test χ²"), tags$th("Test Fishera"))
         ),
@@ -607,7 +611,7 @@ ch5_server <- function(input, output, session) {
           )
         )
       ),
-      div(class = if (low_exp) "callout-danger" else "callout-success",
+      lc_feedback(type = if (low_exp) "danger" else "ok",
         p(tags$b("Oczekiwane liczności < 5: "),
           if (low_exp) paste0("TAK (", n_low, " komórek) — χ² może być niedokładny, preferuj Fishera!")
           else "NIE — oba testy dają wiarygodne wyniki.")
@@ -622,7 +626,7 @@ ch5_server <- function(input, output, session) {
     par <- isolate(scenario_params[[input$ch5_scenario]])
 
     if (is.null(tab)) {
-      return(div(class = "callout-warning",
+      return(lc_feedback(type = "warning",
         "Najpierw wylosuj próbę w widgecie powyżej."))
     }
 
@@ -654,14 +658,14 @@ ch5_server <- function(input, output, session) {
 
     div(
       p(tags$b("Procenty w każdej grupie ", par$lab1, ":")),
-      tags$table(class = "table table-bordered table-striped", style = "font-size: 15px;",
+      tags$table(class = "lc-table lc-table-bordered lc-table-striped", style = "font-size: 15px;",
         tags$thead(tags$tr(
           tags$th(par$lab1),
           lapply(colnames(pct_tab), function(cn) tags$th(paste0(par$lab2, ": ", cn)))
         )),
         tags$tbody(pct_rows)
       ),
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         p(tags$b("Rozrzut procentów między grupami:")),
         tags$ul(lapply(range_info, function(ri) tags$li(ri))),
         p("Im większy rozrzut, tym silniejszy związek praktyczny."),

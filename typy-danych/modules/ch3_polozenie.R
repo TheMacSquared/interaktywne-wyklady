@@ -18,7 +18,7 @@ ch3_ui <- list(
 
     uiOutput("tracker_ch3"),
 
-    div(class = "narrative",
+    tagList(
       p("Zmienne ilościowe wymagają nowych narzędzi. Zanim przejdziemy do
         statystyk, poznajmy podstawową wizualizację — histogram.
         Potem zbadamy miary położenia: średnią, medianę i percentyle.")
@@ -27,9 +27,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET: Histogram krok po kroku
     # ========================================================================
-    h2(id = "ch3-histogram", class = "section-title", "Histogram — krok po kroku"),
+    lc_h2("ch3-histogram", "Histogram — krok po kroku"),
 
-    div(class = "narrative",
+    tagList(
       p("Histogram to podstawowy wykres dla zmiennych ciągłych. Pokazuje
         jak często występują wartości w poszczególnych
         przedziałach (binach). Zbudujmy go krok po kroku.")
@@ -48,31 +48,31 @@ ch3_ui <- list(
           ),
           uiOutput("ch3_hist_bin_slider"),
           actionButton("ch3_hist_step1", "1. Surowe dane",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch3_hist_step2", "2. Posortuj dane",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch3_hist_step3", "3. Podziel na przedziały",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch3_hist_step4", "4. Przypisz do binów",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch3_hist_step5", "5. Zlicz obserwacje",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch3_hist_step6", "6. Zbuduj słupki",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch3_hist_step7", "7. Gotowy histogram",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch3_hist_step8", "8. Wpływ szerokości binu",
-                       class = "btn-outline-primary", width = "100%"),
+                       class = "lc-btn-outline", width = "100%"),
           br(), br(),
           actionButton("ch3_hist_reset", "Reset",
-                       class = "btn-outline-secondary", width = "100%")
+                       class = "lc-btn-secondary-outline", width = "100%")
         ),
         column(8,
           plotOutput("ch3_hist_plot", height = "400px"),
@@ -82,7 +82,7 @@ ch3_ui <- list(
       )
     ),
 
-    div(class = "narrative",
+    tagList(
       p("Histogram pokazuje kształt rozkładu, ale nie daje jednej liczby
         opisującej 'środek'. Do tego służą statystyki położenia:
         średnia, mediana i percentyle. Każda odpowiada na to pytanie inaczej.")
@@ -91,9 +91,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 0a: Mean introduction
     # ========================================================================
-    h2(id = "ch3-srednia", class = "section-title", "Średnia arytmetyczna"),
+    lc_h2("ch3-srednia", "Średnia arytmetyczna"),
 
-    div(class = "narrative",
+    tagList(
       p("Średnia arytmetyczna to suma wszystkich wartości podzielona
         przez ich liczbę. Jest to 'punkt równowagi' danych -- gdybyśmy
         położyli dane na wadze, średnia byłaby punktem podparcia."),
@@ -117,9 +117,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 0b: Median introduction
     # ========================================================================
-    h2(id = "ch3-mediana", class = "section-title", "Mediana"),
+    lc_h2("ch3-mediana", "Mediana"),
 
-    div(class = "narrative",
+    tagList(
       p("Mediana to wartość, która dzieli posortowane dane na dwie
         równe połowy: 50% obserwacji leży poniżej, 50% powyżej.
         Nie zależy od tego, jak bardzo skrajne są wartości
@@ -141,9 +141,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 1: Mean vs Median -- comparison
     # ========================================================================
-    h2(id = "ch3-srednia-vs-mediana", class = "section-title", "Średnia vs mediana — kiedy się różnią?"),
+    lc_h2("ch3-srednia-vs-mediana", "Średnia vs mediana — kiedy się różnią?"),
 
-    div(class = "narrative",
+    tagList(
       p("Dla danych symetrycznych średnia i mediana są blisko siebie.
         Ale co się dzieje, gdy rozkład jest skośny lub pojawi się
         wartość odstająca?"),
@@ -165,11 +165,11 @@ ch3_ui <- list(
         column(7,
           div(style = "display: flex; gap: 8px; margin-top: 25px;",
             actionButton("ch3_svm_add", "Dodaj wartość",
-                         class = "btn-primary"),
+                         class = "lc-btn-primary"),
             actionButton("ch3_svm_outlier", "Dodaj outlier (CEO)",
-                         class = "btn-danger"),
+                         class = "lc-btn-danger"),
             actionButton("ch3_svm_reset", "Reset",
-                         class = "btn-default")
+                         class = "lc-btn-secondary-outline")
           )
         )
       ),
@@ -179,7 +179,7 @@ ch3_ui <- list(
       plotOutput("ch3_svm_hist", height = "280px"),
       plotOutput("ch3_svm_strip", height = "120px"),
 
-      div(style = "text-align: center; margin-top: 10px;",
+      lc_center(
         uiOutput("ch3_svm_stats")
       )
     ),
@@ -194,9 +194,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 2: Robustness mini-demo
     # ========================================================================
-    h2(id = "ch3-odpornosc", class = "section-title", "Odporność miar na outliery"),
+    lc_h2("ch3-odpornosc", "Odporność miar na outliery"),
 
-    div(class = "narrative",
+    tagList(
       p("Która statystyka jest bardziej odporna na outliery? Średnia
         arytmetyczna bierze pod uwagę każdą wartość -- więc jedna
         ekstremalna obserwacja może ją znacząco przesunąć. Mediana
@@ -213,11 +213,11 @@ ch3_ui <- list(
 
       div(style = "display: flex; gap: 8px; margin-bottom: 15px;",
         actionButton("ch3_rob_add1", "Dodaj outlier (+50 000 zl)",
-                     class = "btn-warning"),
+                     class = "lc-btn-warning"),
         actionButton("ch3_rob_add5", "Dodaj 5 outlierow",
-                     class = "btn-danger"),
+                     class = "lc-btn-danger"),
         actionButton("ch3_rob_reset", "Reset",
-                     class = "btn-default")
+                     class = "lc-btn-secondary-outline")
       ),
 
       plotOutput("ch3_rob_plot", height = "320px"),
@@ -240,9 +240,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 2b: Discrete variables
     # ========================================================================
-    h2(id = "ch3-dyskretna", class = "section-title", "Zmienne dyskretne — te same statystyki, inne wykresy"),
+    lc_h2("ch3-dyskretna", "Zmienne dyskretne — te same statystyki, inne wykresy"),
 
-    div(class = "narrative",
+    tagList(
       p("Dotychczas uzywalismy zmiennych ciągłych (wzrost, zarobki). Ale co ze
         zmiennymi dyskretnymi -- takimi jak liczba kursow czy
         liczba nieobecnosci? Statystyki polozenia (średnia, mediana) obliczamy
@@ -274,9 +274,9 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 2c: Multimodality in continuous distributions
     # ========================================================================
-    h2(id = "ch3-modalnosc", class = "section-title", "Modalność rozkładu — ile „górek” ma histogram?"),
+    lc_h2("ch3-modalnosc", "Modalność rozkładu — ile „górek” ma histogram?"),
 
-    div(class = "narrative",
+    tagList(
       p("W rozdziale o zmiennych jakościowych poznaliśmy dominantę -- najczęstszą
         kategorię. Dla danych ciągłych dominanta pojedynczej wartości nie ma sensu
         (prawie każda wartość jest unikatowa). Ale pojęcie ",
@@ -303,7 +303,7 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 3: Percentile explorer
     # ========================================================================
-    h2(id = "ch3-percentyle", class = "section-title", "Percentyle i kwantyle"),
+    lc_h2("ch3-percentyle", "Percentyle i kwantyle"),
 
     margin_callout(
       label = "IQR",
@@ -315,7 +315,7 @@ ch3_ui <- list(
       )
     ),
 
-    div(class = "narrative",
+    tagList(
       p("Kwantyle i percentyle dziela dane na czesci. Percentyl mówi nam,
         jaki procent obserwacji jest poniżej danej wartości. Na przykład
         percentyl 75. oznacza, ze 75% obserwacji ma wartość mniejsza
@@ -342,9 +342,9 @@ ch3_ui <- list(
         ),
         column(6,
           div(style = "display: flex; gap: 8px; margin-top: 25px;",
-            actionButton("ch3_q_q1", "Q1 (25%)", class = "btn-outline-primary"),
-            actionButton("ch3_q_med", "Mediana (50%)", class = "btn-outline-primary"),
-            actionButton("ch3_q_q3", "Q3 (75%)", class = "btn-outline-primary")
+            actionButton("ch3_q_q1", "Q1 (25%)", class = "lc-btn-outline"),
+            actionButton("ch3_q_med", "Mediana (50%)", class = "lc-btn-outline"),
+            actionButton("ch3_q_q3", "Q3 (75%)", class = "lc-btn-outline")
           )
         )
       ),
@@ -354,7 +354,7 @@ ch3_ui <- list(
       plotOutput("ch3_q_hist", height = "280px"),
       plotOutput("ch3_q_box", height = "120px"),
 
-      div(style = "text-align: center; margin-top: 10px;",
+      lc_center(
         uiOutput("ch3_q_text")
       )
     ),
@@ -362,9 +362,9 @@ ch3_ui <- list(
     # ====================================================================
     # WIDGET 4: Guess the statistic game
     # ====================================================================
-    h2(id = "ch3-gra", class = "section-title", "Gra: Zgadnij średnią i medianę!"),
+    lc_h2("ch3-gra", "Gra: Zgadnij średnią i medianę!"),
 
-    div(class = "narrative",
+    tagList(
       p("Sprawdzmy Twoją intuicję! Na histogramie zobaczysz rozkład danych. ",
         "Kliknij na wykres, aby postawić swój typ: najpierw średnia, potem mediana. Czy potrafisz je odroznic?")
     ),
@@ -374,9 +374,9 @@ ch3_ui <- list(
       title = "Kliknij na wykres, aby umieścić średnią i medianę",
       div(style = "margin-bottom: 10px;",
         actionButton("ch3_game_new", "Nowa runda",
-                     class = "btn-primary", style = "margin-right: 6px;"),
+                     class = "lc-btn-primary", style = "margin-right: 6px;"),
         actionButton("ch3_game_reveal", "Pokaż odpowiedź",
-                     class = "btn-success", style = "margin-right: 6px;")
+                     class = "lc-btn-ok", style = "margin-right: 6px;")
       ),
       uiOutput("ch3_game_status_banner"),
       plotOutput("ch3_game_plot", height = "350px", click = "ch3_game_click"),
@@ -391,7 +391,7 @@ ch3_ui <- list(
     ),
 
     # Spacer at bottom
-    div(style = "height: 60px;")
+    lc_spacer("lg")
 
   )
 )
@@ -663,7 +663,7 @@ ch3_server <- function(input, output, session) {
       "8" = paste0("Te same dane z trzema szerokościami binu. ",
                    "Za wąskie → szum. Za szerokie → utrata szczegółów.")
     )
-    div(class = "callout-info", p(txt))
+    lc_feedback(type = "info", p(txt))
   })
 
   output$ch3_hist_table <- renderTable({
@@ -718,7 +718,7 @@ ch3_server <- function(input, output, session) {
     m <- mean(x)
     s <- sum(x)
     n <- length(x)
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       withMathJax(paste0(
         "$$\\bar{x} = \\frac{", round(s, 1), "}{", n, "} = ", round(m, 2), "$$"
       )),
@@ -774,7 +774,7 @@ ch3_server <- function(input, output, session) {
     m <- mean(x)
     diff <- abs(m - med)
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       paste0("Mediana = ", round(med, 1)),
       " | Średnia = ", round(m, 2),
       " | Różnica = ", round(diff, 2)
@@ -866,12 +866,12 @@ ch3_server <- function(input, output, session) {
     diff_color <- if (abs(diff_val) < 500) upwr_cat["szalwia"] else upwr_cat["bursztyn"]
 
     tagList(
-      div(class = "stat-box", style = "background: var(--upwr-accent);",
-          paste0("Srednia: ", format(round(m), big.mark = " "), " zl")),
-      div(class = "stat-box", style = "background: var(--upwr-cat-niebo);",
-          paste0("Mediana: ", format(round(med), big.mark = " "), " zl")),
-      div(class = "stat-box", style = paste0("background: ", diff_color, ";"),
-          paste0("Roznica: ", format(round(diff_val), big.mark = " "), " zl"))
+      lc_stat_box("Srednia", format(round(m), big.mark = " "), " zl",
+                  color = "var(--upwr-accent)"),
+      lc_stat_box("Mediana", format(round(med), big.mark = " "), " zl",
+                  color = "var(--upwr-cat-niebo)"),
+      lc_stat_box("Roznica", format(round(diff_val), big.mark = " "), " zl",
+                  color = diff_color)
     )
   })
 
@@ -1047,7 +1047,7 @@ ch3_server <- function(input, output, session) {
   }, striped = TRUE, hover = TRUE, width = "100%", align = "c")
 
   output$ch3_disc_explanation <- renderUI({
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Dlaczego wykres słupkowy jest lepszy? "),
       "Zmienna dyskretna przyjmuje skończenie wiele wartości calkowitych.
        Wykres słupkowy pokazuje każdą wartość osobno i poprawnie oddaje liczebnośći.
@@ -1117,12 +1117,12 @@ ch3_server <- function(input, output, session) {
     req(scenario)
 
     if (scenario == "unimodal") {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         tags$b("Rozkład unimodalny: "), "jeden szczyt, jedna 'górka'. ",
         "Dla rozkładu symetrycznego moda ≈ średnia ≈ mediana. ",
         "Większość statystyk opisowych zakłada właśnie taki rozkład.")
     } else if (scenario == "bimodal") {
-      div(class = "callout-warning",
+      lc_feedback(type = "warning",
         tags$b("Rozkład bimodalny: "), "dwa szczyty! ",
         "To sygnał, że dane prawdopodobnie pochodzą z ",
         "dwóch różnych grup. ",
@@ -1131,7 +1131,7 @@ ch3_server <- function(input, output, session) {
         tags$br(), tags$br(),
         tags$em("Praktyka: rozdziel grupy i analizuj osobno."))
     } else {
-      div(class = "callout-warning",
+      lc_feedback(type = "warning",
         tags$b("Rozkład wielomodalny: "), "trzy szczyty = trzy podgrupy. ",
         "Każda podgrupa (rowerzyści, pasażerowie autobusów, kierowcy) ",
         "ma własną 'typową' wartość. ",
@@ -1364,16 +1364,16 @@ ch3_server <- function(input, output, session) {
     overall_err <- (abs(g$mean - real_mean) + abs(g$median - real_med)) / rng
     if (overall_err < 0.08) {
       grade <- "Doskonale!"
-      cls <- "callout-info"
+      cls <- "info"
     } else if (overall_err < 0.15) {
       grade <- "Nieźle!"
-      cls <- "callout-warning"
+      cls <- "warning"
     } else {
       grade <- "Mozna lepiej!"
-      cls <- "callout-danger"
+      cls <- "danger"
     }
 
-    div(class = cls,
+    lc_feedback(type = cls,
       tags$strong(paste0(grade, " ")),
       paste0("Błąd średniej: ", mean_err, ", błąd mediany: ", med_err, ".")
     )

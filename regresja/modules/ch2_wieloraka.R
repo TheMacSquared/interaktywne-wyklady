@@ -16,12 +16,11 @@ ch2_ui <- list(
                 W rzeczywistości na Y wpływa wiele czynników jednocześnie."
     ),
 
-    h2(id = "ch2-wiele-predyktorow", class = "section-title",
-       "Wiele predyktorów naraz"),
+    lc_h2("ch2-wiele-predyktorow", "Wiele predyktorów naraz"),
 
-    div(class = "narrative",
+    tagList(
       p("Regresja wieloraka rozszerza model o ", tags$b("k predyktorów"), ":"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(helpText(
           "$$Y = \\beta_0 + \\beta_1 X_1 + \\beta_2 X_2 + \\ldots + \\beta_k X_k + \\varepsilon$$"
         ))
@@ -31,8 +30,7 @@ ch2_ui <- list(
         " wzrośnie o 1, ", tags$b("przy stałych pozostałych zmiennych"), ".")
     ),
 
-    h2(id = "ch2-budowanie", class = "section-title",
-       "Budowanie modelu wielorakiego"),
+    lc_h2("ch2-budowanie", "Budowanie modelu wielorakiego"),
 
     figure_panel(
       label = "Ryc. 2.1", title = "Predykcja średniej ocen",
@@ -50,7 +48,7 @@ ch2_ui <- list(
             selected = c("godziny_nauki", "frekwencja")
           ),
           actionButton("ch2_gen", "Generuj dane i dopasuj",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           uiOutput("ch2_model_coefs"),
@@ -66,10 +64,9 @@ ch2_ui <- list(
        za zbędne zmienne."
     ),
 
-    h2(id = "ch2-krok-po-kroku", class = "section-title",
-       "Efekt dodawania zmiennych"),
+    lc_h2("ch2-krok-po-kroku", "Efekt dodawania zmiennych"),
 
-    div(class = "narrative",
+    tagList(
       p("Zobaczmy, jak zmieniają się metryki modelu, gdy dodajemy
         kolejne predyktory. Czy każda zmienna poprawia model?")
     ),
@@ -81,7 +78,7 @@ ch2_ui <- list(
         column(4,
           helpText("Modele z 1, 2, 3 i 4 predyktorami — porównanie metryk."),
           actionButton("ch2_stepwise", "Buduj modele krok po kroku",
-                       class = "btn-warning", width = "100%")
+                       class = "lc-btn-warning", width = "100%")
         ),
         column(8,
           plotOutput("ch2_step_plot", height = "300px"),
@@ -153,7 +150,7 @@ ch2_server <- function(input, output, session) {
       )
     })
 
-    tags$table(class = "table table-bordered table-striped",
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 14px;",
       tags$thead(
         tags$tr(tags$th("Zmienna"), tags$th("Estymata"), tags$th("SE"),
@@ -200,14 +197,10 @@ ch2_server <- function(input, output, session) {
     if (is.null(model)) return(NULL)
     metrics <- compute_model_metrics(model)
     tagList(
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["niebo"]), ";"),
-          paste0("R² = ", round(metrics$r_squared, 3))),
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["szalwia"]), ";"),
-          paste0("adj.R² = ", round(metrics$adj_r_squared, 3))),
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["bursztyn"]), ";"),
-          paste0("AIC = ", round(metrics$aic, 1))),
-      div(class = "stat-box", style = paste0("background:", unname(upwr_cat["terakota"]), ";"),
-          paste0("RMSE = ", round(metrics$rmse, 3)))
+      lc_stat_box("R²", round(metrics$r_squared, 3), color = unname(upwr_cat["niebo"])),
+      lc_stat_box("adj.R²", round(metrics$adj_r_squared, 3), color = unname(upwr_cat["szalwia"])),
+      lc_stat_box("AIC", round(metrics$aic, 1), color = unname(upwr_cat["bursztyn"])),
+      lc_stat_box("RMSE", round(metrics$rmse, 3), color = unname(upwr_cat["terakota"]))
     )
   })
 
@@ -247,7 +240,7 @@ ch2_server <- function(input, output, session) {
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Buduj modele'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       long <- df %>%
@@ -284,7 +277,7 @@ ch2_server <- function(input, output, session) {
       )
     })
 
-    tags$table(class = "table table-bordered table-striped",
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
       tags$thead(
         tags$tr(tags$th("Predyktory"), tags$th("R²"), tags$th("adj.R²"),

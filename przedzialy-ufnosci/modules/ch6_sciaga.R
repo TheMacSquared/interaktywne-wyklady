@@ -17,15 +17,14 @@ ch6_ui <- list(
                 dla zainteresowanych."
     ),
 
-    h2(id = "ch6-jamovi", class = "section-title",
-       "Jak zrobić przedział ufności w jamovi"),
+    lc_h2("ch6-jamovi", "Jak zrobić przedział ufności w jamovi"),
 
-    div(class = "narrative",
+    tagList(
       p("W jamovi nie musisz niczego liczyć — CI pojawia się w raporcie,
         gdy zaznaczysz jeden checkbox. Twoja robota: nazwać go,
         zinterpretować, wyciągnąć wniosek."),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         tags$strong("Przedział dla średniej (jedna zmienna ilościowa):"),
         tags$ol(
           tags$li(tags$b("Analyses → T-Tests → One Sample T-Test")),
@@ -41,7 +40,7 @@ ch6_ui <- list(
                    między z a t."))
       ),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         tags$strong("Przedział dla różnicy średnich (dwie grupy):"),
         tags$ol(
           tags$li(tags$b("Analyses → T-Tests → Independent Samples T-Test")),
@@ -58,7 +57,7 @@ ch6_ui <- list(
           " — grupy różnią się istotnie.")
       ),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         tags$strong("Przedział dla proporcji (jedna zmienna kategorialna,
                      2 kategorie):"),
         tags$ol(
@@ -72,7 +71,7 @@ ch6_ui <- list(
         )
       ),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         tags$strong("Przedział dla różnicy proporcji (dwie grupy):"),
         tags$ol(
           tags$li(tags$b("Analyses → Frequencies → Independent Samples — χ² test of association")),
@@ -90,12 +89,11 @@ ch6_ui <- list(
       )
     ),
 
-    h2(id = "ch6-jak-czytac", class = "section-title",
-       "Jak czytać wynik jamovi"),
+    lc_h2("ch6-jak-czytac", "Jak czytać wynik jamovi"),
 
-    div(class = "narrative",
+    tagList(
       p("Załóżmy, że jamovi podał:"),
-      tags$pre(style = "background: #f8f9fa; padding: 12px; border-radius: 6px;",
+      tags$pre(class = "lc-code-block",
         tags$code(
 "Mean       Lower (95%)   Upper (95%)
 171.3      168.4         174.2"
@@ -116,11 +114,10 @@ ch6_ui <- list(
       )
     ),
 
-    h2(id = "ch6-szablony", class = "section-title",
-       "Szablony wniosków — co napisać w raporcie"),
+    lc_h2("ch6-szablony", "Szablony wniosków — co napisać w raporcie"),
 
-    div(class = "narrative",
-      div(class = "callout-success",
+    tagList(
+      lc_feedback(type = "ok",
         tags$strong("Średnia (pojedyncza zmienna):"),
         p(tags$em("„Średni wzrost studentów wyniósł 171,3 cm
                    (95% CI: [168,4; 174,2]).”")),
@@ -130,7 +127,7 @@ ch6_ui <- list(
                    że średnia w populacji różni się od normy.”"))
       ),
 
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Różnica średnich (dwie grupy):"),
         p(tags$em("„Grupa eksperymentalna osiągnęła średni wynik
                    wyższy o 4,7 punktu od grupy kontrolnej
@@ -140,7 +137,7 @@ ch6_ui <- list(
            Jeśli zawierałby 0 — nie mamy podstaw mówić o różnicy.")
       ),
 
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Proporcja:"),
         p(tags$em("„Odsetek zdających egzamin wyniósł 68%
                    (95% CI: [62%; 73%]).”")),
@@ -151,11 +148,10 @@ ch6_ui <- list(
       )
     ),
 
-    h2(id = "ch6-ci-hipoteza", class = "section-title",
-       "Kiedy CI daje odpowiedź na hipotezę?"),
+    lc_h2("ch6-ci-hipoteza", "Kiedy CI daje odpowiedź na hipotezę?"),
 
-    div(class = "narrative",
-      div(class = "callout-warning",
+    tagList(
+      lc_feedback(type = "warning",
         tags$strong("Zasada prosta:"),
         tags$ul(
           tags$li(tags$b("CI dla średniej"), " vs wartość hipotetyczna ",
@@ -173,11 +169,10 @@ ch6_ui <- list(
       )
     ),
 
-    h2(id = "ch6-typowe-bledy", class = "section-title",
-       "Typowe błędy interpretacji"),
+    lc_h2("ch6-typowe-bledy", "Typowe błędy interpretacji"),
 
-    div(class = "narrative",
-      div(class = "callout-danger",
+    tagList(
+      lc_feedback(type = "danger",
         tags$strong("BŁĘDNE:"),
         tags$ul(
           tags$li("„Średnia populacji leży w tym przedziale z 95%
@@ -193,7 +188,7 @@ ch6_ui <- list(
         )
       ),
 
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("POPRAWNE:"),
         tags$ul(
           tags$li("„Gdybyśmy powtarzali badanie, 95% tak skonstruowanych
@@ -206,11 +201,10 @@ ch6_ui <- list(
       )
     ),
 
-    h2(id = "ch6-drzewo", class = "section-title",
-       "Drzewo decyzyjne — który CI wybrać?"),
+    lc_h2("ch6-drzewo", "Drzewo decyzyjne — który CI wybrać?"),
 
-    div(class = "narrative",
-      div(class = "callout-info",
+    tagList(
+      lc_feedback(type = "info",
         tags$strong("1. Co chcesz oszacować?"),
         tags$ul(
           tags$li(tags$b("Liczbę"),
@@ -246,11 +240,10 @@ ch6_ui <- list(
       )
     ),
 
-    h2(id = "ch6-szerokosc-tab", class = "section-title",
-       "Co wpływa na szerokość CI"),
+    lc_h2("ch6-szerokosc-tab", "Co wpływa na szerokość CI"),
 
-    div(class = "narrative",
-      tags$table(class = "table table-bordered",
+    tagList(
+      tags$table(class = "lc-table lc-table-bordered",
         style = "font-size: 15px;",
         tags$thead(
           tags$tr(
@@ -285,10 +278,9 @@ ch6_ui <- list(
       )
     ),
 
-    h2(id = "ch6-wzory", class = "section-title",
-       "Dla zainteresowanych: wzory"),
+    lc_h2("ch6-wzory", "Dla zainteresowanych: wzory"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$em("Poniższe wzory są tym, co jamovi liczy pod spodem.
                  Nie musisz ich pamiętać — ale jeśli chcesz zobaczyć,
                  skąd biorą się liczby w kolumnach ",
@@ -301,7 +293,7 @@ ch6_ui <- list(
           "Wzór dla średniej"
         ),
         div(class = "case-body",
-          div(class = "formula-box",
+          lc_formula_box(
             h4("Przedział dla średniej (nieznane σ — STANDARDOWY)"),
             withMathJax(helpText(
               "$$\\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$"
@@ -310,7 +302,7 @@ ch6_ui <- list(
                (lub duże n). To wzór, którego używa jamovi
                w One Sample T-Test.")
           ),
-          div(class = "formula-box",
+          lc_formula_box(
             h4("Jeśli znamy σ populacji (rzadko)"),
             withMathJax(helpText(
               "$$\\bar{x} \\pm z^* \\cdot \\frac{\\sigma}{\\sqrt{n}}$$"
@@ -327,19 +319,19 @@ ch6_ui <- list(
           "Wzory dla proporcji"
         ),
         div(class = "case-body",
-          div(class = "formula-box",
+          lc_formula_box(
             h4("Przedział Walda (prosty, ale niedokładny)"),
             withMathJax(helpText(
               "$$\\hat{p} \\pm z^* \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$$"
             )),
             p("Działa źle przy małych n lub skrajnych p (blisko 0 albo 1).")
           ),
-          div(class = "formula-box",
+          lc_formula_box(
             h4("Przedział Wilsona (zalecany)"),
             p("Lepsze pokrycie niż Wald. Używa go ",
               tags$code("prop.test()"), " w R.")
           ),
-          div(class = "formula-box",
+          lc_formula_box(
             h4("Przedział Cloppera-Pearsona (dokładny)"),
             p("Najbezpieczniejszy — używa dwumianu bez aproksymacji.
                jamovi stosuje go w Binomial test.")
@@ -353,7 +345,7 @@ ch6_ui <- list(
           "Wartości krytyczne (dla poziomów ufności)"
         ),
         div(class = "case-body",
-          tags$table(class = "table table-bordered table-striped",
+          tags$table(class = "lc-table lc-table-bordered lc-table-striped",
             style = "font-size: 15px;",
             tags$thead(
               tags$tr(
@@ -368,7 +360,7 @@ ch6_ui <- list(
               tags$tr(tags$td("99%"), tags$td("2.576"), tags$td("0.01"))
             )
           ),
-          p(style = "color: #7f8c8d; font-size: 14px;",
+          p(style = "color: var(--upwr-reference); font-size: 14px;",
             "Dla rozkładu t wartości zależą od df = n−1; dla dużych
              n są bardzo bliskie z.")
         )
@@ -380,7 +372,7 @@ ch6_ui <- list(
           "Jak policzyć CI w R (zamiast jamovi)"
         ),
         div(class = "case-body",
-          tags$pre(style = "background: #f8f9fa; padding: 12px; border-radius: 6px;",
+          tags$pre(class = "lc-code-block",
             tags$code(
 "# Przedzial dla sredniej (rstatix — preferowany)
 library(rstatix)
@@ -405,7 +397,7 @@ binom.test(x = liczba_sukcesow, n = liczba_prob, conf.level = 0.95)"
           "Planowanie wielkości próby"
         ),
         div(class = "case-body",
-          div(class = "formula-box",
+          lc_formula_box(
             h4("Dla średniej"),
             withMathJax(helpText(
               "$$n = \\left(\\frac{z^* \\cdot s}{ME_{max}}\\right)^2$$"
@@ -416,7 +408,7 @@ binom.test(x = liczba_sukcesow, n = liczba_prob, conf.level = 0.95)"
               withMathJax("\\(s\\)"),
               " — dostaniesz minimalne n.")
           ),
-          div(class = "formula-box",
+          lc_formula_box(
             h4("Dla proporcji"),
             withMathJax(helpText(
               "$$n = \\frac{z^{*2} \\cdot \\hat{p}(1-\\hat{p})}{ME_{max}^2}$$"

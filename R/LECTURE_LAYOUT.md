@@ -1,17 +1,18 @@
-# Migracja wykładu do nowego layoutu (`lecture_page`)
+# Layout wykładów (`lecture_page`)
 
-Nowy design w gałęzi `design-prototype`.
 Pliki współdzielone: `R/lecture_layout.R`, `R/palette.R`, `R/theme_upwr.R`, `R/shared.R`, `R/shared_styles.css`, `R/shared_toc.js`.
 
-Zmigrowane wzorce do naśladowania: `typy-danych/`, `wnioskowanie-statystyczne/`, `rozklady-prawdopodobienstwa/`.
+Wzorce do naśladowania: `typy-danych/`, `wnioskowanie-statystyczne/`, `rozklady-prawdopodobienstwa/`, `przedzialy-ufnosci/`, `regresja/`.
+
+To jest specyfikacja docelowego systemu. Aplikacje wykładowe używają `lecture_page()` i komponentów `lc_*`.
 
 ---
 
 ## 1. `app.R` — 5 zmian
 
-### a) Usuń `library(bslib)` i blok kolorów inline
+### a) Nie ładuj `bslib` i nie definiuj kolorów inline
 
-Stare apki definiowały kolory bezpośrednio w `app.R` (`col_primary <- "#3498db"` itp.) i używały `bs_theme(bootswatch = "sandstone")`. Wszystko to wylatuje.
+Kolory pochodzą z `R/palette.R`, a shell strony z `lecture_page()`. Nie definiuj lokalnych palet hex w `app.R`.
 
 ### b) Dodaj sourcing palety i layoutu (po `.find_app_dir()`)
 
@@ -24,7 +25,7 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 lc_apply_ggplot_defaults()   # motyw upwr + Atkinson dla wszystkich geom-ów
 ```
 
-### c) Zdefiniuj listę rozdziałów i zastąp `navbarPage` → `lecture_page`
+### c) Zdefiniuj listę rozdziałów i użyj `lecture_page`
 
 ```r
 .chapters <- list(ch1_ui, ch2_ui, ...)
@@ -40,9 +41,9 @@ ui <- lecture_page(
 
 Mapowanie `lecture_id → moduł` zdefiniowane w `.LC_LECTURE_MODULE` w `lecture_layout.R` — dopisz nową apkę jeśli potrzeba.
 
-### d) Zastąp server — usuń `observeEvent(input$ch*_next, updateNavbarPage(...))`
+### d) Server
 
-Nawigacja między rozdziałami obsługiwana jest przez `lc_chapter_next()` w modułach. W `server()` wystarczy:
+Nawigacja między rozdziałami obsługiwana jest przez `lc_chapter_next()` w modułach. W `server()`:
 
 ```r
 server <- function(input, output, session) {
@@ -54,28 +55,15 @@ server <- function(input, output, session) {
 }
 ```
 
-### e) Usuń `global_header`
+### e) Zasoby w `<head>`
 
-`lecture_page()` samodzielnie wstrzykuje CSS, JS i fonty. Blok `global_header <- tagList(withMathJax(), tags$head(...))` wylatuje. Jeśli apka potrzebuje dodatkowych zasobów (Chart.js, custom CSS), przekaż je przez parametr `header_extras`.
+`lecture_page()` samodzielnie wstrzykuje CSS, JS i fonty. Jeśli apka potrzebuje dodatkowych zasobów (Chart.js, custom CSS), przekaż je przez parametr `header_extras`.
 
 ---
 
-## 2. Moduły `ch*.R` — lista zamiast `tabPanel`
+## 2. Moduły `ch*.R`
 
 ```r
-# BYŁO
-ch1_ui <- tabPanel("1. Tytuł",
-  fluidRow(column(8, offset = 2,
-    div(class = "chapter-recap", "Krótkie przypomnienie..."),
-    ...treść...
-    div(class = "chapter-transition",
-      actionButton("ch1_next", "Dalej: 2. Tytuł →", class = "btn-primary btn-lg")
-    ),
-    br(), br()
-  ))
-)
-
-# JEST
 ch1_ui <- list(
   id      = "ch-slug",
   num     = "01",
@@ -86,7 +74,7 @@ ch1_ui <- list(
       kicker = "Rozdział 01 · Nazwa wykładu",
       num    = "01",
       title  = "Tytuł rozdziału.",
-      lead   = "Tekst z chapter-recap — 1–2 zdania wprowadzenia."
+      lead   = "Jedno lub dwa zdania wprowadzenia."
     ),
 
     ...treść...
@@ -101,17 +89,17 @@ ch1_ui <- list(
 )
 ```
 
-**Transformacje element po elemencie:**
+**Docelowe komponenty treści:**
 
-| Element stary | Element nowy |
+| Potrzeba | Komponent |
 |---|---|
-| `div(class="chapter-recap", "...")` | `lead` w `lc_chapter_hero()` |
-| `div(class="section-title", "Tytuł")` | `h2(id="ch1-slug", class="section-title", "Tytuł")` |
-| `div(class="widget-block", h4("Tytuł"), ...)` | `figure_panel(label="Ryc. 1.1", title="Tytuł", ..., full_width=TRUE)` |
-| `div(class="callout-*", ...)` statyczny | `margin_callout(label="...", "treść", color="uwaga/ok/wskazowka")` |
-| `div(class="callout-*", ...)` w `renderUI()` | zostaw bez zmian — te są dynamiczne |
-| `div(class="chapter-transition", actionButton(...))` | `lc_chapter_next(num, title, lead, target_id)` |
-| `br(), br()` na końcu | usuń — layout sam zarządza odstępami |
+| Okładka rozdziału | `lc_chapter_hero()` |
+| Sekcja widoczna w TOC | `lc_h2(id, num, title)` |
+| Podsekcja | `lc_h3(title)` |
+| Akapit narracyjny | `lc_p(...)` |
+| Widget/wykres/tabela | `figure_panel(label, title, ..., full_width = TRUE/FALSE)` |
+| Notka na marginesie | `margin_callout()` albo `margin_note()` |
+| Następny rozdział | `lc_chapter_next()` |
 
 ---
 
@@ -120,29 +108,24 @@ ch1_ui <- list(
 JS wykrywa sekcje przez `h2[id]`.
 
 ```r
-# BYŁO (bez id — TOC go nie widzi)
-div(class = "section-title", "Tytuł sekcji")
-
-# JEST
-h2(id = "ch1-slug", class = "section-title", "Tytuł sekcji")
+lc_h2(id = "ch1-slug", num = "§ 1", title = "Tytuł sekcji")
 ```
 
 Format ID: `ch{N}-slug`, np. `ch3-mediana`, `ch4-boxplot`. Konwertuj tylko główne sekcje (5–8 na rozdział).
 
 ---
 
-## 4. Kolory — refaktoryzacja, nie aliasy
+## 4. Kolory
 
-Stary kod używał `col_primary`, `col_secondary` itp. Zamiast definiować aliasy w `helpers.R`, zamień bezpośrednio w kodzie:
+Korzystaj bezpośrednio z palety UPWr:
 
-| Stara zmienna | Nowa wartość |
+| Rola | Wartość |
 |---|---|
-| `col_primary` | `unname(upwr_cat["niebo"])` |
-| `col_secondary` | `unname(upwr_cat["terakota"])` |
-| `col_success` | `unname(upwr_cat["szalwia"])` |
-| `col_warning` | `unname(upwr_cat["bursztyn"])` |
-| `col_dark` | `upwr_secondary` |
-| `col_scenario[seq_len(n)]` | `upwr_cat_n(n)` |
+| Akcent | `upwr_accent` |
+| Tekst/kontekst | `upwr_secondary` |
+| Linia referencyjna | `upwr_reference` |
+| Kategorie | `upwr_cat` albo `upwr_cat_n(n)` |
+| Skale ciągłe | `scale_fill_upwr_seq()`, `scale_color_upwr_seq()` |
 
 **Semantyczne stałe domenowe** (np. `col_normal`, `col_discrete`) mogą zostać w `helpers.R` jeśli są używane w wielu miejscach — ale jako `unname(upwr_cat["nazwa"])`, nie jako hardcoded hex:
 
@@ -157,19 +140,14 @@ Pełna paleta w `R/palette.R`: `upwr_cat` (8 kolorów: grafit, bursztyn, niebo, 
 
 ---
 
-## 5. Motyw ggplot — zamień bezpośrednio
+## 5. Motyw ggplot
 
 ```r
-# BYŁO
-theme_educational()
-theme_educational(base_size = 12)
-
-# JEST
 theme_upwr()
 theme_upwr(base_size = 12)
 ```
 
-Zamieniaj bezpośrednio, bez aliasów. `lc_apply_ggplot_defaults()` ustawia `theme_upwr` jako globalny domyślny motyw — callów `+ theme_upwr()` można unikać w nowych wykresach, ale nie trzeba usuwać istniejących.
+`lc_apply_ggplot_defaults()` ustawia `theme_upwr` jako globalny domyślny motyw — callów `+ theme_upwr()` można unikać, ale można je zostawić tam, gdzie lokalnie doprecyzowują wykres.
 
 ---
 
@@ -233,7 +211,7 @@ Nie używaj `ignoreNULL = FALSE` w `observeEvent` — powoduje strzał przy NULL
 
 ## 7. Callouty — pozycja po migracji
 
-Statyczne `div(class="callout-*")` jako **bezpośrednie dzieci** `.lc-chapter` automatycznie floatują prawostronnie (≥900px). Callout wewnątrz `renderUI()` lub `figure_panel()` pozostaje inline.
+Statyczne notki marginalne twórz przez `margin_callout()` lub `margin_note()`. Dynamiczne komunikaty wewnątrz `renderUI()` mogą nadal używać lekkich klas informacyjnych, ale nie powinny sterować strukturą layoutu.
 
 Callout floatuje do prawej i **tekst po nim owijał się dookoła**. Zatem:
 - Callout który był *po* widgecie jako podsumowanie → przenieś **przed następną sekcję** (h2 + narracja), żeby owijanie miało sens
@@ -242,8 +220,8 @@ Callout floatuje do prawej i **tekst po nim owijał się dookoła**. Zatem:
 ```r
 # Typowy pattern: callout floatuje, narracja się owija
 margin_callout(label = "Zapamiętaj", "treść", color = "uwaga"),
-h2(id = "ch1-nastepna", class = "section-title", "Następna sekcja"),
-div(class = "narrative", p("Ten tekst owija się obok callout...")),
+lc_h2(id = "ch1-nastepna", num = "§ 2", title = "Następna sekcja"),
+lc_p("Ten tekst owija się obok callout..."),
 figure_panel(label = "Ryc. 1.2", title = "...", full_width = TRUE,  # clears float
   plotOutput("plot")
 ),
@@ -274,6 +252,10 @@ Polskie cudzysłowy typograficzne `„..."` (U+201E/U+201D) mogą być **wewnąt
 | `margin_note(...)` | lżejsza notka marginalna (kursywa, bez etykiety) |
 | `margin_code_note(code, description, label)` | callout kodu (gold, `⌘`) |
 | `figure_panel(label, ..., title, full_width)` | ramka z plakietką; `full_width=TRUE` czyści floaty |
+| `lc_formula_box(...)` | blok wzoru lub krótkiego zapisu matematycznego |
+| `lc_stat_grid(..., columns)` | siatka metryk/statystyk |
+| `lc_stat_box(label, value, ..., caption, color)` | pojedyncza metryka z lewym akcentem |
+| `lc_feedback(..., type)` | dynamiczny komunikat w `renderUI()`; `type`: `"info"` / `"ok"` / `"warning"` / `"danger"` |
 | `lc_chapter_next(num, title, lead, target_id)` | link „→ Dalej" na marginesie |
 
 ---

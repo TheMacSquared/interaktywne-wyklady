@@ -16,9 +16,9 @@ ch8_ui <- list(
     ),
 
     # ========================================================================
-    h2(id = "ch8-drzewo", class = "section-title", "Drzewo decyzyjne: jaki test?"),
+    lc_h2("ch8-drzewo", "Drzewo decyzyjne: jaki test?"),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Krok 1:"), " Ile zmiennych?",
       tags$ul(
         tags$li(tags$b("Jedna zmienna"), " → Krok 2a"),
@@ -48,9 +48,9 @@ ch8_ui <- list(
     ),
 
     # ========================================================================
-    h2(id = "ch8-tabela", class = "section-title", "Tabela testów"),
+    lc_h2("ch8-tabela", "Tabela testów"),
 
-    tags$table(class = "table table-bordered table-striped",
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
       tags$thead(
         tags$tr(
@@ -108,7 +108,7 @@ ch8_ui <- list(
       )
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Uwaga: "),
       "gdy dane mocno naruszają założenia testów parametrycznych (skrajna skośność,
        małe n, dane porządkowe), stosuje się testy nieparametryczne (Mann-Whitney, Wilcoxon,
@@ -116,14 +116,14 @@ ch8_ui <- list(
     ),
 
     # ========================================================================
-    h2(id = "ch8-jamovi", class = "section-title", "Jamovi ↔ testy z tego wykładu"),
+    lc_h2("ch8-jamovi", "Jamovi ↔ testy z tego wykładu"),
 
-    div(class = "narrative",
+    tagList(
       p("Liczymy w ", tags$b("jamovi"),
         " — poniżej ścieżka w menu oraz to, co odczytać z wyniku.")
     ),
 
-    tags$table(class = "table table-bordered table-striped",
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
       tags$thead(
         tags$tr(
@@ -194,16 +194,16 @@ ch8_ui <- list(
       )
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Zasada: "),
       "najpierw ANOVA. Jeśli istotna → post-hoc (Games-Howell).
        Jeśli nieistotna → post-hoc pomijamy."
     ),
 
     # ========================================================================
-    h2(id = "ch8-efekt", class = "section-title", "Miary wielkości efektu"),
+    lc_h2("ch8-efekt", "Miary wielkości efektu"),
 
-    tags$table(class = "table table-bordered",
+    tags$table(class = "lc-table lc-table-bordered",
       style = "font-size: 14px;",
       tags$thead(
         tags$tr(
@@ -236,22 +236,22 @@ ch8_ui <- list(
       )
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Reguła interpretacji: "),
       "progi Cohena to punkt wyjścia, nie wyrocznia. To, czy d = 0.3 jest \"małe\" czy \"ważne\", zależy od dziedziny.
        Dla bezpieczeństwa żywności (toksyny, patogeny) nawet mały efekt bywa krytyczny. Dla sensoryki — liczy się dopiero efekt średni."
     ),
 
     # ========================================================================
-    h2(id = "ch8-pvalue", class = "section-title", "P-wartość — przypomnienie"),
+    lc_h2("ch8-pvalue", "P-wartość — przypomnienie"),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$strong("P-wartość to:"),
       p("Prawdopodobieństwo uzyskania wyniku co najmniej tak skrajnego,
         zakładając że H₀ jest prawdziwa.")
     ),
 
-    div(class = "callout-danger",
+    lc_feedback(type = "danger",
       tags$strong("P-wartość NIE jest:"),
       tags$ul(
         tags$li("Prawdopodobieństwem, że H₀ jest prawdziwa"),
@@ -261,9 +261,9 @@ ch8_ui <- list(
     ),
 
     # ========================================================================
-    h2(id = "ch8-pulapki", class = "section-title", "Typowe pułapki"),
+    lc_h2("ch8-pulapki", "Typowe pułapki"),
 
-    div(class = "callout-danger",
+    lc_feedback(type = "danger",
       tags$ul(
         tags$li(tags$b("P-hacking:"),
                 " próbowanie testu aż wyjdzie p < 0.05 (parametryczny → nieparametryczny → usuwanie \"outlierów\" → zmiana hipotezy).
@@ -282,10 +282,10 @@ ch8_ui <- list(
     ),
 
     # ========================================================================
-    h2(id = "ch8-kod", class = "section-title", "Kod R — rstatix"),
+    lc_h2("ch8-kod", "Kod R — rstatix"),
 
-    div(class = "formula-box",
-      tags$pre(style = "background: var(--upwr-surface-sunken); padding: 12px; border-radius: 6px; font-size: 13px;",
+    lc_formula_box(
+      tags$pre(class = "lc-code-block",
         tags$code(
 "library(rstatix)
 library(broom)

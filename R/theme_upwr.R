@@ -27,7 +27,7 @@ theme_upwr <- function(base_size   = 11,
 
   t <- ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
     ggplot2::theme(
-      # Tła — białe, żeby wykres zlewał się z kafelkiem widgetu (figure_panel / widget-block).
+      # Tła — białe, żeby wykres zlewał się z kafelkiem figure_panel.
       # Domyślny cream z palety zostaje dla kontekstów poza UI wykładu.
       plot.background  = ggplot2::element_rect(fill = "#ffffff", color = NA),
       panel.background = ggplot2::element_rect(fill = "#ffffff", color = NA),

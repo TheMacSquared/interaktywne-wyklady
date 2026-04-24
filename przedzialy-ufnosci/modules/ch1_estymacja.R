@@ -16,10 +16,9 @@ ch1_ui <- list(
                 (CTG). Teraz wykorzystamy to do szacowania parametrów populacji."
     ),
 
-    h2(id = "ch1-estymacja", class = "section-title",
-       "Estymacja — od próby do populacji"),
+    lc_h2("ch1-estymacja", "Estymacja — od próby do populacji"),
 
-    div(class = "narrative",
+    tagList(
       p("W statystyce rzadko znamy parametry całej populacji.
         Zamiast tego pobieramy ", tags$strong("próbę"), " i na jej podstawie
         ", tags$strong("szacujemy"), " (estymujemy) nieznany parametr."),
@@ -29,10 +28,9 @@ ch1_ui <- list(
         " średniej populacyjnej ", withMathJax("\\(\\mu\\)"), ".")
     ),
 
-    h2(id = "ch1-estymator", class = "section-title",
-       "Estymator w akcji"),
+    lc_h2("ch1-estymator", "Estymator w akcji"),
 
-    div(class = "narrative",
+    tagList(
       p("Zobaczmy, jak działa estymacja. Znamy prawdziwe ",
         withMathJax("\\(\\mu\\)"), " populacji (wrzosowa linia).
         Za każdym razem losujemy próbę i obliczamy ",
@@ -56,13 +54,13 @@ ch1_ui <- list(
           sliderInput("ch1_n", "Wielkość próby (n):",
                       min = 5, max = 200, value = 30, step = 5),
           hr(),
-          div(style = "display: flex; flex-direction: column; gap: 8px;",
+          lc_stack(gap = "md",
             actionButton("ch1_draw_1", "Pobierz 1 próbę",
-                         class = "btn-primary", width = "100%"),
+                         class = "lc-btn-primary", width = "100%"),
             actionButton("ch1_draw_20", "Pobierz 20 prób",
-                         class = "btn-warning", width = "100%"),
+                         class = "lc-btn-warning", width = "100%"),
             actionButton("ch1_reset", "Reset",
-                         class = "btn-outline-secondary", width = "100%")
+                         class = "lc-btn-secondary-outline", width = "100%")
           ),
           br(),
           uiOutput("ch1_count_info")
@@ -79,10 +77,9 @@ ch1_ui <- list(
        wokół prawdziwego μ — im większe n, tym bliżej."
     ),
 
-    h2(id = "ch1-wlasnosci", class = "section-title",
-       "Trzy własności dobrego estymatora"),
+    lc_h2("ch1-wlasnosci", "Trzy własności dobrego estymatora"),
 
-    div(class = "narrative",
+    tagList(
       p("Skąd wiemy, czy dany estymator jest „dobry”? Statystycy oceniają
         estymatory względem trzech podstawowych własności: ",
         tags$strong("nieobciążoności"), ", ",
@@ -92,7 +89,7 @@ ch1_ui <- list(
       p("Estymator ", withMathJax("\\(\\hat{\\theta}\\)"), " parametru ",
         withMathJax("\\(\\theta\\)"), " jest ", tags$strong("nieobciążony"),
         ", gdy:"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax("$$E[\\hat{\\theta}] = \\theta$$")
       ),
       p("Czyli: ", tags$em("średnio"),
@@ -138,7 +135,7 @@ ch1_ui <- list(
       lc_h3("(3) Zgodność"),
       p("Estymator jest ", tags$strong("zgodny"),
         ", gdy z rosnącą wielkością próby zbiega do prawdziwego parametru:"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax("$$\\hat{\\theta}_n \\xrightarrow{p} \\theta \\quad \\text{gdy} \\quad n \\to \\infty$$")
       ),
       p("Innymi słowy: dla bardzo dużej próby estymator trafia w parametr ",
@@ -165,10 +162,9 @@ ch1_ui <- list(
        trafiał dokładniej, gdy zbieramy więcej danych."
     ),
 
-    h2(id = "ch1-punkt-nie-wystarczy", class = "section-title",
-       "Dlaczego sam punkt nie wystarczy?"),
+    lc_h2("ch1-punkt-nie-wystarczy", "Dlaczego sam punkt nie wystarczy?"),
 
-    div(class = "narrative",
+    tagList(
       p("Nawet najlepszy estymator punktowy zmienia się z próby na próbę.
         Podanie samej liczby ", withMathJax("\\(\\bar{x} = 171.3\\)"),
         " nie mówi nic o tym, jak bardzo możemy się mylić."),
@@ -188,7 +184,7 @@ ch1_ui <- list(
           helpText("Każde kliknięcie losuje nową próbę. Obserwuj,
                     jak bardzo skacze estymata."),
           actionButton("ch1_fluct_draw", "Losuj próbę",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch1_fluct_plot", height = "300px")
@@ -245,8 +241,7 @@ ch1_server <- function(input, output, session) {
 
   output$ch1_count_info <- renderUI({
     n_est <- nrow(ch1_estimates())
-    div(class = "stat-box", style = paste0("background:", col_ci, ";"),
-        paste0("Prób: ", n_est))
+    lc_stat_box("Prób", n_est, color = col_ci)
   })
 
   output$ch1_estimates_plot <- renderPlot({
@@ -256,7 +251,7 @@ ch1_server <- function(input, output, session) {
     if (nrow(est) == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Pobierz próbę'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       ggplot(est, aes(x = xbar)) +
@@ -283,12 +278,9 @@ ch1_server <- function(input, output, session) {
     if (nrow(est) == 0) return(NULL)
     params <- get_population_params(input$ch1_dist)
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_true, ";"),
-          paste0("μ = ", round(params$mu, 2))),
-      div(class = "stat-box", style = paste0("background:", col_estimate, ";"),
-          paste0("Śr. estymat = ", round(mean(est$xbar), 2))),
-      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
-          paste0("SD estymat = ", round(sd(est$xbar), 2)))
+      lc_stat_box("μ", round(params$mu, 2), color = col_true),
+      lc_stat_box("Śr. estymat", round(mean(est$xbar), 2), color = col_estimate),
+      lc_stat_box("SD estymat", round(sd(est$xbar), 2), color = upwr_secondary)
     )
   })
 
@@ -318,7 +310,7 @@ ch1_server <- function(input, output, session) {
     if (nrow(df) == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Losuj próbę'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       ggplot(df, aes(x = draw, y = xbar)) +

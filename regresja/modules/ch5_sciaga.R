@@ -16,12 +16,11 @@ ch5_ui <- list(
                 i logistycznej."
     ),
 
-    h2(id = "ch5-trzy-typy", class = "section-title",
-       "Trzy typy regresji"),
+    lc_h2("ch5-trzy-typy", "Trzy typy regresji"),
 
-    div(class = "narrative",
+    tagList(
 
-    tags$table(class = "table table-bordered table-striped",
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 14px;",
       tags$thead(
         tags$tr(tags$th(""), tags$th("Liniowa prosta"), tags$th("Wieloraka"), tags$th("Logistyczna"))
@@ -44,12 +43,11 @@ ch5_ui <- list(
 
     ),
 
-    h2(id = "ch5-metryki", class = "section-title",
-       "Metryki porównawcze"),
+    lc_h2("ch5-metryki", "Metryki porównawcze"),
 
-    div(class = "narrative",
+    tagList(
 
-    tags$table(class = "table table-bordered",
+    tags$table(class = "lc-table lc-table-bordered",
       style = "font-size: 14px;",
       tags$thead(
         tags$tr(tags$th("Metryka"), tags$th("Wzór"), tags$th("Kierunek"), tags$th("Uwagi"))
@@ -90,12 +88,11 @@ ch5_ui <- list(
 
     ),
 
-    h2(id = "ch5-interpretacja", class = "section-title",
-       "Interpretacja współczynników"),
+    lc_h2("ch5-interpretacja", "Interpretacja współczynników"),
 
-    div(class = "narrative",
+    tagList(
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Regresja liniowa:"),
       p(withMathJax("\\(\\beta_1 = 0.5\\)"), " oznacza: wzrost X o 1 powoduje wzrost Y o 0.5 (ceteris paribus)."),
 
@@ -110,12 +107,11 @@ ch5_ui <- list(
 
     ),
 
-    h2(id = "ch5-kiedy", class = "section-title",
-       "Kiedy która regresja?"),
+    lc_h2("ch5-kiedy", "Kiedy która regresja?"),
 
-    div(class = "narrative",
+    tagList(
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$ul(
         tags$li(tags$b("Y ciągła, 1 predyktor"), " → regresja liniowa prosta"),
         tags$li(tags$b("Y ciągła, wiele predyktorów"), " → regresja wieloraka"),
@@ -127,12 +123,12 @@ ch5_ui <- list(
 
     ),
 
-    h2(id = "ch5-funkcje-r", class = "section-title", "Funkcje R"),
+    lc_h2("ch5-funkcje-r", "Funkcje R"),
 
-    div(class = "narrative",
+    tagList(
 
-    div(class = "formula-box",
-      tags$pre(style = "background: #f8f9fa; padding: 12px; border-radius: 6px; font-size: 13px;",
+    lc_formula_box(
+      tags$pre(class = "lc-code-block",
         tags$code(
 "library(broom)
 
@@ -161,11 +157,11 @@ predict(model_log, newdata = ..., type = 'response')  # prawdopodobienstwa"
 
     ),
 
-    h2(id = "ch5-pulapki", class = "section-title", "Typowe pułapki"),
+    lc_h2("ch5-pulapki", "Typowe pułapki"),
 
-    div(class = "narrative",
+    tagList(
 
-    div(class = "callout-danger",
+    lc_feedback(type = "danger",
       tags$ul(
         tags$li(tags$b("Extrapolacja:"), " Model działa w zakresie danych treningowych. Predykcja poza tym zakresem jest ryzykowna."),
         tags$li(tags$b("Korelacja predyktorów:"), " Silna korelacja między X1 i X2 (współliniowość) zawyża SE i utrudnia interpretację."),

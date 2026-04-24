@@ -16,24 +16,24 @@ ch6_ui <- list(
                 z losowości próby."
     ),
 
-    h2(id = "ch6-intro", class = "section-title", "Test t dla dwóch prób niezależnych"),
+    lc_h2("ch6-intro", "Test t dla dwóch prób niezależnych"),
 
-    div(class = "narrative",
+    tagList(
       p("Pytanie: czy średnie w dwóch grupach różnią się istotnie?"),
       p("Przykład: czy mężczyźni i kobiety różnią się wzrostem?"),
       p("Trzy warianty par hipotez:"),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Dwustronna"), " (grupy różnią się):"),
         p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 \\quad\\)"),
           withMathJax("\\(H_a: \\mu_1 \\neq \\mu_2\\)"))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Prawostronna"), " (grupa 1 ma ",
           tags$em("wyższą"), " średnią):"),
         p(withMathJax("\\(H_0: \\mu_1 \\leq \\mu_2 \\quad\\)"),
           withMathJax("\\(H_a: \\mu_1 > \\mu_2\\)"))
       ),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("Lewostronna"), " (grupa 1 ma ",
           tags$em("niższą"), " średnią):"),
         p(withMathJax("\\(H_0: \\mu_1 \\geq \\mu_2 \\quad\\)"),
@@ -43,7 +43,7 @@ ch6_ui <- list(
         standardowego. Im większa wartość bezwzględna ", withMathJax("\\(|t|\\)"),
         ", tym bardziej nieprawdopodobne jest zobaczenie takiej różnicy gdy
         H₀ jest prawdziwa."),
-      div(class = "formula-box",
+      lc_formula_box(
         p("Statystyka testowa: ",
           withMathJax("\\(t = \\frac{\\bar{x}_1 - \\bar{x}_2}{SE}\\)"))
       )
@@ -52,9 +52,9 @@ ch6_ui <- list(
     # ========================================================================
     # Cwiczenie: sformuluj hipotezy
     # ========================================================================
-    h2(id = "ch6-cwiczenie", class = "section-title", "Ćwiczenie: sformułuj hipotezy"),
+    lc_h2("ch6-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    div(class = "narrative",
+    tagList(
       p("Porównanie dwóch grup — jak zapisać H₀ i Hₐ?")
     ),
 
@@ -84,7 +84,7 @@ ch6_ui <- list(
     # ========================================================================
     # WIDGET 1: Test t niezalezny
     # ========================================================================
-    h2(id = "ch6-niezalezny", class = "section-title", "Test t niezależny"),
+    lc_h2("ch6-niezalezny", "Test t niezależny"),
 
     figure_panel(
       label = "Ryc. 7.1",
@@ -103,7 +103,7 @@ ch6_ui <- list(
           sliderInput("ch6_ind_n", "n (na grupę):",
                       min = 15, max = 100, value = 40, step = 5),
           actionButton("ch6_run_ind_t", "Generuj i testuj",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch6_ind_boxplot", height = "300px"),
@@ -115,9 +115,9 @@ ch6_ui <- list(
     # ========================================================================
     # WIDGET 2: Test t parowy
     # ========================================================================
-    h2(id = "ch6-parowy", class = "section-title", "Test t dla prób zależnych (parowy)"),
+    lc_h2("ch6-parowy", "Test t dla prób zależnych (parowy)"),
 
-    div(class = "narrative",
+    tagList(
       p("Gdy mierzymy tych samych osobników dwa razy
         (przed i po interwencji), używamy testu parowego."),
       p("Przykład: wyniki studentów przed i po korepetycjach."),
@@ -135,7 +135,7 @@ ch6_ui <- list(
           sliderInput("ch6_paired_effect", "Efekt interwencji (pkt):",
                       min = 0, max = 15, value = 5, step = 1),
           actionButton("ch6_run_paired", "Generuj i testuj",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch6_paired_plot", height = "300px"),
@@ -233,7 +233,7 @@ ch6_server <- function(input, output, session) {
 
     res <- format_test_result(tidy_res$p)
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       p(tags$strong("Wynik testu t niezależnego:")),
       p(paste0("t(", round(tidy_res$df, 1), ") = ",
                round(tidy_res$statistic, 3))),
@@ -295,7 +295,7 @@ ch6_server <- function(input, output, session) {
     res <- format_test_result(tidy_res$p)
     direction <- if (mean_diff > 0) "wzrosły" else if (mean_diff < 0) "spadły" else "nie zmieniły się"
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       p(tags$strong("Wynik testu t parowego:")),
       p(paste0("Średnia różnica: ", round(mean_diff, 2), " pkt")),
       p(paste0("t(", tidy_res$df, ") = ", round(tidy_res$statistic, 3))),

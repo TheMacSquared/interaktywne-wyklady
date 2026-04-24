@@ -31,15 +31,15 @@ ch2_ui <- list(
       ),
       div(class = "step-buttons",
         actionButton("ch2_freq_s1", "1. Surowe dane",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch2_freq_s2", "2. Zliczanie",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch2_freq_s3", "3. Częstości względne",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch2_freq_s4", "4. Skumulowane",
-                     class = "btn-outline-primary")
+                     class = "lc-btn-outline")
       ),
-      actionButton("ch2_freq_reset", "Reset", class = "btn-secondary btn-sm"),
+      actionButton("ch2_freq_reset", "Reset", class = "lc-btn-secondary lc-btn-sm"),
       uiOutput("ch2_freq_explanation"),
       tableOutput("ch2_freq_table")
     ),
@@ -47,9 +47,9 @@ ch2_ui <- list(
     # ========================================================================
     # WIDGET 1b: Nominal vs Ordinal comparison
     # ========================================================================
-    h2(id = "ch2-nominalna-vs-porzadkowa", class = "section-title", "Nominalna vs porządkowa — czy kolejność ma znaczenie?"),
+    lc_h2("ch2-nominalna-vs-porzadkowa", "Nominalna vs porządkowa — czy kolejność ma znaczenie?"),
 
-    div(class = "narrative",
+    tagList(
       p("Zanim przejdziemy do wizualizacji, zatrzymajmy sie na waznym rozróżnieniu.
         Zmienne jakościowe dzielimy na ", tags$b("nominalne"), " (kategorie bez naturalnej
         kolejnośći) i ", tags$b("porzadkowe"), " (kategorie z logiczna kolejnośćia).
@@ -77,9 +77,9 @@ ch2_ui <- list(
     ),
 
     # --- Narrative before Widget 2 ---
-    h2(id = "ch2-kolowy-vs-slupkowy", class = "section-title", "Wykres kołowy vs słupkowy"),
+    lc_h2("ch2-kolowy-vs-slupkowy", "Wykres kołowy vs słupkowy"),
 
-    div(class = "narrative",
+    tagList(
       p("Jak wizualizować zmienne jakościowe? Porównajmy wykres kołowy ze słupkowym
         w trzech scenariuszach -- od latwego do trudnego. Zobaczysz, dlaczego
         wykres słupkowy jest ", tags$b("zawsze"), " co najmniej tak samo czytelny.")
@@ -93,11 +93,11 @@ ch2_ui <- list(
       title = "Pie vs Bar — trzy scenariusze porównawcze",
       div(style = "display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;",
         actionButton("ch2_sc1", "1. Duze różnice",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch2_sc2", "2. Podobne wartości",
-                     class = "btn-outline-primary"),
+                     class = "lc-btn-outline"),
         actionButton("ch2_sc3", "3. Podobne + zle kolory",
-                     class = "btn-outline-primary")
+                     class = "lc-btn-outline")
       ),
       fluidRow(
         column(6,
@@ -122,9 +122,9 @@ ch2_ui <- list(
     ),
 
     # --- Narrative before Widget 4 ---
-    h2(id = "ch2-kolory", class = "section-title", "Manipulacja kolorami"),
+    lc_h2("ch2-kolory", "Manipulacja kolorami"),
 
-    div(class = "narrative",
+    tagList(
       p("Kolory na wykresie mogą manipulowac odbiorem danych. Zobaczmy,
         jak ten sam zestaw danych moze wyglądać zupełnie inaczej w
         zależności od doboru palety kolorow.")
@@ -153,11 +153,11 @@ ch2_ui <- list(
             selected = "neutral"
           ),
           actionButton("ch2_color_random", "Losowe kolory",
-                       class = "btn-outline-secondary", width = "100%")
+                       class = "lc-btn-secondary-outline", width = "100%")
         ),
         column(8, plotOutput("ch2_color_plot", height = "380px"))
       ),
-      div(class = "callout-warning",
+      lc_feedback(type = "warning",
         tags$b("Pamiętaj: "),
         "Wybór kolorów nie jest neutralny. Intensywne, cieplejsze barwy
          przyciągają uwagę, a jasne/szare marginalizują kategorie.",
@@ -182,9 +182,9 @@ ch2_ui <- list(
     # ========================================================================
     # WIDGET 4b: Cross-tabulation
     # ========================================================================
-    h2(id = "ch2-krzyzowa", class = "section-title", "Tabela krzyżowa — dwie zmienne jednocześnie"),
+    lc_h2("ch2-krzyzowa", "Tabela krzyżowa — dwie zmienne jednocześnie"),
 
-    div(class = "narrative",
+    tagList(
       p("Dotychczas analizowalismy po jednej zmiennej. Ale często chcemy
         zbadac ", tags$b("zaleznosc miedzy dwiema zmiennymi jakościowymi"),
         ". Sluzy do tego tabela krzyzowa (kontyngencji).")
@@ -230,9 +230,9 @@ ch2_ui <- list(
     ),
 
     # --- Narrative before Widget 5 ---
-    h2(id = "ch2-dominanta", class = "section-title", "Dominanta (moda)"),
+    lc_h2("ch2-dominanta", "Dominanta (moda)"),
 
-    div(class = "narrative",
+    tagList(
       p("Dominanta (moda) to jedyna miara tendencji centralnej dla
         zmiennych nominalnych. Jest to wartość (kategoria), ktora
         występuje najczęściej w zbiorze danych.")
@@ -245,7 +245,7 @@ ch2_ui <- list(
       label = "Ryc. 2.6",
       title = "Dominanta — najczęściej występująca kategoria",
       actionButton("ch2_mode_resample", "Losuj nowe proporcje",
-                   class = "btn-primary"),
+                   class = "lc-btn-primary"),
       plotOutput("ch2_mode_plot", height = "350px"),
       uiOutput("ch2_mode_text")
     ),
@@ -258,7 +258,7 @@ ch2_ui <- list(
     ),
 
     # Bottom spacer
-    div(style = "height: 60px;")
+    lc_spacer("lg")
 
   )
 )
@@ -299,10 +299,10 @@ ch2_server <- function(input, output, session) {
     var_label <- if (is_ord) "zadowolenie" else "kierunek"
 
     if (step == 0) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           "Kliknij kolejne przyciski, aby zbudować tabelę częstości krok po kroku.")
     } else if (step == 1) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$b("Krok 1: Surowe dane. "),
           "Tak wyglądają pierwsze obserwacje zmiennej ",
           tags$code(var_label), ". Każdy wiersz to odpowiedź jednego studenta.",
@@ -313,7 +313,7 @@ ch2_server <- function(input, output, session) {
           )
       )
     } else if (step == 2) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$b("Krok 2: Zliczanie. "),
           "Liczymy, ile razy występuje każda kategoria. To są ",
           tags$b("częstości bezwzględne"), " (liczebności).",
@@ -324,13 +324,13 @@ ch2_server <- function(input, output, session) {
           )
       )
     } else if (step == 3) {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
           tags$b("Krok 3: Częstości względne. "),
           "Dzielimy każdą liczebność przez całkowitą liczbę obserwacji (n = ",
           nrow(student_data), "). Wynik możemy wyrazić jako ułamek lub procent.")
     } else if (step == 4) {
       if (is_ord) {
-        div(class = "callout-success",
+        lc_feedback(type = "ok",
           tags$b("Krok 4: Częstości skumulowane. "),
           "Sumujemy częstości narastająco. ",
           tags$b("Dla zmiennej porządkowej to ma głęboki sens!"),
@@ -344,7 +344,7 @@ ch2_server <- function(input, output, session) {
           "Skumulowany procent daje sensowną interpretację ",
           tags$b("tylko wtedy, gdy kategorie mają naturalną kolejność."))
       } else {
-        div(class = "callout-warning",
+        lc_feedback(type = "warning",
           tags$b("Krok 4: Częstości skumulowane. "),
           "Sumujemy częstości narastająco. ",
           tags$b("Ale uwaga!"), " Dla zmiennej ",
@@ -435,7 +435,7 @@ ch2_server <- function(input, output, session) {
 
   output$ch2_ord_explanation <- renderUI({
     if (isTRUE(input$ch2_ord_shuffle)) {
-      div(class = "callout-warning",
+      lc_feedback(type = "warning",
         tags$strong("Losowa kolejność: "),
         "Dla ", tags$b("kierunku studiow"), " (zmienna nominalna) zmiana kolejnośći
          nie zmienia interpretacji -- kategorie nie maja naturalnego porzadku.
@@ -444,7 +444,7 @@ ch2_server <- function(input, output, session) {
          do 'bardzo zadowolony'."
       )
     } else {
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         tags$strong("Domyslna kolejność: "),
         "Kierunek studiów pokazujemy w kolejnośći alfabetycznej (umownej) --
          moglibymy uzyc dowolnej innej. Zadowolenie natomiast ma naturalny
@@ -731,7 +731,7 @@ ch2_server <- function(input, output, session) {
     total_n  <- sum(counts)
     mode_pct <- round(mode_n / total_n * 100, 1)
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("Dominanta: "), mode_cat,
       tags$br(),
       paste0("Wystepuje ", mode_n, " razy (", mode_pct, "% z ", total_n,

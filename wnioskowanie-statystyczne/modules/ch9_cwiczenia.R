@@ -25,7 +25,7 @@ ch9_ui <- list(
 
     lc_h2("ch9-intro", "§ 1", "Zbiór danych CASchools"),
 
-    div(class = "narrative",
+    tagList(
       p("Dane pochodzą z badania przeprowadzonego w 1998–1999 r. przez California
         Department of Education i dotyczą 420 okręgów szkolnych (ang. ",
         tags$em("school districts"), ") w stanie Kalifornia. Każdy wiersz opisuje
@@ -76,11 +76,11 @@ ch9_ui <- list(
 # ============================================================================
 
 .ch9_task <- function(task_id, title, narrative, ans_btn_id, sol_out_id) {
-  div(class = "widget-block",
+  figure_panel(label = "Ćwiczenie",
     h4(task_id, " — ", title),
-    div(class = "narrative", narrative),
+    tagList( narrative),
     actionButton(ans_btn_id, "Pokaż rozwiązanie",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput(sol_out_id)
   )
 }
@@ -91,7 +91,7 @@ ch9_ui <- list(
 
 .ch9_content_edu <- function() tagList(
 
-  div(class = "callout-info",
+  lc_feedback(type = "info",
     p(tags$b("Otwórz plik "), tags$code("dane/caschools.csv"), tags$b(" w Jamowi"), "."),
     p("Dane ze 420 okręgów szkolnych Kalifornii (1998–1999). Zmienne: ",
       tags$code("read"), ", ", tags$code("math"), ", ", tags$code("income"), ", ",
@@ -517,7 +517,7 @@ ch9_ui <- list(
     tagList(
       p(tags$b("H₀: "), "typ szkoły i high_english są niezależne · ",
         tags$b("Hₐ: "), "zmienne są zależne"),
-      tags$table(class = "table table-bordered table-sm",
+      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
         tags$thead(tags$tr(
           tags$th("grades"),
           tags$th("high_english = FALSE"),
@@ -560,7 +560,7 @@ ch9_ui <- list(
     tagList(
       p(tags$b("H₀: "), "high_str i high_lunch są niezależne · ",
         tags$b("Hₐ: "), "zmienne są zależne"),
-      tags$table(class = "table table-bordered table-sm",
+      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
         tags$thead(tags$tr(
           tags$th("high_str"), tags$th("high_lunch = FALSE"),
           tags$th("high_lunch = TRUE"), tags$th("suma")
@@ -615,7 +615,7 @@ ch9_ui <- list(
     tagList(
       p(tags$b("H₀: "), "μ_niski = μ_średni = μ_wysoki · ",
         tags$b("Hₐ: "), "co najmniej jedna para się różni"),
-      tags$table(class = "table table-bordered table-sm",
+      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
         tags$thead(tags$tr(tags$th("Tercyl"), tags$th("n"),
                            tags$th("x̄ read"), tags$th("s"))),
         tags$tbody(lapply(c("Niski","Średni","Wysoki"), function(g) {
@@ -734,7 +734,7 @@ ch9_server <- function(input, output, session) {
     output[[sol_id_full]] <- renderUI({
       if (!vis[[sol_id_bare]]()) return(NULL)
       k <- isolate(input$ch9_dataset)
-      div(class = "callout-success", style = "margin-top: 10px;",
+      lc_feedback(type = "ok", style = "margin-top: 10px;",
           .ch9_solutions[[k]][[sol_id_bare]])
     })
   }

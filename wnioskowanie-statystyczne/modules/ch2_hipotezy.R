@@ -16,9 +16,9 @@ ch2h_ui <- list(
                 Ćwiczymy tłumaczenie z języka codziennego."
     ),
 
-    h2(id = "ch2h-zasada", class = "section-title", "Zasada: od potocznego do formalnego"),
+    lc_h2("ch2h-zasada", "Zasada: od potocznego do formalnego"),
 
-    div(class = "narrative",
+    tagList(
       p("W badaniach pytania są formułowane swobodnym językiem:"),
       tags$ul(
         tags$li(em("„Czy mężczyźni są wyżsi od kobiet?”")),
@@ -43,11 +43,11 @@ ch2h_ui <- list(
         " — to, co chcemy wykazać (≠, >, <).")
     ),
 
-    h2(id = "ch2h-rozbior", class = "section-title", "Rozbiór przykładu: telefon a koncentracja"),
+    lc_h2("ch2h-rozbior", "Rozbiór przykładu: telefon a koncentracja"),
 
-    div(class = "narrative",
+    tagList(
       p("Pytanie z poprzedniego rozdziału: "),
-      div(class = "callout-info", style = "font-size: 17px;",
+      lc_feedback(type = "info", style = "font-size: 17px;",
         tags$em("„Czy telefon na biurku obniża koncentrację?”")
       ),
       p(tags$b("Krok 1 — parametr.")," Co porównujemy? Mamy dwie grupy
@@ -59,7 +59,7 @@ ch2h_ui <- list(
         " kierunku: czy grupa „biurko” ma ", tags$em("niższą"), " średnią
         niż „plecak”. Relacja w Hₐ to znak „<”."),
       p(tags$b("Krok 3 — sformułowanie:")),
-      div(class = "formula-box",
+      lc_formula_box(
         p(tags$b("H₀ (stan domyślny):"),
           " średnia koncentracja w grupie z telefonem w plecaku jest ",
           tags$b("równa"),
@@ -91,9 +91,9 @@ ch2h_ui <- list(
     # ========================================================================
     # WIDGET 1: Galeria przykładów (język naturalny)
     # ========================================================================
-    h2(id = "ch2h-galeria", class = "section-title", "Galeria: sformułuj hipotezy sam"),
+    lc_h2("ch2h-galeria", "Galeria: sformułuj hipotezy sam"),
 
-    div(class = "narrative",
+    tagList(
       p("Dla każdego pytania zastanów się, jaki parametr porównujemy i jakiej
         relacji szuka Hₐ. Pisz sobie na boku w języku naturalnym (bez greki).
         Potem kliknij „Pokaż odpowiedź” i porównaj.")
@@ -157,11 +157,11 @@ ch2h_ui <- list(
     # ========================================================================
     # WIDGET 4: Jednostronny vs dwustronny
     # ========================================================================
-    h2(id = "ch2h-jedno-dwustronny", class = "section-title", "Test jednostronny a dwustronny"),
+    lc_h2("ch2h-jedno-dwustronny", "Test jednostronny a dwustronny"),
 
-    div(class = "narrative",
+    tagList(
       p("Sformułowanie Hₐ decyduje, czy test jest jedno- czy dwustronny:"),
-      tags$table(class = "table table-bordered", style = "font-size: 15px;",
+      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th("Typ"), tags$th("Hₐ"), tags$th("Przykład"), tags$th("Kiedy?"))
         ),
@@ -222,9 +222,9 @@ ch2h_ui <- list(
     # ========================================================================
     # Typowe bledy
     # ========================================================================
-    h2(id = "ch2h-bledy", class = "section-title", "Typowe błędy przy formułowaniu hipotez"),
+    lc_h2("ch2h-bledy", "Typowe błędy przy formułowaniu hipotez"),
 
-    div(class = "narrative",
+    tagList(
       p("Kilka pułapek, na które warto uważać przy formułowaniu hipotez:"),
       tags$ol(
         tags$li(

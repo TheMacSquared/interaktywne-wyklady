@@ -19,7 +19,7 @@ digraph drzewo {
   graph [rankdir = TB, bgcolor = "transparent", splines = ortho,
          nodesep = 0.5, ranksep = 0.6, fontname = "Helvetica"]
   node  [fontname = "Helvetica", fontsize = 11, margin = "0.18,0.10"]
-  edge  [fontname = "Helvetica", fontsize = 10, color = "#2c3e50"]
+  edge  [fontname = "Helvetica", fontsize = 10, color = "__UPWR_SECONDARY__"]
 
   /* ==================== DRZEWO 1: JEDNA ZMIENNA ==================== */
 
@@ -28,7 +28,7 @@ digraph drzewo {
     labeljust = "c"
     fontsize = 16
     fontname = "Helvetica-Bold"
-    color = "#bdc3c7"
+    color = "__UPWR_RULE__"
     style = "rounded"
     margin = 20
 
@@ -62,7 +62,7 @@ digraph drzewo {
         <tr><td align="left">Test t dla jednej próby</td></tr>
       </table>>,
       shape = box, style = "filled", fillcolor = "#eafaf1",
-      penwidth = 2, color = "#27ae60"]
+      penwidth = 2, color = "__UPWR_SAGE__"]
 
     box_nom1 [label = <
       <table border="0" cellborder="0" cellspacing="3">
@@ -78,7 +78,7 @@ digraph drzewo {
         <tr><td align="left">Test proporcji (dwumianowy)</td></tr>
       </table>>,
       shape = box, style = "filled", fillcolor = "#eaf3fa",
-      penwidth = 2, color = "#2980b9"]
+      penwidth = 2, color = "__UPWR_INDIGO__"]
 
     root1 -> dec1
     dec1  -> ilo1
@@ -94,7 +94,7 @@ digraph drzewo {
     labeljust = "c"
     fontsize = 16
     fontname = "Helvetica-Bold"
-    color = "#bdc3c7"
+    color = "__UPWR_RULE__"
     style = "rounded"
     margin = 20
 
@@ -132,7 +132,7 @@ digraph drzewo {
         <tr><td align="left">Test chi-kwadrat niezależności</td></tr>
       </table>>,
       shape = box, style = "filled", fillcolor = "#eafaf1",
-      penwidth = 2, color = "#27ae60"]
+      penwidth = 2, color = "__UPWR_SAGE__"]
 
     box_ni2 [label = <
       <table border="0" cellborder="0" cellspacing="3">
@@ -148,7 +148,7 @@ digraph drzewo {
         <tr><td align="left">Test t dla dwóch prób</td></tr>
       </table>>,
       shape = box, style = "filled", fillcolor = "#eafaf1",
-      penwidth = 2, color = "#27ae60"]
+      penwidth = 2, color = "__UPWR_SAGE__"]
 
     box_ni3 [label = <
       <table border="0" cellborder="0" cellspacing="3">
@@ -163,7 +163,7 @@ digraph drzewo {
         <tr><td align="left">Analiza ANOVA</td></tr>
       </table>>,
       shape = box, style = "filled", fillcolor = "#eafaf1",
-      penwidth = 2, color = "#27ae60"]
+      penwidth = 2, color = "__UPWR_SAGE__"]
 
     box_cc [label = <
       <table border="0" cellborder="0" cellspacing="3">
@@ -181,7 +181,7 @@ digraph drzewo {
         <tr><td align="left">Współczynnik korelacji Pearsona</td></tr>
       </table>>,
       shape = box, style = "filled", fillcolor = "#eafaf1",
-      penwidth = 2, color = "#27ae60"]
+      penwidth = 2, color = "__UPWR_SAGE__"]
 
     root2 -> dec2
     dec2  -> nn
@@ -194,6 +194,16 @@ digraph drzewo {
   }
 }
 '
+
+drzewo_dot_tokens <- c(
+  "__UPWR_SECONDARY__" = upwr_secondary,
+  "__UPWR_RULE__"      = upwr_rule,
+  "__UPWR_SAGE__"      = unname(upwr_cat["szalwia"]),
+  "__UPWR_INDIGO__"    = unname(upwr_cat["indygo"])
+)
+for (token in names(drzewo_dot_tokens)) {
+  drzewo_dot <- gsub(token, drzewo_dot_tokens[[token]], drzewo_dot, fixed = TRUE)
+}
 
 # ----------------------------------------------------------------------------
 # WARIANT B: visNetwork - dane
@@ -354,42 +364,42 @@ build_drzewo_visnet <- function() {
     ) |>
     visNetwork::visGroups(groupname = "root",
                           color = list(background = "#ffffff",
-                                       border = "#2c3e50"),
+                                       border = upwr_secondary),
                           font = list(multi = "html", size = 20,
                                       face = "Helvetica", align = "center")) |>
     visNetwork::visGroups(groupname = "decision",
                           shape = "ellipse",
                           color = list(background = "#ffffff",
-                                       border = "#7f8c8d"),
+                                       border = upwr_reference),
                           font = list(multi = "html", size = 16,
                                       face = "Helvetica", align = "center")) |>
     visNetwork::visGroups(groupname = "branch",
-                          color = list(background = "#ecf0f1",
-                                       border = "#2c3e50"),
+                          color = list(background = upwr_panel,
+                                       border = upwr_secondary),
                           font = list(multi = "html", size = 17,
                                       face = "Helvetica", align = "center")) |>
     visNetwork::visGroups(groupname = "cat_ilo",
                           color = list(background = "#d5f5e3",
-                                       border = "#27ae60"),
+                                       border = unname(upwr_cat["szalwia"])),
                           font = list(multi = "html", size = 15,
                                       face = "Helvetica", align = "center")) |>
     visNetwork::visGroups(groupname = "cat_nom",
                           color = list(background = "#d6eaf8",
-                                       border = "#2980b9"),
+                                       border = unname(upwr_cat["indygo"])),
                           font = list(multi = "html", size = 15,
                                       face = "Helvetica", align = "center")) |>
     visNetwork::visGroups(groupname = "test_ilo",
                           color = list(background = "#eafaf1",
-                                       border = "#27ae60"),
+                                       border = unname(upwr_cat["szalwia"])),
                           font = list(multi = "html", size = 14,
                                       face = "Helvetica", align = "left")) |>
     visNetwork::visGroups(groupname = "test_nom",
                           color = list(background = "#eaf3fa",
-                                       border = "#2980b9"),
+                                       border = unname(upwr_cat["indygo"])),
                           font = list(multi = "html", size = 14,
                                       face = "Helvetica", align = "left")) |>
     visNetwork::visEdges(arrows = "to",
-                         color = list(color = "#2c3e50"),
+                         color = list(color = upwr_secondary),
                          smooth = list(enabled = TRUE, type = "cubicBezier",
                                        roundness = 0.4),
                          font = list(size = 13, align = "middle",

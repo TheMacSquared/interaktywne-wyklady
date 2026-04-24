@@ -19,9 +19,9 @@ ch5_ui <- list(
     uiOutput("tracker_ch5"),
 
     # --- Widget 1: Skewness ---
-    h2(id = "ch5-skosnosc", class = "section-title", "Skośność (asymetria)"),
+    lc_h2("ch5-skosnosc", "Skośność (asymetria)"),
 
-    div(class = "narrative",
+    tagList(
       p("Skośność mierzy asymetrię rozkładu. Wartość skośności = 0 oznacza
         idealną symetrię, wartości dodatnie wskazują na dłuższy ogon w prawo,
         a ujemne — w lewo.")
@@ -31,7 +31,7 @@ ch5_ui <- list(
       label = "Ryc. 5.1",
       title = "Porównanie trzech typów skośności",
       plotOutput("ch5_skew_comparison", height = "300px"),
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         tags$strong("Trzy typy rozkładów: "),
         "lewostronnie skośny (ogon w lewo), symetryczny (brak ogona), prawostronnie skośny (ogon w prawo)."
       )
@@ -54,9 +54,9 @@ ch5_ui <- list(
     ),
 
     # --- Widget 2: Kurtosis ---
-    h2(id = "ch5-kurtoza", class = "section-title", "Kurtoza (ciężkość ogonów)"),
+    lc_h2("ch5-kurtoza", "Kurtoza (ciężkość ogonów)"),
 
-    div(class = "narrative",
+    tagList(
       p("Kurtoza mierzy, jak 'ciężkie' są ogony rozkładu — czyli
         jak często pojawiają się wartości ekstremalne. Nie chodzi
         o 'spłaszczenie' szczytu, lecz o to, ile obserwacji leży daleko
@@ -75,11 +75,11 @@ ch5_ui <- list(
         column(4,
           div(style = "margin-top: 25px; display: flex; gap: 4px; flex-wrap: wrap;",
             actionButton("ch5_kurt_platy", "Platykurtyczny",
-                         class = "btn-outline-primary btn-sm"),
+                         class = "lc-btn-outline lc-btn-sm"),
             actionButton("ch5_kurt_mezo", "Mezokurtyczny",
-                         class = "btn-outline-primary btn-sm"),
+                         class = "lc-btn-outline lc-btn-sm"),
             actionButton("ch5_kurt_lepto", "Leptokurtyczny",
-                         class = "btn-outline-primary btn-sm")
+                         class = "lc-btn-outline lc-btn-sm")
           )
         )
       ),
@@ -89,9 +89,9 @@ ch5_ui <- list(
     ),
 
     # --- Widget 3: Full picture ---
-    h2(id = "ch5-pelny-obraz", class = "section-title", "Pełny obraz"),
+    lc_h2("ch5-pelny-obraz", "Pełny obraz"),
 
-    div(class = "narrative",
+    tagList(
       p("Na koniec - pelny obraz. Dla każdej zmiennej ilościowej mozemy
         opisać jej położenie, rozrzut i kształt.")
     ),
@@ -317,19 +317,19 @@ ch5_server <- function(input, output, session) {
     req(!is.null(ek))
 
     if (ek < -0.5) {
-      type_class <- "callout-warning"
+      type_class <- "warning"
       type_name <- "Platykurtyczny"
       desc <- "Rozkład ma lżejsze ogony niż normalny — wartości ekstremalne
                są rzadsze. Dane są bardziej 'skoncentrowane' w okolicy średniej,
                bez dalekich obserwacji."
     } else if (ek < 0.5) {
-      type_class <- "callout-info"
+      type_class <- "info"
       type_name <- "Mezokurtyczny"
       desc <- "Rozkład jest zbliżony do normalnego — ogony mają 'typową'
                ciężkość. To punkt odniesienia, względem którego porównujemy
                inne rozkłady."
     } else {
-      type_class <- "callout-danger"
+      type_class <- "danger"
       type_name <- "Leptokurtyczny"
       desc <- paste0("Rozkład ma cięższe ogony niż normalny — wartości
                ekstremalne pojawiają się częściej niż byśmy oczekiwali.
@@ -337,7 +337,7 @@ ch5_server <- function(input, output, session) {
                ('czarne łabędzie').")
     }
 
-    div(class = type_class,
+    lc_feedback(type = type_class,
       tags$strong(paste0(type_name, " (nadwyżkowa kurtoza = ", round(ek, 1), ")")),
       p(desc),
       tags$ul(
@@ -492,7 +492,7 @@ ch5_server <- function(input, output, session) {
       outlier_text <- "Brak wartości odstających (wg kryterium 1.5 * IQR)."
     }
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       p(tags$strong("Podsumowanie:")),
       tags$ul(
         tags$li(paste0("Średnia = ", round(m, 2), ", Mediana = ", round(med, 2))),

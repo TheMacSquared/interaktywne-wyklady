@@ -1,6 +1,6 @@
 # lecture_layout.R
 # Shared layout functions dla interaktywnych wykładów.
-# Zastępuje navbarPage() w apkach używających nowego designu.
+# Kanoniczny shell dla wykładów w nowym designie.
 # Używanie: source(file.path(project_root, "R", "lecture_layout.R"), local=TRUE)
 
 # Przechwytuje project_root w momencie source() — parent.frame() to środowisko
@@ -79,14 +79,14 @@ lecture_chapter <- function(id, num, title, content, duration = NULL) {
 }
 
 # ============================================================================
-# lecture_page() — główna funkcja layoutu; zastępuje navbarPage()
+# lecture_page() — główna funkcja layoutu
 #
 # Argumenty:
 #   lecture_id     — slug apki, np. "typy-danych" (do wyboru aktywnej zakładki)
 #   lecture_num    — numer wykładu do wyświetlenia, np. "01"
 #   lecture_title  — tytuł wyświetlany w sidebarze
 #   module_label   — etykieta modułu w sidebarze, np. "Moduł I"
-#   chapters       — lista list() z lecture_chapter() lub starym tabPanel-em
+#   chapters       — lista list() z lecture_chapter()
 #   header_extras  — tagList z app-specyficznym JS/CSS (Chart.js itp.)
 # ============================================================================
 
@@ -107,19 +107,10 @@ lecture_page <- function(lecture_id      = NULL,
   nav_chapters <- lapply(seq_along(chapters), function(i) {
     ch <- chapters[[i]]
 
-    # Obsługa starego formatu tabPanel (Shiny tag list)
-    if (inherits(ch, "shiny.tag") || inherits(ch, "shiny.tag.list")) {
-      ch <- list(id = paste0("chapter-", i),
-                 num = sprintf("%02d", i),
-                 title = attr(ch, "attribs")[["data-value"]] %||%
-                   paste("Rozdział", i),
-                 content = ch)
-    }
-
     tags$div(
       class = "lc-nav-chapter",
       `data-lc-chapter` = ch$id,
-      # action-button bez Bootstrap .btn — Shiny obserwuje kliknięcia
+      # Klasa action-button pozwala Shiny obserwować kliknięcia na własnym znaczniku.
       tags$button(
         id    = paste0("lc__nav_", i),
         class = "lc-nav-chapter-btn action-button",
@@ -177,7 +168,7 @@ lecture_page <- function(lecture_id      = NULL,
       includeCSS(file.path(proj_root, "R", "shared_styles.css")),
       # Paleta UPWr jako CSS custom properties — źródło wartości: R/palette.R.
       # Wstrzyknięte po shared_styles.css, żeby wartości z palette.R miały
-      # pierwszeństwo nad ewentualnymi starymi wartościami w CSS.
+      # pierwszeństwo nad wartościami fallbackowymi w CSS.
       .lc_palette_css(),
       includeScript(file.path(proj_root, "R", "shared_toc.js")),
       header_extras
@@ -227,18 +218,7 @@ lecture_page <- function(lecture_id      = NULL,
 
 lecture_server <- function(chapters, input, output, session) {
 
-  # Normalizuj do listy (na wypadek starych tabPanel-ów)
-  chs <- lapply(seq_along(chapters), function(i) {
-    ch <- chapters[[i]]
-    if (inherits(ch, "shiny.tag") || inherits(ch, "shiny.tag.list")) {
-      list(id = paste0("chapter-", i),
-           num = sprintf("%02d", i),
-           title = paste("Rozdział", i),
-           content = ch)
-    } else {
-      ch
-    }
-  })
+  chs <- chapters
 
   lc_idx <- reactiveVal(1)
 
@@ -288,15 +268,29 @@ lecture_server <- function(chapters, input, output, session) {
 # Komponenty treści — nowe, do używania w rozdziałach
 # ============================================================================
 
-# Nagłówek sekcji §N — używaj wewnątrz rozdziałów
-lc_h2 <- function(id, num, title) {
+# Nagłówek sekcji wykrywany przez TOC. `num` jest opcjonalne: nowe moduły mogą
+# używać samego `lc_h2(id, title)`, a starsze wywołania zachowują numerację.
+lc_h2 <- function(id, num = NULL, title = NULL) {
+  if (is.null(title)) {
+    title <- num
+    num <- NULL
+  }
+
+  num_label <- NULL
+  if (!is.null(num) && nchar(as.character(num)) > 0) {
+    num_label <- as.character(num)
+    if (!grepl("^§\\s*", num_label)) {
+      num_label <- paste0("§ ", num_label)
+    }
+  }
+
   tags$h2(
     id    = id,
     class = "lc-h2",
     `data-lc-section` = id,
-    `data-lc-section-num`   = num,
+    `data-lc-section-num`   = if (is.null(num)) "" else as.character(num),
     `data-lc-section-title` = title,
-    tags$span(class = "lc-h2-kicker", paste0("§ ", num)),
+    if (!is.null(num_label)) tags$span(class = "lc-h2-kicker", num_label),
     title
   )
 }
@@ -361,9 +355,72 @@ figure_panel <- function(label, ..., title = NULL, color = "#6b1a26",
   )
 }
 
+# Blok wzoru lub krótkiego zapisu matematycznego.
+lc_formula_box <- function(...) {
+  tags$div(class = "lc-formula-box", ...)
+}
+
+# Pojedyncza metryka/statystyka. `color` steruje lewym akcentem.
+lc_stat_box <- function(label, value = NULL, ..., caption = NULL,
+                        color = upwr_accent) {
+  value_parts <- c(if (!is.null(value)) list(value), list(...))
+  tags$div(
+    class = "lc-stat-box",
+    style = paste0("--lc-stat-color:", color, ";"),
+    tags$div(class = "lc-stat-label", label),
+    if (length(value_parts) > 0) tags$div(class = "lc-stat-value", value_parts),
+    if (!is.null(caption)) tags$div(class = "lc-stat-caption", caption)
+  )
+}
+
+# Siatka metryk/statystyk.
+lc_stat_grid <- function(..., columns = NULL) {
+  style <- if (!is.null(columns)) {
+    paste0("--lc-stat-cols:", as.integer(columns), ";")
+  } else {
+    NULL
+  }
+  tags$div(class = "lc-stat-grid", style = style, ...)
+}
+
+# Dynamiczny feedback/status w renderUI(), np. po kliknięciu quizu.
+lc_feedback <- function(..., type = c("info", "ok", "warning", "danger"),
+                        style = NULL) {
+  type <- match.arg(type)
+  tags$div(
+    class = paste("lc-feedback", paste0("lc-feedback-", type)),
+    style = style,
+    ...
+  )
+}
+
 # Wrapper dla całej siatki treści rozdziału (tekst + prawy margines)
 lc_grid <- function(...) {
   tags$div(class = "lc-grid", ...)
+}
+
+# Małe utility layoutu dla powtarzalnych układów kontrolek i statusów.
+lc_stack <- function(..., gap = c("md", "sm")) {
+  gap <- match.arg(gap)
+  tags$div(class = paste("lc-stack", paste0("lc-stack-", gap)), ...)
+}
+
+lc_inline_row <- function(..., gap = c("md", "sm"), align = c("start", "center")) {
+  gap <- match.arg(gap)
+  align <- match.arg(align)
+  tags$div(
+    class = paste("lc-inline-row", paste0("lc-inline-row-", gap), paste0("lc-align-", align)),
+    ...
+  )
+}
+
+lc_center <- function(...) {
+  tags$div(class = "lc-center", ...)
+}
+
+lc_spacer <- function(size = c("md", "lg")) {
+  size <- match.arg(size)
+  tags$div(class = paste("lc-spacer", paste0("lc-spacer-", size)))
 }
 
 # ============================================================================
@@ -495,6 +552,3 @@ lc_chapter_next <- function(num, title, lead = NULL, target_id) {
   )
   tags$style(HTML(css))
 }
-
-# Helper: NULL coalescing
-`%||%` <- function(a, b) if (!is.null(a) && length(a) > 0 && !is.na(a[1])) a else b

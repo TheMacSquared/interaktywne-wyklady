@@ -9,9 +9,12 @@
 
 ## Konwencje kodowania
 
+Kanoniczne reguły nowego designu są w `R/DESIGN_CONTRACT.md`. Przy pracy nad zmigrowanymi wykładami traktuj ten dokument jako nadrzędny kontrakt.
+
 ### Struktura aplikacji Shiny
 
-Każda aplikacja ma strukturę:
+Każda aplikacja wykładowa ma używać wyłącznie nowego systemu layoutu z `R/lecture_layout.R`.
+Nie twórz nowych aplikacji na `fluidPage()`, `navbarPage()`, `sidebarLayout()` ani `bslib::page_*()`.
 
 ```r
 # Tytuł aplikacji
@@ -20,45 +23,36 @@ Każda aplikacja ma strukturę:
 library(shiny)
 library(ggplot2)
 library(dplyr)
-# ... inne biblioteki
 
 # ============================================================================
-# FUNKCJE POMOCNICZE
+# BOOTSTRAP PROJEKTU
 # ============================================================================
 
-generate_xxx_data <- function(n) {
-  set.seed(NULL)  # Losowe seed za każdym razem
-  # ...
-}
+app_dir <- .find_app_dir()
+project_root <- dirname(app_dir)
+
+source(file.path(project_root, "R", "palette.R"),        local = TRUE)
+source(file.path(project_root, "R", "theme_upwr.R"),     local = TRUE)
+source(file.path(project_root, "R", "shared.R"),         local = TRUE)
+source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
+
+lc_apply_ggplot_defaults()
 
 # ============================================================================
-# SCENARIUSZE (jeśli aplikacja ma wiele scenariuszy)
+# MODUŁY
 # ============================================================================
 
-scenarios <- list(
-  nazwa = list(
-    title = "Tytuł",
-    generator = generate_xxx_data,
-    # ... parametry
-  )
-)
+source(file.path(app_dir, "modules", "ch1_intro.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch2_topic.R"), local = TRUE)
 
-# ============================================================================
-# UI
-# ============================================================================
+.chapters <- list(ch1_ui, ch2_ui)
 
-ui <- fluidPage(
-  titlePanel("Tytuł aplikacji"),
-  sidebarLayout(
-    sidebarPanel(
-      # Kontrolki
-      width = 3
-    ),
-    mainPanel(
-      # Wykresy i wyniki
-      width = 9
-    )
-  )
+ui <- lecture_page(
+  lecture_id    = "nazwa-folderu",
+  lecture_num   = "01",
+  lecture_title = "Tytuł wykładu",
+  module_label  = "Moduł I",
+  chapters      = .chapters
 )
 
 # ============================================================================
@@ -66,12 +60,12 @@ ui <- fluidPage(
 # ============================================================================
 
 server <- function(input, output, session) {
-  # Reactive values
-  # Observery
-  # Renderowanie outputów
+  lc <- lecture_server(.chapters, input, output, session)
+
+  ch1_server(input, output, session)
+  ch2_server(input, output, session)
 }
 
-# Uruchomienie aplikacji
 shinyApp(ui = ui, server = server)
 ```
 
@@ -159,15 +153,15 @@ Uwaga: globalny CSS (`R/shared_styles.css`) ustawia `strong { font-weight: 600 }
 ## Styl wizualizacji
 
 ```r
-# Theme dla wszystkich wykresów
-theme_minimal(base_size = 14)
+# Domyślne dla całej aplikacji, po source() palety i motywu
+lc_apply_ggplot_defaults()
 
-# Kolory standardowe
-col_primary <- "#3498db"    # niebieski
-col_secondary <- "#e74c3c"  # czerwony
-col_success <- "#27ae60"    # zielony
-col_warning <- "#f39c12"    # pomarańczowy
-col_dark <- "#2c3e50"       # ciemny
+# Motyw i paleta UPWr
+theme_upwr()
+upwr_accent
+upwr_secondary
+upwr_reference
+upwr_cat_n(4)
 
 # Etykiety - zawsze w języku polskim
 labs(
@@ -254,8 +248,8 @@ conditionalPanel(
 ### Dodawanie nowej aplikacji
 
 1. **Utwórz folder** w konwencji `nazwa-aplikacji/`
-2. **Skopiuj szablon** z istniejącej aplikacji podobnego typu
-3. **Zaimplementuj logikę** zgodnie z konwencjami
+2. **Skopiuj wzorzec** z aplikacji używającej `lecture_page()`
+3. **Zaimplementuj logikę** z komponentami `lc_*`, `figure_panel()` i `margin_callout()`
 4. **Dodaj README.md** ze scenariuszami pedagogicznymi
 5. **Zaktualizuj główny README.md** - dodaj aplikację do tabeli
 

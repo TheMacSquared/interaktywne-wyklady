@@ -189,14 +189,16 @@ interaktywne-wyklady/
 
 ## 🏗️ Architektura aplikacji wykładowej
 
-Każda aplikacja wykładowa (np. `typy-danych`) stosuje wzorzec **scrollowalnego skryptu**:
+Każda aplikacja wykładowa (np. `typy-danych`) stosuje nowy wzorzec **scrollowalnego skryptu** oparty o `lecture_page()`:
 
-- **navbarPage** z zakładkami = rozdziały wykładu
+- **lecture_page** = pełnoekranowy shell z górnym paskiem modułów, lewą nawigacją i treścią aktywnego rozdziału
 - **Sticky TOC** — spis treści z auto-podświetlaniem bieżącej sekcji
 - **Variable tracker** — student wybiera zmienną w rozdziale 1 i śledzi ją przez cały kurs
 - **Osadzone widgety** — interaktywne ćwiczenia wplecione w narrację
 - **MathJax** — wzory matematyczne renderowane profesjonalnie
 - **Chart.js** — wykresy kołowe/słupkowe w HTML5 Canvas
+
+Stary layout Shiny (`navbarPage`, `fluidPage`, `sidebarLayout`, `bs_theme`) nie jest już wzorcem projektowym. Nowe prace powinny używać wyłącznie komponentów z `R/lecture_layout.R`.
 
 ### Modularyzacja
 
@@ -204,7 +206,12 @@ Kod rozdziałów jest rozbity na osobne pliki w katalogu `modules/` (nie `R/`, b
 
 ```r
 # modules/ch3_polozenie.R
-ch3_ui <- tabPanel("3. Statystyki położenia", ...)
+ch3_ui <- lecture_chapter(
+  id = "ch-polozenie",
+  num = "03",
+  title = "Statystyki położenia",
+  content = tagList(...)
+)
 ch3_server <- function(input, output, session) { ... }
 ```
 
@@ -213,9 +220,18 @@ Główny `app.R` łączy je:
 ```r
 source(file.path(app_dir, "modules", "ch1_typy.R"), local = TRUE)
 # ...
-ui <- navbarPage(..., ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui, ch6_ui)
+.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui, ch6_ui)
+
+ui <- lecture_page(
+  lecture_id    = "typy-danych",
+  lecture_num   = "01",
+  lecture_title = "Statystyka opisowa",
+  module_label  = "Moduł I",
+  chapters      = .chapters
+)
+
 server <- function(input, output, session) {
-  # nawigacja + tracker
+  lc <- lecture_server(.chapters, input, output, session)
   ch1_server(input, output, session)
   # ...
 }
@@ -233,16 +249,26 @@ Aplikacje są zaprojektowane do:
 
 Wszystkie aplikacje korzystają z centralnego stylu:
 
-- **`R/shared_styles.css`** — wspólny CSS (font Atkinson Hyperlegible dla dostępności, hierarchia H1/H2/H3, max-width narracji, callout-y z ikonami Bootstrap, quiz tiles, sticky TOC)
-- **`R/shared.R`** — kolory bazowe (`col_primary`…`col_teal`), `theme_educational()` dla ggplot2, `scale_color_lecture()` / `scale_fill_lecture()` ze spójną paletą semantyczną, wspólne funkcje generowania danych (`generate_population_sample()`, `get_population_params()`, `dist_names_pl`)
+- **`R/DESIGN_CONTRACT.md`** — kontrakt nowego designu i lista zakazanych wzorców
+- **`R/lecture_layout.R`** — shell wykładu i komponenty `lc_*`, `figure_panel()`, `margin_callout()`
+- **`R/shared_styles.css`** — CSS nowego layoutu, sticky TOC, typografia, callouty, widgety i quiz tiles
+- **`R/palette.R`** — jedno źródło prawdy dla kolorów UPWr
+- **`R/theme_upwr.R`** — motyw ggplot2 spójny z paletą
+- **`R/shared.R`** — wspólne defaulty ggplot2 i helpery danych (`generate_population_sample()`, `get_population_params()`, `dist_names_pl`)
 - **`sandbox/`** — piaskownica do eksperymentów graficznych przed wdrożeniem do produkcji (log decyzji w `sandbox/EKSPERYMENTY.md`)
 
 Dzięki temu globalne zmiany wizualne (font, kolory, typografia) wymagają edycji w jednym miejscu.
 
+Kontrola zgodności nowego kodu:
+
+```sh
+Rscript scripts/check_design_contract.R
+```
+
 ## 🛠️ Dodawanie nowej aplikacji
 
 1. Utwórz folder z nazwą w formacie `nazwa-aplikacji/`
-2. Utwórz `app.R` zgodnie z konwencjami projektu (patrz `CLAUDE.md`)
+2. Utwórz `app.R` zgodnie z nowym wzorcem `lecture_page()` (patrz `CLAUDE.md` i `R/LECTURE_LAYOUT.md`)
 3. Dla dużych aplikacji: rozbij na moduły w `modules/`
 4. Zaktualizuj ten `README.md`
 

@@ -16,10 +16,9 @@ ch2_ui <- list(
                 Czas dodać do niej zakres niepewności."
     ),
 
-    h2(id = "ch2-czym-jest", class = "section-title",
-       "Czym jest przedział ufności?"),
+    lc_h2("ch2-czym-jest", "Czym jest przedział ufności?"),
 
-    div(class = "narrative",
+    tagList(
       p("Przedział ufności (CI — ", tags$em("confidence interval"),
         ") to zakres wartości, który z określonym poziomem ufności
         (np. 95%) zawiera prawdziwy parametr populacji."),
@@ -28,10 +27,9 @@ ch2_ui <- list(
         withMathJax("\\(\\mu\\)"), ".")
     ),
 
-    h2(id = "ch2-wiele-ci", class = "section-title",
-       "Wiele przedziałów ufności"),
+    lc_h2("ch2-wiele-ci", "Wiele przedziałów ufności"),
 
-    div(class = "narrative",
+    tagList(
       p("To kluczowa wizualizacja. Każdy poziomy odcinek to jeden
         przedział ufności — skonstruowany z osobnej próby.
         Szałwiowe trafiają w ", withMathJax("\\(\\mu\\)"),
@@ -60,13 +58,13 @@ ch2_ui <- list(
           sliderInput("ch2_conf", "Poziom ufności:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           hr(),
-          div(style = "display: flex; flex-direction: column; gap: 8px;",
+          lc_stack(gap = "md",
             actionButton("ch2_sim_10", "Dolosuj 10 przedziałów",
-                         class = "btn-primary", width = "100%"),
+                         class = "lc-btn-primary", width = "100%"),
             actionButton("ch2_sim_50", "Dolosuj 50 przedziałów",
-                         class = "btn-warning", width = "100%"),
+                         class = "lc-btn-warning", width = "100%"),
             actionButton("ch2_sim_reset", "Reset",
-                         class = "btn-outline-secondary", width = "100%")
+                         class = "lc-btn-secondary-outline", width = "100%")
           ),
           br(),
           uiOutput("ch2_coverage_info")
@@ -77,10 +75,9 @@ ch2_ui <- list(
       )
     ),
 
-    h2(id = "ch2-jak-interpretowac", class = "section-title",
-       "Jak (nie) interpretować przedział ufności"),
+    lc_h2("ch2-jak-interpretowac", "Jak (nie) interpretować przedział ufności"),
 
-    div(class = "narrative",
+    tagList(
       p("95% przedział ufności [165, 175] dla średniej wzrostu.
         Która interpretacja jest poprawna?")
     ),
@@ -151,7 +148,7 @@ ch2_server <- function(input, output, session) {
     if (is.null(df) || nrow(df) == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Dolosuj 10 przedziałów'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       params <- get_population_params(input$ch2_dist)
@@ -188,12 +185,9 @@ ch2_server <- function(input, output, session) {
     # Kolor pokrycia: zielony jesli w +/- 5pp od nominalnego, czerwony w przeciwnym razie
     color <- if (abs(coverage - nominal) <= 5) col_hit else col_miss
     tagList(
-      div(class = "stat-box", style = paste0("background:", upwr_secondary, ";"),
-          paste0("Prób: ", n_total)),
-      div(class = "stat-box", style = paste0("background:", color, ";"),
-          paste0("Pokrycie: ", coverage, "% (", n_hits, "/", n_total, ")")),
-      div(class = "stat-box", style = paste0("background:", col_ci, ";"),
-          paste0("Oczekiwane: ", nominal, "%"))
+      lc_stat_box("Prób", n_total, color = upwr_secondary),
+      lc_stat_box("Pokrycie", coverage, "% (", n_hits, "/", n_total, ")", color = color),
+      lc_stat_box("Oczekiwane", nominal, "%", color = col_ci)
     )
   })
 
@@ -244,7 +238,7 @@ ch2_server <- function(input, output, session) {
     req(ch2_quiz_answered())
     answer <- ch2_quiz_selected()
     if (answer == "C") {
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Poprawnie!"),
         p("Przedział ufności opisuje ",
           tags$b("metodę"), ", nie konkretny wynik.
@@ -256,7 +250,7 @@ ch2_server <- function(input, output, session) {
         "B" = "Nie — przedział dotyczy parametru (średniej), nie poszczególnych obserwacji.",
         "D" = "Nie — średnia z próby zawsze leży w środku przedziału (jest punktem wyjścia)."
       )
-      div(class = "callout-danger",
+      lc_feedback(type = "danger",
         tags$strong("Nie do końca!"),
         p(feedback),
         p("Poprawna odpowiedź to C.")

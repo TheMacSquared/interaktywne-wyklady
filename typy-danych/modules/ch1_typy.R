@@ -17,7 +17,7 @@ ch1_ui <- list(
                i jakie testy statystyczne zastosować."
     ),
 
-    div(class = "narrative",
+    tagList(
       p("Błędne rozpoznanie typu zmiennej prowadzi do błędnych analiz.
         Na przykład, obliczanie średniej z kodów pocztowych nie ma sensu,
         mimo że są to liczby.")
@@ -30,9 +30,9 @@ ch1_ui <- list(
     ),
 
     # --- Widget 1: Taxonomy tree ---
-    h2(id = "ch1-taksonomia", class = "section-title", "Taksonomia typów danych"),
+    lc_h2("ch1-taksonomia", "Taksonomia typów danych"),
 
-    div(class = "narrative",
+    tagList(
       p("Ponizszy diagram przedstawia hierarchie typow danych.
         Kliknij na liscie drzewa (najnizszy poziom), aby odkryc
         przyklady zmiennych każdego typu z naszego zbioru danych.")
@@ -102,9 +102,9 @@ ch1_ui <- list(
     ),
 
     # --- Widget 2: Examples gallery ---
-    h2(id = "ch1-przyklady", class = "section-title", "Przykłady typów zmiennych"),
+    lc_h2("ch1-przyklady", "Przykłady typów zmiennych"),
 
-    div(class = "narrative",
+    tagList(
       p("Zobaczmy jak wyglada każdy typ zmiennej w praktyce.
         Kazdy typ ma swoje charakterystyczne cechy i wymaga
         odpowiednich narzedzi wizualizacji."),
@@ -123,7 +123,7 @@ ch1_ui <- list(
           div(class = "example-card",
               style = paste0("border-color: ", type_colors["nominalna"], ";"),
             span(class = "type-badge",
-                 style = paste0("background: ", type_colors["nominalna"], ";"),
+                 style = paste0("background:", type_colors["nominalna"], ";"),
                  "Jakościowa nominalna"),
             tags$h4("Płeć"),
             tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
@@ -137,7 +137,7 @@ ch1_ui <- list(
           div(class = "example-card",
               style = paste0("border-color: ", type_colors["porzadkowa"], ";"),
             span(class = "type-badge",
-                 style = paste0("background: ", type_colors["porzadkowa"], ";"),
+                 style = paste0("background:", type_colors["porzadkowa"], ";"),
                  "Jakościowa porządkowa"),
             tags$h4("Zadowolenie ze studiów"),
             tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
@@ -153,7 +153,7 @@ ch1_ui <- list(
           div(class = "example-card",
               style = paste0("border-color: ", type_colors["ilosciowa_dyskretna"], ";"),
             span(class = "type-badge",
-                 style = paste0("background: ", type_colors["ilosciowa_dyskretna"], ";"),
+                 style = paste0("background:", type_colors["ilosciowa_dyskretna"], ";"),
                  "Ilościowa dyskretna"),
             tags$h4("Liczba kursów"),
             tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
@@ -167,7 +167,7 @@ ch1_ui <- list(
           div(class = "example-card",
               style = paste0("border-color: ", type_colors["ilosciowa_ciagla"], ";"),
             span(class = "type-badge",
-                 style = paste0("background: ", type_colors["ilosciowa_ciagla"], ";"),
+                 style = paste0("background:", type_colors["ilosciowa_ciagla"], ";"),
                  "Ilościowa ciągła"),
             tags$h4("Wzrost (cm)"),
             tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
@@ -181,9 +181,9 @@ ch1_ui <- list(
     ),
 
     # --- Widget 4: Dataset preview ---
-    h2(id = "ch1-dane", class = "section-title", "Nasze dane — ankieta studencka"),
+    lc_h2("ch1-dane", "Nasze dane — ankieta studencka"),
 
-    div(class = "narrative",
+    tagList(
       p("A tak wyglądają nasze dane - ankieta 200 studentow.
         To z tego zbioru beda pochodzic wszystkie przyklady
         w dalszej czesci kursu. Ponizej pierwszych 10 obserwacji.")
@@ -234,7 +234,7 @@ ch1_ui <- list(
     ),
 
     # Bottom spacing
-    div(style = "height: 40px;")
+    lc_spacer("md")
 
   )
 )
