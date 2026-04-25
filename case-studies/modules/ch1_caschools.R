@@ -12,20 +12,20 @@ ca$comp_per_student <- ca$computer / ca$students
 ca$poverty <- ifelse(ca$lunch >= 50, "Wysoki", ifelse(ca$lunch >= 25, "Średni", "Niski"))
 ca$poverty <- factor(ca$poverty, levels = c("Niski", "Średni", "Wysoki"))
 
-ch1_ui <- tabPanel("1. CASchools",
+ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = tagList(
   fluidRow(column(8, offset = 2,
 
     # ========================================================================
     # KONTEKST: Sytuacja decyzyjna
     # ========================================================================
-    div(class = "section-title", "Sytuacja wyjściowa"),
+    lc_h2("sec-01", "Sytuacja wyjściowa"),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Jesteśmy analitykami w kalifornijskim departamencie edukacji.
         Polityk proponuje zmniejszenie liczebności klas jako sposób na poprawę
         wyników egzaminacyjnych. Program będzie kosztować miliardy dolarów."),
       p("Naszym zadaniem jest zbadać na dostępnych danych:"),
-      div(class = "callout-info",
+      div(class = "lc-feedback lc-feedback-info",
         tags$strong("Główne pytanie badawcze:"),
         p(tags$em("\"Czy zmniejszenie liczby uczniów na nauczyciela (STR)
           faktycznie prowadzi do lepszych wyników, czy też obserwowany
@@ -35,14 +35,14 @@ ch1_ui <- tabPanel("1. CASchools",
       )
     ),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p(tags$b("Dane:"), " CASchools — 420 dystryktów szkolnych w Kalifornii
         (pakiet AER). Każda obserwacja to jeden dystrykt."),
       p(tags$b("Zmienna zależna:"), " średni wynik egzaminu = (reading + math) / 2"),
       p(tags$b("Kluczowa zmienna niezależna:"), " STR = uczniowie / nauczyciele")
     ),
 
-    div(class = "callout-warning",
+    div(class = "lc-feedback lc-feedback-warning",
       tags$strong("Plan analizy:"),
       tags$ol(
         tags$li("Poznać dane — czym dysponujemy i jakie są potencjalne zmienne zakłócające"),
@@ -56,7 +56,7 @@ ch1_ui <- tabPanel("1. CASchools",
     # ========================================================================
     # KROK 1: Poznanie danych
     # ========================================================================
-    div(class = "section-title", "Krok 1: Poznanie danych"),
+    lc_h2("sec-02", "Krok 1: Poznanie danych"),
 
     div(class = "analysis-step",
       span(class = "step-number", "1"),
@@ -64,7 +64,7 @@ ch1_ui <- tabPanel("1. CASchools",
                    czym dysponujemy. Jakie zmienne mogą być istotne?"
     ),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       h4("Przegląd zmiennych"),
       fluidRow(
         column(4,
@@ -88,7 +88,7 @@ ch1_ui <- tabPanel("1. CASchools",
       )
     ),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p(tags$b("Kluczowa obserwacja:"), " mamy kilka zmiennych opisujących
         status socjoekonomiczny dystryktu (dochód, % darmowy lunch, % CalWorks).
         Mogą być zmiennymi zakłócającymi — jeśli biedniejsze dystrykty
@@ -96,12 +96,12 @@ ch1_ui <- tabPanel("1. CASchools",
         związek STR→wyniki może być pozorny.")
     ),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       h4("Macierz korelacji — szukamy potencjalnych zakłóceń"),
       plotOutput("ch1_corr_plot", height = "400px")
     ),
 
-    div(class = "callout-danger",
+    div(class = "lc-feedback lc-feedback-danger",
       tags$strong("Czerwona flaga!"),
       p("Zmienne społeczno-ekonomiczne (lunch, calworks, income) są:"),
       tags$ul(
@@ -115,7 +115,7 @@ ch1_ui <- tabPanel("1. CASchools",
     # ========================================================================
     # KROK 2: Prosty zwiazek STR -> wyniki
     # ========================================================================
-    div(class = "section-title", "Krok 2: Prosty związek STR → wyniki"),
+    lc_h2("sec-03", "Krok 2: Prosty związek STR → wyniki"),
 
     div(class = "analysis-step",
       span(class = "step-number", "2"),
@@ -123,8 +123,8 @@ ch1_ui <- tabPanel("1. CASchools",
                    To będzie nasz punkt wyjścia."
     ),
 
-    div(class = "narrative",
-      div(class = "formula-box",
+    div(class = "lc-prose",
+      div(class = "lc-formula-box",
         p(withMathJax("\\(H_0: \\rho_{\\text{STR, score}} = 0\\)"),
           " — brak związku liniowego"),
         p(withMathJax("\\(H_1: \\rho_{\\text{STR, score}} \\neq 0\\)"),
@@ -132,7 +132,7 @@ ch1_ui <- tabPanel("1. CASchools",
       )
     ),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       h4("Korelacja i regresja prosta: score ~ STR"),
       fluidRow(
         column(4,
@@ -146,7 +146,7 @@ ch1_ui <- tabPanel("1. CASchools",
       )
     ),
 
-    div(class = "callout-warning",
+    div(class = "lc-feedback lc-feedback-warning",
       tags$strong("Na tym etapie polityk powiedziałby:"),
       p(tags$em("\"Widzicie? Mniejsze klasy = lepsze wyniki! Dajcie mi budżet.\"")),
       p("Ale my wiemy, że to może być pozorna korelacja.
@@ -158,7 +158,7 @@ ch1_ui <- tabPanel("1. CASchools",
     # ========================================================================
     # KROK 3: Czy bieda to zmienna zaklócajaca?
     # ========================================================================
-    div(class = "section-title", "Krok 3: Czy bieda jest zmienną zakłócającą?"),
+    lc_h2("sec-04", "Krok 3: Czy bieda jest zmienną zakłócającą?"),
 
     div(class = "analysis-step",
       span(class = "step-number", "3"),
@@ -167,7 +167,7 @@ ch1_ui <- tabPanel("1. CASchools",
                    Sprawdzamy oba."
     ),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Zmienną zakłócającą (confoundem) nazwiemy ",
         tags$b("% darmowy lunch"), " — to standardowe proxy biedy
         w badaniach edukacyjnych."),
@@ -175,7 +175,7 @@ ch1_ui <- tabPanel("1. CASchools",
       p("Warunek (b): lunch jest skorelowany z STR?")
     ),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       h4("Sprawdzenie dwóch warunków"),
       fluidRow(
         column(6,
@@ -188,12 +188,12 @@ ch1_ui <- tabPanel("1. CASchools",
       uiOutput("ch1_conf_stats")
     ),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Oba warunki spełnione. Lunch (bieda) jest confoundem.
         Teraz kluczowe pytanie: czy efekt STR przetrwa, gdy skontrolujemy biedę?")
     ),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       h4("Dodatkowe sprawdzenie: wyniki w grupach biedy"),
       fluidRow(
         column(4,
@@ -205,7 +205,7 @@ ch1_ui <- tabPanel("1. CASchools",
       )
     ),
 
-    div(class = "callout-info",
+    div(class = "lc-feedback lc-feedback-info",
       tags$strong("Wynik ANOVA potwierdza:"),
       " bieda ma ogromny wpływ na wyniki — różnica między grupami
         to ~30 punktów. To wielokrotnie więcej niż cały zakres STR."
@@ -214,7 +214,7 @@ ch1_ui <- tabPanel("1. CASchools",
     # ========================================================================
     # KROK 4: Kontrolowanie zaklócen (regresja wieloraka)
     # ========================================================================
-    div(class = "section-title", "Krok 4: Czy efekt STR przetrwa kontrolę?"),
+    lc_h2("sec-05", "Krok 4: Czy efekt STR przetrwa kontrolę?"),
 
     div(class = "analysis-step",
       span(class = "step-number", "4"),
@@ -222,22 +222,22 @@ ch1_ui <- tabPanel("1. CASchools",
                    Obserwujemy, co dzieje się z współczynnikiem STR."
     ),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Strategia: zaczynamy od prostego modelu (sam STR) i dodajemy
         zmienne, które podejrzewamy o zakłócanie. Jeśli β przy STR
         znacznie zmaleje lub straci istotność, to prosty związek był pozorny.")
     ),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       h4("Seria modeli — co się dzieje z efektem STR?"),
       actionButton("ch1_compare_models", "Buduj 4 modele",
-                   class = "btn-primary", width = "250px"),
+                   class = "lc-btn-primary", width = "250px"),
       br(), br(),
       uiOutput("ch1_model_comparison"),
       plotOutput("ch1_beta_str_plot", height = "250px")
     ),
 
-    div(class = "callout-success",
+    div(class = "lc-feedback lc-feedback-ok",
       tags$strong("Kluczowe odkrycie:"),
       p("Współczynnik β przy STR maleje po dodaniu zmiennych kontrolnych,
         ale nie zanika całkowicie."),
@@ -249,7 +249,7 @@ ch1_ui <- tabPanel("1. CASchools",
     # ========================================================================
     # KROK 5: Wybrany model — szczegoly
     # ========================================================================
-    div(class = "section-title", "Krok 5: Analiza wybranego modelu"),
+    lc_h2("sec-06", "Krok 5: Analiza wybranego modelu"),
 
     div(class = "analysis-step",
       span(class = "step-number", "5"),
@@ -257,7 +257,7 @@ ch1_ui <- tabPanel("1. CASchools",
                    Możesz sam wybrać predyktory."
     ),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       h4("Model wieloraki — wybór predyktorów"),
       fluidRow(
         column(4,
@@ -272,7 +272,7 @@ ch1_ui <- tabPanel("1. CASchools",
             selected = c("str", "income", "english")
           ),
           actionButton("ch1_fit_model", "Dopasuj",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           uiOutput("ch1_reg_metrics")
         ),
@@ -283,7 +283,7 @@ ch1_ui <- tabPanel("1. CASchools",
       )
     ),
 
-    div(class = "callout-warning",
+    div(class = "lc-feedback lc-feedback-warning",
       tags$strong("Eksperymentuj:"),
       tags$ul(
         tags$li("Dodaj ", tags$b("lunch"), " do modelu z income — co się stanie?
@@ -296,14 +296,14 @@ ch1_ui <- tabPanel("1. CASchools",
     # ========================================================================
     # KROK 6: Odpowiedz na pytanie decyzyjne
     # ========================================================================
-    div(class = "section-title", "Krok 6: Odpowiedź na pytanie decyzyjne"),
+    lc_h2("sec-07", "Krok 6: Odpowiedź na pytanie decyzyjne"),
 
     div(class = "analysis-step",
       span(class = "step-number", "6"),
       "Wracamy do oryginalnego pytania: czy zmniejszenie klas to dobra inwestycja?"
     ),
 
-    div(class = "callout-success",
+    div(class = "lc-feedback lc-feedback-ok",
       tags$strong("Co mówią dane:"),
       tags$ol(
         tags$li(tags$b("Prosty związek STR→wyniki istnieje"),
@@ -320,7 +320,7 @@ ch1_ui <- tabPanel("1. CASchools",
       )
     ),
 
-    div(class = "callout-warning",
+    div(class = "lc-feedback lc-feedback-warning",
       tags$strong("Rekomendacja (gdyby to był raport):"),
       p("Zmniejszenie klas może mieć niewielki pozytywny efekt, ale nie jest
         \"silver bullet\". Za miliardy dolarów uzyska się poprawkę rzędu kilku punktów."),
@@ -328,7 +328,7 @@ ch1_ui <- tabPanel("1. CASchools",
         wsparcie językowe dla ELL, programy żywieniowe, wsparcie rodzin.")
     ),
 
-    div(class = "callout-danger",
+    div(class = "lc-feedback lc-feedback-danger",
       tags$strong("Ograniczenia naszej analizy:"),
       tags$ul(
         tags$li(tags$b("Dane obserwacyjne, nie eksperymentalne"),
@@ -349,7 +349,7 @@ ch1_ui <- tabPanel("1. CASchools",
         lub danych panelowych z instrumentami."))
     )
 
-  ))
+  )))
 )
 
 # ============================================================================
@@ -368,14 +368,14 @@ ch1_server <- function(input, output, session) {
       "calworks" = "% CalWorks")
 
     p1 <- ggplot(ca, aes(x = .data[[var]])) +
-      geom_histogram(bins = 30, fill = col_explore, alpha = 0.6, color = "white") +
+      geom_histogram(bins = 30, fill = case_explore, alpha = 0.6, color = "white") +
       labs(title = paste0("Rozkład: ", var_label), x = var_label, y = "Liczba") +
-      theme_educational()
+      theme_upwr()
 
     p2 <- ggplot(ca, aes(y = .data[[var]])) +
-      geom_boxplot(fill = col_explore, alpha = 0.4) +
+      geom_boxplot(fill = case_explore, alpha = 0.4) +
       labs(title = "Boxplot", y = var_label) +
-      theme_educational()
+      theme_upwr()
 
     gridExtra::grid.arrange(p1, p2, ncol = 2, widths = c(2, 1))
   })
@@ -383,15 +383,13 @@ ch1_server <- function(input, output, session) {
   output$ch1_eda_stats <- renderUI({
     var <- input$ch1_eda_var
     x <- ca[[var]]
-    tagList(
-      div(class = "stat-box", style = paste0("background:", col_explore, ";"),
-          paste0("n = ", length(x))),
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
-          paste0("Śr. = ", round(mean(x), 1))),
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
-          paste0("SD = ", round(sd(x), 1))),
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
-          paste0("Zakres: ", round(min(x), 1), "–", round(max(x), 1)))
+    lc_stat_grid(
+      lc_stat_box("n", length(x), color = case_explore),
+      lc_stat_box("Śr.", round(mean(x), 1), color = case_reference),
+      lc_stat_box("SD", round(sd(x), 1), color = case_reference),
+      lc_stat_box("Zakres", paste0(round(min(x), 1), "–", round(max(x), 1)),
+                  color = case_reference),
+      columns = 4
     )
   })
 
@@ -412,11 +410,11 @@ ch1_server <- function(input, output, session) {
     ggplot(cor_df, aes(x = Var1, y = Var2, fill = value)) +
       geom_tile(color = "white") +
       geom_text(aes(label = round(value, 2)), size = 3.5) +
-      scale_fill_gradient2(low = col_highlight, mid = "white", high = col_explore,
+      scale_fill_gradient2(low = case_highlight, mid = "white", high = case_explore,
                            midpoint = 0, limits = c(-1, 1), name = "r") +
       labs(title = "Macierz korelacji — szukamy powiązań i potencjalnych zakłóceń",
            x = NULL, y = NULL) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
   })
 
@@ -426,19 +424,19 @@ ch1_server <- function(input, output, session) {
 
     if (input$ch1_str_color) {
       p <- p + geom_point(aes(color = poverty), alpha = 0.6, size = 2) +
-        scale_color_manual(values = c(col_explore, col_conclude, col_highlight),
+        scale_color_manual(values = c(case_explore, case_conclude, case_highlight),
                            name = "Bieda")
     } else {
-      p <- p + geom_point(color = col_dark, alpha = 0.4, size = 2)
+      p <- p + geom_point(color = case_reference, alpha = 0.4, size = 2)
     }
 
     p + geom_smooth(method = "lm", se = TRUE,
-                    color = col_model, fill = col_model, alpha = 0.1) +
+                    color = case_model, fill = case_model, alpha = 0.1) +
       labs(title = "STR vs wyniki egzaminu",
            subtitle = "Każdy punkt = jeden dystrykt szkolny",
            x = "Uczniowie na nauczyciela (STR)",
            y = "Średni wynik egzaminu") +
-      theme_educational()
+      theme_upwr()
   })
 
   output$ch1_str_test <- renderUI({
@@ -450,14 +448,14 @@ ch1_server <- function(input, output, session) {
     g <- broom::glance(model)
 
     tagList(
-      div(class = "callout-info",
+      div(class = "lc-feedback lc-feedback-info",
         p(tags$strong("Korelacja Pearsona:")),
         p(paste0("r = ", round(tidy_cor$cor, 3),
                  ", p ", if (tidy_cor$p < 0.001) "< 0.001" else paste0("= ", round(tidy_cor$p, 4)))),
-        p(style = "color: #e74c3c; font-weight: bold;",
+        p(style = "color: var(--upwr-accent); font-weight: bold;",
           "Istotna ujemna korelacja")
       ),
-      div(class = "callout-info",
+      div(class = "lc-feedback lc-feedback-info",
         p(tags$strong("Regresja prosta:")),
         p(paste0("score = ", round(coefs$estimate[1], 1), " ",
                  round(coefs$estimate[2], 2), " × STR")),
@@ -472,34 +470,34 @@ ch1_server <- function(input, output, session) {
   # --- Krok 3: Zmienne zaklocajace ---
   output$ch1_conf_a <- renderPlot({
     ggplot(ca, aes(x = lunch, y = score)) +
-      geom_point(color = col_dark, alpha = 0.3, size = 1.5) +
-      geom_smooth(method = "lm", se = FALSE, color = col_highlight, linewidth = 1.2) +
+      geom_point(color = case_reference, alpha = 0.3, size = 1.5) +
+      geom_smooth(method = "lm", se = FALSE, color = case_highlight, linewidth = 1.2) +
       labs(title = "Warunek (a): lunch → wyniki?",
            subtitle = paste0("r = ", round(cor(ca$lunch, ca$score), 3)),
            x = "% darmowy lunch", y = "Wynik") +
-      theme_educational()
+      theme_upwr()
   })
 
   output$ch1_conf_b <- renderPlot({
     ggplot(ca, aes(x = lunch, y = str)) +
-      geom_point(color = col_dark, alpha = 0.3, size = 1.5) +
-      geom_smooth(method = "lm", se = FALSE, color = col_test, linewidth = 1.2) +
+      geom_point(color = case_reference, alpha = 0.3, size = 1.5) +
+      geom_smooth(method = "lm", se = FALSE, color = case_test, linewidth = 1.2) +
       labs(title = "Warunek (b): lunch → STR?",
            subtitle = paste0("r = ", round(cor(ca$lunch, ca$str), 3)),
            x = "% darmowy lunch", y = "STR") +
-      theme_educational()
+      theme_upwr()
   })
 
   output$ch1_conf_stats <- renderUI({
     r_lunch_score <- cor(ca$lunch, ca$score)
     r_lunch_str <- cor(ca$lunch, ca$str)
-    tagList(
-      div(class = "stat-box", style = paste0("background:", col_highlight, ";"),
-          paste0("lunch→wyniki: r = ", round(r_lunch_score, 3))),
-      div(class = "stat-box", style = paste0("background:", col_test, ";"),
-          paste0("lunch→STR: r = ", round(r_lunch_str, 3))),
-      div(class = "stat-box", style = paste0("background:", col_conclude, ";"),
-          "Oba istotne → confound!")
+    lc_stat_grid(
+      lc_stat_box("lunch→wyniki", paste0("r = ", round(r_lunch_score, 3)),
+                  color = case_highlight),
+      lc_stat_box("lunch→STR", paste0("r = ", round(r_lunch_str, 3)),
+                  color = case_test),
+      lc_stat_box("Wniosek", "Oba istotne → confound!", color = case_conclude),
+      columns = 3
     )
   })
 
@@ -511,11 +509,11 @@ ch1_server <- function(input, output, session) {
     ggplot(ca, aes(x = poverty, y = score, fill = poverty)) +
       geom_boxplot(alpha = 0.6, outlier.alpha = 0.2) +
       geom_jitter(width = 0.15, alpha = 0.1, size = 1) +
-      scale_fill_manual(values = c(col_explore, col_conclude, col_highlight)) +
+      scale_fill_manual(values = c(case_explore, case_conclude, case_highlight)) +
       labs(title = "Wyniki wg poziomu biedy",
            x = "Poziom biedy (na podst. % darmowy lunch)",
            y = "Średni wynik") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "none")
   })
 
@@ -530,7 +528,7 @@ ch1_server <- function(input, output, session) {
       summarise(m = round(mean(score), 1), n = n(), .groups = "drop")
 
     tagList(
-      div(class = "callout-info",
+      div(class = "lc-feedback lc-feedback-info",
         p(tags$strong("Średnie w grupach:")),
         lapply(1:nrow(means), function(i) {
           p(paste0(means$poverty[i], ": ", means$m[i], " (n=", means$n[i], ")"))
@@ -586,7 +584,7 @@ ch1_server <- function(input, output, session) {
 
     rows <- lapply(1:nrow(df), function(i) {
       p_str_fmt <- if (df$p_str[i] < 0.001) "< 0.001" else round(df$p_str[i], 3)
-      sig_style <- if (df$p_str[i] < 0.05) "font-weight:bold;" else "color: #7f8c8d;"
+      sig_style <- if (df$p_str[i] < 0.05) "font-weight:bold;" else "color: var(--upwr-reference);"
       tags$tr(
         tags$td(df$model[i]),
         tags$td(style = sig_style, round(df$beta_str[i], 2)),
@@ -597,7 +595,7 @@ ch1_server <- function(input, output, session) {
     })
 
     tagList(
-      tags$table(class = "table table-bordered table-striped",
+      tags$table(class = "lc-table lc-table-bordered lc-table-striped",
         style = "font-size: 13px;",
         tags$thead(
           tags$tr(tags$th("Model"), tags$th("β STR"), tags$th("p (STR)"),
@@ -605,7 +603,7 @@ ch1_server <- function(input, output, session) {
         ),
         tags$tbody(rows)
       ),
-      div(class = "callout-info",
+      div(class = "lc-feedback lc-feedback-info",
         p(tags$strong("Obserwacja:"), " β przy STR spada z ~",
           round(df$beta_str[1], 1), " do ~", round(df$beta_str[3], 1),
           " po kontroli biedy i ELL. Efekt zmaleje o ~",
@@ -624,12 +622,12 @@ ch1_server <- function(input, output, session) {
     ggplot(df, aes(x = model, y = beta_str, fill = sig)) +
       geom_col(alpha = 0.8, width = 0.6) +
       geom_hline(yintercept = 0, linetype = "dashed") +
-      scale_fill_manual(values = c("TRUE" = col_model, "FALSE" = "#bdc3c7"),
+      scale_fill_manual(values = c("TRUE" = case_model, "FALSE" = case_muted),
                         labels = c("TRUE" = "p < 0.05", "FALSE" = "nieistotny"),
                         name = NULL) +
       labs(title = "Jak zmienia się efekt STR po dodaniu zmiennych kontrolnych?",
            x = NULL, y = "β przy STR") +
-      theme_educational() +
+      theme_upwr() +
       theme(legend.position = "top",
             axis.text.x = element_text(angle = 20, hjust = 1))
   })
@@ -658,7 +656,7 @@ ch1_server <- function(input, output, session) {
 
     rows <- lapply(1:nrow(coefs), function(i) {
       sig <- coefs$p.value[i] < 0.05
-      tags$tr(style = if (!sig && coefs$term[i] != "(Intercept)") "color: #bdc3c7;" else "",
+      tags$tr(style = if (!sig && coefs$term[i] != "(Intercept)") "color: var(--upwr-reference);" else "",
         tags$td(coefs$term_pl[i]),
         tags$td(round(coefs$estimate[i], 3)),
         tags$td(round(coefs$std.error[i], 3)),
@@ -667,7 +665,7 @@ ch1_server <- function(input, output, session) {
       )
     })
 
-    tags$table(class = "table table-bordered",
+    tags$table(class = "lc-table lc-table-bordered",
       style = "font-size: 13px;",
       tags$thead(tags$tr(tags$th("Zmienna"), tags$th("β"), tags$th("SE"), tags$th("p"))),
       tags$tbody(rows)
@@ -691,12 +689,12 @@ ch1_server <- function(input, output, session) {
     ggplot(coefs, aes(x = estimate, y = term_pl, color = sig)) +
       geom_point(size = 3) +
       geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
-      geom_vline(xintercept = 0, linetype = "dashed", color = col_dark) +
-      scale_color_manual(values = c("TRUE" = col_model, "FALSE" = col_highlight),
+      geom_vline(xintercept = 0, linetype = "dashed", color = case_reference) +
+      scale_color_manual(values = c("TRUE" = case_model, "FALSE" = case_highlight),
                          labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),
                          name = NULL) +
       labs(title = "Współczynniki z 95% CI", x = "β", y = NULL) +
-      theme_educational() + theme(legend.position = "top")
+      theme_upwr() + theme(legend.position = "top")
   })
 
   output$ch1_reg_metrics <- renderUI({
@@ -704,13 +702,11 @@ ch1_server <- function(input, output, session) {
     if (is.null(model)) return(NULL)
     g <- broom::glance(model)
     rmse <- sqrt(mean(residuals(model)^2))
-    tagList(
-      div(class = "stat-box", style = paste0("background:", col_model, ";"),
-          paste0("adj.R² = ", round(g$adj.r.squared, 3))),
-      div(class = "stat-box", style = paste0("background:", col_conclude, ";"),
-          paste0("AIC = ", round(g$AIC, 0))),
-      div(class = "stat-box", style = paste0("background:", col_highlight, ";"),
-          paste0("RMSE = ", round(rmse, 1)))
+    lc_stat_grid(
+      lc_stat_box("adj.R²", round(g$adj.r.squared, 3), color = case_model),
+      lc_stat_box("AIC", round(g$AIC, 0), color = case_conclude),
+      lc_stat_box("RMSE", round(rmse, 1), color = case_highlight),
+      columns = 3
     )
   })
 }

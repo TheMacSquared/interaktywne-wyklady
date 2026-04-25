@@ -22,14 +22,16 @@
 # ============================================================================
 
 .LC_MODULES <- list(
-  list(num = "I",   slug = "opisowa",    title = "Statystyka opisowa",          href = "#"),
-  list(num = "II",  slug = "rozklady",   title = "Rozkłady prawdopodobieństwa", href = "#"),
-  list(num = "III", slug = "przedzialy", title = "Przedziały ufności",          href = "#"),
-  list(num = "IV",  slug = "testowanie", title = "Testowanie",                  href = "#"),
-  list(num = "V",   slug = "regresja",   title = "Regresja",                    href = "#"),
-  list(num = "IVa", slug = "zalozenia",  title = "Założenia testów",            href = "#"),
-  list(num = "VI",  slug = "symulacje",  title = "Symulacje",                   href = "#"),
-  list(num = "VII", slug = "bayes",      title = "Bayes",                       href = "#")
+  list(num = "I",    slug = "opisowa",    title = "Statystyka opisowa",          short = "Opisowa",      href = "#"),
+  list(num = "II",   slug = "rozklady",   title = "Rozkłady prawdopodobieństwa", short = "Rozkłady",     href = "#"),
+  list(num = "III",  slug = "przedzialy", title = "Przedziały ufności",          short = "Przedziały",   href = "#"),
+  list(num = "IV",   slug = "testowanie", title = "Testowanie",                  short = "Testowanie",   href = "#"),
+  list(num = "V",    slug = "regresja",   title = "Regresja",                    short = "Regresja",     href = "#"),
+  list(num = "IVa",  slug = "zalozenia",  title = "Założenia testów",            short = "Założenia",    href = "#"),
+  list(num = "VI",   slug = "symulacje",  title = "Symulacje",                   short = "Symulacje",    href = "#"),
+  list(num = "VII",  slug = "bayes",      title = "Bayes",                       short = "Bayes",        href = "#"),
+  list(num = "VIII", slug = "dane",       title = "Dobre dane",                  short = "Dane",         href = "#"),
+  list(num = "IX",   slug = "case",       title = "Case studies",                short = "Case studies", href = "#")
 )
 
 # Mapowanie lecture_id → slug modułu
@@ -41,7 +43,9 @@
   "zalozenia-testow"            = "zalozenia",
   "regresja"                    = "regresja",
   "symulacje-statystyczne"      = "symulacje",
-  "metody-bayesowskie"          = "bayes"
+  "metody-bayesowskie"          = "bayes",
+  "dobre-dane"                  = "dane",
+  "case-studies"                = "case"
 )
 
 # ============================================================================
@@ -49,6 +53,12 @@
 # ============================================================================
 
 module_tabs <- function(current_slug = NULL) {
+  current_module <- NULL
+  if (!is.null(current_slug)) {
+    idx <- which(vapply(.LC_MODULES, function(m) identical(m$slug, current_slug), logical(1)))
+    if (length(idx) > 0) current_module <- .LC_MODULES[[idx[[1]]]]
+  }
+
   logo <- tags$a(
     class = "lc-tabs-logo",
     href  = "#",
@@ -65,12 +75,68 @@ module_tabs <- function(current_slug = NULL) {
     tags$a(
       class = paste("lc-tab", if (is_active) "lc-tab-active"),
       href  = m$href,
+      title = m$title,
       tags$span(class = "lc-tab-num", m$num),
-      m$title
+      tags$span(class = "lc-tab-title-full", m$title),
+      tags$span(class = "lc-tab-title-short", m$short)
     )
   })
 
-  tags$nav(class = "lc-tabs", logo, tags$div(style="display:flex;", tabs))
+  menu_items <- lapply(.LC_MODULES, function(m) {
+    is_active <- !is.null(current_slug) && identical(m$slug, current_slug)
+    tags$a(
+      class = paste("lc-tabs-menu-item", if (is_active) "lc-tabs-menu-item-active"),
+      href  = m$href,
+      title = m$title,
+      tags$span(class = "lc-tab-num", m$num),
+      tags$span(class = "lc-tabs-menu-item-title", m$title)
+    )
+  })
+
+  current_num <- if (!is.null(current_module)) current_module$num else "—"
+  current_title <- if (!is.null(current_module)) current_module$title else "Moduły"
+
+  menu <- tags$details(
+    class = "lc-tabs-menu",
+    tags$summary(
+      class = "lc-tabs-menu-summary",
+      tags$span(class = "lc-tab-num", current_num),
+      tags$span(class = "lc-tabs-menu-current", current_title),
+      tags$span(class = "lc-tabs-menu-caret", "▾")
+    ),
+    tags$div(class = "lc-tabs-menu-panel", menu_items)
+  )
+
+  scroll_controls <- tagList(
+    tags$button(
+      class = "lc-tabs-scroll lc-tabs-scroll-prev",
+      type = "button",
+      title = "Poprzedni moduł",
+      `aria-label` = "Poprzedni moduł",
+      `data-lc-tabs-scroll` = "prev",
+      "‹"
+    ),
+    tags$button(
+      class = "lc-tabs-scroll lc-tabs-scroll-next",
+      type = "button",
+      title = "Następny moduł",
+      `aria-label` = "Następny moduł",
+      `data-lc-tabs-scroll` = "next",
+      "›"
+    )
+  )
+
+  tags$nav(
+    class = "lc-tabs",
+    logo,
+    tags$div(
+      class = "lc-tabs-strip",
+      scroll_controls[[1]],
+      tags$div(class = "lc-tabs-list", tabs),
+      scroll_controls[[2]]
+    ),
+    menu
+  )
 }
 
 # ============================================================================
@@ -176,6 +242,58 @@ lecture_page <- function(lecture_id      = NULL,
       # pierwszeństwo nad wartościami fallbackowymi w CSS.
       .lc_palette_css(),
       includeScript(file.path(proj_root, "R", "shared_toc.js")),
+      tags$script(HTML("
+function lcUpdateTabsScrollState(list) {
+  if (!list) return;
+  var strip = list.closest('.lc-tabs-strip');
+  if (!strip) return;
+  var prev = strip.querySelector('[data-lc-tabs-scroll=\"prev\"]');
+  var next = strip.querySelector('[data-lc-tabs-scroll=\"next\"]');
+  var maxScroll = Math.max(0, list.scrollWidth - list.clientWidth);
+  var atStart = list.scrollLeft <= 1;
+  var atEnd = list.scrollLeft >= maxScroll - 1;
+  if (prev) prev.disabled = atStart;
+  if (next) next.disabled = atEnd;
+  strip.classList.toggle('lc-tabs-strip-scrollable', maxScroll > 1);
+}
+
+function lcInitTabsScroll() {
+  document.querySelectorAll('.lc-tabs-list').forEach(function(list) {
+    var active = list.querySelector('.lc-tab-active');
+    if (active) {
+      active.scrollIntoView({ block: 'nearest', inline: 'center' });
+    }
+    lcUpdateTabsScrollState(list);
+    list.addEventListener('scroll', function() {
+      lcUpdateTabsScrollState(list);
+    }, { passive: true });
+  });
+}
+
+document.addEventListener('click', function(event) {
+  var button = event.target.closest('[data-lc-tabs-scroll]');
+  if (!button || button.disabled) return;
+
+  var strip = button.closest('.lc-tabs-strip');
+  if (!strip) return;
+
+  var list = strip.querySelector('.lc-tabs-list');
+  var active = list ? list.querySelector('.lc-tab-active') : null;
+  var firstTab = list ? list.querySelector('.lc-tab') : null;
+  if (!list || !firstTab) return;
+
+  var tabWidth = active ? active.getBoundingClientRect().width : firstTab.getBoundingClientRect().width;
+  var gap = 8;
+  var direction = button.getAttribute('data-lc-tabs-scroll') === 'prev' ? -1 : 1;
+  list.scrollBy({ left: direction * (tabWidth + gap), behavior: 'smooth' });
+});
+
+window.addEventListener('resize', function() {
+  document.querySelectorAll('.lc-tabs-list').forEach(lcUpdateTabsScrollState);
+});
+
+document.addEventListener('DOMContentLoaded', lcInitTabsScroll);
+      ")),
       header_extras
     ),
 

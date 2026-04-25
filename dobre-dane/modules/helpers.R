@@ -1,12 +1,16 @@
 # helpers.R — dane globalne i funkcje pomocnicze dla dobre-dane
 
 # ============================================================================
-# KOLORY LOKALNE (col_primary, col_dark -> R/shared.R)
+# KOLORY LOKALNE
 # ============================================================================
 
-col_good    <- "#27ae60"
-col_mixed   <- "#f39c12"
-col_bad     <- "#e74c3c"
+data_primary    <- unname(upwr_cat["niebo"])
+data_reference  <- upwr_secondary
+data_good       <- unname(upwr_cat["szalwia"])
+data_mixed      <- unname(upwr_cat["bursztyn"])
+data_bad        <- upwr_accent
+data_error_bg   <- "#f7ded8"
+data_missing_bg <- upwr_bg
 
 # ============================================================================
 # DANE

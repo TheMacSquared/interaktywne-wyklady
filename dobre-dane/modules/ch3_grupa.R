@@ -1,24 +1,24 @@
 # Tab 3: Grupa — za mało danych (n=8), zły zbiór
 
-ch3_ui <- tabPanel("3. Grupa",
+ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagList(
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Ankieta na grupie"),
+    lc_h2("sec-01", "Ankieta na grupie"),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Kolega zbiera dane do projektu. Dzień przed deadline'em pyta 8 znajomych
         ze swojej grupy. Oto co uzyskał:")
     ),
 
-    div(class = "section-title", "Podgląd danych"),
+    lc_h2("sec-02", "Podgląd danych"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       DT::dataTableOutput("tab2_table")
     ),
 
-    div(class = "section-title", "Ile obserwacji naprawdę potrzebujesz?"),
+    lc_h2("sec-03", "Ile obserwacji naprawdę potrzebujesz?"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       sliderInput("tab2_n", "Liczba obserwacji:", min = 5, max = 200, value = 8, step = 1),
       fluidRow(
         column(6, plotOutput("tab2_hist", height = "280px")),
@@ -27,9 +27,9 @@ ch3_ui <- tabPanel("3. Grupa",
       plotOutput("tab2_power", height = "280px")
     ),
 
-    div(class = "section-title", "Werdykt"),
+    lc_h2("sec-04", "Werdykt"),
 
-    div(class = "callout-danger",
+    div(class = "lc-feedback lc-feedback-danger",
       tags$strong("Problem:"), " n = 8 to zdecydowanie za mało.",
       tags$br(),
       "Przy tak małej próbie moc testu wynosi ok. 10-15% - nawet duża różnica ",
@@ -45,11 +45,11 @@ ch3_ui <- tabPanel("3. Grupa",
     div(class = "chapter-transition",
       p("Zobaczmy teraz zbiór, który radzi sobie lepiej."),
       actionButton("ch2_next", "Dalej: 4. Pingwiny →",
-                   class = "btn-primary btn-lg")
+                   class = "lc-btn-primary lc-btn-lg")
     ),
 
     div(style = "height: 40px;")
-  )))
+  ))))
 
 ch3_server <- function(input, output, session) {
 
@@ -70,9 +70,9 @@ ch3_server <- function(input, output, session) {
   output$tab2_hist <- renderPlot({
     d <- sim_data()
     ggplot(d, aes(x = oceny)) +
-      geom_histogram(bins = max(5L, round(input$tab2_n / 5)), fill = col_primary, color = "white", alpha = 0.8) +
+      geom_histogram(bins = max(5L, round(input$tab2_n / 5)), fill = data_primary, color = "white", alpha = 0.8) +
       labs(title = paste0("Histogram (n = ", input$tab2_n, ")"), x = "Średnia ocen", y = "Liczebność") +
-      theme_minimal(base_size = 14)
+      theme_upwr(base_size = 14)
   })
 
   output$tab2_ci <- renderPlot({
@@ -81,13 +81,13 @@ ch3_server <- function(input, output, session) {
     df_ci <- data.frame(n = ns, ci_width = ci_widths)
 
     ggplot(df_ci, aes(x = n, y = ci_width)) +
-      geom_line(color = col_bad, linewidth = 1.2) +
+      geom_line(color = data_bad, linewidth = 1.2) +
       geom_point(data = df_ci[df_ci$n == max(ns[ns <= input$tab2_n]), ],
-                 color = col_bad, size = 4) +
-      geom_hline(yintercept = 0.5, linetype = "dashed", color = col_good) +
-      annotate("text", x = 150, y = 0.55, label = "Akceptowalna szerokość", color = col_good, size = 4) +
+                 color = data_bad, size = 4) +
+      geom_hline(yintercept = 0.5, linetype = "dashed", color = data_good) +
+      annotate("text", x = 150, y = 0.55, label = "Akceptowalna szerokość", color = data_good, size = 4) +
       labs(title = "Szerokość 95% CI", x = "Liczba obserwacji (n)", y = "Szerokość CI") +
-      theme_minimal(base_size = 14)
+      theme_upwr(base_size = 14)
   })
 
   output$tab2_power <- renderPlot({
@@ -105,14 +105,14 @@ ch3_server <- function(input, output, session) {
     df_pow <- data.frame(n = ns, power = powers)
 
     ggplot(df_pow, aes(x = n, y = power)) +
-      geom_line(color = col_primary, linewidth = 1.2) +
+      geom_line(color = data_primary, linewidth = 1.2) +
       geom_point(data = df_pow[df_pow$n == max(ns[ns <= input$tab2_n]), ],
-                 color = col_primary, size = 4) +
-      geom_hline(yintercept = 0.8, linetype = "dashed", color = col_good) +
-      annotate("text", x = 150, y = 0.83, label = "Moc = 80% (standard)", color = col_good, size = 4) +
+                 color = data_primary, size = 4) +
+      geom_hline(yintercept = 0.8, linetype = "dashed", color = data_good) +
+      annotate("text", x = 150, y = 0.83, label = "Moc = 80% (standard)", color = data_good, size = 4) +
       scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
       labs(title = "Moc testu (effect size d = 0.5)", x = "Liczba obserwacji (n)", y = "Moc testu") +
-      theme_minimal(base_size = 14)
+      theme_upwr(base_size = 14)
   })
 
 }

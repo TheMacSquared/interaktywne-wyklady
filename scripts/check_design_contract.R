@@ -17,7 +17,9 @@ migrated_lectures <- c(
   "zalozenia-testow",
   "regresja",
   "symulacje-statystyczne",
-  "metody-bayesowskie"
+  "metody-bayesowskie",
+  "dobre-dane",
+  "case-studies"
 )
 
 rules <- data.frame(

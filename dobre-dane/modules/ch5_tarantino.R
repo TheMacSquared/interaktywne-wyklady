@@ -1,60 +1,60 @@
 # Tab 5: Tarantino — dane eventowe, zła struktura
 
-ch5_ui <- tabPanel("5. Tarantino",
+ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = tagList(
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Filmy Tarantino"),
+    lc_h2("sec-01", "Filmy Tarantino"),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Kolega znalazł ciekawy zbiór danych o filmach Quentina Tarantino.
         Zawiera informacje o każdym przekleństwie i każdej śmierci w jego filmach.
         'Super temat na projekt!' - mówi."),
       p("Źródło: pakiet fivethirtyeight w R.")
     ),
 
-    div(class = "section-title", "Podgląd danych"),
+    lc_h2("sec-02", "Podgląd danych"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       DT::dataTableOutput("tab4_table")
     ),
 
-    div(class = "callout-info",
+    div(class = "lc-feedback lc-feedback-info",
       tags$strong("Zmienne:"),
       " movie (tytuł filmu), type ('word' lub 'death'), ",
       "word (konkretne słowo, jeśli type='word'), minutes_in (minuta filmu)."
     ),
 
-    div(class = "section-title", "Eksploracja"),
+    lc_h2("sec-03", "Eksploracja"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       fluidRow(
-        column(6, actionButton("tab4_hist", "Histogram: minutes_in", class = "btn-outline-primary", width = "100%")),
-        column(6, actionButton("tab4_bar", "Porównanie filmów", class = "btn-outline-primary", width = "100%"))
+        column(6, actionButton("tab4_hist", "Histogram: minutes_in", class = "lc-btn-outline", width = "100%")),
+        column(6, actionButton("tab4_bar", "Porównanie filmów", class = "lc-btn-outline", width = "100%"))
       ),
       plotOutput("tab4_explore_plot", height = "350px")
     ),
 
-    div(class = "section-title", "Próba analiz"),
+    lc_h2("sec-04", "Próba analiz"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       h4("Jaka analiza tu pasuje?"),
       uiOutput("tab4_quiz_options"),
       uiOutput("tab4_quiz_result")
     ),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       h4("Może agregacja pomoże?"),
-      div(class = "narrative",
+      div(class = "lc-prose",
         p("Każdy wiersz to jedno zdarzenie (przekleństwo lub śmierć). Aby używać klasycznej
           statystyki, musielibyśmy zagregować dane do poziomu filmów.")
       ),
-      actionButton("tab4_aggregate", "Zagreguj dane", class = "btn-warning"),
+      actionButton("tab4_aggregate", "Zagreguj dane", class = "lc-btn-warning"),
       uiOutput("tab4_agg_result")
     ),
 
-    div(class = "section-title", "Werdykt"),
+    lc_h2("sec-05", "Werdykt"),
 
-    div(class = "callout-danger",
+    div(class = "lc-feedback lc-feedback-danger",
       "Zły zbiór do klasycznej statystyki!",
       tags$br(),
       tags$strong("Problem 1:"), " Dane eventowe - każdy wiersz to zdarzenie, nie obserwacja w sensie statystycznym.",
@@ -67,11 +67,11 @@ ch5_ui <- tabPanel("5. Tarantino",
     div(class = "chapter-transition",
       p("Czasem dane mają odpowiednią wielkość, ale inny problem..."),
       actionButton("ch4_next", "Dalej: 6. Ankieta firmowa →",
-                   class = "btn-primary btn-lg")
+                   class = "lc-btn-primary lc-btn-lg")
     ),
 
     div(style = "height: 40px;")
-  )))
+  ))))
 
 ch5_server <- function(input, output, session) {
 
@@ -82,9 +82,9 @@ ch5_server <- function(input, output, session) {
   observeEvent(input$tab4_hist, {
     output$tab4_explore_plot <- renderPlot({
       ggplot(tarantino, aes(x = minutes_in)) +
-        geom_histogram(bins = 30, fill = col_primary, color = "white", alpha = 0.8) +
+        geom_histogram(bins = 30, fill = data_primary, color = "white", alpha = 0.8) +
         labs(title = "Rozkład minutes_in", x = "Minuta filmu", y = "Liczba zdarzeń") +
-        theme_minimal(base_size = 14)
+        theme_upwr(base_size = 14)
     })
   })
 
@@ -94,10 +94,10 @@ ch5_server <- function(input, output, session) {
         count(movie, type) %>%
         ggplot(aes(x = reorder(movie, n), y = n, fill = type)) +
         geom_col(position = "dodge", alpha = 0.8) +
-        scale_fill_manual(values = c("death" = col_bad, "word" = col_mixed)) +
+        scale_fill_manual(values = c("death" = data_bad, "word" = data_mixed)) +
         coord_flip() +
         labs(title = "Zdarzenia wg filmu", x = NULL, y = "Liczba", fill = "Typ") +
-        theme_minimal(base_size = 14)
+        theme_upwr(base_size = 14)
     })
   })
 
@@ -144,13 +144,13 @@ ch5_server <- function(input, output, session) {
     req(tab4_quiz_answered())
     answer <- tab4_quiz_selected()
     if (answer == "Zadna z klasycznych") {
-      div(class = "callout-success", style = "margin-top: 10px;",
+      div(class = "lc-feedback lc-feedback-ok", style = "margin-top: 10px;",
         tags$strong("Dokładnie!"),
         " Dane eventowe nie nadają się do klasycznych testów.",
         " Każdy wiersz to zdarzenie, nie niezależna obserwacja."
       )
     } else {
-      div(class = "callout-danger", style = "margin-top: 10px;",
+      div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
         tags$strong("Nie do końca."),
         paste0(" ", answer, " wymaga zmiennych odpowiedniego typu i niezależnych obserwacji. "),
         "Tutaj mamy dane eventowe - każdy wiersz to jedno przekleństwo lub śmierć w filmie. ",
@@ -175,7 +175,7 @@ ch5_server <- function(input, output, session) {
           datatable(round_df(agg), options = list(dom = 't', pageLength = 10), rownames = FALSE)
         })
       ),
-      div(class = "callout-danger", style = "margin-top: 15px;",
+      div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 15px;",
         tags$strong("Problem:"),
         paste0(" Po agregacji mamy n = ", nrow(agg), " filmów. "),
         "To zdecydowanie za mało na jakąkolwiek analizę statystyczną.",

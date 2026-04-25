@@ -1,22 +1,22 @@
 # Tab 10: Studenci — wzorcowa ankieta studencka, dobry zbiór
 
-ch10_ui <- tabPanel("10. Studenci",
+ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content = tagList(
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Ankieta studencka"),
+    lc_h2("sec-01", "Ankieta studencka"),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Wyobraź sobie, że projektujesz ankietę do projektu końcowego.
         Oto przykład dobrze zaprojektowanej ankiety z 150 respondentami.")
     ),
 
-    div(class = "section-title", "Podgląd danych"),
+    lc_h2("sec-02", "Podgląd danych"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       DT::dataTableOutput("tab9_table")
     ),
 
-    div(class = "callout-info",
+    div(class = "lc-feedback lc-feedback-info",
       tags$strong("Zmienne i ich typy:"),
       tags$br(),
       "plec (nominalna) | kierunek (nominalna) | rok_studiow (porządkowa)",
@@ -24,9 +24,9 @@ ch10_ui <- tabPanel("10. Studenci",
       "godziny_nauki (ciągła) | stres (porządkowa/Likert 1-10) | srednia_ocen (ciągła) | liczba_kursow (dyskretna)"
     ),
 
-    div(class = "section-title", "Werdykt"),
+    lc_h2("sec-03", "Werdykt"),
 
-    div(class = "callout-success",
+    div(class = "lc-feedback lc-feedback-ok",
       tags$strong("Wzorcowa ankieta!"),
       tags$br(),
       "Zamknięte pytania, spójne skale, jasne kodowanie.",
@@ -39,11 +39,11 @@ ch10_ui <- tabPanel("10. Studenci",
     div(class = "chapter-transition",
       p("Ostatni zbiór - wygląda dobrze, ale ma ukryty problem..."),
       actionButton("ch9_next", "Dalej: 11. Jakość powietrza →",
-                   class = "btn-primary btn-lg")
+                   class = "lc-btn-primary lc-btn-lg")
     ),
 
     div(style = "height: 40px;")
-  )))
+  ))))
 
 ch10_server <- function(input, output, session) {
 

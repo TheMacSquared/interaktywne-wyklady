@@ -1,19 +1,19 @@
 # Tab 12: Ściąga — podsumowanie i checklist jakości danych
 
-ch12_ui <- tabPanel("12. Ściąga",
+ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content = tagList(
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Ściąga - jak ocenić zbiór danych"),
+    lc_h2("sec-01", "Ściąga - jak ocenić zbiór danych"),
 
-    div(class = "section-title", "Podsumowanie 10 zbiorów"),
+    lc_h2("sec-02", "Podsumowanie 10 zbiorów"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       tableOutput("tab11_summary")
     ),
 
-    div(class = "section-title", "Checklist jakości danych"),
+    lc_h2("sec-03", "Checklist jakości danych"),
 
-    div(class = "callout-danger",
+    div(class = "lc-feedback lc-feedback-danger",
       HTML("
         <strong style='font-size: 15px;'>KRYTYCZNE - jeśli nie spełniasz, szukaj innego zbioru:</strong>
         <ol>
@@ -27,7 +27,7 @@ ch12_ui <- tabPanel("12. Ściąga",
       ")
     ),
 
-    div(class = "callout-warning",
+    div(class = "lc-feedback lc-feedback-warning",
       HTML("
         <strong style='font-size: 15px;'>NAPRAWIALNE - wymagają pracy, ale się da:</strong>
         <ol start='7'>
@@ -38,13 +38,13 @@ ch12_ui <- tabPanel("12. Ściąga",
       ")
     ),
 
-    div(class = "section-title", "Dopasowanie analizy do danych"),
+    lc_h2("sec-04", "Dopasowanie analizy do danych"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       tableOutput("tab11_analysis_table")
     ),
 
-    div(class = "callout-info",
+    div(class = "lc-feedback lc-feedback-info",
       tags$strong("Wskazówka:"),
       " Użyj tego checklistu oceniając dane do swojego projektu końcowego.",
       tags$br(),
@@ -54,7 +54,7 @@ ch12_ui <- tabPanel("12. Ściąga",
     ),
 
     div(style = "height: 60px;")
-  )))
+  ))))
 
 ch12_server <- function(input, output, session) {
 

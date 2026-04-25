@@ -1,11 +1,11 @@
 # Tab 1: Katalog — 7 typowych problemów w danych z wizualizacjami
 
-ch1_ui <- tabPanel("1. Katalog",
+ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = tagList(
   fluidRow(column(10, offset = 1,
 
-    div(class = "section-title", "Katalog problemów w danych"),
+    lc_h2("sec-01", "Katalog problemów w danych"),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Poniżej zobaczysz 7 typowych problemów, które mogą dyskwalifikować zbiór danych.
         Każdy problem pokazujemy tak, jak wyglądałoby to w jamovi lub Excelu (tabela)
         oraz na wykresie. Gdzie to możliwe - pokaz surowe vs oczyszczone dane.")
@@ -30,7 +30,7 @@ ch1_ui <- tabPanel("1. Katalog",
           plotOutput("cat1_plot", height = "280px")
         )
       ),
-      div(class = "callout-danger", style = "margin-top: 10px;",
+      div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
         tags$strong("Problem:"), " Przy n = 6 histogram ma ogromne dziury, ",
         "przedział ufności jest bardzo szeroki, a moc testu < 10%. ",
         "Nawet duży efekt będzie nieistotny statystycznie.",
@@ -59,7 +59,7 @@ ch1_ui <- tabPanel("1. Katalog",
           plotOutput("cat2_plot", height = "200px")
         )
       ),
-      div(class = "callout-danger", style = "margin-top: 10px;",
+      div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
         tags$strong("Problem:"), " staż pracy jest prawie stały (zakres 2.8–3.2 lata). ",
         "Wynagrodzenia się różnią, ale nie widać żadnego wzorca — punkty tworzą pionową chmurę.",
         tags$br(),
@@ -90,7 +90,7 @@ ch1_ui <- tabPanel("1. Katalog",
           plotOutput("cat3_plot", height = "280px")
         )
       ),
-      div(class = "callout-warning", style = "margin-top: 10px;",
+      div(class = "lc-feedback lc-feedback-warning", style = "margin-top: 10px;",
         tags$strong("Typowe błędy:"),
         " brak zer (45 zamiast 450 000), dodatkowe zero (5 500 000 zamiast 550 000), ",
         "ujemna cena (-300 000), literówka w pokojach (42 zamiast 4).",
@@ -122,7 +122,7 @@ ch1_ui <- tabPanel("1. Katalog",
           plotOutput("cat4_plot", height = "280px")
         )
       ),
-      div(class = "callout-warning", style = "margin-top: 10px;",
+      div(class = "lc-feedback lc-feedback-warning", style = "margin-top: 10px;",
         tags$strong("Problem:"), " R/jamovi nie wie, co zrobić z '3-4h' albo 'dobrze'. ",
         "Czyszczenie jest możliwe, ale tracimy dużo danych (NA).",
         tags$br(),
@@ -149,7 +149,7 @@ ch1_ui <- tabPanel("1. Katalog",
           plotOutput("cat5_plot", height = "280px")
         )
       ),
-      div(class = "callout-info", style = "margin-top: 10px;",
+      div(class = "lc-feedback lc-feedback-info", style = "margin-top: 10px;",
         tags$strong("Progi:"),
         " < 5% braków = OK (usuń wiersze). 5-20% = ostrożnie (rozważ imputację). ",
         "> 20% = zmienna może odpaść z analizy.",
@@ -181,7 +181,7 @@ ch1_ui <- tabPanel("1. Katalog",
           plotOutput("cat6_plot", height = "280px")
         )
       ),
-      div(class = "callout-danger", style = "margin-top: 10px;",
+      div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
         tags$strong("Problem:"), " W tabeli te dane wyglądają jak 183 niezależne pomiary. ",
         "Ale wykres liniowy zdradza sezonowość - każdy dzień zależy od poprzedniego.",
         tags$br(),
@@ -213,7 +213,7 @@ ch1_ui <- tabPanel("1. Katalog",
           plotOutput("cat7_plot", height = "280px")
         )
       ),
-      div(class = "callout-danger", style = "margin-top: 10px;",
+      div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
         tags$strong("Problem:"), " Wierszy jest ", nrow(cat_patients_visits),
         ", ale to wizyty - ten sam pacjent pojawia się wielokrotnie. ",
         "Jeśli pytamy o różnice między pacjentami (np. kobiety vs mężczyźni), jednostką obserwacji jest pacjent (n = ",
@@ -225,16 +225,16 @@ ch1_ui <- tabPanel("1. Katalog",
     ),
 
     # --- Podsumowanie: Checklist ---
-    div(class = "section-title", "Podsumowanie: Checklist jakości danych"),
+    lc_h2("sec-02", "Podsumowanie: Checklist jakości danych"),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Teraz już znasz typowe problemy. Użyj poniższego checklistu,
         żeby systematycznie oceniać każdy zbiór danych.")
     ),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       h4("Checklist jakości danych"),
-      tags$p(tags$strong(style = "color: #e74c3c;", "KRYTYCZNE"),
+      tags$p(tags$strong(style = "color: var(--upwr-accent);", "KRYTYCZNE"),
         " - jeśli nie spełniasz, szukaj innego zbioru:"),
       checkboxGroupInput("intro_critical", NULL,
         choices = c(
@@ -246,7 +246,7 @@ ch1_ui <- tabPanel("1. Katalog",
           "Niezależność obserwacji (lub możliwość agregacji)" = "indep"
         )
       ),
-      tags$p(tags$strong(style = "color: #f39c12;", "NAPRAWIALNE"),
+      tags$p(tags$strong(style = "color: var(--upwr-bursztyn);", "NAPRAWIALNE"),
         " - wymagają pracy, ale się da:"),
       checkboxGroupInput("intro_fixable", NULL,
         choices = c(
@@ -261,11 +261,11 @@ ch1_ui <- tabPanel("1. Katalog",
     div(class = "chapter-transition",
       p("Pora przetestować tę wiedzę na prawdziwych zbiorach danych."),
       actionButton("cat_next", "Dalej: 2. Szkoły w Kalifornii →",
-                   class = "btn-primary btn-lg")
+                   class = "lc-btn-primary lc-btn-lg")
     ),
 
     div(style = "height: 40px;")
-  )))
+  ))))
 
 ch1_server <- function(input, output, session) {
 
@@ -287,13 +287,13 @@ ch1_server <- function(input, output, session) {
 
   output$cat1_plot <- renderPlot({
     ggplot(cat_small, aes(x = oceny)) +
-      geom_histogram(bins = 4, fill = col_bad, color = "white", alpha = 0.8) +
-      geom_vline(xintercept = mean(cat_small$oceny), linetype = "dashed", color = col_dark, linewidth = 1) +
+      geom_histogram(bins = 4, fill = data_bad, color = "white", alpha = 0.8) +
+      geom_vline(xintercept = mean(cat_small$oceny), linetype = "dashed", color = data_reference, linewidth = 1) +
       annotate("text", x = mean(cat_small$oceny) + 0.15, y = 2.2,
                label = paste0("M = ", round(mean(cat_small$oceny), 2)), hjust = 0, size = 4.5) +
       scale_y_continuous(breaks = 0:3) +
       labs(title = "Histogram ocen (n = 6)", x = "Średnia ocen", y = "Liczebność") +
-      theme_minimal(base_size = 14)
+      theme_upwr(base_size = 14)
   })
 
   # --- Problem 2: Brak zmiennosci ---
@@ -315,22 +315,22 @@ ch1_server <- function(input, output, session) {
   output$cat2_plot_zadowolenie <- renderPlot({
     pct_45 <- round(100 * mean(cat_novar$zadowolenie >= 4))
     ggplot(cat_novar, aes(x = factor(zadowolenie))) +
-      geom_bar(fill = col_bad, alpha = 0.85) +
+      geom_bar(fill = data_bad, alpha = 0.85) +
       scale_x_discrete(limits = c("1","2","3","4","5")) +
       labs(title = paste0("Zadowolenie: ", pct_45, "% odpowiedzi to 4 lub 5"),
            x = "Ocena (1–5)", y = "Liczba") +
-      theme_minimal(base_size = 13)
+      theme_upwr(base_size = 13)
   })
 
   output$cat2_plot <- renderPlot({
     ggplot(cat_novar, aes(x = staz, y = wynagrodzenie)) +
-      geom_point(size = 3, alpha = 0.6, color = col_bad) +
+      geom_point(size = 3, alpha = 0.6, color = data_bad) +
       scale_x_continuous(limits = c(1, 10)) +
       labs(title = paste0("Staż vs wynagrodzenie (r = ",
                           round(cor(cat_novar$staz, cat_novar$wynagrodzenie), 3), ")"),
            subtitle = "Staż skupiony w wąskim fragmencie osi",
            x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
-      theme_minimal(base_size = 13)
+      theme_upwr(base_size = 13)
   })
 
   # --- Problem 3: Bledy i literowki (toggle) ---
@@ -384,20 +384,20 @@ ch1_server <- function(input, output, session) {
     if (cat3_view() == "raw") {
       d <- cat_errors
       title_txt <- "Z błędami"
-      col <- col_bad
+      col <- data_bad
     } else {
       d <- cat_errors_clean
       title_txt <- "Po oczyszczeniu"
-      col <- col_good
+      col <- data_good
     }
     model <- lm(cena ~ powierzchnia, data = d)
     r2 <- round(summary(model)$r.squared, 3)
     ggplot(d, aes(x = powierzchnia, y = cena)) +
-      geom_point(size = 3, alpha = 0.7, color = col_dark) +
+      geom_point(size = 3, alpha = 0.7, color = data_reference) +
       geom_smooth(method = "lm", color = col, se = TRUE) +
       labs(title = paste0(title_txt, " (R² = ", r2, ")"),
            x = "Powierzchnia (m²)", y = "Cena (PLN)") +
-      theme_minimal(base_size = 14)
+      theme_upwr(base_size = 14)
   })
 
   # --- Problem 4: Zle zdefiniowane zmienne (toggle) ---
@@ -456,22 +456,22 @@ ch1_server <- function(input, output, session) {
       )
       ggplot(df, aes(x = status, y = n, fill = status)) +
         geom_col(width = 0.6) +
-        scale_fill_manual(values = c(col_good, col_bad)) +
+        scale_fill_manual(values = c(data_good, data_bad)) +
         geom_text(aes(label = n), vjust = -0.5, size = 6, fontface = "bold") +
         labs(title = "czas_nauki: próba konwersji na liczby",
              subtitle = paste0(n_fail, " z ", nrow(cat_messy), " odpowiedzi nie da się użyć"),
              x = NULL, y = "Liczba odpowiedzi") +
-        theme_minimal(base_size = 14) +
+        theme_upwr(base_size = 14) +
         theme(legend.position = "none") +
         ylim(0, max(df$n) + 1)
     } else {
       d <- cat_messy_clean[!is.na(cat_messy_clean$czas_nauki_h), ]
       ggplot(d, aes(x = czas_nauki_h)) +
-        geom_histogram(bins = 5, fill = col_good, color = "white", alpha = 0.8) +
+        geom_histogram(bins = 5, fill = data_good, color = "white", alpha = 0.8) +
         labs(title = paste0("Histogram (n = ", nrow(d), " z ", nrow(cat_messy_clean), ")"),
              subtitle = "Po oczyszczeniu - ale straciliśmy połowę danych",
              x = "Godziny nauki/tydzień", y = "Liczebność") +
-        theme_minimal(base_size = 14)
+        theme_upwr(base_size = 14)
     }
   })
 
@@ -499,18 +499,18 @@ ch1_server <- function(input, output, session) {
   output$cat5_plot <- renderPlot({
     miss_pct <- sapply(cat_missing[, -1], function(x) mean(is.na(x)) * 100)
     df_miss <- data.frame(variable = names(miss_pct), pct = miss_pct)
-    df_miss$color <- ifelse(df_miss$pct > 20, col_bad, ifelse(df_miss$pct > 5, col_mixed, col_good))
+    df_miss$color <- ifelse(df_miss$pct > 20, data_bad, ifelse(df_miss$pct > 5, data_mixed, data_good))
 
     ggplot(df_miss, aes(x = reorder(variable, -pct), y = pct, fill = color)) +
       geom_col(width = 0.6) +
       scale_fill_identity() +
       geom_text(aes(label = paste0(round(pct), "%")), vjust = -0.5, size = 5, fontface = "bold") +
-      geom_hline(yintercept = 5, linetype = "dashed", color = col_mixed) +
-      geom_hline(yintercept = 20, linetype = "dashed", color = col_bad) +
-      annotate("text", x = 3.5, y = 7, label = "5% = OK", color = col_mixed, size = 3.5) +
-      annotate("text", x = 3.5, y = 22, label = "20% = problem", color = col_bad, size = 3.5) +
+      geom_hline(yintercept = 5, linetype = "dashed", color = data_mixed) +
+      geom_hline(yintercept = 20, linetype = "dashed", color = data_bad) +
+      annotate("text", x = 3.5, y = 7, label = "5% = OK", color = data_mixed, size = 3.5) +
+      annotate("text", x = 3.5, y = 22, label = "20% = problem", color = data_bad, size = 3.5) +
       labs(title = "Procent braków na zmienną", x = NULL, y = "% braków (NA)") +
-      theme_minimal(base_size = 14) +
+      theme_upwr(base_size = 14) +
       ylim(0, 35)
   })
 
@@ -559,25 +559,25 @@ ch1_server <- function(input, output, session) {
   output$cat6_plot <- renderPlot({
     if (cat6_view() == "daily") {
       ggplot(cat_timeseries, aes(x = data, y = temperatura)) +
-        geom_line(color = col_bad, linewidth = 0.8) +
-        geom_point(color = col_bad, size = 1.2, alpha = 0.6) +
+        geom_line(color = data_bad, linewidth = 0.8) +
+        geom_point(color = data_bad, size = 1.2, alpha = 0.6) +
         labs(title = "Temperatura w kolejności pomiarów (183 dni)",
              subtitle = "Wyraźna fala sezonowa - każdy dzień zależy od poprzedniego",
              x = "Data", y = "Temperatura (°C)") +
-        theme_minimal(base_size = 14)
+        theme_upwr(base_size = 14)
     } else {
       df_m <- cat_timeseries_monthly
       df_m$idx <- seq_len(nrow(df_m))
       ggplot(df_m, aes(x = idx, y = srednia_temp)) +
-        geom_line(color = col_bad, linewidth = 1) +
-        geom_point(color = col_bad, size = 4) +
+        geom_line(color = data_bad, linewidth = 1) +
+        geom_point(color = data_bad, size = 4) +
         geom_text(aes(label = paste0(srednia_temp, "°C")),
                   vjust = -1.2, size = 4.5, fontface = "bold") +
         scale_x_continuous(breaks = df_m$idx, labels = df_m$miesiac) +
         labs(title = "Średnia temperatura miesięczna (n = 6)",
              subtitle = "Agregacja uśmierza zależność dzień-do-dnia, ale zostaje 6 punktów",
              x = NULL, y = "Średnia temperatura (°C)") +
-        theme_minimal(base_size = 14) +
+        theme_upwr(base_size = 14) +
         theme(axis.text.x = element_text(angle = 30, hjust = 1))
     }
   })
@@ -631,26 +631,26 @@ ch1_server <- function(input, output, session) {
     if (cat7_view() == "events") {
       df <- data.frame(label = "Wiersze\nw tabeli", n = nrow(cat_patients_visits))
       ggplot(df, aes(x = label, y = n)) +
-        geom_col(fill = col_mixed, width = 0.4) +
+        geom_col(fill = data_mixed, width = 0.4) +
         geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold") +
         labs(title = "Ile masz 'obserwacji'?",
              subtitle = paste0(nrow(cat_patients_visits),
                                " wierszy, ale to wizyty - ten sam pacjent wraca"),
              x = NULL, y = NULL) +
         ylim(0, ceiling(nrow(cat_patients_visits) * 1.15)) +
-        theme_minimal(base_size = 14) +
+        theme_upwr(base_size = 14) +
         theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
     } else {
       df <- data.frame(label = "Pacjenci\n(obserwacje)", n = nrow(cat_patients_agg))
       ggplot(df, aes(x = label, y = n)) +
-        geom_col(fill = col_bad, width = 0.4) +
+        geom_col(fill = data_bad, width = 0.4) +
         geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold",
-                  color = col_bad) +
+                  color = data_bad) +
         labs(title = "Po agregacji",
              subtitle = "n = 30 pacjentów - jednostka obserwacji zgodna z pytaniem",
              x = NULL, y = NULL) +
         ylim(0, 40) +
-        theme_minimal(base_size = 14) +
+        theme_upwr(base_size = 14) +
         theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
     }
   })

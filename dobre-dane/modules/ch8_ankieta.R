@@ -1,39 +1,39 @@
 # Tab 8: Formularz rejestracyjny — mix dobrych i złych zmiennych
 
-ch8_ui <- tabPanel("8. Formularz",
+ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = tagList(
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Formularz rejestracyjny kursu"),
+    lc_h2("sec-01", "Formularz rejestracyjny kursu"),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Organizatorzy kursu wakacyjnego zebrali zapisy przez formularz online.
         Nie wszystkie pola były dobrze przemyślane. Zebrano 90 zgłoszeń.")
     ),
 
-    div(class = "section-title", "Podgląd danych"),
+    lc_h2("sec-02", "Podgląd danych"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       DT::dataTableOutput("tab7_table")
     ),
 
-    div(class = "section-title", "Spróbuj policzyć średnią"),
+    lc_h2("sec-03", "Spróbuj policzyć średnią"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       selectInput("tab7_var", "Wybierz zmienną:",
         choices = c("wiek", "wyksztalcenie", "doswiadczenie", "dostepnosc", "ocena_umiejetnosci")),
-      actionButton("tab7_mean", "Policz średnią", class = "btn-primary"),
+      actionButton("tab7_mean", "Policz średnią", class = "lc-btn-primary"),
       uiOutput("tab7_mean_result")
     ),
 
-    div(class = "section-title", "Jak to naprawić?"),
+    lc_h2("sec-04", "Jak to naprawić?"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       radioButtons("tab7_toggle", "Widok danych:", choices = c("Surowe", "Oczyszczone"), inline = TRUE),
       DT::dataTableOutput("tab7_clean_table"),
       uiOutput("tab7_clean_info")
     ),
 
-    div(class = "callout-info",
+    div(class = "lc-feedback lc-feedback-info",
       tags$strong("Jak tego uniknąć:"),
       tags$br(),
       "1. Zamknięte pytania dla zmiennych kluczowych (gotowe opcje do wyboru)",
@@ -45,9 +45,9 @@ ch8_ui <- tabPanel("8. Formularz",
       "4. Jasna instrukcja (np. 'podaj lata doświadczenia jako liczbę')"
     ),
 
-    div(class = "section-title", "Werdykt"),
+    lc_h2("sec-05", "Werdykt"),
 
-    div(class = "callout-warning",
+    div(class = "lc-feedback lc-feedback-warning",
       "Dane częściowo nadają się do analizy.",
       tags$br(),
       tags$strong("Dobre zmienne:"), " wiek (liczbowy, czysty) i wykształcenie (kategoryczne, spójne).",
@@ -59,9 +59,9 @@ ch8_ui <- tabPanel("8. Formularz",
       "R nie wie, co zrobić z 'trochę' albo 'elastycznie' jako wartością liczbową."
     ),
 
-    div(class = "section-title", "Drugi przykład: dane do uratowania"),
+    lc_h2("sec-06", "Drugi przykład: dane do uratowania"),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Inny formularz kursu, podobny problem — respondenci odpowiadali różnie na te same pola.
         Ale tym razem prawie każdą odpowiedź można przypisać do kategorii.
         Porównaj surowe dane z wersją po standaryzacji.")
@@ -72,11 +72,11 @@ ch8_ui <- tabPanel("8. Formularz",
       actionButton("tab7b_cat", "Po standaryzacji", class = "pill-btn")
     ),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       DT::dataTableOutput("tab7b_table")
     ),
 
-    div(class = "callout-success",
+    div(class = "lc-feedback lc-feedback-ok",
       "10 z 12 wierszy można uratować (83%).",
       tags$br(),
       tags$b("poziom:"), " \"podst.\", \"PODSTAWOWY\" → wszystkie to \"podstawowy\".",
@@ -90,11 +90,11 @@ ch8_ui <- tabPanel("8. Formularz",
     div(class = "chapter-transition",
       p("Następny zbiór ma inny rodzaj problemów — błędy w danych."),
       actionButton("ch7_next", "Dalej: 9. Badania laboratoryjne →",
-                   class = "btn-primary btn-lg")
+                   class = "lc-btn-primary lc-btn-lg")
     ),
 
     div(style = "height: 40px;")
-  )))
+  ))))
 
 ch8_server <- function(input, output, session) {
 
@@ -109,12 +109,12 @@ ch8_server <- function(input, output, session) {
       vals <- reg_data[[var]]
 
       if (var == "wiek") {
-        div(class = "callout-success", style = "margin-top: 10px;",
+        div(class = "lc-feedback lc-feedback-ok", style = "margin-top: 10px;",
           paste0("Średnia wieku: ", round(mean(vals, na.rm = TRUE), 1), " lat. "),
           "Ta zmienna jest czysta i liczbowa — nie ma problemów z kodowaniem."
         )
       } else if (var == "wyksztalcenie") {
-        div(class = "callout-info", style = "margin-top: 10px;",
+        div(class = "lc-feedback lc-feedback-info", style = "margin-top: 10px;",
           "Wykształcenie to zmienna kategoryczna — średnia nie ma matematycznego sensu. ",
           "Ale przynajmniej jest dobrze zakodowana: gotowe, spójne kategorie."
         )
@@ -124,11 +124,11 @@ ch8_server <- function(input, output, session) {
         pct_na <- round(n_na / length(nums) * 100, 1)
 
         if (n_na == 0) {
-          div(class = "callout-info", style = "margin-top: 10px;",
+          div(class = "lc-feedback lc-feedback-info", style = "margin-top: 10px;",
             paste0("Średnia: ", round(mean(nums, na.rm = TRUE), 2))
           )
         } else {
-          div(class = "callout-danger", style = "margin-top: 10px;",
+          div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
             paste0(n_na, " z ", length(nums), " wartości (", pct_na, "%) nie dało się przekonwertować na liczby!"),
             tags$br(),
             "Przykłady problematycznych wartości: ",
@@ -161,7 +161,7 @@ ch8_server <- function(input, output, session) {
 
   output$tab7_clean_info <- renderUI({
     if (input$tab7_toggle == "Oczyszczone") {
-      div(class = "callout-info", style = "margin-top: 10px;",
+      div(class = "lc-feedback lc-feedback-info", style = "margin-top: 10px;",
         tags$strong("Zmiany:"),
         tags$br(), "- wiek: bez zmian — już był czysty",
         tags$br(), "- wyksztalcenie: bez zmian — już były spójne kategorie",

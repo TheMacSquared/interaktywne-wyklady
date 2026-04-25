@@ -14,6 +14,8 @@ Kontrakt dotyczy wykładów opartych o `lecture_page()`:
 - `regresja/`
 - `symulacje-statystyczne/`
 - `metody-bayesowskie/`
+- `dobre-dane/`
+- `case-studies/`
 
 Niezmigrowane wykłady mogą być zepsute po usunięciu starych aliasów i stylów. Nie naprawiamy ich przy pracy nad kontraktem nowego systemu.
 

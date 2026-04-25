@@ -1,23 +1,23 @@
 # Tab 2: Szkoły — CASchools (AER), dobry zbiór wzorcowy
 
-ch2_ui <- tabPanel("2. Szkoły",
+ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = tagList(
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Szkoły w Kalifornii"),
+    lc_h2("sec-01", "Szkoły w Kalifornii"),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Zbiór danych z 420 okręgów szkolnych w Kalifornii. Zawiera wyniki testów
         standaryzowanych, wydatki na ucznia, dochody w okręgu i dane demograficzne."),
       p("Źródło: pakiet AER w R (Academic Economic Research).")
     ),
 
-    div(class = "section-title", "Podgląd danych"),
+    lc_h2("sec-02", "Podgląd danych"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       DT::dataTableOutput("tab1_table")
     ),
 
-    div(class = "callout-info",
+    div(class = "lc-feedback lc-feedback-info",
       tags$strong("Zmienne:"), " district, school (identyfikatory), ",
       "students, teachers (liczebności), expenditure (wydatki/ucznia $), ",
       "income (średni dochód w okręgu $tys.), english (% uczniów uczących się angielskiego), ",
@@ -25,9 +25,9 @@ ch2_ui <- tabPanel("2. Szkoły",
       "read, math (wyniki testów Stanford 9)."
     ),
 
-    div(class = "section-title", "Eksploracja zmiennych"),
+    lc_h2("sec-03", "Eksploracja zmiennych"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       fluidRow(
         column(4, selectInput("tab1_var", "Wybierz zmienną:",
           choices = c("read", "math", "expenditure", "income", "english", "lunch",
@@ -37,9 +37,9 @@ ch2_ui <- tabPanel("2. Szkoły",
       verbatimTextOutput("tab1_summary")
     ),
 
-    div(class = "section-title", "Zależności między zmiennymi"),
+    lc_h2("sec-04", "Zależności między zmiennymi"),
 
-    div(class = "widget-block",
+    div(class = "lc-figure-panel",
       fluidRow(
         column(4, selectInput("tab1_x", "Zmienna X:", choices = c("expenditure", "income", "english", "lunch", "calworks", "students"), selected = "income")),
         column(4, selectInput("tab1_y", "Zmienna Y:", choices = c("read", "math"), selected = "read"))
@@ -47,9 +47,9 @@ ch2_ui <- tabPanel("2. Szkoły",
       plotOutput("tab1_scatter_plot", height = "350px")
     ),
 
-    div(class = "section-title", "Werdykt"),
+    lc_h2("sec-05", "Werdykt"),
 
-    div(class = "callout-success",
+    div(class = "lc-feedback lc-feedback-ok",
       tags$strong("Bardzo dobry zbiór!"),
       " 420 okręgów szkolnych — wystarczy do każdej analizy.",
       tags$br(),
@@ -62,11 +62,11 @@ ch2_ui <- tabPanel("2. Szkoły",
     div(class = "chapter-transition",
       p("To był wzorcowy zbiór. Następny będzie... inny."),
       actionButton("ch1_next", "Dalej: 3. Ankieta na grupie →",
-                   class = "btn-primary btn-lg")
+                   class = "lc-btn-primary lc-btn-lg")
     ),
 
     div(style = "height: 40px;")
-  )))
+  ))))
 
 ch2_server <- function(input, output, session) {
 
@@ -79,9 +79,9 @@ ch2_server <- function(input, output, session) {
   output$tab1_hist <- renderPlot({
     req(input$tab1_var)
     ggplot(CASchools, aes(x = .data[[input$tab1_var]])) +
-      geom_histogram(bins = 25, fill = col_primary, color = "white", alpha = 0.8) +
+      geom_histogram(bins = 25, fill = data_primary, color = "white", alpha = 0.8) +
       labs(title = paste("Rozkład:", input$tab1_var), x = input$tab1_var, y = "Liczebność") +
-      theme_minimal(base_size = 14)
+      theme_upwr(base_size = 14)
   })
 
   output$tab1_summary <- renderPrint({
@@ -91,11 +91,11 @@ ch2_server <- function(input, output, session) {
 
   output$tab1_scatter_plot <- renderPlot({
     ggplot(CASchools, aes(x = .data[[input$tab1_x]], y = .data[[input$tab1_y]])) +
-      geom_point(alpha = 0.5, color = col_dark) +
-      geom_smooth(method = "lm", color = col_primary, se = TRUE) +
+      geom_point(alpha = 0.5, color = data_reference) +
+      geom_smooth(method = "lm", color = data_primary, se = TRUE) +
       labs(title = paste(input$tab1_y, "~", input$tab1_x),
            x = input$tab1_x, y = input$tab1_y) +
-      theme_minimal(base_size = 14)
+      theme_upwr(base_size = 14)
   })
 
 }

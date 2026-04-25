@@ -1,11 +1,11 @@
 # Tab 0: Wprowadzenie — wstęp do wykładu o jakości danych
 
-ch0_ui <- tabPanel("0. Wprowadzenie",
+ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Wprowadzenie", content = tagList(
   fluidRow(column(8, offset = 2,
 
-    div(class = "section-title", "Od pomysłu do danych"),
+    lc_h2("sec-01", "Od pomysłu do danych"),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Każda analiza zaczyna się od pomysłu i pytań — jeszcze zanim otworzycie
         jakikolwiek plik. Musicie wiedzieć co chcecie zbadać i jak to opisać:
         czy szukamy związku między dwiema rzeczami? Porównujemy grupy? Sprawdzamy
@@ -18,16 +18,16 @@ ch0_ui <- tabPanel("0. Wprowadzenie",
         podręcznik — bo będziecie rozumieć kontekst.")
     ),
 
-    div(class = "section-title", "Drugi krok: dane"),
+    lc_h2("sec-02", "Drugi krok: dane"),
 
-    div(class = "narrative",
+    div(class = "lc-prose",
       p("Kiedy macie już pomysł, trzeba znaleźć (albo zebrać) dane. I tu zaczyna się
         pierwsza pułapka: nie każdy zbiór danych nadaje się do planowanej analizy.
         Na tym wykładzie pokażę Wam na co zwracać uwagę — co dyskwalifikuje dane
         od razu, a co można naprawić.")
     ),
 
-    div(class = "callout-warning",
+    div(class = "lc-feedback lc-feedback-warning",
       tags$strong("Pytanie do grupy:"),
       " Wyobraźcie sobie, że otworzyliście zbiór danych w jamovi.",
       " Na co zwracacie uwagę? Co może pójść nie tak?",
@@ -35,7 +35,7 @@ ch0_ui <- tabPanel("0. Wprowadzenie",
       tags$em("(Porozmawiajmy o tym, a potem pokażę Wam katalog typowych problemów.)")
     ),
 
-    div(class = "callout-info",
+    div(class = "lc-feedback lc-feedback-info",
       tags$strong("Plan wykładu:"),
       tags$br(),
       "1. Katalog problemów — 7 typów błędów w danych (jak wyglądają w tabeli i na wykresie)",
@@ -48,11 +48,11 @@ ch0_ui <- tabPanel("0. Wprowadzenie",
     div(class = "chapter-transition",
       p("Zobaczmy, co może pójść nie tak z danymi."),
       actionButton("ch0_next", "Dalej: 1. Katalog problemów →",
-                   class = "btn-primary btn-lg")
+                   class = "lc-btn-primary lc-btn-lg")
     ),
 
     div(style = "height: 40px;")
-  )))
+  ))))
 
 ch0_server <- function(input, output, session) {
 
@@ -64,18 +64,18 @@ ch0_server <- function(input, output, session) {
 
     # Krytyczne decyduja o kolorze
     if (n_critical <= 3) {
-      color <- col_bad
+      color <- data_bad
       label <- "Dane wymagają pracy - problemy krytyczne!"
     } else if (n_critical <= 4 || n_total <= 6) {
-      color <- col_mixed
+      color <- data_mixed
       label <- "Dane OK z zastrzeżeniami"
     } else {
-      color <- col_good
+      color <- data_good
       label <- "Dane gotowe do analizy!"
     }
 
     tagList(
-      div(style = "background: #ecf0f1; border-radius: 10px; height: 30px; margin-top: 15px;",
+      div(style = "background: var(--upwr-rule); border-radius: 10px; height: 30px; margin-top: 15px;",
         div(style = paste0("background: ", color, "; height: 30px; border-radius: 10px; width: ", pct, "%;
                             transition: width 0.3s; text-align: center; line-height: 30px; color: white; font-weight: bold;"),
           paste0(n_total, "/9")
@@ -83,7 +83,7 @@ ch0_server <- function(input, output, session) {
       ),
       div(style = paste0("text-align: center; margin-top: 8px; font-weight: bold; color: ", color, ";"), label),
       if (n_critical < 6 && n_fixable > 0)
-        div(style = "text-align: center; margin-top: 4px; font-size: 13px; color: #7f8c8d;",
+        div(style = "text-align: center; margin-top: 4px; font-size: 13px; color: var(--upwr-reference);",
           "Naprawialne kryteria nie ratują krytycznych problemów!")
     )
   })
