@@ -2,31 +2,39 @@
 # CHAPTER 9: Regresja liniowa - lm() vs stan_glm()
 # ============================================================================
 
-ch9_ui <- tabPanel("9. Regresja liniowa",
-  fluidRow(column(8, offset = 2,
+ch9_ui <- lecture_chapter(
+  id = "ch-regresja-lin",
+  num = "09",
+  title = "Regresja liniowa",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 09 · Metody bayesowskie",
+      num    = "09",
+      title  = "Regresja liniowa",
+      lead   = "Od lm() do stan_glm(): estymacja współczynników i rola priora."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Zamiast jednej liczby (r) albo średniej — model:
        y = β₀ + β₁ x + ε. Które β są istotne? Jakie mają wartości?"
     ),
 
-    div(class = "section-title", "lm() vs stan_glm()"),
+    lc_h2("ch9-sec-01", "lm() vs stan_glm()"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Częstościowo: "), "lm(y ~ x) estymuje β metodą najmniejszych kwadratów,
          zwraca p-wartości dla każdego współczynnika i 95% CI."),
       p(tags$b("Bayesowsko: "), "stan_glm(y ~ x, family = gaussian) próbkuje posterior
          dla każdego β. Dostajemy medianę + 95% HDI — plausible range dla siły efektu.")
     ),
 
-    div(class = "callout-warning",
+    lc_feedback(type = "warning",
       tags$b("Uwaga wydajnościowa: "),
       "stan_glm uruchamia sampler MCMC — pierwszy fit trwa 5-15 sekund.
        Kolejne fitowania tego samego modelu są szybsze dzięki cache."
     ),
 
-    div(class = "widget-block",
-      h4("Regresja prosta: ten sam model, dwa paradygmaty"),
+    figure_panel(label = "Ryc. 9.1", title = "Regresja prosta: ten sam model, dwa paradygmaty",
 
       fluidRow(column(12,
         fluidRow(
@@ -51,9 +59,9 @@ ch9_ui <- tabPanel("9. Regresja liniowa",
         fluidRow(
           column(12,
             actionButton("ch9_draw", "↻ Nowa próba",
-                         class = "btn-primary", width = "200px"),
+                         class = "lc-btn-primary", width = "200px"),
             actionButton("ch9_fit", "Dopasuj modele",
-                         class = "btn-success", width = "200px")
+                         class = "lc-btn-ok", width = "200px")
           )
         )
       )),
@@ -78,14 +86,14 @@ ch9_ui <- tabPanel("9. Regresja liniowa",
         )
       ),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         uiOutput("ch9_comparison")
       )
     ),
 
-    div(class = "section-title", "Wpływ priora na estymację"),
+    lc_h2("ch9-sec-02", "Wpływ priora na estymację"),
 
-    div(class = "narrative",
+    tagList(
       p("Suwak „Skala priora‟ kontroluje, jak „optymistyczny‟ jest prior.
          Małe wartości (np. 0.5) „ściągają‟ β w kierunku zera
          — to ", tags$em("regularyzacja"), " bayesowska.
@@ -94,15 +102,14 @@ ch9_ui <- tabPanel("9. Regresja liniowa",
          chroni przed nadinterpretacją losowego szumu jako efektu.")
     ),
 
-    div(class = "chapter-transition",
-      p("Regresja liniowa do odpowiedzi ilościowych.
-         A dla binarnej odpowiedzi — regresja logistyczna."),
-      actionButton("ch9_next",
-                   "Dalej: Regresja logistyczna →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "10",
+      title = "Regresja logistyczna",
+      lead = "bayesowski model dla zmiennej zero-jedynkowej.",
+      target_id = "ch-regresja-log"
     )
 
-  )) # column, fluidRow
+  )
 )
 
 ch9_server <- function(input, output, session) {
@@ -112,20 +119,20 @@ ch9_server <- function(input, output, session) {
 
   observe({
     if (is.null(sample_data())) {
-      d <- generate_regression_data(input$ch9_n,
-                                    slope = input$ch9_slope,
+      d <- generate_regression_data(bayes_input(input$ch9_n, 60),
+                                    slope = bayes_input(input$ch9_slope, 1.5),
                                     intercept = 2,
-                                    sigma = input$ch9_sigma)
+                                    sigma = bayes_input(input$ch9_sigma, 8))
       sample_data(d)
     }
   })
 
   observeEvent(list(input$ch9_draw, input$ch9_n, input$ch9_slope,
                     input$ch9_sigma), {
-    d <- generate_regression_data(input$ch9_n,
-                                  slope = input$ch9_slope,
+    d <- generate_regression_data(bayes_input(input$ch9_n, 60),
+                                  slope = bayes_input(input$ch9_slope, 1.5),
                                   intercept = 2,
-                                  sigma = input$ch9_sigma)
+                                  sigma = bayes_input(input$ch9_sigma, 8))
     sample_data(d)
     fit_result(NULL)  # zresetuj fit po nowych danych
   }, ignoreInit = TRUE)
@@ -149,8 +156,8 @@ ch9_server <- function(input, output, session) {
     d <- sample_data()
     req(d)
     plot_scatter_with_fit(d, show_line = TRUE,
-                           col_point = col_primary,
-                           col_line = col_frequentist,
+                           col_point = bayes_primary,
+                           col_line = bayes_freq,
                            title = paste0("Dane (n = ", nrow(d), ")"))
   })
 
@@ -162,17 +169,17 @@ ch9_server <- function(input, output, session) {
         theme_void())
     }
     plot_coef_forest(r$freq_coefs, "Częstościowo",
-                     col_freq = col_frequentist,
-                     col_bayes = col_bayesian)
+                     col_freq = bayes_freq,
+                     col_bayes = bayes_bayes)
   })
 
   output$ch9_freq_result <- renderUI({
     r <- fit_result()
-    if (is.null(r)) return(div(class = "callout-warning",
+    if (is.null(r)) return(lc_feedback(type = "warning",
                                  "Brak wyników — kliknij „Dopasuj modele‟."))
     fc <- r$freq_coefs
     slope_row <- fc[fc$term == "x", ]
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("Intercept (β₀): "), round(fc$estimate[1], 3),
       "  95% CI: [", round(fc$lower[1], 3), ", ",
       round(fc$upper[1], 3), "]", tags$br(),
@@ -187,8 +194,8 @@ ch9_server <- function(input, output, session) {
     r <- fit_result()
     if (is.null(r)) return(ggplot() + theme_void())
     plot_coef_forest(r$bayes_coefs, "Bayesowsko",
-                     col_freq = col_frequentist,
-                     col_bayes = col_bayesian)
+                     col_freq = bayes_freq,
+                     col_bayes = bayes_bayes)
   })
 
   output$ch9_bayes_result <- renderUI({
@@ -199,7 +206,7 @@ ch9_server <- function(input, output, session) {
     # Posterior P(slope > 0)
     post_slope <- r$posterior[, "x"]
     prob_positive <- mean(post_slope > 0)
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("Intercept (β₀): "), round(bc$estimate[1], 3),
       "  95% HDI: [", round(bc$lower[1], 3), ", ",
       round(bc$upper[1], 3), "]", tags$br(),

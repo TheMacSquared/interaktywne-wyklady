@@ -2,17 +2,26 @@
 # CHAPTER 2: Bayes Factor vs p-value
 # ============================================================================
 
-ch2_ui <- tabPanel("2. BF vs p-wartość",
-  fluidRow(column(8, offset = 2,
+ch2_ui <- lecture_chapter(
+  id = "ch-bf-vs-p",
+  num = "02",
+  title = "BF vs p-wartość",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 02 · Metody bayesowskie",
+      num    = "02",
+      title  = "BF vs p-wartość",
+      lead   = "Bayes Factor odpowiada na inne pytanie niż p-wartość i pozwala ważyć dowód za modelami."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Mamy prior i posterior. Teraz druga kluczowa idea bayesowska:
        miara „siły dowodu‟ — Bayes Factor — i jej porównanie z p-wartością."
     ),
 
-    div(class = "section-title", "P-wartość odpowiada na inne pytanie niż myślisz"),
+    lc_h2("ch2-sec-01", "P-wartość odpowiada na inne pytanie niż myślisz"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("p-wartość"), " = P(dane ≥ obserwowane | H₀ prawdziwe).
          To warunkowe prawdopodobieństwo ", tags$em("danych"), " przy założeniu
          H₀ — nie mówi nam, jak prawdopodobna jest sama H₀."),
@@ -21,7 +30,7 @@ ch2_ui <- tabPanel("2. BF vs p-wartość",
          tags$b("BF₁₀ = 10"), " znaczy, że dane są 10× bardziej prawdopodobne pod H₁ niż pod H₀.")
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("Skala Jeffreysa (konwencja dla BF₁₀):"),
       tags$ul(
         tags$li("1 – 3: dowód anekdotyczny (słaby)"),
@@ -33,16 +42,15 @@ ch2_ui <- tabPanel("2. BF vs p-wartość",
       "Symetrycznie: BF₁₀ < 1 czytamy jako 1/BF₁₀ dowód za H₀."
     ),
 
-    div(class = "section-title", "Porównanie na jednej próbie"),
+    lc_h2("ch2-sec-02", "Porównanie na jednej próbie"),
 
-    div(class = "narrative",
+    tagList(
       p("Generujemy jedną próbę (z prawdziwej średniej μ), testujemy H₀: μ = 0.
          Lewa kolumna — klasyczny test t i p-wartość.
          Prawa kolumna — ttestBF i BF₁₀. Te same dane, dwie odpowiedzi.")
     ),
 
-    div(class = "widget-block",
-      h4("Te same dane, dwa paradygmaty"),
+    figure_panel(label = "Ryc. 2.1", title = "Te same dane, dwa paradygmaty",
       fluidRow(column(12,
         fluidRow(
           column(4,
@@ -56,7 +64,7 @@ ch2_ui <- tabPanel("2. BF vs p-wartość",
           column(4,
             br(),
             actionButton("ch2_draw", "↻ Nowa próba",
-                         class = "btn-primary", width = "100%")
+                         class = "lc-btn-primary", width = "100%")
           )
         )
       )),
@@ -78,14 +86,14 @@ ch2_ui <- tabPanel("2. BF vs p-wartość",
         )
       ),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         uiOutput("ch2_comparison")
       )
     ),
 
-    div(class = "section-title", "Paradoks Lindleya: duża próba"),
+    lc_h2("ch2-sec-03", "Paradoks Lindleya: duża próba"),
 
-    div(class = "narrative",
+    tagList(
       p("Ustaw n = 200 i małą prawdziwą różnicę (np. μ = 0.1).
          Obserwuj: p-wartość szybko spada poniżej 0.05 („istotny wynik‟),
          ale BF może wciąż mówić „słaby dowód‟, a czasem nawet wskazywać na H₀!"),
@@ -95,7 +103,7 @@ ch2_ui <- tabPanel("2. BF vs p-wartość",
          To dwa różne aspekty tego samego obserwowanego wyniku.")
     ),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$strong("Kiedy BF i p zgadzają się:"),
       " zwykle przy małych-średnich próbach i wyraźnych efektach.",
       tags$br(),
@@ -104,15 +112,14 @@ ch2_ui <- tabPanel("2. BF vs p-wartość",
          lub bardzo mała próba (BF realistycznie mówi „nie wiem‟, p potrafi być mylące)."
     ),
 
-    div(class = "chapter-transition",
-      p("Wiemy, że p i BF to różne odpowiedzi.
-         A co z przedziałami? Czy 95% CI i 95% HDI to to samo?"),
-      actionButton("ch2_next",
-                   "Dalej: HDI vs CI →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "03",
+      title = "HDI vs CI",
+      lead = "różnica między przedziałem wiarygodności i ufności.",
+      target_id = "ch-hdi-vs-ci"
     )
 
-  )) # column, fluidRow
+  )
 )
 
 ch2_server <- function(input, output, session) {
@@ -122,14 +129,16 @@ ch2_server <- function(input, output, session) {
   # Wstepna próba
   observe({
     if (is.null(sample_data())) {
-      x <- rnorm(input$ch2_n, mean = input$ch2_true_mu, sd = 1)
+      x <- rnorm(bayes_input(input$ch2_n, 30),
+                 mean = bayes_input(input$ch2_true_mu, 0.2), sd = 1)
       sample_data(x)
     }
   })
 
   # Nowa próba na przycisk lub zmiane parametrów
   observeEvent(list(input$ch2_draw, input$ch2_n, input$ch2_true_mu), {
-    x <- rnorm(input$ch2_n, mean = input$ch2_true_mu, sd = 1)
+    x <- rnorm(bayes_input(input$ch2_n, 30),
+               mean = bayes_input(input$ch2_true_mu, 0.2), sd = 1)
     sample_data(x)
   }, ignoreInit = TRUE)
 
@@ -143,8 +152,8 @@ ch2_server <- function(input, output, session) {
   output$ch2_freq_plot <- renderPlot({
     x <- sample_data()
     req(x)
-    plot_sample_data(x, mu0 = 0, title = "Próba + H₀: μ = 0",
-                     col_freq = col_frequentist)
+    plot_sample_data(x, mu0 = 0, title = "Próba + H0: mu = 0",
+                     col_freq = bayes_freq)
   })
 
   output$ch2_freq_result <- renderUI({
@@ -152,7 +161,7 @@ ch2_server <- function(input, output, session) {
     p_info <- format_pval_pl(r$p_value)
     ci <- r$ci_freq
     tagList(
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         tags$b("t-test Studenta (H₀: μ = 0)"), tags$br(),
         "t = ", round(r$t_statistic, 3),
         "  |  df = ", round(r$df, 1), tags$br(),
@@ -173,7 +182,7 @@ ch2_server <- function(input, output, session) {
     interp <- interpret_bf(r$bf10)
     hdi <- r$hdi
     tagList(
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         tags$b("Bayes Factor (H₁: μ ≠ 0 vs H₀: μ = 0)"), tags$br(),
         "BF₁₀ = ", format_bf(r$bf10), tags$br(),
         tags$b("Interpretacja: "), interp$short_summary, tags$br(),

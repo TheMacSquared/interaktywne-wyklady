@@ -2,17 +2,26 @@
 # CHAPTER 7: Tabele krzyzowe - chi-kwadrat vs contingencyTableBF + OR
 # ============================================================================
 
-ch7_ui <- tabPanel("7. Tabele krzyżowe",
-  fluidRow(column(8, offset = 2,
+ch7_ui <- lecture_chapter(
+  id = "ch-tabele",
+  num = "07",
+  title = "Tabele krzyżowe",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 07 · Metody bayesowskie",
+      num    = "07",
+      title  = "Tabele krzyżowe",
+      lead   = "Klasyczny chi-kwadrat kontra bayesowski dowód dla tabel 2x2."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Dwie zmienne jakościowe — klasyczne pytanie: czy grupa A różni się od grupy B
        pod względem częstości pewnej cechy? (np. skuteczność leku vs placebo)."
     ),
 
-    div(class = "section-title", "Chi-kwadrat vs BF dla tabeli"),
+    lc_h2("ch7-sec-01", "Chi-kwadrat vs BF dla tabeli"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Częstościowo: "), "test χ² niezależności porownuje obserwowane
          liczności z oczekiwanymi pod H₀ (niezależność zmiennych). Zwraca p-wartość."),
       p(tags$b("Bayesowsko: "), "contingencyTableBF zwraca BF₁₀ między modelem
@@ -21,7 +30,7 @@ ch7_ui <- tabPanel("7. Tabele krzyżowe",
          " zależność istnieje, ale też ", tags$em("jak silna"), " i ", tags$em("w którą stronę"), ".")
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("Model próbkowania:"),
       " w BayesFactor wybieramy ", tags$em("sampleType"),
        ". Najczęściej „indepMulti‟ (grupy mają ustalone sumy wierszy —
@@ -29,10 +38,9 @@ ch7_ui <- tabPanel("7. Tabele krzyżowe",
        (żadne brzegi nie są ustalone)."
     ),
 
-    div(class = "section-title", "Tabela 2x2: skuteczność leku vs placebo"),
+    lc_h2("ch7-sec-02", "Tabela 2x2: skuteczność leku vs placebo"),
 
-    div(class = "widget-block",
-      h4("Tabela 2×2: sukces / porażka w dwóch grupach"),
+    figure_panel(label = "Ryc. 7.1", title = "Tabela 2×2: sukces / porażka w dwóch grupach",
 
       fluidRow(column(12,
         fluidRow(
@@ -54,11 +62,11 @@ ch7_ui <- tabPanel("7. Tabele krzyżowe",
             h6("Presety"),
             div(class = "preset-buttons",
               actionButton("ch7_preset_balanced", "Brak różnicy",
-                           class = "btn-outline-secondary btn-sm"),
+                           class = "lc-btn-secondary-outline lc-btn-sm"),
               actionButton("ch7_preset_moderate", "Umiarkowany efekt",
-                           class = "btn-outline-secondary btn-sm"),
+                           class = "lc-btn-secondary-outline lc-btn-sm"),
               actionButton("ch7_preset_strong", "Silny efekt",
-                           class = "btn-outline-secondary btn-sm")
+                           class = "lc-btn-secondary-outline lc-btn-sm")
             )
           ),
           column(3,
@@ -89,14 +97,14 @@ ch7_ui <- tabPanel("7. Tabele krzyżowe",
         )
       ),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         uiOutput("ch7_comparison")
       )
     ),
 
-    div(class = "section-title", "Co zyskuję bayesowsko (dla 2×2)?"),
+    lc_h2("ch7-sec-03", "Co zyskuję bayesowsko (dla 2×2)?"),
 
-    div(class = "narrative",
+    tagList(
       p("Klasyczny test χ² mówi „tak/nie‟ o zależności.
          Bayes — dla tabeli 2×2 — daje nam bezpośrednio:"),
       tags$ul(
@@ -107,21 +115,20 @@ ch7_ui <- tabPanel("7. Tabele krzyżowe",
       )
     ),
 
-    div(class = "callout-warning",
+    lc_feedback(type = "warning",
       tags$b("Małe liczności: "),
       "gdy komorki mają < 5 oczekiwanych obserwacji, klasyczny χ² traci ważność
        (p-wartość aproksymacyjna). BF obliczony analitycznie nie ma tego problemu."
     ),
 
-    div(class = "chapter-transition",
-      p("Od tabel przechodzimy do zmiennych ilościowych związanych ze sobą liniowo
-         — korelacja i jej bayesowski odpowiednik."),
-      actionButton("ch7_next",
-                   "Dalej: Korelacja →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "08",
+      title = "Korelacja",
+      lead = "związek między zmiennymi jako BF i posterior.",
+      target_id = "ch-korelacja"
     )
 
-  )) # column, fluidRow
+  )
 )
 
 ch7_server <- function(input, output, session) {
@@ -169,7 +176,7 @@ ch7_server <- function(input, output, session) {
   output$ch7_data_plot <- renderPlot({
     plot_contingency_table(table_mat(),
                             title = "Obserwowane liczności",
-                            col_a = col_success, col_b = col_secondary)
+                            col_a = bayes_success, col_b = bayes_secondary)
   })
 
   output$ch7_freq_result <- renderUI({
@@ -181,7 +188,7 @@ ch7_server <- function(input, output, session) {
       paste0(" ⚠ ", round(r$low_expected_pct, 0),
              "% komórek ma oczekiwaną liczność < 5 — p może być niedokładne.")
     } else ""
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("χ² = "), round(r$chi_statistic, 3),
       " | df = ", r$df, tags$br(),
       HTML(p_info$decision), tags$br(),
@@ -192,14 +199,14 @@ ch7_server <- function(input, output, session) {
 
   output$ch7_bayes_plot <- renderPlot({
     plot_posterior_or(or_res(),
-                      col_posterior = col_posterior, col_hdi = col_hdi)
+                      bayes_posterior = bayes_posterior, bayes_hdi = bayes_hdi)
   })
 
   output$ch7_bayes_result <- renderUI({
     r <- freq_res()
     orr <- or_res()
     interp <- interpret_bf(r$bf10)
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("BF₁₀ (zależność vs niezależność): "),
       format_bf(r$bf10), tags$br(),
       tags$b("Interpretacja: "), interp$short_summary, tags$br(),

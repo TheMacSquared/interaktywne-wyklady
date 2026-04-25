@@ -2,17 +2,26 @@
 # CHAPTER 5: Dwie grupy - t-test Welcha vs ttestBF + posterior roznicy
 # ============================================================================
 
-ch5_ui <- tabPanel("5. Dwie grupy",
-  fluidRow(column(8, offset = 2,
+ch5_ui <- lecture_chapter(
+  id = "ch-dwie-grupy",
+  num = "05",
+  title = "Dwie grupy",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 05 · Metody bayesowskie",
+      num    = "05",
+      title  = "Dwie grupy",
+      lead   = "Bayes Factor i posterior różnicy między dwiema grupami."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Porównanie dwóch grup — chyba najczęstszy problem:
        czy nowa metoda działa lepiej, czy grupa leczona różni się od kontrolnej?"
     ),
 
-    div(class = "section-title", "Welch vs ttestBF"),
+    lc_h2("ch5-sec-01", "Welch vs ttestBF"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Częstościowo: "), "test t Welcha porównuje średnie dwóch grup,
          nie zakładając równych wariancji. Daje p-wartość + 95% CI dla różnicy."),
       p(tags$b("Bayesowsko: "), "ttestBF wylicza BF₁₀ (jak silny dowód ", tags$em("za"),
@@ -21,8 +30,7 @@ ch5_ui <- tabPanel("5. Dwie grupy",
          " ta różnica prawdopodobnie jest.")
     ),
 
-    div(class = "widget-block",
-      h4("Porównanie dwóch grup"),
+    figure_panel(label = "Ryc. 5.1", title = "Porównanie dwóch grup",
 
       fluidRow(column(12,
         fluidRow(
@@ -44,7 +52,7 @@ ch5_ui <- tabPanel("5. Dwie grupy",
           column(3,
             br(),
             actionButton("ch5_draw", "↻ Nowa próba",
-                         class = "btn-primary", width = "100%")
+                         class = "lc-btn-primary", width = "100%")
           )
         )
       )),
@@ -68,14 +76,14 @@ ch5_ui <- tabPanel("5. Dwie grupy",
         )
       ),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         uiOutput("ch5_comparison")
       )
     ),
 
-    div(class = "section-title", "Zaleta posteriora dla różnicy"),
+    lc_h2("ch5-sec-02", "Zaleta posteriora dla różnicy"),
 
-    div(class = "narrative",
+    tagList(
       p("Z posterior możesz odczytać odpowiedzi, których p-wartość nie daje wprost:"),
       tags$ul(
         tags$li("P(B > A) — szansa, że grupa B jest wyższa"),
@@ -86,14 +94,14 @@ ch5_ui <- tabPanel("5. Dwie grupy",
          warunkowe „jak prawdopodobne są takie dane gdyby H₀ była prawdziwa‟.")
     ),
 
-    div(class = "chapter-transition",
-      p("Dwie grupy mamy. A trzy i więcej? Wchodzimy w ANOVA."),
-      actionButton("ch5_next",
-                   "Dalej: ANOVA →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "06",
+      title = "ANOVA",
+      lead = "porównanie modeli dla wielu grup.",
+      target_id = "ch-anova"
     )
 
-  )) # column, fluidRow
+  )
 )
 
 ch5_server <- function(input, output, session) {
@@ -102,16 +110,18 @@ ch5_server <- function(input, output, session) {
 
   observe({
     if (is.null(sample_data())) {
-      d <- generate_two_groups_data(input$ch5_n, input$ch5_effect,
-                                    dist = input$ch5_dist)
+      d <- generate_two_groups_data(bayes_input(input$ch5_n, 25),
+                                    bayes_input(input$ch5_effect, 5),
+                                    dist = bayes_input(input$ch5_dist, "normal"))
       sample_data(d)
     }
   })
 
   observeEvent(list(input$ch5_draw, input$ch5_n, input$ch5_effect,
                     input$ch5_dist), {
-    d <- generate_two_groups_data(input$ch5_n, input$ch5_effect,
-                                  dist = input$ch5_dist)
+    d <- generate_two_groups_data(bayes_input(input$ch5_n, 25),
+                                  bayes_input(input$ch5_effect, 5),
+                                  dist = bayes_input(input$ch5_dist, "normal"))
     sample_data(d)
   }, ignoreInit = TRUE)
 
@@ -124,7 +134,7 @@ ch5_server <- function(input, output, session) {
   output$ch5_data_plot <- renderPlot({
     d <- sample_data()
     req(d)
-    plot_two_groups_box(d, col_a = col_primary, col_b = col_warning,
+    plot_two_groups_box(d, col_a = bayes_primary, col_b = bayes_warning,
                         title = "Dane: dwie grupy")
   })
 
@@ -132,7 +142,7 @@ ch5_server <- function(input, output, session) {
     r <- result()
     p_info <- format_pval_pl(r$p_value)
     ci <- r$ci_freq
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("H₀: "), "μ_A = μ_B", tags$br(),
       tags$b("t Welcha = "), round(r$t_statistic, 3),
       " | df = ", round(r$df, 1), tags$br(),
@@ -152,8 +162,8 @@ ch5_server <- function(input, output, session) {
       ref_value = 0,
       x_label = "Różnica (B - A)",
       title = "Posterior różnicy średnich",
-      col_posterior = col_posterior,
-      col_hdi = col_hdi
+      bayes_posterior = bayes_posterior,
+      bayes_hdi = bayes_hdi
     )
   })
 
@@ -162,7 +172,7 @@ ch5_server <- function(input, output, session) {
     interp <- interpret_bf(r$bf10)
     prob_b_greater <- mean(r$posterior_diff > 0)
     prob_practical <- mean(r$posterior_diff > 2)  # prog praktyczny
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("BF₁₀ = "), format_bf(r$bf10),
       " (", interp$level, " ", interp$direction, ")", tags$br(),
       tags$b("Mediana posterior różnicy: "),

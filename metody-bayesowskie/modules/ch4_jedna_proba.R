@@ -2,17 +2,26 @@
 # CHAPTER 4: Jedna proba - t-test vs ttestBF + posterior mu
 # ============================================================================
 
-ch4_ui <- tabPanel("4. Jedna próba",
-  fluidRow(column(8, offset = 2,
+ch4_ui <- lecture_chapter(
+  id = "ch-jedna-proba",
+  num = "04",
+  title = "Jedna próba",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 04 · Metody bayesowskie",
+      num    = "04",
+      title  = "Jedna próba",
+      lead   = "Porównujemy test t jednej próby z podejściem bayesowskim."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Pierwsze zastosowanie praktyczne: próbujemy rozstrzygnąć, czy średnia w populacji
        różni się od pewnej wartości referencyjnej μ₀."
     ),
 
-    div(class = "section-title", "Typowa sytuacja"),
+    lc_h2("ch4-sec-01", "Typowa sytuacja"),
 
-    div(class = "narrative",
+    tagList(
       p("Producent deklaruje: „średnia waga paczki = 500 g‟. Mamy próbę 30 paczek
          i chcemy sprawdzić, czy rzeczywiście średnia to 500."),
       p(tags$b("Częstościowo: "), "test t jednej próby z H₀: μ = μ₀. Liczymy p-wartość."),
@@ -20,8 +29,7 @@ ch4_ui <- tabPanel("4. Jedna próba",
          a więc nie tylko „cośś się różni‟, ale też „o ile, z jakim HDI‟.")
     ),
 
-    div(class = "widget-block",
-      h4("Test jednej próby: te same dane, dwa paradygmaty"),
+    figure_panel(label = "Ryc. 4.1", title = "Test jednej próby: te same dane, dwa paradygmaty",
 
       fluidRow(column(12,
         fluidRow(
@@ -43,7 +51,7 @@ ch4_ui <- tabPanel("4. Jedna próba",
         ),
         fluidRow(column(12,
           actionButton("ch4_draw", "↻ Nowa próba",
-                       class = "btn-primary", width = "200px")
+                       class = "lc-btn-primary", width = "200px")
         ))
       )),
 
@@ -65,27 +73,26 @@ ch4_ui <- tabPanel("4. Jedna próba",
         )
       ),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         uiOutput("ch4_comparison")
       )
     ),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$strong("Co daje Bayes dodatkowo: "),
       "nie tylko „jest różnica vs brak‟ (binarna decyzja jak w testście), ale też
        ", tags$em("rozkład możliwych wartości μ"), " — możesz spytać:
        jaka jest szansa, że prawdziwa średnia ≥ 503? (policzysz ją bezpośrednio z posterior.)"
     ),
 
-    div(class = "chapter-transition",
-      p("Porównaliśmy jedną średnią z referencją.
-         Teraz: dwie grupy — najczęstszy problem w badaniach empirycznych."),
-      actionButton("ch4_next",
-                   "Dalej: Dwie grupy →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "05",
+      title = "Dwie grupy",
+      lead = "różnica średnich w ujęciu częstosciowym i bayesowskim.",
+      target_id = "ch-dwie-grupy"
     )
 
-  )) # column, fluidRow
+  )
 )
 
 ch4_server <- function(input, output, session) {
@@ -94,14 +101,18 @@ ch4_server <- function(input, output, session) {
 
   observe({
     if (is.null(sample_data())) {
-      x <- rnorm(input$ch4_n, mean = input$ch4_true_mean, sd = input$ch4_sd)
+      x <- rnorm(bayes_input(input$ch4_n, 30),
+                 mean = bayes_input(input$ch4_true_mean, 50),
+                 sd = bayes_input(input$ch4_sd, 10))
       sample_data(x)
     }
   })
 
   observeEvent(list(input$ch4_draw, input$ch4_n, input$ch4_true_mean,
                     input$ch4_sd), {
-    x <- rnorm(input$ch4_n, mean = input$ch4_true_mean, sd = input$ch4_sd)
+    x <- rnorm(bayes_input(input$ch4_n, 30),
+               mean = bayes_input(input$ch4_true_mean, 50),
+               sd = bayes_input(input$ch4_sd, 10))
     sample_data(x)
   }, ignoreInit = TRUE)
 
@@ -116,14 +127,14 @@ ch4_server <- function(input, output, session) {
     req(x)
     plot_sample_data(x, mu0 = input$ch4_mu0,
                      title = paste0("Próba (n = ", length(x), ")"),
-                     col_freq = col_frequentist)
+                     col_freq = bayes_freq)
   })
 
   output$ch4_freq_result <- renderUI({
     r <- result()
     p_info <- format_pval_pl(r$p_value)
     ci <- r$ci_freq
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("t = "), round(r$t_statistic, 3),
       " | df = ", round(r$df, 1), tags$br(),
       HTML(p_info$decision), tags$br(),
@@ -140,8 +151,8 @@ ch4_server <- function(input, output, session) {
       ref_value = input$ch4_mu0,
       x_label = "μ (posterior)",
       title = "Posterior dla μ",
-      col_posterior = col_posterior,
-      col_hdi = col_hdi
+      bayes_posterior = bayes_posterior,
+      bayes_hdi = bayes_hdi
     )
   })
 
@@ -150,7 +161,7 @@ ch4_server <- function(input, output, session) {
     interp <- interpret_bf(r$bf10)
     hdi <- r$hdi
     prob_above_mu0 <- mean(r$posterior_mu > r$mu0)
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("BF₁₀ = "), format_bf(r$bf10),
       " (", interp$level, " ", interp$direction, ")", tags$br(),
       tags$b("Mediana posterior μ: "), round(r$posterior_median, 2), tags$br(),

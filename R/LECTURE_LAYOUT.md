@@ -2,7 +2,7 @@
 
 Pliki współdzielone: `R/lecture_layout.R`, `R/palette.R`, `R/theme_upwr.R`, `R/shared.R`, `R/shared_styles.css`, `R/shared_toc.js`.
 
-Wzorce do naśladowania: `typy-danych/`, `wnioskowanie-statystyczne/`, `rozklady-prawdopodobienstwa/`, `przedzialy-ufnosci/`, `zalozenia-testow/`, `regresja/`.
+Wzorce do naśladowania: `typy-danych/`, `wnioskowanie-statystyczne/`, `rozklady-prawdopodobienstwa/`, `przedzialy-ufnosci/`, `zalozenia-testow/`, `regresja/`, `symulacje-statystyczne/`, `metody-bayesowskie/`.
 
 To jest specyfikacja docelowego systemu. Aplikacje wykładowe używają `lecture_page()` i komponentów `lc_*`.
 
@@ -270,6 +270,6 @@ Polskie cudzysłowy typograficzne `„..."` (U+201E/U+201D) mogą być **wewnąt
 | Przedziały ufności | `przedzialy-ufnosci/` | ✅ |
 | Założenia testów | `zalozenia-testow/` | ✅ |
 | Regresja | `regresja/` | ✅ |
-| Metody bayesowskie | `metody-bayesowskie/` | ⬜ |
-| Symulacje | `symulacje-statystyczne/` | ⬜ |
+| Metody bayesowskie | `metody-bayesowskie/` | ✅ |
+| Symulacje | `symulacje-statystyczne/` | ✅ |
 | Case studies | `case-studies/` | ⬜ |

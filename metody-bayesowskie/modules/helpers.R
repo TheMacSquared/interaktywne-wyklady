@@ -6,6 +6,25 @@
 # Nullowy operator koalescencji
 `%||%` <- function(a, b) if (!is.null(a)) a else b
 
+bayes_input <- function(x, default) {
+  if (is.null(x) || length(x) != 1L || is.na(x)) default else x
+}
+
+# Kolory semantyczne tej aplikacji oparte o wspólną paletę UPWr.
+bayes_primary    <- unname(upwr_cat["niebo"])
+bayes_secondary  <- upwr_accent
+bayes_success    <- unname(upwr_cat["szalwia"])
+bayes_warning    <- unname(upwr_cat["bursztyn"])
+bayes_reference  <- upwr_secondary
+bayes_purple     <- unname(upwr_cat["wrzos"])
+bayes_teal       <- unname(upwr_cat["turkus"])
+bayes_freq       <- upwr_accent
+bayes_bayes      <- unname(upwr_cat["wrzos"])
+bayes_prior      <- upwr_reference
+bayes_likelihood <- unname(upwr_cat["bursztyn"])
+bayes_posterior  <- unname(upwr_cat["wrzos"])
+bayes_hdi        <- unname(upwr_cat["bursztyn"])
+
 # ============================================================================
 # GENERATORY DANYCH
 # ============================================================================
@@ -349,7 +368,7 @@ posterior_2x2_or <- function(table_2x2, alpha_prior = 1, beta_prior = 1,
 
 # Wykres tabeli krzyzowej: obserwowane vs oczekiwane (stacked bar lub mosaic-like)
 plot_contingency_table <- function(observed, title = "Tabela 2x2 (obserwowane)",
-                                    col_a = "#3498db", col_b = "#e67e22") {
+                                    col_a = bayes_primary, col_b = bayes_warning) {
   rn <- rownames(observed); if (is.null(rn)) rn <- paste0("W", seq_len(nrow(observed)))
   cn <- colnames(observed); if (is.null(cn)) cn <- paste0("K", seq_len(ncol(observed)))
 
@@ -364,14 +383,14 @@ plot_contingency_table <- function(observed, title = "Tabela 2x2 (obserwowane)",
               vjust = -0.3, size = 4, fontface = "bold") +
     scale_fill_manual(values = c(col_a, col_b), name = NULL) +
     labs(title = title, x = NULL, y = "Liczność") +
-    theme_educational() +
+    theme_upwr() +
     theme(legend.position = "top")
 }
 
 # Wykres posterior dla OR (log-skali), z referencja OR = 1
 plot_posterior_or <- function(post_or_result,
-                               col_posterior = "#9b59b6",
-                               col_hdi = "#f39c12") {
+                               bayes_posterior = bayes_purple,
+                               bayes_hdi = bayes_warning) {
   df <- data.frame(log_or = post_or_result$log_or_samples)
   d <- density(df$log_or)
   d_df <- data.frame(x = d$x, y = d$y)
@@ -383,13 +402,13 @@ plot_posterior_or <- function(post_or_result,
   log_breaks <- log(or_breaks)
 
   ggplot(d_df, aes(x = x, y = y)) +
-    geom_area(fill = col_posterior, alpha = 0.25) +
-    geom_line(color = col_posterior, linewidth = 1.2) +
-    geom_area(data = d_in_hdi, fill = col_hdi, alpha = 0.45) +
-    geom_vline(xintercept = 0, color = "#2c3e50",
+    geom_area(fill = bayes_posterior, alpha = 0.25) +
+    geom_line(color = bayes_posterior, linewidth = 1.2) +
+    geom_area(data = d_in_hdi, fill = bayes_hdi, alpha = 0.45) +
+    geom_vline(xintercept = 0, color = bayes_reference,
                linetype = "dotted", linewidth = 1) +
     annotate("text", x = 0, y = Inf, label = "OR = 1",
-             vjust = -0.3, hjust = -0.1, color = "#2c3e50", size = 3.5) +
+             vjust = -0.3, hjust = -0.1, color = bayes_reference, size = 3.5) +
     scale_x_continuous(breaks = log_breaks, labels = or_breaks,
                        name = "Odds Ratio (OR)") +
     labs(
@@ -400,7 +419,7 @@ plot_posterior_or <- function(post_or_result,
                         round(post_or_result$or_hdi["upper"], 2), "]"),
       y = "Gęstość"
     ) +
-    theme_educational()
+    theme_upwr()
 }
 
 # ============================================================================
@@ -557,13 +576,13 @@ format_pval_pl <- function(p, alpha = 0.05) {
   if (p < alpha) {
     list(
       decision    = paste0(p_txt, " — odrzucamy H₀ (α = ", alpha, ")"),
-      color       = "#27ae60",
+      color       = bayes_success,
       explanation = "Wynik jest istotny statystycznie."
     )
   } else {
     list(
       decision    = paste0(p_txt, " — brak podstaw do odrzucenia H₀"),
-      color       = "#e74c3c",
+      color       = bayes_secondary,
       explanation = "Brak istotności statystycznej."
     )
   }
@@ -595,20 +614,20 @@ plot_prior_likelihood_posterior <- function(df, theta_label = "θ",
   ggplot(long_df, aes(x = theta, y = y, color = type, fill = type)) +
     geom_area(alpha = 0.25, position = "identity") +
     geom_line(linewidth = 1.3) +
-    scale_color_manual(values = c("Prior" = "#95a5a6",
-                                   "Likelihood (dane)" = "#f39c12",
-                                   "Posterior" = "#9b59b6"),
+    scale_color_manual(values = c("Prior" = bayes_prior,
+                                   "Likelihood (dane)" = bayes_warning,
+                                   "Posterior" = bayes_purple),
                        name = NULL) +
-    scale_fill_manual(values = c("Prior" = "#95a5a6",
-                                  "Likelihood (dane)" = "#f39c12",
-                                  "Posterior" = "#9b59b6"),
+    scale_fill_manual(values = c("Prior" = bayes_prior,
+                                  "Likelihood (dane)" = bayes_warning,
+                                  "Posterior" = bayes_purple),
                       name = NULL) +
     labs(
       title = "Prior → Likelihood → Posterior",
       x = theta_label,
       y = "Gęstość (znormalizowana)"
     ) +
-    theme_educational() +
+    theme_upwr() +
     theme(legend.position = "top")
 }
 
@@ -616,33 +635,33 @@ plot_prior_likelihood_posterior <- function(df, theta_label = "θ",
 plot_posterior_density <- function(samples, hdi, ref_value = 0,
                                     x_label = "Wartość parametru",
                                     title = "Rozkład a posteriori",
-                                    col_posterior = "#9b59b6",
-                                    col_hdi = "#f39c12") {
+                                    bayes_posterior = bayes_purple,
+                                    bayes_hdi = bayes_warning) {
   df <- data.frame(x = samples)
   d  <- density(samples)
   d_df <- data.frame(x = d$x, y = d$y)
   d_in_hdi <- d_df[d_df$x >= hdi["lower"] & d_df$x <= hdi["upper"], ]
 
   ggplot(d_df, aes(x = x, y = y)) +
-    geom_area(fill = col_posterior, alpha = 0.25) +
-    geom_line(color = col_posterior, linewidth = 1.2) +
-    geom_area(data = d_in_hdi, fill = col_hdi, alpha = 0.45) +
-    geom_vline(xintercept = ref_value, color = "#2c3e50",
+    geom_area(fill = bayes_posterior, alpha = 0.25) +
+    geom_line(color = bayes_posterior, linewidth = 1.2) +
+    geom_area(data = d_in_hdi, fill = bayes_hdi, alpha = 0.45) +
+    geom_vline(xintercept = ref_value, color = bayes_reference,
                linetype = "dotted", linewidth = 1) +
-    geom_vline(xintercept = hdi["lower"], color = col_hdi,
+    geom_vline(xintercept = hdi["lower"], color = bayes_hdi,
                linewidth = 1, linetype = "dashed") +
-    geom_vline(xintercept = hdi["upper"], color = col_hdi,
+    geom_vline(xintercept = hdi["upper"], color = bayes_hdi,
                linewidth = 1, linetype = "dashed") +
     annotate("text", x = ref_value, y = Inf,
              label = paste0("ref = ", round(ref_value, 2)),
-             vjust = -0.3, hjust = -0.1, color = "#2c3e50", size = 3.5) +
+             vjust = -0.3, hjust = -0.1, color = bayes_reference, size = 3.5) +
     labs(
       title    = title,
       subtitle = paste0("95% HDI: [", round(hdi["lower"], 2),
                         ", ", round(hdi["upper"], 2), "]"),
       x = x_label, y = "Gęstość"
     ) +
-    theme_educational()
+    theme_upwr()
 }
 
 # Pasek skali BF (Jeffreys)
@@ -656,8 +675,8 @@ plot_bf_scale <- function(bf) {
               log10(3), 1, log10(30), 2),
     xmax = c(-2, -log10(30), -log10(10), -log10(3), 0, log10(3),
               1, log10(30), 2, 2.5),
-    fill = c("#2c3e50", "#8e44ad", "#9b59b6", "#c39bd3", "#ebdef0",
-             "#fef5e7", "#fad7a0", "#f5b041", "#e67e22", "#ba4a00"),
+    fill = c(bayes_reference, bayes_purple, bayes_purple, upwr_seq_burgundy[2], upwr_panel,
+             upwr_seq_gold[1], upwr_seq_gold[2], upwr_seq_gold[3], bayes_warning, bayes_reference),
     stringsAsFactors = FALSE
   )
 
@@ -672,14 +691,14 @@ plot_bf_scale <- function(bf) {
     geom_rect(data = segments_df,
               aes(xmin = xmin, xmax = xmax, ymin = 0, ymax = 1, fill = fill)) +
     scale_fill_identity() +
-    geom_vline(xintercept = bf_log, color = "#c0392b", linewidth = 2) +
+    geom_vline(xintercept = bf_log, color = bayes_secondary, linewidth = 2) +
     annotate("text", x = bf_log, y = 1.35,
-             label = paste0("BF₁₀ = ", format_bf(bf)),
-             color = "#c0392b", fontface = "bold", size = 5) +
+             label = paste0("BF10 = ", format_bf(bf)),
+             color = bayes_secondary, fontface = "bold", size = 5) +
     geom_text(data = labels_df, aes(x = x, y = -0.25, label = label), size = 3.3) +
-    annotate("text", x = -1.5, y = 0.5, label = "dla H₀",
+    annotate("text", x = -1.5, y = 0.5, label = "dla H0",
              color = "white", fontface = "bold", size = 4) +
-    annotate("text", x = 1.5, y = 0.5, label = "dla H₁",
+    annotate("text", x = 1.5, y = 0.5, label = "dla H1",
              color = "white", fontface = "bold", size = 4) +
     scale_x_continuous(limits = c(-2.7, 2.7), breaks = NULL) +
     scale_y_continuous(limits = c(-0.5, 1.6), breaks = NULL) +
@@ -692,32 +711,32 @@ plot_bf_scale <- function(bf) {
 # Panel danych (próby) dla porównania (lewy panel freq)
 plot_sample_data <- function(x, mu0 = NULL, mean_obs = NULL,
                               title = "Dane (próba)",
-                              col_freq = "#e74c3c") {
+                              col_freq = bayes_secondary) {
   df <- data.frame(x = x)
   mean_x <- mean_obs %||% mean(x)
 
   p <- ggplot(df, aes(x = x)) +
     geom_histogram(bins = 20, fill = col_freq, color = "white", alpha = 0.75) +
-    geom_vline(xintercept = mean_x, color = "#2c3e50",
+    geom_vline(xintercept = mean_x, color = bayes_reference,
                linewidth = 1.3, linetype = "solid") +
     annotate("text", x = mean_x, y = Inf,
-             label = paste0("x̄ = ", round(mean_x, 2)),
-             vjust = -0.3, hjust = -0.1, color = "#2c3e50", size = 4) +
+             label = paste0("xbar = ", round(mean_x, 2)),
+             vjust = -0.3, hjust = -0.1, color = bayes_reference, size = 4) +
     labs(title = title, x = "Wartość", y = "Liczność") +
-    theme_educational()
+    theme_upwr()
 
   if (!is.null(mu0)) {
     p <- p + geom_vline(xintercept = mu0, color = col_freq,
                          linewidth = 1.2, linetype = "dashed") +
       annotate("text", x = mu0, y = Inf,
-               label = paste0("μ₀ = ", round(mu0, 2)),
+               label = paste0("mu0 = ", round(mu0, 2)),
                vjust = -1.5, hjust = -0.1, color = col_freq, size = 4)
   }
   p
 }
 
 # Box plot dwóch grup (dla ch5)
-plot_two_groups_box <- function(data, col_a = "#3498db", col_b = "#e67e22",
+plot_two_groups_box <- function(data, col_a = bayes_primary, col_b = bayes_warning,
                                  title = "Dane (2 grupy)") {
   ggplot(data, aes(x = group, y = value, fill = group)) +
     geom_jitter(width = 0.15, size = 2, alpha = 0.6,
@@ -726,14 +745,14 @@ plot_two_groups_box <- function(data, col_a = "#3498db", col_b = "#e67e22",
     scale_fill_manual(values = c(col_a, col_b), guide = "none") +
     scale_color_manual(values = c(col_a, col_b), guide = "none") +
     labs(title = title, x = "Grupa", y = "Wartość") +
-    theme_educational()
+    theme_upwr()
 }
 
 # Scatter plot dla korelacji / regresji
 plot_scatter_with_fit <- function(data, x_var = "x", y_var = "y",
                                    show_line = TRUE,
-                                   col_point = "#3498db",
-                                   col_line = "#e74c3c",
+                                   col_point = bayes_primary,
+                                   col_line = bayes_secondary,
                                    title = "Dane") {
   p <- ggplot(data, aes(x = .data[[x_var]], y = .data[[y_var]])) +
     geom_point(color = col_point, size = 2.5, alpha = 0.7)
@@ -741,12 +760,12 @@ plot_scatter_with_fit <- function(data, x_var = "x", y_var = "y",
     p <- p + geom_smooth(method = "lm", se = TRUE, color = col_line,
                           fill = col_line, alpha = 0.15, linewidth = 1.1)
   }
-  p + labs(title = title, x = x_var, y = y_var) + theme_educational()
+  p + labs(title = title, x = x_var, y = y_var) + theme_upwr()
 }
 
 # Forest plot wspolczynnikow (dla regresji: freq vs bayes obok siebie)
 plot_coef_forest <- function(coefs_df, paradigm_label,
-                              col_freq = "#e74c3c", col_bayes = "#9b59b6",
+                              col_freq = bayes_secondary, col_bayes = bayes_purple,
                               exclude_intercept = FALSE) {
   if (exclude_intercept) {
     coefs_df <- coefs_df[!grepl("(Intercept)", coefs_df$term), , drop = FALSE]
@@ -755,7 +774,7 @@ plot_coef_forest <- function(coefs_df, paradigm_label,
   col_use <- if (paradigm_label == "Częstościowo") col_freq else col_bayes
 
   ggplot(coefs_df, aes(y = term)) +
-    geom_vline(xintercept = 0, color = "#2c3e50",
+    geom_vline(xintercept = 0, color = bayes_reference,
                 linetype = "dotted", linewidth = 0.8) +
     geom_segment(aes(x = lower, xend = upper, yend = term),
                   color = col_use, linewidth = 2.5) +
@@ -764,9 +783,9 @@ plot_coef_forest <- function(coefs_df, paradigm_label,
                    label = paste0(round(estimate, 2),
                                   " [", round(lower, 2), ", ",
                                   round(upper, 2), "]")),
-               vjust = -0.8, size = 3.2, color = "#2c3e50") +
+               vjust = -0.8, size = 3.2, color = bayes_reference) +
     labs(title = paradigm_label, x = "Współczynnik", y = NULL) +
-    theme_educational()
+    theme_upwr()
 }
 
 # ============================================================================

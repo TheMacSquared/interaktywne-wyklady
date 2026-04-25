@@ -7,6 +7,18 @@
 # GENERATORY DANYCH
 # ============================================================================
 
+# Kolory semantyczne tej aplikacji oparte o wspólną paletę UPWr.
+sim_bootstrap <- unname(upwr_cat["niebo"])
+sim_classical <- unname(upwr_cat["bursztyn"])
+sim_null_dist <- upwr_reference
+sim_observed  <- upwr_accent
+sim_resample  <- unname(upwr_cat["bursztyn"])
+sim_cv_train  <- unname(upwr_cat["szalwia"])
+sim_cv_test   <- unname(upwr_cat["wrzos"])
+sim_success   <- unname(upwr_cat["szalwia"])
+sim_warning   <- unname(upwr_cat["bursztyn"])
+sim_secondary <- upwr_secondary
+
 # Generuje probe z wybranego rozkladu
 # dist: "normal", "skewed", "bimodal", "heavy_tail", "uniform"
 generate_sample_data <- function(n, dist = "skewed", seed = NULL) {
@@ -431,20 +443,20 @@ run_mc_null <- function(observed_data, scenario, B = 5000, seed = NULL) {
 # Histogram rozkladu bootstrapowego z zaznaczonymi granicami CI
 plot_bootstrap_distribution <- function(boot_result, ci,
                                          stat_label = "Statystyka*",
-                                         col_primary, col_secondary, col_success,
+                                         sim_bootstrap, sim_observed, sim_success,
                                          conf_level = 0.95) {
   df <- data.frame(stat = boot_result$boot_stats)
   ggplot(df, aes(x = stat)) +
-    geom_histogram(bins = 40, fill = col_primary, color = "white", alpha = 0.8) +
+    geom_histogram(bins = 40, fill = sim_bootstrap, color = "white", alpha = 0.8) +
     geom_vline(xintercept = boot_result$observed,
-               color = col_secondary, linewidth = 1.5, linetype = "solid") +
+               color = sim_observed, linewidth = 1.5, linetype = "solid") +
     geom_vline(xintercept = ci$lower,
-               color = col_success, linewidth = 1.2, linetype = "dashed") +
+               color = sim_success, linewidth = 1.2, linetype = "dashed") +
     geom_vline(xintercept = ci$upper,
-               color = col_success, linewidth = 1.2, linetype = "dashed") +
+               color = sim_success, linewidth = 1.2, linetype = "dashed") +
     annotate("text", x = boot_result$observed, y = Inf,
              label = paste0("obs = ", round(boot_result$observed, 2)),
-             vjust = -0.3, hjust = -0.1, color = col_secondary, size = 4) +
+             vjust = -0.3, hjust = -0.1, color = sim_observed, size = 4) +
     labs(
       title   = paste0("Rozkład bootstrapowy (B = ", boot_result$B, ")"),
       subtitle = paste0(round(conf_level * 100), "% CI: [",
@@ -452,13 +464,13 @@ plot_bootstrap_distribution <- function(boot_result, ci,
       x = stat_label,
       y = "Liczba prób"
     ) +
-    theme_educational()
+    theme_upwr()
 }
 
 # Histogram rozkladu permutacyjnego z zaznaczona obserwacja i p-wartoscia
 plot_permutation_distribution <- function(perm_result,
                                            stat_label = "Statystyka*",
-                                           col_primary, col_secondary) {
+                                           sim_bootstrap, sim_observed) {
   df    <- data.frame(stat = perm_result$perm_diffs %||% perm_result$perm_cors)
   obs   <- perm_result$observed_diff %||% perm_result$observed_r
   p_val <- perm_result$p_value
@@ -466,15 +478,15 @@ plot_permutation_distribution <- function(perm_result,
 
   ggplot(df, aes(x = stat, fill = extreme)) +
     geom_histogram(bins = 40, color = "white", alpha = 0.85) +
-    scale_fill_manual(values = c("FALSE" = col_primary, "TRUE" = col_secondary),
+    scale_fill_manual(values = c("FALSE" = sim_bootstrap, "TRUE" = sim_observed),
                       guide = "none") +
     geom_vline(xintercept = obs,
-               color = col_secondary, linewidth = 1.5) +
+               color = sim_observed, linewidth = 1.5) +
     geom_vline(xintercept = -abs(obs),
-               color = col_secondary, linewidth = 1.5, linetype = "dashed") +
+               color = sim_observed, linewidth = 1.5, linetype = "dashed") +
     annotate("text", x = obs, y = Inf,
              label = paste0("obs = ", round(obs, 3)),
-             vjust = -0.3, hjust = -0.1, color = col_secondary, size = 4) +
+             vjust = -0.3, hjust = -0.1, color = sim_observed, size = 4) +
     labs(
       title    = paste0("Rozkład permutacyjny (B = ", length(df$stat), ")"),
       subtitle = paste0("p-wartość = ", round(p_val, 4),
@@ -482,7 +494,7 @@ plot_permutation_distribution <- function(perm_result,
       x = stat_label,
       y = "Liczba permutacji"
     ) +
-    theme_educational()
+    theme_upwr()
 }
 
 # Nullowy operator koalescencji (jak w purrr)
@@ -491,11 +503,11 @@ plot_permutation_distribution <- function(perm_result,
 # Wykres porownaczy belek CI (wiele metod)
 # ci_df: data.frame(method, lower, upper) - wiele wierszy
 plot_ci_comparison <- function(ci_df, true_value = NULL,
-                                col_primary, col_secondary, col_success, col_warning) {
+                                sim_bootstrap, sim_observed, sim_success, sim_warning) {
   ci_df$method <- factor(ci_df$method, levels = rev(ci_df$method))
   n_methods    <- nrow(ci_df)
-  cols         <- c(col_primary, col_warning, col_secondary,
-                    col_success, "#9b59b6")[seq_len(n_methods)]
+  cols         <- c(sim_bootstrap, sim_warning, sim_observed,
+                    sim_success, sim_cv_test)[seq_len(n_methods)]
 
   p <- ggplot(ci_df, aes(y = method, color = method)) +
     geom_segment(aes(x = lower, xend = upper, yend = method),
@@ -505,14 +517,14 @@ plot_ci_comparison <- function(ci_df, true_value = NULL,
                        guide = "none") +
     labs(title = "Porównanie przedziałów ufności",
          x = "Wartość", y = NULL) +
-    theme_educational()
+    theme_upwr()
 
   if (!is.null(true_value)) {
     p <- p + geom_vline(xintercept = true_value,
-                        color = "#2c3e50", linewidth = 1, linetype = "dotted") +
+                        color = upwr_secondary, linewidth = 1, linetype = "dotted") +
       annotate("text", x = true_value, y = Inf,
                label = paste0("μ = ", round(true_value, 2)),
-               vjust = -0.3, hjust = -0.1, color = "#2c3e50", size = 3.5)
+               vjust = -0.3, hjust = -0.1, color = upwr_secondary, size = 3.5)
   }
   p
 }
@@ -520,8 +532,8 @@ plot_ci_comparison <- function(ci_df, true_value = NULL,
 # Wykres jednego kroku bootstrapowego (dla ch1)
 # Pokazuje oryginalna probe i jedna probe bootstrapowa z kolorowaniem wg czestosci
 # resample_list: lista wektorow (kolejne proby bootstrapowe)
-plot_bootstrap_step <- function(orig_data, resample_list, col_primary, col_warning,
-                                 col_dark = "#2c3e50") {
+plot_bootstrap_step <- function(orig_data, resample_list, sim_bootstrap, sim_warning,
+                                 sim_secondary = upwr_secondary) {
   n           <- length(orig_data)
   freq_labels <- c("Pominięty (0x)", "Raz (1x)", "Wielokrotnie (2x+)")
   last_rs     <- resample_list[[length(resample_list)]]
@@ -559,18 +571,18 @@ plot_bootstrap_step <- function(orig_data, resample_list, col_primary, col_warni
     geom_jitter(data = df_orig, aes(x = x, y = y, color = freq),
                 height = 0.12, size = 3, alpha = 0.9) +
     geom_jitter(data = df_boot, aes(x = x, y = y),
-                color = col_warning, height = 0.12, size = 2.5, alpha = 0.75) +
-    geom_vline(xintercept = mean(orig_data), color = col_dark,
+                color = sim_warning, height = 0.12, size = 2.5, alpha = 0.75) +
+    geom_vline(xintercept = mean(orig_data), color = sim_secondary,
                linewidth = 1.2, linetype = "dashed") +
     geom_segment(
       data = data.frame(y = seq_along(resample_list), xmean = boot_means),
       aes(x = xmean, xend = xmean, y = y - 0.35, yend = y + 0.35),
-      color = "#e74c3c", linewidth = 1.2, linetype = "dashed"
+      color = sim_observed, linewidth = 1.2, linetype = "dashed"
     ) +
     scale_color_manual(
-      values = c("Pominięty (0x)"      = "#bdc3c7",
-                 "Raz (1x)"                 = col_primary,
-                 "Wielokrotnie (2x+)"       = col_warning),
+      values = c("Pominięty (0x)"      = upwr_rule,
+                 "Raz (1x)"                 = sim_bootstrap,
+                 "Wielokrotnie (2x+)"       = sim_warning),
       name = "Częstość w ostatniej próbie:"
     ) +
     scale_y_continuous(breaks = y_breaks, labels = y_labels) +
@@ -584,14 +596,14 @@ plot_bootstrap_step <- function(orig_data, resample_list, col_primary, col_warni
       x = "Wartość",
       y = NULL
     ) +
-    theme_educational() +
+    theme_upwr() +
     theme(axis.text.y = element_text(size = 11))
   p
 }
 
 # Wykres pseudowartosci jackknife
 plot_jackknife_pseudovalues <- function(jack_result, stat_label = "Statystyka",
-                                         col_primary, col_secondary, col_success) {
+                                         sim_bootstrap, sim_observed, sim_success) {
   n    <- length(jack_result$pseudovalues)
   df   <- data.frame(i = seq_len(n), pv = jack_result$pseudovalues)
   obs  <- jack_result$observed
@@ -599,21 +611,21 @@ plot_jackknife_pseudovalues <- function(jack_result, stat_label = "Statystyka",
   se   <- jack_result$se
 
   ggplot(df, aes(x = i, y = pv)) +
-    geom_point(color = col_primary, size = 2.5, alpha = 0.8) +
-    geom_hline(yintercept = obs, color = col_secondary,
+    geom_point(color = sim_bootstrap, size = 2.5, alpha = 0.8) +
+    geom_hline(yintercept = obs, color = sim_observed,
                linewidth = 1.2, linetype = "dashed") +
-    geom_hline(yintercept = bc, color = col_success,
+    geom_hline(yintercept = bc, color = sim_success,
                linewidth = 1.2, linetype = "solid") +
-    geom_hline(yintercept = obs + se, color = col_primary,
+    geom_hline(yintercept = obs + se, color = sim_bootstrap,
                linewidth = 0.8, linetype = "dotted") +
-    geom_hline(yintercept = obs - se, color = col_primary,
+    geom_hline(yintercept = obs - se, color = sim_bootstrap,
                linewidth = 0.8, linetype = "dotted") +
     annotate("text", x = n * 0.02, y = obs,
              label = paste0("obs = ", round(obs, 3)),
-             hjust = 0, vjust = -0.5, color = col_secondary, size = 3.5) +
+             hjust = 0, vjust = -0.5, color = sim_observed, size = 3.5) +
     annotate("text", x = n * 0.02, y = bc,
              label = paste0("BC = ", round(bc, 3)),
-             hjust = 0, vjust = -0.5, color = col_success, size = 3.5) +
+             hjust = 0, vjust = -0.5, color = sim_success, size = 3.5) +
     labs(
       title    = paste0("Pseudowartości jackknife (n = ", n, ")"),
       subtitle = paste0("Obciążenie = ", round(jack_result$bias, 4),
@@ -621,12 +633,12 @@ plot_jackknife_pseudovalues <- function(jack_result, stat_label = "Statystyka",
       x = "Indeks pominiętej obserwacji",
       y = stat_label
     ) +
-    theme_educational()
+    theme_upwr()
 }
 
 # Wykres wynikow K-Fold CV
 plot_cv_results <- function(cv_results_list, degree_labels = NULL,
-                              col_cv_train, col_cv_test) {
+                              sim_cv_train, sim_cv_test) {
   # cv_results_list: lista wynikow run_kfold_cv dla roznych stopni
   df <- do.call(rbind, lapply(cv_results_list, function(r) {
     data.frame(degree = r$degree, cv_mse = r$cv_mse, train_mse = r$train_mse)
@@ -640,8 +652,8 @@ plot_cv_results <- function(cv_results_list, degree_labels = NULL,
   ggplot(df_long, aes(x = degree, y = mse, color = type, group = type)) +
     geom_line(linewidth = 1.5) +
     geom_point(size = 3) +
-    scale_color_manual(values = c("MSE treningowy" = col_cv_train,
-                                   "CV MSE (uogólnienie)" = col_cv_test),
+    scale_color_manual(values = c("MSE treningowy" = sim_cv_train,
+                                   "CV MSE (uogólnienie)" = sim_cv_test),
                        name = NULL) +
     labs(
       title    = "MSE treningowy vs CV MSE według stopnia wielomianu",
@@ -649,12 +661,12 @@ plot_cv_results <- function(cv_results_list, degree_labels = NULL,
       x        = "Stopień wielomianu",
       y        = "Błąd średniokwadratowy (MSE)"
     ) +
-    theme_educational() +
+    theme_upwr() +
     theme(legend.position = "top")
 }
 
 # Histogram p-wartosci z MC (symulacja mocy)
-plot_power_histogram <- function(mc_result, col_primary, col_secondary) {
+plot_power_histogram <- function(mc_result, sim_bootstrap, sim_observed) {
   df      <- data.frame(p = mc_result$p_values)
   alpha   <- mc_result$alpha
   n_rej   <- sum(df$p < alpha)
@@ -662,13 +674,13 @@ plot_power_histogram <- function(mc_result, col_primary, col_secondary) {
 
   ggplot(df, aes(x = p, fill = p < alpha)) +
     geom_histogram(breaks = seq(0, 1, by = 0.05), color = "white", alpha = 0.9) +
-    scale_fill_manual(values = c("FALSE" = "#bdc3c7", "TRUE" = col_secondary),
+    scale_fill_manual(values = c("FALSE" = upwr_rule, "TRUE" = sim_observed),
                       guide = "none") +
-    geom_vline(xintercept = alpha, color = col_secondary,
+    geom_vline(xintercept = alpha, color = sim_observed,
                linewidth = 1.5, linetype = "dashed") +
     annotate("text", x = alpha, y = Inf,
              label = paste0("α = ", alpha),
-             vjust = -0.3, hjust = -0.1, color = col_secondary, size = 4) +
+             vjust = -0.3, hjust = -0.1, color = sim_observed, size = 4) +
     labs(
       title    = paste0("Rozkład p-wartości z B = ", n_total, " symulacji"),
       subtitle = paste0("Moc = ", round(mc_result$power * 100, 1),
@@ -676,22 +688,22 @@ plot_power_histogram <- function(mc_result, col_primary, col_secondary) {
       x = "p-wartość",
       y = "Liczba symulacji"
     ) +
-    theme_educational()
+    theme_upwr()
 }
 
 # Krzywa mocy
 plot_power_curve <- function(power_df, current_delta = NULL,
-                               alpha = 0.05, col_primary, col_secondary) {
+                               alpha = 0.05, sim_bootstrap, sim_observed) {
   p <- ggplot(power_df, aes(x = delta, y = power)) +
-    geom_line(color = col_primary, linewidth = 1.8) +
-    geom_point(color = col_primary, size = 2.5) +
-    geom_hline(yintercept = alpha, color = "#bdc3c7",
+    geom_line(color = sim_bootstrap, linewidth = 1.8) +
+    geom_point(color = sim_bootstrap, size = 2.5) +
+    geom_hline(yintercept = alpha, color = upwr_rule,
                linetype = "dashed", linewidth = 1) +
-    geom_hline(yintercept = 0.80, color = col_secondary,
+    geom_hline(yintercept = 0.80, color = sim_observed,
                linetype = "dotted", linewidth = 1) +
     annotate("text", x = min(power_df$delta), y = 0.80,
              label = "Moc = 80% (konwencja)", hjust = 0, vjust = -0.4,
-             color = col_secondary, size = 3.5) +
+             color = sim_observed, size = 3.5) +
     scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
     labs(
       title    = "Krzywa mocy testu",
@@ -700,11 +712,11 @@ plot_power_curve <- function(power_df, current_delta = NULL,
       x        = "Wielkość efektu (δ)",
       y        = "Moc = P(odrzucenie H₀ | H₁ prawdziwa)"
     ) +
-    theme_educational()
+    theme_upwr()
 
   if (!is.null(current_delta)) {
     p <- p + geom_vline(xintercept = current_delta,
-                        color = col_secondary, linewidth = 1.2, linetype = "dashed")
+                        color = sim_observed, linewidth = 1.2, linetype = "dashed")
   }
   p
 }
@@ -761,13 +773,13 @@ format_pval_pl <- function(p, alpha = 0.05) {
   if (p < alpha) {
     list(
       decision    = paste0(p_txt, " — odrzucamy H₀ (α = ", alpha, ")"),
-      color       = "#27ae60",
+      color       = sim_success,
       explanation = "Wynik jest istotny statystycznie."
     )
   } else {
     list(
       decision    = paste0(p_txt, " — brak podstaw do odrzucenia H₀"),
-      color       = "#e74c3c",
+      color       = sim_observed,
       explanation = "Brak istotności statystycznej."
     )
   }

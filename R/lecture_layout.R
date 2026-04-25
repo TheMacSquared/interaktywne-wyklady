@@ -27,7 +27,9 @@
   list(num = "III", slug = "przedzialy", title = "Przedziały ufności",          href = "#"),
   list(num = "IV",  slug = "testowanie", title = "Testowanie",                  href = "#"),
   list(num = "V",   slug = "regresja",   title = "Regresja",                    href = "#"),
-  list(num = "IVa", slug = "zalozenia",  title = "Założenia testów",            href = "#")
+  list(num = "IVa", slug = "zalozenia",  title = "Założenia testów",            href = "#"),
+  list(num = "VI",  slug = "symulacje",  title = "Symulacje",                   href = "#"),
+  list(num = "VII", slug = "bayes",      title = "Bayes",                       href = "#")
 )
 
 # Mapowanie lecture_id → slug modułu
@@ -37,7 +39,9 @@
   "przedzialy-ufnosci"          = "przedzialy",
   "wnioskowanie-statystyczne"   = "testowanie",
   "zalozenia-testow"            = "zalozenia",
-  "regresja"                    = "regresja"
+  "regresja"                    = "regresja",
+  "symulacje-statystyczne"      = "symulacje",
+  "metody-bayesowskie"          = "bayes"
 )
 
 # ============================================================================

@@ -15,7 +15,9 @@ migrated_lectures <- c(
   "przedzialy-ufnosci",
   "wnioskowanie-statystyczne",
   "zalozenia-testow",
-  "regresja"
+  "regresja",
+  "symulacje-statystyczne",
+  "metody-bayesowskie"
 )
 
 rules <- data.frame(

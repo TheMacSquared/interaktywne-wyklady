@@ -2,17 +2,26 @@
 # CHAPTER 4: Testy permutacyjne
 # ============================================================================
 
-ch4_ui <- tabPanel("4. Testy permutacyjne",
-  fluidRow(column(8, offset = 2,
+ch4_ui <- lecture_chapter(
+  id = "ch-permutacje",
+  num = "04",
+  title = "Testy permutacyjne",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 04 · Symulacje statystyczne",
+      num    = "04",
+      title  = "Testy permutacyjne",
+      lead   = "Symulujemy świat hipotezy zerowej przez permutacje i porównujemy obserwowany efekt z rozkładem losowym."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Mamy przedziały ufności bez założeń.
        Teraz testy hipotez bez założeń — przez przetasowanie etykiet."
     ),
 
-    div(class = "section-title", "Idea testu permutacyjnego"),
+    lc_h2("ch4-sec-01", "Idea testu permutacyjnego"),
 
-    div(class = "narrative",
+    tagList(
       p("Wyobraźmy sobie eksperyment: dwie grupy roślin, nawóz A i nawóz B.
          Pytamy: czy nawóz wpływa na plony?"),
       p("H₀ mówi: nawóz nie ma wpływu. Jeśli tak, to do której grupy trafiła
@@ -20,7 +29,7 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
         " — plony byłyby takie same niezależnie od przypisania.")
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Kluczowa idea:"),
       " H₀ mówi, że grupy są jednorodne. Jeśli tak, przypisanie
       „Grupa A‟ vs „Grupa B‟ jest arbitralne — możemy je losowo zamienić.
@@ -31,10 +40,9 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
     # ========================================================================
     # WIDGET 1: Test permutacyjny 5 krokow (showpiece)
     # ========================================================================
-    div(class = "section-title", "Test permutacyjny — krok po kroku"),
+    lc_h2("ch4-sec-02", "Test permutacyjny — krok po kroku"),
 
-    div(class = "widget-block",
-      h4("Permutacyjny test różnicy średnich"),
+    figure_panel(label = "Ryc. 4.1", title = "Permutacyjny test różnicy średnich",
       fluidRow(
         column(4,
           sliderInput("ch4_n_per_group", "n na grupę:",
@@ -54,19 +62,19 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
           hr(),
           div(class = "step-buttons",
             actionButton("ch4_perm_step1", "1. Dane",
-                         class = "btn-outline-primary"),
+                         class = "lc-btn-outline"),
             actionButton("ch4_perm_step2", "2. Permutacja",
-                         class = "btn-outline-primary")
+                         class = "lc-btn-outline")
           ),
           div(class = "step-buttons",
             actionButton("ch4_perm_step3", "3. Rozkład",
-                         class = "btn-outline-primary"),
+                         class = "lc-btn-outline"),
             actionButton("ch4_perm_step4", "4. p-wartość",
-                         class = "btn-outline-success")
+                         class = "lc-btn-ok-outline")
           ),
           br(),
           actionButton("ch4_perm_new", "↺ Nowe dane",
-                       class = "btn-outline-secondary btn-sm", width = "100%"),
+                       class = "lc-btn-secondary-outline lc-btn-sm", width = "100%"),
           br(), br(),
           uiOutput("ch4_perm_explanation")
         ),
@@ -77,7 +85,7 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
       )
     ),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$strong("Aha-moment:"),
       " Rozkład permutacyjny to empiryczny rozkład pod H₀.
        Nie zakładamy żadnego rozkładu analitycznego — „budujemy‟ H₀ z danych."
@@ -86,16 +94,15 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
     # ========================================================================
     # WIDGET 2: Permutacyjny test korelacji
     # ========================================================================
-    div(class = "section-title", "Permutacyjny test korelacji"),
+    lc_h2("ch4-sec-03", "Permutacyjny test korelacji"),
 
-    div(class = "narrative",
+    tagList(
       p("To samo podejście działa dla korelacji.
          Jeśli H₀: brak związku między x i y, to kolejność x względem y
          jest dowolna — możemy przetasowywać jedną zmienną.")
     ),
 
-    div(class = "widget-block",
-      h4("Permutacyjny test korelacji"),
+    figure_panel(label = "Ryc. 4.2", title = "Permutacyjny test korelacji",
       fluidRow(
         column(4,
           sliderInput("ch4_cor_n",      "n:", min = 15, max = 80, value = 30, step = 5),
@@ -104,7 +111,7 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
           sliderInput("ch4_cor_B",      "B permutacji:",
                       min = 500, max = 5000, value = 1000, step = 500),
           actionButton("ch4_cor_run", "Uruchom",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           uiOutput("ch4_cor_result")
         ),
@@ -114,23 +121,22 @@ ch4_ui <- tabPanel("4. Testy permutacyjne",
       )
     ),
 
-    div(class = "callout-warning",
+    lc_feedback(type = "warning",
       tags$strong("Kiedy stosować test permutacyjny dla korelacji:"),
       " gdy mamy obserwacje odstające, rozkłady dalekie od normalnych lub
        małą próbę. Klasyczny Pearson wymaga normalności dwuwymiarowej —
        test permutacyjny nie."
     ),
 
-    div(class = "chapter-transition",
-      p("Dalej: jackknife — estymacja obciążenia i SE przez leave-one-out"),
-      actionButton("ch4_next",
-                   "Dalej → 5. Jackknife",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "05",
+      title = "Jackknife",
+      lead = "leave-one-out jako szybka diagnostyka obciążenia i błędu standardowego.",
+      target_id = "ch-jackknife"
     )
 
-  ))
+  )
 )
-
 # ============================================================================
 # SERVER
 # ============================================================================
@@ -196,7 +202,7 @@ ch4_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij '1. Dane'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
@@ -207,17 +213,17 @@ ch4_server <- function(input, output, session) {
       ggplot(df, aes(x = group, y = value, fill = group)) +
         geom_boxplot(alpha = 0.6, outlier.shape = NA) +
         geom_jitter(width = 0.15, size = 2, alpha = 0.7, aes(color = group)) +
-        scale_fill_manual(values  = c("A" = col_primary,  "B" = col_warning),
+        scale_fill_manual(values  = c("A" = sim_bootstrap,  "B" = sim_warning),
                           guide   = "none") +
-        scale_color_manual(values = c("A" = col_primary,  "B" = col_warning),
+        scale_color_manual(values = c("A" = sim_bootstrap,  "B" = sim_warning),
                            guide  = "none") +
         annotate("text", x = 1.5, y = max(df$value) * 1.05,
                  label = paste0("Δ obs = ", round(obs_diff, 2)),
-                 size = 5, fontface = "bold", color = col_secondary) +
+                 size = 5, fontface = "bold", color = sim_observed) +
         labs(title = "Krok 1: Dane oryginalne",
              subtitle = paste0("Różnica obserwowana: Δ = ", round(obs_diff, 2)),
              x = "Grupa", y = "Wartość") +
-        theme_educational()
+        theme_upwr()
     } else if (step == 2) {
       # Jedna permutacja
       perm_df  <- ch4_one_perm()
@@ -226,17 +232,17 @@ ch4_server <- function(input, output, session) {
       ggplot(perm_df, aes(x = group, y = value, fill = group)) +
         geom_boxplot(alpha = 0.6, outlier.shape = NA) +
         geom_jitter(width = 0.15, size = 2, alpha = 0.7, aes(color = group)) +
-        scale_fill_manual(values  = c("A" = col_primary, "B" = col_warning),
+        scale_fill_manual(values  = c("A" = sim_bootstrap, "B" = sim_warning),
                           guide   = "none") +
-        scale_color_manual(values = c("A" = col_primary, "B" = col_warning),
+        scale_color_manual(values = c("A" = sim_bootstrap, "B" = sim_warning),
                            guide  = "none") +
         annotate("text", x = 1.5, y = max(perm_df$value) * 1.05,
                  label = paste0("Δ perm = ", round(perm_diff, 2)),
-                 size = 5, fontface = "bold", color = col_success) +
+                 size = 5, fontface = "bold", color = sim_success) +
         labs(title = "Krok 2: Jedna permutacja etykiet",
              subtitle = "Etykiety grup przetasowane losowo",
              x = "Grupa (przetasowana)", y = "Wartość") +
-        theme_educational()
+        theme_upwr()
     } else {
       # Krok 3 i 4: rozklad permutacyjny
       result <- ch4_perm_res()
@@ -246,19 +252,19 @@ ch4_server <- function(input, output, session) {
 
       p <- ggplot(df_perm_dist, aes(x = diff, fill = extreme)) +
         geom_histogram(bins = 40, color = "white", alpha = 0.85) +
-        scale_fill_manual(values = c("FALSE" = col_null_dist, "TRUE" = col_secondary),
+        scale_fill_manual(values = c("FALSE" = sim_null_dist, "TRUE" = sim_observed),
                           guide  = "none") +
         geom_vline(xintercept = obs_diff,
-                   color = col_secondary, linewidth = 1.6) +
+                   color = sim_observed, linewidth = 1.6) +
         geom_vline(xintercept = -abs(obs_diff),
-                   color = col_secondary, linewidth = 1.2, linetype = "dashed")
+                   color = sim_observed, linewidth = 1.2, linetype = "dashed")
 
       if (step == 4) {
         p_val <- result$p_value
         p <- p + annotate("text", x = obs_diff, y = Inf,
                            label = paste0("obs Δ = ", round(obs_diff, 2)),
                            vjust = -0.3, hjust = -0.1,
-                           color = col_secondary, size = 4.5, fontface = "bold") +
+                           color = sim_observed, size = 4.5, fontface = "bold") +
           labs(
             title    = paste0("Krok 4: Rozkład permutacyjny (B = ", length(result$perm_diffs), ")"),
             subtitle = paste0("p-wartość permutacyjna = ", round(p_val, 4)),
@@ -273,7 +279,7 @@ ch4_server <- function(input, output, session) {
           y        = "Liczba permutacji"
         )
       }
-      p + theme_educational()
+      p + theme_upwr()
     }
   })
 
@@ -292,7 +298,7 @@ ch4_server <- function(input, output, session) {
       },
       ""
     )
-    div(class = "callout-info", txt)
+    lc_feedback(type = "info", txt)
   })
 
   output$ch4_perm_result <- renderUI({
@@ -302,15 +308,15 @@ ch4_server <- function(input, output, session) {
     tt <- tryCatch(classical_ttest_twosample(ch4_data()), error = function(e) NULL)
 
     out <- tagList(
-      div(class = "stat-box", style = paste0("background:", col_secondary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_observed, ";"),
           paste0("Δ obs = ", round(result$observed_diff, 3))),
-      div(class = "stat-box",
+      div(class = "lc-stat-box",
           style = paste0("background:", format_pval_pl(result$p_value)$color, ";"),
           paste0("p (perm) = ", round(result$p_value, 4)))
     )
     if (!is.null(tt)) {
       out <- tagList(out,
-        div(class = "stat-box", style = paste0("background:", col_classical, ";"),
+        div(class = "lc-stat-box", style = paste0("background:", sim_classical, ";"),
             paste0("p (t-test) = ", round(tt$p, 4)))
       )
     }
@@ -336,31 +342,31 @@ ch4_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Uruchom'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
 
     # Dwa panele: scatter + rozklad permutacyjny
     p1 <- ggplot(df, aes(x = x, y = y)) +
-      geom_point(color = col_primary, size = 2.5, alpha = 0.8) +
-      geom_smooth(method = "lm", se = FALSE, color = col_secondary, linewidth = 1) +
+      geom_point(color = sim_bootstrap, size = 2.5, alpha = 0.8) +
+      geom_smooth(method = "lm", se = FALSE, color = sim_observed, linewidth = 1) +
       annotate("text", x = min(df$x), y = max(df$y),
                label = paste0("r = ", round(res$observed_r, 3)),
-               hjust = 0, vjust = 1, size = 5, fontface = "bold", color = col_secondary) +
+               hjust = 0, vjust = 1, size = 5, fontface = "bold", color = sim_observed) +
       labs(title = paste0("Dane (n = ", nrow(df), ")"),
            x = "x", y = "y") +
-      theme_educational()
+      theme_upwr()
 
     df_perm <- data.frame(r = res$perm_cors)
     extreme <- abs(df_perm$r) >= abs(res$observed_r)
 
     p2 <- ggplot(df_perm, aes(x = r, fill = extreme)) +
       geom_histogram(bins = 40, color = "white", alpha = 0.85) +
-      scale_fill_manual(values = c("FALSE" = col_null_dist, "TRUE" = col_secondary),
+      scale_fill_manual(values = c("FALSE" = sim_null_dist, "TRUE" = sim_observed),
                         guide = "none") +
-      geom_vline(xintercept  = res$observed_r, color = col_secondary, linewidth = 1.5) +
-      geom_vline(xintercept = -abs(res$observed_r), color = col_secondary,
+      geom_vline(xintercept  = res$observed_r, color = sim_observed, linewidth = 1.5) +
+      geom_vline(xintercept = -abs(res$observed_r), color = sim_observed,
                  linewidth = 1.2, linetype = "dashed") +
       labs(
         title    = paste0("Rozkład permutacyjny (B = ", length(res$perm_cors), ")"),
@@ -368,7 +374,7 @@ ch4_server <- function(input, output, session) {
         x        = "Korelacja r*",
         y        = "Liczba permutacji"
       ) +
-      theme_educational()
+      theme_upwr()
 
     gridExtra::grid.arrange(p1, p2, ncol = 1, heights = c(1.4, 1))
   })
@@ -378,9 +384,9 @@ ch4_server <- function(input, output, session) {
     if (is.null(res)) return(NULL)
     pv  <- format_pval_pl(res$p_value)
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_secondary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_observed, ";"),
           paste0("r = ", round(res$observed_r, 3))),
-      div(class = "stat-box",
+      div(class = "lc-stat-box",
           style = paste0("background:", pv$color, ";"),
           paste0("p (perm) = ", round(res$p_value, 4)))
     )

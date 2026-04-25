@@ -2,25 +2,33 @@
 # CHAPTER 10: Regresja logistyczna - glm(binomial) vs stan_glm(binomial)
 # ============================================================================
 
-ch10_ui <- tabPanel("10. Regresja logistyczna",
-  fluidRow(column(8, offset = 2,
+ch10_ui <- lecture_chapter(
+  id = "ch-regresja-log",
+  num = "10",
+  title = "Regresja logistyczna",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 10 · Metody bayesowskie",
+      num    = "10",
+      title  = "Regresja logistyczna",
+      lead   = "Ilorazy szans i posterior prawdopodobieństw w modelu logistycznym."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Odpowiedź binarna (sukces/porażka). Model przewiduje prawdopodobieństwo,
        a współczynniki interpretujemy jako Odds Ratio (OR)."
     ),
 
-    div(class = "section-title", "OR w dwóch szkołach"),
+    lc_h2("ch10-sec-01", "OR w dwóch szkołach"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Częstościowo: "), "glm(y ~ x, family = binomial). Współczynniki na skali logit;
          po eksponencjacji dostajemy OR. 95% CI → 95% CI dla OR."),
       p(tags$b("Bayesowsko: "), "stan_glm(y ~ x, family = binomial). Posterior dla każdego β;
          eksponencjujemy → posterior dla OR. 95% HDI OR — wiarygodny przedział.")
     ),
 
-    div(class = "widget-block",
-      h4("Regresja logistyczna prosta"),
+    figure_panel(label = "Ryc. 10.1", title = "Regresja logistyczna prosta",
 
       fluidRow(column(12,
         fluidRow(
@@ -40,13 +48,13 @@ ch10_ui <- tabPanel("10. Regresja logistyczna",
           column(3,
             br(),
             actionButton("ch10_draw", "↻ Nowa próba",
-                         class = "btn-primary", width = "100%")
+                         class = "lc-btn-primary", width = "100%")
           )
         ),
         fluidRow(
           column(12,
             actionButton("ch10_fit", "Dopasuj modele",
-                         class = "btn-success", width = "200px")
+                         class = "lc-btn-ok", width = "200px")
           )
         )
       )),
@@ -70,27 +78,26 @@ ch10_ui <- tabPanel("10. Regresja logistyczna",
         )
       ),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         uiOutput("ch10_comparison")
       )
     ),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$b("Bonus bayesowski: "),
       "z posteriora dla OR można liczyć odpowiedzi typu
        „P(OR > 2 | dane)‟ — jak prawdopodobne, że efekt jest przynajmniej dwukrotny.
        W częstościowym świecie takie pytanie nie ma prostej odpowiedzi."
     ),
 
-    div(class = "chapter-transition",
-      p("Prześliśmy przez wszystkie typowe modele.
-         Czas podsumować: kiedy ktory paradygmat?"),
-      actionButton("ch10_next",
-                   "Dalej: Ściąga →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "11",
+      title = "Ściąga",
+      lead = "najważniejsze reguły i dobór metod.",
+      target_id = "ch-sciaga"
     )
 
-  )) # column, fluidRow
+  )
 )
 
 ch10_server <- function(input, output, session) {
@@ -100,18 +107,18 @@ ch10_server <- function(input, output, session) {
 
   observe({
     if (is.null(sample_data())) {
-      d <- generate_logistic_data(input$ch10_n,
-                                  beta0 = input$ch10_beta0,
-                                  beta1 = input$ch10_beta1)
+      d <- generate_logistic_data(bayes_input(input$ch10_n, 80),
+                                  beta0 = bayes_input(input$ch10_beta0, -1),
+                                  beta1 = bayes_input(input$ch10_beta1, 1.5))
       sample_data(d)
     }
   })
 
   observeEvent(list(input$ch10_draw, input$ch10_n, input$ch10_beta0,
                     input$ch10_beta1), {
-    d <- generate_logistic_data(input$ch10_n,
-                                beta0 = input$ch10_beta0,
-                                beta1 = input$ch10_beta1)
+    d <- generate_logistic_data(bayes_input(input$ch10_n, 80),
+                                beta0 = bayes_input(input$ch10_beta0, -1),
+                                beta1 = bayes_input(input$ch10_beta1, 1.5))
     sample_data(d)
     fit_result(NULL)
   }, ignoreInit = TRUE)
@@ -136,23 +143,23 @@ ch10_server <- function(input, output, session) {
     req(d)
     ggplot(d, aes(x = x, y = y)) +
       geom_jitter(height = 0.05, width = 0, size = 2,
-                   alpha = 0.5, color = col_primary) +
+                   alpha = 0.5, color = bayes_primary) +
       geom_smooth(method = "glm", method.args = list(family = "binomial"),
-                   se = TRUE, color = col_frequentist,
-                   fill = col_frequentist, alpha = 0.15) +
+                   se = TRUE, color = bayes_freq,
+                   fill = bayes_freq, alpha = 0.15) +
       scale_y_continuous(breaks = c(0, 1), limits = c(-0.1, 1.1)) +
       labs(title = paste0("Dane (n = ", nrow(d), ", odpowiedź binarna)"),
            x = "x", y = "y (0 / 1)") +
-      theme_educational()
+      theme_upwr()
   })
 
   output$ch10_freq_result <- renderUI({
     r <- fit_result()
-    if (is.null(r)) return(div(class = "callout-warning",
+    if (is.null(r)) return(lc_feedback(type = "warning",
                                  "Brak wyników — kliknij „Dopasuj modele‟."))
     fc <- r$freq_coefs
     slope_row <- fc[fc$term == "x", ]
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("β₁ (logit): "), round(slope_row$estimate, 3),
       "  95% CI: [", round(slope_row$lower, 3), ", ",
       round(slope_row$upper, 3), "]", tags$br(),
@@ -179,7 +186,7 @@ ch10_server <- function(input, output, session) {
       p_direction    = mean(post_slope > 0)
     )
     plot_posterior_or(post_result,
-                      col_posterior = col_posterior, col_hdi = col_hdi)
+                      bayes_posterior = bayes_posterior, bayes_hdi = bayes_hdi)
   })
 
   output$ch10_bayes_result <- renderUI({
@@ -190,7 +197,7 @@ ch10_server <- function(input, output, session) {
     post_slope <- r$posterior[, "x"]
     prob_pos <- mean(post_slope > 0)
     prob_or2 <- mean(exp(post_slope) > 2)
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("β₁ (logit): "), round(slope_row$estimate, 3),
       "  95% HDI: [", round(slope_row$lower, 3), ", ",
       round(slope_row$upper, 3), "]", tags$br(),

@@ -2,19 +2,28 @@
 # CHAPTER 5: Jackknife
 # ============================================================================
 
-ch5_ui <- tabPanel("5. Jackknife",
-  fluidRow(column(8, offset = 2,
+ch5_ui <- lecture_chapter(
+  id = "ch-jackknife",
+  num = "05",
+  title = "Jackknife",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 05 · Symulacje statystyczne",
+      num    = "05",
+      title  = "Jackknife",
+      lead   = "Metoda leave-one-out pokazuje wpływ pojedynczych obserwacji i pozwala oszacować SE."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Bootstrap daje CI. Jackknife robi coś innego:
        szacuje, jak bardzo statystyka jest ", tags$em("obciążona"),
       " i jaki jest jej błąd standardowy — przez usunięcie
        kolejnych obserwacji."
     ),
 
-    div(class = "section-title", "Czym jest jackknife?"),
+    lc_h2("ch5-sec-01", "Czym jest jackknife?"),
 
-    div(class = "narrative",
+    tagList(
       p("Jackknife to starsza metoda resamplingowa (Quenouille, 1949).
          Idea: oblicz statystykę n razy, za każdym razem pomijając
          inną obserwację."),
@@ -23,9 +32,9 @@ ch5_ui <- tabPanel("5. Jackknife",
         jest kolejno „vykluczona‟. To pozwala oszacować obciążenie i SE.")
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Wzory jackknife:"),
-      div(class = "formula-box",
+      lc_formula_box(
         withMathJax(
           "$$\\text{Bias} = (n-1)(\\bar{\\theta}_{-} - \\hat{\\theta})$$",
           "$$\\text{SE} = \\sqrt{\\frac{n-1}{n} \\sum_{i=1}^{n}
@@ -43,10 +52,9 @@ ch5_ui <- tabPanel("5. Jackknife",
     # ========================================================================
     # WIDGET 1: Jackknife w akcji
     # ========================================================================
-    div(class = "section-title", "Jackknife w akcji"),
+    lc_h2("ch5-sec-02", "Jackknife w akcji"),
 
-    div(class = "widget-block",
-      h4("Pseudowartości i estymacja obciążenia"),
+    figure_panel(label = "Ryc. 5.1", title = "Pseudowartości i estymacja obciążenia",
       fluidRow(
         column(4,
           selectInput("ch5_stat", "Statystyka:",
@@ -70,7 +78,7 @@ ch5_ui <- tabPanel("5. Jackknife",
           sliderInput("ch5_n", "n:", min = 10, max = 80, value = 25, step = 5),
           hr(),
           actionButton("ch5_run", "Oblicz jackknife",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           uiOutput("ch5_jack_stats")
         ),
@@ -83,9 +91,9 @@ ch5_ui <- tabPanel("5. Jackknife",
     # ========================================================================
     # WIDGET 2: Bootstrap vs Jackknife SE
     # ========================================================================
-    div(class = "section-title", "Bootstrap vs Jackknife — porównanie SE"),
+    lc_h2("ch5-sec-03", "Bootstrap vs Jackknife — porównanie SE"),
 
-    div(class = "narrative",
+    tagList(
       p("Dla większości statystyk przy dużych próbach oba podejścia dają
          podobne SE. Rozchodzą się przy:",
         tags$ul(
@@ -97,8 +105,7 @@ ch5_ui <- tabPanel("5. Jackknife",
          jackknife może niełapiwać niestabilności mediany.")
     ),
 
-    div(class = "widget-block",
-      h4("Porównanie SE: Bootstrap vs Jackknife"),
+    figure_panel(label = "Ryc. 5.2", title = "Porównanie SE: Bootstrap vs Jackknife",
       fluidRow(
         column(4,
           selectInput("ch5_cmp_stat", "Statystyka:",
@@ -119,7 +126,7 @@ ch5_ui <- tabPanel("5. Jackknife",
           ),
           sliderInput("ch5_cmp_n", "n:", min = 10, max = 100, value = 30, step = 5),
           actionButton("ch5_cmp_run", "Porównaj",
-                       class = "btn-warning", width = "100%"),
+                       class = "lc-btn-warning", width = "100%"),
           br(), br(),
           uiOutput("ch5_cmp_stats")
         ),
@@ -129,7 +136,7 @@ ch5_ui <- tabPanel("5. Jackknife",
       )
     ),
 
-    div(class = "callout-warning",
+    lc_feedback(type = "warning",
       tags$strong("Kiedy bootstrap jest lepszy niż jackknife:"),
       tags$ul(
         tags$li("Mediana i inne statystyki oparte na rangach (jackknife może nie działać dobrze)"),
@@ -138,16 +145,15 @@ ch5_ui <- tabPanel("5. Jackknife",
       )
     ),
 
-    div(class = "chapter-transition",
-      p("Dalej: cross-validation — jak ocenić jakość modelu predykcyjnego"),
-      actionButton("ch5_next",
-                   "Dalej → 6. Cross-validation",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "06",
+      title = "Cross-validation",
+      lead = "ocena modeli przez podział trening-test.",
+      target_id = "ch-cv"
     )
 
-  ))
+  )
 )
-
 # ============================================================================
 # SERVER
 # ============================================================================
@@ -188,27 +194,27 @@ ch5_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Oblicz jackknife'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
     plot_jackknife_pseudovalues(result, stat_label = ch5_stat_label(),
-                                 col_primary   = col_primary,
-                                 col_secondary = col_secondary,
-                                 col_success   = col_success)
+                                 sim_bootstrap   = sim_bootstrap,
+                                 sim_observed = sim_observed,
+                                 sim_success   = sim_success)
   })
 
   output$ch5_jack_stats <- renderUI({
     result <- ch5_jack_result()
     if (is.null(result)) return(NULL)
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_secondary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_observed, ";"),
           paste0("obs = ", round(result$observed, 4))),
-      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
           paste0("SE = ", round(result$se, 4))),
-      div(class = "stat-box", style = paste0("background:", col_warning, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_warning, ";"),
           paste0("Obciążenie = ", round(result$bias, 4))),
-      div(class = "stat-box", style = paste0("background:", col_success, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_success, ";"),
           paste0("BC = ", round(result$bias_corrected, 4)))
     )
   })
@@ -237,7 +243,7 @@ ch5_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Porównaj'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
@@ -258,22 +264,22 @@ ch5_server <- function(input, output, session) {
     ggplot(df, aes(y = method, color = method)) +
       geom_point(aes(x = obs), size = 5) +
       geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0.3, linewidth = 2) +
-      scale_color_manual(values = c("Jackknife" = col_primary, "Bootstrap" = col_warning),
+      scale_color_manual(values = c("Jackknife" = sim_bootstrap, "Bootstrap" = sim_warning),
                          guide  = "none") +
       labs(title = "Szacunki ± 1.96 SE",
            subtitle = paste0("Jackknife SE = ", round(se_j, 4),
                              "  |  Bootstrap SE = ", round(se_b, 4)),
            x = "Wartość statystyki", y = NULL) +
-      theme_educational()
+      theme_upwr()
   })
 
   output$ch5_cmp_stats <- renderUI({
     res <- ch5_cmp_result()
     if (is.null(res)) return(NULL)
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
           paste0("SE (jack) = ", round(res$jack$se, 4))),
-      div(class = "stat-box", style = paste0("background:", col_warning, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_warning, ";"),
           paste0("SE (boot) = ", round(res$boot$se, 4)))
     )
   })

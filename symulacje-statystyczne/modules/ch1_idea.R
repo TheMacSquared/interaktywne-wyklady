@@ -2,18 +2,26 @@
 # CHAPTER 1: Idea resamplingowa
 # ============================================================================
 
-ch1_ui <- tabPanel("1. Idea resamplingowa",
-  fluidRow(column(8, offset = 2,
+ch1_ui <- lecture_chapter(
+  id = "ch-idea",
+  num = "01",
+  title = "Idea resamplingowa",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 01 · Symulacje statystyczne",
+      num    = "01",
+      title  = "Idea resamplingowa",
+      lead   = "Zaczynamy od intuicji: próbę traktujemy jak mini-populację i uczymy się losować z niej ponownie."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Znamy już klasyczne testy i przedziały ufności oparte na założeniach o rozkładach.
        Czas poznać podejście, które z tych założeń rezygnuje."
     ),
 
-    div(class = "section-title",
-        "Skąd biorą się klasyczne metody?"),
+    lc_h2("ch1-sec-01", "Skąd biorą się klasyczne metody?"),
 
-    div(class = "narrative",
+    tagList(
       p("Klasyczna statystyka opiera się na ", tags$b("założeniach o rozkładzie"),
         " populacji lub na Centralnym Twierdzeniu Granicznym (CTG). Na przykład:"),
       tags$ul(
@@ -23,16 +31,16 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
       )
     ),
 
-    div(class = "callout-warning",
+    lc_feedback(type = "warning",
       tags$strong("Problem:"),
       " Co jeśli dane są silnie skośne i próba mała? Co jeśli chcemy przedział ufności
        dla mediany albo percentyla? Klasyczne wzory ",
       tags$b("nie istnieją"), " lub są niedokładne."
     ),
 
-    div(class = "section-title", "Idea resamplingowa"),
+    lc_h2("ch1-sec-02", "Idea resamplingowa"),
 
-    div(class = "narrative",
+    tagList(
       p("Kluczowy pomysł: ", tags$b("traktuj próbę jako mini-populację"),
         " i losuj z niej wielokrotnie."),
       p("Jeśli próba jest reprezentatywna dla populacji, to losowanie z próby
@@ -40,7 +48,7 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
         "uzyskać to, co klasyczna statystyka oblicza analitycznie.")
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Słowniczek:"),
       tags$ul(
         tags$li(tags$b("Próba bootstrapowa:"),
@@ -59,9 +67,9 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
       )
     ),
 
-    div(class = "section-title", "Mapa metod resamplingowych"),
+    lc_h2("ch1-sec-03", "Mapa metod resamplingowych"),
 
-    div(class = "narrative",
+    tagList(
       p("Pięć metod, które poznamy w tym rozdziale, różnią się celem
         i sposobem resamplingu:")
     ),
@@ -104,23 +112,22 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
     # ========================================================================
     # WIDGET 1: Proba bootstrapowa w akcji
     # ========================================================================
-    div(class = "section-title", "Próba bootstrapowa w akcji"),
+    lc_h2("ch1-sec-04", "Próba bootstrapowa w akcji"),
 
-    div(class = "narrative",
+    tagList(
       p("Zacznijmy od najmniejszego kroku: jednej próby bootstrapowej.
         Pobierz próbę z populacji, a następnie wylosuj z niej jedną próbę
         bootstrapową (losowanie ze zwracaniem)."),
       p("Kolor kropek pokazuje, ile razy dana obserwacja została wylosowana:",
-        tags$span(style = "color:#bdc3c7; font-weight:bold;", " szara"),
+        tags$span(style = "color:var(--upwr-rule); font-weight:bold;", " szara"),
         " = pominął (0 razy),",
-        tags$span(style = "color:#3498db; font-weight:bold;", " niebieska"),
+        tags$span(style = "color:var(--upwr-cat-niebo); font-weight:bold;", " niebieska"),
         " = raz,",
-        tags$span(style = "color:#f39c12; font-weight:bold;", " pomarańczowa"),
+        tags$span(style = "color:var(--upwr-cat-bursztyn); font-weight:bold;", " pomarańczowa"),
         " = dwa razy lub więcej.")
     ),
 
-    div(class = "widget-block",
-      h4("Jedna próba bootstrapowa"),
+    figure_panel(label = "Ryc. 1.1", title = "Jedna próba bootstrapowa",
       fluidRow(
         column(4,
           selectInput("ch1_dist", "Kształt danych:",
@@ -135,13 +142,13 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
                       min = 8, max = 30, value = 15, step = 1),
           hr(),
           actionButton("ch1_draw_orig", "Pobierz próbę",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           actionButton("ch1_resample_one", "+ Nowa próba bootstrapowa",
-                       class = "btn-warning", width = "100%"),
+                       class = "lc-btn-warning", width = "100%"),
           br(), br(),
           actionButton("ch1_resample_reset", "Wyczyść próby",
-                       class = "btn-outline-secondary", width = "100%"),
+                       class = "lc-btn-secondary-outline", width = "100%"),
           br(), br(),
           uiOutput("ch1_demo_stats")
         ),
@@ -154,9 +161,9 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
     # ========================================================================
     # WIDGET 2: Budowanie rozkladu bootstrapowego
     # ========================================================================
-    div(class = "section-title", "Rozkład bootstrapowy"),
+    lc_h2("ch1-sec-05", "Rozkład bootstrapowy"),
 
-    div(class = "narrative",
+    tagList(
       p("Jedna próba bootstrapowa daje jedną wartość średniej.
         Tysiąc prób daje rozkład średniej. To właśnie ",
         tags$b("rozkład bootstrapowy"), "."),
@@ -166,8 +173,7 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
         próbują obliczyć.")
     ),
 
-    div(class = "widget-block",
-      h4("Budowanie rozkładu bootstrapowego"),
+    figure_panel(label = "Ryc. 1.2", title = "Budowanie rozkładu bootstrapowego",
       p(class = "text-muted",
         "Najpierw pobierz próbę (powyżej), następnie kliknij \"Uruchom\"."),
       fluidRow(
@@ -175,10 +181,10 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
           sliderInput("ch1_B", "Liczba prób bootstrapowych (B):",
                       min = 50, max = 2000, value = 500, step = 50),
           actionButton("ch1_build_dist", "Uruchom bootstrap",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           actionButton("ch1_build_reset", "Reset",
-                       class = "btn-outline-secondary", width = "100%"),
+                       class = "lc-btn-secondary-outline", width = "100%"),
           br(), br(),
           uiOutput("ch1_boot_stats")
         ),
@@ -188,7 +194,7 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
       )
     ),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$strong("Aha-moment:"),
       " Odchylenie standardowe rozkładu bootstrapowego = ",
       tags$b("błąd standardowy statystyki"),
@@ -196,16 +202,15 @@ ch1_ui <- tabPanel("1. Idea resamplingowa",
        bootstrap oblicza to symulacyjnie!"
     ),
 
-    div(class = "chapter-transition",
-      p("Dalej: jak z rozkładu bootstrapowego budować przedziały ufności"),
-      actionButton("ch1_next",
-                   "Dalej → 2. Bootstrap — przedziały",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "02",
+      title = "Bootstrap — przedziały",
+      lead = "jak z rozkładu bootstrapowego budować przedziały ufności.",
+      target_id = "ch-bootstrap-ci"
     )
 
-  ))
+  )
 )
-
 # ============================================================================
 # SERVER
 # ============================================================================
@@ -251,25 +256,25 @@ ch1_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Pobierz próbę'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else if (is.null(rs)) {
       # Pokaz tylko oryginalna probe
       df <- data.frame(x = orig, y = 0)
       ggplot(df, aes(x = x, y = y)) +
-        geom_jitter(color = col_primary, height = 0.1, size = 3.5, alpha = 0.9) +
-        geom_vline(xintercept = mean(orig), color = col_dark,
+        geom_jitter(color = sim_bootstrap, height = 0.1, size = 3.5, alpha = 0.9) +
+        geom_vline(xintercept = mean(orig), color = sim_secondary,
                    linewidth = 1.2, linetype = "dashed") +
         annotate("text", x = mean(orig), y = Inf,
                  label = paste0("śr. = ", round(mean(orig), 2)),
-                 vjust = -0.3, hjust = -0.1, color = col_dark, size = 4) +
+                 vjust = -0.3, hjust = -0.1, color = sim_secondary, size = 4) +
         scale_y_continuous(breaks = 0, labels = "Oryginalna próba") +
         labs(title = paste0("Próba (n = ", length(orig), ")"),
              x = "Wartość", y = NULL) +
-        theme_educational() +
+        theme_upwr() +
         theme(axis.text.y = element_text(size = 12))
     } else {
-      plot_bootstrap_step(orig, rs, col_primary, col_warning, col_dark)
+      plot_bootstrap_step(orig, rs, sim_bootstrap, sim_warning, sim_secondary)
     }
   }, height = function() {
     rs <- ch1_resample()
@@ -281,17 +286,17 @@ ch1_server <- function(input, output, session) {
     rs   <- ch1_resample()
     if (is.null(orig)) return(NULL)
     tag_list <- list(
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
           paste0("n = ", length(orig))),
-      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
           paste0("śr. oryg. = ", round(mean(orig), 2)))
     )
     if (!is.null(rs)) {
       last_rs <- rs[[length(rs)]]
       tag_list <- c(tag_list, list(
-        div(class = "stat-box", style = paste0("background:", col_warning, ";"),
+        div(class = "lc-stat-box", style = paste0("background:", sim_warning, ";"),
             paste0("śr. boot. #", length(rs), " = ", round(mean(last_rs), 2))),
-        div(class = "stat-box", style = paste0("background:", col_dark, "; opacity:0.7;"),
+        div(class = "lc-stat-box", style = paste0("background:", sim_secondary, "; opacity:0.7;"),
             paste0("Liczba prób: ", length(rs)))
       ))
     }
@@ -316,15 +321,15 @@ ch1_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Uruchom bootstrap'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else {
       ci <- bootstrap_ci_percentile(result, conf_level = 0.95)
       plot_bootstrap_distribution(result, ci,
                                    stat_label = "Średniane bootstrapowe",
-                                   col_primary = col_primary,
-                                   col_secondary = col_secondary,
-                                   col_success = col_success)
+                                   sim_bootstrap = sim_bootstrap,
+                                   sim_observed = sim_observed,
+                                   sim_success = sim_success)
     }
   })
 
@@ -332,11 +337,11 @@ ch1_server <- function(input, output, session) {
     result <- ch1_boot_dist()
     if (is.null(result)) return(NULL)
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
           paste0("B = ", result$B)),
-      div(class = "stat-box", style = paste0("background:", col_secondary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_observed, ";"),
           paste0("obs. = ", round(result$observed, 3))),
-      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
           paste0("SE = ", round(result$se, 4)))
     )
   })

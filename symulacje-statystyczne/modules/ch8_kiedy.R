@@ -2,17 +2,26 @@
 # CHAPTER 8: Kiedy stosowac?
 # ============================================================================
 
-ch8_ui <- tabPanel("8. Kiedy stosować?",
-  fluidRow(column(8, offset = 2,
+ch8_ui <- lecture_chapter(
+  id = "ch-kiedy",
+  num = "08",
+  title = "Kiedy stosować?",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 08 · Symulacje statystyczne",
+      num    = "08",
+      title  = "Kiedy stosować?",
+      lead   = "Dobieramy bootstrap, permutacje, jackknife, CV i Monte Carlo do pytania badawczego."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Poznaliśmy pięć metod: Bootstrap, Jackknife, Permutacje, CV, Monte Carlo.
        Teraz: praktyczny przewodnik decyzyjny."
     ),
 
-    div(class = "section-title", "Mapa decyzji"),
+    lc_h2("ch8-sec-01", "Mapa decyzji"),
 
-    div(class = "narrative",
+    tagList(
       p("Poniższa tabela podsumowuje, kiedy każda metoda jest właściwym wybórem.")
     ),
 
@@ -69,10 +78,9 @@ ch8_ui <- tabPanel("8. Kiedy stosować?",
     # ========================================================================
     # Rozroznienie: Bootstrap vs Jackknife
     # ========================================================================
-    div(class = "section-title",
-        "Bootstrap vs Jackknife: kiedy co?"),
+    lc_h2("ch8-sec-02", "Bootstrap vs Jackknife: kiedy co?"),
 
-    div(class = "narrative",
+    tagList(
       tags$ul(
         tags$li(tags$b("Jackknife"), " daje obciążenie i SE, ale ", tags$b("nie daje CI"),
                 ". To nie jest zastępstwo dla bootstrap CI."),
@@ -83,7 +91,7 @@ ch8_ui <- tabPanel("8. Kiedy stosować?",
       )
     ),
 
-    div(class = "callout-warning",
+    lc_feedback(type = "warning",
       tags$strong("Ważne:"),
       " Mann-Whitney U testuje inne H₀ niż test t (przesunięcie rozkładu,
        nie różnica średnich). Bootstrap test różnicy średnich testuje
@@ -93,10 +101,9 @@ ch8_ui <- tabPanel("8. Kiedy stosować?",
     # ========================================================================
     # Rozroznienie: Permutacje vs MC pod H0
     # ========================================================================
-    div(class = "section-title",
-        "Test permutacyjny vs Monte Carlo pod H₀"),
+    lc_h2("ch8-sec-03", "Test permutacyjny vs Monte Carlo pod H₀"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Test permutacyjny"), ": przetasowuje etykiety grup.
          Wymaga, żeby H₀ mówiła, że obserwacje są wymienne między grupami
          (np. H₀: brak różnicy między grupami)."),
@@ -108,9 +115,9 @@ ch8_ui <- tabPanel("8. Kiedy stosować?",
     # ========================================================================
     # Ograniczenia metod
     # ========================================================================
-    div(class = "section-title", "Ograniczenia metod resamplingowych"),
+    lc_h2("ch8-sec-04", "Ograniczenia metod resamplingowych"),
 
-    div(class = "callout-danger",
+    lc_feedback(type = "danger",
       tags$strong("Czego resampling nie naprawi:"),
       tags$ul(
         tags$li(tags$b("Błąd doboru próby (selection bias)"),
@@ -127,10 +134,9 @@ ch8_ui <- tabPanel("8. Kiedy stosować?",
     # ========================================================================
     # WIDGET: Quiz scenariuszy
     # ========================================================================
-    div(class = "section-title", "Quiz: która metoda?"),
+    lc_h2("ch8-sec-05", "Quiz: która metoda?"),
 
-    div(class = "widget-block",
-      h4("Wybierz odpowiednią metodę dla każdego scenariusza:"),
+    figure_panel(label = "Ryc. 8.1", title = "Wybierz odpowiednią metodę dla każdego scenariusza:",
       selectInput("ch8_scenario", "Scenariusz:",
         choices = list(
           "1. CI dla mediany czasu kielkowania (n=12, silna skosnosc)" = "s1",
@@ -147,21 +153,20 @@ ch8_ui <- tabPanel("8. Kiedy stosować?",
       ),
       br(),
       actionButton("ch8_show", "Pokaż odpowiedź",
-                   class = "btn-outline-success"),
+                   class = "lc-btn-ok-outline"),
       br(), br(),
       uiOutput("ch8_scenario_answer")
     ),
 
-    div(class = "chapter-transition",
-      p("Dalej: ściąga ze wszystkimi algorytmami"),
-      actionButton("ch8_next",
-                   "Dalej → 9. Ściąga",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "09",
+      title = "Ściąga",
+      lead = "algorytmy i najważniejsze reguły w jednym miejscu.",
+      target_id = "ch-sciaga"
     )
 
-  ))
+  )
 )
-
 # ============================================================================
 # SERVER
 # ============================================================================
@@ -170,51 +175,51 @@ ch8_server <- function(input, output, session) {
 
   ch8_answers <- list(
     s1 = list(
-      cls   = "callout-success",
+      type  = "ok",
       title = "Zalecany: Bootstrap CI dla mediany",
       body  = "Nie istnieje prosty wzór analityczny na CI dla mediany.
                Bootstrap działa dla każdej statystyki.
                Jackknife da SE, ale nie pełny CI."
     ),
     s2 = list(
-      cls   = "callout-info",
+      type  = "info",
       title = "Wystarczy: klasyczny t-CI",
       body  = "Duże n, dane normalne — CTG zapewnia dokładność t-CI.
                Bootstrap również zadziala, ale jest zbyteczny."
     ),
     s3 = list(
-      cls   = "callout-success",
+      type  = "ok",
       title = "Zalecany: test permutacyjny (lub bootstrap CI różnicy)",
       body  = "Brak normalności: test permutacyjny testuje dokładnie tę samą H₀
                co t-test (różnica średnich), ale bez założeń.
                Mann-Whitney U byłby alternatywą, ale testuje inne H₀."
     ),
     s4 = list(
-      cls   = "callout-success",
+      type  = "ok",
       title = "Zalecany: Bootstrap CI dla r lub test permutacyjny korelacji",
       body  = "Outliery zaburzają Pearsona. Bootstrap/permutacja są odporne."
     ),
     s5 = list(
-      cls   = "callout-success",
+      type  = "ok",
       title = "Zalecany: K-Fold CV",
       body  = "CV mierzy błąd predykcji out-of-sample.
                MSE treningowy zawsze preferuje bardziej złożony model —
                CV wybiera optymalny."
     ),
     s6 = list(
-      cls   = "callout-success",
+      type  = "ok",
       title = "Zalecany: MC symulacja mocy",
       body  = "Podajesz δ = 5 kg i σ szacowane ze wstępnych danych.
                MC daje dokładny wynik n dla osiągnięcia mocy 80%."
     ),
     s7 = list(
-      cls   = "callout-info",
+      type  = "info",
       title = "Jackknife",
       body  = "Jackknife oblicza obciążenie statystyki — odchylenie estymaty
                od wartości oczekiwanej. Szybszy i prostszy niż bootstrap dla tego celu."
     ),
     s8 = list(
-      cls   = "callout-info",
+      type  = "info",
       title = "MC pod H₀ lub klasyczny test z (proporcja)",
       body  = "H₀: p = 0.02 określa rozkład Bernoulli — można zasymulować MC.
                Test permutacyjny nie ma tu zastosowania (brak etykiet grup do tasowania)."
@@ -225,7 +230,7 @@ ch8_server <- function(input, output, session) {
     scenario <- input$ch8_scenario
     ans      <- ch8_answers[[scenario]]
     output$ch8_scenario_answer <- renderUI({
-      div(class = ans$cls,
+      lc_feedback(type = ans$type,
         tags$strong(ans$title),
         p(ans$body)
       )

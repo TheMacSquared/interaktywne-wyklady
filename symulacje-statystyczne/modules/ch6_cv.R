@@ -2,18 +2,27 @@
 # CHAPTER 6: Cross-validation
 # ============================================================================
 
-ch6_ui <- tabPanel("6. Cross-validation",
-  fluidRow(column(8, offset = 2,
+ch6_ui <- lecture_chapter(
+  id = "ch-cv",
+  num = "06",
+  title = "Cross-validation",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 06 · Symulacje statystyczne",
+      num    = "06",
+      title  = "Cross-validation",
+      lead   = "Walidacja krzyżowa pomaga ocenić, jak model działa poza danymi treningowymi."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Bootstrap i jackknife mierzyły niepewność statystyk z próby.
        Cross-validation mierzy coś innego: jak dobry jest model
        predykcyjny na ", tags$em("nowych"), " danych?"
     ),
 
-    div(class = "section-title", "Po co cross-validation?"),
+    lc_h2("ch6-sec-01", "Po co cross-validation?"),
 
-    div(class = "narrative",
+    tagList(
       p("Mamy model regresji. MSE treningowy (na tych samych danych,
          na których model był uczony) jest zawsze zbyt optymistyczny —
          model „zapamiętał‟ dane."),
@@ -22,7 +31,7 @@ ch6_ui <- tabPanel("6. Cross-validation",
          zbioru testowego.")
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Algorytm K-Fold CV:"),
       tags$ol(
         tags$li("Podziel dane losowo na k równych części (foldów)"),
@@ -36,16 +45,15 @@ ch6_ui <- tabPanel("6. Cross-validation",
     # ========================================================================
     # WIDGET 1: K-Fold CV demo
     # ========================================================================
-    div(class = "section-title", "K-Fold CV w praktyce"),
+    lc_h2("ch6-sec-02", "K-Fold CV w praktyce"),
 
-    div(class = "narrative",
+    tagList(
       p("Poniżej dane wygenerowane z kwadratowej zależności + szum.
          Dopasujemy wielomiany różnych stopni i sprawdzimy,
          który ma najniższe CV MSE.")
     ),
 
-    div(class = "widget-block",
-      h4("K-Fold CV — demo"),
+    figure_panel(label = "Ryc. 6.1", title = "K-Fold CV — demo",
       fluidRow(
         column(4,
           selectInput("ch6_degree", "Stopień wielomianu:",
@@ -66,7 +74,7 @@ ch6_ui <- tabPanel("6. Cross-validation",
                       min = 1, max = 20, value = 8, step = 1),
           hr(),
           actionButton("ch6_run", "Uruchom CV",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           uiOutput("ch6_cv_stats")
         ),
@@ -76,7 +84,7 @@ ch6_ui <- tabPanel("6. Cross-validation",
       )
     ),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$strong("Aha-moment:"),
       " Model 10. stopnia ma niski MSE treningowy, ale wysoki CV MSE —
        to właśnie ", tags$b("prze-uczenie (overfitting)"),
@@ -86,22 +94,21 @@ ch6_ui <- tabPanel("6. Cross-validation",
     # ========================================================================
     # WIDGET 2: Porownanie wszystkich stopni
     # ========================================================================
-    div(class = "section-title", "Optymalny stopień wielomianu"),
+    lc_h2("ch6-sec-03", "Optymalny stopień wielomianu"),
 
-    div(class = "narrative",
+    tagList(
       p("Uruchom CV dla wszystkich stopni naraz i porównaj MSE treningowe
          i CV na jednym wykresie. Optymalny model ma najniższe CV MSE.")
     ),
 
-    div(class = "widget-block",
-      h4("MSE treningowy vs CV MSE"),
+    figure_panel(label = "Ryc. 6.2", title = "MSE treningowy vs CV MSE",
       fluidRow(
         column(4,
           sliderInput("ch6_cmp_n",     "n:", min = 40, max = 150, value = 80, step = 10),
           sliderInput("ch6_cmp_sigma", "σ:", min = 2, max = 20, value = 8, step = 1),
           sliderInput("ch6_cmp_k",     "k (folds):", min = 3, max = 15, value = 5, step = 1),
           actionButton("ch6_cmp_run", "Porównaj wszystkie stopnie",
-                       class = "btn-warning", width = "100%")
+                       class = "lc-btn-warning", width = "100%")
         ),
         column(8,
           plotOutput("ch6_cmp_plot", height = "300px")
@@ -109,7 +116,7 @@ ch6_ui <- tabPanel("6. Cross-validation",
       )
     ),
 
-    div(class = "callout-warning",
+    lc_feedback(type = "warning",
       tags$strong("LOOCV (Leave-One-Out CV):"),
       " szczególny przypadek k = n.
        Daje prawie nieprzychylne (unbiased) szacunki błędu, ale:
@@ -117,16 +124,15 @@ ch6_ui <- tabPanel("6. Cross-validation",
        W praktyce k = 5 lub k = 10 jest zwykle lepszym kompromisem."
     ),
 
-    div(class = "chapter-transition",
-      p("Dalej: Monte Carlo — symulacja mocy testu i rozkładów pod H₀"),
-      actionButton("ch6_next",
-                   "Dalej → 7. Monte Carlo",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "07",
+      title = "Monte Carlo",
+      lead = "symulacje mocy testu i rozkładu pod hipotezą zerową.",
+      target_id = "ch-monte-carlo"
     )
 
-  ))
+  )
 )
-
 # ============================================================================
 # SERVER
 # ============================================================================
@@ -161,7 +167,7 @@ ch6_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Uruchom CV'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
@@ -176,12 +182,12 @@ ch6_server <- function(input, output, session) {
     df_fit <- data.frame(x = x_seq, y = preds)
 
     p1 <- ggplot(df, aes(x = x, y = y)) +
-      geom_point(color = col_primary, size = 2, alpha = 0.7) +
+      geom_point(color = sim_bootstrap, size = 2, alpha = 0.7) +
       geom_line(data = df_fit, aes(x = x, y = y),
-                color = col_secondary, linewidth = 1.5) +
+                color = sim_observed, linewidth = 1.5) +
       labs(title = paste0("Model: wielomian stopnia ", degree),
            x = "x", y = "y") +
-      theme_educational()
+      theme_upwr()
 
     # Prawy panel: bledy per fold
     n_folds <- length(result$fold_errors)
@@ -190,20 +196,20 @@ ch6_server <- function(input, output, session) {
       err  = result$fold_errors
     )
     p2 <- ggplot(df_err, aes(x = fold, y = err)) +
-      geom_col(fill = col_cv_test, alpha = 0.8) +
-      geom_hline(yintercept = result$cv_mse, color = col_cv_test,
+      geom_col(fill = sim_cv_test, alpha = 0.8) +
+      geom_hline(yintercept = result$cv_mse, color = sim_cv_test,
                  linewidth = 1.2, linetype = "dashed") +
-      geom_hline(yintercept = result$train_mse, color = col_cv_train,
+      geom_hline(yintercept = result$train_mse, color = sim_cv_train,
                  linewidth = 1.2, linetype = "solid") +
       annotate("text", x = 0.6, y = result$cv_mse,
                label = paste0("CV MSE = ", round(result$cv_mse, 1)),
-               hjust = 0, vjust = -0.4, color = col_cv_test, size = 3.5) +
+               hjust = 0, vjust = -0.4, color = sim_cv_test, size = 3.5) +
       annotate("text", x = 0.6, y = result$train_mse,
                label = paste0("Train MSE = ", round(result$train_mse, 1)),
-               hjust = 0, vjust = -0.4, color = col_cv_train, size = 3.5) +
+               hjust = 0, vjust = -0.4, color = sim_cv_train, size = 3.5) +
       labs(title = paste0(n_folds, "-Fold CV: błąd per fold"),
            x = "Fold", y = "MSE") +
-      theme_educational()
+      theme_upwr()
 
     gridExtra::grid.arrange(p1, p2, ncol = 2)
   })
@@ -213,11 +219,11 @@ ch6_server <- function(input, output, session) {
     if (is.null(cv_res)) return(NULL)
     res  <- cv_res$result
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_cv_train, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_cv_train, ";"),
           paste0("MSE train = ", round(res$train_mse, 2))),
-      div(class = "stat-box", style = paste0("background:", col_cv_test, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_cv_test, ";"),
           paste0("CV MSE = ", round(res$cv_mse, 2))),
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
           paste0("k = ", res$k))
     )
   })
@@ -245,11 +251,11 @@ ch6_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Porównaj wszystkie stopnie'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
-    plot_cv_results(results, col_cv_train = col_cv_train, col_cv_test = col_cv_test)
+    plot_cv_results(results, sim_cv_train = sim_cv_train, sim_cv_test = sim_cv_test)
   })
 
 }

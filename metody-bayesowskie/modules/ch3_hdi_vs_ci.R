@@ -2,17 +2,26 @@
 # CHAPTER 3: HDI vs CI - przedzialy dwoch szkol
 # ============================================================================
 
-ch3_ui <- tabPanel("3. HDI vs CI",
-  fluidRow(column(8, offset = 2,
+ch3_ui <- lecture_chapter(
+  id = "ch-hdi-vs-ci",
+  num = "03",
+  title = "HDI vs CI",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 03 · Metody bayesowskie",
+      num    = "03",
+      title  = "HDI vs CI",
+      lead   = "Dwa podobne wykresy, ale dwie różne interpretacje niepewności."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "BF vs p-value porównaliśmy.
        Teraz dwa rodzaje przedziałów: częstościowy CI i bayesowski HDI."
     ),
 
-    div(class = "section-title", "CI i HDI mają tę samą nazwę, inne znaczenie"),
+    lc_h2("ch3-sec-01", "CI i HDI mają tę samą nazwę, inne znaczenie"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Częstościowy 95% CI:"),
          " jeśli powtórzymy eksperyment bardzo wiele razy, to 95% tak skonstruowanych przedziałów
          pokryje prawdziwy parametr. O ", tags$em("tym konkretnym"), " przedziale nie możemy tak powiedzieć —
@@ -22,17 +31,16 @@ ch3_ui <- tabPanel("3. HDI vs CI",
          To jest stwierdzenie o ", tags$em("tym konkretnym"), " przedziale.")
     ),
 
-    div(class = "callout-warning",
+    lc_feedback(type = "warning",
       tags$b("Pułapka językowa:"),
       " studenci często mówią o CI to, co jest prawdą o HDI („daję 95% pewności, że
        μ jest tu‟). To częsty błąd interpretacyjny w częstościowej statystyce,
        który w bayesowskim świecie po prostu ", tags$em("jest prawdziwy"), "."
     ),
 
-    div(class = "section-title", "Pokaz na jednej próbie"),
+    lc_h2("ch3-sec-02", "Pokaz na jednej próbie"),
 
-    div(class = "widget-block",
-      h4("Te same dane, dwa rodzaje przedziałów"),
+    figure_panel(label = "Ryc. 3.1", title = "Te same dane, dwa rodzaje przedziałów",
       fluidRow(column(12,
         fluidRow(
           column(4,
@@ -45,7 +53,7 @@ ch3_ui <- tabPanel("3. HDI vs CI",
           column(4,
             br(),
             actionButton("ch3_draw", "↻ Nowa próba",
-                         class = "btn-primary", width = "100%")
+                         class = "lc-btn-primary", width = "100%")
           )
         )
       )),
@@ -67,29 +75,28 @@ ch3_ui <- tabPanel("3. HDI vs CI",
         )
       ),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         uiOutput("ch3_comparison_narrative")
       )
     ),
 
-    div(class = "section-title", "Kiedy CI ≈ HDI?"),
+    lc_h2("ch3-sec-03", "Kiedy CI ≈ HDI?"),
 
-    div(class = "narrative",
+    tagList(
       p("Przy ", tags$b("nieinformatywnym priorze"), " i ", tags$b("dużej próbie"),
          " oba przedziały są niemal identyczne numerycznie — ale interpretacja zostaje różna."),
       p("Gdy prior jest silny lub próba mała, HDI „ściąga‟ się w stronę priora,
          a CI pozostaje oparty wyłącznie na danych.")
     ),
 
-    div(class = "chapter-transition",
-      p("Teorii wystarczy. Wchodzimy w konkret — te same zastosowania, co we wnioskowaniu,
-         ale z bayesowskim odpowiednikiem obok."),
-      actionButton("ch3_next",
-                   "Dalej: Jedna próba →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "04",
+      title = "Jedna próba",
+      lead = "testy bayesowskie i posterior dla pojedynczej próby.",
+      target_id = "ch-jedna-proba"
     )
 
-  )) # column, fluidRow
+  )
 )
 
 ch3_server <- function(input, output, session) {
@@ -98,13 +105,15 @@ ch3_server <- function(input, output, session) {
 
   observe({
     if (is.null(sample_data())) {
-      x <- rnorm(input$ch3_n, mean = input$ch3_true_mu, sd = 1)
+      x <- rnorm(bayes_input(input$ch3_n, 30),
+                 mean = bayes_input(input$ch3_true_mu, 0.2), sd = 1)
       sample_data(x)
     }
   })
 
   observeEvent(list(input$ch3_draw, input$ch3_n, input$ch3_true_mu), {
-    x <- rnorm(input$ch3_n, mean = input$ch3_true_mu, sd = 1)
+    x <- rnorm(bayes_input(input$ch3_n, 30),
+               mean = bayes_input(input$ch3_true_mu, 0.2), sd = 1)
     sample_data(x)
   }, ignoreInit = TRUE)
 
@@ -122,27 +131,27 @@ ch3_server <- function(input, output, session) {
     mean_x <- r$mean_x
 
     ggplot(df, aes(x = x)) +
-      geom_histogram(bins = 20, fill = col_frequentist, color = "white", alpha = 0.6) +
-      geom_vline(xintercept = mean_x, color = col_dark,
+      geom_histogram(bins = 20, fill = bayes_freq, color = "white", alpha = 0.6) +
+      geom_vline(xintercept = mean_x, color = bayes_reference,
                  linewidth = 1.3) +
       geom_errorbarh(data = data.frame(y = 0.5, xmin = ci[1], xmax = ci[2]),
                      aes(y = y, xmin = xmin, xmax = xmax),
-                     height = 0, color = col_frequentist, linewidth = 3,
+                     height = 0, color = bayes_freq, linewidth = 3,
                      inherit.aes = FALSE) +
       annotate("text", x = ci[1], y = Inf, label = round(ci[1], 2),
-               vjust = -0.3, hjust = 1.1, color = col_frequentist, size = 3.5) +
+               vjust = -0.3, hjust = 1.1, color = bayes_freq, size = 3.5) +
       annotate("text", x = ci[2], y = Inf, label = round(ci[2], 2),
-               vjust = -0.3, hjust = -0.1, color = col_frequentist, size = 3.5) +
+               vjust = -0.3, hjust = -0.1, color = bayes_freq, size = 3.5) +
       labs(title = "Dane + 95% CI (t-Studenta)",
            subtitle = "Przedział zbudowany metodą, która w 95% przypadków pokrywa prawdę",
            x = "Wartość", y = "Liczność") +
-      theme_educational()
+      theme_upwr()
   })
 
   output$ch3_freq_result <- renderUI({
     r <- bf_result()
     ci <- r$ci_freq
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("Średnia próby: "), round(r$mean_x, 3), tags$br(),
       tags$b("95% CI: "), "[", round(ci[1], 3), ", ", round(ci[2], 3), "]", tags$br(),
       tags$em("Interpretacja: jeśli powtórzymy eksperyment wiele razy,
@@ -159,15 +168,15 @@ ch3_server <- function(input, output, session) {
       ref_value = 0,
       x_label = "μ (posterior)",
       title = "Posterior dla μ + 95% HDI",
-      col_posterior = col_posterior,
-      col_hdi = col_hdi
+      bayes_posterior = bayes_posterior,
+      bayes_hdi = bayes_hdi
     )
   })
 
   output$ch3_bayes_result <- renderUI({
     r <- bf_result()
     hdi <- r$hdi
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("Mediana posterior: "), round(r$posterior_median, 3), tags$br(),
       tags$b("95% HDI: "), "[", round(hdi["lower"], 3), ", ",
       round(hdi["upper"], 3), "]", tags$br(),

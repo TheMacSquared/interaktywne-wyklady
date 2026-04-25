@@ -6,16 +6,25 @@
 # UI
 # ============================================================================
 
-ch10_ui <- tabPanel("10. Ćwiczenia",
-  fluidRow(column(8, offset = 2,
+ch10_ui <- lecture_chapter(
+  id = "ch-cwiczenia",
+  num = "10",
+  title = "Ćwiczenia",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 10 · Symulacje statystyczne",
+      num    = "10",
+      title  = "Ćwiczenia",
+      lead   = "Zestawy zadań kierunkowych: bootstrap CI, test permutacyjny i krytyczna interpretacja."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Czas zastosować metody resamplingowe na danych z Twojego kierunku."
     ),
 
-    div(class = "section-title", "Ćwiczenia — metody resamplingowe"),
+    lc_h2("ch10-sec-01", "Ćwiczenia — metody resamplingowe"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Czas trwania:"), " ~ 90 minut · ",
         tags$b("Narzędzie:"), " Jamovi (z pakietem bootstrap/permutacje)"),
       p("Trzy bloki zadań na kierunek: bootstrap CI, test permutacyjny
@@ -23,7 +32,7 @@ ch10_ui <- tabPanel("10. Ćwiczenia",
         "ukryte rozwiązanie.")
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       selectInput("ch10_kierunek", tags$b("Wybierz wariant dla kierunku:"),
         choices = list(
           "Rolnictwo"                        = "rol",
@@ -40,7 +49,7 @@ ch10_ui <- tabPanel("10. Ćwiczenia",
 
     br(), br(), br()
 
-  ))
+  )
 )
 
 # ============================================================================
@@ -49,7 +58,7 @@ ch10_ui <- tabPanel("10. Ćwiczenia",
 
 .ch10_rol <- function() tagList(
 
-  div(class = "callout-info",
+  lc_feedback(type = "info",
     p(tags$b("Dane: "), tags$code("plony_nawoz"), " — wygeneruj w R lub Jamovi:"),
     tags$pre(style = "font-size:12px;",
 "set.seed(42)
@@ -61,11 +70,10 @@ df <- data.frame(
     p("Dane: n = 28, plony w dt/ha (silnie prawoskętne).")
   ),
 
-  div(class = "section-title", "Blok 1: Bootstrap CI"),
+  lc_h2("ch10-sec-02", "Blok 1: Bootstrap CI"),
 
-  div(class = "widget-block",
-    h4("Zadanie 1 — Mediana plonu"),
-    div(class = "narrative",
+  figure_panel(label = "Ćw. 1", title = "Zadanie 1 — Mediana plonu",
+    tagList(
       p("Wyznacz 95% bootstrap CI dla mediany plonu (zmienna ",
         tags$code("plon_dt_ha"), "). Dlaczego mediana, a nie średnia?"),
       p("Zanim klikniesz rozwiązanie: ",
@@ -73,36 +81,34 @@ df <- data.frame(
           co oznacza ten przedział w kontekście agrotechnicznym?"))
     ),
     actionButton("ch10_rol_ans1", "Pokaż rozwiązanie",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch10_rol_sol1")
   ),
 
-  div(class = "section-title", "Blok 2: Test permutacyjny"),
+  lc_h2("ch10-sec-03", "Blok 2: Test permutacyjny"),
 
-  div(class = "widget-block",
-    h4("Zadanie 2 — Nawóz A vs B"),
-    div(class = "narrative",
+  figure_panel(label = "Ćw. 2", title = "Zadanie 2 — Nawóz A vs B",
+    tagList(
       p("Czy nawóz A daje wyższe plony niż B?
          Wykonaj permutacyjny test różnicy średnich (B = 5000)."),
       p("Porównaj p-wartość z testu permutacyjnego z p-wartością z testu t.
          Jeśli się różnią, co to oznacza?")
     ),
     actionButton("ch10_rol_ans2", "Pokaż rozwiązanie",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch10_rol_sol2")
   ),
 
-  div(class = "section-title", "Blok 3: Myślenie krytyczne"),
+  lc_h2("ch10-sec-04", "Blok 3: Myślenie krytyczne"),
 
-  div(class = "widget-block",
-    h4("Zadanie 3 — Mała próba"),
-    div(class = "narrative",
+  figure_panel(label = "Ćw. 3", title = "Zadanie 3 — Mała próba",
+    tagList(
       p("Przeprowadzono 5 dodatkowych prób na mniejszych poletkach (n = 5)."),
       p(tags$em("Czy bootstrap CI pomoże z tak małą próbą?
                  Jakie są ograniczenia? Czy zaproponowany CI będzie wiarygodny?"))
     ),
     actionButton("ch10_rol_ans3", "Pokaż odpowiedź",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch10_rol_sol3")
   )
 
@@ -110,7 +116,7 @@ df <- data.frame(
 
 .ch10_zyw <- function() tagList(
 
-  div(class = "callout-info",
+  lc_feedback(type = "info",
     p(tags$b("Dane: "), tags$code("analiza_sensoryczna"), " — wygeneruj w R lub Jamovi:"),
     tags$pre(style = "font-size:12px;",
 "set.seed(42)
@@ -123,47 +129,44 @@ df <- data.frame(
     p("Dane: n = 35, ocena tekstury na skali 1–7 (skośna), białko w g/100g.")
   ),
 
-  div(class = "section-title", "Blok 1: Bootstrap CI"),
+  lc_h2("ch10-sec-05", "Blok 1: Bootstrap CI"),
 
-  div(class = "widget-block",
-    h4("Zadanie 1 — Mediana oceny tekstury"),
-    div(class = "narrative",
+  figure_panel(label = "Ćw. 4", title = "Zadanie 1 — Mediana oceny tekstury",
+    tagList(
       p("Wyznacz 95% bootstrap CI dla mediany oceny tekstury produktu A.
          Porównaj z t-CI."),
       p(tags$em("Który CI jest właściwszy dla skali 1–7 przy n ≈ 18?
                  Uzasadnij."))
     ),
     actionButton("ch10_zyw_ans1", "Pokaż rozwiązanie",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch10_zyw_sol1")
   ),
 
-  div(class = "section-title", "Blok 2: Test permutacyjny"),
+  lc_h2("ch10-sec-06", "Blok 2: Test permutacyjny"),
 
-  div(class = "widget-block",
-    h4("Zadanie 2 — Produkt A vs B"),
-    div(class = "narrative",
+  figure_panel(label = "Ćw. 5", title = "Zadanie 2 — Produkt A vs B",
+    tagList(
       p("Permutacyjny test różnicy ocen tekstury między produktem A i B.
          Porównaj z Mann-Whitney U."),
       p(tags$em("Dlaczego Mann-Whitney U i test permutacyjny mogą dać inne p-wartości?
                  Który testuje tę samą H₀ co t-test?"))
     ),
     actionButton("ch10_zyw_ans2", "Pokaż rozwiązanie",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch10_zyw_sol2")
   ),
 
-  div(class = "section-title", "Blok 3: Myślenie krytyczne"),
+  lc_h2("ch10-sec-07", "Blok 3: Myślenie krytyczne"),
 
-  div(class = "widget-block",
-    h4("Zadanie 3 — Korelacja białko – tekstura"),
-    div(class = "narrative",
+  figure_panel(label = "Ćw. 6", title = "Zadanie 3 — Korelacja białko – tekstura",
+    tagList(
       p("Czy istnieje związek między zawartością białka a oceną tekstury?"),
       p(tags$em("Oblicz bootstrap CI dla współczynnika korelacji Pearsona.
                  Dlaczego tu wolimy bootstrap, a nie klasyczny test Pearsona?"))
     ),
     actionButton("ch10_zyw_ans3", "Pokaż odpowiedź",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch10_zyw_sol3")
   )
 
@@ -171,7 +174,7 @@ df <- data.frame(
 
 .ch10_bhp <- function() tagList(
 
-  div(class = "callout-info",
+  lc_feedback(type = "info",
     p(tags$b("Dane: "), tags$code("czas_reakcji_bhp"), " — wygeneruj w R lub Jamovi:"),
     tags$pre(style = "font-size:12px;",
 "set.seed(42)
@@ -183,46 +186,43 @@ df <- data.frame(
     p("Dane: n = 22, czas reakcji w ms (log-normalny, silnie prawoskętny).")
   ),
 
-  div(class = "section-title", "Blok 1: Bootstrap CI"),
+  lc_h2("ch10-sec-08", "Blok 1: Bootstrap CI"),
 
-  div(class = "widget-block",
-    h4("Zadanie 1 — Mediana czasu reakcji"),
-    div(class = "narrative",
+  figure_panel(label = "Ćw. 7", title = "Zadanie 1 — Mediana czasu reakcji",
+    tagList(
       p("Wyznacz 95% bootstrap CI dla mediany czasu reakcji pracowników."),
       p(tags$em("Dlaczego bootstrap CI dla mediany — a nie t-CI dla średniej?
                  Jakie jest znaczenie praktyczne tego CI w kontekście BHP?"))
     ),
     actionButton("ch10_bhp_ans1", "Pokaż rozwiązanie",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch10_bhp_sol1")
   ),
 
-  div(class = "section-title", "Blok 2: Test permutacyjny"),
+  lc_h2("ch10-sec-09", "Blok 2: Test permutacyjny"),
 
-  div(class = "widget-block",
-    h4("Zadanie 2 — Stres vs normalne warunki"),
-    div(class = "narrative",
+  figure_panel(label = "Ćw. 8", title = "Zadanie 2 — Stres vs normalne warunki",
+    tagList(
       p("Czy stres istotnie wydłuża czas reakcji?
          Wykonaj permutacyjny test różnicy średnich (B = 5000)."),
       p(tags$em("Porównaj p-wartość z t-testem i Wilcoxonem.
                  Który test jest tu najodpowiedniejszy i dlaczego?"))
     ),
     actionButton("ch10_bhp_ans2", "Pokaż rozwiązanie",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch10_bhp_sol2")
   ),
 
-  div(class = "section-title", "Blok 3: Myślenie krytyczne"),
+  lc_h2("ch10-sec-10", "Blok 3: Myślenie krytyczne"),
 
-  div(class = "widget-block",
-    h4("Zadanie 3 — Norma bezpieczeństwa"),
-    div(class = "narrative",
+  figure_panel(label = "Ćw. 9", title = "Zadanie 3 — Norma bezpieczeństwa",
+    tagList(
       p("Norma bezpieczeństwa: mediana czasu reakcji nie powinna przekraczać 250ms."),
       p(tags$em("Oblicz bootstrap CI dla mediany. Jeśli 250ms leży poza CI —
                  co wnioskujesz? Sformułuj wniosek „jak w raporcie BHP‟."))
     ),
     actionButton("ch10_bhp_ans3", "Pokaż odpowiedź",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch10_bhp_sol3")
   )
 
@@ -230,7 +230,7 @@ df <- data.frame(
 
 .ch10_edu <- function() tagList(
 
-  div(class = "callout-info",
+  lc_feedback(type = "info",
     p(tags$b("Dane: "), tags$code("wyniki_programu"), " — wygeneruj w R lub Jamovi:"),
     tags$pre(style = "font-size:12px;",
 "set.seed(42)
@@ -243,46 +243,43 @@ df <- data.frame(
     p("Dane: n = 45, wynik testu 0–100, frekwencja % (heavy tail).")
   ),
 
-  div(class = "section-title", "Blok 1: Bootstrap CI"),
+  lc_h2("ch10-sec-11", "Blok 1: Bootstrap CI"),
 
-  div(class = "widget-block",
-    h4("Zadanie 1 — Różnica wyników"),
-    div(class = "narrative",
+  figure_panel(label = "Ćw. 10", title = "Zadanie 1 — Różnica wyników",
+    tagList(
       p("Wyznacz 95% bootstrap CI dla różnicy średnich wyników
          (nowy program vs tradycyjny). Porównaj z t-CI Welcha."),
       p(tags$em("Czy oba CI są podobne? Co to mówi o rozkładzie danych?"))
     ),
     actionButton("ch10_edu_ans1", "Pokaż rozwiązanie",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch10_edu_sol1")
   ),
 
-  div(class = "section-title", "Blok 2: Test permutacyjny"),
+  lc_h2("ch10-sec-12", "Blok 2: Test permutacyjny"),
 
-  div(class = "widget-block",
-    h4("Zadanie 2 — Skuteczność nowego programu"),
-    div(class = "narrative",
+  figure_panel(label = "Ćw. 11", title = "Zadanie 2 — Skuteczność nowego programu",
+    tagList(
       p("Permutacyjny test różnicy wyników między programami.
          Porównaj p-wartość z testem t i Mann-Whitney U."),
       p(tags$em("Który test testuje H₀: brak różnicy średnich — test permutacyjny czy Mann-Whitney?
                  Uzasadnij."))
     ),
     actionButton("ch10_edu_ans2", "Pokaż rozwiązanie",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch10_edu_sol2")
   ),
 
-  div(class = "section-title", "Blok 3: Myślenie krytyczne"),
+  lc_h2("ch10-sec-13", "Blok 3: Myślenie krytyczne"),
 
-  div(class = "widget-block",
-    h4("Zadanie 3 — Frekwencja w klasie A"),
-    div(class = "narrative",
+  figure_panel(label = "Ćw. 12", title = "Zadanie 3 — Frekwencja w klasie A",
+    tagList(
       p("Oblicz bootstrap CI dla mediany frekwencji w klasie A (heavy tail, n ≈ 15)."),
       p(tags$em("Czy klasyczny t-CI byłby wiarygodny? Uzasadnij odwołując się
                  do rozkładu danych i rozmiaru próby."))
     ),
     actionButton("ch10_edu_ans3", "Pokaż odpowiedź",
-                 class = "btn-outline-success btn-sm"),
+                 class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch10_edu_sol3")
   )
 
@@ -306,7 +303,7 @@ ch10_server <- function(input, output, session) {
   # ---- Rozwiazania ROLNICTWO ----
   observeEvent(input$ch10_rol_ans1, {
     output$ch10_rol_sol1 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Rozwiązanie:"),
         p("Plony są silnie prawoskętne (Gamma) — średnia jest wrażliwa na outliery.
            Mediana lepiej opisuje „typowy‟ plon. Dla mediany nie istnieje prosty wzór
@@ -319,7 +316,7 @@ ch10_server <- function(input, output, session) {
 
   observeEvent(input$ch10_rol_ans2, {
     output$ch10_rol_sol2 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Rozwiązanie:"),
         p("Test permutacyjny testuje H₀: brak różnicy średnich, bez założenia normalności.
            T-test zakłada normalność lub duże n."),
@@ -331,7 +328,7 @@ ch10_server <- function(input, output, session) {
 
   observeEvent(input$ch10_rol_ans3, {
     output$ch10_rol_sol3 <- renderUI({
-      div(class = "callout-warning",
+      lc_feedback(type = "warning",
         tags$strong("Odpowiedź:"),
         p("Bootstrap pomoże technicznie (obliczy CI), ale przy n = 5 wynik będzie
            mało precyzyjny i wrażliwy na poszczególne obserwacje."),
@@ -345,7 +342,7 @@ ch10_server <- function(input, output, session) {
   # ---- Rozwiazania TZ ----
   observeEvent(input$ch10_zyw_ans1, {
     output$ch10_zyw_sol1 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Rozwiązanie:"),
         p("Dane na skali 1–7 są skośne i dyskretne — t-CI zakłada ciągłość i normalność.
            Bootstrap CI jest asymetryczny i lepiej odzwierciedla skośność skali."),
@@ -357,7 +354,7 @@ ch10_server <- function(input, output, session) {
 
   observeEvent(input$ch10_zyw_ans2, {
     output$ch10_zyw_sol2 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Rozwiązanie:"),
         p("Test permutacyjny testuje H₀: średnia A = średnia B (ta sama H₀ co t-test).
            Mann-Whitney U testuje H₀: rozkłady są identyczne (przesunięcie lokalizacji)."),
@@ -369,7 +366,7 @@ ch10_server <- function(input, output, session) {
 
   observeEvent(input$ch10_zyw_ans3, {
     output$ch10_zyw_sol3 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Odpowiedź:"),
         p("Korelacja Pearson zakłada normalność dwuwymiarową.
            Dane sensoryczne rzadko spełniają to założenie."),
@@ -382,7 +379,7 @@ ch10_server <- function(input, output, session) {
   # ---- Rozwiazania BHP ----
   observeEvent(input$ch10_bhp_ans1, {
     output$ch10_bhp_sol1 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Rozwiązanie:"),
         p("Czas reakcji ma log-normalny rozkład (silna prawoskętność).
            T-CI dla średniej jest zawodny przy n=22 i silnej skośności.
@@ -395,7 +392,7 @@ ch10_server <- function(input, output, session) {
 
   observeEvent(input$ch10_bhp_ans2, {
     output$ch10_bhp_sol2 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Rozwiązanie:"),
         p("Test permutacyjny: brak założeń o normalności, testuje różnicę średnich.
            T-test: wrażliwy na skośność przy małej próbie.
@@ -408,7 +405,7 @@ ch10_server <- function(input, output, session) {
 
   observeEvent(input$ch10_bhp_ans3, {
     output$ch10_bhp_sol3 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Odpowiedź:"),
         p("Jeśli bootstrap CI dla mediany = [280, 350] ms, a norma to 250 ms:"),
         p(tags$b("Wniosek (jak w raporcie BHP): "),
@@ -423,7 +420,7 @@ ch10_server <- function(input, output, session) {
   # ---- Rozwiazania EDU ----
   observeEvent(input$ch10_edu_ans1, {
     output$ch10_edu_sol1 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Rozwiązanie:"),
         p("Bootstrap CI dla różnicy średnich oblicza się przez:
            (1) resampling par (wynik, program), (2) obliczanie różnicy średnich
@@ -436,7 +433,7 @@ ch10_server <- function(input, output, session) {
 
   observeEvent(input$ch10_edu_ans2, {
     output$ch10_edu_sol2 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Rozwiązanie:"),
         p("Test permutacyjny i t-test testują H₀: średnia A = średnia B.
            Mann-Whitney U testuje H₀: rozkłady są identyczne (równość pośred.
@@ -449,7 +446,7 @@ ch10_server <- function(input, output, session) {
 
   observeEvent(input$ch10_edu_ans3, {
     output$ch10_edu_sol3 <- renderUI({
-      div(class = "callout-warning",
+      lc_feedback(type = "warning",
         tags$strong("Odpowiedź:"),
         p("Frekwencja ma heavy tail (wiele wartości bliskich 100%, kilka bardzo niskich).
            T-CI dla mediany wymaga normalności. Przy n ≈ 15 i heavy-tail: CTG jeszcze

@@ -2,17 +2,26 @@
 # CHAPTER 1: Intuicja Bayesa - prior, likelihood, posterior
 # ============================================================================
 
-ch1_ui <- tabPanel("1. Intuicja",
-  fluidRow(column(8, offset = 2,
+ch1_ui <- lecture_chapter(
+  id = "ch-intuicja",
+  num = "01",
+  title = "Intuicja",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 01 · Metody bayesowskie",
+      num    = "01",
+      title  = "Intuicja",
+      lead   = "Prior, likelihood i posterior na prostym przykładzie rzutu monetą."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Zanim porównamy świat bayesowski z częstościowym:
        potrzebujemy trzech pojęć — prior, likelihood, posterior."
     ),
 
-    div(class = "section-title", "Po co w ogóle Bayes?"),
+    lc_h2("ch1-sec-01", "Po co w ogóle Bayes?"),
 
-    div(class = "narrative",
+    tagList(
       p("W statystyce częstościowej odpowiadamy na pytanie:
          „jak prawdopodobne są dane przy założyciu H₀?‟ — to jest p-wartość.
          W statystyce bayesowskiej odpowiadamy na pytanie, które intuicyjnie częściej
@@ -21,14 +30,14 @@ ch1_ui <- tabPanel("1. Intuicja",
          " zebraniem danych (prior). Dane aktualizują to przekonanie do posterior.")
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Twór, który to opisuje (twierdzenie Bayesa):"),
       withMathJax("$$P(\\theta \\mid \\text{dane}) \\;\\propto\\; \\underbrace{P(\\text{dane} \\mid \\theta)}_{\\text{likelihood}} \\;\\cdot\\; \\underbrace{P(\\theta)}_{\\text{prior}}$$")
     ),
 
-    div(class = "section-title", "Na konkrecie: rzut monetą"),
+    lc_h2("ch1-sec-02", "Na konkrecie: rzut monetą"),
 
-    div(class = "narrative",
+    tagList(
       p("Rzucamy monetą ", tags$em("n"), " razy i zliczamy orły. Szukana jest
          ", tags$b("θ"), " — rzeczywiste prawdopodobieństwo orła."),
       p("Widget niżej pozwala wybrać prior (przekonanie ", tags$em("zanim"),
@@ -36,8 +45,7 @@ ch1_ui <- tabPanel("1. Intuicja",
          Zobaczysz, jak dane „obracają‟ priora w posterior.")
     ),
 
-    div(class = "widget-block",
-      h4("Prior → Likelihood → Posterior (beta-binomial)"),
+    figure_panel(label = "Ryc. 1.1", title = "Prior → Likelihood → Posterior (beta-binomial)",
       fluidRow(
         column(4,
           h5("Prior: Beta(α, β)"),
@@ -47,11 +55,11 @@ ch1_ui <- tabPanel("1. Intuicja",
                       min = 0.5, max = 20, value = 2, step = 0.5),
           div(class = "preset-buttons",
             actionButton("ch1_prior_flat",     "Neutralny",
-                         class = "btn-outline-secondary btn-sm"),
+                         class = "lc-btn-secondary-outline lc-btn-sm"),
             actionButton("ch1_prior_fair",     "Uczciwa moneta",
-                         class = "btn-outline-secondary btn-sm"),
+                         class = "lc-btn-secondary-outline lc-btn-sm"),
             actionButton("ch1_prior_biased",   "Podejrzana",
-                         class = "btn-outline-secondary btn-sm")
+                         class = "lc-btn-secondary-outline lc-btn-sm")
           ),
           hr(),
           h5("Dane (rzuty)"),
@@ -71,16 +79,16 @@ ch1_ui <- tabPanel("1. Intuicja",
       )
     ),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$strong("Aha-moment:"),
       " Posterior to kompromis między priorem a danymi.
        Im więcej danych, tym bardziej posterior przesuwa się w stronę likelihood —
        prior traci znaczenie (chyba że był bardzo silny)."
     ),
 
-    div(class = "section-title", "Kiedy prior ma duże znaczenie?"),
+    lc_h2("ch1-sec-03", "Kiedy prior ma duże znaczenie?"),
 
-    div(class = "narrative",
+    tagList(
       p("Z widgetu widzisz dwie końcówki:"),
       tags$ul(
         tags$li(tags$b("Mało danych (n = 5, 10):"),
@@ -95,15 +103,14 @@ ch1_ui <- tabPanel("1. Intuicja",
          " — i jednocześnie to ryzyko: ", tags$em("jeśli prior jest błędny, psuje posterior przy małej próbie"), ".")
     ),
 
-    div(class = "chapter-transition",
-      p("Wiemy już, co to prior i posterior.
-         Czas porównać bayesowski dowód (BF) z częstościowym (p-wartość)."),
-      actionButton("ch1_next",
-                   "Dalej: Bayes Factor vs p-wartość →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "02",
+      title = "BF vs p-wartość",
+      lead = "porównanie bayesowskiego dowodu z częstościową p-wartością.",
+      target_id = "ch-bf-vs-p"
     )
 
-  ))  # close column, fluidRow
+  )
 )
 
 ch1_server <- function(input, output, session) {
@@ -165,7 +172,7 @@ ch1_server <- function(input, output, session) {
     mle <- if (input$ch1_trials > 0)
              input$ch1_successes / input$ch1_trials else NA
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("Prior:"),
       " średnia = ", round(prior_mean, 3),
       "  |  Beta(", input$ch1_alpha, ", ", input$ch1_beta, ")",

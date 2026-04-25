@@ -2,23 +2,32 @@
 # CHAPTER 2: Bootstrap — przedzialy ufnosci
 # ============================================================================
 
-ch2_ui <- tabPanel("2. Bootstrap — przedziały",
-  fluidRow(column(8, offset = 2,
+ch2_ui <- lecture_chapter(
+  id = "ch-bootstrap-ci",
+  num = "02",
+  title = "Bootstrap — przedziały",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 02 · Symulacje statystyczne",
+      num    = "02",
+      title  = "Bootstrap — przedziały",
+      lead   = "Przedziały percentylowe, pokrycie i porównanie z klasycznymi konstrukcjami."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Wiemy już, że rozkład bootstrapowy odzwierciedla zmienność statystyki.
        Czas zobaczyć, jak go zamienić w przedział ufności."
     ),
 
-    div(class = "section-title", "Metoda percentylowa"),
+    lc_h2("ch2-sec-01", "Metoda percentylowa"),
 
-    div(class = "narrative",
+    tagList(
       p("Najprostrzy sposób: weź rozkład bootstrapowy i obetnij ogony."),
       p("Dla 95% CI: weź 2.5. i 97.5. percentyl z ",
         withMathJax("\\(B\\)"), " wartości bootstrapowych.")
     ),
 
-    div(class = "formula-box",
+    lc_formula_box(
       withMathJax(
         "\\[\\text{CI}_{0.95} = \\left[ Q_{0.025}(\\theta^*_1, \\ldots, \\theta^*_B),\\;
           Q_{0.975}(\\theta^*_1, \\ldots, \\theta^*_B) \\right]\\]"
@@ -32,17 +41,16 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
     # ========================================================================
     # WIDGET 1a: Narastajace belki CI
     # ========================================================================
-    div(class = "section-title", "Bootstrap CI dla dowolnej statystyki"),
+    lc_h2("ch2-sec-02", "Bootstrap CI dla dowolnej statystyki"),
 
-    div(class = "narrative",
+    tagList(
       p("Kluczowa zaleta bootstrapu: działa tak samo dla ",
         tags$b("każdej statystyki"),
         " — średniej, mediany, odchylenia standardowego, skośności.
          Nie potrzebujemy wzoru analitycznego.")
     ),
 
-    div(class = "widget-block",
-      h4("A) Narastające przedziały — jak bardzo CI skacze między próbami?"),
+    figure_panel(label = "Ryc. 2.1", title = "A) Narastające przedziały — jak bardzo CI skacze między próbami?",
       p(class = "text-muted",
         "Każde kliknięcie losuje nową próbę i dodaje jej CI jako belkę.
          Widoczny jest rozrzut między próbami i asymetria CI."),
@@ -71,10 +79,10 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           hr(),
           actionButton("ch2a_add", "+ Nowa próba i CI",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           actionButton("ch2a_clear", "Wyczyść",
-                       class = "btn-outline-secondary", width = "100%"),
+                       class = "lc-btn-secondary-outline", width = "100%"),
           br(), br(),
           uiOutput("ch2a_stats")
         ),
@@ -87,8 +95,7 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
     # ========================================================================
     # WIDGET 1b: Belki CI + histogram aktualnej proby
     # ========================================================================
-    div(class = "widget-block",
-      h4("B) Dane i CI razem — jak wyglądają dane które go wygęnerowały?"),
+    figure_panel(label = "Ryc. 2.2", title = "B) Dane i CI razem — jak wyglądają dane które go wygęnerowały?",
       p(class = "text-muted",
         "Lewy panel: histogram aktualnej próby.
          Prawy panel: narastające belki CI z kolejnych prób.
@@ -118,10 +125,10 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           hr(),
           actionButton("ch2b_add", "+ Nowa próba i CI",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           actionButton("ch2b_clear", "Wyczyść",
-                       class = "btn-outline-secondary", width = "100%"),
+                       class = "lc-btn-secondary-outline", width = "100%"),
           br(), br(),
           uiOutput("ch2b_stats")
         ),
@@ -134,8 +141,7 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
     # ========================================================================
     # WIDGET 1c: Symulacja pokrycia CI
     # ========================================================================
-    div(class = "widget-block",
-      h4("C) Pokrycie CI — ile razy CI zawiera prawdziwą wartość?"),
+    figure_panel(label = "Ryc. 2.3", title = "C) Pokrycie CI — ile razy CI zawiera prawdziwą wartość?",
       p(class = "text-muted",
         "Symuluje N prób naraz i sprawdza ile CI zawiera prawdziwą wartość parametru.
          Zielony = CI trafiło, czerwony = nie trafiło.
@@ -158,7 +164,7 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
                       min = 20, max = 100, value = 50, step = 10),
           hr(),
           actionButton("ch2c_run", "Symuluj pokrycie",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           uiOutput("ch2c_stats")
         ),
@@ -168,7 +174,7 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
       )
     ),
 
-    div(class = "callout-warning",
+    lc_feedback(type = "warning",
       tags$strong("Kiedy bootstrap ma przewagę:"),
       tags$ul(
         tags$li("Mała próba + skośny rozkład"),
@@ -180,9 +186,9 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
     # ========================================================================
     # WIDGET 2: Bootstrap vs t-CI
     # ========================================================================
-    div(class = "section-title", "Bootstrap vs klasyczny przedział t"),
+    lc_h2("ch2-sec-03", "Bootstrap vs klasyczny przedział t"),
 
-    div(class = "narrative",
+    tagList(
       p("Kiedy dane są normalne i próba duża, bootstrap i t-CI dają prawie identyczne wyniki.
          Kiedy dane są skośne i próba mała — rozchodzą się."),
       p("Bootstrap CI jest wtedy ", tags$b("asymetryczny"),
@@ -190,8 +196,7 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
          T-CI jest symetryczny z założenia.")
     ),
 
-    div(class = "widget-block",
-      h4("Porównanie: Bootstrap vs t-Student"),
+    figure_panel(label = "Ryc. 2.4", title = "Porównanie: Bootstrap vs t-Student",
       fluidRow(
         column(4,
           selectInput("ch2_cmp_dist", "Rozkład:",
@@ -207,7 +212,7 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
           sliderInput("ch2_cmp_conf", "Poziom ufności:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           actionButton("ch2_cmp_run", "Porównaj metody",
-                       class = "btn-warning", width = "100%")
+                       class = "lc-btn-warning", width = "100%")
         ),
         column(8,
           plotOutput("ch2_comparison_plot", height = "300px"),
@@ -219,9 +224,9 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
     # ========================================================================
     # WIDGET 3: CI dla proporcji
     # ========================================================================
-    div(class = "section-title", "Bootstrap CI dla proporcji"),
+    lc_h2("ch2-sec-04", "Bootstrap CI dla proporcji"),
 
-    div(class = "narrative",
+    tagList(
       p("Dla proporcji mamy trzy konkurencyjne metody: Wald (prosta formuła),
          Wilson (dokładniejszy), Bootstrap (symulacyjny)."),
       p("Przy skrajnych proporcjach (bliskie 0 lub 1) i małym n: ",
@@ -229,8 +234,7 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
          Wilson i Bootstrap są lepsze.")
     ),
 
-    div(class = "widget-block",
-      h4("Porównanie CI dla proporcji"),
+    figure_panel(label = "Ryc. 2.5", title = "Porównanie CI dla proporcji",
       fluidRow(
         column(4,
           sliderInput("ch2_prop_p", "Prawdziwe p (proporcja):",
@@ -239,7 +243,7 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
           sliderInput("ch2_prop_conf", "Poziom ufności:",
                       min = 0.80, max = 0.99, value = 0.95, step = 0.01),
           actionButton("ch2_prop_run", "Uruchom",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch2_prop_plot", height = "260px"),
@@ -248,16 +252,15 @@ ch2_ui <- tabPanel("2. Bootstrap — przedziały",
       )
     ),
 
-    div(class = "chapter-transition",
-      p("Dalej: bootstrap dla jednej małej próby — krok po kroku"),
-      actionButton("ch2_next",
-                   "Dalej → 3. Bootstrap jednej próby",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "03",
+      title = "Bootstrap jednej próby",
+      lead = "jak bootstrapować średnie, mediany i inne statystyki jednej próby.",
+      target_id = "ch-bootstrap-jednopr"
     )
 
-  ))
+  )
 )
-
 # ============================================================================
 # SERVER
 # ============================================================================
@@ -311,13 +314,13 @@ ch2_server <- function(input, output, session) {
       rep(TRUE, nrow(df))
     }
     df$covers <- covers
-    df$color  <- ifelse(covers, "#27ae60", "#e74c3c")
+    df$color  <- ifelse(covers, sim_success, sim_observed)
 
     p <- ggplot(df, aes(y = i)) +
       geom_errorbarh(aes(xmin = lower, xmax = upper, color = covers),
                      height = 0.4, linewidth = 1.2) +
       geom_point(aes(x = obs, color = covers), size = 3) +
-      scale_color_manual(values = c("TRUE" = "#27ae60", "FALSE" = "#e74c3c"),
+      scale_color_manual(values = c("TRUE" = sim_success, "FALSE" = sim_observed),
                          labels = c("TRUE" = "Trafiło", "FALSE" = "Nie trafiło"),
                          name = NULL) +
       scale_y_continuous(breaks = seq_len(nrow(df)),
@@ -330,11 +333,11 @@ ch2_server <- function(input, output, session) {
                      paste0("Liczba prób: ", nrow(df)),
         x = stat_label, y = NULL
       ) +
-      theme_educational() +
+      theme_upwr() +
       theme(axis.text.y = element_text(size = 10))
 
     if (!is.null(true_val)) {
-      p <- p + geom_vline(xintercept = true_val, color = col_dark,
+      p <- p + geom_vline(xintercept = true_val, color = sim_secondary,
                           linewidth = 1.2, linetype = "dashed")
     }
     p
@@ -368,7 +371,7 @@ ch2_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij '+ Nowa próba i CI'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
@@ -382,11 +385,11 @@ ch2_server <- function(input, output, session) {
     if (length(cis) == 0) return(NULL)
     last <- cis[[length(cis)]]
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
           paste0("Liczba prób: ", length(cis))),
-      div(class = "stat-box", style = paste0("background:", col_success, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_success, ";"),
           paste0("CI: [", round(last$lower, 3), ", ", round(last$upper, 3), "]")),
-      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
           paste0("Szerokość: ", round(last$upper - last$lower, 3)))
     )
   })
@@ -423,7 +426,7 @@ ch2_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij '+ Nowa próba i CI'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
@@ -434,13 +437,13 @@ ch2_server <- function(input, output, session) {
     # Lewy panel: histogram ostatniej proby
     last_obs <- cis[[length(cis)]]$obs
     p_hist <- ggplot(data.frame(x = x), aes(x = x)) +
-      geom_histogram(fill = col_primary, color = "white", alpha = 0.8, bins = 15) +
-      geom_vline(xintercept = last_obs, color = "#e74c3c",
+      geom_histogram(fill = sim_bootstrap, color = "white", alpha = 0.8, bins = 15) +
+      geom_vline(xintercept = last_obs, color = sim_observed,
                  linewidth = 1.3, linetype = "dashed") +
       labs(title = "Ostatnia próba",
            subtitle = paste0(stat_lbl, " = ", round(last_obs, 3)),
            x = "Wartość", y = "Liczba") +
-      theme_educational()
+      theme_upwr()
 
     # Prawy panel: belki CI
     p_ci <- plot_ci_bands(cis, stat_lbl, input$ch2b_conf, true_val = true_val)
@@ -453,11 +456,11 @@ ch2_server <- function(input, output, session) {
     if (length(cis) == 0) return(NULL)
     last <- cis[[length(cis)]]
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
           paste0("Liczba prób: ", length(cis))),
-      div(class = "stat-box", style = paste0("background:", col_success, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_success, ";"),
           paste0("CI: [", round(last$lower, 3), ", ", round(last$upper, 3), "]")),
-      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
           paste0("SE: ", round(last$se, 4)))
     )
   })
@@ -495,7 +498,7 @@ ch2_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Symuluj pokrycie'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
@@ -516,10 +519,10 @@ ch2_server <- function(input, output, session) {
       geom_errorbarh(aes(xmin = lower, xmax = upper, color = covers),
                      height = 0.5, linewidth = 0.9, alpha = 0.85) +
       geom_point(aes(x = obs, color = covers), size = 2) +
-      geom_vline(xintercept = true_val, color = col_dark,
+      geom_vline(xintercept = true_val, color = sim_secondary,
                  linewidth = 1.3, linetype = "dashed") +
       scale_color_manual(
-        values = c("TRUE" = "#27ae60", "FALSE" = "#e74c3c"),
+        values = c("TRUE" = sim_success, "FALSE" = sim_observed),
         labels = c("TRUE" = "Trafiło", "FALSE" = "Nie trafiło"),
         name = NULL
       ) +
@@ -532,7 +535,7 @@ ch2_server <- function(input, output, session) {
                           "  |  ", sum(covers), " z ", length(covers), " CI trafiło"),
         x = "Średnia", y = "Symulacja"
       ) +
-      theme_educational()
+      theme_upwr()
   }, height = function() {
     res <- ch2c_result()
     if (is.null(res)) 500 else max(400, 60 + length(res$cis) * 9)
@@ -542,13 +545,13 @@ ch2_server <- function(input, output, session) {
     res <- ch2c_result()
     if (is.null(res)) return(NULL)
     coverage <- mean(res$covers)
-    col_cov  <- if (abs(coverage - res$conf) < 0.05) col_success else col_warning
+    col_cov  <- if (abs(coverage - res$conf) < 0.05) sim_success else sim_warning
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_cov, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", col_cov, ";"),
           paste0("Pokrycie: ", round(coverage * 100, 1), "%")),
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
           paste0("Cel: ", round(res$conf * 100), "%")),
-      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
           paste0("Trafiło: ", sum(res$covers), " / ", length(res$covers)))
     )
   })
@@ -577,16 +580,16 @@ ch2_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Porównaj metody'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
     ci_df <- rbind(res$ci_boot, res$ci_t)
     plot_ci_comparison(ci_df,
-                       col_primary   = col_primary,
-                       col_secondary = col_secondary,
-                       col_success   = col_success,
-                       col_warning   = col_warning)
+                       sim_bootstrap   = sim_bootstrap,
+                       sim_observed = sim_observed,
+                       sim_success   = sim_success,
+                       sim_warning   = sim_warning)
   })
 
   output$ch2_comparison_text <- renderUI({
@@ -599,7 +602,7 @@ ch2_server <- function(input, output, session) {
                           (cb$upper - res$boot$observed))
 
     if (asymmetry_boot > 0.5 || width_diff / ct$width > 0.1) {
-      div(class = "callout-warning",
+      lc_feedback(type = "warning",
         tags$strong("Rozbieżność:"),
         paste0(" Bootstrap CI jest asymetryczny (różnica lewej/prawej ramki: ",
                round(asymmetry_boot, 2), "). T-CI byłby symetryczny z założenia.
@@ -607,7 +610,7 @@ ch2_server <- function(input, output, session) {
                niepewność.")
       )
     } else {
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Zgodność:"),
         " Oba metody dają zbliżone wyniki. Przy normalnych danych lub dużym n
          t-CI i bootstrap są równoważne."
@@ -644,28 +647,28 @@ ch2_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Uruchom'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
     ci_df <- rbind(res$ci_boot, res$ci_classical)
     plot_ci_comparison(ci_df,
                        true_value    = res$p_true,
-                       col_primary   = col_primary,
-                       col_secondary = col_secondary,
-                       col_success   = col_success,
-                       col_warning   = col_warning)
+                       sim_bootstrap   = sim_bootstrap,
+                       sim_observed = sim_observed,
+                       sim_success   = sim_success,
+                       sim_warning   = sim_warning)
   })
 
   output$ch2_prop_stats <- renderUI({
     res <- ch2_prop_result()
     if (is.null(res)) return(NULL)
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
           paste0("n = ", res$n, ", k = ", res$k)),
-      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
           paste0("p̂ = ", round(res$phat, 3))),
-      div(class = "stat-box", style = paste0("background:", col_success, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_success, ";"),
           paste0("p (prawdziwe) = ", round(res$p_true, 3)))
     )
   })

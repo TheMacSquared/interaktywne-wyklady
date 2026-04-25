@@ -2,19 +2,28 @@
 # CHAPTER 7: Monte Carlo
 # ============================================================================
 
-ch7_ui <- tabPanel("7. Monte Carlo",
-  fluidRow(column(8, offset = 2,
+ch7_ui <- lecture_chapter(
+  id = "ch-monte-carlo",
+  num = "07",
+  title = "Monte Carlo",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 07 · Symulacje statystyczne",
+      num    = "07",
+      title  = "Monte Carlo",
+      lead   = "Losujemy wiele eksperymentów, żeby zobaczyć moc testu i zachowanie p-wartości."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Bootstrap i permutacje korzystają z danych, które mamy.
        Monte Carlo korzysta z ", tags$em("modelu"),
       " — losujemy z rozkładu, aby odpowiedzieć na pytania
        statystyczne bez analitycznych wzorów."
     ),
 
-    div(class = "section-title", "Ogólna idea Monte Carlo"),
+    lc_h2("ch7-sec-01", "Ogólna idea Monte Carlo"),
 
-    div(class = "narrative",
+    tagList(
       p("Monte Carlo (MC) to rodzina metod opartych na masowym losowaniu.
          Ich siła: jeśli potrafisz ", tags$em("zasymulować"), " eksperyment,
          możesz odpowiedzieć na prawie każde pytanie probabilistyczne."),
@@ -28,17 +37,16 @@ ch7_ui <- tabPanel("7. Monte Carlo",
     # ========================================================================
     # SEKCJA A: Symulacja mocy testu
     # ========================================================================
-    div(class = "section-title", "Symulacja mocy testu"),
+    lc_h2("ch7-sec-02", "Symulacja mocy testu"),
 
-    div(class = "narrative",
+    tagList(
       p("Moc testu = P(odrzucenie H₀ | H₁ prawdziwa)."),
       p("Obliczamy ją MC: symulujemy B eksperymentów, w każdym losujemy
          dwie grupy z prawdziwą różnicą δ i sprawdzamy,
          czy test daje p < α. Proporcja takich przypadków to moc.")
     ),
 
-    div(class = "widget-block",
-      h4("Moc testu t — symulacja MC"),
+    figure_panel(label = "Ryc. 7.1", title = "Moc testu t — symulacja MC",
       fluidRow(
         column(4,
           sliderInput("ch7_delta", "Prawdziwa różnica δ:",
@@ -53,7 +61,7 @@ ch7_ui <- tabPanel("7. Monte Carlo",
                       min = 500, max = 5000, value = 1000, step = 500),
           hr(),
           actionButton("ch7_run_power", "Symuluj moc",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           uiOutput("ch7_power_stats")
         ),
@@ -63,7 +71,7 @@ ch7_ui <- tabPanel("7. Monte Carlo",
       )
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Moc = P(odrzucenie H₀ | H₁ prawdziwa)."),
       " Tu: proporcja p-wartości < α z B symulowanych eksperymentów.
        Przy δ = 0 moc powinna równać się α (to poziom istotności)."
@@ -72,16 +80,15 @@ ch7_ui <- tabPanel("7. Monte Carlo",
     # ========================================================================
     # WIDGET: Krzywa mocy
     # ========================================================================
-    div(class = "section-title", "Krzywa mocy"),
+    lc_h2("ch7-sec-03", "Krzywa mocy"),
 
-    div(class = "narrative",
+    tagList(
       p("Jak zmienia się moc testu wraz z efektem δ?
          Dla dużych efektów test prawie zawsze wykrywa różnicę.
          Dla małych — często nie.")
     ),
 
-    div(class = "widget-block",
-      h4("Krzywa mocy testu t"),
+    figure_panel(label = "Ryc. 7.2", title = "Krzywa mocy testu t",
       fluidRow(
         column(4,
           sliderInput("ch7_pc_n",    "n (na grupę):",
@@ -93,7 +100,7 @@ ch7_ui <- tabPanel("7. Monte Carlo",
             selected = "0.05"
           ),
           actionButton("ch7_pc_run", "Oblicz krzywą mocy",
-                       class = "btn-warning", width = "100%"),
+                       class = "lc-btn-warning", width = "100%"),
           br(),
           p(class = "text-muted", style = "font-size:12px;",
             "Uwaga: obliczenie krzywej trwa kilka sekund (B=500 na punkt).")
@@ -107,17 +114,16 @@ ch7_ui <- tabPanel("7. Monte Carlo",
     # ========================================================================
     # SEKCJA B: Symulacja pod H0
     # ========================================================================
-    div(class = "section-title", "Symulacja pod H₀"),
+    lc_h2("ch7-sec-04", "Symulacja pod H₀"),
 
-    div(class = "narrative",
+    tagList(
       p("Test permutacyjny przetasowuje etykiety. Ale co jeśli H₀ określa
          ", tags$b("konkretny rozkład"), " (np. H₀: μ = 100), a nie wymienność grup?"),
       p("Wtedy losujemy statystykę testowaną z rozkładu pod H₀ przez symulację MC.
          Uzyskujemy p-wartość MC, która może być porównana z klasyczną.")
     ),
 
-    div(class = "widget-block",
-      h4("Symulacja rozkładu pod H₀"),
+    figure_panel(label = "Ryc. 7.3", title = "Symulacja rozkładu pod H₀",
       fluidRow(
         column(4,
           selectInput("ch7_null_scenario", "Scenariusz:",
@@ -132,7 +138,7 @@ ch7_ui <- tabPanel("7. Monte Carlo",
           sliderInput("ch7_null_B", "B (symulacje MC):",
                       min = 1000, max = 10000, value = 3000, step = 1000),
           actionButton("ch7_null_run", "Symuluj pod H₀",
-                       class = "btn-primary", width = "100%"),
+                       class = "lc-btn-primary", width = "100%"),
           br(), br(),
           uiOutput("ch7_null_stats")
         ),
@@ -142,7 +148,7 @@ ch7_ui <- tabPanel("7. Monte Carlo",
       )
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("MC pod H₀ vs test permutacyjny:"),
       tags$ul(
         tags$li("Test permutacyjny: przetasowuje etykiety — działa gdy H₀
@@ -152,16 +158,15 @@ ch7_ui <- tabPanel("7. Monte Carlo",
       )
     ),
 
-    div(class = "chapter-transition",
-      p("Dalej: kiedy stosować którą metodę?"),
-      actionButton("ch7_next",
-                   "Dalej → 8. Kiedy stosować?",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "08",
+      title = "Kiedy stosować?",
+      lead = "mapa decyzji dla metod resamplingowych.",
+      target_id = "ch-kiedy"
     )
 
-  ))
+  )
 )
-
 # ============================================================================
 # SERVER
 # ============================================================================
@@ -190,11 +195,11 @@ ch7_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Symuluj moc'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
-    plot_power_histogram(result, col_primary = col_primary, col_secondary = col_secondary)
+    plot_power_histogram(result, sim_bootstrap = sim_bootstrap, sim_observed = sim_observed)
   })
 
   output$ch7_power_stats <- renderUI({
@@ -202,13 +207,13 @@ ch7_server <- function(input, output, session) {
     if (is.null(result)) return(NULL)
     moc     <- result$power
     alpha   <- result$alpha
-    moc_col <- if (moc >= 0.80) col_success else if (moc >= 0.50) col_warning else col_secondary
+    moc_col <- if (moc >= 0.80) sim_success else if (moc >= 0.50) sim_warning else sim_observed
     tagList(
-      div(class = "stat-box", style = paste0("background:", moc_col, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", moc_col, ";"),
           paste0("Moc = ", round(moc * 100, 1), "%")),
-      div(class = "stat-box", style = paste0("background:", col_dark, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
           paste0("α = ", alpha)),
-      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
           paste0("n = ", result$n, ", δ = ", result$delta))
     )
   })
@@ -237,7 +242,7 @@ ch7_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Oblicz krzywą mocy'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
@@ -245,8 +250,8 @@ ch7_server <- function(input, output, session) {
       power_df      = df_pow,
       current_delta = input$ch7_delta,
       alpha         = as.numeric(input$ch7_pc_alpha),
-      col_primary   = col_primary,
-      col_secondary = col_secondary
+      sim_bootstrap   = sim_bootstrap,
+      sim_observed = sim_observed
     )
   })
 
@@ -279,7 +284,7 @@ ch7_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij 'Symuluj pod H₀'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
       return()
     }
@@ -296,14 +301,14 @@ ch7_server <- function(input, output, session) {
 
     ggplot(df, aes(x = stat, fill = extreme)) +
       geom_histogram(bins = 50, color = "white", alpha = 0.85) +
-      scale_fill_manual(values = c("FALSE" = col_null_dist, "TRUE" = col_secondary),
+      scale_fill_manual(values = c("FALSE" = sim_null_dist, "TRUE" = sim_observed),
                         guide = "none") +
-      geom_vline(xintercept  = obs,       color = col_secondary, linewidth = 1.6) +
-      geom_vline(xintercept = -abs(obs),  color = col_secondary,
+      geom_vline(xintercept  = obs,       color = sim_observed, linewidth = 1.6) +
+      geom_vline(xintercept = -abs(obs),  color = sim_observed,
                  linewidth = 1.2, linetype = "dashed") +
       annotate("text", x = obs, y = Inf,
                label = paste0("obs = ", round(obs, 3)),
-               vjust = -0.3, hjust = -0.1, color = col_secondary, size = 4.5) +
+               vjust = -0.3, hjust = -0.1, color = sim_observed, size = 4.5) +
       labs(
         title    = paste0("Rozkład MC pod H₀ (B = ", length(result$null_stats), ")"),
         subtitle = paste0("p MC = ", round(result$p_value_mc, 4),
@@ -311,7 +316,7 @@ ch7_server <- function(input, output, session) {
         x        = stat_label,
         y        = "Liczba symulacji"
       ) +
-      theme_educational()
+      theme_upwr()
   })
 
   output$ch7_null_stats <- renderUI({
@@ -320,12 +325,12 @@ ch7_server <- function(input, output, session) {
     pv_mc  <- format_pval_pl(result$p_value_mc)
     pv_cl  <- format_pval_pl(result$classical_p)
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
           paste0("obs = ", round(result$observed_stat, 3))),
-      div(class = "stat-box",
+      div(class = "lc-stat-box",
           style = paste0("background:", pv_mc$color, ";"),
           paste0("p MC = ", round(result$p_value_mc, 4))),
-      div(class = "stat-box",
+      div(class = "lc-stat-box",
           style = paste0("background:", pv_cl$color, ";"),
           paste0("p klas. = ", round(result$classical_p, 4)))
     )

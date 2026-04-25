@@ -2,25 +2,33 @@
 # CHAPTER 8: Korelacja - cor.test vs correlationBF + posterior rho
 # ============================================================================
 
-ch8_ui <- tabPanel("8. Korelacja",
-  fluidRow(column(8, offset = 2,
+ch8_ui <- lecture_chapter(
+  id = "ch-korelacja",
+  num = "08",
+  title = "Korelacja",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 08 · Metody bayesowskie",
+      num    = "08",
+      title  = "Korelacja",
+      lead   = "Korelacja w dwóch paradygmatach: p-wartość, BF i niepewność efektu."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Dwie zmienne ilościowe: czy są powiązane liniowo?
        Częstościowo: test istotności r Pearsona. Bayesowsko: BF + posterior ρ."
     ),
 
-    div(class = "section-title", "Dwa paradygmaty o związku"),
+    lc_h2("ch8-sec-01", "Dwa paradygmaty o związku"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Częstościowo: "), "cor.test daje r, p-wartość i 95% CI dla ρ."),
       p(tags$b("Bayesowsko: "), "correlationBF zwraca BF₁₀ (czy jest związek)
          + posterior dla ρ (populacyjnego współczynnika korelacji).
          HDI mówi nam, jakie wartości ρ są zgodne z danymi.")
     ),
 
-    div(class = "widget-block",
-      h4("Ten sam dataset, dwie odpowiedzi"),
+    figure_panel(label = "Ryc. 8.1", title = "Ten sam dataset, dwie odpowiedzi",
 
       fluidRow(column(12,
         fluidRow(
@@ -35,7 +43,7 @@ ch8_ui <- tabPanel("8. Korelacja",
           column(4,
             br(),
             actionButton("ch8_draw", "↻ Nowa próba",
-                         class = "btn-primary", width = "100%")
+                         class = "lc-btn-primary", width = "100%")
           )
         )
       )),
@@ -65,27 +73,26 @@ ch8_ui <- tabPanel("8. Korelacja",
         )
       ),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         uiOutput("ch8_comparison")
       )
     ),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$b("Zaleta posteriora ρ: "),
       "zamiast binarnej decyzji „istotna/nieistotna‟ widzimy cały rozkład
         możliwych wartości siły związku. Można zapytać:
        P(|ρ| > 0.3 | dane) — że związek ma praktyczną wielkość."
     ),
 
-    div(class = "chapter-transition",
-      p("Korelacja to prosta liniowa zależność między dwiema zmiennymi.
-         Wchodzimy w pełną regresję — tam różnica paradygmatów jest najbardziej widoczna."),
-      actionButton("ch8_next",
-                   "Dalej: Regresja liniowa →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "09",
+      title = "Regresja liniowa",
+      lead = "model liniowy z priorem i posteriorem współczynników.",
+      target_id = "ch-regresja-lin"
     )
 
-  )) # column, fluidRow
+  )
 )
 
 ch8_server <- function(input, output, session) {
@@ -94,13 +101,15 @@ ch8_server <- function(input, output, session) {
 
   observe({
     if (is.null(sample_data())) {
-      d <- generate_bivariate_data(input$ch8_n, true_r = input$ch8_true_r)
+      d <- generate_bivariate_data(bayes_input(input$ch8_n, 40),
+                                   true_r = bayes_input(input$ch8_true_r, 0.4))
       sample_data(d)
     }
   })
 
   observeEvent(list(input$ch8_draw, input$ch8_n, input$ch8_true_r), {
-    d <- generate_bivariate_data(input$ch8_n, true_r = input$ch8_true_r)
+    d <- generate_bivariate_data(bayes_input(input$ch8_n, 40),
+                                 true_r = bayes_input(input$ch8_true_r, 0.4))
     sample_data(d)
   }, ignoreInit = TRUE)
 
@@ -115,8 +124,8 @@ ch8_server <- function(input, output, session) {
     req(d)
     plot_scatter_with_fit(d, x_var = "x", y_var = "y",
                           show_line = TRUE,
-                          col_point = col_primary,
-                          col_line = col_frequentist,
+                          col_point = bayes_primary,
+                          col_line = bayes_freq,
                           title = paste0("Dane (n = ", nrow(d), ")"))
   })
 
@@ -124,7 +133,7 @@ ch8_server <- function(input, output, session) {
     r <- result()
     p_info <- format_pval_pl(r$p_value)
     ci <- r$ci_freq
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("r Pearsona = "), round(r$r_obs, 3),
       "  |  t = ", round(r$t_statistic, 2),
       "  |  df = ", r$df, tags$br(),
@@ -142,8 +151,8 @@ ch8_server <- function(input, output, session) {
       ref_value = 0,
       x_label = "ρ (korelacja populacyjna)",
       title = NULL,
-      col_posterior = col_posterior,
-      col_hdi = col_hdi
+      bayes_posterior = bayes_posterior,
+      bayes_hdi = bayes_hdi
     )
   })
 
@@ -152,7 +161,7 @@ ch8_server <- function(input, output, session) {
     interp <- interpret_bf(r$bf10)
     prob_positive <- mean(r$posterior_rho > 0)
     prob_mid <- mean(abs(r$posterior_rho) > 0.3)
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("BF₁₀ = "), format_bf(r$bf10),
       " (", interp$level, " ", interp$direction, ")", tags$br(),
       tags$b("Mediana ρ: "), round(r$posterior_median, 3),

@@ -2,17 +2,26 @@
 # CHAPTER 6: ANOVA - F-test vs anovaBF
 # ============================================================================
 
-ch6_ui <- tabPanel("6. ANOVA",
-  fluidRow(column(8, offset = 2,
+ch6_ui <- lecture_chapter(
+  id = "ch-anova",
+  num = "06",
+  title = "ANOVA",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 06 · Metody bayesowskie",
+      num    = "06",
+      title  = "ANOVA",
+      lead   = "Bayesowska alternatywa dla ANOVA i interpretacja dowodu między modelami."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Trzy lub więcej grup. W częstościowej statystyce: F-test (jednoczynnikowa ANOVA).
        Tutaj: jej bayesowski odpowiednik — anovaBF."
     ),
 
-    div(class = "section-title", "Idea dwoch podejsc"),
+    lc_h2("ch6-sec-01", "Idea dwoch podejsc"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Częstościowo: "), "F = wariancja między grupami / wariancja wewnątrz.
          Duże F i małe p → co najmniej jedna grupa różni się od pozostałych."),
       p(tags$b("Bayesowsko: "), "anovaBF porównuje dwa modele:"),
@@ -24,8 +33,7 @@ ch6_ui <- tabPanel("6. ANOVA",
       p("BF₁₀ mówi, ile razy bardziej prawdopodobne są dane pod M₁ niż pod M₀.")
     ),
 
-    div(class = "widget-block",
-      h4("ANOVA: te same dane, dwa paradygmaty"),
+    figure_panel(label = "Ryc. 6.1", title = "ANOVA: te same dane, dwa paradygmaty",
 
       fluidRow(column(12,
         fluidRow(
@@ -54,7 +62,7 @@ ch6_ui <- tabPanel("6. ANOVA",
           column(3,
             br(),
             actionButton("ch6_draw", "↻ Nowa próba",
-                         class = "btn-primary", width = "100%")
+                         class = "lc-btn-primary", width = "100%")
           )
         )
       )),
@@ -78,14 +86,14 @@ ch6_ui <- tabPanel("6. ANOVA",
         )
       ),
 
-      div(class = "callout-info",
+      lc_feedback(type = "info",
         uiOutput("ch6_comparison")
       )
     ),
 
-    div(class = "section-title", "Co zyskuję bayesowsko?"),
+    lc_h2("ch6-sec-02", "Co zyskuję bayesowsko?"),
 
-    div(class = "narrative",
+    tagList(
       p("ANOVA częstościowa daje jedną liczbę (p) i każe iść na post-hoc testy. Bayes:"),
       tags$ul(
         tags$li("BF₁₀ = jasna skala siły dowodu (nie tylko binarne „istotny/nie‟)"),
@@ -94,15 +102,14 @@ ch6_ui <- tabPanel("6. ANOVA",
       )
     ),
 
-    div(class = "chapter-transition",
-      p("Porównywaliśmy średnie. A co z danymi jakościowymi?
-         Tabele krzyżowe — też mają bayesowski odpowiednik."),
-      actionButton("ch6_next",
-                   "Dalej: Tabele krzyżowe →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "07",
+      title = "Tabele krzyżowe",
+      lead = "Bayes Factor dla danych kategorycznych.",
+      target_id = "ch-tabele"
     )
 
-  )) # column, fluidRow
+  )
 )
 
 ch6_server <- function(input, output, session) {
@@ -112,9 +119,11 @@ ch6_server <- function(input, output, session) {
   observe({
     if (is.null(sample_data())) {
       d <- generate_multi_groups_data(
-        n_per_group = input$ch6_n,
-        means = c(input$ch6_mean_a, input$ch6_mean_b, input$ch6_mean_c),
-        sd = input$ch6_sd
+        n_per_group = bayes_input(input$ch6_n, 20),
+        means = c(bayes_input(input$ch6_mean_a, 50),
+                  bayes_input(input$ch6_mean_b, 55),
+                  bayes_input(input$ch6_mean_c, 60)),
+        sd = bayes_input(input$ch6_sd, 10)
       )
       sample_data(d)
     }
@@ -123,9 +132,11 @@ ch6_server <- function(input, output, session) {
   observeEvent(list(input$ch6_draw, input$ch6_n, input$ch6_mean_a,
                     input$ch6_mean_b, input$ch6_mean_c, input$ch6_sd), {
     d <- generate_multi_groups_data(
-      n_per_group = input$ch6_n,
-      means = c(input$ch6_mean_a, input$ch6_mean_b, input$ch6_mean_c),
-      sd = input$ch6_sd
+      n_per_group = bayes_input(input$ch6_n, 20),
+      means = c(bayes_input(input$ch6_mean_a, 50),
+                bayes_input(input$ch6_mean_b, 55),
+                bayes_input(input$ch6_mean_c, 60)),
+      sd = bayes_input(input$ch6_sd, 10)
     )
     sample_data(d)
   }, ignoreInit = TRUE)
@@ -143,12 +154,12 @@ ch6_server <- function(input, output, session) {
       geom_jitter(width = 0.15, size = 2, alpha = 0.5,
                    aes(color = group), show.legend = FALSE) +
       geom_boxplot(alpha = 0.55, width = 0.5, outlier.shape = NA) +
-      scale_fill_manual(values = c(col_primary, col_warning, col_teal),
+      scale_fill_manual(values = c(bayes_primary, bayes_warning, bayes_teal),
                         guide = "none") +
-      scale_color_manual(values = c(col_primary, col_warning, col_teal),
+      scale_color_manual(values = c(bayes_primary, bayes_warning, bayes_teal),
                          guide = "none") +
       labs(title = "Dane: trzy grupy", x = "Grupa", y = "Wartość") +
-      theme_educational()
+      theme_upwr()
   })
 
   output$ch6_freq_result <- renderUI({
@@ -158,7 +169,7 @@ ch6_server <- function(input, output, session) {
     means_str <- paste0(gs$group, " = ", round(gs$mean, 2),
                         " (SD ", round(gs$sd, 2), ")",
                         collapse = " | ")
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("F("), r$df1, ", ", r$df2, ") = ",
       round(r$f_statistic, 3), tags$br(),
       HTML(p_info$decision), tags$br(),
@@ -174,7 +185,7 @@ ch6_server <- function(input, output, session) {
   output$ch6_bayes_result <- renderUI({
     r <- result()
     interp <- interpret_bf(r$bf10)
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$b("BF₁₀ (model grupowy vs null): "),
       format_bf(r$bf10), tags$br(),
       tags$b("Interpretacja: "), interp$short_summary, tags$br(),

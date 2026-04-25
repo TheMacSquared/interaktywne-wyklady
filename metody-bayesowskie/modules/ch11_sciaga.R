@@ -2,17 +2,26 @@
 # CHAPTER 11: Sciaga - tabela porownawcza paradygmatow
 # ============================================================================
 
-ch11_ui <- tabPanel("11. Ściąga",
-  fluidRow(column(8, offset = 2,
+ch11_ui <- lecture_chapter(
+  id = "ch-sciaga",
+  num = "11",
+  title = "Ściąga",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 11 · Metody bayesowskie",
+      num    = "11",
+      title  = "Ściąga",
+      lead   = "Podsumowanie metod bayesowskich, interpretacji BF i praktycznych komend."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Podsumowanie na jednej stronie: kiedy używać którego paradygmatu,
        która funkcja R odpowiada ktoremu testowi, i jak interpretować wyniki."
     ),
 
-    div(class = "section-title", "Paradygmat ↔ Paradygmat: czym się różnią?"),
+    lc_h2("ch11-sec-01", "Paradygmat ↔ Paradygmat: czym się różnią?"),
 
-    tags$table(class = "table table-striped table-bordered",
+    tags$table(class = "lc-table lc-table-striped lc-table-bordered",
       tags$thead(
         tags$tr(
           tags$th("Pytanie"),
@@ -54,9 +63,9 @@ ch11_ui <- tabPanel("11. Ściąga",
       )
     ),
 
-    div(class = "section-title", "Tabela metod: co używać w R?"),
+    lc_h2("ch11-sec-02", "Tabela metod: co używać w R?"),
 
-    tags$table(class = "table table-striped table-bordered",
+    tags$table(class = "lc-table lc-table-striped lc-table-bordered",
       tags$thead(
         tags$tr(
           tags$th("Problem"),
@@ -105,9 +114,9 @@ ch11_ui <- tabPanel("11. Ściąga",
       )
     ),
 
-    div(class = "section-title", "Kiedy który paradygmat?"),
+    lc_h2("ch11-sec-03", "Kiedy który paradygmat?"),
 
-    div(class = "narrative",
+    tagList(
       p(tags$b("Częstościowo jest wygodniejsze gdy:")),
       tags$ul(
         tags$li("Recenzenci/czasopismo oczekują p-wartości (wciąż standard w wielu dziedzinach)"),
@@ -124,16 +133,16 @@ ch11_ui <- tabPanel("11. Ściąga",
       )
     ),
 
-    div(class = "callout-success",
+    lc_feedback(type = "ok",
       tags$b("Podsumowanie w jednym zdaniu: "),
       "częstościowa statystyka odpowiada na pytanie „jak zaskakujące są moje dane, gdyby H₀ było prawdą?‟,
        bayesowska — „jak prawdopodobne są różne wartości parametru, dając moje dane i prior?‟.
        To dwa różne pytania, oba legalne, często komplementarne."
     ),
 
-    div(class = "section-title", "Skala Jeffreysa dla BF"),
+    lc_h2("ch11-sec-04", "Skala Jeffreysa dla BF"),
 
-    tags$table(class = "table table-bordered",
+    tags$table(class = "lc-table lc-table-bordered",
       tags$thead(
         tags$tr(
           tags$th("BF₁₀"),
@@ -150,14 +159,14 @@ ch11_ui <- tabPanel("11. Ściąga",
     ),
     p(tags$em("Symetrycznie: BF₁₀ < 1 czytamy jako 1/BF₁₀ dowód za H₀.")),
 
-    div(class = "chapter-transition",
-      p("Przejdź do ćwiczeń — praktyczne zadania w Twoim kierunku."),
-      actionButton("ch11_to_ch12",
-                   "Ćwiczenia kierunkowe →",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "12",
+      title = "Ćwiczenia",
+      lead = "zadania kierunkowe do samodzielnej interpretacji.",
+      target_id = "ch-cwiczenia"
     )
 
-  )) # column, fluidRow
+  )
 )
 
 ch11_server <- function(input, output, session) {

@@ -2,14 +2,23 @@
 # CHAPTER 12: Cwiczenia kierunkowe (Rolnictwo / TZ / BHP / Edukacja)
 # ============================================================================
 
-ch12_ui <- tabPanel("12. Ćwiczenia",
-  fluidRow(column(8, offset = 2,
+ch12_ui <- lecture_chapter(
+  id = "ch-cwiczenia",
+  num = "12",
+  title = "Ćwiczenia",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 12 · Metody bayesowskie",
+      num    = "12",
+      title  = "Ćwiczenia",
+      lead   = "Praktyczne zadania bayesowskie w kontekście kierunkowym."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Praktyczne zadania bayesowskie w kontekście Twojego kierunku."
     ),
 
-    div(class = "section-title", "Wybierz kierunek"),
+    lc_h2("ch12-sec-01", "Wybierz kierunek"),
 
     selectInput("ch12_kierunek", NULL,
       choices = list(
@@ -23,7 +32,7 @@ ch12_ui <- tabPanel("12. Ćwiczenia",
 
     uiOutput("ch12_content")
 
-  ))
+  )
 )
 
 ch12_server <- function(input, output, session) {
@@ -43,41 +52,38 @@ ch12_server <- function(input, output, session) {
 
   .ch12_rol <- function() {
     tagList(
-      div(class = "section-title", "Rolnictwo: porównanie nawozów"),
+      lc_h2("ch12-sec-02", "Rolnictwo: porównanie nawozów"),
 
-      div(class = "widget-block",
-        h4("Zadanie 1 — Porównanie plonów (BF vs p)"),
-        div(class = "narrative",
+      figure_panel(label = "Ćw. 1", title = "Zadanie 1 — Porównanie plonów (BF vs p)",
+        tagList(
           p("Rolnik porównuje dwa nawozy (A i B) na identycznych poletkach.
              Plony w dt/ha dla 15 poletek każdy nawoz."),
           p(tags$b("Pytanie: "), "Czy nawóz B daje wyższe plony niż A?")
         ),
         actionButton("ch12_rol_ans1", "Pokaż rozwiązanie",
-                      class = "btn-outline-success btn-sm"),
+                      class = "lc-btn-ok-outline lc-btn-sm"),
         uiOutput("ch12_rol_sol1")
       ),
 
-      div(class = "widget-block",
-        h4("Zadanie 2 — Skuteczność oprysku (tabela 2×2)"),
-        div(class = "narrative",
+      figure_panel(label = "Ćw. 2", title = "Zadanie 2 — Skuteczność oprysku (tabela 2×2)",
+        tagList(
           p("Dla 80 poletek z opryskiem: 60 zdrowych, 20 chorych.
              Dla 80 bez oprysku: 40 zdrowych, 40 chorych."),
           p(tags$b("Pytanie: "), "Jak silny jest dowód na skuteczność oprysku?
              Jakie OR wynika z posteriora?")
         ),
         actionButton("ch12_rol_ans2", "Pokaż rozwiązanie",
-                      class = "btn-outline-success btn-sm"),
+                      class = "lc-btn-ok-outline lc-btn-sm"),
         uiOutput("ch12_rol_sol2")
       ),
 
-      div(class = "widget-block",
-        h4("Zadanie 3 — Myślenie krytyczne"),
-        div(class = "narrative",
+      figure_panel(label = "Ćw. 3", title = "Zadanie 3 — Myślenie krytyczne",
+        tagList(
           p("Eksperyment z 2 poletkami. p = 0.04 (istotne), BF₁₀ = 1.8 (anekdotyczne).
              Jak pogodzić te wyniki? Który paradygmat jest tu wiarygodniejszy i dlaczego?")
         ),
         actionButton("ch12_rol_ans3", "Pokaż rozwiązanie",
-                      class = "btn-outline-success btn-sm"),
+                      class = "lc-btn-ok-outline lc-btn-sm"),
         uiOutput("ch12_rol_sol3")
       )
     )
@@ -85,7 +91,7 @@ ch12_server <- function(input, output, session) {
 
   observeEvent(input$ch12_rol_ans1, {
     output$ch12_rol_sol1 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$b("Rozwiązanie:"), tags$br(),
         tags$code("BayesFactor::ttestBF(plon_B, plon_A)"),
         " – BF₁₀ > 3 to dowód umiarkowany ", tags$em("za"), " różnicą.",
@@ -102,7 +108,7 @@ ch12_server <- function(input, output, session) {
 
   observeEvent(input$ch12_rol_ans2, {
     output$ch12_rol_sol2 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$b("Rozwiązanie:"), tags$br(),
         tags$code("contingencyTableBF(matrix(c(60,20,40,40), 2, byrow=TRUE), sampleType=\"indepMulti\", fixedMargin=\"rows\")"),
         tags$br(),
@@ -117,7 +123,7 @@ ch12_server <- function(input, output, session) {
 
   observeEvent(input$ch12_rol_ans3, {
     output$ch12_rol_sol3 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$b("Rozwiązanie:"), tags$br(),
         "To paradoks Lindleya w miniaturze: częstościowa istotność (p=0.04) przy
          bayesowsko słabym dowodzie (BF=1.8) zazwyczaj sygnalizuje mały efekt przy dużej próbie
@@ -138,42 +144,39 @@ ch12_server <- function(input, output, session) {
 
   .ch12_zyw <- function() {
     tagList(
-      div(class = "section-title", "Technologia żywności: receptury i trwałość"),
+      lc_h2("ch12-sec-03", "Technologia żywności: receptury i trwałość"),
 
-      div(class = "widget-block",
-        h4("Zadanie 1 — Nowa vs stara receptura (dwie grupy)"),
-        div(class = "narrative",
+      figure_panel(label = "Ćw. 4", title = "Zadanie 1 — Nowa vs stara receptura (dwie grupy)",
+        tagList(
           p("20 degustatorów ocenia starą recepturę (skala 1–10), drugie 20 — nową."),
           p(tags$b("Pytanie: "), "Czy nowa receptura jest oceniana lepiej?
              Wykonaj test bayesowski i podaj P(nowa > stara | dane).")
         ),
         actionButton("ch12_zyw_ans1", "Pokaż rozwiązanie",
-                      class = "btn-outline-success btn-sm"),
+                      class = "lc-btn-ok-outline lc-btn-sm"),
         uiOutput("ch12_zyw_sol1")
       ),
 
-      div(class = "widget-block",
-        h4("Zadanie 2 — Trwałość vs temperatura (regresja)"),
-        div(class = "narrative",
+      figure_panel(label = "Ćw. 5", title = "Zadanie 2 — Trwałość vs temperatura (regresja)",
+        tagList(
           p("Dla 40 porcji produktu zapisano temperaturę przechowywania (°C)
              i czas do utraty walorów (dni)."),
           p(tags$b("Pytanie: "), "O ile dni skraca się trwałość na każdy dodatkowy °C?
              (regresja bayesowska, 95% HDI dla slope)")
         ),
         actionButton("ch12_zyw_ans2", "Pokaż rozwiązanie",
-                      class = "btn-outline-success btn-sm"),
+                      class = "lc-btn-ok-outline lc-btn-sm"),
         uiOutput("ch12_zyw_sol2")
       ),
 
-      div(class = "widget-block",
-        h4("Zadanie 3 — Aha-moment"),
-        div(class = "narrative",
+      figure_panel(label = "Ćw. 6", title = "Zadanie 3 — Aha-moment",
+        tagList(
           p("Recenzent pisze: „p = 0.08, więc nowa receptura nie jest lepsza‟.
              Jak przeformułować to stwierdzenie w języku bayesowskim,
              żeby lepiej odzwierciedliło stan wiedzy?")
         ),
         actionButton("ch12_zyw_ans3", "Pokaż rozwiązanie",
-                      class = "btn-outline-success btn-sm"),
+                      class = "lc-btn-ok-outline lc-btn-sm"),
         uiOutput("ch12_zyw_sol3")
       )
     )
@@ -181,7 +184,7 @@ ch12_server <- function(input, output, session) {
 
   observeEvent(input$ch12_zyw_ans1, {
     output$ch12_zyw_sol1 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$code("ttestBF(formula = ocena ~ receptura, data = d)"),
         " zwraca BF₁₀.",
         tags$br(),
@@ -197,7 +200,7 @@ ch12_server <- function(input, output, session) {
 
   observeEvent(input$ch12_zyw_ans2, {
     output$ch12_zyw_sol2 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$code("stan_glm(trwalosc ~ temp, data = d, family=gaussian, iter=1000)"),
         tags$br(),
         "Z posteriora: mediana β₁ + 95% HDI.",
@@ -210,7 +213,7 @@ ch12_server <- function(input, output, session) {
 
   observeEvent(input$ch12_zyw_ans3, {
     output$ch12_zyw_sol3 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$b("Problem ze stwierdzeniem recenzenta: "),
         "p = 0.08 nie znaczy „brak efektu‟ — znaczy tylko „nie możemy odrzucić H₀ przy α = 0.05‟.",
         tags$br(),
@@ -230,43 +233,40 @@ ch12_server <- function(input, output, session) {
 
   .ch12_bhp <- function() {
     tagList(
-      div(class = "section-title", "BHP: szkolenia i wypadki"),
+      lc_h2("ch12-sec-04", "BHP: szkolenia i wypadki"),
 
-      div(class = "widget-block",
-        h4("Zadanie 1 — Szkolenie vs incydenty (tabela 2×2)"),
-        div(class = "narrative",
+      figure_panel(label = "Ćw. 7", title = "Zadanie 1 — Szkolenie vs incydenty (tabela 2×2)",
+        tagList(
           p("Przed szkoleniem: 12 incydentów w 80 zmianach. Po szkoleniu: 5 w 80 zmianach."),
           p(tags$b("Pytanie: "), "Jak silny jest dowód na spadek liczby incydentów?
              Podaj OR i jego 95% HDI.")
         ),
         actionButton("ch12_bhp_ans1", "Pokaż rozwiązanie",
-                      class = "btn-outline-success btn-sm"),
+                      class = "lc-btn-ok-outline lc-btn-sm"),
         uiOutput("ch12_bhp_sol1")
       ),
 
-      div(class = "widget-block",
-        h4("Zadanie 2 — Czas reakcji (regresja logistyczna)"),
-        div(class = "narrative",
+      figure_panel(label = "Ćw. 8", title = "Zadanie 2 — Czas reakcji (regresja logistyczna)",
+        tagList(
           p("Dla 100 pracowników mierzono czas reakcji (ms) i czy popełnili błąd (0/1).
              Czy dłuższy czas reakcji zwiększa szansę błędu?"),
           p(tags$b("Pytanie: "), "Wykonaj ", tags$code("stan_glm(blad ~ czas, family=binomial)"),
              " — podaj OR na wzrost czasu o 100 ms.")
         ),
         actionButton("ch12_bhp_ans2", "Pokaż rozwiązanie",
-                      class = "btn-outline-success btn-sm"),
+                      class = "lc-btn-ok-outline lc-btn-sm"),
         uiOutput("ch12_bhp_sol2")
       ),
 
-      div(class = "widget-block",
-        h4("Zadanie 3 — Decyzja zarządcza"),
-        div(class = "narrative",
+      figure_panel(label = "Ćw. 9", title = "Zadanie 3 — Decyzja zarządcza",
+        tagList(
           p("Posterior dla zmniejszenia wypadków po wdrożeniu nowej procedury:
              mediana 30% spadku, 95% HDI: [5%, 52%].
              Koszt wdrożenia: 100k zł. Żadnych innych danych.
              Jak argumentować „wdrażamy‟ / „nie wdrażamy‟ na podstawie HDI?")
         ),
         actionButton("ch12_bhp_ans3", "Pokaż rozwiązanie",
-                      class = "btn-outline-success btn-sm"),
+                      class = "lc-btn-ok-outline lc-btn-sm"),
         uiOutput("ch12_bhp_sol3")
       )
     )
@@ -274,7 +274,7 @@ ch12_server <- function(input, output, session) {
 
   observeEvent(input$ch12_bhp_ans1, {
     output$ch12_bhp_sol1 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$code("tab <- matrix(c(12, 68, 5, 75), 2, byrow=TRUE)"),
         tags$br(),
         tags$code("contingencyTableBF(tab, sampleType=\"indepMulti\", fixedMargin=\"rows\")"),
@@ -293,7 +293,7 @@ ch12_server <- function(input, output, session) {
 
   observeEvent(input$ch12_bhp_ans2, {
     output$ch12_bhp_sol2 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$code("fit <- stan_glm(blad ~ I(czas/100), data=d, family=binomial, iter=1000)"),
         tags$br(),
         tags$code("post <- as.matrix(fit); OR_100 <- exp(post[,\"I(czas/100)\"])"),
@@ -307,7 +307,7 @@ ch12_server <- function(input, output, session) {
 
   observeEvent(input$ch12_bhp_ans3, {
     output$ch12_bhp_sol3 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$b("Za wdrożeniem: "),
         "HDI nie obejmuje 0% (dolny kraniec = 5%). Mamy wiarygodny spadek minimum
          o 5%, mediana 30%. Jeśli nawet dolna granica HDI (5% spadku) jest ekonomicznie opłacalna
@@ -329,42 +329,39 @@ ch12_server <- function(input, output, session) {
 
   .ch12_edu <- function() {
     tagList(
-      div(class = "section-title", "Edukacja: metody i wyniki"),
+      lc_h2("ch12-sec-05", "Edukacja: metody i wyniki"),
 
-      div(class = "widget-block",
-        h4("Zadanie 1 — Klasyczna vs aktywna (ANOVA)"),
-        div(class = "narrative",
+      figure_panel(label = "Ćw. 10", title = "Zadanie 1 — Klasyczna vs aktywna (ANOVA)",
+        tagList(
           p("Trzy klasy (A, B, C) — każda uczę inną metodą.
              n = 25 na klasę, średnie wyniki: 68, 72, 70."),
           p(tags$b("Pytanie: "), "BF₁₀ dla modelu z różnicami —
              czy mamy przesłanki, że metoda ma znaczenie?")
         ),
         actionButton("ch12_edu_ans1", "Pokaż rozwiązanie",
-                      class = "btn-outline-success btn-sm"),
+                      class = "lc-btn-ok-outline lc-btn-sm"),
         uiOutput("ch12_edu_sol1")
       ),
 
-      div(class = "widget-block",
-        h4("Zadanie 2 — Godziny nauki → zaliczenie (reg. log.)"),
-        div(class = "narrative",
+      figure_panel(label = "Ćw. 11", title = "Zadanie 2 — Godziny nauki → zaliczenie (reg. log.)",
+        tagList(
           p("Dla 60 studentów: godziny nauki w tygodniu (1–10) i czy zaliczyli (0/1)."),
           p(tags$b("Pytanie: "), "OR na dodatkową godzinę + P(OR > 1.5 | dane).
              Co to oznacza praktycznie?")
         ),
         actionButton("ch12_edu_ans2", "Pokaż rozwiązanie",
-                      class = "btn-outline-success btn-sm"),
+                      class = "lc-btn-ok-outline lc-btn-sm"),
         uiOutput("ch12_edu_sol2")
       ),
 
-      div(class = "widget-block",
-        h4("Zadanie 3 — Bayes vs częstościowo (dyskusja)"),
-        div(class = "narrative",
+      figure_panel(label = "Ćw. 12", title = "Zadanie 3 — Bayes vs częstościowo (dyskusja)",
+        tagList(
           p("W Twojej pracy magisterskiej: porównujesz dwa podręczniki (n = 18 + 18).
              Test t: p = 0.06. ttestBF: BF₁₀ = 2.1.
              Jak opisać wynik w sekcji „Wyniki‟ tak, żeby nie nadinterpretować?")
         ),
         actionButton("ch12_edu_ans3", "Pokaż rozwiązanie",
-                      class = "btn-outline-success btn-sm"),
+                      class = "lc-btn-ok-outline lc-btn-sm"),
         uiOutput("ch12_edu_sol3")
       )
     )
@@ -372,7 +369,7 @@ ch12_server <- function(input, output, session) {
 
   observeEvent(input$ch12_edu_ans1, {
     output$ch12_edu_sol1 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$code("anovaBF(wynik ~ klasa, data = d)"),
         tags$br(),
         tags$b("Interpretacja: "),
@@ -388,7 +385,7 @@ ch12_server <- function(input, output, session) {
 
   observeEvent(input$ch12_edu_ans2, {
     output$ch12_edu_sol2 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$code("fit <- stan_glm(zaliczenie ~ godziny, family=binomial, iter=1000)"),
         tags$br(),
         tags$code("post <- as.matrix(fit); OR <- exp(post[,\"godziny\"])"),
@@ -404,7 +401,7 @@ ch12_server <- function(input, output, session) {
 
   observeEvent(input$ch12_edu_ans3, {
     output$ch12_edu_sol3 <- renderUI({
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$b("Propozycja opisu: "),
         tags$em("„Test t-Studenta nie wykazał istotnej statystycznie różnicy (t = 1.95, p = 0.06).
                  Analiza bayesowska dała BF₁₀ = 2.1 — anekdotyczny dowód za różnicą.

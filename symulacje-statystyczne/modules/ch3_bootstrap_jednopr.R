@@ -2,26 +2,34 @@
 # CHAPTER 3: Bootstrap jednej proby
 # ============================================================================
 
-ch3_ui <- tabPanel("3. Bootstrap jednej próby",
-  fluidRow(column(8, offset = 2,
+ch3_ui <- lecture_chapter(
+  id = "ch-bootstrap-jednopr",
+  num = "03",
+  title = "Bootstrap jednej próby",
+  content = tagList(
+    lc_chapter_hero(
+      kicker = "Rozdział 03 · Symulacje statystyczne",
+      num    = "03",
+      title  = "Bootstrap jednej próby",
+      lead   = "Krok po kroku budujemy rozkład bootstrapowy i sprawdzamy stabilność wyniku."
+    ),
 
-    div(class = "chapter-recap",
+    lc_feedback(type = "info",
       "Bootstrap CI dla dużych prób działa świetnie.
        A dla jednej małej próby z niestandardowym rozkładem?
        To właśnie bootstrap jednej próby."
     ),
 
-    div(class = "section-title",
-        "Wnioskowanie o populacji z jednej próby"),
+    lc_h2("ch3-sec-01", "Wnioskowanie o populacji z jednej próby"),
 
-    div(class = "narrative",
+    tagList(
       p("Mamy próbę. Pytanie: co można powiedzieć o parametrze populacji?"),
       p("Klasyczny CI wymaga wzoru i założeń. Bootstrap CI nie wymaga.
          Dla mediany w ogóle nie istnieje prosty wzór analityczny —
          bootstrap wypełnia tę lukę automatycznie.")
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Algorytm bootstrap CI (krok po kroku):"),
       tags$ol(
         tags$li("Pobierz próbę x = (x₁, …, xₙ) z populacji"),
@@ -34,10 +42,9 @@ ch3_ui <- tabPanel("3. Bootstrap jednej próby",
     # ========================================================================
     # WIDGET 1: Krok po kroku
     # ========================================================================
-    div(class = "section-title", "Bootstrap CI krok po kroku"),
+    lc_h2("ch3-sec-02", "Bootstrap CI krok po kroku"),
 
-    div(class = "widget-block",
-      h4("Budowanie CI krok po kroku"),
+    figure_panel(label = "Ryc. 3.1", title = "Budowanie CI krok po kroku",
       fluidRow(
         column(4,
           selectInput("ch3_scenario", "Scenariusz:",
@@ -55,19 +62,19 @@ ch3_ui <- tabPanel("3. Bootstrap jednej próby",
           hr(),
           div(class = "step-buttons",
             actionButton("ch3_step1", "1. Dane",
-                         class = "btn-outline-primary"),
+                         class = "lc-btn-outline"),
             actionButton("ch3_step2", "2. Resample",
-                         class = "btn-outline-primary")
+                         class = "lc-btn-outline")
           ),
           div(class = "step-buttons",
             actionButton("ch3_step3", "3. Rozkład",
-                         class = "btn-outline-primary"),
+                         class = "lc-btn-outline"),
             actionButton("ch3_step4", "4. CI",
-                         class = "btn-outline-success")
+                         class = "lc-btn-ok-outline")
           ),
           br(),
           actionButton("ch3_new_data", "↺ Nowe dane",
-                       class = "btn-outline-secondary btn-sm", width = "100%"),
+                       class = "lc-btn-secondary-outline lc-btn-sm", width = "100%"),
           br(), br(),
           uiOutput("ch3_step_explanation")
         ),
@@ -81,15 +88,14 @@ ch3_ui <- tabPanel("3. Bootstrap jednej próby",
     # ========================================================================
     # WIDGET 2: Stabilnosc wg B
     # ========================================================================
-    div(class = "section-title", "Ile prób bootstrapowych potrzeba?"),
+    lc_h2("ch3-sec-03", "Ile prób bootstrapowych potrzeba?"),
 
-    div(class = "narrative",
+    tagList(
       p("Szerokość CI stabilizuje się wraz z rosnącym B.
          Ponad pewną wartością B dodawanie kolejnych prób nic już nie zmienia.")
     ),
 
-    div(class = "widget-block",
-      h4("Stabilność CI vs B"),
+    figure_panel(label = "Ryc. 3.2", title = "Stabilność CI vs B",
       fluidRow(
         column(4,
           sliderInput("ch3_B_max", "Maksymalne B:",
@@ -99,7 +105,7 @@ ch3_ui <- tabPanel("3. Bootstrap jednej próby",
             selected = "median"
           ),
           actionButton("ch3_B_run", "Pokaż stabilność",
-                       class = "btn-primary", width = "100%")
+                       class = "lc-btn-primary", width = "100%")
         ),
         column(8,
           plotOutput("ch3_B_stability", height = "260px")
@@ -107,7 +113,7 @@ ch3_ui <- tabPanel("3. Bootstrap jednej próby",
       )
     ),
 
-    div(class = "callout-info",
+    lc_feedback(type = "info",
       tags$strong("Praktyczna reguła:"),
       tags$ul(
         tags$li(tags$b("B = 1000"), " — wystarczy dla przedziałów ufności (orientacyjne)"),
@@ -119,29 +125,27 @@ ch3_ui <- tabPanel("3. Bootstrap jednej próby",
     # ========================================================================
     # QUIZ
     # ========================================================================
-    div(class = "section-title", "Quiz: która metoda?"),
+    lc_h2("ch3-sec-04", "Quiz: która metoda?"),
 
-    div(class = "narrative",
+    tagList(
       p("Próba n = 15 czasów reakcji kierowcy, wyraźnie prawoskosńna.
          Mediana = 320ms. Pytanie: czy mediana populacji różni się od 300ms?")
     ),
 
-    div(class = "widget-block",
-      h4("Wybierz odpowiednie podejście:"),
+    figure_panel(label = "Ryc. 3.3", title = "Wybierz odpowiednie podejście:",
       uiOutput("ch3_quiz_options"),
       uiOutput("ch3_quiz_feedback")
     ),
 
-    div(class = "chapter-transition",
-      p("Dalej: testowanie hipotez bez założeń — testy permutacyjne"),
-      actionButton("ch3_next",
-                   "Dalej → 4. Testy permutacyjne",
-                   class = "btn-primary btn-lg")
+    lc_chapter_next(
+      num = "04",
+      title = "Testy permutacyjne",
+      lead = "jak testować hipotezy przez przetasowanie etykiet.",
+      target_id = "ch-permutacje"
     )
 
-  ))
+  )
 )
-
 # ============================================================================
 # SERVER
 # ============================================================================
@@ -215,23 +219,23 @@ ch3_server <- function(input, output, session) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
                  label = "Kliknij '1. Dane'",
-                 size = 6, color = "#7f8c8d") +
+                 size = 6, color = upwr_reference) +
         theme_void()
     } else if (step == 1) {
       df <- data.frame(val = x, idx = seq_along(x))
       ggplot(df, aes(x = val)) +
-        geom_histogram(bins = 15, fill = col_primary, color = "white", alpha = 0.8) +
-        geom_vline(xintercept = params$stat(x), color = col_secondary,
+        geom_histogram(bins = 15, fill = sim_bootstrap, color = "white", alpha = 0.8) +
+        geom_vline(xintercept = params$stat(x), color = sim_observed,
                    linewidth = 1.4, linetype = "dashed") +
         annotate("text", x = params$stat(x), y = Inf,
                  label = paste0("obs = ", round(params$stat(x), 2)),
-                 vjust = -0.3, hjust = -0.1, color = col_secondary, size = 4) +
+                 vjust = -0.3, hjust = -0.1, color = sim_observed, size = 4) +
         labs(title = paste0("Krok 1: Próba (n = ", length(x), ")"),
              x = params$stat_lbl, y = "Liczebność") +
-        theme_educational()
+        theme_upwr()
     } else if (step == 2) {
       rs <- ch3_one_rs()
-      plot_bootstrap_step(x, rs, col_primary, col_warning, col_dark)
+      plot_bootstrap_step(x, rs, sim_bootstrap, sim_warning, sim_secondary)
     } else if (step >= 3) {
       result <- ch3_boot_res()
       ci     <- bootstrap_ci_percentile(result, conf_level = input$ch3_conf)
@@ -239,19 +243,19 @@ ch3_server <- function(input, output, session) {
         # Tylko rozklad bez CI
         df <- data.frame(stat = result$boot_stats)
         ggplot(df, aes(x = stat)) +
-          geom_histogram(bins = 40, fill = col_primary, color = "white", alpha = 0.8) +
-          geom_vline(xintercept = result$observed, color = col_secondary,
+          geom_histogram(bins = 40, fill = sim_bootstrap, color = "white", alpha = 0.8) +
+          geom_vline(xintercept = result$observed, color = sim_observed,
                      linewidth = 1.4) +
           labs(title = paste0("Krok 3: Rozkład bootstrapowy (B = ", result$B, ")"),
                x = params$stat_lbl, y = "Liczba prób") +
-          theme_educational()
+          theme_upwr()
       } else {
         # Krok 4: z CI
         plot_bootstrap_distribution(result, ci,
                                      stat_label = params$stat_lbl,
-                                     col_primary = col_primary,
-                                     col_secondary = col_secondary,
-                                     col_success = col_success,
+                                     sim_bootstrap = sim_bootstrap,
+                                     sim_observed = sim_observed,
+                                     sim_success = sim_success,
                                      conf_level = input$ch3_conf)
       }
     }
@@ -274,20 +278,20 @@ ch3_server <- function(input, output, session) {
       },
       ""
     )
-    div(class = "callout-info", txt)
+    lc_feedback(type = "info", txt)
   })
 
   output$ch3_step_result <- renderUI({
     req(ch3_step() == 4, ch3_boot_res())
     ci <- bootstrap_ci_percentile(ch3_boot_res(), conf_level = input$ch3_conf)
     tagList(
-      div(class = "stat-box", style = paste0("background:", col_success, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_success, ";"),
           paste0("Dół: ", round(ci$lower, 3))),
-      div(class = "stat-box", style = paste0("background:", col_secondary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_observed, ";"),
           paste0("Obs: ", round(ch3_boot_res()$observed, 3))),
-      div(class = "stat-box", style = paste0("background:", col_success, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_success, ";"),
           paste0("Góra: ", round(ci$upper, 3))),
-      div(class = "stat-box", style = paste0("background:", col_primary, ";"),
+      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
           paste0("SE: ", round(ch3_boot_res()$se, 4)))
     )
   })
@@ -316,17 +320,17 @@ ch3_server <- function(input, output, session) {
 
       df <- data.frame(B = B_seq, width = widths)
       ggplot(df, aes(x = B, y = width)) +
-        geom_line(color = col_primary, linewidth = 1.5) +
-        geom_point(color = col_primary, size = 2) +
-        geom_vline(xintercept = 1000, color = col_secondary,
+        geom_line(color = sim_bootstrap, linewidth = 1.5) +
+        geom_point(color = sim_bootstrap, size = 2) +
+        geom_vline(xintercept = 1000, color = sim_observed,
                    linetype = "dashed", linewidth = 1) +
         annotate("text", x = 1000, y = max(widths),
-                 label = "B = 1000", hjust = -0.1, color = col_secondary, size = 4) +
+                 label = "B = 1000", hjust = -0.1, color = sim_observed, size = 4) +
         labs(title = "Szerokość CI vs liczba prób bootstrapowych",
              subtitle = "Plateau po ok. B = 1000",
              x = "B (liczba prób bootstrapowych)",
              y = "Szerokość 95% CI") +
-        theme_educational()
+        theme_upwr()
     })
   })
 
@@ -374,7 +378,7 @@ ch3_server <- function(input, output, session) {
     answer <- ch3_quiz_selected()
 
     if (answer %in% c("B", "C")) {
-      div(class = "callout-success",
+      lc_feedback(type = "ok",
         tags$strong("Dobrze!"),
         p(
           if (answer == "B") {
@@ -390,14 +394,14 @@ ch3_server <- function(input, output, session) {
            W praktyce często stosuje się oba.")
       )
     } else if (answer == "A") {
-      div(class = "callout-danger",
+      lc_feedback(type = "danger",
         tags$strong("Nie do końca."),
         p("T-test dla jednej próby testuje średnią, nie medianę.
            Przy silnie skośnych danych i n=15, t-test jest wątpliwy.
            Poprawne: B lub C.")
       )
     } else {
-      div(class = "callout-danger",
+      lc_feedback(type = "danger",
         tags$strong("Nie."),
         p("Z-test wymaga znania σ i normalności populacji.
            Nie ma zastosowania tutaj. Poprawne: B lub C.")
