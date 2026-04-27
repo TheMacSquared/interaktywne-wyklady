@@ -277,9 +277,9 @@ ch1_ui <- list(
         " ustalamy sami — zwykle na 5%. Ale jak z danego eksperymentu wyciągnąć ",
         tags$em("decyzję"), ": odrzucić H₀ czy nie? Służy do tego ",
         tags$b("p-wartość"), "."),
-      p("Eksperyment z telefonem dał różnicę −0,7 pkt na korzyść grupy „plecak”.
+      p("Eksperyment z telefonem dał pewną różnicę średnich na korzyść grupy „plecak”.
         Czy to dowód, że telefon rozprasza? A może gdybyśmy powtórzyli badanie
-        z innymi studentami, różnica wyszłaby w drugą stronę?
+        z innymi studentami, różnica wyszłaby mniejsza, większa albo w drugą stronę?
         p-wartość formalizuje tę intuicję — mierzy, jak ",
         tags$em("zaskakująca"),
         " jest nasza obserwacja w świecie, w którym H₀ byłaby prawdziwa."),
@@ -353,6 +353,22 @@ ch1_ui <- list(
        daleko od zera jak nasza czerwona linia?"
     ),
 
+    figure_panel(
+      label = "Ryc. 1.4",
+      title = "Co naprawdę oznacza p-wartość?",
+      p("Załóżmy, że w badaniu wyszło ", tags$b("p = 0,03"),
+        ". Które zdanie jest poprawną interpretacją?"),
+      radioButtons("ch1_pvalue_meaning", NULL,
+        choices = c(
+          "Jest 3% szans, że H₀ jest prawdziwa." = "h0_prob",
+          "Jest 3% szans, że wynik jest przypadkowy." = "random_prob",
+          "Gdyby H₀ była prawdziwa, taki lub bardziej skrajny wynik pojawiłby się w 3% powtórzeń." = "tail_prob"
+        ),
+        selected = character(0)
+      ),
+      uiOutput("ch1_pvalue_meaning_feedback")
+    ),
+
     # ========================================================================
     # WIDGET 3: Quiz - decyzja
     # ========================================================================
@@ -391,7 +407,7 @@ ch1_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 1.4",
+      label = "Ryc. 1.5",
       title = "Quiz: odrzucić czy nie?",
       uiOutput("ch1_quiz_scenario"),
       p("Twoja decyzja:"),
@@ -544,6 +560,26 @@ ch1_server <- function(input, output, session) {
         color = col_pvalue
       )
     )
+  })
+
+  output$ch1_pvalue_meaning_feedback <- renderUI({
+    choice <- input$ch1_pvalue_meaning
+    if (is.null(choice) || identical(choice, character(0))) return(NULL)
+
+    if (identical(choice, "tail_prob")) {
+      lc_feedback(type = "ok",
+        tags$b("Tak."),
+        " p-wartość zakłada, że H₀ jest prawdziwa, i pyta o częstość danych
+        co najmniej tak skrajnych jak nasze."
+      )
+    } else {
+      lc_feedback(type = "danger",
+        tags$b("Nie."),
+        " p-wartość nie mówi, jakie jest prawdopodobieństwo H₀ ani
+        prawdopodobieństwo „przypadkowości” wyniku. To prawdopodobieństwo
+        danych przy założeniu H₀."
+      )
+    }
   })
 
   # --- Widget 2: Moc testu ---

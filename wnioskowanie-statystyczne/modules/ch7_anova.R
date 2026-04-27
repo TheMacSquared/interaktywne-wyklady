@@ -68,6 +68,23 @@ ch7_ui <- list(
         " średnia odstaje — ale nie mówi, ", tags$b("która"), ". Do tego służy test post-hoc (niżej).")
     ),
 
+    figure_panel(
+      label = "Ryc. 8.1",
+      title = "Intuicja ANOVA: sygnał kontra szum",
+      fluidRow(
+        column(4,
+          sliderInput("ch7_int_between", "Różnice między grupami:",
+                      min = 0, max = 8, value = 3, step = 0.5),
+          sliderInput("ch7_int_within", "Rozrzut wewnątrz grup:",
+                      min = 0.5, max = 5, value = 1.6, step = 0.1),
+          uiOutput("ch7_int_stats")
+        ),
+        column(8,
+          plotOutput("ch7_int_plot", height = "330px")
+        )
+      )
+    ),
+
     # ========================================================================
     # Cwiczenie: sformuluj hipotezy
     # ========================================================================
@@ -108,7 +125,7 @@ ch7_ui <- list(
     lc_h2("ch7-akcja", "ANOVA w akcji"),
 
     figure_panel(
-      label = "Ryc. 8.1",
+      label = "Ryc. 8.2",
       title = "ANOVA jednoczynnikowa",
       fluidRow(
         column(4,
@@ -197,7 +214,7 @@ ch7_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 8.2",
+      label = "Ryc. 8.3",
       title = "Games-Howell",
       helpText("Używa danych z ANOVA powyżej. Najpierw uruchom ANOVA!"),
       actionButton("ch7_run_tukey", "Testuj Games-Howellem",
@@ -231,7 +248,7 @@ ch7_ui <- list(
       h4("Zadanie 10 — Czy wyniki czytania różnią się między tercylami dochodu?"),
       p("Podziel okręgi na trzy równe grupy dochodowe (tercyle): ",
         tags$b("niski / średni / wysoki"),
-        " (użyj ", tags$em("split into groups"), " w Jamowi lub utwórz zmienną
+        " (użyj ", tags$em("split into groups"), " w Jamovi lub utwórz zmienną
         ręcznie na podstawie kwantyli 0, 1/3, 2/3, 1).
         Wykonaj jednoczynnikową ANOVA dla zmiennej ", tags$code("read"),
         " między grupami. Zapisz: F, df, p, η².
@@ -262,6 +279,62 @@ ch7_ui <- list(
 # ============================================================================
 
 ch7_server <- function(input, output, session) {
+
+  ch7_int_data <- reactive({
+    set.seed(404)
+    n_per_group <- 35
+    between <- input$ch7_int_between
+    within <- input$ch7_int_within
+    groups <- factor(rep(c("A", "B", "C"), each = n_per_group),
+                     levels = c("A", "B", "C"))
+    means <- c(0, between / 2, between)
+    y <- rnorm(length(groups), mean = rep(means, each = n_per_group), sd = within)
+    data.frame(grupa = groups, wynik = y)
+  })
+
+  output$ch7_int_plot <- renderPlot({
+    d <- ch7_int_data()
+    group_means <- d %>%
+      dplyr::group_by(grupa) %>%
+      dplyr::summarise(m = mean(wynik), .groups = "drop")
+
+    ggplot(d, aes(x = grupa, y = wynik, fill = grupa)) +
+      geom_boxplot(alpha = 0.35, outlier.shape = NA, width = 0.55) +
+      geom_jitter(width = 0.14, alpha = 0.35, size = 1.8) +
+      geom_point(data = group_means, aes(y = m),
+                 shape = 23, size = 4, fill = "white", color = upwr_secondary) +
+      geom_hline(yintercept = mean(d$wynik), linetype = "dashed",
+                 color = upwr_reference) +
+      scale_fill_upwr() +
+      labs(title = "Trzy grupy: średnie kontra rozrzut",
+           subtitle = "Przerywana linia = średnia ogólna; białe punkty = średnie grup",
+           x = "Grupa", y = "Wynik") +
+      theme(legend.position = "none")
+  })
+
+  output$ch7_int_stats <- renderUI({
+    d <- ch7_int_data()
+    fit <- aov(wynik ~ grupa, data = d)
+    s <- summary(fit)[[1]]
+    f_val <- s[["F value"]][1]
+    p_val <- s[["Pr(>F)"]][1]
+    eta2 <- s[["Sum Sq"]][1] / sum(s[["Sum Sq"]])
+
+    tagList(
+      lc_stat_box("F", round(f_val, 2), color = col_effect),
+      lc_stat_box("p", format.pval(p_val, digits = 3), color = col_pvalue),
+      lc_stat_box("η²", round(eta2, 2),
+                  caption = paste0(round(100 * eta2), "% zmienności wyjaśnione"),
+                  color = col_accept),
+      lc_feedback(type = "info",
+        p("ANOVA robi dokładnie to porównanie: ",
+          tags$b("zmienność między grupami"),
+          " dzieli przez ",
+          tags$b("zmienność wewnątrz grup"),
+          ". Gdy sygnał rośnie albo szum maleje, F zwykle rośnie.")
+      )
+    )
+  })
 
   # Shared ANOVA data
   ch7_data <- reactiveVal(NULL)
@@ -562,7 +635,7 @@ ch7_server <- function(input, output, session) {
       ),
       if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
       else tags$b("Brak podstaw do odrzucenia H₀"),
-      p(tags$b("Post-hoc Tukey HSD (przybliżenie — w Jamowi użyj Games-Howell):")),
+      p(tags$b("Post-hoc Tukey HSD (przybliżenie — w Jamovi użyj Games-Howell):")),
       tags$ul(lapply(rownames(r$ph), function(nm) {
         pp <- r$ph[nm, "p adj"]
         tags$li(sprintf("%s: Δ = %.2f pkt, p.adj %s %s",

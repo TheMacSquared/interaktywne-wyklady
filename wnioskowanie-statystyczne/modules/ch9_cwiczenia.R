@@ -39,24 +39,37 @@ ch9_ui <- list(
           " — 200 partii produktów spożywczych (białko, wilgotność, trwałość)")
       ),
       p(tags$b("Czas:"), " ~2 h · ",
-        tags$b("Narzędzie:"), " Jamowi lub R · ",
-        tags$b("Format:"), " 3 bloki × 6 zadań + krytyczne myślenie, ukryte rozwiązania.")
+        tags$b("Narzędzie:"), " Jamovi lub R · ",
+        tags$b("Format:"), " 1 wariant kierunkowy × 6 zadań + krytyczne myślenie, ukryte rozwiązania."),
+      lc_feedback(type = "info",
+        selectInput("ch9_kierunek", tags$b("Wybierz wariant dla kierunku:"),
+          choices = list(
+            "Rolnictwo" = "rol",
+            "Inżynieria bezpieczeństwa (BHP)" = "bhp",
+            "Technologia żywności" = "tz"
+          ),
+          selected = "rol",
+          width = "100%"
+        )
+      )
     ),
 
     # ---- Blok 1: Rolnictwo ----
-    lc_h2("ch9-rol", "Blok 1", "Rolnictwo — pola uprawne Dolnego Śląska"),
+    conditionalPanel(
+      condition = "input.ch9_kierunek == 'rol'",
+      lc_h2("ch9-rol", "Blok 1", "Rolnictwo — pola uprawne Dolnego Śląska"),
 
-    lc_feedback(type = "info",
-      p(tags$b("Dane: "), tags$code("dane/rolnictwo.csv"),
-        " — 200 pól uprawnych (Dolny Śląsk, sezon 2022–2023)."),
-      p("Zmienne: ", tags$code("plon"), " (t/ha), ",
-        tags$code("nawozenie"), " (kg NPK/ha), ",
-        tags$code("ph"), " (pH gleby), ",
-        tags$code("opady"), " (mm/sezon), ",
-        tags$code("uprawa"), ' ("pszenica"/"rzepak"), ',
-        tags$code("nawadnianie"), ' ("tak"/"nie"), ',
-        tags$code("region"), ' ("dolnośląskie"/"opolskie"/"lubuskie").')
-    ),
+      lc_feedback(type = "info",
+        p(tags$b("Dane: "), tags$code("dane/rolnictwo.csv"),
+          " — 200 pól uprawnych (Dolny Śląsk, sezon 2022–2023)."),
+        p("Zmienne: ", tags$code("plon"), " (t/ha), ",
+          tags$code("nawozenie"), " (kg NPK/ha), ",
+          tags$code("ph"), " (pH gleby), ",
+          tags$code("opady"), " (mm/sezon), ",
+          tags$code("uprawa"), ' ("pszenica"/"rzepak"), ',
+          tags$code("nawadnianie"), ' ("tak"/"nie"), ',
+          tags$code("region"), ' ("dolnośląskie"/"opolskie"/"lubuskie").')
+      ),
 
     figure_panel(label = "Ćwiczenie 1.1",
       h4("Czy średni plon różni się od krajowej normy 5.0 t/ha?"),
@@ -117,22 +130,25 @@ ch9_ui <- list(
       actionButton("ch9_r_ans6", "Pokaż rozwiązanie",
                    class = "lc-btn-ok-outline lc-btn-sm"),
       uiOutput("ch9_r_sol6")
+      )
     ),
 
     # ---- Blok 2: Inzynieria bezpieczenstwa ----
-    lc_h2("ch9-bhp", "Blok 2", "Inżynieria bezpieczeństwa — przedsiębiorstwa"),
+    conditionalPanel(
+      condition = "input.ch9_kierunek == 'bhp'",
+      lc_h2("ch9-bhp", "Blok 2", "Inżynieria bezpieczeństwa — przedsiębiorstwa"),
 
-    lc_feedback(type = "info",
-      p(tags$b("Dane: "), tags$code("dane/bezpieczenstwo.csv"),
-        " — 200 przedsiębiorstw (Polska, 2022)."),
-      p("Zmienne: ", tags$code("wypadki"), " (wypadki/rok na 1000 pracowników), ",
-        tags$code("szkolenia"), " (godz. BHP/rok), ",
-        tags$code("soi_rate"), " (% stosowania ŚOI), ",
-        tags$code("ryzyko_score"), " (wskaźnik ryzyka 1–10), ",
-        tags$code("wielkosc"), ' ("małe"/"duże"), ',
-        tags$code("sektor"), ' ("produkcja"/"budownictwo"), ',
-        tags$code("poziom_ryzyka"), ' ("niski"/"średni"/"wysoki").')
-    ),
+      lc_feedback(type = "info",
+        p(tags$b("Dane: "), tags$code("dane/bezpieczenstwo.csv"),
+          " — 200 przedsiębiorstw (Polska, 2022)."),
+        p("Zmienne: ", tags$code("wypadki"), " (wypadki/rok na 1000 pracowników), ",
+          tags$code("szkolenia"), " (godz. BHP/rok), ",
+          tags$code("soi_rate"), " (% stosowania ŚOI), ",
+          tags$code("ryzyko_score"), " (wskaźnik ryzyka 1–10), ",
+          tags$code("wielkosc"), ' ("małe"/"duże"), ',
+          tags$code("sektor"), ' ("produkcja"/"budownictwo"), ',
+          tags$code("poziom_ryzyka"), ' ("niski"/"średni"/"wysoki").')
+      ),
 
     figure_panel(label = "Ćwiczenie 2.1",
       h4("Czy wskaźnik wypadkowości jest niższy od średniej branżowej 10?"),
@@ -194,22 +210,25 @@ ch9_ui <- list(
       actionButton("ch9_b_ans6", "Pokaż rozwiązanie",
                    class = "lc-btn-ok-outline lc-btn-sm"),
       uiOutput("ch9_b_sol6")
+      )
     ),
 
     # ---- Blok 3: Technologia zywnosci ----
-    lc_h2("ch9-tz", "Blok 3", "Technologia żywności — partie produktów"),
+    conditionalPanel(
+      condition = "input.ch9_kierunek == 'tz'",
+      lc_h2("ch9-tz", "Blok 3", "Technologia żywności — partie produktów"),
 
-    lc_feedback(type = "info",
-      p(tags$b("Dane: "), tags$code("dane/technologia_zywnosci.csv"),
-        " — 200 partii produktów spożywczych (Polska, 2023)."),
-      p("Zmienne: ", tags$code("bialko"), " (g białka/100 g), ",
-        tags$code("wilgotnosc"), " (%), ",
-        tags$code("trwalosc"), " (dni), ",
-        tags$code("ph"), " (pH produktu), ",
-        tags$code("typ"), ' ("tradycyjny"/"funkcjonalny"), ',
-        tags$code("zanieczyszczenie"), ' ("brak"/"wykryte"), ',
-        tags$code("przechowywanie"), ' ("chłodnicze"/"atmosfera modyfikowana"/"suszenie").')
-    ),
+      lc_feedback(type = "info",
+        p(tags$b("Dane: "), tags$code("dane/technologia_zywnosci.csv"),
+          " — 200 partii produktów spożywczych (Polska, 2023)."),
+        p("Zmienne: ", tags$code("bialko"), " (g białka/100 g), ",
+          tags$code("wilgotnosc"), " (%), ",
+          tags$code("trwalosc"), " (dni), ",
+          tags$code("ph"), " (pH produktu), ",
+          tags$code("typ"), ' ("tradycyjny"/"funkcjonalny"), ',
+          tags$code("zanieczyszczenie"), ' ("brak"/"wykryte"), ',
+          tags$code("przechowywanie"), ' ("chłodnicze"/"atmosfera modyfikowana"/"suszenie").')
+      ),
 
     figure_panel(label = "Ćwiczenie 3.1",
       h4("Czy zawartość białka spełnia normę ≥ 12 g/100 g?"),
@@ -270,6 +289,7 @@ ch9_ui <- list(
       actionButton("ch9_t_ans6", "Pokaż rozwiązanie",
                    class = "lc-btn-ok-outline lc-btn-sm"),
       uiOutput("ch9_t_sol6")
+      )
     ),
 
     # ---- Blok 4: Myslenie krytyczne ----
@@ -545,7 +565,7 @@ ch9_ui <- list(
         100 * r$eta2))
     ),
     .ch9_decision(r$p),
-    p(tags$b("Post-hoc Tukey HSD (przybliżenie — w Jamowi użyj Games-Howell):")),
+    p(tags$b("Post-hoc Tukey HSD (przybliżenie — w Jamovi użyj Games-Howell):")),
     tags$ul(lapply(rownames(r$ph), function(nm) {
       pp <- r$ph[nm, "p adj"]
       tags$li(sprintf("%s: Δ = %.2f, p.adj %s",
@@ -868,6 +888,17 @@ ch9_server <- function(input, output, session) {
 
   # ---- Myslenie krytyczne ----
   krit_vis <- reactiveVal(FALSE)
+
+  observeEvent(input$ch9_kierunek, {
+    lapply(c(r_vis, b_vis, t_vis, list(krit_vis)), function(vis_rv) vis_rv(FALSE))
+    for (prefix in c("r", "b", "t")) {
+      for (i in 1:6) {
+        updateActionButton(session, paste0("ch9_", prefix, "_ans", i),
+                           label = "Pokaż rozwiązanie")
+      }
+    }
+    updateActionButton(session, "ch9_krit_ans", label = "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
 
   observeEvent(input$ch9_krit_ans, {
     nowy <- !krit_vis()
