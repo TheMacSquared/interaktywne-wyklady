@@ -216,6 +216,39 @@ ch2_ui <- list(
       color = "uwaga"
     ),
 
+    lc_h2("ch2-cas", "Ćwiczenia", "CASchools — test t jednej próby"),
+
+    lc_feedback(type = "info",
+      p(tags$b("Dane: "), "420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+        tags$code("dane/caschools.csv"), "."),
+      p("Zmienne w zadaniach: ", tags$code("read"),
+        " (średni wynik z czytania, ok. 655 pkt), ",
+        tags$code("income"), " (dochód okręgu, tys. USD).")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Zadanie 1 — Czy wyniki z czytania różnią się od normy 650 pkt?"),
+      p("Departament edukacji podaje normę 650 pkt. Przetestuj, czy średni wynik ",
+        tags$code("read"), " w okręgach Kalifornii ", tags$b("istotnie różni się"),
+        " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0.05)
+        i oblicz Cohen's d. Co raportowałbyś departamentowi?"),
+      actionButton("cas_ch2_ans1", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("cas_ch2_sol1")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Zadanie 2 — Czy typowy dochód okręgu przekracza 15 tys. USD?"),
+      p('Hipoteza dyrekcji: „Nasz stan to stan zamożnych" — typowy okrąg ma dochód
+        powyżej 15 tys. USD. Przetestuj ', tags$b("jednostronnie (prawostronnie)"),
+        " zmienną ", tags$code("income"),
+        '. Sformułuj H₀ i Hₐ dla hipotezy kierunkowej.
+        Czy wynik jest istotny statystycznie? A praktycznie?'),
+      actionButton("cas_ch2_ans2", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("cas_ch2_sol2")
+    ),
+
     lc_chapter_next(
       num       = "04",
       title     = "Test proporcji",
@@ -224,6 +257,13 @@ ch2_ui <- list(
     )
   )
 )
+
+# ============================================================================
+# DANE — CASchools (wczytane raz przy ladowaniu modulu)
+# ============================================================================
+
+.ch2_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
+                     stringsAsFactors = FALSE)
 
 # ============================================================================
 # SERVER
@@ -606,5 +646,88 @@ ch2_server <- function(input, output, session) {
       )
     )
     lc_feedback(type = "info", info)
+  })
+
+  # --- Cwiczenia CASchools ---
+
+  cas_vis1 <- reactiveVal(FALSE)
+  cas_vis2 <- reactiveVal(FALSE)
+
+  observeEvent(input$cas_ch2_ans1, {
+    nowy <- !cas_vis1()
+    cas_vis1(nowy)
+    updateActionButton(session, "cas_ch2_ans1",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$cas_ch2_sol1 <- renderUI({
+    if (!cas_vis1()) return(NULL)
+    r <- local({
+      x <- .ch2_cas$read; mu <- 650
+      n <- length(x); m <- mean(x); s <- sd(x); se <- s / sqrt(n)
+      t_val <- (m - mu) / se; df <- n - 1
+      p_val <- 2 * pt(-abs(t_val), df)
+      d <- (m - mu) / s
+      list(n = n, m = m, s = s, t = t_val, df = df, p = p_val, d = d)
+    })
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      p(tags$b("H₀: "), "μ_read = 650 · ", tags$b("Hₐ: "), "μ_read ≠ 650"),
+      tags$ul(
+        tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f", r$n, r$m, r$s)),
+        tags$li(sprintf("t(%s) = %.3f, p %s %s",
+          round(r$df, 1), r$t,
+          if (r$p < 0.001) "<" else "=",
+          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+        tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
+      ),
+      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
+      else tags$b("Brak podstaw do odrzucenia H₀"),
+      p(tags$b("Interpretacja: "),
+        sprintf(
+          "Średni wynik (%.2f pkt) różni się istotnie od normy 650 pkt (p < 0.05).
+           Efekt %s (d = %.3f) — różnica %.2f pkt ma %s znaczenie praktyczne.",
+          r$m, effect_size_label(r$d), r$d, r$m - 650,
+          if (abs(r$d) < 0.2) "ograniczone" else "wyraźne"
+        ))
+    )
+  })
+
+  observeEvent(input$cas_ch2_ans2, {
+    nowy <- !cas_vis2()
+    cas_vis2(nowy)
+    updateActionButton(session, "cas_ch2_ans2",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$cas_ch2_sol2 <- renderUI({
+    if (!cas_vis2()) return(NULL)
+    r <- local({
+      x <- .ch2_cas$income; mu <- 15
+      n <- length(x); m <- mean(x); s <- sd(x); se <- s / sqrt(n)
+      t_val <- (m - mu) / se; df <- n - 1
+      p_val <- pt(t_val, df, lower.tail = FALSE)
+      d <- (m - mu) / s
+      list(n = n, m = m, s = s, t = t_val, df = df, p = p_val, d = d)
+    })
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      p(tags$b("H₀: "), "μ_income ≤ 15 · ", tags$b("Hₐ: "), "μ_income > 15"),
+      tags$ul(
+        tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f (tys. USD)", r$n, r$m, r$s)),
+        tags$li(sprintf("t(%s) = %.3f, p %s %s (jednostronnie)",
+          round(r$df, 1), r$t,
+          if (r$p < 0.001) "<" else "=",
+          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+        tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
+      ),
+      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
+      else tags$b("Brak podstaw do odrzucenia H₀"),
+      p(tags$b("Interpretacja: "),
+        sprintf(
+          "Średni dochód (%.2f tys. USD) jest istotnie wyższy od 15 tys. (p < 0.05),
+           efekt %s (d = %.3f). Uwaga: hipotezę kierunkową formułujemy PRZED zebraniem
+           danych — inaczej influjemy błąd I rodzaju.",
+          r$m, effect_size_label(r$d), r$d
+        ))
+    )
   })
 }

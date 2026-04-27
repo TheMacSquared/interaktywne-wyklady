@@ -241,6 +241,44 @@ ch5_ui <- list(
         " — to język zrozumiały dla każdego odbiorcy.")
     ),
 
+    lc_h2("ch5-cas", "Ćwiczenia", "CASchools — test χ² niezależności"),
+
+    lc_feedback(type = "info",
+      p(tags$b("Dane: "), "420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+        tags$code("dane/caschools.csv"), "."),
+      p("Zmienne w zadaniach: ", tags$code("grades"),
+        " (typ szkoły: KK-06/KK-08), ",
+        tags$code("english"), " (% uczniów ELL), ",
+        tags$code("student_teacher_ratio"), " (STR), ",
+        tags$code("lunch"), " (% uczniów z dotacją — wskaźnik ubóstwa).")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Zadanie 8 — Czy typ szkoły wiąże się z wysokim odsetkiem uczniów ELL?"),
+      p("Utwórz zmienną binarną: ",
+        tags$code("high_english = (english > 20)"),
+        ". Zbuduj tabelę krzyżową ", tags$code("grades"), " × ",
+        tags$code("high_english"),
+        " i wykonaj test χ² niezależności.
+        Zapisz: χ², df, p. Co wynika? Czy typ szkoły jest niezależny
+        od odsetka uczniów uczących się angielskiego?"),
+      actionButton("cas_ch5_ans8", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("cas_ch5_sol8")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Zadanie 9 — Czy przeładowane klasy idą w parze z ubóstwem?"),
+      p("Utwórz dwie zmienne binarne: ",
+        tags$code("high_str = (student_teacher_ratio > 20)"),
+        " i ", tags$code("high_lunch = (lunch > 50)"),
+        ". Wykonaj test χ² niezależności. Czy STR i ubóstwo są ze sobą powiązane?
+        Co sugeruje wynik dla interpretacji zadania 5 z korelacji?"),
+      actionButton("cas_ch5_ans9", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("cas_ch5_sol9")
+    ),
+
     lc_chapter_next(
       num       = "07",
       title     = "Test t dwóch grup",
@@ -249,6 +287,13 @@ ch5_ui <- list(
     )
   )
 )
+
+# ============================================================================
+# DANE — CASchools (wczytane raz przy ladowaniu modulu)
+# ============================================================================
+
+.ch5_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
+                     stringsAsFactors = FALSE)
 
 # ============================================================================
 # SERVER
@@ -673,6 +718,113 @@ ch5_server <- function(input, output, session) {
         p(tags$b("Cramér's V = ", round(v, 3)),
           " (", effect_size_label(v), ")")
       )
+    )
+  })
+
+  # --- Cwiczenia CASchools ---
+
+  .cas_chisq <- function(tab) {
+    ct <- chisq.test(tab, correct = FALSE)
+    n  <- sum(tab)
+    k  <- min(nrow(tab), ncol(tab))
+    v  <- sqrt(ct$statistic / (n * (k - 1)))
+    list(chi2 = unname(ct$statistic), df = unname(ct$parameter),
+         p = ct$p.value, tab = tab, v = v, n = n)
+  }
+
+  cas_vis8 <- reactiveVal(FALSE)
+  cas_vis9 <- reactiveVal(FALSE)
+
+  observeEvent(input$cas_ch5_ans8, {
+    nowy <- !cas_vis8()
+    cas_vis8(nowy)
+    updateActionButton(session, "cas_ch5_ans8",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$cas_ch5_sol8 <- renderUI({
+    if (!cas_vis8()) return(NULL)
+    r <- local({
+      high_eng <- .ch5_cas$english > 20
+      .cas_chisq(table(grades = .ch5_cas$grades, high_english = high_eng))
+    })
+    tab <- r$tab
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      p(tags$b("H₀: "), "typ szkoły i high_english są niezależne · ",
+        tags$b("Hₐ: "), "zmienne są zależne"),
+      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
+        tags$thead(tags$tr(
+          tags$th("grades"), tags$th("high_english = FALSE"),
+          tags$th("high_english = TRUE"), tags$th("suma")
+        )),
+        tags$tbody(lapply(rownames(tab), function(g) {
+          tags$tr(tags$td(g),
+            tags$td(tab[g, "FALSE"]), tags$td(tab[g, "TRUE"]),
+            tags$td(sum(tab[g, ])))
+        }))
+      ),
+      tags$ul(
+        tags$li(sprintf("χ²(%d) = %.3f, p %s %s",
+          r$df, r$chi2,
+          if (r$p < 0.001) "<" else "=",
+          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+        tags$li(sprintf("Cramér's V = %.3f (%s efekt)", r$v, effect_size_label(r$v)))
+      ),
+      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
+      else tags$b("Brak podstaw do odrzucenia H₀"),
+      p(tags$b("Interpretacja: "),
+        "Test χ² stwierdza, czy zmienne są zależne — nie jak duże jest przesunięcie ani
+        w jakim kierunku. Siłę związku wyraża Cramér's V. By zobaczyć kierunek —
+        porównaj proporcje high_english w każdej grupie grades.")
+    )
+  })
+
+  observeEvent(input$cas_ch5_ans9, {
+    nowy <- !cas_vis9()
+    cas_vis9(nowy)
+    updateActionButton(session, "cas_ch5_ans9",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$cas_ch5_sol9 <- renderUI({
+    if (!cas_vis9()) return(NULL)
+    r <- local({
+      high_str   <- .ch5_cas$student_teacher_ratio > 20
+      high_lunch <- .ch5_cas$lunch > 50
+      .cas_chisq(table(high_str = high_str, high_lunch = high_lunch))
+    })
+    tab <- r$tab
+    p_hi_str_poor <- tab["TRUE",  "TRUE"] / sum(tab["TRUE", ])
+    p_lo_str_poor <- tab["FALSE", "TRUE"] / sum(tab["FALSE", ])
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      p(tags$b("H₀: "), "high_str i high_lunch są niezależne · ",
+        tags$b("Hₐ: "), "zmienne są zależne"),
+      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
+        tags$thead(tags$tr(
+          tags$th("high_str"), tags$th("high_lunch = FALSE"),
+          tags$th("high_lunch = TRUE"), tags$th("suma")
+        )),
+        tags$tbody(lapply(rownames(tab), function(g) {
+          tags$tr(tags$td(g),
+            tags$td(tab[g, "FALSE"]), tags$td(tab[g, "TRUE"]),
+            tags$td(sum(tab[g, ])))
+        }))
+      ),
+      tags$ul(
+        tags$li(sprintf("χ²(%d) = %.3f, p %s %s",
+          r$df, r$chi2,
+          if (r$p < 0.001) "<" else "=",
+          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+        tags$li(sprintf("Cramér's V = %.3f (%s efekt)", r$v, effect_size_label(r$v))),
+        tags$li(sprintf("Odsetek high_lunch wśród STR > 20: %.1f%%", 100 * p_hi_str_poor)),
+        tags$li(sprintf("Odsetek high_lunch wśród STR ≤ 20: %.1f%%", 100 * p_lo_str_poor))
+      ),
+      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
+      else tags$b("Brak podstaw do odrzucenia H₀"),
+      p(tags$b("Wniosek: "),
+        "Okręgi z przeładowanymi klasami mają wyraźnie wyższy odsetek ubogich uczniów.
+        STR może być proxy dla zasobności — dlatego korelacja STR–read z zadania 5
+        jest częściowo konfundowana dochodem.")
     )
   })
 }

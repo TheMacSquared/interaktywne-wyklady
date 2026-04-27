@@ -263,6 +263,38 @@ ch3_ui <- list(
         " — oba testy dadzą praktycznie ten sam wynik.")
     ),
 
+    lc_h2("ch3-cas", "Ćwiczenia", "CASchools — test proporcji"),
+
+    lc_feedback(type = "info",
+      p(tags$b("Dane: "), "420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+        tags$code("dane/caschools.csv"), "."),
+      p("Zmienne w zadaniach: ", tags$code("grades"),
+        " (typ szkoły: KK-06 lub KK-08), ",
+        tags$code("lunch"), " (% uczniów z dotacją do obiadów — wskaźnik ubóstwa).")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Zadanie A — Czy większość okręgów obejmuje klasy tylko do 6.?"),
+      p("Okręgi dzielą się na szkoły klas KK-06 i KK-08. Przetestuj ",
+        tags$b("dwustronnie"), ", czy odsetek okręgów KK-06 różni się od 50%.
+        Sformułuj H₀ i Hₐ, oblicz p-wartość testem dwumianowym (α = 0.05).
+        Jak interpretujesz wynik?"),
+      actionButton("cas_ch3_ans_a", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("cas_ch3_sol_a")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Zadanie B — Czy więcej niż 30% okręgów ma wysoki poziom ubóstwa?"),
+      p("Przyjmij, że okrąg ma wysoki poziom ubóstwa, gdy ", tags$code("lunch > 50%"),
+        ". Przetestuj ", tags$b("jednostronnie (prawostronnie)"), ",
+        czy odsetek takich okręgów przekracza normę 30%.
+        Sformułuj H₀ i Hₐ, wykonaj test dwumianowy. Jaki wniosek?"),
+      actionButton("cas_ch3_ans_b", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("cas_ch3_sol_b")
+    ),
+
     lc_chapter_next(
       num       = "05",
       title     = "Korelacja",
@@ -271,6 +303,13 @@ ch3_ui <- list(
     )
   )
 )
+
+# ============================================================================
+# DANE — CASchools (wczytane raz przy ladowaniu modulu)
+# ============================================================================
+
+.ch3_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
+                     stringsAsFactors = FALSE)
 
 # ============================================================================
 # SERVER
@@ -710,6 +749,94 @@ ch3_server <- function(input, output, session) {
           if (ok) " — oba ≥ 10, przybliżenie działa dobrze."
           else " — warunek niespiełniony! Test proporcji może być niedokładny.")
       )
+    )
+  })
+
+  # --- Cwiczenia CASchools ---
+
+  cas_vis_a <- reactiveVal(FALSE)
+  cas_vis_b <- reactiveVal(FALSE)
+
+  observeEvent(input$cas_ch3_ans_a, {
+    nowy <- !cas_vis_a()
+    cas_vis_a(nowy)
+    updateActionButton(session, "cas_ch3_ans_a",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$cas_ch3_sol_a <- renderUI({
+    if (!cas_vis_a()) return(NULL)
+    r <- local({
+      k <- sum(.ch3_cas$grades == "KK-06")
+      n <- nrow(.ch3_cas)
+      p_obs <- k / n
+      bt <- binom.test(k, n, p = 0.5, alternative = "two.sided")
+      list(k = k, n = n, p_obs = p_obs, p_val = bt$p.value,
+           ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
+    })
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      p(tags$b("H₀: "), "p_KK06 = 0.5 · ", tags$b("Hₐ: "), "p_KK06 ≠ 0.5"),
+      tags$ul(
+        tags$li(sprintf("k = %d, n = %d, p̂ = %.3f (%.1f%%)",
+                        r$k, r$n, r$p_obs, 100 * r$p_obs)),
+        tags$li(sprintf("p %s %s (test dwumianowy, dwustronny)",
+          if (r$p_val < 0.001) "<" else "=",
+          if (r$p_val < 0.001) "0.001" else format(round(r$p_val, 4), nsmall = 4))),
+        tags$li(sprintf("95%% CI: [%.3f, %.3f]", r$ci_lo, r$ci_hi))
+      ),
+      if (r$p_val < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
+      else tags$b("Brak podstaw do odrzucenia H₀"),
+      p(tags$b("Interpretacja: "),
+        sprintf(
+          "%.1f%% okręgów to szkoły KK-06. Odsetek istotnie %s się od 50%%
+           (p %s 0.05) — szkoły KK-06 %s dominują.",
+          100 * r$p_obs,
+          if (r$p_val < 0.05) "różni" else "nie różni",
+          if (r$p_val < 0.05) "<" else ">",
+          if (r$p_obs > 0.5 && r$p_val < 0.05) "istotnie" else "nieistotnie"
+        ))
+    )
+  })
+
+  observeEvent(input$cas_ch3_ans_b, {
+    nowy <- !cas_vis_b()
+    cas_vis_b(nowy)
+    updateActionButton(session, "cas_ch3_ans_b",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$cas_ch3_sol_b <- renderUI({
+    if (!cas_vis_b()) return(NULL)
+    r <- local({
+      high_lunch <- .ch3_cas$lunch > 50
+      k <- sum(high_lunch)
+      n <- length(high_lunch)
+      p_obs <- k / n
+      bt <- binom.test(k, n, p = 0.30, alternative = "greater")
+      list(k = k, n = n, p_obs = p_obs, p_val = bt$p.value,
+           ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
+    })
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      p(tags$b("H₀: "), "p_ubóstwo ≤ 0.30 · ",
+        tags$b("Hₐ: "), "p_ubóstwo > 0.30"),
+      tags$ul(
+        tags$li(sprintf("k = %d okręgów z lunch > 50%%, n = %d, p̂ = %.3f (%.1f%%)",
+                        r$k, r$n, r$p_obs, 100 * r$p_obs)),
+        tags$li(sprintf("p %s %s (test dwumianowy, jednostronny prawy)",
+          if (r$p_val < 0.001) "<" else "=",
+          if (r$p_val < 0.001) "0.001" else format(round(r$p_val, 4), nsmall = 4))),
+        tags$li(sprintf("95%% CI dolne: %.3f", r$ci_lo))
+      ),
+      if (r$p_val < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
+      else tags$b("Brak podstaw do odrzucenia H₀"),
+      p(tags$b("Interpretacja: "),
+        sprintf(
+          "%.1f%% okręgów ma wysoki poziom ubóstwa (lunch > 50%%).
+           Odsetek ten istotnie %s normę 30%% (p %s 0.05).",
+          100 * r$p_obs,
+          if (r$p_val < 0.05) "przekracza" else "nie przekracza",
+          if (r$p_val < 0.05) "<" else ">"
+        ))
     )
   })
 }

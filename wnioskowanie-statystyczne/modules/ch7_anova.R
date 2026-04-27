@@ -217,6 +217,30 @@ ch7_ui <- list(
       uiOutput("ch7_tukey_result")
     ),
 
+    lc_h2("ch7-cas", "Ćwiczenia", "CASchools — ANOVA"),
+
+    lc_feedback(type = "info",
+      p(tags$b("Dane: "), "420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+        tags$code("dane/caschools.csv"), "."),
+      p("Zmienne w zadaniu: ", tags$code("read"),
+        " (wyniki z czytania), ", tags$code("income"),
+        " (dochód okręgu, tys. USD).")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Zadanie 10 — Czy wyniki czytania różnią się między tercylami dochodu?"),
+      p("Podziel okręgi na trzy równe grupy dochodowe (tercyle): ",
+        tags$b("niski / średni / wysoki"),
+        " (użyj ", tags$em("split into groups"), " w Jamowi lub utwórz zmienną
+        ręcznie na podstawie kwantyli 0, 1/3, 2/3, 1).
+        Wykonaj jednoczynnikową ANOVA dla zmiennej ", tags$code("read"),
+        " między grupami. Zapisz: F, df, p, η².
+        Wykonaj post-hoc Games-Howell i wskaż, które pary różnią się istotnie."),
+      actionButton("cas_ch7_ans10", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("cas_ch7_sol10")
+    ),
+
     lc_chapter_next(
       num       = "09",
       title     = "Drzewo decyzyjne",
@@ -225,6 +249,13 @@ ch7_ui <- list(
     )
   )
 )
+
+# ============================================================================
+# DANE — CASchools (wczytane raz przy ladowaniu modulu)
+# ============================================================================
+
+.ch7_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
+                     stringsAsFactors = FALSE)
 
 # ============================================================================
 # SERVER
@@ -472,5 +503,73 @@ ch7_server <- function(input, output, session) {
         )
       )
     }
+  })
+
+  # --- Cwiczenia CASchools ---
+
+  cas_vis10 <- reactiveVal(FALSE)
+
+  observeEvent(input$cas_ch7_ans10, {
+    nowy <- !cas_vis10()
+    cas_vis10(nowy)
+    updateActionButton(session, "cas_ch7_ans10",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$cas_ch7_sol10 <- renderUI({
+    if (!cas_vis10()) return(NULL)
+    r <- local({
+      edu <- .ch7_cas
+      q   <- quantile(edu$income, probs = c(0, 1/3, 2/3, 1))
+      edu$income_group <- cut(edu$income, breaks = q,
+        labels = c("Niski", "Średni", "Wysoki"), include.lowest = TRUE)
+      grp_stats <- tapply(edu$read, edu$income_group, function(x)
+        c(n = length(x), m = mean(x), s = sd(x)))
+      fit   <- aov(read ~ income_group, data = edu)
+      s     <- summary(fit)[[1]]
+      F_val <- s[["F value"]][1]
+      df1   <- s[["Df"]][1]; df2 <- s[["Df"]][2]
+      p_val <- s[["Pr(>F)"]][1]
+      eta2  <- s[["Sum Sq"]][1] / sum(s[["Sum Sq"]])
+      ph    <- TukeyHSD(fit)$income_group
+      list(grp_stats = grp_stats, F = F_val, df1 = df1, df2 = df2,
+           p = p_val, eta2 = eta2, ph = ph)
+    })
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      p(tags$b("H₀: "), "μ_niski = μ_średni = μ_wysoki · ",
+        tags$b("Hₐ: "), "co najmniej jedna para się różni"),
+      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
+        tags$thead(tags$tr(
+          tags$th("Tercyl"), tags$th("n"), tags$th("x̄ read"), tags$th("s")
+        )),
+        tags$tbody(lapply(c("Niski","Średni","Wysoki"), function(g) {
+          v <- r$grp_stats[[g]]
+          tags$tr(tags$td(g), tags$td(v["n"]),
+                  tags$td(round(v["m"], 2)), tags$td(round(v["s"], 2)))
+        }))
+      ),
+      tags$ul(
+        tags$li(sprintf("F(%d, %d) = %.3f, p %s %s",
+          r$df1, r$df2, r$F,
+          if (r$p < 0.001) "<" else "=",
+          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+        tags$li(sprintf("η² = %.3f (%s efekt — %.1f%% wariancji wyjaśnione przez dochód)",
+          r$eta2,
+          if (r$eta2 < 0.01) "pomijalny"
+          else if (r$eta2 < 0.06) "mały"
+          else if (r$eta2 < 0.14) "średni" else "duży",
+          100 * r$eta2))
+      ),
+      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
+      else tags$b("Brak podstaw do odrzucenia H₀"),
+      p(tags$b("Post-hoc Tukey HSD (przybliżenie — w Jamowi użyj Games-Howell):")),
+      tags$ul(lapply(rownames(r$ph), function(nm) {
+        pp <- r$ph[nm, "p adj"]
+        tags$li(sprintf("%s: Δ = %.2f pkt, p.adj %s %s",
+          nm, r$ph[nm, "diff"],
+          if (pp < 0.001) "<" else "=",
+          if (pp < 0.001) "0.001" else format(round(pp, 3), nsmall = 3)))
+      }))
+    )
   })
 }

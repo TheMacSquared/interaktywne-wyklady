@@ -1,8 +1,7 @@
 # ============================================================================
-# CHAPTER 9: Cwiczenia praktyczne — wnioskowanie statystyczne
-# Zbiór CASchools (420 okręgów szkolnych Kalifornii) — pokrycie wszystkich
-# typów testów z wykładu. System danych gotowy na rozszerzenie o kolejne
-# zbiory wzorowany na przedzialy-ufnosci/modules/ch7_cwiczenia.R.
+# CHAPTER 9: Cwiczenia praktyczne — dane z kierunków UPWr
+# Trzy syntetyczne zbiory (rolnictwo, inz. bezpieczenstwa, techn. zywnosci)
+# pokrywajace wszystkie typy testow z wykladu.
 # ============================================================================
 
 # ============================================================================
@@ -17,688 +16,544 @@ ch9_ui <- list(
     lc_chapter_hero(
       kicker = "Rozdział 11 · Testowanie hipotez",
       num    = "11",
-      title  = "Ćwiczenia z danymi.",
-      lead   = "420 okręgów szkolnych Kalifornii — dane przekrojowe ze zmiennymi
-                ciągłymi i jakościowymi. Czas zastosować wszystkie narzędzia
-                z wykładu: od testu jednej próby po ANOVA."
+      title  = "Ćwiczenia z danych UPWr.",
+      lead   = "Trzy zestawy danych z kierunków studiów UPWr — zastosuj wszystkie
+                narzędzia z wykładu na danych ze swojej dziedziny:
+                test jednej próby, proporcji, korelację, test t dwóch grup,
+                test χ² i ANOVA."
     ),
 
-    lc_h2("ch9-intro", "§ 1", "Zbiór danych CASchools"),
+    lc_h2("ch9-intro", "§ 1", "Zbiory danych"),
 
     tagList(
-      p("Dane pochodzą z badania przeprowadzonego w 1998–1999 r. przez California
-        Department of Education i dotyczą 420 okręgów szkolnych (ang. ",
-        tags$em("school districts"), ") w stanie Kalifornia. Każdy wiersz opisuje
-        jeden okręg."),
-      p("Kluczowe zmienne:"),
+      p("Każdy blok ćwiczeń opiera się na syntetycznym zbiorze danych
+        specyficznym dla jednego kierunku. Dane są zróżnicowane pod względem
+        zmiennych i kontekstu, ale struktura zadań jest analogiczna —
+        możesz wybrać kierunek najbliższy Twojej specjalności."),
       tags$ul(
-        tags$li(tags$code("read"), ", ", tags$code("math"),
-          " — średni wynik standaryzowanego testu z czytania i matematyki"),
-        tags$li(tags$code("income"),
-          " — przeciętny dochód gospodarstw domowych w okręgu (tys. USD)"),
-        tags$li(tags$code("english"),
-          " — odsetek uczniów uczących się angielskiego jako drugiego języka (ELL, %)"),
-        tags$li(tags$code("lunch"),
-          " — odsetek uczniów z dotacją do obiadów (wskaźnik ubóstwa, %)"),
-        tags$li(tags$code("student_teacher_ratio"),
-          " — liczba uczniów na jednego nauczyciela (STR)"),
-        tags$li(tags$code("grades"),
-          " — zakres klas w okręgu: ", tags$code("KK-06"), " lub ", tags$code("KK-08"))
+        tags$li(tags$b("Blok 1: Rolnictwo"),
+          " — 200 pól uprawnych z Dolnego Śląska (plon, nawożenie, pH gleby)"),
+        tags$li(tags$b("Blok 2: Inżynieria bezpieczeństwa"),
+          " — 200 przedsiębiorstw (wypadkowość, szkolenia BHP, ŚOI)"),
+        tags$li(tags$b("Blok 3: Technologia żywności"),
+          " — 200 partii produktów spożywczych (białko, wilgotność, trwałość)")
       ),
       p(tags$b("Czas:"), " ~2 h · ",
-        tags$b("Narzędzie:"), " Jamovi · ",
-        tags$b("Format:"), " 6 bloków, 11 zadań, ukryte rozwiązania.")
+        tags$b("Narzędzie:"), " Jamowi lub R · ",
+        tags$b("Format:"), " 3 bloki × 6 zadań + krytyczne myślenie, ukryte rozwiązania.")
     ),
 
-    figure_panel(
-      label = "Dane",
-      title = "Wybierz zbiór danych",
-      div(
-        selectInput("ch9_dataset", NULL,
-          choices  = list("Edukacja (CASchools)" = "edu"),
-          selected = "edu",
-          width    = "100%"
-        ),
-        p(class = "lc-label",
-          "Otwórz odpowiedni plik CSV z folderu ", tags$code("dane/"),
-          " w Jamowi przed rozpoczęciem ćwiczeń.")
-      )
+    # ---- Blok 1: Rolnictwo ----
+    lc_h2("ch9-rol", "Blok 1", "Rolnictwo — pola uprawne Dolnego Śląska"),
+
+    lc_feedback(type = "info",
+      p(tags$b("Dane: "), tags$code("dane/rolnictwo.csv"),
+        " — 200 pól uprawnych (Dolny Śląsk, sezon 2022–2023)."),
+      p("Zmienne: ", tags$code("plon"), " (t/ha), ",
+        tags$code("nawozenie"), " (kg NPK/ha), ",
+        tags$code("ph"), " (pH gleby), ",
+        tags$code("opady"), " (mm/sezon), ",
+        tags$code("uprawa"), ' ("pszenica"/"rzepak"), ',
+        tags$code("nawadnianie"), ' ("tak"/"nie"), ',
+        tags$code("region"), ' ("dolnośląskie"/"opolskie"/"lubuskie").')
     ),
 
-    uiOutput("ch9_content"),
+    figure_panel(label = "Ćwiczenie 1.1",
+      h4("Czy średni plon różni się od krajowej normy 5.0 t/ha?"),
+      p("Przetestuj dwustronnie, czy średni ", tags$code("plon"),
+        " różni się od normy 5.0 t/ha. Sformułuj H₀ i Hₐ, wykonaj test t
+        jednej próby (α = 0.05) i oblicz Cohen's d."),
+      actionButton("ch9_r_ans1", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_r_sol1")
+    ),
+
+    figure_panel(label = "Ćwiczenie 1.2",
+      h4("Czy mniej niż 40% pól stosuje nawadnianie?"),
+      p("Przetestuj ", tags$b("lewostronnie"), ", czy odsetek pól z ",
+        tags$code("nawadnianie == \"tak\""), " jest niższy niż 40% (p₀ = 0.4).
+        Użyj testu dwumianowego."),
+      actionButton("ch9_r_ans2", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_r_sol2")
+    ),
+
+    figure_panel(label = "Ćwiczenie 1.3",
+      h4("Czy wyższe nawożenie wiąże się z wyższym plonem?"),
+      p("Oblicz korelację Pearsona między ", tags$code("nawozenie"),
+        " a ", tags$code("plon"), ". Czy korelacja jest istotna?
+        Jak interpretujesz siłę i kierunek związku?"),
+      actionButton("ch9_r_ans3", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_r_sol3")
+    ),
+
+    figure_panel(label = "Ćwiczenie 1.4",
+      h4("Czy pszenica i rzepak dają różne plony?"),
+      p("Porównaj średni ", tags$code("plon"),
+        " między uprawą ", tags$code("pszenica"), " a ", tags$code("rzepak"),
+        ". Wykonaj test t dla prób niezależnych i oblicz Cohen's d."),
+      actionButton("ch9_r_ans4", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_r_sol4")
+    ),
+
+    figure_panel(label = "Ćwiczenie 1.5",
+      h4("Czy typ uprawy wiąże się ze stosowaniem nawadniania?"),
+      p("Zbuduj tabelę krzyżową ", tags$code("uprawa"), " × ",
+        tags$code("nawadnianie"),
+        " i wykonaj test χ² niezależności. Oblicz Cramér's V."),
+      actionButton("ch9_r_ans5", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_r_sol5")
+    ),
+
+    figure_panel(label = "Ćwiczenie 1.6",
+      h4("Czy region różnicuje plony?"),
+      p("Wykonaj jednoczynnikową ANOVA: ", tags$code("plon"), " ~ ",
+        tags$code("region"),
+        " (trzy regiony). Zapisz F, df, p, η². Wykonaj post-hoc Games-Howell
+        i wskaż, które pary regionów różnią się istotnie."),
+      actionButton("ch9_r_ans6", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_r_sol6")
+    ),
+
+    # ---- Blok 2: Inzynieria bezpieczenstwa ----
+    lc_h2("ch9-bhp", "Blok 2", "Inżynieria bezpieczeństwa — przedsiębiorstwa"),
+
+    lc_feedback(type = "info",
+      p(tags$b("Dane: "), tags$code("dane/bezpieczenstwo.csv"),
+        " — 200 przedsiębiorstw (Polska, 2022)."),
+      p("Zmienne: ", tags$code("wypadki"), " (wypadki/rok na 1000 pracowników), ",
+        tags$code("szkolenia"), " (godz. BHP/rok), ",
+        tags$code("soi_rate"), " (% stosowania ŚOI), ",
+        tags$code("ryzyko_score"), " (wskaźnik ryzyka 1–10), ",
+        tags$code("wielkosc"), ' ("małe"/"duże"), ',
+        tags$code("sektor"), ' ("produkcja"/"budownictwo"), ',
+        tags$code("poziom_ryzyka"), ' ("niski"/"średni"/"wysoki").')
+    ),
+
+    figure_panel(label = "Ćwiczenie 2.1",
+      h4("Czy wskaźnik wypadkowości jest niższy od średniej branżowej 10?"),
+      p("Przetestuj ", tags$b("jednostronnie (lewostronnie)"), ", czy średni ",
+        tags$code("wypadki"), " jest niższy od normy 10 wypadków/1000 pracowników.
+        Sformułuj H₀ i Hₐ, oblicz Cohen's d."),
+      actionButton("ch9_b_ans1", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_b_sol1")
+    ),
+
+    figure_panel(label = "Ćwiczenie 2.2",
+      h4("Czy więcej niż 50% przedsiębiorstw spełnia normę stosowania ŚOI?"),
+      p('Przyjmij, że „spełnia normę" = ', tags$code("soi_rate ≥ 80%"),
+        ". Przetestuj ", tags$b("jednostronnie (prawostronnie)"),
+        ", czy odsetek takich firm przekracza 50% (p₀ = 0.5). Użyj testu dwumianowego."),
+      actionButton("ch9_b_ans2", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_b_sol2")
+    ),
+
+    figure_panel(label = "Ćwiczenie 2.3",
+      h4("Czy więcej szkoleń BHP wiąże się z niższą wypadkowością?"),
+      p("Oblicz korelację Pearsona między ", tags$code("szkolenia"),
+        " a ", tags$code("wypadki"),
+        ". Jaki jest kierunek zależności? Jak silna jest korelacja?"),
+      actionButton("ch9_b_ans3", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_b_sol3")
+    ),
+
+    figure_panel(label = "Ćwiczenie 2.4",
+      h4("Czy małe i duże przedsiębiorstwa różnią się wypadkowością?"),
+      p("Porównaj średni ", tags$code("wypadki"),
+        " między grupami ", tags$code("wielkosc"),
+        " (małe vs duże). Wykonaj test t dla prób niezależnych."),
+      actionButton("ch9_b_ans4", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_b_sol4")
+    ),
+
+    figure_panel(label = "Ćwiczenie 2.5",
+      h4("Czy sektor jest niezależny od poziomu stosowania ŚOI?"),
+      p("Utwórz zmienną binarną: ", tags$code("soi_ok = (soi_rate ≥ 80)"),
+        ". Zbuduj tabelę ", tags$code("sektor"), " × ",
+        tags$code("soi_ok"),
+        " i wykonaj test χ² niezależności. Oblicz Cramér's V."),
+      actionButton("ch9_b_ans5", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_b_sol5")
+    ),
+
+    figure_panel(label = "Ćwiczenie 2.6",
+      h4("Czy poziom ryzyka różnicuje wypadkowość?"),
+      p("Wykonaj jednoczynnikową ANOVA: ", tags$code("wypadki"), " ~ ",
+        tags$code("poziom_ryzyka"),
+        " (niski/średni/wysoki). Zapisz F, df, p, η².
+        Wykonaj post-hoc Games-Howell."),
+      actionButton("ch9_b_ans6", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_b_sol6")
+    ),
+
+    # ---- Blok 3: Technologia zywnosci ----
+    lc_h2("ch9-tz", "Blok 3", "Technologia żywności — partie produktów"),
+
+    lc_feedback(type = "info",
+      p(tags$b("Dane: "), tags$code("dane/technologia_zywnosci.csv"),
+        " — 200 partii produktów spożywczych (Polska, 2023)."),
+      p("Zmienne: ", tags$code("bialko"), " (g białka/100 g), ",
+        tags$code("wilgotnosc"), " (%), ",
+        tags$code("trwalosc"), " (dni), ",
+        tags$code("ph"), " (pH produktu), ",
+        tags$code("typ"), ' ("tradycyjny"/"funkcjonalny"), ',
+        tags$code("zanieczyszczenie"), ' ("brak"/"wykryte"), ',
+        tags$code("przechowywanie"), ' ("chłodnicze"/"atmosfera modyfikowana"/"suszenie").')
+    ),
+
+    figure_panel(label = "Ćwiczenie 3.1",
+      h4("Czy zawartość białka spełnia normę ≥ 12 g/100 g?"),
+      p("Przetestuj ", tags$b("dwustronnie"), ", czy średnia ",
+        tags$code("bialko"), " różni się od normy 12 g/100 g.
+        Sformułuj H₀ i Hₐ, oblicz Cohen's d."),
+      actionButton("ch9_t_ans1", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_t_sol1")
+    ),
+
+    figure_panel(label = "Ćwiczenie 3.2",
+      h4("Czy ponad 20% partii ma wykryte zanieczyszczenia?"),
+      p("Przetestuj ", tags$b("jednostronnie (prawostronnie)"),
+        ", czy odsetek partii z ", tags$code("zanieczyszczenie == \"wykryte\""),
+        " przekracza 20% (p₀ = 0.2). Użyj testu dwumianowego."),
+      actionButton("ch9_t_ans2", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_t_sol2")
+    ),
+
+    figure_panel(label = "Ćwiczenie 3.3",
+      h4("Czy wilgotność jest ujemnie skorelowana z trwałością?"),
+      p("Oblicz korelację Pearsona między ", tags$code("wilgotnosc"),
+        " a ", tags$code("trwalosc"),
+        ". Jaki jest oczekiwany kierunek? Jak silna jest zależność?"),
+      actionButton("ch9_t_ans3", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_t_sol3")
+    ),
+
+    figure_panel(label = "Ćwiczenie 3.4",
+      h4("Czy produkty tradycyjne i funkcjonalne różnią się trwałością?"),
+      p("Porównaj średnią ", tags$code("trwalosc"),
+        " między ", tags$code("typ"),
+        " (tradycyjny vs funkcjonalny). Wykonaj test t dla prób niezależnych."),
+      actionButton("ch9_t_ans4", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_t_sol4")
+    ),
+
+    figure_panel(label = "Ćwiczenie 3.5",
+      h4("Czy typ produktu wiąże się z wykryciem zanieczyszczeń?"),
+      p("Zbuduj tabelę ", tags$code("typ"), " × ",
+        tags$code("zanieczyszczenie"),
+        " i wykonaj test χ² niezależności. Oblicz Cramér's V."),
+      actionButton("ch9_t_ans5", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_t_sol5")
+    ),
+
+    figure_panel(label = "Ćwiczenie 3.6",
+      h4("Czy metoda przechowywania różnicuje trwałość?"),
+      p("Wykonaj jednoczynnikową ANOVA: ", tags$code("trwalosc"), " ~ ",
+        tags$code("przechowywanie"),
+        " (3 metody). Zapisz F, df, p, η².
+        Wykonaj post-hoc Games-Howell."),
+      actionButton("ch9_t_ans6", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_t_sol6")
+    ),
+
+    # ---- Blok 4: Myslenie krytyczne ----
+    lc_h2("ch9-krit", "Blok 4", "Myślenie krytyczne (~10 min)"),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Prawda czy fałsz?"),
+      tagList(
+        p("Oceń każde stwierdzenie (T/F) i uzasadnij odpowiedź:"),
+        tags$ol(
+          tags$li('„Korelacja r = –0.45 między szkoleniami a wypadkowością oznacza,
+                   że szkolenia powodują spadek wypadków."'),
+          tags$li('„p < 0.05 w teście t oznacza, że z prawdopodobieństwem 95%
+                   hipoteza alternatywna jest prawdziwa."'),
+          tags$li('„Test χ² wykazał p = 0.03 — wiem więc, że związek między typem
+                   produktu a zanieczyszczeniem jest silny."'),
+          tags$li('„Jeśli ANOVA dała p < 0.05, to każda para regionów różni się
+                   istotnie pod względem plonu."'),
+          tags$li('„Cohen\'s d = 0.15 przy p < 0.001 oznacza, że różnica między
+                   grupami jest duża i ważna praktycznie."'),
+          tags$li('„Gdybyśmy zamiast ANOVA wykonali trzy oddzielne testy t
+                   dla każdej pary grup, wnioski byłyby identyczne."'),
+          tags$li('„Korelacja Pearsona r = –0.30 oznacza, że nawożenie wyjaśnia
+                   9% zmienności plonu."'),
+          tags$li('„Test jednostronny (lewy) jest mocniejszy od dwustronnego,
+                   więc zawsze powinniśmy go wybierać."')
+        )
+      ),
+      actionButton("ch9_krit_ans", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("ch9_krit_sol")
+    ),
 
     br(), br(), br()
   )
 )
 
 # ============================================================================
-# TRESC ZADAN — funkcja zwracajaca tagList per dataset
+# DANE — generowane syntetycznie z set.seed (brak plikow zewnetrznych)
 # ============================================================================
 
-.ch9_task <- function(task_id, title, narrative, ans_btn_id, sol_out_id) {
-  figure_panel(label = "Ćwiczenie",
-    h4(task_id, " — ", title),
-    tagList( narrative),
-    actionButton(ans_btn_id, "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
-    uiOutput(sol_out_id)
+.ch9_data <- local({
+
+  set.seed(42)
+  n <- 200
+
+  # ---- Rolnictwo ----
+  region_lvls <- c("dolnośląskie", "opolskie", "lubuskie")
+  region   <- sample(region_lvls, n, replace = TRUE,
+                     prob = c(0.45, 0.35, 0.20))
+  uprawa   <- sample(c("pszenica", "rzepak"), n, replace = TRUE,
+                     prob = c(0.60, 0.40))
+  nawadnianie <- ifelse(runif(n) < 0.30, "tak", "nie")
+
+  # regiony maja nieco rozne srednisie plonow
+  base_plon <- ifelse(region == "dolnośląskie", 5.3,
+               ifelse(region == "opolskie", 5.0, 4.7))
+  plon <- pmax(1.5, base_plon + rnorm(n, 0, 0.9))
+
+  nawozenie <- pmax(80, rnorm(n, 180, 40))
+  ph        <- pmax(4.5, pmin(8.0, rnorm(n, 6.4, 0.55)))
+  opady     <- pmax(250, rnorm(n, 540, 85))
+
+  rolnictwo <- data.frame(
+    plon = round(plon, 2),
+    nawozenie = round(nawozenie, 1),
+    ph = round(ph, 2),
+    opady = round(opady, 0),
+    uprawa, nawadnianie, region,
+    stringsAsFactors = FALSE
   )
-}
 
-# ----------------------------------------------------------------------------
-# EDUKACJA (CASchools)
-# ----------------------------------------------------------------------------
+  # ---- Inzynieria bezpieczenstwa ----
+  sektor       <- sample(c("produkcja", "budownictwo"), n, replace = TRUE,
+                         prob = c(0.55, 0.45))
+  wielkosc     <- sample(c("małe", "duże"), n, replace = TRUE,
+                         prob = c(0.60, 0.40))
+  poziom_ryzyka <- sample(c("niski", "średni", "wysoki"), n, replace = TRUE,
+                           prob = c(0.30, 0.45, 0.25))
 
-.ch9_content_edu <- function() tagList(
+  base_wyp <- ifelse(poziom_ryzyka == "niski", 6.5,
+              ifelse(poziom_ryzyka == "średni", 8.8, 11.5))
+  wypadki   <- pmax(0.5, base_wyp + rnorm(n, 0, 2.2))
+  szkolenia <- pmax(4, rnorm(n, 24, 8))
+  soi_rate  <- pmax(30, pmin(100, rnorm(n, 77, 13)))
+  ryzyko_score <- pmax(1, pmin(10, rnorm(n, 5.1, 1.7)))
 
-  lc_feedback(type = "info",
-    p(tags$b("Otwórz plik "), tags$code("dane/caschools.csv"), tags$b(" w Jamowi"), "."),
-    p("Dane ze 420 okręgów szkolnych Kalifornii (1998–1999). Zmienne: ",
-      tags$code("read"), ", ", tags$code("math"), ", ", tags$code("income"), ", ",
-      tags$code("english"), ", ", tags$code("lunch"), ", ",
-      tags$code("student_teacher_ratio"), ", ", tags$code("grades"), ".")
-  ),
-
-  # ---- Blok 1: Test jednej proby ----
-  lc_h2("ch9-blok1", "Blok 1", "Test jednej próby (~20 min)"),
-
-  .ch9_task("Zadanie 1",
-    "Czy wyniki z czytania różnią się od krajowej normy 650 pkt?",
-    p("Departament edukacji podaje normę 650 pkt. Przetestuj, czy średni wynik ",
-      tags$code("read"), " w okręgach Kalifornii ", tags$b("istotnie różni się"),
-      " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0.05)
-      i oblicz Cohen's d. Co raportowałbyś departamentowi?"),
-    "ch9_ans1", "ch9_sol1"
-  ),
-
-  .ch9_task("Zadanie 2",
-    "Czy typowy dochód okręgu przekracza 15 tys. USD?",
-    p('Hipoteza dyrekcji: „Nasz stan to stan zamożnych" — tzn. typowy okrąg
-      ma dochód powyżej 15 tys. USD. Przetestuj jednostronnie (prawostronie) zmienną ',
-      tags$code("income"), '. Skonstruuj H₀ i Hₐ dla hipotezy kierunkowej.
-      Jaki wniosek? Czy wynik jest istotny statystycznie? A praktycznie?'),
-    "ch9_ans2", "ch9_sol2"
-  ),
-
-  # ---- Blok 2: Korelacja ----
-  lc_h2("ch9-blok2", "Blok 2", "Korelacja Pearsona (~20 min)"),
-
-  .ch9_task("Zadanie 3",
-    "Jak silnie czytanie i matematyka idą w parze?",
-    p("Oblicz korelację Pearsona między zmiennymi ", tags$code("read"), " i ",
-      tags$code("math"), ". Zanim klikniesz: czy spodziewasz się korelacji
-      dodatniej czy ujemnej? Silnej czy słabej? Zanotuj swoje przewidywanie
-      i sprawdź, jak daleko byłeś/aś od wyniku."),
-    "ch9_ans3", "ch9_sol3"
-  ),
-
-  .ch9_task("Zadanie 4",
-    "Czy zamożniejsze okręgi uczą się lepiej?",
-    p("Oblicz korelację Pearsona między ", tags$code("income"), " a ",
-      tags$code("read"), ". Jaki znak ma r? Czy korelacja jest istotna?
-      Czy możesz z tego wyciągnąć wniosek przyczynowy — że wyższy dochód
-      ", tags$em("powoduje"), " lepsze wyniki?"),
-    "ch9_ans4", "ch9_sol4"
-  ),
-
-  .ch9_task("Zadanie 5",
-    "Czy przeładowane klasy szkodzą wynikom?",
-    p("Oblicz korelację Pearsona między ", tags$code("student_teacher_ratio"),
-      " (STR) a ", tags$code("read"), ". Dlaczego korelacja jest ", tags$em("ujemna"),
-      "? Czy jest istotna statystycznie? Czy silna praktycznie?"),
-    "ch9_ans5", "ch9_sol5"
-  ),
-
-  # ---- Blok 3: Test dwóch grup ----
-  lc_h2("ch9-blok3", "Blok 3", "Test t dwóch grup (~20 min)"),
-
-  .ch9_task("Zadanie 6",
-    "Czy typ szkoły różnicuje wyniki z czytania?",
-    p("Okręgi dzielą się na szkoły zakresu ", tags$code("KK-06"), " i ",
-      tags$code("KK-08"), ". Przetestuj, czy średnie wyniki ", tags$code("read"),
-      " różnią się między grupami. Wykonaj test t dla prób niezależnych i oblicz
-      Cohen's d. Jak duży jest efekt?"),
-    "ch9_ans6", "ch9_sol6"
-  ),
-
-  .ch9_task("Zadanie 7",
-    "Duże klasy vs małe — czy stosunek uczniów do nauczycieli ma znaczenie?",
-    p("Stwórz zmienną binarną: ", tags$code("high_str = (student_teacher_ratio > 20)"),
-      ". Porównaj wyniki ", tags$code("read"), " między okręgami z dużym (STR > 20)
-      i małym (STR ≤ 20) stosunkiem. Czy różnica jest istotna? Jak duże jest
-      przesunięcie w punktach?"),
-    "ch9_ans7", "ch9_sol7"
-  ),
-
-  # ---- Blok 4: Chi-kwadrat niezaleznosci ----
-  lc_h2("ch9-blok4", "Blok 4", "Test niezależności χ² (~20 min)"),
-
-  .ch9_task("Zadanie 8",
-    "Czy typ szkoły wiąże się z wysokim odsetkiem uczniów ELL?",
-    p("Stwórz zmienną binarną: ", tags$code("high_english = (english > 20)"),
-      ". Zbuduj tabelę krzyżową ", tags$code("grades"), " × ",
-      tags$code("high_english"), " i wykonaj test χ² niezależności.
-      Zapisz: χ², df, p. Co wynika z wyniku? Czy typ szkoły jest niezależny
-      od odsetka uczniów uczących się angielskiego?"),
-    "ch9_ans8", "ch9_sol8"
-  ),
-
-  .ch9_task("Zadanie 9",
-    "Czy przeładowane klasy idą w parze z ubóstwem uczniów?",
-    p("Stwórz dwie zmienne binarne: ", tags$code("high_str = (student_teacher_ratio > 20)"),
-      " i ", tags$code("high_lunch = (lunch > 50)"),
-      " (okręgi, gdzie ponad połowa uczniów dostaje dotację do obiadów).
-      Wykonaj test χ² niezależności. Czy STR i ubóstwo są ze sobą powiązane?"),
-    "ch9_ans9", "ch9_sol9"
-  ),
-
-  # ---- Blok 5: ANOVA ----
-  lc_h2("ch9-blok5", "Blok 5", "ANOVA (~20 min)"),
-
-  .ch9_task("Zadanie 10",
-    "Czy wyniki czytania różnią się między tercylami dochodu?",
-    p("Podziel okręgi na trzy równe grupy dochodowe (tercyle): ",
-      tags$b("niski / średni / wysoki"), " (użyj ", tags$code("split into groups"),
-      " w Jamowi lub utwórz zmienną ręcznie na podstawie kwantyli 0, 1/3, 2/3, 1).
-      Wykonaj jednoczynnikową ANOVA dla zmiennej ", tags$code("read"),
-      " między grupami. Zapisz: F, df, p, η². Wykonaj też post-hoc Games-Howell
-      i wskaż, które pary różnią się istotnie."),
-    "ch9_ans10", "ch9_sol10"
-  ),
-
-  # ---- Blok 6: Myslenie krytyczne ----
-  lc_h2("ch9-blok6", "Blok 6", "Myślenie krytyczne (~10 min)"),
-
-  .ch9_task("Zadanie 11",
-    "Prawda czy fałsz?",
-    tagList(
-      p("Na podstawie wyników z powyższych zadań oceń każde stwierdzenie:"),
-      tags$ol(
-        tags$li('„Skoro korelacja między dochodem a wynikami z czytania jest istotna (Zadanie 4),
-                 wyższy dochód okręgu powoduje wyższe wyniki testów."'),
-        tags$li('„Korelacja r = –0.23 między STR a read oznacza, że STR wyjaśnia
-                 ok. 5% zmienności wyników."'),
-        tags$li('„Test t w Zadaniu 6 wykazał p < 0.05, więc różnica między KK-06
-                 a KK-08 jest duża i praktycznie ważna."'),
-        tags$li('„Test χ² z Zadania 8 dał p < 0.05, więc wiemy, o ile procent
-                 różni się odsetek high_english między grupami grades."'),
-        tags$li('„ANOVA w Zadaniu 10 wykazała F > 0, więc ', tags$em("wszystkie"),
-                 ' trzy grupy dochodowe różnią się między sobą."'),
-        tags$li('„Gdybyśmy zamiast ANOVA wykonali trzy oddzielne testy t
-                 dla każdej pary grup, otrzymalibyśmy identyczne wnioski."'),
-        tags$li('„W Zadaniu 1 test wykazał p < 0.05 — to znaczy, że
-                 z prawdopodobieństwem 95% prawdziwa średnia różni się od 650."'),
-        tags$li('„Istotność statystyczna gwarantuje, że wynik ma znaczenie
-                 praktyczne (policy-relevant) dla systemu oświaty."')
-      )
-    ),
-    "ch9_ans11", "ch9_sol11"
-  ),
-
-  br()
-)
-
-# ============================================================================
-# DANE — wczytane raz przy ladowaniu modulu
-# ============================================================================
-
-.ch9_data <- list(
-  edu = read.csv(file.path(app_dir, "dane", "caschools.csv"),
-                 stringsAsFactors = FALSE)
-)
-
-# ============================================================================
-# HELPERY obliczen (uzywane inline w .ch9_solutions)
-# ============================================================================
-
-.ch9_t1samp <- function(x, mu, alternative = "two.sided") {
-  x <- x[!is.na(x)]
-  n  <- length(x)
-  m  <- mean(x); s <- sd(x)
-  se <- s / sqrt(n)
-  t  <- (m - mu) / se
-  df <- n - 1
-  p  <- switch(alternative,
-    two.sided = 2 * pt(-abs(t), df),
-    greater   = pt(t, df, lower.tail = FALSE),
-    less      = pt(t, df, lower.tail = TRUE)
+  bezpieczenstwo <- data.frame(
+    wypadki = round(wypadki, 2),
+    szkolenia = round(szkolenia, 1),
+    soi_rate = round(soi_rate, 1),
+    ryzyko_score = round(ryzyko_score, 2),
+    wielkosc, sektor, poziom_ryzyka,
+    stringsAsFactors = FALSE
   )
-  d_cohen <- (m - mu) / s
-  list(n = n, mean = m, sd = s, se = se, t = t, df = df, p = p,
-       mu = mu, d = d_cohen, alternative = alternative)
+
+  # ---- Technologia zywnosci ----
+  typ              <- sample(c("tradycyjny", "funkcjonalny"), n, replace = TRUE,
+                              prob = c(0.55, 0.45))
+  przechowywanie   <- sample(c("chłodnicze", "atmosfera modyfikowana", "suszenie"),
+                              n, replace = TRUE, prob = c(0.40, 0.35, 0.25))
+  # metody przechowywania roznicuja trwalosc
+  base_trw <- ifelse(przechowywanie == "chłodnicze", 160,
+              ifelse(przechowywanie == "atmosfera modyfikowana", 195, 230))
+  trwalosc      <- pmax(30, base_trw + rnorm(n, 0, 28))
+  bialko        <- pmax(5, rnorm(n, 12.3, 2.1))
+  wilgotnosc    <- pmax(5, pmin(25, rnorm(n, 11.3, 1.9)))
+  ph_food       <- pmax(3.5, pmin(8.0, rnorm(n, 5.7, 0.6)))
+  zanieczyszczenie <- ifelse(runif(n) < 0.18, "wykryte", "brak")
+
+  technologia_zywnosci <- data.frame(
+    bialko = round(bialko, 2),
+    wilgotnosc = round(wilgotnosc, 2),
+    trwalosc = round(trwalosc, 0),
+    ph = round(ph_food, 2),
+    typ, zanieczyszczenie, przechowywanie,
+    stringsAsFactors = FALSE
+  )
+
+  list(rol = rolnictwo, bhp = bezpieczenstwo, tz = technologia_zywnosci)
+})
+
+# ============================================================================
+# HELPERY obliczen
+# ============================================================================
+
+.ch9_t1 <- function(x, mu, alternative = "two.sided") {
+  x <- x[!is.na(x)]; n <- length(x); m <- mean(x); s <- sd(x)
+  se <- s / sqrt(n); t_val <- (m - mu) / se; df <- n - 1
+  p_val <- switch(alternative,
+    two.sided = 2 * pt(-abs(t_val), df),
+    greater   = pt(t_val, df, lower.tail = FALSE),
+    less      = pt(t_val, df, lower.tail = TRUE)
+  )
+  list(n=n, m=m, s=s, t=t_val, df=df, p=p_val, d=(m-mu)/s)
 }
 
-.ch9_cor <- function(x, y) {
-  complete <- complete.cases(x, y)
-  x <- x[complete]; y <- y[complete]
-  n <- length(x)
-  r <- cor(x, y)
-  t <- r * sqrt((n - 2) / (1 - r^2))
-  df <- n - 2
-  p  <- 2 * pt(-abs(t), df)
-  list(r = r, t = t, df = df, p = p, n = n)
+.ch9_cor_test <- function(x, y) {
+  ok <- complete.cases(x, y); x <- x[ok]; y <- y[ok]; n <- length(x)
+  r <- cor(x, y); t_val <- r * sqrt((n-2)/(1-r^2)); df <- n - 2
+  p_val <- 2 * pt(-abs(t_val), df)
+  list(r=r, t=t_val, df=df, p=p_val, n=n, r2=r^2)
 }
 
-.ch9_t2samp <- function(x, grp) {
-  grp <- as.factor(grp)
-  lvls <- levels(grp)
+.ch9_t2 <- function(x, grp) {
+  grp <- as.factor(grp); lvls <- levels(grp)
   x1 <- x[grp == lvls[1]]; x2 <- x[grp == lvls[2]]
   n1 <- length(x1); n2 <- length(x2)
-  m1 <- mean(x1); m2 <- mean(x2)
-  s1 <- sd(x1);   s2 <- sd(x2)
-  se <- sqrt(s1^2/n1 + s2^2/n2)
-  t  <- (m1 - m2) / se
+  m1 <- mean(x1); m2 <- mean(x2); s1 <- sd(x1); s2 <- sd(x2)
+  se <- sqrt(s1^2/n1 + s2^2/n2); t_val <- (m1 - m2) / se
   df <- (s1^2/n1 + s2^2/n2)^2 /
         ((s1^2/n1)^2/(n1-1) + (s2^2/n2)^2/(n2-1))
-  p  <- 2 * pt(-abs(t), df)
+  p_val <- 2 * pt(-abs(t_val), df)
   sp <- sqrt(((n1-1)*s1^2 + (n2-1)*s2^2) / (n1+n2-2))
-  d  <- (m1 - m2) / sp
-  list(lvls = lvls, n1 = n1, n2 = n2, m1 = m1, m2 = m2,
-       s1 = s1, s2 = s2, t = t, df = df, p = p, d = d)
+  list(lvls=lvls, n1=n1, n2=n2, m1=m1, m2=m2, s1=s1, s2=s2,
+       t=t_val, df=df, p=p_val, d=(m1-m2)/sp)
 }
 
-.ch9_chisq <- function(tab) {
-  ct   <- chisq.test(tab, correct = FALSE)
-  list(chi2 = ct$statistic, df = ct$parameter, p = ct$p.value, tab = tab)
+.ch9_chi2 <- function(tab) {
+  ct <- chisq.test(tab, correct = FALSE)
+  n  <- sum(tab); k <- min(nrow(tab), ncol(tab))
+  v  <- sqrt(unname(ct$statistic) / (n * (k - 1)))
+  list(chi2=unname(ct$statistic), df=unname(ct$parameter), p=ct$p.value, v=v, tab=tab)
 }
 
-.ch9_fmt_t <- function(r) {
-  sprintf("t(%s) = %.3f, p %s %s",
-    round(r$df, 1),
-    r$t,
-    if (r$p < 0.001) "<" else "=",
-    if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))
+.ch9_anova_f <- function(outcome, group) {
+  df_fit <- data.frame(y = outcome, g = group)
+  fit    <- aov(y ~ g, data = df_fit)
+  s      <- summary(fit)[[1]]
+  F_val  <- s[["F value"]][1]; df1 <- s[["Df"]][1]; df2 <- s[["Df"]][2]
+  p_val  <- s[["Pr(>F)"]][1]
+  eta2   <- s[["Sum Sq"]][1] / sum(s[["Sum Sq"]])
+  ph     <- TukeyHSD(fit)$g
+  grp_stats <- tapply(outcome, group, function(x) c(n=length(x), m=mean(x), s=sd(x)))
+  list(F=F_val, df1=df1, df2=df2, p=p_val, eta2=eta2, ph=ph,
+       grp_stats=grp_stats, lvls=levels(as.factor(group)))
 }
 
-.ch9_fmt_r <- function(r) {
-  sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
-    r$r, r$df, r$t,
-    if (r$p < 0.001) "<" else "=",
-    if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))
+.ch9_fmt_p <- function(p) {
+  if (p < 0.001) "p < 0.001" else sprintf("p = %s", format(round(p, 4), nsmall = 4))
 }
 
-.ch9_decision <- function(p, alpha = 0.05) {
-  if (p < alpha)
-    tagList(tags$b(style = paste0("color:", upwr_accent),   "Odrzucamy H₀"))
+.ch9_decision <- function(p) {
+  if (p < 0.05)
+    tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀ (p < 0.05)")
   else
-    tagList(tags$b(style = paste0("color:", unname(upwr_cat["szalwia"])),
-                   "Brak podstaw do odrzucenia H₀"))
+    tags$b("Brak podstaw do odrzucenia H₀ (p ≥ 0.05)")
 }
 
-# ============================================================================
-# ROZWIAZANIA — lista per dataset
-# ============================================================================
+.ch9_sol_t1 <- function(r, h0_text, ha_text, var_label, mu, unit = "") {
+  tagList(
+    p(tags$b("H₀: "), h0_text, " · ", tags$b("Hₐ: "), ha_text),
+    tags$ul(
+      tags$li(sprintf("n = %d, x̄ = %.2f%s, s = %.2f",
+                      r$n, r$m, if (nchar(unit) > 0) paste0(" ", unit) else "", r$s)),
+      tags$li(sprintf("t(%s) = %.3f, %s", round(r$df, 1), r$t, .ch9_fmt_p(r$p))),
+      tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
+    ),
+    .ch9_decision(r$p)
+  )
+}
 
-.ch9_solutions <- local({
+.ch9_sol_cor <- function(r, var1, var2) {
+  tagList(
+    tags$ul(
+      tags$li(sprintf("r = %.3f, t(%d) = %.3f, %s",
+                      r$r, r$df, r$t, .ch9_fmt_p(r$p))),
+      tags$li(sprintf("R² = %.3f — %s wyjaśnia %.1f%% wariancji %s",
+                      r$r2, var1, 100 * r$r2, var2))
+    ),
+    .ch9_decision(r$p)
+  )
+}
 
-  edu <- .ch9_data$edu
+.ch9_sol_t2 <- function(r, unit = "") {
+  tagList(
+    tags$ul(
+      tags$li(sprintf("%s: n = %d, x̄ = %.2f%s",
+                      r$lvls[1], r$n1, r$m1,
+                      if (nchar(unit) > 0) paste0(" ", unit) else "")),
+      tags$li(sprintf("%s: n = %d, x̄ = %.2f%s",
+                      r$lvls[2], r$n2, r$m2,
+                      if (nchar(unit) > 0) paste0(" ", unit) else "")),
+      tags$li(sprintf("t(%s) = %.3f, %s", round(r$df, 1), r$t, .ch9_fmt_p(r$p))),
+      tags$li(sprintf("Cohen's d = %.3f (%s efekt)", abs(r$d), effect_size_label(r$d)))
+    ),
+    .ch9_decision(r$p)
+  )
+}
 
-  # ---- sol1: test jednej proby, read vs 650 ----
-  sol1 <- local({
-    r <- .ch9_t1samp(edu$read, mu = 650, alternative = "two.sided")
-    tagList(
-      p(tags$b("H₀: "), "μ_read = 650 · ", tags$b("Hₐ: "), "μ_read ≠ 650"),
-      tags$ul(
-        tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f", r$n, r$mean, r$sd)),
-        tags$li(.ch9_fmt_t(r)),
-        tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
-      ),
-      p(.ch9_decision(r$p)),
-      p(tags$b("Interpretacja:"),
-        sprintf(
-          " Średni wynik z czytania (%.2f pkt) różni się istotnie od normy 650 pkt
-           (p %s 0.05), jednak efekt jest %s (d = %.3f) — różnica %s pkt ma
-           ograniczone znaczenie praktyczne.",
-          r$mean,
-          if (r$p < 0.001) "<" else "=",
-          effect_size_label(r$d),
-          r$d,
-          round(r$mean - 650, 2)
-        )
-      )
-    )
-  })
+.ch9_sol_chi2 <- function(r) {
+  tab <- r$tab
+  tagList(
+    tags$table(class = "lc-table lc-table-bordered lc-table-sm",
+      tags$thead(tags$tr(
+        tags$th(""),
+        lapply(colnames(tab), tags$th),
+        tags$th("suma")
+      )),
+      tags$tbody(lapply(rownames(tab), function(g) {
+        tags$tr(tags$td(g),
+          lapply(colnames(tab), function(cn) tags$td(tab[g, cn])),
+          tags$td(sum(tab[g, ])))
+      }))
+    ),
+    tags$ul(
+      tags$li(sprintf("χ²(%d) = %.3f, %s", r$df, r$chi2, .ch9_fmt_p(r$p))),
+      tags$li(sprintf("Cramér's V = %.3f (%s efekt)", r$v, effect_size_label(r$v)))
+    ),
+    .ch9_decision(r$p)
+  )
+}
 
-  # ---- sol2: test jednej proby, income > 15, jednostronny ----
-  sol2 <- local({
-    r <- .ch9_t1samp(edu$income, mu = 15, alternative = "greater")
-    tagList(
-      p(tags$b("H₀: "), "μ_income ≤ 15 · ", tags$b("Hₐ: "), "μ_income > 15"),
-      tags$ul(
-        tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f (tys. USD)", r$n, r$mean, r$sd)),
-        tags$li(.ch9_fmt_t(r)),
-        tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
-      ),
-      p(.ch9_decision(r$p)),
-      p(tags$b("Interpretacja:"),
-        sprintf(
-          " Średni dochód (%.2f tys. USD) jest %s wyższy od 15 tys. (p %s 0.05).
-           Efekt %s (d = %.3f). Pamiętaj: to jednostronny test — sformułowanie
-           hipotezy kierunkowej jest uzasadnione tylko gdy masz merytoryczne
-           podstawy, by zakładać dany kierunek z góry.",
-          r$mean,
-          if (r$p < 0.05) "istotnie" else "nieistotnie",
-          if (r$p < 0.001) "<" else "=",
-          effect_size_label(r$d),
-          r$d
-        )
-      )
-    )
-  })
-
-  # ---- sol3: korelacja read ~ math ----
-  sol3 <- local({
-    r <- .ch9_cor(edu$read, edu$math)
-    tagList(
-      tags$ul(
-        tags$li(.ch9_fmt_r(r)),
-        tags$li(sprintf("R² = %.3f (wspólna wariancja: %.1f%%)", r$r^2, 100*r$r^2))
-      ),
-      p(.ch9_decision(r$p)),
-      p(tags$b("Interpretacja:"),
-        sprintf(
-          " r = %.3f — korelacja %s i dodatnia. Okręgi z lepszymi wynikami
-           z czytania osiągają też lepsze wyniki z matematyki.
-           Korelacja wyjaśnia %.1f%% wariancji wyników matematyki.",
-          r$r,
-          effect_size_label(r$r),
-          100*r$r^2
-        )
-      )
-    )
-  })
-
-  # ---- sol4: korelacja income ~ read ----
-  sol4 <- local({
-    r <- .ch9_cor(edu$income, edu$read)
-    tagList(
-      tags$ul(
-        tags$li(.ch9_fmt_r(r)),
-        tags$li(sprintf("R² = %.3f (wspólna wariancja: %.1f%%)", r$r^2, 100*r$r^2))
-      ),
-      p(.ch9_decision(r$p)),
-      p(tags$b("Korelacja ≠ przyczynowość:"),
-        " Korelacja jest istotna i dodatnia — bogatsze okręgi mają wyższe wyniki.
-        Jednak nie możemy stwierdzić, że dochód ", tags$em("powoduje"),
-        " lepsze wyniki. Trzecia zmienna (np. jakość nauczycieli, zasób kulturowy
-        rodziny) może tłumaczyć obie. Potrzeba badania eksperymentalnego lub
-        quasi-eksperymentalnego, by mówić o przyczynowości.")
-    )
-  })
-
-  # ---- sol5: korelacja STR ~ read ----
-  sol5 <- local({
-    r <- .ch9_cor(edu$student_teacher_ratio, edu$read)
-    tagList(
-      tags$ul(
-        tags$li(.ch9_fmt_r(r)),
-        tags$li(sprintf("R² = %.3f (wspólna wariancja: %.1f%%)", r$r^2, 100*r$r^2))
-      ),
-      p(.ch9_decision(r$p)),
-      p(tags$b("Interpretacja:"),
-        sprintf(
-          " r = %.3f — korelacja %s i ujemna: wyższy STR (więcej uczniów
-           na nauczyciela) wiąże się z niższymi wynikami. Efekt %s —
-           STR wyjaśnia tylko %.1f%% wariancji wyników. Uwaga: STR jest
-           często proxy dla zasobności okręgu — konfunder dochodu może
-           tłumaczyć część tej zależności.",
-          r$r,
-          effect_size_label(abs(r$r)),
-          effect_size_label(abs(r$r)),
-          100*r$r^2
-        )
-      )
-    )
-  })
-
-  # ---- sol6: t-test grades (KK-06 vs KK-08) ----
-  sol6 <- local({
-    df2 <- edu[!is.na(edu$read) & !is.na(edu$grades), ]
-    r <- .ch9_t2samp(df2$read, df2$grades)
-    tagList(
-      p(tags$b("H₀: "), "μ(KK-06) = μ(KK-08) · ", tags$b("Hₐ: "), "μ(KK-06) ≠ μ(KK-08)"),
-      tags$ul(
-        tags$li(sprintf("%s: n=%d, x̄=%.2f, s=%.2f", r$lvls[1], r$n1, r$m1, r$s1)),
-        tags$li(sprintf("%s: n=%d, x̄=%.2f, s=%.2f", r$lvls[2], r$n2, r$m2, r$s2)),
-        tags$li(.ch9_fmt_t(r)),
-        tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
-      ),
-      p(.ch9_decision(r$p)),
-      p(tags$b("Interpretacja:"),
-        sprintf(
-          " Różnica między grupami (%.2f pkt) jest %s (p %s 0.05).
-           Efekt %s (d = %.3f). Pamiętaj: różnica istotna statystycznie
-           nie musi być edukacyjnie ważna — %.2f pkt na skali wyników to
-           %s praktycznie.",
-          abs(r$m1 - r$m2),
-          if (r$p < 0.05) "istotna statystycznie" else "nieistotna statystycznie",
-          if (r$p < 0.001) "<" else "=",
-          effect_size_label(r$d),
-          r$d,
-          abs(r$m1 - r$m2),
-          if (abs(r$d) < 0.2) "pomijalnie mała różnica"
-          else if (abs(r$d) < 0.5) "mała różnica"
-          else "znacząca różnica"
-        )
-      )
-    )
-  })
-
-  # ---- sol7: t-test high_str (>20 vs <=20) ----
-  sol7 <- local({
-    high_str <- edu$student_teacher_ratio > 20
-    r <- .ch9_t2samp(edu$read, high_str)
-    n_hi <- sum(high_str); n_lo <- sum(!high_str)
-    m_hi <- mean(edu$read[high_str]); m_lo <- mean(edu$read[!high_str])
-    tagList(
-      p(tags$b("H₀: "), "μ(STR≤20) = μ(STR>20) · ",
-        tags$b("Hₐ: "), "μ(STR≤20) ≠ μ(STR>20)"),
-      tags$ul(
-        tags$li(sprintf("STR ≤ 20: n=%d, x̄=%.2f", n_lo, m_lo)),
-        tags$li(sprintf("STR > 20: n=%d, x̄=%.2f", n_hi, m_hi)),
-        tags$li(sprintf("Różnica: %.2f pkt", m_lo - m_hi)),
-        tags$li(.ch9_fmt_t(r)),
-        tags$li(sprintf("Cohen's d = %.3f (%s efekt)", abs(r$d), effect_size_label(r$d)))
-      ),
-      p(.ch9_decision(r$p)),
-      p(tags$b("Uwaga:"),
-        " STR > 20 to okręgi z większą liczbą uczniów na nauczyciela —
-        a często to okręgi biedniejsze. Ujemna różnica może być konfundowana
-        dochodem. Aby izolować efekt STR, potrzeba analizy regresji z kontrolą
-        zmiennych towarzyszących.")
-    )
-  })
-
-  # ---- sol8: chi-kwadrat grades x high_english ----
-  sol8 <- local({
-    high_eng <- edu$english > 20
-    tab <- table(grades = edu$grades, high_english = high_eng)
-    r   <- .ch9_chisq(tab)
-    tagList(
-      p(tags$b("H₀: "), "typ szkoły i high_english są niezależne · ",
-        tags$b("Hₐ: "), "zmienne są zależne"),
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        tags$thead(tags$tr(
-          tags$th("grades"),
-          tags$th("high_english = FALSE"),
-          tags$th("high_english = TRUE"),
-          tags$th("suma")
-        )),
-        tags$tbody(
-          tags$tr(tags$td("KK-06"),
-                  tags$td(tab["KK-06", "FALSE"]), tags$td(tab["KK-06", "TRUE"]),
-                  tags$td(sum(tab["KK-06", ]))),
-          tags$tr(tags$td("KK-08"),
-                  tags$td(tab["KK-08", "FALSE"]), tags$td(tab["KK-08", "TRUE"]),
-                  tags$td(sum(tab["KK-08", ])))
-        )
-      ),
-      tags$ul(
-        tags$li(sprintf("χ²(%d) = %.3f", r$df, r$chi2)),
-        tags$li(sprintf("p %s %s",
-          if (r$p < 0.001) "<" else "=",
-          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4)))
-      ),
-      p(.ch9_decision(r$p)),
-      p(tags$b("Interpretacja:"),
-        " Test χ² mówi tylko, że zmienna jest ", tags$em("istotna"),
-        " — nie jak duży jest związek ani w jakim kierunku.
-        By ocenić siłę związku, oblicz Cramér's V; by zobaczyć kierunek —
-        porównaj proporcje w tabeli.")
-    )
-  })
-
-  # ---- sol9: chi-kwadrat high_str x high_lunch ----
-  sol9 <- local({
-    high_str   <- edu$student_teacher_ratio > 20
-    high_lunch <- edu$lunch > 50
-    tab <- table(high_str = high_str, high_lunch = high_lunch)
-    r   <- .ch9_chisq(tab)
-    n_both <- tab["TRUE", "TRUE"]
-    p_hi_str_poor <- tab["TRUE","TRUE"] / sum(tab["TRUE",])
-    p_lo_str_poor <- tab["FALSE","TRUE"] / sum(tab["FALSE",])
-    tagList(
-      p(tags$b("H₀: "), "high_str i high_lunch są niezależne · ",
-        tags$b("Hₐ: "), "zmienne są zależne"),
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        tags$thead(tags$tr(
-          tags$th("high_str"), tags$th("high_lunch = FALSE"),
-          tags$th("high_lunch = TRUE"), tags$th("suma")
-        )),
-        tags$tbody(
-          tags$tr(tags$td("FALSE"),
-                  tags$td(tab["FALSE","FALSE"]), tags$td(tab["FALSE","TRUE"]),
-                  tags$td(sum(tab["FALSE",]))),
-          tags$tr(tags$td("TRUE"),
-                  tags$td(tab["TRUE","FALSE"]), tags$td(tab["TRUE","TRUE"]),
-                  tags$td(sum(tab["TRUE",])))
-        )
-      ),
-      tags$ul(
-        tags$li(sprintf("χ²(%d) = %.3f", r$df, r$chi2)),
-        tags$li(sprintf("p %s %s",
-          if (r$p < 0.001) "<" else "=",
-          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("Odsetek high_lunch wśród okręgów z STR>20: %.1f%%",
-                        100 * p_hi_str_poor)),
-        tags$li(sprintf("Odsetek high_lunch wśród okręgów z STR≤20: %.1f%%",
-                        100 * p_lo_str_poor))
-      ),
-      p(.ch9_decision(r$p)),
-      p(tags$b("Wniosek:"),
-        " Okręgi z przeładowanymi klasami mają wyraźnie wyższy odsetek ubogich uczniów.
-        STR może być wskaźnikiem zastępczym (proxy) dla zasobności — dlatego korelacja
-        STR–read z Zadania 5 jest częściowo konfundowana dochodem.")
-    )
-  })
-
-  # ---- sol10: ANOVA income_group x read ----
-  sol10 <- local({
-    quant <- quantile(edu$income, probs = c(0, 1/3, 2/3, 1))
-    edu$income_group <- cut(edu$income, breaks = quant,
-      labels = c("Niski", "Średni", "Wysoki"), include.lowest = TRUE)
-
-    grp_stats <- tapply(edu$read, edu$income_group, function(x)
-      c(n = length(x), m = mean(x), s = sd(x)))
-
-    fit <- aov(read ~ income_group, data = edu)
-    s   <- summary(fit)[[1]]
-    F_val  <- s[["F value"]][1]
-    df1    <- s[["Df"]][1]
-    df2    <- s[["Df"]][2]
-    p_val  <- s[["Pr(>F)"]][1]
-    sst    <- sum(s[["Sum Sq"]])
-    eta2   <- s[["Sum Sq"]][1] / sst
-
-    ph <- TukeyHSD(fit)$income_group
-
-    tagList(
-      p(tags$b("H₀: "), "μ_niski = μ_średni = μ_wysoki · ",
-        tags$b("Hₐ: "), "co najmniej jedna para się różni"),
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        tags$thead(tags$tr(tags$th("Tercyl"), tags$th("n"),
-                           tags$th("x̄ read"), tags$th("s"))),
-        tags$tbody(lapply(c("Niski","Średni","Wysoki"), function(g) {
-          v <- grp_stats[[g]]
-          tags$tr(tags$td(g), tags$td(v["n"]),
-                  tags$td(round(v["m"],2)), tags$td(round(v["s"],2)))
-        }))
-      ),
-      tags$ul(
-        tags$li(sprintf("F(%d, %d) = %.3f", df1, df2, F_val)),
-        tags$li(sprintf("p %s %s",
-          if (p_val < 0.001) "<" else "=",
-          if (p_val < 0.001) "0.001" else format(round(p_val, 4), nsmall = 4))),
-        tags$li(sprintf("η² = %.3f (%s efekt — %.1f%% wariancji wyjaśnionej przez dochód)",
-          eta2,
-          if (eta2 < 0.01) "pomijalny" else if (eta2 < 0.06) "mały"
-          else if (eta2 < 0.14) "średni" else "duży",
-          100 * eta2))
-      ),
-      p(.ch9_decision(p_val)),
-      p(tags$b("Post-hoc Tukey HSD:")),
-      tags$ul(
-        lapply(rownames(ph), function(nm) {
-          pp <- ph[nm, "p adj"]
-          tags$li(sprintf("%s: Δ = %.2f pkt, p %s %s",
-            nm, ph[nm,"diff"],
-            if (pp < 0.001) "<" else "=",
-            if (pp < 0.001) "0.001" else format(round(pp, 3), nsmall = 3)
-          ))
-        })
-      ),
-      p(tags$b("Uwaga o post-hoc:"),
-        " W Jamowi użyj Games-Howell (nie zakłada równych wariancji).
-        Tu użyto Tukey HSD do zilustrowania idei; wyniki mogą się nieznacznie różnić.")
-    )
-  })
-
-  # ---- sol11: prawda czy falsz ----
-  sol11 <- local({
-    r_inc  <- .ch9_cor(edu$income, edu$read)
-    r_str  <- .ch9_cor(edu$student_teacher_ratio, edu$read)
-    r_str_r2 <- round(100 * r_str$r^2, 1)
-
-    tagList(
-      tags$ol(
-        tags$li(tags$b("Fałsz."),
-          " Korelacja nie implikuje przyczynowości — jest to obserwacyjna miara
-          współzależności, nie związku przyczynowego."),
-        tags$li(tags$b("Prawda."),
-          sprintf(" R² = r² = (%.3f)² ≈ %.3f, czyli STR wyjaśnia %.1f%% wariancji wyników.",
-            r_str$r, r_str$r^2, r_str_r2)),
-        tags$li(tags$b("Fałsz."),
-          " Istotność statystyczna (p < 0.05) nie mówi nic o wielkości efektu.
-          Trzeba sprawdzić Cohen's d — może być pomijalny."),
-        tags$li(tags$b("Fałsz."),
-          " Test χ² stwierdza ", tags$em("czy"), " zmienne są zależne, nie ",
-          tags$em("jak bardzo"), " ani w jakim kierunku. Do opisu siły służy Cramér's V,
-          do kierunku — proporcje w tabeli krzyżowej."),
-        tags$li(tags$b("Fałsz."),
-          " ANOVA testuje, czy ", tags$em("jakaś"), " para grup się różni —
-          nie że ", tags$em("wszystkie"), " pary są różne. Post-hoc wskazuje,
-          które konkretnie pary."),
-        tags$li(tags$b("Fałsz."),
-          " Trzy oddzielne testy t influją błąd I rodzaju (problem porównań wielokrotnych).
-          Przy α = 0.05 i trzech testach prawdopodobieństwo co najmniej jednego
-          fałszywie pozytywnego wyniku rośnie do ~14%."),
-        tags$li(tags$b("Fałsz."),
-          ' p < 0.05 oznacza, że dane byłyby mało prawdopodobne, gdyby H₀ była prawdziwa
-          — nie daje "prawdopodobieństwa 95%", że H₀ jest fałszywa.'),
-        tags$li(tags$b("Fałsz."),
-          " Istotność statystyczna ≠ istotność praktyczna. Mała różnica (np. 1 pkt)
-          może być istotna statystycznie przy dużym n, ale nieistotna dla polityków
-          i praktyków.")
-      )
-    )
-  })
-
-  list(edu = list(
-    sol1 = sol1, sol2 = sol2, sol3 = sol3, sol4 = sol4,
-    sol5 = sol5, sol6 = sol6, sol7 = sol7, sol8 = sol8,
-    sol9 = sol9, sol10 = sol10, sol11 = sol11
-  ))
-})
+.ch9_sol_anova <- function(r, outcome_label = "y") {
+  tagList(
+    tags$table(class = "lc-table lc-table-bordered lc-table-sm",
+      tags$thead(tags$tr(tags$th("Grupa"), tags$th("n"),
+                         tags$th(paste0("x̄ (", outcome_label, ")")), tags$th("s"))),
+      tags$tbody(lapply(r$lvls, function(g) {
+        v <- r$grp_stats[[g]]
+        tags$tr(tags$td(g), tags$td(v["n"]),
+                tags$td(round(v["m"], 2)), tags$td(round(v["s"], 2)))
+      }))
+    ),
+    tags$ul(
+      tags$li(sprintf("F(%d, %d) = %.3f, %s",
+                      r$df1, r$df2, r$F, .ch9_fmt_p(r$p))),
+      tags$li(sprintf("η² = %.3f (%s efekt — %.1f%% wariancji wyjaśnionej)",
+        r$eta2,
+        if (r$eta2 < 0.01) "pomijalny"
+        else if (r$eta2 < 0.06) "mały"
+        else if (r$eta2 < 0.14) "średni" else "duży",
+        100 * r$eta2))
+    ),
+    .ch9_decision(r$p),
+    p(tags$b("Post-hoc Tukey HSD (przybliżenie — w Jamowi użyj Games-Howell):")),
+    tags$ul(lapply(rownames(r$ph), function(nm) {
+      pp <- r$ph[nm, "p adj"]
+      tags$li(sprintf("%s: Δ = %.2f, p.adj %s",
+        nm, r$ph[nm, "diff"],
+        if (pp < 0.001) "< 0.001" else format(round(pp, 3), nsmall = 3)))
+    }))
+  )
+}
 
 # ============================================================================
 # SERVER
@@ -706,42 +561,351 @@ ch9_ui <- list(
 
 ch9_server <- function(input, output, session) {
 
-  sol_ids <- paste0("sol", 1:11)
-  btn_ids <- paste0("ans", 1:11)
+  # ---- Rolnictwo ----
+  rol <- .ch9_data$rol
 
-  vis <- lapply(sol_ids, function(x) reactiveVal(FALSE))
-  names(vis) <- sol_ids
-
-  observeEvent(input$ch9_dataset, {
-    k <- input$ch9_dataset
-    for (sid in sol_ids) vis[[sid]](FALSE)
-    for (bid in btn_ids) {
-      updateActionButton(session, paste0("ch9_", bid), label = "Pokaż rozwiązanie")
-    }
-    output$ch9_content <- renderUI({
-      switch(k, edu = .ch9_content_edu())
-    })
-  }, ignoreNULL = FALSE)
-
-  .make_toggle <- function(sol_id_bare, sol_id_full, btn_id_full) {
-    observeEvent(input[[btn_id_full]], {
-      nowy <- !vis[[sol_id_bare]]()
-      vis[[sol_id_bare]](nowy)
-      updateActionButton(session, btn_id_full,
+  .make_toggle_r <- function(vis_rv, btn_id, sol_fn) {
+    observeEvent(input[[btn_id]], {
+      nowy <- !vis_rv()
+      vis_rv(nowy)
+      updateActionButton(session, btn_id,
         label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
     }, ignoreInit = TRUE)
-
-    output[[sol_id_full]] <- renderUI({
-      if (!vis[[sol_id_bare]]()) return(NULL)
-      k <- isolate(input$ch9_dataset)
-      lc_feedback(type = "ok", style = "margin-top: 10px;",
-          .ch9_solutions[[k]][[sol_id_bare]])
+    out_id <- sub("_ans", "_sol", btn_id)
+    output[[out_id]] <- renderUI({
+      if (!vis_rv()) return(NULL)
+      lc_feedback(type = "ok", style = "margin-top: 10px;", sol_fn())
     })
   }
 
-  mapply(.make_toggle,
-    sol_id_bare = sol_ids,
-    sol_id_full = paste0("ch9_", sol_ids),
-    btn_id_full = paste0("ch9_", btn_ids)
-  )
+  r_vis <- lapply(1:6, function(i) reactiveVal(FALSE))
+
+  .make_toggle_r(r_vis[[1]], "ch9_r_ans1", function() {
+    r <- .ch9_t1(rol$plon, mu = 5.0, alternative = "two.sided")
+    tagList(
+      .ch9_sol_t1(r, "μ_plon = 5.0 t/ha", "μ_plon ≠ 5.0 t/ha",
+                  "plon", 5.0, "t/ha"),
+      p(tags$b("Interpretacja: "),
+        sprintf("Średni plon (%.2f t/ha) %s się od normy 5.0 t/ha (%s).
+          Efekt %s (d = %.3f).",
+          r$m,
+          if (r$p < 0.05) "różni istotnie" else "nie różni istotnie",
+          .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
+    )
+  })
+
+  .make_toggle_r(r_vis[[2]], "ch9_r_ans2", function() {
+    k <- sum(rol$nawadnianie == "tak")
+    n <- nrow(rol); p_obs <- k / n
+    bt <- binom.test(k, n, p = 0.4, alternative = "less")
+    tagList(
+      p(tags$b("H₀: "), "p_nawadnianie ≥ 0.4 · ",
+        tags$b("Hₐ: "), "p_nawadnianie < 0.4"),
+      tags$ul(
+        tags$li(sprintf("k = %d, n = %d, p̂ = %.3f (%.1f%%)",
+                        k, n, p_obs, 100 * p_obs)),
+        tags$li(.ch9_fmt_p(bt$p.value), " (test dwumianowy, lewostrony)")
+      ),
+      .ch9_decision(bt$p.value),
+      p(tags$b("Interpretacja: "),
+        sprintf("%.1f%% pól stosuje nawadnianie. Odsetek %s poniżej 40%% (%s).",
+          100 * p_obs,
+          if (bt$p.value < 0.05) "istotnie leży" else "nieistotnie leży",
+          .ch9_fmt_p(bt$p.value)))
+    )
+  })
+
+  .make_toggle_r(r_vis[[3]], "ch9_r_ans3", function() {
+    r <- .ch9_cor_test(rol$nawozenie, rol$plon)
+    tagList(
+      .ch9_sol_cor(r, "nawożenie", "plonu"),
+      p(tags$b("Interpretacja: "),
+        sprintf("r = %.3f — korelacja %s (%s). Wyższe nawożenie wiąże się %s
+          z wyższym plonem.",
+          r$r, if (r$r > 0) "dodatnia" else "ujemna",
+          effect_size_label(abs(r$r)),
+          if (abs(r$r) > 0.3) "wyraźnie" else "słabo"))
+    )
+  })
+
+  .make_toggle_r(r_vis[[4]], "ch9_r_ans4", function() {
+    r <- .ch9_t2(rol$plon, rol$uprawa)
+    tagList(
+      .ch9_sol_t2(r, "t/ha"),
+      p(tags$b("Interpretacja: "),
+        sprintf("Różnica %.2f t/ha między pszenicą a rzepakiem jest %s (%s).
+          Efekt %s (d = %.3f).",
+          abs(r$m1 - r$m2),
+          if (r$p < 0.05) "istotna" else "nieistotna",
+          .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
+    )
+  })
+
+  .make_toggle_r(r_vis[[5]], "ch9_r_ans5", function() {
+    r <- .ch9_chi2(table(uprawa = rol$uprawa, nawadnianie = rol$nawadnianie))
+    tagList(
+      .ch9_sol_chi2(r),
+      p(tags$b("Interpretacja: "),
+        "Test χ² wskazuje, czy typ uprawy i decyzja o nawadnianiu są zależne.
+        Cramér's V opisuje siłę związku niezależnie od kierunku.")
+    )
+  })
+
+  .make_toggle_r(r_vis[[6]], "ch9_r_ans6", function() {
+    r <- .ch9_anova_f(rol$plon, rol$region)
+    tagList(
+      .ch9_sol_anova(r, "plon (t/ha)"),
+      p(tags$b("Interpretacja: "),
+        sprintf("F(%d, %d) = %.3f, %s, η² = %.3f.
+          Regiony %s się pod względem plonu.",
+          r$df1, r$df2, r$F, .ch9_fmt_p(r$p), r$eta2,
+          if (r$p < 0.05) "różnią" else "nie różnią"))
+    )
+  })
+
+  # ---- Inzynieria bezpieczenstwa ----
+  bhp <- .ch9_data$bhp
+
+  b_vis <- lapply(1:6, function(i) reactiveVal(FALSE))
+
+  .make_toggle_b <- function(vis_rv, btn_id, sol_fn) {
+    observeEvent(input[[btn_id]], {
+      nowy <- !vis_rv()
+      vis_rv(nowy)
+      updateActionButton(session, btn_id,
+        label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+    }, ignoreInit = TRUE)
+    out_id <- sub("_ans", "_sol", btn_id)
+    output[[out_id]] <- renderUI({
+      if (!vis_rv()) return(NULL)
+      lc_feedback(type = "ok", style = "margin-top: 10px;", sol_fn())
+    })
+  }
+
+  .make_toggle_b(b_vis[[1]], "ch9_b_ans1", function() {
+    r <- .ch9_t1(bhp$wypadki, mu = 10, alternative = "less")
+    tagList(
+      .ch9_sol_t1(r, "μ_wypadki ≥ 10", "μ_wypadki < 10",
+                  "wypadki", 10, "wyp./1000"),
+      p(tags$b("Interpretacja: "),
+        sprintf("Średnia wypadkowość (%.2f/1000) jest %s niższa od normy 10 (%s).
+          Efekt %s (d = %.3f).",
+          r$m,
+          if (r$p < 0.05) "istotnie" else "nieistotnie",
+          .ch9_fmt_p(r$p), effect_size_label(abs(r$d)), r$d))
+    )
+  })
+
+  .make_toggle_b(b_vis[[2]], "ch9_b_ans2", function() {
+    soi_ok <- bhp$soi_rate >= 80
+    k <- sum(soi_ok); n <- length(soi_ok); p_obs <- k / n
+    bt <- binom.test(k, n, p = 0.5, alternative = "greater")
+    tagList(
+      p(tags$b("H₀: "), "p_soi_ok ≤ 0.5 · ", tags$b("Hₐ: "), "p_soi_ok > 0.5"),
+      tags$ul(
+        tags$li(sprintf("k = %d, n = %d, p̂ = %.3f (%.1f%%)",
+                        k, n, p_obs, 100 * p_obs)),
+        tags$li(.ch9_fmt_p(bt$p.value), " (test dwumianowy, prawostrony)")
+      ),
+      .ch9_decision(bt$p.value),
+      p(tags$b("Interpretacja: "),
+        sprintf("%.1f%% przedsiębiorstw spełnia normę ŚOI ≥ 80%%.
+          Odsetek %s większy od 50%% (%s).",
+          100 * p_obs,
+          if (bt$p.value < 0.05) "istotnie" else "nieistotnie",
+          .ch9_fmt_p(bt$p.value)))
+    )
+  })
+
+  .make_toggle_b(b_vis[[3]], "ch9_b_ans3", function() {
+    r <- .ch9_cor_test(bhp$szkolenia, bhp$wypadki)
+    tagList(
+      .ch9_sol_cor(r, "szkolenia", "wypadkowości"),
+      p(tags$b("Interpretacja: "),
+        sprintf("r = %.3f — korelacja %s. Więcej szkoleń wiąże się
+          %s wypadkowością. Pamiętaj: to korelacja, nie dowód przyczynowy.",
+          r$r, effect_size_label(abs(r$r)),
+          if (r$r < 0) "z niższą" else "z wyższą"))
+    )
+  })
+
+  .make_toggle_b(b_vis[[4]], "ch9_b_ans4", function() {
+    r <- .ch9_t2(bhp$wypadki, bhp$wielkosc)
+    tagList(
+      .ch9_sol_t2(r, "wyp./1000"),
+      p(tags$b("Interpretacja: "),
+        sprintf("Różnica %.2f wyp./1000 jest %s (%s). Efekt %s (d = %.3f).",
+          abs(r$m1 - r$m2),
+          if (r$p < 0.05) "istotna" else "nieistotna",
+          .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
+    )
+  })
+
+  .make_toggle_b(b_vis[[5]], "ch9_b_ans5", function() {
+    soi_ok <- bhp$soi_rate >= 80
+    r <- .ch9_chi2(table(sektor = bhp$sektor, soi_ok = soi_ok))
+    tagList(
+      .ch9_sol_chi2(r),
+      p(tags$b("Interpretacja: "),
+        "Zależy, czy sektor (produkcja vs budownictwo) różnicuje stosowanie ŚOI.
+        Cramér's V podaje siłę tego związku.")
+    )
+  })
+
+  .make_toggle_b(b_vis[[6]], "ch9_b_ans6", function() {
+    r <- .ch9_anova_f(bhp$wypadki, bhp$poziom_ryzyka)
+    tagList(
+      .ch9_sol_anova(r, "wypadki/1000"),
+      p(tags$b("Interpretacja: "),
+        sprintf("F(%d, %d) = %.3f, %s, η² = %.3f.
+          Poziomy ryzyka %s się wypadkowością.",
+          r$df1, r$df2, r$F, .ch9_fmt_p(r$p), r$eta2,
+          if (r$p < 0.05) "różnią" else "nie różnią"))
+    )
+  })
+
+  # ---- Technologia zywnosci ----
+  tz <- .ch9_data$tz
+
+  t_vis <- lapply(1:6, function(i) reactiveVal(FALSE))
+
+  .make_toggle_t <- function(vis_rv, btn_id, sol_fn) {
+    observeEvent(input[[btn_id]], {
+      nowy <- !vis_rv()
+      vis_rv(nowy)
+      updateActionButton(session, btn_id,
+        label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+    }, ignoreInit = TRUE)
+    out_id <- sub("_ans", "_sol", btn_id)
+    output[[out_id]] <- renderUI({
+      if (!vis_rv()) return(NULL)
+      lc_feedback(type = "ok", style = "margin-top: 10px;", sol_fn())
+    })
+  }
+
+  .make_toggle_t(t_vis[[1]], "ch9_t_ans1", function() {
+    r <- .ch9_t1(tz$bialko, mu = 12, alternative = "two.sided")
+    tagList(
+      .ch9_sol_t1(r, "μ_białko = 12 g/100 g", "μ_białko ≠ 12 g/100 g",
+                  "białko", 12, "g/100 g"),
+      p(tags$b("Interpretacja: "),
+        sprintf("Średnia zawartość białka (%.2f g/100 g) %s się od normy 12 g/100 g
+          (%s). Efekt %s (d = %.3f).",
+          r$m,
+          if (r$p < 0.05) "różni istotnie" else "nie różni istotnie",
+          .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
+    )
+  })
+
+  .make_toggle_t(t_vis[[2]], "ch9_t_ans2", function() {
+    k <- sum(tz$zanieczyszczenie == "wykryte")
+    n <- nrow(tz); p_obs <- k / n
+    bt <- binom.test(k, n, p = 0.20, alternative = "greater")
+    tagList(
+      p(tags$b("H₀: "), "p_zanieczyszczenie ≤ 0.20 · ",
+        tags$b("Hₐ: "), "p_zanieczyszczenie > 0.20"),
+      tags$ul(
+        tags$li(sprintf("k = %d, n = %d, p̂ = %.3f (%.1f%%)",
+                        k, n, p_obs, 100 * p_obs)),
+        tags$li(.ch9_fmt_p(bt$p.value), " (test dwumianowy, prawostrony)")
+      ),
+      .ch9_decision(bt$p.value),
+      p(tags$b("Interpretacja: "),
+        sprintf("%.1f%% partii ma wykryte zanieczyszczenia. Odsetek %s
+          przekracza próg 20%% (%s).",
+          100 * p_obs,
+          if (bt$p.value < 0.05) "istotnie" else "nieistotnie",
+          .ch9_fmt_p(bt$p.value)))
+    )
+  })
+
+  .make_toggle_t(t_vis[[3]], "ch9_t_ans3", function() {
+    r <- .ch9_cor_test(tz$wilgotnosc, tz$trwalosc)
+    tagList(
+      .ch9_sol_cor(r, "wilgotność", "trwałości"),
+      p(tags$b("Interpretacja: "),
+        sprintf("r = %.3f — korelacja %s. Wyższa wilgotność wiąże się
+          %s trwałością produktu.",
+          r$r, effect_size_label(abs(r$r)),
+          if (r$r < 0) "z niższą" else "z wyższą"))
+    )
+  })
+
+  .make_toggle_t(t_vis[[4]], "ch9_t_ans4", function() {
+    r <- .ch9_t2(tz$trwalosc, tz$typ)
+    tagList(
+      .ch9_sol_t2(r, "dni"),
+      p(tags$b("Interpretacja: "),
+        sprintf("Różnica %.0f dni między typami produktu jest %s (%s).
+          Efekt %s (d = %.3f).",
+          abs(r$m1 - r$m2),
+          if (r$p < 0.05) "istotna" else "nieistotna",
+          .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
+    )
+  })
+
+  .make_toggle_t(t_vis[[5]], "ch9_t_ans5", function() {
+    r <- .ch9_chi2(table(typ = tz$typ, zanieczyszczenie = tz$zanieczyszczenie))
+    tagList(
+      .ch9_sol_chi2(r),
+      p(tags$b("Interpretacja: "),
+        "Test χ² wskazuje, czy typ produktu wiąże się z wykryciem zanieczyszczeń.
+        Siłę związku opisuje Cramér's V.")
+    )
+  })
+
+  .make_toggle_t(t_vis[[6]], "ch9_t_ans6", function() {
+    r <- .ch9_anova_f(tz$trwalosc, tz$przechowywanie)
+    tagList(
+      .ch9_sol_anova(r, "trwałość (dni)"),
+      p(tags$b("Interpretacja: "),
+        sprintf("F(%d, %d) = %.3f, %s, η² = %.3f.
+          Metody przechowywania %s się trwałością.",
+          r$df1, r$df2, r$F, .ch9_fmt_p(r$p), r$eta2,
+          if (r$p < 0.05) "różnią" else "nie różnią"))
+    )
+  })
+
+  # ---- Myslenie krytyczne ----
+  krit_vis <- reactiveVal(FALSE)
+
+  observeEvent(input$ch9_krit_ans, {
+    nowy <- !krit_vis()
+    krit_vis(nowy)
+    updateActionButton(session, "ch9_krit_ans",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$ch9_krit_sol <- renderUI({
+    if (!krit_vis()) return(NULL)
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      tags$ol(
+        tags$li(tags$b("Fałsz."),
+          " Korelacja nie implikuje przyczynowości. Wymagane byłoby badanie
+          eksperymentalne lub quasi-eksperymentalne z kontrolą zmiennych."),
+        tags$li(tags$b("Fałsz."),
+          ' p < 0.05 oznacza: „dane byłyby mało prawdopodobne, gdyby H₀ była
+          prawdziwa" — nie daje prawdopodobieństwa prawdziwości H_a.'),
+        tags$li(tags$b("Fałsz."),
+          " Test χ² informuje tylko o tym, czy zmienne są zależne — nie mówi,
+          jak silny jest związek ani w jakim kierunku. Do siły służy Cramér's V."),
+        tags$li(tags$b("Fałsz."),
+          " ANOVA wskazuje, że co najmniej jedna para różni się. Które konkretnie?
+          Odpowiada na to post-hoc (np. Games-Howell)."),
+        tags$li(tags$b("Fałsz."),
+          " Małe d = 0.15 przy dużym n może dać p < 0.001 — ale efekt jest pomijalny
+          praktycznie. Istotność statystyczna ≠ istotność praktyczna."),
+        tags$li(tags$b("Fałsz."),
+          " Trzy oddzielne testy t influją błąd I rodzaju (problem porównań
+          wielokrotnych). Przy α = 0.05 prawdopodobieństwo co najmniej jednego
+          fałszywego odkrycia rośnie do ~14%."),
+        tags$li(tags$b("Prawda."),
+          " R² = r² = (–0.30)² = 0.09 — nawożenie wyjaśnia 9% zmienności plonu."),
+        tags$li(tags$b("Fałsz."),
+          " Test jednostronny jest mocniejszy tylko w założonym kierunku — jest
+          całkowicie ślepy na efekt w przeciwnym kierunku. Kierunek hipotezy
+          musimy ustalić przed zebraniem danych, nie na podstawie wyników.")
+      )
+    )
+  })
 }

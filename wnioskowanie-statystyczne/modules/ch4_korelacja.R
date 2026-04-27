@@ -340,6 +340,48 @@ ch4_ui <- list(
       )
     ),
 
+    lc_h2("ch4-cas", "Ćwiczenia", "CASchools — korelacja Pearsona"),
+
+    lc_feedback(type = "info",
+      p(tags$b("Dane: "), "420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+        tags$code("dane/caschools.csv"), "."),
+      p("Zmienne w zadaniach: ", tags$code("read"), " i ", tags$code("math"),
+        " (wyniki testów), ", tags$code("income"),
+        " (dochód okręgu, tys. USD), ", tags$code("student_teacher_ratio"),
+        " (liczba uczniów na nauczyciela).")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Zadanie 3 — Jak silnie czytanie i matematyka idą w parze?"),
+      p("Oblicz korelację Pearsona między ", tags$code("read"), " i ", tags$code("math"),
+        ". Zanim klikniesz: czy spodziewasz się korelacji dodatniej czy ujemnej?
+        Silnej czy słabej? Zanotuj przewidywanie i sprawdź wynik."),
+      actionButton("cas_ch4_ans3", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("cas_ch4_sol3")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Zadanie 4 — Czy zamożniejsze okręgi uczą się lepiej?"),
+      p("Oblicz korelację Pearsona między ", tags$code("income"), " a ", tags$code("read"),
+        ". Jaki znak ma r? Czy korelacja jest istotna? Czy możesz wyciągnąć wniosek
+        przyczynowy — że wyższy dochód ", tags$em("powoduje"), " lepsze wyniki?"),
+      actionButton("cas_ch4_ans4", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("cas_ch4_sol4")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Zadanie 5 — Czy przeładowane klasy szkodzą wynikom?"),
+      p("Oblicz korelację Pearsona między ", tags$code("student_teacher_ratio"),
+        " (STR) a ", tags$code("read"),
+        ". Dlaczego korelacja jest ujemna? Czy jest istotna statystycznie?
+        Czy silna praktycznie? Pomyśl, co może być konfunderem."),
+      actionButton("cas_ch4_ans5", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("cas_ch4_sol5")
+    ),
+
     lc_chapter_next(
       num       = "06",
       title     = "Test χ² niezależności",
@@ -348,6 +390,13 @@ ch4_ui <- list(
     )
   )
 )
+
+# ============================================================================
+# DANE — CASchools (wczytane raz przy ladowaniu modulu)
+# ============================================================================
+
+.ch4_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
+                     stringsAsFactors = FALSE)
 
 # ============================================================================
 # SERVER
@@ -545,8 +594,8 @@ ch4_server <- function(input, output, session) {
 
     info <- switch(as.character(step),
       "1" = tagList(
-        lc_stat_box("Outlierów", n_outliers,
-                    caption = paste0("n = ", n, " par obserwacji"),
+        lc_stat_box("n", n,
+                    caption = "par obserwacji",
                     color = col_h0),
         p("Każdy punkt to jedna obserwacja z dwiema wartościami: ",
           par$xlab, " i ", par$ylab, ". Czy widać trend?")
@@ -730,6 +779,105 @@ ch4_server <- function(input, output, session) {
     tagList(
       lc_stat_box("r", round(r_val, 3), color = col_h0),
       lc_stat_box("Outlierów", n_outliers, color = col_reject)
+    )
+  })
+
+  # --- Cwiczenia CASchools ---
+
+  .cas_cor <- function(x, y) {
+    ok <- complete.cases(x, y); x <- x[ok]; y <- y[ok]
+    n <- length(x); r <- cor(x, y)
+    t_val <- r * sqrt((n - 2) / (1 - r^2)); df <- n - 2
+    p_val <- 2 * pt(-abs(t_val), df)
+    list(r = r, t = t_val, df = df, p = p_val, n = n, r2 = r^2)
+  }
+
+  cas_vis3 <- reactiveVal(FALSE)
+  cas_vis4 <- reactiveVal(FALSE)
+  cas_vis5 <- reactiveVal(FALSE)
+
+  observeEvent(input$cas_ch4_ans3, {
+    nowy <- !cas_vis3()
+    cas_vis3(nowy)
+    updateActionButton(session, "cas_ch4_ans3",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$cas_ch4_sol3 <- renderUI({
+    if (!cas_vis3()) return(NULL)
+    r <- .cas_cor(.ch4_cas$read, .ch4_cas$math)
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      tags$ul(
+        tags$li(sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
+          r$r, r$df, r$t,
+          if (r$p < 0.001) "<" else "=",
+          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+        tags$li(sprintf("R² = %.3f → czytanie wyjaśnia %.1f%% wariancji wyników z matematyki",
+                        r$r2, 100 * r$r2))
+      ),
+      tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀"),
+      p(tags$b("Interpretacja: "),
+        sprintf("r = %.3f — korelacja %s i silnie dodatnia.
+          Okręgi z lepszymi wynikami z czytania osiągają też wyższe wyniki z matematyki
+          (%.1f%% wspólnej wariancji). Obie zmienne mierzą ogólny poziom edukacji.",
+          r$r, effect_size_label(r$r), 100 * r$r2))
+    )
+  })
+
+  observeEvent(input$cas_ch4_ans4, {
+    nowy <- !cas_vis4()
+    cas_vis4(nowy)
+    updateActionButton(session, "cas_ch4_ans4",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$cas_ch4_sol4 <- renderUI({
+    if (!cas_vis4()) return(NULL)
+    r <- .cas_cor(.ch4_cas$income, .ch4_cas$read)
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      tags$ul(
+        tags$li(sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
+          r$r, r$df, r$t,
+          if (r$p < 0.001) "<" else "=",
+          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+        tags$li(sprintf("R² = %.3f — dochód wyjaśnia %.1f%% wariancji wyników",
+                        r$r2, 100 * r$r2))
+      ),
+      tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀"),
+      p(tags$b("Korelacja ≠ przyczynowość: "),
+        "Korelacja jest istotna i dodatnia — bogatsze okręgi mają wyższe wyniki.
+        Jednak nie możemy stwierdzić, że dochód ", tags$em("powoduje"),
+        " lepsze wyniki. Trzecia zmienna (jakość nauczycieli, kapitał kulturowy rodziny)
+        może tłumaczyć obie. Potrzeba badania eksperymentalnego lub quasi-eksperymentalnego.")
+    )
+  })
+
+  observeEvent(input$cas_ch4_ans5, {
+    nowy <- !cas_vis5()
+    cas_vis5(nowy)
+    updateActionButton(session, "cas_ch4_ans5",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$cas_ch4_sol5 <- renderUI({
+    if (!cas_vis5()) return(NULL)
+    r <- .cas_cor(.ch4_cas$student_teacher_ratio, .ch4_cas$read)
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      tags$ul(
+        tags$li(sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
+          r$r, r$df, r$t,
+          if (r$p < 0.001) "<" else "=",
+          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+        tags$li(sprintf("R² = %.3f — STR wyjaśnia %.1f%% wariancji wyników",
+                        r$r2, 100 * r$r2))
+      ),
+      tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀"),
+      p(tags$b("Interpretacja: "),
+        sprintf("r = %.3f — korelacja ujemna: wyższy STR (więcej uczniów na nauczyciela)
+          wiąże się z niższymi wynikami z czytania. Efekt %s — STR wyjaśnia tylko %.1f%%
+          wariancji. Uwaga: STR jest często proxy dla zasobności okręgu — dochód może
+          być konfunderem tej zależności.",
+          r$r, effect_size_label(abs(r$r)), 100 * r$r2))
     )
   })
 }

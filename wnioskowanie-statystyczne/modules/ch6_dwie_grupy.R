@@ -152,6 +152,41 @@ ch6_ui <- list(
       color = "uwaga"
     ),
 
+    lc_h2("ch6-cas", "Ćwiczenia", "CASchools — test t dwóch grup"),
+
+    lc_feedback(type = "info",
+      p(tags$b("Dane: "), "420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+        tags$code("dane/caschools.csv"), "."),
+      p("Zmienne w zadaniach: ", tags$code("read"),
+        " (wyniki z czytania), ", tags$code("grades"),
+        " (typ szkoły: KK-06/KK-08), ",
+        tags$code("student_teacher_ratio"), " (STR).")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Zadanie 6 — Czy typ szkoły różnicuje wyniki z czytania?"),
+      p("Okręgi dzielą się na szkoły ", tags$code("KK-06"), " i ", tags$code("KK-08"),
+        ". Przetestuj, czy średnie wyniki ", tags$code("read"),
+        " różnią się między grupami. Wykonaj test t dla prób niezależnych i oblicz
+        Cohen's d. Jak duży jest efekt? Czy różnica jest edukacyjnie znacząca?"),
+      actionButton("cas_ch6_ans6", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("cas_ch6_sol6")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      h4("Zadanie 7 — Duże klasy vs małe — czy STR ma znaczenie?"),
+      p("Utwórz zmienną binarną: ",
+        tags$code("high_str = (student_teacher_ratio > 20)"),
+        ". Porównaj wyniki ", tags$code("read"),
+        " między okręgami z dużym (STR > 20) i małym (STR ≤ 20) stosunkiem.
+        Czy różnica jest istotna? Jak duże jest przesunięcie w punktach?
+        Skąd może wynikać ta różnica?"),
+      actionButton("cas_ch6_ans7", "Pokaż rozwiązanie",
+                   class = "lc-btn-ok-outline lc-btn-sm"),
+      uiOutput("cas_ch6_sol7")
+    ),
+
     lc_chapter_next(
       num       = "08",
       title     = "ANOVA",
@@ -160,6 +195,13 @@ ch6_ui <- list(
     )
   )
 )
+
+# ============================================================================
+# DANE — CASchools (wczytane raz przy ladowaniu modulu)
+# ============================================================================
+
+.ch6_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
+                     stringsAsFactors = FALSE)
 
 # ============================================================================
 # SERVER
@@ -307,6 +349,103 @@ ch6_server <- function(input, output, session) {
         res$decision),
       p(tags$strong("Werdykt: "),
         "wyniki średnio ", tags$b(direction), " o ", tags$b(round(abs(mean_diff), 2)), " pkt.")
+    )
+  })
+
+  # --- Cwiczenia CASchools ---
+
+  .cas_t2samp <- function(x, grp) {
+    grp <- as.factor(grp); lvls <- levels(grp)
+    x1 <- x[grp == lvls[1]]; x2 <- x[grp == lvls[2]]
+    n1 <- length(x1); n2 <- length(x2)
+    m1 <- mean(x1); m2 <- mean(x2); s1 <- sd(x1); s2 <- sd(x2)
+    se <- sqrt(s1^2/n1 + s2^2/n2)
+    t_val <- (m1 - m2) / se
+    df <- (s1^2/n1 + s2^2/n2)^2 /
+          ((s1^2/n1)^2/(n1-1) + (s2^2/n2)^2/(n2-1))
+    p_val <- 2 * pt(-abs(t_val), df)
+    sp <- sqrt(((n1-1)*s1^2 + (n2-1)*s2^2) / (n1+n2-2))
+    d <- (m1 - m2) / sp
+    list(lvls=lvls, n1=n1, n2=n2, m1=m1, m2=m2, s1=s1, s2=s2,
+         t=t_val, df=df, p=p_val, d=d)
+  }
+
+  cas_vis6 <- reactiveVal(FALSE)
+  cas_vis7 <- reactiveVal(FALSE)
+
+  observeEvent(input$cas_ch6_ans6, {
+    nowy <- !cas_vis6()
+    cas_vis6(nowy)
+    updateActionButton(session, "cas_ch6_ans6",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$cas_ch6_sol6 <- renderUI({
+    if (!cas_vis6()) return(NULL)
+    df2 <- .ch6_cas[!is.na(.ch6_cas$read) & !is.na(.ch6_cas$grades), ]
+    r <- .cas_t2samp(df2$read, df2$grades)
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      p(tags$b("H₀: "), "μ(KK-06) = μ(KK-08) · ",
+        tags$b("Hₐ: "), "μ(KK-06) ≠ μ(KK-08)"),
+      tags$ul(
+        tags$li(sprintf("%s: n = %d, x̄ = %.2f, s = %.2f",
+                        r$lvls[1], r$n1, r$m1, r$s1)),
+        tags$li(sprintf("%s: n = %d, x̄ = %.2f, s = %.2f",
+                        r$lvls[2], r$n2, r$m2, r$s2)),
+        tags$li(sprintf("t(%s) = %.3f, p %s %s",
+          round(r$df, 1), r$t,
+          if (r$p < 0.001) "<" else "=",
+          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+        tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
+      ),
+      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
+      else tags$b("Brak podstaw do odrzucenia H₀"),
+      p(tags$b("Interpretacja: "),
+        sprintf(
+          "Różnica %.2f pkt jest %s (p %s 0.05). Efekt %s (d = %.3f).
+           Pamiętaj: istotność statystyczna ≠ istotność praktyczna.",
+          abs(r$m1 - r$m2),
+          if (r$p < 0.05) "istotna" else "nieistotna",
+          if (r$p < 0.05) "<" else ">",
+          effect_size_label(r$d), r$d
+        ))
+    )
+  })
+
+  observeEvent(input$cas_ch6_ans7, {
+    nowy <- !cas_vis7()
+    cas_vis7(nowy)
+    updateActionButton(session, "cas_ch6_ans7",
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output$cas_ch6_sol7 <- renderUI({
+    if (!cas_vis7()) return(NULL)
+    high_str <- .ch6_cas$student_teacher_ratio > 20
+    r <- .cas_t2samp(.ch6_cas$read, high_str)
+    m_lo <- .ch6_cas$read[!high_str]; m_hi <- .ch6_cas$read[high_str]
+    lc_feedback(type = "ok", style = "margin-top: 10px;",
+      p(tags$b("H₀: "), "μ(STR ≤ 20) = μ(STR > 20) · ",
+        tags$b("Hₐ: "), "μ(STR ≤ 20) ≠ μ(STR > 20)"),
+      tags$ul(
+        tags$li(sprintf("STR ≤ 20: n = %d, x̄ = %.2f",
+                        sum(!high_str), mean(m_lo))),
+        tags$li(sprintf("STR > 20: n = %d, x̄ = %.2f",
+                        sum(high_str), mean(m_hi))),
+        tags$li(sprintf("Różnica: %.2f pkt",
+                        mean(m_lo) - mean(m_hi))),
+        tags$li(sprintf("t(%s) = %.3f, p %s %s",
+          round(r$df, 1), r$t,
+          if (r$p < 0.001) "<" else "=",
+          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+        tags$li(sprintf("Cohen's d = %.3f (%s efekt)", abs(r$d), effect_size_label(r$d)))
+      ),
+      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
+      else tags$b("Brak podstaw do odrzucenia H₀"),
+      p(tags$b("Uwaga: "),
+        "STR > 20 to często okręgi biedniejsze. Różnica może być częściowo
+        konfundowana dochodem — by to zbadać, potrzeba analizy regresji
+        z kontrolą zmiennych towarzyszących.")
     )
   })
 

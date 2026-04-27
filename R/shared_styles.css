@@ -464,6 +464,15 @@ html, body {
   padding-bottom: 20px;
 }
 
+/* Bare p/ul/ol/h4/h5 placed directly in chapter content (without lc-p class) */
+.lc-chapter > p,
+.lc-chapter > ul,
+.lc-chapter > ol,
+.lc-chapter > h4,
+.lc-chapter > h5 {
+  max-width: 680px;
+}
+
 /* === Header rozdziału === */
 .lc-chapter-header {
   padding-bottom: 40px;
