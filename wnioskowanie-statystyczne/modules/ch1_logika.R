@@ -11,7 +11,7 @@ ch1_ui <- list(
       kicker = "Rozdział 01 · Testowanie hipotez",
       num    = "01",
       title  = "Logika testowania.",
-      lead   = "„Czy telefon na biurku obniża koncentrację?” — statystyk zaczyna nie
+      lead   = "„Czy telefon na biurku wpływa na koncentrację?” — statystyk zaczyna nie
                 od wzorów, tylko od pytania. Zobaczymy, jak przełożyć je na formalną
                 decyzję: hipotezy, p-wartość, błędy I i II rodzaju."
     ),
@@ -74,12 +74,12 @@ ch1_ui <- list(
           tags$tr(
             tags$td(tags$b("H₀")),
             tags$td("Oskarżony jest niewinny"),
-            tags$td("Telefon NIE wpływa na koncentrację (różnica = 0)")
+            tags$td("Telefon nie wpływa na koncentrację (różnica = 0)")
           ),
           tags$tr(
             tags$td(tags$b("Hₐ")),
             tags$td("Oskarżony jest winny"),
-            tags$td("Telefon OBNIŻA koncentrację (różnica > 0)")
+            tags$td("Telefon wpływa na koncentrację (różnica ≠ 0)")
           ),
           tags$tr(
             tags$td(tags$b("Dane")),
@@ -206,7 +206,7 @@ ch1_ui <- list(
         tags$li(tags$b("Niebieski"), " — rozkład średniej, gdy H₀ jest prawdziwa
                 (telefon nie ma wpływu; średnia populacyjna = wartość referencyjna)."),
         tags$li(tags$b("Burgundowy"), " — rozkład średniej, gdy Hₐ jest prawdziwa
-                (telefon ", tags$em("naprawdę"), " rozprasza o konkretną liczbę punktów).")
+                (telefon ", tags$em("naprawdę"), " wpływa o konkretną liczbę punktów).")
       ),
       p(tags$b("Punkt krytyczny"), " (czarna przerywana pionowa linia) to wartość
         na osi średnich, powyżej której odrzucamy H₀ — wynika on bezpośrednio z ",
@@ -277,9 +277,9 @@ ch1_ui <- list(
         " ustalamy sami — zwykle na 5%. Ale jak z danego eksperymentu wyciągnąć ",
         tags$em("decyzję"), ": odrzucić H₀ czy nie? Służy do tego ",
         tags$b("p-wartość"), "."),
-      p("Eksperyment z telefonem dał pewną różnicę średnich na korzyść grupy „plecak”.
-        Czy to dowód, że telefon rozprasza? A może gdybyśmy powtórzyli badanie
-        z innymi studentami, różnica wyszłaby mniejsza, większa albo w drugą stronę?
+      p("Eksperyment z telefonem dał pewną różnicę średnich między grupami.
+        Czy to dowód, że telefon wpływa na koncentrację? A może gdybyśmy powtórzyli
+        badanie z innymi studentami, różnica wyszłaby mniejsza, większa albo w drugą stronę?
         p-wartość formalizuje tę intuicję — mierzy, jak ",
         tags$em("zaskakująca"),
         " jest nasza obserwacja w świecie, w którym H₀ byłaby prawdziwa."),
@@ -292,15 +292,13 @@ ch1_ui <- list(
           skrajnej jak nasza (", withMathJax("\\(d_{\\text{obs}}\\)"), "), ",
           tags$em("gdyby H₀ była prawdziwa"), ".")
       ),
-      p("Dla dwustronnego testu „co najmniej tak skrajnej” oznacza ",
-        tags$em("w obie strony"), " — i na plus, i na minus.
-        Jeśli test jest jednostronny (pytamy np. „czy telefon ",
-        tags$em("obniża"), " koncentrację?”), liczymy tylko jedną stronę:"),
-      lc_formula_box(
-        p(withMathJax(
-          "\\(p_{\\text{1-stronny}} = P(\\bar{X}_A - \\bar{X}_B \\leq d_{\\text{obs}} \\mid H_0)\\)"
-        ))
-      ),
+      p("„Co najmniej tak skrajnej” oznacza tu ",
+        tags$em("w obie strony"), " — i na plus, i na minus. Hₐ z naszego eksperymentu
+        mówi tylko, że telefon „wpływa” na koncentrację, bez wskazania kierunku,
+        więc każde wystarczająco duże odchylenie od zera — w dół albo w górę —
+        jest dla nas tak samo zaskakujące. Wariant jednostronny (gdy z góry zakładamy
+        kierunek różnicy) pojawi się w następnym rozdziale, kiedy przyjrzymy się
+        formułowaniu hipotez."),
       p(tags$b("Jak to obliczyć?"),
         " W praktyce używamy statystyki testowej (np. t, χ², F) i znanych rozkładów
         pod H₀ — ale dla intuicji najlepiej wyobrazić sobie, że ",
@@ -602,7 +600,7 @@ ch1_server <- function(input, output, session) {
     df_plot <- data.frame(
       x = rep(x, 2),
       y = c(y_h0, y_h1),
-      dist = rep(c("H0: brak efektu", "Ha: telefon rozprasza"), each = 500)
+      dist = rep(c("H0: brak efektu", "Ha: telefon wpływa"), each = 500)
     )
 
     p <- ggplot(df_plot, aes(x = x, y = y, color = dist)) +

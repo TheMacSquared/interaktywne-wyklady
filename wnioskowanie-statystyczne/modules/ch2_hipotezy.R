@@ -48,32 +48,36 @@ ch2h_ui <- list(
     tagList(
       p("Pytanie z poprzedniego rozdziału: "),
       lc_feedback(type = "info", style = "font-size: 17px;",
-        tags$em("„Czy telefon na biurku obniża koncentrację?”")
+        tags$em("„Czy telefon na biurku wpływa na koncentrację?”")
       ),
       p(tags$b("Krok 1 — parametr.")," Co porównujemy? Mamy dwie grupy
         (plecak / biurko) i każdej mierzymy wynik testu koncentracji.
         Interesuje nas ", tags$b("średnia"),
         " koncentracja w populacji — osobno dla grupy „plecak” i „biurko”."),
-      p(tags$b("Krok 2 — relacja."), " Pytanie mówi „obniża”, nie „różni się”.
-        To kierunkowe pytanie — szukamy ", tags$em("konkretnego"),
-        " kierunku: czy grupa „biurko” ma ", tags$em("niższą"), " średnią
-        niż „plecak”. Relacja w Hₐ to znak „<”."),
+      p(tags$b("Krok 2 — relacja."), " Pytanie pyta neutralnie — ",
+        tags$em("czy w ogóle"),
+        " jest jakiś wpływ. Nie zakładamy z góry kierunku, więc Hₐ to po prostu
+        „średnie się różnią”. Relacja w Hₐ to znak „≠”."),
       p(tags$b("Krok 3 — sformułowanie:")),
       lc_formula_box(
         p(tags$b("H₀ (stan domyślny):"),
-          " średnia koncentracja w grupie z telefonem w plecaku jest ",
-          tags$b("równa"),
-          " średniej koncentracji w grupie z telefonem na biurku."),
-        p(tags$b("Hₐ (to, co chcemy wykazać):"),
           " średnia koncentracja w grupie z telefonem na biurku jest ",
-          tags$b("niższa"),
-          " niż średnia koncentracji w grupie z telefonem w plecaku.")
+          tags$b("równa"),
+          " średniej koncentracji w grupie z telefonem w plecaku."),
+        p(tags$b("Hₐ (to, co chcemy wykazać):"),
+          " średnia koncentracja w grupie z telefonem na biurku ",
+          tags$b("różni się od"),
+          " średniej koncentracji w grupie z telefonem w plecaku.")
       ),
-      p("To jest test ", tags$b("jednostronny"),
-        " — Hₐ wskazuje konkretny kierunek. Gdyby pytanie brzmiało „czy telefon ",
-        tags$em("wpływa"), " na koncentrację” (neutralnie, bez kierunku), Hₐ
-        musiałaby być ", tags$em("„średnie różnią się”"),
-        " — to byłby test dwustronny."),
+      p("Zauważ, że H₀ i Hₐ są ", tags$b("przeciwstawne"),
+        " — razem wyczerpują wszystkie możliwości („są równe” albo „różnią się”).
+        To kluczowa zasada przy formułowaniu hipotez: jedna jest dokładnym
+        zaprzeczeniem drugiej."),
+      p("To jest test ", tags$b("dwustronny"),
+        " — Hₐ pyta tylko, czy jest jakaś różnica, bez zakładania kierunku.
+        O tym, kiedy warto użyć wariantu jednostronnego (Hₐ wskazującej
+        konkretny kierunek), powiemy w sekcji „Test jednostronny a dwustronny”
+        niżej."),
       p(tags$b("Uwaga:"), " formalnego zapisu z greką (μ, ρ, p) i znakami
         matematycznymi nauczymy się później — teraz chodzi o to, żeby
         ", tags$em("słowami"),
@@ -89,31 +93,22 @@ ch2h_ui <- list(
     ),
 
     # ========================================================================
-    # WIDGET 1: Galeria przykładów (język naturalny)
+    # WIDGET 1: Galeria przykładów (język naturalny) — część dwustronna
     # ========================================================================
     lc_h2("ch2h-galeria", "Galeria: sformułuj hipotezy sam"),
 
     tagList(
       p("Dla każdego pytania zastanów się, jaki parametr porównujemy i jakiej
         relacji szuka Hₐ. Pisz sobie na boku w języku naturalnym (bez greki).
-        Potem kliknij „Pokaż odpowiedź” i porównaj.")
+        Potem kliknij „Pokaż odpowiedź” i porównaj."),
+      p("Na razie ćwiczymy ", tags$b("hipotezy nieskierowane"),
+        " — Hₐ mówi „średnie się różnią” albo „zmienne są powiązane”, bez
+        zakładania kierunku. Przykłady, w których pytanie z góry wskazuje
+        kierunek (i Hₐ jest jednostronna), pojawią się dalej, po sekcji
+        o teście jednostronnym i dwustronnym.")
     ),
 
     hypothesis_practice("ch2h_gal", list(
-      list(
-        question = "Doświadczenie polowe: 30 poletek z nowym nawozem,
-                    30 kontrolnych. Czy nowy nawóz daje wyższe plony?",
-        h0 = "Średni plon na poletkach z nowym nawozem jest równy średniemu plonowi na poletkach kontrolnych.",
-        ha = "Średni plon na poletkach z nowym nawozem jest wyższy niż średni plon na poletkach kontrolnych.",
-        note = "Jednostronny — pytamy tylko o „wyższe”, nie o ogólną różnicę."
-      ),
-      list(
-        question = "20 zakładów, w których mierzono liczbę wypadków przed
-                    i po szkoleniu BHP. Czy szkolenie zmniejszyło liczbę wypadków?",
-        h0 = "Średnia liczba wypadków przed szkoleniem jest równa średniej liczbie wypadków po szkoleniu.",
-        ha = "Średnia liczba wypadków po szkoleniu jest niższa niż przed szkoleniem.",
-        note = "Jednostronny („zmniejszyło”). Uwaga: te same zakłady mierzone dwa razy — w praktyce użyjemy testu parowego."
-      ),
       list(
         question = "60 gospodarstw domowych, pomiary zużycia wody.
                     Norma projektowa: 150 l na osobę na dobę.
@@ -123,13 +118,6 @@ ch2h_ui <- list(
         note = "Dwustronny — „spełnia normę” oznacza „nie odbiega” w żadną stronę."
       ),
       list(
-        question = "Laboratorium przebadało 120 próbek wody pitnej.
-                    Czy ponad 80% próbek spełnia normy jakości?",
-        h0 = "Odsetek próbek spełniających normy w populacji jest równy 80%.",
-        ha = "Odsetek próbek spełniających normy w populacji jest wyższy niż 80%.",
-        note = "Jednostronny („ponad”). Parametr to proporcja, nie średnia."
-      ),
-      list(
         question = "Plan zagospodarowania: 300 działek podzielono według strefy
                     (centrum / przedmieścia / obrzeża) i typu (mieszkaniowa /
                     usługowa / przemysłowa / zielona). Czy typ zagospodarowania
@@ -137,13 +125,6 @@ ch2h_ui <- list(
         h0 = "Typ zagospodarowania działki i strefa miasta są niezależne.",
         ha = "Typ zagospodarowania działki i strefa miasta są ze sobą powiązane.",
         note = "Dwie zmienne jakościowe — pytamy o niezależność vs powiązanie. Nie ma tu „kierunku”, więc nie mówimy o jedno- / dwustronności."
-      ),
-      list(
-        question = "Ankieta wśród 150 studentów: godziny snu przed egzaminem
-                    i ocena z egzaminu. Czy dłuższy sen wiąże się z lepszą oceną?",
-        h0 = "Nie ma związku między godzinami snu a oceną z egzaminu.",
-        ha = "Im więcej snu, tym wyższa ocena z egzaminu (dodatni związek).",
-        note = "Jednostronny — „dłuższy → lepsza” wskazuje kierunek dodatniego związku."
       ),
       list(
         question = "Eksperyment: 3 typy opakowań jogurtu (szkło / plastik / karton),
@@ -218,6 +199,50 @@ ch2h_ui <- list(
         )
       )
     ),
+
+    # ========================================================================
+    # WIDGET 2: Galeria przykładów — jednostronne
+    # ========================================================================
+    lc_h2("ch2h-galeria-jedno", "Galeria: hipotezy jednostronne"),
+
+    tagList(
+      p("A teraz przykłady, w których pytanie z góry wskazuje kierunek
+        — i Hₐ jest jednostronna. Zwróć uwagę, jak H₀ jest dopełnieniem Hₐ:
+        jeśli Hₐ mówi „wyższy”, to H₀ obejmuje wszystko, co nie jest „wyższe”
+        (czyli „nie wyższy niż”, ≤). Razem H₀ i Hₐ wyczerpują wszystkie
+        możliwości.")
+    ),
+
+    hypothesis_practice("ch2h_gal_one", list(
+      list(
+        question = "Doświadczenie polowe: 30 poletek z nowym nawozem,
+                    30 kontrolnych. Czy nowy nawóz daje wyższe plony?",
+        h0 = "Średni plon na poletkach z nowym nawozem jest nie wyższy niż średni plon na poletkach kontrolnych.",
+        ha = "Średni plon na poletkach z nowym nawozem jest wyższy niż średni plon na poletkach kontrolnych.",
+        note = "Jednostronny — pytamy tylko o „wyższe”, nie o ogólną różnicę. H₀ to dopełnienie Hₐ: „nie wyższy niż” = równy lub niższy."
+      ),
+      list(
+        question = "20 zakładów, w których mierzono liczbę wypadków przed
+                    i po szkoleniu BHP. Czy szkolenie zmniejszyło liczbę wypadków?",
+        h0 = "Średnia liczba wypadków po szkoleniu jest nie niższa niż przed szkoleniem.",
+        ha = "Średnia liczba wypadków po szkoleniu jest niższa niż przed szkoleniem.",
+        note = "Jednostronny („zmniejszyło”). Uwaga: te same zakłady mierzone dwa razy — w praktyce użyjemy testu parowego."
+      ),
+      list(
+        question = "Laboratorium przebadało 120 próbek wody pitnej.
+                    Czy ponad 80% próbek spełnia normy jakości?",
+        h0 = "Odsetek próbek spełniających normy w populacji jest nie wyższy niż 80%.",
+        ha = "Odsetek próbek spełniających normy w populacji jest wyższy niż 80%.",
+        note = "Jednostronny („ponad”). Parametr to proporcja, nie średnia."
+      ),
+      list(
+        question = "Ankieta wśród 150 studentów: godziny snu przed egzaminem
+                    i ocena z egzaminu. Czy dłuższy sen wiąże się z lepszą oceną?",
+        h0 = "Nie ma dodatniego związku między godzinami snu a oceną z egzaminu (związek zerowy lub ujemny).",
+        ha = "Im więcej snu, tym wyższa ocena z egzaminu (dodatni związek).",
+        note = "Jednostronny — „dłuższy → lepsza” wskazuje kierunek dodatniego związku."
+      )
+    )),
 
     # ========================================================================
     # Typowe bledy
