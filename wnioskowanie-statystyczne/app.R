@@ -54,7 +54,7 @@ source(file.path(app_dir, "modules", "ch9_cwiczenia.R"),        local = TRUE)
 # UI
 # ============================================================================
 
-.chapters <- list(ch1_ui, ch2h_ui, ch2_ui, ch3_ui, ch4_ui,
+.chapters <- list(ch1_ui, ch2h_ui, ch1d_ui, ch2_ui, ch3_ui, ch4_ui,
                   ch5_ui, ch6_ui, ch7_ui, ch_drzewo_ui, ch8_ui, ch9_ui)
 
 ui <- lecture_page(

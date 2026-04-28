@@ -9,13 +9,13 @@
 # ============================================================================
 
 ch9_ui <- list(
-  id = "ch-cwiczenia", num = "11", title = "Ćwiczenia",
+  id = "ch-cwiczenia", num = "12", title = "Ćwiczenia",
 
   content = tagList(
 
     lc_chapter_hero(
-      kicker = "Rozdział 11 · Testowanie hipotez",
-      num    = "11",
+      kicker = "Rozdział 12 · Testowanie hipotez",
+      num    = "12",
       title  = "Ćwiczenia z danych UPWr.",
       lead   = "Trzy zestawy danych z kierunków studiów UPWr — zastosuj wszystkie
                 narzędzia z wykładu na danych ze swojej dziedziny:

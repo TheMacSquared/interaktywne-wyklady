@@ -3,13 +3,13 @@
 # ============================================================================
 
 ch5_ui <- list(
-  id = "ch-dwie-jakosciowe", num = "06", title = "Test χ² niezależności",
+  id = "ch-dwie-jakosciowe", num = "07", title = "Test χ² niezależności",
   content = tagList(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 06 · Testowanie hipotez",
-      num    = "06",
+      kicker = "Rozdział 07 · Testowanie hipotez",
+      num    = "07",
       title  = "Test χ² niezależności.",
       lead   = "„Czy wybór kierunku studiów zależy od płci?” Dwie zmienne jakościowe —
                 tabela kontyngencji, liczebności oczekiwane i statystyka χ² rozstrzygają,
@@ -45,7 +45,7 @@ ch5_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 6.1",
+      label = "Ryc. 7.1",
       title = "Przykład: czy płeć wpływa na dostawanie mandatów?",
 
       tagList(
@@ -112,7 +112,7 @@ ch5_ui <- list(
     lc_h2("ch5-krok", "Test χ² niezależności — krok po kroku"),
 
     figure_panel(
-      label = "Ryc. 6.2",
+      label = "Ryc. 7.2",
       title = "Test χ² niezależności — krok po kroku",
       fluidRow(
         column(4,
@@ -162,7 +162,7 @@ ch5_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 6.3",
+      label = "Ryc. 7.3",
       title = "Porównanie: χ² vs Fisher",
       actionButton("ch5_compare", "Porównaj χ² i Fishera (na tych samych danych)",
                    class = "lc-btn-primary", width = "100%"),
@@ -217,7 +217,7 @@ ch5_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 6.4",
+      label = "Ryc. 7.4",
       title = "Siła związku — na naszych danych",
       actionButton("ch5_effect", "Pokaż siłę związku",
                    class = "lc-btn-primary", width = "100%"),
@@ -280,7 +280,7 @@ ch5_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "07",
+      num       = "08",
       title     = "Test t dwóch grup",
       lead      = "porównanie średnich między dwiema grupami — czy różnica jest realna?",
       target_id = "ch-dwie-grupy"

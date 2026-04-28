@@ -3,13 +3,13 @@
 # ============================================================================
 
 ch7_ui <- list(
-  id = "ch-anova", num = "08", title = "ANOVA",
+  id = "ch-anova", num = "09", title = "ANOVA",
   content = tagList(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 08 · Testowanie hipotez",
-      num    = "08",
+      kicker = "Rozdział 09 · Testowanie hipotez",
+      num    = "09",
       title  = "ANOVA.",
       lead   = "„Czy średnia cena posiłku różni się między Spiżem, budką z knyszą a Pasibusem?”
                 Gdy grup jest trzy lub więcej, analiza wariancji porównuje wszystkie jednym
@@ -69,7 +69,7 @@ ch7_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 8.1",
+      label = "Ryc. 9.1",
       title = "Intuicja ANOVA: sygnał kontra szum",
       fluidRow(
         column(4,
@@ -125,7 +125,7 @@ ch7_ui <- list(
     lc_h2("ch7-akcja", "ANOVA w akcji"),
 
     figure_panel(
-      label = "Ryc. 8.2",
+      label = "Ryc. 9.2",
       title = "ANOVA jednoczynnikowa",
       fluidRow(
         column(4,
@@ -214,7 +214,7 @@ ch7_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 8.3",
+      label = "Ryc. 9.3",
       title = "Games-Howell",
       helpText("Używa danych z ANOVA powyżej. Najpierw uruchom ANOVA!"),
       actionButton("ch7_run_tukey", "Testuj Games-Howellem",
@@ -259,7 +259,7 @@ ch7_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "09",
+      num       = "10",
       title     = "Drzewo decyzyjne",
       lead      = "mapa wyboru testu — od typu zmiennych do konkretnego testu.",
       target_id = "ch-drzewo"

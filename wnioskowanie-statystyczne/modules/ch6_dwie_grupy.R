@@ -3,13 +3,13 @@
 # ============================================================================
 
 ch6_ui <- list(
-  id = "ch-dwie-grupy", num = "07", title = "Test t dwóch grup",
+  id = "ch-dwie-grupy", num = "08", title = "Test t dwóch grup",
   content = tagList(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 07 · Testowanie hipotez",
-      num    = "07",
+      kicker = "Rozdział 08 · Testowanie hipotez",
+      num    = "08",
       title  = "Test t dwóch grup.",
       lead   = "„Czy mężczyźni jeżdżą szybciej niż kobiety?” Porównanie średnich między
                 dwiema grupami — czy obserwowana różnica jest realna, czy wynika
@@ -87,7 +87,7 @@ ch6_ui <- list(
     lc_h2("ch6-niezalezny", "Test t niezależny"),
 
     figure_panel(
-      label = "Ryc. 7.1",
+      label = "Ryc. 8.1",
       title = "Porównanie dwóch grup",
       fluidRow(
         column(4,
@@ -139,7 +139,7 @@ ch6_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 7.2",
+      label = "Ryc. 8.2",
       title = "Test parowy: przed i po",
       fluidRow(
         column(4,
@@ -201,7 +201,7 @@ ch6_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "08",
+      num       = "09",
       title     = "ANOVA",
       lead      = "a gdy grup jest więcej niż dwie?",
       target_id = "ch-anova"

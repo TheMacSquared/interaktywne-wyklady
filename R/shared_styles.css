@@ -658,6 +658,7 @@ html, body {
 /* === Figure panel (ramka z plakietką) === */
 .lc-figure-panel {
   position: relative;
+  box-sizing: border-box;
   background: var(--upwr-surface);
   border: 1px solid var(--upwr-rule);
   padding: 28px 28px 24px;
@@ -692,7 +693,7 @@ html, body {
   padding-top: 4px;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1320px) {
   .lc-chapter > .lc-margin {
     float: right;
     clear: right;

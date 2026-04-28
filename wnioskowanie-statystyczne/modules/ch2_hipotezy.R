@@ -27,16 +27,20 @@ ch2h_ui <- list(
       ),
       p("Test statystyczny wymaga jednak ", tags$b("precyzyjnych hipotez"),
         " — stwierdzeń, które można zweryfikować danymi. Żeby sformułować
-        hipotezę, musimy określić dwie rzeczy:"),
+        hipotezę, musimy odpowiedzieć na dwa pytania:"),
       tags$ol(
-        tags$li(tags$b("Parametr"),
-                " — co właściwie porównujemy? Średnią? Proporcję?
-                Korelację? Różnicę między grupami?"),
-        tags$li(tags$b("Relację"),
-                " — jaki znak ma łączyć parametr z wartością odniesienia lub
-                drugim parametrem? Równość (=), nierówność (≠), większe (>)
-                albo mniejsze (<)?")
+        tags$li(tags$b("Co mierzymy lub porównujemy?"),
+                " Czy chodzi o średnią, proporcję, korelację,
+                czy różnicę między grupami?"),
+        tags$li(tags$b("Jaki jest kierunek pytania?"),
+                " Czy pytamy o różnicę w ogóle, wartość większą,
+                wartość mniejszą, czy zgodność z wartością odniesienia?")
       ),
+      p("W zapisie formalnym pierwsza decyzja mówi nam, jaki ",
+        tags$b("parametr"),
+        " pojawi się we wzorze, a druga — jaki ",
+        tags$b("znak"),
+        " połączy go z wartością odniesienia albo z drugim parametrem."),
       p("H₀ (hipoteza zerowa) zawsze zawiera znak ", tags$b("równości"),
         " (=, ≤, ≥) — reprezentuje „stan domyślny”, brak efektu.
         Hₐ (hipoteza alternatywna) to ", tags$b("dopełnienie"),
@@ -78,10 +82,43 @@ ch2h_ui <- list(
         O tym, kiedy warto użyć wariantu jednostronnego (Hₐ wskazującej
         konkretny kierunek), powiemy w sekcji „Test jednostronny a dwustronny”
         niżej."),
-      p(tags$b("Uwaga:"), " formalnego zapisu z greką (μ, ρ, p) i znakami
-        matematycznymi nauczymy się później — teraz chodzi o to, żeby
-        ", tags$em("słowami"),
-        " rozłożyć pytanie badawcze na parametr i relację.")
+    ),
+
+    lc_h2("ch2h-formalizm", "Od hipotezy słownej do zapisu formalnego"),
+
+    tagList(
+      p("Słowna wersja hipotez nie jest etapem „mniej statystycznym”.
+        To uporządkowanie sensu badania. Dopiero kiedy wiemy, ",
+        tags$b("jaki parametr"),
+        " badamy i ",
+        tags$b("jaka relacja"),
+        " nas interesuje, możemy przejść do pełnego zapisu formalnego."),
+      p("Najpierw nazywamy parametry. W przykładzie z telefonem możemy oznaczyć:"),
+      lc_formula_box(
+        p(withMathJax("\\(\\mu_{plecak}\\)"),
+          " — średnia koncentracja w populacji studentów, gdy telefon jest w plecaku"),
+        p(withMathJax("\\(\\mu_{biurko}\\)"),
+          " — średnia koncentracja w populacji studentów, gdy telefon leży na biurku")
+      ),
+      p("Dopiero potem zapisujemy hipotezy. Ponieważ pytanie brzmi „czy telefon
+        na biurku wpływa na koncentrację?”, hipoteza alternatywna jest dwustronna:"),
+      lc_formula_box(
+        p(withMathJax("\\(H_0: \\mu_{biurko} = \\mu_{plecak}\\)")),
+        p(withMathJax("\\(H_a: \\mu_{biurko} \\neq \\mu_{plecak}\\)"))
+      ),
+      p("Pełny formalizm składa się więc z trzech elementów: ",
+        tags$b("definicji symboli"),
+        ", ",
+        tags$b("hipotezy zerowej"),
+        " i ",
+        tags$b("hipotezy alternatywnej"),
+        ". Bez definicji symboli sam wzór jest nieczytelny: ",
+        withMathJax("\\(\\mu_1 < \\mu_2\\)"),
+        " nic nie mówi, jeśli nie wiemy, czym są grupa 1 i grupa 2."),
+      p("W praktyce warto iść zawsze tą samą ścieżką: ",
+        tags$em("pytanie badawcze → hipotezy słowne → definicja parametrów → zapis formalny"),
+        ". To chroni przed najczęstszym błędem: mechanicznym wpisaniem znaków
+        matematycznych bez zrozumienia, co dokładnie porównujemy.")
     ),
 
     margin_callout(
@@ -282,9 +319,9 @@ ch2h_ui <- list(
 
     lc_chapter_next(
       num       = "03",
-      title     = "Test t jednej próby",
-      lead      = "pierwszy konkretny test — średnia wobec wartości referencyjnej.",
-      target_id = "ch-jedna-ilosciowa"
+      title     = "Błędy, p-wartość i decyzja",
+      lead      = "jak przejść od H₀ i Hₐ do formalnego werdyktu.",
+      target_id = "ch-decyzja"
     )
   )
 )

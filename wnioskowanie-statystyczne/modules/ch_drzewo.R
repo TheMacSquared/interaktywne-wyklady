@@ -10,13 +10,13 @@ source(file.path(app_dir, "modules", "drzewo_data.R"), local = TRUE)
 # UI
 # ----------------------------------------------------------------------------
 ch_drzewo_ui <- list(
-  id = "ch-drzewo", num = "09", title = "Drzewo decyzyjne",
+  id = "ch-drzewo", num = "10", title = "Drzewo decyzyjne",
   content = tagList(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 09 · Testowanie hipotez",
-      num    = "09",
+      kicker = "Rozdział 10 · Testowanie hipotez",
+      num    = "10",
       title  = "Drzewo decyzyjne.",
       lead   = "„Mam dane — jaki test zastosować?” Mapa decyzji: od typu zmiennych
                 i liczby grup do konkretnego testu. Jedno spojrzenie na cały wykład."
@@ -33,7 +33,7 @@ ch_drzewo_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 9.1",
+      label = "Ryc. 10.1",
       title = "Drzewo decyzyjne — wariant interaktywny",
       full_width = TRUE,
       div(id = "drzewo-fullscreen-wrap", class = "drzewo-wrap",
@@ -65,7 +65,7 @@ ch_drzewo_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "10",
+      num       = "11",
       title     = "Ściąga",
       lead      = "kompaktowe podsumowanie wszystkich testów w tabelach.",
       target_id = "ch-sciaga"

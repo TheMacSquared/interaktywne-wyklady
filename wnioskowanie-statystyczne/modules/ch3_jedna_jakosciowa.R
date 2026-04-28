@@ -3,13 +3,13 @@
 # ============================================================================
 
 ch3_ui <- list(
-  id = "ch-jedna-jakosciowa", num = "04", title = "Test proporcji",
+  id = "ch-jedna-jakosciowa", num = "05", title = "Test proporcji",
   content = tagList(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 04 · Testowanie hipotez",
-      num    = "04",
+      kicker = "Rozdział 05 · Testowanie hipotez",
+      num    = "05",
       title  = "Test proporcji.",
       lead   = "„Czy w naszej populacji faktycznie 30% osób to leworęczni?” Gdy pytanie
                 dotyczy odsetka, nie średniej — test dwumianowy i jego z-przybliżenie."
@@ -103,7 +103,7 @@ ch3_ui <- list(
     lc_h2("ch3-krok", "Test dwumianowy — krok po kroku"),
 
     figure_panel(
-      label = "Ryc. 4.1",
+      label = "Ryc. 5.1",
       title = "Test dwumianowy — krok po kroku",
       fluidRow(
         column(4,
@@ -166,7 +166,7 @@ ch3_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.2",
+      label = "Ryc. 5.2",
       title = "Test dwumianowy jednostronny",
       fluidRow(
         column(4,
@@ -221,7 +221,7 @@ ch3_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.3",
+      label = "Ryc. 5.3",
       title = "Porównanie wyników: dwumianowy vs z-test",
       actionButton("ch3_compare", "Porównaj testy", class = "lc-btn-primary", width = "100%"),
       br(), br(),
@@ -296,7 +296,7 @@ ch3_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "05",
+      num       = "06",
       title     = "Korelacja",
       lead      = "związek między dwiema zmiennymi ilościowymi.",
       target_id = "ch-korelacja"

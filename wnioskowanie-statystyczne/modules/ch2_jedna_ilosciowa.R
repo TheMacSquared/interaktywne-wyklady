@@ -1,15 +1,15 @@
 # ============================================================================
-# CHAPTER 3: Jedna zmienna ilosciowa — test t jednej proby
+# CHAPTER 4: Jedna zmienna ilosciowa — test t jednej proby
 # ============================================================================
 
 ch2_ui <- list(
-  id = "ch-jedna-ilosciowa", num = "03", title = "Test t jednej próby",
+  id = "ch-jedna-ilosciowa", num = "04", title = "Test t jednej próby",
   content = tagList(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 03 · Testowanie hipotez",
-      num    = "03",
+      kicker = "Rozdział 04 · Testowanie hipotez",
+      num    = "04",
       title  = "Test t jednej próby.",
       lead   = "„Czy nasi studenci mają typowy poziom koncentracji?” Jeden pomiar na
                 osobie, porównanie średniej z wartością referencyjną — od danych, przez
@@ -106,7 +106,7 @@ ch2_ui <- list(
     lc_h2("ch2-krok", "Test t jednej próby — krok po kroku"),
 
     figure_panel(
-      label = "Ryc. 3.1",
+      label = "Ryc. 4.1",
       title = "Test t jednej próby — krok po kroku",
       fluidRow(
         column(4,
@@ -176,7 +176,7 @@ ch2_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 3.2",
+      label = "Ryc. 4.2",
       title = "Test t jednostronny — krok po kroku",
       fluidRow(
         column(4,
@@ -250,7 +250,7 @@ ch2_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "04",
+      num       = "05",
       title     = "Test proporcji",
       lead      = "a co gdy pytamy nie o średnią, lecz o procent?",
       target_id = "ch-jedna-jakosciowa"

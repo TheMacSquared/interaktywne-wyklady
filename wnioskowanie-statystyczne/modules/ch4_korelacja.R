@@ -3,13 +3,13 @@
 # ============================================================================
 
 ch4_ui <- list(
-  id = "ch-korelacja", num = "05", title = "Korelacja",
+  id = "ch-korelacja", num = "06", title = "Korelacja",
   content = tagList(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 05 · Testowanie hipotez",
-      num    = "05",
+      kicker = "Rozdział 06 · Testowanie hipotez",
+      num    = "06",
       title  = "Korelacja.",
       lead   = "„Czy wraz ze wzrostem temperatury rośnie sprzedaż lodów?” Współczynnik
                 Pearsona pokazuje kierunek i siłę zależności między dwiema zmiennymi
@@ -42,7 +42,7 @@ ch4_ui <- list(
         zbiory o różnej sile korelacji.")
     ),
     figure_panel(
-      label = "Ryc. 5.1",
+      label = "Ryc. 6.1",
       title = "Siła korelacji",
       tags$img(src = "assets/correlation-strength.png",
                style = "width: 100%; border-radius: 4px;")
@@ -55,7 +55,7 @@ ch4_ui <- list(
         ujemny — jedna rośnie, druga maleje; zero — brak trendu liniowego.")
     ),
     figure_panel(
-      label = "Ryc. 5.2",
+      label = "Ryc. 6.2",
       title = "Kierunek korelacji",
       tags$img(src = "assets/correlation-direction.png",
                style = "width: 100%; border-radius: 4px;")
@@ -71,7 +71,7 @@ ch4_ui <- list(
         " to, jak ciaśno punkty go trzymają.")
     ),
     figure_panel(
-      label = "Ryc. 5.3",
+      label = "Ryc. 6.3",
       title = "Uwaga: r to nie nachylenie!",
       tags$img(src = "assets/correlation-scatter.png",
                style = "width: 100%; border-radius: 4px;")
@@ -148,7 +148,7 @@ ch4_ui <- list(
     )),
 
     figure_panel(
-      label = "Ryc. 5.4",
+      label = "Ryc. 6.4",
       title = "Test korelacji — krok po kroku",
       fluidRow(
         column(4,
@@ -198,7 +198,7 @@ ch4_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 5.5",
+      label = "Ryc. 6.5",
       title = "Test korelacji jednostronny",
       fluidRow(
         column(4,
@@ -243,7 +243,7 @@ ch4_ui <- list(
         za tym, żeby zawsze rysować wykres przed interpretacją r.")
     ),
     figure_panel(
-      label = "Ryc. 5.6",
+      label = "Ryc. 6.6",
       title = "Kwartet Anscombe’a",
       tags$img(src = "assets/anscombe-quartet.png",
                style = "width: 100%; border-radius: 4px;")
@@ -283,7 +283,7 @@ ch4_ui <- list(
                target = "_blank", "Film TED-Ed →"))
     ),
     figure_panel(
-      label = "Ryc. 5.8",
+      label = "Ryc. 6.8",
       title = "Paradoks Simpsona",
       tags$img(src = "assets/simpson-paradox.png",
                style = "width: 100%; max-width: 650px; border-radius: 4px;")
@@ -297,7 +297,7 @@ ch4_ui <- list(
         liniową — nie każdą.")
     ),
     figure_panel(
-      label = "Ryc. 5.9",
+      label = "Ryc. 6.9",
       title = "Nieliniowość przy r ≈ 0",
       tags$img(src = "assets/correlation-nonlinear.png",
                style = "max-width: 500px; width: 100%; border-radius: 4px;")
@@ -312,7 +312,7 @@ ch4_ui <- list(
         jak r skacze.")
     ),
     figure_panel(
-      label = "Ryc. 5.10",
+      label = "Ryc. 6.10",
       title = "Wpływ outliera na r",
       fluidRow(
         column(4,
@@ -383,7 +383,7 @@ ch4_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "06",
+      num       = "07",
       title     = "Test χ² niezależności",
       lead      = "związek między dwiema zmiennymi jakościowymi.",
       target_id = "ch-dwie-jakosciowe"

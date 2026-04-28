@@ -12,8 +12,8 @@ ch1_ui <- list(
       num    = "01",
       title  = "Logika testowania.",
       lead   = "„Czy telefon na biurku wpływa na koncentrację?” — statystyk zaczyna nie
-                od wzorów, tylko od pytania. Zobaczymy, jak przełożyć je na formalną
-                decyzję: hipotezy, p-wartość, błędy I i II rodzaju."
+                od wzorów, tylko od pytania. Najpierw zobaczymy, skąd bierze się
+                potrzeba testu, a w kolejnym kroku nazwiemy hipotezy."
     ),
 
     # ========================================================================
@@ -103,8 +103,33 @@ ch1_ui <- list(
         odrzucamy H₀ na korzyść Hₐ.")
     ),
 
+    lc_chapter_next(
+      num       = "02",
+      title     = "Od pytania do hipotezy",
+      lead      = "najpierw nazywamy H₀ i Hₐ, a dopiero potem podejmujemy decyzję.",
+      target_id = "ch-hipotezy"
+    )
+
+  )
+)
+
+# ============================================================================
+# CHAPTER 3: Bledy, p-wartosc i decyzja
+# ============================================================================
+
+ch1d_ui <- list(
+  id = "ch-decyzja", num = "03", title = "Błędy, p-wartość i decyzja",
+  content = tagList(
+
+    lc_chapter_hero(
+      kicker = "Rozdział 03 · Testowanie hipotez",
+      num    = "03",
+      title  = "Błędy, p-wartość i decyzja.",
+      lead   = "Skoro mamy już H₀ i Hₐ, możemy zapytać, jakie błędy grożą przy decyzji, czym jest p-wartość i jak poprawnie sformułować werdykt."
+    ),
+
     # ========================================================================
-    # WIDGET 1: Bledy I i II rodzaju
+    # SEKCJA 1: Bledy I i II rodzaju
     # ========================================================================
     lc_h2("ch1-bledy", "Błędy I i II rodzaju"),
 
@@ -238,7 +263,7 @@ ch1_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 1.2",
+      label = "Ryc. 3.1",
       title = "Moc testu i błędy",
       fluidRow(
         column(4,
@@ -268,7 +293,7 @@ ch1_ui <- list(
     ),
 
     # ========================================================================
-    # WIDGET 2: P-wartość (po błędach — bo α jest już zdefiniowane)
+    # SEKCJA 2: P-wartość (po błędach — bo α jest już zdefiniowane)
     # ========================================================================
     lc_h2("ch1-pvalue", "Co to jest p-wartość?"),
 
@@ -318,7 +343,7 @@ ch1_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 1.3",
+      label = "Ryc. 3.2",
       title = "Powtórzone eksperymenty pod H₀",
       fluidRow(
         column(4,
@@ -352,7 +377,7 @@ ch1_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 1.4",
+      label = "Ryc. 3.3",
       title = "Co naprawdę oznacza p-wartość?",
       p("Załóżmy, że w badaniu wyszło ", tags$b("p = 0,03"),
         ". Które zdanie jest poprawną interpretacją?"),
@@ -368,7 +393,7 @@ ch1_ui <- list(
     ),
 
     # ========================================================================
-    # WIDGET 3: Quiz - decyzja
+    # SEKCJA 3: Quiz - decyzja
     # ========================================================================
     lc_h2("ch1-decyzja", "Decyzja w praktyce"),
 
@@ -399,13 +424,13 @@ ch1_ui <- list(
         tags$em("„średni czas dojazdu statystycznie istotnie różni się od 30 minut”"),
         " — a nie: „odrzuciliśmy hipotezę zerową”. W raportach i publikacjach
         zawsze wracamy do języka problemu."),
-      p("Tę drugą część — jak sformułować hipotezy i jak wrócić z werdyktu do
-        języka badania — omówimy w kolejnych rozdziałach. Na razie poćwiczmy
-        samo podjęcie decyzji na podstawie p-wartości:")
+      p("Hipotezy umiemy już zapisać, teraz domykamy drugi ruch: jak wrócić
+        z formalnego werdyktu do języka badania. Na razie poćwiczmy samo
+        podjęcie decyzji na podstawie p-wartości:")
     ),
 
     figure_panel(
-      label = "Ryc. 1.5",
+      label = "Ryc. 3.4",
       title = "Quiz: odrzucić czy nie?",
       uiOutput("ch1_quiz_scenario"),
       p("Twoja decyzja:"),
@@ -415,13 +440,14 @@ ch1_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "02",
-      title     = "Od pytania do hipotezy",
-      lead      = "jak sformalizować „wydaje mi się” w parę H₀ / Hₐ.",
-      target_id = "ch-hipotezy"
+      num       = "04",
+      title     = "Test t jednej próby",
+      lead      = "pierwszy konkretny test — średnia wobec wartości referencyjnej.",
+      target_id = "ch-jedna-ilosciowa"
     )
   )
 )
+
 
 # ============================================================================
 # SERVER
