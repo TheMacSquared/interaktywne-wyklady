@@ -50,7 +50,7 @@ ch1_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Pytanie kluczowe",
       "Średnia w grupie „biurko” jest niższa. Ale czy to nie może być przypadek?
        Gdybyśmy powtórzyli eksperyment z innymi 80 osobami, różnica mogłaby być
@@ -283,7 +283,7 @@ ch1d_ui <- list(
       uiOutput("ch1_power_stats")
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Kompromis",
       tagList(
         "Zmniejszenie α redukuje błąd I rodzaju, ale zwiększa błąd II rodzaju. ",
@@ -368,7 +368,7 @@ ch1d_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Jak to czytać",
       "Każdy słupek to różnica średnich z jednego symulowanego eksperymentu,
        w którym telefon nie ma wpływu. Czerwona linia to różnica z prawdziwego

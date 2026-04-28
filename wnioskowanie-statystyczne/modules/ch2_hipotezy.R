@@ -121,7 +121,7 @@ ch2h_ui <- list(
         matematycznych bez zrozumienia, co dokładnie porównujemy.")
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Szablon",
       tagList(
         tags$p(tags$b("H₀:"), " parametr ", tags$b("=/≤/≥"), " wartość"),
@@ -206,7 +206,7 @@ ch2h_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "W wątpliwości",
       "Używaj testu dwustronnego. Test jednostronny jest mocniejszy
        (większa moc), ale ryzykowny: jeśli efekt jest w przeciwnym kierunku,

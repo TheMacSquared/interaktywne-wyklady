@@ -52,7 +52,7 @@ ch_drzewo_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Jak używać",
       tagList(
         tags$ul(

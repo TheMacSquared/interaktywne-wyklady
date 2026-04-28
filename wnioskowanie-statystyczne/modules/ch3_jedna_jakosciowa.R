@@ -142,7 +142,7 @@ ch3_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Co zrobiliśmy?",
       tagList(
         tags$ol(
@@ -192,7 +192,7 @@ ch3_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Dwu- a jednostronny",
       tagList(
         tags$ul(

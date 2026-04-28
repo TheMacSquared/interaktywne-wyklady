@@ -655,6 +655,94 @@ html, body {
   color: var(--upwr-sage);
 }
 
+/* === Inline collapsible callouts === */
+.lc-inline-callout {
+  box-sizing: border-box;
+  display: block;
+  width: fit-content;
+  max-width: 680px;
+  margin: 1.2em 0;
+  border: 1px solid var(--upwr-rule);
+  border-left: 2px solid var(--upwr-single-alt);
+  background: var(--upwr-surface);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.lc-inline-callout[open] {
+  width: 100%;
+}
+
+.lc-inline-callout-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px 12px;
+  font-family: var(--upwr-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--upwr-single-alt);
+  user-select: none;
+}
+
+.lc-inline-callout-label::marker,
+.lc-inline-callout-label::-webkit-details-marker {
+  display: none;
+  content: "";
+}
+
+.lc-inline-callout-label::before {
+  content: "+";
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0;
+  flex: 0 0 auto;
+}
+
+.lc-inline-callout[open] .lc-inline-callout-label::before {
+  content: "−";
+}
+
+.lc-inline-callout-body {
+  padding: 0 14px 14px 38px;
+  font-family: var(--upwr-serif);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--upwr-ink-soft);
+}
+
+.lc-inline-callout-body p {
+  margin: 0 0 0.55em;
+}
+
+.lc-inline-callout-body p:last-child,
+.lc-inline-callout-body ul:last-child,
+.lc-inline-callout-body ol:last-child {
+  margin-bottom: 0;
+}
+
+.lc-inline-callout.lc-callout-uwaga {
+  border-left-color: var(--upwr-accent);
+}
+.lc-inline-callout.lc-callout-uwaga .lc-inline-callout-label {
+  color: var(--upwr-accent);
+}
+
+.lc-inline-callout.lc-callout-ok {
+  border-left-color: var(--upwr-sage);
+}
+.lc-inline-callout.lc-callout-ok .lc-inline-callout-label {
+  color: var(--upwr-sage);
+}
+
 /* === Figure panel (ramka z plakietką) === */
 .lc-figure-panel {
   position: relative;

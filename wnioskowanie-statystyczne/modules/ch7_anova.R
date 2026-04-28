@@ -176,7 +176,7 @@ ch7_ui <- list(
         Pozostałe 77% to inne czynniki: drobnoustroje startowe, czystość surowca, czas, partia mleka.")
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Uwaga praktyczna",
       tagList(
         "małe p przy małym η² oznacza często tylko ", tags$em("dużą próbę"),
@@ -199,7 +199,7 @@ ch7_ui <- list(
         w grupach, więc jest bezpiecznym wyborem domyślnym.")
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Ważne",
       tagList(
         "Testy post-hoc wykonujemy ", tags$b("tylko"), " gdy ANOVA jest istotna.

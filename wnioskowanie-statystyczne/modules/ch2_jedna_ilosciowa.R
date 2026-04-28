@@ -148,7 +148,7 @@ ch2_ui <- list(
     # ========================================================================
     # Interpretacja
     # ========================================================================
-    margin_callout(
+    inline_callout(
       label = "Co zrobiliśmy?",
       tagList(
         tags$ol(
@@ -202,7 +202,7 @@ ch2_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Dwustronny a jednostronny",
       tagList(
         tags$ul(

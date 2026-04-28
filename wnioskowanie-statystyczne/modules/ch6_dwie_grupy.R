@@ -157,7 +157,7 @@ ch6_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Uwaga",
       "gdy założenia testu t nie są spełnione (skrajne odstające, mocno skośny
        rozkład, małe n), stosuje się testy nieparametryczne — omówimy je w osobnym

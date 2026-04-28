@@ -448,6 +448,24 @@ margin_callout <- function(label = "Zapamiętaj", ..., color = "wskazowka") {
   )
 }
 
+# Zwinięty callout w głównej kolumnie tekstu.
+# Używany eksperymentalnie tam, gdzie callout w marginesie zaburza rytm treści.
+inline_callout <- function(label = "Zapamiętaj", ..., color = "wskazowka",
+                           open = FALSE) {
+  css_class <- paste("lc-inline-callout", switch(color,
+    uwaga     = "lc-callout-uwaga",
+    ok        = "lc-callout-ok",
+    wskazowka = "",
+    ""
+  ))
+  tags$details(
+    class = css_class,
+    if (isTRUE(open)) list(open = NA),
+    tags$summary(class = "lc-inline-callout-label", label),
+    tags$div(class = "lc-inline-callout-body", ...)
+  )
+}
+
 # Notka na marginesie (bez etykiety)
 margin_note <- function(...) {
   tags$div(
