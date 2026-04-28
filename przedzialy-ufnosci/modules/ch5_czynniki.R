@@ -54,7 +54,7 @@ ch5_ui <- list(
       )
     ),
 
-    margin_callout(label = "Malejące korzyści", color = "wskazowka",
+    inline_callout(label = "Malejące korzyści", color = "wskazowka",
       "Zwiększenie n z 25 do 100 (4×) skraca przedział o połowę (2×).
        Ale z 100 do 400 (4×) też tylko o połowę. To efekt 1/√n."
     ),
@@ -128,7 +128,7 @@ ch5_ui <- list(
       )
     ),
 
-    margin_callout(label = "Kompromis", color = "ok",
+    inline_callout(label = "Kompromis", color = "ok",
       "95% to standardowy wybór — rozsądna równowaga między pewnością
        a precyzją. 99% daje szerszy przedział (większa pewność, mniejsza
        precyzja), 90% węższy (mniej pewny, bardziej precyzyjny)."

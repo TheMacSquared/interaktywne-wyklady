@@ -218,7 +218,7 @@ ch4_ui <- list(
       tableOutput("ch4_comp_table")
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Wniosek",
       "Rozstęp jest bardzo wrażliwy na outliery — wystarczy jedna wartość
        odstająca, aby go zmienić. IQR i odchylenie standardowe są bardziej

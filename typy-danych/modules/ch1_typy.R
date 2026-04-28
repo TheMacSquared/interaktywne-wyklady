@@ -23,7 +23,7 @@ ch1_ui <- list(
         mimo że są to liczby.")
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Zasada",
       "Zanim zaczniesz analizę — zawsze określ typ każdej zmiennej.",
       color = "uwaga"
@@ -93,7 +93,7 @@ ch1_ui <- list(
       uiOutput("ch1_leaf_detail")
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Uwaga",
       "Granica między typami nie zawsze jest ostra. Na przykład ocena wykładowcy
        w skali 1–10 może być traktowana jako porządkowa lub dyskretna,
@@ -197,7 +197,7 @@ ch1_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Zwróć uwagę",
       "Zbiór zawiera zmienne wszystkich czterech typów. W kolejnych
        rozdziałach nauczymy się, jak je podsumowywać i wizualizować."

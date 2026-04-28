@@ -81,7 +81,7 @@ ch2_ev_var_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Wartość oczekiwana",
       "To 'długoterminowa średnia' — wynik, wokół którego oscyluje
        średnia po wielu powtorzeniach. Nie musi być równa żadnemu
@@ -129,7 +129,7 @@ ch2_ev_var_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Pamiętaj",
       "E(X) to średnia ważona prawdopodobieństwami. Wynik o dużym prawdopodobieństwie
        ciągnie E(X) w swoją stronę — podobnie jak ciężki przedmiot na wadze.",
@@ -167,7 +167,7 @@ ch2_ev_var_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Kluczowa intuicja",
       tagList(
         tags$ul(

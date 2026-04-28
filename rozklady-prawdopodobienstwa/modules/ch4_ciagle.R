@@ -108,7 +108,7 @@ ch4_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Zapamiętaj",
       tagList(
         "W rozkładzie ciągłym gęstość f(x) może być > 1 (np. U(0, 0.5) ma f(x) = 2),
@@ -193,13 +193,13 @@ ch4_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Związek z Poissonem",
       "Jeśli liczba zdarzeń w czasie ma rozkład Poissona(λ),
        to czas między zdarzeniami ma rozkład Exp(λ) — dwie strony tego samego procesu."
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Bezpamięciowość",
       tagList(
         "Czekasz na wiadomość już 2 godziny. Czy następna przyjdzie szybciej?",
@@ -252,14 +252,14 @@ ch4_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Dlaczego t-Studenta?",
       "Gdy nie znamy prawdziwego σ populacji i szacujemy je z próby,
        rozkład statystyki testowej to t-Studenta, nie normalny.
        Przy małych próbach (n < 30) różnica jest znacząca!"
     ),
 
-    margin_callout(
+    inline_callout(
       label = "W praktyce",
       "Przy df=30 krzywa t jest już prawie normalną. Przy df=3 (n=4!)
        ogony są wyraźnie cięższe — wartości ekstremalne bardziej prawdopodobne.",
@@ -306,13 +306,13 @@ ch4_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Obserwacja",
       "Przy małym df rozkład jest mocno prawoskośny.
        Gdy df rośnie, staje się coraz bardziej symetryczny i zbliża się do normalnego (CTG!)."
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Intuicja",
       "χ² mierzy odleglosc od idealu. Test χ² sprawdza, czy obserwowane
        czestosci sa zbyt daleko od oczekiwanych.",
@@ -359,7 +359,7 @@ ch4_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Uwaga na średnią!",
       tagList(
         "Średnia > mediana. Mediana = e^μ, średnia = e^(μ + σ²/2).
@@ -368,7 +368,7 @@ ch4_ui <- list(
       color = "uwaga"
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Jak rozpoznać?",
       "Dane zawsze dodatnie + długi prawy ogon → myśl log-normalny.
        Prosty test: jeśli po zlogarytmowaniu histogram wygląda normalnie — to log-normalny."

@@ -90,7 +90,7 @@ ch6_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Aha-moment",
       "Zmień rozkład na najbardziej 'dziki' (U-kształtny, dwumodalny),
        pobierz 1000 prób — histogram średnich i tak stanie się dzwonem!"
@@ -154,7 +154,7 @@ ch6_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Kluczowa intuicja",
       "Uśrednianie 'wygładza' indywidualne dziwactwa. Ekstrema w jednym
        kierunku są niwelowane przez ekstrema w drugim. Im więcej uśredniamy,

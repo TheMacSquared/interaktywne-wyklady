@@ -71,7 +71,7 @@ ch4_ui <- list(
       )
     ),
 
-    margin_callout(label = "AIC vs BIC", color = "wskazowka",
+    inline_callout(label = "AIC vs BIC", color = "wskazowka",
       "AIC faworyzuje modele z lepszą predykcją (nawet złożone).
        BIC mocniej karze za złożoność — preferuje prostsze modele.
        Gdy się nie zgadzają, AIC jest lepszy do predykcji, BIC do
@@ -100,7 +100,7 @@ ch4_ui <- list(
       )
     ),
 
-    margin_callout(label = "Wniosek", color = "uwaga",
+    inline_callout(label = "Wniosek", color = "uwaga",
       "Regresja liniowa na danych binarnych daje predykcje poza [0, 1]
        i nie jest poprawnym modelem. Zawsze używaj regresji logistycznej
        dla zmiennej zależnej 0/1."
@@ -133,7 +133,7 @@ ch4_ui <- list(
       )
     ),
 
-    margin_callout(label = "Złota reguła", color = "uwaga",
+    inline_callout(label = "Złota reguła", color = "uwaga",
       "Najlepszy model to nie ten z najwyższym R², ale ten, który
        najlepiej generalizuje na nowe dane. Używaj AIC/BIC do wyboru
        złożoności."

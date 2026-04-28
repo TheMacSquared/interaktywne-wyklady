@@ -90,7 +90,7 @@ ch2_ui <- list(
       uiOutput("ch2_quiz_feedback")
     ),
 
-    margin_callout(label = "Częsty błąd", color = "uwaga",
+    inline_callout(label = "Częsty błąd", color = "uwaga",
       "Przedział ufności nie mówi o prawdopodobieństwie, że parametr
        leży w konkretnym przedziale. Parametr jest stały — to przedział
        jest losowy. Poprawnie: „metoda daje przedziały, które w 95%

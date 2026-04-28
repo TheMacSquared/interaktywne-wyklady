@@ -184,7 +184,7 @@ ch3_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Obserwacja",
       "Dodaj kilka „normalnych” zarobków — średnia i mediana będą blisko
        siebie. Teraz kliknij „Dodaj outlier (CEO)” — zobacz, jak średnia
@@ -227,7 +227,7 @@ ch3_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Wniosek",
       "Średnia arytmetyczna jest bardzo wrażliwa na wartości odstające.
        Mediana jest najbardziej odporna. Średnia ucinana oferuje
@@ -305,7 +305,7 @@ ch3_ui <- list(
     # ========================================================================
     lc_h2("ch3-percentyle", "Percentyle i kwantyle"),
 
-    margin_callout(
+    inline_callout(
       label = "IQR",
       tagList(
         tags$strong("Rozstęp międzykwartylowy:"),

@@ -19,7 +19,7 @@ ch6_ui <- list(
     # --- Cheat sheet 1: Tools by variable type ---
     lc_h2("ch6-narzedzia", "Narzędzia wg typu zmiennej"),
 
-    margin_callout(
+    inline_callout(
       label = "Najczęstszy błąd",
       "Obliczanie średniej z danych nominalnych lub porządkowych
        (np. średnia z kodów kierunków). Wynik będzie liczbą, ale

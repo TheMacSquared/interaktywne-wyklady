@@ -61,7 +61,7 @@ ch5_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Reguła 68-95-99.7",
       "Około 68% danych leży w μ±σ, 95% w μ±2σ, a 99.7% w μ±3σ."
     ),

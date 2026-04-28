@@ -76,7 +76,7 @@ rules <- data.frame(
     "Zamień chapter-title na lc_chapter_hero().",
     "Zamień widget-block na figure_panel().",
     "Zamień narrative na lc_p() / lc_grid().",
-    "Zamień callout-* na margin_callout(), margin_note() albo nowy komponent lc_*.",
+    "Zamień callout-* na inline_callout(), margin_note() albo nowy komponent lc_*.",
     "Zamień formula-box na lc_formula_box().",
     "Zamień stat-box na lc_stat_grid() + lc_stat_box().",
     "Użyj klas lc-btn-* zamiast Bootstrap btn-*.",

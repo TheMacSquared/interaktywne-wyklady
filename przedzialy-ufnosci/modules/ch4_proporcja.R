@@ -52,7 +52,7 @@ ch4_ui <- list(
         withMathJax("\\(n(1-p) \\geq 10\\)"), ".")
     ),
 
-    margin_callout(label = "W jamovi", color = "wskazowka",
+    inline_callout(label = "W jamovi", color = "wskazowka",
       tagList(
         "Analyses → Frequencies → 2 Outcomes — Binomial test → przeciągnij
          zmienną binarną (np. zdany/niezdany) do pola zmiennych → zaznacz

@@ -45,7 +45,7 @@ ch3_ui <- list(
         do wyboru. Ten rozdział nauczy Cię interpretować gotowe przedziały — a nie liczyć je ręcznie.")
     ),
 
-    margin_callout(label = "W jamovi", color = "wskazowka",
+    inline_callout(label = "W jamovi", color = "wskazowka",
       tagList(
         "Analyses → T-Tests → One Sample T-Test → przeciągnij zmienną
          ilościową do Dependent Variables → w panelu Additional
@@ -174,7 +174,7 @@ ch3_ui <- list(
       )
     ),
 
-    margin_callout(label = "Zasada praktyczna", color = "uwaga",
+    inline_callout(label = "Zasada praktyczna", color = "uwaga",
       "Kiedy porównujesz grupy, patrz przede wszystkim na CI różnicy —
        to liczba, która uwzględnia niepewność obu pomiarów naraz.
        Porównywanie dwóch osobnych CI na oko to szybki skrót — często

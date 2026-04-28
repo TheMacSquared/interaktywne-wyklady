@@ -58,7 +58,7 @@ ch2_ui <- list(
       )
     ),
 
-    margin_callout(label = "Skorygowane R²", color = "wskazowka",
+    inline_callout(label = "Skorygowane R²", color = "wskazowka",
       "Zwykłe R² zawsze rośnie z każdym dodanym predyktorem (nawet
        bezużytecznym!). Adjusted R² koryguje ten efekt — karze
        za zbędne zmienne."
@@ -87,7 +87,7 @@ ch2_ui <- list(
       )
     ),
 
-    margin_callout(label = "Ostrożnie!", color = "uwaga",
+    inline_callout(label = "Ostrożnie!", color = "uwaga",
       "Więcej zmiennych = większe R², ale nie zawsze lepszy model.
        Przeuczone modele słabo generalizują. Używaj adj. R², AIC, BIC."
     ),

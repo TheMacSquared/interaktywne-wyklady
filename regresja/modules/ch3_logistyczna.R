@@ -113,7 +113,7 @@ ch3_ui <- list(
       uiOutput("ch3_odds_ratios")
     ),
 
-    margin_callout(label = "Ocena modelu", color = "wskazowka",
+    inline_callout(label = "Ocena modelu", color = "wskazowka",
       "Nie używamy R² w sensie liniowym. Zamiast tego: AIC, BIC, oraz
        macierz pomyłek (confusion matrix) z dokładnością, czułością
        i swoistością."

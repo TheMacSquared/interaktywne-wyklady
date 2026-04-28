@@ -1117,6 +1117,9 @@ input[type="range"] {
   font-family: var(--upwr-sans) !important;
   border-radius: 4px !important;
   font-weight: 700 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  line-height: 1.2 !important;
 }
 
 .lc-btn-sm {

@@ -72,7 +72,7 @@ ch1_ui <- list(
       )
     ),
 
-    margin_callout(label = "Obserwacja", color = "ok",
+    inline_callout(label = "Obserwacja", color = "ok",
       "Każda próba daje inny wynik. Ale średnie z prób skupiają się
        wokół prawdziwego μ — im większe n, tym bliżej."
     ),
@@ -155,7 +155,7 @@ ch1_ui <- list(
         To dlatego duże badania są takie drogie.")
     ),
 
-    margin_callout(label = "Hierarchia", color = "wskazowka",
+    inline_callout(label = "Hierarchia", color = "wskazowka",
       "Najpierw chcemy, żeby estymator był nieobciążony (trafiał średnio
        w cel). Spośród nieobciążonych wybieramy najefektywniejszy
        (najmniej się waha). I oczywiście chcemy, żeby był zgodny —
@@ -192,7 +192,7 @@ ch1_ui <- list(
       )
     ),
 
-    margin_callout(label = "Wniosek", color = "uwaga",
+    inline_callout(label = "Wniosek", color = "uwaga",
       "Estymacja punktowa to za mało. Potrzebujemy przedziału
        ufności — zakresu wartości, który z określonym
        prawdopodobieństwem zawiera prawdziwy parametr."

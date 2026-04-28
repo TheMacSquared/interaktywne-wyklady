@@ -102,13 +102,13 @@ ch3_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Obserwacja",
       "Porównaj scenariusze i zwróć uwagę, jak zmiana p przesuwa
        rozkład, a wzrost n sprawia, że staje się coraz bardziej 'dzwonowaty'."
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Jak rozpoznać?",
       "Kiedy w zadaniu widzisz pytanie: ile z n... — mysl dwumianowy.
        Np. ile z 20 studentow zda egzamin? Kluczowe: ustalona liczba prob i dwa wyniki.",
@@ -155,13 +155,13 @@ ch3_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Ciekawostka",
       "W rozkładzie Poissona wartość oczekiwana = wariancja = λ.
        Jeśli w danych średnia ≈ wariancja, to dobry kandydat na model Poissona!"
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Jak rozpoznać?",
       "Kiedy w zadaniu widzisz pytanie: ile razy w ciagu... — mysl Poisson.
        Kluczowe: zliczasz zdarzenia w ustalonym czasie lub przestrzeni, bez gornego limitu.",
@@ -207,14 +207,14 @@ ch3_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Bezpamięciowość",
       "Im mniejsze p, tym dłużej (przeciętnie) czekamy na sukces.
        Rozkład geometryczny jest bezpamięciowy — szansa sukcesu w każdej próbie jest taka sama,
        niezależnie od liczby dotychczasowych porażek."
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Jak rozpoznać?",
       "Kiedy w zadaniu widzisz pytanie: ile prob az do... — mysl geometryczny.
        Kluczowe: powtarzasz proby az do pierwszego sukcesu.",

@@ -107,7 +107,7 @@ ch1_ui <- list(
       )
     ),
 
-    margin_callout(label = "Uwaga", color = "uwaga",
+    inline_callout(label = "Uwaga", color = "uwaga",
       "Wysokie R² nie oznacza, że model jest „dobry” — może być przeuczony.
        Niskie R² nie oznacza, że model jest bezwartościowy — w naukach
        społecznych R² = 0.3 jest często bardzo dobre."

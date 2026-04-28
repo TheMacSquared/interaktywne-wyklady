@@ -107,7 +107,7 @@ ch1_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Kluczowa idea",
       tagList(
         "Włącz obie warstwy i zwiększaj próbę. Im więcej danych,
@@ -190,7 +190,7 @@ ch1_ui <- list(
       )
     ),
 
-    margin_callout(
+    inline_callout(
       label = "Zapamiętaj",
       tagList(
         "Rozkład prawdopodobieństwa to nie dane — to ", tags$b("model matematyczny"),
