@@ -85,6 +85,11 @@ ch1_ui <- list(
             tags$td(tags$b("Dane")),
             tags$td("Dowody złożone w sądzie"),
             tags$td("Wyniki testu 80 studentów")
+          ),
+          tags$tr(
+            tags$td(tags$b("Możliwy werdykt")),
+            tags$td("Nie mamy podstaw, by twierdzić, że jest winny — albo uznajemy, że dowody są wystarczające"),
+            tags$td("Nie mamy podstaw, by twierdzić, że telefon wpływa — albo odrzucamy hipotezę o braku wpływu")
           )
         )
       ),
