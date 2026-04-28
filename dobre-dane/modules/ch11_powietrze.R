@@ -75,10 +75,11 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
       obserwacji — wtedy analiza sezonowości i trendów byłaby pełnoprawna.")
     ),
 
-    div(class = "chapter-transition",
-      p("To był ostatni zbiór danych. Zobaczmy podsumowanie."),
-      actionButton("ch10_next", "Dalej: 12. Ściąga →",
-                   class = "lc-btn-primary lc-btn-lg")
+    lc_chapter_next(
+      num = "12",
+      title = "Ściąga",
+      lead = "To był ostatni zbiór danych. Zobaczmy podsumowanie.",
+      target_id = "ch12"
     ),
 
     div(style = "height: 40px;")

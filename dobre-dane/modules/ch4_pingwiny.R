@@ -46,10 +46,11 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
       "Możliwe analizy: test t, ANOVA, korelacja, regresja, chi-kwadrat."
     ),
 
-    div(class = "chapter-transition",
-      p("Następny zbiór wygląda ciekawie... ale czy nadaje się do analizy?"),
-      actionButton("ch3_next", "Dalej: 5. Filmy Tarantino →",
-                   class = "lc-btn-primary lc-btn-lg")
+    lc_chapter_next(
+      num = "05",
+      title = "Filmy Tarantino",
+      lead = "Następny zbiór wygląda ciekawie... ale czy nadaje się do analizy?",
+      target_id = "ch5"
     ),
 
     div(style = "height: 40px;")

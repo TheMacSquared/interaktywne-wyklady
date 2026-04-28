@@ -45,10 +45,11 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Wprowadzenie", content
       "3. Ściąga — checklist i podsumowanie"
     ),
 
-    div(class = "chapter-transition",
-      p("Zobaczmy, co może pójść nie tak z danymi."),
-      actionButton("ch0_next", "Dalej: 1. Katalog problemów →",
-                   class = "lc-btn-primary lc-btn-lg")
+    lc_chapter_next(
+      num = "01",
+      title = "Katalog problemów",
+      lead = "Zobaczmy, co może pójść nie tak z danymi.",
+      target_id = "ch1"
     ),
 
     div(style = "height: 40px;")

@@ -42,10 +42,11 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
       "Regresja z k predyktorami potrzebuje n > 10k + 50."
     ),
 
-    div(class = "chapter-transition",
-      p("Zobaczmy teraz zbiór, który radzi sobie lepiej."),
-      actionButton("ch2_next", "Dalej: 4. Pingwiny →",
-                   class = "lc-btn-primary lc-btn-lg")
+    lc_chapter_next(
+      num = "04",
+      title = "Pingwiny",
+      lead = "Zobaczmy teraz zbiór, który radzi sobie lepiej.",
+      target_id = "ch4"
     ),
 
     div(style = "height: 40px;")

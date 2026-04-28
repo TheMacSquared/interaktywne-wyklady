@@ -111,10 +111,11 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
       Nie ma zmiennej, z którą można sensownie powiązać cenę za noc."
     ),
 
-    div(class = "chapter-transition",
-      p("Pora na duży, dobry zbiór danych."),
-      actionButton("ch5_next", "Dalej: 7. Wynagrodzenia →",
-                   class = "lc-btn-primary lc-btn-lg")
+    lc_chapter_next(
+      num = "07",
+      title = "Wynagrodzenia",
+      lead = "Pora na duży, dobry zbiór danych.",
+      target_id = "ch7"
     ),
 
     div(style = "height: 40px;")

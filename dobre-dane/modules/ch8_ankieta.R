@@ -87,10 +87,11 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
         Straty: \"duzo\" i \"malo\" — za mało informacji żeby przypisać do kategorii."
     ),
 
-    div(class = "chapter-transition",
-      p("Następny zbiór ma inny rodzaj problemów — błędy w danych."),
-      actionButton("ch7_next", "Dalej: 9. Badania laboratoryjne →",
-                   class = "lc-btn-primary lc-btn-lg")
+    lc_chapter_next(
+      num = "09",
+      title = "Badania laboratoryjne",
+      lead = "Następny zbiór ma inny rodzaj problemów — błędy w danych.",
+      target_id = "ch9"
     ),
 
     div(style = "height: 40px;")

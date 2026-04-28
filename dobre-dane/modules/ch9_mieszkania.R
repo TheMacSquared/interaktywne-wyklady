@@ -62,10 +62,11 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
       tags$strong("Klucz:"), " Rozróżnij błąd danych (usuń) od prawdziwego outliera (przemyśl zachowanie)."
     ),
 
-    div(class = "chapter-transition",
-      p("Następny zbiór to przykład dobrze zaprojektowanej ankiety."),
-      actionButton("ch8_next", "Dalej: 10. Ankieta studencka →",
-                   class = "lc-btn-primary lc-btn-lg")
+    lc_chapter_next(
+      num = "10",
+      title = "Ankieta studencka",
+      lead = "Następny zbiór to przykład dobrze zaprojektowanej ankiety.",
+      target_id = "ch10"
     ),
 
     div(style = "height: 40px;")

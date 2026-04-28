@@ -39,10 +39,11 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
       tags$em("Uwaga: dane tylko dla mężczyzn z jednego regionu USA — wyniki nie generalizują się na inne grupy.")
     ),
 
-    div(class = "chapter-transition",
-      p("Następny zbiór to przykład złej ankiety."),
-      actionButton("ch6_next", "Dalej: 8. Trudna ankieta →",
-                   class = "lc-btn-primary lc-btn-lg")
+    lc_chapter_next(
+      num = "08",
+      title = "Trudna ankieta",
+      lead = "Następny zbiór to przykład złej ankiety.",
+      target_id = "ch8"
     ),
 
     div(style = "height: 40px;")

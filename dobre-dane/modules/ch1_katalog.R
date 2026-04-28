@@ -258,10 +258,11 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       uiOutput("intro_thermometer")
     ),
 
-    div(class = "chapter-transition",
-      p("Pora przetestować tę wiedzę na prawdziwych zbiorach danych."),
-      actionButton("cat_next", "Dalej: 2. Szkoły w Kalifornii →",
-                   class = "lc-btn-primary lc-btn-lg")
+    lc_chapter_next(
+      num = "02",
+      title = "Szkoły w Kalifornii",
+      lead = "Pora przetestować tę wiedzę na prawdziwych zbiorach danych.",
+      target_id = "ch2"
     ),
 
     div(style = "height: 40px;")

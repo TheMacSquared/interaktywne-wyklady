@@ -163,19 +163,6 @@ ui <- lecture_page(
 server <- function(input, output, session) {
   lc <- lecture_server(.chapters, input, output, session)
 
-  observeEvent(input$ch0_next,  { lc$switch_to("ch1") })
-  observeEvent(input$cat_next,  { lc$switch_to("ch2") })
-  observeEvent(input$ch1_next,  { lc$switch_to("ch3") })
-  observeEvent(input$ch2_next,  { lc$switch_to("ch4") })
-  observeEvent(input$ch3_next,  { lc$switch_to("ch5") })
-  observeEvent(input$ch4_next,  { lc$switch_to("ch6") })
-  observeEvent(input$ch5_next,  { lc$switch_to("ch7") })
-  observeEvent(input$ch6_next,  { lc$switch_to("ch8") })
-  observeEvent(input$ch7_next,  { lc$switch_to("ch9") })
-  observeEvent(input$ch8_next,  { lc$switch_to("ch10") })
-  observeEvent(input$ch9_next,  { lc$switch_to("ch11") })
-  observeEvent(input$ch10_next, { lc$switch_to("ch12") })
-
   ch0_server(input, output, session)
   ch1_server(input, output, session)
   ch2_server(input, output, session)

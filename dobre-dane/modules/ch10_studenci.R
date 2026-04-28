@@ -36,10 +36,11 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
       tags$em("Porównaj z Trudną ankietą (tab 7) - te same tematy, ale świat różnic w jakości!")
     ),
 
-    div(class = "chapter-transition",
-      p("Ostatni zbiór - wygląda dobrze, ale ma ukryty problem..."),
-      actionButton("ch9_next", "Dalej: 11. Jakość powietrza →",
-                   class = "lc-btn-primary lc-btn-lg")
+    lc_chapter_next(
+      num = "11",
+      title = "Jakość powietrza",
+      lead = "Ostatni zbiór - wygląda dobrze, ale ma ukryty problem...",
+      target_id = "ch11"
     ),
 
     div(style = "height: 40px;")

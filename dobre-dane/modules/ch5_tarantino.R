@@ -64,10 +64,11 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
       tags$strong("Problem 3:"), " Brak zmiennych ilościowych do korelacji/regresji."
     ),
 
-    div(class = "chapter-transition",
-      p("Czasem dane mają odpowiednią wielkość, ale inny problem..."),
-      actionButton("ch4_next", "Dalej: 6. Ankieta firmowa →",
-                   class = "lc-btn-primary lc-btn-lg")
+    lc_chapter_next(
+      num = "06",
+      title = "Ankieta firmowa",
+      lead = "Czasem dane mają odpowiednią wielkość, ale inny problem...",
+      target_id = "ch6"
     ),
 
     div(style = "height: 40px;")

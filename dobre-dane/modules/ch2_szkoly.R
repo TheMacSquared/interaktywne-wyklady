@@ -59,10 +59,11 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
       tags$em("Uwaga: to dane dla okręgów szkolnych USA — wyniki nie dotyczą Polski.")
     ),
 
-    div(class = "chapter-transition",
-      p("To był wzorcowy zbiór. Następny będzie... inny."),
-      actionButton("ch1_next", "Dalej: 3. Ankieta na grupie →",
-                   class = "lc-btn-primary lc-btn-lg")
+    lc_chapter_next(
+      num = "03",
+      title = "Ankieta na grupie",
+      lead = "To był wzorcowy zbiór. Następny będzie... inny.",
+      target_id = "ch3"
     ),
 
     div(style = "height: 40px;")
