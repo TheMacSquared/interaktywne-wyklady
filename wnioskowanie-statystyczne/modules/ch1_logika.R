@@ -85,22 +85,15 @@ ch1_ui <- list(
             tags$td(tags$b("Dane")),
             tags$td("Dowody złożone w sądzie"),
             tags$td("Wyniki testu 80 studentów")
-          ),
-          tags$tr(
-            tags$td(tags$b("p-wartość")),
-            tags$td("Czy takie dowody mogłyby powstać przypadkiem, gdyby oskarżony był niewinny?"),
-            tags$td("Czy taką różnicę moglibyśmy zobaczyć przypadkiem, gdyby telefon nie miał wpływu?")
-          ),
-          tags$tr(
-            tags$td(tags$b("Decyzja")),
-            tags$td("Skazanie (jeśli dowody wystarczające) lub uniewinnienie"),
-            tags$td("Odrzucamy H₀ (jeśli p < α) lub brak podstaw do odrzucenia")
           )
         )
       ),
-      p("Jeśli p-wartość jest mniejsza niż przyjęty ",
-        tags$b("poziom istotności α"), " (zwykle 0.05),
-        odrzucamy H₀ na korzyść Hₐ.")
+      p("Na razie najważniejsze jest samo uporządkowanie pytania: ",
+        tags$b("jaki stan uznajemy za domyślny"),
+        " i ",
+        tags$b("co byłoby sygnałem efektu"),
+        ". W następnym rozdziale zapiszemy to jako parę H₀/Hₐ. Dopiero potem
+        wrócimy do błędów, p-wartości i formalnej decyzji.")
     ),
 
     lc_chapter_next(
