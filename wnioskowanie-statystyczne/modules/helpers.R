@@ -92,6 +92,25 @@ hypothesis_practice <- function(prefix, questions) {
   tags$div(class = "hypothesis-practice", items)
 }
 
+exercise_solution_toggle_server <- function(input, output, session, btn_id, sol_fn,
+                                            visible = reactiveVal(FALSE),
+                                            output_id = sub("_ans", "_sol", btn_id),
+                                            feedback_type = "ok") {
+  observeEvent(input[[btn_id]], {
+    nowy <- !visible()
+    visible(nowy)
+    updateActionButton(session, btn_id,
+      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
+
+  output[[output_id]] <- renderUI({
+    if (!visible()) return(NULL)
+    lc_feedback(type = feedback_type, style = "margin-top: 10px;", sol_fn())
+  })
+
+  visible
+}
+
 
 # Generowanie danych studenckich (n=200)
 generate_student_data <- function(n = 200) {
@@ -404,4 +423,3 @@ generate_phone_data <- function(n_per_group = 40) {
     koncentracja = round(c(plecak, biurko), 1)
   )
 }
-

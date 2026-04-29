@@ -584,23 +584,9 @@ ch9_server <- function(input, output, session) {
   # ---- Rolnictwo ----
   rol <- .ch9_data$rol
 
-  .make_toggle_r <- function(vis_rv, btn_id, sol_fn) {
-    observeEvent(input[[btn_id]], {
-      nowy <- !vis_rv()
-      vis_rv(nowy)
-      updateActionButton(session, btn_id,
-        label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-    }, ignoreInit = TRUE)
-    out_id <- sub("_ans", "_sol", btn_id)
-    output[[out_id]] <- renderUI({
-      if (!vis_rv()) return(NULL)
-      lc_feedback(type = "ok", style = "margin-top: 10px;", sol_fn())
-    })
-  }
-
   r_vis <- lapply(1:6, function(i) reactiveVal(FALSE))
 
-  .make_toggle_r(r_vis[[1]], "ch9_r_ans1", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_r_ans1", function() {
     r <- .ch9_t1(rol$plon, mu = 5.0, alternative = "two.sided")
     tagList(
       .ch9_sol_t1(r, "μ_plon = 5.0 t/ha", "μ_plon ≠ 5.0 t/ha",
@@ -612,9 +598,9 @@ ch9_server <- function(input, output, session) {
           if (r$p < 0.05) "różni istotnie" else "nie różni istotnie",
           .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
     )
-  })
+  }, visible = r_vis[[1]])
 
-  .make_toggle_r(r_vis[[2]], "ch9_r_ans2", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_r_ans2", function() {
     k <- sum(rol$nawadnianie == "tak")
     n <- nrow(rol); p_obs <- k / n
     bt <- binom.test(k, n, p = 0.4, alternative = "less")
@@ -633,9 +619,9 @@ ch9_server <- function(input, output, session) {
           if (bt$p.value < 0.05) "istotnie leży" else "nieistotnie leży",
           .ch9_fmt_p(bt$p.value)))
     )
-  })
+  }, visible = r_vis[[2]])
 
-  .make_toggle_r(r_vis[[3]], "ch9_r_ans3", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_r_ans3", function() {
     r <- .ch9_cor_test(rol$nawozenie, rol$plon)
     tagList(
       .ch9_sol_cor(r, "nawożenie", "plonu"),
@@ -646,9 +632,9 @@ ch9_server <- function(input, output, session) {
           effect_size_label(abs(r$r)),
           if (abs(r$r) > 0.3) "wyraźnie" else "słabo"))
     )
-  })
+  }, visible = r_vis[[3]])
 
-  .make_toggle_r(r_vis[[4]], "ch9_r_ans4", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_r_ans4", function() {
     r <- .ch9_t2(rol$plon, rol$uprawa)
     tagList(
       .ch9_sol_t2(r, "t/ha"),
@@ -659,9 +645,9 @@ ch9_server <- function(input, output, session) {
           if (r$p < 0.05) "istotna" else "nieistotna",
           .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
     )
-  })
+  }, visible = r_vis[[4]])
 
-  .make_toggle_r(r_vis[[5]], "ch9_r_ans5", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_r_ans5", function() {
     r <- .ch9_chi2(table(uprawa = rol$uprawa, nawadnianie = rol$nawadnianie))
     tagList(
       .ch9_sol_chi2(r),
@@ -669,9 +655,9 @@ ch9_server <- function(input, output, session) {
         "Test χ² wskazuje, czy typ uprawy i decyzja o nawadnianiu są zależne.
         Cramér's V opisuje siłę związku niezależnie od kierunku.")
     )
-  })
+  }, visible = r_vis[[5]])
 
-  .make_toggle_r(r_vis[[6]], "ch9_r_ans6", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_r_ans6", function() {
     r <- .ch9_anova_f(rol$plon, rol$region)
     tagList(
       .ch9_sol_anova(r, "plon (t/ha)"),
@@ -681,28 +667,14 @@ ch9_server <- function(input, output, session) {
           r$df1, r$df2, r$F, .ch9_fmt_p(r$p), r$eta2,
           if (r$p < 0.05) "różnią" else "nie różnią"))
     )
-  })
+  }, visible = r_vis[[6]])
 
   # ---- Inzynieria bezpieczenstwa ----
   bhp <- .ch9_data$bhp
 
   b_vis <- lapply(1:6, function(i) reactiveVal(FALSE))
 
-  .make_toggle_b <- function(vis_rv, btn_id, sol_fn) {
-    observeEvent(input[[btn_id]], {
-      nowy <- !vis_rv()
-      vis_rv(nowy)
-      updateActionButton(session, btn_id,
-        label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-    }, ignoreInit = TRUE)
-    out_id <- sub("_ans", "_sol", btn_id)
-    output[[out_id]] <- renderUI({
-      if (!vis_rv()) return(NULL)
-      lc_feedback(type = "ok", style = "margin-top: 10px;", sol_fn())
-    })
-  }
-
-  .make_toggle_b(b_vis[[1]], "ch9_b_ans1", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_b_ans1", function() {
     r <- .ch9_t1(bhp$wypadki, mu = 10, alternative = "less")
     tagList(
       .ch9_sol_t1(r, "μ_wypadki ≥ 10", "μ_wypadki < 10",
@@ -714,9 +686,9 @@ ch9_server <- function(input, output, session) {
           if (r$p < 0.05) "istotnie" else "nieistotnie",
           .ch9_fmt_p(r$p), effect_size_label(abs(r$d)), r$d))
     )
-  })
+  }, visible = b_vis[[1]])
 
-  .make_toggle_b(b_vis[[2]], "ch9_b_ans2", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_b_ans2", function() {
     soi_ok <- bhp$soi_rate >= 80
     k <- sum(soi_ok); n <- length(soi_ok); p_obs <- k / n
     bt <- binom.test(k, n, p = 0.5, alternative = "greater")
@@ -735,9 +707,9 @@ ch9_server <- function(input, output, session) {
           if (bt$p.value < 0.05) "istotnie" else "nieistotnie",
           .ch9_fmt_p(bt$p.value)))
     )
-  })
+  }, visible = b_vis[[2]])
 
-  .make_toggle_b(b_vis[[3]], "ch9_b_ans3", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_b_ans3", function() {
     r <- .ch9_cor_test(bhp$szkolenia, bhp$wypadki)
     tagList(
       .ch9_sol_cor(r, "szkolenia", "wypadkowości"),
@@ -747,9 +719,9 @@ ch9_server <- function(input, output, session) {
           r$r, effect_size_label(abs(r$r)),
           if (r$r < 0) "z niższą" else "z wyższą"))
     )
-  })
+  }, visible = b_vis[[3]])
 
-  .make_toggle_b(b_vis[[4]], "ch9_b_ans4", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_b_ans4", function() {
     r <- .ch9_t2(bhp$wypadki, bhp$wielkosc)
     tagList(
       .ch9_sol_t2(r, "wyp./1000"),
@@ -759,9 +731,9 @@ ch9_server <- function(input, output, session) {
           if (r$p < 0.05) "istotna" else "nieistotna",
           .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
     )
-  })
+  }, visible = b_vis[[4]])
 
-  .make_toggle_b(b_vis[[5]], "ch9_b_ans5", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_b_ans5", function() {
     soi_ok <- bhp$soi_rate >= 80
     r <- .ch9_chi2(table(sektor = bhp$sektor, soi_ok = soi_ok))
     tagList(
@@ -770,9 +742,9 @@ ch9_server <- function(input, output, session) {
         "Zależy, czy sektor (produkcja vs budownictwo) różnicuje stosowanie ŚOI.
         Cramér's V podaje siłę tego związku.")
     )
-  })
+  }, visible = b_vis[[5]])
 
-  .make_toggle_b(b_vis[[6]], "ch9_b_ans6", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_b_ans6", function() {
     r <- .ch9_anova_f(bhp$wypadki, bhp$poziom_ryzyka)
     tagList(
       .ch9_sol_anova(r, "wypadki/1000"),
@@ -782,28 +754,14 @@ ch9_server <- function(input, output, session) {
           r$df1, r$df2, r$F, .ch9_fmt_p(r$p), r$eta2,
           if (r$p < 0.05) "różnią" else "nie różnią"))
     )
-  })
+  }, visible = b_vis[[6]])
 
   # ---- Technologia zywnosci ----
   tz <- .ch9_data$tz
 
   t_vis <- lapply(1:6, function(i) reactiveVal(FALSE))
 
-  .make_toggle_t <- function(vis_rv, btn_id, sol_fn) {
-    observeEvent(input[[btn_id]], {
-      nowy <- !vis_rv()
-      vis_rv(nowy)
-      updateActionButton(session, btn_id,
-        label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-    }, ignoreInit = TRUE)
-    out_id <- sub("_ans", "_sol", btn_id)
-    output[[out_id]] <- renderUI({
-      if (!vis_rv()) return(NULL)
-      lc_feedback(type = "ok", style = "margin-top: 10px;", sol_fn())
-    })
-  }
-
-  .make_toggle_t(t_vis[[1]], "ch9_t_ans1", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_t_ans1", function() {
     r <- .ch9_t1(tz$bialko, mu = 12, alternative = "two.sided")
     tagList(
       .ch9_sol_t1(r, "μ_białko = 12 g/100 g", "μ_białko ≠ 12 g/100 g",
@@ -815,9 +773,9 @@ ch9_server <- function(input, output, session) {
           if (r$p < 0.05) "różni istotnie" else "nie różni istotnie",
           .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
     )
-  })
+  }, visible = t_vis[[1]])
 
-  .make_toggle_t(t_vis[[2]], "ch9_t_ans2", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_t_ans2", function() {
     k <- sum(tz$zanieczyszczenie == "wykryte")
     n <- nrow(tz); p_obs <- k / n
     bt <- binom.test(k, n, p = 0.20, alternative = "greater")
@@ -837,9 +795,9 @@ ch9_server <- function(input, output, session) {
           if (bt$p.value < 0.05) "istotnie" else "nieistotnie",
           .ch9_fmt_p(bt$p.value)))
     )
-  })
+  }, visible = t_vis[[2]])
 
-  .make_toggle_t(t_vis[[3]], "ch9_t_ans3", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_t_ans3", function() {
     r <- .ch9_cor_test(tz$wilgotnosc, tz$trwalosc)
     tagList(
       .ch9_sol_cor(r, "wilgotność", "trwałości"),
@@ -849,9 +807,9 @@ ch9_server <- function(input, output, session) {
           r$r, effect_size_label(abs(r$r)),
           if (r$r < 0) "z niższą" else "z wyższą"))
     )
-  })
+  }, visible = t_vis[[3]])
 
-  .make_toggle_t(t_vis[[4]], "ch9_t_ans4", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_t_ans4", function() {
     r <- .ch9_t2(tz$trwalosc, tz$typ)
     tagList(
       .ch9_sol_t2(r, "dni"),
@@ -862,9 +820,9 @@ ch9_server <- function(input, output, session) {
           if (r$p < 0.05) "istotna" else "nieistotna",
           .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
     )
-  })
+  }, visible = t_vis[[4]])
 
-  .make_toggle_t(t_vis[[5]], "ch9_t_ans5", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_t_ans5", function() {
     r <- .ch9_chi2(table(typ = tz$typ, zanieczyszczenie = tz$zanieczyszczenie))
     tagList(
       .ch9_sol_chi2(r),
@@ -872,9 +830,9 @@ ch9_server <- function(input, output, session) {
         "Test χ² wskazuje, czy typ produktu wiąże się z wykryciem zanieczyszczeń.
         Siłę związku opisuje Cramér's V.")
     )
-  })
+  }, visible = t_vis[[5]])
 
-  .make_toggle_t(t_vis[[6]], "ch9_t_ans6", function() {
+  exercise_solution_toggle_server(input, output, session, "ch9_t_ans6", function() {
     r <- .ch9_anova_f(tz$trwalosc, tz$przechowywanie)
     tagList(
       .ch9_sol_anova(r, "trwałość (dni)"),
@@ -884,7 +842,7 @@ ch9_server <- function(input, output, session) {
           r$df1, r$df2, r$F, .ch9_fmt_p(r$p), r$eta2,
           if (r$p < 0.05) "różnią" else "nie różnią"))
     )
-  })
+  }, visible = t_vis[[6]])
 
   # ---- Myslenie krytyczne ----
   krit_vis <- reactiveVal(FALSE)
@@ -900,16 +858,7 @@ ch9_server <- function(input, output, session) {
     updateActionButton(session, "ch9_krit_ans", label = "Pokaż rozwiązanie")
   }, ignoreInit = TRUE)
 
-  observeEvent(input$ch9_krit_ans, {
-    nowy <- !krit_vis()
-    krit_vis(nowy)
-    updateActionButton(session, "ch9_krit_ans",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
-  output$ch9_krit_sol <- renderUI({
-    if (!krit_vis()) return(NULL)
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
+  exercise_solution_toggle_server(input, output, session, "ch9_krit_ans", function() {
       tags$ol(
         tags$li(tags$b("Fałsz."),
           " Korelacja nie implikuje przyczynowości. Wymagane byłoby badanie
@@ -937,6 +886,5 @@ ch9_server <- function(input, output, session) {
           całkowicie ślepy na efekt w przeciwnym kierunku. Kierunek hipotezy
           musimy ustalić przed zebraniem danych, nie na podstawie wyników.")
       )
-    )
-  })
+  }, visible = krit_vis)
 }

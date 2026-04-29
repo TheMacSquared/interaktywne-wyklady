@@ -305,23 +305,41 @@ ch2_server <- function(input, output, session) {
                   h1_text = "\\(H_a: \\mu \\neq 85\\) (hałas odbiega od normy)")
   )
 
-  # --- Shared state ---
-  ch2_sample <- reactiveVal(NULL)
-  ch2_step   <- reactiveVal(0)
+  # Jedna wspólna próba dla widgetu dwustronnego i jednostronnego.
+  # Trzymamy metadane próbki, żeby po zmianie scenariusza albo n stara
+  # próbka była traktowana jako nieaktualna, a nie jako dane do nowego pytania.
+  ch2_sample_state <- reactiveVal(NULL)
 
   observeEvent(input$ch2_new_sample, {
+    req(input$ch2_scenario, input$ch2_n)
     par <- scenario_params[[input$ch2_scenario]]
+    req(!is.null(par))
     n <- input$ch2_n
-    samp <- rnorm(n, mean = par$mu_true, sd = par$sd)
-    ch2_sample(samp)
-    ch2_step(0)
+
+    ch2_sample_state(list(
+      scenario = input$ch2_scenario,
+      n = n,
+      values = rnorm(n, mean = par$mu_true, sd = par$sd)
+    ))
+  }, ignoreInit = TRUE)
+
+  ch2_sample <- reactive({
+    state <- ch2_sample_state()
+    if (is.null(state)) return(NULL)
+    req(input$ch2_scenario, input$ch2_n)
+
+    if (!identical(state$scenario, input$ch2_scenario) ||
+        !isTRUE(state$n == input$ch2_n)) {
+      return(NULL)
+    }
+
+    state$values
   })
 
-  # Resetuj probke przy zmianie scenariusza
-  observeEvent(input$ch2_scenario, {
-    ch2_sample(NULL)
-    ch2_step(0)
-  })
+  ch2_step <- reactiveVal(0)
+
+  observeEvent(input$ch2_new_sample, ch2_step(0), ignoreInit = TRUE)
+  observeEvent(list(input$ch2_scenario, input$ch2_n), ch2_step(0), ignoreInit = TRUE)
 
   observeEvent(input$ch2_step1, ch2_step(1))
   observeEvent(input$ch2_step2, ch2_step(2))
@@ -497,9 +515,9 @@ ch2_server <- function(input, output, session) {
 
   ch2b_step <- reactiveVal(0)
 
-  # Reset krokow Widget 2 gdy Widget 1 generuje nowa probke
-  observeEvent(input$ch2_new_sample, { ch2b_step(0) })
-  observeEvent(input$ch2_scenario,   { ch2b_step(0) })
+  # Reset krokow Widget 2 gdy wspolna probka jest nowa albo nieaktualna.
+  observeEvent(input$ch2_new_sample, ch2b_step(0), ignoreInit = TRUE)
+  observeEvent(list(input$ch2_scenario, input$ch2_n), ch2b_step(0), ignoreInit = TRUE)
 
   observeEvent(input$ch2b_step1, ch2b_step(1))
   observeEvent(input$ch2b_step2, ch2b_step(2))

@@ -223,20 +223,36 @@ ch6_ui <- list(
 ch6_server <- function(input, output, session) {
 
   # Shared independent data
-  ch6_ind_data <- reactiveVal(NULL)
+  ch6_ind_data_state <- reactiveVal(NULL)
+  ch6_ind_data <- reactive({
+    state <- ch6_ind_data_state()
+    if (is.null(state)) return(NULL)
+    req(input$ch6_ind_var, input$ch6_ind_n)
+
+    if (!identical(state$var, input$ch6_ind_var) ||
+        !isTRUE(state$n_per_group == input$ch6_ind_n)) {
+      return(NULL)
+    }
+
+    state$data
+  })
   ch6_ind_step <- reactiveVal(0)
 
   observeEvent(input$ch6_run_ind_t, {
+    req(input$ch6_ind_var, input$ch6_ind_n)
     n <- input$ch6_ind_n
     data <- generate_student_data(n * 2)
-    ch6_ind_data(data)
+    ch6_ind_data_state(list(
+      var = input$ch6_ind_var,
+      n_per_group = n,
+      data = data
+    ))
     ch6_ind_step(0)
-  })
+  }, ignoreInit = TRUE)
 
-  observeEvent(input$ch6_ind_var, {
-    ch6_ind_data(NULL)
+  observeEvent(list(input$ch6_ind_var, input$ch6_ind_n), {
     ch6_ind_step(0)
-  })
+  }, ignoreInit = TRUE)
 
   observeEvent(input$ch6_ind_step1, ch6_ind_step(1))
   observeEvent(input$ch6_ind_step2, ch6_ind_step(2))
@@ -244,11 +260,28 @@ ch6_server <- function(input, output, session) {
   observeEvent(input$ch6_ind_step4, ch6_ind_step(4))
 
   # Shared paired data
-  ch6_paired_data <- reactiveVal(NULL)
+  ch6_paired_data_state <- reactiveVal(NULL)
+  ch6_paired_data <- reactive({
+    state <- ch6_paired_data_state()
+    if (is.null(state)) return(NULL)
+    req(input$ch6_paired_n, input$ch6_paired_effect)
+
+    if (!isTRUE(state$n == input$ch6_paired_n) ||
+        !isTRUE(state$effect == input$ch6_paired_effect)) {
+      return(NULL)
+    }
+
+    state$data
+  })
 
   observeEvent(input$ch6_run_paired, {
-    ch6_paired_data(generate_paired_data(input$ch6_paired_n, input$ch6_paired_effect))
-  })
+    req(input$ch6_paired_n, input$ch6_paired_effect)
+    ch6_paired_data_state(list(
+      n = input$ch6_paired_n,
+      effect = input$ch6_paired_effect,
+      data = generate_paired_data(input$ch6_paired_n, input$ch6_paired_effect)
+    ))
+  }, ignoreInit = TRUE)
 
   # --- Widget 1: Test t niezalezny ---
   ch6_ind_var_label <- function(var) {

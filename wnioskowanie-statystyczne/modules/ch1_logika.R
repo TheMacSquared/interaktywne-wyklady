@@ -231,27 +231,27 @@ ch1d_ui <- list(
         tags$li(tags$b("Burgundowy"), " — rozkład średniej, gdy Hₐ jest prawdziwa
                 (telefon ", tags$em("naprawdę"), " wpływa o konkretną liczbę punktów).")
       ),
-      p(tags$b("Punkt krytyczny"), " (czarna przerywana pionowa linia) to wartość
-        na osi średnich, powyżej której odrzucamy H₀ — wynika on bezpośrednio z ",
+      p(tags$b("Punkty krytyczne"), " (czarne przerywane pionowe linie) to wartości
+        na osi średnich, poza którymi odrzucamy H₀ — wynikają one bezpośrednio z ",
         withMathJax("\\(\\alpha\\)"),
-        ": to kwantyl rozkładu niebieskiego odcinający 5% w prawym ogonie."),
+        ": przy teście dwustronnym dzielimy 5% na dwa ogony po 2,5%."),
       p(tags$b("Cztery obszary na wykresie:")),
       tags$ul(
-        tags$li(tags$b("α (szary w niebieskim, prawy ogon):"),
-                " pole pod niebieskim rozkładem na prawo od punktu krytycznego
+        tags$li(tags$b("α (szary w niebieskim, oba ogony):"),
+                " pole pod niebieskim rozkładem poza punktami krytycznymi
                 — fałszywe alarmy, gdy H₀ jest prawdziwa."),
-        tags$li(tags$b("1 − α (niebieski, lewa strona):"),
+        tags$li(tags$b("1 − α (niebieski, środek rozkładu):"),
                 " trafne negacje — H₀ prawdziwa i nie odrzucamy."),
-        tags$li(tags$b("β (burgundowy, lewa strona punktu krytycznego):"),
+        tags$li(tags$b("β (burgundowy, między punktami krytycznymi):"),
                 " pole pod burgundowym rozkładem po złej stronie — przegapione efekty."),
-        tags$li(tags$b("Moc (zielony obszar, prawa strona):"),
-                " pole pod burgundowym rozkładem po prawej stronie punktu krytycznego
+        tags$li(tags$b("Moc (zielony obszar, poza punktami krytycznymi):"),
+                " pole pod burgundowym rozkładem w obszarze odrzucenia H₀
                 — trafne wykrycia efektu.")
       ),
       p("Przesuwając suwaki zauważysz kilka mechanik:"),
       tags$ul(
         tags$li("Zmniejszenie ", withMathJax("\\(\\alpha\\)"),
-                " przesuwa punkt krytyczny w prawo → mniej fałszywych alarmów,
+                " odsuwa punkty krytyczne od środka → mniej fałszywych alarmów,
                 ale ", tags$em("więcej"), " przegapionych efektów (β rośnie, moc spada)."),
         tags$li("Większa różnica średnich oddala od siebie oba rozkłady → moc rośnie,
                 β maleje."),
@@ -619,7 +619,8 @@ ch1_server <- function(input, output, session) {
     y_h0 <- dnorm(x, mean = mu0, sd = se)
     y_h1 <- dnorm(x, mean = mu1, sd = se)
 
-    crit <- mu0 + qnorm(1 - alpha / 2) * se
+    crit_low <- mu0 + qnorm(alpha / 2) * se
+    crit_high <- mu0 + qnorm(1 - alpha / 2) * se
 
     df_plot <- data.frame(
       x = rep(x, 2),
@@ -629,24 +630,34 @@ ch1_server <- function(input, output, session) {
 
     p <- ggplot(df_plot, aes(x = x, y = y, color = dist)) +
       geom_line(linewidth = 1.2) +
-      geom_vline(xintercept = crit, linetype = "dashed", color = upwr_secondary) +
+      geom_vline(xintercept = c(crit_low, crit_high), linetype = "dashed",
+                 color = upwr_secondary) +
       scale_color_manual(values = c(col_h0, col_h1), name = "Rozkład") +
       labs(title = paste0("Moc testu (n = ", n, " na grupę, różnica = ", diff_means,
-                          " pkt, alpha = ", alpha, ")"),
+                          " pkt, alpha = ", alpha, ", test dwustronny)"),
            x = "Średnia koncentracja w próbie", y = "Gęstość") +
       theme(legend.position = "top")
 
-    # Shade rejection region under H0
-    shade_h0 <- data.frame(x = x[x >= crit], y = y_h0[x >= crit])
+    # Obszar odrzucenia H0 w teście dwustronnym.
+    h0_tail <- x <= crit_low | x >= crit_high
+    shade_h0 <- data.frame(
+      x = x[h0_tail],
+      y = y_h0[h0_tail],
+      tail = ifelse(x[h0_tail] <= crit_low, "lewy", "prawy")
+    )
     if (nrow(shade_h0) > 0) {
-      p <- p + geom_area(data = shade_h0, aes(x = x, y = y),
+      p <- p + geom_area(data = shade_h0, aes(x = x, y = y, group = tail),
                          fill = col_reject, alpha = 0.2, inherit.aes = FALSE)
     }
 
-    # Shade power under H1
-    shade_h1 <- data.frame(x = x[x >= crit], y = y_h1[x >= crit])
+    h1_tail <- x <= crit_low | x >= crit_high
+    shade_h1 <- data.frame(
+      x = x[h1_tail],
+      y = y_h1[h1_tail],
+      tail = ifelse(x[h1_tail] <= crit_low, "lewy", "prawy")
+    )
     if (nrow(shade_h1) > 0) {
-      p <- p + geom_area(data = shade_h1, aes(x = x, y = y),
+      p <- p + geom_area(data = shade_h1, aes(x = x, y = y, group = tail),
                          fill = col_accept, alpha = 0.2, inherit.aes = FALSE)
     }
 
@@ -659,7 +670,12 @@ ch1_server <- function(input, output, session) {
     n <- input$ch1_power_n
     sigma <- 13
     se <- sigma / sqrt(n)
-    power <- pnorm(diff_means / se - qnorm(1 - alpha / 2))
+    mu0 <- 70
+    mu1 <- mu0 + diff_means
+    crit_low <- mu0 + qnorm(alpha / 2) * se
+    crit_high <- mu0 + qnorm(1 - alpha / 2) * se
+    power <- pnorm(crit_low, mean = mu1, sd = se) +
+      (1 - pnorm(crit_high, mean = mu1, sd = se))
 
     tagList(
       lc_stat_box("Moc", round(power * 100, 1), "%", color = col_accept),

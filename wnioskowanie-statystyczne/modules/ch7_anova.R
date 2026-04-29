@@ -337,7 +337,19 @@ ch7_server <- function(input, output, session) {
   })
 
   # Shared ANOVA data
-  ch7_data <- reactiveVal(NULL)
+  ch7_data_state <- reactiveVal(NULL)
+  ch7_data <- reactive({
+    state <- ch7_data_state()
+    if (is.null(state)) return(NULL)
+    req(input$ch7_scenario, input$ch7_n)
+
+    if (!identical(state$scenario, input$ch7_scenario) ||
+        !isTRUE(state$n == input$ch7_n)) {
+      return(NULL)
+    }
+
+    state$data
+  })
 
   # Konfiguracja scenariuszy: jakie zmienne zależne, jaka kolumna grupująca, etykiety
   ch7_scenario_cfg <- function(scenario) {
@@ -374,19 +386,22 @@ ch7_server <- function(input, output, session) {
                 selected = unname(cfg$vars[1]))
   })
 
-  observeEvent(input$ch7_scenario, {
-    ch7_data(NULL)
-  })
-
   observeEvent(input$ch7_run_anova, {
-    if (identical(input$ch7_scenario, "fermentation")) {
-      ch7_data(generate_fermentation_data(input$ch7_n))
+    req(input$ch7_scenario, input$ch7_n)
+    data <- if (identical(input$ch7_scenario, "fermentation")) {
+      generate_fermentation_data(input$ch7_n)
     } else if (identical(input$ch7_scenario, "workplace")) {
-      ch7_data(generate_workplace_data(input$ch7_n))
+      generate_workplace_data(input$ch7_n)
     } else {
-      ch7_data(generate_student_data(input$ch7_n))
+      generate_student_data(input$ch7_n)
     }
-  })
+
+    ch7_data_state(list(
+      scenario = input$ch7_scenario,
+      n = input$ch7_n,
+      data = data
+    ))
+  }, ignoreInit = TRUE)
 
   # --- Widget 1: ANOVA ---
   output$ch7_boxplot <- renderPlot({

@@ -351,11 +351,27 @@ ch5_server <- function(input, output, session) {
   )
 
   # --- Wspoldzielone dane ---
-  ch5_tab <- reactiveVal(NULL)
+  # Tabela jest losowana dla konkretnego scenariusza i n. Po zmianie tych
+  # inputow wymaga ponownego losowania, zamiast udawac aktualne dane.
+  ch5_tab_state <- reactiveVal(NULL)
+  ch5_tab <- reactive({
+    state <- ch5_tab_state()
+    if (is.null(state)) return(NULL)
+    req(input$ch5_scenario, input$ch5_n)
+
+    if (!identical(state$scenario, input$ch5_scenario) ||
+        !isTRUE(state$n == input$ch5_n)) {
+      return(NULL)
+    }
+
+    state$tab
+  })
   ch5_step <- reactiveVal(0)
 
   observeEvent(input$ch5_new_sample, {
+    req(input$ch5_scenario, input$ch5_n)
     par <- scenario_params[[input$ch5_scenario]]
+    req(!is.null(par))
     n <- input$ch5_n
     n_per_cat1 <- rmultinom(1, n, rep(1, length(par$cats1)))
 
@@ -368,9 +384,13 @@ ch5_server <- function(input, output, session) {
     df$var1 <- factor(df$var1, levels = par$cats1)
     df$var2 <- factor(df$var2, levels = par$cats2)
 
-    ch5_tab(table(df$var1, df$var2))
+    ch5_tab_state(list(
+      scenario = input$ch5_scenario,
+      n = n,
+      tab = table(df$var1, df$var2)
+    ))
     ch5_step(0)
-  })
+  }, ignoreInit = TRUE)
 
   # --- Widget 0: Narracja niezaleznosci (mandaty) ---
   # Stale dane do narracji (nie losowane)
@@ -440,10 +460,9 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  observeEvent(input$ch5_scenario, {
-    ch5_tab(NULL)
+  observeEvent(list(input$ch5_scenario, input$ch5_n), {
     ch5_step(0)
-  })
+  }, ignoreInit = TRUE)
 
   observeEvent(input$ch5_step1, ch5_step(1))
   observeEvent(input$ch5_step2, ch5_step(2))

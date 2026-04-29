@@ -5,7 +5,7 @@ Aplikacje R Shiny w formie interaktywnych skryptów wykładowych. Każda aplikac
 ## 📋 Wymagania
 
 - R (wersja ≥ 4.0)
-- Pakiety R: `shiny`, `ggplot2`, `dplyr`, `e1071`, `gridExtra`, `rstatix`, `broom`, `tidyr`, `lmtest`
+- Pakiety R: `shiny`, `ggplot2`, `dplyr`, `e1071`, `gridExtra`, `rstatix`, `broom`, `tidyr`, `lmtest`, `visNetwork`
 
 ## 🚀 Instalacja pakietów
 
@@ -13,7 +13,7 @@ Aplikacje R Shiny w formie interaktywnych skryptów wykładowych. Każda aplikac
 install.packages(c("shiny", "ggplot2", "dplyr", "e1071", "gridExtra"))
 
 # Dodatkowe (dla przedzialy-ufnosci, wnioskowanie-statystyczne, regresja, zalozenia-testow)
-install.packages(c("rstatix", "broom", "tidyr", "knitr", "lmtest", "sandwich"))
+install.packages(c("rstatix", "broom", "tidyr", "knitr", "lmtest", "sandwich", "visNetwork"))
 
 # Dodatkowe (dla dobre-dane)
 install.packages(c("DT", "bslib", "AER", "palmerpenguins", "ISLR", "fivethirtyeight"))
@@ -45,7 +45,7 @@ shiny::runApp("metody-bayesowskie")
 | [typy-danych](typy-danych/) | Statystyka opisowa | 8 rozdziałów: typy danych, zmienne jakościowe, statystyki położenia, rozrzutu, kształt rozkładu, ściąga, quiz + **ćwiczenia z dropdownem kierunków** (BHP/Rolnictwo/Żywność) |
 | [rozklady-prawdopodobienstwa](rozklady-prawdopodobienstwa/) | Rozkłady prawdopodobieństwa | 9 rozdziałów: od danych do prawdopodobieństwa, wartość oczekiwana i wariancja, rozkłady dyskretne, ciągłe, normalny, CTG, ściąga, quiz + **ćwiczenia z dropdownem kierunków** (BHP/Rolnictwo/Żywność) |
 | [przedzialy-ufnosci](przedzialy-ufnosci/) | Przedziały ufności | 7 rozdziałów: estymacja punktowa, idea przedziałów, przedział dla średniej, proporcji, czynniki szerokości, ściąga + **ćwiczenia z dropdownem kierunków** (Edukacja/BHP/Rolnictwo/Żywność) |
-| [wnioskowanie-statystyczne](wnioskowanie-statystyczne/) | Wnioskowanie statystyczne | 9 rozdziałów: logika testowania, formułowanie hipotez, jedna ilo./jako., korelacja, dwie jakościowe, dwie grupy, ANOVA, ściąga |
+| [wnioskowanie-statystyczne](wnioskowanie-statystyczne/) | Wnioskowanie statystyczne | 12 rozdziałów: logika testowania, formułowanie hipotez, błędy/p-wartość/decyzja, jedna ilo./jako., korelacja, dwie jakościowe, dwie grupy, ANOVA, drzewo decyzyjne, ściąga + ćwiczenia |
 | [regresja](regresja/) | Regresja | 5 rozdziałów: liniowa prosta, wieloraka, logistyczna, porównanie modeli (R², AIC, BIC, RMSE), ściąga |
 | [zalozenia-testow](zalozenia-testow/) | Założenia testów | 6 rozdziałów: normalność, jednorodne wariancje, założenia regresji, χ²/Fisher, mapa metod z alternatywami, ściąga |
 | [case-studies](case-studies/) | Case studies | Kompletne analizy od A do Z. Każdy rozdział = jeden zbiór danych, hipotezy, analizy, wnioski. Na razie: CASchools |
@@ -102,15 +102,17 @@ interaktywne-wyklady/
 │   ├── assets/                     # Obrazki do rozdziałów (Anscombe, Simpson, itp.)
 │   └── modules/
 │       ├── helpers.R               # Dane studenckie, formatowanie wyników, theme
-│       ├── ch1_logika.R            # 1. Logika testowania (p-wartość, błędy, moc)
+│       ├── ch1_logika.R            # 1 i 3. Logika testowania oraz błędy, p-wartość i decyzja
 │       ├── ch2_hipotezy.R          # 2. Formułowanie hipotez (pytanie↔hipoteza, quizy, jedno/dwustronny)
-│       ├── ch2_jedna_ilosciowa.R   # 3. Jedna zmienna ilościowa (t, Wilcoxon)
-│       ├── ch3_jedna_jakosciowa.R  # 4. Jedna zmienna jakościowa (χ², dwumianowy)
-│       ├── ch4_korelacja.R         # 5. Dwie ilościowe (Pearson, Spearman)
-│       ├── ch5_dwie_jakosciowe.R   # 6. Dwie jakościowe (χ² niezależności, Fisher)
-│       ├── ch6_dwie_grupy.R        # 7. Ilościowa vs jakościowa, 2 grupy (t, M-W, parowe)
-│       ├── ch7_anova.R             # 8. ANOVA (jednoczynnikowa, Kruskal-Wallis, post-hoc)
-│       └── ch8_sciaga.R            # 9. Ściąga (drzewo decyzyjne, tabele, kod R)
+│       ├── ch2_jedna_ilosciowa.R   # 4. Jedna zmienna ilościowa (t, Wilcoxon)
+│       ├── ch3_jedna_jakosciowa.R  # 5. Jedna zmienna jakościowa (χ², dwumianowy)
+│       ├── ch4_korelacja.R         # 6. Dwie ilościowe (Pearson, Spearman)
+│       ├── ch5_dwie_jakosciowe.R   # 7. Dwie jakościowe (χ² niezależności, Fisher)
+│       ├── ch6_dwie_grupy.R        # 8. Ilościowa vs jakościowa, 2 grupy (t, M-W, parowe)
+│       ├── ch7_anova.R             # 9. ANOVA (jednoczynnikowa, Kruskal-Wallis, post-hoc)
+│       ├── ch_drzewo.R             # 10. Drzewo decyzyjne wyboru testu
+│       ├── ch8_sciaga.R            # 11. Ściąga (drzewo decyzyjne, tabele, kod R)
+│       └── ch9_cwiczenia.R         # 12. Ćwiczenia (Rolnictwo/BHP/Technologia żywności)
 ├── regresja/                        # Regresja liniowa i logistyczna
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
 │   └── modules/

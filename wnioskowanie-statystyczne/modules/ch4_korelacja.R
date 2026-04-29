@@ -471,25 +471,44 @@ ch4_server <- function(input, output, session) {
   )
 
   # --- Wspoldzielone dane ---
-  ch4_data <- reactiveVal(NULL)
+  # Jedna probka dla testu dwustronnego i jednostronnego; po zmianie
+  # scenariusza albo n stara probka nie pasuje juz do opisu pytania.
+  ch4_data_state <- reactiveVal(NULL)
+  ch4_data <- reactive({
+    state <- ch4_data_state()
+    if (is.null(state)) return(NULL)
+    req(input$ch4_scenario, input$ch4_n)
+
+    if (!identical(state$scenario, input$ch4_scenario) ||
+        !isTRUE(state$n == input$ch4_n)) {
+      return(NULL)
+    }
+
+    state$data
+  })
   ch4_step <- reactiveVal(0)
   ch4b_step <- reactiveVal(0)
 
   observeEvent(input$ch4_new_sample, {
+    req(input$ch4_scenario, input$ch4_n)
     par <- scenario_params[[input$ch4_scenario]]
+    req(!is.null(par))
     n <- input$ch4_n
-    ch4_data(generate_correlation_data(n, par$r_true, "linear",
+    ch4_data_state(list(
+      scenario = input$ch4_scenario,
+      n = n,
+      data = generate_correlation_data(n, par$r_true, "linear",
                                        x_mean = par$x_mean, x_sd = par$x_sd,
-                                       y_mean = par$y_mean, y_sd = par$y_sd))
+                                       y_mean = par$y_mean, y_sd = par$y_sd)
+    ))
     ch4_step(0)
     ch4b_step(0)
-  })
+  }, ignoreInit = TRUE)
 
-  observeEvent(input$ch4_scenario, {
-    ch4_data(NULL)
+  observeEvent(list(input$ch4_scenario, input$ch4_n), {
     ch4_step(0)
     ch4b_step(0)
-  })
+  }, ignoreInit = TRUE)
 
   observeEvent(input$ch4_step1, ch4_step(1))
   observeEvent(input$ch4_step2, ch4_step(2))

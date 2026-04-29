@@ -377,24 +377,43 @@ ch3_server <- function(input, output, session) {
   )
 
   # --- Wspoldzielone dane ---
-  ch3_data <- reactiveVal(NULL)  # list(k, n)
+  # Jedna probka dla testu dwustronnego i jednostronnego; po zmianie
+  # scenariusza albo n stara probka nie jest juz zgodna z pytaniem.
+  ch3_data_state <- reactiveVal(NULL)
+  ch3_data <- reactive({
+    state <- ch3_data_state()
+    if (is.null(state)) return(NULL)
+    req(input$ch3_scenario, input$ch3_n)
+
+    if (!identical(state$scenario, input$ch3_scenario) ||
+        !isTRUE(state$n == input$ch3_n)) {
+      return(NULL)
+    }
+
+    list(k = state$k, n = state$n)
+  })
   ch3_step <- reactiveVal(0)
   ch3b_step <- reactiveVal(0)
 
   observeEvent(input$ch3_new_sample, {
+    req(input$ch3_scenario, input$ch3_n)
     par <- scenario_params[[input$ch3_scenario]]
+    req(!is.null(par))
     n <- input$ch3_n
     k <- rbinom(1, n, par$p_true)
-    ch3_data(list(k = k, n = n))
+    ch3_data_state(list(
+      scenario = input$ch3_scenario,
+      n = n,
+      k = k
+    ))
     ch3_step(0)
     ch3b_step(0)
-  })
+  }, ignoreInit = TRUE)
 
-  observeEvent(input$ch3_scenario, {
-    ch3_data(NULL)
+  observeEvent(list(input$ch3_scenario, input$ch3_n), {
     ch3_step(0)
     ch3b_step(0)
-  })
+  }, ignoreInit = TRUE)
 
   observeEvent(input$ch3_step1, ch3_step(1))
   observeEvent(input$ch3_step2, ch3_step(2))
