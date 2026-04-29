@@ -376,6 +376,14 @@ ch1d_ui <- list(
 
     figure_panel(
       label = "Ryc. 3.3",
+      title = "P-wartość jako obszar ogonów",
+      div(class = "ws-chart-wrap",
+        tags$canvas(id = "ch1_pvalue_chart")
+      )
+    ),
+
+    figure_panel(
+      label = "Ryc. 3.4",
       title = "Co naprawdę oznacza p-wartość?",
       p("Załóżmy, że w badaniu wyszło ", tags$b("p = 0,03"),
         ". Które zdanie jest poprawną interpretacją?"),
@@ -428,7 +436,7 @@ ch1d_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 3.4",
+      label = "Ryc. 3.5",
       title = "Quiz: odrzucić czy nie?",
       uiOutput("ch1_quiz_scenario"),
       p("Twoja decyzja:"),
@@ -452,6 +460,13 @@ ch1d_ui <- list(
 # ============================================================================
 
 ch1_server <- function(input, output, session) {
+
+  observe({
+    session$sendCustomMessage("ws_pvalue_chart", list(
+      id = "ch1_pvalue_chart",
+      stat = 2.17
+    ))
+  })
 
   # --- Sekcja 0: Case study ---
   ch1_case_data <- reactiveVal(NULL)

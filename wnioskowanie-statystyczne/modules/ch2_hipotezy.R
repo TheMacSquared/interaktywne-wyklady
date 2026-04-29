@@ -232,7 +232,9 @@ ch2h_ui <- list(
                       min = 0.01, max = 0.10, value = 0.05, step = 0.01)
         ),
         column(8,
-          plotOutput("ch2h_sided_plot", height = "300px")
+          div(class = "ws-chart-wrap",
+            tags$canvas(id = "ch2h_sided_chart")
+          )
         )
       )
     ),
@@ -333,45 +335,28 @@ ch2h_ui <- list(
 ch2h_server <- function(input, output, session) {
 
   # --- Widget: Jednostronny vs dwustronny ---
-  output$ch2h_sided_plot <- renderPlot({
+  observe({
+    req(input$ch2h_alpha, input$ch2h_sided)
     alpha <- input$ch2h_alpha
     sided <- input$ch2h_sided
-    x <- seq(-4, 4, length.out = 500)
-    y <- dnorm(x)
-    df <- data.frame(x = x, y = y)
-
-    p <- ggplot(df, aes(x = x, y = y)) +
-      geom_line(color = col_h0, linewidth = 1.2)
 
     if (sided == "two.sided") {
       crit <- qnorm(1 - alpha / 2)
-      shade_left <- df[df$x <= -crit, ]
-      shade_right <- df[df$x >= crit, ]
-      p <- p +
-        geom_area(data = shade_left, fill = col_reject, alpha = 0.4) +
-        geom_area(data = shade_right, fill = col_reject, alpha = 0.4) +
-        geom_vline(xintercept = c(-crit, crit), linetype = "dashed", color = col_reject) +
-        labs(title = paste0("Dwustronny: α/2 = ", alpha/2, " na każdym ogonie"))
+      title <- paste0("Dwustronny: α/2 = ", alpha / 2, " na każdym ogonie")
     } else if (sided == "greater") {
       crit <- qnorm(1 - alpha)
-      shade <- df[df$x >= crit, ]
-      p <- p +
-        geom_area(data = shade, fill = col_reject, alpha = 0.4) +
-        geom_vline(xintercept = crit, linetype = "dashed", color = col_reject) +
-        labs(title = paste0("Prawostronny: całe α = ", alpha, " na prawym ogonie"))
+      title <- paste0("Prawostronny: całe α = ", alpha, " na prawym ogonie")
     } else {
       crit <- qnorm(alpha)
-      shade <- df[df$x <= crit, ]
-      p <- p +
-        geom_area(data = shade, fill = col_reject, alpha = 0.4) +
-        geom_vline(xintercept = crit, linetype = "dashed", color = col_reject) +
-        labs(title = paste0("Lewostronny: całe α = ", alpha, " na lewym ogonie"))
+      title <- paste0("Lewostronny: całe α = ", alpha, " na lewym ogonie")
     }
 
-    p +
-      labs(x = "Statystyka testowa (z)", y = "Gęstość") +
-      annotate("text", x = 0, y = max(y) * 0.5, label = "Nie odrzucamy H0",
-               color = col_accept, fontface = "bold", size = 5) +
-      theme()
+    session$sendCustomMessage("ws_sided_chart", list(
+      id = "ch2h_sided_chart",
+      sided = sided,
+      alpha = alpha,
+      crit = crit,
+      title = title
+    ))
   })
 }

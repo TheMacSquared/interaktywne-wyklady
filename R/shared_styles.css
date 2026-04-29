@@ -705,10 +705,14 @@ html, body {
   line-height: 1;
   letter-spacing: 0;
   flex: 0 0 auto;
+  transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
 .lc-inline-callout[open] .lc-inline-callout-label::before {
   content: "−";
+  transform: rotate(180deg);
+  background: currentColor;
+  color: var(--upwr-surface);
 }
 
 .lc-inline-callout-body {
@@ -717,6 +721,24 @@ html, body {
   font-size: 15px;
   line-height: 1.55;
   color: var(--upwr-ink-soft);
+  overflow: hidden;
+}
+
+.lc-inline-callout[open] .lc-inline-callout-body {
+  animation: lcInlineCalloutOpen 260ms cubic-bezier(.2, .75, .25, 1) both;
+}
+
+@keyframes lcInlineCalloutOpen {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    max-height: 36rem;
+    transform: translateY(0);
+  }
 }
 
 .lc-inline-callout-body p {
@@ -741,6 +763,15 @@ html, body {
 }
 .lc-inline-callout.lc-callout-ok .lc-inline-callout-label {
   color: var(--upwr-sage);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-inline-callout-label::before,
+  .lc-inline-callout[open] .lc-inline-callout-body {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
 }
 
 /* === Figure panel (ramka z plakietką) === */

@@ -80,7 +80,9 @@ ch7_ui <- list(
           uiOutput("ch7_int_stats")
         ),
         column(8,
-          plotOutput("ch7_int_plot", height = "330px")
+          div(class = "ws-chart-wrap",
+            tags$canvas(id = "ch7_anova_signal_chart")
+          )
         )
       )
     ),
@@ -290,6 +292,15 @@ ch7_server <- function(input, output, session) {
     means <- c(0, between / 2, between)
     y <- rnorm(length(groups), mean = rep(means, each = n_per_group), sd = within)
     data.frame(grupa = groups, wynik = y)
+  })
+
+  observe({
+    req(input$ch7_int_between, input$ch7_int_within)
+    session$sendCustomMessage("ws_anova_signal_chart", list(
+      id = "ch7_anova_signal_chart",
+      between = input$ch7_int_between,
+      within = input$ch7_int_within
+    ))
   })
 
   output$ch7_int_plot <- renderPlot({

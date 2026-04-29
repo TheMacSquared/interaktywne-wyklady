@@ -108,39 +108,43 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 4.1",
       title = "Test t jednej próby — krok po kroku",
-      fluidRow(
-        column(4,
-          selectInput("ch2_scenario", "Scenariusz:",
-            choices = c(
-              "Koncentracja (μ₀ = 70 pkt)" = "concentration",
-              "Zużycie wody (μ₀ = 150 l)" = "water",
-              "Plon pszenicy (μ₀ = 5 t/ha)" = "yield",
-              "Trwałość jogurtu (μ₀ = 14 dni)" = "yogurt",
-              "Hałas w hali (μ₀ = 85 dB, IB)" = "noise"
+      div(class = "ch2-animated-widget",
+        fluidRow(
+          column(4,
+            selectInput("ch2_scenario", "Scenariusz:",
+              choices = c(
+                "Koncentracja (μ₀ = 70 pkt)" = "concentration",
+                "Zużycie wody (μ₀ = 150 l)" = "water",
+                "Plon pszenicy (μ₀ = 5 t/ha)" = "yield",
+                "Trwałość jogurtu (μ₀ = 14 dni)" = "yogurt",
+                "Hałas w hali (μ₀ = 85 dB, IB)" = "noise"
+              ),
+              selected = "concentration"
             ),
-            selected = "concentration"
+            sliderInput("ch2_n", "Wielkość próby (n):",
+                        min = 10, max = 100, value = 40, step = 5),
+            actionButton("ch2_new_sample", "Losuj próbę",
+                         class = "lc-btn-primary ch2-sample-reset", width = "100%"),
+            hr(),
+            h5("Kroki testu:"),
+            lc_stack(gap = "sm",
+              actionButton("ch2_step1", "1. Dane",
+                           class = "lc-btn-outline ch2-step-btn", width = "100%"),
+              actionButton("ch2_step2", "2. Statystyki opisowe",
+                           class = "lc-btn-outline ch2-step-btn", width = "100%"),
+              actionButton("ch2_step3", "3. Statystyka testowa",
+                           class = "lc-btn-outline ch2-step-btn", width = "100%"),
+              actionButton("ch2_step4", "4. p-wartość i decyzja",
+                           class = "lc-btn-outline ch2-step-btn", width = "100%")
+            )
           ),
-          sliderInput("ch2_n", "Wielkość próby (n):",
-                      min = 10, max = 100, value = 40, step = 5),
-          actionButton("ch2_new_sample", "Losuj próbę",
-                       class = "lc-btn-primary", width = "100%"),
-          hr(),
-          h5("Kroki testu:"),
-          lc_stack(gap = "sm",
-            actionButton("ch2_step1", "1. Dane",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch2_step2", "2. Statystyki opisowe",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch2_step3", "3. Statystyka testowa",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch2_step4", "4. p-wartość i decyzja",
-                         class = "lc-btn-outline", width = "100%")
+          column(8,
+            div(class = "ch2-step-stage",
+              uiOutput("ch2_hypothesis_panel"),
+              plotOutput("ch2_step_plot", height = "350px"),
+              uiOutput("ch2_step_info")
+            )
           )
-        ),
-        column(8,
-          uiOutput("ch2_hypothesis_panel"),
-          plotOutput("ch2_step_plot", height = "350px"),
-          uiOutput("ch2_step_info")
         )
       )
     ),
@@ -178,26 +182,30 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 4.2",
       title = "Test t jednostronny — krok po kroku",
-      fluidRow(
-        column(4,
-          helpText("Dane: te same co w teście dwustronnym powyżej."),
-          hr(),
-          h5("Kroki testu:"),
-          lc_stack(gap = "sm",
-            actionButton("ch2b_step1", "1. Dane",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch2b_step2", "2. Statystyki opisowe",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch2b_step3", "3. Statystyka testowa",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch2b_step4", "4. p-wartość i decyzja",
-                         class = "lc-btn-outline", width = "100%")
+      div(class = "ch2-animated-widget",
+        fluidRow(
+          column(4,
+            helpText("Dane: te same co w teście dwustronnym powyżej."),
+            hr(),
+            h5("Kroki testu:"),
+            lc_stack(gap = "sm",
+              actionButton("ch2b_step1", "1. Dane",
+                           class = "lc-btn-outline ch2-step-btn", width = "100%"),
+              actionButton("ch2b_step2", "2. Statystyki opisowe",
+                           class = "lc-btn-outline ch2-step-btn", width = "100%"),
+              actionButton("ch2b_step3", "3. Statystyka testowa",
+                           class = "lc-btn-outline ch2-step-btn", width = "100%"),
+              actionButton("ch2b_step4", "4. p-wartość i decyzja",
+                           class = "lc-btn-outline ch2-step-btn", width = "100%")
+            )
+          ),
+          column(8,
+            div(class = "ch2-step-stage",
+              uiOutput("ch2b_hypothesis_panel"),
+              plotOutput("ch2b_step_plot", height = "350px"),
+              uiOutput("ch2b_step_info")
+            )
           )
-        ),
-        column(8,
-          uiOutput("ch2b_hypothesis_panel"),
-          plotOutput("ch2b_step_plot", height = "350px"),
-          uiOutput("ch2b_step_info")
         )
       )
     ),
@@ -351,7 +359,7 @@ ch2_server <- function(input, output, session) {
     par <- scenario_params[[input$ch2_scenario]]
     samp <- ch2_sample()
 
-    tagList(
+    div(class = "ch2-step-panel",
       lc_feedback(type = "info", style = "font-size: 16px;",
         p(tags$b("Pytanie potoczne:")),
         p(tags$em(paste0("„", par$question, "”")))
@@ -486,7 +494,9 @@ ch2_server <- function(input, output, session) {
         p(res$explanation)
       )
     )
-    lc_feedback(type = "info", info)
+    div(class = "ch2-step-panel",
+      lc_feedback(type = "info", info)
+    )
   })
 
   # --- Widget 2: Test jednostronny (te same dane co Widget 1) ---
@@ -529,7 +539,7 @@ ch2_server <- function(input, output, session) {
     par1s <- scenario_params_1s[[input$ch2_scenario]]
     samp <- ch2_sample()
 
-    tagList(
+    div(class = "ch2-step-panel",
       lc_feedback(type = "info", style = "font-size: 16px;",
         p(tags$b("Pytanie potoczne (kierunkowe):")),
         p(tags$em(paste0("„", par1s$question, "”")))
@@ -663,7 +673,9 @@ ch2_server <- function(input, output, session) {
           ten sam t, ale inna p-wartość!"))
       )
     )
-    lc_feedback(type = "info", info)
+    div(class = "ch2-step-panel",
+      lc_feedback(type = "info", info)
+    )
   })
 
   # --- Cwiczenia CASchools ---
@@ -688,25 +700,27 @@ ch2_server <- function(input, output, session) {
       d <- (m - mu) / s
       list(n = n, m = m, s = s, t = t_val, df = df, p = p_val, d = d)
     })
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
-      p(tags$b("H₀: "), "μ_read = 650 · ", tags$b("Hₐ: "), "μ_read ≠ 650"),
-      tags$ul(
-        tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f", r$n, r$m, r$s)),
-        tags$li(sprintf("t(%s) = %.3f, p %s %s",
-          round(r$df, 1), r$t,
-          if (r$p < 0.001) "<" else "=",
-          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
-      ),
-      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
-      else tags$b("Brak podstaw do odrzucenia H₀"),
-      p(tags$b("Interpretacja: "),
-        sprintf(
-          "Średni wynik (%.2f pkt) różni się istotnie od normy 650 pkt (p < 0.05).
-           Efekt %s (d = %.3f) — różnica %.2f pkt ma %s znaczenie praktyczne.",
-          r$m, effect_size_label(r$d), r$d, r$m - 650,
-          if (abs(r$d) < 0.2) "ograniczone" else "wyraźne"
-        ))
+    div(class = "ch2-step-panel",
+      lc_feedback(type = "ok", style = "margin-top: 10px;",
+        p(tags$b("H₀: "), "μ_read = 650 · ", tags$b("Hₐ: "), "μ_read ≠ 650"),
+        tags$ul(
+          tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f", r$n, r$m, r$s)),
+          tags$li(sprintf("t(%s) = %.3f, p %s %s",
+            round(r$df, 1), r$t,
+            if (r$p < 0.001) "<" else "=",
+            if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+          tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
+        ),
+        if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
+        else tags$b("Brak podstaw do odrzucenia H₀"),
+        p(tags$b("Interpretacja: "),
+          sprintf(
+            "Średni wynik (%.2f pkt) różni się istotnie od normy 650 pkt (p < 0.05).
+             Efekt %s (d = %.3f) — różnica %.2f pkt ma %s znaczenie praktyczne.",
+            r$m, effect_size_label(r$d), r$d, r$m - 650,
+            if (abs(r$d) < 0.2) "ograniczone" else "wyraźne"
+          ))
+      )
     )
   })
 
@@ -727,25 +741,27 @@ ch2_server <- function(input, output, session) {
       d <- (m - mu) / s
       list(n = n, m = m, s = s, t = t_val, df = df, p = p_val, d = d)
     })
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
-      p(tags$b("H₀: "), "μ_income ≤ 15 · ", tags$b("Hₐ: "), "μ_income > 15"),
-      tags$ul(
-        tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f (tys. USD)", r$n, r$m, r$s)),
-        tags$li(sprintf("t(%s) = %.3f, p %s %s (jednostronnie)",
-          round(r$df, 1), r$t,
-          if (r$p < 0.001) "<" else "=",
-          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
-      ),
-      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
-      else tags$b("Brak podstaw do odrzucenia H₀"),
-      p(tags$b("Interpretacja: "),
-        sprintf(
-          "Średni dochód (%.2f tys. USD) jest istotnie wyższy od 15 tys. (p < 0.05),
-           efekt %s (d = %.3f). Uwaga: hipotezę kierunkową formułujemy PRZED zebraniem
-           danych — inaczej influjemy błąd I rodzaju.",
-          r$m, effect_size_label(r$d), r$d
-        ))
+    div(class = "ch2-step-panel",
+      lc_feedback(type = "ok", style = "margin-top: 10px;",
+        p(tags$b("H₀: "), "μ_income ≤ 15 · ", tags$b("Hₐ: "), "μ_income > 15"),
+        tags$ul(
+          tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f (tys. USD)", r$n, r$m, r$s)),
+          tags$li(sprintf("t(%s) = %.3f, p %s %s (jednostronnie)",
+            round(r$df, 1), r$t,
+            if (r$p < 0.001) "<" else "=",
+            if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+          tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
+        ),
+        if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
+        else tags$b("Brak podstaw do odrzucenia H₀"),
+        p(tags$b("Interpretacja: "),
+          sprintf(
+            "Średni dochód (%.2f tys. USD) jest istotnie wyższy od 15 tys. (p < 0.05),
+             efekt %s (d = %.3f). Uwaga: hipotezę kierunkową formułujemy PRZED zebraniem
+             danych — inaczej influjemy błąd I rodzaju.",
+            r$m, effect_size_label(r$d), r$d
+          ))
+      )
     )
   })
 }
