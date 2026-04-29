@@ -166,8 +166,7 @@ ch2_server <- function(input, output, session) {
         scale_color_manual(values = c("TRUE" = col_hit, "FALSE" = col_miss),
                            labels = c("TRUE" = "Trafiony", "FALSE" = "Chybiony"),
                            name = NULL) +
-        labs(title = paste0(n_total, " przedziałów ufności (",
-                            round(input$ch2_conf * 100), "%)"),
+        labs(
              x = "Wartość parametru",
              y = "Numer próby") +
         theme_upwr() +

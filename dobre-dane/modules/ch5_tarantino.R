@@ -84,7 +84,7 @@ ch5_server <- function(input, output, session) {
     output$tab4_explore_plot <- renderPlot({
       ggplot(tarantino, aes(x = minutes_in)) +
         geom_histogram(bins = 30, fill = data_primary, color = "white", alpha = 0.8) +
-        labs(title = "Rozkład minutes_in", x = "Minuta filmu", y = "Liczba zdarzeń") +
+        labs( x = "Minuta filmu", y = "Liczba zdarzeń") +
         theme_upwr(base_size = 14)
     })
   })
@@ -97,7 +97,7 @@ ch5_server <- function(input, output, session) {
         geom_col(position = "dodge", alpha = 0.8) +
         scale_fill_manual(values = c("death" = data_bad, "word" = data_mixed)) +
         coord_flip() +
-        labs(title = "Zdarzenia wg filmu", x = NULL, y = "Liczba", fill = "Typ") +
+        labs(x = NULL, y = "Liczba", fill = "Typ") +
         theme_upwr(base_size = 14)
     })
   })

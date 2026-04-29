@@ -147,7 +147,7 @@ ch3_server <- function(input, output, session) {
       ggplot(df, aes(x = x, y = y)) +
         geom_point(color = col_test, alpha = 0.5) +
         geom_smooth(method = "lm", se = TRUE, color = col_ok, fill = col_ok, alpha = 0.1) +
-        labs(title = "Dane + linia regresji", x = "X", y = "Y") +
+        labs(x = "X", y = "Y") +
         theme_upwr()
     }
   })
@@ -167,19 +167,18 @@ ch3_server <- function(input, output, session) {
       geom_hline(yintercept = 0, linetype = "dashed", color = upwr_secondary) +
       geom_point(color = col_test, alpha = 0.5) +
       geom_smooth(se = FALSE, color = col_fail, linewidth = 0.8) +
-      labs(title = "Reszty vs dopasowane", x = "Dopasowane", y = "Reszty") +
+      labs(x = "Dopasowane", y = "Reszty") +
       theme_upwr()
 
     p2 <- ggplot(df, aes(sample = std_resid)) +
       stat_qq(color = col_test, alpha = 0.5) +
       stat_qq_line(color = col_ok) +
-      labs(title = "Q-Q reszt") +
       theme_upwr()
 
     p3 <- ggplot(df, aes(x = fitted, y = sqrt_abs_resid)) +
       geom_point(color = col_test, alpha = 0.5) +
       geom_smooth(se = FALSE, color = col_fail, linewidth = 0.8) +
-      labs(title = "Scale-Location", x = "Dopasowane",
+      labs(x = "Dopasowane",
            y = expression(sqrt("|Std. reszty|"))) +
       theme_upwr()
 

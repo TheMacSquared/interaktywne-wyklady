@@ -346,7 +346,7 @@ ch6_server <- function(input, output, session) {
           geom_boxplot(alpha = 0.45, outlier.alpha = 0.3, width = 0.5) +
           geom_jitter(width = 0.15, alpha = 0.35, size = 1.5) +
           scale_fill_manual(values = c(col_h0, col_reject)) +
-          labs(title = paste0(var_label, " według płci"),
+          labs(
                x = "Płeć", y = var_label) +
           theme(legend.position = "none")
 
@@ -380,7 +380,7 @@ ch6_server <- function(input, output, session) {
                    label = paste0("t = ", round(t_stat, 3)),
                    hjust = if (t_stat > 0) -0.1 else 1.1,
                    color = col_reject, fontface = "bold") +
-          labs(title = paste0("Rozkład pod H0: t(", round(df, 1), ")"),
+          labs(
                x = "Statystyka testowa", y = "Gęstość") +
           theme()
       } else {
@@ -474,7 +474,7 @@ ch6_server <- function(input, output, session) {
         geom_line(aes(group = student), alpha = 0.3, color = col_paired) +
         geom_point(aes(color = moment), size = 2.5, alpha = 0.7) +
         scale_color_manual(values = c(col_h0, col_reject)) +
-        labs(title = "Wyniki przed i po interwencji",
+        labs(
              x = "Moment", y = "Wynik") +
                 theme(legend.position = "none")
     }

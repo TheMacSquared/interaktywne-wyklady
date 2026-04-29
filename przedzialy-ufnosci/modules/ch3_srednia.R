@@ -475,7 +475,7 @@ ch3_server <- function(input, output, session) {
         geom_point(aes(x = xbar, y = Y_MEAN), color = c_mean,
                    size = 7, shape = 18) +
         annotate("text", x = xbar, y = Y_MEAN - 0.13,
-                 label = paste0("x̄ = ", round(xbar, 2)),
+                 label = "x̄",
                  color = c_mean, fontface = "bold", size = 5)
     }
 
@@ -485,7 +485,7 @@ ch3_server <- function(input, output, session) {
         geom_errorbarh(aes(xmin = xbar - se, xmax = xbar + se, y = Y_SE),
                        height = 0.07, color = c_se, linewidth = 1.8) +
         annotate("text", x = xbar, y = Y_SE - 0.10,
-                 label = paste0("± SE = ±", round(se, 2)),
+                 label = "± SE",
                  color = c_se, fontface = "bold", size = 4.5)
     }
 
@@ -495,12 +495,11 @@ ch3_server <- function(input, output, session) {
         geom_errorbarh(aes(xmin = xbar - me, xmax = xbar + me, y = Y_CI),
                        height = 0.10, color = col_ci, linewidth = 2.2) +
         annotate("text", x = xbar, y = Y_CI - 0.13,
-                 label = paste0("95% CI: [", round(xbar - me, 2),
-                                " ; ", round(xbar + me, 2), "]"),
+                 label = "95% CI",
                  color = col_ci, fontface = "bold", size = 5)
     }
 
-    p + ggtitle(paste0("Krok ", step, " z 4"))
+    p
   })
 
   output$ch3_step_explanation <- renderUI({
@@ -696,7 +695,7 @@ ch3_server <- function(input, output, session) {
 
     # Dla krokow 1-2 zwracamy tylko gorny panel
     if (step < 3) {
-      return(p_top + ggtitle(paste0("Krok ", step, " z 5")))
+      return(p_top)
     }
 
     # ---- DOLNY PANEL: roznica w skali wycentrowanej na 0 ----
@@ -1057,7 +1056,7 @@ ch3_server <- function(input, output, session) {
     p <- ggplot() +
       xlim(xlims) +
       ylim(-0.55, 0.75) +
-      labs(x = xlab, y = NULL, title = title) +
+      labs(x = xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
@@ -1974,7 +1973,7 @@ ch3_server <- function(input, output, session) {
                 vjust = -1.2, color = col_estimate, fontface = "bold", size = 4.2) +
       scale_y_continuous(breaks = df_groups$row, labels = df_groups$label,
                          limits = c(0.5, 2.5)) +
-      labs(title = "CI grup (osobno)", x = dat$unit, y = NULL) +
+      labs(x = dat$unit, y = NULL) +
       theme_upwr() +
       theme(plot.title = element_text(size = 13, face = "bold"))
 
@@ -1990,7 +1989,7 @@ ch3_server <- function(input, output, session) {
                 vjust = -1.2, color = col_estimate, fontface = "bold", size = 4.2) +
       scale_y_continuous(breaks = df_diff$row, labels = df_diff$label,
                          limits = c(0.5, 2.5)) +
-      labs(title = paste0("CI różnicy (", dat$g1_name, " − ", dat$g2_name, ")"),
+      labs(
            x = paste("różnica —", dat$unit), y = NULL) +
       theme_upwr() +
       theme(plot.title = element_text(size = 13, face = "bold"))

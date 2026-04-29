@@ -396,7 +396,7 @@ ch2_server <- function(input, output, session) {
       # Krok 1-2: histogram danych
       p <- ggplot(data.frame(x = samp), aes(x = x)) +
         geom_histogram(bins = 15, fill = col_h0, alpha = 0.6, color = "white") +
-        labs(title = par$title, x = par$xlab, y = "Liczba") +
+        labs(x = par$xlab, y = "Liczba") +
         theme()
 
       if (step >= 2) {
@@ -430,7 +430,7 @@ ch2_server <- function(input, output, session) {
                  label = paste0("t = ", round(t_stat, 3)),
                  hjust = if (t_stat > 0) -0.1 else 1.1,
                  color = col_reject, fontface = "bold") +
-        labs(title = paste0("Rozkład pod H0: t(", n - 1, ")"),
+        labs(
              x = "Statystyka testowa", y = "Gęstość") +
         theme()
 
@@ -570,7 +570,7 @@ ch2_server <- function(input, output, session) {
     if (step <= 2) {
       p <- ggplot(data.frame(x = samp), aes(x = x)) +
         geom_histogram(bins = 15, fill = col_h0, alpha = 0.6, color = "white") +
-        labs(title = par$title, x = par$xlab, y = "Liczba") +
+        labs(x = par$xlab, y = "Liczba") +
         theme()
 
       if (step >= 2) {
@@ -602,8 +602,8 @@ ch2_server <- function(input, output, session) {
                  label = paste0("t = ", round(t_stat, 3)),
                  hjust = if (t_stat > 0) -0.1 else 1.1,
                  color = col_reject, fontface = "bold") +
-        labs(title = paste0("Rozkład pod H0: t(", n - 1, ")"),
-             subtitle = "Test jednostronny — tylko jeden ogon!",
+        labs(
+             
              x = "Statystyka testowa", y = "Gęstość") +
         theme()
     } else {

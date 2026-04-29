@@ -230,7 +230,7 @@ ch3_server <- function(input, output, session) {
         annotate("text", x = params$stat(x), y = Inf,
                  label = paste0("obs = ", round(params$stat(x), 2)),
                  vjust = -0.3, hjust = -0.1, color = sim_observed, size = 4) +
-        labs(title = paste0("Krok 1: Próba (n = ", length(x), ")"),
+        labs(
              x = params$stat_lbl, y = "Liczebność") +
         theme_upwr()
     } else if (step == 2) {
@@ -246,7 +246,7 @@ ch3_server <- function(input, output, session) {
           geom_histogram(bins = 40, fill = sim_bootstrap, color = "white", alpha = 0.8) +
           geom_vline(xintercept = result$observed, color = sim_observed,
                      linewidth = 1.4) +
-          labs(title = paste0("Krok 3: Rozkład bootstrapowy (B = ", result$B, ")"),
+          labs(
                x = params$stat_lbl, y = "Liczba prób") +
           theme_upwr()
       } else {
@@ -326,8 +326,8 @@ ch3_server <- function(input, output, session) {
                    linetype = "dashed", linewidth = 1) +
         annotate("text", x = 1000, y = max(widths),
                  label = "B = 1000", hjust = -0.1, color = sim_observed, size = 4) +
-        labs(title = "Szerokość CI vs liczba prób bootstrapowych",
-             subtitle = "Plateau po ok. B = 1000",
+        labs(
+             
              x = "B (liczba prób bootstrapowych)",
              y = "Szerokość 95% CI") +
         theme_upwr()

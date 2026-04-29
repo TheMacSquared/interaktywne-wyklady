@@ -185,7 +185,7 @@ ch6_server <- function(input, output, session) {
       geom_point(color = sim_bootstrap, size = 2, alpha = 0.7) +
       geom_line(data = df_fit, aes(x = x, y = y),
                 color = sim_observed, linewidth = 1.5) +
-      labs(title = paste0("Model: wielomian stopnia ", degree),
+      labs(
            x = "x", y = "y") +
       theme_upwr()
 
@@ -207,7 +207,7 @@ ch6_server <- function(input, output, session) {
       annotate("text", x = 0.6, y = result$train_mse,
                label = paste0("Train MSE = ", round(result$train_mse, 1)),
                hjust = 0, vjust = -0.4, color = sim_cv_train, size = 3.5) +
-      labs(title = paste0(n_folds, "-Fold CV: błąd per fold"),
+      labs(
            x = "Fold", y = "MSE") +
       theme_upwr()
 

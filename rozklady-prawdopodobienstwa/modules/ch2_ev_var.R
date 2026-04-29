@@ -280,7 +280,7 @@ ch2_ev_var_server <- function(input, output, session) {
           min(min(running_mean), lot$ev) - abs(lot$ev) * 0.3,
           max(max(running_mean), lot$ev) + abs(lot$ev) * 0.3
         )) +
-        labs(title = "Średnia wygrana na grę → E(X)",
+        labs(
              x = "Liczba gier", y = "Średnia wygrana (zł)") +
         theme_upwr()
     }
@@ -359,7 +359,7 @@ ch2_ev_var_server <- function(input, output, session) {
       scale_y_continuous(limits = c(-0.08, max(probs) * 1.3),
                          expand = expansion(mult = c(0, 0.05))) +
       scale_x_continuous(breaks = x_vals, limits = c(0, 10)) +
-      labs(title = "Rozkład na wadze — E(X) to punkt równowagi",
+      labs(
            x = "Wartość (x)", y = "Prawdopodobieństwo P(X=x)") +
       theme_upwr()
   })
@@ -416,7 +416,7 @@ ch2_ev_var_server <- function(input, output, session) {
       facet_wrap(~lottery, ncol = 3) +
       annotate("text", x = 50, y = Inf, label = "E(X) = 50",
                color = unname(upwr_cat["terakota"]), fontface = "bold", size = 4, vjust = 2) +
-      labs(title = paste0("Wyniki ", d$n, " gier — to samo E(X), różne ryzyko"),
+      labs(
            x = "Wygrana (zł)", y = "Liczebność") +
       theme_upwr(base_size = 12)
   })

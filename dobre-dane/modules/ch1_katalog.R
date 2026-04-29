@@ -293,7 +293,7 @@ ch1_server <- function(input, output, session) {
       annotate("text", x = mean(cat_small$oceny) + 0.15, y = 2.2,
                label = paste0("M = ", round(mean(cat_small$oceny), 2)), hjust = 0, size = 4.5) +
       scale_y_continuous(breaks = 0:3) +
-      labs(title = "Histogram ocen (n = 6)", x = "Średnia ocen", y = "Liczebność") +
+      labs(x = "Średnia ocen", y = "Liczebność") +
       theme_upwr(base_size = 14)
   })
 
@@ -318,7 +318,7 @@ ch1_server <- function(input, output, session) {
     ggplot(cat_novar, aes(x = factor(zadowolenie))) +
       geom_bar(fill = data_bad, alpha = 0.85) +
       scale_x_discrete(limits = c("1","2","3","4","5")) +
-      labs(title = paste0("Zadowolenie: ", pct_45, "% odpowiedzi to 4 lub 5"),
+      labs(
            x = "Ocena (1–5)", y = "Liczba") +
       theme_upwr(base_size = 13)
   })
@@ -327,9 +327,8 @@ ch1_server <- function(input, output, session) {
     ggplot(cat_novar, aes(x = staz, y = wynagrodzenie)) +
       geom_point(size = 3, alpha = 0.6, color = data_bad) +
       scale_x_continuous(limits = c(1, 10)) +
-      labs(title = paste0("Staż vs wynagrodzenie (r = ",
-                          round(cor(cat_novar$staz, cat_novar$wynagrodzenie), 3), ")"),
-           subtitle = "Staż skupiony w wąskim fragmencie osi",
+      labs(
+           
            x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
       theme_upwr(base_size = 13)
   })
@@ -396,7 +395,7 @@ ch1_server <- function(input, output, session) {
     ggplot(d, aes(x = powierzchnia, y = cena)) +
       geom_point(size = 3, alpha = 0.7, color = data_reference) +
       geom_smooth(method = "lm", color = col, se = TRUE) +
-      labs(title = paste0(title_txt, " (R² = ", r2, ")"),
+      labs(
            x = "Powierzchnia (m²)", y = "Cena (PLN)") +
       theme_upwr(base_size = 14)
   })
@@ -459,9 +458,7 @@ ch1_server <- function(input, output, session) {
         geom_col(width = 0.6) +
         scale_fill_manual(values = c(data_good, data_bad)) +
         geom_text(aes(label = n), vjust = -0.5, size = 6, fontface = "bold") +
-        labs(title = "czas_nauki: próba konwersji na liczby",
-             subtitle = paste0(n_fail, " z ", nrow(cat_messy), " odpowiedzi nie da się użyć"),
-             x = NULL, y = "Liczba odpowiedzi") +
+        labs(x = NULL, y = "Liczba odpowiedzi") +
         theme_upwr(base_size = 14) +
         theme(legend.position = "none") +
         ylim(0, max(df$n) + 1)
@@ -469,8 +466,8 @@ ch1_server <- function(input, output, session) {
       d <- cat_messy_clean[!is.na(cat_messy_clean$czas_nauki_h), ]
       ggplot(d, aes(x = czas_nauki_h)) +
         geom_histogram(bins = 5, fill = data_good, color = "white", alpha = 0.8) +
-        labs(title = paste0("Histogram (n = ", nrow(d), " z ", nrow(cat_messy_clean), ")"),
-             subtitle = "Po oczyszczeniu - ale straciliśmy połowę danych",
+        labs(
+             
              x = "Godziny nauki/tydzień", y = "Liczebność") +
         theme_upwr(base_size = 14)
     }
@@ -510,7 +507,7 @@ ch1_server <- function(input, output, session) {
       geom_hline(yintercept = 20, linetype = "dashed", color = data_bad) +
       annotate("text", x = 3.5, y = 7, label = "5% = OK", color = data_mixed, size = 3.5) +
       annotate("text", x = 3.5, y = 22, label = "20% = problem", color = data_bad, size = 3.5) +
-      labs(title = "Procent braków na zmienną", x = NULL, y = "% braków (NA)") +
+      labs(x = NULL, y = "% braków (NA)") +
       theme_upwr(base_size = 14) +
       ylim(0, 35)
   })
@@ -562,8 +559,8 @@ ch1_server <- function(input, output, session) {
       ggplot(cat_timeseries, aes(x = data, y = temperatura)) +
         geom_line(color = data_bad, linewidth = 0.8) +
         geom_point(color = data_bad, size = 1.2, alpha = 0.6) +
-        labs(title = "Temperatura w kolejności pomiarów (183 dni)",
-             subtitle = "Wyraźna fala sezonowa - każdy dzień zależy od poprzedniego",
+        labs(
+             
              x = "Data", y = "Temperatura (°C)") +
         theme_upwr(base_size = 14)
     } else {
@@ -575,8 +572,8 @@ ch1_server <- function(input, output, session) {
         geom_text(aes(label = paste0(srednia_temp, "°C")),
                   vjust = -1.2, size = 4.5, fontface = "bold") +
         scale_x_continuous(breaks = df_m$idx, labels = df_m$miesiac) +
-        labs(title = "Średnia temperatura miesięczna (n = 6)",
-             subtitle = "Agregacja uśmierza zależność dzień-do-dnia, ale zostaje 6 punktów",
+        labs(
+             
              x = NULL, y = "Średnia temperatura (°C)") +
         theme_upwr(base_size = 14) +
         theme(axis.text.x = element_text(angle = 30, hjust = 1))
@@ -634,10 +631,7 @@ ch1_server <- function(input, output, session) {
       ggplot(df, aes(x = label, y = n)) +
         geom_col(fill = data_mixed, width = 0.4) +
         geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold") +
-        labs(title = "Ile masz 'obserwacji'?",
-             subtitle = paste0(nrow(cat_patients_visits),
-                               " wierszy, ale to wizyty - ten sam pacjent wraca"),
-             x = NULL, y = NULL) +
+        labs(x = NULL, y = NULL) +
         ylim(0, ceiling(nrow(cat_patients_visits) * 1.15)) +
         theme_upwr(base_size = 14) +
         theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
@@ -647,9 +641,7 @@ ch1_server <- function(input, output, session) {
         geom_col(fill = data_bad, width = 0.4) +
         geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold",
                   color = data_bad) +
-        labs(title = "Po agregacji",
-             subtitle = "n = 30 pacjentów - jednostka obserwacji zgodna z pytaniem",
-             x = NULL, y = NULL) +
+        labs(x = NULL, y = NULL) +
         ylim(0, 40) +
         theme_upwr(base_size = 14) +
         theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())

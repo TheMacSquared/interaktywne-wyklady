@@ -223,8 +223,8 @@ ch6_server <- function(input, output, session) {
       ggplot(df, aes(x = factor(x), y = prob)) +
         geom_col(fill = unname(upwr_cat["bursztyn"]), color = "white", alpha = 0.85, width = 0.6) +
         scale_y_continuous(limits = c(0, 0.3), expand = expansion(mult = c(0, 0))) +
-        labs(title = paste0("Populacja: ", dist_label),
-             subtitle = "To NIE jest normalny!",
+        labs(
+             
              x = "", y = "P(X=k)") +
         theme_upwr(base_size = 11)
     } else {
@@ -232,8 +232,8 @@ ch6_server <- function(input, output, session) {
       df <- data.frame(x = data)
       ggplot(df, aes(x = x)) +
         geom_density(fill = unname(upwr_cat["bursztyn"]), color = upwr_secondary, alpha = 0.5, linewidth = 0.8) +
-        labs(title = paste0("Populacja: ", dist_label),
-             subtitle = "To NIE jest normalny!",
+        labs(
+             
              x = "", y = "Gęstość") +
         theme_upwr(base_size = 11)
     }
@@ -275,9 +275,8 @@ ch6_server <- function(input, output, session) {
       }
 
       p + geom_vline(xintercept = theo_mu, color = unname(upwr_cat["terakota"]), linetype = "dashed") +
-        labs(title = paste0("Rozkład średnich (n=", n, ", ", length(means), " prób)"),
-             subtitle = paste0("Krzywa: N(", round(theo_mu, 2), ", ",
-                               round(theo_sd, 2), ")"),
+        labs(
+             
              x = "Średnia z próby", y = "Gęstość") +
         theme_upwr()
     }
@@ -337,8 +336,7 @@ ch6_server <- function(input, output, session) {
       geom_line(data = norm_data, aes(x = x, y = y),
                 color = unname(upwr_cat["terakota"]), linewidth = 1.2) +
       facet_wrap(~n_label, scales = "free") +
-      labs(title = paste0("2000 średnich z rozkładu: ",
-                          dist_names_pl[dist]),
+      labs(
            x = "Średnia z próby", y = "Gęstość") +
       theme_upwr(base_size = 12)
   })
@@ -380,12 +378,8 @@ ch6_server <- function(input, output, session) {
                            color = unname(upwr_cat["terakota"]), linewidth = 1.5)
       }
 
-      p + labs(title = paste0("Rozkład średniej z ", n_val,
-                              if (n_val == 1) " obserwacji" else " obserwacji",
-                              " (wykładniczy)"),
-               subtitle = if (n_val == 1) "Identyczny z rozkładem populacji"
-                           else paste0("Krzywa: N(", round(params$mu, 2), ", ",
-                                       round(theo_sd, 2), ")"),
+      p + labs(
+               
                x = "Średnia", y = "Gęstość") +
         theme_upwr()
     }

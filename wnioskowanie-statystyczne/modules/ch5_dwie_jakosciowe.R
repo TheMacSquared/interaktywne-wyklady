@@ -509,7 +509,7 @@ ch5_server <- function(input, output, session) {
           geom_col(position = "dodge", alpha = 0.8) +
           geom_text(aes(label = Freq), position = position_dodge(width = 0.9),
                     vjust = -0.3, size = 4) +
-          labs(title = paste0(par$lab1, " a ", par$lab2, " (liczności)"),
+          labs(
                x = par$lab1, y = "Liczność", fill = par$lab2) +
           scale_fill_upwr() +
                     theme(legend.position = "top")
@@ -525,7 +525,7 @@ ch5_server <- function(input, output, session) {
           geom_text(aes(label = paste0(pct, "%")),
                     position = position_dodge(width = 0.9),
                     vjust = -0.3, size = 4) +
-          labs(title = paste0(par$lab1, " a ", par$lab2, " (% w grupie)"),
+          labs(
                x = par$lab1, y = "Procent", fill = par$lab2) +
           scale_fill_upwr() +
                     theme(legend.position = "top")

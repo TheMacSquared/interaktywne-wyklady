@@ -157,7 +157,7 @@ ch3_server <- function(input, output, session) {
     ggplot(data.frame(x = x, p = p), aes(x = x, y = p)) +
       geom_line(color = unname(upwr_cat["wrzos"]), linewidth = 1.5) +
       geom_hline(yintercept = 0.5, linetype = "dashed", color = upwr_secondary, alpha = 0.5) +
-      labs(title = paste0("Sigmoida: β₀ = ", b0, ", β₁ = ", b1),
+      labs(
            x = "X", y = "P(Y = 1)") +
       ylim(0, 1) +
       theme_upwr()
@@ -202,7 +202,7 @@ ch3_server <- function(input, output, session) {
         geom_line(data = newdata, aes(x = .data[[pred_var]], y = .data[["pred_prob"]]),
                   color = unname(upwr_cat["wrzos"]), linewidth = 1.5) +
         geom_hline(yintercept = 0.5, linetype = "dashed", color = unname(upwr_cat["bursztyn"])) +
-        labs(title = paste0("Regresja logistyczna: P(zdanie) ~ ", pred_label),
+        labs(
              x = pred_label, y = "P(zdanie egzaminu)") +
         ylim(-0.05, 1.05) +
         theme_upwr()

@@ -491,7 +491,7 @@ ch1_server <- function(input, output, session) {
       geom_jitter(width = 0.15, alpha = 0.5, size = 2) +
       scale_fill_manual(values = c(col_accept, col_pvalue)) +
       scale_color_manual(values = c(col_accept, col_pvalue)) +
-      labs(title = "Wyniki testu koncentracji",
+      labs(
            x = NULL, y = "Wynik (0–100 pkt)") +
       theme(legend.position = "none") +
       coord_cartesian(ylim = c(20, 100))
@@ -572,8 +572,8 @@ ch1_server <- function(input, output, session) {
                           labels = c("TRUE" = "co najmniej tak skrajne",
                                      "FALSE" = "bliżej zera"),
                           name = NULL) +
-        labs(title = expression(paste("Różnice średnich z symulowanych eksperymentów (", H[0], " prawdziwa)")),
-             subtitle = "Czerwona linia = prawdziwa różnica z eksperymentu",
+        labs(
+             
              x = "Różnica średnich (grupa A − grupa B)", y = "Liczba") +
                 theme(legend.position = "top")
     }
@@ -648,8 +648,7 @@ ch1_server <- function(input, output, session) {
       geom_vline(xintercept = c(crit_low, crit_high), linetype = "dashed",
                  color = upwr_secondary) +
       scale_color_manual(values = c(col_h0, col_h1), name = "Rozkład") +
-      labs(title = paste0("Moc testu (n = ", n, " na grupę, różnica = ", diff_means,
-                          " pkt, alpha = ", alpha, ", test dwustronny)"),
+      labs(
            x = "Średnia koncentracja w próbie", y = "Gęstość") +
       theme(legend.position = "top")
 

@@ -158,7 +158,7 @@ ch6_server <- function(input, output, session) {
                         guide = "none") +
       scale_color_manual(values = c(bayes_primary, bayes_warning, bayes_teal),
                          guide = "none") +
-      labs(title = "Dane: trzy grupy", x = "Grupa", y = "Wartość") +
+      labs(x = "Grupa", y = "Wartość") +
       theme_upwr()
   })
 

@@ -317,8 +317,8 @@ ch7_server <- function(input, output, session) {
       geom_hline(yintercept = mean(d$wynik), linetype = "dashed",
                  color = upwr_reference) +
       scale_fill_upwr() +
-      labs(title = "Trzy grupy: średnie kontra rozrzut",
-           subtitle = "Przerywana linia = średnia ogólna; białe punkty = średnie grup",
+      labs(
+           
            x = "Grupa", y = "Wynik") +
       theme(legend.position = "none")
   })
@@ -433,7 +433,7 @@ ch7_server <- function(input, output, session) {
         geom_boxplot(alpha = 0.6, outlier.alpha = 0.3) +
         geom_jitter(width = 0.15, alpha = 0.2, size = 1) +
         scale_fill_upwr() +
-        labs(title = paste0(var_label, " według: ", cfg$group_label),
+        labs(
              x = cfg$group_label, y = var_label) +
                 theme(legend.position = "none")
     }

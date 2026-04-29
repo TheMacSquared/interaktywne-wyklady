@@ -369,12 +369,12 @@ ch1_server <- function(input, output, session) {
 
     p1 <- ggplot(ca, aes(x = .data[[var]])) +
       geom_histogram(bins = 30, fill = case_explore, alpha = 0.6, color = "white") +
-      labs(title = paste0("Rozkład: ", var_label), x = var_label, y = "Liczba") +
+      labs( x = var_label, y = "Liczba") +
       theme_upwr()
 
     p2 <- ggplot(ca, aes(y = .data[[var]])) +
       geom_boxplot(fill = case_explore, alpha = 0.4) +
-      labs(title = "Boxplot", y = var_label) +
+      labs(y = var_label) +
       theme_upwr()
 
     gridExtra::grid.arrange(p1, p2, ncol = 2, widths = c(2, 1))
@@ -412,7 +412,7 @@ ch1_server <- function(input, output, session) {
       geom_text(aes(label = round(value, 2)), size = 3.5) +
       scale_fill_gradient2(low = case_highlight, mid = "white", high = case_explore,
                            midpoint = 0, limits = c(-1, 1), name = "r") +
-      labs(title = "Macierz korelacji — szukamy powiązań i potencjalnych zakłóceń",
+      labs(
            x = NULL, y = NULL) +
       theme_upwr() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -432,8 +432,8 @@ ch1_server <- function(input, output, session) {
 
     p + geom_smooth(method = "lm", se = TRUE,
                     color = case_model, fill = case_model, alpha = 0.1) +
-      labs(title = "STR vs wyniki egzaminu",
-           subtitle = "Każdy punkt = jeden dystrykt szkolny",
+      labs(
+           
            x = "Uczniowie na nauczyciela (STR)",
            y = "Średni wynik egzaminu") +
       theme_upwr()
@@ -472,8 +472,8 @@ ch1_server <- function(input, output, session) {
     ggplot(ca, aes(x = lunch, y = score)) +
       geom_point(color = case_reference, alpha = 0.3, size = 1.5) +
       geom_smooth(method = "lm", se = FALSE, color = case_highlight, linewidth = 1.2) +
-      labs(title = "Warunek (a): lunch → wyniki?",
-           subtitle = paste0("r = ", round(cor(ca$lunch, ca$score), 3)),
+      labs(
+           
            x = "% darmowy lunch", y = "Wynik") +
       theme_upwr()
   })
@@ -482,8 +482,8 @@ ch1_server <- function(input, output, session) {
     ggplot(ca, aes(x = lunch, y = str)) +
       geom_point(color = case_reference, alpha = 0.3, size = 1.5) +
       geom_smooth(method = "lm", se = FALSE, color = case_test, linewidth = 1.2) +
-      labs(title = "Warunek (b): lunch → STR?",
-           subtitle = paste0("r = ", round(cor(ca$lunch, ca$str), 3)),
+      labs(
+           
            x = "% darmowy lunch", y = "STR") +
       theme_upwr()
   })
@@ -510,7 +510,7 @@ ch1_server <- function(input, output, session) {
       geom_boxplot(alpha = 0.6, outlier.alpha = 0.2) +
       geom_jitter(width = 0.15, alpha = 0.1, size = 1) +
       scale_fill_manual(values = c(case_explore, case_conclude, case_highlight)) +
-      labs(title = "Wyniki wg poziomu biedy",
+      labs(
            x = "Poziom biedy (na podst. % darmowy lunch)",
            y = "Średni wynik") +
       theme_upwr() +
@@ -625,7 +625,7 @@ ch1_server <- function(input, output, session) {
       scale_fill_manual(values = c("TRUE" = case_model, "FALSE" = case_muted),
                         labels = c("TRUE" = "p < 0.05", "FALSE" = "nieistotny"),
                         name = NULL) +
-      labs(title = "Jak zmienia się efekt STR po dodaniu zmiennych kontrolnych?",
+      labs(
            x = NULL, y = "β przy STR") +
       theme_upwr() +
       theme(legend.position = "top",
@@ -693,7 +693,7 @@ ch1_server <- function(input, output, session) {
       scale_color_manual(values = c("TRUE" = case_model, "FALSE" = case_highlight),
                          labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),
                          name = NULL) +
-      labs(title = "Współczynniki z 95% CI", x = "β", y = NULL) +
+      labs(x = "β", y = NULL) +
       theme_upwr() + theme(legend.position = "top")
   })
 

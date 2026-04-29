@@ -423,12 +423,19 @@ ch2_server <- function(input, output, session) {
       lvls <- sample(lvls)
     }
     df$zadowolenie <- factor(df$zadowolenie, levels = lvls)
+    short_labels <- c(
+      "Bardzo niezadowolony" = "B. niezad.",
+      "Niezadowolony"        = "Niezad.",
+      "Neutralny"            = "Neutr.",
+      "Zadowolony"           = "Zad.",
+      "Bardzo zadowolony"    = "B. zad."
+    )
     ggplot(df, aes(x = zadowolenie)) +
       geom_bar(fill = type_colors["porzadkowa"], color = "white", alpha = 0.85) +
       geom_text(stat = "count", aes(label = after_stat(count)),
                 vjust = -0.5, size = 5) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-      scale_x_discrete(labels = function(x) gsub(" ", "\n", x)) +
+      scale_x_discrete(labels = function(x) short_labels[x]) +
       labs(x = "Zadowolenie", y = "Liczebność") +
       theme()
   })
@@ -599,11 +606,7 @@ ch2_server <- function(input, output, session) {
       geom_text(aes(label = n), vjust = -0.5, size = 5) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
       scale_fill_manual(values = fill_colors, guide = "none") +
-      labs(title = "Kierunek studiów",
-           subtitle = subtitle,
-           x = "Kierunek", y = "Liczebność") +
-            theme(plot.title = element_text(face = "bold"),
-            plot.subtitle = element_text(color = upwr_ink_soft, face = "italic"))
+      labs(x = "Kierunek", y = "Liczebność")
   })
 
 
@@ -668,7 +671,6 @@ ch2_server <- function(input, output, session) {
 
       ggplot(heat_df, aes(x = Kolumna, y = Wiersz, fill = Wartosc)) +
         geom_tile(color = "white", linewidth = 1.5) +
-        geom_text(aes(label = fmt(Wartosc)), size = 5, fontface = "bold") +
         scale_fill_upwr_seq(variant = "burgundy", name = fill_label) +
         labs(x = col_label[col_var], y = row_label[row_var]) +
                 theme(
@@ -711,15 +713,12 @@ ch2_server <- function(input, output, session) {
 
     ggplot(df_counts, aes(x = Kierunek, y = n, fill = is_mode)) +
       geom_col(color = "white", width = 0.7, alpha = 0.9) +
-      geom_text(aes(label = n), vjust = -0.5, size = 5, fontface = "bold") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
       scale_fill_manual(
         values = c("Dominanta" = type_colors["nominalna"], "Inne" = upwr_rule),
         guide = "none"
       ) +
-      labs(title = "Kierunek studiów - dominanta",
-           x = "Kierunek", y = "Liczebność") +
-            theme(plot.title = element_text(face = "bold"))
+      labs(x = "Kierunek", y = "Liczebność")
   })
 
   output$ch2_mode_text <- renderUI({

@@ -203,7 +203,7 @@ ch4_server <- function(input, output, session) {
         geom_col(alpha = 0.8) +
         facet_wrap(~metric, scales = "free_y", ncol = 4) +
         scale_fill_manual(values = c(unname(upwr_cat["niebo"]), unname(upwr_cat["szalwia"]), unname(upwr_cat["bursztyn"]), unname(upwr_cat["wrzos"]))) +
-        labs(title = "Metryki 4 modeli", x = NULL, y = "Wartość") +
+        labs(x = NULL, y = "Wartość") +
         theme_upwr() +
         theme(legend.position = "none",
               axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
@@ -271,7 +271,7 @@ ch4_server <- function(input, output, session) {
                  fontface = "bold") +
         annotate("text", x = 35, y = 0.85, label = "Liniowy", color = unname(upwr_cat["niebo"]),
                  fontface = "bold") +
-        labs(title = "Regresja liniowa vs logistyczna (dane binarne)",
+        labs(
              x = "Godziny nauki", y = "P(zdanie)") +
         ylim(-0.2, 1.2) +
         theme_upwr()
@@ -329,7 +329,7 @@ ch4_server <- function(input, output, session) {
       ggplot() +
         geom_point(data = df, aes(x = x, y = y), color = upwr_secondary, alpha = 0.5) +
         geom_line(data = pred_df, aes(x = x, y = y), color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-        labs(title = paste0("Wielomian stopnia ", degree),
+        labs(
              x = "X", y = "Y") +
         theme_upwr()
     }

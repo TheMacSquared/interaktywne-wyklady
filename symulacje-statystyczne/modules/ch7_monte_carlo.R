@@ -310,9 +310,8 @@ ch7_server <- function(input, output, session) {
                label = paste0("obs = ", round(obs, 3)),
                vjust = -0.3, hjust = -0.1, color = sim_observed, size = 4.5) +
       labs(
-        title    = paste0("Rozkład MC pod H₀ (B = ", length(result$null_stats), ")"),
-        subtitle = paste0("p MC = ", round(result$p_value_mc, 4),
-                          "  |  p klasyczne = ", round(result$classical_p, 4)),
+        
+        
         x        = stat_label,
         y        = "Liczba symulacji"
       ) +

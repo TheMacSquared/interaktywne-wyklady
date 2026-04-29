@@ -110,7 +110,7 @@ ch11_server <- function(input, output, session) {
       annotate("text", x = Inf, y = 21.5, label = "20% — poważny problem",
                hjust = 1.05, color = data_bad,   size = 3.8) +
       scale_y_continuous(limits = c(0, 30)) +
-      labs(title = "Procent braków danych (tylko zmienne z brakami)",
+      labs(
            x = NULL, y = "% braków") +
       theme_upwr(base_size = 14)
   })
@@ -139,8 +139,8 @@ ch11_server <- function(input, output, session) {
     ggplot(df, aes(x = dzien, y = kawy)) +
       geom_line(color = data_primary, alpha = 0.6) +
       geom_point(color = data_primary, size = 1.2, alpha = 0.4) +
-      labs(title = "Sprzedaż kaw w kolejności dni",
-           subtitle = "Widoczna periodyczność tygodniowa — obserwacje nie są niezależne!",
+      labs(
+           
            x = "Numer dnia (= kolejność w roku akademickim)", y = "Liczba sprzedanych kaw") +
       theme_upwr(base_size = 14)
   })
@@ -154,8 +154,8 @@ ch11_server <- function(input, output, session) {
     ggplot(lag_df, aes(x = x, y = y)) +
       geom_point(alpha = 0.4, color = data_reference) +
       geom_smooth(method = "lm", color = data_bad, se = TRUE) +
-      labs(title = paste0("Autokorelacja lag-1 (r = ", r, ")"),
-           subtitle = "Jeśli obserwacje są niezależne, nie powinno być korelacji",
+      labs(
+           
            x = "Kawy(t)", y = "Kawy(t+1)") +
       theme_upwr(base_size = 14)
   })

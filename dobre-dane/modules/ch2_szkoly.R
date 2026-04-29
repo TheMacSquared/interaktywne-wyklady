@@ -81,7 +81,7 @@ ch2_server <- function(input, output, session) {
     req(input$tab1_var)
     ggplot(CASchools, aes(x = .data[[input$tab1_var]])) +
       geom_histogram(bins = 25, fill = data_primary, color = "white", alpha = 0.8) +
-      labs(title = paste("Rozkład:", input$tab1_var), x = input$tab1_var, y = "Liczebność") +
+      labs( x = input$tab1_var, y = "Liczebność") +
       theme_upwr(base_size = 14)
   })
 
@@ -94,7 +94,7 @@ ch2_server <- function(input, output, session) {
     ggplot(CASchools, aes(x = .data[[input$tab1_x]], y = .data[[input$tab1_y]])) +
       geom_point(alpha = 0.5, color = data_reference) +
       geom_smooth(method = "lm", color = data_primary, se = TRUE) +
-      labs(title = paste(input$tab1_y, "~", input$tab1_x),
+      labs(
            x = input$tab1_x, y = input$tab1_y) +
       theme_upwr(base_size = 14)
   })

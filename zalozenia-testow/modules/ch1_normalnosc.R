@@ -183,14 +183,14 @@ ch1_server <- function(input, output, session) {
                        fill = col_test, alpha = 0.6, color = "white") +
         stat_function(fun = dnorm, args = list(mean = mean(x), sd = sd(x)),
                       color = col_ok, linewidth = 1.2, linetype = "dashed") +
-        labs(title = "Histogram + krzywa normalna",
+        labs(
              x = "Wartość", y = "Gęstość") +
         theme_upwr()
 
       p2 <- ggplot(df, aes(sample = x)) +
         stat_qq(color = col_test, alpha = 0.6) +
         stat_qq_line(color = col_ok, linewidth = 1) +
-        labs(title = "Q-Q plot",
+        labs(
              x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
         theme_upwr()
 
@@ -255,13 +255,11 @@ ch1_server <- function(input, output, session) {
       p1 <- ggplot(data.frame(x = x), aes(sample = x)) +
         stat_qq(color = col_fail, alpha = 0.5) +
         stat_qq_line(color = col_fail) +
-        labs(title = "Oryginalne (prawoskośne)") +
         theme_upwr()
 
       p2 <- ggplot(data.frame(x = log_x), aes(sample = x)) +
         stat_qq(color = col_ok, alpha = 0.5) +
         stat_qq_line(color = col_ok) +
-        labs(title = "Po log()") +
         theme_upwr()
 
       gridExtra::grid.arrange(p1, p2, ncol = 2)

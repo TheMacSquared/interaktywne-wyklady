@@ -211,7 +211,7 @@ ch3_ui <- list(
       label = "Ryc. 3.5",
       title = "Odporność: średnia vs mediana vs średnia ucinana",
 
-      div(style = "display: flex; gap: 8px; margin-bottom: 15px;",
+      div(style = "display: flex; gap: 8px; margin-bottom: 8px;",
         actionButton("ch3_rob_add1", "Dodaj outlier (+50 000 zl)",
                      class = "lc-btn-warning"),
         actionButton("ch3_rob_add5", "Dodaj 5 outlierow",
@@ -219,6 +219,7 @@ ch3_ui <- list(
         actionButton("ch3_rob_reset", "Reset",
                      class = "lc-btn-secondary-outline")
       ),
+      uiOutput("ch3_rob_outliers_count"),
 
       plotOutput("ch3_rob_plot", height = "320px"),
 
@@ -557,13 +558,13 @@ ch3_server <- function(input, output, session) {
       ggplot() +
         geom_rect(data = bin_rects,
                   aes(xmin = xmin, xmax = xmax, ymin = -0.35, ymax = 0.35,
-                      fill = factor(bin_num)),
+                      fill = bin_num),
                   alpha = 0.15, color = upwr_secondary, linewidth = 0.5) +
         geom_jitter(data = df %>% filter(!is.na(bin)),
-                    aes(x = value, y = 0, color = factor(bin_num)),
+                    aes(x = value, y = 0, color = bin_num),
                     height = 0.2, size = 3, alpha = 0.8) +
-        scale_fill_upwr(guide = "none") +
-        scale_color_upwr(guide = "none") +
+        scale_fill_upwr_seq(guide = "none") +
+        scale_color_upwr_seq(guide = "none") +
         labs(x = x_label, y = "") + strip_theme +
         coord_cartesian(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.5))
 
@@ -575,17 +576,17 @@ ch3_server <- function(input, output, session) {
         geom_rect(data = stats,
                   aes(xmin = bin_start, xmax = bin_end,
                       ymin = -0.35, ymax = 0.35,
-                      fill = factor(bin_num)),
+                      fill = bin_num),
                   alpha = 0.15, color = upwr_secondary, linewidth = 0.5) +
         geom_jitter(data = df %>% filter(!is.na(bin)),
-                    aes(x = value, y = 0, color = factor(bin_num)),
+                    aes(x = value, y = 0, color = bin_num),
                     height = 0.2, size = 2, alpha = 0.6) +
         geom_text(data = stats,
                   aes(x = bin_mid, y = 0.45,
                       label = ifelse(count > 0, paste0("n=", count), "")),
                   size = 4, fontface = "bold", color = upwr_secondary) +
-        scale_fill_upwr(guide = "none") +
-        scale_color_upwr(guide = "none") +
+        scale_fill_upwr_seq(guide = "none") +
+        scale_color_upwr_seq(guide = "none") +
         labs(x = x_label, y = "") + strip_theme +
         coord_cartesian(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.6))
 
@@ -594,11 +595,11 @@ ch3_server <- function(input, output, session) {
       w <- input$ch3_hist_bin_width
 
       ggplot(stats, aes(x = bin_mid, y = count)) +
-        geom_col(aes(fill = factor(bin_num)),
+        geom_col(aes(fill = bin_num),
                  width = w * 0.95, alpha = 0.7,
                  color = upwr_secondary, linewidth = 0.3) +
         geom_text(aes(label = count), vjust = -0.5, size = 4, fontface = "bold") +
-        scale_fill_upwr(guide = "none") +
+        scale_fill_upwr_seq(guide = "none") +
         labs(x = x_label, y = "Liczba obserwacji") +
                 coord_cartesian(xlim = c(x_lo, x_hi))
 
@@ -609,9 +610,7 @@ ch3_server <- function(input, output, session) {
       ggplot(df, aes(x = value)) +
         geom_histogram(binwidth = w, fill = upwr_cat["niebo"], alpha = 0.7,
                        color = upwr_secondary, linewidth = 0.3) +
-        labs(x = x_label, y = "Liczba obserwacji",
-             title = paste0("Histogram: ", x_label),
-             subtitle = paste0("n = ", n, " | szerokość binu = ", w)) +
+        labs(x = x_label, y = "Liczba obserwacji") +
         theme()
 
     } else if (step == 8) {
@@ -706,8 +705,7 @@ ch3_server <- function(input, output, session) {
       annotate("segment", x = max(x), xend = m, y = -0.5, yend = -0.5,
                color = upwr_cat["niebo"], linewidth = 2,
                arrow = arrow(length = unit(0.2, "cm"), ends = "last")) +
-      labs(x = var_labels[var_name], y = "Liczebność",
-           title = "Średnia jako punkt równowagi") +
+      labs(x = var_labels[var_name], y = "Liczebność") +
       theme()
   })
 
@@ -761,8 +759,7 @@ ch3_server <- function(input, output, session) {
                vjust = 4, hjust = -0.1, color = upwr_cat["indygo"], size = 5, fontface = "bold") +
       geom_histogram(bins = 25, fill = upwr_rule, color = "white", alpha = 0.8) +
       geom_vline(xintercept = med, color = upwr_cat["indygo"], linewidth = 1.5) +
-      labs(x = var_labels[var_name], y = "Liczebność",
-           title = "Mediana dzieli dane na dwie równe połowy") +
+      labs(x = var_labels[var_name], y = "Liczebność") +
       theme()
   })
 
@@ -829,10 +826,8 @@ ch3_server <- function(input, output, session) {
         values = c("Srednia" = upwr_accent, "Mediana" = upwr_cat["niebo"])
       ) +
       scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
-      labs(x = "Zarobki (zl)", y = "Liczba osob",
-           title = "Rozkład zarobkow") +
-            theme(legend.position = "top",
-            plot.title = element_text(face = "bold"))
+      labs(x = "Zarobki (zl)", y = "Liczba osob") +
+      theme(legend.position = "top")
   })
 
   output$ch3_svm_strip <- renderPlot({
@@ -940,13 +935,6 @@ ch3_server <- function(input, output, session) {
       ltype = c("solid", "dashed", "dotted")
     )
 
-    n_outliers <- length(ch3_rob_outliers())
-    subtitle_text <- if (n_outliers == 0) {
-      "Brak outlierow"
-    } else {
-      paste0("Liczba dodanych outlierow: ", n_outliers)
-    }
-
     ggplot(d, aes(x = x)) +
       geom_histogram(fill = upwr_reference, color = "white", bins = 30) +
       geom_vline(data = line_data,
@@ -968,11 +956,15 @@ ch3_server <- function(input, output, session) {
                    "Sr. ucinana (10%)" = "dotted")
       ) +
       scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
-      labs(x = "Zarobki (zl)", y = "Liczba osob",
-           title = "Porównanie miar polozenia",
-           subtitle = subtitle_text) +
-            theme(legend.position = "top",
-            plot.title = element_text(face = "bold"))
+      labs(x = "Zarobki (zl)", y = "Liczba osob") +
+      theme(legend.position = "top")
+  })
+
+  output$ch3_rob_outliers_count <- renderUI({
+    n_outliers <- length(ch3_rob_outliers())
+    msg <- if (n_outliers == 0) "Brak dodanych outlierów"
+           else paste0("Liczba dodanych outlierów: ", n_outliers)
+    div(style = "font-size: 13px; color: var(--upwr-ink-soft); margin-top: 4px;", msg)
   })
 
   output$ch3_rob_table <- renderTable({
@@ -1075,8 +1067,7 @@ ch3_server <- function(input, output, session) {
         geom_vline(xintercept = mean(x), color = upwr_accent, linewidth = 1, linetype = "dashed") +
         annotate("text", x = mean(x) + 1, y = Inf, label = "moda ≈ średnia ≈ mediana",
                  hjust = 0, vjust = 2, color = upwr_accent, size = 4.5, fontface = "bold") +
-        labs(title = "Unimodalny -- jeden wyraźny szczyt",
-             x = "Wzrost kobiet (cm)", y = "Gęstość") +
+        labs(x = "Wzrost kobiet (cm)", y = "Gęstość") +
         theme()
 
     } else if (scenario == "bimodal") {
@@ -1090,8 +1081,7 @@ ch3_server <- function(input, output, session) {
         geom_density(linewidth = 1.2, color = upwr_secondary) +
         geom_density(aes(color = grupa), linewidth = 0.8, linetype = "dashed") +
         scale_color_manual(values = c("Kobiety" = upwr_accent, "Mężczyźni" = upwr_cat["niebo"])) +
-        labs(title = "Bimodalny -- dwa szczyty (dwie grupy!)",
-             x = "Wzrost (cm)", y = "Gęstość", color = NULL) +
+        labs(x = "Wzrost (cm)", y = "Gęstość", color = NULL) +
                 theme(legend.position = "top")
 
     } else {
@@ -1106,8 +1096,7 @@ ch3_server <- function(input, output, session) {
         geom_density(linewidth = 1.2, color = upwr_secondary) +
         geom_density(aes(color = grupa), linewidth = 0.8, linetype = "dashed") +
         scale_color_manual(values = c("Rower" = upwr_cat["szalwia"], "Autobus" = upwr_cat["bursztyn"], "Auto" = upwr_accent)) +
-        labs(title = "Wielomodalny -- trzy szczyty (trzy środki transportu)",
-             x = "Czas dojazdu (min)", y = "Gęstość", color = NULL) +
+        labs(x = "Czas dojazdu (min)", y = "Gęstość", color = NULL) +
                 theme(legend.position = "top")
     }
   })
@@ -1176,9 +1165,8 @@ ch3_server <- function(input, output, session) {
                vjust = -0.5, hjust = -0.1,
                fontface = "bold", size = 5, color = upwr_secondary) +
       scale_fill_manual(values = c("TRUE" = upwr_cat["niebo"], "FALSE" = upwr_reference)) +
-      labs(x = "Wzrost (cm)", y = "Liczba studentow",
-           title = paste0(input$ch3_q_pct, ". percentyl wzrostu studentow")) +
-            theme(plot.title = element_text(face = "bold"))
+      labs(x = "Wzrost (cm)", y = "Liczba studentow") +
+      theme()
   })
 
   output$ch3_q_box <- renderPlot({
@@ -1320,7 +1308,7 @@ ch3_server <- function(input, output, session) {
 
     p <- ggplot(data.frame(x = vals), aes(x = x)) +
       geom_histogram(bins = 25, fill = "grey70", color = "white", alpha = 0.7) +
-            labs(x = "Wartość", y = "Liczebność", title = "Gdzie jest srednia? Gdzie mediana?")
+      labs(x = "Wartość", y = "Liczebność")
 
     if (!is.null(g$mean)) {
       p <- p + geom_vline(xintercept = g$mean, color = upwr_accent,

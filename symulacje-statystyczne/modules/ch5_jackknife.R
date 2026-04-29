@@ -266,9 +266,8 @@ ch5_server <- function(input, output, session) {
       geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0.3, linewidth = 2) +
       scale_color_manual(values = c("Jackknife" = sim_bootstrap, "Bootstrap" = sim_warning),
                          guide  = "none") +
-      labs(title = "Szacunki ± 1.96 SE",
-           subtitle = paste0("Jackknife SE = ", round(se_j, 4),
-                             "  |  Bootstrap SE = ", round(se_b, 4)),
+      labs(
+           
            x = "Wartość statystyki", y = NULL) +
       theme_upwr()
   })

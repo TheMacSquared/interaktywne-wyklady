@@ -251,10 +251,9 @@ ch5_server <- function(input, output, session) {
       geom_point(aes(x = !!n, y = !!me), color = col_estimate, size = 4) +
       geom_hline(yintercept = me, color = col_estimate, linetype = "dotted") +
       annotate("text", x = n + 4, y = me + 0.3,
-               label = paste0("ME = ", round(me, 2)),
+               label = "ME",
                color = col_estimate, fontface = "bold", size = 4.5) +
-      labs(title = paste0("Margines błędu w funkcji n ",
-                          "(", round(conf * 100), "% CI, s = ", s, ")"),
+      labs(
            x = "Wielkość próby (n)",
            y = "Margines błędu (ME)") +
       theme_upwr()
@@ -267,8 +266,7 @@ ch5_server <- function(input, output, session) {
     p_bot <- ggplot() +
       xlim(xlims) +
       ylim(-0.6, 0.6) +
-      labs(x = "Wartość (np. wzrost w cm)", y = NULL,
-           title = "Twój 95% CI na stałej osi") +
+      labs(x = "Wartość (np. wzrost w cm)", y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
@@ -276,16 +274,14 @@ ch5_server <- function(input, output, session) {
             panel.grid.minor.y = element_blank()) +
       geom_vline(xintercept = xbar, color = upwr_reference,
                  linetype = "dashed", linewidth = 0.6) +
-      annotate("text", x = xbar, y = 0.5, label = paste0("środek = ", xbar),
+      annotate("text", x = xbar, y = 0.5, label = "środek",
                color = upwr_reference, size = 4, hjust = -0.1) +
       geom_point(aes(x = xbar, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
       geom_errorbarh(aes(xmin = xbar - me, xmax = xbar + me, y = 0),
                      height = 0.18, color = col_ci, linewidth = 2.4, alpha = 0.7) +
       annotate("text", x = xbar, y = -0.42,
-               label = paste0("CI: [", round(xbar - me, 2),
-                              " ; ", round(xbar + me, 2), "]    szer. = ",
-                              round(2 * me, 2)),
+               label = "95% CI",
                color = col_ci, fontface = "bold", size = 4.8)
 
     library(patchwork)
@@ -347,7 +343,7 @@ ch5_server <- function(input, output, session) {
       annotate("text", x = n_req, y = me_max + 0.3,
                label = paste0("n = ", n_req),
                color = col_hit, fontface = "bold", size = 5) +
-      labs(title = "Margines błędu vs wielkość próby",
+      labs(
            x = "n", y = "Margines błędu") +
       theme_upwr()
 
@@ -357,9 +353,7 @@ ch5_server <- function(input, output, session) {
     p_bot <- ggplot() +
       xlim(xlims) +
       ylim(-0.6, 0.6) +
-      labs(x = "Wartość (jednostki dowolne)", y = NULL,
-           title = paste0("CI przy n = ", n_req,
-                          "  —  szara strefa = dopuszczalny ME = ±", me_max)) +
+      labs(x = "Wartość (jednostki dowolne)", y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
@@ -376,8 +370,7 @@ ch5_server <- function(input, output, session) {
       geom_errorbarh(aes(xmin = center - me_actual, xmax = center + me_actual, y = 0),
                      height = 0.18, color = col_hit, linewidth = 2.4, alpha = 0.8) +
       annotate("text", x = center, y = -0.42,
-               label = paste0("Osiągnięte ME = ±", round(me_actual, 3),
-                              "  ≤  ", me_max, " ✓"),
+               label = "Osiągnięte ME ≤ wymagane ✓",
                color = col_hit, fontface = "bold", size = 4.8)
 
     library(patchwork)
@@ -435,7 +428,7 @@ ch5_server <- function(input, output, session) {
                  label = paste0("[", round(df$lower, 2), " ; ",
                                 round(df$upper, 2), "]"),
                  hjust = 0, size = 4) +
-        labs(title = "Ten sam zbiór — trzy poziomy ufności",
+        labs(
              x = "Wartość", y = "Poziom ufności") +
         theme_upwr()
     }

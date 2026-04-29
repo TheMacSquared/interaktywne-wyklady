@@ -72,7 +72,7 @@ ch3_server <- function(input, output, session) {
     d <- sim_data()
     ggplot(d, aes(x = oceny)) +
       geom_histogram(bins = max(5L, round(input$tab2_n / 5)), fill = data_primary, color = "white", alpha = 0.8) +
-      labs(title = paste0("Histogram (n = ", input$tab2_n, ")"), x = "Średnia ocen", y = "Liczebność") +
+      labs(x = "Średnia ocen", y = "Liczebność") +
       theme_upwr(base_size = 14)
   })
 
@@ -87,7 +87,7 @@ ch3_server <- function(input, output, session) {
                  color = data_bad, size = 4) +
       geom_hline(yintercept = 0.5, linetype = "dashed", color = data_good) +
       annotate("text", x = 150, y = 0.55, label = "Akceptowalna szerokość", color = data_good, size = 4) +
-      labs(title = "Szerokość 95% CI", x = "Liczba obserwacji (n)", y = "Szerokość CI") +
+      labs(x = "Liczba obserwacji (n)", y = "Szerokość CI") +
       theme_upwr(base_size = 14)
   })
 
@@ -112,7 +112,7 @@ ch3_server <- function(input, output, session) {
       geom_hline(yintercept = 0.8, linetype = "dashed", color = data_good) +
       annotate("text", x = 150, y = 0.83, label = "Moc = 80% (standard)", color = data_good, size = 4) +
       scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
-      labs(title = "Moc testu (effect size d = 0.5)", x = "Liczba obserwacji (n)", y = "Moc testu") +
+      labs(x = "Liczba obserwacji (n)", y = "Moc testu") +
       theme_upwr(base_size = 14)
   })
 

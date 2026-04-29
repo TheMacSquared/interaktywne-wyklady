@@ -133,7 +133,7 @@ ch6_server <- function(input, output, session) {
       geom_bar(fill = data_bad, alpha = 0.85) +
       scale_x_discrete(limits = c("1","2","3","4","5")) +
       labs(
-        title = paste0("Ocena ogólna hotelu (skala 1–5): ", pct_45, "% odpowiedzi to 4 lub 5"),
+        
         x = "Ocena ogólna", y = "Liczba gości"
       ) +
       theme_upwr(base_size = 14)
@@ -147,7 +147,7 @@ ch6_server <- function(input, output, session) {
     ggplot(typ_counts, aes(x = typ_pokoju, y = n)) +
       geom_col(fill = data_bad, alpha = 0.85) +
       geom_text(aes(label = paste0(pct, "%")), vjust = -0.4, size = 4.5) +
-      labs(title = "Rozkład gości według typu pokoju",
+      labs(
            x = "Typ pokoju", y = "Liczba gości") +
       theme_upwr(base_size = 14)
   })
@@ -173,8 +173,7 @@ ch6_server <- function(input, output, session) {
                vjust = 2, hjust = -0.1, size = 4, color = data_reference) +
       scale_x_continuous(breaks = 1:14) +
       labs(
-        title = paste0("Długość pobytu  |  zakres: ", min(hotel_data$dlugosc_pobytu),
-                       "–", max(hotel_data$dlugosc_pobytu), " noce"),
+        
         x = "Długość pobytu (noce)", y = "Liczba gości"
       ) +
       theme_upwr(base_size = 14)
@@ -191,8 +190,7 @@ ch6_server <- function(input, output, session) {
       annotate("text", x = med_cena, y = Inf, label = paste0("mediana = ", med_cena, " PLN"),
                vjust = 2, hjust = -0.1, size = 4, color = data_reference) +
       labs(
-        title = paste0("Cena za noc  |  zakres: ", min(hotel_data$cena_za_noc),
-                       "–", max(hotel_data$cena_za_noc), " PLN  |  SD = ", sd_cena, " PLN"),
+        
         x = "Cena za noc (PLN)", y = "Liczba gości"
       ) +
       theme_upwr(base_size = 14)
@@ -205,7 +203,7 @@ ch6_server <- function(input, output, session) {
     ggplot(kraj_counts, aes(x = reorder(kraj_goscia, -n), y = n)) +
       geom_col(fill = data_bad, alpha = 0.85) +
       geom_text(aes(label = paste0(pct, "%  (n=", n, ")")), vjust = -0.4, size = 4.5) +
-      labs(title = "Rozkład gości według kraju",
+      labs(
            x = "Kraj gościa", y = "Liczba gości") +
       theme_upwr(base_size = 14)
   })
@@ -215,9 +213,8 @@ ch6_server <- function(input, output, session) {
       geom_point(alpha = 0.5, size = 3, color = data_reference) +
       geom_smooth(method = "lm", color = data_bad, se = TRUE) +
       scale_x_continuous(limits = c(1, 14), breaks = seq(1, 14, 2)) +
-      labs(title = "Długość pobytu vs cena za noc",
-           subtitle = paste0("r = ", round(cor(hotel_data$dlugosc_pobytu, hotel_data$cena_za_noc), 3),
-                             "  —  pobyt w wąskim przedziale 1–3 noce"),
+      labs(
+           
            x = "Długość pobytu (noce)", y = "Cena za noc (PLN)") +
       theme_upwr(base_size = 14)
   })
@@ -234,8 +231,8 @@ ch6_server <- function(input, output, session) {
     ggplot(data.frame(x = sim_pobytu, y = sim_cena), aes(x, y)) +
       geom_point(alpha = 0.5, size = 3, color = data_reference) +
       geom_smooth(method = "lm", color = data_primary, se = TRUE) +
-      labs(title = paste0("Symulacja z rozrzutem ×", mult),
-           subtitle = paste0("r = ", r, "  —  dłuższy pobyt = niższa cena za noc (znizka wolumenowa)"),
+      labs(
+           
            x = "Długość pobytu (symulowane noce)", y = "Cena za noc (PLN)") +
       theme_upwr(base_size = 14)
   })

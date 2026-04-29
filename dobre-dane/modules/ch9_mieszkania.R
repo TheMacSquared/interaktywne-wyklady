@@ -90,7 +90,7 @@ ch9_server <- function(input, output, session) {
     ggplot(lab_data, aes(x = wiek, y = hemoglobina)) +
       geom_point(alpha = 0.5, color = data_reference) +
       geom_smooth(method = "lm", color = data_bad, se = TRUE) +
-      labs(title = paste0("Wiek vs hemoglobina (R² = ", r2, ")"),
+      labs(
            x = "Wiek (lata)", y = "Hemoglobina (g/dL)") +
       theme_upwr(base_size = 14)
   })
@@ -98,7 +98,7 @@ ch9_server <- function(input, output, session) {
   make_boxplot <- function(var, label, unit = "") {
     ggplot(lab_data, aes(y = .data[[var]])) +
       geom_boxplot(fill = data_mixed, alpha = 0.7, width = 0.4) +
-      labs(title = label,
+      labs(
            y = if (nchar(unit) > 0) paste0(label, " (", unit, ")") else label) +
       theme_upwr(base_size = 13) +
       theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -116,7 +116,7 @@ ch9_server <- function(input, output, session) {
     ggplot(d, aes(x = wiek, y = hemoglobina)) +
       geom_point(alpha = 0.5, color = data_reference) +
       geom_smooth(method = "lm", color = data_good, se = TRUE) +
-      labs(title = paste0("Po czyszczeniu (R² = ", r2, ")"),
+      labs(
            x = "Wiek (lata)", y = "Hemoglobina (g/dL)") +
       theme_upwr(base_size = 14)
   })

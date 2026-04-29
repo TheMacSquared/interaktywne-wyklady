@@ -269,7 +269,7 @@ ch1_server <- function(input, output, session) {
                  label = paste0("śr. = ", round(mean(orig), 2)),
                  vjust = -0.3, hjust = -0.1, color = sim_secondary, size = 4) +
         scale_y_continuous(breaks = 0, labels = "Oryginalna próba") +
-        labs(title = paste0("Próba (n = ", length(orig), ")"),
+        labs(
              x = "Wartość", y = NULL) +
         theme_upwr() +
         theme(axis.text.y = element_text(size = 12))

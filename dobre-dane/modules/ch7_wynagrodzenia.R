@@ -62,12 +62,12 @@ ch7_server <- function(input, output, session) {
     if (var %in% c("wage", "age")) {
       ggplot(Wage, aes(x = .data[[var]])) +
         geom_histogram(bins = 30, fill = data_primary, color = "white", alpha = 0.8) +
-        labs(title = paste("Rozkład:", var), x = var, y = "Liczebność") +
+        labs( x = var, y = "Liczebność") +
         theme_upwr(base_size = 14)
     } else {
       ggplot(Wage, aes(x = .data[[var]])) +
         geom_bar(fill = data_primary, alpha = 0.8) +
-        labs(title = paste("Rozkład:", var), x = var, y = "Liczebność") +
+        labs( x = var, y = "Liczebność") +
         theme_upwr(base_size = 14) +
         theme(axis.text.x = element_text(angle = 30, hjust = 1))
     }

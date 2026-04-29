@@ -561,7 +561,7 @@ ch4_server <- function(input, output, session) {
     } else if (step <= 2) {
       p <- ggplot(d, aes(x = x, y = y)) +
         geom_point(color = col_h0, alpha = 0.6, size = 2.5) +
-        labs(title = par$title, x = par$xlab, y = par$ylab) +
+        labs(x = par$xlab, y = par$ylab) +
         theme()
 
       if (step >= 2) {
@@ -587,7 +587,7 @@ ch4_server <- function(input, output, session) {
                  label = paste0("t = ", round(t_stat, 3)),
                  hjust = if (t_stat > 0) -0.1 else 1.1,
                  color = col_reject, fontface = "bold") +
-        labs(title = paste0("Rozkład pod H0: t(", n - 2, ")"),
+        labs(
              x = "Statystyka testowa", y = "Gęstość") +
         theme()
     } else {
@@ -684,7 +684,7 @@ ch4_server <- function(input, output, session) {
     if (step <= 2) {
       p <- ggplot(d, aes(x = x, y = y)) +
         geom_point(color = col_h0, alpha = 0.6, size = 2.5) +
-        labs(title = par$title, x = par$xlab, y = par$ylab) +
+        labs(x = par$xlab, y = par$ylab) +
         theme()
       if (step >= 2) {
         p <- p + geom_smooth(method = "lm", se = FALSE,
@@ -704,8 +704,8 @@ ch4_server <- function(input, output, session) {
                  label = paste0("t = ", round(t_stat, 3)),
                  hjust = if (t_stat > 0) -0.1 else 1.1,
                  color = col_reject, fontface = "bold") +
-        labs(title = paste0("Rozkład pod H0: t(", n - 2, ")"),
-             subtitle = "Test jednostronny — tylko jeden ogon!",
+        labs(
+             
              x = "Statystyka testowa", y = "Gęstość") +
         theme()
     } else {
@@ -784,7 +784,7 @@ ch4_server <- function(input, output, session) {
                    size = ifelse(seq_len(nrow(df)) > n_base, 4, 2.5),
                    alpha = 0.7) +
         geom_smooth(method = "lm", se = FALSE, color = col_reject, alpha = 0.5) +
-        labs(title = paste0("r = ", round(r_val, 3)),
+        labs(
              x = "X", y = "Y") +
         theme()
     }

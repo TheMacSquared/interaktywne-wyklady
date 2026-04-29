@@ -175,7 +175,7 @@ ch4_server <- function(input, output, session) {
                        color = "white", position = "identity") +
         geom_vline(xintercept = 0.05, color = col_fail, linetype = "dashed") +
         scale_fill_manual(values = c(col_test, col_alt), name = NULL) +
-        labs(title = paste0("Rozkład p-wartości (H₀ prawdziwa, n = ", input$ch4_n, ")"),
+        labs(
              x = "p-wartość", y = "Liczba") +
         theme_upwr() +
         theme(legend.position = "top")

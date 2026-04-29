@@ -260,14 +260,14 @@ ch1_server <- function(input, output, session) {
         geom_vline(xintercept = params$mu, color = col_true,
                    linewidth = 1.5, linetype = "dashed") +
         annotate("text", x = params$mu, y = Inf, vjust = 2,
-                 label = paste0("μ = ", params$mu),
+                 label = "μ",
                  color = col_true, fontface = "bold", size = 5) +
         geom_vline(xintercept = mean(est$xbar), color = col_estimate,
                    linewidth = 1.5, linetype = "solid") +
         annotate("text", x = mean(est$xbar), y = Inf, vjust = 4,
-                 label = paste0("średnia x̄ = ", round(mean(est$xbar), 2)),
+                 label = "średnia x̄",
                  color = col_estimate, fontface = "bold", size = 5) +
-        labs(title = "Rozkład estymat średniej",
+        labs(
              x = expression(bar(x)), y = "Gęstość") +
         theme_upwr()
     }
@@ -319,9 +319,9 @@ ch1_server <- function(input, output, session) {
         geom_point(color = col_estimate, size = 3) +
         geom_line(color = col_estimate, alpha = 0.5) +
         annotate("text", x = max(df$draw), y = params$mu,
-                 label = paste0("μ = ", params$mu),
+                 label = "μ",
                  vjust = -1, color = col_true, fontface = "bold") +
-        labs(title = paste0("Kolejne estymaty średniej (n = ", input$ch1_fluct_n, ")"),
+        labs(
              x = "Numer losowania", y = expression(bar(x))) +
         theme_upwr()
     }

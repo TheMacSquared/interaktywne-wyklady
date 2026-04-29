@@ -298,8 +298,8 @@ ch3_server <- function(input, output, session) {
       geom_hline(yintercept = 1/d$k, color = unname(upwr_cat["terakota"]), linewidth = 1, linetype = "dashed") +
       geom_point(aes(y = 1/d$k), color = unname(upwr_cat["terakota"]), size = 3) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = paste0("Rozkład jednostajny: ", d$n, " prób, ", d$k, " wyników"),
-           subtitle = paste0("Linia: P(X=k) = 1/", d$k, " = ", round(1/d$k, 4)),
+      labs(
+           
            x = "Wynik", y = "Częstość względna") +
       theme_upwr()
   })
@@ -329,7 +329,7 @@ ch3_server <- function(input, output, session) {
       geom_segment(aes(xend = x, yend = 0), linewidth = 1, alpha = 0.6, position = dodge) +
       scale_color_manual(values = colors, name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozkład dwumianowy B(n, p)",
+      labs(
            x = "Liczba sukcesów (k)", y = "P(X = k)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
@@ -377,7 +377,7 @@ ch3_server <- function(input, output, session) {
       geom_segment(aes(xend = x, yend = 0), linewidth = 1, alpha = 0.6, position = dodge) +
       scale_color_manual(values = colors, name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozkład Poissona Pois(λ)",
+      labs(
            x = "Liczba zdarzeń (k)", y = "P(X = k)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
@@ -426,7 +426,7 @@ ch3_server <- function(input, output, session) {
       geom_segment(aes(xend = x, yend = 0), linewidth = 1, alpha = 0.6, position = dodge) +
       scale_color_manual(values = colors, name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozkład geometryczny Geom(p)",
+      labs(
            x = "Numer próby (k)", y = "P(X = k)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))

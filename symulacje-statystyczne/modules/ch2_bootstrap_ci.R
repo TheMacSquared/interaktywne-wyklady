@@ -326,11 +326,8 @@ ch2_server <- function(input, output, session) {
       scale_y_continuous(breaks = seq_len(nrow(df)),
                          labels = paste0("Próba ", seq_len(nrow(df)))) +
       labs(
-        title    = paste0("Bootstrap CI (", round(conf_level * 100), "%) dla ", stat_label),
-        subtitle = if (!is.null(true_val))
-                     paste0("Prawdziwa wartość = ", round(true_val, 3))
-                   else
-                     paste0("Liczba prób: ", nrow(df)),
+        
+        
         x = stat_label, y = NULL
       ) +
       theme_upwr() +
@@ -440,8 +437,8 @@ ch2_server <- function(input, output, session) {
       geom_histogram(fill = sim_bootstrap, color = "white", alpha = 0.8, bins = 15) +
       geom_vline(xintercept = last_obs, color = sim_observed,
                  linewidth = 1.3, linetype = "dashed") +
-      labs(title = "Ostatnia próba",
-           subtitle = paste0(stat_lbl, " = ", round(last_obs, 3)),
+      labs(
+           
            x = "Wartość", y = "Liczba") +
       theme_upwr()
 
@@ -528,11 +525,8 @@ ch2_server <- function(input, output, session) {
       ) +
       scale_y_continuous(breaks = NULL) +
       labs(
-        title    = paste0("Pokrycie CI: ", coverage_pct, "% (cel: ",
-                          round(res$conf * 100), "%)"),
-        subtitle = paste0("Prawdziwa wartość średniej = ", round(true_val, 3),
-                          "  |  n = ", res$n,
-                          "  |  ", sum(covers), " z ", length(covers), " CI trafiło"),
+        
+        
         x = "Średnia", y = "Symulacja"
       ) +
       theme_upwr()

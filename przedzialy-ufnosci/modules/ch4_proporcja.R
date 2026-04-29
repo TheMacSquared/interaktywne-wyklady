@@ -319,8 +319,7 @@ ch4_server <- function(input, output, session) {
       scale_fill_manual(values = c("NIE" = col_miss, "TAK" = col_ci),
                         guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-      labs(x = NULL, y = "Liczebność",
-           title = paste0("Dane (n = ", n, ")")) +
+      labs(x = NULL, y = "Liczebność") +
       theme_upwr() +
       theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
@@ -339,8 +338,7 @@ ch4_server <- function(input, output, session) {
     p_right <- ggplot() +
       xlim(0, 1) +
       ylim(-0.6, 0.6) +
-      labs(x = "Proporcja", y = NULL,
-           title = paste0("p̂ = ", round(phat, 3))) +
+      labs(x = "Proporcja", y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
@@ -355,7 +353,7 @@ ch4_server <- function(input, output, session) {
         geom_point(aes(x = phat, y = Y_EST), color = c_est,
                    size = 7, shape = 18) +
         annotate("text", x = phat, y = Y_EST - 0.13,
-                 label = paste0("p̂ = ", round(phat, 3)),
+                 label = "p̂",
                  color = c_est, fontface = "bold", size = 5)
     }
 
@@ -365,7 +363,7 @@ ch4_server <- function(input, output, session) {
         geom_errorbarh(aes(xmin = phat - se, xmax = phat + se, y = Y_SE),
                        height = 0.08, color = c_se, linewidth = 1.8) +
         annotate("text", x = phat, y = Y_SE - 0.12,
-                 label = paste0("± SE = ±", round(se, 3)),
+                 label = "± SE",
                  color = c_se, fontface = "bold", size = 4.2)
     }
 
@@ -375,8 +373,7 @@ ch4_server <- function(input, output, session) {
         geom_errorbarh(aes(xmin = phat - me, xmax = phat + me, y = Y_CI),
                        height = 0.12, color = col_ci, linewidth = 2.2) +
         annotate("text", x = phat, y = Y_CI - 0.13,
-                 label = paste0("95% CI: [", round(phat - me, 3),
-                                " ; ", round(phat + me, 3), "]"),
+                 label = "95% CI",
                  color = col_ci, fontface = "bold", size = 5)
     }
 
@@ -516,7 +513,7 @@ ch4_server <- function(input, output, session) {
       scale_fill_manual(values = c("NIE" = col_miss, "TAK" = col_ci),
                         name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
-      labs(x = NULL, y = "Liczebność", title = "Dane") +
+      labs(x = NULL, y = "Liczebność") +
       theme_upwr() +
       theme(legend.position = "top",
             panel.grid.major.x = element_blank(),
@@ -526,7 +523,7 @@ ch4_server <- function(input, output, session) {
     p_top <- ggplot() +
       xlim(0, 1) +
       ylim(0.4, 2.6) +
-      labs(x = "Proporcja", y = NULL, title = "Proporcje w grupach") +
+      labs(x = "Proporcja", y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_text(face = "bold", size = 12),
             panel.grid.major.y = element_blank(),
@@ -555,7 +552,7 @@ ch4_server <- function(input, output, session) {
       xlim(xlims_bot) +
       ylim(-0.55, 0.55) +
       labs(x = "Różnica proporcji  —  Grupa 1 − Grupa 2",
-           y = NULL, title = "Różnica + CI") +
+           y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
@@ -842,8 +839,7 @@ ch4_server <- function(input, output, session) {
       scale_fill_manual(values = c("NIE" = col_miss, "TAK" = col_ci),
                         guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-      labs(x = NULL, y = "Liczebność",
-           title = paste0("Dane (n = ", n, ")")) +
+      labs(x = NULL, y = "Liczebność") +
       theme_upwr() +
       theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
@@ -859,7 +855,7 @@ ch4_server <- function(input, output, session) {
     p_right <- ggplot() +
       xlim(xlims) +
       ylim(-0.6, 0.6) +
-      labs(x = xlab, y = NULL, title = title) +
+      labs(x = xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
@@ -958,7 +954,7 @@ ch4_server <- function(input, output, session) {
     p <- ggplot() +
       xlim(xlims) +
       ylim(0.3, k + 0.7) +
-      labs(x = xlab, y = NULL, title = title) +
+      labs(x = xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
@@ -1036,7 +1032,7 @@ ch4_server <- function(input, output, session) {
       scale_fill_manual(values = c("NIE" = col_miss, "TAK" = col_ci),
                         name = NULL) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
-      labs(x = NULL, y = "Liczebność", title = "Dane") +
+      labs(x = NULL, y = "Liczebność") +
       theme_upwr() +
       theme(legend.position = "top",
             panel.grid.major.x = element_blank(),
@@ -1046,7 +1042,7 @@ ch4_server <- function(input, output, session) {
     p_top <- ggplot() +
       xlim(0, 1) +
       ylim(0.4, 2.6) +
-      labs(x = xlab, y = NULL, title = "Proporcje w grupach") +
+      labs(x = xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_text(face = "bold", size = 11),
             panel.grid.major.y = element_blank(),
@@ -1078,7 +1074,7 @@ ch4_server <- function(input, output, session) {
       xlim(xlims_bot) +
       ylim(-0.55, 0.55) +
       labs(x = paste0("Różnica proporcji  —  ", label1, " − ", label2),
-           y = NULL, title = "Różnica + CI") +
+           y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),

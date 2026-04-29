@@ -142,8 +142,8 @@ ch3_server <- function(input, output, session) {
                vjust = -0.3, hjust = 1.1, color = bayes_freq, size = 3.5) +
       annotate("text", x = ci[2], y = Inf, label = round(ci[2], 2),
                vjust = -0.3, hjust = -0.1, color = bayes_freq, size = 3.5) +
-      labs(title = "Dane + 95% CI (t-Studenta)",
-           subtitle = "Przedział zbudowany metodą, która w 95% przypadków pokrywa prawdę",
+      labs(
+           
            x = "Wartość", y = "Liczność") +
       theme_upwr()
   })

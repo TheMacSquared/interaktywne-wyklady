@@ -478,7 +478,7 @@ ch3_server <- function(input, output, session) {
         geom_col(alpha = 0.8, width = 0.6) +
         geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold") +
         scale_fill_manual(values = c(col_accept, col_reject)) +
-        labs(title = par$title, x = NULL, y = "Liczba") +
+        labs(x = NULL, y = "Liczba") +
                 theme(legend.position = "none")
 
       if (step >= 2) {
@@ -515,7 +515,7 @@ ch3_server <- function(input, output, session) {
                  label = paste0("k = ", k),
                  hjust = if (k > n * p0) -0.2 else 1.2,
                  color = col_reject, fontface = "bold") +
-        labs(title = paste0("Rozkład B(", n, ", ", p0, ") pod H0"),
+        labs(
              x = "Liczba sukcesów", y = "Prawdopodobieństwo") +
         theme()
     }
@@ -613,7 +613,7 @@ ch3_server <- function(input, output, session) {
         geom_col(alpha = 0.8, width = 0.6) +
         geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold") +
         scale_fill_manual(values = c(col_accept, col_reject)) +
-        labs(title = par$title, x = NULL, y = "Liczba") +
+        labs(x = NULL, y = "Liczba") +
                 theme(legend.position = "none")
 
       if (step >= 2) {
@@ -649,10 +649,8 @@ ch3_server <- function(input, output, session) {
                  label = paste0("k = ", k),
                  hjust = if (k > n * p0) -0.2 else 1.2,
                  color = col_reject, fontface = "bold") +
-        labs(title = paste0("Rozkład B(", n, ", ", p0, ") pod H0"),
-             subtitle = paste0("Test jednostronny (",
-                               if (par$alt_1s == "greater") "prawy" else "lewy",
-                               " ogon)"),
+        labs(
+             
              x = "Liczba sukcesów", y = "Prawdopodobieństwo") +
         theme()
     }

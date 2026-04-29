@@ -304,10 +304,8 @@ ch1_server <- function(input, output, session) {
 
     p + coord_cartesian(xlim = fixed_xlim, ylim = c(0, fixed_ymax)) +
     labs(
-      title = paste0(if (show_hist && show_dens) "Dane + model"
-                     else if (show_hist) "Dane empiryczne (histogram)"
-                     else "Model teoretyczny (krzywa)"),
-      subtitle = paste0("n = ", d$n, " | ", dist_label),
+      
+      
       x = "Wartość", y = "Gęstość"
     ) +
     theme_upwr()
@@ -373,7 +371,7 @@ ch1_server <- function(input, output, session) {
         geom_text(aes(label = sprintf("%.3f", rel_freq)), vjust = -0.5, size = 4) +
         scale_y_continuous(limits = c(0, max(0.35, max(freq_df$rel_freq) * 1.15)),
                            expand = expansion(mult = c(0, 0.05))) +
-        labs(title = "Częstości względne", x = "Ścianka", y = "Częstość względna") +
+        labs(x = "Ścianka", y = "Częstość względna") +
         annotate("text", x = 6.3, y = 1/6, label = "1/6", color = unname(upwr_cat["terakota"]),
                  fontface = "bold", size = 4, hjust = 0) +
         theme_upwr()
@@ -405,7 +403,7 @@ ch1_server <- function(input, output, session) {
       geom_line(linewidth = 0.8, alpha = 0.7) +
       geom_hline(yintercept = 1/6, color = "gray40", linewidth = 0.8, linetype = "dashed") +
       scale_color_brewer(palette = "Set2", name = "Ścianka") +
-      labs(title = "Zbieżność częstości do 1/6",
+      labs(
            x = "Liczba rzutów", y = "Częstość względna") +
       theme_upwr() +
       theme(legend.position = "right")
@@ -452,7 +450,7 @@ ch1_server <- function(input, output, session) {
       scale_fill_manual(values = c("Obserwowane" = unname(upwr_cat["niebo"])), name = "") +
       scale_color_manual(values = c("Teoretyczne" = unname(upwr_cat["terakota"])), name = "") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = paste0("n = ", length(fd$obs), " obserwacji"),
+      labs(
            x = "Wynik", y = "Proporcja / Prawdopodobieństwo") +
       theme_upwr() +
       theme(legend.position = "top")
@@ -495,7 +493,7 @@ ch1_server <- function(input, output, session) {
                color = "white", alpha = 0.85, width = 0.6) +
       geom_text(aes(label = sprintf("%.2f", prob)), vjust = -0.5, size = 5) +
       scale_y_continuous(limits = c(0, 1.1), expand = expansion(mult = c(0, 0))) +
-      labs(title = if (valid) "Poprawny rozkład!" else "Suma musi wynosić 1",
+      labs(
            x = "Wynik", y = "Prawdopodobieństwo") +
       theme_upwr()
   })

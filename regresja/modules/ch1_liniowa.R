@@ -166,7 +166,7 @@ ch1_server <- function(input, output, session) {
         p <- p + geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]))
       }
 
-      p + labs(title = paste0(df$y_label[1], " ~ ", df$x_label[1]),
+      p + labs(
                x = df$x_label[1], y = df$y_label[1]) +
         theme_upwr()
     }
@@ -214,14 +214,14 @@ ch1_server <- function(input, output, session) {
         geom_hline(yintercept = 0, linetype = "dashed", color = upwr_secondary) +
         geom_point(color = unname(upwr_cat["terakota"]), alpha = 0.5) +
         geom_smooth(se = FALSE, color = unname(upwr_cat["niebo"]), linewidth = 0.8) +
-        labs(title = "Reszty vs dopasowane", x = "Wartości dopasowane",
+        labs(x = "Wartości dopasowane",
              y = "Reszty") +
         theme_upwr()
 
       p2 <- ggplot(df, aes(sample = std_resid)) +
         stat_qq(color = upwr_secondary, alpha = 0.5) +
         stat_qq_line(color = unname(upwr_cat["niebo"])) +
-        labs(title = "Q-Q reszty", x = "Kwantyle teoretyczne",
+        labs(x = "Kwantyle teoretyczne",
              y = "Kwantyle próbkowe") +
         theme_upwr()
 
@@ -251,8 +251,7 @@ ch1_server <- function(input, output, session) {
       ggplot(df, aes(x = x, y = y)) +
         geom_point(color = upwr_secondary, alpha = 0.5) +
         geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-        labs(title = paste0("R² = ",
-                            round(summary(lm(y ~ x, data = df))$r.squared, 3)),
+        labs(
              x = "X", y = "Y") +
         theme_upwr()
     }

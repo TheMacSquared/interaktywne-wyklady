@@ -148,7 +148,7 @@ ch10_server <- function(input, output, session) {
                    se = TRUE, color = bayes_freq,
                    fill = bayes_freq, alpha = 0.15) +
       scale_y_continuous(breaks = c(0, 1), limits = c(-0.1, 1.1)) +
-      labs(title = paste0("Dane (n = ", nrow(d), ", odpowiedź binarna)"),
+      labs(
            x = "x", y = "y (0 / 1)") +
       theme_upwr()
   })

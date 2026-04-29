@@ -263,7 +263,7 @@ ch5_server <- function(input, output, session) {
     }
 
     p + geom_vline(xintercept = mu, color = upwr_secondary, linetype = "dashed") +
-      labs(title = paste0("N(μ=", mu, ", σ=", sigma, ")"),
+      labs(
            x = "x", y = "f(x)") +
       theme_upwr()
   })
@@ -311,7 +311,7 @@ ch5_server <- function(input, output, session) {
                          name = "") +
       scale_fill_manual(values = c("A" = unname(upwr_cat["niebo"]), "B" = unname(upwr_cat["terakota"])),
                         guide = "none") +
-      labs(title = "Porównanie dwóch rozkładów normalnych",
+      labs(
            x = "x", y = "f(x)") +
       theme_upwr() +
       theme(legend.position = "top")
@@ -361,7 +361,7 @@ ch5_server <- function(input, output, session) {
       annotate("text", x = x, y = dnorm(x, mu, sigma) * 1.2,
                label = paste0("x = ", x), color = unname(upwr_cat["terakota"]),
                size = 4, fontface = "bold", vjust = -0.5) +
-      labs(title = paste0("Oryginalna skala: N(", mu, ", ", sigma, ")"),
+      labs(
            x = "x", y = "f(x)") +
       theme_upwr(base_size = 12)
 
@@ -372,7 +372,7 @@ ch5_server <- function(input, output, session) {
       annotate("text", x = z, y = dnorm(z) * 1.2,
                label = paste0("z = ", round(z, 2)), color = unname(upwr_cat["terakota"]),
                size = 4, fontface = "bold", vjust = -0.5) +
-      labs(title = "Standaryzowana skala: N(0, 1)",
+      labs(
            x = "z", y = "f(z)") +
       theme_upwr(base_size = 12)
 
@@ -413,7 +413,7 @@ ch5_server <- function(input, output, session) {
     p + annotate("text", x = 0, y = 0.2,
                  label = sprintf("P = %.4f", prob),
                  size = 6, fontface = "bold", color = upwr_secondary) +
-      labs(title = "Rozkład standardowy N(0, 1)", x = "z", y = "f(z)") +
+      labs( x = "z", y = "f(z)") +
       theme_upwr()
   })
 

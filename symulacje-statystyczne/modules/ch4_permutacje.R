@@ -220,8 +220,8 @@ ch4_server <- function(input, output, session) {
         annotate("text", x = 1.5, y = max(df$value) * 1.05,
                  label = paste0("Δ obs = ", round(obs_diff, 2)),
                  size = 5, fontface = "bold", color = sim_observed) +
-        labs(title = "Krok 1: Dane oryginalne",
-             subtitle = paste0("Różnica obserwowana: Δ = ", round(obs_diff, 2)),
+        labs(
+             
              x = "Grupa", y = "Wartość") +
         theme_upwr()
     } else if (step == 2) {
@@ -239,8 +239,8 @@ ch4_server <- function(input, output, session) {
         annotate("text", x = 1.5, y = max(perm_df$value) * 1.05,
                  label = paste0("Δ perm = ", round(perm_diff, 2)),
                  size = 5, fontface = "bold", color = sim_success) +
-        labs(title = "Krok 2: Jedna permutacja etykiet",
-             subtitle = "Etykiety grup przetasowane losowo",
+        labs(
+             
              x = "Grupa (przetasowana)", y = "Wartość") +
         theme_upwr()
     } else {
@@ -266,15 +266,15 @@ ch4_server <- function(input, output, session) {
                            vjust = -0.3, hjust = -0.1,
                            color = sim_observed, size = 4.5, fontface = "bold") +
           labs(
-            title    = paste0("Krok 4: Rozkład permutacyjny (B = ", length(result$perm_diffs), ")"),
-            subtitle = paste0("p-wartość permutacyjna = ", round(p_val, 4)),
+            
+            
             x        = "Permutacyjna różnica średnich (Δ*)",
             y        = "Liczba permutacji"
           )
       } else {
         p <- p + labs(
-          title    = paste0("Krok 3: Rozkład permutacyjny (B = ", length(result$perm_diffs), ")"),
-          subtitle = "Czerwone słupki = wyniki równie lub bardziej ekstremalne",
+          
+          
           x        = "Permutacyjna różnica średnich (Δ*)",
           y        = "Liczba permutacji"
         )
@@ -354,7 +354,7 @@ ch4_server <- function(input, output, session) {
       annotate("text", x = min(df$x), y = max(df$y),
                label = paste0("r = ", round(res$observed_r, 3)),
                hjust = 0, vjust = 1, size = 5, fontface = "bold", color = sim_observed) +
-      labs(title = paste0("Dane (n = ", nrow(df), ")"),
+      labs(
            x = "x", y = "y") +
       theme_upwr()
 
@@ -369,8 +369,8 @@ ch4_server <- function(input, output, session) {
       geom_vline(xintercept = -abs(res$observed_r), color = sim_observed,
                  linewidth = 1.2, linetype = "dashed") +
       labs(
-        title    = paste0("Rozkład permutacyjny (B = ", length(res$perm_cors), ")"),
-        subtitle = paste0("p = ", round(res$p_value, 4)),
+        
+        
         x        = "Korelacja r*",
         y        = "Liczba permutacji"
       ) +

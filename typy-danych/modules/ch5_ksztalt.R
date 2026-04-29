@@ -84,6 +84,8 @@ ch5_ui <- list(
         )
       ),
       plotOutput("ch5_kurt_plot", height = "350px"),
+      h5(style = "text-align: center; color: var(--upwr-reference); margin-top: 12px;",
+         "Powiększenie prawego ogona (x > 2.5)"),
       plotOutput("ch5_kurt_tails", height = "220px"),
       uiOutput("ch5_kurt_text")
     ),
@@ -185,9 +187,8 @@ ch5_server <- function(input, output, session) {
         "Symetryczny" = upwr_cat["szalwia"],
         "Prawostronnie skośny" = upwr_cat["niebo"]
       )) +
-      labs(x = "Wartość", y = "Gęstość",
-        title = "Trzy typy skośności rozkładu") +
-            theme(legend.position = "none",
+      labs(x = "Wartość", y = "Gęstość") +
+      theme(legend.position = "none",
             strip.text = element_text(face = "bold", size = 12))
   })
 
@@ -204,22 +205,13 @@ ch5_server <- function(input, output, session) {
       geom_histogram(aes(y = after_stat(density)),
         bins = 20, fill = upwr_cat["niebo"], color = "white", alpha = 0.6) +
       geom_density(color = upwr_secondary, linewidth = 1) +
-      geom_vline(xintercept = m, color = upwr_accent, linewidth = 1.2, linetype = "solid") +
-      geom_vline(xintercept = med, color = upwr_cat["niebo"], linewidth = 1.2, linetype = "dashed") +
-      annotate("text",
-        x = m, y = -Inf, vjust = -0.5,
-        label = paste0("Średnia = ", round(m, 2)),
-        color = upwr_accent, size = 3.5, fontface = "bold") +
-      annotate("text",
-        x = med, y = -Inf, vjust = -2,
-        label = paste0("Mediana = ", round(med, 2)),
-        color = upwr_cat["niebo"], size = 3.5, fontface = "bold") +
-      labs(
-        title = paste0(d$label, " — skośność = ", round(sk, 3)),
-        x = d$label,
-        y = "Gęstość"
-      ) +
-      theme()
+      geom_vline(aes(xintercept = m, color = "Średnia"), linewidth = 1.2, linetype = "solid") +
+      geom_vline(aes(xintercept = med, color = "Mediana"), linewidth = 1.2, linetype = "dashed") +
+      scale_color_manual(name = NULL,
+        breaks = c("Średnia", "Mediana"),
+        values = c("Średnia" = upwr_accent, "Mediana" = upwr_cat["niebo"])) +
+      labs(x = d$label, y = "Gęstość") +
+      theme(legend.position = "top")
   })
 
   output$ch5_skew_info <- renderUI({
@@ -281,18 +273,14 @@ ch5_server <- function(input, output, session) {
     type_color <- if (ek < -0.1) upwr_cat["bursztyn"] else if (ek > 0.1) upwr_accent else upwr_cat["szalwia"]
 
     ggplot(df, aes(x = x)) +
-      geom_line(aes(y = norm), color = upwr_reference, linewidth = 1, linetype = "dashed") +
+      geom_line(aes(y = norm, linetype = "Rozkład normalny"),
+                color = upwr_reference, linewidth = 1) +
       geom_area(aes(y = dens), fill = type_color, alpha = 0.35) +
-      geom_line(aes(y = dens), color = type_color, linewidth = 1.2) +
-      annotate("text", x = -4.5, y = max(df$dens) * 0.95,
-        label = paste0(type_name, " (kurtoza = ", round(ek, 1), ")"),
-        color = type_color, hjust = 0, size = 5, fontface = "bold") +
-      annotate("text", x = -4.5, y = max(df$dens) * 0.85,
-        label = "Rozkład normalny (kurtoza = 0)",
-        color = upwr_reference, hjust = 0, size = 4) +
-      labs(x = "x", y = "Gęstość",
-        title = "Jak kurtoza wpływa na kształt rozkładu?") +
-      theme()
+      geom_line(aes(y = dens, linetype = type_name), color = type_color, linewidth = 1.2) +
+      scale_linetype_manual(name = NULL,
+        values = setNames(c("dashed", "solid"), c("Rozkład normalny", type_name))) +
+      labs(x = "x", y = "Gęstość") +
+      theme(legend.position = "top")
   })
 
   output$ch5_kurt_tails <- renderPlot({
@@ -307,8 +295,7 @@ ch5_server <- function(input, output, session) {
       geom_line(aes(y = norm), color = upwr_reference, linewidth = 1, linetype = "dashed") +
       geom_area(aes(y = dens), fill = type_color, alpha = 0.3) +
       geom_line(aes(y = dens), color = type_color, linewidth = 1.2) +
-      labs(x = "x", y = "Gęstość",
-        title = "Powiększenie prawego ogona (x > 2.5)") +
+      labs(x = "x", y = "Gęstość") +
       theme()
   })
 
@@ -375,20 +362,13 @@ ch5_server <- function(input, output, session) {
         bins = 20, fill = upwr_cat["niebo"], color = "white", alpha = 0.5) +
       geom_density(color = upwr_secondary, linewidth = 1) +
       geom_rug(color = upwr_secondary, alpha = 0.5) +
-      geom_vline(xintercept = m, color = upwr_accent, linewidth = 1.1) +
-      geom_vline(xintercept = med, color = upwr_cat["niebo"], linewidth = 1.1, linetype = "dashed") +
-      annotate("text", x = m, y = Inf, vjust = 2, hjust = -0.1,
-        label = paste0("Średnia = ", round(m, 2)),
-        color = upwr_accent, size = 3.8, fontface = "bold") +
-      annotate("text", x = med, y = Inf, vjust = 3.5, hjust = -0.1,
-        label = paste0("Mediana = ", round(med, 2)),
-        color = upwr_cat["niebo"], size = 3.8, fontface = "bold") +
-      labs(
-        title = paste0("Rozkład zmiennej: ", d$label),
-        x = d$label,
-        y = "Gęstość"
-      ) +
-      theme()
+      geom_vline(aes(xintercept = m, color = "Średnia"), linewidth = 1.1) +
+      geom_vline(aes(xintercept = med, color = "Mediana"), linewidth = 1.1, linetype = "dashed") +
+      scale_color_manual(name = NULL,
+        breaks = c("Średnia", "Mediana"),
+        values = c("Średnia" = upwr_accent, "Mediana" = upwr_cat["niebo"])) +
+      labs(x = d$label, y = "Gęstość") +
+      theme(legend.position = "top")
   })
 
   output$ch5_full_box <- renderPlot({

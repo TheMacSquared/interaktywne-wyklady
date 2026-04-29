@@ -153,7 +153,7 @@ ch2_server <- function(input, output, session) {
         geom_boxplot(alpha = 0.6) +
         geom_jitter(width = 0.15, alpha = 0.3) +
         scale_fill_manual(values = c(col_test, col_alt)) +
-        labs(title = "Dwie grupy", x = "Grupa", y = "Wartość") +
+        labs(x = "Grupa", y = "Wartość") +
         theme_upwr() +
         theme(legend.position = "none")
     }

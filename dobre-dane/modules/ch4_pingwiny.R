@@ -72,7 +72,7 @@ ch4_server <- function(input, output, session) {
       scale_fill_identity() +
       geom_hline(yintercept = 5, linetype = "dashed", color = data_bad) +
       annotate("text", x = 2, y = 6, label = "Próg 5%", color = data_bad, size = 4) +
-      labs(title = "Procent braków danych", x = NULL, y = "% braków") +
+      labs( x = NULL, y = "% braków") +
       theme_upwr(base_size = 14) +
       theme(axis.text.x = element_text(angle = 30, hjust = 1))
   })
@@ -93,7 +93,7 @@ ch4_server <- function(input, output, session) {
            aes(x = species, y = .data[[input$tab3_var]], fill = species)) +
       geom_boxplot(alpha = 0.7) +
       scale_fill_manual(values = c(data_primary, data_mixed, data_good)) +
-      labs(title = paste(input$tab3_var, "wg gatunku"), x = "Gatunek", y = input$tab3_var) +
+      labs(x = "Gatunek", y = input$tab3_var) +
       theme_upwr(base_size = 14) +
       theme(legend.position = "none")
   })

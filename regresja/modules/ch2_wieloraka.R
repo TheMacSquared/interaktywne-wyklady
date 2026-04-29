@@ -186,7 +186,7 @@ ch2_server <- function(input, output, session) {
       scale_color_manual(values = c("TRUE" = unname(upwr_cat["niebo"]), "FALSE" = unname(upwr_cat["terakota"])),
                          labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),
                          name = NULL) +
-      labs(title = "Współczynniki regresji z 95% CI",
+      labs(
            x = "Estymata β", y = NULL) +
       theme_upwr() +
       theme(legend.position = "top")
@@ -255,7 +255,7 @@ ch2_server <- function(input, output, session) {
         scale_x_continuous(breaks = 1:4,
                            labels = paste0(1:4, " pred.")) +
         scale_color_manual(values = c(unname(upwr_cat["niebo"]), unname(upwr_cat["szalwia"])), name = NULL) +
-        labs(title = "R² vs adj. R² w funkcji liczby predyktorów",
+        labs(
              x = "Liczba predyktorów", y = "Wartość") +
         theme_upwr() +
         theme(legend.position = "top")

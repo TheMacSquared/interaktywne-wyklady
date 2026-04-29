@@ -468,29 +468,29 @@ ch4_server <- function(input, output, session) {
     } else if (step == 1) {
       ggplot(df, aes(x = x)) +
         geom_rug(color = unname(upwr_cat["niebo"]), alpha = 0.3) +
-        labs(title = "Krok 1: Surowe dane", x = "Wartość", y = "") +
+        labs(x = "Wartość", y = "") +
         theme_upwr()
     } else if (step == 2) {
       ggplot(df, aes(x = x)) +
         geom_histogram(bins = 5, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
         geom_rug(alpha = 0.2) +
-        labs(title = "Krok 2: Histogram (5 binów)", x = "Wartość", y = "Liczebność") +
+        labs( x = "Wartość", y = "Liczebność") +
         theme_upwr()
     } else if (step == 3) {
       ggplot(df, aes(x = x)) +
         geom_histogram(bins = 15, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
-        labs(title = "Krok 3: Histogram (15 binów)", x = "Wartość", y = "Liczebność") +
+        labs( x = "Wartość", y = "Liczebność") +
         theme_upwr()
     } else if (step == 4) {
       ggplot(df, aes(x = x)) +
         geom_histogram(bins = 30, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
-        labs(title = "Krok 4: Histogram (30 binów)", x = "Wartość", y = "Liczebność") +
+        labs( x = "Wartość", y = "Liczebność") +
         theme_upwr()
     } else if (step == 5) {
       ggplot(df, aes(x = x)) +
         geom_histogram(aes(y = after_stat(density)), bins = 30,
                        fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
-        labs(title = "Krok 5: Skala gęstości (oś Y = gęstość)",
+        labs(
              x = "Wartość", y = "Gęstość") +
         theme_upwr()
     } else if (step == 6) {
@@ -498,14 +498,14 @@ ch4_server <- function(input, output, session) {
         geom_histogram(aes(y = after_stat(density)), bins = 30,
                        fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.5) +
         geom_density(color = unname(upwr_cat["terakota"]), linewidth = 1.5) +
-        labs(title = "Krok 6: Histogram + krzywa gęstości",
+        labs(
              x = "Wartość", y = "Gęstość") +
         theme_upwr()
     } else {
       ggplot(df, aes(x = x)) +
         geom_density(fill = unname(upwr_cat["niebo"]), color = upwr_secondary, linewidth = 1.2, alpha = 0.3) +
-        labs(title = "Krok 7: Funkcja gęstości (PDF)",
-             subtitle = "Matematyczna idealizacja histogramu",
+        labs(
+             
              x = "Wartość", y = "Gęstość f(x)") +
         theme_upwr()
     }
@@ -575,7 +575,7 @@ ch4_server <- function(input, output, session) {
       annotate("text", x = (a + b) / 2, y = max(dfn(x_seq)) * 0.5,
                label = sprintf("P = %.4f", prob),
                size = 6, fontface = "bold", color = upwr_secondary) +
-      labs(title = paste0("P(", a, " < X < ", b, ")"),
+      labs(
            x = "x", y = "f(x)") +
       theme_upwr()
   })
@@ -626,7 +626,7 @@ ch4_server <- function(input, output, session) {
       scale_color_manual(values = colors, name = NULL) +
       scale_fill_manual(values = colors, guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozkład jednostajny U(a, b)",
+      labs(
            x = "x", y = "f(x)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
@@ -673,7 +673,7 @@ ch4_server <- function(input, output, session) {
       scale_color_manual(values = colors, name = NULL) +
       scale_fill_manual(values = colors, guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozkład wykładniczy Exp(λ)",
+      labs(
            x = "x", y = "f(x)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
@@ -725,7 +725,7 @@ ch4_server <- function(input, output, session) {
       scale_color_manual(values = colors, name = NULL) +
       scale_fill_manual(values = colors, guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozkład t-Studenta t(df)",
+      labs(
            x = "x", y = "f(x)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
@@ -773,7 +773,7 @@ ch4_server <- function(input, output, session) {
       scale_color_manual(values = colors, name = NULL) +
       scale_fill_manual(values = colors, guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozkład χ²(df)",
+      labs(
            x = "x", y = "f(x)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
@@ -822,7 +822,7 @@ ch4_server <- function(input, output, session) {
       scale_color_manual(values = colors, name = NULL) +
       scale_fill_manual(values = colors, guide = "none") +
       scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(title = "Rozkład log-normalny LogN(μ, σ)",
+      labs(
            x = "x", y = "f(x)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
