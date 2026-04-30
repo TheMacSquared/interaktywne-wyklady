@@ -35,44 +35,45 @@ ch4_ui <- list(
       )
     ),
 
-    # --- Wykres 1: sila korelacji (statyczny obrazek) ---
-    tagList(
-      p("Im większe ", withMathJax("\\(|r|\\)"),
-        ", tym ciaśniej punkty grupują się wokół prostej — poniżej trzy
-        zbiory o różnej sile korelacji.")
-    ),
-    figure_panel(
-      label = "Ryc. 6.1",
-      title = "Siła korelacji",
-      tags$img(src = "assets/correlation-strength.png",
-               style = "width: 100%; border-radius: 4px;")
-    ),
-
-    # --- Wykres 2: kierunek korelacji (statyczny obrazek) ---
+    # --- Wykres 1: kierunek korelacji ---
     tagList(
       p("Znak ", withMathJax("\\(r\\)"),
         " mówi o kierunku: dodatni oznacza, że obie zmienne rosną razem;
         ujemny — jedna rośnie, druga maleje; zero — brak trendu liniowego.")
     ),
     figure_panel(
-      label = "Ryc. 6.2",
+      label = "Ryc. 6.1",
       title = "Kierunek korelacji",
       tags$img(src = "assets/correlation-direction.png",
                style = "width: 100%; border-radius: 4px;")
     ),
 
-    # --- Wykres 3: rozrzut vs r (statyczny obrazek) ---
+    # --- Wykres 2: r vs nachylenie ---
     tagList(
-      p("Warto odróżnić korelację od nachylenia prostej. Wszystkie trzy
-        panele poniżej mają ten sam trend wzrostowy (podobne nachylenie),
-        ale im większy rozrzut punktów wokół prostej, tym niższe ",
-        withMathJax("\\(r\\)"),
-        ". Korelacja łączy obie cechy: kierunek trendu ", tags$em("i"),
-        " to, jak ciaśno punkty go trzymają.")
+      p("Wartość ", withMathJax("\\(|r|\\)"),
+        " mówi o ciasności, nie o nachyleniu. Trzy panele poniżej mają
+        wyraźnie różne nachylenia, a mimo to ", withMathJax("\\(r\\)"),
+        " jest w każdym z nich podobnie wysokie — bo punkty równie ciasno
+        trzymają się prostej, niezależnie od tego, jak ostro idzie ona w górę.")
+    ),
+    figure_panel(
+      label = "Ryc. 6.2",
+      title = "r nie zależy od nachylenia",
+      tags$img(src = "assets/correlation-strength.png",
+               style = "width: 100%; border-radius: 4px;")
+    ),
+
+    # --- Wykres 3: rozrzut vs r ---
+    tagList(
+      p("Skoro ", withMathJax("\\(r\\)"),
+        " nie zależy od nachylenia, to od czego? Od ", tags$em("rozrzutu"),
+        " punktów wokół prostej. Wszystkie trzy panele poniżej mają ten sam
+        trend wzrostowy, ale im większy rozrzut, tym niższe ",
+        withMathJax("\\(r\\)"), ".")
     ),
     figure_panel(
       label = "Ryc. 6.3",
-      title = "Uwaga: r to nie tylko nachylenie!",
+      title = "r mierzy ciasność, nie nachylenie",
       tags$img(src = "assets/correlation-scatter.png",
                style = "width: 100%; border-radius: 4px;")
     ),

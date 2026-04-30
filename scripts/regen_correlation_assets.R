@@ -68,22 +68,41 @@ scatter_panel <- function(df, panel_title, free_y = FALSE) {
 }
 
 # ----------------------------------------------------------------------------
-# Ryc. 6.1 — Sila korelacji (rozne r, IDENTYCZNY rozrzut globalny)
+# Ryc. 6.1 (po zamianie kolejnosci) — Korelacja vs nachylenie
+# Trzy rozne nachylenia (lagodne / srednie / strome), staly maly szum.
+# Wszystkie trzy maja podobnie wysokie r — bo r nie zalezy od nachylenia,
+# tylko od ciasnosci punktow wokol prostej.
 # ----------------------------------------------------------------------------
 
+make_slope <- function(n, slope, sigma, seed) {
+  set.seed(seed)
+  x <- as.numeric(scale(rnorm(n)))
+  y <- slope * x + sigma * rnorm(n)
+  data.frame(x = x, y = y)
+}
+
+# Szum proporcjonalny do nachylenia daje WSZEDZIE podobne r (~ slope/sqrt(slope^2+sigma_rel^2)
+# = 1/sqrt(1 + sigma_rel^2)). Dla sigma_rel = 0.33 -> r ~ 0.95 dla kazdego nachylenia.
 n <- 90
-d_low  <- make_xy(n, target_r = 0.3, seed = 11)
-d_med  <- make_xy(n, target_r = 0.6, seed = 12)
-d_high <- make_xy(n, target_r = 0.9, seed = 13)
+sigma_rel <- 0.33
 
-cat("strength panels:\n")
-cat("  r=0.3:", round(cor(d_low$x,  d_low$y),  3), "\n")
-cat("  r=0.6:", round(cor(d_med$x,  d_med$y),  3), "\n")
-cat("  r=0.9:", round(cor(d_high$x, d_high$y), 3), "\n")
+d_low  <- make_slope(n, slope = 0.4, sigma = 0.4 * sigma_rel, seed = 41)
+d_med  <- make_slope(n, slope = 0.8, sigma = 0.8 * sigma_rel, seed = 42)
+d_high <- make_slope(n, slope = 1.6, sigma = 1.6 * sigma_rel, seed = 43)
 
-g <- scatter_panel(d_low,  "r = 0.3 (słaba)") +
-     scatter_panel(d_med,  "r = 0.6 (średnia)") +
-     scatter_panel(d_high, "r = 0.9 (silna)") +
+r_low  <- round(cor(d_low$x,  d_low$y),  2)
+r_med  <- round(cor(d_med$x,  d_med$y),  2)
+r_high <- round(cor(d_high$x, d_high$y), 2)
+
+cat("slope panels (nowa Ryc. 6.1):\n")
+cat("  slope 0.4 -> r =", r_low,  "\n")
+cat("  slope 0.8 -> r =", r_med,  "\n")
+cat("  slope 1.6 -> r =", r_high, "\n")
+
+g <- scatter_panel(d_low,  paste0("Łagodne nachylenie (r = ", format(r_low,  nsmall = 2), ")"), free_y = TRUE) +
+     scatter_panel(d_med,  paste0("Średnie nachylenie (r = ", format(r_med,  nsmall = 2), ")"), free_y = TRUE) +
+     scatter_panel(d_high, paste0("Strome nachylenie (r = ", format(r_high, nsmall = 2), ")"), free_y = TRUE) +
+     plot_annotation(title = "Różne nachylenia, podobnie wysokie r") +
      plot_layout(nrow = 1)
 
 ggsave_ragg("correlation-strength.png", g)
