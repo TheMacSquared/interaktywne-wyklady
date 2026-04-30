@@ -48,33 +48,33 @@ ch4_ui <- list(
                style = "width: 100%; border-radius: 4px;")
     ),
 
-    # --- Wykres 2: r vs nachylenie ---
+    # --- Wykres 2: sila korelacji (rozrzut wokol prostej) ---
     tagList(
-      p("Wartość ", withMathJax("\\(|r|\\)"),
-        " mówi o ciasności, nie o nachyleniu. Trzy panele poniżej mają
-        wyraźnie różne nachylenia, a mimo to ", withMathJax("\\(r\\)"),
+      p("Wartość bezwzględna ", withMathJax("\\(|r|\\)"),
+        " mówi o ", tags$em("sile"), " związku liniowego — czyli o tym,
+        jak ciaśnie punkty grupują się wokół prostej. Trzy panele poniżej
+        pokazują zbiory o coraz większej sile korelacji.")
+    ),
+    figure_panel(
+      label = "Ryc. 6.2",
+      title = "Siła korelacji",
+      tags$img(src = "assets/correlation-scatter.png",
+               style = "width: 100%; border-radius: 4px;")
+    ),
+
+    # --- Wykres 3: r vs nachylenie ---
+    tagList(
+      p("Uwaga na pułapkę: ", withMathJax("\\(r\\)"),
+        " mierzy ciasność punktów wokół prostej, ale ", tags$em("nie"),
+        " jej nachylenie. Trzy panele poniżej mają wyraźnie różne nachylenia,
+        a mimo to ", withMathJax("\\(r\\)"),
         " jest w każdym z nich podobnie wysokie — bo punkty równie ciasno
         trzymają się prostej, niezależnie od tego, jak ostro idzie ona w górę.")
     ),
     figure_panel(
-      label = "Ryc. 6.2",
+      label = "Ryc. 6.3",
       title = "r nie zależy od nachylenia",
       tags$img(src = "assets/correlation-strength.png",
-               style = "width: 100%; border-radius: 4px;")
-    ),
-
-    # --- Wykres 3: rozrzut vs r ---
-    tagList(
-      p("Skoro ", withMathJax("\\(r\\)"),
-        " nie zależy od nachylenia, to od czego? Od ", tags$em("rozrzutu"),
-        " punktów wokół prostej. Wszystkie trzy panele poniżej mają ten sam
-        trend wzrostowy, ale im większy rozrzut, tym niższe ",
-        withMathJax("\\(r\\)"), ".")
-    ),
-    figure_panel(
-      label = "Ryc. 6.3",
-      title = "r mierzy ciasność, nie nachylenie",
-      tags$img(src = "assets/correlation-scatter.png",
                style = "width: 100%; border-radius: 4px;")
     ),
 

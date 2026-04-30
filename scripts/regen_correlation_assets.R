@@ -138,9 +138,10 @@ g <- scatter_panel(d_neg,  "r = −0.6 (ujemna)") +
 ggsave_ragg("correlation-direction.png", g)
 
 # ----------------------------------------------------------------------------
-# Ryc. 6.3 — Ten sam trend, rozny rozrzut -> rozne r
-# Wszystkie trzy panele: y = 1 * x + eps, gdzie sd(eps) rosnie.
-# Bez standaryzacji y — chmura rosnie globalnie.
+# Ryc. 6.2 (po zamianie kolejnosci) — Sila korelacji
+# Trzy panele: ten sam trend (slope = 1), rozny szum -> rozne r.
+# Etykiety rosnaco: mala -> srednia -> duza sila (a nie rozrzut).
+# Bez standaryzacji y — chmura rosnie globalnie wraz ze spadkiem sily.
 # ----------------------------------------------------------------------------
 
 make_scatter_same_slope <- function(n, sigma, seed) {
@@ -150,23 +151,22 @@ make_scatter_same_slope <- function(n, sigma, seed) {
   data.frame(x = x, y = y)
 }
 
-d_low  <- make_scatter_same_slope(n, sigma = 0.4,  seed = 31)
-d_med  <- make_scatter_same_slope(n, sigma = 1.25, seed = 32)
-d_high <- make_scatter_same_slope(n, sigma = 4.0,  seed = 33)
+d_weak   <- make_scatter_same_slope(n, sigma = 4.0,  seed = 33)  # niski r
+d_medium <- make_scatter_same_slope(n, sigma = 1.25, seed = 32)
+d_strong <- make_scatter_same_slope(n, sigma = 0.4,  seed = 31)  # wysoki r
 
-r_low  <- round(cor(d_low$x,  d_low$y),  2)
-r_med  <- round(cor(d_med$x,  d_med$y),  2)
-r_high <- round(cor(d_high$x, d_high$y), 2)
+r_weak   <- round(cor(d_weak$x,   d_weak$y),   2)
+r_medium <- round(cor(d_medium$x, d_medium$y), 2)
+r_strong <- round(cor(d_strong$x, d_strong$y), 2)
 
-cat("scatter panels:\n")
-cat("  small sd:", r_low, "\n")
-cat("  med sd:  ", r_med, "\n")
-cat("  large sd:", r_high, "\n")
+cat("strength panels (po zamianie - obecna Ryc. 6.2):\n")
+cat("  mala sila   -> r =", r_weak,   "\n")
+cat("  srednia     -> r =", r_medium, "\n")
+cat("  duza sila   -> r =", r_strong, "\n")
 
-g <- scatter_panel(d_low,  paste0("Mały rozrzut (r = ",  format(r_low,  nsmall = 2), ")"), free_y = TRUE) +
-     scatter_panel(d_med,  paste0("Średni rozrzut (r = ", format(r_med,  nsmall = 2), ")"), free_y = TRUE) +
-     scatter_panel(d_high, paste0("Duży rozrzut (r = ",   format(r_high, nsmall = 2), ")"), free_y = TRUE) +
-     plot_annotation(title = "Ten sam trend, różny rozrzut → różne r") +
+g <- scatter_panel(d_weak,   paste0("Mała siła (r = ",    format(r_weak,   nsmall = 2), ")"), free_y = TRUE) +
+     scatter_panel(d_medium, paste0("Średnia siła (r = ", format(r_medium, nsmall = 2), ")"), free_y = TRUE) +
+     scatter_panel(d_strong, paste0("Duża siła (r = ",    format(r_strong, nsmall = 2), ")"), free_y = TRUE) +
      plot_layout(nrow = 1)
 
 ggsave_ragg("correlation-scatter.png", g)
