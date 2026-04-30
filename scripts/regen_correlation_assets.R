@@ -102,9 +102,21 @@ cat("  slope 0.4 -> r =", r_low,  "\n")
 cat("  slope 0.8 -> r =", r_med,  "\n")
 cat("  slope 1.6 -> r =", r_high, "\n")
 
-g <- scatter_panel(d_low,  paste0("Łagodne nachylenie (r = ", format(r_low,  nsmall = 2), ")"), free_y = TRUE) +
-     scatter_panel(d_med,  paste0("Średnie nachylenie (r = ", format(r_med,  nsmall = 2), ")"), free_y = TRUE) +
-     scatter_panel(d_high, paste0("Strome nachylenie (r = ", format(r_high, nsmall = 2), ")"), free_y = TRUE) +
+slope_panel <- function(df, panel_title) {
+  ggplot(df, aes(x = x, y = y)) +
+    stat_ellipse(geom = "polygon", level = 0.95,
+                 fill = upwr_cat["niebo"], alpha = 0.18,
+                 color = upwr_cat["niebo"], linewidth = 0.4) +
+    geom_point(color = upwr_cat["niebo"], alpha = 0.65, size = 2.2) +
+    geom_smooth(method = "lm", se = FALSE, color = upwr_accent, linewidth = 1.1) +
+    coord_cartesian(xlim = c(-3, 3), ylim = c(-4.5, 4.5)) +
+    labs(title = panel_title, x = NULL, y = NULL) +
+    theme(plot.title = element_text(face = "bold", size = rel(1.05)))
+}
+
+g <- slope_panel(d_low,  paste0("Łagodne nachylenie (r = ", format(r_low,  nsmall = 2), ")")) +
+     slope_panel(d_med,  paste0("Średnie nachylenie (r = ", format(r_med,  nsmall = 2), ")")) +
+     slope_panel(d_high, paste0("Strome nachylenie (r = ", format(r_high, nsmall = 2), ")")) +
      plot_annotation(title = "Różne nachylenia, podobnie wysokie r") +
      plot_layout(nrow = 1)
 
