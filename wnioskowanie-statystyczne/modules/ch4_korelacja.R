@@ -72,7 +72,7 @@ ch4_ui <- list(
     ),
     figure_panel(
       label = "Ryc. 6.3",
-      title = "Uwaga: r to nie nachylenie!",
+      title = "Uwaga: r to nie tylko nachylenie!",
       tags$img(src = "assets/correlation-scatter.png",
                style = "width: 100%; border-radius: 4px;")
     ),
