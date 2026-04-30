@@ -289,7 +289,7 @@ ch4_ui <- list(
       div(class = "step-buttons",
         actionButton("ch4_simpson_global", "Spojrzenie globalne",
                      class = "lc-btn-outline"),
-        actionButton("ch4_simpson_groups", "Podział na szkoły",
+        actionButton("ch4_simpson_groups", "Paradoks",
                      class = "lc-btn-outline")
       ),
       plotOutput("ch4_simpson_plot", height = "420px"),
@@ -911,12 +911,12 @@ ch4_server <- function(input, output, session) {
   ch4_simpson_data <- local({
     set.seed(42)
     schools <- c("Szkoła słaba", "Szkoła średnia", "Szkoła silna")
-    school_levels <- c(slaba = 45, srednia = 65, silna = 85)
-    study_means   <- c(slaba = 26, srednia = 17, silna =  7)
-    study_sd <- 3
+    school_levels <- c(slaba = 48, srednia = 65, silna = 82)
+    study_means   <- c(slaba = 24, srednia = 17, silna =  9)
+    study_sd <- 4.5
     within_slope <- 1.4
-    within_noise <- 2.5
-    n_per_group <- 30
+    within_noise <- 4.5
+    n_per_group <- 70
 
     rows <- lapply(seq_along(school_levels), function(i) {
       key <- names(school_levels)[i]
@@ -981,7 +981,7 @@ ch4_server <- function(input, output, session) {
         sprintf("r = %s. Więcej godzin nauki → niższy wynik z egzaminu? ",
                 format(r_global, nsmall = 2)),
         "To wygląda na absurd — przecież nauka powinna pomagać. ",
-        tags$em("Kliknij „Podział na szkoły”, żeby zobaczyć, co tu się naprawdę dzieje.")
+        tags$em("Kliknij „Paradoks”, żeby zobaczyć, co tu się naprawdę dzieje.")
       )
     } else {
       r_per_school <- df %>%
