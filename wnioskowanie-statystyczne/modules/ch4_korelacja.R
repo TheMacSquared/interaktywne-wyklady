@@ -286,8 +286,14 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 6.8",
       title = "Paradoks Simpsona",
-      tags$img(src = "assets/simpson-paradox.png",
-               style = "width: 100%; max-width: 650px; border-radius: 4px;")
+      div(class = "step-buttons",
+        actionButton("ch4_simpson_global", "Spojrzenie globalne",
+                     class = "lc-btn-outline"),
+        actionButton("ch4_simpson_groups", "Podział na szkoły",
+                     class = "lc-btn-outline")
+      ),
+      plotOutput("ch4_simpson_plot", height = "420px"),
+      uiOutput("ch4_simpson_caption")
     ),
 
     # --- 4. Nieliniowość przy r ~ 0 ---
@@ -899,5 +905,104 @@ ch4_server <- function(input, output, session) {
           być konfunderem tej zależności.",
           r$r, effect_size_label(abs(r$r)), 100 * r$r2))
     )
+  })
+
+  # ---- Widget Paradoks Simpsona ----
+  ch4_simpson_data <- local({
+    set.seed(42)
+    schools <- c("Szkoła słaba", "Szkoła średnia", "Szkoła silna")
+    school_levels <- c(slaba = 45, srednia = 65, silna = 85)
+    study_means   <- c(slaba = 26, srednia = 17, silna =  7)
+    study_sd <- 3
+    within_slope <- 1.4
+    within_noise <- 2.5
+    n_per_group <- 30
+
+    rows <- lapply(seq_along(school_levels), function(i) {
+      key <- names(school_levels)[i]
+      study <- pmax(0.5, rnorm(n_per_group, mean = study_means[key], sd = study_sd))
+      score <- school_levels[key] +
+               within_slope * (study - mean(study)) +
+               rnorm(n_per_group, 0, within_noise)
+      data.frame(
+        szkola  = factor(schools[i], levels = schools),
+        godziny = study,
+        wynik   = score
+      )
+    })
+    do.call(rbind, rows)
+  })
+
+  ch4_simpson_view <- reactiveVal("global")
+  observeEvent(input$ch4_simpson_global, ch4_simpson_view("global"))
+  observeEvent(input$ch4_simpson_groups, ch4_simpson_view("groups"))
+
+  output$ch4_simpson_plot <- renderPlot({
+    df <- ch4_simpson_data
+    view <- ch4_simpson_view()
+
+    school_colors <- c(
+      "Szkoła słaba"   = unname(upwr_cat["terakota"]),
+      "Szkoła średnia" = unname(upwr_cat["bursztyn"]),
+      "Szkoła silna"   = unname(upwr_cat["niebo"])
+    )
+
+    if (view == "global") {
+      ggplot(df, aes(x = godziny, y = wynik)) +
+        geom_point(color = "grey75", size = 2.4, alpha = 0.85) +
+        geom_smooth(method = "lm", se = FALSE,
+                    color = upwr_secondary, linewidth = 1.4) +
+        labs(x = "Godziny nauki / tydzień", y = "Wynik z egzaminu") +
+        theme_upwr()
+    } else {
+      ggplot(df, aes(x = godziny, y = wynik, color = szkola)) +
+        geom_smooth(method = "lm", se = FALSE,
+                    color = upwr_secondary, linewidth = 1.0,
+                    linetype = "dashed", alpha = 0.5,
+                    aes(group = 1)) +
+        geom_point(size = 2.4, alpha = 0.85) +
+        geom_smooth(method = "lm", se = FALSE, linewidth = 1.2,
+                    aes(group = szkola)) +
+        scale_color_manual(values = school_colors, name = NULL) +
+        labs(x = "Godziny nauki / tydzień", y = "Wynik z egzaminu") +
+        theme_upwr() +
+        theme(legend.position = "top")
+    }
+  })
+
+  output$ch4_simpson_caption <- renderUI({
+    df <- ch4_simpson_data
+    view <- ch4_simpson_view()
+    r_global <- round(cor(df$godziny, df$wynik), 2)
+
+    if (view == "global") {
+      lc_feedback(type = "warning",
+        tags$strong("Spojrzenie globalne: "),
+        sprintf("r = %s. Więcej godzin nauki → niższy wynik z egzaminu? ",
+                format(r_global, nsmall = 2)),
+        "To wygląda na absurd — przecież nauka powinna pomagać. ",
+        tags$em("Kliknij „Podział na szkoły”, żeby zobaczyć, co tu się naprawdę dzieje.")
+      )
+    } else {
+      r_per_school <- df %>%
+        group_by(szkola) %>%
+        summarise(r = cor(godziny, wynik), .groups = "drop")
+      r_text <- paste0(r_per_school$szkola, ": r = ", round(r_per_school$r, 2),
+                       collapse = "; ")
+
+      lc_feedback(type = "ok",
+        tags$strong("Podział na szkoły: "),
+        "w każdej szkole z osobna więcej nauki → ",
+        tags$b("wyższy"), " wynik (",
+        r_text, "). ",
+        tags$br(), tags$br(),
+        "Globalnie wychodziło odwrotnie, bo ",
+        tags$b("poziom szkoły"),
+        " jest ukrytym konfunderem: uczniowie słabej szkoły uczą się
+         więcej (materiał trudniejszy), ale i tak mają niższe wyniki niż
+         uczniowie szkoły silnej. Po połączeniu grup ten efekt szkoły
+         maskuje rzeczywisty pozytywny wpływ nauki w obrębie szkoły."
+      )
+    }
   })
 }
