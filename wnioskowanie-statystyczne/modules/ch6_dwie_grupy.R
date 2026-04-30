@@ -157,6 +157,50 @@ ch6_ui <- list(
       )
     ),
 
+    # ========================================================================
+    # WIDGET 3: Sparowane vs. niesparowane — te same dane, inny wynik
+    # ========================================================================
+    lc_h2("ch6-compare", "Dlaczego sparowanie ma znaczenie?"),
+
+    tagList(
+      p("Wyobraź sobie badanie: 20 pacjentów zmierzono ciśnienie ",
+        tags$b("przed"), " nową dietą. Po 3 miesiącach na kontrolę wróciło",
+        " tylko 15 — 5 pacjentów z najwyższym ciśnieniem wyjściowym nie zgłosiło się."),
+      p("Te same dane, dwa podejścia:"),
+      tags$ul(
+        tags$li(tags$b("Niesparowane:"),
+          " porównujemy 20 pomiarów 'przed' z 15 pomiarami 'po' — jak dwie niezależne grupy."),
+        tags$li(tags$b("Sparowane:"),
+          " bierzemy tylko 15 pacjentów z obydwoma pomiarami i liczymy różnice.")
+      )
+    ),
+
+    figure_panel(
+      label = "Ryc. 8.3",
+      title = "Błąd atrycji: sparowane vs. niesparowane na tych samych danych",
+      fluidRow(
+        column(6,
+          p(tags$strong("Analiza niesparowana"), " (n₁=20, n₂=15)"),
+          plotOutput("ch6_compare_ind_plot", height = "260px"),
+          uiOutput("ch6_compare_ind_result")
+        ),
+        column(6,
+          p(tags$strong("Analiza sparowana"), " (15 par)"),
+          plotOutput("ch6_compare_paired_plot", height = "260px"),
+          uiOutput("ch6_compare_paired_result")
+        )
+      )
+    ),
+
+    inline_callout(
+      label = "Błąd doboru",
+      "5 pacjentów nie wróciło na kontrolę — nie było to przypadkowe, lecz związane
+       z wyższym ciśnieniem wyjściowym (MNAR). Analiza niesparowana 'widzi' tę różnicę
+       jako efekt diety; analiza sparowana eliminuje błąd, porównując każdego pacjenta
+       ze sobą.",
+      color = "info"
+    ),
+
     inline_callout(
       label = "Uwaga",
       "gdy założenia testu t nie są spełnione (skrajne odstające, mocno skośny
@@ -180,8 +224,8 @@ ch6_ui <- list(
       h4("Zadanie 6 — Czy typ szkoły różnicuje wyniki z czytania?"),
       p("Okręgi dzielą się na szkoły ", tags$code("KK-06"), " i ", tags$code("KK-08"),
         ". Przetestuj, czy średnie wyniki ", tags$code("read"),
-        " różnią się między grupami. Wykonaj test t dla prób niezależnych i oblicz
-        Cohen's d. Jak duży jest efekt? Czy różnica jest edukacyjnie znacząca?"),
+        " różnią się między grupami. Wykonaj test t dla prób niezależnych.
+        Zapisz: t, df, p. Czy różnica jest istotna?"),
       actionButton("cas_ch6_ans6", "Pokaż rozwiązanie",
                    class = "lc-btn-ok-outline lc-btn-sm"),
       uiOutput("cas_ch6_sol6")
@@ -215,6 +259,34 @@ ch6_ui <- list(
 
 .ch6_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
                      stringsAsFactors = FALSE)
+
+# Statyczne dane do widgetu porownania sparowany vs. niesparowany (Ryc. 8.3)
+.ch6_compare <- local({
+  przed_paired  <- c(132, 138, 145, 141, 136, 152, 143, 139,
+                     147, 134, 148, 141, 137, 144, 150)
+  po_paired     <- c(130, 140, 142, 143, 127, 154, 142, 144,
+                     140, 133, 145, 142, 135, 149, 148)
+  przed_dropout <- c(164, 170, 175, 161, 178)
+
+  pairs <- data.frame(id = 1:15, przed = przed_paired, po = po_paired)
+
+  ind_data <- data.frame(
+    wartosc = c(przed_paired, przed_dropout, po_paired),
+    grupa   = factor(
+      c(rep("Przed", 20), rep("Po", 15)),
+      levels = c("Przed", "Po")
+    ),
+    typ = c(rep("para", 15), rep("dropout", 5), rep("para", 15))
+  )
+
+  long_pairs <- pivot_longer(pairs, cols = c(przed, po),
+                             names_to = "moment", values_to = "cisnienie") %>%
+    mutate(moment = factor(moment,
+                           levels = c("przed", "po"),
+                           labels = c("Przed", "Po")))
+
+  list(pairs = pairs, long_pairs = long_pairs, ind_data = ind_data)
+})
 
 # ============================================================================
 # SERVER
@@ -352,14 +424,15 @@ ch6_server <- function(input, output, session) {
 
         if (step >= 2) {
           means <- ch6_ind_stats()$means
+          means$hj <- ifelse(seq_len(nrow(means)) == 1, 1.15, -0.15)
           p <- p +
             stat_summary(fun = mean, geom = "point", shape = 23,
                          size = 4, fill = "white", color = upwr_secondary) +
             geom_text(
               data = means,
-              aes(x = plec, y = m, label = paste0("x̄ = ", round(m, 1))),
+              aes(x = plec, y = m, label = paste0("x = ", round(m, 1)), hjust = hj),
               inherit.aes = FALSE,
-              nudge_y = diff(range(data[[var]], na.rm = TRUE)) * 0.08,
+              nudge_y = diff(range(data[[var]], na.rm = TRUE)) * 0.04,
               color = upwr_secondary,
               fontface = "bold"
             )
@@ -414,7 +487,7 @@ ch6_server <- function(input, output, session) {
       ),
       "2" = tagList(
         tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-          tags$thead(tags$tr(tags$th("Grupa"), tags$th("n"), tags$th("x̄"), tags$th("s"))),
+          tags$thead(tags$tr(tags$th("Grupa"), tags$th("n"), tags$th(HTML("<span style='text-decoration:overline'>x</span>")), tags$th("s"))),
           tags$tbody(lapply(seq_len(nrow(means)), function(i) {
             tags$tr(
               tags$td(as.character(means$plec[i])),
@@ -439,9 +512,6 @@ ch6_server <- function(input, output, session) {
         p(paste0("t(", round(tidy_res$df, 1), ") = ",
                  round(tidy_res$statistic, 3))),
         p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
-        p(paste0("Cohen's d = ", round(d_val, 3),
-                 " (efekt ", effect_size_label(d_val), ")")),
-        p(tags$em(interpret_cohens_d(d_val))),
         p(style = paste0("color:", res$color, "; font-weight: bold;"),
           res$decision),
         p(tags$strong("Werdykt: "),
@@ -503,13 +573,104 @@ ch6_server <- function(input, output, session) {
       p(paste0("Średnia różnica: ", round(mean_diff, 2), " pkt")),
       p(paste0("t(", tidy_res$df, ") = ", round(tidy_res$statistic, 3))),
       p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
-      p(paste0("Cohen's d = ", round(d_val, 3),
-               " (efekt ", effect_size_label(d_val), ")")),
-      p(tags$em(interpret_cohens_d(d_val))),
       p(style = paste0("color:", res$color, "; font-weight: bold;"),
         res$decision),
       p(tags$strong("Werdykt: "),
         "wyniki średnio ", tags$b(direction), " o ", tags$b(round(abs(mean_diff), 2)), " pkt.")
+    )
+  })
+
+  # --- Widget: porownanie sparowany vs. niesparowany (Ryc. 8.3) ---
+
+  output$ch6_compare_ind_plot <- renderPlot({
+    d <- .ch6_compare$ind_data
+    d$kolor <- factor(
+      ifelse(d$typ == "dropout", "Brak kontroli (n=5)", as.character(d$grupa)),
+      levels = c("Przed", "Po", "Brak kontroli (n=5)")
+    )
+    means <- d %>% group_by(grupa) %>% summarise(m = mean(wartosc), .groups = "drop")
+
+    ggplot(d, aes(x = grupa, y = wartosc)) +
+      geom_boxplot(aes(fill = grupa), alpha = 0.35, outlier.alpha = 0,
+                   width = 0.45, color = "grey40") +
+      geom_jitter(aes(color = kolor, shape = kolor),
+                  width = 0.12, alpha = 0.8, size = 2.2) +
+      geom_text(data = means,
+                aes(y = m, label = paste0("x = ", round(m, 1)),
+                    hjust = ifelse(as.integer(grupa) == 1, 1.15, -0.15)),
+                nudge_y = 2, color = upwr_secondary, fontface = "bold", size = 3.5) +
+      scale_fill_manual(values = c("Przed" = col_h0, "Po" = col_reject)) +
+      scale_color_manual(values = c("Przed"             = col_h0,
+                                    "Po"                = col_reject,
+                                    "Brak kontroli (n=5)" = "#8B1A1A")) +
+      scale_shape_manual(values = c("Przed" = 16, "Po" = 16,
+                                    "Brak kontroli (n=5)" = 17)) +
+      labs(x = NULL, y = "Ciśnienie skurczowe (mmHg)", color = NULL, shape = NULL) +
+      guides(fill = "none") +
+      theme(legend.position = "bottom", legend.text = element_text(size = 9))
+  })
+
+  output$ch6_compare_ind_result <- renderUI({
+    d <- .ch6_compare$ind_data
+    result <- rstatix::t_test(d, wartosc ~ grupa)
+    res <- format_test_result(result$p)
+    smry <- d %>% group_by(grupa) %>%
+      summarise(n = n(), m = round(mean(wartosc), 1), s = round(sd(wartosc), 1),
+                .groups = "drop")
+    tagList(
+      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
+        tags$thead(tags$tr(
+          tags$th("Grupa"), tags$th("n"),
+          tags$th(HTML("<span style='text-decoration:overline'>x</span>")),
+          tags$th("s")
+        )),
+        tags$tbody(lapply(seq_len(nrow(smry)), function(i) {
+          tags$tr(
+            tags$td(as.character(smry$grupa[i])),
+            tags$td(smry$n[i]),
+            tags$td(smry$m[i]),
+            tags$td(smry$s[i])
+          )
+        }))
+      ),
+      p(paste0("t(", round(result$df, 0), ") = ", round(result$statistic, 3),
+               ",  p = ", format.pval(result$p, digits = 3))),
+      p(style = paste0("color:", res$color, "; font-weight: bold;"), res$decision)
+    )
+  })
+
+  output$ch6_compare_paired_plot <- renderPlot({
+    long <- .ch6_compare$long_pairs
+    ggplot(long, aes(x = moment, y = cisnienie)) +
+      geom_line(aes(group = id), alpha = 0.3, color = col_paired) +
+      geom_point(aes(color = moment), size = 2.5, alpha = 0.8) +
+      scale_color_manual(values = c("Przed" = col_h0, "Po" = col_reject)) +
+      labs(x = NULL, y = "Ciśnienie skurczowe (mmHg)") +
+      theme(legend.position = "none")
+  })
+
+  output$ch6_compare_paired_result <- renderUI({
+    long <- .ch6_compare$long_pairs
+    result <- rstatix::t_test(long, cisnienie ~ moment, paired = TRUE)
+    res <- format_test_result(result$p)
+    diffs <- .ch6_compare$pairs$po - .ch6_compare$pairs$przed
+    tagList(
+      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
+        tags$thead(tags$tr(
+          tags$th("Miara"), tags$th("n"),
+          tags$th(HTML("<span style='text-decoration:overline'>d</span>")),
+          tags$th("s_d")
+        )),
+        tags$tbody(tags$tr(
+          tags$td("po − przed"),
+          tags$td(15),
+          tags$td(round(mean(diffs), 2)),
+          tags$td(round(sd(diffs), 2))
+        ))
+      ),
+      p(paste0("t(14) = ", round(result$statistic, 3),
+               ",  p = ", format.pval(result$p, digits = 3))),
+      p(style = paste0("color:", res$color, "; font-weight: bold;"), res$decision)
     )
   })
 
@@ -557,18 +718,15 @@ ch6_server <- function(input, output, session) {
           round(r$df, 1), r$t,
           if (r$p < 0.001) "<" else "=",
           if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
       ),
       if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
       else tags$b("Brak podstaw do odrzucenia H₀"),
       p(tags$b("Interpretacja: "),
         sprintf(
-          "Różnica %.2f pkt jest %s (p %s 0.05). Efekt %s (d = %.3f).
-           Pamiętaj: istotność statystyczna ≠ istotność praktyczna.",
+          "Różnica %.2f pkt jest %s (p %s 0.05).",
           abs(r$m1 - r$m2),
           if (r$p < 0.05) "istotna" else "nieistotna",
-          if (r$p < 0.05) "<" else ">",
-          effect_size_label(r$d), r$d
+          if (r$p < 0.05) "<" else ">"
         ))
     )
   })
@@ -599,7 +757,6 @@ ch6_server <- function(input, output, session) {
           round(r$df, 1), r$t,
           if (r$p < 0.001) "<" else "=",
           if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("Cohen's d = %.3f (%s efekt)", abs(r$d), effect_size_label(r$d)))
       ),
       if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
       else tags$b("Brak podstaw do odrzucenia H₀"),

@@ -843,10 +843,10 @@ ch4_server <- function(input, output, session) {
       ),
       tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀"),
       p(tags$b("Interpretacja: "),
-        sprintf("r = %.3f — korelacja %s i silnie dodatnia.
+        sprintf("r = %.3f — korelacja silnie dodatnia.
           Okręgi z lepszymi wynikami z czytania osiągają też wyższe wyniki z matematyki
           (%.1f%% wspólnej wariancji). Obie zmienne mierzą ogólny poziom edukacji.",
-          r$r, effect_size_label(r$r), 100 * r$r2))
+          r$r, 100 * r$r2))
     )
   })
 
@@ -900,10 +900,10 @@ ch4_server <- function(input, output, session) {
       tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀"),
       p(tags$b("Interpretacja: "),
         sprintf("r = %.3f — korelacja ujemna: wyższy STR (więcej uczniów na nauczyciela)
-          wiąże się z niższymi wynikami z czytania. Efekt %s — STR wyjaśnia tylko %.1f%%
+          wiąże się z niższymi wynikami z czytania. STR wyjaśnia tylko %.1f%%
           wariancji. Uwaga: STR jest często proxy dla zasobności okręgu — dochód może
           być konfunderem tej zależności.",
-          r$r, effect_size_label(abs(r$r)), 100 * r$r2))
+          r$r, 100 * r$r2))
     )
   })
 

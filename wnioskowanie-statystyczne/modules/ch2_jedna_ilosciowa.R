@@ -238,8 +238,8 @@ ch2_ui <- list(
       h4("Zadanie 1 — Czy wyniki z czytania różnią się od normy 650 pkt?"),
       p("Departament edukacji podaje normę 650 pkt. Przetestuj, czy średni wynik ",
         tags$code("read"), " w okręgach Kalifornii ", tags$b("istotnie różni się"),
-        " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0.05)
-        i oblicz Cohen's d. Co raportowałbyś departamentowi?"),
+        " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0.05).
+        Co raportowałbyś departamentowi?"),
       actionButton("cas_ch2_ans1", "Pokaż rozwiązanie",
                    class = "lc-btn-ok-outline lc-btn-sm"),
       uiOutput("cas_ch2_sol1")
@@ -709,16 +709,14 @@ ch2_server <- function(input, output, session) {
             round(r$df, 1), r$t,
             if (r$p < 0.001) "<" else "=",
             if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-          tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
         ),
         if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
         else tags$b("Brak podstaw do odrzucenia H₀"),
         p(tags$b("Interpretacja: "),
           sprintf(
             "Średni wynik (%.2f pkt) różni się istotnie od normy 650 pkt (p < 0.05).
-             Efekt %s (d = %.3f) — różnica %.2f pkt ma %s znaczenie praktyczne.",
-            r$m, effect_size_label(r$d), r$d, r$m - 650,
-            if (abs(r$d) < 0.2) "ograniczone" else "wyraźne"
+             Różnica wynosi %.2f pkt.",
+            r$m, r$m - 650
           ))
       )
     )
@@ -750,16 +748,15 @@ ch2_server <- function(input, output, session) {
             round(r$df, 1), r$t,
             if (r$p < 0.001) "<" else "=",
             if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-          tags$li(sprintf("Cohen's d = %.3f (%s efekt)", r$d, effect_size_label(r$d)))
         ),
         if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
         else tags$b("Brak podstaw do odrzucenia H₀"),
         p(tags$b("Interpretacja: "),
           sprintf(
-            "Średni dochód (%.2f tys. USD) jest istotnie wyższy od 15 tys. (p < 0.05),
-             efekt %s (d = %.3f). Uwaga: hipotezę kierunkową formułujemy PRZED zebraniem
-             danych — inaczej influjemy błąd I rodzaju.",
-            r$m, effect_size_label(r$d), r$d
+            "Średni dochód (%.2f tys. USD) jest istotnie wyższy od 15 tys. (p < 0.05).
+             Uwaga: hipotezę kierunkową formułujemy PRZED zebraniem danych — inaczej
+             influjemy błąd I rodzaju.",
+            r$m
           ))
       )
     )

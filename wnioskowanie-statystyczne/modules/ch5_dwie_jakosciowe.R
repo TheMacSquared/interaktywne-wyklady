@@ -28,8 +28,10 @@ ch5_ui <- list(
       p("Idea: porównujemy to, co ", tags$b("zaobserwowaliśmy"),
         " z tym, czego ", tags$b("oczekiwalibyśmy, gdyby zmienne były niezależne"), "."),
       lc_formula_box(
-        p(withMathJax("\\(H_0:\\) zmienne są niezależne — ",
-                      "\\(H_a:\\) zmienne są powiązane")),
+        p(withMathJax("\\(H_0:\\)"), " zmienne są niezależne"),
+        p(withMathJax("\\(H_a:\\)"), " zmienne są powiązane")
+      ),
+      lc_formula_box(
         p("Liczności oczekiwane: ", withMathJax("\\(E_{ij} = \\frac{n_{i\\cdot} \\cdot n_{\\cdot j}}{n}\\)")),
         p("Statystyka testowa: ", withMathJax("\\(\\chi^2 = \\sum \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}\\)"))
       )
@@ -93,15 +95,15 @@ ch5_ui <- list(
       list(
         question = "Czy typ opakowania (szkło / plastik / karton) ma związek
                     z występowaniem pleśni w sokach?",
-        h0 = "\\(H_0:\\) typ opakowania i występowanie pleśni są niezależne",
-        ha = "\\(H_a:\\) są powiązane",
+        h0 = "\\(H_0:\\) rodzaj opakowania nie wpływa na ryzyko pojawienia się pleśni",
+        ha = "\\(H_a:\\) przynajmniej jedno opakowanie wiąże się z innym ryzykiem pleśni",
         note = "Choć merytorycznie spodziewamy się kierunku (niektóre opakowania pleśnieją częściej), test χ² jest zawsze dwustronny."
       ),
       list(
         question = "Czy preferencje konsumentów (lubi / nie lubi) zależą od regionu
                     Polski (płd. / pn. / centr. / wsch. / zach.)?",
-        h0 = "\\(H_0:\\) preferencja i region są niezależne",
-        ha = "\\(H_a:\\) są powiązane",
+        h0 = "\\(H_0:\\) rozkład preferencji jest taki sam we wszystkich regionach",
+        ha = "\\(H_a:\\) rozkład preferencji różni się między przynajmniej dwoma regionami",
         note = "Tabela 2 × 5. Test χ² działa na dowolne wymiary tabeli kontyngencji."
       )
     )),
@@ -230,13 +232,8 @@ ch5_ui <- list(
       p(tags$b("1. Procenty w grupach"), " — najlepsza intuicja.
         Jeśli odsetek to 45% wobec 47% — nawet przy p < 0,05 różnica jest
         praktycznie żadna. Jeśli 30% wobec 70% — efekt jest ogromny."),
-      p(tags$b("2. Cramér's V"), " — współczynnik siły związku [0–1]:"),
-      lc_formula_box(
-        p(withMathJax("\\(V = \\sqrt{\\frac{\\chi^2}{n \\cdot (k - 1)}}\\)"),
-          " gdzie k = min(wiersze, kolumny)")
-      ),
-      p("Interpretacja: < 0,1 pomijalny, 0,1–0,3 mały, 0,3–0,5 średni,
-        > 0,5 duży."),
+      p(tags$b("2. Cramér's V"), " — numeryczna miara siły związku [0–1].
+        Omówiona szerzej w rozdziale ", tags$em("Siła efektu"), "."),
       p("Zawsze ", tags$b("zacznij od procentów"),
         " — to język zrozumiały dla każdego odbiorcy.")
     ),
@@ -620,7 +617,6 @@ ch5_server <- function(input, output, session) {
           lc_stat_box(
             "Cramér's V",
             round(v, 3),
-            caption = effect_size_label(v),
             color = col_pvalue
           ),
           p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
@@ -734,8 +730,7 @@ ch5_server <- function(input, output, session) {
         tags$ul(lapply(range_info, function(ri) tags$li(ri))),
         p("Im większy rozrzut, tym silniejszy związek praktyczny."),
         hr(),
-        p(tags$b("Cramér's V = ", round(v, 3)),
-          " (", effect_size_label(v), ")")
+        p(tags$b("Cramér's V = ", round(v, 3)))
       )
     )
   })
@@ -787,7 +782,7 @@ ch5_server <- function(input, output, session) {
           r$df, r$chi2,
           if (r$p < 0.001) "<" else "=",
           if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("Cramér's V = %.3f (%s efekt)", r$v, effect_size_label(r$v)))
+        tags$li(sprintf("Cramér's V = %.3f", r$v))
       ),
       if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
       else tags$b("Brak podstaw do odrzucenia H₀"),
@@ -834,7 +829,7 @@ ch5_server <- function(input, output, session) {
           r$df, r$chi2,
           if (r$p < 0.001) "<" else "=",
           if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("Cramér's V = %.3f (%s efekt)", r$v, effect_size_label(r$v))),
+        tags$li(sprintf("Cramér's V = %.3f", r$v)),
         tags$li(sprintf("Odsetek high_lunch wśród STR > 20: %.1f%%", 100 * p_hi_str_poor)),
         tags$li(sprintf("Odsetek high_lunch wśród STR ≤ 20: %.1f%%", 100 * p_lo_str_poor))
       ),

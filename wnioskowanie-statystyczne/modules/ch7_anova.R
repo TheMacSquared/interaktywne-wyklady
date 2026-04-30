@@ -28,21 +28,33 @@ ch7_ui <- list(
       p("Każdy test t przeprowadzany przy ", withMathJax("\\(\\alpha = 0{,}05\\)"),
         " dopuszcza 5% ryzyka ", tags$em("fałszywego alarmu"),
         " — odrzucenia H₀ gdy w rzeczywistości różnicy nie ma.
-        Gdy testów jest więcej, to ryzyko ", tags$b("składa się"),
-        " — pojawia się tzw. inflacja błędu I rodzaju:"),
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px; margin: 10px 0;",
-        tags$thead(tags$tr(tags$th("Liczba grup"), tags$th("Liczba par"),
-                           tags$th("Ryzyko ≥ 1 fałszywego alarmu"))),
-        tags$tbody(
-          tags$tr(tags$td("3"), tags$td("3"), tags$td("~14%")),
-          tags$tr(tags$td("4"), tags$td("6"), tags$td("~26%")),
-          tags$tr(tags$td("5"), tags$td("10"), tags$td("~40%"))
+        Gdy testów jest więcej, to ryzyko ", tags$b("składa się"), ".")
+    ),
+
+    figure_panel(
+      label = "Ryc. 9.1",
+      title = "Dodaj grupy i obserwuj inflację błędu I rodzaju",
+      fluidRow(
+        column(4,
+          p(tags$em("Zacznij od 2 grup. Każde kliknięcie dodaje jedną.")),
+          actionButton("ch7_motyw_add", "Dodaj grupę +",
+                       class = "lc-btn-primary", width = "100%"),
+          br(), br(),
+          actionButton("ch7_motyw_reset", "Reset",
+                       class = "lc-btn-outline", width = "100%"),
+          br(), br(),
+          uiOutput("ch7_motyw_stats")
+        ),
+        column(8,
+          plotOutput("ch7_motyw_plot", height = "340px")
         )
-      ),
-      p("Przy 5 grupach w dwóch na pięciu analizach wyjdzie „istotna różnica”,
-        której tam ", tags$em("nie ma"), ". Potrzebujemy jednego testu,
-        który odpowiada na pytanie „czy w ogóle coś się różni między grupami?”
-        z kontrolowanym ryzykiem — to właśnie ", tags$b("ANOVA"), ".")
+      )
+    ),
+
+    tagList(
+      p("Potrzebujemy jednego testu, który odpowiada na pytanie",
+        " 'czy w ogóle coś się różni między grupami?'",
+        " z kontrolowanym ryzykiem — to właśnie ", tags$b("ANOVA"), ".")
     ),
 
     # ========================================================================
@@ -69,7 +81,7 @@ ch7_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 9.1",
+      label = "Ryc. 9.2",
       title = "Intuicja ANOVA: sygnał kontra szum",
       fluidRow(
         column(4,
@@ -118,6 +130,13 @@ ch7_ui <- list(
         h0 = "\\(H_0: \\mu_1 = \\mu_2 = \\mu_3\\) (Warszawa, Kraków, Wrocław — ten sam średni czas)",
         ha = "\\(H_a:\\) co najmniej jedna średnia jest różna",
         note = "Jeśli ANOVA odrzuci H₀, trzeba sprawdzić post-hoc (Games-Howell) które miasta konkretnie się różnią."
+      ),
+      list(
+        question = "Ergonomista mierzy czas reakcji (ms) operatorów maszyn na trzy
+                    zmiany robocze: ranną, popołudniową i nocną.",
+        h0 = "\\(H_0: \\mu_R = \\mu_P = \\mu_N\\) — średni czas reakcji jest taki sam na każdej zmianie",
+        ha = "\\(H_a:\\) co najmniej jedna zmiana różni się średnim czasem reakcji",
+        note = "Czas reakcji przekłada się bezpośrednio na ryzyko wypadku. Jeśli ANOVA jest istotna, post-hoc wskaże która zmiana jest krytyczna."
       )
     )),
 
@@ -127,7 +146,7 @@ ch7_ui <- list(
     lc_h2("ch7-akcja", "ANOVA w akcji"),
 
     figure_panel(
-      label = "Ryc. 9.2",
+      label = "Ryc. 9.3",
       title = "ANOVA jednoczynnikowa",
       fluidRow(
         column(4,
@@ -216,7 +235,7 @@ ch7_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 9.3",
+      label = "Ryc. 9.4",
       title = "Games-Howell",
       helpText("Używa danych z ANOVA powyżej. Najpierw uruchom ANOVA!"),
       actionButton("ch7_run_tukey", "Testuj Games-Howellem",
@@ -281,6 +300,73 @@ ch7_ui <- list(
 # ============================================================================
 
 ch7_server <- function(input, output, session) {
+
+  # --- Widget: inflacja bledu I rodzaju (Ryc. 9.1) ---
+
+  ch7_motyw_k <- reactiveVal(2L)
+
+  observeEvent(input$ch7_motyw_add, {
+    ch7_motyw_k(min(ch7_motyw_k() + 1L, 8L))
+  })
+  observeEvent(input$ch7_motyw_reset, {
+    ch7_motyw_k(2L)
+  })
+
+  output$ch7_motyw_plot <- renderPlot({
+    k <- ch7_motyw_k()
+    angles <- seq(0, 2 * pi, length.out = k + 1)[-(k + 1)]
+    nodes <- data.frame(
+      x     = cos(angles),
+      y     = sin(angles),
+      label = LETTERS[1:k]
+    )
+    pairs_idx <- combn(k, 2)
+    edges <- data.frame(
+      x1 = nodes$x[pairs_idx[1, ]],
+      y1 = nodes$y[pairs_idx[1, ]],
+      x2 = nodes$x[pairs_idx[2, ]],
+      y2 = nodes$y[pairs_idx[2, ]]
+    )
+    n_tests <- ncol(pairs_idx)
+    fwer    <- 1 - (1 - 0.05)^n_tests
+    edge_col <- if (fwer < 0.15) upwr_accent else if (fwer < 0.35) "#D4860A" else "#9B1C1C"
+
+    ggplot() +
+      geom_segment(data = edges,
+                   aes(x = x1, y = y1, xend = x2, yend = y2),
+                   color = edge_col, alpha = 0.55, linewidth = 1.1) +
+      geom_point(data = nodes, aes(x = x, y = y),
+                 shape = 21, size = 16, fill = upwr_accent,
+                 color = "white", stroke = 1.5) +
+      geom_text(data = nodes, aes(x = x, y = y, label = label),
+                color = "white", fontface = "bold", size = 5.5) +
+      coord_equal(xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5)) +
+      theme_void()
+  })
+
+  output$ch7_motyw_stats <- renderUI({
+    k       <- ch7_motyw_k()
+    n_tests <- k * (k - 1L) / 2L
+    fwer    <- 1 - (1 - 0.05)^n_tests
+    fwer_pct <- round(fwer * 100, 1)
+
+    fb_type <- if (fwer < 0.10) "ok" else if (fwer < 0.30) "warning" else "danger"
+
+    lc_feedback(type = fb_type,
+      tags$table(class = "lc-table lc-table-sm", style = "margin: 0;",
+        tags$tbody(
+          tags$tr(tags$td("Grup:"),      tags$td(tags$b(k))),
+          tags$tr(tags$td("Testów t:"),  tags$td(tags$b(n_tests))),
+          tags$tr(tags$td("Ryzyko ≥ 1 błędu:"),
+                  tags$td(tags$b(paste0(fwer_pct, "%"))))
+        )
+      ),
+      if (k >= 5)
+        p(style = "margin-top: 6px; margin-bottom: 0;",
+          tags$em(paste0("Co ", round(1 / fwer, 1),
+                         " badanie da fałszywy alarm — nawet gdy żadna różnica nie istnieje.")))
+    )
+  })
 
   ch7_int_data <- reactive({
     set.seed(404)
