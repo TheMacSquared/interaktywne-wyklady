@@ -240,8 +240,7 @@ header_extras <- tagList(
           },
           plugins: {
             legend: { display: false },
-            title: { display: true, text: msg.title, color: wsCss('--upwr-ink', '#1c1a17'),
-                     font: { size: 15, weight: '600' } },
+            title: { display: false },
             tooltip: { enabled: false }
           }
         }
@@ -252,8 +251,7 @@ header_extras <- tagList(
       wsRenderSidedChart(Object.assign({
         sided: 'two.sided',
         alpha: 0.03,
-        crit: msg.stat || 2.17,
-        title: 'p-wartość: wyniki co najmniej tak skrajne jak obserwowany'
+        crit: msg.stat || 2.17
       }, msg));
     }
 
@@ -290,8 +288,7 @@ header_extras <- tagList(
           },
           plugins: {
             legend: { display: false },
-            title: { display: true, text: 'ANOVA: im większy sygnał względem szumu, tym większe F',
-                     color: wsCss('--upwr-ink', '#1c1a17'), font: { size: 15, weight: '600' } },
+            title: { display: false },
             tooltip: {
               callbacks: { label: function(ctx) { return ' ' + Number(ctx.parsed.x).toFixed(2); } }
             }

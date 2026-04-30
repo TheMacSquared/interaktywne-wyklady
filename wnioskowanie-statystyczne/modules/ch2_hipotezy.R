@@ -215,6 +215,13 @@ ch2h_ui <- list(
       color = "uwaga"
     ),
 
+    tagList(
+      p("W teście dwustronnym poziom istotności dzielimy na dwa ogony rozkładu —
+         po α/2 na każdym. W teście jednostronnym całe α leży po jednej stronie.
+         Suwakiem niżej możesz zmienić α i przekonać się, jak rośnie albo maleje
+         obszar odrzucenia.")
+    ),
+
     figure_panel(
       label = "Ryc. 2.4",
       title = "Wizualizacja: jedno- i dwustronny",
@@ -340,23 +347,19 @@ ch2h_server <- function(input, output, session) {
     alpha <- input$ch2h_alpha
     sided <- input$ch2h_sided
 
-    if (sided == "two.sided") {
-      crit <- qnorm(1 - alpha / 2)
-      title <- paste0("Dwustronny: α/2 = ", alpha / 2, " na każdym ogonie")
+    crit <- if (sided == "two.sided") {
+      qnorm(1 - alpha / 2)
     } else if (sided == "greater") {
-      crit <- qnorm(1 - alpha)
-      title <- paste0("Prawostronny: całe α = ", alpha, " na prawym ogonie")
+      qnorm(1 - alpha)
     } else {
-      crit <- qnorm(alpha)
-      title <- paste0("Lewostronny: całe α = ", alpha, " na lewym ogonie")
+      qnorm(alpha)
     }
 
     session$sendCustomMessage("ws_sided_chart", list(
       id = "ch2h_sided_chart",
       sided = sided,
       alpha = alpha,
-      crit = crit,
-      title = title
+      crit = crit
     ))
   })
 }
