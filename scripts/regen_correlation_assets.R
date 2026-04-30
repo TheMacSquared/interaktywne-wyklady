@@ -57,6 +57,9 @@ make_xy <- function(n, target_r, seed) {
 
 scatter_panel <- function(df, panel_title, free_y = FALSE) {
   p <- ggplot(df, aes(x = x, y = y)) +
+    stat_ellipse(geom = "polygon", level = 0.95,
+                 fill = upwr_cat["niebo"], alpha = 0.18,
+                 color = upwr_cat["niebo"], linewidth = 0.4) +
     geom_point(color = upwr_cat["niebo"], alpha = 0.65, size = 2.2) +
     geom_smooth(method = "lm", se = FALSE, color = upwr_accent, linewidth = 1.1) +
     labs(title = panel_title, x = NULL, y = NULL) +
