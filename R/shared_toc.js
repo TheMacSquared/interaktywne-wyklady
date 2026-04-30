@@ -203,4 +203,66 @@
     });
   }
 
+  // ===========================================================================
+  // Image zoom — kliknięcie w <img> wewnątrz .lc-figure-panel powiększa
+  // obrazek na overlayu. ESC lub klik w tło zamyka.
+  // CSS dla .lc-zoom-overlay i .lc-figure-panel img w shared_styles.css.
+  // ===========================================================================
+
+  var zoomOverlay = null;
+  var zoomImg = null;
+
+  function ensureZoomOverlay() {
+    if (zoomOverlay) return zoomOverlay;
+    zoomOverlay = document.createElement("div");
+    zoomOverlay.className = "lc-zoom-overlay";
+    zoomOverlay.setAttribute("role", "dialog");
+    zoomOverlay.setAttribute("aria-modal", "true");
+    zoomOverlay.setAttribute("aria-label", "Powiększony obrazek");
+    zoomImg = document.createElement("img");
+    zoomImg.alt = "";
+    zoomOverlay.appendChild(zoomImg);
+    document.body.appendChild(zoomOverlay);
+    zoomOverlay.addEventListener("click", function (e) {
+      // Klik gdziekolwiek w overlay zamyka — także w samym obrazku.
+      // (Klikalna powierzchnia obrazka i tak nie ma żadnej innej akcji.)
+      closeZoom();
+    });
+    return zoomOverlay;
+  }
+
+  function openZoom(src, alt) {
+    var overlay = ensureZoomOverlay();
+    zoomImg.src = src;
+    zoomImg.alt = alt || "";
+    // Force reflow przed dodaniem klasy, żeby transition zadziałało
+    void overlay.offsetWidth;
+    overlay.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeZoom() {
+    if (!zoomOverlay) return;
+    zoomOverlay.classList.remove("is-open");
+    document.body.style.overflow = "";
+  }
+
+  // Event delegation — łapiemy kliki tylko w statyczne <img> które są
+  // bezpośrednim dzieckiem .lc-figure-panel, lub explicit opt-in przez
+  // klasę .lc-zoomable. Pomijamy obrazki w plotOutput (Shiny) bo niektóre
+  // mają zarejestrowany click handler.
+  document.addEventListener("click", function (e) {
+    var img = e.target.closest(
+      ".lc-figure-panel > img, .lc-figure-panel .lc-zoomable img"
+    );
+    if (!img) return;
+    openZoom(img.currentSrc || img.src, img.alt);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && zoomOverlay && zoomOverlay.classList.contains("is-open")) {
+      closeZoom();
+    }
+  });
+
 })();
