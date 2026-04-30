@@ -915,7 +915,7 @@ ch4_server <- function(input, output, session) {
     study_means   <- c(slaba = 24, srednia = 17, silna =  9)
     study_sd <- 4.5
     within_slope <- 1.4
-    within_noise <- 4.5
+    within_noise <- 7
     n_per_group <- 70
 
     rows <- lapply(seq_along(school_levels), function(i) {
