@@ -160,7 +160,6 @@ header_extras <- tagList(
       delete window.wsPendingCharts[msg.id];
       if (type === 'sided') wsRenderSidedChart(msg);
       if (type === 'pvalue') wsRenderPValueChart(msg);
-      if (type === 'anova') wsRenderAnovaSignalChart(msg);
       return true;
     }
 
@@ -256,57 +255,12 @@ header_extras <- tagList(
       }, msg));
     }
 
-    function wsRenderAnovaSignalChart(msg) {
-      var canvas = document.getElementById(msg.id);
-      if (!canvas || !window.Chart) return;
-      wsDestroyChart(msg.id);
-      var accent = wsCss('--upwr-accent', '#6b1a2a');
-      var sage = wsCss('--upwr-szalwia', '#4a8a6a');
-      var reference = wsCss('--upwr-reference', '#8b8175');
-      var between = Number(msg.between || 3);
-      var within = Number(msg.within || 1.6);
-      var fApprox = Math.max(0.05, (between * between) / (within * within));
-
-      window.wsCharts[msg.id] = new Chart(canvas, {
-        type: 'bar',
-        data: {
-          labels: ['Sygnał między grupami', 'Szum wewnątrz grup', 'Przybliżone F'],
-          datasets: [{
-            data: [between, within, fApprox],
-            backgroundColor: [accent, sage, wsCss('--upwr-bursztyn', '#c08540')],
-            borderRadius: 6,
-            barPercentage: 0.68
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true, maintainAspectRatio: false,
-          animation: { duration: 650, easing: 'easeOutQuart' },
-          scales: {
-            x: { beginAtZero: true, grid: { color: 'rgba(139,129,117,.12)' },
-                 ticks: { color: reference } },
-            y: { grid: { display: false }, ticks: { color: reference, font: { size: 13 } } }
-          },
-          plugins: {
-            legend: { display: false },
-            title: { display: false },
-            tooltip: {
-              callbacks: { label: function(ctx) { return ' ' + Number(ctx.parsed.x).toFixed(2); } }
-            }
-          }
-        }
-      });
-    }
-
     if (window.Shiny) {
       Shiny.addCustomMessageHandler('ws_sided_chart', function(msg) {
         wsRenderWhenReady('sided', msg);
       });
       Shiny.addCustomMessageHandler('ws_pvalue_chart', function(msg) {
         wsRenderWhenReady('pvalue', msg);
-      });
-      Shiny.addCustomMessageHandler('ws_anova_signal_chart', function(msg) {
-        wsRenderWhenReady('anova', msg);
       });
     }
 

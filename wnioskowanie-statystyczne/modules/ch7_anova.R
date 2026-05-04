@@ -80,25 +80,6 @@ ch7_ui <- list(
         " średnia odstaje — ale nie mówi, ", tags$b("która"), ". Do tego służy test post-hoc (niżej).")
     ),
 
-    figure_panel(
-      label = "Ryc. 9.2",
-      title = "Intuicja ANOVA: sygnał kontra szum",
-      fluidRow(
-        column(4,
-          sliderInput("ch7_int_between", "Różnice między grupami:",
-                      min = 0, max = 8, value = 3, step = 0.5),
-          sliderInput("ch7_int_within", "Rozrzut wewnątrz grup:",
-                      min = 0.5, max = 5, value = 1.6, step = 0.1),
-          uiOutput("ch7_int_stats")
-        ),
-        column(8,
-          div(class = "ws-chart-wrap",
-            tags$canvas(id = "ch7_anova_signal_chart")
-          )
-        )
-      )
-    ),
-
     # ========================================================================
     # Cwiczenie: sformuluj hipotezy
     # ========================================================================
@@ -172,40 +153,6 @@ ch7_ui <- list(
     ),
 
     # ========================================================================
-    # Intuicja eta^2
-    # ========================================================================
-    lc_h2("ch7-eta", "Jak czytać siłę efektu (η²)?"),
-
-    tagList(
-      p("P-wartość mówi ", tags$em("czy"), " różnice istnieją, ale nie mówi, ",
-        tags$em("jak duże"), " są. ", tags$b("η² (eta kwadrat)"),
-        " odpowiada na to drugie pytanie — mówi, jaki ułamek całej zmienności
-        wyjaśnia czynnik grupujący. Innymi słowy: ile procent różnic między
-        próbkami tłumaczy ten czynnik, a ile zostaje na „inne rzeczy”?"),
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px; margin: 10px 0;",
-        tags$thead(
-          tags$tr(tags$th("η²"), tags$th("Jak to czytać"), tags$th("Efekt"))
-        ),
-        tags$tbody(
-          tags$tr(tags$td("0,01"), tags$td("~1% zmienności wyjaśnione — wpływ symboliczny"), tags$td("mały")),
-          tags$tr(tags$td("0,06"), tags$td("~6% zmienności wyjaśnione — czynnik liczy się"), tags$td("średni")),
-          tags$tr(tags$td("0,14"), tags$td("~14% zmienności wyjaśnione — czynnik dominujący"), tags$td("duży"))
-        )
-      ),
-      p(tags$b("Przykład (fermentacja):"),
-        " η² = 0,23 oznacza, że około 23% różnic w pH jogurtu tłumaczy temperatura fermentacji.
-        Pozostałe 77% to inne czynniki: drobnoustroje startowe, czystość surowca, czas, partia mleka.")
-    ),
-
-    inline_callout(
-      label = "Uwaga praktyczna",
-      tagList(
-        "małe p przy małym η² oznacza często tylko ", tags$em("dużą próbę"),
-        ", nie duży efekt. Zawsze raportuj ", tags$b("oba"), "."
-      )
-    ),
-
-    # ========================================================================
     # WIDGET 2: Post-hoc Games-Howell
     # ========================================================================
     lc_h2("ch7-posthoc", "Testy post-hoc (Games-Howell)"),
@@ -272,7 +219,7 @@ ch7_ui <- list(
         " (użyj ", tags$em("split into groups"), " w Jamovi lub utwórz zmienną
         ręcznie na podstawie kwantyli 0, 1/3, 2/3, 1).
         Wykonaj jednoczynnikową ANOVA dla zmiennej ", tags$code("read"),
-        " między grupami. Zapisz: F, df, p, η².
+        " między grupami. Zapisz: F, df, p.
         Wykonaj post-hoc Games-Howell i wskaż, które pary różnią się istotnie."),
       actionButton("cas_ch7_ans10", "Pokaż rozwiązanie",
                    class = "lc-btn-ok-outline lc-btn-sm"),
@@ -365,71 +312,6 @@ ch7_server <- function(input, output, session) {
         p(style = "margin-top: 6px; margin-bottom: 0;",
           tags$em(paste0("Co ", round(1 / fwer, 1),
                          " badanie da fałszywy alarm — nawet gdy żadna różnica nie istnieje.")))
-    )
-  })
-
-  ch7_int_data <- reactive({
-    set.seed(404)
-    n_per_group <- 35
-    between <- input$ch7_int_between
-    within <- input$ch7_int_within
-    groups <- factor(rep(c("A", "B", "C"), each = n_per_group),
-                     levels = c("A", "B", "C"))
-    means <- c(0, between / 2, between)
-    y <- rnorm(length(groups), mean = rep(means, each = n_per_group), sd = within)
-    data.frame(grupa = groups, wynik = y)
-  })
-
-  observe({
-    req(input$ch7_int_between, input$ch7_int_within)
-    session$sendCustomMessage("ws_anova_signal_chart", list(
-      id = "ch7_anova_signal_chart",
-      between = input$ch7_int_between,
-      within = input$ch7_int_within
-    ))
-  })
-
-  output$ch7_int_plot <- renderPlot({
-    d <- ch7_int_data()
-    group_means <- d %>%
-      dplyr::group_by(grupa) %>%
-      dplyr::summarise(m = mean(wynik), .groups = "drop")
-
-    ggplot(d, aes(x = grupa, y = wynik, fill = grupa)) +
-      geom_boxplot(alpha = 0.35, outlier.shape = NA, width = 0.55) +
-      geom_jitter(width = 0.14, alpha = 0.35, size = 1.8) +
-      geom_point(data = group_means, aes(y = m),
-                 shape = 23, size = 4, fill = "white", color = upwr_secondary) +
-      geom_hline(yintercept = mean(d$wynik), linetype = "dashed",
-                 color = upwr_reference) +
-      scale_fill_upwr() +
-      labs(
-           
-           x = "Grupa", y = "Wynik") +
-      theme(legend.position = "none")
-  })
-
-  output$ch7_int_stats <- renderUI({
-    d <- ch7_int_data()
-    fit <- aov(wynik ~ grupa, data = d)
-    s <- summary(fit)[[1]]
-    f_val <- s[["F value"]][1]
-    p_val <- s[["Pr(>F)"]][1]
-    eta2 <- s[["Sum Sq"]][1] / sum(s[["Sum Sq"]])
-
-    tagList(
-      lc_stat_box("F", round(f_val, 2), color = col_effect),
-      lc_stat_box("p", format.pval(p_val, digits = 3), color = col_pvalue),
-      lc_stat_box("η²", round(eta2, 2),
-                  caption = paste0(round(100 * eta2), "% zmienności wyjaśnione"),
-                  color = col_accept),
-      lc_feedback(type = "info",
-        p("ANOVA robi dokładnie to porównanie: ",
-          tags$b("zmienność między grupami"),
-          " dzieli przez ",
-          tags$b("zmienność wewnątrz grup"),
-          ". Gdy sygnał rośnie albo szum maleje, F zwykle rośnie.")
-      )
     )
   })
 
@@ -537,15 +419,6 @@ ch7_server <- function(input, output, session) {
     result <- rstatix::anova_test(data, formula)
     tidy_res <- as.data.frame(result)
 
-    # Eta-squared jest w wyniku rstatix (generalized eta squared)
-    eta_sq <- tidy_res$ges
-
-    # Etykieta efektu dla η² (progi Cohena: 0.01 mały, 0.06 średni, 0.14 duży)
-    eta_label <- if (eta_sq < 0.01) "pomijalny"
-      else if (eta_sq < 0.06) "mały"
-      else if (eta_sq < 0.14) "średni"
-      else "duży"
-
     p_val <- tidy_res$p
     res <- format_test_result(p_val)
 
@@ -553,10 +426,7 @@ ch7_server <- function(input, output, session) {
       p(tags$strong("Wynik ANOVA jednoczynnikowej:")),
       p(paste0("F(", tidy_res$DFn, ", ", tidy_res$DFd, ") = ",
                round(tidy_res$F, 3))),
-      p(paste0("p = ", format.pval(p_val, digits = 4))),
-      p(paste0("η² = ", round(eta_sq, 3),
-               " (efekt ", eta_label, ", ok. ",
-               round(eta_sq * 100), "% zmienności wyjaśnione)")),
+      ui_p_value(p_val),
       p(style = paste0("color:", res$color, "; font-weight: bold;"),
         res$decision)
     )
@@ -683,7 +553,7 @@ ch7_server <- function(input, output, session) {
           lapply(1:n_sig, function(i) {
             tags$li(paste0(sig_pairs$group1[i], " — ", sig_pairs$group2[i],
                            ": Δ = ", round(sig_pairs$estimate[i], 2),
-                           ", p.adj = ", format.pval(sig_pairs$p.adj[i], digits = 3)))
+                           ", p.adj = ", format_p_value(sig_pairs$p.adj[i])))
           })
         )
       )
@@ -715,10 +585,9 @@ ch7_server <- function(input, output, session) {
       F_val <- s[["F value"]][1]
       df1   <- s[["Df"]][1]; df2 <- s[["Df"]][2]
       p_val <- s[["Pr(>F)"]][1]
-      eta2  <- s[["Sum Sq"]][1] / sum(s[["Sum Sq"]])
       ph    <- TukeyHSD(fit)$income_group
       list(grp_stats = grp_stats, F = F_val, df1 = df1, df2 = df2,
-           p = p_val, eta2 = eta2, ph = ph)
+           p = p_val, ph = ph)
     })
     lc_feedback(type = "ok", style = "margin-top: 10px;",
       p(tags$b("H₀: "), "μ_niski = μ_średni = μ_wysoki · ",
@@ -734,26 +603,16 @@ ch7_server <- function(input, output, session) {
         }))
       ),
       tags$ul(
-        tags$li(sprintf("F(%d, %d) = %.3f, p %s %s",
-          r$df1, r$df2, r$F,
-          if (r$p < 0.001) "<" else "=",
-          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("η² = %.3f (%s efekt — %.1f%% wariancji wyjaśnione przez dochód)",
-          r$eta2,
-          if (r$eta2 < 0.01) "pomijalny"
-          else if (r$eta2 < 0.06) "mały"
-          else if (r$eta2 < 0.14) "średni" else "duży",
-          100 * r$eta2))
+        tags$li(sprintf("F(%d, %d) = %.3f, %s",
+          r$df1, r$df2, r$F, format_p(r$p)))
       ),
       if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
       else tags$b("Brak podstaw do odrzucenia H₀"),
       p(tags$b("Post-hoc Tukey HSD (przybliżenie — w Jamovi użyj Games-Howell):")),
       tags$ul(lapply(rownames(r$ph), function(nm) {
         pp <- r$ph[nm, "p adj"]
-        tags$li(sprintf("%s: Δ = %.2f pkt, p.adj %s %s",
-          nm, r$ph[nm, "diff"],
-          if (pp < 0.001) "<" else "=",
-          if (pp < 0.001) "0.001" else format(round(pp, 3), nsmall = 3)))
+        tags$li(sprintf("%s: Δ = %.2f pkt, p.adj = %s",
+          nm, r$ph[nm, "diff"], format_p_value(pp)))
       }))
     )
   })
