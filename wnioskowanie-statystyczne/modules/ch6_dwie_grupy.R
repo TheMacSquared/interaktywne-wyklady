@@ -77,7 +77,7 @@ ch6_ui <- list(
                     (słowa na minutę). Czy kurs poprawił wyniki?",
         h0 = "\\(H_0: \\mu_d \\leq 0\\) (d = po − przed)",
         ha = "\\(H_a: \\mu_d > 0\\) (poprawa)",
-        note = "Test parowy (nie niezależny!) — te same osoby mierzone dwa razy. Analizujemy różnice."
+        note = "Dane sparowane (nie niezależne!) — te same osoby mierzone dwa razy. Analizujemy różnice."
       )
     )),
 
@@ -128,11 +128,11 @@ ch6_ui <- list(
     # ========================================================================
     # WIDGET 2: Test t parowy
     # ========================================================================
-    lc_h2("ch6-parowy", "Test t dla prób zależnych (parowy)"),
+    lc_h2("ch6-parowy", "Test t dla prób zależnych (sparowany)"),
 
     tagList(
       p("Gdy mierzymy tych samych osobników dwa razy
-        (przed i po interwencji), używamy testu parowego."),
+        (przed i po interwencji), używamy testu t dla danych sparowanych."),
       p("Przykład: wyniki studentów przed i po korepetycjach."),
       p("Testujemy różnice: ", withMathJax("\\(d_i = x_{\\text{po},i} - x_{\\text{przed},i}\\)"),
         ". Pytamy, czy średnia różnic ≠ 0.")
@@ -140,7 +140,7 @@ ch6_ui <- list(
 
     figure_panel(
       label = "Ryc. 8.2",
-      title = "Test parowy: przed i po",
+      title = "Test t dla danych sparowanych: przed i po",
       fluidRow(
         column(4,
           sliderInput("ch6_paired_n", "Liczba studentów:",
@@ -511,13 +511,23 @@ ch6_server <- function(input, output, session) {
         p(tags$strong("Wynik testu t niezależnego:")),
         p(paste0("t(", round(tidy_res$df, 1), ") = ",
                  round(tidy_res$statistic, 3))),
-        p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
+        ui_p_value(tidy_res$p),
         p(style = paste0("color:", res$color, "; font-weight: bold;"),
           res$decision),
-        p(tags$strong("Werdykt: "),
-          "średnia ", var_label, " w grupie ", tags$b(as.character(higher)),
-          " była wyższa od grupy ", tags$b(as.character(lower)),
-          " o ", tags$b(diff_val), ".")
+        if (tidy_res$p < 0.05) {
+          p(tags$strong("Werdykt: "),
+            "średnia ", var_label, " różni się istotnie między grupami — ",
+            "w próbie była wyższa w grupie ", tags$b(as.character(higher)),
+            " niż ", tags$b(as.character(lower)),
+            " o ", tags$b(diff_val), ".")
+        } else {
+          p(tags$strong("Werdykt: "),
+            "nie ma podstaw, by twierdzić, że średnia ", var_label,
+            " różni się między grupami. Obserwowana w próbie różnica ",
+            tags$b(diff_val),
+            " (na korzyść grupy ", tags$b(as.character(higher)),
+            ") mieści się w zakresie wahań losowych.")
+        }
       )
     )
     lc_feedback(type = "info", info)
@@ -569,14 +579,22 @@ ch6_server <- function(input, output, session) {
     direction <- if (mean_diff > 0) "wzrosły" else if (mean_diff < 0) "spadły" else "nie zmieniły się"
 
     lc_feedback(type = "info",
-      p(tags$strong("Wynik testu t parowego:")),
+      p(tags$strong("Wynik testu t dla danych sparowanych:")),
       p(paste0("Średnia różnica: ", round(mean_diff, 2), " pkt")),
       p(paste0("t(", tidy_res$df, ") = ", round(tidy_res$statistic, 3))),
-      p(paste0("p = ", format.pval(tidy_res$p, digits = 4))),
+      ui_p_value(tidy_res$p),
       p(style = paste0("color:", res$color, "; font-weight: bold;"),
         res$decision),
-      p(tags$strong("Werdykt: "),
-        "wyniki średnio ", tags$b(direction), " o ", tags$b(round(abs(mean_diff), 2)), " pkt.")
+      if (tidy_res$p < 0.05) {
+        p(tags$strong("Werdykt: "),
+          "wyniki istotnie się zmieniły — średnio ", tags$b(direction),
+          " o ", tags$b(round(abs(mean_diff), 2)), " pkt.")
+      } else {
+        p(tags$strong("Werdykt: "),
+          "nie ma podstaw, by twierdzić, że wyniki się zmieniły. ",
+          "Obserwowana w próbie zmiana (", tags$b(round(mean_diff, 2)),
+          " pkt) mieści się w zakresie wahań losowych.")
+      }
     )
   })
 
@@ -634,7 +652,7 @@ ch6_server <- function(input, output, session) {
         }))
       ),
       p(paste0("t(", round(result$df, 0), ") = ", round(result$statistic, 3),
-               ",  p = ", format.pval(result$p, digits = 3))),
+               ",  ", format_p(result$p))),
       p(style = paste0("color:", res$color, "; font-weight: bold;"), res$decision)
     )
   })
@@ -669,7 +687,7 @@ ch6_server <- function(input, output, session) {
         ))
       ),
       p(paste0("t(14) = ", round(result$statistic, 3),
-               ",  p = ", format.pval(result$p, digits = 3))),
+               ",  ", format_p(result$p))),
       p(style = paste0("color:", res$color, "; font-weight: bold;"), res$decision)
     )
   })

@@ -591,7 +591,7 @@ ch5_server <- function(input, output, session) {
           .html_table(exp_mat, "Liczności oczekiwane (gdyby H₀ prawdziwa):"),
           lc_stat_box(
             "p",
-            format.pval(p_val, digits = 4),
+            format_p_value(p_val),
             caption = paste0("χ²(", df_val, ") = ", round(chi_stat, 3)),
             color = col_effect
           ),
@@ -659,8 +659,8 @@ ch5_server <- function(input, output, session) {
         tags$tbody(
           tags$tr(
             tags$td(tags$b("p-wartość")),
-            tags$td(tags$b(format.pval(test_chi$p.value, digits = 4))),
-            tags$td(tags$b(format.pval(test_fisher$p.value, digits = 4)))
+            tags$td(tags$b(format_p_value(test_chi$p.value))),
+            tags$td(tags$b(format_p_value(test_fisher$p.value)))
           ),
           tags$tr(
             tags$td(tags$b("Decyzja")),

@@ -469,7 +469,7 @@ ch2_server <- function(input, output, session) {
         lc_stat_box("s", round(s, 2), color = col_h0),
         lc_stat_box(
           "p",
-          format.pval(p_val, digits = 4),
+          format_p_value(p_val),
           caption = paste0("SE = s/√n = ", round(se, 2)),
           color = upwr_secondary
         ),
@@ -488,7 +488,7 @@ ch2_server <- function(input, output, session) {
           if (abs(t_stat) > 2) " To sporo!" else " To niewiele.")
       ),
       "4" = tagList(
-        lc_stat_box("p", format.pval(p_val, digits = 4), color = col_pvalue),
+        lc_stat_box("p", format_p_value(p_val), color = col_pvalue),
         p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
           res$decision),
         p(res$explanation)
@@ -664,7 +664,7 @@ ch2_server <- function(input, output, session) {
           tags$b(if (par1s$alt == "less") "lewy" else "prawy"), " ogon rozkładu.")
       ),
       "4" = tagList(
-        lc_stat_box("p", format.pval(p_val, digits = 4),
+        lc_stat_box("p", format_p_value(p_val),
                     caption = "jednostronnie", color = col_pvalue),
         p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
           res$decision),

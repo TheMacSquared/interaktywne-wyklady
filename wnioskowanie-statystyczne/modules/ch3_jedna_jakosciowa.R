@@ -557,7 +557,7 @@ ch3_server <- function(input, output, session) {
         test <- binom.test(k, n, p0, alternative = "two.sided")
         res <- format_test_result(test$p.value)
         tagList(
-          lc_stat_box("p", format.pval(test$p.value, digits = 4), color = col_pvalue),
+          lc_stat_box("p", format_p_value(test$p.value), color = col_pvalue),
           p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
             res$decision),
           p(res$explanation)
@@ -685,7 +685,7 @@ ch3_server <- function(input, output, session) {
         test <- binom.test(k, n, p0, alternative = par$alt_1s)
         res <- format_test_result(test$p.value)
         tagList(
-          lc_stat_box("p", format.pval(test$p.value, digits = 4),
+          lc_stat_box("p", format_p_value(test$p.value),
                      " (jednostronnie!)", color = col_pvalue),
           p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
             res$decision),
@@ -746,8 +746,8 @@ ch3_server <- function(input, output, session) {
           ),
           tags$tr(
             tags$td(tags$b("p-wartość")),
-            tags$td(tags$b(format.pval(binom_res$p.value, digits = 4))),
-            tags$td(tags$b(format.pval(prop_res$p.value, digits = 4)))
+            tags$td(tags$b(format_p_value(binom_res$p.value))),
+            tags$td(tags$b(format_p_value(prop_res$p.value)))
           ),
           tags$tr(
             tags$td(tags$b("Decyzja")),

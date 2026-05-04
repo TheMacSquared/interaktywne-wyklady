@@ -634,7 +634,7 @@ ch4_server <- function(input, output, session) {
       "3" = tagList(
         lc_stat_box(
           "p",
-          format.pval(p_val, digits = 4),
+          format_p_value(p_val),
           caption = paste0("t = ", round(r_val, 3), " · √", n - 2,
                            " / √(1 − ", round(r_val^2, 3),
                            ") = ", round(t_stat, 3)),
@@ -643,7 +643,7 @@ ch4_server <- function(input, output, session) {
         p("Zamieniamy r na statystykę t, żeby móc porównać z rozkładem t(", n - 2, ").")
       ),
       "4" = tagList(
-        lc_stat_box("p", format.pval(p_val, digits = 4), color = col_pvalue),
+        lc_stat_box("p", format_p_value(p_val), color = col_pvalue),
         p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
           res$decision),
         p(res$explanation)
@@ -749,7 +749,7 @@ ch4_server <- function(input, output, session) {
           tags$b(if (par$alt_1s == "greater") "prawy" else "lewy"), " ogon.")
       ),
       "4" = tagList(
-        lc_stat_box("p", format.pval(p_val, digits = 4), " (jednostronnie!)", color = col_pvalue),
+        lc_stat_box("p", format_p_value(p_val), " (jednostronnie!)", color = col_pvalue),
         p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
           res$decision),
         p(res$explanation),
