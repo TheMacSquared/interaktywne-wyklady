@@ -208,36 +208,6 @@ ch5_ui <- list(
       )
     ),
 
-    # ========================================================================
-    # Jak interpretowac sile zwiazku
-    # ========================================================================
-    lc_h2("ch5-sila", "Jak duża jest różnica? Siła związku"),
-
-    tagList(
-      p("P-wartość mówi ", tags$em("czy"), " związek istnieje, ale nie ",
-        tags$em("jak duży"), " jest. Zobaczmy to na naszych danych:")
-    ),
-
-    figure_panel(
-      label = "Ryc. 7.4",
-      title = "Siła związku — na naszych danych",
-      actionButton("ch5_effect", "Pokaż siłę związku",
-                   class = "lc-btn-primary", width = "100%"),
-      br(), br(),
-      uiOutput("ch5_effect_result")
-    ),
-
-    tagList(
-      p(tags$b("Jak czytać siłę związku:")),
-      p(tags$b("1. Procenty w grupach"), " — najlepsza intuicja.
-        Jeśli odsetek to 45% wobec 47% — nawet przy p < 0,05 różnica jest
-        praktycznie żadna. Jeśli 30% wobec 70% — efekt jest ogromny."),
-      p(tags$b("2. Cramér's V"), " — numeryczna miara siły związku [0–1].
-        Omówiona szerzej w rozdziale ", tags$em("Siła efektu"), "."),
-      p("Zawsze ", tags$b("zacznij od procentów"),
-        " — to język zrozumiały dla każdego odbiorcy.")
-    ),
-
     lc_h2("ch5-cas", "Ćwiczenia", "CASchools — test χ² niezależności"),
 
     lc_feedback(type = "info",
@@ -590,12 +560,12 @@ ch5_server <- function(input, output, session) {
         tagList(
           .html_table(exp_mat, "Liczności oczekiwane (gdyby H₀ prawdziwa):"),
           lc_stat_box(
-            "p",
-            format_p_value(p_val),
-            caption = paste0("χ²(", df_val, ") = ", round(chi_stat, 3)),
+            "χ²",
+            round(chi_stat, 3),
+            caption = paste0("df = ", df_val),
             color = col_effect
           ),
-          p("Statystyka χ² mierzy łączną rozbieżność między tabelą obserwowancą
+          p("Statystyka χ² mierzy łączną rozbieżność między tabelą obserwowaną
             a tabelą oczekiwaną."),
           if (low_exp) p(style = "color: var(--upwr-accent); font-weight: bold;",
             "⚠ Uwaga: niektóre oczekiwane liczności < 5!")
@@ -604,28 +574,16 @@ ch5_server <- function(input, output, session) {
       "4" = {
         p_val <- test$p.value
         res <- format_test_result(p_val)
-
-        # Cramers V
-        k <- min(nrow(tab), ncol(tab))
-        v <- sqrt(as.numeric(test$statistic) / (n_total * (k - 1)))
-
-        # Zakres procentow
-        pct_tab <- prop.table(tab, margin = 1) * 100
-        pct_cols <- apply(pct_tab, 2, function(col) round(range(col), 1))
+        chi_stat <- as.numeric(test$statistic)
+        df_val <- as.numeric(test$parameter)
 
         tagList(
-          lc_stat_box(
-            "Cramér's V",
-            round(v, 3),
-            color = col_pvalue
-          ),
-          p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
+          p(tags$strong("Wynik testu χ² niezależności:")),
+          p(paste0("χ²(", df_val, ") = ", round(chi_stat, 3))),
+          ui_p_value(p_val),
+          p(style = paste0("color:", res$color, "; font-weight: bold;"),
             res$decision),
-          p(res$explanation),
-          hr(),
-          p("Rozrzut procentów między grupami: ",
-            paste(colnames(pct_tab), "od", pct_cols[1, ], "do", pct_cols[2, ], "%",
-                  collapse = "; "))
+          p(res$explanation)
         )
       }
     )
@@ -675,62 +633,6 @@ ch5_server <- function(input, output, session) {
         p(tags$b("Oczekiwane liczności < 5: "),
           if (low_exp) paste0("TAK (", n_low, " komórek) — χ² może być niedokładny, preferuj Fishera!")
           else "NIE — oba testy dają wiarygodne wyniki.")
-      )
-    )
-  })
-
-  # --- Widget 3: Sila zwiazku na danych z Widget 1 ---
-  output$ch5_effect_result <- renderUI({
-    req(input$ch5_effect)
-    tab <- isolate(ch5_tab())
-    par <- isolate(scenario_params[[input$ch5_scenario]])
-
-    if (is.null(tab)) {
-      return(lc_feedback(type = "warning",
-        "Najpierw wylosuj próbę w widgecie powyżej."))
-    }
-
-    test <- chisq.test(tab)
-    n_total <- sum(tab)
-    k <- min(nrow(tab), ncol(tab))
-    v <- sqrt(as.numeric(test$statistic) / (n_total * (k - 1)))
-
-    # Tabela procentow per wiersz
-    pct_tab <- prop.table(tab, margin = 1) * 100
-
-    # Buduj czytelna tabelke procentow
-    pct_rows <- lapply(seq_len(nrow(pct_tab)), function(i) {
-      tags$tr(
-        tags$td(tags$b(rownames(pct_tab)[i])),
-        lapply(seq_len(ncol(pct_tab)), function(j) {
-          tags$td(paste0(round(pct_tab[i, j], 1), "%"))
-        })
-      )
-    })
-
-    # Zakres procentow per kolumna
-    range_info <- sapply(seq_len(ncol(pct_tab)), function(j) {
-      vals <- pct_tab[, j]
-      paste0(colnames(pct_tab)[j], ": od ", round(min(vals), 1),
-             "% do ", round(max(vals), 1), "%",
-             " (rozrzut ", round(max(vals) - min(vals), 1), " pp)")
-    })
-
-    div(
-      p(tags$b("Procenty w każdej grupie ", par$lab1, ":")),
-      tags$table(class = "lc-table lc-table-bordered lc-table-striped", style = "font-size: 15px;",
-        tags$thead(tags$tr(
-          tags$th(par$lab1),
-          lapply(colnames(pct_tab), function(cn) tags$th(paste0(par$lab2, ": ", cn)))
-        )),
-        tags$tbody(pct_rows)
-      ),
-      lc_feedback(type = "info",
-        p(tags$b("Rozrzut procentów między grupami:")),
-        tags$ul(lapply(range_info, function(ri) tags$li(ri))),
-        p("Im większy rozrzut, tym silniejszy związek praktyczny."),
-        hr(),
-        p(tags$b("Cramér's V = ", round(v, 3)))
       )
     )
   })

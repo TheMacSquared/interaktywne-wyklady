@@ -651,8 +651,8 @@ ch6_server <- function(input, output, session) {
           )
         }))
       ),
-      p(paste0("t(", round(result$df, 0), ") = ", round(result$statistic, 3),
-               ",  ", format_p(result$p))),
+      p(paste0("t(", round(result$df, 0), ") = ", round(result$statistic, 3))),
+      ui_p_value(result$p),
       p(style = paste0("color:", res$color, "; font-weight: bold;"), res$decision)
     )
   })
@@ -686,8 +686,8 @@ ch6_server <- function(input, output, session) {
           tags$td(round(sd(diffs), 2))
         ))
       ),
-      p(paste0("t(14) = ", round(result$statistic, 3),
-               ",  ", format_p(result$p))),
+      p(paste0("t(14) = ", round(result$statistic, 3))),
+      ui_p_value(result$p),
       p(style = paste0("color:", res$color, "; font-weight: bold;"), res$decision)
     )
   })
