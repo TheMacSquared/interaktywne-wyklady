@@ -40,10 +40,10 @@ ch8_ui <- list(
         tags$li(tags$b("Ilościowa + jakościowa (3+ grup)"), " → ANOVA + post-hoc Games-Howell")
       ),
 
-      tags$strong("Krok 3:"), " Próby niezależne czy parowe?",
+      tags$strong("Krok 3:"), " Próby niezależne czy sparowane?",
       tags$ul(
         tags$li(tags$b("Niezależne"), " → test t niezależny"),
-        tags$li(tags$b("Parowe"), " → test t parowy")
+        tags$li(tags$b("Sparowane"), " → test t dla danych sparowanych")
       )
     ),
 
@@ -91,8 +91,8 @@ ch8_ui <- list(
           tags$td(tags$code("t_test(y~gr)"))
         ),
         tags$tr(
-          tags$td("2 grupy parowe"),
-          tags$td("Test t parowy"),
+          tags$td("2 grupy sparowane"),
+          tags$td("Test t dla danych sparowanych"),
           tags$td(tags$code("t_test(y~t, paired=T)"))
         ),
         tags$tr(
@@ -173,7 +173,7 @@ ch8_ui <- list(
           tags$td("t, df, p, Mean difference, Cohen's d, 95% CI różnicy")
         ),
         tags$tr(
-          tags$td(tags$b("Test t parowy")),
+          tags$td(tags$b("Test t dla danych sparowanych")),
           tags$td("Porównanie: ta sama jednostka zmierzona dwukrotnie (przed/po)."),
           tags$td(tags$code("T-Tests → Paired Samples T-Test")),
           tags$td("t, df, p, Cohen's d, średnia różnic")

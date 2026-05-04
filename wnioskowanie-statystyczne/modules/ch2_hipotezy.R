@@ -272,7 +272,7 @@ ch2h_ui <- list(
                     i po szkoleniu BHP. Czy szkolenie zmniejszyło liczbę wypadków?",
         h0 = "Średnia liczba wypadków po szkoleniu jest nie niższa niż przed szkoleniem.",
         ha = "Średnia liczba wypadków po szkoleniu jest niższa niż przed szkoleniem.",
-        note = "Jednostronny („zmniejszyło”). Uwaga: te same zakłady mierzone dwa razy — w praktyce użyjemy testu parowego."
+        note = "Jednostronny („zmniejszyło”). Uwaga: te same zakłady mierzone dwa razy — w praktyce użyjemy testu t dla danych sparowanych."
       ),
       list(
         question = "Laboratorium przebadało 120 próbek wody pitnej.

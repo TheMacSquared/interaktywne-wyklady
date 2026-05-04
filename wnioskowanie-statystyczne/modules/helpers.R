@@ -250,8 +250,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
       annotate("text", x = stat_value, y = max(y) * 0.85,
                label = paste0("stat = ", round(stat_value, 3)),
                hjust = -0.1, color = upwr_accent, fontface = "bold") +
-      labs(title = paste0("Rozkład pod H0: ", label),
-           x = "Statystyka testowa", y = "Gęstość") +
+      labs(x = "Statystyka testowa", y = "Gęstość") +
       theme()
 
   } else if (alternative == "two.sided") {
@@ -282,8 +281,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
                label = paste0("t = ", round(stat_value, 3)),
                hjust = if (stat_value > 0) -0.1 else 1.1,
                color = upwr_accent, fontface = "bold") +
-      labs(title = paste0("Rozkład pod H0: ", label),
-           x = "Statystyka testowa", y = "Gęstość") +
+      labs(x = "Statystyka testowa", y = "Gęstość") +
       theme()
 
   } else {
@@ -309,8 +307,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
                label = paste0("t = ", round(stat_value, 3)),
                hjust = if (stat_value > 0) -0.1 else 1.1,
                color = upwr_accent, fontface = "bold") +
-      labs(title = paste0("Rozkład pod H0: ", label),
-           x = "Statystyka testowa", y = "Gęstość") +
+      labs(x = "Statystyka testowa", y = "Gęstość") +
       theme()
   }
 
