@@ -5,6 +5,22 @@ ale nie blokują obecnego zadania. Posortowane luźno wg modułu.
 
 ---
 
+## Ogólne: wdrożenie gloss() na całość projektu
+
+System klikalnych terminów słownikowych (`gloss()`) jest gotowy i przetestowany
+w `przedzialy-ufnosci/modules/ch1_estymacja.R`. Słownik 31 haseł jest w
+`R/glossary.R`.
+
+Do zrobienia: przejrzeć moduły wszystkich wykładów i owinąć `gloss()` pierwsze
+wprowadzenia kluczowych terminów (nie każde wystąpienie — tylko to gdzie pojęcie
+jest wprowadzane po raz pierwszy w danym rozdziale).
+
+Powiązane pliki:
+- [R/glossary.R](R/glossary.R) — słownik terminów (tu też dopisywać nowe hasła)
+- [przedzialy-ufnosci/modules/ch1_estymacja.R](przedzialy-ufnosci/modules/ch1_estymacja.R) — wzorzec użycia
+
+---
+
 ## Wykład: regresja
 
 ### Regresja do średniej — mini-widget
