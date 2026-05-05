@@ -1663,3 +1663,49 @@ mjx-container mjx-text {
     transition: none;
   }
 }
+
+/* ============================================================================
+   Glossary terms — klikalne hasła słownikowe
+   Funkcja R: gloss("termin") w R/glossary.R
+   ============================================================================ */
+
+.lc-gloss {
+  cursor: pointer;
+  border-bottom: 1.5px dashed var(--upwr-accent);
+  color: inherit;
+  white-space: nowrap;
+}
+
+.lc-gloss:hover {
+  border-bottom-style: solid;
+}
+
+.lc-gloss-popup {
+  position: fixed;
+  z-index: 10000;
+  max-width: 280px;
+  padding: .55rem .8rem .6rem;
+  background: var(--upwr-bg, #fff);
+  border: 1.5px solid var(--upwr-accent);
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .13);
+  font-family: var(--upwr-sans);
+  font-size: .875rem;
+  line-height: 1.5;
+  color: var(--upwr-text, #222);
+  display: none;
+  pointer-events: none;
+}
+
+.lc-gloss-popup.is-visible {
+  display: block;
+}
+
+.lc-gloss-popup .lc-gloss-term {
+  font-weight: 600;
+  margin-bottom: .2rem;
+  color: var(--upwr-accent);
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}

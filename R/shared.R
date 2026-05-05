@@ -167,3 +167,12 @@ ui_p_value <- function(p_value) {
 .fmt_me   <- function(ci, digits = 2) sprintf("%.*f", digits, ci$me)
 .fmt_ci   <- function(ci, digits = 2) sprintf("[%.*f, %.*f]", digits, ci$lo, digits, ci$hi)
 .fmt_prop <- function(ci, digits = 3) sprintf("%.*f", digits, ci$p)
+
+# ============================================================================
+# SLOWNIK TERMINOW (gloss)
+# Sourcujemy glossary.R jeśli istnieje — udostępnia gloss() i .GLOSSARY.
+# ============================================================================
+local({
+  gf <- file.path(project_root, "R", "glossary.R")
+  if (file.exists(gf)) source(gf, local = parent.env(environment()))
+})

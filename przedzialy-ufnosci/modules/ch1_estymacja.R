@@ -19,13 +19,14 @@ ch1_ui <- list(
     lc_h2("ch1-estymacja", "Estymacja — od próby do populacji"),
 
     tagList(
-      p("W statystyce rzadko znamy parametry całej populacji.
-        Zamiast tego pobieramy ", tags$strong("próbę"), " i na jej podstawie
-        ", tags$strong("szacujemy"), " (estymujemy) nieznany parametr."),
+      p("W statystyce rzadko znamy ", gloss("parametr"), " całej ",
+        gloss("populacja"), ". Zamiast tego pobieramy ", gloss("próba"),
+        " i na jej podstawie szacujemy (estymujemy) nieznany parametr."),
       p("Na przykład: nie znamy średniego wzrostu wszystkich studentów
-        w Polsce, ale możemy zmierzyć 100 osób i obliczyć średnią z próby ",
-        withMathJax("\\(\\bar{x}\\)"), " jako ", tags$strong("estymator"),
-        " średniej populacyjnej ", withMathJax("\\(\\mu\\)"), ".")
+        w Polsce, ale możemy zmierzyć 100 osób i obliczyć ", gloss("średnia"),
+        " z próby ", withMathJax("\\(\\bar{x}\\)"), " jako ",
+        gloss("estymator"), " średniej populacyjnej ",
+        withMathJax("\\(\\mu\\)"), ".")
     ),
 
     lc_h2("ch1-estymator", "Estymator w akcji"),
