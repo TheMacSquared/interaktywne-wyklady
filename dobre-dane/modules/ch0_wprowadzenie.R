@@ -3,6 +3,14 @@
 ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Wprowadzenie", content = tagList(
   fluidRow(column(8, offset = 2,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 00 · Co czyni dobry zbiór danych?",
+      num    = "00",
+      title  = "Od pomysłu do danych.",
+      lead   = "Zanim uruchomisz test statystyczny, sprawdź czy dane naprawdę
+                odpowiadają na pytanie badawcze i czy da się je sensownie analizować."
+    ),
+
     lc_h2("sec-01", "Od pomysłu do danych"),
 
     div(class = "lc-prose",

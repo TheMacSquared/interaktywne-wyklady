@@ -3,6 +3,14 @@
 ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content = tagList(
   fluidRow(column(8, offset = 2,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 11 · Co czyni dobry zbiór danych?",
+      num    = "11",
+      title  = "Kawiarnia studencka.",
+      lead   = "Dane dzienne mogą wyglądać jak zwykła tabela, ale ukrywać
+                strukturę szeregu czasowego i naruszenie niezależności obserwacji."
+    ),
+
     lc_h2("sec-01", "Sprzedaż w kawiarni studenckiej"),
 
     div(class = "lc-prose",

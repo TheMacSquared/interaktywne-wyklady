@@ -3,6 +3,15 @@
 ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = tagList(
   fluidRow(column(10, offset = 1,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 01 · Co czyni dobry zbiór danych?",
+      num    = "01",
+      title  = "Katalog problemów.",
+      lead   = "Siedem typowych usterek, które potrafią zepsuć analizę:
+                za mała próba, brak zmienności, błędy, braki, zła struktura,
+                niejasne zmienne i brak niezależności."
+    ),
+
     lc_h2("sec-01", "Katalog problemów w danych"),
 
     div(class = "lc-prose",

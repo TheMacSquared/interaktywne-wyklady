@@ -49,7 +49,7 @@ shiny::runApp("metody-bayesowskie")
 | [regresja](regresja/) | Regresja | 5 rozdziałów: liniowa prosta, wieloraka, logistyczna, porównanie modeli (R², AIC, BIC, RMSE), ściąga |
 | [zalozenia-testow](zalozenia-testow/) | Założenia testów | 6 rozdziałów: normalność, jednorodne wariancje, założenia regresji, χ²/Fisher, mapa metod z alternatywami, ściąga |
 | [case-studies](case-studies/) | Case studies | Kompletne analizy od A do Z. Każdy rozdział = jeden zbiór danych, hipotezy, analizy, wnioski. Na razie: CASchools |
-| [dobre-dane](dobre-dane/) | Jakość danych | 11 zbiorów — kiedy dane nadają się do klasycznej statystyki? (CASchools, pingwiny, Tarantino, Wage, ankieta firmowa, mieszkania, studenci, powietrze, ankieta SU) + ściąga |
+| [dobre-dane](dobre-dane/) | Jakość danych | 11 zbiorów — kiedy dane nadają się do klasycznej statystyki? (CASchools, pingwiny, Tarantino, Wage, hotel, formularz, laboratorium, studenci, kawiarnia) + ściąga |
 | [symulacje-statystyczne](symulacje-statystyczne/) | Symulacje statystyczne | 10 rozdziałów: idea resamplingowa, bootstrap CI, bootstrap jednej próby, testy permutacyjne, jackknife, cross-validation, Monte Carlo (moc + H₀), kiedy stosować?, ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
 | [metody-bayesowskie](metody-bayesowskie/) | Metody bayesowskie | 12 rozdziałów z **konsekwentnym dwukolumnowym porównaniem freq vs Bayes**: intuicja (prior→posterior), BF vs p, HDI vs CI, jedna próba, dwie grupy, ANOVA, tabele krzyżowe, korelacja, regresja liniowa i logistyczna (rstanarm), ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
 
@@ -147,12 +147,12 @@ interaktywne-wyklady/
 │       ├── ch3_grupa.R             # 3. Za mało danych — zły (n=8)
 │       ├── ch4_pingwiny.R          # 4. Pingwiny — dobry (palmerpenguins)
 │       ├── ch5_tarantino.R         # 5. Tarantino — zły (brak zmienności pytania)
-│       ├── ch6_firma.R             # 6. Ankieta firmowa — zły (brak zmienności w zmiennych)
+│       ├── ch6_hotel.R             # 6. Hotel — zły (brak zmienności w zmiennych)
 │       ├── ch7_wynagrodzenia.R     # 7. Wynagrodzenia — dobry (Wage/ISLR)
 │       ├── ch8_ankieta.R           # 8. Trudna ankieta — zły (źle zdefiniowane zmienne)
-│       ├── ch9_mieszkania.R        # 9. Ceny mieszkań — mieszany (outliery i błędy)
+│       ├── ch9_laboratorium.R      # 9. Badania laboratoryjne — mieszany (outliery i błędy)
 │       ├── ch10_studenci.R         # 10. Ankieta studencka — dobry (wzorcowa)
-│       ├── ch11_powietrze.R        # 11. Jakość powietrza — zły (brak niezależności)
+│       ├── ch11_kawiarnia.R        # 11. Kawiarnia — zły (braki danych + brak niezależności)
 │       └── ch12_sciaga.R           # 12. Ściąga (checklista 9 kryteriów)
 ├── symulacje-statystyczne/         # Symulacje: bootstrap, permutacje, CV, MC
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja

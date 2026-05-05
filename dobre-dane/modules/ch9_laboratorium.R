@@ -3,6 +3,14 @@
 ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content = tagList(
   fluidRow(column(8, offset = 2,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 09 · Co czyni dobry zbiór danych?",
+      num    = "09",
+      title  = "Badania laboratoryjne.",
+      lead   = "Nie każdy outlier jest błędem. Ten rozdział oddziela wartości
+                niemożliwe od rzadkich, ale prawdziwych obserwacji."
+    ),
+
     lc_h2("sec-01", "Badania laboratoryjne"),
 
     div(class = "lc-prose",
