@@ -372,7 +372,6 @@ ch6_server <- function(input, output, session) {
     var <- input$ch6_ind_var
     formula <- as.formula(paste(var, "~ plec"))
     tidy_res <- as.data.frame(rstatix::t_test(data, formula))
-    d_val <- as.data.frame(rstatix::cohens_d(data, formula))$effsize
     means <- data %>%
       dplyr::group_by(plec) %>%
       dplyr::summarise(
@@ -381,7 +380,7 @@ ch6_server <- function(input, output, session) {
         s = sd(.data[[var]], na.rm = TRUE),
         .groups = "drop"
       )
-    list(test = tidy_res, d = d_val, means = means)
+    list(test = tidy_res, means = means)
   })
 
   output$ch6_ind_hypothesis <- renderUI({
@@ -472,7 +471,6 @@ ch6_server <- function(input, output, session) {
     var_label <- tolower(ch6_ind_var_label(var))
     st <- ch6_ind_stats()
     tidy_res <- st$test
-    d_val <- st$d
     means <- st$means
     higher <- means$plec[which.max(means$m)]
     lower <- means$plec[which.min(means$m)]
@@ -573,7 +571,6 @@ ch6_server <- function(input, output, session) {
     result <- rstatix::t_test(long, wynik ~ moment, paired = TRUE)
     tidy_res <- as.data.frame(result)
 
-    d_val <- mean(data$wynik_po - data$wynik_przed) / sd(data$wynik_po - data$wynik_przed)
     mean_diff <- mean(data$wynik_po - data$wynik_przed)
     res <- format_test_result(tidy_res$p)
     direction <- if (mean_diff > 0) "wzrosły" else if (mean_diff < 0) "spadły" else "nie zmieniły się"

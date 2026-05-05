@@ -660,7 +660,7 @@ ch1_server <- function(input, output, session) {
         tags$td(coefs$term_pl[i]),
         tags$td(round(coefs$estimate[i], 3)),
         tags$td(round(coefs$std.error[i], 3)),
-        tags$td(paste0(format.pval(coefs$p.value[i], digits = 3),
+        tags$td(paste0(format_p_value(coefs$p.value[i]),
                         if (sig) " *" else ""))
       )
     })

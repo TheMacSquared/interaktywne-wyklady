@@ -272,7 +272,7 @@ ch3_server <- function(input, output, session) {
         tags$td(tags$strong(round(coefs$or[i], 3))),
         tags$td(paste0("[", round(coefs$or_low[i], 3), " ; ",
                         round(coefs$or_high[i], 3), "]")),
-        tags$td(format.pval(coefs$p.value[i], digits = 3))
+        tags$td(format_p_value(coefs$p.value[i]))
       )
     })
 

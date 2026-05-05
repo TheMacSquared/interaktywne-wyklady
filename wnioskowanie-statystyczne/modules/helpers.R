@@ -314,44 +314,7 @@ plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
   p
 }
 
-# Formatowanie p-wartości w postaci PL (przecinek), 2 cyfry znaczące,
-# z capem dolnym "p < 0,0001". Zwraca samą liczbę (bez "p = " / "p < ").
-# Dla p < 0,0001 zwraca string "<0,0001" (z bezpośrednim znakiem mniejszości).
-format_p_value <- function(p_value) {
-  if (is.na(p_value)) return("NA")
-  if (p_value < 0.0001) return("<0,0001")
-  rounded <- signif(p_value, 2)
-  if (rounded >= 1) return(">0,99")
-  s <- formatC(rounded, format = "fg", digits = 2)
-  if (!grepl("\\.", s)) s <- paste0(s, ".0")
-  gsub("\\.", ",", s)
-}
-
-# Wersja z prefiksem: "p = 0,023" lub "p < 0,0001".
-format_p <- function(p_value) {
-  v <- format_p_value(p_value)
-  if (startsWith(v, "<") || startsWith(v, ">")) {
-    paste0("p ", substr(v, 1, 1), " ", substr(v, 2, nchar(v)))
-  } else {
-    paste0("p = ", v)
-  }
-}
-
-# UI: linia "p = 0,023" w werdyktach — sama liczba pogrubiona i powiększona.
-# Zwraca tag <p> gotowy do wstawienia w lc_feedback / tagList.
-ui_p_value <- function(p_value) {
-  v <- format_p_value(p_value)
-  is_bound <- startsWith(v, "<") || startsWith(v, ">")
-  prefix   <- if (is_bound) paste0("p ", substr(v, 1, 1), " ") else "p = "
-  number   <- if (is_bound) substr(v, 2, nchar(v)) else v
-  tags$p(
-    prefix,
-    tags$strong(
-      style = "font-size: 1.25em;",
-      number
-    )
-  )
-}
+# format_p_value(), format_p(), ui_p_value() — zdefiniowane w R/shared.R
 
 # Formatowanie wyniku testu jako tekst PL
 format_test_result <- function(p_value, alpha = 0.05) {

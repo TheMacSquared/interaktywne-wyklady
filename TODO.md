@@ -39,3 +39,48 @@ Powiązane pliki:
 - [regresja/modules/ch1_liniowa.R](regresja/modules/ch1_liniowa.R)
 - [wnioskowanie-statystyczne/modules/ch4_korelacja.R](wnioskowanie-statystyczne/modules/ch4_korelacja.R) (ryc. 6.1–6.3 jako odniesienie)
 - [scripts/regen_correlation_assets.R](scripts/regen_correlation_assets.R) (generator elips)
+
+---
+
+## Jakość kodu: bold overuse w wnioskowanie-statystyczne
+
+`wnioskowanie-statystyczne/modules/ch1_logika.R` ma ~37 wystąpień `tags$strong()` /
+`tags$b()` — znacznie więcej niż inne wykłady. CLAUDE.md ogranicza bold do:
+krótkich etykiet z dwukropkiem, one-word werdyktów, status-tagów.
+
+Warto przejrzeć ten plik i ograniczyć bold do semantycznych oznaczeń.
+Pozostałe wykłady (rozklady-prawdopodobienstwa, zalozenia-testow) używają bold oszczędnie — wzorzec do naśladowania.
+
+Powiązane pliki:
+- [wnioskowanie-statystyczne/modules/ch1_logika.R](wnioskowanie-statystyczne/modules/ch1_logika.R)
+
+---
+
+## Jakość kodu: rstatix w zalozenia-testow ch1
+
+`zalozenia-testow/modules/ch1_normalnosc.R` używa `ks.test()` (base R) zamiast
+rstatix. CLAUDE.md nakazuje preferować rstatix. Wyjątek może być uzasadniony
+dydaktycznie (pokazujemy składnię KS), ale warto rozważyć ujednolicenie.
+
+Widget 2 (testy normalności) używa już `shapiro_test()` z rstatix — KS jest jedynym
+odstępstwem w tym module.
+
+Powiązane pliki:
+- [zalozenia-testow/modules/ch1_normalnosc.R](zalozenia-testow/modules/ch1_normalnosc.R)
+
+---
+
+## Rozbudowa: case-studies — więcej rozdziałów
+
+`case-studies` ma tylko 1 rozdział (ch1_caschools — dane CASchools z AER).
+Brak quizów i nawigacji między rozdziałami. W porównaniu do innych wykładów
+(9–13 rozdziałów) wykład jest szczątkowy.
+
+Potencjalne rozdziały:
+- ch2: case study z danymi palmerpenguins (ANOVA/korelacja)
+- ch3: case study binarna — dane medyczne (regresja logistyczna)
+- ch4: case study czasowy — symulacja zmian w czasie
+
+Powiązane pliki:
+- [case-studies/app.R](case-studies/app.R)
+- [case-studies/modules/ch1_caschools.R](case-studies/modules/ch1_caschools.R)
