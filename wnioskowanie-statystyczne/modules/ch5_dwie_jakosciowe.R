@@ -22,11 +22,10 @@ ch5_ui <- list(
     lc_h2("ch5-intro", "Tabela kontyngencji i test χ²"),
 
     tagList(
-      p("Gdy mamy dwie zmienne jakościowe, pytamy: ",
-        tags$b("czy są ze sobą powiązane?"),
+      p("Gdy mamy dwie zmienne jakościowe, pytamy: czy są ze sobą powiązane?",
         " Narzędzie: tabela kontyngencji (krzyżowa) + test χ² niezależności."),
-      p("Idea: porównujemy to, co ", tags$b("zaobserwowaliśmy"),
-        " z tym, czego ", tags$b("oczekiwalibyśmy, gdyby zmienne były niezależne"), "."),
+      p("Idea: porównujemy to, co zaobserwowaliśmy",
+        " z tym, czego oczekiwalibyśmy, gdyby zmienne były niezależne."),
       lc_formula_box(
         p(withMathJax("\\(H_0:\\)"), " zmienne są niezależne"),
         p(withMathJax("\\(H_a:\\)"), " zmienne są powiązane")
@@ -159,7 +158,7 @@ ch5_ui <- list(
     tagList(
       p("Test χ² opiera się na przybliżeniu. Gdy próba jest mała,
         niektóre oczekiwane liczności mogą być < 5 — wtedy przybliżenie zawodzi."),
-      p("Alternatywa: ", tags$b("test dokładny Fishera"),
+      p("Alternatywa: test dokładny Fishera",
         " — liczy p-wartość dokładnie, jak test dwumianowy dla proporcji.")
     ),
 
@@ -173,7 +172,7 @@ ch5_ui <- list(
     ),
 
     tagList(
-      p(tags$b("Kiedy który?")),
+      p("Kiedy który?"),
       tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th(""), tags$th("Test χ²"), tags$th("Test Fishera"))

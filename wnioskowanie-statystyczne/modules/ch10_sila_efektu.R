@@ -11,8 +11,8 @@ ch10_ui <- list(
       kicker = "Rozdział 10 — Testowanie hipotez",
       num    = "10",
       title  = "Siła efektu.",
-      lead   = "Istotność mówi „coś tam jest” — ale nie mówi „jak duże”. Cohen's d, r,
-                Cramér's V i eta kwadrat to miary, które odpowiadają na pytanie „ile?”."
+      lead   = "Istotność mówi 'coś tam jest' — ale nie mówi 'jak duże'. Cohen's d, r,
+                Cramér's V i eta kwadrat to miary, które odpowiadają na pytanie 'ile?'."
     ),
 
     # ========================================================================
@@ -23,9 +23,9 @@ ch10_ui <- list(
     tagList(
       p("Wyobraź sobie, że badasz skuteczność nowego szkolenia BHP. Mierzysz czas reakcji
         operatorów przed i po szkoleniu. Wynik: ", tags$b("p = 0,03"), " — istotne!"),
-      p("Ale czy szkolenie cokolwiek zmieniło? ", tags$b("Tego p nie mówi."),
+      p("Ale czy szkolenie cokolwiek zmieniło? Tego p nie mówi.",
         " Przy wystarczająco dużej próbie nawet różnica 2 ms (bez żadnego praktycznego znaczenia)
-        będzie „wysoce istotna statystycznie”."),
+        będzie 'wysoce istotna statystycznie'."),
       p("I odwrotnie: przy małej próbie nawet duży efekt może nie osiągnąć istotności."),
       lc_formula_box(
         p(tags$b("Reguła: "), "p informuje o tym, czy efekt istnieje w populacji.
@@ -39,11 +39,20 @@ ch10_ui <- list(
       title = "p kontra d: to nie to samo",
       fluidRow(
         column(4,
+          selectInput("ch10_dist_scenario", "Przykład:",
+            choices = c(
+              "Enzym (TŻ)"   = "TZ",
+              "Ziarno (ROL)" = "ROL",
+              "Reakcja (IB)" = "IB"
+            ),
+            selected = "TZ"
+          ),
           sliderInput("ch10_d", "Cohen's d (wielkość efektu):",
                       min = 0.1, max = 1.5, value = 0.3, step = 0.05),
           sliderInput("ch10_n", "n na grupę:",
                       min = 20, max = 300, value = 50, step = 10),
-          p(tags$em("Zmień n przy stałym d i obserwuj, jak zmienia się p."))
+          p(tags$em("Zmień n przy stałym d i obserwuj, jak zmienia się p.")),
+          uiOutput("ch10_dist_hint")
         ),
         column(8,
           plotOutput("ch10_dist_plot", height = "280px"),
@@ -70,11 +79,11 @@ ch10_ui <- list(
           withMathJax("\\(d = \\dfrac{\\bar{d}}{s_d}\\)"),
           " (średnia różnic przez odchylenie różnic)")
       ),
-      p("Dlaczego dzielimy przez ", tags$b("s"), "? Żeby różnice z różnych dziedzin
+      p("Dlaczego dzielimy przez s? Żeby różnice z różnych dziedzin
         były porównywalne. Różnica 5 cm wzrostu i różnica 5 punktów na egzaminie
         to zupełnie inne sytuacje — ale przeliczone na ", tags$em("liczbę odchyleń standardowych"),
-        " dają wspólną skalę. ", tags$b("d nie zależy od n"),
-        " — mówi „jak duża jest różnica”, a nie „jak pewni jej jesteśmy”."),
+        " dają wspólną skalę. d nie zależy od n",
+        " — mówi 'jak duża jest różnica', a nie 'jak pewni jej jesteśmy'."),
       tags$table(class = "lc-table lc-table-bordered",
         style = "font-size: 15px; margin: 10px 0;",
         tags$thead(tags$tr(
@@ -96,6 +105,14 @@ ch10_ui <- list(
       title = "Cohen's d w surowych liczbach",
       fluidRow(
         column(4,
+          selectInput("ch10_d_scenario", "Przykład:",
+            choices = c(
+              "Jogurt (TŻ)"    = "TZ",
+              "Pszenica (ROL)" = "ROL",
+              "BHP (IB)"       = "IB"
+            ),
+            selected = "TZ"
+          ),
           radioButtons("ch10_d_level", "Wielkość efektu:",
             choices = c(
               "d = 0,2 (mały)"      = "0.2",
@@ -126,10 +143,10 @@ ch10_ui <- list(
       lc_formula_box(
         p(withMathJax("\\(r = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum(x_i-\\bar{x})^2 \\cdot \\sum(y_i-\\bar{y})^2}}\\)"))
       ),
-      p("Wygodniejsze do interpretacji jest często ", tags$b("r²"),
+      p("Wygodniejsze do interpretacji jest często r²",
         " — mówi, ", tags$em("ile procent zmienności y wyjaśnia x"),
         ". Przy r = 0,5 mamy r² = 0,25, czyli 25% zmienności wyjaśnione, a 75%
-        zostaje na inne czynniki. Ważne: r mierzy tylko ", tags$b("zależność liniową"),
+        zostaje na inne czynniki. Ważne: r mierzy tylko zależność liniową",
         " — silna zależność krzywoliniowa może dać r bliskie zeru."),
       tags$table(class = "lc-table lc-table-bordered",
         style = "font-size: 15px; margin: 10px 0;",
@@ -149,6 +166,14 @@ ch10_ui <- list(
       title = "r w surowych liczbach",
       fluidRow(
         column(4,
+          selectInput("ch10_r_scenario", "Przykład:",
+            choices = c(
+              "Jogurt (TŻ)"   = "TZ",
+              "Plon (ROL)"    = "ROL",
+              "Wypadki (IB)"  = "IB"
+            ),
+            selected = "TZ"
+          ),
           radioButtons("ch10_r_level", "Wielkość korelacji:",
             choices = c(
               "r = 0,1 (znikoma)"    = "0.1",
@@ -159,7 +184,7 @@ ch10_ui <- list(
             ),
             selected = "0.5"
           ),
-          p(tags$em("Te same dane co w korelacji temperatury i pH jogurtu — różny stopień związku."))
+          uiOutput("ch10_r_hint")
         ),
         column(8,
           plotOutput("ch10_r_plot", height = "240px"),
@@ -204,6 +229,14 @@ ch10_ui <- list(
       title = "Cramér's V w tabeli 2×2",
       fluidRow(
         column(4,
+          selectInput("ch10_v_scenario", "Przykład:",
+            choices = c(
+              "Pleśń (TŻ)"      = "TZ",
+              "Chwasty (ROL)"   = "ROL",
+              "Szczepienie (IB)" = "IB"
+            ),
+            selected = "TZ"
+          ),
           radioButtons("ch10_v_level", "Wielkość efektu:",
             choices = c(
               "V = 0,10 (mały)"   = "0.10",
@@ -213,7 +246,7 @@ ch10_ui <- list(
             ),
             selected = "0.30"
           ),
-          p(tags$em("Przykład: zaszczepieni vs niezaszczepieni — odsetek infekcji."))
+          uiOutput("ch10_v_hint")
         ),
         column(8,
           plotOutput("ch10_v_plot", height = "240px"),
@@ -230,13 +263,13 @@ ch10_ui <- list(
     tagList(
       p(withMathJax("\\(\\eta^2\\)"),
         " (eta kwadrat) to udział wariancji całkowitej wyjaśniany przez przynależność do grupy.
-        Można je rozumieć jako „procent zmienności wyników tłumaczony przez badany czynnik”."),
+        Można je rozumieć jako 'procent zmienności wyników tłumaczony przez badany czynnik'."),
       lc_formula_box(
         p(withMathJax("\\(\\eta^2 = \\frac{SS_{\\text{między}}}{SS_{\\text{całkowite}}}\\)"))
       ),
       p("W jamovi i niektórych podręcznikach zobaczysz różne warianty: ",
-        tags$b("klasyczne η²"), ", ", tags$b("η² częściowe (partial)"), " i ",
-        tags$b("η² uogólnione (ges)"), " — różnią się tym, co dokładnie znajduje
+        "klasyczne η², η² częściowe (partial) i η² uogólnione (ges)",
+        " — różnią się tym, co dokładnie znajduje
         się w mianowniku. Dla prostej ANOVA jednoczynnikowej wszystkie zwracają
         zbliżone wartości. Progi Cohena (0,01 / 0,06 / 0,14) to ",
         tags$em("dolne piętra"), " — w eksperymentach kontrolowanych często
@@ -263,6 +296,14 @@ ch10_ui <- list(
       title = "η² w ANOVA — trzy grupy",
       fluidRow(
         column(4,
+          selectInput("ch10_eta_scenario", "Przykład:",
+            choices = c(
+              "Pasteryzacja (TŻ)" = "TZ",
+              "Nawozy (ROL)"      = "ROL",
+              "Zmiany (IB)"       = "IB"
+            ),
+            selected = "TZ"
+          ),
           radioButtons("ch10_eta_level", "Wielkość efektu:",
             choices = c(
               "η² = 0,01 (mały)"    = "0.01",
@@ -272,7 +313,7 @@ ch10_ui <- list(
             ),
             selected = "0.06"
           ),
-          p(tags$em("3 metody pasteryzacji × kolonie bakterii (s = 10 we wszystkich grupach)."))
+          uiOutput("ch10_eta_hint")
         ),
         column(8,
           plotOutput("ch10_eta_plot", height = "240px"),
@@ -284,9 +325,9 @@ ch10_ui <- list(
     inline_callout(
       label = "Kontekst",
       tagList(
-        "Wartości Cohena („mały/średni/duży”) to konwencje z lat 60. — służą jako punkt
+        "Wartości Cohena ('mały/średni/duży') to konwencje z lat 60. — służą jako punkt
          odniesienia, nie bezwzględny standard. W wielu dziedzinach ",
-        tags$b("d = 0,2 może być kluczowe"),
+        "d = 0,2 może być kluczowe",
         " (np. zmiana śmiertelności o 2 pp.). Zawsze interpretuj efekt
          w kontekście stawek i kosztów dziedziny."
       ),
@@ -308,7 +349,189 @@ ch10_ui <- list(
 
 ch10_server <- function(input, output, session) {
 
-  # --- Ryc. 10.1 (istniejący widget) ---
+  # --------------------------------------------------------------------------
+  # Dane domenowe
+  # --------------------------------------------------------------------------
+
+  ch10_dist_hints <- list(
+    TZ  = "Np. czas inaktywacji enzymu (s) w dwóch temperaturach blanszowania.",
+    ROL = "Np. masa ziarna (g) z dwóch odmian pszenicy.",
+    IB  = "Np. czas reakcji operatora (ms) na zmianie rannej vs nocnej."
+  )
+
+  ch10_d_scenarios <- list(
+    TZ = list(
+      "0.2" = list(
+        x1 = 4.50, x2 = 4.56, s = 0.30,
+        kontekst  = "pH jogurtu po fermentacji — różnica 0,06 pH między dwoma zakwasami.",
+        jednostka = "pH",
+        etyk1 = "Zakwas A", etyk2 = "Zakwas B"
+      ),
+      "0.5" = list(
+        x1 = 20.0, x2 = 22.5, s = 5.0,
+        kontekst  = "Wilgotność produktu suszonego (%) — bez vs ze stabilizatorem, różnica 2,5 pp.",
+        jednostka = "%",
+        etyk1 = "Bez stabilizatora", etyk2 = "Ze stabilizatorem"
+      ),
+      "0.8" = list(
+        x1 = 8.0, x2 = 10.0, s = 2.5,
+        kontekst  = "Czas inaktywacji enzymów (min) — blanszowanie 80°C vs 95°C, różnica 2 min.",
+        jednostka = "min",
+        etyk1 = "Blanszowanie 80°C", etyk2 = "Blanszowanie 95°C"
+      ),
+      "1.2" = list(
+        x1 = 5.0, x2 = 8.6, s = 3.0,
+        kontekst  = "Liczba drożdży (×10⁶/mL) — dwa szczepy hodowlane, różnica 3,6 × 10⁶/mL.",
+        jednostka = "×10⁶/mL",
+        etyk1 = "Szczep A", etyk2 = "Szczep B"
+      )
+    ),
+    ROL = list(
+      "0.2" = list(
+        x1 = 5.0, x2 = 5.4, s = 2.0,
+        kontekst  = "Plon pszenicy (t/ha) — kontrola vs nawożenie lekkie, różnica 0,4 t/ha.",
+        jednostka = "t/ha",
+        etyk1 = "Kontrola", etyk2 = "Nawożenie lekkie"
+      ),
+      "0.5" = list(
+        x1 = 72, x2 = 78, s = 12,
+        kontekst  = "Kiełkowalność nasion (%) — nasiona standardowe vs z podkładem, różnica 6 pp.",
+        jednostka = "%",
+        etyk1 = "Nasiona standardowe", etyk2 = "Nasiona z podkładem"
+      ),
+      "0.8" = list(
+        x1 = 120, x2 = 140, s = 25,
+        kontekst  = "Zawartość azotu w glebie (mg/kg) — bez nawozu vs z nawozem azotowym, różnica 20 mg/kg.",
+        jednostka = "mg/kg",
+        etyk1 = "Bez nawozu azotowego", etyk2 = "Z nawozem azotowym"
+      ),
+      "1.2" = list(
+        x1 = 5.0, x2 = 8.6, s = 3.0,
+        kontekst  = "Wzrost sadzonek w 30 dni (cm) — kontrola vs fitohormon, różnica 3,6 cm.",
+        jednostka = "cm",
+        etyk1 = "Kontrola", etyk2 = "Fitohormon"
+      )
+    ),
+    IB = list(
+      "0.2" = list(
+        x1 = 72, x2 = 74, s = 10,
+        kontekst  = "Tętno spoczynkowe (ud./min) — bez kofeiny vs po wypiciu herbaty czarnej, różnica 2 ud./min.",
+        jednostka = "ud./min",
+        etyk1 = "Bez kofeiny", etyk2 = "Po herbacie"
+      ),
+      "0.5" = list(
+        x1 = 60, x2 = 66, s = 12,
+        kontekst  = "Wynik egzaminu BHP (pkt) — bez korepetycji vs z korepetycjami, różnica 6 pkt.",
+        jednostka = "pkt",
+        etyk1 = "Bez korepetycji", etyk2 = "Z korepetycjami"
+      ),
+      "0.8" = list(
+        x1 = 12.0, x2 = 14.0, s = 2.5,
+        kontekst  = "Czas reakcji operatora (s) — zmiana ranna vs nocna, różnica 2 s.",
+        jednostka = "s",
+        etyk1 = "Zmiana ranna", etyk2 = "Zmiana nocna"
+      ),
+      "1.2" = list(
+        x1 = 5.0, x2 = 8.6, s = 3.0,
+        kontekst  = "Sen (godz.) — okres egzaminacyjny vs ferie, różnica 3,6 h.",
+        jednostka = "godz.",
+        etyk1 = "Egzaminy", etyk2 = "Ferie"
+      )
+    )
+  )
+
+  ch10_r_scenarios <- list(
+    TZ = list(
+      x_label   = "Temperatura fermentacji (°C)",
+      y_label   = "pH jogurtu po 24 h",
+      seed      = 101,
+      x_center  = 42, x_scale = 5,
+      y_center  = 4.5, y_scale = 0.2,
+      r_sign    = 1
+    ),
+    ROL = list(
+      x_label   = "Opad atmosferyczny (mm)",
+      y_label   = "Plon pszenicy (t/ha)",
+      seed      = 202,
+      x_center  = 450, x_scale = 80,
+      y_center  = 5.0, y_scale = 0.8,
+      r_sign    = 1
+    ),
+    IB = list(
+      x_label   = "Godziny szkolenia BHP",
+      y_label   = "Wypadki na 100 pracowników",
+      seed      = 303,
+      x_center  = 20, x_scale = 8,
+      y_center  = 8.0, y_scale = 2.0,
+      r_sign    = -1
+    )
+  )
+
+  ch10_r_hints <- list(
+    TZ  = "Korelacja między temperaturą fermentacji a pH jogurtu.",
+    ROL = "Korelacja między opadem atmosferycznym a plonem pszenicy.",
+    IB  = "Korelacja ujemna: więcej szkoleń BHP → mniej wypadków."
+  )
+
+  ch10_v_scenarios <- list(
+    TZ = list(
+      grp_a = "Opakowanie A", grp_b = "Opakowanie B",
+      stan_pos = "Pleśń", stan_neg = "Brak pleśni",
+      hint = "Opakowanie a pojawienie się pleśni na produkcie."
+    ),
+    ROL = list(
+      grp_a = "Odmiana A", grp_b = "Odmiana B",
+      stan_pos = "Zachwaszczenie powyżej progu", stan_neg = "Zachwaszczenie poniżej progu",
+      hint = "Odmiana rośliny a przekroczenie progu zachwaszczenia pola."
+    ),
+    IB = list(
+      grp_a = "Zaszczepieni", grp_b = "Niezaszczepieni",
+      stan_pos = "Infekcja", stan_neg = "Brak infekcji",
+      hint = "Zaszczepieni vs niezaszczepieni — odsetek infekcji."
+    )
+  )
+
+  ch10_v_examples <- list(
+    "0.10" = list(p_a = 0.45, p_b = 0.55),
+    "0.30" = list(p_a = 0.35, p_b = 0.65),
+    "0.50" = list(p_a = 0.25, p_b = 0.75),
+    "0.70" = list(p_a = 0.15, p_b = 0.85)
+  )
+
+  ch10_eta_scenarios <- list(
+    TZ = list(
+      grp    = c("Metoda A", "Metoda B", "Metoda C"),
+      y_lab  = "Liczba kolonii bakterii (jedn.)",
+      mu_ctr = 50, s = 10
+    ),
+    ROL = list(
+      grp    = c("Nawóz A", "Nawóz B", "Nawóz C"),
+      y_lab  = "Plon pszenicy (t/ha)",
+      mu_ctr = 5.0, s = 1.5
+    ),
+    IB = list(
+      grp    = c("Zmiana ranna", "Zmiana popołudniowa", "Zmiana nocna"),
+      y_lab  = "Liczba wypadków na 100 pracowników (rocznie)",
+      mu_ctr = 12, s = 4
+    )
+  )
+
+  ch10_eta_examples <- list(
+    "0.01" = list(kontekst = "Grupy dają niemal identyczne wyniki — czynnik symboliczny."),
+    "0.06" = list(kontekst = "Grupy zauważalnie się różnią, ale rozrzut wewnątrz grup nadal dominuje."),
+    "0.14" = list(kontekst = "Czynnik wyraźnie liczy się — 14% zmienności tłumaczy badany czynnik."),
+    "0.30" = list(kontekst = "Dominujący efekt — czynnik wyjaśnia 30% wszystkich różnic.")
+  )
+
+  # --------------------------------------------------------------------------
+  # Ryc. 10.1
+  # --------------------------------------------------------------------------
+
+  output$ch10_dist_hint <- renderUI({
+    req(input$ch10_dist_scenario)
+    p(tags$em(ch10_dist_hints[[input$ch10_dist_scenario]]))
+  })
+
   output$ch10_dist_plot <- renderPlot({
     d <- input$ch10_d
     x_lo <- -4
@@ -372,37 +595,13 @@ ch10_server <- function(input, output, session) {
     )
   })
 
-  # --- Ryc. 10.2: Cohen's d w surowych liczbach ---
-  ch10_d_examples <- list(
-    "0.2" = list(
-      x1 = 72, x2 = 74, s = 10,
-      kontekst = "Tętno spoczynkowe (ud./min): grupa kontrolna vs po wypiciu herbaty czarnej — różnica 2 ud./min.",
-      jednostka = "ud./min",
-      etyk1 = "Bez kofeiny", etyk2 = "Po herbacie"
-    ),
-    "0.5" = list(
-      x1 = 60, x2 = 66, s = 12,
-      kontekst = "Wynik egzaminu (pkt): grupa kontrolna vs grupa po korepetycjach — różnica 6 pkt.",
-      jednostka = "pkt",
-      etyk1 = "Bez korepetycji", etyk2 = "Z korepetycjami"
-    ),
-    "0.8" = list(
-      x1 = 12.0, x2 = 14.0, s = 2.5,
-      kontekst = "Czas reakcji operatora (s): zmiana ranna vs nocna — różnica 2 s.",
-      jednostka = "s",
-      etyk1 = "Zmiana ranna", etyk2 = "Zmiana nocna"
-    ),
-    "1.2" = list(
-      x1 = 5.0, x2 = 8.6, s = 3,
-      kontekst = "Sen (godz.): okres egzaminacyjny vs ferie — różnica 3,6 h.",
-      jednostka = "godz.",
-      etyk1 = "Egzaminy", etyk2 = "Ferie"
-    )
-  )
+  # --------------------------------------------------------------------------
+  # Ryc. 10.2: Cohen's d w surowych liczbach
+  # --------------------------------------------------------------------------
 
   output$ch10_d_plot <- renderPlot({
-    req(input$ch10_d_level)
-    e <- ch10_d_examples[[input$ch10_d_level]]
+    req(input$ch10_d_level, input$ch10_d_scenario)
+    e <- ch10_d_scenarios[[input$ch10_d_scenario]][[input$ch10_d_level]]
     x_lo <- min(e$x1, e$x2) - 3 * e$s
     x_hi <- max(e$x1, e$x2) + 3 * e$s
     x_seq <- seq(x_lo, x_hi, length.out = 600)
@@ -425,8 +624,8 @@ ch10_server <- function(input, output, session) {
   })
 
   output$ch10_d_table <- renderUI({
-    req(input$ch10_d_level)
-    e <- ch10_d_examples[[input$ch10_d_level]]
+    req(input$ch10_d_level, input$ch10_d_scenario)
+    e <- ch10_d_scenarios[[input$ch10_d_scenario]][[input$ch10_d_level]]
     diff <- e$x2 - e$x1
     tagList(
       tags$table(class = "lc-table lc-table-bordered lc-table-sm",
@@ -454,19 +653,27 @@ ch10_server <- function(input, output, session) {
     )
   })
 
-  # --- Ryc. 10.3: r w surowych liczbach ---
+  # --------------------------------------------------------------------------
+  # Ryc. 10.3: r w surowych liczbach
+  # --------------------------------------------------------------------------
+
+  output$ch10_r_hint <- renderUI({
+    req(input$ch10_r_scenario)
+    p(tags$em(ch10_r_hints[[input$ch10_r_scenario]]))
+  })
+
   output$ch10_r_plot <- renderPlot({
-    req(input$ch10_r_level)
+    req(input$ch10_r_level, input$ch10_r_scenario)
     r_target <- as.numeric(input$ch10_r_level)
-    set.seed(101)
+    sc <- ch10_r_scenarios[[input$ch10_r_scenario]]
+    set.seed(sc$seed)
     n_pts <- 50
     z <- rnorm(n_pts)
     e <- rnorm(n_pts)
     x_raw <- z
-    y_raw <- r_target * z + sqrt(1 - r_target^2) * e
-    # Rescale do realistycznych jednostek: temperatura fermentacji 35-50°C, pH jogurtu 4,2-4,8
-    x <- 42 + 5 * x_raw
-    y <- 4.5 + 0.2 * y_raw
+    y_raw <- sc$r_sign * r_target * z + sqrt(1 - r_target^2) * e
+    x <- sc$x_center + sc$x_scale * x_raw
+    y <- sc$y_center + sc$y_scale * y_raw
 
     df <- data.frame(x = x, y = y)
     r_emp <- cor(df$x, df$y)
@@ -475,10 +682,10 @@ ch10_server <- function(input, output, session) {
       geom_smooth(method = "lm", se = FALSE, color = upwr_reference,
                   linewidth = 1, formula = y ~ x) +
       geom_point(color = col_effect, alpha = 0.7, size = 2.5) +
-      labs(x = "Temperatura fermentacji (°C)",
-           y = "pH jogurtu po 24 h",
+      labs(x = sc$x_label,
+           y = sc$y_label,
            subtitle = paste0("r empiryczne = ", round(r_emp, 2),
-                             "  (zadane r = ", r_target, ")"))
+                             "  (zadane |r| = ", r_target, ")"))
   })
 
   output$ch10_r_table <- renderUI({
@@ -508,28 +715,24 @@ ch10_server <- function(input, output, session) {
     )
   })
 
-  # --- Ryc. 10.4: Cramér's V w 2×2 ---
-  # Dla tabeli 2×2 V = phi = (p_A - p_B) gdy proporcje pomocnicze 50/50 — używamy
-  # symetrycznego scenariusza p_A = 0.5 - V/2, p_B = 0.5 + V/2 (przy zbalansowanych grupach n_A = n_B).
-  ch10_v_examples <- list(
-    "0.10" = list(p_a = 0.45, p_b = 0.55,
-                  kontekst = "Słabe powiązanie: zaszczepieni 45% infekcji, niezaszczepieni 55% — różnica 10 pp."),
-    "0.30" = list(p_a = 0.35, p_b = 0.65,
-                  kontekst = "Wyraźne powiązanie: 35% vs 65% — szczepienie zauważalnie obniża ryzyko (30 pp.)."),
-    "0.50" = list(p_a = 0.25, p_b = 0.75,
-                  kontekst = "Silne powiązanie: 25% vs 75% — różnica 50 pp., szczepienie chroni połowę grupy."),
-    "0.70" = list(p_a = 0.15, p_b = 0.85,
-                  kontekst = "Bardzo silne powiązanie: 15% vs 85% — efekt niemal deterministyczny.")
-  )
+  # --------------------------------------------------------------------------
+  # Ryc. 10.4: Cramér's V w 2×2
+  # --------------------------------------------------------------------------
+
+  output$ch10_v_hint <- renderUI({
+    req(input$ch10_v_scenario)
+    p(tags$em(ch10_v_scenarios[[input$ch10_v_scenario]]$hint))
+  })
 
   output$ch10_v_plot <- renderPlot({
-    req(input$ch10_v_level)
-    e <- ch10_v_examples[[input$ch10_v_level]]
+    req(input$ch10_v_level, input$ch10_v_scenario)
+    e  <- ch10_v_examples[[input$ch10_v_level]]
+    sc <- ch10_v_scenarios[[input$ch10_v_scenario]]
     df <- data.frame(
-      grupa = factor(c("Zaszczepieni", "Zaszczepieni", "Niezaszczepieni", "Niezaszczepieni"),
-                     levels = c("Zaszczepieni", "Niezaszczepieni")),
-      stan  = factor(c("Infekcja", "Brak infekcji", "Infekcja", "Brak infekcji"),
-                     levels = c("Brak infekcji", "Infekcja")),
+      grupa = factor(c(sc$grp_a, sc$grp_a, sc$grp_b, sc$grp_b),
+                     levels = c(sc$grp_a, sc$grp_b)),
+      stan  = factor(c(sc$stan_pos, sc$stan_neg, sc$stan_pos, sc$stan_neg),
+                     levels = c(sc$stan_neg, sc$stan_pos)),
       pct   = c(e$p_a, 1 - e$p_a, e$p_b, 1 - e$p_b)
     )
     ggplot(df, aes(x = grupa, y = pct, fill = stan)) +
@@ -538,88 +741,88 @@ ch10_server <- function(input, output, session) {
                 position = position_stack(vjust = 0.5),
                 color = "white", fontface = "bold", size = 5) +
       scale_y_continuous(labels = scales::percent_format()) +
-      scale_fill_manual(values = c("Brak infekcji" = col_h0, "Infekcja" = col_reject)) +
+      scale_fill_manual(
+        values = setNames(c(col_h0, col_reject), c(sc$stan_neg, sc$stan_pos))
+      ) +
       labs(x = NULL, y = "Odsetek osób w grupie", fill = NULL) +
       theme(legend.position = "bottom")
   })
 
   output$ch10_v_table <- renderUI({
-    req(input$ch10_v_level)
-    e <- ch10_v_examples[[input$ch10_v_level]]
+    req(input$ch10_v_level, input$ch10_v_scenario)
+    e  <- ch10_v_examples[[input$ch10_v_level]]
+    sc <- ch10_v_scenarios[[input$ch10_v_scenario]]
     diff_pp <- round(100 * (e$p_b - e$p_a))
     tagList(
       tags$table(class = "lc-table lc-table-bordered lc-table-sm",
         style = "margin-top: 8px;",
         tags$thead(tags$tr(
           tags$th("Grupa"),
-          tags$th("Infekcja (%)"),
-          tags$th("Brak infekcji (%)"),
+          tags$th(paste0(sc$stan_pos, " (%)")),
+          tags$th(paste0(sc$stan_neg, " (%)")),
           tags$th("V")
         )),
         tags$tbody(
           tags$tr(
-            tags$td("Zaszczepieni"),
+            tags$td(sc$grp_a),
             tags$td(paste0(round(100 * e$p_a), "%")),
             tags$td(paste0(round(100 * (1 - e$p_a)), "%")),
             tags$td(rowspan = 2, input$ch10_v_level)
           ),
           tags$tr(
-            tags$td("Niezaszczepieni"),
+            tags$td(sc$grp_b),
             tags$td(paste0(round(100 * e$p_b), "%")),
             tags$td(paste0(round(100 * (1 - e$p_b)), "%"))
           )
         )
       ),
       p(style = "margin-top: 8px;",
-        tags$em(paste0("Różnica między grupami: ", diff_pp, " pp. ", e$kontekst)))
+        tags$em(paste0("Różnica między grupami: ", diff_pp, " pp. — ", sc$hint)))
     )
   })
 
-  # --- Ryc. 10.5: η² w ANOVA — trzy grupy ---
-  # eta² = SS_between / SS_total. Dla 3 grup równolicznych ze średnimi mu = (mu1, mu2, mu3) i wspólnym sd s,
-  # eta² (populacyjne) = var(mu) / (var(mu) + s²). Dobieramy mu tak, żeby var(mu) / (var(mu) + s²) = eta_target.
-  # Trzymamy s = 10, mu_centralna = 50, mu1 = 50 - delta, mu3 = 50 + delta:
-  # var(mu) = (2 * delta²) / 3, więc delta = sqrt(3 * eta * s² / (2 * (1 - eta)))
-  ch10_eta_examples <- list(
-    "0.01" = list(delta_round = "1,0", kontekst = "Metody dają niemal identyczne wyniki — czynnik symboliczny."),
-    "0.06" = list(delta_round = "3,2", kontekst = "Metody zauważalnie się różnią, ale rozrzut wewnątrz grup nadal dominuje."),
-    "0.14" = list(delta_round = "5,1", kontekst = "Czynnik wyraźnie liczy się — 14% zmienności tłumaczy metoda."),
-    "0.30" = list(delta_round = "8,0", kontekst = "Dominujący efekt — wybór metody wyjaśnia 30% wszystkich różnic.")
-  )
+  # --------------------------------------------------------------------------
+  # Ryc. 10.5: η² w ANOVA — trzy grupy
+  # --------------------------------------------------------------------------
 
-  ch10_eta_means <- function(eta) {
-    s <- 10
+  output$ch10_eta_hint <- renderUI({
+    req(input$ch10_eta_scenario)
+    sc <- ch10_eta_scenarios[[input$ch10_eta_scenario]]
+    p(tags$em(paste0("3 grupy (", paste(sc$grp, collapse = " / "), ") × ", sc$y_lab, ".")))
+  })
+
+  ch10_eta_means <- function(eta, mu_ctr, s) {
     delta <- sqrt(3 * eta * s^2 / (2 * (1 - eta)))
-    c(50 - delta, 50, 50 + delta)
+    c(mu_ctr - delta, mu_ctr, mu_ctr + delta)
   }
 
   output$ch10_eta_plot <- renderPlot({
-    req(input$ch10_eta_level)
+    req(input$ch10_eta_level, input$ch10_eta_scenario)
     eta <- as.numeric(input$ch10_eta_level)
-    mus <- ch10_eta_means(eta)
-    s <- 10
+    sc  <- ch10_eta_scenarios[[input$ch10_eta_scenario]]
+    mus <- ch10_eta_means(eta, sc$mu_ctr, sc$s)
     set.seed(202)
     n_per <- 30
     df <- data.frame(
-      grupa = factor(rep(c("Metoda A", "Metoda B", "Metoda C"), each = n_per),
-                     levels = c("Metoda A", "Metoda B", "Metoda C")),
-      y = c(rnorm(n_per, mus[1], s),
-            rnorm(n_per, mus[2], s),
-            rnorm(n_per, mus[3], s))
+      grupa = factor(rep(sc$grp, each = n_per), levels = sc$grp),
+      y = c(rnorm(n_per, mus[1], sc$s),
+            rnorm(n_per, mus[2], sc$s),
+            rnorm(n_per, mus[3], sc$s))
     )
     ggplot(df, aes(x = grupa, y = y, fill = grupa)) +
       geom_boxplot(alpha = 0.5, outlier.alpha = 0.5) +
       geom_jitter(width = 0.15, alpha = 0.4, size = 1.5) +
       scale_fill_upwr() +
-      labs(x = NULL, y = "Liczba kolonii bakterii (jedn.)", fill = NULL) +
+      labs(x = NULL, y = sc$y_lab, fill = NULL) +
       theme(legend.position = "none")
   })
 
   output$ch10_eta_table <- renderUI({
-    req(input$ch10_eta_level)
+    req(input$ch10_eta_level, input$ch10_eta_scenario)
     eta <- as.numeric(input$ch10_eta_level)
-    e <- ch10_eta_examples[[input$ch10_eta_level]]
-    mus <- ch10_eta_means(eta)
+    sc  <- ch10_eta_scenarios[[input$ch10_eta_scenario]]
+    e   <- ch10_eta_examples[[input$ch10_eta_level]]
+    mus <- ch10_eta_means(eta, sc$mu_ctr, sc$s)
     pct <- round(100 * eta)
     tagList(
       tags$table(class = "lc-table lc-table-bordered lc-table-sm",
@@ -633,12 +836,12 @@ ch10_server <- function(input, output, session) {
         )),
         tags$tbody(
           tags$tr(
-            tags$td("Metoda A"), tags$td(round(mus[1], 1)), tags$td(10),
+            tags$td(sc$grp[1]), tags$td(round(mus[1], 1)), tags$td(sc$s),
             tags$td(rowspan = 3, input$ch10_eta_level),
             tags$td(rowspan = 3, paste0(pct, "%"))
           ),
-          tags$tr(tags$td("Metoda B"), tags$td(round(mus[2], 1)), tags$td(10)),
-          tags$tr(tags$td("Metoda C"), tags$td(round(mus[3], 1)), tags$td(10))
+          tags$tr(tags$td(sc$grp[2]), tags$td(round(mus[2], 1)), tags$td(sc$s)),
+          tags$tr(tags$td(sc$grp[3]), tags$td(round(mus[3], 1)), tags$td(sc$s))
         )
       ),
       p(style = "margin-top: 8px;", tags$em(e$kontekst))

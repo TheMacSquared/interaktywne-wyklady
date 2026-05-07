@@ -25,7 +25,7 @@ ch2h_ui <- list(
         tags$li(em("„Czy korepetycje pomagają?”")),
         tags$li(em("„Czy lodów sprzedaje się więcej w ciepłe dni?”"))
       ),
-      p("Test statystyczny wymaga jednak ", tags$b("precyzyjnych hipotez"),
+      p("Test statystyczny wymaga jednak precyzyjnych hipotez",
         " — stwierdzeń, które można zweryfikować danymi. Żeby sformułować
         hipotezę, musimy odpowiedzieć na dwa pytania:"),
       tags$ol(
@@ -37,13 +37,13 @@ ch2h_ui <- list(
                 wartość mniejszą, czy zgodność z wartością odniesienia?")
       ),
       p("W zapisie formalnym pierwsza decyzja mówi nam, jaki ",
-        tags$b("parametr"),
+        "parametr",
         " pojawi się we wzorze, a druga — jaki ",
-        tags$b("znak"),
+        "znak",
         " połączy go z wartością odniesienia albo z drugim parametrem."),
-      p("H₀ (hipoteza zerowa) zawsze zawiera znak ", tags$b("równości"),
+      p("H₀ (hipoteza zerowa) zawsze zawiera znak równości",
         " (=, ≤, ≥) — reprezentuje „stan domyślny”, brak efektu.
-        Hₐ (hipoteza alternatywna) to ", tags$b("dopełnienie"),
+        Hₐ (hipoteza alternatywna) to dopełnienie",
         " — to, co chcemy wykazać (≠, >, <).")
     ),
 
@@ -54,30 +54,30 @@ ch2h_ui <- list(
       lc_feedback(type = "info", style = "font-size: 17px;",
         tags$em("„Czy telefon na biurku wpływa na koncentrację?”")
       ),
-      p(tags$b("Krok 1 — parametr.")," Co porównujemy? Mamy dwie grupy
+      p("Krok 1 — parametr. Co porównujemy? Mamy dwie grupy
         (plecak / biurko) i każdej mierzymy wynik testu koncentracji.
-        Interesuje nas ", tags$b("średnia"),
+        Interesuje nas ", "średnia",
         " koncentracja w populacji — osobno dla grupy „plecak” i „biurko”."),
-      p(tags$b("Krok 2 — relacja."), " Pytanie pyta neutralnie — ",
+      p("Krok 2 — relacja. Pytanie pyta neutralnie — ",
         tags$em("czy w ogóle"),
         " jest jakiś wpływ. Nie zakładamy z góry kierunku, więc Hₐ to po prostu
         „średnie się różnią”. Relacja w Hₐ to znak „≠”."),
-      p(tags$b("Krok 3 — sformułowanie:")),
+      p("Krok 3 — sformułowanie:"),
       lc_formula_box(
         p(tags$b("H₀ (stan domyślny):"),
           " średnia koncentracja w grupie z telefonem na biurku jest ",
-          tags$b("równa"),
+          "równa",
           " średniej koncentracji w grupie z telefonem w plecaku."),
         p(tags$b("Hₐ (to, co chcemy wykazać):"),
           " średnia koncentracja w grupie z telefonem na biurku ",
-          tags$b("różni się od"),
+          "różni się od",
           " średniej koncentracji w grupie z telefonem w plecaku.")
       ),
-      p("Zauważ, że H₀ i Hₐ są ", tags$b("przeciwstawne"),
+      p("Zauważ, że H₀ i Hₐ są przeciwstawne",
         " — razem wyczerpują wszystkie możliwości („są równe” albo „różnią się”).
         To kluczowa zasada przy formułowaniu hipotez: jedna jest dokładnym
         zaprzeczeniem drugiej."),
-      p("To jest test ", tags$b("dwustronny"),
+      p("To jest test dwustronny",
         " — Hₐ pyta tylko, czy jest jakaś różnica, bez zakładania kierunku.
         O tym, kiedy warto użyć wariantu jednostronnego (Hₐ wskazującej
         konkretny kierunek), powiemy w sekcji „Test jednostronny a dwustronny”
@@ -89,9 +89,9 @@ ch2h_ui <- list(
     tagList(
       p("Słowna wersja hipotez nie jest etapem „mniej statystycznym”.
         To uporządkowanie sensu badania. Dopiero kiedy wiemy, ",
-        tags$b("jaki parametr"),
+        "jaki parametr",
         " badamy i ",
-        tags$b("jaka relacja"),
+        "jaka relacja",
         " nas interesuje, możemy przejść do pełnego zapisu formalnego."),
       p("Najpierw nazywamy parametry. W przykładzie z telefonem możemy oznaczyć:"),
       lc_formula_box(
@@ -107,11 +107,11 @@ ch2h_ui <- list(
         p(withMathJax("\\(H_a: \\mu_{biurko} \\neq \\mu_{plecak}\\)"))
       ),
       p("Pełny formalizm składa się więc z trzech elementów: ",
-        tags$b("definicji symboli"),
+        "definicji symboli",
         ", ",
-        tags$b("hipotezy zerowej"),
+        "hipotezy zerowej",
         " i ",
-        tags$b("hipotezy alternatywnej"),
+        "hipotezy alternatywnej",
         ". Bez definicji symboli sam wzór jest nieczytelny: ",
         withMathJax("\\(\\mu_1 < \\mu_2\\)"),
         " nic nie mówi, jeśli nie wiemy, czym są grupa 1 i grupa 2."),
@@ -138,7 +138,7 @@ ch2h_ui <- list(
       p("Dla każdego pytania zastanów się, jaki parametr porównujemy i jakiej
         relacji szuka Hₐ. Pisz sobie na boku w języku naturalnym (bez greki).
         Potem kliknij „Pokaż odpowiedź” i porównaj."),
-      p("Na razie ćwiczymy ", tags$b("hipotezy nieskierowane"),
+      p("Na razie ćwiczymy hipotezy nieskierowane",
         " — Hₐ mówi „średnie się różnią” albo „zmienne są powiązane”, bez
         zakładania kierunku. Przykłady, w których pytanie z góry wskazuje
         kierunek (i Hₐ jest jednostronna), pojawią się dalej, po sekcji

@@ -23,7 +23,7 @@ ch3_ui <- list(
     tagList(
       p("Gdy zmienna ma dwie kategorie (sukces/porażka, tak/nie, spełnia/nie spełnia),
         pytamy o proporcję w populacji."),
-      p("Narzędzie: ", tags$b("test dwumianowy"),
+      p("Narzędzie: test dwumianowy",
         " — porównuje obserwowany odsetek z wartością referencyjną p₀."),
       p("Test dwumianowy jest dokładny — nie opiera się na przybliżeniu normalnym,
         działa nawet przy małych próbach."),
@@ -195,7 +195,7 @@ ch3_ui <- list(
           tags$li(tags$b("Dwustronny (≠):"), " p-wartość liczymy po obu stronach. Bezpieczniejszy."),
           tags$li(tags$b("Jednostronny (> lub <):"), " p-wartość tylko po jednej stronie. Mocniejszy, ale ślepy na efekt w drugą stronę.")
         ),
-        tags$p("Te same dane, ten sam wynik k/n, ale ", tags$b("inna p-wartość"),
+        tags$p("Te same dane, ten sam wynik k/n, ale inna p-wartość",
                " — bo inaczej zadane pytanie!")
       ),
       color = "uwaga"
@@ -208,7 +208,7 @@ ch3_ui <- list(
 
     tagList(
       p("W Jamovi i wielu podręcznikach spotkasz też ",
-        tags$b("test proporcji (z-test)"),
+        "test proporcji (z-test)",
         ". Działa na przybliżeniu normalnym:"),
       lc_formula_box(
         p(withMathJax("\\(z = \\frac{\\hat{p} - p_0}{\\sqrt{p_0(1-p_0)/n}}\\)"))
@@ -225,7 +225,7 @@ ch3_ui <- list(
     ),
 
     tagList(
-      p(tags$b("Kiedy który?")),
+      p("Kiedy który?"),
       tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th(""), tags$th("Test dwumianowy"), tags$th("Test proporcji (z-test)"))
@@ -253,7 +253,7 @@ ch3_ui <- list(
           )
         )
       ),
-      p(tags$b("Reguła kciuka:"),
+      p("Reguła kciuka:",
         " jeśli ", withMathJax("\\(np_0 \\geq 10\\)"), " i ",
         withMathJax("\\(n(1-p_0) \\geq 10\\)"),
         " — oba testy dadzą praktycznie ten sam wynik.")
@@ -271,8 +271,8 @@ ch3_ui <- list(
 
     figure_panel(label = "Ćwiczenie",
       h4("Zadanie A — Czy większość okręgów obejmuje klasy tylko do 6.?"),
-      p("Okręgi dzielą się na szkoły klas KK-06 i KK-08. Przetestuj ",
-        tags$b("dwustronnie"), ", czy odsetek okręgów KK-06 różni się od 50%.
+      p("Okręgi dzielą się na szkoły klas KK-06 i KK-08. Przetestuj
+        dwustronnie, czy odsetek okręgów KK-06 różni się od 50%.
         Sformułuj H₀ i Hₐ, oblicz p-wartość testem dwumianowym (α = 0.05).
         Jak interpretujesz wynik?"),
       actionButton("cas_ch3_ans_a", "Pokaż rozwiązanie",
@@ -283,7 +283,7 @@ ch3_ui <- list(
     figure_panel(label = "Ćwiczenie",
       h4("Zadanie B — Czy więcej niż 30% okręgów ma wysoki poziom ubóstwa?"),
       p("Przyjmij, że okrąg ma wysoki poziom ubóstwa, gdy ", tags$code("lunch > 50%"),
-        ". Przetestuj ", tags$b("jednostronnie (prawostronnie)"), ",
+        ". Przetestuj jednostronnie (prawostronnie),
         czy odsetek takich okręgów przekracza normę 30%.
         Sformułuj H₀ i Hₐ, wykonaj test dwumianowy. Jaki wniosek?"),
       actionButton("cas_ch3_ans_b", "Pokaż rozwiązanie",

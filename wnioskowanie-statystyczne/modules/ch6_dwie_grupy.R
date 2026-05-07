@@ -164,7 +164,7 @@ ch6_ui <- list(
 
     tagList(
       p("Wyobraź sobie badanie: 20 pacjentów zmierzono ciśnienie ",
-        tags$b("przed"), " nową dietą. Po 3 miesiącach na kontrolę wróciło",
+        "przed", " nową dietą. Po 3 miesiącach na kontrolę wróciło",
         " tylko 15 — 5 pacjentów z najwyższym ciśnieniem wyjściowym nie zgłosiło się."),
       p("Te same dane, dwa podejścia:"),
       tags$ul(
