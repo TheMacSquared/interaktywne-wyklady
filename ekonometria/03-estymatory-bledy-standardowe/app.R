@@ -1,4 +1,5 @@
-# Estymatory i bledy standardowe - wersja startowa.
+# Wykład 03: Estymatory i błędy standardowe
+# Cztery rozdziały: parametr vs estymator, SE, test t i CI, ćwiczenie z tabeli.
 
 library(shiny)
 library(ggplot2)
@@ -16,31 +17,50 @@ library(broom)
   getwd()
 }
 
+# ============================================================================
+# BOOTSTRAP PROJEKTU
+# ============================================================================
+
 app_dir <- .find_app_dir()
 project_root <- dirname(app_dir)
 
-source(file.path(project_root, "R", "palette.R"), local = TRUE)
-source(file.path(project_root, "R", "theme_upwr.R"), local = TRUE)
-source(file.path(project_root, "R", "shared.R"), local = TRUE)
-source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
+source(file.path(project_root, "R", "palette.R"),              local = TRUE)
+source(file.path(project_root, "R", "theme_upwr.R"),           local = TRUE)
+source(file.path(project_root, "R", "shared.R"),               local = TRUE)
+source(file.path(project_root, "R", "lecture_layout.R"),       local = TRUE)
 source(file.path(project_root, "R", "econometrics_helpers.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
-source(file.path(app_dir, "modules", "chapter.R"), local = TRUE)
+# ============================================================================
+# MODUŁY
+# ============================================================================
 
-.chapters <- list(ch1_ui, ch2_ui, ch3_ui)
+source(file.path(app_dir, "modules", "ch1_estymatory.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch2_se.R"),         local = TRUE)
+source(file.path(app_dir, "modules", "ch3_test.R"),       local = TRUE)
+source(file.path(app_dir, "modules", "ch4_cwiczenie.R"),  local = TRUE)
+
+.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui)
 
 ui <- lecture_page(
-  lecture_id = "estymatory-bledy-standardowe",
-  lecture_num = "03",
-  lecture_title = "Estymatory i bledy standardowe",
-  module_label = "Rozdzial 03",
-  chapters = .chapters
+  lecture_id    = "estymatory-bledy-standardowe",
+  lecture_num   = "03",
+  lecture_title = "Estymatory i błędy standardowe",
+  module_label  = "Rozdział 03",
+  chapters      = .chapters
 )
+
+# ============================================================================
+# SERVER
+# ============================================================================
 
 server <- function(input, output, session) {
   lecture_server(.chapters, input, output, session)
-  chapter_server(input, output, session)
+
+  ch1_server(input, output, session)
+  ch2_server(input, output, session)
+  ch3_server(input, output, session)
+  ch4_server(input, output, session)
 }
 
 shinyApp(ui = ui, server = server)

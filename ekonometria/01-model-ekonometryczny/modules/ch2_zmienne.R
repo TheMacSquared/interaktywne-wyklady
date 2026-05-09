@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 2: Zmienne w modelu
+# ROZDZIAŁ 2: Zmienne w modelu
 # ============================================================================
 
 ch2_ui <- lecture_chapter(
@@ -8,46 +8,48 @@ ch2_ui <- lecture_chapter(
   title = "Zmienne w modelu",
   content = tagList(
     lc_chapter_hero(
-      kicker = "Rozdzial 01 · Model ekonometryczny",
+      kicker = "Rozdział 01 · Model ekonometryczny",
       num = "02",
       title = "Zmienne w modelu.",
-      lead = "Ten sam zbior danych mozna opisac na kilka sposobow. Ekonometria zaczyna sie od decyzji, ktora zmienna pelni jaka role."
+      lead = "Ten sam zbiór danych można opisać na kilka sposobów. Ekonometria zaczyna się od decyzji, która zmienna pełni jaką rolę."
     ),
 
     lc_h2("ch2-role", "Role zmiennych"),
     tagList(
-      p("W modelu jedna zmienna zwykle pelni role wyniku, a pozostale role czynnikow, ktore maja ten wynik tlumaczyc. To jest decyzja merytoryczna, nie tylko techniczna."),
+      p("W modelu jedna zmienna zwykle pełni rolę wyniku, a pozostałe — rolę czynników, które ten wynik tłumaczą. To jest decyzja merytoryczna, nie tylko techniczna. Ten sam zestaw zmiennych można poukładać inaczej, jeśli zadamy inne pytanie."),
+      p("Przykład: w danych mamy ", strong("cenę mieszkania"), ", ", strong("metraż"), " i ", strong("dzielnicę"), ". Jeśli pytamy o wycenę nieruchomości — Y to cena, a metraż i dzielnica to X. Jeśli pytamy o segregację społeczną w mieście — bardziej naturalne jest patrzenie na cenę i metraż jako zmienne wyjaśniające skład dzielnicy."),
       figure_panel(
         label = "Tabela 2.1",
-        title = "Najczestsze role zmiennych",
+        title = "Najczęstsze role zmiennych",
         tags$table(
           class = "table",
           tags$thead(tags$tr(
             tags$th("Rola"),
             tags$th("Pytanie"),
-            tags$th("Przyklad")
+            tags$th("Przykład")
           )),
           tags$tbody(
-            tags$tr(tags$td("Zmienna objasniana"), tags$td("Co chcemy wyjasnic?"), tags$td("sprzedaz, koszt, stopa bezrobocia")),
-            tags$tr(tags$td("Zmienna objasniajaca"), tags$td("Czym to wyjasniamy?"), tags$td("cena, dochod, naklady, czas")),
-            tags$tr(tags$td("Zmienna kontrolna"), tags$td("Co trzeba uwzglednic, zeby nie pomylic efektow?"), tags$td("region, sezon, wielkosc firmy")),
-            tags$tr(tags$td("Skladnik losowy"), tags$td("Co zostaje poza modelem?"), tags$td("czynniki pominiete, blad pomiaru, przypadkowosc"))
+            tags$tr(tags$td("Zmienna objaśniana"), tags$td("Co chcemy wyjaśnić?"), tags$td("sprzedaż, koszt, stopa bezrobocia")),
+            tags$tr(tags$td("Zmienna objaśniająca"), tags$td("Czym to wyjaśniamy?"), tags$td("cena, dochód, nakłady, czas")),
+            tags$tr(tags$td("Zmienna kontrolna"), tags$td("Co trzeba uwzględnić, żeby nie pomylić efektów?"), tags$td("region, sezon, wielkość firmy")),
+            tags$tr(tags$td("Składnik losowy"), tags$td("Co zostaje poza modelem?"), tags$td("czynniki pominięte, błąd pomiaru, przypadkowość"))
           )
         )
       )
     ),
 
-    lc_h2("ch2-przyklad", "Mini-przyklad"),
+    lc_h2("ch2-przyklad", "Mini-przykład: nakłady reklamowe i sprzedaż"),
+    lc_p("Spójrzmy na sztuczne dane, które naśladują sytuację firmy obserwującej, jak miesięczne nakłady reklamowe (X) wiążą się z miesięczną sprzedażą (Y). Zmień siłę relacji i poziom szumu, żeby zobaczyć, jak zmienia się obraz."),
     figure_panel(
       label = "Ryc. 2.1",
-      title = "Sprzedaz i naklady reklamowe",
+      title = "Sprzedaż i nakłady reklamowe",
       full_width = TRUE,
       fluidRow(
         column(
           4,
           sliderInput("ch2_n", "Liczba obserwacji", min = 20, max = 160, value = 70, step = 10),
-          sliderInput("ch2_beta1", "Sila relacji X -> Y", min = -1, max = 4, value = 1.4, step = 0.2),
-          sliderInput("ch2_sigma", "Niepewnosc poza modelem", min = 1, max = 18, value = 6, step = 1)
+          sliderInput("ch2_beta1", "Siła relacji X → Y", min = -1, max = 4, value = 1.4, step = 0.2),
+          sliderInput("ch2_sigma", "Niepewność poza modelem", min = 1, max = 18, value = 6, step = 1)
         ),
         column(
           8,
@@ -58,14 +60,14 @@ ch2_ui <- lecture_chapter(
     ),
 
     inline_callout(
-      label = "Notatka metodyczna",
+      label = "Wskazówka",
       color = "ok",
-      "To jeszcze nie jest pelny wyklad o KMNK. Widget ma pokazac intuicje relacji Y-X i przygotowac grunt pod nastepny rozdzial o regresji liniowej."
+      "Im mniejszy szum (i im większa próba), tym wyraźniej widać związek między X a Y. Pierwsza wersja modelu może wyglądać dobrze przy niskim szumie, a rozsypywać się przy realistycznych danych — to jeden z powodów, dla których ekonometria nie kończy się na narysowaniu prostej."
     ),
 
     lc_chapter_next(
       num = "03",
-      title = "Skladnik losowy",
+      title = "Składnik losowy",
       lead = "dlaczego model nie trafia idealnie",
       target_id = "ch-losowy"
     )
@@ -88,7 +90,7 @@ ch2_server <- function(input, output, session) {
       geom_point(color = unname(upwr_cat["grafit"]), alpha = 0.65, size = 2) +
       geom_smooth(method = "lm", se = TRUE, color = upwr_accent,
                   fill = upwr_seq_burgundy[3], alpha = 0.18) +
-      labs(x = "X: naklady reklamowe", y = "Y: sprzedaz") +
+      labs(x = "X: nakłady reklamowe", y = "Y: sprzedaż") +
       theme_upwr()
   })
 
@@ -97,9 +99,9 @@ ch2_server <- function(input, output, session) {
     g <- broom::glance(fit)
     coefs <- broom::tidy(fit)
     lc_stat_grid(
-      eco_metric("Nachylenie", round(coefs$estimate[2], 2), "zmiana Y przy wzroscie X o 1", unname(upwr_cat["szalwia"])),
-      eco_metric("R2", round(g$r.squared, 3), "czesc zmiennosci Y opisana przez X", unname(upwr_cat["niebo"])),
-      eco_metric("Reszta", "Y - Y_hat", "to, czego model nie wyjasnil", unname(upwr_cat["terakota"])),
+      eco_metric("Nachylenie", round(coefs$estimate[2], 2), "zmiana Y przy wzroście X o 1", unname(upwr_cat["szalwia"])),
+      eco_metric("R²", round(g$r.squared, 3), "część zmienności Y opisana przez X", unname(upwr_cat["niebo"])),
+      eco_metric("Reszta", "Y − Ŷ", "to, czego model nie wyjaśnił", unname(upwr_cat["terakota"])),
       columns = 3
     )
   })

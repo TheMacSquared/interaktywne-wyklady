@@ -1,5 +1,5 @@
-# Model ekonometryczny - wersja 1
-# Pierwszy rozdzial wykladu z ekonometrii.
+# Model ekonometryczny — wykład 01.
+# Pierwszy rozdział kursu z ekonometrii.
 
 library(shiny)
 library(ggplot2)

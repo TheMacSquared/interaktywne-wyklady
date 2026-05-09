@@ -26,21 +26,27 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "econometrics_helpers.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
-source(file.path(app_dir, "modules", "chapter.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch1_szereg.R"),     local = TRUE)
+source(file.path(app_dir, "modules", "ch2_dynamiczny.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch3_dokladnosc.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch4_cwiczenie.R"),  local = TRUE)
 
-.chapters <- list(ch1_ui, ch2_ui, ch3_ui)
+.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui)
 
 ui <- lecture_page(
   lecture_id = "szeregi-prognozy",
   lecture_num = "05",
   lecture_title = "Szeregi i prognozowanie",
-  module_label = "Rozdzial 05",
+  module_label = "Rozdział 05",
   chapters = .chapters
 )
 
 server <- function(input, output, session) {
   lecture_server(.chapters, input, output, session)
-  chapter_server(input, output, session)
+  ch1_server(input, output, session)
+  ch2_server(input, output, session)
+  ch3_server(input, output, session)
+  ch4_server(input, output, session)
 }
 
 shinyApp(ui = ui, server = server)

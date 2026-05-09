@@ -1,4 +1,4 @@
-# Regresja liniowa i KMNK - wersja startowa.
+# Regresja liniowa i KMNK — wykład interaktywny.
 
 library(shiny)
 library(ggplot2)
@@ -26,21 +26,27 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "econometrics_helpers.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
-source(file.path(app_dir, "modules", "chapter.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch1_rownanie.R"),    local = TRUE)
+source(file.path(app_dir, "modules", "ch2_dopasowanie.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch3_zalozenia.R"),   local = TRUE)
+source(file.path(app_dir, "modules", "ch4_cwiczenie.R"),   local = TRUE)
 
-.chapters <- list(ch1_ui, ch2_ui, ch3_ui)
+.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui)
 
 ui <- lecture_page(
-  lecture_id = "regresja-kmnk",
-  lecture_num = "02",
+  lecture_id    = "regresja-kmnk",
+  lecture_num   = "02",
   lecture_title = "Regresja liniowa i KMNK",
-  module_label = "Rozdzial 02",
-  chapters = .chapters
+  module_label  = "Rozdział 02",
+  chapters      = .chapters
 )
 
 server <- function(input, output, session) {
   lecture_server(.chapters, input, output, session)
-  chapter_server(input, output, session)
+  ch1_server(input, output, session)
+  ch2_server(input, output, session)
+  ch3_server(input, output, session)
+  ch4_server(input, output, session)
 }
 
 shinyApp(ui = ui, server = server)

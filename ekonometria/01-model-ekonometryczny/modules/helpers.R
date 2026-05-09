@@ -1,4 +1,4 @@
-# Helpery dla pierwszej wersji wykladu z ekonometrii.
+# Lokalne helpery dla wykładu 01: Model ekonometryczny.
 
 eco_make_regression_data <- function(n = 80, beta0 = 12, beta1 = 1.8,
                                      sigma = 6, seed = 123) {
