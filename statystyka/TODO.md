@@ -36,6 +36,6 @@ Aktualnie w wykładzie o korelacji **nic o tym nie mówimy**, świadomie —
 Ale w wykładzie o regresji to powinno wybrzmieć.
 
 Powiązane pliki:
-- [regresja/modules/ch1_liniowa.R](regresja/modules/ch1_liniowa.R)
-- [wnioskowanie-statystyczne/modules/ch4_korelacja.R](wnioskowanie-statystyczne/modules/ch4_korelacja.R) (ryc. 6.1–6.3 jako odniesienie)
+- [05-regresja/modules/ch1_liniowa.R](05-regresja/modules/ch1_liniowa.R)
+- [04-wnioskowanie-statystyczne/modules/ch4_korelacja.R](04-wnioskowanie-statystyczne/modules/ch4_korelacja.R) (ryc. 6.1–6.3 jako odniesienie)
 - [scripts/regen_correlation_assets.R](scripts/regen_correlation_assets.R) (generator elips)

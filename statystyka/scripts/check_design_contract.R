@@ -19,16 +19,16 @@ class_token <- function(token) {
 }
 
 migrated_lectures <- c(
-  "typy-danych",
-  "rozklady-prawdopodobienstwa",
-  "przedzialy-ufnosci",
-  "wnioskowanie-statystyczne",
-  "zalozenia-testow",
-  "regresja",
-  "symulacje-statystyczne",
-  "metody-bayesowskie",
-  "dobre-dane",
-  "case-studies"
+  "01-typy-danych",
+  "02-rozklady-prawdopodobienstwa",
+  "03-przedzialy-ufnosci",
+  "04-wnioskowanie-statystyczne",
+  "05-regresja",
+  "05a-zalozenia-testow",
+  "06-symulacje-statystyczne",
+  "07-metody-bayesowskie",
+  "08-dobre-dane",
+  "09-case-studies"
 )
 
 rules <- data.frame(

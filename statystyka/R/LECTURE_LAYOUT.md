@@ -31,7 +31,7 @@ lc_apply_ggplot_defaults()   # motyw upwr + Atkinson dla wszystkich geom-ów
 .chapters <- list(ch1_ui, ch2_ui, ...)
 
 ui <- lecture_page(
-  lecture_id    = "nazwa-folderu",   # slug folderu apki, np. "rozklady-prawdopodobienstwa"
+  lecture_id    = "nazwa-wykladu",   # slug wykładu, np. "rozklady-prawdopodobienstwa"
   lecture_num   = "02",
   lecture_title = "Tytuł wykładu",
   module_label  = "Moduł II",
