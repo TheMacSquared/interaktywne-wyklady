@@ -24,7 +24,7 @@ ch4_ui <- list(
     tagList(
       p("Współczynnik korelacji Pearsona ", withMathJax("\\(r\\)"),
         " mierzy siłę i kierunek liniowego związku między dwiema zmiennymi ilościowymi."),
-      p("Przyjmuje wartości od ", tags$b("−1"), " do ", tags$b("+1"), ":"),
+      p("Przyjmuje wartości od −1 do +1:"),
       tags$ul(
         tags$li(tags$b("r = +1"), " — doskonała korelacja dodatnia (wzrost jednej = wzrost drugiej)"),
         tags$li(tags$b("r = 0"), " — brak korelacji liniowej"),
@@ -237,7 +237,7 @@ ch4_ui <- list(
 
     # --- 1. Kwartet Anscombe'a ---
     tagList(
-      p(tags$b("1. Kwartet Anscombe’a — te same statystyki, różne dane.")),
+      p("1. Kwartet Anscombe’a — te same statystyki, różne dane."),
       p("Poniższe cztery zbiory danych mają identyczną korelację (~0,82),
         tę samą średnią i wariancję — a zupełnie inną strukturę. Tylko wykres
         pozwala odkleić statystykę od rzeczywistości. To najmocniejszy argument
@@ -252,7 +252,7 @@ ch4_ui <- list(
 
     # --- 2. Korelacja pozorna (spurious) ---
     tagList(
-      p(tags$b("2. Korelacja pozorna (spurious correlation).")),
+      p("2. Korelacja pozorna (spurious correlation)."),
       p("Spożycie lodów i liczba utonięć korelują dodatnio. Czy lody zabijają?
         Oczywiście nie — obie zmienne zależą od temperatury (zmienna ukryta /
         konfounder). Korelacja między X i Y może wynikać z tego, że obie
@@ -266,16 +266,16 @@ ch4_ui <- list(
 
     # --- 3. Paradoks Simpsona ---
     tagList(
-      p(tags$b("3. Paradoks Simpsona.")),
+      p("3. Paradoks Simpsona."),
       p("Globalnie: więcej nauki wydaje się obniżać wyniki (r ujemne, czarna
         linia). Ale w każdej szkole z osobna więcej nauki daje ",
-        tags$b("wyższy"), " wynik (r dodatnie, kolorowe linie). Jak to
+        "wyższy", " wynik (r dodatnie, kolorowe linie). Jak to
         możliwe? Uczniowie słabej szkoły uczą się dużo (materiał jest dla nich
         trudniejszy), ale mimo to mają niskie wyniki. Uczniowie silnej szkoły
         uczą się mniej (materiał przychodzi łatwiej) i mają wysokie wyniki.
         Po połączeniu danych „wychodzi”, że nauka obniża wyniki."),
       p(tags$em("Zmienna ukryta:"), " poziom szkoły (konfounder). Agregacja
-        danych bez uwzględnienia grup może ", tags$b("odwrócić"),
+        danych bez uwzględnienia grup może odwrócić",
         " rzeczywisty kierunek zależności."),
       p("Więcej: ",
         tags$a(href = "https://en.wikipedia.org/wiki/Simpson%27s_paradox",
@@ -298,7 +298,7 @@ ch4_ui <- list(
 
     # --- 4. Nieliniowość przy r ~ 0 ---
     tagList(
-      p(tags$b("4. Nieliniowość przy r ≈ 0.")),
+      p("4. Nieliniowość przy r ≈ 0."),
       p("Zależność kwadratowa (U-kształtna) daje r bliskie zeru, choć związek
         jest silny i deterministyczny. Pearson mierzy wyłącznie zależność
         liniową — nie każdą.")
@@ -312,7 +312,7 @@ ch4_ui <- list(
 
     # --- 5. Outlier (widget interaktywny) ---
     tagList(
-      p(tags$b("5. Wpływ outliera na r.")),
+      p("5. Wpływ outliera na r."),
       p("Jeden punkt odległy od reszty może sztucznie wytworzyć korelację tam,
         gdzie jej nie ma — albo drastycznie ją zmienić. Pobaw się poniższym
         widgetem: wygeneruj dane bez korelacji, potem dodaj outliera i zobacz,
@@ -337,7 +337,7 @@ ch4_ui <- list(
     ),
 
     tagList(
-      p(tags$b("Podsumowanie pułapek:")),
+      p("Podsumowanie pułapek:"),
       tags$ol(
         tags$li("Zawsze rysuj wykres przed interpretacją r (Anscombe)."),
         tags$li("Korelacja nie oznacza przyczynowości — szukaj konfounderów."),

@@ -222,7 +222,7 @@ ch3_server <- function(input, output, session) {
         msg <- if (r$p >= 0.05) r$ok_msg else r$fail_msg
         div(style = "margin-bottom: 10px;",
           p(tags$strong(r$name)),
-          p(paste0(r$stat, ", p = ", format.pval(r$p, digits = 4))),
+          p(paste0(r$stat, ", ", format_p(r$p))),
           p(style = paste0("color:", color, "; font-weight: bold;"), msg)
         )
       })

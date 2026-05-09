@@ -266,3 +266,77 @@
   });
 
 })();
+
+// ============================================================================
+// Glossary popups — obsługa .lc-gloss
+// ============================================================================
+(function () {
+  "use strict";
+
+  var popup = null;
+  var activeSpan = null;
+
+  function ensurePopup() {
+    if (popup) return popup;
+    popup = document.createElement("div");
+    popup.className = "lc-gloss-popup";
+    popup.innerHTML =
+      '<div class="lc-gloss-term"></div><div class="lc-gloss-def"></div>';
+    document.body.appendChild(popup);
+    return popup;
+  }
+
+  function showGloss(span) {
+    var p = ensurePopup();
+    p.querySelector(".lc-gloss-term").textContent = span.textContent;
+    p.querySelector(".lc-gloss-def").textContent = span.dataset.def || "";
+    activeSpan = span;
+
+    // Pozycjonowanie: poniżej terminu, nie wychodź za prawy/dolny brzeg
+    var rect = span.getBoundingClientRect();
+    var top  = rect.bottom + 6;
+    var left = rect.left;
+    var vpW  = window.innerWidth;
+    var vpH  = window.innerHeight;
+
+    // Wymuś display:block żeby zmierzyć wymiary popupu
+    p.style.visibility = "hidden";
+    p.style.display = "block";
+    var pw = p.offsetWidth;
+    var ph = p.offsetHeight;
+    p.style.display = "";
+    p.style.visibility = "";
+
+    if (left + pw > vpW - 8) left = vpW - pw - 8;
+    if (top  + ph > vpH - 8) top  = rect.top - ph - 6;
+    left = Math.max(8, left);
+
+    p.style.top  = top  + "px";
+    p.style.left = left + "px";
+    p.classList.add("is-visible");
+  }
+
+  function hideGloss() {
+    if (popup) popup.classList.remove("is-visible");
+    activeSpan = null;
+  }
+
+  document.addEventListener("click", function (e) {
+    var span = e.target.closest(".lc-gloss");
+    if (span) {
+      e.stopPropagation();
+      if (activeSpan === span) {
+        hideGloss();
+      } else {
+        showGloss(span);
+      }
+    } else {
+      hideGloss();
+    }
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") hideGloss();
+  });
+
+})();

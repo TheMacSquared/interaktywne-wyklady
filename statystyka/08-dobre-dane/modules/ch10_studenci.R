@@ -3,6 +3,14 @@
 ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content = tagList(
   fluidRow(column(8, offset = 2,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 10 · Co czyni dobry zbiór danych?",
+      num    = "10",
+      title  = "Ankieta studencka.",
+      lead   = "Ten sam obszar tematyczny co w trudnym formularzu,
+                ale z jasnymi pytaniami, spójnym kodowaniem i użytecznymi zmiennymi."
+    ),
+
     lc_h2("sec-01", "Ankieta studencka"),
 
     div(class = "lc-prose",
@@ -38,8 +46,8 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
 
     lc_chapter_next(
       num = "11",
-      title = "Jakość powietrza",
-      lead = "Ostatni zbiór - wygląda dobrze, ale ma ukryty problem...",
+      title = "Kawiarnia",
+      lead = "Ostatni zbiór wygląda dobrze, ale ma ukryty problem: obserwacje zależą od czasu.",
       target_id = "ch11"
     ),
 

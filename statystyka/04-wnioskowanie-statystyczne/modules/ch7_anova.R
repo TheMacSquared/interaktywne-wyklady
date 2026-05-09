@@ -28,7 +28,7 @@ ch7_ui <- list(
       p("Każdy test t przeprowadzany przy ", withMathJax("\\(\\alpha = 0{,}05\\)"),
         " dopuszcza 5% ryzyka ", tags$em("fałszywego alarmu"),
         " — odrzucenia H₀ gdy w rzeczywistości różnicy nie ma.
-        Gdy testów jest więcej, to ryzyko ", tags$b("składa się"), ".")
+        Gdy testów jest więcej, to ryzyko składa się.")
     ),
 
     figure_panel(
@@ -54,7 +54,7 @@ ch7_ui <- list(
     tagList(
       p("Potrzebujemy jednego testu, który odpowiada na pytanie",
         " 'czy w ogóle coś się różni między grupami?'",
-        " z kontrolowanym ryzykiem — to właśnie ", tags$b("ANOVA"), ".")
+        " z kontrolowanym ryzykiem — to właśnie ANOVA.")
     ),
 
     # ========================================================================
@@ -64,20 +64,20 @@ ch7_ui <- list(
 
     tagList(
       p("ANOVA (Analysis of Variance) to uogólnienie testu t na 3 lub więcej grup.
-        Zadaje ", tags$b("jedno"), " pytanie: czy średnie w k grupach różnią się między sobą?"),
+        Zadaje jedno pytanie: czy średnie w k grupach różnią się między sobą?"),
       p("Przykład: czy pH jogurtu różni się między trzema temperaturami fermentacji (20°C, 25°C, 30°C)?"),
       lc_formula_box(
         p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 = \\ldots = \\mu_k\\) — wszystkie średnie są równe")),
         p(withMathJax("\\(H_a:\\) co najmniej jedna średnia różni się od pozostałych"))
       ),
-      p("ANOVA działa dzięki ", tags$b("dekompozycji wariancji"), ":
+      p("ANOVA działa dzięki dekompozycji wariancji:
         całkowitą zmienność danych dzieli na dwie części — zmienność ",
         tags$em("między"), " grupami (różnice średnich) i zmienność ",
         tags$em("wewnątrz"), " grup (naturalne rozrzuty). Statystyka F porównuje te dwie części:"),
       p("Duże F = różnice między grupami są większe niż moglibyśmy oczekiwać z samego
         wewnątrzgrupowego szumu. Jeśli F jest dostatecznie duże, p-wartość spada poniżej α
         i odrzucamy H₀. Odrzucenie mówi, że ", tags$em("co najmniej jedna"),
-        " średnia odstaje — ale nie mówi, ", tags$b("która"), ". Do tego służy test post-hoc (niżej).")
+        " średnia odstaje — ale nie mówi, która. Do tego służy test post-hoc (niżej).")
     ),
 
     # ========================================================================
@@ -161,8 +161,8 @@ ch7_ui <- list(
       p("ANOVA mówi „grupy różnią się”, ale nie mówi „które”. Wracamy więc
         do porównań parami — ale tym razem z kontrolowanym ryzykiem fałszywego alarmu
         na poziomie całej rodziny testów, a nie pojedynczego testu."),
-      p(tags$b("Games-Howell"), " porównuje każdą parę grup z korektą na wielokrotne
-        porównania — trzyma ryzyko błędu I rodzaju na 5% dla ", tags$b("całej rodziny"),
+      p("Games-Howell porównuje każdą parę grup z korektą na wielokrotne
+        porównania — trzyma ryzyko błędu I rodzaju na 5% dla całej rodziny",
         " porównań, niezależnie od liczby par. Dodatkowo nie wymaga równych wariancji
         w grupach, więc jest bezpiecznym wyborem domyślnym.")
     ),
@@ -170,7 +170,7 @@ ch7_ui <- list(
     inline_callout(
       label = "Ważne",
       tagList(
-        "Testy post-hoc wykonujemy ", tags$b("tylko"), " gdy ANOVA jest istotna.
+        "Testy post-hoc wykonujemy tylko gdy ANOVA jest istotna.
          Bez tego korekcja na wielokrotne porównania jest niepotrzebna."
       ),
       color = "uwaga"
@@ -214,8 +214,8 @@ ch7_ui <- list(
 
     figure_panel(label = "Ćwiczenie",
       h4("Zadanie 10 — Czy wyniki czytania różnią się między tercylami dochodu?"),
-      p("Podziel okręgi na trzy równe grupy dochodowe (tercyle): ",
-        tags$b("niski / średni / wysoki"),
+      p("Podziel okręgi na trzy równe grupy dochodowe (tercyle):
+        niski / średni / wysoki",
         " (użyj ", tags$em("split into groups"), " w Jamovi lub utwórz zmienną
         ręcznie na podstawie kwantyli 0, 1/3, 2/3, 1).
         Wykonaj jednoczynnikową ANOVA dla zmiennej ", tags$code("read"),

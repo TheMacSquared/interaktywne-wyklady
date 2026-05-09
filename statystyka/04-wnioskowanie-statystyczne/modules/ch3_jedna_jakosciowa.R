@@ -23,7 +23,7 @@ ch3_ui <- list(
     tagList(
       p("Gdy zmienna ma dwie kategorie (sukces/porażka, tak/nie, spełnia/nie spełnia),
         pytamy o proporcję w populacji."),
-      p("Narzędzie: ", tags$b("test dwumianowy"),
+      p("Narzędzie: test dwumianowy",
         " — porównuje obserwowany odsetek z wartością referencyjną p₀."),
       p("Test dwumianowy jest dokładny — nie opiera się na przybliżeniu normalnym,
         działa nawet przy małych próbach."),
@@ -126,11 +126,9 @@ ch3_ui <- list(
           lc_stack(gap = "sm",
             actionButton("ch3_step1", "1. Dane",
                          class = "lc-btn-outline", width = "100%"),
-            actionButton("ch3_step2", "2. Proporcja z próby",
+            actionButton("ch3_step3", "2. Rozkład pod H₀",
                          class = "lc-btn-outline", width = "100%"),
-            actionButton("ch3_step3", "3. Rozkład pod H₀",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch3_step4", "4. p-wartość i decyzja",
+            actionButton("ch3_step4", "3. p-wartość i decyzja",
                          class = "lc-btn-outline", width = "100%")
           )
         ),
@@ -146,8 +144,8 @@ ch3_ui <- list(
       label = "Co zrobiliśmy?",
       tagList(
         tags$ol(
-          tags$li("Zebraliśmy dane — ile sukcesów w n próbach"),
-          tags$li("Obliczyliśmy proporcję z próby: ", withMathJax("\\(\\hat{p} = k/n\\)")),
+          tags$li("Zebraliśmy dane i obliczyliśmy proporcję z próby: ",
+                  withMathJax("\\(\\hat{p} = k/n\\)")),
           tags$li("Sprawdziliśmy jak wygląda rozkład dwumianowy pod H₀"),
           tags$li("Policzyliśmy p-wartość — jak prawdopodobny jest nasz wynik jeśli H₀ prawdziwa")
         )
@@ -176,11 +174,9 @@ ch3_ui <- list(
           lc_stack(gap = "sm",
             actionButton("ch3b_step1", "1. Dane",
                          class = "lc-btn-outline", width = "100%"),
-            actionButton("ch3b_step2", "2. Proporcja z próby",
+            actionButton("ch3b_step3", "2. Rozkład pod H₀",
                          class = "lc-btn-outline", width = "100%"),
-            actionButton("ch3b_step3", "3. Rozkład pod H₀",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch3b_step4", "4. p-wartość i decyzja",
+            actionButton("ch3b_step4", "3. p-wartość i decyzja",
                          class = "lc-btn-outline", width = "100%")
           )
         ),
@@ -199,7 +195,7 @@ ch3_ui <- list(
           tags$li(tags$b("Dwustronny (≠):"), " p-wartość liczymy po obu stronach. Bezpieczniejszy."),
           tags$li(tags$b("Jednostronny (> lub <):"), " p-wartość tylko po jednej stronie. Mocniejszy, ale ślepy na efekt w drugą stronę.")
         ),
-        tags$p("Te same dane, ten sam wynik k/n, ale ", tags$b("inna p-wartość"),
+        tags$p("Te same dane, ten sam wynik k/n, ale inna p-wartość",
                " — bo inaczej zadane pytanie!")
       ),
       color = "uwaga"
@@ -212,7 +208,7 @@ ch3_ui <- list(
 
     tagList(
       p("W Jamovi i wielu podręcznikach spotkasz też ",
-        tags$b("test proporcji (z-test)"),
+        "test proporcji (z-test)",
         ". Działa na przybliżeniu normalnym:"),
       lc_formula_box(
         p(withMathJax("\\(z = \\frac{\\hat{p} - p_0}{\\sqrt{p_0(1-p_0)/n}}\\)"))
@@ -229,7 +225,7 @@ ch3_ui <- list(
     ),
 
     tagList(
-      p(tags$b("Kiedy który?")),
+      p("Kiedy który?"),
       tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(tags$th(""), tags$th("Test dwumianowy"), tags$th("Test proporcji (z-test)"))
@@ -257,7 +253,7 @@ ch3_ui <- list(
           )
         )
       ),
-      p(tags$b("Reguła kciuka:"),
+      p("Reguła kciuka:",
         " jeśli ", withMathJax("\\(np_0 \\geq 10\\)"), " i ",
         withMathJax("\\(n(1-p_0) \\geq 10\\)"),
         " — oba testy dadzą praktycznie ten sam wynik.")
@@ -275,8 +271,8 @@ ch3_ui <- list(
 
     figure_panel(label = "Ćwiczenie",
       h4("Zadanie A — Czy większość okręgów obejmuje klasy tylko do 6.?"),
-      p("Okręgi dzielą się na szkoły klas KK-06 i KK-08. Przetestuj ",
-        tags$b("dwustronnie"), ", czy odsetek okręgów KK-06 różni się od 50%.
+      p("Okręgi dzielą się na szkoły klas KK-06 i KK-08. Przetestuj
+        dwustronnie, czy odsetek okręgów KK-06 różni się od 50%.
         Sformułuj H₀ i Hₐ, oblicz p-wartość testem dwumianowym (α = 0.05).
         Jak interpretujesz wynik?"),
       actionButton("cas_ch3_ans_a", "Pokaż rozwiązanie",
@@ -287,7 +283,7 @@ ch3_ui <- list(
     figure_panel(label = "Ćwiczenie",
       h4("Zadanie B — Czy więcej niż 30% okręgów ma wysoki poziom ubóstwa?"),
       p("Przyjmij, że okrąg ma wysoki poziom ubóstwa, gdy ", tags$code("lunch > 50%"),
-        ". Przetestuj ", tags$b("jednostronnie (prawostronnie)"), ",
+        ". Przetestuj jednostronnie (prawostronnie),
         czy odsetek takich okręgów przekracza normę 30%.
         Sformułuj H₀ i Hₐ, wykonaj test dwumianowy. Jaki wniosek?"),
       actionButton("cas_ch3_ans_b", "Pokaż rozwiązanie",
@@ -416,12 +412,10 @@ ch3_server <- function(input, output, session) {
   }, ignoreInit = TRUE)
 
   observeEvent(input$ch3_step1, ch3_step(1))
-  observeEvent(input$ch3_step2, ch3_step(2))
   observeEvent(input$ch3_step3, ch3_step(3))
   observeEvent(input$ch3_step4, ch3_step(4))
 
   observeEvent(input$ch3b_step1, ch3b_step(1))
-  observeEvent(input$ch3b_step2, ch3b_step(2))
   observeEvent(input$ch3b_step3, ch3b_step(3))
   observeEvent(input$ch3b_step4, ch3b_step(4))
 
@@ -466,29 +460,24 @@ ch3_server <- function(input, output, session) {
                  label = "Próba gotowa! Klikaj kroki po kolei.",
                  size = 5, color = upwr_reference) +
         theme_void()
-    } else if (step <= 2) {
-      # Krok 1-2: slupki sukces/porazka
+    } else if (step == 1) {
+      # Krok 1: slupki sukces/porazka z proporcją
+      phat <- k / n
       df <- data.frame(
         kat = c(par$success_label, par$failure_label),
         count = c(k, n - k)
       )
       df$kat <- factor(df$kat, levels = c(par$success_label, par$failure_label))
 
-      p <- ggplot(df, aes(x = kat, y = count, fill = kat)) +
+      ggplot(df, aes(x = kat, y = count, fill = kat)) +
         geom_col(alpha = 0.8, width = 0.6) +
         geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold") +
         scale_fill_manual(values = c(col_accept, col_reject)) +
+        annotate("text", x = 1.5, y = max(k, n - k) * 0.7,
+                 label = paste0("p̂ = ", k, "/", n, " = ", round(phat, 3)),
+                 size = 5, color = col_pvalue, fontface = "bold") +
         labs(x = NULL, y = "Liczba") +
-                theme(legend.position = "none")
-
-      if (step >= 2) {
-        phat <- k / n
-        p <- p +
-          annotate("text", x = 1.5, y = max(k, n - k) * 0.7,
-                   label = paste0("p̂ = ", k, "/", n, " = ", round(phat, 3)),
-                   size = 5, color = col_pvalue, fontface = "bold")
-      }
-      p
+        theme(legend.position = "none")
     } else {
       # Krok 3-4: rozklad dwumianowy pod H0
       x_vals <- 0:n
@@ -536,10 +525,6 @@ ch3_server <- function(input, output, session) {
         lc_stat_box("p̂", k, "/", n, " = ", round(phat, 3),
                     caption = paste0(par$success_label, ": ", k),
                     color = col_accept),
-        lc_stat_box(par$failure_label, n - k, color = col_reject),
-        p("Mamy ", n, " obserwacji. Ile z nich to sukcesy?")
-      ),
-      "2" = tagList(
         lc_stat_box("p₀", p0, color = upwr_secondary),
         p("Proporcja z próby: ", tags$b(round(phat, 3)),
           ". Wartość referencyjna: ", tags$b(p0),
@@ -602,28 +587,23 @@ ch3_server <- function(input, output, session) {
 
     k <- d$k; n <- d$n; p0 <- par$p0
 
-    if (step <= 2) {
+    if (step == 1) {
+      phat <- k / n
       df <- data.frame(
         kat = c(par$success_label, par$failure_label),
         count = c(k, n - k)
       )
       df$kat <- factor(df$kat, levels = c(par$success_label, par$failure_label))
 
-      p <- ggplot(df, aes(x = kat, y = count, fill = kat)) +
+      ggplot(df, aes(x = kat, y = count, fill = kat)) +
         geom_col(alpha = 0.8, width = 0.6) +
         geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold") +
         scale_fill_manual(values = c(col_accept, col_reject)) +
+        annotate("text", x = 1.5, y = max(k, n - k) * 0.7,
+                 label = paste0("p̂ = ", round(phat, 3), " (te same dane)"),
+                 size = 5, color = col_pvalue, fontface = "bold") +
         labs(x = NULL, y = "Liczba") +
-                theme(legend.position = "none")
-
-      if (step >= 2) {
-        phat <- k / n
-        p <- p +
-          annotate("text", x = 1.5, y = max(k, n - k) * 0.7,
-                   label = paste0("p̂ = ", round(phat, 3), " (te same dane)"),
-                   size = 5, color = col_pvalue, fontface = "bold")
-      }
-      p
+        theme(legend.position = "none")
     } else {
       # Krok 3-4: rozklad z zaznaczonym jednym ogonem
       x_vals <- 0:n
@@ -669,12 +649,8 @@ ch3_server <- function(input, output, session) {
     info <- switch(as.character(step),
       "1" = tagList(
         lc_stat_box("n", n, " (te same dane co wyżej)", color = col_h0),
-        p("Pytamy, czy proporcja sukcesów jest ", dir_label, " niż p₀ = ", p0, ".")
-      ),
-      "2" = tagList(
         lc_stat_box("p̂", round(phat, 3), " (ta sama wartość!)", color = col_pvalue),
-        p("Statystyki takie same — dane się nie zmieniły.
-          Zmieniło się tylko pytanie (kierunek).")
+        p("Statystyki takie same — dane się nie zmieniły. Zmieniło się tylko pytanie (kierunek).")
       ),
       "3" = tagList(
         p("Ten sam rozkład B(", n, ", ", p0,

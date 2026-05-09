@@ -572,7 +572,7 @@ format_bf <- function(bf) {
 # ============================================================================
 
 format_pval_pl <- function(p, alpha = 0.05) {
-  p_txt <- if (p < 0.001) "p < 0.001" else paste0("p = ", round(p, 4))
+  p_txt <- format_p(p)
   if (p < alpha) {
     list(
       decision    = paste0(p_txt, " — odrzucamy H₀ (α = ", alpha, ")"),

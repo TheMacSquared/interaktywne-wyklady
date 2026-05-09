@@ -3,6 +3,14 @@
 ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = tagList(
   fluidRow(column(8, offset = 2,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 05 · Co czyni dobry zbiór danych?",
+      num    = "05",
+      title  = "Filmy Tarantino.",
+      lead   = "Ciekawy temat nie wystarczy. Dane eventowe mogą być świetne
+                opisowo, ale słabe do klasycznych analiz porównawczych."
+    ),
+
     lc_h2("sec-01", "Filmy Tarantino"),
 
     div(class = "lc-prose",
@@ -66,8 +74,8 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
 
     lc_chapter_next(
       num = "06",
-      title = "Ankieta firmowa",
-      lead = "Czasem dane mają odpowiednią wielkość, ale inny problem...",
+      title = "Hotel",
+      lead = "Czasem dane mają odpowiednią wielkość, ale inny problem: prawie brak zmienności.",
       target_id = "ch6"
     ),
 

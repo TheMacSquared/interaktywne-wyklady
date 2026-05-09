@@ -216,7 +216,7 @@ ch1_server <- function(input, output, session) {
           column(6,
             p(tags$strong("Shapiro-Wilk:")),
             p(paste0("W = ", round(sw$statistic, 4))),
-            p(paste0("p = ", format.pval(sw$p, digits = 4))),
+            p(paste0("p = ", format_p_value(sw$p))),
             p(style = paste0("color:", sw_color, "; font-weight: bold;"),
               if (sw$p >= 0.05) "Brak podstaw do odrzucenia normalności"
               else "Normalność odrzucona!")
@@ -224,7 +224,7 @@ ch1_server <- function(input, output, session) {
           column(6,
             p(tags$strong("Kolmogorov-Smirnov:")),
             p(paste0("D = ", round(ks$statistic, 4))),
-            p(paste0("p = ", format.pval(ks$p.value, digits = 4))),
+            p(paste0("p = ", format_p_value(ks$p.value))),
             p(style = paste0("color:", ks_color, "; font-weight: bold;"),
               if (ks$p.value >= 0.05) "Brak podstaw do odrzucenia normalności"
               else "Normalność odrzucona!")
@@ -276,12 +276,12 @@ ch1_server <- function(input, output, session) {
     tagList(
       lc_stat_box(
         "Oryginalne",
-        paste0("p = ", format.pval(sw_orig$p, digits = 3)),
+        paste0("p = ", format_p_value(sw_orig$p)),
         color = if (sw_orig$p >= 0.05) col_ok else col_fail
       ),
       lc_stat_box(
         "Po log()",
-        paste0("p = ", format.pval(sw_log$p, digits = 3)),
+        paste0("p = ", format_p_value(sw_log$p)),
         color = if (sw_log$p >= 0.05) col_ok else col_fail
       )
     )

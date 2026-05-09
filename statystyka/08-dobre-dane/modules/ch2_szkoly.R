@@ -3,6 +3,14 @@
 ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = tagList(
   fluidRow(column(8, offset = 2,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 02 · Co czyni dobry zbiór danych?",
+      num    = "02",
+      title  = "Szkoły w Kalifornii.",
+      lead   = "Zaczynamy od wzorcowego zbioru: dużo obserwacji, jasne zmienne
+                i realne pytania badawcze."
+    ),
+
     lc_h2("sec-01", "Szkoły w Kalifornii"),
 
     div(class = "lc-prose",

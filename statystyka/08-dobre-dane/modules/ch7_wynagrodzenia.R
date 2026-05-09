@@ -3,6 +3,14 @@
 ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", content = tagList(
   fluidRow(column(8, offset = 2,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 07 · Co czyni dobry zbiór danych?",
+      num    = "07",
+      title  = "Wynagrodzenia w USA.",
+      lead   = "Duży, kompletny zbiór z mieszanką zmiennych pokazuje,
+                jak wygląda materiał gotowy do wielu typów analiz."
+    ),
+
     lc_h2("sec-01", "Wynagrodzenia w USA"),
 
     div(class = "lc-prose",

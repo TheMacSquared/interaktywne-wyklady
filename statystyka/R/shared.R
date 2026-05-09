@@ -91,6 +91,48 @@ dist_names_pl <- c(
 )
 
 # ============================================================================
+# FORMATOWANIE P-WARTOSCI (styl PL — przecinek jako separator dziesiętny)
+# Uzywane we wszystkich wykladach z testami statystycznymi.
+# ============================================================================
+
+# Formatuje p-wartość: "0,023", "<0,0001", ">0,99". Bez prefiksu "p =".
+format_p_value <- function(p_value) {
+  if (is.na(p_value)) return("NA")
+  if (p_value < 0.0001) return("<0,0001")
+  rounded <- signif(p_value, 2)
+  if (rounded >= 1) return(">0,99")
+  s <- formatC(rounded, format = "fg", digits = 2)
+  if (!grepl("\\.", s)) s <- paste0(s, ".0")
+  gsub("\\.", ",", s)
+}
+
+# Wersja z prefiksem: "p = 0,023" lub "p < 0,0001".
+format_p <- function(p_value) {
+  v <- format_p_value(p_value)
+  if (startsWith(v, "<") || startsWith(v, ">")) {
+    paste0("p ", substr(v, 1, 1), " ", substr(v, 2, nchar(v)))
+  } else {
+    paste0("p = ", v)
+  }
+}
+
+# UI: linia "p = 0,023" w werdyktach — liczba pogrubiona i powiększona.
+# Zwraca tag <p> gotowy do wstawienia w lc_feedback / tagList.
+ui_p_value <- function(p_value) {
+  v <- format_p_value(p_value)
+  is_bound <- startsWith(v, "<") || startsWith(v, ">")
+  prefix   <- if (is_bound) paste0("p ", substr(v, 1, 1), " ") else "p = "
+  number   <- if (is_bound) substr(v, 2, nchar(v)) else v
+  tags$p(
+    prefix,
+    tags$strong(
+      style = "font-size: 1.25em;",
+      number
+    )
+  )
+}
+
+# ============================================================================
 # FORMATOWANIE WYNIKOW STATYSTYCZNYCH
 # Helpery uzywane w rozwiazaniach cwiczen — zapewniaja ze wartosci w UI
 # sa liczone z danych/parametrow, a nie wpisane na staie.
@@ -125,3 +167,12 @@ dist_names_pl <- c(
 .fmt_me   <- function(ci, digits = 2) sprintf("%.*f", digits, ci$me)
 .fmt_ci   <- function(ci, digits = 2) sprintf("[%.*f, %.*f]", digits, ci$lo, digits, ci$hi)
 .fmt_prop <- function(ci, digits = 3) sprintf("%.*f", digits, ci$p)
+
+# ============================================================================
+# SLOWNIK TERMINOW (gloss)
+# Sourcujemy glossary.R jeśli istnieje — udostępnia gloss() i .GLOSSARY.
+# ============================================================================
+local({
+  gf <- file.path(project_root, "R", "glossary.R")
+  if (file.exists(gf)) source(gf, local = parent.env(environment()))
+})

@@ -94,9 +94,9 @@ ch1_ui <- list(
         )
       ),
       p("Na razie najważniejsze jest samo uporządkowanie pytania: ",
-        tags$b("jaki stan uznajemy za domyślny"),
+        "jaki stan uznajemy za domyślny",
         " i ",
-        tags$b("co byłoby sygnałem efektu"),
+        "co byłoby sygnałem efektu",
         ". W następnym rozdziale zapiszemy to jako parę H₀/Hₐ. Dopiero potem
         wrócimy do błędów, p-wartości i formalnej decyzji.")
     ),
@@ -133,15 +133,15 @@ ch1d_ui <- list(
 
     tagList(
       p("Zanim nauczymy się podejmować decyzje w testach hipotez, musimy
-        zauważyć coś fundamentalnego: ", tags$b("rzeczywistość i nasza decyzja
-        to dwie różne rzeczy"), ". Test statystyczny daje nam werdykt —
+        zauważyć coś fundamentalnego: rzeczywistość i nasza decyzja
+        to dwie różne rzeczy. Test statystyczny daje nam werdykt —
         ale werdykt może się nie zgadzać z tym, co naprawdę jest w świecie."),
-      p(tags$b("Analogia: alarm przeciwpożarowy.")),
+      p("Analogia: alarm przeciwpożarowy."),
       p("Wyobraź sobie czujnik dymu. W świecie są dwa możliwe stany: ",
         tags$em("pożar faktycznie trwa"), " albo ", tags$em("nic się nie pali"),
         ". Czujnik może podjąć dwie decyzje: ",
         tags$em("włączyć alarm"), " albo ", tags$em("milczeć"),
-        ". To daje cztery kombinacje — dwie trafne i ", tags$b("dwa błędy"), ":"),
+        ". To daje cztery kombinacje — dwie trafne i dwa błędy:"),
       tags$ul(
         tags$li(tags$b("Fałszywy alarm"), " — czujnik wyje, choć nie ma pożaru.
                 Przykry, ale bezpieczny błąd."),
@@ -223,7 +223,7 @@ ch1d_ui <- list(
 
     tagList(
       p("Żeby zobaczyć, co kryje się pod literami α i β, rozrysujmy ",
-        tags$b("dwa rozkłady"), " obok siebie — rozkłady ",
+        "dwa rozkłady", " obok siebie — rozkłady ",
         tags$em("średniej z próby"), ":"),
       tags$ul(
         tags$li(tags$b("Niebieski"), " — rozkład średniej, gdy H₀ jest prawdziwa
@@ -231,11 +231,11 @@ ch1d_ui <- list(
         tags$li(tags$b("Burgundowy"), " — rozkład średniej, gdy Hₐ jest prawdziwa
                 (telefon ", tags$em("naprawdę"), " wpływa o konkretną liczbę punktów).")
       ),
-      p(tags$b("Punkty krytyczne"), " (czarne przerywane pionowe linie) to wartości
+      p("Punkty krytyczne (czarne przerywane pionowe linie) to wartości
         na osi średnich, poza którymi odrzucamy H₀ — wynikają one bezpośrednio z ",
         withMathJax("\\(\\alpha\\)"),
         ": przy teście dwustronnym dzielimy 5% na dwa ogony po 2,5%."),
-      p(tags$b("Cztery obszary na wykresie:")),
+      p("Cztery obszary na wykresie:"),
       tags$ul(
         tags$li(tags$b("α (szary w niebieskim, oba ogony):"),
                 " pole pod niebieskim rozkładem poza punktami krytycznymi
@@ -285,7 +285,7 @@ ch1d_ui <- list(
       label = "Kompromis",
       tagList(
         "Zmniejszenie α redukuje błąd I rodzaju, ale zwiększa błąd II rodzaju. ",
-        "Jedyny sposób na zmniejszenie obu naraz: ", tags$b("zwiększenie n"), "!"
+        "Jedyny sposób na zmniejszenie obu naraz: zwiększenie n!"
       ),
       color = "uwaga"
     ),
@@ -299,14 +299,14 @@ ch1d_ui <- list(
       p("Wiemy już, że ryzyko błędu I rodzaju ", withMathJax("\\(\\alpha\\)"),
         " ustalamy sami — zwykle na 5%. Ale jak z danego eksperymentu wyciągnąć ",
         tags$em("decyzję"), ": odrzucić H₀ czy nie? Służy do tego ",
-        tags$b("p-wartość"), "."),
+        "p-wartość", "."),
       p("Eksperyment z telefonem dał pewną różnicę średnich między grupami.
         Czy to dowód, że telefon wpływa na koncentrację? A może gdybyśmy powtórzyli
         badanie z innymi studentami, różnica wyszłaby mniejsza, większa albo w drugą stronę?
         p-wartość formalizuje tę intuicję — mierzy, jak ",
         tags$em("zaskakująca"),
         " jest nasza obserwacja w świecie, w którym H₀ byłaby prawdziwa."),
-      p(tags$b("Definicja formalna:")),
+      p("Definicja formalna:"),
       lc_formula_box(
         p(withMathJax(
           "\\(p = P(|\\bar{X}_A - \\bar{X}_B| \\geq |d_{\\text{obs}}| \\mid H_0)\\)"
@@ -322,14 +322,14 @@ ch1d_ui <- list(
         jest dla nas tak samo zaskakujące. Wariant jednostronny (gdy z góry zakładamy
         kierunek różnicy) pojawi się w następnym rozdziale, kiedy przyjrzymy się
         formułowaniu hipotez."),
-      p(tags$b("Jak to obliczyć?"),
+      p("Jak to obliczyć?",
         " W praktyce używamy statystyki testowej (np. t, χ², F) i znanych rozkładów
         pod H₀ — ale dla intuicji najlepiej wyobrazić sobie, że ",
         tags$em("wielokrotnie powtarzamy eksperyment"),
         " w świecie, gdzie H₀ jest prawdziwa. Każdy powtórzony eksperyment da inną
         różnicę średnich — losowy szum. Rozkład tych różnic ",
-        tags$b("pod H₀"), " pokazuje, co „normalne” bez żadnego efektu."),
-      p(tags$b("Reguła decyzyjna:"),
+        "pod H₀", " pokazuje, co „normalne” bez żadnego efektu."),
+      p("Reguła decyzyjna:",
         " jeśli ", withMathJax("\\(p < \\alpha\\)"), " — mówimy, że zaobserwowana
         różnica jest ", tags$em("zbyt skrajna"),
         ", by ją wytłumaczyć samym przypadkiem i odrzucamy H₀. W przeciwnym razie
@@ -418,11 +418,11 @@ ch1d_ui <- list(
                 odrzucenia hipotezy zerowej.”")
       ),
       p("Zwróć uwagę na szczegół w drugim werdykcie: mówimy ",
-        tags$em("„nie mamy podstaw do odrzucenia”"), ", a ", tags$b("nie"),
+        tags$em("„nie mamy podstaw do odrzucenia”"), ", a nie",
         tags$em(" „H₀ jest prawdziwa”"),
         ". Brak dowodu to nie dowód braku — może efekt istnieje, ale nasza próba
         była za mała albo efekt za słaby, żeby go wykryć. Stąd tak ostrożny język."),
-      p(tags$b("Ale to jeszcze nie koniec interpretacji."),
+      p("Ale to jeszcze nie koniec interpretacji.",
         " Werdykt o hipotezach to krok formalny — trzeba go dodatkowo ",
         tags$em("przetłumaczyć z powrotem na język pytania badawczego"),
         ". Jeśli H₀ brzmiała „średni czas dojazdu jest równy 30 minut”, a Hₐ

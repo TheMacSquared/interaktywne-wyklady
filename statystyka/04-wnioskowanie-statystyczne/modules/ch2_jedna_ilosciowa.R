@@ -50,13 +50,13 @@ ch2_ui <- list(
           withMathJax("\\(H_a: \\mu < 70\\)"))
       ),
       p("Wybór wariantu wynika z brzmienia pytania badawczego i musi być
-        ", tags$b("zdecydowany przed zbieraniem danych"), "."),
+        zdecydowany przed zbieraniem danych."),
       p("Niezależnie od wybranego wariantu, liczymy tę samą ",
-        tags$b("statystykę testową"), " — mierzy ona, ile błędów standardowych
+        "statystykę testową", " — mierzy ona, ile błędów standardowych
         dzieli średnią z próby od wartości referencyjnej ",
         withMathJax("\\(\\mu_0\\)"),
         ". Różni się tylko sposób liczenia p-wartości (po jednej albo po obu stronach rozkładu)."),
-      p("Wzór na ", tags$b("test t jednej próby"), ":"),
+      p("Wzór na test t jednej próby:"),
       lc_formula_box(
         p(withMathJax("\\(t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}}, \\quad df = n - 1\\)"))
       )
@@ -69,7 +69,7 @@ ch2_ui <- list(
 
     tagList(
       p("Zanim zobaczysz test w działaniu — spróbuj sam. Dla każdego pytania
-        badawczego zastanów się, jak wyglądałyby ", tags$b("H₀"), " i ", tags$b("Hₐ"),
+        badawczego zastanów się, jak wyglądałyby H₀ i Hₐ",
         ". Przedyskutuj w grupie, a potem kliknij „Pokaż odpowiedź”.")
     ),
 
@@ -237,7 +237,7 @@ ch2_ui <- list(
     figure_panel(label = "Ćwiczenie",
       h4("Zadanie 1 — Czy wyniki z czytania różnią się od normy 650 pkt?"),
       p("Departament edukacji podaje normę 650 pkt. Przetestuj, czy średni wynik ",
-        tags$code("read"), " w okręgach Kalifornii ", tags$b("istotnie różni się"),
+        tags$code("read"), " w okręgach Kalifornii istotnie różni się",
         " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0.05).
         Co raportowałbyś departamentowi?"),
       actionButton("cas_ch2_ans1", "Pokaż rozwiązanie",
@@ -247,11 +247,11 @@ ch2_ui <- list(
 
     figure_panel(label = "Ćwiczenie",
       h4("Zadanie 2 — Czy typowy dochód okręgu przekracza 15 tys. USD?"),
-      p('Hipoteza dyrekcji: „Nasz stan to stan zamożnych" — typowy okrąg ma dochód
-        powyżej 15 tys. USD. Przetestuj ', tags$b("jednostronnie (prawostronnie)"),
+      p("Hipoteza dyrekcji: „Nasz stan to stan zamożnych\" — typowy okrąg ma dochód
+        powyżej 15 tys. USD. Przetestuj jednostronnie (prawostronnie)",
         " zmienną ", tags$code("income"),
-        '. Sformułuj H₀ i Hₐ dla hipotezy kierunkowej.
-        Czy wynik jest istotny statystycznie? A praktycznie?'),
+        ". Sformułuj H₀ i Hₐ dla hipotezy kierunkowej.
+        Czy wynik jest istotny statystycznie? A praktycznie?"),
       actionButton("cas_ch2_ans2", "Pokaż rozwiązanie",
                    class = "lc-btn-ok-outline lc-btn-sm"),
       uiOutput("cas_ch2_sol2")

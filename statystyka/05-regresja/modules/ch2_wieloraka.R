@@ -146,7 +146,7 @@ ch2_server <- function(input, output, session) {
         tags$td(round(coefs$estimate[i], 4)),
         tags$td(round(coefs$std.error[i], 4)),
         tags$td(round(coefs$statistic[i], 3)),
-        tags$td(paste0(format.pval(coefs$p.value[i], digits = 3), sig))
+        tags$td(paste0(format_p_value(coefs$p.value[i]), sig))
       )
     })
 

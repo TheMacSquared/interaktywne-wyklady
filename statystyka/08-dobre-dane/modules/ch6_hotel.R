@@ -3,6 +3,14 @@
 ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagList(
   fluidRow(column(8, offset = 2,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 06 · Co czyni dobry zbiór danych?",
+      num    = "06",
+      title  = "Oceny hotelu boutique.",
+      lead   = "Duże n nie pomoże, jeśli zmienne prawie się nie różnią.
+                Bez zmienności nie ma czego wyjaśniać ani porównywać."
+    ),
+
     lc_h2("sec-01", "Oceny hotelu boutique"),
 
     div(class = "lc-prose",

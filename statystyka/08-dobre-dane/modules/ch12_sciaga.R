@@ -3,6 +3,14 @@
 ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content = tagList(
   fluidRow(column(8, offset = 2,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 12 · Co czyni dobry zbiór danych?",
+      num    = "12",
+      title  = "Ściąga jakości danych.",
+      lead   = "Krótka lista kontrolna: co dyskwalifikuje zbiór,
+                co da się naprawić i jak dopasować analizę do struktury danych."
+    ),
+
     lc_h2("sec-01", "Ściąga - jak ocenić zbiór danych"),
 
     lc_h2("sec-02", "Podsumowanie 10 zbiorów"),
@@ -62,9 +70,9 @@ ch12_server <- function(input, output, session) {
     data.frame(
       Nr = 2:11,
       Zbior = c("Szkoły w Kalifornii", "Ankieta na grupie", "Pingwiny",
-                "Filmy Tarantino", "Ankieta firmowa", "Wynagrodzenia USA",
-                "Trudna ankieta", "Ceny mieszkań", "Ankieta studencka", "Jakość powietrza"),
-      n = c(420, 8, 344, "~1800 zdarzeń", 80, 3000, 90, 150, 150, 153),
+                "Filmy Tarantino", "Hotel boutique", "Wynagrodzenia USA",
+                "Trudna ankieta", "Badania laboratoryjne", "Ankieta studencka", "Kawiarnia"),
+      n = c(420, 8, 344, "~1800 zdarzeń", 80, 3000, 90, 150, 150, 245),
       Werdykt = c("DOBRY", "ZŁY", "DOBRY", "ZŁY", "ZŁY", "DOBRY", "ZŁY", "MIESZANY", "DOBRY", "ZŁY"),
       Problem = c("Brak", "Za mała próba", "Niewielkie braki", "Zła struktura, n=7 po agregacji",
                   "Brak zmienności", "Brak", "Źle zdefiniowane zmienne",

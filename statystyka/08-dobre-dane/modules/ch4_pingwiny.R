@@ -3,6 +3,14 @@
 ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = tagList(
   fluidRow(column(8, offset = 2,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 04 · Co czyni dobry zbiór danych?",
+      num    = "04",
+      title  = "Pingwiny z Antarktydy.",
+      lead   = "Dobry zbiór nie musi być idealny. Ważne, żeby braki i ograniczenia
+                były jawne, małe i możliwe do uzasadnienia."
+    ),
+
     lc_h2("sec-01", "Pingwiny z Antarktydy"),
 
     div(class = "lc-prose",

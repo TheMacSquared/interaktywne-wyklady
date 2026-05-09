@@ -191,14 +191,14 @@ ch2_server <- function(input, output, session) {
         column(6,
           p(tags$strong("Test Levene'a:")),
           p(paste0("F = ", round(lev$statistic, 3))),
-          p(paste0("p = ", format.pval(lev$p, digits = 4))),
+          p(paste0("p = ", format_p_value(lev$p))),
           p(style = paste0("color:", lev_color, "; font-weight: bold;"),
             if (lev$p >= 0.05) "Wariancje jednorodne" else "Wariancje nierówne!")
         ),
         column(6,
           p(tags$strong("Test Bartletta:")),
           p(paste0("χ² = ", round(bart$statistic, 3))),
-          p(paste0("p = ", format.pval(bart$p.value, digits = 4))),
+          p(paste0("p = ", format_p_value(bart$p.value))),
           p(style = paste0("color:", bart_color, "; font-weight: bold;"),
             if (bart$p.value >= 0.05) "Wariancje jednorodne" else "Wariancje nierówne!")
         )
@@ -221,13 +221,13 @@ ch2_server <- function(input, output, session) {
           p(tags$strong("Test t klasyczny"), " (var.equal=TRUE):"),
           p(paste0("t(", round(t_classic$df, 1), ") = ",
                    round(t_classic$statistic, 3))),
-          p(paste0("p = ", format.pval(t_classic$p, digits = 4)))
+          p(paste0("p = ", format_p_value(t_classic$p)))
         ),
         column(6,
           p(tags$strong("Test Welcha"), " (var.equal=FALSE):"),
           p(paste0("t(", round(t_welch$df, 1), ") = ",
                    round(t_welch$statistic, 3))),
-          p(paste0("p = ", format.pval(t_welch$p, digits = 4)))
+          p(paste0("p = ", format_p_value(t_welch$p)))
         )
       ),
       p(style = "margin-top: 10px;",

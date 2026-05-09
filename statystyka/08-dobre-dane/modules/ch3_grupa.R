@@ -3,6 +3,14 @@
 ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagList(
   fluidRow(column(8, offset = 2,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 03 · Co czyni dobry zbiór danych?",
+      num    = "03",
+      title  = "Ankieta na grupie.",
+      lead   = "Ten zbiór wygląda jak typowy projekt studencki, ale ma problem,
+                którego nie da się naprawić kosmetyką: zbyt małe n."
+    ),
+
     lc_h2("sec-01", "Ankieta na grupie"),
 
     div(class = "lc-prose",

@@ -3,6 +3,14 @@
 ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = tagList(
   fluidRow(column(8, offset = 2,
 
+    lc_chapter_hero(
+      kicker = "Rozdział 08 · Co czyni dobry zbiór danych?",
+      num    = "08",
+      title  = "Formularz rejestracyjny.",
+      lead   = "Źle zaprojektowane pytania tworzą dane, których nie da się
+                po prostu naprawić jednym kliknięciem w analizie."
+    ),
+
     lc_h2("sec-01", "Formularz rejestracyjny kursu"),
 
     div(class = "lc-prose",
