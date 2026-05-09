@@ -1,0 +1,1711 @@
+/* ============================================================================
+   LECTURE THEME — kanoniczny design system dla interaktywnych wykładów
+   Używany przez lecture_layout.R.
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap&subset=latin-ext');
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
+
+/* === Tokeny typograficzne === */
+/* Kolorowe tokeny --upwr-* są generowane dynamicznie z R/palette.R przez
+   .lc_palette_css() w lecture_layout.R (wstrzykiwane w tags$head po tym CSS).
+   Jedno źródło prawdy dla wszystkich kolorów — ggplot, CSS i inline style
+   używają tych samych wartości z palette.R. */
+:root {
+  --upwr-sans:   'Atkinson Hyperlegible', -apple-system, sans-serif;
+  --upwr-mono:   'JetBrains Mono', ui-monospace, monospace;
+  /* --upwr-serif mapowane na sans — Atkinson jako domyślna czcionka wszędzie.
+     Zmienna zostaje w CSS, żeby nie łamać istniejących reguł font-family;
+     efektywnie cały tekst jest teraz Atkinson Hyperlegible. */
+  --upwr-serif:  var(--upwr-sans);
+  --upwr-nav-w:  280px;
+}
+
+/* === Reset dla pełnoekranowego layoutu === */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0 !important;
+  overflow: hidden;
+  background: var(--upwr-bg);
+  font-family: var(--upwr-sans);
+  color: var(--upwr-ink);
+}
+
+/* Shiny wrappers — nie przeszkadzają w full-height */
+#shiny-wrapper, .shiny-html-output, #shiny-app { height: 100%; }
+
+/* === Shell === */
+.lc-shell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* === Górny pasek modułów === */
+.lc-tabs {
+  background: var(--upwr-surface);
+  border-bottom: 1px solid var(--upwr-rule);
+  padding: 0 32px;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  flex-shrink: 0;
+  z-index: 100;
+  min-width: 0;
+}
+
+.lc-tabs-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 24px;
+  border-right: 1px solid var(--upwr-rule-soft);
+  margin-right: 16px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.lc-tabs-strip {
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.lc-tabs-list {
+  display: flex;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex: 1 1 auto;
+  scroll-behavior: smooth;
+}
+
+.lc-tabs-list::-webkit-scrollbar {
+  display: none;
+}
+
+.lc-tabs-logo-mark {
+  width: 30px;
+  height: 30px;
+  background: var(--upwr-accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--upwr-serif);
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.lc-tabs-logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.lc-tabs-logo-title {
+  font-family: var(--upwr-serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--upwr-ink);
+  line-height: 1;
+}
+
+.lc-tabs-logo-sub {
+  font-family: var(--upwr-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--upwr-reference);
+  margin-top: 2px;
+}
+
+.lc-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 14px 16px;
+  font-family: var(--upwr-sans);
+  font-size: 14px;
+  color: var(--upwr-reference);
+  font-weight: 400;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  transition: color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.lc-tab:hover { color: var(--upwr-ink); }
+
+.lc-tab.lc-tab-active {
+  color: var(--upwr-ink);
+  font-weight: 600;
+  border-bottom-color: var(--upwr-accent);
+}
+
+.lc-tab-num {
+  font-family: var(--upwr-serif);
+  font-size: 13px;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--upwr-accent);
+}
+
+.lc-tab:not(.lc-tab-active) .lc-tab-num {
+  color: var(--upwr-ink-subtle);
+}
+
+.lc-tabs-scroll {
+  width: 28px;
+  border: none;
+  border-inline: 1px solid var(--upwr-rule-soft);
+  background: var(--upwr-surface);
+  color: var(--upwr-reference);
+  font-family: var(--upwr-serif);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  flex: 0 0 28px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.lc-tabs-scroll:hover,
+.lc-tabs-scroll:focus {
+  background: var(--upwr-panel);
+  color: var(--upwr-ink);
+  outline: none;
+}
+
+.lc-tabs-scroll:disabled {
+  color: var(--upwr-rule);
+  cursor: default;
+  background: var(--upwr-surface);
+}
+
+.lc-tabs-scroll-prev {
+  margin-left: -1px;
+}
+
+.lc-tab-title-short {
+  display: none;
+}
+
+.lc-tabs-menu {
+  display: none;
+  position: relative;
+  margin-left: auto;
+  align-self: center;
+}
+
+.lc-tabs-menu-summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--upwr-rule);
+  background: var(--upwr-surface);
+  color: var(--upwr-ink);
+  font-family: var(--upwr-sans);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.lc-tabs-menu-summary::-webkit-details-marker {
+  display: none;
+}
+
+.lc-tabs-menu-current {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lc-tabs-menu-caret {
+  color: var(--upwr-reference);
+  margin-left: 2px;
+}
+
+.lc-tabs-menu[open] .lc-tabs-menu-caret {
+  transform: rotate(180deg);
+}
+
+.lc-tabs-menu-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 260px;
+  max-height: min(70vh, 420px);
+  overflow-y: auto;
+  padding: 6px;
+  background: var(--upwr-surface);
+  border: 1px solid var(--upwr-rule);
+  box-shadow: 0 14px 35px rgba(28, 26, 23, 0.16);
+  z-index: 200;
+}
+
+.lc-tabs-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 11px;
+  color: var(--upwr-reference);
+  text-decoration: none;
+  font-family: var(--upwr-sans);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.lc-tabs-menu-item:hover {
+  background: var(--upwr-panel);
+  color: var(--upwr-ink);
+}
+
+.lc-tabs-menu-item-active {
+  background: var(--upwr-panel);
+  color: var(--upwr-ink);
+  font-weight: 600;
+}
+
+.lc-tabs-menu-item-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* === Body (sidebar + main) === */
+.lc-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+/* === Lewy sidebar === */
+.lc-nav {
+  width: var(--upwr-nav-w);
+  flex-shrink: 0;
+  background: var(--upwr-panel);
+  border-right: 1px solid var(--upwr-rule-soft);
+  padding: 24px 18px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.lc-nav-module-label {
+  font-family: var(--upwr-mono);
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--upwr-reference);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.lc-nav-module-title {
+  font-family: var(--upwr-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--upwr-ink);
+  line-height: 1.2;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--upwr-rule-soft);
+}
+
+/* Rozdział w sidebarze */
+.lc-nav-chapter {
+  margin-bottom: 2px;
+}
+
+.lc-nav-chapter-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-left: 3px solid transparent;
+  padding: 9px 10px;
+  cursor: pointer;
+  font-family: var(--upwr-sans);
+  font-size: 14px;
+  color: var(--upwr-ink);
+  transition: background 0.1s;
+}
+
+.lc-nav-chapter-btn:hover {
+  background: var(--upwr-surface-sunken);
+}
+
+.lc-nav-chapter-btn.lc-active {
+  background: var(--upwr-surface);
+  border-color: var(--upwr-rule);
+  border-left-color: var(--upwr-accent);
+}
+
+.lc-nav-chapter-inner {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.lc-nav-chapter-num {
+  font-family: var(--upwr-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--upwr-reference);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+
+.lc-nav-chapter-btn.lc-active .lc-nav-chapter-num {
+  color: var(--upwr-accent);
+}
+
+.lc-nav-chapter-title {
+  font-family: var(--upwr-serif);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--upwr-reference);
+  line-height: 1.25;
+}
+
+.lc-nav-chapter-btn:hover .lc-nav-chapter-title {
+  color: var(--upwr-ink);
+}
+
+.lc-nav-chapter-btn.lc-active .lc-nav-chapter-title {
+  font-weight: 700;
+  color: var(--upwr-ink);
+}
+
+.lc-nav-chapter-dur {
+  font-size: 11px;
+  color: var(--upwr-reference);
+  margin-top: 3px;
+  margin-left: 24px;
+  line-height: 1.3;
+}
+
+/* TOC w sidebarze (sekcje aktywnego rozdziału) */
+.lc-nav-toc {
+  list-style: none;
+  margin: 3px 0 8px 0;
+  padding: 4px 0 4px 14px;
+  border-left: 1px solid var(--upwr-rule-soft);
+  margin-left: 14px;
+  display: none; /* pokazywany przez JS dla aktywnego rozdziału */
+}
+
+.lc-nav-toc.lc-toc-open { display: block; }
+
+.lc-nav-toc a {
+  display: block;
+  padding: 4px 10px 4px 12px;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
+  text-decoration: none;
+  font-family: var(--upwr-sans);
+  font-size: 12px;
+  color: var(--upwr-reference);
+  font-weight: 400;
+  line-height: 1.35;
+  transition: color 0.1s, border-color 0.1s;
+}
+
+.lc-nav-toc a:hover { color: var(--upwr-ink); }
+
+.lc-nav-toc a.lc-active {
+  color: var(--upwr-accent);
+  font-weight: 600;
+  border-left-color: var(--upwr-accent);
+}
+
+.lc-nav-toc-num {
+  font-family: var(--upwr-mono);
+  font-size: 10px;
+  margin-right: 6px;
+  color: var(--upwr-ink-subtle);
+}
+
+.lc-nav-toc a.lc-active .lc-nav-toc-num { color: var(--upwr-accent); }
+
+/* === Główna obszar treści === */
+.lc-main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  background: var(--upwr-bg);
+}
+
+/* === Wrapper treści wewnątrz .lc-main === */
+.lc-content-wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 48px 120px;
+}
+
+/* === Sekcja rozdziału === */
+.lc-chapter {
+  padding-top: 48px;
+  padding-bottom: 20px;
+}
+
+/* Bare p/ul/ol/h4/h5 placed directly in chapter content (without lc-p class) */
+.lc-chapter > p,
+.lc-chapter > ul,
+.lc-chapter > ol,
+.lc-chapter > h4,
+.lc-chapter > h5 {
+  max-width: 680px;
+}
+
+/* === Header rozdziału === */
+.lc-chapter-header {
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--upwr-rule-soft);
+  margin-bottom: 16px;
+}
+
+.lc-chapter-kicker {
+  font-family: var(--upwr-mono);
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--upwr-reference);
+  margin-bottom: 20px;
+}
+
+.lc-chapter-hero {
+  display: flex;
+  align-items: baseline;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.lc-chapter-num {
+  font-family: var(--upwr-serif);
+  font-weight: 700;
+  font-size: 120px;
+  line-height: 0.88;
+  color: var(--upwr-accent);
+  letter-spacing: -4px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.lc-chapter-title {
+  font-family: var(--upwr-serif);
+  font-weight: 700;
+  font-size: 52px;
+  line-height: 0.98;
+  margin: 0;
+  color: var(--upwr-ink);
+  letter-spacing: -1.5px;
+}
+
+.lc-chapter-lead {
+  font-family: var(--upwr-serif);
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--upwr-ink-soft);
+  max-width: 600px;
+  margin: 0;
+}
+
+/* === Siatka treści: tekst (1fr) + margines prawy (240px) === */
+.lc-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  column-gap: 36px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .lc-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lc-margin { display: none; }
+}
+
+/* Elementy domyślnie w kolumnie 1 */
+.lc-grid > * { grid-column: 1; }
+
+/* Full-width (wykresy, ściąga) */
+.lc-full { grid-column: 1 / -1 !important; }
+
+/* Prawy margines */
+.lc-margin {
+  grid-column: 2;
+  align-self: start;
+}
+
+/* === Treść narracyjna (kolumna 1) === */
+.lc-p {
+  font-family: var(--upwr-serif);
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--upwr-ink-soft);
+  margin: 0 0 1.1em;
+  max-width: 680px;
+}
+
+.lc-h2 {
+  font-family: var(--upwr-serif);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--upwr-ink);
+  letter-spacing: -0.5px;
+  margin: 3em 0 0.5em;
+  scroll-margin-top: 80px;
+}
+
+.lc-h2-kicker {
+  display: block;
+  font-family: var(--upwr-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--upwr-accent);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.lc-h3 {
+  font-family: var(--upwr-serif);
+  font-size: 20px;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--upwr-ink);
+  margin: 2em 0 0.4em;
+}
+
+/* Inicjał (drop cap) */
+.lc-drop {
+  font-family: var(--upwr-serif);
+  font-weight: 700;
+  font-size: 60px;
+  float: left;
+  line-height: 0.82;
+  margin-right: 8px;
+  margin-top: 6px;
+  margin-bottom: -4px;
+  color: var(--upwr-accent);
+}
+
+/* === Margin callouts === */
+.lc-margin-callout {
+  border-left: 2px solid var(--upwr-single-alt);
+  padding-left: 12px;
+  margin-bottom: 20px;
+}
+
+.lc-margin-callout-label {
+  font-family: var(--upwr-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--upwr-single-alt);
+  margin-bottom: 6px;
+}
+
+.lc-margin-callout-label::before {
+  content: "※ ";
+}
+
+.lc-margin-callout-body {
+  font-family: var(--upwr-serif);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--upwr-ink-soft);
+  font-style: italic;
+}
+
+/* Wariant: uwaga (burgundy) */
+.lc-margin-callout.lc-callout-uwaga {
+  border-left-color: var(--upwr-accent);
+}
+.lc-margin-callout.lc-callout-uwaga .lc-margin-callout-label {
+  color: var(--upwr-accent);
+}
+
+/* Wariant: wskazówka/kod (gold) — domyślny */
+
+/* Wariant: sukces (sage) */
+.lc-margin-callout.lc-callout-ok {
+  border-left-color: var(--upwr-sage);
+}
+.lc-margin-callout.lc-callout-ok .lc-margin-callout-label {
+  color: var(--upwr-sage);
+}
+
+/* === Inline collapsible callouts === */
+.lc-inline-callout {
+  box-sizing: border-box;
+  display: block;
+  width: fit-content;
+  max-width: 680px;
+  margin: 1.2em 0;
+  border: 1px solid var(--upwr-rule);
+  border-left: 2px solid var(--upwr-single-alt);
+  background: var(--upwr-surface);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.lc-inline-callout[open] {
+  width: 100%;
+}
+
+.lc-inline-callout-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px 12px;
+  font-family: var(--upwr-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--upwr-single-alt);
+  user-select: none;
+}
+
+.lc-inline-callout-label::marker,
+.lc-inline-callout-label::-webkit-details-marker {
+  display: none;
+  content: "";
+}
+
+.lc-inline-callout-label::before {
+  content: "+";
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0;
+  flex: 0 0 auto;
+  transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
+}
+
+.lc-inline-callout[open] .lc-inline-callout-label::before {
+  content: "−";
+  transform: rotate(180deg);
+  background: currentColor;
+  color: var(--upwr-surface);
+}
+
+.lc-inline-callout-body {
+  padding: 0 14px 14px 38px;
+  font-family: var(--upwr-serif);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--upwr-ink-soft);
+  overflow: hidden;
+}
+
+.lc-inline-callout[open] .lc-inline-callout-body {
+  animation: lcInlineCalloutOpen 260ms cubic-bezier(.2, .75, .25, 1) both;
+}
+
+@keyframes lcInlineCalloutOpen {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    max-height: 36rem;
+    transform: translateY(0);
+  }
+}
+
+.lc-inline-callout-body p {
+  margin: 0 0 0.55em;
+}
+
+.lc-inline-callout-body p:last-child,
+.lc-inline-callout-body ul:last-child,
+.lc-inline-callout-body ol:last-child {
+  margin-bottom: 0;
+}
+
+.lc-inline-callout.lc-callout-uwaga {
+  border-left-color: var(--upwr-accent);
+}
+.lc-inline-callout.lc-callout-uwaga .lc-inline-callout-label {
+  color: var(--upwr-accent);
+}
+
+.lc-inline-callout.lc-callout-ok {
+  border-left-color: var(--upwr-sage);
+}
+.lc-inline-callout.lc-callout-ok .lc-inline-callout-label {
+  color: var(--upwr-sage);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-inline-callout-label::before,
+  .lc-inline-callout[open] .lc-inline-callout-body {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* === Figure panel (ramka z plakietką) === */
+.lc-figure-panel {
+  position: relative;
+  box-sizing: border-box;
+  background: var(--upwr-surface);
+  border: 1px solid var(--upwr-rule);
+  padding: 28px 28px 24px;
+  margin: 2em 0;
+  max-width: 680px;  /* zgodność z .lc-p — domyślnie w kolumnie tekstu */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+/* Pełna szerokość — opt-in przez full_width = TRUE */
+.lc-figure-panel.lc-full { max-width: none; }
+
+.lc-figure-panel-badge {
+  position: absolute;
+  top: -9px;
+  left: 20px;
+  background: var(--upwr-accent);
+  color: #fff;
+  font-family: var(--upwr-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 10px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.lc-figure-panel-title {
+  font-family: var(--upwr-serif);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--upwr-ink);
+  margin-bottom: 16px;
+  padding-top: 4px;
+}
+
+@media (min-width: 1320px) {
+  .lc-chapter > .lc-margin {
+    float: right;
+    clear: right;
+    width: 224px;
+    margin: 6px 0 18px 28px;
+  }
+
+  .lc-chapter > .lc-chapter-header,
+  .lc-chapter > .lc-figure-panel.lc-full,
+  .lc-chapter > hr {
+    clear: both;
+  }
+
+  /* Opt-in: pełna szerokość (wykresy gridowe, szerokie tabele itp.) */
+  .lc-chapter > .lc-wide {
+    clear: both;
+    width: 100%;
+  }
+
+  /* Clearfix na końcu sekcji */
+  .lc-chapter::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+/* === Progress bar w sidebarze (X / N) === */
+.lc-nav-progress {
+  margin: 20px 12px 8px;
+  padding-top: 18px;
+  border-top: 1px solid var(--upwr-rule-soft);
+}
+
+.lc-nav-progress-bar {
+  height: 2px;
+  background: var(--upwr-rule-soft);
+  margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.lc-nav-progress-fill {
+  height: 100%;
+  background: var(--upwr-accent);
+  transition: width 0.3s ease;
+}
+
+.lc-nav-progress-text {
+  font-family: var(--upwr-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--upwr-reference);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+  text-align: right;
+}
+
+#lc-nav-progress-current { color: var(--upwr-accent); }
+
+/* === Per-typ ikony w margin-callout (override domyślnego ※) === */
+.lc-margin-callout-label::before { content: none; }
+
+.lc-margin-callout .lc-margin-callout-label::before { content: "ℓ  "; }
+.lc-margin-callout.lc-callout-uwaga .lc-margin-callout-label::before { content: "※  "; }
+.lc-margin-callout.lc-callout-ok    .lc-margin-callout-label::before { content: "✓  "; }
+.lc-margin-callout.lc-callout-kod   .lc-margin-callout-label::before { content: "⌘  "; }
+.lc-margin-callout.lc-callout-next  .lc-margin-callout-label::before { content: "→  "; }
+
+/* === Margin callout: wariant "W kodzie" (gold, blok monospace) === */
+.lc-margin-callout.lc-callout-kod {
+  border-left-color: var(--upwr-single-alt);
+}
+.lc-margin-callout.lc-callout-kod .lc-margin-callout-label {
+  color: var(--upwr-single-alt);
+}
+
+.lc-margin-code {
+  background: var(--upwr-surface-sunken);
+  font-family: var(--upwr-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 6px 8px;
+  margin: 4px 0 6px;
+  border-radius: 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--upwr-ink);
+}
+
+.lc-margin-code-desc {
+  font-family: var(--upwr-serif);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--upwr-ink-soft);
+  font-style: italic;
+}
+
+/* === Margin callout: wariant "Dalej" (navigational link do następnego rozdziału) === */
+.lc-margin-callout.lc-callout-next {
+  display: block;
+  text-decoration: none;
+  border-left-color: var(--upwr-reference);
+  transition: border-color 0.15s, background 0.15s;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-right: 6px;
+}
+.lc-margin-callout.lc-callout-next:hover {
+  border-left-color: var(--upwr-accent);
+  background: var(--upwr-rule-soft);
+}
+.lc-margin-callout.lc-callout-next .lc-margin-callout-label {
+  color: var(--upwr-reference);
+}
+.lc-margin-callout.lc-callout-next:hover .lc-margin-callout-label {
+  color: var(--upwr-accent);
+}
+
+.lc-chapter-next-title {
+  font-family: var(--upwr-serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--upwr-ink);
+  line-height: 1.25;
+  font-style: normal;
+}
+
+.lc-chapter-next-num {
+  font-family: var(--upwr-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--upwr-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.lc-chapter-next-lead {
+  font-family: var(--upwr-serif);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--upwr-reference);
+  font-style: italic;
+  margin-top: 3px;
+}
+
+/* === Tabular numerals dla cyfr w nagłówkach/tabach === */
+.lc-tab-num,
+.lc-nav-toc-num,
+.lc-chapter-num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* === Drzewo decyzyjne: fullscreen toggle (ch_drzewo visNetwork) === */
+.drzewo-wrap {
+  position: relative;
+  background: var(--upwr-surface);
+}
+.drzewo-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+/* W trybie pełnoekranowym: wrapper zajmuje całe okno, widget dostosowuje się */
+.drzewo-wrap:fullscreen,
+.drzewo-wrap:-webkit-full-screen {
+  padding: 16px 24px;
+  background: var(--upwr-surface);
+  overflow: auto;
+}
+.drzewo-wrap:fullscreen .visNetwork,
+.drzewo-wrap:fullscreen > div[id$="_visnet"],
+.drzewo-wrap:-webkit-full-screen .visNetwork,
+.drzewo-wrap:-webkit-full-screen > div[id$="_visnet"] {
+  height: calc(100vh - 60px) !important;
+}
+
+/* Tabele wbudowane w narrację — rozciągamy na pełną szerokość kolumny tekstu.
+   Bez tego domyślny styl tabeli kurczy ją do zawartości komórek. */
+.lc-chapter table.lc-table {
+  width: 100%;
+  max-width: 680px;
+  margin: 14px 0;
+  border-collapse: collapse;
+  color: var(--upwr-ink);
+}
+
+/* Opt-in: tabela na pełną szerokość kontentu (poza kolumną tekstu) */
+.lc-chapter table.lc-table.lc-wide {
+  max-width: none;
+}
+
+.lc-table th,
+.lc-table td {
+  padding: 8px 10px;
+  vertical-align: top;
+}
+
+.lc-table-bordered th,
+.lc-table-bordered td {
+  border: 1px solid var(--upwr-rule);
+}
+
+.lc-table-striped tbody tr:nth-child(odd) {
+  background: var(--upwr-surface-sunken);
+}
+
+.lc-table-sm th,
+.lc-table-sm td {
+  padding: 4px 8px;
+}
+
+/* === Utility layoutu treści === */
+.lc-stack {
+  display: flex;
+  flex-direction: column;
+}
+.lc-stack-sm { gap: 6px; }
+.lc-stack-md { gap: 8px; }
+
+.lc-inline-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.lc-inline-row-sm { gap: 6px; }
+.lc-inline-row-md { gap: 8px; }
+.lc-align-start { align-items: flex-start; }
+.lc-align-center { align-items: center; }
+
+.lc-center {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.lc-spacer { flex: 0 0 auto; }
+.lc-spacer-md { height: 40px; }
+.lc-spacer-lg { height: 60px; }
+
+.lc-mt-xs { margin-top: 4px; }
+.lc-mt-sm { margin-top: 8px; }
+.lc-mt-md { margin-top: 10px; }
+
+/* === Kod === */
+code, pre, .verbatim {
+  font-family: var(--upwr-mono);
+  font-size: 0.88em;
+  background: var(--upwr-surface-sunken);
+  border-radius: 2px;
+  padding: 1px 5px;
+}
+
+pre { padding: 12px 16px; }
+
+.lc-code-block {
+  background: var(--upwr-surface-sunken);
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* === Przyciski — nowy styl === */
+/* === sliderInput (IonRangeSlider) — przemalowanie na paletę UPWr === */
+/* Shiny slider używa klas .irs-* z pakietu ionRangeSlider (domyślnie niebieski). */
+
+/* Wypełnienie zakresu (wybrany zakres) */
+.irs--shiny .irs-bar,
+.irs--shiny .irs-from,
+.irs--shiny .irs-to,
+.irs--shiny .irs-single {
+  background: var(--upwr-accent) !important;
+}
+
+/* Trójkątny „dziób" nad etykietą with value */
+.irs--shiny .irs-from::before,
+.irs--shiny .irs-to::before,
+.irs--shiny .irs-single::before {
+  border-top-color: var(--upwr-accent) !important;
+}
+
+/* Uchwyt (handle) — kółko przesuwania */
+.irs--shiny .irs-handle {
+  border-color: var(--upwr-accent) !important;
+}
+.irs--shiny .irs-handle > i:nth-child(1) {
+  background-color: var(--upwr-accent) !important;
+}
+
+/* Tło szyny (nieaktywny zakres) */
+.irs--shiny .irs-line {
+  background: var(--upwr-rule) !important;
+  border-color: var(--upwr-rule) !important;
+}
+
+/* Liczby min/max po bokach i pod szyną */
+.irs--shiny .irs-min,
+.irs--shiny .irs-max,
+.irs--shiny .irs-grid-text {
+  color: var(--upwr-reference) !important;
+  background: transparent !important;
+}
+
+/* === checkboxy, radio buttons, inputy — kolor akcentu === */
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"] {
+  accent-color: var(--upwr-accent);
+}
+
+/* Focus ring formularzy i przycisków zgodny z paletą UPWr */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--upwr-accent) !important;
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--upwr-accent) 25%, transparent) !important;
+}
+
+.lc-btn:focus,
+[class*="lc-btn-"]:focus {
+  border-color: var(--upwr-accent) !important;
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--upwr-accent) 25%, transparent) !important;
+}
+
+/* === Przyciski lecture components ===
+   Mapowanie ról semantycznych na kolory UPWr:
+   - primary   → upwr-accent (burgund) — główna akcja
+   - ok        → upwr-sage   (zielony) — potwierdzenie, "pokaż odpowiedź"
+   - danger    → upwr-accent (burgund) — akcja destrukcyjna/ostrzegawcza
+   - warning   → upwr-single-alt (złoto) — zwróć uwagę
+   - info      → upwr-cat-niebo (niebieski) — informacja neutralna
+   - secondary → szary z palety — akcja wtórna */
+
+.lc-btn,
+[class*="lc-btn-"] {
+  font-family: var(--upwr-sans) !important;
+  border-radius: 4px !important;
+  font-weight: 700 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  line-height: 1.2 !important;
+}
+
+.lc-btn-sm {
+  font-size: 12px !important;
+  padding: 4px 9px !important;
+}
+
+.lc-btn-lg {
+  font-size: 16px !important;
+  padding: 10px 16px !important;
+}
+
+.lc-btn-primary {
+  background: var(--upwr-accent) !important;
+  border-color: var(--upwr-accent) !important;
+  color: #fff !important;
+}
+.lc-btn-primary:hover,
+.lc-btn-primary:focus,
+.lc-btn-primary:active {
+  background: var(--upwr-accent-hover) !important;
+  border-color: var(--upwr-accent-hover) !important;
+  color: #fff !important;
+}
+.lc-btn-outline {
+  color: var(--upwr-accent) !important;
+  border-color: var(--upwr-accent) !important;
+  background: transparent !important;
+}
+.lc-btn-outline:hover,
+.lc-btn-outline:focus,
+.lc-btn-outline:active {
+  background: var(--upwr-accent) !important;
+  color: #fff !important;
+}
+
+.lc-btn-ok {
+  background: var(--upwr-sage) !important;
+  border-color: var(--upwr-sage) !important;
+  color: #fff !important;
+}
+.lc-btn-ok:hover,
+.lc-btn-ok:focus,
+.lc-btn-ok:active {
+  background: var(--upwr-cat-szalwia) !important;
+  border-color: var(--upwr-cat-szalwia) !important;
+  filter: brightness(0.9);
+  color: #fff !important;
+}
+.lc-btn-ok-outline {
+  color: var(--upwr-sage) !important;
+  border-color: var(--upwr-sage) !important;
+  background: transparent !important;
+}
+.lc-btn-ok-outline:hover {
+  background: var(--upwr-sage) !important;
+  color: #fff !important;
+}
+
+.lc-btn-danger {
+  background: var(--upwr-accent) !important;
+  border-color: var(--upwr-accent) !important;
+  color: #fff !important;
+}
+.lc-btn-danger:hover,
+.lc-btn-danger:focus,
+.lc-btn-danger:active {
+  background: var(--upwr-accent-hover) !important;
+  border-color: var(--upwr-accent-hover) !important;
+  color: #fff !important;
+}
+.lc-btn-danger-outline {
+  color: var(--upwr-accent) !important;
+  border-color: var(--upwr-accent) !important;
+  background: transparent !important;
+}
+.lc-btn-danger-outline:hover {
+  background: var(--upwr-accent) !important;
+  color: #fff !important;
+}
+
+.lc-btn-warning {
+  background: var(--upwr-single-alt) !important;
+  border-color: var(--upwr-single-alt) !important;
+  color: #fff !important;
+}
+.lc-btn-warning:hover,
+.lc-btn-warning:focus,
+.lc-btn-warning:active {
+  background: var(--upwr-single-alt) !important;
+  border-color: var(--upwr-single-alt) !important;
+  filter: brightness(0.9);
+  color: #fff !important;
+}
+.lc-btn-warning-outline {
+  color: var(--upwr-single-alt) !important;
+  border-color: var(--upwr-single-alt) !important;
+  background: transparent !important;
+}
+.lc-btn-warning-outline:hover {
+  background: var(--upwr-single-alt) !important;
+  color: #fff !important;
+}
+
+.lc-btn-info {
+  background: var(--upwr-cat-niebo) !important;
+  border-color: var(--upwr-cat-niebo) !important;
+  color: #fff !important;
+}
+.lc-btn-info:hover,
+.lc-btn-info:focus,
+.lc-btn-info:active {
+  background: var(--upwr-cat-indygo) !important;
+  border-color: var(--upwr-cat-indygo) !important;
+  color: #fff !important;
+}
+.lc-btn-info-outline {
+  color: var(--upwr-cat-niebo) !important;
+  border-color: var(--upwr-cat-niebo) !important;
+  background: transparent !important;
+}
+.lc-btn-info-outline:hover {
+  background: var(--upwr-cat-niebo) !important;
+  color: #fff !important;
+}
+
+.lc-btn-secondary {
+  background: var(--upwr-reference) !important;
+  border-color: var(--upwr-reference) !important;
+  color: #fff !important;
+}
+.lc-btn-secondary:hover,
+.lc-btn-secondary:focus,
+.lc-btn-secondary:active {
+  background: var(--upwr-ink-soft) !important;
+  border-color: var(--upwr-ink-soft) !important;
+  color: #fff !important;
+}
+.lc-btn-secondary-outline {
+  color: var(--upwr-ink-soft) !important;
+  border-color: var(--upwr-rule) !important;
+  background: transparent !important;
+}
+.lc-btn-secondary-outline:hover {
+  background: var(--upwr-rule) !important;
+  color: var(--upwr-ink) !important;
+}
+
+/* === Pasek kroków === */
+.step-buttons { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.step-buttons .lc-btn,
+.step-buttons [class*="lc-btn-"] { flex: 1; min-width: 110px; }
+
+/* === Quiz tiles — nowy wygląd === */
+.quiz-tiles { display: grid; gap: 10px; margin: 14px 0; }
+/* minmax(0, 1fr) zamiast 1fr — wymusza, by komórki nie rozszerzały siatki
+   poza szerokość rodzica nawet gdy zawartość (długi tekst) by tego chciała */
+.quiz-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.quiz-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.quiz-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.quiz-tiles .quiz-tile {
+  background: var(--upwr-surface);
+  border: 1px solid var(--upwr-rule);
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: block;
+  width: 100%;
+  min-width: 0;              /* pozwala zwężać się wewnątrz grid-minmax(0,1fr) */
+  white-space: normal;       /* wymuszamy łamanie dłuższego tekstu odpowiedzi */
+  overflow-wrap: break-word;
+  font-family: var(--upwr-sans);
+  color: var(--upwr-ink);
+}
+
+.quiz-tiles .quiz-tile:hover {
+  border-color: var(--upwr-accent);
+  background: var(--upwr-accent-tint);
+}
+
+.quiz-tiles .quiz-tile .tile-letter {
+  display: inline-block;
+  width: 32px; height: 32px; line-height: 32px;
+  background: var(--upwr-accent);
+  color: #fff;
+  font-family: var(--upwr-mono);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.quiz-tiles .quiz-tile .tile-text {
+  font-size: 13px;
+  color: var(--upwr-ink-soft);
+}
+
+.quiz-tile.correct { border-color: var(--upwr-sage) !important; background: var(--upwr-sage-tint) !important; }
+.quiz-tile.wrong   { border-color: var(--upwr-accent) !important; background: var(--upwr-accent-tint) !important; }
+.quiz-tile.disabled { pointer-events: none; opacity: 0.65; }
+
+/* === Formulas === */
+.lc-formula-box {
+  background: var(--upwr-single-alt-tint);
+  border: 1px solid #e8d5a8;
+  padding: 12px 16px;
+  margin: 10px 0;
+  max-width: 680px;  /* zgodność z .lc-p — nie wychodzi poza kolumnę tekstu */
+  font-family: var(--upwr-mono);
+  font-size: 14px;
+}
+
+.lc-feedback {
+  max-width: 680px;
+  padding: 10px 14px;
+  margin: 14px 0;
+  font-family: var(--upwr-serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--upwr-ink-soft);
+  background: var(--upwr-surface);
+  border: 1px solid var(--upwr-rule);
+  border-left: 4px solid var(--upwr-reference);
+  border-radius: 2px;
+}
+
+.lc-feedback-info {
+  background: var(--upwr-single-alt-tint);
+  border-left-color: var(--upwr-single-alt);
+}
+
+.lc-feedback-ok {
+  background: var(--upwr-sage-tint);
+  border-left-color: var(--upwr-sage);
+}
+
+.lc-feedback-warning,
+.lc-feedback-danger {
+  background: var(--upwr-accent-tint);
+  border-left-color: var(--upwr-accent);
+}
+
+/* === Widget „Sformułuj hipotezy” (helpers.R::hypothesis_practice) === */
+.hypothesis-practice {
+  max-width: 680px;
+  margin: 14px 0;
+}
+.hypothesis-practice .hp-item {
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  background: var(--upwr-surface);
+  border: 1px solid var(--upwr-rule);
+  border-left: 4px solid var(--upwr-accent);
+  border-radius: 2px;
+}
+.hypothesis-practice .hp-question {
+  font-family: var(--upwr-serif);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--upwr-ink);
+  margin-bottom: 10px;
+}
+.hypothesis-practice .hp-num {
+  display: inline-block;
+  margin-right: 6px;
+  font-family: var(--upwr-mono);
+  font-weight: 700;
+  color: var(--upwr-accent);
+}
+.hypothesis-practice .hp-controls {
+  margin-bottom: 8px;
+}
+.hypothesis-practice .hp-answer {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: var(--upwr-single-alt-tint);
+  border-left: 3px solid var(--upwr-single-alt);
+  border-radius: 2px;
+}
+.hypothesis-practice .hp-hypotheses > div {
+  font-family: var(--upwr-serif);
+  font-size: 15px;
+  margin: 2px 0;
+}
+.hypothesis-practice .hp-note {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--upwr-ink-soft);
+}
+
+/* === MathJax override === */
+mjx-container mjx-mtext,
+mjx-container mjx-text {
+  font-family: var(--upwr-sans) !important;
+}
+
+/* === Stat boxes === */
+.lc-stat-grid {
+  --lc-stat-cols: 3;
+  display: grid;
+  grid-template-columns: repeat(var(--lc-stat-cols), minmax(0, 1fr));
+  gap: 8px;
+  max-width: 680px;
+  margin: 12px 0;
+}
+
+.lc-stat-box {
+  --lc-stat-color: var(--upwr-accent);
+  font-family: var(--upwr-serif);
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 10px 12px;
+  background: var(--upwr-surface);
+  color: var(--upwr-ink);
+  border: 1px solid var(--upwr-rule);
+  border-left-color: var(--lc-stat-color);
+  border-left-width: 4px;
+  border-radius: 2px;
+  min-width: 0;
+}
+
+.lc-stat-box > :first-child { margin-top: 0; }
+.lc-stat-box > :last-child { margin-bottom: 0; }
+
+.lc-stat-box > h3,
+.lc-stat-box > h4 {
+  font-family: var(--upwr-sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--upwr-ink);
+  margin: 0 0 4px;
+}
+
+.lc-stat-box > p {
+  margin: 4px 0;
+  color: var(--upwr-ink-soft);
+}
+
+.lc-stat-label {
+  font-family: var(--upwr-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lc-stat-color);
+  overflow-wrap: break-word;
+}
+
+.lc-stat-value {
+  font-family: var(--upwr-sans);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--upwr-ink);
+  margin-top: 3px;
+  overflow-wrap: break-word;
+}
+
+.lc-stat-caption {
+  font-family: var(--upwr-serif);
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--upwr-reference);
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .lc-stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === Responsywność === */
+@media (max-width: 1280px) {
+  .lc-tabs {
+    padding: 0 24px;
+  }
+
+  .lc-tabs-logo {
+    padding-right: 18px;
+    margin-right: 10px;
+  }
+
+  .lc-tab {
+    padding-inline: 12px;
+  }
+
+  .lc-tab-title-full {
+    display: none;
+  }
+
+  .lc-tab-title-short {
+    display: inline;
+  }
+}
+
+@media (max-width: 900px) {
+  .lc-tabs {
+    padding: 0 16px;
+    min-height: 58px;
+    justify-content: space-between;
+  }
+
+  .lc-tabs-list {
+    display: none;
+  }
+
+  .lc-tabs-strip {
+    display: none;
+  }
+
+  .lc-tabs-menu {
+    display: block;
+    max-width: min(56vw, 360px);
+  }
+
+  .lc-tabs-menu-summary {
+    max-width: min(56vw, 360px);
+  }
+
+  .lc-tabs-logo {
+    border-right: none;
+    margin-right: 12px;
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .lc-nav { display: none; }
+  .lc-content-wrap { padding: 0 20px 80px; }
+  .lc-chapter-num { font-size: 72px; }
+  .lc-chapter-title { font-size: 34px; }
+  .lc-tabs-logo-sub { display: none; }
+  .lc-tabs-logo-title { font-size: 15px; }
+  .lc-tabs-menu {
+    max-width: min(58vw, 300px);
+  }
+  .lc-tabs-menu-summary {
+    max-width: min(58vw, 300px);
+  }
+}
+
+@media (max-width: 520px) {
+  .lc-tabs-logo-text {
+    display: none;
+  }
+
+  .lc-tabs-menu {
+    max-width: calc(100vw - 92px);
+  }
+
+  .lc-tabs-menu-summary {
+    max-width: calc(100vw - 92px);
+  }
+}
+
+/* ============================================================================
+   Image zoom — kliknięcie w obrazek wewnątrz figure_panel powiększa go
+   na overlayu. Targetuje TYLKO bezpośrednie statyczne <img>, nie obrazki
+   wewnątrz plotOutput (te są zarządzane przez Shiny i często mają click=).
+   Opcjonalny opt-in: opakuj zagnieżdżony obrazek w div.lc-zoomable.
+   JS w shared_toc.js (sekcja "Image zoom").
+   ============================================================================ */
+
+.lc-figure-panel > img,
+.lc-figure-panel .lc-zoomable img {
+  cursor: zoom-in;
+}
+
+.lc-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 18, 16, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.18s ease-out, visibility 0.18s ease-out;
+  cursor: zoom-out;
+  padding: 24px;
+}
+
+.lc-zoom-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lc-zoom-overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+  cursor: default;
+  transform: scale(0.96);
+  transition: transform 0.18s ease-out;
+}
+
+.lc-zoom-overlay.is-open img {
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-zoom-overlay,
+  .lc-zoom-overlay img {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   Glossary terms — klikalne hasła słownikowe
+   Funkcja R: gloss("termin") w R/glossary.R
+   ============================================================================ */
+
+.lc-gloss {
+  cursor: pointer;
+  border-bottom: 1.5px dashed var(--upwr-accent);
+  color: inherit;
+  white-space: nowrap;
+}
+
+.lc-gloss:hover {
+  border-bottom-style: solid;
+}
+
+.lc-gloss-popup {
+  position: fixed;
+  z-index: 10000;
+  max-width: 280px;
+  padding: .55rem .8rem .6rem;
+  background: var(--upwr-bg, #fff);
+  border: 1.5px solid var(--upwr-accent);
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .13);
+  font-family: var(--upwr-sans);
+  font-size: .875rem;
+  line-height: 1.5;
+  color: var(--upwr-text, #222);
+  display: none;
+  pointer-events: none;
+}
+
+.lc-gloss-popup.is-visible {
+  display: block;
+}
+
+.lc-gloss-popup .lc-gloss-term {
+  font-weight: 600;
+  margin-bottom: .2rem;
+  color: var(--upwr-accent);
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}

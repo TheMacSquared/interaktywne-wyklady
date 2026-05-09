@@ -1,6 +1,6 @@
 # Interaktywne wykłady
 
-Repozytorium na równoległe zestawy interaktywnych wykładów R Shiny.
+Repozytorium na rownolegle zestawy interaktywnych wykladow R Shiny. Numerowany katalog wykladu jest osobna aplikacja/chapterem, uruchamiana lokalnie niezaleznie od pozostalych.
 
 ## Struktura
 
@@ -15,7 +15,7 @@ interaktywne-wyklady/
 | Folder | Status | Dokumentacja |
 |--------|--------|--------------|
 | `statystyka/` | gotowy zestaw aplikacji statystycznych | [statystyka/README.md](statystyka/README.md) |
-| `ekonometria/` | nowy projekt, jeszcze bez aplikacji | [ekonometria/README.md](ekonometria/README.md) |
+| `ekonometria/` | startowy zestaw wykładów z ekonometrii | [ekonometria/README.md](ekonometria/README.md) |
 
 ## Uruchamianie z katalogu głównego
 
@@ -30,6 +30,14 @@ shiny::runApp("statystyka/06-symulacje-statystyczne")
 shiny::runApp("statystyka/07-metody-bayesowskie")
 shiny::runApp("statystyka/08-dobre-dane")
 shiny::runApp("statystyka/09-case-studies")
+
+shiny::runApp("ekonometria/01-model-ekonometryczny")
+shiny::runApp("ekonometria/02-regresja-liniowa-kmnk")
+shiny::runApp("ekonometria/03-estymatory-bledy-standardowe")
+shiny::runApp("ekonometria/04-weryfikacja-modelu")
+shiny::runApp("ekonometria/05-szeregi-prognozowanie")
+shiny::runApp("ekonometria/06-optymalizacja-liniowa")
+shiny::runApp("ekonometria/07-simpleks-dualizm")
 ```
 
 Szczegółowe wymagania pakietów i opis aplikacji są w dokumentacji konkretnego zestawu.
