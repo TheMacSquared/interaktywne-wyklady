@@ -44,10 +44,64 @@ ch1_ui <- lecture_chapter(
     ),
     lc_p("Dwie liczby — i już można rozmawiać o decyzji marketingowej. Jeśli wzrost wydatków o 1 tys. zł daje średnio 1,4 tys. zł sprzedaży, to ekonomicznie się to opłaca, póki marża pokrywa różnicę. Bez modelu mielibyśmy tylko poczucie, że „chyba reklama działa”."),
 
+    # ------------------------------------------------------------------------
+    # Widget 1 — „Co znaczy β₁?” Manipulacja parametrami bez danych.
+    # ------------------------------------------------------------------------
+    lc_h2("ch1-widget-bety", "Pobaw się parametrami: jak wygląda prosta?"),
+    lc_p("Zanim wejdziemy w realne dane, popatrzmy na samo równanie. Suwaki niżej zmieniają β₀ (wyraz wolny) i β₁ (nachylenie). Wykres pokazuje samą prostą — bez chmury punktów, bez szumu — w realistycznych jednostkach lodziarni: X to temperatura (°C), Y to sprzedaż (tys. zł)."),
+    figure_panel(
+      label = "Ryc. 1.1",
+      title = "Prosta regresji jako funkcja β₀ i β₁",
+      full_width = TRUE,
+      fluidRow(
+        column(
+          4,
+          sliderInput("ch1_beta0", "Wyraz wolny β₀", min = -5, max = 15, value = 2, step = 0.5),
+          sliderInput("ch1_beta1", "Nachylenie β₁",  min = -1, max = 3,  value = 0.4, step = 0.1)
+        ),
+        column(
+          8,
+          plotOutput("ch1_line_plot", height = "320px"),
+          uiOutput("ch1_line_verdict")
+        )
+      )
+    ),
     inline_callout(
       label = "Wskazówka",
       color = "ok",
-      "Słowo ‚średnio‘ jest tu kluczowe. β₁ = 1,4 nie znaczy, że każdy konkretny tysiąc reklamy doda dokładnie 1,4 tys. zł sprzedaży. Znaczy, że ", strong("przeciętnie"), " — w długim okresie, dla wielu miesięcy — taki będzie efekt. Pojedyncze obserwacje będą się odchylać przez ε, czyli przez wszystko, czego model nie kontroluje."
+      "Zauważ, że β₀ przesuwa linię w górę i w dół (przecięcie z osią Y), a β₁ obraca ją wokół tego punktu. To są dwa niezależne parametry — każdy odpowiada za inną cechę prostej."
+    ),
+
+    # ------------------------------------------------------------------------
+    # Widget 2 — „Po co składnik losowy?” Przyciski +szum.
+    # ------------------------------------------------------------------------
+    lc_h2("ch1-widget-szum", "Po co potrzebujemy ε? Dodaj szum krok po kroku."),
+    lc_p("Idealna prosta jest dobra w podręczniku. W realnych danych obserwacje nie leżą dokładnie na linii — są chmurą wokół niej. To nie jest błąd, tylko skutek tego, że na sprzedaż wpływa wiele innych czynników (pogoda, promocje konkurencji, dzień tygodnia). Wszystko, co nie jest β₀+β₁X, ląduje w ε."),
+    lc_p("Kliknij przycisk niżej kilka razy. Każde kliknięcie zwiększa wariancję składnika losowego — zacznij od idealnych danych i zobacz, jak rosnący szum stopniowo „rozmywa” prostą."),
+    figure_panel(
+      label = "Ryc. 1.2",
+      title = "Mechanizm β₀+β₁X jest stały — tylko ε rośnie",
+      full_width = TRUE,
+      fluidRow(
+        column(
+          4,
+          actionButton("ch1_szum_plus", "Zwiększ szum (+1)", class = "btn-primary", width = "100%"),
+          tags$br(), tags$br(),
+          actionButton("ch1_szum_reset", "Wyzeruj szum", class = "btn-outline-secondary", width = "100%"),
+          tags$br(), tags$br(),
+          uiOutput("ch1_szum_status")
+        ),
+        column(
+          8,
+          plotOutput("ch1_szum_plot", height = "340px"),
+          uiOutput("ch1_szum_verdict")
+        )
+      )
+    ),
+    inline_callout(
+      label = "Zapamiętaj",
+      color = "wskazowka",
+      "Mechanizm generujący dane (prawdziwa prosta β₀+β₁X) cały czas jest ten sam. Zmienia się tylko, jak bardzo poszczególne obserwacje od niego odbiegają. Zadaniem KMNK będzie odzyskać tę prawdziwą prostą z zaszumionych danych — i to jest dokładnie temat następnego rozdziału."
     ),
 
     inline_callout(
@@ -65,4 +119,136 @@ ch1_ui <- lecture_chapter(
   )
 )
 
-ch1_server <- function(input, output, session) {}
+ch1_server <- function(input, output, session) {
+
+  # --- Widget 1: prosta jako funkcja β₀, β₁ -------------------------------
+
+  output$ch1_line_plot <- renderPlot({
+    x <- seq(0, 35, length.out = 100)
+    y <- input$ch1_beta0 + input$ch1_beta1 * x
+    df <- data.frame(x = x, y = y)
+
+    ggplot(df, aes(x, y)) +
+      geom_hline(yintercept = 0, color = "gray70", linewidth = 0.3) +
+      geom_vline(xintercept = 0, color = "gray70", linewidth = 0.3) +
+      geom_line(color = upwr_accent, linewidth = 1.4) +
+      geom_point(data = data.frame(x = 0, y = input$ch1_beta0),
+                 aes(x, y), size = 4, color = upwr_secondary) +
+      annotate("label", x = 0, y = input$ch1_beta0, label = "β₀", hjust = -0.4,
+               fill = "white", color = upwr_secondary, size = 5) +
+      coord_cartesian(xlim = c(-2, 35), ylim = c(-15, 35)) +
+      labs(x = "X — temperatura (°C)", y = "Y — sprzedaż (tys. zł)") +
+      theme_upwr()
+  })
+
+  output$ch1_line_verdict <- renderUI({
+    b0 <- input$ch1_beta0
+    b1 <- input$ch1_beta1
+    znak_b1 <- if (b1 > 0) "rośnie" else if (b1 < 0) "maleje" else "się nie zmienia"
+
+    przy_25 <- b0 + b1 * 25
+    przy_30 <- b0 + b1 * 30
+    diff5 <- przy_30 - przy_25
+
+    lc_feedback(
+      type = "info",
+      tags$p(
+        strong("Przy aktualnych parametrach: "),
+        "Y = ", eco_fmt(b0, 2), " + ", eco_fmt(b1, 2), " · X."
+      ),
+      tags$p(
+        "Przy 0°C przewidujemy ", strong(eco_fmt(b0, 2), " tys. zł"),
+        " sprzedaży (czyli β₀). Każdy dodatkowy stopień Celsjusza sprawia, że sprzedaż ",
+        znak_b1, " średnio o ", strong(eco_fmt(abs(b1), 2), " tys. zł"),
+        " (czyli β₁ = ", eco_fmt(b1, 2), ")."
+      ),
+      tags$p(
+        "Konkretnie: w dzień 25°C model przewiduje ",
+        strong(eco_fmt(przy_25, 2), " tys. zł"),
+        ", a w dzień 30°C — ", strong(eco_fmt(przy_30, 2), " tys. zł"),
+        ". Różnica 5 stopni daje różnicę ", strong(eco_fmt(diff5, 2), " tys. zł"), "."
+      )
+    )
+  })
+
+  # --- Widget 2: szum krok po kroku ---------------------------------------
+
+  ch1_szum_level <- reactiveVal(0)
+
+  observeEvent(input$ch1_szum_plus, {
+    ch1_szum_level(min(ch1_szum_level() + 1, 6))
+  })
+  observeEvent(input$ch1_szum_reset, {
+    ch1_szum_level(0)
+  })
+
+  ch1_szum_data <- reactive({
+    set.seed(2024)
+    n <- 30
+    x <- seq(15, 30, length.out = n)
+    sigma <- ch1_szum_level() * 1.2
+    eps <- if (sigma > 0) rnorm(n, 0, sigma) else rep(0, n)
+    y <- 2 + 0.4 * x + eps
+    data.frame(x = x, y = y, fit = 2 + 0.4 * x)
+  })
+
+  output$ch1_szum_status <- renderUI({
+    lvl <- ch1_szum_level()
+    sigma <- lvl * 1.2
+    label <- if (lvl == 0) "idealne dane" else
+             if (lvl <= 2) "lekki szum"   else
+             if (lvl <= 4) "umiarkowany szum" else "duży szum"
+    lc_stat_grid(
+      lc_stat_box(
+        label = paste0("Poziom szumu: ", lvl, "/6"),
+        caption = paste0("σ ≈ ", eco_fmt(sigma, 1), "  ·  ", label),
+        color = upwr_accent
+      ),
+      columns = 1
+    )
+  })
+
+  output$ch1_szum_plot <- renderPlot({
+    df <- ch1_szum_data()
+    ggplot(df, aes(x, y)) +
+      geom_line(aes(y = fit), color = unname(upwr_cat["niebo"]),
+                linewidth = 1.2, linetype = "dashed") +
+      geom_point(color = unname(upwr_cat["grafit"]), alpha = 0.8, size = 2.6) +
+      coord_cartesian(xlim = c(14, 31), ylim = c(0, 25)) +
+      labs(
+        x = "X — temperatura (°C)",
+        y = "Y — sprzedaż (tys. zł)",
+        caption = "Niebieska przerywana: prawdziwa prosta β₀+β₁X. Punkty: realizacje z szumem ε."
+      ) +
+      theme_upwr()
+  })
+
+  output$ch1_szum_verdict <- renderUI({
+    lvl <- ch1_szum_level()
+    if (lvl == 0) {
+      lc_feedback(
+        type = "ok",
+        strong("Szum = 0. "),
+        "Wszystkie punkty leżą dokładnie na prostej Y = 2 + 0,4 X. To jest stan idealny, którego w rzeczywistości nie zobaczysz — dane realne zawsze mają jakąś niepewność."
+      )
+    } else if (lvl <= 2) {
+      lc_feedback(
+        type = "info",
+        strong("Lekki szum. "),
+        "Punkty rozsypują się wokół prostej, ale liniowy trend jest wyraźny gołym okiem. Dla takich danych KMNK znajdzie prostą bardzo blisko prawdziwej."
+      )
+    } else if (lvl <= 4) {
+      lc_feedback(
+        type = "info",
+        strong("Umiarkowany szum. "),
+        "Trend liniowy jest cały czas widoczny, ale poszczególne punkty potrafią leżeć daleko od linii. Pojedynczej obserwacji nie da się przewidzieć — model mówi jedynie o ‚średnim‘ zachowaniu."
+      )
+    } else {
+      lc_feedback(
+        type = "warning",
+        strong("Duży szum. "),
+        "Mechanizm β₀+β₁X cały czas tam jest — ale gołym okiem trudno go już wyłowić. To jest typowa sytuacja realnych danych ekonomicznych. Bez statystyki łatwo o błędne wnioski."
+      )
+    }
+  })
+}

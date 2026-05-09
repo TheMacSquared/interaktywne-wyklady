@@ -25,12 +25,13 @@ source(file.path(project_root, "R", "lecture_layout.R"),         local = TRUE)
 source(file.path(project_root, "R", "econometrics_helpers.R"),   local = TRUE)
 lc_apply_ggplot_defaults()
 
-source(file.path(app_dir, "modules", "ch1_decyzja.R"),     local = TRUE)
-source(file.path(app_dir, "modules", "ch2_model_postac.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch3_graficzna.R"),   local = TRUE)
-source(file.path(app_dir, "modules", "ch4_cwiczenie.R"),   local = TRUE)
+source(file.path(app_dir, "modules", "ch1_decyzja.R"),       local = TRUE)
+source(file.path(app_dir, "modules", "ch2_model_postac.R"),  local = TRUE)
+source(file.path(app_dir, "modules", "ch3_typologia_pl.R"),  local = TRUE)
+source(file.path(app_dir, "modules", "ch4_graficzna.R"),     local = TRUE)
+source(file.path(app_dir, "modules", "ch5_cwiczenie.R"),     local = TRUE)
 
-.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui)
+.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui)
 
 ui <- lecture_page(
   lecture_id    = "optymalizacja-liniowa",
@@ -47,6 +48,7 @@ server <- function(input, output, session) {
   ch2_server(input, output, session)
   ch3_server(input, output, session)
   ch4_server(input, output, session)
+  ch5_server(input, output, session)
 }
 
 shinyApp(ui = ui, server = server)

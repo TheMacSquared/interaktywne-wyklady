@@ -1,23 +1,23 @@
 # ============================================================================
-# ROZDZIAŁ 3: Założenia KMNK
+# ROZDZIAŁ 4: Założenia KMNK
 # ============================================================================
 
-ch3_ui <- lecture_chapter(
+ch4_ui <- lecture_chapter(
   id = "ch-zalozenia",
-  num = "03",
+  num = "04",
   title = "Założenia KMNK",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 02 · KMNK",
-      num = "03",
+      num = "04",
       title = "Założenia klasycznej MNK.",
       lead = "KMNK daje porządne, wiarygodne wyniki tylko wtedy, gdy spełnione są pewne warunki. Niżej lista kontrolna, do której będziemy wracać przy każdym kolejnym modelu."
     ),
 
-    lc_h2("ch3-po-co-zalozenia", "Po co w ogóle założenia?"),
+    lc_h2("ch4-po-co-zalozenia", "Po co w ogóle założenia?"),
     lc_p("KMNK to procedura matematyczna — ona zawsze coś policzy, nawet jeśli dane są kompletnie pokręcone. Pytanie nie brzmi ‚czy się policzy‘, tylko ‚czy wynikom można ufać‘. Część założeń dotyczy samej linii regresji: czy nie pomijamy czegoś, co systematycznie przesuwa wynik. Inne dotyczą głównie niepewności: czy standardowe błędy, testy i przedziały ufności są liczone uczciwie."),
 
-    lc_h2("ch3-lista", "Sześć założeń klasycznych"),
+    lc_h2("ch4-lista", "Sześć założeń klasycznych"),
     figure_panel(
       label = "Lista kontrolna",
       title = "Założenia KMNK z przykładami łamania",
@@ -61,17 +61,59 @@ ch3_ui <- lecture_chapter(
       "Najważniejszy warunek dla samej interpretacji współczynnika brzmi: reszty nie mogą mieć ukrytego wzorca powiązanego z X. Jeśli taki wzorzec jest, nachylenie może opisywać nie tylko wpływ X, ale też wpływ pominiętego czynnika. Homoskedastyczność, brak autokorelacji i normalność są szczególnie ważne dla niepewności: standardowych błędów, testów i przedziałów ufności."
     ),
 
-    lc_h2("ch3-wizualnie", "Jak rozpoznać złamanie założeń?"),
-    lc_p("Najprostsze diagnostyki to dwa wykresy: rozrzut Y vs X z dopasowaną prostą oraz reszty vs wartości dopasowane. Drugi z nich jest najczulszym detektorem heteroskedastyczności i nieliniowości — jeśli na nim widać wzór (lejek, łuk, klastry), coś jest nie tak."),
+    # ------------------------------------------------------------------------
+    # Główny widget: suwak naruszenia
+    # ------------------------------------------------------------------------
+    lc_h2("ch4-suwak", "Suwak naruszenia — od idealnych danych do wyraźnego problemu"),
+    lc_p("Książkowy przykład pokazuje albo stan idealny, albo karykaturę naruszenia. W realnych danych jest między tym wszystko, co możliwe. Ten widget pozwala płynnie przejść od ‚OK‘ przez ‚delikatne ostrzeżenie‘ do ‚wyraźnego problemu‘. Wybierz, które założenie testujemy, i przesuwaj suwak."),
     figure_panel(
-      label = "Ryc. 3.1",
+      label = "Ryc. 4.1",
+      title = "Diagnostyka graficzna z suwakiem naruszenia",
+      full_width = TRUE,
+      fluidRow(
+        column(
+          4,
+          radioButtons(
+            "ch4_zalozenie", "Które założenie testujemy?",
+            choices = c(
+              "Homoskedastyczność (stała wariancja)" = "hetero",
+              "Liniowość (X→Y prosta)"               = "nieliniowosc",
+              "Brak obserwacji odstających"          = "outliery"
+            ),
+            selected = "hetero"
+          ),
+          sliderInput("ch4_naruszenie", "Poziom naruszenia (%)",
+                      min = 0, max = 100, value = 0, step = 5),
+          tags$br(),
+          uiOutput("ch4_legenda")
+        ),
+        column(
+          8,
+          plotOutput("ch4_suwak_plot", height = "380px"),
+          uiOutput("ch4_suwak_verdict")
+        )
+      )
+    ),
+    inline_callout(
+      label = "Wskazówka",
+      color = "ok",
+      "Granice nie są ostre. ‚Lekkie ostrzeżenie‘ przy 30% to subiektywna ocena — różni statystycy mogą się tu różnić. Liczy się to, czy potrafisz powiedzieć: w jakim kierunku idzie problem, jak duży jest, i co z tym dalej zrobić."
+    ),
+
+    # ------------------------------------------------------------------------
+    # Drugi widget: szybkie cztery scenariusze (zachowane)
+    # ------------------------------------------------------------------------
+    lc_h2("ch4-wizualnie", "Cztery skrajne scenariusze — szybkie porównanie"),
+    lc_p("Po prześlizgnięciu się suwakiem warto zobaczyć też cztery klasyczne sytuacje obok siebie — w tym taką, która mieści ", em("dwa"),  " problemy naraz (obserwacje odstające)."),
+    figure_panel(
+      label = "Ryc. 4.2",
       title = "Diagnostyka graficzna — cztery scenariusze",
       full_width = TRUE,
       fluidRow(
         column(
           4,
           selectInput(
-            "ch3_kind", "Scenariusz danych:",
+            "ch4_kind", "Scenariusz danych:",
             choices = c(
               "OK — wszystko gra"            = "ok",
               "Heteroskedastyczność"         = "hetero",
@@ -84,8 +126,8 @@ ch3_ui <- lecture_chapter(
         ),
         column(
           8,
-          plotOutput("ch3_plot", height = "360px"),
-          uiOutput("ch3_verdict")
+          plotOutput("ch4_plot", height = "320px"),
+          uiOutput("ch4_verdict")
         )
       )
     ),
@@ -97,7 +139,7 @@ ch3_ui <- lecture_chapter(
     ),
 
     lc_chapter_next(
-      num = "04",
+      num = "05",
       title = "Czytanie wyników",
       lead = "ćwiczenie z interpretacji modelu",
       target_id = "ch-cwiczenie"
@@ -105,16 +147,109 @@ ch3_ui <- lecture_chapter(
   )
 )
 
-ch3_server <- function(input, output, session) {
-  ch3_df <- reactive({
-    eco_diagnostic_data(kind = input$ch3_kind, n = 120, seed = 44)
-  })
-  ch3_fit <- reactive(lm(y ~ x, data = ch3_df()))
+ch4_server <- function(input, output, session) {
 
-  output$ch3_plot <- renderPlot({
-    d <- ch3_df()
-    d$fitted <- fitted(ch3_fit())
-    d$resid  <- resid(ch3_fit())
+  # --- Główny widget: suwak naruszenia -------------------------------------
+
+  ch4_suwak_data <- reactive({
+    eco02_naruszenie_data(
+      zalozenie = input$ch4_zalozenie,
+      level     = input$ch4_naruszenie,
+      n         = 100,
+      seed      = 11
+    )
+  })
+
+  ch4_suwak_fit <- reactive(lm(y ~ x, data = ch4_suwak_data()))
+
+  output$ch4_legenda <- renderUI({
+    nazwa <- switch(input$ch4_zalozenie,
+      hetero       = "Homoskedastyczność: rozrzut reszt nie zależy od X",
+      nieliniowosc = "Liniowość: zależność Y od X jest prosta, nie zakrzywiona",
+      outliery     = "Brak outlierów: wszystkie obserwacje pochodzą z tej samej populacji"
+    )
+    co_widac <- switch(input$ch4_zalozenie,
+      hetero       = "Przy 0% rozrzut jest stały. Z każdym przesunięciem suwaka rośnie ‚lejek‘ — wariancja reszt staje się coraz silniejszą funkcją X.",
+      nieliniowosc = "Przy 0% relacja jest dokładnie prosta. Wraz z suwakiem dane zaczynają się wyginać w łuk — model liniowy przestaje być adekwatny.",
+      outliery     = "Przy 0% punkty leżą równomiernie wokół linii. Suwak dodaje rosnącą liczbę skrajnych obserwacji odbiegających od reszty."
+    )
+    tagList(
+      tags$p(strong("Założenie: "), nazwa),
+      tags$p(co_widac)
+    )
+  })
+
+  output$ch4_suwak_plot <- renderPlot({
+    d <- ch4_suwak_data()
+    d$fitted <- fitted(ch4_suwak_fit())
+    d$resid  <- resid(ch4_suwak_fit())
+
+    p1 <- ggplot(d, aes(x, y)) +
+      geom_point(color = unname(upwr_cat["grafit"]), alpha = 0.7, size = 2) +
+      geom_smooth(method = "lm", se = FALSE, color = upwr_accent, linewidth = 1) +
+      labs(x = "X", y = "Y", title = "Rozrzut z prostą KMNK") +
+      theme_upwr()
+
+    p2 <- ggplot(d, aes(fitted, resid)) +
+      geom_hline(yintercept = 0, color = unname(upwr_cat["grafit"]), linetype = "dashed") +
+      geom_point(color = unname(upwr_cat["terakota"]), alpha = 0.75, size = 2) +
+      geom_smooth(method = "loess", se = FALSE, color = unname(upwr_cat["niebo"]),
+                  linewidth = 0.9) +
+      labs(x = "Wartości dopasowane ŷ", y = "Reszty e",
+           title = "Reszty vs ŷ — detektor naruszeń") +
+      theme_upwr()
+
+    if (requireNamespace("patchwork", quietly = TRUE)) {
+      patchwork::wrap_plots(p1, p2, ncol = 2)
+    } else {
+      p2
+    }
+  })
+
+  output$ch4_suwak_verdict <- renderUI({
+    werdykt <- eco02_werdykt_naruszenie(input$ch4_zalozenie, input$ch4_naruszenie)
+    nazwa_status <- switch(werdykt$type,
+      ok      = "Założenie spełnione",
+      warning = "Lekkie ostrzeżenie",
+      danger  = "Wyraźny problem"
+    )
+
+    tagList(
+      lc_stat_grid(
+        lc_stat_box(label = "Poziom naruszenia",
+                    value = paste0(input$ch4_naruszenie, "%"),
+                    caption = "ile na suwaku",
+                    color = upwr_secondary),
+        lc_stat_box(label = "Status",
+                    value = nazwa_status,
+                    caption = paste0("typ: ", werdykt$type),
+                    color = switch(werdykt$type,
+                                   ok      = unname(upwr_cat["szalwia"]),
+                                   warning = unname(upwr_cat["terakota"]),
+                                   danger  = upwr_accent)),
+        columns = 2
+      ),
+      lc_feedback(
+        type = werdykt$type,
+        tags$p(werdykt$opis),
+        if (werdykt$type != "ok")
+          tags$p(strong("Co dalej: "), werdykt$rekomendacja)
+        else NULL
+      )
+    )
+  })
+
+  # --- Drugi widget: cztery skrajne scenariusze (zachowane) ----------------
+
+  ch4_df <- reactive({
+    eco_diagnostic_data(kind = input$ch4_kind, n = 120, seed = 44)
+  })
+  ch4_fit <- reactive(lm(y ~ x, data = ch4_df()))
+
+  output$ch4_plot <- renderPlot({
+    d <- ch4_df()
+    d$fitted <- fitted(ch4_fit())
+    d$resid  <- resid(ch4_fit())
 
     p1 <- ggplot(d, aes(x, y)) +
       geom_point(color = unname(upwr_cat["grafit"]), alpha = 0.65, size = 1.8) +
@@ -136,8 +271,8 @@ ch3_server <- function(input, output, session) {
     }
   })
 
-  output$ch3_verdict <- renderUI({
-    kind <- input$ch3_kind
+  output$ch4_verdict <- renderUI({
+    kind <- input$ch4_kind
     if (kind == "ok") {
       lc_feedback(
         type = "ok",

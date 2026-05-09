@@ -33,8 +33,11 @@ NN-tytul/
     ├── ch1_*.R          # rozdział 1 (UI + server)
     ├── ch2_*.R          # rozdział 2
     ├── ch3_*.R          # rozdział 3
-    └── ch4_cwiczenie.R  # rozdział 4 — ćwiczenie (quiz / interpretacja tabeli)
+    ├── ch4_*.R          # rozdział 4 (jeśli temat wymaga rozszerzenia)
+    └── chN_cwiczenie.R  # ostatni rozdział — ćwiczenie (quiz / interpretacja tabeli)
 ```
+
+Większość wykładów ma 4 rozdziały (3 merytoryczne + ćwiczenie). Wykłady 02 (regresja KMNK) i 06 (optymalizacja liniowa) obejmują po 2–3 punkty syllabusa, więc mają 5 rozdziałów.
 
 ## Uruchamianie wykładu
 
@@ -54,19 +57,37 @@ Wymagane pakiety: `shiny`, `ggplot2`, `dplyr`, `broom`. Opcjonalnie `patchwork` 
 
 ## Zakres tematyczny (mapowanie na syllabus PD000000PEKS.L4.0561.24)
 
-| Wykład | Temat | Punkty syllabusa |
-|--------|-------|------------------|
-| 01 | Model ekonometryczny — pojęcie, klasyfikacja zmiennych, składnik losowy, postępowanie ekonometryczne | 1 |
-| 02 | Regresja liniowa z jedną zmienną i założenia KMNK | 2 |
-| 03 | Estymatory parametrów strukturalnych i błędy standardowe w KMNK | 3, 4 |
-| 04 | Weryfikacja merytoryczna i statystyczna; R², SE reszt; istotność zmiennej | 5, 6 |
-| 05 | Szeregi czasowe, modele dynamiczne, prognoza punktowa i przedziałowa, miary ex ante / ex post | 7, 8 |
-| 06 | Optymalizacja liniowa — problem decyzyjny, postać klasyczna i standardowa, metoda graficzna | 9, 10, 11 |
-| 07 | Metoda simpleks i dualizm programowania liniowego | 12, 13 |
+| Wykład | Temat | Punkty syllabusa | Rozdziały |
+|--------|-------|------------------|-----------|
+| 01 | Model ekonometryczny — pojęcie, klasyfikacja zmiennych, składnik losowy, postępowanie ekonometryczne | 1 | 4 |
+| 02 | Regresja liniowa z jedną zmienną, KMNK i estymatory parametrów strukturalnych | 2, 3 | 5 |
+| 03 | Niepewność i wnioskowanie — błędy standardowe, test t, przedziały ufności | 4 | 4 |
+| 04 | Weryfikacja merytoryczna i statystyczna; R², SE reszt; istotność zmiennej | 5, 6 | 4 |
+| 05 | Szeregi czasowe, modele dynamiczne, prognoza punktowa i przedziałowa, miary ex ante / ex post | 7, 8 | 4 |
+| 06 | Optymalizacja liniowa — problem decyzyjny, postać klasyczna i standardowa, typologia PL, metoda graficzna | 9, 10, 11 | 5 |
+| 07 | Metoda simpleks i dualizm programowania liniowego | 12, 13 | 4 |
+
+### Szczegółowy układ rozdziałów wewnątrz wykładów 02 i 06
+
+**Wykład 02 — Regresja liniowa i KMNK**
+
+1. Równanie regresji — interpretacja β₀, β₁, ε.
+2. Dopasowanie KMNK — intuicja graficzna, R², SE reszt.
+3. Estymatory parametrów — wzory na b₀ i b₁, parametr vs estymata, próba i jej zmienność.
+4. Założenia KMNK — sześć założeń klasycznych, diagnostyka graficzna.
+5. Czytanie wyników — ćwiczenie z interpretacji tabeli regresji.
+
+**Wykład 06 — Optymalizacja liniowa**
+
+1. Problem decyzyjny — zmienne, funkcja celu, ograniczenia.
+2. Postać klasyczna i standardowa — zmienne dopełniające, dopuszczalność.
+3. Typologia PL — produkcja, transport, dieta (mieszanka).
+4. Metoda graficzna — obszar dopuszczalny, wierzchołki, optimum.
+5. Twoja decyzja — ćwiczenie z wyboru produkcji i analizy wąskich gardeł.
 
 ## Wzorzec dydaktyczny (per rozdział)
 
-Każdy z czterech rozdziałów wykładu trzyma się następującej sekwencji komponentów:
+Każdy rozdział wykładu trzyma się następującej sekwencji komponentów:
 
 1. **`lc_chapter_hero`** — kicker (numer wykładu) + tytuł + jednolinijkowy lead-haczyk z konkretnym przykładem.
 2. **„Po co?”** — paragraf z mini-historyjką ekonomiczną (piekarnia, sklep z lodami, gospodarstwo rolne, doradca HR, stolarz).
@@ -76,7 +97,7 @@ Każdy z czterech rozdziałów wykładu trzyma się następującej sekwencji kom
 6. **`inline_callout`** — Wskazówka / Pułapka / Zapamiętaj.
 7. **`lc_chapter_next`** — most do następnego rozdziału.
 
-Czwarty rozdział każdego wykładu jest **ćwiczeniowy** — typowo zawiera tabelę wyników (jakby z konsoli statystycznej) i serię pytań `radioButtons` z dynamicznymi werdyktami.
+Ostatni rozdział każdego wykładu jest **ćwiczeniowy** — typowo zawiera tabelę wyników (jakby z konsoli statystycznej) i serię pytań `radioButtons` z dynamicznymi werdyktami.
 
 ## Konwencje kodowania
 

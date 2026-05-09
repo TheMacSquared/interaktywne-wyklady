@@ -64,9 +64,9 @@ ch2_ui <- lecture_chapter(
 
     lc_chapter_next(
       num = "03",
-      title = "Metoda graficzna",
-      lead = "obszar dopuszczalny i wierzchołki",
-      target_id = "ch-graf"
+      title = "Typologia PL",
+      lead = "produkcja, transport, dieta — różne zadania, ten sam schemat",
+      target_id = "ch-typologia"
     )
   )
 )

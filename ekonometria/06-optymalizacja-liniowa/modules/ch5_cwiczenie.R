@@ -1,23 +1,23 @@
 # ============================================================================
-# ROZDZIAŁ 4: Twoja decyzja (ćwiczenie)
+# ROZDZIAŁ 5: Twoja decyzja (ćwiczenie)
 # ============================================================================
 
-ch4_ui <- lecture_chapter(
+ch5_ui <- lecture_chapter(
   id = "ch-cwiczenie",
-  num = "04",
+  num = "05",
   title = "Twoja decyzja",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 06 · Optymalizacja",
-      num = "04",
+      num = "05",
       title = "Twoja decyzja.",
       lead = "Sprawdź się: jaką produkcję wybierzesz, żeby zarobić jak najwięcej? A potem — co zrobić, żeby zarobić jeszcze więcej?"
     ),
 
-    lc_h2("ch4-sytuacja", "Sytuacja"),
+    lc_h2("ch5-sytuacja", "Sytuacja"),
     lc_p("Stolarz produkuje krzesła i stoły. Każde krzesło wymaga 4 m drewna i 3 godzin pracy. Każdy stół — 6 m drewna i 4 godziny pracy. Tygodniowo dysponuje 240 m drewna i 200 godzinami pracy. Krzesło sprzedaje za 80 zł zysku, stół za 100 zł zysku. Cel: maksymalny tygodniowy zysk."),
     figure_panel(
-      label = "Tabela 4.1",
+      label = "Tabela 5.1",
       title = "Dane zadania",
       tags$table(
         class = "table",
@@ -38,7 +38,7 @@ ch4_ui <- lecture_chapter(
       )
     ),
 
-    lc_h2("ch4-wybor", "Twój wybór produkcji"),
+    lc_h2("ch5-wybor", "Twój wybór produkcji"),
     figure_panel(
       label = "Ćwiczenie 4.1",
       title = "Wpisz liczbę krzeseł i stołów",
@@ -46,24 +46,24 @@ ch4_ui <- lecture_chapter(
       fluidRow(
         column(
           4,
-          numericInput("ch4_x1", "Krzesła (x₁)", value = 30, min = 0, max = 80, step = 1),
-          numericInput("ch4_x2", "Stoły (x₂)",   value = 20, min = 0, max = 60, step = 1)
+          numericInput("ch5_x1", "Krzesła (x₁)", value = 30, min = 0, max = 80, step = 1),
+          numericInput("ch5_x2", "Stoły (x₂)",   value = 20, min = 0, max = 60, step = 1)
         ),
         column(
           8,
-          uiOutput("ch4_stats"),
-          uiOutput("ch4_feedback")
+          uiOutput("ch5_stats"),
+          uiOutput("ch5_feedback")
         )
       )
     ),
 
-    lc_h2("ch4-pytanie", "Co zrobić, żeby jeszcze więcej zarobić?"),
+    lc_h2("ch5-pytanie", "Co zrobić, żeby jeszcze więcej zarobić?"),
     lc_p("Załóżmy, że jesteś już w optimum. Stolarz może zainwestować — ale w co? Wybierz odpowiedź:"),
     figure_panel(
       label = "Quiz",
       title = "Gdzie zainwestować?",
       radioButtons(
-        "ch4_action", NULL,
+        "ch5_action", NULL,
         choices = c(
           "Kupić więcej drewna"             = "drewno",
           "Zatrudnić dodatkowego pracownika" = "praca",
@@ -72,7 +72,7 @@ ch4_ui <- lecture_chapter(
         ),
         selected = character(0)
       ),
-      uiOutput("ch4_action_feedback")
+      uiOutput("ch5_action_feedback")
     ),
 
     inline_callout(
@@ -84,7 +84,7 @@ ch4_ui <- lecture_chapter(
   )
 )
 
-ch4_server <- function(input, output, session) {
+ch5_server <- function(input, output, session) {
   # Parametry zadania (na sztywno — to jest ćwiczenie z konkretnymi liczbami).
   WOOD_LIMIT  <- 240
   LABOR_LIMIT <- 200
@@ -93,9 +93,9 @@ ch4_server <- function(input, output, session) {
   PRICE_CHAIR <- 80; PRICE_TABLE <- 100
   OPT_X1 <- 60; OPT_X2 <- 0; OPT_Z <- 4800
 
-  ch4_check <- reactive({
-    x1 <- input$ch4_x1
-    x2 <- input$ch4_x2
+  ch5_check <- reactive({
+    x1 <- input$ch5_x1
+    x2 <- input$ch5_x2
     if (is.null(x1) || is.null(x2) || is.na(x1) || is.na(x2)) {
       return(NULL)
     }
@@ -113,8 +113,8 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  output$ch4_stats <- renderUI({
-    r <- ch4_check()
+  output$ch5_stats <- renderUI({
+    r <- ch5_check()
     if (is.null(r)) return(NULL)
     lc_stat_grid(
       lc_stat_box("Drewno", paste0(eco_fmt(r$wood, 0), " / 240 m"),
@@ -127,8 +127,8 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  output$ch4_feedback <- renderUI({
-    r <- ch4_check()
+  output$ch5_feedback <- renderUI({
+    r <- ch5_check()
     if (is.null(r)) return(NULL)
 
     if (!r$feasible) {
@@ -164,8 +164,8 @@ ch4_server <- function(input, output, session) {
     lc_feedback(type = "info", msg)
   })
 
-  output$ch4_action_feedback <- renderUI({
-    a <- input$ch4_action
+  output$ch5_action_feedback <- renderUI({
+    a <- input$ch5_action
     if (is.null(a) || !nzchar(a)) return(NULL)
     switch(a,
       drewno = lc_feedback(

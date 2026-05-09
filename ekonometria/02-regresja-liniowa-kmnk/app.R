@@ -26,12 +26,14 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "econometrics_helpers.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
+source(file.path(app_dir, "modules", "helpers.R"),         local = TRUE)
 source(file.path(app_dir, "modules", "ch1_rownanie.R"),    local = TRUE)
 source(file.path(app_dir, "modules", "ch2_dopasowanie.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch3_zalozenia.R"),   local = TRUE)
-source(file.path(app_dir, "modules", "ch4_cwiczenie.R"),   local = TRUE)
+source(file.path(app_dir, "modules", "ch3_estymatory.R"),  local = TRUE)
+source(file.path(app_dir, "modules", "ch4_zalozenia.R"),   local = TRUE)
+source(file.path(app_dir, "modules", "ch5_cwiczenie.R"),   local = TRUE)
 
-.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui)
+.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui)
 
 ui <- lecture_page(
   lecture_id    = "regresja-kmnk",
@@ -47,6 +49,7 @@ server <- function(input, output, session) {
   ch2_server(input, output, session)
   ch3_server(input, output, session)
   ch4_server(input, output, session)
+  ch5_server(input, output, session)
 }
 
 shinyApp(ui = ui, server = server)

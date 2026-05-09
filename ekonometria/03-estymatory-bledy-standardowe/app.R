@@ -1,5 +1,5 @@
-# Wykład 03: Estymatory i błędy standardowe
-# Cztery rozdziały: parametr vs estymator, SE, test t i CI, ćwiczenie z tabeli.
+# Wykład 03: Niepewność i wnioskowanie
+# Cztery rozdziały: skąd niepewność, błąd standardowy, test t i CI, ćwiczenie z tabeli.
 
 library(shiny)
 library(ggplot2)
@@ -35,7 +35,7 @@ lc_apply_ggplot_defaults()
 # MODUŁY
 # ============================================================================
 
-source(file.path(app_dir, "modules", "ch1_estymatory.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch1_niepewnosc.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_se.R"),         local = TRUE)
 source(file.path(app_dir, "modules", "ch3_test.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch4_cwiczenie.R"),  local = TRUE)
