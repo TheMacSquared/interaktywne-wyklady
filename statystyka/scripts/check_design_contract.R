@@ -3,7 +3,16 @@
 args <- commandArgs(trailingOnly = TRUE)
 strict <- "--strict" %in% args
 
-project_root <- normalizePath(file.path(getwd()), mustWork = TRUE)
+script_dir <- function() {
+  cmd_args <- commandArgs(trailingOnly = FALSE)
+  file_arg <- grep("^--file=", cmd_args, value = TRUE)
+  if (length(file_arg)) {
+    return(dirname(normalizePath(sub("^--file=", "", file_arg[1]), mustWork = TRUE)))
+  }
+  normalizePath(getwd(), mustWork = TRUE)
+}
+
+project_root <- normalizePath(file.path(script_dir(), ".."), mustWork = TRUE)
 
 class_token <- function(token) {
   paste0("class\\s*=\\s*['\"]([^'\"]*\\s)?", token, "(\\s|['\"])")

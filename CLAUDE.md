@@ -1,20 +1,38 @@
-# CLAUDE.md - Instrukcje dla projektu Interaktywne
+# CLAUDE.md - Instrukcje dla projektu Interaktywne Wykłady
 
 ## Kontekst projektu
 
-- **Cel:** Interaktywne narzędzia R Shiny do nauczania statystyki
-- **Odbiorcy:** Studenci na zajęciach akademickich
-- **Język interfejsu:** Polski
-- **Język kodu:** Angielski (nazwy zmiennych, funkcji)
+- **Cel:** interaktywne narzędzia R Shiny do nauczania przedmiotów ilościowych.
+- **Struktura:** każdy przedmiot ma własny katalog na najwyższym poziomie repo.
+- **Obecne przedmioty:** `statystyka/` oraz startowy katalog `ekonometria/`.
+- **Odbiorcy:** studenci na zajęciach akademickich.
+- **Język interfejsu:** polski.
+- **Język kodu:** angielski dla nazw zmiennych i funkcji.
+
+## Organizacja repo
+
+```text
+interaktywne-wyklady/
+├── statystyka/
+│   ├── R/
+│   ├── scripts/
+│   ├── README.md
+│   └── */app.R
+└── ekonometria/
+    └── README.md
+```
+
+Materiały statystyczne są samowystarczalnym zestawem w `statystyka/`. Wspólne komponenty statystyki są w `statystyka/R/`, a narzędzia pomocnicze w `statystyka/scripts/`.
+
+Katalog `ekonometria/` jest oddzielnym projektem równoległym. Nowe aplikacje ekonometryczne powinny powstawać wewnątrz `ekonometria/`, z własnym katalogiem `R/` albo świadomie skopiowanym/adaptowanym systemem ze `statystyka/R/`.
 
 ## Konwencje kodowania
 
-Kanoniczne reguły nowego designu są w `R/DESIGN_CONTRACT.md`. Przy pracy nad zmigrowanymi wykładami traktuj ten dokument jako nadrzędny kontrakt.
+Kanoniczne reguły designu dla istniejącej statystyki są w `statystyka/R/DESIGN_CONTRACT.md`. Przy pracy nad wykładami statystycznymi traktuj ten dokument jako nadrzędny kontrakt.
 
 ### Struktura aplikacji Shiny
 
-Każda aplikacja wykładowa ma używać wyłącznie nowego systemu layoutu z `R/lecture_layout.R`.
-Nie twórz nowych aplikacji na `fluidPage()`, `navbarPage()`, `sidebarLayout()` ani `bslib::page_*()`.
+Każda aplikacja wykładowa ma używać systemu layoutu z właściwego katalogu przedmiotu, np. `statystyka/R/lecture_layout.R` dla statystyki. Nie twórz nowych aplikacji na `fluidPage()`, `navbarPage()`, `sidebarLayout()` ani `bslib::page_*()`.
 
 ```r
 # Tytuł aplikacji
@@ -29,7 +47,8 @@ library(dplyr)
 # ============================================================================
 
 app_dir <- .find_app_dir()
-project_root <- dirname(app_dir)
+subject_root <- dirname(app_dir)
+project_root <- subject_root
 
 source(file.path(project_root, "R", "palette.R"),        local = TRUE)
 source(file.path(project_root, "R", "theme_upwr.R"),     local = TRUE)
@@ -55,10 +74,6 @@ ui <- lecture_page(
   chapters      = .chapters
 )
 
-# ============================================================================
-# SERVER
-# ============================================================================
-
 server <- function(input, output, session) {
   lc <- lecture_server(.chapters, input, output, session)
 
@@ -69,57 +84,63 @@ server <- function(input, output, session) {
 shinyApp(ui = ui, server = server)
 ```
 
+Istniejące aplikacje statystyczne używają `project_root <- dirname(app_dir)` i ten wzorzec pozostaje poprawny po przeniesieniu do `statystyka/`.
+
 ### Nazewnictwo
 
 | Element | Konwencja | Przykład |
 |---------|-----------|----------|
-| Foldery aplikacji | kebab-case | `box-plot-builder`, `srednia-vs-mediana` |
+| Foldery aplikacji | kebab-case | `model-liniowy`, `typy-danych` |
 | Funkcje R | snake_case | `generate_data`, `calculate_stats` |
 | Zmienne reactive | snake_case | `collected_data`, `current_step` |
 | Identyfikatory UI | snake_case | `main_plot`, `step_explanation` |
 
 ## Polskie znaki w plikach R
 
-Pisz polskie znaki **bezpośrednio jako UTF-8** (`ó`, `ą`, `ę`, `ł`, `ś`, `ż`, `ź`, `ć`, `ń`), nie jako escape'y `\uXXXX`.
+Pisz polskie znaki bezpośrednio jako UTF-8 (`ó`, `ą`, `ę`, `ł`, `ś`, `ż`, `ź`, `ć`, `ń`), nie jako escape'y `\uXXXX`.
 
 ```r
 # DOBRZE
 p("Średnia próby wynosi 42")
 
-# ŹLE — escape'y \uXXXX
-p("Średnia próby wynosi 42")
+# ŹLE
+p("\\u015arednia próby wynosi 42")
 ```
 
-To dotyczy też znaków typograficznych: `≥` (nie `≥`), `—` (nie `—`), `×` (nie `×`), `μ`, `σ`, `λ`.
-
-Powód: escape'y są nieczytelne w edytorze, utrudniają `grep`, sed i Edit, dają nieczytelne diffy w git. Środowisko (Linux/WSL, R ≥ 4.0, locale UTF-8) obsługuje surowe UTF-8 bez problemu.
+To dotyczy też znaków typograficznych: `≥`, `—`, `×`, `μ`, `σ`, `λ`.
 
 ## Preferowane pakiety R
 
-### Podstawowe (używaj zawsze)
+### Podstawowe
 
 ```r
-library(shiny)      # Framework aplikacji
-library(ggplot2)    # Wizualizacje
-library(dplyr)      # Manipulacja danych
+library(shiny)
+library(ggplot2)
+library(dplyr)
 ```
 
-### Statystyka (preferuj te pakiety)
+### Statystyka
 
 ```r
-library(rstatix)    # Testy statystyczne (zamiast base R)
-library(broom)      # Porządkowanie wyników modeli
-library(lmtest)     # Testy diagnostyczne regresji
+library(rstatix)
+library(broom)
+library(lmtest)
 ```
 
-### Bayesowskie (dla metody-bayesowskie/)
+### Ekonometria
+
+Dla nowych wykładów ekonometrycznych preferuj pakiety dobrze wspierające modele i diagnostykę:
 
 ```r
-library(BayesFactor)  # ttestBF, anovaBF, correlationBF, contingencyTableBF
-library(rstanarm)     # stan_glm (regresja bayesowska, MCMC pod maską)
+library(broom)
+library(lmtest)
+library(sandwich)
+library(modelsummary)
 ```
 
-### Mapowanie funkcji statystycznych
+Nie dodawaj ciężkich zależności bez potrzeby dydaktycznej.
+
+## Mapowanie funkcji statystycznych
 
 | Zadanie | Używaj | Zamiast |
 |---------|--------|---------|
@@ -131,39 +152,27 @@ library(rstanarm)     # stan_glm (regresja bayesowska, MCMC pod maską)
 | ANOVA | `rstatix::anova_test()` | `aov()` |
 | Porządkowanie modeli | `broom::tidy()`, `broom::glance()` | ręczne wyciąganie |
 
-## Pogrubienia w tekście (bold)
+## Pogrubienia w tekście
 
-Używaj `tags$strong()` / `strong()` **oszczędnie** — tylko jako wizualnej nawigacji, nie jako emfazy. Za dużo boldów rozprasza i zmniejsza ich skuteczność.
+Używaj `tags$strong()` / `strong()` oszczędnie, tylko jako wizualnej nawigacji, nie jako emfazy.
 
-**ZOSTAW bold** gdy to:
-- Krótka etykieta z dwukropkiem: `strong("Problem:")`, `strong("Zasada:")`, `strong("Uwaga:")`, `strong("Wniosek:")`, `strong("Wskazówka:")`, `strong("Interpretacja:")`, `strong("Przykład:")`, `strong("Krok 1:")`
-- Numerowany marker listy: `strong("1.")`, `strong("2.")`
-- Jedno-słowo werdykt quiz-feedback: `strong("Dokładnie!")`, `strong("Nie do końca.")`
-- Krótki status-tag na początku callout-u: `strong("Dobry zbiór!")`, `strong("KRYTYCZNE")`
+Zostaw bold dla krótkich etykiet z dwukropkiem, numerowanych markerów listy, krótkich werdyktów quizowych i statusów na początku calloutu.
 
-**NIE używaj bold** dla:
-- Całych zdań opisowych — wystarczy, że są w `callout-*` (tam jest już wizualny sygnał)
-- Emfazy w środku paragrafu narracji — lepiej przeformułować zdanie
-- Markdown `**tekst**` w narracji — zwykły tekst
+Nie używaj bold dla całych zdań opisowych, emfazy w środku narracji ani markdown `**tekst**` w tekstach wykładowych.
 
-**Pattern `strong("Label: treść")`** → rozbij na `strong("Label:"), " treść"` — pogrubiona ma być tylko etykieta.
-
-Uwaga: globalny CSS (`R/shared_styles.css`) ustawia `strong { font-weight: 600 }` — boldy są już wyciszone do półgrubej wagi. Nie próbuj tego obchodzić przez `style="font-weight: 700"`.
+Pattern `strong("Label: treść")` rozbij na `strong("Label:"), " treść"`.
 
 ## Styl wizualizacji
 
 ```r
-# Domyślne dla całej aplikacji, po source() palety i motywu
 lc_apply_ggplot_defaults()
 
-# Motyw i paleta UPWr
 theme_upwr()
 upwr_accent
 upwr_secondary
 upwr_reference
 upwr_cat_n(4)
 
-# Etykiety - zawsze w języku polskim
 labs(
   title = "Tytuł wykresu",
   x = "Oś X (jednostki)",
@@ -171,23 +180,25 @@ labs(
 )
 ```
 
+Etykiety wykresów zawsze pisz po polsku.
+
 ## Struktura README dla nowych aplikacji
 
 ```markdown
-# 📦 Tytuł Aplikacji
+# Tytuł aplikacji
 
 Jednolinijkowy opis.
 
-## 📋 Wymagania
+## Wymagania
 
-- R (wersja ≥ 4.0)
+- R (wersja >= 4.0)
 - Pakiety R: `shiny`, `ggplot2`, `dplyr`
 
-## 🚀 Uruchamianie
+## Uruchamianie
 
 [kod R]
 
-## 📚 Jak używać na zajęciach
+## Jak używać na zajęciach
 
 ### Scenariusze pedagogiczne
 [opis scenariuszy]
@@ -195,75 +206,21 @@ Jednolinijkowy opis.
 ### Interaktywne elementy
 [opis kontrolek]
 
-## 🎯 Koncepcje pedagogiczne
+## Koncepcje pedagogiczne
 
 ### Co ilustruje to narzędzie?
 [lista koncepcji]
 
-## 💡 Scenariusze na zajęciach
-[konkretne scenariusze użycia]
+## Techniczne szczegóły
 
-## 🛠️ Techniczne szczegóły
 [szczegóły implementacji]
-
-## 🐛 Rozwiązywanie problemów
-[FAQ]
 ```
 
-## Typy aplikacji (wzorce do naśladowania)
+## Typy aplikacji
 
 | Typ | Wzorzec | Opis |
 |-----|---------|------|
-| Krok po kroku | `box-plot-builder` | Przyciski kroków, wyjaśnienia |
-| Eksploracja | `distribution-explorer` | Slidery parametrów, dynamiczny wykres |
-| Symulacja | `losowanie_spoznienia` | Zbieranie danych, statystyki na żywo |
-| Gra | `gra-estymacja` | Rundy, punkty, feedback |
-| Porównanie | `srednia-vs-mediana` | Scenariusze, dodawanie outlierów |
-
-## Elementy UI (standardowe)
-
-```r
-# Przyciski akcji
-actionButton("action", "Etykieta", class = "btn-primary", width = "100%")
-
-# Przyciski kroków
-actionButton("step1", "1. Nazwa kroku", class = "btn-outline-primary", width = "100%")
-
-# Slidery
-sliderInput("param", "Etykieta:",
-            min = 0, max = 100, value = 50, step = 1)
-
-# Checkbox
-checkboxInput("show_stats", "Pokaż statystyki", value = FALSE)
-
-# Warunkowe panele
-conditionalPanel(
-  condition = "input.show_stats == true",
-  verbatimTextOutput("stats")
-)
-```
-
-## Rozszerzanie projektu
-
-### Dodawanie nowej aplikacji
-
-1. **Utwórz folder** w konwencji `nazwa-aplikacji/`
-2. **Skopiuj wzorzec** z aplikacji używającej `lecture_page()`
-3. **Zaimplementuj logikę** z komponentami `lc_*`, `figure_panel()` i `margin_callout()`
-4. **Dodaj README.md** ze scenariuszami pedagogicznymi
-5. **Zaktualizuj główny README.md** - dodaj aplikację do tabeli
-
-## Debugowanie
-
-Gdy coś nie działa:
-
-1. **Diagnozuj błąd** - sprawdź konsolę R
-2. **Zaproponuj opcje naprawy** - minimum 2 alternatywy
-3. **NIE porzucaj pakietu** na rzecz "prostszego" bez uzasadnienia
-
-## Język
-
-- **UI:** Polski (tytuły, etykiety, wyjaśnienia)
-- **Kod:** Angielski (nazwy zmiennych, funkcji)
-- **Komentarze:** Polski lub angielski (konsekwentnie w pliku)
-- **README:** Polski
+| Krok po kroku | `typy-danych` | przyciski kroków, wyjaśnienia |
+| Eksploracja | `rozklady-prawdopodobienstwa` | slidery parametrów, dynamiczny wykres |
+| Symulacja | `symulacje-statystyczne` | zbieranie danych, statystyki na żywo |
+| Case study | `case-studies` | kompletna analiza od danych do wniosku |

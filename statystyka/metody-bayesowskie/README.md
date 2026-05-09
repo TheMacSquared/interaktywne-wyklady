@@ -22,7 +22,7 @@ install.packages(c(
 ## ▶️ Uruchamianie
 
 ```r
-shiny::runApp("metody-bayesowskie")
+shiny::runApp("statystyka/metody-bayesowskie")
 ```
 
 ## 📚 Struktura wykładu (12 rozdziałów)
