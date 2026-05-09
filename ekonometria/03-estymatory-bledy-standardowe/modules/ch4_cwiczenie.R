@@ -134,7 +134,7 @@ ch4_server <- function(input, output, session) {
         type = "ok",
         tags$p(strong("Dokładnie!"),
                " 0.18 ± 1.99 · 0.04 = 0.18 ± 0.0796 ≈ [0.10, 0.26]. ",
-               "Z prawdopodobieństwem 95% prawdziwe nachylenie populacyjne β₁ leży w tym przedziale.")
+               "Procedura budowania takich przedziałów trafiałaby w prawdziwe nachylenie populacyjne β₁ w około 95% powtarzanych prób.")
       )
     } else {
       msg <- switch(input$ch4_q2,

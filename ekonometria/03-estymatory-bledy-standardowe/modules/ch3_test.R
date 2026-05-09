@@ -24,7 +24,7 @@ ch3_ui <- lecture_chapter(
     lc_h2("ch3-przedzial", "Przedział ufności"),
     lc_formula_box(
       withMathJax(helpText("$$\\hat\\beta_1 \\pm t_{\\alpha/2,\\,df} \\cdot SE(\\hat\\beta_1)$$")),
-      p("Z prawdopodobieństwem 1 − α prawdziwe β₁ mieści się w tym przedziale. Wartość t_{α/2, df} to ‚tabelaryczna’ liczba zależna od poziomu ufności i liczby stopni swobody — np. dla 95% i dużej próby ≈ 1.96.")
+      p("Poziom ufności 1 − α mówi, jak często taka procedura trafiałaby w prawdziwe β₁, gdybyśmy wielokrotnie losowali nowe próby i za każdym razem budowali przedział. Wartość t_{α/2, df} to ‚tabelaryczna’ liczba zależna od poziomu ufności i liczby stopni swobody — np. dla 95% i dużej próby ≈ 1.96.")
     ),
 
     lc_h2("ch3-widget", "Jak poziom ufności zmienia szerokość przedziału?"),
@@ -117,7 +117,8 @@ ch3_server <- function(input, output, session) {
         "Gdyby z danych wyszło b₁ = 1.50 z SE(b₁) = 0.20, to ",
         strong(paste0(input$ch3_level, "% przedział ufności")),
         " wynosiłby [", strong(eco_fmt(lwr, 2)), ", ", strong(eco_fmt(upr, 2)), "]. ",
-        "Z prawdopodobieństwem ", input$ch3_level, "% prawdziwe nachylenie leży w tym przedziale. ",
+        "To znaczy: metoda budowania takich przedziałów trafiałaby w prawdziwe nachylenie w około ",
+        input$ch3_level, "% powtarzanych prób. ",
         "Im wyższy poziom ufności, tym szerszy przedział — to cena ostrożności."
       )
     )

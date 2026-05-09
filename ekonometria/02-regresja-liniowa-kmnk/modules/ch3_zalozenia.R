@@ -15,7 +15,7 @@ ch3_ui <- lecture_chapter(
     ),
 
     lc_h2("ch3-po-co-zalozenia", "Po co w ogóle założenia?"),
-    lc_p("KMNK to procedura matematyczna — ona zawsze coś policzy, nawet jeśli dane są kompletnie pokręcone. Pytanie nie brzmi ‚czy się policzy‘, tylko ‚czy wynikom można ufać‘. Założenia klasyczne to warunki, przy których wzory na błędy standardowe, testy istotności i przedziały ufności mają sens. Gdy są łamane, oszacowania mogą być obciążone albo testy mogą prowadzić w pole."),
+    lc_p("KMNK to procedura matematyczna — ona zawsze coś policzy, nawet jeśli dane są kompletnie pokręcone. Pytanie nie brzmi ‚czy się policzy‘, tylko ‚czy wynikom można ufać‘. Część założeń dotyczy samej linii regresji: czy nie pomijamy czegoś, co systematycznie przesuwa wynik. Inne dotyczą głównie niepewności: czy standardowe błędy, testy i przedziały ufności są liczone uczciwie."),
 
     lc_h2("ch3-lista", "Sześć założeń klasycznych"),
     figure_panel(
@@ -28,9 +28,9 @@ ch3_ui <- lecture_chapter(
           em("Łamanie:"), " model Y = β₀ + β₁² · X jest nieliniowy względem β i KMNK go nie unie­sie."
         ),
         tags$li(
-          strong("2. Średnia ε równa zero."),
-          " Składnik losowy nie ma systematycznego biasu w żadnym kierunku. ",
-          em("Łamanie:"), " gdy pominęliśmy ważną zmienną dodatnio skorelowaną z X — wpadnie do ε i przesunie jego średnią."
+          strong("2. Błąd nie zależy systematycznie od X."),
+          " Dla małych i dużych wartości X reszty powinny średnio krążyć wokół zera. ",
+          em("Łamanie:"), " gdy pominęliśmy ważną zmienną powiązaną z X — jej wpływ wpada do ε i linia może przypisać X efekt, który naprawdę pochodzi z czegoś innego."
         ),
         tags$li(
           strong("3. Stała wariancja ε (homoskedastyczność)."),
@@ -58,7 +58,7 @@ ch3_ui <- lecture_chapter(
     inline_callout(
       label = "Wskazówka",
       color = "ok",
-      "Pierwsze cztery założenia (liniowość, zerowa średnia ε, homoskedastyczność, brak autokorelacji) wpływają na to, czy oszacowania są ", strong("nieobciążone i efektywne"), ". Założenie o normalności wpływa głównie na wnioskowanie statystyczne (testy, przedziały ufności). To rozróżnienie wraca w każdym podręczniku ekonometrii."
+      "Najważniejszy warunek dla samej interpretacji współczynnika brzmi: reszty nie mogą mieć ukrytego wzorca powiązanego z X. Jeśli taki wzorzec jest, nachylenie może opisywać nie tylko wpływ X, ale też wpływ pominiętego czynnika. Homoskedastyczność, brak autokorelacji i normalność są szczególnie ważne dla niepewności: standardowych błędów, testów i przedziałów ufności."
     ),
 
     lc_h2("ch3-wizualnie", "Jak rozpoznać złamanie założeń?"),

@@ -21,7 +21,8 @@ eco_diagnostic_data <- function(kind = "ok", n = 120, seed = 2) {
     nonlinear = 0.03 * (x - 50)^2 + rnorm(n, 0, 8),
     outliers = {
       z <- rnorm(n, 0, 8)
-      z[sample(seq_len(n), 4)] <- z[sample(seq_len(n), 4)] + sample(c(-45, 45), 4, TRUE)
+      idx <- sample(seq_len(n), 4)
+      z[idx] <- z[idx] + sample(c(-45, 45), length(idx), TRUE)
       z
     },
     rnorm(n, 0, 8)

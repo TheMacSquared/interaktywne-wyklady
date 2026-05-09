@@ -30,7 +30,7 @@ ch1_ui <- lecture_chapter(
     ),
 
     lc_h2("ch1-piekarnia", "Wracamy do piekarni"),
-    lc_p("W zadaniu z rozdziału 06 (chleb i bułki, mąka i piec) wierzchołki obszaru dopuszczalnego to: V₀ = (0, 0), V₁ = (60, 0), V₂ = optimum (przecięcie ograniczeń mąki i pieca), V₃ = (0, 90). Simpleks zacznie od V₀ (zysk = 0), zobaczy, że V₁ daje zysk większy, przejdzie tam. Potem sprawdzi V₂ — większy zysk, przejdzie. Z V₂ wszystkie sąsiednie wierzchołki dają mniej — koniec."),
+    lc_p("W zadaniu z rozdziału 06 (chleb i bułki, mąka i piec) wierzchołki obszaru dopuszczalnego to: V₀ = (0, 0), V₁ = (50, 0), V₂ = przecięcie ograniczeń mąki i pieca, czyli około (36.7, 26.7), oraz V₃ = (0, 45). Simpleks zacznie od V₀ (zysk = 0), zobaczy, że V₁ daje zysk większy, przejdzie tam. Potem sprawdzi V₂ — jeszcze większy zysk, przejdzie. Z V₂ wszystkie sąsiednie wierzchołki dają mniej — koniec."),
     figure_panel(
       label = "Tabela 1.1",
       title = "Trasa simpleksu po wierzchołkach",
@@ -45,8 +45,8 @@ ch1_ui <- lecture_chapter(
         )),
         tags$tbody(
           tags$tr(tags$td("0"), tags$td("V₀"), tags$td("(0, 0)"),   tags$td("0 zł"),    tags$td("start; sąsiedzi V₁ i V₃ poprawiają — idziemy do V₁")),
-          tags$tr(tags$td("1"), tags$td("V₁"), tags$td("(60, 0)"),  tags$td("1800 zł"), tags$td("sąsiad V₂ poprawia — idziemy do V₂")),
-          tags$tr(tags$td("2"), tags$td("V₂"), tags$td("optimum"),  tags$td("max"),     tags$td("żaden sąsiad nie poprawia — STOP"))
+          tags$tr(tags$td("1"), tags$td("V₁"), tags$td("(50, 0)"),          tags$td("1500 zł"), tags$td("sąsiad V₂ poprawia — idziemy do V₂")),
+          tags$tr(tags$td("2"), tags$td("V₂"), tags$td("(36.7, 26.7)"),     tags$td("1766.7 zł"), tags$td("żaden sąsiad nie poprawia — STOP"))
         )
       )
     ),
