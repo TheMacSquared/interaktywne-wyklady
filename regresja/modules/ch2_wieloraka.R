@@ -51,6 +51,8 @@ ch2_ui <- list(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
+          plotOutput("ch2_scatter_model_plot", height = "340px"),
+          uiOutput("ch2_scatter_model_info"),
           uiOutput("ch2_model_coefs"),
           plotOutput("ch2_coef_plot", height = "250px"),
           uiOutput("ch2_model_stats")
@@ -155,6 +157,22 @@ ch2_server <- function(input, output, session) {
   ch2_data <- reactiveVal(NULL)
   ch2_model <- reactiveVal(NULL)
 
+  ch2_labels_pl <- c(
+    "godziny_nauki" = "Godziny nauki",
+    "frekwencja" = "Frekwencja",
+    "stres" = "Stres",
+    "sen_h" = "Sen (h)"
+  )
+
+  ch2_make_three_groups <- function(x) {
+    breaks <- unique(stats::quantile(x, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE))
+    if (length(breaks) < 4) {
+      breaks <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), length.out = 4)
+    }
+    cut(x, breaks = breaks, include.lowest = TRUE,
+        labels = c("niski", "średni", "wysoki"))
+  }
+
   observeEvent(input$ch2_gen, {
     df <- generate_multi_data(150)
     ch2_data(df)
@@ -167,19 +185,82 @@ ch2_server <- function(input, output, session) {
     ch2_model(model)
   })
 
+  output$ch2_scatter_model_plot <- renderPlot({
+    df <- ch2_data()
+    if (is.null(df)) {
+      ggplot() +
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane i dopasuj'",
+                 size = 5.5, color = upwr_reference) +
+        theme_void()
+    } else {
+      preds <- input$ch2_predictors
+      if (length(preds) == 0) preds <- "godziny_nauki"
+
+      x_var <- preds[1]
+      df$kolor_pred <- if (length(preds) >= 2) ch2_make_three_groups(df[[preds[2]]]) else factor("wszyscy")
+      df$facet_row <- if (length(preds) >= 3) ch2_make_three_groups(df[[preds[3]]]) else factor("wszyscy")
+      df$facet_col <- if (length(preds) >= 4) ch2_make_three_groups(df[[preds[4]]]) else factor("wszyscy")
+
+      color_title <- if (length(preds) >= 2) ch2_labels_pl[[preds[2]]] else NULL
+
+      p <- ggplot(df, aes(x = .data[[x_var]], y = ocena, color = kolor_pred)) +
+        geom_point(alpha = 0.55, size = 2) +
+        geom_smooth(method = "lm", se = FALSE, linewidth = 1) +
+        scale_color_manual(
+          values = if (length(preds) >= 2) {
+            c("niski" = unname(upwr_cat["niebo"]),
+              "średni" = unname(upwr_cat["bursztyn"]),
+              "wysoki" = unname(upwr_cat["wrzos"]))
+          } else {
+            c("wszyscy" = upwr_secondary)
+          },
+          name = color_title
+        ) +
+        labs(x = ch2_labels_pl[[x_var]], y = "Średnia ocen") +
+        theme_upwr() +
+        theme(legend.position = if (length(preds) >= 2) "top" else "none")
+
+      if (length(preds) == 3) {
+        p <- p + facet_grid(rows = vars(facet_row), labeller = labeller(
+          facet_row = function(x) paste(ch2_labels_pl[[preds[3]]], x)
+        ))
+      } else if (length(preds) >= 4) {
+        p <- p + facet_grid(rows = vars(facet_row), cols = vars(facet_col),
+          labeller = labeller(
+            facet_row = function(x) paste(ch2_labels_pl[[preds[3]]], x),
+            facet_col = function(x) paste(ch2_labels_pl[[preds[4]]], x)
+          )
+        )
+      }
+
+      p
+    }
+  })
+
+  output$ch2_scatter_model_info <- renderUI({
+    df <- ch2_data()
+    if (is.null(df)) return(NULL)
+    preds <- input$ch2_predictors
+    if (length(preds) == 0) preds <- "godziny_nauki"
+    x_var <- ch2_labels_pl[[preds[1]]]
+    layers <- c(paste("oś X:", x_var))
+    if (length(preds) >= 2) layers <- c(layers, paste("kolor:", ch2_labels_pl[[preds[2]]], "w 3 grupach"))
+    if (length(preds) >= 3) layers <- c(layers, paste("wiersze:", ch2_labels_pl[[preds[3]]], "w 3 grupach"))
+    if (length(preds) >= 4) layers <- c(layers, paste("kolumny:", ch2_labels_pl[[preds[4]]], "w 3 grupach"))
+
+    lc_feedback(type = "info",
+      p(tags$strong("Wizualizacja modelu: "), paste(layers, collapse = "; "),
+        ". Linie są poglądowymi prostymi na przekrojach danych; tabela niżej pokazuje współczynniki pełnego modelu.")
+    )
+  })
+
   output$ch2_model_coefs <- renderUI({
     model <- ch2_model()
     if (is.null(model)) return(NULL)
 
     coefs <- broom::tidy(model)
 
-    labels_pl <- c(
-      "(Intercept)" = "Wyraz wolny",
-      "godziny_nauki" = "Godziny nauki",
-      "frekwencja" = "Frekwencja",
-      "stres" = "Stres",
-      "sen_h" = "Sen (h)"
-    )
+    labels_pl <- c("(Intercept)" = "Wyraz wolny", ch2_labels_pl)
 
     coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
                              labels_pl[coefs$term], coefs$term)
@@ -214,12 +295,7 @@ ch2_server <- function(input, output, session) {
 
     if (nrow(coefs) == 0) return(NULL)
 
-    labels_pl <- c(
-      "godziny_nauki" = "Godziny nauki",
-      "frekwencja" = "Frekwencja",
-      "stres" = "Stres",
-      "sen_h" = "Sen (h)"
-    )
+    labels_pl <- ch2_labels_pl
     coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
                              labels_pl[coefs$term], coefs$term)
     coefs$significant <- coefs$p.value < 0.05
