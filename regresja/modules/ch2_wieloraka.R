@@ -58,6 +58,32 @@ ch2_ui <- list(
       )
     ),
 
+    lc_h2("ch2-kontrola", "Co znaczy „przy stałych pozostałych zmiennych”?"),
+
+    figure_panel(
+      label = "Ryc. 2.1b", title = "Efekt pozorny i kontrola zmiennych",
+      full_width = TRUE,
+      fluidRow(
+        column(4,
+          helpText("Porównujemy model prosty i model z kontrolą drugiej zmiennej."),
+          actionButton("ch2_control_new", "Generuj dane",
+                       class = "lc-btn-primary", width = "100%"),
+          hr(),
+          h5("Kroki:"),
+          actionButton("ch2_control_step1", "1. Ocena ~ frekwencja",
+                       class = "lc-btn-outline", width = "100%"),
+          actionButton("ch2_control_step2", "2. Ocena ~ nauka",
+                       class = "lc-btn-outline", width = "100%"),
+          actionButton("ch2_control_step3", "3. Obie zmienne naraz",
+                       class = "lc-btn-outline", width = "100%")
+        ),
+        column(8,
+          plotOutput("ch2_control_plot", height = "320px"),
+          uiOutput("ch2_control_info")
+        )
+      )
+    ),
+
     inline_callout(label = "Skorygowane R²", color = "wskazowka",
       "Zwykłe R² zawsze rośnie z każdym dodanym predyktorem (nawet
        bezużytecznym!). Adjusted R² koryguje ten efekt — karze
@@ -83,6 +109,25 @@ ch2_ui <- list(
         column(8,
           plotOutput("ch2_step_plot", height = "300px"),
           uiOutput("ch2_step_table")
+        )
+      )
+    ),
+
+    lc_h2("ch2-wspolliniowosc", "Multikolinearność"),
+
+    figure_panel(
+      label = "Ryc. 2.3", title = "Gdy predyktory mówią prawie to samo",
+      full_width = TRUE,
+      fluidRow(
+        column(4,
+          sliderInput("ch2_collin_rho", "Korelacja X₁–X₂:",
+                      min = 0, max = 0.98, value = 0.8, step = 0.02),
+          actionButton("ch2_collin_new", "Generuj i dopasuj",
+                       class = "lc-btn-warning", width = "100%")
+        ),
+        column(8,
+          plotOutput("ch2_collin_plot", height = "300px"),
+          uiOutput("ch2_collin_info")
         )
       )
     ),
@@ -204,6 +249,92 @@ ch2_server <- function(input, output, session) {
     )
   })
 
+  # --- Widget: kontrola zmiennych ---
+  ch2_control_data <- reactiveVal(NULL)
+  ch2_control_step <- reactiveVal(0)
+
+  observeEvent(input$ch2_control_new, {
+    ch2_control_data(generate_confounding_data(160))
+    ch2_control_step(0)
+  })
+  observeEvent(input$ch2_control_step1, ch2_control_step(1))
+  observeEvent(input$ch2_control_step2, ch2_control_step(2))
+  observeEvent(input$ch2_control_step3, ch2_control_step(3))
+
+  output$ch2_control_plot <- renderPlot({
+    df <- ch2_control_data()
+    step <- ch2_control_step()
+    if (is.null(df) || step == 0) {
+      ggplot() +
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane', potem kroki",
+                 size = 5.5, color = upwr_reference) +
+        theme_void()
+    } else if (step == 1) {
+      ggplot(df, aes(x = frekwencja, y = ocena)) +
+        geom_point(color = upwr_secondary, alpha = 0.5) +
+        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"])) +
+        labs(x = "Frekwencja (%)", y = "Ocena") +
+        theme_upwr()
+    } else if (step == 2) {
+      ggplot(df, aes(x = godziny_nauki, y = ocena)) +
+        geom_point(color = upwr_secondary, alpha = 0.5) +
+        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["szalwia"])) +
+        labs(x = "Godziny nauki", y = "Ocena") +
+        theme_upwr()
+    } else {
+      model <- lm(ocena ~ godziny_nauki + frekwencja, data = df)
+      coefs <- broom::tidy(model)
+      coefs <- coefs[coefs$term != "(Intercept)", ]
+      labels <- c(godziny_nauki = "Godziny nauki", frekwencja = "Frekwencja")
+      coefs$term <- labels[coefs$term]
+      ggplot(coefs, aes(x = estimate, y = term)) +
+        geom_vline(xintercept = 0, linetype = "dashed", color = upwr_secondary) +
+        geom_point(color = unname(upwr_cat["wrzos"]), size = 3) +
+        geom_errorbarh(aes(xmin = estimate - 1.96 * std.error,
+                           xmax = estimate + 1.96 * std.error),
+                       height = 0.2, color = unname(upwr_cat["wrzos"])) +
+        labs(x = "β w modelu wielorakim", y = NULL) +
+        theme_upwr()
+    }
+  })
+
+  output$ch2_control_info <- renderUI({
+    df <- ch2_control_data()
+    step <- ch2_control_step()
+    if (is.null(df) || step == 0) return(NULL)
+    m_freq <- lm(ocena ~ frekwencja, data = df)
+    m_study <- lm(ocena ~ godziny_nauki, data = df)
+    m_both <- lm(ocena ~ godziny_nauki + frekwencja, data = df)
+    tf <- broom::tidy(m_freq)
+    ts <- broom::tidy(m_study)
+    tb <- broom::tidy(m_both)
+    if (step == 1) {
+      tagList(
+        lc_stat_box("β frekw.", round(tf$estimate[2], 3), color = unname(upwr_cat["niebo"])),
+        lc_stat_box("p", format_p_value(tf$p.value[2]), color = upwr_secondary),
+        lc_feedback(type = "info", p("W modelu prostym frekwencja wygląda na ważną, ale może nieść informację o przygotowaniu studenta."))
+      )
+    } else if (step == 2) {
+      tagList(
+        lc_stat_box("β nauka", round(ts$estimate[2], 3), color = unname(upwr_cat["szalwia"])),
+        lc_stat_box("p", format_p_value(ts$p.value[2]), color = upwr_secondary),
+        lc_feedback(type = "info", p("Godziny nauki też są powiązane z oceną. Teraz sprawdzimy, co zostaje po kontroli obu naraz."))
+      )
+    } else {
+      rows <- lapply(2:nrow(tb), function(i) {
+        tags$tr(tags$td(tb$term[i]), tags$td(round(tb$estimate[i], 4)),
+                tags$td(round(tb$std.error[i], 4)), tags$td(format_p_value(tb$p.value[i])))
+      })
+      tagList(
+        tags$table(class = "lc-table lc-table-bordered lc-table-striped",
+          tags$thead(tags$tr(tags$th("Zmienna"), tags$th("β"), tags$th("SE"), tags$th("p"))),
+          tags$tbody(rows)
+        ),
+        lc_feedback(type = "warning", p("Współczynnik oznacza efekt danej zmiennej po odjęciu informacji wspólnej z pozostałymi predyktorami."))
+      )
+    }
+  })
+
   # --- Widget 2: Krok po kroku ---
   ch2_step_data <- reactiveVal(NULL)
 
@@ -284,6 +415,58 @@ ch2_server <- function(input, output, session) {
                 tags$th("AIC"), tags$th("BIC"), tags$th("RMSE"))
       ),
       tags$tbody(rows)
+    )
+  })
+
+  # --- Widget: multikolinearnosc ---
+  ch2_collin_data <- reactiveVal(NULL)
+
+  observeEvent(input$ch2_collin_new, {
+    ch2_collin_data(generate_collinearity_data(140, input$ch2_collin_rho))
+  })
+
+  output$ch2_collin_plot <- renderPlot({
+    df <- ch2_collin_data()
+    if (is.null(df)) {
+      ggplot() +
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i dopasuj'",
+                 size = 6, color = upwr_reference) +
+        theme_void()
+    } else {
+      ggplot(df, aes(x = x1, y = x2)) +
+        geom_point(color = upwr_secondary, alpha = 0.5) +
+        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"])) +
+        labs(x = "X₁", y = "X₂") +
+        theme_upwr()
+    }
+  })
+
+  output$ch2_collin_info <- renderUI({
+    df <- ch2_collin_data()
+    if (is.null(df)) return(NULL)
+    model <- lm(y ~ x1 + x2, data = df)
+    coefs <- broom::tidy(model)
+    vifs <- compute_vif_simple(df, c("x1", "x2"))
+    rows <- lapply(2:nrow(coefs), function(i) {
+      term <- coefs$term[i]
+      tags$tr(
+        tags$td(term),
+        tags$td(round(coefs$estimate[i], 3)),
+        tags$td(round(coefs$std.error[i], 3)),
+        tags$td(format_p_value(coefs$p.value[i])),
+        tags$td(round(vifs[[term]], 2))
+      )
+    })
+    tagList(
+      lc_stat_box("corr(X₁,X₂)", round(cor(df$x1, df$x2), 2), color = unname(upwr_cat["niebo"])),
+      lc_stat_box("R² modelu", round(summary(model)$r.squared, 3), color = unname(upwr_cat["szalwia"])),
+      tags$table(class = "lc-table lc-table-bordered lc-table-striped",
+        style = "font-size: 13px;",
+        tags$thead(tags$tr(tags$th("Zmienna"), tags$th("β"), tags$th("SE"), tags$th("p"), tags$th("VIF"))),
+        tags$tbody(rows)
+      ),
+      lc_feedback(type = "warning",
+        p("Im bardziej X₁ i X₂ są podobne, tym trudniej modelowi stabilnie przypisać osobny efekt każdej zmiennej."))
     )
   })
 }

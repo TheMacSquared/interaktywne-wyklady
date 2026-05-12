@@ -123,6 +123,37 @@ ch5_ui <- list(
 
     ),
 
+    figure_panel(
+      label = "Ryc. 5.1", title = "Mini-drzewko wyboru modelu regresyjnego",
+      full_width = TRUE,
+      fluidRow(
+        column(4,
+          selectInput("ch5_tree_y", "Jaka jest zmienna zależna Y?",
+            choices = c(
+              "Ilościowa / ciągła" = "continuous",
+              "Binarna 0/1" = "binary",
+              "Licznikowa" = "count",
+              "Porządkowa" = "ordinal"
+            )
+          ),
+          selectInput("ch5_tree_x", "Ile predyktorów?",
+            choices = c("Jeden" = "one", "Wiele" = "many")
+          ),
+          selectInput("ch5_tree_goal", "Główny cel:",
+            choices = c(
+              "Interpretacja efektów" = "explain",
+              "Predykcja nowych obserwacji" = "predict"
+            )
+          ),
+          checkboxInput("ch5_tree_nonlinear", "Podejrzewam nieliniowość / przeuczenie", value = FALSE)
+        ),
+        column(8,
+          plotOutput("ch5_tree_plot", height = "310px"),
+          uiOutput("ch5_tree_info")
+        )
+      )
+    ),
+
     lc_h2("ch5-funkcje-r", "Funkcje R"),
 
     tagList(
@@ -175,4 +206,81 @@ predict(model_log, newdata = ..., type = 'response')  # prawdopodobienstwa"
 )
 
 ch5_server <- function(input, output, session) {
+
+  ch5_tree_result <- reactive({
+    y <- input$ch5_tree_y
+    x <- input$ch5_tree_x
+    goal <- input$ch5_tree_goal
+    nonlinear <- isTRUE(input$ch5_tree_nonlinear)
+
+    if (y == "continuous" && x == "one") {
+      model <- "Regresja liniowa prosta"
+      formula <- "lm(y ~ x)"
+      note <- "Zacznij od wykresu rozrzutu, linii regresji i diagnostyki reszt."
+    } else if (y == "continuous") {
+      model <- "Regresja liniowa wieloraka"
+      formula <- "lm(y ~ x1 + x2 + ...)"
+      note <- "Interpretuj β przy stałych pozostałych predyktorach; sprawdź współliniowość."
+    } else if (y == "binary") {
+      model <- "Regresja logistyczna"
+      formula <- "glm(y ~ x1 + x2, family = binomial)"
+      note <- "Model zwraca prawdopodobieństwa; próg klasyfikacji dobierz do kosztu błędów."
+    } else if (y == "count") {
+      model <- "Regresja Poissona / ujemna dwumianowa"
+      formula <- "glm(y ~ x, family = poisson)"
+      note <- "Dla nadmiernej zmienności rozważ model ujemny dwumianowy."
+    } else {
+      model <- "Regresja porządkowa"
+      formula <- "ordered logit/probit"
+      note <- "Gdy kategorie mają naturalny porządek, nie traktuj ich jak zwykłej skali ciągłej."
+    }
+
+    if (goal == "predict") {
+      note <- paste(note, "Do predykcji porównuj modele na danych testowych lub przez walidację krzyżową.")
+    }
+    if (nonlinear) {
+      note <- paste(note, "Sprawdź wielomiany, splajny lub prostszy model z lepszą generalizacją.")
+    }
+
+    list(model = model, formula = formula, note = note)
+  })
+
+  output$ch5_tree_plot <- renderPlot({
+    res <- ch5_tree_result()
+    nodes <- data.frame(
+      id = 1:5,
+      label = c("Y?", "Ilościowa", "Binarna", "Inna", res$model),
+      x = c(0, -1.8, 0, 1.8, 0),
+      y = c(3, 2, 2, 2, 0.7)
+    )
+    edges <- data.frame(
+      x = c(0, 0, 0, nodes$x[if (input$ch5_tree_y == "continuous") 2 else if (input$ch5_tree_y == "binary") 3 else 4]),
+      y = c(3, 3, 3, 2),
+      xend = c(-1.8, 0, 1.8, 0),
+      yend = c(2, 2, 2, 0.7)
+    )
+    active_branch <- if (input$ch5_tree_y == "continuous") 2 else if (input$ch5_tree_y == "binary") 3 else 4
+    nodes$active <- nodes$id %in% c(1, active_branch, 5)
+
+    ggplot() +
+      geom_segment(data = edges, aes(x = x, y = y, xend = xend, yend = yend),
+                   color = upwr_rule, linewidth = 1) +
+      geom_label(data = nodes, aes(x = x, y = y, label = label, fill = active),
+                 color = "white", fontface = "bold", label.size = 0,
+                 label.padding = grid::unit(0.35, "lines"), size = 4) +
+      scale_fill_manual(values = c("TRUE" = upwr_secondary, "FALSE" = upwr_reference)) +
+      xlim(-2.7, 2.7) +
+      ylim(0, 3.5) +
+      theme_void() +
+      theme(legend.position = "none")
+  })
+
+  output$ch5_tree_info <- renderUI({
+    res <- ch5_tree_result()
+    tagList(
+      lc_stat_box("Rekomendacja", res$model, color = upwr_secondary),
+      lc_formula_box(tags$code(res$formula)),
+      lc_feedback(type = "info", p(res$note))
+    )
+  })
 }

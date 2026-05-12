@@ -104,3 +104,79 @@ compute_model_metrics <- function(model, data = NULL, y_name = NULL) {
   metrics
 }
 
+generate_assumption_data <- function(n = 120, scenario = "good") {
+  x <- runif(n, 0, 10)
+
+  if (scenario == "nonlinear") {
+    y <- 3 + 0.7 * x + 0.22 * (x - 5)^2 + rnorm(n, 0, 1.1)
+  } else if (scenario == "hetero") {
+    y <- 3 + 0.9 * x + rnorm(n, 0, 0.25 + 0.28 * x)
+  } else if (scenario == "outlier") {
+    y <- 3 + 0.9 * x + rnorm(n, 0, 1)
+    x[1] <- 9.8
+    y[1] <- min(y) - 8
+  } else if (scenario == "nonnormal") {
+    y <- 3 + 0.9 * x + rt(n, df = 2) * 1.1
+  } else {
+    y <- 3 + 0.9 * x + rnorm(n, 0, 1)
+  }
+
+  data.frame(x = round(x, 2), y = round(y, 2))
+}
+
+generate_confounding_data <- function(n = 160) {
+  przygotowanie <- rnorm(n, 0, 1)
+  godziny_nauki <- pmax(0, round(18 + 7 * przygotowanie + rnorm(n, 0, 4), 1))
+  frekwencja <- pmin(100, pmax(30, round(68 + 14 * przygotowanie + rnorm(n, 0, 8), 1)))
+  ocena <- 2.7 + 0.035 * godziny_nauki + 0.004 * frekwencja +
+    0.45 * przygotowanie + rnorm(n, 0, 0.35)
+  ocena <- pmin(5, pmax(2, round(ocena, 2)))
+
+  data.frame(
+    ocena = ocena,
+    godziny_nauki = godziny_nauki,
+    frekwencja = frekwencja,
+    przygotowanie = round(przygotowanie, 2)
+  )
+}
+
+generate_collinearity_data <- function(n = 140, rho = 0.8) {
+  x1 <- rnorm(n)
+  x2 <- rho * x1 + sqrt(max(0.001, 1 - rho^2)) * rnorm(n)
+  y <- 2 + 1.1 * x1 + 1.1 * x2 + rnorm(n, 0, 1.1)
+
+  data.frame(
+    y = round(y, 2),
+    x1 = round(x1, 2),
+    x2 = round(x2, 2)
+  )
+}
+
+compute_vif_simple <- function(df, predictors) {
+  sapply(predictors, function(pred) {
+    others <- setdiff(predictors, pred)
+    if (length(others) == 0) return(1)
+    form <- as.formula(paste(pred, "~", paste(others, collapse = " + ")))
+    r2 <- summary(lm(form, data = df))$r.squared
+    1 / (1 - r2)
+  })
+}
+
+generate_train_test_poly <- function(n_train = 35, n_test = 180) {
+  f <- function(x) sin(x) * 3
+  train_x <- sort(runif(n_train, 0, 10))
+  test_x <- sort(runif(n_test, 0, 10))
+
+  train <- data.frame(
+    set = "Trening",
+    x = train_x,
+    y = f(train_x) + rnorm(n_train, 0, 1)
+  )
+  test <- data.frame(
+    set = "Test",
+    x = test_x,
+    y = f(test_x) + rnorm(n_test, 0, 1)
+  )
+
+  list(train = train, test = test)
+}

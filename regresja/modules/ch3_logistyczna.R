@@ -59,6 +59,35 @@ ch3_ui <- list(
       )
     ),
 
+    figure_panel(
+      label = "Ryc. 3.1b", title = "Logit → prawdopodobieństwo → decyzja",
+      full_width = TRUE,
+      fluidRow(
+        column(4,
+          sliderInput("ch3_logit_x", "X (np. godziny nauki):",
+                      min = 0, max = 40, value = 20, step = 1),
+          sliderInput("ch3_logit_b0", "β₀:",
+                      min = -8, max = 4, value = -4, step = 0.5),
+          sliderInput("ch3_logit_b1", "β₁:",
+                      min = -0.2, max = 0.5, value = 0.16, step = 0.02),
+          sliderInput("ch3_logit_threshold", "Próg decyzji:",
+                      min = 0.1, max = 0.9, value = 0.5, step = 0.05),
+          hr(),
+          h5("Kroki:"),
+          actionButton("ch3_logit_step1", "1. Policz η",
+                       class = "lc-btn-outline", width = "100%"),
+          actionButton("ch3_logit_step2", "2. Zamień na p",
+                       class = "lc-btn-outline", width = "100%"),
+          actionButton("ch3_logit_step3", "3. Podejmij decyzję",
+                       class = "lc-btn-outline", width = "100%")
+        ),
+        column(8,
+          plotOutput("ch3_logit_step_plot", height = "320px"),
+          uiOutput("ch3_logit_step_info")
+        )
+      )
+    ),
+
     lc_h2("ch3-model-dane", "Model logistyczny na danych"),
 
     tagList(
@@ -113,6 +142,22 @@ ch3_ui <- list(
       uiOutput("ch3_odds_ratios")
     ),
 
+    figure_panel(
+      label = "Ryc. 3.4", title = "Próg klasyfikacji i macierz pomyłek",
+      full_width = TRUE,
+      fluidRow(
+        column(4,
+          helpText("Używa modelu dopasowanego w Ryc. 3.2."),
+          sliderInput("ch3_threshold", "Próg decyzji:",
+                      min = 0.1, max = 0.9, value = 0.5, step = 0.05)
+        ),
+        column(8,
+          plotOutput("ch3_threshold_plot", height = "280px"),
+          uiOutput("ch3_threshold_info")
+        )
+      )
+    ),
+
     inline_callout(label = "Ocena modelu", color = "wskazowka",
       "Nie używamy R² w sensie liniowym. Zamiast tego: AIC, BIC, oraz
        macierz pomyłek (confusion matrix) z dokładnością, czułością
@@ -161,6 +206,53 @@ ch3_server <- function(input, output, session) {
            x = "X", y = "P(Y = 1)") +
       ylim(0, 1) +
       theme_upwr()
+  })
+
+  # --- Widget: logit krok po kroku ---
+  ch3_logit_step <- reactiveVal(0)
+  observeEvent(input$ch3_logit_step1, ch3_logit_step(1))
+  observeEvent(input$ch3_logit_step2, ch3_logit_step(2))
+  observeEvent(input$ch3_logit_step3, ch3_logit_step(3))
+
+  output$ch3_logit_step_plot <- renderPlot({
+    x <- seq(0, 40, length.out = 300)
+    eta <- input$ch3_logit_b0 + input$ch3_logit_b1 * x
+    p <- 1 / (1 + exp(-eta))
+    x0 <- input$ch3_logit_x
+    eta0 <- input$ch3_logit_b0 + input$ch3_logit_b1 * x0
+    p0 <- 1 / (1 + exp(-eta0))
+    step <- ch3_logit_step()
+
+    df <- data.frame(x = x, p = p)
+    plot <- ggplot(df, aes(x = x, y = p)) +
+      geom_line(color = unname(upwr_cat["wrzos"]), linewidth = 1.4) +
+      geom_hline(yintercept = input$ch3_logit_threshold, linetype = "dashed",
+                 color = unname(upwr_cat["bursztyn"])) +
+      labs(x = "X", y = "P(Y = 1)") +
+      ylim(0, 1) +
+      theme_upwr()
+    if (step >= 2) {
+      plot <- plot +
+        geom_segment(aes(x = x0, xend = x0, y = 0, yend = p0),
+                     color = upwr_secondary, linetype = "dotted") +
+        geom_point(data = data.frame(x = x0, p = p0), aes(x = x, y = p),
+                   color = upwr_secondary, size = 3)
+    }
+    plot
+  })
+
+  output$ch3_logit_step_info <- renderUI({
+    step <- ch3_logit_step()
+    if (step == 0) return(NULL)
+    eta <- input$ch3_logit_b0 + input$ch3_logit_b1 * input$ch3_logit_x
+    prob <- 1 / (1 + exp(-eta))
+    decision <- if (prob >= input$ch3_logit_threshold) "klasa 1" else "klasa 0"
+    tagList(
+      if (step >= 1) lc_stat_box("η", round(eta, 3), caption = "β₀ + β₁X", color = unname(upwr_cat["niebo"])),
+      if (step >= 2) lc_stat_box("p", round(prob, 3), caption = "sigmoid(η)", color = unname(upwr_cat["wrzos"])),
+      if (step >= 3) lc_stat_box("Decyzja", decision, caption = paste("próg", input$ch3_logit_threshold), color = if (prob >= input$ch3_logit_threshold) unname(upwr_cat["szalwia"]) else unname(upwr_cat["terakota"])),
+      if (step >= 3) lc_feedback(type = "info", p("Regresja logistyczna najpierw zwraca prawdopodobieństwo. Klasa 0/1 pojawia się dopiero po wybraniu progu."))
+    )
   })
 
   # --- Widget 2: Model logistyczny ---
@@ -290,6 +382,53 @@ ch3_server <- function(input, output, session) {
           " OR > 1 oznacza, że wzrost predyktora o 1 zwiększa szanse sukcesu.
             OR < 1 — zmniejsza. OR = 1 — brak wpływu.")
       )
+    )
+  })
+
+  # --- Widget: prog klasyfikacji ---
+  output$ch3_threshold_plot <- renderPlot({
+    model <- ch3_model()
+    df <- ch3_data()
+    if (is.null(model) || is.null(df)) {
+      ggplot() +
+        annotate("text", x = 0.5, y = 0.5, label = "Najpierw dopasuj model w Ryc. 3.2",
+                 size = 5.5, color = upwr_reference) +
+        theme_void()
+    } else {
+      probs <- predict(model, type = "response")
+      pred <- ifelse(probs >= input$ch3_threshold, 1, 0)
+      cm <- as.data.frame(table(
+        Rzeczywiste = factor(df$zdal_num, levels = c(0, 1), labels = c("Nie", "Tak")),
+        Predykcja = factor(pred, levels = c(0, 1), labels = c("Nie", "Tak"))
+      ))
+      ggplot(cm, aes(x = Predykcja, y = Rzeczywiste, fill = Freq)) +
+        geom_tile(color = "white", linewidth = 1) +
+        geom_text(aes(label = Freq), size = 7, fontface = "bold", color = "white") +
+        scale_fill_gradient(low = unname(upwr_cat["niebo"]), high = upwr_secondary) +
+        labs(x = "Predykcja modelu", y = "Rzeczywistość") +
+        theme_upwr() +
+        theme(legend.position = "none")
+    }
+  })
+
+  output$ch3_threshold_info <- renderUI({
+    model <- ch3_model()
+    df <- ch3_data()
+    if (is.null(model) || is.null(df)) return(NULL)
+    probs <- predict(model, type = "response")
+    pred <- ifelse(probs >= input$ch3_threshold, 1, 0)
+    tp <- sum(pred == 1 & df$zdal_num == 1)
+    tn <- sum(pred == 0 & df$zdal_num == 0)
+    fp <- sum(pred == 1 & df$zdal_num == 0)
+    fn <- sum(pred == 0 & df$zdal_num == 1)
+    accuracy <- (tp + tn) / length(pred)
+    sensitivity <- ifelse(tp + fn == 0, NA, tp / (tp + fn))
+    specificity <- ifelse(tn + fp == 0, NA, tn / (tn + fp))
+    tagList(
+      lc_stat_box("Accuracy", paste0(round(accuracy * 100, 1), "%"), color = unname(upwr_cat["szalwia"])),
+      lc_stat_box("Czułość", paste0(round(sensitivity * 100, 1), "%"), caption = "wykrywa Tak", color = unname(upwr_cat["niebo"])),
+      lc_stat_box("Swoistość", paste0(round(specificity * 100, 1), "%"), caption = "wykrywa Nie", color = unname(upwr_cat["bursztyn"])),
+      lc_feedback(type = "warning", p("Obniżenie progu zwykle zwiększa czułość, ale może obniżyć swoistość."))
     )
   })
 }

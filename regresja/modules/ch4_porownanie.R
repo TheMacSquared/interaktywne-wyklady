@@ -133,6 +133,23 @@ ch4_ui <- list(
       )
     ),
 
+    figure_panel(
+      label = "Ryc. 4.4", title = "Train/test: kiedy model przestaje generalizować",
+      full_width = TRUE,
+      fluidRow(
+        column(4,
+          sliderInput("ch4_tt_degree", "Stopień wielomianu:",
+                      min = 1, max = 15, value = 1, step = 1),
+          actionButton("ch4_tt_new", "Nowy podział train/test",
+                       class = "lc-btn-warning", width = "100%")
+        ),
+        column(8,
+          plotOutput("ch4_tt_plot", height = "330px"),
+          uiOutput("ch4_tt_info")
+        )
+      )
+    ),
+
     inline_callout(label = "Złota reguła", color = "uwaga",
       "Najlepszy model to nie ten z najwyższym R², ale ten, który
        najlepiej generalizuje na nowe dane. Używaj AIC/BIC do wyboru
@@ -347,6 +364,59 @@ ch4_server <- function(input, output, session) {
       lc_stat_box("adj.R²", round(metrics$adj_r_squared, 3), color = unname(upwr_cat["szalwia"])),
       lc_stat_box("AIC", round(metrics$aic, 1), color = unname(upwr_cat["bursztyn"])),
       lc_stat_box("BIC", round(metrics$bic, 1), color = upwr_secondary)
+    )
+  })
+
+  # --- Widget 4: train/test overfitting ---
+  ch4_tt_data <- reactiveVal(generate_train_test_poly())
+
+  observeEvent(input$ch4_tt_new, {
+    ch4_tt_data(generate_train_test_poly())
+  })
+
+  output$ch4_tt_plot <- renderPlot({
+    sets <- ch4_tt_data()
+    train <- sets$train
+    test <- sets$test
+    degree <- input$ch4_tt_degree
+    model <- lm(y ~ poly(x, degree), data = train)
+    grid <- data.frame(x = seq(0, 10, length.out = 300))
+    grid$y <- predict(model, newdata = grid)
+
+    ggplot() +
+      geom_point(data = test, aes(x = x, y = y), color = unname(upwr_cat["bursztyn"]),
+                 alpha = 0.25, size = 1.8) +
+      geom_point(data = train, aes(x = x, y = y), color = upwr_secondary,
+                 alpha = 0.75, size = 2.2) +
+      geom_line(data = grid, aes(x = x, y = y), color = unname(upwr_cat["niebo"]),
+                linewidth = 1.2) +
+      labs(x = "X", y = "Y") +
+      theme_upwr()
+  })
+
+  output$ch4_tt_info <- renderUI({
+    sets <- ch4_tt_data()
+    train <- sets$train
+    test <- sets$test
+    degree <- input$ch4_tt_degree
+
+    degrees <- 1:15
+    metrics <- lapply(degrees, function(d) {
+      model <- lm(y ~ poly(x, d), data = train)
+      train_rmse <- sqrt(mean((train$y - predict(model, train))^2))
+      test_rmse <- sqrt(mean((test$y - predict(model, test))^2))
+      data.frame(degree = d, train_rmse = train_rmse, test_rmse = test_rmse)
+    })
+    metrics <- do.call(rbind, metrics)
+    current <- metrics[metrics$degree == degree, ]
+    best <- metrics[which.min(metrics$test_rmse), ]
+
+    tagList(
+      lc_stat_box("RMSE train", round(current$train_rmse, 2), color = unname(upwr_cat["niebo"])),
+      lc_stat_box("RMSE test", round(current$test_rmse, 2), color = unname(upwr_cat["bursztyn"])),
+      lc_stat_box("Najlepszy test", paste0("stopień ", best$degree), caption = paste("RMSE", round(best$test_rmse, 2)), color = unname(upwr_cat["szalwia"])),
+      lc_feedback(type = if (current$test_rmse > best$test_rmse * 1.25) "warning" else "info",
+        p("Model może coraz lepiej zapamiętywać trening, ale oceniamy go po błędzie na nowych danych."))
     )
   })
 }
