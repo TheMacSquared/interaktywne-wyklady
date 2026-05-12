@@ -1,8 +1,8 @@
 # Regeneruje statyczne PNG-i dla rozdzialu o korelacji
-# (wnioskowanie-statystyczne/assets/correlation-*.png).
+# (04-wnioskowanie-statystyczne/assets/correlation-*.png).
 #
 # Uruchom z roota repo:
-#   Rscript scripts/regen_correlation_assets.R
+#   Rscript statystyka/scripts/regen_correlation_assets.R
 #
 # Generowane pliki:
 #   correlation-strength.png  — Ryc. 6.1: trzy r przy STALYM rozrzucie globalnym
@@ -19,12 +19,23 @@ suppressPackageStartupMessages({
   library(patchwork)
 })
 
-source("R/palette.R")
-source("R/theme_upwr.R")
+script_dir <- function() {
+  cmd_args <- commandArgs(trailingOnly = FALSE)
+  file_arg <- grep("^--file=", cmd_args, value = TRUE)
+  if (length(file_arg)) {
+    return(dirname(normalizePath(sub("^--file=", "", file_arg[1]), mustWork = TRUE)))
+  }
+  normalizePath(getwd(), mustWork = TRUE)
+}
+
+project_root <- normalizePath(file.path(script_dir(), ".."), mustWork = TRUE)
+
+source(file.path(project_root, "R", "palette.R"))
+source(file.path(project_root, "R", "theme_upwr.R"))
 
 ggplot2::theme_set(theme_upwr())
 
-assets_dir <- "wnioskowanie-statystyczne/assets"
+assets_dir <- file.path(project_root, "04-wnioskowanie-statystyczne", "assets")
 stopifnot(dir.exists(assets_dir))
 
 W <- 15

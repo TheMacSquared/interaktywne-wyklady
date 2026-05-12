@@ -1,0 +1,14 @@
+Warstwa 1 — drobne dopracowania (pewnie zauważysz przy oglądaniu)
+Wzajemna spójność tonu — sześciu różnych subagentów pisało rozdziały. Mimo wspólnego briefu mogą być różnice w długości akapitów, gęstości boldów, sposobie formułowania werdyktów. Po pierwszym przeglądzie warto wybrać 2–3 wykłady jako wzorzec i podciągnąć resztę.
+Wartości w widgetach — slidery mają wartości startowe ustawione przez subagentów na oko. Niektóre mogą startować w pozycji, która nie pokazuje "fajnego" obrazu. Po obejrzeniu warto przesunąć defaulty tak, żeby pierwszy rzut oka był pedagogicznie czytelny.
+Werdykty graniczne — w ćwiczeniowych ch4 sprawdziłem logikę warunków, ale nie wszystkie ścieżki. Np. czy w ch4 wykładu 06 (stolarz) werdykt dla x₁=0, x₂=0 jest sensowny (pewnie wymaga osobnej gałęzi).
+
+Warstwa 2 — naturalny dydaktyczny rozwój
+Spójna historia przewodnia — teraz mamy piekarnię (01, 06–07), HR (03), rolnictwo (04), sklep z lodami (02-ch4), odzież (05-ch4), stolarza (06-ch4). To bogato, ale dla studenta gubi się rytm. Wybór jednej firmy-bohatera (np. piekarnia "Pan Jan") przewijającej się przez wszystkie 7 wykładów dałby spójność typu "case study". W każdym wykładzie ten sam świat, inny problem.
+Dane realne zamiast syntetycznych — eco_regression_data generuje dane z ustalonego DGP. Studenci szybko nauczą się, że "modele zawsze pasują, bo to symulacja". GUS, NBP, Eurostat mają darmowe API; wciągnięcie 1–2 prawdziwych zbiorów (np. miesięczne PKB, kursy walut, ceny żywności) pozwoliłoby pokazać "gdzie teoria pęka". Mogę dodać helper eco_real_data("nazwa") z lokalnym cache w CSV.
+Eksport tabel wyników — w ch4 ćwiczeniowych mamy ręcznie wpisane tabele KMNK. Naturalny krok: generator, który dla zadanego DGP automatycznie produkuje "tabelkę z konsoli" (Excel/Gretl-style). Daje nieskończoną liczbę wariantów ćwiczenia.
+
+Warstwa 3 — to, co wymaga decyzji wykładowczyni
+Synchronizacja z laboratoriami — syllabus mówi "Excel/Gretl/R". Wykład interaktywny pokazuje intuicje, ale na laborkach studenci klikają w realnym narzędziu. Naturalny most: każdy rozdział kończy się "instrukcją krok-po-kroku jak to zrobić w Gretlu" jako margin_callout albo osobny rozdział "ch5_lab" na końcu wykładu. Bez tego materiał z wykładu i laborek może żyć osobno.
+Spójność oznaczeń z podręcznikami — Guzik, Goryl i Borkowski (literatura obowiązkowa) mogą używać innych symboli (np. b̂ vs b vs β̂, s² vs σ̂²). Do uzgodnienia z prowadzącą, którą notację trzymamy.
+Kolokwium-symulator — skoro 40% oceny to kolokwium, naturalny dodatkowy moduł: "ch5_kolokwium" z 5 losowymi pytaniami i scoringiem. Może być wspólny komponent dla wszystkich 7 wykładów.

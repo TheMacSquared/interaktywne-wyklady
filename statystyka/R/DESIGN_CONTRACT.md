@@ -139,13 +139,13 @@ Style specyficzne dla jednego wykładu mogą trafić do `header_extras`, ale pow
 Uruchom:
 
 ```sh
-Rscript scripts/check_design_contract.R
+Rscript statystyka/scripts/check_design_contract.R
 ```
 
 Na razie skrypt raportuje naruszenia informacyjnie. Tryb twardy:
 
 ```sh
-Rscript scripts/check_design_contract.R --strict
+Rscript statystyka/scripts/check_design_contract.R --strict
 ```
 
 Tryb `--strict` kończy się błędem, jeśli znajdzie zakazane wzorce.
