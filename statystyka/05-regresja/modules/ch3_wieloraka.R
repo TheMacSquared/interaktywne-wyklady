@@ -1,22 +1,22 @@
 # ============================================================================
-# CHAPTER 2: Regresja wieloraka
+# CHAPTER 3: Regresja wieloraka
 # ============================================================================
 
-ch2_ui <- list(
+ch3_ui <- list(
   id    = "ch-wieloraka",
-  num   = "02",
+  num   = "03",
   title = "Regresja wieloraka",
   content = tagList(
 
     lc_chapter_hero(
-      kicker = "Rozdział 02 · Regresja",
-      num    = "02",
+      kicker = "Rozdział 03 · Regresja",
+      num   = "03",
       title  = "Regresja wieloraka.",
       lead   = "Regresja prosta używała jednego predyktora.
                 W rzeczywistości na Y wpływa wiele czynników jednocześnie."
     ),
 
-    lc_h2("ch2-wiele-predyktorow", "Wiele predyktorów naraz"),
+    lc_h2("ch3-wiele-predyktorow", "Wiele predyktorów naraz"),
 
     tagList(
       p("Regresja wieloraka rozszerza model o ", tags$b("k predyktorów"), ":"),
@@ -30,7 +30,7 @@ ch2_ui <- list(
         " wzrośnie o 1, ", tags$b("przy stałych pozostałych zmiennych"), ".")
     ),
 
-    lc_h2("ch2-budowanie", "Budowanie modelu wielorakiego"),
+    lc_h2("ch3-budowanie", "Budowanie modelu wielorakiego"),
 
     figure_panel(
       label = "Ryc. 2.1", title = "Predykcja średniej ocen",
@@ -38,7 +38,7 @@ ch2_ui <- list(
       fluidRow(
         column(4,
           helpText("Dane: 150 studentów. Zmienna zależna: średnia ocen."),
-          checkboxGroupInput("ch2_predictors", "Predyktory:",
+          checkboxGroupInput("ch3_predictors", "Predyktory:",
             choices = c(
               "Godziny nauki/tydz." = "godziny_nauki",
               "Frekwencja (%)"      = "frekwencja",
@@ -47,20 +47,20 @@ ch2_ui <- list(
             ),
             selected = c("godziny_nauki", "frekwencja")
           ),
-          actionButton("ch2_gen", "Generuj dane i dopasuj",
+          actionButton("ch3_gen", "Generuj dane i dopasuj",
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch2_scatter_model_plot", height = "340px"),
-          uiOutput("ch2_scatter_model_info"),
-          uiOutput("ch2_model_coefs"),
-          plotOutput("ch2_coef_plot", height = "250px"),
-          uiOutput("ch2_model_stats")
+          plotOutput("ch3_scatter_model_plot", height = "340px"),
+          uiOutput("ch3_scatter_model_info"),
+          uiOutput("ch3_model_coefs"),
+          plotOutput("ch3_coef_plot", height = "250px"),
+          uiOutput("ch3_model_stats")
         )
       )
     ),
 
-    lc_h2("ch2-kontrola", "Co znaczy „przy stałych pozostałych zmiennych”?"),
+    lc_h2("ch3-kontrola", "Co znaczy „przy stałych pozostałych zmiennych”?"),
 
     figure_panel(
       label = "Ryc. 2.1b", title = "Efekt pozorny i kontrola zmiennych",
@@ -68,20 +68,20 @@ ch2_ui <- list(
       fluidRow(
         column(4,
           helpText("Porównujemy model prosty i model z kontrolą drugiej zmiennej."),
-          actionButton("ch2_control_new", "Generuj dane",
+          actionButton("ch3_control_new", "Generuj dane",
                        class = "lc-btn-primary", width = "100%"),
           hr(),
           h5("Kroki:"),
-          actionButton("ch2_control_step1", "1. Ocena ~ frekwencja",
+          actionButton("ch3_control_step1", "1. Ocena ~ frekwencja",
                        class = "lc-btn-outline", width = "100%"),
-          actionButton("ch2_control_step2", "2. Ocena ~ nauka",
+          actionButton("ch3_control_step2", "2. Ocena ~ nauka",
                        class = "lc-btn-outline", width = "100%"),
-          actionButton("ch2_control_step3", "3. Obie zmienne naraz",
+          actionButton("ch3_control_step3", "3. Obie zmienne naraz",
                        class = "lc-btn-outline", width = "100%")
         ),
         column(8,
-          plotOutput("ch2_control_plot", height = "320px"),
-          uiOutput("ch2_control_info")
+          plotOutput("ch3_control_plot", height = "320px"),
+          uiOutput("ch3_control_info")
         )
       )
     ),
@@ -92,7 +92,7 @@ ch2_ui <- list(
        za zbędne zmienne."
     ),
 
-    lc_h2("ch2-krok-po-kroku", "Efekt dodawania zmiennych"),
+    lc_h2("ch3-krok-po-kroku", "Efekt dodawania zmiennych"),
 
     tagList(
       p("Zobaczmy, jak zmieniają się metryki modelu, gdy dodajemy
@@ -105,31 +105,31 @@ ch2_ui <- list(
       fluidRow(
         column(4,
           helpText("Modele z 1, 2, 3 i 4 predyktorami — porównanie metryk."),
-          actionButton("ch2_stepwise", "Buduj modele krok po kroku",
+          actionButton("ch3_stepwise", "Buduj modele krok po kroku",
                        class = "lc-btn-warning", width = "100%")
         ),
         column(8,
-          plotOutput("ch2_step_plot", height = "300px"),
-          uiOutput("ch2_step_table")
+          plotOutput("ch3_step_plot", height = "300px"),
+          uiOutput("ch3_step_table")
         )
       )
     ),
 
-    lc_h2("ch2-wspolliniowosc", "Multikolinearność"),
+    lc_h2("ch3-wspolliniowosc", "Multikolinearność"),
 
     figure_panel(
       label = "Ryc. 2.3", title = "Gdy predyktory mówią prawie to samo",
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch2_collin_rho", "Korelacja X₁–X₂:",
+          sliderInput("ch3_collin_rho", "Korelacja X₁–X₂:",
                       min = 0, max = 0.98, value = 0.8, step = 0.02),
-          actionButton("ch2_collin_new", "Generuj i dopasuj",
+          actionButton("ch3_collin_new", "Generuj i dopasuj",
                        class = "lc-btn-warning", width = "100%")
         ),
         column(8,
-          plotOutput("ch2_collin_plot", height = "300px"),
-          uiOutput("ch2_collin_info")
+          plotOutput("ch3_collin_plot", height = "300px"),
+          uiOutput("ch3_collin_info")
         )
       )
     ),
@@ -140,10 +140,10 @@ ch2_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "03",
-      title     = "Regresja logistyczna",
-      lead      = "gdy zmienna zależna jest binarna",
-      target_id = "ch-logistyczna"
+      num       = "04",
+      title     = "Porównanie modeli",
+      lead      = "jak porównać modele i wybrać najlepszy",
+      target_id = "ch-porownanie"
     )
   )
 )
@@ -152,19 +152,19 @@ ch2_ui <- list(
 # SERVER
 # ============================================================================
 
-ch2_server <- function(input, output, session) {
+ch3_server <- function(input, output, session) {
 
-  ch2_data <- reactiveVal(NULL)
-  ch2_model <- reactiveVal(NULL)
+  ch3_data <- reactiveVal(NULL)
+  ch3_model <- reactiveVal(NULL)
 
-  ch2_labels_pl <- c(
+  ch3_labels_pl <- c(
     "godziny_nauki" = "Godziny nauki",
     "frekwencja" = "Frekwencja",
     "stres" = "Stres",
     "sen_h" = "Sen (h)"
   )
 
-  ch2_make_three_groups <- function(x) {
+  ch3_make_three_groups <- function(x) {
     breaks <- unique(stats::quantile(x, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE))
     if (length(breaks) < 4) {
       breaks <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), length.out = 4)
@@ -173,35 +173,35 @@ ch2_server <- function(input, output, session) {
         labels = c("niski", "średni", "wysoki"))
   }
 
-  observeEvent(input$ch2_gen, {
+  observeEvent(input$ch3_gen, {
     df <- generate_multi_data(150)
-    ch2_data(df)
+    ch3_data(df)
 
-    preds <- input$ch2_predictors
+    preds <- input$ch3_predictors
     if (length(preds) == 0) preds <- "godziny_nauki"
 
     formula <- as.formula(paste("ocena ~", paste(preds, collapse = " + ")))
     model <- lm(formula, data = df)
-    ch2_model(model)
+    ch3_model(model)
   })
 
-  output$ch2_scatter_model_plot <- renderPlot({
-    df <- ch2_data()
+  output$ch3_scatter_model_plot <- renderPlot({
+    df <- ch3_data()
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane i dopasuj'",
                  size = 5.5, color = upwr_reference) +
         theme_void()
     } else {
-      preds <- input$ch2_predictors
+      preds <- input$ch3_predictors
       if (length(preds) == 0) preds <- "godziny_nauki"
 
       x_var <- preds[1]
-      df$kolor_pred <- if (length(preds) >= 2) ch2_make_three_groups(df[[preds[2]]]) else factor("wszyscy")
-      df$facet_row <- if (length(preds) >= 3) ch2_make_three_groups(df[[preds[3]]]) else factor("wszyscy")
-      df$facet_col <- if (length(preds) >= 4) ch2_make_three_groups(df[[preds[4]]]) else factor("wszyscy")
+      df$kolor_pred <- if (length(preds) >= 2) ch3_make_three_groups(df[[preds[2]]]) else factor("wszyscy")
+      df$facet_row <- if (length(preds) >= 3) ch3_make_three_groups(df[[preds[3]]]) else factor("wszyscy")
+      df$facet_col <- if (length(preds) >= 4) ch3_make_three_groups(df[[preds[4]]]) else factor("wszyscy")
 
-      color_title <- if (length(preds) >= 2) ch2_labels_pl[[preds[2]]] else NULL
+      color_title <- if (length(preds) >= 2) ch3_labels_pl[[preds[2]]] else NULL
 
       p <- ggplot(df, aes(x = .data[[x_var]], y = ocena, color = kolor_pred)) +
         geom_point(alpha = 0.55, size = 2) +
@@ -216,19 +216,19 @@ ch2_server <- function(input, output, session) {
           },
           name = color_title
         ) +
-        labs(x = ch2_labels_pl[[x_var]], y = "Średnia ocen") +
+        labs(x = ch3_labels_pl[[x_var]], y = "Średnia ocen") +
         theme_upwr() +
         theme(legend.position = if (length(preds) >= 2) "top" else "none")
 
       if (length(preds) == 3) {
         p <- p + facet_grid(rows = vars(facet_row), labeller = labeller(
-          facet_row = function(x) paste(ch2_labels_pl[[preds[3]]], x)
+          facet_row = function(x) paste(ch3_labels_pl[[preds[3]]], x)
         ))
       } else if (length(preds) >= 4) {
         p <- p + facet_grid(rows = vars(facet_row), cols = vars(facet_col),
           labeller = labeller(
-            facet_row = function(x) paste(ch2_labels_pl[[preds[3]]], x),
-            facet_col = function(x) paste(ch2_labels_pl[[preds[4]]], x)
+            facet_row = function(x) paste(ch3_labels_pl[[preds[3]]], x),
+            facet_col = function(x) paste(ch3_labels_pl[[preds[4]]], x)
           )
         )
       }
@@ -237,16 +237,16 @@ ch2_server <- function(input, output, session) {
     }
   })
 
-  output$ch2_scatter_model_info <- renderUI({
-    df <- ch2_data()
+  output$ch3_scatter_model_info <- renderUI({
+    df <- ch3_data()
     if (is.null(df)) return(NULL)
-    preds <- input$ch2_predictors
+    preds <- input$ch3_predictors
     if (length(preds) == 0) preds <- "godziny_nauki"
-    x_var <- ch2_labels_pl[[preds[1]]]
+    x_var <- ch3_labels_pl[[preds[1]]]
     layers <- c(paste("oś X:", x_var))
-    if (length(preds) >= 2) layers <- c(layers, paste("kolor:", ch2_labels_pl[[preds[2]]], "w 3 grupach"))
-    if (length(preds) >= 3) layers <- c(layers, paste("wiersze:", ch2_labels_pl[[preds[3]]], "w 3 grupach"))
-    if (length(preds) >= 4) layers <- c(layers, paste("kolumny:", ch2_labels_pl[[preds[4]]], "w 3 grupach"))
+    if (length(preds) >= 2) layers <- c(layers, paste("kolor:", ch3_labels_pl[[preds[2]]], "w 3 grupach"))
+    if (length(preds) >= 3) layers <- c(layers, paste("wiersze:", ch3_labels_pl[[preds[3]]], "w 3 grupach"))
+    if (length(preds) >= 4) layers <- c(layers, paste("kolumny:", ch3_labels_pl[[preds[4]]], "w 3 grupach"))
 
     lc_feedback(type = "info",
       p(tags$strong("Wizualizacja modelu: "), paste(layers, collapse = "; "),
@@ -254,13 +254,13 @@ ch2_server <- function(input, output, session) {
     )
   })
 
-  output$ch2_model_coefs <- renderUI({
-    model <- ch2_model()
+  output$ch3_model_coefs <- renderUI({
+    model <- ch3_model()
     if (is.null(model)) return(NULL)
 
     coefs <- broom::tidy(model)
 
-    labels_pl <- c("(Intercept)" = "Wyraz wolny", ch2_labels_pl)
+    labels_pl <- c("(Intercept)" = "Wyraz wolny", ch3_labels_pl)
 
     coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
                              labels_pl[coefs$term], coefs$term)
@@ -286,8 +286,8 @@ ch2_server <- function(input, output, session) {
     )
   })
 
-  output$ch2_coef_plot <- renderPlot({
-    model <- ch2_model()
+  output$ch3_coef_plot <- renderPlot({
+    model <- ch3_model()
     if (is.null(model)) return(NULL)
 
     coefs <- broom::tidy(model, conf.int = TRUE)
@@ -295,7 +295,7 @@ ch2_server <- function(input, output, session) {
 
     if (nrow(coefs) == 0) return(NULL)
 
-    labels_pl <- ch2_labels_pl
+    labels_pl <- ch3_labels_pl
     coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
                              labels_pl[coefs$term], coefs$term)
     coefs$significant <- coefs$p.value < 0.05
@@ -313,8 +313,8 @@ ch2_server <- function(input, output, session) {
       theme(legend.position = "top")
   })
 
-  output$ch2_model_stats <- renderUI({
-    model <- ch2_model()
+  output$ch3_model_stats <- renderUI({
+    model <- ch3_model()
     if (is.null(model)) return(NULL)
     metrics <- compute_model_metrics(model)
     tagList(
@@ -326,20 +326,20 @@ ch2_server <- function(input, output, session) {
   })
 
   # --- Widget: kontrola zmiennych ---
-  ch2_control_data <- reactiveVal(NULL)
-  ch2_control_step <- reactiveVal(0)
+  ch3_control_data <- reactiveVal(NULL)
+  ch3_control_step <- reactiveVal(0)
 
-  observeEvent(input$ch2_control_new, {
-    ch2_control_data(generate_confounding_data(160))
-    ch2_control_step(0)
+  observeEvent(input$ch3_control_new, {
+    ch3_control_data(generate_confounding_data(160))
+    ch3_control_step(0)
   })
-  observeEvent(input$ch2_control_step1, ch2_control_step(1))
-  observeEvent(input$ch2_control_step2, ch2_control_step(2))
-  observeEvent(input$ch2_control_step3, ch2_control_step(3))
+  observeEvent(input$ch3_control_step1, ch3_control_step(1))
+  observeEvent(input$ch3_control_step2, ch3_control_step(2))
+  observeEvent(input$ch3_control_step3, ch3_control_step(3))
 
-  output$ch2_control_plot <- renderPlot({
-    df <- ch2_control_data()
-    step <- ch2_control_step()
+  output$ch3_control_plot <- renderPlot({
+    df <- ch3_control_data()
+    step <- ch3_control_step()
     if (is.null(df) || step == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane', potem kroki",
@@ -374,9 +374,9 @@ ch2_server <- function(input, output, session) {
     }
   })
 
-  output$ch2_control_info <- renderUI({
-    df <- ch2_control_data()
-    step <- ch2_control_step()
+  output$ch3_control_info <- renderUI({
+    df <- ch3_control_data()
+    step <- ch3_control_step()
     if (is.null(df) || step == 0) return(NULL)
     m_freq <- lm(ocena ~ frekwencja, data = df)
     m_study <- lm(ocena ~ godziny_nauki, data = df)
@@ -412,9 +412,9 @@ ch2_server <- function(input, output, session) {
   })
 
   # --- Widget 2: Krok po kroku ---
-  ch2_step_data <- reactiveVal(NULL)
+  ch3_step_data <- reactiveVal(NULL)
 
-  observeEvent(input$ch2_stepwise, {
+  observeEvent(input$ch3_stepwise, {
     df <- generate_multi_data(150)
 
     pred_sets <- list(
@@ -439,11 +439,11 @@ ch2_server <- function(input, output, session) {
       )
     })
 
-    ch2_step_data(do.call(rbind, results))
+    ch3_step_data(do.call(rbind, results))
   })
 
-  output$ch2_step_plot <- renderPlot({
-    df <- ch2_step_data()
+  output$ch3_step_plot <- renderPlot({
+    df <- ch3_step_data()
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Buduj modele'",
@@ -469,8 +469,8 @@ ch2_server <- function(input, output, session) {
     }
   })
 
-  output$ch2_step_table <- renderUI({
-    df <- ch2_step_data()
+  output$ch3_step_table <- renderUI({
+    df <- ch3_step_data()
     if (is.null(df)) return(NULL)
 
     rows <- lapply(1:nrow(df), function(i) {
@@ -495,14 +495,14 @@ ch2_server <- function(input, output, session) {
   })
 
   # --- Widget: multikolinearnosc ---
-  ch2_collin_data <- reactiveVal(NULL)
+  ch3_collin_data <- reactiveVal(NULL)
 
-  observeEvent(input$ch2_collin_new, {
-    ch2_collin_data(generate_collinearity_data(140, input$ch2_collin_rho))
+  observeEvent(input$ch3_collin_new, {
+    ch3_collin_data(generate_collinearity_data(140, input$ch3_collin_rho))
   })
 
-  output$ch2_collin_plot <- renderPlot({
-    df <- ch2_collin_data()
+  output$ch3_collin_plot <- renderPlot({
+    df <- ch3_collin_data()
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i dopasuj'",
@@ -517,8 +517,8 @@ ch2_server <- function(input, output, session) {
     }
   })
 
-  output$ch2_collin_info <- renderUI({
-    df <- ch2_collin_data()
+  output$ch3_collin_info <- renderUI({
+    df <- ch3_collin_data()
     if (is.null(df)) return(NULL)
     model <- lm(y ~ x1 + x2, data = df)
     coefs <- broom::tidy(model)

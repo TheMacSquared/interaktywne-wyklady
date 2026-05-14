@@ -2,6 +2,25 @@
 # FUNKCJE POMOCNICZE - Regresja
 # ============================================================================
 
+# Wspólne dane CASchools: ~420 okręgów szkolnych w Kalifornii, lata 90.
+# Używane w ch1 (regresja prosta) i ch2 (jakość modelu).
+.cas_data <- read.csv(
+  file.path(project_root, "04-wnioskowanie-statystyczne", "dane", "caschools.csv"),
+  stringsAsFactors = FALSE
+)
+
+.cas_labels <- c(
+  students = "Liczba uczniów",
+  income = "Dochód okręgu (tys. USD)",
+  student_teacher_ratio = "Uczniowie / nauczyciel",
+  expenditure = "Wydatki na ucznia",
+  english = "Angielski jako drugi język (%)",
+  lunch = "Lunch subsydiowany (%)",
+  computer = "Komputery",
+  read = "Wynik: czytanie",
+  math = "Wynik: matematyka"
+)
+
 # Generowanie danych do regresji liniowej prostej
 generate_regression_data <- function(n = 100, beta0 = 10, beta1 = 2, sigma = 5,
                                       scenario = "custom") {

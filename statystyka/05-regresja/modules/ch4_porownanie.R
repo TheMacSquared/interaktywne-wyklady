@@ -182,9 +182,9 @@ ch4_ui <- list(
 
     lc_chapter_next(
       num       = "05",
-      title     = "Ściąga",
-      lead      = "podsumowanie wzorów i zasad",
-      target_id = "ch-sciaga"
+      title     = "Regresja logistyczna",
+      lead      = "gdy zmienna zależna jest binarna",
+      target_id = "ch-logistyczna"
     )
   )
 )

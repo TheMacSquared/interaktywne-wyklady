@@ -2,20 +2,8 @@
 # CHAPTER 1: Regresja liniowa prosta
 # ============================================================================
 
-.ch1_cas <- read.csv(file.path(project_root, "04-wnioskowanie-statystyczne", "dane", "caschools.csv"),
-                     stringsAsFactors = FALSE)
-
-.ch1_cas_labels <- c(
-  students = "Liczba uczniów",
-  income = "Dochód okręgu (tys. USD)",
-  student_teacher_ratio = "Uczniowie / nauczyciel",
-  expenditure = "Wydatki na ucznia",
-  english = "Angielski jako drugi język (%)",
-  lunch = "Lunch subsydiowany (%)",
-  computer = "Komputery",
-  read = "Wynik: czytanie",
-  math = "Wynik: matematyka"
-)
+# Dane CASchools są wczytywane w helpers.R jako .cas_data / .cas_labels
+# (wspólne dla ch1 i ch2).
 
 .ch1_pred_specs <- list(
   read_students = list(
@@ -432,17 +420,17 @@ ch1_ui <- list(
         nauczyliśmy się czytać tabelę regresji i przewidywać Y dla nowego X.
         Świadomie jednak pominęliśmy kilka rzeczy, do których wrócimy."),
       tags$ul(
-        tags$li(tags$strong("Założenia regresji: "),
-                "kiedy w ogóle wolno ufać prostej? Liniowość zależności,
-                 niezależność obserwacji, stałość wariancji reszt, ich rozkład —
-                 to temat rozdziału 2."),
+        tags$li(tags$strong("Co czyni model dobrym: "),
+                "kiedy wolno ufać prostej? Reszty zdradzają, czy model się
+                 nadaje; R² i RMSE mówią, ile wyjaśnia i jak duże robi
+                 pomyłki — to temat rozdziału 2."),
         tags$li(tags$strong("Wiele predyktorów: "),
                 "jak dołączyć drugą i trzecią zmienną X, kiedy STR ", tags$em("i"),
                 " wydatki ", tags$em("i"),
                 " dochód wpływają na wyniki naraz — rozdział 3."),
         tags$li(tags$strong("Porównywanie modeli: "),
-                "ile model wyjaśnia (R²), kiedy bogatszy model jest lepszy,
-                 a kiedy tylko przepasowany — rozdział 4.")
+                "kiedy bogatszy model jest lepszy, a kiedy tylko przepasowany —
+                 rozdział 4. Tam dochodzą R²adj, AIC, BIC i train/test.")
       ),
       p("Linia regresji jest w wykresach od ponad stu lat. Reszta tego wykładu
         pokaże, dlaczego mimo prostoty ciągle bywa nadużywana — i jak tego nie
@@ -451,9 +439,9 @@ ch1_ui <- list(
 
     lc_chapter_next(
       num       = "02",
-      title     = "Regresja wieloraka",
-      lead      = "wiele zmiennych objaśniających naraz",
-      target_id = "ch-wieloraka"
+      title     = "Co czyni model dobrym?",
+      lead      = "reszty, R², RMSE — diagnostyka pojedynczego modelu",
+      target_id = "ch-jakosc"
     )
   )
 )
@@ -1108,21 +1096,21 @@ ch1_server <- function(input, output, session) {
     req(input$ch1_cas_x, input$ch1_cas_y)
     validate(need(input$ch1_cas_x != input$ch1_cas_y, "Wybierz dwie różne zmienne."))
     form <- as.formula(paste(input$ch1_cas_y, "~", input$ch1_cas_x))
-    lm(form, data = .ch1_cas)
+    lm(form, data = .cas_data)
   })
 
   output$ch1_cas_plot <- renderPlot({
     req(input$ch1_cas_x, input$ch1_cas_y)
     validate(need(input$ch1_cas_x != input$ch1_cas_y, "Wybierz dwie różne zmienne."))
 
-    ggplot(.ch1_cas, aes(x = .data[[input$ch1_cas_x]], y = .data[[input$ch1_cas_y]])) +
+    ggplot(.cas_data, aes(x = .data[[input$ch1_cas_x]], y = .data[[input$ch1_cas_y]])) +
       geom_point(color = upwr_secondary, alpha = 0.45, size = 1.8) +
       geom_smooth(method = "lm", se = TRUE,
                   color = unname(upwr_cat["niebo"]),
                   fill = unname(upwr_cat["niebo"]), alpha = 0.15) +
       labs(
-        x = unname(.ch1_cas_labels[input$ch1_cas_x]),
-        y = unname(.ch1_cas_labels[input$ch1_cas_y])
+        x = unname(.cas_labels[input$ch1_cas_x]),
+        y = unname(.cas_labels[input$ch1_cas_y])
       ) +
       theme_upwr()
   })
@@ -1179,8 +1167,8 @@ ch1_server <- function(input, output, session) {
     coefs <- broom::tidy(model)
     p_val <- coefs$p.value[2]
     b1 <- coefs$estimate[2]
-    x_label <- unname(.ch1_cas_labels[input$ch1_cas_x])
-    y_label <- unname(.ch1_cas_labels[input$ch1_cas_y])
+    x_label <- unname(.cas_labels[input$ch1_cas_x])
+    y_label <- unname(.cas_labels[input$ch1_cas_y])
     relation <- if (b1 > 0) "dodatni" else "ujemny"
 
     if (p_val < 0.05) {
@@ -1204,8 +1192,8 @@ ch1_server <- function(input, output, session) {
 
     model <- ch1_cas_model()
     coefs <- broom::tidy(model)
-    x_label <- unname(.ch1_cas_labels[input$ch1_cas_x])
-    y_label <- unname(.ch1_cas_labels[input$ch1_cas_y])
+    x_label <- unname(.cas_labels[input$ch1_cas_x])
+    y_label <- unname(.cas_labels[input$ch1_cas_y])
 
     tagList(
       lc_stat_grid(
@@ -1234,7 +1222,7 @@ ch1_server <- function(input, output, session) {
   ch1_pred_model <- reactive({
     spec <- ch1_pred_spec()
     form <- as.formula(paste(spec$y, "~", spec$x))
-    lm(form, data = .ch1_cas)
+    lm(form, data = .cas_data)
   })
 
   observeEvent(input$ch1_pred_reveal, {
@@ -1248,7 +1236,7 @@ ch1_server <- function(input, output, session) {
 
   output$ch1_pred_x_input <- renderUI({
     spec <- ch1_pred_spec()
-    x_vals <- .ch1_cas[[spec$x]]
+    x_vals <- .cas_data[[spec$x]]
     numericInput(
       "ch1_pred_x",
       label = paste0("Wartość X (", spec$unit, "):"),
@@ -1301,14 +1289,14 @@ ch1_server <- function(input, output, session) {
     if (is.null(x0)) x0 <- spec$default
     y_hat <- unname(coefs[1] + coefs[2] * x0)
 
-    p <- ggplot(.ch1_cas, aes(x = .data[[spec$x]], y = .data[[spec$y]])) +
+    p <- ggplot(.cas_data, aes(x = .data[[spec$x]], y = .data[[spec$y]])) +
       geom_point(color = upwr_secondary, alpha = 0.42, size = 1.8) +
       geom_smooth(method = "lm", se = TRUE,
                   color = unname(upwr_cat["niebo"]),
                   fill = unname(upwr_cat["niebo"]), alpha = 0.15) +
       labs(
-        x = unname(.ch1_cas_labels[spec$x]),
-        y = unname(.ch1_cas_labels[spec$y])
+        x = unname(.cas_labels[spec$x]),
+        y = unname(.cas_labels[spec$y])
       ) +
       theme_upwr()
 
@@ -1343,8 +1331,8 @@ ch1_server <- function(input, output, session) {
     coefs <- coef(ch1_pred_model())
     x0 <- input$ch1_pred_x
     y_hat <- unname(coefs[1] + coefs[2] * x0)
-    x_label <- unname(.ch1_cas_labels[spec$x])
-    y_label <- unname(.ch1_cas_labels[spec$y])
+    x_label <- unname(.cas_labels[spec$x])
+    y_label <- unname(.cas_labels[spec$y])
 
     tagList(
       lc_feedback(type = "ok", style = "margin-top: 12px;",
@@ -1371,9 +1359,9 @@ ch1_server <- function(input, output, session) {
     lc_stat_grid(
       lc_stat_box("b₀", round(coefs[1], 2), color = upwr_secondary),
       lc_stat_box("b₁", round(coefs[2], 3), color = unname(upwr_cat["szalwia"])),
-      lc_stat_box("X", round(x0, 2), caption = unname(.ch1_cas_labels[spec$x]),
+      lc_stat_box("X", round(x0, 2), caption = unname(.cas_labels[spec$x]),
                   color = unname(upwr_cat["bursztyn"])),
-      lc_stat_box("Ŷ", round(y_hat, 2), caption = unname(.ch1_cas_labels[spec$y]),
+      lc_stat_box("Ŷ", round(y_hat, 2), caption = unname(.cas_labels[spec$y]),
                   color = unname(upwr_cat["terakota"])),
       columns = 4
     )

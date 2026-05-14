@@ -1,22 +1,22 @@
 # ============================================================================
-# CHAPTER 3: Regresja logistyczna
+# CHAPTER 5: Regresja logistyczna
 # ============================================================================
 
-ch3_ui <- list(
+ch5_ui <- list(
   id    = "ch-logistyczna",
-  num   = "03",
+  num   = "05",
   title = "Regresja logistyczna",
   content = tagList(
 
     lc_chapter_hero(
-      kicker = "Rozdział 03 · Regresja",
-      num    = "03",
+      kicker = "Rozdział 05 · Regresja",
+      num   = "05",
       title  = "Regresja logistyczna.",
       lead   = "Regresja liniowa wymaga ciągłej zmiennej zależnej.
                 A co, gdy Y to 0 lub 1 (sukces/porażka)?"
     ),
 
-    lc_h2("ch3-dlaczego", "Dlaczego nie regresja liniowa?"),
+    lc_h2("ch5-dlaczego", "Dlaczego nie regresja liniowa?"),
 
     tagList(
       p("Gdy zmienna zależna jest ", tags$b("binarna"),
@@ -32,29 +32,29 @@ ch3_ui <- list(
       )
     ),
 
-    lc_h2("ch3-krzywa", "Krzywa logistyczna"),
+    lc_h2("ch5-krzywa", "Krzywa logistyczna"),
 
     figure_panel(
       label = "Ryc. 3.1", title = "Sigmoida w akcji",
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch3_b0", "β₀ (intercept):",
+          sliderInput("ch5_b0", "β₀ (intercept):",
                       min = -10, max = 10, value = -4, step = 0.5),
-          sliderInput("ch3_b1", "β₁ (slope):",
+          sliderInput("ch5_b1", "β₁ (slope):",
                       min = -3, max = 3, value = 0.2, step = 0.05),
           hr(),
           div(class = "preset-buttons",
-            actionButton("ch3_preset_steep", "Stromy",
+            actionButton("ch5_preset_steep", "Stromy",
                          class = "lc-btn-outline"),
-            actionButton("ch3_preset_flat", "Płaski",
+            actionButton("ch5_preset_flat", "Płaski",
                          class = "lc-btn-secondary-outline"),
-            actionButton("ch3_preset_neg", "Odwrotny",
+            actionButton("ch5_preset_neg", "Odwrotny",
                          class = "lc-btn-danger-outline")
           )
         ),
         column(8,
-          plotOutput("ch3_sigmoid_plot", height = "350px")
+          plotOutput("ch5_sigmoid_plot", height = "350px")
         )
       )
     ),
@@ -64,31 +64,31 @@ ch3_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch3_logit_x", "X (np. godziny nauki):",
+          sliderInput("ch5_logit_x", "X (np. godziny nauki):",
                       min = 0, max = 40, value = 20, step = 1),
-          sliderInput("ch3_logit_b0", "β₀:",
+          sliderInput("ch5_logit_b0", "β₀:",
                       min = -8, max = 4, value = -4, step = 0.5),
-          sliderInput("ch3_logit_b1", "β₁:",
+          sliderInput("ch5_logit_b1", "β₁:",
                       min = -0.2, max = 0.5, value = 0.16, step = 0.02),
-          sliderInput("ch3_logit_threshold", "Próg decyzji:",
+          sliderInput("ch5_logit_threshold", "Próg decyzji:",
                       min = 0.1, max = 0.9, value = 0.5, step = 0.05),
           hr(),
           h5("Kroki:"),
-          actionButton("ch3_logit_step1", "1. Policz η",
+          actionButton("ch5_logit_step1", "1. Policz η",
                        class = "lc-btn-outline", width = "100%"),
-          actionButton("ch3_logit_step2", "2. Zamień na p",
+          actionButton("ch5_logit_step2", "2. Zamień na p",
                        class = "lc-btn-outline", width = "100%"),
-          actionButton("ch3_logit_step3", "3. Podejmij decyzję",
+          actionButton("ch5_logit_step3", "3. Podejmij decyzję",
                        class = "lc-btn-outline", width = "100%")
         ),
         column(8,
-          plotOutput("ch3_logit_step_plot", height = "320px"),
-          uiOutput("ch3_logit_step_info")
+          plotOutput("ch5_logit_step_plot", height = "320px"),
+          uiOutput("ch5_logit_step_info")
         )
       )
     ),
 
-    lc_h2("ch3-model-dane", "Model logistyczny na danych"),
+    lc_h2("ch5-model-dane", "Model logistyczny na danych"),
 
     tagList(
       p("Scenariusz: czy student zda egzamin? Predyktory: godziny nauki
@@ -100,30 +100,30 @@ ch3_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch3_n", "n:", min = 50, max = 300, value = 150, step = 25),
-          selectInput("ch3_predictor", "Prezentowany predyktor:",
+          sliderInput("ch5_n", "n:", min = 50, max = 300, value = 150, step = 25),
+          selectInput("ch5_predictor", "Prezentowany predyktor:",
             choices = c(
               "Godziny nauki" = "godziny_nauki",
               "Średnia ocen"  = "srednia_ocen"
             ),
             selected = "godziny_nauki"
           ),
-          actionButton("ch3_fit", "Dopasuj model",
+          actionButton("ch5_fit", "Dopasuj model",
                        class = "lc-btn-primary", width = "100%"),
           hr(),
           h5("Predykcja dla nowego studenta:"),
-          numericInput("ch3_pred_hours", "Godziny nauki:", value = 20, min = 0, max = 40),
-          numericInput("ch3_pred_gpa", "Średnia ocen:", value = 3.5, min = 2, max = 5, step = 0.1),
-          uiOutput("ch3_prediction")
+          numericInput("ch5_pred_hours", "Godziny nauki:", value = 20, min = 0, max = 40),
+          numericInput("ch5_pred_gpa", "Średnia ocen:", value = 3.5, min = 2, max = 5, step = 0.1),
+          uiOutput("ch5_prediction")
         ),
         column(8,
-          plotOutput("ch3_logit_plot", height = "350px"),
-          uiOutput("ch3_model_summary")
+          plotOutput("ch5_logit_plot", height = "350px"),
+          uiOutput("ch5_model_summary")
         )
       )
     ),
 
-    lc_h2("ch3-iloraz-szans", "Interpretacja: iloraz szans"),
+    lc_h2("ch5-iloraz-szans", "Interpretacja: iloraz szans"),
 
     tagList(
       p("W regresji logistycznej współczynniki interpretujemy przez ",
@@ -139,7 +139,7 @@ ch3_ui <- list(
       label = "Ryc. 3.3", title = "Odds ratio",
       full_width = TRUE,
       helpText("Używa modelu dopasowanego powyżej."),
-      uiOutput("ch3_odds_ratios")
+      uiOutput("ch5_odds_ratios")
     ),
 
     figure_panel(
@@ -148,12 +148,12 @@ ch3_ui <- list(
       fluidRow(
         column(4,
           helpText("Używa modelu dopasowanego w Ryc. 3.2."),
-          sliderInput("ch3_threshold", "Próg decyzji:",
+          sliderInput("ch5_threshold", "Próg decyzji:",
                       min = 0.1, max = 0.9, value = 0.5, step = 0.05)
         ),
         column(8,
-          plotOutput("ch3_threshold_plot", height = "280px"),
-          uiOutput("ch3_threshold_info")
+          plotOutput("ch5_threshold_plot", height = "280px"),
+          uiOutput("ch5_threshold_info")
         )
       )
     ),
@@ -165,10 +165,10 @@ ch3_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "04",
-      title     = "Porównanie modeli",
-      lead      = "jak porównać modele i wybrać najlepszy",
-      target_id = "ch-porownanie"
+      num       = "06",
+      title     = "Ściąga",
+      lead      = "podsumowanie wzorów i zasad",
+      target_id = "ch-sciaga"
     )
   )
 )
@@ -177,25 +177,25 @@ ch3_ui <- list(
 # SERVER
 # ============================================================================
 
-ch3_server <- function(input, output, session) {
+ch5_server <- function(input, output, session) {
 
   # --- Widget 1: Sigmoida ---
-  observeEvent(input$ch3_preset_steep, {
-    updateSliderInput(session, "ch3_b0", value = -5)
-    updateSliderInput(session, "ch3_b1", value = 0.5)
+  observeEvent(input$ch5_preset_steep, {
+    updateSliderInput(session, "ch5_b0", value = -5)
+    updateSliderInput(session, "ch5_b1", value = 0.5)
   })
-  observeEvent(input$ch3_preset_flat, {
-    updateSliderInput(session, "ch3_b0", value = -1)
-    updateSliderInput(session, "ch3_b1", value = 0.05)
+  observeEvent(input$ch5_preset_flat, {
+    updateSliderInput(session, "ch5_b0", value = -1)
+    updateSliderInput(session, "ch5_b1", value = 0.05)
   })
-  observeEvent(input$ch3_preset_neg, {
-    updateSliderInput(session, "ch3_b0", value = 5)
-    updateSliderInput(session, "ch3_b1", value = -0.3)
+  observeEvent(input$ch5_preset_neg, {
+    updateSliderInput(session, "ch5_b0", value = 5)
+    updateSliderInput(session, "ch5_b1", value = -0.3)
   })
 
-  output$ch3_sigmoid_plot <- renderPlot({
-    b0 <- input$ch3_b0
-    b1 <- input$ch3_b1
+  output$ch5_sigmoid_plot <- renderPlot({
+    b0 <- input$ch5_b0
+    b1 <- input$ch5_b1
     x <- seq(-5, 45, length.out = 500)
     p <- 1 / (1 + exp(-(b0 + b1 * x)))
 
@@ -209,24 +209,24 @@ ch3_server <- function(input, output, session) {
   })
 
   # --- Widget: logit krok po kroku ---
-  ch3_logit_step <- reactiveVal(0)
-  observeEvent(input$ch3_logit_step1, ch3_logit_step(1))
-  observeEvent(input$ch3_logit_step2, ch3_logit_step(2))
-  observeEvent(input$ch3_logit_step3, ch3_logit_step(3))
+  ch5_logit_step <- reactiveVal(0)
+  observeEvent(input$ch5_logit_step1, ch5_logit_step(1))
+  observeEvent(input$ch5_logit_step2, ch5_logit_step(2))
+  observeEvent(input$ch5_logit_step3, ch5_logit_step(3))
 
-  output$ch3_logit_step_plot <- renderPlot({
+  output$ch5_logit_step_plot <- renderPlot({
     x <- seq(0, 40, length.out = 300)
-    eta <- input$ch3_logit_b0 + input$ch3_logit_b1 * x
+    eta <- input$ch5_logit_b0 + input$ch5_logit_b1 * x
     p <- 1 / (1 + exp(-eta))
-    x0 <- input$ch3_logit_x
-    eta0 <- input$ch3_logit_b0 + input$ch3_logit_b1 * x0
+    x0 <- input$ch5_logit_x
+    eta0 <- input$ch5_logit_b0 + input$ch5_logit_b1 * x0
     p0 <- 1 / (1 + exp(-eta0))
-    step <- ch3_logit_step()
+    step <- ch5_logit_step()
 
     df <- data.frame(x = x, p = p)
     plot <- ggplot(df, aes(x = x, y = p)) +
       geom_line(color = unname(upwr_cat["wrzos"]), linewidth = 1.4) +
-      geom_hline(yintercept = input$ch3_logit_threshold, linetype = "dashed",
+      geom_hline(yintercept = input$ch5_logit_threshold, linetype = "dashed",
                  color = unname(upwr_cat["bursztyn"])) +
       labs(x = "X", y = "P(Y = 1)") +
       ylim(0, 1) +
@@ -241,42 +241,42 @@ ch3_server <- function(input, output, session) {
     plot
   })
 
-  output$ch3_logit_step_info <- renderUI({
-    step <- ch3_logit_step()
+  output$ch5_logit_step_info <- renderUI({
+    step <- ch5_logit_step()
     if (step == 0) return(NULL)
-    eta <- input$ch3_logit_b0 + input$ch3_logit_b1 * input$ch3_logit_x
+    eta <- input$ch5_logit_b0 + input$ch5_logit_b1 * input$ch5_logit_x
     prob <- 1 / (1 + exp(-eta))
-    decision <- if (prob >= input$ch3_logit_threshold) "klasa 1" else "klasa 0"
+    decision <- if (prob >= input$ch5_logit_threshold) "klasa 1" else "klasa 0"
     tagList(
       if (step >= 1) lc_stat_box("η", round(eta, 3), caption = "β₀ + β₁X", color = unname(upwr_cat["niebo"])),
       if (step >= 2) lc_stat_box("p", round(prob, 3), caption = "sigmoid(η)", color = unname(upwr_cat["wrzos"])),
-      if (step >= 3) lc_stat_box("Decyzja", decision, caption = paste("próg", input$ch3_logit_threshold), color = if (prob >= input$ch3_logit_threshold) unname(upwr_cat["szalwia"]) else unname(upwr_cat["terakota"])),
+      if (step >= 3) lc_stat_box("Decyzja", decision, caption = paste("próg", input$ch5_logit_threshold), color = if (prob >= input$ch5_logit_threshold) unname(upwr_cat["szalwia"]) else unname(upwr_cat["terakota"])),
       if (step >= 3) lc_feedback(type = "info", p("Regresja logistyczna najpierw zwraca prawdopodobieństwo. Klasa 0/1 pojawia się dopiero po wybraniu progu."))
     )
   })
 
   # --- Widget 2: Model logistyczny ---
-  ch3_data <- reactiveVal(NULL)
-  ch3_model <- reactiveVal(NULL)
+  ch5_data <- reactiveVal(NULL)
+  ch5_model <- reactiveVal(NULL)
 
-  observeEvent(input$ch3_fit, {
-    df <- generate_logistic_data(input$ch3_n)
-    ch3_data(df)
+  observeEvent(input$ch5_fit, {
+    df <- generate_logistic_data(input$ch5_n)
+    ch5_data(df)
     model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
                  data = df, family = binomial)
-    ch3_model(model)
+    ch5_model(model)
   })
 
-  output$ch3_logit_plot <- renderPlot({
-    df <- ch3_data()
-    model <- ch3_model()
+  output$ch5_logit_plot <- renderPlot({
+    df <- ch5_data()
+    model <- ch5_model()
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Dopasuj model'",
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {
-      pred_var <- input$ch3_predictor
+      pred_var <- input$ch5_predictor
       pred_label <- if (pred_var == "godziny_nauki") "Godziny nauki" else "Średnia ocen"
 
       # Predykcja dla wykresu (trzymajac drugi predyktor na sredniej)
@@ -301,15 +301,15 @@ ch3_server <- function(input, output, session) {
     }
   })
 
-  output$ch3_model_summary <- renderUI({
-    model <- ch3_model()
+  output$ch5_model_summary <- renderUI({
+    model <- ch5_model()
     if (is.null(model)) return(NULL)
 
     g <- broom::glance(model)
     coefs <- broom::tidy(model)
 
     # Confusion matrix
-    df <- ch3_data()
+    df <- ch5_data()
     pred_class <- ifelse(predict(model, type = "response") >= 0.5, 1, 0)
     accuracy <- mean(pred_class == df$zdal_num) * 100
 
@@ -320,13 +320,13 @@ ch3_server <- function(input, output, session) {
     )
   })
 
-  output$ch3_prediction <- renderUI({
-    model <- ch3_model()
+  output$ch5_prediction <- renderUI({
+    model <- ch5_model()
     if (is.null(model)) return(NULL)
 
     newdata <- data.frame(
-      godziny_nauki = input$ch3_pred_hours,
-      srednia_ocen = input$ch3_pred_gpa
+      godziny_nauki = input$ch5_pred_hours,
+      srednia_ocen = input$ch5_pred_gpa
     )
     prob <- predict(model, newdata, type = "response")
 
@@ -337,8 +337,8 @@ ch3_server <- function(input, output, session) {
   })
 
   # --- Widget 3: Odds ratios ---
-  output$ch3_odds_ratios <- renderUI({
-    model <- ch3_model()
+  output$ch5_odds_ratios <- renderUI({
+    model <- ch5_model()
     if (is.null(model)) {
       return(lc_feedback(type = "warning", "Najpierw dopasuj model."))
     }
@@ -386,9 +386,9 @@ ch3_server <- function(input, output, session) {
   })
 
   # --- Widget: prog klasyfikacji ---
-  output$ch3_threshold_plot <- renderPlot({
-    model <- ch3_model()
-    df <- ch3_data()
+  output$ch5_threshold_plot <- renderPlot({
+    model <- ch5_model()
+    df <- ch5_data()
     if (is.null(model) || is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Najpierw dopasuj model w Ryc. 3.2",
@@ -396,7 +396,7 @@ ch3_server <- function(input, output, session) {
         theme_void()
     } else {
       probs <- predict(model, type = "response")
-      pred <- ifelse(probs >= input$ch3_threshold, 1, 0)
+      pred <- ifelse(probs >= input$ch5_threshold, 1, 0)
       cm <- as.data.frame(table(
         Rzeczywiste = factor(df$zdal_num, levels = c(0, 1), labels = c("Nie", "Tak")),
         Predykcja = factor(pred, levels = c(0, 1), labels = c("Nie", "Tak"))
@@ -411,12 +411,12 @@ ch3_server <- function(input, output, session) {
     }
   })
 
-  output$ch3_threshold_info <- renderUI({
-    model <- ch3_model()
-    df <- ch3_data()
+  output$ch5_threshold_info <- renderUI({
+    model <- ch5_model()
+    df <- ch5_data()
     if (is.null(model) || is.null(df)) return(NULL)
     probs <- predict(model, type = "response")
-    pred <- ifelse(probs >= input$ch3_threshold, 1, 0)
+    pred <- ifelse(probs >= input$ch5_threshold, 1, 0)
     tp <- sum(pred == 1 & df$zdal_num == 1)
     tn <- sum(pred == 0 & df$zdal_num == 0)
     fp <- sum(pred == 1 & df$zdal_num == 0)

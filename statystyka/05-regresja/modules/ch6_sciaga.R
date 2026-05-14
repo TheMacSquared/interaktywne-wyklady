@@ -1,22 +1,22 @@
 # ============================================================================
-# CHAPTER 5: Sciaga - podsumowanie regresji
+# CHAPTER 6: Sciaga - podsumowanie regresji
 # ============================================================================
 
-ch5_ui <- list(
+ch6_ui <- list(
   id    = "ch-sciaga",
-  num   = "05",
+  num   = "06",
   title = "Ściąga",
   content = tagList(
 
     lc_chapter_hero(
-      kicker = "Rozdział 05 · Regresja",
-      num    = "05",
+      kicker = "Rozdział 06 · Regresja",
+      num   = "06",
       title  = "Ściąga.",
       lead   = "Kompaktowe podsumowanie regresji liniowej, wielorakiej
                 i logistycznej."
     ),
 
-    lc_h2("ch5-trzy-typy", "Trzy typy regresji"),
+    lc_h2("ch6-trzy-typy", "Trzy typy regresji"),
 
     tagList(
 
@@ -43,7 +43,7 @@ ch5_ui <- list(
 
     ),
 
-    lc_h2("ch5-metryki", "Metryki porównawcze"),
+    lc_h2("ch6-metryki", "Metryki porównawcze"),
 
     tagList(
 
@@ -88,7 +88,7 @@ ch5_ui <- list(
 
     ),
 
-    lc_h2("ch5-interpretacja", "Interpretacja współczynników"),
+    lc_h2("ch6-interpretacja", "Interpretacja współczynników"),
 
     tagList(
 
@@ -107,7 +107,7 @@ ch5_ui <- list(
 
     ),
 
-    lc_h2("ch5-kiedy", "Kiedy która regresja?"),
+    lc_h2("ch6-kiedy", "Kiedy która regresja?"),
 
     tagList(
 
@@ -128,7 +128,7 @@ ch5_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          selectInput("ch5_tree_y", "Jaka jest zmienna zależna Y?",
+          selectInput("ch6_tree_y", "Jaka jest zmienna zależna Y?",
             choices = c(
               "Ilościowa / ciągła" = "continuous",
               "Binarna 0/1" = "binary",
@@ -136,25 +136,25 @@ ch5_ui <- list(
               "Porządkowa" = "ordinal"
             )
           ),
-          selectInput("ch5_tree_x", "Ile predyktorów?",
+          selectInput("ch6_tree_x", "Ile predyktorów?",
             choices = c("Jeden" = "one", "Wiele" = "many")
           ),
-          selectInput("ch5_tree_goal", "Główny cel:",
+          selectInput("ch6_tree_goal", "Główny cel:",
             choices = c(
               "Interpretacja efektów" = "explain",
               "Predykcja nowych obserwacji" = "predict"
             )
           ),
-          checkboxInput("ch5_tree_nonlinear", "Podejrzewam nieliniowość / przeuczenie", value = FALSE)
+          checkboxInput("ch6_tree_nonlinear", "Podejrzewam nieliniowość / przeuczenie", value = FALSE)
         ),
         column(8,
-          plotOutput("ch5_tree_plot", height = "310px"),
-          uiOutput("ch5_tree_info")
+          plotOutput("ch6_tree_plot", height = "310px"),
+          uiOutput("ch6_tree_info")
         )
       )
     ),
 
-    lc_h2("ch5-funkcje-r", "Funkcje R"),
+    lc_h2("ch6-funkcje-r", "Funkcje R"),
 
     tagList(
 
@@ -188,7 +188,7 @@ predict(model_log, newdata = ..., type = 'response')  # prawdopodobienstwa"
 
     ),
 
-    lc_h2("ch5-pulapki", "Typowe pułapki"),
+    lc_h2("ch6-pulapki", "Typowe pułapki"),
 
     tagList(
 
@@ -205,13 +205,13 @@ predict(model_log, newdata = ..., type = 'response')  # prawdopodobienstwa"
   )
 )
 
-ch5_server <- function(input, output, session) {
+ch6_server <- function(input, output, session) {
 
-  ch5_tree_result <- reactive({
-    y <- input$ch5_tree_y
-    x <- input$ch5_tree_x
-    goal <- input$ch5_tree_goal
-    nonlinear <- isTRUE(input$ch5_tree_nonlinear)
+  ch6_tree_result <- reactive({
+    y <- input$ch6_tree_y
+    x <- input$ch6_tree_x
+    goal <- input$ch6_tree_goal
+    nonlinear <- isTRUE(input$ch6_tree_nonlinear)
 
     if (y == "continuous" && x == "one") {
       model <- "Regresja liniowa prosta"
@@ -245,8 +245,8 @@ ch5_server <- function(input, output, session) {
     list(model = model, formula = formula, note = note)
   })
 
-  output$ch5_tree_plot <- renderPlot({
-    res <- ch5_tree_result()
+  output$ch6_tree_plot <- renderPlot({
+    res <- ch6_tree_result()
     nodes <- data.frame(
       id = 1:5,
       label = c("Y?", "Ilościowa", "Binarna", "Inna", res$model),
@@ -254,12 +254,12 @@ ch5_server <- function(input, output, session) {
       y = c(3, 2, 2, 2, 0.7)
     )
     edges <- data.frame(
-      x = c(0, 0, 0, nodes$x[if (input$ch5_tree_y == "continuous") 2 else if (input$ch5_tree_y == "binary") 3 else 4]),
+      x = c(0, 0, 0, nodes$x[if (input$ch6_tree_y == "continuous") 2 else if (input$ch6_tree_y == "binary") 3 else 4]),
       y = c(3, 3, 3, 2),
       xend = c(-1.8, 0, 1.8, 0),
       yend = c(2, 2, 2, 0.7)
     )
-    active_branch <- if (input$ch5_tree_y == "continuous") 2 else if (input$ch5_tree_y == "binary") 3 else 4
+    active_branch <- if (input$ch6_tree_y == "continuous") 2 else if (input$ch6_tree_y == "binary") 3 else 4
     nodes$active <- nodes$id %in% c(1, active_branch, 5)
 
     ggplot() +
@@ -275,8 +275,8 @@ ch5_server <- function(input, output, session) {
       theme(legend.position = "none")
   })
 
-  output$ch5_tree_info <- renderUI({
-    res <- ch5_tree_result()
+  output$ch6_tree_info <- renderUI({
+    res <- ch6_tree_result()
     tagList(
       lc_stat_box("Rekomendacja", res$model, color = upwr_secondary),
       lc_formula_box(tags$code(res$formula)),
