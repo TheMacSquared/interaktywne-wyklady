@@ -2,6 +2,20 @@
 # CHAPTER 1: Regresja liniowa prosta
 # ============================================================================
 
+.ch1_cas <- read.csv(file.path(project_root, "04-wnioskowanie-statystyczne", "dane", "caschools.csv"),
+                     stringsAsFactors = FALSE)
+
+.ch1_cas_labels <- c(
+  income = "Dochód okręgu (tys. USD)",
+  student_teacher_ratio = "Uczniowie / nauczyciel",
+  expenditure = "Wydatki na ucznia",
+  english = "Angielski jako drugi język (%)",
+  lunch = "Lunch subsydiowany (%)",
+  computer = "Komputery",
+  read = "Wynik: czytanie",
+  math = "Wynik: matematyka"
+)
+
 ch1_ui <- list(
   id    = "ch-liniowa",
   num   = "01",
@@ -48,32 +62,32 @@ ch1_ui <- list(
       )
     ),
 
-    lc_h2("ch1-dopasowanie", "Dopasowanie linii regresji"),
+    lc_h2("ch1-korelacja-regresja", "Regresja z korelacji"),
 
     figure_panel(
-      label = "Ryc. 1.1", title = "Regresja liniowa prosta",
+      label = "Ryc. 1.1", title = "Jak policzyć regresję z korelacji?",
       full_width = TRUE,
       fluidRow(
         column(4,
-          selectInput("ch1_scenario", "Scenariusz:",
-            choices = c(
-              "Wzrost vs waga"      = "height_weight",
-              "Nauka vs oceny"      = "study_grade",
-              "Temperatura vs lody" = "temp_icecream"
-            ),
-            selected = "height_weight"
-          ),
-          sliderInput("ch1_n", "Wielkość próby (n):",
-                      min = 20, max = 200, value = 80, step = 10),
-          actionButton("ch1_gen", "Generuj dane i dopasuj",
+          helpText("Dla jednej zmiennej X i jednej Y nachylenie regresji można policzyć bez optymalizacji: z korelacji i odchyleń standardowych."),
+          actionButton("ch1_corr_new", "Nowa próba",
                        class = "lc-btn-primary", width = "100%"),
           hr(),
-          checkboxInput("ch1_show_residuals", "Pokaż reszty", value = FALSE),
-          checkboxInput("ch1_show_ci", "Pokaż pasmo ufności", value = TRUE)
+          h5("Kroki:"),
+          actionButton("ch1_corr_step1", "1. Średnie X i Y",
+                       class = "lc-btn-outline", width = "100%"),
+          actionButton("ch1_corr_step2", "2. Odchylenia standardowe",
+                       class = "lc-btn-outline", width = "100%"),
+          actionButton("ch1_corr_step3", "3. Korelacja r",
+                       class = "lc-btn-outline", width = "100%"),
+          actionButton("ch1_corr_step4", "4. Nachylenie b₁",
+                       class = "lc-btn-outline", width = "100%"),
+          actionButton("ch1_corr_step5", "5. Wyraz wolny b₀",
+                       class = "lc-btn-outline", width = "100%")
         ),
         column(8,
-          plotOutput("ch1_scatter", height = "380px"),
-          uiOutput("ch1_model_summary")
+          plotOutput("ch1_corr_plot", height = "360px"),
+          uiOutput("ch1_corr_info")
         )
       )
     ),
@@ -110,24 +124,6 @@ ch1_ui <- list(
       )
     ),
 
-    lc_h2("ch1-reszty", "Reszty (residuals)"),
-
-    tagList(
-      p("Reszta to różnica między wartością zaobserwowaną a przewidywaną:"),
-      lc_formula_box(
-        withMathJax(helpText("$$e_i = y_i - \\hat{y}_i$$"))
-      ),
-      p("Dobry model ma reszty ", tags$strong("małe"), ", ",
-        tags$strong("losowe"), " i ", tags$strong("bez wzorca"), ".")
-    ),
-
-    figure_panel(
-      label = "Ryc. 1.2", title = "Analiza reszt",
-      full_width = TRUE,
-      helpText("Używa danych z widgetu powyżej."),
-      plotOutput("ch1_resid_plots", height = "300px")
-    ),
-
     lc_h2("ch1-r2", "R² — ile model wyjaśnia?"),
 
     tagList(
@@ -140,70 +136,44 @@ ch1_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 1.3", title = "Wizualizacja R²",
+      label = "Ryc. 1.3", title = "To samo X i Y, różna siła wyjaśniania",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          sliderInput("ch1_r2_noise", "Szum (σ):",
-                      min = 0.5, max = 20, value = 5, step = 0.5),
-          sliderInput("ch1_r2_slope", "Nachylenie (β₁):",
-                      min = 0, max = 5, value = 2, step = 0.25),
-          actionButton("ch1_r2_gen", "Generuj",
-                       class = "lc-btn-primary", width = "100%")
-        ),
-        column(8,
-          plotOutput("ch1_r2_plot", height = "300px"),
-          uiOutput("ch1_r2_stats")
-        )
-      )
+      helpText("Trzy stałe przykłady: niskie, średnie i wysokie R². Im ciaśniej punkty leżą przy linii, tym większa część zmienności Y jest wyjaśniona przez X."),
+      plotOutput("ch1_r2_compare_plot", height = "360px")
     ),
 
+    lc_h2("ch1-caschool", "Regresja na danych CASchools"),
+
     figure_panel(
-      label = "Ryc. 1.4", title = "R² jako SST, SSE i SSR",
+      label = "Ryc. 1.4", title = "Wybierz X i Y, dopasuj prostą",
       full_width = TRUE,
       fluidRow(
         column(4,
-          helpText("Rozbijamy zmienność Y na część wyjaśnioną i niewyjaśnioną."),
-          actionButton("ch1_r2_parts_new", "Nowe dane",
-                       class = "lc-btn-primary", width = "100%"),
-          hr(),
-          h5("Warstwa:"),
-          actionButton("ch1_r2_part1", "1. Całkowita zmienność",
-                       class = "lc-btn-outline", width = "100%"),
-          actionButton("ch1_r2_part2", "2. Model i reszty",
-                       class = "lc-btn-outline", width = "100%"),
-          actionButton("ch1_r2_part3", "3. R²",
-                       class = "lc-btn-outline", width = "100%")
-        ),
-        column(8,
-          plotOutput("ch1_r2_parts_plot", height = "330px"),
-          uiOutput("ch1_r2_parts_info")
-        )
-      )
-    ),
-
-    lc_h2("ch1-zalozenia", "Diagnostyka założeń"),
-
-    figure_panel(
-      label = "Ryc. 1.5", title = "Co może pójść nie tak?",
-      full_width = TRUE,
-      fluidRow(
-        column(4,
-          selectInput("ch1_assumption_scenario", "Scenariusz:",
+          selectInput("ch1_cas_x", "Zmienna X:",
             choices = c(
-              "Model liniowy OK" = "good",
-              "Nieliniowość" = "nonlinear",
-              "Niejednorodna wariancja" = "hetero",
-              "Punkt odstający" = "outlier",
-              "Ciężkie ogony reszt" = "nonnormal"
-            )
+              "Dochód okręgu (income)" = "income",
+              "Uczniowie na nauczyciela (STR)" = "student_teacher_ratio",
+              "Wydatki na ucznia (expenditure)" = "expenditure",
+              "Udział uczniów z angielskim jako drugim językiem (english)" = "english",
+              "Udział lunch subsydiowany (lunch)" = "lunch",
+              "Komputery" = "computer"
+            ),
+            selected = "income"
           ),
-          actionButton("ch1_assumption_new", "Generuj i diagnozuj",
-                       class = "lc-btn-warning", width = "100%")
+          selectInput("ch1_cas_y", "Zmienna Y:",
+            choices = c(
+              "Czytanie (read)" = "read",
+              "Matematyka (math)" = "math",
+              "Dochód okręgu (income)" = "income",
+              "Wydatki na ucznia (expenditure)" = "expenditure",
+              "Uczniowie na nauczyciela (STR)" = "student_teacher_ratio"
+            ),
+            selected = "read"
+          )
         ),
         column(8,
-          plotOutput("ch1_assumption_plot", height = "360px"),
-          uiOutput("ch1_assumption_info")
+          plotOutput("ch1_cas_plot", height = "360px"),
+          uiOutput("ch1_cas_summary")
         )
       )
     ),
@@ -258,69 +228,182 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 1: Regresja prosta ---
-  ch1_data <- reactiveVal(NULL)
-  ch1_model <- reactiveVal(NULL)
+  # --- Widget: regresja z korelacji ---
+  ch1_corr_data <- reactiveVal(generate_regression_data(n = 65, beta0 = 8, beta1 = 1.6, sigma = 4))
+  ch1_corr_step <- reactiveVal(0)
 
-  observeEvent(input$ch1_gen, {
-    df <- generate_regression_data(n = input$ch1_n, scenario = input$ch1_scenario)
-    ch1_data(df)
-    model <- lm(y ~ x, data = df)
-    ch1_model(model)
+  observeEvent(input$ch1_corr_new, {
+    ch1_corr_data(generate_regression_data(n = 65, beta0 = 8, beta1 = 1.6, sigma = 4))
+    ch1_corr_step(0)
   })
+  observeEvent(input$ch1_corr_step1, ch1_corr_step(1))
+  observeEvent(input$ch1_corr_step2, ch1_corr_step(2))
+  observeEvent(input$ch1_corr_step3, ch1_corr_step(3))
+  observeEvent(input$ch1_corr_step4, ch1_corr_step(4))
+  observeEvent(input$ch1_corr_step5, ch1_corr_step(5))
 
-  output$ch1_scatter <- renderPlot({
-    df <- ch1_data()
-    model <- ch1_model()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane i dopasuj'",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      df$fitted <- fitted(model)
-      df$resid <- residuals(model)
+  output$ch1_corr_plot <- renderPlot({
+    df <- ch1_corr_data()
+    step <- ch1_corr_step()
+    x_bar <- mean(df$x)
+    y_bar <- mean(df$y)
+    r <- cor(df$x, df$y)
+    b1 <- r * sd(df$y) / sd(df$x)
+    b0 <- y_bar - b1 * x_bar
+    slope_x0 <- x_bar + 0.4
+    slope_x1 <- slope_x0 + 1
+    slope_y0 <- b0 + b1 * slope_x0
+    slope_y1 <- b0 + b1 * slope_x1
+    slope_y_mid <- (slope_y0 + slope_y1) / 2
+    slope_y_pad <- max(1.8, abs(b1) * 1.4)
 
-      p <- ggplot(df, aes(x = x, y = y)) +
-        geom_point(color = upwr_secondary, alpha = 0.5, size = 2)
+    p <- ggplot(df, aes(x = x, y = y)) +
+      geom_point(color = upwr_secondary,
+                 alpha = if (step == 4) 0.24 else 0.55,
+                 size = if (step == 4) 1.8 else 2.2) +
+      labs(x = "X", y = "Y") +
+      theme_upwr()
 
-      if (input$ch1_show_residuals) {
-        p <- p + geom_segment(aes(xend = x, yend = fitted),
-                              color = unname(upwr_cat["terakota"]), alpha = 0.3)
-      }
-
-      if (input$ch1_show_ci) {
-        p <- p + geom_smooth(method = "lm", se = TRUE,
-                             color = unname(upwr_cat["niebo"]), fill = unname(upwr_cat["niebo"]), alpha = 0.15)
-      } else {
-        p <- p + geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]))
-      }
-
-      p + labs(
-               x = df$x_label[1], y = df$y_label[1]) +
-        theme_upwr()
+    if (step >= 1 && !(step %in% c(4, 5))) {
+      p <- p +
+        geom_vline(xintercept = x_bar, linetype = "dashed",
+                   color = unname(upwr_cat["bursztyn"]), linewidth = 0.9) +
+        geom_hline(yintercept = y_bar, linetype = "dashed",
+                   color = unname(upwr_cat["bursztyn"]), linewidth = 0.9)
     }
+    if (step == 2) {
+      p <- p +
+        geom_segment(aes(xend = x_bar, yend = y),
+                     color = unname(upwr_cat["niebo"]),
+                     linetype = "dashed", alpha = 0.35, linewidth = 0.5) +
+        geom_segment(aes(xend = x, yend = y_bar),
+                     color = unname(upwr_cat["terakota"]),
+                     linetype = "dashed", alpha = 0.35, linewidth = 0.5) +
+        annotate("text", x = x_bar, y = max(df$y),
+                 label = "odchylenia X", hjust = -0.05, vjust = 1,
+                 color = unname(upwr_cat["niebo"]), fontface = "bold") +
+        annotate("text", x = min(df$x), y = y_bar,
+                 label = "odchylenia Y", hjust = 0, vjust = -0.7,
+                 color = unname(upwr_cat["terakota"]), fontface = "bold")
+    }
+    if (step == 3) {
+      p <- p + geom_abline(intercept = b0, slope = b1,
+                           color = unname(upwr_cat["niebo"]), linewidth = 1.3)
+    }
+    if (step == 4) {
+      p <- p +
+        geom_abline(intercept = b0, slope = b1,
+                    color = unname(upwr_cat["niebo"]), linewidth = 1.8) +
+        geom_segment(aes(x = slope_x0, xend = slope_x1,
+                         y = slope_y0, yend = slope_y0),
+                     inherit.aes = FALSE,
+                     color = unname(upwr_cat["bursztyn"]),
+                     linewidth = 1.2,
+                     arrow = arrow(length = grid::unit(0.12, "inches"))) +
+        geom_segment(aes(x = slope_x1, xend = slope_x1,
+                         y = slope_y0, yend = slope_y1),
+                     inherit.aes = FALSE,
+                     color = unname(upwr_cat["terakota"]),
+                     linewidth = 1.2,
+                     arrow = arrow(length = grid::unit(0.12, "inches"))) +
+        geom_point(
+          data = data.frame(
+            x = c(slope_x0, slope_x1, slope_x1),
+            y = c(slope_y0, slope_y0, slope_y1)
+          ),
+          aes(x = x, y = y),
+          inherit.aes = FALSE,
+          color = upwr_secondary,
+          fill = "white",
+          shape = 21,
+          stroke = 1.1,
+          size = 3.2
+        ) +
+        annotate("text", x = (slope_x0 + slope_x1) / 2, y = slope_y0,
+                 label = "ΔX = 1", vjust = 1.6,
+                 color = unname(upwr_cat["bursztyn"]), fontface = "bold") +
+        annotate("text", x = slope_x1, y = (slope_y0 + slope_y1) / 2,
+                 label = paste0("ΔY = b₁ = ", round(b1, 2)),
+                 hjust = -0.08,
+                 color = unname(upwr_cat["terakota"]), fontface = "bold") +
+        coord_cartesian(
+          xlim = c(slope_x0 - 1.1, slope_x1 + 1.45),
+          ylim = c(slope_y_mid - slope_y_pad, slope_y_mid + slope_y_pad)
+        )
+    }
+    if (step == 5) {
+      p <- p +
+        geom_abline(intercept = 0, slope = b1,
+                    color = unname(upwr_cat["bursztyn"]),
+                    linewidth = 1.2, linetype = "longdash") +
+        geom_abline(intercept = b0, slope = b1,
+                    color = unname(upwr_cat["niebo"]), linewidth = 1.5) +
+        geom_segment(aes(x = 0, xend = 0,
+                         y = 0, yend = b0),
+                     inherit.aes = FALSE,
+                     color = unname(upwr_cat["terakota"]),
+                     linewidth = 1.2,
+                     arrow = arrow(length = grid::unit(0.12, "inches"),
+                                   ends = "both")) +
+        geom_point(
+          data = data.frame(x = 0, y = c(0, b0)),
+          aes(x = x, y = y),
+          inherit.aes = FALSE,
+          color = upwr_secondary,
+          fill = "white",
+          shape = 21,
+          stroke = 1.1,
+          size = 3
+        ) +
+        annotate("text", x = min(df$x), y = b1 * min(df$x),
+                 label = "b[0] == 0", parse = TRUE,
+                 hjust = 0, vjust = -0.6,
+                 color = unname(upwr_cat["bursztyn"]), fontface = "bold") +
+        annotate("text", x = 0.15, y = b0 / 2,
+                 label = paste0("b[0] == ", round(b0, 2)), parse = TRUE,
+                 hjust = 0,
+                 color = unname(upwr_cat["terakota"]), fontface = "bold")
+    }
+    if (step == 0) {
+      p <- p + annotate("text", x = mean(df$x), y = mean(df$y),
+                        label = "Klikaj kroki po lewej", color = upwr_reference, size = 5)
+    }
+    p
   })
 
-  output$ch1_model_summary <- renderUI({
-    model <- ch1_model()
-    if (is.null(model)) return(NULL)
+  output$ch1_corr_info <- renderUI({
+    df <- ch1_corr_data()
+    step <- ch1_corr_step()
+    if (step == 0) return(NULL)
 
-    s <- summary(model)
-    coefs <- broom::tidy(model)
-    g <- broom::glance(model)
+    x_bar <- mean(df$x)
+    y_bar <- mean(df$y)
+    sx <- sd(df$x)
+    sy <- sd(df$y)
+    r <- cor(df$x, df$y)
+    b1 <- r * sy / sx
+    b0 <- y_bar - b1 * x_bar
 
     tagList(
-      lc_stat_box("R²", round(g$r.squared, 3), color = unname(upwr_cat["niebo"])),
-      lc_stat_box("β₀", round(coefs$estimate[1], 2), color = upwr_secondary),
-      lc_stat_box("β₁", round(coefs$estimate[2], 3), color = unname(upwr_cat["szalwia"])),
-      lc_stat_box("RMSE", round(sqrt(mean(residuals(model)^2)), 2),
-                  color = unname(upwr_cat["terakota"])),
-      lc_feedback(type = "info", style = "margin-top: 10px;",
-        p(tags$strong("Interpretacja:"),
-          paste0(" Gdy ", ch1_data()$x_label[1], " wzrasta o 1, ",
-                 ch1_data()$y_label[1], " zmienia się średnio o ",
-                 round(coefs$estimate[2], 3), "."))
+      lc_stat_grid(
+        if (step >= 1) lc_stat_box("x̄", round(x_bar, 2), color = unname(upwr_cat["bursztyn"])),
+        if (step >= 1) lc_stat_box("ȳ", round(y_bar, 2), color = unname(upwr_cat["bursztyn"])),
+        if (step >= 2) lc_stat_box("sX", round(sx, 2), color = upwr_secondary),
+        if (step >= 2) lc_stat_box("sY", round(sy, 2), color = upwr_secondary),
+        if (step >= 3) lc_stat_box("r", round(r, 3), color = unname(upwr_cat["szalwia"])),
+        columns = if (step >= 3) 5 else 4
+      ),
+      if (step >= 4) lc_formula_box(
+        withMathJax(helpText(sprintf("$$b_1 = r \\cdot \\frac{s_Y}{s_X} = %.3f \\cdot \\frac{%.2f}{%.2f} = %.3f$$",
+                                     r, sy, sx, b1)))
+      ),
+      if (step >= 5) lc_formula_box(
+        withMathJax(helpText(sprintf("$$b_0 = \\bar{y} - b_1\\bar{x} = %.2f - %.3f \\cdot %.2f = %.2f$$",
+                                     y_bar, b1, x_bar, b0))),
+        withMathJax(helpText(sprintf("$$\\hat{Y} = %.2f + %.3fX$$", b0, b1)))
+      ),
+      if (step >= 5) lc_feedback(type = "info",
+        p("To jest ta sama prosta, którą zwraca klasyczna regresja liniowa dla jednego predyktora. Korelacja ustala kierunek i siłę związku, a iloraz odchyleń standardowych przelicza ją na jednostki X i Y.")
       )
     )
   })
@@ -402,10 +485,13 @@ ch1_server <- function(input, output, session) {
     alt_sse <- sum((df$y - (alt_b0 + alt_b1 * df$x))^2)
     if (step == 6) {
       return(tagList(
-        lc_stat_box("SSE OLS", round(sse, 1), color = unname(upwr_cat["niebo"])),
-        lc_stat_box("SSE innej prostej", round(alt_sse, 1),
-                    caption = paste0("+", round((alt_sse / sse - 1) * 100, 1), "%"),
-                    color = unname(upwr_cat["bursztyn"])),
+        lc_stat_grid(
+          lc_stat_box("SSE OLS", round(sse, 1), color = unname(upwr_cat["niebo"])),
+          lc_stat_box("SSE innej prostej", round(alt_sse, 1),
+                      caption = paste0("+", round((alt_sse / sse - 1) * 100, 1), "%"),
+                      color = unname(upwr_cat["bursztyn"])),
+          columns = 2
+        ),
         lc_feedback(type = "warning",
           p("Ta przerywana linia też jest prostym modelem regresyjnym: dla każdego X daje przewidywane Ŷ. Nie jest jednak linią OLS, bo ma większą sumę kwadratów reszt. OLS wygrywa nie dlatego, że jest jedyną prostą, tylko dlatego, że minimalizuje SSE.")
         )
@@ -423,194 +509,85 @@ ch1_server <- function(input, output, session) {
     lc_feedback(type = "info", p(info))
   })
 
-  # --- Widget 2: Wykresy reszt ---
-  output$ch1_resid_plots <- renderPlot({
-    model <- ch1_model()
-    if (is.null(model)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Najpierw dopasuj model",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      df <- data.frame(
-        fitted = fitted(model),
-        residuals = residuals(model),
-        std_resid = rstandard(model)
-      )
-
-      p1 <- ggplot(df, aes(x = fitted, y = residuals)) +
-        geom_hline(yintercept = 0, linetype = "dashed", color = upwr_secondary) +
-        geom_point(color = unname(upwr_cat["terakota"]), alpha = 0.5) +
-        geom_smooth(se = FALSE, color = unname(upwr_cat["niebo"]), linewidth = 0.8) +
-        labs(x = "Wartości dopasowane",
-             y = "Reszty") +
-        theme_upwr()
-
-      p2 <- ggplot(df, aes(sample = std_resid)) +
-        stat_qq(color = upwr_secondary, alpha = 0.5) +
-        stat_qq_line(color = unname(upwr_cat["niebo"])) +
-        labs(x = "Kwantyle teoretyczne",
-             y = "Kwantyle próbkowe") +
-        theme_upwr()
-
-      gridExtra::grid.arrange(p1, p2, ncol = 2)
+  # --- R2: trzy statyczne przykłady ---
+  output$ch1_r2_compare_plot <- renderPlot({
+    set.seed(103)
+    make_panel <- function(label, sigma) {
+      x <- seq(-3, 3, length.out = 70)
+      y <- 10 + 2.2 * x + rnorm(length(x), 0, sigma)
+      data.frame(wariant = label, x = x, y = y)
     }
-  })
-
-  # --- Widget 3: R-kwadrat ---
-  ch1_r2_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch1_r2_gen, {
-    df <- generate_regression_data(
-      n = 100, beta0 = 10, beta1 = input$ch1_r2_slope,
-      sigma = input$ch1_r2_noise
+    df <- rbind(
+      make_panel("Niskie R²", 12.0),
+      make_panel("Średnie R²", 4.0),
+      make_panel("Wysokie R²", 0.9)
     )
-    ch1_r2_data(df)
-  })
 
-  output$ch1_r2_plot <- renderPlot({
-    df <- ch1_r2_data()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj'",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      ggplot(df, aes(x = x, y = y)) +
-        geom_point(color = upwr_secondary, alpha = 0.5) +
-        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-        labs(
-             x = "X", y = "Y") +
-        theme_upwr()
-    }
-  })
+    r2_levels <- c("Niskie R²", "Średnie R²", "Wysokie R²")
+    stats <- df %>%
+      group_by(wariant) %>%
+      summarise(r2 = summary(lm(y ~ x))$r.squared, .groups = "drop")
+    df$wariant <- factor(df$wariant, levels = r2_levels)
+    stats$wariant <- factor(stats$wariant, levels = r2_levels)
 
-  output$ch1_r2_stats <- renderUI({
-    df <- ch1_r2_data()
-    if (is.null(df)) return(NULL)
-    model <- lm(y ~ x, data = df)
-    r2 <- summary(model)$r.squared
-    tagList(
-      lc_stat_box("R²", round(r2, 3), color = unname(upwr_cat["niebo"])),
-      lc_stat_box("Wyjaśnione", round(r2 * 100, 1), "%",
-                  caption = "zmienności",
-                  color = upwr_secondary)
-    )
-  })
-
-  # --- Widget: R2 decomposition ---
-  ch1_r2_parts_data <- reactiveVal(generate_regression_data(n = 55, beta0 = 8, beta1 = 1.7, sigma = 4))
-  ch1_r2_parts_step <- reactiveVal(0)
-
-  observeEvent(input$ch1_r2_parts_new, {
-    ch1_r2_parts_data(generate_regression_data(n = 55, beta0 = 8, beta1 = 1.7, sigma = 4))
-    ch1_r2_parts_step(0)
-  })
-  observeEvent(input$ch1_r2_part1, ch1_r2_parts_step(1))
-  observeEvent(input$ch1_r2_part2, ch1_r2_parts_step(2))
-  observeEvent(input$ch1_r2_part3, ch1_r2_parts_step(3))
-
-  output$ch1_r2_parts_plot <- renderPlot({
-    df <- ch1_r2_parts_data()
-    step <- ch1_r2_parts_step()
-    model <- lm(y ~ x, data = df)
-    df$fitted <- fitted(model)
-    mean_y <- mean(df$y)
-
-    p <- ggplot(df, aes(x = x, y = y)) +
-      geom_point(color = upwr_secondary, alpha = 0.55) +
+    ggplot(df, aes(x = x, y = y)) +
+      geom_point(color = upwr_secondary, alpha = 0.5, size = 1.9) +
+      geom_smooth(method = "lm", se = FALSE,
+                  color = unname(upwr_cat["niebo"]), linewidth = 1.1) +
+      geom_text(
+        data = stats,
+        aes(x = -2.8, y = Inf, label = paste0("R² = ", round(r2, 2))),
+        inherit.aes = FALSE, hjust = 0, vjust = 1.6,
+        color = upwr_secondary, fontface = "bold"
+      ) +
+      facet_wrap(~ wariant, nrow = 1) +
       labs(x = "X", y = "Y") +
       theme_upwr()
-    if (step >= 1) {
-      p <- p +
-        geom_hline(yintercept = mean_y, color = unname(upwr_cat["bursztyn"]),
-                   linetype = "dashed") +
-        geom_segment(aes(xend = x, yend = mean_y),
-                     color = unname(upwr_cat["bursztyn"]), alpha = 0.25)
-    }
-    if (step >= 2) {
-      p <- p +
-        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]),
-                    linewidth = 1.2) +
-        geom_segment(aes(xend = x, yend = fitted),
-                     color = unname(upwr_cat["terakota"]), alpha = 0.35)
-    }
-    if (step == 0) {
-      p <- p + annotate("text", x = mean(df$x), y = mean(df$y),
-                        label = "Kliknij warstwę po lewej", color = upwr_reference, size = 5)
-    }
-    p
   })
 
-  output$ch1_r2_parts_info <- renderUI({
-    df <- ch1_r2_parts_data()
-    step <- ch1_r2_parts_step()
-    if (step == 0) return(NULL)
-    model <- lm(y ~ x, data = df)
-    sst <- sum((df$y - mean(df$y))^2)
-    sse <- sum(residuals(model)^2)
-    ssr <- sst - sse
-    r2 <- 1 - sse / sst
+  # --- CASchools: regresja z dropdownow ---
+  output$ch1_cas_plot <- renderPlot({
+    req(input$ch1_cas_x, input$ch1_cas_y)
+    validate(need(input$ch1_cas_x != input$ch1_cas_y, "Wybierz dwie różne zmienne."))
+
+    ggplot(.ch1_cas, aes(x = .data[[input$ch1_cas_x]], y = .data[[input$ch1_cas_y]])) +
+      geom_point(color = upwr_secondary, alpha = 0.45, size = 1.8) +
+      geom_smooth(method = "lm", se = TRUE,
+                  color = unname(upwr_cat["niebo"]),
+                  fill = unname(upwr_cat["niebo"]), alpha = 0.15) +
+      labs(
+        x = unname(.ch1_cas_labels[input$ch1_cas_x]),
+        y = unname(.ch1_cas_labels[input$ch1_cas_y])
+      ) +
+      theme_upwr()
+  })
+
+  output$ch1_cas_summary <- renderUI({
+    req(input$ch1_cas_x, input$ch1_cas_y)
+    if (input$ch1_cas_x == input$ch1_cas_y) {
+      return(lc_feedback(type = "warning", p("Wybierz dwie różne zmienne.")))
+    }
+
+    form <- as.formula(paste(input$ch1_cas_y, "~", input$ch1_cas_x))
+    model <- lm(form, data = .ch1_cas)
+    coefs <- broom::tidy(model)
+    g <- broom::glance(model)
+    x_label <- unname(.ch1_cas_labels[input$ch1_cas_x])
+    y_label <- unname(.ch1_cas_labels[input$ch1_cas_y])
+
     tagList(
-      lc_stat_box("SST", round(sst, 1), caption = "całkowita zmienność", color = unname(upwr_cat["bursztyn"])),
-      if (step >= 2) lc_stat_box("SSE", round(sse, 1), caption = "niewyjaśnione", color = unname(upwr_cat["terakota"])),
-      if (step >= 3) lc_stat_box("SSR", round(ssr, 1), caption = "wyjaśnione", color = unname(upwr_cat["niebo"])),
-      if (step >= 3) lc_stat_box("R²", round(r2, 3), caption = "SSR / SST", color = unname(upwr_cat["szalwia"]))
-    )
-  })
-
-  # --- Widget: diagnostics ---
-  ch1_assumption_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch1_assumption_new, {
-    ch1_assumption_data(generate_assumption_data(120, input$ch1_assumption_scenario))
-  })
-
-  output$ch1_assumption_plot <- renderPlot({
-    df <- ch1_assumption_data()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i diagnozuj'",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      model <- lm(y ~ x, data = df)
-      diag <- data.frame(
-        x = df$x,
-        y = df$y,
-        fitted = fitted(model),
-        residuals = residuals(model),
-        std_resid = rstandard(model)
+      lc_stat_grid(
+        lc_stat_box("b₀", round(coefs$estimate[1], 2), color = upwr_secondary),
+        lc_stat_box("b₁", round(coefs$estimate[2], 3), color = unname(upwr_cat["szalwia"])),
+        lc_stat_box("R²", round(g$r.squared, 3), color = unname(upwr_cat["niebo"])),
+        lc_stat_box("p dla b₁", signif(coefs$p.value[2], 3), color = unname(upwr_cat["bursztyn"])),
+        columns = 4
+      ),
+      lc_feedback(type = "info", style = "margin-top: 10px;",
+        p(tags$strong("Interpretacja: "),
+          paste0("gdy ", x_label, " rośnie o 1, przewidywane ", y_label,
+                 " zmienia się średnio o ", round(coefs$estimate[2], 3), "."))
       )
-      p1 <- ggplot(diag, aes(x = x, y = y)) +
-        geom_point(color = upwr_secondary, alpha = 0.5) +
-        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"])) +
-        labs(x = "X", y = "Y") +
-        theme_upwr()
-      p2 <- ggplot(diag, aes(x = fitted, y = residuals)) +
-        geom_hline(yintercept = 0, linetype = "dashed", color = upwr_secondary) +
-        geom_point(color = unname(upwr_cat["terakota"]), alpha = 0.5) +
-        geom_smooth(se = FALSE, color = unname(upwr_cat["niebo"]), linewidth = 0.8) +
-        labs(x = "Dopasowane", y = "Reszty") +
-        theme_upwr()
-      p3 <- ggplot(diag, aes(sample = std_resid)) +
-        stat_qq(color = upwr_secondary, alpha = 0.5) +
-        stat_qq_line(color = unname(upwr_cat["niebo"])) +
-        labs(x = "Kwantyle teoret.", y = "Kwantyle próby") +
-        theme_upwr()
-      gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
-    }
-  })
-
-  output$ch1_assumption_info <- renderUI({
-    scenario <- input$ch1_assumption_scenario
-    msg <- switch(scenario,
-      "good" = "Brak wyraźnego wzorca w resztach: model liniowy jest rozsądnym opisem danych.",
-      "nonlinear" = "Reszty układają się łukiem: prosta nie łapie krzywizny związku.",
-      "hetero" = "Rozrzut reszt rośnie wraz z predykcją: wariancja błędu nie jest stała.",
-      "outlier" = "Pojedyncza obserwacja mocno ciągnie linię i może zmienić wnioski.",
-      "nonnormal" = "QQ-plot odchyla się na końcach: reszty mają ciężkie ogony."
     )
-    lc_feedback(type = if (scenario == "good") "ok" else "warning", p(msg))
   })
 }
