@@ -161,7 +161,7 @@ ch1_ui <- list(
           helpText("Przeczytaj tabelę współczynników. Potem kliknij na wykresie dwa punkty, które wyznaczają prostą regresji."),
           uiOutput("ch1_draw_table"),
           actionButton("ch1_draw_reset", "Wyczyść punkty",
-                       class = "lc-btn-outline", width = "100%"),
+                       class = "lc-btn-secondary-outline", width = "100%"),
           actionButton("ch1_draw_reveal", "Pokaż odpowiedź",
                        class = "lc-btn-ok", width = "100%"),
           actionButton("ch1_draw_new", "Nowe ćwiczenie",

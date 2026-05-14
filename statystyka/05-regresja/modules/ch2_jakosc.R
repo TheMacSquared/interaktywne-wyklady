@@ -494,11 +494,10 @@ ch2_server <- function(input, output, session) {
       geom_smooth(method = "lm", se = FALSE,
                   color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
       geom_ribbon(
-        data = data.frame(
-          x = sort(df$x),
-          ymin = sort(df$fitted) - rmse,
-          ymax = sort(df$fitted) + rmse
-        ),
+        data = local({
+          ord <- order(df$x)
+          data.frame(x = df$x[ord], ymin = df$fitted[ord] - rmse, ymax = df$fitted[ord] + rmse)
+        }),
         aes(x = x, ymin = ymin, ymax = ymax),
         inherit.aes = FALSE,
         fill = unname(upwr_cat["bursztyn"]), alpha = 0.18
