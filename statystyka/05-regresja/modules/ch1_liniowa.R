@@ -462,8 +462,8 @@ ch1_server <- function(input, output, session) {
     ggplot(df, aes(x = x, y = y)) +
       geom_point(color = upwr_secondary, alpha = 0.45) +
       geom_line(aes(y = y_true), color = unname(upwr_cat["niebo"]), linewidth = 1.3) +
-      geom_segment(aes(x = 0, xend = 0, y = 0, yend = input$ch1_beta_b0),
-                   color = unname(upwr_cat["bursztyn"]), linewidth = 1.1) +
+      annotate("segment", x = 0, xend = 0, y = 0, yend = input$ch1_beta_b0,
+               color = unname(upwr_cat["bursztyn"]), linewidth = 1.1) +
       annotate("text", x = 0.6, y = input$ch1_beta_b0,
                label = paste0("β₀ = ", input$ch1_beta_b0),
                hjust = 0, color = unname(upwr_cat["bursztyn"]), fontface = "bold") +
