@@ -51,10 +51,34 @@ ch4_ui <- list(
       p("gdzie L = wiarygodność, k = liczba parametrów, n = liczba obserwacji")
     ),
 
+    lc_h2("ch4-r2", "R² — ile model wyjaśnia?"),
+
+    tagList(
+      p("Współczynnik determinacji ", withMathJax("\\(R^2\\)"),
+        " mówi, jaki odsetek zmienności Y jest wyjaśniony przez model."),
+      lc_formula_box(
+        withMathJax(helpText("$$R^2 = 1 - \\frac{SS_{res}}{SS_{tot}} = 1 - \\frac{\\sum(y_i - \\hat{y}_i)^2}{\\sum(y_i - \\bar{y})^2}$$"))
+      ),
+      p("Zakres [0, 1]: 0 = model nic nie wyjaśnia, 1 = idealne dopasowanie.")
+    ),
+
+    figure_panel(
+      label = "Ryc. 4.1", title = "To samo X i Y, różna siła wyjaśniania",
+      full_width = TRUE,
+      helpText("Trzy stałe przykłady: niskie, średnie i wysokie R². Im ciaśniej punkty leżą przy linii, tym większa część zmienności Y jest wyjaśniona przez X."),
+      plotOutput("ch4_r2_compare_plot", height = "360px")
+    ),
+
+    inline_callout(label = "Uwaga", color = "uwaga",
+      "Wysokie R² nie oznacza, że model jest „dobry” — może być przeuczony.
+       Niskie R² nie oznacza, że model jest bezwartościowy — w naukach
+       społecznych R² = 0.3 jest często bardzo dobre."
+    ),
+
     lc_h2("ch4-arena", "Arena modeli liniowych"),
 
     figure_panel(
-      label = "Ryc. 4.1", title = "Porównanie modeli regresji",
+      label = "Ryc. 4.2", title = "Porównanie modeli regresji",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -86,7 +110,7 @@ ch4_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.2", title = "Liniowy vs logistyczny (dane binarne)",
+      label = "Ryc. 4.3", title = "Liniowy vs logistyczny (dane binarne)",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -115,7 +139,7 @@ ch4_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.3", title = "Wielomian: dopasowanie vs generalizacja",
+      label = "Ryc. 4.4", title = "Wielomian: dopasowanie vs generalizacja",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -134,7 +158,7 @@ ch4_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.4", title = "Train/test: kiedy model przestaje generalizować",
+      label = "Ryc. 4.5", title = "Train/test: kiedy model przestaje generalizować",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -170,6 +194,41 @@ ch4_ui <- list(
 # ============================================================================
 
 ch4_server <- function(input, output, session) {
+
+  output$ch4_r2_compare_plot <- renderPlot({
+    set.seed(103)
+    make_panel <- function(label, sigma) {
+      x <- seq(-3, 3, length.out = 70)
+      y <- 10 + 2.2 * x + rnorm(length(x), 0, sigma)
+      data.frame(wariant = label, x = x, y = y)
+    }
+    df <- rbind(
+      make_panel("Niskie R²", 12.0),
+      make_panel("Średnie R²", 4.0),
+      make_panel("Wysokie R²", 0.9)
+    )
+
+    r2_levels <- c("Niskie R²", "Średnie R²", "Wysokie R²")
+    stats <- df %>%
+      group_by(wariant) %>%
+      summarise(r2 = summary(lm(y ~ x))$r.squared, .groups = "drop")
+    df$wariant <- factor(df$wariant, levels = r2_levels)
+    stats$wariant <- factor(stats$wariant, levels = r2_levels)
+
+    ggplot(df, aes(x = x, y = y)) +
+      geom_point(color = upwr_secondary, alpha = 0.5, size = 1.9) +
+      geom_smooth(method = "lm", se = FALSE,
+                  color = unname(upwr_cat["niebo"]), linewidth = 1.1) +
+      geom_text(
+        data = stats,
+        aes(x = -2.8, y = Inf, label = paste0("R² = ", round(r2, 2))),
+        inherit.aes = FALSE, hjust = 0, vjust = 1.6,
+        color = upwr_secondary, fontface = "bold"
+      ) +
+      facet_wrap(~ wariant, nrow = 1) +
+      labs(x = "X", y = "Y") +
+      theme_upwr()
+  })
 
   # --- Widget 1: Porownanie modeli liniowych ---
   ch4_models <- reactiveVal(NULL)
