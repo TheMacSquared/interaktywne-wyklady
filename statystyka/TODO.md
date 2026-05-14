@@ -23,6 +23,69 @@ Powiązane pliki:
 
 ## Wykład: regresja
 
+### Rozbudowa ch2 „Co czyni model dobrym?" do pełnej diagnostyki
+
+Obecny ch2 jest w wersji MVP: wzorzec reszt + R² + RMSE. Świadomie pominięto
+dwie dalsze diagnostyki, które naturalnie do tego rozdziału pasują:
+
+- **Q-Q plot reszt** — czy reszty są w przybliżeniu normalne (sygnalizuje,
+  czy testy istotności współczynników są wiarygodne, czy nie). Pasowałby
+  obok reszt vs fitted: scatter X-Y + reszty vs fitted + Q-Q jako trójpanel.
+- **Outliery wpływowe (odległość Cooka)** — które pojedyncze obserwacje
+  ciągną linię na siebie. Widget mógłby pokazywać scatter z wyróżnionymi
+  punktami o wysokiej Cook's distance i opcją „usuń te punkty i przelicz".
+
+Po dodaniu tych dwóch ch2 byłby pełnym wprowadzeniem do diagnostyki modelu
+liniowego — wciąż dla pojedynczego modelu, wciąż bez porównań.
+
+Powiązane pliki:
+- [05-regresja/modules/ch2_jakosc.R](05-regresja/modules/ch2_jakosc.R) — obecny MVP
+- [05-regresja/modules/helpers.R](05-regresja/modules/helpers.R) — `generate_assumption_data()` ma już 5 scenariuszy, można wykorzystać
+
+### Hero rozdziałów regresji — przekształcić `lead` w pytanie-hook
+
+Wykład o wnioskowaniu statystycznym (ch1, ch4, ch6) otwiera każdy rozdział
+konkretnym pytaniem („Czy wraz ze wzrostem temperatury rośnie sprzedaż lodów?").
+W rozdziałach regresji `lead` to obecnie stwierdzenia („Korelacja mówiła,
+czy dwie zmienne są powiązane. Regresja idzie dalej..."). Stwierdzenia
+informują, pytania zaczepiają. Warto przejrzeć 6 hero i przeformułować
+ledy w pytania, gdzie to naturalne.
+
+Powiązane pliki:
+- [05-regresja/modules/ch1_liniowa.R](05-regresja/modules/ch1_liniowa.R) i kolejne ch2-ch6
+
+### Sekcja „Pułapki regresji" — nowy rozdział lub dodatek do istniejących
+
+W wykładzie o korelacji (ch6 ch4_korelacja) jest świetna sekcja „Pułapki
+korelacji" (kwartet Anscombe'a, korelacja pozorna, Simpson, nieliniowość,
+outlier). W regresji analog brzmiałby:
+
+- kwartet Anscombe'a dla regresji (4 zbiory z tym samym b₀, b₁, R², ale
+  zupełnie różnymi wzorcami reszt — silny argument za diagnostyką),
+- outliery wpływowe (pokrywa się z Cookiem powyżej),
+- spurious regression (regresja na pozornie powiązanych zmiennych),
+- ekstrapolacja (decyzja świadomie odrzucona w ch1; może wrócić).
+
+Mógłby być osobnym rozdziałem (po porównaniu modeli, przed logistyczną)
+albo dodatkiem do ch2 jakości.
+
+### Mini-widget reszt vs fitted już istnieje w ch2 — patrz wyżej
+
+To samo, co było pierwszą sugestią z mojej strony, ale po reorganizacji
+wszedł naturalnie do nowego ch2. Pozostawione tu jako notatka, że temat
+jest zaadresowany.
+
+### Quiz interpretacji b₁ w jednostkach
+
+W ch1 sekcja CASchools pokazuje, jak czytać tabelę regresji. Można dodać
+prosty quiz: dane („read ~ income", b₁ = 1.88), pytanie „Co to znaczy
+dla okręgu, którego dochód rośnie o 1 tys. USD?", odpowiedzi wielokrotnego
+wyboru z dystraktorami (mylące jednostki, mylące skale). Aktywizuje
+umiejętność czytania jednostek, którą w ch1 wprowadzamy ale słabo trenujemy.
+
+Powiązane pliki:
+- [05-regresja/modules/ch1_liniowa.R](05-regresja/modules/ch1_liniowa.R) — sekcja `ch1-caschool`
+
 ### Regresja do średniej — mini-widget
 
 W wykładzie o korelacji (`wnioskowanie-statystyczne/modules/ch4_korelacja.R`,
@@ -83,6 +146,24 @@ odstępstwem w tym module.
 
 Powiązane pliki:
 - [zalozenia-testow/modules/ch1_normalnosc.R](zalozenia-testow/modules/ch1_normalnosc.R)
+
+---
+
+## Infrastruktura: fullscreen jako globalny pattern
+
+W `05-regresja/modules/ch3_wieloraka.R` w widgecie `ch3-budowanie` ("Predykcja
+średniej ocen") dodany został przycisk fullscreen na wykresie scatter.
+Implementacja jest lokalna: CSS + JS są w `tags$head` wewnątrz `ch3_ui`,
+klasa `.lc-plot-fullscreen-wrap` używa natywnego HTML5 Fullscreen API.
+
+Jeśli okaże się przydatne w innych widgetach, najczyściej wynieść:
+- CSS → [R/shared_styles.css](R/shared_styles.css)
+- JS → [R/shared_toc.js](R/shared_toc.js) (lub osobny `shared_fullscreen.js`)
+- helper `lc_plot_fullscreen(outputId, ...)` w
+  [R/lecture_layout.R](R/lecture_layout.R) wokół `plotOutput`
+
+Powiązane pliki:
+- [05-regresja/modules/ch3_wieloraka.R](05-regresja/modules/ch3_wieloraka.R) — referencyjna implementacja lokalna
 
 ---
 
