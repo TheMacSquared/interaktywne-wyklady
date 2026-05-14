@@ -92,6 +92,31 @@ ch1_ui <- list(
       )
     ),
 
+    lc_h2("ch1-rysuj-z-tabeli", "Ćwiczenie: narysuj prostą z tabeli"),
+
+    figure_panel(
+      label = "Ćwiczenie", title = "Kliknij dwa punkty, przez które przechodzi prosta",
+      full_width = TRUE,
+      fluidRow(
+        column(4,
+          helpText("Przeczytaj tabelę współczynników. Potem kliknij na wykresie dwa punkty, które wyznaczają prostą regresji."),
+          uiOutput("ch1_draw_table"),
+          actionButton("ch1_draw_reset", "Wyczyść punkty",
+                       class = "lc-btn-outline", width = "100%"),
+          actionButton("ch1_draw_reveal", "Pokaż odpowiedź",
+                       class = "lc-btn-ok", width = "100%"),
+          actionButton("ch1_draw_new", "Nowe ćwiczenie",
+                       class = "lc-btn-primary", width = "100%"),
+          uiOutput("ch1_draw_feedback")
+        ),
+        column(8,
+          plotOutput("ch1_draw_plot", height = "360px",
+                     click = "ch1_draw_plot_click"),
+          uiOutput("ch1_draw_stats")
+        )
+      )
+    ),
+
     lc_h2("ch1-ols-krok", "Najmniejsze kwadraty — krok po kroku"),
 
     figure_panel(
@@ -404,6 +429,194 @@ ch1_server <- function(input, output, session) {
       ),
       if (step >= 5) lc_feedback(type = "info",
         p("To jest ta sama prosta, którą zwraca klasyczna regresja liniowa dla jednego predyktora. Korelacja ustala kierunek i siłę związku, a iloraz odchyleń standardowych przelicza ją na jednostki X i Y.")
+      )
+    )
+  })
+
+  # --- Cwiczenie: narysuj prosta z outputu regresji ---
+  ch1_draw_model <- reactiveVal(NULL)
+  ch1_draw_points <- reactiveVal(data.frame(x = numeric(), y = numeric()))
+  ch1_draw_revealed <- reactiveVal(FALSE)
+
+  .ch1_new_draw_model <- function() {
+    beta0 <- runif(1, 2.5, 8.5)
+    beta1 <- sample(c(-1.6, -1.2, -0.8, 0.8, 1.2, 1.6), 1)
+    x <- runif(35, -4.5, 4.5)
+    y <- beta0 + beta1 * x + rnorm(length(x), 0, 1.2)
+    list(
+      beta0 = beta0,
+      beta1 = beta1,
+      data = data.frame(x = x, y = y)
+    )
+  }
+
+  ch1_draw_model(.ch1_new_draw_model())
+
+  observeEvent(input$ch1_draw_new, {
+    ch1_draw_model(.ch1_new_draw_model())
+    ch1_draw_points(data.frame(x = numeric(), y = numeric()))
+    ch1_draw_revealed(FALSE)
+  })
+
+  observeEvent(input$ch1_draw_reset, {
+    ch1_draw_points(data.frame(x = numeric(), y = numeric()))
+    ch1_draw_revealed(FALSE)
+  })
+
+  observeEvent(input$ch1_draw_reveal, {
+    req(nrow(ch1_draw_points()) == 2)
+    ch1_draw_revealed(TRUE)
+  })
+
+  observeEvent(input$ch1_draw_plot_click, {
+    if (ch1_draw_revealed()) return()
+    click <- input$ch1_draw_plot_click
+    pts <- ch1_draw_points()
+    new_pt <- data.frame(x = click$x, y = click$y)
+    if (nrow(pts) >= 2) {
+      pts <- new_pt
+    } else {
+      pts <- rbind(pts, new_pt)
+    }
+    ch1_draw_points(pts)
+  })
+
+  output$ch1_draw_table <- renderUI({
+    model <- ch1_draw_model()
+    tags$table(class = "lc-table lc-table-bordered lc-table-sm",
+      tags$thead(
+        tags$tr(
+          tags$th("Term"),
+          tags$th("Estimate")
+        )
+      ),
+      tags$tbody(
+        tags$tr(tags$td("wyraz wolny"), tags$td(sprintf("%.2f", model$beta0))),
+        tags$tr(tags$td("X"), tags$td(sprintf("%.2f", model$beta1)))
+      )
+    )
+  })
+
+  output$ch1_draw_plot <- renderPlot({
+    model <- ch1_draw_model()
+    pts <- ch1_draw_points()
+    revealed <- ch1_draw_revealed()
+    x_min <- -5
+    x_max <- 5
+    y_min <- -4
+    y_max <- 17
+    grid_df <- data.frame(x = c(x_min, x_max), y = c(y_min, y_max))
+
+    p <- ggplot(grid_df, aes(x = x, y = y)) +
+      geom_blank() +
+      geom_hline(yintercept = 0, color = upwr_rule, linewidth = 0.6) +
+      geom_vline(xintercept = 0, color = upwr_rule, linewidth = 0.6) +
+      coord_cartesian(xlim = c(x_min, x_max), ylim = c(y_min, y_max), expand = FALSE) +
+      scale_x_continuous(breaks = seq(x_min, x_max, by = 1)) +
+      scale_y_continuous(breaks = seq(y_min, y_max, by = 1)) +
+      labs(x = "X", y = "Y") +
+      theme_upwr()
+
+    if (revealed) {
+      p <- p +
+        geom_point(data = model$data, aes(x = x, y = y),
+                   inherit.aes = FALSE,
+                   color = upwr_secondary, alpha = 0.45, size = 2)
+    }
+
+    if (nrow(pts) > 0) {
+      p <- p +
+        geom_point(data = pts, aes(x = x, y = y),
+                   inherit.aes = FALSE,
+                   color = unname(upwr_cat["terakota"]),
+                   fill = "white", shape = 21, stroke = 1.2, size = 3.6) +
+        geom_text(data = pts, aes(x = x, y = y, label = seq_len(nrow(pts))),
+                  inherit.aes = FALSE,
+                  color = unname(upwr_cat["terakota"]),
+                  fontface = "bold", vjust = -1)
+    }
+
+    if (nrow(pts) == 2 && abs(diff(pts$x)) >= 0.05) {
+      user_b1 <- diff(pts$y) / diff(pts$x)
+      user_b0 <- pts$y[1] - user_b1 * pts$x[1]
+      p <- p +
+        geom_abline(intercept = user_b0, slope = user_b1,
+                    color = unname(upwr_cat["terakota"]),
+                    linewidth = 1.4, linetype = "longdash")
+      if (revealed) {
+        p <- p +
+        geom_abline(intercept = model$beta0, slope = model$beta1,
+                    color = unname(upwr_cat["niebo"]), linewidth = 1.5) +
+        annotate("text", x = x_min + 0.25, y = y_max - 0.8,
+                 label = "poprawna prosta", hjust = 0,
+                 color = unname(upwr_cat["niebo"]), fontface = "bold") +
+        annotate("text", x = x_min + 0.25, y = y_max - 1.8,
+                 label = "Twoja prosta", hjust = 0,
+                 color = unname(upwr_cat["terakota"]), fontface = "bold")
+      } else {
+        p <- p +
+          annotate("text", x = x_min + 0.25, y = y_max - 0.8,
+                   label = "Twoja prosta", hjust = 0,
+                   color = unname(upwr_cat["terakota"]), fontface = "bold") +
+          annotate("text", x = 0, y = y_max - 1,
+                   label = "Kliknij „Pokaż odpowiedź”",
+                   color = upwr_reference, size = 5)
+      }
+    } else if (nrow(pts) == 2) {
+      p <- p + annotate("text", x = 0, y = y_max - 1,
+                        label = "Wybierz punkty bardziej oddalone poziomo",
+                        color = unname(upwr_cat["terakota"]), size = 5)
+    } else {
+      p <- p + annotate("text", x = 0, y = y_max - 1,
+                        label = "Kliknij dwa punkty na wykresie",
+                        color = upwr_reference, size = 5)
+    }
+
+    p
+  })
+
+  output$ch1_draw_feedback <- renderUI({
+    pts <- ch1_draw_points()
+    if (nrow(pts) < 2) {
+      return(lc_feedback(type = "info", style = "margin-top: 12px;",
+        p(if (nrow(pts) == 0) {
+          "Kliknij pierwszy punkt prostej."
+        } else {
+          "Kliknij drugi punkt prostej."
+        })
+      ))
+    }
+    if (!ch1_draw_revealed()) {
+      return(lc_feedback(type = "warning", style = "margin-top: 12px;",
+        p("Gotowe. Kliknij „Pokaż odpowiedź”, żeby porównać z modelem.")
+      ))
+    }
+
+    lc_feedback(type = "ok", style = "margin-top: 12px;",
+      p("Porównaj czerwoną przerywaną prostą z niebieską poprawną prostą.")
+    )
+  })
+
+  output$ch1_draw_stats <- renderUI({
+    model <- ch1_draw_model()
+    pts <- ch1_draw_points()
+    if (nrow(pts) < 2 || !ch1_draw_revealed()) return(NULL)
+
+    if (abs(diff(pts$x)) < 0.05) {
+      return(lc_feedback(type = "warning",
+        p("Punkty mają prawie ten sam X. Wybierz dwa punkty bardziej oddalone poziomo.")
+      ))
+    }
+
+    user_b1 <- diff(pts$y) / diff(pts$x)
+    user_b0 <- pts$y[1] - user_b1 * pts$x[1]
+    tagList(
+      lc_stat_grid(
+        lc_stat_box("Twoje b₀", round(user_b0, 2), color = unname(upwr_cat["terakota"])),
+        lc_stat_box("Poprawne b₀", round(model$beta0, 2), color = unname(upwr_cat["niebo"])),
+        lc_stat_box("Twoje b₁", round(user_b1, 2), color = unname(upwr_cat["terakota"])),
+        lc_stat_box("Poprawne b₁", round(model$beta1, 2), color = unname(upwr_cat["niebo"])),
+        columns = 4
       )
     )
   })
