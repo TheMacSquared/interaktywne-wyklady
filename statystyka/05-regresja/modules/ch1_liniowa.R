@@ -63,14 +63,28 @@ ch1_ui <- list(
     lc_h2("ch1-od-korelacji", "Od korelacji do regresji"),
 
     tagList(
-      p("Regresja liniowa prosta opisuje związek między jedną zmienną
-        objaśniającą (X) a zmienną zależną (Y) za pomocą linii prostej:"),
+      p("W poprzednim wykładzie pytaliśmy, ", tags$em("czy"),
+        " dwie zmienne idą razem — i mierzyliśmy to korelacją. Teraz pytanie się
+        przesuwa: ", tags$em("o ile"), " zmienia się Y, kiedy X rośnie o jedną
+        jednostkę? Korelacja sama z siebie tego nie odpowie; potrzebujemy modelu,
+        który da konkretne liczby — i pozwoli przewidywać Y dla nowych X."),
+      p("Najprostszy taki model to linia prosta. Zanim ją jednak narysujemy,
+        zawsze warto najpierw rzucić okiem na wykres rozrzutu: regresja liniowa
+        ma sens dopiero wtedy, gdy chmura punktów układa się w przybliżeniu
+        wzdłuż prostej. Jeśli widać krzywiznę albo dwie chmury, prosta będzie
+        kłamać niezależnie od tego, jak ładnie policzą się współczynniki."),
+      p("Formalnie regresja liniowa prosta zapisuje związek X → Y tak:"),
       lc_formula_box(
         withMathJax(helpText("$$Y = \\beta_0 + \\beta_1 X + \\varepsilon$$")),
         p(withMathJax("\\(\\beta_0\\)"), " — wyraz wolny (intercept): wartość Y gdy X = 0"),
         p(withMathJax("\\(\\beta_1\\)"), " — nachylenie (slope): o ile zmieni się Y, gdy X wzrośnie o 1"),
         p(withMathJax("\\(\\varepsilon\\)"), " — błąd losowy (reszty)")
-      )
+      ),
+      p("Greckie litery ", withMathJax("\\(\\beta_0, \\beta_1\\)"),
+        " to ", tags$strong("prawdziwe"), ", populacyjne parametry — nieznane.
+        Z próby liczymy ich estymatory, oznaczane małymi literami ",
+        withMathJax("\\(b_0, b_1\\)"),
+        ". Zaraz zobaczysz, jak każdy z tych elementów wpływa na kształt linii.")
     ),
 
     figure_panel(
@@ -90,6 +104,20 @@ ch1_ui <- list(
           uiOutput("ch1_beta_info")
         )
       )
+    ),
+
+    tagList(
+      p("Suwakami sterowałeś trzema wielkościami: ",
+        withMathJax("\\(\\beta_0\\)"), " podnosił całą linię w górę i w dół,
+        ", withMathJax("\\(\\beta_1\\)"), " ją przekręcał, a ",
+        withMathJax("\\(\\sigma\\)"),
+        " rozsypywał punkty wokół niej. Ale to była ręczna animacja: my
+        ustalaliśmy parametry i patrzyliśmy, co z nich wynika."),
+      p("W praktyce mamy odwrotny problem: widzimy ", tags$em("chmurę punktów"),
+        " i potrzebujemy z niej wyłuskać ", withMathJax("\\(b_0\\)"), " i ",
+        withMathJax("\\(b_1\\)"),
+        ". W rozdziale o korelacji policzyliśmy już r i odchylenia standardowe —
+        okaże się, że to wystarczy, żeby od razu napisać równanie prostej.")
     ),
 
     lc_h2("ch1-korelacja-regresja", "Regresja z korelacji"),
@@ -122,6 +150,19 @@ ch1_ui <- list(
       )
     ),
 
+    tagList(
+      p("Recepta jest więc prosta: jedno r, dwa odchylenia standardowe i dwie
+        średnie wystarczą, żeby wyznaczyć linię. W rzeczywistej pracy nikt nie
+        robi tego ręcznie — wpisujemy do R jedną komendę i dostajemy gotową
+        ", tags$strong("tabelę regresji"),
+        ": kolumny z estymatorami, błędami standardowymi, statystykami t i
+        p-value. Cały dalszy rozdział będzie ćwiczeniem w odczytywaniu właśnie
+        takich tabel."),
+      p("Zacznijmy od najprostszego ruchu: dostajesz tabelę z dwiema liczbami
+        (", withMathJax("\\(b_0\\)"), " i ", withMathJax("\\(b_1\\)"),
+        ") i twoim zadaniem jest narysować prostą, którą ta tabela opisuje.")
+    ),
+
     lc_h2("ch1-rysuj-z-tabeli", "Ćwiczenie: narysuj prostą z tabeli"),
 
     figure_panel(
@@ -145,6 +186,19 @@ ch1_ui <- list(
           uiOutput("ch1_draw_stats")
         )
       )
+    ),
+
+    tagList(
+      p("Mając gotowe ", withMathJax("\\(b_0\\)"), " i ",
+        withMathJax("\\(b_1\\)"),
+        " z tabeli, narysowanie prostej jest mechaniczne. Ale przewińmy
+        pytanie o krok wstecz: ", tags$strong("skąd komputer wziął te dwie liczby?"),
+        " Spośród nieskończenie wielu prostych, które dałoby się przeciągnąć
+        przez chmurę punktów, musi wybrać jedną. Według jakiego kryterium?"),
+      p("Zasada nazywa się ", tags$em("metodą najmniejszych kwadratów (MNK / OLS)"),
+        ": wybieramy taką prostą, która minimalizuje sumę kwadratów pionowych
+        odległości między punktami a linią. Następny widget rozkłada ten pomysł
+        na sześć kroków.")
     ),
 
     lc_h2("ch1-ols-krok", "Najmniejsze kwadraty — krok po kroku"),
@@ -179,17 +233,69 @@ ch1_ui <- list(
       )
     ),
 
+    lc_h2("ch1-reszty", "Reszty i dlaczego kwadraty"),
+
+    tagList(
+      p("Te pionowe odcinki, które pojawiły się w kroku 4, mają swoją nazwę:
+        to ", tags$strong("reszty"),
+        ". Każda obserwacja ma własną resztę — różnicę między tym, co
+        zobaczyliśmy, a tym, co przewiduje model:"),
+      lc_formula_box(
+        withMathJax(helpText("$$e_i = y_i - \\hat{y}_i$$"))
+      ),
+      p("Reszta ze znakiem mówi nam, czy konkretny punkt leży nad linią
+        (", withMathJax("\\(e_i > 0\\)"), "), czy pod nią (",
+        withMathJax("\\(e_i < 0\\)"),
+        "). MNK nie dba o znak — sumuje kwadraty. Dlaczego nie sumy wartości
+        bezwzględnych?"),
+      p("Powody są dwa, jeden praktyczny i jeden matematyczny. Po pierwsze,
+        kwadraty ", tags$em("karzą większe błędy nieproporcjonalnie mocno"),
+        ": jeden punkt oddalony o 4 jednostki przeszkadza tak, jak szesnaście
+        punktów oddalonych o 1. To zmusza prostą, by raczej trochę odsunąć się
+        od każdej dużej obserwacji, niż zignorować skrajne odchylenia."),
+      p("Po drugie, kwadraty są ", tags$em("różniczkowalne"),
+        " — dzięki temu zadanie optymalizacji ma jedno, jawne rozwiązanie. To
+        właśnie ten wzór, który widzieliśmy wcześniej: ",
+        withMathJax("\\(b_1 = r \\cdot s_Y / s_X\\)"),
+        ". Gdybyśmy minimalizowali wartości bezwzględne, dostalibyśmy regresję
+        ", tags$em("medianową"),
+        " — sensowną, ale bez wzoru zamkniętego i trudniejszą obliczeniowo."),
+      inline_callout(label = "Zapamiętaj", color = "wskazowka",
+        "Diagnostyka modelu polega głównie na patrzeniu w reszty. Jeśli układają
+         się w wachlarz albo w łuk, znaczy, że linia kłamie — wrócimy do tego
+         w rozdziale o założeniach regresji."
+      )
+    ),
+
     lc_h2("ch1-pvalue", "p-value dla nachylenia"),
 
     tagList(
-      p("W regresji liniowej najczęściej testujemy, czy nachylenie prostej
-        różni się od zera. Innymi słowy: czy X wnosi informację o Y."),
+      p("Mamy linię, mamy reszty, mamy wzór. Ale ", withMathJax("\\(b_1\\)"),
+        " policzone z jednej próby to nie to samo, co prawdziwe nachylenie
+        w populacji. Gdybyśmy wzięli inną grupę 65 obserwacji, dostalibyśmy
+        trochę inne ", withMathJax("\\(b_1\\)"),
+        ". Pytanie brzmi: czy to, co widzimy, jest naprawdę różne od zera, czy
+        równie dobrze mogłoby się zdarzyć, gdyby X i Y w populacji były od siebie
+        niezależne?"),
+      p("Wzór na ", withMathJax("\\(b_1\\)"),
+        " ma swój brat-cień: ", tags$strong("błąd standardowy"), " ",
+        withMathJax("\\(SE(b_1)\\)"),
+        ", który mierzy, jak bardzo nasza estymata mogłaby się chwiać między
+        próbami. Statystyka testowa jest właściwie ilorazem — ",
+        withMathJax("\\(t = b_1 / SE(b_1)\\)"),
+        " — i mówi, ", tags$em("ile błędów standardowych"),
+        " dzieli nasze nachylenie od zera. Im dalej, tym mniej prawdopodobne,
+        że to przypadek."),
+      p("Sformalizowane:"),
       lc_formula_box(
         withMathJax(helpText("$$H_0: \\beta_1 = 0 \\quad\\text{brak liniowego wpływu X na Y}$$")),
         withMathJax(helpText("$$H_a: \\beta_1 \\neq 0 \\quad\\text{nachylenie jest różne od zera}$$"))
       ),
-      p("Małe p-value oznacza, że takie nachylenie byłoby mało prawdopodobne,
-        gdyby w populacji prawdziwe ", withMathJax("\\(\\beta_1\\)"), " wynosiło 0.")
+      p("Małe p-value mówi: gdyby prawdziwe ", withMathJax("\\(\\beta_1\\)"),
+        " wynosiło zero, zobaczenie tak skrajnego ", withMathJax("\\(b_1\\)"),
+        " byłoby mało prawdopodobne. To dokładnie ten sam mechanizm, który
+        widziałeś w teście t — kolumny ", tags$em("Estimate, SE, t, p"),
+        " w tabeli regresji to jego standardowy raport.")
     ),
 
     figure_panel(
@@ -214,6 +320,24 @@ ch1_ui <- list(
           uiOutput("ch1_pval_stats")
         )
       )
+    ),
+
+    tagList(
+      p("Symulacja jest wygodna, bo my znamy prawdziwe ",
+        withMathJax("\\(\\beta_1\\)"),
+        " — sami je ustawiliśmy. W rzeczywistych danych jesteśmy ślepi: widzimy
+        tylko próbę. Spróbujmy więc tej samej procedury na realnym zbiorze."),
+      p("CASchools to dane o około 420 okręgach szkolnych w Kalifornii z lat 90.
+        Każdy wiersz to jeden okręg, każda kolumna — jeden mierzony parametr:
+        dochód w tysiącach dolarów, wydatki na ucznia, stosunek liczby uczniów
+        do nauczycieli (STR), procent dzieci z angielskim jako drugim językiem,
+        średnie wyniki z czytania i matematyki. To dane, na których ekonomiści
+        edukacji testowali hipotezę: czy mniejsze klasy poprawiają wyniki?"),
+      p("Wybierz parę zmiennych i ", tags$strong("zanim klikniesz „Pokaż odpowiedź”"),
+        " popatrz na chmurę i na tabelę: czy znak ", withMathJax("\\(b_1\\)"),
+        " pasuje do intuicji? Czy ", withMathJax("\\(p\\)"),
+        " jest dość małe, żeby odrzucić H₀? Dopiero potem porównaj swoją diagnozę
+        z werdyktem widgetu.")
     ),
 
     lc_h2("ch1-caschool", "Regresja na danych CASchools"),
@@ -257,6 +381,24 @@ ch1_ui <- list(
       )
     ),
 
+    tagList(
+      p("Do tej pory traktowaliśmy regresję jako narzędzie do opisu zależności:
+        czy istnieje, jaki ma znak, czy jest istotna. Ale model regresji ma drugie
+        zastosowanie, równie ważne: ", tags$strong("przewidywanie"),
+        ". Skoro mamy równanie ",
+        withMathJax("\\(\\hat{Y} = b_0 + b_1 X\\)"),
+        ", możemy podstawić dowolne X i odczytać oczekiwane Y."),
+      p("Trzeba tylko pamiętać, co ta liczba znaczy: ",
+        tags$strong("predykcja to średnia warunkowa"),
+        " — najlepszy strzał w Y dla okręgów o danym X, ", tags$em("nie"),
+        " obietnica konkretnej wartości. Jeśli dla okręgu o dochodzie 20 tys.
+        USD model daje ", withMathJax("\\(\\hat{Y} = 658\\)"),
+        ", to nie znaczy, że ", tags$em("każdy"),
+        " taki okręg dostanie 658 — znaczy, że średnio okręgi o tym dochodzie
+        kręcą się wokół 658."),
+      p("Sam rachunek jest banalny: podstaw X do równania. Spróbuj.")
+    ),
+
     lc_h2("ch1-predykcja", "Predykcja z modelu"),
 
     figure_panel(
@@ -281,6 +423,30 @@ ch1_ui <- list(
           uiOutput("ch1_pred_stats")
         )
       )
+    ),
+
+    lc_h2("ch1-co-dalej", "Co zostawiamy na potem"),
+
+    tagList(
+      p("W jednym rozdziale przeszliśmy od chmury punktów do równania prostej,
+        nauczyliśmy się czytać tabelę regresji i przewidywać Y dla nowego X.
+        Świadomie jednak pominęliśmy kilka rzeczy, do których wrócimy."),
+      tags$ul(
+        tags$li(tags$strong("Założenia regresji: "),
+                "kiedy w ogóle wolno ufać prostej? Liniowość zależności,
+                 niezależność obserwacji, stałość wariancji reszt, ich rozkład —
+                 to temat rozdziału 2."),
+        tags$li(tags$strong("Wiele predyktorów: "),
+                "jak dołączyć drugą i trzecią zmienną X, kiedy STR ", tags$em("i"),
+                " wydatki ", tags$em("i"),
+                " dochód wpływają na wyniki naraz — rozdział 3."),
+        tags$li(tags$strong("Porównywanie modeli: "),
+                "ile model wyjaśnia (R²), kiedy bogatszy model jest lepszy,
+                 a kiedy tylko przepasowany — rozdział 4.")
+      ),
+      p("Linia regresji jest w wykresach od ponad stu lat. Reszta tego wykładu
+        pokaże, dlaczego mimo prostoty ciągle bywa nadużywana — i jak tego nie
+        robić.")
     ),
 
     lc_chapter_next(
@@ -796,8 +962,7 @@ ch1_server <- function(input, output, session) {
       "3" = "Linia regresji przechodzi tak, aby suma kwadratów pionowych błędów była możliwie mała.",
       "4" = "Każdy odcinek to reszta: obserwacja minus predykcja.",
       "5" = paste0("Model: Ŷ = ", round(coefs[1], 2), " + ",
-                   round(coefs[2], 2), "X; SSE = ", round(sse, 1),
-                   "; R² = ", round(summary(model)$r.squared, 3), ".")
+                   round(coefs[2], 2), "X; SSE = ", round(sse, 1), ".")
     )
     lc_feedback(type = "info", p(info))
   })
@@ -910,7 +1075,6 @@ ch1_server <- function(input, output, session) {
   output$ch1_pval_stats <- renderUI({
     model <- ch1_pval_model()
     coefs <- broom::tidy(model)
-    glance <- broom::glance(model)
     p_val <- coefs$p.value[2]
 
     tagList(
@@ -920,8 +1084,7 @@ ch1_server <- function(input, output, session) {
         lc_stat_box("t", round(coefs$statistic[2], 2), color = unname(upwr_cat["bursztyn"])),
         lc_stat_box("p-value", if (p_val < 0.001) "< 0.001" else round(p_val, 3),
                     color = if (p_val < 0.05) unname(upwr_cat["niebo"]) else upwr_reference),
-        lc_stat_box("R²", round(glance$r.squared, 2), color = upwr_secondary),
-        columns = 5
+        columns = 4
       ),
       lc_feedback(type = "info",
         p("p-value dotyczy testu dla współczynnika przy X, czyli pytania,
@@ -1041,7 +1204,6 @@ ch1_server <- function(input, output, session) {
 
     model <- ch1_cas_model()
     coefs <- broom::tidy(model)
-    g <- broom::glance(model)
     x_label <- unname(.ch1_cas_labels[input$ch1_cas_x])
     y_label <- unname(.ch1_cas_labels[input$ch1_cas_y])
 
@@ -1049,9 +1211,8 @@ ch1_server <- function(input, output, session) {
       lc_stat_grid(
         lc_stat_box("b₀", round(coefs$estimate[1], 2), color = upwr_secondary),
         lc_stat_box("b₁", round(coefs$estimate[2], 3), color = unname(upwr_cat["szalwia"])),
-        lc_stat_box("R²", round(g$r.squared, 3), color = unname(upwr_cat["niebo"])),
         lc_stat_box("p dla b₁", signif(coefs$p.value[2], 3), color = unname(upwr_cat["bursztyn"])),
-        columns = 4
+        columns = 3
       ),
       lc_feedback(type = "info", style = "margin-top: 10px;",
         p(tags$strong("Interpretacja: "),
