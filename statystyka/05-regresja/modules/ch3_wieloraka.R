@@ -57,12 +57,60 @@ ch3_ui <- list(
         " współczynnika, gdy dokładamy kolejny X.")
     ),
 
+    tags$head(tags$style(HTML("
+      .lc-plot-fullscreen-wrap { position: relative; }
+      .lc-plot-fullscreen-btn {
+        position: absolute; top: 8px; right: 8px;
+        z-index: 5;
+        background: rgba(255,255,255,0.92);
+        border: 1px solid var(--upwr-rule, #ccc);
+        border-radius: 4px;
+        padding: 4px 10px;
+        font-size: 13px;
+        cursor: pointer;
+        line-height: 1;
+      }
+      .lc-plot-fullscreen-btn:hover { background: white; }
+      .lc-plot-fullscreen-wrap:fullscreen,
+      .lc-plot-fullscreen-wrap:-webkit-full-screen {
+        background: white;
+        padding: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .lc-plot-fullscreen-wrap:fullscreen img,
+      .lc-plot-fullscreen-wrap:-webkit-full-screen img {
+        max-height: 95vh !important;
+        max-width: 95vw !important;
+        height: auto !important;
+        width: auto !important;
+      }
+    "))),
+    tags$head(tags$script(HTML("
+      document.addEventListener('click', function(ev) {
+        var btn = ev.target.closest('.lc-plot-fullscreen-btn');
+        if (!btn) return;
+        var wrap = btn.closest('.lc-plot-fullscreen-wrap');
+        if (!wrap) return;
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else if (wrap.requestFullscreen) {
+          wrap.requestFullscreen();
+        } else if (wrap.webkitRequestFullscreen) {
+          wrap.webkitRequestFullscreen();
+        }
+      });
+    "))),
+
     figure_panel(
       label = "Ryc. 3.1", title = "Predykcja średniej ocen",
       full_width = TRUE,
       fluidRow(
         column(4,
-          helpText("Dane: 150 studentów. Zmienna zależna: średnia ocen."),
+          helpText("Dane: 400 studentów. Kliknij „Generuj próbę\", a potem
+                    przełączaj predyktory — model przelicza się na tych
+                    samych danych."),
           checkboxGroupInput("ch3_predictors", "Predyktory:",
             choices = c(
               "Godziny nauki/tydz." = "godziny_nauki",
@@ -72,11 +120,19 @@ ch3_ui <- list(
             ),
             selected = c("godziny_nauki", "frekwencja")
           ),
-          actionButton("ch3_gen", "Generuj dane i dopasuj",
-                       class = "lc-btn-primary", width = "100%")
+          actionButton("ch3_gen", "Generuj próbę",
+                       class = "lc-btn-primary", width = "100%"),
+          helpText(style = "margin-top: 8px; font-size: 12px;",
+            "Każde kliknięcie losuje nową próbę 400 studentów — zobacz,
+             jak estymaty trochę się chwieją.")
         ),
         column(8,
-          plotOutput("ch3_scatter_model_plot", height = "340px"),
+          tags$div(class = "lc-plot-fullscreen-wrap",
+            tags$button(class = "lc-plot-fullscreen-btn", type = "button",
+                        title = "Pełny ekran",
+                        HTML("&#x26F6; Pełny ekran")),
+            plotOutput("ch3_scatter_model_plot", height = "340px")
+          ),
           uiOutput("ch3_scatter_model_info"),
           uiOutput("ch3_model_coefs"),
           plotOutput("ch3_coef_plot", height = "250px"),
@@ -190,7 +246,6 @@ ch3_ui <- list(
 ch3_server <- function(input, output, session) {
 
   ch3_data <- reactiveVal(NULL)
-  ch3_model <- reactiveVal(NULL)
 
   ch3_labels_pl <- c(
     "godziny_nauki" = "Godziny nauki",
@@ -208,16 +263,20 @@ ch3_server <- function(input, output, session) {
         labels = c("niski", "średni", "wysoki"))
   }
 
+  # Generowanie danych: tylko podmienia próbę. Model przelicza się reaktywnie.
   observeEvent(input$ch3_gen, {
-    df <- generate_multi_data(150)
-    ch3_data(df)
+    ch3_data(generate_multi_data(400))
+  })
 
+  # Model jako reactive: zależy od danych i wyboru predyktorów.
+  # Dzięki temu przełączanie checkboxów porównuje modele na TYCH SAMYCH danych.
+  ch3_model <- reactive({
+    df <- ch3_data()
+    if (is.null(df)) return(NULL)
     preds <- input$ch3_predictors
     if (length(preds) == 0) preds <- "godziny_nauki"
-
     formula <- as.formula(paste("ocena ~", paste(preds, collapse = " + ")))
-    model <- lm(formula, data = df)
-    ch3_model(model)
+    lm(formula, data = df)
   })
 
   output$ch3_scatter_model_plot <- renderPlot({
