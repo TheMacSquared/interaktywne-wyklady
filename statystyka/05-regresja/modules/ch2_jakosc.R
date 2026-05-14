@@ -1,0 +1,519 @@
+# ============================================================================
+# CHAPTER 2: Co czyni model dobrym?
+# ============================================================================
+
+# Scenariusze widgetu reszt vs fitted — dobrane tak, by pokazać różne wzorce.
+.ch2_resid_specs <- list(
+  read_lunch = list(
+    label = "Czytanie ~ lunch (model dobrze działa)",
+    x = "lunch", y = "read",
+    verdict = "ok",
+    title = "Wzorzec OK: linia ma sens",
+    comment = "Reszty rozsypane wokół zera, bez wyraźnego wzorca.
+              Model liniowy jest tu uzasadniony."
+  ),
+  read_income = list(
+    label = "Czytanie ~ dochód (krzywizna)",
+    x = "income", y = "read",
+    verdict = "warning",
+    title = "Łuk w resztach: zależność jest nieliniowa",
+    comment = "Reszty układają się w łuk — zależność czytanie ~ dochód
+              jest krzywa, nie liniowa. Prosta systematycznie zaniża
+              przewidywania w środku zakresu X."
+  ),
+  read_str = list(
+    label = "Czytanie ~ STR (słaby model, ale bez wzorca)",
+    x = "student_teacher_ratio", y = "read",
+    verdict = "info",
+    title = "Słaby model, ale uczciwy",
+    comment = "Reszty są duże, bo R² jest niskie — STR słabo przewiduje
+              czytanie. Ale wzorzec sam w sobie jest losowy. To rzetelny
+              model: po prostu niewiele tłumaczy."
+  ),
+  math_english = list(
+    label = "Matematyka ~ angielski jako 2. język (przyzwoity)",
+    x = "english", y = "math",
+    verdict = "ok",
+    title = "Reszty wyglądają OK",
+    comment = "Wzorzec nie krzyczy. Można patrzeć dalej — na R² i RMSE."
+  )
+)
+
+.ch2_resid_choices <- setNames(
+  names(.ch2_resid_specs),
+  vapply(.ch2_resid_specs, `[[`, character(1), "label")
+)
+
+# Scenariusze widgetu RMSE — modele różnej jakości, ten sam zbiór.
+.ch2_rmse_specs <- list(
+  read_lunch = list(
+    label = "Czytanie ~ lunch (najlepsze dopasowanie)",
+    x = "lunch", y = "read"
+  ),
+  read_income = list(
+    label = "Czytanie ~ dochód okręgu",
+    x = "income", y = "read"
+  ),
+  math_english = list(
+    label = "Matematyka ~ angielski jako 2. język",
+    x = "english", y = "math"
+  ),
+  read_str = list(
+    label = "Czytanie ~ uczniowie na nauczyciela",
+    x = "student_teacher_ratio", y = "read"
+  )
+)
+
+.ch2_rmse_choices <- setNames(
+  names(.ch2_rmse_specs),
+  vapply(.ch2_rmse_specs, `[[`, character(1), "label")
+)
+
+ch2_ui <- list(
+  id    = "ch-jakosc",
+  num   = "02",
+  title = "Co czyni model dobrym?",
+  content = tagList(
+
+    lc_chapter_hero(
+      kicker = "Rozdział 02 · Regresja",
+      num    = "02",
+      title  = "Co czyni model dobrym?",
+      lead   = "W ch1 dopasowaliśmy linię. Ale czy ona w ogóle ma sens?
+                Reszty mówią prawdę o modelu."
+    ),
+
+    tagList(
+      p("W rozdziale 1 mieliśmy wszystko, czego potrzeba do policzenia
+        regresji: chmurę punktów, MNK, p-value, predykcję. Każde z tych
+        narzędzi mówiło jednak: ", tags$em("jeśli model jest sensowny, to..."),
+        ". Pytanie, które dotąd omijaliśmy, brzmi: ",
+        tags$strong("czy nasz model jest sensowny?")),
+      p("To pytanie rozkłada się na trzy konkretne podpytania, a każdemu
+        z nich odpowiada inne narzędzie:"),
+      tags$ol(
+        tags$li("Czy linia nie kłamie systematycznie? — ",
+                tags$em("wzorzec reszt")),
+        tags$li("Ile zmienności Y model wyjaśnia? — ",
+                withMathJax("\\(R^2\\)")),
+        tags$li("Jak duże są typowe pomyłki w predykcji? — ",
+                tags$em("RMSE"))
+      ),
+      p("Wszystko to są miary jakości ", tags$strong("pojedynczego"),
+        " modelu. Porównywaniem różnych modeli — który lepszy, który gorszy
+        — zajmiemy się w rozdziale 4. Tu pytamy tylko: czy ", tags$em("ten"),
+        " model jest wart zaufania?")
+    ),
+
+    lc_h2("ch2-reszty", "Wzorzec reszt: kiedy linia kłamie"),
+
+    tagList(
+      p("W rozdziale 1 reszty pojawiły się jako pojęcie pomocnicze:
+        coś, co MNK ", tags$em("kwadratuje"),
+        ", żeby znaleźć najlepszą prostą. Teraz reszty stają się głównym
+        bohaterem. Patrzymy w nie, żeby zobaczyć, ", tags$em("czego model
+        nie złapał"), "."),
+      p("Idealny model ma reszty rozsypane jak chmura wokół zera —
+        bez żadnego wzorca, bez trendu, bez wachlarza. Każde odchylenie
+        od tego ideału ma swoją wymowę:"),
+      tags$ul(
+        tags$li(tags$strong("Łuk w resztach: "),
+                "zależność jest tak naprawdę krzywa, a my dopasowaliśmy prostą.
+                 Linia systematycznie zaniża przewidywania w jednym zakresie
+                 X i zawyża w innym."),
+        tags$li(tags$strong("Wachlarz (lejek): "),
+                "wariancja Y zmienia się z X. Tam, gdzie X duże, punkty są
+                 bardziej rozproszone niż tam, gdzie X małe. Łamie to założenie
+                 stałej wariancji (homoskedastyczności)."),
+        tags$li(tags$strong("Pojedynczy odstający: "),
+                "kropka na wykresie reszt daleko od reszty chmury — to obserwacja,
+                 która ", tags$em("ciągnie"), " linię na siebie.")
+      ),
+      p("Standardowe narzędzie to wykres ", tags$strong("reszt vs dopasowanych
+        wartości"),
+        ": na osi X kładziemy ", withMathJax("\\(\\hat{Y}\\)"), ", na osi Y ",
+        withMathJax("\\(e_i = y_i - \\hat{y}_i\\)"),
+        ". Jeśli chmura nie ma struktury — model się nadaje. Jeśli ma —
+        sygnał, że trzeba coś poprawić.")
+    ),
+
+    figure_panel(
+      label = "Ryc. 2.1", title = "Reszty na danych CASchools",
+      full_width = TRUE,
+      fluidRow(
+        column(4,
+          helpText("Cztery scenariusze na tych samych okręgach szkolnych z Kalifornii. Zobacz, jak różny model zachowuje się na tych samych danych."),
+          selectInput("ch2_resid_case", "Model:",
+            choices = .ch2_resid_choices,
+            selected = "read_income"
+          ),
+          uiOutput("ch2_resid_verdict")
+        ),
+        column(8,
+          plotOutput("ch2_resid_plot", height = "380px"),
+          uiOutput("ch2_resid_stats")
+        )
+      )
+    ),
+
+    inline_callout(label = "Zapamiętaj", color = "wskazowka",
+      "Wykres reszt vs dopasowanych jest standardową pierwszą diagnozą modelu
+       liniowego. Jeśli wygląda jak chmura wokół zera bez struktury — model
+       jest OK pod względem wzorca. Pełna diagnostyka (Q-Q, leverage,
+       wpływowe obserwacje) — w kolejnych wykładach."
+    ),
+
+    lc_h2("ch2-r2", "R² — ile model wyjaśnia?"),
+
+    tagList(
+      p("Wzorzec reszt mówił o jakości ", tags$em("jakościowej"),
+        ": czy linia nie kłamie. Teraz pytanie ilościowe: ",
+        tags$strong("ile zmienności Y rzeczywiście wyjaśnia model"),
+        "?"),
+      p("Współczynnik determinacji ", withMathJax("\\(R^2\\)"),
+        " mówi, jaki odsetek całej zmienności Y jest „zaopiekowany\" przez X.
+        Liczy się prosto:"),
+      lc_formula_box(
+        withMathJax(helpText("$$R^2 = 1 - \\frac{SS_{res}}{SS_{tot}} = 1 - \\frac{\\sum(y_i - \\hat{y}_i)^2}{\\sum(y_i - \\bar{y})^2}$$"))
+      ),
+      p("Licznik to suma kwadratów reszt — wariancja, której model nie wyjaśnił.
+        Mianownik to całkowita wariancja Y. Iloraz mierzy, ", tags$em("ile zmienności
+        został niewytłumaczonej"),
+        ", a 1 minus to jest dopełnieniem: ", tags$em("ile zmienności wyjaśniono"),
+        ". Zakres [0, 1]: 0 = model nie wyjaśnia nic, 1 = idealne dopasowanie.")
+    ),
+
+    figure_panel(
+      label = "Ryc. 2.2", title = "To samo X i Y, różna siła wyjaśniania",
+      full_width = TRUE,
+      helpText("Trzy stałe przykłady: niskie, średnie i wysokie R². Im ciaśniej punkty leżą przy linii, tym większa część zmienności Y jest wyjaśniona przez X."),
+      plotOutput("ch2_r2_compare_plot", height = "360px")
+    ),
+
+    inline_callout(label = "Uwaga", color = "uwaga",
+      "Wysokie R² nie oznacza, że model jest „dobry” — może być przeuczony.
+       Niskie R² nie oznacza, że model jest bezwartościowy — w naukach
+       społecznych R² = 0.3 jest często bardzo dobre. R² mówi o sile związku
+       w tych konkretnych danych, nie o jakości modelu w ogóle."
+    ),
+
+    tagList(
+      p("R² ma też siostrę używaną w porównaniach modeli — ",
+        withMathJax("\\(R^2_{adj}\\)"),
+        ", która karze za zbędne predyktory. Spotkamy ją w rozdziale 4,
+        kiedy będziemy wybierać między kilkoma modelami.")
+    ),
+
+    lc_h2("ch2-rmse", "RMSE — jak duże są typowe pomyłki?"),
+
+    tagList(
+      p("R² jest miarą względną — daje wartość między 0 a 1, ale nie mówi
+        nic o tym, ", tags$em("jak duże w jednostkach Y"),
+        " są pomyłki modelu. Dla praktyka często to jest pytanie ważniejsze:
+        jeśli model przewiduje wynik testu, czy myli się o 5 punktów czy o 50?"),
+      p("Odpowiada na to ", tags$strong("RMSE — Root Mean Squared Error"),
+        ": pierwiastek ze średniej kwadratów reszt."),
+      lc_formula_box(
+        withMathJax(helpText("$$RMSE = \\sqrt{\\frac{1}{n}\\sum_{i=1}^{n}(y_i - \\hat{y}_i)^2}$$"))
+      ),
+      p("Liczone w jednostkach Y. Jeśli Y to wynik testu czytania w skali
+        600–700, a RMSE wyszło 15, znaczy: typowa pomyłka modelu to ±15
+        punktów. To dużo czy mało? Zależy od skali."),
+      p(tags$strong("Złota zasada: "),
+        "RMSE zawsze porównuj z rozrzutem Y. RMSE = 15 dla zmiennej w skali
+        600–700 (zakres ~80 punktów) to nie najgorzej. RMSE = 15 dla zmiennej
+        w skali 0–50 to katastrofa.")
+    ),
+
+    figure_panel(
+      label = "Ryc. 2.3", title = "RMSE i zakres Y na danych CASchools",
+      full_width = TRUE,
+      fluidRow(
+        column(4,
+          helpText("Wybierz model i porównaj RMSE z zakresem Y. Liczbowo to różne wyniki, ale dopiero stosunek RMSE do zakresu daje intuicję jakości."),
+          selectInput("ch2_rmse_case", "Model:",
+            choices = .ch2_rmse_choices,
+            selected = "read_lunch"
+          ),
+          uiOutput("ch2_rmse_interpretation")
+        ),
+        column(8,
+          plotOutput("ch2_rmse_plot", height = "320px"),
+          uiOutput("ch2_rmse_stats")
+        )
+      )
+    ),
+
+    lc_h2("ch2-co-dalej", "Co dalej"),
+
+    tagList(
+      p("Mamy trzy narzędzia do oceny pojedynczego modelu: ",
+        tags$strong("wzorzec reszt"), " (czy linia kłamie), ",
+        withMathJax("\\(R^2\\)"), " (ile wyjaśnia), ",
+        tags$strong("RMSE"),
+        " (jak duże pomyłki). To wystarczy, żeby powiedzieć, czy ",
+        tags$em("ten"), " model jest wart zaufania."),
+      p("Czego jeszcze nie umiemy:"),
+      tags$ul(
+        tags$li(tags$strong("Porównać dwa modele "),
+                " i wybrać lepszy — rozdział 4 wprowadzi R²adj, AIC, BIC
+                 i train/test."),
+        tags$li(tags$strong("Modelować zależności od wielu X-ów naraz "),
+                " — rozdział 3 rozszerzy regresję prostą na wieloraką."),
+        tags$li(tags$strong("Modelować Y binarne "),
+                " (zdał/nie zdał, kliknął/nie kliknął) — rozdział 5
+                 wprowadzi regresję logistyczną.")
+      ),
+      p("Następnie wracamy do regresji wielorakiej — bo realne dane prawie
+        nigdy nie mają tylko jednego X.")
+    ),
+
+    lc_chapter_next(
+      num       = "03",
+      title     = "Regresja wieloraka",
+      lead      = "wiele zmiennych objaśniających naraz",
+      target_id = "ch-wieloraka"
+    )
+  )
+)
+
+# ============================================================================
+# SERVER
+# ============================================================================
+
+ch2_server <- function(input, output, session) {
+
+  # --- Widget: Reszty vs fitted na CASchools ---
+  ch2_resid_spec <- reactive({
+    case <- input$ch2_resid_case
+    if (is.null(case)) case <- "read_income"
+    .ch2_resid_specs[[case]]
+  })
+
+  ch2_resid_model <- reactive({
+    spec <- ch2_resid_spec()
+    form <- as.formula(paste(spec$y, "~", spec$x))
+    lm(form, data = .cas_data)
+  })
+
+  output$ch2_resid_plot <- renderPlot({
+    spec <- ch2_resid_spec()
+    model <- ch2_resid_model()
+
+    df_scatter <- data.frame(
+      x = .cas_data[[spec$x]],
+      y = .cas_data[[spec$y]]
+    )
+    df_resid <- data.frame(
+      fitted = fitted(model),
+      resid  = residuals(model)
+    )
+
+    p_left <- ggplot(df_scatter, aes(x = x, y = y)) +
+      geom_point(color = upwr_secondary, alpha = 0.4, size = 1.7) +
+      geom_smooth(method = "lm", se = FALSE,
+                  color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
+      labs(
+        title = "Dane + linia regresji",
+        x = unname(.cas_labels[spec$x]),
+        y = unname(.cas_labels[spec$y])
+      ) +
+      theme_upwr()
+
+    p_right <- ggplot(df_resid, aes(x = fitted, y = resid)) +
+      geom_point(color = upwr_secondary, alpha = 0.4, size = 1.7) +
+      geom_hline(yintercept = 0, color = upwr_reference,
+                 linetype = "dashed", linewidth = 0.8) +
+      geom_smooth(method = "loess", se = FALSE,
+                  color = unname(upwr_cat["terakota"]), linewidth = 1.2) +
+      labs(
+        title = "Reszty vs dopasowane",
+        x = expression(hat(Y)),
+        y = expression(e[i] == y[i] - hat(y)[i])
+      ) +
+      theme_upwr()
+
+    # Wymaga patchwork — używamy gridExtra jako fallback gdyby patchwork nie był
+    if (requireNamespace("patchwork", quietly = TRUE)) {
+      patchwork::wrap_plots(p_left, p_right, ncol = 2)
+    } else if (requireNamespace("gridExtra", quietly = TRUE)) {
+      gridExtra::grid.arrange(p_left, p_right, ncol = 2)
+    } else {
+      # Ostateczny fallback — sklejka faceted
+      df_combined <- rbind(
+        data.frame(panel = "Dane + linia regresji",
+                   x = df_scatter$x, y = df_scatter$y),
+        data.frame(panel = "Reszty vs dopasowane",
+                   x = df_resid$fitted, y = df_resid$resid)
+      )
+      ggplot(df_combined, aes(x = x, y = y)) +
+        geom_point(color = upwr_secondary, alpha = 0.4, size = 1.7) +
+        facet_wrap(~ panel, scales = "free", ncol = 2) +
+        theme_upwr()
+    }
+  })
+
+  output$ch2_resid_verdict <- renderUI({
+    spec <- ch2_resid_spec()
+    lc_feedback(type = spec$verdict, style = "margin-top: 12px;",
+      tags$strong(spec$title),
+      p(spec$comment)
+    )
+  })
+
+  output$ch2_resid_stats <- renderUI({
+    spec <- ch2_resid_spec()
+    model <- ch2_resid_model()
+    g <- broom::glance(model)
+
+    lc_stat_grid(
+      lc_stat_box("R²", round(g$r.squared, 3),
+                  color = unname(upwr_cat["niebo"])),
+      lc_stat_box("RMSE", round(sqrt(mean(residuals(model)^2)), 2),
+                  color = unname(upwr_cat["bursztyn"])),
+      lc_stat_box("n", nrow(.cas_data),
+                  color = upwr_secondary),
+      columns = 3
+    )
+  })
+
+  # --- Widget: R² compare (przeniesiony z ch4) ---
+  output$ch2_r2_compare_plot <- renderPlot({
+    set.seed(103)
+    make_panel <- function(label, sigma) {
+      x <- seq(-3, 3, length.out = 70)
+      y <- 10 + 2.2 * x + rnorm(length(x), 0, sigma)
+      data.frame(wariant = label, x = x, y = y)
+    }
+    df <- rbind(
+      make_panel("Niskie R²", 12.0),
+      make_panel("Średnie R²", 4.0),
+      make_panel("Wysokie R²", 0.9)
+    )
+
+    r2_levels <- c("Niskie R²", "Średnie R²", "Wysokie R²")
+    stats <- df %>%
+      group_by(wariant) %>%
+      summarise(r2 = summary(lm(y ~ x))$r.squared, .groups = "drop")
+    df$wariant <- factor(df$wariant, levels = r2_levels)
+    stats$wariant <- factor(stats$wariant, levels = r2_levels)
+
+    ggplot(df, aes(x = x, y = y)) +
+      geom_point(color = upwr_secondary, alpha = 0.5, size = 1.9) +
+      geom_smooth(method = "lm", se = FALSE,
+                  color = unname(upwr_cat["niebo"]), linewidth = 1.1) +
+      geom_text(
+        data = stats,
+        aes(x = -2.8, y = Inf, label = paste0("R² = ", round(r2, 2))),
+        inherit.aes = FALSE, hjust = 0, vjust = 1.6,
+        color = upwr_secondary, fontface = "bold"
+      ) +
+      facet_wrap(~ wariant, nrow = 1) +
+      labs(x = "X", y = "Y") +
+      theme_upwr()
+  })
+
+  # --- Widget: RMSE i zakres Y na CASchools ---
+  ch2_rmse_spec <- reactive({
+    case <- input$ch2_rmse_case
+    if (is.null(case)) case <- "read_lunch"
+    .ch2_rmse_specs[[case]]
+  })
+
+  ch2_rmse_model <- reactive({
+    spec <- ch2_rmse_spec()
+    form <- as.formula(paste(spec$y, "~", spec$x))
+    lm(form, data = .cas_data)
+  })
+
+  output$ch2_rmse_plot <- renderPlot({
+    spec <- ch2_rmse_spec()
+    model <- ch2_rmse_model()
+    rmse <- sqrt(mean(residuals(model)^2))
+    y_vals <- .cas_data[[spec$y]]
+    y_mean <- mean(y_vals)
+
+    df <- data.frame(
+      x = .cas_data[[spec$x]],
+      y = y_vals,
+      fitted = fitted(model)
+    )
+
+    ggplot(df, aes(x = x, y = y)) +
+      geom_point(color = upwr_secondary, alpha = 0.42, size = 1.8) +
+      geom_smooth(method = "lm", se = FALSE,
+                  color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
+      geom_ribbon(
+        data = data.frame(
+          x = sort(df$x),
+          ymin = sort(df$fitted) - rmse,
+          ymax = sort(df$fitted) + rmse
+        ),
+        aes(x = x, ymin = ymin, ymax = ymax),
+        inherit.aes = FALSE,
+        fill = unname(upwr_cat["bursztyn"]), alpha = 0.18
+      ) +
+      annotate("label", x = min(df$x), y = max(df$y),
+               hjust = 0, vjust = 1,
+               label = paste0("Pasmo ±RMSE = ±", round(rmse, 1)),
+               color = unname(upwr_cat["bursztyn"]),
+               fill = "white", label.size = 0) +
+      labs(
+        x = unname(.cas_labels[spec$x]),
+        y = unname(.cas_labels[spec$y])
+      ) +
+      theme_upwr()
+  })
+
+  output$ch2_rmse_stats <- renderUI({
+    spec <- ch2_rmse_spec()
+    model <- ch2_rmse_model()
+    g <- broom::glance(model)
+    rmse <- sqrt(mean(residuals(model)^2))
+    y_vals <- .cas_data[[spec$y]]
+    y_range <- diff(range(y_vals))
+    rmse_ratio <- rmse / y_range
+
+    lc_stat_grid(
+      lc_stat_box("R²", round(g$r.squared, 3),
+                  color = unname(upwr_cat["niebo"])),
+      lc_stat_box("RMSE", round(rmse, 2),
+                  caption = paste("jednostek", unname(.cas_labels[spec$y])),
+                  color = unname(upwr_cat["bursztyn"])),
+      lc_stat_box("Zakres Y", round(y_range, 1),
+                  caption = "max − min",
+                  color = upwr_secondary),
+      lc_stat_box("RMSE / zakres", paste0(round(rmse_ratio * 100, 1), "%"),
+                  color = unname(upwr_cat["terakota"])),
+      columns = 4
+    )
+  })
+
+  output$ch2_rmse_interpretation <- renderUI({
+    spec <- ch2_rmse_spec()
+    model <- ch2_rmse_model()
+    rmse <- sqrt(mean(residuals(model)^2))
+    y_vals <- .cas_data[[spec$y]]
+    y_range <- diff(range(y_vals))
+    rmse_ratio <- rmse / y_range
+    y_label <- unname(.cas_labels[spec$y])
+
+    verdict_type <- if (rmse_ratio < 0.05) "ok"
+                    else if (rmse_ratio < 0.12) "info"
+                    else "warning"
+
+    verdict_text <- if (rmse_ratio < 0.05) {
+      "Typowa pomyłka jest mała w stosunku do zakresu Y — model robi co trzeba."
+    } else if (rmse_ratio < 0.12) {
+      "Typowa pomyłka jest umiarkowana w stosunku do zakresu Y. Można dyskutować, czy to dość."
+    } else {
+      "Typowa pomyłka jest duża w stosunku do zakresu Y. Model ma ograniczoną wartość praktyczną."
+    }
+
+    lc_feedback(type = verdict_type, style = "margin-top: 12px;",
+      p(sprintf("Typowa pomyłka modelu to ±%.1f w skali „%s\" (zakres %.0f).",
+                rmse, y_label, y_range)),
+      p(verdict_text)
+    )
+  })
+}
