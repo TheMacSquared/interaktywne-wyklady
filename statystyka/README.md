@@ -37,6 +37,7 @@ shiny::runApp("statystyka/07-symulacje-statystyczne")
 shiny::runApp("statystyka/08-metody-bayesowskie")
 shiny::runApp("statystyka/09-dobre-dane")
 shiny::runApp("statystyka/10-case-studies")
+shiny::runApp("statystyka/11-kierunkowe")
 ```
 
 Z katalogu `statystyka/`:
@@ -52,6 +53,7 @@ shiny::runApp("07-symulacje-statystyczne")
 shiny::runApp("08-metody-bayesowskie")
 shiny::runApp("09-dobre-dane")
 shiny::runApp("10-case-studies")
+shiny::runApp("11-kierunkowe")
 ```
 
 ## 📚 Aplikacje
@@ -68,6 +70,7 @@ shiny::runApp("10-case-studies")
 | [metody-bayesowskie](08-metody-bayesowskie/) | Metody bayesowskie | 12 rozdziałów z **konsekwentnym dwukolumnowym porównaniem freq vs Bayes**: intuicja (prior→posterior), BF vs p, HDI vs CI, jedna próba, dwie grupy, ANOVA, tabele krzyżowe, korelacja, regresja liniowa i logistyczna (rstanarm), ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
 | [dobre-dane](09-dobre-dane/) | Jakość danych | 11 zbiorów — kiedy dane nadają się do klasycznej statystyki? (CASchools, pingwiny, Tarantino, Wage, hotel, formularz, laboratorium, studenci, kawiarnia) + ściąga |
 | [case-studies](10-case-studies/) | Case studies | Kompletne analizy od A do Z. Każdy rozdział = jeden zbiór danych, hipotezy, analizy, wnioski. Na razie: CASchools |
+| [kierunkowe](11-kierunkowe/) | Materiał kierunkowy | 6 chapterów, po jednym dla kierunku: rolnictwo, technologia żywności, inżynieria bezpieczeństwa, inżynieria środowiska, gospodarka wodna, OZE |
 
 ## 📁 Struktura projektu
 
@@ -200,6 +203,16 @@ interaktywne-wyklady/statystyka/
 │   └── modules/
 │       ├── helpers.R               # Formatowanie, theme
 │       └── ch1_caschools.R         # 1. CASchools (EDA, korelacja, t-test, ANOVA, regresja)
+├── 11-kierunkowe/                      # Materiał kierunkowy
+│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
+│   └── modules/
+│       ├── helpers.R               # Generatory danych i formatowanie
+│       ├── ch1_rolnictwo.R         # 1. ANOVA dwuczynnikowa i RCBD
+│       ├── ch2_zywnosc.R           # 2. Sensoryka i karty kontrolne SPC
+│       ├── ch3_bezpieczenstwo.R    # 3. Niezawodność i Weibull
+│       ├── ch4_srodowisko.R        # 4. Transformacje w regresji i LOD
+│       ├── ch5_wodna.R             # 5. Analiza częstości i okres powrotu
+│       └── ch6_oze.R               # 6. Weibull dla wiatru i szeregi czasowe
 ├── R/                              # Współdzielone zasoby (shared.R, shared_styles.css, shared_toc.js)
 ├── README.md                       # Ten plik
 └── CLAUDE.md                       # Instrukcje dla AI
