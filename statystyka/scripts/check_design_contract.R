@@ -24,11 +24,11 @@ migrated_lectures <- c(
   "03-przedzialy-ufnosci",
   "04-wnioskowanie-statystyczne",
   "05-regresja",
-  "05a-zalozenia-testow",
-  "06-symulacje-statystyczne",
-  "07-metody-bayesowskie",
-  "08-dobre-dane",
-  "09-case-studies"
+  "06-zalozenia-testow",
+  "07-symulacje-statystyczne",
+  "08-metody-bayesowskie",
+  "09-dobre-dane",
+  "10-case-studies"
 )
 
 rules <- data.frame(

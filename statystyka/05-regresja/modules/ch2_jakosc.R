@@ -134,7 +134,11 @@ ch2_ui <- list(
         ": na osi X kładziemy ", withMathJax("\\(\\hat{Y}\\)"), ", na osi Y ",
         withMathJax("\\(e_i = y_i - \\hat{y}_i\\)"),
         ". Jeśli chmura nie ma struktury — model się nadaje. Jeśli ma —
-        sygnał, że trzeba coś poprawić.")
+        sygnał, że trzeba coś poprawić."),
+      p("Uzupełnieniem jest ", tags$strong("wykres Q-Q reszt"),
+        ": porównuje kwantyle reszt z kwantylami rozkładu normalnego.
+         Punkty biegnące wzdłuż linii prostej — reszty są w przybliżeniu normalne.
+         Łuk lub grube ogony — sygnał problemów.")
     ),
 
     figure_panel(
@@ -150,17 +154,16 @@ ch2_ui <- list(
           uiOutput("ch2_resid_verdict")
         ),
         column(8,
-          plotOutput("ch2_resid_plot", height = "380px"),
+          plotOutput("ch2_resid_plot", height = "340px"),
           uiOutput("ch2_resid_stats")
         )
       )
     ),
 
     inline_callout(label = "Zapamiętaj", color = "wskazowka",
-      "Wykres reszt vs dopasowanych jest standardową pierwszą diagnozą modelu
-       liniowego. Jeśli wygląda jak chmura wokół zera bez struktury — model
-       jest OK pod względem wzorca. Pełna diagnostyka (Q-Q, leverage,
-       wpływowe obserwacje) — w kolejnych wykładach."
+      "Wykres reszt vs dopasowanych i Q-Q reszt to standardowa pierwsza diagnoza modelu
+       liniowego. Jeśli chmura nie ma struktury i Q-Q biegnie wzdłuż linii — model
+       jest OK. Pełna diagnostyka (leverage, wpływowe obserwacje) — w kolejnych wykładach."
     ),
 
     lc_h2("ch2-r2", "R² — ile model wyjaśnia?"),
@@ -242,6 +245,45 @@ ch2_ui <- list(
           uiOutput("ch2_rmse_stats")
         )
       )
+    ),
+
+    lc_h2("ch2-ekstrapolacja", "Ekstrapolacja: poza zakresem danych"),
+
+    tagList(
+      p("Model regresji uczy się z danych, które mamy. Poza ich zakresem —
+        nie ma podstaw, żeby mu ufać. Wciąż daje liczbę, ale ta liczba
+        jest ", tags$strong("ekstrapolacją"), ": predykcją za granicę,
+        gdzie model nigdy nie był."),
+      p("Ekstrapolacja jest niebezpieczna, bo linia wygląda pewnie
+        nawet daleko od danych. Ale każdy punkt poza zakresem X to
+        predykcja bez pokrycia — model nie wie, czy zależność tam
+        jest nadal liniowa."),
+      p("Przykład: model przewiduje wyniki testu czytania na podstawie
+        dochodów okręgu. Dane obejmują dochody 5–55 tys. USD. Co jeśli
+        zapytamy o dochód 80 tys.? Prosta obliczy wynik — ale nie ma
+        żadnych danych w tym przedziale, żeby to potwierdzić.")
+    ),
+
+    figure_panel(
+      label = "Ryc. 2.4", title = "Ekstrapolacja poza zakres danych",
+      full_width = TRUE,
+      fluidRow(
+        column(4,
+          helpText("Przesuń suwak poza zakres danych (szary pas) i obserwuj, jak predykcja traci grunt pod nogami."),
+          sliderInput("ch2_extrap_x", "Dochód okręgu (tys. USD):",
+            min = 1, max = 80, value = 20, step = 1),
+          uiOutput("ch2_extrap_verdict")
+        ),
+        column(8,
+          plotOutput("ch2_extrap_plot", height = "320px"),
+          uiOutput("ch2_extrap_stats")
+        )
+      )
+    ),
+
+    inline_callout(label = "Zasada", color = "wskazowka",
+      "Nigdy nie ufaj predykcji poza zakresem X, na którym model był uczony.
+       Im dalej od danych, tym bardziej ryzykowna ekstrapolacja."
     ),
 
     lc_h2("ch2-co-dalej", "Co dalej"),
@@ -333,13 +375,21 @@ ch2_server <- function(input, output, session) {
       ) +
       theme_upwr()
 
-    # Wymaga patchwork — używamy gridExtra jako fallback gdyby patchwork nie był
+    p_qq <- ggplot(df_resid, aes(sample = resid)) +
+      stat_qq(color = upwr_secondary, alpha = 0.4, size = 1.7) +
+      stat_qq_line(color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
+      labs(
+        title = "Q-Q reszt",
+        x = "Kwantyle teoretyczne",
+        y = "Kwantyle próbki"
+      ) +
+      theme_upwr()
+
     if (requireNamespace("patchwork", quietly = TRUE)) {
-      patchwork::wrap_plots(p_left, p_right, ncol = 2)
+      patchwork::wrap_plots(p_left, p_right, p_qq, ncol = 3)
     } else if (requireNamespace("gridExtra", quietly = TRUE)) {
-      gridExtra::grid.arrange(p_left, p_right, ncol = 2)
+      gridExtra::grid.arrange(p_left, p_right, p_qq, ncol = 3)
     } else {
-      # Ostateczny fallback — sklejka faceted
       df_combined <- rbind(
         data.frame(panel = "Dane + linia regresji",
                    x = df_scatter$x, y = df_scatter$y),
@@ -486,6 +536,97 @@ ch2_server <- function(input, output, session) {
       lc_stat_box("RMSE / zakres", paste0(round(rmse_ratio * 100, 1), "%"),
                   color = unname(upwr_cat["terakota"])),
       columns = 4
+    )
+  })
+
+  # --- Widget: Ekstrapolacja ---
+  .ch2_extrap_model <- lm(read ~ income, data = .cas_data)
+  .ch2_extrap_x_range <- range(.cas_data$income)
+
+  output$ch2_extrap_plot <- renderPlot({
+    x_val <- input$ch2_extrap_x
+    if (is.null(x_val)) x_val <- 20
+    x_obs <- .cas_data$income
+    y_obs <- .cas_data$read
+    x_range <- .ch2_extrap_x_range
+    x_grid <- seq(min(1, x_val - 2), max(80, x_val + 2), length.out = 300)
+    df_line <- data.frame(
+      income = x_grid,
+      read   = predict(.ch2_extrap_model, newdata = data.frame(income = x_grid)),
+      outside = x_grid < x_range[1] | x_grid > x_range[2]
+    )
+    y_pred <- predict(.ch2_extrap_model, newdata = data.frame(income = x_val))
+    in_range <- x_val >= x_range[1] & x_val <= x_range[2]
+    point_color <- if (in_range) unname(upwr_cat["niebo"]) else unname(upwr_cat["terakota"])
+
+    ggplot() +
+      annotate("rect",
+        xmin = x_range[1], xmax = x_range[2],
+        ymin = -Inf, ymax = Inf,
+        fill = upwr_secondary, alpha = 0.08) +
+      geom_point(data = data.frame(x = x_obs, y = y_obs),
+                 aes(x = x, y = y),
+                 color = upwr_secondary, alpha = 0.35, size = 1.6) +
+      geom_line(data = df_line[!df_line$outside, ],
+                aes(x = income, y = read),
+                color = unname(upwr_cat["niebo"]), linewidth = 1.1) +
+      geom_line(data = df_line[df_line$outside, ],
+                aes(x = income, y = read),
+                color = unname(upwr_cat["niebo"]), linewidth = 1.1,
+                linetype = "dashed") +
+      geom_vline(xintercept = x_val, color = point_color,
+                 linetype = "dotted", linewidth = 0.9) +
+      geom_point(data = data.frame(x = x_val, y = y_pred),
+                 aes(x = x, y = y),
+                 color = point_color, size = 4, shape = 18) +
+      labs(
+        x = "Dochód okręgu (tys. USD)",
+        y = "Wynik testu czytania",
+        caption = "Szary pas = zakres danych treningowych"
+      ) +
+      theme_upwr()
+  })
+
+  output$ch2_extrap_verdict <- renderUI({
+    x_val <- input$ch2_extrap_x
+    if (is.null(x_val)) x_val <- 20
+    x_range <- .ch2_extrap_x_range
+    y_pred <- predict(.ch2_extrap_model, newdata = data.frame(income = x_val))
+    in_range <- x_val >= x_range[1] & x_val <= x_range[2]
+    dist_pct <- min(abs(x_val - x_range[1]), abs(x_val - x_range[2])) /
+                diff(x_range) * 100
+
+    if (in_range) {
+      lc_feedback(type = "ok", style = "margin-top: 12px;",
+        tags$strong("W zakresie danych"),
+        p(sprintf("Predykcja: %.1f pkt. Jesteśmy wewnątrz zakresu danych — predykcja ma sens.", y_pred))
+      )
+    } else {
+      lc_feedback(type = "warning", style = "margin-top: 12px;",
+        tags$strong("Ekstrapolacja!"),
+        p(sprintf("Predykcja: %.1f pkt. Jesteśmy %.0f%% zakresu danych poza granicą — brak gwarancji.", y_pred, dist_pct))
+      )
+    }
+  })
+
+  output$ch2_extrap_stats <- renderUI({
+    x_val <- input$ch2_extrap_x
+    if (is.null(x_val)) x_val <- 20
+    x_range <- .ch2_extrap_x_range
+    y_pred <- predict(.ch2_extrap_model, newdata = data.frame(income = x_val))
+
+    lc_stat_grid(
+      lc_stat_box("X podany", x_val,
+                  caption = "tys. USD",
+                  color = unname(upwr_cat["niebo"])),
+      lc_stat_box("Predykcja", round(y_pred, 1),
+                  caption = "pkt czytania",
+                  color = unname(upwr_cat["bursztyn"])),
+      lc_stat_box("Zakres X danych",
+                  paste0(round(x_range[1], 0), "–", round(x_range[2], 0)),
+                  caption = "tys. USD",
+                  color = upwr_secondary),
+      columns = 3
     )
   })
 

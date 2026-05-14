@@ -32,11 +32,11 @@ shiny::runApp("statystyka/02-rozklady-prawdopodobienstwa")
 shiny::runApp("statystyka/03-przedzialy-ufnosci")
 shiny::runApp("statystyka/04-wnioskowanie-statystyczne")
 shiny::runApp("statystyka/05-regresja")
-shiny::runApp("statystyka/05a-zalozenia-testow")
-shiny::runApp("statystyka/06-symulacje-statystyczne")
-shiny::runApp("statystyka/07-metody-bayesowskie")
-shiny::runApp("statystyka/08-dobre-dane")
-shiny::runApp("statystyka/09-case-studies")
+shiny::runApp("statystyka/06-zalozenia-testow")
+shiny::runApp("statystyka/07-symulacje-statystyczne")
+shiny::runApp("statystyka/08-metody-bayesowskie")
+shiny::runApp("statystyka/09-dobre-dane")
+shiny::runApp("statystyka/10-case-studies")
 ```
 
 Z katalogu `statystyka/`:
@@ -47,11 +47,11 @@ shiny::runApp("02-rozklady-prawdopodobienstwa")
 shiny::runApp("03-przedzialy-ufnosci")
 shiny::runApp("04-wnioskowanie-statystyczne")
 shiny::runApp("05-regresja")
-shiny::runApp("05a-zalozenia-testow")
-shiny::runApp("06-symulacje-statystyczne")
-shiny::runApp("07-metody-bayesowskie")
-shiny::runApp("08-dobre-dane")
-shiny::runApp("09-case-studies")
+shiny::runApp("06-zalozenia-testow")
+shiny::runApp("07-symulacje-statystyczne")
+shiny::runApp("08-metody-bayesowskie")
+shiny::runApp("09-dobre-dane")
+shiny::runApp("10-case-studies")
 ```
 
 ## 📚 Aplikacje
@@ -63,11 +63,11 @@ shiny::runApp("09-case-studies")
 | [przedzialy-ufnosci](03-przedzialy-ufnosci/) | Przedziały ufności | 7 rozdziałów: estymacja punktowa, idea przedziałów, przedział dla średniej, proporcji, czynniki szerokości, ściąga + **ćwiczenia z dropdownem kierunków** (Edukacja/BHP/Rolnictwo/Żywność) |
 | [wnioskowanie-statystyczne](04-wnioskowanie-statystyczne/) | Wnioskowanie statystyczne | 12 rozdziałów: logika testowania, formułowanie hipotez, błędy/p-wartość/decyzja, jedna ilo./jako., korelacja, dwie jakościowe, dwie grupy, ANOVA, drzewo decyzyjne, ściąga + ćwiczenia |
 | [regresja](05-regresja/) | Regresja | 5 rozdziałów: liniowa prosta, wieloraka, logistyczna, porównanie modeli (R², AIC, BIC, RMSE), ściąga |
-| [zalozenia-testow](05a-zalozenia-testow/) | Założenia testów | 6 rozdziałów: normalność, jednorodne wariancje, założenia regresji, χ²/Fisher, mapa metod z alternatywami, ściąga |
-| [symulacje-statystyczne](06-symulacje-statystyczne/) | Symulacje statystyczne | 10 rozdziałów: idea resamplingowa, bootstrap CI, bootstrap jednej próby, testy permutacyjne, jackknife, cross-validation, Monte Carlo (moc + H₀), kiedy stosować?, ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
-| [metody-bayesowskie](07-metody-bayesowskie/) | Metody bayesowskie | 12 rozdziałów z **konsekwentnym dwukolumnowym porównaniem freq vs Bayes**: intuicja (prior→posterior), BF vs p, HDI vs CI, jedna próba, dwie grupy, ANOVA, tabele krzyżowe, korelacja, regresja liniowa i logistyczna (rstanarm), ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
-| [dobre-dane](08-dobre-dane/) | Jakość danych | 11 zbiorów — kiedy dane nadają się do klasycznej statystyki? (CASchools, pingwiny, Tarantino, Wage, hotel, formularz, laboratorium, studenci, kawiarnia) + ściąga |
-| [case-studies](09-case-studies/) | Case studies | Kompletne analizy od A do Z. Każdy rozdział = jeden zbiór danych, hipotezy, analizy, wnioski. Na razie: CASchools |
+| [zalozenia-testow](06-zalozenia-testow/) | Założenia testów | 6 rozdziałów: normalność, jednorodne wariancje, założenia regresji, χ²/Fisher, mapa metod z alternatywami, ściąga |
+| [symulacje-statystyczne](07-symulacje-statystyczne/) | Symulacje statystyczne | 10 rozdziałów: idea resamplingowa, bootstrap CI, bootstrap jednej próby, testy permutacyjne, jackknife, cross-validation, Monte Carlo (moc + H₀), kiedy stosować?, ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
+| [metody-bayesowskie](08-metody-bayesowskie/) | Metody bayesowskie | 12 rozdziałów z **konsekwentnym dwukolumnowym porównaniem freq vs Bayes**: intuicja (prior→posterior), BF vs p, HDI vs CI, jedna próba, dwie grupy, ANOVA, tabele krzyżowe, korelacja, regresja liniowa i logistyczna (rstanarm), ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
+| [dobre-dane](09-dobre-dane/) | Jakość danych | 11 zbiorów — kiedy dane nadają się do klasycznej statystyki? (CASchools, pingwiny, Tarantino, Wage, hotel, formularz, laboratorium, studenci, kawiarnia) + ściąga |
+| [case-studies](10-case-studies/) | Case studies | Kompletne analizy od A do Z. Każdy rozdział = jeden zbiór danych, hipotezy, analizy, wnioski. Na razie: CASchools |
 
 ## 📁 Struktura projektu
 
@@ -138,7 +138,7 @@ interaktywne-wyklady/statystyka/
 │       ├── ch3_logistyczna.R       # 3. Regresja logistyczna (sigmoida, OR, predykcja)
 │       ├── ch4_porownanie.R        # 4. Porównanie modeli (R², AIC, BIC, RMSE, overfitting)
 │       └── ch5_sciaga.R            # 5. Ściąga (wzory, metryki, kod R)
-├── 05a-zalozenia-testow/               # Założenia testów statystycznych
+├── 06-zalozenia-testow/               # Założenia testów statystycznych
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
 │   └── modules/
 │       ├── helpers.R               # Generatory danych z naruszeniami, theme
@@ -148,7 +148,7 @@ interaktywne-wyklady/statystyka/
 │       ├── ch4_chi_fisher.R        # 4. Założenia χ² i Fishera (min. liczności)
 │       ├── ch5_mapa.R              # 5. Mapa metod (metoda → założenia → alternatywa)
 │       └── ch6_sciaga.R            # 6. Ściąga (testy diagnostyczne, quick reference)
-├── 06-symulacje-statystyczne/         # Symulacje: bootstrap, permutacje, CV, MC
+├── 07-symulacje-statystyczne/         # Symulacje: bootstrap, permutacje, CV, MC
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
 │   └── modules/
 │       ├── helpers.R               # Generatory, run_bootstrap/jackknife/permutation, compute_skewness, theme
@@ -162,7 +162,7 @@ interaktywne-wyklady/statystyka/
 │       ├── ch8_kiedy.R             # 8. Kiedy stosować?
 │       ├── ch9_sciaga.R            # 9. Ściąga
 │       └── ch10_cwiczenia.R        # 10. Ćwiczenia (dropdown: Rolnictwo/TŻ/BHP/Edukacja)
-├── 07-metody-bayesowskie/             # Metody bayesowskie (porównanie freq vs Bayes)
+├── 08-metody-bayesowskie/             # Metody bayesowskie (porównanie freq vs Bayes)
 │   ├── app.R                       # Główny plik: kolory (freq czerwony/bayes fioletowy), CSS/JS, nawigacja
 │   └── modules/
 │       ├── helpers.R               # Beta-binomial, HDI, wrappery BayesFactor i rstanarm, wizualizacje
@@ -178,7 +178,7 @@ interaktywne-wyklady/statystyka/
 │       ├── ch10_regresja_log.R     # 10. Regresja logistyczna: glm(binom) vs stan_glm(binom) + OR
 │       ├── ch11_sciaga.R           # 11. Ściąga (tabela paradygmat↔paradygmat, kiedy który)
 │       └── ch12_cwiczenia.R        # 12. Ćwiczenia (dropdown: Rolnictwo/TŻ/BHP/Edukacja)
-├── 08-dobre-dane/                     # Jakość danych
+├── 09-dobre-dane/                     # Jakość danych
 │   ├── app.R                       # Główny plik: CSS/JS, nawigacja
 │   └── modules/
 │       ├── helpers.R               # Dane (CASchools, penguins, apt…), katalog problemów, render_verdict()
@@ -195,7 +195,7 @@ interaktywne-wyklady/statystyka/
 │       ├── ch10_studenci.R         # 10. Ankieta studencka — dobry (wzorcowa)
 │       ├── ch11_kawiarnia.R        # 11. Kawiarnia — zły (braki danych + brak niezależności)
 │       └── ch12_sciaga.R           # 12. Ściąga (checklista 9 kryteriów)
-├── 09-case-studies/                    # Case studies - kompletne analizy
+├── 10-case-studies/                    # Case studies - kompletne analizy
 │   ├── app.R                       # Główny plik: kolory, CSS/JS
 │   └── modules/
 │       ├── helpers.R               # Formatowanie, theme

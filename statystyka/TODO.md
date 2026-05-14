@@ -23,24 +23,18 @@ Powiązane pliki:
 
 ## Wykład: regresja
 
-### Rozbudowa ch2 „Co czyni model dobrym?" do pełnej diagnostyki
+### Rozbudowa ch2 „Co czyni model dobrym?" — pozostałe opcje
 
-Obecny ch2 jest w wersji MVP: wzorzec reszt + R² + RMSE. Świadomie pominięto
-dwie dalsze diagnostyki, które naturalnie do tego rozdziału pasują:
+~~Q-Q plot reszt~~ — dodany jako trójpanel w Ryc. 2.1 ✓
+~~Ekstrapolacja~~ — dodana jako nowa sekcja Ryc. 2.4 ✓
 
-- **Q-Q plot reszt** — czy reszty są w przybliżeniu normalne (sygnalizuje,
-  czy testy istotności współczynników są wiarygodne, czy nie). Pasowałby
-  obok reszt vs fitted: scatter X-Y + reszty vs fitted + Q-Q jako trójpanel.
-- **Outliery wpływowe (odległość Cooka)** — które pojedyncze obserwacje
-  ciągną linię na siebie. Widget mógłby pokazywać scatter z wyróżnionymi
-  punktami o wysokiej Cook's distance i opcją „usuń te punkty i przelicz".
-
-Po dodaniu tych dwóch ch2 byłby pełnym wprowadzeniem do diagnostyki modelu
-liniowego — wciąż dla pojedynczego modelu, wciąż bez porównań.
+Do ewentualnego rozważenia (nie krytyczne):
+- **Outliery wpływowe (odległość Cooka)** — które obserwacje ciągną linię.
+  Widget: scatter z wyróżnionymi punktami o wysokiej Cook's distance + opcja „usuń i przelicz".
 
 Powiązane pliki:
-- [05-regresja/modules/ch2_jakosc.R](05-regresja/modules/ch2_jakosc.R) — obecny MVP
-- [05-regresja/modules/helpers.R](05-regresja/modules/helpers.R) — `generate_assumption_data()` ma już 5 scenariuszy, można wykorzystać
+- [05-regresja/modules/ch2_jakosc.R](05-regresja/modules/ch2_jakosc.R)
+- [05-regresja/modules/helpers.R](05-regresja/modules/helpers.R) — `generate_assumption_data()` ma 5 scenariuszy
 
 ### Hero rozdziałów regresji — przekształcić `lead` w pytanie-hook
 
@@ -54,26 +48,17 @@ ledy w pytania, gdzie to naturalne.
 Powiązane pliki:
 - [05-regresja/modules/ch1_liniowa.R](05-regresja/modules/ch1_liniowa.R) i kolejne ch2-ch6
 
-### Sekcja „Pułapki regresji" — nowy rozdział lub dodatek do istniejących
+### Sekcja „Pułapki regresji" — potencjalny przyszły rozdział
 
-W wykładzie o korelacji (ch6 ch4_korelacja) jest świetna sekcja „Pułapki
-korelacji" (kwartet Anscombe'a, korelacja pozorna, Simpson, nieliniowość,
-outlier). W regresji analog brzmiałby:
+Większość tematów omówiona przy korelacji (kwartet Anscombe'a, korelacja pozorna,
+Simpson, nieliniowość, outlier) — można dać odnośnik do tamtego wykładu.
+~~Ekstrapolacja~~ dodana do ch2 ✓.
 
-- kwartet Anscombe'a dla regresji (4 zbiory z tym samym b₀, b₁, R², ale
-  zupełnie różnymi wzorcami reszt — silny argument za diagnostyką),
-- outliery wpływowe (pokrywa się z Cookiem powyżej),
-- spurious regression (regresja na pozornie powiązanych zmiennych),
-- ekstrapolacja (decyzja świadomie odrzucona w ch1; może wrócić).
+Pozostaje do ewentualnego rozszerzenia:
+- kwartet Anscombe'a specyficznie dla regresji (wzorce reszt różne przy tym samym R²)
+- spurious regression
 
-Mógłby być osobnym rozdziałem (po porównaniu modeli, przed logistyczną)
-albo dodatkiem do ch2 jakości.
-
-### Mini-widget reszt vs fitted już istnieje w ch2 — patrz wyżej
-
-To samo, co było pierwszą sugestią z mojej strony, ale po reorganizacji
-wszedł naturalnie do nowego ch2. Pozostawione tu jako notatka, że temat
-jest zaadresowany.
+Nie wymaga osobnego rozdziału — mogłoby wejść jako callout w ch2 lub ch4.
 
 ### Quiz interpretacji b₁ w jednostkach
 

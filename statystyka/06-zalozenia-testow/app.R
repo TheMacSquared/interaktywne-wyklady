@@ -50,7 +50,7 @@ source(file.path(app_dir, "modules", "ch6_sciaga.R"),       local = TRUE)
 
 ui <- lecture_page(
   lecture_id    = "zalozenia-testow",
-  lecture_num   = "04a",
+  lecture_num   = "06",
   lecture_title = "Założenia testów",
   module_label  = "Moduł IV",
   chapters      = .chapters

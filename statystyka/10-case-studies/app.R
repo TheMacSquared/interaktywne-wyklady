@@ -66,7 +66,7 @@ header_extras <- tagList(
 
 ui <- lecture_page(
   lecture_id    = "case-studies",
-  lecture_num   = "09",
+  lecture_num   = "10",
   lecture_title = "Case studies",
   module_label  = "Moduł IX",
   chapters      = .chapters,

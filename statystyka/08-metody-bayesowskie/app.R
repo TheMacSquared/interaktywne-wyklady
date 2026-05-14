@@ -60,7 +60,7 @@ source(file.path(app_dir, "modules", "ch12_cwiczenia.R"), local = TRUE)
 
 ui <- lecture_page(
   lecture_id    = "metody-bayesowskie",
-  lecture_num   = "07",
+  lecture_num   = "08",
   lecture_title = "Metody bayesowskie",
   module_label  = "Moduł VII",
   chapters      = .chapters

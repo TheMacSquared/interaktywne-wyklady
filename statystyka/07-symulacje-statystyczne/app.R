@@ -55,7 +55,7 @@ source(file.path(app_dir, "modules", "ch10_cwiczenia.R"), local = TRUE)
 
 ui <- lecture_page(
   lecture_id    = "symulacje-statystyczne",
-  lecture_num   = "06",
+  lecture_num   = "07",
   lecture_title = "Symulacje statystyczne",
   module_label  = "Moduł VI",
   chapters      = .chapters

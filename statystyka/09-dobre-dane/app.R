@@ -149,7 +149,7 @@ header_extras <- tagList(
 
 ui <- lecture_page(
   lecture_id    = "dobre-dane",
-  lecture_num   = "08",
+  lecture_num   = "09",
   lecture_title = "Co czyni dobry zbiór danych?",
   module_label  = "Moduł VIII",
   chapters      = .chapters,

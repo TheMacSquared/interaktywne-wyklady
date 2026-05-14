@@ -27,11 +27,11 @@
   list(num = "III",  slug = "przedzialy", title = "Przedziały ufności",          short = "Przedziały",   href = "#"),
   list(num = "IV",   slug = "testowanie", title = "Testowanie",                  short = "Testowanie",   href = "#"),
   list(num = "V",    slug = "regresja",   title = "Regresja",                    short = "Regresja",     href = "#"),
-  list(num = "IVa",  slug = "zalozenia",  title = "Założenia testów",            short = "Założenia",    href = "#"),
-  list(num = "VI",   slug = "symulacje",  title = "Symulacje",                   short = "Symulacje",    href = "#"),
-  list(num = "VII",  slug = "bayes",      title = "Bayes",                       short = "Bayes",        href = "#"),
-  list(num = "VIII", slug = "dane",       title = "Dobre dane",                  short = "Dane",         href = "#"),
-  list(num = "IX",   slug = "case",       title = "Case studies",                short = "Case studies", href = "#")
+  list(num = "VI",   slug = "zalozenia",  title = "Założenia testów",            short = "Założenia",    href = "#"),
+  list(num = "VII",  slug = "symulacje",  title = "Symulacje",                   short = "Symulacje",    href = "#"),
+  list(num = "VIII", slug = "bayes",      title = "Bayes",                       short = "Bayes",        href = "#"),
+  list(num = "IX",   slug = "dane",       title = "Dobre dane",                  short = "Dane",         href = "#"),
+  list(num = "X",    slug = "case",       title = "Case studies",                short = "Case studies", href = "#")
 )
 
 # Mapowanie lecture_id → slug modułu
