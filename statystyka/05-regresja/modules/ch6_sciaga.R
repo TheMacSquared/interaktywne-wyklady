@@ -93,15 +93,14 @@ ch6_ui <- list(
     tagList(
 
     lc_feedback(type = "info",
-      tags$strong("Regresja liniowa:"),
-      p(withMathJax("\\(\\beta_1 = 0.5\\)"), " oznacza: wzrost X o 1 powoduje wzrost Y o 0.5 (ceteris paribus)."),
+      p("Regresja liniowa: ", withMathJax("\\(\\beta_1 = 0.5\\)"),
+        " oznacza wzrost Y o 0.5 przy wzroście X o 1 (ceteris paribus)."),
 
-      tags$strong("Regresja logistyczna:"),
-      p(withMathJax("\\(\\beta_1 = 0.5 \\Rightarrow OR = e^{0.5} = 1.65\\)"),
+      p("Regresja logistyczna: ", withMathJax("\\(\\beta_1 = 0.5 \\Rightarrow OR = e^{0.5} = 1.65\\)"),
         " oznacza: wzrost X o 1 zwiększa szanse sukcesu 1.65-krotnie."),
 
-      tags$strong("Istotność współczynników:"),
-      p("p < 0.05 dla ", withMathJax("\\(\\beta_j\\)"), " oznacza, że predyktor ", withMathJax("\\(X_j\\)"),
+      p("Istotność współczynników: p < 0.05 dla ", withMathJax("\\(\\beta_j\\)"),
+        " oznacza, że predyktor ", withMathJax("\\(X_j\\)"),
         " istotnie wpływa na Y (przy kontroli pozostałych).")
     ),
 
@@ -113,11 +112,11 @@ ch6_ui <- list(
 
     lc_feedback(type = "ok",
       tags$ul(
-        tags$li(tags$b("Y ciągła, 1 predyktor"), " → regresja liniowa prosta"),
-        tags$li(tags$b("Y ciągła, wiele predyktorów"), " → regresja wieloraka"),
-        tags$li(tags$b("Y binarna (0/1)"), " → regresja logistyczna"),
-        tags$li(tags$b("Y porządkowa"), " → regresja porządkowa (ordered logit)"),
-        tags$li(tags$b("Y licznikowa"), " → regresja Poissona")
+        tags$li("Y ciągła, 1 predyktor → regresja liniowa prosta"),
+        tags$li("Y ciągła, wiele predyktorów → regresja wieloraka"),
+        tags$li("Y binarna (0/1) → regresja logistyczna"),
+        tags$li("Y porządkowa → regresja porządkowa (ordered logit)"),
+        tags$li("Y licznikowa → regresja Poissona")
       )
     ),
 
@@ -148,7 +147,7 @@ ch6_ui <- list(
           checkboxInput("ch6_tree_nonlinear", "Podejrzewam nieliniowość / przeuczenie", value = FALSE)
         ),
         column(8,
-          plotOutput("ch6_tree_plot", height = "310px"),
+          zoom_plot_ui("ch6_tree_plot", height = "310px"),
           uiOutput("ch6_tree_info")
         )
       )
@@ -194,10 +193,10 @@ predict(model_log, newdata = ..., type = 'response')  # prawdopodobienstwa"
 
     lc_feedback(type = "danger",
       tags$ul(
-        tags$li(tags$b("Extrapolacja:"), " Model działa w zakresie danych treningowych. Predykcja poza tym zakresem jest ryzykowna."),
-        tags$li(tags$b("Korelacja predyktorów:"), " Silna korelacja między X1 i X2 (współliniowość) zawyża SE i utrudnia interpretację."),
-        tags$li(tags$b("Overfitting:"), " Więcej zmiennych = wyższe R², ale gorsze uogólnianie. Zawsze sprawdzaj adj.R² / AIC / BIC."),
-        tags$li(tags$b("R² w logistycznej:"), " Nie używaj R² do oceny regresji logistycznej. Użyj AIC, BIC, dokładności, ROC-AUC.")
+        tags$li("Ekstrapolacja: model działa w zakresie danych treningowych. Predykcja poza tym zakresem jest ryzykowna."),
+        tags$li("Korelacja predyktorów: silna korelacja między X1 i X2 (współliniowość) zawyża SE i utrudnia interpretację."),
+        tags$li("Overfitting: więcej zmiennych = wyższe R², ale gorsze uogólnianie. Zawsze sprawdzaj adj.R² / AIC / BIC."),
+        tags$li("R² w logistycznej: nie używaj R² do oceny regresji logistycznej. Użyj AIC, BIC, dokładności, ROC-AUC.")
       )
     )
 
@@ -245,7 +244,7 @@ ch6_server <- function(input, output, session) {
     list(model = model, formula = formula, note = note)
   })
 
-  output$ch6_tree_plot <- renderPlot({
+  zoom_plot_server("ch6_tree_plot", reactive({
     res <- ch6_tree_result()
     nodes <- data.frame(
       id = 1:5,
@@ -273,7 +272,7 @@ ch6_server <- function(input, output, session) {
       ylim(0, 3.5) +
       theme_void() +
       theme(legend.position = "none")
-  })
+  }))
 
   output$ch6_tree_info <- renderUI({
     res <- ch6_tree_result()

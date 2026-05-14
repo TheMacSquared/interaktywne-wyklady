@@ -79,7 +79,7 @@ ch3_ui <- lecture_chapter(
           uiOutput("ch3_step_explanation")
         ),
         column(8,
-          plotOutput("ch3_step_plot", height = "400px"),
+          zoom_plot_ui("ch3_step_plot", height = "400px"),
           uiOutput("ch3_step_result")
         )
       )
@@ -108,7 +108,7 @@ ch3_ui <- lecture_chapter(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch3_B_stability", height = "260px")
+          zoom_plot_ui("ch3_B_stability", height = "260px")
         )
       )
     ),
@@ -210,7 +210,7 @@ ch3_server <- function(input, output, session) {
     ch3_step(4)
   })
 
-  output$ch3_step_plot <- renderPlot({
+  zoom_plot_server("ch3_step_plot", reactive({
     step   <- ch3_step()
     x      <- ch3_data()
     params <- ch3_scenario_params()
@@ -259,7 +259,7 @@ ch3_server <- function(input, output, session) {
                                      conf_level = input$ch3_conf)
       }
     }
-  })
+  }))
 
   output$ch3_step_explanation <- renderUI({
     step   <- ch3_step()
@@ -297,7 +297,7 @@ ch3_server <- function(input, output, session) {
   })
 
   # --- Widget 2: Stabilnosc wg B ---
-  output$ch3_B_stability <- renderPlot({
+  zoom_plot_server("ch3_B_stability", reactive({
     input$ch3_B_run
     isolate({
       if (is.null(ch3_data())) {
@@ -332,7 +332,7 @@ ch3_server <- function(input, output, session) {
              y = "Szerokość 95% CI") +
         theme_upwr()
     })
-  })
+  }))
 
   # --- Quiz ---
   ch3_quiz_answered <- reactiveVal(FALSE)

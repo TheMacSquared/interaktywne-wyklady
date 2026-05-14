@@ -119,7 +119,7 @@ ch6_ui <- list(
         ),
         column(8,
           uiOutput("ch6_ind_hypothesis"),
-          plotOutput("ch6_ind_boxplot", height = "300px"),
+          zoom_plot_ui("ch6_ind_boxplot", height = "300px"),
           uiOutput("ch6_ind_result")
         )
       )
@@ -151,7 +151,7 @@ ch6_ui <- list(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch6_paired_plot", height = "300px"),
+          zoom_plot_ui("ch6_paired_plot", height = "300px"),
           uiOutput("ch6_paired_result")
         )
       )
@@ -181,12 +181,12 @@ ch6_ui <- list(
       fluidRow(
         column(6,
           p(tags$strong("Analiza niesparowana"), " (n₁=20, n₂=15)"),
-          plotOutput("ch6_compare_ind_plot", height = "260px"),
+          zoom_plot_ui("ch6_compare_ind_plot", height = "260px"),
           uiOutput("ch6_compare_ind_result")
         ),
         column(6,
           p(tags$strong("Analiza sparowana"), " (15 par)"),
-          plotOutput("ch6_compare_paired_plot", height = "260px"),
+          zoom_plot_ui("ch6_compare_paired_plot", height = "260px"),
           uiOutput("ch6_compare_paired_result")
         )
       )
@@ -394,7 +394,7 @@ ch6_server <- function(input, output, session) {
     )
   })
 
-  output$ch6_ind_boxplot <- renderPlot({
+  zoom_plot_server("ch6_ind_boxplot", reactive({
     data <- ch6_ind_data()
     if (is.null(data)) {
       ggplot() +
@@ -460,7 +460,7 @@ ch6_server <- function(input, output, session) {
         plot_test_distribution(st$test$statistic, df = st$test$df, test_type = "t")
       }
     }
-  })
+  }))
 
   output$ch6_ind_result <- renderUI({
     data <- ch6_ind_data()
@@ -532,7 +532,7 @@ ch6_server <- function(input, output, session) {
   })
 
   # --- Widget 2: Test t parowy ---
-  output$ch6_paired_plot <- renderPlot({
+  zoom_plot_server("ch6_paired_plot", reactive({
     data <- ch6_paired_data()
     if (is.null(data)) {
       ggplot() +
@@ -556,7 +556,7 @@ ch6_server <- function(input, output, session) {
              x = "Moment", y = "Wynik") +
                 theme(legend.position = "none")
     }
-  })
+  }))
 
   output$ch6_paired_result <- renderUI({
     data <- ch6_paired_data()
@@ -597,7 +597,7 @@ ch6_server <- function(input, output, session) {
 
   # --- Widget: porownanie sparowany vs. niesparowany (Ryc. 8.3) ---
 
-  output$ch6_compare_ind_plot <- renderPlot({
+  zoom_plot_server("ch6_compare_ind_plot", reactive({
     d <- .ch6_compare$ind_data
     d$kolor <- factor(
       ifelse(d$typ == "dropout", "Brak kontroli (n=5)", as.character(d$grupa)),
@@ -623,7 +623,7 @@ ch6_server <- function(input, output, session) {
       labs(x = NULL, y = "Ciśnienie skurczowe (mmHg)", color = NULL, shape = NULL) +
       guides(fill = "none") +
       theme(legend.position = "bottom", legend.text = element_text(size = 9))
-  })
+  }))
 
   output$ch6_compare_ind_result <- renderUI({
     d <- .ch6_compare$ind_data
@@ -654,7 +654,7 @@ ch6_server <- function(input, output, session) {
     )
   })
 
-  output$ch6_compare_paired_plot <- renderPlot({
+  zoom_plot_server("ch6_compare_paired_plot", reactive({
     long <- .ch6_compare$long_pairs
     ggplot(long, aes(x = moment, y = cisnienie)) +
       geom_line(aes(group = id), alpha = 0.3, color = col_paired) +
@@ -662,7 +662,7 @@ ch6_server <- function(input, output, session) {
       scale_color_manual(values = c("Przed" = col_h0, "Po" = col_reject)) +
       labs(x = NULL, y = "Ciśnienie skurczowe (mmHg)") +
       theme(legend.position = "none")
-  })
+  }))
 
   output$ch6_compare_paired_result <- renderUI({
     long <- .ch6_compare$long_pairs

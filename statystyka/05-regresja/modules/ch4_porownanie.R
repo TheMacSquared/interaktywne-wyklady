@@ -28,9 +28,8 @@ ch4_ui <- list(
     lc_h2("ch4-problem", "Dlaczego sam R² nie wystarczy?"),
 
     tagList(
-      p("R² ma jedną zdradliwą właściwość przy porównaniach: ",
-        tags$strong("zawsze rośnie"),
-        ", kiedy dodajemy do modelu kolejny predyktor — nawet zupełnie
+      p("R² ma jedną zdradliwą właściwość przy porównaniach: zawsze rośnie,
+        kiedy dodajemy do modelu kolejny predyktor — nawet zupełnie
         bezsensowny. Matematycznie nie jest to przypadek: każdy nowy X
         może tylko zmniejszyć (albo pozostawić bez zmian) sumę kwadratów
         reszt, więc R² nigdy nie spada."),
@@ -63,7 +62,7 @@ ch4_ui <- list(
                        class = "lc-btn-warning", width = "100%")
         ),
         column(8,
-          plotOutput("ch4_step_plot", height = "300px"),
+          zoom_plot_ui("ch4_step_plot", height = "300px"),
           uiOutput("ch4_step_table")
         )
       )
@@ -80,8 +79,7 @@ ch4_ui <- list(
     tagList(
       p("W rozdziale 2 mieliśmy ", withMathJax("\\(R^2\\)"), " i ", tags$em("RMSE"),
         " — miary jakości pojedynczego modelu. Teraz dochodzą trzy metryki
-        ", tags$strong("porównawcze"),
-        ", które albo karzą za złożoność, albo dzielą dane na trening i test:"),
+        porównawcze, które albo karzą za złożoność, albo dzielą dane na trening i test:"),
       tags$table(class = "lc-table lc-table-bordered", style = "font-size: 14px;",
         tags$thead(
           tags$tr(tags$th("Metryka"), tags$th("Co mierzy"), tags$th("Lepiej gdy"))
@@ -133,7 +131,7 @@ ch4_ui <- list(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch4_metrics_plot", height = "350px"),
+          zoom_plot_ui("ch4_metrics_plot", height = "350px"),
           uiOutput("ch4_metrics_table")
         )
       )
@@ -152,7 +150,7 @@ ch4_ui <- list(
       p("AIC i BIC działają, gdy modele są ", tags$em("zagnieżdżone"),
         " (jeden zawiera predyktory drugiego). Co, jeśli porównujemy modele
         zasadniczo różne — np. wielomian różnego stopnia? Najlepszą miarą
-        staje się wtedy ", tags$strong("generalizacja na nowe dane"), "."),
+        staje się wtedy generalizacja na nowe dane."),
       p("Najpierw zobaczmy sam efekt przeuczenia: model z dużą liczbą
         parametrów może idealnie dopasować się do danych treningowych,
         ale działać fatalnie na nowych obserwacjach.")
@@ -171,7 +169,7 @@ ch4_ui <- list(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch4_poly_plot", height = "300px"),
+          zoom_plot_ui("ch4_poly_plot", height = "300px"),
           uiOutput("ch4_poly_stats")
         )
       )
@@ -198,7 +196,7 @@ ch4_ui <- list(
                        class = "lc-btn-warning", width = "100%")
         ),
         column(8,
-          plotOutput("ch4_tt_plot", height = "330px"),
+          zoom_plot_ui("ch4_tt_plot", height = "330px"),
           uiOutput("ch4_tt_info")
         )
       )
@@ -221,8 +219,7 @@ ch4_ui <- list(
       p("A co, gdy Y to zdał/nie zdał, kliknął/nie kliknął, kupił/nie
         kupił? Wtedy regresja liniowa zawodzi — daje predykcje poza
         zakresem [0, 1] i nie jest sensownym modelem. Następny rozdział
-        wprowadza ", tags$strong("regresję logistyczną"),
-        ", która jest stworzona dokładnie dla takich sytuacji.")
+        wprowadza regresję logistyczną, która jest stworzona dokładnie dla takich sytuacji.")
     ),
 
     lc_chapter_next(
@@ -271,7 +268,7 @@ ch4_server <- function(input, output, session) {
     ch4_step_data(do.call(rbind, results))
   })
 
-  output$ch4_step_plot <- renderPlot({
+  zoom_plot_server("ch4_step_plot", reactive({
     df <- ch4_step_data()
     if (is.null(df)) {
       ggplot() +
@@ -296,7 +293,7 @@ ch4_server <- function(input, output, session) {
         theme_upwr() +
         theme(legend.position = "top")
     }
-  })
+  }))
 
   output$ch4_step_table <- renderUI({
     df <- ch4_step_data()
@@ -352,7 +349,7 @@ ch4_server <- function(input, output, session) {
     ch4_models(do.call(rbind, results))
   })
 
-  output$ch4_metrics_plot <- renderPlot({
+  zoom_plot_server("ch4_metrics_plot", reactive({
     df <- ch4_models()
     if (is.null(df)) {
       ggplot() +
@@ -376,7 +373,7 @@ ch4_server <- function(input, output, session) {
         theme(legend.position = "none",
               axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
     }
-  })
+  }))
 
   output$ch4_metrics_table <- renderUI({
     df <- ch4_models()
@@ -422,7 +419,7 @@ ch4_server <- function(input, output, session) {
     ch4_poly_data(data.frame(x = x, y = y))
   })
 
-  output$ch4_poly_plot <- renderPlot({
+  zoom_plot_server("ch4_poly_plot", reactive({
     df <- ch4_poly_data()
     if (is.null(df)) {
       ggplot() +
@@ -445,7 +442,7 @@ ch4_server <- function(input, output, session) {
              x = "X", y = "Y") +
         theme_upwr()
     }
-  })
+  }))
 
   output$ch4_poly_stats <- renderUI({
     df <- ch4_poly_data()
@@ -469,7 +466,7 @@ ch4_server <- function(input, output, session) {
     ch4_tt_data(generate_train_test_poly())
   })
 
-  output$ch4_tt_plot <- renderPlot({
+  zoom_plot_server("ch4_tt_plot", reactive({
     sets <- ch4_tt_data()
     train <- sets$train
     test <- sets$test
@@ -487,7 +484,7 @@ ch4_server <- function(input, output, session) {
                 linewidth = 1.2) +
       labs(x = "X", y = "Y") +
       theme_upwr()
-  })
+  }))
 
   output$ch4_tt_info <- renderUI({
     sets <- ch4_tt_data()

@@ -55,7 +55,7 @@ ch10_ui <- list(
           uiOutput("ch10_dist_hint")
         ),
         column(8,
-          plotOutput("ch10_dist_plot", height = "280px"),
+          zoom_plot_ui("ch10_dist_plot", height = "280px"),
           uiOutput("ch10_dist_stats")
         )
       )
@@ -125,7 +125,7 @@ ch10_ui <- list(
           p(tags$em("Zobacz, jak ta sama wartość d wygląda w konkretnych liczbach."))
         ),
         column(8,
-          plotOutput("ch10_d_plot", height = "240px"),
+          zoom_plot_ui("ch10_d_plot", height = "240px"),
           uiOutput("ch10_d_table")
         )
       )
@@ -187,7 +187,7 @@ ch10_ui <- list(
           uiOutput("ch10_r_hint")
         ),
         column(8,
-          plotOutput("ch10_r_plot", height = "240px"),
+          zoom_plot_ui("ch10_r_plot", height = "240px"),
           uiOutput("ch10_r_table")
         )
       )
@@ -249,7 +249,7 @@ ch10_ui <- list(
           uiOutput("ch10_v_hint")
         ),
         column(8,
-          plotOutput("ch10_v_plot", height = "240px"),
+          zoom_plot_ui("ch10_v_plot", height = "240px"),
           uiOutput("ch10_v_table")
         )
       )
@@ -316,7 +316,7 @@ ch10_ui <- list(
           uiOutput("ch10_eta_hint")
         ),
         column(8,
-          plotOutput("ch10_eta_plot", height = "240px"),
+          zoom_plot_ui("ch10_eta_plot", height = "240px"),
           uiOutput("ch10_eta_table")
         )
       )
@@ -532,7 +532,7 @@ ch10_server <- function(input, output, session) {
     p(tags$em(ch10_dist_hints[[input$ch10_dist_scenario]]))
   })
 
-  output$ch10_dist_plot <- renderPlot({
+  zoom_plot_server("ch10_dist_plot", reactive({
     d <- input$ch10_d
     x_lo <- -4
     x_hi <- d + 4
@@ -559,7 +559,7 @@ ch10_server <- function(input, output, session) {
       scale_color_manual(values = c(col_h0, col_reject)) +
       labs(x = NULL, y = "Gęstość", fill = NULL, color = NULL) +
       theme(legend.position = "bottom")
-  })
+  }))
 
   output$ch10_dist_stats <- renderUI({
     d     <- input$ch10_d
@@ -599,7 +599,7 @@ ch10_server <- function(input, output, session) {
   # Ryc. 10.2: Cohen's d w surowych liczbach
   # --------------------------------------------------------------------------
 
-  output$ch10_d_plot <- renderPlot({
+  zoom_plot_server("ch10_d_plot", reactive({
     req(input$ch10_d_level, input$ch10_d_scenario)
     e <- ch10_d_scenarios[[input$ch10_d_scenario]][[input$ch10_d_level]]
     x_lo <- min(e$x1, e$x2) - 3 * e$s
@@ -621,7 +621,7 @@ ch10_server <- function(input, output, session) {
       labs(x = paste0("Wartość (", e$jednostka, ")"),
            y = "Gęstość", fill = NULL, color = NULL) +
       theme(legend.position = "bottom")
-  })
+  }))
 
   output$ch10_d_table <- renderUI({
     req(input$ch10_d_level, input$ch10_d_scenario)
@@ -662,7 +662,7 @@ ch10_server <- function(input, output, session) {
     p(tags$em(ch10_r_hints[[input$ch10_r_scenario]]))
   })
 
-  output$ch10_r_plot <- renderPlot({
+  zoom_plot_server("ch10_r_plot", reactive({
     req(input$ch10_r_level, input$ch10_r_scenario)
     r_target <- as.numeric(input$ch10_r_level)
     sc <- ch10_r_scenarios[[input$ch10_r_scenario]]
@@ -686,7 +686,7 @@ ch10_server <- function(input, output, session) {
            y = sc$y_label,
            subtitle = paste0("r empiryczne = ", round(r_emp, 2),
                              "  (zadane |r| = ", r_target, ")"))
-  })
+  }))
 
   output$ch10_r_table <- renderUI({
     req(input$ch10_r_level)
@@ -724,7 +724,7 @@ ch10_server <- function(input, output, session) {
     p(tags$em(ch10_v_scenarios[[input$ch10_v_scenario]]$hint))
   })
 
-  output$ch10_v_plot <- renderPlot({
+  zoom_plot_server("ch10_v_plot", reactive({
     req(input$ch10_v_level, input$ch10_v_scenario)
     e  <- ch10_v_examples[[input$ch10_v_level]]
     sc <- ch10_v_scenarios[[input$ch10_v_scenario]]
@@ -746,7 +746,7 @@ ch10_server <- function(input, output, session) {
       ) +
       labs(x = NULL, y = "Odsetek osób w grupie", fill = NULL) +
       theme(legend.position = "bottom")
-  })
+  }))
 
   output$ch10_v_table <- renderUI({
     req(input$ch10_v_level, input$ch10_v_scenario)
@@ -796,7 +796,7 @@ ch10_server <- function(input, output, session) {
     c(mu_ctr - delta, mu_ctr, mu_ctr + delta)
   }
 
-  output$ch10_eta_plot <- renderPlot({
+  zoom_plot_server("ch10_eta_plot", reactive({
     req(input$ch10_eta_level, input$ch10_eta_scenario)
     eta <- as.numeric(input$ch10_eta_level)
     sc  <- ch10_eta_scenarios[[input$ch10_eta_scenario]]
@@ -815,7 +815,7 @@ ch10_server <- function(input, output, session) {
       scale_fill_upwr() +
       labs(x = NULL, y = sc$y_lab, fill = NULL) +
       theme(legend.position = "none")
-  })
+  }))
 
   output$ch10_eta_table <- renderUI({
     req(input$ch10_eta_level, input$ch10_eta_scenario)

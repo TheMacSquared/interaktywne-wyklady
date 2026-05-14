@@ -31,7 +31,7 @@ ch3_ui <- list(
     lc_h2("ch3-wiele-predyktorow", "Wiele predyktorów naraz"),
 
     tagList(
-      p("Regresja wieloraka rozszerza model o ", tags$strong("k predyktorów"), ":"),
+      p("Regresja wieloraka rozszerza model o k predyktorów:"),
       lc_formula_box(
         withMathJax(helpText(
           "$$Y = \\beta_0 + \\beta_1 X_1 + \\beta_2 X_2 + \\ldots + \\beta_k X_k + \\varepsilon$$"
@@ -39,7 +39,7 @@ ch3_ui <- list(
       ),
       p("Każde ", withMathJax("\\(\\beta_j\\)"),
         " mówi: o ile zmieni się Y, gdy ", withMathJax("\\(X_j\\)"),
-        " wzrośnie o 1, ", tags$strong("przy stałych pozostałych zmiennych"), "."),
+        " wzrośnie o 1, przy stałych pozostałych zmiennych."),
       p("To zastrzeżenie „przy stałych pozostałych\" jest sercem regresji
         wielorakiej. Bez niego ", withMathJax("\\(\\beta_j\\)"),
         " wyglądałoby tak samo jak w regresji prostej. Z nim — może być
@@ -56,52 +56,6 @@ ch3_ui <- list(
         tags$em("istotność"),
         " współczynnika, gdy dokładamy kolejny X.")
     ),
-
-    tags$head(tags$style(HTML("
-      .lc-plot-fullscreen-wrap { position: relative; }
-      .lc-plot-fullscreen-btn {
-        position: absolute; top: 8px; right: 8px;
-        z-index: 5;
-        background: rgba(255,255,255,0.92);
-        border: 1px solid var(--upwr-rule, #ccc);
-        border-radius: 4px;
-        padding: 4px 10px;
-        font-size: 13px;
-        cursor: pointer;
-        line-height: 1;
-      }
-      .lc-plot-fullscreen-btn:hover { background: white; }
-      .lc-plot-fullscreen-wrap:fullscreen,
-      .lc-plot-fullscreen-wrap:-webkit-full-screen {
-        background: white;
-        padding: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .lc-plot-fullscreen-wrap:fullscreen img,
-      .lc-plot-fullscreen-wrap:-webkit-full-screen img {
-        max-height: 95vh !important;
-        max-width: 95vw !important;
-        height: auto !important;
-        width: auto !important;
-      }
-    "))),
-    tags$head(tags$script(HTML("
-      document.addEventListener('click', function(ev) {
-        var btn = ev.target.closest('.lc-plot-fullscreen-btn');
-        if (!btn) return;
-        var wrap = btn.closest('.lc-plot-fullscreen-wrap');
-        if (!wrap) return;
-        if (document.fullscreenElement) {
-          document.exitFullscreen();
-        } else if (wrap.requestFullscreen) {
-          wrap.requestFullscreen();
-        } else if (wrap.webkitRequestFullscreen) {
-          wrap.webkitRequestFullscreen();
-        }
-      });
-    "))),
 
     figure_panel(
       label = "Ryc. 3.1", title = "Predykcja średniej ocen",
@@ -127,12 +81,7 @@ ch3_ui <- list(
              jak estymaty trochę się chwieją.")
         ),
         column(8,
-          tags$div(class = "lc-plot-fullscreen-wrap",
-            tags$button(class = "lc-plot-fullscreen-btn", type = "button",
-                        title = "Pełny ekran",
-                        HTML("&#x26F6; Pełny ekran")),
-            plotOutput("ch3_scatter_model_plot", height = "340px")
-          ),
+          zoom_plot_ui("ch3_scatter_model_plot", height = "340px"),
           uiOutput("ch3_scatter_model_info"),
           uiOutput("ch3_model_coefs"),
           plotOutput("ch3_coef_plot", height = "250px"),
@@ -146,8 +95,7 @@ ch3_ui <- list(
     tagList(
       p("Słowo „kontrola\" w regresji znaczy: ", tags$em("usuwamy"),
         " z X-a informację, którą już niesie inny X. To, co zostaje, jest
-        ", tags$strong("efektem unikalnym"),
-        " danej zmiennej — tym, czego nie da się wytłumaczyć pozostałymi."),
+        efektem unikalnym danej zmiennej — tym, czego nie da się wytłumaczyć pozostałymi."),
       p("Widget pokazuje to krok po kroku: najpierw policzymy efekt
         frekwencji w modelu prostym, potem efekt godzin nauki, a na końcu
         zobaczymy, co zostaje, gdy zbudujemy model z obiema zmiennymi naraz.")
@@ -190,10 +138,9 @@ ch3_ui <- list(
       p("A co, jeśli dwa nasze predyktory mówią ", tags$em("prawie to samo"),
         "? Powiedzmy: dochód okręgu i wydatki na ucznia są silnie ze sobą
         skorelowane. Model w zasadzie nie wie, któremu przypisać efekt —
-        i ", tags$strong("rozdmuchuje błędy standardowe obu"),
-        ". Współczynniki stają się niestabilne, p-value rosną."),
-      p("Wskaźnikiem, który to wychwytuje, jest ", tags$strong("VIF"),
-        " — variance inflation factor. Im wyższy, tym bardziej zmienna
+        i rozdmuchuje błędy standardowe obu. Współczynniki stają się niestabilne, p-value rosną."),
+      p("Wskaźnikiem, który to wychwytuje, jest VIF
+        — variance inflation factor. Im wyższy, tym bardziej zmienna
         powtarza informację z innych X-ów. VIF > 5 jest sygnałem
         ostrzegawczym, VIF > 10 — czerwoną flagą.")
     ),
@@ -219,8 +166,7 @@ ch3_ui <- list(
 
     tagList(
       p("Mamy teraz w arsenale modele z różną liczbą predyktorów: od
-        jednego X aż po wszystkie naraz. Naturalne pytanie: ",
-        tags$strong("który z nich wybrać"), "?"),
+        jednego X aż po wszystkie naraz. Naturalne pytanie: który z nich wybrać?"),
       p("Można by chcieć po prostu wziąć ten o najwyższym R². Ale —
         jak zaraz zobaczymy w rozdziale 4 — R² zachowuje się w
         porównaniach zdradliwie: zawsze rośnie, gdy dodajemy kolejny
@@ -279,57 +225,57 @@ ch3_server <- function(input, output, session) {
     lm(formula, data = df)
   })
 
-  output$ch3_scatter_model_plot <- renderPlot({
+  ch3_build_scatter <- reactive({
     df <- ch3_data()
     if (is.null(df)) {
-      ggplot() +
+      return(ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane i dopasuj'",
                  size = 5.5, color = upwr_reference) +
-        theme_void()
-    } else {
-      preds <- input$ch3_predictors
-      if (length(preds) == 0) preds <- "godziny_nauki"
-
-      x_var <- preds[1]
-      df$kolor_pred <- if (length(preds) >= 2) ch3_make_three_groups(df[[preds[2]]]) else factor("wszyscy")
-      df$facet_row <- if (length(preds) >= 3) ch3_make_three_groups(df[[preds[3]]]) else factor("wszyscy")
-      df$facet_col <- if (length(preds) >= 4) ch3_make_three_groups(df[[preds[4]]]) else factor("wszyscy")
-
-      color_title <- if (length(preds) >= 2) ch3_labels_pl[[preds[2]]] else NULL
-
-      p <- ggplot(df, aes(x = .data[[x_var]], y = ocena, color = kolor_pred)) +
-        geom_point(alpha = 0.55, size = 2) +
-        geom_smooth(method = "lm", se = FALSE, linewidth = 1) +
-        scale_color_manual(
-          values = if (length(preds) >= 2) {
-            c("niski" = unname(upwr_cat["niebo"]),
-              "średni" = unname(upwr_cat["bursztyn"]),
-              "wysoki" = unname(upwr_cat["wrzos"]))
-          } else {
-            c("wszyscy" = upwr_secondary)
-          },
-          name = color_title
-        ) +
-        labs(x = ch3_labels_pl[[x_var]], y = "Średnia ocen") +
-        theme_upwr() +
-        theme(legend.position = if (length(preds) >= 2) "top" else "none")
-
-      if (length(preds) == 3) {
-        p <- p + facet_grid(rows = vars(facet_row), labeller = labeller(
-          facet_row = function(x) paste(ch3_labels_pl[[preds[3]]], x)
-        ))
-      } else if (length(preds) >= 4) {
-        p <- p + facet_grid(rows = vars(facet_row), cols = vars(facet_col),
-          labeller = labeller(
-            facet_row = function(x) paste(ch3_labels_pl[[preds[3]]], x),
-            facet_col = function(x) paste(ch3_labels_pl[[preds[4]]], x)
-          )
-        )
-      }
-
-      p
+        theme_void())
     }
+    preds <- input$ch3_predictors
+    if (length(preds) == 0) preds <- "godziny_nauki"
+
+    x_var <- preds[1]
+    df$kolor_pred <- if (length(preds) >= 2) ch3_make_three_groups(df[[preds[2]]]) else factor("wszyscy")
+    df$facet_row  <- if (length(preds) >= 3) ch3_make_three_groups(df[[preds[3]]]) else factor("wszyscy")
+    df$facet_col  <- if (length(preds) >= 4) ch3_make_three_groups(df[[preds[4]]]) else factor("wszyscy")
+
+    color_title <- if (length(preds) >= 2) ch3_labels_pl[[preds[2]]] else NULL
+
+    p <- ggplot(df, aes(x = .data[[x_var]], y = ocena, color = kolor_pred)) +
+      geom_point(alpha = 0.55, size = 2) +
+      geom_smooth(method = "lm", se = FALSE, linewidth = 1) +
+      scale_color_manual(
+        values = if (length(preds) >= 2) {
+          c("niski" = unname(upwr_cat["niebo"]),
+            "średni" = unname(upwr_cat["bursztyn"]),
+            "wysoki" = unname(upwr_cat["wrzos"]))
+        } else {
+          c("wszyscy" = upwr_secondary)
+        },
+        name = color_title
+      ) +
+      labs(x = ch3_labels_pl[[x_var]], y = "Średnia ocen") +
+      theme_upwr() +
+      theme(legend.position = if (length(preds) >= 2) "top" else "none")
+
+    if (length(preds) == 3) {
+      p <- p + facet_grid(rows = vars(facet_row), labeller = labeller(
+        facet_row = function(x) paste(ch3_labels_pl[[preds[3]]], x)
+      ))
+    } else if (length(preds) >= 4) {
+      p <- p + facet_grid(rows = vars(facet_row), cols = vars(facet_col),
+        labeller = labeller(
+          facet_row = function(x) paste(ch3_labels_pl[[preds[3]]], x),
+          facet_col = function(x) paste(ch3_labels_pl[[preds[4]]], x)
+        )
+      )
+    }
+    p
   })
+
+  zoom_plot_server("ch3_scatter_model_plot", ch3_build_scatter)
 
   output$ch3_scatter_model_info <- renderUI({
     df <- ch3_data()

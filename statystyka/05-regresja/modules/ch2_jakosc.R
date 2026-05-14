@@ -87,8 +87,7 @@ ch2_ui <- list(
       p("W rozdziale 1 mieliśmy wszystko, czego potrzeba do policzenia
         regresji: chmurę punktów, MNK, p-value, predykcję. Każde z tych
         narzędzi mówiło jednak: ", tags$em("jeśli model jest sensowny, to..."),
-        ". Pytanie, które dotąd omijaliśmy, brzmi: ",
-        tags$strong("czy nasz model jest sensowny?")),
+        ". Pytanie, które dotąd omijaliśmy, brzmi: czy nasz model jest sensowny?"),
       p("To pytanie rozkłada się na trzy konkretne podpytania, a każdemu
         z nich odpowiada inne narzędzie:"),
       tags$ol(
@@ -99,8 +98,8 @@ ch2_ui <- list(
         tags$li("Jak duże są typowe pomyłki w predykcji? — ",
                 tags$em("RMSE"))
       ),
-      p("Wszystko to są miary jakości ", tags$strong("pojedynczego"),
-        " modelu. Porównywaniem różnych modeli — który lepszy, który gorszy
+      p("Wszystko to są miary jakości pojedynczego modelu.
+        Porównywaniem różnych modeli — który lepszy, który gorszy
         — zajmiemy się w rozdziale 4. Tu pytamy tylko: czy ", tags$em("ten"),
         " model jest wart zaufania?")
     ),
@@ -117,26 +116,21 @@ ch2_ui <- list(
         bez żadnego wzorca, bez trendu, bez wachlarza. Każde odchylenie
         od tego ideału ma swoją wymowę:"),
       tags$ul(
-        tags$li(tags$strong("Łuk w resztach: "),
-                "zależność jest tak naprawdę krzywa, a my dopasowaliśmy prostą.
+        tags$li("Łuk w resztach: zależność jest tak naprawdę krzywa, a my dopasowaliśmy prostą.
                  Linia systematycznie zaniża przewidywania w jednym zakresie
                  X i zawyża w innym."),
-        tags$li(tags$strong("Wachlarz (lejek): "),
-                "wariancja Y zmienia się z X. Tam, gdzie X duże, punkty są
+        tags$li("Wachlarz (lejek): wariancja Y zmienia się z X. Tam, gdzie X duże, punkty są
                  bardziej rozproszone niż tam, gdzie X małe. Łamie to założenie
                  stałej wariancji (homoskedastyczności)."),
-        tags$li(tags$strong("Pojedynczy odstający: "),
-                "kropka na wykresie reszt daleko od reszty chmury — to obserwacja,
+        tags$li("Pojedynczy odstający: kropka na wykresie reszt daleko od reszty chmury — to obserwacja,
                  która ", tags$em("ciągnie"), " linię na siebie.")
       ),
-      p("Standardowe narzędzie to wykres ", tags$strong("reszt vs dopasowanych
-        wartości"),
-        ": na osi X kładziemy ", withMathJax("\\(\\hat{Y}\\)"), ", na osi Y ",
+      p("Standardowe narzędzie to wykres reszt vs dopasowanych
+        wartości: na osi X kładziemy ", withMathJax("\\(\\hat{Y}\\)"), ", na osi Y ",
         withMathJax("\\(e_i = y_i - \\hat{y}_i\\)"),
         ". Jeśli chmura nie ma struktury — model się nadaje. Jeśli ma —
         sygnał, że trzeba coś poprawić."),
-      p("Uzupełnieniem jest ", tags$strong("wykres Q-Q reszt"),
-        ": porównuje kwantyle reszt z kwantylami rozkładu normalnego.
+      p("Uzupełnieniem jest wykres Q-Q reszt: porównuje kwantyle reszt z kwantylami rozkładu normalnego.
          Punkty biegnące wzdłuż linii prostej — reszty są w przybliżeniu normalne.
          Łuk lub grube ogony — sygnał problemów.")
     ),
@@ -154,7 +148,7 @@ ch2_ui <- list(
           uiOutput("ch2_resid_verdict")
         ),
         column(8,
-          plotOutput("ch2_resid_plot", height = "340px"),
+          zoom_plot_ui("ch2_resid_plot", height = "340px"),
           uiOutput("ch2_resid_stats")
         )
       )
@@ -170,9 +164,7 @@ ch2_ui <- list(
 
     tagList(
       p("Wzorzec reszt mówił o jakości ", tags$em("jakościowej"),
-        ": czy linia nie kłamie. Teraz pytanie ilościowe: ",
-        tags$strong("ile zmienności Y rzeczywiście wyjaśnia model"),
-        "?"),
+        ": czy linia nie kłamie. Teraz pytanie ilościowe: ile zmienności Y rzeczywiście wyjaśnia model?"),
       p("Współczynnik determinacji ", withMathJax("\\(R^2\\)"),
         " mówi, jaki odsetek całej zmienności Y jest „zaopiekowany\" przez X.
         Liczy się prosto:"),
@@ -190,7 +182,7 @@ ch2_ui <- list(
       label = "Ryc. 2.2", title = "To samo X i Y, różna siła wyjaśniania",
       full_width = TRUE,
       helpText("Trzy stałe przykłady: niskie, średnie i wysokie R². Im ciaśniej punkty leżą przy linii, tym większa część zmienności Y jest wyjaśniona przez X."),
-      plotOutput("ch2_r2_compare_plot", height = "360px")
+      zoom_plot_ui("ch2_r2_compare_plot", height = "360px")
     ),
 
     inline_callout(label = "Uwaga", color = "uwaga",
@@ -214,8 +206,8 @@ ch2_ui <- list(
         nic o tym, ", tags$em("jak duże w jednostkach Y"),
         " są pomyłki modelu. Dla praktyka często to jest pytanie ważniejsze:
         jeśli model przewiduje wynik testu, czy myli się o 5 punktów czy o 50?"),
-      p("Odpowiada na to ", tags$strong("RMSE — Root Mean Squared Error"),
-        ": pierwiastek ze średniej kwadratów reszt."),
+      p("Odpowiada na to RMSE — Root Mean Squared Error:
+        pierwiastek ze średniej kwadratów reszt."),
       lc_formula_box(
         withMathJax(helpText("$$RMSE = \\sqrt{\\frac{1}{n}\\sum_{i=1}^{n}(y_i - \\hat{y}_i)^2}$$"))
       ),
@@ -241,7 +233,7 @@ ch2_ui <- list(
           uiOutput("ch2_rmse_interpretation")
         ),
         column(8,
-          plotOutput("ch2_rmse_plot", height = "320px"),
+          zoom_plot_ui("ch2_rmse_plot", height = "320px"),
           uiOutput("ch2_rmse_stats")
         )
       )
@@ -252,7 +244,7 @@ ch2_ui <- list(
     tagList(
       p("Model regresji uczy się z danych, które mamy. Poza ich zakresem —
         nie ma podstaw, żeby mu ufać. Wciąż daje liczbę, ale ta liczba
-        jest ", tags$strong("ekstrapolacją"), ": predykcją za granicę,
+        jest ekstrapolacją: predykcją za granicę,
         gdzie model nigdy nie był."),
       p("Ekstrapolacja jest niebezpieczna, bo linia wygląda pewnie
         nawet daleko od danych. Ale każdy punkt poza zakresem X to
@@ -275,7 +267,7 @@ ch2_ui <- list(
           uiOutput("ch2_extrap_verdict")
         ),
         column(8,
-          plotOutput("ch2_extrap_plot", height = "320px"),
+          zoom_plot_ui("ch2_extrap_plot", height = "320px"),
           uiOutput("ch2_extrap_stats")
         )
       )
@@ -289,21 +281,17 @@ ch2_ui <- list(
     lc_h2("ch2-co-dalej", "Co dalej"),
 
     tagList(
-      p("Mamy trzy narzędzia do oceny pojedynczego modelu: ",
-        tags$strong("wzorzec reszt"), " (czy linia kłamie), ",
+      p("Mamy trzy narzędzia do oceny pojedynczego modelu: wzorzec reszt
+        (czy linia kłamie), ",
         withMathJax("\\(R^2\\)"), " (ile wyjaśnia), ",
-        tags$strong("RMSE"),
-        " (jak duże pomyłki). To wystarczy, żeby powiedzieć, czy ",
+        "RMSE (jak duże pomyłki). To wystarczy, żeby powiedzieć, czy ",
         tags$em("ten"), " model jest wart zaufania."),
       p("Czego jeszcze nie umiemy:"),
       tags$ul(
-        tags$li(tags$strong("Porównać dwa modele "),
-                " i wybrać lepszy — rozdział 4 wprowadzi R²adj, AIC, BIC
+        tags$li("Porównać dwa modele i wybrać lepszy — rozdział 4 wprowadzi R²adj, AIC, BIC
                  i train/test."),
-        tags$li(tags$strong("Modelować zależności od wielu X-ów naraz "),
-                " — rozdział 3 rozszerzy regresję prostą na wieloraką."),
-        tags$li(tags$strong("Modelować Y binarne "),
-                " (zdał/nie zdał, kliknął/nie kliknął) — rozdział 5
+        tags$li("Modelować zależności od wielu X-ów naraz — rozdział 3 rozszerzy regresję prostą na wieloraką."),
+        tags$li("Modelować Y binarne (zdał/nie zdał, kliknął/nie kliknął) — rozdział 5
                  wprowadzi regresję logistyczną.")
       ),
       p("Następnie wracamy do regresji wielorakiej — bo realne dane prawie
@@ -338,7 +326,7 @@ ch2_server <- function(input, output, session) {
     lm(form, data = .cas_data)
   })
 
-  output$ch2_resid_plot <- renderPlot({
+  zoom_plot_server("ch2_resid_plot", reactive({
     spec <- ch2_resid_spec()
     model <- ch2_resid_model()
 
@@ -401,7 +389,7 @@ ch2_server <- function(input, output, session) {
         facet_wrap(~ panel, scales = "free", ncol = 2) +
         theme_upwr()
     }
-  })
+  }))
 
   output$ch2_resid_verdict <- renderUI({
     spec <- ch2_resid_spec()
@@ -428,7 +416,7 @@ ch2_server <- function(input, output, session) {
   })
 
   # --- Widget: R² compare (przeniesiony z ch4) ---
-  output$ch2_r2_compare_plot <- renderPlot({
+  zoom_plot_server("ch2_r2_compare_plot", reactive({
     set.seed(103)
     make_panel <- function(label, sigma) {
       x <- seq(-3, 3, length.out = 70)
@@ -461,7 +449,7 @@ ch2_server <- function(input, output, session) {
       facet_wrap(~ wariant, nrow = 1) +
       labs(x = "X", y = "Y") +
       theme_upwr()
-  })
+  }))
 
   # --- Widget: RMSE i zakres Y na CASchools ---
   ch2_rmse_spec <- reactive({
@@ -476,7 +464,7 @@ ch2_server <- function(input, output, session) {
     lm(form, data = .cas_data)
   })
 
-  output$ch2_rmse_plot <- renderPlot({
+  zoom_plot_server("ch2_rmse_plot", reactive({
     spec <- ch2_rmse_spec()
     model <- ch2_rmse_model()
     rmse <- sqrt(mean(residuals(model)^2))
@@ -512,7 +500,7 @@ ch2_server <- function(input, output, session) {
         y = unname(.cas_labels[spec$y])
       ) +
       theme_upwr()
-  })
+  }))
 
   output$ch2_rmse_stats <- renderUI({
     spec <- ch2_rmse_spec()
@@ -542,7 +530,7 @@ ch2_server <- function(input, output, session) {
   .ch2_extrap_model <- lm(read ~ income, data = .cas_data)
   .ch2_extrap_x_range <- range(.cas_data$income)
 
-  output$ch2_extrap_plot <- renderPlot({
+  zoom_plot_server("ch2_extrap_plot", reactive({
     x_val <- input$ch2_extrap_x
     if (is.null(x_val)) x_val <- 20
     x_obs <- .cas_data$income
@@ -584,7 +572,7 @@ ch2_server <- function(input, output, session) {
         caption = "Szary pas = zakres danych treningowych"
       ) +
       theme_upwr()
-  })
+  }))
 
   output$ch2_extrap_verdict <- renderUI({
     x_val <- input$ch2_extrap_x

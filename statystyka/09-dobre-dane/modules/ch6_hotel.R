@@ -27,7 +27,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     lc_h2("sec-03", "Zmienna 1: Ocena ogólna"),
 
     div(class = "lc-figure-panel",
-      plotOutput("tab5_plot_zadowolenie", height = "300px")
+      zoom_plot_ui("tab5_plot_zadowolenie", height = "300px")
     ),
     div(class = "lc-feedback lc-feedback-danger",
       tags$strong("Problem:"), " brak zróżnicowania odpowiedzi.",
@@ -38,7 +38,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     lc_h2("sec-04", "Zmienna 2: Typ pokoju"),
 
     div(class = "lc-figure-panel",
-      plotOutput("tab5_plot_departament", height = "300px")
+      zoom_plot_ui("tab5_plot_departament", height = "300px")
     ),
     div(class = "lc-feedback lc-feedback-danger",
       tags$strong("Problem:"), " niezbalansowane grupy.",
@@ -53,7 +53,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
       actionButton("tab5_staz_wide", "Pełna skala (1–14 nocy)", class = "pill-btn")
     ),
     div(class = "lc-figure-panel",
-      plotOutput("tab5_plot_staz", height = "300px")
+      zoom_plot_ui("tab5_plot_staz", height = "300px")
     ),
     div(class = "lc-feedback lc-feedback-warning",
       tags$strong("Uwaga:"), " wąska rozpiętość wartości.",
@@ -66,7 +66,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     lc_h2("sec-06", "Zmienna 4: Cena za noc"),
 
     div(class = "lc-figure-panel",
-      plotOutput("tab5_plot_wynagrodzenie", height = "300px")
+      zoom_plot_ui("tab5_plot_wynagrodzenie", height = "300px")
     ),
     div(class = "lc-feedback lc-feedback-ok",
       "Ceny za noc mają dobry rozrzut.",
@@ -77,7 +77,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     lc_h2("sec-07", "Zmienna 5: Kraj gościa"),
 
     div(class = "lc-figure-panel",
-      plotOutput("tab5_plot_plec", height = "300px")
+      zoom_plot_ui("tab5_plot_plec", height = "300px")
     ),
     div(class = "lc-feedback lc-feedback-danger",
       tags$strong("Problem:"), " niezbalansowane grupy.",
@@ -93,7 +93,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     ),
 
     div(class = "lc-figure-panel",
-      plotOutput("tab5_scatter", height = "300px")
+      zoom_plot_ui("tab5_scatter", height = "300px")
     ),
 
     lc_h2("sec-09", "Co by było, gdyby dane miały normalną zmienność?"),
@@ -106,7 +106,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
     div(class = "lc-figure-panel",
       sliderInput("tab5_sd_mult", "Mnożnik rozrzutu danych:", min = 1, max = 5, value = 1, step = 0.5),
-      plotOutput("tab5_scatter_sim", height = "300px")
+      zoom_plot_ui("tab5_scatter_sim", height = "300px")
     ),
 
     lc_h2("sec-10", "Werdykt"),
@@ -135,7 +135,7 @@ ch6_server <- function(input, output, session) {
     datatable(round_df(hotel_data), options = list(pageLength = 10, scrollX = TRUE), rownames = FALSE)
   })
 
-  output$tab5_plot_zadowolenie <- renderPlot({
+  zoom_plot_server("tab5_plot_zadowolenie", reactive({
     pct_45 <- round(100 * mean(hotel_data$ocena_ogolna >= 4))
     ggplot(hotel_data, aes(x = factor(ocena_ogolna))) +
       geom_bar(fill = data_bad, alpha = 0.85) +
@@ -145,9 +145,9 @@ ch6_server <- function(input, output, session) {
         x = "Ocena ogólna", y = "Liczba gości"
       ) +
       theme_upwr(base_size = 14)
-  })
+  }))
 
-  output$tab5_plot_departament <- renderPlot({
+  zoom_plot_server("tab5_plot_departament", reactive({
     typ_counts <- hotel_data %>%
       count(typ_pokoju) %>%
       mutate(pct = round(100 * n / sum(n)),
@@ -158,7 +158,7 @@ ch6_server <- function(input, output, session) {
       labs(
            x = "Typ pokoju", y = "Liczba gości") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
   tab5_staz_view <- reactiveVal("normal")
   observeEvent(input$tab5_staz_normal, {
@@ -172,7 +172,7 @@ ch6_server <- function(input, output, session) {
       "$('#tab5_staz_wide').addClass('active'); $('#tab5_staz_normal').removeClass('active');"))
   })
 
-  output$tab5_plot_staz <- renderPlot({
+  zoom_plot_server("tab5_plot_staz", reactive({
     med_pobytu <- median(hotel_data$dlugosc_pobytu)
     p <- ggplot(hotel_data, aes(x = dlugosc_pobytu)) +
       geom_bar(fill = data_mixed, alpha = 0.85, width = 0.6) +
@@ -187,9 +187,9 @@ ch6_server <- function(input, output, session) {
       theme_upwr(base_size = 14)
     if (tab5_staz_view() == "wide") p <- p + scale_x_continuous(limits = c(1, 14), breaks = seq(1, 14, 2))
     p
-  })
+  }))
 
-  output$tab5_plot_wynagrodzenie <- renderPlot({
+  zoom_plot_server("tab5_plot_wynagrodzenie", reactive({
     med_cena <- median(hotel_data$cena_za_noc)
     sd_cena  <- round(sd(hotel_data$cena_za_noc))
     ggplot(hotel_data, aes(x = cena_za_noc)) +
@@ -202,9 +202,9 @@ ch6_server <- function(input, output, session) {
         x = "Cena za noc (PLN)", y = "Liczba gości"
       ) +
       theme_upwr(base_size = 14)
-  })
+  }))
 
-  output$tab5_plot_plec <- renderPlot({
+  zoom_plot_server("tab5_plot_plec", reactive({
     kraj_counts <- hotel_data %>%
       count(kraj_goscia) %>%
       mutate(pct = round(100 * n / sum(n)))
@@ -214,9 +214,9 @@ ch6_server <- function(input, output, session) {
       labs(
            x = "Kraj gościa", y = "Liczba gości") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
-  output$tab5_scatter <- renderPlot({
+  zoom_plot_server("tab5_scatter", reactive({
     ggplot(hotel_data, aes(x = dlugosc_pobytu, y = cena_za_noc)) +
       geom_point(alpha = 0.5, size = 3, color = data_reference) +
       geom_smooth(method = "lm", color = data_bad, se = TRUE) +
@@ -225,9 +225,9 @@ ch6_server <- function(input, output, session) {
            
            x = "Długość pobytu (noce)", y = "Cena za noc (PLN)") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
-  output$tab5_scatter_sim <- renderPlot({
+  zoom_plot_server("tab5_scatter_sim", reactive({
     mult <- input$tab5_sd_mult
     set.seed(42)
     spread <- (mult - 1) * 3
@@ -243,6 +243,6 @@ ch6_server <- function(input, output, session) {
            
            x = "Długość pobytu (symulowane noce)", y = "Cena za noc (PLN)") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
 }

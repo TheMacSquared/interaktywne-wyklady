@@ -46,7 +46,7 @@ ch7_ui <- list(
           uiOutput("ch7_motyw_stats")
         ),
         column(8,
-          plotOutput("ch7_motyw_plot", height = "340px")
+          zoom_plot_ui("ch7_motyw_plot", height = "340px")
         )
       )
     ),
@@ -146,7 +146,7 @@ ch7_ui <- list(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch7_boxplot", height = "350px"),
+          zoom_plot_ui("ch7_boxplot", height = "350px"),
           uiOutput("ch7_anova_result")
         )
       )
@@ -197,7 +197,7 @@ ch7_ui <- list(
 
       br(),
       h5("Różnice parowe z 95% CI"),
-      plotOutput("ch7_tukey_plot", height = "260px"),
+      zoom_plot_ui("ch7_tukey_plot", height = "260px"),
 
       uiOutput("ch7_tukey_result")
     ),
@@ -259,7 +259,7 @@ ch7_server <- function(input, output, session) {
     ch7_motyw_k(2L)
   })
 
-  output$ch7_motyw_plot <- renderPlot({
+  zoom_plot_server("ch7_motyw_plot", reactive({
     k <- ch7_motyw_k()
     angles <- seq(0, 2 * pi, length.out = k + 1)[-(k + 1)]
     nodes <- data.frame(
@@ -289,7 +289,7 @@ ch7_server <- function(input, output, session) {
                 color = "white", fontface = "bold", size = 5.5) +
       coord_equal(xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5)) +
       theme_void()
-  })
+  }))
 
   output$ch7_motyw_stats <- renderUI({
     k       <- ch7_motyw_k()
@@ -383,7 +383,7 @@ ch7_server <- function(input, output, session) {
   }, ignoreInit = TRUE)
 
   # --- Widget 1: ANOVA ---
-  output$ch7_boxplot <- renderPlot({
+  zoom_plot_server("ch7_boxplot", reactive({
     data <- ch7_data()
     if (is.null(data)) {
       ggplot() +
@@ -405,7 +405,7 @@ ch7_server <- function(input, output, session) {
              x = cfg$group_label, y = var_label) +
                 theme(legend.position = "none")
     }
-  })
+  }))
 
   output$ch7_anova_result <- renderUI({
     data <- ch7_data()
@@ -514,7 +514,7 @@ ch7_server <- function(input, output, session) {
     )
   })
 
-  output$ch7_tukey_plot <- renderPlot({
+  zoom_plot_server("ch7_tukey_plot", reactive({
     gd <- ch7_gh_data()
     if (is.null(gd)) return(NULL)
 
@@ -531,7 +531,7 @@ ch7_server <- function(input, output, session) {
                          name = NULL) +
       labs(x = "Różnica średnich", y = NULL) +
       theme(legend.position = "top")
-  })
+  }))
 
   output$ch7_tukey_result <- renderUI({
     gd <- ch7_gh_data()

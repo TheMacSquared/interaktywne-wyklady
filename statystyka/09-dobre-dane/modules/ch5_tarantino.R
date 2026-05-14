@@ -39,7 +39,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
         column(6, actionButton("tab4_hist", "Histogram: minutes_in", class = "lc-btn-outline", width = "100%")),
         column(6, actionButton("tab4_bar", "Porównanie filmów", class = "lc-btn-outline", width = "100%"))
       ),
-      plotOutput("tab4_explore_plot", height = "350px")
+      zoom_plot_ui("tab4_explore_plot", height = "350px")
     ),
 
     lc_h2("sec-04", "Próba analiz"),
@@ -88,17 +88,8 @@ ch5_server <- function(input, output, session) {
     datatable(round_df(tarantino), options = list(pageLength = 10, scrollX = TRUE), rownames = FALSE)
   })
 
-  observeEvent(input$tab4_hist, {
-    output$tab4_explore_plot <- renderPlot({
-      ggplot(tarantino, aes(x = minutes_in)) +
-        geom_histogram(bins = 30, fill = data_primary, color = "white", alpha = 0.8) +
-        labs( x = "Minuta filmu", y = "Liczba zdarzeń") +
-        theme_upwr(base_size = 14)
-    })
-  })
-
-  observeEvent(input$tab4_bar, {
-    output$tab4_explore_plot <- renderPlot({
+  zoom_plot_server("tab4_explore_plot", reactive({
+    if (input$tab4_bar > input$tab4_hist) {
       tarantino %>%
         count(movie, type) %>%
         ggplot(aes(x = reorder(movie, n), y = n, fill = type)) +
@@ -107,8 +98,13 @@ ch5_server <- function(input, output, session) {
         coord_flip() +
         labs(x = NULL, y = "Liczba", fill = "Typ") +
         theme_upwr(base_size = 14)
-    })
-  })
+    } else {
+      ggplot(tarantino, aes(x = minutes_in)) +
+        geom_histogram(bins = 30, fill = data_primary, color = "white", alpha = 0.8) +
+        labs( x = "Minuta filmu", y = "Liczba zdarzeń") +
+        theme_upwr(base_size = 14)
+    }
+  }))
 
   tab4_quiz_answered <- reactiveVal(FALSE)
   tab4_quiz_selected <- reactiveVal(NULL)

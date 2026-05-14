@@ -29,7 +29,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     lc_h2("sec-03", "Czy są braki danych?"),
 
     div(class = "lc-figure-panel",
-      plotOutput("tab10_missing", height = "300px"),
+      zoom_plot_ui("tab10_missing", height = "300px"),
       uiOutput("tab10_missing_info")
     ),
 
@@ -38,7 +38,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     div(class = "lc-figure-panel",
       actionButton("tab10_reveal", "Pokaż dane w kolejności", class = "lc-btn-warning lc-btn-lg", width = "100%"),
       conditionalPanel("input.tab10_reveal > 0",
-        plotOutput("tab10_lineplot", height = "350px"),
+        zoom_plot_ui("tab10_lineplot", height = "350px"),
         div(class = "lc-feedback lc-feedback-danger",
           "To nie są niezależne obserwacje!",
           " Widać wyraźną periodyczność tygodniową — każdy poniedziałek wysoki,
@@ -52,7 +52,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     conditionalPanel("input.tab10_reveal > 0",
       div(class = "lc-figure-panel",
         h4("Autokorelacja — dowód braku niezależności"),
-        plotOutput("tab10_lag", height = "300px"),
+        zoom_plot_ui("tab10_lag", height = "300px"),
         uiOutput("tab10_autocorr_info")
       )
     ),
@@ -99,7 +99,7 @@ ch11_server <- function(input, output, session) {
     datatable(round_df(cafe_data), options = list(pageLength = 10, scrollX = TRUE), rownames = FALSE)
   })
 
-  output$tab10_missing <- renderPlot({
+  zoom_plot_server("tab10_missing", reactive({
     miss_pct <- sapply(cafe_data[, c("kawy", "temperatura")], function(x) mean(is.na(x)) * 100)
     df_miss  <- data.frame(variable = names(miss_pct), pct = miss_pct)
     df_miss  <- df_miss[df_miss$pct > 0, ]
@@ -121,7 +121,7 @@ ch11_server <- function(input, output, session) {
       labs(
            x = NULL, y = "% braków") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
   output$tab10_missing_info <- renderUI({
     kawy_na <- sum(is.na(cafe_data$kawy))
@@ -142,7 +142,7 @@ ch11_server <- function(input, output, session) {
     tags$strong(paste0(pct, "%"))
   })
 
-  output$tab10_lineplot <- renderPlot({
+  zoom_plot_server("tab10_lineplot", reactive({
     df <- cafe_data[!is.na(cafe_data$kawy), ]
     ggplot(df, aes(x = dzien, y = kawy)) +
       geom_line(color = data_primary, alpha = 0.6) +
@@ -151,9 +151,9 @@ ch11_server <- function(input, output, session) {
            
            x = "Numer dnia (= kolejność w roku akademickim)", y = "Liczba sprzedanych kaw") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
-  output$tab10_lag <- renderPlot({
+  zoom_plot_server("tab10_lag", reactive({
     kw        <- cafe_data$kawy[!is.na(cafe_data$kawy)]
     n         <- length(kw)
     lag_df    <- data.frame(x = kw[-n], y = kw[-1])
@@ -166,7 +166,7 @@ ch11_server <- function(input, output, session) {
            
            x = "Kawy(t)", y = "Kawy(t+1)") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
   output$tab10_autocorr_info <- renderUI({
     kw <- cafe_data$kawy[!is.na(cafe_data$kawy)]

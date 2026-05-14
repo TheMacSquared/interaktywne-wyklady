@@ -27,26 +27,26 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     lc_h2("sec-03", "Wiek a hemoglobina"),
 
     div(class = "lc-figure-panel",
-      plotOutput("tab8_scatter_raw", height = "350px")
+      zoom_plot_ui("tab8_scatter_raw", height = "350px")
     ),
 
     lc_h2("sec-04", "Szukanie outlierów"),
 
     div(class = "lc-figure-panel",
       fluidRow(
-        column(6, plotOutput("tab8_box_hemoglobina", height = "260px")),
-        column(6, plotOutput("tab8_box_glukoza",     height = "260px"))
+        column(6, zoom_plot_ui("tab8_box_hemoglobina", height = "260px")),
+        column(6, zoom_plot_ui("tab8_box_glukoza",     height = "260px"))
       ),
       fluidRow(
-        column(6, plotOutput("tab8_box_wiek",        height = "260px")),
-        column(6, plotOutput("tab8_box_cisnienie",   height = "260px"))
+        column(6, zoom_plot_ui("tab8_box_wiek",        height = "260px")),
+        column(6, zoom_plot_ui("tab8_box_cisnienie",   height = "260px"))
       )
     ),
 
     div(class = "lc-figure-panel",
       checkboxInput("tab8_clean", "Usuń podejrzane obserwacje", value = FALSE),
       conditionalPanel("input.tab8_clean",
-        plotOutput("tab8_scatter_clean", height = "350px")
+        zoom_plot_ui("tab8_scatter_clean", height = "350px")
       )
     ),
 
@@ -92,7 +92,7 @@ ch9_server <- function(input, output, session) {
     if (input$tab8_clean) lab_data[-error_rows, ] else lab_data
   })
 
-  output$tab8_scatter_raw <- renderPlot({
+  zoom_plot_server("tab8_scatter_raw", reactive({
     model <- lm(hemoglobina ~ wiek, data = lab_data)
     r2    <- round(summary(model)$r.squared, 3)
     ggplot(lab_data, aes(x = wiek, y = hemoglobina)) +
@@ -101,7 +101,7 @@ ch9_server <- function(input, output, session) {
       labs(
            x = "Wiek (lata)", y = "Hemoglobina (g/dL)") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
   make_boxplot <- function(var, label, unit = "") {
     ggplot(lab_data, aes(y = .data[[var]])) +
@@ -112,12 +112,12 @@ ch9_server <- function(input, output, session) {
       theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
   }
 
-  output$tab8_box_hemoglobina <- renderPlot({ make_boxplot("hemoglobina", "Hemoglobina", "g/dL") })
-  output$tab8_box_glukoza     <- renderPlot({ make_boxplot("glukoza",     "Glukoza",     "mg/dL") })
-  output$tab8_box_wiek        <- renderPlot({ make_boxplot("wiek",        "Wiek",        "lata") })
-  output$tab8_box_cisnienie   <- renderPlot({ make_boxplot("cisnienie",   "Ciśnienie skurczowe", "mmHg") })
+  zoom_plot_server("tab8_box_hemoglobina", reactive({ make_boxplot("hemoglobina", "Hemoglobina", "g/dL") }))
+  zoom_plot_server("tab8_box_glukoza", reactive({ make_boxplot("glukoza",     "Glukoza",     "mg/dL") }))
+  zoom_plot_server("tab8_box_wiek", reactive({ make_boxplot("wiek",        "Wiek",        "lata") }))
+  zoom_plot_server("tab8_box_cisnienie", reactive({ make_boxplot("cisnienie",   "Ciśnienie skurczowe", "mmHg") }))
 
-  output$tab8_scatter_clean <- renderPlot({
+  zoom_plot_server("tab8_scatter_clean", reactive({
     d     <- lab_clean()
     model <- lm(hemoglobina ~ wiek, data = d)
     r2    <- round(summary(model)$r.squared, 3)
@@ -127,7 +127,7 @@ ch9_server <- function(input, output, session) {
       labs(
            x = "Wiek (lata)", y = "Hemoglobina (g/dL)") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
   output$tab8_quiz <- renderUI({
     tagList(

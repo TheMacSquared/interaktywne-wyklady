@@ -75,7 +75,7 @@ ch2_ev_var_ui <- list(
           uiOutput("ch2ev_play_count")
         ),
         column(8,
-          plotOutput("ch2ev_convergence_plot", height = "300px"),
+          zoom_plot_ui("ch2ev_convergence_plot", height = "300px"),
           uiOutput("ch2ev_lottery_stats")
         )
       )
@@ -123,7 +123,7 @@ ch2_ev_var_ui <- list(
           )
         ),
         column(8,
-          plotOutput("ch2ev_balance_plot", height = "350px"),
+          zoom_plot_ui("ch2ev_balance_plot", height = "350px"),
           uiOutput("ch2ev_balance_text")
         )
       )
@@ -162,7 +162,7 @@ ch2_ev_var_ui <- list(
           uiOutput("ch2ev_var_summary")
         ),
         column(8,
-          plotOutput("ch2ev_var_plot", height = "400px")
+          zoom_plot_ui("ch2ev_var_plot", height = "400px")
         )
       )
     ),
@@ -253,7 +253,7 @@ ch2_ev_var_server <- function(input, output, session) {
     lc_stat_box("Gier", n, color = unname(upwr_cat["niebo"]))
   })
 
-  output$ch2ev_convergence_plot <- renderPlot({
+  zoom_plot_server("ch2ev_convergence_plot", reactive({
     results <- lottery_results()
     lot <- lottery_defs[[input$ch2ev_lottery]]
 
@@ -284,7 +284,7 @@ ch2_ev_var_server <- function(input, output, session) {
              x = "Liczba gier", y = "Średnia wygrana (zł)") +
         theme_upwr()
     }
-  })
+  }))
 
   output$ch2ev_lottery_stats <- renderUI({
     results <- lottery_results()
@@ -333,7 +333,7 @@ ch2_ev_var_server <- function(input, output, session) {
     }
   })
 
-  output$ch2ev_balance_plot <- renderPlot({
+  zoom_plot_server("ch2ev_balance_plot", reactive({
     x_vals <- c(1, 3, 5, 9)
     probs <- c(input$ch2ev_bal_p1, input$ch2ev_bal_p2,
                input$ch2ev_bal_p3, input$ch2ev_bal_p4)
@@ -362,7 +362,7 @@ ch2_ev_var_server <- function(input, output, session) {
       labs(
            x = "Wartość (x)", y = "Prawdopodobieństwo P(X=x)") +
       theme_upwr()
-  })
+  }))
 
   output$ch2ev_balance_text <- renderUI({
     x_vals <- c(1, 3, 5, 9)
@@ -398,7 +398,7 @@ ch2_ev_var_server <- function(input, output, session) {
     )
   })
 
-  output$ch2ev_var_plot <- renderPlot({
+  zoom_plot_server("ch2ev_var_plot", reactive({
     d <- ch2ev_var_data()
 
     df <- data.frame(
@@ -419,7 +419,7 @@ ch2_ev_var_server <- function(input, output, session) {
       labs(
            x = "Wygrana (zł)", y = "Liczebność") +
       theme_upwr(base_size = 12)
-  })
+  }))
 
   output$ch2ev_var_summary <- renderUI({
     d <- ch2ev_var_data()

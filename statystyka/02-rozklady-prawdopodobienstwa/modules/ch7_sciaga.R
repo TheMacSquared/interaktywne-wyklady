@@ -117,7 +117,7 @@ ch7_ui <- list(
         ),
         column(8,
           uiOutput("ch7_tree_info"),
-          plotOutput("ch7_tree_plot", height = "250px")
+          zoom_plot_ui("ch7_tree_plot", height = "250px")
         )
       )
     ),
@@ -220,7 +220,7 @@ ch7_server <- function(input, output, session) {
     )
   })
 
-  output$ch7_tree_plot <- renderPlot({
+  zoom_plot_server("ch7_tree_plot", reactive({
     dist <- ch7_selected_dist()
 
     switch(dist,
@@ -310,7 +310,7 @@ ch7_server <- function(input, output, session) {
           theme_upwr(base_size = 12)
       }
     )
-  })
+  }))
 
   # --- Tabele statyczne ---
   output$ch7_discrete_table <- renderTable({

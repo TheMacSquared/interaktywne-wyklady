@@ -79,7 +79,7 @@ ch6_ui <- lecture_chapter(
           uiOutput("ch6_cv_stats")
         ),
         column(8,
-          plotOutput("ch6_cv_plot", height = "360px")
+          zoom_plot_ui("ch6_cv_plot", height = "360px")
         )
       )
     ),
@@ -111,7 +111,7 @@ ch6_ui <- lecture_chapter(
                        class = "lc-btn-warning", width = "100%")
         ),
         column(8,
-          plotOutput("ch6_cmp_plot", height = "300px")
+          zoom_plot_ui("ch6_cmp_plot", height = "300px")
         )
       )
     ),
@@ -159,7 +159,7 @@ ch6_server <- function(input, output, session) {
     ch6_cv_result(list(result = result, degree = degree))
   })
 
-  output$ch6_cv_plot <- renderPlot({
+  zoom_plot_server("ch6_cv_plot", reactive({
     cv_res <- ch6_cv_result()
     df     <- ch6_data_rv()
 
@@ -212,7 +212,7 @@ ch6_server <- function(input, output, session) {
       theme_upwr()
 
     gridExtra::grid.arrange(p1, p2, ncol = 2)
-  })
+  }))
 
   output$ch6_cv_stats <- renderUI({
     cv_res <- ch6_cv_result()
@@ -245,7 +245,7 @@ ch6_server <- function(input, output, session) {
     ch6_cmp_result(results)
   })
 
-  output$ch6_cmp_plot <- renderPlot({
+  zoom_plot_server("ch6_cmp_plot", reactive({
     results <- ch6_cmp_result()
     if (is.null(results)) {
       ggplot() +
@@ -256,6 +256,6 @@ ch6_server <- function(input, output, session) {
       return()
     }
     plot_cv_results(results, sim_cv_train = sim_cv_train, sim_cv_test = sim_cv_test)
-  })
+  }))
 
 }

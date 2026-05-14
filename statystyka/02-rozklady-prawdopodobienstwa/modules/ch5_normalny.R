@@ -55,7 +55,7 @@ ch5_ui <- list(
           checkboxInput("ch5_show_empirical", "Pokaż regułę 68-95-99.7", value = TRUE)
         ),
         column(8,
-          plotOutput("ch5_explore_plot", height = "400px"),
+          zoom_plot_ui("ch5_explore_plot", height = "400px"),
           uiOutput("ch5_explore_stats")
         )
       )
@@ -90,7 +90,7 @@ ch5_ui <- list(
                        class = "lc-btn-outline", width = "100%")
         ),
         column(6,
-          plotOutput("ch5_compare_plot", height = "350px")
+          zoom_plot_ui("ch5_compare_plot", height = "350px")
         )
       )
     ),
@@ -123,7 +123,7 @@ ch5_ui <- list(
           uiOutput("ch5_z_result")
         ),
         column(8,
-          plotOutput("ch5_z_plot", height = "350px")
+          zoom_plot_ui("ch5_z_plot", height = "350px")
         )
       )
     ),
@@ -159,7 +159,7 @@ ch5_ui <- list(
           )
         ),
         column(8,
-          plotOutput("ch5_prob_plot", height = "300px"),
+          zoom_plot_ui("ch5_prob_plot", height = "300px"),
           uiOutput("ch5_prob_result")
         )
       )
@@ -205,7 +205,7 @@ ch5_server <- function(input, output, session) {
   })
 
   # --- Widget 1: Eksploracja ---
-  output$ch5_explore_plot <- renderPlot({
+  zoom_plot_server("ch5_explore_plot", reactive({
     mu <- input$ch5_mu
     sigma <- input$ch5_sigma
     show_emp <- input$ch5_show_empirical
@@ -266,7 +266,7 @@ ch5_server <- function(input, output, session) {
       labs(
            x = "x", y = "f(x)") +
       theme_upwr()
-  })
+  }))
 
   output$ch5_explore_stats <- renderUI({
     mu <- input$ch5_mu
@@ -288,7 +288,7 @@ ch5_server <- function(input, output, session) {
     updateSliderInput(session, "ch5_cmp_s2", value = 7, min = 1, max = 15)
   })
 
-  output$ch5_compare_plot <- renderPlot({
+  zoom_plot_server("ch5_compare_plot", reactive({
     mu1 <- input$ch5_cmp_mu1; s1 <- input$ch5_cmp_s1
     mu2 <- input$ch5_cmp_mu2; s2 <- input$ch5_cmp_s2
 
@@ -315,7 +315,7 @@ ch5_server <- function(input, output, session) {
            x = "x", y = "f(x)") +
       theme_upwr() +
       theme(legend.position = "top")
-  })
+  }))
 
   # --- Widget 3: Z-score ---
   output$ch5_z_result <- renderUI({
@@ -337,7 +337,7 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  output$ch5_z_plot <- renderPlot({
+  zoom_plot_server("ch5_z_plot", reactive({
     mu <- input$ch5_z_mu
     sigma <- input$ch5_z_sigma
     x <- input$ch5_z_x
@@ -377,10 +377,10 @@ ch5_server <- function(input, output, session) {
       theme_upwr(base_size = 12)
 
     gridExtra::grid.arrange(p1, p2, ncol = 1)
-  })
+  }))
 
   # --- Widget 4: Kalkulator prawdopodobienstw ---
-  output$ch5_prob_plot <- renderPlot({
+  zoom_plot_server("ch5_prob_plot", reactive({
     type <- input$ch5_prob_type
     a <- input$ch5_prob_a
     b <- if (type == "between") input$ch5_prob_b else NULL
@@ -415,7 +415,7 @@ ch5_server <- function(input, output, session) {
                  size = 6, fontface = "bold", color = upwr_secondary) +
       labs( x = "z", y = "f(z)") +
       theme_upwr()
-  })
+  }))
 
   output$ch5_prob_result <- renderUI({
     type <- input$ch5_prob_type

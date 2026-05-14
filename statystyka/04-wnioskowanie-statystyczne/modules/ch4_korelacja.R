@@ -182,7 +182,7 @@ ch4_ui <- list(
         ),
         column(8,
           uiOutput("ch4_hypothesis_panel"),
-          plotOutput("ch4_step_plot", height = "350px"),
+          zoom_plot_ui("ch4_step_plot", height = "350px"),
           uiOutput("ch4_step_info")
         )
       )
@@ -219,7 +219,7 @@ ch4_ui <- list(
         ),
         column(8,
           uiOutput("ch4b_hypothesis_panel"),
-          plotOutput("ch4b_step_plot", height = "350px"),
+          zoom_plot_ui("ch4b_step_plot", height = "350px"),
           uiOutput("ch4b_step_info")
         )
       )
@@ -292,7 +292,7 @@ ch4_ui <- list(
         actionButton("ch4_simpson_groups", "Paradoks",
                      class = "lc-btn-outline")
       ),
-      plotOutput("ch4_simpson_plot", height = "420px"),
+      zoom_plot_ui("ch4_simpson_plot", height = "420px"),
       uiOutput("ch4_simpson_caption")
     ),
 
@@ -331,7 +331,7 @@ ch4_ui <- list(
           uiOutput("ch4_outlier_r")
         ),
         column(8,
-          plotOutput("ch4_outlier_plot", height = "300px")
+          zoom_plot_ui("ch4_outlier_plot", height = "300px")
         )
       )
     ),
@@ -552,7 +552,7 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  output$ch4_step_plot <- renderPlot({
+  zoom_plot_server("ch4_step_plot", reactive({
     d <- ch4_data()
     step <- ch4_step()
     par <- scenario_params[[input$ch4_scenario]]
@@ -603,7 +603,7 @@ ch4_server <- function(input, output, session) {
       t_stat <- r_val * sqrt(n - 2) / sqrt(1 - r_val^2)
       plot_test_distribution(t_stat, df = n - 2, test_type = "t")
     }
-  })
+  }))
 
   output$ch4_step_info <- renderUI({
     d <- ch4_data()
@@ -677,7 +677,7 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  output$ch4b_step_plot <- renderPlot({
+  zoom_plot_server("ch4b_step_plot", reactive({
     d <- ch4_data()
     step <- ch4b_step()
     par <- scenario_params[[input$ch4_scenario]]
@@ -719,7 +719,7 @@ ch4_server <- function(input, output, session) {
       plot_test_distribution(t_stat, df = n - 2, test_type = "t",
                              alternative = par$alt_1s)
     }
-  })
+  }))
 
   output$ch4b_step_info <- renderUI({
     d <- ch4_data()
@@ -775,7 +775,7 @@ ch4_server <- function(input, output, session) {
     ch4_outlier_data(rbind(df, outlier))
   })
 
-  output$ch4_outlier_plot <- renderPlot({
+  zoom_plot_server("ch4_outlier_plot", reactive({
     df <- ch4_outlier_data()
     if (is.null(df)) {
       ggplot() +
@@ -795,7 +795,7 @@ ch4_server <- function(input, output, session) {
              x = "X", y = "Y") +
         theme()
     }
-  })
+  }))
 
   output$ch4_outlier_r <- renderUI({
     df <- ch4_outlier_data()
@@ -937,7 +937,7 @@ ch4_server <- function(input, output, session) {
   observeEvent(input$ch4_simpson_global, ch4_simpson_view("global"))
   observeEvent(input$ch4_simpson_groups, ch4_simpson_view("groups"))
 
-  output$ch4_simpson_plot <- renderPlot({
+  zoom_plot_server("ch4_simpson_plot", reactive({
     df <- ch4_simpson_data
     view <- ch4_simpson_view()
 
@@ -968,7 +968,7 @@ ch4_server <- function(input, output, session) {
         theme_upwr() +
         theme(legend.position = "top")
     }
-  })
+  }))
 
   output$ch4_simpson_caption <- renderUI({
     df <- ch4_simpson_data

@@ -82,7 +82,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
           )
         ),
         column(8,
-          plotOutput("ch1_eda_plot", height = "280px"),
+          zoom_plot_ui("ch1_eda_plot", height = "280px"),
           uiOutput("ch1_eda_stats")
         )
       )
@@ -98,7 +98,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
 
     div(class = "lc-figure-panel",
       h4("Macierz korelacji — szukamy potencjalnych zakłóceń"),
-      plotOutput("ch1_corr_plot", height = "400px")
+      zoom_plot_ui("ch1_corr_plot", height = "400px")
     ),
 
     div(class = "lc-feedback lc-feedback-danger",
@@ -141,7 +141,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
           uiOutput("ch1_str_test")
         ),
         column(8,
-          plotOutput("ch1_str_plot", height = "380px")
+          zoom_plot_ui("ch1_str_plot", height = "380px")
         )
       )
     ),
@@ -179,10 +179,10 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
       h4("Sprawdzenie dwóch warunków"),
       fluidRow(
         column(6,
-          plotOutput("ch1_conf_a", height = "280px")
+          zoom_plot_ui("ch1_conf_a", height = "280px")
         ),
         column(6,
-          plotOutput("ch1_conf_b", height = "280px")
+          zoom_plot_ui("ch1_conf_b", height = "280px")
         )
       ),
       uiOutput("ch1_conf_stats")
@@ -200,7 +200,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
           uiOutput("ch1_anova_result")
         ),
         column(8,
-          plotOutput("ch1_anova_plot", height = "320px")
+          zoom_plot_ui("ch1_anova_plot", height = "320px")
         )
       )
     ),
@@ -234,7 +234,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
                    class = "lc-btn-primary", width = "250px"),
       br(), br(),
       uiOutput("ch1_model_comparison"),
-      plotOutput("ch1_beta_str_plot", height = "250px")
+      zoom_plot_ui("ch1_beta_str_plot", height = "250px")
     ),
 
     div(class = "lc-feedback lc-feedback-ok",
@@ -278,7 +278,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
         ),
         column(8,
           uiOutput("ch1_reg_coefs"),
-          plotOutput("ch1_reg_coef_plot", height = "230px")
+          zoom_plot_ui("ch1_reg_coef_plot", height = "230px")
         )
       )
     ),
@@ -359,7 +359,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
 ch1_server <- function(input, output, session) {
 
   # --- Krok 1: EDA ---
-  output$ch1_eda_plot <- renderPlot({
+  zoom_plot_server("ch1_eda_plot", reactive({
     var <- input$ch1_eda_var
     var_label <- switch(var,
       "score" = "Średni wynik", "str" = "Uczniowie/nauczyciel",
@@ -378,7 +378,7 @@ ch1_server <- function(input, output, session) {
       theme_upwr()
 
     gridExtra::grid.arrange(p1, p2, ncol = 2, widths = c(2, 1))
-  })
+  }))
 
   output$ch1_eda_stats <- renderUI({
     var <- input$ch1_eda_var
@@ -393,7 +393,7 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  output$ch1_corr_plot <- renderPlot({
+  zoom_plot_server("ch1_corr_plot", reactive({
     vars <- c("score", "str", "expenditure", "income", "english", "lunch", "calworks")
     cor_mat <- cor(ca[, vars], use = "complete.obs")
 
@@ -416,10 +416,10 @@ ch1_server <- function(input, output, session) {
            x = NULL, y = NULL) +
       theme_upwr() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  })
+  }))
 
   # --- Krok 2: STR vs wyniki ---
-  output$ch1_str_plot <- renderPlot({
+  zoom_plot_server("ch1_str_plot", reactive({
     p <- ggplot(ca, aes(x = str, y = score))
 
     if (input$ch1_str_color) {
@@ -437,7 +437,7 @@ ch1_server <- function(input, output, session) {
            x = "Uczniowie na nauczyciela (STR)",
            y = "Średni wynik egzaminu") +
       theme_upwr()
-  })
+  }))
 
   output$ch1_str_test <- renderUI({
     cor_res <- rstatix::cor_test(ca, str, score, method = "pearson")
@@ -468,7 +468,7 @@ ch1_server <- function(input, output, session) {
   })
 
   # --- Krok 3: Zmienne zaklocajace ---
-  output$ch1_conf_a <- renderPlot({
+  zoom_plot_server("ch1_conf_a", reactive({
     ggplot(ca, aes(x = lunch, y = score)) +
       geom_point(color = case_reference, alpha = 0.3, size = 1.5) +
       geom_smooth(method = "lm", se = FALSE, color = case_highlight, linewidth = 1.2) +
@@ -476,9 +476,9 @@ ch1_server <- function(input, output, session) {
            
            x = "% darmowy lunch", y = "Wynik") +
       theme_upwr()
-  })
+  }))
 
-  output$ch1_conf_b <- renderPlot({
+  zoom_plot_server("ch1_conf_b", reactive({
     ggplot(ca, aes(x = lunch, y = str)) +
       geom_point(color = case_reference, alpha = 0.3, size = 1.5) +
       geom_smooth(method = "lm", se = FALSE, color = case_test, linewidth = 1.2) +
@@ -486,7 +486,7 @@ ch1_server <- function(input, output, session) {
            
            x = "% darmowy lunch", y = "STR") +
       theme_upwr()
-  })
+  }))
 
   output$ch1_conf_stats <- renderUI({
     r_lunch_score <- cor(ca$lunch, ca$score)
@@ -502,7 +502,7 @@ ch1_server <- function(input, output, session) {
   })
 
   # ANOVA
-  output$ch1_anova_plot <- renderPlot({
+  zoom_plot_server("ch1_anova_plot", reactive({
     means <- ca %>% group_by(poverty) %>%
       summarise(m = mean(score), .groups = "drop")
 
@@ -515,7 +515,7 @@ ch1_server <- function(input, output, session) {
            y = "Średni wynik") +
       theme_upwr() +
       theme(legend.position = "none")
-  })
+  }))
 
   output$ch1_anova_result <- renderUI({
     result <- rstatix::anova_test(ca, score ~ poverty)
@@ -612,7 +612,7 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  output$ch1_beta_str_plot <- renderPlot({
+  zoom_plot_server("ch1_beta_str_plot", reactive({
     df <- ch1_models_data()
     if (is.null(df)) return(NULL)
 
@@ -630,7 +630,7 @@ ch1_server <- function(input, output, session) {
       theme_upwr() +
       theme(legend.position = "top",
             axis.text.x = element_text(angle = 20, hjust = 1))
-  })
+  }))
 
   # --- Krok 5: Model interaktywny ---
   ch1_model <- reactiveVal(NULL)
@@ -672,7 +672,7 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  output$ch1_reg_coef_plot <- renderPlot({
+  zoom_plot_server("ch1_reg_coef_plot", reactive({
     model <- ch1_model()
     if (is.null(model)) return(NULL)
 
@@ -695,7 +695,7 @@ ch1_server <- function(input, output, session) {
                          name = NULL) +
       labs(x = "β", y = NULL) +
       theme_upwr() + theme(legend.position = "top")
-  })
+  }))
 
   output$ch1_reg_metrics <- renderUI({
     model <- ch1_model()

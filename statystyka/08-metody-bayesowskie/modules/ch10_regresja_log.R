@@ -60,7 +60,7 @@ ch10_ui <- lecture_chapter(
       )),
 
       br(),
-      plotOutput("ch10_scatter", height = "260px"),
+      zoom_plot_ui("ch10_scatter", height = "260px"),
 
       fluidRow(
         column(6,
@@ -72,7 +72,7 @@ ch10_ui <- lecture_chapter(
         column(6,
           div(class = "panel-bayesian",
             h5("stan_glm(family = binomial) + posterior OR"),
-            plotOutput("ch10_bayes_or", height = "200px"),
+            zoom_plot_ui("ch10_bayes_or", height = "200px"),
             uiOutput("ch10_bayes_result")
           )
         )
@@ -138,7 +138,7 @@ ch10_server <- function(input, output, session) {
     })
   })
 
-  output$ch10_scatter <- renderPlot({
+  zoom_plot_server("ch10_scatter", reactive({
     d <- sample_data()
     req(d)
     ggplot(d, aes(x = x, y = y)) +
@@ -151,7 +151,7 @@ ch10_server <- function(input, output, session) {
       labs(
            x = "x", y = "y (0 / 1)") +
       theme_upwr()
-  })
+  }))
 
   output$ch10_freq_result <- renderUI({
     r <- fit_result()
@@ -169,7 +169,7 @@ ch10_server <- function(input, output, session) {
     )
   })
 
-  output$ch10_bayes_or <- renderPlot({
+  zoom_plot_server("ch10_bayes_or", reactive({
     r <- fit_result()
     if (is.null(r)) return(ggplot() + theme_void())
     # Posterior OR dla slope
@@ -187,7 +187,7 @@ ch10_server <- function(input, output, session) {
     )
     plot_posterior_or(post_result,
                       bayes_posterior = bayes_posterior, bayes_hdi = bayes_hdi)
-  })
+  }))
 
   output$ch10_bayes_result <- renderUI({
     r <- fit_result()

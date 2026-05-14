@@ -153,7 +153,7 @@ ch1_ui <- lecture_chapter(
           uiOutput("ch1_demo_stats")
         ),
         column(8,
-          plotOutput("ch1_bootstrap_demo")
+          zoom_plot_ui("ch1_bootstrap_demo")
         )
       )
     ),
@@ -189,7 +189,7 @@ ch1_ui <- lecture_chapter(
           uiOutput("ch1_boot_stats")
         ),
         column(8,
-          plotOutput("ch1_boot_dist_plot", height = "320px")
+          zoom_plot_ui("ch1_boot_dist_plot", height = "320px")
         )
       )
     ),
@@ -315,7 +315,7 @@ ch1_server <- function(input, output, session) {
     ch1_boot_dist(result)
   })
 
-  output$ch1_boot_dist_plot <- renderPlot({
+  zoom_plot_server("ch1_boot_dist_plot", reactive({
     result <- ch1_boot_dist()
     if (is.null(result)) {
       ggplot() +
@@ -331,7 +331,7 @@ ch1_server <- function(input, output, session) {
                                    sim_observed = sim_observed,
                                    sim_success = sim_success)
     }
-  })
+  }))
 
   output$ch1_boot_stats <- renderUI({
     result <- ch1_boot_dist()

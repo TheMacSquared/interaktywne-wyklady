@@ -62,14 +62,14 @@ ch3_ui <- lecture_chapter(
         column(6,
           div(class = "panel-frequentist",
             h5("95% CI (częstościowy)"),
-            plotOutput("ch3_freq_plot", height = "280px"),
+            zoom_plot_ui("ch3_freq_plot", height = "280px"),
             uiOutput("ch3_freq_result")
           )
         ),
         column(6,
           div(class = "panel-bayesian",
             h5("95% HDI (bayesowski)"),
-            plotOutput("ch3_bayes_plot", height = "280px"),
+            zoom_plot_ui("ch3_bayes_plot", height = "280px"),
             uiOutput("ch3_bayes_result")
           )
         )
@@ -124,7 +124,7 @@ ch3_server <- function(input, output, session) {
   })
 
   # LEWA - CI czestosciowy, wizualizacja na osi
-  output$ch3_freq_plot <- renderPlot({
+  zoom_plot_server("ch3_freq_plot", reactive({
     r <- bf_result()
     df <- data.frame(x = sample_data())
     ci <- r$ci_freq
@@ -146,7 +146,7 @@ ch3_server <- function(input, output, session) {
            
            x = "Wartość", y = "Liczność") +
       theme_upwr()
-  })
+  }))
 
   output$ch3_freq_result <- renderUI({
     r <- bf_result()
@@ -160,7 +160,7 @@ ch3_server <- function(input, output, session) {
   })
 
   # PRAWA - HDI z posterior
-  output$ch3_bayes_plot <- renderPlot({
+  zoom_plot_server("ch3_bayes_plot", reactive({
     r <- bf_result()
     plot_posterior_density(
       r$posterior_mu,
@@ -171,7 +171,7 @@ ch3_server <- function(input, output, session) {
       bayes_posterior = bayes_posterior,
       bayes_hdi = bayes_hdi
     )
-  })
+  }))
 
   output$ch3_bayes_result <- renderUI({
     r <- bf_result()

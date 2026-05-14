@@ -30,7 +30,7 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.1",
       title = "Porównanie trzech typów skośności",
-      plotOutput("ch5_skew_comparison", height = "300px"),
+      zoom_plot_ui("ch5_skew_comparison", height = "300px"),
       lc_feedback(type = "info",
         tags$strong("Trzy typy rozkładów: "),
         "lewostronnie skośny (ogon w lewo), symetryczny (brak ogona), prawostronnie skośny (ogon w prawo)."
@@ -49,7 +49,7 @@ ch5_ui <- list(
         ),
         selected = "czas_dojazdu"
       ),
-      plotOutput("ch5_skew_plot", height = "350px"),
+      zoom_plot_ui("ch5_skew_plot", height = "350px"),
       uiOutput("ch5_skew_info")
     ),
 
@@ -83,10 +83,10 @@ ch5_ui <- list(
           )
         )
       ),
-      plotOutput("ch5_kurt_plot", height = "350px"),
+      zoom_plot_ui("ch5_kurt_plot", height = "350px"),
       h5(style = "text-align: center; color: var(--upwr-reference); margin-top: 12px;",
          "Powiększenie prawego ogona (x > 2.5)"),
-      plotOutput("ch5_kurt_tails", height = "220px"),
+      zoom_plot_ui("ch5_kurt_tails", height = "220px"),
       uiOutput("ch5_kurt_text")
     ),
 
@@ -110,8 +110,8 @@ ch5_ui <- list(
         ),
         selected = "wzrost"
       ),
-      plotOutput("ch5_full_hist", height = "350px"),
-      plotOutput("ch5_full_box", height = "120px"),
+      zoom_plot_ui("ch5_full_hist", height = "350px"),
+      zoom_plot_ui("ch5_full_box", height = "120px"),
       tableOutput("ch5_full_table"),
       uiOutput("ch5_full_interpretation")
     ),
@@ -148,7 +148,7 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  output$ch5_skew_comparison <- renderPlot({
+  zoom_plot_server("ch5_skew_comparison", reactive({
     set.seed(42)
     n_pts <- 5000
     left_skew  <- -rgamma(n_pts, shape = 4, scale = 1)
@@ -190,9 +190,9 @@ ch5_server <- function(input, output, session) {
       labs(x = "Wartość", y = "Gęstość") +
       theme(legend.position = "none",
             strip.text = element_text(face = "bold", size = 12))
-  })
+  }))
 
-  output$ch5_skew_plot <- renderPlot({
+  zoom_plot_server("ch5_skew_plot", reactive({
     d <- ch5_skew_data()
     vals <- d$values
     m <- mean(vals)
@@ -212,7 +212,7 @@ ch5_server <- function(input, output, session) {
         values = c("Średnia" = upwr_accent, "Mediana" = upwr_cat["niebo"])) +
       labs(x = d$label, y = "Gęstość") +
       theme(legend.position = "top")
-  })
+  }))
 
   output$ch5_skew_info <- renderUI({
     d <- ch5_skew_data()
@@ -265,7 +265,7 @@ ch5_server <- function(input, output, session) {
     data.frame(x = x_seq, dens = dens, norm = dnorm(x_seq))
   })
 
-  output$ch5_kurt_plot <- renderPlot({
+  zoom_plot_server("ch5_kurt_plot", reactive({
     df <- ch5_kurt_density()
     ek <- input$ch5_kurt_val
 
@@ -281,9 +281,9 @@ ch5_server <- function(input, output, session) {
         values = setNames(c("dashed", "solid"), c("Rozkład normalny", type_name))) +
       labs(x = "x", y = "Gęstość") +
       theme(legend.position = "top")
-  })
+  }))
 
-  output$ch5_kurt_tails <- renderPlot({
+  zoom_plot_server("ch5_kurt_tails", reactive({
     df <- ch5_kurt_density()
     ek <- input$ch5_kurt_val
     type_color <- if (ek < -0.1) upwr_cat["bursztyn"] else if (ek > 0.1) upwr_accent else upwr_cat["szalwia"]
@@ -297,7 +297,7 @@ ch5_server <- function(input, output, session) {
       geom_line(aes(y = dens), color = type_color, linewidth = 1.2) +
       labs(x = "x", y = "Gęstość") +
       theme()
-  })
+  }))
 
   output$ch5_kurt_text <- renderUI({
     ek <- input$ch5_kurt_val
@@ -350,7 +350,7 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  output$ch5_full_hist <- renderPlot({
+  zoom_plot_server("ch5_full_hist", reactive({
     d <- ch5_full_data()
     vals <- d$values
     m <- mean(vals)
@@ -369,9 +369,9 @@ ch5_server <- function(input, output, session) {
         values = c("Średnia" = upwr_accent, "Mediana" = upwr_cat["niebo"])) +
       labs(x = d$label, y = "Gęstość") +
       theme(legend.position = "top")
-  })
+  }))
 
-  output$ch5_full_box <- renderPlot({
+  zoom_plot_server("ch5_full_box", reactive({
     d <- ch5_full_data()
     df <- data.frame(x = d$values)
 
@@ -386,7 +386,7 @@ ch5_server <- function(input, output, session) {
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank()
       )
-  })
+  }))
 
   output$ch5_full_table <- renderTable({
     d <- ch5_full_data()

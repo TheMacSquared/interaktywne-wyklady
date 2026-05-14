@@ -29,7 +29,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     lc_h2("sec-03", "Czy są braki danych?"),
 
     div(class = "lc-figure-panel",
-      plotOutput("tab3_missing", height = "250px"),
+      zoom_plot_ui("tab3_missing", height = "250px"),
       uiOutput("tab3_missing_info")
     ),
 
@@ -39,7 +39,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
       fluidRow(
         column(4, selectInput("tab3_var", "Zmienna:",
           choices = c("bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"))),
-        column(8, plotOutput("tab3_boxplot", height = "300px"))
+        column(8, zoom_plot_ui("tab3_boxplot", height = "300px"))
       )
     ),
 
@@ -70,7 +70,7 @@ ch4_server <- function(input, output, session) {
     datatable(round_df(penguins), options = list(pageLength = 8, scrollX = TRUE), rownames = FALSE)
   })
 
-  output$tab3_missing <- renderPlot({
+  zoom_plot_server("tab3_missing", reactive({
     miss_pct <- sapply(penguins, function(x) mean(is.na(x)) * 100)
     df_miss <- data.frame(variable = names(miss_pct), pct = miss_pct)
     df_miss$color <- ifelse(df_miss$pct > 5, data_bad, ifelse(df_miss$pct > 0, data_mixed, data_good))
@@ -83,7 +83,7 @@ ch4_server <- function(input, output, session) {
       labs( x = NULL, y = "% braków") +
       theme_upwr(base_size = 14) +
       theme(axis.text.x = element_text(angle = 30, hjust = 1))
-  })
+  }))
 
   output$tab3_missing_info <- renderUI({
     n_complete <- sum(complete.cases(penguins))
@@ -95,7 +95,7 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  output$tab3_boxplot <- renderPlot({
+  zoom_plot_server("tab3_boxplot", reactive({
     req(input$tab3_var)
     ggplot(penguins %>% filter(!is.na(.data[[input$tab3_var]])),
            aes(x = species, y = .data[[input$tab3_var]], fill = species)) +
@@ -104,6 +104,6 @@ ch4_server <- function(input, output, session) {
       labs(x = "Gatunek", y = input$tab3_var) +
       theme_upwr(base_size = 14) +
       theme(legend.position = "none")
-  })
+  }))
 
 }

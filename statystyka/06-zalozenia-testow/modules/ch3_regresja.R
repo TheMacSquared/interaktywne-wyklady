@@ -52,8 +52,8 @@ ch3_ui <- lecture_chapter(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch3_scatter", height = "250px"),
-          plotOutput("ch3_diag_plots", height = "300px")
+          zoom_plot_ui("ch3_scatter", height = "250px"),
+          zoom_plot_ui("ch3_diag_plots", height = "300px")
         )
       )
     ),
@@ -136,7 +136,7 @@ ch3_server <- function(input, output, session) {
     ch3_model(lm(y ~ x, data = df))
   })
 
-  output$ch3_scatter <- renderPlot({
+  zoom_plot_server("ch3_scatter", reactive({
     df <- ch3_data()
     if (is.null(df)) {
       ggplot() +
@@ -150,9 +150,9 @@ ch3_server <- function(input, output, session) {
         labs(x = "X", y = "Y") +
         theme_upwr()
     }
-  })
+  }))
 
-  output$ch3_diag_plots <- renderPlot({
+  zoom_plot_server("ch3_diag_plots", reactive({
     model <- ch3_model()
     if (is.null(model)) return(NULL)
 
@@ -183,7 +183,7 @@ ch3_server <- function(input, output, session) {
       theme_upwr()
 
     gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
-  })
+  }))
 
   # --- Testy formalne ---
   output$ch3_diag_results <- renderUI({

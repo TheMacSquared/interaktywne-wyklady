@@ -67,20 +67,20 @@ ch9_ui <- lecture_chapter(
       )),
 
       br(),
-      plotOutput("ch9_scatter", height = "260px"),
+      zoom_plot_ui("ch9_scatter", height = "260px"),
 
       fluidRow(
         column(6,
           div(class = "panel-frequentist",
             h5("lm() — estymator OLS"),
-            plotOutput("ch9_freq_forest", height = "180px"),
+            zoom_plot_ui("ch9_freq_forest", height = "180px"),
             uiOutput("ch9_freq_result")
           )
         ),
         column(6,
           div(class = "panel-bayesian",
             h5("stan_glm() — posterior β"),
-            plotOutput("ch9_bayes_forest", height = "180px"),
+            zoom_plot_ui("ch9_bayes_forest", height = "180px"),
             uiOutput("ch9_bayes_result")
           )
         )
@@ -152,16 +152,16 @@ ch9_server <- function(input, output, session) {
     })
   })
 
-  output$ch9_scatter <- renderPlot({
+  zoom_plot_server("ch9_scatter", reactive({
     d <- sample_data()
     req(d)
     plot_scatter_with_fit(d, show_line = TRUE,
                            col_point = bayes_primary,
                            col_line = bayes_freq,
                            title = paste0("Dane (n = ", nrow(d), ")"))
-  })
+  }))
 
-  output$ch9_freq_forest <- renderPlot({
+  zoom_plot_server("ch9_freq_forest", reactive({
     r <- fit_result()
     if (is.null(r)) {
       return(ggplot() + annotate("text", x = 0, y = 0,
@@ -171,7 +171,7 @@ ch9_server <- function(input, output, session) {
     plot_coef_forest(r$freq_coefs, "Częstościowo",
                      col_freq = bayes_freq,
                      col_bayes = bayes_bayes)
-  })
+  }))
 
   output$ch9_freq_result <- renderUI({
     r <- fit_result()
@@ -190,13 +190,13 @@ ch9_server <- function(input, output, session) {
     )
   })
 
-  output$ch9_bayes_forest <- renderPlot({
+  zoom_plot_server("ch9_bayes_forest", reactive({
     r <- fit_result()
     if (is.null(r)) return(ggplot() + theme_void())
     plot_coef_forest(r$bayes_coefs, "Bayesowsko",
                      col_freq = bayes_freq,
                      col_bayes = bayes_bayes)
-  })
+  }))
 
   output$ch9_bayes_result <- renderUI({
     r <- fit_result()

@@ -79,7 +79,7 @@ ch4_ui <- lecture_chapter(
           uiOutput("ch4_perm_explanation")
         ),
         column(8,
-          plotOutput("ch4_perm_plot", height = "440px"),
+          zoom_plot_ui("ch4_perm_plot", height = "440px"),
           uiOutput("ch4_perm_result")
         )
       )
@@ -116,7 +116,7 @@ ch4_ui <- lecture_chapter(
           uiOutput("ch4_cor_result")
         ),
         column(8,
-          plotOutput("ch4_cor_plot", height = "380px")
+          zoom_plot_ui("ch4_cor_plot", height = "380px")
         )
       )
     ),
@@ -194,7 +194,7 @@ ch4_server <- function(input, output, session) {
     ch4_step(4)
   })
 
-  output$ch4_perm_plot <- renderPlot({
+  zoom_plot_server("ch4_perm_plot", reactive({
     step <- ch4_step()
     df   <- ch4_data()
 
@@ -281,7 +281,7 @@ ch4_server <- function(input, output, session) {
       }
       p + theme_upwr()
     }
-  })
+  }))
 
   output$ch4_perm_explanation <- renderUI({
     step <- ch4_step()
@@ -334,7 +334,7 @@ ch4_server <- function(input, output, session) {
     ch4_cor_result_rv(result)
   })
 
-  output$ch4_cor_plot <- renderPlot({
+  zoom_plot_server("ch4_cor_plot", reactive({
     res <- ch4_cor_result_rv()
     df  <- ch4_cor_data_rv()
 
@@ -377,7 +377,7 @@ ch4_server <- function(input, output, session) {
       theme_upwr()
 
     gridExtra::grid.arrange(p1, p2, ncol = 1, heights = c(1.4, 1))
-  })
+  }))
 
   output$ch4_cor_result <- renderUI({
     res <- ch4_cor_result_rv()

@@ -69,7 +69,7 @@ ch1_ui <- list(
         p(withMathJax("\\(\\varepsilon\\)"), " — błąd losowy (reszty)")
       ),
       p("Greckie litery ", withMathJax("\\(\\beta_0, \\beta_1\\)"),
-        " to ", tags$strong("prawdziwe"), ", populacyjne parametry — nieznane.
+        " to prawdziwe, populacyjne parametry — nieznane.
         Z próby liczymy ich estymatory, oznaczane małymi literami ",
         withMathJax("\\(b_0, b_1\\)"),
         ". Zaraz zobaczysz, jak każdy z tych elementów wpływa na kształt linii.")
@@ -88,7 +88,7 @@ ch1_ui <- list(
                       min = 0, max = 8, value = 2, step = 0.5)
         ),
         column(8,
-          plotOutput("ch1_beta_plot", height = "320px"),
+          zoom_plot_ui("ch1_beta_plot", height = "320px"),
           uiOutput("ch1_beta_info")
         )
       )
@@ -132,7 +132,7 @@ ch1_ui <- list(
                        class = "lc-btn-outline", width = "100%")
         ),
         column(8,
-          plotOutput("ch1_corr_plot", height = "360px"),
+          zoom_plot_ui("ch1_corr_plot", height = "360px"),
           uiOutput("ch1_corr_info")
         )
       )
@@ -142,8 +142,7 @@ ch1_ui <- list(
       p("Recepta jest więc prosta: jedno r, dwa odchylenia standardowe i dwie
         średnie wystarczą, żeby wyznaczyć linię. W rzeczywistej pracy nikt nie
         robi tego ręcznie — wpisujemy do R jedną komendę i dostajemy gotową
-        ", tags$strong("tabelę regresji"),
-        ": kolumny z estymatorami, błędami standardowymi, statystykami t i
+        tabelę regresji: kolumny z estymatorami, błędami standardowymi, statystykami t i
         p-value. Cały dalszy rozdział będzie ćwiczeniem w odczytywaniu właśnie
         takich tabel."),
       p("Zacznijmy od najprostszego ruchu: dostajesz tabelę z dwiema liczbami
@@ -169,7 +168,7 @@ ch1_ui <- list(
           uiOutput("ch1_draw_feedback")
         ),
         column(8,
-          plotOutput("ch1_draw_plot", height = "360px",
+          zoom_plot_ui("ch1_draw_plot", height = "360px",
                      click = "ch1_draw_plot_click"),
           uiOutput("ch1_draw_stats")
         )
@@ -180,8 +179,8 @@ ch1_ui <- list(
       p("Mając gotowe ", withMathJax("\\(b_0\\)"), " i ",
         withMathJax("\\(b_1\\)"),
         " z tabeli, narysowanie prostej jest mechaniczne. Ale przewińmy
-        pytanie o krok wstecz: ", tags$strong("skąd komputer wziął te dwie liczby?"),
-        " Spośród nieskończenie wielu prostych, które dałoby się przeciągnąć
+        pytanie o krok wstecz: skąd komputer wziął te dwie liczby?
+        Spośród nieskończenie wielu prostych, które dałoby się przeciągnąć
         przez chmurę punktów, musi wybrać jedną. Według jakiego kryterium?"),
       p("Zasada nazywa się ", tags$em("metodą najmniejszych kwadratów (MNK / OLS)"),
         ": wybieramy taką prostą, która minimalizuje sumę kwadratów pionowych
@@ -215,7 +214,7 @@ ch1_ui <- list(
                        class = "lc-btn-outline", width = "100%")
         ),
         column(8,
-          plotOutput("ch1_ols_plot", height = "360px"),
+          zoom_plot_ui("ch1_ols_plot", height = "360px"),
           uiOutput("ch1_ols_info")
         )
       )
@@ -225,8 +224,7 @@ ch1_ui <- list(
 
     tagList(
       p("Te pionowe odcinki, które pojawiły się w kroku 4, mają swoją nazwę:
-        to ", tags$strong("reszty"),
-        ". Każda obserwacja ma własną resztę — różnicę między tym, co
+        to reszty. Każda obserwacja ma własną resztę — różnicę między tym, co
         zobaczyliśmy, a tym, co przewiduje model:"),
       lc_formula_box(
         withMathJax(helpText("$$e_i = y_i - \\hat{y}_i$$"))
@@ -266,7 +264,7 @@ ch1_ui <- list(
         równie dobrze mogłoby się zdarzyć, gdyby X i Y w populacji były od siebie
         niezależne?"),
       p("Wzór na ", withMathJax("\\(b_1\\)"),
-        " ma swój brat-cień: ", tags$strong("błąd standardowy"), " ",
+        " ma swój brat-cień: błąd standardowy ",
         withMathJax("\\(SE(b_1)\\)"),
         ", który mierzy, jak bardzo nasza estymata mogłaby się chwiać między
         próbami. Statystyka testowa jest właściwie ilorazem — ",
@@ -304,7 +302,7 @@ ch1_ui <- list(
           uiOutput("ch1_pval_verdict")
         ),
         column(8,
-          plotOutput("ch1_pval_plot", height = "360px"),
+          zoom_plot_ui("ch1_pval_plot", height = "360px"),
           uiOutput("ch1_pval_stats")
         )
       )
@@ -321,8 +319,8 @@ ch1_ui <- list(
         do nauczycieli (STR), procent dzieci z angielskim jako drugim językiem,
         średnie wyniki z czytania i matematyki. To dane, na których ekonomiści
         edukacji testowali hipotezę: czy mniejsze klasy poprawiają wyniki?"),
-      p("Wybierz parę zmiennych i ", tags$strong("zanim klikniesz „Pokaż odpowiedź”"),
-        " popatrz na chmurę i na tabelę: czy znak ", withMathJax("\\(b_1\\)"),
+      p("Wybierz parę zmiennych i zanim klikniesz „Pokaż odpowiedź”,
+        popatrz na chmurę i na tabelę: czy znak ", withMathJax("\\(b_1\\)"),
         " pasuje do intuicji? Czy ", withMathJax("\\(p\\)"),
         " jest dość małe, żeby odrzucić H₀? Dopiero potem porównaj swoją diagnozę
         z werdyktem widgetu.")
@@ -362,7 +360,7 @@ ch1_ui <- list(
           uiOutput("ch1_cas_answer")
         ),
         column(8,
-          plotOutput("ch1_cas_plot", height = "360px"),
+          zoom_plot_ui("ch1_cas_plot", height = "360px"),
           uiOutput("ch1_cas_table"),
           uiOutput("ch1_cas_summary")
         )
@@ -372,13 +370,11 @@ ch1_ui <- list(
     tagList(
       p("Do tej pory traktowaliśmy regresję jako narzędzie do opisu zależności:
         czy istnieje, jaki ma znak, czy jest istotna. Ale model regresji ma drugie
-        zastosowanie, równie ważne: ", tags$strong("przewidywanie"),
-        ". Skoro mamy równanie ",
+        zastosowanie, równie ważne: przewidywanie. Skoro mamy równanie ",
         withMathJax("\\(\\hat{Y} = b_0 + b_1 X\\)"),
         ", możemy podstawić dowolne X i odczytać oczekiwane Y."),
-      p("Trzeba tylko pamiętać, co ta liczba znaczy: ",
-        tags$strong("predykcja to średnia warunkowa"),
-        " — najlepszy strzał w Y dla okręgów o danym X, ", tags$em("nie"),
+      p("Trzeba tylko pamiętać, co ta liczba znaczy: predykcja to średnia warunkowa
+        — najlepszy strzał w Y dla okręgów o danym X, ", tags$em("nie"),
         " obietnica konkretnej wartości. Jeśli dla okręgu o dochodzie 20 tys.
         USD model daje ", withMathJax("\\(\\hat{Y} = 658\\)"),
         ", to nie znaczy, że ", tags$em("każdy"),
@@ -406,7 +402,7 @@ ch1_ui <- list(
           uiOutput("ch1_pred_answer")
         ),
         column(8,
-          plotOutput("ch1_pred_plot", height = "360px"),
+          zoom_plot_ui("ch1_pred_plot", height = "360px"),
           uiOutput("ch1_pred_table"),
           uiOutput("ch1_pred_stats")
         )
@@ -420,16 +416,13 @@ ch1_ui <- list(
         nauczyliśmy się czytać tabelę regresji i przewidywać Y dla nowego X.
         Świadomie jednak pominęliśmy kilka rzeczy, do których wrócimy."),
       tags$ul(
-        tags$li(tags$strong("Co czyni model dobrym: "),
-                "kiedy wolno ufać prostej? Reszty zdradzają, czy model się
+        tags$li("Co czyni model dobrym: kiedy wolno ufać prostej? Reszty zdradzają, czy model się
                  nadaje; R² i RMSE mówią, ile wyjaśnia i jak duże robi
                  pomyłki — to temat rozdziału 2."),
-        tags$li(tags$strong("Wiele predyktorów: "),
-                "jak dołączyć drugą i trzecią zmienną X, kiedy STR ", tags$em("i"),
+        tags$li("Wiele predyktorów: jak dołączyć drugą i trzecią zmienną X, kiedy STR ", tags$em("i"),
                 " wydatki ", tags$em("i"),
                 " dochód wpływają na wyniki naraz — rozdział 3."),
-        tags$li(tags$strong("Porównywanie modeli: "),
-                "kiedy bogatszy model jest lepszy, a kiedy tylko przepasowany —
+        tags$li("Porównywanie modeli: kiedy bogatszy model jest lepszy, a kiedy tylko przepasowany —
                  rozdział 4. Tam dochodzą R²adj, AIC, BIC i train/test.")
       ),
       p("Linia regresji jest w wykresach od ponad stu lat. Reszta tego wykładu
@@ -452,7 +445,7 @@ ch1_ui <- list(
 
 ch1_server <- function(input, output, session) {
 
-  output$ch1_beta_plot <- renderPlot({
+  zoom_plot_server("ch1_beta_plot", reactive({
     set.seed(101)
     x <- seq(0, 10, length.out = 80)
     y_true <- input$ch1_beta_b0 + input$ch1_beta_b1 * x
@@ -469,7 +462,7 @@ ch1_server <- function(input, output, session) {
                hjust = 0, color = unname(upwr_cat["bursztyn"]), fontface = "bold") +
       labs(x = "X", y = "Y") +
       theme_upwr()
-  })
+  }))
 
   output$ch1_beta_info <- renderUI({
     direction <- if (input$ch1_beta_b1 > 0) "rośnie" else if (input$ch1_beta_b1 < 0) "maleje" else "nie zmienia się"
@@ -495,7 +488,7 @@ ch1_server <- function(input, output, session) {
   observeEvent(input$ch1_corr_step4, ch1_corr_step(4))
   observeEvent(input$ch1_corr_step5, ch1_corr_step(5))
 
-  output$ch1_corr_plot <- renderPlot({
+  zoom_plot_server("ch1_corr_plot", reactive({
     df <- ch1_corr_data()
     step <- ch1_corr_step()
     x_bar <- mean(df$x)
@@ -622,7 +615,7 @@ ch1_server <- function(input, output, session) {
                         label = "Klikaj kroki po lewej", color = upwr_reference, size = 5)
     }
     p
-  })
+  }))
 
   output$ch1_corr_info <- renderUI({
     df <- ch1_corr_data()
@@ -731,7 +724,7 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  output$ch1_draw_plot <- renderPlot({
+  zoom_plot_server("ch1_draw_plot", reactive({
     model <- ch1_draw_model()
     pts <- ch1_draw_points()
     revealed <- ch1_draw_revealed()
@@ -807,7 +800,7 @@ ch1_server <- function(input, output, session) {
     }
 
     p
-  })
+  }))
 
   output$ch1_draw_feedback <- renderUI({
     pts <- ch1_draw_points()
@@ -870,7 +863,7 @@ ch1_server <- function(input, output, session) {
   observeEvent(input$ch1_ols_step5, ch1_ols_step(5))
   observeEvent(input$ch1_ols_step6, ch1_ols_step(6))
 
-  output$ch1_ols_plot <- renderPlot({
+  zoom_plot_server("ch1_ols_plot", reactive({
     df <- ch1_ols_data()
     step <- ch1_ols_step()
     model <- lm(y ~ x, data = df)
@@ -918,7 +911,7 @@ ch1_server <- function(input, output, session) {
                         label = "Klikaj kroki po lewej", color = upwr_reference, size = 5)
     }
     p
-  })
+  }))
 
   output$ch1_ols_info <- renderUI({
     df <- ch1_ols_data()
@@ -1018,7 +1011,7 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  output$ch1_pval_plot <- renderPlot({
+  zoom_plot_server("ch1_pval_plot", reactive({
     df <- ch1_pval_data()
     model <- ch1_pval_model()
     p_val <- broom::tidy(model)$p.value[2]
@@ -1038,7 +1031,7 @@ ch1_server <- function(input, output, session) {
                color = line_color, fill = "white", label.size = 0) +
       labs(x = "X", y = "Y", subtitle = df$title[1]) +
       theme_upwr()
-  })
+  }))
 
   output$ch1_pval_verdict <- renderUI({
     model <- ch1_pval_model()
@@ -1099,7 +1092,7 @@ ch1_server <- function(input, output, session) {
     lm(form, data = .cas_data)
   })
 
-  output$ch1_cas_plot <- renderPlot({
+  zoom_plot_server("ch1_cas_plot", reactive({
     req(input$ch1_cas_x, input$ch1_cas_y)
     validate(need(input$ch1_cas_x != input$ch1_cas_y, "Wybierz dwie różne zmienne."))
 
@@ -1113,7 +1106,7 @@ ch1_server <- function(input, output, session) {
         y = unname(.cas_labels[input$ch1_cas_y])
       ) +
       theme_upwr()
-  })
+  }))
 
   output$ch1_cas_table <- renderUI({
     req(input$ch1_cas_x, input$ch1_cas_y)
@@ -1281,7 +1274,7 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  output$ch1_pred_plot <- renderPlot({
+  zoom_plot_server("ch1_pred_plot", reactive({
     spec <- ch1_pred_spec()
     model <- ch1_pred_model()
     coefs <- coef(model)
@@ -1316,7 +1309,7 @@ ch1_server <- function(input, output, session) {
     }
 
     p
-  })
+  }))
 
   output$ch1_pred_answer <- renderUI({
     spec <- ch1_pred_spec()

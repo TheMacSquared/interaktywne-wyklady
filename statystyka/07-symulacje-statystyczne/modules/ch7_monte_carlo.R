@@ -66,7 +66,7 @@ ch7_ui <- lecture_chapter(
           uiOutput("ch7_power_stats")
         ),
         column(8,
-          plotOutput("ch7_power_hist", height = "320px")
+          zoom_plot_ui("ch7_power_hist", height = "320px")
         )
       )
     ),
@@ -106,7 +106,7 @@ ch7_ui <- lecture_chapter(
             "Uwaga: obliczenie krzywej trwa kilka sekund (B=500 na punkt).")
         ),
         column(8,
-          plotOutput("ch7_power_curve", height = "300px")
+          zoom_plot_ui("ch7_power_curve", height = "300px")
         )
       )
     ),
@@ -143,7 +143,7 @@ ch7_ui <- lecture_chapter(
           uiOutput("ch7_null_stats")
         ),
         column(8,
-          plotOutput("ch7_null_plot", height = "340px")
+          zoom_plot_ui("ch7_null_plot", height = "340px")
         )
       )
     ),
@@ -189,7 +189,7 @@ ch7_server <- function(input, output, session) {
     ch7_power_result(result)
   })
 
-  output$ch7_power_hist <- renderPlot({
+  zoom_plot_server("ch7_power_hist", reactive({
     result <- ch7_power_result()
     if (is.null(result)) {
       ggplot() +
@@ -200,7 +200,7 @@ ch7_server <- function(input, output, session) {
       return()
     }
     plot_power_histogram(result, sim_bootstrap = sim_bootstrap, sim_observed = sim_observed)
-  })
+  }))
 
   output$ch7_power_stats <- renderUI({
     result <- ch7_power_result()
@@ -236,7 +236,7 @@ ch7_server <- function(input, output, session) {
     ch7_pc_result(df_pow)
   })
 
-  output$ch7_power_curve <- renderPlot({
+  zoom_plot_server("ch7_power_curve", reactive({
     df_pow <- ch7_pc_result()
     if (is.null(df_pow)) {
       ggplot() +
@@ -253,7 +253,7 @@ ch7_server <- function(input, output, session) {
       sim_bootstrap   = sim_bootstrap,
       sim_observed = sim_observed
     )
-  })
+  }))
 
   # --- Widget 2: Symulacja pod H0 ---
   ch7_null_result <- reactiveVal(NULL)
@@ -278,7 +278,7 @@ ch7_server <- function(input, output, session) {
     ch7_null_result(result)
   })
 
-  output$ch7_null_plot <- renderPlot({
+  zoom_plot_server("ch7_null_plot", reactive({
     result <- ch7_null_result()
     if (is.null(result)) {
       ggplot() +
@@ -316,7 +316,7 @@ ch7_server <- function(input, output, session) {
         y        = "Liczba symulacji"
       ) +
       theme_upwr()
-  })
+  }))
 
   output$ch7_null_stats <- renderUI({
     result <- ch7_null_result()

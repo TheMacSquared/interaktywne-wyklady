@@ -87,7 +87,7 @@ ch2_ui <- lecture_chapter(
           uiOutput("ch2a_stats")
         ),
         column(8,
-          plotOutput("ch2a_plot")
+          zoom_plot_ui("ch2a_plot")
         )
       )
     ),
@@ -133,7 +133,7 @@ ch2_ui <- lecture_chapter(
           uiOutput("ch2b_stats")
         ),
         column(8,
-          plotOutput("ch2b_plot", height = "420px")
+          zoom_plot_ui("ch2b_plot", height = "420px")
         )
       )
     ),
@@ -169,7 +169,7 @@ ch2_ui <- lecture_chapter(
           uiOutput("ch2c_stats")
         ),
         column(8,
-          plotOutput("ch2c_plot", height = "500px")
+          zoom_plot_ui("ch2c_plot", height = "500px")
         )
       )
     ),
@@ -215,7 +215,7 @@ ch2_ui <- lecture_chapter(
                        class = "lc-btn-warning", width = "100%")
         ),
         column(8,
-          plotOutput("ch2_comparison_plot", height = "300px"),
+          zoom_plot_ui("ch2_comparison_plot", height = "300px"),
           uiOutput("ch2_comparison_text")
         )
       )
@@ -246,7 +246,7 @@ ch2_ui <- lecture_chapter(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch2_prop_plot", height = "260px"),
+          zoom_plot_ui("ch2_prop_plot", height = "260px"),
           uiOutput("ch2_prop_stats")
         )
       )
@@ -568,7 +568,7 @@ ch2_server <- function(input, output, session) {
     ))
   })
 
-  output$ch2_comparison_plot <- renderPlot({
+  zoom_plot_server("ch2_comparison_plot", reactive({
     res <- ch2_cmp_result()
     if (is.null(res)) {
       ggplot() +
@@ -584,7 +584,7 @@ ch2_server <- function(input, output, session) {
                        sim_observed = sim_observed,
                        sim_success   = sim_success,
                        sim_warning   = sim_warning)
-  })
+  }))
 
   output$ch2_comparison_text <- renderUI({
     res <- ch2_cmp_result()
@@ -635,7 +635,7 @@ ch2_server <- function(input, output, session) {
     ))
   })
 
-  output$ch2_prop_plot <- renderPlot({
+  zoom_plot_server("ch2_prop_plot", reactive({
     res <- ch2_prop_result()
     if (is.null(res)) {
       ggplot() +
@@ -652,7 +652,7 @@ ch2_server <- function(input, output, session) {
                        sim_observed = sim_observed,
                        sim_success   = sim_success,
                        sim_warning   = sim_warning)
-  })
+  }))
 
   output$ch2_prop_stats <- renderUI({
     res <- ch2_prop_result()

@@ -60,14 +60,14 @@ ch4_ui <- lecture_chapter(
         column(6,
           div(class = "panel-frequentist",
             h5("Test t jednej próby"),
-            plotOutput("ch4_freq_plot", height = "300px"),
+            zoom_plot_ui("ch4_freq_plot", height = "300px"),
             uiOutput("ch4_freq_result")
           )
         ),
         column(6,
           div(class = "panel-bayesian",
             h5("ttestBF + posterior μ"),
-            plotOutput("ch4_bayes_plot", height = "300px"),
+            zoom_plot_ui("ch4_bayes_plot", height = "300px"),
             uiOutput("ch4_bayes_result")
           )
         )
@@ -122,13 +122,13 @@ ch4_server <- function(input, output, session) {
     compute_bf_one_sample(x, mu0 = input$ch4_mu0)
   })
 
-  output$ch4_freq_plot <- renderPlot({
+  zoom_plot_server("ch4_freq_plot", reactive({
     x <- sample_data()
     req(x)
     plot_sample_data(x, mu0 = input$ch4_mu0,
                      title = paste0("Próba (n = ", length(x), ")"),
                      col_freq = bayes_freq)
-  })
+  }))
 
   output$ch4_freq_result <- renderUI({
     r <- result()
@@ -143,7 +143,7 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  output$ch4_bayes_plot <- renderPlot({
+  zoom_plot_server("ch4_bayes_plot", reactive({
     r <- result()
     plot_posterior_density(
       r$posterior_mu,
@@ -154,7 +154,7 @@ ch4_server <- function(input, output, session) {
       bayes_posterior = bayes_posterior,
       bayes_hdi = bayes_hdi
     )
-  })
+  }))
 
   output$ch4_bayes_result <- renderUI({
     r <- result()

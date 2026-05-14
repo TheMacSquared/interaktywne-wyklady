@@ -75,7 +75,7 @@ ch3_ui <- list(
                        class = "lc-btn-secondary-outline", width = "100%")
         ),
         column(8,
-          plotOutput("ch3_hist_plot", height = "400px"),
+          zoom_plot_ui("ch3_hist_plot", height = "400px"),
           uiOutput("ch3_hist_text"),
           tableOutput("ch3_hist_table")
         )
@@ -110,7 +110,7 @@ ch3_ui <- list(
                     "Średnia ocen" = "srednia_ocen"),
         selected = "wzrost"
       ),
-      plotOutput("ch3_mean_plot", height = "300px"),
+      zoom_plot_ui("ch3_mean_plot", height = "300px"),
       uiOutput("ch3_mean_text")
     ),
 
@@ -134,7 +134,7 @@ ch3_ui <- list(
                     "Średnia ocen" = "srednia_ocen"),
         selected = "czas_dojazdu"
       ),
-      plotOutput("ch3_median_plot", height = "300px"),
+      zoom_plot_ui("ch3_median_plot", height = "300px"),
       uiOutput("ch3_median_text")
     ),
 
@@ -176,8 +176,8 @@ ch3_ui <- list(
 
       hr(),
 
-      plotOutput("ch3_svm_hist", height = "280px"),
-      plotOutput("ch3_svm_strip", height = "120px"),
+      zoom_plot_ui("ch3_svm_hist", height = "280px"),
+      zoom_plot_ui("ch3_svm_strip", height = "120px"),
 
       lc_center(
         uiOutput("ch3_svm_stats")
@@ -221,7 +221,7 @@ ch3_ui <- list(
       ),
       uiOutput("ch3_rob_outliers_count"),
 
-      plotOutput("ch3_rob_plot", height = "320px"),
+      zoom_plot_ui("ch3_rob_plot", height = "320px"),
 
       div(style = "margin-top: 15px;",
         tableOutput("ch3_rob_table")
@@ -261,11 +261,11 @@ ch3_ui <- list(
       fluidRow(
         column(6,
           h5(style = "text-align: center; color: var(--upwr-cat-szalwia);", "Wykres słupkowy (poprawny)"),
-          plotOutput("ch3_disc_bar", height = "300px")
+          zoom_plot_ui("ch3_disc_bar", height = "300px")
         ),
         column(6,
           h5(style = "text-align: center; color: var(--upwr-accent);", "Histogram (problematyczny)"),
-          plotOutput("ch3_disc_hist", height = "300px")
+          zoom_plot_ui("ch3_disc_hist", height = "300px")
         )
       ),
       tableOutput("ch3_disc_stats"),
@@ -297,7 +297,7 @@ ch3_ui <- list(
         ),
         selected = "unimodal"
       ),
-      plotOutput("ch3_modal_plot", height = "350px"),
+      zoom_plot_ui("ch3_modal_plot", height = "350px"),
       uiOutput("ch3_modal_text")
     ),
 
@@ -352,8 +352,8 @@ ch3_ui <- list(
 
       hr(),
 
-      plotOutput("ch3_q_hist", height = "280px"),
-      plotOutput("ch3_q_box", height = "120px"),
+      zoom_plot_ui("ch3_q_hist", height = "280px"),
+      zoom_plot_ui("ch3_q_box", height = "120px"),
 
       lc_center(
         uiOutput("ch3_q_text")
@@ -380,7 +380,7 @@ ch3_ui <- list(
                      class = "lc-btn-ok", style = "margin-right: 6px;")
       ),
       uiOutput("ch3_game_status_banner"),
-      plotOutput("ch3_game_plot", height = "350px", click = "ch3_game_click"),
+      zoom_plot_ui("ch3_game_plot", height = "350px", click = "ch3_game_click"),
       uiOutput("ch3_game_feedback")
     ),
 
@@ -490,7 +490,7 @@ ch3_server <- function(input, output, session) {
     "srednia_ocen" = "Średnia ocen"
   )
 
-  output$ch3_hist_plot <- renderPlot({
+  zoom_plot_server("ch3_hist_plot", reactive({
     step <- ch3_hist_step()
     var_name <- input$ch3_hist_var
     req(var_name)
@@ -634,7 +634,7 @@ ch3_server <- function(input, output, session) {
       })
       gridExtra::grid.arrange(grobs = plots, ncol = 3)
     }
-  })
+  }))
 
   output$ch3_hist_text <- renderUI({
     step <- ch3_hist_step()
@@ -685,7 +685,7 @@ ch3_server <- function(input, output, session) {
   # Widget 0a: Mean introduction
   # --------------------------------------------------------------------------
 
-  output$ch3_mean_plot <- renderPlot({
+  zoom_plot_server("ch3_mean_plot", reactive({
     var_name <- input$ch3_mean_var
     req(var_name)
     x <- student_data[[var_name]]
@@ -707,7 +707,7 @@ ch3_server <- function(input, output, session) {
                arrow = arrow(length = unit(0.2, "cm"), ends = "last")) +
       labs(x = var_labels[var_name], y = "Liczebność") +
       theme()
-  })
+  }))
 
   output$ch3_mean_text <- renderUI({
     var_name <- input$ch3_mean_var
@@ -729,7 +729,7 @@ ch3_server <- function(input, output, session) {
   # Widget 0b: Median introduction
   # --------------------------------------------------------------------------
 
-  output$ch3_median_plot <- renderPlot({
+  zoom_plot_server("ch3_median_plot", reactive({
     var_name <- input$ch3_median_var
     req(var_name)
     x <- student_data[[var_name]]
@@ -761,7 +761,7 @@ ch3_server <- function(input, output, session) {
       geom_vline(xintercept = med, color = upwr_cat["indygo"], linewidth = 1.5) +
       labs(x = var_labels[var_name], y = "Liczebność") +
       theme()
-  })
+  }))
 
   output$ch3_median_text <- renderUI({
     var_name <- input$ch3_median_var
@@ -808,7 +808,7 @@ ch3_server <- function(input, output, session) {
     ch3_svm_data(ch3_svm_generate())
   })
 
-  output$ch3_svm_hist <- renderPlot({
+  zoom_plot_server("ch3_svm_hist", reactive({
     req(ch3_svm_data())
     d <- data.frame(x = ch3_svm_data())
     m <- mean(d$x)
@@ -828,9 +828,9 @@ ch3_server <- function(input, output, session) {
       scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
       labs(x = "Zarobki (zl)", y = "Liczba osob") +
       theme(legend.position = "top")
-  })
+  }))
 
-  output$ch3_svm_strip <- renderPlot({
+  zoom_plot_server("ch3_svm_strip", reactive({
     req(ch3_svm_data())
     d <- data.frame(x = ch3_svm_data())
     m <- mean(d$x)
@@ -849,7 +849,7 @@ ch3_server <- function(input, output, session) {
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank())
-  })
+  }))
 
   output$ch3_svm_stats <- renderUI({
     req(ch3_svm_data())
@@ -919,7 +919,7 @@ ch3_server <- function(input, output, session) {
     ch3_rob_outliers(numeric(0))
   })
 
-  output$ch3_rob_plot <- renderPlot({
+  zoom_plot_server("ch3_rob_plot", reactive({
     req(ch3_rob_all())
     d <- data.frame(x = ch3_rob_all())
     m <- mean(d$x)
@@ -958,7 +958,7 @@ ch3_server <- function(input, output, session) {
       scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
       labs(x = "Zarobki (zl)", y = "Liczba osob") +
       theme(legend.position = "top")
-  })
+  }))
 
   output$ch3_rob_outliers_count <- renderUI({
     n_outliers <- length(ch3_rob_outliers())
@@ -998,7 +998,7 @@ ch3_server <- function(input, output, session) {
   # --------------------------------------------------------------------------
   # Widget 2b: Discrete variables
 
-  output$ch3_disc_bar <- renderPlot({
+  zoom_plot_server("ch3_disc_bar", reactive({
     var_name <- input$ch3_disc_var
     req(var_name)
     vals <- student_data[[var_name]]
@@ -1010,9 +1010,9 @@ ch3_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
       labs(x = variable_meta[[var_name]]$label, y = "Liczebność") +
       theme()
-  })
+  }))
 
-  output$ch3_disc_hist <- renderPlot({
+  zoom_plot_server("ch3_disc_hist", reactive({
     var_name <- input$ch3_disc_var
     req(var_name)
     vals <- student_data[[var_name]]
@@ -1021,7 +1021,7 @@ ch3_server <- function(input, output, session) {
       geom_histogram(bins = 15, fill = upwr_accent, color = "white", alpha = 0.6) +
       labs(x = variable_meta[[var_name]]$label, y = "Liczebność") +
       theme()
-  })
+  }))
 
   output$ch3_disc_stats <- renderTable({
     var_name <- input$ch3_disc_var
@@ -1052,7 +1052,7 @@ ch3_server <- function(input, output, session) {
   # Widget 2c: Multimodality in continuous distributions
   # --------------------------------------------------------------------------
 
-  output$ch3_modal_plot <- renderPlot({
+  zoom_plot_server("ch3_modal_plot", reactive({
     scenario <- input$ch3_modal_scenario
     req(scenario)
 
@@ -1099,7 +1099,7 @@ ch3_server <- function(input, output, session) {
         labs(x = "Czas dojazdu (min)", y = "Gęstość", color = NULL) +
                 theme(legend.position = "top")
     }
-  })
+  }))
 
   output$ch3_modal_text <- renderUI({
     scenario <- input$ch3_modal_scenario
@@ -1147,7 +1147,7 @@ ch3_server <- function(input, output, session) {
     updateSliderInput(session, "ch3_q_pct", value = 75)
   })
 
-  output$ch3_q_hist <- renderPlot({
+  zoom_plot_server("ch3_q_hist", reactive({
     pct <- input$ch3_q_pct / 100
     wzrost <- student_data$wzrost
     q_val <- quantile(wzrost, probs = pct)
@@ -1167,9 +1167,9 @@ ch3_server <- function(input, output, session) {
       scale_fill_manual(values = c("TRUE" = upwr_cat["niebo"], "FALSE" = upwr_reference)) +
       labs(x = "Wzrost (cm)", y = "Liczba studentow") +
       theme()
-  })
+  }))
 
-  output$ch3_q_box <- renderPlot({
+  zoom_plot_server("ch3_q_box", reactive({
     pct <- input$ch3_q_pct / 100
     wzrost <- student_data$wzrost
     q_val <- quantile(wzrost, probs = pct)
@@ -1189,7 +1189,7 @@ ch3_server <- function(input, output, session) {
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank())
-  })
+  }))
 
   output$ch3_q_text <- renderUI({
     pct <- input$ch3_q_pct / 100
@@ -1300,7 +1300,7 @@ ch3_server <- function(input, output, session) {
     }
   })
 
-  output$ch3_game_plot <- renderPlot({
+  zoom_plot_server("ch3_game_plot", reactive({
     vals <- ch3_game_data()
     req(vals)
     g <- ch3_game_guesses()
@@ -1336,7 +1336,7 @@ ch3_server <- function(input, output, session) {
     }
 
     p
-  })
+  }))
 
   output$ch3_game_feedback <- renderUI({
     if (!ch3_game_revealed()) return(NULL)

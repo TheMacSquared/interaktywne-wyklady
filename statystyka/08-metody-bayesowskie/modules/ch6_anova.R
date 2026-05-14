@@ -68,7 +68,7 @@ ch6_ui <- lecture_chapter(
       )),
 
       br(),
-      plotOutput("ch6_data_plot", height = "240px"),
+      zoom_plot_ui("ch6_data_plot", height = "240px"),
 
       fluidRow(
         column(6,
@@ -80,7 +80,7 @@ ch6_ui <- lecture_chapter(
         column(6,
           div(class = "panel-bayesian",
             h5("anovaBF"),
-            plotOutput("ch6_bayes_plot", height = "180px"),
+            zoom_plot_ui("ch6_bayes_plot", height = "180px"),
             uiOutput("ch6_bayes_result")
           )
         )
@@ -147,7 +147,7 @@ ch6_server <- function(input, output, session) {
     compute_bf_anova(d)
   })
 
-  output$ch6_data_plot <- renderPlot({
+  zoom_plot_server("ch6_data_plot", reactive({
     d <- sample_data()
     req(d)
     ggplot(d, aes(x = group, y = value, fill = group)) +
@@ -160,7 +160,7 @@ ch6_server <- function(input, output, session) {
                          guide = "none") +
       labs(x = "Grupa", y = "Wartość") +
       theme_upwr()
-  })
+  }))
 
   output$ch6_freq_result <- renderUI({
     r <- result()
@@ -177,10 +177,10 @@ ch6_server <- function(input, output, session) {
     )
   })
 
-  output$ch6_bayes_plot <- renderPlot({
+  zoom_plot_server("ch6_bayes_plot", reactive({
     r <- result()
     plot_bf_scale(r$bf10)
-  })
+  }))
 
   output$ch6_bayes_result <- renderUI({
     r <- result()

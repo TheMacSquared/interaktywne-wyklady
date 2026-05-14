@@ -67,7 +67,7 @@ ch1_ui <- list(
           uiOutput("ch1_count_info")
         ),
         column(8,
-          plotOutput("ch1_estimates_plot", height = "400px"),
+          zoom_plot_ui("ch1_estimates_plot", height = "400px"),
           uiOutput("ch1_estimates_stats")
         )
       )
@@ -188,7 +188,7 @@ ch1_ui <- list(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch1_fluct_plot", height = "300px")
+          zoom_plot_ui("ch1_fluct_plot", height = "300px")
         )
       )
     ),
@@ -245,7 +245,7 @@ ch1_server <- function(input, output, session) {
     lc_stat_box("Prób", n_est, color = col_ci)
   })
 
-  output$ch1_estimates_plot <- renderPlot({
+  zoom_plot_server("ch1_estimates_plot", reactive({
     est <- ch1_estimates()
     params <- get_population_params(input$ch1_dist)
 
@@ -272,7 +272,7 @@ ch1_server <- function(input, output, session) {
              x = expression(bar(x)), y = "Gęstość") +
         theme_upwr()
     }
-  })
+  }))
 
   output$ch1_estimates_stats <- renderUI({
     est <- ch1_estimates()
@@ -304,7 +304,7 @@ ch1_server <- function(input, output, session) {
     ch1_fluct_history(data.frame(draw = integer(0), xbar = numeric(0)))
   })
 
-  output$ch1_fluct_plot <- renderPlot({
+  zoom_plot_server("ch1_fluct_plot", reactive({
     df <- ch1_fluct_history()
     params <- get_population_params("normal")
 
@@ -326,5 +326,5 @@ ch1_server <- function(input, output, session) {
              x = "Numer losowania", y = expression(bar(x))) +
         theme_upwr()
     }
-  })
+  }))
 }

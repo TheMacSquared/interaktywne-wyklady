@@ -53,7 +53,7 @@ ch4_ui <- list(
       ),
       sliderInput("ch4_spread_buffer", "Wychodzisz wcześniej o (minuty):",
                   min = 0, max = 10, value = 0, step = 1, width = "100%"),
-      plotOutput("ch4_spread_plot", height = "450px"),
+      zoom_plot_ui("ch4_spread_plot", height = "450px"),
       uiOutput("ch4_spread_text")
     ),
 
@@ -84,7 +84,7 @@ ch4_ui <- list(
         actionButton("ch4_sd_reset", "Reset",
                      class = "lc-btn-secondary lc-btn-sm")
       ),
-      plotOutput("ch4_sd_plot", height = "400px"),
+      zoom_plot_ui("ch4_sd_plot", height = "400px"),
       tableOutput("ch4_sd_table"),
       uiOutput("ch4_sd_text")
     ),
@@ -111,7 +111,7 @@ ch4_ui <- list(
                     "Średnia ocen" = "srednia_ocen"),
         selected = "wzrost"
       ),
-      plotOutput("ch4_emp_plot", height = "400px"),
+      zoom_plot_ui("ch4_emp_plot", height = "400px"),
       uiOutput("ch4_emp_text")
     ),
 
@@ -147,7 +147,7 @@ ch4_ui <- list(
         actionButton("ch4_bp_reset", "Reset",
                      class = "lc-btn-secondary lc-btn-sm")
       ),
-      plotOutput("ch4_bp_plot", height = "350px"),
+      zoom_plot_ui("ch4_bp_plot", height = "350px"),
       uiOutput("ch4_bp_text")
     ),
 
@@ -188,7 +188,7 @@ ch4_ui <- list(
           checkboxInput("ch4_grp_points", "Pokaz punkty", value = TRUE)
         )
       ),
-      plotOutput("ch4_grp_plot", height = "400px"),
+      zoom_plot_ui("ch4_grp_plot", height = "400px"),
       tableOutput("ch4_grp_table")
     ),
 
@@ -214,7 +214,7 @@ ch4_ui <- list(
         actionButton("ch4_comp_reset", "Reset",
                      class = "lc-btn-secondary")
       ),
-      plotOutput("ch4_comp_plot", height = "350px"),
+      zoom_plot_ui("ch4_comp_plot", height = "350px"),
       tableOutput("ch4_comp_table")
     ),
 
@@ -244,11 +244,11 @@ ch4_ui <- list(
       fluidRow(
         column(6,
           h5(style = "text-align: center; color: var(--upwr-reference);", "SD — nieporównywalne"),
-          plotOutput("ch4_sd_compare_plot", height = "350px")
+          zoom_plot_ui("ch4_sd_compare_plot", height = "350px")
         ),
         column(6,
           h5(style = "text-align: center; color: var(--upwr-reference);", "CV — porównywalne"),
-          plotOutput("ch4_cv_plot", height = "350px")
+          zoom_plot_ui("ch4_cv_plot", height = "350px")
         )
       ),
       tableOutput("ch4_cv_table"),
@@ -300,7 +300,7 @@ ch4_server <- function(input, output, session) {
          sd_a = round(sd(data_a), 1), sd_b = round(sd(data_b), 1))
   }
 
-  output$ch4_spread_plot <- renderPlot({
+  zoom_plot_server("ch4_spread_plot", reactive({
     step <- ch4_spread_step()
     if (step == 0) return(NULL)
 
@@ -346,7 +346,7 @@ ch4_server <- function(input, output, session) {
     }
 
     p
-  })
+  }))
 
   output$ch4_spread_text <- renderUI({
     step <- ch4_spread_step()
@@ -439,7 +439,7 @@ ch4_server <- function(input, output, session) {
     ch4_sd_step(0)
   })
 
-  output$ch4_sd_plot <- renderPlot({
+  zoom_plot_server("ch4_sd_plot", reactive({
     step <- ch4_sd_step()
     if (step == 0) return(NULL)
 
@@ -508,7 +508,7 @@ ch4_server <- function(input, output, session) {
     }
 
     p
-  })
+  }))
 
   output$ch4_sd_table <- renderTable({
     step <- ch4_sd_step()
@@ -606,7 +606,7 @@ ch4_server <- function(input, output, session) {
 
   # --- Widget 2b: Empirical rule (68-95-99.7) ---
 
-  output$ch4_emp_plot <- renderPlot({
+  zoom_plot_server("ch4_emp_plot", reactive({
     var_name <- input$ch4_emp_var
     req(var_name)
     vals <- student_data[[var_name]]
@@ -646,7 +646,7 @@ ch4_server <- function(input, output, session) {
       theme()
 
     p
-  })
+  }))
 
   output$ch4_emp_text <- renderUI({
     var_name <- input$ch4_emp_var
@@ -702,7 +702,7 @@ ch4_server <- function(input, output, session) {
     ch4_bp_step(0)
   })
 
-  output$ch4_bp_plot <- renderPlot({
+  zoom_plot_server("ch4_bp_plot", reactive({
     step <- ch4_bp_step()
     if (step == 0) return(NULL)
 
@@ -857,7 +857,7 @@ ch4_server <- function(input, output, session) {
 
       p
     }
-  })
+  }))
 
   output$ch4_bp_text <- renderUI({
     step <- ch4_bp_step()
@@ -921,7 +921,7 @@ ch4_server <- function(input, output, session) {
 
   # --- Widget 3b: Group comparison ---
 
-  output$ch4_grp_plot <- renderPlot({
+  zoom_plot_server("ch4_grp_plot", reactive({
     var_name <- input$ch4_grp_var
     grp_name <- input$ch4_grp_by
     req(var_name, grp_name)
@@ -953,7 +953,7 @@ ch4_server <- function(input, output, session) {
     p + scale_fill_upwr() +
       labs(x = grp_label, y = var_label) +
             theme(legend.position = "none")
-  })
+  }))
 
   output$ch4_grp_table <- renderTable({
     var_name <- input$ch4_grp_var
@@ -1005,7 +1005,7 @@ ch4_server <- function(input, output, session) {
     ch4_comp_data(student_data$wzrost)
   })
 
-  output$ch4_comp_plot <- renderPlot({
+  zoom_plot_server("ch4_comp_plot", reactive({
     vals <- ch4_comp_data()
     if (is.null(vals)) return(NULL)
 
@@ -1034,7 +1034,7 @@ ch4_server <- function(input, output, session) {
            title = paste0("Histogram wzrostu (n = ", length(vals), ")")) +
             coord_cartesian(clip = "off") +
       theme(plot.margin = margin(10, 10, 50, 10))
-  })
+  }))
 
   output$ch4_comp_table <- renderTable({
     vals <- ch4_comp_data()
@@ -1063,7 +1063,7 @@ ch4_server <- function(input, output, session) {
 
   # --- Widget 5: Coefficient of Variation ---
 
-  output$ch4_sd_compare_plot <- renderPlot({
+  zoom_plot_server("ch4_sd_compare_plot", reactive({
     vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")
     labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "Średnia ocen")
 
@@ -1079,9 +1079,9 @@ ch4_server <- function(input, output, session) {
       coord_flip() +
       labs(x = NULL, y = "Odchylenie standardowe (oryg. jednostki)") +
       theme()
-  })
+  }))
 
-  output$ch4_cv_plot <- renderPlot({
+  zoom_plot_server("ch4_cv_plot", reactive({
     vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")
     labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "Średnia ocen")
 
@@ -1097,7 +1097,7 @@ ch4_server <- function(input, output, session) {
       coord_flip() +
       labs(x = NULL, y = "Współczynnik zmienności (%)") +
       theme()
-  })
+  }))
 
   output$ch4_cv_table <- renderTable({
     vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")

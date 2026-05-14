@@ -54,7 +54,7 @@ ch1_ui <- lecture_chapter(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch1_normality_plots", height = "350px")
+          zoom_plot_ui("ch1_normality_plots", height = "350px")
         )
       )
     ),
@@ -128,7 +128,7 @@ ch1_ui <- lecture_chapter(
                        class = "lc-btn-warning", width = "100%")
         ),
         column(8,
-          plotOutput("ch1_transform_plots", height = "300px"),
+          zoom_plot_ui("ch1_transform_plots", height = "300px"),
           uiOutput("ch1_transform_results")
         )
       )
@@ -168,7 +168,7 @@ ch1_server <- function(input, output, session) {
     ch1_data(generate_test_data(input$ch1_n, input$ch1_dist))
   })
 
-  output$ch1_normality_plots <- renderPlot({
+  zoom_plot_server("ch1_normality_plots", reactive({
     x <- ch1_data()
     if (is.null(x)) {
       ggplot() +
@@ -196,7 +196,7 @@ ch1_server <- function(input, output, session) {
 
       gridExtra::grid.arrange(p1, p2, ncol = 2)
     }
-  })
+  }))
 
   # --- Widget 2: Testy normalnosci ---
   output$ch1_norm_results <- renderUI({
@@ -242,7 +242,7 @@ ch1_server <- function(input, output, session) {
     ch1_trans_data(x)
   })
 
-  output$ch1_transform_plots <- renderPlot({
+  zoom_plot_server("ch1_transform_plots", reactive({
     x <- ch1_trans_data()
     if (is.null(x)) {
       ggplot() +
@@ -264,7 +264,7 @@ ch1_server <- function(input, output, session) {
 
       gridExtra::grid.arrange(p1, p2, ncol = 2)
     }
-  })
+  }))
 
   output$ch1_transform_results <- renderUI({
     x <- ch1_trans_data()

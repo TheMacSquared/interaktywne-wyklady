@@ -36,7 +36,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
         ),
         div(class = "view-panel",
           div(class = "view-label", "Co widać na wykresie"),
-          plotOutput("cat1_plot", height = "280px")
+          zoom_plot_ui("cat1_plot", height = "280px")
         )
       ),
       div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
@@ -64,8 +64,8 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
         ),
         div(class = "view-panel",
           div(class = "view-label", "Co widać na wykresach"),
-          plotOutput("cat2_plot_zadowolenie", height = "200px"),
-          plotOutput("cat2_plot", height = "200px")
+          zoom_plot_ui("cat2_plot_zadowolenie", height = "200px"),
+          zoom_plot_ui("cat2_plot", height = "200px")
         )
       ),
       div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
@@ -96,7 +96,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
         ),
         div(class = "view-panel",
           div(class = "view-label", "Cena vs powierzchnia"),
-          plotOutput("cat3_plot", height = "280px")
+          zoom_plot_ui("cat3_plot", height = "280px")
         )
       ),
       div(class = "lc-feedback lc-feedback-warning", style = "margin-top: 10px;",
@@ -128,7 +128,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
         ),
         div(class = "view-panel",
           div(class = "view-label", "Próba zrobienia histogramu"),
-          plotOutput("cat4_plot", height = "280px")
+          zoom_plot_ui("cat4_plot", height = "280px")
         )
       ),
       div(class = "lc-feedback lc-feedback-warning", style = "margin-top: 10px;",
@@ -155,7 +155,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
         ),
         div(class = "view-panel",
           div(class = "view-label", "Procent brakow na zmienna"),
-          plotOutput("cat5_plot", height = "280px")
+          zoom_plot_ui("cat5_plot", height = "280px")
         )
       ),
       div(class = "lc-feedback lc-feedback-info", style = "margin-top: 10px;",
@@ -187,7 +187,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
         ),
         div(class = "view-panel",
           div(class = "view-label", "Dane w kolejności"),
-          plotOutput("cat6_plot", height = "280px")
+          zoom_plot_ui("cat6_plot", height = "280px")
         )
       ),
       div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
@@ -219,7 +219,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
         ),
         div(class = "view-panel",
           div(class = "view-label", "Ile masz obserwacji?"),
-          plotOutput("cat7_plot", height = "280px")
+          zoom_plot_ui("cat7_plot", height = "280px")
         )
       ),
       div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
@@ -295,7 +295,7 @@ ch1_server <- function(input, output, session) {
               options = list(dom = 't', ordering = FALSE, pageLength = 10))
   })
 
-  output$cat1_plot <- renderPlot({
+  zoom_plot_server("cat1_plot", reactive({
     ggplot(cat_small, aes(x = oceny)) +
       geom_histogram(bins = 4, fill = data_bad, color = "white", alpha = 0.8) +
       geom_vline(xintercept = mean(cat_small$oceny), linetype = "dashed", color = data_reference, linewidth = 1) +
@@ -304,7 +304,7 @@ ch1_server <- function(input, output, session) {
       scale_y_continuous(breaks = 0:3) +
       labs(x = "Średnia ocen", y = "Liczebność") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
   # --- Problem 2: Brak zmiennosci ---
   output$cat2_table <- DT::renderDataTable({
@@ -322,7 +322,7 @@ ch1_server <- function(input, output, session) {
               options = list(dom = 't', ordering = FALSE, pageLength = 12))
   })
 
-  output$cat2_plot_zadowolenie <- renderPlot({
+  zoom_plot_server("cat2_plot_zadowolenie", reactive({
     pct_45 <- round(100 * mean(cat_novar$zadowolenie >= 4))
     ggplot(cat_novar, aes(x = factor(zadowolenie))) +
       geom_bar(fill = data_bad, alpha = 0.85) +
@@ -330,9 +330,9 @@ ch1_server <- function(input, output, session) {
       labs(
            x = "Ocena (1–5)", y = "Liczba") +
       theme_upwr(base_size = 13)
-  })
+  }))
 
-  output$cat2_plot <- renderPlot({
+  zoom_plot_server("cat2_plot", reactive({
     ggplot(cat_novar, aes(x = staz, y = wynagrodzenie)) +
       geom_point(size = 3, alpha = 0.6, color = data_bad) +
       scale_x_continuous(limits = c(1, 10)) +
@@ -340,7 +340,7 @@ ch1_server <- function(input, output, session) {
            
            x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
       theme_upwr(base_size = 13)
-  })
+  }))
 
   # --- Problem 3: Bledy i literowki (toggle) ---
   cat3_view <- reactiveVal("raw")
@@ -389,7 +389,7 @@ ch1_server <- function(input, output, session) {
     dt
   })
 
-  output$cat3_plot <- renderPlot({
+  zoom_plot_server("cat3_plot", reactive({
     if (cat3_view() == "raw") {
       d <- cat_errors
       title_txt <- "Z błędami"
@@ -407,7 +407,7 @@ ch1_server <- function(input, output, session) {
       labs(
            x = "Powierzchnia (m²)", y = "Cena (PLN)") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
   # --- Problem 4: Zle zdefiniowane zmienne (toggle) ---
   cat4_view <- reactiveVal("raw")
@@ -454,7 +454,7 @@ ch1_server <- function(input, output, session) {
     }
   })
 
-  output$cat4_plot <- renderPlot({
+  zoom_plot_server("cat4_plot", reactive({
     if (cat4_view() == "raw") {
       nums <- suppressWarnings(as.numeric(cat_messy$czas_nauki))
       n_ok <- sum(!is.na(nums))
@@ -480,7 +480,7 @@ ch1_server <- function(input, output, session) {
              x = "Godziny nauki/tydzień", y = "Liczebność") +
         theme_upwr(base_size = 14)
     }
-  })
+  }))
 
   # --- Problem 5: Braki danych ---
   output$cat5_table <- DT::renderDataTable({
@@ -503,7 +503,7 @@ ch1_server <- function(input, output, session) {
         color = styleEqual(NA, "#bbb"))
   })
 
-  output$cat5_plot <- renderPlot({
+  zoom_plot_server("cat5_plot", reactive({
     miss_pct <- sapply(cat_missing[, -1], function(x) mean(is.na(x)) * 100)
     df_miss <- data.frame(variable = names(miss_pct), pct = miss_pct)
     df_miss$color <- ifelse(df_miss$pct > 20, data_bad, ifelse(df_miss$pct > 5, data_mixed, data_good))
@@ -519,7 +519,7 @@ ch1_server <- function(input, output, session) {
       labs(x = NULL, y = "% braków (NA)") +
       theme_upwr(base_size = 14) +
       ylim(0, 35)
-  })
+  }))
 
   # --- Problem 6: Brak niezaleznosci (toggle) ---
   cat6_view <- reactiveVal("daily")
@@ -563,7 +563,7 @@ ch1_server <- function(input, output, session) {
     }
   })
 
-  output$cat6_plot <- renderPlot({
+  zoom_plot_server("cat6_plot", reactive({
     if (cat6_view() == "daily") {
       ggplot(cat_timeseries, aes(x = data, y = temperatura)) +
         geom_line(color = data_bad, linewidth = 0.8) +
@@ -587,7 +587,7 @@ ch1_server <- function(input, output, session) {
         theme_upwr(base_size = 14) +
         theme(axis.text.x = element_text(angle = 30, hjust = 1))
     }
-  })
+  }))
 
   # --- Problem 7: Zla struktura (toggle) ---
   cat7_view <- reactiveVal("events")
@@ -634,7 +634,7 @@ ch1_server <- function(input, output, session) {
     }
   })
 
-  output$cat7_plot <- renderPlot({
+  zoom_plot_server("cat7_plot", reactive({
     if (cat7_view() == "events") {
       df <- data.frame(label = "Wiersze\nw tabeli", n = nrow(cat_patients_visits))
       ggplot(df, aes(x = label, y = n)) +
@@ -655,5 +655,5 @@ ch1_server <- function(input, output, session) {
         theme_upwr(base_size = 14) +
         theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
     }
-  })
+  }))
 }

@@ -42,7 +42,7 @@ ch2_ui <- lecture_chapter(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch2_boxplot", height = "300px"),
+          zoom_plot_ui("ch2_boxplot", height = "300px"),
           uiOutput("ch2_var_stats")
         )
       )
@@ -141,7 +141,7 @@ ch2_server <- function(input, output, session) {
     ))
   })
 
-  output$ch2_boxplot <- renderPlot({
+  zoom_plot_server("ch2_boxplot", reactive({
     df <- ch2_data()
     if (is.null(df)) {
       ggplot() +
@@ -157,7 +157,7 @@ ch2_server <- function(input, output, session) {
         theme_upwr() +
         theme(legend.position = "none")
     }
-  })
+  }))
 
   output$ch2_var_stats <- renderUI({
     df <- ch2_data()

@@ -65,11 +65,11 @@ ch2_ui <- list(
       fluidRow(
         column(6,
           h5(style = paste0("text-align: center; color: ", type_colors["nominalna"], ";"), "Nominalna: Kierunek studiów"),
-          plotOutput("ch2_ord_nom_plot", height = "300px")
+          zoom_plot_ui("ch2_ord_nom_plot", height = "300px")
         ),
         column(6,
           h5(style = paste0("text-align: center; color: ", type_colors["porzadkowa"], ";"), "Porzadkowa: Zadowolenie"),
-          plotOutput("ch2_ord_ord_plot", height = "300px")
+          zoom_plot_ui("ch2_ord_ord_plot", height = "300px")
         )
       ),
 
@@ -155,7 +155,7 @@ ch2_ui <- list(
           actionButton("ch2_color_random", "Losowe kolory",
                        class = "lc-btn-secondary-outline", width = "100%")
         ),
-        column(8, plotOutput("ch2_color_plot", height = "380px"))
+        column(8, zoom_plot_ui("ch2_color_plot", height = "380px"))
       ),
       lc_feedback(type = "warning",
         tags$b("Pamiętaj: "),
@@ -226,7 +226,7 @@ ch2_ui <- list(
           )
         )
       ),
-      plotOutput("ch2_cross_plot", height = "350px")
+      zoom_plot_ui("ch2_cross_plot", height = "350px")
     ),
 
     # --- Narrative before Widget 5 ---
@@ -246,7 +246,7 @@ ch2_ui <- list(
       title = "Dominanta — najczęściej występująca kategoria",
       actionButton("ch2_mode_resample", "Losuj nowe proporcje",
                    class = "lc-btn-primary"),
-      plotOutput("ch2_mode_plot", height = "350px"),
+      zoom_plot_ui("ch2_mode_plot", height = "350px"),
       uiOutput("ch2_mode_text")
     ),
 
@@ -400,7 +400,7 @@ ch2_server <- function(input, output, session) {
   # Widget 1b: Nominal vs Ordinal comparison
   # ========================================================================
 
-  output$ch2_ord_nom_plot <- renderPlot({
+  zoom_plot_server("ch2_ord_nom_plot", reactive({
     df <- data.frame(kierunek = student_data$kierunek)
     lvls <- levels(df$kierunek)
     if (isTRUE(input$ch2_ord_shuffle)) {
@@ -414,9 +414,9 @@ ch2_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
       labs(x = "Kierunek", y = "Liczebność") +
       theme()
-  })
+  }))
 
-  output$ch2_ord_ord_plot <- renderPlot({
+  zoom_plot_server("ch2_ord_ord_plot", reactive({
     df <- data.frame(zadowolenie = student_data$zadowolenie)
     lvls <- levels(df$zadowolenie)
     if (isTRUE(input$ch2_ord_shuffle)) {
@@ -438,7 +438,7 @@ ch2_server <- function(input, output, session) {
       scale_x_discrete(labels = function(x) short_labels[x]) +
       labs(x = "Zadowolenie", y = "Liczebność") +
       theme()
-  })
+  }))
 
   output$ch2_ord_explanation <- renderUI({
     if (isTRUE(input$ch2_ord_shuffle)) {
@@ -538,7 +538,7 @@ ch2_server <- function(input, output, session) {
     ch2_random_colors(NULL)
   })
 
-  output$ch2_color_plot <- renderPlot({
+  zoom_plot_server("ch2_color_plot", reactive({
     df <- data.frame(kierunek = student_data$kierunek)
     df_counts <- as.data.frame(table(df$kierunek))
     names(df_counts) <- c("Kierunek", "n")
@@ -607,7 +607,7 @@ ch2_server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
       scale_fill_manual(values = fill_colors, guide = "none") +
       labs(x = "Kierunek", y = "Liczebność")
-  })
+  }))
 
 
   # ========================================================================
@@ -637,7 +637,7 @@ ch2_server <- function(input, output, session) {
     df
   }, striped = TRUE, hover = TRUE, width = "100%", align = "c")
 
-  output$ch2_cross_plot <- renderPlot({
+  zoom_plot_server("ch2_cross_plot", reactive({
     row_var <- input$ch2_cross_row
     col_var <- input$ch2_cross_col
     chart_type <- input$ch2_cross_chart
@@ -685,7 +685,7 @@ ch2_server <- function(input, output, session) {
         labs(x = row_label[row_var], y = "Liczebność", fill = col_label[col_var]) +
                 theme(legend.position = "top")
     }
-  })
+  }))
 
   # Widget 5: Mode (dominanta)
   # ========================================================================
@@ -701,7 +701,7 @@ ch2_server <- function(input, output, session) {
       levels = c("Informatyka", "Biologia", "Psychologia", "Ekonomia")))
   })
 
-  output$ch2_mode_plot <- renderPlot({
+  zoom_plot_server("ch2_mode_plot", reactive({
     req(ch2_mode_data())
     x <- ch2_mode_data()
     df_counts <- as.data.frame(table(x))
@@ -719,7 +719,7 @@ ch2_server <- function(input, output, session) {
         guide = "none"
       ) +
       labs(x = "Kierunek", y = "Liczebność")
-  })
+  }))
 
   output$ch2_mode_text <- renderUI({
     req(ch2_mode_data())

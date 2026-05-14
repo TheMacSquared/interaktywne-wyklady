@@ -45,7 +45,7 @@ ch1_ui <- list(
           uiOutput("ch1_case_stats")
         ),
         column(8,
-          plotOutput("ch1_case_plot", height = "350px")
+          zoom_plot_ui("ch1_case_plot", height = "350px")
         )
       )
     ),
@@ -277,7 +277,7 @@ ch1d_ui <- list(
                       min = 10, max = 200, value = 40, step = 5)
         )
       ),
-      plotOutput("ch1_power_plot", height = "380px"),
+      zoom_plot_ui("ch1_power_plot", height = "380px"),
       uiOutput("ch1_power_stats")
     ),
 
@@ -360,7 +360,7 @@ ch1d_ui <- list(
           uiOutput("ch1_sim_info")
         ),
         column(8,
-          plotOutput("ch1_sim_plot", height = "350px"),
+          zoom_plot_ui("ch1_sim_plot", height = "350px"),
           uiOutput("ch1_sim_stats")
         )
       )
@@ -482,7 +482,7 @@ ch1_server <- function(input, output, session) {
     }
   })
 
-  output$ch1_case_plot <- renderPlot({
+  zoom_plot_server("ch1_case_plot", reactive({
     d <- ch1_case_data()
     if (is.null(d)) return(NULL)
 
@@ -495,7 +495,7 @@ ch1_server <- function(input, output, session) {
            x = NULL, y = "Wynik (0–100 pkt)") +
       theme(legend.position = "none") +
       coord_cartesian(ylim = c(20, 100))
-  })
+  }))
 
   output$ch1_case_stats <- renderUI({
     d <- ch1_case_data()
@@ -550,7 +550,7 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  output$ch1_sim_plot <- renderPlot({
+  zoom_plot_server("ch1_sim_plot", reactive({
     diffs <- ch1_sim_diffs()
     obs <- ch1_observed_diff()
 
@@ -577,7 +577,7 @@ ch1_server <- function(input, output, session) {
              x = "Różnica średnich (grupa A − grupa B)", y = "Liczba") +
                 theme(legend.position = "top")
     }
-  })
+  }))
 
   output$ch1_sim_stats <- renderUI({
     diffs <- ch1_sim_diffs()
@@ -620,7 +620,7 @@ ch1_server <- function(input, output, session) {
   })
 
   # --- Widget 2: Moc testu ---
-  output$ch1_power_plot <- renderPlot({
+  zoom_plot_server("ch1_power_plot", reactive({
     alpha <- input$ch1_alpha
     diff_means <- input$ch1_effect  # roznica srednich w punktach
     n <- input$ch1_power_n
@@ -676,7 +676,7 @@ ch1_server <- function(input, output, session) {
     }
 
     p
-  })
+  }))
 
   output$ch1_power_stats <- renderUI({
     alpha <- input$ch1_alpha

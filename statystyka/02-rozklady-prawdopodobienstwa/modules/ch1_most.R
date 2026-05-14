@@ -49,8 +49,8 @@ ch1_ui <- list(
           uiOutput("ch1_roll_count")
         ),
         column(8,
-          plotOutput("ch1_freq_bar", height = "250px"),
-          plotOutput("ch1_conv_plot", height = "250px")
+          zoom_plot_ui("ch1_freq_bar", height = "250px"),
+          zoom_plot_ui("ch1_conv_plot", height = "250px")
         )
       )
     ),
@@ -101,7 +101,7 @@ ch1_ui <- list(
           checkboxInput("ch1_show_density", "Krzywa gęstości (model teoretyczny)", value = FALSE)
         ),
         column(8,
-          plotOutput("ch1_emp_vs_theo", height = "380px"),
+          zoom_plot_ui("ch1_emp_vs_theo", height = "380px"),
           uiOutput("ch1_emp_text")
         )
       )
@@ -149,7 +149,7 @@ ch1_ui <- list(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch1_freq_vs_prob", height = "350px"),
+          zoom_plot_ui("ch1_freq_vs_prob", height = "350px"),
           uiOutput("ch1_freq_vs_prob_text")
         )
       )
@@ -185,7 +185,7 @@ ch1_ui <- list(
           uiOutput("ch1_sum_check")
         ),
         column(6,
-          plotOutput("ch1_custom_dist", height = "300px")
+          zoom_plot_ui("ch1_custom_dist", height = "300px")
         )
       )
     ),
@@ -231,7 +231,7 @@ ch1_server <- function(input, output, session) {
     list(data = data, dist = dist, n = n)
   })
 
-  output$ch1_emp_vs_theo <- renderPlot({
+  zoom_plot_server("ch1_emp_vs_theo", reactive({
     d <- ch1_emp_data()
 
     show_hist <- input$ch1_show_hist
@@ -309,7 +309,7 @@ ch1_server <- function(input, output, session) {
       x = "Wartość", y = "Gęstość"
     ) +
     theme_upwr()
-  })
+  }))
 
   output$ch1_emp_text <- renderUI({
     show_hist <- input$ch1_show_hist
@@ -354,7 +354,7 @@ ch1_server <- function(input, output, session) {
     lc_stat_box("Rzutów", n, color = unname(upwr_cat["niebo"]))
   })
 
-  output$ch1_freq_bar <- renderPlot({
+  zoom_plot_server("ch1_freq_bar", reactive({
     rolls <- dice_rolls()
     if (length(rolls) == 0) {
       ggplot() +
@@ -376,9 +376,9 @@ ch1_server <- function(input, output, session) {
                  fontface = "bold", size = 4, hjust = 0) +
         theme_upwr()
     }
-  })
+  }))
 
-  output$ch1_conv_plot <- renderPlot({
+  zoom_plot_server("ch1_conv_plot", reactive({
     rolls <- dice_rolls()
     if (length(rolls) < 2) return(NULL)
 
@@ -407,7 +407,7 @@ ch1_server <- function(input, output, session) {
            x = "Liczba rzutów", y = "Częstość względna") +
       theme_upwr() +
       theme(legend.position = "right")
-  })
+  }))
 
   # --- Widget 2: Czestosci vs prawdopodobienstwo ---
   freq_data <- reactive({
@@ -425,7 +425,7 @@ ch1_server <- function(input, output, session) {
     }
   })
 
-  output$ch1_freq_vs_prob <- renderPlot({
+  zoom_plot_server("ch1_freq_vs_prob", reactive({
     fd <- freq_data()
 
     n_levels <- length(fd$labels)
@@ -454,7 +454,7 @@ ch1_server <- function(input, output, session) {
            x = "Wynik", y = "Proporcja / Prawdopodobieństwo") +
       theme_upwr() +
       theme(legend.position = "top")
-  })
+  }))
 
   output$ch1_freq_vs_prob_text <- renderUI({
     fd <- freq_data()
@@ -478,7 +478,7 @@ ch1_server <- function(input, output, session) {
     }
   })
 
-  output$ch1_custom_dist <- renderPlot({
+  zoom_plot_server("ch1_custom_dist", reactive({
     probs <- c(input$ch1_p1, input$ch1_p2, input$ch1_p3, input$ch1_p4)
     s <- sum(probs)
     valid <- abs(s - 1) < 0.005
@@ -496,6 +496,6 @@ ch1_server <- function(input, output, session) {
       labs(
            x = "Wynik", y = "Prawdopodobieństwo") +
       theme_upwr()
-  })
+  }))
 
 }

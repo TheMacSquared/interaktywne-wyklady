@@ -40,7 +40,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
         column(4, selectInput("tab1_var", "Wybierz zmienną:",
           choices = c("read", "math", "expenditure", "income", "english", "lunch",
                       "students", "teachers", "calworks"))),
-        column(8, plotOutput("tab1_hist", height = "300px"))
+        column(8, zoom_plot_ui("tab1_hist", height = "300px"))
       ),
       verbatimTextOutput("tab1_summary")
     ),
@@ -52,7 +52,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
         column(4, selectInput("tab1_x", "Zmienna X:", choices = c("expenditure", "income", "english", "lunch", "calworks", "students"), selected = "income")),
         column(4, selectInput("tab1_y", "Zmienna Y:", choices = c("read", "math"), selected = "read"))
       ),
-      plotOutput("tab1_scatter_plot", height = "350px")
+      zoom_plot_ui("tab1_scatter_plot", height = "350px")
     ),
 
     lc_h2("sec-05", "Werdykt"),
@@ -85,26 +85,26 @@ ch2_server <- function(input, output, session) {
               options = list(pageLength = 8, scrollX = TRUE), rownames = FALSE)
   })
 
-  output$tab1_hist <- renderPlot({
+  zoom_plot_server("tab1_hist", reactive({
     req(input$tab1_var)
     ggplot(CASchools, aes(x = .data[[input$tab1_var]])) +
       geom_histogram(bins = 25, fill = data_primary, color = "white", alpha = 0.8) +
       labs( x = input$tab1_var, y = "Liczebność") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
   output$tab1_summary <- renderPrint({
     req(input$tab1_var)
     summary(CASchools[[input$tab1_var]])
   })
 
-  output$tab1_scatter_plot <- renderPlot({
+  zoom_plot_server("tab1_scatter_plot", reactive({
     ggplot(CASchools, aes(x = .data[[input$tab1_x]], y = .data[[input$tab1_y]])) +
       geom_point(alpha = 0.5, color = data_reference) +
       geom_smooth(method = "lm", color = data_primary, se = TRUE) +
       labs(
            x = input$tab1_x, y = input$tab1_y) +
       theme_upwr(base_size = 14)
-  })
+  }))
 
 }

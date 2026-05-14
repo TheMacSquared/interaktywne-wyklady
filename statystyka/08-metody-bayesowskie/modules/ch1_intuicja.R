@@ -73,7 +73,7 @@ ch1_ui <- lecture_chapter(
           checkboxInput("ch1_show_post",  "Pokaż posterior", value = TRUE)
         ),
         column(8,
-          plotOutput("ch1_plot", height = "420px"),
+          zoom_plot_ui("ch1_plot", height = "420px"),
           uiOutput("ch1_summary")
         )
       )
@@ -147,7 +147,7 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  output$ch1_plot <- renderPlot({
+  zoom_plot_server("ch1_plot", reactive({
     df <- bb_df()
     plot_prior_likelihood_posterior(
       df,
@@ -156,7 +156,7 @@ ch1_server <- function(input, output, session) {
       show_likelihood = input$ch1_show_lik,
       show_posterior  = input$ch1_show_post
     )
-  })
+  }))
 
   output$ch1_summary <- renderUI({
     df <- bb_df()

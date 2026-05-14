@@ -84,7 +84,7 @@ ch4_ui <- list(
         actionButton("ch4_step_new_sample", "↻ Nowa próba",
                      class = "lc-btn-secondary-outline lc-btn-sm")
       ),
-      plotOutput("ch4_step_plot", height = "340px"),
+      zoom_plot_ui("ch4_step_plot", height = "340px"),
       uiOutput("ch4_step_explanation")
     ),
 
@@ -114,7 +114,7 @@ ch4_ui <- list(
         actionButton("ch4_dstep_new_sample", "↻ Nowe próby",
                      class = "lc-btn-secondary-outline lc-btn-sm")
       ),
-      plotOutput("ch4_dstep_plot", height = "420px"),
+      zoom_plot_ui("ch4_dstep_plot", height = "420px"),
       uiOutput("ch4_dstep_explanation")
     ),
 
@@ -141,7 +141,7 @@ ch4_ui <- list(
             "). Zbudujmy CI dla poparcia w populacji i sprawdźmy dwie hipotezy.")
         ),
         uiOutput("ch4_caseA1_buttons"),
-        plotOutput("ch4_caseA1_plot", height = "260px"),
+        zoom_plot_ui("ch4_caseA1_plot", height = "260px"),
         uiOutput("ch4_caseA1_explain")
       )
     ),
@@ -159,7 +159,7 @@ ch4_ui <- list(
             po drugim i patrz, jak się zwężają.")
         ),
         uiOutput("ch4_caseA2_buttons"),
-        plotOutput("ch4_caseA2_plot", height = "260px"),
+        zoom_plot_ui("ch4_caseA2_plot", height = "260px"),
         uiOutput("ch4_caseA2_explain")
       )
     ),
@@ -178,7 +178,7 @@ ch4_ui <- list(
             ", tags$b("Placebo:"), " 200 pacjentów, 84 zgłosiło ustąpienie bólu (42%).")
         ),
         uiOutput("ch4_caseB1_buttons"),
-        plotOutput("ch4_caseB1_plot", height = "380px"),
+        zoom_plot_ui("ch4_caseB1_plot", height = "380px"),
         uiOutput("ch4_caseB1_explain")
       )
     ),
@@ -195,7 +195,7 @@ ch4_ui <- list(
             ", tags$b("Linia B:"), " skontrolowano 250, 18 wadliwych (7.2%).")
         ),
         uiOutput("ch4_caseB2_buttons"),
-        plotOutput("ch4_caseB2_plot", height = "380px"),
+        zoom_plot_ui("ch4_caseB2_plot", height = "380px"),
         uiOutput("ch4_caseB2_explain")
       )
     ),
@@ -214,7 +214,7 @@ ch4_ui <- list(
             powiedzieć, że procedura A jest skuteczniejsza?")
         ),
         uiOutput("ch4_caseB3_buttons"),
-        plotOutput("ch4_caseB3_plot", height = "380px"),
+        zoom_plot_ui("ch4_caseB3_plot", height = "380px"),
         uiOutput("ch4_caseB3_explain")
       )
     ),
@@ -233,7 +233,7 @@ ch4_ui <- list(
             Dodawaj CI jeden po drugim i obserwuj.")
         ),
         uiOutput("ch4_caseC1_buttons"),
-        plotOutput("ch4_caseC1_plot", height = "320px"),
+        zoom_plot_ui("ch4_caseC1_plot", height = "320px"),
         uiOutput("ch4_caseC1_explain")
       )
     ),
@@ -1530,10 +1530,10 @@ ch4_server <- function(input, output, session) {
       ch4_case_state[[case_id]]
       case_buttons_ui(case_id)
     })
-    output[[paste0("ch4_case", case_id, "_plot")]] <- renderPlot({
+    zoom_plot_server(paste0("ch4_case", case_id, "_plot"), reactive({
       ch4_case_state[[case_id]]
       render_case_plot(case_id)
-    })
+    }))
     output[[paste0("ch4_case", case_id, "_explain")]] <- renderUI({
       ch4_case_state[[case_id]]
       render_case_explain(case_id)

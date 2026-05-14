@@ -83,7 +83,7 @@ ch5_ui <- lecture_chapter(
           uiOutput("ch5_jack_stats")
         ),
         column(8,
-          plotOutput("ch5_jack_plot", height = "360px")
+          zoom_plot_ui("ch5_jack_plot", height = "360px")
         )
       )
     ),
@@ -131,7 +131,7 @@ ch5_ui <- lecture_chapter(
           uiOutput("ch5_cmp_stats")
         ),
         column(8,
-          plotOutput("ch5_cmp_plot", height = "300px")
+          zoom_plot_ui("ch5_cmp_plot", height = "300px")
         )
       )
     ),
@@ -188,7 +188,7 @@ ch5_server <- function(input, output, session) {
     ch5_jack_result(result)
   })
 
-  output$ch5_jack_plot <- renderPlot({
+  zoom_plot_server("ch5_jack_plot", reactive({
     result <- ch5_jack_result()
     if (is.null(result)) {
       ggplot() +
@@ -202,7 +202,7 @@ ch5_server <- function(input, output, session) {
                                  sim_bootstrap   = sim_bootstrap,
                                  sim_observed = sim_observed,
                                  sim_success   = sim_success)
-  })
+  }))
 
   output$ch5_jack_stats <- renderUI({
     result <- ch5_jack_result()
@@ -237,7 +237,7 @@ ch5_server <- function(input, output, session) {
     ch5_cmp_result(list(jack = jack, boot = boot, x = x))
   })
 
-  output$ch5_cmp_plot <- renderPlot({
+  zoom_plot_server("ch5_cmp_plot", reactive({
     res <- ch5_cmp_result()
     if (is.null(res)) {
       ggplot() +
@@ -270,7 +270,7 @@ ch5_server <- function(input, output, session) {
            
            x = "Wartość statystyki", y = NULL) +
       theme_upwr()
-  })
+  }))
 
   output$ch5_cmp_stats <- renderUI({
     res <- ch5_cmp_result()

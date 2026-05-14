@@ -130,7 +130,7 @@ ch1_ui <- list(
               "Kategorie bez naturalnego porzadku. Mozemy liczyc ile jest
                obserwacji w każdej kategorii, ale nie mozemy ich uporządkowac
                ani uśredniać."),
-            plotOutput("ch1_ex1_plot", height = "280px")
+            zoom_plot_ui("ch1_ex1_plot", height = "280px")
           )
         ),
         column(6,
@@ -144,7 +144,7 @@ ch1_ui <- list(
               "Kategorie z naturalnym porzadkiem. Wiemy ze 'Bardzo zadowolony'
                jest wyzej niż 'Zadowolony', ale nie znamy dokladnych odleglosci
                miedzy kategoriami."),
-            plotOutput("ch1_ex2_plot", height = "280px")
+            zoom_plot_ui("ch1_ex2_plot", height = "280px")
           )
         )
       ),
@@ -160,7 +160,7 @@ ch1_ui <- list(
               "Wartości liczbowe, ale tylko całkowite. Mozemy obliczać srednia
                i odchylenie standardowe. Wykres słupkowy jest tu odpowiedni,
                bo mamy skończoną liczbę wartości."),
-            plotOutput("ch1_ex3_plot", height = "280px")
+            zoom_plot_ui("ch1_ex3_plot", height = "280px")
           )
         ),
         column(6,
@@ -174,7 +174,7 @@ ch1_ui <- list(
               "Wartości liczbowe, ktore mogą przyjmowac dowolne wartości
                z pewnego przedzialu (takze ulamkowe). Histogram grupuje
                wartości w przedziały, gęstość wygładza rozkład."),
-            plotOutput("ch1_ex4_plot", height = "280px")
+            zoom_plot_ui("ch1_ex4_plot", height = "280px")
           )
         )
       )
@@ -297,37 +297,37 @@ ch1_server <- function(input, output, session) {
 
   # --- Widget 2: Examples gallery ---
 
-  output$ch1_ex1_plot <- renderPlot({
+  zoom_plot_server("ch1_ex1_plot", reactive({
     if (input$ch1_show_bad) {
       render_bad_plot(student_data$plec, "Płeć", "nominalna")
     } else {
       render_good_plot(student_data$plec, "Płeć", "nominalna")
     }
-  })
+  }))
 
-  output$ch1_ex2_plot <- renderPlot({
+  zoom_plot_server("ch1_ex2_plot", reactive({
     if (input$ch1_show_bad) {
       render_bad_plot(student_data$zadowolenie, "Zadowolenie", "porzadkowa")
     } else {
       render_good_plot(student_data$zadowolenie, "Zadowolenie", "porzadkowa")
     }
-  })
+  }))
 
-  output$ch1_ex3_plot <- renderPlot({
+  zoom_plot_server("ch1_ex3_plot", reactive({
     if (input$ch1_show_bad) {
       render_bad_plot(student_data$liczba_kursow, "Liczba kursów", "ilosciowa_dyskretna")
     } else {
       render_good_plot(student_data$liczba_kursow, "Liczba kursów", "ilosciowa_dyskretna")
     }
-  })
+  }))
 
-  output$ch1_ex4_plot <- renderPlot({
+  zoom_plot_server("ch1_ex4_plot", reactive({
     if (input$ch1_show_bad) {
       render_bad_plot(student_data$wzrost, "Wzrost (cm)", "ilosciowa_ciagla")
     } else {
       render_good_plot(student_data$wzrost, "Wzrost (cm)", "ilosciowa_ciagla")
     }
-  })
+  }))
 
   # --- Widget 4: Dataset preview ---
 

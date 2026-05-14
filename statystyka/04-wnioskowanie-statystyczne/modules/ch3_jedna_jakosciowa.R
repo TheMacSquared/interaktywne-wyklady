@@ -134,7 +134,7 @@ ch3_ui <- list(
         ),
         column(8,
           uiOutput("ch3_hypothesis_panel"),
-          plotOutput("ch3_step_plot", height = "350px"),
+          zoom_plot_ui("ch3_step_plot", height = "350px"),
           uiOutput("ch3_step_info")
         )
       )
@@ -182,7 +182,7 @@ ch3_ui <- list(
         ),
         column(8,
           uiOutput("ch3b_hypothesis_panel"),
-          plotOutput("ch3b_step_plot", height = "350px"),
+          zoom_plot_ui("ch3b_step_plot", height = "350px"),
           uiOutput("ch3b_step_info")
         )
       )
@@ -445,7 +445,7 @@ ch3_server <- function(input, output, session) {
     )
   })
 
-  output$ch3_step_plot <- renderPlot({
+  zoom_plot_server("ch3_step_plot", reactive({
     d <- ch3_data()
     step <- ch3_step()
     par <- scenario_params[[input$ch3_scenario]]
@@ -508,7 +508,7 @@ ch3_server <- function(input, output, session) {
              x = "Liczba sukcesów", y = "Prawdopodobieństwo") +
         theme()
     }
-  })
+  }))
 
   output$ch3_step_info <- renderUI({
     d <- ch3_data()
@@ -578,7 +578,7 @@ ch3_server <- function(input, output, session) {
     )
   })
 
-  output$ch3b_step_plot <- renderPlot({
+  zoom_plot_server("ch3b_step_plot", reactive({
     d <- ch3_data()
     step <- ch3b_step()
     par <- scenario_params[[input$ch3_scenario]]
@@ -634,7 +634,7 @@ ch3_server <- function(input, output, session) {
              x = "Liczba sukcesów", y = "Prawdopodobieństwo") +
         theme()
     }
-  })
+  }))
 
   output$ch3b_step_info <- renderUI({
     d <- ch3_data()

@@ -144,7 +144,7 @@ ch5_ui <- list(
         ),
         column(8,
           uiOutput("ch5_hypothesis_panel"),
-          plotOutput("ch5_step_plot", height = "350px"),
+          zoom_plot_ui("ch5_step_plot", height = "350px"),
           uiOutput("ch5_step_info")
         )
       )
@@ -458,7 +458,7 @@ ch5_server <- function(input, output, session) {
   })
 
   # --- Krokowy wykres ---
-  output$ch5_step_plot <- renderPlot({
+  zoom_plot_server("ch5_step_plot", reactive({
     tab <- ch5_tab()
     step <- ch5_step()
     par <- scenario_params[[input$ch5_scenario]]
@@ -503,7 +503,7 @@ ch5_server <- function(input, output, session) {
       df_val <- as.numeric(test$parameter)
       plot_test_distribution(chi_stat, df = df_val, test_type = "chisq")
     }
-  })
+  }))
 
   # --- Krokowe info ---
   output$ch5_step_info <- renderUI({

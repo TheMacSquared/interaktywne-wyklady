@@ -141,7 +141,7 @@ ch2_ui <- list(
           column(8,
             div(class = "ch2-step-stage",
               uiOutput("ch2_hypothesis_panel"),
-              plotOutput("ch2_step_plot", height = "350px"),
+              zoom_plot_ui("ch2_step_plot", height = "350px"),
               uiOutput("ch2_step_info")
             )
           )
@@ -202,7 +202,7 @@ ch2_ui <- list(
           column(8,
             div(class = "ch2-step-stage",
               uiOutput("ch2b_hypothesis_panel"),
-              plotOutput("ch2b_step_plot", height = "350px"),
+              zoom_plot_ui("ch2b_step_plot", height = "350px"),
               uiOutput("ch2b_step_info")
             )
           )
@@ -378,7 +378,7 @@ ch2_server <- function(input, output, session) {
   })
 
   # --- Krokowy wykres ---
-  output$ch2_step_plot <- renderPlot({
+  zoom_plot_server("ch2_step_plot", reactive({
     samp <- ch2_sample()
     step <- ch2_step()
     par <- scenario_params[[input$ch2_scenario]]
@@ -440,7 +440,7 @@ ch2_server <- function(input, output, session) {
       t_stat <- (mean(samp) - mu0) / (sd(samp) / sqrt(n))
       plot_test_distribution(t_stat, df = n - 1, test_type = "t")
     }
-  })
+  }))
 
   # --- Krokowe info ---
   output$ch2_step_info <- renderUI({
@@ -558,7 +558,7 @@ ch2_server <- function(input, output, session) {
   })
 
   # Krokowy wykres (jednostronny)
-  output$ch2b_step_plot <- renderPlot({
+  zoom_plot_server("ch2b_step_plot", reactive({
     samp <- ch2_sample()
     step <- ch2b_step()
     par <- scenario_params[[input$ch2_scenario]]
@@ -612,7 +612,7 @@ ch2_server <- function(input, output, session) {
       plot_test_distribution(t_stat, df = n - 1, test_type = "t",
                              alternative = par1s$alt)
     }
-  })
+  }))
 
   # Krokowe info (jednostronny)
   output$ch2b_step_info <- renderUI({

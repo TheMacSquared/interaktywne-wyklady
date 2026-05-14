@@ -44,7 +44,7 @@ ch4_ui <- lecture_chapter(
         ),
         column(8,
           uiOutput("ch4_sim_results"),
-          plotOutput("ch4_sim_plot", height = "250px")
+          zoom_plot_ui("ch4_sim_plot", height = "250px")
         )
       )
     ),
@@ -156,7 +156,7 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  output$ch4_sim_plot <- renderPlot({
+  zoom_plot_server("ch4_sim_plot", reactive({
     df <- ch4_sim_data()
     if (is.null(df)) {
       ggplot() +
@@ -180,5 +180,5 @@ ch4_server <- function(input, output, session) {
         theme_upwr() +
         theme(legend.position = "top")
     }
-  })
+  }))
 }

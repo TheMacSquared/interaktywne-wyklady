@@ -77,7 +77,7 @@ ch3_ui <- list(
         actionButton("ch3_step_new_sample", "↻ Nowa próba",
                      class = "lc-btn-secondary-outline lc-btn-sm")
       ),
-      plotOutput("ch3_step_plot", height = "340px"),
+      zoom_plot_ui("ch3_step_plot", height = "340px"),
       uiOutput("ch3_step_explanation")
     ),
 
@@ -106,7 +106,7 @@ ch3_ui <- list(
         actionButton("ch3_dstep_new_sample", "↻ Nowe próby",
                      class = "lc-btn-secondary-outline lc-btn-sm")
       ),
-      plotOutput("ch3_dstep_plot", height = "420px"),
+      zoom_plot_ui("ch3_dstep_plot", height = "420px"),
       uiOutput("ch3_dstep_explanation")
     ),
 
@@ -136,7 +136,7 @@ ch3_ui <- list(
           p("Zakład piekarniczy porównuje dwóch dostawców mąki pszennej typu 550
             pod względem zawartości białka (%). Pobrano po 40 partii od każdego dostawcy.")
         ),
-        plotOutput("ch3_comp_A_plot", height = "340px"),
+        zoom_plot_ui("ch3_comp_A_plot", height = "340px"),
         uiOutput("ch3_comp_A_verdict")
       )
     ),
@@ -152,7 +152,7 @@ ch3_ui <- list(
           p("Technolog sprawdza, czy materiał opakowania wpływa na zawartość tłuszczu (%)
             w jogurcie naturalnym po 7 dniach przechowywania. Po 30 próbek z każdego typu.")
         ),
-        plotOutput("ch3_comp_B_plot", height = "340px"),
+        zoom_plot_ui("ch3_comp_B_plot", height = "340px"),
         uiOutput("ch3_comp_B_verdict")
       )
     ),
@@ -169,7 +169,7 @@ ch3_ui <- list(
             dają produkt o tej samej zawartości błonnika (g / 100 g).
             Po 120 partii z każdej linii.")
         ),
-        plotOutput("ch3_comp_C_plot", height = "340px"),
+        zoom_plot_ui("ch3_comp_C_plot", height = "340px"),
         uiOutput("ch3_comp_C_verdict")
       )
     ),
@@ -206,7 +206,7 @@ ch3_ui <- list(
             Zbudujmy CI dla średniego wzrostu i sprawdźmy dwie hipotezy.")
         ),
         uiOutput("ch3_caseA1_buttons"),
-        plotOutput("ch3_caseA1_plot", height = "260px"),
+        zoom_plot_ui("ch3_caseA1_plot", height = "260px"),
         uiOutput("ch3_caseA1_explain")
       )
     ),
@@ -224,7 +224,7 @@ ch3_ui <- list(
             i patrz, jak się zwężają.")
         ),
         uiOutput("ch3_caseA2_buttons"),
-        plotOutput("ch3_caseA2_plot", height = "260px"),
+        zoom_plot_ui("ch3_caseA2_plot", height = "260px"),
         uiOutput("ch3_caseA2_explain")
       )
     ),
@@ -243,7 +243,7 @@ ch3_ui <- list(
             ", tags$b("Placebo:"), " n=40, średnie obniżenie 4.1 mmHg, s=4.2.")
         ),
         uiOutput("ch3_caseB1_buttons"),
-        plotOutput("ch3_caseB1_plot", height = "380px"),
+        zoom_plot_ui("ch3_caseB1_plot", height = "380px"),
         uiOutput("ch3_caseB1_explain")
       )
     ),
@@ -260,7 +260,7 @@ ch3_ui <- list(
             ", tags$b("Nawoz Y:"), " n=25, średnia 8.1 t/ha, s=1.3.")
         ),
         uiOutput("ch3_caseB2_buttons"),
-        plotOutput("ch3_caseB2_plot", height = "380px"),
+        zoom_plot_ui("ch3_caseB2_plot", height = "380px"),
         uiOutput("ch3_caseB2_explain")
       )
     ),
@@ -278,7 +278,7 @@ ch3_ui <- list(
             CI każdej grupy osobno się nakładają — czy różnica jest istotna?")
         ),
         uiOutput("ch3_caseB3_buttons"),
-        plotOutput("ch3_caseB3_plot", height = "380px"),
+        zoom_plot_ui("ch3_caseB3_plot", height = "380px"),
         uiOutput("ch3_caseB3_explain")
       )
     ),
@@ -296,7 +296,7 @@ ch3_ui <- list(
             Różnica 0.4 pkt IQ — dużo czy mało?")
         ),
         uiOutput("ch3_caseB4_buttons"),
-        plotOutput("ch3_caseB4_plot", height = "380px"),
+        zoom_plot_ui("ch3_caseB4_plot", height = "380px"),
         uiOutput("ch3_caseB4_explain")
       )
     ),
@@ -315,7 +315,7 @@ ch3_ui <- list(
             Dodawaj CI jeden po drugim i obserwuj.")
         ),
         uiOutput("ch3_caseC1_buttons"),
-        plotOutput("ch3_caseC1_plot", height = "300px"),
+        zoom_plot_ui("ch3_caseC1_plot", height = "300px"),
         uiOutput("ch3_caseC1_explain")
       )
     ),
@@ -331,7 +331,7 @@ ch3_ui <- list(
             oddziałach szpitala. Który wymaga interwencji?")
         ),
         uiOutput("ch3_caseC2_buttons"),
-        plotOutput("ch3_caseC2_plot", height = "340px"),
+        zoom_plot_ui("ch3_caseC2_plot", height = "340px"),
         uiOutput("ch3_caseC2_explain")
       )
     ),
@@ -1833,10 +1833,10 @@ ch3_server <- function(input, output, session) {
       ch3_case_state[[case_id]]
       case_buttons_ui(case_id)
     })
-    output[[paste0("ch3_case", case_id, "_plot")]] <- renderPlot({
+    zoom_plot_server(paste0("ch3_case", case_id, "_plot"), reactive({
       ch3_case_state[[case_id]]
       render_case_plot(case_id)
-    })
+    }))
     output[[paste0("ch3_case", case_id, "_explain")]] <- renderUI({
       ch3_case_state[[case_id]]
       render_case_explain(case_id)

@@ -31,7 +31,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
       fluidRow(
         column(4, selectInput("tab6_var", "Wybierz zmienną:",
           choices = c("wage", "age", "education", "jobclass", "health", "maritl", "race"))),
-        column(8, plotOutput("tab6_hist", height = "300px"))
+        column(8, zoom_plot_ui("tab6_hist", height = "300px"))
       )
     ),
 
@@ -64,7 +64,7 @@ ch7_server <- function(input, output, session) {
               options = list(pageLength = 8, scrollX = TRUE), rownames = FALSE)
   })
 
-  output$tab6_hist <- renderPlot({
+  zoom_plot_server("tab6_hist", reactive({
     req(input$tab6_var)
     var <- input$tab6_var
     if (var %in% c("wage", "age")) {
@@ -79,6 +79,6 @@ ch7_server <- function(input, output, session) {
         theme_upwr(base_size = 14) +
         theme(axis.text.x = element_text(angle = 30, hjust = 1))
     }
-  })
+  }))
 
 }

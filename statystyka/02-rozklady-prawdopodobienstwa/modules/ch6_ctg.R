@@ -83,8 +83,8 @@ ch6_ui <- list(
           uiOutput("ch6_sample_count")
         ),
         column(8,
-          plotOutput("ch6_pop_plot", height = "180px"),
-          plotOutput("ch6_means_plot", height = "300px"),
+          zoom_plot_ui("ch6_pop_plot", height = "180px"),
+          zoom_plot_ui("ch6_means_plot", height = "300px"),
           uiOutput("ch6_means_stats")
         )
       )
@@ -118,7 +118,7 @@ ch6_ui <- list(
         ),
         selected = "exponential"
       ),
-      plotOutput("ch6_effect_plot", height = "350px")
+      zoom_plot_ui("ch6_effect_plot", height = "350px")
     ),
 
     # ========================================================================
@@ -148,7 +148,7 @@ ch6_ui <- list(
                        class = "lc-btn-secondary-outline", width = "100%")
         ),
         column(8,
-          plotOutput("ch6_why_plot", height = "350px"),
+          zoom_plot_ui("ch6_why_plot", height = "350px"),
           uiOutput("ch6_why_text")
         )
       )
@@ -214,7 +214,7 @@ ch6_server <- function(input, output, session) {
     lc_stat_box("Prób", n, color = unname(upwr_cat["niebo"]))
   })
 
-  output$ch6_pop_plot <- renderPlot({
+  zoom_plot_server("ch6_pop_plot", reactive({
     dist <- input$ch6_pop_dist
     dist_label <- dist_names_pl[dist]
 
@@ -237,9 +237,9 @@ ch6_server <- function(input, output, session) {
              x = "", y = "Gęstość") +
         theme_upwr(base_size = 11)
     }
-  })
+  }))
 
-  output$ch6_means_plot <- renderPlot({
+  zoom_plot_server("ch6_means_plot", reactive({
     means <- collected_means()
 
     if (length(means) == 0) {
@@ -280,7 +280,7 @@ ch6_server <- function(input, output, session) {
              x = "Średnia z próby", y = "Gęstość") +
         theme_upwr()
     }
-  })
+  }))
 
   output$ch6_means_stats <- renderUI({
     means <- collected_means()
@@ -303,7 +303,7 @@ ch6_server <- function(input, output, session) {
   })
 
   # --- Widget 2: Wplyw wielkosci proby ---
-  output$ch6_effect_plot <- renderPlot({
+  zoom_plot_server("ch6_effect_plot", reactive({
     dist <- input$ch6_effect_dist
     params <- get_population_params(dist)
 
@@ -339,7 +339,7 @@ ch6_server <- function(input, output, session) {
       labs(
            x = "Średnia z próby", y = "Gęstość") +
       theme_upwr(base_size = 12)
-  })
+  }))
 
   # --- Widget 3: Dlaczego to dziala? ---
   ch6_why_step <- reactiveVal(0)
@@ -350,7 +350,7 @@ ch6_server <- function(input, output, session) {
   observeEvent(input$ch6_why_step4, ch6_why_step(4))
   observeEvent(input$ch6_why_reset, ch6_why_step(0))
 
-  output$ch6_why_plot <- renderPlot({
+  zoom_plot_server("ch6_why_plot", reactive({
     step <- ch6_why_step()
 
     if (step == 0) {
@@ -383,7 +383,7 @@ ch6_server <- function(input, output, session) {
                x = "Średnia", y = "Gęstość") +
         theme_upwr()
     }
-  })
+  }))
 
   output$ch6_why_text <- renderUI({
     step <- ch6_why_step()

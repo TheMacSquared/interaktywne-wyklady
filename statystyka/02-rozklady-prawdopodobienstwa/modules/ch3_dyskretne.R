@@ -52,7 +52,7 @@ ch3_ui <- list(
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
-          plotOutput("ch3_unif_plot", height = "350px")
+          zoom_plot_ui("ch3_unif_plot", height = "350px")
         )
       ),
       lc_formula_box(
@@ -91,7 +91,7 @@ ch3_ui <- list(
           )
         ),
         column(8,
-          plotOutput("ch3_binom_plot", height = "400px"),
+          zoom_plot_ui("ch3_binom_plot", height = "400px"),
           uiOutput("ch3_binom_stats")
         )
       ),
@@ -144,7 +144,7 @@ ch3_ui <- list(
           )
         ),
         column(8,
-          plotOutput("ch3_pois_plot", height = "400px"),
+          zoom_plot_ui("ch3_pois_plot", height = "400px"),
           uiOutput("ch3_pois_stats")
         )
       ),
@@ -196,7 +196,7 @@ ch3_ui <- list(
           )
         ),
         column(8,
-          plotOutput("ch3_geom_plot", height = "400px"),
+          zoom_plot_ui("ch3_geom_plot", height = "400px"),
           uiOutput("ch3_geom_stats")
         )
       ),
@@ -238,7 +238,7 @@ ch3_ui <- list(
       full_width = TRUE,
       checkboxInput("ch3_compare_show_ev", "Pokaż wartość oczekiwaną (linia)", value = FALSE),
       checkboxInput("ch3_compare_show_sd", "Pokaż ± odchylenie standardowe (pas)", value = FALSE),
-      plotOutput("ch3_compare_plot", height = "350px")
+      zoom_plot_ui("ch3_compare_plot", height = "350px")
     ),
 
     lc_chapter_next(
@@ -287,7 +287,7 @@ ch3_server <- function(input, output, session) {
     list(obs = sample(1:k, input$ch3_unif_n, replace = TRUE), k = k, n = input$ch3_unif_n)
   })
 
-  output$ch3_unif_plot <- renderPlot({
+  zoom_plot_server("ch3_unif_plot", reactive({
     d <- ch3_unif_data()
 
     df <- data.frame(x = factor(d$obs, levels = 1:d$k))
@@ -302,10 +302,10 @@ ch3_server <- function(input, output, session) {
            
            x = "Wynik", y = "Częstość względna") +
       theme_upwr()
-  })
+  }))
 
   # --- Widget 2: Dwumianowy — scenariusze overlay ---
-  output$ch3_binom_plot <- renderPlot({
+  zoom_plot_server("ch3_binom_plot", reactive({
     selected <- input$ch3_binom_scenarios
     req(length(selected) > 0)
 
@@ -333,7 +333,7 @@ ch3_server <- function(input, output, session) {
            x = "Liczba sukcesów (k)", y = "P(X = k)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
-  })
+  }))
 
   output$ch3_binom_stats <- renderUI({
     selected <- input$ch3_binom_scenarios
@@ -351,7 +351,7 @@ ch3_server <- function(input, output, session) {
   })
 
   # --- Widget 3: Poissona — scenariusze overlay ---
-  output$ch3_pois_plot <- renderPlot({
+  zoom_plot_server("ch3_pois_plot", reactive({
     selected <- input$ch3_pois_scenarios
     req(length(selected) > 0)
 
@@ -381,7 +381,7 @@ ch3_server <- function(input, output, session) {
            x = "Liczba zdarzeń (k)", y = "P(X = k)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
-  })
+  }))
 
   output$ch3_pois_stats <- renderUI({
     selected <- input$ch3_pois_scenarios
@@ -398,7 +398,7 @@ ch3_server <- function(input, output, session) {
   })
 
   # --- Widget 4: Geometryczny — scenariusze overlay ---
-  output$ch3_geom_plot <- renderPlot({
+  zoom_plot_server("ch3_geom_plot", reactive({
     selected <- input$ch3_geom_scenarios
     req(length(selected) > 0)
 
@@ -430,7 +430,7 @@ ch3_server <- function(input, output, session) {
            x = "Numer próby (k)", y = "P(X = k)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
-  })
+  }))
 
   output$ch3_geom_stats <- renderUI({
     selected <- input$ch3_geom_scenarios
@@ -448,7 +448,7 @@ ch3_server <- function(input, output, session) {
   })
 
   # --- Widget 5: Porownanie (bez zmian) ---
-  output$ch3_compare_plot <- renderPlot({
+  zoom_plot_server("ch3_compare_plot", reactive({
     show_ev <- input$ch3_compare_show_ev
     show_sd <- input$ch3_compare_show_sd
 
@@ -504,6 +504,6 @@ ch3_server <- function(input, output, session) {
                            inherit.aes = FALSE, fill = unname(upwr_cat["terakota"]), alpha = 0.08)
     }
     pl
-  })
+  }))
 
 }

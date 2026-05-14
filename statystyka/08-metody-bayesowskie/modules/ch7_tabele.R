@@ -79,7 +79,7 @@ ch7_ui <- lecture_chapter(
       )),
 
       br(),
-      plotOutput("ch7_data_plot", height = "220px"),
+      zoom_plot_ui("ch7_data_plot", height = "220px"),
 
       fluidRow(
         column(6,
@@ -91,7 +91,7 @@ ch7_ui <- lecture_chapter(
         column(6,
           div(class = "panel-bayesian",
             h5("contingencyTableBF + posterior OR"),
-            plotOutput("ch7_bayes_plot", height = "220px"),
+            zoom_plot_ui("ch7_bayes_plot", height = "220px"),
             uiOutput("ch7_bayes_result")
           )
         )
@@ -173,11 +173,11 @@ ch7_server <- function(input, output, session) {
                      beta_prior  = input$ch7_prior_alpha)
   })
 
-  output$ch7_data_plot <- renderPlot({
+  zoom_plot_server("ch7_data_plot", reactive({
     plot_contingency_table(table_mat(),
                             title = "Obserwowane liczności",
                             col_a = bayes_success, col_b = bayes_secondary)
-  })
+  }))
 
   output$ch7_freq_result <- renderUI({
     r <- freq_res()
@@ -197,10 +197,10 @@ ch7_server <- function(input, output, session) {
     )
   })
 
-  output$ch7_bayes_plot <- renderPlot({
+  zoom_plot_server("ch7_bayes_plot", reactive({
     plot_posterior_or(or_res(),
                       bayes_posterior = bayes_posterior, bayes_hdi = bayes_hdi)
-  })
+  }))
 
   output$ch7_bayes_result <- renderUI({
     r <- freq_res()

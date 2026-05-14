@@ -1710,3 +1710,22 @@ mjx-container mjx-text {
   text-transform: uppercase;
   letter-spacing: .04em;
 }
+
+/* === zoom_plot: przycisk powiększ + modal ================================= */
+.lc-zoom-plot-wrap { position: relative; }
+
+.lc-zoom-btn {
+  position: absolute; top: 8px; right: 8px; z-index: 5;
+  background: rgba(255,255,255,.92);
+  border: 1px solid var(--upwr-rule, #ccc);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 14px; line-height: 1.2;
+  opacity: 0; transition: opacity .15s;
+}
+.lc-zoom-plot-wrap:hover .lc-zoom-btn { opacity: 1; }
+/* Na urządzeniach dotykowych (brak hover) przycisk zawsze widoczny */
+@media (hover: none) { .lc-zoom-btn { opacity: 1 !important; } }
+
+/* Szerokie okno modalne dla powiększonego wykresu */
+.modal-dialog { width: 90vw !important; max-width: 1400px !important; }

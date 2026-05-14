@@ -58,7 +58,7 @@ ch5_ui <- lecture_chapter(
       )),
 
       br(),
-      plotOutput("ch5_data_plot", height = "220px"),
+      zoom_plot_ui("ch5_data_plot", height = "220px"),
 
       fluidRow(
         column(6,
@@ -70,7 +70,7 @@ ch5_ui <- lecture_chapter(
         column(6,
           div(class = "panel-bayesian",
             h5("ttestBF + posterior różnicy"),
-            plotOutput("ch5_bayes_plot", height = "260px"),
+            zoom_plot_ui("ch5_bayes_plot", height = "260px"),
             uiOutput("ch5_bayes_result")
           )
         )
@@ -131,12 +131,12 @@ ch5_server <- function(input, output, session) {
     compute_bf_two_sample(d)
   })
 
-  output$ch5_data_plot <- renderPlot({
+  zoom_plot_server("ch5_data_plot", reactive({
     d <- sample_data()
     req(d)
     plot_two_groups_box(d, col_a = bayes_primary, col_b = bayes_warning,
                         title = "Dane: dwie grupy")
-  })
+  }))
 
   output$ch5_freq_result <- renderUI({
     r <- result()
@@ -154,7 +154,7 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  output$ch5_bayes_plot <- renderPlot({
+  zoom_plot_server("ch5_bayes_plot", reactive({
     r <- result()
     plot_posterior_density(
       r$posterior_diff,
@@ -165,7 +165,7 @@ ch5_server <- function(input, output, session) {
       bayes_posterior = bayes_posterior,
       bayes_hdi = bayes_hdi
     )
-  })
+  }))
 
   output$ch5_bayes_result <- renderUI({
     r <- result()

@@ -49,7 +49,7 @@ ch5_ui <- list(
           uiOutput("ch5_me_display")
         ),
         column(8,
-          plotOutput("ch5_factors_plot", height = "480px")
+          zoom_plot_ui("ch5_factors_plot", height = "480px")
         )
       )
     ),
@@ -85,7 +85,7 @@ ch5_ui <- list(
         ),
         column(8,
           uiOutput("ch5_plan_result"),
-          plotOutput("ch5_plan_plot", height = "440px")
+          zoom_plot_ui("ch5_plan_plot", height = "440px")
         )
       )
     ),
@@ -123,7 +123,7 @@ ch5_ui <- list(
           uiOutput("ch5_cmp_stats")
         ),
         column(8,
-          plotOutput("ch5_cmp_plot", height = "250px")
+          zoom_plot_ui("ch5_cmp_plot", height = "250px")
         )
       )
     ),
@@ -159,7 +159,7 @@ ch5_ui <- list(
             Hipoteza: średni czas dojazdu w populacji przekracza 26 min.")
         ),
         uiOutput("ch5_edge1_buttons"),
-        plotOutput("ch5_edge1_plot", height = "240px"),
+        zoom_plot_ui("ch5_edge1_plot", height = "240px"),
         uiOutput("ch5_edge1_explain")
       )
     ),
@@ -176,7 +176,7 @@ ch5_ui <- list(
             Hipoteza: poparcie w populacji przekracza próg 50%.")
         ),
         uiOutput("ch5_edge2_buttons"),
-        plotOutput("ch5_edge2_plot", height = "240px"),
+        zoom_plot_ui("ch5_edge2_plot", height = "240px"),
         uiOutput("ch5_edge2_explain")
       )
     ),
@@ -194,7 +194,7 @@ ch5_ui <- list(
             Hipoteza: średni wynik w populacji przekracza próg 65 pkt.")
         ),
         uiOutput("ch5_edge3_buttons"),
-        plotOutput("ch5_edge3_plot", height = "240px"),
+        zoom_plot_ui("ch5_edge3_plot", height = "240px"),
         uiOutput("ch5_edge3_explain")
       )
     ),
@@ -709,10 +709,10 @@ ch5_server <- function(input, output, session) {
       ch5_edge_state[[case_id]]
       edge_buttons_ui(case_id)
     })
-    output[[paste0("ch5_", case_id, "_plot")]] <- renderPlot({
+    zoom_plot_server(paste0("ch5_", case_id, "_plot"), reactive({
       ch5_edge_state[[case_id]]
       render_edge_plot(case_id)
-    })
+    }))
     output[[paste0("ch5_", case_id, "_explain")]] <- renderUI({
       ch5_edge_state[[case_id]]
       render_edge_explain(case_id)

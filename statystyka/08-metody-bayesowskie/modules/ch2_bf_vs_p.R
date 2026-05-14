@@ -73,14 +73,14 @@ ch2_ui <- lecture_chapter(
         column(6,
           div(class = "panel-frequentist",
             h5("Podejście częstościowe"),
-            plotOutput("ch2_freq_plot", height = "260px"),
+            zoom_plot_ui("ch2_freq_plot", height = "260px"),
             uiOutput("ch2_freq_result")
           )
         ),
         column(6,
           div(class = "panel-bayesian",
             h5("Podejście bayesowskie"),
-            plotOutput("ch2_bayes_plot", height = "260px"),
+            zoom_plot_ui("ch2_bayes_plot", height = "260px"),
             uiOutput("ch2_bayes_result")
           )
         )
@@ -149,12 +149,12 @@ ch2_server <- function(input, output, session) {
   })
 
   # LEWA KOLUMNA - freq
-  output$ch2_freq_plot <- renderPlot({
+  zoom_plot_server("ch2_freq_plot", reactive({
     x <- sample_data()
     req(x)
     plot_sample_data(x, mu0 = 0, title = "Próba + H0: mu = 0",
                      col_freq = bayes_freq)
-  })
+  }))
 
   output$ch2_freq_result <- renderUI({
     r <- bf_result()
@@ -172,10 +172,10 @@ ch2_server <- function(input, output, session) {
   })
 
   # PRAWA KOLUMNA - bayes
-  output$ch2_bayes_plot <- renderPlot({
+  zoom_plot_server("ch2_bayes_plot", reactive({
     r <- bf_result()
     plot_bf_scale(r$bf10)
-  })
+  }))
 
   output$ch2_bayes_result <- renderUI({
     r <- bf_result()

@@ -70,7 +70,7 @@ ch2_ui <- list(
           uiOutput("ch2_coverage_info")
         ),
         column(8,
-          plotOutput("ch2_ci_plot", height = "500px")
+          zoom_plot_ui("ch2_ci_plot", height = "500px")
         )
       )
     ),
@@ -143,7 +143,7 @@ ch2_server <- function(input, output, session) {
   observeEvent(input$ch2_n,    { ch2_sim_data(NULL) })
   observeEvent(input$ch2_conf, { ch2_sim_data(NULL) })
 
-  output$ch2_ci_plot <- renderPlot({
+  zoom_plot_server("ch2_ci_plot", reactive({
     df <- ch2_sim_data()
     if (is.null(df) || nrow(df) == 0) {
       ggplot() +
@@ -172,7 +172,7 @@ ch2_server <- function(input, output, session) {
         theme_upwr() +
         theme(legend.position = "top")
     }
-  })
+  }))
 
   output$ch2_coverage_info <- renderUI({
     df <- ch2_sim_data()

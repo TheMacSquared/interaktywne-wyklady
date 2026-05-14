@@ -29,10 +29,10 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     div(class = "lc-figure-panel",
       sliderInput("tab2_n", "Liczba obserwacji:", min = 5, max = 200, value = 8, step = 1),
       fluidRow(
-        column(6, plotOutput("tab2_hist", height = "280px")),
-        column(6, plotOutput("tab2_ci", height = "280px"))
+        column(6, zoom_plot_ui("tab2_hist", height = "280px")),
+        column(6, zoom_plot_ui("tab2_ci", height = "280px"))
       ),
-      plotOutput("tab2_power", height = "280px")
+      zoom_plot_ui("tab2_power", height = "280px")
     ),
 
     lc_h2("sec-04", "Werdykt"),
@@ -76,15 +76,15 @@ ch3_server <- function(input, output, session) {
     )
   })
 
-  output$tab2_hist <- renderPlot({
+  zoom_plot_server("tab2_hist", reactive({
     d <- sim_data()
     ggplot(d, aes(x = oceny)) +
       geom_histogram(bins = max(5L, round(input$tab2_n / 5)), fill = data_primary, color = "white", alpha = 0.8) +
       labs(x = "Średnia ocen", y = "Liczebność") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
-  output$tab2_ci <- renderPlot({
+  zoom_plot_server("tab2_ci", reactive({
     ns <- seq(5, 200, by = 5)
     ci_widths <- 2 * qt(0.975, ns - 1) * 0.6 / sqrt(ns)  # assuming SD = 0.6
     df_ci <- data.frame(n = ns, ci_width = ci_widths)
@@ -97,9 +97,9 @@ ch3_server <- function(input, output, session) {
       annotate("text", x = 150, y = 0.55, label = "Akceptowalna szerokość", color = data_good, size = 4) +
       labs(x = "Liczba obserwacji (n)", y = "Szerokość CI") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
-  output$tab2_power <- renderPlot({
+  zoom_plot_server("tab2_power", reactive({
     ns <- seq(5, 200, by = 5)
     # Power simulation: detect effect size d=0.5
     powers <- sapply(ns, function(n) {
@@ -122,6 +122,6 @@ ch3_server <- function(input, output, session) {
       scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
       labs(x = "Liczba obserwacji (n)", y = "Moc testu") +
       theme_upwr(base_size = 14)
-  })
+  }))
 
 }

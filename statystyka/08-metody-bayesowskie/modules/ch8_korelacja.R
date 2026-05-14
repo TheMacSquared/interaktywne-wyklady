@@ -50,7 +50,7 @@ ch8_ui <- lecture_chapter(
 
       fluidRow(
         column(5,
-          plotOutput("ch8_scatter", height = "300px")
+          zoom_plot_ui("ch8_scatter", height = "300px")
         ),
         column(7,
           fluidRow(
@@ -65,7 +65,7 @@ ch8_ui <- lecture_chapter(
             column(12,
               div(class = "panel-bayesian",
                 h5("correlationBF + posterior ρ"),
-                plotOutput("ch8_bayes_plot", height = "180px"),
+                zoom_plot_ui("ch8_bayes_plot", height = "180px"),
                 uiOutput("ch8_bayes_result")
               )
             )
@@ -119,7 +119,7 @@ ch8_server <- function(input, output, session) {
     compute_bf_correlation(d)
   })
 
-  output$ch8_scatter <- renderPlot({
+  zoom_plot_server("ch8_scatter", reactive({
     d <- sample_data()
     req(d)
     plot_scatter_with_fit(d, x_var = "x", y_var = "y",
@@ -127,7 +127,7 @@ ch8_server <- function(input, output, session) {
                           col_point = bayes_primary,
                           col_line = bayes_freq,
                           title = paste0("Dane (n = ", nrow(d), ")"))
-  })
+  }))
 
   output$ch8_freq_result <- renderUI({
     r <- result()
@@ -143,7 +143,7 @@ ch8_server <- function(input, output, session) {
     )
   })
 
-  output$ch8_bayes_plot <- renderPlot({
+  zoom_plot_server("ch8_bayes_plot", reactive({
     r <- result()
     plot_posterior_density(
       r$posterior_rho,
@@ -154,7 +154,7 @@ ch8_server <- function(input, output, session) {
       bayes_posterior = bayes_posterior,
       bayes_hdi = bayes_hdi
     )
-  })
+  }))
 
   output$ch8_bayes_result <- renderUI({
     r <- result()

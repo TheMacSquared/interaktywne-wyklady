@@ -176,3 +176,35 @@ local({
   gf <- file.path(project_root, "R", "glossary.R")
   if (file.exists(gf)) source(gf, local = parent.env(environment()))
 })
+
+# ============================================================================
+# MODUŁ: zoom_plot — przycisk powiększ + showModal dla każdego wykresu
+# UI:     zoom_plot_ui("id", height = "300px")
+# Server: zoom_plot_server("id", reactive({ ggplot(...) }))
+# ============================================================================
+
+zoom_plot_ui <- function(id, height = "300px", width = "100%", ...) {
+  ns <- NS(id)
+  div(class = "lc-zoom-plot-wrap",
+    plotOutput(ns("plot"), height = height, width = width, ...),
+    actionButton(ns("zoom"), HTML("&#x2922;"),
+                 class = "lc-zoom-btn", title = "Powiększ wykres")
+  )
+}
+
+zoom_plot_server <- function(id, plot_fn) {
+  moduleServer(id, function(input, output, session) {
+    output$plot <- renderPlot(plot_fn())
+
+    observeEvent(input$zoom, {
+      showModal(modalDialog(
+        plotOutput(session$ns("plot_modal"), height = "65vh"),
+        footer    = NULL,
+        easyClose = TRUE,
+        size      = "l"
+      ))
+    }, ignoreInit = TRUE)
+
+    output$plot_modal <- renderPlot(plot_fn())
+  })
+}

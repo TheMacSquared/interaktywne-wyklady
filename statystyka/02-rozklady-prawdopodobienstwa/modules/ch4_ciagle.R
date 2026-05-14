@@ -65,7 +65,7 @@ ch4_ui <- list(
                        class = "lc-btn-secondary-outline", width = "100%")
         ),
         column(8,
-          plotOutput("ch4_step_plot", height = "400px"),
+          zoom_plot_ui("ch4_step_plot", height = "400px"),
           uiOutput("ch4_step_text")
         )
       )
@@ -102,7 +102,7 @@ ch4_ui <- list(
                       min = -4, max = 4, value = 1, step = 0.1)
         ),
         column(8,
-          plotOutput("ch4_area_plot", height = "350px"),
+          zoom_plot_ui("ch4_area_plot", height = "350px"),
           uiOutput("ch4_area_stats")
         )
       )
@@ -144,7 +144,7 @@ ch4_ui <- list(
           )
         ),
         column(8,
-          plotOutput("ch4_unif_plot", height = "350px"),
+          zoom_plot_ui("ch4_unif_plot", height = "350px"),
           uiOutput("ch4_unif_stats")
         )
       ),
@@ -182,7 +182,7 @@ ch4_ui <- list(
           )
         ),
         column(8,
-          plotOutput("ch4_exp_plot", height = "350px"),
+          zoom_plot_ui("ch4_exp_plot", height = "350px"),
           uiOutput("ch4_exp_stats")
         )
       ),
@@ -241,7 +241,7 @@ ch4_ui <- list(
           checkboxInput("ch4_t_show_normal", "Pokaż N(0,1) jako odniesienie", value = TRUE)
         ),
         column(8,
-          plotOutput("ch4_t_plot", height = "400px"),
+          zoom_plot_ui("ch4_t_plot", height = "400px"),
           uiOutput("ch4_t_stats")
         )
       ),
@@ -295,7 +295,7 @@ ch4_ui <- list(
           )
         ),
         column(8,
-          plotOutput("ch4_chisq_plot", height = "400px"),
+          zoom_plot_ui("ch4_chisq_plot", height = "400px"),
           uiOutput("ch4_chisq_stats")
         )
       ),
@@ -348,7 +348,7 @@ ch4_ui <- list(
           )
         ),
         column(8,
-          plotOutput("ch4_lnorm_plot", height = "400px"),
+          zoom_plot_ui("ch4_lnorm_plot", height = "400px"),
           uiOutput("ch4_lnorm_stats")
         )
       ),
@@ -453,7 +453,7 @@ ch4_server <- function(input, output, session) {
   observeEvent(input$ch4_step7, ch4_step(7))
   observeEvent(input$ch4_step_reset, ch4_step(0))
 
-  output$ch4_step_plot <- renderPlot({
+  zoom_plot_server("ch4_step_plot", reactive({
     step <- ch4_step()
     data <- ch4_sample_data()
 
@@ -509,7 +509,7 @@ ch4_server <- function(input, output, session) {
              x = "Wartość", y = "Gęstość f(x)") +
         theme_upwr()
     }
-  })
+  }))
 
   output$ch4_step_text <- renderUI({
     step <- ch4_step()
@@ -540,7 +540,7 @@ ch4_server <- function(input, output, session) {
     }
   })
 
-  output$ch4_area_plot <- renderPlot({
+  zoom_plot_server("ch4_area_plot", reactive({
     dist <- input$ch4_area_dist
     a <- input$ch4_area_a
     b <- input$ch4_area_b
@@ -578,7 +578,7 @@ ch4_server <- function(input, output, session) {
       labs(
            x = "x", y = "f(x)") +
       theme_upwr()
-  })
+  }))
 
   output$ch4_area_stats <- renderUI({
     dist <- input$ch4_area_dist
@@ -603,7 +603,7 @@ ch4_server <- function(input, output, session) {
   })
 
   # --- Widget 3: Jednostajny — scenariusze overlay ---
-  output$ch4_unif_plot <- renderPlot({
+  zoom_plot_server("ch4_unif_plot", reactive({
     selected <- input$ch4_unif_scenarios
     req(length(selected) > 0)
 
@@ -630,7 +630,7 @@ ch4_server <- function(input, output, session) {
            x = "x", y = "f(x)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
-  })
+  }))
 
   output$ch4_unif_stats <- renderUI({
     selected <- input$ch4_unif_scenarios
@@ -648,7 +648,7 @@ ch4_server <- function(input, output, session) {
   })
 
   # --- Widget 3b: Wykladniczy — scenariusze overlay ---
-  output$ch4_exp_plot <- renderPlot({
+  zoom_plot_server("ch4_exp_plot", reactive({
     selected <- input$ch4_exp_scenarios
     req(length(selected) > 0)
 
@@ -677,7 +677,7 @@ ch4_server <- function(input, output, session) {
            x = "x", y = "f(x)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
-  })
+  }))
 
   output$ch4_exp_stats <- renderUI({
     selected <- input$ch4_exp_scenarios
@@ -694,7 +694,7 @@ ch4_server <- function(input, output, session) {
   })
 
   # --- Widget 4: t-Studenta — scenariusze overlay ---
-  output$ch4_t_plot <- renderPlot({
+  zoom_plot_server("ch4_t_plot", reactive({
     selected <- input$ch4_t_scenarios
     show_normal <- input$ch4_t_show_normal
     req(length(selected) > 0 || show_normal)
@@ -729,7 +729,7 @@ ch4_server <- function(input, output, session) {
            x = "x", y = "f(x)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
-  })
+  }))
 
   output$ch4_t_stats <- renderUI({
     selected <- input$ch4_t_scenarios
@@ -749,7 +749,7 @@ ch4_server <- function(input, output, session) {
   })
 
   # --- Widget 5: Chi-kwadrat — scenariusze overlay ---
-  output$ch4_chisq_plot <- renderPlot({
+  zoom_plot_server("ch4_chisq_plot", reactive({
     selected <- input$ch4_chisq_scenarios
     req(length(selected) > 0)
 
@@ -777,7 +777,7 @@ ch4_server <- function(input, output, session) {
            x = "x", y = "f(x)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
-  })
+  }))
 
   output$ch4_chisq_stats <- renderUI({
     selected <- input$ch4_chisq_scenarios
@@ -793,7 +793,7 @@ ch4_server <- function(input, output, session) {
   })
 
   # --- Widget 6: Log-normalny — scenariusze overlay ---
-  output$ch4_lnorm_plot <- renderPlot({
+  zoom_plot_server("ch4_lnorm_plot", reactive({
     selected <- input$ch4_lnorm_scenarios
     req(length(selected) > 0)
 
@@ -826,7 +826,7 @@ ch4_server <- function(input, output, session) {
            x = "x", y = "f(x)") +
       theme_upwr() +
       theme(legend.position = "top", legend.text = element_text(size = 11))
-  })
+  }))
 
   output$ch4_lnorm_stats <- renderUI({
     selected <- input$ch4_lnorm_scenarios

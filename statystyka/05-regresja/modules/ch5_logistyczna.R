@@ -43,7 +43,7 @@ ch5_ui <- list(
                        class = "lc-btn-warning", width = "100%")
         ),
         column(8,
-          plotOutput("ch5_lin_log_plot", height = "300px"),
+          zoom_plot_ui("ch5_lin_log_plot", height = "300px"),
           uiOutput("ch5_lin_log_stats")
         )
       )
@@ -57,9 +57,8 @@ ch5_ui <- list(
     ),
 
     tagList(
-      p("Rozwiązaniem jest ", tags$strong("regresja logistyczna"),
-        ". Zamiast modelować Y bezpośrednio, modelujemy ",
-        tags$strong("prawdopodobieństwo"), " sukcesu:"),
+      p("Rozwiązaniem jest regresja logistyczna.
+        Zamiast modelować Y bezpośrednio, modelujemy prawdopodobieństwo sukcesu:"),
       lc_formula_box(
         withMathJax(helpText(
           "$$P(Y=1) = \\frac{1}{1 + e^{-(\\beta_0 + \\beta_1 X_1 + \\ldots + \\beta_k X_k)}}$$"
@@ -91,7 +90,7 @@ ch5_ui <- list(
           )
         ),
         column(8,
-          plotOutput("ch5_sigmoid_plot", height = "350px")
+          zoom_plot_ui("ch5_sigmoid_plot", height = "350px")
         )
       )
     ),
@@ -119,7 +118,7 @@ ch5_ui <- list(
                        class = "lc-btn-outline", width = "100%")
         ),
         column(8,
-          plotOutput("ch5_logit_step_plot", height = "320px"),
+          zoom_plot_ui("ch5_logit_step_plot", height = "320px"),
           uiOutput("ch5_logit_step_info")
         )
       )
@@ -154,7 +153,7 @@ ch5_ui <- list(
           uiOutput("ch5_prediction")
         ),
         column(8,
-          plotOutput("ch5_logit_plot", height = "350px"),
+          zoom_plot_ui("ch5_logit_plot", height = "350px"),
           uiOutput("ch5_model_summary")
         )
       )
@@ -163,8 +162,7 @@ ch5_ui <- list(
     lc_h2("ch5-iloraz-szans", "Interpretacja: iloraz szans"),
 
     tagList(
-      p("W regresji logistycznej współczynniki interpretujemy przez ",
-        tags$strong("iloraz szans (odds ratio)"), ":"),
+      p("W regresji logistycznej współczynniki interpretujemy przez iloraz szans (odds ratio):"),
       lc_formula_box(
         withMathJax(helpText("$$OR = e^{\\beta_j}$$")),
         p("OR = 1.5 oznacza: wzrost X o 1 zwiększa szanse sukcesu
@@ -189,7 +187,7 @@ ch5_ui <- list(
                       min = 0.1, max = 0.9, value = 0.5, step = 0.05)
         ),
         column(8,
-          plotOutput("ch5_threshold_plot", height = "280px"),
+          zoom_plot_ui("ch5_threshold_plot", height = "280px"),
           uiOutput("ch5_threshold_info")
         )
       )
@@ -223,7 +221,7 @@ ch5_server <- function(input, output, session) {
     ch5_lin_log_data(generate_logistic_data(200))
   })
 
-  output$ch5_lin_log_plot <- renderPlot({
+  zoom_plot_server("ch5_lin_log_plot", reactive({
     df <- ch5_lin_log_data()
     if (is.null(df)) {
       ggplot() +
@@ -247,7 +245,7 @@ ch5_server <- function(input, output, session) {
         ylim(-0.2, 1.2) +
         theme_upwr()
     }
-  })
+  }))
 
   output$ch5_lin_log_stats <- renderUI({
     df <- ch5_lin_log_data()
@@ -284,7 +282,7 @@ ch5_server <- function(input, output, session) {
     updateSliderInput(session, "ch5_b1", value = -0.3)
   })
 
-  output$ch5_sigmoid_plot <- renderPlot({
+  zoom_plot_server("ch5_sigmoid_plot", reactive({
     b0 <- input$ch5_b0
     b1 <- input$ch5_b1
     x <- seq(-5, 45, length.out = 500)
@@ -297,7 +295,7 @@ ch5_server <- function(input, output, session) {
            x = "X", y = "P(Y = 1)") +
       ylim(0, 1) +
       theme_upwr()
-  })
+  }))
 
   # --- Widget: logit krok po kroku ---
   ch5_logit_step <- reactiveVal(0)
@@ -305,7 +303,7 @@ ch5_server <- function(input, output, session) {
   observeEvent(input$ch5_logit_step2, ch5_logit_step(2))
   observeEvent(input$ch5_logit_step3, ch5_logit_step(3))
 
-  output$ch5_logit_step_plot <- renderPlot({
+  zoom_plot_server("ch5_logit_step_plot", reactive({
     x <- seq(0, 40, length.out = 300)
     eta <- input$ch5_logit_b0 + input$ch5_logit_b1 * x
     p <- 1 / (1 + exp(-eta))
@@ -330,7 +328,7 @@ ch5_server <- function(input, output, session) {
                    color = upwr_secondary, size = 3)
     }
     plot
-  })
+  }))
 
   output$ch5_logit_step_info <- renderUI({
     step <- ch5_logit_step()
@@ -358,7 +356,7 @@ ch5_server <- function(input, output, session) {
     ch5_model(model)
   })
 
-  output$ch5_logit_plot <- renderPlot({
+  zoom_plot_server("ch5_logit_plot", reactive({
     df <- ch5_data()
     model <- ch5_model()
     if (is.null(df)) {
@@ -390,7 +388,7 @@ ch5_server <- function(input, output, session) {
         ylim(-0.05, 1.05) +
         theme_upwr()
     }
-  })
+  }))
 
   output$ch5_model_summary <- renderUI({
     model <- ch5_model()
@@ -477,7 +475,7 @@ ch5_server <- function(input, output, session) {
   })
 
   # --- Widget: prog klasyfikacji ---
-  output$ch5_threshold_plot <- renderPlot({
+  zoom_plot_server("ch5_threshold_plot", reactive({
     model <- ch5_model()
     df <- ch5_data()
     if (is.null(model) || is.null(df)) {
@@ -500,7 +498,7 @@ ch5_server <- function(input, output, session) {
         theme_upwr() +
         theme(legend.position = "none")
     }
-  })
+  }))
 
   output$ch5_threshold_info <- renderUI({
     model <- ch5_model()
