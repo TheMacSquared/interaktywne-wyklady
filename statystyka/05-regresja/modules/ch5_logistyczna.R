@@ -16,19 +16,56 @@ ch5_ui <- list(
                 A co, gdy Y to 0 lub 1 (sukces/porażka)?"
     ),
 
+    tagList(
+      p("W rozdziale 4 spotkaliśmy się z porównywaniem modeli liniowych —
+        ale wszystkie zakładały, że Y jest ciągłe. Co, gdy Y to ",
+        tags$em("zdał albo nie zdał"), "? Albo ",
+        tags$em("kliknął albo nie kliknął"), "? Albo ",
+        tags$em("przeżył albo nie przeżył"), "? Wtedy regresja liniowa nie
+        odmawia odpowiedzi — ale ta odpowiedź jest bezsensowna."),
+      p("Zaraz zobaczymy, dlaczego — a potem poznamy alternatywę.")
+    ),
+
     lc_h2("ch5-dlaczego", "Dlaczego nie regresja liniowa?"),
 
     tagList(
-      p("Gdy zmienna zależna jest ", tags$b("binarna"),
-        " (np. zdany/niezdany egzamin), regresja liniowa daje przewidywania
-        spoza zakresu [0, 1]. Rozwiązanie: ", tags$b("regresja logistyczna"), "."),
-      p("Zamiast modelować Y bezpośrednio, modelujemy ",
-        tags$b("prawdopodobieństwo"), " sukcesu:"),
+      p("Zacznijmy od eksperymentu: nałóżmy zwykłą regresję liniową na
+        dane binarne (zdał = 1, nie zdał = 0) i zobaczmy, co się stanie.")
+    ),
+
+    figure_panel(
+      label = "Ryc. 5.1", title = "Liniowy vs logistyczny na danych binarnych",
+      full_width = TRUE,
+      fluidRow(
+        column(4,
+          helpText("Symulujemy dane studentów: czy zdają egzamin w zależności od godzin nauki?"),
+          actionButton("ch5_lin_vs_log", "Generuj porównanie",
+                       class = "lc-btn-warning", width = "100%")
+        ),
+        column(8,
+          plotOutput("ch5_lin_log_plot", height = "300px"),
+          uiOutput("ch5_lin_log_stats")
+        )
+      )
+    ),
+
+    inline_callout(label = "Wniosek", color = "uwaga",
+      "Linia liniowa wychodzi poza [0, 1] — przy małej liczbie godzin daje
+       prawdopodobieństwa ujemne, przy dużej powyżej 100%. To nie są
+       prawdopodobieństwa, to absurd. Potrzebujemy modelu, który z definicji
+       zwraca wartości w przedziale [0, 1]."
+    ),
+
+    tagList(
+      p("Rozwiązaniem jest ", tags$strong("regresja logistyczna"),
+        ". Zamiast modelować Y bezpośrednio, modelujemy ",
+        tags$strong("prawdopodobieństwo"), " sukcesu:"),
       lc_formula_box(
         withMathJax(helpText(
           "$$P(Y=1) = \\frac{1}{1 + e^{-(\\beta_0 + \\beta_1 X_1 + \\ldots + \\beta_k X_k)}}$$"
         )),
-        p("Funkcja logistyczna (sigmoida) zamyka wynik w [0, 1].")
+        p("Funkcja logistyczna (sigmoida) zamyka wynik w [0, 1] —
+          niezależnie od tego, jak duże albo małe są X-y.")
       )
     ),
 
@@ -178,6 +215,60 @@ ch5_ui <- list(
 # ============================================================================
 
 ch5_server <- function(input, output, session) {
+
+  # --- Widget: Liniowy vs logistyczny (przeniesiony z ch4) ---
+  ch5_lin_log_data <- reactiveVal(NULL)
+
+  observeEvent(input$ch5_lin_vs_log, {
+    ch5_lin_log_data(generate_logistic_data(200))
+  })
+
+  output$ch5_lin_log_plot <- renderPlot({
+    df <- ch5_lin_log_data()
+    if (is.null(df)) {
+      ggplot() +
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj'",
+                 size = 6, color = upwr_reference) +
+        theme_void()
+    } else {
+      ggplot(df, aes(x = godziny_nauki, y = zdal_num)) +
+        geom_jitter(height = 0.03, alpha = 0.3, color = upwr_secondary) +
+        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]),
+                    linewidth = 1, linetype = "dashed") +
+        geom_smooth(method = "glm", method.args = list(family = "binomial"),
+                    se = FALSE, color = unname(upwr_cat["wrzos"]), linewidth = 1.2) +
+        geom_hline(yintercept = c(0, 1), linetype = "dotted", color = upwr_rule) +
+        annotate("text", x = 5, y = 0.85, label = "Logistyczny", color = unname(upwr_cat["wrzos"]),
+                 fontface = "bold") +
+        annotate("text", x = 35, y = 0.85, label = "Liniowy", color = unname(upwr_cat["niebo"]),
+                 fontface = "bold") +
+        labs(
+             x = "Godziny nauki", y = "P(zdanie)") +
+        ylim(-0.2, 1.2) +
+        theme_upwr()
+    }
+  })
+
+  output$ch5_lin_log_stats <- renderUI({
+    df <- ch5_lin_log_data()
+    if (is.null(df)) return(NULL)
+
+    lin <- lm(zdal_num ~ godziny_nauki, data = df)
+    log <- glm(zdal_num ~ godziny_nauki, data = df, family = binomial)
+
+    lin_pred <- ifelse(fitted(lin) >= 0.5, 1, 0)
+    log_pred <- ifelse(fitted(log) >= 0.5, 1, 0)
+    acc_lin <- mean(lin_pred == df$zdal_num) * 100
+    acc_log <- mean(log_pred == df$zdal_num) * 100
+
+    outside <- mean(fitted(lin) < 0 | fitted(lin) > 1) * 100
+
+    tagList(
+      lc_stat_box("Liniowy", round(acc_lin, 1), "%", color = unname(upwr_cat["niebo"])),
+      lc_stat_box("Logistyczny", round(acc_log, 1), "%", color = unname(upwr_cat["wrzos"])),
+      lc_stat_box("Liniowy poza [0,1]", round(outside, 1), "%", color = unname(upwr_cat["terakota"]))
+    )
+  })
 
   # --- Widget 1: Sigmoida ---
   observeEvent(input$ch5_preset_steep, {

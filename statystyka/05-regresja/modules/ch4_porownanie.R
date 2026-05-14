@@ -1,33 +1,92 @@
 # ============================================================================
-# CHAPTER 4: Porownanie modeli
+# CHAPTER 4: Jak porównywać modele
 # ============================================================================
 
 ch4_ui <- list(
   id    = "ch-porownanie",
   num   = "04",
-  title = "Porównanie modeli",
+  title = "Jak porównywać modele?",
   content = tagList(
 
     lc_chapter_hero(
       kicker = "Rozdział 04 · Regresja",
       num    = "04",
-      title  = "Porównanie modeli.",
-      lead   = "Zbudowaliśmy różne modele. Jak wybrać najlepszy?
-                Poznajmy metryki porównawcze."
+      title  = "Jak porównywać modele?",
+      lead   = "W ch2 oceniliśmy pojedynczy model. Teraz mamy kilku kandydatów —
+                jak wybrać najlepszego?"
     ),
 
-    lc_h2("ch4-metryki", "Metryki jakości modelu"),
+    tagList(
+      p("W rozdziale 2 nauczyliśmy się oceniać ", tags$em("jeden"),
+        " model: wzorzec reszt, R², RMSE. W rozdziale 3 zbudowaliśmy modele
+        z różną liczbą predyktorów. Teraz pojawia się naturalne pytanie:
+        który z tych modeli wybrać?"),
+      p("Można by chcieć po prostu wziąć model o najwyższym R². Okazuje się
+        jednak, że to klasyczna pułapka — zobaczymy zaraz dlaczego.")
+    ),
+
+    lc_h2("ch4-problem", "Dlaczego sam R² nie wystarczy?"),
 
     tagList(
-      p("Nie ma jednej uniwersalnej miary. Każda odpowiada na inne pytanie:"),
+      p("R² ma jedną zdradliwą właściwość przy porównaniach: ",
+        tags$strong("zawsze rośnie"),
+        ", kiedy dodajemy do modelu kolejny predyktor — nawet zupełnie
+        bezsensowny. Matematycznie nie jest to przypadek: każdy nowy X
+        może tylko zmniejszyć (albo pozostawić bez zmian) sumę kwadratów
+        reszt, więc R² nigdy nie spada."),
+      p("Konsekwencja: jeśli porównujemy modele o ", tags$em("różnej"),
+        " liczbie zmiennych, R² nie jest sprawiedliwym sędzią — premiuje
+        ten bardziej rozdęty, nawet gdy dodatkowe X-y są przypadkiem.
+        Potrzebujemy metryk, które ", tags$em("karzą za złożoność"), ".")
+    ),
+
+    inline_callout(label = "Uwaga", color = "uwaga",
+      "Wybór modelu o największym R² to klasyczna droga do przeuczenia.
+       Następny widget pokaże, jak R² rośnie nawet wtedy, gdy nowe
+       predyktory niewiele wnoszą."
+    ),
+
+    lc_h2("ch4-efekt-dodawania", "Efekt dodawania zmiennych"),
+
+    tagList(
+      p("Zobaczmy to empirycznie. Widget buduje cztery modele kolejno z
+        1, 2, 3 i 4 predyktorami i pokazuje, jak zmieniają się metryki.")
+    ),
+
+    figure_panel(
+      label = "Ryc. 4.1", title = "Krok po kroku",
+      full_width = TRUE,
+      fluidRow(
+        column(4,
+          helpText("Modele z 1, 2, 3 i 4 predyktorami — porównanie metryk."),
+          actionButton("ch4_stepwise", "Buduj modele krok po kroku",
+                       class = "lc-btn-warning", width = "100%")
+        ),
+        column(8,
+          plotOutput("ch4_step_plot", height = "300px"),
+          uiOutput("ch4_step_table")
+        )
+      )
+    ),
+
+    inline_callout(label = "Co się dzieje?", color = "wskazowka",
+      "R² stale rośnie. Adjusted R² i AIC zaczynają w pewnym momencie
+       się stabilizować albo wręcz pogarszać — to sygnał, że dodawanie
+       kolejnego X przestaje się opłacać."
+    ),
+
+    lc_h2("ch4-metryki", "Metryki porównawcze"),
+
+    tagList(
+      p("W rozdziale 2 mieliśmy ", withMathJax("\\(R^2\\)"), " i ", tags$em("RMSE"),
+        " — miary jakości pojedynczego modelu. Teraz dochodzą trzy metryki
+        ", tags$strong("porównawcze"),
+        ", które albo karzą za złożoność, albo dzielą dane na trening i test:"),
       tags$table(class = "lc-table lc-table-bordered", style = "font-size: 14px;",
         tags$thead(
           tags$tr(tags$th("Metryka"), tags$th("Co mierzy"), tags$th("Lepiej gdy"))
         ),
         tags$tbody(
-          tags$tr(tags$td(withMathJax("\\(R^2\\)")),
-                  tags$td("Odsetek wyjaśnionej zmienności"),
-                  tags$td("wyższe")),
           tags$tr(tags$td(withMathJax("\\(R^2_{adj}\\)")),
                   tags$td("R² skorygowane za liczbę predyktorów"),
                   tags$td("wyższe")),
@@ -36,9 +95,6 @@ ch4_ui <- list(
                   tags$td("niższe")),
           tags$tr(tags$td("BIC"),
                   tags$td("Jak AIC, ale silniejsza kara za parametry"),
-                  tags$td("niższe")),
-          tags$tr(tags$td("RMSE"),
-                  tags$td("Średni błąd predykcji (w jednostkach Y)"),
                   tags$td("niższe"))
         )
       )
@@ -47,35 +103,23 @@ ch4_ui <- list(
     lc_formula_box(
       p(tags$strong("AIC:"), withMathJax("\\(AIC = -2 \\ln(L) + 2k\\)")),
       p(tags$strong("BIC:"), withMathJax("\\(BIC = -2 \\ln(L) + k \\ln(n)\\)")),
-      p(tags$strong("RMSE:"), withMathJax("\\(RMSE = \\sqrt{\\frac{1}{n}\\sum(y_i - \\hat{y}_i)^2}\\)")),
-      p("gdzie L = wiarygodność, k = liczba parametrów, n = liczba obserwacji")
+      p("gdzie L = wiarygodność modelu, k = liczba parametrów, n = liczba obserwacji")
     ),
-
-    lc_h2("ch4-r2", "R² — ile model wyjaśnia?"),
 
     tagList(
-      p("Współczynnik determinacji ", withMathJax("\\(R^2\\)"),
-        " mówi, jaki odsetek zmienności Y jest wyjaśniony przez model."),
-      lc_formula_box(
-        withMathJax(helpText("$$R^2 = 1 - \\frac{SS_{res}}{SS_{tot}} = 1 - \\frac{\\sum(y_i - \\hat{y}_i)^2}{\\sum(y_i - \\bar{y})^2}$$"))
-      ),
-      p("Zakres [0, 1]: 0 = model nic nie wyjaśnia, 1 = idealne dopasowanie.")
-    ),
-
-    figure_panel(
-      label = "Ryc. 4.1", title = "To samo X i Y, różna siła wyjaśniania",
-      full_width = TRUE,
-      helpText("Trzy stałe przykłady: niskie, średnie i wysokie R². Im ciaśniej punkty leżą przy linii, tym większa część zmienności Y jest wyjaśniona przez X."),
-      plotOutput("ch4_r2_compare_plot", height = "360px")
-    ),
-
-    inline_callout(label = "Uwaga", color = "uwaga",
-      "Wysokie R² nie oznacza, że model jest „dobry” — może być przeuczony.
-       Niskie R² nie oznacza, że model jest bezwartościowy — w naukach
-       społecznych R² = 0.3 jest często bardzo dobre."
+      p("AIC i BIC są bezsensowne w izolacji — usłyszeć „AIC = 2384\" nic
+        nie mówi. Ich sens jest ", tags$em("różnicowy"),
+        ": porównujemy kilka modeli i wybieramy ten o ", tags$em("niższej"),
+        " wartości. Im większa różnica, tym pewniejszy wybór.")
     ),
 
     lc_h2("ch4-arena", "Arena modeli liniowych"),
+
+    tagList(
+      p("Zobaczmy te metryki w akcji. Widget generuje dane i buduje cztery
+        modele o rosnącej złożoności — porównaj, który wygrywa w każdej
+        kategorii.")
+    ),
 
     figure_panel(
       label = "Ryc. 4.2", title = "Porównanie modeli regresji",
@@ -102,44 +146,20 @@ ch4_ui <- list(
        wyjaśnienia."
     ),
 
-    lc_h2("ch4-liniowy-vs-logistyczny", "Liniowy vs logistyczny"),
-
-    tagList(
-      p("Co się stanie, jeśli spróbujemy użyć regresji liniowej
-        do predykcji zmiennej binarnej? Porównajmy z logistyczną.")
-    ),
-
-    figure_panel(
-      label = "Ryc. 4.3", title = "Liniowy vs logistyczny (dane binarne)",
-      full_width = TRUE,
-      fluidRow(
-        column(4,
-          actionButton("ch4_lin_vs_log", "Generuj porównanie",
-                       class = "lc-btn-warning", width = "100%")
-        ),
-        column(8,
-          plotOutput("ch4_lin_log_plot", height = "300px"),
-          uiOutput("ch4_lin_log_stats")
-        )
-      )
-    ),
-
-    inline_callout(label = "Wniosek", color = "uwaga",
-      "Regresja liniowa na danych binarnych daje predykcje poza [0, 1]
-       i nie jest poprawnym modelem. Zawsze używaj regresji logistycznej
-       dla zmiennej zależnej 0/1."
-    ),
-
     lc_h2("ch4-overfitting", "Przeuczenie (overfitting)"),
 
     tagList(
-      p("Model z wieloma parametrami może idealnie dopasować się do
-        danych treningowych, ale źle generalizować. Zobaczmy to
-        na wielomianach.")
+      p("AIC i BIC działają, gdy modele są ", tags$em("zagnieżdżone"),
+        " (jeden zawiera predyktory drugiego). Co, jeśli porównujemy modele
+        zasadniczo różne — np. wielomian różnego stopnia? Najlepszą miarą
+        staje się wtedy ", tags$strong("generalizacja na nowe dane"), "."),
+      p("Najpierw zobaczmy sam efekt przeuczenia: model z dużą liczbą
+        parametrów może idealnie dopasować się do danych treningowych,
+        ale działać fatalnie na nowych obserwacjach.")
     ),
 
     figure_panel(
-      label = "Ryc. 4.4", title = "Wielomian: dopasowanie vs generalizacja",
+      label = "Ryc. 4.3", title = "Wielomian: dopasowanie vs generalizacja",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -157,8 +177,18 @@ ch4_ui <- list(
       )
     ),
 
+    lc_h2("ch4-train-test", "Train/test: ostateczny sędzia"),
+
+    tagList(
+      p("Podział danych na zbiór treningowy i testowy: model uczy się na
+        jednej części, a my oceniamy go na drugiej. Jeśli model dobrze
+        działa tylko na treningowej, a źle na testowej — to przeuczenie."),
+      p("To najuczciwszy test, bo dane testowe ", tags$em("naprawdę"),
+        " są dla modelu nowe.")
+    ),
+
     figure_panel(
-      label = "Ryc. 4.5", title = "Train/test: kiedy model przestaje generalizować",
+      label = "Ryc. 4.4", title = "Train/test: kiedy model przestaje generalizować",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -177,7 +207,22 @@ ch4_ui <- list(
     inline_callout(label = "Złota reguła", color = "uwaga",
       "Najlepszy model to nie ten z najwyższym R², ale ten, który
        najlepiej generalizuje na nowe dane. Używaj AIC/BIC do wyboru
-       złożoności."
+       złożoności, train/test do ostatecznej weryfikacji."
+    ),
+
+    lc_h2("ch4-co-dalej", "Co dalej"),
+
+    tagList(
+      p("Mamy komplet narzędzi do porównywania: ",
+        withMathJax("\\(R^2_{adj}\\)"),
+        ", AIC, BIC dla modeli o różnej liczbie predyktorów; train/test
+        dla zasadniczo różnych modeli. Wszystkie zakładały jednak, że Y
+        jest ", tags$em("ciągłe"), "."),
+      p("A co, gdy Y to zdał/nie zdał, kliknął/nie kliknął, kupił/nie
+        kupił? Wtedy regresja liniowa zawodzi — daje predykcje poza
+        zakresem [0, 1] i nie jest sensownym modelem. Następny rozdział
+        wprowadza ", tags$strong("regresję logistyczną"),
+        ", która jest stworzona dokładnie dla takich sytuacji.")
     ),
 
     lc_chapter_next(
@@ -195,42 +240,90 @@ ch4_ui <- list(
 
 ch4_server <- function(input, output, session) {
 
-  output$ch4_r2_compare_plot <- renderPlot({
-    set.seed(103)
-    make_panel <- function(label, sigma) {
-      x <- seq(-3, 3, length.out = 70)
-      y <- 10 + 2.2 * x + rnorm(length(x), 0, sigma)
-      data.frame(wariant = label, x = x, y = y)
-    }
-    df <- rbind(
-      make_panel("Niskie R²", 12.0),
-      make_panel("Średnie R²", 4.0),
-      make_panel("Wysokie R²", 0.9)
+  # --- Widget: Efekt dodawania zmiennych (przeniesiony z ch3 wielorakiej) ---
+  ch4_step_data <- reactiveVal(NULL)
+
+  observeEvent(input$ch4_stepwise, {
+    df <- generate_multi_data(150)
+
+    pred_sets <- list(
+      c("godziny_nauki"),
+      c("godziny_nauki", "frekwencja"),
+      c("godziny_nauki", "frekwencja", "stres"),
+      c("godziny_nauki", "frekwencja", "stres", "sen_h")
     )
 
-    r2_levels <- c("Niskie R²", "Średnie R²", "Wysokie R²")
-    stats <- df %>%
-      group_by(wariant) %>%
-      summarise(r2 = summary(lm(y ~ x))$r.squared, .groups = "drop")
-    df$wariant <- factor(df$wariant, levels = r2_levels)
-    stats$wariant <- factor(stats$wariant, levels = r2_levels)
+    results <- lapply(seq_along(pred_sets), function(i) {
+      formula <- as.formula(paste("ocena ~", paste(pred_sets[[i]], collapse = " + ")))
+      model <- lm(formula, data = df)
+      metrics <- compute_model_metrics(model)
+      data.frame(
+        k = i,
+        predictors = paste(pred_sets[[i]], collapse = " + "),
+        r_squared = metrics$r_squared,
+        adj_r_squared = metrics$adj_r_squared,
+        aic = metrics$aic,
+        bic = metrics$bic,
+        rmse = metrics$rmse
+      )
+    })
 
-    ggplot(df, aes(x = x, y = y)) +
-      geom_point(color = upwr_secondary, alpha = 0.5, size = 1.9) +
-      geom_smooth(method = "lm", se = FALSE,
-                  color = unname(upwr_cat["niebo"]), linewidth = 1.1) +
-      geom_text(
-        data = stats,
-        aes(x = -2.8, y = Inf, label = paste0("R² = ", round(r2, 2))),
-        inherit.aes = FALSE, hjust = 0, vjust = 1.6,
-        color = upwr_secondary, fontface = "bold"
-      ) +
-      facet_wrap(~ wariant, nrow = 1) +
-      labs(x = "X", y = "Y") +
-      theme_upwr()
+    ch4_step_data(do.call(rbind, results))
   })
 
-  # --- Widget 1: Porownanie modeli liniowych ---
+  output$ch4_step_plot <- renderPlot({
+    df <- ch4_step_data()
+    if (is.null(df)) {
+      ggplot() +
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Buduj modele'",
+                 size = 6, color = upwr_reference) +
+        theme_void()
+    } else {
+      long <- df %>%
+        select(k, r_squared, adj_r_squared) %>%
+        tidyr::pivot_longer(cols = c(r_squared, adj_r_squared),
+                            names_to = "metric", values_to = "value") %>%
+        mutate(metric = ifelse(metric == "r_squared", "R²", "adj. R²"))
+
+      ggplot(long, aes(x = k, y = value, color = metric)) +
+        geom_line(linewidth = 1.2) +
+        geom_point(size = 3) +
+        scale_x_continuous(breaks = 1:4,
+                           labels = paste0(1:4, " pred.")) +
+        scale_color_manual(values = c(unname(upwr_cat["niebo"]), unname(upwr_cat["szalwia"])), name = NULL) +
+        labs(
+             x = "Liczba predyktorów", y = "Wartość") +
+        theme_upwr() +
+        theme(legend.position = "top")
+    }
+  })
+
+  output$ch4_step_table <- renderUI({
+    df <- ch4_step_data()
+    if (is.null(df)) return(NULL)
+
+    rows <- lapply(1:nrow(df), function(i) {
+      tags$tr(
+        tags$td(df$predictors[i]),
+        tags$td(round(df$r_squared[i], 3)),
+        tags$td(round(df$adj_r_squared[i], 3)),
+        tags$td(round(df$aic[i], 1)),
+        tags$td(round(df$bic[i], 1)),
+        tags$td(round(df$rmse[i], 3))
+      )
+    })
+
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
+      style = "font-size: 13px;",
+      tags$thead(
+        tags$tr(tags$th("Predyktory"), tags$th("R²"), tags$th("adj.R²"),
+                tags$th("AIC"), tags$th("BIC"), tags$th("RMSE"))
+      ),
+      tags$tbody(rows)
+    )
+  })
+
+  # --- Widget: Arena modeli liniowych ---
   ch4_models <- reactiveVal(NULL)
 
   observeEvent(input$ch4_compare, {
@@ -267,7 +360,6 @@ ch4_server <- function(input, output, session) {
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {
-      # Normalize metrics for comparison
       long <- df %>%
         select(model, adj_r_squared, aic, bic, rmse) %>%
         tidyr::pivot_longer(-model, names_to = "metric", values_to = "value") %>%
@@ -290,7 +382,6 @@ ch4_server <- function(input, output, session) {
     df <- ch4_models()
     if (is.null(df)) return(NULL)
 
-    # Zaznacz najlepsze wartosci
     best_adj_r2 <- which.max(df$adj_r_squared)
     best_aic <- which.min(df$aic)
     best_bic <- which.min(df$bic)
@@ -321,62 +412,7 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 2: Liniowy vs logistyczny ---
-  ch4_lin_log_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch4_lin_vs_log, {
-    ch4_lin_log_data(generate_logistic_data(200))
-  })
-
-  output$ch4_lin_log_plot <- renderPlot({
-    df <- ch4_lin_log_data()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj'",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      ggplot(df, aes(x = godziny_nauki, y = zdal_num)) +
-        geom_jitter(height = 0.03, alpha = 0.3, color = upwr_secondary) +
-        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]),
-                    linewidth = 1, linetype = "dashed") +
-        geom_smooth(method = "glm", method.args = list(family = "binomial"),
-                    se = FALSE, color = unname(upwr_cat["wrzos"]), linewidth = 1.2) +
-        geom_hline(yintercept = c(0, 1), linetype = "dotted", color = upwr_rule) +
-        annotate("text", x = 5, y = 0.85, label = "Logistyczny", color = unname(upwr_cat["wrzos"]),
-                 fontface = "bold") +
-        annotate("text", x = 35, y = 0.85, label = "Liniowy", color = unname(upwr_cat["niebo"]),
-                 fontface = "bold") +
-        labs(
-             x = "Godziny nauki", y = "P(zdanie)") +
-        ylim(-0.2, 1.2) +
-        theme_upwr()
-    }
-  })
-
-  output$ch4_lin_log_stats <- renderUI({
-    df <- ch4_lin_log_data()
-    if (is.null(df)) return(NULL)
-
-    lin <- lm(zdal_num ~ godziny_nauki, data = df)
-    log <- glm(zdal_num ~ godziny_nauki, data = df, family = binomial)
-
-    lin_pred <- ifelse(fitted(lin) >= 0.5, 1, 0)
-    log_pred <- ifelse(fitted(log) >= 0.5, 1, 0)
-    acc_lin <- mean(lin_pred == df$zdal_num) * 100
-    acc_log <- mean(log_pred == df$zdal_num) * 100
-
-    # Procent predykcji poza [0,1]
-    outside <- mean(fitted(lin) < 0 | fitted(lin) > 1) * 100
-
-    tagList(
-      lc_stat_box("Liniowy", round(acc_lin, 1), "%", color = unname(upwr_cat["niebo"])),
-      lc_stat_box("Logistyczny", round(acc_log, 1), "%", color = unname(upwr_cat["wrzos"])),
-      lc_stat_box("Liniowy poza [0,1]", round(outside, 1), "%", color = unname(upwr_cat["terakota"]))
-    )
-  })
-
-  # --- Widget 3: Overfitting ---
+  # --- Widget: Overfitting ---
   ch4_poly_data <- reactiveVal(NULL)
 
   observeEvent(input$ch4_poly_gen, {
@@ -426,7 +462,7 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 4: train/test overfitting ---
+  # --- Widget: train/test overfitting ---
   ch4_tt_data <- reactiveVal(generate_train_test_poly())
 
   observeEvent(input$ch4_tt_new, {

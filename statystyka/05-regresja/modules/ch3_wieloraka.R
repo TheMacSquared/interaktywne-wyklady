@@ -16,24 +16,49 @@ ch3_ui <- list(
                 W rzeczywistości na Y wpływa wiele czynników jednocześnie."
     ),
 
+    tagList(
+      p("W rozdziale 1 mieliśmy jedno X. W rozdziale 2 nauczyliśmy się
+        oceniać, ", tags$em("czy"), " dany model jest dobry — reszty, R², RMSE.
+        Realne dane mają jednak wiele predyktorów naraz i czasem dopiero
+        zobaczenie ich razem zmienia obraz."),
+      p("Klasyczny przykład: w danych CASchools wyniki uczniów rosną wraz
+        z wydatkami na ucznia. Brzmi prosto — ale wydatki są skorelowane
+        z dochodem okręgu, a okręgi bogate mają też mniejsze klasy. Co
+        ", tags$em("naprawdę"), " wpływa na wyniki? Tego nie powie nam żadne
+        z pojedynczych równań. Musimy zbudować model z wieloma X-ami naraz.")
+    ),
+
     lc_h2("ch3-wiele-predyktorow", "Wiele predyktorów naraz"),
 
     tagList(
-      p("Regresja wieloraka rozszerza model o ", tags$b("k predyktorów"), ":"),
+      p("Regresja wieloraka rozszerza model o ", tags$strong("k predyktorów"), ":"),
       lc_formula_box(
         withMathJax(helpText(
           "$$Y = \\beta_0 + \\beta_1 X_1 + \\beta_2 X_2 + \\ldots + \\beta_k X_k + \\varepsilon$$"
         ))
       ),
-      p("Każde ", withMathJax("\\(\\beta_j\\)"), " mówi:
-        o ile zmieni się Y, gdy ", withMathJax("\\(X_j\\)"),
-        " wzrośnie o 1, ", tags$b("przy stałych pozostałych zmiennych"), ".")
+      p("Każde ", withMathJax("\\(\\beta_j\\)"),
+        " mówi: o ile zmieni się Y, gdy ", withMathJax("\\(X_j\\)"),
+        " wzrośnie o 1, ", tags$strong("przy stałych pozostałych zmiennych"), "."),
+      p("To zastrzeżenie „przy stałych pozostałych\" jest sercem regresji
+        wielorakiej. Bez niego ", withMathJax("\\(\\beta_j\\)"),
+        " wyglądałoby tak samo jak w regresji prostej. Z nim — może być
+        zupełnie inne, a czasem wręcz przeciwnego znaku.")
     ),
 
     lc_h2("ch3-budowanie", "Budowanie modelu wielorakiego"),
 
+    tagList(
+      p("Zobaczmy to na danych studentów: średnia ocen w zależności od
+        kilku czynników (godziny nauki, frekwencja, stres, sen). Wybierz,
+        które predyktory dodać — i zwróć uwagę nie tylko na same liczby
+        w tabeli, ale na to, jak zmienia się ", tags$em("znak"), " i ",
+        tags$em("istotność"),
+        " współczynnika, gdy dokładamy kolejny X.")
+    ),
+
     figure_panel(
-      label = "Ryc. 2.1", title = "Predykcja średniej ocen",
+      label = "Ryc. 3.1", title = "Predykcja średniej ocen",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -62,8 +87,18 @@ ch3_ui <- list(
 
     lc_h2("ch3-kontrola", "Co znaczy „przy stałych pozostałych zmiennych”?"),
 
+    tagList(
+      p("Słowo „kontrola\" w regresji znaczy: ", tags$em("usuwamy"),
+        " z X-a informację, którą już niesie inny X. To, co zostaje, jest
+        ", tags$strong("efektem unikalnym"),
+        " danej zmiennej — tym, czego nie da się wytłumaczyć pozostałymi."),
+      p("Widget pokazuje to krok po kroku: najpierw policzymy efekt
+        frekwencji w modelu prostym, potem efekt godzin nauki, a na końcu
+        zobaczymy, co zostaje, gdy zbudujemy model z obiema zmiennymi naraz.")
+    ),
+
     figure_panel(
-      label = "Ryc. 2.1b", title = "Efekt pozorny i kontrola zmiennych",
+      label = "Ryc. 3.2", title = "Efekt pozorny i kontrola zmiennych",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -86,39 +121,29 @@ ch3_ui <- list(
       )
     ),
 
-    inline_callout(label = "Skorygowane R²", color = "wskazowka",
-      "Zwykłe R² zawsze rośnie z każdym dodanym predyktorem (nawet
-       bezużytecznym!). Adjusted R² koryguje ten efekt — karze
-       za zbędne zmienne."
-    ),
-
-    lc_h2("ch3-krok-po-kroku", "Efekt dodawania zmiennych"),
-
-    tagList(
-      p("Zobaczmy, jak zmieniają się metryki modelu, gdy dodajemy
-        kolejne predyktory. Czy każda zmienna poprawia model?")
-    ),
-
-    figure_panel(
-      label = "Ryc. 2.2", title = "Krok po kroku",
-      full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Modele z 1, 2, 3 i 4 predyktorami — porównanie metryk."),
-          actionButton("ch3_stepwise", "Buduj modele krok po kroku",
-                       class = "lc-btn-warning", width = "100%")
-        ),
-        column(8,
-          plotOutput("ch3_step_plot", height = "300px"),
-          uiOutput("ch3_step_table")
-        )
-      )
+    inline_callout(label = "Uwaga", color = "uwaga",
+      "Współczynnik tej samej zmiennej w modelu prostym i wielorakim może
+       być zupełnie różny — czasem nawet przeciwnego znaku. To zjawisko
+       nazywa się paradoksem Simpsona i jest jedną z głównych motywacji
+       do używania regresji wielorakiej."
     ),
 
     lc_h2("ch3-wspolliniowosc", "Multikolinearność"),
 
+    tagList(
+      p("A co, jeśli dwa nasze predyktory mówią ", tags$em("prawie to samo"),
+        "? Powiedzmy: dochód okręgu i wydatki na ucznia są silnie ze sobą
+        skorelowane. Model w zasadzie nie wie, któremu przypisać efekt —
+        i ", tags$strong("rozdmuchuje błędy standardowe obu"),
+        ". Współczynniki stają się niestabilne, p-value rosną."),
+      p("Wskaźnikiem, który to wychwytuje, jest ", tags$strong("VIF"),
+        " — variance inflation factor. Im wyższy, tym bardziej zmienna
+        powtarza informację z innych X-ów. VIF > 5 jest sygnałem
+        ostrzegawczym, VIF > 10 — czerwoną flagą.")
+    ),
+
     figure_panel(
-      label = "Ryc. 2.3", title = "Gdy predyktory mówią prawie to samo",
+      label = "Ryc. 3.3", title = "Gdy predyktory mówią prawie to samo",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -134,15 +159,25 @@ ch3_ui <- list(
       )
     ),
 
-    inline_callout(label = "Ostrożnie!", color = "uwaga",
-      "Więcej zmiennych = większe R², ale nie zawsze lepszy model.
-       Przeuczone modele słabo generalizują. Używaj adj. R², AIC, BIC."
+    lc_h2("ch3-co-dalej", "Co dalej"),
+
+    tagList(
+      p("Mamy teraz w arsenale modele z różną liczbą predyktorów: od
+        jednego X aż po wszystkie naraz. Naturalne pytanie: ",
+        tags$strong("który z nich wybrać"), "?"),
+      p("Można by chcieć po prostu wziąć ten o najwyższym R². Ale —
+        jak zaraz zobaczymy w rozdziale 4 — R² zachowuje się w
+        porównaniach zdradliwie: zawsze rośnie, gdy dodajemy kolejny
+        predyktor, nawet bezsensowny. Trzeba poznać metryki, które karzą
+        za złożoność."),
+      p("Most do rozdziału 4: R²adj, AIC, BIC, podział train/test —
+        i pierwszy widget pokazujący, dlaczego sam R² nie wystarcza.")
     ),
 
     lc_chapter_next(
       num       = "04",
-      title     = "Porównanie modeli",
-      lead      = "jak porównać modele i wybrać najlepszy",
+      title     = "Jak porównywać modele?",
+      lead      = "R²adj, AIC, BIC, train/test — gdy mamy kilku kandydatów",
       target_id = "ch-porownanie"
     )
   )
@@ -411,88 +446,8 @@ ch3_server <- function(input, output, session) {
     }
   })
 
-  # --- Widget 2: Krok po kroku ---
-  ch3_step_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch3_stepwise, {
-    df <- generate_multi_data(150)
-
-    pred_sets <- list(
-      c("godziny_nauki"),
-      c("godziny_nauki", "frekwencja"),
-      c("godziny_nauki", "frekwencja", "stres"),
-      c("godziny_nauki", "frekwencja", "stres", "sen_h")
-    )
-
-    results <- lapply(seq_along(pred_sets), function(i) {
-      formula <- as.formula(paste("ocena ~", paste(pred_sets[[i]], collapse = " + ")))
-      model <- lm(formula, data = df)
-      metrics <- compute_model_metrics(model)
-      data.frame(
-        k = i,
-        predictors = paste(pred_sets[[i]], collapse = " + "),
-        r_squared = metrics$r_squared,
-        adj_r_squared = metrics$adj_r_squared,
-        aic = metrics$aic,
-        bic = metrics$bic,
-        rmse = metrics$rmse
-      )
-    })
-
-    ch3_step_data(do.call(rbind, results))
-  })
-
-  output$ch3_step_plot <- renderPlot({
-    df <- ch3_step_data()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Buduj modele'",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      long <- df %>%
-        select(k, r_squared, adj_r_squared) %>%
-        tidyr::pivot_longer(cols = c(r_squared, adj_r_squared),
-                            names_to = "metric", values_to = "value") %>%
-        mutate(metric = ifelse(metric == "r_squared", "R²", "adj. R²"))
-
-      ggplot(long, aes(x = k, y = value, color = metric)) +
-        geom_line(linewidth = 1.2) +
-        geom_point(size = 3) +
-        scale_x_continuous(breaks = 1:4,
-                           labels = paste0(1:4, " pred.")) +
-        scale_color_manual(values = c(unname(upwr_cat["niebo"]), unname(upwr_cat["szalwia"])), name = NULL) +
-        labs(
-             x = "Liczba predyktorów", y = "Wartość") +
-        theme_upwr() +
-        theme(legend.position = "top")
-    }
-  })
-
-  output$ch3_step_table <- renderUI({
-    df <- ch3_step_data()
-    if (is.null(df)) return(NULL)
-
-    rows <- lapply(1:nrow(df), function(i) {
-      tags$tr(
-        tags$td(df$predictors[i]),
-        tags$td(round(df$r_squared[i], 3)),
-        tags$td(round(df$adj_r_squared[i], 3)),
-        tags$td(round(df$aic[i], 1)),
-        tags$td(round(df$bic[i], 1)),
-        tags$td(round(df$rmse[i], 3))
-      )
-    })
-
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 13px;",
-      tags$thead(
-        tags$tr(tags$th("Predyktory"), tags$th("R²"), tags$th("adj.R²"),
-                tags$th("AIC"), tags$th("BIC"), tags$th("RMSE"))
-      ),
-      tags$tbody(rows)
-    )
-  })
+  # Widget "Efekt dodawania zmiennych" został przeniesiony do ch4
+  # (Jak porównywać modele) — tam pasuje merytorycznie.
 
   # --- Widget: multikolinearnosc ---
   ch3_collin_data <- reactiveVal(NULL)
