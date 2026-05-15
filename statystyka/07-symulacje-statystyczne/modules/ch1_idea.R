@@ -286,21 +286,18 @@ ch1_server <- function(input, output, session) {
     rs   <- ch1_resample()
     if (is.null(orig)) return(NULL)
     tag_list <- list(
-      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
-          paste0("n = ", length(orig))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
-          paste0("śr. oryg. = ", round(mean(orig), 2)))
+      lc_stat_box("n", length(orig), color = sim_secondary),
+      lc_stat_box("śr. oryg.", round(mean(orig), 2), color = sim_bootstrap)
     )
     if (!is.null(rs)) {
       last_rs <- rs[[length(rs)]]
       tag_list <- c(tag_list, list(
-        div(class = "lc-stat-box", style = paste0("background:", sim_warning, ";"),
-            paste0("śr. boot. #", length(rs), " = ", round(mean(last_rs), 2))),
-        div(class = "lc-stat-box", style = paste0("background:", sim_secondary, "; opacity:0.7;"),
-            paste0("Liczba prób: ", length(rs)))
+        lc_stat_box(paste0("śr. boot. #", length(rs)), round(mean(last_rs), 2),
+                    color = sim_warning),
+        lc_stat_box("Liczba prób", length(rs), color = sim_secondary)
       ))
     }
-    do.call(tagList, tag_list)
+    do.call(lc_stat_grid, tag_list)
   })
 
   # --- Widget 2: rozklad bootstrapowy ---
@@ -336,13 +333,10 @@ ch1_server <- function(input, output, session) {
   output$ch1_boot_stats <- renderUI({
     result <- ch1_boot_dist()
     if (is.null(result)) return(NULL)
-    tagList(
-      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
-          paste0("B = ", result$B)),
-      div(class = "lc-stat-box", style = paste0("background:", sim_observed, ";"),
-          paste0("obs. = ", round(result$observed, 3))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
-          paste0("SE = ", round(result$se, 4)))
+    lc_stat_grid(
+      lc_stat_box("B", result$B, color = sim_secondary),
+      lc_stat_box("obs.", round(result$observed, 3), color = sim_observed),
+      lc_stat_box("SE", round(result$se, 4), color = sim_bootstrap)
     )
   })
 

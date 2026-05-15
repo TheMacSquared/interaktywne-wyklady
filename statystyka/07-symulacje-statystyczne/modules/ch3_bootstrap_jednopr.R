@@ -284,15 +284,12 @@ ch3_server <- function(input, output, session) {
   output$ch3_step_result <- renderUI({
     req(ch3_step() == 4, ch3_boot_res())
     ci <- bootstrap_ci_percentile(ch3_boot_res(), conf_level = input$ch3_conf)
-    tagList(
-      div(class = "lc-stat-box", style = paste0("background:", sim_success, ";"),
-          paste0("Dół: ", round(ci$lower, 3))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_observed, ";"),
-          paste0("Obs: ", round(ch3_boot_res()$observed, 3))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_success, ";"),
-          paste0("Góra: ", round(ci$upper, 3))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
-          paste0("SE: ", round(ch3_boot_res()$se, 4)))
+    lc_stat_grid(
+      lc_stat_box("Dół", round(ci$lower, 3), color = sim_success),
+      lc_stat_box("Obs", round(ch3_boot_res()$observed, 3), color = sim_observed),
+      lc_stat_box("Góra", round(ci$upper, 3), color = sim_success),
+      lc_stat_box("SE", round(ch3_boot_res()$se, 4), color = sim_bootstrap),
+      columns = 4
     )
   })
 

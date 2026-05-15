@@ -307,20 +307,16 @@ ch4_server <- function(input, output, session) {
     # Ttest do porownania
     tt <- tryCatch(classical_ttest_twosample(ch4_data()), error = function(e) NULL)
 
-    out <- tagList(
-      div(class = "lc-stat-box", style = paste0("background:", sim_observed, ";"),
-          paste0("Δ obs = ", round(result$observed_diff, 3))),
-      div(class = "lc-stat-box",
-          style = paste0("background:", format_pval_pl(result$p_value)$color, ";"),
-          paste0("p (perm) = ", round(result$p_value, 4)))
+    out <- list(
+      lc_stat_box("Δ obs", round(result$observed_diff, 3), color = sim_observed),
+      lc_stat_box("p (perm)", round(result$p_value, 4),
+                  color = format_pval_pl(result$p_value)$color)
     )
     if (!is.null(tt)) {
-      out <- tagList(out,
-        div(class = "lc-stat-box", style = paste0("background:", sim_classical, ";"),
-            paste0("p (t-test) = ", round(tt$p, 4)))
-      )
+      out <- c(out, list(lc_stat_box("p (t-test)", round(tt$p, 4),
+                                     color = sim_classical)))
     }
-    out
+    do.call(lc_stat_grid, out)
   })
 
   # --- Widget 2: Test permutacyjny korelacji ---
@@ -383,12 +379,9 @@ ch4_server <- function(input, output, session) {
     res <- ch4_cor_result_rv()
     if (is.null(res)) return(NULL)
     pv  <- format_pval_pl(res$p_value)
-    tagList(
-      div(class = "lc-stat-box", style = paste0("background:", sim_observed, ";"),
-          paste0("r = ", round(res$observed_r, 3))),
-      div(class = "lc-stat-box",
-          style = paste0("background:", pv$color, ";"),
-          paste0("p (perm) = ", round(res$p_value, 4)))
+    lc_stat_grid(
+      lc_stat_box("r", round(res$observed_r, 3), color = sim_observed),
+      lc_stat_box("p (perm)", round(res$p_value, 4), color = pv$color)
     )
   })
 

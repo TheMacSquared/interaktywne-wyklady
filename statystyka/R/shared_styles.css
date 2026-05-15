@@ -1453,10 +1453,10 @@ mjx-container mjx-text {
 .lc-stat-grid {
   --lc-stat-cols: 3;
   display: grid;
-  grid-template-columns: repeat(var(--lc-stat-cols), minmax(0, 1fr));
-  gap: 8px;
-  max-width: 680px;
-  margin: 12px 0;
+  grid-template-columns: repeat(var(--lc-stat-cols), minmax(150px, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin: 16px 0;
 }
 
 .lc-stat-box {
@@ -1522,6 +1522,7 @@ mjx-container mjx-text {
 @media (max-width: 768px) {
   .lc-stat-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 }
 

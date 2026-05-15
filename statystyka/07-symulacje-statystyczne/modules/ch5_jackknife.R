@@ -207,15 +207,12 @@ ch5_server <- function(input, output, session) {
   output$ch5_jack_stats <- renderUI({
     result <- ch5_jack_result()
     if (is.null(result)) return(NULL)
-    tagList(
-      div(class = "lc-stat-box", style = paste0("background:", sim_observed, ";"),
-          paste0("obs = ", round(result$observed, 4))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
-          paste0("SE = ", round(result$se, 4))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_warning, ";"),
-          paste0("Obciążenie = ", round(result$bias, 4))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_success, ";"),
-          paste0("BC = ", round(result$bias_corrected, 4)))
+    lc_stat_grid(
+      lc_stat_box("obs", round(result$observed, 4), color = sim_observed),
+      lc_stat_box("SE", round(result$se, 4), color = sim_bootstrap),
+      lc_stat_box("Obciążenie", round(result$bias, 4), color = sim_warning),
+      lc_stat_box("BC", round(result$bias_corrected, 4), color = sim_success),
+      columns = 4
     )
   })
 
@@ -275,11 +272,9 @@ ch5_server <- function(input, output, session) {
   output$ch5_cmp_stats <- renderUI({
     res <- ch5_cmp_result()
     if (is.null(res)) return(NULL)
-    tagList(
-      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
-          paste0("SE (jack) = ", round(res$jack$se, 4))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_warning, ";"),
-          paste0("SE (boot) = ", round(res$boot$se, 4)))
+    lc_stat_grid(
+      lc_stat_box("SE (jack)", round(res$jack$se, 4), color = sim_bootstrap),
+      lc_stat_box("SE (boot)", round(res$boot$se, 4), color = sim_warning)
     )
   })
 

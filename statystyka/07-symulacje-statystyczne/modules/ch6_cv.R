@@ -218,13 +218,10 @@ ch6_server <- function(input, output, session) {
     cv_res <- ch6_cv_result()
     if (is.null(cv_res)) return(NULL)
     res  <- cv_res$result
-    tagList(
-      div(class = "lc-stat-box", style = paste0("background:", sim_cv_train, ";"),
-          paste0("MSE train = ", round(res$train_mse, 2))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_cv_test, ";"),
-          paste0("CV MSE = ", round(res$cv_mse, 2))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
-          paste0("k = ", res$k))
+    lc_stat_grid(
+      lc_stat_box("MSE train", round(res$train_mse, 2), color = sim_cv_train),
+      lc_stat_box("CV MSE", round(res$cv_mse, 2), color = sim_cv_test),
+      lc_stat_box("k", res$k, color = sim_secondary)
     )
   })
 
