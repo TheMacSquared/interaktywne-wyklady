@@ -494,7 +494,7 @@ ch2_server <- function(input, output, session) {
                hjust = 0, vjust = 1,
                label = paste0("Pasmo ±RMSE = ±", round(rmse, 1)),
                color = unname(upwr_cat["bursztyn"]),
-               fill = "white", label.size = 0) +
+               fill = "white", linewidth = 0) +
       labs(
         x = unname(.cas_labels[spec$x]),
         y = unname(.cas_labels[spec$y])

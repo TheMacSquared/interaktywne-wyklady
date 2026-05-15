@@ -265,7 +265,7 @@ ch6_server <- function(input, output, session) {
       geom_segment(data = edges, aes(x = x, y = y, xend = xend, yend = yend),
                    color = upwr_rule, linewidth = 1) +
       geom_label(data = nodes, aes(x = x, y = y, label = label, fill = active),
-                 color = "white", fontface = "bold", label.size = 0,
+                 color = "white", fontface = "bold", linewidth = 0,
                  label.padding = grid::unit(0.35, "lines"), size = 4) +
       scale_fill_manual(values = c("TRUE" = upwr_secondary, "FALSE" = upwr_reference)) +
       xlim(-2.7, 2.7) +
