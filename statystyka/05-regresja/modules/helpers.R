@@ -5,7 +5,7 @@
 # Wspólne dane CASchools: ~420 okręgów szkolnych w Kalifornii, lata 90.
 # Używane w ch1 (regresja prosta) i ch2 (jakość modelu).
 .cas_data <- read.csv(
-  file.path(project_root, "04-wnioskowanie-statystyczne", "dane", "caschools.csv"),
+  file.path(app_dir, "dane", "caschools.csv"),
   stringsAsFactors = FALSE
 )
 

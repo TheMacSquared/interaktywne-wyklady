@@ -49,40 +49,57 @@ ch3_ui <- list(
     lc_h2("ch3-budowanie", "Budowanie modelu wielorakiego"),
 
     tagList(
-      p("Zobaczmy to na danych studentów: średnia ocen w zależności od
-        kilku czynników (godziny nauki, frekwencja, stres, sen). Wybierz,
-        które predyktory dodać — i zwróć uwagę nie tylko na same liczby
-        w tabeli, ale na to, jak zmienia się ", tags$em("znak"), " i ",
-        tags$em("istotność"),
-        " współczynnika, gdy dokładamy kolejny X.")
+      p("Zobaczmy to na realnych danych CASchools: wyniki testów szkolnych
+        w zależności od cech okręgu. Wybierz, które predyktory dodać — i zwróć
+        uwagę nie tylko na same liczby w tabeli, ale na to, jak zmienia się ",
+        tags$em("znak"), " i ", tags$em("istotność"),
+        " współczynnika, gdy dokładamy kolejny X."),
+      p("To są dane obserwacyjne, więc nie oczekujemy czystej sytuacji
+        laboratoryjnej. Część zmiennych będzie wyraźna, część nieistotna,
+        a część może działać inaczej w różnych podgrupach. Interakcje
+        na razie świadomie ignorujemy — najpierw uczymy się modelu
+        addytywnego: każdy predyktor wnosi własny składnik.")
     ),
 
     figure_panel(
-      label = "Ryc. 3.1", title = "Predykcja średniej ocen",
+      label = "Ryc. 3.1", title = "CASchools: model z wieloma predyktorami",
       full_width = TRUE,
       fluidRow(
         column(4,
-          helpText("Dane: 400 studentów. Kliknij „Generuj próbę\", a potem
-                    przełączaj predyktory — model przelicza się na tych
-                    samych danych."),
+          helpText("Dane: 420 okręgów szkolnych w Kalifornii. Przełączaj
+                    predyktory — model przelicza się na tych samych realnych
+                    danych."),
+          selectInput("ch3_outcome", "Zmienna zależna Y:",
+            choices = c(
+              "Wynik: czytanie" = "read",
+              "Wynik: matematyka" = "math"
+            ),
+            selected = "read"
+          ),
           checkboxGroupInput("ch3_predictors", "Predyktory:",
             choices = c(
-              "Godziny nauki/tydz." = "godziny_nauki",
-              "Frekwencja (%)"      = "frekwencja",
-              "Poziom stresu (1-10)" = "stres",
-              "Sen (h/dobę)"        = "sen_h"
+              "Dotacje do obiadów (%)" = "lunch",
+              "Dochód okręgu (tys. USD)" = "income",
+              "Angielski jako drugi język (%)" = "english",
+              "Uczniowie / nauczyciel" = "student_teacher_ratio",
+              "Wydatki na ucznia" = "expenditure",
+              "Komputery" = "computer",
+              "CalWORKs (%)" = "calworks"
             ),
-            selected = c("godziny_nauki", "frekwencja")
+            selected = c("lunch", "income", "english",
+                         "student_teacher_ratio", "expenditure",
+                         "computer", "calworks")
           ),
-          actionButton("ch3_gen", "Generuj próbę",
-                       class = "lc-btn-primary", width = "100%"),
           helpText(style = "margin-top: 8px; font-size: 12px;",
-            "Każde kliknięcie losuje nową próbę 400 studentów — zobacz,
-             jak estymaty trochę się chwieją.")
+            "Domyślny model celowo zawiera też predyktory słabe lub redundantne.
+             Dzięki temu tabela nie udaje, że w realnych danych wszystko jest
+             istotne.")
         ),
         column(8,
-          zoom_plot_ui("ch3_scatter_model_plot", height = "340px"),
-          uiOutput("ch3_scatter_model_info"),
+          lc_feedback(type = "info",
+            p("Tabela pokazuje współczynniki pełnego modelu addytywnego,
+              bez interakcji. Gwiazdka przy p-value oznacza p < 0.05.")
+          ),
           uiOutput("ch3_model_coefs"),
           plotOutput("ch3_coef_plot", height = "250px"),
           uiOutput("ch3_model_stats")
@@ -96,9 +113,11 @@ ch3_ui <- list(
       p("Słowo „kontrola\" w regresji znaczy: ", tags$em("usuwamy"),
         " z X-a informację, którą już niesie inny X. To, co zostaje, jest
         efektem unikalnym danej zmiennej — tym, czego nie da się wytłumaczyć pozostałymi."),
-      p("Widget pokazuje to krok po kroku: najpierw policzymy efekt
-        frekwencji w modelu prostym, potem efekt godzin nauki, a na końcu
-        zobaczymy, co zostaje, gdy zbudujemy model z obiema zmiennymi naraz.")
+      p("Widget pokazuje to krok po kroku na CASchools: najpierw policzymy
+        prosty związek wyniku czytania z dochodem okręgu, potem z odsetkiem
+        uczniów z dotacją do obiadu, a na końcu zobaczymy, co zostaje, gdy
+        obie informacje kontrolujemy naraz razem z odsetkiem uczniów uczących
+        się angielskiego jako drugiego języka.")
     ),
 
     figure_panel(
@@ -106,16 +125,14 @@ ch3_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          helpText("Porównujemy model prosty i model z kontrolą drugiej zmiennej."),
-          actionButton("ch3_control_new", "Generuj dane",
-                       class = "lc-btn-primary", width = "100%"),
-          hr(),
+          helpText("Porównujemy modele proste i model wieloraki na tych samych
+                    420 okręgach szkolnych."),
           h5("Kroki:"),
-          actionButton("ch3_control_step1", "1. Ocena ~ frekwencja",
+          actionButton("ch3_control_step1", "1. Czytanie ~ dochód",
                        class = "lc-btn-outline", width = "100%"),
-          actionButton("ch3_control_step2", "2. Ocena ~ nauka",
+          actionButton("ch3_control_step2", "2. Czytanie ~ lunch",
                        class = "lc-btn-outline", width = "100%"),
-          actionButton("ch3_control_step3", "3. Obie zmienne naraz",
+          actionButton("ch3_control_step3", "3. Model z kontrolą",
                        class = "lc-btn-outline", width = "100%")
         ),
         column(8,
@@ -191,107 +208,28 @@ ch3_ui <- list(
 
 ch3_server <- function(input, output, session) {
 
-  ch3_data <- reactiveVal(NULL)
-
   ch3_labels_pl <- c(
-    "godziny_nauki" = "Godziny nauki",
-    "frekwencja" = "Frekwencja",
-    "stres" = "Stres",
-    "sen_h" = "Sen (h)"
+    "read" = "Wynik: czytanie",
+    "math" = "Wynik: matematyka",
+    "lunch" = "Dotacje do obiadów (%)",
+    "income" = "Dochód okręgu (tys. USD)",
+    "english" = "Angielski jako drugi język (%)",
+    "student_teacher_ratio" = "Uczniowie / nauczyciel",
+    "expenditure" = "Wydatki na ucznia",
+    "computer" = "Komputery",
+    "calworks" = "CalWORKs (%)"
   )
-
-  ch3_make_three_groups <- function(x) {
-    breaks <- unique(stats::quantile(x, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE))
-    if (length(breaks) < 4) {
-      breaks <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), length.out = 4)
-    }
-    cut(x, breaks = breaks, include.lowest = TRUE,
-        labels = c("niski", "średni", "wysoki"))
-  }
-
-  # Generowanie danych: tylko podmienia próbę. Model przelicza się reaktywnie.
-  observeEvent(input$ch3_gen, {
-    ch3_data(generate_multi_data(400))
-  })
 
   # Model jako reactive: zależy od danych i wyboru predyktorów.
   # Dzięki temu przełączanie checkboxów porównuje modele na TYCH SAMYCH danych.
   ch3_model <- reactive({
-    df <- ch3_data()
-    if (is.null(df)) return(NULL)
+    df <- .cas_data
+    outcome <- input$ch3_outcome
+    if (is.null(outcome)) outcome <- "read"
     preds <- input$ch3_predictors
-    if (length(preds) == 0) preds <- "godziny_nauki"
-    formula <- as.formula(paste("ocena ~", paste(preds, collapse = " + ")))
+    if (length(preds) == 0) preds <- "lunch"
+    formula <- as.formula(paste(outcome, "~", paste(preds, collapse = " + ")))
     lm(formula, data = df)
-  })
-
-  ch3_build_scatter <- reactive({
-    df <- ch3_data()
-    if (is.null(df)) {
-      return(ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane i dopasuj'",
-                 size = 5.5, color = upwr_reference) +
-        theme_void())
-    }
-    preds <- input$ch3_predictors
-    if (length(preds) == 0) preds <- "godziny_nauki"
-
-    x_var <- preds[1]
-    df$kolor_pred <- if (length(preds) >= 2) ch3_make_three_groups(df[[preds[2]]]) else factor("wszyscy")
-    df$facet_row  <- if (length(preds) >= 3) ch3_make_three_groups(df[[preds[3]]]) else factor("wszyscy")
-    df$facet_col  <- if (length(preds) >= 4) ch3_make_three_groups(df[[preds[4]]]) else factor("wszyscy")
-
-    color_title <- if (length(preds) >= 2) ch3_labels_pl[[preds[2]]] else NULL
-
-    p <- ggplot(df, aes(x = .data[[x_var]], y = ocena, color = kolor_pred)) +
-      geom_point(alpha = 0.55, size = 2) +
-      geom_smooth(method = "lm", se = FALSE, linewidth = 1) +
-      scale_color_manual(
-        values = if (length(preds) >= 2) {
-          c("niski" = unname(upwr_cat["niebo"]),
-            "średni" = unname(upwr_cat["bursztyn"]),
-            "wysoki" = unname(upwr_cat["wrzos"]))
-        } else {
-          c("wszyscy" = upwr_secondary)
-        },
-        name = color_title
-      ) +
-      labs(x = ch3_labels_pl[[x_var]], y = "Średnia ocen") +
-      theme_upwr() +
-      theme(legend.position = if (length(preds) >= 2) "top" else "none")
-
-    if (length(preds) == 3) {
-      p <- p + facet_grid(rows = vars(facet_row), labeller = labeller(
-        facet_row = function(x) paste(ch3_labels_pl[[preds[3]]], x)
-      ))
-    } else if (length(preds) >= 4) {
-      p <- p + facet_grid(rows = vars(facet_row), cols = vars(facet_col),
-        labeller = labeller(
-          facet_row = function(x) paste(ch3_labels_pl[[preds[3]]], x),
-          facet_col = function(x) paste(ch3_labels_pl[[preds[4]]], x)
-        )
-      )
-    }
-    p
-  })
-
-  zoom_plot_server("ch3_scatter_model_plot", ch3_build_scatter)
-
-  output$ch3_scatter_model_info <- renderUI({
-    df <- ch3_data()
-    if (is.null(df)) return(NULL)
-    preds <- input$ch3_predictors
-    if (length(preds) == 0) preds <- "godziny_nauki"
-    x_var <- ch3_labels_pl[[preds[1]]]
-    layers <- c(paste("oś X:", x_var))
-    if (length(preds) >= 2) layers <- c(layers, paste("kolor:", ch3_labels_pl[[preds[2]]], "w 3 grupach"))
-    if (length(preds) >= 3) layers <- c(layers, paste("wiersze:", ch3_labels_pl[[preds[3]]], "w 3 grupach"))
-    if (length(preds) >= 4) layers <- c(layers, paste("kolumny:", ch3_labels_pl[[preds[4]]], "w 3 grupach"))
-
-    lc_feedback(type = "info",
-      p(tags$strong("Wizualizacja modelu: "), paste(layers, collapse = "; "),
-        ". Linie są poglądowymi prostymi na przekrojach danych; tabela niżej pokazuje współczynniki pełnego modelu.")
-    )
   })
 
   output$ch3_model_coefs <- renderUI({
@@ -365,43 +303,37 @@ ch3_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget: kontrola zmiennych ---
-  ch3_control_data <- reactiveVal(NULL)
-  ch3_control_step <- reactiveVal(0)
+  # --- Widget: kontrola zmiennych na CASchools ---
+  ch3_control_step <- reactiveVal(1)
 
-  observeEvent(input$ch3_control_new, {
-    ch3_control_data(generate_confounding_data(160))
-    ch3_control_step(0)
-  })
   observeEvent(input$ch3_control_step1, ch3_control_step(1))
   observeEvent(input$ch3_control_step2, ch3_control_step(2))
   observeEvent(input$ch3_control_step3, ch3_control_step(3))
 
   output$ch3_control_plot <- renderPlot({
-    df <- ch3_control_data()
+    df <- .cas_data
     step <- ch3_control_step()
-    if (is.null(df) || step == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane', potem kroki",
-                 size = 5.5, color = upwr_reference) +
-        theme_void()
-    } else if (step == 1) {
-      ggplot(df, aes(x = frekwencja, y = ocena)) +
+    if (step == 1) {
+      ggplot(df, aes(x = income, y = read)) +
         geom_point(color = upwr_secondary, alpha = 0.5) +
         geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"])) +
-        labs(x = "Frekwencja (%)", y = "Ocena") +
+        labs(x = "Dochód okręgu (tys. USD)", y = "Wynik: czytanie") +
         theme_upwr()
     } else if (step == 2) {
-      ggplot(df, aes(x = godziny_nauki, y = ocena)) +
+      ggplot(df, aes(x = lunch, y = read)) +
         geom_point(color = upwr_secondary, alpha = 0.5) +
         geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["szalwia"])) +
-        labs(x = "Godziny nauki", y = "Ocena") +
+        labs(x = "Dotacje do obiadów (%)", y = "Wynik: czytanie") +
         theme_upwr()
     } else {
-      model <- lm(ocena ~ godziny_nauki + frekwencja, data = df)
+      model <- lm(read ~ income + lunch + english, data = df)
       coefs <- broom::tidy(model)
       coefs <- coefs[coefs$term != "(Intercept)", ]
-      labels <- c(godziny_nauki = "Godziny nauki", frekwencja = "Frekwencja")
+      labels <- c(
+        income = "Dochód okręgu",
+        lunch = "Dotacje do obiadów",
+        english = "Angielski jako drugi język"
+      )
       coefs$term <- labels[coefs$term]
       ggplot(coefs, aes(x = estimate, y = term)) +
         geom_vline(xintercept = 0, linetype = "dashed", color = upwr_secondary) +
@@ -415,26 +347,32 @@ ch3_server <- function(input, output, session) {
   })
 
   output$ch3_control_info <- renderUI({
-    df <- ch3_control_data()
+    df <- .cas_data
     step <- ch3_control_step()
-    if (is.null(df) || step == 0) return(NULL)
-    m_freq <- lm(ocena ~ frekwencja, data = df)
-    m_study <- lm(ocena ~ godziny_nauki, data = df)
-    m_both <- lm(ocena ~ godziny_nauki + frekwencja, data = df)
-    tf <- broom::tidy(m_freq)
-    ts <- broom::tidy(m_study)
+    m_income <- lm(read ~ income, data = df)
+    m_lunch <- lm(read ~ lunch, data = df)
+    m_both <- lm(read ~ income + lunch + english, data = df)
+    ti <- broom::tidy(m_income)
+    tl <- broom::tidy(m_lunch)
     tb <- broom::tidy(m_both)
     if (step == 1) {
       tagList(
-        lc_stat_box("β frekw.", round(tf$estimate[2], 3), color = unname(upwr_cat["niebo"])),
-        lc_stat_box("p", format_p_value(tf$p.value[2]), color = upwr_secondary),
-        lc_feedback(type = "info", p("W modelu prostym frekwencja wygląda na ważną, ale może nieść informację o przygotowaniu studenta."))
+        lc_stat_box("β dochód", round(ti$estimate[2], 3), color = unname(upwr_cat["niebo"])),
+        lc_stat_box("p", format_p_value(ti$p.value[2]), color = upwr_secondary),
+        lc_feedback(type = "info",
+          p("W modelu prostym bogatsze okręgi mają wyższe wyniki czytania.
+            Ale dochód niesie też informację o składzie społecznym okręgu,
+            więc nie traktujemy tego jeszcze jako czystego efektu dochodu."))
       )
     } else if (step == 2) {
       tagList(
-        lc_stat_box("β nauka", round(ts$estimate[2], 3), color = unname(upwr_cat["szalwia"])),
-        lc_stat_box("p", format_p_value(ts$p.value[2]), color = upwr_secondary),
-        lc_feedback(type = "info", p("Godziny nauki też są powiązane z oceną. Teraz sprawdzimy, co zostaje po kontroli obu naraz."))
+        lc_stat_box("β lunch", round(tl$estimate[2], 3), color = unname(upwr_cat["szalwia"])),
+        lc_stat_box("p", format_p_value(tl$p.value[2]), color = upwr_secondary),
+        lc_feedback(type = "info",
+          p("Odsetek uczniów z dotacją do obiadu jest silnie ujemnie
+            powiązany z wynikiem czytania. W kolejnym kroku sprawdzimy,
+            co zostaje po kontroli dochodu i odsetka uczniów uczących się
+            angielskiego."))
       )
     } else {
       rows <- lapply(2:nrow(tb), function(i) {
@@ -446,7 +384,10 @@ ch3_server <- function(input, output, session) {
           tags$thead(tags$tr(tags$th("Zmienna"), tags$th("β"), tags$th("SE"), tags$th("p"))),
           tags$tbody(rows)
         ),
-        lc_feedback(type = "warning", p("Współczynnik oznacza efekt danej zmiennej po odjęciu informacji wspólnej z pozostałymi predyktorami."))
+        lc_feedback(type = "warning",
+          p("Współczynnik oznacza efekt danej zmiennej po odjęciu informacji
+            wspólnej z pozostałymi predyktorami. To nadal nie jest dowód
+            przyczynowy, tylko lepszy opis zależności w danych obserwacyjnych."))
       )
     }
   })

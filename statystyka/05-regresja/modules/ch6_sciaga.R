@@ -123,7 +123,7 @@ ch6_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 5.1", title = "Mini-drzewko wyboru modelu regresyjnego",
+      label = "Ryc. 6.1", title = "Mini-drzewko wyboru modelu regresyjnego",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -198,6 +198,13 @@ predict(model_log, newdata = ..., type = 'response')  # prawdopodobienstwa"
         tags$li("Overfitting: więcej zmiennych = wyższe R², ale gorsze uogólnianie. Zawsze sprawdzaj adj.R² / AIC / BIC."),
         tags$li("R² w logistycznej: nie używaj R² do oceny regresji logistycznej. Użyj AIC, BIC, dokładności, ROC-AUC.")
       )
+    ),
+
+    lc_chapter_next(
+      num       = "07",
+      title     = "Ćwiczenia",
+      lead      = "zadania interpretacyjne i porównywanie modeli",
+      target_id = "ch-cwiczenia"
     )
 
     )
