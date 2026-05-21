@@ -381,13 +381,11 @@ ch2_server <- function(input, output, session) {
     cis <- ch2a_ci_list()
     if (length(cis) == 0) return(NULL)
     last <- cis[[length(cis)]]
-    tagList(
-      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
-          paste0("Liczba prób: ", length(cis))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_success, ";"),
-          paste0("CI: [", round(last$lower, 3), ", ", round(last$upper, 3), "]")),
-      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
-          paste0("Szerokość: ", round(last$upper - last$lower, 3)))
+    lc_stat_grid(
+      lc_stat_box("Liczba prób", length(cis), color = sim_secondary),
+      lc_stat_box("CI", paste0("[", round(last$lower, 3), ", ", round(last$upper, 3), "]"),
+                  color = sim_success),
+      lc_stat_box("Szerokość", round(last$upper - last$lower, 3), color = sim_bootstrap)
     )
   })
 
@@ -452,13 +450,11 @@ ch2_server <- function(input, output, session) {
     cis <- ch2b_ci_list()
     if (length(cis) == 0) return(NULL)
     last <- cis[[length(cis)]]
-    tagList(
-      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
-          paste0("Liczba prób: ", length(cis))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_success, ";"),
-          paste0("CI: [", round(last$lower, 3), ", ", round(last$upper, 3), "]")),
-      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
-          paste0("SE: ", round(last$se, 4)))
+    lc_stat_grid(
+      lc_stat_box("Liczba prób", length(cis), color = sim_secondary),
+      lc_stat_box("CI", paste0("[", round(last$lower, 3), ", ", round(last$upper, 3), "]"),
+                  color = sim_success),
+      lc_stat_box("SE", round(last$se, 4), color = sim_bootstrap)
     )
   })
 
@@ -540,13 +536,11 @@ ch2_server <- function(input, output, session) {
     if (is.null(res)) return(NULL)
     coverage <- mean(res$covers)
     col_cov  <- if (abs(coverage - res$conf) < 0.05) sim_success else sim_warning
-    tagList(
-      div(class = "lc-stat-box", style = paste0("background:", col_cov, ";"),
-          paste0("Pokrycie: ", round(coverage * 100, 1), "%")),
-      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
-          paste0("Cel: ", round(res$conf * 100), "%")),
-      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
-          paste0("Trafiło: ", sum(res$covers), " / ", length(res$covers)))
+    lc_stat_grid(
+      lc_stat_box("Pokrycie", round(coverage * 100, 1), "%", color = col_cov),
+      lc_stat_box("Cel", round(res$conf * 100), "%", color = sim_secondary),
+      lc_stat_box("Trafiło", sum(res$covers), " / ", length(res$covers),
+                  color = sim_bootstrap)
     )
   })
 
@@ -657,13 +651,10 @@ ch2_server <- function(input, output, session) {
   output$ch2_prop_stats <- renderUI({
     res <- ch2_prop_result()
     if (is.null(res)) return(NULL)
-    tagList(
-      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
-          paste0("n = ", res$n, ", k = ", res$k)),
-      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
-          paste0("p̂ = ", round(res$phat, 3))),
-      div(class = "lc-stat-box", style = paste0("background:", sim_success, ";"),
-          paste0("p (prawdziwe) = ", round(res$p_true, 3)))
+    lc_stat_grid(
+      lc_stat_box("n", res$n, caption = paste("k =", res$k), color = sim_secondary),
+      lc_stat_box("p̂", round(res$phat, 3), color = sim_bootstrap),
+      lc_stat_box("p prawdziwe", round(res$p_true, 3), color = sim_success)
     )
   })
 

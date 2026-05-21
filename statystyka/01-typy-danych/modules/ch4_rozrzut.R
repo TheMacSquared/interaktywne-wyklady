@@ -852,7 +852,7 @@ ch4_server <- function(input, output, session) {
           annotate("label", x = mean(outliers), y = 0.55,
                    label = paste0(length(outliers), " outlier(s)"),
                    fill = upwr_seq_burgundy[2], color = upwr_accent, size = 4,
-                   fontface = "bold", label.size = 0.5)
+                   fontface = "bold", linewidth = 0.5)
       }
 
       p

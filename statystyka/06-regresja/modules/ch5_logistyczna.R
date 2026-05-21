@@ -71,7 +71,7 @@ ch5_ui <- list(
     lc_h2("ch5-krzywa", "Krzywa logistyczna"),
 
     figure_panel(
-      label = "Ryc. 3.1", title = "Sigmoida w akcji",
+      label = "Ryc. 5.2", title = "Sigmoida w akcji",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -96,7 +96,7 @@ ch5_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 3.1b", title = "Logit → prawdopodobieństwo → decyzja",
+      label = "Ryc. 5.3", title = "Logit → prawdopodobieństwo → decyzja",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -132,7 +132,7 @@ ch5_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 3.2", title = "Predykcja zdania egzaminu",
+      label = "Ryc. 5.4", title = "Predykcja zdania egzaminu",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -171,18 +171,18 @@ ch5_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 3.3", title = "Odds ratio",
+      label = "Ryc. 5.5", title = "Odds ratio",
       full_width = TRUE,
       helpText("Używa modelu dopasowanego powyżej."),
       uiOutput("ch5_odds_ratios")
     ),
 
     figure_panel(
-      label = "Ryc. 3.4", title = "Próg klasyfikacji i macierz pomyłek",
+      label = "Ryc. 5.6", title = "Próg klasyfikacji i macierz pomyłek",
       full_width = TRUE,
       fluidRow(
         column(4,
-          helpText("Używa modelu dopasowanego w Ryc. 3.2."),
+          helpText("Używa modelu dopasowanego w Ryc. 5.4."),
           sliderInput("ch5_threshold", "Próg decyzji:",
                       min = 0.1, max = 0.9, value = 0.5, step = 0.05)
         ),
@@ -523,7 +523,7 @@ ch5_server <- function(input, output, session) {
     df <- ch5_data()
     if (is.null(model) || is.null(df)) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Najpierw dopasuj model w Ryc. 3.2",
+        annotate("text", x = 0.5, y = 0.5, label = "Najpierw dopasuj model w Ryc. 5.4",
                  size = 5.5, color = upwr_reference) +
         theme_void()
     } else {

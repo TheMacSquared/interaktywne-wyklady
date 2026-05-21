@@ -198,6 +198,13 @@ predict(model_log, newdata = ..., type = 'response')  # prawdopodobienstwa"
         tags$li("Overfitting: więcej zmiennych = wyższe R², ale gorsze uogólnianie. Zawsze sprawdzaj adj.R² / AIC / BIC."),
         tags$li("R² w logistycznej: nie używaj R² do oceny regresji logistycznej. Użyj AIC, BIC, dokładności, ROC-AUC.")
       )
+    ),
+
+    lc_chapter_next(
+      num       = "07",
+      title     = "Ćwiczenia",
+      lead      = "zadania interpretacyjne i porównywanie modeli",
+      target_id = "ch-cwiczenia"
     )
 
     )
@@ -265,7 +272,7 @@ ch6_server <- function(input, output, session) {
       geom_segment(data = edges, aes(x = x, y = y, xend = xend, yend = yend),
                    color = upwr_rule, linewidth = 1) +
       geom_label(data = nodes, aes(x = x, y = y, label = label, fill = active),
-                 color = "white", fontface = "bold", label.size = 0,
+                 color = "white", fontface = "bold", linewidth = 0,
                  label.padding = grid::unit(0.35, "lines"), size = 4) +
       scale_fill_manual(values = c("TRUE" = upwr_secondary, "FALSE" = upwr_reference)) +
       xlim(-2.7, 2.7) +

@@ -65,7 +65,7 @@ shiny::runApp("11-kierunkowe")
 | [przedzialy-ufnosci](03-przedzialy-ufnosci/) | Przedziały ufności | 7 rozdziałów: estymacja punktowa, idea przedziałów, przedział dla średniej, proporcji, czynniki szerokości, ściąga + **ćwiczenia z dropdownem kierunków** (Edukacja/BHP/Rolnictwo/Żywność) |
 | [wnioskowanie-statystyczne](04-wnioskowanie-statystyczne/) | Wnioskowanie statystyczne | 12 rozdziałów: logika testowania, formułowanie hipotez, błędy/p-wartość/decyzja, jedna ilo./jako., korelacja, dwie jakościowe, dwie grupy, ANOVA, drzewo decyzyjne, ściąga + ćwiczenia |
 | [zalozenia-testow](05-zalozenia-testow/) | Założenia testów | 5 rozdziałów: normalność, jednorodne wariancje, χ²/Fisher, mapa metod z alternatywami, ściąga |
-| [regresja](06-regresja/) | Regresja | 6 rozdziałów: liniowa prosta, jakość modelu, wieloraka, porównanie modeli, logistyczna, ściąga |
+| [regresja](06-regresja/) | Regresja | 7 rozdziałów: liniowa prosta, jakość modelu, wieloraka, porównanie modeli (R², AIC, BIC, RMSE), logistyczna, ściąga, ćwiczenia |
 | [symulacje-statystyczne](07-symulacje-statystyczne/) | Symulacje statystyczne | 10 rozdziałów: idea resamplingowa, bootstrap CI, bootstrap jednej próby, testy permutacyjne, jackknife, cross-validation, Monte Carlo (moc + H₀), kiedy stosować?, ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
 | [metody-bayesowskie](08-metody-bayesowskie/) | Metody bayesowskie | 12 rozdziałów z **konsekwentnym dwukolumnowym porównaniem freq vs Bayes**: intuicja (prior→posterior), BF vs p, HDI vs CI, jedna próba, dwie grupy, ANOVA, tabele krzyżowe, korelacja, regresja liniowa i logistyczna (rstanarm), ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
 | [dobre-dane](09-dobre-dane/) | Jakość danych | 11 zbiorów — kiedy dane nadają się do klasycznej statystyki? (CASchools, pingwiny, Tarantino, Wage, hotel, formularz, laboratorium, studenci, kawiarnia) + ściąga |
@@ -143,14 +143,16 @@ interaktywne-wyklady/statystyka/
 │       └── ch5_sciaga.R            # 5. Ściąga (testy diagnostyczne, quick reference)
 ├── 06-regresja/                        # Regresja liniowa i logistyczna
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
+│   ├── dane/                       # Dane CASchools do przykładów i ćwiczeń
 │   └── modules/
 │       ├── helpers.R               # Generatory danych regresyjnych, metryki, theme
 │       ├── ch1_liniowa.R           # 1. Regresja liniowa prosta (scatter, reszty, R²)
-│       ├── ch2_jakosc.R            # 2. Jakość modelu (reszty, R², błędy)
-│       ├── ch3_wieloraka.R         # 3. Regresja wieloraka (predyktory, adj.R², stepwise)
+│       ├── ch2_jakosc.R            # 2. Jakość modelu (reszty, R², RMSE, ekstrapolacja)
+│       ├── ch3_wieloraka.R         # 3. Regresja wieloraka (predyktory, kontrola, VIF)
 │       ├── ch4_porownanie.R        # 4. Porównanie modeli (R², AIC, BIC, RMSE, overfitting)
 │       ├── ch5_logistyczna.R       # 5. Regresja logistyczna (sigmoida, OR, predykcja)
-│       └── ch6_sciaga.R            # 6. Ściąga (wzory, metryki, kod R)
+│       ├── ch6_sciaga.R            # 6. Ściąga (wzory, metryki, kod R)
+│       └── ch7_cwiczenia.R         # 7. Ćwiczenia praktyczne
 ├── 07-symulacje-statystyczne/         # Symulacje: bootstrap, permutacje, CV, MC
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
 │   └── modules/

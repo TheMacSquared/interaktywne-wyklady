@@ -1028,7 +1028,7 @@ ch1_server <- function(input, output, session) {
       annotate("label", x = min(df$x), y = max(df$y),
                hjust = 0, vjust = 1,
                label = if (is_sig) "p < 0.05: nachylenie istotne" else "p ≥ 0.05: brak istotności",
-               color = line_color, fill = "white", label.size = 0) +
+               color = line_color, fill = "white", linewidth = 0) +
       labs(x = "X", y = "Y", subtitle = df$title[1]) +
       theme_upwr()
   }))

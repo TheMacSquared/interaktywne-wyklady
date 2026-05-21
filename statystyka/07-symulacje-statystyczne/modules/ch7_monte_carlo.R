@@ -208,13 +208,11 @@ ch7_server <- function(input, output, session) {
     moc     <- result$power
     alpha   <- result$alpha
     moc_col <- if (moc >= 0.80) sim_success else if (moc >= 0.50) sim_warning else sim_observed
-    tagList(
-      div(class = "lc-stat-box", style = paste0("background:", moc_col, ";"),
-          paste0("Moc = ", round(moc * 100, 1), "%")),
-      div(class = "lc-stat-box", style = paste0("background:", sim_secondary, ";"),
-          paste0("α = ", alpha)),
-      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
-          paste0("n = ", result$n, ", δ = ", result$delta))
+    lc_stat_grid(
+      lc_stat_box("Moc", round(moc * 100, 1), "%", color = moc_col),
+      lc_stat_box("α", alpha, color = sim_secondary),
+      lc_stat_box("n", result$n, caption = paste("δ =", result$delta),
+                  color = sim_bootstrap)
     )
   })
 
@@ -323,15 +321,10 @@ ch7_server <- function(input, output, session) {
     if (is.null(result)) return(NULL)
     pv_mc  <- format_pval_pl(result$p_value_mc)
     pv_cl  <- format_pval_pl(result$classical_p)
-    tagList(
-      div(class = "lc-stat-box", style = paste0("background:", sim_bootstrap, ";"),
-          paste0("obs = ", round(result$observed_stat, 3))),
-      div(class = "lc-stat-box",
-          style = paste0("background:", pv_mc$color, ";"),
-          paste0("p MC = ", round(result$p_value_mc, 4))),
-      div(class = "lc-stat-box",
-          style = paste0("background:", pv_cl$color, ";"),
-          paste0("p klas. = ", round(result$classical_p, 4)))
+    lc_stat_grid(
+      lc_stat_box("obs", round(result$observed_stat, 3), color = sim_bootstrap),
+      lc_stat_box("p MC", round(result$p_value_mc, 4), color = pv_mc$color),
+      lc_stat_box("p klas.", round(result$classical_p, 4), color = pv_cl$color)
     )
   })
 

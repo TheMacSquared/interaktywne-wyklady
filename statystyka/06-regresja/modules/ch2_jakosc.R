@@ -236,18 +236,83 @@ ch2_ui <- list(
       zoom_plot_ui("ch2_r2_compare_plot", height = "360px")
     ),
 
-    inline_callout(label = "Uwaga", color = "uwaga",
-      "Wysokie R² nie oznacza, że model jest „dobry” — może być przeuczony.
-       Niskie R² nie oznacza, że model jest bezwartościowy — w naukach
-       społecznych R² = 0.3 jest często bardzo dobre. R² mówi o sile związku
-       w tych konkretnych danych, nie o jakości modelu w ogóle."
-    ),
-
     tagList(
+      p("Tu pojawia się pierwsza ważna pułapka: wysokie ",
+        withMathJax("\\(R^2\\)"),
+        " nie oznacza automatycznie dobrego modelu. Model może tak mocno
+        dopasować się do przypadkowych szczegółów próby, że świetnie wygląda
+        na danych treningowych, ale słabo przewiduje nowe obserwacje. To jest
+        ", tags$em("przeuczenie"), " (overfitting)."),
+      p("Niskie ", withMathJax("\\(R^2\\)"),
+        " też nie przekreśla modelu. W naukach społecznych, edukacyjnych
+        czy bezpieczeństwie pracy procesy są głośne i wieloczynnikowe, więc
+        ", withMathJax("\\(R^2 = 0.3\\)"),
+        " bywa bardzo dobrą informacją. R² mówi o sile związku w tych
+        konkretnych danych, a nie o jakości modelu w ogóle."),
+      lc_h3("Jak wygląda przeuczenie?"),
+      p("Kilka typowych sytuacji:"),
+      tags$ul(
+        tags$li(tags$b("Za dużo predyktorów przy małej próbie: "),
+                "model z 20 zmiennymi dla 40 obserwacji może przypadkiem
+                „wyjaśnić” szum, a nie zjawisko."),
+        tags$li(tags$b("Zbyt elastyczna krzywa: "),
+                "wielomian wysokiego stopnia przechodzi blisko każdego punktu,
+                ale między punktami faluje bez sensu."),
+        tags$li(tags$b("Powtarzane dobieranie modelu pod tę samą próbę: "),
+                "sprawdzamy wiele wariantów i wybieramy ten, który wygląda
+                najlepiej, choć wygrał przypadkiem."),
+        tags$li(tags$b("Wyciek informacji: "),
+                "w predyktorach znajduje się zmienna, której w praktycznej
+                predykcji jeszcze byśmy nie znali, np. wynik po egzaminie
+                użyty do przewidywania zdania egzaminu.")
+      ),
+      figure_panel(
+        label = "Ryc. 2.2b", title = "Przeuczenie: dopasowanie kontra generalizacja",
+        full_width = TRUE,
+        helpText("Te same dane treningowe i testowe, trzy poziomy elastyczności modelu.
+                  Model przeuczony potrafi mocno falować między punktami treningowymi,
+                  mimo że nie poprawia przewidywania nowych obserwacji."),
+        zoom_plot_ui("ch2_overfit_plot", height = "380px"),
+        uiOutput("ch2_overfit_stats")
+      ),
+      figure_panel(
+        label = "Miniściąga", title = "Jak ograniczać przeuczenie?",
+        full_width = TRUE,
+        tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
+          tags$thead(
+            tags$tr(tags$th("Problem"), tags$th("Objaw"), tags$th("Co zrobić"))
+          ),
+          tags$tbody(
+            tags$tr(
+              tags$td("Model za złożony"),
+              tags$td("R² wysokie, ale interpretacja chaotyczna"),
+              tags$td("Uprościć model; usuwać predyktory bez uzasadnienia teoretycznego")
+            ),
+            tags$tr(
+              tags$td("Dopasowanie do szumu"),
+              tags$td("Błąd na danych treningowych mały, na nowych duży"),
+              tags$td("Użyć train/test albo walidacji krzyżowej")
+            ),
+            tags$tr(
+              tags$td("Dodawanie kolejnych X tylko pod R²"),
+              tags$td("R² rośnie po każdym dodatku"),
+              tags$td("Patrzeć na adjusted R², AIC, BIC i sens merytoryczny")
+            ),
+            tags$tr(
+              tags$td("Niestabilne współczynniki"),
+              tags$td("Mała zmiana danych mocno zmienia tabelę regresji"),
+              tags$td("Zebrać więcej danych, ograniczyć liczbę zmiennych, sprawdzić współliniowość")
+            )
+          )
+        )
+      ),
       p("R² ma też siostrę używaną w porównaniach modeli — ",
         withMathJax("\\(R^2_{adj}\\)"),
         ", która karze za zbędne predyktory. Spotkamy ją w rozdziale 4,
-        kiedy będziemy wybierać między kilkoma modelami.")
+        kiedy będziemy wybierać między kilkoma modelami. Tam pokażemy też
+        train/test na przykładzie wielomianów: model może mieć świetne
+        dopasowanie do treningu i jednocześnie gorszą predykcję na danych
+        testowych.")
     ),
 
     lc_h2("ch2-rmse", "RMSE — jak duże są typowe pomyłki?"),
@@ -502,6 +567,115 @@ ch2_server <- function(input, output, session) {
       theme_upwr()
   }))
 
+  # --- Widget: intuicja przeuczenia ---
+  ch2_overfit_sets <- local({
+    set.seed(26)
+    f <- function(x) 4.8 * sin(x)
+    train_x <- sort(runif(30, 0, 10))
+    test_x <- sort(runif(180, 0, 10))
+    list(
+      train = data.frame(
+        set = "Trening",
+        x = train_x,
+        y = f(train_x) + rnorm(length(train_x), 0, 0.9)
+      ),
+      test = data.frame(
+        set = "Test",
+        x = test_x,
+        y = f(test_x) + rnorm(length(test_x), 0, 0.9)
+      )
+    )
+  })
+
+  ch2_overfit_metrics <- reactive({
+    train <- ch2_overfit_sets$train
+    test <- ch2_overfit_sets$test
+    degrees <- c(1, 4, 12)
+    do.call(rbind, lapply(degrees, function(degree) {
+      model <- lm(y ~ poly(x, degree), data = train)
+      data.frame(
+        degree = degree,
+        train_rmse = sqrt(mean((train$y - predict(model, train))^2)),
+        test_rmse = sqrt(mean((test$y - predict(model, test))^2))
+      )
+    }))
+  })
+
+  zoom_plot_server("ch2_overfit_plot", reactive({
+    train <- ch2_overfit_sets$train
+    test <- ch2_overfit_sets$test
+    degrees <- c(1, 4, 12)
+    labels <- c(
+      "1" = "Zbyt prosty",
+      "4" = "Rozsądnie elastyczny",
+      "12" = "Przeuczony"
+    )
+
+    grid <- do.call(rbind, lapply(degrees, function(degree) {
+      model <- lm(y ~ poly(x, degree), data = train)
+      x_grid <- seq(0, 10, length.out = 260)
+      data.frame(
+        degree = factor(degree, levels = degrees, labels = labels[as.character(degrees)]),
+        x = x_grid,
+        y = predict(model, newdata = data.frame(x = x_grid))
+      )
+    }))
+
+    train_plot <- train
+    test_plot <- test
+    train_plot$set <- "Trening"
+    test_plot$set <- "Test"
+    points <- do.call(rbind, lapply(labels[as.character(degrees)], function(lab) {
+      tmp <- rbind(train_plot, test_plot)
+      tmp$degree <- factor(lab, levels = labels[as.character(degrees)])
+      tmp
+    }))
+
+    ggplot() +
+      geom_point(data = points[points$set == "Test", ],
+                 aes(x = x, y = y), color = unname(upwr_cat["bursztyn"]),
+                 alpha = 0.22, size = 1.6) +
+      geom_point(data = points[points$set == "Trening", ],
+                 aes(x = x, y = y), color = upwr_secondary,
+                 alpha = 0.72, size = 2.1) +
+      geom_line(data = grid, aes(x = x, y = y),
+                color = unname(upwr_cat["niebo"]), linewidth = 1.05) +
+      facet_wrap(~ degree, nrow = 1) +
+      labs(x = "X", y = "Y", caption = "Ciemne punkty = trening; jasne bursztynowe = nowe dane testowe") +
+      coord_cartesian(ylim = c(-8, 8)) +
+      theme_upwr()
+  }))
+
+  output$ch2_overfit_stats <- renderUI({
+    metrics <- ch2_overfit_metrics()
+    labels <- c(
+      "1" = "Zbyt prosty",
+      "4" = "Rozsądnie elastyczny",
+      "12" = "Przeuczony"
+    )
+    metrics$model <- labels[as.character(metrics$degree)]
+    rows <- lapply(seq_len(nrow(metrics)), function(i) {
+      tags$tr(
+        tags$td(metrics$model[i]),
+        tags$td(metrics$degree[i]),
+        tags$td(round(metrics$train_rmse[i], 2)),
+        tags$td(round(metrics$test_rmse[i], 2))
+      )
+    })
+
+    tagList(
+      tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
+        tags$thead(
+          tags$tr(tags$th("Model"), tags$th("Stopień"), tags$th("RMSE trening"), tags$th("RMSE test"))
+        ),
+        tags$tbody(rows)
+      ),
+      lc_feedback(type = "info",
+        p("Przeuczenie rozpoznajemy po rozjechaniu błędu treningowego i testowego:
+          model dobrze pamięta punkty, które widział, ale gorzej działa na nowych danych."))
+    )
+  })
+
   # --- Widget: RMSE i zakres Y na CASchools ---
   ch2_rmse_spec <- reactive({
     case <- input$ch2_rmse_case
@@ -545,7 +719,7 @@ ch2_server <- function(input, output, session) {
                hjust = 0, vjust = 1,
                label = paste0("Pasmo ±RMSE = ±", round(rmse, 1)),
                color = unname(upwr_cat["bursztyn"]),
-               fill = "white", label.size = 0) +
+               fill = "white", linewidth = 0) +
       labs(
         x = unname(.cas_labels[spec$x]),
         y = unname(.cas_labels[spec$y])
