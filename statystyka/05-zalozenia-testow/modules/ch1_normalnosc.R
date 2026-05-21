@@ -19,7 +19,7 @@ ch1_ui <- lecture_chapter(
     tagList(
       p("Założenie normalności dotyczy:"),
       tags$ul(
-        tags$li(tags$b("Test t"), " (jednej próby, niezależny, parowy) — normalność danych (lub reszt)"),
+        tags$li(tags$b("Test t"), " (jednej próby, niezależny, sparowany) — normalność danych (lub reszt)"),
         tags$li(tags$b("ANOVA"), " — normalność reszt w każdej grupie"),
         tags$li(tags$b("Korelacja Pearsona"), " — rozkład dwuwymiarowy normalny"),
         tags$li(tags$b("Regresja liniowa"), " — normalność reszt (nie danych!)")
@@ -140,7 +140,7 @@ ch1_ui <- lecture_chapter(
         tags$tbody(
           tags$tr(tags$td("Test t jednej próby"), tags$td("→ Wilcoxon jednej próby")),
           tags$tr(tags$td("Test t niezależny"), tags$td("→ Mann-Whitney U")),
-          tags$tr(tags$td("Test t parowy"), tags$td("→ Wilcoxon par znakowych")),
+          tags$tr(tags$td("Test t sparowany"), tags$td("→ Wilcoxon par znakowych")),
           tags$tr(tags$td("ANOVA"), tags$td("→ Kruskal-Wallis")),
           tags$tr(tags$td("Pearson"), tags$td("→ Spearman"))
         )

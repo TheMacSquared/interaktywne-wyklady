@@ -249,7 +249,7 @@ ch1_ui <- list(
       inline_callout(label = "Zapamiętaj", color = "wskazowka",
         "Diagnostyka modelu polega głównie na patrzeniu w reszty. Jeśli układają
          się w wachlarz albo w łuk, znaczy, że linia kłamie — wrócimy do tego
-         w rozdziale o założeniach regresji."
+         w rozdziale o jakości modelu."
       )
     ),
 

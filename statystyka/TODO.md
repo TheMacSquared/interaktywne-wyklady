@@ -33,8 +33,8 @@ Do ewentualnego rozważenia (nie krytyczne):
   Widget: scatter z wyróżnionymi punktami o wysokiej Cook's distance + opcja „usuń i przelicz".
 
 Powiązane pliki:
-- [05-regresja/modules/ch2_jakosc.R](05-regresja/modules/ch2_jakosc.R)
-- [05-regresja/modules/helpers.R](05-regresja/modules/helpers.R) — `generate_assumption_data()` ma 5 scenariuszy
+- [06-regresja/modules/ch2_jakosc.R](06-regresja/modules/ch2_jakosc.R)
+- [06-regresja/modules/helpers.R](06-regresja/modules/helpers.R) — `generate_assumption_data()` ma 5 scenariuszy
 
 ### Hero rozdziałów regresji — przekształcić `lead` w pytanie-hook
 
@@ -46,7 +46,7 @@ informują, pytania zaczepiają. Warto przejrzeć 6 hero i przeformułować
 ledy w pytania, gdzie to naturalne.
 
 Powiązane pliki:
-- [05-regresja/modules/ch1_liniowa.R](05-regresja/modules/ch1_liniowa.R) i kolejne ch2-ch6
+- [06-regresja/modules/ch1_liniowa.R](06-regresja/modules/ch1_liniowa.R) i kolejne ch2-ch6
 
 ### Sekcja „Pułapki regresji" — potencjalny przyszły rozdział
 
@@ -69,7 +69,7 @@ wyboru z dystraktorami (mylące jednostki, mylące skale). Aktywizuje
 umiejętność czytania jednostek, którą w ch1 wprowadzamy ale słabo trenujemy.
 
 Powiązane pliki:
-- [05-regresja/modules/ch1_liniowa.R](05-regresja/modules/ch1_liniowa.R) — sekcja `ch1-caschool`
+- [06-regresja/modules/ch1_liniowa.R](06-regresja/modules/ch1_liniowa.R) — sekcja `ch1-caschool`
 
 ### Regresja do średniej — mini-widget
 
@@ -100,7 +100,7 @@ Aktualnie w wykładzie o korelacji **nic o tym nie mówimy**, świadomie —
 Ale w wykładzie o regresji to powinno wybrzmieć.
 
 Powiązane pliki:
-- [05-regresja/modules/ch1_liniowa.R](05-regresja/modules/ch1_liniowa.R)
+- [06-regresja/modules/ch1_liniowa.R](06-regresja/modules/ch1_liniowa.R)
 - [04-wnioskowanie-statystyczne/modules/ch4_korelacja.R](04-wnioskowanie-statystyczne/modules/ch4_korelacja.R) (ryc. 6.1–6.3 jako odniesienie)
 - [scripts/regen_correlation_assets.R](scripts/regen_correlation_assets.R) (generator elips)
 
@@ -136,7 +136,7 @@ Powiązane pliki:
 
 ## Infrastruktura: fullscreen jako globalny pattern
 
-W `05-regresja/modules/ch3_wieloraka.R` w widgecie `ch3-budowanie` ("Predykcja
+W `06-regresja/modules/ch3_wieloraka.R` w widgecie `ch3-budowanie` ("Predykcja
 średniej ocen") dodany został przycisk fullscreen na wykresie scatter.
 Implementacja jest lokalna: CSS + JS są w `tags$head` wewnątrz `ch3_ui`,
 klasa `.lc-plot-fullscreen-wrap` używa natywnego HTML5 Fullscreen API.
@@ -148,7 +148,7 @@ Jeśli okaże się przydatne w innych widgetach, najczyściej wynieść:
   [R/lecture_layout.R](R/lecture_layout.R) wokół `plotOutput`
 
 Powiązane pliki:
-- [05-regresja/modules/ch3_wieloraka.R](05-regresja/modules/ch3_wieloraka.R) — referencyjna implementacja lokalna
+- [06-regresja/modules/ch3_wieloraka.R](06-regresja/modules/ch3_wieloraka.R) — referencyjna implementacja lokalna
 
 ---
 

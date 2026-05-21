@@ -199,6 +199,49 @@ ch5_ui <- list(
        i swoistością."
     ),
 
+    lc_h2("ch5-zalozenia", "Kiedy logistyczna może zawieść?"),
+
+    tagList(
+      p("Regresja logistyczna nie wymaga normalności Y ani reszt w sensie
+        regresji liniowej, ale też nie jest magicznym guzikiem. Najważniejsze
+        warunki dotyczą konstrukcji danych i stabilności modelu:"),
+      tags$table(class = "lc-table lc-table-bordered lc-table-striped",
+        style = "font-size: 14px;",
+        tags$thead(
+          tags$tr(tags$th("Warunek"), tags$th("Co oznacza w praktyce"))
+        ),
+        tags$tbody(
+          tags$tr(
+            tags$td(tags$strong("Y jest binarne")),
+            tags$td("modelujemy zdarzenie 0/1: zdał/nie zdał, kupił/nie kupił")
+          ),
+          tags$tr(
+            tags$td(tags$strong("Niezależne obserwacje")),
+            tags$td("ten sam student, klient lub zakład nie powinien pojawiać się wiele razy bez modelu z powtórzeniami")
+          ),
+          tags$tr(
+            tags$td(tags$strong("Liniowość logitu")),
+            tags$td("dla predyktorów ilościowych zależność ma być mniej więcej liniowa na skali log-odds")
+          ),
+          tags$tr(
+            tags$td(tags$strong("Brak silnej współliniowości")),
+            tags$td("tak jak w regresji wielorakiej: predyktory nie powinny powtarzać tej samej informacji")
+          ),
+          tags$tr(
+            tags$td(tags$strong("Dość zdarzeń")),
+            tags$td("przy bardzo małej liczbie sukcesów lub porażek współczynniki są niestabilne")
+          ),
+          tags$tr(
+            tags$td(tags$strong("Brak separacji")),
+            tags$td("jeśli jeden predyktor idealnie oddziela 0 od 1, klasyczne estymaty mogą uciekać do nieskończoności")
+          )
+        )
+      ),
+      p("Jeśli któryś z tych punktów jest problemem, zwykle lepsza jest
+        prostsza specyfikacja, więcej danych, regularyzacja albo specjalne
+        warianty regresji logistycznej, np. regresja Firtha przy separacji.")
+    ),
+
     lc_chapter_next(
       num       = "06",
       title     = "Ściąga",

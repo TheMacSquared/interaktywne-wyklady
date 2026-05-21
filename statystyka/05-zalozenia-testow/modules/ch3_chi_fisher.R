@@ -1,20 +1,20 @@
 # ============================================================================
-# CHAPTER 4: Zalozenia chi-kwadrat i Fishera
+# CHAPTER 3: Zalozenia chi-kwadrat i Fishera
 # ============================================================================
 
-ch4_ui <- lecture_chapter(
+ch3_ui <- lecture_chapter(
   id = "ch-chi-fisher",
-  num = "04",
+  num = "03",
   title = "Założenia χ² i Fishera",
   content = tagList(
     lc_chapter_hero(
-      kicker = "Rozdział 04 · Założenia testów",
-      num    = "04",
+      kicker = "Rozdział 03 · Założenia testów",
+      num    = "03",
       title  = "Założenia χ² i Fishera.",
       lead   = "Testy dla zmiennych jakościowych mają prostsze, ale ważne założenia dotyczące minimalnych liczności."
     ),
 
-    lc_h2("ch4-zalozenia-chi", "Założenia testu χ²"),
+    lc_h2("ch3-zalozenia-chi", "Założenia testu χ²"),
 
     tagList(
       p("Test chi-kwadrat (zgodności i niezależności) wymaga:"),
@@ -29,22 +29,22 @@ ch4_ui <- lecture_chapter(
     # ========================================================================
     # WIDGET 1: Wizualizacja efektu malych licznosci
     # ========================================================================
-    lc_h2("ch4-male-licznosci", "Efekt małych liczności"),
+    lc_h2("ch3-male-licznosci", "Efekt małych liczności"),
 
     figure_panel(
-      label = "Ryc. 4.1",
+      label = "Ryc. 3.1",
       title = "Symulacja: χ² vs Fisher przy małych n",
       fluidRow(
         column(4,
-          sliderInput("ch4_n", "Wielkość próby:", min = 10, max = 200, value = 20, step = 5),
+          sliderInput("ch3_n", "Wielkość próby:", min = 10, max = 200, value = 20, step = 5),
           helpText("Generujemy 500 prób z H₀ prawdziwą (brak związku).
                     Sprawdzamy, jak często każdy test fałszywie odrzuci H₀."),
-          actionButton("ch4_sim", "Symuluj",
+          actionButton("ch3_sim", "Symuluj",
                        class = "lc-btn-warning", width = "100%")
         ),
         column(8,
-          uiOutput("ch4_sim_results"),
-          zoom_plot_ui("ch4_sim_plot", height = "250px")
+          uiOutput("ch3_sim_results"),
+          zoom_plot_ui("ch3_sim_plot", height = "250px")
         )
       )
     ),
@@ -58,7 +58,7 @@ ch4_ui <- lecture_chapter(
     # ========================================================================
     # WIDGET 2: Kiedy ktory?
     # ========================================================================
-    lc_h2("ch4-kiedy", "Kiedy χ², kiedy Fisher?"),
+    lc_h2("ch3-kiedy", "Kiedy χ², kiedy Fisher?"),
 
     lc_feedback(type = "ok",
       tags$strong("Zasady:"),
@@ -80,7 +80,7 @@ ch4_ui <- lecture_chapter(
     ),
 
     # ========================================================================
-    lc_h2("ch4-korelacja", "Założenia korelacji"),
+    lc_h2("ch3-korelacja", "Założenia korelacji"),
 
     tagList(
       tags$table(class = "lc-table lc-table-bordered", style = "font-size: 14px;",
@@ -103,7 +103,7 @@ ch4_ui <- lecture_chapter(
     ),
 
     lc_chapter_next(
-      num = "05",
+      num = "04",
       title = "Mapa metod",
       lead = "szybkie przejście od metody do założeń i alternatyw.",
       target_id = "ch-mapa"
@@ -115,12 +115,12 @@ ch4_ui <- lecture_chapter(
 # SERVER
 # ============================================================================
 
-ch4_server <- function(input, output, session) {
+ch3_server <- function(input, output, session) {
 
-  ch4_sim_data <- reactiveVal(NULL)
+  ch3_sim_data <- reactiveVal(NULL)
 
-  observeEvent(input$ch4_sim, {
-    n <- input$ch4_n
+  observeEvent(input$ch3_sim, {
+    n <- input$ch3_n
     n_sims <- 500
 
     results <- sapply(1:n_sims, function(i) {
@@ -136,11 +136,11 @@ ch4_server <- function(input, output, session) {
     })
 
     results_df <- data.frame(t(results))
-    ch4_sim_data(results_df)
+    ch3_sim_data(results_df)
   })
 
-  output$ch4_sim_results <- renderUI({
-    df <- ch4_sim_data()
+  output$ch3_sim_results <- renderUI({
+    df <- ch3_sim_data()
     if (is.null(df)) return(NULL)
 
     fpr_chi <- mean(df$p_chi < 0.05, na.rm = TRUE) * 100
@@ -156,8 +156,8 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  zoom_plot_server("ch4_sim_plot", reactive({
-    df <- ch4_sim_data()
+  zoom_plot_server("ch3_sim_plot", reactive({
+    df <- ch3_sim_data()
     if (is.null(df)) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Symuluj'",

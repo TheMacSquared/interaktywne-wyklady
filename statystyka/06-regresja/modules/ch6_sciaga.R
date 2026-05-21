@@ -123,7 +123,7 @@ ch6_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 5.1", title = "Mini-drzewko wyboru modelu regresyjnego",
+      label = "Ryc. 6.1", title = "Mini-drzewko wyboru modelu regresyjnego",
       full_width = TRUE,
       fluidRow(
         column(4,

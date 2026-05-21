@@ -160,6 +160,57 @@ ch2_ui <- list(
        jest OK. Pełna diagnostyka (leverage, wpływowe obserwacje) — w kolejnych wykładach."
     ),
 
+    lc_h2("ch2-zalozenia", "Założenia, które widać w resztach"),
+
+    tagList(
+      p("W praktyce nie zaczynamy diagnostyki regresji od listy testów,
+        tylko od pytania: ", tags$em("czy model zostawił po sobie losowy szum?"),
+        " Dlatego większość klasycznych założeń modelu liniowego czytamy
+        właśnie z wykresów reszt."),
+      tags$table(class = "lc-table lc-table-bordered lc-table-striped",
+        style = "font-size: 14px;",
+        tags$thead(
+          tags$tr(
+            tags$th("Założenie"),
+            tags$th("Co sprawdzić"),
+            tags$th("Sygnał problemu"),
+            tags$th("Co wtedy")
+          )
+        ),
+        tags$tbody(
+          tags$tr(
+            tags$td(tags$strong("Liniowość")),
+            tags$td("reszty vs dopasowane"),
+            tags$td("łuk, fala, systematyczny wzorzec"),
+            tags$td("transformacja, składnik kwadratowy, model nieliniowy")
+          ),
+          tags$tr(
+            tags$td(tags$strong("Stała wariancja")),
+            tags$td("reszty vs dopasowane / Scale-Location"),
+            tags$td("wachlarz, rosnący lub malejący rozrzut"),
+            tags$td("transformacja Y, odporne błędy standardowe, WLS")
+          ),
+          tags$tr(
+            tags$td(tags$strong("Normalność reszt")),
+            tags$td("Q-Q reszt"),
+            tags$td("grube ogony, łuk, odstające punkty"),
+            tags$td("sprawdź outliery, bootstrap CI, inny model dla Y")
+          ),
+          tags$tr(
+            tags$td(tags$strong("Brak obserwacji wpływowych")),
+            tags$td("reszty standaryzowane, leverage, Cook's distance"),
+            tags$td("pojedynczy punkt zmienia nachylenie"),
+            tags$td("zweryfikuj pomiar, pokaż analizę z/bez punktu")
+          )
+        )
+      ),
+      p("Testy formalne — np. Shapiro-Wilk dla reszt albo Breusch-Pagan
+        dla heteroscedastyczności — są dodatkiem do wykresu. Przy dużych
+        próbach łatwo wykrywają drobiazgi, a przy małych często nie mają
+        mocy. W raporcie najpierw pokaż wzorzec reszt, dopiero potem
+        ewentualnie podaj test.")
+    ),
+
     lc_h2("ch2-r2", "R² — ile model wyjaśnia?"),
 
     tagList(

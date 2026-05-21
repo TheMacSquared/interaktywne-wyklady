@@ -1,21 +1,21 @@
 # ============================================================================
-# CHAPTER 6: Sciaga - podsumowanie zalozen
+# CHAPTER 5: Sciaga - podsumowanie zalozen
 # ============================================================================
 
-ch6_ui <- lecture_chapter(
+ch5_ui <- lecture_chapter(
   id = "ch-sciaga",
-  num = "06",
+  num = "05",
   title = "Ściąga",
   content = tagList(
     lc_chapter_hero(
-      kicker = "Rozdział 06 · Założenia testów",
-      num    = "06",
+      kicker = "Rozdział 05 · Założenia testów",
+      num    = "05",
       title  = "Ściąga.",
       lead   = "Kompaktowe podsumowanie: założenia, testy diagnostyczne i alternatywy."
     ),
 
     # ========================================================================
-    lc_h2("ch6-schemat", "Schemat postępowania"),
+    lc_h2("ch5-schemat", "Schemat postępowania"),
 
     lc_feedback(type = "info",
       tags$strong("Krok 1:"), " Wybierz metodę na podstawie typu zmiennych i pytania badawczego.",
@@ -30,7 +30,7 @@ ch6_ui <- lecture_chapter(
     ),
 
     # ========================================================================
-    lc_h2("ch6-testy", "Testy diagnostyczne — szybka referencja"),
+    lc_h2("ch5-testy", "Testy diagnostyczne — szybka referencja"),
 
     tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
@@ -84,7 +84,7 @@ ch6_ui <- lecture_chapter(
     ),
 
     # ========================================================================
-    lc_h2("ch6-alternatywy", "Metoda → alternatywa (quick reference)"),
+    lc_h2("ch5-alternatywy", "Metoda → alternatywa (quick reference)"),
 
     tags$table(class = "lc-table lc-table-bordered",
       style = "font-size: 13px;",
@@ -94,7 +94,7 @@ ch6_ui <- lecture_chapter(
       tags$tbody(
         tags$tr(tags$td("Test t jednej próby"), tags$td("Wilcoxon jednej próby")),
         tags$tr(tags$td("Test t niezależny"), tags$td("Mann-Whitney U")),
-        tags$tr(tags$td("Test t parowy"), tags$td("Wilcoxon par znakowych")),
+        tags$tr(tags$td("Test t sparowany"), tags$td("Wilcoxon par znakowych")),
         tags$tr(tags$td("ANOVA"), tags$td("Kruskal-Wallis")),
         tags$tr(tags$td("Tukey HSD (post-hoc)"), tags$td("Test Dunna")),
         tags$tr(tags$td("Pearson"), tags$td("Spearman")),
@@ -104,7 +104,7 @@ ch6_ui <- lecture_chapter(
     ),
 
     # ========================================================================
-    lc_h2("ch6-rady", "Praktyczne rady"),
+    lc_h2("ch5-rady", "Praktyczne rady"),
 
     lc_feedback(type = "ok",
       tags$ul(
@@ -122,7 +122,7 @@ ch6_ui <- lecture_chapter(
     ),
 
     # ========================================================================
-    lc_h2("ch6-kod", "Kod R — diagnostyka"),
+    lc_h2("ch5-kod", "Kod R — diagnostyka"),
 
     lc_formula_box(
       tags$pre(style = "background: var(--upwr-surface-sunken); padding: 12px; border-radius: 6px; font-size: 13px;",
@@ -158,5 +158,5 @@ oneway.test(var ~ group, data = data)"
   )
 )
 
-ch6_server <- function(input, output, session) {
+ch5_server <- function(input, output, session) {
 }

@@ -119,9 +119,9 @@ ch2_ui <- lecture_chapter(
 
     lc_chapter_next(
       num = "03",
-      title = "Założenia regresji",
-      lead = "diagnostyka reszt, liniowości i homoscedastyczności.",
-      target_id = "ch-regresja"
+      title = "Założenia χ² i Fishera",
+      lead = "minimalne liczności i wybór testu dla tabel.",
+      target_id = "ch-chi-fisher"
     )
   )
 )

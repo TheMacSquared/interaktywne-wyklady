@@ -31,8 +31,8 @@ shiny::runApp("statystyka/01-typy-danych")
 shiny::runApp("statystyka/02-rozklady-prawdopodobienstwa")
 shiny::runApp("statystyka/03-przedzialy-ufnosci")
 shiny::runApp("statystyka/04-wnioskowanie-statystyczne")
-shiny::runApp("statystyka/05-regresja")
-shiny::runApp("statystyka/06-zalozenia-testow")
+shiny::runApp("statystyka/05-zalozenia-testow")
+shiny::runApp("statystyka/06-regresja")
 shiny::runApp("statystyka/07-symulacje-statystyczne")
 shiny::runApp("statystyka/08-metody-bayesowskie")
 shiny::runApp("statystyka/09-dobre-dane")
@@ -47,8 +47,8 @@ shiny::runApp("01-typy-danych")
 shiny::runApp("02-rozklady-prawdopodobienstwa")
 shiny::runApp("03-przedzialy-ufnosci")
 shiny::runApp("04-wnioskowanie-statystyczne")
-shiny::runApp("05-regresja")
-shiny::runApp("06-zalozenia-testow")
+shiny::runApp("05-zalozenia-testow")
+shiny::runApp("06-regresja")
 shiny::runApp("07-symulacje-statystyczne")
 shiny::runApp("08-metody-bayesowskie")
 shiny::runApp("09-dobre-dane")
@@ -64,8 +64,8 @@ shiny::runApp("11-kierunkowe")
 | [rozklady-prawdopodobienstwa](02-rozklady-prawdopodobienstwa/) | Rozkłady prawdopodobieństwa | 9 rozdziałów: od danych do prawdopodobieństwa, wartość oczekiwana i wariancja, rozkłady dyskretne, ciągłe, normalny, CTG, ściąga, quiz + **ćwiczenia z dropdownem kierunków** (BHP/Rolnictwo/Żywność) |
 | [przedzialy-ufnosci](03-przedzialy-ufnosci/) | Przedziały ufności | 7 rozdziałów: estymacja punktowa, idea przedziałów, przedział dla średniej, proporcji, czynniki szerokości, ściąga + **ćwiczenia z dropdownem kierunków** (Edukacja/BHP/Rolnictwo/Żywność) |
 | [wnioskowanie-statystyczne](04-wnioskowanie-statystyczne/) | Wnioskowanie statystyczne | 12 rozdziałów: logika testowania, formułowanie hipotez, błędy/p-wartość/decyzja, jedna ilo./jako., korelacja, dwie jakościowe, dwie grupy, ANOVA, drzewo decyzyjne, ściąga + ćwiczenia |
-| [regresja](05-regresja/) | Regresja | 5 rozdziałów: liniowa prosta, wieloraka, logistyczna, porównanie modeli (R², AIC, BIC, RMSE), ściąga |
-| [zalozenia-testow](06-zalozenia-testow/) | Założenia testów | 6 rozdziałów: normalność, jednorodne wariancje, założenia regresji, χ²/Fisher, mapa metod z alternatywami, ściąga |
+| [zalozenia-testow](05-zalozenia-testow/) | Założenia testów | 5 rozdziałów: normalność, jednorodne wariancje, χ²/Fisher, mapa metod z alternatywami, ściąga |
+| [regresja](06-regresja/) | Regresja | 6 rozdziałów: liniowa prosta, jakość modelu, wieloraka, porównanie modeli, logistyczna, ściąga |
 | [symulacje-statystyczne](07-symulacje-statystyczne/) | Symulacje statystyczne | 10 rozdziałów: idea resamplingowa, bootstrap CI, bootstrap jednej próby, testy permutacyjne, jackknife, cross-validation, Monte Carlo (moc + H₀), kiedy stosować?, ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
 | [metody-bayesowskie](08-metody-bayesowskie/) | Metody bayesowskie | 12 rozdziałów z **konsekwentnym dwukolumnowym porównaniem freq vs Bayes**: intuicja (prior→posterior), BF vs p, HDI vs CI, jedna próba, dwie grupy, ANOVA, tabele krzyżowe, korelacja, regresja liniowa i logistyczna (rstanarm), ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
 | [dobre-dane](09-dobre-dane/) | Jakość danych | 11 zbiorów — kiedy dane nadają się do klasycznej statystyki? (CASchools, pingwiny, Tarantino, Wage, hotel, formularz, laboratorium, studenci, kawiarnia) + ściąga |
@@ -132,25 +132,25 @@ interaktywne-wyklady/statystyka/
 │       ├── ch_drzewo.R             # 10. Drzewo decyzyjne wyboru testu
 │       ├── ch8_sciaga.R            # 11. Ściąga (drzewo decyzyjne, tabele, kod R)
 │       └── ch9_cwiczenia.R         # 12. Ćwiczenia (Rolnictwo/BHP/Technologia żywności)
-├── 05-regresja/                        # Regresja liniowa i logistyczna
-│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
-│   └── modules/
-│       ├── helpers.R               # Generatory danych regresyjnych, metryki, theme
-│       ├── ch1_liniowa.R           # 1. Regresja liniowa prosta (scatter, reszty, R²)
-│       ├── ch2_wieloraka.R         # 2. Regresja wieloraka (predyktory, adj.R², stepwise)
-│       ├── ch3_logistyczna.R       # 3. Regresja logistyczna (sigmoida, OR, predykcja)
-│       ├── ch4_porownanie.R        # 4. Porównanie modeli (R², AIC, BIC, RMSE, overfitting)
-│       └── ch5_sciaga.R            # 5. Ściąga (wzory, metryki, kod R)
-├── 06-zalozenia-testow/               # Założenia testów statystycznych
+├── 05-zalozenia-testow/               # Założenia testów statystycznych
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
 │   └── modules/
 │       ├── helpers.R               # Generatory danych z naruszeniami, theme
 │       ├── ch1_normalnosc.R        # 1. Normalność (Q-Q, Shapiro, transformacje)
 │       ├── ch2_wariancje.R         # 2. Jednorodne wariancje (Levene, Bartlett, Welch)
-│       ├── ch3_regresja.R          # 3. Założenia regresji (diagnostyka, BP, DW)
-│       ├── ch4_chi_fisher.R        # 4. Założenia χ² i Fishera (min. liczności)
-│       ├── ch5_mapa.R              # 5. Mapa metod (metoda → założenia → alternatywa)
-│       └── ch6_sciaga.R            # 6. Ściąga (testy diagnostyczne, quick reference)
+│       ├── ch3_chi_fisher.R        # 3. Założenia χ² i Fishera (min. liczności)
+│       ├── ch4_mapa.R              # 4. Mapa metod (metoda → założenia → alternatywa)
+│       └── ch5_sciaga.R            # 5. Ściąga (testy diagnostyczne, quick reference)
+├── 06-regresja/                        # Regresja liniowa i logistyczna
+│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
+│   └── modules/
+│       ├── helpers.R               # Generatory danych regresyjnych, metryki, theme
+│       ├── ch1_liniowa.R           # 1. Regresja liniowa prosta (scatter, reszty, R²)
+│       ├── ch2_jakosc.R            # 2. Jakość modelu (reszty, R², błędy)
+│       ├── ch3_wieloraka.R         # 3. Regresja wieloraka (predyktory, adj.R², stepwise)
+│       ├── ch4_porownanie.R        # 4. Porównanie modeli (R², AIC, BIC, RMSE, overfitting)
+│       ├── ch5_logistyczna.R       # 5. Regresja logistyczna (sigmoida, OR, predykcja)
+│       └── ch6_sciaga.R            # 6. Ściąga (wzory, metryki, kod R)
 ├── 07-symulacje-statystyczne/         # Symulacje: bootstrap, permutacje, CV, MC
 │   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
 │   └── modules/

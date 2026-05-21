@@ -162,6 +162,14 @@ ch3_ui <- list(
       )
     ),
 
+    inline_callout(label = "Przed interpretacją", color = "wskazowka",
+      "W regresji wielorakiej VIF jest częścią diagnostyki modelu, nie
+       ozdobną metryką. Jeśli VIF jest wysoki, współczynniki mogą mieć
+       sensowny znak w jednym losowaniu i dziwny w następnym. Wtedy
+       interpretuj ostrożnie, usuń jeden z redundantnych predyktorów albo
+       połącz je w jedną miarę."
+    ),
+
     lc_h2("ch3-co-dalej", "Co dalej"),
 
     tagList(

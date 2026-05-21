@@ -1,25 +1,25 @@
 # ============================================================================
-# CHAPTER 5: Mapa metod - kompletna tablica zalozenia -> alternatywa
+# CHAPTER 4: Mapa metod - kompletna tablica zalozenia -> alternatywa
 # ============================================================================
 
-ch5_ui <- lecture_chapter(
+ch4_ui <- lecture_chapter(
   id = "ch-mapa",
-  num = "05",
+  num = "04",
   title = "Mapa metod",
   content = tagList(
     lc_chapter_hero(
-      kicker = "Rozdział 05 · Założenia testów",
-      num    = "05",
+      kicker = "Rozdział 04 · Założenia testów",
+      num    = "04",
       title  = "Mapa metod.",
       lead   = "Zbierzmy wszystko w jedną mapę: każda metoda, jej założenia i co robić, gdy są naruszone."
     ),
 
-    lc_h2("ch5-kompletna-mapa", "Kompletna mapa: metoda → założenia → alternatywa"),
+    lc_h2("ch4-kompletna-mapa", "Kompletna mapa: metoda → założenia → alternatywa"),
 
     # ========================================================================
     # Testy parametryczne
     # ========================================================================
-    lc_h2("ch5-parametryczne", "Testy parametryczne"),
+    lc_h2("ch4-parametryczne", "Testy parametryczne"),
 
     tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
@@ -41,7 +41,7 @@ ch5_ui <- lecture_chapter(
           tags$td("Welch t (nierówne war.), Mann-Whitney U (brak norm.)")
         ),
         tags$tr(
-          tags$td(tags$strong("Test t parowy")),
+          tags$td(tags$strong("Test t sparowany")),
           tags$td("Normalność różnic"),
           tags$td("Shapiro na różnicach"),
           tags$td("Wilcoxon par znakowych")
@@ -64,7 +64,7 @@ ch5_ui <- lecture_chapter(
     # ========================================================================
     # Testy nieparametryczne
     # ========================================================================
-    lc_h2("ch5-nieparametryczne", "Testy nieparametryczne"),
+    lc_h2("ch4-nieparametryczne", "Testy nieparametryczne"),
 
     tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
@@ -93,7 +93,7 @@ ch5_ui <- lecture_chapter(
     # ========================================================================
     # Testy dla jakosciowych
     # ========================================================================
-    lc_h2("ch5-jakosciowe", "Testy dla zmiennych jakościowych"),
+    lc_h2("ch4-jakosciowe", "Testy dla zmiennych jakościowych"),
 
     tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
@@ -127,7 +127,7 @@ ch5_ui <- lecture_chapter(
     # ========================================================================
     # Regresja
     # ========================================================================
-    lc_h2("ch5-regresja", "Regresja"),
+    lc_h2("ch4-regresja", "Regresja"),
 
     tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
@@ -153,18 +153,18 @@ ch5_ui <- lecture_chapter(
     # ========================================================================
     # WIDGET: Interaktywny selektor
     # ========================================================================
-    lc_h2("ch5-selektor", "Selektor: mam tę metodę — co sprawdzić?"),
+    lc_h2("ch4-selektor", "Selektor: mam tę metodę — co sprawdzić?"),
 
     figure_panel(
-      label = "Ryc. 5.1",
+      label = "Ryc. 4.1",
       title = "Sprawdzarka założeń",
       fluidRow(
         column(4,
-          selectInput("ch5_method", "Metoda:",
+          selectInput("ch4_method", "Metoda:",
             choices = c(
               "Test t jednej próby" = "t_one",
               "Test t niezależny" = "t_ind",
-              "Test t parowy" = "t_paired",
+              "Test t sparowany" = "t_paired",
               "ANOVA" = "anova",
               "Korelacja Pearsona" = "pearson",
               "Korelacja Spearmana" = "spearman",
@@ -179,13 +179,13 @@ ch5_ui <- lecture_chapter(
           )
         ),
         column(8,
-          uiOutput("ch5_method_info")
+          uiOutput("ch4_method_info")
         )
       )
     ),
 
     lc_chapter_next(
-      num = "06",
+      num = "05",
       title = "Ściąga",
       lead = "kompaktowa referencja do diagnostyki i alternatyw.",
       target_id = "ch-sciaga"
@@ -197,7 +197,7 @@ ch5_ui <- lecture_chapter(
 # SERVER
 # ============================================================================
 
-ch5_server <- function(input, output, session) {
+ch4_server <- function(input, output, session) {
 
   method_info <- list(
     t_one = list(
@@ -215,7 +215,7 @@ ch5_server <- function(input, output, session) {
       r_code = "rstatix::t_test(data, var ~ group)"
     ),
     t_paired = list(
-      name = "Test t parowy",
+      name = "Test t sparowany",
       assumptions = c("Dane ilościowe", "Normalność różnic"),
       checks = c("shapiro_test() na różnicach"),
       alternatives = c("Wilcoxon par znakowych: wilcox_test(paired = TRUE)"),
@@ -286,8 +286,8 @@ ch5_server <- function(input, output, session) {
     )
   )
 
-  output$ch5_method_info <- renderUI({
-    info <- method_info[[input$ch5_method]]
+  output$ch4_method_info <- renderUI({
+    info <- method_info[[input$ch4_method]]
     if (is.null(info)) return(NULL)
 
     tagList(
