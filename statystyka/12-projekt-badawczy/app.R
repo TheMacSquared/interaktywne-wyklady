@@ -55,7 +55,7 @@ header_extras <- tagList(
       align-items: center;
       justify-content: center;
       background: var(--upwr-szalwia);
-      color: white;
+      color: #fff;
       font-weight: 700;
       margin-right: 8px;
     }
@@ -66,7 +66,7 @@ header_extras <- tagList(
       margin: 16px 0;
     }
     .construct-cell {
-      background: white;
+      background: var(--upwr-surface);
       border: 1px solid var(--upwr-rule);
       border-radius: 8px;
       padding: 12px;
@@ -85,14 +85,14 @@ header_extras <- tagList(
       color: var(--upwr-ink-soft);
     }
     .design-option {
-      background: white;
+      background: var(--upwr-surface);
       border: 1px solid var(--upwr-rule);
       border-radius: 8px;
       padding: 16px;
       margin: 12px 0;
     }
     .question-card {
-      background: white;
+      background: var(--upwr-surface);
       border: 1px solid var(--upwr-rule);
       border-radius: 8px;
       padding: 16px;
@@ -111,7 +111,7 @@ header_extras <- tagList(
       margin: 18px 0;
     }
     .research-ladder > div {
-      background: white;
+      background: var(--upwr-surface);
       border: 1px solid var(--upwr-rule);
       border-radius: 8px;
       padding: 14px;
@@ -134,7 +134,7 @@ header_extras <- tagList(
     }
     .data-legend-item {
       border-left: 3px solid var(--upwr-szalwia);
-      background: white;
+      background: var(--upwr-surface);
       padding: 8px 10px;
       border-radius: 0 6px 6px 0;
       font-size: calc(13px * var(--lc-font-scale));

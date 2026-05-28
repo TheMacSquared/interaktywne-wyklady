@@ -268,6 +268,61 @@
 })();
 
 // ============================================================================
+// Theme switcher — sidebar light/dark, persisted per browser.
+// ============================================================================
+(function () {
+  "use strict";
+
+  var storageKey = "lc-theme";
+  var allowed = { light: true, dark: true };
+
+  function getStoredTheme() {
+    try {
+      return window.localStorage.getItem(storageKey);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function storeTheme(theme) {
+    try {
+      window.localStorage.setItem(storageKey, theme);
+    } catch (e) {
+      // localStorage can be unavailable in restrictive browser settings.
+    }
+  }
+
+  function setTheme(theme, persist) {
+    if (!allowed[theme]) theme = "light";
+    document.documentElement.setAttribute("data-lc-theme", theme);
+
+    document.querySelectorAll(".lc-theme-option[data-lc-theme]").forEach(function (button) {
+      var isActive = button.getAttribute("data-lc-theme") === theme;
+      button.classList.toggle("lc-active", isActive);
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+
+    if (persist) storeTheme(theme);
+  }
+
+  function initThemeSwitcher() {
+    setTheme(getStoredTheme() || "light", false);
+
+    document.addEventListener("click", function (event) {
+      var button = event.target.closest(".lc-theme-option[data-lc-theme]");
+      if (!button) return;
+      setTheme(button.getAttribute("data-lc-theme"), true);
+    });
+  }
+
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    initThemeSwitcher();
+  } else {
+    document.addEventListener("DOMContentLoaded", initThemeSwitcher);
+  }
+})();
+
+// ============================================================================
 // Font size switcher — sidebar S/M/L, persisted per browser.
 // ============================================================================
 (function () {

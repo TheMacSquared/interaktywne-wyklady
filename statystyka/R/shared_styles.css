@@ -891,14 +891,20 @@ html, body {
 
 #lc-nav-progress-current { color: var(--upwr-accent); }
 
-/* === Przełącznik rozmiaru tekstu === */
-.lc-font-size-control {
-  margin: auto 18px 0;
+/* === Przełączniki dostępności === */
+.lc-font-size-control,
+.lc-theme-control {
+  margin: 10px 18px 0;
   padding-top: 10px;
   border-top: 1px solid var(--upwr-rule-soft);
 }
 
-.lc-font-size-label {
+.lc-font-size-control {
+  margin-top: auto;
+}
+
+.lc-font-size-label,
+.lc-theme-label {
   font-family: var(--upwr-mono);
   font-size: 8px;
   letter-spacing: 1.5px;
@@ -908,14 +914,23 @@ html, body {
   margin-bottom: 5px;
 }
 
-.lc-font-size-options {
+.lc-font-size-options,
+.lc-theme-options {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   border: 1px solid var(--upwr-rule);
   background: var(--upwr-surface);
 }
 
-.lc-font-size-option {
+.lc-font-size-options {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.lc-theme-options {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.lc-font-size-option,
+.lc-theme-option {
   min-width: 0;
   height: 24px;
   border: 0;
@@ -929,18 +944,22 @@ html, body {
   padding: 0;
 }
 
-.lc-font-size-option:last-child {
+.lc-font-size-option:last-child,
+.lc-theme-option:last-child {
   border-right: 0;
 }
 
 .lc-font-size-option:hover,
-.lc-font-size-option:focus {
+.lc-font-size-option:focus,
+.lc-theme-option:hover,
+.lc-theme-option:focus {
   background: var(--upwr-surface-sunken);
   color: var(--upwr-ink);
   outline: none;
 }
 
-.lc-font-size-option.lc-active {
+.lc-font-size-option.lc-active,
+.lc-theme-option.lc-active {
   background: var(--upwr-accent);
   color: #fff;
 }
@@ -1098,6 +1117,46 @@ html, body {
   padding: 4px 8px;
 }
 
+/* Tabele generowane przez Shiny renderTable() dostają klasy Bootstrapa,
+   więc wymagają osobnego mapowania na tokeny motywu. */
+.lc-chapter table.table,
+.lc-chapter table.shiny-table {
+  width: 100%;
+  color: var(--upwr-ink);
+  background: var(--upwr-surface);
+  border-color: var(--upwr-rule);
+}
+
+.lc-chapter table.table th,
+.lc-chapter table.table td,
+.lc-chapter table.shiny-table th,
+.lc-chapter table.shiny-table td {
+  color: var(--upwr-ink) !important;
+  background-color: var(--upwr-surface) !important;
+  border-color: var(--upwr-rule) !important;
+}
+
+.lc-chapter table.table thead th,
+.lc-chapter table.shiny-table thead th {
+  color: var(--upwr-ink) !important;
+  background-color: var(--upwr-surface-sunken) !important;
+  border-bottom-color: var(--upwr-rule) !important;
+}
+
+.lc-chapter table.table-striped tbody tr:nth-of-type(odd) th,
+.lc-chapter table.table-striped tbody tr:nth-of-type(odd) td,
+.lc-chapter table.shiny-table tbody tr:nth-of-type(odd) th,
+.lc-chapter table.shiny-table tbody tr:nth-of-type(odd) td {
+  background-color: var(--upwr-panel) !important;
+}
+
+.lc-chapter table.table-striped tbody tr:nth-of-type(even) th,
+.lc-chapter table.table-striped tbody tr:nth-of-type(even) td,
+.lc-chapter table.shiny-table tbody tr:nth-of-type(even) th,
+.lc-chapter table.shiny-table tbody tr:nth-of-type(even) td {
+  background-color: var(--upwr-surface) !important;
+}
+
 /* === Utility layoutu treści === */
 .lc-stack {
   display: flex;
@@ -1192,6 +1251,35 @@ input[type="checkbox"],
 input[type="radio"],
 input[type="range"] {
   accent-color: var(--upwr-accent);
+}
+
+.lc-chapter .form-control,
+.lc-chapter .form-select,
+.lc-chapter .selectize-input,
+.lc-chapter .selectize-dropdown,
+.lc-chapter .selectize-dropdown-content {
+  color: var(--upwr-ink) !important;
+  background: var(--upwr-surface) !important;
+  border-color: var(--upwr-rule) !important;
+}
+
+.lc-chapter .selectize-input input {
+  color: var(--upwr-ink) !important;
+}
+
+.lc-chapter .selectize-input::after {
+  border-top-color: var(--upwr-ink-soft) !important;
+}
+
+.lc-chapter .selectize-dropdown .option,
+.lc-chapter .selectize-dropdown .optgroup-header {
+  color: var(--upwr-ink) !important;
+  background: var(--upwr-surface) !important;
+}
+
+.lc-chapter .selectize-dropdown .active {
+  color: var(--upwr-ink) !important;
+  background: var(--upwr-panel) !important;
 }
 
 .lc-chapter .shiny-input-container {

@@ -257,6 +257,31 @@ lecture_page <- function(lecture_id      = NULL,
     )
   )
 
+  theme_control <- tags$div(
+    class = "lc-theme-control",
+    `aria-label` = "Tryb kolorów",
+    tags$div(class = "lc-theme-label", "Tryb"),
+    tags$div(
+      class = "lc-theme-options",
+      tags$button(
+        class = "lc-theme-option",
+        type = "button",
+        `data-lc-theme` = "light",
+        title = "Jasny tryb",
+        `aria-label` = "Jasny tryb",
+        "J"
+      ),
+      tags$button(
+        class = "lc-theme-option",
+        type = "button",
+        `data-lc-theme` = "dark",
+        title = "Ciemny tryb",
+        `aria-label` = "Ciemny tryb",
+        "C"
+      )
+    )
+  )
+
   bootstrapPage(
     # ---- HEAD ----
     tags$head(
@@ -284,6 +309,10 @@ lecture_page <- function(lecture_id      = NULL,
     var size = window.localStorage.getItem('lc-font-size');
     if (size === 'small' || size === 'medium' || size === 'large') {
       document.documentElement.setAttribute('data-lc-font-size', size);
+    }
+    var theme = window.localStorage.getItem('lc-theme');
+    if (theme === 'light' || theme === 'dark') {
+      document.documentElement.setAttribute('data-lc-theme', theme);
     }
   } catch (e) {}
 })();
@@ -365,7 +394,8 @@ document.addEventListener('DOMContentLoaded', lcInitTabsScroll);
             tags$div(class = "lc-nav-module-title", lecture_title),
           nav_chapters,
           progress_block,
-          font_size_control
+          font_size_control,
+          theme_control
         ),
 
         # Główna treść — jeden rozdział na raz (renderUI po stronie serwera)
@@ -700,6 +730,7 @@ lc_chapter_next <- function(num, title, lead = NULL, target_id) {
 
   css <- sprintf(
     ":root {
+  color-scheme: light;
   --upwr-bg:                %s;
   --upwr-panel:             %s;
   --upwr-surface:           #ffffff;
@@ -726,6 +757,36 @@ lc_chapter_next <- function(num, title, lead = NULL, target_id) {
   --upwr-cat-indygo:        %s;
   --upwr-cat-terakota:      %s;
   --upwr-cat-wrzos:         %s;
+}
+
+html[data-lc-theme=\"dark\"] {
+  color-scheme: dark;
+  --upwr-bg:                #161412;
+  --upwr-panel:             #201d19;
+  --upwr-surface:           #26221d;
+  --upwr-surface-sunken:    #1b1815;
+  --upwr-ink:               #f7efe4;
+  --upwr-ink-soft:          #ded1c2;
+  --upwr-ink-subtle:        #8d8276;
+  --upwr-reference:         #aa9d90;
+  --upwr-rule:              #4a4238;
+  --upwr-rule-soft:         #342f29;
+  --upwr-accent:            #d98a99;
+  --upwr-accent-hover:      #e3a8b2;
+  --upwr-accent-tint:       #3f2028;
+  --upwr-single-alt:        #d6b15b;
+  --upwr-single-alt-tint:   #3a301d;
+  --upwr-sage:              #82bf9c;
+  --upwr-sage-tint:         #1f3528;
+  --upwr-secondary:         #b8c7c4;
+  --upwr-cat-grafit:        #b8c7c4;
+  --upwr-cat-bursztyn:      #d8a35d;
+  --upwr-cat-niebo:         #89b9df;
+  --upwr-cat-szalwia:       #82bf9c;
+  --upwr-cat-kurkuma:       #d9ca6a;
+  --upwr-cat-indygo:        #8aa8dc;
+  --upwr-cat-terakota:      #d27a59;
+  --upwr-cat-wrzos:         #c89ab9;
 }",
     upwr_bg, upwr_panel, panel_sunken,
     upwr_ink, upwr_ink_soft, ink_subtle, upwr_reference,
