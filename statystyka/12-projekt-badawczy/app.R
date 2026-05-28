@@ -75,12 +75,12 @@ header_extras <- tagList(
     .construct-cell h4 {
       margin-top: 0;
       margin-bottom: 8px;
-      font-size: 14px;
+      font-size: calc(14px * var(--lc-font-scale));
       color: var(--upwr-ink);
     }
     .construct-cell p {
       margin: 0;
-      font-size: 13px;
+      font-size: calc(13px * var(--lc-font-scale));
       line-height: 1.45;
       color: var(--upwr-ink-soft);
     }
@@ -101,6 +101,7 @@ header_extras <- tagList(
     .question-card h4 {
       margin-top: 0;
       margin-bottom: 8px;
+      font-size: calc(16px * var(--lc-font-scale));
       color: var(--upwr-ink);
     }
     .research-ladder {
@@ -136,7 +137,7 @@ header_extras <- tagList(
       background: white;
       padding: 8px 10px;
       border-radius: 0 6px 6px 0;
-      font-size: 13px;
+      font-size: calc(13px * var(--lc-font-scale));
       line-height: 1.35;
     }
     .data-legend-item code {

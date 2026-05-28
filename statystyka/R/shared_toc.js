@@ -268,6 +268,61 @@
 })();
 
 // ============================================================================
+// Font size switcher — sidebar S/M/L, persisted per browser.
+// ============================================================================
+(function () {
+  "use strict";
+
+  var storageKey = "lc-font-size";
+  var allowed = { small: true, medium: true, large: true };
+
+  function getStoredSize() {
+    try {
+      return window.localStorage.getItem(storageKey);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function storeSize(size) {
+    try {
+      window.localStorage.setItem(storageKey, size);
+    } catch (e) {
+      // localStorage can be unavailable in restrictive browser settings.
+    }
+  }
+
+  function setSize(size, persist) {
+    if (!allowed[size]) size = "medium";
+    document.documentElement.setAttribute("data-lc-font-size", size);
+
+    document.querySelectorAll(".lc-font-size-option[data-lc-font-size]").forEach(function (button) {
+      var isActive = button.getAttribute("data-lc-font-size") === size;
+      button.classList.toggle("lc-active", isActive);
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+
+    if (persist) storeSize(size);
+  }
+
+  function initFontSizeSwitcher() {
+    setSize(getStoredSize() || "medium", false);
+
+    document.addEventListener("click", function (event) {
+      var button = event.target.closest(".lc-font-size-option[data-lc-font-size]");
+      if (!button) return;
+      setSize(button.getAttribute("data-lc-font-size"), true);
+    });
+  }
+
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    initFontSizeSwitcher();
+  } else {
+    document.addEventListener("DOMContentLoaded", initFontSizeSwitcher);
+  }
+})();
+
+// ============================================================================
 // Glossary popups — obsługa .lc-gloss
 // ============================================================================
 (function () {

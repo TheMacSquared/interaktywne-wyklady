@@ -224,6 +224,39 @@ lecture_page <- function(lecture_id      = NULL,
     )
   )
 
+  font_size_control <- tags$div(
+    class = "lc-font-size-control",
+    `aria-label` = "Rozmiar tekstu",
+    tags$div(class = "lc-font-size-label", "Tekst"),
+    tags$div(
+      class = "lc-font-size-options",
+      tags$button(
+        class = "lc-font-size-option",
+        type = "button",
+        `data-lc-font-size` = "small",
+        title = "Mały tekst",
+        `aria-label` = "Mały tekst",
+        "S"
+      ),
+      tags$button(
+        class = "lc-font-size-option",
+        type = "button",
+        `data-lc-font-size` = "medium",
+        title = "Średni tekst",
+        `aria-label` = "Średni tekst",
+        "M"
+      ),
+      tags$button(
+        class = "lc-font-size-option",
+        type = "button",
+        `data-lc-font-size` = "large",
+        title = "Duży tekst",
+        `aria-label` = "Duży tekst",
+        "L"
+      )
+    )
+  )
+
   bootstrapPage(
     # ---- HEAD ----
     tags$head(
@@ -245,6 +278,16 @@ lecture_page <- function(lecture_id      = NULL,
       # Wstrzyknięte po shared_styles.css, żeby wartości z palette.R miały
       # pierwszeństwo nad wartościami fallbackowymi w CSS.
       .lc_palette_css(),
+      tags$script(HTML("
+(function() {
+  try {
+    var size = window.localStorage.getItem('lc-font-size');
+    if (size === 'small' || size === 'medium' || size === 'large') {
+      document.documentElement.setAttribute('data-lc-font-size', size);
+    }
+  } catch (e) {}
+})();
+      ")),
       includeScript(file.path(proj_root, "R", "shared_toc.js")),
       tags$script(HTML("
 function lcUpdateTabsScrollState(list) {
@@ -321,7 +364,8 @@ document.addEventListener('DOMContentLoaded', lcInitTabsScroll);
           if (nchar(lecture_title) > 0)
             tags$div(class = "lc-nav-module-title", lecture_title),
           nav_chapters,
-          progress_block
+          progress_block,
+          font_size_control
         ),
 
         # Główna treść — jeden rozdział na raz (renderUI po stronie serwera)
