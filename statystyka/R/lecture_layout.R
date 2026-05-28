@@ -32,7 +32,8 @@
   list(num = "VIII", slug = "bayes",      title = "Bayes",                       short = "Bayes",        href = "#"),
   list(num = "IX",   slug = "dane",       title = "Dobre dane",                  short = "Dane",         href = "#"),
   list(num = "X",    slug = "case",       title = "Case studies",                short = "Case studies", href = "#"),
-  list(num = "XI",   slug = "kierunkowe", title = "Kierunkowe",                  short = "Kierunkowe",   href = "#")
+  list(num = "XI",   slug = "kierunkowe", title = "Kierunkowe",                  short = "Kierunkowe",   href = "#"),
+  list(num = "XII",  slug = "projekt",    title = "Projekt badawczy",            short = "Projekt",      href = "#")
 )
 
 # Mapowanie lecture_id → slug modułu
@@ -47,7 +48,8 @@
   "metody-bayesowskie"          = "bayes",
   "dobre-dane"                  = "dane",
   "case-studies"                = "case",
-  "kierunkowe"                  = "kierunkowe"
+  "kierunkowe"                  = "kierunkowe",
+  "projekt-badawczy"            = "projekt"
 )
 
 # ============================================================================
