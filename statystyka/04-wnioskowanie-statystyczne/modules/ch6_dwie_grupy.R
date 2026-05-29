@@ -177,7 +177,7 @@ ch6_ui <- list(
 
     figure_panel(
       label = "Ryc. 8.3",
-      title = "Błąd atrycji: sparowane vs. niesparowane na tych samych danych",
+      title = "Błąd wykruszania próby: sparowane vs. niesparowane na tych samych danych",
       fluidRow(
         column(6,
           p(tags$strong("Analiza niesparowana"), " (n₁=20, n₂=15)"),
@@ -193,7 +193,7 @@ ch6_ui <- list(
     ),
 
     inline_callout(
-      label = "Błąd doboru",
+      label = "Błąd wykruszania próby",
       "5 pacjentów nie wróciło na kontrolę — nie było to przypadkowe, lecz związane
        z wyższym ciśnieniem wyjściowym (MNAR). Analiza niesparowana 'widzi' tę różnicę
        jako efekt diety; analiza sparowana eliminuje błąd, porównując każdego pacjenta
