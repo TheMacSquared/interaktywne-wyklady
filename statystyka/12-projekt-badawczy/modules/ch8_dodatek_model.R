@@ -1,35 +1,36 @@
-ch8_ui <- lecture_chapter(id = "ch8", num = "9", title = "Dodatek: model kontrolny", content = tagList(
+ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Model kontrolny", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
-      kicker = "Rozdział 09 · Dodatek na przyszłość",
-      num = "09",
-      title = "Model kontrolny na później.",
-      lead = "To nie jest część głównego flow dzisiejszych zajęć. To zapowiedź:
-              kiedy poznamy regresję wieloczynnikową, wrócimy do tych samych pytań
-              z narzędziem do jednoczesnego uwzględniania kilku tropów."
+      kicker = "Rozdział 08 · Stabilność efektu",
+      num = "08",
+      title = "Cała wiązka w jednym modelu.",
+      lead = "W rozdziale 5 sprawdzaliśmy tropy pojedynczo. Teraz sprawdzamy je
+              jednocześnie: czy efekt utrzymuje się, gdy kontrolujemy pozostałe?"
+    ),
+
+    div(class = "lc-feedback lc-feedback-info",
+      tags$strong("Przypomnienie celu:"),
+      p(tags$em(tr_goal))
     ),
 
     lc_h2("sec-01", "Po co model kontrolny?"),
 
     div(class = "lc-prose",
-      p("W głównej części wykładu sprawdzaliśmy tropy pojedynczo: korelacja,
-        różnice między dwiema grupami, proste porównania. To dobry start
-        badawczy, ale świat rzadko zmienia się jedną zmienną naraz."),
-      p("Regresja wieloczynnikowa pozwala zapytać: czy trop związany z `beauty`
-        pozostaje widoczny, gdy jednocześnie uwzględnimy np. wiek, płeć,
+      p("W rozdziale 5 sprawdzaliśmy tropy pojedynczo: korelacja, różnice między
+        dwiema grupami, proste porównania. To dobry start, ale świat rzadko
+        zmienia się jedną zmienną naraz — a tablica zakłócaczy pokazała, że tropy
+        się przeplatają."),
+      p("Regresja wieloczynnikowa pozwala zapytać wprost: czy trop związany z
+        `beauty` pozostaje widoczny, gdy jednocześnie uwzględnimy wiek, płeć,
         native speaker status, poziom kursu i response rate?")
-    ),
-
-    div(class = "lc-feedback lc-feedback-warning",
-      tags$strong("Na dziś:"),
-      p("Nie traktujemy tego rozdziału jako wymaganej metody. To mapa miejsca,
-        do którego dojdziemy później.")
     ),
 
     div(class = "lc-figure-panel",
       h4("Seria modeli kontrolnych"),
-      actionButton("ch8_build", "Pokaż serię modeli", class = "lc-btn-primary"),
-      br(), br(),
+      div(class = "lc-prose",
+        p("Dodajemy kontrole warstwami i patrzymy, co dzieje się ze współczynnikiem
+          przy `beauty`: czy słabnie, czy się trzyma.")
+      ),
       uiOutput("ch8_models_table"),
       zoom_plot_ui("ch8_beta_plot", height = "280px")
     ),
@@ -73,26 +74,30 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "9", title = "Dodatek: model kontrol
     lc_feedback(
       tags$p(tags$strong("Jeśli efekt beauty przeżywa kontrolę, rodzi to kolejne pytanie:")),
       tags$p("Czy to przyczynowość? Czy atrakcyjność powoduje wyższe oceny, czy tylko z nimi współwystępuje?"),
-      tags$p("Dane obserwacyjne nie mogą same odpowiedzieć na to pytanie. Żeby odpowiedzieć mocniej, potrzebujemy innego projektu badania."),
+      tags$p("Dane obserwacyjne nie mogą same odpowiedzieć na to pytanie. Żeby odpowiedzieć mocniej, potrzebowalibyśmy projektu badania z rozdziału 7."),
       type = "warning"
     ),
+
+    lc_chapter_next("09", "Checklist projektu grupowego",
+      "Domykamy całość: cały proces zwijamy w listę kontrolną do własnych projektów.",
+      "ch7"),
 
     div(style = "height: 40px;")
   )))
 )
 
 ch8_server <- function(input, output, session) {
-  model_series <- reactiveVal(NULL)
-
-  observeEvent(input$ch8_build, {
+  # Seria modeli liczona od razu — to materiał do omówienia z projekcji,
+  # nie nagroda za kliknięcie.
+  model_series <- reactive({
     models <- list(
       list(label = "1: beauty", model = lm(eval ~ beauty, data = tr_data)),
       list(label = "2: + cechy osoby", model = lm(eval ~ beauty + gender + age + minority + native + tenure, data = tr_data)),
       list(label = "3: + kontekst kursu", model = lm(eval ~ beauty + gender + age + minority + native + tenure + division + credits + students, data = tr_data)),
       list(label = "4: + response rate", model = lm(eval ~ beauty + gender + age + minority + native + tenure + division + credits + students + response.rate, data = tr_data))
     )
-    model_series(tr_model_table(models))
-  }, ignoreInit = FALSE)
+    tr_model_table(models)
+  })
 
   output$ch8_models_table <- renderUI({
     df <- model_series()

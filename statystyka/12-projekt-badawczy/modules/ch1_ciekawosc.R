@@ -1,11 +1,11 @@
-ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do pytania", content = tagList(
+ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
       kicker = "Rozdział 01 · Start badania",
       num = "01",
-      title = "Od ciekawości do pytania.",
+      title = "Od ciekawości do celu.",
       lead = "Na początku nie potrzebujemy testu. Potrzebujemy ciekawości,
-              dobrych podejrzeń i języka, którym da się opisać problem."
+              jednego dobrego celu i wiązki tropów, którymi da się go oświetlić."
     ),
 
     lc_h2("sec-01", "Zaczynamy od sytuacji, nie od metody"),
@@ -15,7 +15,8 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do pyta
         informacji o kontekście zajęć. To nie jest jeszcze projekt badawczy.
         To dopiero materiał, z którego można zbudować kilka różnych historii."),
       p("Dzisiejsze ćwiczenie polega na tym, żeby zobaczyć, jak z luźnej ciekawości
-        powstaje pytanie, z pytania hipoteza, a z hipotezy plan analizy.")
+        powstaje jeden cel badawczy, z celu wiązka hipotez, a z hipotez plan analizy.
+        Ten sam cel i tę samą wiązkę będziemy ciągnąć przez cały wykład.")
     ),
 
     div(class = "lc-figure-panel",
@@ -55,53 +56,68 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do pyta
       uiOutput("ch1_data_legend")
     ),
 
-    div(class = "lc-figure-panel",
-      h4("Co nas zaciekawiło?"),
-      checkboxGroupInput("ch1_curiosity", NULL,
-        choices = c(
-          "Czy ewaluacje mierzą jakość, czy sympatię?" = "quality",
-          "Czy wygląd prowadzącego może wpływać na ocenę?" = "beauty",
-          "Czy niektóre grupy prowadzących są oceniane inaczej?" = "fairness",
-          "Czy typ kursu zmienia sposób oceniania?" = "context",
-          "Czy odpowiedzieli reprezentatywni studenci?" = "response"
-        ),
-        selected = c("quality", "beauty")
-      ),
-      uiOutput("ch1_curiosity_prompt"),
-      actionButton("ch1_show_main_question", "Pokaż główne pytanie",
-                   class = "lc-btn-secondary"),
-      uiOutput("ch1_main_question")
+    lc_h2("sec-02", "Nasz cel na cały wykład"),
+
+    div(class = "lc-feedback lc-feedback-warning",
+      tags$strong("Cel badawczy:"),
+      p(tags$em(tr_goal)),
+      p("Tego pytania nie rozstrzygniemy jednym testem. Ono jest celem, do którego
+        zbliżamy się wiązką tropów — kilkoma konkurującymi hipotezami, które razem
+        oświetlają, co tak naprawdę siedzi w ocenie z ankiety.")
     ),
+
+    lc_h2("sec-03", "Wiązka tropów, którą będziemy śledzić"),
+
+    div(class = "lc-prose",
+      p("Zamiast wybierać jeden trop, kładziemy na stół wszystkie naraz. To jest
+        wiązka hipotez naszego projektu. Każdy trop pyta o inny możliwy składnik
+        oceny; żaden sam nie odpowiada na cel, ale razem rysują obraz.")
+    ),
+
+    uiOutput("ch1_tropy_bundle"),
 
     div(class = "research-step",
       span(class = "step-number", "1"),
-      "Dobra analiza często zaczyna się od zdania: 'ciekawe, czy...'.
-       Dopiero później pytamy, jaką statystyką da się to sprawdzić."
+      "Dobra analiza zaczyna się od zdania: 'ciekawe, czy...', a potem od decyzji,
+       który cel chcemy oświetlić i jakimi tropami. Statystyka przychodzi później."
+    ),
+
+    lc_h2("sec-04", "Tablica tropów — tu będziemy zbierać wyniki"),
+
+    div(class = "lc-prose",
+      p("Przez cały wykład będziemy wracać do jednej tablicy. Na razie jest pusta:
+        mamy pytania, ale jeszcze żadnego kontaktu z danymi. W rozdziale 5 zaczniemy
+        ją wypełniać, a w rozdziale 6 odczytamy, co cała wiązka mówi o celu.")
+    ),
+
+    div(class = "lc-figure-panel",
+      h4("Tablica tropów (stan początkowy)"),
+      tr_board_ui(reveal = character(0), show_verdict = TRUE)
     ),
 
     tr_discussion_box("Rozmowa na start:",
-      tags$li("Które z tych pytań jest najbardziej interesujące dla studentów?"),
-      tags$li("Które byłoby ważne dla władz uczelni?"),
-      tags$li("Które jest najłatwiej sprawdzić na tych danych, a które wymagałoby nowych danych?")
+      tags$li("Który trop wydaje się studentom najbardziej przekonujący — i dlaczego?"),
+      tags$li("Który byłby najważniejszy dla władz uczelni przy decyzjach kadrowych?"),
+      tags$li("Który da się sprawdzić na tych danych, a który wymagałby nowych danych?")
     ),
 
     lc_chapter_next("02", "Jak obracać pytanie badawcze",
-      "To samo zjawisko można opowiedzieć jako obciążenie, trafność pomiaru, kontekst albo sprawiedliwość.",
+      "Ten sam cel można ująć w różnych ramach: obciążenie, trafność pomiaru, kontekst albo sprawiedliwość.",
       "ch2"),
     div(style = "height: 40px;")
   )))
 )
 
 ch1_server <- function(input, output, session) {
-  output$ch1_main_question <- renderUI({
-    if (is.null(input$ch1_show_main_question) || input$ch1_show_main_question == 0) {
-      return(NULL)
-    }
-    div(class = "lc-feedback lc-feedback-warning",
-      tags$strong("Główne pytanie / główna teza:"),
-      p(tags$em("Czy ocena z ankiety naprawdę mówi, kto dobrze uczy, czy raczej
-        pokazuje mieszankę jakości zajęć, sympatii, stereotypów i okoliczności kursu?"))
-    )
+  output$ch1_tropy_bundle <- renderUI({
+    cards <- lapply(tr_trop_order, function(id) {
+      tr <- tr_tropy[[id]]
+      div(class = "trop-card",
+        h4(tr$short),
+        p(tags$strong("Pytanie: "), tr$question)
+      )
+    })
+    div(class = "trop-stack", cards)
   })
 
   output$ch1_snapshot <- renderUI({
@@ -164,20 +180,6 @@ ch1_server <- function(input, output, session) {
           )
         })
       )
-    )
-  })
-
-  output$ch1_curiosity_prompt <- renderUI({
-    n <- length(input$ch1_curiosity)
-    if (n == 0) {
-      return(div(class = "lc-feedback lc-feedback-warning",
-        "Wybierz przynajmniej jeden trop. Bez ciekawości nie ma projektu."
-      ))
-    }
-    div(class = "lc-feedback lc-feedback-info",
-      tags$strong("Teraz zamieńcie ciekawość w pytanie:"),
-      p("Nie: \"zrobię test\". Tak: \"chcę zrozumieć, czy i dlaczego...\""),
-      p("Wybrane tropy: ", tags$strong(n), ". Spróbujcie ułożyć z nich jedno główne pytanie.")
     )
   })
 }

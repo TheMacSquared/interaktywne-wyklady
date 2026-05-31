@@ -8,21 +8,18 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Hipotezy jako tropy", 
               poprawić, zawęzić albo porzucić po kontakcie z danymi."
     ),
 
-    lc_h2("sec-01", "Budujemy kilka wersji historii"),
+    div(class = "lc-feedback lc-feedback-info",
+      tags$strong("Przypomnienie celu:"),
+      p(tags$em(tr_goal))
+    ),
 
-    div(class = "lc-figure-panel",
-      h4("Karta hipotezy"),
-      selectInput("ch3_hyp", "Wybierz trop:",
-        choices = c(
-          "Atrakcyjność wiąże się z oceną kursu" = "beauty",
-          "Płeć prowadzącego wiąże się z oceną kursu" = "gender",
-          "Native speakerzy są oceniani inaczej" = "native",
-          "Kursy jednopunktowe dostają inne oceny" = "credits",
-          "Wyższy response rate zmienia interpretację oceny" = "response"
-        ),
-        selected = "beauty"
-      ),
-      uiOutput("ch3_hyp_card")
+    lc_h2("sec-01", "Cała wiązka hipotez naraz"),
+
+    div(class = "lc-prose",
+      p("Projekt badawczy rzadko stoi na jednej hipotezie. Pod jednym celem
+        rozkładamy kilka konkurujących tropów — każdy z własnym pytaniem,
+        roboczą hipotezą i alternatywnymi wyjaśnieniami. To ta sama wiązka,
+        którą wprowadziliśmy w rozdziale 1; tutaj nadajemy jej kształt hipotez.")
     ),
 
     div(class = "lc-feedback lc-feedback-warning",
@@ -31,10 +28,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Hipotezy jako tropy", 
         Jeśli nie umiemy tego zrobić, to zwykle jeszcze nie rozumiemy problemu.")
     ),
 
-    div(class = "lc-figure-panel",
-      h4("Mapa alternatywnych wyjaśnień"),
-      uiOutput("ch3_alt_map")
-    ),
+    uiOutput("ch3_bundle"),
 
     lc_chapter_next("04", "Co właściwie mierzymy?",
       "Sprawdzamy, czy nasze pojęcia naprawdę mają odpowiedniki w danych.",
@@ -44,57 +38,18 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Hipotezy jako tropy", 
 )
 
 ch3_server <- function(input, output, session) {
-  hyp <- reactive({
-    list(
-      beauty = list(
-        q = "Czy prowadzący oceniani jako atrakcyjniejsi dostają wyższe oceny kursu?",
-        h = "Wyższe `beauty` współwystępuje z wyższym `eval`.",
-        alt = c("Atrakcyjność może być powiązana z wiekiem lub płcią.",
-                "Studenci mogą wyżej oceniać osoby bardziej pewne siebie, a nie wygląd sam w sobie.",
-                "Efekt może zależeć od typu kursu.")
-      ),
-      gender = list(
-        q = "Czy oceny kursu różnią się między kobietami i mężczyznami prowadzącymi?",
-        h = "Średnie `eval` różni się między grupami `gender`.",
-        alt = c("Kobiety i mężczyźni mogą prowadzić inne typy kursów.",
-                "Różnice mogą wynikać z oczekiwań studentów wobec stylu prowadzenia.",
-                "Nierówny response rate może zmieniać obraz.")
-      ),
-      native = list(
-        q = "Czy native speaker status wiąże się z oceną kursu?",
-        h = "Średnie `eval` różni się między `native = tak` i `native = nie`.",
-        alt = c("Status native może mieszać się z typem kursu.",
-                "Studenci mogą oceniać zrozumiałość języka, nie jakość dydaktyczną.",
-                "Grupy mogą mieć różną liczebność.")
-      ),
-      credits = list(
-        q = "Czy kursy jednopunktowe są oceniane inaczej niż większe kursy?",
-        h = "Średnie `eval` różni się między kategoriami `credits`.",
-        alt = c("Mniejsze kursy mogą być łatwiejsze albo mniej obciążające.",
-                "Studenci mogą mieć inne oczekiwania wobec kursów pobocznych.",
-                "Liczebność i poziom kursu mogą działać razem.")
-      ),
-      response = list(
-        q = "Czy przy niskim odsetku odpowiedzi ocena kursu znaczy to samo?",
-        h = "`response.rate` współwystępuje z `eval`.",
-        alt = c("Odpowiadają głównie osoby skrajnie zadowolone lub niezadowolone.",
-                "Duże kursy mogą mieć niższy response rate.",
-                "Response rate może mówić o zaangażowaniu grupy, nie o jakości kursu.")
+  output$ch3_bundle <- renderUI({
+    cards <- lapply(tr_trop_order, function(id) {
+      tr <- tr_tropy[[id]]
+      div(class = "trop-card",
+        h4(tr$short),
+        p(tags$strong("Pytanie: "), tr$question),
+        p(tags$strong("Robocza hipoteza: "),
+          HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$hypothesis))),
+        p(tags$strong("Alternatywne wyjaśnienia:")),
+        tags$ul(class = "trop-alt", lapply(tr$alt, tags$li))
       )
-    )[[input$ch3_hyp]]
-  })
-
-  output$ch3_hyp_card <- renderUI({
-    x <- hyp()
-    div(class = "question-card",
-      p(tags$strong("Pytanie: "), x$q),
-      p(tags$strong("Robocza hipoteza: "), HTML(gsub("`([^`]+)`", "<code>\\1</code>", x$h))),
-      p(tags$strong("Co sprawdzimy najpierw: "),
-        "wykres, opis grup lub prosty test dopasowany do typu zmiennych.")
-    )
-  })
-
-  output$ch3_alt_map <- renderUI({
-    tags$ul(lapply(hyp()$alt, tags$li))
+    })
+    div(class = "trop-stack", cards)
   })
 }

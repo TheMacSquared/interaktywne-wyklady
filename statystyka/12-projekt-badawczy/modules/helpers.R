@@ -218,3 +218,197 @@ tr_confounder_summary <- local({
 tr_confounder_row <- function(var) {
   tr_confounder_summary[tr_confounder_summary$variable == var, , drop = FALSE]
 }
+
+# ============================================================================
+# WIĄZKA TROPÓW — jedno źródło prawdy dla całego wykładu
+# ----------------------------------------------------------------------------
+# Cały wykład realizuje jeden CEL badawczy: czy `eval` (ocena z ankiety) mierzy
+# jakość nauczania, czy raczej mieszankę innych rzeczy? Tego celu NIE da się
+# rozstrzygnąć jedną hipotezą — potrzebujemy wiązki konkurujących tropów, które
+# razem oświetlają cel. Ta lista to ta sama wiązka, którą śledzimy od ciekawości
+# (ch1), przez hipotezy (ch3), testy (ch5), iterację (ch6) aż po model (ch8).
+# Wszystkie moduły czytają stąd, zamiast powielać własne listy.
+# ============================================================================
+
+tr_goal <- paste0(
+  "Czy ocena z ankiety (eval) mierzy jakość nauczania, czy raczej mieszankę ",
+  "jakości zajęć, sympatii, stereotypów i okoliczności kursu?"
+)
+
+tr_tropy <- list(
+  beauty = list(
+    id        = "beauty",
+    short     = "Atrakcyjność",
+    var       = "beauty",
+    question  = "Czy prowadzący oceniani jako atrakcyjniejsi dostają wyższe oceny kursu?",
+    hypothesis = "Wyższe `beauty` współwystępuje z wyższym `eval`.",
+    method    = "cor",
+    test_name = "korelacja Pearsona",
+    analysis  = "wykres punktowy + korelacja",
+    note      = "Obie zmienne są ilościowe, więc zaczynamy od związku liniowego.",
+    alt = c(
+      "Atrakcyjność może być powiązana z wiekiem lub płcią.",
+      "Studenci mogą wyżej oceniać osoby bardziej pewne siebie, a nie wygląd sam w sobie.",
+      "Efekt może zależeć od typu kursu."
+    )
+  ),
+  gender = list(
+    id        = "gender",
+    short     = "Płeć",
+    var       = "gender",
+    question  = "Czy kobiety i mężczyźni prowadzący są oceniani podobnie?",
+    hypothesis = "Średnie `eval` różni się między grupami `gender`.",
+    method    = "t",
+    test_name = "test t dla dwóch grup",
+    analysis  = "boxplot + porównanie średnich",
+    note      = "Pytanie porównuje dwie grupy prowadzących.",
+    alt = c(
+      "Kobiety i mężczyźni mogą prowadzić inne typy kursów.",
+      "Różnice mogą wynikać z oczekiwań studentów wobec stylu prowadzenia.",
+      "Nierówny response rate może zmieniać obraz."
+    )
+  ),
+  native = list(
+    id        = "native",
+    short     = "Native speaker",
+    var       = "native",
+    question  = "Czy status native speaker wiąże się z oceną kursu?",
+    hypothesis = "Średnie `eval` różni się między `native = tak` i `native = nie`.",
+    method    = "wilcox",
+    test_name = "Mann-Whitney",
+    analysis  = "boxplot + porównanie rozkładów",
+    note      = "Używamy wariantu odpornego na nierówne i skośne grupy.",
+    alt = c(
+      "Status native może mieszać się z typem kursu.",
+      "Studenci mogą oceniać zrozumiałość języka, nie jakość dydaktyczną.",
+      "Grupy mogą mieć różną liczebność."
+    )
+  ),
+  minority = list(
+    id        = "minority",
+    short     = "Mniejszość",
+    var       = "minority",
+    question  = "Czy prowadzący z grup mniejszościowych są oceniani inaczej?",
+    hypothesis = "Średnie `eval` różni się między `minority = tak` i `minority = nie`.",
+    method    = "wilcox",
+    test_name = "Mann-Whitney",
+    analysis  = "boxplot + porównanie rozkładów",
+    note      = "To pytanie dotyczy sprawiedliwości ocen, więc wynik interpretujemy szczególnie ostrożnie.",
+    alt = c(
+      "Grupa mniejszościowa może być mało liczna — trudniej o stabilny wynik.",
+      "Różnice mogą ujawniać się tylko w wybranych typach kursów.",
+      "Możliwy słaby pomiar doświadczeń prowadzących i studentów."
+    )
+  ),
+  response = list(
+    id        = "response",
+    short     = "Response rate",
+    var       = "response.rate",
+    question  = "Czy przy niskim odsetku odpowiedzi ocena kursu znaczy to samo?",
+    hypothesis = "`response.rate` współwystępuje z `eval`.",
+    method    = "cor",
+    test_name = "korelacja Pearsona",
+    analysis  = "wykres punktowy + korelacja",
+    note      = "Sprawdzamy, czy reprezentatywność ankiety wiąże się z oceną.",
+    alt = c(
+      "Odpowiadają głównie osoby skrajnie zadowolone lub niezadowolone.",
+      "Duże kursy mogą mieć niższy response rate.",
+      "Response rate może mówić o zaangażowaniu grupy, nie o jakości kursu."
+    )
+  )
+)
+
+# Kolejność wiązki — jedna, używana wszędzie (od najmocniejszego do metodologicznego).
+tr_trop_order <- c("beauty", "gender", "native", "minority", "response")
+
+# ----------------------------------------------------------------------------
+# tr_board_summary — prekalkulowana tablica wyników dla całej wiązki.
+# Składa istniejące helpery (cor.test / tr_group_test / tr_mean_diff /
+# tr_research_verdict). Liczone raz przy starcie, żeby UI był szybki.
+# ----------------------------------------------------------------------------
+
+tr_board_summary <- local({
+  rows <- lapply(tr_trop_order, function(id) {
+    tr <- tr_tropy[[id]]
+    if (tr$method == "cor") {
+      res <- cor.test(tr_data[[tr$var]], tr_data$eval)
+      r <- unname(res$estimate)
+      p <- res$p.value
+      effect_text <- paste0("r = ", gsub("\\.", ",", sprintf("%.3f", r)))
+      effect_label <- effect_text
+    } else {
+      res  <- tr_group_test(tr$var, tr$method)
+      diff <- tr_mean_diff(tr$var)
+      p <- res$p
+      effect_text <- paste0("różnica średnich = ", round(diff$diff, 3))
+      effect_label <- paste0("Δ = ", gsub("\\.", ",", sprintf("%.2f", diff$diff)),
+                             " (", diff$group2, " − ", diff$group1, ")")
+    }
+    supported <- !is.na(p) && p < 0.05
+    verdict <- if (is.na(p)) {
+      "—"
+    } else if (supported) {
+      "trop wzmocniony"
+    } else {
+      "trop osłabiony"
+    }
+    data.frame(
+      id        = id,
+      short     = tr$short,
+      question  = tr$question,
+      test_name = tr$test_name,
+      effect    = effect_label,
+      p         = p,
+      p_label   = tr_fmt_p(p),
+      supported = supported,
+      verdict   = verdict,
+      full_verdict = tr_research_verdict(p, effect_text),
+      stringsAsFactors = FALSE
+    )
+  })
+  do.call(rbind, rows)
+})
+
+tr_board_row <- function(id) {
+  tr_board_summary[tr_board_summary$id == id, , drop = FALSE]
+}
+
+# ----------------------------------------------------------------------------
+# tr_board_ui — narastająca tablica tropów.
+#   reveal: które tropy są już "odkryte" (mają widoczny wynik). Pozostałe są
+#           wyszarzone z placeholderem "—". Domyślnie wszystkie odkryte.
+#   show_verdict: czy pokazać kolumnę werdyktu (włączamy od ch5 w górę).
+# Ten sam komponent służy jako pusta tablica (ch1, reveal=character(0)),
+# narastająca (ch5) i pełne podsumowanie (ch6, reveal=tr_trop_order).
+# ----------------------------------------------------------------------------
+
+tr_board_ui <- function(reveal = tr_trop_order, show_verdict = TRUE) {
+  header <- tags$thead(tags$tr(
+    tags$th("Trop"),
+    tags$th("Pytanie badawcze"),
+    tags$th("Narzędzie"),
+    tags$th("Wynik"),
+    if (show_verdict) tags$th("Werdykt")
+  ))
+
+  body <- tags$tbody(lapply(tr_trop_order, function(id) {
+    row <- tr_board_row(id)
+    revealed <- id %in% reveal
+    cls <- if (revealed) "tropy-row tropy-row-on" else "tropy-row tropy-row-off"
+    verdict_cls <- if (!revealed) "" else if (row$supported)
+      "tropy-verdict tropy-verdict-on" else "tropy-verdict tropy-verdict-off"
+
+    tags$tr(class = cls,
+      tags$td(tags$strong(row$short)),
+      tags$td(row$question),
+      tags$td(if (revealed) row$test_name else tags$span(class = "tropy-muted", "—")),
+      tags$td(if (revealed) HTML(paste0(row$effect, " · p ", row$p_label))
+              else tags$span(class = "tropy-muted", "czeka na sprawdzenie")),
+      if (show_verdict)
+        tags$td(if (revealed) tags$span(class = verdict_cls, row$verdict)
+                else tags$span(class = "tropy-muted", "—"))
+    )
+  }))
+
+  tags$table(class = "lc-table lc-table-bordered tropy-board", header, body)
+}

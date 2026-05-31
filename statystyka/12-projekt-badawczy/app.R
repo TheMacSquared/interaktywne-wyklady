@@ -143,6 +143,57 @@ header_extras <- tagList(
     .data-legend-item code {
       font-weight: 700;
     }
+
+    /* --- Tablica tropów: narastający widok zbiorczy całej wiązki --- */
+    .tropy-board { margin: 16px 0; }
+    .tropy-board td, .tropy-board th {
+      vertical-align: top;
+      font-size: calc(13px * var(--lc-font-scale));
+      line-height: 1.4;
+    }
+    .tropy-row-off { opacity: 0.45; }
+    .tropy-row-on  { opacity: 1; transition: opacity .25s; }
+    .tropy-muted   { color: var(--upwr-ink-subtle); font-style: italic; }
+    .tropy-verdict {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: calc(12px * var(--lc-font-scale));
+    }
+    .tropy-verdict-on  { background: var(--upwr-sage-tint);   color: var(--upwr-sage); }
+    .tropy-verdict-off { background: var(--upwr-accent-tint); color: var(--upwr-accent); }
+
+    /* --- Rozłożone karty tropów: wszystkie hipotezy/wyniki naraz --- */
+    .trop-stack { display: grid; gap: 14px; margin: 16px 0; }
+    .trop-card {
+      background: var(--upwr-surface);
+      border: 1px solid var(--upwr-rule);
+      border-left: 4px solid var(--upwr-szalwia);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .trop-card h4 {
+      margin: 0 0 6px 0;
+      font-size: calc(15px * var(--lc-font-scale));
+      color: var(--upwr-ink);
+    }
+    .trop-card p {
+      margin: 4px 0;
+      font-size: calc(13px * var(--lc-font-scale));
+      line-height: 1.45;
+      color: var(--upwr-ink-soft);
+    }
+    .trop-card .trop-alt {
+      margin: 6px 0 0 0;
+      padding-left: 18px;
+    }
+    .trop-card .trop-alt li {
+      font-size: calc(12.5px * var(--lc-font-scale));
+      color: var(--upwr-ink-soft);
+      line-height: 1.4;
+    }
+
     @media (max-width: 992px) {
       .construct-map { grid-template-columns: 1fr; }
       .research-ladder { grid-template-columns: 1fr; }
@@ -152,8 +203,11 @@ header_extras <- tagList(
   "))
 )
 
+# Kolejność: model kontrolny (ch8) wchodzi przed checklist (ch7), bo checklist
+# domyka cały projekt i musi być ostatni. Numery w hero każdego modułu są
+# ustawione zgodnie z TĄ kolejnością (1..9).
 .chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui, ch6_ui,
-                  ch_projekt_ui, ch7_ui, ch8_ui)
+                  ch_projekt_ui, ch8_ui, ch7_ui)
 
 ui <- lecture_page(
   lecture_id    = "projekt-badawczy",
@@ -174,8 +228,8 @@ server <- function(input, output, session) {
   ch5_server(input, output, session)
   ch6_server(input, output, session)
   ch_projekt_server(input, output, session)
-  ch7_server(input, output, session)
   ch8_server(input, output, session)
+  ch7_server(input, output, session)
 }
 
 shinyApp(ui = ui, server = server)

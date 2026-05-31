@@ -1,171 +1,86 @@
-# Handout: Usprawnienia wykładu 12-projekt-badawczy
+# Handout: wykład 12-projekt-badawczy
 
 ## Kontekst
 
-Wykład `statystyka/12-projekt-badawczy/` to interaktywna aplikacja Shiny prowadząca studentów przez mock-badanie empiryczne na danych `AER::TeachingRatings` (oceny ewaluacyjne nauczycieli akademickich, n=463). Celem jest nauka iteracyjnego myślenia badawczego — statystyka jest narzędziem, nie celem.
+Wykład `statystyka/12-projekt-badawczy/` to interaktywna aplikacja Shiny prowadząca
+studentów przez mock-badanie empiryczne na danych `AER::TeachingRatings` (oceny
+ewaluacyjne nauczycieli akademickich, n=463). Celem jest nauka iteracyjnego myślenia
+badawczego — statystyka jest narzędziem, nie celem.
 
-Istniejąca struktura (8 rozdziałów, pliki w `modules/`):
-- `ch1_ciekawosc.R` — wybór obszaru zainteresowania
-- `ch2_pytanie.R` — różne "ramki" dla pytania badawczego
-- `ch3_hipotezy.R` — hipotezy + alternatywne wyjaśnienia
-- `ch4_pomiar.R` — operacjonalizacja, construct map
-- `ch5_sprawdzenia.R` — pierwsze testy statystyczne
-- `ch6_iteracja.R` — co zrobić z wynikami
-- `ch7_checklist.R` — checklist projektu grupowego
-- `ch8_dodatek_model.R` — regresja wielowymiarowa (oznaczona jako "opcjonalna")
+## Idea spinająca: jeden cel, wiązka tropów
 
-Kod jest dobry. Potrzebuje 4 konkretnych usprawnień opisanych poniżej.
+Cały wykład realizuje **jeden cel badawczy** (zdefiniowany jako `tr_goal` w
+`modules/helpers.R`):
 
----
+> Czy ocena z ankiety (`eval`) mierzy jakość nauczania, czy raczej mieszankę jakości
+> zajęć, sympatii, stereotypów i okoliczności kursu?
 
-## Wzorce UI których musisz przestrzegać
+Tego celu nie da się rozstrzygnąć jedną hipotezą. Realizujemy go **wiązką 5 tropów**
+(konkurujących hipotez), które śledzimy przez WSZYSTKIE rozdziały — od ciekawości po
+wniosek. Wiązka jest jednym źródłem prawdy: `tr_tropy` + `tr_trop_order` w `helpers.R`.
 
-Projekt używa shared layout z `statystyka/R/`. **Nie wolno** używać `fluidPage`, `navbarPage`, `bslib::page_*`. Kanon:
+| Trop | Zmienna | Narzędzie |
+|------|---------|-----------|
+| Atrakcyjność | `beauty` | korelacja |
+| Płeć | `gender` | test t |
+| Native speaker | `native` | Mann-Whitney |
+| Mniejszość | `minority` | Mann-Whitney |
+| Response rate | `response.rate` | korelacja |
 
-```r
-lc_feedback("tekst", type = "info|ok|warning|danger")
-lc_stat_grid(lc_stat_box("label", value, color = proj_col_xxx))
-figure_panel(label = "...", title = "...", zoom_plot_ui("id"))
-margin_callout("tekst", color = "uwaga|wskazowka|ok")
-lc_h2(id = "...", num = "N", title = "...")
-lc_p("akapit narracyjny")
-```
+Spinający mechanizm wizualny: **narastająca tablica tropów** (`tr_board_ui()`), pusta w
+ch1, wypełniana w ch5, pełna w ch6 i ch9. Wyniki liczone raz przy starcie
+(`tr_board_summary`).
 
-Kolory aplikacji są zdefiniowane w `modules/helpers.R` jako `proj_col_*`. Używaj ich, nie definiuj nowych.
+## Struktura (kolejność = numeracja w UI)
 
-Wzorce interaktywne do reuse z `statystyka/10-case-studies/modules/ch1_caschools.R`:
-- **Checkbox model builder**: linie 636–643 (reactiveVal + observeEvent + dynamic formula)
-- **Coefficient plot**: linie 675–698 (broom::tidy conf.int + geom_errorbarh + significance color)
-- **Model comparison series**: linie 554–579 (4 pre-fit models, extract β, styled table)
+| Poz. | Plik | num | Tytuł |
+|------|------|-----|-------|
+| 1 | `ch1_ciekawosc.R` | 01 | Od ciekawości do celu (cel + wiązka + pusta tablica) |
+| 2 | `ch2_pytanie.R` | 02 | Jak obracać pytanie (4 ramy naraz) |
+| 3 | `ch3_hipotezy.R` | 03 | Hipotezy jako tropy (cała wiązka naraz) |
+| 4 | `ch4_pomiar.R` | 04 | Co właściwie mierzymy (4 construct mapy naraz) |
+| 5 | `ch5_sprawdzenia.R` | 05 | Pierwsze sprawdzenia (wyniki wiązki + tablica + zakłócacze) |
+| 6 | `ch6_iteracja.R` | 06 | Wynik nie kończy badania (pełna tablica + co mówi o celu) |
+| 7 | `ch_projekt_badania.R` | 07 | Jak zaprojektować lepsze badanie (4 projekty naraz) |
+| 8 | `ch8_dodatek_model.R` | 08 | Model kontrolny (cała wiązka w jednym modelu) |
+| 9 | `ch7_checklist.R` | 09 | Checklist projektu grupowego (domknięcie + tablica) |
 
----
+Uwaga: nazwy plików `ch7_*`/`ch8_*` są historyczne. W aplikacji ich pozycja i numer to
+09 (checklist) i 08 (model) — kolejność ustawiana w `.chapters` w `app.R`, numery w
+`lc_chapter_hero()` i `lecture_chapter(num=...)` każdego modułu.
 
-## Zmiana 1: Confound checker w ch5_sprawdzenia.R
+## Tryb prowadzenia: projekcja
 
-### Problem
-Rozdział 5 przeskakuje od hipotez do testów statystycznych. Brakuje kroku gdzie student sprawdza *czy dana zmienna w ogóle jest zakłócaczem* — zanim uruchomi test.
+Wykład jest projektowany pod prowadzenie z projekcji (prowadzący omawia, studenci
+patrzą). Dlatego selektory nawigacyjne (`selectInput`/`radioButtons` „wybierz 1 z N")
+zostały **rozłożone**: w ch2/ch3/ch4/ch5/ch6/ch_projekt cała zawartość jest widoczna
+naraz (karty `.trop-card` / `.question-card` jedna pod drugą, tablica `.tropy-board`).
+Zero klikania w trakcie narracji.
 
-### Co dodać
-Na początku ch5, przed istniejącą sekcją z wyborem testu, dodaj nową sekcję `lc_h2`:
+Interakcja została tylko tam, gdzie klik jest puentą:
+- ch1 — podgląd danych (sortowanie, zakres wierszy/kolumn),
+- ch8 — budowanie własnego modelu (checkbox kontroli),
+- ch9 — autodiagnoza projektu (checklist, 10 pozycji).
 
-**"Zanim uruchomisz test: sprawdź zakłócacze"**
+## Wzorce UI (kanon — `R/DESIGN_CONTRACT.md`)
 
-Zawartość:
-1. Krótki tekst: zmienna Z jest zakłócaczem jeśli spełnia oba warunki jednocześnie: (a) koreluje z predyktorem X (`beauty`), (b) koreluje z wynikiem Y (`eval`).
-2. `selectInput` — wybierz zmienną do sprawdzenia: `gender`, `age`, `tenure`, `minority`, `native`, `credits`, `division`
-3. Dwa wykresy obok siebie (użyj CSS grid lub `lc_grid()`):
-   - Lewy: `beauty ~ wybrana_zmienna` (violin lub boxplot)
-   - Prawy: `eval ~ wybrana_zmienna` (violin lub boxplot)
-4. Pod wykresami: `lc_feedback` reagujące dynamicznie na wybraną zmienną:
-   - Jeśli zmienna spełnia oba warunki → `type="warning"`, tekst: "Kandydat na zakłócacz — warto kontrolować w modelu"
-   - Jeśli tylko jeden warunek → `type="info"`, tekst: "Koreluje tylko z [X/Y] — nie zakłóca głównej relacji"
+Projekt używa shared layout z `statystyka/R/`. **Nie wolno** `fluidPage`, `navbarPage`,
+`bslib::page_*`. Kanon: `lc_chapter_hero`, `lc_h2`, `lc_p`, `figure_panel`, `lc_feedback`,
+`lc_stat_grid`+`lc_stat_box`, `margin_callout`, `lc_chapter_next`,
+`zoom_plot_ui`/`zoom_plot_server`, `lc-table*`. Kolory: `proj_col_*` z `helpers.R`.
+Style specyficzne wykładu (`.tropy-board`, `.trop-card`, `.trop-stack`) są w
+`header_extras` w `app.R`, na tokenach `--upwr-*`.
 
-### Logika "spełnia warunki"
-Oblicz w serverze korelacje (lub różnice median dla zmiennych kategorycznych) i zdefiniuj próg dla "koreluje":
-- Ciągłe: `abs(cor(beauty, z, use="complete.obs")) > 0.10`
-- Kategoryczne: różnica median między grupami > 0.05 punktu w skali
-
-Prekalkuluj wyniki dla wszystkich zmiennych w `helpers.R` żeby serwer był szybki.
-
----
-
-## Zmiana 2: Iteracyjne mosty na końcu ch5 i ch8
-
-### Problem
-Wykład jest linearny. Studenci przechodzą rozdziały jak kroki procedury, zamiast czuć że wyniki jednej analizy *generują* następne pytania.
-
-### Co dodać w ch5_sprawdzenia.R (na końcu)
-
-Po ostatniej sekcji z wynikami testu, dodaj nową sekcję `lc_h2` pt. **"Co ten wynik mówi nam dalej?"**:
+## Uruchamianie
 
 ```r
-lc_feedback(
-  tags$p(strong("Wynik sugeruje dwa nowe pytania:")),
-  tags$ol(
-    tags$li("Czy efekt beauty utrzymuje się gdy kontrolujemy inne czynniki (wiek, płeć, typ kursu)?"),
-    tags$li("Czy response rate wpływa na wynik — czyli czy słyszmy tylko część studentów?")
-  ),
-  tags$p("Te pytania prowadzą do kolejnego kroku: modelu z kontrolami."),
-  type = "info"
-)
+shiny::runApp("statystyka/12-projekt-badawczy")
 ```
-
-### Co dodać w ch8_dodatek_model.R (na końcu)
-
-Po sekcji z własnym modelem studenta, dodaj sekcję **"Co model mówi nam dalej?"**:
-
-```r
-lc_feedback(
-  tags$p(strong("Efekt beauty przeżył kontrolę — ale to rodzi kolejne pytanie:")),
-  tags$p("Czy to przyczynowość? Czy atrakcyjność *powoduje* wyższe oceny, czy tylko z nimi współwystępuje?"),
-  tags$p("Dane obserwacyjne nie mogą odpowiedzieć na to pytanie. Żeby odpowiedzieć, potrzebujemy innego projektu badania."),
-  type = "warning"
-)
-```
-
----
-
-## Zmiana 3: Wynieś ch8 z "bonusu" do głównego toku
-
-### Problem
-`ch8_dodatek_model.R` jest oznaczony jako opcjonalny. Regresja wielowymiarowa to jednak najważniejszy krok analityczny w całym wykładzie — bez niej nie widać jak β_beauty zmienia się pod kontrolą.
-
-### Co zmienić
-
-**W app.R**: Przesuń ch8 przed ch7. Nowa kolejność rozdziałów:
-```
-ch1, ch2, ch3, ch4, ch5, ch6, ch8_model, ch7_checklist
-```
-(Iteracja po wynikach → model → checklist to sensowniejszy flow niż model po checkliście)
-
-Jeśli zmiana kolejności wymaga przelogowania numerów w UI (np. "Rozdział 8" staje się "Rozdział 7"), zrób to w argumentach `lecture_num` w `lc_chapter_hero()` każdego pliku.
-
-**W ch8_dodatek_model.R**: Usuń wszelkie oznaczenia "opcjonalny", "bonus", "dodatek" z kicker/lead/tytułu. Zmień kicker na coś w stylu: `"Testujemy stabilność efektu"`.
-
-**W ch7_checklist.R**: Zaktualizuj referencje — checklist powinien odwoływać się do modelu z poprzedniego rozdziału jako ostatniego kroku przed wnioskami.
-
----
-
-## Zmiana 4: Nowy rozdział — projektowanie lepszego badania
-
-### Problem
-Wykład kończy się checklistem. Brakuje domknięcia które pyta: "skoro dane obserwacyjne mają ograniczenia — jak wyglądałoby badanie które naprawdę odpowie na pytanie?"
-
-### Nowy plik: `modules/ch_projekt_badania.R`
-
-Wstaw go między obecnym ch6_iteracja.R a ch8_model (w nowej kolejności: ch1–ch5, ch6_iter, **ch_projekt**, ch8_model, ch7_checklist).
-
-**Kicker**: Od obserwacji do eksperymentu  
-**Tytuł**: "Jak zaprojektować lepsze badanie?"
-
-Zawartość:
-
-**Sekcja 1** — krótki tekst (2 akapity):
-- Dane obserwacyjne pokazują *współwystępowanie*, nie *przyczynowość*. Nie możemy losować urody nauczycielom.
-- Żeby ustalić czy efekt jest przyczynowy, potrzebujemy innego projektu.
-
-**Sekcja 2** — interaktywna: `radioButtons` z 4 propozycjami:
-1. Eksperyment z manipulowanym opisem prowadzącego (fikcyjne profile, różna "uroda" na zdjęciu)
-2. Ślepa ocena materiałów dydaktycznych (studenci oceniają anonimowe slajdy)
-3. Pomiar efektów uczenia się (wyniki egzaminów zamiast ewaluacji)
-4. Replikacja w różnych kulturach i uczelniach
-
-Dla każdej propozycji: `lc_feedback` z oceną:
-- Co by to pokazało?
-- Jakie ma ograniczenia?
-- Jak silny byłby dowód?
-
-Użyj `type="ok"` dla mocnych propozycji, `type="info"` dla słabszych.
-
-**Sekcja 3** — `margin_callout(color="wskazowka")`:
-"W swoim projekcie grupowym też nie możesz losować — zastanów się co to oznacza dla siły twoich wniosków."
-
----
 
 ## Weryfikacja po zmianach
 
-1. `shiny::runApp("statystyka/12-projekt-badawczy")` — przejść przez wszystkie rozdziały w nowej kolejności
-2. Sprawdzić confound checker (zmiana 1): czy wykresy się renderują, czy feedback zmienia się przy wyborze zmiennej
-3. Sprawdzić mosty iteracyjne (zmiana 2): czy są widoczne na końcu ch5 i ch8
-4. Sprawdzić nowy rozdział (zmiana 4): czy radio buttons wyświetlają właściwy feedback per propozycja
-5. Sprawdzić że `lc_chapter_next()` na końcu każdego rozdziału wskazuje właściwy następny rozdział (po zmianie kolejności)
+1. Przejść 9 rozdziałów w kolejności — cel z ch1 wraca w leadzie każdego rozdziału,
+   wiązka jedzie jako jedna całość (nie rozłączne menu).
+2. Tablica tropów: pusta w ch1 → pełna w ch5/ch6/ch9, spójna z wynikami testów.
+3. Numer w hero == pozycja w sidebarze == cel w `lc_chapter_next` dla każdego rozdziału.
+4. `Rscript statystyka/scripts/check_design_contract.R` — bez nowych naruszeń.

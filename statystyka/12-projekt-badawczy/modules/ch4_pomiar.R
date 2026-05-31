@@ -8,21 +8,22 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Co właściwie mierzym
               Dobra analiza umie ją nazwać."
     ),
 
+    div(class = "lc-feedback lc-feedback-info",
+      tags$strong("Przypomnienie celu:"),
+      p(tags$em(tr_goal)),
+      p("Cel mówi o ", tags$em("jakości nauczania"), ", ale w danych mamy tylko
+        ", tags$code("eval"), ". Zanim ruszymy z testami, nazwijmy tę szczelinę.")
+    ),
+
     lc_h2("sec-01", "Pojęcie → wskaźnik → zmienna → ograniczenie"),
 
-    div(class = "lc-figure-panel",
-      h4("Mapa pomiaru"),
-      selectInput("ch4_construct", "Wybierz pojęcie:",
-        choices = c(
-          "Jakość nauczania" = "quality",
-          "Atrakcyjność" = "beauty",
-          "Sprawiedliwość ocen" = "fairness",
-          "Reprezentatywność opinii" = "response"
-        ),
-        selected = "quality"
-      ),
-      uiOutput("ch4_construct_map")
+    div(class = "lc-prose",
+      p("Każde pojęcie z naszego celu i z wiązki tropów trzeba przełożyć na
+        konkretną zmienną. Po drodze coś gubimy — i właśnie to ograniczenie
+        musi później wrócić we wniosku. Poniżej cztery kluczowe pojęcia naraz.")
     ),
+
+    uiOutput("ch4_construct_maps"),
 
     div(class = "lc-feedback lc-feedback-info",
       tags$strong("Ważne rozróżnienie:"),
@@ -45,39 +46,45 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Co właściwie mierzym
 )
 
 ch4_server <- function(input, output, session) {
-  output$ch4_construct_map <- renderUI({
+  output$ch4_construct_maps <- renderUI({
     maps <- list(
-      quality = list(
+      list(name = "Jakość nauczania", cells = list(
         c("Pojęcie", "Jakość nauczania: czy zajęcia realnie pomagają studentom uczyć się."),
         c("Wskaźnik", "Ogólna ocena kursu wystawiona przez studentów."),
         c("Zmienna", "`eval`: skala 1-5."),
         c("Ograniczenie", "Może mierzyć satysfakcję, łatwość, sympatię lub oczekiwaną ocenę.")
-      ),
-      beauty = list(
+      )),
+      list(name = "Atrakcyjność", cells = list(
         c("Pojęcie", "Atrakcyjność jako możliwe źródło obciążenia ocen."),
         c("Wskaźnik", "Średnia ocena wyglądu przez panel studentów."),
         c("Zmienna", "`beauty`: wystandaryzowana ocena atrakcyjności."),
         c("Ograniczenie", "To ocena społeczna, nie obiektywna cecha osoby.")
-      ),
-      fairness = list(
+      )),
+      list(name = "Sprawiedliwość ocen", cells = list(
         c("Pojęcie", "Sprawiedliwość oceniania prowadzących."),
         c("Wskaźnik", "Porównanie ocen między grupami prowadzących."),
         c("Zmienna", "`gender`, `native`, `minority`, `tenure`."),
         c("Ograniczenie", "Różnice grupowe nie wyjaśniają automatycznie mechanizmu.")
-      ),
-      response = list(
+      )),
+      list(name = "Reprezentatywność opinii", cells = list(
         c("Pojęcie", "Reprezentatywność opinii studentów."),
         c("Wskaźnik", "Odsetek zapisanych osób, które wypełniły ankietę."),
         c("Zmienna", "`response.rate`."),
         c("Ograniczenie", "Nie wiemy, kto nie odpowiedział i dlaczego.")
-      )
+      ))
     )
-    cells <- lapply(maps[[input$ch4_construct]], function(item) {
-      div(class = "construct-cell",
-        h4(item[[1]]),
-        p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", item[[2]])))
+    blocks <- lapply(maps, function(m) {
+      cells <- lapply(m$cells, function(item) {
+        div(class = "construct-cell",
+          h4(item[[1]]),
+          p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", item[[2]])))
+        )
+      })
+      tagList(
+        tags$h4(style = "margin: 14px 0 6px 0;", m$name),
+        div(class = "construct-map", cells)
       )
     })
-    div(class = "construct-map", cells)
+    div(blocks)
   })
 }
