@@ -142,6 +142,41 @@ tr_mean_diff <- function(group_var) {
   )
 }
 
+# Liczba z polskim przecinkiem dziesiętnym.
+tr_fmt_num <- function(x, digits = 2) {
+  if (is.na(x)) return("—")
+  gsub("\\.", ",", sprintf(paste0("%.", digits, "f"), x))
+}
+
+# Pełne statystyki opisowe do panelu wyniku: średnia, SD, mediana, Q1, Q3.
+# Dla porównań grup: jeden wiersz na grupę (eval w danej grupie).
+# Dla korelacji: wiersz dla predyktora i dla eval (obie zmienne ilościowe).
+tr_desc_table <- function(id) {
+  tr <- tr_tropy[[id]]
+  one <- function(label, x) {
+    qs <- quantile(x, c(0.25, 0.75), na.rm = TRUE, names = FALSE)
+    data.frame(
+      label  = label,
+      mean   = mean(x, na.rm = TRUE),
+      sd     = sd(x, na.rm = TRUE),
+      median = median(x, na.rm = TRUE),
+      q1     = qs[1],
+      q3     = qs[2],
+      stringsAsFactors = FALSE
+    )
+  }
+  if (tr$method == "cor") {
+    rbind(
+      one(unname(tr_labels[tr$var]), tr_data[[tr$var]]),
+      one(unname(tr_labels["eval"]), tr_data$eval)
+    )
+  } else {
+    dat <- tr_data[!is.na(tr_data$eval) & !is.na(tr_data[[tr$var]]), ]
+    grp <- droplevels(dat[[tr$var]])
+    do.call(rbind, lapply(levels(grp), function(g) one(g, dat$eval[grp == g])))
+  }
+}
+
 tr_group_test <- function(group_var, method = "t") {
   dat <- tr_data[!is.na(tr_data$eval) & !is.na(tr_data[[group_var]]), ]
   dat[[group_var]] <- droplevels(dat[[group_var]])
@@ -280,7 +315,7 @@ tr_tropy <- list(
     note      = "Używamy wariantu odpornego na nierówne i skośne grupy.",
     alt = c(
       "Status native może mieszać się z typem kursu.",
-      "Studenci mogą oceniać zrozumiałość języka, nie jakość dydaktyczną.",
+      "Native speakerzy mogą uczyć innych przedmiotów albo na innym poziomie.",
       "Grupy mogą mieć różną liczebność."
     )
   ),
@@ -297,7 +332,7 @@ tr_tropy <- list(
     alt = c(
       "Grupa mniejszościowa może być mało liczna — trudniej o stabilny wynik.",
       "Różnice mogą ujawniać się tylko w wybranych typach kursów.",
-      "Możliwy słaby pomiar doświadczeń prowadzących i studentów."
+      "Status mniejszości może współwystępować z innymi cechami prowadzącego."
     )
   ),
   response = list(
@@ -313,7 +348,7 @@ tr_tropy <- list(
     alt = c(
       "Odpowiadają głównie osoby skrajnie zadowolone lub niezadowolone.",
       "Duże kursy mogą mieć niższy response rate.",
-      "Response rate może mówić o zaangażowaniu grupy, nie o jakości kursu."
+      "Zaangażowanie grupy może wpływać i na oceny, i na odsetek odpowiedzi."
     )
   )
 )
@@ -387,7 +422,7 @@ tr_board_ui <- function(reveal = tr_trop_order, show_verdict = TRUE) {
     tags$th("Trop"),
     tags$th("Pytanie badawcze"),
     tags$th("Narzędzie"),
-    tags$th("Wynik"),
+    tags$th("Miara efektu"),
     if (show_verdict) tags$th("Werdykt")
   ))
 

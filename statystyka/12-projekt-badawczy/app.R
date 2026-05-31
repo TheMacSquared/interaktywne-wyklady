@@ -29,12 +29,10 @@ lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch1_ciekawosc.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch2_pytanie.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch3_hipotezy.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch4_pomiar.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch5_sprawdzenia.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch6_iteracja.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch_projekt_badania.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch7_checklist.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch8_dodatek_model.R"), local = TRUE)
 
@@ -148,10 +146,11 @@ header_extras <- tagList(
     .tropy-board { margin: 16px 0; }
     .tropy-board td, .tropy-board th {
       vertical-align: top;
+      color: var(--upwr-ink);
       font-size: calc(13px * var(--lc-font-scale));
       line-height: 1.4;
     }
-    .tropy-row-off { opacity: 0.45; }
+    .tropy-row-off { opacity: 0.6; }
     .tropy-row-on  { opacity: 1; transition: opacity .25s; }
     .tropy-muted   { color: var(--upwr-ink-subtle); font-style: italic; }
     .tropy-verdict {
@@ -203,11 +202,11 @@ header_extras <- tagList(
   "))
 )
 
-# Kolejność: model kontrolny (ch8) wchodzi przed checklist (ch7), bo checklist
-# domyka cały projekt i musi być ostatni. Numery w hero każdego modułu są
-# ustawione zgodnie z TĄ kolejnością (1..9).
-.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui, ch6_ui,
-                  ch_projekt_ui, ch8_ui, ch7_ui)
+# Kolejność: po celu (ch1) od razu tropy (ch3). Model kontrolny (ch8) wchodzi
+# przed checklist (ch7), bo checklist domyka cały projekt i musi być ostatni.
+# Numery w hero każdego modułu są ustawione zgodnie z TĄ kolejnością (1..7).
+.chapters <- list(ch1_ui, ch3_ui, ch4_ui, ch5_ui, ch6_ui,
+                  ch8_ui, ch7_ui)
 
 ui <- lecture_page(
   lecture_id    = "projekt-badawczy",
@@ -222,12 +221,10 @@ server <- function(input, output, session) {
   lc <- lecture_server(.chapters, input, output, session)
 
   ch1_server(input, output, session)
-  ch2_server(input, output, session)
   ch3_server(input, output, session)
   ch4_server(input, output, session)
   ch5_server(input, output, session)
   ch6_server(input, output, session)
-  ch_projekt_server(input, output, session)
   ch8_server(input, output, session)
   ch7_server(input, output, session)
 }

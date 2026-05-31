@@ -1,11 +1,11 @@
-ch7_ui <- lecture_chapter(id = "ch7", num = "9", title = "Checklist projektu grupowego", content = tagList(
+ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Checklist projektu grupowego", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
-      kicker = "Rozdział 09 · Ściąga projektowa",
-      num = "09",
+      kicker = "Rozdział 07 · Ściąga projektowa",
+      num = "07",
       title = "Checklist projektu grupowego.",
-      lead = "Domknięcie całego wykładu. Dobry projekt nie zaczyna się od nazwy
-              testu — zaczyna się od celu, wiązki tropów i uczciwego planu interpretacji."
+      lead = "Podsumowanie wykładu. Dobry projekt opiera się na celu, zestawie
+              hipotez i jasnym planie interpretacji, a nie na wyborze testu."
     ),
 
     div(class = "lc-feedback lc-feedback-info",
@@ -25,7 +25,6 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "9", title = "Checklist projektu gru
         tags$li(tags$b("Dane:"), " jednostka obserwacji, źródło danych, braki, jakość próby."),
         tags$li(tags$b("Analiza:"), " wykres/opis/test pasuje do typu pytania i zmiennych."),
         tags$li(tags$b("Model:"), " sprawdziłem(am) tropy razem, nie tylko pojedynczo — czy efekt trzyma się pod kontrolą innych zmiennych."),
-        tags$li(tags$b("Projekt badania:"), " wiem, czy moje dane wspierają tylko współwystępowanie, czy mocniejszy wniosek."),
         tags$li(tags$b("Interpretacja:"), " wynik zmienia, wzmacnia albo osłabia hipotezę."),
         tags$li(tags$b("Iteracja:"), " wiem, jakie pytanie lub dane byłyby następnym krokiem.")
       )
@@ -42,7 +41,6 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "9", title = "Checklist projektu gru
           "Mamy hipotezę i alternatywne wyjaśnienia" = "h",
           "Plan testu/analizy pasuje do typu zmiennych" = "a",
           "Sprawdziliśmy tropy razem w jednym modelu" = "model",
-          "Umiemy zaproponować lepszy projekt badania" = "design",
           "Wiemy, jak wynik może zmienić hipotezę" = "iter",
           "Wniosek będzie ostrożny przy danych obserwacyjnych" = "w"
         )
@@ -79,15 +77,15 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "9", title = "Checklist projektu gru
 ch7_server <- function(input, output, session) {
   output$ch7_score <- renderUI({
     done <- length(input$ch7_checks)
-    total <- 10
+    total <- 9
     pct <- round(done / total * 100)
-    color <- if (done <= 3) proj_col_risk else if (done <= 6) proj_col_warn else proj_col_ctrl
+    color <- if (done <= 3) proj_col_risk else if (done <= 5) proj_col_warn else proj_col_ctrl
     label <- if (done <= 3) {
       "Jeszcze za wcześnie na testy - dopracujcie pytanie i pomiar."
-    } else if (done <= 6) {
+    } else if (done <= 5) {
       "Dobry szkic, ale są luki interpretacyjne."
     } else {
-      "Projekt ma solidny kręgosłup badawczy."
+      "Projekt ma kompletną strukturę badawczą."
     }
     tagList(
       div(style = "background: var(--upwr-rule); border-radius: 10px; height: 28px;",

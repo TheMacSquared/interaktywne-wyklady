@@ -1,10 +1,10 @@
-ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Model kontrolny", content = tagList(
+ch8_ui <- lecture_chapter(id = "ch8", num = "6", title = "Model kontrolny", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
-      kicker = "Rozdział 08 · Stabilność efektu",
-      num = "08",
+      kicker = "Rozdział 06 · Stabilność efektu",
+      num = "06",
       title = "Cała wiązka w jednym modelu.",
-      lead = "W rozdziale 5 sprawdzaliśmy tropy pojedynczo. Teraz sprawdzamy je
+      lead = "W rozdziale 4 sprawdzaliśmy tropy pojedynczo. Teraz sprawdzamy je
               jednocześnie: czy efekt utrzymuje się, gdy kontrolujemy pozostałe?"
     ),
 
@@ -63,10 +63,10 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Model kontrolny", cont
     ),
 
     div(class = "lc-feedback lc-feedback-info",
-      tags$strong("Łącznik z dzisiejszym warsztatem:"),
-      p("Model nie wymyśla pytania za nas. Najpierw potrzebujemy hipotez,
-        mapy alternatywnych wyjaśnień i sensownego pomiaru. Dopiero potem
-        model ma co robić.")
+      tags$strong("Rola modelu:"),
+      p("Model nie zastępuje sformułowania pytania. Wymaga wcześniejszych hipotez,
+        alternatywnych wyjaśnień i poprawnego pomiaru — dopiero wtedy jego wynik
+        da się sensownie zinterpretować.")
     ),
 
     lc_h2("sec-02", "Co model mówi nam dalej?"),
@@ -74,11 +74,11 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Model kontrolny", cont
     lc_feedback(
       tags$p(tags$strong("Jeśli efekt beauty przeżywa kontrolę, rodzi to kolejne pytanie:")),
       tags$p("Czy to przyczynowość? Czy atrakcyjność powoduje wyższe oceny, czy tylko z nimi współwystępuje?"),
-      tags$p("Dane obserwacyjne nie mogą same odpowiedzieć na to pytanie. Żeby odpowiedzieć mocniej, potrzebowalibyśmy projektu badania z rozdziału 7."),
+      tags$p("Dane obserwacyjne nie odpowiedzą na to pytanie — pokazują współwystępowanie, nie przyczynę. To granica, której ten zbiór nie przekroczy, i trzeba ją uczciwie zapisać we wniosku."),
       type = "warning"
     ),
 
-    lc_chapter_next("09", "Checklist projektu grupowego",
+    lc_chapter_next("07", "Checklist projektu grupowego",
       "Domykamy całość: cały proces zwijamy w listę kontrolną do własnych projektów.",
       "ch7"),
 

@@ -1,11 +1,11 @@
-ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Co właściwie mierzymy?", content = tagList(
+ch4_ui <- lecture_chapter(id = "ch4", num = "3", title = "Co właściwie mierzymy?", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
-      kicker = "Rozdział 04 · Operacjonalizacja",
-      num = "04",
+      kicker = "Rozdział 03 · Operacjonalizacja",
+      num = "03",
       title = "Co właściwie mierzymy?",
-      lead = "Między pojęciem a kolumną w danych zawsze jest szczelina.
-              Dobra analiza umie ją nazwać."
+      lead = "Pojęcie z hipotezy i zmienna w danych to nie to samo. Trzeba nazwać
+              różnicę między nimi, zanim zinterpretujemy wynik."
     ),
 
     div(class = "lc-feedback lc-feedback-info",
@@ -38,7 +38,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Co właściwie mierzym
       tags$li("Jakie zjawisko mogłoby dać taki sam wynik w danych?")
     ),
 
-    lc_chapter_next("05", "Pierwsze sprawdzenia w danych",
+    lc_chapter_next("04", "Pierwsze sprawdzenia w danych",
       "Dopiero teraz wybieramy testy i wykresy, bo wiemy już, co próbujemy sprawdzić.",
       "ch5"),
     div(style = "height: 40px;")
@@ -64,7 +64,7 @@ ch4_server <- function(input, output, session) {
         c("Pojęcie", "Sprawiedliwość oceniania prowadzących."),
         c("Wskaźnik", "Porównanie ocen między grupami prowadzących."),
         c("Zmienna", "`gender`, `native`, `minority`, `tenure`."),
-        c("Ograniczenie", "Różnice grupowe nie wyjaśniają automatycznie mechanizmu.")
+        c("Ograniczenie", "Przynależność do grupy to etykieta, nie pomiar samego traktowania.")
       )),
       list(name = "Reprezentatywność opinii", cells = list(
         c("Pojęcie", "Reprezentatywność opinii studentów."),

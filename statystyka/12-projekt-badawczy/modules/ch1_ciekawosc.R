@@ -4,8 +4,8 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
       kicker = "Rozdział 01 · Start badania",
       num = "01",
       title = "Od ciekawości do celu.",
-      lead = "Na początku nie potrzebujemy testu. Potrzebujemy ciekawości,
-              jednego dobrego celu i wiązki tropów, którymi da się go oświetlić."
+      lead = "Projekt badawczy zaczyna się przed testem: od celu i zestawu
+              konkurujących tropów, które ten cel pomogą wyjaśnić."
     ),
 
     lc_h2("sec-01", "Zaczynamy od sytuacji, nie od metody"),
@@ -17,11 +17,6 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
       p("Dzisiejsze ćwiczenie polega na tym, żeby zobaczyć, jak z luźnej ciekawości
         powstaje jeden cel badawczy, z celu wiązka hipotez, a z hipotez plan analizy.
         Ten sam cel i tę samą wiązkę będziemy ciągnąć przez cały wykład.")
-    ),
-
-    div(class = "lc-figure-panel",
-      h4("Pierwsze obserwacje"),
-      uiOutput("ch1_snapshot")
     ),
 
     div(class = "lc-figure-panel",
@@ -61,33 +56,44 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     div(class = "lc-feedback lc-feedback-warning",
       tags$strong("Cel badawczy:"),
       p(tags$em(tr_goal)),
-      p("Tego pytania nie rozstrzygniemy jednym testem. Ono jest celem, do którego
-        zbliżamy się wiązką tropów — kilkoma konkurującymi hipotezami, które razem
-        oświetlają, co tak naprawdę siedzi w ocenie z ankiety.")
+      p("Tego pytania nie rozstrzyga pojedynczy test. To cel, do którego dochodzimy
+        przez zestaw konkurujących hipotez (tropów). Każdy trop dotyczy innego
+        możliwego składnika oceny z ankiety; dopiero razem pozwalają ocenić cel.")
+    ),
+
+    div(class = "lc-prose",
+      p("Cel powstaje przez zawężanie: od ogólnego tematu, przez konkretne pytanie,
+        do planu analizy.")
+    ),
+
+    div(class = "research-ladder",
+      div(tags$strong("Luźny temat"), "Studenci różnie oceniają prowadzących."),
+      div(tags$strong("Cel badawczy"), "Czy ta różnica mówi o jakości, czy o czymś pobocznym?"),
+      div(tags$strong("Plan analizy"), "Najpierw szukamy prostych tropów, potem alternatywnych wyjaśnień.")
     ),
 
     lc_h2("sec-03", "Wiązka tropów, którą będziemy śledzić"),
 
     div(class = "lc-prose",
-      p("Zamiast wybierać jeden trop, kładziemy na stół wszystkie naraz. To jest
-        wiązka hipotez naszego projektu. Każdy trop pyta o inny możliwy składnik
-        oceny; żaden sam nie odpowiada na cel, ale razem rysują obraz.")
+      p("Rozważamy wszystkie tropy naraz, a nie pojedynczo. Tworzą one wiązkę
+        hipotez projektu. Każdy trop dotyczy innego możliwego składnika oceny;
+        żaden nie odpowiada na cel samodzielnie, ale razem dają pełniejszy obraz.")
     ),
 
     uiOutput("ch1_tropy_bundle"),
 
     div(class = "research-step",
       span(class = "step-number", "1"),
-      "Dobra analiza zaczyna się od zdania: 'ciekawe, czy...', a potem od decyzji,
-       który cel chcemy oświetlić i jakimi tropami. Statystyka przychodzi później."
+      "Kolejność pracy: najpierw cel i tropy, potem dobór metody statystycznej.
+       Test jest narzędziem do sprawdzenia tropu, nie punktem wyjścia."
     ),
 
     lc_h2("sec-04", "Tablica tropów — tu będziemy zbierać wyniki"),
 
     div(class = "lc-prose",
       p("Przez cały wykład będziemy wracać do jednej tablicy. Na razie jest pusta:
-        mamy pytania, ale jeszcze żadnego kontaktu z danymi. W rozdziale 5 zaczniemy
-        ją wypełniać, a w rozdziale 6 odczytamy, co cała wiązka mówi o celu.")
+        mamy pytania, ale jeszcze żadnego kontaktu z danymi. W rozdziale 4 zaczniemy
+        ją wypełniać, a w rozdziale 5 odczytamy, co cała wiązka mówi o celu.")
     ),
 
     div(class = "lc-figure-panel",
@@ -95,15 +101,20 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
       tr_board_ui(reveal = character(0), show_verdict = TRUE)
     ),
 
-    tr_discussion_box("Rozmowa na start:",
-      tags$li("Który trop wydaje się studentom najbardziej przekonujący — i dlaczego?"),
-      tags$li("Który byłby najważniejszy dla władz uczelni przy decyzjach kadrowych?"),
-      tags$li("Który da się sprawdzić na tych danych, a który wymagałby nowych danych?")
+    lc_h2("sec-05", "Tropy poza naszą wiązką"),
+
+    div(class = "lc-prose",
+      p("Pięć tropów to nasz wybór na dziś, nie pełna lista. Ten sam cel można
+        badać wieloma innymi pytaniami — poniżej kilka przykładów. Zasadą przy
+        własnym projekcie jest dążenie do wyczerpania tematu, a nie zatrzymanie
+        się na pierwszych tropach.")
     ),
 
-    lc_chapter_next("02", "Jak obracać pytanie badawcze",
-      "Ten sam cel można ująć w różnych ramach: obciążenie, trafność pomiaru, kontekst albo sprawiedliwość.",
-      "ch2"),
+    uiOutput("ch1_extra_tropy"),
+
+    lc_chapter_next("02", "Hipotezy jako tropy",
+      "Mamy cel i wiązkę. Teraz nadajemy każdemu tropowi kształt hipotezy z alternatywnymi wyjaśnieniami.",
+      "ch3"),
     div(style = "height: 40px;")
   )))
 )
@@ -120,14 +131,23 @@ ch1_server <- function(input, output, session) {
     div(class = "trop-stack", cards)
   })
 
-  output$ch1_snapshot <- renderUI({
-    lc_stat_grid(
-      lc_stat_box("Kursów", nrow(tr_data), color = proj_col_data),
-      lc_stat_box("Prowadzących", length(unique(tr_data$prof)), color = proj_col_hyp),
-      lc_stat_box("Śr. ocena", round(mean(tr_data$eval), 2), color = proj_col_ctrl),
-      lc_stat_box("Śr. response rate", paste0(round(mean(tr_data$response.rate), 1), "%"),
-                  color = proj_col_warn),
-      columns = 4
+  output$ch1_extra_tropy <- renderUI({
+    extra <- list(
+      c("Wielkość kursu", "Czy bardzo duże grupy są oceniane inaczej niż kameralne?"),
+      c("Pora i dzień zajęć", "Czy zajęcia o poranku albo w piątek dostają niższe oceny?"),
+      c("Trudność i obciążenie", "Czy łatwiejsze kursy dostają wyższe oceny niezależnie od jakości?"),
+      c("Dyscyplina / wydział", "Czy kursy ścisłe są oceniane surowiej niż humanistyczne?"),
+      c("Powtarzalność prowadzącego", "Czy ten sam prowadzący dostaje podobne oceny na różnych kursach?")
+    )
+    rows <- lapply(extra, function(x) {
+      tags$tr(
+        tags$td(tags$strong(x[[1]])),
+        tags$td(x[[2]])
+      )
+    })
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
+      tags$thead(tags$tr(tags$th("Trop"), tags$th("Przykładowe pytanie"))),
+      tags$tbody(rows)
     )
   })
 

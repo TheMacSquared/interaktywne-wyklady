@@ -1,11 +1,11 @@
-ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia", content = tagList(
+ch5_ui <- lecture_chapter(id = "ch5", num = "4", title = "Pierwsze sprawdzenia", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
-      kicker = "Rozdział 05 · Proste testy",
-      num = "05",
+      kicker = "Rozdział 04 · Proste testy",
+      num = "04",
       title = "Pierwsze sprawdzenia w danych.",
-      lead = "Test statystyczny nie jest finałem. Jest sposobem na sprawdzenie,
-              czy każdy trop z wiązki ma kontakt z danymi."
+      lead = "Test statystyczny sprawdza, czy dany trop ma oparcie w danych.
+              Nie rozstrzyga celu — dostarcza przesłanki do jego oceny."
     ),
 
     div(class = "lc-feedback lc-feedback-info",
@@ -38,27 +38,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia",
       tr_board_ui(reveal = tr_trop_order, show_verdict = TRUE)
     ),
 
-    lc_h2("sec-03", "Dlaczego jeden test to za mało: zmienne zakłócające"),
-
-    div(class = "lc-prose",
-      p("Pojedynczy test mówi tylko o związku dwóch zmiennych. Ale zmienna Z może
-        mieszać w interpretacji, jeśli wiąże się jednocześnie z predyktorem i z
-        wynikiem. Pokażmy to na najmocniejszym tropie: `beauty` → `eval`.")
-    ),
-
-    div(class = "lc-figure-panel",
-      h4("Kandydaci na zmienne zakłócające (dla tropu beauty)"),
-      uiOutput("ch5_confounder_table")
-    ),
-
-    div(class = "lc-feedback lc-feedback-warning",
-      tags$strong("Wniosek pośredni:"),
-      p("Jeśli choć jedna zmienna wiąże się i z `beauty`, i z `eval`, to prosty
-        test nie wystarczy — trzeba uwzględnić te zmienne jednocześnie. To jest
-        dokładnie zadanie dla modelu kontrolnego z rozdziału 8.")
-    ),
-
-    lc_chapter_next("06", "Wynik nie kończy badania",
+    lc_chapter_next("05", "Wynik nie kończy badania",
       "Mamy pełną tablicę — czas odczytać, co cała wiązka mówi o celu.",
       "ch6"),
     div(style = "height: 40px;")
@@ -98,20 +78,40 @@ ch5_server <- function(input, output, session) {
       tr  <- tr_tropy[[id]]
       row <- tr_board_row(id)
       fb_type <- if (row$supported) "warning" else "ok"
+
+      desc <- tr_desc_table(id)
+      first_col <- if (tr$method == "cor") "Zmienna" else "Grupa"
+      desc_rows <- lapply(seq_len(nrow(desc)), function(i) {
+        tags$tr(
+          tags$td(desc$label[i]),
+          tags$td(tr_fmt_num(desc$mean[i])),
+          tags$td(tr_fmt_num(desc$sd[i])),
+          tags$td(tr_fmt_num(desc$median[i])),
+          tags$td(paste0(tr_fmt_num(desc$q1[i]), "–", tr_fmt_num(desc$q3[i])))
+        )
+      })
+      desc_tbl <- tags$table(class = "lc-table lc-table-bordered lc-table-sm",
+        tags$thead(tags$tr(
+          tags$th(first_col), tags$th("Średnia"), tags$th("SD"),
+          tags$th("Mediana"), tags$th("Q1–Q3")
+        )),
+        tags$tbody(desc_rows)
+      )
+
+      p_disp <- if (grepl("<", row$p_label)) paste0("p ", row$p_label)
+                else paste0("p = ", row$p_label)
+      effect_kind <- if (tr$method == "cor") "korelacja" else "różnica średnich"
+
       div(class = "lc-figure-panel",
         h4(tr$short),
-        fluidRow(
-          column(7, zoom_plot_ui(paste0("ch5_plot_", id), height = "300px")),
-          column(5,
-            lc_stat_grid(
-              lc_stat_box("Pytanie", tr$question, color = proj_col_data),
-              lc_stat_box("Test", row$test_name, color = proj_col_ctrl),
-              lc_stat_box("Wynik", row$effect, color = proj_col_hyp),
-              lc_stat_box("p", row$p_label, color = proj_col_warn),
-              columns = 1
-            )
-          )
-        ),
+        p(tags$strong("Pytanie: "), tr$question),
+        zoom_plot_ui(paste0("ch5_plot_", id), height = "320px"),
+        tags$p(style = "margin-top: 12px;", tags$strong("Statystyki opisowe (eval):")),
+        desc_tbl,
+        tags$p(tags$strong(paste0("Miara efektu (", effect_kind, "): ")),
+               row$effect,
+               tags$span(style = "margin-left: 16px;", tags$strong("Test: ")),
+               tr$test_name, "; ", p_disp),
         lc_feedback(
           tags$p(tags$strong("Interpretacja badawcza: "), row$full_verdict),
           type = fb_type
@@ -119,37 +119,5 @@ ch5_server <- function(input, output, session) {
       )
     })
     div(blocks)
-  })
-
-  output$ch5_confounder_table <- renderUI({
-    rows <- lapply(tr_confounder_vars, function(var) {
-      r <- tr_confounder_row(var)
-      verdict <- if (r$confounder) {
-        tags$span(class = "tropy-verdict tropy-verdict-off", "kandydat na zakłócacz")
-      } else {
-        tags$span(class = "tropy-muted", "nie zakłóca głównej relacji")
-      }
-      tags$tr(
-        tags$td(tags$strong(r$label)),
-        tags$td(r$beauty_label),
-        tags$td(r$eval_label),
-        tags$td(verdict)
-      )
-    })
-    tagList(
-      div(class = "lc-prose",
-        p("Zmienna jest kandydatem na zakłócacz, gdy wiąże się i z `beauty`,
-          i z `eval` jednocześnie.")
-      ),
-      tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-        tags$thead(tags$tr(
-          tags$th("Zmienna"),
-          tags$th("Związek z beauty"),
-          tags$th("Związek z eval"),
-          tags$th("Werdykt")
-        )),
-        tags$tbody(rows)
-      )
-    )
   })
 }
