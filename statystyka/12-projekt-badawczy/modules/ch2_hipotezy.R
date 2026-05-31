@@ -1,4 +1,4 @@
-ch3_ui <- lecture_chapter(id = "ch3", num = "2", title = "Hipotezy jako tropy", content = tagList(
+ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Hipotezy jako tropy", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
       kicker = "Rozdział 02 · Hipotezy",
@@ -29,17 +29,17 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "2", title = "Hipotezy jako tropy", 
         jeszcze dobrze rozpoznany.")
     ),
 
-    uiOutput("ch3_bundle"),
+    uiOutput("ch2_bundle"),
 
     lc_chapter_next("03", "Co właściwie mierzymy?",
       "Sprawdzamy, czy nasze pojęcia naprawdę mają odpowiedniki w danych.",
-      "ch4"),
+      "ch3"),
     div(style = "height: 40px;")
   )))
 )
 
-ch3_server <- function(input, output, session) {
-  output$ch3_bundle <- renderUI({
+ch2_server <- function(input, output, session) {
+  output$ch2_bundle <- renderUI({
     cards <- lapply(tr_trop_order, function(id) {
       tr <- tr_tropy[[id]]
       div(class = "trop-card",

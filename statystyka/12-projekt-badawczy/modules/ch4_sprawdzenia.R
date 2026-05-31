@@ -1,4 +1,4 @@
-ch5_ui <- lecture_chapter(id = "ch5", num = "4", title = "Pierwsze sprawdzenia", content = tagList(
+ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pierwsze sprawdzenia", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
       kicker = "Rozdział 04 · Proste testy",
@@ -24,7 +24,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "4", title = "Pierwsze sprawdzenia",
         wynik wzmacnia trop, osłabia go, czy każe zmienić pytanie.")
     ),
 
-    uiOutput("ch5_bundle_results"),
+    uiOutput("ch4_bundle_results"),
 
     lc_h2("sec-02", "Tablica tropów po pierwszych testach"),
 
@@ -40,12 +40,12 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "4", title = "Pierwsze sprawdzenia",
 
     lc_chapter_next("05", "Wynik nie kończy badania",
       "Mamy pełną tablicę — czas odczytać, co cała wiązka mówi o celu.",
-      "ch6"),
+      "ch5"),
     div(style = "height: 40px;")
   )))
 )
 
-ch5_server <- function(input, output, session) {
+ch4_server <- function(input, output, session) {
   # Wykres jednego tropu — korelacja (ilościowe) albo boxplot (grupy).
   .trop_plot <- function(id) {
     tr <- tr_tropy[[id]]
@@ -70,10 +70,10 @@ ch5_server <- function(input, output, session) {
 
   # Zarejestruj wykres + render karty wyniku dla każdego tropu.
   lapply(tr_trop_order, function(id) {
-    zoom_plot_server(paste0("ch5_plot_", id), reactive(.trop_plot(id)))
+    zoom_plot_server(paste0("ch4_plot_", id), reactive(.trop_plot(id)))
   })
 
-  output$ch5_bundle_results <- renderUI({
+  output$ch4_bundle_results <- renderUI({
     blocks <- lapply(tr_trop_order, function(id) {
       tr  <- tr_tropy[[id]]
       row <- tr_board_row(id)
@@ -105,7 +105,7 @@ ch5_server <- function(input, output, session) {
       div(class = "lc-figure-panel",
         h4(tr$short),
         p(tags$strong("Pytanie: "), tr$question),
-        zoom_plot_ui(paste0("ch5_plot_", id), height = "320px"),
+        zoom_plot_ui(paste0("ch4_plot_", id), height = "320px"),
         tags$p(style = "margin-top: 12px;", tags$strong("Statystyki opisowe (eval):")),
         desc_tbl,
         tags$p(tags$strong(paste0("Miara efektu (", effect_kind, "): ")),

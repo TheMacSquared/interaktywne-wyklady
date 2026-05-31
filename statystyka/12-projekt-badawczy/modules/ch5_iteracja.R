@@ -1,4 +1,4 @@
-ch6_ui <- lecture_chapter(id = "ch6", num = "5", title = "Wynik nie kończy badania", content = tagList(
+ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Wynik nie kończy badania", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
       kicker = "Rozdział 05 · Iteracja",
@@ -26,7 +26,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "5", title = "Wynik nie kończy bada
       tr_board_ui(reveal = tr_trop_order, show_verdict = TRUE)
     ),
 
-    uiOutput("ch6_goal_readout"),
+    uiOutput("ch5_goal_readout"),
 
     lc_h2("sec-02", "Co robimy z każdym tropem?"),
 
@@ -36,7 +36,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "5", title = "Wynik nie kończy bada
         całej wiązki naraz.")
     ),
 
-    uiOutput("ch6_next_steps"),
+    uiOutput("ch5_next_steps"),
 
     lc_h2("sec-03", "Zanim zaufamy wynikowi: zmienne zakłócające"),
 
@@ -58,17 +58,17 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "5", title = "Wynik nie kończy bada
     div(class = "lc-figure-panel",
       h4("Płeć a obie zmienne relacji"),
       div(class = "two-plot-grid",
-        zoom_plot_ui("ch6_conf_beauty", height = "300px"),
-        zoom_plot_ui("ch6_conf_eval", height = "300px")
+        zoom_plot_ui("ch5_conf_beauty", height = "300px"),
+        zoom_plot_ui("ch5_conf_eval", height = "300px")
       ),
-      uiOutput("ch6_conf_example_verdict")
+      uiOutput("ch5_conf_example_verdict")
     ),
 
     lc_h3("Pozostałe zmienne — tabela zbiorcza"),
 
     div(class = "lc-figure-panel",
       h4("Kandydaci na zmienne zakłócające (dla tropu beauty)"),
-      uiOutput("ch6_confounder_table")
+      uiOutput("ch5_confounder_table")
     ),
 
     div(class = "lc-feedback lc-feedback-info",
@@ -86,7 +86,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "5", title = "Wynik nie kończy bada
       tags$strong("Wniosek pośredni:"),
       p("Jeśli choć jedna zmienna wiąże się i z `beauty`, i z `eval`, to prosty
         test nie wystarczy — trzeba uwzględnić te zmienne jednocześnie. To jest
-        dokładnie zadanie dla modelu kontrolnego z rozdziału 7.")
+        dokładnie zadanie dla modelu kontrolnego z rozdziału 6.")
     ),
 
     lc_h2("sec-04", "Czego brakuje w danych?"),
@@ -118,13 +118,13 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "5", title = "Wynik nie kończy bada
 
     lc_chapter_next("06", "Model kontrolny",
       "Sprawdziliśmy tropy pojedynczo — czas sprawdzić je wszystkie naraz, w jednym modelu.",
-      "ch8"),
+      "ch6"),
     div(style = "height: 40px;")
   )))
 )
 
-ch6_server <- function(input, output, session) {
-  output$ch6_goal_readout <- renderUI({
+ch5_server <- function(input, output, session) {
+  output$ch5_goal_readout <- renderUI({
     supported <- tr_board_summary$short[tr_board_summary$supported]
     weak      <- tr_board_summary$short[!tr_board_summary$supported]
     fmt <- function(x) if (length(x) == 0) "—" else paste(x, collapse = ", ")
@@ -138,7 +138,7 @@ ch6_server <- function(input, output, session) {
     )
   })
 
-  output$ch6_next_steps <- renderUI({
+  output$ch5_next_steps <- renderUI({
     cases <- list(
       beauty = c(
         "Jak zaprojektować badanie, które oddzieli wygląd od jakości materiałów?",
@@ -189,12 +189,12 @@ ch6_server <- function(input, output, session) {
       theme_upwr() +
       theme(legend.position = "none")
   }
-  zoom_plot_server("ch6_conf_beauty",
+  zoom_plot_server("ch5_conf_beauty",
                    reactive(.conf_box("beauty", "Ocena atrakcyjności (beauty)")))
-  zoom_plot_server("ch6_conf_eval",
+  zoom_plot_server("ch5_conf_eval",
                    reactive(.conf_box("eval", "Ocena kursu (eval)")))
 
-  output$ch6_conf_example_verdict <- renderUI({
+  output$ch5_conf_example_verdict <- renderUI({
     r <- tr_confounder_row("gender")
     lc_feedback(
       tags$p(tags$strong("Co widać: "),
@@ -207,7 +207,7 @@ ch6_server <- function(input, output, session) {
     )
   })
 
-  output$ch6_confounder_table <- renderUI({
+  output$ch5_confounder_table <- renderUI({
     rows <- lapply(tr_confounder_vars, function(var) {
       r <- tr_confounder_row(var)
       verdict <- if (r$confounder) {

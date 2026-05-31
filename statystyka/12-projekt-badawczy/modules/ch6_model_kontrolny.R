@@ -1,4 +1,4 @@
-ch8_ui <- lecture_chapter(id = "ch8", num = "6", title = "Model kontrolny", content = tagList(
+ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Model kontrolny", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
       kicker = "Rozdział 06 · Stabilność efektu",
@@ -16,7 +16,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "6", title = "Model kontrolny", cont
     lc_h2("sec-01", "Po co model kontrolny?"),
 
     div(class = "lc-prose",
-      p("W rozdziale 5 sprawdzaliśmy tropy pojedynczo: korelacja, różnice między
+      p("W rozdziale 4 sprawdzaliśmy tropy pojedynczo: korelacja, różnice między
         dwiema grupami, proste porównania. To dobry start, ale świat rzadko
         zmienia się jedną zmienną naraz — a tablica zakłócaczy pokazała, że tropy
         się przeplatają."),
@@ -31,15 +31,15 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "6", title = "Model kontrolny", cont
         p("Dodajemy kontrole warstwami i patrzymy, co dzieje się ze współczynnikiem
           przy `beauty`: czy słabnie, czy się trzyma.")
       ),
-      uiOutput("ch8_models_table"),
-      zoom_plot_ui("ch8_beta_plot", height = "280px")
+      uiOutput("ch6_models_table"),
+      zoom_plot_ui("ch6_beta_plot", height = "280px")
     ),
 
     div(class = "lc-figure-panel",
       h4("Własny model kontrolny"),
       fluidRow(
         column(4,
-          checkboxGroupInput("ch8_vars", "Dodaj kontrole:",
+          checkboxGroupInput("ch6_vars", "Dodaj kontrole:",
             choices = c(
               "Płeć" = "gender",
               "Wiek" = "age",
@@ -53,11 +53,11 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "6", title = "Model kontrolny", cont
             ),
             selected = c("gender", "age", "native", "division", "credits", "response.rate")
           ),
-          uiOutput("ch8_custom_metrics")
+          uiOutput("ch6_custom_metrics")
         ),
         column(8,
-          uiOutput("ch8_custom_coefs"),
-          zoom_plot_ui("ch8_custom_coef_plot", height = "260px")
+          uiOutput("ch6_custom_coefs"),
+          zoom_plot_ui("ch6_custom_coef_plot", height = "260px")
         )
       )
     ),
@@ -86,7 +86,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "6", title = "Model kontrolny", cont
   )))
 )
 
-ch8_server <- function(input, output, session) {
+ch6_server <- function(input, output, session) {
   # Seria modeli liczona od razu — to materiał do omówienia z projekcji,
   # nie nagroda za kliknięcie.
   model_series <- reactive({
@@ -99,7 +99,7 @@ ch8_server <- function(input, output, session) {
     tr_model_table(models)
   })
 
-  output$ch8_models_table <- renderUI({
+  output$ch6_models_table <- renderUI({
     df <- model_series()
     rows <- lapply(seq_len(nrow(df)), function(i) {
       tags$tr(
@@ -119,7 +119,7 @@ ch8_server <- function(input, output, session) {
     )
   })
 
-  zoom_plot_server("ch8_beta_plot", reactive({
+  zoom_plot_server("ch6_beta_plot", reactive({
     df <- model_series()
     df$model <- factor(df$model, levels = df$model)
     ggplot(df, aes(x = model, y = beta_beauty, fill = p_beauty < 0.05)) +
@@ -133,12 +133,12 @@ ch8_server <- function(input, output, session) {
   }))
 
   custom_model <- reactive({
-    vars <- input$ch8_vars
+    vars <- input$ch6_vars
     rhs <- paste(c("beauty", vars), collapse = " + ")
     lm(as.formula(paste("eval ~", rhs)), data = tr_data)
   })
 
-  output$ch8_custom_metrics <- renderUI({
+  output$ch6_custom_metrics <- renderUI({
     m <- custom_model()
     g <- broom::glance(m)
     coefs <- broom::tidy(m)
@@ -153,7 +153,7 @@ ch8_server <- function(input, output, session) {
     )
   })
 
-  output$ch8_custom_coefs <- renderUI({
+  output$ch6_custom_coefs <- renderUI({
     coefs <- broom::tidy(custom_model())
     coefs <- coefs[coefs$term != "(Intercept)", ]
     rows <- lapply(seq_len(nrow(coefs)), function(i) {
@@ -170,7 +170,7 @@ ch8_server <- function(input, output, session) {
     )
   })
 
-  zoom_plot_server("ch8_custom_coef_plot", reactive({
+  zoom_plot_server("ch6_custom_coef_plot", reactive({
     coefs <- broom::tidy(custom_model(), conf.int = TRUE)
     coefs <- coefs[coefs$term != "(Intercept)", ]
     coefs$label <- tr_label_term(coefs$term)

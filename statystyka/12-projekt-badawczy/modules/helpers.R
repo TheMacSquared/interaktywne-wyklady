@@ -261,7 +261,7 @@ tr_confounder_row <- function(var) {
 # jakość nauczania, czy raczej mieszankę innych rzeczy? Tego celu NIE da się
 # rozstrzygnąć jedną hipotezą — potrzebujemy wiązki konkurujących tropów, które
 # razem oświetlają cel. Ta lista to ta sama wiązka, którą śledzimy od ciekawości
-# (ch1), przez hipotezy (ch3), testy (ch5), iterację (ch6) aż po model (ch8).
+# (ch1), przez hipotezy (ch2), testy (ch4), iterację (ch5) aż po model (ch6).
 # Wszystkie moduły czytają stąd, zamiast powielać własne listy.
 # ============================================================================
 
@@ -412,9 +412,9 @@ tr_board_row <- function(id) {
 # tr_board_ui — narastająca tablica tropów.
 #   reveal: które tropy są już "odkryte" (mają widoczny wynik). Pozostałe są
 #           wyszarzone z placeholderem "—". Domyślnie wszystkie odkryte.
-#   show_verdict: czy pokazać kolumnę werdyktu (włączamy od ch5 w górę).
+#   show_verdict: czy pokazać kolumnę werdyktu (włączamy od ch4 w górę).
 # Ten sam komponent służy jako pusta tablica (ch1, reveal=character(0)),
-# narastająca (ch5) i pełne podsumowanie (ch6, reveal=tr_trop_order).
+# narastająca (ch4) i pełne podsumowanie (ch5, reveal=tr_trop_order).
 # ----------------------------------------------------------------------------
 
 tr_board_ui <- function(reveal = tr_trop_order, show_verdict = TRUE) {

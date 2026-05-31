@@ -1,4 +1,4 @@
-ch4_ui <- lecture_chapter(id = "ch4", num = "3", title = "Co właściwie mierzymy?", content = tagList(
+ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Co właściwie mierzymy?", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
       kicker = "Rozdział 03 · Operacjonalizacja",
@@ -23,7 +23,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "3", title = "Co właściwie mierzym
         musi później wrócić we wniosku. Poniżej cztery kluczowe pojęcia naraz.")
     ),
 
-    uiOutput("ch4_construct_maps"),
+    uiOutput("ch3_construct_maps"),
 
     div(class = "lc-feedback lc-feedback-info",
       tags$strong("Ważne rozróżnienie:"),
@@ -40,13 +40,13 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "3", title = "Co właściwie mierzym
 
     lc_chapter_next("04", "Pierwsze sprawdzenia w danych",
       "Dopiero teraz wybieramy testy i wykresy, bo wiemy już, co próbujemy sprawdzić.",
-      "ch5"),
+      "ch4"),
     div(style = "height: 40px;")
   )))
 )
 
-ch4_server <- function(input, output, session) {
-  output$ch4_construct_maps <- renderUI({
+ch3_server <- function(input, output, session) {
+  output$ch3_construct_maps <- renderUI({
     maps <- list(
       list(name = "Jakość nauczania", cells = list(
         c("Pojęcie", "Jakość nauczania: czy zajęcia realnie pomagają studentom uczyć się."),

@@ -29,12 +29,12 @@ lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch1_ciekawosc.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch3_hipotezy.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch4_pomiar.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch5_sprawdzenia.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch6_iteracja.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch2_hipotezy.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch3_pomiar.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch4_sprawdzenia.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch5_iteracja.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch6_model_kontrolny.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch7_checklist.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch8_dodatek_model.R"), local = TRUE)
 
 header_extras <- tagList(
   tags$style(HTML("
@@ -202,11 +202,11 @@ header_extras <- tagList(
   "))
 )
 
-# Kolejność: po celu (ch1) od razu tropy (ch3). Model kontrolny (ch8) wchodzi
+# Kolejność: po celu (ch1) od razu tropy (ch2). Model kontrolny (ch6) wchodzi
 # przed checklist (ch7), bo checklist domyka cały projekt i musi być ostatni.
 # Numery w hero każdego modułu są ustawione zgodnie z TĄ kolejnością (1..7).
-.chapters <- list(ch1_ui, ch3_ui, ch4_ui, ch5_ui, ch6_ui,
-                  ch8_ui, ch7_ui)
+.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui,
+                  ch6_ui, ch7_ui)
 
 ui <- lecture_page(
   lecture_id    = "projekt-badawczy",
@@ -221,11 +221,11 @@ server <- function(input, output, session) {
   lc <- lecture_server(.chapters, input, output, session)
 
   ch1_server(input, output, session)
+  ch2_server(input, output, session)
   ch3_server(input, output, session)
   ch4_server(input, output, session)
   ch5_server(input, output, session)
   ch6_server(input, output, session)
-  ch8_server(input, output, session)
   ch7_server(input, output, session)
 }
 

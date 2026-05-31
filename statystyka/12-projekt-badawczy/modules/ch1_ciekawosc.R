@@ -114,7 +114,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
 
     lc_chapter_next("02", "Hipotezy jako tropy",
       "Mamy cel i wiązkę. Teraz nadajemy każdemu tropowi kształt hipotezy z alternatywnymi wyjaśnieniami.",
-      "ch3"),
+      "ch2"),
     div(style = "height: 40px;")
   )))
 )

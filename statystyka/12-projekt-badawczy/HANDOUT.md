@@ -36,32 +36,31 @@ rozdz. 1, wypełniana w rozdz. 4, pełna w rozdz. 5 i 7. Wyniki liczone raz przy
 | Poz. | Plik | num | Tytuł |
 |------|------|-----|-------|
 | 1 | `ch1_ciekawosc.R` | 01 | Od ciekawości do celu (cel + drabina + wiązka + pusta tablica) |
-| 2 | `ch3_hipotezy.R` | 02 | Hipotezy jako tropy (cała wiązka naraz) |
-| 3 | `ch4_pomiar.R` | 03 | Co właściwie mierzymy (4 construct mapy naraz) |
-| 4 | `ch5_sprawdzenia.R` | 04 | Pierwsze sprawdzenia (wyniki wiązki + tablica) |
-| 5 | `ch6_iteracja.R` | 05 | Wynik nie kończy badania (pełna tablica + zakłócacze + co mówi o celu) |
-| 6 | `ch8_dodatek_model.R` | 06 | Model kontrolny (cała wiązka w jednym modelu) |
+| 2 | `ch2_hipotezy.R` | 02 | Hipotezy jako tropy (cała wiązka naraz) |
+| 3 | `ch3_pomiar.R` | 03 | Co właściwie mierzymy (4 construct mapy naraz) |
+| 4 | `ch4_sprawdzenia.R` | 04 | Pierwsze sprawdzenia (wyniki wiązki + tablica) |
+| 5 | `ch5_iteracja.R` | 05 | Wynik nie kończy badania (pełna tablica + zakłócacze + co mówi o celu) |
+| 6 | `ch6_model_kontrolny.R` | 06 | Model kontrolny (cała wiązka w jednym modelu) |
 | 7 | `ch7_checklist.R` | 07 | Checklist projektu grupowego (domknięcie + tablica) |
 
-Uwaga: nazwy plików są historyczne i NIE odpowiadają numerom w UI. Usunięte zostały dwa
-rozdziały: „Jak obracać pytanie" (drabinę luźny temat → cel → plan wchłonięto do ch1) oraz
+Usunięte zostały dwa dawne rozdziały: „Jak obracać pytanie" (drabinę luźny temat → cel → plan wchłonięto do ch1) oraz
 „Jak zaprojektować lepsze badanie" (za dużo niuansu, niepotrzebne do wykonania projektu —
 myśl o granicy danych obserwacyjnych została w modelu i w checklist). Sekcja zmiennych
 zakłócających mieszka w „Wynik nie kończy badania" (po next-steps, jako ich przykład).
-Kolejność ustawiana w `.chapters` w `app.R`, numery w `lc_chapter_hero()` i
-`lecture_chapter(num=...)`. id rozdziałów (`ch3`, `ch8` itd.) nietknięte jako klucze nawigacji.
+Kolejność ustawiana w `.chapters` w `app.R`; nazwy plików, obiekty `ch*_ui/server`,
+`lecture_chapter(id=...)` i targety `lc_chapter_next()` są zgodne z numeracją 1-7.
 
 ## Tryb prowadzenia: projekcja
 
 Wykład jest projektowany pod prowadzenie z projekcji (prowadzący omawia, studenci
 patrzą). Dlatego selektory nawigacyjne (`selectInput`/`radioButtons` „wybierz 1 z N")
-zostały **rozłożone**: w ch3/ch4/ch5/ch6 cała zawartość jest widoczna
+zostały **rozłożone**: w ch2/ch3/ch4/ch5 cała zawartość jest widoczna
 naraz (karty `.trop-card` / `.question-card` jedna pod drugą, tablica `.tropy-board`).
 Zero klikania w trakcie narracji.
 
 Interakcja została tylko tam, gdzie klik jest puentą:
 - rozdz. 1 — podgląd danych (sortowanie, zakres wierszy/kolumn),
-- rozdz. 7 (model) — budowanie własnego modelu (checkbox kontroli),
+- rozdz. 6 (model) — budowanie własnego modelu (checkbox kontroli),
 - rozdz. 7 (checklist) — autodiagnoza projektu (9 pozycji).
 
 ## Wzorce UI (kanon — `R/DESIGN_CONTRACT.md`)
