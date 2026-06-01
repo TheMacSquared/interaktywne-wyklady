@@ -98,6 +98,7 @@ ch1_ui <- list(
 | Podsekcja | `lc_h3(title)` |
 | Akapit narracyjny | `lc_p(...)` |
 | Widget/wykres/tabela | `figure_panel(label, title, ..., full_width = TRUE/FALSE)` |
+| Wykres z pełnym ekranem | `lc_plot_fullscreen(outputId, height = "300px")` |
 | Notka na marginesie | `margin_callout()` albo `margin_note()` |
 | Następny rozdział | `lc_chapter_next()` |
 

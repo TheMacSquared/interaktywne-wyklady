@@ -126,6 +126,14 @@ ch10_server <- function(input, output, session) {
   observeEvent(input$ch10_fit, {
     d <- sample_data()
     req(d)
+    if (!requireNamespace("rstanarm", quietly = TRUE)) {
+      showNotification(
+        "Pakiet 'rstanarm' nie jest zainstalowany. Zainstaluj go, aby dopasować model bayesowski.",
+        type = "error",
+        duration = 10
+      )
+      return(NULL)
+    }
     withProgress(message = "Dopasowywanie modeli logistycznych...",
                   detail = "stan_glm MCMC",
                   value = 0.1, {

@@ -134,18 +134,12 @@ Powiązane pliki:
 
 ---
 
-## Infrastruktura: fullscreen jako globalny pattern
+## Infrastruktura: fullscreen jako globalny pattern ✓
 
-W `06-regresja/modules/ch3_wieloraka.R` w widgecie `ch3-budowanie` ("Predykcja
-średniej ocen") dodany został przycisk fullscreen na wykresie scatter.
-Implementacja jest lokalna: CSS + JS są w `tags$head` wewnątrz `ch3_ui`,
-klasa `.lc-plot-fullscreen-wrap` używa natywnego HTML5 Fullscreen API.
-
-Jeśli okaże się przydatne w innych widgetach, najczyściej wynieść:
-- CSS → [R/shared_styles.css](R/shared_styles.css)
-- JS → [R/shared_toc.js](R/shared_toc.js) (lub osobny `shared_fullscreen.js`)
-- helper `lc_plot_fullscreen(outputId, ...)` w
-  [R/lecture_layout.R](R/lecture_layout.R) wokół `plotOutput`
+Zrobione: globalny helper `lc_plot_fullscreen(outputId, ...)` jest w
+[R/lecture_layout.R](R/lecture_layout.R), style są w
+[R/shared_styles.css](R/shared_styles.css), a obsługa Fullscreen API w
+[R/shared_toc.js](R/shared_toc.js).
 
 Powiązane pliki:
 - [06-regresja/modules/ch3_wieloraka.R](06-regresja/modules/ch3_wieloraka.R) — referencyjna implementacja lokalna

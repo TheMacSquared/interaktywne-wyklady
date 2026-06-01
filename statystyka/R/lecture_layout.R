@@ -574,6 +574,24 @@ figure_panel <- function(label, ..., title = NULL, color = "#6b1a26",
   )
 }
 
+# Wykres z natywnym trybem pełnoekranowym.
+# UI-only wrapper wokół plotOutput(); server używa zwykłego output$... <- renderPlot().
+lc_plot_fullscreen <- function(outputId, height = "300px", width = "100%",
+                               label = "Pełny ekran", ...) {
+  tags$div(
+    class = "lc-plot-fullscreen-wrap",
+    shiny::plotOutput(outputId, height = height, width = width, ...),
+    tags$button(
+      class = "lc-plot-fullscreen-btn",
+      type = "button",
+      title = label,
+      `aria-label` = label,
+      `data-lc-fullscreen-toggle` = "true",
+      HTML("&#x26F6;")
+    )
+  )
+}
+
 # Blok wzoru lub krótkiego zapisu matematycznego.
 lc_formula_box <- function(...) {
   tags$div(class = "lc-formula-box", ...)

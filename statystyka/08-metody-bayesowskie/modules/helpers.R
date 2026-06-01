@@ -426,9 +426,28 @@ plot_posterior_or <- function(post_or_result,
 # REGRESJA BAYESOWSKA (rstanarm)
 # ============================================================================
 
+.bayes_fit_cache <- new.env(parent = emptyenv())
+
+bayes_fit_cache_key <- function(kind, formula, data, chains, iter, prior_scale) {
+  data_sig <- paste(
+    vapply(data, function(x) paste(round(as.numeric(x), 8), collapse = ","), character(1)),
+    collapse = "|"
+  )
+  paste(kind, deparse(formula), nrow(data), chains, iter, prior_scale, data_sig, sep = "::")
+}
+
 # Regresja liniowa: stan_glm vs lm
 # Zwraca list ze spójnymi elementami: freq_coefs (df), bayes_coefs (df z HDI)
 fit_bayes_lm <- function(formula, data, chains = 2, iter = 1000, prior_scale = 2.5) {
+  if (!requireNamespace("rstanarm", quietly = TRUE)) {
+    stop("Pakiet 'rstanarm' jest potrzebny do regresji bayesowskiej. Zainstaluj go przez install.packages('rstanarm').", call. = FALSE)
+  }
+
+  cache_key <- bayes_fit_cache_key("lm", formula, data, chains, iter, prior_scale)
+  if (exists(cache_key, envir = .bayes_fit_cache, inherits = FALSE)) {
+    return(get(cache_key, envir = .bayes_fit_cache, inherits = FALSE))
+  }
+
   # Freq: lm
   freq_model <- lm(formula, data = data)
   freq_tidy  <- broom::tidy(freq_model, conf.int = TRUE, conf.level = 0.95)
@@ -465,7 +484,7 @@ fit_bayes_lm <- function(formula, data, chains = 2, iter = 1000, prior_scale = 2
     )
   }))
 
-  list(
+  result <- list(
     freq_model    = freq_model,
     bayes_model   = bayes_model,
     freq_coefs    = freq_coefs,
@@ -474,11 +493,22 @@ fit_bayes_lm <- function(formula, data, chains = 2, iter = 1000, prior_scale = 2
     r_squared     = summary(freq_model)$r.squared,
     n             = nrow(data)
   )
+  assign(cache_key, result, envir = .bayes_fit_cache)
+  result
 }
 
 # Regresja logistyczna
 fit_bayes_glm_logistic <- function(formula, data, chains = 2, iter = 1000,
                                     prior_scale = 2.5) {
+  if (!requireNamespace("rstanarm", quietly = TRUE)) {
+    stop("Pakiet 'rstanarm' jest potrzebny do regresji bayesowskiej. Zainstaluj go przez install.packages('rstanarm').", call. = FALSE)
+  }
+
+  cache_key <- bayes_fit_cache_key("logistic", formula, data, chains, iter, prior_scale)
+  if (exists(cache_key, envir = .bayes_fit_cache, inherits = FALSE)) {
+    return(get(cache_key, envir = .bayes_fit_cache, inherits = FALSE))
+  }
+
   freq_model <- glm(formula, data = data, family = binomial())
   freq_tidy  <- broom::tidy(freq_model, conf.int = TRUE, conf.level = 0.95,
                              exponentiate = FALSE)
@@ -520,7 +550,7 @@ fit_bayes_glm_logistic <- function(formula, data, chains = 2, iter = 1000,
     )
   }))
 
-  list(
+  result <- list(
     freq_model  = freq_model,
     bayes_model = bayes_model,
     freq_coefs  = freq_coefs,
@@ -528,6 +558,8 @@ fit_bayes_glm_logistic <- function(formula, data, chains = 2, iter = 1000,
     posterior   = post,
     n           = nrow(data)
   )
+  assign(cache_key, result, envir = .bayes_fit_cache)
+  result
 }
 
 # ============================================================================

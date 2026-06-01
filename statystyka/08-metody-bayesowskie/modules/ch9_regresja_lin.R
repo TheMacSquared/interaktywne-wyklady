@@ -140,6 +140,14 @@ ch9_server <- function(input, output, session) {
   observeEvent(input$ch9_fit, {
     d <- sample_data()
     req(d)
+    if (!requireNamespace("rstanarm", quietly = TRUE)) {
+      showNotification(
+        "Pakiet 'rstanarm' nie jest zainstalowany. Zainstaluj go, aby dopasować model bayesowski.",
+        type = "error",
+        duration = 10
+      )
+      return(NULL)
+    }
     withProgress(message = "Dopasowywanie modeli...",
                   detail = "stan_glm MCMC (chains=2, iter=1000)",
                   value = 0.1, {

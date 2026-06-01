@@ -9,7 +9,6 @@ library(tidyr)
 library(rstatix)
 library(broom)
 library(BayesFactor)
-library(rstanarm)
 
 # ============================================================================
 # MODULY
@@ -62,7 +61,7 @@ ui <- lecture_page(
   lecture_id    = "metody-bayesowskie",
   lecture_num   = "08",
   lecture_title = "Metody bayesowskie",
-  module_label  = "Moduł VII",
+  module_label  = "Moduł VIII",
   chapters      = .chapters
 )
 

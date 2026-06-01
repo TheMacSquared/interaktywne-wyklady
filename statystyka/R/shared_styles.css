@@ -1911,3 +1911,70 @@ mjx-container mjx-text {
 
 /* Szerokie okno modalne dla powiększonego wykresu */
 .modal-dialog { width: 90vw !important; max-width: 1400px !important; }
+
+/* ============================================================================
+   Plot fullscreen — globalny wrapper dla wykresów Shiny
+   Funkcja R: lc_plot_fullscreen()
+   JS w shared_toc.js (sekcja "Plot fullscreen").
+   ============================================================================ */
+
+.lc-plot-fullscreen-wrap {
+  position: relative;
+}
+
+.lc-plot-fullscreen-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--upwr-rule);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--upwr-surface) 92%, transparent);
+  color: var(--upwr-ink);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .15s ease-out, background .15s ease-out;
+}
+
+.lc-plot-fullscreen-wrap:hover .lc-plot-fullscreen-btn,
+.lc-plot-fullscreen-wrap:focus-within .lc-plot-fullscreen-btn,
+.lc-plot-fullscreen-wrap:fullscreen .lc-plot-fullscreen-btn {
+  opacity: 1;
+}
+
+.lc-plot-fullscreen-btn:hover,
+.lc-plot-fullscreen-btn:focus {
+  background: var(--upwr-surface);
+}
+
+.lc-plot-fullscreen-wrap:fullscreen {
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+  padding: 24px;
+  background: var(--upwr-bg);
+  display: flex;
+  align-items: stretch;
+}
+
+.lc-plot-fullscreen-wrap:fullscreen .shiny-plot-output {
+  width: 100% !important;
+  height: calc(100vh - 48px) !important;
+}
+
+.lc-plot-fullscreen-wrap:fullscreen .shiny-plot-output img {
+  object-fit: contain;
+}
+
+@media (hover: none) {
+  .lc-plot-fullscreen-btn {
+    opacity: 1;
+  }
+}

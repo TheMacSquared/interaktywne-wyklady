@@ -268,6 +268,61 @@
 })();
 
 // ============================================================================
+// Plot fullscreen — natywny Fullscreen API dla lc_plot_fullscreen()
+// ============================================================================
+(function () {
+  "use strict";
+
+  function fullscreenElement() {
+    return document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement;
+  }
+
+  function requestFullscreen(el) {
+    if (el.requestFullscreen) return el.requestFullscreen();
+    if (el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
+    if (el.mozRequestFullScreen) return el.mozRequestFullScreen();
+    if (el.msRequestFullscreen) return el.msRequestFullscreen();
+    return null;
+  }
+
+  function exitFullscreen() {
+    if (document.exitFullscreen) return document.exitFullscreen();
+    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+    if (document.mozCancelFullScreen) return document.mozCancelFullScreen();
+    if (document.msExitFullscreen) return document.msExitFullscreen();
+    return null;
+  }
+
+  document.addEventListener("click", function (event) {
+    var button = event.target.closest("[data-lc-fullscreen-toggle]");
+    if (!button) return;
+
+    var wrap = button.closest(".lc-plot-fullscreen-wrap");
+    if (!wrap) return;
+
+    event.preventDefault();
+
+    if (fullscreenElement()) {
+      exitFullscreen();
+    } else {
+      requestFullscreen(wrap);
+    }
+  });
+
+  document.addEventListener("fullscreenchange", function () {
+    document.querySelectorAll("[data-lc-fullscreen-toggle]").forEach(function (button) {
+      var active = !!fullscreenElement();
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+      button.setAttribute("title", active ? "Zamknij pełny ekran" : "Pełny ekran");
+      button.setAttribute("aria-label", active ? "Zamknij pełny ekran" : "Pełny ekran");
+    });
+  });
+})();
+
+// ============================================================================
 // Theme switcher — sidebar light/dark, persisted per browser.
 // ============================================================================
 (function () {

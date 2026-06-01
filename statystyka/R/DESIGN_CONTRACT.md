@@ -16,6 +16,8 @@ Kontrakt dotyczy wykładów opartych o `lecture_page()`:
 - `metody-bayesowskie/`
 - `dobre-dane/`
 - `case-studies/`
+- `kierunkowe/`
+- `projekt-badawczy/`
 
 Niezmigrowane wykłady mogą być zepsute po usunięciu starych aliasów i stylów. Nie naprawiamy ich przy pracy nad kontraktem nowego systemu.
 

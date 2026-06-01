@@ -101,7 +101,7 @@ ch3_ui <- list(
               bez interakcji. Gwiazdka przy p-value oznacza p < 0.05.")
           ),
           uiOutput("ch3_model_coefs"),
-          plotOutput("ch3_coef_plot", height = "250px"),
+          lc_plot_fullscreen("ch3_coef_plot", height = "250px"),
           uiOutput("ch3_model_stats")
         )
       )
@@ -136,7 +136,7 @@ ch3_ui <- list(
                        class = "lc-btn-outline", width = "100%")
         ),
         column(8,
-          plotOutput("ch3_control_plot", height = "320px"),
+          lc_plot_fullscreen("ch3_control_plot", height = "320px"),
           uiOutput("ch3_control_info")
         )
       )
@@ -173,7 +173,7 @@ ch3_ui <- list(
                        class = "lc-btn-warning", width = "100%")
         ),
         column(8,
-          plotOutput("ch3_collin_plot", height = "300px"),
+          lc_plot_fullscreen("ch3_collin_plot", height = "300px"),
           uiOutput("ch3_collin_info")
         )
       )

@@ -5,13 +5,13 @@ Interaktywny wykład porównujący podejście bayesowskie ze częstościowym. Ka
 ## 📋 Wymagania
 
 - R (wersja ≥ 4.0)
-- Pakiety R: `shiny`, `bslib`, `ggplot2`, `dplyr`, `tidyr`, `rstatix`, `broom`, `BayesFactor`, `rstanarm`
+- Pakiety R: `shiny`, `ggplot2`, `dplyr`, `tidyr`, `rstatix`, `broom`, `BayesFactor`, `rstanarm`
 
 ## 🚀 Instalacja
 
 ```r
 install.packages(c(
-  "shiny", "bslib", "ggplot2", "dplyr", "tidyr",
+  "shiny", "ggplot2", "dplyr", "tidyr",
   "rstatix", "broom",
   "BayesFactor", "rstanarm"
 ))
@@ -22,7 +22,7 @@ install.packages(c(
 ## ▶️ Uruchamianie
 
 ```r
-shiny::runApp("statystyka/metody-bayesowskie")
+shiny::runApp("statystyka/08-metody-bayesowskie")
 ```
 
 ## 📚 Struktura wykładu (12 rozdziałów)
