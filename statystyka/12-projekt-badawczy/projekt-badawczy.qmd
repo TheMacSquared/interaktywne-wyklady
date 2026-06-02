@@ -1,0 +1,590 @@
+---
+title: "Projekt badawczy"
+subtitle: "Przewodnik po wykładzie · dane: TeachingRatings (n = 463)"
+lang: pl
+format:
+  pdf:
+    pdf-engine: xelatex
+    number-sections: true
+    toc: true
+    toc-depth: 2
+    geometry: margin=2.5cm
+    fontsize: 11pt
+    include-in-header:
+      text: |
+        \usepackage{xcolor}
+        \definecolor{vargreen}{HTML}{d8ede0}
+        \let\origttfamily\ttfamily
+        \renewcommand{\texttt}[1]{\colorbox{vargreen}{\origttfamily #1}}
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(broom)
+# install.packages("patchwork") — jeśli brakuje
+library(patchwork)
+
+app_dir      <- normalizePath(".")
+project_root <- dirname(app_dir)
+
+source(file.path(project_root, "R", "palette.R"))
+source(file.path(project_root, "R", "theme_upwr.R"))
+source(file.path(project_root, "R", "shared.R"))
+source(file.path(app_dir, "modules", "helpers.R"))
+
+lc_apply_ggplot_defaults()
+
+# ---- Wykres dla jednego tropu -------------------------------------------------
+trop_plot <- function(id) {
+  tr <- tr_tropy[[id]]
+  if (tr$method == "cor") {
+    ggplot(tr_data, aes(x = .data[[tr$var]], y = eval)) +
+      geom_point(color = proj_col_ref, alpha = 0.45, size = 1.8) +
+      geom_smooth(method = "lm", se = TRUE, color = proj_col_ctrl,
+                  fill = proj_col_ctrl, alpha = 0.15) +
+      labs(x = unname(tr_labels[tr$var]), y = "Ocena kursu (eval)") +
+      theme_upwr()
+  } else {
+    n_grp <- length(unique(na.omit(tr_data[[tr$var]])))
+    fills <- rep(c(proj_col_data, proj_col_hyp, proj_col_ctrl), length.out = n_grp)
+    ggplot(tr_data, aes(x = .data[[tr$var]], y = eval, fill = .data[[tr$var]])) +
+      geom_boxplot(alpha = 0.65, outlier.alpha = 0.25) +
+      geom_jitter(width = 0.12, alpha = 0.16, size = 1) +
+      scale_fill_manual(values = fills) +
+      labs(x = unname(tr_labels[tr$var]), y = "Ocena kursu (eval)") +
+      theme_upwr() +
+      theme(legend.position = "none")
+  }
+}
+
+conf_box <- function(y_var, y_label) {
+  ggplot(tr_data, aes(x = gender, y = .data[[y_var]], fill = gender)) +
+    geom_boxplot(alpha = 0.65, outlier.alpha = 0.25) +
+    geom_jitter(width = 0.12, alpha = 0.16, size = 1) +
+    scale_fill_manual(values = c(proj_col_data, proj_col_hyp)) +
+    labs(x = "Płeć prowadzącego", y = y_label) +
+    theme_upwr() +
+    theme(legend.position = "none")
+}
+
+# ---- Modele (ch6) ------------------------------------------------------------
+.models <- list(
+  list(label = "M1: beauty",
+       model  = lm(eval ~ beauty, data = tr_data)),
+  list(label = "M2: + cechy osoby",
+       model  = lm(eval ~ beauty + gender + age + minority + native + tenure,
+                   data = tr_data)),
+  list(label = "M3: + kontekst kursu",
+       model  = lm(eval ~ beauty + gender + age + minority + native + tenure +
+                     division + credits + students, data = tr_data)),
+  list(label = "M4: + response rate",
+       model  = lm(eval ~ beauty + gender + age + minority + native + tenure +
+                     division + credits + students + response.rate, data = tr_data))
+)
+.mt <- tr_model_table(.models)
+
+# ---- Zapis wszystkich wykresów ------------------------------------------------
+.fig_dir <- "_quarto_figs"
+dir.create(.fig_dir, showWarnings = FALSE)
+
+for (id in tr_trop_order) {
+  ggsave(file.path(.fig_dir, paste0("trop_", id, ".png")),
+         trop_plot(id), width = 5.2, height = 3.4, dpi = 150)
+}
+
+conf_combined <- conf_box("beauty", "Ocena atrakcyjności (beauty)") +
+                 conf_box("eval",   "Ocena kursu (eval)")
+ggsave(file.path(.fig_dir, "conf_combined.png"),
+       conf_combined, width = 6.0, height = 3.2, dpi = 150)
+
+.mt_plot <- .mt
+.mt_plot$model <- factor(.mt_plot$model, levels = .mt_plot$model)
+ggsave(
+  file.path(.fig_dir, "beta_plot.png"),
+  ggplot(.mt_plot, aes(x = model, y = beta_beauty, fill = p_beauty < 0.05)) +
+    geom_col(width = 0.6) +
+    geom_hline(yintercept = 0, color = proj_col_ref) +
+    scale_fill_manual(
+      values = c("TRUE" = proj_col_ctrl, "FALSE" = proj_col_ref),
+      guide  = "none"
+    ) +
+    labs(x = NULL, y = "Współczynnik przy beauty",
+         title = "Stabilność efektu beauty pod kontrolą") +
+    theme_upwr() +
+    theme(axis.text.x = element_text(angle = 20, hjust = 1)),
+  width = 5.2, height = 2.8, dpi = 150
+)
+
+.coefs_full <- broom::tidy(.models[[4]]$model, conf.int = TRUE)
+.coefs_full <- .coefs_full[.coefs_full$term != "(Intercept)", ]
+.coefs_full$label <- tr_label_term(.coefs_full$term)
+.coefs_full$label <- factor(.coefs_full$label, levels = rev(.coefs_full$label))
+ggsave(
+  file.path(.fig_dir, "coef_full.png"),
+  ggplot(.coefs_full, aes(x = estimate, y = label)) +
+    geom_vline(xintercept = 0, color = proj_col_ref, linetype = "dashed") +
+    geom_errorbarh(aes(xmin = conf.low, xmax = conf.high),
+                   height = 0.25, color = proj_col_ref) +
+    geom_point(color = proj_col_hyp, size = 2.5) +
+    labs(x = "Współczynnik z 95% CI", y = NULL,
+         title = "Model M4 — wszystkie predyktory") +
+    theme_upwr(),
+  width = 5.2, height = 4.0, dpi = 150
+)
+```
+
+**Cel badawczy:** *Czy ocena z ankiety (`eval`) mierzy jakość nauczania, czy raczej mieszankę jakości zajęć, sympatii, stereotypów i okoliczności kursu?*
+
+Tego pytania nie rozstrzyga pojedynczy test. Realizujemy go **wiązką 5 tropów** — konkurujących hipotez, które razem oświetlają cel. Dane: 463 ewaluacje kursów akademickich (`AER::TeachingRatings`). Jedna obserwacja to jeden kurs; ten sam prowadzący może pojawić się przy kilku kursach.
+
+# Od ciekawości do celu
+
+Projekt badawczy zaczyna się przed testem: od celu i zestawu konkurujących tropów, które ten cel pomogą wyjaśnić. Cel powstaje przez zawężanie:
+
+| Etap | Treść |
+|------|-------|
+| **Pomysł badawczy** | Zaczynamy od przypuszczenia: ocena z ankiety może mieć kilka źródeł. |
+| **Cel badania** | Formułujemy pytanie, które da się rozważyć na danych. |
+| **Plan analizy** | Zamieniamy cel na hipotezy, zmienne i porównania. |
+
+Kolejność pracy: **najpierw cel i tropy, potem dobór metody statystycznej.** Test jest narzędziem do sprawdzenia tropu, nie punktem wyjścia.
+
+## Podgląd danych
+
+```{r data-preview}
+key_cols <- c("eval", "beauty", "gender", "age", "minority", "native",
+              "division", "credits", "students", "allstudents", "response.rate")
+preview  <- tr_data[1:10, key_cols]
+num_cols <- sapply(preview, is.numeric)
+preview[num_cols] <- lapply(preview[num_cols], round, 2)
+
+kable(preview,
+      caption  = "Pierwsze 10 wierszy zbioru (kluczowe zmienne)",
+      booktabs = TRUE) |>
+  kable_styling(latex_options = c("striped", "scale_down", "hold_position"),
+                font_size = 8)
+```
+
+**Jak czytać tabelę:** `eval` — ocena kursu (wynik); `beauty` — ocena atrakcyjności (trop główny); `gender`, `minority`, `native`, `tenure` — cechy prowadzącego; `division`, `credits` — kontekst kursu; `students`/`allstudents` — liczba odpowiedzi i zapisanych; `response.rate` — odsetek odpowiedzi na ankietę; `prof` — identyfikator prowadzącego.
+
+## Wiązka tropów
+
+Pięć tropów, które śledzimy przez cały wykład — rozważamy je wszystkie naraz, a nie pojedynczo:
+
+```{r tropy-intro}
+tropy_df <- data.frame(
+  Trop      = sapply(tr_tropy, \(t) t$short)[tr_trop_order],
+  Pytanie   = sapply(tr_tropy, \(t) t$question)[tr_trop_order],
+  Narzędzie = sapply(tr_tropy, \(t) t$test_name)[tr_trop_order],
+  stringsAsFactors = FALSE
+)
+kable(tropy_df, booktabs = TRUE, longtable = TRUE, row.names = FALSE,
+      caption = "Wiązka tropów — stan początkowy") |>
+  kable_styling(latex_options = c("striped", "repeat_header"),
+                full_width = FALSE) |>
+  column_spec(1, width = "2.2cm") |>
+  column_spec(2, width = "7.8cm") |>
+  column_spec(3, width = "3.2cm")
+```
+
+Poza naszą wiązką istnieją inne możliwe tropy: wielkość kursu, pora zajęć, trudność i obciążenie pracą, dyscyplina/wydział, powtarzalność prowadzącego. Wybór pięciu tropów to decyzja badawcza; zasadą przy własnym projekcie jest dążenie do wyczerpania tematu.
+
+# Hipotezy jako tropy
+
+Hipoteza to robocze przypuszczenie o związku między zmiennymi. Projekt badawczy obejmuje kilka hipotez pod wspólnym celem — każda ma własne pytanie, roboczą hipotezę i alternatywne wyjaśnienia. Dopisujemy też część konspektową: czy mamy dane potrzebne do sprawdzenia alternatywnego wyjaśnienia i co trzeba uwzględnić w analizie. Na tym etapie nie wybieramy jeszcze testu — porządkujemy projekt.
+
+**Zasada:** do każdej hipotezy podajemy co najmniej jedno alternatywne wyjaśnienie. Potem sprawdzamy, czy mamy dane, które pozwolą je odróżnić od głównego tropu. Brak danych nie przekreśla projektu, ale musi trafić do konspektu jako ograniczenie.
+
+```{r hipotezy, results='asis'}
+for (id in tr_trop_order) {
+  tr  <- tr_tropy[[id]]
+  hyp <- gsub("`([^`]+)`", "`\\1`", tr$hypothesis)
+  dc  <- gsub("`([^`]+)`", "`\\1`", tr$data_check)
+  pc  <- gsub("`([^`]+)`", "`\\1`", tr$plan_check)
+  cat("### Trop:", tr$short, "\n\n")
+  cat("**Pytanie:** ", tr$question, "\n\n")
+  cat("**Robocza hipoteza:** ", hyp, "\n\n")
+  cat("**Alternatywne wyjaśnienia:**\n\n")
+  for (alt in tr$alt) cat("-", alt, "\n")
+  cat("\n")
+  cat("**Czy mamy dane?** ", dc, "\n\n")
+  cat("**Co wpisać do konspektu?** ", pc, "\n\n")
+}
+```
+
+# Co właściwie mierzymy?
+
+Pojęcie z hipotezy i zmienna w danych to nie to samo. Trzeba nazwać tę różnicę, zanim zinterpretujemy wynik. Cel mówi o *jakości nauczania*, ale w danych mamy tylko `eval`. Zanim ruszymy z testami, nazwijmy tę szczelinę.
+
+```{r construct-maps}
+cm <- data.frame(
+  Pojęcie = c(
+    "Jakość nauczania: czy zajęcia realnie pomagają studentom uczyć się.",
+    "Atrakcyjność jako możliwe źródło obciążenia ocen.",
+    "Sprawiedliwość oceniania prowadzących.",
+    "Reprezentatywność opinii studentów."
+  ),
+  Wskaźnik = c(
+    "Ogólna ocena kursu wystawiona przez studentów.",
+    "Średnia ocena wyglądu przez panel studentów.",
+    "Porównanie ocen między grupami prowadzących.",
+    "Odsetek zapisanych osób, które wypełniły ankietę."
+  ),
+  Zmienna = c(
+    "eval: skala 1–5.",
+    "beauty: wystandaryzowana.",
+    "gender, native, minority, tenure.",
+    "response.rate."
+  ),
+  Ograniczenie = c(
+    "Może mierzyć satysfakcję, łatwość lub sympatię — nie faktyczne uczenie się.",
+    "To ocena społeczna, nie obiektywna cecha osoby.",
+    "Przynależność do grupy to etykieta, nie pomiar samego traktowania.",
+    "Nie wiemy, kto nie odpowiedział i dlaczego."
+  ),
+  stringsAsFactors = FALSE
+)
+
+kable(cm, booktabs = TRUE, longtable = TRUE,
+      caption = "Pojęcie → wskaźnik → zmienna → ograniczenie") |>
+  kable_styling(latex_options = "repeat_header", full_width = FALSE,
+                font_size = 9) |>
+  column_spec(1, width = "3.6cm", background = "#dceef7") |>
+  column_spec(2, width = "3.6cm", background = "#f5f0e6") |>
+  column_spec(3, width = "2.6cm", background = "#ddf0e4") |>
+  column_spec(4, width = "3.6cm", background = "#fef3d8") |>
+  row_spec(0, bold = TRUE, background = "white")
+```
+
+**Ważne rozróżnienie:** możemy testować różnice w `eval`, ale `eval` nie jest tym samym co jakość nauczania. Wniosek musi mówić językiem zmiennych, a nie tylko językiem ambicji badawczych.
+
+Pytania kontrolne do własnych projektów:
+
+- Czy zmienna naprawdę mierzy to, o czym mówi hipoteza?
+- Kto i kiedy wykonał pomiar?
+- Jakie zjawisko mogłoby dać taki sam wynik w danych?
+
+# Konspekt pracy badawczej
+
+Po celu, tropach i operacjonalizacji możemy zapisać pełny plan badania: zmienne, hipotezy, alternatywne wyjaśnienia i sposób interpretacji. Konspekt nie jest jeszcze raportem i nie jest listą testów. To roboczy plan — powinien być na tyle konkretny, żeby po jego przeczytaniu było wiadomo, co dokładnie będziemy sprawdzać w danych.
+
+## Cztery części konspektu
+
+| Krok | Element | Co zawiera |
+|------|---------|-----------|
+| **1** | **Cel badania** | Jedno główne pytanie, które porządkuje cały projekt. |
+| **2** | **Zmienne, dane i pomiar** | Źródło danych, jednostka obserwacji, zmienna wynikowa, zmienne główne, zmienne kontekstowe, ograniczenia pomiaru. |
+| **3** | **Tropy i hipotezy** | Każdy trop ma pytanie, hipotezę roboczą, alternatywne wyjaśnienia oraz informację, czy mamy dane potrzebne do ich sprawdzenia. |
+| **4** | **Plan interpretacji** | Co opiszemy, co porównamy, które zmienne uwzględnimy jako kontekst i jak ostrożnie połączymy wyniki z celem badania. |
+
+## Wypełniony konspekt dla naszych danych
+
+**1. Cel badania**
+
+Sprawdzić, czy ocena z ankiety `eval` mierzy jakość nauczania, czy raczej miesza jakość zajęć, sympatię, stereotypy i okoliczności kursu.
+
+**2. Zmienne, dane i pomiar**
+
+Jednostką obserwacji jest kurs/ewaluacja. Dane zawierają oceny studenckie, cechy prowadzących i kilka informacji o kontekście kursu.
+
+```{r konspekt-zmienne}
+variable_rows <- data.frame(
+  `Rola w konspekcie` = c(
+    "Zmienna wynikowa", "Główne tropy",
+    "Kontekst kursu", "Cechy prowadzącego"
+  ),
+  Zmienne = c(
+    "eval",
+    "beauty, gender, native, minority, response.rate",
+    "division, credits, students, allstudents",
+    "age, tenure, prof"
+  ),
+  `Co opisują` = c(
+    "Ogólna ocena kursu w ankiecie studenckiej; główny wynik, który interpretujemy.",
+    "Zmienne pozwalające sprawdzić różne możliwe źródła ocen z ankiety.",
+    "Informacje o poziomie kursu, liczbie punktów i wielkości grupy.",
+    "Dodatkowe informacje o prowadzącym, przydatne jako kontekst lub wyjaśnienia poboczne."
+  ),
+  `Ograniczenie pomiaru` = c(
+    "Nie jest bezpośrednim pomiarem jakości nauczania. Może mieszać satysfakcję, sympatię, łatwość kursu.",
+    "Każda jest tylko wskaźnikiem szerszego zjawiska i wymaga alternatywnych wyjaśnień.",
+    "Mogą zmieniać interpretację ocen; nie są pełnym opisem trudności ani organizacji zajęć.",
+    "Nie mierzą stylu prowadzenia, przygotowania dydaktycznego ani relacji ze studentami."
+  ),
+  check.names = FALSE,
+  stringsAsFactors = FALSE
+)
+
+kable(variable_rows, booktabs = TRUE, longtable = TRUE,
+      caption = "Zmienne w konspekcie — role i ograniczenia") |>
+  kable_styling(latex_options = c("striped", "repeat_header"),
+                full_width = FALSE, font_size = 9) |>
+  column_spec(1, width = "2.8cm") |>
+  column_spec(2, width = "3.2cm") |>
+  column_spec(3, width = "4.0cm") |>
+  column_spec(4, width = "4.0cm")
+```
+
+**3. Tropy i hipotezy**
+
+Każdy trop zapisujemy w tym samym porządku: pytanie, hipoteza, zmienne do użycia, dostępne dane i braki, alternatywne wyjaśnienia i plan interpretacji. Poniżej gotowy konspekt dla każdego tropu z naszej wiązki.
+
+```{r konspekt-tropy, results='asis'}
+for (id in tr_trop_order) {
+  tr  <- tr_tropy[[id]]
+  hyp <- gsub("`([^`]+)`", "`\\1`", tr$hypothesis)
+  dc  <- gsub("`([^`]+)`", "`\\1`", tr$data_check)
+  pc  <- gsub("`([^`]+)`", "`\\1`", tr$plan_check)
+  cat("**Trop:", tr$short, "**\n\n")
+  cat("**Pytanie badawcze:** ", tr$question, "\n\n")
+  cat("**Hipoteza robocza:** ", hyp, "\n\n")
+  cat("**Zmienne do użycia:** wynik: `eval`; trop: `", tr$var, "`.\n\n", sep = "")
+  cat("**Dostępne dane i braki:** ", dc, "\n\n")
+  cat("**Alternatywne wyjaśnienia:**\n\n")
+  for (alt in tr$alt) cat("-", alt, "\n")
+  cat("\n")
+  cat("**Co uwzględnić w analizie:** ", pc, "\n\n")
+  cat("---\n\n")
+}
+```
+
+**4. Plan interpretacji**
+
+1. Opiszemy zmienną wynikową i najważniejsze zmienne z tropów.
+2. Sprawdzimy każdy trop osobno: czy sugeruje związek z `eval`.
+3. Przy każdym tropie zapiszemy alternatywne wyjaśnienia i sprawdzimy, czy mamy dane, żeby je uwzględnić.
+4. Zestawimy tropy razem, żeby ocenić, co cała wiązka mówi o celu.
+5. Wniosek sformułujemy ostrożnie: dane obserwacyjne wspierają interpretację, ale nie dowodzą przyczynowości.
+
+# Pierwsze sprawdzenia
+
+Test statystyczny sprawdza, czy dany trop ma oparcie w danych. Nie rozstrzyga celu — dostarcza przesłanki do jego oceny. Każdy trop dostaje wykres i test dopasowany do typu zmiennych: korelację dla zmiennych ilościowych, test t lub Mann-Whitneya dla porównania dwóch grup. Nie pytamy tylko „czy p < 0,05?" — pytamy, czy wynik wzmacnia trop, osłabia go, czy każe zmienić pytanie.
+
+```{r ch4-content, results='asis'}
+for (id in tr_trop_order) {
+  tr  <- tr_tropy[[id]]
+  row <- tr_board_summary[tr_board_summary$id == id, ]
+
+  cat("### Trop:", tr$short, "\n\n")
+  cat("**Pytanie:**", tr$question, "\n\n")
+
+  cat(paste0("![](_quarto_figs/trop_", id, ".png){width=82%}\n\n"))
+
+  # Statystyki opisowe
+  desc       <- tr_desc_table(id)
+  first_col  <- if (tr$method == "cor") "Zmienna" else "Grupa"
+  colnames(desc) <- c(first_col, "Średnia", "SD", "Mediana", "Q1", "Q3")
+  cat(
+    kable(desc, booktabs = TRUE, digits = 2) |>
+      kable_styling(latex_options = "hold_position", font_size = 9),
+    "\n\n"
+  )
+
+  # Wynik testu
+  effect_kind <- if (tr$method == "cor") "korelacja" else "różnica średnich"
+  p_disp      <- if (grepl("<", row$p_label)) paste0("p ", row$p_label)
+                 else paste0("p = ", row$p_label)
+  cat("**Miara efektu (", effect_kind, "):** ", row$effect,
+      " · ", tr$test_name, " · ", p_disp, "\n\n", sep = "")
+
+  verdict_label <- if (row$supported) "**Wynik wzmacnia trop:**" else "**Wynik osłabia trop:**"
+  cat(verdict_label, row$full_verdict, "\n\n")
+  cat("---\n\n")
+}
+```
+
+## Tablica tropów po pierwszych testach
+
+```{r ch4-board}
+board <- tr_board_summary
+board$efekt_p <- paste0(board$effect, " · p ", board$p_label)
+out <- board[, c("short", "question", "test_name", "efekt_p", "verdict")]
+colnames(out) <- c("Trop", "Pytanie", "Narzędzie", "Efekt · p", "Werdykt")
+
+kable(out, booktabs = TRUE,
+      caption = "Tablica tropów — pełny obraz po pierwszych testach") |>
+  kable_styling(latex_options = c("striped", "scale_down", "hold_position")) |>
+  column_spec(2, width = "5cm") |>
+  column_spec(4, width = "3.5cm")
+```
+
+# Wynik nie kończy badania
+
+Pojedynczy wynik nie odpowiada na cel. Dopiero zebrane razem tropy zaczynają coś mówić: część się wzmocniła, część osłabła. Werdykt „wzmocniony" nie znaczy „udowodniony", a „osłabiony" nie znaczy „temat zamknięty".
+
+```{r ch5-readout, results='asis'}
+supported <- tr_board_summary$short[tr_board_summary$supported]
+weak      <- tr_board_summary$short[!tr_board_summary$supported]
+fmt <- function(x) if (length(x) == 0) "—" else paste(x, collapse = ", ")
+cat("**Tropy wzmocnione przez dane:**", fmt(supported), "\n\n")
+cat("**Tropy osłabione:**", fmt(weak), "\n\n")
+```
+
+Żaden pojedynczy trop nie rozstrzyga, czy `eval` mierzy jakość. Ale wiązka pokazuje, że w ocenie z ankiety siedzi więcej niż sama jakość nauczania — i że trzeba sprawdzić te tropy jednocześnie, w jednym modelu.
+
+## Co możemy policzyć dla tropów?
+
+Tropy zapisaliśmy osobno, żeby nie zgubić pytań. W analizie zaczynają się jednak spotykać: ta sama zmienna może być raz głównym tropem, a raz alternatywnym wyjaśnieniem dla innego tropu. Dlatego porządkujemy obliczenia w trzech warstwach: sprawdzenia pojedyncze, sprawdzenia krzyżowe między tropami i analiza łączona.
+
+```{r ch6-next, results='asis'}
+next_steps <- list(
+  beauty = list(
+    narrative = "Studenci mogą część oceny kursu przypisywać nie tylko jakości prowadzenia, ale też ogólnemu wrażeniu związanemu z prowadzącym.",
+    single  = "Policzyć związek między `beauty` i `eval`.",
+    cross   = "Sprawdzić, czy `beauty` współwystępuje z wiekiem, płcią lub typem kursu.",
+    joint   = "W modelu łączonym sprawdzić, czy związek `beauty` z `eval` pozostaje widoczny po dodaniu innych zmiennych."
+  ),
+  gender = list(
+    narrative = "Oceny mogą odzwierciedlać różne oczekiwania wobec prowadzących kobiet i mężczyzn, a nie tylko jakość zajęć.",
+    single  = "Policzyć różnice w `eval` między grupami `gender`.",
+    cross   = "Sprawdzić, czy grupy `gender` różnią się typem kursów, response rate albo innymi cechami prowadzącego.",
+    joint   = "W modelu łączonym potraktować `gender` jako osobny trop oraz możliwe wyjaśnienie poboczne dla innych efektów."
+  ),
+  native = list(
+    narrative = "Status językowy prowadzącego może wpływać na odbiór zajęć albo mieszać się z typem kursów, które prowadzi dana grupa.",
+    single  = "Policzyć różnice w `eval` między `native = tak` i `native = nie`.",
+    cross   = "Sprawdzić, czy status `native` współwystępuje z poziomem kursu, credits albo liczebnością grup.",
+    joint   = "W modelu łączonym sprawdzić, czy status `native` wnosi informację po uwzględnieniu innych cech kursu i prowadzącego."
+  ),
+  minority = list(
+    narrative = "Oceny mogą zawierać element nierównego traktowania albo stereotypów, ale taki trop wymaga szczególnie ostrożnej interpretacji.",
+    single  = "Policzyć różnice w `eval` między `minority = tak` i `minority = nie` oraz opisać liczebności grup.",
+    cross   = "Sprawdzić, czy status `minority` współwystępuje z płcią, statusem `native`, typem kursu lub innymi cechami.",
+    joint   = "W modelu łączonym traktować ten trop ostrożnie: jako sygnał do interpretacji, nie jako dowód mechanizmu."
+  ),
+  response = list(
+    narrative = "Ocena kursu może wyglądać inaczej, gdy ankietę wypełnia mała albo selektywna część studentów.",
+    single  = "Policzyć związek między `response.rate` i `eval`.",
+    cross   = "Sprawdzić, czy `response.rate` wiąże się z wielkością kursu (`students`, `allstudents`) albo typem kursu.",
+    joint   = "W modelu łączonym sprawdzić, czy response rate zmienia interpretację pozostałych tropów."
+  )
+)
+
+for (id in tr_trop_order) {
+  tr   <- tr_tropy[[id]]
+  row  <- tr_board_summary[tr_board_summary$id == id, ]
+  case <- next_steps[[id]]
+  fix  <- function(x) gsub("`([^`]+)`", "`\\1`", x)
+  verdict <- if (row$supported) "trop wzmocniony" else "trop osłabiony"
+  cat("**", tr$short, "** (", verdict, ")\n\n", sep = "")
+  cat("*", case$narrative, "*\n\n", sep = "")
+  cat("1. **Pojedynczy trop:** ", fix(case$single), "\n")
+  cat("2. **Tropy krzyżowe:** ",  fix(case$cross),  "\n")
+  cat("3. **Analiza łączona:** ", fix(case$joint),  "\n\n")
+}
+```
+
+## Zmienne zakłócające
+
+Pierwsze pytanie po każdym wyniku brzmi: czy to nie zasługa czegoś innego? Zmienna Z może mieszać w interpretacji, jeśli wiąże się jednocześnie z predyktorem i z wynikiem. Prześledźmy to na przykładzie płci, a potem zbiorczo.
+
+**Przykład: czy płeć zakłóca relację beauty → eval?**
+
+Płeć jest kandydatem na zakłócacz tylko wtedy, gdy wiąże się i z atrakcyjnością (predyktorem), i z oceną kursu (wynikiem). Poniżej oba związki naraz:
+
+![](_quarto_figs/conf_combined.png){width=88%}
+
+```{r ch5-gender-verdict, results='asis'}
+r <- tr_confounder_summary[tr_confounder_summary$variable == "gender", ]
+cat("Płeć wiąże się z atrakcyjnością (", r$beauty_label,
+    ") i z oceną kursu (", r$eval_label,
+    "). Oba związki są wyraźne — płeć jest kandydatem na zmienną zakłócającą.",
+    "Relacji beauty → eval nie można czytać bez uwzględnienia płci.\n\n")
+```
+
+### Tabela zakłócaczy
+
+Zmienna jest kandydatem na zakłócacz, gdy wiąże się i z `beauty`, i z `eval` jednocześnie.
+
+```{r ch5-confounder-table}
+conf_df <- tr_confounder_summary
+conf_df$werdykt <- ifelse(conf_df$confounder, "kandydat na zakłócacz",
+                          "nie zakłóca głównej relacji")
+out_c <- conf_df[, c("label", "beauty_label", "eval_label", "werdykt")]
+colnames(out_c) <- c("Zmienna", "Związek z beauty", "Związek z eval", "Werdykt")
+
+kable(out_c, booktabs = TRUE,
+      caption = "Kandydaci na zmienne zakłócające (dla tropu beauty)") |>
+  kable_styling(latex_options = c("striped", "hold_position"), font_size = 9)
+```
+
+**Brak zakłócenia to nie brak znaczenia.** Wiek wiąże się silnie z atrakcyjnością, ale słabo z oceną — to podpowiada, że `beauty` może częściowo mierzyć wiek, czyli być jego *proxy*. Pytanie „czy uroda wpływa na ocenę, czy jest tylko zasłoną dla wieku?" zostaje otwarte.
+
+**Wniosek pośredni:** jeśli choć jedna zmienna wiąże się i z `beauty`, i z `eval`, prosty test nie wystarczy — trzeba uwzględnić te zmienne jednocześnie. To jest dokładnie zadanie dla modelu kontrolnego.
+
+**Czego brakuje w danych:** efekty uczenia się przed i po kursie; trudność kursu i obciążenie pracą; oczekiwana ocena; obowiązkowość kursu; styl prowadzenia; powody braku odpowiedzi w ankiecie. Wynik wskazuje kolejne pytanie — nie zamyka tematu.
+
+# Model kontrolny
+
+W rozdziale 5 sprawdzaliśmy tropy pojedynczo. Teraz sprawdzamy je jednocześnie: czy efekt utrzymuje się, gdy kontrolujemy pozostałe? Regresja wieloczynnikowa pozwala zapytać wprost: czy trop związany z `beauty` pozostaje widoczny, gdy jednocześnie uwzględnimy wiek, płeć, status native speaker, poziom kursu i response rate?
+
+## Seria modeli kontrolnych
+
+Dodajemy kontrole warstwami i patrzymy, co dzieje się ze współczynnikiem przy `beauty`: czy słabnie, czy się trzyma.
+
+```{r ch6-models-table}
+mt_out <- .mt
+mt_out$beta_beauty <- round(mt_out$beta_beauty, 3)
+mt_out$adj_r2      <- round(mt_out$adj_r2, 3)
+mt_out$aic         <- round(mt_out$aic, 0)
+mt_out$p_label     <- sapply(mt_out$p_beauty, tr_fmt_p)
+out_m <- mt_out[, c("model", "beta_beauty", "p_label", "adj_r2", "aic")]
+colnames(out_m) <- c("Model", "β beauty", "p (beauty)", "adj.R²", "AIC")
+
+kable(out_m, booktabs = TRUE,
+      caption = "Seria modeli kontrolnych — efekt beauty pod kolejnymi kontrolami") |>
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+![](_quarto_figs/beta_plot.png){width=82%}
+
+![](_quarto_figs/coef_full.png){width=82%}
+
+**Rola modelu:** model nie zastępuje sformułowania pytania. Wymaga wcześniejszych hipotez, alternatywnych wyjaśnień i poprawnego pomiaru — dopiero wtedy jego wynik da się sensownie zinterpretować.
+
+**Granica danych obserwacyjnych:** jeśli efekt beauty przeżywa kontrolę, rodzi to kolejne pytanie — czy to przyczynowość? Dane obserwacyjne pokazują współwystępowanie, nie przyczynę. To granica, której ten zbiór nie przekroczy, i trzeba ją uczciwie zapisać we wniosku.
+
+# Od konspektu do wniosku
+
+Konspekt powstał przed analizą. Po sprawdzeniach wracamy do niego i dopisujemy, co dane zmieniły w interpretacji celu.
+
+## Co dopisać po analizie?
+
+Po pierwszych sprawdzeniach konspekt nie znika. Staje się szkieletem raportu: przy każdym tropie dopisujemy wynik, interpretację, ograniczenie i pytanie, które wynika z analizy.
+
+| Krok | Co dopisujemy | Przykład dla naszych danych |
+|------|--------------|----------------------------|
+| **1** | **Wyniki przy tropach** — które wzmacniają, które osłabiają. Nie zmieniaj celu tylko dlatego, że jeden wynik jest ciekawy. | Część tropów pomaga interpretować `eval`, ale żaden pojedynczy wynik nie rozstrzyga całego celu. |
+| **2** | **Interpretacja celu** — zbierz tropy razem i napisz, co cała wiązka mówi o głównym pytaniu. | Ocena z ankiety wygląda raczej jak wskaźnik mieszany niż czysta miara jakości nauczania. |
+| **3** | **Ograniczenia** — nazwij, czego dane nie pozwalają stwierdzić. To część jakości projektu, nie porażka analizy. | Dane obserwacyjne pokazują współwystępowanie, ale nie pozwalają rozstrzygnąć przyczynowości. |
+| **4** | **Następny krok** — jak rozwinąć projekt: jakie dane, pomiary lub porównania byłyby potrzebne. | Przydałyby się komentarze z ankiet, dane o typie zajęć i lepszy pomiar jakości nauczania. |
+
+## Zdanie, które warto mieć w raporcie
+
+> *„Nasze dane wspierają interpretację X, ale nie pozwalają rozstrzygnąć przyczynowości, ponieważ..."*
+
+To nie osłabia pracy. To pokazuje, że autorzy rozumieją granice własnego badania. Właśnie taki standard chcemy przenieść do projektów grupowych: nie metoda dla metody, tylko badawcza historia, w której statystyka jest narzędziem do ostrożnego dochodzenia do odpowiedzi.
+
+## Domknięty projekt: cel + wiązka + werdykty
+
+Cała droga w jednym kadrze: cel badawczy, tropy, dane i ostrożne werdykty. Wasz raport ma wracać do konspektu, który powstał przed analizą.
+
+```{r ch8-final-board}
+board2 <- tr_board_summary
+board2$efekt_p <- paste0(board2$effect, " · p ", board2$p_label)
+out2 <- board2[, c("short", "question", "test_name", "efekt_p", "verdict")]
+colnames(out2) <- c("Trop", "Pytanie", "Narzędzie", "Efekt · p", "Werdykt")
+
+kable(out2, booktabs = TRUE,
+      caption = "Tablica tropów — domknięty projekt") |>
+  kable_styling(latex_options = c("striped", "scale_down", "hold_position")) |>
+  column_spec(2, width = "5cm") |>
+  column_spec(4, width = "3.5cm")
+```
