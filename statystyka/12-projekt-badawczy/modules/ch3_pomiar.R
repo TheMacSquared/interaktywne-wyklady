@@ -38,8 +38,8 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Co właściwie mierzym
       tags$li("Jakie zjawisko mogłoby dać taki sam wynik w danych?")
     ),
 
-    lc_chapter_next("04", "Pierwsze sprawdzenia w danych",
-      "Dopiero teraz wybieramy testy i wykresy, bo wiemy już, co próbujemy sprawdzić.",
+    lc_chapter_next("04", "Konspekt pracy badawczej",
+      "Mamy cel, tropy i pomiar — teraz składamy z nich pełny konspekt przed analizą.",
       "ch4"),
     div(style = "height: 40px;")
   )))
@@ -87,4 +87,5 @@ ch3_server <- function(input, output, session) {
     })
     div(blocks)
   })
+
 }

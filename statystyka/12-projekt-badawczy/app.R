@@ -33,10 +33,11 @@ source(file.path(app_dir, "modules", "ch0_dzien_dziecka.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch1_ciekawosc.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_hipotezy.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch3_pomiar.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch4_sprawdzenia.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch5_iteracja.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch6_model_kontrolny.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch7_checklist.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch4_konspekt.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch5_sprawdzenia.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch6_iteracja.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch7_model_kontrolny.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch8_konspekt.R"), local = TRUE)
 
 header_extras <- tagList(
   tags$style(HTML("
@@ -103,6 +104,43 @@ header_extras <- tagList(
       margin-bottom: 8px;
       font-size: calc(16px * var(--lc-font-scale));
       color: var(--upwr-ink);
+    }
+    .lecture-goal-card {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(90deg, rgba(107, 26, 42, 0.14), var(--upwr-panel));
+      border: 1px solid rgba(107, 26, 42, 0.22);
+      border-left: 6px solid var(--upwr-accent);
+      box-shadow: 0 10px 26px rgba(28, 26, 23, 0.08);
+    }
+    .lecture-goal-card::after {
+      content: \"\";
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      width: 52px;
+      height: 52px;
+      border: 1px solid rgba(107, 26, 42, 0.18);
+      border-radius: 50%;
+    }
+    .lecture-goal-label {
+      display: inline-block;
+      margin-bottom: 8px;
+      color: var(--upwr-accent);
+      font-family: var(--upwr-sans);
+      font-size: calc(13px * var(--lc-font-scale));
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+    .lecture-goal-question {
+      max-width: 92%;
+      margin-bottom: 16px;
+      color: var(--upwr-ink);
+      font-size: calc(19px * var(--lc-font-scale));
+      line-height: 1.45;
+    }
+    .lecture-goal-card p:last-child {
+      margin-bottom: 0;
     }
     .research-ladder {
       display: grid;
@@ -194,12 +232,201 @@ header_extras <- tagList(
       color: var(--upwr-ink-soft);
       line-height: 1.4;
     }
+    .trop-plan-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .trop-plan-box {
+      background: var(--upwr-panel);
+      border: 1px solid var(--upwr-rule);
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    .trop-plan-box strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: calc(12.5px * var(--lc-font-scale));
+      color: var(--upwr-ink);
+    }
+    .trop-plan-box p {
+      margin: 0;
+    }
+    .proposal-skeleton {
+      display: grid;
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .proposal-step {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 12px;
+      align-items: start;
+      background: var(--upwr-surface);
+      border: 1px solid var(--upwr-rule);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .proposal-step-num {
+      display: inline-flex;
+      width: 34px;
+      height: 34px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--upwr-szalwia);
+      color: #fff;
+      font-weight: 700;
+      font-family: var(--upwr-sans);
+    }
+    .proposal-step h4 {
+      margin: 0 0 6px 0;
+      font-size: calc(15px * var(--lc-font-scale));
+      color: var(--upwr-ink);
+    }
+    .proposal-step p {
+      margin: 4px 0;
+      font-size: calc(13px * var(--lc-font-scale));
+      line-height: 1.45;
+      color: var(--upwr-ink-soft);
+    }
+    .proposal-step code {
+      font-size: calc(12.5px * var(--lc-font-scale));
+    }
+    .proposal-example {
+      margin-top: 8px;
+      padding-left: 12px;
+      border-left: 3px solid var(--upwr-szalwia);
+    }
+    .proposal-draft-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .proposal-preview {
+      background: var(--upwr-surface);
+      border: 1px solid var(--upwr-rule);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 14px;
+    }
+    .proposal-preview h4 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: calc(15px * var(--lc-font-scale));
+    }
+    .proposal-preview p {
+      margin: 6px 0;
+    }
+    .proposal-variable-table td,
+    .proposal-variable-table th {
+      vertical-align: top;
+      font-size: calc(13px * var(--lc-font-scale));
+      line-height: 1.4;
+    }
+    .proposal-trop-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .proposal-trop {
+      background: var(--upwr-surface);
+      border: 1px solid var(--upwr-rule);
+      border-left: 4px solid var(--upwr-szalwia);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .proposal-trop h5 {
+      margin: 0 0 6px 0;
+      font-size: calc(14px * var(--lc-font-scale));
+      color: var(--upwr-ink);
+    }
+    .proposal-trop p {
+      margin: 5px 0;
+      font-size: calc(12.8px * var(--lc-font-scale));
+      line-height: 1.45;
+      color: var(--upwr-ink-soft);
+    }
+    .proposal-trop ul {
+      margin: 6px 0 0 0;
+      padding-left: 18px;
+    }
+    .proposal-trop li {
+      font-size: calc(12.5px * var(--lc-font-scale));
+      line-height: 1.4;
+      color: var(--upwr-ink-soft);
+    }
+    .control-model-layout {
+      display: grid;
+      grid-template-columns: minmax(180px, 0.9fr) minmax(0, 2.1fr);
+      gap: 18px;
+      align-items: start;
+    }
+    .control-model-sidebar {
+      min-width: 0;
+    }
+    .control-model-sidebar .form-group {
+      margin-bottom: 12px;
+    }
+    .control-model-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .control-model-metrics .lc-stat-box {
+      min-width: 0;
+      padding: 10px 12px;
+    }
+    .control-model-metrics .lc-stat-value {
+      font-size: calc(19px * var(--lc-font-scale));
+      overflow-wrap: anywhere;
+    }
+    .control-model-results {
+      min-width: 0;
+      display: grid;
+      gap: 14px;
+    }
+    .model-table-scroll {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    .model-coef-table {
+      min-width: 560px;
+      margin-bottom: 0;
+    }
+    .model-coef-table td,
+    .model-coef-table th {
+      white-space: nowrap;
+    }
+    .model-coef-table tr.model-row-significant td {
+      background: var(--upwr-sage-tint);
+    }
+    .model-coef-table tr.model-row-significant td:first-child {
+      border-left: 4px solid var(--upwr-sage);
+      font-weight: 700;
+    }
+    .model-p-significant {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--upwr-sage);
+      color: #fff;
+      font-weight: 700;
+    }
 
     @media (max-width: 992px) {
       .construct-map { grid-template-columns: 1fr; }
       .research-ladder { grid-template-columns: 1fr; }
       .two-plot-grid { grid-template-columns: 1fr; }
       .data-legend { grid-template-columns: 1fr; }
+      .trop-plan-grid { grid-template-columns: 1fr; }
+      .proposal-draft-grid { grid-template-columns: 1fr; }
+      .lecture-goal-question { max-width: 100%; }
+      .lecture-goal-card::after { display: none; }
+      .control-model-layout { grid-template-columns: 1fr; }
+      .control-model-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     .child-wheel-panel {
       background: var(--upwr-panel);
@@ -479,11 +706,11 @@ header_extras <- tagList(
   "))
 )
 
-# Kolejność: po celu (ch1) od razu tropy (ch2). Model kontrolny (ch6) wchodzi
-# przed checklist (ch7), bo checklist domyka cały projekt i musi być ostatni.
-# Numery w hero każdego modułu są ustawione zgodnie z TĄ kolejnością (1..7).
+# Kolejność: po celu (ch1) od razu tropy (ch2), potem pomiar (ch3)
+# i osobny konspekt pracy (ch4). Finał (ch8) domyka projekt po wynikach.
+# Numery w hero każdego modułu są ustawione zgodnie z TĄ kolejnością (1..8).
 .chapters <- list(ch0_ui, ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui,
-                  ch6_ui, ch7_ui)
+                  ch6_ui, ch7_ui, ch8_ui)
 
 ui <- lecture_page(
   lecture_id    = "projekt-badawczy",
@@ -505,6 +732,7 @@ server <- function(input, output, session) {
   ch5_server(input, output, session)
   ch6_server(input, output, session)
   ch7_server(input, output, session)
+  ch8_server(input, output, session)
 }
 
 shinyApp(ui = ui, server = server)

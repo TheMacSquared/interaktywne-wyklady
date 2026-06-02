@@ -51,25 +51,26 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
       uiOutput("ch1_data_legend")
     ),
 
-    lc_h2("sec-02", "Nasz cel na cały wykład"),
-
-    div(class = "lc-feedback lc-feedback-warning",
-      tags$strong("Cel badawczy:"),
-      p(tags$em(tr_goal)),
-      p("Tego pytania nie rozstrzyga pojedynczy test. To cel, do którego dochodzimy
-        przez zestaw konkurujących hipotez (tropów). Każdy trop dotyczy innego
-        możliwego składnika oceny z ankiety; dopiero razem pozwalają ocenić cel.")
-    ),
+    lc_h2("sec-02", "Jak zdefiniować cel badania?"),
 
     div(class = "lc-prose",
-      p("Cel powstaje przez zawężanie: od ogólnego tematu, przez konkretne pytanie,
-        do planu analizy.")
+      p("Dobry cel badania nie zaczyna się od testu statystycznego. Zaczyna się
+        od pomysłu, który trzeba uporządkować: nazwać przypuszczenie, zawęzić je
+        do pytania i przełożyć na plan sprawdzenia.")
     ),
 
     div(class = "research-ladder",
-      div(tags$strong("Luźny temat"), "Studenci różnie oceniają prowadzących."),
-      div(tags$strong("Cel badawczy"), "Czy ta różnica mówi o jakości, czy o czymś pobocznym?"),
-      div(tags$strong("Plan analizy"), "Najpierw szukamy prostych tropów, potem alternatywnych wyjaśnień.")
+      div(tags$strong("Pomysł badawczy"), "Zaczynamy od przypuszczenia: ocena z ankiety może mieć kilka źródeł."),
+      div(tags$strong("Cel badania"), "Formułujemy pytanie, które da się rozważyć na danych."),
+      div(tags$strong("Plan analizy"), "Zamieniamy cel na hipotezy, zmienne i porównania.")
+    ),
+
+    div(class = "lc-feedback lc-feedback-warning lecture-goal-card",
+      tags$strong(class = "lecture-goal-label", "Nasz cel badawczy"),
+      p(class = "lecture-goal-question", tags$em(tr_goal)),
+      p("Tego pytania nie rozstrzyga pojedynczy test. To cel, do którego dochodzimy
+        przez zestaw konkurujących hipotez (tropów). Każdy trop dotyczy innego
+        możliwego składnika oceny z ankiety; dopiero razem pozwalają ocenić cel.")
     ),
 
     lc_h2("sec-03", "Wiązka tropów, którą będziemy śledzić"),

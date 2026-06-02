@@ -1,8 +1,8 @@
-ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pierwsze sprawdzenia", content = tagList(
+ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
-      kicker = "Rozdział 04 · Proste testy",
-      num = "04",
+      kicker = "Rozdział 05 · Proste testy",
+      num = "05",
       title = "Pierwsze sprawdzenia w danych.",
       lead = "Test statystyczny sprawdza, czy dany trop ma oparcie w danych.
               Nie rozstrzyga celu — dostarcza przesłanki do jego oceny."
@@ -24,7 +24,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pierwsze sprawdzenia",
         wynik wzmacnia trop, osłabia go, czy każe zmienić pytanie.")
     ),
 
-    uiOutput("ch4_bundle_results"),
+    uiOutput("ch5_bundle_results"),
 
     lc_h2("sec-02", "Tablica tropów po pierwszych testach"),
 
@@ -38,14 +38,14 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pierwsze sprawdzenia",
       tr_board_ui(reveal = tr_trop_order, show_verdict = TRUE)
     ),
 
-    lc_chapter_next("05", "Wynik nie kończy badania",
+    lc_chapter_next("06", "Wynik nie kończy badania",
       "Mamy pełną tablicę — czas odczytać, co cała wiązka mówi o celu.",
-      "ch5"),
+      "ch6"),
     div(style = "height: 40px;")
   )))
 )
 
-ch4_server <- function(input, output, session) {
+ch5_server <- function(input, output, session) {
   # Wykres jednego tropu — korelacja (ilościowe) albo boxplot (grupy).
   .trop_plot <- function(id) {
     tr <- tr_tropy[[id]]
@@ -70,10 +70,10 @@ ch4_server <- function(input, output, session) {
 
   # Zarejestruj wykres + render karty wyniku dla każdego tropu.
   lapply(tr_trop_order, function(id) {
-    zoom_plot_server(paste0("ch4_plot_", id), reactive(.trop_plot(id)))
+    zoom_plot_server(paste0("ch5_plot_", id), reactive(.trop_plot(id)))
   })
 
-  output$ch4_bundle_results <- renderUI({
+  output$ch5_bundle_results <- renderUI({
     blocks <- lapply(tr_trop_order, function(id) {
       tr  <- tr_tropy[[id]]
       row <- tr_board_row(id)
@@ -105,7 +105,7 @@ ch4_server <- function(input, output, session) {
       div(class = "lc-figure-panel",
         h4(tr$short),
         p(tags$strong("Pytanie: "), tr$question),
-        zoom_plot_ui(paste0("ch4_plot_", id), height = "320px"),
+        zoom_plot_ui(paste0("ch5_plot_", id), height = "320px"),
         tags$p(style = "margin-top: 12px;", tags$strong("Statystyki opisowe (eval):")),
         desc_tbl,
         tags$p(tags$strong(paste0("Miara efektu (", effect_kind, "): ")),

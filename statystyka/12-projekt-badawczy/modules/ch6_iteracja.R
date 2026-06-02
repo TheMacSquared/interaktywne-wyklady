@@ -1,8 +1,8 @@
-ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Wynik nie kończy badania", content = tagList(
+ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy badania", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
-      kicker = "Rozdział 05 · Iteracja",
-      num = "05",
+      kicker = "Rozdział 06 · Iteracja",
+      num = "06",
       title = "Wynik nie kończy badania.",
       lead = "Tablica tropów jest kompletna. Pozostaje odczytać, co cały zestaw
               wyników mówi o celu i jakie pytania wynikają z niego dalej."
@@ -26,17 +26,28 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Wynik nie kończy bada
       tr_board_ui(reveal = tr_trop_order, show_verdict = TRUE)
     ),
 
-    uiOutput("ch5_goal_readout"),
+    uiOutput("ch6_goal_readout"),
 
-    lc_h2("sec-02", "Co robimy z każdym tropem?"),
+    lc_h2("sec-02", "Co robimy po wstępnych wynikach?"),
 
     div(class = "lc-prose",
       p("Werdykt „wzmocniony\" nie znaczy „udowodniony\", a „osłabiony\" nie znaczy
-        „temat zamknięty\". Każdy trop generuje następne pytania — poniżej dla
-        całej wiązki naraz.")
+        „temat zamknięty\". Na tym etapie mamy już pierwsze wyniki, więc nie
+        układamy planu od zera. Sprawdzamy alternatywne wyjaśnienia zapisane
+        wcześniej i dopisujemy nowe hipotezy, które pojawiły się po obliczeniach.")
     ),
 
-    uiOutput("ch5_next_steps"),
+    uiOutput("ch6_next_steps"),
+
+    div(class = "lc-feedback lc-feedback-info",
+      tags$strong("Dlaczego te punkty czasem się nakładają?"),
+      p("Na poziomie konspektu tropy zapisujemy osobno, żeby nie zgubić pytań.
+        Na poziomie analizy te same zmienne mogą się spotkać: ", tags$code("gender"),
+        " może być osobnym tropem, ale też alternatywnym wyjaśnieniem dla relacji ",
+        tags$code("beauty"), " → ", tags$code("eval"), "."),
+      p("To właśnie prowadzi do analizy łączonej: po weryfikacji alternatyw
+        budujemy jeden model, który pozwala zobaczyć tropy razem.")
+    ),
 
     lc_h2("sec-03", "Zanim zaufamy wynikowi: zmienne zakłócające"),
 
@@ -58,17 +69,17 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Wynik nie kończy bada
     div(class = "lc-figure-panel",
       h4("Płeć a obie zmienne relacji"),
       div(class = "two-plot-grid",
-        zoom_plot_ui("ch5_conf_beauty", height = "300px"),
-        zoom_plot_ui("ch5_conf_eval", height = "300px")
+        zoom_plot_ui("ch6_conf_beauty", height = "300px"),
+        zoom_plot_ui("ch6_conf_eval", height = "300px")
       ),
-      uiOutput("ch5_conf_example_verdict")
+      uiOutput("ch6_conf_example_verdict")
     ),
 
     lc_h3("Pozostałe zmienne — tabela zbiorcza"),
 
     div(class = "lc-figure-panel",
       h4("Kandydaci na zmienne zakłócające (dla tropu beauty)"),
-      uiOutput("ch5_confounder_table")
+      uiOutput("ch6_confounder_table")
     ),
 
     div(class = "lc-feedback lc-feedback-info",
@@ -86,7 +97,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Wynik nie kończy bada
       tags$strong("Wniosek pośredni:"),
       p("Jeśli choć jedna zmienna wiąże się i z `beauty`, i z `eval`, to prosty
         test nie wystarczy — trzeba uwzględnić te zmienne jednocześnie. To jest
-        dokładnie zadanie dla modelu kontrolnego z rozdziału 6.")
+        dokładnie zadanie dla modelu kontrolnego z rozdziału 7.")
     ),
 
     lc_h2("sec-04", "Czego brakuje w danych?"),
@@ -116,15 +127,15 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Wynik nie kończy bada
       p("Wynik nie zamyka tematu. Wskazuje, które pytanie warto postawić jako następne.")
     ),
 
-    lc_chapter_next("06", "Model kontrolny",
+    lc_chapter_next("07", "Model kontrolny",
       "Sprawdziliśmy tropy pojedynczo — czas sprawdzić je wszystkie naraz, w jednym modelu.",
-      "ch6"),
+      "ch7"),
     div(style = "height: 40px;")
   )))
 )
 
-ch5_server <- function(input, output, session) {
-  output$ch5_goal_readout <- renderUI({
+ch6_server <- function(input, output, session) {
+  output$ch6_goal_readout <- renderUI({
     supported <- tr_board_summary$short[tr_board_summary$supported]
     weak      <- tr_board_summary$short[!tr_board_summary$supported]
     fmt <- function(x) if (length(x) == 0) "—" else paste(x, collapse = ", ")
@@ -138,31 +149,47 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  output$ch5_next_steps <- renderUI({
+  output$ch6_next_steps <- renderUI({
     cases <- list(
-      beauty = c(
-        "Jak zaprojektować badanie, które oddzieli wygląd od jakości materiałów?",
-        "Czy efekt jest jednakowy dla różnych typów kursów i poziomów?"
+      beauty = list(
+        narrative = "Wstępny wynik sugeruje, że atrakcyjność wiąże się z oceną kursu. Teraz pytamy, czy ten związek nie wynika z innych cech prowadzącego albo kursu.",
+        checks = c(
+          "Sprawdzić alternatywy z konspektu: wiek, płeć i typ kursu.",
+          "Zobaczyć, czy `beauty` współwystępuje z tymi zmiennymi.",
+          "Zobaczyć, czy związek `beauty` z `eval` pozostaje widoczny, gdy te zmienne analizujemy razem."
+        )
       ),
-      gender = c(
-        "Czy kobiety i mężczyźni prowadzą podobne typy kursów?",
-        "Czy różnica wygląda tak samo dla niższych i wyższych kursów?",
-        "Czy response rate różni się między tymi grupami?"
+      gender = list(
+        narrative = "Jeżeli płeć różnicuje oceny, trzeba sprawdzić, czy jest samodzielnym tropem, czy raczej miesza się z innymi cechami kursu i prowadzącego.",
+        checks = c(
+          "Sprawdzić, z czym współwystępuje `gender`: typ kursu, response rate, wiek, atrakcyjność.",
+          "Ocenić, czy wynik dla płci może być alternatywnym wyjaśnieniem dla innych tropów.",
+          "Zobaczyć, czy efekt płci pozostaje widoczny, gdy inne zmienne analizujemy razem."
+        )
       ),
-      native = c(
-        "Czy native speakerzy prowadzą inne kursy niż pozostali?",
-        "Czy studenci oceniają jakość nauczania, czy łatwość komunikacji?",
-        "Jak zebrać dane o języku prowadzenia, jasności wyjaśnień i typie zajęć?"
+      native = list(
+        narrative = "Jeżeli status językowy różnicuje oceny, trzeba ustalić, czy chodzi o sam odbiór prowadzącego, czy o kontekst kursów, które prowadzi dana grupa.",
+        checks = c(
+          "Sprawdzić, czy `native` współwystępuje z poziomem kursu, credits albo liczebnością grup.",
+          "Ocenić, czy różnice między grupami mogą wynikać z nierównych liczebności albo rodzaju prowadzonych zajęć.",
+          "Zobaczyć, czy `native` wnosi informację, gdy uwzględniamy inne cechy kursu i prowadzącego."
+        )
       ),
-      minority = c(
-        "Czy grupa minority jest wystarczająco liczna na stabilny wynik?",
-        "Czy różnice ujawniają się tylko w wybranych typach kursów?",
-        "Czy potrzebujemy lepszego pomiaru doświadczeń prowadzących i studentów?"
+      minority = list(
+        narrative = "Jeżeli status mniejszościowy wiąże się z oceną, wynik trzeba traktować jako ostrożny sygnał i sprawdzić, czy nie nakładają się tu inne różnice między grupami.",
+        checks = c(
+          "Opisać liczebności grup, zanim interpretujemy różnice.",
+          "Sprawdzić, czy `minority` współwystępuje z płcią, statusem `native`, typem kursu lub innymi cechami.",
+          "Dopisać nowe hipotezy ostrożnie: wynik może wskazywać problem, ale nie dowodzi mechanizmu."
+        )
       ),
-      response = c(
-        "Czy kursy z niskim response rate są większe albo trudniejsze?",
-        "Czy bardziej niezadowoleni studenci chętniej odpowiadają?",
-        "Jak w projekcie zadbać o reprezentatywność ankiety?"
+      response = list(
+        narrative = "Jeżeli response rate wiąże się z oceną, trzeba sprawdzić, czy ankieta opisuje doświadczenie całej grupy, czy raczej głos wybranej części studentów.",
+        checks = c(
+          "Sprawdzić, czy `response.rate` wiąże się z wielkością kursu (`students`, `allstudents`) albo typem kursu.",
+          "Zobaczyć, czy niska odpowiedź osłabia zaufanie do pozostałych wyników.",
+          "Dopisać hipotezę o selekcji odpowiedzi, jeśli response rate zmienia interpretację innych tropów."
+        )
       )
     )
     cards <- lapply(tr_trop_order, function(id) {
@@ -172,8 +199,13 @@ ch5_server <- function(input, output, session) {
                    else "tropy-verdict tropy-verdict-off"
       div(class = "trop-card",
         h4(tr$short, " ", tags$span(class = badge_cls, row$verdict)),
-        p(tags$strong("Następne pytania:")),
-        tags$ul(class = "trop-alt", lapply(cases[[id]], tags$li))
+        p(tags$strong("Hipoteza po wstępnym wyniku: "), cases[[id]]$narrative),
+        p(tags$strong("Co sprawdzamy dalej:")),
+        tags$ul(class = "trop-alt",
+          lapply(cases[[id]]$checks, function(x) {
+            tags$li(HTML(gsub("`([^`]+)`", "<code>\\1</code>", x)))
+          })
+        )
       )
     })
     div(class = "trop-stack", cards)
@@ -189,12 +221,12 @@ ch5_server <- function(input, output, session) {
       theme_upwr() +
       theme(legend.position = "none")
   }
-  zoom_plot_server("ch5_conf_beauty",
+  zoom_plot_server("ch6_conf_beauty",
                    reactive(.conf_box("beauty", "Ocena atrakcyjności (beauty)")))
-  zoom_plot_server("ch5_conf_eval",
+  zoom_plot_server("ch6_conf_eval",
                    reactive(.conf_box("eval", "Ocena kursu (eval)")))
 
-  output$ch5_conf_example_verdict <- renderUI({
+  output$ch6_conf_example_verdict <- renderUI({
     r <- tr_confounder_row("gender")
     lc_feedback(
       tags$p(tags$strong("Co widać: "),
@@ -207,7 +239,7 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  output$ch5_confounder_table <- renderUI({
+  output$ch6_confounder_table <- renderUI({
     rows <- lapply(tr_confounder_vars, function(var) {
       r <- tr_confounder_row(var)
       verdict <- if (r$confounder) {

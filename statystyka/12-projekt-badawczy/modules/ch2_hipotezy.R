@@ -19,14 +19,18 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Hipotezy jako tropy", 
       p("Projekt badawczy zwykle obejmuje kilka hipotez pod wspólnym celem.
         Każda ma własne pytanie, roboczą hipotezę i alternatywne wyjaśnienia.
         To ta sama wiązka, którą wprowadzono w rozdziale 1 — tutaj zapisana
-        jako formalne hipotezy.")
+        jako formalne hipotezy."),
+      p("Dopisujemy też część konspektową: czy mamy dane potrzebne do sprawdzenia
+        alternatywnego wyjaśnienia i co trzeba uwzględnić w analizie. Na tym
+        etapie nie wybieramy jeszcze testu — porządkujemy projekt.")
     ),
 
     div(class = "lc-feedback lc-feedback-warning",
       tags$strong("Zasada:"),
       p("Do każdej hipotezy podajemy co najmniej jedno alternatywne wyjaśnienie
-        obserwacji. Brak takiego wyjaśnienia zwykle oznacza, że problem nie jest
-        jeszcze dobrze rozpoznany.")
+        obserwacji. Potem sprawdzamy, czy mamy dane, które pozwolą je odróżnić
+        od głównego tropu. Brak danych nie przekreśla projektu, ale musi trafić
+        do konspektu jako ograniczenie.")
     ),
 
     uiOutput("ch2_bundle"),
@@ -48,7 +52,17 @@ ch2_server <- function(input, output, session) {
         p(tags$strong("Robocza hipoteza: "),
           HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$hypothesis))),
         p(tags$strong("Alternatywne wyjaśnienia:")),
-        tags$ul(class = "trop-alt", lapply(tr$alt, tags$li))
+        tags$ul(class = "trop-alt", lapply(tr$alt, tags$li)),
+        div(class = "trop-plan-grid",
+          div(class = "trop-plan-box",
+            tags$strong("Czy mamy dane?"),
+            p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$data_check)))
+          ),
+          div(class = "trop-plan-box",
+            tags$strong("Co wpisać do konspektu?"),
+            p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$plan_check)))
+          )
+        )
       )
     })
     div(class = "trop-stack", cards)

@@ -285,7 +285,9 @@ tr_tropy <- list(
       "Atrakcyjność może być powiązana z wiekiem lub płcią.",
       "Studenci mogą wyżej oceniać osoby bardziej pewne siebie, a nie wygląd sam w sobie.",
       "Efekt może zależeć od typu kursu."
-    )
+    ),
+    data_check = "Mamy `beauty`, `age`, `gender` oraz cechy kursu (`division`, `credits`). Nie mamy bezpośredniej miary pewności siebie ani stylu prowadzenia.",
+    plan_check = "Sprawdzić związek `beauty` z `eval`, a potem uwzględnić wiek, płeć i typ kursu jako możliwe wyjaśnienia poboczne."
   ),
   gender = list(
     id        = "gender",
@@ -301,7 +303,9 @@ tr_tropy <- list(
       "Kobiety i mężczyźni mogą prowadzić inne typy kursów.",
       "Różnice mogą wynikać z oczekiwań studentów wobec stylu prowadzenia.",
       "Nierówny response rate może zmieniać obraz."
-    )
+    ),
+    data_check = "Mamy `gender`, `eval`, cechy kursu oraz `response.rate`. Nie mamy danych o oczekiwaniach studentów ani stylu komunikacji prowadzącego.",
+    plan_check = "Porównać oceny między grupami i sprawdzić, które cechy kursu oraz reprezentatywność odpowiedzi trzeba uwzględnić przy interpretacji."
   ),
   native = list(
     id        = "native",
@@ -317,7 +321,9 @@ tr_tropy <- list(
       "Status native może mieszać się z typem kursu.",
       "Native speakerzy mogą uczyć innych przedmiotów albo na innym poziomie.",
       "Grupy mogą mieć różną liczebność."
-    )
+    ),
+    data_check = "Mamy `native`, `division`, `credits` i liczebności grup. Nie mamy informacji o języku prowadzenia, poziomie trudności materiału ani doświadczeniu językowym studentów.",
+    plan_check = "Sprawdzić, czy grupy różnią się oceną, oraz uwzględnić kontekst kursu i ostrożność przy nierównych liczebnościach."
   ),
   minority = list(
     id        = "minority",
@@ -333,7 +339,9 @@ tr_tropy <- list(
       "Grupa mniejszościowa może być mało liczna — trudniej o stabilny wynik.",
       "Różnice mogą ujawniać się tylko w wybranych typach kursów.",
       "Status mniejszości może współwystępować z innymi cechami prowadzącego."
-    )
+    ),
+    data_check = "Mamy `minority`, `eval` i kilka cech prowadzącego/kursu. Nie mamy danych o doświadczeniach dyskryminacji, atmosferze zajęć ani treści komentarzy studentów.",
+    plan_check = "Opisać liczebności grup, porównać oceny i sprawdzić, czy wynik nie wynika z innych cech kursu lub prowadzącego."
   ),
   response = list(
     id        = "response",
@@ -349,7 +357,9 @@ tr_tropy <- list(
       "Odpowiadają głównie osoby skrajnie zadowolone lub niezadowolone.",
       "Duże kursy mogą mieć niższy response rate.",
       "Zaangażowanie grupy może wpływać i na oceny, i na odsetek odpowiedzi."
-    )
+    ),
+    data_check = "Mamy `response.rate`, `students`, `allstudents` i `eval`. Nie mamy informacji, kto dokładnie odpowiedział ani dlaczego część osób pominęła ankietę.",
+    plan_check = "Sprawdzić, czy odsetek odpowiedzi wiąże się z oceną i czy wielkość kursu zmienia interpretację tego związku."
   )
 )
 
