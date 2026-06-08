@@ -38,9 +38,8 @@ ch5_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          helpText("Symulujemy dane studentów: czy zdają egzamin w zależności od godzin nauki?"),
-          actionButton("ch5_lin_vs_log", "Generuj porównanie",
-                       class = "lc-btn-warning", width = "100%")
+          helpText("Stały przykład: czy student zdaje egzamin w zależności od godzin nauki?
+                    Dane mają wyraźne przejście od małych do dużych prawdopodobieństw.")
         ),
         column(8,
           zoom_plot_ui("ch5_lin_log_plot", height = "300px"),
@@ -258,41 +257,43 @@ ch5_ui <- list(
 ch5_server <- function(input, output, session) {
 
   # --- Widget: Liniowy vs logistyczny (przeniesiony z ch4) ---
-  ch5_lin_log_data <- reactiveVal(NULL)
+  ch5_lin_log_data <- reactive({
+    x <- seq(0, 40, length.out = 180)
+    p <- 1 / (1 + exp(-(-7 + 0.35 * x)))
+    u <- ((seq_along(x) * 37) %% 100) / 100
+    y <- as.integer(u < p)
+    y_jitter <- ifelse(y == 1, 1, 0) + sin(seq_along(x) * 1.7) * 0.025
 
-  observeEvent(input$ch5_lin_vs_log, {
-    ch5_lin_log_data(generate_logistic_data(200))
+    data.frame(
+      godziny_nauki = x,
+      zdal_num = y,
+      zdal_plot = y_jitter,
+      zdal = factor(y, levels = c(0, 1), labels = c("Nie", "Tak"))
+    )
   })
 
   zoom_plot_server("ch5_lin_log_plot", reactive({
     df <- ch5_lin_log_data()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj'",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      ggplot(df, aes(x = godziny_nauki, y = zdal_num)) +
-        geom_jitter(height = 0.03, alpha = 0.3, color = upwr_secondary) +
-        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]),
-                    linewidth = 1, linetype = "dashed") +
-        geom_smooth(method = "glm", method.args = list(family = "binomial"),
-                    se = FALSE, color = unname(upwr_cat["wrzos"]), linewidth = 1.2) +
-        geom_hline(yintercept = c(0, 1), linetype = "dotted", color = upwr_rule) +
-        annotate("text", x = 5, y = 0.85, label = "Logistyczny", color = unname(upwr_cat["wrzos"]),
-                 fontface = "bold") +
-        annotate("text", x = 35, y = 0.85, label = "Liniowy", color = unname(upwr_cat["niebo"]),
-                 fontface = "bold") +
-        labs(
-             x = "Godziny nauki", y = "P(zdanie)") +
-        ylim(-0.2, 1.2) +
-        theme_upwr()
-    }
+
+    ggplot(df, aes(x = godziny_nauki, y = zdal_num)) +
+      geom_point(aes(y = zdal_plot), alpha = 0.34, color = upwr_secondary, size = 1.6) +
+      geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]),
+                  linewidth = 1, linetype = "dashed") +
+      geom_smooth(method = "glm", method.args = list(family = "binomial"),
+                  se = FALSE, color = unname(upwr_cat["wrzos"]), linewidth = 1.2) +
+      geom_hline(yintercept = c(0, 1), linetype = "dotted", color = upwr_rule) +
+      annotate("text", x = 13, y = 0.28, label = "Logistyczny", color = unname(upwr_cat["wrzos"]),
+               fontface = "bold") +
+      annotate("text", x = 34, y = 1.12, label = "Liniowy", color = unname(upwr_cat["niebo"]),
+               fontface = "bold") +
+      labs(
+           x = "Godziny nauki", y = "P(zdanie)") +
+      coord_cartesian(ylim = c(-0.2, 1.2)) +
+      theme_upwr()
   }))
 
   output$ch5_lin_log_stats <- renderUI({
     df <- ch5_lin_log_data()
-    if (is.null(df)) return(NULL)
 
     lin <- lm(zdal_num ~ godziny_nauki, data = df)
     log <- glm(zdal_num ~ godziny_nauki, data = df, family = binomial)
@@ -304,7 +305,7 @@ ch5_server <- function(input, output, session) {
 
     outside <- mean(fitted(lin) < 0 | fitted(lin) > 1) * 100
 
-    tagList(
+    lc_stat_grid(columns = 3,
       lc_stat_box("Liniowy", round(acc_lin, 1), "%", color = unname(upwr_cat["niebo"])),
       lc_stat_box("Logistyczny", round(acc_log, 1), "%", color = unname(upwr_cat["wrzos"])),
       lc_stat_box("Liniowy poza [0,1]", round(outside, 1), "%", color = unname(upwr_cat["terakota"]))
