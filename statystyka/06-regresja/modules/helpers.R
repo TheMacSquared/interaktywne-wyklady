@@ -11,6 +11,7 @@
 
 .cas_labels <- c(
   students = "Liczba uczniów",
+  grades = "Zakres klas",
   income = "Dochód okręgu (tys. USD)",
   student_teacher_ratio = "Uczniowie / nauczyciel",
   expenditure = "Wydatki na ucznia",

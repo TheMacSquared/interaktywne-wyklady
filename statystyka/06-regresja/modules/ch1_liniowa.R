@@ -341,7 +341,8 @@ ch1_ui <- list(
               "Wydatki na ucznia (expenditure)" = "expenditure",
               "Udział uczniów z angielskim jako drugim językiem (english)" = "english",
               "Udział lunch subsydiowany (lunch)" = "lunch",
-              "Komputery" = "computer"
+              "Komputery" = "computer",
+              "Zakres klas (grades)" = "grades"
             ),
             selected = "income"
           ),
@@ -1088,24 +1089,57 @@ ch1_server <- function(input, output, session) {
   ch1_cas_model <- reactive({
     req(input$ch1_cas_x, input$ch1_cas_y)
     validate(need(input$ch1_cas_x != input$ch1_cas_y, "Wybierz dwie różne zmienne."))
-    form <- as.formula(paste(input$ch1_cas_y, "~", input$ch1_cas_x))
-    lm(form, data = .cas_data)
+    if (identical(input$ch1_cas_x, "grades")) {
+      df <- .cas_data
+      df$grades01 <- ifelse(df$grades == "KK-08", 1, 0)
+      lm(as.formula(paste(input$ch1_cas_y, "~ grades01")), data = df)
+    } else {
+      form <- as.formula(paste(input$ch1_cas_y, "~", input$ch1_cas_x))
+      lm(form, data = .cas_data)
+    }
   })
 
   zoom_plot_server("ch1_cas_plot", reactive({
     req(input$ch1_cas_x, input$ch1_cas_y)
     validate(need(input$ch1_cas_x != input$ch1_cas_y, "Wybierz dwie różne zmienne."))
 
-    ggplot(.cas_data, aes(x = .data[[input$ch1_cas_x]], y = .data[[input$ch1_cas_y]])) +
-      geom_point(color = upwr_secondary, alpha = 0.45, size = 1.8) +
-      geom_smooth(method = "lm", se = TRUE,
-                  color = unname(upwr_cat["niebo"]),
-                  fill = unname(upwr_cat["niebo"]), alpha = 0.15) +
-      labs(
-        x = unname(.cas_labels[input$ch1_cas_x]),
-        y = unname(.cas_labels[input$ch1_cas_y])
-      ) +
-      theme_upwr()
+    if (identical(input$ch1_cas_x, "grades")) {
+      df <- .cas_data
+      df$grades01 <- ifelse(df$grades == "KK-08", 1, 0)
+      model <- ch1_cas_model()
+      pred_df <- data.frame(
+        grades = c("KK-06", "KK-08"),
+        grades01 = c(0, 1)
+      )
+      pred_df$pred <- predict(model, newdata = pred_df)
+
+      ggplot(df, aes(x = grades, y = .data[[input$ch1_cas_y]])) +
+        geom_jitter(width = 0.12, height = 0, color = upwr_secondary,
+                    alpha = 0.42, size = 1.8) +
+        stat_summary(fun = mean, geom = "point",
+                     color = unname(upwr_cat["terakota"]), size = 3.4) +
+        geom_crossbar(data = pred_df,
+                      aes(x = grades, y = pred, ymin = pred, ymax = pred),
+                      inherit.aes = FALSE,
+                      color = unname(upwr_cat["niebo"]), fill = NA,
+                      linewidth = 0.8, width = 0.55) +
+        labs(
+          x = unname(.cas_labels[input$ch1_cas_x]),
+          y = unname(.cas_labels[input$ch1_cas_y])
+        ) +
+        theme_upwr()
+    } else {
+      ggplot(.cas_data, aes(x = .data[[input$ch1_cas_x]], y = .data[[input$ch1_cas_y]])) +
+        geom_point(color = upwr_secondary, alpha = 0.45, size = 1.8) +
+        geom_smooth(method = "lm", se = TRUE,
+                    color = unname(upwr_cat["niebo"]),
+                    fill = unname(upwr_cat["niebo"]), alpha = 0.15) +
+        labs(
+          x = unname(.cas_labels[input$ch1_cas_x]),
+          y = unname(.cas_labels[input$ch1_cas_y])
+        ) +
+        theme_upwr()
+    }
   }))
 
   output$ch1_cas_table <- renderUI({
@@ -1116,7 +1150,8 @@ ch1_server <- function(input, output, session) {
 
     model <- ch1_cas_model()
     coefs <- broom::tidy(model)
-    coefs$term <- ifelse(coefs$term == "(Intercept)", "wyraz wolny", input$ch1_cas_x)
+    coefs$term <- ifelse(coefs$term == "(Intercept)", "wyraz wolny",
+                         ifelse(coefs$term == "grades01", "grades: KK-08 vs KK-06", input$ch1_cas_x))
 
     fmt_p <- function(p) {
       ifelse(p < 0.001, "< 0.001", sprintf("%.3f", p))
@@ -1167,14 +1202,24 @@ ch1_server <- function(input, output, session) {
     if (p_val < 0.05) {
       lc_feedback(type = "ok", style = "margin-top: 12px;",
         tags$strong("Odpowiedź: "),
-        sprintf("tak, %s istotnie przewiduje %s. Efekt jest %s: b1 = %.3f, p = %.3g.",
-                x_label, y_label, relation, b1, p_val)
+        if (identical(input$ch1_cas_x, "grades")) {
+          sprintf("tak, %s istotnie przewiduje %s. Okręgi KK-08 różnią się od KK-06 średnio o %.3f punktu, p = %.3g.",
+                  x_label, y_label, b1, p_val)
+        } else {
+          sprintf("tak, %s istotnie przewiduje %s. Efekt jest %s: b1 = %.3f, p = %.3g.",
+                  x_label, y_label, relation, b1, p_val)
+        }
       )
     } else {
       lc_feedback(type = "warning", style = "margin-top: 12px;",
         tags$strong("Odpowiedź: "),
-        sprintf("nie mamy podstaw, by uznać wpływ %s na %s za istotny: b1 = %.3f, p = %.3g.",
-                x_label, y_label, b1, p_val)
+        if (identical(input$ch1_cas_x, "grades")) {
+          sprintf("nie mamy podstaw, by uznać różnicę między KK-08 i KK-06 w %s za istotną: b1 = %.3f, p = %.3g.",
+                  y_label, b1, p_val)
+        } else {
+          sprintf("nie mamy podstaw, by uznać wpływ %s na %s za istotny: b1 = %.3f, p = %.3g.",
+                  x_label, y_label, b1, p_val)
+        }
       )
     }
   })
@@ -1187,6 +1232,42 @@ ch1_server <- function(input, output, session) {
     coefs <- broom::tidy(model)
     x_label <- unname(.cas_labels[input$ch1_cas_x])
     y_label <- unname(.cas_labels[input$ch1_cas_y])
+
+    if (identical(input$ch1_cas_x, "grades")) {
+      b0 <- coefs$estimate[1]
+      b1 <- coefs$estimate[2]
+      y0 <- b0
+      y1 <- b0 + b1
+
+      return(tagList(
+        lc_stat_grid(
+          lc_stat_box("b₀", round(b0, 2), color = upwr_secondary),
+          lc_stat_box("b₁", round(b1, 3), color = unname(upwr_cat["szalwia"])),
+          lc_stat_box("p dla b₁", signif(coefs$p.value[2], 3), color = unname(upwr_cat["bursztyn"])),
+          columns = 3
+        ),
+        lc_formula_box(
+          withMathJax(helpText(sprintf(
+            "$$\\hat{Y} = %.2f %+ .2f \\cdot X_{\\text{KK-08}}$$",
+            b0, b1
+          ))),
+          p(tags$strong("Kodowanie: "), "KK-06 = 0, KK-08 = 1."),
+          withMathJax(helpText(sprintf(
+            "$$\\text{KK-06: } \\hat{Y} = %.2f %+ .2f \\cdot 0 = %.2f$$",
+            b0, b1, y0
+          ))),
+          withMathJax(helpText(sprintf(
+            "$$\\text{KK-08: } \\hat{Y} = %.2f %+ .2f \\cdot 1 = %.2f$$",
+            b0, b1, y1
+          )))
+        ),
+        lc_feedback(type = "info", style = "margin-top: 10px;",
+          p(tags$strong("Interpretacja: "),
+            paste0("w tym kodowaniu b₀ to średni przewidywany ", y_label,
+                   " dla KK-06, a b₁ to różnica KK-08 minus KK-06."))
+        )
+      ))
+    }
 
     tagList(
       lc_stat_grid(
