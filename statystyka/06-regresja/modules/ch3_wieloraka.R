@@ -202,10 +202,10 @@ ch3_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "04",
-      title     = "Jak porównywać modele?",
-      lead      = "R²adj, AIC, BIC, train/test — gdy mamy kilku kandydatów",
-      target_id = "ch-porownanie"
+      num       = "03a",
+      title     = "Interakcje",
+      lead      = "gdy wpływ jednego predyktora zależy od drugiego",
+      target_id = "ch-interakcje"
     )
   )
 )
