@@ -76,24 +76,24 @@ ch3_ui <- list(
             ),
             selected = "read"
           ),
-          checkboxGroupInput("ch3_predictors", "Predyktory:",
+          tags$div(class = "form-group shiny-input-container",
+            tags$label(class = "control-label", "Predyktor bazowy:"),
+            tags$div(tags$strong("Dochód okręgu (tys. USD)"))
+          ),
+          checkboxGroupInput("ch3_predictors", "Dodaj predyktory:",
             choices = c(
               "Dotacje do obiadów (%)" = "lunch",
-              "Dochód okręgu (tys. USD)" = "income",
               "Angielski jako drugi język (%)" = "english",
               "Uczniowie / nauczyciel" = "student_teacher_ratio",
               "Wydatki na ucznia" = "expenditure",
               "Komputery" = "computer",
               "CalWORKs (%)" = "calworks"
             ),
-            selected = c("lunch", "income", "english",
-                         "student_teacher_ratio", "expenditure",
-                         "computer", "calworks")
+            selected = "lunch"
           ),
           helpText(style = "margin-top: 8px; font-size: 12px;",
-            "Domyślny model celowo zawiera też predyktory słabe lub redundantne.
-             Dzięki temu tabela nie udaje, że w realnych danych wszystko jest
-             istotne.")
+            "Model zawsze zaczyna od dochodu okręgu. Kolejne checkboxy
+             dodają następne predyktory do tego samego równania.")
         ),
         column(8,
           lc_feedback(type = "info",
@@ -101,7 +101,7 @@ ch3_ui <- list(
               bez interakcji. Gwiazdka przy p-value oznacza p < 0.05.")
           ),
           uiOutput("ch3_model_coefs"),
-          lc_plot_fullscreen("ch3_coef_plot", height = "250px"),
+          uiOutput("ch3_prediction_plot_ui"),
           uiOutput("ch3_model_stats")
         )
       )
@@ -228,14 +228,19 @@ ch3_server <- function(input, output, session) {
     "calworks" = "CalWORKs (%)"
   )
 
+  ch3_base_x <- "income"
+
+  ch3_selected_predictors <- reactive({
+    unique(c(ch3_base_x, input$ch3_predictors))
+  })
+
   # Model jako reactive: zależy od danych i wyboru predyktorów.
   # Dzięki temu przełączanie checkboxów porównuje modele na TYCH SAMYCH danych.
   ch3_model <- reactive({
     df <- .cas_data
     outcome <- input$ch3_outcome
     if (is.null(outcome)) outcome <- "read"
-    preds <- input$ch3_predictors
-    if (length(preds) == 0) preds <- "lunch"
+    preds <- ch3_selected_predictors()
     formula <- as.formula(paste(outcome, "~", paste(preds, collapse = " + ")))
     lm(formula, data = df)
   })
@@ -272,29 +277,207 @@ ch3_server <- function(input, output, session) {
     )
   })
 
+  ch3_make_bins <- function(x, labels) {
+    probs <- seq(0, 1, length.out = length(labels) + 1)
+    breaks <- unique(as.numeric(quantile(x, probs = probs, na.rm = TRUE)))
+    if (length(breaks) <= 2) {
+      cut(x, breaks = 2, include.lowest = TRUE, labels = labels[seq_len(2)])
+    } else {
+      cut(x, breaks = breaks, include.lowest = TRUE, labels = labels[seq_len(length(breaks) - 1)])
+    }
+  }
+
+  ch3_group_reps <- function(df, var, labels) {
+    group <- ch3_make_bins(df[[var]], labels)
+    reps <- tapply(df[[var]], group, median, na.rm = TRUE)
+    list(group = group, reps = reps)
+  }
+
+  ch3_prediction_grid <- function(df, predictors, x_var) {
+    extra <- setdiff(predictors, x_var)
+    x_grid <- seq(min(df[[x_var]], na.rm = TRUE), max(df[[x_var]], na.rm = TRUE), length.out = 120)
+    grid <- data.frame(x = x_grid)
+    names(grid) <- x_var
+
+    if (length(extra) >= 1) {
+      color_info <- ch3_group_reps(df, extra[1], c("niskie", "średnie", "wysokie"))
+      grid <- merge(
+        grid,
+        data.frame(color_group = names(color_info$reps), stringsAsFactors = FALSE),
+        all = TRUE
+      )
+      grid[[extra[1]]] <- as.numeric(color_info$reps[grid$color_group])
+    }
+
+    facet_vars <- extra[-1]
+    if (length(facet_vars) >= 1) {
+      levels_1 <- if (length(facet_vars) == 1) c("niskie", "średnie", "wysokie") else c("niższe", "wyższe")
+      facet_info_1 <- ch3_group_reps(df, facet_vars[1], levels_1)
+      grid <- merge(
+        grid,
+        data.frame(facet_1 = names(facet_info_1$reps), stringsAsFactors = FALSE),
+        all = TRUE
+      )
+      grid[[facet_vars[1]]] <- as.numeric(facet_info_1$reps[grid$facet_1])
+    }
+
+    if (length(facet_vars) >= 2) {
+      facet_info_2 <- ch3_group_reps(df, facet_vars[2], c("niższe", "wyższe"))
+      grid <- merge(
+        grid,
+        data.frame(facet_2 = names(facet_info_2$reps), stringsAsFactors = FALSE),
+        all = TRUE
+      )
+      grid[[facet_vars[2]]] <- as.numeric(facet_info_2$reps[grid$facet_2])
+    }
+
+    other_vars <- setdiff(predictors, names(grid))
+    for (var in other_vars) {
+      grid[[var]] <- mean(df[[var]], na.rm = TRUE)
+    }
+
+    grid
+  }
+
+  output$ch3_prediction_plot_ui <- renderUI({
+    if (length(ch3_selected_predictors()) > 4) return(NULL)
+    tagList(
+      lc_plot_fullscreen("ch3_coef_plot", height = "320px"),
+      if (length(ch3_selected_predictors()) > 1) {
+        lc_plot_fullscreen("ch3_compare_plot", height = "230px")
+      }
+    )
+  })
+
   output$ch3_coef_plot <- renderPlot({
     model <- ch3_model()
     if (is.null(model)) return(NULL)
 
-    coefs <- broom::tidy(model, conf.int = TRUE)
-    coefs <- coefs[coefs$term != "(Intercept)", ]
+    df <- .cas_data
+    outcome <- input$ch3_outcome
+    if (is.null(outcome)) outcome <- "read"
+    predictors <- ch3_selected_predictors()
+    if (length(predictors) > 4) return(NULL)
+    x_var <- ch3_base_x
 
-    if (nrow(coefs) == 0) return(NULL)
+    plot_df <- df
+    extra <- setdiff(predictors, x_var)
+    color_var <- extra[1]
+    if (!is.na(color_var)) {
+      plot_df$color_group <- ch3_group_reps(plot_df, color_var, c("niskie", "średnie", "wysokie"))$group
+    }
 
-    labels_pl <- ch3_labels_pl
-    coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
-                             labels_pl[coefs$term], coefs$term)
-    coefs$significant <- coefs$p.value < 0.05
+    grid <- ch3_prediction_grid(df, predictors, x_var)
+    grid$pred <- predict(model, newdata = grid)
 
-    ggplot(coefs, aes(x = estimate, y = term_pl, color = significant)) +
-      geom_point(size = 3) +
-      geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
-      geom_vline(xintercept = 0, linetype = "dashed", color = upwr_secondary) +
-      scale_color_manual(values = c("TRUE" = unname(upwr_cat["niebo"]), "FALSE" = unname(upwr_cat["terakota"])),
-                         labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),
-                         name = NULL) +
+    if (length(predictors) >= 3) {
+      facet_vars <- extra[-1]
+      levels_1 <- if (length(facet_vars) == 1) c("niskie", "średnie", "wysokie") else c("niższe", "wyższe")
+      plot_df$facet_1 <- ch3_group_reps(plot_df, facet_vars[1], levels_1)$group
+
+      if (length(facet_vars) >= 2) {
+        plot_df$facet_2 <- ch3_group_reps(plot_df, facet_vars[2], c("niższe", "wyższe"))$group
+      }
+    }
+
+    p <- ggplot(plot_df, aes(x = .data[[x_var]], y = .data[[outcome]])) +
       labs(
-           x = "Estymata β", y = NULL) +
+        x = ch3_labels_pl[[x_var]],
+        y = ch3_labels_pl[[outcome]]
+      ) +
+      theme_upwr() +
+      theme(legend.position = "top")
+
+    if (length(predictors) == 1) {
+      p <- p +
+        geom_point(color = upwr_secondary, alpha = 0.45, size = 1.8) +
+        geom_line(data = grid, aes(x = .data[[x_var]], y = pred),
+                  color = unname(upwr_cat["niebo"]), linewidth = 1.05) +
+        guides(color = "none", linetype = "none")
+    } else {
+      p <- p +
+        geom_point(aes(color = color_group), alpha = 0.68, size = 1.9) +
+        geom_line(data = grid, aes(x = .data[[x_var]], y = pred, color = color_group),
+                  linewidth = 1.05) +
+        scale_color_manual(
+          values = c(
+            "niskie" = unname(upwr_cat["szalwia"]),
+            "średnie" = unname(upwr_cat["bursztyn"]),
+            "wysokie" = unname(upwr_cat["terakota"])
+          ),
+          name = ch3_labels_pl[[color_var]]
+        )
+    }
+
+    if (length(predictors) == 1) {
+      p <- p
+    } else if (length(predictors) == 3) {
+      facet_label <- ch3_labels_pl[[extra[-1][1]]]
+      p <- p + facet_grid(
+        cols = vars(facet_1),
+        labeller = labeller(facet_1 = function(x) paste(facet_label, x))
+      )
+    } else if (length(predictors) == 4) {
+      facet_vars <- extra[-1]
+      facet_label_1 <- ch3_labels_pl[[facet_vars[1]]]
+      facet_label_2 <- ch3_labels_pl[[facet_vars[2]]]
+      p <- p + facet_grid(
+        rows = vars(facet_1),
+        cols = vars(facet_2),
+        labeller = labeller(
+          facet_1 = function(x) paste(facet_label_1, x),
+          facet_2 = function(x) paste(facet_label_2, x)
+        )
+      )
+    }
+
+    p
+  })
+
+  output$ch3_compare_plot <- renderPlot({
+    model <- ch3_model()
+    if (is.null(model)) return(NULL)
+
+    df <- .cas_data
+    outcome <- input$ch3_outcome
+    if (is.null(outcome)) outcome <- "read"
+    predictors <- ch3_selected_predictors()
+    if (length(predictors) <= 1 || length(predictors) > 4) return(NULL)
+    x_var <- ch3_base_x
+
+    x_grid <- seq(min(df[[x_var]], na.rm = TRUE), max(df[[x_var]], na.rm = TRUE), length.out = 120)
+    simple_model <- lm(as.formula(paste(outcome, "~", x_var)), data = df)
+
+    simple_grid <- data.frame(x = x_grid)
+    names(simple_grid) <- x_var
+    simple_grid$pred <- predict(simple_model, newdata = simple_grid)
+    simple_grid$model <- "Regresja prosta"
+
+    model_grid <- data.frame(x = x_grid)
+    names(model_grid) <- x_var
+    for (var in setdiff(predictors, x_var)) {
+      model_grid[[var]] <- mean(df[[var]], na.rm = TRUE)
+    }
+    model_grid$pred <- predict(model, newdata = model_grid)
+    model_grid$model <- "Aktualny model"
+
+    line_cols <- c(x_var, "pred", "model")
+    line_df <- rbind(simple_grid[line_cols], model_grid[line_cols])
+
+    ggplot(df, aes(x = .data[[x_var]], y = .data[[outcome]])) +
+      geom_point(color = upwr_secondary, alpha = 0.28, size = 1.5) +
+      geom_line(data = line_df, aes(x = .data[[x_var]], y = pred, color = model, linetype = model),
+                linewidth = 1.05) +
+      scale_color_manual(
+        values = c("Regresja prosta" = unname(upwr_cat["terakota"]),
+                   "Aktualny model" = unname(upwr_cat["niebo"])),
+        name = NULL
+      ) +
+      scale_linetype_manual(
+        values = c("Regresja prosta" = "dashed", "Aktualny model" = "solid"),
+        name = NULL
+      ) +
+      labs(x = ch3_labels_pl[[x_var]], y = ch3_labels_pl[[outcome]]) +
       theme_upwr() +
       theme(legend.position = "top")
   })
@@ -303,7 +486,7 @@ ch3_server <- function(input, output, session) {
     model <- ch3_model()
     if (is.null(model)) return(NULL)
     metrics <- compute_model_metrics(model)
-    tagList(
+    lc_stat_grid(columns = 4,
       lc_stat_box("R²", round(metrics$r_squared, 3), color = unname(upwr_cat["niebo"])),
       lc_stat_box("adj.R²", round(metrics$adj_r_squared, 3), color = unname(upwr_cat["szalwia"])),
       lc_stat_box("AIC", round(metrics$aic, 1), color = unname(upwr_cat["bursztyn"])),
