@@ -256,6 +256,12 @@ ts_to_df <- function(x, value_name = "value") {
   vapply(.ts_datasets, `[[`, character(1), "label")
 )
 
+# Subset .ts_dataset_choices by internal key names (values), not by display labels
+.ts_choices_for <- function(...) {
+  keys <- c(...)
+  .ts_dataset_choices[.ts_dataset_choices %in% keys]
+}
+
 # ============================================================================
 # FORMATTERY WYNIKÓW
 # ============================================================================

@@ -52,7 +52,7 @@ ch4_ui <- list(
       fluidRow(
         column(3,
           selectInput("ch4_ss_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("warszawa", "bezrobocie", "noclegi", "sprzedaz")],
+                      choices = .ts_choices_for("warszawa", "bezrobocie", "noclegi", "sprzedaz"),
                       selected = "noclegi"),
           uiOutput("ch4_ss_summary")
         ),
@@ -76,7 +76,7 @@ ch4_ui <- list(
       fluidRow(
         column(3,
           selectInput("ch4_hm_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("warszawa", "bezrobocie", "noclegi", "sprzedaz")],
+                      choices = .ts_choices_for("warszawa", "bezrobocie", "noclegi", "sprzedaz"),
                       selected = "noclegi")
         ),
         column(9,

@@ -57,7 +57,7 @@ ch13_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch13_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("noclegi", "bezrobocie", "sprzedaz", "warszawa")],
+                      choices = .ts_choices_for("noclegi", "bezrobocie", "sprzedaz", "warszawa"),
                       selected = "noclegi"),
           sliderInput("ch13_test_pct", "Procent danych testowych:", min = 10, max = 30, value = 20, step = 5),
           actionButton("ch13_run", "Oblicz metryki", class = "lc-btn-primary", width = "100%")

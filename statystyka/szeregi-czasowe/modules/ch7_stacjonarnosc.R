@@ -79,7 +79,7 @@ ch7_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch7_diff_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("warszawa", "bezrobocie", "pszenica", "pm10")],
+                      choices = .ts_choices_for("warszawa", "bezrobocie", "pszenica", "pm10"),
                       selected = "bezrobocie"),
           div(
             style = "display: flex; flex-direction: column; gap: 6px; margin: 12px 0;",
@@ -116,7 +116,7 @@ ch7_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch7_bc_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("noclegi", "sprzedaz", "pszenica")],
+                      choices = .ts_choices_for("noclegi", "sprzedaz", "pszenica"),
                       selected = "noclegi"),
           sliderInput("ch7_bc_lambda", "λ:",
                       min = -1, max = 1, value = 0, step = 0.1),

@@ -84,7 +84,7 @@ ch2_ui <- list(
       fluidRow(
         column(3,
           selectInput("ch2_stl_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("warszawa", "bezrobocie", "noclegi", "sprzedaz")],
+                      choices = .ts_choices_for("warszawa", "bezrobocie", "noclegi", "sprzedaz"),
                       selected = "warszawa"),
           radioButtons("ch2_stl_type", "Model:",
                        choices = c("Addytywny" = "additive", "Multiplikatywny" = "multiplicative"),

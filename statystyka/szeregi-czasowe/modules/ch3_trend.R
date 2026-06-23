@@ -112,7 +112,7 @@ ch3_ui <- list(
                                   "LOESS (span=0.3)" = "loess"),
                       selected = "loess"),
           selectInput("ch3_res_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("warszawa", "bezrobocie", "pszenica")],
+                      choices = .ts_choices_for("warszawa", "bezrobocie", "pszenica"),
                       selected = "warszawa"),
           uiOutput("ch3_res_stats")
         ),

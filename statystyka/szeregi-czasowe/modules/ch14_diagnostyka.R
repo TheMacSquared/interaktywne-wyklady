@@ -41,7 +41,7 @@ ch14_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch14_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("bezrobocie", "noclegi", "sprzedaz", "warszawa")],
+                      choices = .ts_choices_for("bezrobocie", "noclegi", "sprzedaz", "warszawa"),
                       selected = "bezrobocie"),
           selectInput("ch14_method", "Model:",
                       choices = c("ETS (auto)" = "ets", "ARIMA (auto)" = "arima"),
@@ -105,7 +105,7 @@ ch14_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch14_cmp_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("bezrobocie", "noclegi")],
+                      choices = .ts_choices_for("bezrobocie", "noclegi"),
                       selected = "bezrobocie"),
           actionButton("ch14_cmp_run", "Porównaj", class = "lc-btn-primary", width = "100%")
         ),

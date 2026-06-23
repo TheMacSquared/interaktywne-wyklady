@@ -112,7 +112,7 @@ ch5_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch5_both_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("warszawa", "bezrobocie", "pszenica")],
+                      choices = .ts_choices_for("warszawa", "bezrobocie", "pszenica"),
                       selected = "pszenica"),
           sliderInput("ch5_both_k", "Wybrany lag k:",
                       min = 1, max = 24, value = 1, step = 1),

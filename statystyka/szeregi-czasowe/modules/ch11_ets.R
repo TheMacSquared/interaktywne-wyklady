@@ -66,7 +66,7 @@ ch11_ui <- list(
           sliderInput("ch11_holt_alpha", "α (poziom):",  min = 0.05, max = 0.95, value = 0.4, step = 0.05),
           sliderInput("ch11_holt_beta",  "β (trend):",   min = 0.01, max = 0.50, value = 0.1, step = 0.01),
           selectInput("ch11_holt_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("bezrobocie", "sprzedaz", "pszenica")],
+                      choices = .ts_choices_for("bezrobocie", "sprzedaz", "pszenica"),
                       selected = "bezrobocie")
         ),
         column(8,
@@ -93,7 +93,7 @@ ch11_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch11_hw_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("noclegi", "sprzedaz", "warszawa")],
+                      choices = .ts_choices_for("noclegi", "sprzedaz", "warszawa"),
                       selected = "noclegi"),
           radioButtons("ch11_hw_type", "Typ modelu:",
                        choices = c("Addytywny" = "additive", "Multiplikatywny" = "multiplicative"),

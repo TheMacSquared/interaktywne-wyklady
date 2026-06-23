@@ -81,7 +81,7 @@ ch10_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch10_auto_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("warszawa", "bezrobocie", "noclegi", "pszenica")],
+                      choices = .ts_choices_for("warszawa", "bezrobocie", "noclegi", "pszenica"),
                       selected = "bezrobocie"),
           actionButton("ch10_auto_run", "Uruchom auto.arima", class = "lc-btn-primary", width = "100%"),
           uiOutput("ch10_auto_result")
@@ -113,7 +113,7 @@ ch10_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch10_aic_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("bezrobocie", "noclegi", "sprzedaz")],
+                      choices = .ts_choices_for("bezrobocie", "noclegi", "sprzedaz"),
                       selected = "bezrobocie"),
           actionButton("ch10_aic_run", "Porównaj modele", class = "lc-btn-primary", width = "100%")
         ),

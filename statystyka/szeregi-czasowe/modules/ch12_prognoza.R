@@ -28,7 +28,7 @@ ch12_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch12_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("warszawa", "noclegi", "bezrobocie", "sprzedaz")],
+                      choices = .ts_choices_for("warszawa", "noclegi", "bezrobocie", "sprzedaz"),
                       selected = "noclegi"),
           selectInput("ch12_method", "Metoda:",
                       choices = c(
@@ -69,7 +69,7 @@ ch12_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch12_fan_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("noclegi", "warszawa", "bezrobocie")],
+                      choices = .ts_choices_for("noclegi", "warszawa", "bezrobocie"),
                       selected = "warszawa"),
           actionButton("ch12_fan_run", "Przelicz", class = "lc-btn-primary", width = "100%")
         ),
@@ -92,7 +92,7 @@ ch12_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch12_reveal_data", "Szereg:",
-                      choices = .ts_dataset_choices[c("noclegi", "bezrobocie", "sprzedaz", "warszawa")],
+                      choices = .ts_choices_for("noclegi", "bezrobocie", "sprzedaz", "warszawa"),
                       selected = "bezrobocie"),
           selectInput("ch12_reveal_method", "Metoda:",
                       choices = c(
