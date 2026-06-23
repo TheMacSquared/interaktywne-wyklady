@@ -33,7 +33,8 @@
   list(num = "IX",   slug = "dane",       title = "Dobre dane",                  short = "Dane",         href = "#"),
   list(num = "X",    slug = "case",       title = "Case studies",                short = "Case studies", href = "#"),
   list(num = "XI",   slug = "kierunkowe", title = "Kierunkowe",                  short = "Kierunkowe",   href = "#"),
-  list(num = "XII",  slug = "projekt",    title = "Projekt badawczy",            short = "Projekt",      href = "#")
+  list(num = "XII",  slug = "projekt",    title = "Projekt badawczy",            short = "Projekt",      href = "#"),
+  list(num = "XIII", slug = "szeregi",    title = "Szeregi czasowe",             short = "Szeregi",      href = "#")
 )
 
 # Mapowanie lecture_id → slug modułu
@@ -49,7 +50,8 @@
   "dobre-dane"                  = "dane",
   "case-studies"                = "case",
   "kierunkowe"                  = "kierunkowe",
-  "projekt-badawczy"            = "projekt"
+  "projekt-badawczy"            = "projekt",
+  "szeregi-czasowe"             = "szeregi"
 )
 
 # ============================================================================

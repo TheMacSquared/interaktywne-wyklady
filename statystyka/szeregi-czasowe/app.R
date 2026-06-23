@@ -1,0 +1,104 @@
+# Szeregi Czasowe — interaktywny wykład
+# Kompleksowy przewodnik po analizie i modelowaniu szeregów czasowych
+
+library(shiny)
+library(ggplot2)
+library(dplyr)
+library(forecast)
+library(tseries)
+library(broom)
+
+# ============================================================================
+# BOOTSTRAP PROJEKTU
+# ============================================================================
+
+.find_app_dir <- function() {
+  for (i in seq_len(sys.nframe())) {
+    ofile <- sys.frame(i)$ofile
+    if (!is.null(ofile)) return(dirname(normalizePath(ofile)))
+  }
+  args <- commandArgs(trailingOnly = FALSE)
+  file_arg <- grep("--file=", args, value = TRUE)
+  if (length(file_arg) > 0) {
+    return(dirname(normalizePath(sub("--file=", "", file_arg))))
+  }
+  getwd()
+}
+app_dir      <- .find_app_dir()
+project_root <- dirname(app_dir)
+
+source(file.path(project_root, "R", "palette.R"),        local = TRUE)
+source(file.path(project_root, "R", "theme_upwr.R"),     local = TRUE)
+source(file.path(project_root, "R", "shared.R"),         local = TRUE)
+source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
+lc_apply_ggplot_defaults()
+
+# ============================================================================
+# MODUŁY
+# ============================================================================
+
+source(file.path(app_dir, "modules", "helpers.R"),              local = TRUE)
+source(file.path(app_dir, "modules", "ch1_motywacja.R"),        local = TRUE)
+source(file.path(app_dir, "modules", "ch2_dekompozycja.R"),     local = TRUE)
+source(file.path(app_dir, "modules", "ch3_trend.R"),            local = TRUE)
+source(file.path(app_dir, "modules", "ch4_sezonowosc.R"),       local = TRUE)
+source(file.path(app_dir, "modules", "ch5_acf.R"),              local = TRUE)
+source(file.path(app_dir, "modules", "ch6_pacf.R"),             local = TRUE)
+source(file.path(app_dir, "modules", "ch7_stacjonarnosc.R"),    local = TRUE)
+source(file.path(app_dir, "modules", "ch8_ar.R"),               local = TRUE)
+source(file.path(app_dir, "modules", "ch9_ma_arma.R"),          local = TRUE)
+source(file.path(app_dir, "modules", "ch10_arima.R"),           local = TRUE)
+source(file.path(app_dir, "modules", "ch11_ets.R"),             local = TRUE)
+source(file.path(app_dir, "modules", "ch12_prognoza.R"),        local = TRUE)
+source(file.path(app_dir, "modules", "ch13_dokladnosc.R"),      local = TRUE)
+source(file.path(app_dir, "modules", "ch14_diagnostyka.R"),     local = TRUE)
+source(file.path(app_dir, "modules", "ch15_anomalie.R"),        local = TRUE)
+source(file.path(app_dir, "modules", "ch16_sciaga_cwiczenia.R"), local = TRUE)
+
+# ============================================================================
+# UI
+# ============================================================================
+
+.chapters <- list(
+  ch1_ui, ch2_ui, ch3_ui, ch4_ui,
+  ch5_ui, ch6_ui, ch7_ui,
+  ch8_ui, ch9_ui, ch10_ui, ch11_ui,
+  ch12_ui, ch13_ui, ch14_ui,
+  ch15_ui,
+  ch16_ui
+)
+
+ui <- lecture_page(
+  lecture_id    = "szeregi-czasowe",
+  lecture_num   = "13",
+  lecture_title = "Szeregi czasowe",
+  module_label  = "Moduł XIII",
+  chapters      = .chapters
+)
+
+# ============================================================================
+# SERVER
+# ============================================================================
+
+server <- function(input, output, session) {
+  lc <- lecture_server(.chapters, input, output, session)
+
+  ch1_server(input, output, session)
+  ch2_server(input, output, session)
+  ch3_server(input, output, session)
+  ch4_server(input, output, session)
+  ch5_server(input, output, session)
+  ch6_server(input, output, session)
+  ch7_server(input, output, session)
+  ch8_server(input, output, session)
+  ch9_server(input, output, session)
+  ch10_server(input, output, session)
+  ch11_server(input, output, session)
+  ch12_server(input, output, session)
+  ch13_server(input, output, session)
+  ch14_server(input, output, session)
+  ch15_server(input, output, session)
+  ch16_server(input, output, session)
+}
+
+shinyApp(ui = ui, server = server)
