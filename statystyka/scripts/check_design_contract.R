@@ -28,7 +28,9 @@ migrated_lectures <- c(
   "07-symulacje-statystyczne",
   "08-metody-bayesowskie",
   "09-dobre-dane",
-  "10-case-studies"
+  "10-case-studies",
+  "11-kierunkowe",
+  "12-projekt-badawczy"
 )
 
 rules <- data.frame(

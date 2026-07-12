@@ -45,12 +45,6 @@ ch5_ui <- lecture_chapter(
           tags$td("Dane są normalne")
         ),
         tags$tr(
-          tags$td("Normalność"),
-          tags$td("Kolmogorov-Smirnov"),
-          tags$td(tags$code("ks.test()")),
-          tags$td("Dane mają podany rozkład")
-        ),
-        tags$tr(
           tags$td("Równe wariancje"),
           tags$td("Levene"),
           tags$td(tags$code("levene_test()")),
@@ -113,9 +107,11 @@ ch5_ui <- lecture_chapter(
         tags$li(tags$b("Testy Welcha są domyślne w R."),
                 " Nie musisz sprawdzać równości wariancji przed testem t."),
         tags$li(tags$b("Duże n łagodzi naruszenia."),
-                " Przy n > 30 testy parametryczne są odporne na brak normalności (CTG)."),
+                " Łagodna skośność zwykle jest mniej groźna w większych próbach,
+                  ale silne outliery i bardzo ciężkie ogony nadal wymagają uwagi."),
         tags$li(tags$b("Testy nieparametryczne nie są \"gorsze\"."),
-                " Mają mniejszą moc przy spełnionych założeniach, ale są bezpieczniejsze ogólnie."),
+                " Są praktyczną alternatywą przy silnych naruszeniach lub danych quasi-ilościowych,
+                  choć nie zawsze odpowiadają dokładnie na pytanie o średnią."),
         tags$li(tags$b("Raportuj zawsze wielkość efektu"),
                 " — p-wartość nie mówi, jak duży jest efekt.")
       )

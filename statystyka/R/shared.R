@@ -188,13 +188,15 @@ zoom_plot_ui <- function(id, height = "300px", width = "100%", ...) {
   div(class = "lc-zoom-plot-wrap",
     plotOutput(ns("plot"), height = height, width = width, ...),
     actionButton(ns("zoom"), HTML("&#x2922;"),
-                 class = "lc-zoom-btn", title = "Powiększ wykres")
+                 class = "lc-zoom-btn", title = "Powiększ wykres",
+                 `aria-label` = "Powiększ wykres")
   )
 }
 
-zoom_plot_server <- function(id, plot_fn) {
+zoom_plot_server <- function(id, plot_fn,
+                             alt = "Wykres ilustrujący omawiane zagadnienie") {
   moduleServer(id, function(input, output, session) {
-    output$plot <- renderPlot(plot_fn())
+    output$plot <- renderPlot(plot_fn(), alt = alt)
 
     observeEvent(input$zoom, {
       showModal(modalDialog(
@@ -205,6 +207,6 @@ zoom_plot_server <- function(id, plot_fn) {
       ))
     }, ignoreInit = TRUE)
 
-    output$plot_modal <- renderPlot(plot_fn())
+    output$plot_modal <- renderPlot(plot_fn(), alt = alt)
   })
 }

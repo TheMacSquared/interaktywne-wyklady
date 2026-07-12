@@ -18,11 +18,20 @@ ch_drzewo_ui <- list(
       kicker = "Rozdział 10 · Testowanie hipotez",
       num    = "10",
       title  = "Drzewo decyzyjne.",
-      lead   = "„Mam dane — jaki test zastosować?” Mapa decyzji: od typu zmiennych
-                i liczby grup do konkretnego testu. Jedno spojrzenie na cały wykład."
+      lead   = "„Mam pytanie i dane — jaki test zastosować?” Najpierw sprawdź plan
+                badania, potem przejdź od typu zmiennych i liczby grup do konkretnego testu."
     ),
 
     tagList(
+      lc_feedback(type = "warning",
+        tags$strong("Zanim wejdziesz do drzewa:"),
+        tags$ul(
+          tags$li("Nazwij pytanie: opis, porównanie czy związek?"),
+          tags$li("Ustal jednostkę obserwacji i sprawdź, czy pomiary są niezależne."),
+          tags$li("Jeśli te same obiekty mierzono kilka razy, wybierz analizę sparowaną."),
+          tags$li("Wniosek o przyczynowości wymaga odpowiedniego planu badania — sam test go nie zapewnia.")
+        )
+      ),
       p("Jedno drzewo zaczynające się od pytania „ile mamy zmiennych?”.
         Diagram jest interaktywny — możesz przeciągać węzły, powiększać scrollem,
         a także ", tags$b("kliknąć"),
@@ -56,7 +65,8 @@ ch_drzewo_ui <- list(
       label = "Jak używać",
       tagList(
         tags$ul(
-          tags$li("Zacznij od pytania ", tags$b("ile zmiennych?")),
+          tags$li("Przed drzewem sprawdź ", tags$b("pytanie i plan badania")),
+          tags$li("Następnie zapytaj ", tags$b("ile zmiennych?")),
           tags$li("Zapytaj ", tags$b("jaki typ danych?")),
           tags$li("Jeśli jedna nominalna + druga ciągła, ", tags$b("ile grup?")),
           tags$li("Box na końcu gałęzi: przykład, hipotezy, test.")

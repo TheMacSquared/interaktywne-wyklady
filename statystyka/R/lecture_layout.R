@@ -70,7 +70,7 @@ module_tabs <- function(current_slug = NULL) {
     tags$div(
       class = "lc-tabs-logo-text",
       tags$div(class = "lc-tabs-logo-title", "Statystyka"),
-      tags$div(class = "lc-tabs-logo-sub",   "Skrypt · 25/26")
+      tags$div(class = "lc-tabs-logo-sub",   "Skrypt wykładowy")
     )
   )
 
@@ -604,10 +604,17 @@ lc_stat_grid <- function(..., columns = NULL) {
 
 # Dynamiczny feedback/status w renderUI(), np. po kliknięciu quizu.
 lc_feedback <- function(..., type = c("info", "ok", "warning", "danger"),
-                        style = NULL) {
+                        style = NULL,
+                        live = !is.null(shiny::getDefaultReactiveDomain())) {
   type <- match.arg(type)
   tags$div(
     class = paste("lc-feedback", paste0("lc-feedback-", type)),
+    role = if (isTRUE(live)) {
+      if (identical(type, "danger")) "alert" else "status"
+    },
+    `aria-live` = if (isTRUE(live)) {
+      if (identical(type, "danger")) "assertive" else "polite"
+    },
     style = style,
     ...
   )

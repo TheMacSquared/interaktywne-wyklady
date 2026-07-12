@@ -197,7 +197,10 @@ ch8_ui <- list(
     lc_feedback(type = "info",
       tags$strong("Zasada: "),
       "najpierw ANOVA. Jeśli istotna → post-hoc (Games-Howell).
-       Jeśli nieistotna → post-hoc pomijamy."
+       Jeśli nieistotna → w tym podstawowym, eksploracyjnym schemacie post-hoc pomijamy.",
+      p(tags$em("Wyjątek na później: wcześniej zaplanowane porównanie dwóch konkretnych
+        grup odpowiada na węższe pytanie niż ANOVA i może być analizowane osobno.
+        Na tych zajęciach trzymamy się prostego schematu powyżej."))
     ),
 
     # ========================================================================

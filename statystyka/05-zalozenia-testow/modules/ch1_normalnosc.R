@@ -11,21 +11,24 @@ ch1_ui <- lecture_chapter(
       kicker = "Rozdział 01 · Założenia testów",
       num    = "01",
       title  = "Normalność rozkładu.",
-      lead   = "Wiele testów statystycznych zakłada normalność danych. Jak to sprawdzić i co zrobić, gdy założenie jest naruszone?"
+      lead   = "Nie pytamy, czy dane są idealnie normalne, lecz czy ich kształt zagraża wnioskom. Zaczynamy od wykresu, a test traktujemy pomocniczo."
     ),
 
     lc_h2("ch1-metody", "Które metody wymagają normalności?"),
 
     tagList(
-      p("Założenie normalności dotyczy:"),
+      p("To, co oceniamy, zależy od metody:"),
       tags$ul(
-        tags$li(tags$b("Test t"), " (jednej próby, niezależny, sparowany) — normalność danych (lub reszt)"),
+        tags$li(tags$b("Test t jednej próby"), " — rozkład badanej zmiennej wokół średniej"),
+        tags$li(tags$b("Test t dla grup"), " — rozkład wyników (reszt) w porównywanych grupach"),
+        tags$li(tags$b("Test t sparowany"), " — rozkład różnic między pomiarami, nie obu pomiarów osobno"),
         tags$li(tags$b("ANOVA"), " — normalność reszt w każdej grupie"),
         tags$li(tags$b("Korelacja Pearsona"), " — rozkład dwuwymiarowy normalny"),
         tags$li(tags$b("Regresja liniowa"), " — normalność reszt (nie danych!)")
       ),
-      p(tags$b("Ważne:"), " Przy dużych próbach (n > 30) testy t i ANOVA są
-        odporne na odchylenia dzięki CTG. Normalność jest kluczowa głównie przy małych próbach.")
+      p(tags$b("Ważne:"), " Testy t i ANOVA zwykle tolerują łagodne odchylenia,
+        zwłaszcza przy podobnych liczebnościach grup. Nie istnieje jednak jeden
+        próg n, po którym można automatycznie zignorować silną skośność lub obserwacje odstające.")
     ),
 
     # ========================================================================
@@ -61,33 +64,29 @@ ch1_ui <- lecture_chapter(
 
     lc_feedback(type = "info",
       tags$strong("Jak czytać Q-Q plot:"),
-      " Jeśli punkty leżą na linii — dane są normalne.
-        Odchylenia na końcach — ciężkie/lekkie ogony.
-        Krzywa — skośność."
+      " Punkty blisko linii oznaczają, że rozkład jest wystarczająco podobny do normalnego.
+        Systematyczne odchylenia na końcach wskazują ciężkie lub lekkie ogony,
+        wygięcie — skośność, a pojedyncze dalekie punkty — możliwe obserwacje odstające."
     ),
 
     # ========================================================================
     # WIDGET 2: Testy normalnosci
     # ========================================================================
-    lc_h2("ch1-testy-formalne", "Testy formalne"),
+    lc_h2("ch1-testy-formalne", "Test formalny jako pomoc"),
 
     tagList(
-      p("Dwa najczęściej używane testy:"),
-      tags$ul(
-        tags$li(tags$b("Shapiro-Wilk"), " — najlepszy dla n < 50, najczęściej używany"),
-        tags$li(tags$b("Kolmogorov-Smirnov"), " — działa dla dowolnego n, mniej mocny")
-      ),
+      p(tags$b("Shapiro–Wilk"), " sprawdza zgodność danych z rozkładem normalnym."),
       p(withMathJax("\\(H_0\\)"), ": dane pochodzą z rozkładu normalnego. ",
-        "p < 0.05 → odrzucamy normalność.")
+        "Małe p jest sygnałem odchylenia, ale nie mówi, czy odchylenie jest ważne dla naszej analizy.")
     ),
 
     figure_panel(
       label = "Ryc. 1.2",
-      title = "Shapiro-Wilk i K-S",
+      title = "Shapiro–Wilk — wynik obok Q-Q plotu",
       fluidRow(
         column(4,
           helpText("Używa danych z widgetu powyżej."),
-          actionButton("ch1_test_norm", "Testuj normalność",
+          actionButton("ch1_test_norm", "Policz test Shapiro–Wilka",
                        class = "lc-btn-primary", width = "100%")
         ),
         column(8,
@@ -98,9 +97,9 @@ ch1_ui <- lecture_chapter(
 
     lc_feedback(type = "warning",
       tags$strong("Problem z testami formalnymi:"),
-      " Przy dużym n test Shapiro-Wilka odrzuci normalność nawet dla
-        nieistotnych odchyleń. Przy małym n nie ma mocy. ",
-      tags$strong("Zawsze łącz test z wizualizacją (Q-Q plot)!")
+      " Przy dużym n test może wykryć drobne, praktycznie niegroźne odchylenie.
+        Przy małym n może nie zauważyć poważnego problemu. ",
+      tags$strong("Decyzję opieraj przede wszystkim na Q-Q plocie, outlierach i rodzaju analizy.")
     ),
 
     # ========================================================================
@@ -109,11 +108,12 @@ ch1_ui <- lecture_chapter(
     lc_h2("ch1-naruszenia", "Gdy normalność jest naruszona"),
 
     tagList(
-      p("Opcje:"),
+      p("Praktyczna kolejność postępowania:"),
       tags$ol(
-        tags$li(tags$b("Zignoruj"), " — przy dużym n (> 30) testy parametryczne są odporne"),
-        tags$li(tags$b("Użyj alternatywy nieparametrycznej"), " — patrz tabela"),
-        tags$li(tags$b("Transformuj dane"), " — log, sqrt, Box-Cox")
+        tags$li(tags$b("Sprawdź wykres i dane"), " — czy problemem jest łagodna skośność, czy pojedynczy błąd/outlier?"),
+        tags$li(tags$b("Oceń odporność metody"), " — łagodne odchylenie często nie wymaga zmiany analizy."),
+        tags$li(tags$b("Użyj alternatywy rangowej"), " — przy silnym naruszeniu albo zmiennej quasi-ilościowej; patrz tabela."),
+        tags$li(tags$b("Transformuj tylko z uzasadnieniem"), " — np. log dla dodatnich danych o różnicach względnych. Transformacja zmienia skalę interpretacji.")
       )
     ),
 
@@ -135,7 +135,8 @@ ch1_ui <- lecture_chapter(
     ),
 
     lc_feedback(type = "ok",
-      tags$strong("Alternatywy nieparametryczne:"),
+      tags$strong("Praktyczne alternatywy rangowe:"),
+      p("To użyteczne zamienniki narzędziowe, ale ich wynik nie zawsze opisuje dokładnie tę samą wielkość co średnia."),
       tags$table(class = "lc-table lc-table-bordered", style = "font-size: 14px;",
         tags$tbody(
           tags$tr(tags$td("Test t jednej próby"), tags$td("→ Wilcoxon jednej próby")),
@@ -205,32 +206,17 @@ ch1_server <- function(input, output, session) {
     if (is.null(x)) return(lc_feedback(type = "warning", "Najpierw wygeneruj dane."))
 
     sw <- shapiro_test(data.frame(value = x), value)
-    ks <- ks.test(x, "pnorm", mean = mean(x), sd = sd(x))
-
     sw_color <- if (sw$p >= 0.05) col_ok else col_fail
-    ks_color <- if (ks$p.value >= 0.05) col_ok else col_fail
 
-    tagList(
-      lc_feedback(type = "info",
-        fluidRow(
-          column(6,
-            p(tags$strong("Shapiro-Wilk:")),
-            p(paste0("W = ", round(sw$statistic, 4))),
-            p(paste0("p = ", format_p_value(sw$p))),
-            p(style = paste0("color:", sw_color, "; font-weight: bold;"),
-              if (sw$p >= 0.05) "Brak podstaw do odrzucenia normalności"
-              else "Normalność odrzucona!")
-          ),
-          column(6,
-            p(tags$strong("Kolmogorov-Smirnov:")),
-            p(paste0("D = ", round(ks$statistic, 4))),
-            p(paste0("p = ", format_p_value(ks$p.value))),
-            p(style = paste0("color:", ks_color, "; font-weight: bold;"),
-              if (ks$p.value >= 0.05) "Brak podstaw do odrzucenia normalności"
-              else "Normalność odrzucona!")
-          )
-        )
-      )
+    lc_feedback(type = "info",
+      p(tags$strong("Shapiro–Wilk:"), " W = ", round(sw$statistic, 4),
+        ", p = ", format_p_value(sw$p)),
+      p(style = paste0("color:", sw_color, ";"),
+        if (sw$p >= 0.05) {
+          "Test nie wykrył wyraźnego odstępstwa. Nadal spójrz na Q-Q plot."
+        } else {
+          "Test wykrył odstępstwo. Oceń na Q-Q plocie jego rodzaj i znaczenie dla wybranej metody."
+        })
     )
   })
 
@@ -255,11 +241,15 @@ ch1_server <- function(input, output, session) {
       p1 <- ggplot(data.frame(x = x), aes(sample = x)) +
         stat_qq(color = col_fail, alpha = 0.5) +
         stat_qq_line(color = col_fail) +
+        labs(title = "Oryginalna skala",
+             x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
         theme_upwr()
 
       p2 <- ggplot(data.frame(x = log_x), aes(sample = x)) +
         stat_qq(color = col_ok, alpha = 0.5) +
         stat_qq_line(color = col_ok) +
+        labs(title = "Po transformacji log()",
+             x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
         theme_upwr()
 
       gridExtra::grid.arrange(p1, p2, ncol = 2)
@@ -270,20 +260,10 @@ ch1_server <- function(input, output, session) {
     x <- ch1_trans_data()
     if (is.null(x)) return(NULL)
 
-    sw_orig <- shapiro_test(data.frame(value = x), value)
-    sw_log <- shapiro_test(data.frame(value = log(x)), value)
-
-    tagList(
-      lc_stat_box(
-        "Oryginalne",
-        paste0("p = ", format_p_value(sw_orig$p)),
-        color = if (sw_orig$p >= 0.05) col_ok else col_fail
-      ),
-      lc_stat_box(
-        "Po log()",
-        paste0("p = ", format_p_value(sw_log$p)),
-        color = if (sw_log$p >= 0.05) col_ok else col_fail
-      )
+    lc_feedback(type = "info",
+      tags$strong("Porównaj kształt, nie tylko liczbę:"),
+      " po transformacji punkty zwykle leżą bliżej prostej. Pamiętaj, że wynik
+        interpretujemy teraz na skali logarytmicznej, czyli przez różnice względne/ilorazy."
     )
   })
 }
