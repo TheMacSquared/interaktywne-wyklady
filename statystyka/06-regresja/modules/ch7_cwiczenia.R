@@ -2,6 +2,8 @@
 # CHAPTER 7: Cwiczenia praktyczne
 # ============================================================================
 
+source(file.path(app_dir, "modules", "ch7_sat.R"), local = TRUE)
+
 ch7_ui <- list(
   id    = "ch-cwiczenia",
   num   = "07",
@@ -121,6 +123,8 @@ model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
       uiOutput("ch7_sol6")
     ),
 
+    ch7_sat_ui(),
+
     lc_h2("ch7-podsumowanie", "Na koniec"),
 
     lc_feedback(type = "ok",
@@ -135,6 +139,8 @@ model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
 )
 
 ch7_server <- function(input, output, session) {
+
+  ch7_sat_server(input, output, session)
 
   ch7_show <- function(id) {
     isTruthy(input[[id]]) && input[[id]] > 0

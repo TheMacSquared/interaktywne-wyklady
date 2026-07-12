@@ -317,6 +317,25 @@ Aplikacje są zaprojektowane do:
 2. **Samodzielnej eksploracji** — studenci uruchamiają lokalnie i eksperymentują w swoim tempie
 3. **Materiałów do powtórki** — ściąga (rozdział 6) jako kompaktowe podsumowanie
 
+### Wariant: Inżynieria danych satelitarnych i kosmicznych
+
+Podstawowe wykłady 01–04 oraz ćwiczenia z regresji zawierają wariant oparty na
+jednym syntetycznym zbiorze `dane/satelitarne_obserwacje.csv`. Studenci wracają
+do tych samych zmiennych — temperatury satelitarnej i naziemnej, różnicy
+pomiarów, NDVI, zachmurzenia, typu pokrycia i jakości obserwacji — podczas nauki:
+
+- typów danych i statystyki opisowej;
+- podstawowych rozkładów prawdopodobieństwa;
+- przedziałów ufności dla średniej, różnicy sparowanej i proporcji;
+- testów jednej próby, proporcji, korelacji, porównań grup, χ² i ANOVA;
+- prostej i wielorakiej regresji oraz kalibracji względem pomiaru referencyjnego.
+
+Wariant nie wymaga znajomości radiometrii ani przetwarzania obrazów. NDVI jest
+traktowany wyłącznie jako przykładowa zmienna liczbowa. Krótkie uwagi o zależności
+przestrzennej, zachmurzeniu i błędzie systematycznym służą rozpoznaniu ograniczeń,
+nie wprowadzaniu geostatystyki. Dane i sposób ich odtworzenia opisuje
+[`dane/README.md`](dane/README.md).
+
 ## 🎨 Wspólny styl wizualny
 
 Wszystkie aplikacje korzystają z centralnego stylu:

@@ -1,6 +1,6 @@
 # ============================================================================
 # CHAPTER 7: Cwiczenia praktyczne — przedzialy ufnosci
-# Cztery warianty kierunkowe: Edukacja, BHP, Rolnictwo, Technologia Zywnosci
+# Pięć wariantów kierunkowych, w tym dane satelitarne i kosmiczne
 # ============================================================================
 
 # ============================================================================
@@ -37,7 +37,8 @@ ch7_ui <- list(
             "Edukacja (CASchools)" = "edu",
             "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
             "Rolnictwo" = "rol",
-            "Technologia żywności" = "zyw"
+            "Technologia żywności" = "zyw",
+            "Inżynieria danych satelitarnych i kosmicznych" = "sat"
           ),
           selected = "edu",
           width = "100%"
@@ -644,6 +645,8 @@ ch7_ui <- list(
 # ROZWIAZANIA — listy per kierunek
 # ============================================================================
 
+source(file.path(app_dir, "modules", "ch7_sat.R"), local = TRUE)
+
 .ch7_solutions <- list(
 
   edu = list(
@@ -1117,6 +1120,8 @@ ch7_ui <- list(
   )
 )
 
+.ch7_solutions$sat <- .ch7_sat_solutions
+
 # ============================================================================
 # SERVER
 # ============================================================================
@@ -1142,7 +1147,8 @@ ch7_server <- function(input, output, session) {
         edu = .ch7_content_edu(),
         bhp = .ch7_content_bhp(),
         rol = .ch7_content_rol(),
-        zyw = .ch7_content_zyw()
+        zyw = .ch7_content_zyw(),
+        sat = .ch7_content_sat()
       )
     })
   }, ignoreNULL = FALSE)
