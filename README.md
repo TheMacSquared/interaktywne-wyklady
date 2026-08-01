@@ -7,7 +7,8 @@ Repozytorium na rownolegle zestawy interaktywnych wykladow R Shiny. Numerowany k
 ```text
 interaktywne-wyklady/
 ├── statystyka/     # istniejące wykłady ze statystyki
-└── ekonometria/    # miejsce na nowy zestaw wykładów z ekonometrii
+├── ekonometria/    # zestaw wykładów z ekonometrii
+└── analiza-ryzyka/ # interaktywne wykłady z analizy ryzyka
 ```
 
 ## Zestawy wykładów
@@ -16,6 +17,7 @@ interaktywne-wyklady/
 |--------|--------|--------------|
 | `statystyka/` | gotowy zestaw aplikacji statystycznych | [statystyka/README.md](statystyka/README.md) |
 | `ekonometria/` | startowy zestaw wykładów z ekonometrii | [ekonometria/README.md](ekonometria/README.md) |
+| `analiza-ryzyka/` | pierwszy pionowy wycinek w realizacji | [analiza-ryzyka/README.md](analiza-ryzyka/README.md) |
 
 ## Uruchamianie z katalogu głównego
 
@@ -39,6 +41,17 @@ shiny::runApp("ekonometria/04-weryfikacja-modelu")
 shiny::runApp("ekonometria/05-szeregi-prognozowanie")
 shiny::runApp("ekonometria/06-optymalizacja-liniowa")
 shiny::runApp("ekonometria/07-simpleks-dualizm")
+
+shiny::runApp("analiza-ryzyka/01-jezyk-ryzyka")
+shiny::runApp("analiza-ryzyka/02-warunki")
+shiny::runApp("analiza-ryzyka/03-alarm-i-prawda")
+shiny::runApp("analiza-ryzyka/04-wiele-prob")
+shiny::runApp("analiza-ryzyka/05-do-zdarzenia")
+shiny::runApp("analiza-ryzyka/06-zmiennosc-i-prog")
+shiny::runApp("analiza-ryzyka/07-czas-zycia")
+shiny::runApp("analiza-ryzyka/08-niezawodnosc-systemu")
+shiny::runApp("analiza-ryzyka/09-drzewo-bledow")
+shiny::runApp("analiza-ryzyka/10-model-do-decyzji")
 ```
 
 Szczegółowe wymagania pakietów i opis aplikacji są w dokumentacji konkretnego zestawu.

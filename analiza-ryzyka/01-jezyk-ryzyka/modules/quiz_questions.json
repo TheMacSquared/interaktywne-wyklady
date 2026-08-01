@@ -1,0 +1,122 @@
+[
+  {
+    "id": "q1",
+    "question": "Skórka leżąca na przejściu jest przede wszystkim:",
+    "options": {
+      "a": "zagrożeniem",
+      "b": "skutkiem",
+      "c": "prawdopodobieństwem",
+      "d": "zdarzeniem szczytowym"
+    },
+    "correct": "a",
+    "explanation": "Skórka jest źródłem możliwości szkody. Upadek byłby zdarzeniem, a uraz jego skutkiem."
+  },
+  {
+    "id": "q2",
+    "question": "Oddział A zgłosił 3 poślizgnięcia, a oddział B — 5. Czego przede wszystkim brakuje do porównania częstości?",
+    "options": {
+      "a": "nazwiska kierownika",
+      "b": "liczby porównywalnych ekspozycji i okresu obserwacji",
+      "c": "koloru posadzki",
+      "d": "średniej wieku pracowników"
+    },
+    "correct": "b",
+    "explanation": "Same liczniki nie wystarczają. Potrzebujemy mianownika, jednostki ekspozycji i wspólnego okresu."
+  },
+  {
+    "id": "q3",
+    "question": "Kiedy klasyczna definicja P(A) = |A| / |Ω| jest uzasadniona?",
+    "options": {
+      "a": "zawsze, gdy znamy liczbę awarii",
+      "b": "gdy wyniki są skończone i jednakowo możliwe",
+      "c": "tylko dla zdarzeń niepożądanych",
+      "d": "gdy próba ma co najmniej 100 obserwacji"
+    },
+    "correct": "b",
+    "explanation": "Liczenie przypadków sprzyjających wymaga dobrze określonej, skończonej przestrzeni jednakowo możliwych wyników."
+  },
+  {
+    "id": "q4",
+    "question": "W 20 zmianach nie było poślizgnięcia. Co można z tego bezpiecznie wywnioskować?",
+    "options": {
+      "a": "prawdopodobieństwo zdarzenia wynosi dokładnie zero",
+      "b": "w tej serii częstość wyniosła zero, ale modelowe prawdopodobieństwo nie musi być zerowe",
+      "c": "zabezpieczenia są doskonałe",
+      "d": "zdarzenie jest niemożliwe w przyszłości"
+    },
+    "correct": "b",
+    "explanation": "Częstość z małej serii jest zmienna. Brak zdarzeń w obserwacji nie dowodzi niemożliwości zdarzenia."
+  },
+  {
+    "id": "q5",
+    "question": "Który opis zdarzenia jest najbardziej użyteczny do obliczeń?",
+    "options": {
+      "a": "w magazynie jest niebezpiecznie",
+      "b": "banany bywają śliskie",
+      "c": "co najmniej jeden upadek w korytarzu podczas jednej 8-godzinnej zmiany",
+      "d": "pracownicy powinni uważać"
+    },
+    "correct": "c",
+    "explanation": "Zdarzenie jest obserwowalne, ma miejsce, jednostkę i horyzont czasu."
+  },
+  {
+    "id": "q6",
+    "question": "Prawdopodobieństwo upadku opisuje pełne ryzyko dla pracownika:",
+    "options": {
+      "a": "tak, zawsze",
+      "b": "nie, trzeba jeszcze uwzględnić możliwe skutki i kontekst decyzji",
+      "c": "tak, jeśli wynik podamy w procentach",
+      "d": "nie, ponieważ prawdopodobieństwo nie ma znaczenia"
+    },
+    "correct": "b",
+    "explanation": "Prawdopodobieństwo jest ważną składową analizy, ale nie opisuje samo dotkliwości ani rodzaju skutków."
+  },
+  {
+    "id": "q7",
+    "question": "W 100 kontrolach zdarzenie A wystąpiło 30 razy, B — 20 razy, a oba naraz — 8 razy. Ile razy wystąpiło A lub B?",
+    "options": {
+      "a": "42",
+      "b": "50",
+      "c": "58",
+      "d": "8"
+    },
+    "correct": "a",
+    "explanation": "30 + 20 − 8 = 42. Część wspólna została uwzględniona w obu licznikach, więc odejmujemy ją raz."
+  },
+  {
+    "id": "q8",
+    "question": "Dwa niezerowe zdarzenia rozłączne są automatycznie niezależne:",
+    "options": {
+      "a": "tak, ponieważ nie zachodzą razem",
+      "b": "nie, zajście jednego wyklucza drugie, więc zmienia o nim informację",
+      "c": "tak, jeśli mają takie samo prawdopodobieństwo",
+      "d": "nie da się tego rozstrzygnąć"
+    },
+    "correct": "b",
+    "explanation": "Rozłączność oznacza pustą część wspólną. Gdy jedno zdarzenie zaszło, drugie na pewno nie zaszło — to silna zależność."
+  },
+  {
+    "id": "q9",
+    "question": "Zdarzenia A i B mają takie samo prawdopodobieństwo. Czy wymagają automatycznie tego samego priorytetu?",
+    "options": {
+      "a": "tak, identyczne prawdopodobieństwo oznacza identyczne ryzyko",
+      "b": "tak, jeśli wyrażono je procentowo",
+      "c": "nie, mogą różnić się skutkami, ekspozycją, barierami i niepewnością",
+      "d": "nie, ponieważ prawdopodobieństwo nigdy nie jest użyteczne"
+    },
+    "correct": "c",
+    "explanation": "Priorytet działania wymaga profilu szerszego niż sama wartość prawdopodobieństwa."
+  },
+  {
+    "id": "q10",
+    "question": "Jeśli P(A) = 0,18, to P(Aᶜ) wynosi:",
+    "options": {
+      "a": "0,18",
+      "b": "0,82",
+      "c": "1,18",
+      "d": "nie da się obliczyć"
+    },
+    "correct": "b",
+    "explanation": "A i jego dopełnienie wyczerpują całą przestrzeń, dlatego P(Aᶜ) = 1 − 0,18 = 0,82."
+  }
+]
