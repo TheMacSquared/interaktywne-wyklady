@@ -235,7 +235,7 @@ ch10_server <- function(input, output, session) {
       " [", round(bc_slope$or_lower, 2), ", ",
       round(bc_slope$or_upper, 2), "]",
       tags$br(),
-      tags$em("Przy n ≥ 100 i Beta-nieinformatywnym priorze różnice numeryczne są niewielkie.
+      tags$em("Przy n ≥ 100 i słabo informacyjnym priorze normalnym dla współczynników różnice numeryczne są niewielkie.
                Różni się interpretacja (CI vs HDI) oraz możliwość bezpośrednich pytań
                o wartości praktyczne.")
     )

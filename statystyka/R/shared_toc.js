@@ -211,6 +211,7 @@
 
   var zoomOverlay = null;
   var zoomImg = null;
+  var zoomPreviousFocus = null;
 
   function ensureZoomOverlay() {
     if (zoomOverlay) return zoomOverlay;
@@ -219,6 +220,7 @@
     zoomOverlay.setAttribute("role", "dialog");
     zoomOverlay.setAttribute("aria-modal", "true");
     zoomOverlay.setAttribute("aria-label", "Powiększony obrazek");
+    zoomOverlay.setAttribute("tabindex", "-1");
     zoomImg = document.createElement("img");
     zoomImg.alt = "";
     zoomOverlay.appendChild(zoomImg);
@@ -233,18 +235,24 @@
 
   function openZoom(src, alt) {
     var overlay = ensureZoomOverlay();
+    zoomPreviousFocus = document.activeElement;
     zoomImg.src = src;
     zoomImg.alt = alt || "";
     // Force reflow przed dodaniem klasy, żeby transition zadziałało
     void overlay.offsetWidth;
     overlay.classList.add("is-open");
     document.body.style.overflow = "hidden";
+    overlay.focus();
   }
 
   function closeZoom() {
     if (!zoomOverlay) return;
     zoomOverlay.classList.remove("is-open");
     document.body.style.overflow = "";
+    if (zoomPreviousFocus && typeof zoomPreviousFocus.focus === "function") {
+      zoomPreviousFocus.focus();
+    }
+    zoomPreviousFocus = null;
   }
 
   // Event delegation — łapiemy kliki tylko w statyczne <img> które są
@@ -260,6 +268,14 @@
   });
 
   document.addEventListener("keydown", function (e) {
+    var img = e.target.closest && e.target.closest(
+      ".lc-figure-panel > img, .lc-figure-panel .lc-zoomable img"
+    );
+    if (img && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      openZoom(img.currentSrc || img.src, img.alt);
+      return;
+    }
     if (e.key === "Escape" && zoomOverlay && zoomOverlay.classList.contains("is-open")) {
       closeZoom();
     }

@@ -199,6 +199,14 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       )
     ),
 
+    lc_feedback(type = "warning",
+      tags$strong("Ten sam problem w danych satelitarnych:"),
+      " sąsiednie piksele często mają podobną temperaturę, wilgotność czy NDVI.
+        Obraz z milionem pikseli nie musi więc zawierać miliona niezależnych
+        informacji. Dodatkowo braki wywołane zachmurzeniem mają strukturę
+        przestrzenną i sezonową — usunięcie ich nie zawsze jest neutralne."
+    ),
+
     # --- Problem 7: Zła struktura ---
     div(class = "problem-card",
       div(class = "problem-header",

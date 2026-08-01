@@ -30,14 +30,14 @@ ch4_ui <- lecture_chapter(
       tags$tbody(
         tags$tr(
           tags$td(tags$strong("Test t jednej pr.")),
-          tags$td("Normalność danych (lub n > 30)"),
-          tags$td("Q-Q plot, Shapiro-Wilk"),
+          tags$td("Brak silnej skośności i groźnych outlierów"),
+          tags$td("Q-Q plot; pomocniczo Shapiro-Wilk"),
           tags$td("Wilcoxon jednej próby")
         ),
         tags$tr(
           tags$td(tags$strong("Test t niezależny")),
           tags$td("Normalność w grupach, równe wariancje"),
-          tags$td("Shapiro + Levene"),
+          tags$td("Q-Q w grupach + Levene; pomocniczo Shapiro"),
           tags$td("Welch t (nierówne war.), Mann-Whitney U (brak norm.)")
         ),
         tags$tr(
@@ -202,15 +202,15 @@ ch4_server <- function(input, output, session) {
   method_info <- list(
     t_one = list(
       name = "Test t jednej próby",
-      assumptions = c("Dane ilościowe", "Normalność danych (lub n > 30)"),
-      checks = c("Q-Q plot", "shapiro_test()"),
+      assumptions = c("Dane ilościowe", "Brak silnej skośności i groźnych outlierów"),
+      checks = c("Q-Q plot (najpierw)", "shapiro_test() pomocniczo"),
       alternatives = c("Wilcoxon jednej próby: wilcox_test(x ~ 1, mu = ...)"),
       r_code = "rstatix::t_test(data, var ~ 1, mu = wartość)"
     ),
     t_ind = list(
       name = "Test t niezależny",
-      assumptions = c("Dane ilościowe", "Normalność w każdej grupie (lub n > 30)", "Równe wariancje (lub użyj Welcha)"),
-      checks = c("Q-Q per group", "shapiro_test() per group", "levene_test()"),
+      assumptions = c("Dane ilościowe", "Brak silnych odchyleń w grupach", "Równe wariancje (lub użyj Welcha)"),
+      checks = c("Q-Q per group (najpierw)", "shapiro_test() pomocniczo", "levene_test()"),
       alternatives = c("Welch t (domyślny!): t_test(var.equal = FALSE)", "Mann-Whitney U: wilcox_test()"),
       r_code = "rstatix::t_test(data, var ~ group)"
     ),

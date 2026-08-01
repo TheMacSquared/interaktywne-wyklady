@@ -191,7 +191,7 @@ Jednolinijkowy opis.
 
 ## Wymagania
 
-- R (wersja >= 4.0)
+- R (wersja >= 4.1)
 - Pakiety R: `shiny`, `ggplot2`, `dplyr`
 
 ## Uruchamianie

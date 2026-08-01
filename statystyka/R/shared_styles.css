@@ -1804,6 +1804,12 @@ mjx-container mjx-text {
   cursor: zoom-in;
 }
 
+.lc-figure-panel > img[role="button"]:focus-visible,
+.lc-figure-panel .lc-zoomable img[role="button"]:focus-visible {
+  outline: 3px solid var(--upwr-accent);
+  outline-offset: 4px;
+}
+
 .lc-zoom-overlay {
   position: fixed;
   inset: 0;
@@ -1905,7 +1911,8 @@ mjx-container mjx-text {
   font-size: 14px; line-height: 1.2;
   opacity: 0; transition: opacity .15s;
 }
-.lc-zoom-plot-wrap:hover .lc-zoom-btn { opacity: 1; }
+.lc-zoom-plot-wrap:hover .lc-zoom-btn,
+.lc-zoom-btn:focus-visible { opacity: 1; }
 /* Na urządzeniach dotykowych (brak hover) przycisk zawsze widoczny */
 @media (hover: none) { .lc-zoom-btn { opacity: 1 !important; } }
 

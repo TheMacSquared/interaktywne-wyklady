@@ -1,6 +1,6 @@
 # ============================================================================
 # CHAPTER 8: Cwiczenia praktyczne — typy danych i statystyka opisowa
-# Trzy warianty kierunkowe: BHP, Rolnictwo, Technologia Zywnosci
+# Cztery warianty kierunkowe, w tym dane satelitarne i kosmiczne
 # ============================================================================
 
 # ============================================================================
@@ -29,7 +29,8 @@ ch8_ui <- list(
         choices = list(
           "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
           "Rolnictwo"                       = "rol",
-          "Technologia żywności"            = "zyw"
+          "Technologia żywności"            = "zyw",
+          "Inżynieria danych satelitarnych i kosmicznych" = "sat"
         ),
         selected = "bhp",
         width = "100%"
@@ -45,6 +46,78 @@ ch8_ui <- list(
 # ============================================================================
 # TRESC ZADAN — funkcje zwracajace tagList per kierunek
 # ============================================================================
+
+# Jedno źródło prawdy dla tabeli w zadaniu 1. Przed odsłonięciem odpowiedzi
+# komórki są puste; po kliknięciu ta sama tabela zostaje uzupełniona.
+.ch8_task1_specs <- list(
+  bhp = data.frame(
+    variable = c("branza", "liczba_pracownikow", "liczba_wypadkow",
+                 "kategoria_ryzyka", "sredni_halas_db", "ma_certyfikat_iso"),
+    type = c("Nominalna", "Ilościowa dyskretna", "Ilościowa dyskretna",
+             "Porządkowa", "Ilościowa ciągła", "Nominalna binarna"),
+    stats = c("Liczebności, proporcje, moda", "Średnia, mediana, SD, IQR",
+              "Średnia, mediana, SD, IQR", "Liczebności, proporcje, moda",
+              "Średnia, mediana, SD, IQR", "Liczebności i proporcje"),
+    plot = c("Słupkowy", "Histogram lub słupkowy", "Słupkowy",
+             "Słupkowy z zachowaniem kolejności", "Histogram i boxplot", "Słupkowy")
+  ),
+  rol = data.frame(
+    variable = c("uprawa", "powierzchnia_ha", "plon_t_ha", "klasa_gleby",
+                 "liczba_zabiegow", "nawozenie_organiczne"),
+    type = c("Nominalna", "Ilościowa ciągła", "Ilościowa ciągła",
+             "Porządkowa", "Ilościowa dyskretna", "Nominalna binarna"),
+    stats = c("Liczebności, proporcje, moda", "Średnia, mediana, SD, IQR",
+              "Średnia, mediana, SD, IQR", "Liczebności, proporcje, moda",
+              "Średnia, mediana, SD, IQR", "Liczebności i proporcje"),
+    plot = c("Słupkowy", "Histogram i boxplot", "Histogram i boxplot",
+             "Słupkowy z zachowaniem kolejności", "Słupkowy", "Słupkowy")
+  ),
+  zyw = data.frame(
+    variable = c("typ_produktu", "masa_netto_g", "liczba_reklamacji",
+                 "klasa_jakosci", "zawartosc_soli_pct", "spelnia_norme"),
+    type = c("Nominalna", "Ilościowa ciągła", "Ilościowa dyskretna",
+             "Porządkowa", "Ilościowa ciągła", "Nominalna binarna"),
+    stats = c("Liczebności, proporcje, moda", "Średnia, mediana, SD, IQR",
+              "Średnia, mediana, SD, IQR", "Liczebności, proporcje, moda",
+              "Średnia, mediana, SD, IQR", "Liczebności i proporcje"),
+    plot = c("Słupkowy", "Histogram i boxplot", "Słupkowy",
+             "Słupkowy z zachowaniem kolejności", "Histogram i boxplot", "Słupkowy")
+  ),
+  sat = data.frame(
+    variable = c("id_lokalizacji", "typ_pokrycia", "jakosc_pomiaru", "wysokosc_m",
+                 "zachmurzenie_pct", "ndvi", "sat_temp_c", "pomiar_dostepny"),
+    type = c("Identyfikator — nie analizujemy", "Nominalna", "Porządkowa",
+             "Ilościowa ciągła", "Ilościowa ciągła", "Ilościowa ciągła",
+             "Ilościowa ciągła", "Nominalna binarna"),
+    stats = c("Nie dotyczy — identyfikator", "Liczebności, proporcje, moda",
+              "Liczebności, proporcje, moda", "Średnia, mediana, SD, IQR",
+              "Średnia, mediana, SD, IQR", "Średnia, mediana, SD, IQR",
+              "Średnia, mediana, SD, IQR", "Liczebności i proporcje"),
+    plot = c("Nie dotyczy", "Słupkowy", "Słupkowy z zachowaniem kolejności",
+             "Histogram i boxplot", "Histogram i boxplot", "Histogram i boxplot",
+             "Histogram i boxplot", "Słupkowy")
+  )
+)
+
+.ch8_task1_table <- function(direction, reveal = FALSE) {
+  spec <- .ch8_task1_specs[[direction]]
+  blank <- tags$span(`aria-label` = "miejsce do uzupełnienia", HTML("&nbsp;"))
+  value <- function(x) if (isTRUE(reveal)) x else blank
+
+  tags$table(class = "lc-table lc-table-striped lc-table-bordered",
+    tags$thead(tags$tr(
+      tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
+    )),
+    tags$tbody(lapply(seq_len(nrow(spec)), function(i) {
+      tags$tr(
+        tags$td(tags$code(spec$variable[i])),
+        tags$td(value(spec$type[i])),
+        tags$td(value(spec$stats[i])),
+        tags$td(value(spec$plot[i]))
+      )
+    }))
+  )
+}
 
 # --------------------------------------------------------------------------
 # BHP
@@ -70,22 +143,9 @@ ch8_ui <- list(
         tags$li("Jaki wykres jest odpowiedni?")
       ),
       p("Wypełnij tabelę:"),
-      tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-        tags$thead(tags$tr(
-          tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
-        )),
-        tags$tbody(
-          tags$tr(tags$td(tags$code("branza")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("liczba_pracownikow")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("liczba_wypadkow")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("kategoria_ryzyka")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("sredni_halas_db")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("ma_certyfikat_iso")), tags$td("?"), tags$td("?"), tags$td("?"))
-        )
-      )
+      uiOutput("ch8_table1")
     ),
-    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
-    uiOutput("ch8_sol1")
+    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm")
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -228,22 +288,9 @@ ch8_ui <- list(
         tags$li("Jaki wykres jest odpowiedni?")
       ),
       p("Wypełnij tabelę:"),
-      tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-        tags$thead(tags$tr(
-          tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
-        )),
-        tags$tbody(
-          tags$tr(tags$td(tags$code("uprawa")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("powierzchnia_ha")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("plon_t_ha")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("klasa_gleby")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("liczba_zabiegow")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("nawozenie_organiczne")), tags$td("?"), tags$td("?"), tags$td("?"))
-        )
-      )
+      uiOutput("ch8_table1")
     ),
-    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
-    uiOutput("ch8_sol1")
+    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm")
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -377,22 +424,9 @@ ch8_ui <- list(
         tags$li("Jaki wykres jest odpowiedni?")
       ),
       p("Wypełnij tabelę:"),
-      tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-        tags$thead(tags$tr(
-          tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
-        )),
-        tags$tbody(
-          tags$tr(tags$td(tags$code("typ_produktu")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("masa_netto_g")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("liczba_reklamacji")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("klasa_jakosci")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("zawartosc_soli_pct")), tags$td("?"), tags$td("?"), tags$td("?")),
-          tags$tr(tags$td(tags$code("spelnia_norme")), tags$td("?"), tags$td("?"), tags$td("?"))
-        )
-      )
+      uiOutput("ch8_table1")
     ),
-    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
-    uiOutput("ch8_sol1")
+    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm")
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -507,30 +541,12 @@ ch8_ui <- list(
 # ROZWIAZANIA
 # ============================================================================
 
+source(file.path(app_dir, "modules", "ch8_sat.R"), local = TRUE)
+
 .ch8_solutions <- list(
 
   bhp = list(
-    sol1 = tagList(
-      tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-        tags$thead(tags$tr(
-          tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
-        )),
-        tags$tbody(
-          tags$tr(tags$td(tags$code("branza")), tags$td("Nominalna"),
-            tags$td("Moda, częstości, proporcje"), tags$td("Słupkowy")),
-          tags$tr(tags$td(tags$code("liczba_pracownikow")), tags$td("Dyskretna"),
-            tags$td("Średnia, mediana, SD, IQR"), tags$td("Histogram lub słupkowy")),
-          tags$tr(tags$td(tags$code("liczba_wypadkow")), tags$td("Dyskretna"),
-            tags$td("Średnia, mediana, SD, IQR"), tags$td("Słupkowy")),
-          tags$tr(tags$td(tags$code("kategoria_ryzyka")), tags$td("Porządkowa"),
-            tags$td("Moda, częstości, cz. skumulowane"), tags$td("Słupkowy (z kolejnością)")),
-          tags$tr(tags$td(tags$code("sredni_halas_db")), tags$td("Ciągła"),
-            tags$td("Średnia, mediana, SD, skośność"), tags$td("Histogram, boxplot")),
-          tags$tr(tags$td(tags$code("ma_certyfikat_iso")), tags$td("Nominalna (binarna)"),
-            tags$td("Częstości, proporcje"), tags$td("Słupkowy"))
-        )
-      )
-    ),
+    sol1 = NULL,
     sol2 = tagList(
       tags$b("1."), " Nie — to zmienna ", tags$b("porządkowa"),
         ". Liczby 1, 2, 3 oznaczają kategorie ryzyka z porządkiem, ale różnica
@@ -577,27 +593,7 @@ ch8_ui <- list(
   ),
 
   rol = list(
-    sol1 = tagList(
-      tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-        tags$thead(tags$tr(
-          tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
-        )),
-        tags$tbody(
-          tags$tr(tags$td(tags$code("uprawa")), tags$td("Nominalna"),
-            tags$td("Moda, częstości, proporcje"), tags$td("Słupkowy")),
-          tags$tr(tags$td(tags$code("powierzchnia_ha")), tags$td("Ciągła"),
-            tags$td("Średnia, mediana, SD, IQR"), tags$td("Histogram, boxplot")),
-          tags$tr(tags$td(tags$code("plon_t_ha")), tags$td("Ciągła"),
-            tags$td("Średnia, mediana, SD, skośność"), tags$td("Histogram, boxplot")),
-          tags$tr(tags$td(tags$code("klasa_gleby")), tags$td("Porządkowa"),
-            tags$td("Moda, częstości, cz. skumulowane"), tags$td("Słupkowy (z kolejnością)")),
-          tags$tr(tags$td(tags$code("liczba_zabiegow")), tags$td("Dyskretna"),
-            tags$td("Średnia, mediana, SD, IQR"), tags$td("Słupkowy")),
-          tags$tr(tags$td(tags$code("nawozenie_organiczne")), tags$td("Nominalna (binarna)"),
-            tags$td("Częstości, proporcje"), tags$td("Słupkowy"))
-        )
-      )
-    ),
+    sol1 = NULL,
     sol2 = tagList(
       tags$b("1."), " Nie nominalna — to ", tags$b("porządkowa"), "! Klasy I–VI mają
         naturalny porządek (I = najlepsza), ale różnice między klasami nie są równe.", tags$br(),
@@ -638,27 +634,7 @@ ch8_ui <- list(
   ),
 
   zyw = list(
-    sol1 = tagList(
-      tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-        tags$thead(tags$tr(
-          tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
-        )),
-        tags$tbody(
-          tags$tr(tags$td(tags$code("typ_produktu")), tags$td("Nominalna"),
-            tags$td("Moda, częstości, proporcje"), tags$td("Słupkowy")),
-          tags$tr(tags$td(tags$code("masa_netto_g")), tags$td("Ciągła"),
-            tags$td("Średnia, mediana, SD, IQR"), tags$td("Histogram, boxplot")),
-          tags$tr(tags$td(tags$code("liczba_reklamacji")), tags$td("Dyskretna"),
-            tags$td("Średnia, mediana, SD, IQR"), tags$td("Słupkowy")),
-          tags$tr(tags$td(tags$code("klasa_jakosci")), tags$td("Porządkowa"),
-            tags$td("Moda, częstości, cz. skumulowane"), tags$td("Słupkowy (z kolejnością)")),
-          tags$tr(tags$td(tags$code("zawartosc_soli_pct")), tags$td("Ciągła"),
-            tags$td("Średnia, mediana, SD, skośność"), tags$td("Histogram, boxplot")),
-          tags$tr(tags$td(tags$code("spelnia_norme")), tags$td("Nominalna (binarna)"),
-            tags$td("Częstości, proporcje"), tags$td("Słupkowy"))
-        )
-      )
-    ),
+    sol1 = NULL,
     sol2 = tagList(
       tags$b("1."), " Nie nominalna — to ", tags$b("porządkowa"), "!
         Premium > Standard > Ekonomiczna ma naturalny porządek jakości.", tags$br(),
@@ -699,6 +675,8 @@ ch8_ui <- list(
   )
 )
 
+.ch8_solutions$sat <- .ch8_sat_solutions
+
 
 # ============================================================================
 # SERVER
@@ -713,6 +691,12 @@ ch8_server <- function(input, output, session) {
   vis <- lapply(sol_ids, function(x) reactiveVal(FALSE))
   names(vis) <- sol_ids
 
+  output$ch8_table1 <- renderUI({
+    k <- input$ch8_kierunek
+    req(k %in% names(.ch8_task1_specs))
+    .ch8_task1_table(k, reveal = vis$sol1())
+  })
+
   # Render tresci po zmianie kierunku + reset stanow
   observeEvent(input$ch8_kierunek, {
     k <- input$ch8_kierunek
@@ -726,7 +710,8 @@ ch8_server <- function(input, output, session) {
       switch(k,
         bhp = .ch8_content_bhp(),
         rol = .ch8_content_rol(),
-        zyw = .ch8_content_zyw()
+        zyw = .ch8_content_zyw(),
+        sat = .ch8_content_sat()
       )
     })
   }, ignoreNULL = FALSE)

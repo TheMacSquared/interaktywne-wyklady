@@ -4,8 +4,8 @@ Aplikacje R Shiny w formie interaktywnych skryptów wykładowych. Każda aplikac
 
 ## 📋 Wymagania
 
-- R (wersja ≥ 4.0)
-- Pakiety R: `shiny`, `ggplot2`, `dplyr`, `e1071`, `gridExtra`, `rstatix`, `broom`, `tidyr`, `lmtest`, `visNetwork`
+- R (wersja ≥ 4.1)
+- Pakiety zależą od wykładu. Ich kompletność sprawdza skrypt `scripts/check_dependencies.R`.
 
 ## 🚀 Instalacja pakietów
 
@@ -21,6 +21,37 @@ install.packages(c("DT", "bslib", "AER", "palmerpenguins", "ISLR", "fivethirtyei
 # Dodatkowe (dla metody-bayesowskie)
 install.packages(c("BayesFactor", "rstanarm"))
 ```
+
+Kontrola środowiska przed uruchomieniem lub wdrożeniem:
+
+```sh
+Rscript statystyka/scripts/check_dependencies.R
+```
+
+## 🧪 Testy
+
+Testy deweloperskie wymagają pakietów `testthat` i `callr`:
+
+```r
+install.packages(c("testthat", "callr"))
+```
+
+Pełna kontrola przed wdrożeniem sprawdza zależności, kontrakt designu, funkcje
+statystyczne, strukturę repozytorium i ładuje każdą z 12 aplikacji w osobnym
+procesie R:
+
+```sh
+Rscript statystyka/scripts/run_tests.R
+```
+
+Szybka kontrola podczas edycji pomija ładowanie 12 aplikacji:
+
+```sh
+Rscript statystyka/scripts/run_tests.R --quick
+```
+
+Testy nie są częścią działających aplikacji Shiny i nie obciążają serwera podczas
+korzystania z wykładów przez studentów.
 
 ## ▶️ Uruchamianie
 
@@ -38,6 +69,7 @@ shiny::runApp("statystyka/08-metody-bayesowskie")
 shiny::runApp("statystyka/09-dobre-dane")
 shiny::runApp("statystyka/10-case-studies")
 shiny::runApp("statystyka/11-kierunkowe")
+shiny::runApp("statystyka/12-projekt-badawczy")
 ```
 
 Z katalogu `statystyka/`:
@@ -54,6 +86,7 @@ shiny::runApp("08-metody-bayesowskie")
 shiny::runApp("09-dobre-dane")
 shiny::runApp("10-case-studies")
 shiny::runApp("11-kierunkowe")
+shiny::runApp("12-projekt-badawczy")
 ```
 
 ## 📚 Aplikacje
@@ -71,6 +104,7 @@ shiny::runApp("11-kierunkowe")
 | [dobre-dane](09-dobre-dane/) | Jakość danych | 11 zbiorów — kiedy dane nadają się do klasycznej statystyki? (CASchools, pingwiny, Tarantino, Wage, hotel, formularz, laboratorium, studenci, kawiarnia) + ściąga |
 | [case-studies](10-case-studies/) | Case studies | Kompletne analizy od A do Z. Każdy rozdział = jeden zbiór danych, hipotezy, analizy, wnioski. Na razie: CASchools |
 | [kierunkowe](11-kierunkowe/) | Materiał kierunkowy | 6 chapterów, po jednym dla kierunku: rolnictwo, technologia żywności, inżynieria bezpieczeństwa, inżynieria środowiska, gospodarka wodna, OZE |
+| [projekt-badawczy](12-projekt-badawczy/) | Projekt badawczy | 7 rozdziałów: od ciekawości i hipotez, przez pomiar i pierwsze sprawdzenia, po model kontrolny, iterację i checklistę projektu grupowego |
 
 ## 📁 Struktura projektu
 
@@ -215,6 +249,11 @@ interaktywne-wyklady/statystyka/
 │       ├── ch4_srodowisko.R        # 4. Transformacje w regresji i LOD
 │       ├── ch5_wodna.R             # 5. Analiza częstości i okres powrotu
 │       └── ch6_oze.R               # 6. Weibull dla wiatru i szeregi czasowe
+├── 12-projekt-badawczy/                 # Myślenie badawcze przed modelowaniem
+│   ├── app.R                       # Główny plik i style specyficzne wykładu
+│   ├── HANDOUT.md                  # Scenariusz prowadzenia i założenia dydaktyczne
+│   ├── dane/                       # Lokalna kopia danych TeachingRatings
+│   └── modules/                    # 7 rozdziałów od pytania do checklisty projektu
 ├── R/                              # Współdzielone zasoby (shared.R, shared_styles.css, shared_toc.js)
 ├── README.md                       # Ten plik
 └── CLAUDE.md                       # Instrukcje dla AI
@@ -277,6 +316,25 @@ Aplikacje są zaprojektowane do:
 1. **Demonstracji na wykładach** — prowadzący scrolluje i omawia, studenci widzą na projektorze
 2. **Samodzielnej eksploracji** — studenci uruchamiają lokalnie i eksperymentują w swoim tempie
 3. **Materiałów do powtórki** — ściąga (rozdział 6) jako kompaktowe podsumowanie
+
+### Wariant: Inżynieria danych satelitarnych i kosmicznych
+
+Podstawowe wykłady 01–04 oraz ćwiczenia z regresji zawierają wariant oparty na
+jednym syntetycznym zbiorze `dane/satelitarne_obserwacje.csv`. Studenci wracają
+do tych samych zmiennych — temperatury satelitarnej i naziemnej, różnicy
+pomiarów, NDVI, zachmurzenia, typu pokrycia i jakości obserwacji — podczas nauki:
+
+- typów danych i statystyki opisowej;
+- podstawowych rozkładów prawdopodobieństwa;
+- przedziałów ufności dla średniej, różnicy sparowanej i proporcji;
+- testów jednej próby, proporcji, korelacji, porównań grup, χ² i ANOVA;
+- prostej i wielorakiej regresji oraz kalibracji względem pomiaru referencyjnego.
+
+Wariant nie wymaga znajomości radiometrii ani przetwarzania obrazów. NDVI jest
+traktowany wyłącznie jako przykładowa zmienna liczbowa. Krótkie uwagi o zależności
+przestrzennej, zachmurzeniu i błędzie systematycznym służą rozpoznaniu ograniczeń,
+nie wprowadzaniu geostatystyki. Dane i sposób ich odtworzenia opisuje
+[`dane/README.md`](dane/README.md).
 
 ## 🎨 Wspólny styl wizualny
 

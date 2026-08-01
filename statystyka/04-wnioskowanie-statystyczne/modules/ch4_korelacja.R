@@ -45,6 +45,8 @@ ch4_ui <- list(
       label = "Ryc. 6.1",
       title = "Kierunek korelacji",
       tags$img(src = "assets/correlation-direction.png",
+               alt = "Trzy wykresy punktowe pokazujące korelację dodatnią, brak korelacji liniowej i korelację ujemną.",
+               tabindex = "0", role = "button",
                style = "width: 100%; border-radius: 4px;")
     ),
 
@@ -59,6 +61,8 @@ ch4_ui <- list(
       label = "Ryc. 6.2",
       title = "Siła korelacji",
       tags$img(src = "assets/correlation-scatter.png",
+               alt = "Trzy chmury punktów o rosnącej sile korelacji liniowej.",
+               tabindex = "0", role = "button",
                style = "width: 100%; border-radius: 4px;")
     ),
 
@@ -75,6 +79,8 @@ ch4_ui <- list(
       label = "Ryc. 6.3",
       title = "r nie zależy od nachylenia",
       tags$img(src = "assets/correlation-strength.png",
+               alt = "Trzy zależności liniowe o różnych nachyleniach, ale podobnej sile korelacji.",
+               tabindex = "0", role = "button",
                style = "width: 100%; border-radius: 4px;")
     ),
 
@@ -247,6 +253,8 @@ ch4_ui <- list(
       label = "Ryc. 6.6",
       title = "Kwartet Anscombe’a",
       tags$img(src = "assets/anscombe-quartet.png",
+               alt = "Kwartet Anscombe’a: cztery bardzo różne chmury punktów o niemal identycznych statystykach opisowych i korelacji.",
+               tabindex = "0", role = "button",
                style = "width: 100%; border-radius: 4px;")
     ),
 
@@ -307,6 +315,8 @@ ch4_ui <- list(
       label = "Ryc. 6.9",
       title = "Nieliniowość przy r ≈ 0",
       tags$img(src = "assets/correlation-nonlinear.png",
+               alt = "Silna zależność w kształcie litery U, dla której korelacja liniowa jest bliska zeru.",
+               tabindex = "0", role = "button",
                style = "max-width: 500px; width: 100%; border-radius: 4px;")
     ),
 

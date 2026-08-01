@@ -480,7 +480,7 @@ ch3_server <- function(input, output, session) {
       labs(x = ch3_labels_pl[[x_var]], y = ch3_labels_pl[[outcome]]) +
       theme_upwr() +
       theme(legend.position = "top")
-  })
+  }, alt = "Wykres współczynników modelu regresji z 95% przedziałami ufności.")
 
   output$ch3_model_stats <- renderUI({
     model <- ch3_model()
@@ -535,7 +535,7 @@ ch3_server <- function(input, output, session) {
         labs(x = "β w modelu wielorakim", y = NULL) +
         theme_upwr()
     }
-  })
+  }, alt = "Wykres pokazujący zależności proste i współczynniki po kontroli pozostałych zmiennych.")
 
   output$ch3_control_info <- renderUI({
     df <- .cas_data
@@ -607,7 +607,7 @@ ch3_server <- function(input, output, session) {
         labs(x = "X₁", y = "X₂") +
         theme_upwr()
     }
-  })
+  }, alt = "Wykres punktowy dwóch coraz silniej współliniowych predyktorów.")
 
   output$ch3_collin_info <- renderUI({
     df <- ch3_collin_data()

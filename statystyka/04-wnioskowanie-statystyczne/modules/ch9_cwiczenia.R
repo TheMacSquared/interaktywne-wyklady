@@ -1,12 +1,14 @@
 # ============================================================================
 # CHAPTER 9: Cwiczenia praktyczne — dane z kierunków UPWr
-# Trzy syntetyczne zbiory (rolnictwo, inz. bezpieczenstwa, techn. zywnosci)
+# Cztery zbiory kierunkowe, w tym prosty wariant danych satelitarnych
 # pokrywajace wszystkie typy testow z wykladu.
 # ============================================================================
 
 # ============================================================================
 # UI
 # ============================================================================
+
+source(file.path(app_dir, "modules", "ch9_sat.R"), local = TRUE)
 
 ch9_ui <- list(
   id = "ch-cwiczenia", num = "12", title = "Ćwiczenia",
@@ -17,7 +19,7 @@ ch9_ui <- list(
       kicker = "Rozdział 12 · Testowanie hipotez",
       num    = "12",
       title  = "Ćwiczenia z danych UPWr.",
-      lead   = "Trzy zestawy danych z kierunków studiów UPWr — zastosuj wszystkie
+      lead   = "Cztery zestawy danych z kierunków studiów UPWr — zastosuj wszystkie
                 narzędzia z wykładu na danych ze swojej dziedziny:
                 test jednej próby, proporcji, korelację, test t dwóch grup,
                 test χ² i ANOVA."
@@ -36,7 +38,9 @@ ch9_ui <- list(
         tags$li(tags$b("Blok 2: Inżynieria bezpieczeństwa"),
           " — 200 przedsiębiorstw (wypadkowość, szkolenia BHP, ŚOI)"),
         tags$li(tags$b("Blok 3: Technologia żywności"),
-          " — 200 partii produktów spożywczych (białko, wilgotność, trwałość)")
+          " — 200 partii produktów spożywczych (białko, wilgotność, trwałość)"),
+        tags$li(tags$b("Blok 4: Inżynieria danych satelitarnych i kosmicznych"),
+          " — 180 lokalizacji (temperatura, NDVI, zachmurzenie, jakość pomiaru)")
       ),
       p(tags$b("Czas:"), " ~2 h · ",
         tags$b("Narzędzie:"), " Jamovi lub R · ",
@@ -46,7 +50,8 @@ ch9_ui <- list(
           choices = list(
             "Rolnictwo" = "rol",
             "Inżynieria bezpieczeństwa (BHP)" = "bhp",
-            "Technologia żywności" = "tz"
+            "Technologia żywności" = "tz",
+            "Inżynieria danych satelitarnych i kosmicznych" = "sat"
           ),
           selected = "rol",
           width = "100%"
@@ -290,6 +295,11 @@ ch9_ui <- list(
                    class = "lc-btn-ok-outline lc-btn-sm"),
       uiOutput("ch9_t_sol6")
       )
+    ),
+
+    conditionalPanel(
+      condition = "input.ch9_kierunek == 'sat'",
+      ch9_sat_ui()
     ),
 
     # ---- Blok 4: Myslenie krytyczne ----
@@ -580,6 +590,8 @@ ch9_ui <- list(
 # ============================================================================
 
 ch9_server <- function(input, output, session) {
+
+  ch9_sat_server(input, output, session)
 
   # ---- Rolnictwo ----
   rol <- .ch9_data$rol

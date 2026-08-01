@@ -216,7 +216,9 @@ ch1d_ui <- list(
     ),
 
     div(style = "text-align: center; margin: 15px 0;",
-      tags$img(src = "assets/type-error.jpg", style = "width: 100%; border-radius: 8px;")
+      tags$img(src = "assets/type-error.jpg",
+               alt = "Schemat błędu pierwszego i drugiego rodzaju zestawiony z decyzją testu i stanem rzeczywistym.",
+               style = "width: 100%; border-radius: 8px;")
     ),
 
     lc_h2("ch1-moc", "Wizualizacja α, β i mocy testu"),

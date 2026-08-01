@@ -1,6 +1,6 @@
 # ============================================================================
 # CHAPTER 9: Cwiczenia - Rozklady prawdopodobienstwa
-# Trzy warianty kierunkowe: BHP, Rolnictwo, Technologia Zywnosci
+# Cztery warianty kierunkowe, w tym dane satelitarne i kosmiczne
 # ============================================================================
 
 # ============================================================================
@@ -32,7 +32,8 @@ ch9_ui <- list(
         choices = list(
           "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
           "Rolnictwo"                       = "rol",
-          "Technologia żywności"            = "zyw"
+          "Technologia żywności"            = "zyw",
+          "Inżynieria danych satelitarnych i kosmicznych" = "sat"
         ),
         selected = "bhp",
         width = "100%"
@@ -685,6 +686,8 @@ ch9_ui <- list(
 # Helper: formatuje prawdopodobieństwo jako "0.2392 (~23.9%)"
 .fmt_p <- function(p) sprintf("%.4f (~%.1f%%)", p, 100 * p)
 
+source(file.path(app_dir, "modules", "ch9_sat.R"), local = TRUE)
+
 .ch9_solutions <- list(
 
   bhp = list(
@@ -930,6 +933,8 @@ ch9_ui <- list(
   )
 )
 
+.ch9_solutions$sat <- .ch9_sat_solutions
+
 # ============================================================================
 # SERVER
 # ============================================================================
@@ -960,7 +965,8 @@ ch9_server <- function(input, output, session) {
       switch(k,
         bhp = .ch9_content_bhp(),
         rol = .ch9_content_rol(),
-        zyw = .ch9_content_zyw()
+        zyw = .ch9_content_zyw(),
+        sat = .ch9_content_sat()
       )
     })
   }, ignoreNULL = FALSE)

@@ -342,9 +342,11 @@ ch3_ui <- list(
         tags$ol(
           tags$li("CI dla różnicy mówi czy różnica jest istotna — sprawdź
                    czy zawiera 0."),
-          tags$li("Nie porównuj nakładania się CI poszczególnych grup —
-                   to MOŻE dać mylny obraz. Zawsze patrz na CI
-                   dla różnicy."),
+          tags$li("Przy wielu grupach użyj forest plotu jako szybkiej mapy:
+                   rozłączne CI wskazują wyraźne różnice, ale nakładające się CI
+                   nie pozwalają stwierdzić, że różnicy nie ma."),
+          tags$li("Gdy chcesz precyzyjnie rozstrzygnąć dwie konkretne grupy,
+                   policz CI bezpośrednio dla różnicy średnich."),
           tags$li("„Istotne statystycznie” ≠ „ważne praktycznie”.
                    Przy bardzo dużym n nawet trywialne różnice
                    będą istotne."),
@@ -1577,8 +1579,9 @@ ch3_server <- function(input, output, session) {
     )
   }
 
-  # ---- Pairwise: macierz nakladania CI dla forest plot ----
-  # Zwraca macierz logiczna NxN: TRUE = grupy roznia sie istotnie (CI nie nakladaja).
+  # ---- Pairwise: szybka macierz rozlacznych CI dla forest plot ----
+  # TRUE oznacza rozłączne 95% CI, co jest mocnym sygnałem różnicy.
+  # FALSE jest wynikiem nierozstrzygającym: nakładanie CI nie dowodzi braku różnicy.
   forest_pairwise_matrix <- function(data) {
     k <- length(data$groups)
     cis <- lapply(seq_len(k), function(i) {
@@ -1588,7 +1591,7 @@ ch3_server <- function(input, output, session) {
                 dimnames = list(data$groups, data$groups))
     for (i in seq_len(k)) for (j in seq_len(k)) {
       if (i == j) next
-      # Roznia sie gdy CI[i] i CI[j] sie nie nakladaja
+      # Szybki sygnał różnicy: CI[i] i CI[j] są rozłączne.
       m[i, j] <- (cis[[i]]$upper < cis[[j]]$lower) ||
                  (cis[[j]]$upper < cis[[i]]$lower)
     }
@@ -1631,7 +1634,7 @@ ch3_server <- function(input, output, session) {
     k <- length(groups)
     unit_str <- if (nzchar(unit)) paste0(" ", unit) else ""
 
-    # Wyciagnij istotne pary z gornego trojkata, z kierunkiem (wieksza > mniejsza)
+    # Wyciągnij pary z rozłącznymi CI z górnego trójkąta.
     diff_pairs <- list()
     for (i in seq_len(k - 1)) for (j in seq(i + 1, k)) {
       if (mat[i, j]) {
@@ -1646,9 +1649,9 @@ ch3_server <- function(input, output, session) {
 
     if (n_diff == 0) {
       return(paste0(
-        "Żadna para grup nie wykazała istotnej różnicy — wszystkie 95% CI ",
-        "nakładają się wzajemnie. Na podstawie tych danych nie możemy ",
-        "stwierdzić różnic między badanymi grupami."
+        "Żadna para nie ma rozłącznych 95% CI. Ta szybka ocena nie wskazała ",
+        "oczywistych różnic, ale nakładanie się przedziałów nie dowodzi ich braku. ",
+        "Aby rozstrzygnąć konkretną parę, policz przedział dla różnicy średnich."
       ))
     }
 
@@ -1661,11 +1664,11 @@ ch3_server <- function(input, output, session) {
       return(paste0(
         "Spośród wszystkich badanych grup wyraźnie odstaje ",
         tags$b(groups[i]), " (średnia ", round(means[i], 1), unit_str,
-        ") — ma istotnie ", direction, " wartość niż każda z pozostałych grup ",
+        ") — szybkie porównanie wskazuje na ", direction, " wartość niż w każdej z pozostałych grup ",
         "(jej 95% CI nie nakłada się z żadnym innym). ",
         "Pozostałe grupy mają średnie w przedziale ",
         round(min(others), 1), "–", round(max(others), 1), unit_str,
-        ", a ich CI nakładają się — nie możemy stwierdzić między nimi istotnych różnic."
+        ", a ich CI nakładają się — ten wykres nie rozstrzyga różnic między nimi."
       ))
     }
 
@@ -1683,16 +1686,16 @@ ch3_server <- function(input, output, session) {
     }
 
     intro <- if (n_diff == 1) {
-      "Spośród wszystkich porównań jedynie jedna para wykazała istotną różnicę: "
+      "Spośród wszystkich porównań jedynie jedna para ma rozłączne 95% CI: "
     } else {
-      paste0("Istotne różnice (CI nie nakładają się) wykazały ",
+      paste0("Rozłączne 95% CI, wskazujące wyraźne różnice, mają ",
              n_diff, " pary: ")
     }
 
     paste0(
       intro, pairs_inline, ". ",
-      "Pozostałe pary nie różnią się istotnie — ich 95% CI nakładają się, ",
-      "więc na podstawie tych danych nie możemy między nimi rozróżnić."
+      "Dla pozostałych par 95% CI nakładają się. To wynik nierozstrzygający, ",
+      "a nie dowód braku różnicy; konkretną parę sprawdzamy przedziałem dla różnicy średnich."
     )
   }
 
@@ -1728,12 +1731,12 @@ ch3_server <- function(input, output, session) {
                                          unit = if (!is.null(hyp$unit)) hyp$unit else "")
         return(lc_feedback(type = "ok",
           p(tags$strong("Hipoteza: "), hyp$text),
-          p(tags$strong("Werdykt — macierz par:")),
-          p(tags$em("✓ = grupy różnią się istotnie (CI nie nakładają się);  ",
-                    "× = nie można stwierdzić różnicy (CI nakładają się)"),
+          p(tags$strong("Szybka mapa porównań:")),
+          p(tags$em("✓ = rozłączne CI: wyraźny sygnał różnicy;  ",
+                    "× = CI nakładają się: wykres nie rozstrzyga"),
             style = "font-size: 12px; color: var(--upwr-reference);"),
           render_pairwise_table(mat),
-          p(tags$strong("Jak to opisać w raporcie:"),
+          p(tags$strong("Jak to opisać na tym etapie:"),
             style = "margin-top: 12px;"),
           p(HTML(narrative), style = "font-style: italic;")
         ))
