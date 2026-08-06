@@ -1,4 +1,4 @@
-testthat::test_that("kurs zawiera 12 oczekiwanych aplikacji", {
+testthat::test_that("kurs zawiera wszystkie oczekiwane aplikacje", {
   app_dirs <- sort(list.dirs(stat_root, recursive = FALSE, full.names = FALSE))
   app_dirs <- app_dirs[file.exists(file.path(stat_root, app_dirs, "app.R"))]
   testthat::expect_setequal(app_dirs, expected_apps)

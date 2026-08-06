@@ -2,8 +2,6 @@
 # CHAPTER 7: Cwiczenia praktyczne
 # ============================================================================
 
-source(file.path(app_dir, "modules", "ch7_sat.R"), local = TRUE)
-
 ch7_ui <- list(
   id    = "ch-cwiczenia",
   num   = "07",
@@ -23,23 +21,23 @@ ch7_ui <- list(
     tagList(
       p(tags$b("Czas trwania:"), " ~ 75-90 minut · ",
         tags$b("Narzędzie:"), " R albo Jamovi"),
-      p("Zadania opierają się na danych ", tags$code("dane/caschools.csv"),
+      p("Zadania opierają się na danych ", tags$code("dane/penguins.csv"),
         " oraz jednym małym zbiorze symulowanym dla regresji logistycznej.
         Najpierw wykonaj analizę samodzielnie, potem odsłoń rozwiązanie."),
       lc_feedback(type = "info",
         p("Nie chodzi o przepisywanie tabeli. W każdym zadaniu zapisz jedno
-          zdanie interpretacji w języku problemu: wynik testu szkolnego,
-          dochód okręgu, odsetek uczniów z dotacją do obiadu albo
+          zdanie interpretacji w języku problemu: masa ciała pingwina,
+          długość płetwy, wysokość dzioba, gatunek albo
           prawdopodobieństwo zdania egzaminu.")
       )
     ),
 
     lc_h2("ch7-liniowa", "Blok 1: regresja liniowa prosta"),
 
-    figure_panel(label = "Ćw. 1", title = "Czy ubóstwo w okręgu przewiduje wynik z czytania?",
+    figure_panel(label = "Ćw. 1", title = "Czy długość płetwy przewiduje masę ciała?",
       tagList(
-        p("Dopasuj model ", tags$code("read ~ lunch"),
-          ", gdzie ", tags$code("lunch"), " to procent uczniów z dotacją do obiadu."),
+        p("Dopasuj model ", tags$code("body_mass_g ~ flipper_length_mm"),
+          ", gdzie ", tags$code("flipper_length_mm"), " to długość płetwy w mm."),
         tags$ol(
           tags$li("Zapisz równanie regresji."),
           tags$li("Zinterpretuj nachylenie."),
@@ -52,9 +50,9 @@ ch7_ui <- list(
 
     figure_panel(label = "Ćw. 2", title = "Predykcja i ekstrapolacja",
       tagList(
-        p("Użyj modelu z ćwiczenia 1 i przewidź wynik czytania dla okręgu,
-          w którym ", tags$code("lunch = 40"), "."),
-        p("Następnie policz predykcję dla ", tags$code("lunch = 110"),
+        p("Użyj modelu z ćwiczenia 1 i przewidź masę ciała pingwina,
+          u którego ", tags$code("flipper_length_mm = 200"), "."),
+        p("Następnie policz predykcję dla ", tags$code("flipper_length_mm = 260"),
           ". Czy druga predykcja ma sens? Uzasadnij.")
       ),
       actionButton("ch7_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
@@ -63,13 +61,13 @@ ch7_ui <- list(
 
     lc_h2("ch7-jakosc", "Blok 2: jakość i porównanie modeli"),
 
-    figure_panel(label = "Ćw. 3", title = "Który model czytania jest lepszy?",
+    figure_panel(label = "Ćw. 3", title = "Który model masy ciała jest lepszy?",
       tagList(
-        p("Porównaj trzy modele dla ", tags$code("read"), ":"),
+        p("Porównaj trzy modele dla ", tags$code("body_mass_g"), ":"),
         tags$ol(
-          tags$li(tags$code("read ~ lunch")),
-          tags$li(tags$code("read ~ lunch + income")),
-          tags$li(tags$code("read ~ lunch + income + english + student_teacher_ratio"))
+          tags$li(tags$code("body_mass_g ~ flipper_length_mm")),
+          tags$li(tags$code("body_mass_g ~ flipper_length_mm + bill_length_mm")),
+          tags$li(tags$code("body_mass_g ~ flipper_length_mm + bill_length_mm + bill_depth_mm + species"))
         ),
         p("Porównaj R², adjusted R², AIC, BIC i RMSE. Który model wybierzesz
           do wyjaśniania, a który do predykcji?")
@@ -80,10 +78,10 @@ ch7_ui <- list(
 
     figure_panel(label = "Ćw. 4", title = "Reszty mówią, czy model kłamie",
       tagList(
-        p("Dla modelu ", tags$code("read ~ income"),
+        p("Dla modelu ", tags$code("bill_depth_mm ~ bill_length_mm"),
           " narysuj wykres reszt względem wartości dopasowanych i Q-Q plot."),
-        p("Czy widzisz sygnał nieliniowości, obserwacji odstających albo
-          problemu z normalnością reszt? Co zrobiłbyś dalej?")
+        p("Czy widzisz w resztach ukryty podział na grupy (gatunki), obserwacje
+          odstające albo problem z normalnością reszt? Co zrobiłbyś dalej?")
       ),
       actionButton("ch7_ans4", "Pokaż wskazówkę", class = "lc-btn-ok-outline lc-btn-sm"),
       uiOutput("ch7_sol4")
@@ -94,51 +92,13 @@ ch7_ui <- list(
     figure_panel(label = "Ćw. 5", title = "Interpretacja ceteris paribus",
       tagList(
         p("Dopasuj model ",
-          tags$code("math ~ lunch + income + english + student_teacher_ratio"), "."),
-        p("Zinterpretuj współczynnik przy ", tags$code("income"),
+          tags$code("body_mass_g ~ bill_depth_mm + flipper_length_mm + species"), "."),
+        p("Zinterpretuj współczynnik przy ", tags$code("bill_depth_mm"),
           " i porównaj go ze współczynnikiem w modelu prostym ",
-          tags$code("math ~ income"), ".")
+          tags$code("body_mass_g ~ bill_depth_mm"), ".")
       ),
       actionButton("ch7_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
       uiOutput("ch7_sol5")
-    ),
-
-    lc_h2("ch7-kontekst", "Blok 3B: kontekst i interakcje na pingwinach"),
-
-    figure_panel(
-      label = "Ćw. 5A",
-      title = "Czy pominięcie gatunku zmienia wniosek?",
-      tagList(
-        p("Dopasuj dwa modele dla danych ", tags$code("palmerpenguins"), ":"),
-        tags$ol(
-          tags$li(tags$code("bill_depth_mm ~ bill_length_mm")),
-          tags$li(tags$code("bill_depth_mm ~ bill_length_mm + species"))
-        ),
-        p("Porównaj znak współczynnika długości dzioba i wyjaśnij, dlaczego się zmienił.")
-      ),
-      actionButton(
-        "ch7_ans5a", "Pokaż rozwiązanie",
-        class = "lc-btn-ok-outline lc-btn-sm"
-      ),
-      uiOutput("ch7_sol5a")
-    ),
-
-    figure_panel(
-      label = "Ćw. 5B",
-      title = "Czy gatunki potrzebują różnych nachyleń?",
-      tagList(
-        p("Porównaj modele:"),
-        tags$ol(
-          tags$li(tags$code("body_mass_g ~ flipper_length_mm + species")),
-          tags$li(tags$code("body_mass_g ~ flipper_length_mm * species"))
-        ),
-        p("Narysuj przewidywane linie, sprawdź składniki interakcji i porównaj AIC.")
-      ),
-      actionButton(
-        "ch7_ans5b", "Pokaż rozwiązanie",
-        class = "lc-btn-ok-outline lc-btn-sm"
-      ),
-      uiOutput("ch7_sol5b")
     ),
 
     lc_h2("ch7-logistyczna", "Blok 4: regresja logistyczna"),
@@ -161,8 +121,6 @@ model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
       uiOutput("ch7_sol6")
     ),
 
-    ch7_sat_ui(),
-
     lc_h2("ch7-podsumowanie", "Na koniec"),
 
     lc_feedback(type = "ok",
@@ -177,8 +135,6 @@ model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
 )
 
 ch7_server <- function(input, output, session) {
-
-  ch7_sat_server(input, output, session)
 
   ch7_show <- function(id) {
     isTruthy(input[[id]]) && input[[id]] > 0
@@ -213,52 +169,52 @@ ch7_server <- function(input, output, session) {
   output$ch7_sol1 <- renderUI({
     if (!ch7_show("ch7_ans1")) return(NULL)
 
-    model <- lm(read ~ lunch, data = .cas_data)
+    model <- lm(body_mass_g ~ flipper_length_mm, data = .cas_data)
     coefs <- coef(model)
     g <- broom::glance(model)
 
     lc_feedback(type = "ok",
       p("Równanie: ",
-        tags$code(sprintf("read = %.2f %+ .2f * lunch", coefs[1], coefs[2]))),
-      p("Interpretacja: wzrost odsetka uczniów z dotacją do obiadu o 1 punkt
-        procentowy wiąże się przeciętnie ze zmianą wyniku czytania o ",
-        tags$b(sprintf("%.2f", coefs[2])), " punktu."),
+        tags$code(sprintf("body_mass_g = %.2f %+ .2f * flipper_length_mm", coefs[1], coefs[2]))),
+      p("Interpretacja: wzrost długości płetwy o 1 mm wiąże się przeciętnie
+        ze zmianą masy ciała o ",
+        tags$b(sprintf("%.2f", coefs[2])), " g."),
       p("R² = ", tags$b(sprintf("%.3f", g$r.squared)),
         ", więc model wyjaśnia około ",
         tags$b(sprintf("%.1f%%", 100 * g$r.squared)),
-        " zmienności wyników czytania.")
+        " zmienności masy ciała.")
     )
   })
 
   output$ch7_sol2 <- renderUI({
     if (!ch7_show("ch7_ans2")) return(NULL)
 
-    model <- lm(read ~ lunch, data = .cas_data)
-    pred <- predict(model, newdata = data.frame(lunch = c(40, 110)))
-    rng <- range(.cas_data$lunch, na.rm = TRUE)
+    model <- lm(body_mass_g ~ flipper_length_mm, data = .cas_data)
+    pred <- predict(model, newdata = data.frame(flipper_length_mm = c(200, 260)))
+    rng <- range(.cas_data$flipper_length_mm, na.rm = TRUE)
 
     lc_feedback(type = "warning",
-      p("Dla ", tags$code("lunch = 40"), " predykcja wynosi ",
-        tags$b(sprintf("%.1f", pred[1])), " punktu."),
-      p("Dla ", tags$code("lunch = 110"), " mechaniczna predykcja wynosi ",
-        tags$b(sprintf("%.1f", pred[2])), " punktu, ale to ekstrapolacja."),
-      p("W danych ", tags$code("lunch"), " mieści się w zakresie ",
-        tags$b(sprintf("%.1f-%.1f", rng[1], rng[2])),
-        ". Model nie został nauczony na wartościach powyżej tego zakresu.")
+      p("Dla ", tags$code("flipper_length_mm = 200"), " predykcja wynosi ",
+        tags$b(sprintf("%.0f", pred[1])), " g."),
+      p("Dla ", tags$code("flipper_length_mm = 260"), " mechaniczna predykcja wynosi ",
+        tags$b(sprintf("%.0f", pred[2])), " g, ale to ekstrapolacja."),
+      p("W danych ", tags$code("flipper_length_mm"), " mieści się w zakresie ",
+        tags$b(sprintf("%.0f-%.0f", rng[1], rng[2])),
+        " mm. Model nie został nauczony na wartościach powyżej tego zakresu.")
     )
   })
 
   output$ch7_sol3 <- renderUI({
     if (!ch7_show("ch7_ans3")) return(NULL)
 
-    m1 <- lm(read ~ lunch, data = .cas_data)
-    m2 <- lm(read ~ lunch + income, data = .cas_data)
-    m3 <- lm(read ~ lunch + income + english + student_teacher_ratio, data = .cas_data)
+    m1 <- lm(body_mass_g ~ flipper_length_mm, data = .cas_data)
+    m2 <- lm(body_mass_g ~ flipper_length_mm + bill_length_mm, data = .cas_data)
+    m3 <- lm(body_mass_g ~ flipper_length_mm + bill_length_mm + bill_depth_mm + species, data = .cas_data)
 
     metrics <- rbind(
-      ch7_metric_row(m1, "lunch"),
-      ch7_metric_row(m2, "lunch + income"),
-      ch7_metric_row(m3, "lunch + income + english + STR")
+      ch7_metric_row(m1, "flipper"),
+      ch7_metric_row(m2, "flipper + bill_length"),
+      ch7_metric_row(m3, "flipper + bill_length + bill_depth + species")
     )
     metrics[, -1] <- lapply(metrics[, -1], function(x) round(x, 3))
 
@@ -280,31 +236,31 @@ ch7_server <- function(input, output, session) {
   output$ch7_sol4 <- renderUI({
     if (!ch7_show("ch7_ans4")) return(NULL)
 
-    model <- lm(read ~ income, data = .cas_data)
+    model <- lm(bill_depth_mm ~ bill_length_mm, data = .cas_data)
     g <- broom::glance(model)
 
     lc_feedback(type = "info",
       p("W R zacznij od:"),
       tags$pre(class = "lc-code-block",
         tags$code(
-"model <- lm(read ~ income, data = caschools)
+"model <- lm(bill_depth_mm ~ bill_length_mm, data = penguins)
 plot(model, which = 1)  # reszty vs dopasowane
 plot(model, which = 2)  # Q-Q plot")
       ),
       p("W tym modelu R² = ", tags$b(sprintf("%.3f", g$r.squared)),
-        ", ale sama liczba nie wystarczy. Jeśli na wykresie reszt widzisz łuk,
-        rozważ transformację dochodu, składnik nieliniowy albo porównanie
-        z modelem wielorakim.")
+        ", ale sama liczba nie wystarczy. Jeśli reszty rozpadają się na trzy
+        chmury, rozważ dodanie gatunku jako predyktora — to klasyczny przykład
+        paradoksu Simpsona.")
     )
   })
 
   output$ch7_sol5 <- renderUI({
     if (!ch7_show("ch7_ans5")) return(NULL)
 
-    simple <- lm(math ~ income, data = .cas_data)
-    multi <- lm(math ~ lunch + income + english + student_teacher_ratio, data = .cas_data)
-    simple_income <- coef(simple)[["income"]]
-    multi_income <- coef(multi)[["income"]]
+    simple <- lm(body_mass_g ~ bill_depth_mm, data = .cas_data)
+    multi <- lm(body_mass_g ~ bill_depth_mm + flipper_length_mm + species, data = .cas_data)
+    simple_depth <- coef(simple)[["bill_depth_mm"]]
+    multi_depth <- coef(multi)[["bill_depth_mm"]]
     coefs <- broom::tidy(multi)
     coefs$estimate <- round(coefs$estimate, 3)
     coefs$std.error <- round(coefs$std.error, 3)
@@ -314,82 +270,14 @@ plot(model, which = 2)  # Q-Q plot")
     tagList(
       ch7_table(coefs[, c("term", "estimate", "std.error", "statistic", "p.value")]),
       lc_feedback(type = "ok",
-        p("W modelu prostym wzrost dochodu o 1 tys. USD wiąże się ze zmianą
-          wyniku matematyki o ", tags$b(sprintf("%.2f", simple_income)),
-          " punktu."),
-        p("W modelu wielorakim, przy stałych wartościach lunch, english i STR,
+        p("W modelu prostym wzrost wysokości dzioba o 1 mm wiąże się ze zmianą
+          masy ciała o ", tags$b(sprintf("%.2f", simple_depth)),
+          " g."),
+        p("W modelu wielorakim, przy stałej długości płetwy i gatunku,
           analogiczny współczynnik wynosi ",
-          tags$b(sprintf("%.2f", multi_income)), "."),
+          tags$b(sprintf("%.2f", multi_depth)), "."),
         p("Różnica między tymi liczbami to właśnie sens kontroli zmiennych:
-          część związku dochodu z wynikiem była współdzielona z innymi predyktorami.")
-      )
-    )
-  })
-
-  output$ch7_sol5a <- renderUI({
-    if (!ch7_show("ch7_ans5a")) return(NULL)
-
-    simple <- lm(bill_depth_mm ~ bill_length_mm, data = .penguins_data)
-    controlled <- lm(
-      bill_depth_mm ~ bill_length_mm + species,
-      data = .penguins_data
-    )
-    b_simple <- coef(simple)[["bill_length_mm"]]
-    b_controlled <- coef(controlled)[["bill_length_mm"]]
-
-    lc_feedback(
-      type = "ok",
-      p(
-        "Bez gatunku nachylenie wynosi ",
-        tags$strong(sprintf("%.3f", b_simple)),
-        ", a po kontroli gatunku ",
-        tags$strong(sprintf("%.3f", b_controlled)), "."
-      ),
-      p(
-        "Znak zmienia się, ponieważ model prosty miesza różnice między",
-        " gatunkami z relacją długości i wysokości dzioba wewnątrz gatunków."
-      )
-    )
-  })
-
-  output$ch7_sol5b <- renderUI({
-    if (!ch7_show("ch7_ans5b")) return(NULL)
-
-    additive <- lm(
-      body_mass_g ~ flipper_length_mm + species,
-      data = .penguins_data
-    )
-    interaction <- lm(
-      body_mass_g ~ flipper_length_mm * species,
-      data = .penguins_data
-    )
-    interaction_terms <- broom::tidy(interaction)
-    interaction_terms <- interaction_terms[grepl(":", interaction_terms$term), ]
-
-    comparison <- data.frame(
-      model = c("addytywny", "z interakcją"),
-      AIC = round(c(AIC(additive), AIC(interaction)), 1),
-      RMSE = round(c(
-        sqrt(mean(residuals(additive)^2)),
-        sqrt(mean(residuals(interaction)^2))
-      ), 1),
-      parametry = c(length(coef(additive)), length(coef(interaction))),
-      check.names = FALSE
-    )
-
-    tagList(
-      ch7_table(comparison),
-      ch7_table(data.frame(
-        składnik = interaction_terms$term,
-        współczynnik = round(interaction_terms$estimate, 3),
-        p_value = signif(interaction_terms$p.value, 3),
-        check.names = FALSE
-      )),
-      lc_feedback(
-        type = "info",
-        "Model z interakcją pozwala na różne nachylenia, ale płaci za to",
-        " dodatkowymi parametrami. Decyzję uzasadnij wykresem, pytaniem",
-        " merytorycznym i zmianą jakości dopasowania."
+          część związku wysokości dzioba z masą była współdzielona z innymi predyktorami.")
       )
     )
   })

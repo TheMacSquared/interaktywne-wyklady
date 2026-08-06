@@ -1,5 +1,5 @@
-# Regresja - interaktywny przewodnik
-# Scrollowalny skrypt z osadzonymi widgetami do nauczania regresji liniowej i logistycznej
+# Regresja light - 45-minutowy crash course
+# Osobna, kompaktowa wersja wykładu. Pełna aplikacja zostaje w app.R.
 
 library(shiny)
 library(ggplot2)
@@ -31,30 +31,20 @@ source(file.path(project_root, "R", "shared.R"),         local = TRUE)
 source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
-source(file.path(app_dir, "modules", "helpers.R"),         local = TRUE)
-source(file.path(app_dir, "modules", "ch0_mapa.R"),        local = TRUE)
-source(file.path(app_dir, "modules", "ch1_liniowa.R"),     local = TRUE)
-source(file.path(app_dir, "modules", "ch2_jakosc.R"),      local = TRUE)
-source(file.path(app_dir, "modules", "ch3_wieloraka.R"),   local = TRUE)
-source(file.path(app_dir, "modules", "ch3b_kontekst.R"),   local = TRUE)
-source(file.path(app_dir, "modules", "ch4_porownanie.R"),  local = TRUE)
-source(file.path(app_dir, "modules", "ch5_logistyczna.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch6_sciaga.R"),      local = TRUE)
-source(file.path(app_dir, "modules", "ch7_cwiczenia.R"),   local = TRUE)
+source(file.path(app_dir, "modules", "helpers.R"),  local = TRUE)
+source(file.path(app_dir, "modules", "ch2_jakosc.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch0_light.R"), local = TRUE)
 
 # ============================================================================
 # UI
 # ============================================================================
 
-.chapters <- list(
-  ch0_map_ui, ch1_ui, ch2_ui, ch3_ui, ch3b_ui,
-  ch4_ui, ch5_ui, ch6_ui, ch7_ui
-)
+.chapters <- list(ch0_light_ui)
 
 ui <- lecture_page(
   lecture_id    = "regresja",
-  lecture_num   = "06",
-  lecture_title = "Regresja",
+  lecture_num   = "06L",
+  lecture_title = "Regresja light",
   module_label  = "Moduł VI",
   chapters      = .chapters
 )
@@ -64,18 +54,9 @@ ui <- lecture_page(
 # ============================================================================
 
 server <- function(input, output, session) {
-
-  lc <- lecture_server(.chapters, input, output, session)
-
-  ch0_map_server(input, output, session)
-  ch1_server(input, output, session)
+  lecture_server(.chapters, input, output, session)
   ch2_server(input, output, session)
-  ch3_server(input, output, session)
-  ch3b_server(input, output, session)
-  ch4_server(input, output, session)
-  ch5_server(input, output, session)
-  ch6_server(input, output, session)
-  ch7_server(input, output, session)
+  ch0_light_server(input, output, session)
 }
 
 shinyApp(ui = ui, server = server)

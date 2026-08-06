@@ -33,39 +33,30 @@ ch5_ui <- list(
         w której zwykły wynik liczbowy zamieniamy na zdarzenie: zdał albo
         nie zdał. Próg nie jest drobiazgiem technicznym — to definicja
         zmiennej zależnej."),
-      p("Poniżej używamy danych CASchools. Najpierw patrzymy na oryginalny
-        wynik czytania, potem ustawiamy próg zaliczenia i dopiero z tak
+      p("Poniżej używamy danych palmerpenguins. Najpierw patrzymy na oryginalną
+        masę ciała, potem ustawiamy próg „ciężkiego pingwina” i dopiero z tak
         utworzonego Y = 0/1 budujemy model logistyczny.")
     ),
 
-    lc_feedback(
-      type = "warning",
-      tags$strong("To demonstracja, nie zalecenie:"),
-      " sztuczne progowanie wyniku ciągłego traci informację. Jeśli wynik",
-      " punktowy jest dostępny i odpowiada na pytanie badawcze, zwykle lepiej",
-      " modelować go bez zamiany na 0/1. Logistyczna jest naturalna wtedy,",
-      " gdy samo zdarzenie jest binarne."
-    ),
-
     figure_panel(
-      label = "Ryc. 5.0", title = "Od wyniku punktowego do prawdopodobieństwa zdania",
+      label = "Ryc. 5.0", title = "Od masy ciała do prawdopodobieństwa, że pingwin jest ciężki",
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch5_cas_y_cut", "Próg zaliczenia: zdał od:",
-                      min = 630, max = 680, value = 656, step = 1),
+          sliderInput("ch5_cas_y_cut", "Próg: ciężki pingwin od (g):",
+                      min = 3000, max = 5500, value = 4050, step = 50),
           uiOutput("ch5_cas_threshold_note"),
           lc_feedback(type = "info",
             tags$strong("Co pokazuje widget?"),
             tags$ul(
-              tags$li("Najpierw mamy zwykły wynik punktowy z czytania."),
-              tags$li("Próg zamienia wynik na zmienną: zdał / nie zdał."),
-              tags$li("Regresja logistyczna modeluje prawdopodobieństwo klasy 'zdał'.")
+              tags$li("Najpierw mamy zwykłą masę ciała w gramach."),
+              tags$li("Próg zamienia masę na zmienną: ciężki / lekki."),
+              tags$li("Regresja logistyczna modeluje prawdopodobieństwo klasy 'ciężki'.")
             )
           )
         ),
         column(8,
-          tags$h4("Krok 1: wynik ciągły i próg zaliczenia"),
+          tags$h4("Krok 1: masa ciała i próg ciężkiego pingwina"),
           lc_plot_fullscreen("ch5_cas_continuous_plot", height = "280px"),
           tags$h4("Krok 2: model logistyczny daje prawdopodobieństwo klasy 1"),
           lc_plot_fullscreen("ch5_cas_logit_plot", height = "310px"),
@@ -73,14 +64,6 @@ ch5_ui <- list(
           uiOutput("ch5_cas_model_metrics")
         )
       )
-    ),
-
-    lc_feedback(
-      type = "info",
-      tags$strong("Dwa różne progi:"),
-      " próg tworzący Y=0/1 definiuje zdarzenie przed dopasowaniem modelu.",
-      " Próg klasyfikacji, np. p ≥ 0,5, zamienia przewidywane prawdopodobieństwo",
-      " na decyzję dopiero po dopasowaniu modelu."
     ),
 
     lc_h2("ch5-dlaczego", "Dlaczego nie regresja liniowa?"),
@@ -295,21 +278,21 @@ ch5_server <- function(input, output, session) {
   ch5_cas_data <- reactive({
     df <- .cas_data
     y_cut <- input$ch5_cas_y_cut
-    if (is.null(y_cut)) y_cut <- median(df$read, na.rm = TRUE)
-    df$zdal_read <- as.integer(df$read >= y_cut)
+    if (is.null(y_cut)) y_cut <- median(df$body_mass_g, na.rm = TRUE)
+    df$zdal_read <- as.integer(df$body_mass_g >= y_cut)
     df
   })
 
   ch5_cas_model <- reactive({
-    glm(zdal_read ~ income + lunch + english,
+    glm(zdal_read ~ flipper_length_mm + bill_length_mm + bill_depth_mm,
         data = ch5_cas_data(), family = binomial)
   })
 
   output$ch5_cas_threshold_note <- renderUI({
     lc_feedback(type = "ok",
-      p("Y = 1, czyli 'zdał', oznacza wynik czytania od ",
+      p("Y = 1, czyli 'ciężki', oznacza masę ciała od ",
         tags$strong(ch5_fmt(input$ch5_cas_y_cut, 0)),
-        " pkt. Zmiana tego progu zmienia definicję zmiennej zależnej
+        " g. Zmiana tego progu zmienia definicję zmiennej zależnej
         i przelicza współczynniki.")
     )
   })
@@ -317,30 +300,30 @@ ch5_server <- function(input, output, session) {
   output$ch5_cas_continuous_plot <- renderPlot({
     df <- ch5_cas_data()
 
-    ggplot(df, aes(income, read, color = factor(zdal_read))) +
+    ggplot(df, aes(flipper_length_mm, body_mass_g, color = factor(zdal_read))) +
       geom_point(alpha = 0.62, size = 2) +
       geom_hline(yintercept = input$ch5_cas_y_cut,
                  color = upwr_accent, linewidth = 1.05, linetype = "dashed") +
       annotate(
         "label",
-        x = min(df$income, na.rm = TRUE),
+        x = min(df$flipper_length_mm, na.rm = TRUE),
         y = input$ch5_cas_y_cut,
         hjust = 0,
         vjust = -0.45,
-        label = paste0("próg zaliczenia: ", input$ch5_cas_y_cut, " pkt"),
+        label = paste0("próg: ciężki od ", input$ch5_cas_y_cut, " g"),
         color = upwr_accent,
         fill = "white",
         linewidth = 0
       ) +
       scale_color_manual(
         values = c("0" = unname(upwr_cat["grafit"]), "1" = unname(upwr_cat["szalwia"])),
-        labels = c("0" = "nie zdał", "1" = "zdał"),
+        labels = c("0" = "lekki", "1" = "ciężki"),
         name = "Klasa"
       ) +
       labs(
-        x = "Dochód okręgu (tys. USD)",
-        y = "Wynik z czytania",
-        caption = "To jeszcze nie jest regresja logistyczna. To oryginalny wynik i próg, który tworzy później zmienną 0/1."
+        x = "Długość płetwy (mm)",
+        y = "Masa ciała (g)",
+        caption = "To jeszcze nie jest regresja logistyczna. To oryginalna masa i próg, który tworzy później zmienną 0/1."
       ) +
       theme_upwr()
   })
@@ -350,14 +333,14 @@ ch5_server <- function(input, output, session) {
     mod <- ch5_cas_model()
     df$prob <- fitted(mod)
 
-    ggplot(df, aes(income, prob, color = factor(zdal_read))) +
+    ggplot(df, aes(flipper_length_mm, prob, color = factor(zdal_read))) +
       geom_point(alpha = 0.7) +
       scale_color_manual(
         values = c("0" = unname(upwr_cat["grafit"]), "1" = unname(upwr_cat["szalwia"])),
-        labels = c("0" = "nie zdał", "1" = "zdał"),
+        labels = c("0" = "lekki", "1" = "ciężki"),
         name = "Klasa"
       ) +
-      labs(x = "Dochód okręgu (tys. USD)", y = "Prawdopodobieństwo zdania") +
+      labs(x = "Długość płetwy (mm)", y = "Prawdopodobieństwo, że ciężki") +
       theme_upwr()
   })
 
@@ -365,9 +348,9 @@ ch5_server <- function(input, output, session) {
     tb <- broom::tidy(ch5_cas_model(), exponentiate = TRUE, conf.int = TRUE)
     labels <- c(
       "(Intercept)" = "Stała",
-      "income" = "Dochód okręgu (tys. USD)",
-      "lunch" = "Lunch subsydiowany (%)",
-      "english" = "Angielski jako drugi język (%)"
+      "flipper_length_mm" = "Długość płetwy (mm)",
+      "bill_length_mm" = "Długość dzioba (mm)",
+      "bill_depth_mm" = "Wysokość dzioba (mm)"
     )
     rows <- lapply(seq_len(nrow(tb)), function(i) {
       term <- tb$term[i]

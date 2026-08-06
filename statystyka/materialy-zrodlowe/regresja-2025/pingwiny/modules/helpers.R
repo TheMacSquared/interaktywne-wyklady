@@ -2,43 +2,16 @@
 # FUNKCJE POMOCNICZE - Regresja
 # ============================================================================
 
-# Wspólne dane CASchools: ~420 okręgów szkolnych w Kalifornii, lata 90.
-# Używane w ch1 (regresja prosta) i ch2 (jakość modelu).
+# Wspólne dane palmerpenguins: 333 pingwiny (pełne wiersze) z 3 gatunków
+# (Adelie, Chinstrap, Gentoo) na archipelagu Palmer. Używane w ch1 (regresja
+# prosta), ch2 (jakość modelu), ch3 (regresja wieloraka) i ch3a (interakcje).
+# Identyfikator .cas_data pozostaje wspólny dla wszystkich modułów regresji.
 .cas_data <- read.csv(
-  file.path(app_dir, "dane", "caschools.csv"),
+  file.path(app_dir, "dane", "penguins.csv"),
   stringsAsFactors = FALSE
 )
 
 .cas_labels <- c(
-  students = "Liczba uczniów",
-  grades = "Zakres klas",
-  income = "Dochód okręgu (tys. USD)",
-  student_teacher_ratio = "Uczniowie / nauczyciel",
-  expenditure = "Wydatki na ucznia",
-  english = "Angielski jako drugi język (%)",
-  lunch = "Lunch subsydiowany (%)",
-  computer = "Komputery",
-  read = "Wynik: czytanie",
-  math = "Wynik: matematyka"
-)
-
-# Drugi przypadek dydaktyczny: pingwiny są używane tam, gdzie trzy naturalne
-# grupy pozwalają dobrze zobaczyć pominiętą zmienną, predyktor jakościowy oraz
-# interakcję. Nie zastępują CASchools w pozostałych rozdziałach.
-if (!requireNamespace("palmerpenguins", quietly = TRUE)) {
-  stop(
-    "Pakiet 'palmerpenguins' jest wymagany przez rozdział o kontekście i interakcjach.",
-    call. = FALSE
-  )
-}
-
-.penguins_data <- as.data.frame(stats::na.omit(palmerpenguins::penguins))
-.penguins_data$species <- factor(
-  .penguins_data$species,
-  levels = c("Adelie", "Chinstrap", "Gentoo")
-)
-
-.penguins_labels <- c(
   species = "Gatunek",
   island = "Wyspa",
   bill_length_mm = "Długość dzioba (mm)",

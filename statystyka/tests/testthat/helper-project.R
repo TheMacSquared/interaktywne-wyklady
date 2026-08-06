@@ -23,5 +23,6 @@ expected_apps <- c(
   "09-dobre-dane",
   "10-case-studies",
   "11-kierunkowe",
-  "12-projekt-badawczy"
+  "12-projekt-badawczy",
+  "szeregi-czasowe"
 )
