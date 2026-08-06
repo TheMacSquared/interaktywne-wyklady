@@ -8,9 +8,10 @@ języka zdarzeń i podstaw prawdopodobieństwa.
 
 - plan kanoniczny: `docs/plan-kanoniczny.md`;
 - wykład 01: pełna, rozbudowana wersja z ośmioma rozdziałami;
-- wykłady 02–10: kompletne, uruchamialne szkice wszystkich rozdziałów z jednym
-  kluczowym widgetem na wykład;
-- kolejny etap: przegląd globalny, a następnie pogłębianie wybranych rozdziałów.
+- wykłady 02–10: pełne bloki z lokalnymi modułami, narracją, głosowaniem,
+  interakcjami, decyzją, pułapką, ściągą, pięciopytaniowym quizem i ćwiczeniami;
+- bloki 06–10 mają naturalny podział na dwa spotkania po 90 minut;
+- kolejny etap: manualna próba tempa zajęć i korekta obciążenia treścią.
 
 ## Wymagania
 
@@ -52,7 +53,7 @@ analiza-ryzyka/
 ├── tests/                # testy funkcji oraz smoke test aplikacji
 ├── 01-jezyk-ryzyka/      # pełna aplikacja referencyjna
 └── 02-warunki/ ... 10-model-do-decyzji/
-                          # kompletne szkice generowane ze wspólnego katalogu
+                          # pełne bloki z lokalnym modules/block.R
 ```
 
 ## Konwencje
@@ -61,6 +62,6 @@ Interfejs jest po polsku, kod używa angielskich nazw. Wszystkie aplikacje
 korzystają z `lecture_page()` oraz komponentów `lc_*`. Dane Bananpolu są
 fikcyjne, a ich jednostki i horyzonty czasu znajdują się w `R/bananpol.R`.
 
-Wykłady 02–10 korzystają z `R/course_catalog.R` i `R/course_factory.R`. Katalog
-jest jednym źródłem prawdy dla kolejności oraz treści rozdziałów na etapie
-przeglądu globalnego.
+Wykłady 02–10 korzystają ze wspólnych czystych funkcji w `R/risk_math.R` oraz
+komponentów w `R/risk_block.R`. `R/course_catalog.R` jest indeksem kolejności i
+metadanych; treść każdego bloku pozostaje w jego własnym `modules/block.R`.

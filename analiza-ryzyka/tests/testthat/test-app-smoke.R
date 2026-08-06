@@ -12,6 +12,9 @@ testthat::test_that("wszystkie wykłady ładują UI i kompletną listę rozdzia�
         stopifnot(length(env$.chapters) == expected_count)
         ids <- vapply(env$.chapters, function(chapter) chapter$id, character(1))
         stopifnot(all(nzchar(ids)), !anyDuplicated(ids))
+        html <- htmltools::renderTags(env$ui)$html
+        ui_ids <- sub('^id="|"$', "", regmatches(html, gregexpr('id="[^"]+"', html))[[1]])
+        stopifnot(!anyDuplicated(ui_ids))
         TRUE
       },
       args = list(
