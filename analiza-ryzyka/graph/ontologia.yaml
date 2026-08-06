@@ -1,0 +1,36 @@
+# Ontologia: wiedza metodyczna (analiza ryzyka)
+# Rdzeń zna tylko strukturę tego pliku; treść definiuje domenę.
+
+typy_wezlow:
+  - pojecie      # abstrakcja, definicja, twierdzenie
+  - rozklad      # rozkład prawdopodobieństwa (wyodrębniony, bo ma własne relacje uogólniania)
+  - metoda       # procedura stosowana do problemu
+  - problem      # klasa pytań praktycznych
+  - narzedzie    # oprogramowanie, biblioteka (na razie nieużywany)
+  - zrodlo       # podręcznik, artykuł (na razie nieużywany)
+
+typy_relacji:
+  wymaga:
+    opis: "Zrozumienie źródła wymaga uprzedniego zrozumienia celu."
+    dziedzina: "pojecie|rozklad|metoda -> pojecie|rozklad"
+    acykliczna: true
+  uogolnia:
+    opis: "Źródło jest uogólnieniem celu (cel to przypadek szczególny)."
+    dziedzina: "pojecie|rozklad|metoda -> pojecie|rozklad|metoda"
+    acykliczna: true
+  rozwiazuje:
+    opis: "Źródło odpowiada na klasę pytań opisaną przez cel."
+    dziedzina: "pojecie|rozklad|metoda -> problem"
+  zaimplementowane_w:
+    opis: "Realizacja metody lub rozkładu w narzędziu."
+    dziedzina: "metoda|rozklad -> narzedzie"
+
+statusy:
+  - zalazek         # istnieje tylko szkielet
+  - w-trakcie       # aktywnie się uczę
+  - rozumiem        # potrafię wyjaśnić i zastosować
+  - wymaga-powrotu  # rozumiałem, zwietrzało
+
+# Pola opcjonalne węzła:
+#   powstanie: data EDTF — kiedy pojęcie/metoda powstały (wymiar temporalny)
+#   tagi: lista etykiet, np. przypisanie do planowanych wykładów

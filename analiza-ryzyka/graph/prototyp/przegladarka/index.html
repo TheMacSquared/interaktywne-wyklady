@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Graf wiedzy — kurs analizy ryzyka</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Prototyp archipelagu grafów</p>
+        <h1>Graf wiedzy: kurs analizy ryzyka</h1>
+      </div>
+      <p id="graph-stats" class="graph-stats" aria-live="polite">Wczytywanie…</p>
+    </header>
+
+    <nav class="view-switcher" aria-label="Sposób oglądania grafu">
+      <button type="button" data-mode="prerequisites" aria-pressed="true">Prerekwizyty</button>
+      <button type="button" data-mode="syllabus" aria-pressed="false">Sylabus</button>
+      <button type="button" data-mode="arguments" aria-pressed="false">Pytania i źródła</button>
+    </nav>
+
+    <section class="workspace">
+      <aside class="control-panel" aria-label="Filtry grafu">
+        <label class="field-label" for="search">Szukaj</label>
+        <input id="search" type="search" placeholder="np. hazard, alarm…" autocomplete="off">
+
+        <label class="field-label" for="lecture-filter">Zakres wykładu</label>
+        <select id="lecture-filter">
+          <option value="">Cały graf</option>
+        </select>
+
+        <fieldset>
+          <legend>Typy węzłów</legend>
+          <div id="type-filters" class="type-filters"></div>
+        </fieldset>
+
+        <section class="decisions" aria-labelledby="decisions-title">
+          <h2 id="decisions-title">Decyzje z raportu</h2>
+          <div id="decision-list"></div>
+        </section>
+      </aside>
+
+      <section class="graph-panel" aria-label="Wizualizacja grafu">
+        <div class="graph-toolbar">
+          <p id="view-description">Pojęcia bardziej zaawansowane są u góry, fundamenty niżej.</p>
+          <div class="zoom-controls" aria-label="Powiększenie grafu">
+            <button id="zoom-out" type="button" aria-label="Pomniejsz">−</button>
+            <button id="zoom-reset" type="button">Dopasuj</button>
+            <button id="zoom-in" type="button" aria-label="Powiększ">+</button>
+          </div>
+        </div>
+        <div id="graph-message" class="graph-message" hidden></div>
+        <svg id="graph" role="img" aria-labelledby="graph-title graph-description">
+          <title id="graph-title">Graf wiedzy kursu analizy ryzyka</title>
+          <desc id="graph-description">Interaktywny graf pojęć, wykładów, pytań i źródeł.</desc>
+        </svg>
+      </section>
+
+      <aside class="detail-panel" aria-label="Szczegóły węzła">
+        <p id="detail-placeholder">Wybierz węzeł, aby zobaczyć jego treść i relacje.</p>
+        <article id="node-detail" hidden>
+          <p id="detail-type" class="detail-type"></p>
+          <h2 id="detail-title"></h2>
+          <div id="detail-state" class="detail-state"></div>
+          <div id="detail-content" class="detail-content"></div>
+          <h3>Relacje</h3>
+          <ul id="detail-relations" class="detail-relations"></ul>
+        </article>
+      </aside>
+    </section>
+
+    <footer class="legend" aria-label="Legenda relacji">
+      <span><i class="edge-sample requires"></i>wymaga</span>
+      <span><i class="edge-sample discusses"></i>omawia</span>
+      <span><i class="edge-sample answers"></i>odpowiada / wspiera</span>
+      <span>Strzałka biegnie od źródła relacji do celu.</span>
+    </footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
+

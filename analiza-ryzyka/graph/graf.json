@@ -1,0 +1,347 @@
+{
+  "meta": {
+    "ontologia": "ontologia.yaml",
+    "wezlow": 18,
+    "krawedzi": 23
+  },
+  "nodes": [
+    {
+      "id": "czas-do-zdarzenia",
+      "typ": "pojecie",
+      "label": "Czas do zdarzenia: F(t) i R(t)",
+      "status": "zalazek",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-07"
+      ],
+      "plik": "czas-do-zdarzenia.md"
+    },
+    {
+      "id": "fta",
+      "typ": "metoda",
+      "label": "Analiza drzewa błędów (FTA)",
+      "status": "zalazek",
+      "powstanie": "1962",
+      "tagi": [
+        "wyklad-09"
+      ],
+      "plik": "fta.md"
+    },
+    {
+      "id": "funkcja-hazardu",
+      "typ": "pojecie",
+      "label": "Funkcja hazardu",
+      "status": "w-trakcie",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-07"
+      ],
+      "plik": "funkcja-hazardu.md"
+    },
+    {
+      "id": "naturalne-czestosci",
+      "typ": "metoda",
+      "label": "Naturalne częstości",
+      "status": "zalazek",
+      "powstanie": "1995~",
+      "tagi": [
+        "wyklad-03"
+      ],
+      "plik": "naturalne-czestosci.md"
+    },
+    {
+      "id": "niezawodnosc-systemu",
+      "typ": "pojecie",
+      "label": "Niezawodność systemu",
+      "status": "zalazek",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-08"
+      ],
+      "plik": "niezawodnosc-systemu.md"
+    },
+    {
+      "id": "prawdopodobienstwo-warunkowe",
+      "typ": "pojecie",
+      "label": "Prawdopodobieństwo warunkowe",
+      "status": "zalazek",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-02"
+      ],
+      "plik": "prawdopodobienstwo-warunkowe.md"
+    },
+    {
+      "id": "problem-falszywego-alarmu",
+      "typ": "problem",
+      "label": "Problem fałszywego alarmu",
+      "status": "zalazek",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-03"
+      ],
+      "plik": "problem-falszywego-alarmu.md"
+    },
+    {
+      "id": "przestrzen-zdarzen",
+      "typ": "pojecie",
+      "label": "Przestrzeń zdarzeń elementarnych",
+      "status": "zalazek",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-01"
+      ],
+      "plik": "przestrzen-zdarzen.md"
+    },
+    {
+      "id": "rozklad-bernoulliego",
+      "typ": "rozklad",
+      "label": "Rozkład Bernoulliego",
+      "status": "zalazek",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-04"
+      ],
+      "plik": "rozklad-bernoulliego.md"
+    },
+    {
+      "id": "rozklad-dwumianowy",
+      "typ": "rozklad",
+      "label": "Rozkład dwumianowy",
+      "status": "zalazek",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-04"
+      ],
+      "plik": "rozklad-dwumianowy.md"
+    },
+    {
+      "id": "rozklad-geometryczny",
+      "typ": "rozklad",
+      "label": "Rozkład geometryczny",
+      "status": "zalazek",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-05"
+      ],
+      "plik": "rozklad-geometryczny.md"
+    },
+    {
+      "id": "rozklad-normalny",
+      "typ": "rozklad",
+      "label": "Rozkład normalny",
+      "status": "zalazek",
+      "powstanie": "1733~",
+      "tagi": [
+        "wyklad-06"
+      ],
+      "plik": "rozklad-normalny.md"
+    },
+    {
+      "id": "rozklad-ujemny-dwumianowy",
+      "typ": "rozklad",
+      "label": "Rozkład ujemny dwumianowy",
+      "status": "zalazek",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-05"
+      ],
+      "plik": "rozklad-ujemny-dwumianowy.md"
+    },
+    {
+      "id": "rozklad-weibulla",
+      "typ": "rozklad",
+      "label": "Rozkład Weibulla",
+      "status": "zalazek",
+      "powstanie": "1951",
+      "tagi": [
+        "wyklad-07"
+      ],
+      "plik": "rozklad-weibulla.md"
+    },
+    {
+      "id": "rozklad-wykladniczy",
+      "typ": "rozklad",
+      "label": "Rozkład wykładniczy",
+      "status": "zalazek",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-07"
+      ],
+      "plik": "rozklad-wykladniczy.md"
+    },
+    {
+      "id": "twierdzenie-bayesa",
+      "typ": "pojecie",
+      "label": "Twierdzenie Bayesa",
+      "status": "rozumiem",
+      "powstanie": "1763",
+      "tagi": [
+        "wyklad-03"
+      ],
+      "plik": "twierdzenie-bayesa.md"
+    },
+    {
+      "id": "zdarzenie-losowe",
+      "typ": "pojecie",
+      "label": "Zdarzenie losowe",
+      "status": "zalazek",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-01"
+      ],
+      "plik": "zdarzenie-losowe.md"
+    },
+    {
+      "id": "zmienna-losowa",
+      "typ": "pojecie",
+      "label": "Zmienna losowa",
+      "status": "zalazek",
+      "powstanie": null,
+      "tagi": [
+        "wyklad-04"
+      ],
+      "plik": "zmienna-losowa.md"
+    }
+  ],
+  "edges": [
+    {
+      "source": "czas-do-zdarzenia",
+      "target": "zmienna-losowa",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "fta",
+      "target": "zdarzenie-losowe",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "fta",
+      "target": "niezawodnosc-systemu",
+      "typ": "wymaga",
+      "nota": "bramki AND/OR to inna notacja układów równoległych/szeregowych"
+    },
+    {
+      "source": "funkcja-hazardu",
+      "target": "czas-do-zdarzenia",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "naturalne-czestosci",
+      "target": "prawdopodobienstwo-warunkowe",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "naturalne-czestosci",
+      "target": "problem-falszywego-alarmu",
+      "typ": "rozwiazuje",
+      "nota": "reprezentacja Gigerenzera: te same rachunki na '10 z 1000' zamiast procentów"
+    },
+    {
+      "source": "niezawodnosc-systemu",
+      "target": "czas-do-zdarzenia",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "prawdopodobienstwo-warunkowe",
+      "target": "przestrzen-zdarzen",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "przestrzen-zdarzen",
+      "target": "zdarzenie-losowe",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-bernoulliego",
+      "target": "zmienna-losowa",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-dwumianowy",
+      "target": "rozklad-bernoulliego",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-dwumianowy",
+      "target": "rozklad-bernoulliego",
+      "typ": "uogolnia",
+      "nota": "n = 1"
+    },
+    {
+      "source": "rozklad-geometryczny",
+      "target": "rozklad-bernoulliego",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-normalny",
+      "target": "zmienna-losowa",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-ujemny-dwumianowy",
+      "target": "rozklad-geometryczny",
+      "typ": "uogolnia",
+      "nota": "r = 1"
+    },
+    {
+      "source": "rozklad-ujemny-dwumianowy",
+      "target": "rozklad-geometryczny",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-weibulla",
+      "target": "rozklad-wykladniczy",
+      "typ": "uogolnia",
+      "nota": "k = 1"
+    },
+    {
+      "source": "rozklad-weibulla",
+      "target": "funkcja-hazardu",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-wykladniczy",
+      "target": "czas-do-zdarzenia",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-wykladniczy",
+      "target": "funkcja-hazardu",
+      "typ": "wymaga",
+      "nota": "definiująca własność: h(t) = λ = const"
+    },
+    {
+      "source": "twierdzenie-bayesa",
+      "target": "prawdopodobienstwo-warunkowe",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "twierdzenie-bayesa",
+      "target": "problem-falszywego-alarmu",
+      "typ": "rozwiazuje",
+      "nota": null
+    },
+    {
+      "source": "zmienna-losowa",
+      "target": "przestrzen-zdarzen",
+      "typ": "wymaga",
+      "nota": null
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+wersja: 1
+
+typy_wezlow:
+  - pojecie
+  - pytanie
+  - twierdzenie
+  - metoda
+  - zrodlo
+  - projekt
+
+typy_relacji:
+  wymaga:
+    opis: "Zrozumienie źródła wymaga wcześniejszego zrozumienia celu w kontekście tego grafu."
+    zrodlo: [pojecie, pytanie, twierdzenie, metoda, projekt]
+    cel: [pojecie, twierdzenie, metoda]
+    acykliczna: true
+  odpowiada_na:
+    opis: "Źródło dostarcza odpowiedzi na pytanie opisane przez cel."
+    zrodlo: [pojecie, twierdzenie, metoda]
+    cel: [pytanie]
+  wspiera:
+    opis: "Źródło dostarcza uzasadnienia lub dowodu dla celu."
+    zrodlo: [zrodlo, twierdzenie]
+    cel: [twierdzenie]
+  kwestionuje:
+    opis: "Źródło podważa albo ogranicza twierdzenie będące celem."
+    zrodlo: [zrodlo, twierdzenie]
+    cel: [twierdzenie]
+  stosuje:
+    opis: "Źródło stosuje metodę lub pojęcie będące celem."
+    zrodlo: [metoda, projekt]
+    cel: [pojecie, metoda]
+  wykorzystane_w:
+    opis: "Źródło jest wykorzystywane w projekcie będącym celem."
+    zrodlo: [pojecie, pytanie, twierdzenie, metoda, zrodlo]
+    cel: [projekt]
+
+wartosci_stanu:
+  zrozumienie: [nie-oceniono, zalazek, w-trakcie, rozumiem, wymaga-powrotu]
+  dojrzalosc_notatki: [szkic, robocza, dojrzala]
+

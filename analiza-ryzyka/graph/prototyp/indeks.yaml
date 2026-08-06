@@ -1,0 +1,9 @@
+wersja: 1
+
+grafy:
+  - id: kurs-analiza-ryzyka
+    tytul: "Kurs analizy ryzyka"
+    opis: "Pojęcia i pytania potrzebne do zaprojektowania dziesięciu wykładów."
+    sciezka: grafy/kurs-analiza-ryzyka
+    tagi: [dydaktyka, prawdopodobienstwo, niezawodnosc]
+

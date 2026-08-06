@@ -1,0 +1,18 @@
+typy_wezlow:
+  - wyklad
+
+typy_relacji:
+  omawia:
+    opis: "Wykład omawia pojęcie, pytanie, twierdzenie lub metodę."
+    zrodlo: [wyklad]
+    cel: [pojecie, pytanie, twierdzenie, metoda]
+  poprzedza:
+    opis: "Wykład źródłowy występuje przed wykładem docelowym."
+    zrodlo: [wyklad]
+    cel: [wyklad]
+    acykliczna: true
+  uogolnia:
+    opis: "Pojęcie albo metoda źródłowa uogólnia cel."
+    zrodlo: [pojecie, metoda]
+    cel: [pojecie, metoda]
+    acykliczna: true

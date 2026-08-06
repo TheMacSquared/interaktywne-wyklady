@@ -1,0 +1,967 @@
+{
+  "meta": {
+    "id": "kurs-analiza-ryzyka",
+    "tytul": "Kurs analizy ryzyka",
+    "wersja_ontologii": 1,
+    "wezlow": 42,
+    "krawedzi": 80
+  },
+  "nodes": [
+    {
+      "id": "czas-do-zdarzenia",
+      "typ": "pojecie",
+      "label": "Czas do zdarzenia: F(t) i R(t)",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": [],
+      "plik": "czas-do-zdarzenia.md",
+      "tresc": "\n# Czas do zdarzenia: F(t) i R(t)\n\nT jest losowym czasem do zdarzenia, F(t) = P(T ≤ t) jego dystrybuantą, a\nR(t) = P(T > t) funkcją przeżycia lub niezawodności."
+    },
+    {
+      "id": "fta",
+      "typ": "metoda",
+      "label": "Analiza drzewa błędów (FTA)",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": [],
+      "plik": "fta.md",
+      "tresc": "\n# Analiza drzewa błędów (FTA)\n\nDedukcyjna metoda rozkładu zdarzenia szczytowego na kombinacje przyczyn za\npomocą bramek logicznych i zdarzeń bazowych."
+    },
+    {
+      "id": "funkcja-hazardu",
+      "typ": "pojecie",
+      "label": "Funkcja hazardu",
+      "stan": {
+        "zrozumienie": "w-trakcie",
+        "dojrzalosc_notatki": "robocza"
+      },
+      "tagi": [],
+      "plik": "funkcja-hazardu.md",
+      "tresc": "\n# Funkcja hazardu\n\nh(t) = f(t)/R(t) — chwilowa intensywność zdarzenia pod warunkiem przetrwania\ndo chwili t. Hazard nie jest prawdopodobieństwem i może przekraczać 1."
+    },
+    {
+      "id": "naturalne-czestosci",
+      "typ": "metoda",
+      "label": "Naturalne częstości",
+      "stan": {
+        "zrozumienie": "w-trakcie",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": [],
+      "plik": "naturalne-czestosci.md",
+      "tresc": "\n# Naturalne częstości\n\nReprezentacja problemów probabilistycznych za pomocą liczebności w ustalonej\npopulacji zamiast prawdopodobieństw warunkowych.\n"
+    },
+    {
+      "id": "niezawodnosc-systemu",
+      "typ": "pojecie",
+      "label": "Niezawodność systemu",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": [],
+      "plik": "niezawodnosc-systemu.md",
+      "tresc": "\n# Niezawodność systemu\n\nSkładanie niezawodności elementów w tym samym czasie misji zgodnie z logiką\ndziałania systemu. Wzory iloczynowe wymagają uzasadnienia niezależności."
+    },
+    {
+      "id": "prawdopodobienstwo-warunkowe",
+      "typ": "pojecie",
+      "label": "Prawdopodobieństwo warunkowe",
+      "stan": {
+        "zrozumienie": "w-trakcie",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": [],
+      "plik": "prawdopodobienstwo-warunkowe.md",
+      "tresc": "\n# Prawdopodobieństwo warunkowe\n\nP(A|B) = P(A∩B)/P(B) — prawdopodobieństwo A po zawężeniu przestrzeni do B.\n\nWarunek nie zmienia świata, ale zmienia populację odniesienia."
+    },
+    {
+      "id": "przestrzen-zdarzen",
+      "typ": "pojecie",
+      "label": "Przestrzeń wyników",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": [],
+      "plik": "przestrzen-zdarzen.md",
+      "tresc": "\n# Przestrzeń wyników\n\nZbiór wszystkich możliwych wyników doświadczenia losowego, oznaczany przez Ω."
+    },
+    {
+      "id": "pytanie-alarm",
+      "typ": "pytanie",
+      "label": "Czy alarm oznacza awarię?",
+      "stan": {
+        "zrozumienie": "rozumiem",
+        "dojrzalosc_notatki": "robocza"
+      },
+      "tagi": [],
+      "plik": "pytanie-alarm.md",
+      "tresc": "\n# Czy alarm oznacza awarię?\n\nJak częstość bazowa i parametry detektora wpływają na interpretację alarmu?\n"
+    },
+    {
+      "id": "pytanie-architektura",
+      "typ": "pytanie",
+      "label": "Jak architektura zmienia działanie całości?",
+      "stan": {
+        "zrozumienie": "w-trakcie",
+        "dojrzalosc_notatki": "robocza"
+      },
+      "tagi": [],
+      "plik": "pytanie-architektura.md",
+      "tresc": "\n# Jak architektura zmienia działanie całości?\n\nPytanie przewodnie wykładu 08.\n"
+    },
+    {
+      "id": "pytanie-czas-zycia",
+      "typ": "pytanie",
+      "label": "Czy element psuje się losowo, czy się zużywa?",
+      "stan": {
+        "zrozumienie": "w-trakcie",
+        "dojrzalosc_notatki": "robocza"
+      },
+      "tagi": [],
+      "plik": "pytanie-czas-zycia.md",
+      "tresc": "\n# Czy element psuje się losowo, czy się zużywa?\n\nPytanie przewodnie wykładu 07.\n"
+    },
+    {
+      "id": "pytanie-decyzja",
+      "typ": "pytanie",
+      "label": "Którą barierę poprawić najpierw?",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": [],
+      "plik": "pytanie-decyzja.md",
+      "tresc": "\n# Którą barierę poprawić najpierw?\n\nPytanie przewodnie wykładu 10. Graf nie zawiera jeszcze metody, która udziela\npełnej odpowiedzi — jest to zamierzona, widoczna luka prototypu.\n"
+    },
+    {
+      "id": "pytanie-do-zdarzenia",
+      "typ": "pytanie",
+      "label": "Ile prób potrzeba do kolejnego wykrycia?",
+      "stan": {
+        "zrozumienie": "w-trakcie",
+        "dojrzalosc_notatki": "robocza"
+      },
+      "tagi": [],
+      "plik": "pytanie-do-zdarzenia.md",
+      "tresc": "\n# Ile prób potrzeba do kolejnego wykrycia?\n\nPytanie przewodnie wykładu 05.\n"
+    },
+    {
+      "id": "pytanie-drzewo-bledow",
+      "typ": "pytanie",
+      "label": "Jak kombinacje przyczyn prowadzą do skutku?",
+      "stan": {
+        "zrozumienie": "w-trakcie",
+        "dojrzalosc_notatki": "robocza"
+      },
+      "tagi": [],
+      "plik": "pytanie-drzewo-bledow.md",
+      "tresc": "\n# Jak kombinacje przyczyn prowadzą do skutku?\n\nPytanie przewodnie wykładu 09.\n"
+    },
+    {
+      "id": "pytanie-jezyk-ryzyka",
+      "typ": "pytanie",
+      "label": "Co właściwie może się wydarzyć i spośród czego liczymy?",
+      "stan": {
+        "zrozumienie": "w-trakcie",
+        "dojrzalosc_notatki": "robocza"
+      },
+      "tagi": [],
+      "plik": "pytanie-jezyk-ryzyka.md",
+      "tresc": "\n# Co właściwie może się wydarzyć i spośród czego liczymy?\n\nPytanie przewodnie wykładu 01.\n"
+    },
+    {
+      "id": "pytanie-prog",
+      "typ": "pytanie",
+      "label": "Jak często przekraczamy granicę?",
+      "stan": {
+        "zrozumienie": "w-trakcie",
+        "dojrzalosc_notatki": "robocza"
+      },
+      "tagi": [],
+      "plik": "pytanie-prog.md",
+      "tresc": "\n# Jak często przekraczamy granicę?\n\nPytanie przewodnie wykładu 06.\n"
+    },
+    {
+      "id": "pytanie-warunek",
+      "typ": "pytanie",
+      "label": "Co zmienia się po poznaniu warunku?",
+      "stan": {
+        "zrozumienie": "w-trakcie",
+        "dojrzalosc_notatki": "robocza"
+      },
+      "tagi": [],
+      "plik": "pytanie-warunek.md",
+      "tresc": "\n# Co zmienia się po poznaniu warunku?\n\nPytanie przewodnie wykładu 02.\n"
+    },
+    {
+      "id": "pytanie-wiele-prob",
+      "typ": "pytanie",
+      "label": "Ile zdarzeń wystąpi w ustalonej liczbie prób?",
+      "stan": {
+        "zrozumienie": "w-trakcie",
+        "dojrzalosc_notatki": "robocza"
+      },
+      "tagi": [],
+      "plik": "pytanie-wiele-prob.md",
+      "tresc": "\n# Ile zdarzeń wystąpi w ustalonej liczbie prób?\n\nPytanie przewodnie wykładu 04.\n"
+    },
+    {
+      "id": "rozklad-bernoulliego",
+      "typ": "pojecie",
+      "label": "Rozkład Bernoulliego",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": "rozklad",
+      "plik": "rozklad-bernoulliego.md",
+      "tresc": "\n# Rozkład Bernoulliego\n\nModel pojedynczej próby o dwóch wynikach z prawdopodobieństwem wyróżnionego\nwyniku równym p.\n"
+    },
+    {
+      "id": "rozklad-dwumianowy",
+      "typ": "pojecie",
+      "label": "Rozkład dwumianowy",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": "rozklad",
+      "plik": "rozklad-dwumianowy.md",
+      "tresc": "\n# Rozkład dwumianowy\n\nRozkład liczby wyróżnionych wyników w n niezależnych próbach Bernoulliego o\nstałym prawdopodobieństwie p."
+    },
+    {
+      "id": "rozklad-geometryczny",
+      "typ": "pojecie",
+      "label": "Rozkład geometryczny",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": "rozklad",
+      "plik": "rozklad-geometryczny.md",
+      "tresc": "\n# Rozkład geometryczny\n\nRozkład liczby prób do pierwszego wyróżnionego wyniku w schemacie Bernoulliego."
+    },
+    {
+      "id": "rozklad-normalny",
+      "typ": "pojecie",
+      "label": "Rozkład normalny",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": "rozklad",
+      "plik": "rozklad-normalny.md",
+      "tresc": "\n# Rozkład normalny\n\nCiągły rozkład N(μ, σ²), którego parametry opisują położenie i rozrzut."
+    },
+    {
+      "id": "rozklad-ujemny-dwumianowy",
+      "typ": "pojecie",
+      "label": "Rozkład ujemny dwumianowy",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": "rozklad",
+      "plik": "rozklad-ujemny-dwumianowy.md",
+      "tresc": "\n# Rozkład ujemny dwumianowy\n\nRozkład liczby prób do r-tego wyróżnionego wyniku, przy jawnie określonej\nkonwencji liczenia prób albo niepowodzeń."
+    },
+    {
+      "id": "rozklad-weibulla",
+      "typ": "pojecie",
+      "label": "Rozkład Weibulla",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": "rozklad",
+      "plik": "rozklad-weibulla.md",
+      "tresc": "\n# Rozkład Weibulla\n\nModel o funkcji przeżycia R(t) = exp(−(t/λ)^k), w którym parametr kształtu\nsteruje monotonicznością hazardu.\n"
+    },
+    {
+      "id": "rozklad-wykladniczy",
+      "typ": "pojecie",
+      "label": "Rozkład wykładniczy",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": "rozklad",
+      "plik": "rozklad-wykladniczy.md",
+      "tresc": "\n# Rozkład wykładniczy\n\nModel czasu do zdarzenia o stałym hazardzie λ i funkcji przeżycia\nR(t) = exp(−λt).\n"
+    },
+    {
+      "id": "twierdzenie-bayesa",
+      "typ": "twierdzenie",
+      "label": "Twierdzenie Bayesa",
+      "stan": {
+        "zrozumienie": "rozumiem",
+        "dojrzalosc_notatki": "robocza"
+      },
+      "tagi": [],
+      "plik": "twierdzenie-bayesa.md",
+      "tresc": "\n# Twierdzenie Bayesa\n\nP(H|D) = P(D|H)·P(H)/P(D). Pozwala odwrócić kierunek warunkowania,\nłącząc informację z częstością bazową."
+    },
+    {
+      "id": "twierdzenie-niezaleznosc-nie-domyslna",
+      "typ": "twierdzenie",
+      "label": "Niezależność nie jest założeniem domyślnym",
+      "stan": {
+        "zrozumienie": "rozumiem",
+        "dojrzalosc_notatki": "dojrzala"
+      },
+      "tagi": [],
+      "plik": "twierdzenie-niezaleznosc-nie-domyslna.md",
+      "tresc": "\n# Niezależność nie jest założeniem domyślnym\n\nModel niezależny wymaga uzasadnienia i powinien być konfrontowany ze wspólnymi\nprzyczynami lub innymi mechanizmami zależności.\n"
+    },
+    {
+      "id": "twierdzenie-problem-przed-modelem",
+      "typ": "twierdzenie",
+      "label": "Model powinien pojawić się po problemie, który uzasadnia jego użycie",
+      "stan": {
+        "zrozumienie": "rozumiem",
+        "dojrzalosc_notatki": "dojrzala"
+      },
+      "tagi": [],
+      "plik": "twierdzenie-problem-przed-modelem.md",
+      "tresc": "\n# Model powinien pojawić się po problemie, który uzasadnia jego użycie\n\nJest to nadrzędna zasada konstrukcji dydaktycznej kursu.\n"
+    },
+    {
+      "id": "twierdzenie-weibull-nie-wanna",
+      "typ": "twierdzenie",
+      "label": "Pojedynczy Weibull nie tworzy całej krzywej wannowej",
+      "stan": {
+        "zrozumienie": "rozumiem",
+        "dojrzalosc_notatki": "dojrzala"
+      },
+      "tagi": [],
+      "plik": "twierdzenie-weibull-nie-wanna.md",
+      "tresc": "\n# Pojedynczy Weibull nie tworzy całej krzywej wannowej\n\nPrzy stałym parametrze kształtu hazard Weibulla jest malejący, stały albo\nrosnący. Pełna krzywa wannowa wymaga modelu złożonego lub zmiennego mechanizmu.\n"
+    },
+    {
+      "id": "wyklad-01",
+      "typ": "wyklad",
+      "label": "Wykład 01: Język ryzyka",
+      "stan": [],
+      "tagi": [],
+      "plik": "wyklad-01.md",
+      "tresc": "\n# Wykład 01: Język ryzyka\n\nCo właściwie może się wydarzyć i spośród czego liczymy?\n"
+    },
+    {
+      "id": "wyklad-02",
+      "typ": "wyklad",
+      "label": "Wykład 02: Warunki zmieniają ocenę",
+      "stan": [],
+      "tagi": [],
+      "plik": "wyklad-02.md",
+      "tresc": "\n# Wykład 02: Warunki zmieniają ocenę\n\nCo zmienia się po poznaniu warunku?"
+    },
+    {
+      "id": "wyklad-03",
+      "typ": "wyklad",
+      "label": "Wykład 03: Alarm i prawda",
+      "stan": [],
+      "tagi": [],
+      "plik": "wyklad-03.md",
+      "tresc": "\n# Wykład 03: Alarm i prawda\n\nCzy alarm oznacza awarię?\n"
+    },
+    {
+      "id": "wyklad-04",
+      "typ": "wyklad",
+      "label": "Wykład 04: Wiele prób",
+      "stan": [],
+      "tagi": [],
+      "plik": "wyklad-04.md",
+      "tresc": "\n# Wykład 04: Wiele prób\n\nIle zdarzeń wystąpi w ustalonej liczbie prób?\n"
+    },
+    {
+      "id": "wyklad-05",
+      "typ": "wyklad",
+      "label": "Wykład 05: Ile prób do zdarzenia",
+      "stan": [],
+      "tagi": [],
+      "plik": "wyklad-05.md",
+      "tresc": "\n# Wykład 05: Ile prób do zdarzenia\n\nIle prób potrzeba do kolejnego wykrycia?\n"
+    },
+    {
+      "id": "wyklad-06",
+      "typ": "wyklad",
+      "label": "Wykład 06: Zmienność i próg",
+      "stan": [],
+      "tagi": [],
+      "plik": "wyklad-06.md",
+      "tresc": "\n# Wykład 06: Zmienność i próg\n\nJak często przekraczamy granicę?\n"
+    },
+    {
+      "id": "wyklad-07",
+      "typ": "wyklad",
+      "label": "Wykład 07: Czas życia",
+      "stan": [],
+      "tagi": [],
+      "plik": "wyklad-07.md",
+      "tresc": "\n# Wykład 07: Czas życia\n\nCzy element psuje się losowo, czy się zużywa?\n"
+    },
+    {
+      "id": "wyklad-08",
+      "typ": "wyklad",
+      "label": "Wykład 08: Niezawodność systemu",
+      "stan": [],
+      "tagi": [],
+      "plik": "wyklad-08.md",
+      "tresc": "\n# Wykład 08: Niezawodność systemu\n\nJak architektura zmienia działanie całości?\n"
+    },
+    {
+      "id": "wyklad-09",
+      "typ": "wyklad",
+      "label": "Wykład 09: Drzewo błędów",
+      "stan": [],
+      "tagi": [],
+      "plik": "wyklad-09.md",
+      "tresc": "\n# Wykład 09: Drzewo błędów\n\nJak kombinacje przyczyn prowadzą do skutku?\n"
+    },
+    {
+      "id": "wyklad-10",
+      "typ": "wyklad",
+      "label": "Wykład 10: Od modelu do decyzji",
+      "stan": [],
+      "tagi": [],
+      "plik": "wyklad-10.md",
+      "tresc": "\n# Wykład 10: Od modelu do decyzji\n\nKtórą barierę poprawić najpierw?\n"
+    },
+    {
+      "id": "zdarzenie-losowe",
+      "typ": "pojecie",
+      "label": "Zdarzenie losowe",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": [],
+      "plik": "zdarzenie-losowe.md",
+      "tresc": "\n# Zdarzenie losowe\n\nPodzbiór przestrzeni wyników, któremu w modelu przypisujemy prawdopodobieństwo."
+    },
+    {
+      "id": "zmienna-losowa",
+      "typ": "pojecie",
+      "label": "Zmienna losowa",
+      "stan": {
+        "zrozumienie": "zalazek",
+        "dojrzalosc_notatki": "szkic"
+      },
+      "tagi": [],
+      "plik": "zmienna-losowa.md",
+      "tresc": "\n# Zmienna losowa\n\nFunkcja przypisująca wynikom losowym liczby; jej rozkład opisuje możliwe\nwartości i odpowiadające im prawdopodobieństwa.\n"
+    },
+    {
+      "id": "zrodlo-ocena-planow",
+      "typ": "zrodlo",
+      "label": "Ocena planów wykładu z analizy ryzyka",
+      "stan": [],
+      "tagi": [],
+      "plik": "zrodlo-ocena-planow.md",
+      "tresc": "\n# Ocena planów wykładu z analizy ryzyka\n\nŹródło lokalne: `../../../../../docs/ocena-planow.md`.\n"
+    },
+    {
+      "id": "zrodlo-plan-kanoniczny",
+      "typ": "zrodlo",
+      "label": "Plan kanoniczny kursu analizy ryzyka",
+      "stan": [],
+      "tagi": [],
+      "plik": "zrodlo-plan-kanoniczny.md",
+      "tresc": "\n# Plan kanoniczny kursu analizy ryzyka\n\nŹródło lokalne: `../../../../../docs/plan-kanoniczny.md`.\n"
+    }
+  ],
+  "edges": [
+    {
+      "source": "czas-do-zdarzenia",
+      "target": "zmienna-losowa",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "czas-do-zdarzenia",
+      "target": "pytanie-czas-zycia",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "fta",
+      "target": "zdarzenie-losowe",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "fta",
+      "target": "niezawodnosc-systemu",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "fta",
+      "target": "pytanie-drzewo-bledow",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "funkcja-hazardu",
+      "target": "czas-do-zdarzenia",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "funkcja-hazardu",
+      "target": "pytanie-czas-zycia",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "naturalne-czestosci",
+      "target": "prawdopodobienstwo-warunkowe",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "naturalne-czestosci",
+      "target": "pytanie-alarm",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "niezawodnosc-systemu",
+      "target": "czas-do-zdarzenia",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "niezawodnosc-systemu",
+      "target": "twierdzenie-niezaleznosc-nie-domyslna",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "niezawodnosc-systemu",
+      "target": "pytanie-architektura",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "prawdopodobienstwo-warunkowe",
+      "target": "pytanie-warunek",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "przestrzen-zdarzen",
+      "target": "pytanie-jezyk-ryzyka",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "rozklad-bernoulliego",
+      "target": "zmienna-losowa",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-dwumianowy",
+      "target": "rozklad-bernoulliego",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-dwumianowy",
+      "target": "rozklad-bernoulliego",
+      "typ": "uogolnia",
+      "nota": "n = 1 daje rozkład Bernoulliego"
+    },
+    {
+      "source": "rozklad-dwumianowy",
+      "target": "pytanie-wiele-prob",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "rozklad-geometryczny",
+      "target": "rozklad-bernoulliego",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-geometryczny",
+      "target": "pytanie-do-zdarzenia",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "rozklad-normalny",
+      "target": "zmienna-losowa",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-normalny",
+      "target": "pytanie-prog",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "rozklad-ujemny-dwumianowy",
+      "target": "rozklad-geometryczny",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-ujemny-dwumianowy",
+      "target": "rozklad-geometryczny",
+      "typ": "uogolnia",
+      "nota": "r = 1 daje rozkład geometryczny"
+    },
+    {
+      "source": "rozklad-ujemny-dwumianowy",
+      "target": "pytanie-do-zdarzenia",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "rozklad-weibulla",
+      "target": "funkcja-hazardu",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-weibulla",
+      "target": "rozklad-wykladniczy",
+      "typ": "uogolnia",
+      "nota": "k = 1 daje rozkład wykładniczy"
+    },
+    {
+      "source": "rozklad-wykladniczy",
+      "target": "czas-do-zdarzenia",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "rozklad-wykladniczy",
+      "target": "funkcja-hazardu",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "twierdzenie-bayesa",
+      "target": "prawdopodobienstwo-warunkowe",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "twierdzenie-bayesa",
+      "target": "pytanie-alarm",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "twierdzenie-weibull-nie-wanna",
+      "target": "rozklad-weibulla",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "wyklad-01",
+      "target": "pytanie-jezyk-ryzyka",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-01",
+      "target": "przestrzen-zdarzen",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-01",
+      "target": "zdarzenie-losowe",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-01",
+      "target": "wyklad-02",
+      "typ": "poprzedza",
+      "nota": null
+    },
+    {
+      "source": "wyklad-02",
+      "target": "pytanie-warunek",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-02",
+      "target": "prawdopodobienstwo-warunkowe",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-02",
+      "target": "wyklad-03",
+      "typ": "poprzedza",
+      "nota": null
+    },
+    {
+      "source": "wyklad-03",
+      "target": "pytanie-alarm",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-03",
+      "target": "twierdzenie-bayesa",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-03",
+      "target": "naturalne-czestosci",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-03",
+      "target": "wyklad-04",
+      "typ": "poprzedza",
+      "nota": null
+    },
+    {
+      "source": "wyklad-04",
+      "target": "pytanie-wiele-prob",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-04",
+      "target": "zmienna-losowa",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-04",
+      "target": "rozklad-bernoulliego",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-04",
+      "target": "rozklad-dwumianowy",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-04",
+      "target": "wyklad-05",
+      "typ": "poprzedza",
+      "nota": null
+    },
+    {
+      "source": "wyklad-05",
+      "target": "pytanie-do-zdarzenia",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-05",
+      "target": "rozklad-geometryczny",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-05",
+      "target": "rozklad-ujemny-dwumianowy",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-05",
+      "target": "wyklad-06",
+      "typ": "poprzedza",
+      "nota": null
+    },
+    {
+      "source": "wyklad-06",
+      "target": "pytanie-prog",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-06",
+      "target": "rozklad-normalny",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-06",
+      "target": "wyklad-07",
+      "typ": "poprzedza",
+      "nota": null
+    },
+    {
+      "source": "wyklad-07",
+      "target": "pytanie-czas-zycia",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-07",
+      "target": "czas-do-zdarzenia",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-07",
+      "target": "funkcja-hazardu",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-07",
+      "target": "rozklad-wykladniczy",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-07",
+      "target": "rozklad-weibulla",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-07",
+      "target": "twierdzenie-weibull-nie-wanna",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-07",
+      "target": "wyklad-08",
+      "typ": "poprzedza",
+      "nota": null
+    },
+    {
+      "source": "wyklad-08",
+      "target": "pytanie-architektura",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-08",
+      "target": "niezawodnosc-systemu",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-08",
+      "target": "twierdzenie-niezaleznosc-nie-domyslna",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-08",
+      "target": "wyklad-09",
+      "typ": "poprzedza",
+      "nota": null
+    },
+    {
+      "source": "wyklad-09",
+      "target": "pytanie-drzewo-bledow",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-09",
+      "target": "fta",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-09",
+      "target": "twierdzenie-niezaleznosc-nie-domyslna",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-09",
+      "target": "wyklad-10",
+      "typ": "poprzedza",
+      "nota": null
+    },
+    {
+      "source": "wyklad-10",
+      "target": "pytanie-decyzja",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "wyklad-10",
+      "target": "twierdzenie-problem-przed-modelem",
+      "typ": "omawia",
+      "nota": null
+    },
+    {
+      "source": "zdarzenie-losowe",
+      "target": "przestrzen-zdarzen",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "zdarzenie-losowe",
+      "target": "pytanie-jezyk-ryzyka",
+      "typ": "odpowiada_na",
+      "nota": null
+    },
+    {
+      "source": "zmienna-losowa",
+      "target": "przestrzen-zdarzen",
+      "typ": "wymaga",
+      "nota": null
+    },
+    {
+      "source": "zrodlo-ocena-planow",
+      "target": "twierdzenie-niezaleznosc-nie-domyslna",
+      "typ": "wspiera",
+      "nota": null
+    },
+    {
+      "source": "zrodlo-ocena-planow",
+      "target": "twierdzenie-weibull-nie-wanna",
+      "typ": "wspiera",
+      "nota": null
+    },
+    {
+      "source": "zrodlo-plan-kanoniczny",
+      "target": "twierdzenie-problem-przed-modelem",
+      "typ": "wspiera",
+      "nota": null
+    },
+    {
+      "source": "zrodlo-plan-kanoniczny",
+      "target": "twierdzenie-niezaleznosc-nie-domyslna",
+      "typ": "wspiera",
+      "nota": null
+    },
+    {
+      "source": "zrodlo-plan-kanoniczny",
+      "target": "twierdzenie-weibull-nie-wanna",
+      "typ": "wspiera",
+      "nota": null
+    }
+  ],
+  "raport": {
+    "nieomawiane": [],
+    "pytania_bez_odpowiedzi": "pytanie-decyzja",
+    "twierdzenia_bez_zrodel": "twierdzenie-bayesa",
+    "wezly_odlaczone": []
+  }
+}
