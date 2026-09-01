@@ -123,13 +123,15 @@ risk_assessment_ui <- function(prefix, quiz, exercises) {
 
 risk_assessment_server <- function(prefix, quiz, input, output) {
   questions <- risk_quiz_questions(quiz)
-  checked <- reactiveVal(FALSE)
-  observeEvent(input[[paste0(prefix, "_quiz_check")]], checked(TRUE))
-  output[[paste0(prefix, "_quiz_feedback")]] <- renderUI({
-    req(checked())
-    answers <- vapply(seq_along(questions), function(index) {
+  submitted <- reactiveVal(NULL)
+  observeEvent(input[[paste0(prefix, "_quiz_check")]], {
+    submitted(vapply(seq_along(questions), function(index) {
       input[[paste0(prefix, "_quiz_", index)]] %||% ""
-    }, character(1))
+    }, character(1)))
+  })
+  output[[paste0(prefix, "_quiz_feedback")]] <- renderUI({
+    answers <- submitted()
+    req(answers)
     correct <- vapply(seq_along(questions), function(index) {
       identical(answers[[index]], questions[[index]]$correct)
     }, logical(1))
@@ -149,6 +151,11 @@ risk_assessment_server <- function(prefix, quiz, input, output) {
   })
 }
 
+risk_prose <- function(text) {
+  # Akapit lub kilka akapitów: wektor znakowy renderuje się jako kolejne lc_p.
+  tagList(lapply(text, lc_p))
+}
+
 risk_chapter_from_config <- function(block, chapter, index, next_chapter = NULL) {
   content <- tagList(
     lc_chapter_hero(
@@ -159,11 +166,26 @@ risk_chapter_from_config <- function(block, chapter, index, next_chapter = NULL)
     )
   )
 
+  if (!is.null(chapter$intro)) {
+    content <- tagAppendChildren(content, risk_prose(chapter$intro))
+  }
+
+  if (!is.null(chapter$callout)) {
+    content <- tagAppendChildren(
+      content,
+      margin_callout(
+        label = chapter$callout$label,
+        chapter$callout$text,
+        color = chapter$callout$color %||% "wskazowka"
+      )
+    )
+  }
+
   for (section in chapter$sections %||% list()) {
     content <- tagAppendChildren(
       content,
       lc_h2(paste0(block$id, "-", chapter$id, "-", section$id), section$title),
-      if (!is.null(section$text)) lc_p(section$text),
+      if (!is.null(section$text)) risk_prose(section$text),
       if (!is.null(section$bullets)) tags$ul(lapply(section$bullets, tags$li))
     )
   }
@@ -173,6 +195,9 @@ risk_chapter_from_config <- function(block, chapter, index, next_chapter = NULL)
     )))
   }
   if (!is.null(chapter$widget)) content <- tagAppendChildren(content, chapter$widget)
+  if (!is.null(chapter$takeaway)) {
+    content <- tagAppendChildren(content, lc_p(chapter$takeaway))
+  }
   if (!is.null(chapter$decision)) {
     content <- tagAppendChildren(
       content,
@@ -210,7 +235,7 @@ risk_chapter_from_config <- function(block, chapter, index, next_chapter = NULL)
     id = paste0("ch-", chapter$id),
     num = sprintf("%02d", index),
     title = chapter$title,
-    duration = chapter$duration %||% "10–15 min",
+    duration = chapter$duration,
     content = content
   )
 }
