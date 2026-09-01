@@ -5,29 +5,21 @@
 ch5_ui <- lecture_chapter(
   id = "ch-decyzja",
   num = "05",
-  title = "Prawdopodobieństwo to nie całe ryzyko",
-  duration = "15 min",
+  title = "Od liczby do decyzji",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 05 · Język ryzyka",
       num = "05",
-      title = "Ten sam procent nie oznacza tej samej decyzji.",
-      lead = "Prawdopodobieństwo opisuje możliwość zdarzenia. Decyzja o
-              bezpieczeństwie wymaga także skutków, ekspozycji, niepewności,
-              istniejących barier i możliwości działania."
-    ),
-
-    margin_callout(
-      label = "Granica wykładu",
-      "Ten kurs buduje przede wszystkim składową probabilistyczną analizy.
-       Skutków nie zamieniamy automatycznie w pieniądze ani punkty.",
-      color = "uwaga"
+      title = "Który problem powinien być pierwszy?",
+      lead = "Dyrektor Bananpolu dostał dwa wyniki dotyczące bezpieczeństwa.
+              Obejrzyj dwa przypadki i wybierz najlepiej uzasadniony wniosek.
+              Dopiero potem porównamy możliwe sposoby rozumowania."
     ),
 
     lc_h2("ch5-porownanie", "Dwa problemy dyrektora Bananpolu"),
     lc_p(
-      "Poniższe liczby są fikcyjne. Nie służą do rankingu prawdziwych zagrożeń,
-       lecz pokazują, jak niepełna jest decyzja oparta wyłącznie na częstości."
+      "Poniższe liczby są fikcyjne i służą wyłącznie temu ćwiczeniu. Porównaj
+       oba przypadki, zwracając uwagę na dokładne brzmienie każdej odpowiedzi."
     ),
 
     lc_stat_grid(
@@ -48,7 +40,7 @@ ch5_ui <- lecture_chapter(
 
     figure_panel(
       label = "Decyzja",
-      title = "Co wynika z samych prawdopodobieństw?",
+      title = "Jaki priorytet można teraz uzasadnić?",
       radioButtons(
         "ch5_priority",
         "Wybierz najlepiej uzasadnione stwierdzenie",
@@ -64,7 +56,14 @@ ch5_ui <- lecture_chapter(
       uiOutput("ch5_feedback")
     ),
 
-    lc_h2("ch5-profil", "Zamiast jednej magicznej liczby"),
+    margin_callout(
+      label = "Granica wykładu",
+      "Ten kurs buduje przede wszystkim składową probabilistyczną analizy.
+       Skutków nie zamieniamy automatycznie w pieniądze ani punkty.",
+      color = "uwaga"
+    ),
+
+    lc_h2("ch5-profil", "Profil dwóch problemów"),
     lc_p(
       "Dla obu problemów warto zapisać profil: definicję zdarzenia,
        prawdopodobieństwo wraz z horyzontem, możliwe skutki, liczbę osób
@@ -90,7 +89,7 @@ ch5_ui <- lecture_chapter(
       )
     ),
 
-    lc_h2("ch5-macierz", "Macierz ryzyka jest narzędziem, nie definicją"),
+    lc_h2("ch5-macierz", "Jak czytać macierz ryzyka"),
     lc_p(
       "Kategorie „rzadkie”, „możliwe”, „poważne” i „katastrofalne” pomagają
        porządkować dyskusję, ale są skalami porządkowymi. Iloczyn numerów pól

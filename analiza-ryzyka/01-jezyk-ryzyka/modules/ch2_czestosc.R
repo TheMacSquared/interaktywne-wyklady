@@ -6,7 +6,6 @@ ch2_ui <- lecture_chapter(
   id = "ch-czestosc",
   num = "02",
   title = "Od obserwacji do modelu",
-  duration = "20 min",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 02 · Język ryzyka",
@@ -19,7 +18,9 @@ ch2_ui <- lecture_chapter(
     margin_callout(
       label = "Jednostka obserwacji",
       "Jedna próba oznacza jedną 8-godzinną zmianę w konkretnym korytarzu.
-       Zdarzenie: co najmniej jedno poślizgnięcie podczas tej zmiany.",
+       Zdarzenie rejestrowe: co najmniej jedno poślizgnięcie (utrata
+       przyczepności i upadek) podczas tej zmiany. Rejestr zlicza zmiany ze
+       zdarzeniem, nie pojedyncze poślizgnięcia.",
       color = "ok"
     ),
 
@@ -38,9 +39,10 @@ ch2_ui <- lecture_chapter(
 
     lc_h2("ch2-symulacja", "Zobacz stabilizację częstości"),
     lc_p(
-      "Ustaw modelowe prawdopodobieństwo, a następnie dodawaj kolejne fikcyjne
-       zmiany. Małe serie mogą wyglądać dramatycznie albo podejrzanie dobrze.
-       Duże serie zwykle zbliżają się do wartości przyjętej w modelu."
+      "Aplikacja wylosowała i ukryła modelowe prawdopodobieństwo. Dodawaj kolejne
+       fikcyjne zmiany i spróbuj oszacować je na podstawie częstości empirycznej.
+       Małe serie mogą wyglądać dramatycznie albo podejrzanie dobrze. Gdy uznasz,
+       że danych jest dość, odsłoń wartość przyjętą w modelu."
     ),
 
     figure_panel(
@@ -51,19 +53,12 @@ ch2_ui <- lecture_chapter(
         column(
           4,
           lc_stack(
-            sliderInput(
-              "ch2_probability",
-              "Modelowe P(zdarzenia w jednej zmianie)",
-              min = 0.01,
-              max = 0.30,
-              value = bananpol$events$corridor_slip$illustrative_probability,
-              step = 0.01
-            ),
             actionButton("ch2_add_1", "Dodaj 1 zmianę", class = "lc-btn-primary", width = "100%"),
             actionButton("ch2_add_10", "Dodaj 10 zmian", class = "lc-btn-primary", width = "100%"),
             actionButton("ch2_add_100", "Dodaj 100 zmian", class = "lc-btn-primary", width = "100%"),
             actionButton("ch2_add_1000", "Dodaj 1000 zmian", class = "lc-btn-primary", width = "100%"),
-            actionButton("ch2_reset", "Reset", class = "lc-btn-secondary-outline", width = "100%")
+            actionButton("ch2_reveal", "Odsłoń modelowe P", class = "lc-btn-secondary-outline", width = "100%"),
+            actionButton("ch2_reset", "Nowa seria (reset)", class = "lc-btn-secondary-outline", width = "100%")
           ),
           uiOutput("ch2_stats")
         ),
@@ -100,22 +95,27 @@ ch2_ui <- lecture_chapter(
 )
 
 ch2_server <- function(input, output, session) {
+  probability_candidates <- seq(0.01, 0.30, by = 0.01)
   history <- reactiveVal(integer())
+  model_probability <- reactiveVal(sample(probability_candidates, 1L))
+  probability_revealed <- reactiveVal(FALSE)
 
   add_days <- function(n) {
-    req(input$ch2_probability)
-    history(append_bernoulli_history(history(), n, input$ch2_probability))
+    history(append_bernoulli_history(history(), n, model_probability()))
   }
 
   observeEvent(input$ch2_add_1, add_days(1L))
   observeEvent(input$ch2_add_10, add_days(10L))
   observeEvent(input$ch2_add_100, add_days(100L))
   observeEvent(input$ch2_add_1000, add_days(1000L))
-  observeEvent(input$ch2_reset, history(integer()))
-  observeEvent(input$ch2_probability, history(integer()), ignoreInit = TRUE)
+  observeEvent(input$ch2_reveal, probability_revealed(TRUE))
+  observeEvent(input$ch2_reset, {
+    history(integer())
+    model_probability(sample(setdiff(probability_candidates, model_probability()), 1L))
+    probability_revealed(FALSE)
+  })
 
   output$ch2_stats <- renderUI({
-    req(input$ch2_probability)
     observed <- history()
     n <- length(observed)
     events <- sum(observed)
@@ -131,7 +131,11 @@ ch2_server <- function(input, output, session) {
       ),
       lc_stat_box(
         "Prawdopodobieństwo modelowe",
-        format_probability_pl(input$ch2_probability),
+        if (probability_revealed()) {
+          format_probability_pl(model_probability())
+        } else {
+          "Ukryte"
+        },
         color = upwr_accent
       ),
       columns = 2
@@ -139,23 +143,30 @@ ch2_server <- function(input, output, session) {
   })
 
   convergence_plot <- reactive({
-    req(input$ch2_probability)
     data <- cumulative_frequency(history())
+    revealed <- probability_revealed()
 
     plot <- ggplot(data, aes(x = trial, y = frequency)) +
-      geom_hline(
-        yintercept = input$ch2_probability,
-        colour = upwr_accent,
-        linewidth = 0.9,
-        linetype = "dashed"
-      ) +
       coord_cartesian(ylim = c(0, 1)) +
       labs(
         title = "Częstość poślizgnięć w kolejnych zmianach",
-        subtitle = "Linia przerywana: prawdopodobieństwo przyjęte w modelu",
+        subtitle = if (revealed) {
+          "Linia przerywana: prawdopodobieństwo przyjęte w modelu"
+        } else {
+          "Modelowe prawdopodobieństwo pozostaje ukryte"
+        },
         x = "Liczba obserwowanych zmian",
         y = "Skumulowana częstość zdarzenia"
       )
+
+    if (revealed) {
+      plot <- plot + geom_hline(
+        yintercept = model_probability(),
+        colour = upwr_accent,
+        linewidth = 0.9,
+        linetype = "dashed"
+      )
+    }
 
     if (nrow(data) == 0) {
       plot +
@@ -176,9 +187,6 @@ ch2_server <- function(input, output, session) {
   zoom_plot_server(
     "ch2_convergence",
     convergence_plot,
-    alt = paste(
-      "Wykres skumulowanej częstości poślizgnięć w kolejnych zmianach",
-      "z linią modelowego prawdopodobieństwa."
-    )
+    alt = "Wykres skumulowanej częstości poślizgnięć w kolejnych zmianach. Po odsłonięciu modelu pojawia się linia modelowego prawdopodobieństwa."
   )
 }

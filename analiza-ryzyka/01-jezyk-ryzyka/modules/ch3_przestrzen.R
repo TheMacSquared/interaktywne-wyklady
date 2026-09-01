@@ -6,7 +6,6 @@ ch3_ui <- lecture_chapter(
   id = "ch-przestrzen",
   num = "03",
   title = "Spośród czego liczymy?",
-  duration = "20 min",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 03 · Język ryzyka",
@@ -35,6 +34,44 @@ ch3_ui <- lecture_chapter(
       withMathJax("$$P(A)=\\frac{|A|}{|\\Omega|}
                    =\\frac{\\text{liczba wyników sprzyjających}}
                    {\\text{liczba jednakowo możliwych wyników}}$$")
+    ),
+
+    lc_h2("ch3-slownik", "Te same pojęcia w języku formalnym"),
+    lc_p(
+      "Podręczniki rachunku prawdopodobieństwa używają kilku stałych nazw.
+       Wszystkie już znasz z przykładu palety — tutaj tylko je porządkujemy."
+    ),
+    figure_panel(
+      label = "Słownik",
+      title = "Losowanie palety w terminologii formalnej",
+      full_width = TRUE,
+      tags$table(
+        class = "lc-table lc-table-striped lc-table-bordered",
+        tags$thead(tags$tr(
+          tags$th("Termin"),
+          tags$th("Znaczenie"),
+          tags$th("W Bananpolu")
+        )),
+        tags$tbody(
+          tags$tr(tags$td("Doświadczenie losowe"), tags$td("Powtarzalna procedura o niepewnym wyniku"), tags$td("Losowanie jednej palety do kontroli")),
+          tags$tr(tags$td("Wynik elementarny"), tags$td("Pojedynczy, niepodzielny wynik doświadczenia"), tags$td("Numer wylosowanej palety")),
+          tags$tr(tags$td("Przestrzeń wyników Ω"), tags$td("Zbiór wszystkich wyników elementarnych"), tags$td("Wszystkie 24 palety")),
+          tags$tr(tags$td("Zdarzenie A"), tags$td("Dowolny podzbiór przestrzeni Ω"), tags$td("Palety z uszkodzonym zabezpieczeniem")),
+          tags$tr(tags$td("Zdarzenie pewne"), tags$td("Cała przestrzeń Ω — zachodzi zawsze"), tags$td("Wylosowano którąś z 24 palet")),
+          tags$tr(tags$td("Zdarzenie niemożliwe"), tags$td("Zbiór pusty ∅ — nie zachodzi nigdy"), tags$td("Wylosowano paletę numer 25"))
+        )
+      )
+    ),
+
+    lc_p(
+      "Z definicji klasycznej wynikają trzy podstawowe własności. Możesz je
+       sprawdzić suwakiem poniżej: ustaw 0 palet sprzyjających (zdarzenie
+       niemożliwe), potem 24 (zdarzenie pewne)."
+    ),
+    lc_formula_box(
+      withMathJax("$$P(\\Omega)=1,\\qquad P(\\emptyset)=0,\\qquad 0\\le P(A)\\le 1$$"),
+      tags$p("Prawdopodobieństwo zdarzenia pewnego wynosi 1, niemożliwego 0,
+             a każdego innego zdarzenia — wartość pomiędzy.")
     ),
 
     lc_h2("ch3-paletki", "Zbuduj zdarzenie na siatce palet"),
@@ -117,16 +154,18 @@ ch3_server <- function(input, output, session) {
 
   pallet_plot <- reactive({
     data <- pallet_data()
-    data$status <- ifelse(data$favourable, "Zdarzenie A", "Dopełnienie Aᶜ")
+    data$status <- ifelse(data$favourable, "event", "complement")
 
     ggplot(data, aes(x = column, y = -row, fill = status)) +
       geom_tile(colour = "white", linewidth = 2, width = 0.92, height = 0.92) +
       geom_text(aes(label = id), colour = "white", fontface = "bold", size = 4) +
       scale_fill_manual(
         values = c(
-          "Zdarzenie A" = upwr_cat[["terakota"]],
-          "Dopełnienie Aᶜ" = upwr_reference
-        )
+          "complement" = upwr_reference,
+          "event" = upwr_cat[["terakota"]]
+        ),
+        breaks = c("complement", "event"),
+        labels = expression("Dopełnienie " * A^c, "Zdarzenie A")
       ) +
       coord_equal() +
       scale_x_continuous(breaks = NULL) +

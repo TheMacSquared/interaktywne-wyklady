@@ -6,7 +6,6 @@ ch6_ui <- lecture_chapter(
   id = "ch-sciaga",
   num = "06",
   title = "Ściąga",
-  duration = "10 min",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 06 · Język ryzyka",
@@ -31,7 +30,7 @@ ch6_ui <- lecture_chapter(
         tags$tbody(
           tags$tr(tags$td("Zagrożenie"), tags$td("Co może spowodować szkodę?"), tags$td("Skórka na przejściu")),
           tags$tr(tags$td("Ekspozycja"), tags$td("Kto lub co ma kontakt z zagrożeniem?"), tags$td("Pracownik przechodzący korytarzem")),
-          tags$tr(tags$td("Zdarzenie"), tags$td("Co dokładnie ma zajść?"), tags$td("Utrata przyczepności i upadek")),
+          tags$tr(tags$td("Zdarzenie"), tags$td("Co dokładnie ma zajść?"), tags$td("Poślizgnięcie: utrata przyczepności i upadek (w rejestrze zmian: co najmniej jedno podczas zmiany)")),
           tags$tr(tags$td("Skutek"), tags$td("Jakie może być następstwo?"), tags$td("Uraz nadgarstka")),
           tags$tr(tags$td("Zabezpieczenie"), tags$td("Co przerywa drogę do szkody?"), tags$td("Kontrola i sprzątanie przejścia"))
         )
@@ -66,6 +65,11 @@ ch6_ui <- lecture_chapter(
     lc_formula_box(
       withMathJax("$$P(A^c)=1-P(A)$$"),
       tags$p("Dopełnienie obejmuje wszystkie wyniki, w których zdarzenie A nie zaszło.")
+    ),
+    lc_formula_box(
+      withMathJax("$$P(\\Omega)=1,\\qquad P(\\emptyset)=0,\\qquad 0\\le P(A)\\le 1$$"),
+      tags$p("Zdarzenie pewne Ω ma prawdopodobieństwo 1, zdarzenie niemożliwe ∅
+             ma 0, a każde zdarzenie mieści się między tymi granicami.")
     ),
 
     lc_h2("ch6-model", "Jak rozpoznać właściwy punkt startu"),

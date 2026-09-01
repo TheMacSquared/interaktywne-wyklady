@@ -19,7 +19,6 @@ ch7_ui <- lecture_chapter(
   id = "ch-quiz",
   num = "07",
   title = "Quiz",
-  duration = "10 min",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 07 · Język ryzyka",

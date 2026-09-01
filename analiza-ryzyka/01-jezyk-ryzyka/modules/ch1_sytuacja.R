@@ -30,7 +30,6 @@ ch1_ui <- lecture_chapter(
   id = "ch-sytuacja",
   num = "01",
   title = "Co tu jest ryzykiem?",
-  duration = "15 min",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 01 · Język ryzyka",
@@ -39,6 +38,28 @@ ch1_ui <- lecture_chapter(
       lead = "W korytarzu Bananpolu znaleziono skórkę od banana. Brzmi jak
               dowcip, ale pozwala precyzyjnie oddzielić zagrożenie, ekspozycję,
               zdarzenie, skutek i zabezpieczenie."
+    ),
+
+    lc_h2("ch1-bananpol", "Witamy w Bananpolu"),
+    lc_p(
+      "Bananpol jest fikcyjnym importerem bananów. Firma ma rampę rozładunkową,
+       dojrzewalnię z chłodnią, magazyn wysokiego składowania, linię sortowania
+       i pakowania, wózki widłowe oraz instalację chłodniczą z alarmami.
+       Właśnie zaczynasz tu pracę jako inspektor bezpieczeństwa."
+    ),
+    lc_p(
+      "Przez całą serię wykładów będziesz uzupełniać mapę ryzyka tej firmy: od
+       dzisiejszej skórki na korytarzu, przez alarmy i awarie urządzeń, aż po
+       drzewo błędów całej instalacji w finale. Każde nowe pojęcie dostanie
+       swoje miejsce w tym samym zakładzie, więc wyniki z kolejnych wykładów
+       będą do siebie pasować."
+    ),
+
+    margin_callout(
+      label = "Dane fikcyjne",
+      "Wszystkie liczby w kursie są wymyślone na potrzeby dydaktyki i nie
+       opisują żadnej prawdziwej firmy. Prawdziwe są tylko metody.",
+      color = "uwaga"
     ),
 
     margin_callout(
