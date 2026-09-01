@@ -299,6 +299,15 @@ lecture_page <- function(lecture_id      = NULL,
           "display=swap&subset=latin-ext"
         )
       ),
+      # Tekst wewnątrz \text{...} dziedziczy krój interfejsu. Domyślny font
+      # MathJax nie składa polskich znaków spójnie z resztą wykładu.
+      tags$script(
+        type = "text/x-mathjax-config",
+        HTML("MathJax.Hub.Config({
+          'HTML-CSS': { mtextFontInherit: true },
+          CommonHTML: { mtextFontInherit: true }
+        });")
+      ),
       withMathJax(),
       includeCSS(file.path(proj_root, "R", "shared_styles.css")),
       # Paleta UPWr jako CSS custom properties — źródło wartości: R/palette.R.
