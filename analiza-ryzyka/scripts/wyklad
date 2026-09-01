@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# Launcher wykładów analizy ryzyka.
+#
+# Użycie:
+#   scripts/wyklad              # interaktywne menu z tytułami
+#   scripts/wyklad 10           # start po numerze lub fragmencie nazwy
+#   scripts/wyklad alarm        # dopasowanie fragmentu (np. "alarm" -> 03)
+#   scripts/wyklad -l           # tylko wypisz listę wykładów
+#   PORT=8888 scripts/wyklad 10 # inny port (domyślnie 7710)
+#   HOST=0.0.0.0 scripts/wyklad 10  # udostępnij w sieci lokalnej
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+PORT="${PORT:-7710}"
+HOST="${HOST:-127.0.0.1}"
+
+apps=()
+for f in */app.R; do
+  apps+=("${f%/app.R}")
+done
+if [ "${#apps[@]}" -eq 0 ]; then
+  echo "Nie znaleziono żadnego katalogu z app.R." >&2
+  exit 1
+fi
+
+title_of() {
+  sed -n 's/.*lecture_title *= *"\(.*\)".*/\1/p' "$1/app.R" | head -1
+}
+
+print_list() {
+  local i=1
+  for dir in "${apps[@]}"; do
+    printf "%2d) %-28s %s\n" "$i" "$dir" "$(title_of "$dir")"
+    i=$((i + 1))
+  done
+}
+
+run_app() {
+  local dir="$1"
+  echo "Uruchamiam: $dir — $(title_of "$dir")"
+  echo "Adres: http://${HOST}:${PORT}  (zatrzymanie: Ctrl+C)"
+  exec Rscript -e "shiny::runApp('${dir}', port = ${PORT}, host = '${HOST}')"
+}
+
+if [ "${1:-}" = "-l" ] || [ "${1:-}" = "--list" ]; then
+  print_list
+  exit 0
+fi
+
+if [ $# -ge 1 ]; then
+  query="$1"
+  matches=()
+  for dir in "${apps[@]}"; do
+    if [[ "$dir" == *"$query"* ]]; then
+      matches+=("$dir")
+    fi
+  done
+  if [ "${#matches[@]}" -eq 1 ]; then
+    run_app "${matches[0]}"
+  elif [ "${#matches[@]}" -eq 0 ]; then
+    echo "Brak wykładu pasującego do: $query" >&2
+    print_list >&2
+    exit 1
+  else
+    echo "Niejednoznaczne dopasowanie dla: $query" >&2
+    printf "  %s\n" "${matches[@]}" >&2
+    exit 1
+  fi
+fi
+
+print_list
+printf "Wybierz numer wykładu: "
+read -r choice
+if ! [[ "$choice" =~ ^[0-9]+$ ]] || [ "$choice" -lt 1 ] || [ "$choice" -gt "${#apps[@]}" ]; then
+  echo "Nieprawidłowy wybór: $choice" >&2
+  exit 1
+fi
+run_app "${apps[$((choice - 1))]}"

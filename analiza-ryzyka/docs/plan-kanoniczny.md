@@ -1,10 +1,5 @@
 # Analiza ryzyka — plan kanoniczny
 
-Status: przyjęty do realizacji. Wszystkie dziesięć wykładów ma uruchamialną
-strukturę globalną; wykład 01 jest rozwiniętą aplikacją referencyjną. Dokument
-scala plan A z wybranymi elementami planu B oraz werdyktem z
-`ocena-planow.md`.
-
 ## Założenie dydaktyczne
 
 Kurs prowadzi od intuicji i obserwowanych częstości do prostych modeli
