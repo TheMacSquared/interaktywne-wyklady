@@ -26,7 +26,6 @@
     "rdzeń", "rdzeń", "rdzeń", "rdzeń", "pogłębienie", "rdzeń",
     "pogłębienie", "pogłębienie", "pogłębienie", "rdzeń", "rdzeń", "rdzeń"
   ),
-  minutes = c(4, 8, 7, 10, 12, 10, 10, 15, 15, 10, 12, 5),
   stringsAsFactors = FALSE
 )
 
@@ -62,38 +61,24 @@ ch0_map_ui <- list(
       " jako pogłębienie można ominąć bez utraty głównej historii."
     ),
 
-    lc_h2("mapa-plan", "Planowanie konkretnego spotkania"),
+    lc_h2("mapa-tematy", "Mapa tematów"),
 
-    figure_panel(
-      label = "Narzędzie prowadzącego",
-      title = "Co zmieści się w dostępnym czasie?",
-      full_width = TRUE,
-      fluidRow(
-        column(
-          4,
-          radioButtons(
-            "ch0_available_time",
-            "Czas dostępny na dane spotkanie:",
-            choices = c(
-              "około 45 minut" = "45",
-              "około 90 minut" = "90",
-              "kilka spotkań — pełny materiał" = "full"
-            ),
-            selected = "90"
-          ),
-          lc_feedback(
-            type = "warning",
-            tags$strong("To nie są wersje aplikacji."),
-            " Lista jedynie pomaga podjąć decyzję, które elementy omówić teraz,",
-            " a do których wrócić później."
-          )
-        ),
-        column(
-          8,
-          tableOutput("ch0_route_table"),
-          uiOutput("ch0_route_note")
+    tags$table(
+      class = "lc-table lc-table-bordered lc-table-striped",
+      tags$thead(tags$tr(
+        tags$th("Nr"),
+        tags$th("Temat"),
+        tags$th("Rozdział"),
+        tags$th("Poziom")
+      )),
+      tags$tbody(lapply(seq_len(nrow(.regression_topics)), function(index) {
+        tags$tr(
+          tags$td(.regression_topics$order[[index]]),
+          tags$td(.regression_topics$topic[[index]]),
+          tags$td(.regression_topics$chapter[[index]]),
+          tags$td(.regression_topics$level[[index]])
         )
-      )
+      }))
     ),
 
     lc_h2("mapa-przypadki", "Dwa przypadki, dwie funkcje"),
@@ -129,51 +114,6 @@ ch0_map_ui <- list(
 )
 
 ch0_map_server <- function(input, output, session) {
-  selected_topics <- reactive({
-    if (identical(input$ch0_available_time, "full")) {
-      return(.regression_topics)
-    }
-
-    available <- as.numeric(input$ch0_available_time)
-    # Zostawiamy około 15 minut w spotkaniu 90-minutowym i około 8 minut
-    # w spotkaniu 45-minutowym na pracę w jamovi, pytania oraz dyskusję.
-    budget <- if (available >= 90) 75 else 37
-    topics <- .regression_topics
-
-    # Najpierw rdzeń w kolejności narracji, potem pogłębienia, jeśli zostaje czas.
-    priority <- order(topics$level != "rdzeń", topics$order)
-    topics <- topics[priority, , drop = FALSE]
-    topics$include <- cumsum(topics$minutes) <= budget
-    topics[order(topics$order), , drop = FALSE]
-  })
-
-  output$ch0_route_table <- renderTable({
-    topics <- selected_topics()
-    if (!"include" %in% names(topics)) topics$include <- TRUE
-    data.frame(
-      Nr = topics$order,
-      Temat = topics$topic,
-      Rozdział = topics$chapter,
-      Poziom = topics$level,
-      `Na to spotkanie` = ifelse(topics$include, "omów", "zostaw na później"),
-      check.names = FALSE
-    )
-  }, striped = TRUE, bordered = TRUE, spacing = "xs")
-
-  output$ch0_route_note <- renderUI({
-    topics <- selected_topics()
-    if (!"include" %in% names(topics)) {
-      return(lc_feedback(
-        type = "ok",
-        tags$strong("Pełna ścieżka:"),
-        paste(" około", sum(topics$minutes), "minut materiału bez ćwiczeń i dyskusji.")
-      ))
-    }
-    used <- sum(topics$minutes[topics$include])
-    lc_feedback(
-      type = "ok",
-      tags$strong("Sugerowany rdzeń:"),
-      paste(" około", used, "minut narracji; pozostały czas zostaw na przykład w jamovi i pytania.")
-    )
-  })
+  # Rozdział jest statyczną mapą — nie ma elementów reaktywnych.
+  invisible(NULL)
 }

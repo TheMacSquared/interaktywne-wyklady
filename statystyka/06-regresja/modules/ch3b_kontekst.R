@@ -325,9 +325,9 @@ ch3b_server <- function(input, output, session) {
           tags$td(round(table$estimate[[index]], 3)),
           tags$td(round(table$std.error[[index]], 3)),
           tags$td(if (table$p.value[[index]] < 0.001) {
-            "< 0,001"
+            "< 0.001"
           } else {
-            format(round(table$p.value[[index]], 3), decimal.mark = ",")
+            format(round(table$p.value[[index]], 3))
           })
         )
       }))

@@ -38,17 +38,6 @@ if (!requireNamespace("palmerpenguins", quietly = TRUE)) {
   levels = c("Adelie", "Chinstrap", "Gentoo")
 )
 
-.penguins_labels <- c(
-  species = "Gatunek",
-  island = "Wyspa",
-  bill_length_mm = "Długość dzioba (mm)",
-  bill_depth_mm = "Wysokość dzioba (mm)",
-  flipper_length_mm = "Długość płetwy (mm)",
-  body_mass_g = "Masa ciała (g)",
-  sex = "Płeć",
-  year = "Rok"
-)
-
 # Generowanie danych do regresji liniowej prostej
 generate_regression_data <- function(n = 100, beta0 = 10, beta1 = 2, sigma = 5,
                                       scenario = "custom") {

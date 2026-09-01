@@ -364,7 +364,7 @@ ch5_server <- function(input, output, session) {
   output$ch5_cas_model_table <- renderUI({
     tb <- broom::tidy(ch5_cas_model(), exponentiate = TRUE, conf.int = TRUE)
     labels <- c(
-      "(Intercept)" = "Stała",
+      "(Intercept)" = "Stała (szanse wyjściowe, nie OR)",
       "income" = "Dochód okręgu (tys. USD)",
       "lunch" = "Lunch subsydiowany (%)",
       "english" = "Angielski jako drugi język (%)"
@@ -382,7 +382,7 @@ ch5_server <- function(input, output, session) {
 
     tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       tags$thead(tags$tr(
-        tags$th("Zmienna"), tags$th("OR / efekt"),
+        tags$th("Zmienna"), tags$th("Iloraz szans (OR)"),
         tags$th("Błąd stand."), tags$th("p-value"), tags$th("p < 0.05?")
       )),
       tags$tbody(rows)
