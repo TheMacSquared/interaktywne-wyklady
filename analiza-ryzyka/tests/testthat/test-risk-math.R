@@ -35,4 +35,8 @@ testthat::test_that("systemy i bramki FTA respektują logikę", {
   testthat::expect_equal(env$risk_gate_or(c(.1, .2)), .28)
   testthat::expect_equal(env$risk_fta_top(.005, .05, .08), .005 * (1 - .95 * .92))
   testthat::expect_equal(env$risk_common_cause_reliability(.98, .01), .9702)
+  testthat::expect_equal(
+    env$risk_common_cause_reliability(env$risk_parallel_reliability(c(.92, .95)), .01),
+    .99 * (1 - .08 * .05)
+  )
 })

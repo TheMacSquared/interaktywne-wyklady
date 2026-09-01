@@ -144,7 +144,8 @@ bananpol_parameters <- data.frame(
     82, 3, 85, 1500, 2, 1700, 1000, .92, .95, .98, .01, .005, .05, .08
   ),
   unit = c(
-    "zmiana", rep("udział zmian", 4), rep("udział zmian", 3), "zmiana",
+    "zmiana", rep("udział zmian", 4), "udział zmian",
+    rep("prawdopodobieństwo warunkowe", 2), "zmiana",
     "udział elementów", "element", "udział palet", "wykrycie",
     rep("°C", 3), "godzina", "bezwymiarowy", "godzina", "godzina",
     rep("prawdopodobieństwo misji", 4), rep("prawdopodobieństwo roczne", 3)
