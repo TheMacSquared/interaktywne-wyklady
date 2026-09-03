@@ -11,16 +11,30 @@ library(jsonlite)
 # ============================================================================
 
 .find_app_dir <- function() {
+  # Katalog aplikacji rozpoznajemy po tym, że jego rodzic zawiera R/lecture_layout.R.
+  has_project_root <- function(dir) {
+    file.exists(file.path(dirname(dir), "R", "lecture_layout.R"))
+  }
+
+  candidates <- character(0)
+  # 1) ofile w stosie wywołań (source())
   for (i in seq_len(sys.nframe())) {
     ofile <- sys.frame(i)$ofile
-    if (!is.null(ofile)) return(dirname(normalizePath(ofile)))
+    if (!is.null(ofile)) candidates <- c(candidates, dirname(normalizePath(ofile)))
   }
-  args <- commandArgs(trailingOnly = FALSE)
-  file_arg <- grep("--file=", args, value = TRUE)
+  # 2) Rscript --file=...
+  file_arg <- grep("--file=", commandArgs(trailingOnly = FALSE), value = TRUE)
   if (length(file_arg) > 0) {
-    return(dirname(normalizePath(sub("--file=", "", file_arg))))
+    candidates <- c(candidates, dirname(normalizePath(sub("--file=", "", file_arg[[1]]))))
   }
-  getwd()
+  # 3) Katalog roboczy — shiny::runApp() ustawia go na katalog aplikacji.
+  candidates <- c(candidates, getwd())
+
+  # Pierwszy kandydat leżący w projekcie; gdy żaden nie pasuje, zachowaj stare zachowanie.
+  # Bez tego uruchomienie przez wrapper (np. rozszerzenie Shiny dla VS Code) trafia do
+  # katalogu wrappera, bo --file= wskazuje jego skrypt, a nie app.R.
+  valid <- Filter(has_project_root, candidates)
+  if (length(valid) > 0) valid[[1]] else candidates[[1]]
 }
 app_dir <- .find_app_dir()
 project_root <- dirname(app_dir)
