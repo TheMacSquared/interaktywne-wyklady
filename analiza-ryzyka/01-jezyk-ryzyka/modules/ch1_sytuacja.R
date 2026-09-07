@@ -114,6 +114,11 @@ ch1_ui <- lecture_chapter(
         opisuje jeszcze dotkliwości skutku."
     ),
 
+    lc_h2("ch1-proces", "Gdzie w procesie mieści się rachunek?"),
+    lc_p("Ustalamy cel i zakres, identyfikujemy zagrożenia i scenariusze, analizujemy ich prawdopodobieństwo oraz skutki, oceniamy wynik według jawnych kryteriów, wdrażamy działanie i sprawdzamy pozostałe ryzyko. Komunikacja z osobami narażonymi i odpowiedzialnymi trwa na każdym etapie. Ten kurs rozwija przede wszystkim część probabilistyczną."),
+    lc_h2("ch1-scenariusz", "Zanim dostaniesz gotowe drzewo"),
+    lc_p("W parze wybierz zagrożenie przy rozładunku. Zapisz: źródło zagrożenia, zdarzenie inicjujące, osoby narażone, istniejące bariery i dwa możliwe skutki. Dodaj błąd człowieka lub procedury oraz jedną brakującą informację. Oddziel bariery zapobiegające zdarzeniu od tych, które ograniczają skutek po jego wystąpieniu."),
+    lc_p("Przykład: uszkodzenie opakowania → wyciek na przejście → poślizgnięcie → brak urazu albo uraz. Kontrola opakowania zapobiega wyciekowi, usunięcie rozlania i odgrodzenie ograniczają kontakt. Sama tabliczka ostrzegawcza zależy od zauważenia i reakcji człowieka. Ponowna kontrola przejścia sprawdza, czy działanie było skuteczne."),
     lc_chapter_next(
       num = "02",
       title = "Częstość i prawdopodobieństwo",

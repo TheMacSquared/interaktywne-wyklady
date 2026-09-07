@@ -1,6 +1,7 @@
 # Blok 04: Wiele prób -----------------------------------------------------
 
-proby_quiz <- list(
+proby_quiz <- list(questions = list(
+  list(
   question = "Który warunek jest konieczny dla prostego modelu dwumianowego?",
   choices = c(
     "Stała liczba prób i to samo p w każdej próbie" = "fixed",
@@ -9,7 +10,20 @@ proby_quiz <- list(
   ),
   correct = "fixed",
   explanation = "Model wymaga ustalonego n, dwóch wyników, stałego p i niezależności prób."
-)
+),
+  list(question = "Dla n=100 i p=0,02 ile wynosi E(X)?",
+    choices = c("0,02" = "a", "98" = "b", "2" = "c"), correct = "c",
+    explanation = "E(X)=np=2; pojedyncza partia może dać inny wynik."),
+  list(question = "Jak policzyć co najmniej jedną wadę?",
+    choices = c("p^n" = "a", "1−(1−p)^n" = "b", "np w każdym przypadku" = "c"), correct = "b",
+    explanation = "Przez dopełnienie zdarzenia, że wszystkie próby zakończą się bez wady."),
+  list(question = "Co oznacza P(X≤2) w planie akceptacji c=2?",
+    choices = c("Prawdopodobieństwo przyjęcia partii" = "a", "Prawdopodobieństwo dokładnie dwóch wad" = "b", "Prawdopodobieństwo odrzucenia partii" = "c"), correct = "a",
+    explanation = "Przyjmujemy partię, gdy liczba wad nie przekracza limitu."),
+  list(question = "Zero wad w 100 niezależnych próbach przy ustalonym n. Jaki wniosek jest poprawny?",
+    choices = c("Udowodniono p=0" = "a", "Następna partia na pewno nie ma wad" = "b", "Górna jednostronna granica 95% dla p wynosi około 0,0295" = "c"), correct = "c",
+    explanation = "Niezaobserwowanie wady pozostawia niepewność parametru; granica wynika z (1−p)^100=0,05.")
+))
 proby_exercises <- c(
   "Bananpol: dla n=100 i p=0,02 policz P(X=0), P(X=2) i P(X≥1).",
   "Diagnostyka: partia pochodzi z dwóch dostaw o różnej jakości. Które założenie modelu dwumianowego jest zagrożone?",
@@ -217,6 +231,10 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
       id = "plan", title = "Co należy zapisać?",
       bullets = c("wielkość losowanej próby", "dopuszczalna liczba niesprawnych", "p reprezentujące jakość partii", "konsekwencję odrzucenia i przeoczenia")
     )),
+    widget = figure_panel(label = "Od danych do modelu", title = "Zero wad w stu kontrolach", full_width = TRUE,
+      lc_p("Jeśli p nie podano, szacujemy je z próby. Zero wad w 100 niezależnych kontrolach daje oszacowanie punktowe 0, ale dokładna jednostronna górna granica ufności 95% wynosi 1−0,05^(1/100)≈0,0295. Przy tej wartości szansa zobaczenia zera wynosi jeszcze 5%. Założenia obejmują stałe p i ustaloną z góry liczebność próby."),
+      lc_p("Dla następnej partii 100 elementów podstawienie oszacowania p=0 daje prognozę P(co najmniej jednej wady)=0, natomiast podstawienie górnej granicy daje 0,95. To wrażliwość prognozy na niepewność p, a nie 95-procentowe prawdopodobieństwo awarii partii. Losowość nowej partii i niepewność oszacowania to dwa różne źródła niepewności.")
+    ),
     decision = "Porównaj kilka jakości partii, zanim wybierzesz n i limit akceptacji."
   ),
   list(

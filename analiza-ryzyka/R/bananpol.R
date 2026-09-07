@@ -103,17 +103,28 @@ bananpol <- list(
     initiation = 0.005,
     detection_failure = 0.05,
     suppression_failure = 0.08,
-    unit = "rok pracy magazynu",
-    horizon = "jeden rok",
+    unit = "inicjacja: rok; niepowodzenia funkcji: na zapotrzebowanie",
+    horizon = "inicjacja w roku; detekcja i tłumienie podczas tej inicjacji",
     source = "fikcyjne parametry dydaktyczne"
   ),
+  integration = list(
+    label = "Utrata wymaganej ochrony termicznej podczas misji",
+    initiation = .005,
+    sensitivity = .95,
+    false_positive_rate = .05,
+    power_r1000 = .98,
+    controller_r1000 = .95,
+    intervention_efficacy = .5,
+    unit = "jedna misja; zapotrzebowanie na początku, brak napraw",
+    horizon = "1000 h bazowo; czas misji zmieniany przez użytkownika",
+    source = "fikcyjny scenariusz; osobna detekcja, dwa pracujące wentylatory; skuteczność działań jest hipotezą"
+  ),
   interventions = data.frame(
-    id = c("detector", "inspection", "power", "fan"),
+    id = c("detector", "prevention", "power", "fan"),
     label = c(
-      "Lepszy czujnik", "Częstszy przegląd", "Niezależne zasilanie",
+      "Lepszy czujnik", "Ograniczenie źródła ciepła", "Niezależne zasilanie",
       "Dodatkowy wentylator"
     ),
-    relative_reduction = c(0.35, 0.20, 0.55, 0.30),
     cost_index = c(2, 1, 4, 3),
     feasibility = c("wysoka", "wysoka", "średnia", "średnia"),
     stringsAsFactors = FALSE
@@ -148,13 +159,13 @@ bananpol_parameters <- data.frame(
     rep("prawdopodobieństwo warunkowe", 2), "zmiana",
     "udział elementów", "element", "udział palet", "wykrycie",
     rep("°C", 3), "godzina", "bezwymiarowy", "godzina", "godzina",
-    rep("prawdopodobieństwo misji", 4), rep("prawdopodobieństwo roczne", 3)
+    rep("prawdopodobieństwo misji", 4), "prawdopodobieństwo roczne", rep("prawdopodobieństwo warunkowe przy inicjacji", 2)
   ),
   horizon = c(
     rep("1000 porównywalnych zmian", 5), rep("10 000 porównywalnych zmian", 4),
     rep("jedna partia kontrolna", 4), rep("ustalony tryb pracy", 3),
     rep("czas do awarii wentylatora", 3), rep("misja 1000 godzin", 5),
-    rep("jeden rok pracy magazynu", 3)
+    "jeden rok pracy magazynu", rep("podczas zapotrzebowania wywołanego inicjacją", 2)
   ),
   source = rep("fikcyjny parametr dydaktyczny Bananpolu", 27),
   fictional = rep(TRUE, 27),

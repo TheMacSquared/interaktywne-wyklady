@@ -1,7 +1,21 @@
 # Blok 08: Niezawodność systemu -----------------------------------------
 
-system_quiz <- list(question = "Dla dwóch niezależnych gałęzi równoległych system zawodzi, gdy…", choices = c("zawiodą obie gałęzie" = "both", "zawiedzie dowolna jedna" = "one", "zawsze po średnim czasie życia" = "mean"), correct = "both", explanation = "W układzie równoległym sukces wymaga co najmniej jednej działającej gałęzi.")
-system_exercises <- c("Bananpol: policz R systemu szeregowego dla R1=0,92, R2=0,95 i R3=0,98.", "Diagnostyka: wskaż, dlaczego wspólne zasilanie podważa zwykły rachunek redundancji.", "Transfer: zapisz logikę sukcesu systemu hamulcowego z dwiema niezależnymi gałęziami i wspólnym sterownikiem.")
+system_quiz <- list(questions = list(
+  list(question = "Dla dwóch niezależnych gałęzi równoległych system zawodzi, gdy…", choices = c("zawiodą obie gałęzie" = "both", "zawiedzie dowolna jedna" = "one", "zawsze po średnim czasie życia" = "mean"), correct = "both", explanation = "W układzie równoległym sukces wymaga co najmniej jednej działającej gałęzi."),
+  list(question = "Niezależne elementy w szeregu mają R=0,9 i 0,8. Jakie jest R systemu?",
+    choices = c("0,98" = "a", "0,85" = "b", "0,72" = "c"), correct = "c",
+    explanation = "System wymaga obu elementów: 0,9×0,8=0,72."),
+  list(question = "Dwie gałęzie mają R=0,9 i wspólne zasilanie o R=0,99. Jakie jest R układu?",
+    choices = c("0,81" = "a", "0,9801" = "b", "0,99" = "c"), correct = "b",
+    explanation = "Warunkowo bez utraty zasilania redundancja daje 0,99; całość 0,99×0,99."),
+  list(question = "φ(x_A,x_B,x_C)=x_A. Czy ten trzyczęściowy model jest koherentny?",
+    choices = c("Nie, B i C są nieistotne" = "a", "Tak, bo φ jest niemalejąca" = "b", "Nie, bo φ czasami wynosi zero" = "c"), correct = "a",
+    explanation = "Koherentność wymaga monotoniczności i istotności każdego uwzględnionego elementu."),
+  list(question = "Czy zwykły wzór na równoległe R wystarcza dla rezerwy uruchamianej po awarii?",
+    choices = c("Tak, zawsze są dwa elementy" = "a", "Tak, jeśli mają identyczny MTTF" = "b", "Nie, trzeba określić oczekiwanie i przełączenie" = "c"), correct = "c",
+    explanation = "Rezerwa oczekująca ma inny czas pracy i dodatkowy mechanizm przełączenia.")
+))
+system_exercises <- c("Struktura: zapisz tabelę ośmiu stanów dla φ=x_C·[1−(1−x_A)(1−x_B)]. Sprawdź monotoniczność i istotność każdego elementu; porównaj z φ=x_A, gdy w modelu pozostają także B i C.", "Bananpol: policz R systemu szeregowego dla R1=0,92, R2=0,95 i R3=0,98.", "Diagnostyka: wskaż, dlaczego wspólne zasilanie podważa zwykły rachunek redundancji.", "Transfer: zapisz logikę sukcesu systemu hamulcowego z dwiema niezależnymi gałęziami i wspólnym sterownikiem.")
 
 system_block <- list(id = "system", title = "Niezawodność systemu", chapters = list(
   list(
@@ -49,8 +63,8 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
       lc_p(
         "Iloczyn liczb mniejszych od jedności maleje z każdym czynnikiem, więc
          długie szeregi są bezlitosne: dziesięć elementów po R = 0,95 daje
-         systemowe R ≈ 0,60. W układzie szeregowym system jest zawsze gorszy od
-         najsłabszego elementu — a dotkliwość tej straty rośnie z długością
+         systemowe R ≈ 0,60. W układzie szeregowym system jest co najwyżej tak niezawodny jak
+         najsłabszy element — a dotkliwość tej straty rośnie z długością
          łańcucha."
       )
     ),
@@ -59,7 +73,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
   list(
     id = "rownolegle", title = "Układ równoległy",
     lead = "Liczymy przez zdarzenie przeciwne: awarię wszystkich gałęzi.",
-    intro = "Drugi wentylator zamontowany obok pierwszego niczego nie chłodzi lepiej — czeka. System równoległy działa, dopóki działa co najmniej jedna gałąź, więc zawodzi tylko wtedy, gdy zawiodą wszystkie naraz. Przełącz stany gałęzi i znajdź jedyną kombinację, która kładzie system.",
+    intro = "Dwa wentylatory pracują równocześnie, ale jeden wystarcza do wymaganej wydajności. Zakładamy, że awaria jednego nie zmienia obciążenia ani charakterystyki drugiego. Rezerwa oczekująca na uruchomienie to inny model: trzeba uwzględnić stan podczas oczekiwania i niezawodność przełącznika. System równoległy działa, dopóki działa co najmniej jedna gałąź, więc zawodzi tylko wtedy, gdy zawiodą wszystkie naraz. Przełącz stany gałęzi i znajdź jedyną kombinację, która kładzie system.",
     widget = tagList(
       figure_panel(label = "Stany", title = "Co najmniej jedna gałąź musi działać", checkboxGroupInput("s8_parallel_states", "Działające wentylatory", choices = c("A" = "a", "B" = "b"), selected = c("a", "b")), uiOutput("s8_parallel_state"), full_width = TRUE),
       lc_p("Tym razem przegrywająca kombinacja jest jedna — i to jest zaproszenie do triku z dopełnieniem, znanego z wykładu o wielu próbach: zamiast wielu scenariuszy sukcesu liczymy jeden scenariusz porażki."),
@@ -132,13 +146,13 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
       text = "Ta sama krzywa opisuje kopie zapasowe danych. Druga kopia radykalnie zmniejsza ryzyko utraty, trzecia już umiarkowanie — a wszystkie trzy trzymane w tej samej serwerowni dzielą wspólną przyczynę: pożar, zalanie, ransomware. Reguła 3-2-1 (trzy kopie, dwa nośniki, jedna poza lokalizacją) to inżynieria wspólnych przyczyn, nie mnożenie gałęzi."
     )),
     widget = risk_widget_panel("Trade-off", "Liczba gałęzi i koszt", tagList(sliderInput("s8_branches", "Liczba gałęzi", 1, 6, 2, 1), sliderInput("s8_branch_r", "R jednej gałęzi", .5, .99, .9, .01)), "s8_redundancy", "s8_redundancy_stats"),
-    takeaway = "Przy niezależnych, jednakowych gałęziach każda kolejna redukuje coraz mniejszą część pozostałego ryzyka, a koszt rośnie liniowo. Wielkość korzyści zależy jednak od niezawodności gałęzi i od wspólnych przyczyn: zależne zasilanie potrafi odebrać redundancji większość obiecanego zysku."
+    takeaway = "Przy niezależnych, jednakowych gałęziach każda kolejna redukuje stały ułamek pozostałego ryzyka, lecz coraz mniejszą wartość bezwzględną, a koszt rośnie liniowo. Wielkość korzyści zależy jednak od niezawodności gałęzi i od wspólnych przyczyn: zależne zasilanie potrafi odebrać redundancji większość obiecanego zysku."
   ),
   list(
     id = "poprawa", title = "Który element poprawić?",
     lead = "Ta sama poprawa elementu może mieć różną wartość systemową.",
     intro = c(
-      "Budżet pozwala poprawić jeden element o dwie setne niezawodności. Który wybrać? Intuicja podpowiada najsłabszy — i w układzie szeregowym zwykle ma rację, ale nie zawsze i nie z definicji. Wartość poprawy zależy od miejsca elementu w architekturze: wzmacnianie gałęzi równoległej, którą i tak ktoś zastępuje, daje ułamek tego, co wzmocnienie wąskiego gardła w szeregu.",
+      "Budżet pozwala poprawić jeden element o dwie setne niezawodności. Który wybrać? W szeregu niezależnych elementów o dodatnich R identyczny dopuszczalny przyrost bezwzględny daje największy zysk dla najsłabszego elementu. W układzie mieszanym decyduje także położenie gałęzi. Wartość poprawy zależy od miejsca elementu w architekturze: wzmacnianie gałęzi równoległej, którą i tak ktoś zastępuje, daje ułamek tego, co wzmocnienie wąskiego gardła w szeregu.",
       "Porównanie poniżej liczy dokładnie to: systemowy zysk z identycznej poprawy w trzech różnych miejscach. To pierwsza wersja analizy wrażliwości, która w wykładzie o drzewach błędów stanie się rankingiem interwencji."
     ),
     widget = figure_panel(label = "Porównanie", title = "Spadek ryzyka po poprawie R o 0,02", uiOutput("s8_improvement"), full_width = TRUE),

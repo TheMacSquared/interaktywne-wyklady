@@ -1,4 +1,5 @@
-warunki_quiz <- list(
+warunki_quiz <- list(questions = list(
+  list(
   question = "Co zmienia warunek B w prawdopodobieństwie P(A | B)?",
   choices = c(
     "Populację odniesienia" = "den", "Tylko licznik" = "num",
@@ -6,8 +7,20 @@ warunki_quiz <- list(
   ),
   correct = "den",
   explanation = "Warunek filtruje świat do przypadków spełniających B; w tej populacji liczymy A."
-)
-
+),
+  list(question = "P(B)=0,1 i P(A | B)=0,12. Ile wynosi P(A ∩ B)?",
+    choices = c("0,12" = "a", "0,22" = "b", "0,012" = "c"), correct = "c",
+    explanation = "Reguła iloczynu: 0,1 × 0,12 = 0,012."),
+  list(question = "Dodatkowo P(A | brak B)=0,005. Ile wynosi P(A)?",
+    choices = c("0,012" = "a", "0,0165" = "b", "0,125" = "c"), correct = "b",
+    explanation = "Sumujemy ważone drogi: 0,1×0,12 + 0,9×0,005 = 0,0165."),
+  list(question = "Dwa dodatnio prawdopodobne zdarzenia są rozłączne. Czy są niezależne?",
+    choices = c("Nie" = "a", "Tak" = "b", "Tylko gdy oba p są małe" = "c"), correct = "a",
+    explanation = "Przecięcie ma prawdopodobieństwo zero, a iloczyn ich dodatnich prawdopodobieństw jest dodatni."),
+  list(question = "P(A | B)>P(A). Czy usunięcie B na pewno zmniejszy P(A)?",
+    choices = c("Tak, wynika to z definicji" = "a", "Tak, jeśli próba jest duża" = "b", "Nie, związek może wynikać ze wspólnej przyczyny" = "c"), correct = "c",
+    explanation = "Warunkowanie na obserwacji nie jest tym samym co interwencja w proces.")
+))
 warunki_exercises <- c(
   "Bananpol: policz P(incydent) z dwóch trybów pracy i zapisz wynik jako częstość na 1000 zmian.",
   "Diagnostyka: wskaż, dlaczego wspólne zasilanie narusza założenie niezależności dwóch zabezpieczeń.",
@@ -352,7 +365,7 @@ warunki_block <- list(
       ),
       sections = list(
         list(id = "czytanie", title = "Czytaj od mianownika", bullets = c("Wiersz B wyznacza populację warunkową.", "Komórka A i B jest licznikiem.", "Suma wszystkich dróg prowadzących do A daje P(A).")),
-        list(id = "kontrola", title = "Test zgodności", text = "Po zmianie widoku liczba incydentów, liczebność grup i prawdopodobieństwa muszą pozostać takie same. Jeśli wynik zmienia się wraz z rodzajem wykresu, zmieniliśmy definicję albo mianownik, a nie tylko reprezentację.")
+        list(id = "kontrola", title = "Test zgodności", text = "Po zmianie widoku liczba incydentów i liczebność grup pozostają takie same. Siatka i tabela zaokrąglają oczekiwane liczby do całych zmian, więc udziały z ilustracji mogą różnić się od parametrów modelu. Jeśli wynik zmienia się wraz z rodzajem wykresu, zmieniliśmy definicję albo mianownik, a nie tylko reprezentację.")
       ), widget = warunki_views_widget
     ),
     list(
@@ -691,8 +704,9 @@ warunki_server <- function(input, output, session) {
     d <- counts()
     p_all <- sum(d$event) / sum(d$total)
     lc_stat_grid(
-      lc_stat_box("P(incydent)", risk_format_probability(p_all)),
-      lc_stat_box("P(incydent | przegrzanie)", risk_format_probability(d$event[1] / d$total[1]), color = upwr_accent),
+      lc_stat_box("Udział incydentów w zaokrąglonej ilustracji", risk_format_probability(p_all)),
+      lc_stat_box("Udział przy przegrzaniu — ilustracja", risk_format_probability(d$event[1] / d$total[1]), color = upwr_accent),
+      lc_stat_box("P(incydent) w modelu", risk_format_probability(risk_total_probability(input$w2_share, input$w2_risk_hot, input$w2_risk_normal))),
       columns = 1
     )
   })
@@ -732,7 +746,7 @@ warunki_server <- function(input, output, session) {
         geom_label(data = edges, aes((xs + xe) / 2, (ys + ye) / 2, label = p), size = 3.1, colour = upwr_secondary, linewidth = 0) +
         geom_label(data = nodes, aes(x, y, label = label), size = 3.4, fill = upwr_secondary, colour = "white", fontface = "bold", linewidth = 0) +
         coord_cartesian(xlim = c(-.7, 6.3), ylim = c(-2.5, 2.5)) +
-        labs(title = "Drzewo dróg: mnożymy wzdłuż gałęzi", x = NULL, y = NULL) +
+        labs(title = "Drzewo dróg: mnożymy wzdłuż gałęzi", subtitle = "Parametry na gałęziach; liczebności na końcach zaokrąglono", x = NULL, y = NULL) +
         theme_upwr() +
         theme(
           axis.text = element_blank(), axis.ticks = element_blank(),

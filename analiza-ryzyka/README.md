@@ -6,6 +6,9 @@ języka zdarzeń i podstaw prawdopodobieństwa.
 
 ## Status
 
+- klucz ćwiczeń i wskazówki prowadzenia: `docs/przewodnik-prowadzacego.md`;
+- korekty spójności: model misji w 10, warunkowe wejścia FTA, quizy tematyczne
+  z objaśnieniami, niepewność parametrów i kryterium decyzji;
 - plan kanoniczny: `docs/plan-kanoniczny.md`;
 - wykład 01: pełna, rozbudowana wersja z ośmioma rozdziałami;
 - wykłady 02–10: pełne bloki z lokalnymi modułami, narracją, głosowaniem,
@@ -65,3 +68,8 @@ fikcyjne, a ich jednostki i horyzonty czasu znajdują się w `R/bananpol.R`.
 Wykłady 02–10 korzystają ze wspólnych czystych funkcji w `R/risk_math.R` oraz
 komponentów w `R/risk_block.R`. `R/course_catalog.R` jest indeksem kolejności i
 metadanych; treść każdego bloku pozostaje w jego własnym `modules/block.R`.
+
+Blok 09 dotyczy pożaru z warunkowymi niepowodzeniami detekcji i tłumienia.
+Blok 10 jest osobnym studium utraty ochrony termicznej w jednej misji: model
+czasu życia zasila układ chłodzenia, a interwencje porównujemy w trzech
+scenariuszach, z budżetem i demonstracyjnym kryterium pozostałego ryzyka.

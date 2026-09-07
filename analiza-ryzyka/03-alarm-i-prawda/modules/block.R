@@ -1,6 +1,7 @@
 # Blok 03: Alarm i prawda -------------------------------------------------
 
-alarm_quiz <- list(
+alarm_quiz <- list(questions = list(
+  list(
   question = "Czujnik ma czułość 95%. Czy po alarmie prawdopodobieństwo awarii wynosi 95%?",
   choices = c(
     "Nie — zależy także od częstości bazowej i fałszywych alarmów" = "no",
@@ -9,8 +10,20 @@ alarm_quiz <- list(
   ),
   correct = "no",
   explanation = "Czułość to P(alarm | awaria), a pytanie po alarmie dotyczy P(awaria | alarm)."
-)
-
+),
+  list(question = "Na 10 000 zmian: 100 awarii, czułość 0,95, FPR 0,05. Ile alarmów jest prawdziwych?",
+    choices = c("95 z 100" = "a", "9500 z 10 000" = "b", "95 z 590" = "c"), correct = "c",
+    explanation = "Jest 95 prawdziwych alarmów i 495 fałszywych, więc posterior wynosi 95/590≈0,161."),
+  list(question = "Przy stałej czułości i FPR maleje częstość awarii. Co dzieje się z P(awaria | alarm)?",
+    choices = c("Zawsze rośnie" = "a", "Maleje, jeśli FPR>0" = "b", "Nie zmienia się" = "c"), correct = "b",
+    explanation = "Maleje udział prawdziwych alarmów wśród wszystkich alarmów."),
+  list(question = "Kiedy wolno ponownie użyć Bayesa z tymi samymi parametrami drugiego czujnika?",
+    choices = c("Gdy wyniki są niezależne warunkowo przy awarii i przy jej braku" = "a", "Gdy czujniki mają różne numery seryjne" = "b", "Gdy oba alarmy wystąpiły jednocześnie" = "c"), correct = "a",
+    explanation = "Potrzebna jest niezależność warunkowa w obu stanach, a nie tylko niezależność bezwarunkowa."),
+  list(question = "Reakcja kosztuje 100 zł i zapobiega stracie 2000 zł. Kiedy minimalizuje oczekiwany koszt?",
+    choices = c("Dopiero powyżej 0,5" = "a", "Przy każdym dodatnim posteriorze" = "b", "Gdy posterior przekracza 0,05" = "c"), correct = "c",
+    explanation = "Porównujemy 100 z 2000q; przy q=0,05 koszty są równe.")
+))
 alarm_exercises <- c(
   "Bananpol: dla 10 000 zmian, częstości awarii 0,01, czułości 0,95 i FPR 0,05 policz, ile alarmów będzie prawdziwych.",
   "Diagnostyka: wyjaśnij, dlaczego dwóch czujników z tym samym zasilaniem nie wolno automatycznie traktować jako niezależnych.",
@@ -225,6 +238,11 @@ alarm_block <- list(
         id = "macierz", title = "Macierz konsekwencji",
         bullets = c("alarmuj przy awarii — uniknięta szkoda", "alarmuj bez awarii — koszt postoju", "nie alarmuj przy awarii — możliwa katastrofa", "nie alarmuj bez awarii — brak działania")
       )),
+      widget = figure_panel(label = "Decyzja", title = "Jeden rachunek kosztów", full_width = TRUE,
+        lc_p("Rozważamy wyłącznie szkodę materialną. Reakcja kosztuje 100 zł niezależnie od stanu i całkowicie zapobiega stracie; brak reakcji przy awarii kosztuje 2000 zł. Przy posteriorze q oczekiwany koszt braku reakcji to 2000q. Reagujemy, gdy q>0,05. Przy q≈0,161 koszt braku reakcji wynosi około 322 zł, więc reakcja jest uzasadniona mimo przewagi fałszywych alarmów."),
+        lc_formula_box(withMathJax("$$L(\\text{reakcja})=100,\\qquad L(\\text{brak})=2000q$$")),
+        lc_p("Jeśli reakcja ogranicza stratę tylko o połowę, jej koszt oczekiwany to 100+1000q; próg rośnie do q>0,10. Skuteczność działania jest osobnym założeniem. Urazów i pełnej oceny bezpieczeństwa nie sprowadzamy w tym przykładzie do jednej kwoty.")
+      ),
       decision = "Ustal próg reakcji jawnie na podstawie kosztów i wykonalności, nie na podstawie samego posteriora."
     ),
     list(

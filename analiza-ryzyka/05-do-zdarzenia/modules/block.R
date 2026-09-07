@@ -1,10 +1,24 @@
 # Blok 05: Ile prób do zdarzenia -----------------------------------------
 
-dozd_quiz <- list(
+dozd_quiz <- list(questions = list(
+  list(
   question = "Co jest ustalone w modelu ujemnym dwumianowym?",
   choices = c("Liczba oczekiwanych zdarzeń r" = "r", "Łączna liczba prób n" = "n", "Dokładny moment ostatniego zdarzenia" = "time"),
   correct = "r", explanation = "Eksperyment trwa do r-tego zdarzenia, więc liczba prób jest losowa."
-)
+),
+  list(question = "Przy p=0,1 ile wynosi średnia liczba wszystkich prób do trzeciej wady?",
+    choices = c("3" = "a", "27" = "b", "30" = "c"), correct = "c",
+    explanation = "E(X)=r/p=30; 27 to średnia liczba niepowodzeń przed trzecim sukcesem."),
+  list(question = "R zwrócił 27 niepowodzeń przed trzecim sukcesem. Ile było wszystkich prób?",
+    choices = c("24" = "a", "30" = "b", "27" = "c"), correct = "b",
+    explanation = "Dodajemy trzy próby zakończone sukcesem: X=Y+r."),
+  list(question = "Po 20 próbach bez wady, przy stałym p i niezależności, szansa wady w następnej próbie…",
+    choices = c("nadal wynosi p" = "a", "rośnie do 1" = "b", "spada do zera" = "c"), correct = "a",
+    explanation = "Brak pamięci nie oznacza, że zdarzenie musi wkrótce nastąpić."),
+  list(question = "Między seriami p jest losowe. Jak wyznaczyć średnią liczbę prób do r zdarzeń?",
+    choices = c("r/E(p) zawsze" = "a", "E(p)/r" = "b", "r·E(1/p)" = "c"), correct = "c",
+    explanation = "Warunkowo średnia wynosi r/p; następnie uśredniamy po rozkładzie p. Zmienność zmienia także średnią oczekiwania.")
+))
 dozd_exercises <- c(
   "Bananpol: przy p=0,10 wyznacz średnią liczbę kontroli do znalezienia trzech wadliwych zabezpieczeń i P(ukończenia do 40. kontroli).",
   "Diagnostyka: jakość zmienia się między partiami. Wyjaśnij, dlaczego model ze stałym p może zaniżyć niepewność planu.",
@@ -104,13 +118,13 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
     id = "zawodzi", title = "Kiedy model zawodzi", lead = "Stałe p i niezależność są założeniami operacyjnymi.",
     intro = c(
       "Stałe p brzmi niewinnie, ale w praktyce oznacza: każda kontrolowana paleta pochodzi z tej samej populacji jakości. Gdy dostawy przychodzą od różnych dostawców albo jakość dryfuje w czasie, p zmienia się między partiami — a rozkład liczby kontroli robi się szerszy, niż obiecuje model.",
-      "Symulacja porównuje świat stałego p ze światem, w którym p losuje się osobno dla każdej partii. Średnie są zbliżone; różni się ogon — czyli dokładnie ta część rozkładu, na której opiera się plan zasobów. Niedoszacowany ogon to audyt, który „niespodziewanie” trwa dwa razy dłużej."
+      "Symulacja porównuje świat stałego p ze światem, w którym p losuje się osobno dla każdej partii. Zmienia się także średnia: przy losowym p wynosi r·E(1/p), a nie r/E(p). Funkcja 1/p jest wypukła, więc przy tej samej średniej p zmienność wydłuża przeciętne oczekiwanie. Różni się również ogon — czyli dokładnie ta część rozkładu, na której opiera się plan zasobów. Niedoszacowany ogon to audyt, który „niespodziewanie” trwa dwa razy dłużej."
     ),
     sections = list(list(
       id = "transfer", title = "Przykład transferowy: poszukiwania i rekrutacja",
       text = "Model „ile prób do r-tego sukcesu” pojawia się wszędzie tam, gdzie szuka się rzadkich obiektów: liczba odwiertów do drugiego złoża, liczba rozmów rekrutacyjnych do trzeciego zatrudnienia, liczba testów do wykrycia r-tej usterki oprogramowania. We wszystkich tych zastosowaniach ta sama pułapka: sukcesy zmieniają proces (uczenie, wyczerpanie puli), więc stałość p trzeba sprawdzić, zanim rozkład stanie się planem."
     )),
-    widget = risk_widget_panel("Porównanie", "Stałe p kontra partie o różnej jakości", sliderInput("d5_variation", "Zmienność p między partiami", 0, .09, .04, .005), "d5_failure", "d5_failure_stats"),
+    widget = risk_widget_panel("Porównanie", "Stałe p kontra partie o różnej jakości", sliderInput("d5_variation", "Odchylenie p przed ograniczeniem do [0,005; 0,95]", 0, .09, .04, .005), "d5_failure", "d5_failure_stats"),
     pitfall = "Uczenie kontrolera, grupowanie wad i zmiana dostawy mogą zmieniać p w czasie."
   ),
   list(
@@ -164,13 +178,15 @@ dozd_server <- function(input, output, session) {
     pfinish <- risk_negative_binomial_finish(input$d5_limit, input$d5_r, input$d5_p)
     lc_stat_grid(lc_stat_box("Średnia", round(input$d5_r / input$d5_p, 1)), lc_stat_box("P(ukończenia do limitu)", risk_format_probability(pfinish), color = upwr_accent), lc_stat_box("95. percentyl", qnbinom(.95, input$d5_r, input$d5_p) + input$d5_r), columns = 1)
   })
-  failure_plot <- reactive({
+  failure_data <- reactive({
     set.seed(505)
     stable <- rnbinom(1000, size = 3, prob = .1) + 3
     ps <- pmin(.95, pmax(.005, rnorm(1000, .1, input$d5_variation)))
     mixed <- vapply(ps, function(p) rnbinom(1, 3, p) + 3, numeric(1))
-    dat <- data.frame(x = c(stable, mixed), model = rep(c("Stałe p", "Zmienne p między partiami"), each = 1000))
-    ggplot(dat, aes(x, fill = model)) +
+    data.frame(x = c(stable, mixed), model = rep(c("Stałe p", "Zmienne p między partiami"), each = 1000))
+  })
+  failure_plot <- reactive({
+    ggplot(failure_data(), aes(x, fill = model)) +
       geom_histogram(binwidth = 3, position = "identity", alpha = .55) +
       coord_cartesian(xlim = c(3, 150)) +
       scale_fill_manual(values = upwr_cat_n(2)) +
@@ -178,6 +194,10 @@ dozd_server <- function(input, output, session) {
       theme_upwr()
   })
   zoom_plot_server("d5_failure", failure_plot, alt = "Nakładające się histogramy stałego i zmiennego prawdopodobieństwa wykrycia.")
-  output$d5_failure_stats <- renderUI(lc_feedback(type = "warning", "Model ze stałym p nie pokazuje ryzyka wyjątkowo słabej partii."))
+  output$d5_failure_stats <- renderUI({
+    dat <- failure_data()
+    means <- tapply(dat$x, dat$model, mean)
+    lc_stat_grid(lc_stat_box("Średnia symulowana — stałe p", round(means[["Stałe p"]], 1)), lc_stat_box("Średnia symulowana — zmienne p", round(means[["Zmienne p między partiami"]], 1)), columns = 1)
+  })
   risk_assessment_server("d5", dozd_quiz, input, output)
 }

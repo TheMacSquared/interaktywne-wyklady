@@ -205,9 +205,54 @@ risk_gate_or <- function(probabilities) {
 }
 
 risk_fta_top <- function(p_initiation, p_detection_failure, p_suppression_failure) {
+  # P(I) × P(D ∪ S | I); wejścia D, S są warunkowo niezależne przy I.
   risk_assert_probability(
     c(p_initiation, p_detection_failure, p_suppression_failure),
     "parametry FTA"
   )
   p_initiation * risk_gate_or(c(p_detection_failure, p_suppression_failure))
+}
+
+# Dokładna jednostronna górna granica ufności przy zerze zdarzeń w n próbach.
+risk_zero_failure_upper <- function(n, confidence = .95) {
+  risk_assert_count(n, "n", 1L)
+  if (length(confidence) != 1L || !is.finite(confidence) ||
+      confidence <= 0 || confidence >= 1) stop("Poziom ufności musi być między 0 a 1.")
+  -expm1(log1p(-confidence) / n)
+}
+
+# Jeden kontrakt misji dla kart, interwencji, scenariuszy i rekomendacji.
+# Zapotrzebowanie występuje na początku; brak napraw i zmiany obciążenia gałęzi.
+risk_mission_analysis <- function(time, model, power_r1000, controller_r1000,
+                                  initiation, sensitivity, intervention = "none",
+                                  stress = 1) {
+  model <- match.arg(model, c("exp", "weibull"))
+  intervention <- match.arg(intervention, c("none", "detector", "prevention", "power", "fan"))
+  risk_assert_probability(c(power_r1000, controller_r1000, initiation, sensitivity))
+  if (length(time) != 1L || !is.finite(time) || time <= 0 ||
+      length(stress) != 1L || !is.finite(stress) || stress <= 0) {
+    stop("Czas misji i mnożnik scenariusza muszą być dodatnie.")
+  }
+  fan_r <- if (model == "exp") exp(-time / 1500) else exp(-(time / 1700)^2)
+  # Scenariusz skaluje skumulowany hazard, zachowując spójność czasu.
+  fan_r <- fan_r^stress
+  power_r <- power_r1000^(time / 1000 * stress)
+  controller_r <- controller_r1000^(time / 1000 * stress)
+  p_init <- min(1, initiation * stress)
+  p_miss <- min(1, (1 - sensitivity) * stress)
+  # Założona skuteczność działania: 50% bazowo, słabsza w ostrożnym scenariuszu.
+  efficacy <- max(0, min(1, .5 * (2 - stress)))
+  branches <- 2L
+  switch(intervention,
+    detector = p_miss <- p_miss * (1 - efficacy),
+    prevention = p_init <- p_init * (1 - efficacy),
+    power = power_r <- risk_parallel_reliability(rep(power_r, 2)),
+    fan = branches <- 3L
+  )
+  parallel_r <- risk_parallel_reliability(rep(fan_r, branches))
+  system_r <- power_r * controller_r * parallel_r
+  list(fan_r = fan_r, power_r = power_r, controller_r = controller_r,
+       parallel_r = parallel_r, system_r = system_r, initiation = p_init,
+       miss = p_miss, cooling_failure = 1 - system_r,
+       top = risk_fta_top(p_init, p_miss, 1 - system_r), efficacy = efficacy)
 }

@@ -1,7 +1,21 @@
 # Blok 06: Zmienność i próg ---------------------------------------------
 
-prog_quiz <- list(question = "Która zmiana bezpośrednio zmniejsza P(T>85°C), gdy próg pozostaje stały?", choices = c("Obniżenie średniej lub odchylenia standardowego" = "both", "Zwiększenie średniej" = "mean", "Ignorowanie ogona rozkładu" = "ignore"), correct = "both", explanation = "Położenie i rozrzut rozkładu wspólnie wyznaczają pole za progiem.")
-prog_exercises <- c("Bananpol: dla T~N(82,3) policz P(T>85°C) i naturalną częstość na 1000 zmian.", "Diagnostyka: porównaj histogram i wykres kwantylowy; wskaż, co podważa model normalny.", "Transfer: dla obciążenia i wytrzymałości konstrukcji policz ryzyko jako P(L>S), nie jako pole nakładania krzywych.")
+prog_quiz <- list(questions = list(
+  list(question = "Która zmiana bezpośrednio zmniejsza P(T>85°C), gdy próg jest stały i leży powyżej średniej?", choices = c("Obniżenie średniej lub odchylenia standardowego" = "both", "Zwiększenie średniej" = "mean", "Ignorowanie ogona rozkładu" = "ignore"), correct = "both", explanation = "Położenie i rozrzut rozkładu wspólnie wyznaczają pole za progiem."),
+  list(question = "T~N(82,3), drugi parametr to σ. Jakie jest P(T>85)?",
+    choices = c("Około 0,841" = "a", "Zero, bo średnia jest niższa" = "b", "Około 0,159" = "c"), correct = "c",
+    explanation = "z=(85−82)/3=1 i liczymy prawy ogon 1−Φ(1)."),
+  list(question = "Próg c leży poniżej μ. Co robi zmniejszenie σ przy stałych c i μ?",
+    choices = c("Zawsze pozostawia 0,5" = "a", "Zwiększa P(T>c)" = "b", "Zmniejsza P(T>c)" = "c"), correct = "b",
+    explanation = "Zwężenie rozkładu skupia więcej masy powyżej progu leżącego poniżej średniej."),
+  list(question = "Jakie zdarzenie opisuje awarię obciążenie–wytrzymałość?",
+    choices = c("S−L<0" = "a", "Nakładanie się gęstości" = "b", "S+L>0" = "c"), correct = "a",
+    explanation = "Awaria zachodzi przy L>S. Pole wspólne gęstości nie mierzy częstości takich par."),
+  list(question = "16% losowych pomiarów przekracza próg. Czy 16% zmian ma co najmniej jedno przekroczenie?",
+    choices = c("Tak, procent nie ma jednostki" = "a", "Tak, jeśli użyto rozkładu normalnego" = "b", "Nie wynika to bez modelu pomiarów w zmianie" = "c"), correct = "c",
+    explanation = "Pojedynczy pomiar i maksimum wielu pomiarów podczas zmiany to różne zmienne.")
+))
+prog_exercises <- c("Bananpol: dla T~N(82,3) policz P(T>85°C) i naturalną częstość na 1000 porównywalnych pomiarów.", "Diagnostyka: porównaj histogram i wykres kwantylowy; wskaż, co podważa model normalny.", "Transfer: dla obciążenia i wytrzymałości konstrukcji policz ryzyko jako P(L>S), nie jako pole nakładania krzywych.")
 
 prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
   list(
@@ -13,7 +27,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
     ),
     callout = list(
       label = "Dane Bananpolu",
-      text = "Temperatura łożyska wentylatora: średnia 82°C, odchylenie standardowe 3°C, wewnętrzny próg ostrzegawczy 85°C. Jednostka: °C; pomiar w ustalonym trybie pracy. Próg jest demonstracyjny, a liczby fikcyjne.",
+      text = "Temperatura łożyska wentylatora: średnia 82°C, odchylenie standardowe 3°C, wewnętrzny próg ostrzegawczy 85°C. Jednostka obserwacji: pojedynczy pomiar w ustalonym trybie pracy; temperatura w °C. Udział pomiarów ponad progiem nie jest prawdopodobieństwem co najmniej jednego przekroczenia w całej zmianie. Próg jest demonstracyjny, a liczby fikcyjne.",
       color = "uwaga"
     ),
     widget = tagList(
@@ -70,14 +84,14 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         tags$p("Φ jest dystrybuantą standardowego rozkładu normalnego, a (c−μ)/σ to wynik z progu — odległość od średniej we wspólnej linijce odchyleń.")
       )
     ),
-    takeaway = "Wynik progowy zawsze raportuj podwójnie: jako pole ogona i jako naturalną częstość w ustalonym horyzoncie. „P = 0,16” i „około 159 zmian na 1000” to ta sama liczba, ale tylko druga wersja uruchamia wyobraźnię decydenta."
+    takeaway = "Wynik progowy zawsze raportuj podwójnie: jako pole ogona i jako naturalną częstość w ustalonym horyzoncie. „P = 0,16” i „około 159 pomiarów na 1000” to ta sama liczba, ale tylko druga wersja uruchamia wyobraźnię decydenta."
   ),
   list(
     id = "dzialania", title = "Trzy działania na ogonie",
     lead = "Chłodzenie przesuwa średnią, stabilizacja zwęża rozkład, zmiana progu przesuwa granicę.",
     intro = c(
-      "Pole ogona można zmniejszyć na trzy sposoby: obniżyć średnią, ograniczyć zmienność albo zmienić próg. Fizycznie to trzy zupełnie różne interwencje — lepsze chłodzenie, wyrównanie obciążenia i warunków pracy albo decyzja konstrukcyjna o nowej granicy.",
-      "Porównaj skuteczność interwencji w widgecie. Zwróć uwagę, że wynik zależy od punktu wyjścia: gdy próg leży blisko średniej, więcej daje przesunięcie μ; gdy daleko w ogonie — zwężenie σ. Nie ma uniwersalnego zwycięzcy, jest rachunek."
+      "Gdy górny próg leży powyżej średniej, pole ogona można zmniejszyć przez obniżenie średniej lub ograniczenie zmienności. Zmniejszenie σ przy progu poniżej średniej zwiększa P(T>c), a przy progu równym średniej pozostawia 0,5. Zmiana progu zmienia samo zdarzenie. Fizycznie to trzy zupełnie różne interwencje — lepsze chłodzenie, wyrównanie obciążenia i warunków pracy albo decyzja konstrukcyjna o nowej granicy.",
+      "Porównaj skuteczność konkretnych interwencji względem stanu bazowego μ=82°C, σ=3°C, c=85°C. Wynik zależy zarówno od punktu wyjścia, jak i wielkości zmiany parametrów; nie ma uniwersalnego rankingu chłodzenia i stabilizacji."
     ),
     sections = list(list(
       id = "hierarchia", title = "Hierarchia interwencji",
@@ -151,7 +165,7 @@ prog_server <- function(input, output, session) {
     if (is.null(input$z6_vote)) {
       return(lc_feedback(type = "info", "Najpierw zaznacz jedną z odpowiedzi."))
     }
-    lc_feedback(type = if (identical(input$z6_vote, "sd")) "ok" else "warning", tags$strong("Potrzebujemy σ:"), " przy σ=3°C przekroczenie dotyczy około 16% zmian.")
+    lc_feedback(type = if (identical(input$z6_vote, "sd")) "ok" else "warning", tags$strong("Potrzebujemy σ:"), " przy σ=3°C przekroczenie dotyczy około 16% porównywalnych pomiarów.")
   })
   sample_values <- reactive({
     set.seed(606)

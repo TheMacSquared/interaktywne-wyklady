@@ -17,19 +17,24 @@ testthat::test_that("bloki 02–10 realizują stały rytm dydaktyczny", {
   }
 })
 
-testthat::test_that("wspólny quiz ma pięć pytań, a każdy blok trzy ćwiczenia", {
+testthat::test_that("każdy blok ma pięć własnych pytań z poprawnymi kluczami", {
   env <- new.env(parent = globalenv())
   sys.source(file.path(risk_root, "R", "risk_block.R"), envir = env)
-  primary <- list(
-    question = "P?", choices = c("Tak" = "yes", "Nie" = "no"),
-    correct = "yes", explanation = "E"
-  )
-  testthat::expect_length(env$risk_quiz_questions(primary), 5)
-
   files <- file.path(risk_root, names(expected_apps)[-1], "modules", "block.R")
+  all_questions <- character()
   for (file in files) {
-    text <- paste(readLines(file, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
-    match <- regmatches(text, regexpr("[[:alnum:]_]+_exercises\\s*<-\\s*c\\(", text, perl = TRUE))
-    testthat::expect_true(nzchar(match))
+    # Definicja quizu poprzedza komponenty Shiny; oceniamy sam zestaw treści.
+    expressions <- parse(file)
+    eval(expressions[[1]], envir = env)
+    quiz <- get(as.character(expressions[[1]][[2]]), envir = env)
+    questions <- env$risk_quiz_questions(quiz)
+    testthat::expect_length(questions, 5)
+    for (question in questions) {
+      testthat::expect_true(question$correct %in% unname(question$choices))
+      testthat::expect_true(nzchar(question$explanation))
+      testthat::expect_true(!anyDuplicated(unname(question$choices)))
+      all_questions <- c(all_questions, question$question)
+    }
   }
+  testthat::expect_false(anyDuplicated(all_questions) > 0)
 })

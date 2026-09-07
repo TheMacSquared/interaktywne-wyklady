@@ -1,7 +1,21 @@
 # Blok 09: Analiza drzewa błędów ----------------------------------------
 
-fta_quiz <- list(question = "Czy dla bramki OR wolno zawsze dodać prawdopodobieństwa wejść?", choices = c("Nie — suma podwójnie liczy część wspólną" = "no", "Tak — OR z definicji jest sumą" = "yes", "Tylko gdy wartości są większe od 0,5" = "large"), correct = "no", explanation = "Dla niezależnych wejść używamy 1−∏(1−p_i); prosta suma jest co najwyżej przybliżeniem dla rzadkich, rozłącznych zdarzeń.")
-fta_exercises <- c("Bananpol: policz P(top) dla inicjacji 0,005 oraz OR awarii detekcji 0,05 i tłumienia 0,08.", "Diagnostyka: znajdź powtórzone zdarzenie bazowe i wyjaśnij ryzyko podwójnego liczenia.", "Transfer: zbuduj małe drzewo utraty zasilania aparatury medycznej, oddzielając wspólną przyczynę.")
+fta_quiz <- list(questions = list(
+  list(question = "Czy dla bramki OR wolno zawsze dodać prawdopodobieństwa wejść?", choices = c("Nie — suma podwójnie liczy część wspólną" = "no", "Tak — OR z definicji jest sumą" = "yes", "Tylko gdy wartości są większe od 0,5" = "large"), correct = "no", explanation = "Dla niezależnych wejść używamy 1−∏(1−p_i); dla zdarzeń rozłącznych suma jest dokładna; dla niezależnych rzadkich zdarzeń stanowi przybliżenie."),
+  list(question = "Dla I ∩ (D ∪ S), jakie są minimalne przekroje?",
+    choices = c("{D,S}" = "a", "{I,D,S} jako jedyny" = "b", "{I,D} i {I,S}" = "c"), correct = "c",
+    explanation = "Każdy z dwóch zestawów wystarcza; usunięcie dowolnego jego elementu odbiera wystarczalność."),
+  list(question = "Ten sam liść C o q=0,05 pojawia się dwa razy pod AND. Ile wynosi P(C ∩ C)?",
+    choices = c("0,0975" = "a", "0,05" = "b", "0,0025" = "c"), correct = "b",
+    explanation = "C ∩ C=C; powtórzenie rysunku nie tworzy niezależnego zdarzenia."),
+  list(question = "Dwie samodzielne bariery zastępują się w opanowaniu inicjacji. Kiedy zawodzi ochrona?",
+    choices = c("Gdy zawiodą obie — AND" = "a", "Gdy zawiedzie jedna — OR" = "b", "Zawsze przy inicjacji" = "c"), correct = "a",
+    explanation = "Logika jest inna niż w łańcuchu, w którym detekcja i wykonanie są wymagane razem."),
+  list(question = "Co trzeba założyć w P(I)[1−(1−d)(1−s)], gdzie d=P(D | I), s=P(S | I)?",
+    choices = c("Niezależność I od skutku TOP" = "a", "Rozłączność D i S" = "b", "Niezależność D i S warunkowo przy I" = "c"), correct = "c",
+    explanation = "Reguła iloczynu z warunkowaniem jest ogólna; niezależność potrzebna jest do dopełnienia iloczynu wewnątrz OR.")
+))
+fta_exercises <- c("Architektura: dla P(I)=0,005, d=0,05 i s=0,08 porównaj łańcuch wymagający obu funkcji z dwiema samodzielnymi barierami. Następnie dodaj wspólną przyczynę q=0,01 do łańcucha i wyznacz minimalne przekroje.", "Bananpol: policz P(top) dla inicjacji 0,005 oraz OR warunkowych niepowodzeń detekcji 0,05 i modułu tłumienia 0,08 przy I.", "Diagnostyka: znajdź powtórzone zdarzenie bazowe i wyjaśnij ryzyko podwójnego liczenia.", "Transfer: zbuduj małe drzewo utraty zasilania aparatury medycznej, oddzielając wspólną przyczynę.")
 
 fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = list(
   list(
@@ -13,7 +27,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     ),
     callout = list(
       label = "Dane Bananpolu",
-      text = "Małe drzewo pożaru magazynu: P(inicjacji) 0,005, P(braku detekcji) 0,05, P(braku tłumienia) 0,08. Jednostka: rok pracy magazynu; horyzont: jeden rok. Liczby są fikcyjne.",
+      text = "Małe drzewo pożaru magazynu: P(inicjacji w roku) 0,005, P(braku detekcji | inicjacja) 0,05, P(niepowodzenia modułu tłumienia | inicjacja) 0,08. Analizujemy co najwyżej jedną inicjację w roku; parametry barier dotyczą tej inicjacji. Moduł tłumienia oznacza zdolność wykonawczą przy poprawnym sygnale, a detekcja ma osobne zasilanie. Liczby są fikcyjne.",
       color = "uwaga"
     ),
     sections = list(list(id = "most", title = "Od sukcesu do awarii", text = "W wykładzie o niezawodności opisywaliśmy logikę sukcesu systemu: kiedy całość działa. Drzewo błędów odwraca perspektywę — budujemy logikę awarii i pytamy, jakie kombinacje przyczyn prowadzą do zdarzenia szczytowego.")),
@@ -33,7 +47,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     lead = "Pytanie operacyjne brzmi: czy wystarczy jedna przyczyna, czy potrzebna jest kombinacja?",
     intro = c(
       "Protokół po pożarze magazynu nie pyta, dlaczego doszło do zapłonu — pyta, dlaczego nie udało się go opanować. Drzewo błędów buduje się w tym samym kierunku: od niepożądanego skutku w dół, do kombinacji przyczyn, które musiały wystąpić razem albo z których wystarczyła jedna.",
-      "Przy każdym rozgałęzieniu zadajesz jedno pytanie: czy do zdarzenia nadrzędnego wystarczy dowolna z tych przyczyn (bramka OR), czy potrzebne są wszystkie naraz (bramka AND)? Zabezpieczenia zwykle wchodzą przez AND — pożar wymyka się spod kontroli tylko wtedy, gdy zawiodą wszystkie bariery na drodze."
+      "Przy każdym rozgałęzieniu zadajesz jedno pytanie: czy do zdarzenia nadrzędnego wystarczy dowolna z tych przyczyn (bramka OR), czy potrzebne są wszystkie naraz (bramka AND)? Dwie samodzielne bariery zastępujące się nawzajem zawodzą wspólnie przez AND. W naszym łańcuchu potrzebne są obie funkcje: wykrycie i wykonanie tłumienia, więc ich niepowodzenia łączymy przez OR. Logika wynika z instalacji, nie z samego słowa „bariera”."
     ),
     widget = figure_panel(label = "Budowa", title = "Utrata kontroli nad zapłonem", selectInput("f9_gate", "Logika", c("Wystarczy jedna przyczyna — OR" = "or", "Potrzebna kombinacja — AND" = "and")), checkboxGroupInput("f9_causes", "Przyczyny", c("Brak detekcji" = "detect", "Brak tłumienia" = "suppress", "Utrata zasilania" = "power"), selected = c("detect", "suppress")), uiOutput("f9_structure"), full_width = TRUE)
   ),
@@ -52,21 +66,21 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
   ),
   list(
     id = "rachunek", title = "Od liści do korzenia",
-    lead = "Najpierw obliczamy bramkę OR zabezpieczeń, potem łączymy ją przez AND z inicjacją.",
+    lead = "Najpierw liczymy niepowodzenie wymaganych funkcji przy inicjacji, potem ważymy je P(I).",
     intro = c(
-      "Gdy struktura przeszła test logiczny, liczby wchodzą do drzewa od dołu. Bramka AND mnoży prawdopodobieństwa wejść, bramka OR bierze dopełnienie iloczynu dopełnień — dokładnie te same operacje, którymi liczyliśmy układ szeregowy i równoległy. Oba wzory wymagają niezależności wejść.",
+      "Gdy struktura przeszła test logiczny, liczby wchodzą od dołu. Oznaczmy d=P(D | I), s=P(S | I). Zakładamy niezależność detekcji i modułu wykonawczego warunkowo przy inicjacji: P(D ∪ S | I)=1−(1−d)(1−s). Potem stosujemy ogólną regułę iloczynu P(TOP)=P(I)P(D ∪ S | I); ten krok nie wymaga niezależności od I.",
       "Zauważ, że dla rzadkich zdarzeń suma P(D) + P(S) jest dobrym przybliżeniem bramki OR — tutaj 0,13 wobec dokładnego 0,126 — ale to przybliżenie trzeba oznaczyć, a przy większych prawdopodobieństwach przestaje być dopuszczalne. Kurs liczy dokładnie; sumę zostawiamy do szybkich szacunków na marginesie."
     ),
-    formula = "P(top)=P(I)\\,[1-(1-P(D))(1-P(S))]",
-    widget = risk_widget_panel("Obliczenia", "Parametry małego drzewa", tagList(sliderInput("f9_init", "P(inicjacji)", 0, .03, .005, .001), sliderInput("f9_detect", "P(braku detekcji)", 0, .3, .05, .01), sliderInput("f9_suppress", "P(braku tłumienia)", 0, .3, .08, .01)), "f9_tree_plot", "f9_tree_stats"),
+    formula = "P(top)=P(I)\\,[1-(1-P(D\\mid I))(1-P(S\\mid I))]",
+    widget = risk_widget_panel("Obliczenia", "Parametry małego drzewa", tagList(sliderInput("f9_init", "P(inicjacji)", 0, .03, .005, .001), sliderInput("f9_detect", "P(braku detekcji | I)", 0, .3, .05, .01), sliderInput("f9_suppress", "P(niepowodzenia modułu tłumienia | I)", 0, .3, .08, .01)), "f9_tree_plot", "f9_tree_stats"),
     takeaway = "Liczby weszły do drzewa dopiero wtedy, gdy jego struktura była gotowa. Odwrotna kolejność — najpierw dostępne dane, potem logika — może ukryć wspólną przyczynę albo narzucić strukturę wygodną dla danych, a nie wierną mechanizmowi.",
-    pitfall = "Iloczyn dla AND oraz dopełnienie 1−∏(1−p_i) dla OR zakładają niezależność wejść — sprawdź ją przed rachunkiem. OR nie jest przy tym automatycznie sumą prawdopodobieństw."
+    pitfall = "Iloczyn bez warunkowania wymaga niezależności. Ogólna reguła P(A ∩ B)=P(A)P(B | A) jej nie wymaga. W tym przykładzie niezależność przy I przyjęto wewnątrz bramki OR."
   ),
   list(
     id = "przekroje", title = "Część B — minimalne przekroje",
-    lead = "Minimalny przekrój to najmniejszy zestaw zdarzeń bazowych wystarczający do top event.",
+    lead = "Minimalny przekrój wystarcza do TOP, ale żaden jego właściwy podzbiór już nie wystarcza.",
     intro = c(
-      "Duże drzewo trudno ogarnąć wzrokiem, ale można je streścić listą minimalnych przekrojów: najmniejszych zestawów zdarzeń bazowych, które razem wystarczają do zdarzenia szczytowego. Nasze drzewo ma dwa, oba dwuelementowe — i to jest dobra wiadomość: żadna pojedyncza awaria nie wywołuje katastrofy.",
+      "Duże drzewo trudno ogarnąć wzrokiem, ale można je streścić listą minimalnych przekrojów: zestawów zdarzeń wystarczających do TOP, z których nie można usunąć żadnego elementu. Minimalność dotyczy zawierania, a nie najmniejszej liczebności w całym drzewie. Nasze drzewo ma dwa, oba dwuelementowe — i to jest dobra wiadomość: żadna pojedyncza awaria nie wywołuje katastrofy.",
       "Przekroje czyta się jak diagnozę architektury. Przekrój jednoelementowy to pojedynczy punkt awarii — najpilniejszy sygnał do przeprojektowania. Wiele przekrojów współdzielących to samo zdarzenie (u nas: inicjację w obu) wskazuje, gdzie jedna interwencja osłabia kilka scenariuszy naraz."
     ),
     sections = list(list(id = "sets", title = "Dwa przekroje drzewa Bananpolu", bullets = c("{inicjacja, brak detekcji}", "{inicjacja, brak tłumienia}"))),
@@ -77,7 +91,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     lead = "Ten sam brak zasilania może pojawić się w wielu gałęziach, ale pozostaje jednym zdarzeniem.",
     intro = c(
       "W większych drzewach to samo zdarzenie bazowe — utrata zasilania, błąd tego samego zespołu, ta sama partia komponentów — pojawia się w kilku gałęziach. Rysunek może je pokazywać wielokrotnie, ale rachunek musi pamiętać, że to jedno zdarzenie: zachodzi albo nie zachodzi wszędzie naraz.",
-      "Potraktowanie dwóch wystąpień jako niezależnych zdarzeń fałszuje wynik w sposób zależny od struktury: pod bramką OR zawyża (liczymy to samo dwa razy), pod bramką AND drastycznie zaniża — kwadrat małej liczby wygląda uspokajająco. Porównanie poniżej pokazuje skalę tego drugiego błędu."
+      "Potraktowanie dwóch wystąpień jako niezależnych zdarzeń fałszuje wynik w sposób zależny od struktury: pod bramką OR zawyża (liczymy to samo dwa razy), pod bramką AND drastycznie zaniża — kwadrat małej liczby wygląda uspokajająco. Porównanie poniżej pokazuje oba błędy: q, błędne OR 1−(1−q)² oraz błędne AND q²."
     ),
     widget = figure_panel(label = "Pułapka", title = "Dwa wystąpienia, jedno źródło", sliderInput("f9_repeat", "P(utraty wspólnego zasilania)", 0, .2, .05, .01), uiOutput("f9_repeat_result"), full_width = TRUE),
     pitfall = "Traktowanie powtórzeń jako niezależnych zaniża lub zawyża wynik zależnie od struktury."
@@ -85,9 +99,9 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
   list(
     id = "wspolna", title = "Wspólna przyczyna zmienia strukturę",
     lead = "Zasilanie wspólne umieszczamy jako jawny liść prowadzący do obu niesprawności.",
-    intro = "Skoro utrata zasilania wyłącza jednocześnie detekcję i tłumienie, poprawka liczbowa nie wystarczy — trzeba przebudować drzewo. Wspólna przyczyna staje się osobnym zdarzeniem bazowym, które przez własną gałąź prowadzi do obu niesprawności, a minimalne przekroje trzeba wyznaczyć od nowa. Zwykle pojawia się wtedy nowy, krótszy przekrój — i to on, nie stare gałęzie, dominuje wynik.",
-    sections = list(list(id = "model", title = "Zmiana modelu", text = "Nie wystarczy skorygować liczby. Trzeba pokazać wspólny mechanizm w drzewie i ponownie ocenić minimalne przekroje.")),
-    extension = TRUE
+    intro = "Skoro utrata zasilania wyłącza jednocześnie detekcję i tłumienie, poprawka liczbowa nie wystarczy — trzeba przebudować drzewo. Wspólna przyczyna staje się osobnym zdarzeniem bazowym, które przez własną gałąź prowadzi do obu niesprawności, a minimalne przekroje trzeba wyznaczyć od nowa. W naszym drzewie pojawia się {I,C}. Ma dwa elementy, tak samo jak {I,D₀} i {I,S₀}; nowy przekrój nie musi być krótszy ani dominujący. D₀ i S₀ oznaczają lokalne niepowodzenia bez wspólnej przyczyny C.",
+    sections = list(list(id = "model", title = "Zmiana modelu", text = "D=C ∪ D₀ i S=C ∪ S₀, więc TOP=I ∩ (C ∪ D₀ ∪ S₀). Przy niezależnych C, D₀, S₀ warunkowo przy I: P(TOP)=P(I)[q+(1−q)(1−(1−d₀)(1−s₀))]. Parametry d₀ i s₀ wykluczają wspólną przyczynę; nie dodajemy q do danych, które już ją zawierają.")),
+    widget = figure_panel(label = "Rachunek", title = "Trzy minimalne przekroje", sliderInput("f9_common", "P(C | I): wspólne niepowodzenie funkcji", 0, .2, .01, .005), uiOutput("f9_common_result"), full_width = TRUE)
   ),
   list(
     id = "ranking", title = "Ranking potencjalnej redukcji",
@@ -147,7 +161,7 @@ fta_server <- function(input, output, session) {
   })
   tree_value <- reactive(risk_fta_top(input$f9_init, input$f9_detect, input$f9_suppress))
   tree_plot <- reactive({
-    nodes <- data.frame(x = c(2, 1, 3, .5, 1.5), y = c(3, 2, 2, 1, 1), label = c("TOP", "Inicjacja", "OR", "Brak detekcji", "Brak tłumienia"), type = c("Szczytowe", "Bazowe", "Bramka", "Bazowe", "Bazowe"))
+    nodes <- data.frame(x = c(2, 1, 3, .5, 1.5), y = c(3, 2, 2, 1, 1), label = c("TOP (AND)", "Inicjacja", "OR", "Brak detekcji", "Brak tłumienia"), type = c("Szczytowe", "Bazowe", "Bramka", "Bazowe", "Bazowe"))
     edges <- data.frame(x = c(2, 2, 3, 3), y = c(3, 3, 2, 2), xend = c(1, 3, .5, 1.5), yend = c(2, 2, 1, 1))
     ggplot() +
       geom_segment(data = edges, aes(x, y, xend = xend, yend = yend), colour = upwr_reference) +
@@ -160,12 +174,18 @@ fta_server <- function(input, output, session) {
       theme(axis.text = element_blank(), axis.ticks = element_blank())
   })
   zoom_plot_server("f9_tree_plot", tree_plot, alt = "Drzewo błędów z inicjacją połączoną przez AND z bramką OR dwóch niesprawności zabezpieczeń.")
-  output$f9_tree_stats <- renderUI(lc_stat_grid(lc_stat_box("P(OR zabezpieczeń)", risk_format_probability(risk_gate_or(c(input$f9_detect, input$f9_suppress)))), lc_stat_box("P(top)", risk_format_probability(tree_value()), color = upwr_accent), columns = 1))
+  output$f9_tree_stats <- renderUI(lc_stat_grid(lc_stat_box("P(D ∪ S | I)", risk_format_probability(risk_gate_or(c(input$f9_detect, input$f9_suppress)))), lc_stat_box("P(top)", risk_format_probability(tree_value()), color = upwr_accent), columns = 1))
   output$f9_cut_text <- renderUI(lc_feedback(type = "info", if (input$f9_cut == "id") "Inicjacja + brak detekcji wystarczają do TOP." else "Inicjacja + brak tłumienia wystarczają do TOP."))
   output$f9_repeat_result <- renderUI({
     q <- input$f9_repeat
     wrong <- risk_gate_or(c(q, q))
-    lc_stat_grid(lc_stat_box("Jedno wspólne zdarzenie", risk_format_probability(q), color = upwr_accent), lc_stat_box("Błędnie jako dwa niezależne", risk_format_probability(wrong)), columns = 1)
+    lc_stat_grid(lc_stat_box("Jedno wspólne zdarzenie", risk_format_probability(q), color = upwr_accent), lc_stat_box("Błędne OR niezależnych kopii", risk_format_probability(wrong)), lc_stat_box("Błędne AND niezależnych kopii", risk_format_probability(q^2)), columns = 1)
+  })
+  output$f9_common_result <- renderUI({
+    q <- input$f9_common
+    local_failure <- risk_gate_or(c(input$f9_detect, input$f9_suppress))
+    result <- input$f9_init * (q + (1 - q) * local_failure)
+    tagList(lc_stat_grid(lc_stat_box("Bez wspólnej przyczyny", risk_format_probability(tree_value(), 6)), lc_stat_box("Ze wspólną przyczyną", risk_format_probability(result, 6)), columns = 1), lc_p("Przekroje: {I,C}, {I,D₀}, {I,S₀}. Suwaki detekcji i tłumienia interpretujemy tu jako lokalne niepowodzenia bez C."))
   })
   rank_plot <- reactive({
     base <- c(init = .005, detect = .05, suppress = .08)

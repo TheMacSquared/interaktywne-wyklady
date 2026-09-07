@@ -9,9 +9,11 @@ risk_format_probability <- function(x, digits = 3L) {
   if (length(x) != 1L || is.na(x) || !is.finite(x)) {
     return("—")
   }
+  if (x > 0 && x < .01) digits <- max(digits, min(12L, ceiling(-log10(x)) + 2L))
+  percent_digits <- max(1L, digits - 2L)
   paste0(
     gsub("\\.", ",", sprintf(paste0("%.", digits, "f"), x)),
-    " (", gsub("\\.", ",", sprintf("%.1f", 100 * x)), "%)"
+    " (", gsub("\\.", ",", sprintf(paste0("%.", percent_digits, "f"), 100 * x)), "%)"
   )
 }
 
@@ -61,32 +63,10 @@ risk_vote_panel <- function(input_id, output_id, question, choices) {
 }
 
 risk_quiz_questions <- function(quiz) {
-  if (!is.null(quiz$questions)) {
-    return(quiz$questions)
+  if (is.null(quiz$questions) || !length(quiz$questions)) {
+    stop("Quiz musi zawierać jawny zestaw pytań tematycznych.")
   }
-  list(
-    quiz,
-    list(
-      question = "Czy wynik prawdopodobieństwa bez jednostki ekspozycji i horyzontu jest kompletny?",
-      choices = c("Nie" = "no", "Tak" = "yes"), correct = "no",
-      explanation = "Prawdopodobieństwo trzeba przypisać do określonej ekspozycji i czasu."
-    ),
-    list(
-      question = "Czy niezależność można przyjąć bez sprawdzenia wspólnych mechanizmów?",
-      choices = c("Nie" = "no", "Tak" = "yes"), correct = "no",
-      explanation = "Niezależność jest założeniem wymagającym uzasadnienia."
-    ),
-    list(
-      question = "Czy najmniejsze ryzyko liczbowe automatycznie wskazuje najlepszą decyzję?",
-      choices = c("Nie" = "no", "Tak" = "yes"), correct = "no",
-      explanation = "Decyzja uwzględnia również konsekwencje, koszt i wykonalność."
-    ),
-    list(
-      question = "Czy raport powinien wskazywać przypadek, w którym model może zawieść?",
-      choices = c("Tak" = "yes", "Nie" = "no"), correct = "yes",
-      explanation = "Jawne ograniczenie ułatwia bezpieczne użycie wyniku."
-    )
-  )
+  quiz$questions
 }
 
 risk_assessment_ui <- function(prefix, quiz, exercises) {
@@ -95,7 +75,7 @@ risk_assessment_ui <- function(prefix, quiz, exercises) {
     lc_h2(paste0(prefix, "-quiz"), "Krótki quiz"),
     figure_panel(
       label = "Sprawdź rozumienie",
-      title = "Pięć pytań: mechanizm i audyt modelu",
+      title = paste(length(questions), "pytań: mechanizm i audyt modelu"),
       tags$ol(lapply(seq_along(questions), function(index) {
         question <- questions[[index]]
         tags$li(
@@ -131,22 +111,27 @@ risk_assessment_server <- function(prefix, quiz, input, output) {
   })
   output[[paste0(prefix, "_quiz_feedback")]] <- renderUI({
     answers <- submitted()
-    req(answers)
+    req(!is.null(answers))
     correct <- vapply(seq_along(questions), function(index) {
       identical(answers[[index]], questions[[index]]$correct)
     }, logical(1))
     score <- sum(correct)
     missing <- sum(!nzchar(answers))
-    lc_feedback(
-      type = if (score == length(questions)) "ok" else "warning",
-      tags$strong(sprintf("Wynik: %d/%d.", score, length(questions))),
-      if (missing) {
-        paste0(" Bez odpowiedzi: ", missing, ".")
-      } else if (score == length(questions)) {
-        " Wszystkie odpowiedzi są poprawne."
-      } else {
-        " Wróć do pytania merytorycznego i listy kontrolnej założeń."
-      }
+    tagList(
+      lc_feedback(
+        type = if (score == length(questions)) "ok" else "warning",
+        tags$strong(sprintf("Wynik: %d/%d.", score, length(questions))),
+        if (missing) paste0(" Bez odpowiedzi: ", missing, ".") else " Poniżej omówienie każdej odpowiedzi."
+      ),
+      tags$ol(lapply(seq_along(questions), function(i) {
+        question <- questions[[i]]
+        answer_label <- names(question$choices)[match(question$correct, unname(question$choices))]
+        tags$li(
+          lc_feedback(type = if (correct[i]) "ok" else "warning",
+            tags$strong(if (correct[i]) "Poprawnie:" else if (!nzchar(answers[i])) "Brak odpowiedzi:" else "Do poprawy:"),
+            paste0(" ", question$question, " Poprawna odpowiedź: ", answer_label, ". ", question$explanation))
+        )
+      }))
     )
   })
 }

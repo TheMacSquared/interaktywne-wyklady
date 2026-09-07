@@ -28,8 +28,8 @@ pakowania, wózki widłowe, instalację chłodniczą, alarmy oraz zabezpieczenia
 przeciwpożarowe.
 
 Student wciela się w nowego inspektora bezpieczeństwa. W kolejnych wykładach
-uzupełnia mapę ryzyka Bananpolu, a w końcowym FTA wykorzystuje parametry poznane
-wcześniej. Dane są jawnie fikcyjne i mają wspólne metadane: jednostkę, okres,
+uzupełnia mapę ryzyka Bananpolu, a w FTA wykorzystuje wcześniej poznane reguły. Blok 09 opisuje pożar,
+a blok 10 osobną misję ochrony termicznej z parametrami czasu życia i detekcji. Dane są jawnie fikcyjne i mają wspólne metadane: jednostkę, okres,
 definicję zdarzenia oraz dopuszczalny zakres.
 
 Powracającym lekkim motywem jest poślizgnięcie na skórce od banana. Żart służy
@@ -72,6 +72,12 @@ najmniej jeden krótki przykład transferowy z innej domeny bezpieczeństwa.
 - W FTA iloczyn dla AND wymaga niezależności. Dla OR stosujemy dokładne
   dopełnienie, gdy założenia na to pozwalają; suma jest tylko oznaczonym
   przybliżeniem.
+- W 10 nie zamieniamy awarii choć raz w roku na niedostępność podczas zapotrzebowania.
+  I to zapotrzebowanie na początku misji; D i S są niepowodzeniami funkcji
+  warunkowo przy I. Stan początkowy nowy, brak napraw, wspólny czas pracy.
+- Czas życia wentylatora zasila system; R zasilania i sterownika przeliczamy
+  wykładniczo na ten sam t. Scenariusze obejmują wszystkie interwencje.
+- Każdy blok 02–10 ma pięć własnych pytań i objaśnienia odpowiedzi.
 - Skutki wracają jawnie w wykładach 01, 09 i 10, aby kurs nie stał się wyłącznie
   kursem prawdopodobieństwa.
 
