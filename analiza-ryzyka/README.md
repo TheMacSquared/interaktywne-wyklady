@@ -24,20 +24,29 @@ języka zdarzeń i podstaw prawdopodobieństwa.
 
 ## Uruchamianie
 
-Z katalogu głównego repozytorium:
+Najprościej hubem — spis wszystkich wykładów w przeglądarce, bez wracania do
+terminala między wykładami (lista wykrywana automatycznie, więc zawsze aktualna):
+
+```bash
+scripts/hub          # z katalogu głównego repo; albo dwuklik w Wyklady.command
+```
+
+Szczegóły: [hub/README.md](../hub/README.md).
+
+Pojedynczy wykład bezpośrednio — z katalogu głównego repo:
 
 ```r
 shiny::runApp("analiza-ryzyka/01-jezyk-ryzyka")
-shiny::runApp("analiza-ryzyka/02-warunki")
-shiny::runApp("analiza-ryzyka/03-alarm-i-prawda")
-shiny::runApp("analiza-ryzyka/04-wiele-prob")
-shiny::runApp("analiza-ryzyka/05-do-zdarzenia")
-shiny::runApp("analiza-ryzyka/06-zmiennosc-i-prog")
-shiny::runApp("analiza-ryzyka/07-czas-zycia")
-shiny::runApp("analiza-ryzyka/08-niezawodnosc-systemu")
-shiny::runApp("analiza-ryzyka/09-drzewo-bledow")
-shiny::runApp("analiza-ryzyka/10-model-do-decyzji")
 ```
+
+Albo z katalogu `analiza-ryzyka/`:
+
+```r
+shiny::runApp("01-jezyk-ryzyka")
+```
+
+Menu wykładów tylko dla tego przedmiotu, w terminalu: `scripts/wyklad`.
+
 
 ## Kontrola
 

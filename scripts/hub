@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Hub wykładów — spis wszystkich przedmiotów i wykładów w przeglądarce.
+#
+# Użycie:
+#   scripts/hub                 # start na porcie 7700, otwiera przeglądarkę
+#   PORT=8000 scripts/hub       # inny port
+#   HOST=0.0.0.0 scripts/hub    # udostępnij w sieci lokalnej
+#
+# Wykłady startują jako osobne procesy na portach 7701+ i żyją tak długo,
+# jak hub — dzięki temu powrót do wykładu zachowuje jego stan.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+PORT="${PORT:-7700}"
+HOST="${HOST:-127.0.0.1}"
+BROWSER="${BROWSER:-TRUE}"
+
+echo "Hub wykładów — http://${HOST}:${PORT}  (zatrzymanie: Ctrl+C)"
+exec Rscript -e "shiny::runApp('hub', port = ${PORT}, host = '${HOST}', launch.browser = ${BROWSER})"

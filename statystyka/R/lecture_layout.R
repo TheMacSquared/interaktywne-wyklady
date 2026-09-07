@@ -65,9 +65,17 @@ module_tabs <- function(current_slug = NULL) {
     if (length(idx) > 0) current_module <- .LC_MODULES[[idx[[1]]]]
   }
 
+  # Gdy wykład uruchomił hub (hub/app.R), logo wraca do spisu wykładów.
+  # Bez zmiennej LC_HUB_URL zostaje placeholderem "#", dokładnie jak dotąd, więc
+  # ręczne shiny::runApp() zachowuje się bez zmian. Nazwany target sprawia, że
+  # klik przełącza na kartę huba, a nie nadpisuje karty wykładu.
+  .lc_hub_url <- Sys.getenv("LC_HUB_URL", "")
+
   logo <- tags$a(
-    class = "lc-tabs-logo",
-    href  = "#",
+    class  = "lc-tabs-logo",
+    href   = if (nzchar(.lc_hub_url)) .lc_hub_url else "#",
+    target = if (nzchar(.lc_hub_url)) "wyklady_hub" else NULL,
+    title  = if (nzchar(.lc_hub_url)) "Powrót do spisu wykładów" else NULL,
     tags$div(class = "lc-tabs-logo-mark", "Σ"),
     tags$div(
       class = "lc-tabs-logo-text",

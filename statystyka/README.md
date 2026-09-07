@@ -55,39 +55,27 @@ korzystania z wykładów przez studentów.
 
 ## ▶️ Uruchamianie
 
-Z katalogu głównego repo:
+Najprościej hubem — spis wszystkich wykładów w przeglądarce, bez wracania do
+terminala między wykładami (lista wykrywana automatycznie, więc zawsze aktualna):
+
+```bash
+scripts/hub          # z katalogu głównego repo; albo dwuklik w Wyklady.command
+```
+
+Szczegóły: [hub/README.md](../hub/README.md).
+
+Pojedynczy wykład bezpośrednio — z katalogu głównego repo:
 
 ```r
 shiny::runApp("statystyka/01-typy-danych")
-shiny::runApp("statystyka/02-rozklady-prawdopodobienstwa")
-shiny::runApp("statystyka/03-przedzialy-ufnosci")
-shiny::runApp("statystyka/04-wnioskowanie-statystyczne")
-shiny::runApp("statystyka/05-zalozenia-testow")
-shiny::runApp("statystyka/06-regresja")
-shiny::runApp("statystyka/07-symulacje-statystyczne")
-shiny::runApp("statystyka/08-metody-bayesowskie")
-shiny::runApp("statystyka/09-dobre-dane")
-shiny::runApp("statystyka/10-case-studies")
-shiny::runApp("statystyka/11-kierunkowe")
-shiny::runApp("statystyka/12-projekt-badawczy")
 ```
 
-Z katalogu `statystyka/`:
+Albo z katalogu `statystyka/`:
 
 ```r
 shiny::runApp("01-typy-danych")
-shiny::runApp("02-rozklady-prawdopodobienstwa")
-shiny::runApp("03-przedzialy-ufnosci")
-shiny::runApp("04-wnioskowanie-statystyczne")
-shiny::runApp("05-zalozenia-testow")
-shiny::runApp("06-regresja")
-shiny::runApp("07-symulacje-statystyczne")
-shiny::runApp("08-metody-bayesowskie")
-shiny::runApp("09-dobre-dane")
-shiny::runApp("10-case-studies")
-shiny::runApp("11-kierunkowe")
-shiny::runApp("12-projekt-badawczy")
 ```
+
 
 ## 📚 Aplikacje
 

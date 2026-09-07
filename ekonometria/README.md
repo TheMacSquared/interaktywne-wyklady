@@ -41,19 +41,27 @@ Większość wykładów ma 4 rozdziały (3 merytoryczne + ćwiczenie). Wykłady 
 
 ## Uruchamianie wykładu
 
-Z katalogu głównego repozytorium:
+Najprościej hubem — spis wszystkich wykładów w przeglądarce, bez wracania do
+terminala między wykładami (lista wykrywana automatycznie, więc zawsze aktualna):
+
+```bash
+scripts/hub          # z katalogu głównego repo; albo dwuklik w Wyklady.command
+```
+
+Szczegóły: [hub/README.md](../hub/README.md).
+
+Pojedynczy wykład bezpośrednio — z katalogu głównego repo:
 
 ```r
 shiny::runApp("ekonometria/01-model-ekonometryczny")
-shiny::runApp("ekonometria/02-regresja-liniowa-kmnk")
-shiny::runApp("ekonometria/03-estymatory-bledy-standardowe")
-shiny::runApp("ekonometria/04-weryfikacja-modelu")
-shiny::runApp("ekonometria/05-szeregi-prognozowanie")
-shiny::runApp("ekonometria/06-optymalizacja-liniowa")
-shiny::runApp("ekonometria/07-simpleks-dualizm")
 ```
 
-Wymagane pakiety: `shiny`, `ggplot2`, `dplyr`, `broom`. Opcjonalnie `patchwork` (wykorzystywany w niektórych dwupanelowych wykresach diagnostycznych — jeśli niezainstalowany, kod ma fallback do jednego panelu).
+Albo z katalogu `ekonometria/`:
+
+```r
+shiny::runApp("01-model-ekonometryczny")
+```
+
 
 ## Zakres tematyczny (mapowanie na syllabus PD000000PEKS.L4.0561.24)
 
