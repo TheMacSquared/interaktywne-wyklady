@@ -2,30 +2,6 @@
 # ROZDZIAŁ 1: OD ŻARTU DO PRECYZYJNEGO OPISU
 # ==========================================================================
 
-.risk_term_choices <- stats::setNames(
-  names(risk_term_labels),
-  unname(risk_term_labels)
-)
-
-.risk_item_ui <- function(item_id, item_text) {
-  fluidRow(
-    column(
-      8,
-      tags$p(class = "lc-p", style = "margin-top:0.55rem;", item_text)
-    ),
-    column(
-      4,
-      selectInput(
-        inputId = paste0("ch1_term_", item_id),
-        label = paste("Kategoria dla:", item_text),
-        choices = c("— wybierz —" = "", .risk_term_choices),
-        selected = "",
-        width = "100%"
-      )
-    )
-  )
-}
-
 ch1_ui <- lecture_chapter(
   id = "ch-sytuacja",
   num = "01",
@@ -88,17 +64,29 @@ ch1_ui <- lecture_chapter(
 
     lc_h2("ch1-klasyfikacja", "Uporządkuj incydent Bananpolu"),
     lc_p(
-      "Przypisz każdemu zdaniu jedną rolę. Ta wersja używa list wyboru zamiast
-       przeciągania kart, dzięki czemu działa również z klawiatury."
+      "Przypisz każdemu zdaniu jedną rolę. Karty w puli leżą w przypadkowej
+       kolejności, więc sama pozycja niczego nie podpowiada."
     ),
 
     figure_panel(
-      label = "Interakcja 1",
+      label = "Ćwiczenie 1",
       title = "Od zagrożenia do zabezpieczenia",
       full_width = TRUE,
-      tagList(lapply(seq_len(nrow(risk_scenario_items)), function(i) {
-        .risk_item_ui(risk_scenario_items$id[[i]], risk_scenario_items$text[[i]])
-      })),
+      lc_drop_match(
+        input_id = "ch1_assign",
+        items = risk_scenario_items[
+          match(risk_scenario_pool_order, risk_scenario_items$id),
+          c("id", "text")
+        ],
+        zones = risk_term_labels,
+        colors = c(
+          upwr_cat[["terakota"]],
+          upwr_cat[["bursztyn"]],
+          upwr_accent,
+          upwr_cat[["wrzos"]],
+          upwr_cat[["szalwia"]]
+        )
+      ),
       actionButton(
         "ch1_check",
         "Sprawdź klasyfikację",
@@ -138,31 +126,24 @@ ch1_server <- function(input, output, session) {
   output$ch1_feedback <- renderUI({
     req(checked())
 
-    answers <- stats::setNames(
-      vapply(risk_scenario_items$id, function(item_id) {
-        value <- input[[paste0("ch1_term_", item_id)]]
-        if (is.null(value)) "" else value
-      }, character(1)),
-      risk_scenario_items$id
-    )
+    answers <- assignment_to_answers(input$ch1_assign)
     result <- score_risk_classification(answers)
 
     details <- lapply(seq_len(nrow(risk_scenario_items)), function(i) {
       selected <- answers[[risk_scenario_items$id[[i]]]]
       correct_code <- risk_scenario_items$correct[[i]]
       is_correct <- result$correct[[i]]
-      selected_label <- if (nzchar(selected)) risk_term_labels[[selected]] else "brak odpowiedzi"
+      verdict <- if (is_correct) {
+        "Dobrze rozpoznane. "
+      } else if (nzchar(selected)) {
+        paste0("Trafiło do pola ", risk_term_labels[[selected]], ". ")
+      } else {
+        "Nie trafiło do żadnego pola. "
+      }
 
       tags$li(
-        tags$strong(paste0(i, ". ")),
-        if (is_correct) {
-          paste0("Dobrze: ", risk_term_labels[[correct_code]], ". ")
-        } else {
-          paste0(
-            "Wybrano: ", selected_label, "; poprawnie: ",
-            risk_term_labels[[correct_code]], ". "
-          )
-        },
+        tags$strong(paste0(risk_term_labels[[correct_code]], ": ")),
+        risk_scenario_items$text[[i]], " ", verdict,
         risk_scenario_items$explanation[[i]]
       )
     })

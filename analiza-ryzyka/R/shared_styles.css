@@ -1918,3 +1918,158 @@ mjx-container mjx-text {
 
 /* Szerokie okno modalne dla powiększonego wykresu */
 .modal-dialog { width: 90vw !important; max-width: 1400px !important; }
+
+/* === lc_drop_match: przypisywanie kart do pól ============================= */
+.lc-dm { margin: 4px 0 0; }
+
+.lc-dm-hint {
+  font-family: var(--upwr-sans);
+  font-size: calc(13px * var(--lc-font-scale));
+  line-height: 1.5;
+  color: var(--upwr-ink-soft);
+  margin: 0 0 14px;
+}
+
+.lc-dm-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-content: flex-start;
+  min-height: 72px;
+  padding: 12px;
+  background: var(--upwr-bg);
+  border: 1px dashed var(--upwr-rule);
+  border-radius: 3px;
+}
+
+.lc-dm-pool.lc-dm-over {
+  border-color: var(--upwr-accent);
+  border-style: solid;
+}
+
+.lc-dm-pool:empty::after {
+  content: "Wszystkie karty są rozdzielone.";
+  font-family: var(--upwr-sans);
+  font-size: calc(12px * var(--lc-font-scale));
+  color: var(--upwr-reference);
+  font-style: italic;
+  align-self: center;
+}
+
+.lc-dm-card {
+  flex: 0 1 auto;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-family: var(--upwr-sans);
+  font-size: calc(13px * var(--lc-font-scale));
+  line-height: 1.4;
+  padding: 9px 12px;
+  background: var(--upwr-surface);
+  color: var(--upwr-ink);
+  border: 1px solid var(--upwr-rule);
+  border-left: 4px solid var(--upwr-reference);
+  border-radius: 2px;
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow .12s, transform .12s, border-color .12s;
+}
+
+.lc-dm-card:hover {
+  border-left-color: var(--upwr-accent);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+}
+
+.lc-dm-card:focus-visible {
+  outline: 2px solid var(--upwr-accent);
+  outline-offset: 2px;
+}
+
+.lc-dm-card.lc-dm-dragging {
+  cursor: grabbing;
+  opacity: .45;
+}
+
+.lc-dm-card.lc-dm-lifted {
+  border-left-color: var(--upwr-accent);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.16);
+  transform: translateY(-2px);
+}
+
+.lc-dm-card.lc-dm-card-placed {
+  width: 100%;
+  border-left-color: var(--lc-dm-color, var(--upwr-accent));
+}
+
+.lc-dm-zones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin: 18px 0 4px;
+}
+
+.lc-dm-zone {
+  --lc-dm-color: var(--upwr-accent);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  background: var(--upwr-surface);
+  border: 1px solid var(--upwr-rule);
+  border-top: 3px solid var(--lc-dm-color);
+  border-radius: 2px;
+  min-width: 0;
+}
+
+.lc-dm-zone.lc-dm-over,
+.lc-dm-zone.lc-dm-target {
+  border-color: var(--lc-dm-color);
+  box-shadow: 0 0 0 2px var(--lc-dm-color);
+}
+
+.lc-dm-zone-label {
+  font-family: var(--upwr-mono);
+  font-size: calc(10px * var(--lc-font-scale));
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lc-dm-color);
+  overflow-wrap: break-word;
+}
+
+.lc-dm-slot {
+  flex: 1;
+  display: flex;
+  min-height: 62px;
+  border: 1px dashed var(--upwr-rule);
+  border-radius: 2px;
+  padding: 6px;
+}
+
+.lc-dm-slot:empty::after {
+  content: "upuść tutaj";
+  margin: auto;
+  font-family: var(--upwr-sans);
+  font-size: calc(12px * var(--lc-font-scale));
+  color: var(--upwr-reference);
+  font-style: italic;
+}
+
+.lc-dm-status {
+  font-family: var(--upwr-sans);
+  font-size: calc(12px * var(--lc-font-scale));
+  color: var(--upwr-ink-soft);
+  min-height: 1.4em;
+  margin: 10px 0 12px;
+}
+
+.lc-dm-reset { margin-right: 8px; }
+
+@media (max-width: 620px) {
+  .lc-dm-zones { grid-template-columns: 1fr; }
+  .lc-dm-card { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-dm-card { transition: none; }
+  .lc-dm-card.lc-dm-lifted { transform: none; }
+}

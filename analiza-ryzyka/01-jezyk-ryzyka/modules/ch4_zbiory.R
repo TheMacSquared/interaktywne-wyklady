@@ -59,7 +59,7 @@ ch4_ui <- lecture_chapter(
     ),
 
     figure_panel(
-      label = "Interakcja 4",
+      label = "Ćwiczenie 4",
       title = "Suma, iloczyn i dopełnienie zdarzeń",
       full_width = TRUE,
       fluidRow(

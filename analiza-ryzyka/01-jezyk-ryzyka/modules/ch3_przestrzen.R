@@ -81,7 +81,7 @@ ch3_ui <- lecture_chapter(
     ),
 
     figure_panel(
-      label = "Interakcja 3",
+      label = "Ćwiczenie 3",
       title = "Losowa kontrola jednej palety",
       full_width = TRUE,
       fluidRow(

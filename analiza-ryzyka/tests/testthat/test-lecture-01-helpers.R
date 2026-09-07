@@ -67,3 +67,36 @@ testthat::test_that("quiz ma poprawne klucze odpowiedzi", {
     testthat::expect_true(nzchar(question$explanation))
   }
 })
+
+testthat::test_that("pula kart ćwiczenia nie zdradza kolejności ról", {
+  env <- load_lecture_helpers()
+  testthat::expect_setequal(env$risk_scenario_pool_order, env$risk_scenario_items$id)
+  testthat::expect_false(identical(env$risk_scenario_pool_order,
+                                   env$risk_scenario_items$id))
+})
+
+testthat::test_that("przypisania z lc_drop_match przekładają się na odpowiedzi", {
+  env <- load_lecture_helpers()
+  items <- env$risk_scenario_items
+
+  # Komplet: mapa kod_pola = id_karty, kolejność kluczy bez znaczenia.
+  full <- as.list(stats::setNames(items$id, items$correct))
+  answers <- env$assignment_to_answers(full[rev(seq_along(full))])
+  testthat::expect_equal(env$score_risk_classification(answers)$score, 5)
+
+  # Brak przypisań: 0/5 zamiast błędu.
+  testthat::expect_equal(
+    env$score_risk_classification(env$assignment_to_answers(NULL))$score, 0
+  )
+  testthat::expect_equal(
+    env$score_risk_classification(env$assignment_to_answers(list()))$score, 0
+  )
+
+  # Częściowe i błędne wpisy: liczą się tylko poprawne, znane pary.
+  partial <- env$assignment_to_answers(
+    list(hazard = "peel", event = "injury", nieznane = "slip", skutek = "")
+  )
+  testthat::expect_equal(unname(partial[["peel"]]), "hazard")
+  testthat::expect_equal(unname(partial[["slip"]]), "")
+  testthat::expect_equal(env$score_risk_classification(partial)$score, 1)
+})

@@ -331,6 +331,7 @@ lecture_page <- function(lecture_id      = NULL,
 })();
       ")),
       includeScript(file.path(proj_root, "R", "shared_toc.js")),
+      includeScript(file.path(proj_root, "R", "lc_dragdrop.js")),
       tags$script(HTML("
 function lcUpdateTabsScrollState(list) {
   if (!list) return;
@@ -584,6 +585,64 @@ figure_panel <- function(label, ..., title = NULL, color = "#6b1a26",
     if (!is.null(title))
       tags$div(class = "lc-figure-panel-title", title),
     ...
+  )
+}
+
+# Ćwiczenie „przypisz karty do pól" — przeciąganie myszą i obsługa klawiatury.
+# Logika po stronie klienta jest w R/lc_dragdrop.js, style w shared_styles.css.
+# Do serwera trafia `input[[input_id]]` — lista `kod_pola = id_karty`
+# zawierająca wyłącznie pola już wypełnione.
+#
+#   items  data.frame z kolumnami `id` i `text` (kolejność = kolejność w puli)
+#   zones  nazwany wektor `kod = "Etykieta"`
+#   colors wektor kolorów równoległy do `zones` (opcjonalny)
+lc_drop_match <- function(input_id, items, zones, colors = NULL,
+                          hint = paste(
+                            "Przeciągnij kartę do właściwego pola.",
+                            "Bez myszy: Enter podnosi kartę, strzałki wybierają pole,",
+                            "Enter upuszcza, Escape anuluje, Delete odsyła kartę do puli."
+                          ),
+                          reset_label = "Zacznij od nowa") {
+  stopifnot(all(c("id", "text") %in% names(items)), length(zones) > 0)
+  if (is.null(colors)) colors <- rep(upwr_accent, length(zones))
+  stopifnot(length(colors) == length(zones))
+
+  cards <- lapply(seq_len(nrow(items)), function(i) {
+    tags$div(
+      class = "lc-dm-card",
+      draggable = "true",
+      tabindex = "0",
+      role = "button",
+      `aria-pressed` = "false",
+      `data-lc-dm-item` = items$id[[i]],
+      `data-lc-dm-order` = i,
+      items$text[[i]]
+    )
+  })
+
+  fields <- lapply(seq_along(zones), function(i) {
+    tags$div(
+      class = "lc-dm-zone",
+      style = paste0("--lc-dm-color:", colors[[i]], ";"),
+      `data-lc-dm-zone` = names(zones)[[i]],
+      tags$div(class = "lc-dm-zone-label", unname(zones)[[i]]),
+      tags$div(class = "lc-dm-slot")
+    )
+  })
+
+  tags$div(
+    class = "lc-dm",
+    `data-lc-dm-input` = input_id,
+    tags$p(class = "lc-dm-hint", hint),
+    tags$div(class = "lc-dm-pool", cards),
+    tags$div(class = "lc-dm-zones", fields),
+    tags$div(class = "lc-dm-status", role = "status", `aria-live` = "polite"),
+    tags$button(
+      type = "button",
+      class = "btn lc-btn-outline lc-dm-reset",
+      `data-lc-dm-reset` = "true",
+      reset_label
+    )
   )
 }
 

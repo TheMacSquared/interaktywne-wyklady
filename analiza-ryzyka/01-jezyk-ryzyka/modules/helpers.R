@@ -30,6 +30,34 @@ risk_scenario_items <- data.frame(
   stringsAsFactors = FALSE
 )
 
+# Kolejność kart w puli ćwiczenia — celowo inna niż łańcuch
+# zagrożenie → ekspozycja → zdarzenie → skutek → zabezpieczenie, żeby sama
+# kolejność nie podpowiadała odpowiedzi. Stała, nie losowa: wykład ma wyglądać
+# tak samo na każdych zajęciach i dawać się testować.
+risk_scenario_pool_order <- c("injury", "peel", "cleanup", "slip", "traffic")
+
+# Mapa z komponentu lc_drop_match() (kod_pola = id_karty) na format oczekiwany
+# przez score_risk_classification() (id_karty = kod_pola). Nieprzypisane karty
+# dostają "".
+assignment_to_answers <- function(assignment) {
+  answers <- stats::setNames(
+    rep("", length(risk_scenario_items$id)),
+    risk_scenario_items$id
+  )
+  if (length(assignment) == 0 || is.null(names(assignment))) {
+    return(answers)
+  }
+
+  for (term in names(assignment)) {
+    item_id <- as.character(assignment[[term]])
+    if (length(item_id) != 1 || !nzchar(item_id)) next
+    if (!item_id %in% names(answers)) next
+    if (!term %in% names(risk_term_labels)) next
+    answers[[item_id]] <- term
+  }
+  answers
+}
+
 score_risk_classification <- function(answers) {
   expected_ids <- risk_scenario_items$id
   if (is.null(names(answers)) || !all(expected_ids %in% names(answers))) {

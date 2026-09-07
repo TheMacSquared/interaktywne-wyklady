@@ -109,8 +109,9 @@ student poprawia niepełny komunikat „w tym miesiącu były trzy wypadki”.
 ## Granice pierwszej wersji
 
 - Jeden widget kluczowy i najwyżej dwa proste uzupełniające na wykład.
-- Bez drag-and-drop; klasyfikacja używa dostępnych kontrolek i pełnej obsługi
-  klawiatury.
+- Klasyfikacja używa przeciągania kart (`lc_drop_match()`) z równoważną obsługą
+  klawiatury i komunikatami `aria-live`; poza nią wystarczają standardowe
+  kontrolki Shiny.
 - Bez edytora grafów oraz swobodnego konstruktora FTA w pierwszej wersji.
 - Quiz MVP ma 5–8 sprawdzonych pytań, nie docelową pulę 40–60.
 - Funkcje matematyczne są oddzielone od reaktywnego UI i mają testy przypadków

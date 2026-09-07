@@ -46,7 +46,7 @@ ch2_ui <- lecture_chapter(
     ),
 
     figure_panel(
-      label = "Interakcja 2",
+      label = "Ćwiczenie 2",
       title = "Teoria kontra kolejne zmiany w Bananpolu",
       full_width = TRUE,
       fluidRow(

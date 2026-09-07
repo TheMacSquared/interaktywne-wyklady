@@ -26,7 +26,7 @@ ch8_ui <- lecture_chapter(
     ),
 
     figure_panel(
-      label = "Ćwiczenie 1",
+      label = "Zadanie 1",
       title = "Notatka dla dyrektora — czego brakuje?",
       full_width = TRUE,
       checkboxGroupInput(
@@ -59,7 +59,7 @@ ch8_ui <- lecture_chapter(
 
     lc_h2("ch8-zbiory", "Policz działania na zdarzeniach"),
     figure_panel(
-      label = "Ćwiczenie 2",
+      label = "Zadanie 2",
       title = "Sto kontroli rampy",
       full_width = TRUE,
       lc_p(
@@ -83,7 +83,7 @@ ch8_ui <- lecture_chapter(
        albo potrzeba dalszego modelu i danych."
     ),
     figure_panel(
-      label = "Ćwiczenie 3",
+      label = "Zadanie 3",
       title = "Nie każdy ułamek znaczy to samo",
       full_width = TRUE,
       selectInput(
@@ -122,7 +122,7 @@ ch8_ui <- lecture_chapter(
 
     lc_h2("ch8-transfer", "Przenieś język poza Bananpol"),
     figure_panel(
-      label = "Ćwiczenie 4",
+      label = "Zadanie 4",
       title = "Alarm gazowy w laboratorium",
       full_width = TRUE,
       lc_p(

@@ -254,10 +254,35 @@ Polskie cudzysłowy typograficzne `„..."` (U+201E/U+201D) mogą być **wewnąt
 | `margin_code_note(code, description, label)` | callout kodu (gold, `⌘`) |
 | `figure_panel(label, ..., title, full_width)` | ramka z plakietką; `full_width=TRUE` czyści floaty |
 | `lc_formula_box(...)` | blok wzoru lub krótkiego zapisu matematycznego |
+| `lc_drop_match(input_id, items, zones, colors, hint, reset_label)` | ćwiczenie „przypisz karty do pól" — przeciąganie myszą i obsługa klawiatury |
 | `lc_stat_grid(..., columns)` | siatka metryk/statystyk |
 | `lc_stat_box(label, value, ..., caption, color)` | pojedyncza metryka z lewym akcentem |
 | `lc_feedback(..., type)` | dynamiczny komunikat w `renderUI()`; `type`: `"info"` / `"ok"` / `"warning"` / `"danger"` |
 | `lc_chapter_next(num, title, lead, target_id)` | link „→ Dalej" na marginesie |
+
+### `lc_drop_match()` — przypisywanie kart do pól
+
+Karty ze zdaniami leżą w puli i trafiają do pól kategorii przez przeciąganie
+albo z klawiatury (Enter podnosi, strzałki wybierają pole, Enter upuszcza,
+Escape anuluje, Delete odsyła kartę do puli). Do serwera trafia lista
+`kod_pola = id_karty` z wypełnionymi polami; nieprzypisane karty są pomijane.
+Logika klienta jest w `R/lc_dragdrop.js` (ładowany przez `lecture_page()`),
+style w sekcji `.lc-dm*` w `R/shared_styles.css`.
+
+```r
+lc_drop_match(
+  input_id = "ch1_assign",
+  items    = data.frame(id = c("peel", "slip"), text = c("Skórka…", "Upadek…")),
+  zones    = c(hazard = "Zagrożenie", event = "Zdarzenie"),
+  colors   = c(upwr_cat[["terakota"]], upwr_accent)
+)
+
+# server
+answers <- assignment_to_answers(input$ch1_assign)
+```
+
+Kolejność `items` jest kolejnością kart w puli — podawaj ją celowo pomieszaną,
+żeby pozycja nie podpowiadała odpowiedzi.
 
 ---
 
