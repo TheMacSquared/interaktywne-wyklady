@@ -23,6 +23,15 @@ testthat::test_that("każda aplikacja ładuje UI i kompletną listę rozdziałó
           stopifnot(length(chapters) > 0)
           ids <- vapply(chapters, function(ch) ch$id, character(1))
           stopifnot(all(nzchar(ids)), !anyDuplicated(ids))
+          # Nawigacja zawiera wyłącznie wykłady należące do tego przedmiotu.
+          subject_root <- dirname(path)
+          app_dirs <- list.dirs(subject_root, recursive = FALSE, full.names = TRUE)
+          app_dirs <- app_dirs[file.exists(file.path(app_dirs, "app.R"))]
+          stopifnot(length(env$.LC_MODULES) == length(app_dirs))
+          stopifnot(length(env$.LC_LECTURE_MODULE) == length(app_dirs))
+          html <- htmltools::renderTags(env$ui)$html
+          subject_title <- if (basename(subject_root) == "statystyka-2") "Statystyka 2" else "Statystyka"
+          stopifnot(grepl(paste0('class="lc-tabs-logo-title">', subject_title, '</div>'), html, fixed = TRUE))
           TRUE
         },
         args = list(path = app_dir),

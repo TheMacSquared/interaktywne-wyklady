@@ -27,6 +27,7 @@ ch_drzewo_ui <- list(
         tags$strong("Zanim wejdziesz do drzewa:"),
         tags$ul(
           tags$li("Nazwij pytanie: opis, porównanie czy związek?"),
+          tags$li("ρ oznacza korelację w populacji, r — wynik w próbie. Zerowa korelacja Pearsona nie wyklucza związku nieliniowego."),
           tags$li("Ustal jednostkę obserwacji i sprawdź, czy pomiary są niezależne."),
           tags$li("Jeśli te same obiekty mierzono kilka razy, wybierz analizę sparowaną."),
           tags$li("Wniosek o przyczynowości wymaga odpowiedniego planu badania — sam test go nie zapewnia.")

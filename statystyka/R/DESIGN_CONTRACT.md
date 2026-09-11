@@ -4,22 +4,7 @@ Ten dokument opisuje docelowy system dla interaktywnych wykładów. Nie jest ins
 
 ## Zakres
 
-Kontrakt dotyczy wykładów opartych o `lecture_page()`:
-
-- `typy-danych/`
-- `rozklady-prawdopodobienstwa/`
-- `przedzialy-ufnosci/`
-- `wnioskowanie-statystyczne/`
-- `zalozenia-testow/`
-- `regresja/`
-- `symulacje-statystyczne/`
-- `metody-bayesowskie/`
-- `dobre-dane/`
-- `case-studies/`
-- `kierunkowe/`
-- `projekt-badawczy/`
-
-Niezmigrowane wykłady mogą być zepsute po usunięciu starych aliasów i stylów. Nie naprawiamy ich przy pracy nad kontraktem nowego systemu.
+Kontrakt dotyczy wszystkich aplikacji w `statystyka/` opartych o `lecture_page()`. Lista aplikacji znajduje się w [README przedmiotu](../README.md).
 
 ## Shell Aplikacji
 

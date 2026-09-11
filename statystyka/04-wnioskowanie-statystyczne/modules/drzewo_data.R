@@ -171,10 +171,10 @@ digraph drzewo {
         <tr><td align="left">Czy wraz ze wzrostem średniej<br/>zawartości soli rośnie średnia<br/>kaloryczność posiłków?</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Hipoteza (1 wariant)</b></td></tr>
-        <tr><td align="left">H0: r = 0</td></tr>
-        <tr><td align="left">&#160;&#160;&#160;&#160;brak związku pomiędzy zmiennymi</td></tr>
-        <tr><td align="left">Ha: r ≠ 0</td></tr>
-        <tr><td align="left">&#160;&#160;&#160;&#160;istnieje istotny związek pomiędzy</td></tr>
+        <tr><td align="left">H0: ρ = 0</td></tr>
+        <tr><td align="left">&#160;&#160;&#160;&#160;brak korelacji liniowej</td></tr>
+        <tr><td align="left">Ha: ρ ≠ 0</td></tr>
+        <tr><td align="left">&#160;&#160;&#160;&#160;istnieje korelacja liniowa między</td></tr>
         <tr><td align="left">&#160;&#160;&#160;&#160;zmiennymi</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Test statystyczny</b></td></tr>
@@ -298,8 +298,8 @@ drzewo_nodes <- data.frame(
     .box_label(
       "Czy wraz ze wzrostem średniej zawartości\nsoli rośnie średnia kaloryczność posiłków?",
       paste(
-        "H0: r = 0 (brak związku)",
-        "Ha: r ≠ 0 (istotny związek)",
+        "H0: ρ = 0 (brak korelacji liniowej)",
+        "Ha: ρ ≠ 0 (korelacja liniowa)",
         sep = "\n"
       ),
       "Współczynnik korelacji Pearsona"

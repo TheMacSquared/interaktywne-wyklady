@@ -32,19 +32,19 @@ ch4_ui <- lecture_chapter(
           tags$td(tags$strong("Test t jednej pr.")),
           tags$td("Brak silnej skośności i groźnych outlierów"),
           tags$td("Q-Q plot; pomocniczo Shapiro-Wilk"),
-          tags$td("Wilcoxon jednej próby")
+          tags$td("Wilcoxon jednej próby tylko przy symetrii; przy silnej skośności najpierw wróć do pytania i danych")
         ),
         tags$tr(
           tags$td(tags$strong("Test t niezależny")),
-          tags$td("Normalność w grupach, równe wariancje"),
+          tags$td("Niezależne grupy; dla dokładnego testu normalność w grupach. Równe wariancje tylko w wersji Studenta"),
           tags$td("Q-Q w grupach + Levene; pomocniczo Shapiro"),
-          tags$td("Welch t (nierówne war.), Mann-Whitney U (brak norm.)")
+          tags$td("Welch przy nierównych wariancjach; Mann–Whitney przy pytaniu o położenie rozkładów, nie automatycznie o średnie")
         ),
         tags$tr(
           tags$td(tags$strong("Test t sparowany")),
           tags$td("Normalność różnic"),
           tags$td("Shapiro na różnicach"),
-          tags$td("Wilcoxon par znakowych")
+          tags$td("Wilcoxon dla par, jeśli rozkład różnic jest symetryczny")
         ),
         tags$tr(
           tags$td(tags$strong("ANOVA")),
@@ -73,9 +73,19 @@ ch4_ui <- lecture_chapter(
       ),
       tags$tbody(
         tags$tr(
-          tags$td(tags$strong("Wilcoxon / Mann-Whitney")),
-          tags$td("Niezależność obserwacji, symetryczne rozkłady (dla mediany)"),
-          tags$td("Nie wymaga normalności. Testuje różnicę rozkładów, nie średnich.")
+          tags$td(tags$strong("Wilcoxon jednej próby")),
+          tags$td("Niezależne obserwacje; symetria wokół badanego położenia"),
+          tags$td("H₀: rozkład jest symetryczny wokół zadanej wartości. Przy symetrii jest ona również medianą; silna skośność nie znika po użyciu rang.")
+        ),
+        tags$tr(
+          tags$td(tags$strong("Wilcoxon dla par")),
+          tags$td("Niezależne pary; symetria rozkładu różnic w parach"),
+          tags$td("H₀: rozkład różnic jest symetryczny wokół zera. Obliczamy różnice w parach, a nie mieszamy wszystkich pomiarów.")
+        ),
+        tags$tr(
+          tags$td(tags$strong("Mann–Whitney (suma rang)")),
+          tags$td("Niezależne grupy i obserwacje; dane co najmniej porządkowe"),
+          tags$td("Pod H₀ grupy mają ten sam rozkład; test wykrywa tendencję do większych wartości w jednej grupie. Interpretacja jako przesunięcie median wymaga tego samego kształtu rozkładów; symetria nie jest wymagana.")
         ),
         tags$tr(
           tags$td(tags$strong("Kruskal-Wallis")),
@@ -204,21 +214,21 @@ ch4_server <- function(input, output, session) {
       name = "Test t jednej próby",
       assumptions = c("Dane ilościowe", "Brak silnej skośności i groźnych outlierów"),
       checks = c("Q-Q plot (najpierw)", "shapiro_test() pomocniczo"),
-      alternatives = c("Wilcoxon jednej próby: wilcox_test(x ~ 1, mu = ...)"),
+      alternatives = c("Przy symetrii: Wilcoxon jednej próby, wilcox_test(x ~ 1, mu = ...); przy silnej skośności nie jest automatycznym zamiennikiem"),
       r_code = "rstatix::t_test(data, var ~ 1, mu = wartość)"
     ),
     t_ind = list(
       name = "Test t niezależny",
       assumptions = c("Dane ilościowe", "Brak silnych odchyleń w grupach", "Równe wariancje (lub użyj Welcha)"),
       checks = c("Q-Q per group (najpierw)", "shapiro_test() pomocniczo", "levene_test()"),
-      alternatives = c("Welch t (domyślny!): t_test(var.equal = FALSE)", "Mann-Whitney U: wilcox_test()"),
+      alternatives = c("Welch t (domyślny!): t_test(var.equal = FALSE)", "Mann–Whitney: wilcox_test(); porównuje rangi, nie średnie"),
       r_code = "rstatix::t_test(data, var ~ group)"
     ),
     t_paired = list(
       name = "Test t sparowany",
       assumptions = c("Dane ilościowe", "Normalność różnic"),
       checks = c("shapiro_test() na różnicach"),
-      alternatives = c("Wilcoxon par znakowych: wilcox_test(paired = TRUE)"),
+      alternatives = c("Przy symetrii różnic: Wilcoxon dla par, wilcox_test(paired = TRUE)"),
       r_code = "rstatix::t_test(data, var ~ time, paired = TRUE)"
     ),
     anova = list(
@@ -244,7 +254,7 @@ ch4_server <- function(input, output, session) {
     ),
     mann_whitney = list(
       name = "Mann-Whitney U",
-      assumptions = c("Niezależność obserwacji", "Dane co najmniej porządkowe"),
+      assumptions = c("Niezależne grupy i obserwacje", "Dane co najmniej porządkowe", "H₀: identyczne rozkłady; interpretacja median wymaga tego samego kształtu"),
       checks = c("Sprawdzenie projektu badawczego"),
       alternatives = c("Test permutacyjny"),
       r_code = "rstatix::wilcox_test(data, var ~ group)"

@@ -18,11 +18,7 @@ expected_apps <- c(
   "04-wnioskowanie-statystyczne",
   "05-zalozenia-testow",
   "06-regresja",
-  "07-symulacje-statystyczne",
-  "08-metody-bayesowskie",
-  "09-dobre-dane",
-  "10-case-studies",
-  "11-kierunkowe",
-  "12-projekt-badawczy",
-  "szeregi-czasowe"
+  "07-dobre-dane",
+  "08-case-studies",
+  "09-projekt-badawczy"
 )

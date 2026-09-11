@@ -361,7 +361,7 @@ ui <- lecture_page(
   lecture_id    = "typy-danych",
   lecture_num   = "01",
   lecture_title = "Statystyka opisowa",
-  module_label  = "Moduł I",
+  module_label  = "Statystyka",
   chapters      = .chapters,
   header_extras = app_extras
 )

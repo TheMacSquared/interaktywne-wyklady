@@ -332,7 +332,7 @@ ui <- lecture_page(
   lecture_id    = "wnioskowanie-statystyczne",
   lecture_num   = "04",
   lecture_title = "Testowanie hipotez",
-  module_label  = "Moduł IV",
+  module_label  = "Statystyka",
   chapters      = .chapters,
   header_extras = header_extras
 )

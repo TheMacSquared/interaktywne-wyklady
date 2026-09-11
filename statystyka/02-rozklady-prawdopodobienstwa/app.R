@@ -69,7 +69,7 @@ ui <- lecture_page(
   lecture_id    = "rozklady-prawdopodobienstwa",
   lecture_num   = "02",
   lecture_title = "Rozkłady prawdopodobieństwa",
-  module_label  = "Moduł II",
+  module_label  = "Statystyka",
   chapters      = .chapters
 )
 

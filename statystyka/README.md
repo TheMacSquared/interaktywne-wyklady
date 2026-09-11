@@ -1,372 +1,75 @@
-# 📊 Interaktywne Wykłady ze Statystyki
+# Statystyka
 
-Aplikacje R Shiny w formie interaktywnych skryptów wykładowych. Każda aplikacja to scrollowalny przewodnik z osadzonymi widgetami — student czyta narrację i eksperymentuje z danymi w kontekście.
+Podstawowy kurs statystyki: od opisu danych do samodzielnego wniosku z analizy. Interaktywne aplikacje R Shiny wspierają wykład dla początkujących.
 
-## 📋 Wymagania
+## Cel i zakres
 
-- R (wersja ≥ 4.1)
-- Pakiety zależą od wykładu. Ich kompletność sprawdza skrypt `scripts/check_dependencies.R`.
+Student potrafi opisać dane, odczytać niepewność wyniku, wybrać podstawową metodę i wyjaśnić wniosek w kontekście pytania. Przykłady budują intuicję; szczegóły metodologiczne pojawiają się tylko tam, gdzie są potrzebne do zrozumienia wyniku.
 
-## 🚀 Instalacja pakietów
+Symulacje, Bayes, rozszerzenia kierunkowe i szeregi czasowe należą do oddzielnego przedmiotu [Statystyka 2](../statystyka-2/README.md). Nie są wymagane do ukończenia kursu podstawowego.
+
+## Wykłady
+
+| Nr | Aplikacja | Zadanie dydaktyczne |
+|---|---|---|
+| 01 | [Typy danych](01-typy-danych/) | Rozpoznać zmienne, dobrać opis i wykres. |
+| 02 | [Rozkłady prawdopodobieństwa](02-rozklady-prawdopodobienstwa/) | Zrozumieć losowość, wartość oczekiwaną i rozkład średniej. |
+| 03 | [Przedziały ufności](03-przedzialy-ufnosci/) | Odczytać oszacowanie i jego niepewność. |
+| 04 | [Wnioskowanie statystyczne](04-wnioskowanie-statystyczne/) | Przejść od pytania i hipotezy do testu, siły efektu i wniosku. |
+| 05 | [Założenia testów](05-zalozenia-testow/) | Rozpoznać sytuacje wymagające zmiany metody. |
+| 06 | [Regresja](06-regresja/) | Opisać związek i zobaczyć, jak uwzględnienie kontekstu zmienia interpretację. |
+| 07 | [Dobre dane](07-dobre-dane/) | Ocenić, czy dane odpowiadają na pytanie. |
+| 08 | [Case studies](08-case-studies/) | Prześledzić pełną analizę na przykładzie szkół i sytuacji uczniów. |
+| 09 | [Projekt badawczy](09-projekt-badawczy/) | Sformułować własne pytanie, zaplanować analizę i przedstawić wniosek. |
+
+Numeracja porządkuje materiały, nie narzuca dziewięciu osobnych spotkań. Przy ograniczonej liczbie godzin fragmenty „Dobrych danych” i „Projektu badawczego” można wplatać we wcześniejsze przykłady. Rozbudowane aplikacje są także materiałem do pracy własnej.
+
+## Jak używać na zajęciach
+
+Najpierw postaw zrozumiałe pytanie, potem poproś o przewidywanie, zmień parametr lub pokaż dane i wróć do odpowiedzi. W CASchools punktem zaczepienia jest pytanie: „Czy dopłaty do obiadów pogarszają oceny?”. Ujemny związek pozwala odkryć, że pomoc częściej trafia do uczniów w trudniejszej sytuacji. Celem jest intuicja dotycząca korelacji i kontekstu.
+
+## Wymagania
+
+- R ≥ 4.1.
+- Pakiety zależne od aplikacji; kompletność sprawdza `scripts/check_dependencies.R`.
 
 ```r
-install.packages(c("shiny", "ggplot2", "dplyr", "e1071", "gridExtra"))
-
-# Dodatkowe (dla przedzialy-ufnosci, wnioskowanie-statystyczne, regresja, zalozenia-testow)
-install.packages(c("rstatix", "broom", "tidyr", "knitr", "lmtest", "sandwich", "visNetwork"))
-
-# Dodatkowe (dla dobre-dane)
-install.packages(c("DT", "bslib", "AER", "palmerpenguins", "ISLR", "fivethirtyeight"))
-
-# Dodatkowe (dla metody-bayesowskie)
-install.packages(c("BayesFactor", "rstanarm"))
+install.packages(c(
+  "shiny", "ggplot2", "dplyr", "e1071", "gridExtra", "rstatix", "broom",
+  "tidyr", "knitr", "lmtest", "sandwich", "visNetwork", "DT", "bslib",
+  "AER", "palmerpenguins", "ISLR", "fivethirtyeight", "jsonlite"
+))
 ```
 
-Kontrola środowiska przed uruchomieniem lub wdrożeniem:
+Pakiety BayesFactor, rstanarm i pakiety szeregów czasowych nie należą do wymagań tej części kursu.
+
+## Uruchamianie
+
+Z katalogu głównego repozytorium:
 
 ```sh
-Rscript statystyka/scripts/check_dependencies.R
+scripts/hub
 ```
 
-## 🧪 Testy
-
-Testy deweloperskie wymagają pakietów `testthat` i `callr`:
-
-```r
-install.packages(c("testthat", "callr"))
-```
-
-Pełna kontrola przed wdrożeniem sprawdza zależności, kontrakt designu, funkcje
-statystyczne, strukturę repozytorium i ładuje każdą z 12 aplikacji w osobnym
-procesie R:
-
-```sh
-Rscript statystyka/scripts/run_tests.R
-```
-
-Szybka kontrola podczas edycji pomija ładowanie 12 aplikacji:
-
-```sh
-Rscript statystyka/scripts/run_tests.R --quick
-```
-
-Testy nie są częścią działających aplikacji Shiny i nie obciążają serwera podczas
-korzystania z wykładów przez studentów.
-
-## ▶️ Uruchamianie
-
-Najprościej hubem — spis wszystkich wykładów w przeglądarce, bez wracania do
-terminala między wykładami (lista wykrywana automatycznie, więc zawsze aktualna):
-
-```bash
-scripts/hub          # z katalogu głównego repo; albo dwuklik w Wyklady.command
-```
-
-Szczegóły: [hub/README.md](../hub/README.md).
-
-Pojedynczy wykład bezpośrednio — z katalogu głównego repo:
+Hub pokazuje „Statystykę” i „Statystykę 2” jako oddzielne przedmioty. Pojedyncza aplikacja:
 
 ```r
 shiny::runApp("statystyka/01-typy-danych")
 ```
 
-Albo z katalogu `statystyka/`:
+## Kontrola
 
-```r
-shiny::runApp("01-typy-danych")
-```
-
-
-## 📚 Aplikacje
-
-| Aplikacja | Temat | Rozdziały / zakres |
-|-----------|-------|--------------------|
-| [typy-danych](01-typy-danych/) | Statystyka opisowa | 8 rozdziałów: typy danych, zmienne jakościowe, statystyki położenia, rozrzutu, kształt rozkładu, ściąga, quiz + **ćwiczenia z dropdownem kierunków** (BHP/Rolnictwo/Żywność) |
-| [rozklady-prawdopodobienstwa](02-rozklady-prawdopodobienstwa/) | Rozkłady prawdopodobieństwa | 9 rozdziałów: od danych do prawdopodobieństwa, wartość oczekiwana i wariancja, rozkłady dyskretne, ciągłe, normalny, CTG, ściąga, quiz + **ćwiczenia z dropdownem kierunków** (BHP/Rolnictwo/Żywność) |
-| [przedzialy-ufnosci](03-przedzialy-ufnosci/) | Przedziały ufności | 7 rozdziałów: estymacja punktowa, idea przedziałów, przedział dla średniej, proporcji, czynniki szerokości, ściąga + **ćwiczenia z dropdownem kierunków** (Edukacja/BHP/Rolnictwo/Żywność) |
-| [wnioskowanie-statystyczne](04-wnioskowanie-statystyczne/) | Wnioskowanie statystyczne | 12 rozdziałów: logika testowania, formułowanie hipotez, błędy/p-wartość/decyzja, jedna ilo./jako., korelacja, dwie jakościowe, dwie grupy, ANOVA, drzewo decyzyjne, ściąga + ćwiczenia |
-| [zalozenia-testow](05-zalozenia-testow/) | Założenia testów | 5 rozdziałów: normalność, jednorodne wariancje, χ²/Fisher, mapa metod z alternatywami, ściąga |
-| [regresja](06-regresja/) | Regresja | 7 rozdziałów: liniowa prosta, jakość modelu, wieloraka, porównanie modeli (R², AIC, BIC, RMSE), logistyczna, ściąga, ćwiczenia |
-| [symulacje-statystyczne](07-symulacje-statystyczne/) | Symulacje statystyczne | 10 rozdziałów: idea resamplingowa, bootstrap CI, bootstrap jednej próby, testy permutacyjne, jackknife, cross-validation, Monte Carlo (moc + H₀), kiedy stosować?, ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
-| [metody-bayesowskie](08-metody-bayesowskie/) | Metody bayesowskie | 12 rozdziałów z **konsekwentnym dwukolumnowym porównaniem freq vs Bayes**: intuicja (prior→posterior), BF vs p, HDI vs CI, jedna próba, dwie grupy, ANOVA, tabele krzyżowe, korelacja, regresja liniowa i logistyczna (rstanarm), ściąga + **ćwiczenia z dropdownem kierunków** (Rolnictwo/TŻ/BHP/Edukacja) |
-| [dobre-dane](09-dobre-dane/) | Jakość danych | 11 zbiorów — kiedy dane nadają się do klasycznej statystyki? (CASchools, pingwiny, Tarantino, Wage, hotel, formularz, laboratorium, studenci, kawiarnia) + ściąga |
-| [case-studies](10-case-studies/) | Case studies | Kompletne analizy od A do Z. Każdy rozdział = jeden zbiór danych, hipotezy, analizy, wnioski. Na razie: CASchools |
-| [kierunkowe](11-kierunkowe/) | Materiał kierunkowy | 6 chapterów, po jednym dla kierunku: rolnictwo, technologia żywności, inżynieria bezpieczeństwa, inżynieria środowiska, gospodarka wodna, OZE |
-| [projekt-badawczy](12-projekt-badawczy/) | Projekt badawczy | 7 rozdziałów: od ciekawości i hipotez, przez pomiar i pierwsze sprawdzenia, po model kontrolny, iterację i checklistę projektu grupowego |
-
-## 📁 Struktura projektu
-
-```
-interaktywne-wyklady/statystyka/
-├── 01-typy-danych/                    # Statystyka opisowa
-│   ├── app.R                       # Główny plik: dane, kolory, CSS/JS, nawigacja
-│   ├── quiz_typy_zmiennych.json    # Pytania do quizu (ch7)
-│   └── modules/                    # Moduły rozdziałów
-│       ├── helpers.R               # Funkcje pomocnicze (taksonomia, wykresy good/bad)
-│       ├── ch1_typy.R              # 1. Typy danych
-│       ├── ch2_jakosciowe.R        # 2. Zmienne jakościowe
-│       ├── ch3_polozenie.R         # 3. Statystyki położenia
-│       ├── ch4_rozrzut.R           # 4. Statystyki rozrzutu
-│       ├── ch5_ksztalt.R           # 5. Kształt rozkładu
-│       ├── ch6_sciaga.R            # 6. Ściąga
-│       ├── ch7_quiz.R              # 7. Quiz (rozpoznaj typ zmiennej)
-│       └── ch8_cwiczenia.R         # 8. Ćwiczenia (dropdown: BHP/Rolnictwo/Żywność)
-├── 02-rozklady-prawdopodobienstwa/    # Rozkłady prawdopodobieństwa
-│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
-│   ├── cwiczenia/                  # Dane i opisy do ch9_cwiczenia (BHP/Rolnictwo/Żywność)
-│   └── modules/
-│       ├── helpers.R               # Funkcje symulacyjne, theme
-│       ├── quiz_rozklady.json      # Pytania do quizu (ch8)
-│       ├── ch1_most.R              # 1. Od danych do prawdopodobieństwa
-│       ├── ch2_ev_var.R            # 2. Wartość oczekiwana i wariancja
-│       ├── ch3_dyskretne.R         # 3. Rozkłady dyskretne (jednostajny, dwumianowy, Poissona)
-│       ├── ch4_ciagle.R            # 4. Rozkłady ciągłe (histogram→PDF, jednostajny, wykładniczy)
-│       ├── ch5_normalny.R          # 5. Rozkład normalny (μ/σ, reguła 68-95-99.7, z-score)
-│       ├── ch6_ctg.R               # 6. Centralne Twierdzenie Graniczne
-│       ├── ch7_sciaga.R            # 7. Ściąga
-│       ├── ch8_quiz.R              # 8. Quiz
-│       └── ch9_cwiczenia.R         # 9. Ćwiczenia (dropdown: BHP/Rolnictwo/Żywność)
-├── 03-przedzialy-ufnosci/             # Przedziały ufności
-│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
-│   ├── dane/                       # Zbiory CSV do ćwiczeń kierunkowych
-│   └── modules/
-│       ├── helpers.R               # Generatory danych, symulacje pokrycia, theme
-│       ├── ch1_estymacja.R         # 1. Od próby do populacji (estymacja punktowa)
-│       ├── ch2_idea.R              # 2. Idea przedziałów (100 CI, krok po kroku, quiz)
-│       ├── ch3_srednia.R           # 3. Przedział dla średniej (z vs t, kalkulator)
-│       ├── ch4_proporcja.R         # 4. Przedział dla proporcji (Wald vs Wilson)
-│       ├── ch5_czynniki.R          # 5. Co wpływa na szerokość? (n, CL, s)
-│       ├── ch6_sciaga.R            # 6. Ściąga (wzory, drzewo decyzyjne, R)
-│       └── ch7_cwiczenia.R         # 7. Ćwiczenia (dropdown: Edukacja/BHP/Rolnictwo/Żywność)
-├── 04-wnioskowanie-statystyczne/      # Wnioskowanie statystyczne (testy hipotez)
-│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
-│   ├── assets/                     # Obrazki do rozdziałów (Anscombe, Simpson, itp.)
-│   └── modules/
-│       ├── helpers.R               # Dane studenckie, formatowanie wyników, theme
-│       ├── ch1_logika.R            # 1 i 3. Logika testowania oraz błędy, p-wartość i decyzja
-│       ├── ch2_hipotezy.R          # 2. Formułowanie hipotez (pytanie↔hipoteza, quizy, jedno/dwustronny)
-│       ├── ch2_jedna_ilosciowa.R   # 4. Jedna zmienna ilościowa (t, Wilcoxon)
-│       ├── ch3_jedna_jakosciowa.R  # 5. Jedna zmienna jakościowa (χ², dwumianowy)
-│       ├── ch4_korelacja.R         # 6. Dwie ilościowe (Pearson, Spearman)
-│       ├── ch5_dwie_jakosciowe.R   # 7. Dwie jakościowe (χ² niezależności, Fisher)
-│       ├── ch6_dwie_grupy.R        # 8. Ilościowa vs jakościowa, 2 grupy (t, M-W, parowe)
-│       ├── ch7_anova.R             # 9. ANOVA (jednoczynnikowa, Kruskal-Wallis, post-hoc)
-│       ├── ch_drzewo.R             # 10. Drzewo decyzyjne wyboru testu
-│       ├── ch8_sciaga.R            # 11. Ściąga (drzewo decyzyjne, tabele, kod R)
-│       └── ch9_cwiczenia.R         # 12. Ćwiczenia (Rolnictwo/BHP/Technologia żywności)
-├── 05-zalozenia-testow/               # Założenia testów statystycznych
-│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
-│   └── modules/
-│       ├── helpers.R               # Generatory danych z naruszeniami, theme
-│       ├── ch1_normalnosc.R        # 1. Normalność (Q-Q, Shapiro, transformacje)
-│       ├── ch2_wariancje.R         # 2. Jednorodne wariancje (Levene, Bartlett, Welch)
-│       ├── ch3_chi_fisher.R        # 3. Założenia χ² i Fishera (min. liczności)
-│       ├── ch4_mapa.R              # 4. Mapa metod (metoda → założenia → alternatywa)
-│       └── ch5_sciaga.R            # 5. Ściąga (testy diagnostyczne, quick reference)
-├── 06-regresja/                        # Regresja liniowa i logistyczna
-│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
-│   ├── dane/                       # Dane CASchools do przykładów i ćwiczeń
-│   └── modules/
-│       ├── helpers.R               # Generatory danych regresyjnych, metryki, theme
-│       ├── ch1_liniowa.R           # 1. Regresja liniowa prosta (scatter, reszty, R²)
-│       ├── ch2_jakosc.R            # 2. Jakość modelu (reszty, R², RMSE, ekstrapolacja)
-│       ├── ch3_wieloraka.R         # 3. Regresja wieloraka (predyktory, kontrola, VIF)
-│       ├── ch4_porownanie.R        # 4. Porównanie modeli (R², AIC, BIC, RMSE, overfitting)
-│       ├── ch5_logistyczna.R       # 5. Regresja logistyczna (sigmoida, OR, predykcja)
-│       ├── ch6_sciaga.R            # 6. Ściąga (wzory, metryki, kod R)
-│       └── ch7_cwiczenia.R         # 7. Ćwiczenia praktyczne
-├── 07-symulacje-statystyczne/         # Symulacje: bootstrap, permutacje, CV, MC
-│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
-│   └── modules/
-│       ├── helpers.R               # Generatory, run_bootstrap/jackknife/permutation, compute_skewness, theme
-│       ├── ch1_idea.R              # 1. Idea resamplingu
-│       ├── ch2_bootstrap_ci.R      # 2. Bootstrap CI (percentyl, basic, klasyczny)
-│       ├── ch3_bootstrap_jednopr.R # 3. Bootstrap dla jednej próby
-│       ├── ch4_permutacje.R        # 4. Testy permutacyjne
-│       ├── ch5_jackknife.R         # 5. Jackknife (bias, SE, bias-correction)
-│       ├── ch6_cv.R                # 6. Cross-validation (K-fold, LOOCV)
-│       ├── ch7_monte_carlo.R       # 7. Monte Carlo (moc testu, rozkład pod H₀)
-│       ├── ch8_kiedy.R             # 8. Kiedy stosować?
-│       ├── ch9_sciaga.R            # 9. Ściąga
-│       └── ch10_cwiczenia.R        # 10. Ćwiczenia (dropdown: Rolnictwo/TŻ/BHP/Edukacja)
-├── 08-metody-bayesowskie/             # Metody bayesowskie (porównanie freq vs Bayes)
-│   ├── app.R                       # Główny plik: kolory (freq czerwony/bayes fioletowy), CSS/JS, nawigacja
-│   └── modules/
-│       ├── helpers.R               # Beta-binomial, HDI, wrappery BayesFactor i rstanarm, wizualizacje
-│       ├── ch1_intuicja.R          # 1. Prior → Likelihood → Posterior (beta-binomial, moneta)
-│       ├── ch2_bf_vs_p.R           # 2. BF vs p-value (paradoks Lindleya, skala Jeffreysa)
-│       ├── ch3_hdi_vs_ci.R         # 3. HDI vs CI (ten sam przedział, różna interpretacja)
-│       ├── ch4_jedna_proba.R       # 4. Jedna próba: t.test vs ttestBF + posterior μ
-│       ├── ch5_dwie_grupy.R        # 5. Dwie grupy: Welch vs ttestBF + posterior różnicy
-│       ├── ch6_anova.R             # 6. ANOVA: F-test vs anovaBF
-│       ├── ch7_tabele.R            # 7. Tabele krzyżowe: χ² vs contingencyTableBF + posterior OR
-│       ├── ch8_korelacja.R         # 8. Korelacja: cor.test vs correlationBF + posterior ρ
-│       ├── ch9_regresja_lin.R      # 9. Regresja liniowa: lm vs stan_glm
-│       ├── ch10_regresja_log.R     # 10. Regresja logistyczna: glm(binom) vs stan_glm(binom) + OR
-│       ├── ch11_sciaga.R           # 11. Ściąga (tabela paradygmat↔paradygmat, kiedy który)
-│       └── ch12_cwiczenia.R        # 12. Ćwiczenia (dropdown: Rolnictwo/TŻ/BHP/Edukacja)
-├── 09-dobre-dane/                     # Jakość danych
-│   ├── app.R                       # Główny plik: CSS/JS, nawigacja
-│   └── modules/
-│       ├── helpers.R               # Dane (CASchools, penguins, apt…), katalog problemów, render_verdict()
-│       ├── ch0_wprowadzenie.R      # 0. Wprowadzenie
-│       ├── ch1_katalog.R           # 1. Katalog problemów (7 kategorii z przykładami)
-│       ├── ch2_szkoly.R            # 2. Szkoły w Kalifornii — dobry zbiór wzorcowy
-│       ├── ch3_grupa.R             # 3. Za mało danych — zły (n=8)
-│       ├── ch4_pingwiny.R          # 4. Pingwiny — dobry (palmerpenguins)
-│       ├── ch5_tarantino.R         # 5. Tarantino — zły (brak zmienności pytania)
-│       ├── ch6_hotel.R             # 6. Hotel — zły (brak zmienności w zmiennych)
-│       ├── ch7_wynagrodzenia.R     # 7. Wynagrodzenia — dobry (Wage/ISLR)
-│       ├── ch8_ankieta.R           # 8. Trudna ankieta — zły (źle zdefiniowane zmienne)
-│       ├── ch9_laboratorium.R      # 9. Badania laboratoryjne — mieszany (outliery i błędy)
-│       ├── ch10_studenci.R         # 10. Ankieta studencka — dobry (wzorcowa)
-│       ├── ch11_kawiarnia.R        # 11. Kawiarnia — zły (braki danych + brak niezależności)
-│       └── ch12_sciaga.R           # 12. Ściąga (checklista 9 kryteriów)
-├── 10-case-studies/                    # Case studies - kompletne analizy
-│   ├── app.R                       # Główny plik: kolory, CSS/JS
-│   └── modules/
-│       ├── helpers.R               # Formatowanie, theme
-│       └── ch1_caschools.R         # 1. CASchools (EDA, korelacja, t-test, ANOVA, regresja)
-├── 11-kierunkowe/                      # Materiał kierunkowy
-│   ├── app.R                       # Główny plik: kolory, CSS/JS, nawigacja
-│   └── modules/
-│       ├── helpers.R               # Generatory danych i formatowanie
-│       ├── ch1_rolnictwo.R         # 1. ANOVA dwuczynnikowa i RCBD
-│       ├── ch2_zywnosc.R           # 2. Sensoryka i karty kontrolne SPC
-│       ├── ch3_bezpieczenstwo.R    # 3. Niezawodność i Weibull
-│       ├── ch4_srodowisko.R        # 4. Transformacje w regresji i LOD
-│       ├── ch5_wodna.R             # 5. Analiza częstości i okres powrotu
-│       └── ch6_oze.R               # 6. Weibull dla wiatru i szeregi czasowe
-├── 12-projekt-badawczy/                 # Myślenie badawcze przed modelowaniem
-│   ├── app.R                       # Główny plik i style specyficzne wykładu
-│   ├── HANDOUT.md                  # Scenariusz prowadzenia i założenia dydaktyczne
-│   ├── dane/                       # Lokalna kopia danych TeachingRatings
-│   └── modules/                    # 7 rozdziałów od pytania do checklisty projektu
-├── R/                              # Współdzielone zasoby (shared.R, shared_styles.css, shared_toc.js)
-├── README.md                       # Ten plik
-└── CLAUDE.md                       # Instrukcje dla AI
-```
-
-## 🏗️ Architektura aplikacji wykładowej
-
-Każda aplikacja wykładowa (np. `typy-danych`) stosuje nowy wzorzec **scrollowalnego skryptu** oparty o `lecture_page()`:
-
-- **lecture_page** = pełnoekranowy shell z górnym paskiem modułów, lewą nawigacją i treścią aktywnego rozdziału
-- **Sticky TOC** — spis treści z auto-podświetlaniem bieżącej sekcji
-- **Variable tracker** — student wybiera zmienną w rozdziale 1 i śledzi ją przez cały kurs
-- **Osadzone widgety** — interaktywne ćwiczenia wplecione w narrację
-- **MathJax** — wzory matematyczne renderowane profesjonalnie
-- **Chart.js** — wykresy kołowe/słupkowe w HTML5 Canvas
-
-Stary layout Shiny (`navbarPage`, `fluidPage`, `sidebarLayout`, `bs_theme`) nie jest już wzorcem projektowym. Nowe prace powinny używać wyłącznie komponentów z `R/lecture_layout.R`.
-
-### Modularyzacja
-
-Kod rozdziałów jest rozbity na osobne pliki w katalogu `modules/` (nie `R/`, bo Shiny automatycznie sourcuje `R/` przed `app.R`). Każdy moduł eksportuje:
-
-```r
-# modules/ch3_polozenie.R
-ch3_ui <- lecture_chapter(
-  id = "ch-polozenie",
-  num = "03",
-  title = "Statystyki położenia",
-  content = tagList(...)
-)
-ch3_server <- function(input, output, session) { ... }
-```
-
-Główny `app.R` łączy je:
-
-```r
-source(file.path(app_dir, "modules", "ch1_typy.R"), local = TRUE)
-# ...
-.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui, ch6_ui)
-
-ui <- lecture_page(
-  lecture_id    = "typy-danych",
-  lecture_num   = "01",
-  lecture_title = "Statystyka opisowa",
-  module_label  = "Moduł I",
-  chapters      = .chapters
-)
-
-server <- function(input, output, session) {
-  lc <- lecture_server(.chapters, input, output, session)
-  ch1_server(input, output, session)
-  # ...
-}
-```
-
-## 🎓 Użycie dydaktyczne
-
-Aplikacje są zaprojektowane do:
-
-1. **Demonstracji na wykładach** — prowadzący scrolluje i omawia, studenci widzą na projektorze
-2. **Samodzielnej eksploracji** — studenci uruchamiają lokalnie i eksperymentują w swoim tempie
-3. **Materiałów do powtórki** — ściąga (rozdział 6) jako kompaktowe podsumowanie
-
-### Wariant: Inżynieria danych satelitarnych i kosmicznych
-
-Podstawowe wykłady 01–04 oraz ćwiczenia z regresji zawierają wariant oparty na
-jednym syntetycznym zbiorze `dane/satelitarne_obserwacje.csv`. Studenci wracają
-do tych samych zmiennych — temperatury satelitarnej i naziemnej, różnicy
-pomiarów, NDVI, zachmurzenia, typu pokrycia i jakości obserwacji — podczas nauki:
-
-- typów danych i statystyki opisowej;
-- podstawowych rozkładów prawdopodobieństwa;
-- przedziałów ufności dla średniej, różnicy sparowanej i proporcji;
-- testów jednej próby, proporcji, korelacji, porównań grup, χ² i ANOVA;
-- prostej i wielorakiej regresji oraz kalibracji względem pomiaru referencyjnego.
-
-Wariant nie wymaga znajomości radiometrii ani przetwarzania obrazów. NDVI jest
-traktowany wyłącznie jako przykładowa zmienna liczbowa. Krótkie uwagi o zależności
-przestrzennej, zachmurzeniu i błędzie systematycznym służą rozpoznaniu ograniczeń,
-nie wprowadzaniu geostatystyki. Dane i sposób ich odtworzenia opisuje
-[`dane/README.md`](dane/README.md).
-
-## 🎨 Wspólny styl wizualny
-
-Wszystkie aplikacje korzystają z centralnego stylu:
-
-- **`R/DESIGN_CONTRACT.md`** — kontrakt nowego designu i lista zakazanych wzorców
-- **`R/lecture_layout.R`** — shell wykładu i komponenty `lc_*`, `figure_panel()`, `margin_callout()`
-- **`R/shared_styles.css`** — CSS nowego layoutu, sticky TOC, typografia, callouty, widgety i quiz tiles
-- **`R/palette.R`** — jedno źródło prawdy dla kolorów UPWr
-- **`R/theme_upwr.R`** — motyw ggplot2 spójny z paletą
-- **`R/shared.R`** — wspólne defaulty ggplot2 i helpery danych (`generate_population_sample()`, `get_population_params()`, `dist_names_pl`)
-- **`sandbox/`** — piaskownica do eksperymentów graficznych przed wdrożeniem do produkcji (log decyzji w `sandbox/EKSPERYMENTY.md`)
-
-Dzięki temu globalne zmiany wizualne (font, kolory, typografia) wymagają edycji w jednym miejscu.
-
-Kontrola zgodności nowego kodu:
+Testy wymagają `testthat` i `callr`.
 
 ```sh
-Rscript statystyka/scripts/check_design_contract.R
+Rscript statystyka/scripts/run_tests.R
+Rscript statystyka/scripts/run_tests.R --quick
 ```
 
-## 🛠️ Dodawanie nowej aplikacji
+Pełna kontrola obejmuje zależności, design, testy i wczytanie dziewięciu aplikacji. Tryb `--quick` pomija wczytywanie aplikacji.
 
-1. Utwórz folder z nazwą w formacie `nazwa-aplikacji/` w katalogu `statystyka/`
-2. Utwórz `app.R` zgodnie z nowym wzorcem `lecture_page()` (patrz `CLAUDE.md` i `R/LECTURE_LAYOUT.md`)
-3. Dla dużych aplikacji: rozbij na moduły w `modules/`
-4. Zaktualizuj ten `README.md`
+## Organizacja kodu
 
-## 🐛 Rozwiązywanie problemów
+Każdy katalog wykładu zawiera `app.R` i moduły rozdziałów. Wspólne komponenty są w `R/`, narzędzia w `scripts/`, testy w `tests/`. Reguły wyglądu określa [kontrakt designu](R/DESIGN_CONTRACT.md).
 
-### Aplikacja nie uruchamia się
-
-```r
-# Sprawdź czy pakiety są zainstalowane
-installed.packages()[c("shiny", "ggplot2", "dplyr"), ]
-
-# Jeśli brak któregoś:
-install.packages("nazwa_pakietu")
-```
-
-### Błąd "cannot open file"
-
-Upewnij się, że uruchamiasz przez `shiny::runApp("statystyka/01-typy-danych")` z katalogu głównego repo albo `shiny::runApp("01-typy-danych")` z katalogu `statystyka/`, nie przez `Rscript app.R`.
-
-## 📝 Licencja
-
-Projekt edukacyjny. Wolne do użytku i modyfikacji w celach dydaktycznych.
+Po podziale kursu dawne wykłady 09, 10 i 12 mają numery 07, 08 i 09. Pozostałe cztery bloki przeniesiono do `statystyka-2/`; treść ćwiczeń kierunkowych wewnątrz podstawowych wykładów pozostaje częścią kursu podstawowego.

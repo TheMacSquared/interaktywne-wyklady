@@ -65,7 +65,7 @@ ui <- lecture_page(
   lecture_id    = "zalozenia-testow",
   lecture_num   = "05",
   lecture_title = "Założenia testów",
-  module_label  = "Moduł V",
+  module_label  = "Statystyka",
   chapters      = .chapters
 )
 

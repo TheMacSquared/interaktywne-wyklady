@@ -69,7 +69,7 @@ ui <- lecture_page(
   lecture_id    = "regresja",
   lecture_num   = "06",
   lecture_title = "Regresja",
-  module_label  = "Moduł VI",
+  module_label  = "Statystyka",
   chapters      = .chapters
 )
 

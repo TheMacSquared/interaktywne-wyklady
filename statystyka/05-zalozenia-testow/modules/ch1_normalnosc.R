@@ -139,9 +139,9 @@ ch1_ui <- lecture_chapter(
       p("To użyteczne zamienniki narzędziowe, ale ich wynik nie zawsze opisuje dokładnie tę samą wielkość co średnia."),
       tags$table(class = "lc-table lc-table-bordered", style = "font-size: 14px;",
         tags$tbody(
-          tags$tr(tags$td("Test t jednej próby"), tags$td("→ Wilcoxon jednej próby")),
-          tags$tr(tags$td("Test t niezależny"), tags$td("→ Mann-Whitney U")),
-          tags$tr(tags$td("Test t sparowany"), tags$td("→ Wilcoxon par znakowych")),
+          tags$tr(tags$td("Test t jednej próby"), tags$td("→ Wilcoxon jednej próby, gdy rozkład jest symetryczny")),
+          tags$tr(tags$td("Test t niezależny"), tags$td("→ Mann–Whitney: porównanie rang, nie średnich")),
+          tags$tr(tags$td("Test t sparowany"), tags$td("→ Wilcoxon dla par, gdy różnice są symetryczne")),
           tags$tr(tags$td("ANOVA"), tags$td("→ Kruskal-Wallis")),
           tags$tr(tags$td("Pearson"), tags$td("→ Spearman"))
         )

@@ -86,9 +86,9 @@ ch5_ui <- lecture_chapter(
         tags$tr(tags$th("Metoda parametryczna"), tags$th("→ Alternatywa nieparametryczna"))
       ),
       tags$tbody(
-        tags$tr(tags$td("Test t jednej próby"), tags$td("Wilcoxon jednej próby")),
-        tags$tr(tags$td("Test t niezależny"), tags$td("Mann-Whitney U")),
-        tags$tr(tags$td("Test t sparowany"), tags$td("Wilcoxon par znakowych")),
+        tags$tr(tags$td("Test t jednej próby"), tags$td("Wilcoxon jednej próby — wymaga symetrii")),
+        tags$tr(tags$td("Test t niezależny"), tags$td("Mann–Whitney: porównanie rang, nie średnich")),
+        tags$tr(tags$td("Test t sparowany"), tags$td("Wilcoxon dla par — wymaga symetrii różnic")),
         tags$tr(tags$td("ANOVA"), tags$td("Kruskal-Wallis")),
         tags$tr(tags$td("Tukey HSD (post-hoc)"), tags$td("Test Dunna")),
         tags$tr(tags$td("Pearson"), tags$td("Spearman")),

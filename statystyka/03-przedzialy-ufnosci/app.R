@@ -67,7 +67,7 @@ ui <- lecture_page(
   lecture_id    = "przedzialy-ufnosci",
   lecture_num   = "03",
   lecture_title = "Przedziały ufności",
-  module_label  = "Moduł III",
+  module_label  = "Statystyka",
   chapters      = .chapters
 )
 

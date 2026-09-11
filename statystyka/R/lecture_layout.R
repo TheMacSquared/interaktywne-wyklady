@@ -28,13 +28,9 @@
   list(num = "IV",   slug = "testowanie", title = "Testowanie",                  short = "Testowanie",   href = "#"),
   list(num = "V",    slug = "zalozenia",  title = "Założenia testów",            short = "Założenia",    href = "#"),
   list(num = "VI",   slug = "regresja",   title = "Regresja",                    short = "Regresja",     href = "#"),
-  list(num = "VII",  slug = "symulacje",  title = "Symulacje",                   short = "Symulacje",    href = "#"),
-  list(num = "VIII", slug = "bayes",      title = "Bayes",                       short = "Bayes",        href = "#"),
-  list(num = "IX",   slug = "dane",       title = "Dobre dane",                  short = "Dane",         href = "#"),
-  list(num = "X",    slug = "case",       title = "Case studies",                short = "Case studies", href = "#"),
-  list(num = "XI",   slug = "kierunkowe", title = "Kierunkowe",                  short = "Kierunkowe",   href = "#"),
-  list(num = "XII",  slug = "projekt",    title = "Projekt badawczy",            short = "Projekt",      href = "#"),
-  list(num = "XIII", slug = "szeregi",    title = "Szeregi czasowe",             short = "Szeregi",      href = "#")
+  list(num = "VII",   slug = "dane",       title = "Dobre dane",                  short = "Dane",         href = "#"),
+  list(num = "VIII",    slug = "case",       title = "Case studies",                short = "Case studies", href = "#"),
+  list(num = "IX",  slug = "projekt",    title = "Projekt badawczy",            short = "Projekt",      href = "#")
 )
 
 # Mapowanie lecture_id → slug modułu
@@ -45,13 +41,9 @@
   "wnioskowanie-statystyczne"   = "testowanie",
   "zalozenia-testow"            = "zalozenia",
   "regresja"                    = "regresja",
-  "symulacje-statystyczne"      = "symulacje",
-  "metody-bayesowskie"          = "bayes",
   "dobre-dane"                  = "dane",
   "case-studies"                = "case",
-  "kierunkowe"                  = "kierunkowe",
-  "projekt-badawczy"            = "projekt",
-  "szeregi-czasowe"             = "szeregi"
+  "projekt-badawczy"            = "projekt"
 )
 
 # ============================================================================
