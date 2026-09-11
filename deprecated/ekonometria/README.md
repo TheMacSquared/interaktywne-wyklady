@@ -1,6 +1,8 @@
-# Interaktywne wykłady z ekonometrii
+# Interaktywne wykłady z ekonometrii — archiwum
 
-Ten katalog zawiera równoległy zestaw aplikacji R Shiny do nauczania ekonometrii. Każdy katalog numerowany (`01-*`, `02-*`, …) jest osobnym wykładem i osobną aplikacją Shiny — żeby pojedynczy proces nie wczytywał całego kursu naraz.
+Status od 11 września 2026 r.: materiały wycofane z aktywnego zestawu wykładów i przeniesione do `deprecated/ekonometria/`. Hub nie pokazuje tego archiwum. Zachowujemy je jako materiał referencyjny; nie obejmują go kontrole aktywnych przedmiotów.
+
+Ten katalog zawiera archiwalny zestaw aplikacji R Shiny do nauczania ekonometrii. Każdy katalog numerowany (`01-*`, `02-*`, …) jest osobnym wykładem i osobną aplikacją Shiny — żeby pojedynczy proces nie wczytywał całego kursu naraz.
 
 Framework, layout i komponenty UI są skopiowane z `statystyka/R/`, z osobną konfiguracją nawigacji dla ekonometrii.
 
@@ -53,10 +55,10 @@ Szczegóły: [hub/README.md](../hub/README.md).
 Pojedynczy wykład bezpośrednio — z katalogu głównego repo:
 
 ```r
-shiny::runApp("ekonometria/01-model-ekonometryczny")
+shiny::runApp("deprecated/ekonometria/01-model-ekonometryczny")
 ```
 
-Albo z katalogu `ekonometria/`:
+Albo z katalogu `deprecated/ekonometria/`:
 
 ```r
 shiny::runApp("01-model-ekonometryczny")
