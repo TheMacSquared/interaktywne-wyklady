@@ -40,3 +40,18 @@ testthat::test_that("systemy i bramki FTA respektują logikę", {
     .99 * (1 - .08 * .05)
   )
 })
+
+testthat::test_that("hazard Weibulla istnieje po numerycznym zaniku R i ma poprawny początek", {
+  t <- seq(1, 5000, length.out = 500)
+  w <- env$risk_weibull(t, 4, 300)
+  testthat::expect_true(any(w$reliability == 0))
+  testthat::expect_true(all(is.finite(w$hazard)))
+  testthat::expect_true(all(diff(w$hazard) > 0))
+  testthat::expect_equal(tail(w$hazard, 1), 61.7283950617284)
+  testthat::expect_equal(env$risk_weibull(0, .4, 300)$hazard, Inf)
+  testthat::expect_equal(env$risk_weibull(0, 1, 300)$hazard, 1 / 300)
+  testthat::expect_equal(env$risk_weibull(0, 4, 300)$hazard, 0)
+  # Dla kształtu 1 Weibull pokrywa się z rozkładem wykładniczym.
+  testthat::expect_equal(env$risk_weibull(t, 1, 1700)$hazard,
+                         env$risk_exponential(t, 1 / 1700)$hazard)
+})

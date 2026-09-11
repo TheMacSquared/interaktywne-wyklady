@@ -226,14 +226,15 @@ zycie_server <- function(input, output, session) {
   weib_plot <- reactive({
     t <- seq(1, 5000, length.out = 500)
     w <- risk_weibull(t, input$c7_beta, input$c7_eta)
-    dat <- rbind(data.frame(t, value = w$reliability, fun = "R(t)"), data.frame(t, value = w$hazard * input$c7_eta, fun = "h(t) × η"))
+    dat <- rbind(data.frame(t, value = w$reliability, fun = "R(t)"), data.frame(t, value = w$hazard, fun = "Hazard h(t) [1/h]"))
     ggplot(dat, aes(t, value, colour = fun)) +
       geom_line(linewidth = 1.05) +
       scale_colour_manual(values = upwr_cat_n(2)) +
-      labs(title = "Niezawodność i hazard", x = "Czas (h)", y = "Wartość", colour = NULL) +
+      facet_wrap(~fun, ncol = 1, scales = "free_y") +
+      labs(title = "Niezawodność i hazard — osobne skale", x = "Czas (h)", y = NULL, colour = NULL) +
       theme_upwr()
   })
-  zoom_plot_server("c7_weibull", weib_plot, alt = "Krzywe niezawodności i hazardu Weibulla sterowane parametrami beta i eta.")
+  zoom_plot_server("c7_weibull", weib_plot, alt = "Krzywe niezawodności i hazardu Weibulla na osobnych skalach pionowych, sterowane parametrami beta i eta.")
   output$c7_weibull_stats <- renderUI(lc_stat_grid(lc_stat_box("Kierunek hazardu", if (input$c7_beta < 1) "maleje" else if (input$c7_beta > 1) "rośnie" else "stały"), lc_stat_box("R(1000 h)", risk_format_probability(risk_weibull(1000, input$c7_beta, input$c7_eta)$reliability), color = upwr_accent), columns = 1))
   same_plot <- reactive({
     t <- seq(0, 3500, length.out = 400)

@@ -167,7 +167,9 @@ risk_weibull <- function(time, shape, scale) {
   }
   reliability <- stats::pweibull(time, shape = shape, scale = scale, lower.tail = FALSE)
   density <- stats::dweibull(time, shape = shape, scale = scale)
-  hazard <- ifelse(reliability > 0, density / reliability, NA_real_)
+  # Wzór analityczny unika dzielenia 0/0 w ogonie. Dla t=0:
+  # shape<1 daje Inf, shape=1 daje 1/scale, shape>1 daje 0.
+  hazard <- (shape / scale) * (time / scale)^(shape - 1)
   list(
     density = density,
     cdf = 1 - reliability,
