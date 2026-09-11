@@ -1,24 +1,42 @@
 # Interaktywne wykłady
 
-Repozytorium na rownolegle zestawy interaktywnych wykladow R Shiny. Numerowany katalog wykladu jest osobna aplikacja/chapterem, uruchamiana lokalnie niezaleznie od pozostalych.
+Interaktywne wykłady R Shiny do nauczania przedmiotów ilościowych. Każdy numerowany katalog wykładu jest osobną aplikacją z rozdziałami, uruchamianą niezależnie od pozostałych.
 
 ## Struktura
 
 ```text
 interaktywne-wyklady/
 ├── hub/            # launcher: spis wszystkich wykładów w przeglądarce
-├── statystyka/     # istniejące wykłady ze statystyki
-├── ekonometria/    # zestaw wykładów z ekonometrii
-└── analiza-ryzyka/ # interaktywne wykłady z analizy ryzyka
+├── statystyka/     # podstawowy kurs statystyki
+├── statystyka-2/   # symulacje, Bayes, kierunkowe, szeregi czasowe
+├── analiza-ryzyka/ # interaktywne wykłady z analizy ryzyka
+├── audyty/         # ustalenia audytu i stan poprawek
+└── deprecated/     # archiwum, pomijane przez hub
+    └── ekonometria/
 ```
 
 ## Zestawy wykładów
 
 | Folder | Status | Dokumentacja |
 |--------|--------|--------------|
-| `statystyka/` | gotowy zestaw aplikacji statystycznych | [statystyka/README.md](statystyka/README.md) |
-| `ekonometria/` | startowy zestaw wykładów z ekonometrii | [ekonometria/README.md](ekonometria/README.md) |
-| `analiza-ryzyka/` | pierwszy pionowy wycinek w realizacji | [analiza-ryzyka/README.md](analiza-ryzyka/README.md) |
+| `statystyka/` | podstawy: 9 aplikacji | [statystyka/README.md](statystyka/README.md) |
+| `statystyka-2/` | rozszerzenia: 4 aplikacje | [statystyka-2/README.md](statystyka-2/README.md) |
+| `analiza-ryzyka/` | 10 aplikacji z analizy ryzyka | [analiza-ryzyka/README.md](analiza-ryzyka/README.md) |
+
+## Obecny stan — 11 września 2026
+
+Aktywne są 23 aplikacje: 9 w Statystyce, 4 w Statystyce 2 i 10 w analizie ryzyka. Podstawowy kurs statystyki kończy się projektem badawczym; symulacje, Bayes, materiały kierunkowe i szeregi czasowe tworzą oddzielny przedmiot. Siedem aplikacji ekonometrii znajduje się w [archiwum](deprecated/ekonometria/README.md).
+
+Wykonano poprawki ustaleń 1–8 [audytu](audyty/2026-09-11-statystyka-analiza-ryzyka.md): skorygowano interpretacje i obliczenia, oznaczono syntetyczne dane i poprawiono ich generator. CASchools zachowuje intuicyjną narrację dla początkujących. Hub ma powiększone czcionki.
+
+Kontrole po poprawkach: 36 sprawdzeń Statystyki, 73 Statystyki 2 i 472 analizy ryzyka — bez błędów, ostrzeżeń i pominięć. To nie jest pełny test wszystkich interakcji przeglądarkowych. Pozostałe zadania, w tym rozszerzenie pokrycia testami i pilotaż tempa zajęć, są opisane w audycie.
+
+```sh
+Rscript statystyka/scripts/run_tests.R
+Rscript statystyka-2/scripts/run_tests.R
+Rscript analiza-ryzyka/scripts/check_design_contract.R --strict
+Rscript analiza-ryzyka/tests/testthat.R
+```
 
 ## Uruchamianie
 

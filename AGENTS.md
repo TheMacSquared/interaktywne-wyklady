@@ -4,7 +4,7 @@
 
 - **Cel:** interaktywne narzędzia R Shiny do nauczania przedmiotów ilościowych.
 - **Struktura:** każdy przedmiot ma własny katalog na najwyższym poziomie repo.
-- **Obecne przedmioty:** `statystyka/` oraz startowy katalog `ekonometria/`.
+- **Obecne przedmioty:** `statystyka/`, `statystyka-2/` i `analiza-ryzyka/`.
 - **Odbiorcy:** studenci na zajęciach akademickich.
 - **Język interfejsu:** polski.
 - **Język kodu:** angielski dla nazw zmiennych i funkcji.
@@ -18,13 +18,22 @@ interaktywne-wyklady/
 │   ├── scripts/
 │   ├── README.md
 │   └── */app.R
-└── ekonometria/
-    └── README.md
+├── statystyka-2/
+│   ├── R/
+│   ├── scripts/
+│   ├── tests/
+│   └── */app.R
+├── analiza-ryzyka/
+│   └── */app.R
+└── deprecated/
+    └── ekonometria/
 ```
+
+Statystyka 2 (`statystyka-2/`) zawiera symulacje, Bayesa, materiały kierunkowe i szeregi czasowe. Ma własny snapshot `R/`, skrypty i testy. Podstawowy kurs nie wymaga zależności tej części.
 
 Materiały statystyczne są samowystarczalnym zestawem w `statystyka/`. Wspólne komponenty statystyki są w `statystyka/R/`, a narzędzia pomocnicze w `statystyka/scripts/`.
 
-Katalog `ekonometria/` jest oddzielnym projektem równoległym. Nowe aplikacje ekonometryczne powinny powstawać wewnątrz `ekonometria/`, z własnym katalogiem `R/` albo świadomie skopiowanym/adaptowanym systemem ze `statystyka/R/`.
+Ekonometria jest archiwalna i znajduje się w `deprecated/ekonometria/`. Nie należy traktować jej jako aktywnego przedmiotu ani włączać do huba lub kontroli aktywnych wykładów. Materiały pozostają dostępne jako referencja.
 
 ## Konwencje kodowania
 
