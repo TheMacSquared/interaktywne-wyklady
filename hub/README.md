@@ -61,3 +61,10 @@ hub/
 Hub jest infrastrukturą zajęciową, nie wykładem, więc świadomie nie używa
 `lecture_page()` ani `DESIGN_CONTRACT.md`. To rozwiązanie lokalne, na zajęcia —
 nie zastępuje docelowego portalu na stronie.
+
+
+## Aktualny zakres
+
+Hub pokazuje trzy aktywne przedmioty: Statystykę (9 aplikacji), Statystykę 2 (4) i analizę ryzyka (10). Wykłady w `deprecated/ekonometria/` pozostają archiwum i nie pojawiają się na liście, ponieważ skan obejmuje tylko poziom `<przedmiot>/<wykład>/app.R`.
+
+Tekst interfejsu ma bazowo 18 px, a tytuły kafelków 1,2 rem (około 22 px). Siatka dopasowuje liczbę kolumn do szerokości okna.
