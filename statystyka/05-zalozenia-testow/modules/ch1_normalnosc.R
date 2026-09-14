@@ -195,7 +195,7 @@ ch1_server <- function(input, output, session) {
              x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
         theme_upwr()
 
-      gridExtra::grid.arrange(p1, p2, ncol = 2)
+      gridExtra::arrangeGrob(p1, p2, ncol = 2)
     }
   }))
 
@@ -252,7 +252,7 @@ ch1_server <- function(input, output, session) {
              x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
         theme_upwr()
 
-      gridExtra::grid.arrange(p1, p2, ncol = 2)
+      gridExtra::arrangeGrob(p1, p2, ncol = 2)
     }
   }))
 

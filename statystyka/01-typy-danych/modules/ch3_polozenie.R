@@ -632,7 +632,7 @@ ch3_server <- function(input, output, session) {
             size = 12, face = "bold",
             color = c(upwr_accent, upwr_cat["niebo"], upwr_cat["szalwia"])[i]))
       })
-      gridExtra::grid.arrange(grobs = plots, ncol = 3)
+      gridExtra::arrangeGrob(grobs = plots, ncol = 3)
     }
   }))
 

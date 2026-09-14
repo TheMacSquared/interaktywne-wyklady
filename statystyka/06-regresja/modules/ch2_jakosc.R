@@ -492,7 +492,7 @@ ch2_server <- function(input, output, session) {
     if (requireNamespace("patchwork", quietly = TRUE)) {
       patchwork::wrap_plots(p_left, p_right, p_qq, ncol = 3)
     } else if (requireNamespace("gridExtra", quietly = TRUE)) {
-      gridExtra::grid.arrange(p_left, p_right, p_qq, ncol = 3)
+      gridExtra::arrangeGrob(p_left, p_right, p_qq, ncol = 3)
     } else {
       df_combined <- rbind(
         data.frame(panel = "Dane + linia regresji",

@@ -741,7 +741,7 @@ ch4_server <- function(input, output, session) {
         labs(x = "Wzrost (cm)", y = "Liczebność") +
         theme()
 
-      gridExtra::grid.arrange(p_box, p_hist, nrow = 2, heights = c(1, 1.2))
+      gridExtra::arrangeGrob(p_box, p_hist, nrow = 2, heights = c(1, 1.2))
       return()
     }
 

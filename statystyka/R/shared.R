@@ -181,6 +181,12 @@ local({
 # MODUŁ: zoom_plot — przycisk powiększ + showModal dla każdego wykresu
 # UI:     zoom_plot_ui("id", height = "300px")
 # Server: zoom_plot_server("id", reactive({ ggplot(...) }))
+#
+# plot_fn MUSI zwracać obiekt (ggplot, patchwork, grob/gtable), a nie rysować
+# przez efekt uboczny (np. gridExtra::grid.arrange, base plot()). Reaktywna
+# jest wywoływana przez dwa renderPlot (mały wykres + modal); drugi dostaje
+# wynik z cache, więc rysunek wykonany "przy okazji" nigdy nie trafi do modala.
+# Do składania paneli używaj patchwork lub gridExtra::arrangeGrob().
 # ============================================================================
 
 zoom_plot_ui <- function(id, height = "300px", width = "100%", ...) {
@@ -196,7 +202,18 @@ zoom_plot_ui <- function(id, height = "300px", width = "100%", ...) {
 zoom_plot_server <- function(id, plot_fn,
                              alt = "Wykres ilustrujący omawiane zagadnienie") {
   moduleServer(id, function(input, output, session) {
-    output$plot <- renderPlot(plot_fn(), alt = alt)
+    draw <- function() {
+      p <- plot_fn()
+      if (inherits(p, c("grob", "gtable"))) {
+        grid::grid.newpage()
+        grid::grid.draw(p)
+        invisible(NULL)
+      } else {
+        p
+      }
+    }
+
+    output$plot <- renderPlot(draw(), alt = alt)
 
     observeEvent(input$zoom, {
       showModal(modalDialog(
@@ -207,6 +224,6 @@ zoom_plot_server <- function(id, plot_fn,
       ))
     }, ignoreInit = TRUE)
 
-    output$plot_modal <- renderPlot(plot_fn(), alt = alt)
+    output$plot_modal <- renderPlot(draw(), alt = alt)
   })
 }

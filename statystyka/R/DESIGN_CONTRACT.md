@@ -111,6 +111,8 @@ Stosuj:
 
 Semantyczne kolory domenowe są dopuszczalne, jeśli realnie poprawiają czytelność kodu w obrębie jednego wykładu, ale ich wartości muszą pochodzić z palety UPWr.
 
+Reaktywna przekazana do `zoom_plot_server()` musi zwracać obiekt (ggplot, patchwork, grob/gtable), nigdy rysować przez efekt uboczny. Ta sama reaktywna obsługuje mały wykres i modal powiększenia, a modal dostaje wynik z cache. Do składania paneli używaj `patchwork` albo `gridExtra::arrangeGrob()`, nie `gridExtra::grid.arrange()`.
+
 ## CSS
 
 `R/shared_styles.css` jest CSS-em nowego systemu. Nie dodajemy do niego fallbacków dla starych klas.
