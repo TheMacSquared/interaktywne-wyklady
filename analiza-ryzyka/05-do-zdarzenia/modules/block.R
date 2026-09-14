@@ -89,20 +89,28 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
     takeaway = "Brak wykrycia po trzydziestu kontrolach nie dowodzi, że wad nie ma. Model geometryczny pozwala policzyć, jak prawdopodobne jest tak długie oczekiwanie przy przyjętym p; dopiero jawne kryterium decyzyjne mówi, kiedy przerwać kontrolę."
   ),
   list(
-    id = "rte", title = "Do r-tego wykrycia", lead = "Łączna liczba prób jest sumą czasów oczekiwania na kolejne wykrycia.",
+    id = "rte", title = "Do r-tego wykrycia", lead = "Łączna liczba prób jest sumą czasów oczekiwania na kolejne wykrycia, a oprogramowanie może liczyć ją na dwa sposoby.",
     intro = c(
       "Audytor potrzebuje trzech wykrytych wad, nie jednej. Oczekiwanie na trzecią wadę to trzy sklejone oczekiwania geometryczne: do pierwszej, potem do drugiej, potem do trzeciej. Suma tych trzech czasów ma rozkład ujemny dwumianowy.",
       "Współczynnik we wzorze zlicza układy: ostatnia, x-ta kontrola musi zakończyć się wykryciem, a wcześniejsze r−1 wykryć może rozmieścić się dowolnie wśród x−1 poprzednich kontroli. Porównaj kształt rozkładu z geometrycznym: im większe r, tym rozkład bardziej symetryczny i dalszy od zera."
     ),
-    formula = "P(X=x)=\\binom{x-1}{r-1}p^{r}(1-p)^{x-r},\\qquad E(X)=\\frac{r}{p}",
-    widget = risk_widget_panel("Rozkład", "Łączna liczba kontroli", tagList(sliderInput("d5_p", "p wykrycia", .01, .5, .1, .01), sliderInput("d5_r", "r", 1, 10, 3, 1)), "d5_nb", "d5_nb_stats"),
-    takeaway = "Dla r = 1 ujemny dwumianowy pokrywa się z geometrycznym — warto to sprawdzić suwakiem. Uogólnienie nie dodaje nowych założeń: nadal stałe p i niezależne próby, zmienia się tylko cel."
-  ),
-  list(
-    id = "parametryzacje", title = "Dwie parametryzacje", lead = "Oprogramowanie może zwracać niepowodzenia przed r-tym sukcesem zamiast wszystkich prób.",
-    intro = "Podręczniki i biblioteki liczą ten sam rozkład na dwa sposoby: jako łączną liczbę prób X albo jako liczbę niepowodzeń Y przed r-tym sukcesem. Funkcje R z rodziny nbinom używają drugiej konwencji — dlatego w kodzie tego kursu do wyniku dodaje się r. Obie wersje opisują tę samą serię kontroli; różnią się tylko tym, co liczą.",
-    sections = list(list(id = "os", title = "Ta sama realizacja", text = "Jeżeli znaleziono r zdarzeń po X wszystkich próbach, liczba wcześniejszych niepowodzeń wynosi X−r. Przeliczenie jest trywialne, ale tylko wtedy, gdy wiadomo, którą wielkość podaje źródło — w raporcie zawsze nazwij, co oznacza oś.")),
-    formula = "X_{wszystkie}=Y_{niepowodzenia}+r", pitfall = "Bez nazwania parametryzacji wynik może różnić się dokładnie o r."
+    sections = list(
+      list(
+        id = "rozklad", title = "Rozkład ujemny dwumianowy",
+        formula = "P(X=x)=\\binom{x-1}{r-1}p^{r}(1-p)^{x-r},\\qquad E(X)=\\frac{r}{p}",
+        widget = risk_widget_panel("Rozkład", "Łączna liczba kontroli", tagList(sliderInput("d5_p", "p wykrycia", .01, .5, .1, .01), sliderInput("d5_r", "r", 1, 10, 3, 1)), "d5_nb", "d5_nb_stats"),
+        takeaway = "Dla r = 1 ujemny dwumianowy pokrywa się z geometrycznym — warto to sprawdzić suwakiem. Uogólnienie nie dodaje nowych założeń: nadal stałe p i niezależne próby, zmienia się tylko cel."
+      ),
+      list(
+        id = "parametryzacje", title = "Dwie parametryzacje",
+        text = c(
+          "Podręczniki i biblioteki liczą ten sam rozkład na dwa sposoby: jako łączną liczbę prób X albo jako liczbę niepowodzeń Y przed r-tym sukcesem. Funkcje R z rodziny nbinom używają drugiej konwencji — dlatego w kodzie tego kursu do wyniku dodaje się r. Obie wersje opisują tę samą serię kontroli; różnią się tylko tym, co liczą.",
+          "Jeżeli znaleziono r zdarzeń po X wszystkich próbach, liczba wcześniejszych niepowodzeń wynosi X−r. Przeliczenie jest trywialne, ale tylko wtedy, gdy wiadomo, którą wielkość podaje źródło — w raporcie zawsze nazwij, co oznacza oś."
+        ),
+        formula = "X_{wszystkie}=Y_{niepowodzenia}+r",
+        pitfall = "Bez nazwania parametryzacji wynik może różnić się dokładnie o r."
+      )
+    )
   ),
   list(
     id = "zasoby", title = "Średnia kontra plan zasobów", lead = "Średnia r/p nie gwarantuje ukończenia przed limitem.",
@@ -110,9 +118,19 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
       "Przy p = 0,10 i celu r = 3 średnia liczba kontroli wynosi 30. Czy zaplanowanie dokładnie 30 kontroli wystarczy? Kalkulator poniżej pokazuje, że szansa ukończenia audytu w 30 kontrolach to tylko około połowa — rozkład jest skośny i długa seria pechowych kontroli wcale nie jest rzadka.",
       "Plan zasobów buduje się więc na kwantylu, nie na średniej: limit kontroli dobieramy tak, żeby prawdopodobieństwo ukończenia audytu przed limitem osiągnęło uzgodniony poziom, na przykład 95%. Różnica między średnią a kwantylem to właśnie zapas planistyczny."
     ),
-    formula = "E(X)=\\frac{r}{p}",
-    widget = figure_panel(label = "Kalkulator", title = "Limit liczby kontroli", sliderInput("d5_limit", "Limit", 3, 200, 40, 1), uiOutput("d5_plan"), full_width = TRUE),
-    decision = "Planuj na podstawie prawdopodobieństwa ukończenia lub kwantyla, a nie tylko średniej."
+    sections = list(
+      list(
+        id = "limit", title = "Średnia a kwantyl",
+        formula = "E(X)=\\frac{r}{p}",
+        widget = figure_panel(label = "Kalkulator", title = "Limit liczby kontroli", sliderInput("d5_limit", "Limit", 3, 200, 40, 1), uiOutput("d5_plan"), full_width = TRUE)
+      ),
+      list(
+        id = "plan", title = "Ile kontroli zaplanować?",
+        text = "Wynik tego rachunku trafia do jednego dokumentu: planu audytu. Dobry plan nie obiecuje, że audyt się uda — podaje, z jakim prawdopodobieństwem uda się w ramach przyznanych zasobów, i co się stanie, jeśli limit zostanie osiągnięty bez ukończenia celu. Ta ostatnia pozycja jest najczęściej pomijana, a to ona decyduje, czy przekroczenie limitu będzie kontrolowaną decyzją, czy improwizacją.",
+        bullets = c("cel r i definicja wykrycia", "p i jego źródło", "limit zasobów", "P(ukończenia przed limitem)", "reakcja, gdy limit zostanie przekroczony"),
+        decision = "Planuj na podstawie prawdopodobieństwa ukończenia lub kwantyla, a nie tylko średniej; oddziel oczekiwaną liczbę kontroli od bezpiecznego zapasu planistycznego."
+      )
+    )
   ),
   list(
     id = "zawodzi", title = "Kiedy model zawodzi", lead = "Stałe p i niezależność są założeniami operacyjnymi.",
@@ -128,16 +146,16 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
     pitfall = "Uczenie kontrolera, grupowanie wad i zmiana dostawy mogą zmieniać p w czasie."
   ),
   list(
-    id = "decyzja", title = "Ile kontroli zaplanować?", lead = "Plan powinien podać cel, limit i ryzyko niedokończenia.",
-    intro = "Wynik tego wykładu trafia do jednego dokumentu: planu audytu. Dobry plan nie obiecuje, że audyt się uda — podaje, z jakim prawdopodobieństwem uda się w ramach przyznanych zasobów, i co się stanie, jeśli limit zostanie osiągnięty bez ukończenia celu. Ta ostatnia pozycja jest najczęściej pomijana, a to ona decyduje, czy przekroczenie limitu będzie kontrolowaną decyzją, czy improwizacją.",
-    sections = list(list(id = "raport", title = "Minimalny raport", bullets = c("cel r i definicja wykrycia", "p i jego źródło", "limit zasobów", "P(ukończenia przed limitem)", "reakcja, gdy limit zostanie przekroczony"))),
-    decision = "Oddziel oczekiwaną liczbę kontroli od bezpiecznego zapasu planistycznego."
-  ),
-  list(
     id = "sprawdzenie", title = "Ściąga i sprawdzenie", lead = "Reguła zatrzymania → p i r → rozkład → limit → decyzja.",
     intro = "Masz teraz komplet trzech rozkładów zbudowanych na schemacie Bernoulliego. Ściąga zestawia je obok siebie — w quizie i ćwiczeniach najważniejsze będzie rozpoznanie, które pytanie prowadzi do którego rozkładu.",
-    sections = list(list(id = "sciaga", title = "Ściąga", bullets = c("Pytanie: ile prób do r-tego zdarzenia?", "Model: geometryczny dla r=1, ujemny dwumianowy dla r>1", "Założenia: stałe p i niezależność", "Wynik: rozkład liczby prób", "Interpretacja: zasoby potrzebne do osiągnięcia celu")), list(id = "most", title = "Co dalej", text = "Geometryczny i ujemny dwumianowy liczą dyskretne próby. W wykładzie o czasie życia to samo pytanie — jak długo czekamy na zdarzenie — zadamy w czasie ciągłym, a odpowiedzą rozkład wykładniczy i gamma.")),
-    widget = dozd_sciaga_widget
+    sections = list(
+      list(
+        id = "sciaga", title = "Ściąga",
+        bullets = c("Pytanie: ile prób do r-tego zdarzenia?", "Model: geometryczny dla r=1, ujemny dwumianowy dla r>1", "Założenia: stałe p i niezależność", "Wynik: rozkład liczby prób", "Interpretacja: zasoby potrzebne do osiągnięcia celu"),
+        widget = dozd_sciaga_widget
+      ),
+      list(id = "most", title = "Co dalej", text = "Geometryczny i ujemny dwumianowy liczą dyskretne próby. W wykładzie o czasie życia to samo pytanie — jak długo czekamy na zdarzenie — zadamy w czasie ciągłym, a odpowiedzą rozkład wykładniczy i gamma.")
+    )
   )
 ))
 

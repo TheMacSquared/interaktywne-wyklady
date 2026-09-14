@@ -83,45 +83,55 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     )
   ),
   list(
-    id = "wykladniczy", title = "Rozkład wykładniczy",
-    lead = "Stały hazard daje model bez pamięci — użyteczny, lecz mechanicznie wymagający.",
+    id = "wykladniczy", title = "Rozkład wykładniczy i gamma",
+    lead = "Stały hazard daje model bez pamięci; suma k takich etapów daje rozkład gamma, a dla całkowitego k — Erlanga.",
     intro = c(
       "Najprostsza hipoteza o hazardzie brzmi: jest stały. Element nie dociera się i nie zużywa — psuje się od losowych zaburzeń, które w każdej godzinie są tak samo prawdopodobne. Ta hipoteza wyznacza dokładnie jeden rozkład: wykładniczy, ciągły odpowiednik geometrycznego z wykładu piątego.",
       "Konsekwencją stałego hazardu jest brak pamięci: wentylator pracujący od 1000 godzin ma przed sobą dokładnie taki sam rozkład dalszego życia jak fabrycznie nowy. Jeśli dane pokazują, że stare egzemplarze psują się częściej niż nowe, model wykładniczy jest z góry wykluczony — żaden dobór λ tego nie naprawi."
     ),
-    formula = "R(t)=e^{-\\lambda t},\\qquad MTTF=1/\\lambda",
-    widget = risk_widget_panel("Model", "Stały hazard", sliderInput("c7_mttf", "MTTF (h)", 300, 4000, 1500, 50), "c7_exp", "c7_exp_stats"),
-    pitfall = "Brak pamięci nie pasuje do wyraźnego docierania ani zużycia."
-  ),
-  list(
-    id = "gamma", title = "Rozkład gamma i przypadek Erlanga",
-    lead = "Gamma opisuje czas oczekiwania o elastycznym kształcie; dla całkowitego k jest to czas do k-tego zdarzenia.",
-    intro = "W wykładzie piątym czekaliśmy na r-te wykrycie, licząc dyskretne próby; gamma robi to samo w czasie ciągłym. W jednorodnym procesie Poissona o intensywności λ czas do k-tego zdarzenia jest sumą k niezależnych czasów wykładniczych o tej samej intensywności — tak jak ujemny dwumianowy był sumą k oczekiwań geometrycznych. Ta paralela to nie przypadek, lecz ta sama konstrukcja w dwóch skalach czasu.",
-    sections = list(list(id = "rodzina", title = "Erlang to szczególny przypadek", text = "Erlang jest rozkładem gamma o całkowitym parametrze kształtu k: sumą k niezależnych etapów o wykładniczych czasach — na przykład czasem do k-tej awarii w jednorodnym procesie Poissona. Ogólny rozkład gamma dopuszcza dowolne k>0. Kształt niecałkowity traci interpretację etapów, ale pozwala modelować hazard rosnący (k>1) albo malejący (k<1) i dopasowywać rozkład do danych bez sztucznego zaokrąglania.")),
-    formula = "f(t)=\\frac{\\lambda^{k}t^{k-1}e^{-\\lambda t}}{\\Gamma(k)},\\qquad E(T)=k/\\lambda",
-    takeaway = "Most przez Poissona: przy stałej intensywności, niezależnych przyrostach i pojedynczych zdarzeniach liczba zdarzeń N(t) ma rozkład Poissona o średniej λt. Czas do pierwszego jest wykładniczy, do k-tego — Erlanga. Stała średnia liczba zgłoszeń nie wystarcza, jeśli zgłoszenia przychodzą grupami albo zależą od wcześniejszych. To krótki kontekst dla gamma, nie dodatkowy rozbudowany dział.",
-    widget = risk_widget_panel("Model", "Czas oczekiwania o kształcie k", sliderInput("c7_k", "Parametr kształtu k", .5, 8, 3, .5), "c7_gamma", "c7_gamma_stats", note = "Dla całkowitego k suwak pokazuje rozkłady Erlanga; wartości pośrednie należą do ogólnej rodziny gamma.")
+    sections = list(
+      list(
+        id = "staly-hazard", title = "Stały hazard",
+        formula = "R(t)=e^{-\\lambda t},\\qquad MTTF=1/\\lambda",
+        widget = risk_widget_panel("Model", "Stały hazard", sliderInput("c7_mttf", "MTTF (h)", 300, 4000, 1500, 50), "c7_exp", "c7_exp_stats"),
+        pitfall = "Brak pamięci nie pasuje do wyraźnego docierania ani zużycia."
+      ),
+      list(
+        id = "gamma", title = "Rozkład gamma i przypadek Erlanga",
+        text = c(
+          "W wykładzie piątym czekaliśmy na r-te wykrycie, licząc dyskretne próby; gamma robi to samo w czasie ciągłym. W jednorodnym procesie Poissona o intensywności λ czas do k-tego zdarzenia jest sumą k niezależnych czasów wykładniczych o tej samej intensywności — tak jak ujemny dwumianowy był sumą k oczekiwań geometrycznych. Ta paralela to nie przypadek, lecz ta sama konstrukcja w dwóch skalach czasu.",
+          "Erlang jest rozkładem gamma o całkowitym parametrze kształtu k: sumą k niezależnych etapów o wykładniczych czasach — na przykład czasem do k-tej awarii w jednorodnym procesie Poissona. Ogólny rozkład gamma dopuszcza dowolne k>0. Kształt niecałkowity traci interpretację etapów, ale pozwala modelować hazard rosnący (k>1) albo malejący (k<1) i dopasowywać rozkład do danych bez sztucznego zaokrąglania."
+        ),
+        formula = "f(t)=\\frac{\\lambda^{k}t^{k-1}e^{-\\lambda t}}{\\Gamma(k)},\\qquad E(T)=k/\\lambda",
+        widget = risk_widget_panel("Model", "Czas oczekiwania o kształcie k", sliderInput("c7_k", "Parametr kształtu k", .5, 8, 3, .5), "c7_gamma", "c7_gamma_stats", note = "Dla całkowitego k suwak pokazuje rozkłady Erlanga; wartości pośrednie należą do ogólnej rodziny gamma."),
+        takeaway = "Most przez Poissona: przy stałej intensywności, niezależnych przyrostach i pojedynczych zdarzeniach liczba zdarzeń N(t) ma rozkład Poissona o średniej λt. Czas do pierwszego jest wykładniczy, do k-tego — Erlanga. Stała średnia liczba zgłoszeń nie wystarcza, jeśli zgłoszenia przychodzą grupami albo zależą od wcześniejszych. To krótki kontekst dla gamma, nie dodatkowy rozbudowany dział."
+      )
+    )
   ),
   list(
     id = "weibull", title = "Część B — mechanizm Weibulla",
-    lead = "Parametr β opisuje kierunek zmiany hazardu, a η skalę czasu.",
+    lead = "Parametr β opisuje kierunek zmiany hazardu, η skalę czasu, a ten sam MTTF może kryć różne R(t).",
     intro = c(
       "Weibull jest domyślnym językiem inżynierii niezawodności, bo jednym parametrem odpowiada na najważniejsze pytanie diagnostyczne: co dzieje się z hazardem. β < 1 oznacza hazard malejący (wczesne defekty odsiewają się z parku), β = 1 odtwarza rozkład wykładniczy, a β > 1 — hazard rosnący, charakterystyczny dla zużycia.",
       "Drugi parametr, η, jest czystą skalą czasu: mówi, kiedy rzeczy się dzieją, a nie jak. Przy każdym β niezawodność w chwili t = η wynosi e⁻¹ ≈ 0,37 — to punkt orientacyjny, po którym łatwo czytać wykresy."
     ),
-    formula = "R(t)=\\exp[-(t/\\eta)^\\beta]",
-    widget = risk_widget_panel("Model", "R(t) i h(t) reagują razem", tagList(sliderInput("c7_beta", "β", .4, 4, 2, .1), sliderInput("c7_eta", "η (h)", 300, 4000, 1700, 50)), "c7_weibull", "c7_weibull_stats"),
-    takeaway = "Dobór β nie jest kosmetyką statystyczną, lecz hipotezą o mechanizmie awarii. Zanim dopasujesz parametry do danych, zapytaj inżyniera utrzymania: czy ten element się dociera, zużywa, czy psuje losowo?"
-  ),
-  list(
-    id = "same-mttf", title = "Ten sam MTTF, inne R(t)",
-    lead = "Kształt rozkładu wpływa na ryzyko misji, nawet gdy średnie czasy są zgodne.",
-    intro = c(
-      "Wracamy do głosowania z początku wykładu, tym razem z rachunkiem. Trzy modele Weibulla — o hazardzie malejącym, stałym i rosnącym — skalibrowano tak, żeby wszystkie miały MTTF równy dokładnie 1500 godzin. Karta katalogowa nie odróżni ich od siebie.",
-      "Przesuń czas misji i odczytaj trzy wartości R(t) na pionowej linii. Dla krótkich misji najlepszy jest model zużyciowy (β > 1): awarie przychodzą późno, ale zbiorowo. Dla długich misji przewaga się odwraca. Wniosek praktyczny: porównywanie urządzeń po MTTF bez czasu misji jest porównywaniem nieporównywalnego."
-    ),
-    widget = risk_widget_panel("Porównanie", "Modele skalibrowane do MTTF=1500 h", sliderInput("c7_mission", "Czas misji (h)", 100, 3000, 1000, 50), "c7_same_mean", "c7_same_mean_stats"),
-    decision = "Wybieraj urządzenie pod konkretny czas misji: porównuj R(t) w horyzoncie eksploatacji, nie sam MTTF z katalogu."
+    sections = list(
+      list(
+        id = "parametry", title = "β i η",
+        formula = "R(t)=\\exp[-(t/\\eta)^\\beta]",
+        widget = risk_widget_panel("Model", "R(t) i h(t) reagują razem", tagList(sliderInput("c7_beta", "β", .4, 4, 2, .1), sliderInput("c7_eta", "η (h)", 300, 4000, 1700, 50)), "c7_weibull", "c7_weibull_stats"),
+        takeaway = "Dobór β nie jest kosmetyką statystyczną, lecz hipotezą o mechanizmie awarii. Zanim dopasujesz parametry do danych, zapytaj inżyniera utrzymania: czy ten element się dociera, zużywa, czy psuje losowo?"
+      ),
+      list(
+        id = "same-mttf", title = "Ten sam MTTF, inne R(t)",
+        text = c(
+          "Wracamy do głosowania z początku wykładu, tym razem z rachunkiem. Trzy modele Weibulla — o hazardzie malejącym, stałym i rosnącym — skalibrowano tak, żeby wszystkie miały MTTF równy dokładnie 1500 godzin. Karta katalogowa nie odróżni ich od siebie.",
+          "Przesuń czas misji i odczytaj trzy wartości R(t) na pionowej linii. Dla krótkich misji najlepszy jest model zużyciowy (β > 1): awarie przychodzą późno, ale zbiorowo. Dla długich misji przewaga się odwraca. Wniosek praktyczny: porównywanie urządzeń po MTTF bez czasu misji jest porównywaniem nieporównywalnego."
+        ),
+        widget = risk_widget_panel("Porównanie", "Modele skalibrowane do MTTF=1500 h", sliderInput("c7_mission", "Czas misji (h)", 100, 3000, 1000, 50), "c7_same_mean", "c7_same_mean_stats"),
+        decision = "Wybieraj urządzenie pod konkretny czas misji: porównuj R(t) w horyzoncie eksploatacji, nie sam MTTF z katalogu."
+      )
+    )
   ),
   list(
     id = "wanna", title = "Krzywa wannowa to złożenie mechanizmów",
@@ -150,16 +160,16 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     decision = "Podaj model, czas misji i prawdopodobieństwo dotrwania. Przegląd sam nie odnawia elementu: trzeba określić, co wykrywa i czy prowadzi do wymiany lub naprawy. MTTF samo nie wyznacza harmonogramu."
   ),
   list(
-    id = "sciaga", title = "Ściąga",
-    lead = "Czas → cenzorowanie → R(t) i h(t) → mechanizm → plan.",
-    intro = "Zanim przejdziesz do quizu, sprawdź, czy umiesz odpowiedzieć na pięć pytań poniżej dla dowolnego elementu ze swojego otoczenia — od baterii w laptopie po pasek rozrządu. To one, a nie wzory, są szkieletem analizy czasu życia.",
-    sections = list(list(id = "lista", title = "Pięć pytań", bullets = c("Co rozpoczyna i kończy czas życia?", "Jaki jest wspólny czas misji?", "Czy obserwacje działające są cenzorowane?", "Czy hazard jest stały, rośnie czy maleje?", "Jak wynik zmienia decyzję utrzymaniową?")), list(id = "most", title = "Co dalej", text = "Dotąd badaliśmy pojedynczy element. W następnym wykładzie połączymy funkcje niezawodności R_i(t) kilku elementów w niezawodność całego systemu — i okaże się, że wynik zależy nie tylko od elementów, ale i od architektury."))
-  ),
-  list(
-    id = "sprawdzenie", title = "Quiz i ćwiczenia",
-    lead = "Interpretuj funkcje czasu życia bez estymacji parametrów.",
-    intro = "Quiz pyta o interpretacje — zwłaszcza o to, co naprawdę znaczy stały hazard — a ćwiczenia prowadzą od rachunku R(t) przez diagnozę cenzorowania po dobór kształtu Weibulla do mechanizmu.",
-    widget = risk_assessment_ui("c7", zycie_quiz, zycie_exercises)
+    id = "sciaga", title = "Ściąga i sprawdzenie",
+    lead = "Czas → cenzorowanie → R(t) i h(t) → mechanizm → plan; interpretuj funkcje czasu życia bez estymacji parametrów.",
+    intro = c(
+      "Zanim przejdziesz do quizu, sprawdź, czy umiesz odpowiedzieć na pięć pytań poniżej dla dowolnego elementu ze swojego otoczenia — od baterii w laptopie po pasek rozrządu. To one, a nie wzory, są szkieletem analizy czasu życia.",
+      "Quiz pyta o interpretacje — zwłaszcza o to, co naprawdę znaczy stały hazard — a ćwiczenia prowadzą od rachunku R(t) przez diagnozę cenzorowania po dobór kształtu Weibulla do mechanizmu."
+    ),
+    sections = list(
+      list(id = "lista", title = "Pięć pytań", bullets = c("Co rozpoczyna i kończy czas życia?", "Jaki jest wspólny czas misji?", "Czy obserwacje działające są cenzorowane?", "Czy hazard jest stały, rośnie czy maleje?", "Jak wynik zmienia decyzję utrzymaniową?"), widget = risk_assessment_ui("c7", zycie_quiz, zycie_exercises)),
+      list(id = "most", title = "Co dalej", text = "Dotąd badaliśmy pojedynczy element. W następnym wykładzie połączymy funkcje niezawodności R_i(t) kilku elementów w niezawodność całego systemu — i okaże się, że wynik zależy nie tylko od elementów, ale i od architektury.")
+    )
   )
 ))
 zycie_chapters <- risk_block_chapters(zycie_block)

@@ -13,7 +13,10 @@ języka zdarzeń i podstaw prawdopodobieństwa.
 - wykład 01: pełna, rozbudowana wersja z ośmioma rozdziałami;
 - wykłady 02–10: pełne bloki z lokalnymi modułami, narracją, głosowaniem,
   interakcjami, decyzją, pułapką, ściągą, pięciopytaniowym quizem i ćwiczeniami;
-- bloki 06–10 mają naturalny podział na dwa spotkania po 90 minut;
+- rozdziały są jednostkami skryptu: dawne mini-rozdziały weszły jako sekcje
+  (`sections` z własnym wzorem, widgetem i pułapką w `R/risk_block.R`);
+- plan semestru to 12 tygodni: każdy blok zajmuje jedno spotkanie, tylko 07
+  („Część B” od rozdziału Weibulla) rozkłada się na dwa;
 - kolejny etap: manualna próba tempa zajęć i korekta obciążenia treścią.
 
 ## Wymagania

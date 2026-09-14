@@ -7,15 +7,15 @@ są fikcyjne; limity i koszty służą ćwiczeniom, nie są normami ani cenami.
 
 Sylabus obejmuje probabilistyczne podstawy ryzyka i niezawodności. Kurs dodaje
 krótki kontekst identyfikacji scenariuszy, niepewności danych i decyzji.
-Wymiar planowany to 15 spotkań po 90 minut: bloki 01–05 po jednym, 06–10 po
-dwa. To 30 godzin dydaktycznych po 45 minut; należy porównać z pełną kartą
-przedmiotu. Efekty formalne i zasady zaliczenia nie są zawarte w lokalnym
+Semestr ma 12 tygodni po 2 godziny wykładu i 2 godziny ćwiczeń: bloki 01–06
+i 08–10 po jednym spotkaniu, blok 07 na dwa (Część B zaczyna się od rozdziału
+Weibulla), tydzień 12 na podsumowanie. Efekty formalne i zasady zaliczenia nie są zawarte w lokalnym
 wyciągu sylabusa.
 
 Propozycja pojedynczego spotkania: 10 minut na problem i głosowanie, 20 na
 intuicję i eksperyment, 25 na model i rachunek, 20 na zadanie w parach,
-10 na omówienie błędów, 5 na podsumowanie. W dłuższych blokach rozdziały
-„Część B” wyznaczają drugi etap. Rozbudowany Monty Hall w 02 jest dygresją do
+10 na omówienie błędów, 5 na podsumowanie. Rozdziały są dłuższe i dzielą się na
+sekcje widoczne w spisie treści; w 07 rozdział „Część B” wyznacza drugie spotkanie. Rozbudowany Monty Hall w 02 jest dygresją do
 skrócenia, gdy brakuje czasu na warunkowe i całkowite. Q–Q w 06 można skrócić;
 nie pomijać definicji misji, wspólnej przyczyny ani oceny niepewności w finale.
 

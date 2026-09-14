@@ -147,77 +147,78 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
     pitfall = "Duża partia nie naprawia złej definicji próby ani zmiennego p."
   ),
   list(
-    id = "zmienna", title = "Zmienna losowa: od zdarzeń do liczb",
-    lead = "Funkcja przypisująca wynikom liczby jest pomostem między „co może się zdarzyć” a „ile tego będzie”.",
+    id = "zmienna", title = "Zmienna losowa i rozkład liczby awarii",
+    lead = "Funkcja przypisująca wynikom liczby jest pomostem między „co może się zdarzyć” a „ile tego będzie”; suma takich zer i jedynek ma rozkład dwumianowy.",
     intro = c(
       "W pierwszym wykładzie zdarzenia były zbiorami: podzbiorami przestrzeni wyników. Zbiorów nie da się jednak dodawać ani uśredniać, a inspektor chce właśnie tego — policzyć niesprawne zawory w partii i porównać partie między sobą. Potrzebny jest pomost od zdarzeń do arytmetyki.",
       "Tym pomostem jest zmienna losowa: funkcja, która każdemu wynikowi doświadczenia przypisuje liczbę. Dla jednej kontroli zaworu przypisujemy 1, gdy zawór jest niesprawny, i 0, gdy sprawny. Rozkład zmiennej losowej mówi, które wartości i z jakim prawdopodobieństwem może ona przyjąć — dla pojedynczej próby to najprostszy rozkład tego kursu, rozkład Bernoulliego."
     ),
-    sections = list(list(
-      id = "suma", title = "Licznik jest sumą zer i jedynek",
-      text = "Zapis 0/1 wygląda niepozornie, ale robi całą robotę: liczba niesprawnych zaworów w partii to po prostu suma X = X₁ + … + X₁₀₀. Pytanie „ile zdarzeń w n próbach?” stało się pytaniem o rozkład sumy zmiennych losowych — i na to pytanie odpowie następny rozdział."
-    )),
-    formula = "P(X_i=1)=p,\\qquad P(X_i=0)=1-p,\\qquad E(X_i)=p",
-    widget = proby_variable_widget,
-    takeaway = "Zmienna losowa nie jest ani zmienną z algebry, ani niewiadomą — jest funkcją na przestrzeni wyników. Jej wartość poznajemy dopiero po doświadczeniu, ale jej rozkład znamy przed nim."
-  ),
-  list(
-    id = "rozklad", title = "Rozkład liczby awarii",
-    lead = "Rozkład odpowiada na pytania dokładnie, co najmniej i najwyżej.",
-    intro = c(
-      "Suma stu prób Bernoulliego o stałym p i wzajemnej niezależności ma rozkład dwumianowy. Współczynnik dwumianowy zlicza, na ile sposobów k niesprawnych zaworów może rozmieścić się wśród n kontroli — a reszta wzoru to znany z wykładu o warunkach iloczyn wzdłuż drogi.",
-      "W praktyce inspektora rzadko potrzebne jest „dokładnie k”. Pytania decyzyjne mają formę ogonową: co najmniej jedna wada (czy partia jest podejrzana?), co najwyżej dwie (czy mieścimy się w limicie akceptacji?). Przełącznik pytania w widgecie zmienia zaznaczony obszar rozkładu — obserwuj, jak zmienia się wynik."
-    ),
-    sections = list(list(
-      id = "most", title = "Od jednej próby do licznika",
-      text = "Poprzedni rozdział zbudował pomost: wynik każdej kontroli to zmienna Xᵢ o wartościach 0/1, a licznik niesprawnych w partii to suma X = X₁ + … + Xₙ. Właśnie ta suma — licznik zdarzeń w n niezależnych próbach o stałym p — ma rozkład dwumianowy."
-    )),
-    formula = "X\\sim Bin(n,p),\\quad P(X=k)={n\\choose k}p^k(1-p)^{n-k}",
-    widget = risk_widget_panel(
-      "Rozkład", "Liczba niesprawnych zaworów",
-      tagList(
-        sliderInput("p4_n", "n", 10, 300, 100, 10), sliderInput("p4_p", "p", .001, .10, .02, .001),
-        sliderInput("p4_k", "k", 0, 20, 2, 1),
-        selectInput("p4_query", "Pytanie", c("Dokładnie k" = "exactly", "Co najmniej k" = "at_least", "Najwyżej k" = "at_most"))
+    sections = list(
+      list(
+        id = "suma", title = "Licznik jest sumą zer i jedynek",
+        text = "Zapis 0/1 wygląda niepozornie, ale robi całą robotę: liczba niesprawnych zaworów w partii to po prostu suma X = X₁ + … + X₁₀₀. Pytanie „ile zdarzeń w n próbach?” stało się pytaniem o rozkład sumy zmiennych losowych — i na to pytanie odpowie dalsza część rozdziału.",
+        formula = "P(X_i=1)=p,\\qquad P(X_i=0)=1-p,\\qquad E(X_i)=p",
+        widget = proby_variable_widget,
+        takeaway = "Zmienna losowa nie jest ani zmienną z algebry, ani niewiadomą — jest funkcją na przestrzeni wyników. Jej wartość poznajemy dopiero po doświadczeniu, ale jej rozkład znamy przed nim."
       ),
-      "p4_binom", "p4_binom_stats"
+      list(
+        id = "rozklad", title = "Rozkład liczby awarii",
+        text = c(
+          "Suma stu prób Bernoulliego o stałym p i wzajemnej niezależności ma rozkład dwumianowy. Współczynnik dwumianowy zlicza, na ile sposobów k niesprawnych zaworów może rozmieścić się wśród n kontroli — a reszta wzoru to znany z wykładu o warunkach iloczyn wzdłuż drogi.",
+          "W praktyce inspektora rzadko potrzebne jest „dokładnie k”. Pytania decyzyjne mają formę ogonową: co najmniej jedna wada (czy partia jest podejrzana?), co najwyżej dwie (czy mieścimy się w limicie akceptacji?). Przełącznik pytania w widgecie zmienia zaznaczony obszar rozkładu — obserwuj, jak zmienia się wynik."
+        ),
+        formula = "X\\sim Bin(n,p),\\quad P(X=k)={n\\choose k}p^k(1-p)^{n-k}",
+        widget = risk_widget_panel(
+          "Rozkład", "Liczba niesprawnych zaworów",
+          tagList(
+            sliderInput("p4_n", "n", 10, 300, 100, 10), sliderInput("p4_p", "p", .001, .10, .02, .001),
+            sliderInput("p4_k", "k", 0, 20, 2, 1),
+            selectInput("p4_query", "Pytanie", c("Dokładnie k" = "exactly", "Co najmniej k" = "at_least", "Najwyżej k" = "at_most"))
+          ),
+          "p4_binom", "p4_binom_stats"
+        )
+      )
     )
   ),
   list(
-    id = "srednia", title = "Średnia nie jest prognozą",
-    lead = "np opisuje środek wielu partii, nie wynik jednej konkretnej partii.",
+    id = "srednia", title = "Średnia i ogon rozkładu",
+    lead = "np opisuje środek wielu partii, nie wynik jednej konkretnej partii; pytanie o co najmniej jedną wadę liczy się przez zdarzenie przeciwne.",
     intro = c(
       "Ile wad będzie w najbliższej partii stu zaworów przy p = 0,02? Kusząca odpowiedź — „dwie, przecież 100 razy 0,02 to 2” — jest błędna w sposób, który najlepiej zobaczyć na własne oczy: pojedyncza partia równie dobrze może mieć zero wad, co pięć.",
       "Symulacja poniżej losuje setki partii przy tych samych parametrach. Zanim spojrzysz na jakikolwiek wzór, obejrzyj histogram: gdzie leży jego środek, jak szeroko rozrzucają się wyniki i jak często zdarza się dokładnie ta „oczekiwana” liczba wad."
     ),
-    widget = tagList(
-      risk_widget_panel(
-        "Powtórzenia", "Wiele partii przy tych samych parametrach",
-        sliderInput("p4_batches", "Liczba partii", 50, 2000, 500, 50), "p4_batches_plot", "p4_batches_stats"
+    sections = list(
+      list(
+        id = "powtorzenia", title = "Średnia nie jest prognozą",
+        widget = tagList(
+          risk_widget_panel(
+            "Powtórzenia", "Wiele partii przy tych samych parametrach",
+            sliderInput("p4_batches", "Liczba partii", 50, 2000, 500, 50), "p4_batches_plot", "p4_batches_stats"
+          ),
+          lc_p("Środek tego histogramu i jego szerokość mają zwięzły zapis:"),
+          lc_formula_box(
+            withMathJax("$$E(X)=np,\\qquad Var(X)=np(1-p)$$"),
+            tags$p("Wartość oczekiwana opisuje środek ciężkości wielu porównywalnych partii; wariancja — rozrzut wyników wokół tego środka.")
+          )
+        ),
+        takeaway = "Wynik jednej partii może wyraźnie różnić się od wartości oczekiwanej: przy stałym p raz zobaczysz zero niesprawnych, innym razem kilka. E(X)=np opisuje środek tego histogramu, nie obietnicę dla konkretnej partii. Dopiero rozkład wyników wielu porównywalnych partii pokazuje, które liczebności są typowe, a które powinny skłonić do sprawdzenia modelu."
       ),
-      lc_p("Środek tego histogramu i jego szerokość mają zwięzły zapis:"),
-      lc_formula_box(
-        withMathJax("$$E(X)=np,\\qquad Var(X)=np(1-p)$$"),
-        tags$p("Wartość oczekiwana opisuje środek ciężkości wielu porównywalnych partii; wariancja — rozrzut wyników wokół tego środka.")
+      list(
+        id = "co-najmniej-jedna", title = "Co najmniej jedna",
+        text = c(
+          "Pytanie „czy w partii jest co najmniej jedna wada?” obejmuje mnóstwo scenariuszy: jedna wada, dwie, trzy… aż po sto. Zamiast sumować je wszystkie, liczymy jedno zdarzenie przeciwne — ani jednej wady — i odejmujemy od jedności. To najczęstszy trik rachunkowy analizy ryzyka.",
+          "Krzywa poniżej pokazuje konsekwencję, którą łatwo przeoczyć: nawet bardzo małe p przy dużej liczbie prób daje niemal pewne zdarzenie. Rzadkość pojedynczej próby nie chroni długiej serii."
+        ),
+        formula = "P(X\\ge 1)=1-P(X=0)=1-(1-p)^n",
+        widget = risk_widget_panel(
+          "Krzywa", "Ryzyko wraz z liczbą prób",
+          sliderInput("p4_curve_p", "p niesprawności", .001, .10, .02, .001), "p4_one", "p4_one_stats"
+        )
+      ),
+      list(
+        id = "transfer", title = "Przykład transferowy: ekspozycja skumulowana",
+        text = "Ta sama krzywa opisuje każdą powtarzaną ekspozycję. Codzienny przejazd o ryzyku kolizji 0,0001 na przejazd daje po dziesięciu latach pracy (około 2500 przejazdów) ponad 20% szans co najmniej jednej kolizji. Wniosek dla profilaktyki: komunikaty „to zdarza się rzadko” trzeba zawsze uzupełniać horyzontem — rzadko na próbę nie znaczy rzadko w karierze."
       )
-    ),
-    takeaway = "Wynik jednej partii może wyraźnie różnić się od wartości oczekiwanej: przy stałym p raz zobaczysz zero niesprawnych, innym razem kilka. E(X)=np opisuje środek tego histogramu, nie obietnicę dla konkretnej partii. Dopiero rozkład wyników wielu porównywalnych partii pokazuje, które liczebności są typowe, a które powinny skłonić do sprawdzenia modelu."
-  ),
-  list(
-    id = "co-najmniej-jedna", title = "Co najmniej jedna",
-    lead = "Łatwiej policzyć zdarzenie przeciwne: ani jednej niesprawności.",
-    intro = c(
-      "Pytanie „czy w partii jest co najmniej jedna wada?” obejmuje mnóstwo scenariuszy: jedna wada, dwie, trzy… aż po sto. Zamiast sumować je wszystkie, liczymy jedno zdarzenie przeciwne — ani jednej wady — i odejmujemy od jedności. To najczęstszy trik rachunkowy analizy ryzyka.",
-      "Krzywa poniżej pokazuje konsekwencję, którą łatwo przeoczyć: nawet bardzo małe p przy dużej liczbie prób daje niemal pewne zdarzenie. Rzadkość pojedynczej próby nie chroni długiej serii."
-    ),
-    sections = list(list(
-      id = "transfer", title = "Przykład transferowy: ekspozycja skumulowana",
-      text = "Ta sama krzywa opisuje każdą powtarzaną ekspozycję. Codzienny przejazd o ryzyku kolizji 0,0001 na przejazd daje po dziesięciu latach pracy (około 2500 przejazdów) ponad 20% szans co najmniej jednej kolizji. Wniosek dla profilaktyki: komunikaty „to zdarza się rzadko” trzeba zawsze uzupełniać horyzontem — rzadko na próbę nie znaczy rzadko w karierze."
-    )),
-    formula = "P(X\\ge 1)=1-P(X=0)=1-(1-p)^n",
-    widget = risk_widget_panel(
-      "Krzywa", "Ryzyko wraz z liczbą prób",
-      sliderInput("p4_curve_p", "p niesprawności", .001, .10, .02, .001), "p4_one", "p4_one_stats"
     )
   ),
   list(
@@ -241,11 +242,10 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
     id = "sprawdzenie", title = "Ściąga i sprawdzenie",
     lead = "Jednostka → założenia → Bin(n,p) → pytanie ogonowe → decyzja.",
     intro = "Model dwumianowy jest pierwszym „gotowym” rozkładem w kursie i łatwo go nadużyć: wystarczy przeoczyć zmienne p albo zależność prób. Ściąga zbiera pytania i zapisy; quiz oraz ćwiczenia sprawdzają, czy potrafisz zarówno policzyć wynik, jak i zauważyć, kiedy liczyć nie wolno.",
-    sections = list(list(id = "sciaga", title = "Ściąga", bullets = c("Pytanie: ile zdarzeń w n próbach?", "Model: dwumianowy", "Założenia: stałe n i p, dwa wyniki, niezależność", "Wynik: prawdopodobieństwo liczby zdarzeń", "Interpretacja: dotyczy powtarzalnych partii")), list(
+    sections = list(list(id = "sciaga", title = "Ściąga", bullets = c("Pytanie: ile zdarzeń w n próbach?", "Model: dwumianowy", "Założenia: stałe n i p, dwa wyniki, niezależność", "Wynik: prawdopodobieństwo liczby zdarzeń", "Interpretacja: dotyczy powtarzalnych partii"), widget = proby_sciaga_widget), list(
       id = "most", title = "Co dalej",
       text = "Dwumianowy zatrzymuje się po ustalonej liczbie prób i pyta o liczbę zdarzeń. W następnym wykładzie odwrócimy regułę zatrzymania: ustalimy liczbę zdarzeń, a losowa stanie się liczba prób potrzebnych, żeby je zaobserwować."
-    )),
-    widget = proby_sciaga_widget
+    ))
   )
 ))
 
