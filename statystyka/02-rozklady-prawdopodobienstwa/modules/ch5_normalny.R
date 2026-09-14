@@ -376,7 +376,7 @@ ch5_server <- function(input, output, session) {
            x = "z", y = "f(z)") +
       theme_upwr(base_size = 12)
 
-    gridExtra::grid.arrange(p1, p2, ncol = 1)
+    gridExtra::arrangeGrob(p1, p2, ncol = 1)
   }))
 
   # --- Widget 4: Kalkulator prawdopodobienstw ---

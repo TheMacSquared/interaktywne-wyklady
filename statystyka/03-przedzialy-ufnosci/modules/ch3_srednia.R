@@ -1998,7 +1998,7 @@ ch3_server <- function(input, output, session) {
       theme(plot.title = element_text(size = 13, face = "bold"))
 
     # Uklad jeden pod drugim
-    gridExtra::grid.arrange(p_groups, p_diff, ncol = 1, heights = c(1, 1))
+    gridExtra::arrangeGrob(p_groups, p_diff, ncol = 1, heights = c(1, 1))
   }
 
   # Helper: werdykt tekstowy

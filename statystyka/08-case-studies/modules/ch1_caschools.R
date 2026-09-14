@@ -386,7 +386,7 @@ ch1_server <- function(input, output, session) {
       labs(y = var_label) +
       theme_upwr()
 
-    gridExtra::grid.arrange(p1, p2, ncol = 2, widths = c(2, 1))
+    gridExtra::arrangeGrob(p1, p2, ncol = 2, widths = c(2, 1))
   }))
 
   output$ch1_eda_stats <- renderUI({
