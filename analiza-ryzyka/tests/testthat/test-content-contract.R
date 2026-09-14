@@ -6,8 +6,11 @@ testthat::test_that("bloki 02–10 realizują stały rytm dydaktyczny", {
     ), collapse = "\n")
   }, character(1))
 
-  for (text in module_text) {
-    testthat::expect_true(grepl("risk_vote_panel", text, fixed = TRUE))
+  # 02-warunki celowo nie ma panelu głosowania: rozdział 1 prowadzi do pytań prozą.
+  no_vote <- c("02-warunki")
+  for (app in apps) {
+    text <- module_text[[app]]
+    if (!app %in% no_vote) testthat::expect_true(grepl("risk_vote_panel", text, fixed = TRUE))
     testthat::expect_gte(lengths(regmatches(text, gregexpr("sliderInput|selectInput|checkboxGroupInput|actionButton", text, perl = TRUE))), 2)
     testthat::expect_true(grepl("decision", text, fixed = TRUE))
     testthat::expect_true(grepl("pitfall", text, fixed = TRUE))

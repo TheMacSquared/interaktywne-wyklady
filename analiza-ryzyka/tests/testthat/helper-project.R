@@ -9,7 +9,7 @@ app_dir <- file.path(risk_root, "01-jezyk-ryzyka")
 
 expected_apps <- c(
   "01-jezyk-ryzyka" = 8L,
-  "02-warunki" = 8L,
+  "02-warunki" = 7L,
   "03-alarm-i-prawda" = 8L,
   "04-wiele-prob" = 8L,
   "05-do-zdarzenia" = 8L,
