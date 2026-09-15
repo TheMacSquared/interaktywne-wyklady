@@ -92,22 +92,32 @@ warunki_monty_widget <- figure_panel(
   )
 }
 
-.monty_svg_goat <- function() {
-  goat_col <- upwr_reference
+.monty_svg_cat <- function() {
+  cat_col <- upwr_reference
   line_col <- upwr_secondary
   paste0(
-    '<ellipse cx="54" cy="93" rx="24" ry="15" fill="', goat_col, '"/>',
-    '<rect x="38" y="103" width="5" height="21" rx="2" fill="', goat_col, '"/>',
-    '<rect x="48" y="105" width="5" height="19" rx="2" fill="', goat_col, '"/>',
-    '<rect x="60" y="105" width="5" height="19" rx="2" fill="', goat_col, '"/>',
-    '<rect x="70" y="103" width="5" height="21" rx="2" fill="', goat_col, '"/>',
-    '<path d="M32 88 Q25 84 28 76" stroke="', goat_col, '" stroke-width="5" fill="none" stroke-linecap="round"/>',
-    '<circle cx="84" cy="74" r="10" fill="', goat_col, '"/>',
-    '<ellipse cx="75" cy="69" rx="5" ry="3" fill="', goat_col, '" transform="rotate(-35 75 69)"/>',
-    '<path d="M88 66 Q92 57 99 55" stroke="', line_col, '" stroke-width="3" fill="none" stroke-linecap="round"/>',
-    '<path d="M83 64 Q84 55 90 51" stroke="', line_col, '" stroke-width="3" fill="none" stroke-linecap="round"/>',
-    '<path d="M85 84 L83 93 L90 85 Z" fill="', line_col, '"/>',
-    '<circle cx="87" cy="72" r="1.8" fill="', line_col, '"/>'
+    # ogon
+    '<path d="M78 112 Q98 110 96 90 Q95 80 88 84" stroke="', cat_col, '" stroke-width="6" fill="none" stroke-linecap="round"/>',
+    # siedzący tułów
+    '<ellipse cx="60" cy="104" rx="22" ry="20" fill="', cat_col, '"/>',
+    # przednie łapy
+    '<rect x="46" y="110" width="9" height="16" rx="4" fill="', cat_col, '"/>',
+    '<rect x="63" y="110" width="9" height="16" rx="4" fill="', cat_col, '"/>',
+    # uszy
+    '<path d="M42 66 L46 46 L58 60 Z" fill="', cat_col, '"/>',
+    '<path d="M78 66 L74 46 L62 60 Z" fill="', cat_col, '"/>',
+    # głowa
+    '<circle cx="60" cy="72" r="18" fill="', cat_col, '"/>',
+    # oczy
+    '<ellipse cx="53" cy="69" rx="2.4" ry="3.4" fill="', line_col, '"/>',
+    '<ellipse cx="67" cy="69" rx="2.4" ry="3.4" fill="', line_col, '"/>',
+    # nos
+    '<path d="M57.5 76 L62.5 76 L60 79 Z" fill="', line_col, '"/>',
+    # wąsy
+    '<path d="M50 77 L34 74" stroke="', line_col, '" stroke-width="1.6" stroke-linecap="round"/>',
+    '<path d="M50 80 L35 83" stroke="', line_col, '" stroke-width="1.6" stroke-linecap="round"/>',
+    '<path d="M70 77 L86 74" stroke="', line_col, '" stroke-width="1.6" stroke-linecap="round"/>',
+    '<path d="M70 80 L85 83" stroke="', line_col, '" stroke-width="1.6" stroke-linecap="round"/>'
   )
 }
 
@@ -116,7 +126,7 @@ warunki_monty_widget <- figure_panel(
     closed = .monty_svg_door_closed(door, highlight = FALSE),
     chosen = .monty_svg_door_closed(door, highlight = TRUE),
     zonk = .monty_svg_doorway(
-      .monty_svg_goat(), sprintf("Bramka %d: Zonk", door)
+      .monty_svg_cat(), sprintf("Bramka %d: Zonk", door)
     ),
     car = .monty_svg_doorway(
       .monty_svg_car(), sprintf("Bramka %d: nagroda", door)
@@ -586,7 +596,9 @@ warunki_server <- function(input, output, session) {
     monty$opened <- NULL
     monty$final <- NULL
     monty$strategy <- NULL
-    monty_simulation(NULL)
+    monty_sim$n <- 0L
+    monty_sim$wins_stay <- 0L
+    monty_sim$wins_switch <- 0L
   })
 
   output$w2_monty_controls <- renderUI({
@@ -677,7 +689,7 @@ warunki_server <- function(input, output, session) {
     )
   })
 
-  monty_simulation <- reactiveVal(NULL)
+  monty_sim <- reactiveValues(n = 0L, wins_stay = 0L, wins_switch = 0L)
 
   output$w2_monty_simulation_panel <- renderUI({
     if (is.null(monty$final)) {
@@ -686,46 +698,65 @@ warunki_server <- function(input, output, session) {
     tagList(
       tags$div(class = "lc-eyebrow", "Eksperyment wielokrotny"),
       tags$h4("Czy wynik jednej gry był przypadkiem?"),
-      actionButton(
-        "w2_monty_simulate", "Porównaj strategie w 1000 gier",
-        class = "lc-btn-primary", width = "100%"
+      tags$p("Dograj kolejne partie obiema strategiami naraz. Wyniki się sumują, więc zobacz, jak odsetek wygranych stabilizuje się wraz z liczbą gier."),
+      fluidRow(
+        column(3, actionButton("w2_monty_sim_1", "+1 gra", class = "lc-btn-primary", width = "100%")),
+        column(3, actionButton("w2_monty_sim_10", "+10 gier", class = "lc-btn-primary", width = "100%")),
+        column(3, actionButton("w2_monty_sim_100", "+100 gier", class = "lc-btn-primary", width = "100%")),
+        column(3, actionButton("w2_monty_sim_1000", "+1000 gier", class = "lc-btn-primary", width = "100%"))
       ),
       zoom_plot_ui("w2_monty_plot", height = "390px")
     )
   })
 
-  observeEvent(input$w2_monty_simulate, {
+  add_monty_games <- function(n) {
     req(monty$final)
-    n <- 1000L
     prizes <- sample.int(3L, n, replace = TRUE)
     choices <- sample.int(3L, n, replace = TRUE)
-    monty_simulation(data.frame(
-      strategy = c("Zostaję", "Zmieniam"),
-      win_rate = c(mean(prizes == choices), mean(prizes != choices))
-    ))
-  })
+    monty_sim$n <- monty_sim$n + n
+    monty_sim$wins_stay <- monty_sim$wins_stay + sum(prizes == choices)
+    monty_sim$wins_switch <- monty_sim$wins_switch + sum(prizes != choices)
+  }
+
+  observeEvent(input$w2_monty_sim_1, add_monty_games(1L))
+  observeEvent(input$w2_monty_sim_10, add_monty_games(10L))
+  observeEvent(input$w2_monty_sim_100, add_monty_games(100L))
+  observeEvent(input$w2_monty_sim_1000, add_monty_games(1000L))
 
   monty_plot <- reactive({
-    results <- monty_simulation()
-    if (is.null(results)) {
+    n <- monty_sim$n
+    if (n == 0L) {
       return(
         ggplot() +
-          annotate("text", x = 1, y = 0.55, label = "Uruchom 1000 gier", colour = upwr_secondary, size = 5) +
+          annotate("text", x = 1, y = 0.55, label = "Dograj partie przyciskami powyżej", colour = upwr_secondary, size = 5) +
           coord_cartesian(xlim = c(0, 2), ylim = c(0, 1)) +
           labs(title = "Która strategia wygrywa częściej?", x = NULL, y = "Odsetek wygranych") +
           theme_upwr() +
           theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
       )
     }
+    results <- data.frame(
+      strategy = c("Zostaję", "Zmieniam"),
+      wins = c(monty_sim$wins_stay, monty_sim$wins_switch)
+    )
+    results$win_rate <- results$wins / n
+    results$label <- sprintf(
+      "%s\n(%d z %d)", scales::percent(results$win_rate, accuracy = 0.1), results$wins, n
+    )
+    subtitle <- if (n < 30L) {
+      "Przy kilku grach przypadek jeszcze rządzi — dograj więcej"
+    } else {
+      "Linie kropkowane: teoretyczne 1/3 i 2/3"
+    }
     ggplot(results, aes(strategy, win_rate, fill = strategy)) +
       geom_col(width = 0.62) +
-      geom_text(aes(label = scales::percent(win_rate, accuracy = 0.1)), vjust = -0.5, fontface = "bold") +
+      geom_text(aes(label = label), vjust = -0.35, fontface = "bold", lineheight = 0.9) +
       geom_hline(yintercept = c(1 / 3, 2 / 3), colour = upwr_reference, linetype = "dotted", linewidth = 0.6) +
       scale_fill_manual(values = c("Zostaję" = upwr_reference, "Zmieniam" = upwr_accent), guide = "none") +
-      scale_y_continuous(labels = scales::percent, limits = c(0, 0.78)) +
+      scale_y_continuous(labels = scales::percent, limits = c(0, 1.18), breaks = seq(0, 1, 0.25)) +
       labs(
-        title = "Wyniki 1000 gier",
-        subtitle = "Zmiana wygrywa około dwa razy częściej",
+        title = sprintf("Wyniki po %d %s", n, if (n == 1L) "grze" else "grach"),
+        subtitle = subtitle,
         x = NULL,
         y = "Odsetek wygranych"
       ) +
