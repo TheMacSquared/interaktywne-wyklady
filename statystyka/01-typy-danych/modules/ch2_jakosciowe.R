@@ -210,7 +210,7 @@ ch2_ui <- list(
         ),
         column(4,
           radioButtons("ch2_cross_type", "Pokaz:",
-            choices = c("Liczebnośći" = "counts",
+            choices = c("Liczebności" = "counts",
                         "% wierszowe" = "row_pct",
                         "% kolumnowe" = "col_pct"),
             selected = "counts", inline = TRUE

@@ -1042,7 +1042,7 @@ ch3_server <- function(input, output, session) {
     lc_feedback(type = "info",
       tags$strong("Dlaczego wykres słupkowy jest lepszy? "),
       "Zmienna dyskretna przyjmuje skończenie wiele wartości calkowitych.
-       Wykres słupkowy pokazuje każdą wartość osobno i poprawnie oddaje liczebnośći.
+       Wykres słupkowy pokazuje każdą wartość osobno i poprawnie oddaje liczebności.
        Histogram natomiast grupuje dane w 'kubly' (bins), co moze niepoprawnie
        rozbic lub polaczyc wartości całkowite. ",
       tags$em("Statystyki (średnia, mediana, SD) liczymy tak samo jak dla zmiennych ciągłych.")
