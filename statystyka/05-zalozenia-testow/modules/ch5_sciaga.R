@@ -18,7 +18,7 @@ ch5_ui <- lecture_chapter(
     lc_h2("ch5-schemat", "Schemat postępowania"),
 
     lc_feedback(type = "info",
-      tags$strong("Krok 1:"), " Wybierz metodę na podstawie typu zmiennych i pytania badawczego.",
+      tags$strong("Krok 1:"), " Wybierz metodę na podstawie typu zmiennych i ", gloss("pytanie badawcze", "pytania badawczego"), ".",
       br(), br(),
       tags$strong("Krok 2:"), " Sprawdź założenia wizualnie (wykresy) i formalnie (testy).",
       br(), br(),
@@ -26,7 +26,7 @@ ch5_ui <- lecture_chapter(
       br(),
       tags$strong("Krok 3b:"), " Założenia naruszone → użyj alternatywy.",
       br(), br(),
-      tags$strong("Krok 4:"), " Raportuj wyniki z wielkością efektu i p-wartością."
+      tags$strong("Krok 4:"), " Raportuj wyniki z ", gloss("wielkość efektu", "wielkością efektu"), " i ", gloss("p-wartość", "p-wartością"), "."
     ),
 
     # ========================================================================
@@ -104,12 +104,12 @@ ch5_ui <- lecture_chapter(
       tags$ul(
         tags$li(tags$b("Wizualizacja > testy formalne."),
                 " Wykresy dają intuicję, testy dają liczbę. Używaj obu."),
-        tags$li(tags$b("Testy Welcha są domyślne w R."),
+        tags$li(tags$b(gloss("test t Welcha", "Testy Welcha"), " są domyślne w R."),
                 " Nie musisz sprawdzać równości wariancji przed testem t."),
         tags$li(tags$b("Duże n łagodzi naruszenia."),
-                " Łagodna skośność zwykle jest mniej groźna w większych próbach,
+                " Łagodna ", gloss("skośność"), " zwykle jest mniej groźna w większych próbach,
                   ale silne outliery i bardzo ciężkie ogony nadal wymagają uwagi."),
-        tags$li(tags$b("Testy nieparametryczne nie są \"gorsze\"."),
+        tags$li(tags$b(gloss("test nieparametryczny", "Testy nieparametryczne"), " nie są \"gorsze\"."),
                 " Są praktyczną alternatywą przy silnych naruszeniach lub danych quasi-ilościowych,
                   choć nie zawsze odpowiadają dokładnie na pytanie o średnią."),
         tags$li(tags$b("Raportuj zawsze wielkość efektu"),

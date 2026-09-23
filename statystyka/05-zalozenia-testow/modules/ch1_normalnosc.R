@@ -21,9 +21,9 @@ ch1_ui <- lecture_chapter(
       tags$ul(
         tags$li(tags$b(gloss("test t", "Test t"), " jednej próby"), " — rozkład badanej zmiennej wokół średniej"),
         tags$li(tags$b("Test t dla grup"), " — rozkład wyników (", gloss("reszta", "reszt"), ") w porównywanych grupach"),
-        tags$li(tags$b("Test t sparowany"), " — rozkład różnic między pomiarami, nie obu pomiarów osobno"),
+        tags$li(tags$b(gloss("test t dla prób zależnych", "Test t sparowany")), " — rozkład różnic między pomiarami, nie obu pomiarów osobno"),
         tags$li(tags$b(gloss("ANOVA")), " — normalność reszt w każdej grupie"),
-        tags$li(tags$b("Korelacja Pearsona"), " — rozkład dwuwymiarowy normalny"),
+        tags$li(tags$b(gloss("korelacja Pearsona", "Korelacja Pearsona")), " — rozkład dwuwymiarowy normalny"),
         tags$li(tags$b("Regresja liniowa"), " — normalność reszt (nie danych!)")
       ),
       p(tags$b("Ważne:"), " Testy t i ANOVA zwykle tolerują łagodne odchylenia,
@@ -64,7 +64,7 @@ ch1_ui <- lecture_chapter(
     ),
 
     lc_feedback(type = "info",
-      tags$strong("Jak czytać Q-Q plot:"),
+      tags$strong("Jak czytać ", gloss("wykres kwantyl-kwantyl", "Q-Q plot"), ":"),
       " Punkty blisko linii oznaczają, że rozkład jest wystarczająco podobny do normalnego.
         Systematyczne odchylenia na końcach wskazują ciężkie lub lekkie ogony,
         wygięcie — skośność, a pojedyncze dalekie punkty — możliwe obserwacje odstające."

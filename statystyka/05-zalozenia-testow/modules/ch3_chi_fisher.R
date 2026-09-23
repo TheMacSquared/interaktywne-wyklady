@@ -52,7 +52,8 @@ ch3_ui <- lecture_chapter(
     lc_feedback(type = "danger",
       tags$strong("Problem:"),
       " Przy małych n, test χ² może dawać za dużo lub za mało fałszywych alarmów
-        (niekontrolowany błąd I rodzaju). Test Fishera zachowuje się poprawnie."
+        (niekontrolowany ", gloss("błąd pierwszego rodzaju", "błąd I rodzaju"), "). ",
+      gloss("test dokładny Fishera", "Test Fishera"), " zachowuje się poprawnie."
     ),
 
     # ========================================================================
