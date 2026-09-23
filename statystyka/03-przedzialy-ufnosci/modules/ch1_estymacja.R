@@ -20,10 +20,11 @@ ch1_ui <- list(
 
     tagList(
       p("W statystyce rzadko znamy ", gloss("parametr"), " całej ",
-        gloss("populacja"), ". Zamiast tego pobieramy ", gloss("próba"),
+        gloss("populacja", "populacji"), ". Zamiast tego pobieramy ",
+        gloss("próba", "próbę"),
         " i na jej podstawie szacujemy (estymujemy) nieznany parametr."),
       p("Na przykład: nie znamy średniego wzrostu wszystkich studentów
-        w Polsce, ale możemy zmierzyć 100 osób i obliczyć ", gloss("średnia"),
+        w Polsce, ale możemy zmierzyć 100 osób i obliczyć ", gloss("średnia", "średnią"),
         " z próby ", withMathJax("\\(\\bar{x}\\)"), " jako ",
         gloss("estymator"), " średniej populacyjnej ",
         withMathJax("\\(\\mu\\)"), ".")

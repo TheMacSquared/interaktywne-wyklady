@@ -469,7 +469,8 @@
 
   function showGloss(span) {
     var p = ensurePopup();
-    p.querySelector(".lc-gloss-term").textContent = span.textContent;
+    p.querySelector(".lc-gloss-term").textContent =
+      span.dataset.term || span.textContent;
     p.querySelector(".lc-gloss-def").textContent = span.dataset.def || "";
     activeSpan = span;
 

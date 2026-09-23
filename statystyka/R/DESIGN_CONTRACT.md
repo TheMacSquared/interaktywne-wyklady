@@ -58,8 +58,11 @@ Kanoniczne komponenty:
 | Notka marginalna | `margin_callout()` albo `margin_note()` |
 | Notka z kodem | `margin_code_note()` |
 | Przejście do następnego rozdziału | `lc_chapter_next()` |
+| Termin słownikowy z definicją | `gloss()` |
 
 TOC wykrywa tylko sekcje tworzone przez `lc_h2()` albo zgodne z atrybutem `data-lc-section`.
+
+`gloss("hasło", "forma w tekście")` owija pierwsze wprowadzenie kluczowego terminu w każdym rozdziale, nie każde wystąpienie. Hasło musi istnieć w `.GLOSSARY` (`R/glossary.R`), drugi argument to forma odmieniona. Nie owijaj terminów w nagłówkach, przyciskach, quizach, etykietach wykresów ani w odpowiedziach dynamicznego feedbacku.
 
 ## Zakazane Wzorce
 
