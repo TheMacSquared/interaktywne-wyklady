@@ -37,13 +37,13 @@ ch2h_ui <- list(
                 wartość mniejszą, czy zgodność z wartością odniesienia?")
       ),
       p("W zapisie formalnym pierwsza decyzja mówi nam, jaki ",
-        "parametr",
+        gloss("parametr"),
         " pojawi się we wzorze, a druga — jaki ",
         "znak",
         " połączy go z wartością odniesienia albo z drugim parametrem."),
-      p("H₀ (hipoteza zerowa) zawsze zawiera znak równości",
+      p("H₀ (", gloss("hipoteza zerowa"), ") zawsze zawiera znak równości",
         " (=, ≤, ≥) — reprezentuje „stan domyślny”, brak efektu.
-        Hₐ (hipoteza alternatywna) to dopełnienie",
+        Hₐ (", gloss("hipoteza alternatywna"), ") to dopełnienie",
         " — to, co chcemy wykazać (≠, >, <).")
     ),
 
@@ -77,7 +77,7 @@ ch2h_ui <- list(
         " — razem wyczerpują wszystkie możliwości („są równe” albo „różnią się”).
         To kluczowa zasada przy formułowaniu hipotez: jedna jest dokładnym
         zaprzeczeniem drugiej."),
-      p("To jest test dwustronny",
+      p("To jest ", gloss("test dwustronny"),
         " — Hₐ pyta tylko, czy jest jakaś różnica, bez zakładania kierunku.
         O tym, kiedy warto użyć wariantu jednostronnego (Hₐ wskazującej
         konkretny kierunek), powiemy w sekcji „Test jednostronny a dwustronny”
@@ -116,7 +116,7 @@ ch2h_ui <- list(
         withMathJax("\\(\\mu_1 < \\mu_2\\)"),
         " nic nie mówi, jeśli nie wiemy, czym są grupa 1 i grupa 2."),
       p("W praktyce warto iść zawsze tą samą ścieżką: ",
-        tags$em("pytanie badawcze → hipotezy słowne → definicja parametrów → zapis formalny"),
+        tags$em(gloss("pytanie badawcze"), " → hipotezy słowne → definicja parametrów → zapis formalny"),
         ". To chroni przed najczęstszym błędem: mechanicznym wpisaniem znaków
         matematycznych bez zrozumienia, co dokładnie porównujemy.")
     ),
@@ -208,7 +208,7 @@ ch2h_ui <- list(
 
     inline_callout(
       label = "W wątpliwości",
-      "Używaj testu dwustronnego. Test jednostronny jest mocniejszy
+      "Używaj testu dwustronnego. ", gloss("test jednostronny", "Test jednostronny"), " jest mocniejszy
        (większa moc), ale ryzykowny: jeśli efekt jest w przeciwnym kierunku,
        nie możesz go wykryć. Test jednostronny powinien być zaplanowany
        przed zbieraniem danych.",
@@ -216,10 +216,10 @@ ch2h_ui <- list(
     ),
 
     tagList(
-      p("W teście dwustronnym poziom istotności dzielimy na dwa ogony rozkładu —
+      p("W teście dwustronnym ", gloss("poziom istotności"), " dzielimy na dwa ogony rozkładu —
          po α/2 na każdym. W teście jednostronnym całe α leży po jednej stronie.
          Suwakiem niżej możesz zmienić α i przekonać się, jak rośnie albo maleje
-         obszar odrzucenia.")
+         ", gloss("obszar odrzucenia"), ".")
     ),
 
     figure_panel(

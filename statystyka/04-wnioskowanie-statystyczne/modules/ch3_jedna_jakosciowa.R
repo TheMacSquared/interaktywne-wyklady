@@ -23,7 +23,7 @@ ch3_ui <- list(
     tagList(
       p("Gdy zmienna ma dwie kategorie (sukces/porażka, tak/nie, spełnia/nie spełnia),
         pytamy o proporcję w populacji."),
-      p("Narzędzie: test dwumianowy",
+      p("Narzędzie: ", gloss("test dwumianowy"),
         " — porównuje obserwowany odsetek z wartością referencyjną p₀."),
       p("Test dwumianowy jest dokładny — nie opiera się na przybliżeniu normalnym,
         działa nawet przy małych próbach."),
@@ -46,11 +46,11 @@ ch3_ui <- list(
         p(withMathJax("\\(H_0: p \\geq p_0 \\quad\\)"),
           withMathJax("\\(H_a: p < p_0\\)"))
       ),
-      p("W teście dwumianowym statystyką testową jest sama liczba sukcesów ",
+      p("W teście dwumianowym ", gloss("statystyka testowa", "statystyką testową"), " jest sama liczba sukcesów ",
         withMathJax("\\(k\\)"),
         " — nie trzeba jej standaryzować, bo pod H₀ zna jej rozkład dokładnie
-        (to rozkład dwumianowy ", withMathJax("\\(B(n, p_0)\\)"),
-        "). p-wartość liczymy bezpośrednio jako prawdopodobieństwo wyniku co najmniej
+        (to ", gloss("rozkład dwumianowy"), " ", withMathJax("\\(B(n, p_0)\\)"),
+        "). ", gloss("p-wartość"), " liczymy bezpośrednio jako prawdopodobieństwo wyniku co najmniej
         tak skrajnego jak obserwowany:"),
       lc_formula_box(
         p("Statystyka: ", withMathJax("\\(k\\)"),
@@ -144,7 +144,7 @@ ch3_ui <- list(
       label = "Co zrobiliśmy?",
       tagList(
         tags$ol(
-          tags$li("Zebraliśmy dane i obliczyliśmy proporcję z próby: ",
+          tags$li("Zebraliśmy dane i obliczyliśmy ", gloss("proporcja z próby", "proporcję z próby"), ": ",
                   withMathJax("\\(\\hat{p} = k/n\\)")),
           tags$li("Sprawdziliśmy jak wygląda rozkład dwumianowy pod H₀"),
           tags$li("Policzyliśmy p-wartość — jak prawdopodobny jest nasz wynik jeśli H₀ prawdziwa")

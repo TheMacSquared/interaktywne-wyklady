@@ -22,7 +22,7 @@ ch4_ui <- list(
     lc_h2("ch4-pearson", "Współczynnik korelacji Pearsona"),
 
     tagList(
-      p("Współczynnik korelacji Pearsona ", withMathJax("\\(r\\)"),
+      p("Współczynnik ", gloss("korelacja", "korelacji"), " Pearsona ", withMathJax("\\(r\\)"),
         " mierzy siłę i kierunek liniowego związku między dwiema zmiennymi ilościowymi."),
       p("Przyjmuje wartości od −1 do +1:"),
       tags$ul(
@@ -110,10 +110,10 @@ ch4_ui <- list(
         p(withMathJax("\\(H_0: \\rho \\geq 0 \\quad\\)"),
           withMathJax("\\(H_a: \\rho < 0\\)"))
       ),
-      p("Dla wszystkich trzech wariantów używamy tej samej statystyki testowej —
+      p("Dla wszystkich trzech wariantów używamy tej samej ", gloss("statystyka testowa", "statystyki testowej"), " —
         transformacja ", withMathJax("\\(r\\)"),
         " na skalę rozkładu t o ", withMathJax("\\(n-2\\)"),
-        " stopniach swobody. Im dalej od zera, tym bardziej nieprawdopodobny jest
+        " ", gloss("stopnie swobody", "stopniach swobody"), ". Im dalej od zera, tym bardziej nieprawdopodobny jest
         taki wynik gdy w populacji korelacji nie ma."),
       lc_formula_box(
         p("Statystyka testowa: ",
@@ -260,12 +260,12 @@ ch4_ui <- list(
 
     # --- 2. Korelacja pozorna (spurious) ---
     tagList(
-      p("2. Korelacja pozorna (spurious correlation)."),
+      p("2. ", gloss("korelacja pozorna", "Korelacja pozorna"), " (spurious correlation)."),
       p("Spożycie lodów i liczba utonięć korelują dodatnio. Czy lody zabijają?
         Oczywiście nie — obie zmienne zależą od temperatury (zmienna ukryta /
         konfounder). Korelacja między X i Y może wynikać z tego, że obie
-        zależą od Z. Bez kontroli zmiennych zakłócających nie można wnioskować
-        o przyczynowości."),
+        zależą od Z. Bez kontroli ", gloss("zmienna zakłócająca", "zmiennych zakłócających"), " nie można wnioskować
+        o ", gloss("przyczynowość", "przyczynowości"), "."),
       p("Więcej absurdalnych przykładów: ",
         tags$a(href = "https://www.tylervigen.com/spurious-correlations",
                target = "_blank",
@@ -274,7 +274,7 @@ ch4_ui <- list(
 
     # --- 3. Paradoks Simpsona ---
     tagList(
-      p("3. Paradoks Simpsona."),
+      p("3. ", gloss("paradoks Simpsona", "Paradoks Simpsona"), "."),
       p("Globalnie: więcej nauki wydaje się obniżać wyniki (r ujemne, czarna
         linia). Ale w każdej szkole z osobna więcej nauki daje ",
         "wyższy", " wynik (r dodatnie, kolorowe linie). Jak to
@@ -282,7 +282,7 @@ ch4_ui <- list(
         trudniejszy), ale mimo to mają niskie wyniki. Uczniowie silnej szkoły
         uczą się mniej (materiał przychodzi łatwiej) i mają wysokie wyniki.
         Po połączeniu danych „wychodzi”, że nauka obniża wyniki."),
-      p(tags$em("Zmienna ukryta:"), " poziom szkoły (konfounder). Agregacja
+      p(tags$em("Zmienna ukryta:"), " poziom szkoły (konfounder). ", gloss("agregacja", "Agregacja"), "
         danych bez uwzględnienia grup może odwrócić",
         " rzeczywisty kierunek zależności."),
       p("Więcej: ",
@@ -322,7 +322,7 @@ ch4_ui <- list(
 
     # --- 5. Outlier (widget interaktywny) ---
     tagList(
-      p("5. Wpływ outliera na r."),
+      p("5. Wpływ ", gloss("wartość odstająca", "outliera"), " na r."),
       p("Jeden punkt odległy od reszty może sztucznie wytworzyć korelację tam,
         gdzie jej nie ma — albo drastycznie ją zmienić. Pobaw się poniższym
         widgetem: wygeneruj dane bez korelacji, potem dodaj outliera i zobacz,

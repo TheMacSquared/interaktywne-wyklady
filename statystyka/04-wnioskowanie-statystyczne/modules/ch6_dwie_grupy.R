@@ -39,8 +39,8 @@ ch6_ui <- list(
         p(withMathJax("\\(H_0: \\mu_1 \\geq \\mu_2 \\quad\\)"),
           withMathJax("\\(H_a: \\mu_1 < \\mu_2\\)"))
       ),
-      p("Statystyka testowa mierzy różnicę średnich wyrażoną w jednostkach błędu
-        standardowego. Im większa wartość bezwzględna ", withMathJax("\\(|t|\\)"),
+      p(gloss("statystyka testowa", "Statystyka testowa"), " mierzy różnicę średnich wyrażoną w jednostkach ",
+        gloss("błąd standardowy", "błędu standardowego"), ". Im większa wartość bezwzględna ", withMathJax("\\(|t|\\)"),
         ", tym bardziej nieprawdopodobne jest zobaczenie takiej różnicy gdy
         H₀ jest prawdziwa."),
       lc_formula_box(
@@ -132,7 +132,8 @@ ch6_ui <- list(
 
     tagList(
       p("Gdy mierzymy tych samych osobników dwa razy
-        (przed i po interwencji), używamy testu t dla danych sparowanych."),
+        (przed i po interwencji), używamy ", gloss("test t", "testu t"), " dla ",
+        gloss("próby zależne", "danych sparowanych"), "."),
       p("Przykład: wyniki studentów przed i po korepetycjach."),
       p("Testujemy różnice: ", withMathJax("\\(d_i = x_{\\text{po},i} - x_{\\text{przed},i}\\)"),
         ". Pytamy, czy średnia różnic ≠ 0.")
@@ -204,7 +205,7 @@ ch6_ui <- list(
     inline_callout(
       label = "Uwaga",
       "gdy założenia testu t nie są spełnione (skrajne odstające, mocno skośny
-       rozkład, małe n), stosuje się testy nieparametryczne — omówimy je w osobnym
+       rozkład, małe n), stosuje się ", gloss("test nieparametryczny", "testy nieparametryczne"), " — omówimy je w osobnym
        wykładzie.",
       color = "uwaga"
     ),

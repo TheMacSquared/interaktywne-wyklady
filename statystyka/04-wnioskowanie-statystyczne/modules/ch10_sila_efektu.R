@@ -67,7 +67,8 @@ ch10_ui <- list(
     lc_h2("ch10-cohens-d", "Cohen's d — testy t"),
 
     tagList(
-      p("Cohen's d wyraża różnicę średnich w jednostkach odchylenia standardowego.
+      p(gloss("d Cohena", "Cohen's d"), " wyraża różnicę średnich w jednostkach ",
+        gloss("odchylenie standardowe", "odchylenia standardowego"), ".
         Używamy go dla wszystkich wariantów testu t:
         jednej próby, dwóch prób niezależnych i próby sparowanej."),
       lc_formula_box(
@@ -138,12 +139,12 @@ ch10_ui <- list(
 
     tagList(
       p("Współczynnik korelacji Pearsona ", withMathJax("\\(r\\)"),
-        " jest jednocześnie statystyką testową i miarą siły efektu.
+        " jest jednocześnie statystyką testową i miarą ", gloss("wielkość efektu", "siły efektu"), ".
         Przyjmuje wartości od −1 do +1, więc od razu widać skalę zależności."),
       lc_formula_box(
         p(withMathJax("\\(r = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum(x_i-\\bar{x})^2 \\cdot \\sum(y_i-\\bar{y})^2}}\\)"))
       ),
-      p("Wygodniejsze do interpretacji jest często r²",
+      p("Wygodniejsze do interpretacji jest często ", gloss("współczynnik determinacji", "r²"),
         " — mówi, ", tags$em("ile procent zmienności y wyjaśnia x"),
         ". Przy r = 0,5 mamy r² = 0,25, czyli 25% zmienności wyjaśnione, a 75%
         zostaje na inne czynniki. Ważne: r mierzy tylko zależność liniową",
@@ -201,7 +202,7 @@ ch10_ui <- list(
     tagList(
       p("Dla zmiennych jakościowych χ² mówi, czy są powiązane,
         ale jego wartość bezwzględna rośnie wraz z n i rozmiarem tabeli — sam χ²
-        nie jest porównywalny między badaniami. Cramér's V normalizuje χ² do
+        nie jest porównywalny między badaniami. ", gloss("V Cramera", "Cramér's V"), " normalizuje χ² do
         przedziału [0, 1] i nie zależy od n."),
       lc_formula_box(
         p(withMathJax("\\(V = \\sqrt{\\frac{\\chi^2}{n \\cdot (\\min(r,c)-1)}}\\)")),
@@ -262,7 +263,7 @@ ch10_ui <- list(
 
     tagList(
       p(withMathJax("\\(\\eta^2\\)"),
-        " (eta kwadrat) to udział wariancji całkowitej wyjaśniany przez przynależność do grupy.
+        " (", gloss("eta kwadrat"), ") to udział wariancji całkowitej wyjaśniany przez przynależność do grupy.
         Można je rozumieć jako 'procent zmienności wyników tłumaczony przez badany czynnik'."),
       lc_formula_box(
         p(withMathJax("\\(\\eta^2 = \\frac{SS_{\\text{między}}}{SS_{\\text{całkowite}}}\\)"))

@@ -29,7 +29,7 @@ ch2_ui <- list(
       ),
       p("Zadanie statystyka: przełożyć to na formalną hipotezę i dodać kontekst —
         typowy to ile? Mamy wartość referencyjną
-        z pilotażu: średni wynik testu koncentracji w populacji = 70 pkt."),
+        z ", gloss("pilotaż", "pilotażu"), ": średni wynik testu koncentracji w populacji = 70 pkt."),
       p("Pytanie potoczne zamienia się w jedną z trzech par hipotez
         — zależnie od tego, w którą stronę pytamy:"),
       lc_formula_box(
@@ -49,14 +49,15 @@ ch2_ui <- list(
         p(withMathJax("\\(H_0: \\mu \\geq 70 \\quad\\)"),
           withMathJax("\\(H_a: \\mu < 70\\)"))
       ),
-      p("Wybór wariantu wynika z brzmienia pytania badawczego i musi być
+      p("Wybór wariantu wynika z brzmienia ", gloss("pytanie badawcze", "pytania badawczego"), " i musi być
         zdecydowany przed zbieraniem danych."),
       p("Niezależnie od wybranego wariantu, liczymy tę samą ",
-        "statystykę testową", " — mierzy ona, ile błędów standardowych
+        gloss("statystyka testowa", "statystykę testową"), " — mierzy ona, ile ",
+        gloss("błąd standardowy", "błędów standardowych"), "
         dzieli średnią z próby od wartości referencyjnej ",
         withMathJax("\\(\\mu_0\\)"),
-        ". Różni się tylko sposób liczenia p-wartości (po jednej albo po obu stronach rozkładu)."),
-      p("Wzór na test t jednej próby:"),
+        ". Różni się tylko sposób liczenia ", gloss("p-wartość", "p-wartości"), " (po jednej albo po obu stronach rozkładu)."),
+      p("Wzór na ", gloss("test t"), " jednej próby:"),
       lc_formula_box(
         p(withMathJax("\\(t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}}, \\quad df = n - 1\\)"))
       )

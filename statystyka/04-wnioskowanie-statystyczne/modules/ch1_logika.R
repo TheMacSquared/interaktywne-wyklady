@@ -98,7 +98,7 @@ ch1_ui <- list(
         " i ",
         "co byłoby sygnałem efektu",
         ". W następnym rozdziale zapiszemy to jako parę H₀/Hₐ. Dopiero potem
-        wrócimy do błędów, p-wartości i formalnej decyzji.")
+        wrócimy do błędów, ", gloss("p-wartość", "p-wartości"), " i formalnej decyzji.")
     ),
 
     lc_chapter_next(
@@ -175,18 +175,18 @@ ch1d_ui <- list(
           )
         )
       ),
-      p(tags$b("Błąd I rodzaju (α):"),
+      p(tags$b(gloss("błąd pierwszego rodzaju", "Błąd I rodzaju"), " (α):"),
         " odrzucamy H₀, choć jest prawdziwa — fałszywy alarm.
         W analogii sądowej: skazujemy niewinnego. W nauce: publikujemy odkrycie,
         którego ", tags$em("nie"), " ma. Ryzyko tego błędu kontrolujemy sami,
-        ustalając poziom istotności ", withMathJax("\\(\\alpha\\)"),
+        ustalając ", gloss("poziom istotności"), " ", withMathJax("\\(\\alpha\\)"),
         " — zwykle 0,05 (5%)."),
-      p(tags$b("Błąd II rodzaju (β):"),
+      p(tags$b(gloss("błąd drugiego rodzaju", "Błąd II rodzaju"), " (β):"),
         " nie odrzucamy H₀, choć jest fałszywa — przegapiony efekt.
         W analogii sądowej: uniewinniamy winnego. W nauce: nie wykrywamy
         realnej zależności. Ryzyko tego błędu (", withMathJax("\\(\\beta\\)"),
         ") zależy od wielkości efektu, rozrzutu danych i wielkości próby."),
-      p(tags$b("Moc testu "), withMathJax("\\(1 - \\beta\\)"),
+      p(tags$b(gloss("moc testu", "Moc testu"), " "), withMathJax("\\(1 - \\beta\\)"),
         ": prawdopodobieństwo wykrycia efektu, gdy ten ", tags$em("naprawdę"),
         " istnieje. Moc rośnie z: (1) większą próbą n, (2) większym efektem
         (różnicą rzeczywistą między grupami), (3) mniejszym rozrzutem w grupach."),
@@ -236,7 +236,7 @@ ch1d_ui <- list(
       p("Punkty krytyczne (czarne przerywane pionowe linie) to wartości
         na osi średnich, poza którymi odrzucamy H₀ — wynikają one bezpośrednio z ",
         withMathJax("\\(\\alpha\\)"),
-        ": przy teście dwustronnym dzielimy 5% na dwa ogony po 2,5%."),
+        ": przy ", gloss("test dwustronny", "teście dwustronnym"), " dzielimy 5% na dwa ogony po 2,5%."),
       p("Cztery obszary na wykresie:"),
       tags$ul(
         tags$li(tags$b("α (szary w niebieskim, oba ogony):"),
@@ -247,7 +247,7 @@ ch1d_ui <- list(
         tags$li(tags$b("β (burgundowy, między punktami krytycznymi):"),
                 " pole pod burgundowym rozkładem po złej stronie — przegapione efekty."),
         tags$li(tags$b("Moc (zielony obszar, poza punktami krytycznymi):"),
-                " pole pod burgundowym rozkładem w obszarze odrzucenia H₀
+                " pole pod burgundowym rozkładem w ", gloss("obszar odrzucenia", "obszarze odrzucenia"), " H₀
                 — trafne wykrycia efektu.")
       ),
       p("Przesuwając suwaki zauważysz kilka mechanik:"),
@@ -257,7 +257,7 @@ ch1d_ui <- list(
                 ale ", tags$em("więcej"), " przegapionych efektów (β rośnie, moc spada)."),
         tags$li("Większa różnica średnich oddala od siebie oba rozkłady → moc rośnie,
                 β maleje."),
-        tags$li("Większa próba n zwęża oba rozkłady (błąd standardowy ∝ 1/√n) →
+        tags$li("Większa próba n zwęża oba rozkłady (", gloss("błąd standardowy"), " ∝ 1/√n) →
                 znów rośnie moc.")
       )
     ),
@@ -301,7 +301,7 @@ ch1d_ui <- list(
       p("Wiemy już, że ryzyko błędu I rodzaju ", withMathJax("\\(\\alpha\\)"),
         " ustalamy sami — zwykle na 5%. Ale jak z danego eksperymentu wyciągnąć ",
         tags$em("decyzję"), ": odrzucić H₀ czy nie? Służy do tego ",
-        "p-wartość", "."),
+        gloss("p-wartość"), "."),
       p("Eksperyment z telefonem dał pewną różnicę średnich między grupami.
         Czy to dowód, że telefon wpływa na koncentrację? A może gdybyśmy powtórzyli
         badanie z innymi studentami, różnica wyszłaby mniejsza, większa albo w drugą stronę?
@@ -325,7 +325,7 @@ ch1d_ui <- list(
         kierunek różnicy) pojawi się w następnym rozdziale, kiedy przyjrzymy się
         formułowaniu hipotez."),
       p("Jak to obliczyć?",
-        " W praktyce używamy statystyki testowej (np. t, χ², F) i znanych rozkładów
+        " W praktyce używamy ", gloss("statystyka testowa", "statystyki testowej"), " (np. t, χ², F) i znanych rozkładów
         pod H₀ — ale dla intuicji najlepiej wyobrazić sobie, że ",
         tags$em("wielokrotnie powtarzamy eksperyment"),
         " w świecie, gdzie H₀ jest prawdziwa. Każdy powtórzony eksperyment da inną

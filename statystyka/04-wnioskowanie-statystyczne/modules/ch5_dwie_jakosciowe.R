@@ -23,7 +23,8 @@ ch5_ui <- list(
 
     tagList(
       p("Gdy mamy dwie zmienne jakościowe, pytamy: czy są ze sobą powiązane?",
-        " Narzędzie: tabela kontyngencji (krzyżowa) + test χ² niezależności."),
+        " Narzędzie: ", gloss("tabela kontyngencji"), " (krzyżowa) + ",
+        gloss("test chi-kwadrat", "test χ²"), " niezależności."),
       p("Idea: porównujemy to, co zaobserwowaliśmy",
         " z tym, czego oczekiwalibyśmy, gdyby zmienne były niezależne."),
       lc_formula_box(
@@ -157,8 +158,8 @@ ch5_ui <- list(
 
     tagList(
       p("Test χ² opiera się na przybliżeniu. Gdy próba jest mała,
-        niektóre oczekiwane liczności mogą być < 5 — wtedy przybliżenie zawodzi."),
-      p("Alternatywa: test dokładny Fishera",
+        niektóre ", gloss("liczność oczekiwana", "oczekiwane liczności"), " mogą być < 5 — wtedy przybliżenie zawodzi."),
+      p("Alternatywa: ", gloss("test dokładny Fishera"),
         " — liczy p-wartość dokładnie, jak test dwumianowy dla proporcji.")
     ),
 

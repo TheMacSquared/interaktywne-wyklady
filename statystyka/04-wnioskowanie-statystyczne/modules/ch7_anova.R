@@ -23,7 +23,7 @@ ch7_ui <- list(
 
     tagList(
       p("Mamy trzy grupy i chcemy porównać ich średnie. Naturalny odruch:
-        przeprowadzić trzy testy t — A vs B, A vs C, B vs C — i zobaczyć,
+        przeprowadzić trzy ", gloss("test t", "testy t"), " — A vs B, A vs C, B vs C — i zobaczyć,
         które pary się różnią. Dlaczego to zły pomysł?"),
       p("Każdy test t przeprowadzany przy ", withMathJax("\\(\\alpha = 0{,}05\\)"),
         " dopuszcza 5% ryzyka ", tags$em("fałszywego alarmu"),
@@ -54,7 +54,7 @@ ch7_ui <- list(
     tagList(
       p("Potrzebujemy jednego testu, który odpowiada na pytanie",
         " 'czy w ogóle coś się różni między grupami?'",
-        " z kontrolowanym ryzykiem — to właśnie ANOVA.")
+        " z kontrolowanym ryzykiem — to właśnie ", gloss("ANOVA"), ".")
     ),
 
     # ========================================================================
@@ -70,14 +70,14 @@ ch7_ui <- list(
         p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 = \\ldots = \\mu_k\\) — wszystkie średnie są równe")),
         p(withMathJax("\\(H_a:\\) co najmniej jedna średnia różni się od pozostałych"))
       ),
-      p("ANOVA działa dzięki dekompozycji wariancji:
+      p("ANOVA działa dzięki dekompozycji ", gloss("wariancja", "wariancji"), ":
         całkowitą zmienność danych dzieli na dwie części — zmienność ",
         tags$em("między"), " grupami (różnice średnich) i zmienność ",
         tags$em("wewnątrz"), " grup (naturalne rozrzuty). Statystyka F porównuje te dwie części:"),
       p("Duże F = różnice między grupami są większe niż moglibyśmy oczekiwać z samego
         wewnątrzgrupowego szumu. Jeśli F jest dostatecznie duże, p-wartość spada poniżej α
         i odrzucamy H₀. Odrzucenie mówi, że ", tags$em("co najmniej jedna"),
-        " średnia odstaje — ale nie mówi, która. Do tego służy test post-hoc (niżej).")
+        " średnia odstaje — ale nie mówi, która. Do tego służy ", gloss("test post hoc", "test post-hoc"), " (niżej).")
     ),
 
     # ========================================================================
@@ -161,8 +161,9 @@ ch7_ui <- list(
       p("ANOVA mówi „grupy różnią się”, ale nie mówi „które”. Wracamy więc
         do porównań parami — ale tym razem z kontrolowanym ryzykiem fałszywego alarmu
         na poziomie całej rodziny testów, a nie pojedynczego testu."),
-      p("Games-Howell porównuje każdą parę grup z korektą na wielokrotne
-        porównania — trzyma ryzyko błędu I rodzaju na 5% dla całej rodziny",
+      p("Games-Howell porównuje każdą parę grup z korektą na ",
+        gloss("porównania wielokrotne", "wielokrotne porównania"), " — trzyma ryzyko ",
+        gloss("błąd pierwszego rodzaju", "błędu I rodzaju"), " na 5% dla całej rodziny",
         " porównań, niezależnie od liczby par. Dodatkowo nie wymaga równych wariancji
         w grupach, więc jest bezpiecznym wyborem domyślnym.")
     ),
