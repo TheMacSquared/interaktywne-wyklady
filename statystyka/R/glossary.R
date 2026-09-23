@@ -317,8 +317,6 @@
     "Jedno główne pytanie, które da się rozważyć na danych i które porządkuje cały projekt.",
   "hipoteza badawcza" =
     "Robocze przypuszczenie o związku między zmiennymi; można je zawęzić lub odrzucić w toku analizy.",
-  "alternatywne wyjaśnienie" =
-    "Inny mechanizm, który mógłby dać te same obserwacje; sprawdzamy, czy dane pozwalają go odróżnić.",
   "wskaźnik" =
     "Konkretna, mierzalna miara pojęcia (np. średnia ocena kursu jako wskaźnik jego jakości).",
   "reprezentatywność" =
@@ -384,9 +382,7 @@
   "dane eksperymentalne" =
     "Dane z badania, w którym badacz losowo przydziela warunki; pozwalają wnioskować o przyczynowości.",
   "dane podłużne" =
-    "Dane z wielokrotnych pomiarów tych samych jednostek w czasie; pokazują zmiany w obrębie jednostek.",
-  "cel badawczy" =
-    "Ogólny cel projektu, z którego wyprowadza się pytania i hipotezy badawcze."
+    "Dane z wielokrotnych pomiarów tych samych jednostek w czasie; pokazują zmiany w obrębie jednostek."
 )
 
 # Wstawia klikalny termin ze słownika.

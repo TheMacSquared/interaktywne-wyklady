@@ -16,8 +16,8 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Hipotezy jako tropy", 
     lc_h2("sec-01", "Wszystkie hipotezy naraz"),
 
     div(class = "lc-prose",
-      p("Projekt badawczy zwykle obejmuje kilka ", gloss("hipoteza badawcza", "hipotez"), " pod wspólnym ", gloss("cel badawczy", "celem"), ".
-        Każda ma własne ", gloss("pytanie badawcze", "pytanie"), ", roboczą hipotezę i ", gloss("alternatywne wyjaśnienie", "alternatywne wyjaśnienia"), ".
+      p("Projekt badawczy zwykle obejmuje kilka ", gloss("hipoteza badawcza", "hipotez"), " pod wspólnym celem.
+        Każda ma własne ", gloss("pytanie badawcze", "pytanie"), ", roboczą hipotezę i alternatywne wyjaśnienia.
         To ta sama wiązka, którą wprowadzono w rozdziale 1 — tutaj zapisana
         jako formalne hipotezy."),
       p("Dopisujemy też część konspektową: czy mamy dane potrzebne do sprawdzenia

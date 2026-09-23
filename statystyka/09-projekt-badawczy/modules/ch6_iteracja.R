@@ -33,7 +33,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     div(class = "lc-prose",
       p("Werdykt „wzmocniony\" nie znaczy „udowodniony\", a „osłabiony\" nie znaczy
         „temat zamknięty\". Na tym etapie mamy już pierwsze wyniki, więc nie
-        układamy planu od zera. Sprawdzamy ", gloss("alternatywne wyjaśnienie", "alternatywne wyjaśnienia"), " zapisane
+        układamy planu od zera. Sprawdzamy alternatywne wyjaśnienia zapisane
         wcześniej i dopisujemy nowe ", gloss("hipoteza badawcza", "hipotezy"), ", które pojawiły się po obliczeniach.")
     ),
 

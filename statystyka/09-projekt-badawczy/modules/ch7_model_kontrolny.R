@@ -65,7 +65,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     div(class = "lc-feedback lc-feedback-info",
       tags$strong("Rola modelu:"),
       p("Model nie zastępuje sformułowania pytania. Wymaga wcześniejszych ", gloss("hipoteza badawcza", "hipotez"), ",
-        ", gloss("alternatywne wyjaśnienie", "alternatywnych wyjaśnień"), " i poprawnego pomiaru — dopiero wtedy jego wynik
+        alternatywnych wyjaśnień i poprawnego pomiaru — dopiero wtedy jego wynik
         da się sensownie zinterpretować.")
     ),
 
