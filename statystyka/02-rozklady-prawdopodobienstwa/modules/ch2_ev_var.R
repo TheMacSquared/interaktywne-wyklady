@@ -17,16 +17,16 @@ ch2_ev_var_ui <- list(
     lc_h2("ch2-ev-intro", "Wartość oczekiwana i wariancja"),
 
     tagList(
-      p("Każdy rozkład prawdopodobieństwa można opisać dwoma kluczowymi
+      p("Każdy ", gloss("rozkład prawdopodobieństwa"), " można opisać dwoma kluczowymi
         liczbami:"),
       tags$ul(
-        tags$li(tags$b("Wartość oczekiwana E(X)"),
+        tags$li(tags$b(gloss("wartość oczekiwana", "Wartość oczekiwana"), " E(X)"),
           " — 'na co mogę liczyć w dłuższej perspektywie?'"),
-        tags$li(tags$b("Wariancja / odchylenie standardowe"),
+        tags$li(tags$b(gloss("wariancja", "Wariancja"), " / ", gloss("odchylenie standardowe")),
           " — 'jak bardzo wyniki rozpraszają się wokół oczekiwania?'")
       ),
       p("To rozszerzenie pojęć, które już znasz ze statystyki opisowej
-        (średnia i odchylenie standardowe), ale teraz stosujemy je do
+        (", gloss("średnia"), " i odchylenie standardowe), ale teraz stosujemy je do
         modeli teoretycznych, a nie do danych.")
     ),
 
@@ -201,7 +201,7 @@ ch2_ev_var_ui <- list(
           tags$tr(tags$td("Obliczane z danych"), tags$td("Obliczane z modelu (rozkładu)"))
         )
       ),
-      p("Prawo wielkich liczb gwarantuje, że x̄ → E(X) wraz ze wzrostem próby.")
+      p(gloss("prawo wielkich liczb", "Prawo wielkich liczb"), " gwarantuje, że x̄ → E(X) wraz ze wzrostem próby.")
     ),
 
     lc_chapter_next(

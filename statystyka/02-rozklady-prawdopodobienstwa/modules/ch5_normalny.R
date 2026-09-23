@@ -17,10 +17,10 @@ ch5_ui <- list(
     lc_h2("ch5-intro", "Rozkład normalny — królowa rozkładów"),
 
     tagList(
-      p("Rozkład normalny (Gaussa) to ", tags$b("najczęściej spotykany"),
+      p(gloss("rozkład normalny", "Rozkład normalny"), " (Gaussa) to ", tags$b("najczęściej spotykany"),
         " rozkład w statystyce. Opisuje go tylko ",
         tags$b("dwa parametry"), ": średnia μ (gdzie jest środek)
-        i odchylenie standardowe σ (jak szerokie jest rozproszenie)."),
+        i ", gloss("odchylenie standardowe"), " σ (jak szerokie jest rozproszenie)."),
       p("Dlaczego jest aż tak ważny? Odpowiedź poznamy w następnym rozdziale (CLT).
         Na razie zbudujmy intuicję.")
     ),
@@ -102,7 +102,7 @@ ch5_ui <- list(
 
     tagList(
       p("Każdy rozkład normalny można sprowadzić do ",
-        tags$b("standardowego N(0, 1)"), " za pomocą transformacji:"),
+        tags$b(gloss("standardowy rozkład normalny", "standardowego N(0, 1)")), " za pomocą transformacji:"),
       lc_formula_box(
         withMathJax(helpText("$$z = \\frac{x - \\mu}{\\sigma}$$"))
       ),

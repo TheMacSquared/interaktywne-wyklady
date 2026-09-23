@@ -17,7 +17,7 @@ ch6_ui <- list(
     lc_h2("ch6-ctg", "Centralne Twierdzenie Graniczne (CTG)"),
 
     tagList(
-      p("Centralne Twierdzenie Graniczne mówi, że:"),
+      p(gloss("centralne twierdzenie graniczne", "Centralne Twierdzenie Graniczne"), " mówi, że:"),
       lc_feedback(type = "ok",
         tags$strong("CTG:"),
         " Jeśli wezmiesz próbę n obserwacji z ", tags$b("dowolnego"),
@@ -25,7 +25,7 @@ ch6_ui <- list(
         to rozkład tej średniej będzie zbiegał do ", tags$b("normalnego"),
         " wraz ze wzrostem n."
       ),
-      p("To wyjaśnia, dlaczego rozkład normalny jest wszędzie — wiele
+      p("To wyjaśnia, dlaczego ", gloss("rozkład normalny"), " jest wszędzie — wiele
         zjawisk naturalnych to suma wielu drobnych, niezależnych czynników.
         Zobaczmy to na własne oczy!")
     ),
@@ -102,7 +102,7 @@ ch6_ui <- list(
     lc_h2("ch6-wielkosc-proby", "Wpływ wielkości próby"),
 
     tagList(
-      p("Im większa próba n, tym szybciej rozkład średnich staje się
+      p("Im większa próba n, tym szybciej ", gloss("rozkład próbkowy", "rozkład średnich"), " staje się
         normalny. Zobaczmy to porównując różne n obok siebie.")
     ),
 

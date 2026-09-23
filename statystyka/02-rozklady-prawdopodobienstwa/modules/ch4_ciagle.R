@@ -19,7 +19,7 @@ ch4_ui <- list(
     tagList(
       p("Znasz już histogramy ze statystyki opisowej. Teraz zobaczymy,
         jak histogram przechodzi w gładką krzywą gdy zwiększamy próbę i zwężamy przedziały.
-        Ta krzywa to ", tags$b("funkcja gęstości prawdopodobieństwa (PDF)"),
+        Ta krzywa to ", tags$b(gloss("funkcja gęstości", "funkcja gęstości prawdopodobieństwa"), " (PDF)"),
         " — ciągły odpowiednik PMF.")
     ),
 
@@ -123,7 +123,7 @@ ch4_ui <- list(
     lc_h2("ch4-jednostajny", "Rozkład jednostajny ciągły"),
 
     tagList(
-      p(tags$b("Jednostajny ciągły U(a, b)"), " — każda wartość w przedziale
+      p(tags$b(gloss("rozkład jednostajny", "Jednostajny ciągły"), " U(a, b)"), " — każda wartość w przedziale
         [a, b] jest jednakowo prawdopodobna. Przykład: losowa liczba z generatora.")
     ),
 
@@ -161,7 +161,7 @@ ch4_ui <- list(
     lc_h2("ch4-wykladniczy", "Rozkład wykładniczy"),
 
     tagList(
-      p(tags$b("Wykładniczy Exp(λ)"), " — modeluje czas oczekiwania między
+      p(tags$b(gloss("rozkład wykładniczy", "Wykładniczy"), " Exp(λ)"), " — modeluje czas oczekiwania między
         zdarzeniami. Przykład: czas między wiadomościami na WhatsAppie, czas między awariami maszyn.")
     ),
 
@@ -215,10 +215,10 @@ ch4_ui <- list(
     lc_h2("ch4-t-studenta", "Rozkład t-Studenta"),
 
     tagList(
-      p("Rozkład t-Studenta wygląda jak normalny, ale ma cięższe ogony —
+      p(gloss("rozkład t-Studenta", "Rozkład t-Studenta"), " wygląda jak normalny, ale ma cięższe ogony —
         wartości ekstremalne są bardziej prawdopodobne. Jest kluczowy we
         wnioskowaniu statystycznym (test t, przedziały ufności)."),
-      p("Parametr ", tags$b("df"), " (stopnie swobody) kontroluje 'grubość' ogonów.
+      p("Parametr ", tags$b("df"), " (", gloss("stopnie swobody"), ") kontroluje 'grubość' ogonów.
         Im więcej df, tym bliżej do rozkładu normalnego.")
     ),
 
@@ -272,7 +272,7 @@ ch4_ui <- list(
     lc_h2("ch4-chi-kwadrat", "Rozkład chi-kwadrat (χ²)"),
 
     tagList(
-      p("Rozkład chi-kwadrat powstaje jako suma kwadratów niezależnych zmiennych N(0,1).
+      p(gloss("rozkład chi-kwadrat", "Rozkład chi-kwadrat"), " powstaje jako suma kwadratów niezależnych zmiennych N(0,1).
         Jest zawsze nieujemny i prawoskośny."),
       p("Zastosowania: testy niezależności, testy dopasowania,
         estymacja wariancji.")
@@ -325,7 +325,7 @@ ch4_ui <- list(
     lc_h2("ch4-lognormalny", "Rozkład log-normalny"),
 
     tagList(
-      p("Jeśli ", tags$b("ln(X) ~ N(μ, σ)"), ", to X ma rozkład log-normalny.
+      p("Jeśli ", tags$b("ln(X) ~ N(μ, σ)"), ", to X ma ", gloss("rozkład log-normalny"), ".
         Zmienna jest zawsze dodatnia i prawoskośna."),
       p("Pojawia się wszędzie tam, gdzie dane rosną multiplikatywnie:
         dochody, ceny akcji, czasy reakcji, stężenia substancji.")

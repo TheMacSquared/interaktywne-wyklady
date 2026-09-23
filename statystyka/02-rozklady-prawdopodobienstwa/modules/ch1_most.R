@@ -23,7 +23,7 @@ ch1_ui <- list(
     tagList(
       p("Wyobraź sobie, że rzucasz kostką. Jak często wypada każda ścianka?
         Przy kilku rzutach wyniki są chaotyczne, ale im więcej rzutów,
-        tym częstości względne stają się bardziej stabilne.")
+        tym ", gloss("częstość względna", "częstości względne"), " stają się bardziej stabilne.")
     ),
 
     figure_panel(
@@ -69,12 +69,12 @@ ch1_ui <- list(
 
     tagList(
       p("Kostka to prosty przykład, ale ten sam mechanizm działa dla każdej
-        zmiennej losowej. Znasz już histogram — pokazuje, jak często dane
-        przyjmują różne wartości. To jest ", tags$b("rozkład empiryczny"),
+        ", gloss("zmienna losowa", "zmiennej losowej"), ". Znasz już ", gloss("histogram"), " — pokazuje, jak często dane
+        przyjmują różne wartości. To jest ", tags$b(gloss("rozkład empiryczny")),
         " — oparty na obserwacjach."),
       p("A gdybyśmy znali ", tags$b("regułę generującą dane"),
         "? Wtedy zamiast histogramu mielibyśmy gładką krzywą — ",
-        tags$b("rozkład teoretyczny"),
+        tags$b(gloss("rozkład teoretyczny")),
         ". Zobaczmy, jak jedno przechodzi w drugie.")
     ),
 
@@ -161,7 +161,7 @@ ch1_ui <- list(
     lc_h2("ch1-rozklad", "Czym jest rozkład prawdopodobieństwa?"),
 
     tagList(
-      p("Rozkład prawdopodobieństwa to ", tags$b("kompletny opis"),
+      p(gloss("rozkład prawdopodobieństwa", "Rozkład prawdopodobieństwa"), " to ", tags$b("kompletny opis"),
         " wszystkich możliwych wyników i ich prawdopodobieństw.
         Musi spełniać dwa warunki:"),
       tags$ol(

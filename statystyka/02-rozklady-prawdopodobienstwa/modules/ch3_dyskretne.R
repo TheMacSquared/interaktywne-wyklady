@@ -68,7 +68,7 @@ ch3_ui <- list(
     lc_h2("ch3-dwumianowy", "Rozkład dwumianowy (Binomial)"),
 
     tagList(
-      p("Powtarzamy n niezależnych prób, każda z prawdopodobieństwem
+      p("Powtarzamy n niezależnych ", gloss("próba Bernoulliego", "prób"), ", każda z prawdopodobieństwem
         sukcesu p. Liczymy, ile razy wystąpił sukces."),
       p("Przykłady: ile orłów w 10 rzutach monetą? Ile wadliwych produktów
         w partii? Ile poprawnych odpowiedzi na teście wielokrotnego wyboru?")
@@ -110,8 +110,8 @@ ch3_ui <- list(
 
     inline_callout(
       label = "Jak rozpoznać?",
-      "Kiedy w zadaniu widzisz pytanie: ile z n... — mysl dwumianowy.
-       Np. ile z 20 studentow zda egzamin? Kluczowe: ustalona liczba prob i dwa wyniki.",
+      tagList("Kiedy w zadaniu widzisz pytanie: ile z n... — mysl ", gloss("rozkład dwumianowy", "dwumianowy"), ".
+       Np. ile z 20 studentow zda egzamin? Kluczowe: ustalona liczba prob i dwa wyniki."),
       color = "uwaga"
     ),
 
@@ -157,8 +157,8 @@ ch3_ui <- list(
 
     inline_callout(
       label = "Ciekawostka",
-      "W rozkładzie Poissona wartość oczekiwana = wariancja = λ.
-       Jeśli w danych średnia ≈ wariancja, to dobry kandydat na model Poissona!"
+      tagList("W ", gloss("rozkład Poissona", "rozkładzie Poissona"), " wartość oczekiwana = wariancja = λ.
+       Jeśli w danych średnia ≈ wariancja, to dobry kandydat na model Poissona!")
     ),
 
     inline_callout(
@@ -209,9 +209,9 @@ ch3_ui <- list(
 
     inline_callout(
       label = "Bezpamięciowość",
-      "Im mniejsze p, tym dłużej (przeciętnie) czekamy na sukces.
-       Rozkład geometryczny jest bezpamięciowy — szansa sukcesu w każdej próbie jest taka sama,
-       niezależnie od liczby dotychczasowych porażek."
+      tagList("Im mniejsze p, tym dłużej (przeciętnie) czekamy na sukces.
+       ", gloss("rozkład geometryczny", "Rozkład geometryczny"), " jest ", gloss("bezpamięciowość", "bezpamięciowy"), " — szansa sukcesu w każdej próbie jest taka sama,
+       niezależnie od liczby dotychczasowych porażek.")
     ),
 
     inline_callout(

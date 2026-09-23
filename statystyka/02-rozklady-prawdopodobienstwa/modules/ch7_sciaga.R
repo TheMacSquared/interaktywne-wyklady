@@ -61,7 +61,7 @@ ch7_ui <- list(
         hr(),
         h4("Centralne Twierdzenie Graniczne"),
         helpText("$$\\bar{X}_n \\xrightarrow{d} N\\left(\\mu, \\frac{\\sigma}{\\sqrt{n}}\\right) \\quad \\text{dla } n \\to \\infty$$"),
-        p("Niezależnie od rozkładu populacji (o ile ma skończoną wariancję).")
+        p("Niezależnie od rozkładu populacji (o ile ma skończoną ", gloss("wariancja", "wariancję"), ").")
       )
     ),
 
@@ -71,7 +71,7 @@ ch7_ui <- list(
     tagList(
       p("Każdy rozkład ma swój 'naturalny habitat'. Kluczowe pytania przy doborze:"),
       tags$ol(
-        tags$li("Czy zmienna jest ", tags$b("dyskretna"), " czy ", tags$b("ciągła"), "?"),
+        tags$li("Czy zmienna jest ", tags$b(gloss("zmienna dyskretna", "dyskretna")), " czy ", tags$b(gloss("zmienna ciągła", "ciągła")), "?"),
         tags$li("Jaki jest ", tags$b("kształt"), " danych? (symetryczny, skośny, płaski)"),
         tags$li("Jaki ", tags$b("mechanizm generuje"), " dane? (zliczanie, pomiar, oczekiwanie)")
       )
