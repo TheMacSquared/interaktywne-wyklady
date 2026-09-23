@@ -84,8 +84,9 @@ ch1_ui <- list(
     tagList(
       p("Skąd wiemy, czy dany estymator jest „dobry”? Statystycy oceniają
         estymatory względem trzech podstawowych własności: ",
-        tags$strong("nieobciążoności"), ", ",
-        tags$strong("efektywności"), " i ", tags$strong("zgodności"), "."),
+        tags$strong(gloss("nieobciążoność", "nieobciążoności")), ", ",
+        tags$strong(gloss("efektywność estymatora", "efektywności")), " i ",
+        tags$strong(gloss("zgodność estymatora", "zgodności")), "."),
 
       lc_h3("(1) Nieobciążoność"),
       p("Estymator ", withMathJax("\\(\\hat{\\theta}\\)"), " parametru ",
@@ -106,7 +107,7 @@ ch1_ui <- list(
         ", to średnia ze ", tags$em("wszystkich możliwych"),
         " prób równa się dokładnie ", withMathJax("\\(\\mu\\)"), "."),
       p(tags$strong("Kontrprzykład:"),
-        " wariancja z próby liczona ze wzoru ",
+        " ", gloss("wariancja"), " z próby liczona ze wzoru ",
         withMathJax("\\(\\frac{1}{n}\\sum(x_i - \\bar{x})^2\\)"),
         " jest ", tags$em("obciążona"),
         " (średnio zaniża prawdziwą wariancję populacji). Dlatego
@@ -131,7 +132,8 @@ ch1_ui <- list(
         " niż mediana. Dlatego w fizyce, chemii i każdym laboratoryjnym
         pomiarze standardem jest średnia arytmetyczna."),
       p(tags$strong("Uwaga:"),
-        " efektywność zależy od rozkładu danych. Dla danych z outlierami
+        " efektywność zależy od rozkładu danych. Dla danych z ",
+        gloss("wartość odstająca", "outlierami"), "
         mediana może być efektywniejsza niż średnia."),
 
       lc_h3("(3) Zgodność"),
@@ -145,11 +147,11 @@ ch1_ui <- list(
         ". Im więcej obserwacji, tym mniejszy rozrzut estymatora wokół prawdy."),
       p(tags$strong("Przykład:"),
         " średnia z próby jest zgodnym estymatorem średniej populacji.
-        Z prawa wielkich liczb wiemy, że ", withMathJax("\\(\\bar{x} \\to \\mu\\)"),
+        Z ", gloss("prawo wielkich liczb", "prawa wielkich liczb"), " wiemy, że ", withMathJax("\\(\\bar{x} \\to \\mu\\)"),
         " gdy ", withMathJax("\\(n \\to \\infty\\)"),
         ". Dla średniej obowiązuje wzór ",
         withMathJax("\\(SD(\\bar{x}) = \\sigma/\\sqrt{n}\\)"),
-        " — odchylenie standardowe maleje proporcjonalnie do ",
+        " — ", gloss("odchylenie standardowe"), " maleje proporcjonalnie do ",
         withMathJax("\\(1/\\sqrt{n}\\)"), "."),
       p(tags$strong("Praktyczna konsekwencja:"),
         " żeby zmniejszyć niepewność estymatora dwa razy, musisz ",

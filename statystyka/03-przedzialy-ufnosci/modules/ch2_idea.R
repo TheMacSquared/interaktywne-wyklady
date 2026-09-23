@@ -19,8 +19,8 @@ ch2_ui <- list(
     lc_h2("ch2-czym-jest", "Czym jest przedział ufności?"),
 
     tagList(
-      p("Przedział ufności (CI — ", tags$em("confidence interval"),
-        ") to zakres wartości, który z określonym poziomem ufności
+      p(gloss("przedział ufności", "Przedział ufności"), " (CI — ", tags$em("confidence interval"),
+        ") to zakres wartości, który z określonym ", gloss("poziom ufności", "poziomem ufności"), "
         (np. 95%) zawiera prawdziwy parametr populacji."),
       p("Kluczowa idea: gdybyśmy powtarzali eksperyment wiele razy,
         to 95% skonstruowanych przedziałów zawierałoby prawdziwe ",
@@ -34,7 +34,7 @@ ch2_ui <- list(
         przedział ufności — skonstruowany z osobnej próby.
         Szałwiowe trafiają w ", withMathJax("\\(\\mu\\)"),
         ", terakotowe — nie."),
-      p("Klikaj „Dolosuj” porcjami i obserwuj, jak pokrycie zbliża się
+      p("Klikaj „Dolosuj” porcjami i obserwuj, jak ", gloss("pokrycie"), " zbliża się
         do nominalnego poziomu ufności. Przy małej liczbie prób
         możesz mieć 80% lub 100%, ale przy 200+ pokrycie powinno
         ustabilizować się wokół 95%.")

@@ -19,15 +19,15 @@ ch5_ui <- list(
     lc_h2("ch5-czynniki", "Trzy czynniki szerokości przedziału"),
 
     tagList(
-      p("Margines błędu (a więc szerokość przedziału) zależy od trzech rzeczy:"),
+      p(gloss("margines błędu", "Margines błędu"), " (a więc szerokość przedziału) zależy od trzech rzeczy:"),
       lc_formula_box(
         withMathJax(helpText(
           "$$ME = t^* \\cdot \\frac{s}{\\sqrt{n}}$$"
         ))
       ),
       tags$ol(
-        tags$li(tags$b("Wielkość próby (n)"), " — więcej danych = węższy przedział"),
-        tags$li(tags$b("Poziom ufności"), " — większa pewność = szerszy przedział"),
+        tags$li(tags$b(gloss("wielkość próby", "Wielkość próby"), " (n)"), " — więcej danych = węższy przedział"),
+        tags$li(tags$b(gloss("poziom ufności", "Poziom ufności")), " — większa pewność = szerszy przedział"),
         tags$li(tags$b("Zmienność danych (s)"), " — większe rozproszenie = szerszy przedział")
       )
     ),
@@ -155,7 +155,7 @@ ch5_ui <- list(
         div(class = "case-scenario",
           p("Zmierzono czas dojazdu dla 40 pracowników. Średnia z próby ",
             withMathJax("\\(\\bar{x} = 28.5\\)"), " min,
-            odchylenie standardowe ", withMathJax("\\(s = 8\\)"), " min.
+            ", gloss("odchylenie standardowe"), " ", withMathJax("\\(s = 8\\)"), " min.
             Hipoteza: średni czas dojazdu w populacji przekracza 26 min.")
         ),
         uiOutput("ch5_edge1_buttons"),

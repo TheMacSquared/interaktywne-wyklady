@@ -19,7 +19,7 @@ ch3_ui <- list(
     lc_h2("ch3-wzor", "Wzór"),
 
     tagList(
-      p("Przedział ufności dla średniej populacji wygląda tak:"),
+      p(gloss("przedział ufności", "Przedział ufności"), " dla średniej populacji wygląda tak:"),
       lc_formula_box(
         withMathJax("$$CI = \\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$")
       ),
@@ -28,9 +28,11 @@ ch3_ui <- list(
         tags$li(withMathJax("\\(\\bar{x}\\)"),
                 " — średnia z próby (środek przedziału)"),
         tags$li(withMathJax("\\(s/\\sqrt{n}\\)"),
-                " — błąd standardowy średniej (jak bardzo średnia z próby waha się z próby na próbę)"),
+                " — ", gloss("błąd standardowy"), " średniej (jak bardzo średnia z próby waha się z próby na próbę)"),
         tags$li(withMathJax("\\(t^*\\)"),
-                " — wartość krytyczna z rozkładu t-Studenta zależna od poziomu ufności i ", withMathJax("\\(n-1\\)"), " stopni swobody")
+                " — ", gloss("wartość krytyczna"), " z ", gloss("rozkład t-Studenta", "rozkładu t-Studenta"),
+                " zależna od ", gloss("poziom ufności", "poziomu ufności"), " i ", withMathJax("\\(n-1\\)"), " ",
+                gloss("stopnie swobody", "stopni swobody"))
       ),
       p(tags$b("Dlaczego rozkład t, a nie normalny (z)?"),
         " Bo ", withMathJax("\\(\\sigma\\)"), " populacji nie znamy — szacujemy je z próby jako ",
@@ -202,7 +204,7 @@ ch3_ui <- list(
         div(class = "case-scenario",
           p("Zmierzyłeś wzrost 30 studentów. Średnia z próby ",
             withMathJax("\\(\\bar{x} = 173.4\\)"), " cm,
-            odchylenie standardowe ", withMathJax("\\(s = 8.2\\)"), " cm.
+            ", gloss("odchylenie standardowe"), " ", withMathJax("\\(s = 8.2\\)"), " cm.
             Zbudujmy CI dla średniego wzrostu i sprawdźmy dwie hipotezy.")
         ),
         uiOutput("ch3_caseA1_buttons"),

@@ -21,11 +21,11 @@ ch4_ui <- list(
     tagList(
       p("Często chcemy oszacować odsetek — jaki procent studentów zdał egzamin,
         jaki odsetek wyborców głosuje na partię X, jaki procent produktów jest wadliwy."),
-      p("Estymator punktowy to proporcja z próby:"),
+      p("Estymator punktowy to ", gloss("proporcja z próby"), ":"),
       lc_formula_box(
         withMathJax("$$\\hat{p} = \\frac{x}{n}$$")
       ),
-      p("Najprostszy przedział ufności dla proporcji to ", tags$b("przedział Walda"), ":"),
+      p("Najprostszy ", gloss("przedział ufności"), " dla proporcji to ", tags$b(gloss("przedział Walda")), ":"),
       lc_formula_box(
         withMathJax("$$CI = \\hat{p} \\pm z^*_{\\alpha/2} \\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$$")
       ),
@@ -34,18 +34,20 @@ ch4_ui <- list(
         tags$li(withMathJax("\\(\\hat{p}\\)"),
                 " — proporcja z próby (środek przedziału)"),
         tags$li(withMathJax("\\(\\sqrt{\\hat{p}(1-\\hat{p})/n}\\)"),
-                " — błąd standardowy proporcji"),
+                " — ", gloss("błąd standardowy"), " proporcji"),
         tags$li(withMathJax("\\(z^*\\)"),
-                " — wartość krytyczna z rozkładu normalnego (dla 95% ≈ 1.96)")
+                " — ", gloss("wartość krytyczna"), " z ",
+                gloss("rozkład normalny", "rozkładu normalnego"), " (dla 95% ≈ 1.96)")
       ),
       p(tags$b("Dlaczego z, a nie t?"),
         " Bo proporcja — inaczej niż średnia — nie wymaga osobnego oszacowania
-        \"odchylenia standardowego\". Wariancja proporcji to ", withMathJax("\\(p(1-p)\\)"),
+        \"odchylenia standardowego\". ", gloss("wariancja", "Wariancja"), " proporcji to ", withMathJax("\\(p(1-p)\\)"),
         ", więc jest jednoznacznie wyznaczona przez samą ", withMathJax("\\(p\\)"), "."),
       p("Uwaga — Wald nie zawsze działa dobrze. Gdy ",
         withMathJax("\\(n\\)"), " jest małe lub ", withMathJax("\\(\\hat{p}\\)"),
         " bardzo bliskie 0 lub 1, przedział Walda może mieć zaskakująco niskie
-        pokrycie. W takich sytuacjach lepiej użyć ", tags$b("przedziału Wilsona"),
+        ", gloss("pokrycie"), ". W takich sytuacjach lepiej użyć ",
+        tags$b(gloss("przedział Wilsona", "przedziału Wilsona")),
         ", który koryguje wzór. W tym wykładzie skupiamy się na Waldzie —
         bo łatwo go zrozumieć, a w przykładach trzymamy się \"bezpiecznych\"
         wartości ", withMathJax("\\(np \\geq 10\\)"), " i ",

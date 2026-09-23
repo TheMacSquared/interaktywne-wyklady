@@ -101,10 +101,10 @@ ch6_ui <- list(
       ),
       p("To czytasz tak:"),
       tags$ul(
-        tags$li(tags$b("Estymata punktowa:"),
+        tags$li(tags$b(gloss("estymata", "Estymata"), " punktowa:"),
                 " w badanej próbie średnia wyniosła ",
                 tags$code("171.3"), "."),
-        tags$li(tags$b("Przedział ufności:"),
+        tags$li(tags$b(gloss("przedział ufności", "Przedział ufności"), ":"),
                 " nasze najlepsze oszacowanie średniej w całej populacji
                  mieści się między ", tags$code("168.4"), " a ",
                 tags$code("174.2"), "."),
@@ -328,7 +328,7 @@ ch6_ui <- list(
           ),
           lc_formula_box(
             h4("Przedział Wilsona (zalecany)"),
-            p("Lepsze pokrycie niż Wald. Używa go ",
+            p("Lepsze ", gloss("pokrycie"), " niż Wald. Używa go ",
               tags$code("prop.test()"), " w R.")
           ),
           lc_formula_box(
@@ -361,7 +361,7 @@ ch6_ui <- list(
             )
           ),
           p(style = "color: var(--upwr-reference); font-size: 14px;",
-            "Dla rozkładu t wartości zależą od df = n−1; dla dużych
+            "Dla ", gloss("rozkład t-Studenta", "rozkładu t"), " wartości zależą od df = n−1; dla dużych
              n są bardzo bliskie z.")
         )
       ),
@@ -402,7 +402,7 @@ binom.test(x = liczba_sukcesow, n = liczba_prob, conf.level = 0.95)"
             withMathJax(helpText(
               "$$n = \\left(\\frac{z^* \\cdot s}{ME_{max}}\\right)^2$$"
             )),
-            p("Podaj oczekiwany margines błędu ",
+            p("Podaj oczekiwany ", gloss("margines błędu"), " ",
               withMathJax("\\(ME_{max}\\)"),
               " i przybliżonej zmienności ",
               withMathJax("\\(s\\)"),
