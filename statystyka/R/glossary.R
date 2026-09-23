@@ -309,8 +309,6 @@
     "Jedno główne pytanie, które da się rozważyć na danych i które porządkuje cały projekt.",
   "hipoteza badawcza" =
     "Robocze przypuszczenie o związku między zmiennymi; można je zawęzić lub odrzucić w toku analizy.",
-  "reprezentatywność" =
-    "Stopień, w jakim próba odzwierciedla populację; zagrażają jej m.in. niski odsetek odpowiedzi i selekcja.",
   "obciążenie" =
     "Systematyczne zniekształcenie wyniku w jedną stronę, np. przez dobór próby lub sposób pomiaru.",
 
