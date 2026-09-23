@@ -41,7 +41,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       ),
       div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
         tags$strong("Problem:"), " Przy n = 6 histogram ma ogromne dziury, ",
-        "przedział ufności jest bardzo szeroki, a moc testu < 10%. ",
+        gloss("przedział ufności"), " jest bardzo szeroki, a ", gloss("moc testu"), " < 10%. ",
         "Nawet duży efekt będzie nieistotny statystycznie.",
         tags$br(),
         tags$strong("Zasada:"), " Minimum 20-30 obserwacji na grupę."
@@ -135,7 +135,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
         tags$strong("Problem:"), " R/jamovi nie wie, co zrobić z '3-4h' albo 'dobrze'. ",
         "Czyszczenie jest możliwe, ale tracimy dużo danych (NA).",
         tags$br(),
-        tags$strong("Zasada:"), " Zamknięte pytania + spójne skale + pilotaż ankiety."
+        tags$strong("Zasada:"), " Zamknięte pytania + spójne skale + ", gloss("pilotaż"), " ankiety."
       )
     ),
 
@@ -160,7 +160,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       ),
       div(class = "lc-feedback lc-feedback-info", style = "margin-top: 10px;",
         tags$strong("Progi:"),
-        " < 5% braków = OK (usuń wiersze). 5-20% = ostrożnie (rozważ imputację). ",
+        " < 5% ", gloss("braki danych", "braków"), " = OK (usuń wiersze). 5-20% = ostrożnie (rozważ ", gloss("imputacja", "imputację"), "). ",
         "> 20% = zmienna może odpaść z analizy.",
         tags$br(),
         tags$strong("Uwaga:"), " Braki rzadko są losowe! Może ludzie pomijali trudne pytania?"
@@ -192,9 +192,9 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       ),
       div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
         tags$strong("Problem:"), " W tabeli te dane wyglądają jak 183 niezależne pomiary. ",
-        "Ale wykres liniowy zdradza sezonowość - każdy dzień zależy od poprzedniego.",
+        "Ale wykres liniowy zdradza ", gloss("sezonowość"), " - każdy dzień zależy od poprzedniego.",
         tags$br(),
-        tags$strong("Po agregacji do miesięcy:"), " znika problem zależności w obrębie miesiąca, ",
+        tags$strong("Po ", gloss("agregacja", "agregacji"), " do miesięcy:"), " znika problem zależności w obrębie miesiąca, ",
         "ale zostaje nam tylko 6 obserwacji. Agregacja to wybór, nie darmowa naprawa."
       )
     ),
@@ -233,7 +233,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
         tags$strong("Problem:"), " Wierszy jest ", nrow(cat_patients_visits),
         ", ale to wizyty - ten sam pacjent pojawia się wielokrotnie. ",
-        "Jeśli pytamy o różnice między pacjentami (np. kobiety vs mężczyźni), jednostką obserwacji jest pacjent (n = ",
+        "Jeśli pytamy o różnice między pacjentami (np. kobiety vs mężczyźni), ", gloss("jednostka obserwacji", "jednostką obserwacji"), " jest pacjent (n = ",
         nrow(cat_patients_agg), ").",
         tags$br(),
         tags$strong("Zasada:"), " Zawsze pytaj: co jest jednostką obserwacji? ",

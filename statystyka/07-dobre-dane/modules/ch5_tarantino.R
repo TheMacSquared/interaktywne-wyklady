@@ -54,7 +54,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
       h4("Może agregacja pomoże?"),
       div(class = "lc-prose",
         p("Każdy wiersz to jedno zdarzenie (przekleństwo lub śmierć). Aby używać klasycznej
-          statystyki, musielibyśmy zagregować dane do poziomu filmów.")
+          statystyki, musielibyśmy ", gloss("agregacja", "zagregować"), " dane do poziomu filmów.")
       ),
       actionButton("tab4_aggregate", "Zagreguj dane", class = "lc-btn-warning"),
       uiOutput("tab4_agg_result")

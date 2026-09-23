@@ -44,7 +44,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
           " Widać wyraźną periodyczność tygodniową — każdy poniedziałek wysoki,
           każdy weekend niski. Każdy dzień jest podobny do poprzedniego.",
           tags$br(),
-          "Testy statystyczne zakładają niezależność obserwacji — to założenie jest tutaj złamane."
+          "Testy statystyczne zakładają ", gloss("niezależność obserwacji"), " — to założenie jest tutaj złamane."
         )
       )
     ),
@@ -62,25 +62,25 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     div(class = "lc-feedback lc-feedback-danger",
       tags$strong("DWA poważne problemy:"),
       tags$br(),
-      tags$strong("1. Braki danych:"), " kawy ma ", uiOutput("tab10_missing_pct", inline = TRUE), " braków
+      tags$strong("1. ", gloss("braki danych", "Braki danych"), ":"), " kawy ma ", uiOutput("tab10_missing_pct", inline = TRUE), " braków
       (kawiarnia zamknięta w święta, awarie systemu).",
       tags$br(),
-      tags$strong("2. Brak niezależności:"), " To szereg czasowy! ",
-      "Obserwacje dzienne są silnie autokorelowane — głównie przez cotygodniową periodyczność.",
+      tags$strong("2. Brak niezależności:"), " To ", gloss("szereg czasowy"), "! ",
+      "Obserwacje dzienne są silnie ", gloss("autokorelacja", "autokorelowane"), " — głównie przez cotygodniową periodyczność.",
       tags$br(),
-      "Korelacja Pearsona między temperaturą a sprzedażą byłaby błędem metodologicznym."
+      gloss("korelacja", "Korelacja"), " Pearsona między temperaturą a sprzedażą byłaby błędem metodologicznym."
     ),
 
     div(class = "lc-feedback lc-feedback-info",
       tags$strong("Czy można to uratować?"),
       tags$br(),
-      "Agregacja tygodniowa rozwiązałaby problem zależności — średnia sprzedaż z całego tygodnia
+      gloss("agregacja", "Agregacja"), " tygodniowa rozwiązałaby problem zależności — średnia sprzedaż z całego tygodnia
       to jedna obserwacja, a kolejne tygodnie są od siebie znacznie mniej zależne.",
       tags$br(),
       "Po agregacji: n = ~35 tygodni — skromnie, ale możliwe do analizy.",
       tags$br(),
       tags$em("Gdyby dane obejmowały kilka lat akademickich, mielibyśmy 35 tyg. × 3 lata = ok. 105
-      obserwacji — wtedy analiza sezonowości i trendów byłaby pełnoprawna.")
+      obserwacji — wtedy analiza ", gloss("sezonowość", "sezonowości"), " i trendów byłaby pełnoprawna.")
     ),
 
     lc_chapter_next(

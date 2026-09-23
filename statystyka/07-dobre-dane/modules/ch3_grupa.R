@@ -40,14 +40,14 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     div(class = "lc-feedback lc-feedback-danger",
       tags$strong("Problem:"), " n = 8 to zdecydowanie za mało.",
       tags$br(),
-      "Przy tak małej próbie moc testu wynosi ok. 10-15% - nawet duża różnica ",
+      "Przy tak małej próbie ", gloss("moc testu"), " wynosi ok. 10-15% - nawet duża różnica ",
       "między grupami będzie nieistotna statystycznie.",
       tags$br(), tags$br(),
       tags$strong("Zasada:"), " Liczy się n na grupę, nie n ogólne! ",
       "Jeśli porównujesz 3 grupy i masz n = 30, to tylko 10 na grupę - wciąż za mało.",
       tags$br(),
       "Minimum 20-30 obserwacji w każdej podgrupie, którą chcesz analizować. ",
-      "Regresja z k predyktorami potrzebuje n > 10k + 50."
+      "Regresja z k ", gloss("predyktor", "predyktorami"), " potrzebuje n > 10k + 50."
     ),
 
     lc_chapter_next(

@@ -65,9 +65,9 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
       tags$br(),
       "Podstawowa struktura zbioru jest dobra (n=150, zróżnicowane zmienne, jasne definicje).",
       tags$br(),
-      "Ale błędy ręcznego przepisywania drastycznie zaburzają wyniki (R² skacze po ich usunięciu).",
+      "Ale błędy ręcznego przepisywania drastycznie zaburzają wyniki (", gloss("współczynnik determinacji", "R²"), " skacze po ich usunięciu).",
       tags$br(),
-      tags$strong("Klucz:"), " Rozróżnij błąd danych (usuń) od prawdziwego outliera (przemyśl zachowanie)."
+      tags$strong("Klucz:"), " Rozróżnij błąd danych (usuń) od prawdziwego ", gloss("wartość odstająca", "outliera"), " (przemyśl zachowanie)."
     ),
 
     lc_chapter_next(

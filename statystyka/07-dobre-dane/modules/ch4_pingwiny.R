@@ -49,7 +49,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
       tags$strong("Dobry zbiór!"),
       " n = 344, trzy zbalansowane grupy gatunków, jasno zdefiniowane zmienne pomiarowe.",
       tags$br(),
-      "Niewielkie braki danych (< 3%) - można je bezpiecznie usunąć (listwise deletion).",
+      "Niewielkie ", gloss("braki danych"), " (< 3%) - można je bezpiecznie usunąć (listwise deletion).",
       tags$br(),
       "Możliwe analizy: test t, ANOVA, korelacja, regresja, chi-kwadrat."
     ),

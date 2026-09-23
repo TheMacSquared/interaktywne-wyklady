@@ -29,7 +29,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
       tags$br(),
       "plec (nominalna) | kierunek (nominalna) | rok_studiow (porządkowa)",
       tags$br(),
-      "godziny_nauki (ciągła) | stres (porządkowa/Likert 1-10) | srednia_ocen (ciągła) | liczba_kursow (dyskretna)"
+      "godziny_nauki (ciągła) | stres (porządkowa/", gloss("skala Likerta", "Likert"), " 1-10) | srednia_ocen (ciągła) | liczba_kursow (dyskretna)"
     ),
 
     lc_h2("sec-03", "Werdykt"),

@@ -22,7 +22,7 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Wprowadzenie", content
       p("Zachęcam do wybierania tematów, które Was naprawdę interesują.",
         " Jeśli piszecie pracę o czymś, na czym Wam zależy, naturalnie zadajecie
         lepsze pytania, szybciej wyłapujecie absurdalne wyniki, łatwiej tworzycie
-        sensowne hipotezy. Analiza zyska niuans i dojrzałość, której nie da żaden
+        sensowne ", gloss("hipoteza badawcza", "hipotezy"), ". Analiza zyska niuans i dojrzałość, której nie da żaden
         podręcznik — bo będziecie rozumieć kontekst.")
     ),
 
