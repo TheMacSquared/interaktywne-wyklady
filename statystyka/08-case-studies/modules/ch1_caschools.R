@@ -46,7 +46,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
       tags$strong("Plan analizy:"),
       tags$ol(
         tags$li("Poznać dane — czym dysponujemy i jakie są potencjalne ", gloss("zmienna zakłócająca", "zmienne zakłócające")),
-        tags$li("Sprawdzić prosty związek STR → wyniki (", gloss("korelacja"), ", regresja prosta)"),
+        tags$li("Sprawdzić prosty związek STR → wyniki (", gloss("korelacja"), ", ", gloss("regresja prosta"), ")"),
         tags$li("Zidentyfikować zmienne zakłócające — co jeszcze wpływa na wyniki i jest skorelowane z STR?"),
         tags$li("Zbudować model wieloraki — czy efekt STR przetrwa kontrolowanie zakłóceń?"),
         tags$li("Odpowiedzieć na pytanie decyzyjne")
@@ -340,7 +340,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     div(class = "lc-feedback lc-feedback-danger",
       tags$strong("Ograniczenia naszej analizy:"),
       tags$ul(
-        tags$li(tags$b(gloss("dane obserwacyjne", "Dane obserwacyjne"), ", nie eksperymentalne"),
+        tags$li(tags$b(gloss("dane obserwacyjne", "Dane obserwacyjne"), ", nie ", gloss("dane eksperymentalne", "eksperymentalne")),
                 " — nie możemy orzekać o ", gloss("przyczynowość", "przyczynowości"), ".
                   Może istnieją ", gloss("zmienna pominięta", "pominięte zmienne"), " (np. jakość nauczycieli)."),
         tags$li(tags$b("Dane zagregowane na poziomie dystryktu"),
@@ -349,7 +349,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
         tags$li(tags$b("Współliniowość"),
                 " — lunch, income, calworks mierzą to samo (biedę).
                   Nie powinny być w modelu jednocześnie."),
-        tags$li(tags$b(gloss("dane przekrojowe", "Przekrojowe"), ", nie podłużne"),
+        tags$li(tags$b(gloss("dane przekrojowe", "Przekrojowe"), ", nie ", gloss("dane podłużne", "podłużne")),
                 " — widzimy jeden moment, nie zmiany w czasie.
                   Nie wiemy, czy dystrykty które zmniejszyły klasy, poprawiły wyniki.")
       ),
