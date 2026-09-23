@@ -319,8 +319,6 @@
     "Robocze przypuszczenie o związku między zmiennymi; można je zawęzić lub odrzucić w toku analizy.",
   "alternatywne wyjaśnienie" =
     "Inny mechanizm, który mógłby dać te same obserwacje; sprawdzamy, czy dane pozwalają go odróżnić.",
-  "operacjonalizacja" =
-    "Przełożenie pojęcia z hipotezy na mierzalny wskaźnik i zmienną w danych, razem z ograniczeniami tego pomiaru.",
   "wskaźnik" =
     "Konkretna, mierzalna miara pojęcia (np. średnia ocena kursu jako wskaźnik jego jakości).",
   "reprezentatywność" =

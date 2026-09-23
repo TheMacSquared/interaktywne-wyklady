@@ -4,7 +4,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
       kicker = "Rozdział 04 · Konspekt",
       num = "04",
       title = "Konspekt pracy badawczej.",
-      lead = "Po celu, tropach i operacjonalizacji możemy zapisać pełny plan
+      lead = "Po celu, tropach i pomiarze możemy zapisać pełny plan
               badania: zmienne, hipotezy, alternatywne wyjaśnienia i sposób interpretacji."
     ),
 
