@@ -162,7 +162,7 @@ ch1_ui <- list(
             tags$h4("Liczba kursów"),
             tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
               "Wartości liczbowe, ale tylko całkowite. Mozemy obliczać srednia
-               i ", gloss("odchylenie standardowe"), ". Wykres słupkowy jest tu odpowiedni,
+               i ", gloss("odchylenie standardowe"), ". ", gloss("wykres słupkowy", "Wykres słupkowy"), " jest tu odpowiedni,
                bo mamy skończoną liczbę wartości."),
             zoom_plot_ui("ch1_ex3_plot", height = "280px")
           )
@@ -218,7 +218,7 @@ ch1_ui <- list(
       title = "🔍 Śledź zmienną przez cały kurs",
       color = upwr_single_alt,
       p(style = "font-family: var(--upwr-serif); font-size: 15px; color: var(--upwr-ink-soft); margin-bottom: 14px;",
-        "Wybierz jedną zmienną ilościową. W każdym kolejnym rozdziale zobaczysz,
+        "Wybierz jedną ", gloss("zmienna ilościowa", "zmienną ilościową"), ". W każdym kolejnym rozdziale zobaczysz,
          jakie nowe informacje dają Ci kolejne narzędzia statystyczne zastosowane
          do tej samej zmiennej."),
       selectInput("tracked_var", "Wybierz zmienną do śledzenia:",

@@ -94,7 +94,7 @@ ch5_ui <- list(
     lc_h2("ch5-pelny-obraz", "Pełny obraz"),
 
     tagList(
-      p("Na koniec - pelny obraz. Dla każdej zmiennej ilościowej mozemy
+      p("Na koniec - pelny obraz. Dla każdej ", gloss("zmienna ilościowa", "zmiennej ilościowej"), " mozemy
         opisać jej położenie, rozrzut i kształt.")
     ),
 

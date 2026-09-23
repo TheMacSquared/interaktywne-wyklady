@@ -51,7 +51,7 @@ ch2_ui <- list(
 
     tagList(
       p("Zanim przejdziemy do wizualizacji, zatrzymajmy sie na waznym rozróżnieniu.
-        Zmienne jakościowe dzielimy na ", tags$b(gloss("zmienna nominalna", "nominalne")), " (kategorie bez naturalnej
+        ", gloss("zmienna jakościowa", "Zmienne jakościowe"), " dzielimy na ", tags$b(gloss("zmienna nominalna", "nominalne")), " (kategorie bez naturalnej
         kolejnośći) i ", tags$b(gloss("zmienna porządkowa", "porzadkowe"))," (kategorie z logiczna kolejnośćia).
         Ta roznica ma praktyczne konsekwencje.")
     ),
@@ -82,7 +82,7 @@ ch2_ui <- list(
     tagList(
       p("Jak wizualizować zmienne jakościowe? Porównajmy wykres kołowy ze słupkowym
         w trzech scenariuszach -- od latwego do trudnego. Zobaczysz, dlaczego
-        wykres słupkowy jest ", tags$b("zawsze"), " co najmniej tak samo czytelny.")
+        ", gloss("wykres słupkowy"), " jest ", tags$b("zawsze"), " co najmniej tak samo czytelny.")
     ),
 
     # ========================================================================
@@ -234,7 +234,8 @@ ch2_ui <- list(
     lc_h2("ch2-dominanta", "Dominanta (moda)"),
 
     tagList(
-      p(gloss("dominanta", "Dominanta"), " (moda) to jedyna miara tendencji centralnej dla
+      p(gloss("dominanta", "Dominanta"), " (moda) to jedyna ",
+        gloss("miara tendencji centralnej"), " dla
         zmiennych nominalnych. Jest to wartość (kategoria), ktora
         występuje najczęściej w zbiorze danych.")
     ),

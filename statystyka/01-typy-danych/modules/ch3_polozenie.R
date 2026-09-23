@@ -19,7 +19,7 @@ ch3_ui <- list(
     uiOutput("tracker_ch3"),
 
     tagList(
-      p("Zmienne ilościowe wymagają nowych narzędzi. Zanim przejdziemy do
+      p(gloss("zmienna ilościowa", "Zmienne ilościowe"), " wymagają nowych narzędzi. Zanim przejdziemy do
         statystyk, poznajmy podstawową wizualizację — ", gloss("histogram"), ".
         Potem zbadamy miary położenia: ", gloss("średnia", "średnią"), ", ",
         gloss("mediana", "medianę"), " i ", gloss("percentyl", "percentyle"), ".")
@@ -279,10 +279,10 @@ ch3_ui <- list(
     lc_h2("ch3-modalnosc", "Modalność rozkładu — ile „górek” ma histogram?"),
 
     tagList(
-      p("W rozdziale o zmiennych jakościowych poznaliśmy dominantę -- najczęstszą
+      p("W rozdziale o ", gloss("zmienna jakościowa", "zmiennych jakościowych"), " poznaliśmy dominantę -- najczęstszą
         kategorię. Dla danych ciągłych dominanta pojedynczej wartości nie ma sensu
         (prawie każda wartość jest unikatowa). Ale pojęcie ",
-        "mody działa na przedziałach -- szukamy, który bin histogramu jest najwyższy."),
+        gloss("moda", "mody"), " działa na przedziałach -- szukamy, który bin histogramu jest najwyższy."),
       p("Co ważniejsze, rozkład może mieć więcej niż jeden szczyt (modę). To często
         sygnał, że dane pochodzą z kilku różnych grup.")
     ),
