@@ -326,7 +326,69 @@
   "reprezentatywność" =
     "Stopień, w jakim próba odzwierciedla populację; zagrażają jej m.in. niski odsetek odpowiedzi i selekcja.",
   "obciążenie" =
-    "Systematyczne zniekształcenie wyniku w jedną stronę, np. przez dobór próby lub sposób pomiaru."
+    "Systematyczne zniekształcenie wyniku w jedną stronę, np. przez dobór próby lub sposób pomiaru.",
+
+  # Statystyka opisowa (uzupełnienie) -----------------------------------------
+  "zmienna jakościowa" =
+    "Zmienna, której wartości to kategorie (np. płeć, gatunek); dzieli się na nominalne i porządkowe.",
+  "zmienna ilościowa" =
+    "Zmienna, której wartości są liczbami z sensem arytmetycznym (np. wzrost, liczba dzieci); dzieli się na dyskretne i ciągłe.",
+  "liczebność" =
+    "Liczba obserwacji w kategorii lub w całej próbie (częstość bezwzględna).",
+  "tabela częstości" =
+    "Tabela podająca dla każdej kategorii (lub przedziału) liczbę obserwacji i ich odsetek.",
+  "wykres słupkowy" =
+    "Wykres, w którym wysokość słupka pokazuje liczebność lub odsetek każdej kategorii zmiennej jakościowej.",
+  "miara tendencji centralnej" =
+    "Liczba opisująca „typową” wartość w danych, np. średnia, mediana lub dominanta.",
+  "moda" =
+    "Inna nazwa dominanty — wartość lub kategoria występująca najczęściej.",
+
+  # Estymacja i testy (uzupełnienie) ------------------------------------------
+  "przedział Cloppera-Pearsona" =
+    "Dokładny przedział ufności dla proporcji oparty na rozkładzie dwumianowym; konserwatywny, zwykle nieco szerszy niż trzeba.",
+  "korelacja Pearsona" =
+    "Współczynnik r mierzący siłę i kierunek związku liniowego dwóch zmiennych ilościowych; od −1 do +1.",
+  "tau Kendalla" =
+    "Korelacja rangowa oparta na zgodności par obserwacji; alternatywa dla korelacji Spearmana przy małych próbach i wielu remisach.",
+  "test t dla prób zależnych" =
+    "Test t dla par pomiarów (np. przed i po); sprawdza, czy średnia różnic w parach różni się od zera.",
+  "statystyka F" =
+    "Statystyka testowa w ANOVA i regresji: stosunek zmienności wyjaśnionej (między grupami) do niewyjaśnionej (wewnątrz grup).",
+  "test Games-Howella" =
+    "Test post hoc po ANOVA, który nie zakłada równych wariancji ani równych liczebności grup.",
+  "HARKing" =
+    "Formułowanie hipotez po obejrzeniu wyników i przedstawianie ich tak, jakby postawiono je wcześniej (Hypothesizing After the Results are Known).",
+  "niezbalansowane grupy" =
+    "Grupy o bardzo różnej liczebności; utrudniają porównania i obniżają moc testu.",
+
+  # Regresja (uzupełnienie) ---------------------------------------------------
+  "regresja prosta" =
+    "Regresja liniowa z jednym predyktorem: ŷ = b₀ + b₁x.",
+  "heteroskedastyczność" =
+    "Nierówne wariancje — np. rozrzut reszt rośnie wraz z wartością predyktora; przeciwieństwo homoskedastyczności.",
+  "VIF" =
+    "Współczynnik inflacji wariancji — ile razy wariancja współczynnika rośnie przez współliniowość; VIF > 5 to ostrzeżenie, > 10 poważny problem.",
+  "odległość Cooka" =
+    "Miara wpływu pojedynczej obserwacji na model — jak bardzo zmieniłyby się przewidywania po jej usunięciu.",
+  "zbiór treningowy" =
+    "Część danych, na której dopasowujemy model; jego jakość ocenia się potem na zbiorze testowym.",
+  "modele zagnieżdżone" =
+    "Para modeli, z których prostszy powstaje z bardziej złożonego przez usunięcie predyktorów; można je porównać testem F.",
+  "funkcja logistyczna" =
+    "Krzywa w kształcie litery S (sigmoida), która zamienia dowolną liczbę na prawdopodobieństwo z przedziału od 0 do 1.",
+  "próg klasyfikacji" =
+    "Wartość prawdopodobieństwa (np. 0,5), powyżej której model logistyczny przypisuje obserwację do klasy „1”.",
+  "macierz pomyłek" =
+    "Tabela zestawiająca klasy przewidziane przez model z prawdziwymi: trafienia i oba rodzaje błędów.",
+
+  # Dane i metodologia (uzupełnienie) -----------------------------------------
+  "dane eksperymentalne" =
+    "Dane z badania, w którym badacz losowo przydziela warunki; pozwalają wnioskować o przyczynowości.",
+  "dane podłużne" =
+    "Dane z wielokrotnych pomiarów tych samych jednostek w czasie; pokazują zmiany w obrębie jednostek.",
+  "cel badawczy" =
+    "Ogólny cel projektu, z którego wyprowadza się pytania i hipotezy badawcze."
 )
 
 # Wstawia klikalny termin ze słownika.
