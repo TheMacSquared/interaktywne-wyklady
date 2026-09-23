@@ -26,7 +26,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
         wyników egzaminacyjnych. Program będzie kosztować miliardy dolarów."),
       p("Naszym zadaniem jest zbadać na dostępnych danych:"),
       div(class = "lc-feedback lc-feedback-info",
-        tags$strong("Główne pytanie badawcze:"),
+        tags$strong("Główne ", gloss("pytanie badawcze"), ":"),
         p(tags$em("\"Czy zmniejszenie liczby uczniów na nauczyciela (STR)
           faktycznie prowadzi do lepszych wyników, czy też obserwowany
           związek wynika z innych czynników?\"")),
@@ -38,15 +38,15 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     div(class = "lc-prose",
       p(tags$b("Dane:"), " CASchools — 420 dystryktów szkolnych w Kalifornii
         (pakiet AER). Każda obserwacja to jeden dystrykt."),
-      p(tags$b("Zmienna zależna:"), " średni wynik egzaminu = (reading + math) / 2"),
+      p(tags$b(gloss("zmienna zależna", "Zmienna zależna"), ":"), " średni wynik egzaminu = (reading + math) / 2"),
       p(tags$strong("STR:"), " liczba uczniów podzielona przez liczbę nauczycieli w dystrykcie. To przybliżenie warunków nauki, a nie pomiar wielkości pojedynczej klasy.")
     ),
 
     div(class = "lc-feedback lc-feedback-warning",
       tags$strong("Plan analizy:"),
       tags$ol(
-        tags$li("Poznać dane — czym dysponujemy i jakie są potencjalne zmienne zakłócające"),
-        tags$li("Sprawdzić prosty związek STR → wyniki (korelacja, regresja prosta)"),
+        tags$li("Poznać dane — czym dysponujemy i jakie są potencjalne ", gloss("zmienna zakłócająca", "zmienne zakłócające")),
+        tags$li("Sprawdzić prosty związek STR → wyniki (", gloss("korelacja"), ", regresja prosta)"),
         tags$li("Zidentyfikować zmienne zakłócające — co jeszcze wpływa na wyniki i jest skorelowane z STR?"),
         tags$li("Zbudować model wieloraki — czy efekt STR przetrwa kontrolowanie zakłóceń?"),
         tags$li("Odpowiedzieć na pytanie decyzyjne")
@@ -149,7 +149,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     div(class = "lc-feedback lc-feedback-warning",
       tags$strong("Na tym etapie polityk powiedziałby:"),
       p(tags$em("\"Widzicie? Mniejsze klasy = lepsze wyniki! Dajcie mi budżet.\"")),
-      p("Ale my wiemy, że to może być pozorna korelacja.
+      p("Ale my wiemy, że to może być ", gloss("korelacja pozorna", "pozorna korelacja"), ".
         Włączmy kolorowanie wg biedy — widać, że biedne dystrykty (czerwone)
         skupiają się w prawym dolnym rogu (duże klasy, niskie wyniki).
         Bieda może tłumaczyć oba zjawiska.")
@@ -211,7 +211,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     ),
 
     div(class = "lc-feedback lc-feedback-info",
-      tags$strong("Wynik ANOVA potwierdza:"),
+      tags$strong("Wynik ", gloss("ANOVA"), " potwierdza:"),
       " grupy różniące się sytuacją materialną mają bardzo różne wyniki — różnica
         to ~30 punktów. To wielokrotnie więcej niż cały zakres STR."
     ),
@@ -223,8 +223,8 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
 
     div(class = "analysis-step",
       span(class = "step-number", "4"),
-      "Budujemy modele regresji, stopniowo dodając zmienne kontrolne.
-                   Obserwujemy, co dzieje się z współczynnikiem STR."
+      "Budujemy modele regresji, stopniowo dodając ", gloss("zmienna kontrolna", "zmienne kontrolne"), ".
+                   Obserwujemy, co dzieje się z ", gloss("współczynnik regresji", "współczynnikiem"), " STR."
     ),
 
     div(class = "lc-prose",
@@ -259,7 +259,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     div(class = "analysis-step",
       span(class = "step-number", "5"),
       "Zbadajmy szczegółowo najlepszy model.
-                   Możesz sam wybrać predyktory."
+                   Możesz sam wybrać ", gloss("predyktor", "predyktory"), "."
     ),
 
     div(class = "lc-figure-panel",
@@ -292,7 +292,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
       tags$strong("Eksperymentuj:"),
       tags$ul(
         tags$li("Dodaj ", tags$b("lunch"), " do modelu z income — co się stanie?
-                 (Współliniowość! Oba mierzą biedę.)"),
+                 (", gloss("współliniowość", "Współliniowość"), "! Oba mierzą biedę.)"),
         tags$li("Usuń income — jak zmieni się β przy STR?"),
         tags$li("Dodaj expenditure — czy wydatki mają efekt po kontroli biedy?")
       )
@@ -340,16 +340,16 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     div(class = "lc-feedback lc-feedback-danger",
       tags$strong("Ograniczenia naszej analizy:"),
       tags$ul(
-        tags$li(tags$b("Dane obserwacyjne, nie eksperymentalne"),
-                " — nie możemy orzekać o przyczynowości.
-                  Może istnieją pominięte zmienne (np. jakość nauczycieli)."),
+        tags$li(tags$b(gloss("dane obserwacyjne", "Dane obserwacyjne"), ", nie eksperymentalne"),
+                " — nie możemy orzekać o ", gloss("przyczynowość", "przyczynowości"), ".
+                  Może istnieją ", gloss("zmienna pominięta", "pominięte zmienne"), " (np. jakość nauczycieli)."),
         tags$li(tags$b("Dane zagregowane na poziomie dystryktu"),
                 " — tracimy zmienność między szkołami wewnątrz dystryktu.
-                  Błąd ekologiczny."),
+                  ", gloss("błąd ekologiczny", "Błąd ekologiczny"), "."),
         tags$li(tags$b("Współliniowość"),
                 " — lunch, income, calworks mierzą to samo (biedę).
                   Nie powinny być w modelu jednocześnie."),
-        tags$li(tags$b("Przekrojowe, nie podłużne"),
+        tags$li(tags$b(gloss("dane przekrojowe", "Przekrojowe"), ", nie podłużne"),
                 " — widzimy jeden moment, nie zmiany w czasie.
                   Nie wiemy, czy dystrykty które zmniejszyły klasy, poprawiły wyniki.")
       ),
