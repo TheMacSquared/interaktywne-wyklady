@@ -40,7 +40,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
           h4("Interpretacja celu"),
           p("Zbierz tropy razem i napisz, co cała wiązka mówi o głównym ", gloss("pytanie badawcze", "pytaniu badawczym"), "."),
           div(class = "proposal-example",
-            p(tags$strong("U nas: "), "ocena z ankiety wygląda raczej jak ", gloss("wskaźnik"), "
+            p(tags$strong("U nas: "), "ocena z ankiety wygląda raczej jak wskaźnik
               mieszany niż czysta miara jakości nauczania.")
           )
         )

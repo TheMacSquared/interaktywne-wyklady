@@ -268,7 +268,7 @@ ch8_ui <- list(
 
     lc_feedback(type = "danger",
       tags$ul(
-        tags$li(tags$b(gloss("p-hacking", "P-hacking"), ":"),
+        tags$li(tags$b("P-hacking:"),
                 " próbowanie testu aż wyjdzie p < 0.05 (parametryczny → nieparametryczny → usuwanie \"outlierów\" → zmiana hipotezy).
                  To nie jest analiza — to wyszukiwanie szumu. Analiza powinna być zaplanowana ", tags$em("przed"),
                 " patrzeniem na wyniki."),

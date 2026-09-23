@@ -314,7 +314,7 @@ ch2h_ui <- list(
           i wartość odniesienia — inaczej nie da się jej sprawdzić danymi."
         ),
         tags$li(
-          tags$b("Zmiana hipotezy po zobaczeniu danych (", gloss("HARKing"), ")."),
+          tags$b("Zmiana hipotezy po zobaczeniu danych (HARKing)."),
           " Hipotezy formułujemy ", tags$em("przed"), " analizą, nie po.
           Dopasowywanie H₀/Hₐ do wyniku jest intelektualnym oszustwem."
         ),

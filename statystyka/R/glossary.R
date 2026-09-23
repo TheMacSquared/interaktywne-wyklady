@@ -201,8 +201,6 @@
     "Zmienna powiązana zarówno z predyktorem, jak i z wynikiem; może tworzyć albo maskować pozorny związek między nimi.",
   "korelacja pozorna" =
     "Związek dwóch zmiennych, który nie wynika z ich wzajemnej zależności, lecz np. ze wspólnej zmiennej zakłócającej.",
-  "p-hacking" =
-    "Przeliczanie analizy na różne sposoby (inne testy, podzbiory, zmienne) aż do uzyskania p < 0,05.",
 
   # Założenia i testy nieparametryczne (W05) ----------------------------------
   "wykres kwantyl-kwantyl" =
@@ -297,10 +295,6 @@
     "Regularnie powtarzający się wzór w szeregu czasowym (np. tygodniowy lub roczny).",
   "skala Likerta" =
     "Skala ocen o kilku uporządkowanych poziomach (np. od „zdecydowanie się nie zgadzam” do „zdecydowanie się zgadzam”); daje dane porządkowe.",
-  "pilotaż" =
-    "Wstępne przetestowanie ankiety lub procedury na małej grupie, by wyłapać problemy przed właściwym badaniem.",
-  "zmienna zastępcza" =
-    "Proxy — zmienna mierząca pośrednio pojęcie, którego nie da się zmierzyć wprost (np. darmowy lunch jako wskaźnik biedy).",
   "zmienna kontrolna" =
     "Zmienna dodana do modelu, by oddzielić jej wpływ od związku, który nas interesuje.",
   "zmienna pominięta" =
@@ -311,14 +305,10 @@
     "Związek, w którym zmiana jednej zmiennej powoduje zmianę drugiej; wymaga eksperymentu albo silnych założeń.",
   "dane przekrojowe" =
     "Dane z jednego momentu dla wielu jednostek; w przeciwieństwie do danych podłużnych nie pokazują zmian w czasie.",
-  "błąd ekologiczny" =
-    "Wnioskowanie o jednostkach (np. uczniach) na podstawie danych zagregowanych dla grup (np. okręgów szkolnych).",
   "pytanie badawcze" =
     "Jedno główne pytanie, które da się rozważyć na danych i które porządkuje cały projekt.",
   "hipoteza badawcza" =
     "Robocze przypuszczenie o związku między zmiennymi; można je zawęzić lub odrzucić w toku analizy.",
-  "wskaźnik" =
-    "Konkretna, mierzalna miara pojęcia (np. średnia ocena kursu jako wskaźnik jego jakości).",
   "reprezentatywność" =
     "Stopień, w jakim próba odzwierciedla populację; zagrażają jej m.in. niski odsetek odpowiedzi i selekcja.",
   "obciążenie" =
@@ -353,8 +343,6 @@
     "Statystyka testowa w ANOVA i regresji: stosunek zmienności wyjaśnionej (między grupami) do niewyjaśnionej (wewnątrz grup).",
   "test Games-Howella" =
     "Test post hoc po ANOVA, który nie zakłada równych wariancji ani równych liczebności grup.",
-  "HARKing" =
-    "Formułowanie hipotez po obejrzeniu wyników i przedstawianie ich tak, jakby postawiono je wcześniej (Hypothesizing After the Results are Known).",
   "niezbalansowane grupy" =
     "Grupy o bardzo różnej liczebności; utrudniają porównania i obniżają moc testu.",
 

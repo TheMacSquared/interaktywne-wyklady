@@ -345,7 +345,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
                   Może istnieją ", gloss("zmienna pominięta", "pominięte zmienne"), " (np. jakość nauczycieli)."),
         tags$li(tags$b("Dane zagregowane na poziomie dystryktu"),
                 " — tracimy zmienność między szkołami wewnątrz dystryktu.
-                  ", gloss("błąd ekologiczny", "Błąd ekologiczny"), "."),
+                  Błąd ekologiczny."),
         tags$li(tags$b("Współliniowość"),
                 " — lunch, income, calworks mierzą to samo (biedę).
                   Nie powinny być w modelu jednocześnie."),

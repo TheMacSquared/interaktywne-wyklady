@@ -29,7 +29,7 @@ ch2_ui <- list(
       ),
       p("Zadanie statystyka: przełożyć to na formalną hipotezę i dodać kontekst —
         typowy to ile? Mamy wartość referencyjną
-        z ", gloss("pilotaż", "pilotażu"), ": średni wynik testu koncentracji w populacji = 70 pkt."),
+        z pilotażu: średni wynik testu koncentracji w populacji = 70 pkt."),
       p("Pytanie potoczne zamienia się w jedną z trzech par hipotez
         — zależnie od tego, w którą stronę pytamy:"),
       lc_formula_box(

@@ -48,7 +48,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
       tags$br(),
       "2. Rozróżnij zmienne analizowane od informacyjnych (wiek → liczba, nie tekst)",
       tags$br(),
-      "3. ", gloss("pilotaż", "Pilotaż"), " formularza (przetestuj na 5 osobach przed uruchomieniem)",
+      "3. Pilotaż formularza (przetestuj na 5 osobach przed uruchomieniem)",
       tags$br(),
       "4. Jasna instrukcja (np. 'podaj lata doświadczenia jako liczbę')"
     ),

@@ -88,7 +88,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
         Wiek wiąże się silnie z atrakcyjnością (|r| = 0,30), ale słabo z oceną
         (|r| = 0,05) — według reguły „nie zakłóca\". A jednak to podpowiada coś
         istotnego: ocena atrakcyjności może częściowo mierzyć wiek, czyli być
-        jego ", tags$em(gloss("zmienna zastępcza", "proxy")), ". Pytanie „czy uroda wpływa na ocenę, czy jest
+        jego ", tags$em("proxy"), ". Pytanie „czy uroda wpływa na ocenę, czy jest
         tylko zasłoną dla wieku?\" zostaje otwarte — i jest dobrym tematem na
         model kontrolny.")
     ),

@@ -135,7 +135,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
         tags$strong("Problem:"), " R/jamovi nie wie, co zrobić z '3-4h' albo 'dobrze'. ",
         "Czyszczenie jest możliwe, ale tracimy dużo danych (NA).",
         tags$br(),
-        tags$strong("Zasada:"), " Zamknięte pytania + spójne skale + ", gloss("pilotaż"), " ankiety."
+        tags$strong("Zasada:"), " Zamknięte pytania + spójne skale + pilotaż ankiety."
       )
     ),
 
