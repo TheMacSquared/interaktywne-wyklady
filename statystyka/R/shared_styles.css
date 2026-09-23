@@ -1862,7 +1862,6 @@ mjx-container mjx-text {
   cursor: pointer;
   border-bottom: 1.5px dashed var(--upwr-accent);
   color: inherit;
-  white-space: nowrap;
 }
 
 .lc-gloss:hover {
