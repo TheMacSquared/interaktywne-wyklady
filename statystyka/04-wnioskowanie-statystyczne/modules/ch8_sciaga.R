@@ -37,13 +37,13 @@ ch8_ui <- list(
         tags$li(tags$b("Ilościowa + ilościowa"), " → Pearson / Spearman"),
         tags$li(tags$b("Jakościowa + jakościowa"), " → χ² niezależności / Fisher"),
         tags$li(tags$b("Ilościowa + jakościowa (2 grupy)"), " → Krok 3"),
-        tags$li(tags$b("Ilościowa + jakościowa (3+ grup)"), " → ANOVA + post-hoc Games-Howell")
+        tags$li(tags$b("Ilościowa + jakościowa (3+ grup)"), " → ANOVA + post-hoc ", gloss("test Games-Howella", "Games-Howell"))
       ),
 
       tags$strong("Krok 3:"), " Próby niezależne czy sparowane?",
       tags$ul(
         tags$li(tags$b("Niezależne"), " → test t niezależny"),
-        tags$li(tags$b("Sparowane"), " → test t dla danych sparowanych")
+        tags$li(tags$b("Sparowane"), " → ", gloss("test t dla prób zależnych", "test t dla danych sparowanych"))
       )
     ),
 
@@ -110,8 +110,8 @@ ch8_ui <- list(
 
     lc_feedback(type = "info",
       tags$strong("Uwaga: "),
-      "gdy dane mocno naruszają założenia testów parametrycznych (skrajna skośność,
-       małe n, dane porządkowe), stosuje się testy nieparametryczne (Mann-Whitney, Wilcoxon,
+      "gdy dane mocno naruszają założenia ", gloss("test parametryczny", "testów parametrycznych"), " (skrajna skośność,
+       małe n, dane porządkowe), stosuje się ", gloss("test nieparametryczny", "testy nieparametryczne"), " (Mann-Whitney, Wilcoxon,
        Kruskal-Wallis). Omówimy je w osobnym wykładzie."
     ),
 
@@ -268,17 +268,17 @@ ch8_ui <- list(
 
     lc_feedback(type = "danger",
       tags$ul(
-        tags$li(tags$b("P-hacking:"),
+        tags$li(tags$b(gloss("p-hacking", "P-hacking"), ":"),
                 " próbowanie testu aż wyjdzie p < 0.05 (parametryczny → nieparametryczny → usuwanie \"outlierów\" → zmiana hipotezy).
                  To nie jest analiza — to wyszukiwanie szumu. Analiza powinna być zaplanowana ", tags$em("przed"),
                 " patrzeniem na wyniki."),
-        tags$li(tags$b("Wielokrotne porównania:"),
+        tags$li(tags$b(gloss("porównania wielokrotne", "Wielokrotne porównania"), ":"),
                 " testujesz 4 metody pasteryzacji mleka → masz 6 par. Bez korekcji ryzyko co najmniej jednego fałszywego alarmu rośnie do ~26% (zamiast 5%).
                  Dlatego po ANOVA stosuje się Games-Howell."),
         tags$li(tags$b("Brak istotności ≠ brak efektu:"),
                 " często znaczy po prostu \"za mało danych, żeby to zobaczyć\".
                  Sprawdź wielkość efektu i szerokość przedziału ufności — jeśli CI jest bardzo szeroki, wynik jest niepewny."),
-        tags$li(tags$b("Istotność statystyczna ≠ istotność praktyczna:"),
+        tags$li(tags$b("Istotność statystyczna ≠ ", gloss("istotność praktyczna"), ":"),
                 " przy n = 10 000 nawet różnica 0.01 pH może być istotna — ale technologicznie nic nie znaczy.
                  Zawsze raportuj p ", tags$b("i"), " wielkość efektu (d, η², V).")
       )

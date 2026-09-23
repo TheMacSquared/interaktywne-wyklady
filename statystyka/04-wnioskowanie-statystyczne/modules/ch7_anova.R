@@ -73,7 +73,7 @@ ch7_ui <- list(
       p("ANOVA działa dzięki dekompozycji ", gloss("wariancja", "wariancji"), ":
         całkowitą zmienność danych dzieli na dwie części — zmienność ",
         tags$em("między"), " grupami (różnice średnich) i zmienność ",
-        tags$em("wewnątrz"), " grup (naturalne rozrzuty). Statystyka F porównuje te dwie części:"),
+        tags$em("wewnątrz"), " grup (naturalne rozrzuty). ", gloss("statystyka F", "Statystyka F"), " porównuje te dwie części:"),
       p("Duże F = różnice między grupami są większe niż moglibyśmy oczekiwać z samego
         wewnątrzgrupowego szumu. Jeśli F jest dostatecznie duże, p-wartość spada poniżej α
         i odrzucamy H₀. Odrzucenie mówi, że ", tags$em("co najmniej jedna"),
@@ -161,7 +161,7 @@ ch7_ui <- list(
       p("ANOVA mówi „grupy różnią się”, ale nie mówi „które”. Wracamy więc
         do porównań parami — ale tym razem z kontrolowanym ryzykiem fałszywego alarmu
         na poziomie całej rodziny testów, a nie pojedynczego testu."),
-      p("Games-Howell porównuje każdą parę grup z korektą na ",
+      p(gloss("test Games-Howella", "Games-Howell"), " porównuje każdą parę grup z korektą na ",
         gloss("porównania wielokrotne", "wielokrotne porównania"), " — trzyma ryzyko ",
         gloss("błąd pierwszego rodzaju", "błędu I rodzaju"), " na 5% dla całej rodziny",
         " porównań, niezależnie od liczby par. Dodatkowo nie wymaga równych wariancji

@@ -138,7 +138,7 @@ ch10_ui <- list(
     lc_h2("ch10-r", "r — korelacja Pearsona"),
 
     tagList(
-      p("Współczynnik korelacji Pearsona ", withMathJax("\\(r\\)"),
+      p("Współczynnik ", gloss("korelacja Pearsona", "korelacji Pearsona"), " ", withMathJax("\\(r\\)"),
         " jest jednocześnie statystyką testową i miarą ", gloss("wielkość efektu", "siły efektu"), ".
         Przyjmuje wartości od −1 do +1, więc od razu widać skalę zależności."),
       lc_formula_box(
@@ -200,7 +200,7 @@ ch10_ui <- list(
     lc_h2("ch10-cramers-v", "Cramér's V — test chi kwadrat"),
 
     tagList(
-      p("Dla zmiennych jakościowych χ² mówi, czy są powiązane,
+      p("Dla ", gloss("zmienna jakościowa", "zmiennych jakościowych"), " χ² mówi, czy są powiązane,
         ale jego wartość bezwzględna rośnie wraz z n i rozmiarem tabeli — sam χ²
         nie jest porównywalny między badaniami. ", gloss("V Cramera", "Cramér's V"), " normalizuje χ² do
         przedziału [0, 1] i nie zależy od n."),

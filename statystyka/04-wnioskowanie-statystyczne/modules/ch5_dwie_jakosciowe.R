@@ -22,7 +22,7 @@ ch5_ui <- list(
     lc_h2("ch5-intro", "Tabela kontyngencji i test χ²"),
 
     tagList(
-      p("Gdy mamy dwie zmienne jakościowe, pytamy: czy są ze sobą powiązane?",
+      p("Gdy mamy dwie ", gloss("zmienna jakościowa", "zmienne jakościowe"), ", pytamy: czy są ze sobą powiązane?",
         " Narzędzie: ", gloss("tabela kontyngencji"), " (krzyżowa) + ",
         gloss("test chi-kwadrat", "test χ²"), " niezależności."),
       p("Idea: porównujemy to, co zaobserwowaliśmy",

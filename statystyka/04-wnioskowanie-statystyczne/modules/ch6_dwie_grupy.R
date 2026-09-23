@@ -132,8 +132,8 @@ ch6_ui <- list(
 
     tagList(
       p("Gdy mierzymy tych samych osobników dwa razy
-        (przed i po interwencji), używamy ", gloss("test t", "testu t"), " dla ",
-        gloss("próby zależne", "danych sparowanych"), "."),
+        (przed i po interwencji), używamy ",
+        gloss("test t dla prób zależnych", "testu t dla danych sparowanych"), "."),
       p("Przykład: wyniki studentów przed i po korepetycjach."),
       p("Testujemy różnice: ", withMathJax("\\(d_i = x_{\\text{po},i} - x_{\\text{przed},i}\\)"),
         ". Pytamy, czy średnia różnic ≠ 0.")

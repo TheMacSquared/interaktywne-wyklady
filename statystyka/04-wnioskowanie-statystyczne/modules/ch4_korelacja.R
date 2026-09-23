@@ -22,8 +22,8 @@ ch4_ui <- list(
     lc_h2("ch4-pearson", "Współczynnik korelacji Pearsona"),
 
     tagList(
-      p("Współczynnik ", gloss("korelacja", "korelacji"), " Pearsona ", withMathJax("\\(r\\)"),
-        " mierzy siłę i kierunek liniowego związku między dwiema zmiennymi ilościowymi."),
+      p("Współczynnik ", gloss("korelacja Pearsona", "korelacji Pearsona"), " ", withMathJax("\\(r\\)"),
+        " mierzy siłę i kierunek liniowego związku między dwiema ", gloss("zmienna ilościowa", "zmiennymi ilościowymi"), "."),
       p("Przyjmuje wartości od −1 do +1:"),
       tags$ul(
         tags$li(tags$b("r = +1"), " — doskonała korelacja dodatnia (wzrost jednej = wzrost drugiej)"),

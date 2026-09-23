@@ -157,8 +157,8 @@ ch2_ui <- list(
       label = "Co zrobiliśmy?",
       tagList(
         tags$ol(
-          tags$li("Zebraliśmy dane (próbę)"),
-          tags$li("Obliczyliśmy średnią i odchylenie standardowe"),
+          tags$li("Zebraliśmy dane (", gloss("próba", "próbę"), ")"),
+          tags$li("Obliczyliśmy średnią i ", gloss("odchylenie standardowe")),
           tags$li("Policzyliśmy, jak daleko średnia z próby jest od μ₀ — to statystyka t"),
           tags$li("Sprawdziliśmy, czy taka wartość t jest zaskakująca (p-wartość)")
         ),
