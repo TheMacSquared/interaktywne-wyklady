@@ -62,7 +62,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
         div(
           h4("Plan interpretacji"),
           p("Co opiszemy, co porównamy, które zmienne uwzględnimy jako kontekst
-            i jak ostrożnie połączymy wyniki z celem badania.")
+            i jak ostrożnie połączymy wyniki z ", gloss("cel badawczy", "celem badania"), ".")
         )
       )
     ),

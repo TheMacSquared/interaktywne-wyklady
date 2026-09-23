@@ -15,7 +15,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
         informacji o kontekście zajęć. To nie jest jeszcze projekt badawczy.
         To dopiero materiał, z którego można zbudować kilka różnych historii."),
       p("Dzisiejsze ćwiczenie polega na tym, żeby zobaczyć, jak z luźnej ciekawości
-        powstaje jeden cel badawczy, z celu wiązka ", gloss("hipoteza badawcza", "hipotez"), ", a z hipotez plan analizy.
+        powstaje jeden ", gloss("cel badawczy"), ", z celu wiązka ", gloss("hipoteza badawcza", "hipotez"), ", a z hipotez plan analizy.
         Ten sam cel i tę samą wiązkę będziemy ciągnąć przez cały wykład.")
     ),
 

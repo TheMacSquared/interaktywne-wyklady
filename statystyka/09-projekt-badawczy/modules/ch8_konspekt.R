@@ -81,7 +81,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
     div(class = "lc-figure-panel",
       h4("Tak wygląda domknięty projekt: cel + wiązka + werdykty"),
       div(class = "lc-prose",
-        p("Cała droga w jednym kadrze: cel badawczy, tropy, dane i ostrożne werdykty.
+        p("Cała droga w jednym kadrze: ", gloss("cel badawczy"), ", tropy, dane i ostrożne werdykty.
           Wasz raport ma wracać do konspektu, który powstał przed analizą.")
       ),
       tr_board_ui(reveal = tr_trop_order, show_verdict = TRUE)

@@ -73,8 +73,8 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
 
     lc_feedback(
       tags$p(tags$strong("Jeśli efekt beauty przeżywa kontrolę, rodzi to kolejne pytanie:")),
-      tags$p("Czy to przyczynowość? Czy atrakcyjność powoduje wyższe oceny, czy tylko z nimi współwystępuje?"),
-      tags$p("Dane obserwacyjne nie odpowiedzą na to pytanie — pokazują współwystępowanie, nie przyczynę. To granica, której ten zbiór nie przekroczy, i trzeba ją uczciwie zapisać we wniosku."),
+      tags$p("Czy to ", gloss("przyczynowość"), "? Czy atrakcyjność powoduje wyższe oceny, czy tylko z nimi współwystępuje?"),
+      tags$p(gloss("dane obserwacyjne", "Dane obserwacyjne"), " nie odpowiedzą na to pytanie — pokazują współwystępowanie, nie przyczynę. To granica, której ten zbiór nie przekroczy, i trzeba ją uczciwie zapisać we wniosku."),
       type = "warning"
     ),
 
