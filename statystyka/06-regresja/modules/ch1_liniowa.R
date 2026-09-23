@@ -57,15 +57,15 @@ ch1_ui <- list(
         jednostkę? Korelacja sama z siebie tego nie odpowie; potrzebujemy modelu,
         który da konkretne liczby — i pozwoli przewidywać Y dla nowych X."),
       p("Najprostszy taki model to linia prosta. Zanim ją jednak narysujemy,
-        zawsze warto najpierw rzucić okiem na wykres rozrzutu: regresja liniowa
+        zawsze warto najpierw rzucić okiem na wykres rozrzutu: ", gloss("regresja liniowa"), "
         ma sens dopiero wtedy, gdy chmura punktów układa się w przybliżeniu
         wzdłuż prostej. Jeśli widać krzywiznę albo dwie chmury, prosta będzie
         kłamać niezależnie od tego, jak ładnie policzą się współczynniki."),
       p("Formalnie regresja liniowa prosta zapisuje związek X → Y tak:"),
       lc_formula_box(
         withMathJax(helpText("$$Y = \\beta_0 + \\beta_1 X + \\varepsilon$$")),
-        p(withMathJax("\\(\\beta_0\\)"), " — wyraz wolny (intercept): wartość Y gdy X = 0"),
-        p(withMathJax("\\(\\beta_1\\)"), " — nachylenie (slope): o ile zmieni się Y, gdy X wzrośnie o 1"),
+        p(withMathJax("\\(\\beta_0\\)"), " — ", gloss("wyraz wolny"), " (intercept): wartość Y gdy X = 0"),
+        p(withMathJax("\\(\\beta_1\\)"), " — ", gloss("współczynnik regresji", "nachylenie"), " (slope): o ile zmieni się Y, gdy X wzrośnie o 1"),
         p(withMathJax("\\(\\varepsilon\\)"), " — błąd losowy (reszty)")
       ),
       p("Greckie litery ", withMathJax("\\(\\beta_0, \\beta_1\\)"),
@@ -142,7 +142,7 @@ ch1_ui <- list(
       p("Recepta jest więc prosta: jedno r, dwa odchylenia standardowe i dwie
         średnie wystarczą, żeby wyznaczyć linię. W rzeczywistej pracy nikt nie
         robi tego ręcznie — wpisujemy do R jedną komendę i dostajemy gotową
-        tabelę regresji: kolumny z estymatorami, błędami standardowymi, statystykami t i
+        tabelę regresji: kolumny z estymatorami, ", gloss("błąd standardowy", "błędami standardowymi"), ", statystykami t i
         p-value. Cały dalszy rozdział będzie ćwiczeniem w odczytywaniu właśnie
         takich tabel."),
       p("Zacznijmy od najprostszego ruchu: dostajesz tabelę z dwiema liczbami
@@ -182,7 +182,7 @@ ch1_ui <- list(
         pytanie o krok wstecz: skąd komputer wziął te dwie liczby?
         Spośród nieskończenie wielu prostych, które dałoby się przeciągnąć
         przez chmurę punktów, musi wybrać jedną. Według jakiego kryterium?"),
-      p("Zasada nazywa się ", tags$em("metodą najmniejszych kwadratów (MNK / OLS)"),
+      p("Zasada nazywa się ", tags$em(gloss("metoda najmniejszych kwadratów", "metodą najmniejszych kwadratów"), " (MNK / OLS)"),
         ": wybieramy taką prostą, która minimalizuje sumę kwadratów pionowych
         odległości między punktami a linią. Następny widget rozkłada ten pomysł
         na sześć kroków.")
@@ -224,7 +224,7 @@ ch1_ui <- list(
 
     tagList(
       p("Te pionowe odcinki, które pojawiły się w kroku 4, mają swoją nazwę:
-        to reszty. Każda obserwacja ma własną resztę — różnicę między tym, co
+        to ", gloss("reszta", "reszty"), ". Każda obserwacja ma własną resztę — różnicę między tym, co
         zobaczyliśmy, a tym, co przewiduje model:"),
       lc_formula_box(
         withMathJax(helpText("$$e_i = y_i - \\hat{y}_i$$"))
@@ -267,7 +267,7 @@ ch1_ui <- list(
         " ma swój brat-cień: błąd standardowy ",
         withMathJax("\\(SE(b_1)\\)"),
         ", który mierzy, jak bardzo nasza estymata mogłaby się chwiać między
-        próbami. Statystyka testowa jest właściwie ilorazem — ",
+        próbami. ", gloss("statystyka testowa", "Statystyka testowa"), " jest właściwie ilorazem — ",
         withMathJax("\\(t = b_1 / SE(b_1)\\)"),
         " — i mówi, ", tags$em("ile błędów standardowych"),
         " dzieli nasze nachylenie od zera. Im dalej, tym mniej prawdopodobne,
@@ -374,7 +374,7 @@ ch1_ui <- list(
         zastosowanie, równie ważne: przewidywanie. Skoro mamy równanie ",
         withMathJax("\\(\\hat{Y} = b_0 + b_1 X\\)"),
         ", możemy podstawić dowolne X i odczytać oczekiwane Y."),
-      p("Trzeba tylko pamiętać, co ta liczba znaczy: predykcja to średnia warunkowa
+      p("Trzeba tylko pamiętać, co ta liczba znaczy: ", gloss("wartość przewidywana", "predykcja"), " to średnia warunkowa
         — najlepszy strzał w Y dla okręgów o danym X, ", tags$em("nie"),
         " obietnica konkretnej wartości. Jeśli dla okręgu o dochodzie 20 tys.
         USD model daje ", withMathJax("\\(\\hat{Y} = 658\\)"),

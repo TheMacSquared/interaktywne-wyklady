@@ -49,8 +49,9 @@ ch0_map_ui <- list(
 
     p(
       "Kręgosłup prowadzi od pytania i modelu liniowego, przez czytanie outputu,",
-      "jakość dopasowania i model wieloraki, aż do porównania modeli oraz",
-      "regresji logistycznej. Pingwiny pojawiają się tylko tam, gdzie naturalne",
+      "jakość dopasowania i model wieloraki, aż do porównania modeli oraz ",
+      gloss("regresja logistyczna", "regresji logistycznej"),
+      ". Pingwiny pojawiają się tylko tam, gdzie naturalne",
       "grupy szczególnie dobrze pokazują kontekst, zmienne jakościowe i interakcje."
     ),
 

@@ -38,8 +38,9 @@ ch3b_ui <- list(
     p(
       "Po połączeniu trzech gatunków długość i wysokość dzioba wydają się",
       "związane ujemnie. Po rozdzieleniu gatunków relacja wewnątrz grup zmienia",
-      "kierunek. Nie jest to sztuczka wykresu — gatunek jest pominiętą zmienną",
-      "opisującą różne populacje."
+      "kierunek. Nie jest to sztuczka wykresu — gatunek jest ",
+      gloss("zmienna pominięta", "pominiętą zmienną"),
+      " opisującą różne populacje."
     ),
 
     figure_panel(
@@ -81,8 +82,9 @@ ch3b_ui <- list(
     lc_h2("ch3b-kategoria", "Predyktor jakościowy w równaniu"),
 
     p(
-      "Gatunek nie ma sensownej jednostki liczbowej. Model tworzy więc zmienne",
-      "wskaźnikowe i porównuje każdy gatunek z poziomem odniesienia. Tutaj",
+      "Gatunek nie ma sensownej jednostki liczbowej. Model tworzy więc ",
+      gloss("zmienna wskaźnikowa", "zmienne wskaźnikowe"),
+      " i porównuje każdy gatunek z poziomem odniesienia. Tutaj",
       "poziomem odniesienia jest Adelie."
     ),
 
@@ -99,7 +101,8 @@ ch3b_ui <- list(
     lc_h2("ch3b-interakcja", "Czy nachylenie zależy od gatunku?"),
 
     p(
-      "Interakcja odpowiada na pytanie, czy dodatkowy milimetr płetwy ma taki",
+      gloss("interakcja", "Interakcja"),
+      " odpowiada na pytanie, czy dodatkowy milimetr płetwy ma taki",
       "sam związek z masą ciała u każdego gatunku. To pytanie o mechanizm,",
       "a nie obowiązkowy sposób poprawiania dopasowania."
     ),

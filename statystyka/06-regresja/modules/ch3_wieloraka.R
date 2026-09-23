@@ -19,7 +19,7 @@ ch3_ui <- list(
     tagList(
       p("W rozdziale 1 mieliśmy jedno X. W rozdziale 2 nauczyliśmy się
         oceniać, ", tags$em("czy"), " dany model jest dobry — reszty, R², RMSE.
-        Realne dane mają jednak wiele predyktorów naraz i czasem dopiero
+        Realne dane mają jednak wiele ", gloss("predyktor", "predyktorów"), " naraz i czasem dopiero
         zobaczenie ich razem zmienia obraz."),
       p("Klasyczny przykład: w danych CASchools wyniki uczniów rosną wraz
         z wydatkami na ucznia. Brzmi prosto — ale wydatki są skorelowane
@@ -31,7 +31,7 @@ ch3_ui <- list(
     lc_h2("ch3-wiele-predyktorow", "Wiele predyktorów naraz"),
 
     tagList(
-      p("Regresja wieloraka rozszerza model o k predyktorów:"),
+      p(gloss("regresja wieloraka", "Regresja wieloraka"), " rozszerza model o k predyktorów:"),
       lc_formula_box(
         withMathJax(helpText(
           "$$Y = \\beta_0 + \\beta_1 X_1 + \\beta_2 X_2 + \\ldots + \\beta_k X_k + \\varepsilon$$"
@@ -53,10 +53,10 @@ ch3_ui <- list(
         w zależności od cech okręgu. Wybierz, które predyktory dodać — i zwróć
         uwagę nie tylko na same liczby w tabeli, ale na to, jak zmienia się ",
         tags$em("znak"), " i ", tags$em("istotność"),
-        " współczynnika, gdy dokładamy kolejny X."),
-      p("To są dane obserwacyjne, więc nie oczekujemy czystej sytuacji
+        " ", gloss("współczynnik regresji", "współczynnika"), ", gdy dokładamy kolejny X."),
+      p("To są ", gloss("dane obserwacyjne"), ", więc nie oczekujemy czystej sytuacji
         laboratoryjnej. Część zmiennych będzie wyraźna, część nieistotna,
-        a część może działać inaczej w różnych podgrupach. Interakcje
+        a część może działać inaczej w różnych podgrupach. ", gloss("interakcja", "Interakcje"), "
         na razie świadomie ignorujemy — najpierw uczymy się modelu
         addytywnego: każdy predyktor wnosi własny składnik.")
     ),
@@ -145,7 +145,7 @@ ch3_ui <- list(
     inline_callout(label = "Uwaga", color = "uwaga",
       "Współczynnik tej samej zmiennej w modelu prostym i wielorakim może
        być zupełnie różny — czasem nawet przeciwnego znaku. To zjawisko
-       nazywa się paradoksem Simpsona i jest jedną z głównych motywacji
+       nazywa się ", gloss("paradoks Simpsona", "paradoksem Simpsona"), " i jest jedną z głównych motywacji
        do używania regresji wielorakiej."
     ),
 

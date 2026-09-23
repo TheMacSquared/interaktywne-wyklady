@@ -107,7 +107,7 @@ ch2_ui <- list(
     lc_h2("ch2-reszty", "Wzorzec reszt: kiedy linia kłamie"),
 
     tagList(
-      p("W rozdziale 1 reszty pojawiły się jako pojęcie pomocnicze:
+      p("W rozdziale 1 ", gloss("reszta", "reszty"), " pojawiły się jako pojęcie pomocnicze:
         coś, co MNK ", tags$em("kwadratuje"),
         ", żeby znaleźć najlepszą prostą. Teraz reszty stają się głównym
         bohaterem. Patrzymy w nie, żeby zobaczyć, ", tags$em("czego model
@@ -121,7 +121,7 @@ ch2_ui <- list(
                  X i zawyża w innym."),
         tags$li("Wachlarz (lejek): wariancja Y zmienia się z X. Tam, gdzie X duże, punkty są
                  bardziej rozproszone niż tam, gdzie X małe. Łamie to założenie
-                 stałej wariancji (homoskedastyczności)."),
+                 stałej wariancji (", gloss("homoskedastyczność", "homoskedastyczności"), ")."),
         tags$li("Pojedynczy odstający: kropka na wykresie reszt daleko od reszty chmury — to obserwacja,
                  która ", tags$em("ciągnie"), " linię na siebie.")
       ),
@@ -130,7 +130,7 @@ ch2_ui <- list(
         withMathJax("\\(e_i = y_i - \\hat{y}_i\\)"),
         ". Jeśli chmura nie ma struktury — model się nadaje. Jeśli ma —
         sygnał, że trzeba coś poprawić."),
-      p("Uzupełnieniem jest wykres Q-Q reszt: porównuje kwantyle reszt z kwantylami rozkładu normalnego.
+      p("Uzupełnieniem jest ", gloss("wykres kwantyl-kwantyl", "wykres Q-Q"), " reszt: porównuje kwantyle reszt z kwantylami rozkładu normalnego.
          Punkty biegnące wzdłuż linii prostej — reszty są w przybliżeniu normalne.
          Łuk lub grube ogony — sygnał problemów.")
     ),
@@ -157,7 +157,7 @@ ch2_ui <- list(
     inline_callout(label = "Zapamiętaj", color = "wskazowka",
       "Wykres reszt vs dopasowanych i Q-Q reszt to standardowa pierwsza diagnoza modelu
        liniowego. Jeśli chmura nie ma struktury i Q-Q biegnie wzdłuż linii — model
-       jest OK. Pełna diagnostyka (leverage, wpływowe obserwacje) — w kolejnych wykładach."
+       jest OK. Pełna diagnostyka (leverage, ", gloss("obserwacja wpływowa", "wpływowe obserwacje"), ") — w kolejnych wykładach."
     ),
 
     lc_h2("ch2-zalozenia", "Założenia, które widać w resztach"),
@@ -204,7 +204,7 @@ ch2_ui <- list(
           )
         )
       ),
-      p("Testy formalne — np. Shapiro-Wilk dla reszt albo Breusch-Pagan
+      p("Testy formalne — np. ", gloss("test Shapiro-Wilka", "Shapiro-Wilk"), " dla reszt albo Breusch-Pagan
         dla heteroscedastyczności — są dodatkiem do wykresu. Przy dużych
         próbach łatwo wykrywają drobiazgi, a przy małych często nie mają
         mocy. W raporcie najpierw pokaż wzorzec reszt, dopiero potem
@@ -216,7 +216,7 @@ ch2_ui <- list(
     tagList(
       p("Wzorzec reszt mówił o jakości ", tags$em("jakościowej"),
         ": czy linia nie kłamie. Teraz pytanie ilościowe: ile zmienności Y rzeczywiście wyjaśnia model?"),
-      p("Współczynnik determinacji ", withMathJax("\\(R^2\\)"),
+      p(gloss("współczynnik determinacji", "Współczynnik determinacji"), " ", withMathJax("\\(R^2\\)"),
         " mówi, jaki odsetek całej zmienności Y jest „zaopiekowany\" przez X.
         Liczy się prosto:"),
       lc_formula_box(
@@ -242,7 +242,7 @@ ch2_ui <- list(
         " nie oznacza automatycznie dobrego modelu. Model może tak mocno
         dopasować się do przypadkowych szczegółów próby, że świetnie wygląda
         na danych treningowych, ale słabo przewiduje nowe obserwacje. To jest
-        ", tags$em("przeuczenie"), " (overfitting)."),
+        ", tags$em(gloss("przeuczenie")), " (overfitting)."),
       p("Niskie ", withMathJax("\\(R^2\\)"),
         " też nie przekreśla modelu. W naukach społecznych, edukacyjnych
         czy bezpieczeństwie pracy procesy są głośne i wieloczynnikowe, więc
@@ -322,7 +322,7 @@ ch2_ui <- list(
         nic o tym, ", tags$em("jak duże w jednostkach Y"),
         " są pomyłki modelu. Dla praktyka często to jest pytanie ważniejsze:
         jeśli model przewiduje wynik testu, czy myli się o 5 punktów czy o 50?"),
-      p("Odpowiada na to RMSE — Root Mean Squared Error:
+      p("Odpowiada na to ", gloss("RMSE"), " — Root Mean Squared Error:
         pierwiastek ze średniej kwadratów reszt."),
       lc_formula_box(
         withMathJax(helpText("$$RMSE = \\sqrt{\\frac{1}{n}\\sum_{i=1}^{n}(y_i - \\hat{y}_i)^2}$$"))
@@ -360,7 +360,7 @@ ch2_ui <- list(
     tagList(
       p("Model regresji uczy się z danych, które mamy. Poza ich zakresem —
         nie ma podstaw, żeby mu ufać. Wciąż daje liczbę, ale ta liczba
-        jest ekstrapolacją: predykcją za granicę,
+        jest ", gloss("ekstrapolacja", "ekstrapolacją"), ": predykcją za granicę,
         gdzie model nigdy nie był."),
       p("Ekstrapolacja jest niebezpieczna, bo linia wygląda pewnie
         nawet daleko od danych. Ale każdy punkt poza zakresem X to

@@ -29,10 +29,10 @@ ch5_ui <- list(
     lc_h2("ch5-od-ciaglej-do-binarnej", "Od wyniku ciągłego do zmiennej 0/1"),
 
     tagList(
-      p("Najprościej zobaczyć regresję logistyczną jako odpowiedź na sytuację,
+      p("Najprościej zobaczyć ", gloss("regresja logistyczna", "regresję logistyczną"), " jako odpowiedź na sytuację,
         w której zwykły wynik liczbowy zamieniamy na zdarzenie: zdał albo
         nie zdał. Próg nie jest drobiazgiem technicznym — to definicja
-        zmiennej zależnej."),
+        ", gloss("zmienna zależna", "zmiennej zależnej"), "."),
       p("Poniżej używamy danych CASchools. Najpierw patrzymy na oryginalny
         wynik czytania, potem ustawiamy próg zaliczenia i dopiero z tak
         utworzonego Y = 0/1 budujemy model logistyczny.")
@@ -189,7 +189,7 @@ ch5_ui <- list(
     lc_h2("ch5-iloraz-szans", "Interpretacja: iloraz szans"),
 
     tagList(
-      p("W regresji logistycznej współczynniki interpretujemy przez iloraz szans (odds ratio):"),
+      p("W regresji logistycznej współczynniki interpretujemy przez ", gloss("iloraz szans"), " (odds ratio):"),
       lc_formula_box(
         withMathJax(helpText("$$OR = e^{\\beta_j}$$")),
         p("OR = 1.5 oznacza: wzrost X o 1 zwiększa szanse sukcesu

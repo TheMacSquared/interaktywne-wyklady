@@ -40,7 +40,7 @@ ch4_ui <- list(
     ),
 
     inline_callout(label = "Uwaga", color = "uwaga",
-      "Wybór modelu o największym R² to klasyczna droga do przeuczenia.
+      "Wybór modelu o największym R² to klasyczna droga do ", gloss("przeuczenie", "przeuczenia"), ".
        Następny widget pokaże, jak R² rośnie nawet wtedy, gdy nowe
        predyktory niewiele wnoszą."
     ),
@@ -69,7 +69,7 @@ ch4_ui <- list(
     ),
 
     inline_callout(label = "Co się dzieje?", color = "wskazowka",
-      "R² stale rośnie. Adjusted R² i AIC zaczynają w pewnym momencie
+      "R² stale rośnie. ", gloss("skorygowany R²", "Adjusted R²"), " i ", gloss("AIC"), " zaczynają w pewnym momencie
        się stabilizować albo wręcz pogarszać — to sygnał, że dodawanie
        kolejnego X przestaje się opłacać."
     ),
@@ -105,7 +105,7 @@ ch4_ui <- list(
     ),
 
     tagList(
-      p("AIC i BIC są bezsensowne w izolacji — usłyszeć „AIC = 2384\" nic
+      p("AIC i ", gloss("BIC"), " są bezsensowne w izolacji — usłyszeć „AIC = 2384\" nic
         nie mówi. Ich sens jest ", tags$em("różnicowy"),
         ": porównujemy kilka modeli i wybieramy ten o ", tags$em("niższej"),
         " wartości. Im większa różnica, tym pewniejszy wybór.")
@@ -181,7 +181,7 @@ ch4_ui <- list(
       p("Podział danych na zbiór treningowy i testowy: model uczy się na
         jednej części, a my oceniamy go na drugiej. Jeśli model dobrze
         działa tylko na treningowej, a źle na testowej — to przeuczenie."),
-      p("To najuczciwszy test, bo dane testowe ", tags$em("naprawdę"),
+      p("To najuczciwszy test, bo ", gloss("zbiór testowy", "dane testowe"), " ", tags$em("naprawdę"),
         " są dla modelu nowe.")
     ),
 
