@@ -58,8 +58,9 @@ ch4_ui <- list(
       tagList(
         "Analyses → Frequencies → 2 Outcomes — Binomial test → przeciągnij
          zmienną binarną (np. zdany/niezdany) do pola zmiennych → zaznacz
-         Confidence interval (domyślnie 95%, metoda Cloppera-Pearsona
-         — bezpieczniejsza niż Wald). W tabeli odczytasz kolumny ",
+         Confidence interval (domyślnie 95%, metoda ",
+        gloss("przedział Cloppera-Pearsona", "Cloppera-Pearsona"),
+        " — bezpieczniejsza niż Wald). W tabeli odczytasz kolumny ",
         tags$code("Proportion"), ", ", tags$code("Lower"), ", ",
         tags$code("Upper"), "."
       )

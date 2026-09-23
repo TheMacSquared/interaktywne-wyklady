@@ -28,7 +28,7 @@ ch6_ui <- list(
         tags$strong("Przedział dla średniej (jedna zmienna ilościowa):"),
         tags$ol(
           tags$li(tags$b("Analyses → T-Tests → One Sample T-Test")),
-          tags$li("Przeciągnij zmienną ilościową (np. wzrost, plon,
+          tags$li("Przeciągnij ", gloss("zmienna ilościowa", "zmienną ilościową"), " (np. wzrost, plon,
                    czas reakcji) do ", tags$em("Dependent Variables")),
           tags$li("W panelu ", tags$em("Additional Statistics"), " zaznacz ",
                   tags$b("Confidence interval"), " — domyślnie 95%"),
@@ -65,7 +65,9 @@ ch6_ui <- list(
           tags$li("Przeciągnij zmienną binarną (np. zdany/niezdany)
                    do pola zmiennych"),
           tags$li("Zaznacz ", tags$b("Confidence interval"),
-                  " — domyślnie 95%, metoda Cloppera-Pearsona (bezpieczna)"),
+                  " — domyślnie 95%, metoda ",
+                  gloss("przedział Cloppera-Pearsona", "Cloppera-Pearsona"),
+                  " (bezpieczna)"),
           tags$li("W tabeli odczytasz ", tags$code("Proportion"), ", ",
                   tags$code("Lower"), ", ", tags$code("Upper"))
         )
@@ -181,7 +183,7 @@ ch6_ui <- list(
                   " To przedział jest losowy (zależy od próby)."),
           tags$li("„95% danych leży w tym przedziale” — ",
                   tags$em("to nie jest zakres danych!"),
-                  " CI dotyczy parametru populacji (np. średniej),
+                  " CI dotyczy ", gloss("parametr", "parametru"), " populacji (np. średniej),
                    nie pojedynczych obserwacji."),
           tags$li("„Średnia z próby leży w przedziale” — ",
                   tags$em("oczywiście że tak — jest w środku, z definicji."))
@@ -221,7 +223,7 @@ ch6_ui <- list(
                   " → CI dla różnicy (Independent Samples T-Test)
                    — sprawdzasz, czy zawiera 0"),
           tags$li(tags$b("Więcej niż dwie"),
-                  " → ANOVA + osobne CI dla każdej pary")
+                  " → ", gloss("ANOVA"), " + osobne CI dla każdej pary")
         ),
         tags$strong("3. Jaki poziom ufności?"),
         tags$ul(
@@ -231,7 +233,7 @@ ch6_ui <- list(
                    (szerszy przedział)"),
           tags$li("Wystarczy zgrubny obraz → 90% (węższy przedział)")
         ),
-        p(tags$em("Ważne: wybieraj poziom ufności ",
+        p(tags$em("Ważne: wybieraj ", gloss("poziom ufności"), " ",
                   tags$b("zanim"),
                   " zobaczysz wynik. Potem możesz pokazać więcej
                    poziomów naraz (90%, 95%, 99%), ale nie wolno

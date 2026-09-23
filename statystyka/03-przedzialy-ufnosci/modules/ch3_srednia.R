@@ -49,8 +49,9 @@ ch3_ui <- list(
 
     inline_callout(label = "W jamovi", color = "wskazowka",
       tagList(
-        "Analyses → T-Tests → One Sample T-Test → przeciągnij zmienną
-         ilościową do Dependent Variables → w panelu Additional
+        "Analyses → T-Tests → One Sample T-Test → przeciągnij ",
+        gloss("zmienna ilościowa", "zmienną ilościową"),
+        " do Dependent Variables → w panelu Additional
          Statistics zaznacz Confidence interval (domyślnie 95%).
          W tabeli wyników odczytasz kolumny ",
         tags$code("Mean"), ", ", tags$code("Lower"), ", ",
@@ -344,12 +345,13 @@ ch3_ui <- list(
         tags$ol(
           tags$li("CI dla różnicy mówi czy różnica jest istotna — sprawdź
                    czy zawiera 0."),
-          tags$li("Przy wielu grupach użyj forest plotu jako szybkiej mapy:
+          tags$li("Przy wielu grupach użyj ", gloss("forest plot", "forest plotu"), " jako szybkiej mapy:
                    rozłączne CI wskazują wyraźne różnice, ale nakładające się CI
                    nie pozwalają stwierdzić, że różnicy nie ma."),
           tags$li("Gdy chcesz precyzyjnie rozstrzygnąć dwie konkretne grupy,
                    policz CI bezpośrednio dla różnicy średnich."),
-          tags$li("„Istotne statystycznie” ≠ „ważne praktycznie”.
+          tags$li("„Istotne statystycznie” ≠ „",
+                  gloss("istotność praktyczna", "ważne praktycznie"), "”.
                    Przy bardzo dużym n nawet trywialne różnice
                    będą istotne."),
           tags$li("Forest plot to standardowy sposób porównania wielu

@@ -197,9 +197,12 @@ ch1_ui <- list(
     ),
 
     inline_callout(label = "Wniosek", color = "uwaga",
-      "Estymacja punktowa to za mało. Potrzebujemy przedziału
-       ufności — zakresu wartości, który z określonym
-       prawdopodobieństwem zawiera prawdziwy parametr."
+      tagList(
+        "Estymacja punktowa to za mało. Potrzebujemy ",
+        gloss("przedział ufności", "przedziału ufności"),
+        " — zakresu wartości, który z określonym
+         prawdopodobieństwem zawiera prawdziwy parametr."
+      )
     ),
 
     lc_chapter_next(

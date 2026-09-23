@@ -91,10 +91,13 @@ ch2_ui <- list(
     ),
 
     inline_callout(label = "Częsty błąd", color = "uwaga",
-      "Przedział ufności nie mówi o prawdopodobieństwie, że parametr
-       leży w konkretnym przedziale. Parametr jest stały — to przedział
+      tagList(
+        "Przedział ufności nie mówi o prawdopodobieństwie, że ",
+        gloss("parametr"),
+        " leży w konkretnym przedziale. Parametr jest stały — to przedział
        jest losowy. Poprawnie: „metoda daje przedziały, które w 95%
        przypadków trafiają”."
+      )
     ),
 
     lc_chapter_next(
