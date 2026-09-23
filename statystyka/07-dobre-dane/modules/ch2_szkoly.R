@@ -62,7 +62,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
       " 420 okręgów szkolnych — wystarczy do każdej analizy.",
       tags$br(),
       "Można zapytać: czy wyższe wydatki na ucznia przekładają się na lepsze wyniki testów?",
-      " Czy ubóstwo w okręgu koreluje z wynikami? Czy są różnice między okręgami?",
+      " Czy ubóstwo w okręgu ", gloss("korelacja", "koreluje"), " z wynikami? Czy są różnice między okręgami?",
       tags$br(),
       tags$em("Uwaga: to dane dla okręgów szkolnych USA — wyniki nie dotyczą Polski.")
     ),

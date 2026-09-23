@@ -41,7 +41,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
       zoom_plot_ui("tab5_plot_departament", height = "300px")
     ),
     div(class = "lc-feedback lc-feedback-danger",
-      tags$strong("Problem:"), " niezbalansowane grupy.",
+      tags$strong("Problem:"), " ", gloss("niezbalansowane grupy"), ".",
       " 84% gości nocowało w Apartamencie Premium. Pozostałe typy pokojów mają po kilka obserwacji —
       porównanie satysfakcji między typami pokojów będzie niemożliwe."
     ),

@@ -39,7 +39,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
 
     div(class = "lc-feedback lc-feedback-ok",
       tags$strong("Bardzo dobry zbiór!"),
-      " n = 3000, kompletne dane, bogaty mix zmiennych ilościowych i jakościowych.",
+      " n = 3000, kompletne dane, bogaty mix ", gloss("zmienna ilościowa", "zmiennych ilościowych"), " i ", gloss("zmienna jakościowa", "jakościowych"), ".",
       tags$br(),
       "Można zapytać: czy wykształcenie przekłada się na zarobki? Czy zawód różnicuje wynagrodzenie?",
       " Czy starsi mężczyźni zarabiają więcej niż młodsi?",

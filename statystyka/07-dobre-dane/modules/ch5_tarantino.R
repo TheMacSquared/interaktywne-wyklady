@@ -69,7 +69,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
       tags$br(),
       tags$strong("Problem 2:"), " Po agregacji do poziomu filmów mamy n = 7. To za mało na jakąkolwiek analizę.",
       tags$br(),
-      tags$strong("Problem 3:"), " Brak zmiennych ilościowych do korelacji/regresji."
+      tags$strong("Problem 3:"), " Brak ", gloss("zmienna ilościowa", "zmiennych ilościowych"), " do korelacji/regresji."
     ),
 
     lc_chapter_next(

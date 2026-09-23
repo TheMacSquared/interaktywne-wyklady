@@ -68,7 +68,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
       tags$strong("2. Brak niezależności:"), " To ", gloss("szereg czasowy"), "! ",
       "Obserwacje dzienne są silnie ", gloss("autokorelacja", "autokorelowane"), " — głównie przez cotygodniową periodyczność.",
       tags$br(),
-      gloss("korelacja", "Korelacja"), " Pearsona między temperaturą a sprzedażą byłaby błędem metodologicznym."
+      gloss("korelacja Pearsona", "Korelacja Pearsona"), " między temperaturą a sprzedażą byłaby błędem metodologicznym."
     ),
 
     div(class = "lc-feedback lc-feedback-info",
