@@ -19,7 +19,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia",
 
     div(class = "lc-prose",
       p("Każdy trop dostaje wykres i test dopasowany do typu zmiennych:
-        korelację dla zmiennych ilościowych, test t lub Mann-Whitneya dla
+        ", gloss("korelacja", "korelację"), " dla zmiennych ilościowych, ", gloss("test t"), " lub ", gloss("test Manna-Whitneya", "Mann-Whitneya"), " dla
         porównania dwóch grup. Nie pytamy tylko „czy p < 0,05?\" — pytamy, czy
         wynik wzmacnia trop, osłabia go, czy każe zmienić pytanie.")
     ),

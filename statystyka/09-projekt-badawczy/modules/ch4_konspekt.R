@@ -26,7 +26,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
         span(class = "proposal-step-num", "1"),
         div(
           h4("Cel badania"),
-          p("Jedno główne pytanie, które porządkuje cały projekt."),
+          p("Jedno główne ", gloss("pytanie badawcze", "pytanie"), ", które porządkuje cały projekt."),
           div(class = "proposal-example",
             p(tags$strong("U nas: "), tags$em(tr_goal))
           )
@@ -36,7 +36,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
         span(class = "proposal-step-num", "2"),
         div(
           h4("Zmienne, dane i pomiar"),
-          p("Źródło danych, jednostka obserwacji, zmienna wynikowa, zmienne główne,
+          p("Źródło danych, ", gloss("jednostka obserwacji"), ", ", gloss("zmienna zależna", "zmienna wynikowa"), ", zmienne główne,
             zmienne kontekstowe oraz ograniczenia pomiaru."),
           div(class = "proposal-example",
             p(tags$strong("U nas: "), "jedna obserwacja to kurs/ewaluacja; mamy oceny,
@@ -49,8 +49,8 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
         span(class = "proposal-step-num", "3"),
         div(
           h4("Tropy i hipotezy"),
-          p("Każdy trop zapisujemy w tym samym porządku: pytanie, hipoteza,
-            zmienne do użycia, alternatywne wyjaśnienia i plan interpretacji."),
+          p("Każdy trop zapisujemy w tym samym porządku: pytanie, ", gloss("hipoteza badawcza", "hipoteza"), ",
+            zmienne do użycia, ", gloss("alternatywne wyjaśnienie", "alternatywne wyjaśnienia"), " i plan interpretacji."),
           div(class = "proposal-example",
             p(tags$strong("U nas: "), "atrakcyjność, płeć, status native speaker,
               status mniejszościowy i response rate jako różne tropy interpretacji ", tags$code("eval"), ".")

@@ -38,10 +38,9 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
         span(class = "proposal-step-num", "2"),
         div(
           h4("Interpretacja celu"),
-          p("Zbierz tropy razem i napisz, co cała wiązka mówi o głównym pytaniu
-            badawczym."),
+          p("Zbierz tropy razem i napisz, co cała wiązka mówi o głównym ", gloss("pytanie badawcze", "pytaniu badawczym"), "."),
           div(class = "proposal-example",
-            p(tags$strong("U nas: "), "ocena z ankiety wygląda raczej jak wskaźnik
+            p(tags$strong("U nas: "), "ocena z ankiety wygląda raczej jak ", gloss("wskaźnik"), "
               mieszany niż czysta miara jakości nauczania.")
           )
         )
@@ -53,8 +52,8 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
           p("Nazwij, czego dane nie pozwalają stwierdzić. To część jakości projektu,
             nie porażka analizy."),
           div(class = "proposal-example",
-            p(tags$strong("U nas: "), "dane obserwacyjne pokazują współwystępowanie,
-              ale nie pozwalają rozstrzygnąć przyczynowości.")
+            p(tags$strong("U nas: "), gloss("dane obserwacyjne"), " pokazują współwystępowanie,
+              ale nie pozwalają rozstrzygnąć ", gloss("przyczynowość", "przyczynowości"), ".")
           )
         )
       ),

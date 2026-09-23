@@ -16,11 +16,11 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     lc_h2("sec-01", "Po co model kontrolny?"),
 
     div(class = "lc-prose",
-      p("W rozdziale 5 sprawdzaliśmy tropy pojedynczo: korelacja, różnice między
+      p("W rozdziale 5 sprawdzaliśmy tropy pojedynczo: ", gloss("korelacja"), ", różnice między
         dwiema grupami, proste porównania. To dobry start, ale świat rzadko
-        zmienia się jedną zmienną naraz — a tablica zakłócaczy pokazała, że tropy
+        zmienia się jedną zmienną naraz — a tablica ", gloss("zmienna zakłócająca", "zakłócaczy"), " pokazała, że tropy
         się przeplatają."),
-      p("Regresja wieloczynnikowa pozwala zapytać wprost: czy trop związany z
+      p(gloss("regresja wieloraka", "Regresja wieloczynnikowa"), " pozwala zapytać wprost: czy trop związany z
         `beauty` pozostaje widoczny, gdy jednocześnie uwzględnimy wiek, płeć,
         native speaker status, poziom kursu i response rate?")
     ),
@@ -28,7 +28,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     div(class = "lc-figure-panel",
       h4("Seria modeli kontrolnych"),
       div(class = "lc-prose",
-        p("Dodajemy kontrole warstwami i patrzymy, co dzieje się ze współczynnikiem
+        p("Dodajemy ", gloss("zmienna kontrolna", "kontrole"), " warstwami i patrzymy, co dzieje się ze ", gloss("współczynnik regresji", "współczynnikiem"), "
           przy `beauty`: czy słabnie, czy się trzyma.")
       ),
       uiOutput("ch7_models_table"),
@@ -64,8 +64,8 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
 
     div(class = "lc-feedback lc-feedback-info",
       tags$strong("Rola modelu:"),
-      p("Model nie zastępuje sformułowania pytania. Wymaga wcześniejszych hipotez,
-        alternatywnych wyjaśnień i poprawnego pomiaru — dopiero wtedy jego wynik
+      p("Model nie zastępuje sformułowania pytania. Wymaga wcześniejszych ", gloss("hipoteza badawcza", "hipotez"), ",
+        ", gloss("alternatywne wyjaśnienie", "alternatywnych wyjaśnień"), " i poprawnego pomiaru — dopiero wtedy jego wynik
         da się sensownie zinterpretować.")
     ),
 

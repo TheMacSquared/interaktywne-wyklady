@@ -33,8 +33,8 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     div(class = "lc-prose",
       p("Werdykt „wzmocniony\" nie znaczy „udowodniony\", a „osłabiony\" nie znaczy
         „temat zamknięty\". Na tym etapie mamy już pierwsze wyniki, więc nie
-        układamy planu od zera. Sprawdzamy alternatywne wyjaśnienia zapisane
-        wcześniej i dopisujemy nowe hipotezy, które pojawiły się po obliczeniach.")
+        układamy planu od zera. Sprawdzamy ", gloss("alternatywne wyjaśnienie", "alternatywne wyjaśnienia"), " zapisane
+        wcześniej i dopisujemy nowe ", gloss("hipoteza badawcza", "hipotezy"), ", które pojawiły się po obliczeniach.")
     ),
 
     uiOutput("ch6_next_steps"),
@@ -54,14 +54,14 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     div(class = "lc-prose",
       p("Pierwsze pytanie po każdym wyniku brzmi: czy to nie zasługa czegoś
         innego? Zmienna Z może mieszać w interpretacji, jeśli wiąże się
-        jednocześnie z predyktorem i z wynikiem. Prześledźmy to na jednym
+        jednocześnie z ", gloss("predyktor", "predyktorem"), " i z wynikiem. Prześledźmy to na jednym
         przykładzie, a potem zbiorczo dla pozostałych zmiennych.")
     ),
 
     lc_h3("Przykład: czy płeć zakłóca relację beauty → eval?"),
 
     div(class = "lc-prose",
-      p("Płeć jest kandydatem na zakłócacz tylko wtedy, gdy wiąże się i z
+      p("Płeć jest kandydatem na ", gloss("zmienna zakłócająca", "zakłócacz"), " tylko wtedy, gdy wiąże się i z
         atrakcyjnością (predyktorem), i z oceną kursu (wynikiem). Sprawdźmy oba
         związki naraz.")
     ),
@@ -88,7 +88,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
         Wiek wiąże się silnie z atrakcyjnością (|r| = 0,30), ale słabo z oceną
         (|r| = 0,05) — według reguły „nie zakłóca\". A jednak to podpowiada coś
         istotnego: ocena atrakcyjności może częściowo mierzyć wiek, czyli być
-        jego ", tags$em("proxy"), ". Pytanie „czy uroda wpływa na ocenę, czy jest
+        jego ", tags$em(gloss("zmienna zastępcza", "proxy")), ". Pytanie „czy uroda wpływa na ocenę, czy jest
         tylko zasłoną dla wieku?\" zostaje otwarte — i jest dobrym tematem na
         model kontrolny.")
     ),

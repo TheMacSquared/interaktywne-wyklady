@@ -18,8 +18,8 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Co właściwie mierzym
     lc_h2("sec-01", "Pojęcie → wskaźnik → zmienna → ograniczenie"),
 
     div(class = "lc-prose",
-      p("Każde pojęcie z naszego celu i z wiązki tropów trzeba przełożyć na
-        konkretną zmienną. Po drodze coś gubimy — i właśnie to ograniczenie
+      p("Każde pojęcie z naszego celu i z wiązki tropów trzeba ",
+        gloss("operacjonalizacja", "przełożyć na konkretną zmienną"), ". Po drodze coś gubimy — i właśnie to ograniczenie
         musi później wrócić we wniosku. Poniżej cztery kluczowe pojęcia naraz.")
     ),
 

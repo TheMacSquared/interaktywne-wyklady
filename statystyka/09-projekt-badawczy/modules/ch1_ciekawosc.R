@@ -15,7 +15,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
         informacji o kontekście zajęć. To nie jest jeszcze projekt badawczy.
         To dopiero materiał, z którego można zbudować kilka różnych historii."),
       p("Dzisiejsze ćwiczenie polega na tym, żeby zobaczyć, jak z luźnej ciekawości
-        powstaje jeden cel badawczy, z celu wiązka hipotez, a z hipotez plan analizy.
+        powstaje jeden cel badawczy, z celu wiązka ", gloss("hipoteza badawcza", "hipotez"), ", a z hipotez plan analizy.
         Ten sam cel i tę samą wiązkę będziemy ciągnąć przez cały wykład.")
     ),
 
@@ -23,7 +23,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
       h4("Podgląd danych"),
       div(class = "lc-prose",
         p("Zanim zaczniemy formułować hipotezy, zobaczmy samą tabelę:
-          co jest jedną obserwacją, jakie są typy zmiennych i czego w danych
+          co jest jedną ", gloss("jednostka obserwacji", "obserwacją"), ", jakie są typy zmiennych i czego w danych
           nie widać.")
       ),
       fluidRow(
@@ -56,7 +56,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     div(class = "lc-prose",
       p("Dobry cel badania nie zaczyna się od testu statystycznego. Zaczyna się
         od pomysłu, który trzeba uporządkować: nazwać przypuszczenie, zawęzić je
-        do pytania i przełożyć na plan sprawdzenia.")
+        do ", gloss("pytanie badawcze", "pytania"), " i przełożyć na plan sprawdzenia.")
     ),
 
     div(class = "research-ladder",
