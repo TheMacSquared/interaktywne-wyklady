@@ -21,9 +21,13 @@ ch6_ui <- list(
 
     inline_callout(
       label = "Najczęstszy błąd",
-      "Obliczanie średniej z danych nominalnych lub porządkowych
+      tagList(
+        "Obliczanie ", gloss("średnia", "średniej"), " z danych ",
+        gloss("zmienna nominalna", "nominalnych"), " lub ",
+        gloss("zmienna porządkowa", "porządkowych"), "
        (np. średnia z kodów kierunków). Wynik będzie liczbą, ale
-       nie będzie miał żadnego sensu!",
+       nie będzie miał żadnego sensu!"
+      ),
       color = "uwaga"
     ),
 
@@ -76,7 +80,7 @@ ch6_ui <- list(
       withMathJax(
         h4("Miary położenia"),
         helpText("$$\\bar{x} = \\frac{1}{n} \\sum_{i=1}^{n} x_i$$"),
-        p("Mediana: wartość środkowa po posortowaniu danych"),
+        p(gloss("mediana", "Mediana"), ": wartość środkowa po posortowaniu danych"),
         hr(),
         h4("Miary rozrzutu"),
         helpText("$$s^2 = \\frac{1}{n-1} \\sum_{i=1}^{n} (x_i - \\bar{x})^2$$"),

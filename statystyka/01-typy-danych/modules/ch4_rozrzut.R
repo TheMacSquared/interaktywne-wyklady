@@ -19,9 +19,11 @@ ch4_ui <- list(
     uiOutput("tracker_ch4"),
 
     tagList(
-      p("W tym rozdziale poznamy miary rozrzutu: odchylenie standardowe,
-        wariancję, rozstęp, rozstęp międzykwartylowy (IQR) oraz
-        współczynnik zmienności. Nauczymy się też budować boxplot od podstaw.")
+      p("W tym rozdziale poznamy miary rozrzutu: ", gloss("odchylenie standardowe"), ",
+        ", gloss("wariancja", "wariancję"), ", ", gloss("rozstęp"), ", ",
+        gloss("rozstęp międzykwartylowy"), " (IQR) oraz
+        ", gloss("współczynnik zmienności"), ". Nauczymy się też budować ",
+        gloss("wykres pudełkowy", "boxplot"), " od podstaw.")
     ),
 
     # ====================================================================
@@ -97,7 +99,7 @@ ch4_ui <- list(
     tagList(
       p("Wiemy juz jak obliczyć odchylenie standardowe. Ale co ono oznacza
         w praktyce? Dla rozkładow zbliżonych do normalnego obowiązuje
-        regula empiryczna: okolo 68% danych miesci sie w zakresie
+        ", gloss("reguła 68-95-99,7", "regula empiryczna"), ": okolo 68% danych miesci sie w zakresie
         srednia ±1 SD, 95% w ±2 SD, a 99.7% w ±3 SD.")
     ),
 
@@ -198,8 +200,8 @@ ch4_ui <- list(
     lc_h2("ch4-miary", "Porównanie miar rozrzutu"),
 
     tagList(
-      p("Porównajmy rozne miary rozrzutu i ich odporność na wartości
-        odstające. Dodaj outliera i obserwuj, ktore miary sie zmieniaja,
+      p("Porównajmy rozne miary rozrzutu i ich ", gloss("odporność"), " na ",
+        gloss("wartość odstająca", "wartości odstające"), ". Dodaj outliera i obserwuj, ktore miary sie zmieniaja,
         a ktore pozostaja stabilne.")
     ),
 

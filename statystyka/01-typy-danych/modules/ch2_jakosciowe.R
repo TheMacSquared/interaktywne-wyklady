@@ -51,8 +51,8 @@ ch2_ui <- list(
 
     tagList(
       p("Zanim przejdziemy do wizualizacji, zatrzymajmy sie na waznym rozróżnieniu.
-        Zmienne jakościowe dzielimy na ", tags$b("nominalne"), " (kategorie bez naturalnej
-        kolejnośći) i ", tags$b("porzadkowe"), " (kategorie z logiczna kolejnośćia).
+        Zmienne jakościowe dzielimy na ", tags$b(gloss("zmienna nominalna", "nominalne")), " (kategorie bez naturalnej
+        kolejnośći) i ", tags$b(gloss("zmienna porządkowa", "porzadkowe"))," (kategorie z logiczna kolejnośćia).
         Ta roznica ma praktyczne konsekwencje.")
     ),
 
@@ -187,7 +187,8 @@ ch2_ui <- list(
     tagList(
       p("Dotychczas analizowalismy po jednej zmiennej. Ale często chcemy
         zbadac ", tags$b("zaleznosc miedzy dwiema zmiennymi jakościowymi"),
-        ". Sluzy do tego tabela krzyzowa (kontyngencji).")
+        ". Sluzy do tego tabela krzyzowa (",
+        gloss("tabela kontyngencji", "kontyngencji"), ").")
     ),
 
     figure_panel(
@@ -233,7 +234,7 @@ ch2_ui <- list(
     lc_h2("ch2-dominanta", "Dominanta (moda)"),
 
     tagList(
-      p("Dominanta (moda) to jedyna miara tendencji centralnej dla
+      p(gloss("dominanta", "Dominanta"), " (moda) to jedyna miara tendencji centralnej dla
         zmiennych nominalnych. Jest to wartość (kategoria), ktora
         występuje najczęściej w zbiorze danych.")
     ),

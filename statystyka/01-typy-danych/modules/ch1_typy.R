@@ -19,7 +19,7 @@ ch1_ui <- list(
 
     tagList(
       p("Błędne rozpoznanie typu zmiennej prowadzi do błędnych analiz.
-        Na przykład, obliczanie średniej z kodów pocztowych nie ma sensu,
+        Na przykład, obliczanie ", gloss("średnia", "średniej"), " z kodów pocztowych nie ma sensu,
         mimo że są to liczby.")
     ),
 
@@ -95,9 +95,13 @@ ch1_ui <- list(
 
     inline_callout(
       label = "Uwaga",
-      "Granica między typami nie zawsze jest ostra. Na przykład ocena wykładowcy
-       w skali 1–10 może być traktowana jako porządkowa lub dyskretna,
-       w zależności od kontekstu i celu analizy.",
+      tagList(
+        "Granica między typami nie zawsze jest ostra. Na przykład ocena wykładowcy
+       w skali 1–10 może być traktowana jako ",
+        gloss("zmienna porządkowa", "porządkowa"), " lub ",
+        gloss("zmienna dyskretna", "dyskretna"), ",
+       w zależności od kontekstu i celu analizy."
+      ),
       color = "uwaga"
     ),
 
@@ -158,7 +162,7 @@ ch1_ui <- list(
             tags$h4("Liczba kursów"),
             tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
               "Wartości liczbowe, ale tylko całkowite. Mozemy obliczać srednia
-               i odchylenie standardowe. Wykres słupkowy jest tu odpowiedni,
+               i ", gloss("odchylenie standardowe"), ". Wykres słupkowy jest tu odpowiedni,
                bo mamy skończoną liczbę wartości."),
             zoom_plot_ui("ch1_ex3_plot", height = "280px")
           )
@@ -172,7 +176,7 @@ ch1_ui <- list(
             tags$h4("Wzrost (cm)"),
             tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
               "Wartości liczbowe, ktore mogą przyjmowac dowolne wartości
-               z pewnego przedzialu (takze ulamkowe). Histogram grupuje
+               z pewnego przedzialu (takze ulamkowe). ", gloss("histogram", "Histogram"), " grupuje
                wartości w przedziały, gęstość wygładza rozkład."),
             zoom_plot_ui("ch1_ex4_plot", height = "280px")
           )

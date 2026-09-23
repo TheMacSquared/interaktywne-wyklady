@@ -22,7 +22,7 @@ ch5_ui <- list(
     lc_h2("ch5-skosnosc", "Skośność (asymetria)"),
 
     tagList(
-      p("Skośność mierzy asymetrię rozkładu. Wartość skośności = 0 oznacza
+      p(gloss("skośność", "Skośność"), " mierzy asymetrię rozkładu. Wartość skośności = 0 oznacza
         idealną symetrię, wartości dodatnie wskazują na dłuższy ogon w prawo,
         a ujemne — w lewo.")
     ),
@@ -57,7 +57,7 @@ ch5_ui <- list(
     lc_h2("ch5-kurtoza", "Kurtoza (ciężkość ogonów)"),
 
     tagList(
-      p("Kurtoza mierzy, jak 'ciężkie' są ogony rozkładu — czyli
+      p(gloss("kurtoza", "Kurtoza"), " mierzy, jak 'ciężkie' są ogony rozkładu — czyli
         jak często pojawiają się wartości ekstremalne. Nie chodzi
         o 'spłaszczenie' szczytu, lecz o to, ile obserwacji leży daleko
         od średniej.")

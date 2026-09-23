@@ -20,8 +20,9 @@ ch3_ui <- list(
 
     tagList(
       p("Zmienne ilościowe wymagają nowych narzędzi. Zanim przejdziemy do
-        statystyk, poznajmy podstawową wizualizację — histogram.
-        Potem zbadamy miary położenia: średnią, medianę i percentyle.")
+        statystyk, poznajmy podstawową wizualizację — ", gloss("histogram"), ".
+        Potem zbadamy miary położenia: ", gloss("średnia", "średnią"), ", ",
+        gloss("mediana", "medianę"), " i ", gloss("percentyl", "percentyle"), ".")
     ),
 
     # ========================================================================
@@ -30,7 +31,7 @@ ch3_ui <- list(
     lc_h2("ch3-histogram", "Histogram — krok po kroku"),
 
     tagList(
-      p("Histogram to podstawowy wykres dla zmiennych ciągłych. Pokazuje
+      p("Histogram to podstawowy wykres dla ", gloss("zmienna ciągła", "zmiennych ciągłych"), ". Pokazuje
         jak często występują wartości w poszczególnych
         przedziałach (binach). Zbudujmy go krok po kroku.")
     ),
@@ -146,7 +147,7 @@ ch3_ui <- list(
     tagList(
       p("Dla danych symetrycznych średnia i mediana są blisko siebie.
         Ale co się dzieje, gdy rozkład jest skośny lub pojawi się
-        wartość odstająca?"),
+        ", gloss("wartość odstająca"), "?"),
       p("Wyobraźmy sobie zarobki w pewnej firmie. Większość pracowników
         zarabia umiarkowanie, ale są też osoby z bardzo wysokimi pensjami.
         Zobaczmy, jak średnia i mediana reagują na nowe wartości.")
@@ -197,11 +198,11 @@ ch3_ui <- list(
     lc_h2("ch3-odpornosc", "Odporność miar na outliery"),
 
     tagList(
-      p("Która statystyka jest bardziej odporna na outliery? Średnia
+      p("Która statystyka jest bardziej ", gloss("odporność", "odporna"), " na outliery? Średnia
         arytmetyczna bierze pod uwagę każdą wartość -- więc jedna
         ekstremalna obserwacja może ją znacząco przesunąć. Mediana
         ignoruje skrajne wartości, patrząc tylko na 'środek' danych."),
-      p("Średnia ucinana (trimmed mean) to kompromis: odrzuca pewien
+      p(gloss("średnia ucinana", "Średnia ucinana"), " (trimmed mean) to kompromis: odrzuca pewien
         procent najbardziej skrajnych obserwacji z obu stron, a następnie
         oblicza średnią z pozostałych. Dodajmy kilka ekstremalnych
         zarobków i zobaczmy, co się stanie.")
@@ -245,7 +246,7 @@ ch3_ui <- list(
 
     tagList(
       p("Dotychczas uzywalismy zmiennych ciągłych (wzrost, zarobki). Ale co ze
-        zmiennymi dyskretnymi -- takimi jak liczba kursow czy
+        ", gloss("zmienna dyskretna", "zmiennymi dyskretnymi"), " -- takimi jak liczba kursow czy
         liczba nieobecnosci? Statystyki polozenia (średnia, mediana) obliczamy
         tak samo, ale wizualizacja wymaga uwagi.")
     ),
@@ -309,9 +310,9 @@ ch3_ui <- list(
     inline_callout(
       label = "IQR",
       tagList(
-        tags$strong("Rozstęp międzykwartylowy:"),
+        tags$strong(gloss("rozstęp międzykwartylowy", "Rozstęp międzykwartylowy"), ":"),
         " różnica Q3 − Q1. Miara rozrzutu odporna na outliery.
-          Boxplot używa właśnie kwartyli do wizualizacji rozkładu danych.
+          Boxplot używa właśnie ", gloss("kwartyl", "kwartyli"), " do wizualizacji rozkładu danych.
           Więcej w kolejnym rozdziale."
       )
     ),
