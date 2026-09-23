@@ -17,11 +17,12 @@ ch2_ui <- lecture_chapter(
     lc_h2("ch2-homoscedastycznosc", "Homoscedastyczność — równe wariancje"),
 
     tagList(
-      p("Założenie jednorodnych wariancji (homoscedastyczność) dotyczy:"),
+      p("Założenie jednorodnych ", gloss("wariancja", "wariancji"), " (",
+        gloss("homoskedastyczność", "homoscedastyczność"), ") dotyczy:"),
       tags$ul(
-        tags$li(tags$b("Test t niezależny"), " — wariancje w obu grupach powinny być podobne"),
-        tags$li(tags$b("ANOVA"), " — wariancje we wszystkich grupach porównywalne"),
-        tags$li(tags$b("Regresja liniowa"), " — wariancja reszt stała (homoscedastyczność reszt)")
+        tags$li(tags$b(gloss("test t", "Test t"), " niezależny"), " — wariancje w obu grupach powinny być podobne"),
+        tags$li(tags$b(gloss("ANOVA")), " — wariancje we wszystkich grupach porównywalne"),
+        tags$li(tags$b("Regresja liniowa"), " — wariancja ", gloss("reszta", "reszt"), " stała (homoscedastyczność reszt)")
       )
     ),
 
@@ -56,8 +57,8 @@ ch2_ui <- lecture_chapter(
     tagList(
       p("Dwa popularne testy:"),
       tags$ul(
-        tags$li(tags$b("Test Levene'a"), " — odporny na naruszenie normalności, zalecany"),
-        tags$li(tags$b("Test Bartletta"), " — mocniejszy, ale wrażliwy na brak normalności")
+        tags$li(tags$b(gloss("test Levene'a", "Test Levene'a")), " — odporny na naruszenie normalności, zalecany"),
+        tags$li(tags$b(gloss("test Bartletta", "Test Bartletta")), " — mocniejszy, ale wrażliwy na brak normalności")
       ),
       p(withMathJax("\\(H_0\\)"), ": wariancje są równe we wszystkich grupach.")
     ),
@@ -85,9 +86,10 @@ ch2_ui <- lecture_chapter(
     tagList(
       p("Opcje:"),
       tags$ol(
-        tags$li(tags$b("Test t Welcha"), " — domyślny w R! Nie zakłada równych wariancji.
+        tags$li(tags$b(gloss("test t Welcha", "Test t Welcha")), " — domyślny w R! Nie zakłada równych wariancji.
                  W praktyce zawsze można używać Welcha zamiast klasycznego t."),
-        tags$li(tags$b("Mann-Whitney U"), " — nieparametryczny, nie zakłada równych wariancji"),
+        tags$li(tags$b(gloss("test Manna-Whitneya", "Mann-Whitney U")), " — ",
+                gloss("test nieparametryczny", "nieparametryczny"), ", nie zakłada równych wariancji"),
         tags$li(tags$b("ANOVA Welcha"), " — odpowiednik dla 3+ grup (", tags$code("oneway.test()"), ")"),
         tags$li(tags$b("Regresja: odporne błędy std."), " — ",
                 tags$code("sandwich::vcovHC()"), " + ", tags$code("lmtest::coeftest()"))

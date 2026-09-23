@@ -19,16 +19,17 @@ ch1_ui <- lecture_chapter(
     tagList(
       p("To, co oceniamy, zależy od metody:"),
       tags$ul(
-        tags$li(tags$b("Test t jednej próby"), " — rozkład badanej zmiennej wokół średniej"),
-        tags$li(tags$b("Test t dla grup"), " — rozkład wyników (reszt) w porównywanych grupach"),
+        tags$li(tags$b(gloss("test t", "Test t"), " jednej próby"), " — rozkład badanej zmiennej wokół średniej"),
+        tags$li(tags$b("Test t dla grup"), " — rozkład wyników (", gloss("reszta", "reszt"), ") w porównywanych grupach"),
         tags$li(tags$b("Test t sparowany"), " — rozkład różnic między pomiarami, nie obu pomiarów osobno"),
-        tags$li(tags$b("ANOVA"), " — normalność reszt w każdej grupie"),
+        tags$li(tags$b(gloss("ANOVA")), " — normalność reszt w każdej grupie"),
         tags$li(tags$b("Korelacja Pearsona"), " — rozkład dwuwymiarowy normalny"),
         tags$li(tags$b("Regresja liniowa"), " — normalność reszt (nie danych!)")
       ),
       p(tags$b("Ważne:"), " Testy t i ANOVA zwykle tolerują łagodne odchylenia,
         zwłaszcza przy podobnych liczebnościach grup. Nie istnieje jednak jeden
-        próg n, po którym można automatycznie zignorować silną skośność lub obserwacje odstające.")
+        próg n, po którym można automatycznie zignorować silną ", gloss("skośność"), " lub ",
+        gloss("wartość odstająca", "obserwacje odstające"), ".")
     ),
 
     # ========================================================================
@@ -75,7 +76,8 @@ ch1_ui <- lecture_chapter(
     lc_h2("ch1-testy-formalne", "Test formalny jako pomoc"),
 
     tagList(
-      p(tags$b("Shapiro–Wilk"), " sprawdza zgodność danych z rozkładem normalnym."),
+      p(tags$b(gloss("test Shapiro-Wilka", "Shapiro–Wilk")), " sprawdza zgodność danych z ",
+        gloss("rozkład normalny", "rozkładem normalnym"), "."),
       p(withMathJax("\\(H_0\\)"), ": dane pochodzą z rozkładu normalnego. ",
         "Małe p jest sygnałem odchylenia, ale nie mówi, czy odchylenie jest ważne dla naszej analizy.")
     ),
@@ -111,7 +113,7 @@ ch1_ui <- lecture_chapter(
       p("Praktyczna kolejność postępowania:"),
       tags$ol(
         tags$li(tags$b("Sprawdź wykres i dane"), " — czy problemem jest łagodna skośność, czy pojedynczy błąd/outlier?"),
-        tags$li(tags$b("Oceń odporność metody"), " — łagodne odchylenie często nie wymaga zmiany analizy."),
+        tags$li(tags$b("Oceń ", gloss("odporność"), " metody"), " — łagodne odchylenie często nie wymaga zmiany analizy."),
         tags$li(tags$b("Użyj alternatywy rangowej"), " — przy silnym naruszeniu albo zmiennej quasi-ilościowej; patrz tabela."),
         tags$li(tags$b("Transformuj tylko z uzasadnieniem"), " — np. log dla dodatnich danych o różnicach względnych. Transformacja zmienia skalę interpretacji.")
       )
