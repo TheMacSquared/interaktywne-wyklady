@@ -56,7 +56,7 @@ ch1_ui <- list(
     ),
 
     lc_feedback(type = "info",
-      tags$strong("Prawo wielkich liczb:"),
+      tags$strong(gloss("prawo wielkich liczb", "Prawo wielkich liczb"), ":"),
       " Wraz ze wzrostem liczby obserwacji, częstość względna każdego
         wyniku zbiega do jego prawdopodobieństwa teoretycznego.
         Dla uczciwej kostki każda ścianka ma P = 1/6 ≈ 0.167."

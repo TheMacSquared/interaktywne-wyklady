@@ -102,7 +102,7 @@ ch5_ui <- list(
 
     tagList(
       p("Każdy rozkład normalny można sprowadzić do ",
-        tags$b(gloss("standardowy rozkład normalny", "standardowego N(0, 1)")), " za pomocą transformacji:"),
+        tags$b(gloss("standardowy rozkład normalny", "standardowego N(0, 1)")), " za pomocą ", gloss("standaryzacja", "transformacji"), ":"),
       lc_formula_box(
         withMathJax(helpText("$$z = \\frac{x - \\mu}{\\sigma}$$"))
       ),

@@ -195,8 +195,8 @@ ch4_ui <- list(
 
     inline_callout(
       label = "Związek z Poissonem",
-      "Jeśli liczba zdarzeń w czasie ma rozkład Poissona(λ),
-       to czas między zdarzeniami ma rozkład Exp(λ) — dwie strony tego samego procesu."
+      tagList("Jeśli liczba zdarzeń w czasie ma ", gloss("rozkład Poissona", "rozkład Poissona(λ)"), ",
+       to czas między zdarzeniami ma rozkład Exp(λ) — dwie strony tego samego procesu.")
     ),
 
     inline_callout(
@@ -254,9 +254,9 @@ ch4_ui <- list(
 
     inline_callout(
       label = "Dlaczego t-Studenta?",
-      "Gdy nie znamy prawdziwego σ populacji i szacujemy je z próby,
-       rozkład statystyki testowej to t-Studenta, nie normalny.
-       Przy małych próbach (n < 30) różnica jest znacząca!"
+      tagList("Gdy nie znamy prawdziwego σ populacji i szacujemy je z próby,
+       rozkład ", gloss("statystyka testowa", "statystyki testowej"), " to t-Studenta, nie normalny.
+       Przy małych próbach (n < 30) różnica jest znacząca!")
     ),
 
     inline_callout(
@@ -314,8 +314,8 @@ ch4_ui <- list(
 
     inline_callout(
       label = "Intuicja",
-      "χ² mierzy odleglosc od idealu. Test χ² sprawdza, czy obserwowane
-       czestosci sa zbyt daleko od oczekiwanych.",
+      tagList("χ² mierzy odleglosc od idealu. ", gloss("test chi-kwadrat", "Test χ²"), " sprawdza, czy obserwowane
+       czestosci sa zbyt daleko od oczekiwanych."),
       color = "uwaga"
     ),
 
@@ -362,7 +362,7 @@ ch4_ui <- list(
     inline_callout(
       label = "Uwaga na średnią!",
       tagList(
-        "Średnia > mediana. Mediana = e^μ, średnia = e^(μ + σ²/2).
+        "Średnia > ", gloss("mediana"), ". Mediana = e^μ, średnia = e^(μ + σ²/2).
          Dlatego ", tags$b("mediana"), " dochodów lepiej opisuje 'typowego' pracownika niż średnia."
       ),
       color = "uwaga"

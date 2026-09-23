@@ -21,7 +21,7 @@ ch6_ui <- list(
       lc_feedback(type = "ok",
         tags$strong("CTG:"),
         " Jeśli wezmiesz próbę n obserwacji z ", tags$b("dowolnego"),
-        " rozkładu (o skończonej wariancji) i obliczysz średnią,
+        " rozkładu (o skończonej ", gloss("wariancja", "wariancji"), ") i obliczysz średnią,
         to rozkład tej średniej będzie zbiegał do ", tags$b("normalnego"),
         " wraz ze wzrostem n."
       ),

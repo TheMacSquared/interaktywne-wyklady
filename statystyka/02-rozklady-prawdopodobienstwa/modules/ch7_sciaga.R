@@ -61,7 +61,7 @@ ch7_ui <- list(
         hr(),
         h4("Centralne Twierdzenie Graniczne"),
         helpText("$$\\bar{X}_n \\xrightarrow{d} N\\left(\\mu, \\frac{\\sigma}{\\sqrt{n}}\\right) \\quad \\text{dla } n \\to \\infty$$"),
-        p("Niezależnie od rozkładu populacji (o ile ma skończoną ", gloss("wariancja", "wariancję"), ").")
+        p("Niezależnie od rozkładu ", gloss("populacja", "populacji"), " (o ile ma skończoną ", gloss("wariancja", "wariancję"), ").")
       )
     ),
 
