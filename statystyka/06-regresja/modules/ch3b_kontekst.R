@@ -75,7 +75,7 @@ ch3b_ui <- list(
     lc_feedback(
       type = "warning",
       tags$strong("Pułapka:"),
-      " współczynnik modelu prostego miesza różnice między grupami z relacją",
+      " ", gloss("współczynnik regresji", "współczynnik"), " modelu prostego miesza różnice między grupami z relacją",
       " obserwowaną wewnątrz każdej grupy. Więcej danych nie naprawia pominiętej zmiennej."
     ),
 

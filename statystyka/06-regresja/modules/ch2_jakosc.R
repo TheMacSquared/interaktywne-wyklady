@@ -205,7 +205,7 @@ ch2_ui <- list(
         )
       ),
       p("Testy formalne — np. ", gloss("test Shapiro-Wilka", "Shapiro-Wilk"), " dla reszt albo Breusch-Pagan
-        dla heteroscedastyczności — są dodatkiem do wykresu. Przy dużych
+        dla ", gloss("heteroskedastyczność", "heteroscedastyczności"), " — są dodatkiem do wykresu. Przy dużych
         próbach łatwo wykrywają drobiazgi, a przy małych często nie mają
         mocy. W raporcie najpierw pokaż wzorzec reszt, dopiero potem
         ewentualnie podaj test.")
@@ -241,7 +241,7 @@ ch2_ui <- list(
         withMathJax("\\(R^2\\)"),
         " nie oznacza automatycznie dobrego modelu. Model może tak mocno
         dopasować się do przypadkowych szczegółów próby, że świetnie wygląda
-        na danych treningowych, ale słabo przewiduje nowe obserwacje. To jest
+        na ", gloss("zbiór treningowy", "danych treningowych"), ", ale słabo przewiduje nowe obserwacje. To jest
         ", tags$em(gloss("przeuczenie")), " (overfitting)."),
       p("Niskie ", withMathJax("\\(R^2\\)"),
         " też nie przekreśla modelu. W naukach społecznych, edukacyjnych
@@ -406,7 +406,7 @@ ch2_ui <- list(
       tags$ul(
         tags$li("Porównać dwa modele i wybrać lepszy — rozdział 4 wprowadzi R²adj, AIC, BIC
                  i train/test."),
-        tags$li("Modelować zależności od wielu X-ów naraz — rozdział 3 rozszerzy regresję prostą na wieloraką."),
+        tags$li("Modelować zależności od wielu X-ów naraz — rozdział 3 rozszerzy ", gloss("regresja prosta", "regresję prostą"), " na wieloraką."),
         tags$li("Modelować Y binarne (zdał/nie zdał, kliknął/nie kliknął) — rozdział 5
                  wprowadzi regresję logistyczną.")
       ),

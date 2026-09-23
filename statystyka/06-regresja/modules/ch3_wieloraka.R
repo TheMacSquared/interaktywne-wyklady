@@ -42,7 +42,7 @@ ch3_ui <- list(
         " wzrośnie o 1, przy stałych pozostałych zmiennych."),
       p("To zastrzeżenie „przy stałych pozostałych\" jest sercem regresji
         wielorakiej. Bez niego ", withMathJax("\\(\\beta_j\\)"),
-        " wyglądałoby tak samo jak w regresji prostej. Z nim — może być
+        " wyglądałoby tak samo jak w ", gloss("regresja prosta", "regresji prostej"), ". Z nim — może być
         zupełnie inne, a czasem wręcz przeciwnego znaku.")
     ),
 
@@ -156,7 +156,7 @@ ch3_ui <- list(
         "? Powiedzmy: dochód okręgu i wydatki na ucznia są silnie ze sobą
         skorelowane. Model w zasadzie nie wie, któremu przypisać efekt —
         i rozdmuchuje błędy standardowe obu. Współczynniki stają się niestabilne, p-value rosną."),
-      p("Wskaźnikiem, który to wychwytuje, jest VIF
+      p("Wskaźnikiem, który to wychwytuje, jest ", gloss("VIF"), "
         — variance inflation factor. Im wyższy, tym bardziej zmienna
         powtarza informację z innych X-ów. VIF > 5 jest sygnałem
         ostrzegawczym, VIF > 10 — czerwoną flagą.")

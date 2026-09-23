@@ -112,9 +112,9 @@ ch6_ui <- list(
 
     lc_feedback(type = "ok",
       tags$ul(
-        tags$li("Y ciągła, 1 predyktor → regresja liniowa prosta"),
-        tags$li("Y ciągła, wiele predyktorów → regresja wieloraka"),
-        tags$li("Y binarna (0/1) → regresja logistyczna"),
+        tags$li("Y ciągła, 1 predyktor → ", gloss("regresja prosta", "regresja liniowa prosta")),
+        tags$li("Y ciągła, wiele predyktorów → ", gloss("regresja wieloraka")),
+        tags$li("Y binarna (0/1) → ", gloss("regresja logistyczna")),
         tags$li("Y porządkowa → regresja porządkowa (ordered logit)"),
         tags$li("Y licznikowa → regresja Poissona")
       )
@@ -193,9 +193,9 @@ predict(model_log, newdata = ..., type = 'response')  # prawdopodobienstwa"
 
     lc_feedback(type = "danger",
       tags$ul(
-        tags$li("Ekstrapolacja: model działa w zakresie danych treningowych. Predykcja poza tym zakresem jest ryzykowna."),
-        tags$li("Korelacja predyktorów: silna korelacja między X1 i X2 (współliniowość) zawyża SE i utrudnia interpretację."),
-        tags$li("Overfitting: więcej zmiennych = wyższe R², ale gorsze uogólnianie. Zawsze sprawdzaj adj.R² / AIC / BIC."),
+        tags$li("Ekstrapolacja: model działa w zakresie ", gloss("zbiór treningowy", "danych treningowych"), ". Predykcja poza tym zakresem jest ryzykowna."),
+        tags$li("Korelacja predyktorów: silna korelacja między X1 i X2 (", gloss("współliniowość"), ") zawyża SE i utrudnia interpretację."),
+        tags$li(gloss("przeuczenie", "Overfitting"), ": więcej zmiennych = wyższe R², ale gorsze uogólnianie. Zawsze sprawdzaj adj.R² / AIC / BIC."),
         tags$li("R² w logistycznej: nie używaj R² do oceny regresji logistycznej. Użyj AIC, BIC, dokładności, ROC-AUC.")
       )
     ),

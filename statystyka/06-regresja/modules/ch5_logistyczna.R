@@ -42,7 +42,7 @@ ch5_ui <- list(
       type = "warning",
       tags$strong("To demonstracja, nie zalecenie:"),
       " sztuczne progowanie wyniku ciągłego traci informację. Jeśli wynik",
-      " punktowy jest dostępny i odpowiada na pytanie badawcze, zwykle lepiej",
+      " punktowy jest dostępny i odpowiada na ", gloss("pytanie badawcze"), ", zwykle lepiej",
       " modelować go bez zamiany na 0/1. Logistyczna jest naturalna wtedy,",
       " gdy samo zdarzenie jest binarne."
     ),
@@ -79,7 +79,7 @@ ch5_ui <- list(
       type = "info",
       tags$strong("Dwa różne progi:"),
       " próg tworzący Y=0/1 definiuje zdarzenie przed dopasowaniem modelu.",
-      " Próg klasyfikacji, np. p ≥ 0,5, zamienia przewidywane prawdopodobieństwo",
+      " ", gloss("próg klasyfikacji", "Próg klasyfikacji"), ", np. p ≥ 0,5, zamienia przewidywane prawdopodobieństwo",
       " na decyzję dopiero po dopasowaniu modelu."
     ),
 
@@ -119,7 +119,7 @@ ch5_ui <- list(
         withMathJax(helpText(
           "$$P(Y=1) = \\frac{1}{1 + e^{-(\\beta_0 + \\beta_1 X_1 + \\ldots + \\beta_k X_k)}}$$"
         )),
-        p("Funkcja logistyczna (sigmoida) zamyka wynik w [0, 1] —
+        p(gloss("funkcja logistyczna", "Funkcja logistyczna"), " (sigmoida) zamyka wynik w [0, 1] —
           niezależnie od tego, jak duże albo małe są X-y.")
       )
     ),
@@ -222,7 +222,7 @@ ch5_ui <- list(
 
     inline_callout(label = "Ocena modelu", color = "wskazowka",
       "Nie używamy R² w sensie liniowym. Zamiast tego: AIC, BIC, oraz
-       macierz pomyłek (confusion matrix) z dokładnością, czułością
+       ", gloss("macierz pomyłek"), " (confusion matrix) z dokładnością, czułością
        i swoistością."
     ),
 

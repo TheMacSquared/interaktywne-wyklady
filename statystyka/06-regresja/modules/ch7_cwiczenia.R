@@ -167,10 +167,10 @@ model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
 
     lc_feedback(type = "ok",
       tags$ul(
-        tags$li("Model najpierw interpretuj w jednostkach danych, dopiero potem przez p-value."),
+        tags$li("Model najpierw interpretuj w jednostkach danych, dopiero potem przez ", gloss("p-wartość", "p-value"), "."),
         tags$li("Nie porównuj modeli tylko po R², gdy różnią się liczbą predyktorów."),
-        tags$li("Predykcja poza zakresem danych to ekstrapolacja, nie zwykłe użycie modelu."),
-        tags$li("W regresji logistycznej decyzja zależy od progu i kosztu błędów.")
+        tags$li("Predykcja poza zakresem danych to ", gloss("ekstrapolacja"), ", nie zwykłe użycie modelu."),
+        tags$li("W regresji logistycznej decyzja zależy od ", gloss("próg klasyfikacji", "progu"), " i kosztu błędów.")
       )
     )
   )

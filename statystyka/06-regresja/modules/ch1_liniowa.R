@@ -61,7 +61,7 @@ ch1_ui <- list(
         ma sens dopiero wtedy, gdy chmura punktów układa się w przybliżeniu
         wzdłuż prostej. Jeśli widać krzywiznę albo dwie chmury, prosta będzie
         kłamać niezależnie od tego, jak ładnie policzą się współczynniki."),
-      p("Formalnie regresja liniowa prosta zapisuje związek X → Y tak:"),
+      p("Formalnie ", gloss("regresja prosta", "regresja liniowa prosta"), " zapisuje związek X → Y tak:"),
       lc_formula_box(
         withMathJax(helpText("$$Y = \\beta_0 + \\beta_1 X + \\varepsilon$$")),
         p(withMathJax("\\(\\beta_0\\)"), " — ", gloss("wyraz wolny"), " (intercept): wartość Y gdy X = 0"),

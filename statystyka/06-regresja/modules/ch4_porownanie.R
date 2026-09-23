@@ -147,12 +147,12 @@ ch4_ui <- list(
     lc_h2("ch4-overfitting", "Przeuczenie (overfitting)"),
 
     tagList(
-      p("AIC i BIC działają, gdy modele są ", tags$em("zagnieżdżone"),
+      p("AIC i BIC działają, gdy modele są ", tags$em(gloss("modele zagnieżdżone", "zagnieżdżone")),
         " (jeden zawiera predyktory drugiego). Co, jeśli porównujemy modele
         zasadniczo różne — np. wielomian różnego stopnia? Najlepszą miarą
         staje się wtedy generalizacja na nowe dane."),
       p("Najpierw zobaczmy sam efekt przeuczenia: model z dużą liczbą
-        parametrów może idealnie dopasować się do danych treningowych,
+        parametrów może idealnie dopasować się do ", gloss("zbiór treningowy", "danych treningowych"), ",
         ale działać fatalnie na nowych obserwacjach.")
     ),
 

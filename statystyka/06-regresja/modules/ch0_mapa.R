@@ -52,7 +52,9 @@ ch0_map_ui <- list(
       "jakość dopasowania i model wieloraki, aż do porównania modeli oraz ",
       gloss("regresja logistyczna", "regresji logistycznej"),
       ". Pingwiny pojawiają się tylko tam, gdzie naturalne",
-      "grupy szczególnie dobrze pokazują kontekst, zmienne jakościowe i interakcje."
+      "grupy szczególnie dobrze pokazują kontekst, ",
+      gloss("zmienna jakościowa", "zmienne jakościowe"),
+      " i interakcje."
     ),
 
     lc_feedback(
