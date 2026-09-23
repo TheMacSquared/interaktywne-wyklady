@@ -35,6 +35,13 @@ testthat::test_that("każdy termin ze słownika ma niepustą definicję", {
   testthat::expect_false(anyDuplicated(names(env$.GLOSSARY)) > 0)
 })
 
+testthat::test_that("gloss() nie dokleja spacji przed interpunkcją", {
+  env <- load_glossary()
+  html <- as.character(shiny::p("Obserwuj ", env$gloss("pokrycie"), ". Dalej."))
+  testthat::expect_match(html, "</span>. Dalej.", fixed = TRUE)
+  testthat::expect_match(html, "Obserwuj <span", fixed = TRUE)
+})
+
 testthat::test_that("każde gloss() w wykładach ma hasło w słowniku", {
   env <- load_glossary()
   files <- list.files(stat_root, pattern = "[.]R$", recursive = TRUE,
