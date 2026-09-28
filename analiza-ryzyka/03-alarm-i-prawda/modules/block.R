@@ -135,6 +135,7 @@ alarm_block <- list(
         alarm_terms_table,
         figure_panel(
           label = "Tablica 2×2", title = "Zmień parametry detektora",
+          lc_p("Liczebności są zaokrągloną ilustracją dla 10 000 zmian. Prawdopodobieństwa obliczamy bezpośrednio z parametrów modelu."),
           fluidRow(
             column(
               4,
@@ -217,7 +218,7 @@ alarm_block <- list(
           id = "druga-informacja", title = "Druga informacja",
           text = c(
             "Naturalny odruch po niepewnym alarmie to sięgnięcie po drugie źródło: drugi czujnik, odczyt ręczny, telefon do operatora. Rachunek jest optymistyczny — jeśli druga informacja jest warunkowo niezależna od pierwszej, posterior po pierwszym alarmie staje się częstością bazową dla drugiego i wiarygodność szybko rośnie.",
-            "Cały zysk wisi jednak na słowie „niezależna”. Dwa identyczne czujniki obok siebie mogą reagować na to samo zakłócenie elektromagnetyczne, ten sam kurz i tę samą wilgoć. Suwak poniżej pokazuje, jak zysk z drugiego alarmu topnieje, gdy rośnie udział wspólnego trybu fałszywego alarmu."
+            "Cały zysk wisi jednak na słowie „niezależna”. Dwa identyczne czujniki obok siebie mogą reagować na to samo zakłócenie elektromagnetyczne, ten sam kurz i tę samą wilgoć. W modelu poniżej drugi czujnik z prawdopodobieństwem zadanym suwakiem kopiuje wynik pierwszego; w pozostałych przypadkach działa niezależnie warunkowo przy ustalonym stanie instalacji. Kopiowanie dotyczy zarówno awarii, jak i jej braku. Oba czujniki zachowują tę samą czułość i FPR."
           )
         ),
         list(
@@ -225,7 +226,7 @@ alarm_block <- list(
           text = "Dwa czujniki mogą reagować na to samo zakłócenie lub utracić wspólne zasilanie. Warunkowa niezależność oznacza, że przy ustalonym stanie instalacji (awaria albo jej brak) wynik jednego czujnika nie zmienia prawdopodobieństwa wyniku drugiego — i to założenie trzeba uzasadnić mechanizmem, tak jak w poprzednim wykładzie.",
           widget = figure_panel(
             label = "Porównanie", title = "Dwa alarmy",
-            sliderInput("a3_dependence", "Udział wspólnego trybu fałszywego alarmu", 0, 1, 0, 0.05),
+            sliderInput("a3_dependence", "Prawdopodobieństwo skopiowania pierwszego alarmu", 0, 1, 0, 0.05),
             uiOutput("a3_second"), full_width = TRUE
           ),
           extension = TRUE
@@ -269,6 +270,12 @@ alarm_block <- list(
 alarm_chapters <- risk_block_chapters(alarm_block)
 
 alarm_server <- function(input, output, session) {
+  detector_parameters <- reactive(list(
+    prevalence = input$a3_prev %||% .01,
+    sensitivity = input$a3_sens %||% .95,
+    false_positive_rate = input$a3_fpr %||% .05
+  ))
+  posterior <- reactive(do.call(risk_bayes, detector_parameters()))
   checked <- reactiveVal(FALSE)
   observeEvent(input$a3_vote_check, checked(TRUE))
   output$a3_vote_feedback <- renderUI({
@@ -296,15 +303,13 @@ alarm_server <- function(input, output, session) {
       )
     }
   })
-  detector <- reactive(risk_detector_counts(10000L, input$a3_prev, input$a3_sens, input$a3_fpr))
+  detector <- reactive(do.call(risk_detector_counts, c(list(population = 10000L), detector_parameters())))
   output$a3_table <- renderTable(detector(), striped = TRUE, bordered = TRUE)
   output$a3_counts <- renderUI({
     d <- detector()
-    positives <- sum(d$alarm)
-    posterior <- d$alarm[1] / positives
     lc_stat_grid(lc_stat_box("Prawdziwe alarmy", d$alarm[1]),
       lc_stat_box("Fałszywe alarmy", d$alarm[2]),
-      lc_stat_box("P(awaria | alarm)", risk_format_probability(posterior), color = upwr_accent),
+      lc_stat_box("P(awaria | alarm)", risk_format_probability(posterior()), color = upwr_accent),
       columns = 1
     )
   })
@@ -343,9 +348,9 @@ alarm_server <- function(input, output, session) {
     color = upwr_accent
   ), columns = 1))
   output$a3_second <- renderUI({
-    p1 <- risk_bayes(input$a3_prev, input$a3_sens, input$a3_fpr)
-    independent <- risk_bayes(p1, input$a3_sens, input$a3_fpr)
-    adjusted <- (1 - input$a3_dependence) * independent + input$a3_dependence * p1
+    p1 <- posterior()
+    adjusted <- do.call(risk_two_alarm_posterior, c(detector_parameters(),
+      list(dependence = input$a3_dependence %||% 0)))
     lc_stat_grid(lc_stat_box("Po jednym alarmie", risk_format_probability(p1)),
       lc_stat_box("Po dwóch alarmach", risk_format_probability(adjusted), color = upwr_accent),
       columns = 1

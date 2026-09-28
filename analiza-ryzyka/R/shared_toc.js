@@ -87,7 +87,8 @@
     if (!tocList) return;
 
     // Szukaj sekcji rozdziału w #lc-main (renderUI może wstawić wrapper div)
-    var section = main.querySelector("[data-lc-chapter-content]");
+    var section = document.getElementById(chapterId);
+    tocList.replaceChildren();
 
     var headings = section
       ? Array.from(section.querySelectorAll(
@@ -138,7 +139,7 @@
     if (!main || !sidebar || !scrollSpyChapterId) return;
 
     var scrollTop = main.scrollTop + 80;
-    var section   = main.querySelector("[data-lc-chapter-content]");
+    var section   = document.getElementById(scrollSpyChapterId);
     if (!section) return;
 
     var headings = Array.from(

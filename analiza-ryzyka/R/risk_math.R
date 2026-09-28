@@ -258,3 +258,13 @@ risk_mission_analysis <- function(time, model, power_r1000, controller_r1000,
        miss = p_miss, cooling_failure = 1 - system_r,
        top = risk_fta_top(p_init, p_miss, 1 - system_r), efficacy = efficacy)
 }
+
+# Dwa identyczne detektory: z prawdopodobieństwem dependence drugi kopiuje
+# pierwszy; inaczej losuje niezależnie warunkowo przy ustalonym stanie.
+# Marginalna czułość i FPR obu detektorów pozostają takie same.
+risk_two_alarm_posterior <- function(prevalence, sensitivity, false_positive_rate,
+                                     dependence = 0) {
+  risk_assert_probability(c(prevalence, sensitivity, false_positive_rate, dependence))
+  joint <- function(p) dependence * p + (1 - dependence) * p^2
+  risk_bayes(prevalence, joint(sensitivity), joint(false_positive_rate))
+}

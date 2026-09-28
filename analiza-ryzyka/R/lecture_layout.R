@@ -451,16 +451,21 @@ lecture_server <- function(chapters, input, output, session) {
     if (length(idx) > 0) lc_idx(idx[[1]])
   }, ignoreInit = TRUE)
 
-  # Renderuj aktywny rozdział
+  # Montujemy kontrolki raz: ukrycie rozdziału zachowuje wartości wejść.
+  # Wszystkie rozdziały inicjalizują parametry także przy wejściu przez skrót.
+  output$lc__active_index <- renderText(lc_idx())
+  outputOptions(output, "lc__active_index", suspendWhenHidden = FALSE)
   output$lc__chapter_content <- renderUI({
-    idx <- lc_idx()
-    ch  <- chs[[idx]]
-    tags$section(
-      id    = ch$id,
-      class = "lc-chapter lc-content-wrap",
-      `data-lc-chapter-content` = "true",
-      ch$content
-    )
+    tagList(lapply(seq_along(chs), function(i) {
+      ch <- chs[[i]]
+      conditionalPanel(
+        condition = sprintf("output.lc__active_index == '%d'", i),
+        tags$section(
+          id = ch$id, class = "lc-chapter lc-content-wrap",
+          `data-lc-chapter-content` = "true", ch$content
+        )
+      )
+    }))
   })
 
   # Powiadamiaj JS o zmianie aktywnego rozdziału (setActiveChapter → sidebar + TOC)

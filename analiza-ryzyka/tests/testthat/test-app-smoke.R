@@ -20,12 +20,14 @@ testthat::test_that("wszystkie wykłady ładują UI i kompletną listę rozdzia�
         html <- htmltools::renderTags(env$ui)$html
         ui_ids <- extract_ids(html)
         stopifnot(!anyDuplicated(ui_ids))
-        # Treść rozdziałów renderuje serwer, więc shell nie pokazuje id sekcji ani widgetów.
-        # Sprawdzamy każdy rozdział osobno oraz nagłówki h2 w całym wykładzie.
+        # Rozdziały pozostają zamontowane razem; identyfikatory muszą być unikalne
+        # także między rozdziałami, nie tylko wewnątrz pojedynczego widoku.
+        all_chapter_ids <- character(0)
         h2_ids <- character(0)
         for (chapter in env$.chapters) {
           chapter_html <- htmltools::renderTags(chapter$content)$html
           chapter_ids <- extract_ids(chapter_html)
+          all_chapter_ids <- c(all_chapter_ids, chapter_ids)
           if (anyDuplicated(chapter_ids)) {
             stop(sprintf("Powtórzone id w rozdziale %s: %s", chapter$id,
               paste(unique(chapter_ids[duplicated(chapter_ids)]), collapse = ", ")))
@@ -33,6 +35,7 @@ testthat::test_that("wszystkie wykłady ładują UI i kompletną listę rozdzia�
           h2 <- regmatches(chapter_html, gregexpr('<h2[^>]*id="[^"]+"', chapter_html))[[1]]
           h2_ids <- c(h2_ids, sub('.*id="([^"]+)"', "\\1", h2))
         }
+        stopifnot(!anyDuplicated(c(ui_ids, all_chapter_ids)))
         if (anyDuplicated(h2_ids)) {
           stop(sprintf("Powtórzone id sekcji w wykładzie: %s",
             paste(unique(h2_ids[duplicated(h2_ids)]), collapse = ", ")))

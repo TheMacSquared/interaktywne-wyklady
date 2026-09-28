@@ -41,6 +41,7 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "bananpol.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_math.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_block.R"), local = TRUE)
+source(file.path(app_dir, "modules", "monty_server.R"), local = TRUE)
 source(file.path(app_dir, "modules", "block.R"), local = TRUE)
 
 lc_apply_ggplot_defaults()
