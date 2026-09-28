@@ -15,6 +15,36 @@ ch6_ui <- lecture_chapter(
               ekspozycji, okresu i danych. Wzór jest dopiero kolejnym krokiem."
     ),
 
+    lc_h2("ch6-podsumowanie", "Podsumowanie"),
+    lc_p(
+      "Wykład zaczął się od skórki na korytarzu i od rozdzielenia jednej historii
+       na pięć ról: zagrożenie, ekspozycję, zdarzenie, skutek i zabezpieczenie
+       (definicja 1.1). Rachunek prawdopodobieństwa dotyczy tylko jednej z nich —
+       zdarzenia — i działa tylko wtedy, gdy zdarzenie jest obserwowalne i ma
+       jednostkę. Pierwszym źródłem liczb jest rejestr: częstość empiryczna
+       n_A / n (wzór 1.1) opisuje konkretną serię obserwacji, zmienia się od
+       serii do serii i stabilizuje dopiero przy dużej liczbie porównywalnych
+       zmian."
+    ),
+    lc_p(
+      "Drugim źródłem jest symetria. Gdy doświadczenie ma skończoną przestrzeń
+       zdarzeń elementarnych Ω (definicja 1.3), a wyniki są jednakowo możliwe z
+       konstrukcji — jak przy losowaniu palety generatorem — prawdopodobieństwo
+       zdarzenia A ⊆ Ω to |A| / |Ω| (wzór 1.2). Z tej definicji wynikają granice
+       (1.3): P(Ω) = 1, P(∅) = 0, 0 ≤ P(A) ≤ 1. Zdarzenia łączymy jak zbiory
+       (definicja 1.6): dopełnienie daje wzór (1.4), suma — wzór (1.5) z
+       odjęciem części wspólnej, a „ani A, ani B” — prawa de Morgana (1.6)."
+    ),
+    lc_p(
+      "Oba źródła liczb spełniają te same trzy aksjomaty Kołmogorowa (1.7), z
+       których wynikają wszystkie wzory tego wykładu; w kolejnych wykładach
+       aksjomaty pozwolą pracować także z modelami, w których wyników jest
+       nieskończenie wiele. Wreszcie rozdział o decyzji przypomniał granicę
+       rachunku: prawdopodobieństwo musi mieć horyzont, nie wolno go dodawać
+       dla zdarzeń, które nie są rozłączne (przykład 1.6), i samo nie wyznacza
+       priorytetu — ten wymaga profilu skutków, ekspozycji i barier."
+    ),
+
     lc_h2("ch6-mapa", "Mapa pojęć"),
     figure_panel(
       label = "Ściąga 1.1",
@@ -52,24 +82,29 @@ ch6_ui <- lecture_chapter(
     lc_formula_box(
       withMathJax("$$\\widehat p=\\frac{\\text{zaobserwowane zdarzenia}}
                    {\\text{porównywalne obserwacje}}$$"),
-      tags$p("Częstość empiryczna opisuje konkretny zbiór obserwacji.")
+      tags$p("Wzór (1.1). Częstość empiryczna opisuje konkretny zbiór obserwacji.")
     ),
     lc_formula_box(
       withMathJax("$$P(A)=\\frac{|A|}{|\\Omega|}$$"),
-      tags$p("Definicja klasyczna wymaga skończonej przestrzeni jednakowo możliwych wyników.")
+      tags$p("Wzór (1.2). Definicja klasyczna wymaga skończonej przestrzeni jednakowo możliwych wyników.")
     ),
     lc_formula_box(
       withMathJax("$$P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$$"),
-      tags$p("Część wspólną odejmujemy, aby nie policzyć tych samych wyników dwa razy.")
+      tags$p("Wzór (1.5). Część wspólną odejmujemy, aby nie policzyć tych samych wyników dwa razy.")
     ),
     lc_formula_box(
       withMathJax("$$P(A^c)=1-P(A)$$"),
-      tags$p("Dopełnienie obejmuje wszystkie wyniki, w których zdarzenie A nie zaszło.")
+      tags$p("Wzór (1.4). Dopełnienie obejmuje wszystkie wyniki, w których zdarzenie A nie zaszło.")
     ),
     lc_formula_box(
       withMathJax("$$P(\\Omega)=1,\\qquad P(\\emptyset)=0,\\qquad 0\\le P(A)\\le 1$$"),
-      tags$p("Zdarzenie pewne Ω ma prawdopodobieństwo 1, zdarzenie niemożliwe ∅
+      tags$p("Wzór (1.3). Zdarzenie pewne Ω ma prawdopodobieństwo 1, zdarzenie niemożliwe ∅
              ma 0, a każde zdarzenie mieści się między tymi granicami.")
+    ),
+    lc_formula_box(
+      withMathJax("$$P(A)\\ge 0,\\qquad P(\\Omega)=1,\\qquad A\\cap B=\\emptyset\\ \\Rightarrow\\ P(A\\cup B)=P(A)+P(B)$$"),
+      tags$p("Aksjomaty (1.7). Każde poprawne przypisanie prawdopodobieństw — z symetrii
+             czy z danych — musi je spełniać; pozostałe wzory z nich wynikają.")
     ),
 
     lc_h2("ch6-model", "Jak rozpoznać właściwy punkt startu"),

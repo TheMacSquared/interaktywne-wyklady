@@ -18,6 +18,15 @@ ch8_ui <- lecture_chapter(
               Twoim zadaniem jest zatrzymać zbyt szybki wniosek."
     ),
 
+    lc_p(
+      "Ćwiczenia sprawdzają trzy umiejętności z tego wykładu. Pierwsza to
+       zatrzymanie wniosku, który opiera się na samym liczniku — to problem
+       mianownika z rozdziału 02. Druga to rachunek na zdarzeniach według wzorów
+       (1.2)–(1.6). Trzecia to rozpoznanie, skąd w danej sytuacji bierze się
+       prawdopodobieństwo: z symetrii, z rejestru czy dopiero z modelu. Zadania 5–7
+       na końcu rozdziału mają odpowiedzi zwinięte pod treścią."
+    ),
+
     lc_h2("ch8-diagnoza", "Uzupełnij informację przed decyzją"),
     lc_p(
       "Zaznacz dane, których potrzebujesz, aby porównać częstość, a następnie
@@ -139,6 +148,53 @@ ch8_ui <- lecture_chapter(
       ),
       actionButton("ch8_transfer_rubric", "Pokaż kryteria samooceny", class = "lc-btn-ok-outline"),
       uiOutput("ch8_transfer_feedback")
+    ),
+
+    lc_h2("ch8-dodatkowe", "Zadania do samodzielnego rozwiązania"),
+    figure_panel(
+      label = "Zadania 5–7",
+      title = "Przestrzeń, aksjomaty i częstość",
+      full_width = TRUE,
+      tags$ol(
+        start = 5,
+        tags$li(
+          "Audytor losuje jedną zmianę z 15 par dzień–zmiana (przykład 1.3).
+           C — wylosowano zmianę ranną, D — wylosowano poniedziałek lub wtorek.
+           Oblicz P(C ∪ D) oraz prawdopodobieństwo, że nie zaszło ani C, ani D.",
+          tags$details(
+            class = "lc-exercise-answer",
+            tags$summary("Odpowiedź"),
+            tags$p("|C| = 5, |D| = 2 · 3 = 6, C ∩ D = {(pon, ranna), (wt, ranna)}, więc |C ∩ D| = 2."),
+            tags$p("Ze wzoru (1.5): P(C ∪ D) = 5/15 + 6/15 − 2/15 = 9/15 = 0,6."),
+            tags$p("Z praw de Morgana (1.6) i wzoru (1.4): P(Cᶜ ∩ Dᶜ) = 1 − 0,6 = 0,4. Sprawdzenie: 3 dni (śr–pt) × 2 zmiany nieranne = 6 wyników, 6/15 = 0,4.")
+          )
+        ),
+        tags$li(
+          "W arkuszu oceny czujnika gazu w chłodni wpisano prawdopodobieństwa
+           czterech wyników, które wykluczają się i wyczerpują wszystkie możliwości
+           w ciągu jednej zmiany: brak alarmu 0,70; alarm fałszywy 0,20; alarm
+           prawdziwy 0,15; awaria czujnika 0,02. Czy takie przypisanie jest
+           dopuszczalne?",
+          tags$details(
+            class = "lc-exercise-answer",
+            tags$summary("Odpowiedź"),
+            tags$p("Nie. Wyniki są rozłączne i razem tworzą Ω, więc z aksjomatów (1.7) ich prawdopodobieństwa muszą sumować się do P(Ω) = 1. Tymczasem 0,70 + 0,20 + 0,15 + 0,02 = 1,07."),
+            tags$p("Arkusz jest wewnętrznie sprzeczny niezależnie od danych: co najmniej jedna wartość jest błędna. Trzeba wrócić do źródła każdej liczby, a nie „przeskalować” wszystkie tak, żeby suma wyszła 1.")
+          )
+        ),
+        tags$li(
+          "W rejestrze korytarza przy pakowni 12 ze 150 zmian zawierało
+           poślizgnięcie. Oblicz częstość empiryczną. Przyjmując p = 0,08, oszacuj
+           typowe odchylenie częstości w serii 150 zmian i oceń, czy wynik różny o
+           0,01 od poprzedniego roku jest mocnym sygnałem zmiany.",
+          tags$details(
+            class = "lc-exercise-answer",
+            tags$summary("Odpowiedź"),
+            tags$p("Ze wzoru (1.1): p̂ = 12/150 = 0,08."),
+            tags$p("Typowe odchylenie: √(0,08 · 0,92 / 150) ≈ 0,022. Różnica 0,01 jest ponad dwa razy mniejsza niż typowe wahanie częstości przy tej liczbie zmian, więc nie jest mocnym sygnałem zmiany. Potrzeba dłuższej serii albo informacji o zmianie warunków.")
+          )
+        )
+      )
     ),
 
     lc_h2("ch8-wzorzec", "Wzorzec poprawionego komunikatu"),

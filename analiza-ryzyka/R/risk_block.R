@@ -95,7 +95,22 @@ risk_assessment_ui <- function(prefix, quiz, exercises) {
     figure_panel(
       label = "Praca własna",
       title = "Od rachunku do decyzji",
-      tags$ol(lapply(exercises, tags$li)),
+      tags$ol(lapply(exercises, function(exercise) {
+        # Ćwiczenie to tekst albo lista z polami task i answer (odpowiedź zwinięta).
+        if (is.character(exercise)) {
+          return(tags$li(exercise))
+        }
+        tags$li(
+          exercise$task,
+          if (!is.null(exercise$answer)) {
+            tags$details(
+              class = "lc-exercise-answer",
+              tags$summary("Odpowiedź"),
+              lapply(exercise$answer, tags$p)
+            )
+          }
+        )
+      })),
       full_width = TRUE
     )
   )
@@ -134,6 +149,129 @@ risk_assessment_server <- function(prefix, quiz, input, output) {
       }))
     )
   })
+}
+
+# --------------------------------------------------------------------------
+# ELEMENTY SKRYPTU
+# Sekcja może mieć pole `body`: listę elementów renderowanych dokładnie w podanej
+# kolejności. Wektor znakowy to akapity prozy; pozostałe elementy to gotowe tagi
+# (definicja, wzór, przykład, pytanie kontrolne, widget). Dzięki temu tekst
+# prowadzi rozumowanie, a widget ilustruje jego wybrany krok.
+# --------------------------------------------------------------------------
+
+risk_script_dependency <- function() {
+  htmltools::htmlDependency(
+    name = "risk-script", version = "1.0.0",
+    src = c(file = file.path(.LC_PROJ_ROOT, "R", "assets")),
+    script = "risk_script.js"
+  )
+}
+
+risk_body <- function(items) {
+  if (is.null(items)) {
+    return(NULL)
+  }
+  if (is.character(items)) {
+    return(risk_prose(items))
+  }
+  tagList(lapply(items, function(item) {
+    if (is.character(item)) risk_prose(item) else item
+  }))
+}
+
+risk_definition <- function(num, term, text) {
+  tags$div(
+    class = "lc-def",
+    tags$div(class = "lc-def-label", paste0("Definicja ", num, " · ", term)),
+    tags$div(class = "lc-def-body", lapply(text, tags$p))
+  )
+}
+
+# Wzór z numerem i objaśnieniem symboli. `legend` to nazwany wektor:
+# nazwa = symbol w TeX-u, wartość = znaczenie.
+risk_formula <- function(tex, num = NULL, legend = NULL) {
+  lc_formula_box(
+    class = "lc-formula-numbered",
+    tags$div(
+      class = "lc-formula-row",
+      tags$div(class = "lc-formula-tex", withMathJax(paste0("$$", tex, "$$"))),
+      if (!is.null(num)) tags$div(class = "lc-formula-num", paste0("(", num, ")"))
+    ),
+    if (!is.null(legend)) {
+      tags$div(
+        class = "lc-formula-legend",
+        "gdzie: ",
+        tagList(lapply(seq_along(legend), function(i) {
+          tagList(
+            if (i > 1) "; ",
+            paste0("\\(", names(legend)[i], "\\)"), " — ", legend[[i]]
+          )
+        })),
+        "."
+      )
+    }
+  )
+}
+
+# Przykład z rozwiązaniem krok po kroku. Rozwiązanie jest zwinięte, żeby czytelnik
+# mógł najpierw spróbować sam. W krokach używaj zapisu Unicode, nie MathJax:
+# treść zwiniętego elementu nie zawsze jest poprawnie składana.
+risk_example <- function(num, title, problem, steps, answer = NULL) {
+  tags$div(
+    class = "lc-example",
+    tags$div(class = "lc-example-label", paste0("Przykład ", num, " · ", title)),
+    tags$div(class = "lc-example-body", lapply(problem, tags$p)),
+    tags$details(
+      class = "lc-example-solution",
+      tags$summary("Rozwiązanie"),
+      tags$ol(lapply(steps, tags$li)),
+      if (!is.null(answer)) tags$p(tags$strong("Odpowiedź:"), paste0(" ", answer))
+    )
+  )
+}
+
+# Zwinięte wyprowadzenie lub uzasadnienie — dla czytelnika, który chce zobaczyć,
+# skąd bierze się wzór; na zajęciach można je pominąć.
+risk_derivation <- function(title, text, lines = NULL) {
+  inline_callout(
+    label = paste0("Skąd to się bierze: ", title),
+    lapply(text, tags$p),
+    if (!is.null(lines)) tags$pre(class = "lc-derivation-lines", paste(lines, collapse = "\n")),
+    color = "ok"
+  )
+}
+
+# Pytanie kontrolne w toku tekstu. Działa w przeglądarce (bez serwera): po wyborze
+# błędnej odpowiedzi pokazuje wskazówkę, po poprawnej — wyjaśnienie.
+risk_check <- function(id, question, choices, correct, explanation, hints = NULL) {
+  stopifnot(correct %in% unname(choices))
+  tags$div(
+    class = "lc-check", `data-correct` = correct,
+    tags$div(class = "lc-check-label", "Sprawdź się"),
+    tags$p(class = "lc-check-question", question),
+    tags$div(
+      class = "lc-check-options",
+      lapply(seq_along(choices), function(i) {
+        value <- unname(choices[[i]])
+        tags$label(
+          class = "lc-check-option",
+          tags$input(
+            type = "radio", name = paste0("lc_check_", id), value = value,
+            `data-hint` = if (!is.null(hints) && value %in% names(hints)) hints[[value]]
+          ),
+          " ", names(choices)[i]
+        )
+      })
+    ),
+    tags$div(class = "lc-check-feedback", role = "status", `aria-live` = "polite"),
+    tags$div(class = "lc-check-explanation", hidden = NA, explanation),
+    risk_script_dependency()
+  )
+}
+
+# Instrukcja przed widgetem: co zmienić i na co patrzeć.
+risk_try <- function(text) {
+  tags$div(class = "lc-try", tags$strong("Do zrobienia:"), paste0(" ", text))
 }
 
 risk_prose <- function(text) {
@@ -186,6 +324,7 @@ risk_section <- function(block, chapter, section) {
     if (!is.null(section$text)) risk_prose(section$text),
     risk_callout(section$callout),
     if (!is.null(section$bullets)) tags$ul(lapply(section$bullets, tags$li)),
+    risk_body(section$body),
     risk_config_extras(section)
   )
 }
@@ -209,6 +348,7 @@ risk_chapter_from_config <- function(block, chapter, index, next_chapter = NULL)
     ),
     if (!is.null(chapter$intro)) risk_prose(chapter$intro),
     risk_callout(chapter$callout),
+    risk_body(chapter$body),
     lapply(sections, function(section) risk_section(block, chapter, section)),
     risk_config_extras(chapter)
   )

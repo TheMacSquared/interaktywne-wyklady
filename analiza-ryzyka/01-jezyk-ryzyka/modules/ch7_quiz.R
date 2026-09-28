@@ -28,6 +28,16 @@ ch7_ui <- lecture_chapter(
               modelu. Rachunki są tu mniej ważne niż precyzyjna interpretacja."
     ),
 
+    lc_p(
+      "Pytania układają się w tej samej kolejności co wykład. Pierwsze dotyczą
+       ról z definicji 1.1 i opisu zdarzenia, kolejne — różnicy między
+       częstością z krótkiej serii a prawdopodobieństwem modelowym, warunków
+       definicji klasycznej (1.2) oraz działań na zdarzeniach (1.4)–(1.5).
+       Ostatnie sprawdzają, czy prawdopodobieństwo nie zostaje pomylone z pełnym
+       opisem ryzyka. Odpowiadaj najpierw bez zaglądania do wcześniejszych
+       rozdziałów; omówienie pojawi się po sprawdzeniu."
+    ),
+
     tagList(lapply(seq_along(quiz_questions), function(i) {
       .quiz_question_ui(quiz_questions[[i]], i)
     })),
@@ -39,6 +49,15 @@ ch7_ui <- lecture_chapter(
       width = "100%"
     ),
     uiOutput("ch7_feedback"),
+
+    lc_p(
+      "Jeśli błędy skupiły się na jednym typie pytań, wróć do odpowiedniego
+       miejsca skryptu. Pomyłki w rolach i opisie zdarzenia wskazują na
+       rozdział 01 i przykład 1.1. Pomyłki przy krótkiej serii bez zdarzeń — na
+       rozdział 02 i uwagę o prawie wielkich liczb. Pomyłki w rachunku na
+       zbiorach najlepiej rozwiązać, licząc kwadraty na siatce ze stu kontroli w
+       rozdziale 04: każdy wzór tego wykładu da się tam sprawdzić ręcznie."
+    ),
 
     lc_chapter_next(
       num = "08",

@@ -38,6 +38,18 @@ ch5_ui <- lecture_chapter(
       columns = 2
     ),
 
+    lc_p(
+      "Obie liczby łatwiej porównać jako częstości naturalne. P = 0,08 na zmianę
+       oznacza w modelu około 80 zmian z poślizgnięciem na 1000 zmian w tym
+       korytarzu. P = 0,002 oznacza około 2 zmiany z kolizją na 1000 zmian w
+       strefie transportu. Poślizgnięcie jest więc czterdzieści razy częstsze.
+       Pytanie brzmi, czy ta różnica sama rozstrzyga, czym dyrektor powinien
+       zająć się najpierw."
+    ),
+    risk_try("zanim klikniesz „Sprawdź rozumowanie”, zapisz jednym zdaniem,
+      czego brakuje w każdej z trzech pierwszych odpowiedzi. Potem wybierz
+      odpowiedź i porównaj swoje uzasadnienie z komentarzem."),
+
     figure_panel(
       label = "Decyzja",
       title = "Jaki priorytet można teraz uzasadnić?",
@@ -56,11 +68,71 @@ ch5_ui <- lecture_chapter(
       uiOutput("ch5_feedback")
     ),
 
+    lc_p(
+      "Każda z pierwszych trzech odpowiedzi opiera się na jednym wymiarze
+       problemu. Większe prawdopodobieństwo poślizgnięcia jest faktem, ale nie
+       mówi nic o skutkach. Cięższy skutek kolizji też jest faktem, ale pomija
+       to, jak rzadko do niej dochodzi. Stwierdzenie o „takim samym ryzyku”
+       wymagałoby reguły, która zamienia prawdopodobieństwo i skutek na jedną
+       liczbę — a takiej reguły nikt jeszcze nie ustalił. Poprawna odpowiedź nie
+       jest uchylaniem się od decyzji, tylko wskazaniem, jakich informacji
+       brakuje, żeby ją podjąć."
+    ),
+
     margin_callout(
       label = "Granica wykładu",
       "Ten kurs buduje przede wszystkim składową probabilistyczną analizy.
        Skutków nie zamieniamy automatycznie w pieniądze ani punkty.",
       color = "uwaga"
+    ),
+
+    lc_h2("ch5-horyzont", "Prawdopodobieństwo zawsze ma horyzont"),
+    lc_p(
+      "Obie liczby dotyczą jednej zmiany. Dyrektor myśli jednak w horyzoncie
+       roku: ile razy w ciągu 250 zmian może dojść do kolizji? Porównywanie
+       prawdopodobieństw liczonych dla różnych horyzontów — na zmianę, na
+       miesiąc, na rok — jest jednym z najczęstszych błędów w raportach
+       bezpieczeństwa. Każde prawdopodobieństwo musi mieć podaną jednostkę tak
+       samo jak częstość z definicji 1.2 ma swój mianownik."
+    ),
+    lc_p(
+      "Przejście od jednej zmiany do roku wymaga założeń o tym, jak zmiany są
+       ze sobą powiązane; zrobimy to porządnie w wykładzie 04. Już teraz wzory
+       z tego wykładu pozwalają jednak wykryć błąd, który pojawia się bardzo
+       często: mnożenie prawdopodobieństwa na zmianę przez liczbę zmian."
+    ),
+    risk_example("1.6", "Czy 250 · 0,002 to prawdopodobieństwo w roku?",
+      problem = c(
+        "Analityk pisze: „P(kolizji na zmianę) = 0,002, w roku jest 250 zmian,
+         więc P(co najmniej jednej kolizji w roku) = 250 · 0,002 = 0,5”. Tą samą
+         metodą dla poślizgnięcia dostałby 250 · 0,08. Oceń ten rachunek."
+      ),
+      steps = c(
+        "Zdarzenie „co najmniej jedna kolizja w roku” to suma zdarzeń K₁ ∪ K₂ ∪ … ∪ K₂₅₀,
+         gdzie Kᵢ oznacza kolizję na i-tej zmianie.",
+        "Dodawanie prawdopodobieństw jest poprawne tylko dla zdarzeń rozłącznych
+         (aksjomat (1.7)). Kolizje na różnych zmianach nie są rozłączne — w roku
+         mogą zdarzyć się dwie.",
+        "Ze wzoru (1.5) dla dwóch zdarzeń: P(K₁ ∪ K₂) = P(K₁) + P(K₂) − P(K₁ ∩ K₂)
+         ≤ P(K₁) + P(K₂). Suma prawdopodobieństw jest więc tylko górnym
+         ograniczeniem, bo pomija odjęcie części wspólnych.",
+        "Dla poślizgnięcia 250 · 0,08 = 20 — liczba większa od 1, co łamie
+         własność (1.3). To ostateczny dowód, że metoda jest błędna.",
+        "Przy dodatkowym założeniu niezależności zmian (wykład 04) i wzorze (1.4):
+         P(co najmniej jednej kolizji) = 1 − 0,998²⁵⁰ ≈ 0,394, a dla poślizgnięcia
+         1 − 0,92²⁵⁰ — praktycznie 1."
+      ),
+      answer = "0,5 to górne ograniczenie, nie prawdopodobieństwo; przy niezależnych
+        zmianach właściwa wartość to około 0,39. Iloczyn 250 · 0,002 = 0,5 ma
+        jednak inną, poprawną interpretację: średnio pół kolizji na rok, czyli
+        około jedna kolizja na dwa lata."
+    ),
+    lc_p(
+      "Przykład pokazuje, że nawet bez danych o skutkach porównanie wymaga
+       uzgodnienia horyzontu. W skali roku poślizgnięcie w tym korytarzu jest w
+       modelu praktycznie pewne, a kolizja ma szansę mniej więcej 2 do 5. Obie
+       liczby są wysokie, ale opisują zupełnie różne zdarzenia — i to prowadzi
+       nas do profilu ryzyka."
     ),
 
     lc_h2("ch5-profil", "Profil dwóch problemów"),
@@ -95,6 +167,31 @@ ch5_ui <- lecture_chapter(
        porządkować dyskusję, ale są skalami porządkowymi. Iloczyn numerów pól
        1–5 nie staje się automatycznie ilościową miarą ryzyka. Granice kategorii
        i reguły decyzji muszą być jawne."
+    ),
+
+    lc_p(
+      "Problem z iloczynem numerów pól łatwo zobaczyć na przykładzie. Zdarzenie
+       o częstości „5 — prawie pewne” i skutku „2 — drobny” dostaje 10 punktów,
+       tak samo jak zdarzenie o częstości „2 — rzadkie” i skutku „5 —
+       katastrofalny”. Równa liczba punktów nie oznacza równego ryzyka — oznacza
+       tylko, że tak wypadła arytmetyka na numerach kategorii. Odstępy między
+       kategoriami też nie są równe: przejście od „rzadkiego” do „możliwego” może
+       oznaczać dziesięciokrotny wzrost prawdopodobieństwa, a od „drobnego” do
+       „poważnego” — zupełnie inny rodzaj szkody."
+    ),
+    risk_check("j1_chk_macierz",
+      "W macierzy 5 × 5 zdarzenie X ma pole (prawdopodobieństwo 5, skutek 2), a zdarzenie Y — pole (2, 5). Oba dostają iloczyn 10. Co z tego wynika?",
+      c(
+        "Oba zdarzenia mają to samo ryzyko" = "same",
+        "Iloczyn numerów kategorii porządkowych nie jest miarą ryzyka; potrzebne są jawne reguły priorytetu" = "ordinal",
+        "Y jest ważniejsze, bo skutek zawsze przeważa" = "severity"
+      ),
+      correct = "ordinal",
+      explanation = "Numery kategorii są etykietami porządku, a nie wielkościami, które wolno mnożyć. Równy iloczyn nie oznacza równego ryzyka — decyzja wymaga jawnych kryteriów, np. progu dla ciężkich skutków niezależnie od częstości.",
+      hints = c(
+        same = "Czy odstęp między kategoriami 1 i 2 musi być taki sam jak między 4 i 5? Co wtedy znaczy iloczyn?",
+        severity = "To może być rozsądna reguła, ale trzeba ją jawnie przyjąć. Sama macierz jej nie zawiera."
+      )
     ),
 
     lc_feedback(

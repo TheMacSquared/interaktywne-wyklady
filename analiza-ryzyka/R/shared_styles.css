@@ -2073,3 +2073,109 @@ mjx-container mjx-text {
   .lc-dm-card { transition: none; }
   .lc-dm-card.lc-dm-lifted { transform: none; }
 }
+
+/* === Elementy skryptu (R/risk_block.R) === */
+.lc-def,
+.lc-example,
+.lc-check {
+  max-width: 680px;
+  margin: 1.4em 0;
+  padding: 12px 16px;
+  background: var(--upwr-surface);
+  border: 1px solid var(--upwr-rule);
+  border-left: 4px solid var(--upwr-accent);
+  border-radius: 2px;
+  font-family: var(--upwr-serif);
+  font-size: calc(17px * var(--lc-font-scale));
+  line-height: 1.6;
+  color: var(--upwr-ink-soft);
+}
+
+.lc-example { border-left-color: var(--upwr-single-alt); }
+.lc-check { border-left-color: var(--upwr-reference); }
+.lc-check.is-correct { border-left-color: var(--upwr-sage); background: var(--upwr-sage-tint); }
+.lc-check.is-wrong { border-left-color: var(--upwr-accent); }
+
+.lc-def-label,
+.lc-example-label,
+.lc-check-label {
+  margin-bottom: 6px;
+  font-family: var(--upwr-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--upwr-accent);
+}
+
+.lc-example-label { color: var(--upwr-single-alt); }
+.lc-check-label { color: var(--upwr-reference); }
+
+.lc-def p,
+.lc-example p,
+.lc-check p { margin: 0 0 0.6em; }
+.lc-def p:last-child,
+.lc-example-body p:last-child { margin-bottom: 0; }
+
+.lc-example-solution,
+.lc-exercise-answer {
+  margin-top: 10px;
+  border-top: 1px solid var(--upwr-rule-soft);
+  padding-top: 8px;
+}
+
+.lc-example-solution > summary,
+.lc-exercise-answer > summary {
+  cursor: pointer;
+  font-family: var(--upwr-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--upwr-single-alt);
+}
+
+.lc-example-solution ol { margin: 8px 0; padding-left: 1.4em; }
+.lc-example-solution li { margin-bottom: 4px; }
+
+.lc-formula-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.lc-formula-tex { flex: 1 1 auto; min-width: 0; overflow-x: auto; }
+.lc-formula-num { flex: 0 0 auto; color: var(--upwr-reference); }
+.lc-formula-legend {
+  margin-top: 4px;
+  font-family: var(--upwr-serif);
+  font-size: calc(14px * var(--lc-font-scale));
+  line-height: 1.5;
+  color: var(--upwr-ink-soft);
+}
+
+.lc-check-question { font-weight: 600; }
+.lc-check-options { display: flex; flex-direction: column; gap: 4px; }
+.lc-check-option { font-weight: 400; cursor: pointer; }
+.lc-check-feedback:not(:empty) { margin-top: 8px; font-weight: 600; }
+.lc-check-explanation { margin-top: 4px; }
+
+.lc-try {
+  max-width: 680px;
+  margin: 1.2em 0 0.6em;
+  font-family: var(--upwr-serif);
+  font-size: calc(16px * var(--lc-font-scale));
+  line-height: 1.55;
+  color: var(--upwr-ink-soft);
+}
+
+.lc-derivation-lines {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  background: var(--upwr-surface-sunken);
+  border: none;
+  font-family: var(--upwr-mono);
+  font-size: calc(13px * var(--lc-font-scale));
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--upwr-ink);
+}

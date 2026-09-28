@@ -45,6 +45,23 @@ ch1_ui <- lecture_chapter(
       color = "wskazowka"
     ),
 
+    lc_p(
+      "Pierwszy dzień pracy zaczyna się od notatki z porannego obchodu:
+       „skórka od banana na korytarzu przy dojrzewalni, ryzyko wypadku”.
+       Notatka brzmi rozsądnie, ale nie da się z nią nic policzyć. Nie wiadomo,
+       czy ktoś już się poślizgnął, ile osób tamtędy chodzi, jak długo skórka
+       leżała ani czym mogłoby się skończyć ewentualne potknięcie. Słowo
+       „ryzyko” skleja tu kilka różnych rzeczy, a każda z nich wymaga innych
+       danych i innego działania."
+    ),
+    lc_p(
+      "Dlatego zanim pojawi się pierwszy wzór, rozkładamy historię na części.
+       Rachunek prawdopodobieństwa dotyczy zdarzeń, czyli precyzyjnie
+       opisanych wyników obserwacji. Jeżeli zdarzenie jest opisane mgliście,
+       żaden wzór tego nie naprawi: dwie osoby policzą dwie różne liczby i obie
+       będą miały rację względem swojej definicji."
+    ),
+
     lc_h2("ch1-slownik", "Pięć różnych elementów jednej historii"),
     lc_p(
       "W analizie ryzyka podobne słowa bywają używane zamiennie. Tutaj każde
@@ -52,6 +69,17 @@ ch1_ui <- lecture_chapter(
        kontakt z zagrożeniem, zdarzenie opisuje to, co zaszło, a skutek mówi o
        następstwie. Zabezpieczenie ma przerwać ten łańcuch."
     ),
+    risk_definition("1.1", "Łańcuch od zagrożenia do skutku", c(
+      "Zagrożenie to źródło lub stan, który może spowodować szkodę. Ekspozycja
+       to kontakt osób albo mienia z zagrożeniem w określonych warunkach i przez
+       określony czas. Zdarzenie to obserwowalny wynik, który w danym okresie
+       zachodzi albo nie zachodzi. Skutek to następstwo zdarzenia, opisane
+       rodzajem i dotkliwością. Zabezpieczenie (bariera) to element, który
+       przerywa drogę od zagrożenia do zdarzenia albo od zdarzenia do skutku.",
+      "Prawdopodobieństwo będziemy przypisywać wyłącznie zdarzeniom. Zagrożenie
+       samo w sobie nie ma prawdopodobieństwa — ma je dopiero konkretne
+       zdarzenie, np. poślizgnięcie się na tym przejściu podczas jednej zmiany."
+    )),
 
     lc_stat_grid(
       lc_stat_box("Zagrożenie", "Źródło możliwej szkody", color = upwr_cat[["terakota"]]),
@@ -62,11 +90,24 @@ ch1_ui <- lecture_chapter(
       columns = 3
     ),
 
+    lc_p(
+      "Kolejność w tym łańcuchu nie jest przypadkowa. Zagrożenie istnieje, zanim
+       ktokolwiek się do niego zbliży; ekspozycja sprawia, że zdarzenie staje
+       się w ogóle możliwe; skutek zależy od tego, jak przebiegło zdarzenie.
+       Zabezpieczenia mogą działać w dwóch miejscach: przed zdarzeniem (sprzątanie
+       usuwa skórkę, zanim ktoś na nią nadepnie) albo po nim (antypoślizgowe
+       obuwie czy pierwsza pomoc ograniczają dotkliwość). To rozróżnienie wróci
+       w wykładzie 09, gdy będziemy budować drzewo błędów."
+    ),
+
     lc_h2("ch1-klasyfikacja", "Uporządkuj incydent Bananpolu"),
     lc_p(
       "Przypisz każdemu zdaniu jedną rolę. Karty w puli leżą w przypadkowej
        kolejności, więc sama pozycja niczego nie podpowiada."
     ),
+    risk_try("dla każdej karty zadaj sobie pytanie z definicji 1.1: czy to
+      źródło szkody, kontakt z nim, to, co zaszło, następstwo, czy element
+      przerywający łańcuch? Dopiero potem przeciągnij kartę i sprawdź wynik."),
 
     figure_panel(
       label = "Ćwiczenie 1",
@@ -95,6 +136,49 @@ ch1_ui <- lecture_chapter(
       uiOutput("ch1_feedback")
     ),
 
+    lc_p(
+      "Najczęstsze pomyłki dotyczą dwóch par. Skórka bywa brana za zdarzenie,
+       bo „coś się stało” — ktoś ją upuścił. Ale z perspektywy bezpieczeństwa
+       pracowników skórka jest stanem otoczenia, a zdarzeniem jest dopiero utrata
+       przyczepności i upadek. Druga para to zdarzenie i skutek: upadek i
+       złamanie nadgarstka to dwie różne rzeczy, bo ten sam upadek może skończyć
+       się siniakiem albo niczym. Gdy te role się zlewają, prawdopodobieństwo
+       upadku zaczyna udawać miarę dotkliwości — a nią nie jest."
+    ),
+    risk_example("1.1", "Ta sama analiza przy rampie",
+      problem = c(
+        "Przypisz role z definicji 1.1 elementom drugiej historii z Bananpolu.",
+        "(a) Wózek widłowy cofa z rampy z ograniczoną widocznością. (b) Pracownik
+         sprawdza dokumenty dostawy, stojąc w strefie manewrów. (c) Wózek uderza
+         w pracownika. (d) Pracownik doznaje stłuczenia biodra. (e) Wyznaczone
+         przejście dla pieszych jest oddzielone barierką od strefy manewrów."
+      ),
+      steps = c(
+        "(a) Cofający wózek przy ograniczonej widoczności może spowodować szkodę,
+         ale sam nikogo jeszcze nie skrzywdził — to zagrożenie.",
+        "(b) Obecność człowieka w strefie manewrów to kontakt z zagrożeniem —
+         ekspozycja. Bez niej kolizja z pieszym nie jest możliwa.",
+        "(c) Uderzenie to obserwowalny wynik, który zaszedł albo nie — zdarzenie.",
+        "(d) Stłuczenie biodra jest następstwem uderzenia — skutkiem. Przy innym
+         przebiegu to samo zdarzenie mogłoby skończyć się złamaniem.",
+        "(e) Barierka oddziela pieszych od wózków, więc działa przed zdarzeniem:
+         usuwa ekspozycję — to zabezpieczenie."
+      ),
+      answer = "(a) zagrożenie, (b) ekspozycja, (c) zdarzenie, (d) skutek,
+        (e) zabezpieczenie. Struktura jest ta sama co przy skórce; zmienia się
+        tylko treść."
+    ),
+    risk_check("j1_chk_role",
+      "Posadzka przy myjni skrzynek jest mokra przez całą zmianę. Jaką rolę pełni ten fakt w łańcuchu z definicji 1.1?",
+      c("Zdarzenie" = "event", "Zagrożenie" = "hazard", "Skutek" = "consequence"),
+      correct = "hazard",
+      explanation = "Mokra posadzka to stan otoczenia, który może spowodować szkodę. Zdarzeniem byłby dopiero upadek na niej, a skutkiem — uraz.",
+      hints = c(
+        event = "Czy mokra posadzka to wynik, który „zaszedł albo nie” w konkretnej chwili? Co musiałoby się stać, żeby ktoś ucierpiał?",
+        consequence = "Skutek jest następstwem zdarzenia. Jakie zdarzenie musiałoby nastąpić wcześniej?"
+      )
+    ),
+
     lc_feedback(
       type = "warning",
       tags$strong("Pułapka:"),
@@ -106,6 +190,11 @@ ch1_ui <- lecture_chapter(
     lc_p("Ustalamy cel i zakres, identyfikujemy zagrożenia i scenariusze, analizujemy ich prawdopodobieństwo oraz skutki, oceniamy wynik według jawnych kryteriów, wdrażamy działanie i sprawdzamy pozostałe ryzyko. Komunikacja z osobami narażonymi i odpowiedzialnymi trwa na każdym etapie. Ten kurs rozwija przede wszystkim część probabilistyczną."),
     lc_h2("ch1-scenariusz", "Zanim dostaniesz gotowe drzewo"),
     lc_p("W parze wybierz zagrożenie przy rozładunku. Zapisz: źródło zagrożenia, zdarzenie inicjujące, osoby narażone, istniejące bariery i dwa możliwe skutki. Dodaj błąd człowieka lub procedury oraz jedną brakującą informację. Oddziel bariery zapobiegające zdarzeniu od tych, które ograniczają skutek po jego wystąpieniu."),
+    lc_p("Ta część jest ćwiczeniem wstępnym, a nie oceną ryzyka. Chodzi o to,
+      żeby przed jakimkolwiek rachunkiem wiedzieć, jakie zdarzenie będziemy
+      liczyć i gdzie w łańcuchu działa każda bariera. Kiedy w kolejnych
+      rozdziałach zaczniemy przypisywać zdarzeniom liczby, każde z nich musi
+      dać się wskazać w takim opisie."),
     lc_p("Przykład: uszkodzenie opakowania → wyciek na przejście → poślizgnięcie → brak urazu albo uraz. Kontrola opakowania zapobiega wyciekowi, usunięcie rozlania i odgrodzenie ograniczają kontakt. Sama tabliczka ostrzegawcza zależy od zauważenia i reakcji człowieka. Ponowna kontrola przejścia sprawdza, czy działanie było skuteczne."),
     lc_chapter_next(
       num = "02",

@@ -31,10 +31,50 @@ ch2_ui <- lecture_chapter(
        zdefiniowano zdarzenie i czy obserwacje dotyczą tych samych warunków."
     ),
 
-    lc_formula_box(
-      withMathJax("$$\\text{częstość empiryczna} =
-                   \\frac{\\text{liczba zmian ze zdarzeniem}}
-                   {\\text{liczba obserwowanych zmian}}$$")
+    lc_p(
+      "Mianownik jest tak samo ważny jak licznik, bo zmienia pytanie. Trzy
+       poślizgnięcia na 40 zmian to inna sytuacja niż trzy na 400 zmian, choć
+       licznik jest identyczny. Równie ważne jest, co liczymy w liczniku: w
+       rejestrze Bananpolu zliczamy zmiany, w których doszło do co najmniej
+       jednego poślizgnięcia. Zmiana z dwoma upadkami liczy się raz. Taki wybór
+       sprawia, że każda obserwacja kończy się jednym z dwóch wyników — zdarzenie
+       zaszło albo nie — i że częstość zawsze leży między 0 a 1."
+    ),
+    risk_definition("1.2", "Częstość empiryczna", c(
+      "Niech w n porównywalnych, niezależnie przeprowadzonych obserwacjach
+       zdarzenie A zaszło n_A razy. Częstością empiryczną (względną) zdarzenia A
+       nazywamy iloraz n_A / n, oznaczany p̂ₙ (czytaj: p z daszkiem).",
+      "Częstość jest wynikiem konkretnej serii obserwacji. Inna seria tej samej
+       długości da zwykle inną wartość, dlatego piszemy p̂ z daszkiem — to
+       oszacowanie, a nie sam parametr modelu."
+    )),
+    risk_formula(
+      "\\widehat{p}_n=\\frac{n_A}{n}=\\frac{\\text{liczba zmian ze zdarzeniem}}{\\text{liczba obserwowanych zmian}}",
+      num = "1.1",
+      legend = c(
+        "n" = "liczba porównywalnych obserwacji (tutaj: zmian)",
+        "n_A" = "liczba obserwacji, w których zaszło zdarzenie A",
+        "\\widehat{p}_n" = "częstość empiryczna po n obserwacjach"
+      )
+    ),
+    risk_example("1.2", "Który korytarz jest bardziej śliski?",
+      problem = c(
+        "W korytarzu przy dojrzewalni obserwowano 40 zmian; w 3 z nich doszło
+         do poślizgnięcia. W korytarzu przy pakowni obserwowano 120 zmian; zdarzenie
+         wystąpiło w 5 z nich. Kierownik pakowni twierdzi, że u niego jest gorzej,
+         bo „było więcej wypadków”. Oblicz częstości i oceń ten argument."
+      ),
+      steps = c(
+        "Dojrzewalnia: ze wzoru (1.1) p̂ = 3/40 = 0,075.",
+        "Pakownia: p̂ = 5/120 ≈ 0,042.",
+        "Licznik jest większy w pakowni, ale mianownik jest trzykrotnie większy.
+         Na zmianę przypada tam mniej zdarzeń.",
+        "Porównanie ma sens tylko wtedy, gdy obie serie używają tej samej definicji
+         zdarzenia i tej samej jednostki obserwacji (zmiana w jednym korytarzu)."
+      ),
+      answer = "0,075 wobec około 0,042 — to dojrzewalnia ma wyższą częstość. Argument
+        „więcej wypadków” pomija mianownik. Seria 40 zmian jest jednak krótka, więc
+        różnica może częściowo wynikać z przypadku; to sprawdzi symulacja poniżej."
     ),
 
     lc_h2("ch2-symulacja", "Zobacz stabilizację częstości"),
@@ -44,6 +84,12 @@ ch2_ui <- lecture_chapter(
        Małe serie mogą wyglądać dramatycznie albo podejrzanie dobrze. Gdy uznasz,
        że danych jest dość, odsłoń wartość przyjętą w modelu."
     ),
+
+    risk_try("zacznij od kilku kliknięć „Dodaj 1 zmianę” i zapisz częstość po
+      10 zmianach. Potem dodawaj po 100 i po 1000. Obserwuj, jak zmienia się
+      zakres wahań linii. Odsłoń modelowe P dopiero, gdy wpiszesz swoje
+      oszacowanie. Na koniec kliknij „Nowa seria” i porównaj początek nowej
+      linii z poprzednią."),
 
     figure_panel(
       label = "Ćwiczenie 2",
@@ -69,6 +115,53 @@ ch2_ui <- lecture_chapter(
       )
     ),
 
+    lc_p(
+      "Na początku serii linia skacze gwałtownie: po jednej zmianie częstość
+       wynosi 0 albo 1, a po kilku zmianach jedno zdarzenie przesuwa ją o
+       kilkanaście punktów procentowych. Z każdą kolejną setką zmian pojedyncza
+       obserwacja waży coraz mniej, więc linia uspokaja się i zbliża do poziomu,
+       który po odsłonięciu okazuje się modelowym prawdopodobieństwem. Dwie
+       różne serie mogą na początku wyglądać zupełnie inaczej, a po tysiącu zmian
+       leżą blisko siebie."
+    ),
+    lc_p(
+      "To zachowanie ma nazwę: prawo wielkich liczb. Mówi ono, że przy
+       niezależnych i porównywalnych obserwacjach częstość empiryczna p̂ₙ z
+       coraz większym prawdopodobieństwem leży blisko prawdopodobieństwa p,
+       gdy n rośnie. Nie mówi natomiast, że w krótkiej serii częstość będzie
+       bliska p, ani że po serii „pechowych” zmian nastąpi seria „szczęśliwych”,
+       która wyrówna wynik. Stabilizacja bierze się z rozcieńczania, a nie z
+       kompensowania."
+    ),
+    risk_derivation("jak szybko częstość się stabilizuje", c(
+      "Typowe odchylenie częstości p̂ₙ od prawdopodobieństwa p wynosi około
+       √(p(1 − p)/n). Wzór wyprowadzimy w wykładzie 04 przy rozkładzie
+       dwumianowym; tutaj wystarczy jego skutek.",
+      "Przy p = 0,10 typowe odchylenie wynosi około 0,095 po 10 zmianach, 0,030
+       po 100 zmianach i 0,0095 po 1000 zmianach. Aby zmniejszyć rozrzut
+       dziesięciokrotnie, potrzeba stukrotnie więcej obserwacji. Dlatego seria
+       40 zmian z przykładu 1.2 nie wystarcza, by rozstrzygnąć, który korytarz
+       jest naprawdę bardziej śliski."
+    ), lines = c(
+      "n = 10:    √(0,1 · 0,9 / 10)   ≈ 0,095",
+      "n = 100:   √(0,1 · 0,9 / 100)  = 0,030",
+      "n = 1000:  √(0,1 · 0,9 / 1000) ≈ 0,0095"
+    )),
+    risk_check("j1_chk_seria",
+      "Model przyjmuje P = 0,08 poślizgnięcia na zmianę. W ostatnich 20 zmianach nie było ani jednego zdarzenia. Co z tego wynika?",
+      c(
+        "Model jest błędny, bo częstość wyniosła 0" = "wrong",
+        "Taka seria jest przy P = 0,08 całkiem możliwa; 20 zmian to za mało, by odrzucić model" = "possible",
+        "Następne zmiany muszą przynieść więcej zdarzeń, żeby wyrównać średnią" = "compensate"
+      ),
+      correct = "possible",
+      explanation = "Przy niezależnych zmianach seria 20 zmian bez zdarzenia ma prawdopodobieństwo 0,92²⁰ ≈ 0,19 — zdarza się mniej więcej w co piątej takiej serii (rachunek pokażemy w wykładzie 04). Częstość 0 z krótkiej serii nie przeczy modelowi.",
+      hints = c(
+        wrong = "Częstość z krótkiej serii mocno się waha. Przypomnij sobie początek linii w symulacji.",
+        compensate = "Prawo wielkich liczb działa przez rozcieńczanie, nie przez wyrównywanie. Zmiany nie „pamiętają” poprzednich wyników."
+      )
+    ),
+
     lc_feedback(
       type = "info",
       tags$strong("Aha:"),
@@ -83,6 +176,16 @@ ch2_ui <- lecture_chapter(
       " stabilizacja częstości nie naprawia złej definicji zdarzenia, zmiany
         warunków ani błędów rejestracji. Więcej danych nie zastępuje dobrego
         modelu obserwacji."
+    ),
+
+    lc_p(
+      "Częstość empiryczna odpowiada więc na pytanie „jak często to się
+       zdarzało w tych obserwacjach?”. Prawdopodobieństwo odpowiada na pytanie
+       „jak często spodziewamy się tego w porównywalnych warunkach?”. Przejście od
+       pierwszego do drugiego wymaga założenia, że przyszłe zmiany będą podobne do
+       obserwowanych. W następnym rozdziale zobaczymy sytuację, w której
+       prawdopodobieństwo można przypisać bez żadnych obserwacji — samym
+       rozumowaniem o symetrii."
     ),
 
     lc_chapter_next(

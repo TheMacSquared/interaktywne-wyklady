@@ -45,6 +45,8 @@ source(file.path(project_root, "R", "theme_upwr.R"),     local = TRUE)
 source(file.path(project_root, "R", "shared.R"),         local = TRUE)
 source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "bananpol.R"),       local = TRUE)
+# Elementy skryptu (definicje, wzory numerowane, przykłady, pytania kontrolne).
+source(file.path(project_root, "R", "risk_block.R"),     local = TRUE)
 
 lc_apply_ggplot_defaults()
 
