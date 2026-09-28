@@ -9,15 +9,15 @@ app_dir <- file.path(risk_root, "01-jezyk-ryzyka")
 
 expected_apps <- c(
   "01-jezyk-ryzyka" = 8L,
-  "02-warunki" = 8L,
-  "03-alarm-i-prawda" = 8L,
-  "04-wiele-prob" = 8L,
-  "05-do-zdarzenia" = 8L,
-  "06-zmiennosc-i-prog" = 10L,
-  "07-czas-zycia" = 11L,
-  "08-niezawodnosc-systemu" = 13L,
-  "09-drzewo-bledow" = 12L,
-  "10-model-do-decyzji" = 12L
+  "02-warunki" = 7L,
+  "03-alarm-i-prawda" = 6L,
+  "04-wiele-prob" = 6L,
+  "05-do-zdarzenia" = 6L,
+  "06-zmiennosc-i-prog" = 7L,
+  "07-czas-zycia" = 8L,
+  "08-niezawodnosc-systemu" = 7L,
+  "09-drzewo-bledow" = 6L,
+  "10-model-do-decyzji" = 5L
 )
 
 load_lecture_helpers <- function() {

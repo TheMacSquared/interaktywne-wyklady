@@ -38,53 +38,59 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
     )
   ),
   list(
-    id = "ciagla", title = "Zmienna dyskretna a ciągła",
-    lead = "Temperatura nie jest liczbą zdarzeń — wymaga innego rodzaju rozkładu.",
+    id = "ciagla", title = "Zmienna ciągła i rozkład normalny",
+    lead = "Temperatura nie jest liczbą zdarzeń — wymaga gęstości, a rozkład normalny opisują dwa parametry: μ przesuwa środek, σ rozszerza lub zwęża krzywą.",
     intro = "W wykładach o próbach zmienne losowe zliczały zdarzenia: zero, jedna, dwie wady. Temperatura łożyska nie zlicza niczego — może wynieść 82,1°C, 82,14°C albo dowolną wartość pomiędzy. To wymusza zmianę narzędzi: zamiast prawdopodobieństw pojedynczych wartości pracujemy z gęstością, a prawdopodobieństwa czytamy z pól pod krzywą.",
     sections = list(
       list(id = "kontrast", title = "Dwa rodzaje zmiennych", text = "Zmienna dyskretna, jak liczba niesprawnych czujników z wykładów 04–05, przyjmuje policzalne wartości i każdej z nich można przypisać dodatnie prawdopodobieństwo. Zmienna ciągła, jak temperatura łożyska, może przyjąć dowolną wartość z przedziału — wyników jest nieprzeliczalnie wiele."),
-      list(id = "zero", title = "Dlaczego P(X=x)=0", text = "Dla zmiennej ciągłej prawdopodobieństwo trafienia dokładnie jednej wartości wynosi zero: pojedynczy punkt nie ma szerokości, więc pole nad nim znika. Sens mają dopiero prawdopodobieństwa przedziałów i przekroczeń, liczone jako pole pod krzywą gęstości.")
-    ),
-    formula = "P(a<X\\le b)=\\int_a^b f(x)\\,dx,\\qquad P(X=x)=0",
-    pitfall = "Pytanie „jakie jest prawdopodobieństwo, że temperatura wyniesie dokładnie 85°C” nie ma użytecznej odpowiedzi; pytaj o przedział albo przekroczenie progu."
+      list(
+        id = "zero", title = "Dlaczego P(X=x)=0",
+        text = "Dla zmiennej ciągłej prawdopodobieństwo trafienia dokładnie jednej wartości wynosi zero: pojedynczy punkt nie ma szerokości, więc pole nad nim znika. Sens mają dopiero prawdopodobieństwa przedziałów i przekroczeń, liczone jako pole pod krzywą gęstości.",
+        formula = "P(a<X\\le b)=\\int_a^b f(x)\\,dx,\\qquad P(X=x)=0",
+        pitfall = "Pytanie „jakie jest prawdopodobieństwo, że temperatura wyniesie dokładnie 85°C” nie ma użytecznej odpowiedzi; pytaj o przedział albo przekroczenie progu."
+      ),
+      list(
+        id = "parametry", title = "Parametry μ i σ",
+        text = c(
+          "Rozkład normalny jest opisany dwiema liczbami o czytelnych rolach: μ mówi, gdzie leży środek, a σ — jak szeroko wyniki rozrzucają się wokół niego. Praktyczna linijka: około 68% wyników mieści się w przedziale μ±σ, około 95% w μ±2σ, a wyniki poza μ±3σ są rzadkością.",
+          "Pobaw się suwakami i obserwuj wskaźnik z dla progu 85°C. Zauważ, że tę samą odległość od progu można osiągnąć chłodzeniem (mniejsze μ) albo stabilizacją pracy (mniejsze σ) — rozróżnienie, które wróci przy decyzjach."
+        ),
+        formula = "T\\sim N(\\mu,\\sigma),\\qquad z=\\frac{t-\\mu}{\\sigma}",
+        widget = risk_widget_panel("Model", "Przesuń i rozszerz krzywą", tagList(sliderInput("z6_mean", "μ (°C)", 75, 90, 82, .5), sliderInput("z6_sd", "σ (°C)", .5, 8, 3, .25)), "z6_normal", "z6_normal_stats")
+      ),
+      list(id = "konwencja", title = "Konwencja zapisu", text = "W tym kursie zapis T~N(μ, σ) oznacza, że drugim parametrem jest odchylenie standardowe σ. W wielu podręcznikach ten sam rozkład zapisuje się jako N(μ, σ²) z wariancją na drugim miejscu — przed podstawieniem liczb zawsze sprawdź, którą konwencję przyjmuje źródło.")
+    )
   ),
   list(
-    id = "parametry", title = "Parametry μ i σ",
-    lead = "μ przesuwa środek, σ rozszerza lub zwęża rozkład.",
-    intro = c(
-      "Rozkład normalny jest opisany dwiema liczbami o czytelnych rolach: μ mówi, gdzie leży środek, a σ — jak szeroko wyniki rozrzucają się wokół niego. Praktyczna linijka: około 68% wyników mieści się w przedziale μ±σ, około 95% w μ±2σ, a wyniki poza μ±3σ są rzadkością.",
-      "Pobaw się suwakami i obserwuj wskaźnik z dla progu 85°C. Zauważ, że tę samą odległość od progu można osiągnąć chłodzeniem (mniejsze μ) albo stabilizacją pracy (mniejsze σ) — rozróżnienie, które wróci przy decyzjach."
-    ),
-    sections = list(list(id = "konwencja", title = "Konwencja zapisu", text = "W tym kursie zapis T~N(μ, σ) oznacza, że drugim parametrem jest odchylenie standardowe σ. W wielu podręcznikach ten sam rozkład zapisuje się jako N(μ, σ²) z wariancją na drugim miejscu — przed podstawieniem liczb zawsze sprawdź, którą konwencję przyjmuje źródło.")),
-    formula = "T\\sim N(\\mu,\\sigma),\\qquad z=\\frac{t-\\mu}{\\sigma}",
-    widget = risk_widget_panel("Model", "Przesuń i rozszerz krzywą", tagList(sliderInput("z6_mean", "μ (°C)", 75, 90, 82, .5), sliderInput("z6_sd", "σ (°C)", .5, 8, 3, .25)), "z6_normal", "z6_normal_stats")
-  ),
-  list(
-    id = "standaryzacja", title = "Wspólna linijka z",
-    lead = "Standaryzacja mówi, ile odchyleń standardowych dzieli wynik od średniej.",
+    id = "standaryzacja", title = "Standaryzacja i ryzyko przekroczenia",
+    lead = "Standaryzacja mówi, ile odchyleń standardowych dzieli wynik od średniej; próg dzieli rozkład na wyniki akceptowalne i przekroczenia.",
     intro = c(
       "Czy 85°C przy średniej 82°C i σ = 3°C to dużo? A 62 bary ciśnienia przy średniej 56 i σ = 2? Porównanie surowych liczb z różnych światów jest niemożliwe — dopóki obu nie przełożymy na wspólną jednostkę: liczbę odchyleń standardowych od średniej.",
       "Dla progu łożyska z = (85−82)/3 = 1: próg leży jedno odchylenie nad średnią, co w modelu normalnym oznacza około 16% przekroczeń. Dla ciśnienia z = 3 — przekroczenia są rzadkością. Standaryzacja porządkuje priorytety, zanim padnie jakakolwiek decyzja."
     ),
-    formula = "z=(x-\\mu)/\\sigma",
-    sections = list(list(id = "jednostki", title = "Bez jednostki", text = "Po standaryzacji można porównywać temperaturę, ciśnienie i drgania, ale tylko w ramach sensownego modelu. Wynik z = 1 znaczy „jedno odchylenie nad średnią” zawsze; przełożenie tego na prawdopodobieństwo wymaga już założenia o kształcie rozkładu."))
-  ),
-  list(
-    id = "ogon", title = "Część B — ryzyko przekroczenia",
-    lead = "Próg dzieli rozkład na wyniki akceptowalne i przekroczenia.",
-    intro = c(
-      "Wracamy do pytania z głosowania, tym razem z pełnym warsztatem. Prawdopodobieństwo przekroczenia progu to pole pod gęstością na prawo od progu — dla T~N(82, 3) i progu 85°C około 0,16. W naturalnych częstościach: mniej więcej 159 na 1000 porównywalnych pomiarów.",
-      "Zanim zapiszemy to wzorem, pobaw się progiem i obserwuj, jak pole reaguje nieliniowo: w okolicy średniej każda zmiana progu o pół stopnia silnie zmienia wynik, a daleko w ogonie te same pół stopnia znaczy niewiele. Ta nieliniowość to znak rozpoznawczy ogonów rozkładu normalnego."
-    ),
-    widget = tagList(
-      risk_widget_panel("Ogon", "Próg temperatury łożyska", sliderInput("z6_threshold", "Próg (°C)", 78, 95, 85, .5), "z6_tail", "z6_tail_stats"),
-      lc_p("To, co robił suwak — odcinał pole na prawo od progu — zapisujemy jedną linijką, korzystając ze standaryzacji z poprzedniego rozdziału:"),
-      lc_formula_box(
-        withMathJax("$$P(T>c)=1-\\Phi\\!\\left(\\frac{c-\\mu}{\\sigma}\\right)$$"),
-        tags$p("Φ jest dystrybuantą standardowego rozkładu normalnego, a (c−μ)/σ to wynik z progu — odległość od średniej we wspólnej linijce odchyleń.")
+    sections = list(
+      list(
+        id = "jednostki", title = "Wspólna linijka z",
+        text = "Po standaryzacji można porównywać temperaturę, ciśnienie i drgania, ale tylko w ramach sensownego modelu. Wynik z = 1 znaczy „jedno odchylenie nad średnią” zawsze; przełożenie tego na prawdopodobieństwo wymaga już założenia o kształcie rozkładu.",
+        formula = "z=(x-\\mu)/\\sigma"
+      ),
+      list(
+        id = "ogon", title = "Ryzyko przekroczenia",
+        text = c(
+          "Wracamy do pytania z głosowania, tym razem z pełnym warsztatem. Prawdopodobieństwo przekroczenia progu to pole pod gęstością na prawo od progu — dla T~N(82, 3) i progu 85°C około 0,16. W naturalnych częstościach: mniej więcej 159 na 1000 porównywalnych pomiarów.",
+          "Zanim zapiszemy to wzorem, pobaw się progiem i obserwuj, jak pole reaguje nieliniowo: w okolicy średniej każda zmiana progu o pół stopnia silnie zmienia wynik, a daleko w ogonie te same pół stopnia znaczy niewiele. Ta nieliniowość to znak rozpoznawczy ogonów rozkładu normalnego."
+        ),
+        widget = tagList(
+          risk_widget_panel("Ogon", "Próg temperatury łożyska", sliderInput("z6_threshold", "Próg (°C)", 78, 95, 85, .5), "z6_tail", "z6_tail_stats"),
+          lc_p("To, co robił suwak — odcinał pole na prawo od progu — zapisujemy jedną linijką, korzystając ze standaryzacji:"),
+          lc_formula_box(
+            withMathJax("$$P(T>c)=1-\\Phi\\!\\left(\\frac{c-\\mu}{\\sigma}\\right)$$"),
+            tags$p("Φ jest dystrybuantą standardowego rozkładu normalnego, a (c−μ)/σ to wynik z progu — odległość od średniej we wspólnej linijce odchyleń.")
+          )
+        ),
+        takeaway = "Wynik progowy zawsze raportuj podwójnie: jako pole ogona i jako naturalną częstość w ustalonym horyzoncie. „P = 0,16” i „około 159 pomiarów na 1000” to ta sama liczba, ale tylko druga wersja uruchamia wyobraźnię decydenta."
       )
-    ),
-    takeaway = "Wynik progowy zawsze raportuj podwójnie: jako pole ogona i jako naturalną częstość w ustalonym horyzoncie. „P = 0,16” i „około 159 pomiarów na 1000” to ta sama liczba, ale tylko druga wersja uruchamia wyobraźnię decydenta."
+    )
   ),
   list(
     id = "dzialania", title = "Trzy działania na ogonie",
@@ -142,17 +148,21 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
     pitfall = "Dopasowanie środka wykresu nie gwarantuje dobrego opisu ekstremów."
   ),
   list(
-    id = "decyzja", title = "Decyzja progowa",
-    lead = "Wynik powinien wskazywać mechanizm, horyzont i działanie.",
-    intro = "Kompletny komunikat progowy mieści się w trzech zdaniach: jaka część wyników przekracza próg i w jakim horyzoncie, jaki mechanizm odpowiada za ogon, które działanie — chłodzenie, stabilizacja czy rewizja progu — rekomendujesz i dlaczego. Liczba bez mechanizmu nie wskazuje działania; działanie bez liczby nie ma uzasadnienia.",
-    sections = list(list(id = "sciaga", title = "Ściąga", bullets = c("Pytanie: jaka część wyników przekracza próg?", "Model: rozkład zmiennej ciągłej", "Założenia: stabilność, kształt ogona, jednostki", "Wynik: P(X>c) i naturalna częstość", "Interpretacja: oczekiwane przekroczenia w porównywalnych ekspozycjach")), list(id = "most", title = "Co dalej", text = "Następny wykład zastosuje ten sam język gęstości, pola i ogona do szczególnej zmiennej ciągłej: czasu do awarii elementu.")),
-    decision = "Najpierw redukuj mechanizm ryzyka; podniesienie progu wymaga uzasadnienia konstrukcyjnego."
-  ),
-  list(
-    id = "sprawdzenie", title = "Quiz i ćwiczenia",
-    lead = "Połącz wykres, rachunek i sens inżynierski.",
-    intro = "Quiz sprawdza rozumienie mechanizmu — co naprawdę zmniejsza pole ogona — a ćwiczenia prowadzą przez pełny rachunek: od parametrów, przez standaryzację, po naturalną częstość i diagnozę modelu.",
-    widget = risk_assessment_ui("z6", prog_quiz, prog_exercises)
+    id = "decyzja", title = "Decyzja progowa, ściąga i sprawdzenie",
+    lead = "Wynik powinien wskazywać mechanizm, horyzont i działanie; quiz i ćwiczenia łączą wykres, rachunek i sens inżynierski.",
+    intro = c(
+      "Kompletny komunikat progowy mieści się w trzech zdaniach: jaka część wyników przekracza próg i w jakim horyzoncie, jaki mechanizm odpowiada za ogon, które działanie — chłodzenie, stabilizacja czy rewizja progu — rekomendujesz i dlaczego. Liczba bez mechanizmu nie wskazuje działania; działanie bez liczby nie ma uzasadnienia.",
+      "Quiz sprawdza rozumienie mechanizmu — co naprawdę zmniejsza pole ogona — a ćwiczenia prowadzą przez pełny rachunek: od parametrów, przez standaryzację, po naturalną częstość i diagnozę modelu."
+    ),
+    sections = list(
+      list(
+        id = "sciaga", title = "Ściąga",
+        bullets = c("Pytanie: jaka część wyników przekracza próg?", "Model: rozkład zmiennej ciągłej", "Założenia: stabilność, kształt ogona, jednostki", "Wynik: P(X>c) i naturalna częstość", "Interpretacja: oczekiwane przekroczenia w porównywalnych ekspozycjach"),
+        widget = risk_assessment_ui("z6", prog_quiz, prog_exercises),
+        decision = "Najpierw redukuj mechanizm ryzyka; podniesienie progu wymaga uzasadnienia konstrukcyjnego."
+      ),
+      list(id = "most", title = "Co dalej", text = "Następny wykład zastosuje ten sam język gęstości, pola i ogona do szczególnej zmiennej ciągłej: czasu do awarii elementu.")
+    )
   )
 ))
 prog_chapters <- risk_block_chapters(prog_block)

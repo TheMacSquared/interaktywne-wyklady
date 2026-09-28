@@ -82,8 +82,10 @@ hub_start <- function(key, dir, hub_url) {
   if (!is.null(existing)) return(existing)
 
   port <- hub_find_free_port()
+  # shiny.autoreload: zapis app.R lub pliku w modules/ przeładowuje wykład i odświeża
+  # otwartą kartę przeglądarki. Zmiany w wspólnym R/ nadal wymagają restartu z huba.
   code <- sprintf(
-    "shiny::runApp(%s, port = %d, host = '127.0.0.1', launch.browser = FALSE, quiet = TRUE)",
+    "options(shiny.autoreload = TRUE); shiny::runApp(%s, port = %d, host = '127.0.0.1', launch.browser = FALSE, quiet = TRUE)",
     deparse(dir), port
   )
   log_path <- file.path(tempdir(), paste0("hub-", gsub("[^A-Za-z0-9]", "-", key), ".log"))

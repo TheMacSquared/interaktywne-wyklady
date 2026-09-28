@@ -149,83 +149,88 @@ alarm_block <- list(
       pitfall = "Wysoka czułość nie oznacza, że większość alarmów jest prawdziwa."
     ),
     list(
-      id = "czestosci", title = "Naturalne częstości",
-      lead = "Zamiast trzech procentów śledzimy konkretne zmiany produkcyjne.",
+      id = "czestosci", title = "Naturalne częstości i wzór Bayesa",
+      lead = "Zamiast trzech procentów śledzimy konkretne zmiany produkcyjne; wzór porządkuje ten rachunek na końcu.",
       intro = c(
         "Trzy procenty naraz — częstość bazowa, czułość, FPR — przeciążają intuicję, bo każdy odnosi się do innego mianownika. Naturalne częstości rozbrajają problem: zamiast ułamków wyobrażamy sobie 10 000 konkretnych zmian i śledzimy, ile z nich trafia do każdej grupy.",
         "Na siatce poniżej każdy punkt to jedna zmiana. Widać od razu to, co ukrywają procenty: zmian bez awarii jest tak dużo, że nawet rzadkie fałszywe alarmy tworzą tłum liczniejszy niż wszystkie prawdziwe alarmy razem wzięte."
       ),
-      sections = list(list(
-        id = "mianownik", title = "Wszystkie alarmy",
-        text = "Dla pytania po alarmie mianownikiem są prawdziwe i fałszywe alarmy razem. Dyżurny nie wie, z której grupy pochodzi jego telefon — wie tylko, że alarm jest. Dlatego wiarygodność alarmu to udział prawdziwych alarmów wśród wszystkich alarmów, a nie wśród awarii."
-      )),
-      widget = risk_widget_panel("Symulacja", "10 000 zmian Bananpolu", tagList(
-        p("Parametry są synchronizowane z tablicą 2×2."), uiOutput("a3_counts")
-      ),
-      plot_id = "a3_grid", height = "390px"
+      sections = list(
+        list(
+          id = "mianownik", title = "Wszystkie alarmy",
+          text = "Dla pytania po alarmie mianownikiem są prawdziwe i fałszywe alarmy razem. Dyżurny nie wie, z której grupy pochodzi jego telefon — wie tylko, że alarm jest. Dlatego wiarygodność alarmu to udział prawdziwych alarmów wśród wszystkich alarmów, a nie wśród awarii.",
+          widget = risk_widget_panel("Symulacja", "10 000 zmian Bananpolu", tagList(
+            p("Parametry są synchronizowane z tablicą 2×2."), uiOutput("a3_counts")
+          ),
+          plot_id = "a3_grid", height = "390px"
+          )
+        ),
+        list(
+          id = "drogi", title = "Od drzewa do Bayesa",
+          text = c(
+            "Wzór przyjdzie na końcu — najpierw jeszcze raz przejdźmy drogę na konkretnych zmianach. Alarm może powstać na dwóch rozłącznych drogach: po awarii (droga przez czułość) albo bez awarii (droga przez fałszywe alarmy). Wiarygodność alarmu to udział pierwszej drogi w sumie obu — policzmy go krok po kroku na 10 000 zmian.",
+            "O wyniku decydują względne szerokości obu dróg: jeśli droga fałszywa jest szersza od prawdziwej, większość alarmów jest fałszywa — niezależnie od tego, jak dobra jest czułość."
+          ),
+          widget = tagList(
+            alarm_paths_widget,
+            lc_p("Iloraz, który właśnie policzyliśmy — jedna droga podzielona przez sumę wszystkich dróg kończących się alarmem — ma swoją nazwę i ogólny zapis:"),
+            lc_formula_box(
+              withMathJax("$$P(A\\mid +)=\\frac{P(+\\mid A)P(A)}{P(+\\mid A)P(A)+P(+\\mid \\neg A)P(\\neg A)}$$"),
+              tags$p("Licznik jest drogą przez awarię; mianownik sumą obu dróg kończących się alarmem.")
+            ),
+            lc_p(
+              "Wzór Bayesa nie wnosi nowej matematyki — porządkuje rachunek, który
+               wykonaliśmy na zmianach. Warto rozpoznać w mianowniku starego znajomego:
+               to wzór na prawdopodobieństwo całkowite z poprzedniego wykładu,
+               zastosowany do zdarzenia „alarm”. Nowa jest tylko nazwa."
+            )
+          ),
+          decision = "Komunikuj posterior wraz z liczebnościami, a nie samą czułość."
+        )
       )
     ),
     list(
-      id = "bayes", title = "Od drzewa do Bayesa",
-      lead = "Licznik jest jedną drogą, mianownik sumą wszystkich dróg kończących się alarmem.",
-      intro = "Wzór przyjdzie na końcu — najpierw jeszcze raz przejdźmy drogę na konkretnych zmianach. Alarm może powstać na dwóch rozłącznych drogach: po awarii (droga przez czułość) albo bez awarii (droga przez fałszywe alarmy). Wiarygodność alarmu to udział pierwszej drogi w sumie obu — policzmy go krok po kroku na 10 000 zmian.",
-      sections = list(list(
-        id = "drogi", title = "Dwie drogi do alarmu",
-        text = "Alarm może powstać po awarii albo bez awarii. O wyniku decydują względne szerokości obu dróg: jeśli droga fałszywa jest szersza od prawdziwej, większość alarmów jest fałszywa — niezależnie od tego, jak dobra jest czułość."
-      )),
-      widget = tagList(
-        alarm_paths_widget,
-        lc_p("Iloraz, który właśnie policzyliśmy — jedna droga podzielona przez sumę wszystkich dróg kończących się alarmem — ma swoją nazwę i ogólny zapis:"),
-        lc_formula_box(
-          withMathJax("$$P(A\\mid +)=\\frac{P(+\\mid A)P(A)}{P(+\\mid A)P(A)+P(+\\mid \\neg A)P(\\neg A)}$$"),
-          tags$p("Licznik jest drogą przez awarię; mianownik sumą obu dróg kończących się alarmem.")
-        ),
-        lc_p(
-          "Wzór Bayesa nie wnosi nowej matematyki — porządkuje rachunek, który
-           wykonaliśmy na zmianach. Warto rozpoznać w mianowniku starego znajomego:
-           to wzór na prawdopodobieństwo całkowite z poprzedniego wykładu,
-           zastosowany do zdarzenia „alarm”. Nowa jest tylko nazwa."
-        )
-      ),
-      decision = "Komunikuj posterior wraz z liczebnościami, a nie samą czułość."
-    ),
-    list(
-      id = "baza", title = "Pułapka częstości bazowej",
-      lead = "Ten sam czujnik daje inną wiarygodność alarmu w innej populacji.",
+      id = "baza", title = "Częstość bazowa i druga informacja",
+      lead = "Ten sam czujnik daje inną wiarygodność alarmu w innej populacji, a drugi alarm pomaga tylko o tyle, o ile wnosi nową informację.",
       intro = c(
         "Wiarygodność alarmu nie jest cechą czujnika — jest cechą pary: czujnik plus populacja, w której pracuje. Ten sam model detektora zamontowany w hali o rzadkich awariach będzie „krzyczał wilk” znacznie częściej niż w hali, gdzie awarie są powszechne.",
         "Krzywa poniżej pokazuje tę zależność w całym zakresie. Zauważ, jak stromo rośnie na początku: przy bardzo rzadkich awariach niewielka zmiana częstości bazowej silnie zmienia sens alarmu. To dlatego przenoszenie parametrów detektora między instalacjami bez sprawdzenia częstości bazowej jest błędem, a nie oszczędnością."
       ),
-      sections = list(list(
-        id = "transfer", title = "Przykład transferowy: test przesiewowy",
-        text = "Identyczny mechanizm działa w medycynie. Test przesiewowy o czułości 90% i FPR 9% stosowany w populacji, w której choroba dotyka 1% badanych, daje wynik dodatni, który potwierdza się w mniej więcej jednym przypadku na dziesięć. Dlatego po badaniu przesiewowym wykonuje się test potwierdzający — i dlatego programy przesiewowe kieruje się do grup o podwyższonej częstości bazowej."
-      )),
-      widget = risk_widget_panel(
-        "Krzywa", "P(awaria | alarm) a częstość bazowa",
-        tagList(
-          sliderInput("a3_curve_sens", "Czułość", 0.5, 1, 0.95, 0.01),
-          sliderInput("a3_curve_fpr", "FPR", 0.001, 0.20, 0.05, 0.001)
+      sections = list(
+        list(
+          id = "krzywa", title = "Pułapka częstości bazowej",
+          widget = risk_widget_panel(
+            "Krzywa", "P(awaria | alarm) a częstość bazowa",
+            tagList(
+              sliderInput("a3_curve_sens", "Czułość", 0.5, 1, 0.95, 0.01),
+              sliderInput("a3_curve_fpr", "FPR", 0.001, 0.20, 0.05, 0.001)
+            ),
+            "a3_curve", "a3_posterior"
+          ),
+          pitfall = "Porównywanie czujników bez podania populacji zastosowania bywa pozorne."
         ),
-        "a3_curve", "a3_posterior"
-      ),
-      pitfall = "Porównywanie czujników bez podania populacji zastosowania bywa pozorne."
-    ),
-    list(
-      id = "druga-informacja", title = "Druga informacja",
-      lead = "Drugi alarm pomaga tylko w takim stopniu, w jakim wnosi nową informację.",
-      intro = c(
-        "Naturalny odruch po niepewnym alarmie to sięgnięcie po drugie źródło: drugi czujnik, odczyt ręczny, telefon do operatora. Rachunek jest optymistyczny — jeśli druga informacja jest warunkowo niezależna od pierwszej, posterior po pierwszym alarmie staje się częstością bazową dla drugiego i wiarygodność szybko rośnie.",
-        "Cały zysk wisi jednak na słowie „niezależna”. Dwa identyczne czujniki obok siebie mogą reagować na to samo zakłócenie elektromagnetyczne, ten sam kurz i tę samą wilgoć. Suwak poniżej pokazuje, jak zysk z drugiego alarmu topnieje, gdy rośnie udział wspólnego trybu fałszywego alarmu."
-      ),
-      sections = list(list(
-        id = "niezaleznosc", title = "Założenie warunkowej niezależności",
-        text = "Dwa czujniki mogą reagować na to samo zakłócenie lub utracić wspólne zasilanie. Warunkowa niezależność oznacza, że przy ustalonym stanie instalacji (awaria albo jej brak) wynik jednego czujnika nie zmienia prawdopodobieństwa wyniku drugiego — i to założenie trzeba uzasadnić mechanizmem, tak jak w poprzednim wykładzie."
-      )),
-      widget = figure_panel(
-        label = "Porównanie", title = "Dwa alarmy",
-        sliderInput("a3_dependence", "Udział wspólnego trybu fałszywego alarmu", 0, 1, 0, 0.05),
-        uiOutput("a3_second"), full_width = TRUE
-      ), extension = TRUE
+        list(
+          id = "transfer", title = "Przykład transferowy: test przesiewowy",
+          text = "Identyczny mechanizm działa w medycynie. Test przesiewowy o czułości 90% i FPR 9% stosowany w populacji, w której choroba dotyka 1% badanych, daje wynik dodatni, który potwierdza się w mniej więcej jednym przypadku na dziesięć. Dlatego po badaniu przesiewowym wykonuje się test potwierdzający — i dlatego programy przesiewowe kieruje się do grup o podwyższonej częstości bazowej."
+        ),
+        list(
+          id = "druga-informacja", title = "Druga informacja",
+          text = c(
+            "Naturalny odruch po niepewnym alarmie to sięgnięcie po drugie źródło: drugi czujnik, odczyt ręczny, telefon do operatora. Rachunek jest optymistyczny — jeśli druga informacja jest warunkowo niezależna od pierwszej, posterior po pierwszym alarmie staje się częstością bazową dla drugiego i wiarygodność szybko rośnie.",
+            "Cały zysk wisi jednak na słowie „niezależna”. Dwa identyczne czujniki obok siebie mogą reagować na to samo zakłócenie elektromagnetyczne, ten sam kurz i tę samą wilgoć. Suwak poniżej pokazuje, jak zysk z drugiego alarmu topnieje, gdy rośnie udział wspólnego trybu fałszywego alarmu."
+          )
+        ),
+        list(
+          id = "niezaleznosc", title = "Założenie warunkowej niezależności",
+          text = "Dwa czujniki mogą reagować na to samo zakłócenie lub utracić wspólne zasilanie. Warunkowa niezależność oznacza, że przy ustalonym stanie instalacji (awaria albo jej brak) wynik jednego czujnika nie zmienia prawdopodobieństwa wyniku drugiego — i to założenie trzeba uzasadnić mechanizmem, tak jak w poprzednim wykładzie.",
+          widget = figure_panel(
+            label = "Porównanie", title = "Dwa alarmy",
+            sliderInput("a3_dependence", "Udział wspólnego trybu fałszywego alarmu", 0, 1, 0, 0.05),
+            uiOutput("a3_second"), full_width = TRUE
+          ),
+          extension = TRUE
+        )
+      )
     ),
     list(
       id = "reakcja", title = "Reakcja jest osobnym problemem",
@@ -251,12 +256,12 @@ alarm_block <- list(
       intro = "Największym ryzykiem tego wykładu nie jest błąd rachunkowy, lecz odpowiedź na niewłaściwe pytanie. Ściąga porządkuje audyt alarmu od pytania do decyzji; quiz i ćwiczenia sprawdzają, czy odróżniasz kierunki warunkowania bez podpowiedzi.",
       sections = list(list(
         id = "sciaga", title = "Ściąga",
-        bullets = c("Pytanie: co oznacza alarm?", "Model: Bayes lub naturalne częstości", "Założenia: częstość bazowa, stabilne parametry, zależności", "Wynik: P(awaria | alarm)", "Interpretacja: nie jest automatyczną decyzją")
+        bullets = c("Pytanie: co oznacza alarm?", "Model: Bayes lub naturalne częstości", "Założenia: częstość bazowa, stabilne parametry, zależności", "Wynik: P(awaria | alarm)", "Interpretacja: nie jest automatyczną decyzją"),
+        widget = alarm_sciaga_widget
       ), list(
         id = "most", title = "Co dalej",
         text = "Alarm dotyczył pojedynczej zmiany. W następnym wykładzie zmienimy skalę: policzymy, ile zdarzeń pojawi się w całej serii wielu porównywalnych prób."
-      )),
-      widget = alarm_sciaga_widget
+      ))
     )
   )
 )

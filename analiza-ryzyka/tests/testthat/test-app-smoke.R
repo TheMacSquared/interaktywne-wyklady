@@ -12,9 +12,31 @@ testthat::test_that("wszystkie wykłady ładują UI i kompletną listę rozdzia�
         stopifnot(length(env$.chapters) == expected_count)
         ids <- vapply(env$.chapters, function(chapter) chapter$id, character(1))
         stopifnot(all(nzchar(ids)), !anyDuplicated(ids))
+        extract_ids <- function(html) {
+          # Tylko atrybut id, bez końcówek typu aria-invalid="true".
+          matches <- regmatches(html, gregexpr('(?<![[:alnum:]_-])id="[^"]+"', html, perl = TRUE))[[1]]
+          sub('^id="|"$', "", matches)
+        }
         html <- htmltools::renderTags(env$ui)$html
-        ui_ids <- sub('^id="|"$', "", regmatches(html, gregexpr('id="[^"]+"', html))[[1]])
+        ui_ids <- extract_ids(html)
         stopifnot(!anyDuplicated(ui_ids))
+        # Treść rozdziałów renderuje serwer, więc shell nie pokazuje id sekcji ani widgetów.
+        # Sprawdzamy każdy rozdział osobno oraz nagłówki h2 w całym wykładzie.
+        h2_ids <- character(0)
+        for (chapter in env$.chapters) {
+          chapter_html <- htmltools::renderTags(chapter$content)$html
+          chapter_ids <- extract_ids(chapter_html)
+          if (anyDuplicated(chapter_ids)) {
+            stop(sprintf("Powtórzone id w rozdziale %s: %s", chapter$id,
+              paste(unique(chapter_ids[duplicated(chapter_ids)]), collapse = ", ")))
+          }
+          h2 <- regmatches(chapter_html, gregexpr('<h2[^>]*id="[^"]+"', chapter_html))[[1]]
+          h2_ids <- c(h2_ids, sub('.*id="([^"]+)"', "\\1", h2))
+        }
+        if (anyDuplicated(h2_ids)) {
+          stop(sprintf("Powtórzone id sekcji w wykładzie: %s",
+            paste(unique(h2_ids[duplicated(h2_ids)]), collapse = ", ")))
+        }
         TRUE
       },
       args = list(

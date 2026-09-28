@@ -141,69 +141,77 @@ risk_prose <- function(text) {
   tagList(lapply(text, lc_p))
 }
 
+risk_callout <- function(callout) {
+  if (is.null(callout)) {
+    return(NULL)
+  }
+  margin_callout(
+    label = callout$label,
+    callout$text,
+    color = callout$color %||% "wskazowka"
+  )
+}
+
+# Wspólne dodatki rozdziału albo sekcji: wzór → widget → takeaway → decyzja → pułapka
+# → nota o rozszerzeniu. Każde pole jest opcjonalne, więc stare konfiguracje renderują
+# się bez zmian, a scalony rozdział może mieć te elementy w każdej sekcji z osobna.
+risk_config_extras <- function(x) {
+  tagList(
+    if (!is.null(x$formula)) {
+      lc_formula_box(withMathJax(paste0("$$", x$formula, "$$")))
+    },
+    x$widget,
+    if (!is.null(x$takeaway)) risk_prose(x$takeaway),
+    if (!is.null(x$decision)) {
+      lc_feedback(type = "ok", tags$strong("Decyzja:"), paste0(" ", x$decision))
+    },
+    if (!is.null(x$pitfall)) {
+      lc_feedback(type = "warning", tags$strong("Pułapka:"), paste0(" ", x$pitfall))
+    },
+    if (isTRUE(x$extension)) {
+      lc_feedback(
+        type = "info", tags$strong("Rozszerzenie:"),
+        " tę część można pominąć podczas krótszego wariantu zajęć."
+      )
+    }
+  )
+}
+
+# Sekcja rozdziału: nagłówek wykrywany przez TOC, tekst, callout, lista punktów
+# oraz te same dodatki, które ma rozdział. Dawny mały rozdział przenosi się do sekcji
+# przez zmianę `intro` na `text`, bez przepisywania treści.
+risk_section <- function(block, chapter, section) {
+  tagList(
+    lc_h2(paste0(block$id, "-", chapter$id, "-", section$id), section$title),
+    if (!is.null(section$text)) risk_prose(section$text),
+    risk_callout(section$callout),
+    if (!is.null(section$bullets)) tags$ul(lapply(section$bullets, tags$li)),
+    risk_config_extras(section)
+  )
+}
+
 risk_chapter_from_config <- function(block, chapter, index, next_chapter = NULL) {
+  sections <- chapter$sections %||% list()
+  section_ids <- vapply(sections, function(section) section$id %||% "", character(1))
+  if (anyDuplicated(section_ids)) {
+    stop(sprintf(
+      "Rozdział „%s” w bloku „%s” ma powtórzone id sekcji: %s",
+      chapter$id, block$id, paste(unique(section_ids[duplicated(section_ids)]), collapse = ", ")
+    ))
+  }
+
   content <- tagList(
     lc_chapter_hero(
       kicker = paste0("Rozdział ", sprintf("%02d", index), " · ", block$title),
       num = sprintf("%02d", index),
       title = paste0(chapter$title, "."),
       lead = chapter$lead
-    )
+    ),
+    if (!is.null(chapter$intro)) risk_prose(chapter$intro),
+    risk_callout(chapter$callout),
+    lapply(sections, function(section) risk_section(block, chapter, section)),
+    risk_config_extras(chapter)
   )
-
-  if (!is.null(chapter$intro)) {
-    content <- tagAppendChildren(content, risk_prose(chapter$intro))
-  }
-
-  if (!is.null(chapter$callout)) {
-    content <- tagAppendChildren(
-      content,
-      margin_callout(
-        label = chapter$callout$label,
-        chapter$callout$text,
-        color = chapter$callout$color %||% "wskazowka"
-      )
-    )
-  }
-
-  for (section in chapter$sections %||% list()) {
-    content <- tagAppendChildren(
-      content,
-      lc_h2(paste0(block$id, "-", chapter$id, "-", section$id), section$title),
-      if (!is.null(section$text)) risk_prose(section$text),
-      if (!is.null(section$bullets)) tags$ul(lapply(section$bullets, tags$li))
-    )
-  }
-  if (!is.null(chapter$formula)) {
-    content <- tagAppendChildren(content, lc_formula_box(withMathJax(
-      paste0("$$", chapter$formula, "$$")
-    )))
-  }
-  if (!is.null(chapter$widget)) content <- tagAppendChildren(content, chapter$widget)
-  if (!is.null(chapter$takeaway)) {
-    content <- tagAppendChildren(content, lc_p(chapter$takeaway))
-  }
-  if (!is.null(chapter$decision)) {
-    content <- tagAppendChildren(
-      content,
-      lc_feedback(type = "ok", tags$strong("Decyzja:"), paste0(" ", chapter$decision))
-    )
-  }
-  if (!is.null(chapter$pitfall)) {
-    content <- tagAppendChildren(
-      content,
-      lc_feedback(type = "warning", tags$strong("Pułapka:"), paste0(" ", chapter$pitfall))
-    )
-  }
-  if (isTRUE(chapter$extension)) {
-    content <- tagAppendChildren(
-      content,
-      lc_feedback(
-        type = "info", tags$strong("Rozszerzenie:"),
-        " tę część można pominąć podczas krótszego wariantu zajęć."
-      )
-    )
-  }
   if (!is.null(next_chapter)) {
     content <- tagAppendChildren(
       content,

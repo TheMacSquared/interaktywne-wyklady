@@ -27,24 +27,16 @@ warunki_exercises <- c(
   "Transfer: opisz warunek i właściwy mianownik dla ryzyka wypadku podczas pracy nocnej."
 )
 
-warunki_vote <- risk_vote_panel(
-  "w2_vote", "w2_vote_feedback",
-  "Po wykryciu przegrzania: która liczba opisuje możliwość incydentu?",
-  c(
-    "P(incydent)" = "marginal", "P(incydent | przegrzanie)" = "conditional",
-    "P(przegrzanie | incydent)" = "reverse"
-  )
-)
-
 warunki_filter_widget <- risk_widget_panel(
-  title = "Filtrujemy 1000 zmian Bananpolu",
+  title = "Filtrujemy 500 zmian Bananpolu",
   controls = tagList(
     sliderInput("w2_share", "Udział zmian z przegrzaniem", 0.02, 0.40, 0.10, 0.01),
     sliderInput("w2_risk_hot", "P(incydent | przegrzanie)", 0.01, 0.30, 0.12, 0.01),
     sliderInput("w2_risk_normal", "P(incydent | brak przegrzania)", 0, 0.05, 0.005, 0.001)
   ),
   plot_id = "w2_filter_plot", stats_id = "w2_filter_stats",
-  note = "Każdy punkt oznacza jedną porównywalną zmianę. Kolor i kształt rozróżniają grupy."
+  note = "Każdy znak oznacza jedną porównywalną zmianę. Trójkąty to zmiany z przegrzaniem, kółka bez; wypełniony znak to incydent.",
+  height = "560px"
 )
 
 warunki_monty_widget <- figure_panel(
@@ -100,22 +92,32 @@ warunki_monty_widget <- figure_panel(
   )
 }
 
-.monty_svg_goat <- function() {
-  goat_col <- upwr_reference
+.monty_svg_cat <- function() {
+  cat_col <- upwr_reference
   line_col <- upwr_secondary
   paste0(
-    '<ellipse cx="54" cy="93" rx="24" ry="15" fill="', goat_col, '"/>',
-    '<rect x="38" y="103" width="5" height="21" rx="2" fill="', goat_col, '"/>',
-    '<rect x="48" y="105" width="5" height="19" rx="2" fill="', goat_col, '"/>',
-    '<rect x="60" y="105" width="5" height="19" rx="2" fill="', goat_col, '"/>',
-    '<rect x="70" y="103" width="5" height="21" rx="2" fill="', goat_col, '"/>',
-    '<path d="M32 88 Q25 84 28 76" stroke="', goat_col, '" stroke-width="5" fill="none" stroke-linecap="round"/>',
-    '<circle cx="84" cy="74" r="10" fill="', goat_col, '"/>',
-    '<ellipse cx="75" cy="69" rx="5" ry="3" fill="', goat_col, '" transform="rotate(-35 75 69)"/>',
-    '<path d="M88 66 Q92 57 99 55" stroke="', line_col, '" stroke-width="3" fill="none" stroke-linecap="round"/>',
-    '<path d="M83 64 Q84 55 90 51" stroke="', line_col, '" stroke-width="3" fill="none" stroke-linecap="round"/>',
-    '<path d="M85 84 L83 93 L90 85 Z" fill="', line_col, '"/>',
-    '<circle cx="87" cy="72" r="1.8" fill="', line_col, '"/>'
+    # ogon
+    '<path d="M78 112 Q98 110 96 90 Q95 80 88 84" stroke="', cat_col, '" stroke-width="6" fill="none" stroke-linecap="round"/>',
+    # siedzący tułów
+    '<ellipse cx="60" cy="104" rx="22" ry="20" fill="', cat_col, '"/>',
+    # przednie łapy
+    '<rect x="46" y="110" width="9" height="16" rx="4" fill="', cat_col, '"/>',
+    '<rect x="63" y="110" width="9" height="16" rx="4" fill="', cat_col, '"/>',
+    # uszy
+    '<path d="M42 66 L46 46 L58 60 Z" fill="', cat_col, '"/>',
+    '<path d="M78 66 L74 46 L62 60 Z" fill="', cat_col, '"/>',
+    # głowa
+    '<circle cx="60" cy="72" r="18" fill="', cat_col, '"/>',
+    # oczy
+    '<ellipse cx="53" cy="69" rx="2.4" ry="3.4" fill="', line_col, '"/>',
+    '<ellipse cx="67" cy="69" rx="2.4" ry="3.4" fill="', line_col, '"/>',
+    # nos
+    '<path d="M57.5 76 L62.5 76 L60 79 Z" fill="', line_col, '"/>',
+    # wąsy
+    '<path d="M50 77 L34 74" stroke="', line_col, '" stroke-width="1.6" stroke-linecap="round"/>',
+    '<path d="M50 80 L35 83" stroke="', line_col, '" stroke-width="1.6" stroke-linecap="round"/>',
+    '<path d="M70 77 L86 74" stroke="', line_col, '" stroke-width="1.6" stroke-linecap="round"/>',
+    '<path d="M70 80 L85 83" stroke="', line_col, '" stroke-width="1.6" stroke-linecap="round"/>'
   )
 }
 
@@ -124,7 +126,7 @@ warunki_monty_widget <- figure_panel(
     closed = .monty_svg_door_closed(door, highlight = FALSE),
     chosen = .monty_svg_door_closed(door, highlight = TRUE),
     zonk = .monty_svg_doorway(
-      .monty_svg_goat(), sprintf("Bramka %d: Zonk", door)
+      .monty_svg_cat(), sprintf("Bramka %d: Zonk", door)
     ),
     car = .monty_svg_doorway(
       .monty_svg_car(), sprintf("Bramka %d: nagroda", door)
@@ -147,16 +149,68 @@ warunki_monty_widget <- figure_panel(
   )
 }
 
-warunki_views_widget <- figure_panel(
-  label = "Trzy reprezentacje", title = "Te same liczby: tabela, drzewo i udziały",
-  fluidRow(
-    column(
-      5, tableOutput("w2_table"),
-      radioButtons("w2_view", "Widok wykresu", c("Drzewo dróg" = "tree", "Udziały" = "shares"), inline = TRUE)
-    ),
-    column(7, zoom_plot_ui("w2_views_plot", height = "390px"))
+# Widget używa stałych liczb Bananpolu z narracji (1000 zmian, 100 z przegrzaniem,
+# 12 i 5 incydentów), więc działa niezależnie od suwaków z poprzedniego rozdziału.
+warunki_views_counts <- data.frame(
+  condition = c("Przegrzanie", "Brak przegrzania"),
+  event = c(12L, 5L),
+  no_event = c(88L, 895L),
+  total = c(100L, 900L),
+  stringsAsFactors = FALSE
+)
+warunki_views_params <- c(share = 0.10, hot = 0.12, normal = 5 / 900)
+
+# Wielkości, które można zaznaczyć na drzewie. Węzły licznika są bordowe, węzły
+# mianownika bursztynowe; przy prawdopodobieństwach warunkowych licznik leży
+# wewnątrz mianownika, więc jego węzeł jest liczony w obu.
+warunki_views_targets <- list(
+  a = list(
+    label = "P(A) — incydent wśród wszystkich zmian",
+    tex = "P(A)", num_nodes = c(4L, 6L), den_nodes = 1L, num_edges = c(1L, 3L, 2L, 5L), den_edges = integer(0),
+    num = 17L, den = 1000L, num_caption = "incydenty (obie drogi)", den_caption = "wszystkie zmiany"
   ),
-  lc_feedback(type = "info", "Zmiana reprezentacji nie zmienia zdarzenia ani mianownika."),
+  b = list(
+    label = "P(B) — przegrzanie wśród wszystkich zmian",
+    tex = "P(B)", num_nodes = 2L, den_nodes = 1L, num_edges = 1L, den_edges = integer(0),
+    num = 100L, den = 1000L, num_caption = "zmiany z przegrzaniem", den_caption = "wszystkie zmiany"
+  ),
+  ab = list(
+    label = "P(A ∩ B) — incydent i przegrzanie naraz",
+    tex = "P(A\\cap B)", num_nodes = 4L, den_nodes = 1L, num_edges = c(1L, 3L), den_edges = integer(0),
+    num = 12L, den = 1000L, num_caption = "incydent i przegrzanie", den_caption = "wszystkie zmiany"
+  ),
+  a_b = list(
+    label = "P(A | B) — incydent wśród zmian z przegrzaniem",
+    tex = "P(A\\mid B)", num_nodes = 4L, den_nodes = c(2L, 5L), num_edges = 3L, den_edges = c(1L, 4L),
+    num = 12L, den = 100L, num_caption = "incydent i przegrzanie", den_caption = "zmiany z przegrzaniem"
+  ),
+  b_a = list(
+    label = "P(B | A) — przegrzanie wśród zmian z incydentem",
+    tex = "P(B\\mid A)", num_nodes = 4L, den_nodes = 6L, num_edges = c(1L, 3L), den_edges = c(2L, 5L),
+    num = 12L, den = 17L, num_caption = "incydent i przegrzanie", den_caption = "wszystkie incydenty"
+  )
+)
+
+warunki_views_widget <- figure_panel(
+  label = "Trzy widoki", title = "Te same liczby: tabela, drzewo i udziały",
+  zoom_plot_ui("w2_views_tree", height = "380px"),
+  fluidRow(
+    column(5, tags$div(class = "lc-table-wrap", tableOutput("w2_table"))),
+    column(7, zoom_plot_ui("w2_views_shares", height = "320px"))
+  ),
+  lc_feedback(type = "info", "Zmiana widoku nie zmienia zdarzenia ani mianownika."),
+  full_width = TRUE
+)
+
+warunki_tree_read_widget <- figure_panel(
+  label = "Czytaj od mianownika", title = "Licznik i mianownik na drzewie",
+  radioButtons(
+    "w2_target", "Zaznacz na drzewie",
+    choices = setNames(names(warunki_views_targets), vapply(warunki_views_targets, `[[`, "", "label")),
+    selected = "a"
+  ),
+  zoom_plot_ui("w2_target_plot", height = "440px"),
+  uiOutput("w2_target_result"),
   full_width = TRUE
 )
 
@@ -279,13 +333,18 @@ warunki_block <- list(
         color = "uwaga"
       ),
       sections = list(
-        list(id = "sens", title = "Trzy podobne zapisy", text = c(
-          "P(A), P(A | B) i P(B | A) wyglądają niemal identycznie, ale odpowiadają na trzy różne pytania. W Bananpolu A oznacza incydent, a B przegrzanie. Pierwszy zapis dotyczy wszystkich zmian, drugi wyłącznie zmian z przegrzaniem, a trzeci — wyłącznie zmian, na których doszło do incydentu.",
-          "Pomyłka między tymi zapisami nie jest błędem rachunkowym, tylko błędem pytania. Dyrektor, który słyszy „12% zmian z przegrzaniem kończy się incydentem”, a zapamiętuje „12% wszystkich zmian kończy się incydentem”, zawyża problem siedmiokrotnie — mimo że nikt nie policzył niczego źle."
-        )),
-        list(id = "pytania", title = "Najpierw zdanie, potem symbol", bullets = c("Jak często dochodzi do incydentu? — P(A).", "Jak często dochodzi do incydentu po wykryciu przegrzania? — P(A | B).", "W ilu incydentach wcześniej wykryto przegrzanie? — P(B | A)."))
-      ), widget = warunki_vote,
-      pitfall = "P(A | B) i P(B | A) zwykle nie są równe."
+        list(id = "sens", title = "Trzy podobne pytania", text = c(
+          "O incydent w Bananpolu można zapytać na trzy sposoby, które brzmią niemal tak samo, a odpowiadają na zupełnie różne pytania. Można pytać, jak często incydent zdarza się w ogóle — wtedy liczymy go wśród wszystkich zmian. Można pytać, jak często zdarza się po wykryciu przegrzania — wtedy liczymy go wyłącznie wśród zmian, na których czujnik zgłosił przegrzanie. Można wreszcie pytać, jak często przegrzanie poprzedzało incydent — wtedy patrzymy wyłącznie na zmiany, na których incydent rzeczywiście zaszedł.",
+          "Różnica między tymi pytaniami nie leży w zdarzeniu, o które pytamy, lecz w grupie przypadków, spośród których liczymy. Warunek „po wykryciu przegrzania” zawęża tę grupę: odrzucamy zmiany bez przegrzania i dopiero w tym, co zostało, sprawdzamy, jak często doszło do incydentu. To samo zdarzenie, inny mianownik — i inna liczba.",
+          "Pomyłka między tymi pytaniami nie jest błędem rachunkowym, tylko błędem pytania. Dyrektor, który słyszy „12% zmian z przegrzaniem kończy się incydentem”, a zapamiętuje „12% wszystkich zmian kończy się incydentem”, zawyża problem siedmiokrotnie — mimo że nikt nie policzył niczego źle.",
+          "Dlatego każde pytanie o częstość formułujemy pełnym zdaniem, które nazywa zarówno zdarzenie, jak i grupę odniesienia:"
+        ), bullets = c(
+          "Jak często dochodzi do incydentu? — liczymy wśród wszystkich porównywalnych zmian.",
+          "Jak często dochodzi do incydentu po wykryciu przegrzania? — liczymy tylko wśród zmian z przegrzaniem.",
+          "W ilu incydentach wcześniej wykryto przegrzanie? — liczymy tylko wśród zmian, na których zaszedł incydent."
+        ))
+      ),
+      pitfall = "Częstość incydentu wśród zmian z przegrzaniem i częstość przegrzania wśród zmian z incydentem to dwie różne liczby — zwykle nie są równe."
     ),
     list(
       id = "filtr", title = "Filtrujemy świat", lead = "Zaczynamy w studiu teleturnieju: jedna odsłonięta bramka zmienia całą ocenę.",
@@ -323,9 +382,8 @@ warunki_block <- list(
         ),
         lc_formula_box(
           withMathJax("$$P(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}$$"),
-          tags$p("Mianownikiem przestaje być cała przestrzeń — zostaje tylko część
-                 spełniająca warunek B. Licznik zbiera przypadki, w których zaszły
-                 oba zdarzenia naraz.")
+          tags$p("Tę wielkość nazywamy prawdopodobieństwem warunkowym, a zapis
+                 P(A | B) czytamy: prawdopodobieństwo A pod warunkiem B.")
         ),
         lc_p(
           "W tym języku gest prowadzącego jest warunkiem B: „za bramką 1 jest Zonk,
@@ -358,26 +416,41 @@ warunki_block <- list(
       takeaway = "Warunek zmienia mianownik, nie przeszłość. Prowadzący w studiu i czujnik przegrzania w hali wykonują tę samą operację: zawężają świat, w którym liczymy."
     ),
     list(
-      id = "reprezentacje", title = "Jedna sytuacja, trzy reprezentacje", lead = "Tabela, drzewo dróg i udziały są różnymi mapami tych samych liczebności.",
+      id = "reprezentacje", title = "Jedna sytuacja, trzy widoki", lead = "Tabela, drzewo dróg i udziały są różnymi mapami tych samych liczebności, a drzewo podpowiada regułę mnożenia.",
       intro = c(
-        "Reprezentacja powinna ułatwiać odpowiedź, a nie zmieniać problem. Tabela dobrze pilnuje liczebności, drzewo pokazuje kolejność warunków, a słupki pomagają porównać częstości w grupach.",
-        "W praktyce inspektora wybór reprezentacji to wybór narzędzia komunikacji: tabela przekonuje audytora, który chce sprawdzić sumy, drzewo tłumaczy mechanizm zarządowi, a wykres udziałów najlepiej pokazuje kontrast między grupami na slajdzie. Umiejętność przejścia między nimi bez zmiany liczb jest testem zrozumienia."
-      ),
-      sections = list(
-        list(id = "czytanie", title = "Czytaj od mianownika", bullets = c("Wiersz B wyznacza populację warunkową.", "Komórka A i B jest licznikiem.", "Suma wszystkich dróg prowadzących do A daje P(A).")),
-        list(id = "kontrola", title = "Test zgodności", text = "Po zmianie widoku liczba incydentów i liczebność grup pozostają takie same. Siatka i tabela zaokrąglają oczekiwane liczby do całych zmian, więc udziały z ilustracji mogą różnić się od parametrów modelu. Jeśli wynik zmienia się wraz z rodzajem wykresu, zmieniliśmy definicję albo mianownik, a nie tylko reprezentację.")
-      ), widget = warunki_views_widget
-    ),
-    list(
-      id = "iloczyn", title = "Mnożymy wzdłuż drogi", lead = "Prawdopodobieństwo wspólnej drogi powstaje przez iloczyn kolejnych etapów.",
-      intro = "Iloczyn nie pojawia się jako sztuczka algebraiczna. Odpowiada przejściu przez dwa kolejne filtry: najpierw trafiamy do grupy B, a następnie szukamy A wewnątrz tej grupy. Zanim zapiszemy regułę ogólnie, przejdźmy tę drogę na konkretnych zmianach Bananpolu.",
-      sections = list(
-        list(id = "droga", title = "Przegrzanie i incydent", text = "Najpierw losujemy zmianę z przegrzaniem, następnie incydent w obrębie tej grupy. Pierwszy czynnik odnosi się do wszystkich zmian, drugi tylko do zmian spełniających warunek."),
-        list(id = "jednostki", title = "Sprawdzenie na liczebnościach", text = "Jeśli przegrzanie dotyczy 10% z 1000 zmian, otrzymujemy 100 zmian. Jeżeli incydent występuje w 12% tej grupy, zostaje 12 zmian, czyli 1,2% całej obserwowanej populacji.")
+        "Sposób prezentacji powinien ułatwiać odpowiedź, a nie zmieniać problem. Tabela dobrze pilnuje liczebności, drzewo pokazuje kolejność warunków, a słupki pomagają porównać częstości w grupach.",
+        "W praktyce inspektora wybór widoku to wybór narzędzia komunikacji: tabela przekonuje audytora, który chce sprawdzić sumy, drzewo tłumaczy mechanizm zarządowi, a wykres udziałów najlepiej pokazuje kontrast między grupami na slajdzie. Umiejętność przejścia między nimi bez zmiany liczb jest testem zrozumienia. Poniżej wszystkie trzy widoki tych samych 1000 zmian Bananpolu obok siebie — sprawdź, czy w każdym znajdujesz te same liczebności."
       ),
       widget = tagList(
+        warunki_views_widget,
+        lc_p(
+          "W każdym widoku liczba incydentów i liczebność grup są takie same.
+           Jeśli wynik zmienia się wraz z rodzajem wykresu, zmieniliśmy definicję
+           albo mianownik, a nie tylko sposób prezentacji."
+        ),
+        lc_h2("warunki-reprezentacje-iloczyn", "Mnożymy wzdłuż drogi"),
+        lc_p(
+          "Drzewo pokazuje coś więcej niż tylko liczebności. Na gałęziach stoją
+           prawdopodobieństwa, a na końcach liczby zmian — i między jednymi a drugimi
+           jest prosty związek. Żeby dojść do liścia „Incydent” w górnej części
+           drzewa, trzeba przejść dwie gałęzie: najpierw trafić do grupy zmian
+           z przegrzaniem, a potem, już wewnątrz tej grupy, trafić na incydent.
+           Iloczyn nie pojawia się więc jako sztuczka algebraiczna — odpowiada
+           przejściu przez dwa kolejne filtry."
+        ),
+        lc_p(
+          "Pierwszy czynnik odnosi się do wszystkich zmian: przegrzanie dotyczy
+           10% z 1000, czyli 100 zmian. Drugi czynnik odnosi się już tylko do tej
+           setki: incydent występuje w 12% z nich, czyli w 12 zmianach. Te 12 zmian
+           to 1,2% całej obserwowanej populacji — i dokładnie tyle daje pomnożenie
+           0,10 przez 0,12. Prześledź tę drogę na liczbach poniżej."
+        ),
         warunki_path_widget,
-        lc_p("Ten rachunek nie korzystał z niczego szczególnego w liczbach 0,10 i 0,12 — działa dla dowolnych wartości, więc uogólniamy go w jedną regułę:"),
+        lc_p(
+          "Ten rachunek nie korzystał z niczego szczególnego w liczbach 0,10
+           i 0,12 — działa dla dowolnych wartości, więc uogólniamy go w jedną
+           regułę:"
+        ),
         lc_formula_box(
           withMathJax("$$P(A\\cap B)=P(B)\\,P(A\\mid B)$$"),
           tags$p("Pierwszy czynnik wprowadza do grupy spełniającej warunek, drugi liczy zdarzenie wewnątrz tej grupy.")
@@ -402,6 +475,20 @@ warunki_block <- list(
         list(id = "wagi", title = "Nie sumujemy samych ryzyk warunkowych", text = "P(A | B₁) i P(A | B₂) mają różne mianowniki. Zanim je dodamy, ważymy każde prawdopodobieństwo udziałem odpowiadającego mu trybu pracy. Sprawdź to na suwakach: przesuwaj udział przeciążenia i obserwuj, jak wynik ogólny wędruje między dwiema wartościami warunkowymi.")
       ),
       widget = tagList(
+        lc_p(
+          "Wróćmy do drzewa z 1000 zmian Bananpolu. Wybierz prawdopodobieństwo,
+           a drzewo pokaże, które węzły tworzą licznik, a które mianownik. Zacznij
+           od P(A): incydent może powstać na dwóch rozłącznych drogach, więc jego
+           licznik to suma dwóch liści. Przy prawdopodobieństwach warunkowych
+           licznik leży wewnątrz mianownika — te same zmiany liczymy raz na górze
+           i raz na dole ułamka."
+        ),
+        warunki_tree_read_widget,
+        lc_p(
+          "Drzewo pokazuje ważoną sumę w konkretnych zmianach: 12 incydentów
+           z gałęzi przegrzania i 5 z gałęzi bez przegrzania. Suwaki poniżej
+           robią to samo w ułamkach, dla dwóch trybów pracy."
+        ),
         warunki_total_widget,
         lc_p("Prosta, po której porusza się punkt na wykresie, jest wykresem jednej reguły — ważonej sumy rozłącznych dróg:"),
         lc_formula_box(
@@ -470,21 +557,6 @@ warunki_block <- list(
 warunki_chapters <- risk_block_chapters(warunki_block)
 
 warunki_server <- function(input, output, session) {
-  vote_checked <- reactiveVal(FALSE)
-  observeEvent(input$w2_vote_check, vote_checked(TRUE))
-  output$w2_vote_feedback <- renderUI({
-    req(vote_checked())
-    if (is.null(input$w2_vote)) {
-      return(lc_feedback(type = "info", "Najpierw zaznacz jedną z odpowiedzi."))
-    }
-    correct <- identical(input$w2_vote, "conditional")
-    lc_feedback(
-      type = if (correct) "ok" else "warning",
-      tags$strong(if (correct) "Tak." else "Nie."),
-      " Po wykryciu przegrzania właściwym mianownikiem są zmiany z przegrzaniem."
-    )
-  })
-
   monty <- reactiveValues(
     prize = sample.int(3L, 1L),
     chosen = NULL,
@@ -496,7 +568,8 @@ warunki_server <- function(input, output, session) {
   choose_monty_door <- function(door) {
     monty$chosen <- as.integer(door)
     possible_zonks <- setdiff(seq_len(3L), c(monty$chosen, monty$prize))
-    monty$opened <- sample(possible_zonks, 1L)
+    # Indeksowanie zamiast sample(x, 1): dla jednoelementowego x sample() losowałoby z 1:x.
+    monty$opened <- possible_zonks[sample.int(length(possible_zonks), 1L)]
     monty$final <- NULL
     monty$strategy <- NULL
   }
@@ -523,7 +596,9 @@ warunki_server <- function(input, output, session) {
     monty$opened <- NULL
     monty$final <- NULL
     monty$strategy <- NULL
-    monty_simulation(NULL)
+    monty_sim$n <- 0L
+    monty_sim$wins_stay <- 0L
+    monty_sim$wins_switch <- 0L
   })
 
   output$w2_monty_controls <- renderUI({
@@ -614,7 +689,7 @@ warunki_server <- function(input, output, session) {
     )
   })
 
-  monty_simulation <- reactiveVal(NULL)
+  monty_sim <- reactiveValues(n = 0L, wins_stay = 0L, wins_switch = 0L)
 
   output$w2_monty_simulation_panel <- renderUI({
     if (is.null(monty$final)) {
@@ -623,46 +698,65 @@ warunki_server <- function(input, output, session) {
     tagList(
       tags$div(class = "lc-eyebrow", "Eksperyment wielokrotny"),
       tags$h4("Czy wynik jednej gry był przypadkiem?"),
-      actionButton(
-        "w2_monty_simulate", "Porównaj strategie w 1000 gier",
-        class = "lc-btn-primary", width = "100%"
+      tags$p("Dograj kolejne partie obiema strategiami naraz. Wyniki się sumują, więc zobacz, jak odsetek wygranych stabilizuje się wraz z liczbą gier."),
+      fluidRow(
+        column(3, actionButton("w2_monty_sim_1", "+1 gra", class = "lc-btn-primary", width = "100%")),
+        column(3, actionButton("w2_monty_sim_10", "+10 gier", class = "lc-btn-primary", width = "100%")),
+        column(3, actionButton("w2_monty_sim_100", "+100 gier", class = "lc-btn-primary", width = "100%")),
+        column(3, actionButton("w2_monty_sim_1000", "+1000 gier", class = "lc-btn-primary", width = "100%"))
       ),
       zoom_plot_ui("w2_monty_plot", height = "390px")
     )
   })
 
-  observeEvent(input$w2_monty_simulate, {
+  add_monty_games <- function(n) {
     req(monty$final)
-    n <- 1000L
     prizes <- sample.int(3L, n, replace = TRUE)
     choices <- sample.int(3L, n, replace = TRUE)
-    monty_simulation(data.frame(
-      strategy = c("Zostaję", "Zmieniam"),
-      win_rate = c(mean(prizes == choices), mean(prizes != choices))
-    ))
-  })
+    monty_sim$n <- monty_sim$n + n
+    monty_sim$wins_stay <- monty_sim$wins_stay + sum(prizes == choices)
+    monty_sim$wins_switch <- monty_sim$wins_switch + sum(prizes != choices)
+  }
+
+  observeEvent(input$w2_monty_sim_1, add_monty_games(1L))
+  observeEvent(input$w2_monty_sim_10, add_monty_games(10L))
+  observeEvent(input$w2_monty_sim_100, add_monty_games(100L))
+  observeEvent(input$w2_monty_sim_1000, add_monty_games(1000L))
 
   monty_plot <- reactive({
-    results <- monty_simulation()
-    if (is.null(results)) {
+    n <- monty_sim$n
+    if (n == 0L) {
       return(
         ggplot() +
-          annotate("text", x = 1, y = 0.55, label = "Uruchom 1000 gier", colour = upwr_secondary, size = 5) +
+          annotate("text", x = 1, y = 0.55, label = "Dograj partie przyciskami powyżej", colour = upwr_secondary, size = 5) +
           coord_cartesian(xlim = c(0, 2), ylim = c(0, 1)) +
           labs(title = "Która strategia wygrywa częściej?", x = NULL, y = "Odsetek wygranych") +
           theme_upwr() +
           theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
       )
     }
+    results <- data.frame(
+      strategy = c("Zostaję", "Zmieniam"),
+      wins = c(monty_sim$wins_stay, monty_sim$wins_switch)
+    )
+    results$win_rate <- results$wins / n
+    results$label <- sprintf(
+      "%s\n(%d z %d)", scales::percent(results$win_rate, accuracy = 0.1), results$wins, n
+    )
+    subtitle <- if (n < 30L) {
+      "Przy kilku grach przypadek jeszcze rządzi — dograj więcej"
+    } else {
+      "Linie kropkowane: teoretyczne 1/3 i 2/3"
+    }
     ggplot(results, aes(strategy, win_rate, fill = strategy)) +
       geom_col(width = 0.62) +
-      geom_text(aes(label = scales::percent(win_rate, accuracy = 0.1)), vjust = -0.5, fontface = "bold") +
+      geom_text(aes(label = label), vjust = -0.35, fontface = "bold", lineheight = 0.9) +
       geom_hline(yintercept = c(1 / 3, 2 / 3), colour = upwr_reference, linetype = "dotted", linewidth = 0.6) +
       scale_fill_manual(values = c("Zostaję" = upwr_reference, "Zmieniam" = upwr_accent), guide = "none") +
-      scale_y_continuous(labels = scales::percent, limits = c(0, 0.78)) +
+      scale_y_continuous(labels = scales::percent, limits = c(0, 1.18), breaks = seq(0, 1, 0.25)) +
       labs(
-        title = "Wyniki 1000 gier",
-        subtitle = "Zmiana wygrywa około dwa razy częściej",
+        title = sprintf("Wyniki po %d %s", n, if (n == 1L) "grze" else "grach"),
+        subtitle = subtitle,
         x = NULL,
         y = "Odsetek wygranych"
       ) +
@@ -675,33 +769,47 @@ warunki_server <- function(input, output, session) {
     alt = "Porównanie odsetka wygranych przy pozostaniu przy pierwszej bramce i przy zmianie bramki."
   )
 
-  counts <- reactive(risk_conditional_counts(
-    1000L, input$w2_share, input$w2_risk_hot, input$w2_risk_normal
+  # Siatka ilustracyjna: 500 zmian w 20 kolumnach, żeby wykres był pionowy i czytelny.
+  dot_counts <- reactive(risk_conditional_counts(
+    500L, input$w2_share, input$w2_risk_hot, input$w2_risk_normal
   ))
   filter_plot <- reactive({
-    d <- counts()
-    statuses <- c(rep("Incydent", sum(d$event)), rep("Brak incydentu", sum(d$no_event)))
+    d <- dot_counts()
+    n_cols <- 20L
+    # Kolejność: najpierw blok zmian z przegrzaniem (filtr), w każdym bloku incydenty na początku.
     groups <- c(
-      rep("Przegrzanie", d$event[1]), rep("Brak przegrzania", d$event[2]),
-      rep("Przegrzanie", d$no_event[1]), rep("Brak przegrzania", d$no_event[2])
+      rep("Przegrzanie", d$event[1] + d$no_event[1]),
+      rep("Brak przegrzania", d$event[2] + d$no_event[2])
     )
-    grid <- data.frame(id = seq_len(1000), status = statuses, group = groups)
-    grid$x <- (grid$id - 1L) %% 50L + 1L
-    grid$y <- (grid$id - 1L) %/% 50L + 1L
-    ggplot(grid, aes(x, y, colour = status, shape = group)) +
-      geom_point(size = 1.6) +
+    statuses <- c(
+      rep("Incydent", d$event[1]), rep("Brak incydentu", d$no_event[1]),
+      rep("Incydent", d$event[2]), rep("Brak incydentu", d$no_event[2])
+    )
+    grid <- data.frame(id = seq_along(groups), status = statuses, group = groups)
+    grid$x <- (grid$id - 1L) %% n_cols + 1L
+    grid$y <- (grid$id - 1L) %/% n_cols + 1L
+    ggplot(grid, aes(x, y, shape = group, fill = status)) +
+      geom_point(size = 2.6, colour = upwr_secondary, stroke = 0.6) +
       scale_y_reverse() +
       coord_equal() +
-      scale_colour_manual(values = c("Incydent" = upwr_accent, "Brak incydentu" = upwr_reference)) +
-      labs(title = "1000 porównywalnych zmian", x = NULL, y = NULL, colour = "Wynik", shape = "Warunek") +
+      scale_shape_manual(values = c("Przegrzanie" = 24, "Brak przegrzania" = 21)) +
+      scale_fill_manual(values = c("Incydent" = upwr_secondary, "Brak incydentu" = "white")) +
+      guides(
+        shape = guide_legend(order = 1, override.aes = list(fill = "white")),
+        fill = guide_legend(order = 2, override.aes = list(shape = 21))
+      ) +
+      labs(title = "500 porównywalnych zmian", x = NULL, y = NULL, shape = "Warunek", fill = "Wynik") +
       theme_upwr() +
-      theme(axis.text = element_blank(), axis.ticks = element_blank())
+      theme(
+        axis.text = element_blank(), axis.ticks = element_blank(),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank()
+      )
   })
   zoom_plot_server("w2_filter_plot", filter_plot,
-    alt = "Siatka 1000 zmian rozróżniająca incydenty oraz zmiany z przegrzaniem."
+    alt = "Siatka 500 zmian: trójkąty to zmiany z przegrzaniem, kółka bez; wypełnione znaki to incydenty."
   )
   output$w2_filter_stats <- renderUI({
-    d <- counts()
+    d <- dot_counts()
     p_all <- sum(d$event) / sum(d$total)
     lc_stat_grid(
       lc_stat_box("Udział incydentów w zaokrąglonej ilustracji", risk_format_probability(p_all)),
@@ -712,62 +820,120 @@ warunki_server <- function(input, output, session) {
   })
   output$w2_table <- renderTable(
     {
-      counts()
+      d <- warunki_views_counts
+      data.frame(
+        Grupa = c(d$condition, "Razem"),
+        Incydent = c(d$event, sum(d$event)),
+        `Brak incydentu` = c(d$no_event, sum(d$no_event)),
+        Razem = c(d$total, sum(d$total)),
+        check.names = FALSE
+      )
     },
     striped = TRUE,
-    bordered = TRUE
+    bordered = TRUE,
+    digits = 0
   )
-  views_plot <- reactive({
-    d <- counts()
-    if (identical(input$w2_view, "tree")) {
-      fmt <- function(p) gsub("\\.", ",", sprintf("%.3f", p))
-      nodes <- data.frame(
-        x = c(0, 2.6, 2.6, 5.2, 5.2, 5.2, 5.2),
-        y = c(0, 1.4, -1.4, 2, .8, -.8, -2),
-        label = c(
-          "1000 zmian", "Przegrzanie", "Brak przegrzania",
-          paste0("Incydent: ", d$event[1]), paste0("Brak: ", d$no_event[1]),
-          paste0("Incydent: ", d$event[2]), paste0("Brak: ", d$no_event[2])
-        )
+  output$w2_target_result <- renderUI({
+    tg <- warunki_views_targets[[input$w2_target %||% "a"]]
+    value <- risk_format_probability(tg$num / tg$den)
+    tagList(
+      lc_stat_grid(
+        lc_stat_box("Licznik", format(tg$num), caption = tg$num_caption, color = upwr_accent),
+        lc_stat_box("Mianownik", format(tg$den), caption = tg$den_caption, color = upwr_cat[["bursztyn"]]),
+        lc_stat_box("Wynik", value, caption = tg$label, color = upwr_secondary),
+        columns = 3
+      ),
+      lc_formula_box(withMathJax(sprintf(
+        "$$%s=\\frac{%d}{%d}=%s$$", tg$tex, tg$num, tg$den, gsub("\\.", "{,}", sprintf("%.3f", tg$num / tg$den))
+      ))),
+      if (tg$den < 1000L) lc_p(
+        "Licznik jest częścią mianownika: ", format(tg$num), " zmian z licznika należy jednocześnie do bursztynowej grupy w mianowniku. Ich węzeł jest bordowy, bo liczymy je dwa razy — raz na górze, raz na dole ułamka."
       )
-      edges <- data.frame(
-        xs = c(0, 0, 2.6, 2.6, 2.6, 2.6),
-        ys = c(0, 0, 1.4, 1.4, -1.4, -1.4),
-        xe = c(2.6, 2.6, 5.2, 5.2, 5.2, 5.2),
-        ye = c(1.4, -1.4, 2, .8, -.8, -2),
-        p = c(
-          fmt(input$w2_share), fmt(1 - input$w2_share),
-          fmt(input$w2_risk_hot), fmt(1 - input$w2_risk_hot),
-          fmt(input$w2_risk_normal), fmt(1 - input$w2_risk_normal)
-        )
-      )
-      ggplot() +
-        geom_segment(data = edges, aes(x = xs, y = ys, xend = xe, yend = ye), colour = upwr_reference, linewidth = .8) +
-        geom_label(data = edges, aes((xs + xe) / 2, (ys + ye) / 2, label = p), size = 3.1, colour = upwr_secondary, linewidth = 0) +
-        geom_label(data = nodes, aes(x, y, label = label), size = 3.4, fill = upwr_secondary, colour = "white", fontface = "bold", linewidth = 0) +
-        coord_cartesian(xlim = c(-.7, 6.3), ylim = c(-2.5, 2.5)) +
-        labs(title = "Drzewo dróg: mnożymy wzdłuż gałęzi", subtitle = "Parametry na gałęziach; liczebności na końcach zaokrąglono", x = NULL, y = NULL) +
-        theme_upwr() +
-        theme(
-          axis.text = element_blank(), axis.ticks = element_blank(),
-          axis.line = element_blank(), panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank()
-        )
-    } else {
-      long <- data.frame(
-        group = rep(d$condition, each = 2), outcome = rep(c("Incydent", "Brak incydentu"), 2),
-        count = c(d$event[1], d$no_event[1], d$event[2], d$no_event[2])
-      )
-      ggplot(long, aes(group, count, fill = outcome)) +
-        geom_col(position = "fill") +
-        scale_y_continuous(labels = scales::percent) +
-        scale_fill_manual(values = c("Incydent" = upwr_accent, "Brak incydentu" = upwr_reference)) +
-        labs(title = "Udziały w dwóch mianownikach", x = NULL, y = "Udział", fill = "Wynik") +
-        theme_upwr()
-    }
+    )
   })
-  zoom_plot_server("w2_views_plot", views_plot,
-    alt = "Drzewo dróg z prawdopodobieństwami gałęzi albo słupki udziału incydentów z warunkiem i bez warunku."
+  # Drzewo dróg; target = NULL rysuje drzewo bez podświetleń.
+  tree_plot <- function(target = NULL) {
+    d <- warunki_views_counts
+    prm <- warunki_views_params
+    fmt <- function(p) gsub("\\.", ",", sprintf("%.3f", p))
+    amber <- unname(upwr_cat[["bursztyn"]])
+    num_nodes <- target$num_nodes %||% integer(0)
+    den_nodes <- target$den_nodes %||% integer(0)
+    num_edges <- target$num_edges %||% integer(0)
+    den_edges <- target$den_edges %||% integer(0)
+    nodes <- data.frame(
+      x = c(0, 5, 5, 10.5, 10.5, 10.5, 10.5),
+      y = c(0, 1.6, -1.6, 2.5, .7, -.7, -2.5),
+      label = c(
+        "1000 zmian", paste0("Przegrzanie: ", d$total[1]), paste0("Brak przegrzania: ", d$total[2]),
+        paste0("Incydent: ", d$event[1]), paste0("Brak: ", d$no_event[1]),
+        paste0("Incydent: ", d$event[2]), paste0("Brak: ", d$no_event[2])
+      )
+    )
+    node_idx <- seq_len(nrow(nodes))
+    nodes$fill <- ifelse(node_idx %in% num_nodes, upwr_accent,
+      ifelse(node_idx %in% den_nodes, amber, upwr_secondary))
+    edges <- data.frame(
+      xs = c(0, 0, 5, 5, 5, 5),
+      ys = c(0, 0, 1.6, 1.6, -1.6, -1.6),
+      xe = c(5, 5, 10.5, 10.5, 10.5, 10.5),
+      ye = c(1.6, -1.6, 2.5, .7, -.7, -2.5),
+      p = c(
+        fmt(prm[["share"]]), fmt(1 - prm[["share"]]),
+        fmt(prm[["hot"]]), fmt(1 - prm[["hot"]]),
+        fmt(prm[["normal"]]), fmt(1 - prm[["normal"]])
+      )
+    )
+    edge_idx <- seq_len(nrow(edges))
+    edges$colour <- ifelse(edge_idx %in% num_edges, upwr_accent,
+      ifelse(edge_idx %in% den_edges, amber, upwr_reference))
+    edges$width <- ifelse(edge_idx %in% c(num_edges, den_edges), 1.8, .8)
+    ggplot() +
+      geom_segment(data = edges, aes(x = xs, y = ys, xend = xe, yend = ye, colour = colour, linewidth = width)) +
+      scale_colour_identity() +
+      scale_linewidth_identity() +
+      geom_label(
+        data = edges, aes((xs + xe) / 2, (ys + ye) / 2, label = p),
+        size = 5, colour = upwr_secondary, fontface = "bold", linewidth = 0,
+        label.padding = unit(0.3, "lines")
+      ) +
+      geom_label(
+        data = nodes, aes(x, y, label = label, fill = fill),
+        size = 5.6, colour = "white", fontface = "bold", linewidth = 0,
+        label.padding = unit(0.5, "lines"), label.r = unit(0.25, "lines")
+      ) +
+      scale_fill_identity() +
+      coord_cartesian(xlim = c(-1.3, 12), ylim = c(-3.1, 3.1)) +
+      labs(title = "Drzewo dróg: mnożymy wzdłuż gałęzi", subtitle = "Prawdopodobieństwa na gałęziach, liczebności w węzłach", x = NULL, y = NULL) +
+      theme_upwr() +
+      theme(
+        axis.text = element_blank(), axis.ticks = element_blank(),
+        axis.line = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()
+      )
+  }
+  shares_plot <- function() {
+    d <- warunki_views_counts
+    long <- data.frame(
+      group = rep(d$condition, each = 2), outcome = rep(c("Incydent", "Brak incydentu"), 2),
+      count = c(d$event[1], d$no_event[1], d$event[2], d$no_event[2])
+    )
+    ggplot(long, aes(group, count, fill = outcome)) +
+      geom_col(position = "fill") +
+      scale_y_continuous(labels = scales::percent) +
+      scale_fill_manual(values = c("Incydent" = upwr_accent, "Brak incydentu" = upwr_reference)) +
+      labs(title = "Udziały w dwóch mianownikach", x = NULL, y = "Udział", fill = "Wynik") +
+      theme_upwr()
+  }
+  zoom_plot_server("w2_views_tree", reactive(tree_plot()),
+    alt = "Drzewo dróg z prawdopodobieństwami na gałęziach i liczebnościami w węzłach."
+  )
+  zoom_plot_server("w2_views_shares", reactive(shares_plot()),
+    alt = "Słupki udziału incydentów wśród zmian z przegrzaniem i bez przegrzania."
+  )
+  zoom_plot_server("w2_target_plot",
+    reactive(tree_plot(warunki_views_targets[[input$w2_target %||% "a"]])),
+    alt = "Drzewo dróg z podświetlonym licznikiem (bordowy) i mianownikiem (bursztynowy) wybranego prawdopodobieństwa."
   )
 
   total_plot <- reactive({

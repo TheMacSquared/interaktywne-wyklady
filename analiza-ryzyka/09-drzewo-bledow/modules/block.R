@@ -19,8 +19,8 @@ fta_exercises <- c("Architektura: dla P(I)=0,005, d=0,05 i s=0,08 porównaj ła�
 
 fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = list(
   list(
-    id = "top", title = "Dobre zdarzenie szczytowe",
-    lead = "Top event musi opisywać konkretny niepożądany stan, system i horyzont.",
+    id = "top", title = "Zdarzenie szczytowe i poziomy drzewa",
+    lead = "Top event musi opisywać konkretny niepożądany stan, system i horyzont; poziomy drzewa rozdzielają skutek, logikę mechanizmu i zdarzenia bez dalszego rozwijania.",
     intro = c(
       "Analiza drzewa błędów (FTA) powstała w latach sześćdziesiątych przy programach rakietowych i lotniczych, a dziś jest standardem wszędzie tam, gdzie pojedyncza awaria ma zbyt poważne skutki, by czekać na dane z wypadków. W Bananpolu użyjemy jej do zdarzenia, które w rejestrach — na szczęście — nie występuje: nieopanowanego pożaru magazynu.",
       "Wszystko zaczyna się od definicji zdarzenia szczytowego. To zdanie, nad którym warto spędzić najwięcej czasu w całej analizie: musi wskazywać konkretny stan, konkretny system i horyzont odniesienia, tak żeby dwie osoby niezależnie potrafiły rozstrzygnąć, czy dane zdarzenie się w nim mieści."
@@ -30,39 +30,47 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
       text = "Małe drzewo pożaru magazynu: P(inicjacji w roku) 0,005, P(braku detekcji | inicjacja) 0,05, P(niepowodzenia modułu tłumienia | inicjacja) 0,08. Analizujemy co najwyżej jedną inicjację w roku; parametry barier dotyczą tej inicjacji. Moduł tłumienia oznacza zdolność wykonawczą przy poprawnym sygnale, a detekcja ma osobne zasilanie. Liczby są fikcyjne.",
       color = "uwaga"
     ),
-    sections = list(list(id = "most", title = "Od sukcesu do awarii", text = "W wykładzie o niezawodności opisywaliśmy logikę sukcesu systemu: kiedy całość działa. Drzewo błędów odwraca perspektywę — budujemy logikę awarii i pytamy, jakie kombinacje przyczyn prowadzą do zdarzenia szczytowego.")),
-    widget = risk_vote_panel("f9_vote", "f9_vote_feedback", "Która definicja jest audytowalna?", c("Nieopanowany pożar magazynu w ciągu roku" = "good", "Problem z bezpieczeństwem" = "vague", "Awaria" = "failure"))
+    sections = list(
+      list(
+        id = "most", title = "Od sukcesu do awarii",
+        text = "W wykładzie o niezawodności opisywaliśmy logikę sukcesu systemu: kiedy całość działa. Drzewo błędów odwraca perspektywę — budujemy logikę awarii i pytamy, jakie kombinacje przyczyn prowadzą do zdarzenia szczytowego.",
+        widget = risk_vote_panel("f9_vote", "f9_vote_feedback", "Która definicja jest audytowalna?", c("Nieopanowany pożar magazynu w ciągu roku" = "good", "Problem z bezpieczeństwem" = "vague", "Awaria" = "failure"))
+      ),
+      list(
+        id = "poziomy", title = "Zdarzenia szczytowe, pośrednie i bazowe",
+        text = c(
+          "Drzewo ma trzy rodzaje węzłów i każdy pełni inną rolę. Na szczycie stoi analizowany niepożądany stan. Pod nim zdarzenia pośrednie porządkują mechanizm — „zapłon nieopanowany” rozkłada się na „brak detekcji” i „brak tłumienia”. Na dole leżą zdarzenia bazowe: przyczyny, których świadomie nie rozwijamy dalej i którym przypisujemy prawdopodobieństwa.",
+          "Granica „bazowości” jest decyzją analityka, nie właściwością świata. Brak detekcji można zostawić jako liść z parametrem z karty czujnika albo rozwinąć w osobne poddrzewo. Reguła praktyczna: rozwijaj dotąd, aż dojdziesz do zdarzeń, dla których masz dane albo które ktoś potrafi bezpośrednio poprawić."
+        ),
+        bullets = c("szczytowe: analizowany niepożądany stan", "pośrednie: wynik bramki lub podsystemu", "bazowe: przyczyna z przypisanym stanem albo prawdopodobieństwem")
+      )
+    )
   ),
   list(
-    id = "poziomy", title = "Zdarzenia szczytowe, pośrednie i bazowe",
-    lead = "Poziomy drzewa rozdzielają skutek, logikę mechanizmu i zdarzenia bez dalszego rozwijania.",
-    intro = c(
-      "Drzewo ma trzy rodzaje węzłów i każdy pełni inną rolę. Na szczycie stoi analizowany niepożądany stan. Pod nim zdarzenia pośrednie porządkują mechanizm — „zapłon nieopanowany” rozkłada się na „brak detekcji” i „brak tłumienia”. Na dole leżą zdarzenia bazowe: przyczyny, których świadomie nie rozwijamy dalej i którym przypisujemy prawdopodobieństwa.",
-      "Granica „bazowości” jest decyzją analityka, nie właściwością świata. Brak detekcji można zostawić jako liść z parametrem z karty czujnika albo rozwinąć w osobne poddrzewo. Reguła praktyczna: rozwijaj dotąd, aż dojdziesz do zdarzeń, dla których masz dane albo które ktoś potrafi bezpośrednio poprawić."
-    ),
-    sections = list(list(id = "role", title = "Role w drzewie", bullets = c("szczytowe: analizowany niepożądany stan", "pośrednie: wynik bramki lub podsystemu", "bazowe: przyczyna z przypisanym stanem albo prawdopodobieństwem")))
-  ),
-  list(
-    id = "konstruktor", title = "Kierowany konstruktor",
-    lead = "Pytanie operacyjne brzmi: czy wystarczy jedna przyczyna, czy potrzebna jest kombinacja?",
+    id = "konstruktor", title = "Budowa drzewa: bramki AND i OR",
+    lead = "Pytanie operacyjne brzmi: czy wystarczy jedna przyczyna, czy potrzebna jest kombinacja? Zbudowaną logikę sprawdzamy, zanim pojawi się jakiekolwiek prawdopodobieństwo.",
     intro = c(
       "Protokół po pożarze magazynu nie pyta, dlaczego doszło do zapłonu — pyta, dlaczego nie udało się go opanować. Drzewo błędów buduje się w tym samym kierunku: od niepożądanego skutku w dół, do kombinacji przyczyn, które musiały wystąpić razem albo z których wystarczyła jedna.",
       "Przy każdym rozgałęzieniu zadajesz jedno pytanie: czy do zdarzenia nadrzędnego wystarczy dowolna z tych przyczyn (bramka OR), czy potrzebne są wszystkie naraz (bramka AND)? Dwie samodzielne bariery zastępujące się nawzajem zawodzą wspólnie przez AND. W naszym łańcuchu potrzebne są obie funkcje: wykrycie i wykonanie tłumienia, więc ich niepowodzenia łączymy przez OR. Logika wynika z instalacji, nie z samego słowa „bariera”."
     ),
-    widget = figure_panel(label = "Budowa", title = "Utrata kontroli nad zapłonem", selectInput("f9_gate", "Logika", c("Wystarczy jedna przyczyna — OR" = "or", "Potrzebna kombinacja — AND" = "and")), checkboxGroupInput("f9_causes", "Przyczyny", c("Brak detekcji" = "detect", "Brak tłumienia" = "suppress", "Utrata zasilania" = "power"), selected = c("detect", "suppress")), uiOutput("f9_structure"), full_width = TRUE)
-  ),
-  list(
-    id = "bramki", title = "Bramki AND i OR bez liczb",
-    lead = "Zbudowaną logikę sprawdzamy przełączaniem stanów, zanim pojawi się jakiekolwiek prawdopodobieństwo.",
-    intro = c(
-      "Drzewo błędów jest funkcją struktury z poprzedniego wykładu — tyle że zapisaną dla awarii zamiast sukcesu. Zanim wpiszesz do niego pierwszą liczbę, przetestuj samą logikę: aktywuj różne kombinacje zdarzeń bazowych i sprawdź, czy zdarzenie szczytowe reaguje tak, jak podpowiada wiedza o instalacji.",
-      "Ten test wyłapuje najdroższe błędy analizy — złą bramkę albo brakującą przyczynę — wtedy, gdy poprawka kosztuje jeszcze tylko chwilę. Rachunek na błędnej strukturze jest bezbłędnie policzoną odpowiedzią na niewłaściwe pytanie."
-    ),
-    sections = list(list(
-      id = "logika", title = "Nasze drzewo",
-      text = "Logika drzewa Bananpolu brzmi: pożar wymyka się spod kontroli, gdy nastąpi inicjacja ORAZ zawiedzie co najmniej jedno z zabezpieczeń — detekcja LUB tłumienie. Sama inicjacja bez awarii barier nie wystarcza; awarie barier bez inicjacji też nie."
-    )),
-    widget = figure_panel(label = "Logika", title = "Aktywuj zdarzenia bazowe", checkboxGroupInput("f9_states", "Aktywne liście", c("Inicjacja" = "init", "Brak detekcji" = "detect", "Brak tłumienia" = "suppress"), selected = character(0)), uiOutput("f9_state_result"), full_width = TRUE)
+    sections = list(
+      list(
+        id = "budowa", title = "Kierowany konstruktor",
+        widget = figure_panel(label = "Budowa", title = "Utrata kontroli nad zapłonem", selectInput("f9_gate", "Logika", c("Wystarczy jedna przyczyna — OR" = "or", "Potrzebna kombinacja — AND" = "and")), checkboxGroupInput("f9_causes", "Przyczyny", c("Brak detekcji" = "detect", "Brak tłumienia" = "suppress", "Utrata zasilania" = "power"), selected = c("detect", "suppress")), uiOutput("f9_structure"), full_width = TRUE)
+      ),
+      list(
+        id = "bramki", title = "Bramki AND i OR bez liczb",
+        text = c(
+          "Drzewo błędów jest funkcją struktury z poprzedniego wykładu — tyle że zapisaną dla awarii zamiast sukcesu. Zanim wpiszesz do niego pierwszą liczbę, przetestuj samą logikę: aktywuj różne kombinacje zdarzeń bazowych i sprawdź, czy zdarzenie szczytowe reaguje tak, jak podpowiada wiedza o instalacji.",
+          "Ten test wyłapuje najdroższe błędy analizy — złą bramkę albo brakującą przyczynę — wtedy, gdy poprawka kosztuje jeszcze tylko chwilę. Rachunek na błędnej strukturze jest bezbłędnie policzoną odpowiedzią na niewłaściwe pytanie."
+        )
+      ),
+      list(
+        id = "logika", title = "Nasze drzewo",
+        text = "Logika drzewa Bananpolu brzmi: pożar wymyka się spod kontroli, gdy nastąpi inicjacja ORAZ zawiedzie co najmniej jedno z zabezpieczeń — detekcja LUB tłumienie. Sama inicjacja bez awarii barier nie wystarcza; awarie barier bez inicjacji też nie.",
+        widget = figure_panel(label = "Logika", title = "Aktywuj zdarzenia bazowe", checkboxGroupInput("f9_states", "Aktywne liście", c("Inicjacja" = "init", "Brak detekcji" = "detect", "Brak tłumienia" = "suppress"), selected = character(0)), uiOutput("f9_state_result"), full_width = TRUE)
+      )
+    )
   ),
   list(
     id = "rachunek", title = "Od liści do korzenia",
@@ -77,31 +85,36 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     pitfall = "Iloczyn bez warunkowania wymaga niezależności. Ogólna reguła P(A ∩ B)=P(A)P(B | A) jej nie wymaga. W tym przykładzie niezależność przy I przyjęto wewnątrz bramki OR."
   ),
   list(
-    id = "przekroje", title = "Część B — minimalne przekroje",
-    lead = "Minimalny przekrój wystarcza do TOP, ale żaden jego właściwy podzbiór już nie wystarcza.",
+    id = "przekroje", title = "Struktura drzewa: przekroje, powtórzenia i wspólna przyczyna",
+    lead = "Minimalny przekrój wystarcza do TOP, ale żaden jego właściwy podzbiór już nie wystarcza; powtórzone zdarzenie i wspólna przyczyna zmieniają listę przekrojów.",
     intro = c(
       "Duże drzewo trudno ogarnąć wzrokiem, ale można je streścić listą minimalnych przekrojów: zestawów zdarzeń wystarczających do TOP, z których nie można usunąć żadnego elementu. Minimalność dotyczy zawierania, a nie najmniejszej liczebności w całym drzewie. Nasze drzewo ma dwa, oba dwuelementowe — i to jest dobra wiadomość: żadna pojedyncza awaria nie wywołuje katastrofy.",
       "Przekroje czyta się jak diagnozę architektury. Przekrój jednoelementowy to pojedynczy punkt awarii — najpilniejszy sygnał do przeprojektowania. Wiele przekrojów współdzielących to samo zdarzenie (u nas: inicjację w obu) wskazuje, gdzie jedna interwencja osłabia kilka scenariuszy naraz."
     ),
-    sections = list(list(id = "sets", title = "Dwa przekroje drzewa Bananpolu", bullets = c("{inicjacja, brak detekcji}", "{inicjacja, brak tłumienia}"))),
-    widget = figure_panel(label = "Podświetlenie", title = "Wybierz przekrój", radioButtons("f9_cut", NULL, c("I + D" = "id", "I + S" = "is"), selected = "id"), uiOutput("f9_cut_text"), full_width = TRUE)
-  ),
-  list(
-    id = "powtorzenie", title = "Powtórzone zdarzenie bazowe",
-    lead = "Ten sam brak zasilania może pojawić się w wielu gałęziach, ale pozostaje jednym zdarzeniem.",
-    intro = c(
-      "W większych drzewach to samo zdarzenie bazowe — utrata zasilania, błąd tego samego zespołu, ta sama partia komponentów — pojawia się w kilku gałęziach. Rysunek może je pokazywać wielokrotnie, ale rachunek musi pamiętać, że to jedno zdarzenie: zachodzi albo nie zachodzi wszędzie naraz.",
-      "Potraktowanie dwóch wystąpień jako niezależnych zdarzeń fałszuje wynik w sposób zależny od struktury: pod bramką OR zawyża (liczymy to samo dwa razy), pod bramką AND drastycznie zaniża — kwadrat małej liczby wygląda uspokajająco. Porównanie poniżej pokazuje oba błędy: q, błędne OR 1−(1−q)² oraz błędne AND q²."
-    ),
-    widget = figure_panel(label = "Pułapka", title = "Dwa wystąpienia, jedno źródło", sliderInput("f9_repeat", "P(utraty wspólnego zasilania)", 0, .2, .05, .01), uiOutput("f9_repeat_result"), full_width = TRUE),
-    pitfall = "Traktowanie powtórzeń jako niezależnych zaniża lub zawyża wynik zależnie od struktury."
-  ),
-  list(
-    id = "wspolna", title = "Wspólna przyczyna zmienia strukturę",
-    lead = "Zasilanie wspólne umieszczamy jako jawny liść prowadzący do obu niesprawności.",
-    intro = "Skoro utrata zasilania wyłącza jednocześnie detekcję i tłumienie, poprawka liczbowa nie wystarczy — trzeba przebudować drzewo. Wspólna przyczyna staje się osobnym zdarzeniem bazowym, które przez własną gałąź prowadzi do obu niesprawności, a minimalne przekroje trzeba wyznaczyć od nowa. W naszym drzewie pojawia się {I,C}. Ma dwa elementy, tak samo jak {I,D₀} i {I,S₀}; nowy przekrój nie musi być krótszy ani dominujący. D₀ i S₀ oznaczają lokalne niepowodzenia bez wspólnej przyczyny C.",
-    sections = list(list(id = "model", title = "Zmiana modelu", text = "D=C ∪ D₀ i S=C ∪ S₀, więc TOP=I ∩ (C ∪ D₀ ∪ S₀). Przy niezależnych C, D₀, S₀ warunkowo przy I: P(TOP)=P(I)[q+(1−q)(1−(1−d₀)(1−s₀))]. Parametry d₀ i s₀ wykluczają wspólną przyczynę; nie dodajemy q do danych, które już ją zawierają.")),
-    widget = figure_panel(label = "Rachunek", title = "Trzy minimalne przekroje", sliderInput("f9_common", "P(C | I): wspólne niepowodzenie funkcji", 0, .2, .01, .005), uiOutput("f9_common_result"), full_width = TRUE)
+    sections = list(
+      list(
+        id = "sets", title = "Dwa przekroje drzewa Bananpolu",
+        bullets = c("{inicjacja, brak detekcji}", "{inicjacja, brak tłumienia}"),
+        widget = figure_panel(label = "Podświetlenie", title = "Wybierz przekrój", radioButtons("f9_cut", NULL, c("I + D" = "id", "I + S" = "is"), selected = "id"), uiOutput("f9_cut_text"), full_width = TRUE)
+      ),
+      list(
+        id = "powtorzenie", title = "Powtórzone zdarzenie bazowe",
+        text = c(
+          "W większych drzewach to samo zdarzenie bazowe — utrata zasilania, błąd tego samego zespołu, ta sama partia komponentów — pojawia się w kilku gałęziach. Rysunek może je pokazywać wielokrotnie, ale rachunek musi pamiętać, że to jedno zdarzenie: zachodzi albo nie zachodzi wszędzie naraz.",
+          "Potraktowanie dwóch wystąpień jako niezależnych zdarzeń fałszuje wynik w sposób zależny od struktury: pod bramką OR zawyża (liczymy to samo dwa razy), pod bramką AND drastycznie zaniża — kwadrat małej liczby wygląda uspokajająco. Porównanie poniżej pokazuje oba błędy: q, błędne OR 1−(1−q)² oraz błędne AND q²."
+        ),
+        widget = figure_panel(label = "Pułapka", title = "Dwa wystąpienia, jedno źródło", sliderInput("f9_repeat", "P(utraty wspólnego zasilania)", 0, .2, .05, .01), uiOutput("f9_repeat_result"), full_width = TRUE),
+        pitfall = "Traktowanie powtórzeń jako niezależnych zaniża lub zawyża wynik zależnie od struktury."
+      ),
+      list(
+        id = "wspolna", title = "Wspólna przyczyna zmienia strukturę",
+        text = c(
+          "Skoro utrata zasilania wyłącza jednocześnie detekcję i tłumienie, poprawka liczbowa nie wystarczy — trzeba przebudować drzewo. Wspólna przyczyna staje się osobnym zdarzeniem bazowym, które przez własną gałąź prowadzi do obu niesprawności, a minimalne przekroje trzeba wyznaczyć od nowa. W naszym drzewie pojawia się {I,C}. Ma dwa elementy, tak samo jak {I,D₀} i {I,S₀}; nowy przekrój nie musi być krótszy ani dominujący. D₀ i S₀ oznaczają lokalne niepowodzenia bez wspólnej przyczyny C.",
+          "D=C ∪ D₀ i S=C ∪ S₀, więc TOP=I ∩ (C ∪ D₀ ∪ S₀). Przy niezależnych C, D₀, S₀ warunkowo przy I: P(TOP)=P(I)[q+(1−q)(1−(1−d₀)(1−s₀))]. Parametry d₀ i s₀ wykluczają wspólną przyczynę; nie dodajemy q do danych, które już ją zawierają."
+        ),
+        widget = figure_panel(label = "Rachunek", title = "Trzy minimalne przekroje", sliderInput("f9_common", "P(C | I): wspólne niepowodzenie funkcji", 0, .2, .01, .005), uiOutput("f9_common_result"), full_width = TRUE)
+      )
+    )
   ),
   list(
     id = "ranking", title = "Ranking potencjalnej redukcji",
@@ -114,28 +127,25 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     decision = "Ranking jest wskazówką do rozmowy o kosztach i wykonalności, nie automatycznym wyborem."
   ),
   list(
-    id = "granice", title = "Granice FTA",
-    lead = "Dokładny rachunek nie naprawia niekompletnego drzewa ani słabych danych.",
+    id = "granice", title = "Granice FTA, ściąga i sprawdzenie",
+    lead = "Dokładny rachunek nie naprawia niekompletnego drzewa ani słabych danych; audytuj zarówno rachunek, jak i strukturę.",
     intro = c(
       "Drzewo błędów modeluje tylko te scenariusze, które ktoś przewidział. Przyczyna nieobecna w drzewie ma w rachunku prawdopodobieństwo zero — nie dlatego, że jest niemożliwa, lecz dlatego, że nikt o niej nie pomyślał. Dlatego dojrzała analiza kończy się przeglądem eksperckim, a nie odczytem wyniku.",
       "Druga granica to statyczność: klasyczne FTA opisuje kombinacje stanów, słabiej radzi sobie z sekwencjami i czasem reakcji. Trzecia — jakość danych w liściach: wynik dziedziczy niepewność najsłabszego parametru, co w naszym kursie podkreślamy, oznaczając wszystkie liczby jako fikcyjne."
     ),
-    sections = list(list(id = "audit", title = "Przegląd ekspercki", bullets = c("Czy top event jest jednoznaczny?", "Czy lista przyczyn jest wystarczająca?", "Gdzie założono niezależność?", "Czy jednostki i horyzonty są zgodne?", "Które dane są fikcyjne lub niepewne?")))
-  ),
-  list(
-    id = "sciaga", title = "Ściąga",
-    lead = "Top event → logika → liście → zależności → redukcja → decyzja.",
-    intro = "FTA łączy wszystko, co kurs zbudował wcześniej: zdarzenia i dopełnienia z wykładu pierwszego, niezależność i wspólne przyczyny z drugiego, algebrę bramek z wykładu o systemach. Reguły poniżej wystarczają do audytu małego drzewa — własnego i cudzego.",
-    sections = list(list(id = "lista", title = "Reguła", bullets = c("Najpierw logika, potem liczby", "AND: potrzebne wszystkie wejścia", "OR: wystarczy co najmniej jedno wejście", "Powtórzony liść pozostaje tym samym zdarzeniem", "Wynik zależy od kompletności drzewa")), list(
-      id = "most", title = "Co dalej",
-      text = "Masz komplet narzędzi: od definicji zdarzenia po drzewo błędów. Ostatni wykład połączy je w jedno studium — z teczki danych Bananpolu, przez karty obliczeniowe, do czterozdaniowej rekomendacji dla zarządu."
-    ))
-  ),
-  list(
-    id = "sprawdzenie", title = "Quiz i ćwiczenia",
-    lead = "Audytuj zarówno rachunek, jak i strukturę.",
-    intro = "Quiz sprawdza regułę OR i rozumienie przekrojów; ćwiczenia prowadzą przez rachunek małego drzewa, polowanie na powtórzone zdarzenia bazowe i budowę własnego drzewa poza Bananpolem.",
-    widget = risk_assessment_ui("f9", fta_quiz, fta_exercises)
+    sections = list(
+      list(id = "audit", title = "Przegląd ekspercki", bullets = c("Czy top event jest jednoznaczny?", "Czy lista przyczyn jest wystarczająca?", "Gdzie założono niezależność?", "Czy jednostki i horyzonty są zgodne?", "Które dane są fikcyjne lub niepewne?")),
+      list(
+        id = "sciaga", title = "Ściąga",
+        text = c(
+          "FTA łączy wszystko, co kurs zbudował wcześniej: zdarzenia i dopełnienia z wykładu pierwszego, niezależność i wspólne przyczyny z drugiego, algebrę bramek z wykładu o systemach. Reguły poniżej wystarczają do audytu małego drzewa — własnego i cudzego.",
+          "Quiz sprawdza regułę OR i rozumienie przekrojów; ćwiczenia prowadzą przez rachunek małego drzewa, polowanie na powtórzone zdarzenia bazowe i budowę własnego drzewa poza Bananpolem."
+        ),
+        bullets = c("Najpierw logika, potem liczby", "AND: potrzebne wszystkie wejścia", "OR: wystarczy co najmniej jedno wejście", "Powtórzony liść pozostaje tym samym zdarzeniem", "Wynik zależy od kompletności drzewa"),
+        widget = risk_assessment_ui("f9", fta_quiz, fta_exercises)
+      ),
+      list(id = "most", title = "Co dalej", text = "Masz komplet narzędzi: od definicji zdarzenia po drzewo błędów. Ostatni wykład połączy je w jedno studium — z teczki danych Bananpolu, przez karty obliczeniowe, do czterozdaniowej rekomendacji dla zarządu.")
+    )
   )
 ))
 fta_chapters <- risk_block_chapters(fta_block)

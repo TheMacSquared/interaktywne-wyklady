@@ -9,7 +9,8 @@ testthat::test_that("katalog obejmuje wykłady 02–10 i kompletne rozdziały", 
 
   for (config in env$risk_course_catalog) {
     testthat::expect_true(dir.exists(file.path(risk_root, config$folder)))
-    testthat::expect_gte(config$chapter_count, 8)
+    testthat::expect_gte(config$chapter_count, 5)
+    testthat::expect_equal(config$chapter_count, unname(expected_apps[[config$folder]]))
     testthat::expect_true(config$meetings %in% 1:2)
     testthat::expect_true(file.exists(file.path(risk_root, config$folder, "modules", "block.R")))
   }
