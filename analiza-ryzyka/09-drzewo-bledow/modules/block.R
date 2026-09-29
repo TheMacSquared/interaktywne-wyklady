@@ -482,8 +482,8 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     decision = "Ranking jest wskazówką do rozmowy o kosztach i wykonalności, nie automatycznym wyborem."
   ),
   list(
-    id = "granice", title = "Ściąga i sprawdzenie", hook = "Dokładny rachunek nie naprawi złego drzewa",
-    lead = "Dokładny rachunek nie naprawia niekompletnego drzewa ani słabych danych; audytuj zarówno rachunek, jak i strukturę.",
+    id = "granice", title = "Granice drzewa błędów", hook = "Dokładny rachunek nie naprawi złego drzewa",
+    lead = "Drzewo błędów zna tylko te przyczyny, które ktoś przewidział: niekompletnej struktury ani słabych danych nie naprawi żaden rachunek, więc audytujemy jedno i drugie.",
     intro = c(
       "Drzewo błędów modeluje tylko te scenariusze, które ktoś przewidział. Przyczyna nieobecna w drzewie ma w rachunku prawdopodobieństwo zero — nie dlatego, że jest niemożliwa, lecz dlatego, że nikt o niej nie pomyślał. Dlatego dojrzała analiza kończy się przeglądem eksperckim, a nie odczytem wyniku.",
       "Druga granica to statyczność: klasyczne FTA opisuje kombinacje stanów, słabiej radzi sobie z sekwencjami i czasem reakcji. Trzecia — jakość danych w liściach: wynik dziedziczy niepewność najsłabszego parametru, co w naszym kursie podkreślamy, oznaczając wszystkie liczby jako fikcyjne."
@@ -518,7 +518,13 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           )
         )
       ),
-      list(id = "audit", title = "Przegląd ekspercki", bullets = c("Czy top event jest jednoznaczny?", "Czy lista przyczyn jest wystarczająca?", "Gdzie założono niezależność?", "Czy jednostki i horyzonty są zgodne?", "Które dane są fikcyjne lub niepewne?")),
+      list(id = "audit", title = "Przegląd ekspercki", bullets = c("Czy top event jest jednoznaczny?", "Czy lista przyczyn jest wystarczająca?", "Gdzie założono niezależność?", "Czy jednostki i horyzonty są zgodne?", "Które dane są fikcyjne lub niepewne?"))
+    )
+  ),
+  list(
+    id = "sprawdzenie", title = "Ściąga i sprawdzenie", hook = "Najpierw logika, potem liczby",
+    lead = "Zdarzenie szczytowe → bramki → rachunek → przekroje → istotność; quiz i ćwiczenia sprawdzają zarówno logikę drzewa, jak i rachunek.",
+    sections = list(
       list(
         id = "podsumowanie", title = "Podsumowanie",
         text = c(
