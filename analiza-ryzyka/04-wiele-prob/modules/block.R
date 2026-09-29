@@ -112,7 +112,7 @@ proby_sciaga_widget <- tagList(
 
 proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
   list(
-    id = "jednostka", title = "Co jest pojedynczą próbą?",
+    id = "jednostka", title = "Próba Bernoulliego", hook = "Jedna kontrola, dwa możliwe wyniki",
     lead = "Najpierw ustalamy jednostkę ekspozycji i wynik 0/1.",
     intro = c(
       "Nowy dostawca przysłał do Bananpolu partię stu zaworów do instalacji chłodniczej. Zanim policzysz cokolwiek, musisz zdecydować, co jest pojedynczą próbą i jaki wynik uznajesz za zdarzenie — od tej decyzji zależy każda dalsza liczba w analizie.",
@@ -134,7 +134,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
         )
       ),
       list(
-        id = "proba", title = "Próba Bernoulliego",
+        id = "proba", title = "Sukces, porażka i zapis 0/1",
         body = list(
           c(
             "Kryteria z poprzedniej sekcji mają swoją nazwę. Doświadczenie, które kończy się jednym z dwóch wyników, nazywamy próbą Bernoulliego — od szwajcarskiego matematyka Jakuba Bernoulliego, który na przełomie XVII i XVIII wieku jako pierwszy ściśle zbadał długie serie takich prób.",
@@ -178,7 +178,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
     )
   ),
   list(
-    id = "bernoulli", title = "Linia Bernoulliego i cztery założenia",
+    id = "bernoulli", title = "Schemat Bernoulliego", hook = "Pojedyncza kontrola zaskakuje, seria już nie",
     lead = "Pojedyncze wyniki są losowe, choć długookresowa częstość jest stabilna — o ile sytuacja spełnia założenia modelu.",
     intro = c(
       "Serię prób o dwóch wynikach, stałym p i wzajemnej niezależności nazywamy schematem Bernoulliego. To najprostszy generator losowości w tym kursie — i fundament trzech rozkładów, które poznasz w tym i następnym wykładzie.",
@@ -258,7 +258,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
     pitfall = "Duża partia nie naprawia złej definicji próby ani zmiennego p."
   ),
   list(
-    id = "zmienna", title = "Zmienna losowa i rozkład liczby awarii",
+    id = "zmienna", title = "Rozkład dwumianowy", hook = "Liczba awarii to suma zer i jedynek",
     lead = "Funkcja przypisująca wynikom liczby jest pomostem między „co może się zdarzyć” a „ile tego będzie”; suma takich zer i jedynek ma rozkład dwumianowy.",
     intro = c(
       "W pierwszym wykładzie zdarzenia były zbiorami: podzbiorami przestrzeni wyników. Zbiorów nie da się jednak dodawać ani uśredniać, a inspektor chce właśnie tego — policzyć niesprawne zawory w partii i porównać partie między sobą. Potrzebny jest pomost od zdarzeń do arytmetyki.",
@@ -362,7 +362,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
     )
   ),
   list(
-    id = "srednia", title = "Średnia i ogon rozkładu",
+    id = "srednia", title = "Wartość oczekiwana", hook = "Średnia nie mówi, co spotka tę partię",
     lead = "np opisuje środek wielu partii, nie wynik jednej konkretnej partii; pytanie o co najmniej jedną wadę liczy się przez zdarzenie przeciwne.",
     intro = c(
       "Ile wad będzie w najbliższej partii stu zaworów przy p = 0,02? Kusząca odpowiedź — „dwie, przecież 100 razy 0,02 to 2” — jest błędna w sposób, który najlepiej zobaczyć na własne oczy: pojedyncza partia może mieć zero wad, a zdarza się też pięć.",
@@ -465,7 +465,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
     )
   ),
   list(
-    id = "decyzja", title = "Decyzja kontrolna",
+    id = "decyzja", title = "Plan odbioru", hook = "Zero wad w stu kontrolach to nie zero ryzyka",
     lead = "Plan kontroli łączy ryzyko partii z regułą akceptacji.",
     intro = c(
       "Rachunek dwumianowy staje się decyzją w planie odbioru partii: losujemy n elementów i akceptujemy dostawę, jeżeli liczba niesprawnych nie przekracza limitu c. Para (n, c) wyznacza dwie krzywe ryzyka — szansę odrzucenia dobrej partii i szansę przyjęcia złej.",
@@ -529,7 +529,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
     decision = "Porównaj kilka jakości partii, zanim wybierzesz n i limit akceptacji."
   ),
   list(
-    id = "sprawdzenie", title = "Ściąga i sprawdzenie",
+    id = "sprawdzenie", title = "Ściąga i sprawdzenie", hook = "Najpierw jednostka, potem wzór",
     lead = "Jednostka → założenia → Bin(n,p) → pytanie ogonowe → decyzja.",
     intro = "Model dwumianowy jest pierwszym „gotowym” rozkładem w kursie i łatwo go nadużyć: wystarczy przeoczyć zmienne p albo zależność prób. Ściąga zbiera pytania i zapisy; quiz oraz ćwiczenia sprawdzają, czy potrafisz zarówno policzyć wynik, jak i zauważyć, kiedy liczyć nie wolno.",
     sections = list(

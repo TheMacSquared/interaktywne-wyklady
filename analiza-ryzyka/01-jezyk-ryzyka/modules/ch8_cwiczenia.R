@@ -12,7 +12,7 @@ ch8_ui <- lecture_chapter(
     lc_chapter_hero(
       kicker = "Rozdział 08 · Język ryzyka",
       num = "08",
-      title = "Trzy wypadki. I co z tego?",
+      title = "Trzy wypadki to jeszcze nie wniosek.",
       lead = "Dyrektor Bananpolu dostał komunikat: „W czerwcu mieliśmy trzy
               wypadki, a drugi magazyn pięć, więc jesteśmy bezpieczniejsi”.
               Twoim zadaniem jest zatrzymać zbyt szybki wniosek."

@@ -80,7 +80,7 @@ system_sciaga_widget <- figure_panel(
 
 system_block <- list(id = "system", title = "Niezawodność systemu", chapters = list(
   list(
-    id = "intuicja", title = "Te same elementy, trzy odpowiedzi",
+    id = "intuicja", title = "Logika sukcesu", hook = "Te same części, trzy różne systemy",
     lead = "Niezawodność systemu zależy od logiki sukcesu, nie tylko od listy części.",
     intro = c(
       "Nocna awaria chłodzenia dojrzewalni. Rano trzy osoby podają trzy różne wartości niezawodności instalacji — i każda potrafi obronić swoją liczbę. To nie są trzy odpowiedzi dla tego samego systemu, lecz odpowiedzi dla trzech różnych definicji sukcesu.",
@@ -121,7 +121,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
     )
   ),
   list(
-    id = "definicja", title = "Sukces, czas misji i schemat blokowy",
+    id = "definicja", title = "Schemat blokowy", hook = "Najpierw ustal, co znaczy „działa”",
     lead = "Najpierw definiujemy, co system ma zrobić i przez jak długi czas, a potem rysujemy drogi sukcesu.",
     intro = c(
       "„System działa” to zdanie bez treści, dopóki nie powiemy, co dokładnie ma robić: utrzymywać temperaturę poniżej progu? podnieść alarm w ciągu minuty? pracować bez przerwy przez tysiąc godzin? Każda definicja sukcesu wyznacza inny zbiór wymaganych elementów — i inną liczbę na końcu rachunku.",
@@ -191,7 +191,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
     )
   ),
   list(
-    id = "szereg", title = "Układ szeregowy i równoległy",
+    id = "szereg", title = "Układ szeregowy i równoległy", hook = "Jeden słaby element psuje wszystko albo nic",
     lead = "Szereg działa tylko wtedy, gdy działają wszystkie elementy; redundancję liczymy przez awarię wszystkich gałęzi.",
     intro = "Czujnik wykrywa przegrzanie, sterownik przetwarza sygnał, wentylator chłodzi. Wystarczy, że zawiedzie jedno ogniwo, a funkcja chłodzenia znika — to definicja układu szeregowego. Zanim pojawi się wzór, sprawdź w przełączniku stanów, które kombinacje utrzymują system przy życiu.",
     sections = list(
@@ -276,7 +276,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
     )
   ),
   list(
-    id = "mieszany", title = "Układ mieszany i funkcja struktury",
+    id = "mieszany", title = "Funkcja struktury", hook = "Każdy układ da się rozebrać na proste kawałki",
     lead = "Redukujemy najpierw gałęzie równoległe, potem łączymy wynik z elementem szeregowym, a całą logikę sukcesu zapisujemy jedną funkcją.",
     intro = c(
       "Prawdziwe instalacje rzadko są czystym szeregiem albo czystą redundancją. Chłodzenie dojrzewalni to sterownik (wymagany zawsze) i dwa wentylatory (zastępowalne). Takie układy liczy się przez redukcję: zwiń każdą grupę równoległą do jednego zastępczego bloku, a potem pomnóż powstały szereg.",
@@ -348,7 +348,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         )
       ),
       list(
-        id = "struktura", title = "Funkcja struktury",
+        id = "struktura", title = "Stany elementów i stan systemu",
         text = c(
           "Checkboksy z poprzednich sekcji wykonywały w tle prostą matematykę: brały wektor stanów elementów i zwracały stan systemu. Ta operacja ma nazwę — funkcja struktury φ — i zapisuje architekturę bez ani jednego prawdopodobieństwa. Rozdzielenie logiki (φ) od liczb (R_i) to porządek, który za wykład wróci w drzewach błędów.",
           "Stan elementu i zapisujemy jako x_i: 1 gdy działa, 0 gdy zawiódł. Funkcja struktury φ przypisuje wektorowi stanów elementów stan całego systemu. Przełączniki stanów w rozdziale o układach robiły dokładnie to: dla szeregu φ(x)=x₁x₂⋯xₙ, dla układu równoległego φ(x)=1−(1−x₁)⋯(1−xₙ), a dla naszego układu mieszanego φ(x)=x_C·[1−(1−x_A)(1−x_B)]."
@@ -407,7 +407,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
     )
   ),
   list(
-    id = "wspolna", title = "Jawna wspólna przyczyna",
+    id = "wspolna", title = "Wspólna przyczyna", hook = "Zapas nie pomoże, gdy padnie zasilanie",
     lead = "Utrata wspólnego zasilania jest osobnym zdarzeniem w architekturze.",
     intro = c(
       "Obietnica z wykładu drugiego zostaje spełniona: wspólne zasilanie wraca w pełnej skali. Dwa wentylatory na papierze dają R = 0,996 — ale oba wpięte są w tę samą rozdzielnicę. Utrata zasilania wyłącza obie gałęzie naraz, więc nie jest szumem w danych, lecz osobnym zdarzeniem, które trzeba dopisać do architektury.",
@@ -481,7 +481,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
     pitfall = "Suwak korelacji nie zastępuje opisu mechanizmu wspólnej przyczyny."
   ),
   list(
-    id = "redundancja", title = "Ile redundancji i który element poprawić",
+    id = "redundancja", title = "Istotność Birnbauma", hook = "Kolejny zapas daje coraz mniej",
     lead = "Kolejna gałąź poprawia R, lecz wnosi koszt i coraz mniejszy przyrost; ta sama poprawa elementu ma różną wartość w różnych miejscach architektury.",
     intro = c(
       "Skoro drugi wentylator tak pomaga, czemu nie zamontować czterech? Rachunek odpowiada krzywą nasycenia: pierwsza dodatkowa gałąź redukuje ryzyko dziesięciokrotnie, następna znowu dziesięciokrotnie — ale to już redukcja z 0,01 do 0,001, podczas gdy koszt każdej gałęzi jest taki sam.",
@@ -571,7 +571,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
     )
   ),
   list(
-    id = "sciaga", title = "Ściąga i sprawdzenie",
+    id = "sciaga", title = "Ściąga i sprawdzenie", hook = "Najpierw architektura, potem rachunek",
     lead = "Funkcja → misja → architektura → zależności → wynik; rachunek ma odzwierciedlać fizyczną architekturę.",
     intro = c(
       "Rachunek systemowy sprowadza się do dwóch wzorów i jednej dyscypliny: iloczyn dla szeregu, dopełnienie iloczynu dla redundancji, i bezwzględny wymóg wspólnego czasu misji oraz jawnych wspólnych przyczyn. Pięć kroków poniżej wystarcza do audytu każdej analizy — własnej i cudzej.",

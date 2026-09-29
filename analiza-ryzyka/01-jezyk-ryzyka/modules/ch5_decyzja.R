@@ -5,15 +5,16 @@
 ch5_ui <- lecture_chapter(
   id = "ch-decyzja",
   num = "05",
-  title = "Od liczby do decyzji",
+  title = "Macierz ryzyka",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 05 · Język ryzyka",
       num = "05",
-      title = "Który problem powinien być pierwszy?",
-      lead = "Dyrektor Bananpolu dostał dwa wyniki dotyczące bezpieczeństwa.
-              Obejrzyj dwa przypadki i wybierz najlepiej uzasadniony wniosek.
-              Dopiero potem porównamy możliwe sposoby rozumowania."
+      title = "Rzadszy wypadek może być groźniejszy.",
+      lead = "Dyrektor Bananpolu ma dwa problemy: częste poślizgnięcia i rzadkie
+              kolizje z wózkiem. Samo prawdopodobieństwo nie ustali, który jest
+              pierwszy, bo liczy się też skutek i horyzont czasowy. Macierz
+              ryzyka zestawia te informacje obok siebie."
     ),
 
     lc_h2("ch5-porownanie", "Dwa problemy dyrektora Bananpolu"),

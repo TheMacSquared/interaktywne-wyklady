@@ -45,7 +45,7 @@ fta_exercises <- list(
     )
   ),
   list(
-    task = "Ważność: dla drzewa Bananpolu (P(I)=0,005, d=0,05, s=0,08) oblicz ważność Birnbauma każdego liścia i spadek P(TOP) po obniżeniu każdego parametru o 20%. Czy kolejność zależy od wielkości redukcji?",
+    task = "Istotność: dla drzewa Bananpolu (P(I)=0,005, d=0,05, s=0,08) oblicz istotność Birnbauma każdego liścia i spadek P(TOP) po obniżeniu każdego parametru o 20%. Czy kolejność zależy od wielkości redukcji?",
     answer = c(
       "Ze wzoru (9.9): I_B(I) = 1 − 0,95 · 0,92 = 0,126; I_B(D) = 0,005 · 0,92 = 0,0046; I_B(S) = 0,005 · 0,95 = 0,00475.",
       "Ze wzoru (9.10) przy r = 0,2: inicjacja 0,2 · 0,005 · 0,126 = 0,000126; tłumienie 0,2 · 0,08 · 0,00475 = 0,000076; detekcja 0,2 · 0,05 · 0,0046 = 0,000046. Kolejność nie zależy od r, bo spadek jest proporcjonalny do r dla każdego liścia; od r zależy tylko skala słupków."
@@ -62,7 +62,7 @@ fta_exercises <- list(
 
 fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = list(
   list(
-    id = "top", title = "Zdarzenie szczytowe i poziomy drzewa",
+    id = "top", title = "Zdarzenie szczytowe", hook = "Najpierw nazwij awarię, której się boisz",
     lead = "Top event musi opisywać konkretny niepożądany stan, system i horyzont; poziomy drzewa rozdzielają skutek, logikę mechanizmu i zdarzenia bez dalszego rozwijania.",
     intro = c(
       "Analiza drzewa błędów (FTA) powstała w latach sześćdziesiątych przy programach rakietowych i lotniczych, a dziś jest standardem wszędzie tam, gdzie pojedyncza awaria ma zbyt poważne skutki, by czekać na dane z wypadków. W Bananpolu użyjemy jej do zdarzenia, które w rejestrach — na szczęście — nie występuje: nieopanowanego pożaru magazynu.",
@@ -135,7 +135,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     )
   ),
   list(
-    id = "konstruktor", title = "Budowa drzewa: bramki AND i OR",
+    id = "konstruktor", title = "Bramki AND i OR", hook = "Czasem wystarczy jedna przyczyna, czasem trzeba dwóch",
     lead = "Pytanie operacyjne brzmi: czy wystarczy jedna przyczyna, czy potrzebna jest kombinacja? Zbudowaną logikę sprawdzamy, zanim pojawi się jakiekolwiek prawdopodobieństwo.",
     intro = c(
       "Protokół po pożarze magazynu nie pyta, dlaczego doszło do zapłonu — pyta, dlaczego nie udało się go opanować. Drzewo błędów buduje się w tym samym kierunku: od niepożądanego skutku w dół, do kombinacji przyczyn, które musiały wystąpić razem albo z których wystarczyła jedna.",
@@ -210,7 +210,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     )
   ),
   list(
-    id = "rachunek", title = "Od liści do korzenia",
+    id = "rachunek", title = "Rachunek bramka po bramce", hook = "Liczymy od liści do korzenia",
     lead = "Najpierw liczymy niepowodzenie wymaganych funkcji przy inicjacji, potem ważymy je P(I).",
     intro = c(
       "Gdy struktura przeszła test logiczny, liczby wchodzą od dołu. Oznaczmy d=P(D | I), s=P(S | I). Zakładamy niezależność detekcji i modułu wykonawczego warunkowo przy inicjacji: P(D ∪ S | I)=1−(1−d)(1−s). Potem stosujemy ogólną regułę iloczynu P(TOP)=P(I)P(D ∪ S | I); ten krok nie wymaga niezależności od I.",
@@ -218,7 +218,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     ),
     sections = list(
       list(
-        id = "algorytm", title = "Rachunek bramka po bramce",
+        id = "algorytm", title = "Krok po kroku na drzewie Bananpolu",
         body = list(
           c(
             "Rachunek od liści do korzenia jest prosty mechanicznie: każdą bramkę zastępujemy jedną liczbą, zaczynając od najniższego poziomu. Bramka AND niezależnych wejść daje iloczyn (9.1), bramka OR — dopełnienie iloczynu dopełnień (9.2). Wynik bramki staje się wejściem bramki poziom wyżej i tak aż do szczytu. Dla drzewa Bananpolu są tylko dwa kroki: najpierw OR barier przy inicjacji, potem AND z inicjacją.",
@@ -286,7 +286,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     pitfall = "Iloczyn bez warunkowania wymaga niezależności. Ogólna reguła P(A ∩ B)=P(A)P(B | A) jej nie wymaga. W tym przykładzie niezależność przy I przyjęto wewnątrz bramki OR."
   ),
   list(
-    id = "przekroje", title = "Struktura drzewa: przekroje, powtórzenia i wspólna przyczyna",
+    id = "przekroje", title = "Minimalny przekrój", hook = "Najkrótsze drogi do awarii",
     lead = "Minimalny przekrój wystarcza do TOP, ale żaden jego właściwy podzbiór już nie wystarcza; powtórzone zdarzenie i wspólna przyczyna zmieniają listę przekrojów.",
     intro = c(
       "Duże drzewo trudno ogarnąć wzrokiem, ale można je streścić listą minimalnych przekrojów: zestawów zdarzeń wystarczających do TOP, z których nie można usunąć żadnego elementu. Minimalność dotyczy zawierania, a nie najmniejszej liczebności w całym drzewie. Nasze drzewo ma dwa, oba dwuelementowe — i to jest dobra wiadomość: żadna pojedyncza awaria nie wywołuje katastrofy.",
@@ -413,7 +413,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     )
   ),
   list(
-    id = "ranking", title = "Ranking potencjalnej redukcji",
+    id = "ranking", title = "Istotność Birnbauma", hook = "Nie każda poprawa ma tę samą wartość",
     lead = "Poprawiamy po kolei każdy liść i obserwujemy spadek P(top).",
     intro = c(
       "Drzewo z liczbami odpowiada wreszcie na pytanie zarządu: co poprawić najpierw? Eksperyment myślowy jest uczciwy — każdemu liściowi po kolei fundujemy tę samą względną redukcję i porównujemy spadek P(top). Struktura drzewa sprawia, że identyczna poprawa w różnych miejscach daje różne zyski.",
@@ -421,17 +421,15 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     ),
     sections = list(
       list(
-        id = "birnbaum", title = "Ważność Birnbauma",
+        id = "birnbaum", title = "Dwa światy jednego liścia",
         body = list(
           c(
             "Zacznijmy od pytania prostszego niż ranking: jak bardzo P(TOP) zależy od stanu jednego liścia? Najbardziej bezpośrednia odpowiedź porównuje dwa światy. W pierwszym liść i na pewno zachodzi, w drugim na pewno nie zachodzi; pozostałe liście zachowują swoje prawdopodobieństwa. Różnica P(TOP) między tymi światami mówi, jak często stan liścia i rozstrzyga o zdarzeniu szczytowym.",
-            "W wykładzie 08 podobne pytanie zadawaliśmy dla niezawodności (istotność Birnbauma, wzór 8.15): który element poprawić, żeby system zyskał najwięcej. Tu patrzymy od strony awarii, ale rachunek jest analogiczny."
+            "Tę miarę już znamy: to istotność Birnbauma z definicji 8.8, zapisana teraz w języku awarii. W wykładzie 08 pytaliśmy, o ile wzrasta niezawodność systemu, gdy element na pewno działa zamiast na pewno nie działać. Tu pytamy, o ile wzrasta P(TOP), gdy zdarzenie bazowe na pewno zachodzi zamiast na pewno nie zachodzić.",
+            "Obie wersje dają tę samą liczbę. Zajście zdarzenia bazowego to awaria elementu, a zdarzenie szczytowe to dopełnienie sukcesu systemu, więc różnica P(TOP) jest dokładnie różnicą niezawodności systemu z wykładu 08. W obu językach istotność Birnbauma to prawdopodobieństwo, że pozostałe zdarzenia bazowe ułożyły się tak, iż stan zdarzenia i przesądza o wyniku — zdarzenie i jest wtedy krytyczne."
           ),
-          risk_definition("9.5", "Ważność Birnbauma", c(
-            "Ważność Birnbauma zdarzenia bazowego i to różnica prawdopodobieństw zdarzenia szczytowego, gdy i na pewno zachodzi, i gdy na pewno nie zachodzi. Jest to prawdopodobieństwo, że pozostałe zdarzenia bazowe ułożyły się tak, iż stan zdarzenia i przesądza o TOP (zdarzenie i jest wtedy krytyczne)."
-          )),
           risk_formula("I_B(i)=P(\\mathrm{TOP}\\mid i\\text{ zachodzi})-P(\\mathrm{TOP}\\mid i\\text{ nie zachodzi})=\\frac{\\partial P(\\mathrm{TOP})}{\\partial p_i}", num = "9.9",
-            legend = c("I_B(i)" = "ważność Birnbauma zdarzenia i", "p_i" = "prawdopodobieństwo zdarzenia i")),
+            legend = c("I_B(i)" = "istotność Birnbauma zdarzenia i", "p_i" = "prawdopodobieństwo zdarzenia i")),
           risk_derivation("dlaczego różnica równa się pochodnej", c(
             "Przy niezależnych zdarzeniach bazowych P(TOP) jest liniowe względem każdego p_i z osobna: rozkładając względem stanu zdarzenia i, dostajemy P(TOP) = p_i · P(TOP | i) + (1 − p_i) · P(TOP | nie i). Współczynnik przy p_i to właśnie różnica z (9.9), a więc i pochodna."
           ), lines = c(
@@ -439,14 +437,14 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             "       = B + p_i · (A − B)",
             "∂P(TOP)/∂p_i = A − B = I_B(i)"
           )),
-          risk_example("9.8", "Ważności w drzewie Bananpolu",
-            problem = "Oblicz ważność Birnbauma inicjacji I, braku detekcji D i niepowodzenia tłumienia S dla P(I) = 0,005, d = 0,05, s = 0,08.",
+          risk_example("9.8", "Istotności w drzewie Bananpolu",
+            problem = "Oblicz istotność Birnbauma inicjacji I, braku detekcji D i niepowodzenia tłumienia S dla P(I) = 0,005, d = 0,05, s = 0,08.",
             steps = c(
               "I: gdy I zachodzi, P(TOP) = 0,126; gdy nie — 0. I_B(I) = 0,126.",
               "D: gdy D zachodzi, TOP = I, więc P = 0,005; gdy nie — TOP = I ∩ S, więc P = 0,005 · 0,08 = 0,0004. I_B(D) = 0,0046 = 0,005 · (1 − 0,08).",
               "S: analogicznie 0,005 − 0,005 · 0,05 = 0,00475 = 0,005 · (1 − 0,05)."
             ),
-            answer = "I_B(I) = 0,126, I_B(D) = 0,0046, I_B(S) = 0,00475. Ważność Birnbauma mierzy wrażliwość na bezwzględną zmianę p_i — ale zmiana inicjacji o 0,01 i zmiana braku detekcji o 0,01 to w praktyce zupełnie różne przedsięwzięcia."
+            answer = "I_B(I) = 0,126, I_B(D) = 0,0046, I_B(S) = 0,00475. Istotność Birnbauma mierzy wrażliwość na bezwzględną zmianę p_i — ale zmiana inicjacji o 0,01 i zmiana braku detekcji o 0,01 to w praktyce zupełnie różne przedsięwzięcia."
           )
         )
       ),
@@ -454,26 +452,26 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
         id = "krytycznosc", title = "Ta sama względna poprawa",
         body = list(
           c(
-            "Ostatnie zdanie przykładu 9.8 wskazuje słabość ważności Birnbauma w zastosowaniach: nie uwzględnia ona, jak duże jest samo p_i. Obniżenie P(I) z 0,005 do 0,004 to redukcja o 20%, a obniżenie d z 0,05 do 0,04 — również o 20%, choć bezwzględnie dziesięć razy większa. Dlatego widget porównuje liście przy tej samej względnej redukcji r.",
+            "Ostatnie zdanie przykładu 9.8 wskazuje słabość istotności Birnbauma w zastosowaniach: nie uwzględnia ona, jak duże jest samo p_i. Obniżenie P(I) z 0,005 do 0,004 to redukcja o 20%, a obniżenie d z 0,05 do 0,04 — również o 20%, choć bezwzględnie dziesięć razy większa. Dlatego widget porównuje liście przy tej samej względnej redukcji r.",
             "Z liniowości P(TOP) względem p_i wynika, że obniżenie p_i do (1 − r) · p_i zmniejsza wynik dokładnie o r · p_i · I_B(i). Podzielone przez P(TOP) daje to miarę, która nie zależy od r."
           ),
           risk_formula("\\Delta P_i=r\\,p_i\\,I_B(i)=r\\,P(\\mathrm{TOP})\\,I_{CR}(i),\\qquad I_{CR}(i)=\\frac{p_i\\,I_B(i)}{P(\\mathrm{TOP})}", num = "9.10",
-            legend = c("r" = "względna redukcja parametru, np. 0,5", "\\Delta P_i" = "spadek P(TOP) po redukcji liścia i", "I_{CR}(i)" = "ważność krytyczna liścia i")),
-          risk_definition("9.6", "Ważność krytyczna", c(
-            "Ważność krytyczna zdarzenia bazowego i to względny spadek P(TOP) przypadający na względny spadek p_i. Równoważnie: prawdopodobieństwo, że zdarzenie i zaszło i było krytyczne, pod warunkiem że zaszło zdarzenie szczytowe."
+            legend = c("r" = "względna redukcja parametru, np. 0,5", "\\Delta P_i" = "spadek P(TOP) po redukcji liścia i", "I_{CR}(i)" = "istotność krytyczna liścia i")),
+          risk_definition("9.5", "Istotność krytyczna", c(
+            "Istotność krytyczna zdarzenia bazowego i to względny spadek P(TOP) przypadający na względny spadek p_i. Równoważnie: prawdopodobieństwo, że zdarzenie i zaszło i było krytyczne, pod warunkiem że zaszło zdarzenie szczytowe."
           )),
           risk_try("zostaw redukcję 0,5 i odczytaj kolejność słupków. Potem zmień redukcję na 0,2 i 0,9 — sprawdź, czy kolejność się zmienia."),
           risk_widget_panel("Wrażliwość", "Ta sama redukcja względna każdego liścia", sliderInput("f9_reduction", "Redukcja parametru", 0, .9, .5, .05), "f9_rank_plot", "f9_rank_stats"),
           c(
-            "Widget liczy ranking dla wartości bazowych 0,005; 0,05; 0,08, niezależnie od suwaków z rozdziału o rachunku. Przy r = 0,5 słupki mają wysokości 0,000315 dla inicjacji, 0,000190 dla tłumienia i 0,000115 dla detekcji — to 50%, 30% i 18% wyjściowego P(TOP). Ważności krytyczne wynoszą więc 1, około 0,60 dla tłumienia i około 0,37 dla detekcji.",
+            "Widget liczy ranking dla wartości bazowych 0,005; 0,05; 0,08, niezależnie od suwaków z rozdziału o rachunku. Przy r = 0,5 słupki mają wysokości 0,000315 dla inicjacji, 0,000190 dla tłumienia i 0,000115 dla detekcji — to 50%, 30% i 18% wyjściowego P(TOP). Istotności krytyczne wynoszą więc 1, około 0,60 dla tłumienia i około 0,37 dla detekcji.",
             "Zmiana r skaluje wszystkie słupki w tej samej proporcji i nie zmienia kolejności — tak mówi wzór (9.10). Inicjacja wygrywa, bo każdy scenariusz przez nią przechodzi: należy do obu minimalnych przekrojów. Tłumienie wyprzedza detekcję, bo zawodzi częściej (0,08 wobec 0,05), więc jego przekrój {I, S} odpowiada za większą część ryzyka."
           ),
-          "W literaturze spotkasz też miarę Fussella–Vesely’ego: udział w P(TOP) przekrojów zawierających dane zdarzenie. Dla inicjacji wynosi 1, dla detekcji 0,00025 / 0,00063 ≈ 0,40, dla tłumienia 0,0004 / 0,00063 ≈ 0,63 — kolejność jest ta sama co dla ważności krytycznej. Różne miary odpowiadają na nieco różne pytania, ale w małych drzewach zwykle prowadzą do tego samego rankingu.",
+          "W literaturze spotkasz też miarę Fussella–Vesely’ego: udział w P(TOP) przekrojów zawierających dane zdarzenie. Dla inicjacji wynosi 1, dla detekcji 0,00025 / 0,00063 ≈ 0,40, dla tłumienia 0,0004 / 0,00063 ≈ 0,63 — kolejność jest ta sama co dla istotności krytycznej. Różne miary odpowiadają na nieco różne pytania, ale w małych drzewach zwykle prowadzą do tego samego rankingu.",
           risk_check("f9_chk_rank",
             "Dlaczego obniżenie P(I) o połowę obniża P(TOP) dokładnie o połowę?",
             c("Bo I należy do każdego minimalnego przekroju, a P(TOP) jest proporcjonalne do P(I)" = "all", "Bo I ma największe prawdopodobieństwo w drzewie" = "largest", "Bo redukcja o połowę zawsze działa proporcjonalnie" = "always"),
             correct = "all",
-            explanation = "P(TOP) = P(I) · P(D ∪ S | I), więc wynik jest wprost proporcjonalny do P(I). Ważność krytyczna I równa się 1, bo I występuje w każdym scenariuszu.",
+            explanation = "P(TOP) = P(I) · P(D ∪ S | I), więc wynik jest wprost proporcjonalny do P(I). Istotność krytyczna I równa się 1, bo I występuje w każdym scenariuszu.",
             hints = c(largest = "P(I) = 0,005 jest najmniejszym parametrem w drzewie.", always = "Połowa d obniża P(TOP) tylko o około 18%. Co odróżnia I od D?")
           )
         )
@@ -482,8 +480,8 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     decision = "Ranking jest wskazówką do rozmowy o kosztach i wykonalności, nie automatycznym wyborem."
   ),
   list(
-    id = "granice", title = "Granice FTA, ściąga i sprawdzenie",
-    lead = "Dokładny rachunek nie naprawia niekompletnego drzewa ani słabych danych; audytuj zarówno rachunek, jak i strukturę.",
+    id = "granice", title = "Granice drzewa błędów", hook = "Dokładny rachunek nie naprawi złego drzewa",
+    lead = "Drzewo błędów zna tylko te przyczyny, które ktoś przewidział: niekompletnej struktury ani słabych danych nie naprawi żaden rachunek, więc audytujemy jedno i drugie.",
     intro = c(
       "Drzewo błędów modeluje tylko te scenariusze, które ktoś przewidział. Przyczyna nieobecna w drzewie ma w rachunku prawdopodobieństwo zero — nie dlatego, że jest niemożliwa, lecz dlatego, że nikt o niej nie pomyślał. Dlatego dojrzała analiza kończy się przeglądem eksperckim, a nie odczytem wyniku.",
       "Druga granica to statyczność: klasyczne FTA opisuje kombinacje stanów, słabiej radzi sobie z sekwencjami i czasem reakcji. Trzecia — jakość danych w liściach: wynik dziedziczy niepewność najsłabszego parametru, co w naszym kursie podkreślamy, oznaczając wszystkie liczby jako fikcyjne."
@@ -518,13 +516,19 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           )
         )
       ),
-      list(id = "audit", title = "Przegląd ekspercki", bullets = c("Czy top event jest jednoznaczny?", "Czy lista przyczyn jest wystarczająca?", "Gdzie założono niezależność?", "Czy jednostki i horyzonty są zgodne?", "Które dane są fikcyjne lub niepewne?")),
+      list(id = "audit", title = "Przegląd ekspercki", bullets = c("Czy top event jest jednoznaczny?", "Czy lista przyczyn jest wystarczająca?", "Gdzie założono niezależność?", "Czy jednostki i horyzonty są zgodne?", "Które dane są fikcyjne lub niepewne?"))
+    )
+  ),
+  list(
+    id = "sprawdzenie", title = "Ściąga i sprawdzenie", hook = "Najpierw logika, potem liczby",
+    lead = "Zdarzenie szczytowe → bramki → rachunek → przekroje → istotność; quiz i ćwiczenia sprawdzają zarówno logikę drzewa, jak i rachunek.",
+    sections = list(
       list(
         id = "podsumowanie", title = "Podsumowanie",
         text = c(
           "Analiza drzewa błędów zaczyna się od zdania, nie od liczby: audytowalnej definicji zdarzenia szczytowego (definicja 9.1). Drzewo rozkłada ten stan na zdarzenia pośrednie i bazowe, łącząc je bramkami AND i OR. Dla niezależnych wejść bramka AND daje iloczyn (9.1), a bramka OR — dopełnienie iloczynu dopełnień (9.2). Dzięki dualności (9.3) te same wzory znamy z układów szeregowych i równoległych: drzewo błędów jest schematem blokowym zapisanym w języku awarii.",
           "Rachunek od liści do korzenia (9.4) jest poprawny, gdy każdy liść występuje w drzewie raz. Ogólniejszą drogą są minimalne przekroje (9.6): zdarzenie szczytowe jest ich sumą, a P(TOP) liczymy z zasady włączeń i wyłączeń albo przybliżeniem rzadkich zdarzeń (9.5, 9.7), które zawyża wynik i wymaga małych wejść bramek OR. Powtórzone zdarzenia i wspólne przyczyny (9.8) trzeba zredukować algebraicznie, zanim cokolwiek pomnożymy — naiwne liczenie zawyża wynik pod OR i zaniża go pod AND.",
-          "Miary ważności (9.9, 9.10) zamieniają drzewo w ranking: w drzewie Bananpolu najważniejsza jest inicjacja, bo należy do każdego przekroju. Ranking otwiera jednak dopiero rozmowę o kosztach, a wynik całej analizy jest tak dobry, jak kompletność drzewa i jakość danych w liściach."
+          "Miary istotności (9.9, 9.10) zamieniają drzewo w ranking: w drzewie Bananpolu najważniejsza jest inicjacja, bo należy do każdego przekroju. Ranking otwiera jednak dopiero rozmowę o kosztach, a wynik całej analizy jest tak dobry, jak kompletność drzewa i jakość danych w liściach."
         )
       ),
       list(

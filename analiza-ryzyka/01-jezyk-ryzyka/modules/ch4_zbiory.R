@@ -5,15 +5,15 @@
 ch4_ui <- lecture_chapter(
   id = "ch-zbiory",
   num = "04",
-  title = "Zdarzenia się łączą",
+  title = "Działania na zdarzeniach",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 04 · Język ryzyka",
       num = "04",
-      title = "„Lub”, „i” oraz „nie” zmieniają zdarzenie.",
-      lead = "W raportach bezpieczeństwa jedno słowo potrafi zmienić licznik.
-              Zobaczymy sumę, część wspólną i dopełnienie na stu kontrolach
-              korytarza Bananpolu."
+      title = "Skórka lub mokro to nie skórka i mokro.",
+      lead = "W raportach bezpieczeństwa słowa „lub”, „i” oraz „nie” zmieniają
+              to, co liczymy. Na stu kontrolach korytarza Bananpolu zobaczymy
+              działania na zdarzeniach: sumę, część wspólną i dopełnienie."
     ),
 
     margin_callout(
@@ -287,7 +287,7 @@ ch4_ui <- lecture_chapter(
 
     lc_chapter_next(
       num = "05",
-      title = "Od prawdopodobieństwa do decyzji",
+      title = "Macierz ryzyka",
       lead = "Dwa zdarzenia o podobnej częstości mogą mieć zupełnie inne skutki.",
       target_id = "ch-decyzja"
     )

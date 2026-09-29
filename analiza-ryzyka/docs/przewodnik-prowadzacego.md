@@ -15,7 +15,7 @@ wyciągu sylabusa.
 Propozycja pojedynczego spotkania: 10 minut na problem i głosowanie, 20 na
 intuicję i eksperyment, 25 na model i rachunek, 20 na zadanie w parach,
 10 na omówienie błędów, 5 na podsumowanie. Rozdziały są dłuższe i dzielą się na
-sekcje widoczne w spisie treści; w 07 rozdział „Część B” wyznacza drugie spotkanie. Rozbudowany Monty Hall w 02 jest dygresją do
+sekcje widoczne w spisie treści; w 07 piąty rozdział („Rozkład Weibulla”) wyznacza drugie spotkanie. Rozbudowany Monty Hall w 02 jest dygresją do
 skrócenia, gdy brakuje czasu na warunkowe i całkowite. Q–Q w 06 można skrócić;
 nie pomijać definicji misji, wspólnej przyczyny ani oceny niepewności w finale.
 

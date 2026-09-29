@@ -136,7 +136,7 @@ ch6_ui <- lecture_chapter(
     lc_chapter_next(
       num = "07",
       title = "Quiz",
-      lead = "Sprawdź, czy rozpoznajesz mianownik i granice modelu.",
+      lead = "Dziesięć pytań o to, co naprawdę liczysz.",
       target_id = "ch-quiz"
     )
   )
