@@ -88,7 +88,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
     ),
     sections = list(
       list(
-        id = "zatrzymanie", title = "Reguła zatrzymania",
+        id = "zatrzymanie", title = "Stała liczba prób czy stała liczba wykryć",
         body = list(
           c(
             "Przypomnijmy, co daje schemat Bernoulliego. Mamy ciąg prób; każda kończy się jednym z dwóch wyników, które umownie nazywamy sukcesem i porażką. Prawdopodobieństwo sukcesu p jest w każdej próbie takie samo, a wyniki prób nie wpływają na siebie nawzajem. W audycie Bananpolu próbą jest kontrola jednej palety, a sukcesem — wykrycie wadliwego zabezpieczenia.",
@@ -153,7 +153,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
         )
       ),
       list(
-        id = "wzor", title = "Rozkład geometryczny",
+        id = "wzor", title = "Wzór na pierwsze wykrycie",
         body = list(
           c(
             "Oznaczmy przez X numer kontroli, w której pojawia się pierwsza wada. Zdarzenie {X = x} zachodzi dokładnie wtedy, gdy pierwsze x − 1 kontroli kończy się bez wykrycia, a x-ta kontrola wykrywa wadę. Z niezależności prób prawdopodobieństwo takiej drogi to iloczyn prawdopodobieństw wzdłuż niej — ten sam mechanizm, który w wykładzie o warunkach stosowaliśmy do drzewa zdarzeń."
@@ -238,7 +238,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
         )
       ),
       list(
-        id = "rozklad", title = "Rozkład ujemny dwumianowy",
+        id = "rozklad", title = "Wzór na r-te wykrycie",
         body = list(
           c(
             "Średnia to za mało do planowania; potrzebujemy całego rozkładu. Zdarzenie {X = x} — trzecia wada pojawia się dokładnie w x-tej kontroli — rozkłada się na dwa niezależne warunki. Po pierwsze, x-ta kontrola wykrywa wadę (prawdopodobieństwo p). Po drugie, wśród wcześniejszych x − 1 kontroli jest dokładnie r − 1 wykryć. Drugi warunek to rozkład dwumianowy z poprzedniego wykładu: C(x−1, r−1) · p^(r−1) · (1 − p)^(x−r). Mnożąc oba czynniki, dostajemy wzór (5.6)."

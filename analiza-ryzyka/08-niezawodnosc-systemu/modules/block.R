@@ -348,7 +348,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         )
       ),
       list(
-        id = "struktura", title = "Funkcja struktury",
+        id = "struktura", title = "Stany elementów i stan systemu",
         text = c(
           "Checkboksy z poprzednich sekcji wykonywały w tle prostą matematykę: brały wektor stanów elementów i zwracały stan systemu. Ta operacja ma nazwę — funkcja struktury φ — i zapisuje architekturę bez ani jednego prawdopodobieństwa. Rozdzielenie logiki (φ) od liczb (R_i) to porządek, który za wykład wróci w drzewach błędów.",
           "Stan elementu i zapisujemy jako x_i: 1 gdy działa, 0 gdy zawiódł. Funkcja struktury φ przypisuje wektorowi stanów elementów stan całego systemu. Przełączniki stanów w rozdziale o układach robiły dokładnie to: dla szeregu φ(x)=x₁x₂⋯xₙ, dla układu równoległego φ(x)=1−(1−x₁)⋯(1−xₙ), a dla naszego układu mieszanego φ(x)=x_C·[1−(1−x_A)(1−x_B)]."

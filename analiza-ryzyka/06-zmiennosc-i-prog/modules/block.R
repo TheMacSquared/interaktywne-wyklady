@@ -362,7 +362,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         )
       ),
       list(
-        id = "hierarchia", title = "Hierarchia interwencji",
+        id = "hierarchia", title = "Kolejność działań",
         text = "Dwie pierwsze interwencje zmieniają mechanizm — po ich wdrożeniu instalacja naprawdę pracuje chłodniej albo stabilniej. Trzecia zmienia tylko definicję problemu: przekroczeń „ubywa”, choć fizycznie nic się nie poprawiło. Podniesienie progu bywa zasadne, ale wymaga dowodu konstrukcyjnego, że wyższa temperatura jest bezpieczna — nigdy samej potrzeby poprawienia statystyk.",
         body = "Stąd kolejność pytań przy każdym ryzyku progowym. Najpierw: czy da się przesunąć średnią? Potem: czy da się ograniczyć zmienność — ujednolicić obciążenie, warunki, surowce? Dopiero na końcu: czy próg został ustalony poprawnie? Ta ostatnia rewizja jest uprawniona, gdy próg wziął się z ostrożnej reguły kciuka, a badania materiałowe pokazują zapas. Nie jest uprawniona, gdy jedynym argumentem jest liczba alarmów w raporcie."
       )
@@ -526,7 +526,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
     ),
     sections = list(
       list(
-        id = "komunikat", title = "Komunikat progowy w praktyce",
+        id = "przyklad", title = "Trzy zdania dla kierownika",
         body = list(
           risk_example("6.12", "Trzy zdania dla kierownika dojrzewalni",
             problem = "Na podstawie danych łożyska (μ = 82°C, σ = 3°C, próg 85°C, 8 pomiarów na zmianę) i przykładu 6.7 zredaguj komunikat progowy w trzech zdaniach: liczba z horyzontem, mechanizm, rekomendacja.",

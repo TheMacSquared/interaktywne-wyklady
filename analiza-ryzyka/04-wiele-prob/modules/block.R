@@ -134,7 +134,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
         )
       ),
       list(
-        id = "proba", title = "Próba Bernoulliego",
+        id = "proba", title = "Sukces, porażka i zapis 0/1",
         body = list(
           c(
             "Kryteria z poprzedniej sekcji mają swoją nazwę. Doświadczenie, które kończy się jednym z dwóch wyników, nazywamy próbą Bernoulliego — od szwajcarskiego matematyka Jakuba Bernoulliego, który na przełomie XVII i XVIII wieku jako pierwszy ściśle zbadał długie serie takich prób.",

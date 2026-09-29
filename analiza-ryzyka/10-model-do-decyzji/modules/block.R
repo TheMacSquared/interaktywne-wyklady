@@ -94,7 +94,7 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
         )
       ),
       list(
-        id = "definicje", title = "Kontrakt zdarzeń",
+        id = "definicje", title = "Trzy litery, jedna umowa",
         text = "I oznacza potrzebę chłodzenia na początku misji. D to niewykrycie tej potrzeby, a S — niezdolność układu do utrzymania chłodzenia przez misję. Definiujemy TOP jako I ∩ (D ∪ S). Obie funkcje są wymagane: skuteczna detekcja nie zastępuje chłodzenia, a układ nie zostanie uruchomiony bez sygnału. Roczne prawdopodobieństwo, wynik misji i odpowiedź na zapotrzebowanie nie są zamienne.",
         bullets = c("P(I): udział porównywalnych misji z zapotrzebowaniem na początku", "P(D | I)=1−czułość: przeoczenia wśród rzeczywistych zapotrzebowań", "P(S | I)=1−R_sys(t): awaria układu podczas wymaganej pracy", "D i S są niezależne warunkowo przy I; pomiar detekcji ma osobne zasilanie", "Parametry czasu życia dotyczą właśnie pracy pod wymaganym obciążeniem"),
         body = list(
@@ -465,7 +465,7 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
         decision = "Budżet ogranicza zbiór opcji; pozostałe ryzyko porównaj z jawnym kryterium. Koszty są umownymi jednostkami, nie cenami rynkowymi."
       ),
       list(
-        id = "scenariusze", title = "Odporność rekomendacji",
+        id = "scenariusze", title = "Gdy założenia się zmieniają",
         text = "Mnożnik m=1±u skaluje P(I), prawdopodobieństwo przeoczenia oraz skumulowane hazardy elementów; prawdopodobieństwa ograniczamy do 1. Skuteczność czujnika i ograniczenia źródła ciepła wynosi 0,5(2−m): w ostrożnym scenariuszu jest niższa. Te same założenia stosujemy do wszystkich opcji przed ich porównaniem. Redundancja zakłada niezależność dodanej gałęzi także w scenariuszach.",
         body = list(
           "Skalowanie skumulowanego hazardu ma prostą postać. Dla każdego elementu R(t) = e^(−H(t)), gdzie H(t) to skumulowany hazard z wykładu 07. Zwiększenie H o czynnik m daje e^(−mH(t)) = R(t)^m. Dlatego scenariusz ostrożny nie „odejmuje” stałej od niezawodności, tylko podnosi ją do potęgi większej od 1 — tak samo dla każdego elementu i w każdej opcji.",

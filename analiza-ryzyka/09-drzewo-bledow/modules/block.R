@@ -218,7 +218,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     ),
     sections = list(
       list(
-        id = "algorytm", title = "Rachunek bramka po bramce",
+        id = "algorytm", title = "Krok po kroku na drzewie Bananpolu",
         body = list(
           c(
             "Rachunek od liści do korzenia jest prosty mechanicznie: każdą bramkę zastępujemy jedną liczbą, zaczynając od najniższego poziomu. Bramka AND niezależnych wejść daje iloczyn (9.1), bramka OR — dopełnienie iloczynu dopełnień (9.2). Wynik bramki staje się wejściem bramki poziom wyżej i tak aż do szczytu. Dla drzewa Bananpolu są tylko dwa kroki: najpierw OR barier przy inicjacji, potem AND z inicjacją.",
@@ -421,7 +421,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     ),
     sections = list(
       list(
-        id = "birnbaum", title = "Ważność Birnbauma",
+        id = "birnbaum", title = "Dwa światy jednego liścia",
         body = list(
           c(
             "Zacznijmy od pytania prostszego niż ranking: jak bardzo P(TOP) zależy od stanu jednego liścia? Najbardziej bezpośrednia odpowiedź porównuje dwa światy. W pierwszym liść i na pewno zachodzi, w drugim na pewno nie zachodzi; pozostałe liście zachowują swoje prawdopodobieństwa. Różnica P(TOP) między tymi światami mówi, jak często stan liścia i rozstrzyga o zdarzeniu szczytowym.",

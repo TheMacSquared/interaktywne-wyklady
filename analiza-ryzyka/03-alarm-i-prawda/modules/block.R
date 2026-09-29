@@ -527,7 +527,7 @@ alarm_block <- list(
           )
         ),
         list(
-          id = "rachunek", title = "Próg reakcji",
+          id = "rachunek", title = "Koszt reakcji a koszt zaniechania",
           body = list(
             figure_panel(label = "Decyzja", title = "Jeden rachunek kosztów", full_width = TRUE,
               lc_p("Rozważamy wyłącznie szkodę materialną. Reakcja kosztuje 100 zł niezależnie od stanu i całkowicie zapobiega stracie; brak reakcji przy awarii kosztuje 2000 zł. Przy posteriorze q oczekiwany koszt braku reakcji to 2000q. Reagujemy, gdy q>0,05. Przy q≈0,161 koszt braku reakcji wynosi około 322 zł, więc reakcja jest uzasadniona mimo przewagi fałszywych alarmów."),
