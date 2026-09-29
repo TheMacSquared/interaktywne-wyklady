@@ -354,7 +354,7 @@ warunki_block <- list(
   id = "warunki", title = "Warunki zmieniają ocenę",
   chapters = list(
     list(
-      id = "pytanie", title = "Która liczba odpowiada na pytanie", lead = "Zanim policzymy, nazywamy warunek i populację odniesienia.",
+      id = "pytanie", title = "Populacja odniesienia", hook = "Ten sam incydent, trzy różne liczby", lead = "Zanim policzymy, nazywamy warunek i populację odniesienia.",
       intro = c(
         "W poprzednim wykładzie ustaliliśmy język: zdarzenie, mianownik, jednostkę i okres. Dziś do tego języka dochodzi jedno słowo, które potrafi zmienić każdą liczbę w raporcie: warunek. Czujnik w dojrzewalni Bananpolu zgłosił przegrzanie łożyska wentylatora — i od tej chwili pytanie „jak często zdarza się incydent?” przestaje mieć jedną odpowiedź.",
         "To samo zdarzenie może mieć inne prawdopodobieństwo w całym zakładzie i inne w wybranej grupie zmian. Kluczowe jest nie tylko to, co liczymy, lecz także spośród jakich przypadków liczymy. Ten wykład uczy zadawać pytanie tak precyzyjnie, żeby wskazywało właściwy mianownik."
@@ -407,7 +407,7 @@ warunki_block <- list(
       pitfall = "Częstość incydentu wśród zmian z przegrzaniem i częstość przegrzania wśród zmian z incydentem to dwie różne liczby — zwykle nie są równe."
     ),
     list(
-      id = "filtr", title = "Filtrujemy świat", lead = "Zaczynamy w studiu teleturnieju: jedna odsłonięta bramka zmienia całą ocenę.",
+      id = "filtr", title = "Prawdopodobieństwo warunkowe", hook = "Jedna otwarta bramka zmienia wszystko", lead = "Zaczynamy w studiu teleturnieju: jedna odsłonięta bramka zmienia całą ocenę.",
       intro = c(
         "Zanim wrócimy do hali Bananpolu, przenieśmy się do studia „Idź na całość”. Przed Tobą trzy bramki: za jedną nagroda, za dwiema Zonk. Wybierasz jedną. Prowadzący — który wie, gdzie stoi nagroda — otwiera jedną z pozostałych bramek i pokazuje Zonka. I pada pytanie, od którego zaczęły się dekady sporów: zostajesz przy swojej bramce czy zmieniasz?",
         "Zagraj kilka rund, zanim przeczytasz cokolwiek dalej, i uruchom symulację tysiąca gier. Po drodze zapisz w głowie odpowiedź na jedno pytanie: czy ruch prowadzącego czegoś Cię nauczył, czy niczego nie zmienił?"
@@ -497,7 +497,7 @@ warunki_block <- list(
       takeaway = "Warunek zmienia mianownik, nie przeszłość. Prowadzący w studiu i czujnik przegrzania w hali wykonują tę samą operację: zawężają świat, w którym liczymy."
     ),
     list(
-      id = "reprezentacje", title = "Jedna sytuacja, trzy widoki", lead = "Tabela, drzewo dróg i udziały są różnymi mapami tych samych liczebności, a drzewo podpowiada regułę mnożenia.",
+      id = "reprezentacje", title = "Reguła mnożenia", hook = "Drogę do incydentu da się narysować", lead = "Tabela, drzewo dróg i udziały są różnymi mapami tych samych liczebności, a drzewo podpowiada regułę mnożenia.",
       intro = c(
         "Sposób prezentacji powinien ułatwiać odpowiedź, a nie zmieniać problem. Tabela dobrze pilnuje liczebności, drzewo pokazuje kolejność warunków, a słupki pomagają porównać częstości w grupach.",
         "W praktyce inspektora wybór widoku to wybór narzędzia komunikacji: tabela przekonuje audytora, który chce sprawdzić sumy, drzewo tłumaczy mechanizm zarządowi, a wykres udziałów najlepiej pokazuje kontrast między grupami na slajdzie. Umiejętność przejścia między nimi bez zmiany liczb jest testem zrozumienia. Poniżej wszystkie trzy widoki tych samych 1000 zmian Bananpolu obok siebie — sprawdź, czy w każdym znajdujesz te same liczebności."
@@ -557,7 +557,7 @@ warunki_block <- list(
       decision = "Reguła iloczynu opisuje drogę, ale nie uzasadnia niezależności."
     ),
     list(
-      id = "calkowite", title = "Wzór na prawdopodobieństwo całkowite", lead = "Sumujemy rozłączne drogi: incydent może powstać podczas pracy normalnej albo przeciążenia.",
+      id = "calkowite", title = "Prawdopodobieństwo całkowite", hook = "Do incydentu prowadzą dwie drogi", lead = "Sumujemy rozłączne drogi: incydent może powstać podczas pracy normalnej albo przeciążenia.",
       intro = c(
         "Wynik ogólny jest średnią ważoną wyników w grupach. Wysokie prawdopodobieństwo w rzadkim trybie może mieć mały wkład do całości, natomiast niewielka zmiana w dominującym trybie może silnie przesunąć wynik.",
         "To tłumaczy częste zaskoczenie w raportach bezpieczeństwa: tryb pracy, o którym wszyscy mówią, bo jest spektakularnie ryzykowny, może odpowiadać za mniejszość incydentów — jeśli występuje rzadko. Zanim wskażesz głównego winowajcę, pomnóż ryzyko warunkowe przez udział trybu."
@@ -663,7 +663,7 @@ warunki_block <- list(
       )
     ),
     list(
-      id = "niezaleznosc", title = "Niezależność wymaga uzasadnienia", lead = "Dwa urządzenia nie stają się niezależne tylko dlatego, że są dwa.",
+      id = "niezaleznosc", title = "Niezależność zdarzeń", hook = "Dwa urządzenia to nie zawsze dwie szanse", lead = "Dwa urządzenia nie stają się niezależne tylko dlatego, że są dwa.",
       intro = c(
         "Niezależność jest twierdzeniem o mechanizmie i informacji: wiedza o jednym zdarzeniu nie zmienia prawdopodobieństwa drugiego. Nie wynika z osobnych nazw elementów ani z narysowania ich w dwóch gałęziach.",
         "Formalny test jest prosty: A i B są niezależne, gdy P(A | B) = P(A) — warunek niczego nie wnosi. W praktyce rzadko mamy dane, by ten warunek sprawdzić wprost, dlatego uzasadnienie niezależności jest zwykle argumentem o mechanizmie: co fizycznie łączy oba zdarzenia, a co je rozdziela."
@@ -747,7 +747,7 @@ warunki_block <- list(
       pitfall = "P(A ∩ B)=P(A)P(B) wolno użyć dopiero po uzasadnieniu niezależności."
     ),
     list(
-      id = "decyzja", title = "Warunek w decyzji", lead = "Działanie kierujemy tam, gdzie warunek istotnie zmienia ocenę.",
+      id = "decyzja", title = "Różnica i iloraz ryzyk", hook = "Silny sygnał to jeszcze nie przyczyna", lead = "Działanie kierujemy tam, gdzie warunek istotnie zmienia ocenę.",
       intro = c(
         "Duża różnica między P(A | B) i P(A) może być użyteczna operacyjnie, nawet zanim poznamy pełny mechanizm. Może wskazać grupę do kontroli, ale sama nie rozstrzyga, czy usunięcie B zmniejszy częstość A.",
         "W Bananpolu przegrzanie podnosi ryzyko incydentu z 1,7% do 12% — to sygnał zbyt silny, żeby go zignorować, i zbyt słaby, żeby od razu wymieniać wentylatory. Rozsądna kolejność: skierować kontrolę tam, gdzie warunek wskazuje, i równolegle szukać mechanizmu."
@@ -797,7 +797,7 @@ warunki_block <- list(
       decision = "Przegrzanie uzasadnia dodatkową kontrolę, ale sam związek warunkowy nie dowodzi przyczynowości."
     ),
     list(
-      id = "sprawdzenie", title = "Ściąga, quiz i ćwiczenia", lead = "Filtruj mianownik, mnóż wzdłuż drogi i sumuj rozłączne drogi.",
+      id = "sprawdzenie", title = "Ściąga i sprawdzenie", hook = "Najpierw warunek, potem liczba", lead = "Filtruj mianownik, mnóż wzdłuż drogi i sumuj rozłączne drogi.",
       intro = "Ostatni rozdział łączy rachunek z audytem założeń. Poprawny symbol i poprawne działanie nie wystarczą, jeśli zdarzenie, warunek albo populacja odniesienia są niejasne.",
       sections = list(
         list(

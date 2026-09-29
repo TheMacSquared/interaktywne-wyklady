@@ -73,7 +73,7 @@ zycie_functions_table <- figure_panel(
 
 zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = list(
   list(
-    id = "mttf", title = "Dwa urządzenia z tym samym MTTF",
+    id = "mttf", title = "MTTF", hook = "Ta sama średnia żywotność, inne ryzyko",
     lead = "Ta sama średnia nie gwarantuje tej samej niezawodności w czasie misji.",
     intro = c(
       "Dwa wentylatory z kart katalogowych mają identyczny średni czas życia. Po roku eksploatacji jeden park maszyn wygląda wyraźnie lepiej od drugiego. Średnia nie mówi, jak awarie rozkładają się w czasie — a właśnie od tego zależy, czy element dotrwa do końca misji.",
@@ -126,7 +126,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     ))
   ),
   list(
-    id = "cenzorowanie", title = "Oś obserwacji i cenzorowanie",
+    id = "cenzorowanie", title = "Obserwacja cenzorowana", hook = "Działa do dziś — to też jest informacja",
     lead = "Element nadal działający na końcu badania wnosi informację: jego czas życia jest co najmniej tak długi.",
     intro = c(
       "Badanie trwałości wentylatorów zakończyło się po 1200 godzinach, a spora część egzemplarzy wciąż działała. Usunięcie ich z danych jest poważnym błędem: ich czas życia nie jest całkiem nieznany — wiemy, że przekroczył moment zakończenia obserwacji, i ta informacja musi zostać w analizie.",
@@ -189,7 +189,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     pitfall = "Usunięcie działających elementów z danych systematycznie skraca obraz czasu życia."
   ),
   list(
-    id = "jezyk", title = "f(t), F(t), R(t) i h(t)",
+    id = "jezyk", title = "Niezawodność i hazard", hook = "„Jak długo” i „czy do jutra” to różne pytania",
     lead = "Cztery funkcje odpowiadają na różne pytania o ten sam czas życia.",
     intro = "Cztery funkcje brzmią groźnie, ale to cztery spojrzenia na jeden rozkład — znając jedną, można wyprowadzić pozostałe. Nowością jest hazard: dzieli gęstość przez niezawodność, więc pyta o ryzyko najbliższej chwili wśród elementów, które dożyły do t. To warunkowe spojrzenie — mianownik R(t) robi tu dokładnie to, co warunek B w wykładzie drugim.",
     sections = list(
@@ -293,7 +293,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     )
   ),
   list(
-    id = "wykladniczy", title = "Rozkład wykładniczy i gamma",
+    id = "wykladniczy", title = "Rozkład wykładniczy i gamma", hook = "Urządzenie, które się nie starzeje",
     lead = "Stały hazard daje model bez pamięci; suma k takich etapów daje rozkład gamma, a dla całkowitego k — Erlanga.",
     intro = c(
       "Najprostsza hipoteza o hazardzie brzmi: jest stały. Element nie dociera się i nie zużywa — psuje się od losowych zaburzeń, które w każdej godzinie są tak samo prawdopodobne. Ta hipoteza wyznacza dokładnie jeden rozkład: wykładniczy, ciągły odpowiednik geometrycznego z wykładu piątego.",
@@ -397,7 +397,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     )
   ),
   list(
-    id = "weibull", title = "Część B — mechanizm Weibulla",
+    id = "weibull", title = "Rozkład Weibulla", hook = "Nie każde urządzenie starzeje się tak samo",
     lead = "Parametr β opisuje kierunek zmiany hazardu, η skalę czasu, a ten sam MTTF może kryć różne R(t).",
     intro = c(
       "Weibull jest domyślnym językiem inżynierii niezawodności, bo jednym parametrem odpowiada na najważniejsze pytanie diagnostyczne: co dzieje się z hazardem. β < 1 oznacza hazard malejący (wczesne defekty odsiewają się z parku), β = 1 odtwarza rozkład wykładniczy, a β > 1 — hazard rosnący, charakterystyczny dla zużycia.",
@@ -495,7 +495,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     )
   ),
   list(
-    id = "wanna", title = "Krzywa wannowa to złożenie mechanizmów",
+    id = "wanna", title = "Krzywa wannowa", hook = "Psuje się na początku i na końcu",
     lead = "Wczesne defekty, okres stabilny i zużycie tworzą trzy składowe hazardu.",
     intro = "Podręcznikowa krzywa wannowa — wysoki hazard na początku, płaski środek, wznoszący koniec — bywa błędnie przedstawiana jako „kształt rozkładu Weibulla”. Tymczasem pojedynczy Weibull ma hazard monotoniczny: może odtworzyć jedno ramię wanny, nigdy całą. Wanna powstaje z nałożenia trzech mechanizmów, z których każdy ma własny przebieg i własne lekarstwo.",
     sections = list(
@@ -551,7 +551,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     pitfall = "Pojedynczy Weibull ma hazard monotoniczny; nie tworzy pełnej krzywej wannowej."
   ),
   list(
-    id = "przeglad", title = "Plan przeglądu",
+    id = "przeglad", title = "Czas życia Bq", hook = "Wymiana na zapas nie zawsze pomaga",
     lead = "Czas interwencji wynika z wymaganego R(t), kosztów i mechanizmu awarii.",
     intro = c(
       "Pytanie utrzymaniowe brzmi konkretnie: po ilu godzinach zaplanować przegląd wentylatora, żeby ryzyko awarii przed przeglądem pozostało akceptowalne? Suwak poniżej liczy R(t) dla modelu zużyciowego Weibulla (β = 2, η = 1700 h) — przesuwaj czas przeglądu i obserwuj, jak rośnie ryzyko.",
@@ -618,7 +618,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     decision = "Podaj model, czas misji i prawdopodobieństwo dotrwania. Przegląd sam nie odnawia elementu: trzeba określić, co wykrywa i czy prowadzi do wymiany lub naprawy. MTTF samo nie wyznacza harmonogramu."
   ),
   list(
-    id = "sciaga", title = "Ściąga i sprawdzenie",
+    id = "sciaga", title = "Ściąga i sprawdzenie", hook = "Najpierw mechanizm, potem termin",
     lead = "Czas → cenzorowanie → R(t) i h(t) → mechanizm → plan; interpretuj funkcje czasu życia bez estymacji parametrów.",
     intro = c(
       "Zanim przejdziesz do quizu, sprawdź, czy umiesz odpowiedzieć na pięć pytań poniżej dla dowolnego elementu ze swojego otoczenia — od baterii w laptopie po pasek rozrządu. To one, a nie wzory, są szkieletem analizy czasu życia.",

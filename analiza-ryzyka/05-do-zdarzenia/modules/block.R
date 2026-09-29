@@ -76,7 +76,7 @@ dozd_sciaga_widget <- tagList(
 
 dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = list(
   list(
-    id = "regula", title = "Co pozostaje stałe?", lead = "Dwumianowy zatrzymuje się po n próbach; ujemny dwumianowy po r zdarzeniach.",
+    id = "regula", title = "Reguła zatrzymania", hook = "Moment zatrzymania zmienia rachunek", lead = "Dwumianowy zatrzymuje się po n próbach; ujemny dwumianowy po r zdarzeniach.",
     intro = c(
       "Audytor w Bananpolu nie pyta, ile wadliwych zabezpieczeń znajdzie w pięćdziesięciu kontrolach. Pyta, ile kontroli potrwa, zanim znajdzie trzy — bo na tyle musi zabudżetować czas i ludzi. To odwrócenie zmienia rozkład: losowa przestaje być liczba zdarzeń, a staje się liczba prób.",
       "Pojedyncze próby są dokładnie te same, co w poprzednim wykładzie — schemat Bernoulliego ze stałym p i niezależnością. Zmienia się wyłącznie reguła zatrzymania eksperymentu. Rozpoznanie, co jest stałe, a co losowe, jest pierwszym i najważniejszym krokiem doboru rozkładu."
@@ -135,7 +135,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
     )
   ),
   list(
-    id = "geometryczny", title = "Do pierwszego wykrycia", lead = "Rozkład geometryczny ma długi ogon: sukces może nadejść szybko albo bardzo późno.",
+    id = "geometryczny", title = "Rozkład geometryczny", hook = "Pierwsze wykrycie bywa szybkie albo bardzo późne", lead = "Rozkład geometryczny ma długi ogon: sukces może nadejść szybko albo bardzo późno.",
     intro = c(
       "Najprostsza wersja pytania: ile kontroli do pierwszej wady? Zanim padnie jakikolwiek wzór, zbuduj wyczucie — uruchom symulację kilka razy i obserwuj kształt histogramu: gdzie jest szczyt, jak długo ciągnie się ogon, jak często seria kończy się już przy pierwszych kontrolach.",
       "Dwie rzeczy powinny zwrócić uwagę. Najbardziej prawdopodobna jest zawsze pierwsza kontrola, a każda kolejna coraz mniej — mimo to średnia bywa myląca: przy p = 0,10 średnio czekamy 10 kontroli, ale co dziesiąta seria przekroczy 22 kontrole."
@@ -219,7 +219,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
     takeaway = "Brak wykrycia po trzydziestu kontrolach nie dowodzi, że wad nie ma. Model geometryczny pozwala policzyć, jak prawdopodobne jest tak długie oczekiwanie przy przyjętym p; dopiero jawne kryterium decyzyjne mówi, kiedy przerwać kontrolę."
   ),
   list(
-    id = "rte", title = "Do r-tego wykrycia", lead = "Łączna liczba prób jest sumą czasów oczekiwania na kolejne wykrycia, a oprogramowanie może liczyć ją na dwa sposoby.",
+    id = "rte", title = "Rozkład ujemny dwumianowy", hook = "Trzy wykrycia to trzy kolejki czekania", lead = "Łączna liczba prób jest sumą czasów oczekiwania na kolejne wykrycia, a oprogramowanie może liczyć ją na dwa sposoby.",
     intro = c(
       "Audytor potrzebuje trzech wykrytych wad, nie jednej. Oczekiwanie na trzecią wadę to trzy sklejone oczekiwania geometryczne: do pierwszej, potem do drugiej, potem do trzeciej. Suma tych trzech czasów ma rozkład ujemny dwumianowy.",
       "Współczynnik we wzorze zlicza układy: ostatnia, x-ta kontrola musi zakończyć się wykryciem, a wcześniejsze r−1 wykryć może rozmieścić się dowolnie wśród x−1 poprzednich kontroli. Porównaj kształt rozkładu z geometrycznym: im większe r, tym rozkład bardziej symetryczny i dalszy od zera."
@@ -295,7 +295,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
     )
   ),
   list(
-    id = "zasoby", title = "Średnia kontra plan zasobów", lead = "Średnia r/p nie gwarantuje ukończenia przed limitem.",
+    id = "zasoby", title = "Limit planistyczny", hook = "Średnio wystarczy, a i tak zabraknie", lead = "Średnia r/p nie gwarantuje ukończenia przed limitem.",
     intro = c(
       "Przy p = 0,10 i celu r = 3 średnia liczba kontroli wynosi 30. Czy zaplanowanie dokładnie 30 kontroli wystarczy? Kalkulator poniżej pokazuje, że szansa ukończenia audytu w 30 kontrolach to niespełna 60% — rozkład jest skośny i długa seria pechowych kontroli wcale nie jest rzadka.",
       "Plan zasobów buduje się więc na kwantylu, nie na średniej: limit kontroli dobieramy tak, żeby prawdopodobieństwo ukończenia audytu przed limitem osiągnęło uzgodniony poziom, na przykład 95%. Różnica między średnią a kwantylem to właśnie zapas planistyczny."
@@ -347,7 +347,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
     )
   ),
   list(
-    id = "zawodzi", title = "Kiedy model zawodzi", lead = "Stałe p i niezależność są założeniami operacyjnymi.",
+    id = "zawodzi", title = "Założenia modelu", hook = "Nie każda partia jest taka sama", lead = "Stałe p i niezależność są założeniami operacyjnymi.",
     intro = c(
       "Stałe p brzmi niewinnie, ale w praktyce oznacza: każda kontrolowana paleta pochodzi z tej samej populacji jakości. Gdy dostawy przychodzą od różnych dostawców albo jakość dryfuje w czasie, p zmienia się między partiami — a rozkład liczby kontroli robi się szerszy, niż obiecuje model.",
       "Symulacja porównuje świat stałego p ze światem, w którym p losuje się osobno dla każdej partii. Zmienia się także średnia: przy losowym p wynosi r·E(1/p), a nie r/E(p). Funkcja 1/p jest wypukła, więc przy tej samej średniej p zmienność wydłuża przeciętne oczekiwanie. Różni się również ogon — czyli dokładnie ta część rozkładu, na której opiera się plan zasobów. Niedoszacowany ogon to audyt, który „niespodziewanie” trwa dwa razy dłużej."
@@ -393,7 +393,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
     pitfall = "Uczenie kontrolera, grupowanie wad i zmiana dostawy mogą zmieniać p w czasie."
   ),
   list(
-    id = "sprawdzenie", title = "Ściąga i sprawdzenie", lead = "Reguła zatrzymania → p i r → rozkład → limit → decyzja.",
+    id = "sprawdzenie", title = "Ściąga i sprawdzenie", hook = "Najpierw ustal, kiedy kończysz", lead = "Reguła zatrzymania → p i r → rozkład → limit → decyzja.",
     intro = "Masz teraz komplet trzech rozkładów zbudowanych na schemacie Bernoulliego. Ściąga zestawia je obok siebie — w quizie i ćwiczeniach najważniejsze będzie rozpoznanie, które pytanie prowadzi do którego rozkładu.",
     sections = list(
       list(

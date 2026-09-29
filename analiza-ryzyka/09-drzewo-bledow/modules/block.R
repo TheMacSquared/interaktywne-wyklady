@@ -62,7 +62,7 @@ fta_exercises <- list(
 
 fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = list(
   list(
-    id = "top", title = "Zdarzenie szczytowe i poziomy drzewa",
+    id = "top", title = "Zdarzenie szczytowe", hook = "Najpierw nazwij awarię, której się boisz",
     lead = "Top event musi opisywać konkretny niepożądany stan, system i horyzont; poziomy drzewa rozdzielają skutek, logikę mechanizmu i zdarzenia bez dalszego rozwijania.",
     intro = c(
       "Analiza drzewa błędów (FTA) powstała w latach sześćdziesiątych przy programach rakietowych i lotniczych, a dziś jest standardem wszędzie tam, gdzie pojedyncza awaria ma zbyt poważne skutki, by czekać na dane z wypadków. W Bananpolu użyjemy jej do zdarzenia, które w rejestrach — na szczęście — nie występuje: nieopanowanego pożaru magazynu.",
@@ -135,7 +135,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     )
   ),
   list(
-    id = "konstruktor", title = "Budowa drzewa: bramki AND i OR",
+    id = "konstruktor", title = "Bramki AND i OR", hook = "Czasem wystarczy jedna przyczyna, czasem trzeba dwóch",
     lead = "Pytanie operacyjne brzmi: czy wystarczy jedna przyczyna, czy potrzebna jest kombinacja? Zbudowaną logikę sprawdzamy, zanim pojawi się jakiekolwiek prawdopodobieństwo.",
     intro = c(
       "Protokół po pożarze magazynu nie pyta, dlaczego doszło do zapłonu — pyta, dlaczego nie udało się go opanować. Drzewo błędów buduje się w tym samym kierunku: od niepożądanego skutku w dół, do kombinacji przyczyn, które musiały wystąpić razem albo z których wystarczyła jedna.",
@@ -210,7 +210,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     )
   ),
   list(
-    id = "rachunek", title = "Od liści do korzenia",
+    id = "rachunek", title = "Rachunek bramka po bramce", hook = "Liczymy od liści do korzenia",
     lead = "Najpierw liczymy niepowodzenie wymaganych funkcji przy inicjacji, potem ważymy je P(I).",
     intro = c(
       "Gdy struktura przeszła test logiczny, liczby wchodzą od dołu. Oznaczmy d=P(D | I), s=P(S | I). Zakładamy niezależność detekcji i modułu wykonawczego warunkowo przy inicjacji: P(D ∪ S | I)=1−(1−d)(1−s). Potem stosujemy ogólną regułę iloczynu P(TOP)=P(I)P(D ∪ S | I); ten krok nie wymaga niezależności od I.",
@@ -286,7 +286,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     pitfall = "Iloczyn bez warunkowania wymaga niezależności. Ogólna reguła P(A ∩ B)=P(A)P(B | A) jej nie wymaga. W tym przykładzie niezależność przy I przyjęto wewnątrz bramki OR."
   ),
   list(
-    id = "przekroje", title = "Struktura drzewa: przekroje, powtórzenia i wspólna przyczyna",
+    id = "przekroje", title = "Minimalny przekrój", hook = "Najkrótsze drogi do awarii",
     lead = "Minimalny przekrój wystarcza do TOP, ale żaden jego właściwy podzbiór już nie wystarcza; powtórzone zdarzenie i wspólna przyczyna zmieniają listę przekrojów.",
     intro = c(
       "Duże drzewo trudno ogarnąć wzrokiem, ale można je streścić listą minimalnych przekrojów: zestawów zdarzeń wystarczających do TOP, z których nie można usunąć żadnego elementu. Minimalność dotyczy zawierania, a nie najmniejszej liczebności w całym drzewie. Nasze drzewo ma dwa, oba dwuelementowe — i to jest dobra wiadomość: żadna pojedyncza awaria nie wywołuje katastrofy.",
@@ -413,7 +413,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     )
   ),
   list(
-    id = "ranking", title = "Ranking potencjalnej redukcji",
+    id = "ranking", title = "Ważność Birnbauma", hook = "Nie każda poprawa ma tę samą wartość",
     lead = "Poprawiamy po kolei każdy liść i obserwujemy spadek P(top).",
     intro = c(
       "Drzewo z liczbami odpowiada wreszcie na pytanie zarządu: co poprawić najpierw? Eksperyment myślowy jest uczciwy — każdemu liściowi po kolei fundujemy tę samą względną redukcję i porównujemy spadek P(top). Struktura drzewa sprawia, że identyczna poprawa w różnych miejscach daje różne zyski.",
@@ -482,7 +482,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     decision = "Ranking jest wskazówką do rozmowy o kosztach i wykonalności, nie automatycznym wyborem."
   ),
   list(
-    id = "granice", title = "Granice FTA, ściąga i sprawdzenie",
+    id = "granice", title = "Ściąga i sprawdzenie", hook = "Dokładny rachunek nie naprawi złego drzewa",
     lead = "Dokładny rachunek nie naprawia niekompletnego drzewa ani słabych danych; audytuj zarówno rachunek, jak i strukturę.",
     intro = c(
       "Drzewo błędów modeluje tylko te scenariusze, które ktoś przewidział. Przyczyna nieobecna w drzewie ma w rachunku prawdopodobieństwo zero — nie dlatego, że jest niemożliwa, lecz dlatego, że nikt o niej nie pomyślał. Dlatego dojrzała analiza kończy się przeglądem eksperckim, a nie odczytem wyniku.",

@@ -131,7 +131,7 @@ alarm_block <- list(
   id = "alarm", title = "Alarm i prawda",
   chapters = list(
     list(
-      id = "intuicja", title = "Dobry czujnik, trudne pytanie",
+      id = "intuicja", title = "Kierunek warunku", hook = "Dobry czujnik nie znaczy pewny alarm",
       lead = "Odwrócenie warunku potrafi całkowicie zmienić odpowiedź.",
       intro = c(
         "Trzecia w nocy, telefon z chłodni Bananpolu: czujnik przegrzania znowu alarmuje. Wysyłać ekipę? Odpowiedź zależy od liczby, o którą mało kto pyta w środku nocy — od tego, jak często awaria zdarza się w ogóle.",
@@ -194,7 +194,7 @@ alarm_block <- list(
       )
     ),
     list(
-      id = "detektor", title = "Język detektora",
+      id = "detektor", title = "Czułość i swoistość", hook = "Alarm może się pomylić na dwa sposoby",
       lead = "Czułość i odsetek fałszywych alarmów opisują dwa różne wiersze tablicy.",
       intro = c(
         "Zanim policzymy cokolwiek, uporządkujmy słownik. Każda zmiana pracy dojrzewalni kończy się jednym z czterech wyników: awaria z alarmem albo bez, brak awarii z alarmem albo bez. Cała wiedza o detektorze mieści się w tym, jak często trafia do każdej z czterech komórek.",
@@ -290,7 +290,7 @@ alarm_block <- list(
       pitfall = "Wysoka czułość nie oznacza, że większość alarmów jest prawdziwa."
     ),
     list(
-      id = "czestosci", title = "Naturalne częstości i wzór Bayesa",
+      id = "czestosci", title = "Wzór Bayesa", hook = "Dziesięć tysięcy zmian mówi więcej niż procenty",
       lead = "Zamiast trzech procentów śledzimy konkretne zmiany produkcyjne; wzór porządkuje ten rachunek na końcu.",
       intro = c(
         "Trzy procenty naraz — częstość bazowa, czułość, FPR — przeciążają intuicję, bo każdy odnosi się do innego mianownika. Naturalne częstości rozbrajają problem: zamiast ułamków wyobrażamy sobie 10 000 konkretnych zmian i śledzimy, ile z nich trafia do każdej grupy.",
@@ -383,7 +383,7 @@ alarm_block <- list(
       )
     ),
     list(
-      id = "baza", title = "Częstość bazowa i druga informacja",
+      id = "baza", title = "Częstość bazowa", hook = "Ten sam alarm znaczy co innego w innej hali",
       lead = "Ten sam czujnik daje inną wiarygodność alarmu w innej populacji, a drugi alarm pomaga tylko o tyle, o ile wnosi nową informację.",
       intro = c(
         "Wiarygodność alarmu nie jest cechą czujnika — jest cechą pary: czujnik plus populacja, w której pracuje. Ten sam model detektora zamontowany w hali o rzadkich awariach będzie „krzyczał wilk” znacznie częściej niż w hali, gdzie awarie są powszechne.",
@@ -511,7 +511,7 @@ alarm_block <- list(
       )
     ),
     list(
-      id = "reakcja", title = "Reakcja jest osobnym problemem",
+      id = "reakcja", title = "Próg reakcji", hook = "Wiedzieć to jeszcze nie działać",
       lead = "Posterior opisuje przekonanie; decyzja wymaga jeszcze konsekwencji.",
       intro = c(
         "Policzyliśmy: po alarmie szansa awarii wynosi około 16%. Czy wysłać ekipę? Sama liczba nie odpowiada, bo decyzja zależy również od tego, co jest na szali. Wyjazd do fałszywego alarmu kosztuje godzinę pracy ekipy; zignorowanie prawdziwej awarii może kosztować całą partię owoców albo pożar instalacji.",
@@ -571,7 +571,7 @@ alarm_block <- list(
       decision = "Ustal próg reakcji jawnie na podstawie kosztów i wykonalności, nie na podstawie samego posteriora."
     ),
     list(
-      id = "sprawdzenie", title = "Ściąga i sprawdzenie",
+      id = "sprawdzenie", title = "Ściąga i sprawdzenie", hook = "Alarm to dopiero początek pytania",
       lead = "Pytanie → populacja → detektor → posterior → konsekwencje.",
       intro = "Największym ryzykiem tego wykładu nie jest błąd rachunkowy, lecz odpowiedź na niewłaściwe pytanie. Ściąga porządkuje audyt alarmu od pytania do decyzji; quiz i ćwiczenia sprawdzają, czy odróżniasz kierunki warunkowania bez podpowiedzi.",
       sections = list(list(

@@ -63,7 +63,7 @@ integracja_exercises <- list(
 
 integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chapters = list(
   list(
-    id = "teczka", title = "Teczka przypadku i kontrakt zdarzeń",
+    id = "teczka", title = "Kontrakt zdarzeń", hook = "Zanim wybierzesz wzór, spisz, co wiesz",
     lead = "Najpierw opisujemy misję i dostępne dane, potem nazywamy zdarzenia i dopiero wtedy wybieramy model.",
     intro = c(
       "Bananpol uruchamia partię w komorze. Na początku misji może wystąpić stan wymagający aktywnego chłodzenia przez cały zadany czas. Ochrona wymaga wykrycia tego stanu i ciągłej pracy układu chłodzenia. Analizujemy utratę wymaganej ochrony termicznej; nie utożsamiamy jej automatycznie z pożarem ani urazem.",
@@ -181,7 +181,7 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
     )
   ),
   list(
-    id = "karty", title = "Trzy karty obliczeniowe",
+    id = "karty", title = "Karty obliczeniowe", hook = "Trzy pytania, trzy różne rachunki",
     lead = "Detekcja, kontrola partii i czas życia: trzy rachunki cząstkowe, każdy z własnym pytaniem i własną pułapką.",
     intro = c(
       "Zanim złożymy układ i drzewo, porządkujemy liczby na trzech kartach. Do końcowego FTA trafią tylko wyniki detekcji i czasu życia; karta kontroli partii pokazuje, jak wnioskować o p z próby, ale nie opisuje żadnego liścia drzewa ochrony termicznej.",
@@ -311,7 +311,7 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
     )
   ),
   list(
-    id = "system", title = "Układ chłodzenia i końcowe FTA",
+    id = "system", title = "Model układu chłodzenia", hook = "Wszystko składa się w jedno drzewo",
     lead = "Zasilanie i sterownik są wymagane zawsze, wystarcza jeden z dwóch wentylatorów; inicjacja i niepowodzenie wymaganej ochrony tworzą wspólny scenariusz.",
     intro = "Wentylatory mają R(t) z karty czasu życia. Dla zasilania i sterownika zakładamy wykładniczy czas życia, więc R(t)=R(1000)^(t/1000). Wszystkie elementy liczymy dla wspólnego czasu misji. Zasilanie jest jawnym wspólnym zasobem obu wentylatorów; poza nim zakładamy niezależność elementów.",
     sections = list(
@@ -422,7 +422,7 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
     )
   ),
   list(
-    id = "interwencje", title = "Interwencje i odporność rekomendacji",
+    id = "interwencje", title = "Odporność rekomendacji", hook = "Dobra rekomendacja przetrwa zmianę założeń",
     lead = "Porównujemy efekt, budżet i wykonalność przy tej samej misji, a każdą interwencję przeliczamy w każdym scenariuszu.",
     intro = "Lepszy czujnik zmniejsza przeoczenia, ograniczenie źródła ciepła zmniejsza częstość zapotrzebowania, niezależne zasilanie dodaje drugą gałąź zasilania, a dodatkowy wentylator trzecią gałąź chłodzenia. Bazowa redukcja przeoczeń lub inicjacji o 50% jest fikcyjną hipotezą skuteczności działania, wymagającą danych z pilotażu. Nie wynika z samego częstszego przeglądu.",
     sections = list(
@@ -506,7 +506,7 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
     )
   ),
   list(
-    id = "notatka", title = "Notatka decyzyjna i obrona rekomendacji",
+    id = "notatka", title = "Notatka decyzyjna", hook = "Mniej ryzyka to jeszcze nie dość",
     lead = "Mniejsze prawdopodobieństwo nie musi spełniać przyjętego kryterium; rachunek oddajemy wraz z założeniami, skutkami i planem sprawdzenia działania.",
     intro = "Wybierz działanie i demonstracyjny limit dla utraty ochrony w jednej misji. Notatka sprawdza budżet i najgorszy z rozpatrywanych scenariuszy. Limit służy wyłącznie ćwiczeniu, nie jest normą bezpieczeństwa. Uzgodnienie rzeczywistego kryterium wymaga także oceny skutków i narażenia.",
     sections = list(
