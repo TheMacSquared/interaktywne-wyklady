@@ -5,14 +5,15 @@
 ch2_ui <- lecture_chapter(
   id = "ch-czestosc",
   num = "02",
-  title = "Od obserwacji do modelu",
+  title = "Częstość empiryczna",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 02 · Język ryzyka",
       num = "02",
       title = "Jeden miesiąc może kłamać.",
-      lead = "Częstość obserwowana zmienia się od serii do serii. Dopiero wraz
-              z liczbą porównywalnych okresów zaczyna odsłaniać stabilny wzorzec."
+      lead = "Częstość empiryczna, czyli udział zmian z poślizgnięciem w
+              rejestrze, zmienia się od serii do serii. Stabilny wzorzec
+              odsłania dopiero wiele porównywalnych okresów."
     ),
 
     margin_callout(

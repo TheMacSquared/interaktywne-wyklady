@@ -5,7 +5,7 @@
 ch1_ui <- lecture_chapter(
   id = "ch-sytuacja",
   num = "01",
-  title = "Co tu jest ryzykiem?",
+  title = "Łańcuch ryzyka",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 01 · Język ryzyka",
@@ -202,7 +202,7 @@ ch1_ui <- lecture_chapter(
     lc_p("Przykład: uszkodzenie opakowania → wyciek na przejście → poślizgnięcie → brak urazu albo uraz. Kontrola opakowania zapobiega wyciekowi, usunięcie rozlania i odgrodzenie ograniczają kontakt. Sama tabliczka ostrzegawcza zależy od zauważenia i reakcji człowieka. Ponowna kontrola przejścia sprawdza, czy działanie było skuteczne."),
     lc_chapter_next(
       num = "02",
-      title = "Częstość i prawdopodobieństwo",
+      title = "Częstość empiryczna",
       lead = "Sprawdzimy, dlaczego jeden miesiąc obserwacji potrafi mylić.",
       target_id = "ch-czestosc"
     )

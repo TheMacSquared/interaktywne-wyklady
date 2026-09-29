@@ -23,9 +23,9 @@ ch7_ui <- lecture_chapter(
     lc_chapter_hero(
       kicker = "Rozdział 07 · Język ryzyka",
       num = "07",
-      title = "Czy mianownik się zgadza?",
-      lead = "Dziesięć krótkich pytań sprawdza rozpoznawanie pojęć i granic
-              modelu. Rachunki są tu mniej ważne niż precyzyjna interpretacja."
+      title = "Liczba bez definicji nic nie mówi.",
+      lead = "Dziesięć krótkich pytań sprawdza, czy umiesz nazwać zdarzenie,
+              jednostkę i źródło liczby, zanim cokolwiek policzysz."
     ),
 
     lc_p(
@@ -61,7 +61,7 @@ ch7_ui <- lecture_chapter(
 
     lc_chapter_next(
       num = "08",
-      title = "Ćwiczenie decyzyjne",
+      title = "Ćwiczenia",
       lead = "Popraw niepełny komunikat o bezpieczeństwie.",
       target_id = "ch-cwiczenia"
     )

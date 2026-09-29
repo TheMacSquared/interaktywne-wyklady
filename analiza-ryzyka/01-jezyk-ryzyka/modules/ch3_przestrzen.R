@@ -5,15 +5,16 @@
 ch3_ui <- lecture_chapter(
   id = "ch-przestrzen",
   num = "03",
-  title = "Spośród czego liczymy?",
+  title = "Przestrzeń zdarzeń",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 03 · Język ryzyka",
       num = "03",
-      title = "Mianownik jest częścią modelu.",
-      lead = "Definicja klasyczna działa wtedy, gdy potrafimy wymienić wyniki i
-              uzasadnić, że są jednakowo możliwe. W Bananpolu nadaje się do
-              losowania palety do kontroli, nie do przewidywania każdego wypadku."
+      title = "Szansę można znać, zanim coś się stanie.",
+      lead = "Nie zawsze potrzebujemy rejestru wypadków. Gdy losujemy paletę do
+              kontroli, szansę wyznacza sama konstrukcja losowania: wystarczy
+              wypisać przestrzeń zdarzeń, czyli wszystkie palety, które mogą
+              zostać wybrane, i uzasadnić, że są jednakowo możliwe."
     ),
 
     margin_callout(
@@ -262,7 +263,7 @@ ch3_ui <- lecture_chapter(
 
     lc_chapter_next(
       num = "04",
-      title = "Zdarzenia się łączą",
+      title = "Działania na zdarzeniach",
       lead = "Przetłumaczymy słowa „lub”, „i” oraz „nie” na działania na zbiorach.",
       target_id = "ch-zbiory"
     )
