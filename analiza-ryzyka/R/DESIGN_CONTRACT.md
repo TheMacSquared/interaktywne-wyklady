@@ -64,6 +64,44 @@ Kanoniczne komponenty:
 
 TOC wykrywa tylko sekcje tworzone przez `lc_h2()` albo zgodne z atrybutem `data-lc-section`.
 
+## Nagłówki Rozdziałów
+
+Każdy rozdział ma dwa nagłówki o rozdzielonych rolach. Nie mieszamy ich i nie zamieniamy miejscami.
+
+| Miejsce | Rola | Źródło w kodzie |
+|---|---|---|
+| Sidebar, karta „następny rozdział” | Tag — lokalizacja pojęciowa | `lecture_chapter(title = )`, `lc_chapter_next(title = )`; w blokach konfiguracyjnych pole `title` |
+| Duży tytuł obok numeru | Hak — zaciekawienie | `lc_chapter_hero(title = )`; w blokach konfiguracyjnych pole `hook` |
+| Pierwsze zdanie leadu | Most — łączy hak z pojęciem | `lc_chapter_hero(lead = )`; pole `lead` |
+
+Tag:
+
+- nazwa pojęcia w brzmieniu z definicji rozdziału (`risk_definition()`), jeśli rozdział ma definicję; w przeciwnym razie termin, który trafia do ściągi;
+- 1–3 słowa, forma rzeczownikowa, bez pytań i bez kropki;
+- rozdziały podsumowujące mają tagi funkcjonalne: „Ściąga”, „Quiz”, „Ćwiczenia” albo „Ściąga i sprawdzenie”;
+- test: student szukający pojęcia przed kolokwium trafia do rozdziału po samym sidebarze.
+
+Hak:
+
+- twierdzenie, nie pytanie; do około 7 słów;
+- każde słowo zrozumiałe przed lekturą rozdziału: konkret z historii Bananpolu (skórka, paleta, alarm, wentylator) albo codzienny język;
+- nie używa terminów wprowadzanych w tym rozdziale ani żargonu matematycznego („mianownik”, „model”, „zdarzenie”);
+- zawiera napięcie lub zaskoczenie, które rozdział rozwiązuje;
+- w blokach konfiguracyjnych kropkę na końcu dopisuje `risk_chapter_from_config()`.
+
+Lead:
+
+- pierwsze zdanie nazywa pojęcie z tagu i wiąże je z sytuacją z haka.
+
+Przykład:
+
+```text
+sidebar:  Przestrzeń zdarzeń
+tytuł:    Szansę można znać, zanim coś się stanie.
+lead:     Nie zawsze potrzebujemy rejestru wypadków. Gdy losujemy paletę do
+          kontroli, […] wystarczy wypisać przestrzeń zdarzeń […]
+```
+
 ## Zakazane Wzorce
 
 W nowym kodzie nie dodajemy:

@@ -350,7 +350,7 @@ risk_chapter_from_config <- function(block, chapter, index, next_chapter = NULL)
     lc_chapter_hero(
       kicker = paste0("Rozdział ", sprintf("%02d", index), " · ", block$title),
       num = sprintf("%02d", index),
-      title = paste0(chapter$title, "."),
+      title = paste0(chapter$hook %||% chapter$title, "."),
       lead = chapter$lead
     ),
     if (!is.null(chapter$intro)) risk_prose(chapter$intro),
