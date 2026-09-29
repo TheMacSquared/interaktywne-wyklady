@@ -216,15 +216,22 @@ risk_formula <- function(tex, num = NULL, legend = NULL) {
 # Przykład z rozwiązaniem krok po kroku. Rozwiązanie jest zwinięte, żeby czytelnik
 # mógł najpierw spróbować sam. W krokach używaj zapisu Unicode, nie MathJax:
 # treść zwiniętego elementu nie zawsze jest poprawnie składana.
-risk_example <- function(num, title, problem, steps, answer = NULL) {
+risk_example <- function(num, title, problem, steps, answer = NULL, steps_type = NULL) {
   tags$div(
     class = "lc-example",
     tags$div(class = "lc-example-label", paste0("Przykład ", num, " · ", title)),
-    tags$div(class = "lc-example-body", lapply(problem, tags$p)),
+    tags$div(
+      class = "lc-example-body",
+      lapply(problem, function(x) if (inherits(x, "shiny.tag")) x else tags$p(x))
+    ),
     tags$details(
       class = "lc-example-solution",
       tags$summary("Rozwiązanie"),
-      tags$ol(lapply(steps, tags$li)),
+      tags$ol(
+        type = steps_type,
+        class = if (!is.null(steps_type)) "lc-example-list",
+        lapply(steps, tags$li)
+      ),
       if (!is.null(answer)) tags$p(tags$strong("Odpowiedź:"), paste0(" ", answer))
     )
   )

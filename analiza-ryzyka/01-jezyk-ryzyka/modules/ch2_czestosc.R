@@ -45,7 +45,7 @@ ch2_ui <- lecture_chapter(
        zdarzenie A zaszło n_A razy. Częstością empiryczną (względną) zdarzenia A
        nazywamy iloraz n_A / n, oznaczany p̂ₙ (czytaj: p z daszkiem).",
       "Częstość jest wynikiem konkretnej serii obserwacji. Inna seria tej samej
-       długości da zwykle inną wartość, dlatego piszemy p̂ z daszkiem — to
+       długości da zwykle inną wartość, dlatego piszemy p̂ — to
        oszacowanie, a nie sam parametr modelu."
     )),
     risk_formula(

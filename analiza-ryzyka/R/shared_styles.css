@@ -2116,6 +2116,9 @@ mjx-container mjx-text {
 .lc-check p { margin: 0 0 0.6em; }
 .lc-def p:last-child,
 .lc-example-body p:last-child { margin-bottom: 0; }
+.lc-example-list { margin: 8px 0 0; padding-left: 1.6em; list-style-type: lower-alpha; }
+.lc-example-list li { margin-bottom: 6px; padding-left: 0.2em; }
+.lc-example-list li::marker { color: var(--upwr-single-alt); font-weight: 600; }
 
 .lc-example-solution,
 .lc-exercise-answer {

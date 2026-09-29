@@ -146,27 +146,31 @@ ch1_ui <- lecture_chapter(
        upadku zaczyna udawać miarę dotkliwości — a nią nie jest."
     ),
     risk_example("1.1", "Ta sama analiza przy rampie",
-      problem = c(
+      problem = list(
         "Przypisz role z definicji 1.1 elementom drugiej historii z Bananpolu.",
-        "(a) Wózek widłowy cofa z rampy z ograniczoną widocznością. (b) Pracownik
-         sprawdza dokumenty dostawy, stojąc w strefie manewrów. (c) Wózek uderza
-         w pracownika. (d) Pracownik doznaje stłuczenia biodra. (e) Wyznaczone
-         przejście dla pieszych jest oddzielone barierką od strefy manewrów."
+        tags$ol(
+          type = "a",
+          class = "lc-example-list",
+          tags$li("Pracownik doznaje stłuczenia biodra."),
+          tags$li("Wózek uderza w pracownika."),
+          tags$li("Wyznaczone przejście dla pieszych jest oddzielone barierką od strefy manewrów."),
+          tags$li("Wózek widłowy cofa z rampy z ograniczoną widocznością."),
+          tags$li("Pracownik sprawdza dokumenty dostawy, stojąc w strefie manewrów.")
+        )
       ),
-      steps = c(
-        "(a) Cofający wózek przy ograniczonej widoczności może spowodować szkodę,
-         ale sam nikogo jeszcze nie skrzywdził — to zagrożenie.",
-        "(b) Obecność człowieka w strefie manewrów to kontakt z zagrożeniem —
-         ekspozycja. Bez niej kolizja z pieszym nie jest możliwa.",
-        "(c) Uderzenie to obserwowalny wynik, który zaszedł albo nie — zdarzenie.",
-        "(d) Stłuczenie biodra jest następstwem uderzenia — skutkiem. Przy innym
-         przebiegu to samo zdarzenie mogłoby skończyć się złamaniem.",
-        "(e) Barierka oddziela pieszych od wózków, więc działa przed zdarzeniem:
-         usuwa ekspozycję — to zabezpieczenie."
+      steps = list(
+        list("Stłuczenie biodra jest następstwem uderzenia — ", tags$strong("skutek"),
+          ". Przy innym przebiegu to samo zdarzenie mogłoby skończyć się złamaniem."),
+        list("Uderzenie to obserwowalny wynik, który zaszedł albo nie — ",
+          tags$strong("zdarzenie"), "."),
+        list("Barierka oddziela pieszych od wózków, więc działa przed zdarzeniem: usuwa ",
+          "ekspozycję — to ", tags$strong("zabezpieczenie"), "."),
+        list("Cofający wózek przy ograniczonej widoczności może spowodować szkodę, ",
+          "ale sam nikogo jeszcze nie skrzywdził — to ", tags$strong("zagrożenie"), "."),
+        list("Obecność człowieka w strefie manewrów to kontakt z zagrożeniem — ",
+          tags$strong("ekspozycja"), ". Bez niej kolizja z pieszym nie jest możliwa.")
       ),
-      answer = "(a) zagrożenie, (b) ekspozycja, (c) zdarzenie, (d) skutek,
-        (e) zabezpieczenie. Struktura jest ta sama co przy skórce; zmienia się
-        tylko treść."
+      steps_type = "a"
     ),
     risk_check("j1_chk_role",
       "Posadzka przy myjni skrzynek jest mokra przez całą zmianę. Jaką rolę pełni ten fakt w łańcuchu z definicji 1.1?",

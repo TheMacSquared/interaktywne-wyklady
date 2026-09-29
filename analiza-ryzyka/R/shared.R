@@ -193,10 +193,23 @@ zoom_plot_ui <- function(id, height = "300px", width = "100%", ...) {
   )
 }
 
+# Czcionki wykresu: w tekście 1.25x (osie i podpisy czytelne z sali), w oknie
+# powiększenia 1.9x, bo wykres jest tam ok. dwa razy szerszy.
+zoom_plot_font_scale_inline <- 1.25
+zoom_plot_font_scale_modal  <- 1.9
+
 zoom_plot_server <- function(id, plot_fn,
                              alt = "Wykres ilustrujący omawiane zagadnienie") {
   moduleServer(id, function(input, output, session) {
-    output$plot <- renderPlot(plot_fn(), alt = alt)
+    scaled_plot <- function(k) {
+      p <- plot_fn()
+      if (inherits(p, "ggplot")) {
+        p <- p + ggplot2::theme(text = ggplot2::element_text(size = 11 * k))
+      }
+      p
+    }
+
+    output$plot <- renderPlot(scaled_plot(zoom_plot_font_scale_inline), alt = alt)
 
     observeEvent(input$zoom, {
       showModal(modalDialog(
@@ -207,6 +220,6 @@ zoom_plot_server <- function(id, plot_fn,
       ))
     }, ignoreInit = TRUE)
 
-    output$plot_modal <- renderPlot(plot_fn(), alt = alt)
+    output$plot_modal <- renderPlot(scaled_plot(zoom_plot_font_scale_modal), alt = alt)
   })
 }
