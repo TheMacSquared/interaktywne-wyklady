@@ -35,7 +35,7 @@ Otwarte pytania po commicie `fb4737d` (2026-09-28). Każdy punkt wymaga decyzji 
 - **Decyzja:**
   - [ ] zostaje
   - [ ] podpiąć suwaki z rozdziału 3, żeby kolejność mogła się zmieniać
-  - [ ] pokazywać redukcję względną albo ważność krytyczną obok Birnbauma
+  - [ ] pokazywać redukcję względną albo istotność krytyczną obok Birnbauma
 
 ## 5. [08] Parametry spoza danych Bananpolu
 
