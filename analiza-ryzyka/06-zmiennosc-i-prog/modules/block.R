@@ -331,15 +331,22 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             "Ta obserwacja pozwala porównywać interwencje na papierze, zanim wyda się pieniądze. Ale z nie mówi, która interwencja jest tańsza ani która zmienia fizykę łożyska; to trzeba dołożyć z wiedzy inżynierskiej."
           ),
           risk_example("6.7", "Trzy interwencje dla łożyska",
-            problem = "Stan bazowy: μ = 82°C, σ = 3°C, c = 85°C. Porównaj P(T > c) po: (a) chłodzeniu o 2°C, (b) stabilizacji zmniejszającej σ o 1°C, (c) podniesieniu progu o 2°C, (d) jednoczesnym chłodzeniu i stabilizacji.",
-            steps = c(
-              "Bazowo: z = 1, P ≈ 0,159.",
-              "(a) μ = 80: z = 5/3 ≈ 1,67, P ≈ 0,048.",
-              "(b) σ = 2: z = 3/2 = 1,5, P ≈ 0,067.",
-              "(c) c = 87: z = 5/3 ≈ 1,67, P ≈ 0,048 — dokładnie tyle co w (a).",
-              "(d) μ = 80, σ = 2: z = 2,5, P ≈ 0,0062.",
-              "Ile stabilizacji odpowiada chłodzeniu o 2°C? Trzeba z = 5/3, czyli σ = 3/(5/3) = 1,8°C — zmniejszenie o 1,2°C."
+            problem = list(
+              "Stan bazowy: μ = 82°C, σ = 3°C, c = 85°C. Porównaj P(T > c) po:",
+              risk_parts(
+                "Chłodzeniu o 2°C.",
+                "Stabilizacji zmniejszającej σ o 1°C.",
+                "Podniesieniu progu o 2°C.",
+                "Jednoczesnym chłodzeniu i stabilizacji."
+              )
             ),
+            steps = c(
+              "Bazowo z = 1, P ≈ 0,159. Po chłodzeniu μ = 80: z = 5/3 ≈ 1,67, P ≈ 0,048.",
+              "σ = 2: z = 3/2 = 1,5, P ≈ 0,067.",
+              "c = 87: z = 5/3 ≈ 1,67, P ≈ 0,048 — dokładnie tyle co w podpunkcie a).",
+              "μ = 80, σ = 2: z = 2,5, P ≈ 0,0062. Ile stabilizacji odpowiada chłodzeniu o 2°C? Trzeba z = 5/3, czyli σ = 3/(5/3) = 1,8°C — zmniejszenie o 1,2°C."
+            ),
+            steps_type = "a",
             answer = "Chłodzenie o 2°C daje ryzyko 0,048 (48 na 1000), stabilizacja o 1°C — 0,067 (67 na 1000), podniesienie progu o 2°C — również 0,048. Połączenie chłodzenia i stabilizacji zmniejsza ryzyko ponad 25-krotnie, do około 6 na 1000."
           ),
           risk_try("wybierz kolejno „Stan bazowy”, „Chłodzenie”, „Stabilizacja” i „Wyższy próg”. Porównaj P(przekroczenia) z wynikami przykładu 6.7 i zwróć uwagę, które dwie opcje dają ten sam wynik."),

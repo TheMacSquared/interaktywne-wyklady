@@ -108,16 +108,22 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
             legend = c("I" = "zapotrzebowanie na chłodzenie na początku misji", "D" = "niewykrycie zapotrzebowania przez detektor", "S" = "niezdolność układu chłodzenia do pracy przez cały czas misji", "\\mathrm{TOP}" = "utrata wymaganej ochrony termicznej w misji")),
           "Warunkowość w kontrakcie nie jest ozdobą. Czułość detektora zmierzono w sytuacjach, w których zapotrzebowanie rzeczywiście wystąpiło — to jest P(alarm | I), a nie odsetek wszystkich alarmów. Niezawodność układu liczymy dla pracy pod wymaganym obciążeniem, bo właśnie wtedy jego awaria ma znaczenie. Pomylenie warunku zmienia liczbę nawet wtedy, gdy nazwa wielkości brzmi tak samo.",
           risk_example("10.1", "Zapisz zdanie z raportu jako zdarzenie",
-            problem = c(
+            problem = list(
               "Poniższe zdania pochodzą z protokołów czterech misji. Zapisz każde w języku kontraktu i rozstrzygnij, czy zaszło zdarzenie TOP.",
-              "(a) Wystąpiło zapotrzebowanie, detektor dał alarm, ale po 400 h zatrzymał się sterownik. (b) Detektor dał alarm, choć zapotrzebowania nie było; wentylatory pracowały całą misję. (c) Wystąpiło zapotrzebowanie, wykryto je, wentylator A zatrzymał się po 200 h, a B pracował do końca. (d) Wystąpiło zapotrzebowanie, detektor milczał; układ chłodzenia był sprawny."
+              risk_parts(
+                "Wystąpiło zapotrzebowanie, detektor dał alarm, ale po 400 h zatrzymał się sterownik.",
+                "Detektor dał alarm, choć zapotrzebowania nie było; wentylatory pracowały całą misję.",
+                "Wystąpiło zapotrzebowanie, wykryto je, wentylator A zatrzymał się po 200 h, a B pracował do końca.",
+                "Wystąpiło zapotrzebowanie, detektor milczał; układ chłodzenia był sprawny."
+              )
             ),
             steps = c(
-              "(a) I ∩ Dᶜ ∩ S. Awaria sterownika wyłącza cały układ (sterownik jest połączony szeregowo), więc zaszło S, a zatem D ∪ S. TOP zaszło.",
-              "(b) Iᶜ z fałszywym alarmem. Bez zapotrzebowania TOP nie może zajść — iloczyn z I jest pusty. Zbędne uruchomienie ma swój koszt, ale leży poza analizowanym TOP.",
-              "(c) I ∩ Dᶜ ∩ Sᶜ. Jeden wentylator wystarcza, więc awaria A przy sprawnym B nie jest zdarzeniem S. TOP nie zaszło.",
-              "(d) I ∩ D. Sprawny układ nie pomoże, jeśli nie dostanie sygnału. TOP zaszło, choć żaden element chłodzenia nie zawiódł."
+              "I ∩ Dᶜ ∩ S. Awaria sterownika wyłącza cały układ (sterownik jest połączony szeregowo), więc zaszło S, a zatem D ∪ S. TOP zaszło.",
+              "Iᶜ z fałszywym alarmem. Bez zapotrzebowania TOP nie może zajść — iloczyn z I jest pusty. Zbędne uruchomienie ma swój koszt, ale leży poza analizowanym TOP.",
+              "I ∩ Dᶜ ∩ Sᶜ. Jeden wentylator wystarcza, więc awaria A przy sprawnym B nie jest zdarzeniem S. TOP nie zaszło.",
+              "I ∩ D. Sprawny układ nie pomoże, jeśli nie dostanie sygnału. TOP zaszło, choć żaden element chłodzenia nie zawiódł."
             ),
+            steps_type = "a",
             answer = "TOP zaszło w misjach (a) i (d). Przypadek (d) pokazuje, dlaczego w nawiasie jest suma D ∪ S: obie funkcje są wymagane i brak każdej z nich wystarcza do utraty ochrony."
           ),
           risk_check("i10_chk_kontrakt",
@@ -159,14 +165,24 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
           figure_panel(label = "Nawigacja", title = "Wybierz pytanie", selectInput("i10_question", "Pytanie", c("Warunek zmienia ocenę" = "conditional", "Co oznacza alarm" = "bayes", "Ile zdarzeń w n próbach" = "binomial", "Ile prób do pierwszego zdarzenia" = "geometric", "Ile prób do r zdarzeń" = "negative", "Jak często przekraczamy próg" = "threshold", "Czy element dotrwa do czasu t" = "survival", "Czy system spełni funkcję" = "system")), uiOutput("i10_model"), full_width = TRUE),
           "Mapa podaje tylko nazwę modelu, bo reszta należy do analityka. Warunek zmieniający ocenę to wykład 02, alarm — 03, liczba zdarzeń w n próbach — 04, próby do pierwszego lub r-tego zdarzenia — 05, przekroczenie progu — 06, dotrwanie do czasu t — 07, a funkcja systemu — 08 i 09. W studium Bananpolu do końcowego drzewa trafią wyniki tylko trzech z nich: Bayesa w postaci 1 − czułość, czasu życia i struktury systemu.",
           risk_example("10.2", "Pytania z teczki a modele",
-            problem = "Przypisz model i wykład źródłowy do każdego pytania zarządu: (a) Jak często alarm detektora oznacza rzeczywistą potrzebę chłodzenia? (b) Czy wentylator dotrwa do końca misji 1000 h? (c) Czy w partii 100 zaworów będzie co najmniej jedna wada? (d) Czy układ chłodzenia jako całość utrzyma pracę? (e) Czy w misji zabraknie wymaganej ochrony?",
-            steps = c(
-              "(a) Wzór Bayesa, wykład 03: P(I | alarm).",
-              "(b) Funkcja niezawodności R(t) z modelu czasu życia, wykład 07.",
-              "(c) Rozkład dwumianowy, wykład 04: P(X ≥ 1) = 1 − (1 − p)ⁿ.",
-              "(d) Funkcja struktury systemu szeregowo-równoległego, wykład 08.",
-              "(e) Drzewo błędów, wykład 09, zasilane wynikami (b) i (d) oraz czułością detektora."
+            problem = list(
+              "Przypisz model i wykład źródłowy do każdego pytania zarządu.",
+              risk_parts(
+                "Jak często alarm detektora oznacza rzeczywistą potrzebę chłodzenia?",
+                "Czy wentylator dotrwa do końca misji 1000 h?",
+                "Czy w partii 100 zaworów będzie co najmniej jedna wada?",
+                "Czy układ chłodzenia jako całość utrzyma pracę?",
+                "Czy w misji zabraknie wymaganej ochrony?"
+              )
             ),
+            steps = c(
+              "Wzór Bayesa, wykład 03: P(I | alarm).",
+              "Funkcja niezawodności R(t) z modelu czasu życia, wykład 07.",
+              "Rozkład dwumianowy, wykład 04: P(X ≥ 1) = 1 − (1 − p)ⁿ.",
+              "Funkcja struktury systemu szeregowo-równoległego, wykład 08.",
+              "Drzewo błędów, wykład 09, zasilane wynikami (b) i (d) oraz czułością detektora."
+            ),
+            steps_type = "a",
             answer = "Pytania (a) i (c) mają odpowiedzi ważne dla Bananpolu, ale nie są liśćmi drzewa ochrony termicznej. Pytanie (e) jest właściwym pytaniem decyzyjnym i łączy pozostałe."
           ),
           risk_check("i10_chk_mapa",
@@ -288,14 +304,22 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
           risk_formula("R(t+s\\mid t)=\\frac{R(t+s)}{R(t)}", num = "10.5",
             legend = c("t" = "czas dotychczasowej pracy bez awarii", "s" = "długość kolejnej misji", "R(t+s\\mid t)" = "prawdopodobieństwo przetrwania kolejnych s godzin przez element używany")),
           risk_example("10.6", "Trzy polityki dla wentylatora Weibulla",
-            problem = "Wentylator Weibulla (β = 2, η = 1700 h) ma pracować łącznie 3000 h. Porównaj: (a) jeden egzemplarz bez wymiany, (b) wymianę na nowy co 1000 h, (c) wymianę co 500 h. Ile wynosi szansa przetrwania drugiej misji 1000 h przez egzemplarz używany?",
-            steps = c(
-              "(a) R(3000) ≈ 0,044.",
-              "(b) Każda misja zaczyna się od nowego egzemplarza: R(1000)³ ≈ 0,707³ ≈ 0,354.",
-              "(c) R(500)⁶ ≈ 0,917⁶ ≈ 0,595.",
-              "Egzemplarz używany w drugiej misji: ze wzoru (10.5) R(2000 | 1000) = R(2000)/R(1000) ≈ 0,251 / 0,707 ≈ 0,354. Równość z wynikiem (b) jest przypadkową cechą β = 2; ważne jest, że 0,354 to połowa wartości 0,707 dla nowego egzemplarza.",
-              "Dla modelu wykładniczego wszystkie trzy polityki dają e^(−2) ≈ 0,135: brak pamięci sprawia, że wymiana nic nie zmienia."
+            problem = list(
+              "Wentylator Weibulla (β = 2, η = 1700 h) ma pracować łącznie 3000 h. Porównaj trzy polityki i odpowiedz na pytanie o egzemplarz używany.",
+              risk_parts(
+                "Jeden egzemplarz bez wymiany.",
+                "Wymiana na nowy co 1000 h.",
+                "Wymiana co 500 h.",
+                "Ile wynosi szansa przetrwania drugiej misji 1000 h przez egzemplarz używany?"
+              )
             ),
+            steps = c(
+              "R(3000) ≈ 0,044.",
+              "Każda misja zaczyna się od nowego egzemplarza: R(1000)³ ≈ 0,707³ ≈ 0,354.",
+              "R(500)⁶ ≈ 0,917⁶ ≈ 0,595.",
+              "Ze wzoru (10.5) R(2000 | 1000) = R(2000)/R(1000) ≈ 0,251 / 0,707 ≈ 0,354. Równość z wynikiem b) jest przypadkową cechą β = 2; ważne jest, że 0,354 to połowa wartości 0,707 dla nowego egzemplarza. Dla modelu wykładniczego wszystkie trzy polityki dają e^(−2) ≈ 0,135: brak pamięci sprawia, że wymiana nic nie zmienia."
+            ),
+            steps_type = "a",
             answer = "Przy zużyciu wymiana prewencyjna radykalnie poprawia przetrwanie łącznego czasu pracy (0,044 → 0,354 → 0,595). Przy stałym hazardzie ta sama wymiana jest wydatkiem bez efektu."
           ),
           "Studium Bananpolu przyjmuje w teczce, że każdy element zaczyna misję nowy. To właśnie polityka (b) i warunek, dzięki któremu możemy liczyć każdą misję osobno tym samym R(t). Jeśli w praktyce wentylatory pracują bez wymiany przez wiele misji, R dla kolejnej misji trzeba liczyć ze wzoru (10.5), a założenie z teczki staje się pozycją na liście niepewności.",
@@ -399,13 +423,21 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
           risk_formula("P_{rok}=1-\\bigl(1-P(TOP)\\bigr)^{3}\\approx 3\\,P(TOP)", num = "10.9",
             legend = c("P(TOP)" = "prawdopodobieństwo utraty ochrony w jednej misji ze wzoru (10.8)", "3" = "liczba misji w roku, przy odnowie przed każdą z nich", "P_{rok}" = "prawdopodobieństwo co najmniej jednej utraty ochrony w roku")),
           risk_example("10.9", "Rok z trzema misjami",
-            problem = "Dla modelu wykładniczego i misji 1000 h oblicz: (a) roczne prawdopodobieństwo co najmniej jednej utraty ochrony; (b) wielkość 1 − R_sys³; (c) prawdopodobieństwo co najmniej jednego zapotrzebowania w roku. Zinterpretuj różnicę między (a) i (b).",
-            steps = c(
-              "(a) Ze wzoru (10.9): 1 − (1 − 0,00162)³ ≈ 0,0049; przybliżenie 3 · 0,00162 ≈ 0,0049 jest tu praktycznie dokładne. Dla Weibulla ≈ 0,0029.",
-              "(b) 1 − 0,711³ ≈ 1 − 0,359 = 0,641; dla Weibulla ≈ 0,383.",
-              "(c) 1 − 0,995³ ≈ 0,015.",
-              "Liczba (b) to szansa, że układ zawiódłby w co najmniej jednej z trzech misji, gdyby w każdej musiał pracować pod wymaganym obciążeniem. Tymczasem jest potrzebny tylko w misjach z zapotrzebowaniem, a rok z co najmniej jednym zapotrzebowaniem zdarza się średnio raz na około 67 lat (c)."
+            problem = list(
+              "Dla modelu wykładniczego i misji 1000 h oblicz:",
+              risk_parts(
+                "Roczne prawdopodobieństwo co najmniej jednej utraty ochrony.",
+                "Wielkość 1 − R_sys³.",
+                "Prawdopodobieństwo co najmniej jednego zapotrzebowania w roku."
+              ),
+              "Zinterpretuj różnicę między a) i b)."
             ),
+            steps = c(
+              "Ze wzoru (10.9): 1 − (1 − 0,00162)³ ≈ 0,0049; przybliżenie 3 · 0,00162 ≈ 0,0049 jest tu praktycznie dokładne. Dla Weibulla ≈ 0,0029.",
+              "1 − 0,711³ ≈ 1 − 0,359 = 0,641; dla Weibulla ≈ 0,383. Ta liczba to szansa, że układ zawiódłby w co najmniej jednej z trzech misji, gdyby w każdej musiał pracować pod wymaganym obciążeniem. Tymczasem jest potrzebny tylko w misjach z zapotrzebowaniem, a rok z co najmniej jednym zapotrzebowaniem zdarza się średnio raz na około 67 lat (patrz c).",
+              "1 − 0,995³ ≈ 0,015."
+            ),
+            steps_type = "a",
             answer = "Roczne ryzyko utraty ochrony wynosi około 0,005, a nie 0,64. Wielkość 1 − R_sys³ opisuje niezawodność układu — przydaje się np. do planowania części zamiennych — ale nie jest ryzykiem zdarzenia TOP, bo pomija warunek I."
           ),
           "Wzór (10.9) opiera się na dwóch założeniach, które trzeba wpisać do notatki. Pierwsze to odnowa przed każdą misją; bez niej prawdopodobieństwa w kolejnych misjach byłyby warunkowe, jak we wzorze (10.5), i dla wentylatora zużywającego się rosłyby z misji na misję. Drugie to niezależność misji: jeśli jedna przyczyna, np. wadliwa partia wentylatorów, dotyka wszystkich trzech misji naraz, mnożenie prawdopodobieństw zaniża ryzyko roczne.",
@@ -475,16 +507,17 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
             "Rekomendacja jest odporna w badanym zakresie, jeśli to samo działanie jest najlepsze wśród dopuszczalnych opcji i spełnia kryterium w każdym rozpatrzonym scenariuszu. Odporność dotyczy zawsze konkretnego zestawu scenariuszy; nie jest gwarancją wobec założeń, których nie zmieniano."
           )),
           risk_example("10.11", "Czy ranking się odwraca?",
-            problem = c(
-              "(a) Dla modelu wykładniczego, u = 0,2 i budżetu 2 policz P(TOP) po obu dopuszczalnych działaniach w trzech scenariuszach.",
-              "(b) Dla modelu Weibulla, u = 0,5 i budżetu 3 porównaj ograniczenie źródła ciepła z dodatkowym wentylatorem w scenariuszu ostrożnym."
+            problem = list(
+              risk_parts(
+                "Dla modelu wykładniczego, u = 0,2 i budżetu 2 policz P(TOP) po obu dopuszczalnych działaniach w trzech scenariuszach.",
+                "Dla modelu Weibulla, u = 0,5 i budżetu 3 porównaj ograniczenie źródła ciepła z dodatkowym wentylatorem w scenariuszu ostrożnym."
+              )
             ),
             steps = c(
-              "(a) Lepszy czujnik: 0,00092 / 0,00154 / 0,00230 (m = 0,8 / 1 / 1,2). Ograniczenie źródła ciepła: 0,00040 / 0,00081 / 0,00144. Ograniczenie źródła ciepła wygrywa we wszystkich trzech scenariuszach.",
-              "(b) Przy m = 1,5 skuteczność e = 0,5 · (2 − 1,5) = 0,25, więc ograniczenie źródła ciepła obniża P(I) = 0,0075 tylko do 0,0056; wynik ≈ 0,00172.",
-              "Dodatkowy wentylator nie ma parametru skuteczności: R wentylatora = 0,707^1,5 ≈ 0,595, gałąź z trzema ≈ 0,934; wynik ≈ 0,00168.",
-              "W scenariuszu ostrożnym wygrywa więc wentylator, choć w pozostałych dwóch wygrywa ograniczenie źródła ciepła."
+              "Lepszy czujnik: 0,00092 / 0,00154 / 0,00230 (m = 0,8 / 1 / 1,2). Ograniczenie źródła ciepła: 0,00040 / 0,00081 / 0,00144. Ograniczenie źródła ciepła wygrywa we wszystkich trzech scenariuszach.",
+              "Przy m = 1,5 skuteczność e = 0,5 · (2 − 1,5) = 0,25, więc ograniczenie źródła ciepła obniża P(I) = 0,0075 tylko do 0,0056; wynik ≈ 0,00172. Dodatkowy wentylator nie ma parametru skuteczności: R wentylatora = 0,707^1,5 ≈ 0,595, gałąź z trzema ≈ 0,934; wynik ≈ 0,00168. W scenariuszu ostrożnym wygrywa więc wentylator, choć w pozostałych dwóch wygrywa ograniczenie źródła ciepła."
             ),
+            steps_type = "a",
             answer = "W (a) rekomendacja jest odporna. W (b) ranking odwraca się przy największej niepewności, bo scenariusz osłabia tylko działania z założoną skutecznością. To nie jest błąd rachunku, lecz informacja: wynik zależy od hipotezy o skuteczności, więc pilotaż ograniczenia źródła ciepła jest warunkiem rekomendacji."
           ),
           risk_try("przy ustawieniach bazowych przesuń u od 0 do 0,5 i śledź tekst pod wykresem. Potem przełącz model na Weibulla na karcie 3, ustaw budżet 3 i powtórz."),

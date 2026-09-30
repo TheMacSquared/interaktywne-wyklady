@@ -190,12 +190,18 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           risk_formula("P(\\text{OR awarii})=1-R_{\\text{szereg}},\\qquad P(\\text{AND awarii})=1-R_{\\text{równoległy}}", num = "9.3",
             legend = c("R_{\\text{szereg}}" = "niezawodność układu szeregowego tych samych elementów", "R_{\\text{równoległy}}" = "niezawodność układu równoległego")),
           risk_example("9.2", "Ta sama para barier w dwóch językach",
-            problem = "Przy zaistniałej inicjacji detekcja działa z prawdopodobieństwem 0,95, a moduł tłumienia z prawdopodobieństwem 0,92 (niezależnie). Oblicz prawdopodobieństwo niepowodzenia ochrony (a) gdy obie funkcje są wymagane, (b) gdy są to dwie samodzielne bariery. Każdy wynik policz dwiema drogami: drzewem błędów i schematem blokowym.",
-            steps = c(
-              "(a) Drzewo: OR niepowodzeń, wzór (9.2): 1 − (1 − 0,05)(1 − 0,08) = 1 − 0,874 = 0,126. Schemat: układ szeregowy, R = 0,95 · 0,92 = 0,874, więc awaria 1 − 0,874 = 0,126.",
-              "(b) Drzewo: AND niepowodzeń, wzór (9.1): 0,05 · 0,08 = 0,004. Schemat: układ równoległy, R = 1 − 0,05 · 0,08 = 0,996, więc awaria 0,004.",
-              "Obie drogi dają te same liczby, bo to ten sam system; zmienia się tylko język opisu — zgodnie z (9.3)."
+            problem = list(
+              "Przy zaistniałej inicjacji detekcja działa z prawdopodobieństwem 0,95, a moduł tłumienia z prawdopodobieństwem 0,92 (niezależnie). Oblicz prawdopodobieństwo niepowodzenia ochrony w dwóch wariantach. Każdy wynik policz dwiema drogami: drzewem błędów i schematem blokowym.",
+              risk_parts(
+                "Obie funkcje są wymagane.",
+                "Są to dwie samodzielne bariery."
+              )
             ),
+            steps = c(
+              "Drzewo: OR niepowodzeń, wzór (9.2): 1 − (1 − 0,05)(1 − 0,08) = 1 − 0,874 = 0,126. Schemat: układ szeregowy, R = 0,95 · 0,92 = 0,874, więc awaria 1 − 0,874 = 0,126.",
+              "Drzewo: AND niepowodzeń, wzór (9.1): 0,05 · 0,08 = 0,004. Schemat: układ równoległy, R = 1 − 0,05 · 0,08 = 0,996, więc awaria 0,004. Obie drogi dają te same liczby, bo to ten sam system; zmienia się tylko język opisu — zgodnie z (9.3)."
+            ),
+            steps_type = "a",
             answer = "(a) 0,126; (b) 0,004. Różnica między architekturami to czynnik 31,5 — przy tych samych urządzeniach."
           ),
           risk_check("f9_chk_brama",
@@ -263,12 +269,18 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           risk_formula("\\sum_i p_i-\\sum_{i<j}p_ip_j\\;\\le\\;1-\\prod_i(1-p_i)\\;\\le\\;\\sum_i p_i", num = "9.5",
             legend = c("p_i" = "prawdopodobieństwa niezależnych wejść bramki OR", "\\sum_i p_i" = "przybliżenie rzadkich zdarzeń (górne oszacowanie)")),
           risk_example("9.4", "Kiedy suma wystarcza?",
-            problem = "Porównaj dokładny wynik bramki OR z przybliżeniem rzadkich zdarzeń (a) dla trzech wejść 0,05; 0,08; 0,02, (b) dla dwóch wejść 0,30 i 0,30.",
-            steps = c(
-              "(a) Dokładnie: 1 − 0,95 · 0,92 · 0,98 = 1 − 0,85652 = 0,14348. Suma: 0,15. Dolne oszacowanie z (9.5): 0,15 − (0,004 + 0,001 + 0,0016) = 0,1434.",
-              "Błąd sumy w (a): 0,15 / 0,14348 ≈ 1,045, czyli około 4,5% za dużo.",
-              "(b) Dokładnie: 1 − 0,7 · 0,7 = 0,51. Suma: 0,60, o około 18% za dużo. Dla dwóch wejść dolne oszacowanie jest dokładne: 0,60 − 0,09 = 0,51."
+            problem = list(
+              "Porównaj dokładny wynik bramki OR z przybliżeniem rzadkich zdarzeń:",
+              risk_parts(
+                "Dla trzech wejść 0,05; 0,08; 0,02.",
+                "Dla dwóch wejść 0,30 i 0,30."
+              )
             ),
+            steps = c(
+              "Dokładnie: 1 − 0,95 · 0,92 · 0,98 = 1 − 0,85652 = 0,14348. Suma: 0,15. Dolne oszacowanie z (9.5): 0,15 − (0,004 + 0,001 + 0,0016) = 0,1434. Błąd sumy: 0,15 / 0,14348 ≈ 1,045, czyli około 4,5% za dużo.",
+              "Dokładnie: 1 − 0,7 · 0,7 = 0,51. Suma: 0,60, o około 18% za dużo. Dla dwóch wejść dolne oszacowanie jest dokładne: 0,60 − 0,09 = 0,51."
+            ),
+            steps_type = "a",
             answer = "Przy wejściach rzędu kilku procent suma myli się o kilka procent; przy wejściach rzędu 0,3 błąd sięga kilkunastu procent. O jakości przybliżenia decydują prawdopodobieństwa wejść bramki, a nie wynik końcowy."
           ),
           risk_check("f9_chk_przybl",
@@ -322,12 +334,18 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           risk_formula("P(\\mathrm{TOP})\\approx\\sum_{j=1}^{m}P(K_j),\\qquad P(K_1\\cup K_2)=P(K_1)+P(K_2)-P(K_1\\cap K_2)", num = "9.7",
             legend = c("\\sum_j P(K_j)" = "przybliżenie rzadkich zdarzeń; górne oszacowanie P(TOP)", "K_1\\cap K_2" = "jednoczesne zajście obu przekrojów")),
           risk_example("9.5", "P(TOP) z minimalnych przekrojów",
-            problem = "Oblicz P(TOP) drzewa Bananpolu z listy minimalnych przekrojów: (a) przybliżeniem rzadkich zdarzeń, (b) dokładnie, z zasady włączeń i wyłączeń.",
-            steps = c(
-              "(a) Ze wzoru (9.7): P(TOP) ≈ 0,00025 + 0,0004 = 0,00065.",
-              "(b) Część wspólna: K₁ ∩ K₂ = {I, D, S}; w iloczynie I występuje raz (idempotentność), więc P(K₁ ∩ K₂) = 0,005 · 0,05 · 0,08 = 0,00002.",
-              "P(TOP) = 0,00025 + 0,0004 − 0,00002 = 0,00063 — dokładnie tyle, co w przykładzie 9.3."
+            problem = list(
+              "Oblicz P(TOP) drzewa Bananpolu z listy minimalnych przekrojów:",
+              risk_parts(
+                "Przybliżeniem rzadkich zdarzeń.",
+                "Dokładnie, z zasady włączeń i wyłączeń."
+              )
             ),
+            steps = c(
+              "Ze wzoru (9.7): P(TOP) ≈ 0,00025 + 0,0004 = 0,00065.",
+              "Część wspólna: K₁ ∩ K₂ = {I, D, S}; w iloczynie I występuje raz (idempotentność), więc P(K₁ ∩ K₂) = 0,005 · 0,05 · 0,08 = 0,00002. Stąd P(TOP) = 0,00025 + 0,0004 − 0,00002 = 0,00063 — dokładnie tyle, co w przykładzie 9.3."
+            ),
+            steps_type = "a",
             answer = "(a) 0,00065, około 3% powyżej wyniku dokładnego; (b) 0,00063. Obie drogi — bramka po bramce i przez przekroje — dają ten sam wynik dokładny."
           ),
           risk_check("f9_chk_mcs",
@@ -353,16 +371,19 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             "W prawdziwych drzewach powtórzenie rzadko jest tak jawne jak C ∩ C. Zwykle ten sam liść wchodzi do dwóch różnych gałęzi, a jego wpływ ukrywa się w mieszance innych zdarzeń. Poniższy przykład pokazuje, jak redukcja do minimalnych przekrojów usuwa ten problem."
           ),
           risk_example("9.6", "Dwa kanały detekcji ze wspólnym zasilaniem",
-            problem = c(
+            problem = list(
               "Detekcję w magazynie zapewniają dwa kanały czujek; każdy sam wystarcza, więc brak detekcji wymaga awarii obu (AND). Kanał k zawodzi, gdy uszkodzi się jego czujka Bₖ albo gdy zabraknie wspólnego zasilania Z (OR). Zatem: brak detekcji = (Z ∪ B₁) ∩ (Z ∪ B₂).",
-              "Przyjmij P(Z) = 0,02 i P(B₁) = P(B₂) = 0,10, wszystkie niezależne. Oblicz P(brak detekcji) (a) naiwnie, bramka po bramce, (b) z minimalnych przekrojów."
+              "Przyjmij P(Z) = 0,02 i P(B₁) = P(B₂) = 0,10, wszystkie niezależne. Oblicz P(brak detekcji):",
+              risk_parts(
+                "Naiwnie, bramka po bramce.",
+                "Z minimalnych przekrojów."
+              )
             ),
             steps = c(
-              "(a) Naiwnie: każdy kanał 1 − 0,98 · 0,90 = 0,118; AND dwóch kanałów 0,118² ≈ 0,0139. Rachunek traktuje dwa wystąpienia Z jak dwa niezależne zdarzenia.",
-              "(b) Rozwijamy: (Z ∪ B₁) ∩ (Z ∪ B₂) = Z ∪ (Z ∩ B₂) ∪ (B₁ ∩ Z) ∪ (B₁ ∩ B₂). Pochłanianie usuwa oba iloczyny zawierające Z: zostaje Z ∪ (B₁ ∩ B₂).",
-              "Minimalne przekroje: {Z} (rzędu 1) i {B₁, B₂} (rzędu 2). Ze wzoru (9.7): P = 0,02 + 0,01 − 0,02 · 0,01 = 0,0298. Przybliżenie rzadkich zdarzeń: 0,03.",
-              "Porównanie: 0,0298 / 0,0139 ≈ 2,1."
+              "Naiwnie: każdy kanał 1 − 0,98 · 0,90 = 0,118; AND dwóch kanałów 0,118² ≈ 0,0139. Rachunek traktuje dwa wystąpienia Z jak dwa niezależne zdarzenia.",
+              "Rozwijamy: (Z ∪ B₁) ∩ (Z ∪ B₂) = Z ∪ (Z ∩ B₂) ∪ (B₁ ∩ Z) ∪ (B₁ ∩ B₂). Pochłanianie usuwa oba iloczyny zawierające Z: zostaje Z ∪ (B₁ ∩ B₂). Minimalne przekroje: {Z} (rzędu 1) i {B₁, B₂} (rzędu 2). Ze wzoru (9.7): P = 0,02 + 0,01 − 0,02 · 0,01 = 0,0298. Przybliżenie rzadkich zdarzeń: 0,03. Porównanie: 0,0298 / 0,0139 ≈ 2,1."
             ),
+            steps_type = "a",
             answer = "Poprawnie 0,0298; rachunek naiwny zaniża wynik ponad dwukrotnie. Redukcja ujawnia też pojedynczy punkt awarii {Z}, którego rysunek z dwoma kanałami nie pokazywał wprost."
           ),
           "Ten sam mechanizm działa w drzewie Bananpolu w drugą stronę. Inicjacja I występuje w obu przekrojach. Gdyby potraktować przekroje jak niezależne zdarzenia i połączyć je wzorem (9.2), wyszłoby 1 − (1 − 0,00025)(1 − 0,0004) ≈ 0,00064990 zamiast 0,00063 — około 3% za dużo. Pod OR błąd jest łagodny i idzie w bezpieczną stronę; pod AND bywa wielokrotny i idzie w stronę fałszywego spokoju.",
@@ -387,12 +408,18 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             legend = c("q=P(C\\mid I)" = "prawdopodobieństwo wspólnego niepowodzenia obu funkcji przy inicjacji", "d_0, s_0" = "lokalne niepowodzenia detekcji i tłumienia bez przyczyny C")),
           "Wzór (9.8) czyta się jak drzewo: albo zachodzi wspólna przyczyna (q), albo nie zachodzi (1 − q) i wtedy działa zwykła bramka OR lokalnych niepowodzeń. Zapis przez przekroje daje to samo: TOP = (I ∩ C) ∪ (I ∩ D₀) ∪ (I ∩ S₀).",
           risk_example("9.7", "Ile kosztuje wspólne zasilanie?",
-            problem = "Przyjmij q = 0,01 oraz lokalne d₀ = 0,05 i s₀ = 0,08. Oblicz P(TOP) (a) dla łańcucha z drzewa Bananpolu, (b) dla wariantu z dwiema samodzielnymi barierami (AND lokalnych niepowodzeń), i porównaj z wersjami bez wspólnej przyczyny.",
-            steps = c(
-              "(a) Łańcuch, wzór (9.8): 0,005 · [0,01 + 0,99 · 0,126] = 0,005 · 0,13474 ≈ 0,000674. Bez C: 0,00063. Wzrost o około 7%.",
-              "(b) Bariery samodzielne: TOP = I ∩ (C ∪ (D₀ ∩ S₀)), więc P(TOP) = 0,005 · [0,01 + 0,99 · 0,004] = 0,005 · 0,01396 ≈ 0,0000698. Bez C: 0,005 · 0,004 = 0,00002. Wzrost 3,49-krotny.",
-              "W wariancie (b) przekrój {I, C} jest rzędu 2, a przekrój {I, D₀, S₀} rzędu 3 — wspólna przyczyna skraca najkrótszą drogę do katastrofy."
+            problem = list(
+              "Przyjmij q = 0,01 oraz lokalne d₀ = 0,05 i s₀ = 0,08. Oblicz P(TOP) i porównaj z wersjami bez wspólnej przyczyny:",
+              risk_parts(
+                "Dla łańcucha z drzewa Bananpolu.",
+                "Dla wariantu z dwiema samodzielnymi barierami (AND lokalnych niepowodzeń)."
+              )
             ),
+            steps = c(
+              "Łańcuch, wzór (9.8): 0,005 · [0,01 + 0,99 · 0,126] = 0,005 · 0,13474 ≈ 0,000674. Bez C: 0,00063. Wzrost o około 7%.",
+              "Bariery samodzielne: TOP = I ∩ (C ∪ (D₀ ∩ S₀)), więc P(TOP) = 0,005 · [0,01 + 0,99 · 0,004] = 0,005 · 0,01396 ≈ 0,0000698. Bez C: 0,005 · 0,004 = 0,00002. Wzrost 3,49-krotny. W tym wariancie przekrój {I, C} jest rzędu 2, a przekrój {I, D₀, S₀} rzędu 3 — wspólna przyczyna skraca najkrótszą drogę do katastrofy."
+            ),
+            steps_type = "a",
             answer = "(a) ≈ 0,000674, (b) ≈ 0,0000698. Wspólna przyczyna najmocniej uderza w redundancję: w łańcuchu dodaje kilka procent, w układzie z dwiema barierami zjada większość zysku z redundancji."
           ),
           risk_try("ustaw P(C | I) na 0 i sprawdź, że oba wyniki się pokrywają. Potem zwiększaj q i obserwuj różnicę; na koniec wróć do rozdziału o rachunku i zmniejsz tam P(braku detekcji) do zera."),

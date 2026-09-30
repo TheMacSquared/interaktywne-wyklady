@@ -148,14 +148,12 @@ ch1_ui <- lecture_chapter(
     risk_example("1.1", "Ta sama analiza przy rampie",
       problem = list(
         "Przypisz role z definicji 1.1 elementom drugiej historii z Bananpolu.",
-        tags$ol(
-          type = "a",
-          class = "lc-example-list",
-          tags$li("Pracownik doznaje stłuczenia biodra."),
-          tags$li("Wózek uderza w pracownika."),
-          tags$li("Wyznaczone przejście dla pieszych jest oddzielone barierką od strefy manewrów."),
-          tags$li("Wózek widłowy cofa z rampy z ograniczoną widocznością."),
-          tags$li("Pracownik sprawdza dokumenty dostawy, stojąc w strefie manewrów.")
+        risk_parts(
+          "Pracownik doznaje stłuczenia biodra.",
+          "Wózek uderza w pracownika.",
+          "Wyznaczone przejście dla pieszych jest oddzielone barierką od strefy manewrów.",
+          "Wózek widłowy cofa z rampy z ograniczoną widocznością.",
+          "Pracownik sprawdza dokumenty dostawy, stojąc w strefie manewrów."
         )
       ),
       steps = list(

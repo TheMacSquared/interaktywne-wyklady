@@ -38,10 +38,18 @@ zycie_exercises <- list(
     )
   ),
   list(
-    task = "Plan wymiany: wentylator ma rozkład Weibulla z β = 2 i η = 1700 h. (a) Po ilu godzinach niezawodność spada do 0,80? (b) Wentylator przepracował już 800 h bez awarii. Jakie jest prawdopodobieństwo, że przetrwa kolejne 300 h? Porównaj z nowym wentylatorem.",
-    answer = c(
-      "(a) Ze wzoru (7.16): t = 1700 · (−ln 0,80)^(1/2) = 1700 · √0,2231 ≈ 1700 · 0,472 ≈ 803 h.",
-      "(b) Ze wzoru (7.17): R(1100)/R(800) = exp[−(1100/1700)² + (800/1700)²] ≈ 0,821. Nowy wentylator przetrwa 300 h z prawdopodobieństwem R(300) = exp[−(300/1700)²] ≈ 0,969. Przy hazardzie rosnącym wiek ma znaczenie: używany egzemplarz jest wyraźnie bardziej ryzykowny."
+    task = tagList(
+      "Plan wymiany: wentylator ma rozkład Weibulla z β = 2 i η = 1700 h.",
+      risk_parts(
+        "Po ilu godzinach niezawodność spada do 0,80?",
+        "Wentylator przepracował już 800 h bez awarii. Jakie jest prawdopodobieństwo, że przetrwa kolejne 300 h? Porównaj z nowym wentylatorem."
+      )
+    ),
+    answer = list(
+      risk_parts(
+        "Ze wzoru (7.16): t = 1700 · (−ln 0,80)^(1/2) = 1700 · √0,2231 ≈ 1700 · 0,472 ≈ 803 h.",
+        "Ze wzoru (7.17): R(1100)/R(800) = exp[−(1100/1700)² + (800/1700)²] ≈ 0,821. Nowy wentylator przetrwa 300 h z prawdopodobieństwem R(300) = exp[−(300/1700)²] ≈ 0,969. Przy hazardzie rosnącym wiek ma znaczenie: używany egzemplarz jest wyraźnie bardziej ryzykowny."
+      )
     )
   ),
   list(
@@ -326,11 +334,19 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             legend = c("s" = "czas, który element już przepracował", "t" = "dodatkowy czas pracy")),
           "Dowód jest przepisaniem dowodu wzoru (5.4): P(T > s + t | T > s) = R(s + t)/R(s) = e^(−λ(s+t)) / e^(−λs) = e^(−λt). W języku hazardu brak pamięci jest oczywisty — skoro ryzyko najbliższej chwili nie zależy od wieku, to dalsza przyszłość elementu też od niego nie zależy.",
           risk_example("7.5", "Wentylator po 1000 godzinach",
-            problem = "Wentylator o wykładniczym czasie życia z MTTF = 1500 h przepracował bez awarii 1000 h. (a) Jakie jest prawdopodobieństwo, że przetrwa kolejne 500 h? (b) Porównaj z nowym wentylatorem. (c) Jaka część nowych wentylatorów zawodzi przed upływem MTTF i ile wynosi mediana czasu życia?",
+            problem = list(
+              "Wentylator o wykładniczym czasie życia z MTTF = 1500 h przepracował bez awarii 1000 h.",
+              risk_parts(
+                "Jakie jest prawdopodobieństwo, że przetrwa kolejne 500 h?",
+                "Porównaj z nowym wentylatorem.",
+                "Jaka część nowych wentylatorów zawodzi przed upływem MTTF i ile wynosi mediana czasu życia?"
+              )
+            ),
+            steps_type = "a",
             steps = c(
-              "(a) Ze wzoru (7.9): P(T > 1500 | T > 1000) = e^(−500/1500) = e^(−1/3) ≈ 0,717.",
-              "(b) Nowy wentylator: R(500) = e^(−1/3) ≈ 0,717 — dokładnie to samo.",
-              "(c) F(MTTF) = 1 − e^(−λ · 1/λ) = 1 − e⁻¹ ≈ 0,632. Mediana m spełnia e^(−m/1500) = 0,5, więc m = 1500 · ln 2 ≈ 1040 h."
+              "Ze wzoru (7.9): P(T > 1500 | T > 1000) = e^(−500/1500) = e^(−1/3) ≈ 0,717.",
+              "Nowy wentylator: R(500) = e^(−1/3) ≈ 0,717 — dokładnie to samo.",
+              "F(MTTF) = 1 − e^(−λ · 1/λ) = 1 − e⁻¹ ≈ 0,632. Mediana m spełnia e^(−m/1500) = 0,5, więc m = 1500 · ln 2 ≈ 1040 h."
             ),
             answer = "(a) i (b) około 0,717; (c) około 63% wentylatorów zawodzi przed upływem średniej, a połowa — przed 1040 h. Średnią 1500 h podnoszą rzadkie, bardzo długie życia z prawego ogona, jak w rozkładzie geometrycznym."
           ),

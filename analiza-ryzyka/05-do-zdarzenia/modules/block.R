@@ -112,15 +112,20 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             "Pomocny test: wyobraź sobie, że audyt właśnie się skończył. Co jest pewne, zanim spojrzysz w protokół? Jeśli wiesz, ile było kontroli, ale nie wiesz, ile wad — liczba prób była ustalona. Jeśli wiesz, że ostatnia kontrola wykryła wadę, a liczba wad jest z góry znana — ustalony był cel."
           ),
           risk_example("5.1", "Rozpoznaj regułę zatrzymania",
-            problem = c(
+            problem = list(
               "Wskaż, co jest stałe, co losowe i jaki rozkład opisuje zmienną w każdej sytuacji.",
-              "(a) Magazynier kontroluje 40 palet z dostawy i zapisuje, ile ma wadliwe zabezpieczenie. (b) Dział jakości kontroluje palety, dopóki nie znajdzie pierwszej wadliwej — wtedy wstrzymuje przyjęcie dostawy. (c) Audytor potrzebuje pięciu wadliwych palet jako materiału do analizy przyczyn i kontroluje palety, dopóki ich nie zbierze."
+              risk_parts(
+                "Magazynier kontroluje 40 palet z dostawy i zapisuje, ile ma wadliwe zabezpieczenie.",
+                "Dział jakości kontroluje palety, dopóki nie znajdzie pierwszej wadliwej — wtedy wstrzymuje przyjęcie dostawy.",
+                "Audytor potrzebuje pięciu wadliwych palet jako materiału do analizy przyczyn i kontroluje palety, dopóki ich nie zbierze."
+              )
             ),
             steps = c(
-              "(a) Stała jest liczba prób n = 40; losowa liczba wad. Rozkład dwumianowy Bin(40; p).",
-              "(b) Stały jest cel: jedna wada; losowa liczba kontroli. Rozkład geometryczny z parametrem p.",
-              "(c) Stały jest cel: r = 5 wad; losowa liczba kontroli. Rozkład ujemny dwumianowy z parametrami r = 5 i p."
+              "Stała jest liczba prób n = 40; losowa liczba wad. Rozkład dwumianowy Bin(40; p).",
+              "Stały jest cel: jedna wada; losowa liczba kontroli. Rozkład geometryczny z parametrem p.",
+              "Stały jest cel: r = 5 wad; losowa liczba kontroli. Rozkład ujemny dwumianowy z parametrami r = 5 i p."
             ),
+            steps_type = "a",
             answer = "(a) dwumianowy, (b) geometryczny, (c) ujemny dwumianowy. We wszystkich trzech sytuacjach pojedyncza kontrola wygląda tak samo; różni się tylko to, kiedy kończymy."
           ),
           risk_check("d5_chk_regula",
@@ -176,13 +181,20 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
           ), lines = c("m = 1 + (1 − p) · m", "m − (1 − p) · m = 1", "p · m = 1", "m = 1/p")),
           "Wzór (5.3) mówi coś intuicyjnego: przy p = 0,10 wada trafia się średnio raz na dziesięć kontroli, więc średnio czekamy dziesięć kontroli. Wariancja jest jednak duża — odchylenie standardowe przy p = 0,10 to około 9,5 kontroli, prawie tyle co średnia. Średnia sama nie opisuje ryzyka długiego czekania.",
           risk_example("5.2", "Pierwsza wada w audycie Bananpolu",
-            problem = "Przy p = 0,10 oblicz: (a) P(X = 1) i P(X = 3); (b) prawdopodobieństwo znalezienia wady najpóźniej w 10. kontroli; (c) prawdopodobieństwo, że trzeba będzie więcej niż 22 kontroli. Porównaj wynik (b) z tym, co sugeruje średnia E(X) = 10.",
-            steps = c(
-              "(a) Ze wzoru (5.1): P(X = 1) = 0,10; P(X = 3) = 0,9² · 0,1 = 0,081.",
-              "(b) Ze wzoru (5.2): P(X ≤ 10) = 1 − 0,9¹⁰ ≈ 1 − 0,349 = 0,651.",
-              "(c) P(X > 22) = 0,9²² ≈ 0,098 — mniej więcej co dziesiąta seria.",
-              "Mediana to najmniejsze x, dla którego P(X ≤ x) ≥ 0,5: 0,9⁶ ≈ 0,531, a 0,9⁷ ≈ 0,478, więc mediana wynosi 7 — wyraźnie mniej niż średnia 10."
+            problem = list(
+              "Przy p = 0,10 oblicz:",
+              risk_parts(
+                "P(X = 1) i P(X = 3).",
+                "Prawdopodobieństwo znalezienia wady najpóźniej w 10. kontroli; porównaj wynik z tym, co sugeruje średnia E(X) = 10.",
+                "Prawdopodobieństwo, że trzeba będzie więcej niż 22 kontroli."
+              )
             ),
+            steps = c(
+              "Ze wzoru (5.1): P(X = 1) = 0,10; P(X = 3) = 0,9² · 0,1 = 0,081.",
+              "Ze wzoru (5.2): P(X ≤ 10) = 1 − 0,9¹⁰ ≈ 1 − 0,349 = 0,651. Mediana to najmniejsze x, dla którego P(X ≤ x) ≥ 0,5: 0,9⁶ ≈ 0,531, a 0,9⁷ ≈ 0,478, więc mediana wynosi 7 — wyraźnie mniej niż średnia 10.",
+              "P(X > 22) = 0,9²² ≈ 0,098 — mniej więcej co dziesiąta seria."
+            ),
+            steps_type = "a",
             answer = "W 65% serii wada pojawia się do 10. kontroli, a połowa serii kończy się do 7. kontroli. Średnią 10 podnoszą rzadkie, bardzo długie serie z prawego ogona."
           ),
           risk_check("d5_chk_geo",
@@ -249,12 +261,18 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
           risk_formula("P(X=x)=\\binom{x-1}{r-1}p^{r}(1-p)^{x-r},\\qquad x=r,r+1,\\ldots", num = "5.6",
             legend = c("\\binom{x-1}{r-1}" = "liczba sposobów rozmieszczenia r − 1 wcześniejszych wykryć wśród x − 1 kontroli", "p^{r}" = "r kontroli z wykryciem", "(1-p)^{x-r}" = "x − r kontroli bez wykrycia")),
           risk_example("5.4", "Trzecia wada w konkretnej kontroli",
-            problem = "Przy p = 0,10 i r = 3 oblicz (a) prawdopodobieństwo, że trzecia wada pojawi się dokładnie w 5. kontroli, wypisując wszystkie sprzyjające układy; (b) prawdopodobieństwo, że pojawi się dokładnie w 30. kontroli.",
-            steps = c(
-              "(a) Piąta kontrola musi wykryć wadę; dwa wcześniejsze wykrycia mieszczą się wśród kontroli 1–4. Możliwe pary pozycji: {1,2}, {1,3}, {1,4}, {2,3}, {2,4}, {3,4} — to C(4, 2) = 6 układów.",
-              "Każdy układ ma 3 wykrycia i 2 kontrole bez wykrycia, więc prawdopodobieństwo każdego to 0,1³ · 0,9² = 0,00081. Razem: 6 · 0,00081 = 0,00486.",
-              "(b) C(29, 2) = 406 układów; każdy ma prawdopodobieństwo 0,1³ · 0,9²⁷ ≈ 0,001 · 0,0581. Razem: 406 · 0,0000581 ≈ 0,0236."
+            problem = list(
+              "Przy p = 0,10 i r = 3 oblicz:",
+              risk_parts(
+                "Prawdopodobieństwo, że trzecia wada pojawi się dokładnie w 5. kontroli, wypisując wszystkie sprzyjające układy.",
+                "Prawdopodobieństwo, że trzecia wada pojawi się dokładnie w 30. kontroli."
+              )
             ),
+            steps = c(
+              "Piąta kontrola musi wykryć wadę; dwa wcześniejsze wykrycia mieszczą się wśród kontroli 1–4. Możliwe pary pozycji: {1,2}, {1,3}, {1,4}, {2,3}, {2,4}, {3,4} — to C(4, 2) = 6 układów. Każdy układ ma 3 wykrycia i 2 kontrole bez wykrycia, więc prawdopodobieństwo każdego to 0,1³ · 0,9² = 0,00081. Razem: 6 · 0,00081 = 0,00486.",
+              "C(29, 2) = 406 układów; każdy ma prawdopodobieństwo 0,1³ · 0,9²⁷ ≈ 0,001 · 0,0581. Razem: 406 · 0,0000581 ≈ 0,0236."
+            ),
+            steps_type = "a",
             answer = "(a) około 0,005; (b) około 0,024. Nawet wartość równa średniej ma małe prawdopodobieństwo — rozkład rozciąga się na kilkadziesiąt możliwych wartości."
           ),
           risk_try("ustaw r = 1 i porównaj wykres z histogramem z rozdziału o pierwszym wykryciu. Potem zwiększaj r do 10 przy stałym p i obserwuj, jak przesuwa się szczyt i zmienia symetria."),

@@ -99,12 +99,20 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
       risk_vote_panel("s8_vote", "s8_vote_feedback", "Dwa elementy mają R=0,9. Czy R systemu wynosi 0,81, 0,9 czy 0,99?", c("0,81" = "series", "0,90" = "single", "0,99" = "parallel")),
       "Pytanie było celowo niedookreślone. Nie powiedzieliśmy, czy system potrzebuje obu elementów, jednego konkretnego, czy któregokolwiek z nich. Każda z trzech liczb jest poprawną odpowiedzią na inne pytanie — i właśnie dlatego lista części wraz z ich niezawodnościami nie wystarcza do obliczenia niezawodności systemu.",
       risk_example("8.1", "Trzy logiki sukcesu",
-        problem = "Dwa niezależne elementy E₁ i E₂ mają niezawodność 0,9 w tym samym czasie misji. Oblicz R systemu, gdy (a) system wymaga obu elementów; (b) system wymaga tylko E₁, a E₂ jest dla funkcji obojętny; (c) wystarczy, że działa którykolwiek z nich.",
-        steps = c(
-          "(a) Sukces = {E₁ działa} ∩ {E₂ działa}. Z niezależności P = 0,9 · 0,9 = 0,81.",
-          "(b) Sukces = {E₁ działa}. P = 0,9; stan E₂ nie ma znaczenia.",
-          "(c) Porażka = {E₁ zawodzi} ∩ {E₂ zawodzi}, P(porażki) = 0,1 · 0,1 = 0,01, więc P(sukcesu) = 0,99."
+        problem = list(
+          "Dwa niezależne elementy E₁ i E₂ mają niezawodność 0,9 w tym samym czasie misji. Oblicz R systemu, gdy:",
+          risk_parts(
+            "System wymaga obu elementów.",
+            "System wymaga tylko E₁, a E₂ jest dla funkcji obojętny.",
+            "Wystarczy, że działa którykolwiek z nich."
+          )
         ),
+        steps = c(
+          "Sukces = {E₁ działa} ∩ {E₂ działa}. Z niezależności P = 0,9 · 0,9 = 0,81.",
+          "Sukces = {E₁ działa}. P = 0,9; stan E₂ nie ma znaczenia.",
+          "Porażka = {E₁ zawodzi} ∩ {E₂ zawodzi}, P(porażki) = 0,1 · 0,1 = 0,01, więc P(sukcesu) = 0,99."
+        ),
+        steps_type = "a",
         answer = "0,81, 0,90 i 0,99. Te same części dają trzy różne systemy; o wyniku rozstrzyga definicja sukcesu, a nie katalog elementów."
       ),
       c(
@@ -543,13 +551,17 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             legend = c("R_s(1_i)" = "niezawodność systemu, gdy element i na pewno działa", "R_s(0_i)" = "niezawodność systemu, gdy element i na pewno nie działa", "\\Delta R_i" = "poprawa niezawodności elementu i")),
           "Dla szeregu istotność elementu to iloczyn niezawodności pozostałych elementów, więc największa jest dla elementu najsłabszego — stąd reguła z początku sekcji. Dla gałęzi równoległej istotność zawiera czynnik 1 − R innej gałęzi, bo element jest krytyczny tylko wtedy, gdy jego zastępca już zawiódł.",
           risk_example("8.11", "Wąskie gardło czy gałąź redundantna?",
-            problem = "(a) Szereg Bananpolu: wentylator 0,92, czujnik 0,95, zasilanie 0,98. Oblicz zysk z poprawy każdego elementu o 0,02. (b) Układ mieszany z przykładu 8.5 (R_C = 0,98, R_A = 0,92, R_B = 0,95): oblicz istotności Birnbauma i zysk z poprawy każdego elementu o 0,01.",
-            steps = c(
-              "(a) I_B(wentylator) = 0,95 · 0,98 = 0,931; I_B(czujnik) = 0,92 · 0,98 = 0,9016; I_B(zasilanie) = 0,92 · 0,95 = 0,874.",
-              "(a) Zyski przy Δ = 0,02: 0,01862; 0,01803; 0,01748 — różnice są niewielkie, bo wszystkie elementy są dość dobre.",
-              "(b) I_B(C) = R_AB = 0,996; I_B(A) = R_C · (1 − R_B) = 0,98 · 0,05 = 0,049; I_B(B) = R_C · (1 − R_A) = 0,98 · 0,08 = 0,0784.",
-              "(b) Zyski przy Δ = 0,01: sterownik 0,00996; wentylator A 0,00049; wentylator B 0,00078."
+            problem = list(
+              risk_parts(
+                "Szereg Bananpolu: wentylator 0,92, czujnik 0,95, zasilanie 0,98. Oblicz zysk z poprawy każdego elementu o 0,02.",
+                "Układ mieszany z przykładu 8.5 (R_C = 0,98, R_A = 0,92, R_B = 0,95): oblicz istotności Birnbauma i zysk z poprawy każdego elementu o 0,01."
+              )
             ),
+            steps = c(
+              "I_B(wentylator) = 0,95 · 0,98 = 0,931; I_B(czujnik) = 0,92 · 0,98 = 0,9016; I_B(zasilanie) = 0,92 · 0,95 = 0,874. Zyski przy Δ = 0,02: 0,01862; 0,01803; 0,01748 — różnice są niewielkie, bo wszystkie elementy są dość dobre.",
+              "I_B(C) = R_AB = 0,996; I_B(A) = R_C · (1 − R_B) = 0,98 · 0,05 = 0,049; I_B(B) = R_C · (1 − R_A) = 0,98 · 0,08 = 0,0784. Zyski przy Δ = 0,01: sterownik 0,00996; wentylator A 0,00049; wentylator B 0,00078."
+            ),
+            steps_type = "a",
             answer = "W szeregu najwięcej daje poprawa najsłabszego wentylatora, choć przewaga jest mała. W układzie mieszanym poprawa sterownika daje około dwudziestokrotnie więcej niż poprawa wentylatora A — tej samej wielkości poprawa ma zupełnie inną wartość w zależności od miejsca w architekturze."
           ),
           risk_try("odczytaj trzy zyski w panelu i porównaj je z krokiem (a) przykładu 8.11. Zastanów się, jak zmieniłaby się kolejność, gdyby zasilanie miało R = 0,90."),

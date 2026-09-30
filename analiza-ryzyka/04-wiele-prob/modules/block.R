@@ -145,15 +145,20 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
           )),
           "Dwa wyniki nie oznaczają, że świat jest dwuwartościowy. Zawór może być lekko nieszczelny, bardzo nieszczelny albo zablokowany; ciśnienie można zmierzyć z dokładnością do setnych części bara. Próbę Bernoulliego tworzymy decyzją analityka: ustalamy kryterium, które dzieli wszystkie możliwe wyniki na dwie grupy. Kryterium musi być zapisane przed kontrolą, bo inaczej granica między sukcesem a porażką przesuwa się w zależności od tego, co zobaczymy.",
           risk_example("4.1", "Czy to jest próba Bernoulliego?",
-            problem = c(
+            problem = list(
               "Oceń, czy opisana obserwacja jest próbą Bernoulliego. Jeśli nie, zaproponuj, jak ją przekształcić.",
-              "(a) Kontroler sprawdza jeden zawór i zapisuje: sprawny albo niesprawny. (b) Dyspozytor zapisuje liczbę usterek zgłoszonych w ciągu dnia. (c) Technik mierzy ciśnienie otwarcia zaworu w barach."
+              risk_parts(
+                "Kontroler sprawdza jeden zawór i zapisuje: sprawny albo niesprawny.",
+                "Dyspozytor zapisuje liczbę usterek zgłoszonych w ciągu dnia.",
+                "Technik mierzy ciśnienie otwarcia zaworu w barach."
+              )
             ),
             steps = c(
-              "(a) Dwa rozłączne wyniki nazwane przed obserwacją — to próba Bernoulliego. Sukces: zawór niesprawny.",
-              "(b) Wynik może wynosić 0, 1, 2, 3, … — to nie jest próba Bernoulliego. Można ją nią uczynić, pytając: „czy tego dnia była co najmniej jedna usterka?”. Tracimy wtedy informację o liczbie usterek w ciągu dnia.",
-              "(c) Wynik jest liczbą rzeczywistą. Próbę Bernoulliego dostajemy, ustalając próg przed pomiarem, np. sukces: ciśnienie otwarcia poza tolerancją producenta."
+              "Dwa rozłączne wyniki nazwane przed obserwacją — to próba Bernoulliego. Sukces: zawór niesprawny.",
+              "Wynik może wynosić 0, 1, 2, 3, … — to nie jest próba Bernoulliego. Można ją nią uczynić, pytając: „czy tego dnia była co najmniej jedna usterka?”. Tracimy wtedy informację o liczbie usterek w ciągu dnia.",
+              "Wynik jest liczbą rzeczywistą. Próbę Bernoulliego dostajemy, ustalając próg przed pomiarem, np. sukces: ciśnienie otwarcia poza tolerancją producenta."
             ),
+            steps_type = "a",
             answer = "Tylko (a) jest próbą Bernoulliego wprost. (b) i (c) stają się nimi po jawnym zdefiniowaniu dwóch wyników, co zawsze oznacza świadomą utratę części informacji."
           ),
           "Teraz ta sama decyzja w kontekście całej dostawy. Wybierz definicję, która tworzy serię porównywalnych prób.",
@@ -206,12 +211,20 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
           risk_formula("P(\\text{konkretny ciąg z } k \\text{ sukcesami})=p^{k}(1-p)^{n-k}", num = "4.1",
             legend = c("n" = "liczba prób", "k" = "liczba sukcesów w ciągu", "p" = "prawdopodobieństwo sukcesu w jednej próbie")),
           risk_example("4.2", "Konkretny ciąg kontroli",
-            problem = "Przy p = 0,02 oblicz prawdopodobieństwo, że (a) trzy pierwsze zawory są sprawne, a czwarty niesprawny; (b) pierwszy zawór jest niesprawny, a trzy kolejne sprawne; (c) wszystkie sto zaworów w partii jest sprawnych.",
-            steps = c(
-              "(a) Ciąg: sprawny, sprawny, sprawny, niesprawny. Ze wzoru (4.1) z n = 4, k = 1: 0,98³ · 0,02 ≈ 0,0188.",
-              "(b) Ciąg: niesprawny, sprawny, sprawny, sprawny. Te same czynniki w innej kolejności: 0,02 · 0,98³ ≈ 0,0188.",
-              "(c) n = 100, k = 0: 0,98¹⁰⁰ ≈ 0,133."
+            problem = list(
+              "Przy p = 0,02 oblicz prawdopodobieństwo, że:",
+              risk_parts(
+                "Trzy pierwsze zawory są sprawne, a czwarty niesprawny.",
+                "Pierwszy zawór jest niesprawny, a trzy kolejne sprawne.",
+                "Wszystkie sto zaworów w partii jest sprawnych."
+              )
             ),
+            steps = c(
+              "Ciąg: sprawny, sprawny, sprawny, niesprawny. Ze wzoru (4.1) z n = 4, k = 1: 0,98³ · 0,02 ≈ 0,0188.",
+              "Ciąg: niesprawny, sprawny, sprawny, sprawny. Te same czynniki w innej kolejności: 0,02 · 0,98³ ≈ 0,0188.",
+              "n = 100, k = 0: 0,98¹⁰⁰ ≈ 0,133."
+            ),
+            steps_type = "a",
             answer = "(a) i (b) mają to samo prawdopodobieństwo, około 0,019, bo zawierają tyle samo sukcesów. (c) wynosi około 0,133: partia bez żadnej wady wcale nie jest rzadkością, mimo że średnio spodziewamy się dwóch."
           )
         )
@@ -330,13 +343,17 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
             legend = c("k" = "granica ogona", "j" = "wartości sumowane w lewym ogonie")),
           "Druga część wzoru (4.4) to trik z dopełnieniem: prawy ogon od k i lewy ogon do k − 1 są zdarzeniami przeciwnymi, więc zamiast sumować wiele wyrazów prawego ogona, odejmujemy od jedności kilka wyrazów lewego. Wrócimy do tego triku w następnym rozdziale i w wykładzie 05.",
           risk_example("4.5", "Partia stu zaworów",
-            problem = "Dla X ~ Bin(100; 0,02) oblicz: (a) P(X = 0); (b) P(X = 2); (c) P(X ≤ 2); (d) P(X ≥ 3).",
-            steps = c(
-              "(a) Ze wzoru (4.3): C(100, 0) · 0,98¹⁰⁰ = 0,98¹⁰⁰ ≈ 0,1326.",
-              "(b) C(100, 2) · 0,02² · 0,98⁹⁸ = 4950 · 0,0004 · 0,1381 ≈ 0,2734.",
-              "(c) Potrzebne jest jeszcze P(X = 1) = 100 · 0,02 · 0,98⁹⁹ ≈ 0,2707. Ze wzoru (4.4): P(X ≤ 2) ≈ 0,1326 + 0,2707 + 0,2734 = 0,6767.",
-              "(d) Z dopełnienia: P(X ≥ 3) = 1 − P(X ≤ 2) ≈ 1 − 0,6767 = 0,3233."
+            problem = list(
+              "Dla X ~ Bin(100; 0,02) oblicz:",
+              risk_parts("P(X = 0).", "P(X = 2).", "P(X ≤ 2).", "P(X ≥ 3).")
             ),
+            steps = c(
+              "Ze wzoru (4.3): C(100, 0) · 0,98¹⁰⁰ = 0,98¹⁰⁰ ≈ 0,1326.",
+              "C(100, 2) · 0,02² · 0,98⁹⁸ = 4950 · 0,0004 · 0,1381 ≈ 0,2734.",
+              "Potrzebne jest jeszcze P(X = 1) = 100 · 0,02 · 0,98⁹⁹ ≈ 0,2707. Ze wzoru (4.4): P(X ≤ 2) ≈ 0,1326 + 0,2707 + 0,2734 = 0,6767.",
+              "Z dopełnienia: P(X ≥ 3) = 1 − P(X ≤ 2) ≈ 1 − 0,6767 = 0,3233."
+            ),
+            steps_type = "a",
             answer = "(a) ≈ 0,133; (b) ≈ 0,273; (c) ≈ 0,677; (d) ≈ 0,323. Mniej więcej jedna partia na trzy ma trzy lub więcej niesprawnych zaworów."
           ),
           risk_try("przy n = 100, p = 0,02 i k = 2 odczytaj wynik dla „Dokładnie k” i porównaj z przykładem 4.5(b). Potem przełącz na „Co najmniej k” i ustaw k = 3 — porównaj z 4.5(d). Na koniec zwiększ p do 0,05 i obserwuj, jak przesuwa się cały rozkład."),
@@ -420,12 +437,20 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
           risk_formula("P(X\\ge 1)=1-P(X=0)=1-(1-p)^n", num = "4.6",
             legend = c("p" = "prawdopodobieństwo zdarzenia w jednej próbie", "n" = "liczba niezależnych prób", "(1-p)^n" = "prawdopodobieństwo, że żadna próba nie da zdarzenia")),
           risk_example("4.7", "Ile kontroli, żeby zobaczyć wadę?",
-            problem = "Przy p = 0,02 oblicz (a) P(co najmniej jednego niesprawnego zaworu) w partii 100 zaworów; (b) najmniejszą liczbę kontroli n, przy której to prawdopodobieństwo przekracza 0,5; (c) najmniejsze n, przy którym przekracza 0,9.",
-            steps = c(
-              "(a) Ze wzoru (4.6): 1 − 0,98¹⁰⁰ ≈ 1 − 0,133 = 0,867.",
-              "(b) Warunek 1 − 0,98ⁿ ≥ 0,5 to 0,98ⁿ ≤ 0,5. Logarytmując: n ≥ ln 0,5 / ln 0,98 ≈ 34,3. Sprawdzenie: 1 − 0,98³⁴ ≈ 0,497, a 1 − 0,98³⁵ ≈ 0,507, więc n = 35.",
-              "(c) n ≥ ln 0,1 / ln 0,98 ≈ 114,0. Sprawdzenie: 1 − 0,98¹¹³ ≈ 0,898, a 1 − 0,98¹¹⁴ ≈ 0,900, więc n = 114."
+            problem = list(
+              "Przy p = 0,02 oblicz:",
+              risk_parts(
+                "P(co najmniej jednego niesprawnego zaworu) w partii 100 zaworów.",
+                "Najmniejszą liczbę kontroli n, przy której to prawdopodobieństwo przekracza 0,5.",
+                "Najmniejsze n, przy którym przekracza 0,9."
+              )
             ),
+            steps = c(
+              "Ze wzoru (4.6): 1 − 0,98¹⁰⁰ ≈ 1 − 0,133 = 0,867.",
+              "Warunek 1 − 0,98ⁿ ≥ 0,5 to 0,98ⁿ ≤ 0,5. Logarytmując: n ≥ ln 0,5 / ln 0,98 ≈ 34,3. Sprawdzenie: 1 − 0,98³⁴ ≈ 0,497, a 1 − 0,98³⁵ ≈ 0,507, więc n = 35.",
+              "n ≥ ln 0,1 / ln 0,98 ≈ 114,0. Sprawdzenie: 1 − 0,98¹¹³ ≈ 0,898, a 1 − 0,98¹¹⁴ ≈ 0,900, więc n = 114."
+            ),
+            steps_type = "a",
             answer = "(a) ≈ 0,867; (b) 35 kontroli; (c) 114 kontroli. Przejście od „raczej zobaczymy wadę” do „prawie na pewno zobaczymy” wymaga ponad trzykrotnie więcej prób."
           ),
           risk_try("przy p = 0,02 odczytaj wartość dla n = 100 i porównaj z przykładem 4.7(a). Następnie zmniejsz p do 0,005 i sprawdź, jak zmienia się kształt krzywej i wartość dla n = 100."),

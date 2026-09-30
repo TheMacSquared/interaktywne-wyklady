@@ -630,16 +630,18 @@ warunki_block <- list(
               legend = c("B_j" = "tryb, o który pytamy", "P(B_j)" = "udział trybu przed obserwacją", "P(A\\mid B_j)" = "prawdopodobieństwo obserwacji A w tym trybie", "\\sum_i" = "prawdopodobieństwo całkowite A, wzór (2.4)")),
             "Licznik to jedna droga drzewa, mianownik — wszystkie drogi prowadzące do A. Wzór Bayesa odpowiada więc na pytanie: jaką część liści „Incydent” stanowi liść na końcu drogi przez B_j? Na drzewie Bananpolu jest to dokładnie opcja P(B | A) z poprzedniej sekcji: 12 z 17 liści, czyli około 0,71.",
             risk_example("2.6", "Po incydencie: który tryb?",
-              problem = c(
-                "(a) Na zmianie w Bananpolu doszło do incydentu. Jakie jest prawdopodobieństwo, że czujnik wykrył na niej przegrzanie? Użyj danych z drzewa: P(B) = 0,10, P(A | B) = 0,12, P(A | nie B) = 5/900.",
-                "(b) W sytuacji z przykładu 2.5 (udział przeciążenia 0,20, ryzyka 0,15 i 0,01) doszło do incydentu. Jakie jest prawdopodobieństwo, że zmiana była przeciążona?"
+              problem = list(
+                "Na zmianie w Bananpolu doszło do incydentu.",
+                risk_parts(
+                  "Jakie jest prawdopodobieństwo, że czujnik wykrył na niej przegrzanie? Użyj danych z drzewa: P(B) = 0,10, P(A | B) = 0,12, P(A | nie B) = 5/900.",
+                  "W sytuacji z przykładu 2.5 (udział przeciążenia 0,20, ryzyka 0,15 i 0,01) doszło do incydentu. Jakie jest prawdopodobieństwo, że zmiana była przeciążona?"
+                )
               ),
               steps = c(
-                "(a) Licznik: P(B) · P(A | B) = 0,10 · 0,12 = 0,012. Mianownik ze wzoru (2.4): 0,012 + 0,90 · 5/900 = 0,012 + 0,005 = 0,017.",
-                "(a) Ze wzoru (2.5): P(B | A) = 0,012 / 0,017 ≈ 0,706.",
-                "(b) Licznik: 0,20 · 0,15 = 0,030. Mianownik: 0,038 z przykładu 2.5.",
-                "(b) P(przeciążenie | incydent) = 0,030 / 0,038 ≈ 0,789."
+                "Licznik: P(B) · P(A | B) = 0,10 · 0,12 = 0,012. Mianownik ze wzoru (2.4): 0,012 + 0,90 · 5/900 = 0,012 + 0,005 = 0,017. Ze wzoru (2.5): P(B | A) = 0,012 / 0,017 ≈ 0,706.",
+                "Licznik: 0,20 · 0,15 = 0,030. Mianownik: 0,038 z przykładu 2.5. Stąd P(przeciążenie | incydent) = 0,030 / 0,038 ≈ 0,789."
               ),
+              steps_type = "a",
               answer = "(a) Około 0,71: przegrzanie dotyczy tylko 10% zmian, ale towarzyszy siedmiu na dziesięć incydentów. (b) Około 0,79: przeciążenie to 20% zmian, ale prawie cztery piąte incydentów. Obserwacja incydentu silnie przesuwa ocenę w stronę trybu, w którym incydenty są częstsze."
             ),
             risk_derivation("Monty Hall według wzoru (2.5)", c(

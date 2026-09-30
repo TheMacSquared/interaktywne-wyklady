@@ -547,14 +547,20 @@ alarm_block <- list(
               legend = c("c" = "koszt reakcji", "L" = "strata, której reakcja zapobiega", "q^{*}" = "próg reakcji")),
             "W Bananpolu q* = 100/2000 = 0,05. Łącząc wzór (3.8) z wzorem (3.6), można przełożyć próg na posteriorze na próg na częstości bazowej: reagujemy na alarm, gdy szanse a priori · 19 > 0,05/0,95 = 1/19, czyli gdy szanse a priori przekraczają 1/361. Odpowiada to częstości awarii około 0,0028. Poniżej tej częstości pojedynczy alarm tego czujnika nie uzasadnia wyjazdu przy tych kosztach.",
             risk_example("3.7", "Jedna reguła, trzy sytuacje",
-              problem = "Reakcja kosztuje 100 zł, brak reakcji przy awarii 2000 zł, a reakcja w pełni zapobiega stracie. Czujnik ma czułość 0,95 i FPR 0,05. Rozstrzygnij, czy reagować: (a) na alarm w hali o częstości awarii 0,01; (b) na alarm w hali o częstości 0,002; (c) na zmianie bez alarmu w hali o częstości 0,01.",
-              steps = c(
-                "Próg ze wzoru (3.8): q* = 100/2000 = 0,05.",
-                "(a) Posterior 0,161 > 0,05. Oczekiwany koszt braku reakcji: 2000 · 0,161 ≈ 322 zł > 100 zł. Reagujemy.",
-                "(b) Ze wzoru (3.4): 0,95 · 0,002/(0,95 · 0,002 + 0,05 · 0,998) ≈ 0,037 < 0,05. Oczekiwany koszt braku reakcji: 2000 · 0,037 ≈ 73 zł < 100 zł. Sam alarm nie uzasadnia wyjazdu; opłaca się tania druga informacja.",
-                "(b, ciąg dalszy) Jeśli drugi, warunkowo niezależny czujnik też alarmuje, ze wzoru (3.7): szanse 0,002/0,998 · 361 ≈ 0,72, posterior ≈ 0,42 > 0,05. Reagujemy.",
-                "(c) Z przykładu 3.3: P(awaria | brak alarmu) ≈ 0,00053. Oczekiwany koszt braku reakcji: około 1,06 zł. Nie reagujemy."
+              problem = list(
+                "Reakcja kosztuje 100 zł, brak reakcji przy awarii 2000 zł, a reakcja w pełni zapobiega stracie. Czujnik ma czułość 0,95 i FPR 0,05. Rozstrzygnij, czy reagować:",
+                risk_parts(
+                  "Na alarm w hali o częstości awarii 0,01.",
+                  "Na alarm w hali o częstości awarii 0,002.",
+                  "Na zmianie bez alarmu w hali o częstości awarii 0,01."
+                )
               ),
+              steps = c(
+                "Próg ze wzoru (3.8): q* = 100/2000 = 0,05. Posterior 0,161 > 0,05. Oczekiwany koszt braku reakcji: 2000 · 0,161 ≈ 322 zł > 100 zł. Reagujemy.",
+                "Ze wzoru (3.4): 0,95 · 0,002/(0,95 · 0,002 + 0,05 · 0,998) ≈ 0,037 < 0,05. Oczekiwany koszt braku reakcji: 2000 · 0,037 ≈ 73 zł < 100 zł. Sam alarm nie uzasadnia wyjazdu; opłaca się tania druga informacja. Jeśli drugi, warunkowo niezależny czujnik też alarmuje, ze wzoru (3.7): szanse 0,002/0,998 · 361 ≈ 0,72, posterior ≈ 0,42 > 0,05. Reagujemy.",
+                "Z przykładu 3.3: P(awaria | brak alarmu) ≈ 0,00053. Oczekiwany koszt braku reakcji: około 1,06 zł. Nie reagujemy."
+              ),
+              steps_type = "a",
               answer = "(a) reagować; (b) najpierw zweryfikować drugim źródłem, reagować po potwierdzeniu; (c) nie reagować. Ta sama reguła kosztowa daje różne decyzje, bo posterior zależy od hali i od wyniku detektora."
             ),
             risk_check("d3_chk_prog",
