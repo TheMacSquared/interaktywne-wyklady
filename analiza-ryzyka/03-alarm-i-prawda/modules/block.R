@@ -236,13 +236,17 @@ alarm_block <- list(
             risk_example("3.2", "Kampania testowa czujnika",
               problem = c(
                 "Przed montażem dział utrzymania ruchu przetestował czujnik. W 60 zmianach z celowo wywołanym przegrzaniem alarm wystąpił 57 razy. W 400 zmianach normalnej pracy alarm wystąpił 20 razy.",
-                "(a) Oblicz czułość, swoistość i FPR. (b) Producent pisze w ulotce: „77 alarmów, z czego 57 prawdziwych — 74% trafności”. Czy dyżurny w hali z częstością awarii 0,01 może przyjąć, że alarm jest prawdziwy z prawdopodobieństwem 0,74?"
+                tags$ol(
+                  class = "lc-example-list", type = "a",
+                  tags$li("Oblicz czułość, swoistość i FPR."),
+                  tags$li("Producent pisze w ulotce: „77 alarmów, z czego 57 prawdziwych — 74% trafności”. Czy dyżurny w hali z częstością awarii 0,01 może przyjąć, że alarm jest prawdziwy z prawdopodobieństwem 0,74?")
+                )
               ),
               steps = c(
-                "(a) Ze wzoru (3.1): czułość = 57/60 = 0,95; swoistość = (400 − 20)/400 = 380/400 = 0,95. Ze wzoru (3.2): FPR = 20/400 = 0,05.",
-                "(b) Iloraz 57/77 ≈ 0,74 jest liczony w kolumnie „alarm”. Jego wartość zależy od tego, ile awarii było w teście: 60 na 460 zmian, czyli około 0,13.",
-                "W hali Bananpolu awarie zdarzają się na 0,01 zmian — trzynaście razy rzadziej niż w teście. Fałszywych alarmów będzie więc proporcjonalnie znacznie więcej; w rozdziale 3 policzymy, że wiarygodność alarmu wynosi tam około 0,16."
+                "Ze wzoru (3.1): czułość = 57/60 = 0,95; swoistość = (400 − 20)/400 = 380/400 = 0,95. Ze wzoru (3.2): FPR = 20/400 = 0,05.",
+                "Iloraz 57/77 ≈ 0,74 jest liczony w kolumnie „alarm”. Jego wartość zależy od tego, ile awarii było w teście: 60 na 460 zmian, czyli około 0,13. W hali Bananpolu awarie zdarzają się na 0,01 zmian — trzynaście razy rzadziej niż w teście. Fałszywych alarmów będzie więc proporcjonalnie znacznie więcej; w rozdziale 3 policzymy, że wiarygodność alarmu wynosi tam około 0,16."
               ),
+              steps_type = "a",
               answer = "(a) Czułość 0,95, swoistość 0,95, FPR 0,05. (b) Nie. Liczba 0,74 opisuje kampanię testową, w której awarie wywołano sztucznie często; w hali trzeba ją przeliczyć z częstością bazową 0,01."
             ),
             risk_check("d3_chk_mianownik",
