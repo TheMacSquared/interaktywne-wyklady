@@ -2223,3 +2223,47 @@ mjx-container mjx-text {
 .lc-cm-bad .lc-cm-abbr { color: #8a271e; }
 .lc-cm-name { font-weight: 600; margin-top: 4px; }
 .lc-cm-desc { color: var(--upwr-ink-soft); font-size: 0.95em; }
+
+/* === Wzór z opisami (risk_formula_map) === */
+.lc-formula-box.lc-fmap {
+  display: grid;
+  column-gap: 12px;
+  row-gap: 4px;
+  align-items: start;
+  padding: 20px 24px;
+}
+.lc-fmap-cell { text-align: center; min-width: 0; }
+.lc-fmap-op {
+  align-self: center;
+  font-size: calc(24px * var(--lc-font-scale));
+  color: var(--upwr-reference);
+  text-align: center;
+}
+.lc-fmap-symbol {
+  font-family: var(--upwr-serif);
+  font-size: calc(22px * var(--lc-font-scale));
+  color: var(--upwr-ink-soft);
+}
+.lc-fmap-value {
+  font-family: var(--upwr-mono);
+  font-size: calc(30px * var(--lc-font-scale));
+  font-weight: 700;
+  color: var(--fmap-color);
+}
+.lc-fmap-cell.lc-fmap-symbol,
+.lc-fmap-cell.lc-fmap-value { padding: 2px 0; }
+.lc-fmap-note {
+  font-family: var(--upwr-sans);
+  font-size: calc(15px * var(--lc-font-scale));
+  color: var(--upwr-ink-soft);
+  line-height: 1.4;
+  padding: 0 4px;
+}
+.lc-fmap-note::before {
+  content: "↓";
+  display: block;
+  font-size: calc(26px * var(--lc-font-scale));
+  line-height: 1;
+  margin-bottom: 4px;
+  color: var(--fmap-color);
+}

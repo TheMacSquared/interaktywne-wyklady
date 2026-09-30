@@ -271,17 +271,22 @@ warunki_path_widget <- figure_panel(
   label = "Przykład liczbowy",
   title = "Od warunku do wspólnej drogi",
   full_width = TRUE,
-  lc_stat_grid(
-    lc_stat_box("Krok 1 · Przegrzanie", "100 na 1000 zmian", caption = "P(B) = 0,10", color = upwr_cat[["bursztyn"]]),
-    lc_stat_box("Krok 2 · Incydent w B", "12 na 100 zmian", caption = "P(A | B) = 0,12", color = upwr_cat[["niebo"]]),
-    lc_stat_box("Cała droga · A i B", "12 na 1000 zmian", caption = "P(A ∩ B) = 0,012", color = upwr_accent),
-    columns = 3
-  ),
-  lc_formula_box(withMathJax("$$0{,}10\\times 0{,}12=0{,}012$$")),
-  lc_feedback(
-    type = "info",
-    tags$strong("Czytaj mianowniki:"),
-    " drugie 12 odnosi się do 100 zmian z przegrzaniem. Po przemnożeniu wracamy do mianownika 1000 wszystkich zmian."
+  risk_formula_map(
+    items = list(
+      list(
+        symbol = "P(A ∩ B)", value = "0,012", color = upwr_accent,
+        note = "12 na 1000 zmian. Mianownik wraca do wszystkich zmian."
+      ),
+      list(
+        symbol = "P(B)", value = "0,10", color = upwr_cat[["bursztyn"]],
+        note = "100 na 1000 zmian: przegrzanie."
+      ),
+      list(
+        symbol = "P(A | B)", value = "0,12", color = upwr_cat[["niebo"]],
+        note = "12 na 100 zmian z przegrzaniem. Mianownik to 100."
+      )
+    ),
+    ops = c("=", "×")
   )
 )
 
