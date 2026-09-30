@@ -234,7 +234,7 @@ alarm_block <- list(
               "Dlatego z tablicy kampanii testowej wolno liczyć ilorazy w wierszach (czułość, swoistość, FPR), ale nie wolno liczyć ilorazów w kolumnach. Udział prawdziwych alarmów wśród alarmów zależy od częstości bazowej, a ta w kampanii jest sztuczna."
             ),
             risk_example("3.2", "Kampania testowa czujnika",
-              problem = c(
+              problem = list(
                 "Przed montażem dział utrzymania ruchu przetestował czujnik. W 60 zmianach z celowo wywołanym przegrzaniem alarm wystąpił 57 razy. W 400 zmianach normalnej pracy alarm wystąpił 20 razy.",
                 tags$ol(
                   class = "lc-example-list", type = "a",
