@@ -203,8 +203,8 @@ alarm_block <- list(
       sections = list(
         list(
           id = "definicje", title = "Cztery wyniki",
-          bullets = c("prawdziwie dodatni: awaria i alarm", "fałszywie dodatni: brak awarii, ale alarm", "fałszywie ujemny: awaria bez alarmu", "prawdziwie ujemny: brak awarii i brak alarmu"),
           body = list(
+            risk_confusion_matrix(),
             "Cztery wyniki układają się w tablicę o dwóch wierszach (stan instalacji) i dwóch kolumnach (wynik detektora). W analizie ryzyka i w diagnostyce medycznej przyjęła się ta sama konwencja zapisu: A oznacza zdarzenie, którego szukamy (tu: awarię), ¬A jego brak, „+” wynik dodatni detektora (alarm), a „−” wynik ujemny (brak alarmu).",
             risk_definition("3.1", "Tablica wyników detektora", c(
               "Tablica wyników detektora to tablica 2×2, której wiersze odpowiadają stanowi rzeczywistemu (A albo ¬A), a kolumny wynikowi detektora (+ albo −). Jej komórki to liczby lub prawdopodobieństwa wyników: prawdziwie dodatnich TP (A i +), fałszywie ujemnych FN (A i −), fałszywie dodatnich FP (¬A i +) oraz prawdziwie ujemnych TN (¬A i −).",

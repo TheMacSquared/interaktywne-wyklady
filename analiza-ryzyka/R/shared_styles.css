@@ -2183,3 +2183,43 @@ mjx-container mjx-text {
   white-space: pre-wrap;
   color: var(--upwr-ink);
 }
+
+/* === Tablica wyników detektora 2×2 === */
+.lc-cm {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  gap: 6px;
+  margin: 16px 0 20px;
+  max-width: 640px;
+}
+.lc-cm-head,
+.lc-cm-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--upwr-mono);
+  font-size: calc(12px * var(--lc-font-scale));
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--upwr-reference);
+  text-align: center;
+}
+.lc-cm-side { padding-right: 8px; justify-content: flex-end; text-align: right; }
+.lc-cm-cell {
+  padding: 14px 16px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  border-left-width: 5px;
+}
+.lc-cm-ok  { background: #dfead6; border-color: #b9cfa9; border-left-color: #3f7a3a; }
+.lc-cm-bad { background: #f3dcd8; border-color: #dfb4ad; border-left-color: #a3342a; }
+.lc-cm-abbr {
+  font-family: var(--upwr-mono);
+  font-size: calc(20px * var(--lc-font-scale));
+  font-weight: 700;
+  line-height: 1.1;
+}
+.lc-cm-ok .lc-cm-abbr  { color: #2f5f2b; }
+.lc-cm-bad .lc-cm-abbr { color: #8a271e; }
+.lc-cm-name { font-weight: 600; margin-top: 4px; }
+.lc-cm-desc { color: var(--upwr-ink-soft); font-size: 0.95em; }

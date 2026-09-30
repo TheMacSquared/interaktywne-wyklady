@@ -167,6 +167,33 @@ risk_script_dependency <- function() {
   )
 }
 
+# Tablica wyników detektora 2×2: wiersze to stan rzeczywisty, kolumny wynik
+# detektora; trafienia (TP, TN) zielone, pomyłki (FN, FP) czerwone.
+risk_confusion_matrix <- function() {
+  cell <- function(kind, name, abbr, desc) {
+    tags$div(
+      class = paste("lc-cm-cell", paste0("lc-cm-", kind)),
+      tags$div(class = "lc-cm-abbr", abbr),
+      tags$div(class = "lc-cm-name", name),
+      tags$div(class = "lc-cm-desc", desc)
+    )
+  }
+  tags$div(
+    class = "lc-cm",
+    role = "table",
+    `aria-label` = "Tablica wyników detektora: cztery wyniki",
+    tags$div(class = "lc-cm-corner"),
+    tags$div(class = "lc-cm-head", "Alarm (+)"),
+    tags$div(class = "lc-cm-head", "Brak alarmu (−)"),
+    tags$div(class = "lc-cm-side", "Awaria (A)"),
+    cell("ok", "prawdziwie dodatni", "TP", "awaria i alarm"),
+    cell("bad", "fałszywie ujemny", "FN", "awaria bez alarmu"),
+    tags$div(class = "lc-cm-side", "Brak awarii (¬A)"),
+    cell("bad", "fałszywie dodatni", "FP", "brak awarii, ale alarm"),
+    cell("ok", "prawdziwie ujemny", "TN", "brak awarii i brak alarmu")
+  )
+}
+
 risk_body <- function(items) {
   if (is.null(items)) {
     return(NULL)
