@@ -193,23 +193,42 @@ zoom_plot_ui <- function(id, height = "300px", width = "100%", ...) {
   )
 }
 
-# Czcionki wykresu: w tekście 1.25x (osie i podpisy czytelne z sali), w oknie
-# powiększenia 1.9x, bo wykres jest tam ok. dwa razy szerszy.
-zoom_plot_font_scale_inline <- 1.25
-zoom_plot_font_scale_modal  <- 1.9
+# Czcionki wykresu: w tekście 1.1x, w oknie powiększenia 1.5x (osie i podpisy
+# czytelne z sali). Wykresy renderujemy z res = 96, zgodnie z showtext_opts(dpi = 96)
+# w lc_apply_ggplot_defaults(); przy domyślnym res = 72 cały tekst wychodził
+# o jedną czwartą mniejszy, niż wynika ze skali.
+zoom_plot_font_scale_inline <- 1.1
+zoom_plot_font_scale_modal  <- 1.5
+zoom_plot_res               <- 96
 
 zoom_plot_server <- function(id, plot_fn,
                              alt = "Wykres ilustrujący omawiane zagadnienie") {
   moduleServer(id, function(input, output, session) {
+    # showtext liczy rozmiar czcionek względem swojego dpi, a Shiny renderuje
+    # obraz z res * pixelratio (na ekranach retina 2x) — bez dopasowania tekst
+    # wychodzi o połowę mniejszy. Ustawiamy dpi zanim wykresy się narysują.
+    observe({
+      ratio <- session$clientData$pixelratio
+      if (!is.null(ratio) && requireNamespace("showtext", quietly = TRUE)) {
+        showtext::showtext_opts(dpi = zoom_plot_res * ratio)
+      }
+    }, priority = 100)
+
     scaled_plot <- function(k) {
       p <- plot_fn()
       if (inherits(p, "ggplot")) {
-        p <- p + ggplot2::theme(text = ggplot2::element_text(size = 11 * k))
+        # Legenda w theme_upwr ma rel(0.8–0.85) — na sali za małe,
+        # więc w wykresach wykładu rysujemy ją w pełnym rozmiarze tekstu.
+        p <- p + ggplot2::theme(
+          text         = ggplot2::element_text(size = 11 * k),
+          legend.text  = ggplot2::element_text(size = ggplot2::rel(1)),
+          legend.title = ggplot2::element_text(size = ggplot2::rel(1))
+        )
       }
       p
     }
 
-    output$plot <- renderPlot(scaled_plot(zoom_plot_font_scale_inline), alt = alt)
+    output$plot <- renderPlot(scaled_plot(zoom_plot_font_scale_inline), res = zoom_plot_res, alt = alt)
 
     observeEvent(input$zoom, {
       showModal(modalDialog(
@@ -220,6 +239,6 @@ zoom_plot_server <- function(id, plot_fn,
       ))
     }, ignoreInit = TRUE)
 
-    output$plot_modal <- renderPlot(scaled_plot(zoom_plot_font_scale_modal), alt = alt)
+    output$plot_modal <- renderPlot(scaled_plot(zoom_plot_font_scale_modal), res = zoom_plot_res, alt = alt)
   })
 }

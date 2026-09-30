@@ -297,7 +297,7 @@ alarm_block <- list(
       lead = "Zamiast trzech procentów śledzimy konkretne zmiany produkcyjne; wzór porządkuje ten rachunek na końcu.",
       intro = c(
         "Trzy procenty naraz — częstość bazowa, czułość, FPR — przeciążają intuicję, bo każdy odnosi się do innego mianownika. Naturalne częstości rozbrajają problem: zamiast ułamków wyobrażamy sobie 10 000 konkretnych zmian i śledzimy, ile z nich trafia do każdej grupy.",
-        "Na siatce poniżej każdy punkt to jedna zmiana. Widać od razu to, co ukrywają procenty: zmian bez awarii jest tak dużo, że nawet rzadkie fałszywe alarmy tworzą tłum liczniejszy niż wszystkie prawdziwe alarmy razem wzięte."
+        "Na siatce poniżej każde pole to jedna zmiana (100 × 100 pól). Widać od razu to, co ukrywają procenty: zmian bez awarii jest tak dużo, że nawet rzadkie fałszywe alarmy tworzą tłum liczniejszy niż wszystkie prawdziwe alarmy razem wzięte."
       ),
       sections = list(
         list(
@@ -313,7 +313,7 @@ alarm_block <- list(
             risk_widget_panel("Symulacja", "10 000 zmian Bananpolu", tagList(
               p("Parametry są synchronizowane z tablicą 2×2."), uiOutput("a3_counts")
             ),
-            plot_id = "a3_grid", height = "390px"
+            plot_id = "a3_grid", height = "470px"
             ),
             c(
               "Przy ustawieniach domyślnych panel pokazuje 95 prawdziwych i 495 fałszywych alarmów, a P(awaria | alarm) = 0,161. Na siatce prawdziwe alarmy to wąski pasek, fałszywe — pas pięć razy szerszy, a oba giną w morzu zmian bez awarii i bez alarmu. Przy FPR = 0,01 fałszywych alarmów jest 99, prawdziwych nadal 95, a wiarygodność alarmu rośnie do 0,490.",
@@ -656,14 +656,25 @@ alarm_server <- function(input, output, session) {
     dat$id <- seq_len(nrow(dat))
     dat$x <- (dat$id - 1L) %% 100L
     dat$y <- (dat$id - 1L) %/% 100L
-    ggplot(dat, aes(x, y, colour = type, shape = type)) +
-      geom_point(size = .7) +
+    legend_labels <- paste0(labels, " (", format(counts, big.mark = " ", trim = TRUE), ")")
+    # Jedno pole na zmianę; alarmy (prawdziwe i fałszywe) tworzą pasek u góry,
+    # a zmiany bez alarmu są tłem, żeby proporcja w pasku była widoczna.
+    ggplot(dat, aes(x, y, fill = type)) +
+      geom_raster() +
       scale_y_reverse() +
-      coord_equal() +
-      scale_colour_manual(values = upwr_cat_n(4)) +
-      labs(title = "Każdy punkt to jedna zmiana", x = NULL, y = NULL, colour = "Wynik", shape = "Wynik") +
+      coord_equal(expand = FALSE) +
+      scale_fill_manual(
+        values = c(upwr_accent, upwr_single_alt, upwr_secondary, upwr_rule),
+        labels = legend_labels, drop = FALSE
+      ) +
+      guides(fill = guide_legend(ncol = 1)) +
+      labs(x = NULL, y = NULL, fill = NULL) +
       theme_upwr() +
-      theme(axis.text = element_blank(), axis.ticks = element_blank())
+      theme(
+        axis.text = element_blank(), axis.ticks = element_blank(),
+        axis.line = element_blank(), panel.grid = element_blank(),
+        legend.position = "bottom", legend.key.size = grid::unit(1.1, "lines")
+      )
   })
   zoom_plot_server("a3_grid", grid_plot, alt = "Siatka dziesięciu tysięcy zmian z prawdziwymi i fałszywymi alarmami.")
   curve_plot <- reactive({
