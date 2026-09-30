@@ -236,10 +236,9 @@ alarm_block <- list(
             risk_example("3.2", "Kampania testowa czujnika",
               problem = list(
                 "Przed montażem dział utrzymania ruchu przetestował czujnik. W 60 zmianach z celowo wywołanym przegrzaniem alarm wystąpił 57 razy. W 400 zmianach normalnej pracy alarm wystąpił 20 razy.",
-                tags$ol(
-                  class = "lc-example-list", type = "a",
-                  tags$li("Oblicz czułość, swoistość i FPR."),
-                  tags$li("Producent pisze w ulotce: „77 alarmów, z czego 57 prawdziwych — 74% trafności”. Czy dyżurny w hali z częstością awarii 0,01 może przyjąć, że alarm jest prawdziwy z prawdopodobieństwem 0,74?")
+                risk_parts(
+                  "Oblicz czułość, swoistość i FPR.",
+                  "Producent pisze w ulotce: „77 alarmów, z czego 57 prawdziwych — 74% trafności”. Czy dyżurny w hali z częstością awarii 0,01 może przyjąć, że alarm jest prawdziwy z prawdopodobieństwem 0,74?"
                 )
               ),
               steps = c(

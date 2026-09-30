@@ -106,7 +106,7 @@ risk_assessment_ui <- function(prefix, quiz, exercises) {
             tags$details(
               class = "lc-exercise-answer",
               tags$summary("Odpowiedź"),
-              lapply(exercise$answer, tags$p)
+              lapply(exercise$answer, function(x) if (inherits(x, "shiny.tag")) x else tags$p(x))
             )
           }
         )
@@ -216,6 +216,17 @@ risk_formula <- function(tex, num = NULL, legend = NULL) {
 # Przykład z rozwiązaniem krok po kroku. Rozwiązanie jest zwinięte, żeby czytelnik
 # mógł najpierw spróbować sam. W krokach używaj zapisu Unicode, nie MathJax:
 # treść zwiniętego elementu nie zawsze jest poprawnie składana.
+# Podpunkty a), b), … jako lista. Każdy argument to jeden podpunkt (tekst albo
+# tagi); znaczniki rysuje CSS (`lc-example-list`), więc treść nie zawiera „(a)”.
+# Wynik wstawiamy do `problem`, `steps` lub `answer` jako element `list(...)`,
+# nigdy `c(...)` — c() rozbija tag na części i wypisuje nazwy atrybutów jako tekst.
+risk_parts <- function(...) {
+  tags$ol(
+    class = "lc-example-list", type = "a",
+    lapply(list(...), tags$li)
+  )
+}
+
 risk_example <- function(num, title, problem, steps, answer = NULL, steps_type = NULL) {
   tags$div(
     class = "lc-example",
