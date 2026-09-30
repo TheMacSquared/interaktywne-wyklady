@@ -215,7 +215,7 @@ alarm_block <- list(
               "Czułość (ang. sensitivity) to P(+ | A): prawdopodobieństwo alarmu, gdy zdarzenie rzeczywiście zachodzi. Swoistość (ang. specificity) to P(− | ¬A): prawdopodobieństwo braku alarmu, gdy zdarzenia nie ma.",
               "Odsetek fałszywych alarmów FPR (ang. false positive rate) to P(+ | ¬A) = 1 − swoistość. Obie wielkości opisują detektor, a nie populację, w której pracuje."
             )),
-            risk_formula("\\text{czułość}=P(+\\mid A)=\\frac{TP}{TP+FN},\\qquad \\text{swoistość}=P(-\\mid \\neg A)=\\frac{TN}{TN+FP}", num = "3.1",
+            risk_formula("\\begin{aligned}\\text{czułość} &= P(+\\mid A)=\\frac{TP}{TP+FN},\\\\[0.6em] \\text{swoistość} &= P(-\\mid \\neg A)=\\frac{TN}{TN+FP}\\end{aligned}", num = "3.1",
               legend = c("TP" = "liczba prawdziwie dodatnich", "FN" = "liczba fałszywie ujemnych", "TN" = "liczba prawdziwie ujemnych", "FP" = "liczba fałszywie dodatnich")),
             risk_formula("\\text{FPR}=P(+\\mid \\neg A)=\\frac{FP}{TN+FP}=1-\\text{swoistość}", num = "3.2"),
             c(
