@@ -197,16 +197,16 @@ risk_confusion_matrix <- function() {
 # Wzór z liczbami i opisami: symbole w pierwszym rzędzie, te same wyrazy z liczbami
 # w drugim, a pod nimi opisy połączone z wyrazami kreską. `items` to lista
 # list(symbol, value, note, color); `ops` to znaki między wyrazami (o jeden mniej).
-risk_formula_map <- function(items, ops) {
+risk_annotated_formula <- function(items, ops) {
   n <- length(items)
   stopifnot(length(ops) == n - 1L)
   cols <- paste(rep(c("minmax(0, 1fr)", "auto"), length.out = 2L * n - 1L), collapse = " ")
-  op_cell <- function(k, class) tags$div(class = paste("lc-fmap-op", class), ops[[k]])
+  op_cell <- function(k, class) tags$div(class = paste("lc-annot-op", class), ops[[k]])
   row_cells <- function(field, class) {
     unlist(lapply(seq_len(n), function(i) {
       cell <- tags$div(
-        class = paste("lc-fmap-cell", class),
-        style = paste0("--fmap-color:", items[[i]]$color %||% "#6b1a2a"),
+        class = paste("lc-annot-cell", class),
+        style = paste0("--annot-color:", items[[i]]$color %||% "#6b1a2a"),
         items[[i]][[field]]
       )
       if (i < n) list(cell, op_cell(i, class)) else list(cell)
@@ -214,17 +214,17 @@ risk_formula_map <- function(items, ops) {
   }
   note_cells <- unlist(lapply(seq_len(n), function(i) {
     cell <- tags$div(
-      class = "lc-fmap-cell lc-fmap-note",
-      style = paste0("--fmap-color:", items[[i]]$color %||% "#6b1a2a"),
+      class = "lc-annot-cell lc-annot-note",
+      style = paste0("--annot-color:", items[[i]]$color %||% "#6b1a2a"),
       items[[i]]$note
     )
     if (i < n) list(cell, tags$div()) else list(cell)
   }), recursive = FALSE)
   lc_formula_box(
-    class = "lc-fmap",
+    class = "lc-annot",
     style = paste0("grid-template-columns:", cols),
-    row_cells("symbol", "lc-fmap-symbol"),
-    row_cells("value", "lc-fmap-value"),
+    row_cells("symbol", "lc-annot-symbol"),
+    row_cells("value", "lc-annot-value"),
     note_cells
   )
 }

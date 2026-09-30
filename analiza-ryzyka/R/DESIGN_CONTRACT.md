@@ -56,11 +56,21 @@ Kanoniczne komponenty:
 | Siatka tekst + margines | `lc_grid()` |
 | Wykres, tabela, widget | `figure_panel()` |
 | Wzór | `lc_formula_box()` |
+| Wzór z adnotacjami | `risk_annotated_formula()` |
 | Metryki i statystyki | `lc_stat_grid()` + `lc_stat_box()` |
 | Dynamiczny feedback | `lc_feedback()` |
 | Notka marginalna | `margin_callout()` albo `margin_note()` |
 | Notka z kodem | `margin_code_note()` |
 | Przejście do następnego rozdziału | `lc_chapter_next()` |
+
+### Wzór z adnotacjami
+
+`risk_annotated_formula(items, ops)` pokazuje wzór policzony na konkretnych liczbach: w pierwszym rzędzie symbole, w drugim te same wyrazy jako liczby, a pod nimi opisy połączone strzałkami. Zamiast rzędu kafelków ze statystykami i osobnego pola z komentarzem.
+
+- `items` to lista `list(symbol, value, note, color)`, jeden element na wyraz; `ops` to znaki między wyrazami (o jeden mniej), np. `c("=", "×")`.
+- `note`: jedno–dwa krótkie zdania, np. „12 na 100 zmian z przegrzaniem”; wyjaśnienie mianownika mieści się w notce, nie w osobnym callout.
+- `color` łączy wyraz z jego notą; te same kolory, co w reszcie przykładu.
+- Używamy, gdy chcemy pokazać, skąd każda liczba wzoru się bierze. Nie używamy do wzorów ogólnych (wtedy `risk_formula()`).
 
 TOC wykrywa tylko sekcje tworzone przez `lc_h2()` albo zgodne z atrybutem `data-lc-section`.
 

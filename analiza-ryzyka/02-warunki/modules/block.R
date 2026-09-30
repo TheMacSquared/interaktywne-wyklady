@@ -271,7 +271,7 @@ warunki_path_widget <- figure_panel(
   label = "Przykład liczbowy",
   title = "Od warunku do wspólnej drogi",
   full_width = TRUE,
-  risk_formula_map(
+  risk_annotated_formula(
     items = list(
       list(
         symbol = "P(A ∩ B)", value = "0,012", color = upwr_accent,
