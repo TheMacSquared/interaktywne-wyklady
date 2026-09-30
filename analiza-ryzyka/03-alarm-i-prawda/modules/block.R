@@ -297,7 +297,7 @@ alarm_block <- list(
       lead = "Zamiast trzech procentów śledzimy konkretne zmiany produkcyjne; wzór porządkuje ten rachunek na końcu.",
       intro = c(
         "Trzy procenty naraz — częstość bazowa, czułość, FPR — przeciążają intuicję, bo każdy odnosi się do innego mianownika. Naturalne częstości rozbrajają problem: zamiast ułamków wyobrażamy sobie 10 000 konkretnych zmian i śledzimy, ile z nich trafia do każdej grupy.",
-        "Na siatce poniżej każde pole to jedna zmiana (100 × 100 pól). Widać od razu to, co ukrywają procenty: zmian bez awarii jest tak dużo, że nawet rzadkie fałszywe alarmy tworzą tłum liczniejszy niż wszystkie prawdziwe alarmy razem wzięte."
+        "Na siatce poniżej każde pole to jeden alarm z 10 000 zmian. Widać od razu to, co ukrywają procenty: zmian bez awarii jest tak dużo, że nawet rzadkie fałszywe alarmy tworzą tłum liczniejszy niż wszystkie prawdziwe alarmy razem wzięte."
       ),
       sections = list(
         list(
@@ -316,7 +316,7 @@ alarm_block <- list(
             plot_id = "a3_grid", height = "470px"
             ),
             c(
-              "Przy ustawieniach domyślnych panel pokazuje 95 prawdziwych i 495 fałszywych alarmów, a P(awaria | alarm) = 0,161. Na siatce prawdziwe alarmy to wąski pasek, fałszywe — pas pięć razy szerszy, a oba giną w morzu zmian bez awarii i bez alarmu. Przy FPR = 0,01 fałszywych alarmów jest 99, prawdziwych nadal 95, a wiarygodność alarmu rośnie do 0,490.",
+              "Przy ustawieniach domyślnych panel pokazuje 95 prawdziwych i 495 fałszywych alarmów, a P(awaria | alarm) = 0,161. Na siatce prawdziwe alarmy to niewielka grupa pól, a fałszywe — obszar pięć razy większy. Pozostałe zmiany, bez alarmu, leżą poza siatką. Przy FPR = 0,01 fałszywych alarmów jest 99, prawdziwych nadal 95, a wiarygodność alarmu rośnie do 0,490.",
               "Wniosek jest praktyczny: przy rzadkich awariach o wiarygodności alarmu decyduje przede wszystkim FPR, a nie czułość. Podniesienie czułości z 0,95 do 1 dodałoby pięć prawdziwych alarmów; obniżenie FPR o jeden punkt procentowy usuwa 99 fałszywych."
             ),
             risk_check("d3_chk_ppv",
@@ -648,27 +648,40 @@ alarm_server <- function(input, output, session) {
       columns = 1
     )
   })
+  # Siatka pokazuje tylko alarmy (prawdziwe i fałszywe): 10 000 pól byłoby
+  # nieczytelne, a proporcja alarmów to właśnie wiarygodność alarmu.
   grid_plot <- reactive({
     d <- detector()
-    counts <- c(d$alarm[1], d$alarm[2], d$no_alarm[1], d$no_alarm[2])
-    labels <- c("Awaria + alarm", "Brak awarii + alarm", "Awaria bez alarmu", "Brak awarii bez alarmu")
-    dat <- data.frame(type = factor(rep(labels, counts), levels = labels))
-    dat$id <- seq_len(nrow(dat))
-    dat$x <- (dat$id - 1L) %% 100L
-    dat$y <- (dat$id - 1L) %/% 100L
-    legend_labels <- paste0(labels, " (", format(counts, big.mark = " ", trim = TRUE), ")")
-    # Jedno pole na zmianę; alarmy (prawdziwe i fałszywe) tworzą pasek u góry,
-    # a zmiany bez alarmu są tłem, żeby proporcja w pasku była widoczna.
+    tp <- d$alarm[1]
+    fp <- d$alarm[2]
+    outside <- paste0(
+      "Poza siatką: ", format(d$no_alarm[1], big.mark = " ", trim = TRUE),
+      " awarii bez alarmu i ", format(d$no_alarm[2], big.mark = " ", trim = TRUE),
+      " zmian bez awarii i bez alarmu."
+    )
+    n <- tp + fp
+    if (n == 0) {
+      return(ggplot() + annotate("text", x = 0, y = 0, label = "Brak alarmów") +
+        labs(title = "Alarmy w 10 000 zmian", caption = outside) + theme_void())
+    }
+    labels <- c("Prawdziwy alarm", "Fałszywy alarm")
+    dat <- data.frame(type = factor(rep(labels, c(tp, fp)), levels = labels))
+    ncol <- max(5L, round(sqrt(n) * 1.2))
+    dat$x <- (seq_len(n) - 1L) %% ncol
+    dat$y <- (seq_len(n) - 1L) %/% ncol
     ggplot(dat, aes(x, y, fill = type)) +
-      geom_raster() +
+      geom_tile(colour = if (n <= 1500) "white" else NA, linewidth = 0.3) +
       scale_y_reverse() +
       coord_equal(expand = FALSE) +
       scale_fill_manual(
-        values = c(upwr_accent, upwr_single_alt, upwr_secondary, upwr_rule),
-        labels = legend_labels, drop = FALSE
+        values = c(upwr_accent, upwr_single_alt),
+        labels = paste0(labels, " (", c(tp, fp), ")"), drop = FALSE
       ) +
       guides(fill = guide_legend(ncol = 1)) +
-      labs(x = NULL, y = NULL, fill = NULL) +
+      labs(
+        title = paste0("Każde pole to jeden alarm (", format(n, big.mark = " ", trim = TRUE), ")"),
+        caption = outside, x = NULL, y = NULL, fill = NULL
+      ) +
       theme_upwr() +
       theme(
         axis.text = element_blank(), axis.ticks = element_blank(),
@@ -676,7 +689,7 @@ alarm_server <- function(input, output, session) {
         legend.position = "bottom", legend.key.size = grid::unit(1.1, "lines")
       )
   })
-  zoom_plot_server("a3_grid", grid_plot, alt = "Siatka dziesięciu tysięcy zmian z prawdziwymi i fałszywymi alarmami.")
+  zoom_plot_server("a3_grid", grid_plot, alt = "Siatka wszystkich alarmów w dziesięciu tysiącach zmian: prawdziwe i fałszywe alarmy jako pola dwóch kolorów.")
   curve_plot <- reactive({
     prevalence <- seq(.0001, .2, length.out = 300)
     dat <- data.frame(prevalence, posterior = vapply(prevalence, risk_bayes, numeric(1),
