@@ -978,6 +978,7 @@ warunki_server <- function(input, output, session) {
     )
     ggplot(long, aes(group, count, fill = outcome)) +
       geom_col(position = "fill") +
+      scale_x_discrete(labels = scales::label_wrap(12)) +
       scale_y_continuous(labels = scales::percent) +
       scale_fill_manual(values = c("Incydent" = upwr_accent, "Brak incydentu" = upwr_reference)) +
       labs(title = "Udziały w dwóch mianownikach", x = NULL, y = "Udział", fill = "Wynik") +
@@ -1028,6 +1029,7 @@ warunki_server <- function(input, output, session) {
       p = c(independent, with_common)
     ), aes(model, p, fill = model)) +
       geom_col(width = .6) +
+      scale_x_discrete(labels = scales::label_wrap(14)) +
       scale_fill_manual(values = upwr_cat_n(2), guide = "none") +
       labs(title = "P jednoczesnej utraty dwóch zabezpieczeń", x = NULL, y = "P(awarii)") +
       theme_upwr()

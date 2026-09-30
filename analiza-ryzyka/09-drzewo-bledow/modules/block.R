@@ -594,14 +594,14 @@ fta_server <- function(input, output, session) {
   })
   tree_value <- reactive(risk_fta_top(input$f9_init, input$f9_detect, input$f9_suppress))
   tree_plot <- reactive({
-    nodes <- data.frame(x = c(2, 1, 3, .5, 1.5), y = c(3, 2, 2, 1, 1), label = c("TOP (AND)", "Inicjacja", "OR", "Brak detekcji", "Brak tłumienia"), type = c("Szczytowe", "Bazowe", "Bramka", "Bazowe", "Bazowe"))
+    nodes <- data.frame(x = c(2, 1, 3, .5, 1.5), y = c(3, 2, 2, 1, 1), label = c("TOP (AND)", "Inicjacja", "OR", "Brak\ndetekcji", "Brak\ntłumienia"), type = c("Szczytowe", "Bazowe", "Bramka", "Bazowe", "Bazowe"))
     edges <- data.frame(x = c(2, 2, 3, 3), y = c(3, 3, 2, 2), xend = c(1, 3, .5, 1.5), yend = c(2, 2, 1, 1))
     ggplot() +
       geom_segment(data = edges, aes(x, y, xend = xend, yend = yend), colour = upwr_reference) +
       geom_point(data = nodes, aes(x, y, shape = type, colour = type), size = 7) +
-      geom_text(data = nodes, aes(x, y - .25, label = label), size = 3) +
+      geom_text(data = nodes, aes(x, y - .3, label = label), size = 4, lineheight = 0.9, vjust = 1) +
       scale_colour_manual(values = upwr_cat_n(3)) +
-      coord_equal(xlim = c(0, 3.5), ylim = c(.5, 3.4)) +
+      coord_equal(xlim = c(-.3, 3.8), ylim = c(-.1, 3.4)) +
       labs(title = "Małe drzewo Bananpolu", x = NULL, y = NULL, shape = NULL, colour = NULL) +
       theme_upwr() +
       theme(axis.text = element_blank(), axis.ticks = element_blank())

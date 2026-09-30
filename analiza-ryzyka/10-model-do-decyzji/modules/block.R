@@ -656,7 +656,7 @@ integracja_server <- function(input, output, session) {
     d <- bananpol$interventions
     d$result <- vapply(d$id, intervention_top, numeric(1))
     d$budget <- ifelse(d$cost_index <= input$i10_budget, "W budżecie", "Poza budżetem")
-    ggplot(d, aes(reorder(label, result), result, fill = budget)) + geom_col() + coord_flip() + scale_fill_manual(values = upwr_cat_n(length(unique(d$budget)))) + labs(title = "Wynik po interwencji", x = NULL, y = "P(TOP) na misję", fill = NULL) + theme_upwr()
+    ggplot(d, aes(reorder(label, result), result, fill = budget)) + geom_col() + scale_x_discrete(labels = scales::label_wrap(14)) + coord_flip() + scale_fill_manual(values = upwr_cat_n(length(unique(d$budget)))) + labs(title = "Wynik po interwencji", x = NULL, y = "P(TOP) na misję", fill = NULL) + theme_upwr()
   })
   zoom_plot_server("i10_interventions_plot", interventions_plot, alt = "Porównanie ryzyka po czterech działaniach z oznaczeniem dostępności w budżecie.")
   output$i10_intervention_stats <- renderUI({
@@ -676,7 +676,7 @@ integracja_server <- function(input, output, session) {
   scenarios_plot <- reactive({
     d <- scenario_results()
     d$scenario <- factor(d$scenario, levels = c("Optymistyczny", "Bazowy", "Ostrożny"))
-    ggplot(d, aes(label, result, fill = scenario)) + geom_col(position = "dodge") + coord_flip() + scale_fill_manual(values = upwr_cat_n(3)) + labs(title = "Każda opcja w każdym scenariuszu", x = NULL, y = "P(TOP) po działaniu", fill = "Scenariusz") + theme_upwr()
+    ggplot(d, aes(label, result, fill = scenario)) + geom_col(position = "dodge") + scale_x_discrete(labels = scales::label_wrap(14)) + coord_flip() + scale_fill_manual(values = upwr_cat_n(3)) + labs(title = "Każda opcja w każdym scenariuszu", x = NULL, y = "P(TOP) po działaniu", fill = "Scenariusz") + theme_upwr()
   })
   zoom_plot_server("i10_scenarios", scenarios_plot, alt = "Trzy scenariusze ryzyka po każdej interwencji.")
   output$i10_scenarios_stats <- renderUI({

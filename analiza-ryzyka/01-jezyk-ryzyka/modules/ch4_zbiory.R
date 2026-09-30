@@ -437,18 +437,8 @@ ch4_server <- function(input, output, session) {
       )
     }
 
-    bottom_label <- switch(
-      as.character(step),
-      "1" = "Najpierw odczytaj dane — jeszcze niczego nie dodajemy",
-      "2" = "0,70 + 0,60 = 1,30  →  wynik niemożliwy",
-      "3" = "1,30 − 0,40 = 0,90  →  część wspólna pozostaje dokładnie raz",
-      "4" = "P(A ∩ B) = 0  →  P(A ∪ B) = P(A) + P(B) = 0,75"
-    )
-
     plot +
-      annotate("text", x = 5, y = 0.82, label = bottom_label,
-               colour = upwr_ink, size = 4.5) +
-      coord_equal(xlim = c(0.5, 9.5), ylim = c(0.3, 6.25), expand = FALSE) +
+      coord_equal(xlim = c(0.5, 9.5), ylim = c(0.6, 6.25), expand = FALSE) +
       labs(
         subtitle = paste("Krok", step, "z 4"),
         x = NULL,

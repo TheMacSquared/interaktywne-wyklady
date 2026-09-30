@@ -201,6 +201,32 @@ zoom_plot_font_scale_inline <- 1.1
 zoom_plot_font_scale_modal  <- 1.5
 zoom_plot_res               <- 96
 
+# Tytuł, podtytuł i podpis łamiemy tak, żeby mieściły się w szerokości wykresu
+# (ggplot sam ich nie łamie, a w wąskiej kolumnie widżetu byłyby ucięte).
+# Przybliżenie: średnia szerokość znaku to ok. 0,55 wysokości czcionki.
+wrap_plot_labels <- function(p, width_px, k) {
+  if (is.null(width_px) || !is.finite(width_px) || width_px <= 0) return(p)
+  labs_now <- ggplot2::get_labs(p)
+  wrap_one <- function(txt, rel_size) {
+    if (!is.character(txt) || length(txt) != 1L || is.na(txt)) return(txt)
+    px_per_char <- 0.55 * 11 * k * rel_size * 96 / 72
+    n <- max(12L, floor((width_px - 16) / px_per_char))
+    paste(strwrap(txt, width = n), collapse = "\n")
+  }
+  p <- p + ggplot2::labs(
+    title    = wrap_one(labs_now$title, 1.3),
+    subtitle = wrap_one(labs_now$subtitle, 1.0),
+    caption  = wrap_one(labs_now$caption, 0.8)
+  )
+  # W wąskim wykresie legenda z boku zabiera połowę szerokości, a etykiety osi
+  # nachodzą na siebie — legenda idzie pod wykres, kolidujące etykiety znikają.
+  if (width_px < 480) {
+    p <- p + ggplot2::theme(legend.position = "bottom", legend.direction = "vertical") +
+      ggplot2::guides(x = ggplot2::guide_axis(check.overlap = TRUE))
+  }
+  p
+}
+
 zoom_plot_server <- function(id, plot_fn,
                              alt = "Wykres ilustrujący omawiane zagadnienie") {
   moduleServer(id, function(input, output, session) {
@@ -214,9 +240,12 @@ zoom_plot_server <- function(id, plot_fn,
       }
     }, priority = 100)
 
-    scaled_plot <- function(k) {
+    scaled_plot <- function(k, out_id) {
       p <- plot_fn()
       if (inherits(p, "ggplot")) {
+        p <- wrap_plot_labels(
+          p, session$clientData[[paste0("output_", session$ns(out_id), "_width")]], k
+        )
         # Legenda w theme_upwr ma rel(0.8–0.85) — na sali za małe,
         # więc w wykresach wykładu rysujemy ją w pełnym rozmiarze tekstu.
         p <- p + ggplot2::theme(
@@ -228,7 +257,7 @@ zoom_plot_server <- function(id, plot_fn,
       p
     }
 
-    output$plot <- renderPlot(scaled_plot(zoom_plot_font_scale_inline), res = zoom_plot_res, alt = alt)
+    output$plot <- renderPlot(scaled_plot(zoom_plot_font_scale_inline, "plot"), res = zoom_plot_res, alt = alt)
 
     observeEvent(input$zoom, {
       showModal(modalDialog(
@@ -239,6 +268,6 @@ zoom_plot_server <- function(id, plot_fn,
       ))
     }, ignoreInit = TRUE)
 
-    output$plot_modal <- renderPlot(scaled_plot(zoom_plot_font_scale_modal), res = zoom_plot_res, alt = alt)
+    output$plot_modal <- renderPlot(scaled_plot(zoom_plot_font_scale_modal, "plot_modal"), res = zoom_plot_res, alt = alt)
   })
 }

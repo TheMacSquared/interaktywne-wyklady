@@ -657,7 +657,7 @@ system_server <- function(input, output, session) {
     ggplot() +
       geom_segment(data = lines, aes(x = xs, xend = xe, y = ys, yend = ye), colour = upwr_reference, linewidth = 1) +
       geom_rect(data = boxes, aes(xmin = x - w, xmax = x + w, ymin = y - .45, ymax = y + .45), fill = upwr_secondary, colour = "white") +
-      geom_text(data = boxes, aes(x = x, y = y, label = label), colour = "white", fontface = "bold", size = 3.6) +
+      geom_text(data = boxes, aes(x = x, y = y, label = label), colour = "white", fontface = "bold", size = 4.2) +
       coord_equal(xlim = limits$x, ylim = limits$y) +
       labs(title = title, x = NULL, y = NULL) +
       theme_upwr() +
