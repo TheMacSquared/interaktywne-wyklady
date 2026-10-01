@@ -69,10 +69,13 @@ risk_quiz_questions <- function(quiz) {
   quiz$questions
 }
 
-risk_assessment_ui <- function(prefix, quiz, exercises) {
+# `quiz$intro` i `quiz$outro` (opcjonalne) to akapity przed panelem quizu i po nim;
+# `exercises_intro` (opcjonalne) — akapity pod nagłówkiem „Ćwiczenia”.
+risk_assessment_ui <- function(prefix, quiz, exercises, exercises_intro = NULL) {
   questions <- risk_quiz_questions(quiz)
   tagList(
     lc_h2(paste0(prefix, "-quiz"), "Krótki quiz"),
+    if (!is.null(quiz$intro)) risk_prose(quiz$intro),
     figure_panel(
       label = "Sprawdź rozumienie",
       title = paste(length(questions), "pytań: mechanizm i audyt modelu"),
@@ -91,12 +94,15 @@ risk_assessment_ui <- function(prefix, quiz, exercises) {
       uiOutput(paste0(prefix, "_quiz_feedback")),
       full_width = TRUE
     ),
+    if (!is.null(quiz$outro)) risk_prose(quiz$outro),
     lc_h2(paste0(prefix, "-cwiczenia"), "Ćwiczenia"),
+    if (!is.null(exercises_intro)) risk_prose(exercises_intro),
     figure_panel(
       label = "Praca własna",
       title = "Od rachunku do decyzji",
       tags$ol(lapply(exercises, function(exercise) {
         # Ćwiczenie to tekst albo lista z polami task i answer (odpowiedź zwinięta).
+        # `task` może zawierać kontrolki; ich ocena należy wtedy do serwera bloku.
         if (is.character(exercise)) {
           return(tags$li(exercise))
         }
@@ -438,7 +444,8 @@ risk_chapter_from_config <- function(block, chapter, index, next_chapter = NULL)
       lc_chapter_next(
         num = sprintf("%02d", index + 1L),
         title = next_chapter$title,
-        lead = next_chapter$lead,
+        # `teaser` to krótsza zapowiedź na karcie „Dalej”; domyślnie lead rozdziału.
+        lead = next_chapter$teaser %||% next_chapter$lead,
         target_id = paste0("ch-", next_chapter$id)
       )
     )

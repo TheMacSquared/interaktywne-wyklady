@@ -178,14 +178,3 @@ format_probability_pl <- function(probability, digits = 3L) {
   decimal <- formatC(probability, format = "f", digits = digits)
   paste0(gsub("\\.", ",", decimal), " (", round(100 * probability, 1), "%)")
 }
-
-quiz_questions <- jsonlite::fromJSON(
-  file.path(app_dir, "modules", "quiz_questions.json"),
-  simplifyVector = FALSE
-)
-
-quiz_choices <- function(question) {
-  option_codes <- names(question$options)
-  option_labels <- unlist(question$options, use.names = FALSE)
-  stats::setNames(option_codes, option_labels)
-}

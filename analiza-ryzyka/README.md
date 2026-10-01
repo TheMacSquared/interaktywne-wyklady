@@ -66,7 +66,7 @@ analiza-ryzyka/
 ├── docs/                 # plany źródłowe, ocena i plan kanoniczny
 ├── scripts/              # kontrole projektu
 ├── tests/                # testy funkcji oraz smoke test aplikacji
-├── 01-jezyk-ryzyka/      # pełna aplikacja referencyjna
+├── 01-jezyk-ryzyka/      # wykład 01 (block.R + helpers.R widżetów)
 └── 02-warunki/ ... 10-model-do-decyzji/
                           # pełne bloki z lokalnym modules/block.R
 ```

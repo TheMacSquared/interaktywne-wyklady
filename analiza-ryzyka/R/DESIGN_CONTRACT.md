@@ -7,7 +7,8 @@ tych reguł bez warstw kompatybilności.
 ## Zakres
 
 Kontrakt dotyczy wszystkich aplikacji w `analiza-ryzyka/` opartych o
-`lecture_page()`. Pierwszą aplikacją referencyjną jest `01-jezyk-ryzyka/`.
+`lecture_page()`. Wszystkie wykłady 01–10 zapisują treść w `modules/block.R`
+jako listę konfiguracyjną renderowaną przez `risk_block_chapters()` z `R/risk_block.R`.
 
 ## Shell Aplikacji
 
@@ -20,10 +21,12 @@ source(file.path(project_root, "R", "palette.R"),        local = TRUE)
 source(file.path(project_root, "R", "theme_upwr.R"),     local = TRUE)
 source(file.path(project_root, "R", "shared.R"),         local = TRUE)
 source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
+source(file.path(project_root, "R", "risk_block.R"),     local = TRUE)
+source(file.path(app_dir, "modules", "block.R"),         local = TRUE)
 
 lc_apply_ggplot_defaults()
 
-.chapters <- list(ch1_ui, ch2_ui, ch3_ui)
+.chapters <- nazwa_chapters   # risk_block_chapters(nazwa_block)
 
 ui <- lecture_page(
   lecture_id    = "nazwa-folderu",
@@ -35,9 +38,7 @@ ui <- lecture_page(
 
 server <- function(input, output, session) {
   lc <- lecture_server(.chapters, input, output, session)
-  ch1_server(input, output, session)
-  ch2_server(input, output, session)
-  ch3_server(input, output, session)
+  nazwa_server(input, output, session)
 }
 ```
 

@@ -58,16 +58,6 @@ testthat::test_that("działania na zdarzeniach zachowują liczebność przestrze
   testthat::expect_error(env$event_set_counts(100, 80, 40, 10))
 })
 
-testthat::test_that("quiz ma poprawne klucze odpowiedzi", {
-  env <- load_lecture_helpers()
-  testthat::expect_gte(length(env$quiz_questions), 5)
-  for (question in env$quiz_questions) {
-    testthat::expect_true(question$correct %in% names(question$options))
-    testthat::expect_gte(length(question$options), 3)
-    testthat::expect_true(nzchar(question$explanation))
-  }
-})
-
 testthat::test_that("pula kart ćwiczenia nie zdradza kolejności ról", {
   env <- load_lecture_helpers()
   testthat::expect_setequal(env$risk_scenario_pool_order, env$risk_scenario_items$id)

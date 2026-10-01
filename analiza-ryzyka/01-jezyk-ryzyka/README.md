@@ -27,8 +27,13 @@ Po wykładzie student potrafi:
 3. Siatka palet dla klasycznej definicji prawdopodobieństwa i dopełnienia.
 4. Siatka stu kontroli dla sumy, części wspólnej i dopełnienia zdarzeń.
 5. Porównanie prawdopodobieństwa, skutków i kryteriów decyzji.
-6. Quiz z dziesięcioma pytaniami i objaśnieniami.
-7. Cztery ćwiczenia: raport, zbiory, dobór modelu i transfer kontekstu.
+6. Rozdział „Ściąga i sprawdzenie”: ściąga, quiz z pięcioma pytaniami i dwanaście
+   ćwiczeń — cztery interaktywne (raport, zbiory, dobór modelu, transfer kontekstu)
+   i osiem z odpowiedziami zwiniętymi pod treścią.
+
+Treść jest zapisana w `modules/block.R` w tym samym formacie co wykłady 02–10
+(`risk_block_chapters()` z `R/risk_block.R`); `modules/helpers.R` zawiera czyste
+funkcje widżetów, testowane w `tests/testthat/test-lecture-01-helpers.R`.
 
 Wartości liczbowe są fikcyjnymi parametrami dydaktycznymi, nie estymacjami
 rzeczywistego ryzyka zawodowego.

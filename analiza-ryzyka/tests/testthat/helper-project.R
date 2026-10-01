@@ -8,7 +8,7 @@ if (!nzchar(risk_root)) {
 app_dir <- file.path(risk_root, "01-jezyk-ryzyka")
 
 expected_apps <- c(
-  "01-jezyk-ryzyka" = 8L,
+  "01-jezyk-ryzyka" = 6L,
   "02-warunki" = 7L,
   "03-alarm-i-prawda" = 6L,
   "04-wiele-prob" = 6L,
