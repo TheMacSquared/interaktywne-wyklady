@@ -96,11 +96,14 @@ risk_assessment_ui <- function(prefix, quiz, exercises) {
       label = "Praca własna",
       title = "Od rachunku do decyzji",
       tags$ol(lapply(exercises, function(exercise) {
-        # Ćwiczenie to tekst albo lista z polami task i answer (odpowiedź zwinięta).
+        # Ćwiczenie to tekst albo lista z polami task, answer (odpowiedź zwinięta)
+        # i opcjonalnym type — rodzajem zadania pokazanym jako plakietka.
         if (is.character(exercise)) {
           return(tags$li(exercise))
         }
         tags$li(
+          class = "lc-exercise",
+          if (!is.null(exercise$type)) tags$span(class = "lc-exercise-type", exercise$type),
           exercise$task,
           if (!is.null(exercise$answer)) {
             tags$details(
@@ -245,7 +248,7 @@ risk_definition <- function(num, term, text) {
   tags$div(
     class = "lc-def",
     tags$div(class = "lc-def-label", paste0("Definicja ", num, " · ", term)),
-    tags$div(class = "lc-def-body", lapply(text, tags$p))
+    tags$div(class = "lc-def-body", risk_paragraphs(text))
   )
 }
 
@@ -295,7 +298,7 @@ risk_example <- function(num, title, problem, steps, answer = NULL, steps_type =
     tags$div(class = "lc-example-label", paste0("Przykład ", num, " · ", title)),
     tags$div(
       class = "lc-example-body",
-      lapply(problem, function(x) if (inherits(x, "shiny.tag")) x else tags$p(x))
+      risk_paragraphs(problem)
     ),
     tags$details(
       class = "lc-example-solution",
@@ -349,24 +352,128 @@ risk_check <- function(id, question, choices, correct, explanation, hints = NULL
   )
 }
 
-# Instrukcja przed widgetem: co zmienić i na co patrzeć.
+# Instrukcja przed widgetem: co zmienić i na co patrzeć. Tekst w konfiguracji
+# zaczyna się małą literą (dawniej po „Do zrobienia:”); etykieta stoi teraz
+# osobno, więc zdanie otwieramy wielką literą.
 risk_try <- function(text) {
-  tags$div(class = "lc-try", tags$strong("Do zrobienia:"), paste0(" ", text))
+  text <- paste0(toupper(substr(text, 1, 1)), substring(text, 2))
+  tags$div(
+    class = "lc-try",
+    tags$div(class = "lc-try-label", "Do zrobienia"),
+    tags$p(risk_inline(text))
+  )
+}
+
+# Znaczniki w tekście prozy. `[[termin]]` wyróżnia pojęcie w miejscu, w którym
+# się je wprowadza (kolor i kursywa, nie pogrubienie). Inne fragmenty zostają
+# zwykłym tekstem, więc nie potrzeba HTML().
+risk_inline <- function(x) {
+  if (!is.character(x) || length(x) != 1L) {
+    return(x)
+  }
+  match <- gregexpr("\\[\\[([^]]+)\\]\\]", x, perl = TRUE)
+  if (match[[1]][1] == -1L) {
+    return(x)
+  }
+  plain <- regmatches(x, match, invert = TRUE)[[1]]
+  terms <- gsub("^\\[\\[|\\]\\]$", "", regmatches(x, match)[[1]])
+  out <- list(plain[1])
+  for (i in seq_along(terms)) {
+    out <- c(out, list(tags$span(class = "lc-term", terms[i], .noWS = "outside"), plain[i + 1L]))
+  }
+  tagList(Filter(function(piece) !identical(piece, ""), out))
+}
+
+risk_paragraphs <- function(text) {
+  lapply(text, function(x) if (inherits(x, "shiny.tag")) x else tags$p(risk_inline(x)))
 }
 
 risk_prose <- function(text) {
   # Akapit lub kilka akapitów: wektor znakowy renderuje się jako kolejne lc_p.
-  tagList(lapply(text, lc_p))
+  tagList(lapply(text, function(x) lc_p(risk_inline(x))))
+}
+
+# Lista w toku prozy, z tą samą typografią co akapit.
+risk_list <- function(items, ordered = FALSE) {
+  (if (ordered) tags$ol else tags$ul)(
+    class = "lc-list",
+    lapply(items, function(item) tags$li(risk_inline(item)))
+  )
+}
+
+# Ramki w toku tekstu. Każda ma etykietę i jedną funkcję:
+# Zapamiętaj — wniosek, który ma zostać po sekcji (2–3 na rozdział, nie więcej);
+# Pułapka — typowy błąd, w miejscu, gdzie tekst o nim mówi;
+# Jak czytać wynik — odczyt widgetu albo komentarz do rozwiązanego przykładu;
+# Własność — twierdzenie, które wynika z definicji.
+risk_box <- function(kind, label, text) {
+  tags$div(
+    class = paste0("lc-box lc-box-", kind),
+    tags$div(class = "lc-box-label", label),
+    tags$div(class = "lc-box-body", risk_paragraphs(text))
+  )
+}
+
+risk_keypoint <- function(text) risk_box("key", "Zapamiętaj", text)
+risk_pitfall <- function(text) risk_box("pitfall", "Pułapka", text)
+risk_reading <- function(text) risk_box("reading", "Jak czytać wynik", text)
+risk_property <- function(name, text) risk_box("property", paste0("Własność · ", name), text)
+
+# Procedura krok po kroku: numer kroku rysuje plakietka, więc tekst kroku
+# zaczyna się od treści, nie od „Krok pierwszy:”.
+risk_steps <- function(...) {
+  tags$ol(class = "lc-steps", lapply(list(...), function(step) tags$li(risk_inline(step))))
+}
+
+# Zdanie objaśniające tuż pod wzorem (jak go czytać, co mówi).
+risk_formula_note <- function(text) {
+  tags$p(class = "lc-formula-note", risk_inline(text))
+}
+
+# Tabela w stylu kursu. `rows` to lista wektorów (albo list) komórek.
+risk_table <- function(header, rows) {
+  tags$div(
+    class = "lc-table-wrap",
+    tags$table(
+      class = "lc-table lc-table-striped lc-table-bordered",
+      tags$thead(tags$tr(lapply(header, tags$th))),
+      tags$tbody(lapply(rows, function(row) tags$tr(lapply(row, tags$td))))
+    )
+  )
+}
+
+# Notka na marginesie przy konkretnym akapicie. W odróżnieniu od zwykłego
+# `margin_callout` zostaje widoczna na wąskim ekranie (pod akapitem), bo niesie
+# treść wykładu, a nie ozdobnik.
+risk_note <- function(label, text, color = "wskazowka") {
+  tagAppendAttributes(
+    margin_callout(label = label, risk_paragraphs(text), color = color),
+    class = "lc-margin-keep"
+  )
 }
 
 risk_callout <- function(callout) {
   if (is.null(callout)) {
     return(NULL)
   }
-  margin_callout(
-    label = callout$label,
-    callout$text,
-    color = callout$color %||% "wskazowka"
+  risk_note(callout$label, callout$text, color = callout$color %||% "wskazowka")
+}
+
+# Mapa rozdziału pod nagłówkiem: tytuły sekcji jako odnośniki.
+risk_chapter_map <- function(block, chapter) {
+  sections <- chapter$sections %||% list()
+  if (length(sections) < 2L) {
+    return(NULL)
+  }
+  tags$nav(
+    class = "lc-chapter-map", `aria-label` = "W tym rozdziale",
+    tags$div(class = "lc-chapter-map-label", "W tym rozdziale"),
+    tags$ol(lapply(sections, function(section) {
+      tags$li(tags$a(
+        href = paste0("#", block$id, "-", chapter$id, "-", section$id),
+        section$title
+      ))
+    }))
   )
 }
 
@@ -379,13 +486,9 @@ risk_config_extras <- function(x) {
       lc_formula_box(withMathJax(paste0("$$", x$formula, "$$")))
     },
     x$widget,
-    if (!is.null(x$takeaway)) risk_prose(x$takeaway),
-    if (!is.null(x$decision)) {
-      lc_feedback(type = "ok", tags$strong("Decyzja:"), paste0(" ", x$decision))
-    },
-    if (!is.null(x$pitfall)) {
-      lc_feedback(type = "warning", tags$strong("Pułapka:"), paste0(" ", x$pitfall))
-    },
+    if (!is.null(x$takeaway)) risk_keypoint(x$takeaway),
+    if (!is.null(x$decision)) risk_box("decision", "Decyzja", x$decision),
+    if (!is.null(x$pitfall)) risk_pitfall(x$pitfall),
     if (isTRUE(x$extension)) {
       lc_feedback(
         type = "info", tags$strong("Rozszerzenie:"),
@@ -403,7 +506,7 @@ risk_section <- function(block, chapter, section) {
     lc_h2(paste0(block$id, "-", chapter$id, "-", section$id), section$title),
     if (!is.null(section$text)) risk_prose(section$text),
     risk_callout(section$callout),
-    if (!is.null(section$bullets)) tags$ul(lapply(section$bullets, tags$li)),
+    if (!is.null(section$bullets)) risk_list(section$bullets),
     risk_body(section$body),
     risk_config_extras(section)
   )
@@ -426,6 +529,7 @@ risk_chapter_from_config <- function(block, chapter, index, next_chapter = NULL)
       title = paste0(chapter$hook %||% chapter$title, "."),
       lead = chapter$lead
     ),
+    risk_chapter_map(block, chapter),
     if (!is.null(chapter$intro)) risk_prose(chapter$intro),
     risk_callout(chapter$callout),
     risk_body(chapter$body),

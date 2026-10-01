@@ -59,7 +59,7 @@ Kanoniczne komponenty:
 | Wzór z adnotacjami | `risk_annotated_formula()` |
 | Metryki i statystyki | `lc_stat_grid()` + `lc_stat_box()` |
 | Dynamiczny feedback | `lc_feedback()` |
-| Notka marginalna | `margin_callout()` albo `margin_note()` |
+| Notka marginalna | `margin_callout()` albo `margin_note()`; w skrypcie `risk_note()` |
 | Notka z kodem | `margin_code_note()` |
 | Przejście do następnego rozdziału | `lc_chapter_next()` |
 
@@ -71,6 +71,25 @@ Kanoniczne komponenty:
 - `note`: jedno–dwa krótkie zdania, np. „12 na 100 zmian z przegrzaniem”; wyjaśnienie mianownika mieści się w notce, nie w osobnym callout.
 - `color` łączy wyraz z jego notą; te same kolory, co w reszcie przykładu.
 - Używamy, gdy chcemy pokazać, skąd każda liczba wzoru się bierze. Nie używamy do wzorów ogólnych (wtedy `risk_formula()`).
+
+### Oznaczenia w skrypcie (wykłady 02–10)
+
+Proza w `body` nie powinna iść ciągiem akapitów. Akapit, który pełni jedną z funkcji poniżej, dostaje odpowiedni element. Słowa zostają; zmienia się tylko oprawa.
+
+| Funkcja fragmentu | Helper | Uwagi |
+|---|---|---|
+| Wniosek, który ma zostać po sekcji | `risk_keypoint()` | 2–3 na rozdział, nie więcej; pole `takeaway` renderuje się tak samo |
+| Typowy błąd | `risk_pitfall()` | w miejscu, gdzie tekst o nim mówi; pole `pitfall` sekcji lub rozdziału też |
+| Odczyt widgetu, komentarz do rozwiązanego przykładu | `risk_reading()` | etykieta „Jak czytać wynik”; inną daje `risk_box("reading", label, text)` |
+| Twierdzenie wynikające z definicji | `risk_property(name, text)` | osobno od `risk_definition()` |
+| Procedura w krokach | `risk_steps(...)` | numer kroku rysuje plakietka; tekst kroku bez „Krok pierwszy:” |
+| Zdanie objaśniające wzór | `risk_formula_note()` | tuż pod `risk_formula()` |
+| Wyliczenie w prozie | `risk_list()` | pole `bullets` też; ta sama typografia co akapit |
+| Dygresja, analogia, zapowiedź | `risk_note(label, text)` | margines; widoczna także na wąskim ekranie; do ~300 znaków |
+| Tabela | `risk_table(header, rows)` | zamiast ręcznego `tags$table` |
+| Pojęcie wprowadzane w tekście | `[[termin]]` w stringu | kolor i kursywa, nie pogrubienie; tylko przy pierwszym użyciu |
+
+Ćwiczenia w `risk_assessment_ui()` przyjmują pole `type` (np. „Bananpol”, „Transfer”), które pokazuje się jako plakietka; tekst zadania zaczyna się wtedy od treści, bez prefiksu. Rozdział z co najmniej dwiema sekcjami dostaje pod nagłówkiem mapę „W tym rozdziale”.
 
 TOC wykrywa tylko sekcje tworzone przez `lc_h2()` albo zgodne z atrybutem `data-lc-section`.
 
