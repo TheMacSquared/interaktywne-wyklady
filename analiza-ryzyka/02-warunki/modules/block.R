@@ -23,40 +23,35 @@ warunki_quiz <- list(questions = list(
 ))
 warunki_exercises <- list(
   list(
-    type = "Bananpol",
-    task = "Policz P(incydent) z dwóch trybów pracy i zapisz wynik jako częstość na 1000 zmian. Przyjmij udział pracy w przeciążeniu 0,20, P(incydent | przeciążenie) = 0,15 i P(incydent | normalna praca) = 0,01.",
+    task = "Bananpol: policz P(incydent) z dwóch trybów pracy i zapisz wynik jako częstość na 1000 zmian. Przyjmij udział pracy w przeciążeniu 0,20, P(incydent | przeciążenie) = 0,15 i P(incydent | normalna praca) = 0,01.",
     answer = c(
       "Tryby „przeciążenie” i „normalna praca” tworzą układ zupełny, więc stosujemy wzór (2.4): P(incydent) = 0,20 · 0,15 + 0,80 · 0,01 = 0,030 + 0,008 = 0,038.",
       "W naturalnych częstościach: około 38 incydentów na 1000 zmian, z czego 30 na 200 zmianach w przeciążeniu i 8 na 800 zmianach normalnych."
     )
   ),
   list(
-    type = "Diagnostyka",
-    task = "Wskaż, dlaczego wspólne zasilanie narusza założenie niezależności dwóch zabezpieczeń.",
+    task = "Diagnostyka: wskaż, dlaczego wspólne zasilanie narusza założenie niezależności dwóch zabezpieczeń.",
     answer = c(
       "Utrata wspólnego zasilania wyłącza oba zabezpieczenia naraz. Informacja, że jedno z nich nie zadziałało, zwiększa więc prawdopodobieństwo, że zasilanie padło, a tym samym — że nie zadziałało również drugie. P(awaria 2 | awaria 1) > P(awaria 2), co z definicji 2.3 oznacza zależność.",
       "Liczbowo, ze wzoru (2.7) przy q = 0,05 i c = 0,01: P(obie) = 0,01 + 0,99 · 0,0025 ≈ 0,0125, czyli mniej więcej pięć razy więcej niż 0,0025 z iloczynu (2.6)."
     )
   ),
   list(
-    type = "Transfer",
-    task = "Opisz warunek i właściwy mianownik dla ryzyka wypadku podczas pracy nocnej.",
+    task = "Transfer: opisz warunek i właściwy mianownik dla ryzyka wypadku podczas pracy nocnej.",
     answer = c(
       "Zdarzenie A: wypadek przy pracy podczas zmiany. Warunek B: zmiana nocna. P(A | B) liczymy wśród wszystkich zmian nocnych w ustalonym okresie (albo wśród przepracowanych godzin nocnych, jeśli zmiany mają różną długość), a nie wśród wszystkich zmian ani wśród wszystkich wypadków.",
       "Udział wypadków nocnych wśród wszystkich wypadków to P(B | A) — inna liczba, która zależy także od tego, ile pracy w ogóle wykonuje się nocą."
     )
   ),
   list(
-    type = "Odwrócenie warunku",
-    task = "W sytuacji z ćwiczenia 1 doszło do incydentu. Jakie jest prawdopodobieństwo, że zmiana przebiegała w trybie przeciążenia? Porównaj wynik z udziałem przeciążenia wśród wszystkich zmian.",
+    task = "Odwrócenie warunku: w sytuacji z ćwiczenia 1 doszło do incydentu. Jakie jest prawdopodobieństwo, że zmiana przebiegała w trybie przeciążenia? Porównaj wynik z udziałem przeciążenia wśród wszystkich zmian.",
     answer = c(
       "Ze wzoru Bayesa (2.5): P(przeciążenie | incydent) = 0,20 · 0,15 / 0,038 = 0,030 / 0,038 ≈ 0,789.",
       "Przeciążenie to tylko 20% zmian, ale około 79% incydentów. Informacja o incydencie prawie czterokrotnie podnosi ocenę, że zmiana była przeciążona."
     )
   ),
   list(
-    type = "Test niezależności z tabeli",
-    task = "W 1000 zmian było 400 zmian nocnych i 20 wypadków, z czego 10 nocą. Czy wypadek i zmiana nocna są niezależne?",
+    task = "Test niezależności z tabeli: w 1000 zmian było 400 zmian nocnych i 20 wypadków, z czego 10 nocą. Czy wypadek i zmiana nocna są niezależne?",
     answer = c(
       "P(W) = 20/1000 = 0,020, P(N) = 400/1000 = 0,40, P(W ∩ N) = 10/1000 = 0,010. Iloczyn P(W) · P(N) = 0,008 ≠ 0,010, więc zdarzenia są zależne.",
       "Równoważnie: P(W | N) = 10/400 = 0,025 > 0,020 = P(W), a P(N | W) = 10/20 = 0,50 > 0,40 = P(N). Związek jest słaby, a przy 20 wypadkach może być przypadkowy — rachunek na próbie nie zastępuje oceny niepewności."
@@ -313,12 +308,16 @@ warunki_signal_panel <- figure_panel(
       lc_stat_box("Porównanie", "około 7× więcej", caption = "silny sygnał do dalszego sprawdzenia", color = upwr_cat[["bursztyn"]])
     )
   ),
-  risk_table(
-    c("Wniosek", "Czy wynika z danych?", "Co dalej?"),
-    list(
-      c("Przegrzanie identyfikuje grupę o wyższej częstości", "Tak", "Sprawdź stabilność wyniku i jakość rejestru"),
-      c("Przegrzanie powoduje incydenty", "Jeszcze nie", "Poszukaj mechanizmu i zmiennych wspólnych"),
-      c("Warto skierować kontrolę na zmiany z przegrzaniem", "Możliwa decyzja operacyjna", "Określ koszt i skutek fałszywych alarmów")
+  tags$div(
+    class = "lc-table-wrap",
+    tags$table(
+      class = "lc-table lc-table-striped lc-table-bordered",
+      tags$thead(tags$tr(tags$th("Wniosek"), tags$th("Czy wynika z danych?"), tags$th("Co dalej?"))),
+      tags$tbody(
+        tags$tr(tags$td("Przegrzanie identyfikuje grupę o wyższej częstości"), tags$td("Tak"), tags$td("Sprawdź stabilność wyniku i jakość rejestru")),
+        tags$tr(tags$td("Przegrzanie powoduje incydenty"), tags$td("Jeszcze nie"), tags$td("Poszukaj mechanizmu i zmiennych wspólnych")),
+        tags$tr(tags$td("Warto skierować kontrolę na zmiany z przegrzaniem"), tags$td("Możliwa decyzja operacyjna"), tags$td("Określ koszt i skutek fałszywych alarmów"))
+      )
     )
   )
 )
@@ -328,22 +327,31 @@ warunki_sciaga_widget <- tagList(
     label = "Ściąga 2.1",
     title = "Trzy zapisy, trzy pytania",
     full_width = TRUE,
-    risk_table(
-      c("Zapis", "Pytanie", "Mianownik"),
-      list(
-        c("P(A)", "Jak często zachodzi incydent?", "wszystkie porównywalne zmiany"),
-        c("P(A | B)", "Jak często incydent zachodzi w grupie z warunkiem?", "tylko zmiany spełniające B"),
-        c("P(B | A)", "Jak często warunek towarzyszył incydentowi?", "tylko zmiany ze zdarzeniem A"),
-        c("P(A ∩ B)", "Jak często oba naraz?", "wszystkie porównywalne zmiany")
+    tags$table(
+      class = "lc-table lc-table-striped lc-table-bordered",
+      tags$thead(tags$tr(
+        tags$th("Zapis"), tags$th("Pytanie"), tags$th("Mianownik")
+      )),
+      tags$tbody(
+        tags$tr(tags$td("P(A)"), tags$td("Jak często zachodzi incydent?"), tags$td("wszystkie porównywalne zmiany")),
+        tags$tr(tags$td("P(A | B)"), tags$td("Jak często incydent zachodzi w grupie z warunkiem?"), tags$td("tylko zmiany spełniające B")),
+        tags$tr(tags$td("P(B | A)"), tags$td("Jak często warunek towarzyszył incydentowi?"), tags$td("tylko zmiany ze zdarzeniem A")),
+        tags$tr(tags$td("P(A ∩ B)"), tags$td("Jak często oba naraz?"), tags$td("wszystkie porównywalne zmiany"))
       )
     )
   ),
-  risk_formula("P(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}", num = "2.1"),
-  risk_formula_note("Warunek filtruje mianownik: liczymy A wyłącznie wśród przypadków, w których zaszło B."),
-  risk_formula("P(A\\cap B)=P(B)\\,P(A\\mid B)", num = "2.2"),
-  risk_formula_note("Wspólną drogę mnożymy etapami: najpierw wejście do grupy B, potem A wewnątrz tej grupy."),
-  risk_formula("P(A)=\\sum_i P(B_i)\\,P(A\\mid B_i)", num = "2.4"),
-  risk_formula_note("Wynik ogólny jest ważoną sumą rozłącznych dróg — wagi są udziałami trybów pracy."),
+  lc_formula_box(
+    withMathJax("$$P(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}$$"),
+    tags$p("Wzór (2.1). Warunek filtruje mianownik: liczymy A wyłącznie wśród przypadków, w których zaszło B.")
+  ),
+  lc_formula_box(
+    withMathJax("$$P(A\\cap B)=P(B)\\,P(A\\mid B)$$"),
+    tags$p("Wzór (2.2). Wspólną drogę mnożymy etapami: najpierw wejście do grupy B, potem A wewnątrz tej grupy.")
+  ),
+  lc_formula_box(
+    withMathJax("$$P(A)=\\sum_i P(B_i)\\,P(A\\mid B_i)$$"),
+    tags$p("Wzór (2.4). Wynik ogólny jest ważoną sumą rozłącznych dróg — wagi są udziałami trybów pracy.")
+  ),
   risk_assessment_ui("w2", warunki_quiz, warunki_exercises)
 )
 
@@ -362,34 +370,22 @@ warunki_block <- list(
         color = "uwaga"
       ),
       sections = list(
-        list(id = "sens", title = "Trzy podobne pytania", body = list(
-          "O incydent w Bananpolu można zapytać na trzy sposoby, które brzmią niemal tak samo, a odpowiadają na zupełnie różne pytania.",
-          risk_list(c(
-            "Można pytać, jak często incydent zdarza się w ogóle — wtedy liczymy go wśród wszystkich zmian.",
-            "Można pytać, jak często zdarza się po wykryciu przegrzania — wtedy liczymy go wyłącznie wśród zmian, na których czujnik zgłosił przegrzanie.",
-            "Można wreszcie pytać, jak często przegrzanie poprzedzało incydent — wtedy patrzymy wyłącznie na zmiany, na których incydent rzeczywiście zaszedł."
-          )),
+        list(id = "sens", title = "Trzy podobne pytania", text = c(
+          "O incydent w Bananpolu można zapytać na trzy sposoby, które brzmią niemal tak samo, a odpowiadają na zupełnie różne pytania. Można pytać, jak często incydent zdarza się w ogóle — wtedy liczymy go wśród wszystkich zmian. Można pytać, jak często zdarza się po wykryciu przegrzania — wtedy liczymy go wyłącznie wśród zmian, na których czujnik zgłosił przegrzanie. Można wreszcie pytać, jak często przegrzanie poprzedzało incydent — wtedy patrzymy wyłącznie na zmiany, na których incydent rzeczywiście zaszedł.",
           "Różnica między tymi pytaniami nie leży w zdarzeniu, o które pytamy, lecz w grupie przypadków, spośród których liczymy. Warunek „po wykryciu przegrzania” zawęża tę grupę: odrzucamy zmiany bez przegrzania i dopiero w tym, co zostało, sprawdzamy, jak często doszło do incydentu. To samo zdarzenie, inny mianownik — i inna liczba.",
-          risk_pitfall("Pomyłka między tymi pytaniami nie jest błędem rachunkowym, tylko błędem pytania. Dyrektor, który słyszy „12% zmian z przegrzaniem kończy się incydentem”, a zapamiętuje „12% wszystkich zmian kończy się incydentem”, zawyża problem siedmiokrotnie — mimo że nikt nie policzył niczego źle."),
-          "Dlatego każde pytanie o częstość formułujemy pełnym zdaniem, które nazywa zarówno zdarzenie, jak i grupę odniesienia:",
-          risk_list(c(
-            "Jak często dochodzi do incydentu? — liczymy wśród wszystkich porównywalnych zmian.",
-            "Jak często dochodzi do incydentu po wykryciu przegrzania? — liczymy tylko wśród zmian z przegrzaniem.",
-            "W ilu incydentach wcześniej wykryto przegrzanie? — liczymy tylko wśród zmian, na których zaszedł incydent."
-          ))
+          "Pomyłka między tymi pytaniami nie jest błędem rachunkowym, tylko błędem pytania. Dyrektor, który słyszy „12% zmian z przegrzaniem kończy się incydentem”, a zapamiętuje „12% wszystkich zmian kończy się incydentem”, zawyża problem siedmiokrotnie — mimo że nikt nie policzył niczego źle.",
+          "Dlatego każde pytanie o częstość formułujemy pełnym zdaniem, które nazywa zarówno zdarzenie, jak i grupę odniesienia:"
+        ), bullets = c(
+          "Jak często dochodzi do incydentu? — liczymy wśród wszystkich porównywalnych zmian.",
+          "Jak często dochodzi do incydentu po wykryciu przegrzania? — liczymy tylko wśród zmian z przegrzaniem.",
+          "W ilu incydentach wcześniej wykryto przegrzanie? — liczymy tylko wśród zmian, na których zaszedł incydent."
         )),
         list(
           id = "zapis", title = "Zapis, który pilnuje mianownika",
           body = list(
-            "Pełne zdania są dokładne, ale długie. Rachunek prawdopodobieństwa ma dla nich skrócony zapis, który zachowuje całą informację o mianowniku. Niech A oznacza zdarzenie „na zmianie doszło do incydentu”, a B — „czujnik wykrył przegrzanie”. Wtedy:",
-            risk_list(c(
-              "P(A) to prawdopodobieństwo incydentu liczone wśród wszystkich zmian,",
-              "P(A ∩ B) — prawdopodobieństwo, że na zmianie zaszły oba zdarzenia naraz, także liczone wśród wszystkich zmian,",
-              "a P(A | B) — prawdopodobieństwo incydentu liczone wyłącznie wśród zmian z przegrzaniem."
-            )),
-            risk_keypoint("Pionowa kreska w zapisie P(A | B) jest najważniejszym znakiem tego wykładu. To, co stoi na prawo od niej, opisuje grupę odniesienia; to, co stoi na lewo — zdarzenie, którego udział w tej grupie liczymy."),
             c(
-              "Zamiana stron kreski zamienia pytanie: P(B | A) to udział zmian z przegrzaniem wśród zmian z incydentem. Symbol ∩ oznacza natomiast „oba naraz” i niczego nie filtruje, dlatego P(A ∩ B) nigdy nie przekracza ani P(A), ani P(B).",
+              "Pełne zdania są dokładne, ale długie. Rachunek prawdopodobieństwa ma dla nich skrócony zapis, który zachowuje całą informację o mianowniku. Niech A oznacza zdarzenie „na zmianie doszło do incydentu”, a B — „czujnik wykrył przegrzanie”. Wtedy P(A) to prawdopodobieństwo incydentu liczone wśród wszystkich zmian, P(A ∩ B) — prawdopodobieństwo, że na zmianie zaszły oba zdarzenia naraz, także liczone wśród wszystkich zmian, a P(A | B) — prawdopodobieństwo incydentu liczone wyłącznie wśród zmian z przegrzaniem.",
+              "Pionowa kreska w zapisie P(A | B) jest najważniejszym znakiem tego wykładu. To, co stoi na prawo od niej, opisuje grupę odniesienia; to, co stoi na lewo — zdarzenie, którego udział w tej grupie liczymy. Zamiana stron kreski zamienia pytanie: P(B | A) to udział zmian z przegrzaniem wśród zmian z incydentem. Symbol ∩ oznacza natomiast „oba naraz” i niczego nie filtruje, dlatego P(A ∩ B) nigdy nie przekracza ani P(A), ani P(B).",
               "W Bananpolu zarejestrowano 1000 porównywalnych zmian. Przegrzanie wykryto na 100 z nich, incydentów było łącznie 17, a 12 z nich wystąpiło na zmianach z przegrzaniem. Te liczby wystarczą, by odpowiedzieć na wszystkie trzy pytania z poprzedniej sekcji — pod warunkiem, że do każdego dobierzemy właściwy mianownik."
             ),
             risk_example("2.1", "Trzy pytania, trzy mianowniki",
@@ -402,8 +398,7 @@ warunki_block <- list(
               ),
               answer = "Licznik 12 pojawia się w trzech ostatnich wynikach, ale za każdym razem dzielimy go przez inny mianownik: 1000, 100 albo 17. Stąd trzy różne liczby: 0,012, 0,12 i około 0,71. Żadna z nich nie jest „prawdziwszym” ryzykiem — każda odpowiada na inne pytanie."
             ),
-            risk_pitfall("Przykład 2.1 pokazuje, jak łatwo o pomyłkę w raporcie. Zdanie „siedem na dziesięć incydentów poprzedziło przegrzanie” dotyczy P(B | A) ≈ 0,71 i jest prawdziwe. Zdanie „siedem na dziesięć przegrzań kończy się incydentem” dotyczyłoby P(A | B) i jest fałszywe — w rzeczywistości incydentem kończy się 12 na 100 przegrzań. Obie wersje brzmią podobnie; różnią się tylko stroną kreski."),
-            risk_note("Dalej", "W kolejnych rozdziałach nadamy temu zapisowi formalną definicję i nauczymy się przechodzić od jednej liczby do drugiej."),
+            "Przykład 2.1 pokazuje, jak łatwo o pomyłkę w raporcie. Zdanie „siedem na dziesięć incydentów poprzedziło przegrzanie” dotyczy P(B | A) ≈ 0,71 i jest prawdziwe. Zdanie „siedem na dziesięć przegrzań kończy się incydentem” dotyczyłoby P(A | B) i jest fałszywe — w rzeczywistości incydentem kończy się 12 na 100 przegrzań. Obie wersje brzmią podobnie; różnią się tylko stroną kreski. W kolejnych rozdziałach nadamy temu zapisowi formalną definicję i nauczymy się przechodzić od jednej liczby do drugiej.",
             risk_check("w2_chk_zapis",
               "Kierownik zmiany pisze: „Na zmianach z incydentem przegrzanie wykryto w 12 przypadkach na 17”. Który zapis opisuje tę liczbę?",
               c("P(A | B)" = "ab", "P(B | A)" = "ba", "P(A ∩ B)" = "and"),
@@ -431,11 +426,8 @@ warunki_block <- list(
           id = "lekcja", title = "Co właściwie zrobił prowadzący?",
           body = list(
             c(
-              "Symulacja jest bezlitosna dla intuicji „50 na 50”: zmiana bramki wygrywa mniej więcej dwa razy częściej. Żeby zobaczyć dlaczego, policz światy, w których możesz się znaleźć. W dwóch grach na trzy Twój pierwszy wybór trafia w Zonka — i wtedy prowadzący nie ma żadnej swobody: musi odsłonić jedynego pozostałego Zonka, więc nagroda stoi za bramką, na którą się przełączysz. Tylko w jednej grze na trzy pierwszy strzał trafia w nagrodę i zmiana przegrywa."
-            ),
-            risk_keypoint("Kluczem nie jest samo otwarcie bramki, lecz to, że ruch prowadzącego zależy od tego, co jest ukryte."),
-            c(
-              "Jego gest odfiltrowuje część możliwych światów: po odsłonięciu Zonka za bramką 1 zostają tylko te scenariusze, które są zgodne z tym, co widzisz. Prawdopodobieństwa liczone w tym przefiltrowanym świecie różnią się od tych sprzed filtracji — i właśnie ta operacja dostanie za chwilę nazwę i wzór.",
+              "Symulacja jest bezlitosna dla intuicji „50 na 50”: zmiana bramki wygrywa mniej więcej dwa razy częściej. Żeby zobaczyć dlaczego, policz światy, w których możesz się znaleźć. W dwóch grach na trzy Twój pierwszy wybór trafia w Zonka — i wtedy prowadzący nie ma żadnej swobody: musi odsłonić jedynego pozostałego Zonka, więc nagroda stoi za bramką, na którą się przełączysz. Tylko w jednej grze na trzy pierwszy strzał trafia w nagrodę i zmiana przegrywa.",
+              "Kluczem nie jest samo otwarcie bramki, lecz to, że ruch prowadzącego zależy od tego, co jest ukryte. Jego gest odfiltrowuje część możliwych światów: po odsłonięciu Zonka za bramką 1 zostają tylko te scenariusze, które są zgodne z tym, co widzisz. Prawdopodobieństwa liczone w tym przefiltrowanym świecie różnią się od tych sprzed filtracji — i właśnie ta operacja dostanie za chwilę nazwę i wzór.",
               "Filtrowanie da się przeprowadzić dosłownie, na liczbach gier. Zamiast pytać o prawdopodobieństwa, wyobraźmy sobie wiele rozegranych partii i zapytajmy, ile z nich wygląda dokładnie tak, jak to, co widzimy w studiu."
             ),
             risk_example("2.2", "Trzysta gier w studiu",
@@ -448,8 +440,7 @@ warunki_block <- list(
               ),
               answer = "Po odsłonięciu bramki 1 zmiana wygrywa w 100 grach na 150, czyli z prawdopodobieństwem 2/3; pozostanie — w 50 na 150, czyli 1/3. Nowym mianownikiem jest 150 gier zgodnych z obserwacją, a nie 300 wszystkich."
             ),
-            risk_reading("Zauważ, co się stało z mianownikiem. Przed ruchem prowadzącego każda z 300 gier była możliwa. Po jego ruchu połowę gier odrzucamy jako niezgodne z tym, co widzimy, a pozostałe 150 staje się nowym „całym światem”. Nierówność 100 do 50 bierze się stąd, że gdy nagroda stoi za bramką 3, prowadzący musi otworzyć bramkę 1, a gdy stoi za Twoją bramką — robi to tylko w połowie przypadków."),
-            risk_keypoint("Wiedza prowadzącego przenosi informację na jego gest."),
+            "Zauważ, co się stało z mianownikiem. Przed ruchem prowadzącego każda z 300 gier była możliwa. Po jego ruchu połowę gier odrzucamy jako niezgodne z tym, co widzimy, a pozostałe 150 staje się nowym „całym światem”. Nierówność 100 do 50 bierze się stąd, że gdy nagroda stoi za bramką 3, prowadzący musi otworzyć bramkę 1, a gdy stoi za Twoją bramką — robi to tylko w połowie przypadków. Wiedza prowadzącego przenosi informację na jego gest.",
             risk_check("w2_chk_monty",
               "Zmieńmy zasady: prowadzący nie wie, gdzie jest nagroda, i otwiera losowo jedną z dwóch pozostałych bramek. Tym razem przypadkiem pokazał Zonka. Jakie jest teraz prawdopodobieństwo wygranej po zmianie?",
               c("2/3, tak jak poprzednio" = "two_thirds", "1/2" = "half", "1/3" = "third"),
@@ -462,27 +453,20 @@ warunki_block <- list(
         list(
           id = "definicja", title = "Od opowieści do definicji",
           body = list(
-            "Poznanie warunku nie zmienia tego, co się wydarzyło — w studiu ani w zakładzie. Zmienia zbiór przypadków, do którego odnosimy licznik. [[Prawdopodobieństwo zdarzenia A pod warunkiem B]] to udział A liczony wyłącznie wśród przypadków, w których zaszło B: filtrujemy mianownik, a potem liczymy jak zwykle.",
+            "Poznanie warunku nie zmienia tego, co się wydarzyło — w studiu ani w zakładzie. Zmienia zbiór przypadków, do którego odnosimy licznik. Prawdopodobieństwo zdarzenia A pod warunkiem B to udział A liczony wyłącznie wśród przypadków, w których zaszło B: filtrujemy mianownik, a potem liczymy jak zwykle.",
             risk_definition("2.1", "Prawdopodobieństwo warunkowe", c(
               "Niech A i B będą zdarzeniami i niech P(B) > 0. Prawdopodobieństwem warunkowym zdarzenia A pod warunkiem B nazywamy liczbę P(A | B) określoną wzorem (2.1).",
               "Zdarzenie B nazywamy warunkiem. Dla warunku o zerowym prawdopodobieństwie wzór (2.1) nie ma sensu — nie można filtrować do pustej grupy przypadków."
             )),
             risk_formula("P(A\\mid B)=\\frac{P(A\\cap B)}{P(B)},\\qquad P(B)>0", num = "2.1",
               legend = c("P(A\\cap B)" = "prawdopodobieństwo, że zaszły oba zdarzenia naraz", "P(B)" = "prawdopodobieństwo warunku, czyli wielkość przefiltrowanej grupy", "P(A\\mid B)" = "udział A wewnątrz tej grupy")),
-            risk_formula_note("Tę wielkość nazywamy prawdopodobieństwem warunkowym, a zapis P(A | B) czytamy: prawdopodobieństwo A pod warunkiem B."),
+            "Tę wielkość nazywamy prawdopodobieństwem warunkowym, a zapis P(A | B) czytamy: prawdopodobieństwo A pod warunkiem B.",
             risk_derivation("dlaczego iloraz?", c(
               "Wzór (2.1) jest wprost przepisaniem liczenia na przypadkach. Jeśli w n porównywalnych przypadkach warunek B zaszedł n_B razy, a oba zdarzenia naraz — n_AB razy, to udział A wśród przypadków z B wynosi n_AB / n_B.",
               "Dzieląc licznik i mianownik przez n, nie zmieniamy ilorazu, a dostajemy częstości odniesione do całej populacji:"
             ), lines = c("n_AB / n_B = (n_AB / n) / (n_B / n)", "           ≈ P(A ∩ B) / P(B)", "", "Bananpol: 12 / 100 = (12/1000) / (100/1000) = 0,012 / 0,10 = 0,12")),
-            risk_box("reading", "Powrót do bramek", "W tym języku gest prowadzącego jest warunkiem B. Załóżmy, jak w przykładzie 2.2, że wybrałeś bramkę 2, a B oznacza: „za bramką 1 jest Zonk, a odsłonił ją prowadzący znający układ”. Pytanie o zmianę bramki to pytanie o P(nagroda za bramką 3 | B) — i rachunek na przefiltrowanych światach daje 2/3, dokładnie tyle, ile pokazała symulacja. We wzorze (2.1): P(B) = 150/300 = 1/2, P(nagroda za 3 ∩ B) = 100/300 = 1/3, a iloraz to (1/3) / (1/2) = 2/3."),
-            risk_property("warunek to mniejszy świat", list(
-              "Prawdopodobieństwo warunkowe zachowuje się jak zwykłe prawdopodobieństwo, tylko w mniejszym świecie. W szczególności:",
-              risk_list(c(
-                "P(B | B) = 1, bo w przefiltrowanej grupie warunek zachodzi zawsze,",
-                "a P(nie A | B) = 1 − P(A | B): w grupie 100 zmian z przegrzaniem 12 kończy się incydentem, więc 88 — bez incydentu."
-              ))
-            )),
-            "Z tej własności korzystają gałęzie drzewa, które w kolejnym rozdziale zawsze sumują się do jedynki na każdym rozwidleniu."
+            "W tym języku gest prowadzącego jest warunkiem B. Załóżmy, jak w przykładzie 2.2, że wybrałeś bramkę 2, a B oznacza: „za bramką 1 jest Zonk, a odsłonił ją prowadzący znający układ”. Pytanie o zmianę bramki to pytanie o P(nagroda za bramką 3 | B) — i rachunek na przefiltrowanych światach daje 2/3, dokładnie tyle, ile pokazała symulacja. We wzorze (2.1): P(B) = 150/300 = 1/2, P(nagroda za 3 ∩ B) = 100/300 = 1/3, a iloraz to (1/3) / (1/2) = 2/3.",
+            "Prawdopodobieństwo warunkowe zachowuje się jak zwykłe prawdopodobieństwo, tylko w mniejszym świecie. W szczególności P(B | B) = 1, bo w przefiltrowanej grupie warunek zachodzi zawsze, a P(nie A | B) = 1 − P(A | B): w grupie 100 zmian z przegrzaniem 12 kończy się incydentem, więc 88 — bez incydentu. Z tej własności korzystają gałęzie drzewa, które w kolejnym rozdziale zawsze sumują się do jedynki na każdym rozwidleniu."
           )
         ),
         list(
@@ -490,12 +474,12 @@ warunki_block <- list(
           body = list(
             c(
               "Wracamy do hali. Wykryte przegrzanie robi z tysiącem zmian dokładnie to, co prowadzący z bramkami: filtruje świat. Najpierw dzielimy 1000 zmian na te z przegrzaniem i bez niego, a dopiero potem zliczamy incydenty. Jeśli 100 zmian spełnia B, to mianownikiem P(A | B) jest 100, a nie 1000.",
-              "Ten sposób liczenia — na konkretnych zmianach zamiast na ułamkach — nazywamy [[naturalnymi częstościami]]. Wróci on w następnym wykładzie jako główne narzędzie do rozbrajania pozornie paradoksalnych wyników. Przy każdym prawdopodobieństwie warunkowym zadawaj dwa pytania kontrolne: ile przypadków spełnia warunek B i w ilu spośród nich zaszło także A?",
+              "Ten sposób liczenia — na konkretnych zmianach zamiast na ułamkach — nazywamy naturalnymi częstościami. Wróci on w następnym wykładzie jako główne narzędzie do rozbrajania pozornie paradoksalnych wyników. Przy każdym prawdopodobieństwie warunkowym zadawaj dwa pytania kontrolne: ile przypadków spełnia warunek B i w ilu spośród nich zaszło także A?",
               "Suwaki poniżej sterują trzema parametrami naraz: jak częsty jest warunek oraz jak ryzykowna jest praca z warunkiem i bez niego. Zwróć uwagę, że P(incydent) w całym zakładzie zawsze leży pomiędzy dwiema wartościami warunkowymi — bliżej tej grupy, która jest liczniejsza."
             ),
             risk_try("zostaw ustawienia startowe i policz na siatce trójkąty oraz wypełnione trójkąty. Potem zwiększ udział zmian z przegrzaniem do 0,40 i obserwuj, jak P(incydent) w modelu przesuwa się w stronę P(incydent | przegrzanie)."),
             warunki_filter_widget,
-            risk_reading("Przy ustawieniach startowych siatka ma 50 trójkątów, z których 6 jest wypełnionych, i 450 kółek, z których wypełnione są 2. Udział incydentów wśród trójkątów to 6/50 = 0,12 — dokładnie P(A | B). Udział incydentów na całej siatce to 8/500 = 0,016, a model podaje 0,0165. Różnica bierze się z zaokrąglenia: 0,005 · 450 = 2,25 incydentu, a na siatce można narysować tylko całe zmiany. Właśnie dlatego panel pokazuje obok siebie ilustrację i wynik modelu."),
+            "Przy ustawieniach startowych siatka ma 50 trójkątów, z których 6 jest wypełnionych, i 450 kółek, z których wypełnione są 2. Udział incydentów wśród trójkątów to 6/50 = 0,12 — dokładnie P(A | B). Udział incydentów na całej siatce to 8/500 = 0,016, a model podaje 0,0165. Różnica bierze się z zaokrąglenia: 0,005 · 450 = 2,25 incydentu, a na siatce można narysować tylko całe zmiany. Właśnie dlatego panel pokazuje obok siebie ilustrację i wynik modelu.",
             risk_example("2.3", "Ile zmian zostaje po filtrze?",
               problem = "Na siatce 500 zmian ustawiono udział przegrzania 0,40, P(incydent | przegrzanie) = 0,12 i P(incydent | brak przegrzania) = 0,005. Ile zmian spełnia warunek, ile incydentów wypada w każdej grupie i ile wynosi P(incydent) w modelu?",
               steps = c(
@@ -526,32 +510,22 @@ warunki_block <- list(
       body = list(
         risk_try("znajdź liczbę 12 w tabeli, na drzewie i na wykresie udziałów. Potem odszukaj w każdym widoku mianownik 100 i mianownik 1000."),
         warunki_views_widget,
-        risk_reading(list(
-          "W każdym widoku liczba incydentów i liczebność grup są takie same. Jeśli wynik zmienia się wraz z rodzajem wykresu, zmieniliśmy definicję albo mianownik, a nie tylko sposób prezentacji.",
-          "Każdy widok eksponuje co innego.",
-          risk_list(c(
-            "W tabeli liczby 12 i 17 stoją w tej samej kolumnie, więc łatwo przeczytać P(B | A) = 12/17.",
-            "Na drzewie 12 stoi na końcu gałęzi wychodzącej z węzła „Przegrzanie: 100”, więc naturalnie czytamy P(A | B) = 12/100.",
-            "Wykres udziałów w ogóle nie pokazuje liczebności grup: słupek zmian z przegrzaniem ma ten sam rozmiar co słupek 900 zmian bez przegrzania. Porównuje więc wyłącznie P(A | B) = 0,12 z P(A | nie B) = 5/900 ≈ 0,006 i ukrywa, że pierwsza grupa jest dziewięć razy mniejsza."
-          ))
-        ))
+        "W każdym widoku liczba incydentów i liczebność grup są takie same. Jeśli wynik zmienia się wraz z rodzajem wykresu, zmieniliśmy definicję albo mianownik, a nie tylko sposób prezentacji.",
+        "Każdy widok eksponuje co innego. W tabeli liczby 12 i 17 stoją w tej samej kolumnie, więc łatwo przeczytać P(B | A) = 12/17. Na drzewie 12 stoi na końcu gałęzi wychodzącej z węzła „Przegrzanie: 100”, więc naturalnie czytamy P(A | B) = 12/100. Wykres udziałów w ogóle nie pokazuje liczebności grup: słupek zmian z przegrzaniem ma ten sam rozmiar co słupek 900 zmian bez przegrzania. Porównuje więc wyłącznie P(A | B) = 0,12 z P(A | nie B) = 5/900 ≈ 0,006 i ukrywa, że pierwsza grupa jest dziewięć razy mniejsza."
       ),
       sections = list(
         list(
           id = "iloczyn", title = "Mnożymy wzdłuż drogi",
           body = list(
             c(
-              "Drzewo pokazuje coś więcej niż tylko liczebności. Na gałęziach stoją prawdopodobieństwa, a na końcach liczby zmian — i między jednymi a drugimi jest prosty związek. Żeby dojść do liścia „Incydent” w górnej części drzewa, trzeba przejść dwie gałęzie: najpierw trafić do grupy zmian z przegrzaniem, a potem, już wewnątrz tej grupy, trafić na incydent."
-            ),
-            risk_keypoint("Iloczyn nie pojawia się więc jako sztuczka algebraiczna — odpowiada przejściu przez dwa kolejne filtry."),
-            c(
+              "Drzewo pokazuje coś więcej niż tylko liczebności. Na gałęziach stoją prawdopodobieństwa, a na końcach liczby zmian — i między jednymi a drugimi jest prosty związek. Żeby dojść do liścia „Incydent” w górnej części drzewa, trzeba przejść dwie gałęzie: najpierw trafić do grupy zmian z przegrzaniem, a potem, już wewnątrz tej grupy, trafić na incydent. Iloczyn nie pojawia się więc jako sztuczka algebraiczna — odpowiada przejściu przez dwa kolejne filtry.",
               "Pierwszy czynnik odnosi się do wszystkich zmian: przegrzanie dotyczy 10% z 1000, czyli 100 zmian. Drugi czynnik odnosi się już tylko do tej setki: incydent występuje w 12% z nich, czyli w 12 zmianach. Te 12 zmian to 1,2% całej obserwowanej populacji — i dokładnie tyle daje pomnożenie 0,10 przez 0,12. Prześledź tę drogę na liczbach poniżej."
             ),
             warunki_path_widget,
-            "Ten rachunek nie korzystał z niczego szczególnego w liczbach 0,10 i 0,12 — działa dla dowolnych wartości, więc uogólniamy go w jedną regułę, nazywaną [[regułą iloczynu]] (wzorem na prawdopodobieństwo iloczynu zdarzeń):",
+            "Ten rachunek nie korzystał z niczego szczególnego w liczbach 0,10 i 0,12 — działa dla dowolnych wartości, więc uogólniamy go w jedną regułę, nazywaną regułą iloczynu (wzorem na prawdopodobieństwo iloczynu zdarzeń):",
             risk_formula("P(A\\cap B)=P(B)\\,P(A\\mid B)=P(A)\\,P(B\\mid A)", num = "2.2",
               legend = c("P(B)" = "udział wszystkich zmian, które wchodzą do grupy B", "P(A\\mid B)" = "udział A wewnątrz grupy B", "P(A)\\,P(B\\mid A)" = "ta sama droga przebyta w odwrotnej kolejności")),
-            risk_formula_note("Pierwszy czynnik wprowadza do grupy spełniającej warunek, drugi liczy zdarzenie wewnątrz tej grupy."),
+            "Pierwszy czynnik wprowadza do grupy spełniającej warunek, drugi liczy zdarzenie wewnątrz tej grupy.",
             risk_derivation("reguła iloczynu", c(
               "Wzór (2.2) nie jest nowym założeniem, tylko definicją 2.1 przepisaną inaczej. Mnożymy obie strony wzoru (2.1) przez P(B). Ponieważ w definicji role A i B są symetryczne w przecięciu (A ∩ B = B ∩ A), tę samą operację można wykonać z warunkiem A, o ile P(A) > 0."
             ), lines = c("P(A | B) = P(A ∩ B) / P(B)    | · P(B)", "P(A ∩ B) = P(B) · P(A | B)", "", "P(B | A) = P(A ∩ B) / P(A)    | · P(A)", "P(A ∩ B) = P(A) · P(B | A)")),
@@ -572,8 +546,7 @@ warunki_block <- list(
             "Drzewo może mieć więcej niż dwa poziomy. Wtedy reguła iloczynu działa krok po kroku: każda kolejna gałąź jest prawdopodobieństwem warunkowym względem wszystkiego, co zaszło wcześniej na tej drodze. Dla trzech zdarzeń dostajemy regułę łańcuchową:",
             risk_formula("P(A\\cap B\\cap C)=P(C)\\,P(B\\mid C)\\,P(A\\mid B\\cap C)", num = "2.3",
               legend = c("P(C)" = "pierwsza gałąź, liczona wśród wszystkich przypadków", "P(B\\mid C)" = "druga gałąź, liczona wśród przypadków z C", "P(A\\mid B\\cap C)" = "trzecia gałąź, liczona wśród przypadków z B i C naraz")),
-            "Wzór (2.3) wynika z dwukrotnego zastosowania (2.2): najpierw P(A ∩ (B ∩ C)) = P(B ∩ C) · P(A | B ∩ C), a potem P(B ∩ C) = P(C) · P(B | C).",
-            risk_pitfall("Każdy czynnik ma własny, coraz węższy mianownik — i dlatego najczęstszym błędem przy dłuższych drogach jest wstawienie w środek łańcucha prawdopodobieństwa liczonego w całej populacji zamiast w grupie, do której doszliśmy."),
+            "Wzór (2.3) wynika z dwukrotnego zastosowania (2.2): najpierw P(A ∩ (B ∩ C)) = P(B ∩ C) · P(A | B ∩ C), a potem P(B ∩ C) = P(C) · P(B | C). Każdy czynnik ma własny, coraz węższy mianownik — i dlatego najczęstszym błędem przy dłuższych drogach jest wstawienie w środek łańcucha prawdopodobieństwa liczonego w całej populacji zamiast w grupie, do której doszliśmy.",
             risk_example("2.4", "Przeciążenie, przegrzanie, incydent",
               problem = "W Bananpolu 20% zmian przebiega w trybie przeciążenia (C). Na zmianach w przeciążeniu czujnik wykrywa przegrzanie (B) w 30% przypadków. Na zmianach w przeciążeniu z wykrytym przegrzaniem incydent (A) zdarza się w 15% przypadków. Oblicz prawdopodobieństwo, że losowa zmiana jest przeciążona, z przegrzaniem i z incydentem, oraz zapisz wynik w naturalnych częstościach.",
               steps = c(
@@ -606,12 +579,12 @@ warunki_block <- list(
             "Przegrzanie i brak przegrzania tworzą układ zupełny: każda zmiana należy do dokładnie jednej z tych grup. Podobnie tryby „przeciążenie” i „normalna praca”, jeśli każdą zmianę zakwalifikowano do jednego z nich. Nie tworzą natomiast układu zupełnego kategorie „zmiana nocna” i „zmiana w przeciążeniu”, bo zmiana nocna może być przeciążona, a zmiana dzienna normalna nie należy do żadnej z nich.",
             risk_formula("P(A)=\\sum_{i=1}^{k} P(B_i)\\,P(A\\mid B_i)", num = "2.4",
               legend = c("B_1,\\ldots,B_k" = "układ zupełny zdarzeń (tryby pracy)", "P(B_i)" = "waga drogi: udział trybu i", "P(A\\mid B_i)" = "prawdopodobieństwo A wewnątrz trybu i")),
-            risk_formula_note("Wagi P(B_i) są udziałami trybów pracy i sumują się do jedności."),
+            "Wagi P(B_i) są udziałami trybów pracy i sumują się do jedności.",
             risk_derivation("wzór na prawdopodobieństwo całkowite", c(
               "Ponieważ tryby B_i pokrywają wszystkie przypadki, każde wystąpienie A leży dokładnie w jednym z nich. Zdarzenie A rozpada się więc na rozłączne kawałki A ∩ B₁, …, A ∩ B_k — jeden kawałek na każdą drogę drzewa.",
               "Prawdopodobieństwa rozłącznych zdarzeń się dodają, a każdy kawałek liczymy regułą iloczynu (2.2):"
             ), lines = c("A = (A ∩ B₁) ∪ (A ∩ B₂) ∪ … ∪ (A ∩ B_k)     (kawałki rozłączne)", "P(A) = P(A ∩ B₁) + … + P(A ∩ B_k)", "     = P(B₁)·P(A | B₁) + … + P(B_k)·P(A | B_k)", "", "Bananpol: 0,10 · 0,12 + 0,90 · 5/900 = 0,012 + 0,005 = 0,017")),
-            risk_pitfall("Warunki układu zupełnego nie są formalnością. Jeśli tryby się nakładają, zmiany ze wspólnej części zostaną policzone dwa razy i wynik będzie zawyżony. Jeśli tryby czegoś nie obejmują — na przykład pominięto zmiany serwisowe — ich incydenty znikną z sumy i wynik będzie zaniżony.")
+            "Warunki układu zupełnego nie są formalnością. Jeśli tryby się nakładają, zmiany ze wspólnej części zostaną policzone dwa razy i wynik będzie zawyżony. Jeśli tryby czegoś nie obejmują — na przykład pominięto zmiany serwisowe — ich incydenty znikną z sumy i wynik będzie zaniżony."
           )
         ),
         list(
@@ -620,10 +593,8 @@ warunki_block <- list(
             "Wróćmy do drzewa z 1000 zmian Bananpolu. Wybierz prawdopodobieństwo, a drzewo pokaże, które węzły tworzą licznik, a które mianownik. Zacznij od P(A): incydent może powstać na dwóch rozłącznych drogach, więc jego licznik to suma dwóch liści. Przy prawdopodobieństwach warunkowych licznik leży wewnątrz mianownika — te same zmiany liczymy raz na górze i raz na dole ułamka.",
             risk_try("przejdź kolejno przez wszystkie pięć opcji. Przy każdej zapisz, czy mianownikiem jest korzeń drzewa (1000), węzeł pośredni (100) czy suma liści (17)."),
             warunki_tree_read_widget,
-            risk_reading(c(
-              "Drzewo pokazuje ważoną sumę w konkretnych zmianach: 12 incydentów z gałęzi przegrzania i 5 z gałęzi bez przegrzania. Suwaki w następnej sekcji robią to samo w ułamkach, dla dwóch trybów pracy.",
-              "Najciekawsza jest ostatnia opcja, P(B | A). Jej mianownikiem nie jest żaden pojedynczy węzeł drzewa, lecz suma dwóch liści „Incydent” z różnych gałęzi — czyli dokładnie licznik z opcji P(A). Drzewo zbudowane w kolejności „najpierw warunek, potem zdarzenie” pozwala więc odwrócić pytanie, ale wymaga do tego wzoru na prawdopodobieństwo całkowite w mianowniku. Wrócimy do tego w sekcji o odwracaniu warunku."
-            ))
+            "Drzewo pokazuje ważoną sumę w konkretnych zmianach: 12 incydentów z gałęzi przegrzania i 5 z gałęzi bez przegrzania. Suwaki w następnej sekcji robią to samo w ułamkach, dla dwóch trybów pracy.",
+            "Najciekawsza jest ostatnia opcja, P(B | A). Jej mianownikiem nie jest żaden pojedynczy węzeł drzewa, lecz suma dwóch liści „Incydent” z różnych gałęzi — czyli dokładnie licznik z opcji P(A). Drzewo zbudowane w kolejności „najpierw warunek, potem zdarzenie” pozwala więc odwrócić pytanie, ale wymaga do tego wzoru na prawdopodobieństwo całkowite w mianowniku. Wrócimy do tego w sekcji o odwracaniu warunku."
           )
         ),
         list(
@@ -632,7 +603,7 @@ warunki_block <- list(
           body = list(
             risk_try("ustaw udział przeciążenia na 0, potem na 1. Odczytaj, ile wynosi P(incydent) na obu krańcach, i porównaj z suwakami ryzyk warunkowych."),
             warunki_total_widget,
-            risk_reading("Prosta, po której porusza się punkt na wykresie, jest wykresem jednej reguły — ważonej sumy rozłącznych dróg, czyli wzoru (2.4) dla dwóch trybów. Przy udziale przeciążenia s ma on postać P(A) = s · P(A | przeciążenie) + (1 − s) · P(A | normalna praca). To funkcja liniowa zmiennej s: na lewym krańcu wykresu (s = 0) równa się ryzyku pracy normalnej, na prawym (s = 1) — ryzyku przeciążenia, a pomiędzy nimi rośnie jednostajnie."),
+            "Prosta, po której porusza się punkt na wykresie, jest wykresem jednej reguły — ważonej sumy rozłącznych dróg, czyli wzoru (2.4) dla dwóch trybów. Przy udziale przeciążenia s ma on postać P(A) = s · P(A | przeciążenie) + (1 − s) · P(A | normalna praca). To funkcja liniowa zmiennej s: na lewym krańcu wykresu (s = 0) równa się ryzyku pracy normalnej, na prawym (s = 1) — ryzyku przeciążenia, a pomiędzy nimi rośnie jednostajnie.",
             risk_example("2.5", "Skąd biorą się incydenty?",
               problem = "Przyjmij ustawienia startowe suwaków: udział przeciążenia 0,20, P(incydent | przeciążenie) = 0,15, P(incydent | normalna praca) = 0,01. Oblicz P(incydent) i udział każdej drogi w incydentach. Następnie powtórz rachunek dla udziału przeciążenia 0,05.",
               steps = c(
@@ -682,9 +653,7 @@ warunki_block <- list(
               "Wybrałeś bramkę 2. Niech H₁, H₂, H₃ oznaczają położenie nagrody — to układ zupełny, każde z prawdopodobieństwem 1/3. Obserwacja O: prowadzący otworzył bramkę 1. Z zasad gry P(O | H₁) = 0 (nie odsłoni nagrody), P(O | H₂) = 1/2 (rzuca monetą), P(O | H₃) = 1 (nie ma wyboru).",
               "Mianownik to wzór (2.4), licznik — droga przez H₃:"
             ), lines = c("P(O) = 1/3 · 0 + 1/3 · 1/2 + 1/3 · 1 = 1/2", "P(H₃ | O) = (1/3 · 1) / (1/2) = 2/3", "P(H₂ | O) = (1/3 · 1/2) / (1/2) = 1/3")),
-            "Ten sam rachunek, który w studiu daje przewagę zmianie bramki, w zakładzie pozwala wskazać najbardziej prawdopodobne źródło incydentu.",
-            risk_pitfall("Jest też źródłem najczęstszego błędu w interpretacji alarmów: utożsamiania P(A | B) z P(B | A). W przykładzie 2.6(a) te dwie liczby to 0,12 i 0,71 — różnią się prawie sześciokrotnie."),
-            risk_note("Dalej", "W następnym wykładzie wzór (2.5) stanie się głównym narzędziem do oceny, co naprawdę znaczy sygnał alarmu."),
+            "Ten sam rachunek, który w studiu daje przewagę zmianie bramki, w zakładzie pozwala wskazać najbardziej prawdopodobne źródło incydentu. Jest też źródłem najczęstszego błędu w interpretacji alarmów: utożsamiania P(A | B) z P(B | A). W przykładzie 2.6(a) te dwie liczby to 0,12 i 0,71 — różnią się prawie sześciokrotnie. W następnym wykładzie wzór (2.5) stanie się głównym narzędziem do oceny, co naprawdę znaczy sygnał alarmu.",
             risk_check("w2_chk_bayes",
               "W Bananpolu P(A | B) = 0,12, a P(B | A) ≈ 0,71. Która informacja najbardziej odpowiada za to, że druga liczba jest dużo większa od pierwszej?",
               c("Incydenty są rzadkie: jest ich 17, a zmian z przegrzaniem 100" = "base", "Czujnik przegrzania jest mało dokładny" = "sensor", "Wzór Bayesa zawsze zwiększa prawdopodobieństwo" = "always"),
@@ -725,7 +694,7 @@ warunki_block <- list(
             risk_derivation("równoważność trzech testów", c(
               "Załóżmy, że P(A) > 0 i P(B) > 0. Dzielimy wzór (2.6) przez P(B) albo przez P(A) i korzystamy z definicji 2.1:"
             ), lines = c("P(A ∩ B) = P(A) · P(B)", "⇔ P(A ∩ B) / P(B) = P(A)   ⇔   P(A | B) = P(A)", "⇔ P(A ∩ B) / P(A) = P(B)   ⇔   P(B | A) = P(B)")),
-            risk_property("symetria niezależności", "Równoważność ma praktyczną konsekwencję: niezależność jest symetryczna. Jeśli przegrzanie niczego nie mówi o incydencie, to i incydent niczego nie mówi o przegrzaniu. Podobnie działa zależność: jeśli B podnosi prawdopodobieństwo A, to A podnosi prawdopodobieństwo B."),
+            "Równoważność ma praktyczną konsekwencję: niezależność jest symetryczna. Jeśli przegrzanie niczego nie mówi o incydencie, to i incydent niczego nie mówi o przegrzaniu. Podobnie działa zależność: jeśli B podnosi prawdopodobieństwo A, to A podnosi prawdopodobieństwo B.",
             risk_example("2.7", "Czy incydent i przegrzanie są niezależne?",
               problem = "Sprawdź trzema testami, czy w danych Bananpolu (1000 zmian, 100 z przegrzaniem, 17 incydentów, 12 z obu zdarzeniami) incydent A i przegrzanie B są niezależne.",
               steps = c(
@@ -736,7 +705,7 @@ warunki_block <- list(
               ),
               answer = "Wszystkie trzy testy dają ten sam werdykt: zdarzenia są wyraźnie zależne. We wszystkich trzech pojawia się ten sam współczynnik około 7 — to nie przypadek, tylko konsekwencja równoważności testów."
             ),
-            risk_pitfall("Niezależności nie należy mylić z rozłącznością. Zdarzenia rozłączne nie mogą zajść razem, więc P(A ∩ B) = 0. Jeśli oba mają dodatnie prawdopodobieństwa, to P(A) · P(B) > 0 i wzór (2.6) nie zachodzi. Rozłączność jest więc skrajną zależnością: wiedza, że zaszło B, mówi z pewnością, że nie zaszło A."),
+            "Niezależności nie należy mylić z rozłącznością. Zdarzenia rozłączne nie mogą zajść razem, więc P(A ∩ B) = 0. Jeśli oba mają dodatnie prawdopodobieństwa, to P(A) · P(B) > 0 i wzór (2.6) nie zachodzi. Rozłączność jest więc skrajną zależnością: wiedza, że zaszło B, mówi z pewnością, że nie zaszło A.",
             risk_check("w2_chk_niez",
               "W rejestrze: P(awaria czujnika) = 0,30, P(zmiana nocna) = 0,50, P(awaria czujnika na zmianie nocnej) = 0,15 (liczone wśród wszystkich zmian). Czy awaria czujnika i zmiana nocna są niezależne?",
               c("Tak, bo 0,30 · 0,50 = 0,15" = "yes", "Nie, bo 0,15 jest mniejsze od 0,30" = "smaller", "Nie da się tego ocenić bez P(A | B)" = "cannot"),
@@ -754,7 +723,7 @@ warunki_block <- list(
             "Najprostszy model rozdziela dwie sytuacje, które tworzą układ zupełny: zasilanie padło (prawdopodobieństwo c) albo działa (1 − c). Gdy padło, oba zabezpieczenia są wyłączone na pewno. Gdy działa, zawodzą niezależnie, każde z prawdopodobieństwem q. Wzór (2.4) daje wtedy:",
             risk_formula("P(\\text{obie awarie})=c\\cdot 1+(1-c)\\,q^{2}", num = "2.7",
               legend = c("c" = "prawdopodobieństwo utraty wspólnego zasilania", "q" = "prawdopodobieństwo awarii pojedynczego zabezpieczenia przy działającym zasilaniu", "q^{2}" = "jednoczesna awaria obu przy działającym zasilaniu, z niezależności")),
-            "Zwróć uwagę, że niezależność nie znika z modelu — obowiązuje nadal, ale tylko wewnątrz grupy „zasilanie działa”. Taką sytuację nazywamy [[niezależnością warunkową]]: zdarzenia są niezależne przy ustalonej wspólnej przyczynie, a zależne, gdy tę przyczynę pominiemy.",
+            "Zwróć uwagę, że niezależność nie znika z modelu — obowiązuje nadal, ale tylko wewnątrz grupy „zasilanie działa”. Taką sytuację nazywamy niezależnością warunkową: zdarzenia są niezależne przy ustalonej wspólnej przyczynie, a zależne, gdy tę przyczynę pominiemy.",
             risk_example("2.8", "Ile kosztuje wspólne zasilanie?",
               problem = "Każde z dwóch zabezpieczeń zawodzi z prawdopodobieństwem q = 0,05 przy działającym zasilaniu. Wspólne zasilanie pada z prawdopodobieństwem c = 0,01. Porównaj prawdopodobieństwo jednoczesnej awarii obu zabezpieczeń w modelu niezależnym i w modelu ze wspólną przyczyną.",
               steps = c(
@@ -766,7 +735,7 @@ warunki_block <- list(
             ),
             risk_try("zacznij od P utraty wspólnego zasilania równego 0 i sprawdź, że oba słupki są równe. Potem ustaw 0,01 i zmniejszaj P awarii pojedynczego zabezpieczenia do 0,01."),
             warunki_common_widget,
-            risk_reading("Przy c = 0 oba modele pokrywają się, bo pozostaje tylko droga niezależna. Już przy c = 0,01 słupek „Jawna wspólna przyczyna” jest około pięć razy wyższy. Gdy przy c = 0,01 zmniejszamy q do 0,01, model niezależny obiecuje 0,0001, a model ze wspólną przyczyną podaje około 0,0101 — ponad sto razy więcej. Poprawa pojedynczych zabezpieczeń prawie nie zmienia wyniku, bo prawie całe ryzyko jednoczesnej awarii pochodzi teraz od zasilania. Skuteczniejszą inwestycją jest wtedy rozdzielenie zasilania niż wymiana czujników."),
+            "Przy c = 0 oba modele pokrywają się, bo pozostaje tylko droga niezależna. Już przy c = 0,01 słupek „Jawna wspólna przyczyna” jest około pięć razy wyższy. Gdy przy c = 0,01 zmniejszamy q do 0,01, model niezależny obiecuje 0,0001, a model ze wspólną przyczyną podaje około 0,0101 — ponad sto razy więcej. Poprawa pojedynczych zabezpieczeń prawie nie zmienia wyniku, bo prawie całe ryzyko jednoczesnej awarii pochodzi teraz od zasilania. Skuteczniejszą inwestycją jest wtedy rozdzielenie zasilania niż wymiana czujników.",
             risk_check("w2_chk_wspolna",
               "W modelu (2.7) q = 0,01 i c = 0,001. Które działanie najbardziej zmniejszy prawdopodobieństwo jednoczesnej awarii?",
               c("Zmniejszenie q do 0,005" = "q", "Rozdzielenie zasilania, czyli c ≈ 0" = "c", "Oba działania dają podobny efekt" = "same"),
@@ -795,7 +764,7 @@ warunki_block <- list(
         list(
           id = "miary", title = "Jak mocno warunek zmienia ocenę?",
           body = list(
-            "Porównanie P(A | B) z P(A) mówi, czy warunek coś wnosi. Do decyzji potrzebna jest jeszcze miara tego, jak dużo wnosi. W analizie ryzyka używa się dwóch podstawowych miar: [[różnicy ryzyk]], która mówi, o ile zdarzeń więcej przypada na każdą zmianę z warunkiem, i [[ilorazu ryzyk]] (ryzyka względnego), który mówi, ile razy częściej zdarzenie występuje w grupie z warunkiem niż bez niego.",
+            "Porównanie P(A | B) z P(A) mówi, czy warunek coś wnosi. Do decyzji potrzebna jest jeszcze miara tego, jak dużo wnosi. W analizie ryzyka używa się dwóch podstawowych miar: różnicy ryzyk, która mówi, o ile zdarzeń więcej przypada na każdą zmianę z warunkiem, i ilorazu ryzyk (ryzyka względnego), który mówi, ile razy częściej zdarzenie występuje w grupie z warunkiem niż bez niego.",
             risk_formula("RD=P(A\\mid B)-P(A\\mid \\bar B),\\qquad RR=\\frac{P(A\\mid B)}{P(A\\mid \\bar B)}", num = "2.8",
               legend = c("\\bar B" = "dopełnienie warunku: brak przegrzania", "RD" = "różnica ryzyk, w jednostkach prawdopodobieństwa", "RR" = "iloraz ryzyk (ryzyko względne), bez jednostki")),
             "W Bananpolu RD = 0,12 − 5/900 ≈ 0,114, a RR = 0,12 / (5/900) = 21,6. Iloraz 21,6 jest większy niż „około 7×” z porównania z P(A), bo porównujemy teraz dwie rozłączne grupy, a nie grupę z całością, która sama zawiera zmiany z przegrzaniem. Obie liczby są poprawne, ale odpowiadają na różne pytania — w raporcie trzeba nazwać, z czym porównujemy.",
@@ -823,7 +792,7 @@ warunki_block <- list(
           body = list(
             "Panel poniżej zestawia trzy liczby z tego wykładu i trzy wnioski, które kusi, żeby z nich wyciągnąć. Czytaj tabelę wierszami: każdy wiersz to inne zdanie do raportu i inny poziom pewności, na jaki pozwalają dane.",
             warunki_signal_panel,
-            risk_reading("Tylko pierwszy wniosek wynika wprost z obliczeń wykonanych w tym wykładzie: w grupie zmian z przegrzaniem incydenty są częstsze. Drugi wniosek jest twierdzeniem o mechanizmie i wymaga danych, których w tabeli 2×2 nie ma. Trzeci wniosek jest decyzją — wynika z danych w połączeniu z kosztami, jak w przykładzie 2.9, i nie potrzebuje rozstrzygnięcia przyczynowego, żeby był rozsądny.")
+            "Tylko pierwszy wniosek wynika wprost z obliczeń wykonanych w tym wykładzie: w grupie zmian z przegrzaniem incydenty są częstsze. Drugi wniosek jest twierdzeniem o mechanizmie i wymaga danych, których w tabeli 2×2 nie ma. Trzeci wniosek jest decyzją — wynika z danych w połączeniu z kosztami, jak w przykładzie 2.9, i nie potrzebuje rozstrzygnięcia przyczynowego, żeby był rozsądny."
           )
         ),
         list(id = "przyczynowosc", title = "Predykcja nie jest interwencją", text = c(
