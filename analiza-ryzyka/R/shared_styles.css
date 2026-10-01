@@ -2267,3 +2267,70 @@ mjx-container mjx-text {
   margin-bottom: 4px;
   color: var(--annot-color);
 }
+
+/* === Schemat łańcucha pojęć (wykład 01, Schemat 1.1) === */
+.lc-chain { display: block; width: 100%; max-width: 960px; height: auto; margin: 4px auto 0; }
+.lc-chain-node { cursor: pointer; outline: none; }
+.lc-chain-node rect {
+  fill: var(--upwr-surface);
+  stroke: var(--node-color);
+  stroke-width: 2;
+  transition: fill 0.15s, stroke-width 0.15s;
+}
+.lc-chain-node:hover rect,
+.lc-chain-node:focus-visible rect { stroke-width: 3; }
+.lc-chain-node.is-active rect { fill: var(--node-color); stroke-width: 3; }
+.lc-chain-name {
+  font-family: var(--upwr-serif);
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--node-color);
+}
+.lc-chain-caption {
+  font-family: var(--upwr-sans);
+  font-size: 16px;
+  text-anchor: middle;
+  fill: var(--upwr-ink-soft);
+}
+.lc-chain-node.is-active .lc-chain-name,
+.lc-chain-node.is-active .lc-chain-caption { fill: #fff; }
+.lc-chain-arrow { stroke: var(--upwr-reference); stroke-width: 2.5; }
+.lc-chain-headfill { fill: var(--upwr-reference); }
+.lc-chain-link {
+  fill: none;
+  stroke: var(--upwr-cat-szalwia);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+}
+.lc-chain-cut { stroke: var(--upwr-cat-szalwia); stroke-width: 5; stroke-linecap: round; }
+.lc-chain-where {
+  font-family: var(--upwr-mono);
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-anchor: middle;
+  fill: var(--upwr-cat-szalwia);
+}
+.lc-chain-hint {
+  margin: 10px 0 0;
+  text-align: center;
+  font-size: calc(13px * var(--lc-font-scale));
+  color: var(--upwr-reference);
+}
+.lc-chain-detail {
+  max-width: 680px;
+  margin: 14px auto 0;
+  padding: 12px 16px;
+  border-left: 4px solid var(--node-color);
+  background: var(--upwr-surface);
+  font-family: var(--upwr-serif);
+  font-size: calc(16px * var(--lc-font-scale));
+  line-height: 1.55;
+  color: var(--upwr-ink-soft);
+}
+.lc-chain-detail p { margin: 6px 0 0; }
+.lc-chain-detail-name {
+  font-size: calc(20px * var(--lc-font-scale));
+  font-weight: 700;
+  color: var(--node-color);
+}

@@ -290,6 +290,99 @@ jezyk_sciaga_widget <- tagList(
   )
 )
 
+# Schemat łańcucha z definicji 1.1: cztery ogniwa w rzędzie, a pod nimi
+# zabezpieczenie, które przecina drogę przed zdarzeniem albo po nim. Kliknięcie
+# pojęcia pokazuje pod schematem jego definicję i pytanie kontrolne ze ściągi.
+# Celowo bez przykładów z korytarza — to odpowiedzi do ćwiczenia z kartami.
+jezyk_chain_terms <- list(
+  hazard = list(
+    color = upwr_cat[["terakota"]], caption = c("Źródło możliwej", "szkody"),
+    definition = "Zagrożenie to źródło lub stan, który może spowodować szkodę.",
+    question = "Co może spowodować szkodę?"
+  ),
+  exposure = list(
+    color = upwr_cat[["bursztyn"]], caption = c("Kontakt w danych", "warunkach"),
+    definition = "Ekspozycja to kontakt osób albo mienia z zagrożeniem w określonych warunkach i przez określony czas.",
+    question = "Kto lub co ma kontakt z zagrożeniem?"
+  ),
+  event = list(
+    color = upwr_accent, caption = c("To, co faktycznie", "zaszło"),
+    definition = "Zdarzenie to obserwowalny wynik, który w danym okresie zachodzi albo nie zachodzi.",
+    question = "Co dokładnie ma zajść?"
+  ),
+  consequence = list(
+    color = upwr_cat[["wrzos"]], caption = c("Następstwo", "zdarzenia"),
+    definition = "Skutek to następstwo zdarzenia, opisane rodzajem i dotkliwością.",
+    question = "Jakie może być następstwo?"
+  ),
+  safeguard = list(
+    color = upwr_cat[["szalwia"]], caption = c("Element przerywający", "łańcuch"),
+    definition = "Zabezpieczenie (bariera) to element, który przerywa drogę od zagrożenia do zdarzenia albo od zdarzenia do skutku.",
+    question = "Co przerywa drogę do szkody?"
+  )
+)
+
+jezyk_chain_svg <- function() {
+  node <- function(key, x, y, w, h) {
+    term <- jezyk_chain_terms[[key]]
+    cx <- x + w / 2
+    sprintf(
+      '<g class="lc-chain-node" data-key="%s" tabindex="0" role="button" aria-label="%s"
+          style="--node-color:%s"
+          onclick="lcChainSelect(this)" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();lcChainSelect(this);}">
+         <rect x="%d" y="%d" width="%d" height="%d" rx="6"/>
+         <text class="lc-chain-name" x="%g" y="%d">%s</text>
+         <text class="lc-chain-caption" x="%g" y="%d">%s</text>
+         <text class="lc-chain-caption" x="%g" y="%d">%s</text>
+       </g>',
+      key, risk_term_labels[[key]], term$color, x, y, w, h,
+      cx, y + 44, risk_term_labels[[key]],
+      cx, y + 72, term$caption[[1]], cx, y + 92, term$caption[[2]]
+    )
+  }
+  arrow <- function(x1, x2, y) {
+    sprintf('<line class="lc-chain-arrow" x1="%d" y1="%d" x2="%d" y2="%d" marker-end="url(#lc-chain-head)"/>', x1, y, x2, y)
+  }
+  # Linia od zabezpieczenia do strzałki, zakończona poprzeczką „przerwania”.
+  barrier <- function(x_from, x_to, label, anchor) {
+    label_x <- if (anchor == "end") x_to - 12 else x_to + 12
+    sprintf(
+      '<path class="lc-chain-link" d="M%d 238 C %d 200, %d 190, %d 92"/>
+       <line class="lc-chain-cut" x1="%d" y1="50" x2="%d" y2="82"/>
+       <text class="lc-chain-where" x="%d" y="150" style="text-anchor:%s">%s</text>',
+      x_from, x_from, x_to, x_to, x_to, x_to, label_x, anchor, label
+    )
+  }
+  HTML(paste0(
+    '<svg class="lc-chain" viewBox="0 0 960 340" role="group" aria-label="Łańcuch od zagrożenia do skutku">
+       <defs><marker id="lc-chain-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+         <path d="M0 0 L10 5 L0 10 z" class="lc-chain-headfill"/></marker></defs>',
+    arrow(212, 246, 66), arrow(457, 491, 66), arrow(702, 736, 66),
+    barrier(400, 474, "przed zdarzeniem", "end"), barrier(560, 719, "po zdarzeniu", "start"),
+    node("hazard", 10, 10, 200, 112), node("exposure", 255, 10, 200, 112),
+    node("event", 500, 10, 200, 112), node("consequence", 745, 10, 200, 112),
+    node("safeguard", 360, 228, 240, 104),
+    '</svg>'
+  ))
+}
+
+jezyk_chain_widget <- figure_panel(
+  label = "Schemat 1.1",
+  title = "Łańcuch od zagrożenia do skutku",
+  full_width = TRUE,
+  jezyk_chain_svg(),
+  tags$p(class = "lc-chain-hint", "Kliknij pojęcie, aby zobaczyć jego definicję i pytanie kontrolne."),
+  uiOutput("ch1_chain_detail"),
+  tags$script(HTML(
+    "function lcChainSelect(el) {
+       el.closest('svg').querySelectorAll('.lc-chain-node').forEach(function(n) {
+         n.classList.toggle('is-active', n === el);
+       });
+       Shiny.setInputValue('ch1_chain_click', el.dataset.key, {priority: 'event'});
+     }"
+  ))
+)
+
 jezyk_block <- list(
   id = "jezyk", title = "Język ryzyka",
   chapters = list(
@@ -355,14 +448,7 @@ jezyk_block <- list(
                samo w sobie nie ma prawdopodobieństwa — ma je dopiero konkretne
                zdarzenie, np. poślizgnięcie się na tym przejściu podczas jednej zmiany."
             )),
-            lc_stat_grid(
-              lc_stat_box("Zagrożenie", "Źródło możliwej szkody", color = upwr_cat[["terakota"]]),
-              lc_stat_box("Ekspozycja", "Kontakt w danych warunkach", color = upwr_cat[["bursztyn"]]),
-              lc_stat_box("Zdarzenie", "To, co faktycznie zaszło", color = upwr_accent),
-              lc_stat_box("Skutek", "Następstwo zdarzenia", color = upwr_cat[["wrzos"]]),
-              lc_stat_box("Zabezpieczenie", "Element przerywający łańcuch", color = upwr_cat[["szalwia"]]),
-              columns = 3
-            ),
+            jezyk_chain_widget,
             "Kolejność w tym łańcuchu nie jest przypadkowa. Zagrożenie istnieje, zanim
                ktokolwiek się do niego zbliży; ekspozycja sprawia, że zdarzenie staje
                się w ogóle możliwe; skutek zależy od tego, jak przebiegło zdarzenie.
@@ -1452,6 +1538,18 @@ jezyk_block <- list(
 jezyk_chapters <- risk_block_chapters(jezyk_block)
 
 jezyk_sytuacja_server <- function(input, output, session) {
+  output$ch1_chain_detail <- renderUI({
+    key <- input$ch1_chain_click
+    req(key %in% names(jezyk_chain_terms))
+    term <- jezyk_chain_terms[[key]]
+    tags$div(
+      class = "lc-chain-detail", style = paste0("--node-color:", term$color),
+      tags$div(class = "lc-chain-detail-name", risk_term_labels[[key]]),
+      tags$p(term$definition),
+      tags$p(tags$strong("Pytanie kontrolne:"), paste0(" ", term$question))
+    )
+  })
+
   checked <- reactiveVal(FALSE)
 
   observeEvent(input$ch1_check, {
