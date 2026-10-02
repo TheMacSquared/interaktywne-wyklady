@@ -69,17 +69,20 @@ alarm_terms_table <- figure_panel(
   label = "Słownik",
   title = "Cztery liczby opisujące detektor",
   full_width = TRUE,
-  tags$table(
-    class = "lc-table lc-table-striped lc-table-bordered",
-    tags$thead(tags$tr(
-      tags$th("Nazwa"), tags$th("Zapis warunkowy"), tags$th("Mianownik"), tags$th("W Bananpolu")
-    )),
-    tags$tbody(
-      tags$tr(tags$td("Częstość bazowa"), tags$td("P(awaria)"), tags$td("wszystkie zmiany"), tags$td("0,01")),
-      tags$tr(tags$td("Czułość"), tags$td("P(alarm | awaria)"), tags$td("zmiany z awarią"), tags$td("0,95")),
-      tags$tr(tags$td("Odsetek fałszywych alarmów"), tags$td("P(alarm | brak awarii)"), tags$td("zmiany bez awarii"), tags$td("0,05")),
-      tags$tr(tags$td("Wiarygodność alarmu"), tags$td("P(awaria | alarm)"), tags$td("wszystkie alarmy"), tags$td("wynik tego wykładu"))
-    )
+  lc_table(
+    data.frame(
+      name = c("Częstość bazowa", "Czułość", "Odsetek fałszywych alarmów", "Wiarygodność alarmu"),
+      notation = c("P(awaria)", "P(alarm | awaria)", "P(alarm | brak awarii)", "P(awaria | alarm)"),
+      denominator = c("wszystkie zmiany", "zmiany z awarią", "zmiany bez awarii", "wszystkie alarmy"),
+      value = c("0,01", "0,95", "0,05", "wynik tego wykładu")
+    ),
+    cols = list(
+      lc_col("name", "Nazwa", "row"),
+      lc_col("notation", "Zapis warunkowy", "text"),
+      lc_col("denominator", "Mianownik", "text"),
+      lc_col("value", "W Bananpolu", "text")
+    ),
+    narrow = "cards"
   )
 )
 
@@ -280,7 +283,7 @@ alarm_block <- list(
                   sliderInput("a3_sens", "Czułość", 0.50, 1, 0.95, 0.01),
                   sliderInput("a3_fpr", "Fałszywie dodatnie", 0, 0.30, 0.05, 0.01)
                 ),
-                column(8, tableOutput("a3_table"))
+                column(8, uiOutput("a3_table"))
               ), full_width = TRUE
             ),
             c(
@@ -639,7 +642,13 @@ alarm_server <- function(input, output, session) {
     }
   })
   detector <- reactive(do.call(risk_detector_counts, c(list(population = 10000L), detector_parameters())))
-  output$a3_table <- renderTable(detector(), striped = TRUE, bordered = TRUE)
+  output$a3_table <- renderUI({
+    d <- detector()
+    counts <- matrix(c(d$alarm, d$no_alarm), nrow = 2,
+                     dimnames = list(d$state, c("Alarm", "Brak alarmu")))
+    lc_crosstab(counts, measure = "n", row_name = "Stan", col_name = "Odczyt detektora",
+                lead = FALSE, label = "Tablica 2×2 dla 10 000 zmian")
+  })
   output$a3_counts <- renderUI({
     d <- detector()
     lc_stat_grid(lc_stat_box("Prawdziwe alarmy", d$alarm[1]),
