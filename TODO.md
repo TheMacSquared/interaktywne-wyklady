@@ -21,39 +21,118 @@ Oznaczenie **Decyzja:** to pytanie do prowadzącego z wariantami do wyboru.
 
 ## Teraz
 
-Kolejność najbliższych prac:
+Kolejność najbliższych prac (szczegóły w „Migracja widgetów do v2”):
 
-1. [ ] Statystyka 01 — dopracować tabelę częstości (szczegóły niżej).
-2. [ ] Przetestować ją w macierzy szerokości: pełne okno, połowa okna,
-   szerokości pośrednie, telefon, powiększony tekst.
-3. [ ] Tą samą macierzą sprawdzić analizę ryzyka 07, rozdziały 2 i 4.
-4. [ ] Po obu pilotażach zatwierdzić wspólny wzorzec, zrobić inwentaryzację
-   widgetów i rozpocząć migrację pozostałych wykładów małymi commitami.
+1. [ ] Naprawić 48 paneli, które wylewają się na telefonie (głównie stare
+   tabele → `lc_table()`).
+2. [ ] Mechaniczne zamiany w całych kursach: `sliderInput()` →
+   `lc_slider()`, stała wysokość wykresu → `lc_plot()`, radio ≤ 4 opcje →
+   `lc_segmented()`, przyciski Bootstrapa → `lc_action()` /
+   `lc_action_group()`.
+3. [ ] Przegląd widgetów wykład po wykładzie: układy kolumn, odczyty,
+   podpisy i tabele.
 
 ---
 
 ## Globalne
 
-### Responsywne panele, tabele i widgety
+### Migracja widgetów do v2
 
 Stan:
 
-- `figure_panel(width_mode = ...)`: `compact` (do treści, maks. 680 px),
-  `text` (do 680 px), `wide` (do 980 px). Istniejące wywołania zachowują
-  dotychczasowe zachowanie.
-- `lc_table_region()` ogranicza przewijanie do tabeli, `lc_controls_row()`
-  reorganizuje sterowanie, `lc_widget_layout()` stawia sterowanie nad
-  wykresem lub obok, zależnie od szerokości kontenera.
-- Pilotaże: statystyka 01 rozdz. 2 (tabela krokowa), statystyka 02 rozdz. 2
-  („Dane a model”), analiza ryzyka 07 rozdz. 2 i 4.
-- Testy komponentów i skany kontraktu przechodzą w obu kursach; 10 aplikacji
-  analizy ryzyka przechodzi kontrolę ładowania.
+- Komponenty v2 (widgety i tabele) są w sekcji „WIDGETY V2 I TABELE V2”
+  w `R/lecture_layout.R`, `R/shared_styles.css` i `R/lc_widgets.js`,
+  identyczne we wszystkich kursach. Zasady: `R/DESIGN_CONTRACT.md`.
+- Style v2 obejmują każdy `figure_panel()`; elementy sprzed v2 działają dalej.
+- Gotowe widgety: statystyka 01 Ryc. 2.1 i 2.5, statystyka 02 Ryc. 1.1,
+  analiza ryzyka 05 `d5_geo`, analiza ryzyka 07 „Cztery funkcje”.
+- Audyt z 2 października 2026 (23 aplikacje, 1440 i 390 px, stan po
+  wejściu do rozdziału, bez interakcji): 477 paneli, 27 gotowych, 402 ze
+  starymi elementami, 48 wylewa się na telefonie (46 z nich także przed v2).
+- Stare elementy w panelach do migracji: przyciski Bootstrapa 376, wykresy
+  o stałej wysokości 238, układy `fluidRow` 201, `lc_feedback` w panelu 116,
+  `lc_stat_box` 90, stare tabele 77, suwaki 150, radio 46.
 
-Zadania:
+Panele per wykład (paneli / gotowe / wylewa się / układ kolumn / pudełka
+statystyk / stare tabele):
+
+| Wykład | Pan. | Got. | Wyl. | Kol. | Stat. | Tab. |
+|---|---|---|---|---|---|---|
+| analiza-ryzyka 01-jezyk-ryzyka | 16 | 1 | 3 | 4 | 5 | 4 |
+| analiza-ryzyka 02-warunki | 11 | 2 | 1 | 3 | 5 | 3 |
+| analiza-ryzyka 03-alarm-i-prawda | 11 | 2 | 2 | 1 | 4 | 3 |
+| analiza-ryzyka 04-wiele-prob | 11 | 2 | 1 | 0 | 5 | 2 |
+| analiza-ryzyka 05-do-zdarzenia | 8 | 1 | 1 | 0 | 3 | 1 |
+| analiza-ryzyka 06-zmiennosc-i-prog | 9 | 1 | 0 | 0 | 5 | 0 |
+| analiza-ryzyka 07-czas-zycia | 13 | 1 | 0 | 0 | 5 | 1 |
+| analiza-ryzyka 08-niezawodnosc-systemu | 13 | 1 | 1 | 0 | 5 | 1 |
+| analiza-ryzyka 09-drzewo-bledow | 10 | 1 | 0 | 0 | 3 | 0 |
+| analiza-ryzyka 10-model-do-decyzji | 13 | 1 | 0 | 0 | 6 | 0 |
+| statystyka-2 01-symulacje-statystyczne | 23 | 0 | 0 | 18 | 0 | 0 |
+| statystyka-2 02-metody-bayesowskie | 13 | 0 | 0 | 10 | 0 | 0 |
+| statystyka-2 03-kierunkowe | 14 | 0 | 0 | 14 | 11 | 1 |
+| statystyka-2 04-szeregi-czasowe | 41 | 0 | 0 | 39 | 4 | 0 |
+| statystyka 01-typy-danych | 44 | 4 | 8 | 13 | 1 | 12 |
+| statystyka 02-rozklady-prawdopodobienstwa | 44 | 2 | 13 | 25 | 8 | 5 |
+| statystyka 03-przedzialy-ufnosci | 19 | 0 | 0 | 6 | 2 | 0 |
+| statystyka 04-wnioskowanie-statystyczne | 55 | 6 | 0 | 22 | 3 | 7 |
+| statystyka 05-zalozenia-testow | 8 | 0 | 0 | 8 | 0 | 0 |
+| statystyka 06-regresja | 40 | 0 | 3 | 25 | 12 | 9 |
+| statystyka 07-dobre-dane | 38 | 1 | 4 | 7 | 0 | 14 |
+| statystyka 08-case-studies | 7 | 0 | 1 | 5 | 2 | 0 |
+| statystyka 09-projekt-badawczy | 16 | 1 | 10 | 1 | 1 | 14 |
+
+Etap 1 — panele wylewające się na telefonie:
+
+- [ ] Przenieść tabele z wylewających się paneli do `lc_table()`
+  (najwięcej: statystyka 02, 09 i 01). Tabele tekstowe: `narrow = "cards"`
+  albo `"stack-last"`; liczbowe: `lc_table_split()`.
+- [ ] Statystyka 07: zastąpić `DT::datatable()` (14 podglądów `dom = "t"`)
+  przez `lc_table_preview()` z typem zmiennej w nagłówku (`lc_col(sub = )`);
+  wygląd jamovi nie jest potrzebny, te same statystyki tak. Potem usunąć
+  zależność od DT i lokalny CSS `.jamovi-table` z `07-dobre-dane/app.R`.
+
+Etap 2 — mechaniczne zamiany (commit per kurs i rodzaj zamiany):
+
+- [ ] `sliderInput()` → `lc_slider()` (150 paneli, ok. 500 suwaków).
+- [ ] `zoom_plot_ui(id, height = "…px")` → `lc_plot(id)`; wysokie wykresy
+  z `max_height`, porównania obok siebie przez `lc_plots()` (238 paneli).
+- [ ] `radioButtons()` z ≤ 4 krótkimi opcjami → `lc_segmented()` (46).
+- [ ] `actionButton(class = "lc-btn-*")` → `lc_action()`, serie akcji →
+  `lc_action_group()`, reset → ikona (376 paneli).
+- [ ] `labs(title / subtitle)` w wykresach widgetów → tytuł panelu.
+- [ ] Rozważyć skrypt migracyjny (`scripts/`) dla zamian 1:1 oraz
+  przeniesienie skryptu audytu paneli do `scripts/`, żeby powtarzać pomiar
+  po każdym etapie.
+
+Etap 3 — przegląd widgetów wykład po wykładzie (commit per widget):
+
+- [ ] `fluidRow(column(…))` → `lc_toolbar()` nad treścią (201 paneli;
+  najwięcej w statystyce 2: 81 z 91 paneli).
+- [ ] `lc_stat_box()` w widgetach → `lc_readout()`; odczyt z kolorem serii
+  zastępuje legendę ggplot (90 paneli; w analizie ryzyka dotyczy prawie
+  każdego `risk_widget_panel()`, w którym pudełka siedzą teraz w pasku).
+- [ ] `lc_feedback()` pod wykresem → `lc_caption()`; `lc_feedback()` zostaje
+  w toku tekstu (116 paneli).
+- [ ] Pozostałe stare tabele → `lc_table()` / `lc_crosstab()` (77 paneli),
+  potem usunąć `lc_table_region()` i klasy `lc-table*`.
+- [ ] Legendy ggplot wychodzące poza wykres na telefonie (np. statystyka 01
+  Ryc. 2.5) — poprawiać przy migracji danego widgetu.
+
+Decyzje:
+
+- [ ] **Decyzja:** Ryc. 2.1 (statystyka 01) na rzutniku z dużym fontem
+  dzieli się na dwie tabele, bo panel `text` ma stałe 680 px. Warianty:
+  akceptujemy / szerokość `wide` dla wąskich widgetów tabelowych / szerokości
+  paneli w `em`.
+- [ ] **Decyzja:** wykresy w analizie ryzyka 02 (`w2_filter_plot`) i 03
+  (`a3_grid`) dostały `ratio` i `max_height` szacunkowo z dawnej wysokości —
+  obejrzeć i zatwierdzić.
+
+Pozostałe:
 
 - [ ] Powtórzyć pełną kontrolę ładowania statystyki na stacjonarnym
   (wcześniej przerwana limitem czasu).
-- [ ] Po pilotażach: inwentaryzacja widgetów w obu kursach i plan migracji.
 
 Zasady migracji:
 
@@ -77,6 +156,22 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
 - [ ] **Decyzja:** czy interaktywny łańcuch pojęć z analizy ryzyka 01 ma być
   wspólnym komponentem.
 
+### Zapis liczb: kropka dziesiętna i zwykły minus
+
+Decyzja: wszędzie kropka dziesiętna i zwykły minus `-`, jak w R i jamovi.
+Helpery v2 (`lc_fmt()`, `lc_num()`, `lc_pval()`, `R/lc_widgets.js`) już
+to stosują.
+
+- [ ] Przestawić stare formatery na kropkę, m.in. `risk_format_probability()`
+  w `analiza-ryzyka/R/risk_block.R` (zamiana `.` na `,`).
+- [ ] Przejrzeć teksty wykładów we wszystkich kursach i zamienić przecinek
+  dziesiętny na kropkę (np. „p = 0,10” w analizie ryzyka 05 obok widgetu
+  pokazującego 0.1). Zmieniać osobnymi commitami per wykład.
+- [ ] Zamienić typograficzny minus `−` w liczbach na zwykły `-` (teksty,
+  formatery, etykiety wykresów).
+- [ ] Sprawdzić etykiety osi i liczby w ggplot (np. `scales::label_number`
+  z `decimal.mark = ","`).
+
 ---
 
 ## Statystyka
@@ -88,23 +183,12 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   hasła dopisywać do `statystyka/R/glossary.R`. Wzorzec:
   `03-przedzialy-ufnosci/modules/ch1_estymacja.R`.
 
-### 01 — typy danych: tabela częstości
+### 01 — typy danych
 
-Kontekst: tabela ma minimum 600 px, panel 680 px daje ok. 622 px treści;
-w kroku 4 sześć kolumn z długimi nagłówkami wymusza przewijanie.
-
-- [ ] Skrócić nagłówki do `n`, `f`, `%`, `N skum.`, `% skum.` i dodać
-  widoczne objaśnienie oznaczeń.
-- [ ] Liczebności jako liczby całkowite, procenty bez zbędnych zer
-  końcowych; kategorie wyrównane do lewej.
-- [ ] Na wąskim kontenerze porównać jedną tabelę z dwiema (zwykłe
-  i skumulowane, kategoria powtórzona w obu).
-- [ ] W pierwszych krokach (dwie kolumny) nie wymuszać minimum 600 px.
-- [ ] Sprawdzić wszystkie kroki dla zmiennej nominalnej i porządkowej,
-  zwłaszcza długie nazwy kategorii; nie zmieniać obliczeń.
-
-Pliki: `01-typy-danych/modules/ch2_jakosciowe.R`, `R/lecture_layout.R`,
-`R/shared_styles.css`, `R/DESIGN_CONTRACT.md`.
+- [ ] Ryc. 2.1, krok 4 dla zmiennej porządkowej: tekst używa zastępczych
+  „X%” i „Y%”; rozważyć wstawienie wyliczonych wartości.
+- [ ] Dane: poziom „Mezczyzna” w `app.R` bez polskiego znaku — poprawić na
+  „Mężczyzna” (widoczny w tabeli krzyżowej i na wykresach).
 
 ### 04 — wnioskowanie statystyczne
 
@@ -224,13 +308,29 @@ kotwice sekcji to `blok-rozdział-sekcja` (`R/risk_block.R`, l. 420).
 
 ### 07 — czas życia
 
-- [ ] Sprawdzić rozdziały 2 i 4 macierzą szerokości (patrz „Teraz”).
-- [ ] Jeśli `lc_table_region()` wystarcza, zastąpić nim `.life-table-scroll`.
+- [ ] Druga tabela w `.life-table-scroll` (`modules/block.R`, ok. l. 501) →
+  `lc_table()`; potem usunąć CSS `.life-table-scroll`.
 - [ ] **Decyzja:** wzór (7.2) λ̂ = d/Σtᵢ (`modules/block.R`, ok. l. 162)
   kłóci się z zapowiedzią „bez estymacji parametrów”, ale pokazuje użycie
   obserwacji cenzorowanych. Warianty: zostaje / przenieść do
   `risk_derivation()` / usunąć i przenumerować (7.3)–(7.17). Rozstrzygnąć
   przed zatwierdzeniem treści wykładu.
+
+- [ ] l. 520 i 523: instrukcja eksperymentu z Weibullem każe ustawić η = 1500 h,
+  a odczyt podaje wartości dla η = 1700 h (przy 1500 h hazard w 100 h to ok.
+  0,0013, nie 0,0012). Ujednolicić instrukcję albo przeliczyć odczyt.
+- [ ] l. 456: usunąć z tekstu dla studentów notatkę autorską „To krótki kontekst
+  dla gamma, nie dodatkowy rozbudowany dział.”
+- [ ] l. 417: ujednolicić oznaczenie liczby zdarzeń („r-te wykrycie” obok
+  „suma k oczekiwań geometrycznych”).
+- [ ] **Decyzja:** kolejność definicji — wzór (7.1) i przykład 7.1 używają f(t)
+  i R(t) przed definicją 7.4, a rozdział o cenzorowaniu opiera się na modelu
+  wykładniczym z rozdziału 4. Warianty: zostaje z jawnym odesłaniem w przód /
+  przestawić rozdziały (`jezyk` przed `mttf` i `cenzorowanie`). Powiązane
+  z decyzją o wzorze (7.2).
+- [ ] **Decyzja:** proces i rozkład Poissona pojawiają się w l. 428–456 bez
+  definicji (nigdzie w kursie). Warianty: jedno zdanie definicji w sekcji
+  `gamma` / zostaje jako „most” bez definicji.
 
 ### 08 — niezawodność systemu
 
@@ -243,12 +343,49 @@ Plik: `modules/block.R`.
   (ok. l. 370, 562)?
 - [ ] Zweryfikować komunikację fikcyjnego progu 14,5 °C w definicji sukcesu.
 
+- [ ] l. 489: pułapka mówi o „suwaku korelacji”, którego w wykładzie nie ma
+  (jest suwak P(utraty wspólnego zasilania), `s8_common`) — przeredagować.
+- [ ] l. 495: „pierwsza dodatkowa gałąź redukuje ryzyko … z 0,01 do 0,001” —
+  to spadek po drugiej dodatkowej gałęzi (przy r = 0,9: 0,1 → 0,01 → 0,001);
+  poprawić i podać r.
+- [ ] l. 590: intro ściągi opisuje quiz i ćwiczenia niezgodnie z zawartością
+  (quiz obejmuje też koherentność i rezerwę oczekującą; ćwiczenia zaczynają
+  się od „Struktury” i kończą na „Beta-factor” i „Ile gałęzi”).
+- [ ] l. 361: „porządek, który za wykład wróci w drzewach błędów” — poprawić
+  szyk.
+- [ ] **Decyzja:** rezerwa oczekująca jest wprowadzona jednym zdaniem (l. 242),
+  a jest przedmiotem pytania quizu 5. Warianty: dopisać krótką definicję
+  (stan w oczekiwaniu, przełącznik) / zostaje jako wzmianka.
+- [ ] **Decyzja:** układ k-z-n nie występuje w wykładzie, a używa go zadanie
+  9.5 (2-z-3) w `materialy/analiza-ryzyka/cwiczenia-listy-zadan.md`.
+  Warianty: dodać krótką sekcję w wykładzie / usunąć z listy ćwiczeń /
+  zostaje jako zadanie dodatkowe.
+- [ ] **Decyzja:** tytuł rozdziału `redundancja` („Istotność Birnbauma”) nie
+  obejmuje dwóch pierwszych sekcji (malejąca korzyść redundancji, kopie
+  zapasowe). Warianty: zostaje (tytuł = tag pojęcia) / „Redundancja
+  i istotność”.
+
 ### 09 — drzewo błędów
 
 - [ ] **Decyzja:** ranking potencjalnej redukcji (`f9_rank_plot`, ok. l. 607)
   liczy na stałych bazowych (0,005; 0,05; 0,08), więc suwak zmienia tylko
   skalę, nie kolejność. Warianty: zostaje / podpiąć suwaki z rozdziału 3 /
   pokazać redukcję względną lub istotność krytyczną obok Birnbauma.
+
+- [ ] **Decyzja (merytoryczna):** l. 73 mówi „detekcja ma osobne zasilanie”,
+  a l. 158, 403, 432 traktują utratę zasilania jako wspólną przyczynę
+  wyłączającą detekcję i tłumienie (także checkbox w l. 157). Warianty:
+  detekcja ma osobne zasilanie, a przykład wspólnej przyczyny dotyczy innego
+  zasobu / detekcja i tłumienie dzielą zasilanie (zmienić l. 73 i opis
+  danych).
+- [ ] l. 124: „wrócimy w ostatnim rozdziale” → w rozdziale „Granice drzewa
+  błędów” (przedostatni).
+- [ ] Ujednolicić „P(top)” / „Top event” → „P(TOP)” / „zdarzenie szczytowe”
+  (l. 66, 254, 444, 446, 546, 593, ćw. 2, etykiety widgetów).
+- [ ] l. 588: „i 2 wejść” → poprawna odmiana dla n = 2–4.
+- [ ] Kolejność: definicja 9.2 (l. 120) używa bramki przed definicją 9.3
+  (l. 148); wzór (9.10) wprowadza I_CR przed definicją 9.5 — przestawić albo
+  dodać odesłanie.
 
 ### 10 — od modelu do decyzji
 
@@ -257,3 +394,62 @@ Plik: `modules/block.R`.
   P_rok = 1 − (1 − P(TOP))³ ≈ 0,005 jest rozszerzeniem; 1 − R_sys³ ≈ 0,641
   pokazano jako pułapkę. Warianty: zostaje / horyzont roczny jako wynik główny
   (zmiana serwera i `risk_mission_analysis()`).
+- [ ] Wzór (10.11, l. 504) nie zawiera skalowania prawdopodobieństwa
+  przeoczenia, które opisuje tekst (l. 501) i liczy kod (`R/risk_math.R`,
+  l. 244) — uzupełnić wzór.
+- [ ] l. 320: „Równość z wynikiem b) jest przypadkową cechą β = 2” — dla β = 2
+  równość R(2000)/R(1000) = R(1000)³ zachodzi dla każdego η; przypadkowa jest
+  tylko bliskość do połowy. Przeredagować.
+- [ ] l. 91 i 88: odsyłacze do „ramki z danymi” — skuteczność 50% jako
+  hipoteza jest opisana dopiero we wstępie rozdziału `interwencje` (l. 459).
+- [ ] l. 421: odsyłacz do „pierwszego pytania quizu” nie pasuje (quiz 1 dotyczy
+  awarii a niedostępności, nie 1 − R_sys³).
+- [ ] l. 287 i l. 398: ta sama różnica modeli opisana jako „prawie dwukrotnie”
+  i „o około 40%” — ujednolicić ujęcie.
+- [ ] l. 526: „wygrywa aż do u = 0,45” jest na granicy (0,00155 wobec 0,00156) —
+  rozważyć „do około u = 0,45”.
+- [ ] Ujednolicić „P(top)” → „P(TOP)” w ćwiczeniach 1 i 3; „blok 07” →
+  „wykład 07” (l. 73).
+- [ ] **Zunifikować misję ochrony termicznej z danymi Bananpol z jRISK**
+  (decyzja 2026-10-02: wariant A1, odłożone na osobną sesję). Cel: wątek
+  ćwiczeń dane → parametr → model → decyzja domyka się w wykładzie 10.
+  Wentylatory z dopasowania do `jRISK/data/bananpol.csv` (typ = wentylator;
+  ćwiczenie 8.6): wykładniczy MTTF ≈ 15,36 mies., Weibull β ≈ 1,19,
+  η ≈ 15,92 mies.; misja = półrocze między przeglądami (6 mies.); R_P = 0,98,
+  R_C = 0,98 (STER z `bananpol_system`) na misję; P(I) = 0,005, czułość 0,95.
+  Przeliczone wstępnie (model z `risk_mission_analysis`, u = 0,2):
+  P(TOP) 0,000915 (wykł.) / 0,000766 (Weibull); limit demonstracyjny trzeba
+  obniżyć z 0,002 do 0,001 (przy 0,002 nawet „bez działania” spełnia limit);
+  ranking bez zmian (ograniczenie źródła ciepła wygrywa, czujnik przekracza
+  limit w ostrożnym). Odnowa: wentylator R(18) / R(6)³ / R(3)⁶ = 0,314 / 0,392
+  / 0,440, agregat (β ≈ 3,23, η ≈ 30) 0,826 / 0,984 / 0,997 — kontrast
+  zużycia z danych zamiast β = 2. Na co uważać:
+  - **Wykład 07 zostaje przy kartach katalogowych** (MTTF 1500 h, β = 2,
+    η = 1700 h; decyzja 2026-10-02). Nie zestawiać ich liczbowo z danymi: przy
+    pracy ciągłej 1500 h ≈ 2 mies., a dane dają MTTF ≈ 15 mies. (7× dłużej) —
+    dwa niespójne „światy” wentylatorów. W 10 tylko zdanie, że w miejsce
+    hipotez z 07 wchodzą modele dopasowane do danych eksploatacyjnych.
+    Parametry `lifetime.*` w `R/bananpol.R` należą do 07 — dla 10 dodać osobne
+    pola w `integration`, nie nadpisywać.
+  - `risk_mission_analysis()` (`R/risk_math.R`) ma wpisane na sztywno 1500/1700
+    i skalowanie `R(1000)^(t/1000)` — sparametryzować (model wentylatora
+    i czas bazowy z rejestru), przemianować argumenty `*_r1000`.
+  - Jednostki: cały wykład 10 jest w godzinach (suwak 100–3000 h, „po 400 h”,
+    „w 200. godzinie”, przykłady 10.5–10.11, notatka 10.12, quiz o R(3000)
+    i R(1000)³, ćwiczenia w `integracja_exercises`, wykres karty 3). Przejście
+    na miesiące musi być konsekwentne — wykład uczy „wspólnej etykiety czasu”.
+  - Horyzont roczny: 2 misje (półrocza) zamiast 3; wzór 10.9 z potęgą 2.
+  - Przeliczyć wszystkie liczby w tekście (ok. 40 miejsc) i sprawdzić
+    zdania jakościowe, które się zmieniają: różnica modeli wentylatora maleje
+    z ≈ 1,7× do ≈ 1,2× (β obejmuje prawie 1 — dane zawęziły niepewność
+    modelu); przykład 10.11(b) i „wygrywa aż do u = 0,45” — odwrócenie
+    rankingu przy u = 0,5 trzeba sprawdzić na nowo.
+  - Testy: `tests/testthat/test-mission-analysis.R` (exp(−1000/1500), .95,
+    `i10_time = 1000`, limit .002) i `test-risk-math.R` (tylko 07 — zostaje).
+    Uruchomić całość przed i po zmianie (`Rscript analiza-ryzyka/tests/testthat.R`).
+  - Razem z wykładem zmienić: przewodnik prowadzącego (sekcja 10), listę
+    ćwiczeń tygodnia 11 (11.1–11.3, 11.a, 11.b) i `jrisk-pokrycie-zadan.md`
+    w `~/praca/dydaktyka/materialy/analiza-ryzyka/`; klucze 11.x liczyć z tych
+    samych zaokrąglonych parametrów co wykład.
+  - Rozważony i odrzucony głębszy wariant (D z przeoczeń w `bananpol_alarmy`,
+    S = 1 − R linii z `bananpol_system`): miesza jednostki zmiana/półrocze.
