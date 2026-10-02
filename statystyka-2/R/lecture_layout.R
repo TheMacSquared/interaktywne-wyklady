@@ -925,10 +925,15 @@ lc_fmt <- function(x, digits = 0, big_mark = "") {
 }
 
 # Suwak v2: wartość w etykiecie (aktualizuje R/lc_widgets.js), min i max pod
-# torem, bez siatki. digits domyślnie z kroku suwaka.
+# torem, bez siatki. digits domyślnie z kroku suwaka (także domyślnego kroku Shiny).
 lc_slider <- function(input_id, label, min, max, value, step = NULL,
                       digits = NULL, suffix = "") {
-  if (is.null(digits)) digits <- if (is.null(step)) 0L else .lc_decimals(step)
+  if (is.null(digits)) {
+    # Bez step Shiny sam dobiera krok; liczba miejsc po kropce wynika z niego.
+    eff_step <- if (!is.null(step)) step else tryCatch(
+      shiny:::findStepSize(min, max, NULL), error = function(e) 1)
+    digits <- max(.lc_decimals(eff_step), .lc_decimals(value))
+  }
   fmt <- function(x) paste0(lc_fmt(x, digits), suffix)
   tags$div(class = "lc-grp lc-grow lc-slider",
     tags$div(class = "lc-slider-label",

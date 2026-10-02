@@ -21,8 +21,16 @@
     var slider = window.jQuery && window.jQuery(input).data('ionRangeSlider');
     var value = slider ? slider.result.from : input.value;
     outputs.forEach(function(o) {
-      o.textContent = lcFormat(value, Number(o.getAttribute('data-digits')) || 0,
-                               o.getAttribute('data-suffix'));
+      var digits = Number(o.getAttribute('data-digits')) || 0;
+      var suffix = o.getAttribute('data-suffix');
+      o.textContent = lcFormat(value, digits, suffix);
+      // Końce toru: aktualne min i max (updateSliderInput może je zmienić).
+      var group = o.closest('.lc-slider');
+      var ends = group && group.querySelectorAll('.lc-slider-ends span');
+      if (slider && ends && ends.length === 2) {
+        ends[0].textContent = lcFormat(slider.result.min, digits, suffix);
+        ends[1].textContent = lcFormat(slider.result.max, digits, suffix);
+      }
     });
   }
   document.addEventListener('input', function(e) {
@@ -30,6 +38,11 @@
   });
   if (window.jQuery) {
     window.jQuery(document).on('change', '.js-range-slider', function() { updateSliderOutput(this); });
+    // updateSliderInput(): stan suwaka zmienia się po obsłudze komunikatu.
+    window.jQuery(document).on('shiny:updateinput', '.js-range-slider', function() {
+      var input = this;
+      setTimeout(function() { updateSliderOutput(input); }, 0);
+    });
   }
 
   // --- Segment: wyłączenie wartości wybranej w segmencie powiązanym ---

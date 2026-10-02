@@ -2056,7 +2056,7 @@ mjx-container mjx-text {
 .lc-seg label:has(input:disabled){opacity:.35;pointer-events:none}
 
 /* Przyciski v2: bez klas Bootstrapa i prefiksu lc-btn- */
-.lc-action{display:inline-flex;align-items:center;gap:.45em;min-height:2.6em;padding:0 1em;border-radius:6px;font:700 .84em var(--upwr-sans);white-space:nowrap;cursor:pointer;border:1px solid var(--upwr-accent);background:var(--upwr-surface);color:var(--upwr-accent)}
+.lc-action{display:inline-flex;align-items:center;gap:.45em;min-height:2.6em;max-width:100%;padding:.35em 1em;border-radius:6px;font:700 .84em/1.25 var(--upwr-sans);white-space:normal;text-align:left;cursor:pointer;border:1px solid var(--upwr-accent);background:var(--upwr-surface);color:var(--upwr-accent)}
 .lc-action svg{width:1.05em;height:1.05em;flex:none}
 .lc-action.is-outline:hover{background:var(--upwr-accent);color:var(--upwr-surface)}
 .lc-action.is-solid{background:var(--upwr-accent);color:var(--upwr-surface)}
