@@ -150,7 +150,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
         id = "symulacja", title = "Symulacja: jak długo czekamy?",
         body = list(
           risk_try("zostaw p = 0,10 i kliknij „Losuj ponownie” kilka razy. Zapisz, gdzie leży najwyższy słupek i jak daleko sięga najdłuższa seria. Potem zmień p na 0,30 i na 0,03."),
-          risk_widget_panel("Symulacja", "Ile kontroli do pierwszej wady?", tagList(sliderInput("d5_geo_p", "p", .01, .5, .1, .01), actionButton("d5_geo_run", "Losuj ponownie", class = "lc-btn-primary")), "d5_geo", "d5_geo_stats"),
+          risk_widget_panel("Symulacja", "Ile kontroli do pierwszej wady?", tagList(lc_slider("d5_geo_p", "Prawdopodobieństwo wady p", .01, .5, .1, .01), lc_action("d5_geo_run", "Losuj ponownie", icon = "shuffle")), "d5_geo", "d5_geo_stats", v2 = TRUE),
           c(
             "Niezależnie od p najwyższy słupek stoi przy pierwszej kontroli. Kolejne słupki systematycznie maleją, ale bardzo powoli, gdy p jest małe. Pojedyncze serie ciągną się kilka razy dłużej niż średnia. Przy p = 0,03 średni czas oczekiwania to około 33 kontroli, a najdłuższe serie wychodzą poza prawą krawędź wykresu, czyli ponad 80 kontroli.",
             "Te obserwacje mają proste wyjaśnienie rachunkowe, które wyprowadzimy w następnej sekcji. Warto je jednak najpierw zobaczyć: w planowaniu zasobów to właśnie długi ogon, a nie średnia, sprawia kłopot."
@@ -451,10 +451,10 @@ dozd_server <- function(input, output, session) {
   geo_plot <- reactive(ggplot(data.frame(x = geo_sample()), aes(x)) +
     geom_histogram(binwidth = 1, boundary = .5, fill = upwr_secondary, colour = "white") +
     coord_cartesian(xlim = c(1, min(80, max(geo_sample())))) +
-    labs(title = "Długi prawy ogon oczekiwania", x = "Liczba prób do pierwszego wykrycia", y = "Powtórzenia") +
+    labs(x = "Liczba prób do pierwszego wykrycia", y = "Powtórzenia") +
     theme_upwr())
   zoom_plot_server("d5_geo", geo_plot, alt = "Histogram liczby prób potrzebnych do pierwszego wykrycia.")
-  output$d5_geo_stats <- renderUI(lc_stat_grid(lc_stat_box("Średnia teoretyczna", round(1 / input$d5_geo_p, 1)), lc_stat_box("90. percentyl", qgeom(.9, input$d5_geo_p) + 1, color = upwr_accent), columns = 1))
+  output$d5_geo_stats <- renderUI(tagList(lc_readout("Średnia teoretyczna", lc_fmt(1 / input$d5_geo_p, 1)), lc_readout("90. percentyl", qgeom(.9, input$d5_geo_p) + 1, color = upwr_accent)))
   nb_plot <- reactive({
     maxx <- max(input$d5_r + 10, qnbinom(.995, input$d5_r, input$d5_p) + input$d5_r)
     x <- input$d5_r:maxx

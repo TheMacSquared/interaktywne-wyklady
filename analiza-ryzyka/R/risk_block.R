@@ -29,7 +29,18 @@ risk_natural_frequency <- function(p, population = 1000L) {
 
 risk_widget_panel <- function(label = "Eksperyment", title, controls,
                               plot_id = NULL, stats_id = NULL, note = NULL,
-                              height = "430px", width_mode = NULL, layout = c("above", "beside")) {
+                              height = "430px", width_mode = NULL, layout = c("above", "beside"),
+                              v2 = FALSE) {
+  # v2: pasek sterowania z odczytami nad wykresem, wysokość wykresu z proporcji,
+  # notka jako podpis pod wykresem. stats_id renderuje lc_readout().
+  if (isTRUE(v2)) {
+    return(figure_panel(label = label, title = title,
+      width_mode = width_mode %||% "wide", v2 = TRUE,
+      lc_toolbar(controls, if (!is.null(stats_id)) lc_readouts(uiOutput(stats_id))),
+      if (!is.null(plot_id)) lc_plot(plot_id),
+      if (!is.null(note)) lc_caption(note)
+    ))
+  }
   if (!is.null(width_mode)) {
     layout <- match.arg(layout)
     control_content <- tagList(
