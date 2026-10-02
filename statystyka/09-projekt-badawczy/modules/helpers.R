@@ -428,32 +428,42 @@ tr_board_row <- function(id) {
 # ----------------------------------------------------------------------------
 
 tr_board_ui <- function(reveal = tr_trop_order, show_verdict = TRUE) {
-  header <- tags$thead(tags$tr(
-    tags$th("Trop"),
-    tags$th("Pytanie badawcze"),
-    tags$th("Narzędzie"),
-    tags$th("Miara efektu"),
-    if (show_verdict) tags$th("Werdykt")
-  ))
-
-  body <- tags$tbody(lapply(tr_trop_order, function(id) {
+  muted <- function(text) tags$span(class = "tropy-muted", text)
+  cells <- lapply(tr_trop_order, function(id) {
     row <- tr_board_row(id)
     revealed <- id %in% reveal
-    cls <- if (revealed) "tropy-row tropy-row-on" else "tropy-row tropy-row-off"
-    verdict_cls <- if (!revealed) "" else if (row$supported)
+    verdict_cls <- if (row$supported)
       "tropy-verdict tropy-verdict-on" else "tropy-verdict tropy-verdict-off"
-
-    tags$tr(class = cls,
-      tags$td(tags$strong(row$short)),
-      tags$td(row$question),
-      tags$td(if (revealed) row$test_name else tags$span(class = "tropy-muted", "—")),
-      tags$td(if (revealed) HTML(paste0(row$effect, " · p ", row$p_label))
-              else tags$span(class = "tropy-muted", "czeka na sprawdzenie")),
-      if (show_verdict)
-        tags$td(if (revealed) tags$span(class = verdict_cls, row$verdict)
-                else tags$span(class = "tropy-muted", "—"))
+    list(
+      short = row$short,
+      question = row$question,
+      test = if (revealed) row$test_name else muted("—"),
+      effect = if (revealed) HTML(paste0(row$effect, " · p ", row$p_label))
+               else muted("czeka na sprawdzenie"),
+      verdict = if (revealed) tags$span(class = verdict_cls, row$verdict)
+                else muted("—")
     )
-  }))
+  })
+  column_of <- function(key) I(lapply(cells, `[[`, key))
+  df <- data.frame(
+    short = vapply(cells, `[[`, character(1), "short"),
+    question = vapply(cells, `[[`, character(1), "question"),
+    stringsAsFactors = FALSE
+  )
+  df$test <- column_of("test")
+  df$effect <- column_of("effect")
+  df$verdict <- column_of("verdict")
 
-  tags$table(class = "lc-table lc-table-bordered tropy-board", header, body)
+  cols <- list(
+    lc_col("short", "Trop", "row"),
+    lc_col("question", "Pytanie badawcze", "text"),
+    lc_col("test", "Narzędzie", "text"),
+    lc_col("effect", "Miara efektu", "text"),
+    if (show_verdict) lc_col("verdict", "Werdykt", "text")
+  )
+
+  lc_table(df, Filter(Negate(is.null), cols), narrow = "cards",
+    row_class = ifelse(tr_trop_order %in% reveal,
+                       "tropy-row tropy-row-on", "tropy-row tropy-row-off")
+  )
 }

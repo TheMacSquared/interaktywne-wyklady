@@ -197,13 +197,6 @@ header_extras <- tagList(
     }
 
     /* --- Tablica tropów: narastający widok zbiorczy całej wiązki --- */
-    .tropy-board { margin: 16px 0; }
-    .tropy-board td, .tropy-board th {
-      vertical-align: top;
-      color: var(--upwr-ink);
-      font-size: calc(13px * var(--lc-font-scale));
-      line-height: 1.4;
-    }
     .tropy-row-off { opacity: 0.6; }
     .tropy-row-on  { opacity: 1; transition: opacity .25s; }
     .tropy-muted   { color: var(--upwr-ink-subtle); font-style: italic; }
@@ -333,12 +326,6 @@ header_extras <- tagList(
     .proposal-preview p {
       margin: 6px 0;
     }
-    .proposal-variable-table td,
-    .proposal-variable-table th {
-      vertical-align: top;
-      font-size: calc(13px * var(--lc-font-scale));
-      line-height: 1.4;
-    }
     .proposal-trop-list {
       display: grid;
       gap: 12px;
@@ -400,36 +387,9 @@ header_extras <- tagList(
     .control-model-results {
       min-width: 0;
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
       gap: 14px;
     }
-    .model-table-scroll {
-      max-width: 100%;
-      overflow-x: auto;
-    }
-    .model-coef-table {
-      min-width: 560px;
-      margin-bottom: 0;
-    }
-    .model-coef-table td,
-    .model-coef-table th {
-      white-space: nowrap;
-    }
-    .model-coef-table tr.model-row-significant td {
-      background: var(--upwr-sage-tint);
-    }
-    .model-coef-table tr.model-row-significant td:first-child {
-      border-left: 4px solid var(--upwr-sage);
-      font-weight: 700;
-    }
-    .model-p-significant {
-      display: inline-block;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: var(--upwr-sage);
-      color: #fff;
-      font-weight: 700;
-    }
-
     @media (max-width: 992px) {
       .construct-map { grid-template-columns: 1fr; }
       .research-ladder { grid-template-columns: 1fr; }

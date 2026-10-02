@@ -240,33 +240,33 @@ ch6_server <- function(input, output, session) {
   })
 
   output$ch6_confounder_table <- renderUI({
-    rows <- lapply(tr_confounder_vars, function(var) {
-      r <- tr_confounder_row(var)
-      verdict <- if (r$confounder) {
+    rows <- lapply(tr_confounder_vars, tr_confounder_row)
+    df <- data.frame(
+      label = vapply(rows, function(r) r$label, character(1)),
+      beauty = vapply(rows, function(r) r$beauty_label, character(1)),
+      eval = vapply(rows, function(r) r$eval_label, character(1)),
+      stringsAsFactors = FALSE
+    )
+    df$verdict <- I(lapply(rows, function(r) {
+      if (r$confounder) {
         tags$span(class = "tropy-verdict tropy-verdict-off", "kandydat na zakłócacz")
       } else {
         tags$span(class = "tropy-muted", "nie zakłóca głównej relacji")
       }
-      tags$tr(
-        tags$td(tags$strong(r$label)),
-        tags$td(r$beauty_label),
-        tags$td(r$eval_label),
-        tags$td(verdict)
-      )
-    })
+    }))
     tagList(
       div(class = "lc-prose",
         p("Zmienna jest kandydatem na zakłócacz, gdy wiąże się i z `beauty`,
           i z `eval` jednocześnie.")
       ),
-      tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-        tags$thead(tags$tr(
-          tags$th("Zmienna"),
-          tags$th("Związek z beauty"),
-          tags$th("Związek z eval"),
-          tags$th("Werdykt")
-        )),
-        tags$tbody(rows)
+      lc_table(df,
+        cols = list(
+          lc_col("label", "Zmienna", "row"),
+          lc_col("beauty", "Związek z beauty", "text"),
+          lc_col("eval", "Związek z eval", "text"),
+          lc_col("verdict", "Werdykt", "text")
+        ),
+        narrow = "cards"
       )
     )
   })

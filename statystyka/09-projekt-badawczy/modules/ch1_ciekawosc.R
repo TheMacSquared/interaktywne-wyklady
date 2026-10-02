@@ -47,7 +47,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
           )
         )
       ),
-      div(style = "overflow-x: auto;", tableOutput("ch1_data_view")),
+      uiOutput("ch1_data_view"),
       uiOutput("ch1_data_legend")
     ),
 
@@ -140,19 +140,21 @@ ch1_server <- function(input, output, session) {
       c("Dyscyplina / wydział", "Czy kursy ścisłe są oceniane surowiej niż humanistyczne?"),
       c("Powtarzalność prowadzącego", "Czy ten sam prowadzący dostaje podobne oceny na różnych kursach?")
     )
-    rows <- lapply(extra, function(x) {
-      tags$tr(
-        tags$td(tags$strong(x[[1]])),
-        tags$td(x[[2]])
-      )
-    })
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      tags$thead(tags$tr(tags$th("Trop"), tags$th("Przykładowe pytanie"))),
-      tags$tbody(rows)
+    lc_table(
+      data.frame(
+        trop = vapply(extra, `[[`, character(1), 1),
+        question = vapply(extra, `[[`, character(1), 2),
+        stringsAsFactors = FALSE
+      ),
+      cols = list(
+        lc_col("trop", "Trop", "row"),
+        lc_col("question", "Przykładowe pytanie", "text")
+      ),
+      narrow = "stack-last"
     )
   })
 
-  output$ch1_data_view <- renderTable({
+  output$ch1_data_view <- renderUI({
     key_cols <- c(
       "eval", "beauty", "gender", "age", "minority", "native",
       "division", "credits", "students", "allstudents",
@@ -168,10 +170,23 @@ ch1_server <- function(input, output, session) {
     start <- min(max(1, input$ch1_row_from), nrow(show))
     idx <- start:min(nrow(show), start + 9)
     out <- show[idx, , drop = FALSE]
-    num_cols <- vapply(out, is.numeric, logical(1))
-    out[num_cols] <- lapply(out[num_cols], round, 2)
-    out
-  }, striped = TRUE, bordered = TRUE, spacing = "s", width = "100%", rownames = TRUE)
+    out <- cbind(data.frame(row = rownames(out), stringsAsFactors = FALSE), out)
+    # Jak wcześniej w renderTable(): liczby całkowite bez miejsc po kropce,
+    # pozostałe liczby z 2 miejscami.
+    cols <- c(
+      list(lc_col("row", "", "row")),
+      lapply(names(out)[-1], function(key) {
+        x <- out[[key]]
+        if (is.numeric(x)) {
+          lc_col(key, key, "num", digits = if (is.integer(x)) 0 else 2)
+        } else {
+          lc_col(key, key, "text")
+        }
+      })
+    )
+    lc_table(out, cols, scroll = TRUE, sticky_first = TRUE,
+             label = "Podgląd danych TeachingRatings")
+  })
 
   output$ch1_data_legend <- renderUI({
     items <- list(

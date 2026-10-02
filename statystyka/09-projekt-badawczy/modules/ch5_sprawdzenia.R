@@ -81,21 +81,17 @@ ch5_server <- function(input, output, session) {
 
       desc <- tr_desc_table(id)
       first_col <- if (tr$method == "cor") "Zmienna" else "Grupa"
-      desc_rows <- lapply(seq_len(nrow(desc)), function(i) {
-        tags$tr(
-          tags$td(desc$label[i]),
-          tags$td(tr_fmt_num(desc$mean[i])),
-          tags$td(tr_fmt_num(desc$sd[i])),
-          tags$td(tr_fmt_num(desc$median[i])),
-          tags$td(paste0(tr_fmt_num(desc$q1[i]), "–", tr_fmt_num(desc$q3[i])))
-        )
-      })
-      desc_tbl <- tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        tags$thead(tags$tr(
-          tags$th(first_col), tags$th("Średnia"), tags$th("SD"),
-          tags$th("Mediana"), tags$th("Q1–Q3")
-        )),
-        tags$tbody(desc_rows)
+      desc$iqr <- paste0(lc_num(desc$q1, 2), "–", lc_num(desc$q3, 2))
+      desc_tbl <- lc_table_split(desc,
+        cols = list(
+          lc_col("label", first_col, "row"),
+          lc_col("mean", "Średnia", digits = 2),
+          lc_col("sd", "SD", digits = 2),
+          lc_col("median", "Mediana", digits = 2),
+          lc_col("iqr", "Q1–Q3")
+        ),
+        groups = list(c("mean", "sd"), c("median", "iqr")),
+        label = "Statystyki opisowe (eval)"
       )
 
       p_disp <- if (grepl("<", row$p_label)) paste0("p ", row$p_label)

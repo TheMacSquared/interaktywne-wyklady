@@ -135,21 +135,21 @@ ch4_server <- function(input, output, session) {
       )
     )
 
-    variable_table <- tags$table(class = "lc-table lc-table-bordered proposal-variable-table",
-      tags$thead(tags$tr(
-        tags$th("Rola w konspekcie"),
-        tags$th("Zmienne"),
-        tags$th("Co opisują"),
-        tags$th("Ograniczenie pomiaru")
-      )),
-      tags$tbody(lapply(variable_rows, function(row) {
-        tags$tr(
-          tags$td(tags$strong(row$role)),
-          tags$td(code_html(row$vars)),
-          tags$td(row$meaning),
-          tags$td(row$caveat)
-        )
-      }))
+    variable_df <- data.frame(
+      role = vapply(variable_rows, `[[`, character(1), "role"),
+      meaning = vapply(variable_rows, `[[`, character(1), "meaning"),
+      caveat = vapply(variable_rows, `[[`, character(1), "caveat"),
+      stringsAsFactors = FALSE
+    )
+    variable_df$vars <- I(lapply(variable_rows, function(row) code_html(row$vars)))
+    variable_table <- lc_table(variable_df,
+      cols = list(
+        lc_col("role", "Rola w konspekcie", "row"),
+        lc_col("vars", "Zmienne", "text"),
+        lc_col("meaning", "Co opisują", "text"),
+        lc_col("caveat", "Ograniczenie pomiaru", "text")
+      ),
+      narrow = "cards"
     )
 
     trop_cards <- lapply(tr_trop_order, function(id) {

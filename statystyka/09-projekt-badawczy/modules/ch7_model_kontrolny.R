@@ -101,21 +101,17 @@ ch7_server <- function(input, output, session) {
 
   output$ch7_models_table <- renderUI({
     df <- model_series()
-    rows <- lapply(seq_len(nrow(df)), function(i) {
-      tags$tr(
-        tags$td(df$model[i]),
-        tags$td(round(df$beta_beauty[i], 3)),
-        tags$td(tr_fmt_p(df$p_beauty[i])),
-        tags$td(round(df$adj_r2[i], 3)),
-        tags$td(round(df$aic[i], 0))
-      )
-    })
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      tags$thead(tags$tr(
-        tags$th("Model"), tags$th("β beauty"), tags$th("p"),
-        tags$th("adj.R²"), tags$th("AIC")
-      )),
-      tags$tbody(rows)
+    df$p_label <- lc_pval(df$p_beauty)
+    lc_table_split(df,
+      cols = list(
+        lc_col("model", "Model", "row"),
+        lc_col("beta_beauty", "β beauty", digits = 3),
+        lc_col("p_label", "p"),
+        lc_col("adj_r2", "adj.R²", digits = 3),
+        lc_col("aic", "AIC")
+      ),
+      groups = list(c("beta_beauty", "p_label"), c("adj_r2", "aic")),
+      label = "Seria modeli kontrolnych"
     )
   })
 
@@ -157,25 +153,23 @@ ch7_server <- function(input, output, session) {
   output$ch7_custom_coefs <- renderUI({
     coefs <- broom::tidy(custom_model())
     coefs <- coefs[coefs$term != "(Intercept)", ]
-    rows <- lapply(seq_len(nrow(coefs)), function(i) {
-      significant <- !is.na(coefs$p.value[i]) && coefs$p.value[i] < 0.05
-      tags$tr(
-        class = if (significant) "model-row-significant" else NULL,
-        tags$td(tr_label_term(coefs$term[i])),
-        tags$td(round(coefs$estimate[i], 3)),
-        tags$td(round(coefs$std.error[i], 3)),
-        tags$td(if (significant) {
-          span(class = "model-p-significant", tr_fmt_p(coefs$p.value[i]))
-        } else {
-          tr_fmt_p(coefs$p.value[i])
-        })
-      )
-    })
-    div(class = "model-table-scroll",
-      tags$table(class = "lc-table lc-table-bordered model-coef-table",
-        tags$thead(tags$tr(tags$th("Predyktor"), tags$th("β"), tags$th("SE"), tags$th("p"))),
-        tags$tbody(rows)
-      )
+    significant <- !is.na(coefs$p.value) & coefs$p.value < 0.05
+    lc_table(
+      data.frame(
+        term = tr_label_term(coefs$term),
+        estimate = coefs$estimate,
+        se = coefs$std.error,
+        p = lc_pval(coefs$p.value),
+        stringsAsFactors = FALSE
+      ),
+      cols = list(
+        lc_col("term", "Predyktor", "row"),
+        lc_col("estimate", "β", digits = 3),
+        lc_col("se", "SE", digits = 3),
+        lc_col("p", "p")
+      ),
+      # Istotne predyktory (p < 0,05) wyróżnione jak dotąd całym wierszem.
+      row_class = lapply(significant, function(s) if (s) "is-best")
     )
   })
 
