@@ -102,20 +102,24 @@ ch8_ui <- list(
 .ch8_task1_table <- function(direction, reveal = FALSE) {
   spec <- .ch8_task1_specs[[direction]]
   blank <- tags$span(`aria-label` = "miejsce do uzupełnienia", HTML("&nbsp;"))
-  value <- function(x) if (isTRUE(reveal)) x else blank
+  value <- function(x) {
+    I(lapply(x, function(v) if (isTRUE(reveal)) v else blank))
+  }
 
-  tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-    tags$thead(tags$tr(
-      tags$th("Zmienna"), tags$th("Typ"), tags$th("Statystyki"), tags$th("Wykres")
-    )),
-    tags$tbody(lapply(seq_len(nrow(spec)), function(i) {
-      tags$tr(
-        tags$td(tags$code(spec$variable[i])),
-        tags$td(value(spec$type[i])),
-        tags$td(value(spec$stats[i])),
-        tags$td(value(spec$plot[i]))
-      )
-    }))
+  df <- data.frame(row.names = seq_len(nrow(spec)))
+  df$variable <- I(lapply(spec$variable, tags$code))
+  df$type <- value(spec$type)
+  df$stats <- value(spec$stats)
+  df$plot <- value(spec$plot)
+
+  lc_table(df,
+    cols = list(
+      lc_col("variable", "Zmienna", "row"),
+      lc_col("type", "Typ", "text"),
+      lc_col("stats", "Statystyki", "text"),
+      lc_col("plot", "Wykres", "text")
+    ),
+    narrow = "cards"
   )
 }
 

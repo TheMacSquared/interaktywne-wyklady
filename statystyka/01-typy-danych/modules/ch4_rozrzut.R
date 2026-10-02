@@ -191,7 +191,7 @@ ch4_ui <- list(
         )
       ),
       zoom_plot_ui("ch4_grp_plot", height = "400px"),
-      tableOutput("ch4_grp_table")
+      uiOutput("ch4_grp_table")
     ),
 
     # ====================================================================
@@ -217,7 +217,7 @@ ch4_ui <- list(
                      class = "lc-btn-secondary")
       ),
       zoom_plot_ui("ch4_comp_plot", height = "350px"),
-      tableOutput("ch4_comp_table")
+      uiOutput("ch4_comp_table")
     ),
 
     inline_callout(
@@ -957,7 +957,7 @@ ch4_server <- function(input, output, session) {
             theme(legend.position = "none")
   }))
 
-  output$ch4_grp_table <- renderTable({
+  output$ch4_grp_table <- renderUI({
     var_name <- input$ch4_grp_var
     grp_name <- input$ch4_grp_by
     req(var_name, grp_name)
@@ -967,17 +967,31 @@ ch4_server <- function(input, output, session) {
       group = student_data[[grp_name]]
     )
 
-    df %>%
-      group_by(Grupa = group) %>%
+    stats <- df %>%
+      group_by(group) %>%
       summarise(
         n = n(),
-        Średnia = round(mean(value), 2),
-        Mediana = round(median(value), 2),
-        SD = round(sd(value), 2),
-        IQR = round(IQR(value), 2),
+        mean = round(mean(value), 2),
+        median = round(median(value), 2),
+        sd = round(sd(value), 2),
+        iqr = round(IQR(value), 2),
         .groups = "drop"
-      )
-  }, striped = TRUE, hover = TRUE, width = "100%", align = "c")
+      ) %>%
+      mutate(group = as.character(group))
+
+    lc_table_split(stats,
+      cols = list(
+        lc_col("group", "Grupa", "row"),
+        lc_col("n", "n"),
+        lc_col("mean", "Średnia", digits = 2),
+        lc_col("median", "Mediana", digits = 2),
+        lc_col("sd", "SD", digits = 2),
+        lc_col("iqr", "IQR", digits = 2)
+      ),
+      groups = list(c("n", "mean", "median"), c("sd", "iqr")),
+      label = "Statystyki opisowe w grupach"
+    )
+  })
 
   # --- Widget 4: Spread measures comparison ---
 
@@ -1038,30 +1052,38 @@ ch4_server <- function(input, output, session) {
       theme(plot.margin = margin(10, 10, 50, 10))
   }))
 
-  output$ch4_comp_table <- renderTable({
+  output$ch4_comp_table <- renderUI({
     vals <- ch4_comp_data()
     if (is.null(vals)) return(NULL)
 
-    data.frame(
-      Miara = c("Rozstep", "IQR (rozstęp międzykwartylowy)",
-                "Odchylenie standardowe (SD)",
-                "Współczynnik zmienności (CV)"),
-      Wartość = c(
-        paste0(round(diff(range(vals)), 1), " cm"),
-        paste0(round(IQR(vals), 1), " cm"),
-        paste0(round(sd(vals), 2), " cm"),
-        paste0(round(sd(vals) / mean(vals) * 100, 1), "%")
+    df <- data.frame(
+      measure = c("Rozstep", "IQR (rozstęp międzykwartylowy)",
+                  "Odchylenie standardowe (SD)",
+                  "Współczynnik zmienności (CV)"),
+      value = c(
+        paste0(lc_num(diff(range(vals)), 1), " cm"),
+        paste0(lc_num(IQR(vals), 1), " cm"),
+        paste0(lc_num(sd(vals), 2), " cm"),
+        paste0(lc_num(sd(vals) / mean(vals) * 100, 1), "%")
       ),
-      Wlasnosci = c(
+      notes = c(
         "Bardzo wrażliwy na outlierow - zależy tylko od min i max",
         "Odporny na outlierow - oparty na kwartylach",
         "Umiarkowanie wrażliwy - bierze pod uwage wszystkie dane",
         "Bezjednostkowy - pozwala porownywac zmiennosc roznych zmiennych"
       ),
-      check.names = FALSE,
       stringsAsFactors = FALSE
     )
-  }, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+
+    lc_table(df,
+      cols = list(
+        lc_col("measure", "Miara", "row"),
+        lc_col("value", "Wartość", "num"),
+        lc_col("notes", "Wlasnosci", "text")
+      ),
+      narrow = "stack-last"
+    )
+  })
 
   # --- Widget 5: Coefficient of Variation ---
 
