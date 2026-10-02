@@ -893,21 +893,26 @@ jezyk_block <- list(
               label = "Słownik",
               title = "Losowanie palety w terminologii formalnej",
               full_width = TRUE,
-              tags$table(
-                class = "lc-table lc-table-striped lc-table-bordered",
-                tags$thead(tags$tr(
-                  tags$th("Termin"),
-                  tags$th("Znaczenie"),
-                  tags$th("W Bananpolu")
-                )),
-                tags$tbody(
-                  tags$tr(tags$td("Doświadczenie losowe"), tags$td("Powtarzalna procedura o niepewnym wyniku"), tags$td("Losowanie jednej palety do kontroli")),
-                  tags$tr(tags$td("Wynik elementarny"), tags$td("Pojedynczy, niepodzielny wynik doświadczenia"), tags$td("Numer wylosowanej palety")),
-                  tags$tr(tags$td("Przestrzeń wyników Ω"), tags$td("Zbiór wszystkich wyników elementarnych"), tags$td("Wszystkie 24 palety")),
-                  tags$tr(tags$td("Zdarzenie A"), tags$td("Dowolny podzbiór przestrzeni Ω"), tags$td("Palety z uszkodzonym zabezpieczeniem")),
-                  tags$tr(tags$td("Zdarzenie pewne"), tags$td("Cała przestrzeń Ω — zachodzi zawsze"), tags$td("Wylosowano którąś z 24 palet")),
-                  tags$tr(tags$td("Zdarzenie niemożliwe"), tags$td("Zbiór pusty ∅ — nie zachodzi nigdy"), tags$td("Wylosowano paletę numer 25"))
-                )
+              lc_table(
+                data.frame(
+                  term = c("Doświadczenie losowe", "Wynik elementarny", "Przestrzeń wyników Ω",
+                           "Zdarzenie A", "Zdarzenie pewne", "Zdarzenie niemożliwe"),
+                  meaning = c("Powtarzalna procedura o niepewnym wyniku",
+                              "Pojedynczy, niepodzielny wynik doświadczenia",
+                              "Zbiór wszystkich wyników elementarnych",
+                              "Dowolny podzbiór przestrzeni Ω",
+                              "Cała przestrzeń Ω — zachodzi zawsze",
+                              "Zbiór pusty ∅ — nie zachodzi nigdy"),
+                  example = c("Losowanie jednej palety do kontroli", "Numer wylosowanej palety",
+                              "Wszystkie 24 palety", "Palety z uszkodzonym zabezpieczeniem",
+                              "Wylosowano którąś z 24 palet", "Wylosowano paletę numer 25")
+                ),
+                cols = list(
+                  lc_col("term", "Termin", "row"),
+                  lc_col("meaning", "Znaczenie", "text"),
+                  lc_col("example", "W Bananpolu", "text")
+                ),
+                narrow = "cards"
               )
             ),
             "Z definicji klasycznej wynikają trzy podstawowe własności. Możesz je
@@ -1492,20 +1497,24 @@ jezyk_block <- list(
               label = "Ściąga 1.1",
               title = "Pięć ról w opisie sytuacji",
               full_width = TRUE,
-              tags$table(
-                class = "lc-table lc-table-striped lc-table-bordered",
-                tags$thead(tags$tr(
-                  tags$th("Pojęcie"),
-                  tags$th("Pytanie"),
-                  tags$th("Przykład z Bananpolu")
-                )),
-                tags$tbody(
-                  tags$tr(tags$td("Zagrożenie"), tags$td("Co może spowodować szkodę?"), tags$td("Skórka na przejściu")),
-                  tags$tr(tags$td("Ekspozycja"), tags$td("Kto lub co ma kontakt z zagrożeniem?"), tags$td("Pracownik przechodzący korytarzem")),
-                  tags$tr(tags$td("Zdarzenie"), tags$td("Co dokładnie ma zajść?"), tags$td("Poślizgnięcie: utrata przyczepności i upadek (w rejestrze zmian: co najmniej jedno podczas zmiany)")),
-                  tags$tr(tags$td("Skutek"), tags$td("Jakie może być następstwo?"), tags$td("Uraz nadgarstka")),
-                  tags$tr(tags$td("Zabezpieczenie"), tags$td("Co przerywa drogę do szkody?"), tags$td("Kontrola i sprzątanie przejścia"))
-                )
+              lc_table(
+                data.frame(
+                  concept = c("Zagrożenie", "Ekspozycja", "Zdarzenie", "Skutek", "Zabezpieczenie"),
+                  question = c("Co może spowodować szkodę?",
+                               "Kto lub co ma kontakt z zagrożeniem?",
+                               "Co dokładnie ma zajść?",
+                               "Jakie może być następstwo?",
+                               "Co przerywa drogę do szkody?"),
+                  example = c("Skórka na przejściu", "Pracownik przechodzący korytarzem",
+                              "Poślizgnięcie: utrata przyczepności i upadek (w rejestrze zmian: co najmniej jedno podczas zmiany)",
+                              "Uraz nadgarstka", "Kontrola i sprzątanie przejścia")
+                ),
+                cols = list(
+                  lc_col("concept", "Pojęcie", "row"),
+                  lc_col("question", "Pytanie", "text"),
+                  lc_col("example", "Przykład z Bananpolu", "text")
+                ),
+                narrow = "cards"
               )
             )
           )
@@ -1562,17 +1571,24 @@ jezyk_block <- list(
             figure_panel(
               label = "Ściąga 1.2",
               full_width = TRUE,
-              tags$table(
-                class = "lc-table lc-table-striped lc-table-bordered",
-                tags$thead(tags$tr(
-                  tags$th("Sytuacja"), tags$th("Punkt startu"), tags$th("Najważniejsze pytanie")
-                )),
-                tags$tbody(
-                  tags$tr(tags$td("Losowanie z jawnej, symetrycznej listy"), tags$td("Definicja klasyczna"), tags$td("Czy wyniki są jednakowo możliwe?")),
-                  tags$tr(tags$td("Rejestr porównywalnych obserwacji"), tags$td("Częstość empiryczna"), tags$td("Czy mianownik i zasady rejestracji są wspólne?")),
-                  tags$tr(tags$td("Zdarzenia zależne od warunków"), tags$td("Dalszy model probabilistyczny"), tags$td("Co zmienia informacja o warunku?")),
-                  tags$tr(tags$td("Priorytet działania"), tags$td("Profil ryzyka"), tags$td("Jakie są skutki, bariery i kryteria decyzji?"))
-                )
+              lc_table(
+                data.frame(
+                  situation = c("Losowanie z jawnej, symetrycznej listy",
+                                "Rejestr porównywalnych obserwacji",
+                                "Zdarzenia zależne od warunków", "Priorytet działania"),
+                  start = c("Definicja klasyczna", "Częstość empiryczna",
+                            "Dalszy model probabilistyczny", "Profil ryzyka"),
+                  question = c("Czy wyniki są jednakowo możliwe?",
+                               "Czy mianownik i zasady rejestracji są wspólne?",
+                               "Co zmienia informacja o warunku?",
+                               "Jakie są skutki, bariery i kryteria decyzji?")
+                ),
+                cols = list(
+                  lc_col("situation", "Sytuacja", "row"),
+                  lc_col("start", "Punkt startu", "text"),
+                  lc_col("question", "Najważniejsze pytanie", "text")
+                ),
+                narrow = "cards"
               )
             ),
 
