@@ -23,14 +23,12 @@ Oznaczenie **Decyzja:** to pytanie do prowadzącego z wariantami do wyboru.
 
 Kolejność najbliższych prac (szczegóły w „Migracja widgetów do v2”):
 
-1. [ ] Naprawić 48 paneli, które wylewają się na telefonie (głównie stare
-   tabele → `lc_table()`).
-2. [ ] Mechaniczne zamiany w całych kursach: `sliderInput()` →
+1. [ ] Mechaniczne zamiany w całych kursach: `sliderInput()` →
    `lc_slider()`, stała wysokość wykresu → `lc_plot()`, radio ≤ 4 opcje →
    `lc_segmented()`, przyciski Bootstrapa → `lc_action()` /
    `lc_action_group()`.
-3. [ ] Przegląd widgetów wykład po wykładzie: układy kolumn, odczyty,
-   podpisy i tabele.
+2. [ ] Przegląd wykład po wykładzie: widgety (układy kolumn, odczyty, podpisy,
+   tabele) i bloki tekstu (notki, pułapki, podsumowania, statusy).
 
 ---
 
@@ -82,15 +80,10 @@ statystyk / stare tabele):
 | statystyka 08-case-studies | 7 | 0 | 1 | 5 | 2 | 0 |
 | statystyka 09-projekt-badawczy | 16 | 1 | 10 | 1 | 1 | 14 |
 
-Etap 1 — panele wylewające się na telefonie:
-
-- [ ] Przenieść tabele z wylewających się paneli do `lc_table()`
-  (najwięcej: statystyka 02, 09 i 01). Tabele tekstowe: `narrow = "cards"`
-  albo `"stack-last"`; liczbowe: `lc_table_split()`.
-- [ ] Statystyka 07: zastąpić `DT::datatable()` (14 podglądów `dom = "t"`)
-  przez `lc_table_preview()` z typem zmiennej w nagłówku (`lc_col(sub = )`);
-  wygląd jamovi nie jest potrzebny, te same statystyki tak. Potem usunąć
-  zależność od DT i lokalny CSS `.jamovi-table` z `07-dobre-dane/app.R`.
+Etap 1 — panele wylewające się na telefonie: zrobione (audyt 2 października
+2026: 0 z 477 paneli wylewa się przy 390 px). Tabele przeniesione do
+`lc_table()`, szerokie wzory przewijają się w panelu, statystyka 07 bez DT
+(podglądy i stronicowanie `lc_table(page_size = )`).
 
 Etap 2 — mechaniczne zamiany (commit per kurs i rodzaj zamiany):
 
@@ -118,6 +111,36 @@ Etap 3 — przegląd widgetów wykład po wykładzie (commit per widget):
   potem usunąć `lc_table_region()` i klasy `lc-table*`.
 - [ ] Legendy ggplot wychodzące poza wykres na telefonie (np. statystyka 01
   Ryc. 2.5) — poprawiać przy migracji danego widgetu.
+
+Etap 3, bloki tekstu (handoff „Bloki v2”; komponenty i zasady są już we
+wspólnym `R/`, margines boczny usunięty, dawne callouty renderują się jako
+`lc_note()`):
+
+- [ ] Statyczne `lc_feedback()` w toku tekstu (Problem / Zasada / Werdykt /
+  Uwaga) → `lc_note()` albo `lc_warn()`; najwyżej jedna pułapka i jedna
+  „Zasada” na sekcję (statystyka ok. 280, statystyka 2 ok. 175, analiza
+  ryzyka ok. 50 wywołań, część z nich to `renderUI()` w widgetach).
+- [ ] `lc_feedback()` w `renderUI()` pod widgetem → `lc_status()` /
+  `lc_caption()` wewnątrz panelu.
+- [ ] Pogrubione wstępy `tags$strong("Przykład:" / "Kontrprzykład:" /
+  "Uwaga:" / "Zasada:")` na początku akapitu → `lc_note()` (statystyka 17,
+  statystyka 2: 2).
+- [ ] Ręczna numeracja podsekcji („(1) Nieobciążoność”, „A. …”) →
+  `lc_h3("…", num = "1")`.
+- [ ] Zwijane `tags$details` (statystyka: 25) — zostawić tylko rozwiązania
+  i odpowiedzi (`lc_more()`); krótkie notki pokazywać zawsze.
+- [ ] Emoji w treści (statystyka: 20 linii, statystyka 2: 4) — usunąć;
+  pasek „Śledzona zmienna” w `app.R` statystyki → `lc_tracker()`; listy
+  przykładów z emoji → `lc_index()`.
+- [ ] Ramki „Najważniejsze do zapamiętania” → `lc_recap()`.
+- [ ] Spacje przed interpunkcją po `tags$strong()` / `tags$em()` w treści
+  (np. „nieobciążoności , efektywności”) → `b_()` / `em_()`.
+- [ ] Wywołania `inline_callout()`, `margin_callout()`, `margin_note()`,
+  `margin_code_note()` w treści → `lc_note()` (działają, ale są zakazane
+  w nowym kodzie).
+- [ ] Usunąć martwy CSS po marginesie i starych blokach: `.lc-margin*`,
+  `.lc-inline-callout*`, `.lc-callout-*`, `.lc-def*`, `.lc-example*`,
+  `.lc-try` (po sprawdzeniu, że nic ich nie używa).
 
 Decyzje:
 
@@ -155,8 +178,6 @@ Zasady migracji:
 
 Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
 
-- [ ] **Decyzja:** czy role tekstu `.life-*` z analizy ryzyka 07 mają być
-  wzorcem dla innych wykładów.
 - [ ] **Decyzja:** czy interaktywny łańcuch pojęć z analizy ryzyka 01 ma być
   wspólnym komponentem.
 
@@ -327,8 +348,6 @@ kotwice sekcji to `blok-rozdział-sekcja` (`R/risk_block.R`, l. 420).
 
 ### 07 — czas życia
 
-- [ ] Druga tabela w `.life-table-scroll` (`modules/block.R`, ok. l. 501) →
-  `lc_table()`; potem usunąć CSS `.life-table-scroll`.
 - [ ] **Decyzja:** wzór (7.2) λ̂ = d/Σtᵢ (`modules/block.R`, ok. l. 162)
   kłóci się z zapowiedzią „bez estymacji parametrów”, ale pokazuje użycie
   obserwacji cenzorowanych. Warianty: zostaje / przenieść do
