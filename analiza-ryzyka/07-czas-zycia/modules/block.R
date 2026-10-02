@@ -61,27 +61,20 @@ zycie_exercises <- list(
   )
 )
 
-# Lokalne komponenty pilotażu: tekst pozostaje w kolejności rozumowania.
+# Bloki tekstu wykładu na wspólnych komponentach (lc_note, lc_h3).
 zycie_reading <- function(text) {
   labels <- c("Odczyt eksperymentu", "Interpretacja")
-  tags$div(class = "life-reading",
-    lapply(seq_along(text), function(i) {
-      tags$section(class = "life-reading-part",
-        lc_h3(labels[min(i, length(labels))]), lc_p(text[[i]])
-      )
-    })
-  )
+  tagList(lapply(seq_along(text), function(i) {
+    lc_note(labels[min(i, length(labels))], tags$p(text[[i]]))
+  }))
 }
 
 zycie_try <- function(text) {
-  tags$div(class = "life-task",
-    tags$div(class = "life-label", "Eksperyment · do zrobienia"),
-    lc_p(text)
-  )
+  lc_note("Do zrobienia", tags$p(risk_capitalize(text)))
 }
 
 zycie_note <- function(label, text) {
-  tags$section(class = "life-note", lc_h3(label), lc_p(text))
+  tagList(lc_h3(label), lc_p(text))
 }
 
 zycie_functions_table <- lc_table(

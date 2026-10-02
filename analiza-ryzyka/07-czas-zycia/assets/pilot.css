@@ -1,38 +1,4 @@
-/* Pilotaż wykładu 07: role tekstu, bez nadpisywania wspólnych komponentów. */
-.life-label {
-  font-family: var(--upwr-mono);
-  font-size: calc(12px * var(--lc-font-scale));
-  letter-spacing: .04em;
-  color: var(--upwr-accent);
-  margin-bottom: 6px;
-}
-.life-task {
-  max-width: 680px;
-  border-top: 2px solid var(--upwr-accent);
-  padding: 14px 18px;
-  margin: 28px 0 12px;
-  background: var(--upwr-surface-sunken);
-}
-.life-reading {
-  max-width: 680px;
-  margin: 24px 0 32px;
-  padding-left: 20px;
-  border-left: 2px solid var(--upwr-rule);
-}
-.life-reading-part + .life-reading-part { margin-top: 22px; }
-.life-note {
-  max-width: 680px;
-  padding: 4px 18px 8px;
-  margin: 24px 0;
-  border-left: 3px solid var(--upwr-reference);
-  background: var(--upwr-surface-sunken);
-}
-@media (max-width: 600px) {
-  .life-task { padding: 12px; }
-  .life-reading { padding-left: 12px; }
-  .life-note { padding-left: 12px; }
-}
-
+/* Wykład 07: lokalny układ ofert (pozostałe bloki tekstu korzystają z lc_note). */
 .life-offers { margin: 8px 0 12px; }
 .life-offer { padding: 4px 0; }
 .life-offer + .life-offer { margin-top: 4px; }
