@@ -666,7 +666,7 @@ system_server <- function(input, output, session) {
       geom_rect(data = boxes, aes(xmin = x - w, xmax = x + w, ymin = y - .45, ymax = y + .45), fill = upwr_secondary, colour = "white") +
       geom_text(data = boxes, aes(x = x, y = y, label = label), colour = "white", fontface = "bold", size = 4.2) +
       coord_equal(xlim = limits$x, ylim = limits$y) +
-      labs(title = title, x = NULL, y = NULL) +
+      labs(x = NULL, y = NULL) +
       theme_upwr() +
       theme(
         axis.text = element_blank(), axis.ticks = element_blank(),
@@ -682,7 +682,7 @@ system_server <- function(input, output, session) {
       geom_col(width = .65) +
       coord_cartesian(ylim = c(0, 1)) +
       scale_fill_manual(values = upwr_cat_n(3), guide = "none") +
-      labs(title = paste("Architektura", if (input$s8_arch == "series") "szeregowa" else "równoległa"), x = NULL, y = "Niezawodność") +
+      labs(x = NULL, y = "Niezawodność") +
       theme_upwr()
   })
   zoom_plot_server("s8_arch_plot", arch_plot, alt = "Słupki niezawodności dwóch elementów i systemu dla wybranej architektury.")
@@ -704,7 +704,7 @@ system_server <- function(input, output, session) {
       geom_line(linewidth = 1) +
       geom_vline(xintercept = input$s8_mission, linetype = 2) +
       scale_colour_manual(values = upwr_cat_n(4)) +
-      labs(title = "Wspólny czas dla elementów i systemu", x = "Czas (h)", y = "R(t)", colour = NULL) +
+      labs(x = "Czas (h)", y = "R(t)", colour = NULL) +
       theme_upwr()
   })
   zoom_plot_server("s8_time_plot", time_plot, alt = "Krzywe niezawodności trzech elementów i systemu mieszanego.")
@@ -719,7 +719,7 @@ system_server <- function(input, output, session) {
     ggplot(data.frame(q, r = (1 - q) * base), aes(q, r)) +
       geom_line(colour = upwr_accent, linewidth = 1.1) +
       geom_point(data = data.frame(q = input$s8_common, r = (1 - input$s8_common) * base), colour = upwr_secondary, size = 3) +
-      labs(title = "Wspólna przyczyna ogranicza redundancję", x = "P(wspólnej awarii)", y = "R systemu") +
+      labs(x = "P(wspólnej awarii)", y = "R systemu") +
       theme_upwr()
   })
   zoom_plot_server("s8_common_plot", common_plot, alt = "Malejąca niezawodność układu redundantnego wraz ze wzrostem wspólnej przyczyny.")
@@ -732,7 +732,7 @@ system_server <- function(input, output, session) {
       geom_line(colour = upwr_accent, linewidth = 1.1) +
       geom_point() +
       geom_point(data = dat[dat$n == input$s8_branches, ], colour = upwr_secondary, size = 4) +
-      labs(title = "Przyrost niezawodności maleje", x = "Liczba gałęzi", y = "R systemu") +
+      labs(x = "Liczba gałęzi", y = "R systemu") +
       theme_upwr()
   })
   zoom_plot_server("s8_redundancy", redundancy_plot, alt = "Krzywa niezawodności równoległej względem liczby gałęzi.")

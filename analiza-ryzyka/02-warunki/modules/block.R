@@ -861,7 +861,7 @@ warunki_server <- function(input, output, session) {
         shape = guide_legend(order = 1, override.aes = list(fill = "white")),
         fill = guide_legend(order = 2, override.aes = list(shape = 21))
       ) +
-      labs(title = "500 porównywalnych zmian", x = NULL, y = NULL, shape = "Warunek", fill = "Wynik") +
+      labs(x = NULL, y = NULL, shape = "Warunek", fill = "Wynik") +
       theme_upwr() +
       theme(
         axis.text = element_blank(), axis.ticks = element_blank(),
@@ -966,7 +966,7 @@ warunki_server <- function(input, output, session) {
       ) +
       scale_fill_identity() +
       coord_cartesian(xlim = c(-1.3, 12), ylim = c(-3.1, 3.1)) +
-      labs(title = "Drzewo dróg: mnożymy wzdłuż gałęzi", subtitle = "Prawdopodobieństwa na gałęziach, liczebności w węzłach", x = NULL, y = NULL) +
+      labs(x = NULL, y = NULL) +
       theme_upwr() +
       theme(
         axis.text = element_blank(), axis.ticks = element_blank(),
@@ -985,7 +985,7 @@ warunki_server <- function(input, output, session) {
       scale_x_discrete(labels = scales::label_wrap(12)) +
       scale_y_continuous(labels = scales::percent) +
       scale_fill_manual(values = c("Incydent" = upwr_accent, "Brak incydentu" = upwr_reference)) +
-      labs(title = "Udziały w dwóch mianownikach", x = NULL, y = "Udział", fill = "Wynik") +
+      labs(x = NULL, y = "Udział", fill = "Wynik") +
       theme_upwr()
   }
   zoom_plot_server("w2_views_tree", reactive(tree_plot()),
@@ -1011,7 +1011,7 @@ warunki_server <- function(input, output, session) {
         ),
         size = 3, colour = upwr_secondary
       ) +
-      labs(title = "Suma dwóch dróg", x = "Udział pracy w przeciążeniu", y = "P(incydent)") +
+      labs(x = "Udział pracy w przeciążeniu", y = "P(incydent)") +
       theme_upwr()
   })
   zoom_plot_server("w2_total_plot", total_plot,
@@ -1035,7 +1035,7 @@ warunki_server <- function(input, output, session) {
       geom_col(width = .6) +
       scale_x_discrete(labels = scales::label_wrap(14)) +
       scale_fill_manual(values = upwr_cat_n(2), guide = "none") +
-      labs(title = "P jednoczesnej utraty dwóch zabezpieczeń", x = NULL, y = "P(awarii)") +
+      labs(x = NULL, y = "P(awarii)") +
       theme_upwr()
   })
   zoom_plot_server("w2_common_plot", common_plot,

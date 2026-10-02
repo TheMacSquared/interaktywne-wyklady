@@ -173,7 +173,7 @@ warunki_monty_server <- function(input, output, session) {
         ggplot() +
           annotate("text", x = 1, y = 0.55, label = "Dograj partie przyciskami powyżej", colour = upwr_secondary, size = 5) +
           coord_cartesian(xlim = c(0, 2), ylim = c(0, 1)) +
-          labs(title = "Która strategia wygrywa częściej?", x = NULL, y = "Odsetek wygranych") +
+          labs(x = NULL, y = "Odsetek wygranych") +
           theme_upwr() +
           theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
       )

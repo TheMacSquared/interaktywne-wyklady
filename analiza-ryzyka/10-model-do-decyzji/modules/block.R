@@ -636,7 +636,7 @@ integracja_server <- function(input, output, session) {
     r <- if (input$i10_life_model == "exp") exp(-t / 1500) else exp(-(t / 1700)^2)
     ggplot(data.frame(t, r), aes(t, r)) + geom_line(colour = upwr_accent, linewidth = 1) +
       geom_vline(xintercept = input$i10_time, linetype = 2) +
-      labs(title = "Niezawodność pojedynczego wentylatora", x = "Czas (h)", y = "R(t)") + theme_upwr()
+      labs(x = "Czas (h)", y = "R(t)") + theme_upwr()
   })
   zoom_plot_server("i10_life_plot", life_plot, alt = "Krzywa wybranego modelu czasu życia wentylatora z zaznaczonym czasem misji.")
   output$i10_life_stats <- renderUI(lc_stat_grid(lc_stat_box("R(t) przekazane do systemu", risk_format_probability(life_r())), columns = 1))
@@ -647,7 +647,7 @@ integracja_server <- function(input, output, session) {
   fta_plot <- reactive({
     b <- base()
     d <- data.frame(node = c("P(I)", "P(D | I)", "P(S | I)", "P(TOP)"), p = c(b$initiation, b$miss, b$cooling_failure, b$top))
-    ggplot(d, aes(node, p, fill = node)) + geom_col() + scale_fill_manual(values = upwr_cat_n(4), guide = "none") + labs(title = "Zdarzenie inicjujące i warunkowe niepowodzenia", x = NULL, y = "Prawdopodobieństwo") + theme_upwr()
+    ggplot(d, aes(node, p, fill = node)) + geom_col() + scale_fill_manual(values = upwr_cat_n(4), guide = "none") + labs(x = NULL, y = "Prawdopodobieństwo") + theme_upwr()
   })
   zoom_plot_server("i10_fta_plot", fta_plot, alt = "Prawdopodobieństwo inicjacji, warunkowe prawdopodobieństwa niepowodzeń oraz wynik na jedną misję.")
   output$i10_fta_stats <- renderUI(lc_stat_grid(lc_stat_box("P(TOP) na misję", risk_format_probability(top_p())), lc_stat_box("Na 10 000 porównywalnych misji", risk_natural_frequency(top_p(), 10000)), columns = 1))
@@ -656,7 +656,7 @@ integracja_server <- function(input, output, session) {
     d <- bananpol$interventions
     d$result <- vapply(d$id, intervention_top, numeric(1))
     d$budget <- ifelse(d$cost_index <= input$i10_budget, "W budżecie", "Poza budżetem")
-    ggplot(d, aes(reorder(label, result), result, fill = budget)) + geom_col() + scale_x_discrete(labels = scales::label_wrap(14)) + coord_flip() + scale_fill_manual(values = upwr_cat_n(length(unique(d$budget)))) + labs(title = "Wynik po interwencji", x = NULL, y = "P(TOP) na misję", fill = NULL) + theme_upwr()
+    ggplot(d, aes(reorder(label, result), result, fill = budget)) + geom_col() + scale_x_discrete(labels = scales::label_wrap(14)) + coord_flip() + scale_fill_manual(values = upwr_cat_n(length(unique(d$budget)))) + labs(x = NULL, y = "P(TOP) na misję", fill = NULL) + theme_upwr()
   })
   zoom_plot_server("i10_interventions_plot", interventions_plot, alt = "Porównanie ryzyka po czterech działaniach z oznaczeniem dostępności w budżecie.")
   output$i10_intervention_stats <- renderUI({
@@ -676,7 +676,7 @@ integracja_server <- function(input, output, session) {
   scenarios_plot <- reactive({
     d <- scenario_results()
     d$scenario <- factor(d$scenario, levels = c("Optymistyczny", "Bazowy", "Ostrożny"))
-    ggplot(d, aes(label, result, fill = scenario)) + geom_col(position = "dodge") + scale_x_discrete(labels = scales::label_wrap(14)) + coord_flip() + scale_fill_manual(values = upwr_cat_n(3)) + labs(title = "Każda opcja w każdym scenariuszu", x = NULL, y = "P(TOP) po działaniu", fill = "Scenariusz") + theme_upwr()
+    ggplot(d, aes(label, result, fill = scenario)) + geom_col(position = "dodge") + scale_x_discrete(labels = scales::label_wrap(14)) + coord_flip() + scale_fill_manual(values = upwr_cat_n(3)) + labs(x = NULL, y = "P(TOP) po działaniu", fill = "Scenariusz") + theme_upwr()
   })
   zoom_plot_server("i10_scenarios", scenarios_plot, alt = "Trzy scenariusze ryzyka po każdej interwencji.")
   output$i10_scenarios_stats <- renderUI({

@@ -671,7 +671,7 @@ alarm_server <- function(input, output, session) {
     n <- tp + fp
     if (n == 0) {
       return(ggplot() + annotate("text", x = 0, y = 0, label = "Brak alarmów") +
-        labs(title = "Alarmy w 10 000 zmian", caption = outside) + theme_void())
+        labs(caption = outside) + theme_void())
     }
     labels <- c("Prawdziwy alarm", "Fałszywy alarm")
     dat <- data.frame(type = factor(rep(labels, c(tp, fp)), levels = labels))
@@ -707,7 +707,7 @@ alarm_server <- function(input, output, session) {
     ggplot(dat, aes(prevalence, posterior)) +
       geom_line(colour = upwr_accent, linewidth = 1.1) +
       geom_vline(xintercept = .01, linetype = 2, colour = upwr_reference) +
-      labs(title = "Wiarygodność alarmu zależy od częstości awarii", x = "P(awarii)", y = "P(awarii | alarm)") +
+      labs(x = "P(awarii)", y = "P(awarii | alarm)") +
       theme_upwr()
   })
   zoom_plot_server("a3_curve", curve_plot, alt = "Rosnąca krzywa wiarygodności alarmu względem częstości bazowej awarii.")

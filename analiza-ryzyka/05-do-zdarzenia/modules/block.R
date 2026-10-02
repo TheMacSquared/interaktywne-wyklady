@@ -465,7 +465,7 @@ dozd_server <- function(input, output, session) {
     x <- input$d5_r:maxx
     ggplot(data.frame(x, p = vapply(x, risk_negative_binomial_total_pmf, numeric(1), r = input$d5_r, p = input$d5_p)), aes(x, p)) +
       geom_col(fill = upwr_accent) +
-      labs(title = "Liczba wszystkich prób do r-tego zdarzenia", x = "Wszystkie próby", y = "Prawdopodobieństwo") +
+      labs(x = "Wszystkie próby", y = "Prawdopodobieństwo") +
       theme_upwr()
   })
   zoom_plot_server("d5_nb", nb_plot, alt = "Rozkład liczby wszystkich prób do osiągnięcia ustalonej liczby wykryć.")
@@ -486,7 +486,7 @@ dozd_server <- function(input, output, session) {
       geom_histogram(binwidth = 3, position = "identity", alpha = .55) +
       coord_cartesian(xlim = c(3, 150)) +
       scale_fill_manual(values = upwr_cat_n(2)) +
-      labs(title = "Zmienność jakości poszerza rozkład", x = "Liczba kontroli", y = "Powtórzenia", fill = NULL) +
+      labs(x = "Liczba kontroli", y = "Powtórzenia", fill = NULL) +
       theme_upwr()
   })
   zoom_plot_server("d5_failure", failure_plot, alt = "Nakładające się histogramy stałego i zmiennego prawdopodobieństwa wykrycia.")

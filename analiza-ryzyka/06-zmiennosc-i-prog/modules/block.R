@@ -592,7 +592,7 @@ prog_server <- function(input, output, session) {
   hist_plot <- reactive(ggplot(data.frame(t = sample_values()), aes(t)) +
     geom_histogram(aes(y = after_stat(density)), bins = 30, fill = upwr_secondary, colour = "white") +
     stat_function(fun = dnorm, args = list(mean = 82, sd = 3), colour = upwr_accent, linewidth = 1) +
-    labs(title = "Histogram i model gęstości", x = "Temperatura (°C)", y = "Gęstość") +
+    labs(x = "Temperatura (°C)", y = "Gęstość") +
     theme_upwr())
   zoom_plot_server("z6_hist", hist_plot, alt = "Histogram temperatur z nałożoną krzywą normalną.")
   output$z6_hist_stats <- renderUI(lc_stat_grid(lc_stat_box("Średnia próby", round(mean(sample_values()), 2)), lc_stat_box("SD próby", round(sd(sample_values()), 2)), columns = 1))
@@ -601,7 +601,7 @@ prog_server <- function(input, output, session) {
     ggplot(data.frame(x, p = dnorm(x, input$z6_mean, input$z6_sd)), aes(x, p)) +
       geom_line(colour = upwr_accent, linewidth = 1.1) +
       geom_vline(xintercept = input$z6_mean, linetype = 2) +
-      labs(title = "Położenie i szerokość rozkładu", x = "Temperatura (°C)", y = "Gęstość") +
+      labs(x = "Temperatura (°C)", y = "Gęstość") +
       theme_upwr()
   })
   zoom_plot_server("z6_normal", normal_plot, alt = "Krzywa normalna sterowana średnią i odchyleniem standardowym.")
@@ -613,7 +613,7 @@ prog_server <- function(input, output, session) {
       geom_area(data = d[d$x >= input$z6_threshold, ], fill = upwr_accent, alpha = .55) +
       geom_line(colour = upwr_secondary, linewidth = 1) +
       geom_vline(xintercept = input$z6_threshold, linetype = 2) +
-      labs(title = "Pole za progiem", x = "Temperatura (°C)", y = "Gęstość") +
+      labs(x = "Temperatura (°C)", y = "Gęstość") +
       theme_upwr()
   })
   zoom_plot_server("z6_tail", tail_plot, alt = "Krzywa normalna z zacieniowanym obszarem temperatur powyżej progu.")
@@ -641,7 +641,7 @@ prog_server <- function(input, output, session) {
       geom_point(alpha = .55) +
       geom_abline(slope = 1, intercept = 0, linetype = 2) +
       scale_colour_manual(values = c("Awaria: L>S" = upwr_accent, "Rezerwa: S≥L" = upwr_secondary)) +
-      labs(title = "Każdy punkt to para L i S", x = "Obciążenie L", y = "Wytrzymałość S", colour = NULL, shape = NULL) +
+      labs(x = "Obciążenie L", y = "Wytrzymałość S", colour = NULL, shape = NULL) +
       theme_upwr()
   })
   zoom_plot_server("z6_ls", ls_plot, alt = "Punkty obciążenia i wytrzymałości po obu stronach linii równości.")
@@ -658,14 +658,14 @@ prog_server <- function(input, output, session) {
       ggplot(data.frame(x), aes(sample = x)) +
         stat_qq(colour = upwr_secondary, alpha = .4) +
         stat_qq_line(colour = upwr_accent, linewidth = 1) +
-        labs(title = "Wykres kwantylowy względem rozkładu normalnego", x = "Kwantyle teoretyczne (normalne)", y = "Kwantyle próby (°C)") +
+        labs(x = "Kwantyle teoretyczne (normalne)", y = "Kwantyle próby (°C)") +
         theme_upwr()
     } else {
       ggplot(data.frame(x), aes(x)) +
         geom_histogram(bins = 60, fill = upwr_secondary, colour = "white") +
         geom_vline(xintercept = 85, colour = upwr_accent, linewidth = 1) +
         coord_cartesian(xlim = c(65, 105)) +
-        labs(title = "Kształt ogona ma znaczenie", x = "Temperatura (°C)", y = "Liczba obserwacji") +
+        labs(x = "Temperatura (°C)", y = "Liczba obserwacji") +
         theme_upwr()
     }
   })

@@ -1701,16 +1701,11 @@ jezyk_czestosc_server <- function(input, output, session) {
 
     plot <- ggplot(data, aes(x = trial, y = frequency)) +
       coord_cartesian(ylim = c(0, 1)) +
-      labs(
-        title = "Częstość poślizgnięć w kolejnych zmianach",
-        subtitle = if (revealed) {
+      labs(subtitle = if (revealed) {
           "Linia przerywana: prawdopodobieństwo przyjęte w modelu"
         } else {
           "Modelowe prawdopodobieństwo pozostaje ukryte"
-        },
-        x = "Liczba obserwowanych zmian",
-        y = "Skumulowana częstość zdarzenia"
-      )
+        }, x = "Liczba obserwowanych zmian", y = "Skumulowana częstość zdarzenia")
 
     if (revealed) {
       plot <- plot + geom_hline(
@@ -1782,13 +1777,7 @@ jezyk_przestrzen_server <- function(input, output, session) {
       coord_equal() +
       scale_x_continuous(breaks = NULL) +
       scale_y_continuous(breaks = NULL) +
-      labs(
-        title = "Przestrzeń 24 jednakowo możliwych wyników",
-        subtitle = "Kolor wskazuje, czy wynik należy do zdarzenia A",
-        x = NULL,
-        y = NULL,
-        fill = NULL
-      ) +
+      labs(x = NULL, y = NULL, fill = NULL) +
       theme(
         panel.grid = element_blank(),
         axis.text = element_blank(),
@@ -2042,13 +2031,7 @@ jezyk_zbiory_server <- function(input, output, session) {
       coord_equal() +
       scale_x_continuous(breaks = NULL) +
       scale_y_continuous(breaks = NULL) +
-      labs(
-        title = "Sto kontroli korytarza",
-        subtitle = "Każdy kwadrat to jeden wynik doświadczenia",
-        x = NULL,
-        y = NULL,
-        fill = NULL
-      ) +
+      labs(x = NULL, y = NULL, fill = NULL) +
       theme(
         panel.grid = element_blank(),
         axis.text = element_blank(),
@@ -2241,8 +2224,7 @@ jezyk_prototypes_server <- function(input, output, session) {
     data <- cumulative_frequency(a$series()[[1]])
     plot <- ggplot(data, aes(trial, frequency)) +
       coord_cartesian(ylim = c(0, 1)) +
-      labs(title = "Częstość poślizgnięć w kolejnych zmianach",
-        x = "Liczba obserwowanych zmian", y = "Skumulowana częstość")
+      labs(x = "Liczba obserwowanych zmian", y = "Skumulowana częstość")
     if (a$revealed()) plot <- plot + geom_hline(yintercept = a$p(), colour = upwr_accent, linewidth = 0.9, linetype = "dashed")
     if (nrow(data) == 0) {
       plot + annotate("text", x = 1, y = 0.5, label = "Dodaj pierwsze zmiany", colour = upwr_secondary, size = 5) +
@@ -2269,7 +2251,7 @@ jezyk_prototypes_server <- function(input, output, session) {
       scale_fill_manual(values = c(upwr_accent, upwr_cat[["niebo"]], upwr_rule), drop = FALSE,
         breaks = c("Poślizgnięcie", "Bez zdarzenia")) +
       coord_equal() +
-      labs(title = "Ostatnie 100 zmian", subtitle = sprintf("%d z %d z poślizgnięciem", sum(last), length(last)),
+      labs(subtitle = sprintf("%d z %d z poślizgnięciem", sum(last), length(last)),
         fill = NULL, x = NULL, y = NULL) +
       theme(axis.text = element_blank(), panel.grid = element_blank(), legend.position = "bottom")
   }), alt = "Siatka ostatnich stu zmian; wypełnione pola oznaczają zmiany z poślizgnięciem.")
@@ -2278,9 +2260,7 @@ jezyk_prototypes_server <- function(input, output, session) {
     plot <- ggplot(data, aes(trial, frequency)) +
       geom_hline(yintercept = input$ch2b_guess, colour = upwr_cat[["bursztyn"]], linewidth = 0.9, linetype = "dotted") +
       coord_cartesian(ylim = c(0, 1)) +
-      labs(title = "Częstość a Twoje oszacowanie",
-        subtitle = if (b$revealed()) "Kropki: oszacowanie · kreski: modelowe P" else "Kropki: Twoje oszacowanie",
-        x = "Liczba obserwowanych zmian", y = "Skumulowana częstość")
+      labs(subtitle = if (b$revealed()) "Kropki: oszacowanie · kreski: modelowe P" else "Kropki: Twoje oszacowanie", x = "Liczba obserwowanych zmian", y = "Skumulowana częstość")
     if (b$revealed()) plot <- plot + geom_hline(yintercept = b$p(), colour = upwr_accent, linewidth = 0.9, linetype = "dashed")
     if (nrow(data) == 0) plot + scale_x_continuous(limits = c(0, 2)) else plot + geom_line(linewidth = 0.8, colour = upwr_cat[["niebo"]])
   }), alt = "Skumulowana częstość z linią oszacowania studenta.")
@@ -2320,9 +2300,7 @@ jezyk_prototypes_server <- function(input, output, session) {
     # Modelowe P leży w [0,01; 0,30], więc oś do 0,6 pokazuje rozrzut serii;
     # pojedyncze skoki na samym początku są przycięte.
     plot <- ggplot() + coord_cartesian(ylim = c(0, 0.6)) +
-      labs(title = "Pięć serii z tym samym modelowym P",
-        subtitle = if (cc$revealed()) "Pas: P ± 2 typowe odchylenia √(p(1 − p)/n)" else "Modelowe P pozostaje ukryte",
-        x = "Liczba obserwowanych zmian (skala logarytmiczna)", y = "Skumulowana częstość", colour = NULL)
+      labs(subtitle = if (cc$revealed()) "Pas: P ± 2 typowe odchylenia √(p(1 − p)/n)" else "Modelowe P pozostaje ukryte", x = "Liczba obserwowanych zmian (skala logarytmiczna)", y = "Skumulowana częstość", colour = NULL)
     if (is.null(data) || nrow(data) == 0) {
       return(plot + annotate("text", x = 10, y = 0.5, label = "Dodaj pierwsze zmiany", colour = upwr_secondary, size = 5) +
         scale_x_log10(limits = c(1, 100)))

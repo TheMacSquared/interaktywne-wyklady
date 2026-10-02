@@ -602,7 +602,7 @@ fta_server <- function(input, output, session) {
       geom_text(data = nodes, aes(x, y - .3, label = label), size = 4, lineheight = 0.9, vjust = 1) +
       scale_colour_manual(values = upwr_cat_n(3)) +
       coord_equal(xlim = c(-.3, 3.8), ylim = c(-.1, 3.4)) +
-      labs(title = "Małe drzewo Bananpolu", x = NULL, y = NULL, shape = NULL, colour = NULL) +
+      labs(x = NULL, y = NULL, shape = NULL, colour = NULL) +
       theme_upwr() +
       theme(axis.text = element_blank(), axis.ticks = element_blank())
   })
@@ -632,7 +632,7 @@ fta_server <- function(input, output, session) {
     ggplot(dat, aes(element, gain, fill = element)) +
       geom_col() +
       scale_fill_manual(values = upwr_cat_n(3), guide = "none") +
-      labs(title = "Spadek P(top) po poprawie", x = NULL, y = "Redukcja P(top)") +
+      labs(x = NULL, y = "Redukcja P(top)") +
       theme_upwr()
   })
   zoom_plot_server("f9_rank_plot", rank_plot, alt = "Słupki redukcji prawdopodobieństwa zdarzenia szczytowego po poprawie każdego liścia.")

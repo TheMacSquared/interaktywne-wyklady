@@ -613,7 +613,7 @@ proby_server <- function(input, output, session) {
     ggplot(dat, aes(x, p, fill = part)) +
       geom_col() +
       scale_fill_manual(values = c(Odpowiedź = upwr_accent, Pozostałe = upwr_reference)) +
-      labs(title = "Rozkład liczby niesprawnych", x = "Liczba niesprawnych", y = "Prawdopodobieństwo", fill = NULL) +
+      labs(x = "Liczba niesprawnych", y = "Prawdopodobieństwo", fill = NULL) +
       theme_upwr()
   })
   zoom_plot_server("p4_binom", binom_plot, alt = "Słupkowy rozkład dwumianowy z wyróżnionym zakresem odpowiedzi.")
@@ -628,7 +628,7 @@ proby_server <- function(input, output, session) {
   batches_plot <- reactive(ggplot(data.frame(x = batches()), aes(x)) +
     geom_histogram(binwidth = 1, boundary = -.5, fill = upwr_secondary, colour = "white") +
     geom_vline(xintercept = input$p4_n * input$p4_p, colour = upwr_accent, linewidth = 1) +
-    labs(title = "Wyniki wielu partii", x = "Liczba niesprawnych", y = "Liczba partii") +
+    labs(x = "Liczba niesprawnych", y = "Liczba partii") +
     theme_upwr())
   zoom_plot_server("p4_batches_plot", batches_plot, alt = "Histogram liczby niesprawnych w wielu partiach z linią wartości oczekiwanej.")
   output$p4_batches_stats <- renderUI(lc_stat_grid(lc_stat_box("E(X)", round(input$p4_n * input$p4_p, 2)), lc_stat_box("Zakres w symulacji", paste(range(batches()), collapse = "–")), columns = 1))
@@ -636,7 +636,7 @@ proby_server <- function(input, output, session) {
     n <- 1:300
     ggplot(data.frame(n, p = vapply(n, risk_at_least_one, numeric(1), p = input$p4_curve_p)), aes(n, p)) +
       geom_line(colour = upwr_accent, linewidth = 1.1) +
-      labs(title = "Im więcej ekspozycji, tym większa szansa co najmniej jednego zdarzenia", x = "Liczba prób", y = "P(X ≥ 1)") +
+      labs(x = "Liczba prób", y = "P(X ≥ 1)") +
       theme_upwr()
   })
   zoom_plot_server("p4_one", one_plot, alt = "Rosnąca krzywa prawdopodobieństwa co najmniej jednej niesprawności.")
