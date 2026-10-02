@@ -319,6 +319,7 @@ lecture_page <- function(lecture_id      = NULL,
 })();
       ")),
       includeScript(file.path(proj_root, "R", "shared_toc.js")),
+      includeScript(file.path(proj_root, "R", "lc_widgets.js")),
       tags$script(HTML("
 function lcUpdateTabsScrollState(list) {
   if (!list) return;
@@ -560,8 +561,10 @@ margin_note <- function(...) {
 # Domyślnie: szerokość kolumny tekstu (lepszy kontrast z narracją).
 # full_width = TRUE tylko gdy wykres naprawdę potrzebuje pełnej szerokości.
 figure_panel <- function(label, ..., title = NULL, color = "#6b1a26",
-                          full_width = FALSE) {
+                          full_width = FALSE, v2 = FALSE) {
   outer_class <- if (full_width) "lc-figure-panel lc-full" else "lc-figure-panel"
+  # v2 = TRUE: style widgetów v2 (pasek, odczyty, suwak, wykres z proporcji).
+  if (isTRUE(v2)) outer_class <- paste(outer_class, "lc-v2")
   tags$div(
     class = outer_class,
     tags$div(
@@ -827,4 +830,598 @@ html[data-lc-theme=\"dark\"] {
     unname(upwr_cat["terakota"]), unname(upwr_cat["wrzos"])
   )
   tags$style(HTML(css))
+}
+
+# ============================================================================
+# WIDGETY V2 I TABELE V2
+# Źródło: handoffy „Widgety v2” i „Tabele v2”. Panel włącza style v2 przez
+# figure_panel(v2 = TRUE); tabele lc_table() działają też w toku tekstu.
+# Logika klienta (kroki, wartość suwaka, klikalne komórki) jest w
+# R/lc_widgets.js. Kod tej sekcji jest identyczny we wszystkich kursach.
+# ============================================================================
+
+.lc_icon_paths <- list(
+  reset   = '<path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path>',
+  shuffle = '<path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 4v5h-5"></path>',
+  prev    = '<path d="M15 6l-6 6 6 6"></path>',
+  `next`  = '<path d="M9 6l6 6-6 6"></path>'
+)
+
+lc_icon <- function(name = c("reset", "shuffle", "prev", "next")) {
+  name <- match.arg(name)
+  HTML(paste0(
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ',
+    'stroke-linecap="round" aria-hidden="true" focusable="false">',
+    .lc_icon_paths[[name]], "</svg>"
+  ))
+}
+
+# Przycisk akcji Shiny (input$<id> jak w actionButton) w stylu v2.
+# Nie używa klas Bootstrapa ani prefiksu lc-btn-, więc nie dziedziczy ich reguł.
+lc_action <- function(input_id, label = NULL, icon = NULL,
+                      variant = c("outline", "solid", "ghost"),
+                      aria_label = NULL) {
+  variant <- match.arg(variant)
+  icon_only <- is.null(label)
+  if (icon_only && is.null(aria_label)) {
+    stop("Przycisk bez etykiety wymaga aria_label.")
+  }
+  tags$button(
+    id = input_id, type = "button",
+    class = paste("action-button lc-action", paste0("is-", variant),
+                  if (icon_only) "is-icon"),
+    `aria-label` = aria_label, title = if (icon_only) aria_label,
+    if (!is.null(icon)) lc_icon(icon),
+    if (!is.null(label)) tags$span(label)
+  )
+}
+
+# Pasek sterowania nad treścią widgetu: elementy zawijają się same.
+lc_toolbar <- function(...) {
+  tags$div(class = "lc-toolbar", ...)
+}
+
+# Grupa w pasku: krótka etykieta nad kontrolką.
+lc_group <- function(label = NULL, ..., grow = FALSE) {
+  tags$div(class = paste("lc-grp", if (grow) "lc-grow"),
+    if (!is.null(label)) tags$span(class = "lc-grp-l", label),
+    ...
+  )
+}
+
+.lc_choices <- function(choices) {
+  values <- unname(as.character(choices))
+  labels <- names(choices)
+  if (is.null(labels)) labels <- values
+  labels[!nzchar(labels)] <- values[!nzchar(labels)]
+  list(values = values, labels = labels)
+}
+
+# Radio z ≤ 4 krótkimi opcjami jako segment. Wartość w input$<id>.
+# exclusive_with: id drugiego segmentu, w którym nie można wybrać tej samej
+# wartości (np. zmienna w wierszach i kolumnach tabeli krzyżowej).
+lc_segmented <- function(input_id, label = NULL, choices, selected = NULL,
+                         exclusive_with = NULL) {
+  ch <- .lc_choices(choices)
+  selected <- if (is.null(selected)) ch$values[[1]] else as.character(selected)
+  label_id <- paste0(input_id, "-label")
+  tags$div(
+    id = input_id, class = "lc-grp shiny-input-radiogroup lc-seg-input",
+    `data-lc-exclusive` = exclusive_with,
+    if (!is.null(label)) tags$span(class = "lc-grp-l", id = label_id, label),
+    tags$div(class = "lc-seg", role = "radiogroup",
+      `aria-labelledby` = if (!is.null(label)) label_id,
+      lapply(seq_along(ch$values), function(i) {
+        tags$label(
+          tags$input(type = "radio", name = input_id, value = ch$values[[i]],
+                     checked = if (identical(ch$values[[i]], selected)) NA),
+          ch$labels[[i]]
+        )
+      })
+    )
+  )
+}
+
+# Grupa akcji jako jeden segment, np. +1 · +10 · +100 · +1000.
+# Argumenty: nazwane id = etykieta, np. lc_action_group(ch1_roll_1 = "+1").
+lc_action_group <- function(..., label = NULL) {
+  actions <- list(...)
+  if (is.null(names(actions)) || any(!nzchar(names(actions)))) {
+    stop("lc_action_group() wymaga par id = etykieta.")
+  }
+  lc_group(label,
+    tags$div(class = "lc-seg", role = "group", `aria-label` = label,
+      lapply(names(actions), function(id) {
+        tags$button(id = id, type = "button", class = "action-button",
+                    actions[[id]])
+      })
+    )
+  )
+}
+
+.lc_decimals <- function(x) {
+  s <- format(x, scientific = FALSE, drop0trailing = TRUE)
+  if (!grepl("\\.", s)) 0L else nchar(sub("^[^.]*\\.", "", s))
+}
+
+# Liczba jako tekst: kropka dziesiętna i zwykły minus (jak w R i jamovi), bez
+# końcowych zer. Do podpisów, odczytów i etykiet (bez wypełnienia).
+lc_fmt <- function(x, digits = 0, big_mark = "") {
+  vapply(x, function(v) {
+    if (is.na(v)) return("–")
+    s <- formatC(abs(v), format = "f", digits = digits, big.mark = big_mark)
+    if (digits > 0) s <- sub("\\.?0+$", "", s)
+    neg <- v < 0 && as.numeric(gsub("[^0-9.]", "", s)) != 0
+    paste0(if (neg) "-", s)
+  }, character(1), USE.NAMES = FALSE)
+}
+
+# Suwak v2: wartość w etykiecie (aktualizuje R/lc_widgets.js), min i max pod
+# torem, bez siatki. digits domyślnie z kroku suwaka.
+lc_slider <- function(input_id, label, min, max, value, step = NULL,
+                      digits = NULL, suffix = "") {
+  if (is.null(digits)) digits <- if (is.null(step)) 0L else .lc_decimals(step)
+  fmt <- function(x) paste0(lc_fmt(x, digits), suffix)
+  tags$div(class = "lc-grp lc-grow lc-slider",
+    tags$div(class = "lc-slider-label",
+      tags$label(`for` = input_id, label),
+      tags$output(`data-lc-slider` = input_id, `data-digits` = digits,
+                  `data-suffix` = suffix, fmt(value))
+    ),
+    sliderInput(input_id, label = NULL, min = min, max = max, value = value,
+                step = step, ticks = FALSE, width = "100%"),
+    tags$div(class = "lc-slider-ends", `aria-hidden` = "true",
+      tags$span(fmt(min)), tags$span(fmt(max))
+    )
+  )
+}
+
+# Odczyt liczby w pasku zamiast lc_stat_box(). Z swatch = TRUE pełni rolę
+# legendy serii (wtedy legend.position = "none" w ggplot).
+lc_readout <- function(label, value, color = NULL, swatch = FALSE) {
+  tags$div(class = "lc-read",
+    style = if (!is.null(color)) paste0("--lc-read-color:", color, ";"),
+    tags$span(class = "lc-read-label",
+      if (isTRUE(swatch)) tags$i(class = "lc-read-swatch", `aria-hidden` = "true"),
+      label
+    ),
+    tags$span(class = "lc-read-value", value)
+  )
+}
+
+# Kontener odczytów, dosunięty do prawej krawędzi paska.
+lc_readouts <- function(...) {
+  tags$div(class = "lc-reads lc-push", ...)
+}
+
+# Jedno zdanie pod wykresem lub tabelą, z kropką statusu.
+lc_caption <- function(..., tone = NULL) {
+  if (!is.null(tone)) tone <- match.arg(tone, c("ok", "info"))
+  tags$div(class = "lc-caption", `data-tone` = tone, tags$div(...))
+}
+
+# Wykres z wysokością z proporcji kontenera zamiast stałej wysokości w px.
+# Serwer bez zmian: zoom_plot_server() rysuje w rozmiarze kontenera.
+lc_plot <- function(plot_id, ratio = NULL, ratio_narrow = NULL) {
+  style <- paste0(c(
+    if (!is.null(ratio)) paste0("--lc-plot-ratio:", ratio, ";"),
+    if (!is.null(ratio_narrow)) paste0("--lc-plot-ratio-narrow:", ratio_narrow, ";")
+  ), collapse = "")
+  tags$div(class = "lc-plot", style = if (nzchar(style)) style,
+    zoom_plot_ui(plot_id, height = "100%")
+  )
+}
+
+# Dwa wykresy obok siebie od 760 px kontenera, pod sobą na węższym.
+lc_plots <- function(...) {
+  tags$div(class = "lc-plots", ...)
+}
+
+# Pusty stan wykresu lub tabeli: tekst w przerywanej ramce.
+lc_empty <- function(text) {
+  tags$div(class = "lc-tbl-empty", text)
+}
+
+lc_table_empty <- lc_empty
+
+# Widget bez wykresu: etykieta, pasek długości, wartość.
+# rows: lista list(label, kicker = NULL, value, share = 0..1, ok = NA, color = NULL).
+lc_compare_rows <- function(rows) {
+  tags$div(class = "lc-cmp",
+    lapply(rows, function(r) {
+      state <- if (isTRUE(r$ok)) "is-ok" else if (isFALSE(r$ok)) "is-bad"
+      share <- max(0, min(1, as.numeric(r$share)))
+      tags$div(class = paste("lc-cmp-row", state),
+        style = if (!is.null(r$color)) paste0("--lc-cmp-color:", r$color, ";"),
+        tags$div(class = "lc-cmp-label",
+          if (!is.null(r$kicker)) tags$em(r$kicker), r$label),
+        tags$div(class = "lc-cmp-bar", `aria-hidden` = "true",
+          tags$i(style = sprintf("width:%.1f%%;", 100 * share))),
+        tags$div(class = "lc-cmp-value", r$value)
+      )
+    })
+  )
+}
+
+# Nawigacja kroków demonstracji. Wartość input$<id>: numer kroku (0 = start).
+# Stan trzyma klient (R/lc_widgets.js); lc_update_step() ustawia go z serwera.
+lc_step_nav <- function(input_id, steps, start = 0L,
+                        start_label = "Zacznij", next_label = "Dalej") {
+  tags$div(
+    id = input_id, class = "lc-step-nav lc-push",
+    `data-lc-steps` = length(steps), `data-step` = as.integer(start),
+    `data-start-label` = start_label, `data-next-label` = next_label,
+    tags$button(type = "button", class = "lc-action is-ghost is-icon",
+      `data-lc-step` = "prev", `aria-label` = "Poprzedni krok",
+      title = "Poprzedni krok", lc_icon("prev")),
+    tags$div(class = "lc-step-dots",
+      lapply(seq_along(steps), function(i) {
+        tags$button(type = "button", class = "lc-step-dot",
+          `data-lc-step-to` = i,
+          `aria-label` = paste0("Krok ", i, ": ", steps[[i]]))
+      })
+    ),
+    tags$button(type = "button", class = "lc-action is-solid",
+      `data-lc-step` = "next",
+      tags$span(if (start == 0) start_label else next_label), lc_icon("next"))
+  )
+}
+
+lc_update_step <- function(session, input_id, step) {
+  session$sendInputMessage(input_id, list(step = as.integer(step)))
+}
+
+# Opis bieżącego kroku: znacznik, opcjonalny tytuł i treść.
+lc_step_text <- function(kicker, ..., title = NULL) {
+  tags$div(class = "lc-step-text", `aria-live` = "polite",
+    tags$div(class = "lc-step-kicker", kicker),
+    if (!is.null(title)) tags$div(class = "lc-step-title", title),
+    tags$div(class = "lc-step-body", ...)
+  )
+}
+
+# --- Tabele v2 --------------------------------------------------------------
+
+# Liczba w komórce tabeli: format lc_fmt() plus niewidoczne wypełnienie
+# brakujących cyfr, żeby kropki dziesiętne stały w jednej linii. Zwraca HTML jako tekst.
+# int_width: liczba znaków części całkowitej, do której dopełniamy z lewej.
+# Dzięki temu cyfry stoją w jednej linii także w kolumnie wyśrodkowanej.
+lc_num <- function(x, digits = 0, big_mark = "", int_width = NULL) {
+  pad_span <- function(p) paste0('<span class="lc-pad" aria-hidden="true">', p, "</span>")
+  vapply(x, function(v) {
+    if (is.na(v)) return("–")
+    full <- formatC(abs(v), format = "f", digits = digits, big.mark = big_mark)
+    shown <- lc_fmt(v, digits, big_mark)
+    lead <- ""
+    if (!is.null(int_width)) {
+      missing_int <- int_width - nchar(sub("\\..*$", "", shown))
+      if (missing_int > 0) lead <- pad_span(strrep("0", missing_int))
+    }
+    if (digits == 0) return(paste0(lead, shown))
+    full_frac <- sub("^[^.]*\\.", "", full)
+    shown_frac <- if (grepl(".", shown, fixed = TRUE)) sub("^[^.]*\\.", "", shown) else ""
+    pad <- paste0(if (!nzchar(shown_frac)) ".",
+                  strrep("0", nchar(full_frac) - nchar(shown_frac)))
+    paste0(lead, shown, if (nzchar(pad)) pad_span(pad))
+  }, character(1), USE.NAMES = FALSE)
+}
+
+# Najdłuższa część całkowita w kolumnie liczbowej (dla lc_num(int_width =)).
+.lc_int_width <- function(x, digits = 0) {
+  x <- suppressWarnings(as.numeric(x))
+  x <- x[is.finite(x)]
+  if (!length(x)) return(NULL)
+  max(nchar(sub("\\..*$", "", lc_fmt(x, digits))))
+}
+
+# Wartość p: „< 0.001” poniżej progu, inaczej 3 miejsca. Zwraca HTML jako tekst.
+lc_pval <- function(p) {
+  out <- lc_num(p, 3)
+  out[!is.na(p) & p < 0.001] <- "&lt; 0.001"
+  out
+}
+
+# Deklaracja kolumny tabeli.
+# type: "row" (nagłówek wiersza), "num" (liczba), "text".
+# short + desc trafiają do widocznej legendy skrótów nad tabelą.
+# sub: druga linia nagłówka (np. typ zmiennej).
+lc_col <- function(key, label, type = c("num", "text", "row"), digits = 0,
+                   short = NULL, desc = NULL, width = NULL, class = NULL,
+                   sub = NULL) {
+  structure(
+    list(key = key, label = label, type = match.arg(type), digits = digits,
+         short = short, desc = desc, width = width, class = class, sub = sub),
+    class = "lc_col"
+  )
+}
+
+.lc_auto_cols <- function(df) {
+  lapply(seq_along(df), function(i) {
+    key <- names(df)[i]
+    type <- if (i == 1) "row" else if (is.numeric(df[[i]])) "num" else "text"
+    lc_col(key, key, type)
+  })
+}
+
+.lc_cell_content <- function(col, value) {
+  if (is.list(value)) value <- value[[1]]
+  if (inherits(value, c("shiny.tag", "shiny.tag.list", "html"))) return(value)
+  if (is.null(value) || (length(value) == 1 && is.na(value))) {
+    return(if (identical(col$type, "num")) HTML("–") else "")
+  }
+  if (is.numeric(value)) return(HTML(lc_num(value, col$digits, int_width = col$int_width)))
+  # W kolumnie liczbowej tekst to gotowy wynik lc_num() / lc_pval().
+  if (identical(col$type, "num")) return(HTML(as.character(value)))
+  as.character(value)
+}
+
+.lc_col_header <- function(col) {
+  label <- if (!is.null(col$short)) tags$abbr(title = col$label, col$short) else col$label
+  list(label, if (!is.null(col$sub)) tags$span(class = "lc-th-sub", col$sub))
+}
+
+.lc_classes <- function(...) {
+  x <- unlist(list(...), use.names = FALSE)
+  x <- x[!is.na(x) & nzchar(x)]
+  if (length(x)) paste(x, collapse = " ")
+}
+
+.lc_cell_class <- function(cell_class, key, i) {
+  if (is.null(cell_class) || is.null(cell_class[[key]])) return(NULL)
+  v <- cell_class[[key]]
+  if (length(v) == 1) v else v[[i]]
+}
+
+# Sam element <table class="lc-tbl">; lc_table() dokłada blok, legendę
+# i przewijanie.
+.lc_table_tag <- function(df, cols, foot = NULL, caption = NULL, number = NULL,
+                          class = NULL, row_class = NULL, cell_class = NULL,
+                          colgroup = FALSE, roles = FALSE) {
+  role <- function(r) if (roles) r
+  n <- nrow(df)
+  cols <- lapply(cols, function(col) {
+    if (identical(col$type, "num")) {
+      vals <- c(if (is.numeric(df[[col$key]])) df[[col$key]],
+                if (!is.null(foot) && is.numeric(foot[[col$key]])) foot[[col$key]])
+      col$int_width <- .lc_int_width(vals, col$digits)
+    }
+    col
+  })
+  is_num <- function(col) identical(col$type, "num")
+  head_cells <- lapply(cols, function(col) {
+    tags$th(scope = "col", role = role("columnheader"),
+      class = .lc_classes(if (is_num(col)) "n", col$class),
+      .lc_col_header(col))
+  })
+  make_row <- function(values, i = NULL, tr_class = NULL) {
+    tags$tr(role = role("row"), class = tr_class,
+      lapply(cols, function(col) {
+        cls <- .lc_classes(if (is_num(col)) "n", col$class,
+                           if (!is.null(i)) .lc_cell_class(cell_class, col$key, i))
+        content <- .lc_cell_content(col, values[[col$key]])
+        if (identical(col$type, "row")) {
+          tags$th(scope = "row", role = role("rowheader"), class = cls, content)
+        } else {
+          tags$td(role = role("cell"), class = cls,
+                  `data-label` = col$label, content)
+        }
+      })
+    )
+  }
+  body_rows <- lapply(seq_len(n), function(i) {
+    make_row(lapply(df, function(column) column[i]), i,
+             if (!is.null(row_class)) row_class[[i]])
+  })
+  tags$table(
+    class = .lc_classes("lc-tbl", class), role = role("table"),
+    if (!is.null(caption) || !is.null(number)) tags$caption(
+      if (!is.null(number)) tags$span(class = "lc-tbl-num", number), caption
+    ),
+    if (isTRUE(colgroup)) tags$colgroup(lapply(cols, function(col) {
+      tags$col(style = if (!is.null(col$width)) paste0("width:", col$width, ";"))
+    })),
+    tags$thead(role = role("rowgroup"), tags$tr(role = role("row"), head_cells)),
+    tags$tbody(role = role("rowgroup"), body_rows),
+    if (!is.null(foot)) tags$tfoot(role = role("rowgroup"), make_row(as.list(foot)))
+  )
+}
+
+# Legenda skrótów z kolumn, które mają short i desc.
+lc_table_key <- function(cols, class = NULL) {
+  keyed <- Filter(function(col) !is.null(col$short) && !is.null(col$desc), cols)
+  if (!length(keyed)) return(NULL)
+  tags$div(class = .lc_classes("lc-tbl-key", class),
+    lapply(keyed, function(col) tags$span(tags$b(col$short), col$desc))
+  )
+}
+
+.lc_scroll <- function(x, label) {
+  tags$div(class = "lc-tbl-scroll", tabindex = "0", role = "region",
+           `aria-label` = label, x)
+}
+
+# Tabela v2. Komórki liczbowe formatuje lc_num(); kolumny tekstowe mogą
+# zawierać tagi (kolumna-lista). foot: nazwana lista lub 1-wierszowy df.
+# narrow: zachowanie tabeli tekstowej na wąskim kontenerze.
+# fit = TRUE: tabela liczbowa nie rozciąga się na pełną szerokość.
+# cell_class: nazwana lista klucz kolumny → wektor klas (is-target, is-best…).
+lc_table <- function(df, cols = NULL, foot = NULL, caption = NULL, number = NULL,
+                     narrow = c("none", "cards", "stack-last"), fit = NULL,
+                     row_class = NULL, cell_class = NULL, key = TRUE,
+                     scroll = FALSE, sticky_first = FALSE, label = NULL,
+                     prose = FALSE, colgroup = FALSE, lead = NULL, note = NULL) {
+  narrow <- match.arg(narrow)
+  if (is.null(cols)) cols <- .lc_auto_cols(df)
+  types <- vapply(cols, `[[`, character(1), "type")
+  if (is.null(fit)) fit <- narrow == "none" && any(types == "num")
+  text_table <- narrow != "none" || !any(types == "num")
+  table_class <- .lc_classes(
+    if (isTRUE(fit)) "is-fit",
+    if (text_table) "is-text",
+    if (narrow == "cards") "is-cards",
+    if (narrow == "stack-last") "is-stack-last",
+    if (isTRUE(sticky_first)) c("is-sticky-first", "is-data")
+  )
+  tbl <- .lc_table_tag(df, cols, foot = foot, caption = caption, number = number,
+                       class = table_class, row_class = row_class,
+                       cell_class = cell_class, colgroup = colgroup,
+                       roles = narrow != "none")
+  if (isTRUE(scroll)) tbl <- .lc_scroll(tbl, label %||% caption %||% "Tabela")
+  tags$div(class = .lc_classes("lc-tbl-block", if (isTRUE(prose)) "lc-tbl-prose"),
+    if (!is.null(lead)) tags$p(class = "lc-tbl-lead", lead),
+    if (isTRUE(key)) lc_table_key(cols),
+    tbl,
+    if (!is.null(note)) tags$div(class = "lc-tbl-note", note)
+  )
+}
+
+# Jedna szeroka tabela, a na wąskim kontenerze (< 34em) kilka węższych
+# z powtórzoną kolumną wierszy. groups: lista wektorów kluczy kolumn.
+# Kolumna typu "row" jest dokładana do każdej grupy. foot trafia do grup,
+# w których ma niepuste wartości.
+lc_table_split <- function(df, cols, groups, foot = NULL, label = "Tabela",
+                           cell_class = NULL, key = TRUE, lead = NULL) {
+  keys <- vapply(cols, `[[`, character(1), "key")
+  row_cols <- cols[vapply(cols, function(col) identical(col$type, "row"), logical(1))]
+  group_tables <- lapply(groups, function(g) {
+    gcols <- c(row_cols, cols[match(g, keys)])
+    gfoot <- NULL
+    if (!is.null(foot)) {
+      vals <- unlist(foot[g], use.names = FALSE)
+      if (any(!is.na(vals) & nzchar(as.character(vals)))) gfoot <- foot
+    }
+    .lc_table_tag(df, gcols, foot = gfoot, class = "is-fit", cell_class = cell_class)
+  })
+  tags$div(class = "lc-tbl-block",
+    if (!is.null(lead)) tags$p(class = "lc-tbl-lead", lead),
+    if (isTRUE(key)) lc_table_key(cols),
+    tags$div(class = "lc-tbl-v-wide",
+      .lc_scroll(.lc_table_tag(df, cols, foot = foot, class = "is-fit",
+                               cell_class = cell_class), label)),
+    tags$div(class = "lc-tbl-v-narrow", group_tables)
+  )
+}
+
+# Podgląd pierwszych n obserwacji: kolumna numeru i wybrane kolumny,
+# rozłożone na `split` tabel obok siebie (na wąskim jedna pod drugą).
+lc_table_preview <- function(df, n = 20, split = 2, cols = NULL, total = nrow(df)) {
+  shown <- utils::head(df, n)
+  shown <- cbind(data.frame(Nr = seq_len(nrow(shown))), shown)
+  if (is.null(cols)) cols <- lapply(names(df), function(k) {
+    lc_col(k, k, if (is.numeric(df[[k]])) "num" else "text")
+  })
+  cols <- c(list(lc_col("Nr", "Nr", "row", class = "n")), cols)
+  parts <- split(seq_len(nrow(shown)), ceiling(seq_len(nrow(shown)) /
+                 ceiling(nrow(shown) / split)))
+  tags$div(class = "lc-tbl-block",
+    tags$div(class = "lc-tbl-pair",
+      lapply(parts, function(idx) {
+        .lc_table_tag(shown[idx, , drop = FALSE], cols, class = "is-fit")
+      })
+    ),
+    tags$div(class = "lc-tbl-note",
+             sprintf("Pierwsze %d z %d obserwacji", nrow(shown), total))
+  )
+}
+
+# Tabela krzyżowa z sumami brzegowymi. measure: "n", "row" (% wierszowe),
+# "col" (% kolumnowe). target = c(i, j): komórka opisana w tekście.
+# input_id: komórki stają się przyciskami; kliknięcie ustawia input$<id>
+# na c(i, j). short_labels: krótkie etykiety kolumn na wąskim kontenerze.
+# cell_tags: macierz etykiet znaczeniowych komórek (np. „trafienie”).
+lc_crosstab <- function(tab, measure = c("n", "row", "col"), target = NULL,
+                        row_name = "", col_name = "", short_labels = NULL,
+                        cell_tags = NULL, input_id = NULL, digits = 1,
+                        lead = TRUE, label = "Tabela krzyżowa") {
+  measure <- match.arg(measure)
+  tab <- as.matrix(tab)
+  storage.mode(tab) <- "double"
+  rows <- rownames(tab)
+  cols <- colnames(tab)
+  row_tot <- rowSums(tab)
+  col_tot <- colSums(tab)
+  total <- sum(tab)
+  value <- switch(measure,
+    n = tab,
+    row = sweep(tab, 1, row_tot, "/") * 100,
+    col = sweep(tab, 2, col_tot, "/") * 100
+  )
+  value_digits <- if (measure == "n") 0 else digits
+  right <- switch(measure, n = row_tot, row = rep(100, length(rows)),
+                  col = row_tot / total * 100)
+  bottom <- switch(measure, n = col_tot, col = rep(100, length(cols)),
+                   row = col_tot / total * 100)
+  grand <- if (measure == "n") total else 100
+  col_width <- vapply(seq_along(cols), function(j) {
+    .lc_int_width(c(value[, j], bottom[j]), value_digits)
+  }, numeric(1))
+  right_width <- .lc_int_width(c(right, grand), value_digits)
+  is_target <- function(i, j) !is.null(target) && target[1] == i && target[2] == j
+  is_base_row <- function(i) measure == "row" && !is.null(target) && target[1] == i
+  is_base_col <- function(j) measure == "col" && !is.null(target) && target[2] == j
+  has_short <- !is.null(short_labels) && any(short_labels != cols)
+  col_label <- function(j) {
+    if (!has_short) return(cols[j])
+    tagList(tags$span(class = "lc-l-full", cols[j]),
+            tags$span(class = "lc-l-short", `aria-hidden` = "true", short_labels[j]))
+  }
+  cell <- function(i, j) {
+    shown <- HTML(lc_num(value[i, j], value_digits, int_width = col_width[j]))
+    content <- tagList(
+      if (!is.null(cell_tags)) tags$span(class = "lc-cell-tag", cell_tags[i, j]),
+      shown
+    )
+    if (!is.null(input_id)) {
+      content <- tags$button(type = "button", class = "lc-cell-btn",
+        `data-lc-cell-input` = input_id, `data-i` = i, `data-j` = j,
+        `aria-pressed` = if (is_target(i, j)) "true" else "false", content)
+    }
+    tags$td(
+      class = .lc_classes("n", if (is_target(i, j)) "is-target"
+                          else if (is_base_row(i) || is_base_col(j)) "is-base"),
+      `data-label` = cols[j], content)
+  }
+  row_total <- function(i) {
+    v <- lc_num(right[i], value_digits, int_width = right_width)
+    tags$td(class = .lc_classes("n is-total", if (measure == "row") "is-base-val",
+                                if (is_base_row(i)) "is-base"), HTML(v))
+  }
+  col_total <- function(j) {
+    v <- lc_num(bottom[j], value_digits, int_width = col_width[j])
+    tags$td(class = .lc_classes("n", if (measure == "col") "is-base-val",
+                                if (is_base_col(j)) "is-base"), HTML(v))
+  }
+  tbl <- tags$table(class = "lc-tbl is-fit",
+    tags$thead(
+      tags$tr(
+        tags$th(scope = "col", rowspan = 2, class = "lc-tbl-corner", row_name),
+        tags$th(scope = "colgroup", colspan = length(cols), class = "lc-tbl-span", col_name),
+        tags$th(scope = "col", rowspan = 2, class = "n is-total", "Razem")
+      ),
+      tags$tr(lapply(seq_along(cols), function(j) {
+        tags$th(scope = "col", class = .lc_classes("n", if (is_base_col(j)) "is-base"),
+                col_label(j))
+      }))
+    ),
+    tags$tbody(lapply(seq_along(rows), function(i) {
+      tags$tr(
+        tags$th(scope = "row", class = if (is_base_row(i)) "is-base", rows[i]),
+        lapply(seq_along(cols), function(j) cell(i, j)),
+        row_total(i)
+      )
+    })),
+    tags$tfoot(tags$tr(
+      tags$th(scope = "row", "Razem"),
+      lapply(seq_along(cols), col_total),
+      tags$td(class = "n is-total", HTML(lc_num(grand, value_digits, int_width = right_width)))
+    ))
+  )
+  lead_tag <- if (isTRUE(lead)) tags$p(class = "lc-tbl-lead", switch(measure,
+    n = paste0("Liczebności, N = ", lc_fmt(total), "."),
+    row = tagList(tags$b("% wierszowe:"), " każdy wiersz sumuje się do 100."),
+    col = tagList(tags$b("% kolumnowe:"), " każda kolumna sumuje się do 100.")
+  ))
+  short_key <- if (has_short) tags$div(class = "lc-tbl-key is-short-key",
+    lapply(seq_along(cols), function(j) tags$span(tags$b(short_labels[j]), cols[j])))
+  tags$div(class = "lc-tbl-block", lead_tag, short_key, .lc_scroll(tbl, label))
 }

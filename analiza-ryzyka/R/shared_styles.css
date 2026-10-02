@@ -2394,3 +2394,244 @@ mjx-container mjx-text {
   gap: 16px;
 }
 .lc-proto-estimate { max-width: 520px; margin: 12px auto 0; }
+
+
+/* ==========================================================================
+   WIDGETY V2 I TABELE V2
+   Źródło: handoffy „Widgety v2” i „Tabele v2” (CSS dostosowany do klas repo:
+   panel = .lc-figure-panel.lc-v2, przyciski = .lc-action). Tylko tokeny
+   --upwr-*, rozmiary w em (skalują się z --lc-font-scale), progi z kontenera.
+   Sekcja identyczna we wszystkich kursach.
+   ========================================================================== */
+
+/* Kontrast tekstu pomocniczego w komponentach v2 (4,5:1 na jasnym tle). */
+html:not([data-lc-theme="dark"]) .lc-v2,
+html:not([data-lc-theme="dark"]) .lc-tbl-block {
+  --upwr-ink-subtle: #6e665c;
+}
+
+/* Panel */
+.lc-figure-panel.lc-v2 {
+  container: lc-fig / inline-size;
+  padding: 1.5em clamp(.9em, 3.5vw, 2em) 1.2em;
+}
+
+/* Pasek sterowania: zastępuje fluidRow(column(4), column(8)) */
+.lc-toolbar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.9em 1.6em;padding-bottom:1em;margin-bottom:.6em;border-bottom:1px solid var(--upwr-rule-soft)}
+.lc-toolbar>*{min-width:0}
+.lc-toolbar .lc-grow{flex:1 1 14em}
+.lc-toolbar .lc-push{margin-left:auto}
+.lc-figure-panel.lc-v2>*+.lc-toolbar{margin-top:1.4em}
+.lc-toolbar .form-group,.lc-toolbar .shiny-input-container{margin:0}
+.lc-grp{display:flex;flex-direction:column;gap:.35em;min-width:0}
+.lc-grp-l{font-size:.78em;font-weight:700;color:var(--upwr-ink-soft)}
+
+/* Segment: grupa akcji albo radio ≤ 4 krótkie opcje */
+.lc-seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--upwr-rule);border-radius:6px;overflow:hidden;background:var(--upwr-surface);max-width:100%}
+.lc-seg>*{border:0;border-left:1px solid var(--upwr-rule);background:none;font:500 .86em var(--upwr-mono);color:var(--upwr-ink);min-height:2.6em;padding:0 .9em;cursor:pointer;display:flex;align-items:center;margin:0}
+.lc-seg>:first-child{border-left:0}
+.lc-seg button:hover{background:var(--upwr-accent-tint);color:var(--upwr-accent)}
+.lc-seg button:active{background:var(--upwr-accent);color:var(--upwr-surface)}
+.lc-seg button:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:-3px}
+.lc-seg label{position:relative;font-family:var(--upwr-sans);font-weight:400;max-width:none}
+.lc-seg input{position:absolute;opacity:0;pointer-events:none}
+.lc-seg label:has(input:checked){background:var(--upwr-accent);color:var(--upwr-surface)}
+.lc-seg label:has(input:focus-visible){outline:2px solid var(--upwr-accent);outline-offset:-3px}
+.lc-seg label:has(input:disabled){opacity:.35;pointer-events:none}
+
+/* Przyciski v2: bez klas Bootstrapa i prefiksu lc-btn- */
+.lc-action{display:inline-flex;align-items:center;gap:.45em;min-height:2.6em;padding:0 1em;border-radius:6px;font:700 .84em var(--upwr-sans);white-space:nowrap;cursor:pointer;border:1px solid var(--upwr-accent);background:var(--upwr-surface);color:var(--upwr-accent)}
+.lc-action svg{width:1.05em;height:1.05em;flex:none}
+.lc-action.is-outline:hover{background:var(--upwr-accent);color:var(--upwr-surface)}
+.lc-action.is-solid{background:var(--upwr-accent);color:var(--upwr-surface)}
+.lc-action.is-solid:hover{background:var(--upwr-accent-hover)}
+.lc-action.is-ghost{border-color:transparent;background:none;color:var(--upwr-ink-subtle)}
+.lc-action.is-ghost:hover{background:var(--upwr-surface-sunken);color:var(--upwr-ink)}
+.lc-action.is-icon{width:2.6em;padding:0;justify-content:center}
+.lc-action:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
+.lc-action:disabled{opacity:.35;pointer-events:none}
+
+/* Odczyty: zastępują lc_stat_box w widgetach */
+.lc-reads{display:flex;flex-wrap:wrap;gap:.6em 1.6em}
+.lc-reads>.shiny-html-output{display:contents}
+.lc-read{display:flex;flex-direction:column;gap:.15em;padding-left:.7em;border-left:2px solid var(--lc-read-color,var(--upwr-accent))}
+.lc-read-label{font:500 .64em var(--upwr-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--upwr-ink-subtle);display:flex;align-items:center;gap:.5em}
+.lc-read-value{font:700 1.35em/1.1 var(--upwr-mono);color:var(--upwr-ink);font-variant-numeric:tabular-nums}
+.lc-read-swatch{flex:none;width:.9em;height:.9em;border-radius:2px;background:var(--lc-read-color)}
+@container lc-fig (max-width:400px){
+  .lc-reads{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:.8em;width:100%;margin-left:0}
+  .lc-read{padding-left:.55em}
+  .lc-read-label{font-size:.6em;letter-spacing:.04em;line-height:1.25;align-items:flex-start}
+  .lc-read-swatch{margin-top:.1em}
+  .lc-read-value{font-size:1.15em}
+}
+
+/* Suwak (ionRangeSlider): bez siatki i dymka, cienki tor; wartość w etykiecie */
+.lc-v2 .irs-grid,.lc-v2 .irs-single,.lc-v2 .irs-from,.lc-v2 .irs-to,.lc-v2 .irs-min,.lc-v2 .irs-max{display:none!important}
+.lc-v2 .irs--shiny{height:44px}
+.lc-v2 .irs--shiny .irs-line{height:4px;top:20px;background:var(--upwr-rule)!important;border:0!important;border-radius:2px}
+.lc-v2 .irs--shiny .irs-bar{height:4px;top:20px;background:var(--upwr-accent)!important;border:0}
+.lc-v2 .irs--shiny .irs-handle{width:18px;height:18px;top:13px;border:2px solid var(--upwr-accent)!important;background:var(--upwr-surface);box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.lc-v2 .irs--shiny .irs-handle>i:nth-child(1){display:none}
+.lc-slider .shiny-input-container{width:100%!important}
+.lc-slider-label{display:flex;justify-content:space-between;gap:1em;font-size:.78em;font-weight:700;color:var(--upwr-ink-soft)}
+.lc-slider-label label{margin:0;font-weight:700}
+.lc-slider-label output{font-family:var(--upwr-mono);color:var(--upwr-accent);padding:0}
+.lc-slider-ends{display:flex;justify-content:space-between;font:.68em var(--upwr-mono);color:var(--upwr-ink-subtle);margin-top:-.4em}
+
+/* Podpis ze statusem: zastępuje lc_feedback pod wykresem */
+.lc-caption{margin-top:.6em;font-size:.86em;line-height:1.45;color:var(--upwr-ink-soft);display:flex;gap:.5em;align-items:baseline}
+.lc-caption::before{content:"";flex:none;width:.55em;height:.55em;border-radius:50%;background:var(--upwr-ink-subtle);transform:translateY(-.05em)}
+.lc-caption[data-tone="ok"]::before{background:var(--upwr-sage)}
+.lc-caption[data-tone="info"]::before{background:var(--upwr-single-alt)}
+.lc-caption b{font-family:var(--upwr-mono)}
+
+/* Wykres: wysokość z proporcji, nie z px */
+.lc-plot{width:100%;aspect-ratio:var(--lc-plot-ratio,2.2/1);min-height:200px;max-height:440px}
+@container lc-fig (max-width:480px){.lc-plot{aspect-ratio:var(--lc-plot-ratio-narrow,4/3)}}
+.lc-plot>.lc-zoom-plot-wrap{height:100%}
+.lc-plot .shiny-plot-output{width:100%!important;height:100%!important}
+.lc-plots{display:grid;grid-template-columns:minmax(0,1fr);gap:1.2em}
+@container lc-fig (min-width:760px){.lc-plots{grid-template-columns:repeat(2,minmax(0,1fr))}.lc-plots .lc-plot{--lc-plot-ratio:1.6/1}}
+
+/* Porównanie długości: widget bez wykresu */
+.lc-cmp{display:grid;gap:.9em;margin-top:.4em}
+.lc-cmp-row{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"l v" "b b";gap:.3em 1em;align-items:baseline}
+@container lc-fig (min-width:640px){.lc-cmp-row{grid-template-columns:15em minmax(0,1fr) 9.5em;grid-template-areas:"l b v";align-items:center}}
+.lc-cmp-label{grid-area:l;font-size:.88em;color:var(--upwr-ink-soft);line-height:1.3}
+.lc-cmp-label em{font:500 .72em var(--upwr-mono);letter-spacing:.06em;text-transform:uppercase;display:block;color:var(--upwr-ink-subtle)}
+.lc-cmp-bar{grid-area:b;height:.8em;background:var(--upwr-surface-sunken);border-radius:2px;overflow:hidden}
+.lc-cmp-bar i{display:block;height:100%;background:var(--lc-cmp-color,var(--upwr-rule));transition:width .15s}
+.lc-cmp-value{grid-area:v;font:700 1.05em var(--upwr-mono);text-align:right;font-variant-numeric:tabular-nums}
+.lc-cmp-row.is-ok .lc-cmp-label{color:var(--upwr-ink);font-weight:700}
+.lc-cmp-row.is-bad .lc-cmp-value{color:var(--upwr-ink-subtle);text-decoration:line-through;text-decoration-thickness:1px}
+
+/* Kroki (demonstracje) */
+.lc-steps{display:grid;grid-template-columns:minmax(0,1fr);gap:1.2em}
+@container lc-fig (min-width:720px){.lc-steps{grid-template-columns:minmax(0,5fr) minmax(0,6fr);align-items:center}}
+.lc-step-text{margin:0 0 .4em}
+.lc-step-kicker{font:500 .66em var(--upwr-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--upwr-accent)}
+.lc-step-title{font-size:1.15em;font-weight:700;line-height:1.3;margin:.35em 0 .5em;text-wrap:balance}
+.lc-step-body{line-height:1.55;color:var(--upwr-ink-soft);margin:.35em 0 .6em;font-size:.95em;max-width:44em}
+.lc-step-nav{display:flex;align-items:center;gap:.8em;flex-wrap:nowrap;flex:none}
+.lc-step-dots{display:flex;gap:.2em}
+.lc-step-dot{width:2.2em;height:2.2em;border:0;background:none;cursor:pointer;display:grid;place-items:center;padding:0}
+.lc-step-dot::before{content:"";width:.6em;height:.6em;border-radius:50%;background:var(--upwr-rule);transition:.2s}
+.lc-step-dot[aria-current="step"]::before{background:var(--upwr-accent);width:1.6em;border-radius:.3em}
+.lc-step-dot:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:-2px;border-radius:6px}
+
+/* --- Tabele v2 ----------------------------------------------------------- */
+
+/* Blok tabeli = kontener zapytań. Wszystkie progi niżej odnoszą się do jego szerokości. */
+.lc-tbl-block{container:lc-tbl/inline-size;min-width:0;margin:.4em 0 0}
+.lc-tbl-scroll{overflow-x:auto;overscroll-behavior-x:contain;
+  background:linear-gradient(90deg,var(--upwr-surface) 30%,transparent) left/2.5em 100% no-repeat local,linear-gradient(270deg,var(--upwr-surface) 30%,transparent) right/2.5em 100% no-repeat local,radial-gradient(farthest-side at 0 50%,rgba(0,0,0,.14),transparent) left/.9em 100% no-repeat scroll,radial-gradient(farthest-side at 100% 50%,rgba(0,0,0,.14),transparent) right/.9em 100% no-repeat scroll}
+.lc-tbl-scroll:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
+
+/* Tabela bazowa */
+.lc-tbl{width:100%;border-collapse:collapse;font-size:.92em;line-height:1.35;color:var(--upwr-ink);font-variant-numeric:tabular-nums lining-nums;margin:0}
+.lc-tbl.is-fit{width:auto;min-width:min(100%,30em)}
+.lc-tbl.is-fit th,.lc-tbl.is-fit td{padding-left:1em;padding-right:1em}
+.lc-tbl th,.lc-tbl td{padding:.5em .75em;text-align:left;vertical-align:baseline;border-bottom:1px solid var(--upwr-rule-soft)}
+.lc-tbl thead th{font-weight:700;font-size:.86em;line-height:1.25;color:var(--upwr-ink-soft);vertical-align:bottom;border-bottom:1.5px solid var(--upwr-ink)}
+.lc-tbl tbody th{font-weight:400}
+/* Kolumny z liczbami są wyśrodkowane; lc_num() dopełnia cyfry niewidocznymi
+   zerami, więc kropki dziesiętne i jedności stoją w jednej linii. */
+.lc-tbl .n{text-align:center;white-space:nowrap}
+.lc-tbl td.n,.lc-tbl tbody th.n,.lc-tbl tfoot .n{font-family:var(--upwr-mono);font-size:.94em}
+.lc-tbl abbr{text-decoration:none;border-bottom:0;cursor:inherit}
+.lc-tbl .lc-th-sub{display:block;font:500 .78em var(--upwr-mono);letter-spacing:.04em;color:var(--upwr-ink-subtle);font-weight:500}
+.lc-pad{visibility:hidden}
+.lc-tbl th:first-child,.lc-tbl td:first-child{padding-left:0!important}
+.lc-tbl th:last-child,.lc-tbl td:last-child{padding-right:0!important}
+.lc-tbl .lc-tbl-span{text-align:left;font:500 .7em var(--upwr-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--upwr-ink-subtle);border-bottom:1px solid var(--upwr-rule);padding-bottom:.35em}
+.lc-tbl .lc-tbl-corner{font-weight:700;color:var(--upwr-ink)}
+
+/* Sumy: wiersz w tfoot, kolumna .is-total */
+.lc-tbl tfoot th,.lc-tbl tfoot td{border-top:1.5px solid var(--upwr-ink);border-bottom:0;font-weight:700}
+.lc-tbl .is-total{border-left:1.5px solid var(--upwr-rule);font-weight:700}
+.lc-tbl .is-base-val{color:var(--upwr-accent)}
+
+/* Stany */
+.lc-tbl .is-new{background:var(--upwr-accent-tint);animation:lc-tbl-in .45s ease-out}
+.lc-tbl thead .is-new{color:var(--upwr-accent)}
+.lc-tbl .is-base{background:var(--upwr-accent-tint)}
+.lc-tbl .is-target{background:var(--upwr-accent-tint);box-shadow:inset 0 0 0 2px var(--upwr-accent);font-weight:700}
+.lc-tbl .is-best{background:var(--upwr-sage-tint);font-weight:700}
+.lc-tbl .is-dim,.lc-tbl .is-dim *{color:var(--upwr-ink-subtle)}
+.lc-tbl .is-changed{animation:lc-tbl-flash .9s ease-out}
+@keyframes lc-tbl-in{from{background:transparent}}
+@keyframes lc-tbl-flash{from{background:var(--upwr-single-alt-tint)}}
+@media (prefers-reduced-motion:reduce){.lc-tbl .is-new,.lc-tbl .is-changed{animation:none}}
+
+/* Komórka klikalna (wybór komórki, o której mówi podpis) */
+.lc-cell-btn{all:unset;display:block;width:100%;text-align:inherit;cursor:pointer;border-radius:2px}
+.lc-cell-btn:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
+.lc-tbl td:has(.lc-cell-btn):hover{background:var(--upwr-surface-sunken)}
+.lc-cell-tag{display:block;font:500 .66em var(--upwr-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--upwr-ink-subtle);margin-bottom:.15em}
+
+/* Legenda skrótów (widoczna, działa na dotyku) i notka pod tabelą */
+.lc-tbl-key{display:flex;flex-wrap:wrap;gap:.2em 1.3em;margin:0 0 .6em;font-size:.8em;line-height:1.4;color:var(--upwr-ink-soft)}
+.lc-tbl-key b{font-family:var(--upwr-mono);color:var(--upwr-ink);margin-right:.35em}
+.lc-tbl-note{margin-top:.55em;font:.72em/1.4 var(--upwr-mono);color:var(--upwr-ink-subtle)}
+.lc-tbl-lead{margin:0 0 .5em;font-size:.84em;color:var(--upwr-ink-soft)}
+.lc-tbl-lead b{color:var(--upwr-accent)}
+
+/* Pusta tabela lub wykres */
+.lc-tbl-empty{display:grid;place-items:center;min-height:9em;padding:1em;border:1px dashed var(--upwr-rule);border-radius:6px;color:var(--upwr-ink-subtle);font-size:.9em;text-align:center}
+
+/* Etykiety pełne / skrócone (np. kategorie w nagłówkach kolumn) */
+.lc-l-short,.lc-tbl-key.is-short-key{display:none}
+@container lc-tbl (max-width:36em){
+  .lc-l-full{display:none}.lc-l-short{display:inline}
+  .lc-tbl-key.is-short-key{display:flex}
+}
+
+/* Wariant wąski: jedna szeroka tabela albo dwie węższe (kategoria powtórzona) */
+.lc-tbl-v-narrow{display:none}
+@container lc-tbl (max-width:34em){
+  .lc-tbl-v-wide{display:none}
+  .lc-tbl-v-narrow{display:grid;gap:1.4em}
+  .lc-tbl th,.lc-tbl td,.lc-tbl.is-fit th,.lc-tbl.is-fit td{padding-left:.5em;padding-right:.5em}
+}
+
+/* Podgląd surowych danych: tabele obok siebie, na wąskim jedna pod drugą */
+.lc-tbl-pair{display:grid;grid-template-columns:minmax(0,1fr);gap:0 2.4em}
+.lc-tbl-pair .lc-tbl th,.lc-tbl-pair .lc-tbl td{padding-top:.32em;padding-bottom:.32em}
+@container lc-tbl (min-width:30em){.lc-tbl-pair{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container lc-tbl (max-width:29.99em){.lc-tbl-pair>.lc-tbl+.lc-tbl thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+
+/* Tabela w toku tekstu (referencyjna, ściągi): bez panelu, podpis nad tabelą */
+.lc-tbl-prose{margin:1.6em 0 2em;max-width:680px}
+.lc-tbl caption{caption-side:top;text-align:left;padding:0 0 .7em;font-weight:700;font-size:1.05em;color:var(--upwr-ink);text-wrap:balance}
+.lc-tbl caption .lc-tbl-num{display:block;font:500 .64em var(--upwr-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--upwr-accent);margin-bottom:.3em}
+.lc-tbl-prose .lc-tbl tbody td{color:var(--upwr-ink-soft)}
+.lc-tbl.is-text td,.lc-tbl.is-text th{vertical-align:top}
+
+/* Na wąskim: wiersz jako karta (pierwsza kolumna = nagłówek karty, reszta z etykietą z data-label).
+   R dodaje role="table/row/cell/rowheader", bo display:block odbiera semantykę w części przeglądarek. */
+@container lc-tbl (max-width:40em){
+  .lc-tbl.is-cards thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+  .lc-tbl.is-cards,.lc-tbl.is-cards tbody,.lc-tbl.is-cards tr,.lc-tbl.is-cards th,.lc-tbl.is-cards td{display:block}
+  .lc-tbl.is-cards caption{display:block}
+  .lc-tbl.is-cards tbody tr{padding:.8em 0;border-bottom:1px solid var(--upwr-rule-soft)}
+  .lc-tbl.is-cards tbody tr:first-child{border-top:1.5px solid var(--upwr-ink)}
+  .lc-tbl.is-cards tbody th{padding:0 0 .35em;border:0;font-weight:700;font-size:1.04em;color:var(--upwr-ink)}
+  .lc-tbl.is-cards tbody td{display:grid;grid-template-columns:minmax(0,7.5em) minmax(0,1fr);gap:.8em;padding:.2em 0;border:0}
+  .lc-tbl.is-cards tbody td::before{content:attr(data-label);font:500 .68em/1.6 var(--upwr-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--upwr-ink-subtle)}
+}
+@container lc-tbl (max-width:24em){.lc-tbl.is-cards tbody td{grid-template-columns:minmax(0,1fr);gap:0}}
+
+/* Na wąskim: ostatnia (tekstowa) kolumna schodzi pod wiersz na całą szerokość */
+@container lc-tbl (max-width:30em){
+  .lc-tbl.is-stack-last tr{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:1em;border-bottom:1px solid var(--upwr-rule-soft)}
+  .lc-tbl.is-stack-last thead tr{border-bottom:1.5px solid var(--upwr-ink)}
+  .lc-tbl.is-stack-last th,.lc-tbl.is-stack-last td{display:block;border:0;padding-left:0;padding-right:0}
+  .lc-tbl.is-stack-last thead th:last-child{display:none}
+  .lc-tbl.is-stack-last tbody td:last-child{grid-column:1/-1;padding-top:0;font-size:.94em}
+}
+
+/* Szeroka tabela danych: pierwsza kolumna przyklejona przy przewijaniu */
+.lc-tbl.is-sticky-first thead th:first-child,.lc-tbl.is-sticky-first tbody th:first-child{position:sticky;left:0;z-index:1;background:var(--upwr-surface)}
+.lc-tbl.is-data{white-space:nowrap}
+.lc-tbl.is-data th,.lc-tbl.is-data td{padding-top:.38em;padding-bottom:.38em}

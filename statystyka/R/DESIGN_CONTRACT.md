@@ -164,3 +164,105 @@ zawijaniem. Dynamiczna tabela zachowuje szerokość panelu po zmianie kolumn.
 nad wykresem. Wariant `"beside"` przechodzi do dwóch kolumn dopiero wtedy,
 gdy sam widget ma co najmniej 720 px. `lc_controls_row()` rozmieszcza grupy
 sterowania w kolumnach, które automatycznie przechodzą do jednego rzędu pionowego.
+
+## Widgety v2 i tabele v2
+
+Nowe i przebudowywane widgety oraz tabele korzystają z komponentów v2
+(sekcja „WIDGETY V2 I TABELE V2” w `R/lecture_layout.R`, style w
+`R/shared_styles.css`, logika klienta w `R/lc_widgets.js`). Sekcja jest
+identyczna we wszystkich kursach; zmiany wprowadzamy równolegle.
+
+Panel widgetu włącza style v2 przez `figure_panel(..., v2 = TRUE)`. Bez tego
+argumentu panel wygląda jak dotąd, więc migracja idzie widget po widgecie.
+W analizie ryzyka `risk_widget_panel(..., v2 = TRUE)` składa pasek, wykres
+i podpis.
+
+### Widgety
+
+| Potrzeba | Komponent |
+|---|---|
+| Pasek sterowania nad treścią | `lc_toolbar()` |
+| Grupa z etykietą | `lc_group()` |
+| Radio z ≤ 4 krótkimi opcjami | `lc_segmented()` |
+| Seria akcji (np. +1 · +10 · +100) | `lc_action_group()` |
+| Pojedyncza akcja | `lc_action(variant = "outline" / "solid" / "ghost")` |
+| Suwak z wartością w etykiecie | `lc_slider()` |
+| Liczba w pasku zamiast pudełka | `lc_readouts()` + `lc_readout()` |
+| Jedno zdanie pod wykresem | `lc_caption(tone = "ok" / "info")` |
+| Wykres z wysokością z proporcji | `lc_plot()`, dwa obok siebie: `lc_plots()` |
+| Pusty stan | `lc_empty()` |
+| Porównanie bez wykresu | `lc_compare_rows()` |
+| Demonstracja krokowa | `lc_step_nav()` + `lc_step_text()` |
+
+Zasady:
+
+1. Sterowanie stoi nad wykresem w jednym pasku, który zawija się sam. Bez
+   `fluidRow(column(4), column(8))`.
+2. Serie akcji to jeden segment; reset to ikona (`lc_action(icon = "reset",
+   variant = "ghost")`).
+3. Radio z ≤ 4 krótkimi opcjami to segment. Segmenty wykluczające się (np.
+   zmienna w wierszach i kolumnach) łączy `exclusive_with`.
+4. Odczyty (`lc_readout()`) zastępują `lc_stat_box()` w widgetach. Gdy
+   kolor odczytu jest kolorem serii (`swatch = TRUE`), odczyt zastępuje
+   legendę ggplot.
+5. Wykresy w widgetach nie mają `labs(title / subtitle)`; treść idzie do
+   tytułu panelu.
+6. Suwak bez podziałki i dymka; wartość w etykiecie, min i max pod torem.
+7. Feedback pod wykresem to jedno zdanie `lc_caption()`. `lc_feedback()`
+   zostaje dla treści w toku tekstu.
+8. Wykres ma wysokość z proporcji (`lc_plot()`), nie `height = "250px"`.
+   Serwer bez zmian: `zoom_plot_server()` rysuje w rozmiarze kontenera.
+9. Rozmiary w `em`, progi z szerokości panelu (container queries), więc tryb
+   rzutnika skaluje cały widget.
+10. Przyciski v2 mają klasy `lc-action`, nie `lc-btn-*` ani Bootstrapa.
+
+### Tabele
+
+Wszystkie nowe tabele powstają przez `lc_table()` i deklaracje kolumn
+`lc_col()`. Ręczne `tags$table(class = "lc-table …")`, `renderTable()`
+i `DT::datatable()` wycofujemy: `renderTable()` zastępuje
+`renderUI(lc_table(...))`. Inline `font-size` usuwamy.
+
+| Potrzeba | Komponent |
+|---|---|
+| Tabela z deklaracją kolumn | `lc_table(df, cols)` + `lc_col()` |
+| Jedna tabela szeroko, dwie wąsko | `lc_table_split()` |
+| Podgląd surowych danych | `lc_table_preview()` |
+| Tabela krzyżowa z sumami | `lc_crosstab()` |
+| Pusta tabela | `lc_table_empty()` |
+| Liczba w komórce / tekście | `lc_num()` / `lc_fmt()` |
+| Wartość p | `lc_pval()` |
+
+Zasady:
+
+1. Liczby: kropka dziesiętna i zwykły minus `-` (jak w R i jamovi), bez
+   końcowych zer, mono z cyframi tabelarycznymi.
+2. Kolumny z liczbami są wyśrodkowane. `lc_num()` dopełnia brakujące cyfry
+   niewidocznymi zerami (z lewej do najdłuższej części całkowitej w kolumnie,
+   z prawej do liczby miejsc po kropce), więc kropki i jedności stoją w jednej
+   linii. Tekst i nagłówki wierszy są wyrównane do lewej.
+3. Tabela liczbowa nie rozciąga się na pełną szerokość (`fit`); tabele
+   tekstowe zajmują 100%.
+4. Skróty nagłówków (`short`, `desc` w `lc_col()`) zawsze mają widoczną
+   legendę nad tabelą.
+5. Sumy: wiersz w `foot` (gruba linia nad nim), kolumna sum w tabeli
+   krzyżowej z cienką linią pionową.
+6. W tabeli krzyżowej zdanie nad tabelą mówi, względem czego liczono
+   procenty; podstawa i komórka opisywana w tekście są wyróżnione.
+7. Wąski kontener, w tej kolejności: krótsze etykiety z legendą, podział na
+   dwie tabele (`lc_table_split()`), karty lub ostatnia kolumna pod wierszem
+   dla tabel tekstowych (`narrow = "cards" / "stack-last"`), przewijanie tylko
+   dla danych surowych (`scroll = TRUE`). Tekstu nie zmniejszamy.
+8. Stany komórek i kolumn: `is-new` (dodane w bieżącym kroku), `is-best`,
+   `is-dim` (bez interpretacji), `is-target`, `is-base`.
+9. Do 3 liczb o jednym obiekcie: `lc_readout()` w pasku. Co najmniej
+   2 obiekty × 2 miary: tabela.
+10. Tabela interaktywna stoi w `figure_panel(v2 = TRUE)`. Tabela referencyjna
+    stoi w toku tekstu (`lc_table(..., prose = TRUE, caption = ...)`).
+
+`lc_table_region()` zostaje dla tabel jeszcze niezmigrowanych; nowe tabele
+korzystają z `lc_table(..., scroll = TRUE)`.
+
+Tekst pomocniczy w komponentach v2 (etykiety odczytów, legenda, notki) ma
+w jasnym motywie kolor `#6e665c` (kontrast 4,5:1); globalny token
+`--upwr-ink-subtle` pozostaje bez zmian.
