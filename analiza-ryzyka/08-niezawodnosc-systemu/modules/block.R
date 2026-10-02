@@ -63,18 +63,25 @@ system_sciaga_widget <- figure_panel(
   label = "Ściąga 8.1",
   title = "Architektury, funkcje struktury i wzory",
   full_width = TRUE,
-  tags$table(
-    class = "lc-table lc-table-striped lc-table-bordered",
-    tags$thead(tags$tr(
-      tags$th("Układ"), tags$th("Sukces, gdy…"), tags$th("φ(x)"), tags$th("R systemu (niezależne elementy)")
-    )),
-    tags$tbody(
-      tags$tr(tags$td("Szeregowy"), tags$td("działają wszystkie elementy"), tags$td("x₁x₂⋯xₙ = min xᵢ"), tags$td("∏ Rᵢ — wzór (8.2)")),
-      tags$tr(tags$td("Równoległy"), tags$td("działa co najmniej jeden"), tags$td("1 − ∏(1 − xᵢ) = max xᵢ"), tags$td("1 − ∏(1 − Rᵢ) — wzór (8.3)")),
-      tags$tr(tags$td("Mieszany C + A/B"), tags$td("C oraz (A lub B)"), tags$td("x_C·[1 − (1 − x_A)(1 − x_B)]"), tags$td("R_C·[1 − (1 − R_A)(1 − R_B)] — wzór (8.4)")),
-      tags$tr(tags$td("Wspólna przyczyna"), tags$td("brak zdarzenia wspólnego i sukces układu"), tags$td("x_Z̄ · φ(x)"), tags$td("(1 − q)·R_niez — wzór (8.10)")),
-      tags$tr(tags$td("n jednakowych gałęzi"), tags$td("działa co najmniej jedna"), tags$td("max xᵢ"), tags$td("1 − (1 − r)ⁿ — wzór (8.13)"))
-    )
+  lc_table(
+    data.frame(
+      layout = c("Szeregowy", "Równoległy", "Mieszany C + A/B", "Wspólna przyczyna",
+                 "n jednakowych gałęzi"),
+      success = c("działają wszystkie elementy", "działa co najmniej jeden", "C oraz (A lub B)",
+                  "brak zdarzenia wspólnego i sukces układu", "działa co najmniej jedna"),
+      structure = c("x₁x₂⋯xₙ = min xᵢ", "1 − ∏(1 − xᵢ) = max xᵢ", "x_C·[1 − (1 − x_A)(1 − x_B)]",
+                    "x_Z̄ · φ(x)", "max xᵢ"),
+      reliability = c("∏ Rᵢ — wzór (8.2)", "1 − ∏(1 − Rᵢ) — wzór (8.3)",
+                      "R_C·[1 − (1 − R_A)(1 − R_B)] — wzór (8.4)", "(1 − q)·R_niez — wzór (8.10)",
+                      "1 − (1 − r)ⁿ — wzór (8.13)")
+    ),
+    cols = list(
+      lc_col("layout", "Układ", "row"),
+      lc_col("success", "Sukces, gdy…", "text"),
+      lc_col("structure", "φ(x)", "text"),
+      lc_col("reliability", "R systemu (niezależne elementy)", "text")
+    ),
+    narrow = "cards"
   )
 )
 
