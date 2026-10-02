@@ -309,11 +309,10 @@ risk_example <- function(num, title, problem, steps, answer = NULL, steps_type =
 # Zwinięte wyprowadzenie lub uzasadnienie — dla czytelnika, który chce zobaczyć,
 # skąd bierze się wzór; na zajęciach można je pominąć.
 risk_derivation <- function(title, text, lines = NULL) {
-  inline_callout(
-    label = paste0("Skąd to się bierze: ", title),
+  lc_more(
+    paste0("Skąd to się bierze: ", title),
     lapply(text, tags$p),
-    if (!is.null(lines)) tags$pre(class = "lc-derivation-lines", paste(lines, collapse = "\n")),
-    color = "ok"
+    if (!is.null(lines)) tags$pre(class = "lc-derivation-lines", paste(lines, collapse = "\n"))
   )
 }
 

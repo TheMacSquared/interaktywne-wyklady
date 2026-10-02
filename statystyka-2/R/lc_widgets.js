@@ -93,6 +93,20 @@
     navs[1].setAttribute('data-lc-page-to', to + 1); navs[1].disabled = to >= pages;
   });
 
+  // --- Przełączniki drugorzędne (lc_chips): jeden aktywny albo żaden ---
+  document.addEventListener('click', function(e) {
+    var chip = e.target.closest && e.target.closest('.lc-chip');
+    if (!chip) return;
+    var group = chip.closest('[data-lc-chips]');
+    var on = chip.getAttribute('aria-pressed') !== 'true';
+    group.querySelectorAll('.lc-chip').forEach(function(x) { x.setAttribute('aria-pressed', 'false'); });
+    if (on) chip.setAttribute('aria-pressed', 'true');
+    if (window.Shiny) {
+      window.Shiny.setInputValue(group.getAttribute('data-lc-chips'),
+        on ? chip.getAttribute('data-value') : null, { priority: 'event' });
+    }
+  });
+
   // --- Kroki demonstracji: input binding, wartość = numer kroku ---
   function renderSteps(el) {
     var n = Number(el.getAttribute('data-lc-steps'));

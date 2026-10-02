@@ -117,3 +117,21 @@ testthat::test_that("lc_table stronicuje po stronie przeglądarki i serwera", {
                          "3 / 3", fixed = TRUE)
   testthat::expect_false(grepl("lc-pager", html(env$lc_table(df, cols, page_size = 50)), fixed = TRUE))
 })
+
+testthat::test_that("bloki treści v2 i dawne callouty jako notki", {
+  env <- load_v2_env()
+  testthat::expect_match(html(env$lc_note("Uwaga", "Treść")), 'class="lc-note"', fixed = TRUE)
+  testthat::expect_match(html(env$lc_note("Zasada", "Treść", rule = TRUE)), "lc-note lc-note-rule", fixed = TRUE)
+  testthat::expect_match(html(env$inline_callout(label = "Zasada", "x", color = "ok", open = FALSE)),
+                         "lc-note lc-note-rule", fixed = TRUE)
+  testthat::expect_match(html(env$margin_callout(label = "Uwaga", "x", color = "uwaga")), "lc-note-l", fixed = TRUE)
+  testthat::expect_false(grepl("<details", html(env$inline_callout(label = "Uwaga", "x")), fixed = TRUE))
+  testthat::expect_match(html(env$lc_more("Rozwiązanie", "x")), "<details class=\"lc-more\">", fixed = TRUE)
+  testthat::expect_match(html(env$lc_warn("Pułapka", "x")), 'role="note"', fixed = TRUE)
+  testthat::expect_equal(lengths(regmatches(html(env$lc_recap("a", "b")), gregexpr("<li>", html(env$lc_recap("a", "b"))))), 2L)
+  testthat::expect_match(html(env$lc_h3("Zgodność", num = "3")), '<span class="lc-h3-n">3</span>', fixed = TRUE)
+  testthat::expect_match(html(env$lc_tracker("Wzrost", c(Me = "170.65"))), "<dd>170.65</dd>", fixed = TRUE)
+  testthat::expect_match(html(env$lc_chips("h", c("H: μ = 170" = "170"), label = "Sprawdź:")),
+                         'data-lc-chips="h"', fixed = TRUE)
+  testthat::expect_match(html(htmltools::tags$p("jest ", env$b_("x"), ", gdy")), "</strong>, gdy", fixed = TRUE)
+})

@@ -2229,3 +2229,88 @@ mjx-container mjx-text {
 .lc-tbl.is-sticky-first thead th:first-child,.lc-tbl.is-sticky-first tbody th:first-child{position:sticky;left:0;z-index:1;background:var(--upwr-surface)}
 .lc-tbl.is-data{white-space:nowrap}
 .lc-tbl.is-data th,.lc-tbl.is-data td{padding-top:.38em;padding-bottom:.38em}
+
+/* --- Bloki treści v2 (handoff „Bloki v2”): typografia zamiast ramek. --- */
+/* Kolumna treści jest kontenerem zapytań dla notek; --lc-gutter to szerokość
+   kolumny etykiet notek. */
+.lc-content-wrap{container-type:inline-size;--lc-gutter:7.5em}
+
+/* Notka z wiszącą etykietą: Zasada, Uwaga, Przykład, Kontrprzykład, Jak czytać */
+.lc-note{display:grid;grid-template-columns:var(--lc-gutter) minmax(0,40em);gap:.2em 1.2em;margin:1.3em 0;line-height:1.55}
+.lc-note-l{font:700 .64em/2.3 var(--upwr-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--upwr-ink-subtle);text-align:right}
+.lc-note-b{color:var(--upwr-ink-soft);text-wrap:pretty}
+.lc-note-b>:first-child{margin-top:0}.lc-note-b>:last-child{margin-bottom:0}
+.lc-note-rule .lc-note-l{color:var(--upwr-accent)}
+.lc-note-rule .lc-note-b{color:var(--upwr-ink);font-weight:700}
+.lc-note+.lc-note{margin-top:-.3em}
+
+/* Wzór wyświetlany: bez tła, oddech zamiast ramki (lc_formula_box) */
+.lc-formula-box{background:none;border:0;box-shadow:none;margin:1.1em 0 1.3em;padding:.2em 0;text-align:center;font-size:1.12em;overflow-x:auto;max-width:calc(var(--lc-gutter) + 41.2em)}
+
+/* Treść zwinięta: rozwiązania, odpowiedzi, opcjonalne rozwinięcia */
+.lc-more{margin:1.3em 0;max-width:calc(var(--lc-gutter) + 41.2em)}
+.lc-more-l{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:.5em;min-height:2.4em;font:700 .72em var(--upwr-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--upwr-accent)}
+.lc-more-l::-webkit-details-marker{display:none}
+.lc-more-l::before{content:"+";display:inline-grid;place-items:center;width:1.5em;height:1.5em;border:1px solid currentColor;border-radius:50%;font-size:1.1em;letter-spacing:0}
+.lc-more[open]>.lc-more-l::before{content:"−"}
+.lc-more-l:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
+.lc-more-b{padding:.4em 0 .2em 1.1em;border-left:2px solid var(--upwr-rule-soft);color:var(--upwr-ink-soft);line-height:1.55}
+.lc-more-b>:first-child{margin-top:0}.lc-more-b>:last-child{margin-bottom:0}
+.lc-note-b pre,.lc-more-b pre{margin:.3em 0;font:.9em/1.5 var(--upwr-mono);background:var(--upwr-surface-sunken);padding:.5em .7em;overflow-x:auto;white-space:pre}
+
+/* Ramka wzoru z samym tekstem (np. hipotezy H₀/H₁): do lewej, zwykły rozmiar */
+.lc-formula-box:not(:has(.MathJax,.MathJax_Display,mjx-container,.lc-formula-row)){text-align:left;font-size:.94em}
+.lc-formula-box>p{margin:.2em 0}
+
+/* Pułapka — jedyny wypełniony blok tekstowy, max 1 na sekcję */
+.lc-warn{background:var(--upwr-accent-tint);padding:.95em 1.2em 1.05em;margin:1.8em 0;max-width:calc(var(--lc-gutter) + 41.2em);line-height:1.55;color:var(--upwr-ink)}
+.lc-warn-l{font:700 .64em var(--upwr-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--upwr-accent);margin-bottom:.45em}
+.lc-warn-b>:first-child{margin-top:0}.lc-warn-b>:last-child{margin-bottom:0}
+
+/* Podsumowanie sekcji */
+.lc-recap{border-top:2px solid var(--upwr-ink);padding-top:.7em;margin:2.6em 0 1.6em;max-width:calc(var(--lc-gutter) + 41.2em)}
+.lc-recap-l{font:700 .64em var(--upwr-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--upwr-ink);margin-bottom:.3em}
+.lc-recap ol{list-style:none;margin:0;padding:0;counter-reset:r}
+.lc-recap li{counter-increment:r;display:grid;grid-template-columns:2em minmax(0,1fr);gap:.6em;padding:.55em 0;border-bottom:1px solid var(--upwr-rule-soft);line-height:1.5;color:var(--upwr-ink-soft)}
+.lc-recap li::before{content:counter(r);font:700 .85em/1.75 var(--upwr-mono);color:var(--upwr-accent)}
+.lc-recap li:last-child{border-bottom:0}
+
+/* Śledzona zmienna: jedna linia, liczby w mono */
+.lc-tracker{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25em 1.3em;padding:.5em 0;margin:1.2em 0 1.6em;border-block:1px solid var(--upwr-rule);font-size:.84em;color:var(--upwr-ink-soft)}
+.lc-tracker-l{font:700 .76em var(--upwr-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--upwr-ink-subtle)}
+.lc-tracker-v{font-weight:700;color:var(--upwr-ink)}
+.lc-tracker dl{display:flex;flex-wrap:wrap;gap:.2em 1.1em;margin:0}
+.lc-tracker dl div{display:flex;gap:.35em}
+.lc-tracker dt{color:var(--upwr-ink-subtle)}
+.lc-tracker dd{margin:0;font-family:var(--upwr-mono);color:var(--upwr-ink)}
+
+/* Spis przykładów (zamiast listy z emoji) */
+.lc-index{list-style:none;margin:.6em 0 1.6em;padding:0;max-width:calc(var(--lc-gutter) + 41.2em);border-top:1px solid var(--upwr-rule)}
+.lc-index a{display:grid;grid-template-columns:2.6em minmax(0,1fr) auto;align-items:center;gap:.8em;min-height:2.75em;padding:.35em 0;border-bottom:1px solid var(--upwr-rule-soft);color:var(--upwr-ink);text-decoration:none}
+.lc-index a:hover{color:var(--upwr-accent)}
+.lc-index-c{font:700 .78em var(--upwr-mono);color:var(--upwr-accent)}
+.lc-index-go{font:.8em var(--upwr-mono);color:var(--upwr-ink-subtle)}
+.lc-index [aria-current] {background:var(--upwr-surface-sunken)}
+
+/* Podsekcja z numerem */
+.lc-h3{display:flex;align-items:baseline;gap:.55em;font-size:1.22em;line-height:1.25;font-weight:700;font-style:normal;margin:2.2em 0 .55em;color:var(--upwr-ink)}
+.lc-h3-n{font:700 .62em var(--upwr-mono);letter-spacing:.06em;color:var(--upwr-accent);flex:none}
+
+/* Status widgetu: wewnątrz panelu, pod wykresem */
+.lc-status{border-top:1px solid var(--upwr-rule-soft);margin-top:1em;padding-top:.75em;font-size:.92em;line-height:1.5;color:var(--upwr-ink-soft)}
+.lc-status b{color:var(--upwr-ink)}
+.lc-status-num{font-family:var(--upwr-mono);color:var(--upwr-ink)}
+.lc-status-ok{color:var(--upwr-sage)}.lc-status-danger{color:var(--upwr-accent)}
+
+/* Przełączniki dodatkowe (np. hipotezy) — drugorzędne wobec kroków */
+.lc-chips{display:flex;flex-wrap:wrap;align-items:center;gap:.4em .5em;font-size:.84em}
+.lc-chips-l{color:var(--upwr-ink-subtle);margin-right:.2em}
+.lc-chip{min-height:2.4em;padding:0 .95em;border-radius:999px;border:1px solid var(--upwr-rule);background:var(--upwr-surface);color:var(--upwr-ink-soft);font:700 1em var(--upwr-sans);cursor:pointer}
+.lc-chip:hover{border-color:var(--upwr-ink-subtle)}
+.lc-chip[aria-pressed="true"]{background:var(--upwr-ink);border-color:var(--upwr-ink);color:var(--upwr-surface)}
+
+@container (max-width:560px){
+  .lc-note{grid-template-columns:minmax(0,1fr);gap:0}
+  .lc-note-l{text-align:left;line-height:1.6}
+  .lc-tracker{gap:.15em .9em}
+}

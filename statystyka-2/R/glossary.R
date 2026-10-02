@@ -57,5 +57,7 @@
 gloss <- function(term, definition = NULL) {
   def <- if (!is.null(definition)) definition else .GLOSSARY[[term]]
   if (is.null(def)) stop(paste0("gloss(): brak definicji dla '", term, "'"))
-  tags$span(class = "lc-gloss", `data-def` = def, term)
+  # .noWS: bez tego htmltools wstawia nową linię wokół spana i przed
+  # następującą interpunkcją pojawia się spacja („pokrycie .”)
+  tags$span(class = "lc-gloss", `data-def` = def, term, .noWS = "outside")
 }

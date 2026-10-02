@@ -244,3 +244,57 @@ korzystają z `lc_table(..., scroll = TRUE)`.
 
 Tekst pomocniczy (`--upwr-ink-subtle`) ma w jasnym motywie kolor `#6e665c`
 (kontrast 4,5:1 na białym tle).
+
+## Bloki treści v2
+
+Hierarchię niesie typografia: etykiety, numeracja, odstępy, kreski. Tło mają
+tylko widgety (`figure_panel()`) i pułapki (`lc_warn()`). Marginesu bocznego
+nie ma; treść stoi w jednej kolumnie.
+
+| Blok | Komponent |
+|---|---|
+| Akapit | `lc_p()` |
+| Notka z etykietą (Uwaga, Przykład, Jak czytać, Zasada…) | `lc_note(label, ...)`; „Zasada”: `rule = TRUE` |
+| Wzór | `lc_formula_box()` (bez tła) |
+| Pułapka | `lc_warn(label, ...)` |
+| Podsumowanie sekcji | `lc_recap(...)` |
+| Widget | `figure_panel()` |
+| Treść zwinięta: rozwiązanie, odpowiedź, rozwinięcie opcjonalne | `lc_more(label, ...)` |
+| Podsekcja z numerem | `lc_h3(title, num = "1")` |
+| Śledzona zmienna | `lc_tracker(label, stats)` |
+| Spis przykładów | `lc_index(items)` |
+| Status widgetu (opis kroku, wynik testu) | `lc_status()` + `lc_verdict()` w `renderUI()` wewnątrz panelu |
+| Przełączniki drugorzędne (np. hipotezy) | `lc_chips()` |
+| Pogrubienie / kursywa przed interpunkcją | `b_()` / `em_()` |
+
+Zasady:
+
+1. Notki się nie zwijają. Zwijamy tylko rozwiązania, odpowiedzi i opcjonalne
+   rozwinięcia (`lc_more()`).
+2. Etykieta stoi w wiszącej kolumnie notki, nie w ramce. Pogrubione wstępy typu
+   `tags$strong("Przykład:")` na początku akapitu zamieniamy na
+   `lc_note("Przykład", ...)`.
+3. Najwyżej jedna `lc_note(rule = TRUE)` i jedna `lc_warn()` na sekcję `lc_h2()`.
+   Pułapka jest na błędy, które student realnie popełnia.
+4. `lc_caption()` to jedno zdanie z kropką statusu pod wykresem; `lc_status()`
+   to dłuższy opis kroku lub wynik testu. Oba stoją wewnątrz panelu, bez
+   osobnej ramki pod widgetem.
+5. Kroki demonstracji: `lc_step_nav()` (kropki i „Dalej”). Opcje dodatkowe
+   obok kroków: `lc_chips()`.
+6. Bez emoji w tytułach, listach, trackerze i statusach. Kod przykładu (A1, B2)
+   trafia do plakietki panelu albo do `lc_index()`.
+7. Podsekcje bez kursywy i ręcznej numeracji: `lc_h3("…", num = "1")`.
+8. Liczby w trackerze i statusach w mono, z kropką dziesiętną (`lc_fmt()`).
+
+Dawne `margin_callout()`, `inline_callout()`, `margin_note()`
+i `margin_code_note()` działają dalej, ale renderują się jako `lc_note()`.
+W nowym kodzie ich nie używamy.
+
+Zakazane wzorce (uzupełnienie):
+
+- `inline_callout()` i zwijane `tags$details` dla notek krótszych niż trzy
+  zdania;
+- emoji w tytułach, listach i statusach;
+- `lc_feedback()` jako osobna ramka pod `figure_panel()`; statyczne
+  `lc_feedback()` w toku tekstu zastępują `lc_note()` albo `lc_warn()`;
+- więcej niż jedna `lc_warn()` i jedna `lc_note(rule = TRUE)` na sekcję.

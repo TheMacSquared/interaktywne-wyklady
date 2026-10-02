@@ -508,9 +508,12 @@ lc_h2 <- function(id, num = NULL, title = NULL) {
   )
 }
 
-# Podsekcja
-lc_h3 <- function(title) {
-  tags$h3(class = "lc-h3", title)
+# Podsekcja z opcjonalnym numerem w mono (zamiast „(1) …” w kursywie).
+lc_h3 <- function(title, num = NULL) {
+  tags$h3(class = "lc-h3",
+    if (!is.null(num)) tags$span(class = "lc-h3-n", num),
+    title
+  )
 }
 
 # Akapit narracyjny (pełna typografia)
@@ -522,49 +525,21 @@ lc_p <- function(..., drop = NULL) {
   tags$p(class = "lc-p", content)
 }
 
-# Callout na prawym marginesie
-# color: "uwaga" (burgundy), "wskazowka" (gold, domyślny), "ok" (sage)
-margin_callout <- function(label = "Zapamiętaj", ..., color = "wskazowka") {
-  css_class <- paste("lc-margin-callout", switch(color,
-    uwaga     = "lc-callout-uwaga",
-    ok        = "lc-callout-ok",
-    wskazowka = "",
-    ""
-  ))
-  tags$div(
-    class = paste("lc-margin", css_class),
-    tags$div(class = "lc-margin-callout-label", label),
-    tags$div(class = "lc-margin-callout-body", ...)
-  )
+# Dawny callout na marginesie. Marginesu nie ma: renderuje się jako lc_note().
+# W nowym kodzie używaj lc_note(); `color` jest ignorowany.
+margin_callout <- function(label = "Zapamiętaj", ..., color = NULL) {
+  lc_note(label, ..., rule = identical(label, "Zasada"))
 }
 
-# Zwinięty callout w głównej kolumnie tekstu.
-# Używany eksperymentalnie tam, gdzie callout w marginesie zaburza rytm treści.
-inline_callout <- function(label = "Zapamiętaj", ..., color = "wskazowka",
-                           open = FALSE) {
-  css_class <- paste("lc-inline-callout", switch(color,
-    uwaga     = "lc-callout-uwaga",
-    ok        = "lc-callout-ok",
-    wskazowka = "",
-    ""
-  ))
-  tags$details(
-    class = css_class,
-    if (isTRUE(open)) list(open = NA),
-    tags$summary(class = "lc-inline-callout-label", label),
-    tags$div(class = "lc-inline-callout-body", ...)
-  )
+# Dawny zwijany callout. Notki się nie zwijają: renderuje się jako lc_note().
+# Rozwinięcia opcjonalne i rozwiązania: lc_more(). `color` i `open` są ignorowane.
+inline_callout <- function(label = "Zapamiętaj", ..., color = NULL, open = NULL) {
+  lc_note(label, ..., rule = identical(label, "Zasada"))
 }
 
-# Notka na marginesie (bez etykiety)
+# Dawna notka na marginesie (bez etykiety); renderuje się jako lc_note().
 margin_note <- function(...) {
-  tags$div(
-    class = "lc-margin",
-    tags$div(
-      style = "font-family:var(--upwr-serif);font-size:13px;line-height:1.5;color:var(--upwr-reference);font-style:italic;",
-      ...
-    )
-  )
+  lc_note("Notka", ...)
 }
 
 # Ramka z plakietką (wykresy, ćwiczenia, ściągi)
@@ -739,16 +714,11 @@ lc_chapter_hero <- function(kicker = NULL, num, title, lead = NULL) {
 # margin_code_note() — callout "W kodzie" z blokiem monospace
 # ============================================================================
 
+# Kod z krótkim opisem jako notka z etykietą (dawniej na marginesie).
 margin_code_note <- function(code, description = NULL, label = "W kodzie") {
-  tags$div(
-    class = "lc-margin lc-margin-callout lc-callout-kod",
-    tags$div(class = "lc-margin-callout-label", label),
-    tags$div(
-      class = "lc-margin-callout-body",
-      tags$pre(class = "lc-margin-code", tags$code(code)),
-      if (!is.null(description))
-        tags$div(class = "lc-margin-code-desc", description)
-    )
+  lc_note(label,
+    tags$pre(tags$code(code)),
+    if (!is.null(description)) tags$p(description)
   )
 }
 
@@ -1523,3 +1493,96 @@ lc_crosstab <- function(tab, measure = c("n", "row", "col"), target = NULL,
     lapply(seq_along(cols), function(j) tags$span(tags$b(short_labels[j]), cols[j])))
   tags$div(class = "lc-tbl-block", lead_tag, short_key, .lc_scroll(tbl, label))
 }
+
+# --- Bloki treści v2 ---------------------------------------------------------
+# Źródło: handoff „Bloki v2”. Hierarchię niesie typografia: tło mają tylko
+# widgety (figure_panel) i pułapki (lc_warn). Margines boczny nie istnieje;
+# dawne margin_callout() / inline_callout() renderują się jako lc_note().
+
+# Notka z wiszącą etykietą (Zasada, Uwaga, Przykład, Jak czytać…).
+# rule = TRUE tylko dla „Zasady”: najwyżej jedna na sekcję.
+lc_note <- function(label, ..., rule = FALSE) {
+  tags$div(class = .lc_classes("lc-note", if (isTRUE(rule)) "lc-note-rule"),
+    tags$div(class = "lc-note-l", label),
+    tags$div(class = "lc-note-b", ...)
+  )
+}
+
+# Pułapka: błąd, który student realnie popełnia. Najwyżej jedna na sekcję.
+lc_warn <- function(label, ...) {
+  tags$div(class = "lc-warn", role = "note",
+    tags$div(class = "lc-warn-l", label),
+    tags$div(class = "lc-warn-b", ...)
+  )
+}
+
+# Treść zwinięta: tylko rozwiązania, odpowiedzi i opcjonalne rozwinięcia
+# (np. „Chcesz więcej matematyki?”, „Skąd to się bierze”). Notki się nie zwijają.
+lc_more <- function(label, ..., open = FALSE) {
+  tags$details(class = "lc-more", open = if (isTRUE(open)) NA,
+    tags$summary(class = "lc-more-l", label),
+    tags$div(class = "lc-more-b", ...)
+  )
+}
+
+# Podsumowanie sekcji: każdy argument w ... to jeden numerowany punkt.
+lc_recap <- function(..., label = "Najważniejsze do zapamiętania") {
+  tags$div(class = "lc-recap",
+    tags$div(class = "lc-recap-l", label),
+    tags$ol(lapply(list(...), tags$li))
+  )
+}
+
+# Śledzona zmienna w jednej linii. stats: nazwany wektor sformatowanych liczb,
+# np. c("x̄" = lc_fmt(171.14, 2), Me = lc_fmt(170.65, 2)).
+lc_tracker <- function(label, stats, kicker = "Śledzisz") {
+  tags$div(class = "lc-tracker", role = "status",
+    tags$span(class = "lc-tracker-l", kicker),
+    tags$span(class = "lc-tracker-v", label),
+    tags$dl(Map(function(k, v) tags$div(tags$dt(k), tags$dd(v)),
+                names(stats), unname(stats)))
+  )
+}
+
+# Spis przykładów. items: list(list(code = "B1", title = "…", target = "id-sekcji")).
+lc_index <- function(items) {
+  tags$ul(class = "lc-index", lapply(items, function(it) {
+    tags$li(tags$a(href = paste0("#", it$target),
+      tags$span(class = "lc-index-c", it$code),
+      tags$span(it$title),
+      tags$span(class = "lc-index-go", `aria-hidden` = "true", "→")
+    ))
+  }))
+}
+
+# Status widgetu w renderUI() wewnątrz figure_panel(), pod wykresem: opis kroku,
+# wynik testu, dłuższy komentarz. Jedno zdanie z kropką statusu to lc_caption().
+lc_status <- function(..., live = TRUE) {
+  tags$div(class = "lc-status",
+    role = if (isTRUE(live)) "status", `aria-live` = if (isTRUE(live)) "polite", ...)
+}
+
+# Werdykt w lc_status(): kolor tylko na fragmencie tekstu, bez tła.
+lc_verdict <- function(..., type = c("ok", "danger")) {
+  type <- match.arg(type)
+  tags$span(class = if (type == "ok") "lc-status-ok" else "lc-status-danger", ...)
+}
+
+# Przełączniki drugorzędne (np. hipotezy): jeden aktywny albo żaden.
+# Wartość w input$<input_id> (NULL, gdy nic nie wybrano). Logika: R/lc_widgets.js.
+lc_chips <- function(input_id, choices, label = NULL) {
+  ch <- .lc_choices(choices)
+  tags$div(class = "lc-chips", `data-lc-chips` = input_id,
+    if (!is.null(label)) tags$span(class = "lc-chips-l", label),
+    lapply(seq_along(ch$values), function(i) {
+      tags$button(type = "button", class = "lc-chip", `aria-pressed` = "false",
+                  `data-value` = ch$values[[i]], ch$labels[[i]])
+    })
+  )
+}
+
+# Pogrubienie i kursywa bez spacji przed interpunkcją: htmltools wstawia znak
+# nowej linii między dziećmi taga, więc p("jest ", strong("x"), ", gdy")
+# renderuje się jako „x , gdy”.
+b_ <- function(...) tags$strong(..., .noWS = "outside")
+em_ <- function(...) tags$em(..., .noWS = "outside")
