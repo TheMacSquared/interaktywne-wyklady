@@ -66,15 +66,18 @@ proby_variable_widget <- figure_panel(
   label = "Słownik",
   title = "Jedna kontrola zaworu jako zmienna losowa",
   full_width = TRUE,
-  tags$table(
-    class = "lc-table lc-table-striped lc-table-bordered",
-    tags$thead(tags$tr(
-      tags$th("Wynik kontroli"), tags$th("Wartość Xᵢ"), tags$th("Prawdopodobieństwo")
-    )),
-    tags$tbody(
-      tags$tr(tags$td("Zawór niesprawny"), tags$td("1"), tags$td("p = 0,02")),
-      tags$tr(tags$td("Zawór sprawny"), tags$td("0"), tags$td("1 − p = 0,98"))
-    )
+  lc_table(
+    data.frame(
+      outcome = c("Zawór niesprawny", "Zawór sprawny"),
+      value = c("1", "0"),
+      probability = c("p = 0,02", "1 − p = 0,98")
+    ),
+    cols = list(
+      lc_col("outcome", "Wynik kontroli", "row"),
+      lc_col("value", "Wartość Xᵢ", "text"),
+      lc_col("probability", "Prawdopodobieństwo", "text")
+    ),
+    narrow = "cards"
   ),
   lc_stat_grid(
     lc_stat_box("E(Xᵢ)", "p = 0,02", caption = "średni wynik jednej próby", color = upwr_accent),
