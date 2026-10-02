@@ -2008,6 +2008,8 @@ mjx-container mjx-text {
 .lc-toolbar .lc-grow{flex:1 1 14em}
 .lc-toolbar .lc-push{margin-left:auto}
 .lc-figure-panel>*+.lc-toolbar{margin-top:1.4em}
+/* Szeroki wzór (MathJax 2 i 3) przewija się w poziomie zamiast wylewać się z panelu. */
+.lc-figure-panel .MathJax_Display,.lc-figure-panel mjx-container[display="true"]{max-width:100%;overflow-x:auto;overflow-y:hidden}
 .lc-toolbar .form-group,.lc-toolbar .shiny-input-container{margin:0}
 .lc-grp{display:flex;flex-direction:column;gap:.35em;min-width:0}
 .lc-grp-l{font-size:.78em;font-weight:700;color:var(--upwr-ink-soft)}
