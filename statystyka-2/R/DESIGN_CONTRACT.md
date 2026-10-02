@@ -179,8 +179,9 @@ Zasady:
 4. Odczyty (`lc_readout()`) zastępują `lc_stat_box()` w widgetach. Gdy
    kolor odczytu jest kolorem serii (`swatch = TRUE`), odczyt zastępuje
    legendę ggplot.
-5. Wykresy w widgetach nie mają `labs(title / subtitle)`; treść idzie do
-   tytułu panelu.
+5. Żaden wykres nie ma tytułu ani podtytułu (`labs(title / subtitle)`,
+   `ggtitle()`, tytuły `plot_annotation()`). Opis idzie do tytułu panelu,
+   a wyniki liczbowe do `lc_readout()` albo `lc_caption()`.
 6. Suwak bez podziałki i dymka; wartość w etykiecie, min i max pod torem.
 7. Feedback pod wykresem to jedno zdanie `lc_caption()`. `lc_feedback()`
    zostaje dla treści w toku tekstu.

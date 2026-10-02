@@ -96,8 +96,27 @@ Etap 3 — przegląd widgetów wykład po wykładzie (commit per widget):
   `lc_action_group()`; przyciski bez klasy `lc-btn` albo ze `style` /
   `onclick` (36); radio z ponad 4 opcjami lub długimi etykietami (11);
   suwak z `pre` (1).
-- [ ] `labs(title / subtitle)` w wykresach widgetów → tytuł panelu (zmiana
-  treści, decyzja per widget).
+- [ ] Wykresy bez tytułów (decyzja: żadnych tytułów). Stałe i opisowe tytuły
+  są usunięte; zostały 36 dynamicznych tytułów i podtytułów z wynikami
+  (p-wartość, moc, HDI, CI, r, SE, „Krok 2 z 4”) albo z objaśnieniem
+  oznaczeń. Przy migracji widgetu: liczby → `lc_readout()` w pasku albo
+  `lc_caption()` pod wykresem, objaśnienie → `lc_caption()`, potem usunąć
+  tytuł. Miejsca (numery linii ze stanu 2 października 2026):
+  - `analiza-ryzyka/01-jezyk-ryzyka/modules/block.R` (l. 1704, 1944, 2254, 2263, 2303)
+  - `analiza-ryzyka/02-warunki/modules/monty_server.R` (l. 201, 202)
+  - `analiza-ryzyka/03-alarm-i-prawda/modules/block.R` (l. 691)
+  - `statystyka-2/01-symulacje-statystyczne/modules/helpers.R` (l. 493, 494, 523, 524, 621, 625, 661, 662, 711, 712, 734)
+  - `statystyka-2/02-metody-bayesowskie/modules/helpers.R` (l. 414, 682)
+  - `statystyka-2/04-szeregi-czasowe/modules/ch11_ets.R` (l. 155, 181)
+  - `statystyka-2/04-szeregi-czasowe/modules/ch5_acf.R` (l. 179, 245)
+  - `statystyka-2/04-szeregi-czasowe/modules/ch8_ar.R` (l. 148, 294)
+  - `statystyka-2/04-szeregi-czasowe/modules/ch9_ma_arma.R` (l. 194, 219)
+  - `statystyka/01-typy-danych/modules/ch4_rozrzut.R` (l. 1034)
+  - `statystyka/01-typy-danych/modules/helpers.R` (l. 98)
+  - `statystyka/03-przedzialy-ufnosci/modules/ch3_srednia.R` (l. 759)
+  - `statystyka/03-przedzialy-ufnosci/modules/ch4_proporcja.R` (l. 600)
+  - `statystyka/04-wnioskowanie-statystyczne/modules/ch10_sila_efektu.R` (l. 677)
+  - `statystyka/06-regresja/modules/ch3b_kontekst.R` (l. 188, 272)
 - [ ] `lc_stat_box()` w widgetach → `lc_readout()`; odczyt z kolorem serii
   zastępuje legendę ggplot (90 paneli; w analizie ryzyka dotyczy prawie
   każdego `risk_widget_panel()`, w którym pudełka siedzą teraz w pasku).
