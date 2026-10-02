@@ -2268,6 +2268,7 @@ mjx-container mjx-text {
 .lc-note-l{font:700 .64em/2.3 var(--upwr-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--upwr-ink-subtle);text-align:right}
 .lc-note-b{color:var(--upwr-ink-soft);text-wrap:pretty}
 .lc-note-b>:first-child{margin-top:0}.lc-note-b>:last-child{margin-bottom:0}
+.lc-note-t{font-weight:700;color:var(--upwr-ink);margin-bottom:.25em}
 .lc-note-rule .lc-note-l{color:var(--upwr-accent)}
 .lc-note-rule .lc-note-b{color:var(--upwr-ink);font-weight:700}
 .lc-note+.lc-note{margin-top:-.3em}

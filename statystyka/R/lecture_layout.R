@@ -1501,10 +1501,14 @@ lc_crosstab <- function(tab, measure = c("n", "row", "col"), target = NULL,
 
 # Notka z wiszącą etykietą (Zasada, Uwaga, Przykład, Jak czytać…).
 # rule = TRUE tylko dla „Zasady”: najwyżej jedna na sekcję.
-lc_note <- function(label, ..., rule = FALSE) {
+# title: pogrubiony tytuł nad treścią (np. termin definicji, tytuł przykładu).
+lc_note <- function(label, ..., rule = FALSE, title = NULL) {
   tags$div(class = .lc_classes("lc-note", if (isTRUE(rule)) "lc-note-rule"),
     tags$div(class = "lc-note-l", label),
-    tags$div(class = "lc-note-b", ...)
+    tags$div(class = "lc-note-b",
+      if (!is.null(title)) tags$div(class = "lc-note-t", title),
+      ...
+    )
   )
 }
 

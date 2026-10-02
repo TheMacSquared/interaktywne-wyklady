@@ -238,11 +238,7 @@ risk_body <- function(items) {
 }
 
 risk_definition <- function(num, term, text) {
-  tags$div(
-    class = "lc-def",
-    tags$div(class = "lc-def-label", paste0("Definicja ", num, " · ", term)),
-    tags$div(class = "lc-def-body", lapply(text, tags$p))
-  )
+  lc_note(paste0("Definicja ", num), title = term, lapply(text, tags$p))
 }
 
 # Wzór z numerem i objaśnieniem symboli. `legend` to nazwany wektor:
@@ -286,16 +282,9 @@ risk_parts <- function(...) {
 }
 
 risk_example <- function(num, title, problem, steps, answer = NULL, steps_type = NULL) {
-  tags$div(
-    class = "lc-example",
-    tags$div(class = "lc-example-label", paste0("Przykład ", num, " · ", title)),
-    tags$div(
-      class = "lc-example-body",
-      lapply(problem, function(x) if (inherits(x, "shiny.tag")) x else tags$p(x))
-    ),
-    tags$details(
-      class = "lc-example-solution",
-      tags$summary("Rozwiązanie"),
+  lc_note(paste0("Przykład ", num), title = title,
+    lapply(problem, function(x) if (inherits(x, "shiny.tag")) x else tags$p(x)),
+    lc_more("Rozwiązanie",
       tags$ol(
         type = steps_type,
         class = if (!is.null(steps_type)) "lc-example-list",
@@ -345,8 +334,13 @@ risk_check <- function(id, question, choices, correct, explanation, hints = NULL
 }
 
 # Instrukcja przed widgetem: co zmienić i na co patrzeć.
+# Teksty pisane dawniej po „Etykieta: …” zaczynają się małą literą.
+risk_capitalize <- function(text) {
+  paste0(toupper(substr(text, 1, 1)), substring(text, 2))
+}
+
 risk_try <- function(text) {
-  tags$div(class = "lc-try", tags$strong("Do zrobienia:"), paste0(" ", text))
+  lc_note("Do zrobienia", tags$p(risk_capitalize(text)))
 }
 
 risk_prose <- function(text) {
@@ -375,17 +369,10 @@ risk_config_extras <- function(x) {
     },
     x$widget,
     if (!is.null(x$takeaway)) risk_prose(x$takeaway),
-    if (!is.null(x$decision)) {
-      lc_feedback(type = "ok", tags$strong("Decyzja:"), paste0(" ", x$decision))
-    },
-    if (!is.null(x$pitfall)) {
-      lc_feedback(type = "warning", tags$strong("Pułapka:"), paste0(" ", x$pitfall))
-    },
+    if (!is.null(x$decision)) lc_note("Decyzja", tags$p(risk_capitalize(x$decision))),
+    if (!is.null(x$pitfall)) lc_warn("Pułapka", tags$p(risk_capitalize(x$pitfall))),
     if (isTRUE(x$extension)) {
-      lc_feedback(
-        type = "info", tags$strong("Rozszerzenie:"),
-        " tę część można pominąć podczas krótszego wariantu zajęć."
-      )
+      lc_note("Rozszerzenie", tags$p("Tę część można pominąć podczas krótszego wariantu zajęć."))
     }
   )
 }
