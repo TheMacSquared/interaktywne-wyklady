@@ -256,24 +256,24 @@ ch3_server <- function(input, output, session) {
     coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
                              labels_pl[coefs$term], coefs$term)
 
-    rows <- lapply(1:nrow(coefs), function(i) {
-      sig <- if (coefs$p.value[i] < 0.05) " *" else ""
-      tags$tr(
-        tags$td(coefs$term_pl[i]),
-        tags$td(round(coefs$estimate[i], 4)),
-        tags$td(round(coefs$std.error[i], 4)),
-        tags$td(round(coefs$statistic[i], 3)),
-        tags$td(paste0(format_p_value(coefs$p.value[i]), sig))
-      )
-    })
+    df <- data.frame(
+      term = unname(coefs$term_pl),
+      estimate = coefs$estimate,
+      se = coefs$std.error,
+      t = coefs$statistic,
+      p = paste0(lc_pval(coefs$p.value), ifelse(coefs$p.value < 0.05, " *", ""))
+    )
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 14px;",
-      tags$thead(
-        tags$tr(tags$th("Zmienna"), tags$th("Estymata"), tags$th("SE"),
-                tags$th("t"), tags$th("p"))
+    lc_table_split(df,
+      cols = list(
+        lc_col("term", "Zmienna", "row"),
+        lc_col("estimate", "Estymata", digits = 4),
+        lc_col("se", "SE", digits = 4),
+        lc_col("t", "t", digits = 3),
+        lc_col("p", "p")
       ),
-      tags$tbody(rows)
+      groups = list(c("estimate", "se"), c("t", "p")),
+      label = "Współczynniki modelu"
     )
   })
 

@@ -369,23 +369,24 @@ ch5_server <- function(input, output, session) {
       "lunch" = "Lunch subsydiowany (%)",
       "english" = "Angielski jako drugi język (%)"
     )
-    rows <- lapply(seq_len(nrow(tb)), function(i) {
-      term <- tb$term[i]
-      tags$tr(
-        tags$td(if (!is.na(labels[term])) unname(labels[term]) else term),
-        tags$td(ch5_fmt(tb$estimate[i], 3)),
-        tags$td(ch5_fmt(tb$std.error[i], 3)),
-        tags$td(ch5_p(tb$p.value[i])),
-        tags$td(ifelse(tb$p.value[i] < 0.05, "tak", "nie"))
-      )
-    })
+    df <- data.frame(
+      term = ifelse(!is.na(labels[tb$term]), unname(labels[tb$term]), tb$term),
+      estimate = tb$estimate,
+      se = tb$std.error,
+      p = lc_pval(tb$p.value),
+      sig = ifelse(tb$p.value < 0.05, "tak", "nie")
+    )
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      tags$thead(tags$tr(
-        tags$th("Zmienna"), tags$th("Iloraz szans (OR)"),
-        tags$th("Błąd stand."), tags$th("p-value"), tags$th("p < 0.05?")
-      )),
-      tags$tbody(rows)
+    lc_table_split(df,
+      cols = list(
+        lc_col("term", "Zmienna", "row"),
+        lc_col("estimate", "Iloraz szans (OR)", digits = 3),
+        lc_col("se", "Błąd stand.", digits = 3),
+        lc_col("p", "p-value"),
+        lc_col("sig", "p < 0.05?", "text")
+      ),
+      groups = list(c("estimate", "se"), c("p", "sig")),
+      label = "Model logistyczny: ilorazy szans"
     )
   })
 

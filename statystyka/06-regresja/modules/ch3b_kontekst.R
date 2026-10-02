@@ -314,26 +314,21 @@ ch3b_server <- function(input, output, session) {
       }
     }, character(1))
 
-    tags$table(
-      class = "lc-table lc-table-bordered lc-table-striped",
-      tags$thead(tags$tr(
-        tags$th("Składnik"),
-        tags$th("Współczynnik"),
-        tags$th("Błąd stand."),
-        tags$th("p-value")
-      )),
-      tags$tbody(lapply(seq_len(nrow(table)), function(index) {
-        tags$tr(
-          tags$td(table$label[[index]]),
-          tags$td(round(table$estimate[[index]], 3)),
-          tags$td(round(table$std.error[[index]], 3)),
-          tags$td(if (table$p.value[[index]] < 0.001) {
-            "< 0.001"
-          } else {
-            format(round(table$p.value[[index]], 3))
-          })
-        )
-      }))
+    lc_table(
+      data.frame(
+        label = table$label,
+        estimate = table$estimate,
+        se = table$std.error,
+        p = lc_pval(table$p.value)
+      ),
+      cols = list(
+        lc_col("label", "Składnik", "row"),
+        lc_col("estimate", "Współczynnik", digits = 3, short = "b",
+               desc = "współczynnik"),
+        lc_col("se", "Błąd stand.", digits = 3, short = "SE",
+               desc = "błąd standardowy"),
+        lc_col("p", "p-value")
+      )
     )
   })
 }
