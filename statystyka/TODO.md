@@ -1,7 +1,52 @@
-# TODO — pomysły do późniejszej realizacji
+# Archiwum TODO — statystyka
+
+Aktualny, nadrzędny backlog projektu znajduje się w [`../TODO.md`](../TODO.md).
+Ten plik zachowuje szczegółowe notatki i kontekst historyczny; nowych zadań
+nie należy już dopisywać tutaj.
 
 Lista rzeczy zauważonych przy okazji innej pracy, które warto kiedyś zrobić,
 ale nie blokują obecnego zadania. Posortowane luźno wg modułu.
+
+---
+
+## Mapa bieżącej pracy — kolejność i granice zakresu (2026-10-02)
+
+Równolegle trwają zmiany o różnym zasięgu. Żeby nie zatwierdzać lokalnego
+eksperymentu jako reguły dla całego repozytorium, prace dzielimy na cztery
+niezależne strumienie:
+
+1. **System layoutu (oba kursy).** Stabilizujemy API `width_mode`,
+   `lc_table_region()`, `lc_controls_row()` i `lc_widget_layout()`. Zmiany we
+   wspólnych komponentach wprowadzamy równolegle do snapshotów
+   `statystyka/R/` i `analiza-ryzyka/R/`, z zachowaniem różnic kursowych.
+2. **Pilotaże responsywności.** Najpierw dopracowujemy tabelę krokową w
+   statystyce 01, potem sprawdzamy na tych samych szerokościach widgety
+   analizy ryzyka 07 (rozdziały 2 i 4). Dopiero po akceptacji obu typów treści
+   rozpoczynamy migrację pozostałych wykładów.
+3. **Eksperymenty konkretnego wykładu.** Prototypy A/B/C i schemat łańcucha
+   pojęć w analizie ryzyka 01 oraz lokalne komponenty `.life-*` w wykładzie 07
+   nie są automatycznie częścią systemu. Najpierw wymagają decyzji
+   dydaktycznej i usunięcia niewybranych wariantów.
+4. **Backlog treści.** Decyzje merytoryczne dla analizy ryzyka 04, 07, 08, 09
+   i 10 oraz pozostałe zadania statystyki realizujemy osobno od migracji
+   layoutu, chyba że dana decyzja bezpośrednio zmienia testowany widget.
+
+Kolejność najbliższych prac:
+
+- [ ] Zamknąć tabelę częstości w statystyce 01 według listy poniżej.
+- [ ] Przetestować ją przy szerokości pełnej, połowie okna, wartościach
+  pośrednich, telefonie i powiększonym tekście.
+- [ ] Tą samą macierzą sprawdzić dwa pilotaże analizy ryzyka 07; zastąpić
+  lokalne `.life-table-scroll` przez `lc_table_region()`, jeśli wspólny
+  komponent pokrywa potrzeby tabel.
+- [ ] Po testach zdecydować, które lokalne wzorce z wykładu 07 są warte
+  uogólnienia. Uogólniać osobnym commitem wraz z dokumentacją i testami.
+- [ ] Dopiero wtedy przygotować inwentaryzację i serię małych migracji
+  pozostałych widgetów w obu kursach.
+
+Każdy commit powinien należeć do jednego poziomu: infrastruktura wspólna,
+migracja jednego widgetu albo zmiana treści konkretnego rozdziału. Wyjątkiem
+jest minimalny test/pilotaż konieczny do zweryfikowania nowego komponentu.
 
 ---
 

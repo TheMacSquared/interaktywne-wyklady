@@ -1,6 +1,34 @@
-# TODO — decyzje po przeróbce wykładów na skrypt
+# Archiwum TODO — decyzje po przeróbce wykładów na skrypt
+
+Aktualny, nadrzędny backlog projektu znajduje się w [`../../TODO.md`](../../TODO.md).
+Ten plik zachowuje pełny kontekst historyczny decyzji; nowych zadań nie należy
+już dopisywać tutaj.
 
 Otwarte pytania po commicie `fb4737d` (2026-09-28). Każdy punkt wymaga decyzji prowadzącego.
+
+## Kolejki pracy
+
+Nadrzędna kolejność prac, także nad responsywnością i wspólnymi komponentami,
+jest w [głównym TODO](../../TODO.md). Poniższa lista zachowuje pierwotny,
+szczegółowy kontekst decyzji kursowych.
+
+### A. Eksperymenty wymagające wyboru przed dalszym rozwojem
+
+- [ ] **Wykład 01, ćwiczenie 2:** porównać dotychczasowy widget i prototypy
+  A/B/C, wybrać jeden wariant, a następnie usunąć pozostały kod serwera i CSS
+  `.lc-proto-*`. Nie migrować prototypów do wspólnych komponentów przed
+  wyborem.
+- [ ] **Wykład 01, łańcuch pojęć:** ocenić interaktywny schemat jako element
+  treści tego wykładu. Ewentualne uogólnienie traktować jako osobne zadanie.
+- [ ] **Wykład 07:** rozdzielić ocenę lokalnych ról tekstu `.life-*` od testu
+  responsywności paneli. Lokalne klasy pozostają pilotażem do czasu decyzji,
+  czy wzorzec ma być używany w innych wykładach.
+
+### B. Decyzje merytoryczne niezależne od layoutu
+
+Punkty 1–5 poniżej rozpatrywać osobnymi zmianami dla wykładów 04, 07, 08, 09
+i 10. Nie łączyć ich z migracją responsywności. W punkcie 2 decyzję o wzorze
+λ̂ warto podjąć przed ostatecznym zatwierdzeniem treści wykładu 07.
 
 ## 1. [04] Które założenie łamie kontroler „po wykryciu sprawdzam dokładniej”?
 
@@ -54,6 +82,6 @@ Otwarte pytania po commicie `fb4737d` (2026-09-28). Każdy punkt wymaga decyzji 
 ## Responsywność paneli, tabel i widgetów
 
 Wspólna koncepcja i lista kolejnych kroków dla obu kursów jest w
-[TODO statystyki — responsywne widgety i tabele](../../statystyka/TODO.md#responsywne-widgety-i-tabele--kontynuacja-pilotażu-2026-10-02).
+[głównym TODO](../../TODO.md#responsywne-panele-tabele-i-widgety).
 Pilotaż analizy ryzyka obejmuje wykład 07, rozdziały 2 i 4. Dalsza migracja
 czeka na dopracowanie tabeli krokowej i weryfikację pośrednich szerokości.
