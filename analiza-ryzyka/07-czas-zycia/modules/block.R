@@ -502,14 +502,21 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             "     = (η/β) · Γ(1/β) = η · Γ(1 + 1/β)"
           )),
           figure_panel(label = "Porównanie", title = "Jak czytać parametr β", full_width = FALSE,
-            tags$div(class = "life-table-scroll", tags$table(class = "lc-table lc-table-striped",
-              tags$thead(tags$tr(tags$th("Kształt"), tags$th("Hazard"), tags$th("Interpretacja mechanizmu"))),
-              tags$tbody(
-                tags$tr(tags$td("β < 1"), tags$td("Maleje"), tags$td("Wczesne defekty; egzemplarze, które przetrwały start, mają niższy hazard.")),
-                tags$tr(tags$td("β = 1"), tags$td("Stały"), tags$td("Model wykładniczy; wiek nie zmienia rozkładu dalszego życia.")),
-                tags$tr(tags$td("β > 1"), tags$td("Rośnie"), tags$td("Zużycie; kolejne godziny pracy zwiększają hazard."))
-              )
-            ))
+            lc_table(
+              data.frame(
+                shape = c("β < 1", "β = 1", "β > 1"),
+                hazard = c("Maleje", "Stały", "Rośnie"),
+                mechanism = c("Wczesne defekty; egzemplarze, które przetrwały start, mają niższy hazard.",
+                              "Model wykładniczy; wiek nie zmienia rozkładu dalszego życia.",
+                              "Zużycie; kolejne godziny pracy zwiększają hazard.")
+              ),
+              cols = list(
+                lc_col("shape", "Kształt", "row"),
+                lc_col("hazard", "Hazard", "text"),
+                lc_col("mechanism", "Interpretacja mechanizmu", "text")
+              ),
+              narrow = "stack-last"
+            )
           ),
           risk_example("7.7", "Wentylator zużywający się",
             problem = "Wentylator oferty B ma rozkład Weibulla z β = 2 i η = 1700 h. Oblicz R(1000), h(500), h(1000), h(2000), R(1700) oraz MTTF.",

@@ -27,8 +27,6 @@
   border-left: 3px solid var(--upwr-reference);
   background: var(--upwr-surface-sunken);
 }
-.life-table-scroll { max-width: 100%; overflow-x: auto; }
-.life-table-scroll table { min-width: 620px; }
 @media (max-width: 600px) {
   .life-task { padding: 12px; }
   .life-reading { padding-left: 12px; }
