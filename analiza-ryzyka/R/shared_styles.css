@@ -2404,12 +2404,6 @@ mjx-container mjx-text {
    Sekcja identyczna we wszystkich kursach.
    ========================================================================== */
 
-/* Kontrast tekstu pomocniczego w komponentach v2 (4,5:1 na jasnym tle). */
-html:not([data-lc-theme="dark"]) .lc-v2,
-html:not([data-lc-theme="dark"]) .lc-tbl-block {
-  --upwr-ink-subtle: #6e665c;
-}
-
 /* Panel */
 .lc-figure-panel.lc-v2 {
   container: lc-fig / inline-size;

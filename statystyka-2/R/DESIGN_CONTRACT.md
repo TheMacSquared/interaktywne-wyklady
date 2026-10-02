@@ -235,6 +235,5 @@ Zasady:
 `lc_table_region()` zostaje dla tabel jeszcze niezmigrowanych; nowe tabele
 korzystają z `lc_table(..., scroll = TRUE)`.
 
-Tekst pomocniczy w komponentach v2 (etykiety odczytów, legenda, notki) ma
-w jasnym motywie kolor `#6e665c` (kontrast 4,5:1); globalny token
-`--upwr-ink-subtle` pozostaje bez zmian.
+Tekst pomocniczy (`--upwr-ink-subtle`) ma w jasnym motywie kolor `#6e665c`
+(kontrast 4,5:1 na białym tle).

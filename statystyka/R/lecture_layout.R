@@ -794,7 +794,7 @@ lc_chapter_next <- function(num, title, lead = NULL, target_id) {
 .lc_palette_css <- function() {
   # Tokeny pochodne — wyliczone z palety sekwencyjnej i kat.
   panel_sunken     <- "#ece6d8"   # ciemniejsza wersja upwr_panel (dla tła wciśniętych elementów UI)
-  ink_subtle       <- "#b8b1a5"   # jaśniejsza niż reference (dla subtelnego tekstu)
+  ink_subtle       <- "#6e665c"   # tekst pomocniczy; kontrast 4,5:1 na jasnym tle
   rule_soft        <- "#e8e1d2"   # jaśniejsza niż upwr_rule (dla miękkich dividerów)
   accent_hover     <- upwr_seq_burgundy[6]   # ciemniejszy burgund na hover
   accent_tint      <- upwr_seq_burgundy[2]   # jasne tło dla callout-uwaga
