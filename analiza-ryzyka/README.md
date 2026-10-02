@@ -6,10 +6,10 @@ języka zdarzeń i podstaw prawdopodobieństwa.
 
 ## Status
 
-- klucz ćwiczeń i wskazówki prowadzenia: `docs/przewodnik-prowadzacego.md`;
+- klucz ćwiczeń i wskazówki prowadzenia: `~/praca/dydaktyka/materialy/analiza-ryzyka/przewodnik-prowadzacego.md`;
 - korekty spójności: model misji w 10, warunkowe wejścia FTA, quizy tematyczne
   z objaśnieniami, niepewność parametrów i kryterium decyzji;
-- plan kanoniczny: `docs/plan-kanoniczny.md`;
+- plan kanoniczny: `~/praca/dydaktyka/materialy/analiza-ryzyka/plan-kanoniczny.md`;
 - wykład 01: pełna, rozbudowana wersja z ośmioma rozdziałami;
 - wykłady 02–10: pełne bloki z lokalnymi modułami, narracją, głosowaniem,
   interakcjami, decyzją, pułapką, ściągą, pięciopytaniowym quizem i ćwiczeniami;
