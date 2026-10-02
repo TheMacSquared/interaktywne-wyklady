@@ -100,21 +100,15 @@ ch6_ui <- list(
             ),
             selected = "wzrost"
           ),
-          sliderInput("ch6_ind_n", "n (na grupę):",
-                      min = 15, max = 100, value = 40, step = 5),
-          actionButton("ch6_run_ind_t", "Losuj próbę",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_slider("ch6_ind_n", "n (na grupę)", 15, 100, 40, 5),
+          lc_action("ch6_run_ind_t", "Losuj próbę", icon = "shuffle", variant = "solid"),
           hr(),
           h5("Kroki testu:"),
           lc_stack(gap = "sm",
-            actionButton("ch6_ind_step1", "1. Dane",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch6_ind_step2", "2. Średnie w grupach",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch6_ind_step3", "3. Statystyka t",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch6_ind_step4", "4. p-wartość i decyzja",
-                         class = "lc-btn-outline", width = "100%")
+            lc_action("ch6_ind_step1", "1. Dane", variant = "outline"),
+            lc_action("ch6_ind_step2", "2. Średnie w grupach", variant = "outline"),
+            lc_action("ch6_ind_step3", "3. Statystyka t", variant = "outline"),
+            lc_action("ch6_ind_step4", "4. p-wartość i decyzja", variant = "outline")
           )
         ),
         column(8,
@@ -144,12 +138,9 @@ ch6_ui <- list(
       title = "Test t dla danych sparowanych: przed i po",
       fluidRow(
         column(4,
-          sliderInput("ch6_paired_n", "Liczba studentów:",
-                      min = 10, max = 50, value = 25, step = 5),
-          sliderInput("ch6_paired_effect", "Efekt interwencji (pkt):",
-                      min = 0, max = 15, value = 5, step = 1),
-          actionButton("ch6_run_paired", "Generuj i testuj",
-                       class = "lc-btn-primary", width = "100%")
+          lc_slider("ch6_paired_n", "Liczba studentów", 10, 50, 25, 5),
+          lc_slider("ch6_paired_effect", "Efekt interwencji (pkt)", 0, 15, 5, 1),
+          lc_action("ch6_run_paired", "Generuj i testuj", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch6_paired_plot", height = "300px"),
@@ -227,8 +218,7 @@ ch6_ui <- list(
         ". Przetestuj, czy średnie wyniki ", tags$code("read"),
         " różnią się między grupami. Wykonaj test t dla prób niezależnych.
         Zapisz: t, df, p. Czy różnica jest istotna?"),
-      actionButton("cas_ch6_ans6", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("cas_ch6_ans6", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch6_sol6")
     ),
 
@@ -240,8 +230,7 @@ ch6_ui <- list(
         " między okręgami z dużym (STR > 20) i małym (STR ≤ 20) stosunkiem.
         Czy różnica jest istotna? Jak duże jest przesunięcie w punktach?
         Skąd może wynikać ta różnica?"),
-      actionButton("cas_ch6_ans7", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("cas_ch6_ans7", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch6_sol7")
     ),
 

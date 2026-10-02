@@ -40,16 +40,11 @@ ch3_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          radioButtons("ch3_unif_type", "Eksperyment:",
-            choices = c("Moneta (2 wyniki)" = "coin",
+          lc_segmented("ch3_unif_type", "Eksperyment", choices = c("Moneta (2 wyniki)" = "coin",
                         "Kostka (6 wyników)" = "die",
-                        "Kostka 12-ścienna" = "d12"),
-            selected = "die"
-          ),
-          sliderInput("ch3_unif_n", "Liczba prób:",
-                      min = 10, max = 5000, value = 100, step = 10),
-          actionButton("ch3_unif_sim", "Symuluj!",
-                       class = "lc-btn-primary", width = "100%")
+                        "Kostka 12-ścienna" = "d12"), selected = "die"),
+          lc_slider("ch3_unif_n", "Liczba prób", 10, 5000, 100, 10),
+          lc_action("ch3_unif_sim", "Symuluj!", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch3_unif_plot", height = "350px")
@@ -238,7 +233,7 @@ ch3_ui <- list(
       full_width = TRUE,
       checkboxInput("ch3_compare_show_ev", "Pokaż wartość oczekiwaną (linia)", value = FALSE),
       checkboxInput("ch3_compare_show_sd", "Pokaż ± odchylenie standardowe (pas)", value = FALSE),
-      zoom_plot_ui("ch3_compare_plot", height = "350px")
+      lc_plot("ch3_compare_plot", ratio = "1.8/1", max_height = "350px")
     ),
 
     lc_chapter_next(

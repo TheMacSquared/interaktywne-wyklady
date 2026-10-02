@@ -235,8 +235,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
 
     div(class = "lc-figure-panel",
       h4("Seria modeli — co się dzieje z efektem STR?"),
-      actionButton("ch1_compare_models", "Buduj 4 modele",
-                   class = "lc-btn-primary", width = "250px"),
+      lc_action("ch1_compare_models", "Buduj 4 modele", variant = "solid"),
       br(), br(),
       uiOutput("ch1_model_comparison"),
       zoom_plot_ui("ch1_beta_str_plot", height = "250px")
@@ -276,8 +275,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
             ),
             selected = c("str", "income", "english")
           ),
-          actionButton("ch1_fit_model", "Dopasuj",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_action("ch1_fit_model", "Dopasuj", variant = "solid"),
           br(), br(),
           uiOutput("ch1_reg_metrics")
         ),

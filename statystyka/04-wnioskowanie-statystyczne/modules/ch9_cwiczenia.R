@@ -81,8 +81,7 @@ ch9_ui <- list(
       p("Przetestuj dwustronnie, czy średni ", tags$code("plon"),
         " różni się od normy 5.0 t/ha. Sformułuj H₀ i Hₐ, wykonaj test t
         jednej próby (α = 0.05) i oblicz Cohen's d."),
-      actionButton("ch9_r_ans1", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_r_ans1", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_r_sol1")
     ),
 
@@ -91,8 +90,7 @@ ch9_ui <- list(
       p("Przetestuj ", tags$b("lewostronnie"), ", czy odsetek pól z ",
         tags$code("nawadnianie == \"tak\""), " jest niższy niż 40% (p₀ = 0.4).
         Użyj testu dwumianowego."),
-      actionButton("ch9_r_ans2", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_r_ans2", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_r_sol2")
     ),
 
@@ -101,8 +99,7 @@ ch9_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("nawozenie"),
         " a ", tags$code("plon"), ". Czy korelacja jest istotna?
         Jak interpretujesz siłę i kierunek związku?"),
-      actionButton("ch9_r_ans3", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_r_ans3", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_r_sol3")
     ),
 
@@ -111,8 +108,7 @@ ch9_ui <- list(
       p("Porównaj średni ", tags$code("plon"),
         " między uprawą ", tags$code("pszenica"), " a ", tags$code("rzepak"),
         ". Wykonaj test t dla prób niezależnych i oblicz Cohen's d."),
-      actionButton("ch9_r_ans4", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_r_ans4", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_r_sol4")
     ),
 
@@ -121,8 +117,7 @@ ch9_ui <- list(
       p("Zbuduj tabelę krzyżową ", tags$code("uprawa"), " × ",
         tags$code("nawadnianie"),
         " i wykonaj test χ² niezależności. Oblicz Cramér's V."),
-      actionButton("ch9_r_ans5", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_r_ans5", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_r_sol5")
     ),
 
@@ -132,8 +127,7 @@ ch9_ui <- list(
         tags$code("region"),
         " (trzy regiony). Zapisz F, df, p, η². Wykonaj post-hoc Games-Howell
         i wskaż, które pary regionów różnią się istotnie."),
-      actionButton("ch9_r_ans6", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_r_ans6", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_r_sol6")
       )
     ),
@@ -160,8 +154,7 @@ ch9_ui <- list(
       p("Przetestuj ", tags$b("jednostronnie (lewostronnie)"), ", czy średni ",
         tags$code("wypadki"), " jest niższy od normy 10 wypadków/1000 pracowników.
         Sformułuj H₀ i Hₐ, oblicz Cohen's d."),
-      actionButton("ch9_b_ans1", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_b_ans1", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_b_sol1")
     ),
 
@@ -170,8 +163,7 @@ ch9_ui <- list(
       p('Przyjmij, że „spełnia normę" = ', tags$code("soi_rate ≥ 80%"),
         ". Przetestuj ", tags$b("jednostronnie (prawostronnie)"),
         ", czy odsetek takich firm przekracza 50% (p₀ = 0.5). Użyj testu dwumianowego."),
-      actionButton("ch9_b_ans2", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_b_ans2", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_b_sol2")
     ),
 
@@ -180,8 +172,7 @@ ch9_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("szkolenia"),
         " a ", tags$code("wypadki"),
         ". Jaki jest kierunek zależności? Jak silna jest korelacja?"),
-      actionButton("ch9_b_ans3", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_b_ans3", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_b_sol3")
     ),
 
@@ -190,8 +181,7 @@ ch9_ui <- list(
       p("Porównaj średni ", tags$code("wypadki"),
         " między grupami ", tags$code("wielkosc"),
         " (małe vs duże). Wykonaj test t dla prób niezależnych."),
-      actionButton("ch9_b_ans4", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_b_ans4", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_b_sol4")
     ),
 
@@ -201,8 +191,7 @@ ch9_ui <- list(
         ". Zbuduj tabelę ", tags$code("sektor"), " × ",
         tags$code("soi_ok"),
         " i wykonaj test χ² niezależności. Oblicz Cramér's V."),
-      actionButton("ch9_b_ans5", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_b_ans5", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_b_sol5")
     ),
 
@@ -212,8 +201,7 @@ ch9_ui <- list(
         tags$code("poziom_ryzyka"),
         " (niski/średni/wysoki). Zapisz F, df, p, η².
         Wykonaj post-hoc Games-Howell."),
-      actionButton("ch9_b_ans6", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_b_ans6", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_b_sol6")
       )
     ),
@@ -240,8 +228,7 @@ ch9_ui <- list(
       p("Przetestuj ", tags$b("dwustronnie"), ", czy średnia ",
         tags$code("bialko"), " różni się od normy 12 g/100 g.
         Sformułuj H₀ i Hₐ, oblicz Cohen's d."),
-      actionButton("ch9_t_ans1", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_t_ans1", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_t_sol1")
     ),
 
@@ -250,8 +237,7 @@ ch9_ui <- list(
       p("Przetestuj ", tags$b("jednostronnie (prawostronnie)"),
         ", czy odsetek partii z ", tags$code("zanieczyszczenie == \"wykryte\""),
         " przekracza 20% (p₀ = 0.2). Użyj testu dwumianowego."),
-      actionButton("ch9_t_ans2", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_t_ans2", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_t_sol2")
     ),
 
@@ -260,8 +246,7 @@ ch9_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("wilgotnosc"),
         " a ", tags$code("trwalosc"),
         ". Jaki jest oczekiwany kierunek? Jak silna jest zależność?"),
-      actionButton("ch9_t_ans3", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_t_ans3", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_t_sol3")
     ),
 
@@ -270,8 +255,7 @@ ch9_ui <- list(
       p("Porównaj średnią ", tags$code("trwalosc"),
         " między ", tags$code("typ"),
         " (tradycyjny vs funkcjonalny). Wykonaj test t dla prób niezależnych."),
-      actionButton("ch9_t_ans4", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_t_ans4", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_t_sol4")
     ),
 
@@ -280,8 +264,7 @@ ch9_ui <- list(
       p("Zbuduj tabelę ", tags$code("typ"), " × ",
         tags$code("zanieczyszczenie"),
         " i wykonaj test χ² niezależności. Oblicz Cramér's V."),
-      actionButton("ch9_t_ans5", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_t_ans5", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_t_sol5")
     ),
 
@@ -291,8 +274,7 @@ ch9_ui <- list(
         tags$code("przechowywanie"),
         " (3 metody). Zapisz F, df, p, η².
         Wykonaj post-hoc Games-Howell."),
-      actionButton("ch9_t_ans6", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_t_ans6", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_t_sol6")
       )
     ),
@@ -328,8 +310,7 @@ ch9_ui <- list(
                    więc zawsze powinniśmy go wybierać."')
         )
       ),
-      actionButton("ch9_krit_ans", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch9_krit_ans", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch9_krit_sol")
     ),
 

@@ -169,21 +169,15 @@ ch4_ui <- list(
             ),
             selected = "sleep_grade"
           ),
-          sliderInput("ch4_n", "Wielkość próby (n):",
-                      min = 15, max = 100, value = 40, step = 5),
-          actionButton("ch4_new_sample", "Losuj próbę",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_slider("ch4_n", "Wielkość próby (n)", 15, 100, 40, 5),
+          lc_action("ch4_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
           hr(),
           h5("Kroki testu:"),
           lc_stack(gap = "sm",
-            actionButton("ch4_step1", "1. Dane (wykres rozrzutu)",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch4_step2", "2. Korelacja z próby",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch4_step3", "3. Statystyka testowa",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch4_step4", "4. p-wartość i decyzja",
-                         class = "lc-btn-outline", width = "100%")
+            lc_action("ch4_step1", "1. Dane (wykres rozrzutu)", variant = "outline"),
+            lc_action("ch4_step2", "2. Korelacja z próby", variant = "outline"),
+            lc_action("ch4_step3", "3. Statystyka testowa", variant = "outline"),
+            lc_action("ch4_step4", "4. p-wartość i decyzja", variant = "outline")
           )
         ),
         column(8,
@@ -213,14 +207,10 @@ ch4_ui <- list(
           hr(),
           h5("Kroki testu:"),
           lc_stack(gap = "sm",
-            actionButton("ch4b_step1", "1. Dane",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch4b_step2", "2. Korelacja z próby",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch4b_step3", "3. Statystyka testowa",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch4b_step4", "4. p-wartość i decyzja",
-                         class = "lc-btn-outline", width = "100%")
+            lc_action("ch4b_step1", "1. Dane", variant = "outline"),
+            lc_action("ch4b_step2", "2. Korelacja z próby", variant = "outline"),
+            lc_action("ch4b_step3", "3. Statystyka testowa", variant = "outline"),
+            lc_action("ch4b_step4", "4. p-wartość i decyzja", variant = "outline")
           )
         ),
         column(8,
@@ -295,12 +285,10 @@ ch4_ui <- list(
       label = "Ryc. 6.8",
       title = "Paradoks Simpsona",
       div(class = "step-buttons",
-        actionButton("ch4_simpson_global", "Spojrzenie globalne",
-                     class = "lc-btn-outline"),
-        actionButton("ch4_simpson_groups", "Paradoks",
-                     class = "lc-btn-outline")
+        lc_action("ch4_simpson_global", "Spojrzenie globalne", variant = "outline"),
+        lc_action("ch4_simpson_groups", "Paradoks", variant = "outline")
       ),
-      zoom_plot_ui("ch4_simpson_plot", height = "420px"),
+      lc_plot("ch4_simpson_plot", ratio = "1.5/1", max_height = "420px"),
       uiOutput("ch4_simpson_caption")
     ),
 
@@ -333,10 +321,8 @@ ch4_ui <- list(
       title = "Wpływ outliera na r",
       fluidRow(
         column(4,
-          actionButton("ch4_gen_outlier", "Nowe dane (brak korelacji)",
-                       class = "lc-btn-primary", width = "100%"),
-          actionButton("ch4_add_outlier", "Dodaj outliera!",
-                       class = "lc-btn-danger", width = "100%"),
+          lc_action("ch4_gen_outlier", "Nowe dane (brak korelacji)", variant = "solid"),
+          lc_action("ch4_add_outlier", "Dodaj outliera!", variant = "solid"),
           br(), br(),
           uiOutput("ch4_outlier_r")
         ),
@@ -373,8 +359,7 @@ ch4_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("read"), " i ", tags$code("math"),
         ". Zanim klikniesz: czy spodziewasz się korelacji dodatniej czy ujemnej?
         Silnej czy słabej? Zanotuj przewidywanie i sprawdź wynik."),
-      actionButton("cas_ch4_ans3", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("cas_ch4_ans3", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch4_sol3")
     ),
 
@@ -383,8 +368,7 @@ ch4_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("income"), " a ", tags$code("read"),
         ". Jaki znak ma r? Czy korelacja jest istotna? Czy możesz wyciągnąć wniosek
         przyczynowy — że wyższy dochód ", tags$em("powoduje"), " lepsze wyniki?"),
-      actionButton("cas_ch4_ans4", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("cas_ch4_ans4", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch4_sol4")
     ),
 
@@ -394,8 +378,7 @@ ch4_ui <- list(
         " (STR) a ", tags$code("read"),
         ". Dlaczego korelacja jest ujemna? Czy jest istotna statystycznie?
         Czy silna praktycznie? Pomyśl, co może być konfunderem."),
-      actionButton("cas_ch4_ans5", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("cas_ch4_ans5", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch4_sol5")
     ),
 

@@ -44,18 +44,13 @@ ch4_ui <- list(
       label = "Ryc. 4.1",
       title = "Dwie linie autobusowe — ta sama średnia, inny rozrzut",
       div(class = "step-buttons",
-        actionButton("ch4_spread_s1", "1. Dwie linie",
-                     class = "lc-btn-outline"),
-        actionButton("ch4_spread_s2", "2. Ta sama średnia, ale...",
-                     class = "lc-btn-outline"),
-        actionButton("ch4_spread_s3", "3. Wychodzisz wcześniej",
-                     class = "lc-btn-outline"),
-        actionButton("ch4_spread_s4", "4. Konsekwencje",
-                     class = "lc-btn-outline")
+        lc_action("ch4_spread_s1", "1. Dwie linie", variant = "outline"),
+        lc_action("ch4_spread_s2", "2. Ta sama średnia, ale...", variant = "outline"),
+        lc_action("ch4_spread_s3", "3. Wychodzisz wcześniej", variant = "outline"),
+        lc_action("ch4_spread_s4", "4. Konsekwencje", variant = "outline")
       ),
-      sliderInput("ch4_spread_buffer", "Wychodzisz wcześniej o (minuty):",
-                  min = 0, max = 10, value = 0, step = 1, width = "100%"),
-      zoom_plot_ui("ch4_spread_plot", height = "450px"),
+      lc_slider("ch4_spread_buffer", "Wychodzisz wcześniej o (minuty)", 0, 10, 0, 1),
+      lc_plot("ch4_spread_plot", ratio = "1.4/1", max_height = "450px"),
       uiOutput("ch4_spread_text")
     ),
 
@@ -73,20 +68,16 @@ ch4_ui <- list(
       label = "Ryc. 4.2",
       title = "Obliczanie odchylenia standardowego",
       div(class = "step-buttons",
-        actionButton("ch4_sd_s1", "1. Dane",
-                     class = "lc-btn-outline"),
-        actionButton("ch4_sd_s2", "2. Odchylenia od średniej",
-                     class = "lc-btn-outline"),
-        actionButton("ch4_sd_s3", "3. Wariancja i SD",
-                     class = "lc-btn-outline")
+        lc_action("ch4_sd_s1", "1. Dane", variant = "outline"),
+        lc_action("ch4_sd_s2", "2. Odchylenia od średniej", variant = "outline"),
+        lc_action("ch4_sd_s3", "3. Wariancja i SD", variant = "outline")
       ),
       div(style = "margin-bottom: 10px;",
         actionButton("ch4_sd_new", "Losuj nowy zestaw",
                      class = "lc-btn-ok lc-btn-sm", style = "margin-right: 6px;"),
-        actionButton("ch4_sd_reset", "Reset",
-                     class = "lc-btn-secondary lc-btn-sm")
+        lc_action("ch4_sd_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
       ),
-      zoom_plot_ui("ch4_sd_plot", height = "400px"),
+      lc_plot("ch4_sd_plot", ratio = "1.6/1", max_height = "400px"),
       tableOutput("ch4_sd_table"),
       uiOutput("ch4_sd_text")
     ),
@@ -113,7 +104,7 @@ ch4_ui <- list(
                     "Średnia ocen" = "srednia_ocen"),
         selected = "wzrost"
       ),
-      zoom_plot_ui("ch4_emp_plot", height = "400px"),
+      lc_plot("ch4_emp_plot", ratio = "1.6/1", max_height = "400px"),
       uiOutput("ch4_emp_text")
     ),
 
@@ -132,24 +123,18 @@ ch4_ui <- list(
       label = "Ryc. 4.4",
       title = "Boxplot — budowa krok po kroku",
       div(class = "step-buttons",
-        actionButton("ch4_bp_s1", "1. Surowe dane",
-                     class = "lc-btn-outline"),
-        actionButton("ch4_bp_s2", "2. Mediana",
-                     class = "lc-btn-outline"),
-        actionButton("ch4_bp_s3", "3. Kwartyle i pudełko",
-                     class = "lc-btn-outline"),
-        actionButton("ch4_bp_s4", "4. Wąsy i outliers",
-                     class = "lc-btn-outline"),
-        actionButton("ch4_bp_s5", "5. Gotowy boxplot",
-                     class = "lc-btn-outline")
+        lc_action("ch4_bp_s1", "1. Surowe dane", variant = "outline"),
+        lc_action("ch4_bp_s2", "2. Mediana", variant = "outline"),
+        lc_action("ch4_bp_s3", "3. Kwartyle i pudełko", variant = "outline"),
+        lc_action("ch4_bp_s4", "4. Wąsy i outliers", variant = "outline"),
+        lc_action("ch4_bp_s5", "5. Gotowy boxplot", variant = "outline")
       ),
       div(style = "margin-bottom: 10px;",
         actionButton("ch4_bp_new", "Losuj nowe dane",
                      class = "lc-btn-ok lc-btn-sm", style = "margin-right: 6px;"),
-        actionButton("ch4_bp_reset", "Reset",
-                     class = "lc-btn-secondary lc-btn-sm")
+        lc_action("ch4_bp_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
       ),
-      zoom_plot_ui("ch4_bp_plot", height = "350px"),
+      lc_plot("ch4_bp_plot", ratio = "1.8/1", max_height = "350px"),
       uiOutput("ch4_bp_text")
     ),
 
@@ -190,7 +175,7 @@ ch4_ui <- list(
           checkboxInput("ch4_grp_points", "Pokaz punkty", value = TRUE)
         )
       ),
-      zoom_plot_ui("ch4_grp_plot", height = "400px"),
+      lc_plot("ch4_grp_plot", ratio = "1.6/1", max_height = "400px"),
       uiOutput("ch4_grp_table")
     ),
 
@@ -213,10 +198,9 @@ ch4_ui <- list(
                      class = "lc-btn-warning", style = "margin-right: 6px;"),
         actionButton("ch4_comp_add5", "Dodaj 5 outlierow",
                      class = "lc-btn-danger", style = "margin-right: 6px;"),
-        actionButton("ch4_comp_reset", "Reset",
-                     class = "lc-btn-secondary")
+        lc_action("ch4_comp_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
       ),
-      zoom_plot_ui("ch4_comp_plot", height = "350px"),
+      lc_plot("ch4_comp_plot", ratio = "1.8/1", max_height = "350px"),
       uiOutput("ch4_comp_table")
     ),
 

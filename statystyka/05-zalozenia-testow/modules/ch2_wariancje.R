@@ -36,11 +36,10 @@ ch2_ui <- lecture_chapter(
       title = "Dwie grupy o różnej wariancji",
       fluidRow(
         column(4,
-          sliderInput("ch2_sd1", "SD grupy A:", min = 2, max = 30, value = 10, step = 1),
-          sliderInput("ch2_sd2", "SD grupy B:", min = 2, max = 30, value = 10, step = 1),
-          sliderInput("ch2_n_per", "n (na grupę):", min = 15, max = 100, value = 40, step = 5),
-          actionButton("ch2_gen", "Generuj dane",
-                       class = "lc-btn-primary", width = "100%")
+          lc_slider("ch2_sd1", "SD grupy A", 2, 30, 10, 1),
+          lc_slider("ch2_sd2", "SD grupy B", 2, 30, 10, 1),
+          lc_slider("ch2_n_per", "n (na grupę)", 15, 100, 40, 5),
+          lc_action("ch2_gen", "Generuj dane", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch2_boxplot", height = "300px"),
@@ -69,8 +68,7 @@ ch2_ui <- lecture_chapter(
       fluidRow(
         column(4,
           helpText("Używa danych z widgetu powyżej."),
-          actionButton("ch2_test_var", "Testuj",
-                       class = "lc-btn-primary", width = "100%")
+          lc_action("ch2_test_var", "Testuj", variant = "solid")
         ),
         column(8,
           uiOutput("ch2_test_results")
@@ -103,8 +101,7 @@ ch2_ui <- lecture_chapter(
         column(4,
           helpText("Porównanie wyniku: klasyczny test t (zakłada równe wariancje)
                     vs test Welcha (nie zakłada)."),
-          actionButton("ch2_compare_t", "Porównaj testy",
-                       class = "lc-btn-warning", width = "100%")
+          lc_action("ch2_compare_t", "Porównaj testy", variant = "solid")
         ),
         column(8,
           uiOutput("ch2_t_comparison")

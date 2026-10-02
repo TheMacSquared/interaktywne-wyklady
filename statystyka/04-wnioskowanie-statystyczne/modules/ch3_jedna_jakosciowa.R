@@ -117,19 +117,14 @@ ch3_ui <- list(
             ),
             selected = "water_quality"
           ),
-          sliderInput("ch3_n", "Wielkość próby (n):",
-                      min = 20, max = 200, value = 50, step = 10),
-          actionButton("ch3_new_sample", "Losuj próbę",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_slider("ch3_n", "Wielkość próby (n)", 20, 200, 50, 10),
+          lc_action("ch3_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
           hr(),
           h5("Kroki testu:"),
           lc_stack(gap = "sm",
-            actionButton("ch3_step1", "1. Dane",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch3_step3", "2. Rozkład pod H₀",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch3_step4", "3. p-wartość i decyzja",
-                         class = "lc-btn-outline", width = "100%")
+            lc_action("ch3_step1", "1. Dane", variant = "outline"),
+            lc_action("ch3_step3", "2. Rozkład pod H₀", variant = "outline"),
+            lc_action("ch3_step4", "3. p-wartość i decyzja", variant = "outline")
           )
         ),
         column(8,
@@ -172,12 +167,9 @@ ch3_ui <- list(
           hr(),
           h5("Kroki testu:"),
           lc_stack(gap = "sm",
-            actionButton("ch3b_step1", "1. Dane",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch3b_step3", "2. Rozkład pod H₀",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch3b_step4", "3. p-wartość i decyzja",
-                         class = "lc-btn-outline", width = "100%")
+            lc_action("ch3b_step1", "1. Dane", variant = "outline"),
+            lc_action("ch3b_step3", "2. Rozkład pod H₀", variant = "outline"),
+            lc_action("ch3b_step4", "3. p-wartość i decyzja", variant = "outline")
           )
         ),
         column(8,
@@ -219,7 +211,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 5.3",
       title = "Porównanie wyników: dwumianowy vs z-test",
-      actionButton("ch3_compare", "Porównaj testy", class = "lc-btn-primary", width = "100%"),
+      lc_action("ch3_compare", "Porównaj testy", variant = "solid"),
       br(), br(),
       uiOutput("ch3_compare_result")
     ),
@@ -275,8 +267,7 @@ ch3_ui <- list(
         dwustronnie, czy odsetek okręgów KK-06 różni się od 50%.
         Sformułuj H₀ i Hₐ, oblicz p-wartość testem dwumianowym (α = 0.05).
         Jak interpretujesz wynik?"),
-      actionButton("cas_ch3_ans_a", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("cas_ch3_ans_a", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch3_sol_a")
     ),
 
@@ -286,8 +277,7 @@ ch3_ui <- list(
         ". Przetestuj jednostronnie (prawostronnie),
         czy odsetek takich okręgów przekracza normę 30%.
         Sformułuj H₀ i Hₐ, wykonaj test dwumianowy. Jaki wniosek?"),
-      actionButton("cas_ch3_ans_b", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("cas_ch3_ans_b", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch3_sol_b")
     ),
 

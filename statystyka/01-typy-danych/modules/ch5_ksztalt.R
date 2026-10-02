@@ -30,7 +30,7 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.1",
       title = "Porównanie trzech typów skośności",
-      zoom_plot_ui("ch5_skew_comparison", height = "300px"),
+      lc_plot("ch5_skew_comparison", max_height = "300px"),
       lc_feedback(type = "info",
         tags$strong("Trzy typy rozkładów: "),
         "lewostronnie skośny (ogon w lewo), symetryczny (brak ogona), prawostronnie skośny (ogon w prawo)."
@@ -49,7 +49,7 @@ ch5_ui <- list(
         ),
         selected = "czas_dojazdu"
       ),
-      zoom_plot_ui("ch5_skew_plot", height = "350px"),
+      lc_plot("ch5_skew_plot", ratio = "1.8/1", max_height = "350px"),
       uiOutput("ch5_skew_info")
     ),
 
@@ -68,25 +68,20 @@ ch5_ui <- list(
       title = "Porównaj rozkłady o różnej kurtozie",
       fluidRow(
         column(8,
-          sliderInput("ch5_kurt_val", "Nadwyżkowa kurtoza:",
-            min = -1.2, max = 6, value = 0, step = 0.2
-          )
+          lc_slider("ch5_kurt_val", "Nadwyżkowa kurtoza", -1.2, 6, 0, 0.2)
         ),
         column(4,
           div(style = "margin-top: 25px; display: flex; gap: 4px; flex-wrap: wrap;",
-            actionButton("ch5_kurt_platy", "Platykurtyczny",
-                         class = "lc-btn-outline lc-btn-sm"),
-            actionButton("ch5_kurt_mezo", "Mezokurtyczny",
-                         class = "lc-btn-outline lc-btn-sm"),
-            actionButton("ch5_kurt_lepto", "Leptokurtyczny",
-                         class = "lc-btn-outline lc-btn-sm")
+            lc_action("ch5_kurt_platy", "Platykurtyczny", variant = "outline"),
+            lc_action("ch5_kurt_mezo", "Mezokurtyczny", variant = "outline"),
+            lc_action("ch5_kurt_lepto", "Leptokurtyczny", variant = "outline")
           )
         )
       ),
-      zoom_plot_ui("ch5_kurt_plot", height = "350px"),
+      lc_plot("ch5_kurt_plot", ratio = "1.8/1", max_height = "350px"),
       h5(style = "text-align: center; color: var(--upwr-reference); margin-top: 12px;",
          "Powiększenie prawego ogona (x > 2.5)"),
-      zoom_plot_ui("ch5_kurt_tails", height = "220px"),
+      lc_plot("ch5_kurt_tails", ratio = "2.8/1", max_height = "220px"),
       uiOutput("ch5_kurt_text")
     ),
 
@@ -110,8 +105,8 @@ ch5_ui <- list(
         ),
         selected = "wzrost"
       ),
-      zoom_plot_ui("ch5_full_hist", height = "350px"),
-      zoom_plot_ui("ch5_full_box", height = "120px"),
+      lc_plot("ch5_full_hist", ratio = "1.8/1", max_height = "350px"),
+      lc_plot("ch5_full_box", ratio = "5.2/1", max_height = "120px"),
       tableOutput("ch5_full_table"),
       uiOutput("ch5_full_interpretation")
     ),

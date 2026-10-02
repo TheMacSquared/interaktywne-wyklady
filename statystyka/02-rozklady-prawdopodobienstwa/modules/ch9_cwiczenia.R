@@ -106,7 +106,7 @@ ch9_ui <- list(
         tags$li("Gdyby próg zaliczenia obniżono do 15 — jak zmieniłoby się prawdopodobieństwo?")
       )
     ),
-    actionButton("ch9_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans1", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol1")
   ),
 
@@ -123,7 +123,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Jeśli rozpatrujemy cały kwartał (3 miesiące) — jaki rozkład opisuje liczbę wypadków i jaki ma parametr? Oblicz P(≥10 wypadków w kwartale).")
       )
     ),
-    actionButton("ch9_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans2", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol2")
   ),
 
@@ -140,7 +140,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Pracodawca planuje wymienić wentylację. Przy jakim poziomie średniej (przy tym samym σ = 4 dB) dokładnie 5% pomiarów przekraczałoby normę 85 dB?")
       )
     ),
-    actionButton("ch9_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans3", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol3")
   ),
 
@@ -156,7 +156,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Czujnik pracuje już 200 dni bez awarii. Czy to zmienia prawdopodobieństwo awarii w następnych 180 dniach? Uzasadnij (bezpamięciowość).")
       )
     ),
-    actionButton("ch9_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans4", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol4")
   ),
 
@@ -178,7 +178,7 @@ ch9_ui <- list(
       .z5row("g)", "Średnio 1 poważny wypadek co 20 dni roboczych. Ile dni do następnego wypadku?"),
       .z5row("h)", "Waga ładunku na palecie — średnia 500 kg, odch. std. 30 kg")
     ),
-    actionButton("ch9_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans5", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol5")
   ),
 
@@ -203,7 +203,7 @@ ch9_ui <- list(
         tags$li("Pracodawca musi zapewnić, że ", tags$b("mniej niż 5% pomiarów"), " przekracza normę. Do jakiej wartości musiałby obniżyć średnie stężenie (przy tym samym σ)?")
       )
     ),
-    actionButton("ch9_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans6", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol6")
   ),
 
@@ -224,7 +224,7 @@ ch9_ui <- list(
         tags$li("Porównaj teoretyczne prawdopodobieństwa z empirycznymi częstościami w danych.")
       )
     ),
-    actionButton("ch9_ans7", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans7", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol7")
   ),
 
@@ -240,7 +240,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Dlaczego stanowisko B mogłoby mieć rozkład skośny? Podaj hipotezę techniczną.")
       )
     ),
-    actionButton("ch9_ans8", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans8", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol8")
   ),
 
@@ -256,7 +256,7 @@ ch9_ui <- list(
         tags$li("Kierownik jakości chce odrzucać partię, jeśli jest ≥ 4 wadliwych. Jak często partia zostanie odrzucona?")
       )
     ),
-    actionButton("ch9_ans9", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans9", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol9")
   ),
 
@@ -272,7 +272,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Jeśli średni czas między incydentami wynosi X dni, ile incydentów oczekujemy w ciągu 30 dni? Jaki rozkład to opisuje? Oblicz P(≥ 3 incydenty w miesiącu).")
       )
     ),
-    actionButton("ch9_ans10", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans10", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol10")
   ),
 
@@ -285,7 +285,7 @@ ch9_ui <- list(
       tags$li("Jaki jest praktyczny sens „bezpamięciowości” rozkładu wykładniczego dla bezpieczeństwa?")
     )
   ),
-  actionButton("ch9_ans_summary", "Pokaż odpowiedzi", class = "lc-btn-ok-outline lc-btn-sm"),
+  lc_action("ch9_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
   uiOutput("ch9_sol_summary")
 )
 
@@ -314,7 +314,7 @@ ch9_ui <- list(
         tags$li("Gdyby poziom infekcji wzrósł do 40% — jak zmieni się prawdopodobieństwo z punktu 2?")
       )
     ),
-    actionButton("ch9_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans1", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol1")
   ),
 
@@ -331,7 +331,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Sad złożony z 3 kwater (każda jak osobne drzewo) — jaki rozkład i jakie P(≥10 połamań łącznie)?")
       )
     ),
-    actionButton("ch9_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans2", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol2")
   ),
 
@@ -347,7 +347,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Przy tym samym σ = 0.8 t/ha — do jakiej średniej należałoby dążyć, żeby tylko 1% pól było poniżej normy 5 t/ha?")
       )
     ),
-    actionButton("ch9_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans3", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol3")
   ),
 
@@ -362,7 +362,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Minęło już 12 dni bez deszczu. Czy to zmienia prawdopodobieństwo suszy w następnych 10 dniach? Uzasadnij (bezpamięciowość).")
       )
     ),
-    actionButton("ch9_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans4", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol4")
   ),
 
@@ -383,7 +383,7 @@ ch9_ui <- list(
       .z5row("g)", "Średnio 1 wystąpienie szkodników co 7 dni na polu. Ile dni do następnego wystąpienia?"),
       .z5row("h)", "Wilgotność gleby na polu — średnia 35%, odch. std. 5%")
     ),
-    actionButton("ch9_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans5", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol5")
   ),
 
@@ -408,7 +408,7 @@ ch9_ui <- list(
         tags$li("Agrotechnik chce, żeby ", tags$b("co najmniej 99% pól"), " spełniało normę. Do jakiej wartości musi wzrosnąć średnia (przy tym samym σ = 0.4)?")
       )
     ),
-    actionButton("ch9_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans6", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol6")
   ),
 
@@ -429,7 +429,7 @@ ch9_ui <- list(
         tags$li("Porównaj teoretyczne prawdopodobieństwa z empirycznymi częstościami w danych.")
       )
     ),
-    actionButton("ch9_ans7", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans7", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol7")
   ),
 
@@ -445,7 +445,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Dlaczego druga odmiana mogłaby mieć rozkład skośny? Podaj hipotezę agronomiczną.")
       )
     ),
-    actionButton("ch9_ans8", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans8", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol8")
   ),
 
@@ -461,7 +461,7 @@ ch9_ui <- list(
         tags$li("Magazynier odrzuca partię, jeśli jest ≥ 5 wadliwych nasion. Jak często partia zostanie odrzucona?")
       )
     ),
-    actionButton("ch9_ans9", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans9", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol9")
   ),
 
@@ -477,7 +477,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Ile opadów oczekujemy w sezonie 90-dniowym? Jaki rozkład i jaki λ? Oblicz P(≥ 15 opadów w sezonie).")
       )
     ),
-    actionButton("ch9_ans10", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans10", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol10")
   ),
 
@@ -490,7 +490,7 @@ ch9_ui <- list(
       tags$li("Dlaczego bezpamięciowość rozkładu wykładniczego jest zaskakująca w kontekście suszy?")
     )
   ),
-  actionButton("ch9_ans_summary", "Pokaż odpowiedzi", class = "lc-btn-ok-outline lc-btn-sm"),
+  lc_action("ch9_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
   uiOutput("ch9_sol_summary")
 )
 
@@ -519,7 +519,7 @@ ch9_ui <- list(
         tags$li("Gdyby wadliwość spadła do 3% po naprawie maszyny — jak zmieni się prawdopodobieństwo z punktu 2?")
       )
     ),
-    actionButton("ch9_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans1", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol1")
   ),
 
@@ -535,7 +535,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Jeśli badamy cały miesiąc (4 tygodnie) — jaki rozkład i jakie P(≥20 reklamacji)?")
       )
     ),
-    actionButton("ch9_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans2", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol2")
   ),
 
@@ -551,7 +551,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Inspektor sanitarny wymaga, żeby ", tags$b("mniej niż 5% partii"), " przekraczało normę 2.5 g/100g. Do jakiej wartości musiałaby spaść średnia (przy tym samym σ = 0.3)?")
       )
     ),
-    actionButton("ch9_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans3", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol3")
   ),
 
@@ -566,7 +566,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Konsument otworzył jogurt 5 dni temu i nadal nie jest zepsuty. Czy zmienia to prawdopodobieństwo zepsucia w ciągu kolejnych 3 dni? Uzasadnij (bezpamięciowość).")
       )
     ),
-    actionButton("ch9_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans4", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol4")
   ),
 
@@ -587,7 +587,7 @@ ch9_ui <- list(
       .z5row("g)", "Średnio 1 usterka linii pakującej co 4 godziny. Ile godzin do następnej usterki?"),
       .z5row("h)", "Zawartość białka w proszku mlecznym — średnia 26%, odch. std. 1.5%")
     ),
-    actionButton("ch9_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans5", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol5")
   ),
 
@@ -612,7 +612,7 @@ ch9_ui <- list(
         tags$li("Producent chce zapewnić, że ", tags$b("mniej niż 1% partii"), " nie spełnia normy. Jaka minimalna średnia jest potrzebna (przy tym samym σ = 0.2)?")
       )
     ),
-    actionButton("ch9_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans6", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol6")
   ),
 
@@ -633,7 +633,7 @@ ch9_ui <- list(
         tags$li("Porównaj teoretyczne prawdopodobieństwa z empirycznymi częstościami w danych.")
       )
     ),
-    actionButton("ch9_ans7", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans7", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol7")
   ),
 
@@ -649,7 +649,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Dlaczego druga linia mogłaby mieć rozkład skośny? Podaj hipotezę technologiczną.")
       )
     ),
-    actionButton("ch9_ans8", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans8", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol8")
   ),
 
@@ -665,7 +665,7 @@ ch9_ui <- list(
         tags$li("Kierownik jakości odrzuca partię, jeśli jest ≥ 5 wadliwych. Jak często partia zostanie odrzucona?")
       )
     ),
-    actionButton("ch9_ans9", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans9", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol9")
   ),
 
@@ -681,7 +681,7 @@ ch9_ui <- list(
         tags$li(tags$em("Trudniejsze:"), " Ile awarii oczekujemy w ciągu tygodnia pracy (40 godzin)? Jaki rozkład i jaki λ? Oblicz P(≥ 5 awarii w tygodniu).")
       )
     ),
-    actionButton("ch9_ans10", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch9_ans10", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch9_sol10")
   ),
 
@@ -694,7 +694,7 @@ ch9_ui <- list(
       tags$li("Jaki jest praktyczny sens bezpamięciowości rozkładu wykładniczego dla trwałości produktów?")
     )
   ),
-  actionButton("ch9_ans_summary", "Pokaż odpowiedzi", class = "lc-btn-ok-outline lc-btn-sm"),
+  lc_action("ch9_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
   uiOutput("ch9_sol_summary")
 )
 

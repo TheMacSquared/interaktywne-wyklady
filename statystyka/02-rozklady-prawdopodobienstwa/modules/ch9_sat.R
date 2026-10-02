@@ -9,8 +9,7 @@
   figure_panel(
     label = "Ćwiczenie",
     h4(title), tagList(...),
-    actionButton(paste0("ch9_ans", id), "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action(paste0("ch9_ans", id), "Pokaż rozwiązanie", variant = "solid"),
     uiOutput(paste0("ch9_sol", id))
   )
 }
@@ -84,8 +83,7 @@
        kształcie histogramu. Zawsze pytaj, co jest pojedynczą próbą i czy próby
        można uznać za niezależne.")
   ),
-  actionButton("ch9_ans_summary", "Pokaż odpowiedzi",
-               class = "lc-btn-ok-outline lc-btn-sm"),
+  lc_action("ch9_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
   uiOutput("ch9_sol_summary")
 )
 

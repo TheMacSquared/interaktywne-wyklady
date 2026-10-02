@@ -71,16 +71,15 @@ ch3_ui <- list(
       label = "Ryc. 3.1", title = "Konstruowanie przedziału",
       full_width = TRUE,
       div(class = "step-buttons",
-        actionButton("ch3_step1", "1. Próba",    class = "lc-btn-outline"),
-        actionButton("ch3_step2", "2. Średnia",  class = "lc-btn-outline"),
-        actionButton("ch3_step3", "3. ± SE",     class = "lc-btn-outline"),
-        actionButton("ch3_step4", "4. Przedział", class = "lc-btn-outline")
+        lc_action("ch3_step1", "1. Próba", variant = "outline"),
+        lc_action("ch3_step2", "2. Średnia", variant = "outline"),
+        lc_action("ch3_step3", "3. ± SE", variant = "outline"),
+        lc_action("ch3_step4", "4. Przedział", variant = "outline")
       ),
       lc_inline_row(gap = "md",
-        actionButton("ch3_step_new_sample", "↻ Nowa próba",
-                     class = "lc-btn-secondary-outline lc-btn-sm")
+        lc_action("ch3_step_new_sample", "↻ Nowa próba", variant = "outline")
       ),
-      zoom_plot_ui("ch3_step_plot", height = "340px"),
+      lc_plot("ch3_step_plot", ratio = "1.8/1", max_height = "340px"),
       uiOutput("ch3_step_explanation")
     ),
 
@@ -99,17 +98,16 @@ ch3_ui <- list(
       label = "Ryc. 3.2", title = "Konstruowanie CI dla różnicy",
       full_width = TRUE,
       div(class = "step-buttons",
-        actionButton("ch3_dstep1", "1. Dwie próby",   class = "lc-btn-outline"),
-        actionButton("ch3_dstep2", "2. Dwie średnie", class = "lc-btn-outline"),
-        actionButton("ch3_dstep3", "3. Różnica",      class = "lc-btn-outline"),
-        actionButton("ch3_dstep4", "4. ± SE",         class = "lc-btn-outline"),
-        actionButton("ch3_dstep5", "5. Przedział",    class = "lc-btn-outline")
+        lc_action("ch3_dstep1", "1. Dwie próby", variant = "outline"),
+        lc_action("ch3_dstep2", "2. Dwie średnie", variant = "outline"),
+        lc_action("ch3_dstep3", "3. Różnica", variant = "outline"),
+        lc_action("ch3_dstep4", "4. ± SE", variant = "outline"),
+        lc_action("ch3_dstep5", "5. Przedział", variant = "outline")
       ),
       lc_inline_row(gap = "md",
-        actionButton("ch3_dstep_new_sample", "↻ Nowe próby",
-                     class = "lc-btn-secondary-outline lc-btn-sm")
+        lc_action("ch3_dstep_new_sample", "↻ Nowe próby", variant = "outline")
       ),
-      zoom_plot_ui("ch3_dstep_plot", height = "420px"),
+      lc_plot("ch3_dstep_plot", ratio = "1.5/1", max_height = "420px"),
       uiOutput("ch3_dstep_explanation")
     ),
 
@@ -139,7 +137,7 @@ ch3_ui <- list(
           p("Zakład piekarniczy porównuje dwóch dostawców mąki pszennej typu 550
             pod względem zawartości białka (%). Pobrano po 40 partii od każdego dostawcy.")
         ),
-        zoom_plot_ui("ch3_comp_A_plot", height = "340px"),
+        lc_plot("ch3_comp_A_plot", ratio = "1.8/1", max_height = "340px"),
         uiOutput("ch3_comp_A_verdict")
       )
     ),
@@ -155,7 +153,7 @@ ch3_ui <- list(
           p("Technolog sprawdza, czy materiał opakowania wpływa na zawartość tłuszczu (%)
             w jogurcie naturalnym po 7 dniach przechowywania. Po 30 próbek z każdego typu.")
         ),
-        zoom_plot_ui("ch3_comp_B_plot", height = "340px"),
+        lc_plot("ch3_comp_B_plot", ratio = "1.8/1", max_height = "340px"),
         uiOutput("ch3_comp_B_verdict")
       )
     ),
@@ -172,7 +170,7 @@ ch3_ui <- list(
             dają produkt o tej samej zawartości błonnika (g / 100 g).
             Po 120 partii z każdej linii.")
         ),
-        zoom_plot_ui("ch3_comp_C_plot", height = "340px"),
+        lc_plot("ch3_comp_C_plot", ratio = "1.8/1", max_height = "340px"),
         uiOutput("ch3_comp_C_verdict")
       )
     ),
@@ -209,7 +207,7 @@ ch3_ui <- list(
             Zbudujmy CI dla średniego wzrostu i sprawdźmy dwie hipotezy.")
         ),
         uiOutput("ch3_caseA1_buttons"),
-        zoom_plot_ui("ch3_caseA1_plot", height = "260px"),
+        lc_plot("ch3_caseA1_plot", ratio = "2.4/1", max_height = "260px"),
         uiOutput("ch3_caseA1_explain")
       )
     ),
@@ -227,7 +225,7 @@ ch3_ui <- list(
             i patrz, jak się zwężają.")
         ),
         uiOutput("ch3_caseA2_buttons"),
-        zoom_plot_ui("ch3_caseA2_plot", height = "260px"),
+        lc_plot("ch3_caseA2_plot", ratio = "2.4/1", max_height = "260px"),
         uiOutput("ch3_caseA2_explain")
       )
     ),
@@ -246,7 +244,7 @@ ch3_ui <- list(
             ", tags$b("Placebo:"), " n=40, średnie obniżenie 4.1 mmHg, s=4.2.")
         ),
         uiOutput("ch3_caseB1_buttons"),
-        zoom_plot_ui("ch3_caseB1_plot", height = "380px"),
+        lc_plot("ch3_caseB1_plot", ratio = "1.6/1", max_height = "380px"),
         uiOutput("ch3_caseB1_explain")
       )
     ),
@@ -263,7 +261,7 @@ ch3_ui <- list(
             ", tags$b("Nawoz Y:"), " n=25, średnia 8.1 t/ha, s=1.3.")
         ),
         uiOutput("ch3_caseB2_buttons"),
-        zoom_plot_ui("ch3_caseB2_plot", height = "380px"),
+        lc_plot("ch3_caseB2_plot", ratio = "1.6/1", max_height = "380px"),
         uiOutput("ch3_caseB2_explain")
       )
     ),
@@ -281,7 +279,7 @@ ch3_ui <- list(
             CI każdej grupy osobno się nakładają — czy różnica jest istotna?")
         ),
         uiOutput("ch3_caseB3_buttons"),
-        zoom_plot_ui("ch3_caseB3_plot", height = "380px"),
+        lc_plot("ch3_caseB3_plot", ratio = "1.6/1", max_height = "380px"),
         uiOutput("ch3_caseB3_explain")
       )
     ),
@@ -299,7 +297,7 @@ ch3_ui <- list(
             Różnica 0.4 pkt IQ — dużo czy mało?")
         ),
         uiOutput("ch3_caseB4_buttons"),
-        zoom_plot_ui("ch3_caseB4_plot", height = "380px"),
+        lc_plot("ch3_caseB4_plot", ratio = "1.6/1", max_height = "380px"),
         uiOutput("ch3_caseB4_explain")
       )
     ),
@@ -318,7 +316,7 @@ ch3_ui <- list(
             Dodawaj CI jeden po drugim i obserwuj.")
         ),
         uiOutput("ch3_caseC1_buttons"),
-        zoom_plot_ui("ch3_caseC1_plot", height = "300px"),
+        lc_plot("ch3_caseC1_plot", max_height = "300px"),
         uiOutput("ch3_caseC1_explain")
       )
     ),
@@ -334,7 +332,7 @@ ch3_ui <- list(
             oddziałach szpitala. Który wymaga interwencji?")
         ),
         uiOutput("ch3_caseC2_buttons"),
-        zoom_plot_ui("ch3_caseC2_plot", height = "340px"),
+        lc_plot("ch3_caseC2_plot", ratio = "1.8/1", max_height = "340px"),
         uiOutput("ch3_caseC2_explain")
       )
     ),
@@ -1525,8 +1523,7 @@ ch3_server <- function(input, output, session) {
     # Drugi rzad: przycisk "Pokaż werdykt" - tylko gdy hipoteza wybrana i jeszcze nie odkryta
     reveal_row <- if (!is.null(phase) && !phase$reveal) {
       div(class = "step-buttons lc-mt-xs",
-        actionButton(paste0("ch3_case", case_id, "_reveal"),
-                     "\U0001f50d Pokaż werdykt", class = "lc-btn-ok"))
+        lc_action(paste0("ch3_case", case_id, "_reveal"), "\U0001f50d Pokaż werdykt", variant = "solid"))
     } else {
       NULL
     }

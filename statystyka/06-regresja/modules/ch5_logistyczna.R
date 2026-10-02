@@ -52,8 +52,7 @@ ch5_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch5_cas_y_cut", "Próg zaliczenia: zdał od:",
-                      min = 630, max = 680, value = 656, step = 1),
+          lc_slider("ch5_cas_y_cut", "Próg zaliczenia: zdał od", 630, 680, 656, 1),
           uiOutput("ch5_cas_threshold_note"),
           lc_feedback(type = "info",
             tags$strong("Co pokazuje widget?"),
@@ -131,18 +130,13 @@ ch5_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch5_b0", "β₀ (intercept):",
-                      min = -10, max = 10, value = -4, step = 0.5),
-          sliderInput("ch5_b1", "β₁ (slope):",
-                      min = -3, max = 3, value = 0.2, step = 0.05),
+          lc_slider("ch5_b0", "β₀ (intercept)", -10, 10, -4, 0.5),
+          lc_slider("ch5_b1", "β₁ (slope)", -3, 3, 0.2, 0.05),
           hr(),
           div(class = "preset-buttons",
-            actionButton("ch5_preset_steep", "Stromy",
-                         class = "lc-btn-outline"),
-            actionButton("ch5_preset_flat", "Płaski",
-                         class = "lc-btn-secondary-outline"),
-            actionButton("ch5_preset_neg", "Odwrotny",
-                         class = "lc-btn-danger-outline")
+            lc_action("ch5_preset_steep", "Stromy", variant = "outline"),
+            lc_action("ch5_preset_flat", "Płaski", variant = "outline"),
+            lc_action("ch5_preset_neg", "Odwrotny", variant = "solid")
           )
         ),
         column(8,
@@ -163,7 +157,7 @@ ch5_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch5_n", "n:", min = 50, max = 300, value = 150, step = 25),
+          lc_slider("ch5_n", "n", 50, 300, 150, 25),
           selectInput("ch5_predictor", "Prezentowany predyktor:",
             choices = c(
               "Godziny nauki" = "godziny_nauki",
@@ -171,8 +165,7 @@ ch5_ui <- list(
             ),
             selected = "godziny_nauki"
           ),
-          actionButton("ch5_fit", "Dopasuj model",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_action("ch5_fit", "Dopasuj model", variant = "solid"),
           hr(),
           h5("Predykcja dla nowego studenta:"),
           numericInput("ch5_pred_hours", "Godziny nauki:", value = 20, min = 0, max = 40),
@@ -210,8 +203,7 @@ ch5_ui <- list(
       fluidRow(
         column(4,
           helpText("Używa modelu dopasowanego w Ryc. 5.4."),
-          sliderInput("ch5_threshold", "Próg decyzji:",
-                      min = 0.1, max = 0.9, value = 0.5, step = 0.05)
+          lc_slider("ch5_threshold", "Próg decyzji", 0.1, 0.9, 0.5, 0.05)
         ),
         column(8,
           zoom_plot_ui("ch5_threshold_plot", height = "280px"),

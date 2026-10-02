@@ -50,18 +50,9 @@ ch3b_ui <- list(
       fluidRow(
         column(
           4,
-          actionButton(
-            "ch3b_simpson_all", "1. Jedna linia dla wszystkich",
-            class = "lc-btn-outline", width = "100%"
-          ),
-          actionButton(
-            "ch3b_simpson_groups", "2. Pokaż gatunki",
-            class = "lc-btn-outline", width = "100%"
-          ),
-          actionButton(
-            "ch3b_simpson_control", "3. Kontroluj gatunek",
-            class = "lc-btn-primary", width = "100%"
-          ),
+          lc_action("ch3b_simpson_all", "1. Jedna linia dla wszystkich", variant = "outline"),
+          lc_action("ch3b_simpson_groups", "2. Pokaż gatunki", variant = "outline"),
+          lc_action("ch3b_simpson_control", "3. Kontroluj gatunek", variant = "solid"),
           uiOutput("ch3b_simpson_stats")
         ),
         column(

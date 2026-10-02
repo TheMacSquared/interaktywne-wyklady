@@ -47,10 +47,8 @@ ch10_ui <- list(
             ),
             selected = "TZ"
           ),
-          sliderInput("ch10_d", "Cohen's d (wielkość efektu):",
-                      min = 0.1, max = 1.5, value = 0.3, step = 0.05),
-          sliderInput("ch10_n", "n na grupę:",
-                      min = 20, max = 300, value = 50, step = 10),
+          lc_slider("ch10_d", "Cohen's d (wielkość efektu)", 0.1, 1.5, 0.3, 0.05),
+          lc_slider("ch10_n", "n na grupę", 20, 300, 50, 10),
           p(tags$em("Zmień n przy stałym d i obserwuj, jak zmienia się p.")),
           uiOutput("ch10_dist_hint")
         ),
@@ -114,15 +112,12 @@ ch10_ui <- list(
             ),
             selected = "TZ"
           ),
-          radioButtons("ch10_d_level", "Wielkość efektu:",
-            choices = c(
+          lc_segmented("ch10_d_level", "Wielkość efektu", choices = c(
               "d = 0,2 (mały)"      = "0.2",
               "d = 0,5 (średni)"    = "0.5",
               "d = 0,8 (duży)"      = "0.8",
               "d = 1,2 (b. duży)"   = "1.2"
-            ),
-            selected = "0.5"
-          ),
+            ), selected = "0.5"),
           p(tags$em("Zobacz, jak ta sama wartość d wygląda w konkretnych liczbach."))
         ),
         column(8,
@@ -238,15 +233,12 @@ ch10_ui <- list(
             ),
             selected = "TZ"
           ),
-          radioButtons("ch10_v_level", "Wielkość efektu:",
-            choices = c(
+          lc_segmented("ch10_v_level", "Wielkość efektu", choices = c(
               "V = 0,10 (mały)"   = "0.10",
               "V = 0,30 (średni)" = "0.30",
               "V = 0,50 (duży)"   = "0.50",
               "V = 0,70 (b. duży)" = "0.70"
-            ),
-            selected = "0.30"
-          ),
+            ), selected = "0.30"),
           uiOutput("ch10_v_hint")
         ),
         column(8,
@@ -305,15 +297,12 @@ ch10_ui <- list(
             ),
             selected = "TZ"
           ),
-          radioButtons("ch10_eta_level", "Wielkość efektu:",
-            choices = c(
+          lc_segmented("ch10_eta_level", "Wielkość efektu", choices = c(
               "η² = 0,01 (mały)"    = "0.01",
               "η² = 0,06 (średni)"  = "0.06",
               "η² = 0,14 (duży)"    = "0.14",
               "η² = 0,30 (b. duży)" = "0.30"
-            ),
-            selected = "0.06"
-          ),
+            ), selected = "0.06"),
           uiOutput("ch10_eta_hint")
         ),
         column(8,

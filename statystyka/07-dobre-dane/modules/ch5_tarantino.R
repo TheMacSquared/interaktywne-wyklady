@@ -36,8 +36,8 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
 
     div(class = "lc-figure-panel",
       fluidRow(
-        column(6, actionButton("tab4_hist", "Histogram: minutes_in", class = "lc-btn-outline", width = "100%")),
-        column(6, actionButton("tab4_bar", "Porównanie filmów", class = "lc-btn-outline", width = "100%"))
+        column(6, lc_action("tab4_hist", "Histogram: minutes_in", variant = "outline")),
+        column(6, lc_action("tab4_bar", "Porównanie filmów", variant = "outline"))
       ),
       zoom_plot_ui("tab4_explore_plot", height = "350px")
     ),
@@ -56,7 +56,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
         p("Każdy wiersz to jedno zdarzenie (przekleństwo lub śmierć). Aby używać klasycznej
           statystyki, musielibyśmy ", gloss("agregacja", "zagregować"), " dane do poziomu filmów.")
       ),
-      actionButton("tab4_aggregate", "Zagreguj dane", class = "lc-btn-warning"),
+      lc_action("tab4_aggregate", "Zagreguj dane", variant = "solid"),
       uiOutput("tab4_agg_result")
     ),
 

@@ -59,17 +59,12 @@ ch2_ev_var_ui <- list(
           ),
           hr(),
           lc_stack(gap = "md",
-            actionButton("ch2ev_play_1", "Graj 1x",
-                         class = "lc-btn-primary", width = "100%"),
-            actionButton("ch2ev_play_10", "Graj 10x",
-                         class = "lc-btn-primary", width = "100%"),
-            actionButton("ch2ev_play_100", "Graj 100x",
-                         class = "lc-btn-primary", width = "100%"),
-            actionButton("ch2ev_play_1000", "Graj 1000x",
-                         class = "lc-btn-warning", width = "100%"),
+            lc_action("ch2ev_play_1", "Graj 1x", variant = "solid"),
+            lc_action("ch2ev_play_10", "Graj 10x", variant = "solid"),
+            lc_action("ch2ev_play_100", "Graj 100x", variant = "solid"),
+            lc_action("ch2ev_play_1000", "Graj 1000x", variant = "solid"),
             hr(),
-            actionButton("ch2ev_reset_lottery", "Reset",
-                         class = "lc-btn-secondary-outline", width = "100%")
+            lc_action("ch2ev_reset_lottery", icon = "reset", variant = "ghost", aria_label = "Reset")
           ),
           br(),
           uiOutput("ch2ev_play_count")
@@ -107,19 +102,16 @@ ch2_ev_var_ui <- list(
       fluidRow(
         column(4,
           h5("Prawdopodobieństwa:"),
-          sliderInput("ch2ev_bal_p1", "P(X = 1):", min = 0, max = 1, value = 0.25, step = 0.01),
-          sliderInput("ch2ev_bal_p2", "P(X = 3):", min = 0, max = 1, value = 0.25, step = 0.01),
-          sliderInput("ch2ev_bal_p3", "P(X = 5):", min = 0, max = 1, value = 0.25, step = 0.01),
-          sliderInput("ch2ev_bal_p4", "P(X = 9):", min = 0, max = 1, value = 0.25, step = 0.01),
+          lc_slider("ch2ev_bal_p1", "P(X = 1)", 0, 1, 0.25, 0.01),
+          lc_slider("ch2ev_bal_p2", "P(X = 3)", 0, 1, 0.25, 0.01),
+          lc_slider("ch2ev_bal_p3", "P(X = 5)", 0, 1, 0.25, 0.01),
+          lc_slider("ch2ev_bal_p4", "P(X = 9)", 0, 1, 0.25, 0.01),
           uiOutput("ch2ev_bal_sum"),
           hr(),
           div(class = "preset-buttons",
-            actionButton("ch2ev_bal_sym", "Symetryczny",
-                         class = "lc-btn-outline"),
-            actionButton("ch2ev_bal_skew", "Skośny",
-                         class = "lc-btn-warning-outline"),
-            actionButton("ch2ev_bal_bimod", "Dwumodalny",
-                         class = "lc-btn-ok-outline")
+            lc_action("ch2ev_bal_sym", "Symetryczny", variant = "outline"),
+            lc_action("ch2ev_bal_skew", "Skośny", variant = "solid"),
+            lc_action("ch2ev_bal_bimod", "Dwumodalny", variant = "solid")
           )
         ),
         column(8,
@@ -154,10 +146,8 @@ ch2_ev_var_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch2ev_var_n", "Ile razy zagrać?",
-                      min = 10, max = 2000, value = 200, step = 10),
-          actionButton("ch2ev_var_sim", "Symuluj!",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_slider("ch2ev_var_n", "Ile razy zagrać?", 10, 2000, 200, 10),
+          lc_action("ch2ev_var_sim", "Symuluj!", variant = "solid"),
           br(), br(),
           uiOutput("ch2ev_var_summary")
         ),

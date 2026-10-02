@@ -86,12 +86,9 @@ ch2_ui <- list(
       label = "Ryc. 2.3",
       title = "Pie vs Bar — trzy scenariusze porównawcze",
       div(style = "display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;",
-        actionButton("ch2_sc1", "1. Duze różnice",
-                     class = "lc-btn-outline"),
-        actionButton("ch2_sc2", "2. Podobne wartości",
-                     class = "lc-btn-outline"),
-        actionButton("ch2_sc3", "3. Podobne + zle kolory",
-                     class = "lc-btn-outline")
+        lc_action("ch2_sc1", "1. Duze różnice", variant = "outline"),
+        lc_action("ch2_sc2", "2. Podobne wartości", variant = "outline"),
+        lc_action("ch2_sc3", "3. Podobne + zle kolory", variant = "outline")
       ),
       fluidRow(
         column(6,
@@ -146,8 +143,7 @@ ch2_ui <- list(
             ),
             selected = "neutral"
           ),
-          actionButton("ch2_color_random", "Losowe kolory",
-                       class = "lc-btn-secondary-outline", width = "100%")
+          lc_action("ch2_color_random", "Losowe kolory", variant = "outline")
         ),
         column(8, zoom_plot_ui("ch2_color_plot", height = "380px"))
       ),
@@ -234,9 +230,8 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.6",
       title = "Dominanta — najczęściej występująca kategoria",
-      actionButton("ch2_mode_resample", "Losuj nowe proporcje",
-                   class = "lc-btn-primary"),
-      zoom_plot_ui("ch2_mode_plot", height = "350px"),
+      lc_action("ch2_mode_resample", "Losuj nowe proporcje", icon = "shuffle", variant = "solid"),
+      lc_plot("ch2_mode_plot", ratio = "1.8/1", max_height = "350px"),
       uiOutput("ch2_mode_text")
     ),
 

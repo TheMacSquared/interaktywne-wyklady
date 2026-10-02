@@ -53,16 +53,12 @@ ch1_ui <- list(
             ),
             selected = "normal"
           ),
-          sliderInput("ch1_n", "Wielkość próby (n):",
-                      min = 5, max = 200, value = 30, step = 5),
+          lc_slider("ch1_n", "Wielkość próby (n)", 5, 200, 30, 5),
           hr(),
           lc_stack(gap = "md",
-            actionButton("ch1_draw_1", "Pobierz 1 próbę",
-                         class = "lc-btn-primary", width = "100%"),
-            actionButton("ch1_draw_20", "Pobierz 20 prób",
-                         class = "lc-btn-warning", width = "100%"),
-            actionButton("ch1_reset", "Reset",
-                         class = "lc-btn-secondary-outline", width = "100%")
+            lc_action("ch1_draw_1", "Pobierz 1 próbę", variant = "solid"),
+            lc_action("ch1_draw_20", "Pobierz 20 prób", variant = "solid"),
+            lc_action("ch1_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
           ),
           br(),
           uiOutput("ch1_count_info")
@@ -183,12 +179,10 @@ ch1_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch1_fluct_n", "Wielkość próby (n):",
-                      min = 5, max = 200, value = 10, step = 5),
+          lc_slider("ch1_fluct_n", "Wielkość próby (n)", 5, 200, 10, 5),
           helpText("Każde kliknięcie losuje nową próbę. Obserwuj,
                     jak bardzo skacze estymata."),
-          actionButton("ch1_fluct_draw", "Losuj próbę",
-                       class = "lc-btn-primary", width = "100%")
+          lc_action("ch1_fluct_draw", "Losuj próbę", icon = "shuffle", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch1_fluct_plot", height = "300px")

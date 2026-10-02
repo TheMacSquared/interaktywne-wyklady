@@ -128,12 +128,9 @@ ch3_ui <- list(
           helpText("Porównujemy modele proste i model wieloraki na tych samych
                     420 okręgach szkolnych."),
           h5("Kroki:"),
-          actionButton("ch3_control_step1", "1. Czytanie ~ dochód",
-                       class = "lc-btn-outline", width = "100%"),
-          actionButton("ch3_control_step2", "2. Czytanie ~ lunch",
-                       class = "lc-btn-outline", width = "100%"),
-          actionButton("ch3_control_step3", "3. Model z kontrolą",
-                       class = "lc-btn-outline", width = "100%")
+          lc_action("ch3_control_step1", "1. Czytanie ~ dochód", variant = "outline"),
+          lc_action("ch3_control_step2", "2. Czytanie ~ lunch", variant = "outline"),
+          lc_action("ch3_control_step3", "3. Model z kontrolą", variant = "outline")
         ),
         column(8,
           lc_plot_fullscreen("ch3_control_plot", height = "320px"),
@@ -167,10 +164,8 @@ ch3_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch3_collin_rho", "Korelacja X₁–X₂:",
-                      min = 0, max = 0.98, value = 0.8, step = 0.02),
-          actionButton("ch3_collin_new", "Generuj i dopasuj",
-                       class = "lc-btn-warning", width = "100%")
+          lc_slider("ch3_collin_rho", "Korelacja X₁–X₂", 0, 0.98, 0.8, 0.02),
+          lc_action("ch3_collin_new", "Generuj i dopasuj", variant = "solid")
         ),
         column(8,
           lc_plot_fullscreen("ch3_collin_plot", height = "300px"),

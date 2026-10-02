@@ -65,19 +65,14 @@ ch6_ui <- list(
             ),
             selected = "exponential"
           ),
-          sliderInput("ch6_sample_size", "Wielkość próby (n):",
-                      min = 1, max = 100, value = 5, step = 1),
+          lc_slider("ch6_sample_size", "Wielkość próby (n)", 1, 100, 5, 1),
           hr(),
           lc_stack(gap = "md",
-            actionButton("ch6_take_1", "Pobierz 1 próbę",
-                         class = "lc-btn-primary", width = "100%"),
-            actionButton("ch6_take_100", "Pobierz 100 prób",
-                         class = "lc-btn-primary", width = "100%"),
-            actionButton("ch6_take_1000", "Pobierz 1000 prób",
-                         class = "lc-btn-warning", width = "100%"),
+            lc_action("ch6_take_1", "Pobierz 1 próbę", variant = "solid"),
+            lc_action("ch6_take_100", "Pobierz 100 prób", variant = "solid"),
+            lc_action("ch6_take_1000", "Pobierz 1000 prób", variant = "solid"),
             hr(),
-            actionButton("ch6_reset", "Reset",
-                         class = "lc-btn-secondary-outline", width = "100%")
+            lc_action("ch6_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
           ),
           br(),
           uiOutput("ch6_sample_count")
@@ -118,7 +113,7 @@ ch6_ui <- list(
         ),
         selected = "exponential"
       ),
-      zoom_plot_ui("ch6_effect_plot", height = "350px")
+      lc_plot("ch6_effect_plot", ratio = "1.8/1", max_height = "350px")
     ),
 
     # ========================================================================
@@ -132,20 +127,15 @@ ch6_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          actionButton("ch6_why_step1", "1. Jedna obserwacja",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch6_why_step1", "1. Jedna obserwacja", variant = "outline"),
           br(), br(),
-          actionButton("ch6_why_step2", "2. Średnia z 2",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch6_why_step2", "2. Średnia z 2", variant = "outline"),
           br(), br(),
-          actionButton("ch6_why_step3", "3. Średnia z 5",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch6_why_step3", "3. Średnia z 5", variant = "outline"),
           br(), br(),
-          actionButton("ch6_why_step4", "4. Średnia z 30",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch6_why_step4", "4. Średnia z 30", variant = "outline"),
           br(), br(),
-          actionButton("ch6_why_reset", "Reset",
-                       class = "lc-btn-secondary-outline", width = "100%")
+          lc_action("ch6_why_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
         ),
         column(8,
           zoom_plot_ui("ch6_why_plot", height = "350px"),

@@ -105,7 +105,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     ),
 
     div(class = "lc-figure-panel",
-      sliderInput("tab5_sd_mult", "Mnożnik rozrzutu danych:", min = 1, max = 5, value = 1, step = 0.5),
+      lc_slider("tab5_sd_mult", "Mnożnik rozrzutu danych", 1, 5, 1, 0.5),
       zoom_plot_ui("tab5_scatter_sim", height = "300px")
     ),
 

@@ -53,8 +53,7 @@ ch8_ui <- list(
       # Start / status bar
       fluidRow(
         column(6,
-          actionButton("ch8_start", "Rozpocznij quiz",
-                       class = "lc-btn-primary lc-btn-lg", width = "100%")
+          lc_action("ch8_start", "Rozpocznij quiz", variant = "solid")
         ),
         column(6,
           uiOutput("ch8_progress")
@@ -331,10 +330,8 @@ ch8_server <- function(input, output, session) {
 
       # Przyciski
       div(style = "display: flex; gap: 10px; justify-content: center;",
-        actionButton("ch8_start", "Spróbuj ponownie",
-                     class = "lc-btn-primary lc-btn-lg"),
-        actionButton("ch8_back_to_ch7", "Wróć do ściągi",
-                     class = "lc-btn-secondary-outline lc-btn-lg")
+        lc_action("ch8_start", "Spróbuj ponownie", variant = "solid"),
+        lc_action("ch8_back_to_ch7", "Wróć do ściągi", variant = "outline")
       )
     )
   })

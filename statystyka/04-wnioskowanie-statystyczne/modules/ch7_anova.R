@@ -37,11 +37,9 @@ ch7_ui <- list(
       fluidRow(
         column(4,
           p(tags$em("Zacznij od 2 grup. Każde kliknięcie dodaje jedną.")),
-          actionButton("ch7_motyw_add", "Dodaj grupę +",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_action("ch7_motyw_add", "Dodaj grupę +", variant = "solid"),
           br(), br(),
-          actionButton("ch7_motyw_reset", "Reset",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch7_motyw_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
           br(), br(),
           uiOutput("ch7_motyw_stats")
         ),
@@ -140,10 +138,8 @@ ch7_ui <- list(
             selected = "fermentation"
           ),
           uiOutput("ch7_var_ui"),
-          sliderInput("ch7_n", "n (ogółem):",
-                      min = 80, max = 300, value = 160, step = 20),
-          actionButton("ch7_run_anova", "Generuj i testuj",
-                       class = "lc-btn-primary", width = "100%")
+          lc_slider("ch7_n", "n (ogółem)", 80, 300, 160, 20),
+          lc_action("ch7_run_anova", "Generuj i testuj", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch7_boxplot", height = "350px"),
@@ -186,8 +182,7 @@ ch7_ui <- list(
       label = "Ryc. 9.4",
       title = "Games-Howell",
       helpText("Używa danych z ANOVA powyżej. Najpierw uruchom ANOVA!"),
-      actionButton("ch7_run_tukey", "Testuj Games-Howellem",
-                   class = "lc-btn-warning"),
+      lc_action("ch7_run_tukey", "Testuj Games-Howellem", variant = "solid"),
       br(), br(),
 
       h5("Macierz p-wartości"),
@@ -198,7 +193,7 @@ ch7_ui <- list(
 
       br(),
       h5("Różnice parowe z 95% CI"),
-      zoom_plot_ui("ch7_tukey_plot", height = "260px"),
+      lc_plot("ch7_tukey_plot", ratio = "2.4/1", max_height = "260px"),
 
       uiOutput("ch7_tukey_result")
     ),
@@ -222,8 +217,7 @@ ch7_ui <- list(
         Wykonaj jednoczynnikową ANOVA dla zmiennej ", tags$code("read"),
         " między grupami. Zapisz: F, df, p.
         Wykonaj post-hoc Games-Howell i wskaż, które pary różnią się istotnie."),
-      actionButton("cas_ch7_ans10", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("cas_ch7_ans10", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch7_sol10")
     ),
 

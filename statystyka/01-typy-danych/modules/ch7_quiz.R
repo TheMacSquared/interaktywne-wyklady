@@ -70,8 +70,7 @@ ch7_ui <- list(
       # Start / status bar
       fluidRow(
         column(6,
-          actionButton("ch7_start", "Rozpocznij quiz",
-                       class = "lc-btn-primary lc-btn-lg", width = "100%")
+          lc_action("ch7_start", "Rozpocznij quiz", variant = "solid")
         ),
         column(6,
           uiOutput("ch7_progress")
@@ -342,10 +341,8 @@ ch7_server <- function(input, output, session) {
       ),
 
       div(style = "display: flex; gap: 10px; justify-content: center;",
-        actionButton("ch7_start", "Spróbuj ponownie",
-                     class = "lc-btn-primary lc-btn-lg"),
-        actionButton("ch7_back_to_ch6", "Wróć do ściągi",
-                     class = "lc-btn-secondary-outline lc-btn-lg")
+        lc_action("ch7_start", "Spróbuj ponownie", variant = "solid"),
+        lc_action("ch7_back_to_ch6", "Wróć do ściągi", variant = "outline")
       )
     )
   })

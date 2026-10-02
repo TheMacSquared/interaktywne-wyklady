@@ -48,32 +48,23 @@ ch3_ui <- list(
             selected = "wzrost"
           ),
           uiOutput("ch3_hist_bin_slider"),
-          actionButton("ch3_hist_step1", "1. Surowe dane",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch3_hist_step1", "1. Surowe dane", variant = "outline"),
           br(), br(),
-          actionButton("ch3_hist_step2", "2. Posortuj dane",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch3_hist_step2", "2. Posortuj dane", variant = "outline"),
           br(), br(),
-          actionButton("ch3_hist_step3", "3. Podziel na przedziały",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch3_hist_step3", "3. Podziel na przedziały", variant = "outline"),
           br(), br(),
-          actionButton("ch3_hist_step4", "4. Przypisz do binów",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch3_hist_step4", "4. Przypisz do binów", variant = "outline"),
           br(), br(),
-          actionButton("ch3_hist_step5", "5. Zlicz obserwacje",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch3_hist_step5", "5. Zlicz obserwacje", variant = "outline"),
           br(), br(),
-          actionButton("ch3_hist_step6", "6. Zbuduj słupki",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch3_hist_step6", "6. Zbuduj słupki", variant = "outline"),
           br(), br(),
-          actionButton("ch3_hist_step7", "7. Gotowy histogram",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch3_hist_step7", "7. Gotowy histogram", variant = "outline"),
           br(), br(),
-          actionButton("ch3_hist_step8", "8. Wpływ szerokości binu",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch3_hist_step8", "8. Wpływ szerokości binu", variant = "outline"),
           br(), br(),
-          actionButton("ch3_hist_reset", "Reset",
-                       class = "lc-btn-secondary-outline", width = "100%")
+          lc_action("ch3_hist_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
         ),
         column(8,
           zoom_plot_ui("ch3_hist_plot", height = "400px"),
@@ -111,7 +102,7 @@ ch3_ui <- list(
                     "Średnia ocen" = "srednia_ocen"),
         selected = "wzrost"
       ),
-      zoom_plot_ui("ch3_mean_plot", height = "300px"),
+      lc_plot("ch3_mean_plot", max_height = "300px"),
       uiOutput("ch3_mean_text")
     ),
 
@@ -135,7 +126,7 @@ ch3_ui <- list(
                     "Średnia ocen" = "srednia_ocen"),
         selected = "czas_dojazdu"
       ),
-      zoom_plot_ui("ch3_median_plot", height = "300px"),
+      lc_plot("ch3_median_plot", max_height = "300px"),
       uiOutput("ch3_median_text")
     ),
 
@@ -165,20 +156,17 @@ ch3_ui <- list(
         ),
         column(7,
           div(style = "display: flex; gap: 8px; margin-top: 25px;",
-            actionButton("ch3_svm_add", "Dodaj wartość",
-                         class = "lc-btn-primary"),
-            actionButton("ch3_svm_outlier", "Dodaj outlier (CEO)",
-                         class = "lc-btn-danger"),
-            actionButton("ch3_svm_reset", "Reset",
-                         class = "lc-btn-secondary-outline")
+            lc_action("ch3_svm_add", "Dodaj wartość", variant = "solid"),
+            lc_action("ch3_svm_outlier", "Dodaj outlier (CEO)", variant = "solid"),
+            lc_action("ch3_svm_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
           )
         )
       ),
 
       hr(),
 
-      zoom_plot_ui("ch3_svm_hist", height = "280px"),
-      zoom_plot_ui("ch3_svm_strip", height = "120px"),
+      lc_plot("ch3_svm_hist", max_height = "280px"),
+      lc_plot("ch3_svm_strip", ratio = "5.2/1", max_height = "120px"),
 
       lc_center(
         uiOutput("ch3_svm_stats")
@@ -213,16 +201,13 @@ ch3_ui <- list(
       title = "Odporność: średnia vs mediana vs średnia ucinana",
 
       div(style = "display: flex; gap: 8px; margin-bottom: 8px;",
-        actionButton("ch3_rob_add1", "Dodaj outlier (+50 000 zl)",
-                     class = "lc-btn-warning"),
-        actionButton("ch3_rob_add5", "Dodaj 5 outlierow",
-                     class = "lc-btn-danger"),
-        actionButton("ch3_rob_reset", "Reset",
-                     class = "lc-btn-secondary-outline")
+        lc_action("ch3_rob_add1", "Dodaj outlier (+50 000 zl)", variant = "solid"),
+        lc_action("ch3_rob_add5", "Dodaj 5 outlierow", variant = "solid"),
+        lc_action("ch3_rob_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
       ),
       uiOutput("ch3_rob_outliers_count"),
 
-      zoom_plot_ui("ch3_rob_plot", height = "320px"),
+      lc_plot("ch3_rob_plot", ratio = "1.9/1", max_height = "320px"),
 
       div(style = "margin-top: 15px;",
         tableOutput("ch3_rob_table")
@@ -298,7 +283,7 @@ ch3_ui <- list(
         ),
         selected = "unimodal"
       ),
-      zoom_plot_ui("ch3_modal_plot", height = "350px"),
+      lc_plot("ch3_modal_plot", ratio = "1.8/1", max_height = "350px"),
       uiOutput("ch3_modal_text")
     ),
 
@@ -338,23 +323,21 @@ ch3_ui <- list(
 
       fluidRow(
         column(6,
-          sliderInput("ch3_q_pct", "Percentyl:",
-                      min = 0, max = 100, value = 50, step = 1,
-                      post = "%", width = "100%")
+          lc_slider("ch3_q_pct", "Percentyl", 0, 100, 50, 1, suffix = "%")
         ),
         column(6,
           div(style = "display: flex; gap: 8px; margin-top: 25px;",
-            actionButton("ch3_q_q1", "Q1 (25%)", class = "lc-btn-outline"),
-            actionButton("ch3_q_med", "Mediana (50%)", class = "lc-btn-outline"),
-            actionButton("ch3_q_q3", "Q3 (75%)", class = "lc-btn-outline")
+            lc_action("ch3_q_q1", "Q1 (25%)", variant = "outline"),
+            lc_action("ch3_q_med", "Mediana (50%)", variant = "outline"),
+            lc_action("ch3_q_q3", "Q3 (75%)", variant = "outline")
           )
         )
       ),
 
       hr(),
 
-      zoom_plot_ui("ch3_q_hist", height = "280px"),
-      zoom_plot_ui("ch3_q_box", height = "120px"),
+      lc_plot("ch3_q_hist", max_height = "280px"),
+      lc_plot("ch3_q_box", ratio = "5.2/1", max_height = "120px"),
 
       lc_center(
         uiOutput("ch3_q_text")
@@ -381,7 +364,7 @@ ch3_ui <- list(
                      class = "lc-btn-ok", style = "margin-right: 6px;")
       ),
       uiOutput("ch3_game_status_banner"),
-      zoom_plot_ui("ch3_game_plot", height = "350px", click = "ch3_game_click"),
+      lc_plot("ch3_game_plot", ratio = "1.8/1", max_height = "350px"),
       uiOutput("ch3_game_feedback")
     ),
 
@@ -431,10 +414,7 @@ ch3_server <- function(input, output, session) {
 
   output$ch3_hist_bin_slider <- renderUI({
     d <- ch3_hist_defaults[[input$ch3_hist_var]]
-    sliderInput("ch3_hist_bin_width",
-                "Szerokość binu:",
-                min = d$min, max = d$max,
-                value = d$value, step = d$step)
+    lc_slider("ch3_hist_bin_width", "Szerokość binu", d$min, d$max, d$value, d$step)
   })
 
   # Compute bin breaks

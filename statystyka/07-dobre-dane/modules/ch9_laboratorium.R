@@ -54,7 +54,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
 
     div(class = "lc-figure-panel",
       uiOutput("tab8_quiz"),
-      actionButton("tab8_check_quiz", "Sprawdź odpowiedzi", class = "lc-btn-primary"),
+      lc_action("tab8_check_quiz", "Sprawdź odpowiedzi", variant = "solid"),
       uiOutput("tab8_quiz_result")
     ),
 
@@ -139,28 +139,28 @@ ch9_server <- function(input, output, session) {
         tags$strong("1."),
         paste0(" Hemoglobina: -14.2 g/dL | Wiek: ", lab_data$wiek[3], " lat | Płeć: ", lab_data$plec[3]),
         tags$br(),
-        radioButtons("tab8_q1", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
+        lc_segmented("tab8_q1", NULL, choices = c("Błąd danych", "Prawdziwy outlier"))
       ),
 
       div(style = "margin: 14px 0; padding: 10px; background: var(--upwr-panel); border-radius: 6px;",
         tags$strong("2."),
         paste0(" Hemoglobina: 1420 g/dL | Wiek: ", lab_data$wiek[17], " lat | Płeć: ", lab_data$plec[17]),
         tags$br(),
-        radioButtons("tab8_q2", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
+        lc_segmented("tab8_q2", NULL, choices = c("Błąd danych", "Prawdziwy outlier"))
       ),
 
       div(style = "margin: 14px 0; padding: 10px; background: var(--upwr-panel); border-radius: 6px;",
         tags$strong("3."),
         paste0(" Ciśnienie skurczowe: -70 mmHg | Wiek: ", lab_data$wiek[42], " lat | Płeć: ", lab_data$plec[42]),
         tags$br(),
-        radioButtons("tab8_q3", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
+        lc_segmented("tab8_q3", NULL, choices = c("Błąd danych", "Prawdziwy outlier"))
       ),
 
       div(style = "margin: 14px 0; padding: 10px; background: var(--upwr-panel); border-radius: 6px;",
         tags$strong("4."),
         paste0(" Glukoza: 11 000 mg/dL | Wiek: ", lab_data$wiek[28], " lat | Płeć: ", lab_data$plec[28]),
         tags$br(),
-        radioButtons("tab8_q4", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
+        lc_segmented("tab8_q4", NULL, choices = c("Błąd danych", "Prawdziwy outlier"))
       ),
 
       div(style = "margin: 14px 0; padding: 10px; background: var(--upwr-panel); border-radius: 6px;",
@@ -168,7 +168,7 @@ ch9_server <- function(input, output, session) {
         paste0(" Glukoza: 310 mg/dL | Wiek: ", lab_data$wiek[100], " lat | Płeć: ", lab_data$plec[100],
                " | Hemoglobina: ", lab_data$hemoglobina[100], " g/dL"),
         tags$br(),
-        radioButtons("tab8_q5", NULL, choices = c("Błąd danych", "Prawdziwy outlier"), inline = TRUE)
+        lc_segmented("tab8_q5", NULL, choices = c("Błąd danych", "Prawdziwy outlier"))
       )
     )
   })

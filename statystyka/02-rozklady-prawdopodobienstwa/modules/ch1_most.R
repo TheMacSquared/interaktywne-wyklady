@@ -85,10 +85,8 @@ ch1_ui <- list(
             ),
             selected = "normal"
           ),
-          sliderInput("ch1_emp_n", "Wielkość próby:",
-                      min = 20, max = 5000, value = 200, step = 20),
-          actionButton("ch1_emp_resample", "Losuj nową próbę",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_slider("ch1_emp_n", "Wielkość próby", 20, 5000, 200, 20),
+          lc_action("ch1_emp_resample", "Losuj nową próbę", icon = "shuffle", variant = "solid"),
           hr(),
           checkboxInput("ch1_show_hist", "Histogram (dane empiryczne)", value = TRUE),
           checkboxInput("ch1_show_density", "Krzywa gęstości (model teoretyczny)", value = FALSE)
@@ -128,18 +126,13 @@ ch1_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          radioButtons("ch1_scenario", "Scenariusz:",
-            choices = c(
+          lc_segmented("ch1_scenario", "Scenariusz", choices = c(
               "Uczciwa kostka"   = "fair",
               "Obciążona kostka" = "loaded",
               "Moneta"           = "coin"
-            ),
-            selected = "fair"
-          ),
-          sliderInput("ch1_n_obs", "Liczba obserwacji:",
-                      min = 10, max = 5000, value = 100, step = 10),
-          actionButton("ch1_resample", "Losuj ponownie",
-                       class = "lc-btn-primary", width = "100%")
+            ), selected = "fair"),
+          lc_slider("ch1_n_obs", "Liczba obserwacji", 10, 5000, 100, 10),
+          lc_action("ch1_resample", "Losuj ponownie", icon = "shuffle", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch1_freq_vs_prob", height = "350px"),
@@ -171,10 +164,10 @@ ch1_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(6,
-          sliderInput("ch1_p1", "P(Wynik A):", min = 0, max = 1, value = 0.25, step = 0.01),
-          sliderInput("ch1_p2", "P(Wynik B):", min = 0, max = 1, value = 0.25, step = 0.01),
-          sliderInput("ch1_p3", "P(Wynik C):", min = 0, max = 1, value = 0.25, step = 0.01),
-          sliderInput("ch1_p4", "P(Wynik D):", min = 0, max = 1, value = 0.25, step = 0.01),
+          lc_slider("ch1_p1", "P(Wynik A)", 0, 1, 0.25, 0.01),
+          lc_slider("ch1_p2", "P(Wynik B)", 0, 1, 0.25, 0.01),
+          lc_slider("ch1_p3", "P(Wynik C)", 0, 1, 0.25, 0.01),
+          lc_slider("ch1_p4", "P(Wynik D)", 0, 1, 0.25, 0.01),
           uiOutput("ch1_sum_check")
         ),
         column(6,

@@ -36,7 +36,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     lc_h2("sec-04", "Odkryj ukryty problem"),
 
     div(class = "lc-figure-panel",
-      actionButton("tab10_reveal", "Pokaż dane w kolejności", class = "lc-btn-warning lc-btn-lg", width = "100%"),
+      lc_action("tab10_reveal", "Pokaż dane w kolejności", variant = "solid"),
       conditionalPanel("input.tab10_reveal > 0",
         zoom_plot_ui("tab10_lineplot", height = "350px"),
         div(class = "lc-feedback lc-feedback-danger",

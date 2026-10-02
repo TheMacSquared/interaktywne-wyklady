@@ -36,20 +36,14 @@ ch5_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch5_mu", "μ (średnia):",
-                      min = -10, max = 10, value = 0, step = 0.5),
-          sliderInput("ch5_sigma", "σ (odch. std.):",
-                      min = 0.5, max = 5, value = 1, step = 0.1),
+          lc_slider("ch5_mu", "μ (średnia)", -10, 10, 0, 0.5),
+          lc_slider("ch5_sigma", "σ (odch. std.)", 0.5, 5, 1, 0.1),
           hr(),
           div(class = "preset-buttons",
-            actionButton("ch5_preset_std", "N(0,1)\nStandardowy",
-                         class = "lc-btn-outline"),
-            actionButton("ch5_preset_wzrost_k", "Wzrost\nkobiet",
-                         class = "lc-btn-ok-outline"),
-            actionButton("ch5_preset_iq", "IQ",
-                         class = "lc-btn-warning-outline"),
-            actionButton("ch5_preset_temp", "Temp.\nciała",
-                         class = "lc-btn-danger-outline")
+            lc_action("ch5_preset_std", "N(0,1)\nStandardowy", variant = "outline"),
+            lc_action("ch5_preset_wzrost_k", "Wzrost\nkobiet", variant = "solid"),
+            lc_action("ch5_preset_iq", "IQ", variant = "solid"),
+            lc_action("ch5_preset_temp", "Temp.\nciała", variant = "solid")
           ),
           hr(),
           checkboxInput("ch5_show_empirical", "Pokaż regułę 68-95-99.7", value = TRUE)
@@ -78,16 +72,15 @@ ch5_ui <- list(
       fluidRow(
         column(3,
           h5("Rozkład A", style = "color: var(--upwr-cat-niebo);"),
-          sliderInput("ch5_cmp_mu1", "μ₁:", min = -5, max = 15, value = 5, step = 0.5),
-          sliderInput("ch5_cmp_s1", "σ₁:", min = 0.5, max = 5, value = 1.5, step = 0.1)
+          lc_slider("ch5_cmp_mu1", "μ₁", -5, 15, 5, 0.5),
+          lc_slider("ch5_cmp_s1", "σ₁", 0.5, 5, 1.5, 0.1)
         ),
         column(3,
           h5("Rozkład B", style = "color: var(--upwr-accent);"),
-          sliderInput("ch5_cmp_mu2", "μ₂:", min = -5, max = 15, value = 8, step = 0.5),
-          sliderInput("ch5_cmp_s2", "σ₂:", min = 0.5, max = 5, value = 2, step = 0.1),
+          lc_slider("ch5_cmp_mu2", "μ₂", -5, 15, 8, 0.5),
+          lc_slider("ch5_cmp_s2", "σ₂", 0.5, 5, 2, 0.1),
           hr(),
-          actionButton("ch5_cmp_preset", "Mężczyźni vs\nkobiety (wzrost)",
-                       class = "lc-btn-outline", width = "100%")
+          lc_action("ch5_cmp_preset", "Mężczyźni vs\nkobiety (wzrost)", variant = "outline")
         ),
         column(6,
           zoom_plot_ui("ch5_compare_plot", height = "350px")
@@ -144,18 +137,15 @@ ch5_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          radioButtons("ch5_prob_type", "Typ pytania:",
-            choices = c(
+          lc_segmented("ch5_prob_type", "Typ pytania", choices = c(
               "P(Z < a)" = "less",
               "P(Z > a)" = "greater",
               "P(a < Z < b)" = "between"
-            ),
-            selected = "between"
-          ),
-          sliderInput("ch5_prob_a", "a:", min = -4, max = 4, value = -1, step = 0.05),
+            ), selected = "between"),
+          lc_slider("ch5_prob_a", "a", -4, 4, -1, 0.05),
           conditionalPanel(
             condition = "input.ch5_prob_type == 'between'",
-            sliderInput("ch5_prob_b", "b:", min = -4, max = 4, value = 1, step = 0.05)
+            lc_slider("ch5_prob_b", "b", -4, 4, 1, 0.05)
           )
         ),
         column(8,

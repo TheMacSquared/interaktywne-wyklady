@@ -55,22 +55,19 @@ ch5_ui <- list(
           tags$em("„Czy szansa dostania mandatu jest niezależna od płci?”"))
       ),
 
-      actionButton("ch5_narr_step1", "1. Pokaż dane",
-                   class = "lc-btn-outline", width = "100%"),
+      lc_action("ch5_narr_step1", "1. Pokaż dane", variant = "outline"),
       uiOutput("ch5_narr1"),
       br(),
 
       conditionalPanel(
         condition = "input.ch5_narr_step1 % 2 == 1",
-        actionButton("ch5_narr_step2", "2. Załóżmy niezależność — co by było?",
-                     class = "lc-btn-outline", width = "100%"),
+        lc_action("ch5_narr_step2", "2. Załóżmy niezależność — co by było?", variant = "outline"),
         uiOutput("ch5_narr2"),
         br(),
 
         conditionalPanel(
           condition = "input.ch5_narr_step2 % 2 == 1",
-          actionButton("ch5_narr_step3", "3. Porównaj: obserwowane i oczekiwane",
-                       class = "lc-btn-outline", width = "100%"),
+          lc_action("ch5_narr_step3", "3. Porównaj: obserwowane i oczekiwane", variant = "outline"),
           uiOutput("ch5_narr3")
         )
       )
@@ -126,21 +123,15 @@ ch5_ui <- list(
             ),
             selected = "packaging"
           ),
-          sliderInput("ch5_n", "Wielkość próby (n):",
-                      min = 50, max = 300, value = 120, step = 10),
-          actionButton("ch5_new_sample", "Losuj próbę",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_slider("ch5_n", "Wielkość próby (n)", 50, 300, 120, 10),
+          lc_action("ch5_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
           hr(),
           h5("Kroki testu:"),
           lc_stack(gap = "sm",
-            actionButton("ch5_step1", "1. Tabela obserwowana",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch5_step2", "2. Procenty — co widzimy?",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch5_step3", "3. Tabela oczekiwana + χ²",
-                         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch5_step4", "4. p-wartość i decyzja",
-                         class = "lc-btn-outline", width = "100%")
+            lc_action("ch5_step1", "1. Tabela obserwowana", variant = "outline"),
+            lc_action("ch5_step2", "2. Procenty — co widzimy?", variant = "outline"),
+            lc_action("ch5_step3", "3. Tabela oczekiwana + χ²", variant = "outline"),
+            lc_action("ch5_step4", "4. p-wartość i decyzja", variant = "outline")
           )
         ),
         column(8,
@@ -166,8 +157,7 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 7.3",
       title = "Porównanie: χ² vs Fisher",
-      actionButton("ch5_compare", "Porównaj χ² i Fishera (na tych samych danych)",
-                   class = "lc-btn-primary", width = "100%"),
+      lc_action("ch5_compare", "Porównaj χ² i Fishera (na tych samych danych)", variant = "solid"),
       br(), br(),
       uiOutput("ch5_compare_result")
     ),
@@ -229,8 +219,7 @@ ch5_ui <- list(
         " i wykonaj test χ² niezależności.
         Zapisz: χ², df, p. Co wynika? Czy typ szkoły jest niezależny
         od odsetka uczniów uczących się angielskiego?"),
-      actionButton("cas_ch5_ans8", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("cas_ch5_ans8", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch5_sol8")
     ),
 
@@ -241,8 +230,7 @@ ch5_ui <- list(
         " i ", tags$code("high_lunch = (lunch > 50)"),
         ". Wykonaj test χ² niezależności. Czy STR i ubóstwo są ze sobą powiązane?
         Co sugeruje wynik dla interpretacji zadania 5 z korelacji?"),
-      actionButton("cas_ch5_ans9", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("cas_ch5_ans9", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch5_sol9")
     ),
 

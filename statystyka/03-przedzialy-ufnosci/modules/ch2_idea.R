@@ -53,18 +53,13 @@ ch2_ui <- list(
             ),
             selected = "normal"
           ),
-          sliderInput("ch2_n", "Wielkość próby (n):",
-                      min = 5, max = 100, value = 30, step = 5),
-          sliderInput("ch2_conf", "Poziom ufności:",
-                      min = 0.80, max = 0.99, value = 0.95, step = 0.01),
+          lc_slider("ch2_n", "Wielkość próby (n)", 5, 100, 30, 5),
+          lc_slider("ch2_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01),
           hr(),
           lc_stack(gap = "md",
-            actionButton("ch2_sim_10", "Dolosuj 10 przedziałów",
-                         class = "lc-btn-primary", width = "100%"),
-            actionButton("ch2_sim_50", "Dolosuj 50 przedziałów",
-                         class = "lc-btn-warning", width = "100%"),
-            actionButton("ch2_sim_reset", "Reset",
-                         class = "lc-btn-secondary-outline", width = "100%")
+            lc_action("ch2_sim_10", "Dolosuj 10 przedziałów", variant = "solid"),
+            lc_action("ch2_sim_50", "Dolosuj 50 przedziałów", variant = "solid"),
+            lc_action("ch2_sim_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
           ),
           br(),
           uiOutput("ch2_coverage_info")

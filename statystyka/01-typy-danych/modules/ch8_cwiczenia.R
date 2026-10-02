@@ -149,7 +149,7 @@ ch8_ui <- list(
       p("Wypełnij tabelę:"),
       uiOutput("ch8_table1")
     ),
-    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm")
+    lc_action("ch8_ans1", "Pokaż rozwiązanie", variant = "solid")
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -168,7 +168,7 @@ ch8_ui <- list(
           Co byś użył/a zamiast tego?")
       )
     ),
-    actionButton("ch8_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans2", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol2")
   ),
 
@@ -193,7 +193,7 @@ ch8_ui <- list(
           tags$b("bezsensowne"), "? Podaj przykład.")
       )
     ),
-    actionButton("ch8_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans3", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol3")
   ),
 
@@ -210,7 +210,7 @@ ch8_ui <- list(
       p(tags$em("Pytanie:"), " Dlaczego histogram dla ", tags$code("liczba_wypadkow"),
         " może być mylący? (Podpowiedź: ile różnych wartości ma ta zmienna?)")
     ),
-    actionButton("ch8_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans4", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol4")
   ),
 
@@ -231,7 +231,7 @@ ch8_ui <- list(
       p(tags$em("Wskazówka:"), " W Jamovi możesz rozbić analizę na grupy przez ",
         tags$b("Split by"), " w Descriptives.")
     ),
-    actionButton("ch8_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans5", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol5")
   ),
 
@@ -249,7 +249,7 @@ ch8_ui <- list(
         tags$li("Sformułuj rekomendację jednym zdaniem: która branża wymaga pilnej kontroli i dlaczego?")
       )
     ),
-    actionButton("ch8_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans6", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol6")
   ),
 
@@ -263,7 +263,7 @@ ch8_ui <- list(
       tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
     )
   ),
-  actionButton("ch8_ans_summary", "Pokaż odpowiedzi", class = "lc-btn-ok-outline lc-btn-sm"),
+  lc_action("ch8_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
   uiOutput("ch8_sol_summary")
 )
 
@@ -294,7 +294,7 @@ ch8_ui <- list(
       p("Wypełnij tabelę:"),
       uiOutput("ch8_table1")
     ),
-    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm")
+    lc_action("ch8_ans1", "Pokaż rozwiązanie", variant = "solid")
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -311,7 +311,7 @@ ch8_ui <- list(
           Co byś użył/a zamiast tego?")
       )
     ),
-    actionButton("ch8_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans2", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol2")
   ),
 
@@ -334,7 +334,7 @@ ch8_ui <- list(
           tags$code("uprawa"), " w Jamovi? Czy program Ci na to pozwoli?")
       )
     ),
-    actionButton("ch8_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans3", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol3")
   ),
 
@@ -351,7 +351,7 @@ ch8_ui <- list(
       p(tags$em("Pytanie:"), " Dlaczego wykres kołowy dla ",
         tags$code("uprawa"), " byłby złym wyborem, jeśli upraw jest 6+?")
     ),
-    actionButton("ch8_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans4", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol4")
   ),
 
@@ -369,7 +369,7 @@ ch8_ui <- list(
         tags$li("Porównanie: plon wg klasy gleby (boxplot)")
       )
     ),
-    actionButton("ch8_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans5", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol5")
   ),
 
@@ -385,7 +385,7 @@ ch8_ui <- list(
         tags$li("Sformułuj rekomendację: które pola wymagają uwagi i dlaczego?")
       )
     ),
-    actionButton("ch8_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans6", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol6")
   ),
 
@@ -399,7 +399,7 @@ ch8_ui <- list(
       tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
     )
   ),
-  actionButton("ch8_ans_summary", "Pokaż odpowiedzi", class = "lc-btn-ok-outline lc-btn-sm"),
+  lc_action("ch8_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
   uiOutput("ch8_sol_summary")
 )
 
@@ -430,7 +430,7 @@ ch8_ui <- list(
       p("Wypełnij tabelę:"),
       uiOutput("ch8_table1")
     ),
-    actionButton("ch8_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm")
+    lc_action("ch8_ans1", "Pokaż rozwiązanie", variant = "solid")
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -446,7 +446,7 @@ ch8_ui <- list(
         tags$li("Czy średnia z ", tags$code("klasa_jakosci"), " ma sens? Dlaczego?")
       )
     ),
-    actionButton("ch8_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans2", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol2")
   ),
 
@@ -469,7 +469,7 @@ ch8_ui <- list(
           tags$code("typ_produktu"), ", ale które są bezsensowne?")
       )
     ),
-    actionButton("ch8_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans3", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol3")
   ),
 
@@ -486,7 +486,7 @@ ch8_ui <- list(
       p(tags$em("Pytanie:"), " Gdybyś chciał/a porównać zawartość soli między typami produktów,
         jaki wykres byś wybrał/a?")
     ),
-    actionButton("ch8_ans4", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans4", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol4")
   ),
 
@@ -504,7 +504,7 @@ ch8_ui <- list(
         tags$li("Porównanie: zawartość soli wg typu produktu (boxplot)")
       )
     ),
-    actionButton("ch8_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans5", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol5")
   ),
 
@@ -522,7 +522,7 @@ ch8_ui <- list(
         tags$li("Sformułuj rekomendację: która linia wymaga korekty i dlaczego?")
       )
     ),
-    actionButton("ch8_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch8_ans6", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch8_sol6")
   ),
 
@@ -536,7 +536,7 @@ ch8_ui <- list(
       tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
     )
   ),
-  actionButton("ch8_ans_summary", "Pokaż odpowiedzi", class = "lc-btn-ok-outline lc-btn-sm"),
+  lc_action("ch8_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
   uiOutput("ch8_sol_summary")
 )
 

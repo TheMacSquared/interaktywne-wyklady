@@ -227,16 +227,12 @@ ch2h_ui <- list(
       title = "Wizualizacja: jedno- i dwustronny",
       fluidRow(
         column(4,
-          radioButtons("ch2h_sided", "Typ testu:",
-            choices = c(
+          lc_segmented("ch2h_sided", "Typ testu", choices = c(
               "Dwustronny (≠)" = "two.sided",
               "Prawostronny (>)" = "greater",
               "Lewostronny (<)" = "less"
-            ),
-            selected = "two.sided"
-          ),
-          sliderInput("ch2h_alpha", "α:",
-                      min = 0.01, max = 0.10, value = 0.05, step = 0.01)
+            ), selected = "two.sided"),
+          lc_slider("ch2h_alpha", "α", 0.01, 0.10, 0.05, 0.01)
         ),
         column(8,
           div(class = "ws-chart-wrap",

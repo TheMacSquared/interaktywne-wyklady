@@ -52,10 +52,8 @@ ch1_ui <- lecture_chapter(
             ),
             selected = "normal"
           ),
-          sliderInput("ch1_n", "Wielkość próby (n):",
-                      min = 10, max = 200, value = 50, step = 10),
-          actionButton("ch1_gen", "Generuj dane",
-                       class = "lc-btn-primary", width = "100%")
+          lc_slider("ch1_n", "Wielkość próby (n)", 10, 200, 50, 10),
+          lc_action("ch1_gen", "Generuj dane", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch1_normality_plots", height = "350px")
@@ -88,8 +86,7 @@ ch1_ui <- lecture_chapter(
       fluidRow(
         column(4,
           helpText("Używa danych z widgetu powyżej."),
-          actionButton("ch1_test_norm", "Policz test Shapiro–Wilka",
-                       class = "lc-btn-primary", width = "100%")
+          lc_action("ch1_test_norm", "Policz test Shapiro–Wilka", variant = "solid")
         ),
         column(8,
           uiOutput("ch1_norm_results")
@@ -125,9 +122,8 @@ ch1_ui <- lecture_chapter(
       fluidRow(
         column(4,
           helpText("Generujemy dane prawoskośne i stosujemy log()."),
-          sliderInput("ch1_trans_n", "n:", min = 30, max = 200, value = 80, step = 10),
-          actionButton("ch1_transform", "Generuj i transformuj",
-                       class = "lc-btn-warning", width = "100%")
+          lc_slider("ch1_trans_n", "n", 30, 200, 80, 10),
+          lc_action("ch1_transform", "Generuj i transformuj", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch1_transform_plots", height = "300px"),

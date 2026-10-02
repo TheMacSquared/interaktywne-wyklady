@@ -8,8 +8,7 @@
 .ch7_sat_reg_panel <- function(id, title, ...) {
   figure_panel(
     label = paste("Ćw. S", id), title = title, tagList(...),
-    actionButton(paste0("ch7_sat_ans", id), "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action(paste0("ch7_sat_ans", id), "Pokaż rozwiązanie", variant = "solid"),
     uiOutput(paste0("ch7_sat_sol", id))
   )
 }

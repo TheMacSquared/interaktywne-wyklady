@@ -27,7 +27,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     lc_h2("sec-03", "Ile obserwacji naprawdę potrzebujesz?"),
 
     div(class = "lc-figure-panel",
-      sliderInput("tab2_n", "Liczba obserwacji:", min = 5, max = 200, value = 8, step = 1),
+      lc_slider("tab2_n", "Liczba obserwacji", 5, 200, 8, 1),
       fluidRow(
         column(6, zoom_plot_ui("tab2_hist", height = "280px")),
         column(6, zoom_plot_ui("tab2_ci", height = "280px"))

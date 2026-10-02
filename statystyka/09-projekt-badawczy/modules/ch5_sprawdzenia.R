@@ -101,7 +101,7 @@ ch5_server <- function(input, output, session) {
       div(class = "lc-figure-panel",
         h4(tr$short),
         p(tags$strong("Pytanie: "), tr$question),
-        zoom_plot_ui(paste0("ch5_plot_", id), height = "320px"),
+        lc_plot(paste0("ch5_plot_", id), ratio = "1.9/1", max_height = "320px"),
         tags$p(style = "margin-top: 12px;", tags$strong("Statystyki opisowe (eval):")),
         desc_tbl,
         tags$p(tags$strong(paste0("Miara efektu (", effect_kind, "): ")),

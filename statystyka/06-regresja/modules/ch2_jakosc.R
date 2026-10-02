@@ -233,7 +233,7 @@ ch2_ui <- list(
       label = "Ryc. 2.2", title = "To samo X i Y, różna siła wyjaśniania",
       full_width = TRUE,
       helpText("Trzy stałe przykłady: niskie, średnie i wysokie R². Im ciaśniej punkty leżą przy linii, tym większa część zmienności Y jest wyjaśniona przez X."),
-      zoom_plot_ui("ch2_r2_compare_plot", height = "360px")
+      lc_plot("ch2_r2_compare_plot", ratio = "1.7/1", max_height = "360px")
     ),
 
     tagList(
@@ -272,7 +272,7 @@ ch2_ui <- list(
         helpText("Te same dane treningowe i testowe, trzy poziomy elastyczności modelu.
                   Model przeuczony potrafi mocno falować między punktami treningowymi,
                   mimo że nie poprawia przewidywania nowych obserwacji."),
-        zoom_plot_ui("ch2_overfit_plot", height = "380px"),
+        lc_plot("ch2_overfit_plot", ratio = "1.6/1", max_height = "380px"),
         uiOutput("ch2_overfit_stats")
       ),
       figure_panel(
@@ -378,8 +378,7 @@ ch2_ui <- list(
       fluidRow(
         column(4,
           helpText("Przesuń suwak poza zakres danych (szary pas) i obserwuj, jak predykcja traci grunt pod nogami."),
-          sliderInput("ch2_extrap_x", "Dochód okręgu (tys. USD):",
-            min = 1, max = 80, value = 20, step = 1),
+          lc_slider("ch2_extrap_x", "Dochód okręgu (tys. USD)", 1, 80, 20, 1),
           uiOutput("ch2_extrap_verdict")
         ),
         column(8,

@@ -46,7 +46,7 @@ ch7_ui <- list(
           tags$li("Sprawdź R² i oceń, czy model wyjaśnia dużo zmienności.")
         )
       ),
-      actionButton("ch7_ans1", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch7_ans1", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch7_sol1")
     ),
 
@@ -57,7 +57,7 @@ ch7_ui <- list(
         p("Następnie policz predykcję dla ", tags$code("lunch = 110"),
           ". Czy druga predykcja ma sens? Uzasadnij.")
       ),
-      actionButton("ch7_ans2", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch7_ans2", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch7_sol2")
     ),
 
@@ -74,7 +74,7 @@ ch7_ui <- list(
         p("Porównaj R², adjusted R², AIC, BIC i RMSE. Który model wybierzesz
           do wyjaśniania, a który do predykcji?")
       ),
-      actionButton("ch7_ans3", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch7_ans3", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch7_sol3")
     ),
 
@@ -85,7 +85,7 @@ ch7_ui <- list(
         p("Czy widzisz sygnał nieliniowości, obserwacji odstających albo
           problemu z normalnością reszt? Co zrobiłbyś dalej?")
       ),
-      actionButton("ch7_ans4", "Pokaż wskazówkę", class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch7_ans4", "Pokaż wskazówkę", variant = "solid"),
       uiOutput("ch7_sol4")
     ),
 
@@ -99,7 +99,7 @@ ch7_ui <- list(
           " i porównaj go ze współczynnikiem w modelu prostym ",
           tags$code("math ~ income"), ".")
       ),
-      actionButton("ch7_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch7_ans5", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch7_sol5")
     ),
 
@@ -116,10 +116,7 @@ ch7_ui <- list(
         ),
         p("Porównaj znak współczynnika długości dzioba i wyjaśnij, dlaczego się zmienił.")
       ),
-      actionButton(
-        "ch7_ans5a", "Pokaż rozwiązanie",
-        class = "lc-btn-ok-outline lc-btn-sm"
-      ),
+      lc_action("ch7_ans5a", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch7_sol5a")
     ),
 
@@ -134,10 +131,7 @@ ch7_ui <- list(
         ),
         p("Narysuj przewidywane linie, sprawdź składniki interakcji i porównaj AIC.")
       ),
-      actionButton(
-        "ch7_ans5b", "Pokaż rozwiązanie",
-        class = "lc-btn-ok-outline lc-btn-sm"
-      ),
+      lc_action("ch7_ans5b", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch7_sol5b")
     ),
 
@@ -157,7 +151,7 @@ model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
           z 22 godzinami nauki i średnią 3.8, a potem porównaj decyzję
           przy progach 0.5 i 0.7.")
       ),
-      actionButton("ch7_ans6", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("ch7_ans6", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("ch7_sol6")
     ),
 

@@ -58,8 +58,7 @@ ch4_ui <- list(
       fluidRow(
         column(4,
           helpText("Modele z 1, 2, 3 i 4 predyktorami — porównanie metryk."),
-          actionButton("ch4_stepwise", "Buduj modele krok po kroku",
-                       class = "lc-btn-warning", width = "100%")
+          lc_action("ch4_stepwise", "Buduj modele krok po kroku", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch4_step_plot", height = "300px"),
@@ -126,9 +125,8 @@ ch4_ui <- list(
         column(4,
           helpText("Generujemy dane i budujemy 4 modele z różną
                     liczbą predyktorów."),
-          sliderInput("ch4_n", "n:", min = 50, max = 300, value = 150, step = 25),
-          actionButton("ch4_compare", "Buduj i porównaj modele",
-                       class = "lc-btn-primary", width = "100%")
+          lc_slider("ch4_n", "n", 50, 300, 150, 25),
+          lc_action("ch4_compare", "Buduj i porównaj modele", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch4_metrics_plot", height = "350px"),
@@ -161,12 +159,9 @@ ch4_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch4_poly_degree", "Stopień wielomianu:",
-                      min = 1, max = 15, value = 1, step = 1),
-          sliderInput("ch4_poly_n", "n (punktów):",
-                      min = 15, max = 100, value = 30, step = 5),
-          actionButton("ch4_poly_gen", "Generuj",
-                       class = "lc-btn-primary", width = "100%")
+          lc_slider("ch4_poly_degree", "Stopień wielomianu", 1, 15, 1, 1),
+          lc_slider("ch4_poly_n", "n (punktów)", 15, 100, 30, 5),
+          lc_action("ch4_poly_gen", "Generuj", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch4_poly_plot", height = "300px"),
@@ -190,10 +185,8 @@ ch4_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch4_tt_degree", "Stopień wielomianu:",
-                      min = 1, max = 15, value = 1, step = 1),
-          actionButton("ch4_tt_new", "Nowy podział train/test",
-                       class = "lc-btn-warning", width = "100%")
+          lc_slider("ch4_tt_degree", "Stopień wielomianu", 1, 15, 1, 1),
+          lc_action("ch4_tt_new", "Nowy podział train/test", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch4_tt_plot", height = "330px"),

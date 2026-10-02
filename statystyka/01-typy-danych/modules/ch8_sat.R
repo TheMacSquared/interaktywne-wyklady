@@ -10,8 +10,7 @@
     label = "Ćwiczenie",
     h4(title),
     tagList(...),
-    actionButton(paste0("ch8_ans", id), "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action(paste0("ch8_ans", id), "Pokaż rozwiązanie", variant = "solid"),
     uiOutput(paste0("ch8_sol", id))
   )
 }
@@ -31,8 +30,7 @@
     h4("Zadanie 1 — Jakiego typu są dane z obserwacji?"),
     p("Dla każdej zmiennej określ typ i sensowny wykres:"),
     uiOutput("ch8_table1"),
-    actionButton("ch8_ans1", "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm")
+    lc_action("ch8_ans1", "Pokaż rozwiązanie", variant = "solid")
   ),
 
   .ch8_sat_panel("2", "Zadanie 2 — Liczba nie zawsze oznacza ilość",
@@ -94,8 +92,7 @@
        jednostką obserwacji jest lokalizacja i termin, a bliskie lokalizacje
        mogą nie dostarczać całkowicie niezależnej informacji.")
   ),
-  actionButton("ch8_ans_summary", "Pokaż odpowiedzi",
-               class = "lc-btn-ok-outline lc-btn-sm"),
+  lc_action("ch8_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
   uiOutput("ch8_sol_summary")
 )
 

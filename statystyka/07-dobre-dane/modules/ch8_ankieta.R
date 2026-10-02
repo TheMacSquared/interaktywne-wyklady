@@ -29,14 +29,14 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     div(class = "lc-figure-panel",
       selectInput("tab7_var", "Wybierz zmienną:",
         choices = c("wiek", "wyksztalcenie", "doswiadczenie", "dostepnosc", "ocena_umiejetnosci")),
-      actionButton("tab7_mean", "Policz średnią", class = "lc-btn-primary"),
+      lc_action("tab7_mean", "Policz średnią", variant = "solid"),
       uiOutput("tab7_mean_result")
     ),
 
     lc_h2("sec-04", "Jak to naprawić?"),
 
     div(class = "lc-figure-panel",
-      radioButtons("tab7_toggle", "Widok danych:", choices = c("Surowe", "Oczyszczone"), inline = TRUE),
+      lc_segmented("tab7_toggle", "Widok danych", choices = c("Surowe", "Oczyszczone")),
       uiOutput("tab7_clean_table"),
       uiOutput("tab7_clean_info")
     ),

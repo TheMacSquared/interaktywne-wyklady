@@ -36,11 +36,10 @@ ch3_ui <- lecture_chapter(
       title = "Symulacja: χ² vs Fisher przy małych n",
       fluidRow(
         column(4,
-          sliderInput("ch3_n", "Wielkość próby:", min = 10, max = 200, value = 20, step = 5),
+          lc_slider("ch3_n", "Wielkość próby", 10, 200, 20, 5),
           helpText("Generujemy 500 prób z H₀ prawdziwą (brak związku).
                     Sprawdzamy, jak często każdy test fałszywie odrzuci H₀."),
-          actionButton("ch3_sim", "Symuluj",
-                       class = "lc-btn-warning", width = "100%")
+          lc_action("ch3_sim", "Symuluj", variant = "solid")
         ),
         column(8,
           uiOutput("ch3_sim_results"),

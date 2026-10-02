@@ -131,13 +131,10 @@ ch7_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          radioButtons("ch7_tree_choice", "Wybierz typ zmiennej:",
-            choices = c(
+          lc_segmented("ch7_tree_choice", "Wybierz typ zmiennej", choices = c(
               "Zmienna dyskretna" = "discrete",
               "Zmienna ciągła"   = "continuous"
-            ),
-            selected = "discrete"
-          ),
+            ), selected = "discrete"),
           conditionalPanel(
             condition = "input.ch7_tree_choice == 'discrete'",
             radioButtons("ch7_disc_type", "Jaki mechanizm?",

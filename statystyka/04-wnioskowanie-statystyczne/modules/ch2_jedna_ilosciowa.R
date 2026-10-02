@@ -122,21 +122,15 @@ ch2_ui <- list(
               ),
               selected = "concentration"
             ),
-            sliderInput("ch2_n", "Wielkość próby (n):",
-                        min = 10, max = 100, value = 40, step = 5),
-            actionButton("ch2_new_sample", "Losuj próbę",
-                         class = "lc-btn-primary ch2-sample-reset", width = "100%"),
+            lc_slider("ch2_n", "Wielkość próby (n)", 10, 100, 40, 5),
+            lc_action("ch2_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
             hr(),
             h5("Kroki testu:"),
             lc_stack(gap = "sm",
-              actionButton("ch2_step1", "1. Dane",
-                           class = "lc-btn-outline ch2-step-btn", width = "100%"),
-              actionButton("ch2_step2", "2. Statystyki opisowe",
-                           class = "lc-btn-outline ch2-step-btn", width = "100%"),
-              actionButton("ch2_step3", "3. Statystyka testowa",
-                           class = "lc-btn-outline ch2-step-btn", width = "100%"),
-              actionButton("ch2_step4", "4. p-wartość i decyzja",
-                           class = "lc-btn-outline ch2-step-btn", width = "100%")
+              lc_action("ch2_step1", "1. Dane", variant = "outline"),
+              lc_action("ch2_step2", "2. Statystyki opisowe", variant = "outline"),
+              lc_action("ch2_step3", "3. Statystyka testowa", variant = "outline"),
+              lc_action("ch2_step4", "4. p-wartość i decyzja", variant = "outline")
             )
           ),
           column(8,
@@ -190,14 +184,10 @@ ch2_ui <- list(
             hr(),
             h5("Kroki testu:"),
             lc_stack(gap = "sm",
-              actionButton("ch2b_step1", "1. Dane",
-                           class = "lc-btn-outline ch2-step-btn", width = "100%"),
-              actionButton("ch2b_step2", "2. Statystyki opisowe",
-                           class = "lc-btn-outline ch2-step-btn", width = "100%"),
-              actionButton("ch2b_step3", "3. Statystyka testowa",
-                           class = "lc-btn-outline ch2-step-btn", width = "100%"),
-              actionButton("ch2b_step4", "4. p-wartość i decyzja",
-                           class = "lc-btn-outline ch2-step-btn", width = "100%")
+              lc_action("ch2b_step1", "1. Dane", variant = "outline"),
+              lc_action("ch2b_step2", "2. Statystyki opisowe", variant = "outline"),
+              lc_action("ch2b_step3", "3. Statystyka testowa", variant = "outline"),
+              lc_action("ch2b_step4", "4. p-wartość i decyzja", variant = "outline")
             )
           ),
           column(8,
@@ -241,8 +231,7 @@ ch2_ui <- list(
         tags$code("read"), " w okręgach Kalifornii istotnie różni się",
         " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0.05).
         Co raportowałbyś departamentowi?"),
-      actionButton("cas_ch2_ans1", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("cas_ch2_ans1", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch2_sol1")
     ),
 
@@ -253,8 +242,7 @@ ch2_ui <- list(
         " zmienną ", tags$code("income"),
         ". Sformułuj H₀ i Hₐ dla hipotezy kierunkowej.
         Czy wynik jest istotny statystycznie? A praktycznie?"),
-      actionButton("cas_ch2_ans2", "Pokaż rozwiązanie",
-                   class = "lc-btn-ok-outline lc-btn-sm"),
+      lc_action("cas_ch2_ans2", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch2_sol2")
     ),
 

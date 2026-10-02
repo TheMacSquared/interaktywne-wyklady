@@ -39,8 +39,7 @@ ch1_ui <- list(
       title = "Wyniki eksperymentu",
       fluidRow(
         column(4,
-          actionButton("ch1_case_generate", "Przeprowadź eksperyment",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_action("ch1_case_generate", "Przeprowadź eksperyment", variant = "solid"),
           br(), br(),
           uiOutput("ch1_case_stats")
         ),
@@ -267,19 +266,16 @@ ch1d_ui <- list(
       title = "Moc testu i błędy",
       fluidRow(
         column(4,
-          sliderInput("ch1_alpha", "α (poziom istotności):",
-                      min = 0.01, max = 0.20, value = 0.05, step = 0.01)
+          lc_slider("ch1_alpha", "α (poziom istotności)", 0.01, 0.20, 0.05, 0.01)
         ),
         column(4,
-          sliderInput("ch1_effect", "Różnica średnich (pkt):",
-                      min = 0, max = 15, value = 7, step = 1)
+          lc_slider("ch1_effect", "Różnica średnich (pkt)", 0, 15, 7, 1)
         ),
         column(4,
-          sliderInput("ch1_power_n", "n (na grupę):",
-                      min = 10, max = 200, value = 40, step = 5)
+          lc_slider("ch1_power_n", "n (na grupę)", 10, 200, 40, 5)
         )
       ),
-      zoom_plot_ui("ch1_power_plot", height = "380px"),
+      lc_plot("ch1_power_plot", ratio = "1.6/1", max_height = "380px"),
       uiOutput("ch1_power_stats")
     ),
 
@@ -347,16 +343,12 @@ ch1d_ui <- list(
       title = "Powtórzone eksperymenty pod H₀",
       fluidRow(
         column(4,
-          sliderInput("ch1_sim_n", "n (na grupę):",
-                      min = 10, max = 100, value = 40, step = 5),
+          lc_slider("ch1_sim_n", "n (na grupę)", 10, 100, 40, 5),
           hr(),
           lc_stack(gap = "md",
-            actionButton("ch1_sim_10", "Powtórz 10 razy",
-                         class = "lc-btn-primary", width = "100%"),
-            actionButton("ch1_sim_200", "Powtórz 200 razy",
-                         class = "lc-btn-warning", width = "100%"),
-            actionButton("ch1_sim_reset", "Reset",
-                         class = "lc-btn-secondary-outline", width = "100%")
+            lc_action("ch1_sim_10", "Powtórz 10 razy", variant = "solid"),
+            lc_action("ch1_sim_200", "Powtórz 200 razy", variant = "solid"),
+            lc_action("ch1_sim_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
           ),
           br(),
           uiOutput("ch1_sim_info")
@@ -444,7 +436,7 @@ ch1d_ui <- list(
       p("Twoja decyzja:"),
       uiOutput("ch1_quiz_options"),
       uiOutput("ch1_quiz_feedback"),
-      actionButton("ch1_quiz_next", "Nowy scenariusz", class = "lc-btn-secondary-outline")
+      lc_action("ch1_quiz_next", "Nowy scenariusz", variant = "outline")
     ),
 
     lc_chapter_next(

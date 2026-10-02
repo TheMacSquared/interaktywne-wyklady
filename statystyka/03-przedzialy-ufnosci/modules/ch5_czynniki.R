@@ -39,12 +39,9 @@ ch5_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch5_n", "Wielkość próby (n):",
-                      min = 5, max = 100, value = 30, step = 1),
-          sliderInput("ch5_conf", "Poziom ufności:",
-                      min = 0.80, max = 0.99, value = 0.95, step = 0.01),
-          sliderInput("ch5_s", "Odchylenie std. (s):",
-                      min = 1, max = 12, value = 8, step = 1),
+          lc_slider("ch5_n", "Wielkość próby (n)", 5, 100, 30, 1),
+          lc_slider("ch5_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01),
+          lc_slider("ch5_s", "Odchylenie std. (s)", 1, 12, 8, 1),
           hr(),
           uiOutput("ch5_me_display")
         ),
@@ -80,8 +77,7 @@ ch5_ui <- list(
                        value = 2, min = 0.1, step = 0.1),
           numericInput("ch5_plan_s", "Spodziewane s:",
                        value = 10, min = 0.1, step = 0.5),
-          sliderInput("ch5_plan_conf", "Poziom ufności:",
-                      min = 0.80, max = 0.99, value = 0.95, step = 0.01)
+          lc_slider("ch5_plan_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01)
         ),
         column(8,
           uiOutput("ch5_plan_result"),
@@ -117,8 +113,7 @@ ch5_ui <- list(
             ),
             selected = "height"
           ),
-          actionButton("ch5_cmp_calc", "Oblicz 3 przedziały",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_action("ch5_cmp_calc", "Oblicz 3 przedziały", variant = "solid"),
           br(), br(),
           uiOutput("ch5_cmp_stats")
         ),
@@ -159,7 +154,7 @@ ch5_ui <- list(
             Hipoteza: średni czas dojazdu w populacji przekracza 26 min.")
         ),
         uiOutput("ch5_edge1_buttons"),
-        zoom_plot_ui("ch5_edge1_plot", height = "240px"),
+        lc_plot("ch5_edge1_plot", ratio = "2.6/1", max_height = "240px"),
         uiOutput("ch5_edge1_explain")
       )
     ),
@@ -176,7 +171,7 @@ ch5_ui <- list(
             Hipoteza: poparcie w populacji przekracza próg 50%.")
         ),
         uiOutput("ch5_edge2_buttons"),
-        zoom_plot_ui("ch5_edge2_plot", height = "240px"),
+        lc_plot("ch5_edge2_plot", ratio = "2.6/1", max_height = "240px"),
         uiOutput("ch5_edge2_explain")
       )
     ),
@@ -194,7 +189,7 @@ ch5_ui <- list(
             Hipoteza: średni wynik w populacji przekracza próg 65 pkt.")
         ),
         uiOutput("ch5_edge3_buttons"),
-        zoom_plot_ui("ch5_edge3_plot", height = "240px"),
+        lc_plot("ch5_edge3_plot", ratio = "2.6/1", max_height = "240px"),
         uiOutput("ch5_edge3_explain")
       )
     ),
@@ -543,8 +538,7 @@ ch5_server <- function(input, output, session) {
     # Drugi rzad: przycisk "Pokaz werdykt" - tylko gdy conf wybrany i jeszcze nie odkryty
     reveal_row <- if (!is.na(current_conf) && !revealed) {
       div(class = "step-buttons lc-mt-xs",
-        actionButton(paste0("ch5_", case_id, "_reveal"),
-                     "\U0001f50d Pokaż werdykt", class = "lc-btn-ok"))
+        lc_action(paste0("ch5_", case_id, "_reveal"), "\U0001f50d Pokaż werdykt", variant = "solid"))
     } else {
       NULL
     }
