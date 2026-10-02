@@ -59,16 +59,21 @@ dozd_sciaga_widget <- tagList(
     label = "Ściąga 5.1",
     title = "Trzy rozkłady schematu Bernoulliego",
     full_width = TRUE,
-    tags$table(
-      class = "lc-table lc-table-striped lc-table-bordered",
-      tags$thead(tags$tr(
-        tags$th("Rozkład"), tags$th("Co jest stałe"), tags$th("Co jest losowe"), tags$th("Pytanie inspektora")
-      )),
-      tags$tbody(
-        tags$tr(tags$td("Dwumianowy"), tags$td("liczba prób n"), tags$td("liczba zdarzeń"), tags$td("Ile wad w partii 100 zaworów?")),
-        tags$tr(tags$td("Geometryczny"), tags$td("cel: 1 zdarzenie"), tags$td("liczba prób"), tags$td("Ile kontroli do pierwszej wady?")),
-        tags$tr(tags$td("Ujemny dwumianowy"), tags$td("cel: r zdarzeń"), tags$td("liczba prób"), tags$td("Ile kontroli do trzeciej wady?"))
-      )
+    lc_table(
+      data.frame(
+        distribution = c("Dwumianowy", "Geometryczny", "Ujemny dwumianowy"),
+        fixed = c("liczba prób n", "cel: 1 zdarzenie", "cel: r zdarzeń"),
+        random = c("liczba zdarzeń", "liczba prób", "liczba prób"),
+        question = c("Ile wad w partii 100 zaworów?", "Ile kontroli do pierwszej wady?",
+                     "Ile kontroli do trzeciej wady?")
+      ),
+      cols = list(
+        lc_col("distribution", "Rozkład", "row"),
+        lc_col("fixed", "Co jest stałe", "text"),
+        lc_col("random", "Co jest losowe", "text"),
+        lc_col("question", "Pytanie inspektora", "text")
+      ),
+      narrow = "cards"
     )
   ),
   risk_assessment_ui("d5", dozd_quiz, dozd_exercises)
