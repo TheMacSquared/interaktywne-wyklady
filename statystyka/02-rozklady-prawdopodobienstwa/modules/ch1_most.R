@@ -29,28 +29,22 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.1",
       title = "Rzuty kostką — stabilizacja częstości",
-      full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_stack(gap = "md",
-            actionButton("ch1_roll_1", "Rzuć 1x",
-                         class = "lc-btn-primary", width = "100%"),
-            actionButton("ch1_roll_10", "Rzuć 10x",
-                         class = "lc-btn-primary", width = "100%"),
-            actionButton("ch1_roll_100", "Rzuć 100x",
-                         class = "lc-btn-primary", width = "100%"),
-            actionButton("ch1_roll_1000", "Rzuć 1000x",
-                         class = "lc-btn-primary", width = "100%"),
-            hr(),
-            actionButton("ch1_roll_reset", "Reset",
-                         class = "lc-btn-secondary-outline", width = "100%")
-          ),
-          br(),
-          uiOutput("ch1_roll_count")
-        ),
-        column(8,
-          zoom_plot_ui("ch1_freq_bar", height = "250px"),
-          zoom_plot_ui("ch1_conv_plot", height = "250px")
+      width_mode = "wide",
+      v2 = TRUE,
+      lc_toolbar(
+        lc_action_group(label = "Rzuć kostką",
+          ch1_roll_1 = "+1", ch1_roll_10 = "+10",
+          ch1_roll_100 = "+100", ch1_roll_1000 = "+1000"),
+        lc_action("ch1_roll_reset", icon = "reset", variant = "ghost",
+                  aria_label = "Wyzeruj rzuty"),
+        lc_readouts(uiOutput("ch1_roll_count"))
+      ),
+      conditionalPanel("!output.ch1_has_rolls",
+        lc_empty("Rzuć kostką, żeby zobaczyć częstości")),
+      conditionalPanel("output.ch1_has_rolls",
+        lc_plots(
+          lc_plot("ch1_freq_bar"),
+          lc_plot("ch1_conv_plot")
         )
       )
     ),
@@ -351,16 +345,16 @@ ch1_server <- function(input, output, session) {
 
   output$ch1_roll_count <- renderUI({
     n <- length(dice_rolls())
-    lc_stat_box("Rzutów", n, color = unname(upwr_cat["niebo"]))
+    lc_readout("Rzutów", n, color = unname(upwr_cat["niebo"]))
   })
+
+  output$ch1_has_rolls <- reactive(length(dice_rolls()) > 0)
+  outputOptions(output, "ch1_has_rolls", suspendWhenHidden = FALSE)
 
   zoom_plot_server("ch1_freq_bar", reactive({
     rolls <- dice_rolls()
     if (length(rolls) == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij przycisk, aby rzucić kostką",
-                 size = 6, color = upwr_reference) +
-        theme_void()
+      NULL
     } else {
       df <- data.frame(face = factor(rolls, levels = 1:6))
       freq_df <- df %>% count(face, .drop = FALSE) %>%
