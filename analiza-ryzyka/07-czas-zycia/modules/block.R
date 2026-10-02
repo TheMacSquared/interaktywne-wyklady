@@ -84,22 +84,26 @@ zycie_note <- function(label, text) {
   tags$section(class = "life-note", lc_h3(label), lc_p(text))
 }
 
-zycie_functions_table <- figure_panel(
-  label = "Słownik",
-  title = "Cztery funkcje, cztery pytania",
-  full_width = FALSE,
-  tags$div(class = "life-table-scroll", tags$table(
-    class = "lc-table lc-table-striped lc-table-bordered",
-    tags$thead(tags$tr(
-      tags$th("Funkcja"), tags$th("Definicja"), tags$th("Pytanie inspektora"), tags$th("Jednostka"), tags$th("Populacja odniesienia")
-    )),
-    tags$tbody(
-      tags$tr(tags$td("Gęstość f(t)"), tags$td("rozkład momentów awarii"), tags$td("Kiedy awarie są najgęstsze?"), tags$td("1/h"), tags$td("Wszystkie nowe elementy")),
-      tags$tr(tags$td("Dystrybuanta F(t)"), tags$td("P(T ≤ t)"), tags$td("Jaka część elementów zawiedzie do chwili t?"), tags$td("Bez jednostki"), tags$td("Wszystkie nowe elementy")),
-      tags$tr(tags$td("Niezawodność R(t)"), tags$td("P(T > t) = 1 − F(t)"), tags$td("Jaka część dotrwa poza t?"), tags$td("Bez jednostki"), tags$td("Wszystkie nowe elementy")),
-      tags$tr(tags$td("Hazard h(t)"), tags$td("f(t) / R(t)"), tags$td("Jak ryzykowna jest najbliższa chwila dla elementu, który wciąż działa?"), tags$td("1/h"), tags$td("Elementy działające w chwili t"))
-    )
-  ))
+zycie_functions_table <- lc_table(
+  data.frame(
+    fun = c("Gęstość f(t)", "Dystrybuanta F(t)", "Niezawodność R(t)", "Hazard h(t)"),
+    def = c("rozkład momentów awarii", "P(T ≤ t)", "P(T > t) = 1 − F(t)", "f(t) / R(t)"),
+    question = c("Kiedy awarie są najgęstsze?", "Jaka część elementów zawiedzie do chwili t?",
+                 "Jaka część dotrwa poza t?",
+                 "Jak ryzykowna jest najbliższa chwila dla elementu, który wciąż działa?"),
+    unit = c("1/h", "Bez jednostki", "Bez jednostki", "1/h"),
+    population = c("Wszystkie nowe elementy", "Wszystkie nowe elementy",
+                   "Wszystkie nowe elementy", "Elementy działające w chwili t")
+  ),
+  cols = list(
+    lc_col("fun", "Funkcja", "row"),
+    lc_col("def", "Definicja", "text"),
+    lc_col("question", "Pytanie inspektora", "text"),
+    lc_col("unit", "Jednostka", "text"),
+    lc_col("population", "Populacja odniesienia", "text")
+  ),
+  caption = "Cztery funkcje, cztery pytania",
+  narrow = "cards", prose = TRUE
 )
 
 zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = list(
