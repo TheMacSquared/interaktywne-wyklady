@@ -68,7 +68,7 @@ warunki_filter_widget <- risk_widget_panel(
   ),
   plot_id = "w2_filter_plot", stats_id = "w2_filter_stats",
   note = "Każdy znak oznacza jedną porównywalną zmianę. Trójkąty to zmiany z przegrzaniem, kółka bez; wypełniony znak to incydent.",
-  height = "560px"
+  ratio = "1.6/1", max_height = "560px"
 )
 
 warunki_monty_widget <- figure_panel(

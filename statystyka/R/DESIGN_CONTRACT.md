@@ -172,10 +172,12 @@ Nowe i przebudowywane widgety oraz tabele korzystają z komponentów v2
 `R/shared_styles.css`, logika klienta w `R/lc_widgets.js`). Sekcja jest
 identyczna we wszystkich kursach; zmiany wprowadzamy równolegle.
 
-Panel widgetu włącza style v2 przez `figure_panel(..., v2 = TRUE)`. Bez tego
-argumentu panel wygląda jak dotąd, więc migracja idzie widget po widgecie.
-W analizie ryzyka `risk_widget_panel(..., v2 = TRUE)` składa pasek, wykres
-i podpis.
+Style v2 obejmują każdy `figure_panel()`; nie ma osobnej flagi. Elementy
+sprzed v2 (`fluidRow`, `sliderInput()`, `lc_stat_box()`, stare tabele,
+wykresy o stałej wysokości) nadal działają i są migrowane widget po widgecie.
+Wygląd suwaka v2 dotyczy tylko `lc_slider()`; zwykły `sliderInput()` zachowuje
+dymek z wartością. W analizie ryzyka `risk_widget_panel()` składa pasek
+z odczytami, wykres i podpis.
 
 ### Widgety
 
@@ -257,7 +259,7 @@ Zasady:
    `is-dim` (bez interpretacji), `is-target`, `is-base`.
 9. Do 3 liczb o jednym obiekcie: `lc_readout()` w pasku. Co najmniej
    2 obiekty × 2 miary: tabela.
-10. Tabela interaktywna stoi w `figure_panel(v2 = TRUE)`. Tabela referencyjna
+10. Tabela interaktywna stoi w `figure_panel()`. Tabela referencyjna
     stoi w toku tekstu (`lc_table(..., prose = TRUE, caption = ...)`).
 
 `lc_table_region()` zostaje dla tabel jeszcze niezmigrowanych; nowe tabele

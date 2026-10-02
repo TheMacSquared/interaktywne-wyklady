@@ -23,7 +23,6 @@ ch2_ui <- list(
       label = "Ryc. 2.1",
       title = "Tabela częstości — krok po kroku",
       width_mode = "text",
-      v2 = TRUE,
       lc_toolbar(
         lc_segmented("ch2_freq_var", "Zmienna",
           choices = c(
@@ -190,7 +189,6 @@ ch2_ui <- list(
       label = "Ryc. 2.5",
       title = "Tabela krzyżowa",
       width_mode = "text",
-      v2 = TRUE,
       lc_toolbar(
         lc_segmented("ch2_cross_row", "Wiersze",
           choices = c("Płeć" = "plec", "Kierunek" = "kierunek",

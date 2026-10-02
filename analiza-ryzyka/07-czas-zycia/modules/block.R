@@ -400,7 +400,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             answer = "(a) i (b) około 0,717; (c) około 63% wentylatorów zawodzi przed upływem średniej, a połowa — przed 1040 h. Średnią 1500 h podnoszą rzadkie, bardzo długie życia z prawego ogona, jak w rozkładzie geometrycznym."
           ),
           zycie_try("zmieniaj MTTF od 300 do 4000 h i obserwuj wartość R(1000 h) w panelu. Sprawdź, dla jakiego MTTF niezawodność w horyzoncie 1000 h przekracza 0,7."),
-          risk_widget_panel("Model", "Stały hazard", sliderInput("c7_mttf", "MTTF (h)", 300, 4000, 1500, 50), "c7_exp", "c7_exp_stats", width_mode = "text", layout = "above"),
+          risk_widget_panel("Model", "Stały hazard", sliderInput("c7_mttf", "MTTF (h)", 300, 4000, 1500, 50), "c7_exp", "c7_exp_stats", width_mode = "text"),
           zycie_reading(c(
             "Przy MTTF = 1500 h panel pokazuje R(1000 h) ≈ 0,513. Podwojenie MTTF do 3000 h podnosi tę wartość do około 0,717, a MTTF = 4000 h daje około 0,779. Przy MTTF = 500 h niezawodność w horyzoncie 1000 h spada do 0,135. Kształt krzywej zawsze jest ten sam — zmienia się tylko skala osi czasu, a w chwili t = MTTF krzywa przechodzi przez e⁻¹ ≈ 0,368.",
             "Ta sztywność jest zaletą i wadą zarazem. Zaletą, bo jeden parametr łatwo oszacować ze wzoru (7.2). Wadą, bo model nie ma czym opisać docierania ani zużycia. Jeśli dane pokazują starzenie, trzeba sięgnąć po rodzinę z dodatkowym parametrem kształtu."

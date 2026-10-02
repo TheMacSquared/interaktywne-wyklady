@@ -2018,14 +2018,15 @@ mjx-container mjx-text {
 /* ==========================================================================
    WIDGETY V2 I TABELE V2
    Źródło: handoffy „Widgety v2” i „Tabele v2” (CSS dostosowany do klas repo:
-   panel = .lc-figure-panel.lc-v2, przyciski = .lc-action). Tylko tokeny
+   panel = .lc-figure-panel, przyciski = .lc-action). Tylko tokeny
    --upwr-*, rozmiary w em (skalują się z --lc-font-scale), progi z kontenera.
    Sekcja identyczna we wszystkich kursach.
    ========================================================================== */
 
-/* Panel */
-.lc-figure-panel.lc-v2 {
-  container: lc-fig / inline-size;
+/* Panel. Panel zwarty (szerokość z treści) nie może być kontenerem
+   inline-size, bo zwinąłby się do zera. */
+.lc-figure-panel:not(.lc-panel-compact) { container: lc-fig / inline-size; }
+.lc-figure-panel {
   padding: 1.5em clamp(.9em, 3.5vw, 2em) 1.2em;
 }
 
@@ -2034,7 +2035,7 @@ mjx-container mjx-text {
 .lc-toolbar>*{min-width:0}
 .lc-toolbar .lc-grow{flex:1 1 14em}
 .lc-toolbar .lc-push{margin-left:auto}
-.lc-figure-panel.lc-v2>*+.lc-toolbar{margin-top:1.4em}
+.lc-figure-panel>*+.lc-toolbar{margin-top:1.4em}
 .lc-toolbar .form-group,.lc-toolbar .shiny-input-container{margin:0}
 .lc-grp{display:flex;flex-direction:column;gap:.35em;min-width:0}
 .lc-grp-l{font-size:.78em;font-weight:700;color:var(--upwr-ink-soft)}
@@ -2080,12 +2081,12 @@ mjx-container mjx-text {
 }
 
 /* Suwak (ionRangeSlider): bez siatki i dymka, cienki tor; wartość w etykiecie */
-.lc-v2 .irs-grid,.lc-v2 .irs-single,.lc-v2 .irs-from,.lc-v2 .irs-to,.lc-v2 .irs-min,.lc-v2 .irs-max{display:none!important}
-.lc-v2 .irs--shiny{height:44px}
-.lc-v2 .irs--shiny .irs-line{height:4px;top:20px;background:var(--upwr-rule)!important;border:0!important;border-radius:2px}
-.lc-v2 .irs--shiny .irs-bar{height:4px;top:20px;background:var(--upwr-accent)!important;border:0}
-.lc-v2 .irs--shiny .irs-handle{width:18px;height:18px;top:13px;border:2px solid var(--upwr-accent)!important;background:var(--upwr-surface);box-shadow:0 1px 2px rgba(0,0,0,.15)}
-.lc-v2 .irs--shiny .irs-handle>i:nth-child(1){display:none}
+.lc-slider .irs-grid,.lc-slider .irs-single,.lc-slider .irs-from,.lc-slider .irs-to,.lc-slider .irs-min,.lc-slider .irs-max{display:none!important}
+.lc-slider .irs--shiny{height:44px}
+.lc-slider .irs--shiny .irs-line{height:4px;top:20px;background:var(--upwr-rule)!important;border:0!important;border-radius:2px}
+.lc-slider .irs--shiny .irs-bar{height:4px;top:20px;background:var(--upwr-accent)!important;border:0}
+.lc-slider .irs--shiny .irs-handle{width:18px;height:18px;top:13px;border:2px solid var(--upwr-accent)!important;background:var(--upwr-surface);box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.lc-slider .irs--shiny .irs-handle>i:nth-child(1){display:none}
 .lc-slider .shiny-input-container{width:100%!important}
 .lc-slider-label{display:flex;justify-content:space-between;gap:1em;font-size:.78em;font-weight:700;color:var(--upwr-ink-soft)}
 .lc-slider-label label{margin:0;font-weight:700}
@@ -2100,7 +2101,7 @@ mjx-container mjx-text {
 .lc-caption b{font-family:var(--upwr-mono)}
 
 /* Wykres: wysokość z proporcji, nie z px */
-.lc-plot{width:100%;aspect-ratio:var(--lc-plot-ratio,2.2/1);min-height:200px;max-height:440px}
+.lc-plot{width:100%;aspect-ratio:var(--lc-plot-ratio,2.2/1);min-height:200px;max-height:var(--lc-plot-max,440px)}
 @container lc-fig (max-width:480px){.lc-plot{aspect-ratio:var(--lc-plot-ratio-narrow,4/3)}}
 .lc-plot>.lc-zoom-plot-wrap{height:100%}
 .lc-plot .shiny-plot-output{width:100%!important;height:100%!important}

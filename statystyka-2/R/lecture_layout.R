@@ -561,10 +561,8 @@ margin_note <- function(...) {
 # Domyślnie: szerokość kolumny tekstu (lepszy kontrast z narracją).
 # full_width = TRUE tylko gdy wykres naprawdę potrzebuje pełnej szerokości.
 figure_panel <- function(label, ..., title = NULL, color = "#6b1a26",
-                          full_width = FALSE, v2 = FALSE) {
+                          full_width = FALSE) {
   outer_class <- if (full_width) "lc-figure-panel lc-full" else "lc-figure-panel"
-  # v2 = TRUE: style widgetów v2 (pasek, odczyty, suwak, wykres z proporcji).
-  if (isTRUE(v2)) outer_class <- paste(outer_class, "lc-v2")
   tags$div(
     class = outer_class,
     tags$div(
@@ -834,8 +832,8 @@ html[data-lc-theme=\"dark\"] {
 
 # ============================================================================
 # WIDGETY V2 I TABELE V2
-# Źródło: handoffy „Widgety v2” i „Tabele v2”. Panel włącza style v2 przez
-# figure_panel(v2 = TRUE); tabele lc_table() działają też w toku tekstu.
+# Źródło: handoffy „Widgety v2” i „Tabele v2”. Style obejmują każdy
+# figure_panel(); tabele lc_table() działają też w toku tekstu.
 # Logika klienta (kroki, wartość suwaka, klikalne komórki) jest w
 # R/lc_widgets.js. Kod tej sekcji jest identyczny we wszystkich kursach.
 # ============================================================================
@@ -1002,10 +1000,12 @@ lc_caption <- function(..., tone = NULL) {
 
 # Wykres z wysokością z proporcji kontenera zamiast stałej wysokości w px.
 # Serwer bez zmian: zoom_plot_server() rysuje w rozmiarze kontenera.
-lc_plot <- function(plot_id, ratio = NULL, ratio_narrow = NULL) {
+# max_height (np. "560px") tylko dla wykresów, które potrzebują więcej niż 440 px.
+lc_plot <- function(plot_id, ratio = NULL, ratio_narrow = NULL, max_height = NULL) {
   style <- paste0(c(
     if (!is.null(ratio)) paste0("--lc-plot-ratio:", ratio, ";"),
-    if (!is.null(ratio_narrow)) paste0("--lc-plot-ratio-narrow:", ratio_narrow, ";")
+    if (!is.null(ratio_narrow)) paste0("--lc-plot-ratio-narrow:", ratio_narrow, ";"),
+    if (!is.null(max_height)) paste0("--lc-plot-max:", max_height, ";")
   ), collapse = "")
   tags$div(class = "lc-plot", style = if (nzchar(style)) style,
     zoom_plot_ui(plot_id, height = "100%")

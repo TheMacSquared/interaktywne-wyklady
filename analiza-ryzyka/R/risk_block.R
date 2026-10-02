@@ -27,48 +27,16 @@ risk_natural_frequency <- function(p, population = 1000L) {
   )
 }
 
+# Panel eksperymentu: pasek sterowania z odczytami nad wykresem, wysokość
+# wykresu z proporcji, notka jako podpis. stats_id renderuje lc_readout().
 risk_widget_panel <- function(label = "Eksperyment", title, controls,
                               plot_id = NULL, stats_id = NULL, note = NULL,
-                              height = "430px", width_mode = NULL, layout = c("above", "beside"),
-                              v2 = FALSE) {
-  # v2: pasek sterowania z odczytami nad wykresem, wysokość wykresu z proporcji,
-  # notka jako podpis pod wykresem. stats_id renderuje lc_readout().
-  if (isTRUE(v2)) {
-    return(figure_panel(label = label, title = title,
-      width_mode = width_mode %||% "wide", v2 = TRUE,
-      lc_toolbar(controls, if (!is.null(stats_id)) lc_readouts(uiOutput(stats_id))),
-      if (!is.null(plot_id)) lc_plot(plot_id),
-      if (!is.null(note)) lc_caption(note)
-    ))
-  }
-  if (!is.null(width_mode)) {
-    layout <- match.arg(layout)
-    control_content <- tagList(
-      lc_controls_row(controls, if (!is.null(stats_id)) uiOutput(stats_id)),
-      if (!is.null(note)) lc_feedback(type = "info", note)
-    )
-    return(figure_panel(label = label, title = title, width_mode = width_mode,
-      if (!is.null(plot_id)) lc_widget_layout(control_content,
-        zoom_plot_ui(plot_id, height = height), layout = layout) else control_content
-    ))
-  }
-  body <- list()
-  if (!is.null(plot_id)) {
-    body <- list(
-      fluidRow(
-        column(
-          4,
-          controls,
-          if (!is.null(stats_id)) uiOutput(stats_id),
-          if (!is.null(note)) lc_feedback(type = "info", note)
-        ),
-        column(8, zoom_plot_ui(plot_id, height = height))
-      )
-    )
-  } else {
-    body <- list(controls, if (!is.null(stats_id)) uiOutput(stats_id))
-  }
-  do.call(figure_panel, c(list(label = label, title = title, full_width = TRUE), body))
+                              width_mode = "wide", ratio = NULL, max_height = NULL) {
+  figure_panel(label = label, title = title, width_mode = width_mode,
+    lc_toolbar(controls, if (!is.null(stats_id)) lc_readouts(uiOutput(stats_id))),
+    if (!is.null(plot_id)) lc_plot(plot_id, ratio = ratio, max_height = max_height),
+    if (!is.null(note)) lc_caption(note)
+  )
 }
 
 risk_vote_panel <- function(input_id, output_id, question, choices, full_width = TRUE) {

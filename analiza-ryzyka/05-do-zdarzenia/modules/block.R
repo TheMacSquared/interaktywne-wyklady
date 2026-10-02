@@ -150,7 +150,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
         id = "symulacja", title = "Symulacja: jak długo czekamy?",
         body = list(
           risk_try("zostaw p = 0,10 i kliknij „Losuj ponownie” kilka razy. Zapisz, gdzie leży najwyższy słupek i jak daleko sięga najdłuższa seria. Potem zmień p na 0,30 i na 0,03."),
-          risk_widget_panel("Symulacja", "Ile kontroli do pierwszej wady?", tagList(lc_slider("d5_geo_p", "Prawdopodobieństwo wady p", .01, .5, .1, .01), lc_action("d5_geo_run", "Losuj ponownie", icon = "shuffle")), "d5_geo", "d5_geo_stats", v2 = TRUE),
+          risk_widget_panel("Symulacja", "Ile kontroli do pierwszej wady?", tagList(lc_slider("d5_geo_p", "Prawdopodobieństwo wady p", .01, .5, .1, .01), lc_action("d5_geo_run", "Losuj ponownie", icon = "shuffle")), "d5_geo", "d5_geo_stats"),
           c(
             "Niezależnie od p najwyższy słupek stoi przy pierwszej kontroli. Kolejne słupki systematycznie maleją, ale bardzo powoli, gdy p jest małe. Pojedyncze serie ciągną się kilka razy dłużej niż średnia. Przy p = 0,03 średni czas oczekiwania to około 33 kontroli, a najdłuższe serie wychodzą poza prawą krawędź wykresu, czyli ponad 80 kontroli.",
             "Te obserwacje mają proste wyjaśnienie rachunkowe, które wyprowadzimy w następnej sekcji. Warto je jednak najpierw zobaczyć: w planowaniu zasobów to właśnie długi ogon, a nie średnia, sprawia kłopot."

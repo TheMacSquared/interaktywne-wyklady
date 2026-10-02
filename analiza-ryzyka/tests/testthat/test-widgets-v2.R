@@ -74,9 +74,9 @@ testthat::test_that("lc_crosstab oznacza podstawę procentów i komórkę docelo
   testthat::expect_match(out, "% wierszowe:", fixed = TRUE)
 })
 
-testthat::test_that("kontrolki v2 generują wejścia Shiny i panel z klasą lc-v2", {
+testthat::test_that("kontrolki v2 generują wejścia Shiny", {
   env <- load_v2_env()
-  testthat::expect_match(html(env$figure_panel("Ryc.", v2 = TRUE)), "lc-figure-panel lc-v2", fixed = TRUE)
+  testthat::expect_false(grepl("lc-v2", html(env$figure_panel("Ryc.")), fixed = TRUE))
   seg <- html(env$lc_segmented("var", "Zmienna", c("A" = "a", "B" = "b"), selected = "b",
                                exclusive_with = "other"))
   testthat::expect_match(seg, 'class="lc-grp shiny-input-radiogroup lc-seg-input"', fixed = TRUE)

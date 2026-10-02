@@ -313,7 +313,7 @@ alarm_block <- list(
             risk_widget_panel("Symulacja", "10 000 zmian Bananpolu", tagList(
               p("Parametry są synchronizowane z tablicą 2×2."), uiOutput("a3_counts")
             ),
-            plot_id = "a3_grid", height = "470px"
+            plot_id = "a3_grid", ratio = "1.9/1", max_height = "470px"
             ),
             c(
               "Przy ustawieniach domyślnych panel pokazuje 95 prawdziwych i 495 fałszywych alarmów, a P(awaria | alarm) = 0,161. Na siatce prawdziwe alarmy to niewielka grupa pól, a fałszywe — obszar pięć razy większy. Pozostałe zmiany, bez alarmu, leżą poza siatką. Przy FPR = 0,01 fałszywych alarmów jest 99, prawdziwych nadal 95, a wiarygodność alarmu rośnie do 0,490.",

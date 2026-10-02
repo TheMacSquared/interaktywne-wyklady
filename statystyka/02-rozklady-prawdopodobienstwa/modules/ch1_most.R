@@ -30,7 +30,6 @@ ch1_ui <- list(
       label = "Ryc. 1.1",
       title = "Rzuty kostką — stabilizacja częstości",
       width_mode = "wide",
-      v2 = TRUE,
       lc_toolbar(
         lc_action_group(label = "Rzuć kostką",
           ch1_roll_1 = "+1", ch1_roll_10 = "+10",
