@@ -21,7 +21,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     lc_h2("sec-02", "Podgląd danych"),
 
     div(class = "lc-figure-panel",
-      DT::dataTableOutput("tab7_table")
+      uiOutput("tab7_table")
     ),
 
     lc_h2("sec-03", "Spróbuj policzyć średnią"),
@@ -37,7 +37,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
 
     div(class = "lc-figure-panel",
       radioButtons("tab7_toggle", "Widok danych:", choices = c("Surowe", "Oczyszczone"), inline = TRUE),
-      DT::dataTableOutput("tab7_clean_table"),
+      uiOutput("tab7_clean_table"),
       uiOutput("tab7_clean_info")
     ),
 
@@ -81,7 +81,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     ),
 
     div(class = "lc-figure-panel",
-      DT::dataTableOutput("tab7b_table")
+      uiOutput("tab7b_table")
     ),
 
     div(class = "lc-feedback lc-feedback-ok",
@@ -107,8 +107,8 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
 
 ch8_server <- function(input, output, session) {
 
-  output$tab7_table <- DT::renderDataTable({
-    datatable(round_df(reg_data), options = list(pageLength = 10, scrollX = TRUE), rownames = FALSE)
+  output$tab7_table <- renderUI({
+    dd_data_table(round_df(reg_data), page_size = 10, page = input$tab7_table_page, page_input = "tab7_table_page")
   })
 
   output$tab7_mean_result <- renderUI({
@@ -150,9 +150,9 @@ ch8_server <- function(input, output, session) {
     })
   })
 
-  output$tab7_clean_table <- DT::renderDataTable({
+  output$tab7_clean_table <- renderUI({
     if (input$tab7_toggle == "Surowe") {
-      datatable(round_df(reg_data), options = list(pageLength = 8, scrollX = TRUE), rownames = FALSE)
+      dd_data_table(round_df(reg_data), page_size = 8, page = input$tab7_clean_table_page, page_input = "tab7_clean_table_page")
     } else {
       dosw_map  <- c("3" = 3, "5 lat" = 5, "ponad rok" = 1, "nie mam" = 0, "brak" = 0)
       ocena_map <- c("7" = 7, "6" = 6, "4" = 4, "9" = 9, "7.5" = 7.5,
@@ -164,7 +164,7 @@ ch8_server <- function(input, output, session) {
         ocena_1_10       = as.numeric(ocena_map[reg_data$ocena_umiejetnosci]),
         stringsAsFactors = FALSE
       )
-      datatable(round_df(clean), options = list(pageLength = 8, scrollX = TRUE), rownames = FALSE)
+      dd_data_table(round_df(clean), page_size = 8, page = input$tab7_clean_table_page, page_input = "tab7_clean_table_page")
     }
   })
 
@@ -198,18 +198,14 @@ ch8_server <- function(input, output, session) {
       "$('#tab7b_cat').addClass('active'); $('#tab7b_raw').removeClass('active');"))
   })
 
-  output$tab7b_table <- DT::renderDataTable({
+  output$tab7b_table <- renderUI({
     if (tab7b_view() == "raw") {
-      datatable(fixable_data,
-                options = list(dom = 't', ordering = FALSE, pageLength = 12),
-                rownames = FALSE)
+      dd_data_table(fixable_data, n = 12)
     } else {
-      datatable(fixable_data_cat,
-                options = list(dom = 't', ordering = FALSE, pageLength = 12),
-                rownames = FALSE) %>%
-        DT::formatStyle("nauka_kat",
-          backgroundColor = DT::styleEqual(NA, "#fdedec"),
-          target = "cell")
+      # Wiersze bez kategorii (NA) podświetlone jak w tekście pod tabelą.
+      dd_data_table(fixable_data_cat, n = 12,
+        cell_class = list(nauka_kat = ifelse(is.na(fixable_data_cat$nauka_kat),
+                                             "is-target", NA)))
     }
   })
 }

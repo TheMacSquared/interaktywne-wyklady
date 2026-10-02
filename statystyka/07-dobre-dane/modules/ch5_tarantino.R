@@ -23,7 +23,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     lc_h2("sec-02", "Podgląd danych"),
 
     div(class = "lc-figure-panel",
-      DT::dataTableOutput("tab4_table")
+      uiOutput("tab4_table")
     ),
 
     div(class = "lc-feedback lc-feedback-info",
@@ -84,8 +84,8 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
 
 ch5_server <- function(input, output, session) {
 
-  output$tab4_table <- DT::renderDataTable({
-    datatable(round_df(tarantino), options = list(pageLength = 10, scrollX = TRUE), rownames = FALSE)
+  output$tab4_table <- renderUI({
+    dd_data_table(round_df(tarantino), page_size = 10, page = input$tab4_table_page, page_input = "tab4_table_page")
   })
 
   zoom_plot_server("tab4_explore_plot", reactive({
@@ -175,11 +175,7 @@ ch5_server <- function(input, output, session) {
       )
 
     tagList(
-      div(style = "margin-top: 15px;",
-        DT::renderDataTable({
-          datatable(round_df(agg), options = list(dom = 't', pageLength = 10), rownames = FALSE)
-        })
-      ),
+      dd_data_table(round_df(agg), n = 10, label = "Dane po agregacji"),
       div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 15px;",
         tags$strong("Problem:"),
         paste0(" Po agregacji mamy n = ", nrow(agg), " filmów. "),

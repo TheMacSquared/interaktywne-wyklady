@@ -22,7 +22,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
     lc_h2("sec-02", "Podgląd danych"),
 
     div(class = "lc-figure-panel",
-      DT::dataTableOutput("tab6_table")
+      uiOutput("tab6_table")
     ),
 
     lc_h2("sec-03", "Eksploracja"),
@@ -59,9 +59,9 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
 
 ch7_server <- function(input, output, session) {
 
-  output$tab6_table <- DT::renderDataTable({
-    datatable(round_df(Wage[, c("year", "age", "maritl", "race", "education", "jobclass", "health", "wage")]),
-              options = list(pageLength = 8, scrollX = TRUE), rownames = FALSE)
+  output$tab6_table <- renderUI({
+    dd_data_table(round_df(Wage[, c("year", "age", "maritl", "race", "education", "jobclass", "health", "wage")]),
+                  page_size = 8, page = input$tab6_table_page, page_input = "tab6_table_page")
   })
 
   zoom_plot_server("tab6_hist", reactive({

@@ -16,7 +16,7 @@ ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content 
     lc_h2("sec-02", "Podsumowanie 10 zbiorów"),
 
     div(class = "lc-figure-panel",
-      tableOutput("tab11_summary")
+      uiOutput("tab11_summary")
     ),
 
     lc_h2("sec-03", "Checklist jakości danych"),
@@ -49,7 +49,7 @@ ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content 
     lc_h2("sec-04", "Dopasowanie analizy do danych"),
 
     div(class = "lc-figure-panel",
-      tableOutput("tab11_analysis_table")
+      uiOutput("tab11_analysis_table")
     ),
 
     div(class = "lc-feedback lc-feedback-info",
@@ -66,8 +66,8 @@ ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content 
 
 ch12_server <- function(input, output, session) {
 
-  output$tab11_summary <- renderTable({
-    data.frame(
+  output$tab11_summary <- renderUI({
+    df <- data.frame(
       Nr = 2:11,
       Zbior = c("Szkoły w Kalifornii", "Ankieta na grupie", "Pingwiny",
                 "Filmy Tarantino", "Hotel boutique", "Wynagrodzenia USA",
@@ -79,10 +79,20 @@ ch12_server <- function(input, output, session) {
                   "Outliery i błędy", "Brak", "Braki danych + szereg czasowy"),
       stringsAsFactors = FALSE
     )
-  }, striped = TRUE, hover = TRUE, bordered = TRUE)
+    lc_table(df,
+      cols = list(
+        lc_col("Nr", "Nr", "row"),
+        lc_col("Zbior", "Zbior", "text"),
+        lc_col("n", "n", "text"),
+        lc_col("Werdykt", "Werdykt", "text"),
+        lc_col("Problem", "Problem", "text")
+      ),
+      narrow = "cards"
+    )
+  })
 
-  output$tab11_analysis_table <- renderTable({
-    data.frame(
+  output$tab11_analysis_table <- renderUI({
+    df <- data.frame(
       Analiza = c("Test t", "Korelacja Pearsona", "Regresja liniowa", "Test chi-kwadrat"),
       Min_n = c("20-30 na grupę", "30 ogólnie", "10k + 50 (k = predyktory)", "5 w każdej komórce tabeli"),
       Zmienne = c("1 ilościowa + 1 jakościowa (2 grupy)", "2 ilościowe (ciągłe)",
@@ -91,5 +101,14 @@ ch12_server <- function(input, output, session) {
                     "Liniowość, normalność reszt, homoskedastyczność", "Niezależność obserwacji"),
       stringsAsFactors = FALSE
     )
-  }, striped = TRUE, hover = TRUE, bordered = TRUE)
+    lc_table(df,
+      cols = list(
+        lc_col("Analiza", "Analiza", "row"),
+        lc_col("Min_n", "Min_n", "text"),
+        lc_col("Zmienne", "Zmienne", "text"),
+        lc_col("Dodatkowe", "Dodatkowe", "text")
+      ),
+      narrow = "cards"
+    )
+  })
 }

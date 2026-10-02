@@ -21,7 +21,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     lc_h2("sec-02", "Podgląd danych"),
 
     div(class = "lc-figure-panel",
-      DT::dataTableOutput("tab2_table")
+      uiOutput("tab2_table")
     ),
 
     lc_h2("sec-03", "Ile obserwacji naprawdę potrzebujesz?"),
@@ -62,8 +62,8 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
 
 ch3_server <- function(input, output, session) {
 
-  output$tab2_table <- DT::renderDataTable({
-    datatable(round_df(small_data), options = list(pageLength = 10, dom = 't'), rownames = FALSE)
+  output$tab2_table <- renderUI({
+    dd_data_table(round_df(small_data), n = 10)
   })
 
   # Slider simulations

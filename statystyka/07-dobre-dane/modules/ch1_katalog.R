@@ -32,7 +32,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       div(class = "dual-view",
         div(class = "view-panel",
           div(class = "view-label", "Widok danych"),
-          div(class = "jamovi-table", DT::dataTableOutput("cat1_table"))
+          uiOutput("cat1_table")
         ),
         div(class = "view-panel",
           div(class = "view-label", "Co widać na wykresie"),
@@ -60,7 +60,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       div(class = "dual-view",
         div(class = "view-panel",
           div(class = "view-label", "Widok danych"),
-          div(class = "jamovi-table", DT::dataTableOutput("cat2_table"))
+          uiOutput("cat2_table")
         ),
         div(class = "view-panel",
           div(class = "view-label", "Co widać na wykresach"),
@@ -92,7 +92,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       div(class = "dual-view",
         div(class = "view-panel",
           div(class = "view-label", "Widok danych"),
-          div(class = "jamovi-table", DT::dataTableOutput("cat3_table"))
+          uiOutput("cat3_table")
         ),
         div(class = "view-panel",
           div(class = "view-label", "Cena vs powierzchnia"),
@@ -124,7 +124,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       div(class = "dual-view",
         div(class = "view-panel",
           div(class = "view-label", "Widok danych"),
-          div(class = "jamovi-table", DT::dataTableOutput("cat4_table"))
+          uiOutput("cat4_table")
         ),
         div(class = "view-panel",
           div(class = "view-label", "Próba zrobienia histogramu"),
@@ -151,7 +151,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       div(class = "dual-view",
         div(class = "view-panel",
           div(class = "view-label", "Widok danych"),
-          div(class = "jamovi-table", DT::dataTableOutput("cat5_table"))
+          uiOutput("cat5_table")
         ),
         div(class = "view-panel",
           div(class = "view-label", "Procent brakow na zmienna"),
@@ -183,7 +183,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       div(class = "dual-view",
         div(class = "view-panel",
           div(class = "view-label", "Widok danych"),
-          div(class = "jamovi-table", DT::dataTableOutput("cat6_table"))
+          uiOutput("cat6_table")
         ),
         div(class = "view-panel",
           div(class = "view-label", "Dane w kolejności"),
@@ -223,7 +223,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       div(class = "dual-view",
         div(class = "view-panel",
           div(class = "view-label", "Widok danych"),
-          div(class = "jamovi-table", DT::dataTableOutput("cat7_table"))
+          uiOutput("cat7_table")
         ),
         div(class = "view-panel",
           div(class = "view-label", "Ile masz obserwacji?"),
@@ -288,19 +288,9 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
 ch1_server <- function(input, output, session) {
 
   # --- Problem 1: Za malo danych ---
-  output$cat1_table <- DT::renderDataTable({
-    sketch <- htmltools::withTags(table(
-      class = "display",
-      thead(tr(
-        th("id", br(span(class = "var-type", "id"))),
-        th("plec", br(span(class = "var-type", "nominalna"))),
-        th("wiek", br(span(class = "var-type", "ciagla"))),
-        th("stres", br(span(class = "var-type", "porzadkowa"))),
-        th("oceny", br(span(class = "var-type", "ciagla")))
-      ))
-    ))
-    datatable(cat_small, container = sketch, rownames = FALSE,
-              options = list(dom = 't', ordering = FALSE, pageLength = 10))
+  output$cat1_table <- renderUI({
+    dd_data_table(cat_small,
+      types = c("id", "nominalna", "ciagla", "porzadkowa", "ciagla"))
   })
 
   zoom_plot_server("cat1_plot", reactive({
@@ -315,19 +305,9 @@ ch1_server <- function(input, output, session) {
   }))
 
   # --- Problem 2: Brak zmiennosci ---
-  output$cat2_table <- DT::renderDataTable({
-    sketch <- htmltools::withTags(table(
-      class = "display",
-      thead(tr(
-        th("id", br(span(class = "var-type", "id"))),
-        th("zadowolenie", br(span(class = "var-type", "porzadkowa"))),
-        th("wynagrodzenie", br(span(class = "var-type", "ciagla"))),
-        th("staz", br(span(class = "var-type", "ciagla"))),
-        th("dzial", br(span(class = "var-type", "nominalna")))
-      ))
-    ))
-    datatable(cat_novar, container = sketch, rownames = FALSE,
-              options = list(dom = 't', ordering = FALSE, pageLength = 12))
+  output$cat2_table <- renderUI({
+    dd_data_table(cat_novar,
+      types = c("id", "porzadkowa", "ciagla", "ciagla", "nominalna"))
   })
 
   zoom_plot_server("cat2_plot_zadowolenie", reactive({
@@ -367,34 +347,18 @@ ch1_server <- function(input, output, session) {
     session$sendCustomMessage(type = "shinyjs-runjs", message = list(code = shinyjs_js))
   })
 
-  output$cat3_table <- DT::renderDataTable({
-    if (cat3_view() == "raw") {
-      d <- cat_errors
-    } else {
-      d <- cat_errors_clean
-    }
-    sketch <- htmltools::withTags(table(
-      class = "display",
-      thead(tr(
-        th("id", br(span(class = "var-type", "id"))),
-        th("cena", br(span(class = "var-type", "ciagla"))),
-        th("powierzchnia", br(span(class = "var-type", "ciagla"))),
-        th("pokoje", br(span(class = "var-type", "dyskretna"))),
-        th("dzielnica", br(span(class = "var-type", "nominalna")))
-      ))
-    ))
-    dt <- datatable(d, container = sketch, rownames = FALSE,
-                    options = list(dom = 't', ordering = FALSE, pageLength = 12))
-    if (cat3_view() == "raw") {
-      dt <- dt %>%
-        formatStyle("cena", backgroundColor = styleInterval(
-          c(0, 1000000), c("#fdedec", "white", "#fdedec"))) %>%
-        formatStyle("powierzchnia", backgroundColor = styleInterval(
-          c(500), c("white", "#fdedec"))) %>%
-        formatStyle("pokoje", backgroundColor = styleInterval(
-          c(10), c("white", "#fdedec")))
-    }
-    dt
+  output$cat3_table <- renderUI({
+    raw <- cat3_view() == "raw"
+    d <- if (raw) cat_errors else cat_errors_clean
+    # Podświetlenie podejrzanych wartości tylko w surowych danych.
+    errors <- if (raw) list(
+      cena = ifelse(d$cena <= 0 | d$cena > 1000000, "is-target", NA),
+      powierzchnia = ifelse(d$powierzchnia > 500, "is-target", NA),
+      pokoje = ifelse(d$pokoje > 10, "is-target", NA)
+    )
+    dd_data_table(d,
+      types = c("id", "ciagla", "ciagla", "dyskretna", "nominalna"),
+      cell_class = errors)
   })
 
   zoom_plot_server("cat3_plot", reactive({
@@ -430,35 +394,13 @@ ch1_server <- function(input, output, session) {
       message = list(code = "$('#cat4_clean').addClass('active'); $('#cat4_raw').removeClass('active');"))
   })
 
-  output$cat4_table <- DT::renderDataTable({
+  output$cat4_table <- renderUI({
     if (cat4_view() == "raw") {
-      d <- cat_messy
-      sketch <- htmltools::withTags(table(
-        class = "display",
-        thead(tr(
-          th("id", br(span(class = "var-type", "id"))),
-          th("czas_nauki", br(span(class = "var-type", "tekst?!"))),
-          th("ocena_kursu", br(span(class = "var-type", "tekst?!"))),
-          th("aktywnosc", br(span(class = "var-type", "tekst?!")))
-        ))
-      ))
-      datatable(d, container = sketch, rownames = FALSE,
-                options = list(dom = 't', ordering = FALSE, pageLength = 10)) %>%
-        formatStyle(c("czas_nauki", "ocena_kursu", "aktywnosc"),
-                    backgroundColor = "#fef9e7")
+      dd_data_table(cat_messy,
+        types = c("id", "tekst?!", "tekst?!", "tekst?!"))
     } else {
-      d <- cat_messy_clean
-      sketch <- htmltools::withTags(table(
-        class = "display",
-        thead(tr(
-          th("id", br(span(class = "var-type", "id"))),
-          th("czas_nauki_h", br(span(class = "var-type", "ciagla"))),
-          th("ocena_kursu_1_10", br(span(class = "var-type", "ciagla"))),
-          th("aktywnosc_razy_tyg", br(span(class = "var-type", "ciagla")))
-        ))
-      ))
-      datatable(d, container = sketch, rownames = FALSE,
-                options = list(dom = 't', ordering = FALSE, pageLength = 10))
+      dd_data_table(cat_messy_clean,
+        types = c("id", "ciagla", "ciagla", "ciagla"))
     }
   })
 
@@ -491,24 +433,9 @@ ch1_server <- function(input, output, session) {
   }))
 
   # --- Problem 5: Braki danych ---
-  output$cat5_table <- DT::renderDataTable({
-    sketch <- htmltools::withTags(table(
-      class = "display",
-      thead(tr(
-        th("id", br(span(class = "var-type", "id"))),
-        th("wiek", br(span(class = "var-type", "ciagla"))),
-        th("stres", br(span(class = "var-type", "porzadkowa"))),
-        th("oceny", br(span(class = "var-type", "ciagla"))),
-        th("kierunek", br(span(class = "var-type", "nominalna")))
-      ))
-    ))
-    # Replace NA with styled text for visibility
-    d <- cat_missing
-    datatable(d, container = sketch, rownames = FALSE,
-              options = list(dom = 't', ordering = FALSE, pageLength = 12)) %>%
-      formatStyle(names(d)[-1],
-        backgroundColor = styleEqual(NA, "#f5f5f5"),
-        color = styleEqual(NA, "#bbb"))
+  output$cat5_table <- renderUI({
+    dd_data_table(cat_missing,
+      types = c("id", "ciagla", "porzadkowa", "ciagla", "nominalna"))
   })
 
   zoom_plot_server("cat5_plot", reactive({
@@ -542,32 +469,15 @@ ch1_server <- function(input, output, session) {
       message = list(code = "$('#cat6_monthly').addClass('active'); $('#cat6_daily').removeClass('active');"))
   })
 
-  output$cat6_table <- DT::renderDataTable({
+  output$cat6_table <- renderUI({
     if (cat6_view() == "daily") {
-      sketch <- htmltools::withTags(table(
-        class = "display",
-        thead(tr(
-          th("data", br(span(class = "var-type", "data"))),
-          th("miesiac", br(span(class = "var-type", "nominalna"))),
-          th("temperatura", br(span(class = "var-type", "ciagla")))
-        ))
-      ))
       df_show <- cat_timeseries
       df_show$data <- format(df_show$data, "%Y-%m-%d")
-      datatable(df_show, container = sketch, rownames = FALSE,
-                options = list(dom = 't', ordering = FALSE,
-                               pageLength = nrow(df_show), scrollY = "260px"))
+      dd_data_table(df_show, page_size = 10, page = input$cat6_table_page, page_input = "cat6_table_page",
+        types = c("data", "nominalna", "ciagla"))
     } else {
-      sketch <- htmltools::withTags(table(
-        class = "display",
-        thead(tr(
-          th("miesiac", br(span(class = "var-type", "nominalna"))),
-          th("srednia_temp", br(span(class = "var-type", "ciagla"))),
-          th("n_dni", br(span(class = "var-type", "dyskretna")))
-        ))
-      ))
-      datatable(cat_timeseries_monthly, container = sketch, rownames = FALSE,
-                options = list(dom = 't', ordering = FALSE, pageLength = 10))
+      dd_data_table(cat_timeseries_monthly,
+        types = c("nominalna", "ciagla", "dyskretna"))
     }
   })
 
@@ -610,35 +520,15 @@ ch1_server <- function(input, output, session) {
       message = list(code = "$('#cat7_agg').addClass('active'); $('#cat7_events').removeClass('active');"))
   })
 
-  output$cat7_table <- DT::renderDataTable({
+  output$cat7_table <- renderUI({
     if (cat7_view() == "events") {
-      sketch <- htmltools::withTags(table(
-        class = "display",
-        thead(tr(
-          th("id_pacjenta", br(span(class = "var-type", "id"))),
-          th("plec", br(span(class = "var-type", "nominalna"))),
-          th("data_wizyty", br(span(class = "var-type", "data"))),
-          th("cisnienie_skurczowe", br(span(class = "var-type", "ciagla")))
-        ))
-      ))
       df_show <- cat_patients_visits
       df_show$data_wizyty <- format(df_show$data_wizyty, "%Y-%m-%d")
-      datatable(df_show, container = sketch, rownames = FALSE,
-                options = list(dom = 't', ordering = FALSE,
-                               pageLength = nrow(df_show), scrollY = "260px"))
+      dd_data_table(df_show, page_size = 10, page = input$cat7_table_page, page_input = "cat7_table_page",
+        types = c("id", "nominalna", "data", "ciagla"))
     } else {
-      sketch <- htmltools::withTags(table(
-        class = "display",
-        thead(tr(
-          th("id_pacjenta", br(span(class = "var-type", "id"))),
-          th("plec", br(span(class = "var-type", "nominalna"))),
-          th("srednie_cisnienie", br(span(class = "var-type", "ciagla"))),
-          th("n_wizyt", br(span(class = "var-type", "dyskretna")))
-        ))
-      ))
-      datatable(cat_patients_agg, container = sketch, rownames = FALSE,
-                options = list(dom = 't', ordering = FALSE,
-                               pageLength = nrow(cat_patients_agg), scrollY = "260px"))
+      dd_data_table(cat_patients_agg, page_size = 10, page = input$cat7_table_page, page_input = "cat7_table_page",
+        types = c("id", "nominalna", "ciagla", "dyskretna"))
     }
   })
 

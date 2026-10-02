@@ -23,7 +23,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     lc_h2("sec-02", "Podgląd danych"),
 
     div(class = "lc-figure-panel",
-      DT::dataTableOutput("tab10_table")
+      uiOutput("tab10_table")
     ),
 
     lc_h2("sec-03", "Czy są braki danych?"),
@@ -95,8 +95,8 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
 
 ch11_server <- function(input, output, session) {
 
-  output$tab10_table <- DT::renderDataTable({
-    datatable(round_df(cafe_data), options = list(pageLength = 10, scrollX = TRUE), rownames = FALSE)
+  output$tab10_table <- renderUI({
+    dd_data_table(round_df(cafe_data), page_size = 10, page = input$tab10_table_page, page_input = "tab10_table_page")
   })
 
   zoom_plot_server("tab10_missing", reactive({

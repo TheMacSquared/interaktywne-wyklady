@@ -23,7 +23,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     lc_h2("sec-02", "Podgląd danych"),
 
     div(class = "lc-figure-panel",
-      DT::dataTableOutput("tab3_table")
+      uiOutput("tab3_table")
     ),
 
     lc_h2("sec-03", "Czy są braki danych?"),
@@ -66,8 +66,8 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
 
 ch4_server <- function(input, output, session) {
 
-  output$tab3_table <- DT::renderDataTable({
-    datatable(round_df(penguins), options = list(pageLength = 8, scrollX = TRUE), rownames = FALSE)
+  output$tab3_table <- renderUI({
+    dd_data_table(round_df(penguins), page_size = 8, page = input$tab3_table_page, page_input = "tab3_table_page")
   })
 
   zoom_plot_server("tab3_missing", reactive({

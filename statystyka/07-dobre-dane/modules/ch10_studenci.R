@@ -21,7 +21,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
     lc_h2("sec-02", "Podgląd danych"),
 
     div(class = "lc-figure-panel",
-      DT::dataTableOutput("tab9_table")
+      uiOutput("tab9_table")
     ),
 
     div(class = "lc-feedback lc-feedback-info",
@@ -56,8 +56,8 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
 
 ch10_server <- function(input, output, session) {
 
-  output$tab9_table <- DT::renderDataTable({
-    datatable(round_df(survey_data), options = list(pageLength = 8, scrollX = TRUE), rownames = FALSE)
+  output$tab9_table <- renderUI({
+    dd_data_table(round_df(survey_data), page_size = 8, page = input$tab9_table_page, page_input = "tab9_table_page")
   })
 
 }

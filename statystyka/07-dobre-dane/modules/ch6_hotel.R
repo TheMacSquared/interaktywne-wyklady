@@ -21,7 +21,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     lc_h2("sec-02", "Podgląd danych"),
 
     div(class = "lc-figure-panel",
-      DT::dataTableOutput("tab5_table")
+      uiOutput("tab5_table")
     ),
 
     lc_h2("sec-03", "Zmienna 1: Ocena ogólna"),
@@ -131,8 +131,8 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
 ch6_server <- function(input, output, session) {
 
-  output$tab5_table <- DT::renderDataTable({
-    datatable(round_df(hotel_data), options = list(pageLength = 10, scrollX = TRUE), rownames = FALSE)
+  output$tab5_table <- renderUI({
+    dd_data_table(round_df(hotel_data), page_size = 10, page = input$tab5_table_page, page_input = "tab5_table_page")
   })
 
   zoom_plot_server("tab5_plot_zadowolenie", reactive({

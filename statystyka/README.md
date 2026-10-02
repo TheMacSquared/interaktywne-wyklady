@@ -36,7 +36,7 @@ Najpierw postaw zrozumiałe pytanie, potem poproś o przewidywanie, zmień param
 ```r
 install.packages(c(
   "shiny", "ggplot2", "dplyr", "e1071", "gridExtra", "rstatix", "broom",
-  "tidyr", "knitr", "lmtest", "sandwich", "visNetwork", "DT", "bslib",
+  "tidyr", "knitr", "lmtest", "sandwich", "visNetwork", "bslib",
   "AER", "palmerpenguins", "ISLR", "fivethirtyeight", "jsonlite"
 ))
 ```

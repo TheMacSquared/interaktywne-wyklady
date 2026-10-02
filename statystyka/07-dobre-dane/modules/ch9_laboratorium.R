@@ -21,7 +21,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     lc_h2("sec-02", "Podgląd danych"),
 
     div(class = "lc-figure-panel",
-      DT::dataTableOutput("tab8_table")
+      uiOutput("tab8_table")
     ),
 
     lc_h2("sec-03", "Wiek a hemoglobina"),
@@ -82,8 +82,8 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
 
 ch9_server <- function(input, output, session) {
 
-  output$tab8_table <- DT::renderDataTable({
-    datatable(round_df(lab_data), options = list(pageLength = 10, scrollX = TRUE), rownames = FALSE)
+  output$tab8_table <- renderUI({
+    dd_data_table(round_df(lab_data), page_size = 10, page = input$tab8_table_page, page_input = "tab8_table_page")
   })
 
   error_rows <- c(3, 17, 28, 42, 55, 71)

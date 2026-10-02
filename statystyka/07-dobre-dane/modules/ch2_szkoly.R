@@ -22,7 +22,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
     lc_h2("sec-02", "Podgląd danych"),
 
     div(class = "lc-figure-panel",
-      DT::dataTableOutput("tab1_table")
+      uiOutput("tab1_table")
     ),
 
     div(class = "lc-feedback lc-feedback-info",
@@ -79,10 +79,10 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
 
 ch2_server <- function(input, output, session) {
 
-  output$tab1_table <- DT::renderDataTable({
-    datatable(round_df(CASchools[, c("district", "school", "students", "teachers", "expenditure",
-                            "income", "english", "lunch", "calworks", "read", "math")]),
-              options = list(pageLength = 8, scrollX = TRUE), rownames = FALSE)
+  output$tab1_table <- renderUI({
+    dd_data_table(round_df(CASchools[, c("district", "school", "students", "teachers", "expenditure",
+                                "income", "english", "lunch", "calworks", "read", "math")]),
+                  page_size = 8, page = input$tab1_table_page, page_input = "tab1_table_page")
   })
 
   zoom_plot_server("tab1_hist", reactive({

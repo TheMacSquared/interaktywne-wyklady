@@ -325,3 +325,67 @@ round_df <- function(df, digits = 2) {
   })
   df
 }
+
+# ============================================================================
+# TABELE V2
+# ============================================================================
+
+# Liczba miejsc po kropce potrzebna, żeby pokazać kolumnę bez zaokrąglania
+# (maks. 3).
+dd_decimals <- function(x) {
+  x <- x[is.finite(x)]
+  if (!length(x)) return(0L)
+  for (d in 0:2) {
+    if (all(abs(x * 10^d - round(x * 10^d)) < 1e-8)) return(d)
+  }
+  3L
+}
+
+# Tabela surowych danych (lc_table v2). Typy kolumn z R, pierwsza kolumna jako
+# nagłówek wiersza, typ zmiennej w drugiej linii nagłówka (types), braki jako
+# szara kreska. n: liczba pokazanych wierszy (reszta opisana w notce).
+# page_size + page_input: cały zbiór ze stronicowaniem po stronie serwera
+# (page = input$<page_input>); wtedy n jest pomijane.
+# cell_class: nazwana lista klucz kolumny → wektor klas (np. is-target).
+dd_data_table <- function(df, types = NULL, n = NULL, cell_class = NULL,
+                          label = "Podgląd danych", page_size = NULL,
+                          page = 1, page_input = NULL) {
+  df <- as.data.frame(df, stringsAsFactors = FALSE)
+  total <- nrow(df)
+  if (is.null(page_size) && !is.null(n) && total > n) df <- utils::head(df, n)
+
+  cols <- lapply(seq_along(df), function(i) {
+    x <- df[[i]]
+    num <- is.numeric(x)
+    lc_col(names(df)[i], names(df)[i],
+           type = if (i == 1) "row" else if (num) "num" else "text",
+           digits = if (num) dd_decimals(x) else 0,
+           sub = if (!is.null(types)) types[[i]])
+  })
+
+  classes <- lapply(names(df), function(key) {
+    cls <- ifelse(is.na(df[[key]]), "is-dim", NA_character_)
+    extra <- cell_class[[key]]
+    if (!is.null(extra)) {
+      extra <- utils::head(extra, nrow(df))
+      cls <- ifelse(is.na(cls), extra,
+                    ifelse(is.na(extra), cls, paste(cls, extra)))
+    }
+    cls
+  })
+  names(classes) <- names(df)
+  classes <- Filter(function(cls) any(!is.na(cls)), classes)
+
+  df[] <- lapply(df, function(x) {
+    if (is.numeric(x)) x else ifelse(is.na(x), "–", as.character(x))
+  })
+
+  lc_table(df, cols,
+    cell_class = if (length(classes)) classes,
+    scroll = TRUE, sticky_first = TRUE, label = label,
+    page_size = page_size, page = page, page_input = page_input,
+    note = if (nrow(df) < total) {
+      sprintf("Pierwsze %d z %d obserwacji", nrow(df), total)
+    }
+  )
+}

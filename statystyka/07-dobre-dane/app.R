@@ -4,7 +4,6 @@
 library(shiny)
 library(ggplot2)
 library(dplyr)
-library(DT)
 library(tidyr)
 library(AER)
 library(palmerpenguins)
@@ -86,28 +85,6 @@ header_extras <- tagList(
       border: 2px dashed var(--upwr-niebo); border-radius: 8px;
       padding: 15px; margin: 15px 0; background: var(--upwr-panel);
     }
-
-    /* Jamovi-style data table */
-    .jamovi-table .dataTables_wrapper { font-family: 'Segoe UI', Roboto, sans-serif; }
-    .jamovi-table table.dataTable thead th {
-      background: var(--upwr-panel); border-bottom: 2px solid var(--upwr-rule);
-      font-weight: 600; font-size: 13px; padding: 8px 10px;
-      text-align: center; vertical-align: bottom;
-    }
-    .jamovi-table table.dataTable thead th .var-type {
-      display: block; font-size: 10px; font-weight: 400;
-      color: var(--upwr-reference); margin-top: 2px; font-style: italic;
-    }
-    .jamovi-table table.dataTable tbody td {
-      padding: 6px 10px; font-size: 13px; text-align: center;
-      border-right: 1px solid var(--upwr-rule);
-    }
-    .jamovi-table table.dataTable tbody tr:nth-child(odd) { background: var(--upwr-panel); }
-    .jamovi-table table.dataTable tbody tr:nth-child(even) { background: white; }
-    .cell-error { background: #f7ded8 !important; color: var(--upwr-accent); font-weight: 600; }
-    .cell-na { background: var(--upwr-bg) !important; color: var(--upwr-reference); font-style: italic; }
-    .cell-messy { background: #f3e6c7 !important; color: #7a5a1a; }
-    .cell-ok { background: #dce9dc !important; }
 
     /* Problem card in catalog */
     .problem-card {
