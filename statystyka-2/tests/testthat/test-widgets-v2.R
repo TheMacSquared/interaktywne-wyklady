@@ -94,3 +94,26 @@ testthat::test_that("kontrolki v2 generują wejścia Shiny", {
   testthat::expect_match(html(env$lc_plot("pl", ratio = "2/1")), "--lc-plot-ratio:2/1;", fixed = TRUE)
   testthat::expect_false(grepl("--lc-plot-ratio", html(env$lc_plot("pl")), fixed = TRUE))
 })
+
+testthat::test_that("lc_table stronicuje po stronie przeglądarki i serwera", {
+  env <- load_v2_env()
+  df <- data.frame(id = as.character(1:25), x = c(1.5, 2, rep(100, 23)))
+  cols <- list(env$lc_col("id", "Id", "row"), env$lc_col("x", "x", digits = 1))
+
+  client <- html(env$lc_table(df, cols, page_size = 10))
+  testthat::expect_equal(lengths(regmatches(client, gregexpr("is-paged-out", client))), 15L)
+  testthat::expect_match(client, "Wiersze 1–10 z 25", fixed = TRUE)
+  testthat::expect_match(client, "1 / 3", fixed = TRUE)
+  testthat::expect_false(grepl("data-lc-page-input", client, fixed = TRUE))
+
+  server <- html(env$lc_table(df, cols, page_size = 10, page = 3, page_input = "pg"))
+  testthat::expect_match(server, 'data-lc-page-input="pg"', fixed = TRUE)
+  testthat::expect_match(server, "Wiersze 21–25 z 25", fixed = TRUE)
+  testthat::expect_equal(lengths(regmatches(server, gregexpr("<tr", server))), 6L)
+  # Szerokość części całkowitej liczona z całego zbioru: 1.5 dopełnione do 100.
+  first <- html(env$lc_table(df, cols, page_size = 10, page = 1, page_input = "pg"))
+  testthat::expect_match(first, '<span class="lc-pad" aria-hidden="true">00</span>1.5', fixed = TRUE)
+  testthat::expect_match(html(env$lc_table(df, cols, page_size = 10, page = 99, page_input = "pg")),
+                         "3 / 3", fixed = TRUE)
+  testthat::expect_false(grepl("lc-pager", html(env$lc_table(df, cols, page_size = 50)), fixed = TRUE))
+})

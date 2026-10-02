@@ -63,6 +63,36 @@
       { priority: 'event' });
   });
 
+  // --- Stronicowanie tabel ---
+  // Z data-lc-page-input stronę renderuje serwer (input$<id> = numer strony);
+  // bez niego przeglądarka ukrywa wiersze spoza bieżącej strony.
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest && e.target.closest('.lc-pager [data-lc-page-to]');
+    if (!btn || btn.disabled) return;
+    var pager = btn.closest('.lc-pager');
+    var to = Number(btn.getAttribute('data-lc-page-to'));
+    var inputId = pager.getAttribute('data-lc-page-input');
+    if (inputId) {
+      if (window.Shiny) window.Shiny.setInputValue(inputId, to, { priority: 'event' });
+      return;
+    }
+    var size = Number(pager.getAttribute('data-lc-page-size'));
+    var total = Number(pager.getAttribute('data-lc-total'));
+    var pages = Math.ceil(total / size);
+    to = Math.max(1, Math.min(pages, to));
+    var block = pager.closest('.lc-tbl-block');
+    var rows = block.querySelectorAll('table.lc-tbl > tbody > tr');
+    rows.forEach(function(row, i) {
+      row.classList.toggle('is-paged-out', i < (to - 1) * size || i >= to * size);
+    });
+    var from = (to - 1) * size + 1, last = Math.min(total, to * size);
+    pager.querySelector('[data-lc-page-range]').textContent = 'Wiersze ' + from + '–' + last + ' z ' + total;
+    pager.querySelector('[data-lc-page-label]').textContent = to + ' / ' + pages;
+    var navs = pager.querySelectorAll('[data-lc-page-to]');
+    navs[0].setAttribute('data-lc-page-to', to - 1); navs[0].disabled = to <= 1;
+    navs[1].setAttribute('data-lc-page-to', to + 1); navs[1].disabled = to >= pages;
+  });
+
   // --- Kroki demonstracji: input binding, wartość = numer kroku ---
   function renderSteps(el) {
     var n = Number(el.getAttribute('data-lc-steps'));

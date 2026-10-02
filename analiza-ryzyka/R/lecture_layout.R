@@ -1273,7 +1273,7 @@ lc_col <- function(key, label, type = c("num", "text", "row"), digits = 0,
   role <- function(r) if (roles) r
   n <- nrow(df)
   cols <- lapply(cols, function(col) {
-    if (identical(col$type, "num")) {
+    if (identical(col$type, "num") && is.null(col$int_width)) {
       vals <- c(if (is.numeric(df[[col$key]])) df[[col$key]],
                 if (!is.null(foot) && is.numeric(foot[[col$key]])) foot[[col$key]])
       col$int_width <- .lc_int_width(vals, col$digits)
@@ -1303,7 +1303,7 @@ lc_col <- function(key, label, type = c("num", "text", "row"), digits = 0,
   }
   body_rows <- lapply(seq_len(n), function(i) {
     make_row(lapply(df, function(column) column[i]), i,
-             if (!is.null(row_class)) row_class[[i]])
+             if (!is.null(row_class)) .lc_classes(row_class[[i]]))
   })
   tags$table(
     class = .lc_classes("lc-tbl", class), role = role("table"),
@@ -1338,13 +1338,45 @@ lc_table_key <- function(cols, class = NULL) {
 # narrow: zachowanie tabeli tekstowej na wąskim kontenerze.
 # fit = TRUE: tabela liczbowa nie rozciąga się na pełną szerokość.
 # cell_class: nazwana lista klucz kolumny → wektor klas (is-target, is-best…).
+# page_size: stronicowanie. Bez page_input strony przełącza przeglądarka
+# (w HTML są wszystkie wiersze; dla małych tabel). Z page_input renderowana
+# jest tylko strona `page`, a przyciski ustawiają input$<page_input>
+# (dla dużych zbiorów): lc_table(..., page = input$x_page, page_input = "x_page").
 lc_table <- function(df, cols = NULL, foot = NULL, caption = NULL, number = NULL,
                      narrow = c("none", "cards", "stack-last"), fit = NULL,
                      row_class = NULL, cell_class = NULL, key = TRUE,
                      scroll = FALSE, sticky_first = FALSE, label = NULL,
-                     prose = FALSE, colgroup = FALSE, lead = NULL, note = NULL) {
+                     prose = FALSE, colgroup = FALSE, lead = NULL, note = NULL,
+                     page_size = NULL, page = 1, page_input = NULL) {
   narrow <- match.arg(narrow)
   if (is.null(cols)) cols <- .lc_auto_cols(df)
+  pager <- NULL
+  total <- nrow(df)
+  if (!is.null(page_size) && total > page_size) {
+    # Szerokości cyfr z całego zbioru, żeby wyrównanie nie skakało między stronami.
+    cols <- lapply(cols, function(col) {
+      if (identical(col$type, "num") && is.numeric(df[[col$key]])) {
+        col$int_width <- .lc_int_width(c(df[[col$key]],
+          if (!is.null(foot) && is.numeric(foot[[col$key]])) foot[[col$key]]), col$digits)
+      }
+      col
+    })
+    n_pages <- ceiling(total / page_size)
+    page <- max(1L, min(n_pages, as.integer(page %||% 1L)))
+    rows <- ((page - 1) * page_size + 1):min(total, page * page_size)
+    if (is.null(page_input)) {
+      paged_out <- ifelse(seq_len(total) %in% rows, NA_character_, "is-paged-out")
+      row_class <- if (is.null(row_class)) paged_out else
+        ifelse(is.na(paged_out), row_class, paste(row_class, paged_out))
+    } else {
+      df <- df[rows, , drop = FALSE]
+      if (!is.null(row_class)) row_class <- row_class[rows]
+      if (!is.null(cell_class)) cell_class <- lapply(cell_class, function(v) {
+        if (length(v) == 1) v else v[rows]
+      })
+    }
+    pager <- .lc_pager(page, n_pages, min(rows), max(rows), total, page_size, page_input)
+  }
   types <- vapply(cols, `[[`, character(1), "type")
   if (is.null(fit)) fit <- narrow == "none" && any(types == "num")
   text_table <- narrow != "none" || !any(types == "num")
@@ -1364,7 +1396,28 @@ lc_table <- function(df, cols = NULL, foot = NULL, caption = NULL, number = NULL
     if (!is.null(lead)) tags$p(class = "lc-tbl-lead", lead),
     if (isTRUE(key)) lc_table_key(cols),
     tbl,
+    pager,
     if (!is.null(note)) tags$div(class = "lc-tbl-note", note)
+  )
+}
+
+# Pasek stronicowania pod tabelą. Logika przycisków: R/lc_widgets.js.
+.lc_pager <- function(page, n_pages, from, to, total, page_size, page_input = NULL) {
+  nav_button <- function(to_page, label, icon, disabled) {
+    tags$button(type = "button", class = "lc-action is-ghost is-icon",
+      `data-lc-page-to` = to_page, `aria-label` = label, title = label,
+      disabled = if (disabled) NA, lc_icon(icon))
+  }
+  tags$div(class = "lc-pager", `data-lc-page-input` = page_input,
+    `data-lc-page-size` = page_size, `data-lc-total` = total,
+    tags$span(class = "lc-pager-info", `aria-live` = "polite",
+      `data-lc-page-range` = NA, sprintf("Wiersze %d–%d z %d", from, to, total)),
+    tags$div(class = "lc-pager-nav",
+      nav_button(page - 1, "Poprzednia strona", "prev", page <= 1),
+      tags$span(class = "lc-pager-info", `data-lc-page-label` = NA,
+                sprintf("%d / %d", page, n_pages)),
+      nav_button(page + 1, "Następna strona", "next", page >= n_pages)
+    )
   )
 }
 

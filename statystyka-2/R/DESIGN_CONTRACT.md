@@ -202,6 +202,7 @@ i `DT::datatable()` wycofujemy: `renderTable()` zastępuje
 | Tabela z deklaracją kolumn | `lc_table(df, cols)` + `lc_col()` |
 | Jedna tabela szeroko, dwie wąsko | `lc_table_split()` |
 | Podgląd surowych danych | `lc_table_preview()` |
+| Stronicowanie | `lc_table(page_size = )`; duże zbiory z `page_input` |
 | Tabela krzyżowa z sumami | `lc_crosstab()` |
 | Pusta tabela | `lc_table_empty()` |
 | Liczba w komórce / tekście | `lc_num()` / `lc_fmt()` |
@@ -227,11 +228,15 @@ Zasady:
    dwie tabele (`lc_table_split()`), karty lub ostatnia kolumna pod wierszem
    dla tabel tekstowych (`narrow = "cards" / "stack-last"`), przewijanie tylko
    dla danych surowych (`scroll = TRUE`). Tekstu nie zmniejszamy.
-8. Stany komórek i kolumn: `is-new` (dodane w bieżącym kroku), `is-best`,
+8. Stronicowanie: `lc_table(page_size = 10)` przełącza strony w przeglądarce
+   (w HTML są wszystkie wiersze; tylko małe tabele). Duże zbiory renderują
+   jedną stronę na serwerze: `lc_table(..., page = input$x_page,
+   page_input = "x_page")`.
+9. Stany komórek i kolumn: `is-new` (dodane w bieżącym kroku), `is-best`,
    `is-dim` (bez interpretacji), `is-target`, `is-base`.
-9. Do 3 liczb o jednym obiekcie: `lc_readout()` w pasku. Co najmniej
+10. Do 3 liczb o jednym obiekcie: `lc_readout()` w pasku. Co najmniej
    2 obiekty × 2 miary: tabela.
-10. Tabela interaktywna stoi w `figure_panel()`. Tabela referencyjna
+11. Tabela interaktywna stoi w `figure_panel()`. Tabela referencyjna
     stoi w toku tekstu (`lc_table(..., prose = TRUE, caption = ...)`).
 
 `lc_table_region()` zostaje dla tabel jeszcze niezmigrowanych; nowe tabele
