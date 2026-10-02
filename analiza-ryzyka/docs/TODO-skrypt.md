@@ -50,3 +50,10 @@ Otwarte pytania po commicie `fb4737d` (2026-09-28). Każdy punkt wymaga decyzji 
   - [ ] zostaje
   - [ ] ujednolicić MTTF w widgecie z danymi Bananpolu
   - [ ] zmienić R_C na wartość niekolidującą (np. 0,97) i przeliczyć przykłady 8.5, 8.7, 8.11
+
+## Responsywność paneli, tabel i widgetów
+
+Wspólna koncepcja i lista kolejnych kroków dla obu kursów jest w
+[TODO statystyki — responsywne widgety i tabele](../../statystyka/TODO.md#responsywne-widgety-i-tabele--kontynuacja-pilotażu-2026-10-02).
+Pilotaż analizy ryzyka obejmuje wykład 07, rozdziały 2 i 4. Dalsza migracja
+czeka na dopracowanie tabeli krokowej i weryfikację pośrednich szerokości.

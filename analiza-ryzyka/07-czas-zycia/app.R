@@ -52,7 +52,8 @@ ui <- lecture_page(
   lecture_num = "07",
   lecture_title = "Czas życia elementu",
   module_label = "Analiza ryzyka · Bananpol",
-  chapters = .chapters
+  chapters = .chapters,
+  header_extras = includeCSS(file.path(app_dir, "assets", "pilot.css"))
 )
 
 server <- function(input, output, session) {

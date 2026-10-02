@@ -578,8 +578,15 @@ margin_note <- function(...) {
 # Domyślnie: szerokość kolumny tekstu (lepszy kontrast z narracją).
 # full_width = TRUE tylko gdy wykres naprawdę potrzebuje pełnej szerokości.
 figure_panel <- function(label, ..., title = NULL, color = "#6b1a26",
-                          full_width = FALSE) {
+                          full_width = FALSE, width_mode = NULL) {
+  if (!is.null(width_mode) && !missing(full_width)) {
+    stop("Wybierz width_mode albo full_width, nie oba argumenty.")
+  }
   outer_class <- if (full_width) "lc-figure-panel lc-full" else "lc-figure-panel"
+  if (!is.null(width_mode)) {
+    width_mode <- match.arg(width_mode, c("compact", "text", "wide"))
+    outer_class <- paste("lc-figure-panel", paste0("lc-panel-", width_mode))
+  }
   tags$div(
     class = outer_class,
     tags$div(
@@ -592,6 +599,34 @@ figure_panel <- function(label, ..., title = NULL, color = "#6b1a26",
     ...
   )
 }
+
+# Szerokość panelu i układ widgetu to dwie niezależne decyzje.
+lc_table_region <- function(..., label = "Tabela", min_width = NULL) {
+  if (!is.null(min_width)) {
+    stopifnot(is.numeric(min_width), length(min_width) == 1L,
+      is.finite(min_width), min_width >= 0)
+  }
+  tags$div(class = "lc-table-region", tabindex = "0", role = "region",
+    `aria-label` = label,
+    style = if (!is.null(min_width)) paste0("--lc-table-min-width:", min_width, "px;"),
+    ...
+  )
+}
+
+lc_controls_row <- function(...) {
+  tags$div(class = "lc-controls-row", ...)
+}
+
+lc_widget_layout <- function(controls, content, layout = c("above", "beside")) {
+  layout <- match.arg(layout)
+  tags$div(class = paste("lc-widget-layout", paste0("lc-widget-", layout)),
+    tags$div(class = "lc-widget-layout-grid",
+      tags$div(class = "lc-widget-controls", controls),
+      tags$div(class = "lc-widget-content", content)
+    )
+  )
+}
+
 
 # Ćwiczenie „przypisz karty do pól" — przeciąganie myszą i obsługa klawiatury.
 # Logika po stronie klienta jest w R/lc_dragdrop.js, style w shared_styles.css.

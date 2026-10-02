@@ -22,6 +22,7 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.1",
       title = "Tabela częstości — krok po kroku",
+      width_mode = "text",
       radioButtons("ch2_freq_var", "Wybierz zmienną:",
         choices = c(
           "Kierunek studiów (nominalna)" = "kierunek",
@@ -41,7 +42,8 @@ ch2_ui <- list(
       ),
       actionButton("ch2_freq_reset", "Reset", class = "lc-btn-secondary lc-btn-sm"),
       uiOutput("ch2_freq_explanation"),
-      tableOutput("ch2_freq_table")
+      lc_table_region(tableOutput("ch2_freq_table"),
+        label = "Tabela częstości", min_width = 600)
     ),
 
     # ========================================================================

@@ -29,7 +29,18 @@ risk_natural_frequency <- function(p, population = 1000L) {
 
 risk_widget_panel <- function(label = "Eksperyment", title, controls,
                               plot_id = NULL, stats_id = NULL, note = NULL,
-                              height = "430px") {
+                              height = "430px", width_mode = NULL, layout = c("above", "beside")) {
+  if (!is.null(width_mode)) {
+    layout <- match.arg(layout)
+    control_content <- tagList(
+      lc_controls_row(controls, if (!is.null(stats_id)) uiOutput(stats_id)),
+      if (!is.null(note)) lc_feedback(type = "info", note)
+    )
+    return(figure_panel(label = label, title = title, width_mode = width_mode,
+      if (!is.null(plot_id)) lc_widget_layout(control_content,
+        zoom_plot_ui(plot_id, height = height), layout = layout) else control_content
+    ))
+  }
   body <- list()
   if (!is.null(plot_id)) {
     body <- list(
@@ -49,7 +60,7 @@ risk_widget_panel <- function(label = "Eksperyment", title, controls,
   do.call(figure_panel, c(list(label = label, title = title, full_width = TRUE), body))
 }
 
-risk_vote_panel <- function(input_id, output_id, question, choices) {
+risk_vote_panel <- function(input_id, output_id, question, choices, full_width = TRUE) {
   figure_panel(
     label = "Najpierw zdecyduj",
     title = question,
@@ -58,7 +69,7 @@ risk_vote_panel <- function(input_id, output_id, question, choices) {
       class = "lc-btn-primary"
     ),
     uiOutput(output_id),
-    full_width = TRUE
+    full_width = full_width
   )
 }
 

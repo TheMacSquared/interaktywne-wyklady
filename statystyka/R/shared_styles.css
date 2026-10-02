@@ -807,6 +807,35 @@ html, body {
 /* Pełna szerokość — opt-in przez full_width = TRUE */
 .lc-figure-panel.lc-full { max-width: none; }
 
+/* Jawne warianty panelu: zwarty, tekstowy i szeroki. */
+.lc-figure-panel.lc-panel-compact {
+  width: fit-content;
+  max-width: min(100%, 680px);
+  min-width: 0;
+}
+.lc-figure-panel.lc-panel-text { width: 100%; max-width: 680px; }
+.lc-figure-panel.lc-panel-wide { width: 100%; max-width: 980px; }
+.lc-table-region { min-width: 0; max-width: 100%; overflow-x: auto; }
+.lc-chapter .lc-figure-panel .lc-table-region table {
+  width: 100%; max-width: none;
+  min-width: var(--lc-table-min-width, 0px);
+}
+.lc-chapter .lc-panel-compact .lc-table-region table { width: auto; }
+.lc-controls-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px 24px;
+  align-items: start;
+}
+.lc-controls-row > *, .lc-widget-controls, .lc-widget-content { min-width: 0; }
+.lc-widget-layout { container: lc-widget / inline-size; }
+.lc-widget-layout-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+@container lc-widget (min-width: 720px) {
+  .lc-widget-beside > .lc-widget-layout-grid {
+    grid-template-columns: minmax(220px, 1fr) minmax(0, 2fr);
+  }
+}
+
 .lc-figure-panel-badge {
   position: absolute;
   top: -9px;

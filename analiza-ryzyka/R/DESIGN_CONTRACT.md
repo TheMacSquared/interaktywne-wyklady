@@ -188,3 +188,26 @@ Rscript analiza-ryzyka/scripts/check_design_contract.R --strict
 ```
 
 Tryb `--strict` kończy się błędem, jeśli znajdzie zakazane wzorce.
+
+## Szerokość paneli i układ widgetów
+
+Nowe i przebudowywane panele wybierają `figure_panel(width_mode = ...)`:
+
+- `"compact"`: szerokość wynikająca z zawartości, do 680 px i dostępnego miejsca;
+  krótkie tabele i proste treści bez wykresów oraz procentowych siatek.
+- `"text"`: stabilna kolumna 680 px; opisowe lub dynamiczne tabele i pojedyncze wykresy.
+- `"wide"`: stabilna kolumna do 980 px; uzasadnione porównania i większe diagramy.
+
+Istniejące wywołania bez `width_mode` zachowują dotychczasowe zachowanie.
+Nie łącz `width_mode` z `full_width` w jednym wywołaniu. Nie stosuj trybu
+`compact` do wykresu o szerokości 100% — wykres potrzebuje szerokości kontenera.
+
+Tabele osadzaj w `lc_table_region(..., label = "Opis tabeli")`. Region przewija
+się poziomo, jeśli zawartość nie mieści się w panelu, i jest dostępny z klawiatury.
+Opcjonalne `min_width` (liczba pikseli) chroni tabelę opisową przed zbyt ciasnym
+zawijaniem. Dynamiczna tabela zachowuje szerokość panelu po zmianie kolumn.
+
+`lc_widget_layout(controls, content, layout = "above")` umieszcza sterowanie
+nad wykresem. Wariant `"beside"` przechodzi do dwóch kolumn dopiero wtedy,
+gdy sam widget ma co najmniej 720 px. `lc_controls_row()` rozmieszcza grupy
+sterowania w kolumnach, które automatycznie przechodzą do jednego rzędu pionowego.

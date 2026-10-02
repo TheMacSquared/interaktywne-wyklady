@@ -5,6 +5,65 @@ ale nie blokują obecnego zadania. Posortowane luźno wg modułu.
 
 ---
 
+## Responsywne widgety i tabele — kontynuacja pilotażu (2026-10-02)
+
+Zakres: statystyka i analiza ryzyka. Wspólne komponenty mają uwzględniać
+szerokość dostępnego kontenera, także przy połowie okna desktopowego,
+otwartym sidebarze, powiększeniu przeglądarki i zmianie rozmiaru tekstu.
+Układ mobilny i desktopowy wymagają projektowania treści, nie tylko CSS.
+Nie usuwać informacji ani zmniejszać tekstu wyłącznie po to, żeby zmieścić widget.
+
+### Stan wdrożenia
+
+- Dostępne tryby `figure_panel(width_mode = ...)`: `compact` (dopasowanie do
+  treści, maks. 680 px), `text` (do 680 px), `wide` (do 980 px).
+  Istniejące wywołania zachowują poprzednie zachowanie; migracja jest stopniowa.
+- `lc_table_region()` ogranicza przewijanie do tabeli; `lc_controls_row()`
+  reorganizuje sterowanie; `lc_widget_layout()` obsługuje układ nad wykresem
+  lub obok niego, zależnie od szerokości kontenera.
+- Pilotaże: statystyka 01, rozdział 2 (tabela krokowa); statystyka 02,
+  rozdział 2 („Dane a model”); analiza ryzyka 07, rozdziały 2 i 4.
+- Testy nowych komponentów i kontraktu designu przeszły w obu kursach.
+  Wszystkie 10 aplikacji analizy ryzyka przeszły kontrolę ładowania.
+  Pełne testy ładowania statystyki przerywały limity czasu — wynik pozostaje
+  niepełny i wymaga ponownego sprawdzenia na stacjonarnym.
+
+### Następny krok: tabela częstości w statystyce 01
+
+Obecne minimum tabeli to 600 px, a panel 680 px daje około 622 px treści.
+W kroku 4 sześć kolumn z długimi nagłówkami szybko wymusza przewijanie.
+To zabezpiecza dostęp do danych, ale nie zapewnia wygodnego porównywania.
+
+- [ ] Skrócić nagłówki: `n`, `f`, `%`, `N skum.`, `% skum.`, z widocznym
+  objaśnieniem oznaczeń. Zachować znaczenie i wszystkie dane.
+- [ ] Liczebności pokazywać jako liczby całkowite, procenty bez zbędnych
+  końcowych zer; nazwy kategorii wyrównać do lewej.
+- [ ] Na węższym kontenerze rozważyć dwie tabele: częstości zwykłe
+  i skumulowane, z kategorią powtórzoną w obu. Porównać czytelność
+  z jedną tabelą przed przyjęciem tego jako wzorca.
+- [ ] Dla pierwszych kroków (dwie kolumny) nie wymuszać minimum 600 px.
+- [ ] Ustalać zmianę układu względem szerokości komponentu, nie samego
+  breakpointu telefonu. Przewijanie zostawić jako zabezpieczenie.
+- [ ] Sprawdzić wszystkie kroki dla zmiennej nominalnej i porządkowej,
+  szczególnie długie nazwy kategorii; nie zmieniać obliczeń przy reformacie.
+
+### Zasady dalszej migracji
+
+- [ ] Dla każdego widgetu oddzielnie określić szerokość panelu i sposób
+  reorganizacji treści: tabele, pojedyncze wykresy, porównania wykresów,
+  sterowanie i podsumowania mają różne potrzeby.
+- [ ] Testować duży ekran, połowę okna i telefon, także szerokości pomiędzy
+  breakpointami oraz powiększony tekst. Kontrolować zawijanie, ucięcie
+  danych, lokalne przewijanie i zmiany układu po aktualizacji danych.
+- [ ] Po zaakceptowaniu poprawionego pilotażu stopniowo migrować oba kursy.
+  Nie wprowadzać globalnego `fit-content` dla wykresów o szerokości `100%`.
+
+Pliki startowe: `01-typy-danych/modules/ch2_jakosciowe.R`,
+`R/lecture_layout.R`, `R/shared_styles.css`, `R/DESIGN_CONTRACT.md`;
+analogiczne komponenty są w `../analiza-ryzyka/R/`.
+
+---
+
 ## Ogólne: wdrożenie gloss() na całość projektu
 
 System klikalnych terminów słownikowych (`gloss()`) jest gotowy i przetestowany

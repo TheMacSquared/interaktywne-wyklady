@@ -187,6 +187,8 @@ ch2_ev_var_ui <- list(
 
     tagList(
       p("Zwróć uwagę na analogię:"),
+      figure_panel(label = "Porównanie", title = "Dane a model", width_mode = "compact",
+        lc_table_region(
       tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
         tags$thead(
           tags$tr(
@@ -200,6 +202,8 @@ ch2_ev_var_ui <- list(
           tags$tr(tags$td("Odchylenie standardowe s"), tags$td("Odchylenie standardowe SD(X)")),
           tags$tr(tags$td("Obliczane z danych"), tags$td("Obliczane z modelu (rozkładu)"))
         )
+      ),
+          label = "Porównanie statystyki opisowej i modelu")
       ),
       p(gloss("prawo wielkich liczb", "Prawo wielkich liczb"), " gwarantuje, że x̄ → E(X) wraz ze wzrostem próby.")
     ),
