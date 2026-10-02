@@ -23,11 +23,7 @@ Oznaczenie **Decyzja:** to pytanie do prowadzącego z wariantami do wyboru.
 
 Kolejność najbliższych prac (szczegóły w „Migracja widgetów do v2”):
 
-1. [ ] Mechaniczne zamiany w całych kursach: `sliderInput()` →
-   `lc_slider()`, stała wysokość wykresu → `lc_plot()`, radio ≤ 4 opcje →
-   `lc_segmented()`, przyciski Bootstrapa → `lc_action()` /
-   `lc_action_group()`.
-2. [ ] Przegląd wykład po wykładzie: widgety (układy kolumn, odczyty, podpisy,
+1. [ ] Przegląd wykład po wykładzie: widgety (układy kolumn, odczyty, podpisy,
    tabele) i bloki tekstu (notki, pułapki, podsumowania, statusy).
 
 ---
@@ -85,23 +81,23 @@ Etap 1 — panele wylewające się na telefonie: zrobione (audyt 2 października
 `lc_table()`, szerokie wzory przewijają się w panelu, statystyka 07 bez DT
 (podglądy i stronicowanie `lc_table(page_size = )`).
 
-Etap 2 — mechaniczne zamiany (commit per kurs i rodzaj zamiany):
-
-- [ ] `sliderInput()` → `lc_slider()` (150 paneli, ok. 500 suwaków).
-- [ ] `zoom_plot_ui(id, height = "…px")` → `lc_plot(id)`; wysokie wykresy
-  z `max_height`, porównania obok siebie przez `lc_plots()` (238 paneli).
-- [ ] `radioButtons()` z ≤ 4 krótkimi opcjami → `lc_segmented()` (46).
-- [ ] `actionButton(class = "lc-btn-*")` → `lc_action()`, serie akcji →
-  `lc_action_group()`, reset → ikona (376 paneli).
-- [ ] `labs(title / subtitle)` w wykresach widgetów → tytuł panelu.
-- [ ] Rozważyć skrypt migracyjny (`scripts/`) dla zamian 1:1 oraz
-  przeniesienie skryptu audytu paneli do `scripts/`, żeby powtarzać pomiar
-  po każdym etapie.
+Etap 2 — mechaniczne zamiany: zrobione 2 października 2026 skryptem
+`statystyka/scripts/migrate_v2_mechanical.R` (suwaki 259, przyciski 494,
+radio 23, wykresy poza kolumnami 68). Audyt `statystyka/scripts/audit_panels.R`:
+0 wylewających się paneli, 0 błędów Shiny, wszystkie suwaki z widoczną
+wartością. Przypadki pominięte przez skrypt przechodzą do etapu 3.
 
 Etap 3 — przegląd widgetów wykład po wykładzie (commit per widget):
 
 - [ ] `fluidRow(column(…))` → `lc_toolbar()` nad treścią (201 paneli;
-  najwięcej w statystyce 2: 81 z 91 paneli).
+  najwięcej w statystyce 2: 81 z 91 paneli). Przy okazji wykresy w kolumnach
+  (`zoom_plot_ui` o stałej wysokości, 246) → `lc_plot()` / `lc_plots()`.
+- [ ] Pozostałości po etapie 2: serie akcji („Rzuć 1x / 10x / 100x”) →
+  `lc_action_group()`; przyciski bez klasy `lc-btn` albo ze `style` /
+  `onclick` (36); radio z ponad 4 opcjami lub długimi etykietami (11);
+  suwak z `pre` (1).
+- [ ] `labs(title / subtitle)` w wykresach widgetów → tytuł panelu (zmiana
+  treści, decyzja per widget).
 - [ ] `lc_stat_box()` w widgetach → `lc_readout()`; odczyt z kolorem serii
   zastępuje legendę ggplot (90 paneli; w analizie ryzyka dotyczy prawie
   każdego `risk_widget_panel()`, w którym pudełka siedzą teraz w pasku).
