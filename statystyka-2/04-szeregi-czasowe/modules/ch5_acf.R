@@ -63,7 +63,7 @@ ch5_ui <- list(
           Przerywane linie to przedziały ufności 95%: słupki poza nimi wskazują
           statystycznie istotną autokorelację.")
       ),
-      inline_callout(label = "Chcesz więcej matematyki?", color = "wskazowka", open = FALSE,
+      lc_more("Chcesz więcej matematyki?",
         p("Pełna definicja funkcji autokowariancji:"),
         withMathJax(helpText("$$\\gamma(k) = \\frac{1}{n} \\sum_{t=k+1}^{n} (x_t - \\bar{x})(x_{t-k} - \\bar{x})$$")),
         p("Autokorelacja: ",

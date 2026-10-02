@@ -25,7 +25,7 @@ ch6_ui <- list(
       lc_p(tags$strong("PACF(k)"), " to korelacja między x_t a x_{t−k} po usunięciu
         liniowego wpływu x_{t−1}, …, x_{t−k+1} — czyli korelacja 'bezpośrednia',
         niezakłócona pośrednikami."),
-      inline_callout(label = "Chcesz więcej matematyki?", color = "wskazowka", open = FALSE,
+      lc_more("Chcesz więcej matematyki?",
         p("PACF(k) oblicza się jako ostatni współczynnik autoregresji AR(k):"),
         withMathJax(helpText(
           "$$x_t = \\phi_{k1}x_{t-1} + \\phi_{k2}x_{t-2} + \\cdots + \\phi_{kk}x_{t-k} + \\varepsilon_t$$"

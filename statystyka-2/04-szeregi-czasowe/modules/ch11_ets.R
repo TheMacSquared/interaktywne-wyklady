@@ -24,7 +24,7 @@ ch11_ui <- list(
         withMathJax(helpText("$$\\hat{x}_{t+1} = \\alpha x_t + \\alpha(1-\\alpha) x_{t-1} + \\alpha(1-\\alpha)^2 x_{t-2} + \\cdots$$")),
         p(withMathJax("\\(\\alpha \\in (0,1)\\)"), " — parametr wygładzania. Im bliżej 1, tym szybciej zapominamy historię.")
       ),
-      inline_callout(label = "Chcesz więcej matematyki?", color = "wskazowka", open = FALSE,
+      lc_more("Chcesz więcej matematyki?",
         p("Równanie rekurencyjne (iteracyjne wyznaczanie prognozy):"),
         withMathJax(helpText("$$L_t = \\alpha x_t + (1-\\alpha) L_{t-1}$$")),
         p("Prognoza na horyzont h: ", withMathJax("\\(\\hat{x}_{t+h} = L_t\\)"), " (stała dla prostego ETS, bo brak trendu)."),

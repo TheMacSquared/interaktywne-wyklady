@@ -97,7 +97,7 @@ ch9_ui <- list(
         p("ACF i PACF obu zanikają geometrycznie — brak wyraźnego ucięcia.",
           " Patrz tabelę identyfikacji w ch6.")
       ),
-      inline_callout(label = "Chcesz więcej matematyki?", color = "wskazowka", open = FALSE,
+      lc_more("Chcesz więcej matematyki?",
         p("ARMA(p,q) można zapisać jako AR(∞) lub MA(∞) (przy odpowiednich warunkach stacjonarności i odwracalności):"),
         p("AR to MA(∞): nieskończona suma błędów."),
         p("MA to AR(∞): nieskończona regresja na własnych poprzednich wartościach."),

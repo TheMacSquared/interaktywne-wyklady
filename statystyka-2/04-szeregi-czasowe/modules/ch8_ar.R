@@ -27,7 +27,7 @@ ch8_ui <- list(
         withMathJax(helpText("$$x_t = \\phi_1 x_{t-1} + \\phi_2 x_{t-2} + \\cdots + \\phi_p x_{t-p} + \\varepsilon_t \\quad \\text{AR(p)}$$")),
         p("gdzie ", withMathJax("\\(\\varepsilon_t \\sim N(0, \\sigma^2)\\)"), " — biały szum (niezależny, o stałej wariancji)")
       ),
-      inline_callout(label = "Chcesz więcej matematyki?", color = "wskazowka", open = FALSE,
+      lc_more("Chcesz więcej matematyki?",
         p("Warunek stacjonarności AR(1): |φ₁| < 1."),
         p("AR(p) jest stacjonarny, jeśli pierwiastki wielomianu charakterystycznego ",
           withMathJax("\\(1 - \\phi_1 z - \\cdots - \\phi_p z^p = 0\\)"),

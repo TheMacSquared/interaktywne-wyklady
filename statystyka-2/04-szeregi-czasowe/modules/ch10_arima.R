@@ -30,7 +30,7 @@ ch10_ui <- list(
         p("ARIMA(1,1,0): pierwszy raz różnicujemy, potem AR(1) na różnicach."),
         p("ARIMA(0,1,1): pierwszy raz różnicujemy, potem MA(1) na różnicach.")
       ),
-      inline_callout(label = "Chcesz więcej matematyki?", color = "wskazowka", open = FALSE,
+      lc_more("Chcesz więcej matematyki?",
         p("ARIMA(1,1,1) explicite: ", withMathJax("\\((1-\\phi_1 B)(1-B)x_t = (1+\\theta_1 B)\\varepsilon_t\\)")),
         p("gdzie B to operator opóźnienia: ", withMathJax("\\(B x_t = x_{t-1}\\)"), "."),
         p("Szczególne przypadki: ARIMA(0,1,0) = random walk; ARIMA(0,0,0) = biały szum; ARIMA(p,0,0) = AR(p); ARIMA(0,0,q) = MA(q).")
