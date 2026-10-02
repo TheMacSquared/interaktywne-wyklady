@@ -48,9 +48,37 @@ ch9_ui <- list(
 # TRESC ZADAN — funkcje zwracajace tagList per kierunek
 # ============================================================================
 
-# Helper: wiersz tabeli zadania 5
+# Helpery tabel zadania 5: wiersz z sytuacją (rozkład i parametry do
+# uzupełnienia) oraz wiersz rozwiązania.
 .z5row <- function(lit, sytuacja) {
-  tags$tr(tags$td(lit), tags$td(sytuacja), tags$td("?"), tags$td("?"))
+  data.frame(lit = lit, situation = sytuacja, dist = "?", params = "?",
+             stringsAsFactors = FALSE)
+}
+
+.ch9_task5_table <- function(...) {
+  lc_table(do.call(rbind, list(...)),
+    cols = list(
+      lc_col("lit", "", "row"),
+      lc_col("situation", "Sytuacja", "text"),
+      lc_col("dist", "Rozkład", "text"),
+      lc_col("params", "Parametry", "text")
+    ),
+    narrow = "cards"
+  )
+}
+
+.z5sol <- function(lit, dist, params) {
+  data.frame(lit = lit, dist = dist, params = params, stringsAsFactors = FALSE)
+}
+
+.ch9_task5_solution <- function(...) {
+  lc_table(do.call(rbind, list(...)),
+    cols = list(
+      lc_col("lit", "", "row"),
+      lc_col("dist", "Rozkład", "text"),
+      lc_col("params", "Parametry", "text")
+    )
+  )
 }
 
 # --------------------------------------------------------------------------
@@ -140,18 +168,15 @@ ch9_ui <- list(
       p("Dla każdej sytuacji: ", tags$b("nazwij rozkład"), " i ", tags$b("podaj parametry"),
         ". Pracujcie w parach, potem dyskusja.")
     ),
-    tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-      tags$thead(tags$tr(tags$th(""), tags$th("Sytuacja"), tags$th("Rozkład"), tags$th("Parametry"))),
-      tags$tbody(
-        .z5row("a)", "Inspektor BHP sprawdza 20 stanowisk. Każde ma 10% szans na naruszenie przepisów. Ile naruszeń znajdzie?"),
-        .z5row("b)", "Średnio 3 alarmy przeciwpożarowe na tydzień w galerii handlowej. Ile alarmów w następnym tygodniu?"),
-        .z5row("c)", "Czas oczekiwania na karetkę pogotowia — średnia 8 min, odch. std. 2 min, rozkład symetryczny"),
-        .z5row("d)", "Awaria w fabryce może wystąpić w losowym momencie 8-godzinnej zmiany (każdy moment tak samo prawdopodobny)"),
-        .z5row("e)", "Z 50 gaśnic w magazynie, 4% jest przeterminowanych. Ile przeterminowanych w losowej kontroli?"),
-        .z5row("f)", "Inspektor sprawdza kolejne budynki aż do znalezienia pierwszego z naruszeniem przepisów ppoż. (szansa: 15%). Ile budynków sprawdzi?"),
-        .z5row("g)", "Średnio 1 poważny wypadek co 20 dni roboczych. Ile dni do następnego wypadku?"),
-        .z5row("h)", "Waga ładunku na palecie — średnia 500 kg, odch. std. 30 kg")
-      )
+    .ch9_task5_table(
+      .z5row("a)", "Inspektor BHP sprawdza 20 stanowisk. Każde ma 10% szans na naruszenie przepisów. Ile naruszeń znajdzie?"),
+      .z5row("b)", "Średnio 3 alarmy przeciwpożarowe na tydzień w galerii handlowej. Ile alarmów w następnym tygodniu?"),
+      .z5row("c)", "Czas oczekiwania na karetkę pogotowia — średnia 8 min, odch. std. 2 min, rozkład symetryczny"),
+      .z5row("d)", "Awaria w fabryce może wystąpić w losowym momencie 8-godzinnej zmiany (każdy moment tak samo prawdopodobny)"),
+      .z5row("e)", "Z 50 gaśnic w magazynie, 4% jest przeterminowanych. Ile przeterminowanych w losowej kontroli?"),
+      .z5row("f)", "Inspektor sprawdza kolejne budynki aż do znalezienia pierwszego z naruszeniem przepisów ppoż. (szansa: 15%). Ile budynków sprawdzi?"),
+      .z5row("g)", "Średnio 1 poważny wypadek co 20 dni roboczych. Ile dni do następnego wypadku?"),
+      .z5row("h)", "Waga ładunku na palecie — średnia 500 kg, odch. std. 30 kg")
     ),
     actionButton("ch9_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol5")
@@ -348,18 +373,15 @@ ch9_ui <- list(
     tagList(
       p("Dla każdej sytuacji: ", tags$b("nazwij rozkład"), " i ", tags$b("podaj parametry"), ". Pracujcie w parach, potem dyskusja.")
     ),
-    tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-      tags$thead(tags$tr(tags$th(""), tags$th("Sytuacja"), tags$th("Rozkład"), tags$th("Parametry"))),
-      tags$tbody(
-        .z5row("a)", "Agrotechnik sprawdza 15 próbek gleby. Każda ma 25% szans na zakwaszenie poniżej normy. Ile próbek będzie zakwaszonych?"),
-        .z5row("b)", "Średnio 4 ataki mszyc na tydzień na polu rzepaku. Ile ataków w następnym tygodniu?"),
-        .z5row("c)", "Masa tysiąca ziaren pszenicy — średnia 42 g, odch. std. 3 g, rozkład symetryczny"),
-        .z5row("d)", "Moment wschodzów roślin w ciągu 14-dniowego okienka — każdy dzień tak samo prawdopodobny"),
-        .z5row("e)", "Z 200 nasion w worku 3% jest niekielkujących. Ile takich nasion w losowej próbce 50 sztuk?"),
-        .z5row("f)", "Agronom sprawdza kolejne działki aż do znalezienia pierwszej z erozją gleby (szansa: 10%). Ile działek sprawdzi?"),
-        .z5row("g)", "Średnio 1 wystąpienie szkodników co 7 dni na polu. Ile dni do następnego wystąpienia?"),
-        .z5row("h)", "Wilgotność gleby na polu — średnia 35%, odch. std. 5%")
-      )
+    .ch9_task5_table(
+      .z5row("a)", "Agrotechnik sprawdza 15 próbek gleby. Każda ma 25% szans na zakwaszenie poniżej normy. Ile próbek będzie zakwaszonych?"),
+      .z5row("b)", "Średnio 4 ataki mszyc na tydzień na polu rzepaku. Ile ataków w następnym tygodniu?"),
+      .z5row("c)", "Masa tysiąca ziaren pszenicy — średnia 42 g, odch. std. 3 g, rozkład symetryczny"),
+      .z5row("d)", "Moment wschodzów roślin w ciągu 14-dniowego okienka — każdy dzień tak samo prawdopodobny"),
+      .z5row("e)", "Z 200 nasion w worku 3% jest niekielkujących. Ile takich nasion w losowej próbce 50 sztuk?"),
+      .z5row("f)", "Agronom sprawdza kolejne działki aż do znalezienia pierwszej z erozją gleby (szansa: 10%). Ile działek sprawdzi?"),
+      .z5row("g)", "Średnio 1 wystąpienie szkodników co 7 dni na polu. Ile dni do następnego wystąpienia?"),
+      .z5row("h)", "Wilgotność gleby na polu — średnia 35%, odch. std. 5%")
     ),
     actionButton("ch9_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol5")
@@ -555,18 +577,15 @@ ch9_ui <- list(
     tagList(
       p("Dla każdej sytuacji: ", tags$b("nazwij rozkład"), " i ", tags$b("podaj parametry"), ". Pracujcie w parach, potem dyskusja.")
     ),
-    tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-      tags$thead(tags$tr(tags$th(""), tags$th("Sytuacja"), tags$th("Rozkład"), tags$th("Parametry"))),
-      tags$tbody(
-        .z5row("a)", "Kontroler sprawdza 25 butelek soku. Każda ma 5% szans na błąd napełnienia. Ile błędnych?"),
-        .z5row("b)", "Średnio 3 awarie linii produkcyjnej dziennie w zakładzie. Ile awarii jutro?"),
-        .z5row("c)", "Masa netto opakowania cukru — średnia 1000 g, odch. std. 5 g, rozkład symetryczny"),
-        .z5row("d)", "Moment pobrania próbki z taśmy produkcyjnej w ciągu 60-minutowej zmiany (każda minuta tak samo prawdopodobna)"),
-        .z5row("e)", "Z partii 200 tabliczek czekolady, 2% ma wady powlekania. Ile wadliwych w losowej próbce 30 sztuk?"),
-        .z5row("f)", "Inspektor sprawdza kolejne partie jogurtów aż do znalezienia pierwszej przeterminowanej (szansa: 8%). Ile partii sprawdzi?"),
-        .z5row("g)", "Średnio 1 usterka linii pakującej co 4 godziny. Ile godzin do następnej usterki?"),
-        .z5row("h)", "Zawartość białka w proszku mlecznym — średnia 26%, odch. std. 1.5%")
-      )
+    .ch9_task5_table(
+      .z5row("a)", "Kontroler sprawdza 25 butelek soku. Każda ma 5% szans na błąd napełnienia. Ile błędnych?"),
+      .z5row("b)", "Średnio 3 awarie linii produkcyjnej dziennie w zakładzie. Ile awarii jutro?"),
+      .z5row("c)", "Masa netto opakowania cukru — średnia 1000 g, odch. std. 5 g, rozkład symetryczny"),
+      .z5row("d)", "Moment pobrania próbki z taśmy produkcyjnej w ciągu 60-minutowej zmiany (każda minuta tak samo prawdopodobna)"),
+      .z5row("e)", "Z partii 200 tabliczek czekolady, 2% ma wady powlekania. Ile wadliwych w losowej próbce 30 sztuk?"),
+      .z5row("f)", "Inspektor sprawdza kolejne partie jogurtów aż do znalezienia pierwszej przeterminowanej (szansa: 8%). Ile partii sprawdzi?"),
+      .z5row("g)", "Średnio 1 usterka linii pakującej co 4 godziny. Ile godzin do następnej usterki?"),
+      .z5row("h)", "Zawartość białka w proszku mlecznym — średnia 26%, odch. std. 1.5%")
     ),
     actionButton("ch9_ans5", "Pokaż rozwiązanie", class = "lc-btn-ok-outline lc-btn-sm"),
     uiOutput("ch9_sol5")
@@ -719,18 +738,15 @@ source(file.path(app_dir, "modules", "ch9_sat.R"), local = TRUE)
       tags$b("d)"), " ", tags$b("Nie zmienia"), " — rozkład wykładniczy jest ", tags$b("bezpamięciowy"),
         sprintf(". P(X > 200+180 | X > 200) = P(X > 180) = %.4f.", 1 - pexp(180, 1/365))
     )),
-    sol5 = tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-      tags$thead(tags$tr(tags$th(""), tags$th("Rozkład"), tags$th("Parametry"))),
-      tags$tbody(
-        tags$tr(tags$td("a)"), tags$td("Dwumianowy"), tags$td("B(20, 0.1)")),
-        tags$tr(tags$td("b)"), tags$td("Poissona"), tags$td("Pois(3)")),
-        tags$tr(tags$td("c)"), tags$td("Normalny"), tags$td("N(8, 2)")),
-        tags$tr(tags$td("d)"), tags$td("Jednostajny ciągły"), tags$td("U(0, 8)")),
-        tags$tr(tags$td("e)"), tags$td("Dwumianowy"), tags$td("B(50, 0.04)")),
-        tags$tr(tags$td("f)"), tags$td("Geometryczny"), tags$td("Geom(0.15)")),
-        tags$tr(tags$td("g)"), tags$td("Wykładniczy"), tags$td("Exp(λ = 1/20)")),
-        tags$tr(tags$td("h)"), tags$td("Normalny"), tags$td("N(500, 30)"))
-      )
+    sol5 = .ch9_task5_solution(
+      .z5sol("a)", "Dwumianowy", "B(20, 0.1)"),
+      .z5sol("b)", "Poissona", "Pois(3)"),
+      .z5sol("c)", "Normalny", "N(8, 2)"),
+      .z5sol("d)", "Jednostajny ciągły", "U(0, 8)"),
+      .z5sol("e)", "Dwumianowy", "B(50, 0.04)"),
+      .z5sol("f)", "Geometryczny", "Geom(0.15)"),
+      .z5sol("g)", "Wykładniczy", "Exp(λ = 1/20)"),
+      .z5sol("h)", "Normalny", "N(500, 30)")
     ),
     sol6 = withMathJax(tagList(
       tags$b("6a)"), " Liczba kolizji: Pois(λ = 4). Czas między kolizjami: Exp(rate = 4/30) → średnio co 7.5 dnia.", tags$br(),
@@ -799,18 +815,15 @@ source(file.path(app_dir, "modules", "ch9_sat.R"), local = TRUE)
       tags$b("c)"), " P(X ≤ 5) = 1 − e^(−5/10) = ", .fmt_p(pexp(5, 0.1)), tags$br(),
       tags$b("d)"), " ", tags$b("Nie zmienia"), sprintf(" — P(X > 12+10 | X > 12) = P(X > 10) = %.4f.", 1 - pexp(10, 0.1))
     )),
-    sol5 = tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-      tags$thead(tags$tr(tags$th(""), tags$th("Rozkład"), tags$th("Parametry"))),
-      tags$tbody(
-        tags$tr(tags$td("a)"), tags$td("Dwumianowy"), tags$td("B(15, 0.25)")),
-        tags$tr(tags$td("b)"), tags$td("Poissona"), tags$td("Pois(4)")),
-        tags$tr(tags$td("c)"), tags$td("Normalny"), tags$td("N(42, 3)")),
-        tags$tr(tags$td("d)"), tags$td("Jednostajny ciągły"), tags$td("U(1, 14)")),
-        tags$tr(tags$td("e)"), tags$td("Dwumianowy"), tags$td("B(50, 0.03)")),
-        tags$tr(tags$td("f)"), tags$td("Geometryczny"), tags$td("Geom(0.10)")),
-        tags$tr(tags$td("g)"), tags$td("Wykładniczy"), tags$td("Exp(λ = 1/7)")),
-        tags$tr(tags$td("h)"), tags$td("Normalny"), tags$td("N(35, 5)"))
-      )
+    sol5 = .ch9_task5_solution(
+      .z5sol("a)", "Dwumianowy", "B(15, 0.25)"),
+      .z5sol("b)", "Poissona", "Pois(4)"),
+      .z5sol("c)", "Normalny", "N(42, 3)"),
+      .z5sol("d)", "Jednostajny ciągły", "U(1, 14)"),
+      .z5sol("e)", "Dwumianowy", "B(50, 0.03)"),
+      .z5sol("f)", "Geometryczny", "Geom(0.10)"),
+      .z5sol("g)", "Wykładniczy", "Exp(λ = 1/7)"),
+      .z5sol("h)", "Normalny", "N(35, 5)")
     ),
     sol6 = withMathJax(tagList(
       tags$b("6a)"), " Ogniska chwastów: Pois(λ = 5). Czas między ogniskami: Exp(rate = 5/7) → średnio co 1.4 dnia.", tags$br(),
@@ -879,18 +892,15 @@ source(file.path(app_dir, "modules", "ch9_sat.R"), local = TRUE)
       tags$b("c)"), " P(X > 10) = e^(−10/8) = ", .fmt_p(1 - pexp(10, 1/8)), tags$br(),
       tags$b("d)"), " ", tags$b("Nie zmienia"), sprintf(" — P(X > 5+3 | X > 5) = P(X > 3) = %.4f.", 1 - pexp(3, 1/8))
     )),
-    sol5 = tags$table(class = "lc-table lc-table-striped lc-table-bordered",
-      tags$thead(tags$tr(tags$th(""), tags$th("Rozkład"), tags$th("Parametry"))),
-      tags$tbody(
-        tags$tr(tags$td("a)"), tags$td("Dwumianowy"), tags$td("B(25, 0.05)")),
-        tags$tr(tags$td("b)"), tags$td("Poissona"), tags$td("Pois(3)")),
-        tags$tr(tags$td("c)"), tags$td("Normalny"), tags$td("N(1000, 5)")),
-        tags$tr(tags$td("d)"), tags$td("Jednostajny ciągły"), tags$td("U(0, 60)")),
-        tags$tr(tags$td("e)"), tags$td("Dwumianowy"), tags$td("B(30, 0.02)")),
-        tags$tr(tags$td("f)"), tags$td("Geometryczny"), tags$td("Geom(0.08)")),
-        tags$tr(tags$td("g)"), tags$td("Wykładniczy"), tags$td("Exp(λ = 1/4)")),
-        tags$tr(tags$td("h)"), tags$td("Normalny"), tags$td("N(26, 1.5)"))
-      )
+    sol5 = .ch9_task5_solution(
+      .z5sol("a)", "Dwumianowy", "B(25, 0.05)"),
+      .z5sol("b)", "Poissona", "Pois(3)"),
+      .z5sol("c)", "Normalny", "N(1000, 5)"),
+      .z5sol("d)", "Jednostajny ciągły", "U(0, 60)"),
+      .z5sol("e)", "Dwumianowy", "B(30, 0.02)"),
+      .z5sol("f)", "Geometryczny", "Geom(0.08)"),
+      .z5sol("g)", "Wykładniczy", "Exp(λ = 1/4)"),
+      .z5sol("h)", "Normalny", "N(26, 1.5)")
     ),
     sol6 = withMathJax(tagList(
       tags$b("6a)"), " Usterki: Pois(λ = 6). Czas między usterkami: Exp(rate = 6/24) → średnio co 4 h.", tags$br(),

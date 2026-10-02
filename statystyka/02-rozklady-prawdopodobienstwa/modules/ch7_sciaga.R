@@ -2,6 +2,54 @@
 # CHAPTER 7: Sciaga
 # ============================================================================
 
+# --------------------------------------------------------------------------
+# Tabele ściągi (dane stałe, budowane raz przy starcie)
+# --------------------------------------------------------------------------
+
+# Tabela tekstowa: rozkład jako nagłówek wiersza, na wąskim karty.
+.ch7_cheat_table <- function(df) {
+  lc_table(df,
+    cols = list(
+      lc_col("a", "Rozkład", "row"),
+      lc_col("b", "Parametry", "text"),
+      lc_col("c", "Przykłady zastosowań", "text")
+    ),
+    narrow = "cards"
+  )
+}
+
+.ch7_discrete_table <- .ch7_cheat_table(
+  data.frame(
+    a = c("Jednostajny dyskretny", "Dwumianowy B(n, p)", "Poissona Pois(λ)", "Geometryczny Geom(p)"),
+    b = c("k (liczba wyników)", "n (próby), p (prawdop.)", "λ (średnia zdarzeń)", "p (prawdop. sukcesu)"),
+    c = c(
+      "Rzut kostką (każda ściana = 1/6), losowanie numeru w loterii, losowy przydział do grup eksperymentalnych",
+      "Liczba wadliwych produktów w partii 100 sztuk, ile osób z 50 odpowie „tak” w ankiecie, skuteczność leku u n pacjentów",
+      "Liczba klientów wchodzących do sklepu na godzinę, zgłoszenia na helpdesk dziennie, literówki na stronie tekstu",
+      "Ile razy rzucać monetą, aż wypadnie orzeł; ile CV wysłać, zanim dostaniesz zaproszenie na rozmowę"
+    ),
+    stringsAsFactors = FALSE
+  )
+)
+
+.ch7_continuous_table <- .ch7_cheat_table(
+  data.frame(
+    a = c("Jednostajny U(a, b)", "Wykładniczy Exp(λ)", "Normalny N(μ, σ)",
+          "t-Studenta t(df)", "Chi-kwadrat χ²(df)", "Log-normalny LogN(μ, σ)"),
+    b = c("a, b (granice)", "λ (rate)", "μ (średnia), σ (odch. std.)",
+          "df (stopnie swobody)", "df (stopnie swobody)", "μ (meanlog), σ (sdlog)"),
+    c = c(
+      "Generator liczb pseudolosowych, czas przyjazdu autobusu w obrębie rozkładu, błąd zaokrąglenia",
+      "Czas do następnej awarii maszyny, odstęp między wiadomościami na czacie, czas oczekiwania na obsługę w kolejce",
+      "Wzrost dorosłych w populacji, wyniki testu IQ, błędy pomiarowe w laboratorium, ciśnienie krwi",
+      "Wnioskowanie o średniej przy małych próbach (n < 30), przedziały ufności, porównanie średnich dwóch grup",
+      "Test niezależności cech w tabeli krzyżowej, test zgodności rozkładu, estymacja wariancji populacji",
+      "Rozkład dochodów w populacji, ceny akcji na giełdzie, czasy reakcji w eksperymencie psychologicznym"
+    ),
+    stringsAsFactors = FALSE
+  )
+)
+
 ch7_ui <- list(
   id = "ch-sciaga", num = "07", title = "Ściąga",
   content = tagList(
@@ -21,7 +69,7 @@ ch7_ui <- list(
       label = "Tab. 7.1",
       title = "Rozkłady dyskretne — zestawienie",
       full_width = TRUE,
-      tableOutput("ch7_discrete_table")
+      .ch7_discrete_table
     ),
 
     # --- Tabela 2: Rozklady ciagle ---
@@ -31,7 +79,7 @@ ch7_ui <- list(
       label = "Tab. 7.2",
       title = "Rozkłady ciągłe — zestawienie",
       full_width = TRUE,
-      tableOutput("ch7_continuous_table")
+      .ch7_continuous_table
     ),
 
     # --- Tabela 3: Kluczowe wzory ---
@@ -311,38 +359,5 @@ ch7_server <- function(input, output, session) {
       }
     )
   }))
-
-  # --- Tabele statyczne ---
-  output$ch7_discrete_table <- renderTable({
-    data.frame(
-      a = c("Jednostajny dyskretny", "Dwumianowy B(n, p)", "Poissona Pois(λ)", "Geometryczny Geom(p)"),
-      b = c("k (liczba wyników)", "n (próby), p (prawdop.)", "λ (średnia zdarzeń)", "p (prawdop. sukcesu)"),
-      c = c(
-        "Rzut kostką (każda ściana = 1/6), losowanie numeru w loterii, losowy przydział do grup eksperymentalnych",
-        "Liczba wadliwych produktów w partii 100 sztuk, ile osób z 50 odpowie „tak” w ankiecie, skuteczność leku u n pacjentów",
-        "Liczba klientów wchodzących do sklepu na godzinę, zgłoszenia na helpdesk dziennie, literówki na stronie tekstu",
-        "Ile razy rzucać monetą, aż wypadnie orzeł; ile CV wysłać, zanim dostaniesz zaproszenie na rozmowę"
-      ),
-      stringsAsFactors = FALSE
-    ) %>% setNames(c("Rozkład", "Parametry", "Przykłady zastosowań"))
-  }, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
-
-  output$ch7_continuous_table <- renderTable({
-    data.frame(
-      a = c("Jednostajny U(a, b)", "Wykładniczy Exp(λ)", "Normalny N(μ, σ)",
-            "t-Studenta t(df)", "Chi-kwadrat χ²(df)", "Log-normalny LogN(μ, σ)"),
-      b = c("a, b (granice)", "λ (rate)", "μ (średnia), σ (odch. std.)",
-            "df (stopnie swobody)", "df (stopnie swobody)", "μ (meanlog), σ (sdlog)"),
-      c = c(
-        "Generator liczb pseudolosowych, czas przyjazdu autobusu w obrębie rozkładu, błąd zaokrąglenia",
-        "Czas do następnej awarii maszyny, odstęp między wiadomościami na czacie, czas oczekiwania na obsługę w kolejce",
-        "Wzrost dorosłych w populacji, wyniki testu IQ, błędy pomiarowe w laboratorium, ciśnienie krwi",
-        "Wnioskowanie o średniej przy małych próbach (n < 30), przedziały ufności, porównanie średnich dwóch grup",
-        "Test niezależności cech w tabeli krzyżowej, test zgodności rozkładu, estymacja wariancji populacji",
-        "Rozkład dochodów w populacji, ceny akcji na giełdzie, czasy reakcji w eksperymencie psychologicznym"
-      ),
-      stringsAsFactors = FALSE
-    ) %>% setNames(c("Rozkład", "Parametry", "Przykłady zastosowań"))
-  }, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
 
 }

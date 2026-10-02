@@ -44,15 +44,11 @@
   lc_h3("Blok 2: Rozpoznawanie modeli (20 min)"),
 
   .ch9_sat_panel("5", "Zadanie 5 — Cztery sytuacje",
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      tags$thead(tags$tr(tags$th(""), tags$th("Sytuacja"),
-                         tags$th("Rozkład"), tags$th("Parametry"))),
-      tags$tbody(
-        .z5row("a", "Liczba pikseli poprawnie sklasyfikowanych w próbie 50 pikseli"),
-        .z5row("b", "Liczba pożarów wykrytych w regionie w tygodniu"),
-        .z5row("c", "Błąd położenia GNSS w jednej osi"),
-        .z5row("d", "Czas do następnej awarii prostego komponentu")
-      )
+    .ch9_task5_table(
+      .z5row("a", "Liczba pikseli poprawnie sklasyfikowanych w próbie 50 pikseli"),
+      .z5row("b", "Liczba pożarów wykrytych w regionie w tygodniu"),
+      .z5row("c", "Błąd położenia GNSS w jednej osi"),
+      .z5row("d", "Czas do następnej awarii prostego komponentu")
     )),
 
   .ch9_sat_panel("6", "Zadanie 6 — Założenie jest częścią modelu",
