@@ -1139,8 +1139,7 @@ ch4_server <- function(input, output, session) {
     library(patchwork)
     right_col <- p_top / p_bot + plot_layout(heights = c(1, 1))
     (p_left | right_col) +
-      plot_layout(widths = c(1, 2)) +
-      plot_annotation(title = title)
+      plot_layout(widths = c(1, 2))
   }
 
   # ---- Plot dla forest_prop (wiele grup, proporcje) ----

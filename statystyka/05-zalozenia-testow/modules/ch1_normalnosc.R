@@ -239,15 +239,13 @@ ch1_server <- function(input, output, session) {
       p1 <- ggplot(data.frame(x = x), aes(sample = x)) +
         stat_qq(color = col_fail, alpha = 0.5) +
         stat_qq_line(color = col_fail) +
-        labs(title = "Oryginalna skala",
-             x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
+        labs(x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
         theme_upwr()
 
       p2 <- ggplot(data.frame(x = log_x), aes(sample = x)) +
         stat_qq(color = col_ok, alpha = 0.5) +
         stat_qq_line(color = col_ok) +
-        labs(title = "Po transformacji log()",
-             x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
+        labs(x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
         theme_upwr()
 
       gridExtra::arrangeGrob(p1, p2, ncol = 2)

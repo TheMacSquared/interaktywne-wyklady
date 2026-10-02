@@ -66,19 +66,19 @@ render_good_plot <- function(x, label, type) {
       geom_bar(fill = col, color = NA) +
       geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 4.5) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-      labs(title = paste0("Wykres słupkowy: ", label), x = label, y = "Liczebność") +
+      labs(x = label, y = "Liczebność") +
       theme(axis.text.x = element_text(angle = if (nlevels(factor(x)) > 4) 30 else 0, hjust = 1))
   } else if (type == "ilosciowa_dyskretna") {
     ggplot(df, aes(x = factor(x))) +
       geom_bar(fill = col, color = NA) +
       geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 4.5) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-      labs(title = paste0("Wykres słupkowy: ", label), x = label, y = "Liczebność")
+      labs(x = label, y = "Liczebność")
   } else {
     ggplot(df, aes(x = x)) +
       geom_histogram(aes(y = after_stat(density)), bins = 20, fill = col, color = NA, alpha = 0.7) +
       geom_density(color = col, fill = NA, linewidth = 1.2) +
-      labs(title = paste0("Histogram z gęstościa: ", label), x = label, y = "Gęstość")
+      labs(x = label, y = "Gęstość")
   }
 }
 
@@ -88,18 +88,14 @@ render_bad_plot <- function(x, label, type) {
     df$x_num <- as.numeric(factor(x))
     ggplot(df, aes(x = x_num)) +
       geom_histogram(bins = 10, fill = upwr_reference, color = NA) +
-      labs(title = paste0("Histogram (NIEODPOWIEDNI): ", label),
-           subtitle = "Histogram wymaga danych liczbowych - tu mamy kategorie!",
-           x = paste0(label, " (zakodowane jako liczby)"), y = "Liczebność") +
+      labs(x = paste0(label, " (zakodowane jako liczby)"), y = "Liczebność") +
       theme(plot.title = element_text(color = upwr_accent),
             plot.subtitle = element_text(color = upwr_accent, face = "italic"))
   } else {
     n_unique <- length(unique(x))
     ggplot(df, aes(x = x)) +
       geom_bar(fill = upwr_reference, width = 0.3) +
-      labs(title = paste0("Wykres słupkowy (NIEODPOWIEDNI): ", label),
-           subtitle = paste0(n_unique, " unikalnych wartości - wykres słupkowy jest nieczytelny!"),
-           x = label, y = "Liczebność") +
+      labs(subtitle = paste0(n_unique, " unikalnych wartości - wykres słupkowy jest nieczytelny!"), x = label, y = "Liczebność") +
       theme(plot.title = element_text(color = upwr_accent),
             plot.subtitle = element_text(color = upwr_accent, face = "italic"),
             axis.text.x = element_text(size = 5, angle = 90))

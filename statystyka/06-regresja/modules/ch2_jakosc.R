@@ -458,11 +458,7 @@ ch2_server <- function(input, output, session) {
       geom_point(color = upwr_secondary, alpha = 0.4, size = 1.7) +
       geom_smooth(method = "lm", se = FALSE,
                   color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-      labs(
-        title = "Dane + linia regresji",
-        x = unname(.cas_labels[spec$x]),
-        y = unname(.cas_labels[spec$y])
-      ) +
+      labs(x = unname(.cas_labels[spec$x]), y = unname(.cas_labels[spec$y])) +
       theme_upwr()
 
     p_right <- ggplot(df_resid, aes(x = fitted, y = resid)) +
@@ -471,21 +467,13 @@ ch2_server <- function(input, output, session) {
                  linetype = "dashed", linewidth = 0.8) +
       geom_smooth(method = "loess", se = FALSE,
                   color = unname(upwr_cat["terakota"]), linewidth = 1.2) +
-      labs(
-        title = "Reszty vs dopasowane",
-        x = expression(hat(Y)),
-        y = expression(e[i] == y[i] - hat(y)[i])
-      ) +
+      labs(x = expression(hat(Y)), y = expression(e[i] == y[i] - hat(y)[i])) +
       theme_upwr()
 
     p_qq <- ggplot(df_resid, aes(sample = resid)) +
       stat_qq(color = upwr_secondary, alpha = 0.4, size = 1.7) +
       stat_qq_line(color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-      labs(
-        title = "Q-Q reszt",
-        x = "Kwantyle teoretyczne",
-        y = "Kwantyle próbki"
-      ) +
+      labs(x = "Kwantyle teoretyczne", y = "Kwantyle próbki") +
       theme_upwr()
 
     if (requireNamespace("patchwork", quietly = TRUE)) {

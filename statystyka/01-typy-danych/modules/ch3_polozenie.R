@@ -606,9 +606,7 @@ ch3_server <- function(input, output, session) {
           geom_histogram(binwidth = widths[i],
                          fill = c(upwr_accent, upwr_cat["niebo"], upwr_cat["szalwia"])[i],
                          alpha = 0.7, color = upwr_secondary, linewidth = 0.3) +
-          labs(x = if (i == 2) x_label else "",
-               y = if (i == 1) "Liczba obs." else "",
-               title = labels[i]) +
+          labs(x = if (i == 2) x_label else "", y = if (i == 1) "Liczba obs." else "") +
                     theme(plot.title = element_text(
             size = 12, face = "bold",
             color = c(upwr_accent, upwr_cat["niebo"], upwr_cat["szalwia"])[i]))

@@ -27,7 +27,7 @@ plot_pmf <- function(x_vals, probs, fill_color = unname(upwr_cat["niebo"]),
     geom_col(fill = fill_color, color = "white", alpha = 0.85, width = 0.7) +
     geom_text(aes(label = round(prob, 3)), vjust = -0.5, size = 3.5) +
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-    labs(title = title, x = xlab, y = ylab) +
+    labs(x = xlab, y = ylab) +
     theme_upwr()
 
   if (show_mean && !is.null(mu)) {
@@ -51,7 +51,7 @@ plot_pdf <- function(density_fn, xlim, fill_color = unname(upwr_cat["szalwia"]),
 
   p <- ggplot(df, aes(x = x, y = y)) +
     geom_line(color = fill_color, linewidth = 1.2) +
-    labs(title = title, x = xlab, y = ylab) +
+    labs(x = xlab, y = ylab) +
     theme_upwr()
 
   if (!is.null(shade_from) && !is.null(shade_to)) {
