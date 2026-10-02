@@ -1,17 +1,36 @@
 # TODO — Interaktywne wykłady
 
-Jedno miejsce do ustalania kolejności prac w całym repozytorium. Szczegółowe
-notatki historyczne mogą pozostać w katalogach kursów, ale nowe zadania i ich
-status zapisujemy tutaj.
+Jedyny plik zadań w repozytorium. Zrobione punkty usuwamy — historia jest
+w gicie.
+
+Jak przypisać zadanie:
+
+- **Globalne** — zmienia wspólne komponenty, konwencje lub testy używane przez
+  więcej niż jeden kurs (np. snapshoty `statystyka/R/` i `analiza-ryzyka/R/`).
+- **Cały kurs** — zmienia wspólne `R/` jednego kursu albo dotyczy wszystkich
+  jego wykładów.
+- **Wykład** — zmienia tylko katalog jednego wykładu.
+
+Jeśli praca nad wykładem ujawnia potrzebę zmiany wspólnej, dopisujemy osobne
+zadanie globalne zamiast rozwiązywać ją lokalnie. Lokalny eksperyment nie
+staje się wzorcem bez osobnej decyzji, dokumentacji i testów.
+
+Oznaczenie **Decyzja:** to pytanie do prowadzącego z wariantami do wyboru.
+
+---
 
 ## Teraz
 
-1. [ ] Dopracować tabelę częstości w `statystyka/01-typy-danych`.
-2. [ ] Sprawdzić pilotaże responsywności przy pełnym i połowie okna,
-   szerokościach pośrednich, na telefonie oraz z powiększonym tekstem.
-3. [ ] Tą samą macierzą sprawdzić pilotaże `analiza-ryzyka/07-czas-zycia`.
-4. [ ] Dopiero po obu pilotażach zatwierdzić wspólny wzorzec i rozpocząć
-   migrację pozostałych widgetów.
+Kolejność najbliższych prac:
+
+1. [ ] Statystyka 01 — dopracować tabelę częstości (szczegóły niżej).
+2. [ ] Przetestować ją w macierzy szerokości: pełne okno, połowa okna,
+   szerokości pośrednie, telefon, powiększony tekst.
+3. [ ] Tą samą macierzą sprawdzić analizę ryzyka 07, rozdziały 2 i 4.
+4. [ ] Po obu pilotażach zatwierdzić wspólny wzorzec, zrobić inwentaryzację
+   widgetów i rozpocząć migrację pozostałych wykładów małymi commitami.
+
+---
 
 ## Globalne
 
@@ -19,136 +38,168 @@ status zapisujemy tutaj.
 
 Stan:
 
-- `figure_panel(width_mode = ...)` obsługuje `compact`, `text` i `wide`.
-- Dostępne są `lc_table_region()`, `lc_controls_row()` oraz
-  `lc_widget_layout()`.
-- Pilotaże obejmują statystykę 01 i 02 oraz analizę ryzyka 07.
-- Testy komponentów i skany kontraktu przechodzą w obu kursach.
-- Pełna kontrola ładowania statystyki wymaga powtórzenia na stacjonarnym;
-  wcześniejsze uruchomienie przerwał limit czasu.
+- `figure_panel(width_mode = ...)`: `compact` (do treści, maks. 680 px),
+  `text` (do 680 px), `wide` (do 980 px). Istniejące wywołania zachowują
+  dotychczasowe zachowanie.
+- `lc_table_region()` ogranicza przewijanie do tabeli, `lc_controls_row()`
+  reorganizuje sterowanie, `lc_widget_layout()` stawia sterowanie nad
+  wykresem lub obok, zależnie od szerokości kontenera.
+- Pilotaże: statystyka 01 rozdz. 2 (tabela krokowa), statystyka 02 rozdz. 2
+  („Dane a model”), analiza ryzyka 07 rozdz. 2 i 4.
+- Testy komponentów i skany kontraktu przechodzą w obu kursach; 10 aplikacji
+  analizy ryzyka przechodzi kontrolę ładowania.
 
-Zasady:
+Zadania:
 
-- [ ] Wspólne komponenty zmieniać równolegle w snapshotach właściwych kursów,
-  zachowując różnice kursowe.
-- [ ] Reagować na szerokość kontenera, nie wyłącznie viewportu.
-- [ ] Nie usuwać informacji ani nie zmniejszać tekstu tylko po to, żeby
-  zmieścić widget.
-- [ ] Przewijanie ograniczać do tabeli i zostawiać jako zabezpieczenie.
-- [ ] Dla każdego widgetu osobno określać szerokość panelu oraz reorganizację
+- [ ] Powtórzyć pełną kontrolę ładowania statystyki na stacjonarnym
+  (wcześniej przerwana limitem czasu).
+- [ ] Po pilotażach: inwentaryzacja widgetów w obu kursach i plan migracji.
+
+Zasady migracji:
+
+- Zmiany wspólnych komponentów wprowadzać równolegle we wszystkich
+  snapshotach kursów, zachowując różnice kursowe.
+- Reagować na szerokość kontenera, nie tylko viewportu.
+- Nie usuwać informacji ani nie zmniejszać tekstu, żeby zmieścić widget.
+- Przewijanie ograniczać do tabeli i traktować jako zabezpieczenie.
+- Dla każdego widgetu osobno ustalić szerokość panelu i reorganizację
   sterowania, wykresów, tabel i podsumowań.
-- [ ] Nie wprowadzać globalnego `fit-content` dla wykresów o szerokości 100%.
-- [ ] Każdy commit ograniczać do wspólnej infrastruktury, migracji jednego
-  widgetu albo zmiany treści konkretnego rozdziału.
+- Nie wprowadzać globalnego `fit-content` dla wykresów o szerokości 100%.
+- Jeden commit = wspólna infrastruktura albo migracja jednego widgetu albo
+  treść jednego rozdziału.
 
-### Granice pilotaży
+### Kandydaci na wspólne komponenty
 
-- Prototypy A/B/C i łańcuch pojęć w analizie ryzyka 01 są lokalnymi
-  eksperymentami dydaktycznymi.
-- Klasy `.life-*` z analizy ryzyka 07 są lokalnym pilotażem ról tekstu.
-- Żaden z tych wzorców nie staje się częścią systemu bez osobnej decyzji,
-  dokumentacji i testów.
+Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
+
+- [ ] **Decyzja:** czy role tekstu `.life-*` z analizy ryzyka 07 mają być
+  wzorcem dla innych wykładów.
+- [ ] **Decyzja:** czy interaktywny łańcuch pojęć z analizy ryzyka 01 ma być
+  wspólnym komponentem.
+
+---
 
 ## Statystyka
 
-### 01 — tabela częstości
+### Cały kurs
+
+- [ ] Wdrożyć `gloss()` we wszystkich wykładach: owijać pierwsze
+  wprowadzenie kluczowego terminu w rozdziale, nie każde wystąpienie. Nowe
+  hasła dopisywać do `statystyka/R/glossary.R`. Wzorzec:
+  `03-przedzialy-ufnosci/modules/ch1_estymacja.R`.
+
+### 01 — typy danych: tabela częstości
+
+Kontekst: tabela ma minimum 600 px, panel 680 px daje ok. 622 px treści;
+w kroku 4 sześć kolumn z długimi nagłówkami wymusza przewijanie.
 
 - [ ] Skrócić nagłówki do `n`, `f`, `%`, `N skum.`, `% skum.` i dodać
   widoczne objaśnienie oznaczeń.
-- [ ] Liczebności pokazywać jako liczby całkowite, a procenty bez zbędnych
-  końcowych zer; kategorie wyrównać do lewej.
-- [ ] Porównać jedną tabelę z dwiema tabelami na wąskim kontenerze.
-- [ ] Dla pierwszych kroków z dwiema kolumnami nie wymuszać minimum 600 px.
+- [ ] Liczebności jako liczby całkowite, procenty bez zbędnych zer
+  końcowych; kategorie wyrównane do lewej.
+- [ ] Na wąskim kontenerze porównać jedną tabelę z dwiema (zwykłe
+  i skumulowane, kategoria powtórzona w obu).
+- [ ] W pierwszych krokach (dwie kolumny) nie wymuszać minimum 600 px.
 - [ ] Sprawdzić wszystkie kroki dla zmiennej nominalnej i porządkowej,
   zwłaszcza długie nazwy kategorii; nie zmieniać obliczeń.
 
-Pliki: `statystyka/01-typy-danych/modules/ch2_jakosciowe.R`,
-`statystyka/R/lecture_layout.R`, `statystyka/R/shared_styles.css`,
-`statystyka/R/DESIGN_CONTRACT.md`.
+Pliki: `01-typy-danych/modules/ch2_jakosciowe.R`, `R/lecture_layout.R`,
+`R/shared_styles.css`, `R/DESIGN_CONTRACT.md`.
 
-### Słownik `gloss()`
+### 04 — wnioskowanie statystyczne
 
-- [ ] W kolejnych rozdziałach owijać `gloss()` pierwsze wprowadzenie
-  kluczowego terminu, a nie każde wystąpienie.
-- [ ] Nowe hasła dopisywać do `statystyka/R/glossary.R`.
+- [ ] Ograniczyć `tags$strong()` / `tags$b()` w `modules/ch1_logika.R`
+  (ok. 37 wystąpień) do etykiet, werdyktów i statusów.
 
-Wzorzec: `statystyka/03-przedzialy-ufnosci/modules/ch1_estymacja.R`.
+### 05 — założenia testów
+
+- [ ] **Decyzja:** `ks.test()` w `modules/ch1_normalnosc.R` — zostaje jako
+  wyjątek dydaktyczny czy zamiana na `rstatix`? Reszta modułu używa już
+  `shapiro_test()`.
 
 ### 06 — regresja
 
-- [ ] Rozważyć przykład obserwacji wpływowych z odległością Cooka.
-- [ ] Przeredagować leady sześciu rozdziałów na pytania-hooki tam, gdzie jest
-  to naturalne.
-- [ ] Rozważyć krótki callout o kwartecie Anscombe'a lub spurious regression.
-- [ ] Dodać quiz interpretacji b₁ w jednostkach na przykładzie CASchools.
-- [ ] Rozważyć mini-widget pokazujący regresję do średniej:
-  `b = r × (sd_y / sd_x)`.
-
-### Jakość kodu i treści
-
-- [ ] Ograniczyć nadmierne `tags$strong()` / `tags$b()` w
-  `statystyka/04-wnioskowanie-statystyczne/modules/ch1_logika.R`.
-- [ ] Rozstrzygnąć, czy użycie `ks.test()` w
-  `statystyka/05-zalozenia-testow/modules/ch1_normalnosc.R` jest uzasadnionym
-  wyjątkiem od preferencji dla `rstatix`.
+- [ ] Przeredagować `lead` sześciu rozdziałów na pytania-hooki tam, gdzie to
+  naturalne (wzorzec: 04 ch1, ch4, ch6).
+- [ ] Quiz interpretacji b₁ w jednostkach w `ch1_liniowa.R`, sekcja
+  `ch1-caschool`: „read ~ income”, b₁ = 1,88 — co znaczy wzrost dochodu
+  o 1 tys. USD? Dystraktory: mylone jednostki i skale.
+- [ ] Rozważyć widget obserwacji wpływowych w `ch2_jakosc.R`: scatter
+  z wyróżnioną odległością Cooka i opcją „usuń i przelicz”.
+- [ ] Rozważyć callout w ch2 lub ch4: kwartet Anscombe'a dla regresji (różne
+  wzorce reszt przy tym samym R²) albo spurious regression; resztę pułapek
+  odesłać do wykładu o korelacji.
+- [ ] Rozważyć mini-widget regresji do średniej w `ch1_liniowa.R`: suwak `r`,
+  na wykresie główna oś elipsy i linia regresji, na żywo
+  `b = r × (sd_y / sd_x)`; przykład „x = +2 SD → oczekiwane y = 2r SD”.
+  Odniesienie: ryc. 6.1–6.3 w `04-wnioskowanie-statystyczne/modules/ch4_korelacja.R`
+  i `scripts/regen_correlation_assets.R`.
 
 ### 08 — case studies
 
-- [ ] Rozbudować wykład poza pojedynczy rozdział CASchools.
-- [ ] Rozważyć case z `palmerpenguins`, analizę binarną oraz case czasowy.
+- [ ] Rozbudować wykład poza jedyny rozdział CASchools; dodać quizy.
+  Kandydaci: `palmerpenguins` (ANOVA/korelacja), case binarny (regresja
+  logistyczna), case czasowy.
+
+---
 
 ## Statystyka 2
 
-Brak wpisanych zadań. Nowe zadania dla tego kursu dodajemy w tej sekcji.
+Brak zadań.
+
+---
 
 ## Analiza ryzyka
 
 ### 01 — język ryzyka
 
-- [ ] Porównać dotychczasowy widget ćwiczenia 2 z prototypami A/B/C.
-- [ ] Wybrać jeden wariant i usunąć pozostały kod serwera oraz CSS
-  `.lc-proto-*`.
-- [ ] Osobno ocenić interaktywny łańcuch pojęć; ewentualne uogólnienie
-  potraktować jako nowe zadanie systemowe.
+- [ ] **Decyzja:** ćwiczenie 2 — dotychczasowy widget czy prototyp A, B lub C.
+  Po wyborze usunąć pozostały kod serwera i CSS `.lc-proto-*`. Nie migrować
+  prototypów do wspólnych komponentów przed wyborem.
+- [ ] Ocenić interaktywny łańcuch pojęć jako treść tego wykładu (uogólnienie —
+  patrz sekcja globalna).
 
 ### 04 — wiele prób
 
-- [ ] Rozstrzygnąć, które założenie łamie reguła „po wykryciu sprawdzam
-  dokładniej”: stałość p, niezależność czy definicję próby.
+- [ ] **Decyzja:** które założenie łamie reguła „po wykryciu sprawdzam
+  dokładniej” (`modules/block.R`, `p4_chk_zalozenia`, ok. l. 248)?
+  Obecnie poprawna odpowiedź to „stałość p”, wyjaśnienie wspomina zależność
+  od historii serii, a starszy tekst mówi o „zmianie definicji próby”.
+  Warianty: stałość p / niezależność / definicja próby (wtedy przeredagować
+  pytanie i wyjaśnienie).
 
 ### 07 — czas życia
 
-- [ ] Tą samą macierzą szerokości co w statystyce 01 sprawdzić rozdziały 2 i 4.
-- [ ] Jeśli wspólny komponent wystarcza, zastąpić `.life-table-scroll` przez
-  `lc_table_region()`.
-- [ ] Oddzielnie zdecydować, czy lokalne role tekstu `.life-*` pozostają
-  lokalne, czy zasługują na uogólnienie.
-- [ ] Rozstrzygnąć los wzoru λ̂ = d/Σtᵢ: pozostawić, przenieść do
-  `risk_derivation()` albo usunąć i poprawić numerację.
+- [ ] Sprawdzić rozdziały 2 i 4 macierzą szerokości (patrz „Teraz”).
+- [ ] Jeśli `lc_table_region()` wystarcza, zastąpić nim `.life-table-scroll`.
+- [ ] **Decyzja:** wzór (7.2) λ̂ = d/Σtᵢ (`modules/block.R`, ok. l. 162)
+  kłóci się z zapowiedzią „bez estymacji parametrów”, ale pokazuje użycie
+  obserwacji cenzorowanych. Warianty: zostaje / przenieść do
+  `risk_derivation()` / usunąć i przenumerować (7.3)–(7.17). Rozstrzygnąć
+  przed zatwierdzeniem treści wykładu.
 
 ### 08 — niezawodność systemu
 
-- [ ] Rozstrzygnąć, czy ujednolicić MTTF widgetu z danymi Bananpolu.
-- [ ] Rozważyć zmianę R_C z 0,98 na niekolidującą wartość i przeliczyć
-  przykłady 8.5, 8.7 i 8.11.
-- [ ] Zweryfikować komunikację fikcyjnego progu 14,5 °C.
+Plik: `modules/block.R`.
+
+- [ ] **Decyzja:** widget czasu (ok. l. 679, przykład 8.6) używa MTTF
+  1800 / 2000 / 2500 h spoza danych Bananpolu — zostaje czy ujednolicić?
+- [ ] **Decyzja:** sterownik C ma R = 0,98, tyle co zasilanie Bananpolu —
+  zostaje czy zmienić (np. 0,97) i przeliczyć przykłady 8.5, 8.7, 8.11
+  (ok. l. 370, 562)?
+- [ ] Zweryfikować komunikację fikcyjnego progu 14,5 °C w definicji sukcesu.
 
 ### 09 — drzewo błędów
 
-- [ ] Zdecydować o losie rankingu potencjalnej redukcji: pozostawić, podpiąć
-  parametry z rozdziału 3 albo pokazać inną miarę obok Birnbauma.
+- [ ] **Decyzja:** ranking potencjalnej redukcji (`f9_rank_plot`, ok. l. 607)
+  liczy na stałych bazowych (0,005; 0,05; 0,08), więc suwak zmienia tylko
+  skalę, nie kolejność. Warianty: zostaje / podpiąć suwaki z rozdziału 3 /
+  pokazać redukcję względną lub istotność krytyczną obok Birnbauma.
 
 ### 10 — od modelu do decyzji
 
-- [ ] Zdecydować, czy horyzont roczny pozostaje rozszerzeniem, czy staje się
-  wynikiem głównym; druga opcja wymaga zmiany serwera i
-  `risk_mission_analysis()`.
-
-## Analiza ryzyka — szczegóły historyczne
-
-Pełne opisy otwartych decyzji po przeróbce wykładów na skrypt pozostają w
-`analiza-ryzyka/docs/TODO-skrypt.md` do czasu ich rozstrzygnięcia.
-
-## Poza aktywnym zakresem
-
-`deprecated/ekonometria/` jest archiwum i nie wchodzi do aktywnego backlogu.
+- [ ] **Decyzja:** horyzont roczny (sekcja `id = "rok"`, ok. l. 393,
+  wzór 10.9). Obecnie wynik główny to jedna misja, a
+  P_rok = 1 − (1 − P(TOP))³ ≈ 0,005 jest rozszerzeniem; 1 − R_sys³ ≈ 0,641
+  pokazano jako pułapkę. Warianty: zostaje / horyzont roczny jako wynik główny
+  (zmiana serwera i `risk_mission_analysis()`).
