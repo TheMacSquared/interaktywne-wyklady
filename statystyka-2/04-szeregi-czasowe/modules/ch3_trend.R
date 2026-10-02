@@ -171,7 +171,7 @@ ch3_server <- function(input, output, session) {
     span <- if (!is.null(input$ch3_loess_span)) input$ch3_loess_span else 0.3
 
     p <- ggplot(df, aes(x = date, y = temp)) +
-      labs(x = NULL, y = "°C", title = "Temperatura Warszawa (1980–2023)") +
+      labs(x = NULL, y = "°C") +
       theme_upwr()
 
     if (step == 0) {

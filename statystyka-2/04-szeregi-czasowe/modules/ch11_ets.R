@@ -216,7 +216,6 @@ ch11_server <- function(input, output, session) {
                label = "Kliknij 'Dopasuj model'", color = upwr_reference, size = 5) + theme_upwr())
     }
     ts_obj <- .ts_datasets[[key]]$get_ts()
-    plot_forecast_gg(ts_obj, fit, value_label = .ts_datasets[[key]]$unit) +
-      labs(title = paste0("Holt-Winters — ", .ts_datasets[[key]]$label))
+    plot_forecast_gg(ts_obj, fit, value_label = .ts_datasets[[key]]$unit)
   }))
 }

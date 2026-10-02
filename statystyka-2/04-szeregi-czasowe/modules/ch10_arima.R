@@ -166,8 +166,7 @@ ch10_server <- function(input, output, session) {
     df <- data.frame(t = seq_along(x), x = x)
     ggplot(df, aes(x = t, y = x)) +
       geom_line(color = upwr_secondary, linewidth = 0.7) +
-      labs(x = "Czas", y = "x_t",
-           title = paste0("ARIMA(", p, ",", d, ",", q, ") — symulacja")) +
+      labs(x = "Czas", y = "x_t") +
       theme_upwr()
   }))
 
@@ -235,8 +234,7 @@ ch10_server <- function(input, output, session) {
     }
     fc   <- forecast::forecast(fit, h = 24)
     info <- .ts_datasets[[key]]
-    plot_forecast_gg(info$get_ts(), fc, value_label = info$unit) +
-      labs(title = paste0("Prognoza ARIMA — ", info$label))
+    plot_forecast_gg(info$get_ts(), fc, value_label = info$unit)
   }))
 
   ch10_aic_results <- reactiveVal(NULL)

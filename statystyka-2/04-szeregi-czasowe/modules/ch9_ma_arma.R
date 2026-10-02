@@ -157,7 +157,7 @@ ch9_server <- function(input, output, session) {
     df <- data.frame(t = seq_along(x), x = x)
     ggplot(df, aes(x = t, y = x)) +
       geom_line(color = upwr_secondary, linewidth = 0.7) +
-      labs(x = NULL, y = NULL, title = title) +
+      labs(x = NULL, y = NULL) +
       theme_upwr()
   }
 

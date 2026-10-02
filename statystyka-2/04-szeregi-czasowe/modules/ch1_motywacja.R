@@ -178,8 +178,7 @@ ch1_server <- function(input, output, session) {
 
     ggplot(df, aes(x = date, y = .data[[names(df)[2]]])) +
       geom_line(color = col, linewidth = 0.85) +
-      labs(x = NULL, y = info$unit,
-           title = info$title) +
+      labs(x = NULL, y = info$unit) +
       theme_upwr()
   }))
 
@@ -197,7 +196,7 @@ ch1_server <- function(input, output, session) {
     df_sub <- df[df$date >= as.Date("2005-01-01") & df$date <= as.Date("2019-12-01"), ]
     ggplot(df_sub, aes(x = date, y = temp)) +
       geom_line(color = unname(upwr_cat["niebo"]), linewidth = 0.9) +
-      labs(x = NULL, y = "°C", title = "Temperatura (chronologicznie)") +
+      labs(x = NULL, y = "°C") +
       theme_upwr()
   }))
 
@@ -209,7 +208,7 @@ ch1_server <- function(input, output, session) {
     df_rnd$temp <- sample(df_rnd$temp)
     ggplot(df_rnd, aes(x = date, y = temp)) +
       geom_line(color = upwr_reference, linewidth = 0.85) +
-      labs(x = NULL, y = "°C", title = "Temperatura (kolejność losowa)") +
+      labs(x = NULL, y = "°C") +
       theme_upwr()
   }))
 

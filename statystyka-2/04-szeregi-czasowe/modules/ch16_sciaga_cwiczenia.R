@@ -264,11 +264,10 @@ ch16_server <- function(input, output, session) {
       df <- ts_to_df(ts_obj, "cena")
       return(ggplot(df, aes(x = date, y = cena)) +
         geom_line(color = upwr_secondary, linewidth = 0.9) +
-        labs(x = NULL, y = "PLN/dt", title = "Ceny pszenicy skupu") + theme_upwr())
+        labs(x = NULL, y = "PLN/dt") + theme_upwr())
     }
     ts_obj <- .ts_datasets[[res$key]]$get_ts()
-    plot_forecast_gg(ts_obj, res$fit, value_label = "PLN/dt") +
-      labs(title = "Prognoza cen pszenicy")
+    plot_forecast_gg(ts_obj, res$fit, value_label = "PLN/dt")
   }))
 
   # ---- Ćwiczenie Bezpieczeństwo ---------------------------------------------
@@ -308,10 +307,9 @@ ch16_server <- function(input, output, session) {
       df <- ts_to_df(ch16_b_ts, "wypadki")
       return(ggplot(df, aes(x = date, y = wypadki)) +
         geom_line(color = upwr_secondary, linewidth = 0.9) +
-        labs(x = NULL, y = "liczba wypadków", title = "Wypadki przy pracy (syntetyczne)") + theme_upwr())
+        labs(x = NULL, y = "liczba wypadków") + theme_upwr())
     }
-    plot_forecast_gg(ch16_b_ts, fit, value_label = "liczba") +
-      labs(title = "Wypadki przy pracy — prognoza SARIMA")
+    plot_forecast_gg(ch16_b_ts, fit, value_label = "liczba")
   }))
 
   # ---- Ćwiczenie Technologia żywności ----------------------------------------
@@ -349,8 +347,7 @@ ch16_server <- function(input, output, session) {
       geom_line(color = upwr_secondary, linewidth = 0.8) +
       annotate("rect", xmin = 44.5, xmax = 47.5, ymin = -Inf, ymax = Inf,
                fill = upwr_accent, alpha = 0.2) +
-      labs(x = "Krok (godziny)", y = "Temperatura (°C)",
-           title = "Temperatura fermentacji") +
+      labs(x = "Krok (godziny)", y = "Temperatura (°C)") +
       theme_upwr()
   }))
 

@@ -198,8 +198,7 @@ ch13_server <- function(input, output, session) {
       geom_tile(color = "white", linewidth = 0.5) +
       geom_text(aes(label = round(Wartosc, 1)), color = "white", size = 3.5) +
       scale_fill_gradient(low = upwr_cat["niebo"], high = upwr_accent, name = "Znorm.") +
-      labs(x = NULL, y = NULL,
-           title = "Heatmap dokładności — jasny = lepszy") +
+      labs(x = NULL, y = NULL) +
       theme_upwr() +
       theme(legend.position = "right")
   }))

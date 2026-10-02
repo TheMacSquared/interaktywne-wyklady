@@ -162,7 +162,7 @@ ch14_server <- function(input, output, session) {
     ggplot(df, aes(x = t, y = e)) +
       geom_line(color = upwr_secondary, linewidth = 0.7) +
       geom_hline(yintercept = 0, color = upwr_reference, linetype = "dashed") +
-      labs(x = "Czas", y = "Residuum", title = "Residua w czasie") +
+      labs(x = "Czas", y = "Residuum") +
       theme_upwr()
   }))
 
@@ -179,7 +179,7 @@ ch14_server <- function(input, output, session) {
     ggplot(df, aes(sample = sample)) +
       stat_qq(color = upwr_accent, size = 1.5, alpha = 0.7) +
       stat_qq_line(color = upwr_secondary) +
-      labs(x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe", title = "QQ-plot") +
+      labs(x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
       theme_upwr()
   }))
 
@@ -192,7 +192,7 @@ ch14_server <- function(input, output, session) {
                      fill = upwr_accent, alpha = 0.7, color = "white") +
       stat_function(fun = dnorm, args = list(mean = 0, sd = sd(e, na.rm = TRUE)),
                     color = upwr_secondary, linewidth = 1.1) +
-      labs(x = "Residuum", y = "Gęstość", title = "Histogram + N(0,σ²)") +
+      labs(x = "Residuum", y = "Gęstość") +
       theme_upwr()
   }))
 
@@ -233,8 +233,7 @@ ch14_server <- function(input, output, session) {
                          name = NULL) +
       scale_x_continuous(breaks = seq(1, k_max, by = 2)) +
       scale_y_continuous(limits = c(0, 1)) +
-      labs(x = "Lag K", y = "p-value Ljung-Box",
-           title = "p-value testu Ljung-Box (linia przerywana = 0,05)") +
+      labs(x = "Lag K", y = "p-value Ljung-Box") +
       theme_upwr()
   }))
 

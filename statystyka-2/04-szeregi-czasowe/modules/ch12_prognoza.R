@@ -167,8 +167,7 @@ ch12_server <- function(input, output, session) {
       geom_line(linewidth = 0.9) +
       scale_color_manual(values = c("Scenariusz syntetyczny" = upwr_secondary, "Prognoza" = upwr_accent), name = NULL) +
       scale_linetype_manual(values = c("Scenariusz syntetyczny" = "solid", "Prognoza" = "dashed"), name = NULL) +
-      labs(x = "Czas", y = .ts_datasets[[key]]$unit,
-           title = paste0("Prognoza — ", .ts_datasets[[key]]$label, " (", method_lbl, ")")) +
+      labs(x = "Czas", y = .ts_datasets[[key]]$unit) +
       theme_upwr() +
       theme(legend.position = "bottom")
 
@@ -216,9 +215,7 @@ ch12_server <- function(input, output, session) {
     ggplot(df, aes(x = h, y = szerokosc)) +
       geom_line(color = upwr_accent, linewidth = 1.2) +
       geom_area(fill = upwr_accent, alpha = 0.15) +
-      labs(x = "Horyzont prognozy (miesiące)",
-           y = "Szerokość 95% PI",
-           title = "Niepewność rośnie z horyzontem ~ √h") +
+      labs(x = "Horyzont prognozy (miesiące)", y = "Szerokość 95% PI") +
       theme_upwr()
   }))
 
@@ -291,8 +288,7 @@ ch12_server <- function(input, output, session) {
       geom_line(linewidth = 0.9) +
       scale_color_manual(values = kolory, name = NULL) +
       scale_linetype_manual(values = linie, name = NULL) +
-      labs(x = "Czas", y = .ts_datasets[[key]]$unit,
-           title = paste0("Odsłonięte dane — ", .ts_datasets[[key]]$label)) +
+      labs(x = "Czas", y = .ts_datasets[[key]]$unit) +
       theme_upwr() +
       theme(legend.position = "bottom")
   }))

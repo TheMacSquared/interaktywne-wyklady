@@ -309,7 +309,7 @@ ts_line_plot <- function(df, x_col = "date", y_col = "value",
   col <- if (!is.null(color)) color else upwr_accent
   p <- ggplot(df, aes(x = .data[[x_col]], y = .data[[y_col]])) +
     geom_line(color = col, linewidth = 0.9) +
-    labs(x = NULL, y = y_label, title = title) +
+    labs(x = NULL, y = y_label) +
     theme_upwr()
   p
 }
@@ -361,7 +361,7 @@ plot_acf_gg <- function(x, lag.max = 24, type = "ACF",
     geom_segment(aes(xend = lag, yend = 0), color = upwr_accent, linewidth = 1.1) +
     geom_point(color = upwr_accent, size = 2.2) +
     scale_x_continuous(breaks = seq(0, lag.max, by = 4)) +
-    labs(x = "Lag k", y = ylab, title = title) +
+    labs(x = "Lag k", y = ylab) +
     theme_upwr()
 }
 

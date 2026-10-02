@@ -382,7 +382,7 @@ plot_contingency_table <- function(observed, title = "Tabela 2x2 (obserwowane)",
     geom_text(aes(label = count), position = position_dodge(width = 0.9),
               vjust = -0.3, size = 4, fontface = "bold") +
     scale_fill_manual(values = c(col_a, col_b), name = NULL) +
-    labs(title = title, x = NULL, y = "Liczność") +
+    labs(x = NULL, y = "Liczność") +
     theme_upwr() +
     theme(legend.position = "top")
 }
@@ -411,14 +411,10 @@ plot_posterior_or <- function(post_or_result,
              vjust = -0.3, hjust = -0.1, color = bayes_reference, size = 3.5) +
     scale_x_continuous(breaks = log_breaks, labels = or_breaks,
                        name = "Odds Ratio (OR)") +
-    labs(
-      title = "Posterior dla OR (skala log)",
-      subtitle = paste0("Mediana OR = ", round(post_or_result$or_median, 2),
+    labs(subtitle = paste0("Mediana OR = ", round(post_or_result$or_median, 2),
                         "  |  95% HDI OR: [",
                         round(post_or_result$or_hdi["lower"], 2), ", ",
-                        round(post_or_result$or_hdi["upper"], 2), "]"),
-      y = "Gęstość"
-    ) +
+                        round(post_or_result$or_hdi["upper"], 2), "]"), y = "Gęstość") +
     theme_upwr()
 }
 
@@ -654,11 +650,7 @@ plot_prior_likelihood_posterior <- function(df, theta_label = "θ",
                                   "Likelihood (dane)" = bayes_warning,
                                   "Posterior" = bayes_purple),
                       name = NULL) +
-    labs(
-      title = "Prior → Likelihood → Posterior",
-      x = theta_label,
-      y = "Gęstość (znormalizowana)"
-    ) +
+    labs(x = theta_label, y = "Gęstość (znormalizowana)") +
     theme_upwr() +
     theme(legend.position = "top")
 }
@@ -687,12 +679,8 @@ plot_posterior_density <- function(samples, hdi, ref_value = 0,
     annotate("text", x = ref_value, y = Inf,
              label = paste0("ref = ", round(ref_value, 2)),
              vjust = -0.3, hjust = -0.1, color = bayes_reference, size = 3.5) +
-    labs(
-      title    = title,
-      subtitle = paste0("95% HDI: [", round(hdi["lower"], 2),
-                        ", ", round(hdi["upper"], 2), "]"),
-      x = x_label, y = "Gęstość"
-    ) +
+    labs(subtitle = paste0("95% HDI: [", round(hdi["lower"], 2),
+                        ", ", round(hdi["upper"], 2), "]"), x = x_label, y = "Gęstość") +
     theme_upwr()
 }
 
@@ -734,7 +722,7 @@ plot_bf_scale <- function(bf) {
              color = "white", fontface = "bold", size = 4) +
     scale_x_continuous(limits = c(-2.7, 2.7), breaks = NULL) +
     scale_y_continuous(limits = c(-0.5, 1.6), breaks = NULL) +
-    labs(title = NULL, x = NULL, y = NULL) +
+    labs(x = NULL, y = NULL) +
     theme_void() +
     theme(plot.background = element_rect(fill = "white", color = NA),
           panel.background = element_rect(fill = "white", color = NA))
@@ -754,7 +742,7 @@ plot_sample_data <- function(x, mu0 = NULL, mean_obs = NULL,
     annotate("text", x = mean_x, y = Inf,
              label = paste0("xbar = ", round(mean_x, 2)),
              vjust = -0.3, hjust = -0.1, color = bayes_reference, size = 4) +
-    labs(title = title, x = "Wartość", y = "Liczność") +
+    labs(x = "Wartość", y = "Liczność") +
     theme_upwr()
 
   if (!is.null(mu0)) {
@@ -776,7 +764,7 @@ plot_two_groups_box <- function(data, col_a = bayes_primary, col_b = bayes_warni
     geom_boxplot(alpha = 0.55, width = 0.5, outlier.shape = NA) +
     scale_fill_manual(values = c(col_a, col_b), guide = "none") +
     scale_color_manual(values = c(col_a, col_b), guide = "none") +
-    labs(title = title, x = "Grupa", y = "Wartość") +
+    labs(x = "Grupa", y = "Wartość") +
     theme_upwr()
 }
 
@@ -792,7 +780,7 @@ plot_scatter_with_fit <- function(data, x_var = "x", y_var = "y",
     p <- p + geom_smooth(method = "lm", se = TRUE, color = col_line,
                           fill = col_line, alpha = 0.15, linewidth = 1.1)
   }
-  p + labs(title = title, x = x_var, y = y_var) + theme_upwr()
+  p + labs(x = x_var, y = y_var) + theme_upwr()
 }
 
 # Forest plot wspolczynnikow (dla regresji: freq vs bayes obok siebie)
@@ -816,7 +804,7 @@ plot_coef_forest <- function(coefs_df, paradigm_label,
                                   " [", round(lower, 2), ", ",
                                   round(upper, 2), "]")),
                vjust = -0.8, size = 3.2, color = bayes_reference) +
-    labs(title = paradigm_label, x = "Współczynnik", y = NULL) +
+    labs(x = "Współczynnik", y = NULL) +
     theme_upwr()
 }
 

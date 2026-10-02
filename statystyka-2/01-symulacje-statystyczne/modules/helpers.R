@@ -547,8 +547,7 @@ plot_ci_comparison <- function(ci_df, true_value = NULL,
     geom_point(aes(x = (lower + upper) / 2), size = 4) +
     scale_color_manual(values = setNames(cols, levels(ci_df$method)),
                        guide = "none") +
-    labs(title = "Porównanie przedziałów ufności",
-         x = "Wartość", y = NULL) +
+    labs(x = "Wartość", y = NULL) +
     theme_upwr()
 
   if (!is.null(true_value)) {
@@ -687,12 +686,7 @@ plot_cv_results <- function(cv_results_list, degree_labels = NULL,
     scale_color_manual(values = c("MSE treningowy" = sim_cv_train,
                                    "CV MSE (uogólnienie)" = sim_cv_test),
                        name = NULL) +
-    labs(
-      title    = "MSE treningowy vs CV MSE według stopnia wielomianu",
-      subtitle = "Optymalny stopień: gdzie CV MSE jest najniższy",
-      x        = "Stopień wielomianu",
-      y        = "Błąd średniokwadratowy (MSE)"
-    ) +
+    labs(x = "Stopień wielomianu", y = "Błąd średniokwadratowy (MSE)") +
     theme_upwr() +
     theme(legend.position = "top")
 }
@@ -737,13 +731,8 @@ plot_power_curve <- function(power_df, current_delta = NULL,
              label = "Moc = 80% (konwencja)", hjust = 0, vjust = -0.4,
              color = sim_observed, size = 3.5) +
     scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
-    labs(
-      title    = "Krzywa mocy testu",
-      subtitle = paste0("n = ", attr(power_df, "n") %||%
-                          "?", "  |  α = ", alpha),
-      x        = "Wielkość efektu (δ)",
-      y        = "Moc = P(odrzucenie H₀ | H₁ prawdziwa)"
-    ) +
+    labs(subtitle = paste0("n = ", attr(power_df, "n") %||%
+                          "?", "  |  α = ", alpha), x = "Wielkość efektu (δ)", y = "Moc = P(odrzucenie H₀ | H₁ prawdziwa)") +
     theme_upwr()
 
   if (!is.null(current_delta)) {

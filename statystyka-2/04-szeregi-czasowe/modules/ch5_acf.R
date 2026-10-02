@@ -267,7 +267,7 @@ ch5_server <- function(input, output, session) {
                          guide = "none") +
       scale_linewidth_manual(values = c("FALSE" = 0.9, "TRUE" = 1.8), guide = "none") +
       scale_x_continuous(breaks = seq(0, 24, by = 4)) +
-      labs(x = "Lag k", y = "r(k)", title = "ACF") +
+      labs(x = "Lag k", y = "r(k)") +
       theme_upwr()
   }))
 

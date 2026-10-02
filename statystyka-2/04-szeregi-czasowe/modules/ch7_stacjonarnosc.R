@@ -191,7 +191,7 @@ ch7_server <- function(input, output, session) {
     df   <- data.frame(t = seq_along(x), x = x)
     ggplot(df, aes(x = t, y = x)) +
       geom_line(color = upwr_secondary, linewidth = 0.7) +
-      labs(x = "Czas", y = NULL, title = info$label) +
+      labs(x = "Czas", y = NULL) +
       theme_upwr()
   }))
 
@@ -238,7 +238,7 @@ ch7_server <- function(input, output, session) {
     ggplot(df, aes(x = t, y = x)) +
       geom_line(color = upwr_accent, linewidth = 0.8) +
       geom_hline(yintercept = mean(x), color = upwr_reference, linetype = "dashed") +
-      labs(x = "Czas", y = if (mode == "none") unit else paste0("∆", unit), title = title) +
+      labs(x = "Czas", y = if (mode == "none") unit else paste0("∆", unit)) +
       theme_upwr()
   }))
 

@@ -196,7 +196,7 @@ ch4_server <- function(input, output, session) {
         midpoint = median(df$value, na.rm = TRUE),
         name     = info$unit
       ) +
-      labs(x = NULL, y = NULL, title = info$label) +
+      labs(x = NULL, y = NULL) +
       theme_upwr() +
       theme(axis.text.x = element_text(size = 8),
             legend.position = "right")
@@ -229,8 +229,7 @@ ch4_server <- function(input, output, session) {
       geom_text(aes(label = paste0(round(strength * 100, 0), "%")),
                 hjust = -0.1, color = upwr_ink, size = 3.5) +
       scale_x_continuous(limits = c(0, 1.1), labels = scales::percent) +
-      labs(x = "Siła sezonowości", y = NULL,
-           title = "Im bliżej 100%, tym silniejsza sezonowość") +
+      labs(x = "Siła sezonowości", y = NULL) +
       theme_upwr()
   }))
 }

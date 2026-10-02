@@ -140,7 +140,7 @@ ch15_server <- function(input, output, session) {
                                       "Prognoza (bez korekcji)" = upwr_accent), name = NULL) +
         scale_linetype_manual(values = c("Dane syntetyczne" = "solid",
                                          "Prognoza (bez korekcji)" = "dashed"), name = NULL) +
-        labs(x = NULL, y = "tys.", title = "Noclegi — prognoza vs. syntetyczny scenariusz pandemii") +
+        labs(x = NULL, y = "tys.") +
         theme_upwr() + theme(legend.position = "bottom")
 
     } else if (view == "highlight") {
@@ -152,13 +152,13 @@ ch15_server <- function(input, output, session) {
         geom_line(color = upwr_secondary, linewidth = 0.9) +
         annotate("text", x = covid_start + 90, y = max(df$noclegi, na.rm = TRUE) * 0.85,
                  label = "Pandemia COVID-19", color = upwr_accent, size = 3.5, hjust = 0) +
-        labs(x = NULL, y = "tys.", title = "Noclegi — anomalia pandemii") +
+        labs(x = NULL, y = "tys.") +
         theme_upwr()
 
     } else {
       ggplot(df, aes(x = date, y = noclegi)) +
         geom_line(color = upwr_secondary, linewidth = 0.9) +
-        labs(x = NULL, y = "tys.", title = "Noclegi w Polsce — liczba miesięczna") +
+        labs(x = NULL, y = "tys.") +
         theme_upwr()
     }
   }))
@@ -234,7 +234,7 @@ ch15_server <- function(input, output, session) {
       annotate("text", x = as.Date(paste0(break_year, "-01-01")) + 30,
                y = max(df$cena, na.rm = TRUE) * 0.9,
                label = paste0("Przerwa: ", break_year), color = upwr_accent, size = 3.5, hjust = 0) +
-      labs(x = NULL, y = "PLN/dt", title = "Ceny pszenicy — zaznaczona przerwa strukturalna") +
+      labs(x = NULL, y = "PLN/dt") +
       theme_upwr()
     p
   }))
@@ -288,7 +288,7 @@ ch15_server <- function(input, output, session) {
     if (is.null(fits)) {
       p <- ggplot(df, aes(x = date, y = noclegi)) +
         geom_line(color = upwr_secondary, linewidth = 0.9) +
-        labs(x = NULL, y = "tys.", title = "Noclegi — kliknij 'Dopasuj oba modele'") +
+        labs(x = NULL, y = "tys.") +
         theme_upwr()
       return(p)
     }
@@ -309,7 +309,7 @@ ch15_server <- function(input, output, session) {
       geom_hline(yintercept = 0, color = upwr_reference, linetype = "dashed") +
       scale_color_manual(values = c("SARIMA (bez dummy)" = upwr_secondary,
                                     "ARIMAX (z dummy COVID)" = upwr_accent), name = NULL) +
-      labs(x = NULL, y = "Residuum (tys.)", title = "Residua: bez dummy vs. z dummy") +
+      labs(x = NULL, y = "Residuum (tys.)") +
       theme_upwr() +
       theme(legend.position = "bottom")
   }))

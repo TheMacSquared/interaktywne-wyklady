@@ -185,7 +185,7 @@ ch8_server <- function(input, output, session) {
   zoom_plot_server("ch8_fc_plot", reactive({
     step <- ch8_fc_step()
     if (step == 0) {
-      return(ggplot() + labs(title = "Klikaj kroki po lewej") +
+      return(ggplot() +
                annotate("text", x = 0.5, y = 0.5, label = "Klikaj kroki po lewej",
                         color = upwr_reference, size = 6) + theme_upwr())
     }
