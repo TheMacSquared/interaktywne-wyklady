@@ -23,27 +23,20 @@ ch2_ui <- list(
       label = "Ryc. 2.1",
       title = "Tabela częstości — krok po kroku",
       width_mode = "text",
-      radioButtons("ch2_freq_var", "Wybierz zmienną:",
-        choices = c(
-          "Kierunek studiów (nominalna)" = "kierunek",
-          "Zadowolenie ze studiów (porządkowa)" = "zadowolenie"
+      v2 = TRUE,
+      lc_toolbar(
+        lc_segmented("ch2_freq_var", "Zmienna",
+          choices = c(
+            "Kierunek (nominalna)" = "kierunek",
+            "Zadowolenie (porządkowa)" = "zadowolenie"
+          ),
+          selected = "kierunek"
         ),
-        selected = "kierunek", inline = TRUE
+        lc_step_nav("ch2_freq_step",
+          c("Surowe dane", "Zliczanie", "Częstości względne", "Skumulowane"))
       ),
-      div(class = "step-buttons",
-        actionButton("ch2_freq_s1", "1. Surowe dane",
-                     class = "lc-btn-outline"),
-        actionButton("ch2_freq_s2", "2. Zliczanie",
-                     class = "lc-btn-outline"),
-        actionButton("ch2_freq_s3", "3. Częstości względne",
-                     class = "lc-btn-outline"),
-        actionButton("ch2_freq_s4", "4. Skumulowane",
-                     class = "lc-btn-outline")
-      ),
-      actionButton("ch2_freq_reset", "Reset", class = "lc-btn-secondary lc-btn-sm"),
       uiOutput("ch2_freq_explanation"),
-      lc_table_region(tableOutput("ch2_freq_table"),
-        label = "Tabela częstości", min_width = 600)
+      uiOutput("ch2_freq_table")
     ),
 
     # ========================================================================
@@ -196,40 +189,35 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.5",
       title = "Tabela krzyżowa",
-      fluidRow(
-        column(4,
-          selectInput("ch2_cross_row", "Zmienna w wierszach:",
-            choices = c("Płeć" = "plec", "Kierunek" = "kierunek",
-                        "Grupa krwi" = "grupa_krwi"),
-            selected = "plec"
-          )
+      width_mode = "text",
+      v2 = TRUE,
+      lc_toolbar(
+        lc_segmented("ch2_cross_row", "Wiersze",
+          choices = c("Płeć" = "plec", "Kierunek" = "kierunek",
+                      "Grupa krwi" = "grupa_krwi"),
+          selected = "plec", exclusive_with = "ch2_cross_col"
         ),
-        column(4,
-          selectInput("ch2_cross_col", "Zmienna w kolumnach:",
-            choices = c("Kierunek" = "kierunek", "Płeć" = "plec",
-                        "Grupa krwi" = "grupa_krwi"),
-            selected = "kierunek"
-          )
+        lc_segmented("ch2_cross_col", "Kolumny",
+          choices = c("Płeć" = "plec", "Kierunek" = "kierunek",
+                      "Grupa krwi" = "grupa_krwi"),
+          selected = "kierunek", exclusive_with = "ch2_cross_row"
         ),
-        column(4,
-          radioButtons("ch2_cross_type", "Pokaz:",
-            choices = c("Liczebności" = "counts",
-                        "% wierszowe" = "row_pct",
-                        "% kolumnowe" = "col_pct"),
-            selected = "counts", inline = TRUE
-          )
+        lc_segmented("ch2_cross_type", "Miara",
+          choices = c("Liczebności" = "counts",
+                      "% wierszowe" = "row_pct",
+                      "% kolumnowe" = "col_pct"),
+          selected = "counts"
         )
       ),
-      tableOutput("ch2_cross_table"),
-      fluidRow(
-        column(6,
-          radioButtons("ch2_cross_chart", NULL,
-            choices = c("Wykres slupkowy" = "bar", "Heatmapa" = "heatmap"),
-            selected = "bar", inline = TRUE
-          )
+      uiOutput("ch2_cross_table"),
+      uiOutput("ch2_cross_caption"),
+      lc_toolbar(
+        lc_segmented("ch2_cross_chart", "Wykres",
+          choices = c("Słupkowy" = "bar", "Heatmapa" = "heatmap"),
+          selected = "bar"
         )
       ),
-      zoom_plot_ui("ch2_cross_plot", height = "350px")
+      lc_plot("ch2_cross_plot")
     ),
 
     # --- Narrative before Widget 5 ---
@@ -273,7 +261,7 @@ ch2_ui <- list(
 
 ch2_server <- function(input, output, session) {
 
-  ch2_freq_step <- reactiveVal(0)
+  ch2_freq_step <- reactive(input$ch2_freq_step %||% 0)
   ch2_scenario_idx <- reactiveVal(1)
   ch2_random_colors <- reactiveVal(NULL)
   ch2_mode_data <- reactiveVal(NULL)
@@ -289,25 +277,19 @@ ch2_server <- function(input, output, session) {
   # Widget 1: Frequency table step-by-step
   # ========================================================================
 
-  observeEvent(input$ch2_freq_s1, { ch2_freq_step(1) })
-  observeEvent(input$ch2_freq_s2, { ch2_freq_step(2) })
-  observeEvent(input$ch2_freq_s3, { ch2_freq_step(3) })
-  observeEvent(input$ch2_freq_s4, { ch2_freq_step(4) })
-  observeEvent(input$ch2_freq_reset, { ch2_freq_step(0) })
-  observeEvent(input$ch2_freq_var, { ch2_freq_step(0) })
-
   output$ch2_freq_explanation <- renderUI({
     step <- ch2_freq_step()
     var_name <- input$ch2_freq_var
     is_ord <- (!is.null(var_name) && var_name == "zadowolenie")
     var_label <- if (is_ord) "zadowolenie" else "kierunek"
+    step_names <- c("Surowe dane", "Zliczanie", "Częstości względne", "Skumulowane")
+    kicker <- if (step == 0) "Start" else paste0("Krok ", step, " z 4 · ", step_names[step])
 
     if (step == 0) {
-      lc_feedback(type = "info",
-          "Kliknij kolejne przyciski, aby zbudować tabelę częstości krok po kroku.")
+      lc_step_text(kicker,
+          "Kliknij „Zacznij”, aby zbudować tabelę częstości krok po kroku.")
     } else if (step == 1) {
-      lc_feedback(type = "info",
-          tags$b("Krok 1: Surowe dane. "),
+      lc_step_text(kicker,
           "Tak wyglądają pierwsze obserwacje zmiennej ",
           tags$code(var_label), ". Każdy wiersz to odpowiedź jednego studenta.",
           if (is_ord) tagList(
@@ -317,8 +299,7 @@ ch2_server <- function(input, output, session) {
           )
       )
     } else if (step == 2) {
-      lc_feedback(type = "info",
-          tags$b("Krok 2: Zliczanie. "),
+      lc_step_text(kicker,
           "Liczymy, ile razy występuje każda kategoria. To są ",
           tags$b("częstości bezwzględne"), " (liczebności).",
           if (is_ord) tagList(
@@ -328,14 +309,12 @@ ch2_server <- function(input, output, session) {
           )
       )
     } else if (step == 3) {
-      lc_feedback(type = "info",
-          tags$b("Krok 3: Częstości względne. "),
+      lc_step_text(kicker,
           "Dzielimy każdą liczebność przez całkowitą liczbę obserwacji (n = ",
           nrow(student_data), "). Wynik możemy wyrazić jako ułamek lub procent.")
     } else if (step == 4) {
       if (is_ord) {
-        lc_feedback(type = "ok",
-          tags$b("Krok 4: Częstości skumulowane. "),
+        lc_step_text(kicker,
           "Sumujemy częstości narastająco. ",
           tags$b("Dla zmiennej porządkowej to ma głęboki sens!"),
           tags$br(), tags$br(),
@@ -348,8 +327,7 @@ ch2_server <- function(input, output, session) {
           "Skumulowany procent daje sensowną interpretację ",
           tags$b("tylko wtedy, gdy kategorie mają naturalną kolejność."))
       } else {
-        lc_feedback(type = "warning",
-          tags$b("Krok 4: Częstości skumulowane. "),
+        lc_step_text(kicker,
           "Sumujemy częstości narastająco. ",
           tags$b("Ale uwaga!"), " Dla zmiennej ",
           tags$b("nominalnej"), " kolejność kategorii jest umowna.",
@@ -363,9 +341,9 @@ ch2_server <- function(input, output, session) {
     }
   })
 
-  output$ch2_freq_table <- renderTable({
+  output$ch2_freq_table <- renderUI({
     step <- ch2_freq_step()
-    if (step == 0) return(NULL)
+    if (step == 0) return(lc_table_empty("Tabela pojawi się po pierwszym kroku"))
 
     var_name <- input$ch2_freq_var
     is_ord <- (!is.null(var_name) && var_name == "zadowolenie")
@@ -373,31 +351,52 @@ ch2_server <- function(input, output, session) {
     col_label <- if (is_ord) "Zadowolenie" else "Kierunek"
 
     if (step == 1) {
-      sample_vals <- head(x, 20)
-      df <- data.frame(Nr = 1:20, V = as.character(sample_vals))
-      names(df) <- c("Nr", col_label)
-      return(df)
+      raw <- data.frame(V = as.character(head(x, 20)))
+      return(lc_table_preview(raw, n = 20, total = length(x),
+                              cols = list(lc_col("V", col_label, "text"))))
     }
 
     counts <- table(x)
     df <- data.frame(
-      Kategoria = names(counts),
-      Liczebnosc = as.integer(counts)
+      kat = names(counts),
+      n = as.integer(counts)
     )
-    names(df) <- c("Kategoria", "Liczebność")
+    df$f <- round(df$n / sum(df$n), 3)
+    df$p <- round(df$f * 100, 1)
+    df$cn <- cumsum(df$n)
+    df$cp <- round(cumsum(df$f) * 100, 1)
+    foot <- list(kat = "Razem", n = sum(df$n), f = 1, p = 100, cn = "", cp = "")
 
-    if (step >= 3) {
-      df[["Częst. względna"]] <- round(df[["Liczebność"]] / sum(df[["Liczebność"]]), 3)
-      df[["Procent (%)"]] <- round(df[["Częst. względna"]] * 100, 1)
+    with_class <- function(col, class) { col$class <- class; col }
+    cols <- list(
+      kat = lc_col("kat", col_label, "row"),
+      n   = lc_col("n", "Liczebność", short = "n", desc = "liczebność"),
+      f   = lc_col("f", "Częstość względna", digits = 3, short = "f",
+                   desc = "częstość względna (n / N)"),
+      p   = lc_col("p", "Procent", digits = 1, short = "%",
+                   desc = "procent (f · 100)"),
+      cn  = lc_col("cn", "Liczebność skumulowana", short = "N skum.",
+                   desc = "liczebność skumulowana"),
+      cp  = lc_col("cp", "Procent skumulowany", digits = 1, short = "% skum.",
+                   desc = "procent skumulowany")
+    )
+
+    if (step == 2) {
+      return(lc_table(df, list(cols$kat, with_class(cols$n, "is-new")), foot = foot))
     }
-
-    if (step >= 4) {
-      df[["Skumul. liczebność"]] <- cumsum(df[["Liczebność"]])
-      df[["Skumul. procent (%)"]] <- round(cumsum(df[["Częst. względna"]]) * 100, 1)
+    if (step == 3) {
+      return(lc_table(df, list(cols$kat, cols$n, with_class(cols$f, "is-new"),
+                               with_class(cols$p, "is-new")),
+                      foot = foot, scroll = TRUE, label = "Tabela częstości"))
     }
-
-    df
-  }, striped = TRUE, hover = TRUE, width = "100%", align = "c")
+    # Krok 4: dla zmiennej nominalnej skumulowane wartości są wyszarzone.
+    cum_class <- if (is_ord) "is-new" else "is-new is-dim"
+    lc_table_split(df,
+      list(cols$kat, cols$n, cols$f, cols$p,
+           with_class(cols$cn, cum_class), with_class(cols$cp, cum_class)),
+      groups = list(c("n", "f", "p"), c("cn", "cp")),
+      foot = foot, label = "Tabela częstości")
+  })
 
 
   # ========================================================================
@@ -617,29 +616,62 @@ ch2_server <- function(input, output, session) {
   # ========================================================================
   # Widget 4b: Cross-tabulation
 
-  output$ch2_cross_table <- renderTable({
+  cross_labels <- c("plec" = "Płeć", "kierunek" = "Kierunek", "grupa_krwi" = "Grupa krwi")
+  cross_short <- list(kierunek = c("Biologia" = "Biol.", "Ekonomia" = "Ekon.",
+                                   "Informatyka" = "Inf.", "Psychologia" = "Psych."))
+  cross_measure <- c("counts" = "n", "row_pct" = "row", "col_pct" = "col")
+  cross_target <- reactiveVal(c(1L, 1L))
+  observeEvent(input$ch2_cross_cell, cross_target(as.integer(input$ch2_cross_cell)))
+
+  cross_tab <- reactive({
     row_var <- input$ch2_cross_row
     col_var <- input$ch2_cross_col
     req(row_var, col_var, row_var != col_var)
+    table(student_data[[row_var]], student_data[[col_var]])
+  })
 
-    tbl <- table(student_data[[row_var]], student_data[[col_var]])
+  cross_cell <- reactive({
+    tbl <- cross_tab()
+    target <- cross_target()
+    if (target[1] > nrow(tbl) || target[2] > ncol(tbl)) target <- c(1L, 1L)
+    target
+  })
 
-    if (input$ch2_cross_type == "counts") {
-      df <- as.data.frame.matrix(tbl)
-      df <- cbind(data.frame(` ` = rownames(df), check.names = FALSE), df)
-    } else if (input$ch2_cross_type == "row_pct") {
-      pct <- round(prop.table(tbl, margin = 1) * 100, 1)
-      df <- as.data.frame.matrix(pct)
-      df[] <- lapply(df, function(x) paste0(x, "%"))
-      df <- cbind(data.frame(` ` = rownames(df), check.names = FALSE), df)
-    } else {
-      pct <- round(prop.table(tbl, margin = 2) * 100, 1)
-      df <- as.data.frame.matrix(pct)
-      df[] <- lapply(df, function(x) paste0(x, "%"))
-      df <- cbind(data.frame(` ` = rownames(df), check.names = FALSE), df)
-    }
-    df
-  }, striped = TRUE, hover = TRUE, width = "100%", align = "c")
+  output$ch2_cross_table <- renderUI({
+    tbl <- cross_tab()
+    col_levels <- colnames(tbl)
+    short <- cross_short[[input$ch2_cross_col]]
+    lc_crosstab(tbl,
+      measure = cross_measure[[input$ch2_cross_type]],
+      target = cross_cell(),
+      row_name = cross_labels[[input$ch2_cross_row]],
+      col_name = cross_labels[[input$ch2_cross_col]],
+      short_labels = if (!is.null(short)) unname(short[col_levels]),
+      input_id = "ch2_cross_cell"
+    )
+  })
+
+  output$ch2_cross_caption <- renderUI({
+    tbl <- cross_tab()
+    target <- cross_cell()
+    i <- target[1]
+    j <- target[2]
+    count <- tbl[i, j]
+    row_name <- rownames(tbl)[i]
+    col_name <- colnames(tbl)[j]
+    q <- function(x) paste0("„", x, "”")
+    text <- switch(input$ch2_cross_type,
+      counts = tagList(paste0(q(row_name), " i ", q(col_name), ": "), tags$b(count),
+        paste0(" osób, czyli ", lc_fmt(count / sum(tbl) * 100, 1), "% całej próby.")),
+      row_pct = tagList(paste0("W wierszu ", q(row_name), " "),
+        tags$b(paste0(lc_fmt(count / sum(tbl[i, ]) * 100, 1), "%")),
+        paste0(" osób to ", q(col_name), " (", count, " z ", sum(tbl[i, ]), ").")),
+      col_pct = tagList(paste0("W kolumnie ", q(col_name), " "),
+        tags$b(paste0(lc_fmt(count / sum(tbl[, j]) * 100, 1), "%")),
+        paste0(" osób to ", q(row_name), " (", count, " z ", sum(tbl[, j]), ")."))
+    )
+    lc_caption(tone = "info", text)
+  })
 
   zoom_plot_server("ch2_cross_plot", reactive({
     row_var <- input$ch2_cross_row
