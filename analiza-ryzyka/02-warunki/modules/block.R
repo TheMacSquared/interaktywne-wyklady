@@ -227,7 +227,7 @@ warunki_views_widget <- figure_panel(
   label = "Trzy widoki", title = "Te same liczby: tabela, drzewo i udziały",
   zoom_plot_ui("w2_views_tree", height = "380px"),
   fluidRow(
-    column(5, tags$div(class = "lc-table-wrap", tableOutput("w2_table"))),
+    column(5, uiOutput("w2_table")),
     column(7, zoom_plot_ui("w2_views_shares", height = "320px"))
   ),
   lc_feedback(type = "info", "Zmiana widoku nie zmienia zdarzenia ani mianownika."),
@@ -881,21 +881,20 @@ warunki_server <- function(input, output, session) {
       columns = 1
     )
   })
-  output$w2_table <- renderTable(
-    {
-      d <- warunki_views_counts
-      data.frame(
-        Grupa = c(d$condition, "Razem"),
-        Incydent = c(d$event, sum(d$event)),
-        `Brak incydentu` = c(d$no_event, sum(d$no_event)),
-        Razem = c(d$total, sum(d$total)),
-        check.names = FALSE
-      )
-    },
-    striped = TRUE,
-    bordered = TRUE,
-    digits = 0
-  )
+  output$w2_table <- renderUI({
+    d <- warunki_views_counts
+    lc_table(
+      data.frame(group = d$condition, event = d$event, no_event = d$no_event, total = d$total),
+      cols = list(
+        lc_col("group", "Grupa", "row"),
+        lc_col("event", "Incydent", "num"),
+        lc_col("no_event", "Brak incydentu", "num"),
+        lc_col("total", "Razem", "num")
+      ),
+      foot = list(group = "Razem", event = sum(d$event), no_event = sum(d$no_event),
+                  total = sum(d$total))
+    )
+  })
   output$w2_target_result <- renderUI({
     tg <- warunki_views_targets[[input$w2_target %||% "a"]]
     value <- risk_format_probability(tg$num / tg$den)
