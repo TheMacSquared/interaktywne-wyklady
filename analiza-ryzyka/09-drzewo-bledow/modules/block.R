@@ -252,7 +252,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             answer = "P(TOP) = 0,00063, czyli około 6,3 nieopanowanego pożaru na 10 000 magazyno-lat."
           ),
           risk_try("zacznij od wartości domyślnych i sprawdź wynik przykładu 9.3. Potem podwój P(inicjacji), a osobno podwój P(braku detekcji) — porównaj, jak zmienia się P(top) w obu przypadkach."),
-          risk_widget_panel("Obliczenia", "Parametry małego drzewa", tagList(sliderInput("f9_init", "P(inicjacji)", 0, .03, .005, .001), sliderInput("f9_detect", "P(braku detekcji | I)", 0, .3, .05, .01), sliderInput("f9_suppress", "P(niepowodzenia modułu tłumienia | I)", 0, .3, .08, .01)), "f9_tree_plot", "f9_tree_stats"),
+          risk_widget_panel("Obliczenia", "Parametry małego drzewa", tagList(lc_slider("f9_init", "P(inicjacji)", 0, .03, .005, .001), lc_slider("f9_detect", "P(braku detekcji | I)", 0, .3, .05, .01), lc_slider("f9_suppress", "P(niepowodzenia modułu tłumienia | I)", 0, .3, .08, .01)), "f9_tree_plot", "f9_tree_stats"),
           c(
             "Przy wartościach domyślnych panel pokazuje P(D ∪ S | I) = 0,126 i P(top) = 0,000630. Podwojenie inicjacji do 0,010 podwaja wynik do 0,00126 — inicjacja wchodzi przez AND, więc działa proporcjonalnie. Podwojenie braku detekcji do 0,10 zmienia wynik słabiej: P(D ∪ S | I) = 1 − 0,90 · 0,92 = 0,172, a P(top) = 0,00086, czyli wzrost o około 37%.",
             "Ta asymetria jest pierwszym sygnałem, że miejsce liścia w drzewie decyduje o jego wadze. Wrócimy do niej w rozdziale o rankingu."
@@ -326,7 +326,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
         bullets = c("{inicjacja, brak detekcji}", "{inicjacja, brak tłumienia}"),
         body = list(
           risk_try("przełączaj między przekrojami i dla każdego zadaj pytanie: którego liścia usunięcie wyłącza ten scenariusz?"),
-          figure_panel(label = "Podświetlenie", title = "Wybierz przekrój", radioButtons("f9_cut", NULL, c("I + D" = "id", "I + S" = "is"), selected = "id"), uiOutput("f9_cut_text"), full_width = TRUE),
+          figure_panel(label = "Podświetlenie", title = "Wybierz przekrój", lc_segmented("f9_cut", NULL, choices = c("I + D" = "id", "I + S" = "is"), selected = "id"), uiOutput("f9_cut_text"), full_width = TRUE),
           c(
             "Oba scenariusze dzielą inicjację: jej wyeliminowanie wyłącza oba naraz, a wyeliminowanie D albo S tylko jeden. To jakościowa zapowiedź rankingu z następnego rozdziału. Lista przekrojów pozwala też policzyć P(TOP) bez rysowania drzewa. Ze wzoru (9.6): P(K₁) = P(I) · d = 0,005 · 0,05 = 0,00025 oraz P(K₂) = P(I) · s = 0,005 · 0,08 = 0,0004.",
             "Przekroje nie są rozłączne — oba zachodzą, gdy zajdą I, D i S naraz — więc dokładna wartość wymaga odjęcia części wspólnej. Dla przekrojów obowiązuje ta sama zasada włączeń i wyłączeń, co dla bramki OR, a jej pierwszy wyraz daje przybliżenie rzadkich zdarzeń, powszechnie stosowane w dużych drzewach."
@@ -365,7 +365,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
         ),
         body = list(
           risk_try("ustaw P(utraty wspólnego zasilania) na 0,05, a potem przesuń suwak do 0,01 i do 0,20. Porównaj, jak zmienia się rozjazd każdego błędnego wyniku z poprawnym."),
-          figure_panel(label = "Pułapka", title = "Dwa wystąpienia, jedno źródło", sliderInput("f9_repeat", "P(utraty wspólnego zasilania)", 0, .2, .05, .01), uiOutput("f9_repeat_result"), full_width = TRUE),
+          figure_panel(label = "Pułapka", title = "Dwa wystąpienia, jedno źródło", lc_slider("f9_repeat", "P(utraty wspólnego zasilania)", 0, .2, .05, .01), uiOutput("f9_repeat_result"), full_width = TRUE),
           c(
             "Przy q = 0,05 poprawna wartość to 0,050. Błędne OR daje 1 − 0,95² = 0,0975 (panel zaokrągla do 0,098) — prawie dwa razy za dużo. Błędne AND daje 0,05² = 0,0025, dwadzieścia razy za mało. Im mniejsze q, tym gorzej wypada AND: przy q = 0,01 kwadrat zaniża wynik stukrotnie. To dlatego pomyłka pod bramką AND jest groźniejsza: daje wrażenie redundancji tam, gdzie jej nie ma.",
             "W prawdziwych drzewach powtórzenie rzadko jest tak jawne jak C ∩ C. Zwykle ten sam liść wchodzi do dwóch różnych gałęzi, a jego wpływ ukrywa się w mieszance innych zdarzeń. Poniższy przykład pokazuje, jak redukcja do minimalnych przekrojów usuwa ten problem."
@@ -423,7 +423,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             answer = "(a) ≈ 0,000674, (b) ≈ 0,0000698. Wspólna przyczyna najmocniej uderza w redundancję: w łańcuchu dodaje kilka procent, w układzie z dwiema barierami zjada większość zysku z redundancji."
           ),
           risk_try("ustaw P(C | I) na 0 i sprawdź, że oba wyniki się pokrywają. Potem zwiększaj q i obserwuj różnicę; na koniec wróć do rozdziału o rachunku i zmniejsz tam P(braku detekcji) do zera."),
-          figure_panel(label = "Rachunek", title = "Trzy minimalne przekroje", sliderInput("f9_common", "P(C | I): wspólne niepowodzenie funkcji", 0, .2, .01, .005), uiOutput("f9_common_result"), full_width = TRUE),
+          figure_panel(label = "Rachunek", title = "Trzy minimalne przekroje", lc_slider("f9_common", "P(C | I): wspólne niepowodzenie funkcji", 0, .2, .01, .005), uiOutput("f9_common_result"), full_width = TRUE),
           c(
             "Panel korzysta z suwaków detekcji i tłumienia z rozdziału o rachunku, interpretując je jako d₀ i s₀. Przy wartościach domyślnych i q = 0,01 pokazuje 0,000630 bez wspólnej przyczyny i 0,000674 z nią — zgodnie z przykładem 9.7(a). Nawet gdy lokalne niepowodzenia sprowadzimy do zera, wynik nie spadnie poniżej P(I) · q: przekroju {I, C} nie da się usunąć poprawianiem pojedynczych urządzeń.",
             "Dla q = 1 wynik osiąga P(I) = 0,005: każda inicjacja kończy się nieopanowanym pożarem, bo wspólna przyczyna wyłącza obie funkcje zawsze. To skrajny, ale pouczający przypadek — pokazuje, że wspólna przyczyna działa jak most łączący inicjację bezpośrednio ze zdarzeniem szczytowym."
@@ -488,7 +488,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             "Istotność krytyczna zdarzenia bazowego i to względny spadek P(TOP) przypadający na względny spadek p_i. Równoważnie: prawdopodobieństwo, że zdarzenie i zaszło i było krytyczne, pod warunkiem że zaszło zdarzenie szczytowe."
           )),
           risk_try("zostaw redukcję 0,5 i odczytaj kolejność słupków. Potem zmień redukcję na 0,2 i 0,9 — sprawdź, czy kolejność się zmienia."),
-          risk_widget_panel("Wrażliwość", "Ta sama redukcja względna każdego liścia", sliderInput("f9_reduction", "Redukcja parametru", 0, .9, .5, .05), "f9_rank_plot", "f9_rank_stats"),
+          risk_widget_panel("Wrażliwość", "Ta sama redukcja względna każdego liścia", lc_slider("f9_reduction", "Redukcja parametru", 0, .9, .5, .05), "f9_rank_plot", "f9_rank_stats"),
           c(
             "Widget liczy ranking dla wartości bazowych 0,005; 0,05; 0,08, niezależnie od suwaków z rozdziału o rachunku. Przy r = 0,5 słupki mają wysokości 0,000315 dla inicjacji, 0,000190 dla tłumienia i 0,000115 dla detekcji — to 50%, 30% i 18% wyjściowego P(TOP). Istotności krytyczne wynoszą więc 1, około 0,60 dla tłumienia i około 0,37 dla detekcji.",
             "Zmiana r skaluje wszystkie słupki w tej samej proporcji i nie zmienia kolejności — tak mówi wzór (9.10). Inicjacja wygrywa, bo każdy scenariusz przez nią przechodzi: należy do obu minimalnych przekrojów. Tłumienie wyprzedza detekcję, bo zawodzi częściej (0,08 wobec 0,05), więc jego przekrój {I, S} odpowiada za większą część ryzyka."

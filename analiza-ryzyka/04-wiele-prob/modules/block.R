@@ -199,8 +199,8 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
           risk_try("zostaw 100 kontroli i kliknij „Uruchom serię” pięć–sześć razy. Zapisz, ile niesprawnych zaworów (×) pojawiło się w każdej serii i czy zdarzyły się dwa krzyżyki obok siebie. Potem ustaw 200 kontroli."),
           figure_panel(
             label = "Symulacja", title = "Seria kontroli zaworów",
-            sliderInput("p4_series_n", "Liczba kontroli", 10, 200, 100, 10),
-            actionButton("p4_run", "Uruchom serię", class = "lc-btn-primary"),
+            lc_slider("p4_series_n", "Liczba kontroli", 10, 200, 100, 10),
+            lc_action("p4_run", "Uruchom serię", variant = "solid"),
             verbatimTextOutput("p4_sequence"), uiOutput("p4_series_stats"), full_width = TRUE
           ),
           c(
@@ -363,8 +363,8 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
           risk_widget_panel(
             "Rozkład", "Liczba niesprawnych zaworów",
             tagList(
-              sliderInput("p4_n", "n", 10, 300, 100, 10), sliderInput("p4_p", "p", .001, .10, .02, .001),
-              sliderInput("p4_k", "k", 0, 20, 2, 1),
+              lc_slider("p4_n", "n", 10, 300, 100, 10), lc_slider("p4_p", "p", .001, .10, .02, .001),
+              lc_slider("p4_k", "k", 0, 20, 2, 1),
               selectInput("p4_query", "Pytanie", c("Dokładnie k" = "exactly", "Co najmniej k" = "at_least", "Najwyżej k" = "at_most"))
             ),
             "p4_binom", "p4_binom_stats"
@@ -395,7 +395,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
           risk_try("zostaw 500 partii i odczytaj, jak wysoki jest słupek przy dwóch wadach w porównaniu z pozostałymi. Histogram używa n i p ustawionych w widgecie rozkładu z poprzedniego rozdziału — przy domyślnych n = 100 i p = 0,02 linia wartości oczekiwanej stoi przy 2. Potem zwiększ liczbę partii do 2000."),
           risk_widget_panel(
             "Powtórzenia", "Wiele partii przy tych samych parametrach",
-            sliderInput("p4_batches", "Liczba partii", 50, 2000, 500, 50), "p4_batches_plot", "p4_batches_stats"
+            lc_slider("p4_batches", "Liczba partii", 50, 2000, 500, 50), "p4_batches_plot", "p4_batches_stats"
           ),
           "Przy domyślnych ustawieniach 500 symulowanych partii ma od 0 do 7 niesprawnych zaworów. Dokładnie dwie wady ma 156 partii, czyli około 31% — najczęstszy wynik, ale wciąż mniejszość. Zero wad ma 67 partii (około 13%), a średnia z symulacji wynosi 2,03, bardzo blisko linii. Środek histogramu jest więc stabilny, a pojedyncze partie rozrzucają się wokół niego szeroko.",
           "Środek tego histogramu i jego szerokość mają zwięzły zapis. Najpierw potrzebujemy ogólnej definicji średniej zmiennej losowej, a potem zastosujemy ją do sumy zer i jedynek.",
@@ -459,7 +459,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
           risk_try("przy p = 0,02 odczytaj wartość dla n = 100 i porównaj z przykładem 4.7(a). Następnie zmniejsz p do 0,005 i sprawdź, jak zmienia się kształt krzywej i wartość dla n = 100."),
           risk_widget_panel(
             "Krzywa", "Ryzyko wraz z liczbą prób",
-            sliderInput("p4_curve_p", "p niesprawności", .001, .10, .02, .001), "p4_one", "p4_one_stats"
+            lc_slider("p4_curve_p", "p niesprawności", .001, .10, .02, .001), "p4_one", "p4_one_stats"
           ),
           "Krzywa rośnie szybko na początku i coraz wolniej zbliża się do 1: każda kolejna próba dokłada coraz mniej, bo dopełnienie (1 − p)ⁿ maleje geometrycznie. Przy p = 0,005 wartość dla n = 100 spada do około 0,394, ale na prawym końcu wykresu, przy n = 300, sięga już około 0,778. Czterokrotnie mniejsze p nie daje czterokrotnie mniejszego ryzyka serii.",
           risk_check("p4_chk_jedna",

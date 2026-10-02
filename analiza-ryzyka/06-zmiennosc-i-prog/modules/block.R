@@ -105,7 +105,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             "Histogram w skali gęstości ma ważną własność: wysokość słupka pomnożona przez jego szerokość to odsetek obserwacji w danym przedziale, a pola wszystkich słupków sumują się do jedności. Odsetek pomiarów ponad progiem 85°C to więc łączne pole słupków na prawo od progu. Gdy obserwacji przybywa, a słupki się zwężają, schodkowy kontur histogramu zbliża się do gładkiej krzywej — i to tę krzywą będziemy dalej nazywać gęstością."
           ),
           risk_try("zacznij od 30 obserwacji i porównaj histogram z nałożoną krzywą. Potem zwiększ liczebność do 200 i do 5000. Obserwuj, jak zachowują się słupki po prawej stronie 85°C oraz średnia i SD próby w panelu."),
-          risk_widget_panel("Symulacja", "Histogram stabilizuje się wraz z liczebnością", sliderInput("z6_sample", "Liczba obserwacji", 30, 5000, 200, 10), "z6_hist", "z6_hist_stats"),
+          risk_widget_panel("Symulacja", "Histogram stabilizuje się wraz z liczebnością", lc_slider("z6_sample", "Liczba obserwacji", 30, 5000, 200, 10), "z6_hist", "z6_hist_stats"),
           c(
             "Przy 30 obserwacjach histogram jest poszarpany, a średnia i SD próby wynoszą 82,31 i 3,20 — blisko, ale nie dokładnie 82 i 3. Ponad progiem leży 7 z 30 wyników, czyli 23%. Przy 200 obserwacjach jest ich 40, czyli 20%, a przy 5000 — 813, czyli 16,3%. Dopiero duża próba zbliża się do wartości 15,9%, którą daje model.",
             "Wniosek jest podwójny. Po pierwsze, model gęstości jest idealizacją histogramu z nieskończenie wielu pomiarów — dlatego prawdopodobieństwa w modelu to pola. Po drugie, ogon jest najsłabiej obsadzoną częścią danych: przy kilkudziesięciu pomiarach odsetek przekroczeń może się mylić o kilka punktów procentowych, a o przekroczeniach dalekich progów mała próba nie mówi prawie nic."
@@ -190,7 +190,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           "Pobaw się suwakami i obserwuj wskaźnik z dla progu 85°C. Zauważ, że tę samą odległość od progu można osiągnąć chłodzeniem (mniejsze μ) albo stabilizacją pracy (mniejsze σ) — rozróżnienie, które wróci przy decyzjach.",
           risk_formula("T\\sim N(\\mu,\\sigma),\\qquad z=\\frac{t-\\mu}{\\sigma}"),
           risk_try("zacznij od μ = 82°C i σ = 3°C (z = 1). Najpierw obniż μ do 80°C, potem wróć do 82°C i zmniejsz σ do 2°C. Zapisz z w obu przypadkach i zwróć uwagę, jak zmienia się wysokość krzywej przy zmianie σ."),
-          risk_widget_panel("Model", "Przesuń i rozszerz krzywą", tagList(sliderInput("z6_mean", "μ (°C)", 75, 90, 82, .5), sliderInput("z6_sd", "σ (°C)", .5, 8, 3, .25)), "z6_normal", "z6_normal_stats"),
+          risk_widget_panel("Model", "Przesuń i rozszerz krzywą", tagList(lc_slider("z6_mean", "μ (°C)", 75, 90, 82, .5), lc_slider("z6_sd", "σ (°C)", .5, 8, 3, .25)), "z6_normal", "z6_normal_stats"),
           c(
             "Obniżenie średniej do 80°C przesuwa całą krzywą w lewo bez zmiany kształtu i daje z = 5/3 ≈ 1,67. Zmniejszenie σ do 2°C zostawia środek w miejscu, ale krzywa staje się węższa i wyższa, a z rośnie do 1,5. W obu przypadkach próg „odsuwa się” od środka rozkładu, choć tylko w pierwszym zmieniła się temperatura, w której łożysko pracuje przeciętnie.",
             "Przy μ = 85°C wskaźnik z spada do zera: próg leży dokładnie w środku rozkładu i przekracza go połowa pomiarów, niezależnie od σ. Przy μ > 85°C wskaźnik staje się ujemny — przekroczenia są wtedy normą, a nie wyjątkiem."
@@ -260,7 +260,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         ),
         body = list(
           risk_try("zacznij od progu 82°C (równego średniej) i przesuń go na 82,5°C. Zanotuj zmianę P(przekroczenia). Potem zrób ten sam krok z 91°C na 91,5°C i porównaj obie zmiany."),
-          risk_widget_panel("Ogon", "Próg temperatury łożyska", sliderInput("z6_threshold", "Próg (°C)", 78, 95, 85, .5), "z6_tail", "z6_tail_stats"),
+          risk_widget_panel("Ogon", "Próg temperatury łożyska", lc_slider("z6_threshold", "Próg (°C)", 78, 95, 85, .5), "z6_tail", "z6_tail_stats"),
           c(
             "Przy progu 82°C panel pokazuje 0,500, a przy 82,5°C — 0,434: pół stopnia zabrało 6,6 punktu procentowego. Między 91 a 91,5°C prawdopodobieństwo spada z 0,00135 do 0,00077, czyli o niecałe 0,06 punktu procentowego. W liczbach bezwzględnych daleki ogon jest mało wrażliwy na próg. W liczbach względnych jest odwrotnie: te same pół stopnia zmniejsza ryzyko o ponad 40%. Która skala jest ważniejsza, zależy od tego, czy pytamy o liczbę przekroczeń, czy o rząd wielkości rzadkiego zdarzenia."
           ),
@@ -390,7 +390,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         body = list(
           "W symulacji obciążenie ma rozkład normalny ze średnią ustawianą suwakiem i odchyleniem 8 jednostek, a wytrzymałość — ze średnią ustawianą suwakiem i odchyleniem 7 jednostek. Obie zmienne są losowane niezależnie. Każda para (L, S) to jedno zdarzenie: konkretny ładunek trafił na konkretny egzemplarz elementu.",
           risk_try("zacznij od ustawień domyślnych (L = 85, S = 95) i policz wzrokiem punkty poniżej przekątnej. Potem zrównaj obie średnie, a na koniec podnieś średnią S do 105. Obserwuj P(L>S) w panelu."),
-          risk_widget_panel("Symulacja", "Pary obciążenie–wytrzymałość", tagList(sliderInput("z6_load", "Średnie L", 60, 110, 85, 1), sliderInput("z6_strength", "Średnie S", 70, 120, 95, 1)), "z6_ls", "z6_ls_stats"),
+          risk_widget_panel("Symulacja", "Pary obciążenie–wytrzymałość", tagList(lc_slider("z6_load", "Średnie L", 60, 110, 85, 1), lc_slider("z6_strength", "Średnie S", 70, 120, 95, 1)), "z6_ls", "z6_ls_stats"),
           c(
             "Przy ustawieniach domyślnych panel pokazuje P(L>S) ≈ 0,173. W narysowanej chmurze 700 punktów pod przekątną leży 101 par, czyli 14% — mniej niż model, co przy tej liczbie punktów mieści się w zmienności losowej. Gdy średnie są równe, awarią kończy się połowa par: P(L>S) = 0,5. Podniesienie średniej wytrzymałości do 105 zmniejsza ryzyko do około 0,030.",
             "Zwróć uwagę, że chmura jest ukośną elipsą dopiero wtedy, gdy L i S są skorelowane; tutaj jest zbliżona do okręgu, bo losujemy je niezależnie. O ryzyku decyduje to, jaka część tej chmury leży po złej stronie przekątnej."
@@ -484,7 +484,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             answer = "Przy progu 1σ nad średnią modele różnią się umiarkowanie, a model z ciężkim ogonem daje nawet mniej przekroczeń niż normalny. Przy progu 3σ oba modele nienormalne dają od 5 do 9 razy więcej przekroczeń. Założenie normalności najbardziej szkodzi tam, gdzie progi są najważniejsze — daleko w ogonie."
           ),
           risk_try("porównaj histogramy trzech kształtów przy widoku „Histogram” i sprawdź, ile słupków leży na prawo od pionowej linii 85°C. Potem przełącz na „Wykres kwantylowy (Q–Q)” i przejrzyj te same trzy kształty, patrząc przede wszystkim na oba końce wykresu."),
-          risk_widget_panel("Rozszerzenie", "Trzy rozkłady o podobnym centrum", tagList(selectInput("z6_shape", "Kształt", c("Symetryczny" = "normal", "Skośny" = "skew", "Ciężki ogon" = "heavy")), radioButtons("z6_view", "Widok", c("Histogram" = "hist", "Wykres kwantylowy (Q–Q)" = "qq"))), "z6_shapes", "z6_shapes_stats"),
+          risk_widget_panel("Rozszerzenie", "Trzy rozkłady o podobnym centrum", tagList(selectInput("z6_shape", "Kształt", c("Symetryczny" = "normal", "Skośny" = "skew", "Ciężki ogon" = "heavy")), lc_segmented("z6_view", "Widok", choices = c("Histogram" = "hist", "Wykres kwantylowy (Q–Q)" = "qq"))), "z6_shapes", "z6_shapes_stats"),
           c(
             "Na histogramach różnice łatwo przeoczyć: wszystkie trzy mają garb w okolicy 82°C, a ogony to kilka niskich słupków. Rozkład skośny ma wyraźnie ucięty lewy bok i nieco dłuższy prawy; rozkład z ciężkim ogonem ma wyższy i węższy garb, a pojedyncze obserwacje sięgają daleko poza 95°C i poniżej 70°C. Na wykresie kwantylowym te same różnice są oczywiste — i to jest główny powód, dla którego używa się go do diagnozy."
           )

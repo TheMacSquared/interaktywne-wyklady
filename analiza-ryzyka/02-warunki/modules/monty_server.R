@@ -51,9 +51,9 @@ warunki_monty_server <- function(input, output, session) {
         tags$h4("Wybierz jedną bramkę"),
         tags$p("Za jedną jest nagroda, za dwiema pozostałymi — Zonk."),
         fluidRow(
-          column(4, actionButton("w2_monty_door_1", "Bramka 1", class = "lc-btn-primary", width = "100%")),
-          column(4, actionButton("w2_monty_door_2", "Bramka 2", class = "lc-btn-primary", width = "100%")),
-          column(4, actionButton("w2_monty_door_3", "Bramka 3", class = "lc-btn-primary", width = "100%"))
+          column(4, lc_action("w2_monty_door_1", "Bramka 1", variant = "solid")),
+          column(4, lc_action("w2_monty_door_2", "Bramka 2", variant = "solid")),
+          column(4, lc_action("w2_monty_door_3", "Bramka 3", variant = "solid"))
         )
       ))
     }
@@ -64,15 +64,15 @@ warunki_monty_server <- function(input, output, session) {
         tags$p(paste("Prowadzący wiedział, gdzie jest nagroda, i odsłonił Zonka za bramką", monty$opened, ".")),
         tags$p("Co robisz z nową informacją?"),
         fluidRow(
-          column(6, actionButton("w2_monty_stay", "Zostaję przy wyborze", class = "lc-btn-primary", width = "100%")),
-          column(6, actionButton("w2_monty_switch", "Zmieniam bramkę", class = "lc-btn-primary", width = "100%"))
+          column(6, lc_action("w2_monty_stay", "Zostaję przy wyborze", variant = "solid")),
+          column(6, lc_action("w2_monty_switch", "Zmieniam bramkę", variant = "solid"))
         )
       ))
     }
     tagList(
       tags$div(class = "lc-eyebrow", "Krok 3 z 3"),
       tags$h4("Sprawdź wynik i zagraj ponownie"),
-      actionButton("w2_monty_new", "Nowa gra", class = "lc-btn-secondary-outline", width = "100%")
+      lc_action("w2_monty_new", "Nowa gra", variant = "outline")
     )
   })
 
@@ -143,12 +143,12 @@ warunki_monty_server <- function(input, output, session) {
       tags$h4("Czy wynik jednej gry był przypadkiem?"),
       tags$p("Dograj kolejne partie obiema strategiami naraz. Wyniki się sumują, więc zobacz, jak odsetek wygranych stabilizuje się wraz z liczbą gier."),
       fluidRow(
-        column(3, actionButton("w2_monty_sim_1", "+1 gra", class = "lc-btn-primary", width = "100%")),
-        column(3, actionButton("w2_monty_sim_10", "+10 gier", class = "lc-btn-primary", width = "100%")),
-        column(3, actionButton("w2_monty_sim_100", "+100 gier", class = "lc-btn-primary", width = "100%")),
-        column(3, actionButton("w2_monty_sim_1000", "+1000 gier", class = "lc-btn-primary", width = "100%"))
+        column(3, lc_action("w2_monty_sim_1", "+1 gra", variant = "solid")),
+        column(3, lc_action("w2_monty_sim_10", "+10 gier", variant = "solid")),
+        column(3, lc_action("w2_monty_sim_100", "+100 gier", variant = "solid")),
+        column(3, lc_action("w2_monty_sim_1000", "+1000 gier", variant = "solid"))
       ),
-      zoom_plot_ui("w2_monty_plot", height = "390px")
+      lc_plot("w2_monty_plot", ratio = "1.6/1", max_height = "390px")
     )
   })
 

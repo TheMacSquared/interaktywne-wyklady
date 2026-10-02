@@ -279,9 +279,9 @@ alarm_block <- list(
               fluidRow(
                 column(
                   4,
-                  sliderInput("a3_prev", "Częstość awarii", 0.001, 0.10, 0.01, 0.001),
-                  sliderInput("a3_sens", "Czułość", 0.50, 1, 0.95, 0.01),
-                  sliderInput("a3_fpr", "Fałszywie dodatnie", 0, 0.30, 0.05, 0.01)
+                  lc_slider("a3_prev", "Częstość awarii", 0.001, 0.10, 0.01, 0.001),
+                  lc_slider("a3_sens", "Czułość", 0.50, 1, 0.95, 0.01),
+                  lc_slider("a3_fpr", "Fałszywie dodatnie", 0, 0.30, 0.05, 0.01)
                 ),
                 column(8, uiOutput("a3_table"))
               ), full_width = TRUE
@@ -403,8 +403,8 @@ alarm_block <- list(
             risk_widget_panel(
               "Krzywa", "P(awaria | alarm) a częstość bazowa",
               tagList(
-                sliderInput("a3_curve_sens", "Czułość", 0.5, 1, 0.95, 0.01),
-                sliderInput("a3_curve_fpr", "FPR", 0.001, 0.20, 0.05, 0.001)
+                lc_slider("a3_curve_sens", "Czułość", 0.5, 1, 0.95, 0.01),
+                lc_slider("a3_curve_fpr", "FPR", 0.001, 0.20, 0.05, 0.001)
               ),
               "a3_curve", "a3_posterior"
             ),
@@ -490,7 +490,7 @@ alarm_block <- list(
             risk_try("zacznij od prawdopodobieństwa skopiowania 0 i porównaj wynik z przykładem 3.6. Następnie ustaw 0,25, 0,5 i 1. Czujniki mają parametry ustawione w tablicy 2×2 w rozdziale o języku detektora."),
             figure_panel(
               label = "Porównanie", title = "Dwa alarmy",
-              sliderInput("a3_dependence", "Prawdopodobieństwo skopiowania pierwszego alarmu", 0, 1, 0, 0.05),
+              lc_slider("a3_dependence", "Prawdopodobieństwo skopiowania pierwszego alarmu", 0, 1, 0, 0.05),
               uiOutput("a3_second"), full_width = TRUE
             ),
             c(

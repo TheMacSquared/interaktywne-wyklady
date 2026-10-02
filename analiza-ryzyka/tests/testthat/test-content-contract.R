@@ -14,7 +14,7 @@ testthat::test_that("bloki 01–10 realizują stały rytm dydaktyczny", {
   for (app in apps) {
     text <- module_text[[app]]
     if (!app %in% no_vote) testthat::expect_true(grepl("risk_vote_panel", text, fixed = TRUE))
-    testthat::expect_gte(lengths(regmatches(text, gregexpr("sliderInput|selectInput|checkboxGroupInput|actionButton", text, perl = TRUE))), 2)
+    testthat::expect_gte(lengths(regmatches(text, gregexpr("sliderInput|selectInput|checkboxGroupInput|actionButton|lc_slider|lc_segmented|lc_action", text, perl = TRUE))), 2)
     if (!app %in% no_decision) testthat::expect_true(grepl("decision", text, fixed = TRUE))
     testthat::expect_true(grepl("pitfall", text, fixed = TRUE))
     testthat::expect_true(grepl("Ściąga", text, fixed = TRUE))

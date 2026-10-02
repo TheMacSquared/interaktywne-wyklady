@@ -94,11 +94,7 @@ jezyk_exercises <- list(
       ),
       selected = character(0)
     ),
-    actionButton(
-      "ch8_check",
-      "Sprawdź rekomendację",
-      class = "lc-btn-primary"
-    ),
+    lc_action("ch8_check", "Sprawdź rekomendację", variant = "solid"),
     uiOutput("ch8_feedback")
   )),
   list(task = tagList(
@@ -114,7 +110,7 @@ jezyk_exercises <- list(
       tags$li("Ile kontroli nie należało ani do A, ani do B?"),
       tags$li("Czy A i B są rozłączne? Uzasadnij jednym zdaniem.")
     ),
-    actionButton("ch8_sets_solution", "Pokaż tok rozwiązania", class = "lc-btn-ok-outline"),
+    lc_action("ch8_sets_solution", "Pokaż tok rozwiązania", variant = "solid"),
     uiOutput("ch8_sets_feedback")
   )),
   list(task = tagList(
@@ -153,7 +149,7 @@ jezyk_exercises <- list(
         "Dalszy model i dane" = "model"
       )
     ),
-    actionButton("ch8_models_check", "Sprawdź dobór", class = "lc-btn-primary"),
+    lc_action("ch8_models_check", "Sprawdź dobór", variant = "solid"),
     uiOutput("ch8_models_feedback")
   )),
   list(task = tagList(
@@ -170,7 +166,7 @@ jezyk_exercises <- list(
       rows = 6,
       placeholder = "Zagrożenie: ... Ekspozycja: ... Zdarzenie: ..."
     ),
-    actionButton("ch8_transfer_rubric", "Pokaż kryteria samooceny", class = "lc-btn-ok-outline"),
+    lc_action("ch8_transfer_rubric", "Pokaż kryteria samooceny", variant = "solid"),
     uiOutput("ch8_transfer_feedback")
   )),
   list(
@@ -390,12 +386,11 @@ jezyk_proto_toolbar <- function(prefix, add = c(1, 10, 100, 1000), estimate = FA
     class = "lc-proto-toolbar",
     tags$span(class = "lc-proto-toolbar-label", "Dodaj zmiany:"),
     lapply(add, function(n) {
-      actionButton(paste0(prefix, "_add_", n), paste0("+", format(n, big.mark = " ")), class = "lc-btn-primary")
+      lc_action(paste0(prefix, "_add_", n), paste0("+", format(n, big.mark = " ")), variant = "solid")
     }),
     tags$span(class = "lc-proto-toolbar-gap"),
-    actionButton(paste0(prefix, "_reveal"), if (estimate) "Odsłoń i porównaj" else "Odsłoń modelowe P",
-      class = "lc-btn-secondary-outline"),
-    actionButton(paste0(prefix, "_reset"), "Nowa seria", class = "lc-btn-secondary-outline")
+    lc_action(paste0(prefix, "_reveal"), if (estimate) "Odsłoń i porównaj" else "Odsłoń modelowe P", variant = "outline"),
+    lc_action(paste0(prefix, "_reset"), "Nowa seria", variant = "outline")
   )
 }
 
@@ -405,7 +400,7 @@ jezyk_proto_a <- figure_panel(
   full_width = TRUE,
   jezyk_proto_toolbar("ch2a"),
   uiOutput("ch2a_stats"),
-  zoom_plot_ui("ch2a_plot", height = "360px")
+  lc_plot("ch2a_plot", ratio = "1.7/1", max_height = "360px")
 )
 
 jezyk_proto_b <- figure_panel(
@@ -415,12 +410,12 @@ jezyk_proto_b <- figure_panel(
   jezyk_proto_toolbar("ch2b", estimate = TRUE),
   tags$div(
     class = "lc-proto-two",
-    tags$div(zoom_plot_ui("ch2b_grid", height = "320px")),
-    tags$div(zoom_plot_ui("ch2b_line", height = "320px"))
+    tags$div(lc_plot("ch2b_grid", ratio = "1.9/1", max_height = "320px")),
+    tags$div(lc_plot("ch2b_line", ratio = "1.9/1", max_height = "320px"))
   ),
   tags$div(
     class = "lc-proto-estimate",
-    sliderInput("ch2b_guess", "Twoje oszacowanie modelowego P", min = 0, max = 0.30, value = 0.15, step = 0.01, width = "100%")
+    lc_slider("ch2b_guess", "Twoje oszacowanie modelowego P", 0, 0.30, 0.15, 0.01)
   ),
   uiOutput("ch2b_feedback")
 )
@@ -431,7 +426,7 @@ jezyk_proto_c <- figure_panel(
   full_width = TRUE,
   jezyk_proto_toolbar("ch2c", add = c(10, 100, 1000)),
   uiOutput("ch2c_stats"),
-  zoom_plot_ui("ch2c_plot", height = "380px")
+  lc_plot("ch2c_plot", ratio = "1.6/1", max_height = "380px")
 )
 
 jezyk_block <- list(
@@ -536,11 +531,7 @@ jezyk_block <- list(
                   upwr_cat[["szalwia"]]
                 )
               ),
-              actionButton(
-                "ch1_check",
-                "Sprawdź klasyfikację",
-                class = "lc-btn-primary"
-              ),
+              lc_action("ch1_check", "Sprawdź klasyfikację", variant = "solid"),
               uiOutput("ch1_feedback")
             ),
             "Najczęstsze pomyłki dotyczą dwóch par. Skórka bywa brana za zdarzenie,
@@ -697,12 +688,12 @@ jezyk_block <- list(
                 column(
                   4,
                   lc_stack(
-                    actionButton("ch2_add_1", "Dodaj 1 zmianę", class = "lc-btn-primary", width = "100%"),
-                    actionButton("ch2_add_10", "Dodaj 10 zmian", class = "lc-btn-primary", width = "100%"),
-                    actionButton("ch2_add_100", "Dodaj 100 zmian", class = "lc-btn-primary", width = "100%"),
-                    actionButton("ch2_add_1000", "Dodaj 1000 zmian", class = "lc-btn-primary", width = "100%"),
-                    actionButton("ch2_reveal", "Odsłoń modelowe P", class = "lc-btn-secondary-outline", width = "100%"),
-                    actionButton("ch2_reset", "Nowa seria (reset)", class = "lc-btn-secondary-outline", width = "100%")
+                    lc_action("ch2_add_1", "Dodaj 1 zmianę", variant = "solid"),
+                    lc_action("ch2_add_10", "Dodaj 10 zmian", variant = "solid"),
+                    lc_action("ch2_add_100", "Dodaj 100 zmian", variant = "solid"),
+                    lc_action("ch2_add_1000", "Dodaj 1000 zmian", variant = "solid"),
+                    lc_action("ch2_reveal", "Odsłoń modelowe P", variant = "outline"),
+                    lc_action("ch2_reset", "Nowa seria (reset)", variant = "outline")
                   ),
                   uiOutput("ch2_stats")
                 ),
@@ -955,14 +946,7 @@ jezyk_block <- list(
               fluidRow(
                 column(
                   4,
-                  sliderInput(
-                    "ch3_favourable",
-                    "Palety z uszkodzonym zabezpieczeniem",
-                    min = 0,
-                    max = 24,
-                    value = 6,
-                    step = 1
-                  ),
+                  lc_slider("ch3_favourable", "Palety z uszkodzonym zabezpieczeniem", 0, 24, 6, 1),
                   uiOutput("ch3_stats"),
                   lc_feedback(
                     type = "info",
@@ -1095,10 +1079,7 @@ jezyk_block <- list(
                 column(
                   4,
                   uiOutput("ch4_venn_explanation"),
-                  actionButton(
-                    "ch4_venn_next", "Dodaj P(A) i P(B)",
-                    class = "lc-btn-primary", width = "100%"
-                  )
+                  lc_action("ch4_venn_next", "Dodaj P(A) i P(B)", variant = "solid")
                 ),
                 column(8, zoom_plot_ui("ch4_venn", height = "430px"))
               )
@@ -1151,9 +1132,9 @@ jezyk_block <- list(
               fluidRow(
                 column(
                   4,
-                  sliderInput("ch4_n_a", "Liczba kontroli ze zdarzeniem A", 0, 80, 30, 1),
-                  sliderInput("ch4_n_b", "Liczba kontroli ze zdarzeniem B", 0, 80, 20, 1),
-                  sliderInput("ch4_overlap", "Liczba kontroli z A i B", 0, 20, 8, 1),
+                  lc_slider("ch4_n_a", "Liczba kontroli ze zdarzeniem A", 0, 80, 30, 1),
+                  lc_slider("ch4_n_b", "Liczba kontroli ze zdarzeniem B", 0, 80, 20, 1),
+                  lc_slider("ch4_overlap", "Liczba kontroli z A i B", 0, 20, 8, 1),
                   uiOutput("ch4_stats")
                 ),
                 column(
@@ -1327,7 +1308,7 @@ jezyk_block <- list(
                 ),
                 selected = character(0)
               ),
-              actionButton("ch5_check", "Sprawdź rozumowanie", class = "lc-btn-primary"),
+              lc_action("ch5_check", "Sprawdź rozumowanie", variant = "solid"),
               uiOutput("ch5_feedback")
             ),
             "Każda z pierwszych trzech odpowiedzi opiera się na jednym wymiarze

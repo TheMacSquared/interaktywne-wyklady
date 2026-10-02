@@ -280,7 +280,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         text = "Ten widget to eksperyment kontrolowany: dwa elementy o ustalonych niezawodnościach i jeden przełącznik logiki. Zanim klikniesz, oszacuj: o ile system równoległy będzie lepszy od szeregowego przy R₁ = 0,92 i R₂ = 0,95? Potem sprawdź, jak różnica reaguje na pogorszenie jednego z elementów.",
         body = list(
           risk_try("przy domyślnych suwakach przełącz układ z szeregowego na równoległy. Potem obniż R₂ do 0,60 i znów porównaj oba układy."),
-          risk_widget_panel("Architektura", "Te same R, inny system", tagList(selectInput("s8_arch", "Układ", c("Szeregowy" = "series", "Równoległy" = "parallel")), sliderInput("s8_r1", "R₁", .5, 1, .92, .01), sliderInput("s8_r2", "R₂", .5, 1, .95, .01)), "s8_arch_plot", "s8_arch_stats"),
+          risk_widget_panel("Architektura", "Te same R, inny system", tagList(selectInput("s8_arch", "Układ", c("Szeregowy" = "series", "Równoległy" = "parallel")), lc_slider("s8_r1", "R₁", .5, 1, .92, .01), lc_slider("s8_r2", "R₂", .5, 1, .95, .01)), "s8_arch_plot", "s8_arch_stats"),
           c(
             "Przy domyślnych wartościach układ szeregowy daje 0,874 — mniej niż którykolwiek element — a równoległy 0,996 — więcej niż którykolwiek element. Słupek systemu zawsze leży poniżej najniższego słupka elementu w szeregu i powyżej najwyższego w układzie równoległym.",
             "Po obniżeniu R₂ do 0,60 szereg spada do 0,92 · 0,60 = 0,552, a układ równoległy tylko do 1 − 0,08 · 0,40 = 0,968. Szereg jest wrażliwy na każdy słaby element, redundancja maskuje słabą gałąź, dopóki druga jest dobra. Ta asymetria zadecyduje w ostatnim rozdziale o tym, który element opłaca się poprawiać."
@@ -305,7 +305,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             "Redukcja wykorzystuje prostą własność wzorów (8.2) i (8.3): grupa niezależnych elementów połączonych równolegle zachowuje się jak jeden blok o niezawodności R_p, a grupa połączona szeregowo — jak jeden blok o niezawodności R_s. Schemat zwija się więc od środka, aż zostanie jeden blok. Warunek: grupy nie mogą dzielić elementów, bo wtedy ich zastępcze bloki nie są niezależne."
           ),
           risk_try("klikaj „Pokaż następny krok” i przy każdym kroku zapisz, który fragment schematu z poprzedniego rozdziału został właśnie zastąpiony jednym blokiem."),
-          figure_panel(label = "Krok po kroku", title = "Sterownik C oraz wentylatory A/B", actionButton("s8_step", "Pokaż następny krok", class = "lc-btn-primary"), uiOutput("s8_reduction"), full_width = TRUE),
+          figure_panel(label = "Krok po kroku", title = "Sterownik C oraz wentylatory A/B", lc_action("s8_step", "Pokaż następny krok", variant = "solid"), uiOutput("s8_reduction"), full_width = TRUE),
           "Trzy kroki redukcji, które właśnie przeszliśmy, składają się w gotowy wzór całego układu:",
           risk_formula("R_{sys}=R_C\\,[1-(1-R_A)(1-R_B)]", num = "8.4",
             legend = c("R_C" = "niezawodność sterownika (blok szeregowy)", "R_A, R_B" = "niezawodności wentylatorów", "[1-(1-R_A)(1-R_B)]" = "zastępczy blok równoległy wentylatorów")),
@@ -348,7 +348,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             answer = "R_sys(1000) ≈ 0,558, MTTF systemu ≈ 1470 h. System ma niższą niezawodność niż sam wentylator A (0,574), bo sterownik o R = 0,670 jest wymagany na każdej drodze sukcesu. Dla porównania szereg wszystkich trzech elementów miałby MTTF = 1/(1/1800 + 1/2000 + 1/2500) ≈ 687 h."
           ),
           risk_try("ustaw czas misji na 1000 h i odczytaj R systemu. Potem przesuń suwak na 100 h i na 3000 h; za każdym razem porównaj krzywą systemu z krzywą sterownika i wentylatora A."),
-          risk_widget_panel("Czas", "Elementy i system mieszany", sliderInput("s8_mission", "Czas misji (h)", 100, 3000, 1000, 50), "s8_time_plot", "s8_time_stats"),
+          risk_widget_panel("Czas", "Elementy i system mieszany", lc_slider("s8_mission", "Czas misji (h)", 100, 3000, 1000, 50), "s8_time_plot", "s8_time_stats"),
           c(
             "Ta sama redukcja działa w czasie: krzywe elementów i całego systemu muszą używać wspólnego czasu misji, a krzywa systemu zawsze leży poniżej najsłabszego wymaganego szeregu — tutaj poniżej krzywej sterownika. Przy 1000 h panel pokazuje R systemu 0,558.",
             "Warto porównać, ile redundancja wentylatorów zmniejsza ryzyko w zależności od t. Prawdopodobieństwo awarii bloku A/B to prawdopodobieństwo awarii A pomnożone przez 1 − R_B(t). Przy 100 h ten mnożnik wynosi około 0,05 — redundancja zmniejsza ryzyko dwudziestokrotnie. Przy 1000 h mnożnik to około 0,39, a przy 3000 h już około 0,78. W długiej misji druga gałąź sama jest prawdopodobnie zepsuta, zanim będzie potrzebna."
@@ -454,7 +454,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             answer = "R ≈ 0,986. Około 72% ryzyka to jedno zdarzenie — utrata zasilania — którego redundancja wentylatorów w ogóle nie dotyka. Następny wentylator nic tu nie da; pomoże tylko poprawa lub zdublowanie zasilania."
           ),
           risk_try("zacznij od q = 0 i odczytaj R. Następnie ustaw q = 0,01 (dane Bananpolu) i q = 0,05; porównaj spadek R z ryzykiem 0,004, które obiecywał sam układ równoległy."),
-          risk_widget_panel("Zależność", "Wspólne zasilanie", sliderInput("s8_common", "P(utraty wspólnego zasilania)", 0, .15, .01, .005), "s8_common_plot", "s8_common_stats"),
+          risk_widget_panel("Zależność", "Wspólne zasilanie", lc_slider("s8_common", "P(utraty wspólnego zasilania)", 0, .15, .01, .005), "s8_common_plot", "s8_common_stats"),
           c(
             "Linia jest prosta, bo R zależy od q liniowo: każdy punkt procentowy q odbiera prawie cały punkt procentowy niezawodności. Przy q = 0,01 panel pokazuje 0,986, przy q = 0,05 R spada do 0,95 · 0,996 ≈ 0,946 — ryzyko 0,054, trzynaście i pół raza większe niż obiecane 0,004. Przy q = 0,15 zostaje około 0,847.",
             "Porównaj to z wkładem wentylatorów: poprawa jednego z nich o kilka punktów procentowych zmienia ryzyko bloku równoległego o tysięczne części. Gdy q jest rzędu ryzyka pojedynczej gałęzi, wspólna przyczyna dominuje całą analizę."
@@ -522,7 +522,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             answer = "Bez wspólnej przyczyny wystarczą 4 gałęzie. Ze wspólnym zasilaniem cel jest nieosiągalny dla dowolnego n; już trzecia gałąź daje tylko około 0,009, a czwarta niecałą jedną tysięczną."
           ),
           risk_try("przy R jednej gałęzi 0,9 przesuwaj liczbę gałęzi od 1 do 6 i zapisuj przyrost R po każdym kroku. Potem zmień R gałęzi na 0,6 i powtórz."),
-          risk_widget_panel("Trade-off", "Liczba gałęzi i koszt", tagList(sliderInput("s8_branches", "Liczba gałęzi", 1, 6, 2, 1), sliderInput("s8_branch_r", "R jednej gałęzi", .5, .99, .9, .01)), "s8_redundancy", "s8_redundancy_stats"),
+          risk_widget_panel("Trade-off", "Liczba gałęzi i koszt", tagList(lc_slider("s8_branches", "Liczba gałęzi", 1, 6, 2, 1), lc_slider("s8_branch_r", "R jednej gałęzi", .5, .99, .9, .01)), "s8_redundancy", "s8_redundancy_stats"),
           c(
             "Przy r = 0,9 krzywa po drugiej gałęzi jest praktycznie pozioma: panel pokazuje R = 0,990 dla dwóch gałęzi i koszt 200 jednostek, a każda następna gałąź dokłada 100 jednostek kosztu za coraz mniej. Przy słabej gałęzi (r = 0,6) krzywa rośnie dłużej, bo pojedyncza gałąź zostawia dużo ryzyka do usunięcia — redundancja najwięcej daje tam, gdzie elementy są słabe.",
             "Widget zakłada pełną niezależność gałęzi. Po lekturze poprzedniego rozdziału wiemy, że realna krzywa ma sufit na poziomie 1 − q: od chwili, gdy ryzyko bloku równoległego spadnie poniżej ryzyka wspólnej przyczyny, dokładanie gałęzi przestaje mieć sens."

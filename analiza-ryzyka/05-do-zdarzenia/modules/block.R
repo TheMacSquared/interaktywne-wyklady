@@ -281,7 +281,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             answer = "(a) około 0,005; (b) około 0,024. Nawet wartość równa średniej ma małe prawdopodobieństwo — rozkład rozciąga się na kilkadziesiąt możliwych wartości."
           ),
           risk_try("ustaw r = 1 i porównaj wykres z histogramem z rozdziału o pierwszym wykryciu. Potem zwiększaj r do 10 przy stałym p i obserwuj, jak przesuwa się szczyt i zmienia symetria."),
-          risk_widget_panel("Rozkład", "Łączna liczba kontroli", tagList(sliderInput("d5_p", "p wykrycia", .01, .5, .1, .01), sliderInput("d5_r", "r", 1, 10, 3, 1)), "d5_nb", "d5_nb_stats"),
+          risk_widget_panel("Rozkład", "Łączna liczba kontroli", tagList(lc_slider("d5_p", "p wykrycia", .01, .5, .1, .01), lc_slider("d5_r", "r", 1, 10, 3, 1)), "d5_nb", "d5_nb_stats"),
           c(
             "Dla r = 3 i p = 0,10 najwyższe słupki stoją przy 20 i 21 kontrolach, mediana wynosi 27, a średnia 30. Trzy różne „środki” rozkładu leżą w różnych miejscach, bo rozkład jest prawostronnie skośny. W miarę wzrostu r skośność maleje, a kształt coraz bardziej przypomina dzwon — to zapowiedź rozkładu normalnego z następnego wykładu."
           ),
@@ -349,7 +349,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             "Limit planistyczny na poziomie α to najmniejsza liczba prób n, dla której P(X ≤ n) ≥ α. Jest to kwantyl rzędu α rozkładu liczby prób. Różnicę między limitem planistycznym a średnią nazywamy zapasem planistycznym."
           )),
           risk_try("przesuwaj limit i znajdź najmniejszą wartość, przy której P(ukończenia do limitu) przekracza 0,95. Porównaj ją ze średnią i z 95. percentylem wyświetlanym w kalkulatorze."),
-          figure_panel(label = "Kalkulator", title = "Limit liczby kontroli", sliderInput("d5_limit", "Limit", 3, 200, 40, 1), uiOutput("d5_plan"), full_width = TRUE),
+          figure_panel(label = "Kalkulator", title = "Limit liczby kontroli", lc_slider("d5_limit", "Limit", 3, 200, 40, 1), uiOutput("d5_plan"), full_width = TRUE),
           "Dla audytu Bananpolu limit na poziomie 95% wynosi 61 kontroli — dwa razy więcej niż średnia. Zapas planistyczny to 31 kontroli. Nie jest to zapas „na wszelki wypadek”; to bezpośrednia konsekwencja kształtu rozkładu. Im mniejsze p, tym dłuższy ogon i tym większy zapas przy tym samym poziomie pewności.",
           risk_check("d5_chk_plan",
             "Mediana liczby kontroli wynosi 27, a średnia 30. Co to mówi o limicie równym średniej?",
@@ -390,7 +390,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             answer = "40 kontroli, a nie 30. Partie o niskim p wydłużają audyt bardziej, niż partie o wysokim p go skracają, bo czas oczekiwania zależy od 1/p, a nie od p."
           ),
           risk_try("zacznij od odchylenia p równego zero i sprawdź, że oba histogramy się pokrywają. Potem zwiększaj odchylenie i obserwuj prawy ogon oraz średnie w panelu."),
-          risk_widget_panel("Porównanie", "Stałe p kontra partie o różnej jakości", sliderInput("d5_variation", "Odchylenie p przed ograniczeniem do [0,005; 0,95]", 0, .09, .04, .005), "d5_failure", "d5_failure_stats"),
+          risk_widget_panel("Porównanie", "Stałe p kontra partie o różnej jakości", lc_slider("d5_variation", "Odchylenie p przed ograniczeniem do [0,005; 0,95]", 0, .09, .04, .005), "d5_failure", "d5_failure_stats"),
           "Przy rosnącym odchyleniu histogram „zmiennego p” wyraźnie wyciąga się w prawo, a średnia symulowana rośnie. Szczególnie groźne są partie o bardzo małym p: przy p = 0,02 średni czas do trzech wad to 150 kontroli. Kilka takich partii wystarczy, by plan oparty na stałym p stał się fikcją.",
           risk_check("d5_chk_mix",
             "Średnie p w dwóch rodzajach partii wynosi 0,10. Średni czas do trzeciej wady w mieszance jest…",

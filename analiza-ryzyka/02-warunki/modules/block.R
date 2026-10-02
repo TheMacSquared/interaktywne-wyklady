@@ -62,9 +62,9 @@ warunki_exercises <- list(
 warunki_filter_widget <- risk_widget_panel(
   title = "Filtrujemy 500 zmian Bananpolu",
   controls = tagList(
-    sliderInput("w2_share", "Udział zmian z przegrzaniem", 0.02, 0.40, 0.10, 0.01),
-    sliderInput("w2_risk_hot", "P(incydent | przegrzanie)", 0.01, 0.30, 0.12, 0.01),
-    sliderInput("w2_risk_normal", "P(incydent | brak przegrzania)", 0, 0.05, 0.005, 0.001)
+    lc_slider("w2_share", "Udział zmian z przegrzaniem", 0.02, 0.40, 0.10, 0.01),
+    lc_slider("w2_risk_hot", "P(incydent | przegrzanie)", 0.01, 0.30, 0.12, 0.01),
+    lc_slider("w2_risk_normal", "P(incydent | brak przegrzania)", 0, 0.05, 0.005, 0.001)
   ),
   plot_id = "w2_filter_plot", stats_id = "w2_filter_stats",
   note = "Każdy znak oznacza jedną porównywalną zmianę. Trójkąty to zmiany z przegrzaniem, kółka bez; wypełniony znak to incydent.",
@@ -225,7 +225,7 @@ warunki_views_targets <- list(
 
 warunki_views_widget <- figure_panel(
   label = "Trzy widoki", title = "Te same liczby: tabela, drzewo i udziały",
-  zoom_plot_ui("w2_views_tree", height = "380px"),
+  lc_plot("w2_views_tree", ratio = "1.6/1", max_height = "380px"),
   fluidRow(
     column(5, uiOutput("w2_table")),
     column(7, zoom_plot_ui("w2_views_shares", height = "320px"))
@@ -241,7 +241,7 @@ warunki_tree_read_widget <- figure_panel(
     choices = setNames(names(warunki_views_targets), vapply(warunki_views_targets, `[[`, "", "label")),
     selected = "a"
   ),
-  zoom_plot_ui("w2_target_plot", height = "440px"),
+  lc_plot("w2_target_plot", ratio = "1.4/1"),
   uiOutput("w2_target_result"),
   full_width = TRUE
 )
@@ -249,9 +249,9 @@ warunki_tree_read_widget <- figure_panel(
 warunki_total_widget <- risk_widget_panel(
   title = "Dwie drogi do incydentu",
   controls = tagList(
-    sliderInput("w2_mode_share", "Udział pracy w przeciążeniu", 0, 1, 0.20, 0.01),
-    sliderInput("w2_overload", "P(incydent | przeciążenie)", 0, 0.40, 0.15, 0.01),
-    sliderInput("w2_regular", "P(incydent | normalna praca)", 0, 0.10, 0.01, 0.005)
+    lc_slider("w2_mode_share", "Udział pracy w przeciążeniu", 0, 1, 0.20, 0.01),
+    lc_slider("w2_overload", "P(incydent | przeciążenie)", 0, 0.40, 0.15, 0.01),
+    lc_slider("w2_regular", "P(incydent | normalna praca)", 0, 0.10, 0.01, 0.005)
   ),
   plot_id = "w2_total_plot", stats_id = "w2_total_stats",
   note = "Wynik jest ważoną sumą dwóch rozłącznych dróg."
@@ -260,8 +260,8 @@ warunki_total_widget <- risk_widget_panel(
 warunki_common_widget <- risk_widget_panel(
   title = "Niezależność kontra wspólna przyczyna",
   controls = tagList(
-    sliderInput("w2_component_fail", "P awarii pojedynczego zabezpieczenia", 0.001, 0.20, 0.05, 0.001),
-    sliderInput("w2_common", "P utraty wspólnego zasilania", 0, 0.10, 0.01, 0.001)
+    lc_slider("w2_component_fail", "P awarii pojedynczego zabezpieczenia", 0.001, 0.20, 0.05, 0.001),
+    lc_slider("w2_common", "P utraty wspólnego zasilania", 0, 0.10, 0.01, 0.001)
   ),
   plot_id = "w2_common_plot", stats_id = "w2_common_stats",
   note = "Wspólna przyczyna jest osobnym zdarzeniem, a nie nieobjaśnioną korelacją."

@@ -185,13 +185,13 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           zycie_try("ustaw koniec obserwacji na 1200 h i policz awarie oraz obserwacje ucięte. Potem przesuń suwak do 800 h i do 2500 h. Dla każdego ustawienia zapisz, które czasy byłyby widoczne jako awarie."),
           figure_panel("Warunki badania", title = "Ustal koniec obserwacji", width_mode = "text",
             lc_controls_row(
-              sliderInput("c7_follow", "Koniec obserwacji (h)", 300, 2500, 1200, 50),
+              lc_slider("c7_follow", "Koniec obserwacji (h)", 300, 2500, 1200, 50),
               uiOutput("c7_timeline_stats")
             ),
             tags$p("Dla działającego elementu znamy tylko dolną granicę czasu życia; jego przyszłej awarii nie pokazujemy.")
           ),
           figure_panel("Oś czasu", title = "Oś czasu: kiedy kończy się nasza wiedza", width_mode = "text",
-            zoom_plot_ui("c7_timeline", height = "350px"),
+            lc_plot("c7_timeline", ratio = "1.8/1", max_height = "350px"),
             tags$p("Kropka oznacza awarię. Trójkąt oznacza koniec obserwacji działającego elementu. Przerywana linia wyznacza koniec badania; skala czasu pozostaje stała.")
           ),
           zycie_reading(c(
@@ -290,7 +290,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             answer = "F ≈ 0,487, R ≈ 0,513, f ≈ 0,00034/h, h ≈ 0,00067/h. Hazard jest prawie dwa razy większy od gęstości, bo odnosi się tylko do połowy populacji, która dożyła 1000 h."
           ),
           zycie_try("zostaw model wykładniczy i przesuwaj wspólną linię czasu od 0 do 4000 h. Porównaj, jak zmieniają się F(t) i R(t) w panelu oraz jak przebiegają przeskalowane krzywe f(t) i h(t)."),
-          risk_widget_panel("Synchronizacja", "Wspólny suwak czasu", sliderInput("c7_time", "Czas t (h)", 0, 4000, 1000, 50), "c7_functions", "c7_functions_stats", note = "Dla rozkładu wykładniczego f(t) jest proporcjonalna do R(t), dlatego obie krzywe mają ten sam kształt, a przeskalowany hazard jest poziomą linią. To cecha tego modelu, nie ogólna reguła."),
+          risk_widget_panel("Synchronizacja", "Wspólny suwak czasu", lc_slider("c7_time", "Czas t (h)", 0, 4000, 1000, 50), "c7_functions", "c7_functions_stats", note = "Dla rozkładu wykładniczego f(t) jest proporcjonalna do R(t), dlatego obie krzywe mają ten sam kształt, a przeskalowany hazard jest poziomą linią. To cecha tego modelu, nie ogólna reguła."),
           zycie_reading(c(
             "Dla t = 1000 h panel pokazuje F ≈ 0,487 i R ≈ 0,513, jak w przykładzie 7.3. Suma obu wartości zawsze wynosi 1. Na wykresie gęstość przemnożono przez 3000, a hazard przez 1500, żeby wszystkie cztery krzywe zmieściły się na jednej osi. Przy takim skalowaniu przeskalowana gęstość jest równa 2R(t), a przeskalowany hazard wynosi stale 1.",
             "Najważniejsza obserwacja: gęstość maleje, choć hazard stoi w miejscu. Mniej awarii w okolicy 3000 h nie oznacza, że stare wentylatory są bezpieczniejsze — po prostu mało który dożył tego wieku. O ryzyku dla działającego egzemplarza mówi hazard, nie gęstość."
@@ -393,7 +393,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             answer = "(a) i (b) około 0,717; (c) około 63% wentylatorów zawodzi przed upływem średniej, a połowa — przed 1040 h. Średnią 1500 h podnoszą rzadkie, bardzo długie życia z prawego ogona, jak w rozkładzie geometrycznym."
           ),
           zycie_try("zmieniaj MTTF od 300 do 4000 h i obserwuj wartość R(1000 h) w panelu. Sprawdź, dla jakiego MTTF niezawodność w horyzoncie 1000 h przekracza 0,7."),
-          risk_widget_panel("Model", "Stały hazard", sliderInput("c7_mttf", "MTTF (h)", 300, 4000, 1500, 50), "c7_exp", "c7_exp_stats", width_mode = "text"),
+          risk_widget_panel("Model", "Stały hazard", lc_slider("c7_mttf", "MTTF (h)", 300, 4000, 1500, 50), "c7_exp", "c7_exp_stats", width_mode = "text"),
           zycie_reading(c(
             "Przy MTTF = 1500 h panel pokazuje R(1000 h) ≈ 0,513. Podwojenie MTTF do 3000 h podnosi tę wartość do około 0,717, a MTTF = 4000 h daje około 0,779. Przy MTTF = 500 h niezawodność w horyzoncie 1000 h spada do 0,135. Kształt krzywej zawsze jest ten sam — zmienia się tylko skala osi czasu, a w chwili t = MTTF krzywa przechodzi przez e⁻¹ ≈ 0,368.",
             "Ta sztywność jest zaletą i wadą zarazem. Zaletą, bo jeden parametr łatwo oszacować ze wzoru (7.2). Wadą, bo model nie ma czym opisać docierania ani zużycia. Jeśli dane pokazują starzenie, trzeba sięgnąć po rodzinę z dodatkowym parametrem kształtu."
@@ -437,7 +437,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             answer = "Średnio 1500 h; z prawdopodobieństwem około 0,68 zapas wystarczy na 1000 h. Mniej więcej w jednym okresie na trzy trzeba będzie zamówić wentylatory wcześniej — średnia sama nie wystarcza do planu, tak jak w wykładzie 05."
           ),
           zycie_try("zacznij od k = 1 i porównaj kształt z krzywą wykładniczą. Potem ustaw k = 3 (przykład 7.6) i k = 8. Obserwuj, gdzie leży szczyt gęstości i jak zmienia się jej symetria."),
-          risk_widget_panel("Model", "Czas oczekiwania o kształcie k", sliderInput("c7_k", "Parametr kształtu k", .5, 8, 3, .5), "c7_gamma", "c7_gamma_stats", note = "Dla całkowitego k suwak pokazuje rozkłady Erlanga; wartości pośrednie należą do ogólnej rodziny gamma."),
+          risk_widget_panel("Model", "Czas oczekiwania o kształcie k", lc_slider("c7_k", "Parametr kształtu k", .5, 8, 3, .5), "c7_gamma", "c7_gamma_stats", note = "Dla całkowitego k suwak pokazuje rozkłady Erlanga; wartości pośrednie należą do ogólnej rodziny gamma."),
           zycie_reading(c(
             "Wykres używa skali 500 h, czyli λ = 1/500, jak w przykładzie 7.6. Dla k = 1 gęstość jest najwyższa w zerze i opada wykładniczo. Dla k = 3 szczyt przesuwa się do (k − 1) · 500 = 1000 h, a średnia wynosi 1500 h. Dla k = 8 średnia to 4000 h, szczyt leży przy 3500 h, a kształt jest wyraźnie bardziej symetryczny — ten sam efekt, który w wykładzie 05 widzieliśmy dla ujemnego dwumianowego przy rosnącym r.",
             "Dla k = 0,5 gęstość w pobliżu zera jest bardzo duża: ogólna gamma z k < 1 opisuje sytuację, w której wiele awarii zdarza się tuż po uruchomieniu, a hazard maleje. Takiej wartości nie da się czytać jako „pół etapu” — to już tylko parametr kształtu."
@@ -522,7 +522,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             answer = "R(1000) ≈ 0,707; hazard podwaja się przy podwojeniu wieku (0,00035 → 0,00069 → 0,00138 na godzinę); R(1700) ≈ 0,368; MTTF ≈ 1507 h."
           ),
           zycie_try("zacznij od β = 2 i η = 1700 h. Następnie ustaw β = 1 i η = 1500 h, a potem β = 0,5. Za każdym razem odczytaj kierunek hazardu i R(1000 h) w panelu; na dolnym wykresie zwróć uwagę na przebieg h(t) tuż po uruchomieniu."),
-          risk_widget_panel("Model", "R(t) i h(t) reagują razem", tagList(sliderInput("c7_beta", "β", .4, 4, 2, .1), sliderInput("c7_eta", "η (h)", 300, 4000, 1700, 50)), "c7_weibull", "c7_weibull_stats"),
+          risk_widget_panel("Model", "R(t) i h(t) reagują razem", tagList(lc_slider("c7_beta", "β", .4, 4, 2, .1), lc_slider("c7_eta", "η (h)", 300, 4000, 1700, 50)), "c7_weibull", "c7_weibull_stats"),
           zycie_reading(c(
             "Dla β = 2 i η = 1700 h panel pokazuje hazard rosnący i R(1000 h) ≈ 0,707, jak w przykładzie 7.7; dolny wykres to prosta linia wychodząca z zera. Dla β = 1 i η = 1500 h hazard jest poziomy, a R(1000 h) ≈ 0,513 — odtworzyliśmy ofertę A. Dla β = 0,5 (przy η = 1700 h) hazard startuje bardzo wysoko i szybko opada: w chwili 100 h wynosi około 0,0012, a w chwili 1000 h około 0,0004 na godzinę.",
             "Zmiana η przy stałym β nie zmienia kształtu żadnej krzywej, tylko rozciąga lub ściska oś czasu. To dlatego η nazywa się parametrem skali: dwa parki maszyn o tym samym mechanizmie awarii, ale różnej jakości wykonania, różnią się η, a nie β."
@@ -554,7 +554,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             answer = "η ≈ 1185, 1500 i 1691 h; R(1000) ≈ 0,41, 0,51 i 0,76. Przy tej samej średniej różnica w niezawodności misji 1000 h sięga 35 punktów procentowych."
           ),
           zycie_try("zacznij od misji 1000 h i odczytaj trzy wartości R(t) na pionowej linii. Potem przesuwaj czas misji w prawo i znajdź moment, w którym krzywa β = 2,5 spada poniżej pozostałych."),
-          risk_widget_panel("Porównanie", "Modele skalibrowane do MTTF=1500 h", sliderInput("c7_mission", "Czas misji (h)", 100, 3000, 1000, 50), "c7_same_mean", "c7_same_mean_stats"),
+          risk_widget_panel("Porównanie", "Modele skalibrowane do MTTF=1500 h", lc_slider("c7_mission", "Czas misji (h)", 100, 3000, 1000, 50), "c7_same_mean", "c7_same_mean_stats"),
           zycie_reading(c(
             "Dla misji 1000 h pionowa linia przecina krzywe przy wartościach 0,41 (β = 0,7), 0,51 (β = 1) i 0,76 (β = 2,5), zgodnie z przykładem 7.8. Model zużyciowy przestaje być najlepszy około 1830 h, kiedy jego krzywa przecina krzywą wykładniczą, a około 1940 h spada także poniżej krzywej β = 0,7. Około 2600 h krzywa wykładnicza przecina krzywą β = 0,7 i od tej chwili model z malejącym hazardem jest najlepszy. Przy 3000 h wartości R wynoszą 0,147, 0,135 i zaledwie 0,015.",
             "Mechanizm jest ten sam co w przykładzie 7.1. Model β = 0,7 traci wiele egzemplarzy wcześnie, ale te, które przetrwały, żyją bardzo długo. Model β = 2,5 prawie nie traci egzemplarzy na początku, ale później zużycie dopada wszystkie niemal jednocześnie. Średnie się wyrównują, a niezawodności misji — nie."
@@ -609,7 +609,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             answer = "Na początku dominują wczesne defekty (88% hazardu), w środku — awarie losowe (około 59%), a pod koniec — zużycie (około 78%). Minimum hazardu całkowitego przypada w tym modelu około t ≈ 1310."
           ),
           zycie_try("zacznij od nasilenia zużycia 1 i znajdź na wykresie dno wanny. Następnie ustaw nasilenie 2 i 0,2. Obserwuj, jak zmienia się położenie dna i które ramię wanny reaguje na suwak."),
-          risk_widget_panel("Mechanizmy", "Suma trzech składowych", sliderInput("c7_wear", "Nasilenie zużycia", .2, 2, 1, .1), "c7_bathtub", "c7_bathtub_stats"),
+          risk_widget_panel("Mechanizmy", "Suma trzech składowych", lc_slider("c7_wear", "Nasilenie zużycia", .2, 2, 1, .1), "c7_bathtub", "c7_bathtub_stats"),
           zycie_reading(c(
             "Suwak zmienia wyłącznie składową zużycia, więc lewe ramię wanny się nie rusza. Przy nasileniu 1 dno leży około t ≈ 1310, przy nasileniu 2 przesuwa się wcześniej, do około 1160, a przy nasileniu 0,2 — później, do około 1700. Mocniejsze zużycie skraca okres stabilny z prawej strony i podnosi całą prawą część krzywej.",
             "To obraz, który warto przenieść na decyzje. Środkowy, płaski odcinek wanny jest okresem, w którym element zachowuje się prawie jak wykładniczy — wymiana profilaktyczna niewiele tu daje. Na lewym ramieniu pomaga kontrola odbiorcza i docieranie, na prawym — wymiana przed wejściem w strefę zużycia."
@@ -657,7 +657,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             answer = "B10 ≈ 552 h, B5 ≈ 385 h. W modelu wykładniczym o podobnym MTTF B10 wynosi tylko 158 h — ale tam, jak zobaczymy, przegląd z wymianą niczego nie poprawia."
           ),
           zycie_try("przesuwaj czas do przeglądu i znajdź największą wartość, dla której R(t) nie spada poniżej 0,90. Porównaj ją z wynikiem przykładu 7.10. Potem ustaw 1000 h i odczytaj ryzyko awarii."),
-          figure_panel(label = "Decyzja", title = "Czy wentylator dotrwa do końca misji?", sliderInput("c7_plan_time", "Czas do przeglądu (h)", 100, 3000, 1000, 50), uiOutput("c7_plan"), full_width = TRUE),
+          figure_panel(label = "Decyzja", title = "Czy wentylator dotrwa do końca misji?", lc_slider("c7_plan_time", "Czas do przeglądu (h)", 100, 3000, 1000, 50), uiOutput("c7_plan"), full_width = TRUE),
           zycie_reading(c(
             "Suwak ma krok 50 h, więc najbliższa wartość to 550 h: R ≈ 0,901, ryzyko awarii ≈ 0,099. Przy 600 h wymaganie jest już złamane. Przy domyślnych 1000 h ryzyko awarii przed przeglądem wynosi około 0,293 — prawie trzy razy więcej, niż dopuszcza kierownik. Przy 1500 h przekracza połowę (0,541).",
             "Zwróć uwagę, jak szybko rośnie ryzyko przy β = 2. Między 500 a 1000 h ryzyko wzrasta z około 0,083 do 0,293, czyli ponad trzykrotnie przy dwukrotnie dłuższym okresie. To bezpośrednia konsekwencja rosnącego hazardu: każda kolejna godzina jest groźniejsza od poprzedniej."
