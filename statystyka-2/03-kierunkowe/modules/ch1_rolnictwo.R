@@ -23,8 +23,8 @@ ch1_ui <- lecture_chapter(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch1_interaction", "Siła interakcji:", min = 0, max = 10, value = 4, step = 1),
-          sliderInput("ch1_block_sd", "Niejednorodność pola (bloki):", min = 0, max = 8, value = 3, step = 0.5),
+          lc_slider("ch1_interaction", "Siła interakcji", 0, 10, 4, 1),
+          lc_slider("ch1_block_sd", "Niejednorodność pola (bloki)", 0, 8, 3, 0.5),
           uiOutput("ch1_anova_note")
         ),
         column(8,

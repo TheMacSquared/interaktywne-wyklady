@@ -49,7 +49,7 @@ ch10_ui <- list(
             numericInput("ch10_d", "d:", value = 1, min = 0, max = 2, step = 1, width = "70px"),
             numericInput("ch10_q", "q:", value = 0, min = 0, max = 3, step = 1, width = "70px")
           ),
-          actionButton("ch10_sim_new", "Nowa realizacja", class = "lc-btn-primary", width = "100%"),
+          lc_action("ch10_sim_new", "Nowa realizacja", variant = "solid"),
           lc_spacer("md"),
           uiOutput("ch10_model_desc")
         ),
@@ -83,7 +83,7 @@ ch10_ui <- list(
           selectInput("ch10_auto_data", "Szereg:",
                       choices = .ts_choices_for("warszawa", "bezrobocie", "noclegi", "pszenica"),
                       selected = "bezrobocie"),
-          actionButton("ch10_auto_run", "Uruchom auto.arima", class = "lc-btn-primary", width = "100%"),
+          lc_action("ch10_auto_run", "Uruchom auto.arima", variant = "solid"),
           uiOutput("ch10_auto_result")
         ),
         column(8,
@@ -115,7 +115,7 @@ ch10_ui <- list(
           selectInput("ch10_aic_data", "Szereg:",
                       choices = .ts_choices_for("bezrobocie", "noclegi", "sprzedaz"),
                       selected = "bezrobocie"),
-          actionButton("ch10_aic_run", "Porównaj modele", class = "lc-btn-primary", width = "100%")
+          lc_action("ch10_aic_run", "Porównaj modele", variant = "solid")
         ),
         column(8,
           uiOutput("ch10_aic_table")

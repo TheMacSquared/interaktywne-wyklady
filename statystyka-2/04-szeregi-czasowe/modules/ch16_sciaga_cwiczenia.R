@@ -142,7 +142,7 @@ ch16_ui <- list(
                   numericInput("ch16_r_q", "q:", value = 1, min = 0, max = 3, step = 1, width = "70px")
                 ),
                 numericInput("ch16_r_h", "Horyzont:", value = 12, min = 6, max = 24, step = 6),
-                actionButton("ch16_r_run", "Dopasuj i prognozuj", class = "lc-btn-primary", width = "100%"),
+                lc_action("ch16_r_run", "Dopasuj i prognozuj", variant = "solid"),
                 uiOutput("ch16_r_result")
               ),
               column(8,
@@ -171,7 +171,7 @@ ch16_ui <- list(
             fluidRow(
               column(4,
                 numericInput("ch16_b_h", "Horyzont (miesiące):", value = 24, min = 12, max = 36, step = 6),
-                actionButton("ch16_b_run", "auto.arima + prognoza", class = "lc-btn-primary", width = "100%"),
+                lc_action("ch16_b_run", "auto.arima + prognoza", variant = "solid"),
                 uiOutput("ch16_b_result")
               ),
               column(8,
@@ -198,7 +198,7 @@ ch16_ui <- list(
             full_width = TRUE,
             fluidRow(
               column(4,
-                actionButton("ch16_f_run", "Dopasuj ETS", class = "lc-btn-primary", width = "100%"),
+                lc_action("ch16_f_run", "Dopasuj ETS", variant = "solid"),
                 uiOutput("ch16_f_result")
               ),
               column(8,

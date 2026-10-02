@@ -96,7 +96,7 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.3", title = "Siła sezonowości dla czterech zbiorów danych",
       full_width = TRUE,
-      zoom_plot_ui("ch4_strength_plot", height = "220px")
+      lc_plot("ch4_strength_plot", ratio = "2.8/1", max_height = "220px")
     ),
 
     lc_h2("ch4-add-vs-mult", "Addytywna czy multiplikatywna?"),

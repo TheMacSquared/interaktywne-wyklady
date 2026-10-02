@@ -37,8 +37,7 @@ ch11_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch11_alpha", "α (tempo wygładzania):",
-                      min = 0.05, max = 0.95, value = 0.3, step = 0.05),
+          lc_slider("ch11_alpha", "α (tempo wygładzania)", 0.05, 0.95, 0.3, 0.05),
           uiOutput("ch11_alpha_info")
         ),
         column(8,
@@ -63,8 +62,8 @@ ch11_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch11_holt_alpha", "α (poziom):",  min = 0.05, max = 0.95, value = 0.4, step = 0.05),
-          sliderInput("ch11_holt_beta",  "β (trend):",   min = 0.01, max = 0.50, value = 0.1, step = 0.01),
+          lc_slider("ch11_holt_alpha", "α (poziom)", 0.05, 0.95, 0.4, 0.05),
+          lc_slider("ch11_holt_beta", "β (trend)", 0.01, 0.50, 0.1, 0.01),
           selectInput("ch11_holt_data", "Szereg:",
                       choices = .ts_choices_for("bezrobocie", "sprzedaz", "pszenica"),
                       selected = "bezrobocie")
@@ -95,11 +94,9 @@ ch11_ui <- list(
           selectInput("ch11_hw_data", "Szereg:",
                       choices = .ts_choices_for("noclegi", "sprzedaz", "warszawa"),
                       selected = "noclegi"),
-          radioButtons("ch11_hw_type", "Typ modelu:",
-                       choices = c("Addytywny" = "additive", "Multiplikatywny" = "multiplicative"),
-                       selected = "additive"),
+          lc_segmented("ch11_hw_type", "Typ modelu", choices = c("Addytywny" = "additive", "Multiplikatywny" = "multiplicative"), selected = "additive"),
           numericInput("ch11_hw_h", "Horyzont prognozy (miesiące):", value = 24, min = 6, max = 48, step = 6),
-          actionButton("ch11_hw_run", "Dopasuj model", class = "lc-btn-primary", width = "100%"),
+          lc_action("ch11_hw_run", "Dopasuj model", variant = "solid"),
           uiOutput("ch11_hw_result")
         ),
         column(8,

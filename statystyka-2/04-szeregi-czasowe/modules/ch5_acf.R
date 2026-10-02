@@ -40,8 +40,7 @@ ch5_ui <- list(
           selectInput("ch5_lag_data", "Szereg:",
                       choices = .ts_dataset_choices,
                       selected = "warszawa"),
-          sliderInput("ch5_lag_k", "Opóźnienie k (lag):",
-                      min = 1, max = 24, value = 1, step = 1),
+          lc_slider("ch5_lag_k", "Opóźnienie k (lag)", 1, 24, 1, 1),
           uiOutput("ch5_lag_r")
         ),
         column(8,
@@ -87,9 +86,9 @@ ch5_ui <- list(
         column(4,
           div(
             style = "display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px;",
-            actionButton("ch5_acf_warszawa",   "Temperatura Warszawa",    class = "lc-btn-outline", width = "100%"),
-            actionButton("ch5_acf_pszenica",   "Ceny pszenicy (AR-like)", class = "lc-btn-outline", width = "100%"),
-            actionButton("ch5_acf_wn",         "Biały szum (symulacja)",  class = "lc-btn-outline", width = "100%")
+            lc_action("ch5_acf_warszawa", "Temperatura Warszawa", variant = "outline"),
+            lc_action("ch5_acf_pszenica", "Ceny pszenicy (AR-like)", variant = "outline"),
+            lc_action("ch5_acf_wn", "Biały szum (symulacja)", variant = "outline")
           ),
           uiOutput("ch5_acf_desc")
         ),
@@ -114,8 +113,7 @@ ch5_ui <- list(
           selectInput("ch5_both_data", "Szereg:",
                       choices = .ts_choices_for("warszawa", "bezrobocie", "pszenica"),
                       selected = "pszenica"),
-          sliderInput("ch5_both_k", "Wybrany lag k:",
-                      min = 1, max = 24, value = 1, step = 1),
+          lc_slider("ch5_both_k", "Wybrany lag k", 1, 24, 1, 1),
           uiOutput("ch5_both_r")
         ),
         column(4,

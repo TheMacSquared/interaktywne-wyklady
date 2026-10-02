@@ -33,17 +33,14 @@ ch8_ui <- lecture_chapter(
       fluidRow(column(12,
         fluidRow(
           column(4,
-            sliderInput("ch8_n", "Wielkość próby n:",
-                        min = 10, max = 200, value = 40, step = 5)
+            lc_slider("ch8_n", "Wielkość próby n", 10, 200, 40, 5)
           ),
           column(4,
-            sliderInput("ch8_true_r", "Prawdziwa korelacja ρ:",
-                        min = -0.9, max = 0.9, value = 0.3, step = 0.05)
+            lc_slider("ch8_true_r", "Prawdziwa korelacja ρ", -0.9, 0.9, 0.3, 0.05)
           ),
           column(4,
             br(),
-            actionButton("ch8_draw", "↻ Nowa próba",
-                         class = "lc-btn-primary", width = "100%")
+            lc_action("ch8_draw", "↻ Nowa próba", variant = "solid")
           )
         )
       )),

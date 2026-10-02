@@ -53,15 +53,10 @@ ch2_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch2_syn_trend", "Nachylenie trendu:",
-                      min = -0.5, max = 0.5, value = 0.1, step = 0.05),
-          sliderInput("ch2_syn_seas", "Amplituda sezonowości:",
-                      min = 0, max = 15, value = 5, step = 0.5),
-          sliderInput("ch2_syn_noise", "Szum losowy (σ):",
-                      min = 0, max = 5, value = 1.5, step = 0.25),
-          radioButtons("ch2_syn_type", "Model:",
-                       choices = c("Addytywny" = "add", "Multiplikatywny" = "mult"),
-                       selected = "add", inline = TRUE)
+          lc_slider("ch2_syn_trend", "Nachylenie trendu", -0.5, 0.5, 0.1, 0.05),
+          lc_slider("ch2_syn_seas", "Amplituda sezonowości", 0, 15, 5, 0.5),
+          lc_slider("ch2_syn_noise", "Szum losowy (σ)", 0, 5, 1.5, 0.25),
+          lc_segmented("ch2_syn_type", "Model", choices = c("Addytywny" = "add", "Multiplikatywny" = "mult"), selected = "add")
         ),
         column(8,
           zoom_plot_ui("ch2_syn_plot", height = "340px")
@@ -86,9 +81,7 @@ ch2_ui <- list(
           selectInput("ch2_stl_data", "Szereg:",
                       choices = .ts_choices_for("warszawa", "bezrobocie", "noclegi", "sprzedaz"),
                       selected = "warszawa"),
-          radioButtons("ch2_stl_type", "Model:",
-                       choices = c("Addytywny" = "additive", "Multiplikatywny" = "multiplicative"),
-                       selected = "additive"),
+          lc_segmented("ch2_stl_type", "Model", choices = c("Addytywny" = "additive", "Multiplikatywny" = "multiplicative"), selected = "additive"),
           uiOutput("ch2_stl_info")
         ),
         column(9,

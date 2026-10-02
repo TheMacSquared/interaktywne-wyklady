@@ -22,8 +22,8 @@ ch6_ui <- lecture_chapter(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch6_shape", "Kształt k:", min = 1.1, max = 3.5, value = 2.0, step = 0.1),
-          sliderInput("ch6_scale", "Skala c (m/s):", min = 3, max = 12, value = 7, step = 0.2),
+          lc_slider("ch6_shape", "Kształt k", 1.1, 3.5, 2.0, 0.1),
+          lc_slider("ch6_scale", "Skala c (m/s)", 3, 12, 7, 0.2),
           uiOutput("ch6_wind_info")
         ),
         column(8, zoom_plot_ui("ch6_wind_plot", height = "350px"))
@@ -35,9 +35,9 @@ ch6_ui <- lecture_chapter(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch6_mean_compare", "Wspólna średnia prędkość (m/s):", min = 4, max = 10, value = 7, step = 0.2),
-          sliderInput("ch6_k_low", "Lokalizacja A: k:", min = 1.1, max = 2.2, value = 1.5, step = 0.1),
-          sliderInput("ch6_k_high", "Lokalizacja B: k:", min = 2.0, max = 4.0, value = 3.0, step = 0.1),
+          lc_slider("ch6_mean_compare", "Wspólna średnia prędkość (m/s)", 4, 10, 7, 0.2),
+          lc_slider("ch6_k_low", "Lokalizacja A: k", 1.1, 2.2, 1.5, 0.1),
+          lc_slider("ch6_k_high", "Lokalizacja B: k", 2.0, 4.0, 3.0, 0.1),
           uiOutput("ch6_compare_info")
         ),
         column(8, zoom_plot_ui("ch6_compare_plot", height = "330px"))

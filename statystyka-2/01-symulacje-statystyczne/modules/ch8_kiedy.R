@@ -153,8 +153,7 @@ ch8_ui <- lecture_chapter(
         width = "100%"
       ),
       br(),
-      actionButton("ch8_show", "Pokaż odpowiedź",
-                   class = "lc-btn-ok-outline"),
+      lc_action("ch8_show", "Pokaż odpowiedź", variant = "solid"),
       br(), br(),
       uiOutput("ch8_scenario_answer")
     ),

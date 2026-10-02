@@ -38,37 +38,31 @@ ch6_ui <- lecture_chapter(
       fluidRow(column(12,
         fluidRow(
           column(3,
-            sliderInput("ch6_n", "n na grupę:",
-                        min = 10, max = 80, value = 25, step = 5)
+            lc_slider("ch6_n", "n na grupę", 10, 80, 25, 5)
           ),
           column(3,
-            sliderInput("ch6_mean_a", "średnia A:",
-                        min = 0, max = 20, value = 10, step = 0.5)
+            lc_slider("ch6_mean_a", "średnia A", 0, 20, 10, 0.5)
           ),
           column(3,
-            sliderInput("ch6_mean_b", "średnia B:",
-                        min = 0, max = 20, value = 12, step = 0.5)
+            lc_slider("ch6_mean_b", "średnia B", 0, 20, 12, 0.5)
           ),
           column(3,
-            sliderInput("ch6_mean_c", "średnia C:",
-                        min = 0, max = 20, value = 11, step = 0.5)
+            lc_slider("ch6_mean_c", "średnia C", 0, 20, 11, 0.5)
           )
         ),
         fluidRow(
           column(3,
-            sliderInput("ch6_sd", "SD wewnątrzgrupowe:",
-                        min = 1, max = 10, value = 4, step = 0.5)
+            lc_slider("ch6_sd", "SD wewnątrzgrupowe", 1, 10, 4, 0.5)
           ),
           column(3,
             br(),
-            actionButton("ch6_draw", "↻ Nowa próba",
-                         class = "lc-btn-primary", width = "100%")
+            lc_action("ch6_draw", "↻ Nowa próba", variant = "solid")
           )
         )
       )),
 
       br(),
-      zoom_plot_ui("ch6_data_plot", height = "240px"),
+      lc_plot("ch6_data_plot", ratio = "2.6/1", max_height = "240px"),
 
       fluidRow(
         column(6,

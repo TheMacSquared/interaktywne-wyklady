@@ -80,8 +80,7 @@ df <- data.frame(
         tags$em("zinterpretuj CI jednym zdaniem —
           co oznacza ten przedział w kontekście agrotechnicznym?"))
     ),
-    actionButton("ch10_rol_ans1", "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch10_rol_ans1", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch10_rol_sol1")
   ),
 
@@ -94,8 +93,7 @@ df <- data.frame(
       p("Porównaj p-wartość z testu permutacyjnego z p-wartością z testu t.
          Jeśli się różnią, co to oznacza?")
     ),
-    actionButton("ch10_rol_ans2", "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch10_rol_ans2", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch10_rol_sol2")
   ),
 
@@ -107,8 +105,7 @@ df <- data.frame(
       p(tags$em("Czy bootstrap CI pomoże z tak małą próbą?
                  Jakie są ograniczenia? Czy zaproponowany CI będzie wiarygodny?"))
     ),
-    actionButton("ch10_rol_ans3", "Pokaż odpowiedź",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch10_rol_ans3", "Pokaż odpowiedź", variant = "solid"),
     uiOutput("ch10_rol_sol3")
   )
 
@@ -138,8 +135,7 @@ df <- data.frame(
       p(tags$em("Który CI jest właściwszy dla skali 1–7 przy n ≈ 18?
                  Uzasadnij."))
     ),
-    actionButton("ch10_zyw_ans1", "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch10_zyw_ans1", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch10_zyw_sol1")
   ),
 
@@ -152,8 +148,7 @@ df <- data.frame(
       p(tags$em("Dlaczego Mann-Whitney U i test permutacyjny mogą dać inne p-wartości?
                  Jakie założenia pozwalają przetasować etykiety grup?"))
     ),
-    actionButton("ch10_zyw_ans2", "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch10_zyw_ans2", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch10_zyw_sol2")
   ),
 
@@ -165,8 +160,7 @@ df <- data.frame(
       p(tags$em("Oblicz bootstrap CI dla współczynnika korelacji Pearsona.
                  Dlaczego tu wolimy bootstrap, a nie klasyczny test Pearsona?"))
     ),
-    actionButton("ch10_zyw_ans3", "Pokaż odpowiedź",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch10_zyw_ans3", "Pokaż odpowiedź", variant = "solid"),
     uiOutput("ch10_zyw_sol3")
   )
 
@@ -194,8 +188,7 @@ df <- data.frame(
       p(tags$em("Dlaczego bootstrap CI dla mediany — a nie t-CI dla średniej?
                  Jakie jest znaczenie praktyczne tego CI w kontekście BHP?"))
     ),
-    actionButton("ch10_bhp_ans1", "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch10_bhp_ans1", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch10_bhp_sol1")
   ),
 
@@ -208,8 +201,7 @@ df <- data.frame(
       p(tags$em("Porównaj p-wartość z t-testem i Wilcoxonem.
                  Który test jest tu najodpowiedniejszy i dlaczego?"))
     ),
-    actionButton("ch10_bhp_ans2", "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch10_bhp_ans2", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch10_bhp_sol2")
   ),
 
@@ -221,8 +213,7 @@ df <- data.frame(
       p(tags$em("Oblicz bootstrap CI dla mediany. Jeśli 250ms leży poza CI —
                  co wnioskujesz? Sformułuj wniosek „jak w raporcie BHP‟."))
     ),
-    actionButton("ch10_bhp_ans3", "Pokaż odpowiedź",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch10_bhp_ans3", "Pokaż odpowiedź", variant = "solid"),
     uiOutput("ch10_bhp_sol3")
   )
 
@@ -251,8 +242,7 @@ df <- data.frame(
          (nowy program vs tradycyjny). Porównaj z t-CI Welcha."),
       p(tags$em("Czy oba CI są podobne? Co to mówi o rozkładzie danych?"))
     ),
-    actionButton("ch10_edu_ans1", "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch10_edu_ans1", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch10_edu_sol1")
   ),
 
@@ -265,8 +255,7 @@ df <- data.frame(
       p(tags$em("Który test testuje H₀: brak różnicy średnich — test permutacyjny czy Mann-Whitney?
                  Uzasadnij."))
     ),
-    actionButton("ch10_edu_ans2", "Pokaż rozwiązanie",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch10_edu_ans2", "Pokaż rozwiązanie", variant = "solid"),
     uiOutput("ch10_edu_sol2")
   ),
 
@@ -278,8 +267,7 @@ df <- data.frame(
       p(tags$em("Czy klasyczny t-CI byłby wiarygodny? Uzasadnij odwołując się
                  do rozkładu danych i rozmiaru próby."))
     ),
-    actionButton("ch10_edu_ans3", "Pokaż odpowiedź",
-                 class = "lc-btn-ok-outline lc-btn-sm"),
+    lc_action("ch10_edu_ans3", "Pokaż odpowiedź", variant = "solid"),
     uiOutput("ch10_edu_sol3")
   )
 

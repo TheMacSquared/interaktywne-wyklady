@@ -51,12 +51,9 @@ ch4_ui <- lecture_chapter(
     figure_panel(label = "Ryc. 4.1", title = "Permutacyjny test różnicy średnich",
       fluidRow(
         column(4,
-          sliderInput("ch4_n_per_group", "n na grupę:",
-                      min = 10, max = 50, value = 20, step = 5),
-          sliderInput("ch4_true_diff", "Prawdziwa różnica średnich (efekt):",
-                      min = 0, max = 20, value = 0, step = 1),
-          sliderInput("ch4_n_perms", "Liczba permutacji (B):",
-                      min = 200, max = 5000, value = 1000, step = 200),
+          lc_slider("ch4_n_per_group", "n na grupę", 10, 50, 20, 5),
+          lc_slider("ch4_true_diff", "Prawdziwa różnica średnich (efekt)", 0, 20, 0, 1),
+          lc_slider("ch4_n_perms", "Liczba permutacji (B)", 200, 5000, 1000, 200),
           selectInput("ch4_dist", "Rozkład:",
             choices = c(
               "Prawoskosśny (Gamma)" = "skewed",
@@ -67,20 +64,15 @@ ch4_ui <- lecture_chapter(
           ),
           hr(),
           div(class = "step-buttons",
-            actionButton("ch4_perm_step1", "1. Dane",
-                         class = "lc-btn-outline"),
-            actionButton("ch4_perm_step2", "2. Permutacja",
-                         class = "lc-btn-outline")
+            lc_action("ch4_perm_step1", "1. Dane", variant = "outline"),
+            lc_action("ch4_perm_step2", "2. Permutacja", variant = "outline")
           ),
           div(class = "step-buttons",
-            actionButton("ch4_perm_step3", "3. Rozkład",
-                         class = "lc-btn-outline"),
-            actionButton("ch4_perm_step4", "4. p-wartość",
-                         class = "lc-btn-ok-outline")
+            lc_action("ch4_perm_step3", "3. Rozkład", variant = "outline"),
+            lc_action("ch4_perm_step4", "4. p-wartość", variant = "solid")
           ),
           br(),
-          actionButton("ch4_perm_new", "↺ Nowe dane",
-                       class = "lc-btn-secondary-outline lc-btn-sm", width = "100%"),
+          lc_action("ch4_perm_new", "↺ Nowe dane", variant = "outline"),
           br(), br(),
           uiOutput("ch4_perm_explanation")
         ),
@@ -111,13 +103,10 @@ ch4_ui <- lecture_chapter(
     figure_panel(label = "Ryc. 4.2", title = "Permutacyjny test korelacji",
       fluidRow(
         column(4,
-          sliderInput("ch4_cor_n",      "n:", min = 15, max = 80, value = 30, step = 5),
-          sliderInput("ch4_cor_true_r", "Prawdziwa korelacja ρ:",
-                      min = 0, max = 0.8, value = 0.4, step = 0.1),
-          sliderInput("ch4_cor_B",      "B permutacji:",
-                      min = 500, max = 5000, value = 1000, step = 500),
-          actionButton("ch4_cor_run", "Uruchom",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_slider("ch4_cor_n", "n", 15, 80, 30, 5),
+          lc_slider("ch4_cor_true_r", "Prawdziwa korelacja ρ", 0, 0.8, 0.4, 0.1),
+          lc_slider("ch4_cor_B", "B permutacji", 500, 5000, 1000, 500),
+          lc_action("ch4_cor_run", "Uruchom", variant = "solid"),
           br(), br(),
           uiOutput("ch4_cor_result")
         ),

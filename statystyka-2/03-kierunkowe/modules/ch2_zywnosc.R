@@ -23,7 +23,7 @@ ch2_ui <- lecture_chapter(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch2_agreement", "Zgodność oceniających:", min = 0, max = 1, value = 0.65, step = 0.05),
+          lc_slider("ch2_agreement", "Zgodność oceniających", 0, 1, 0.65, 0.05),
           uiOutput("ch2_kendall_info")
         ),
         column(8, zoom_plot_ui("ch2_sensory_plot", height = "330px"))
@@ -36,7 +36,7 @@ ch2_ui <- lecture_chapter(
       fluidRow(
         column(4,
           helpText("Po rangowaniu każdy oceniający ma własną kolejność produktów. W zgodnym panelu kolumny układają się podobnie u większości osób."),
-          radioButtons("ch2_rank_view", "Widok:", choices = c("rangi" = "rank", "oceny surowe" = "score"), selected = "rank"),
+          lc_segmented("ch2_rank_view", "Widok", choices = c("rangi" = "rank", "oceny surowe" = "score"), selected = "rank"),
           uiOutput("ch2_rank_comment")
         ),
         column(8, zoom_plot_ui("ch2_rank_heatmap", height = "330px"))
@@ -52,8 +52,8 @@ ch2_ui <- lecture_chapter(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch2_shift", "Skok procesu od próbki 17:", min = 0, max = 3, value = 1.2, step = 0.1),
-          sliderInput("ch2_trend", "Trend na próbkę:", min = -0.08, max = 0.08, value = 0, step = 0.01),
+          lc_slider("ch2_shift", "Skok procesu od próbki 17", 0, 3, 1.2, 0.1),
+          lc_slider("ch2_trend", "Trend na próbkę", -0.08, 0.08, 0, 0.01),
           uiOutput("ch2_spc_info")
         ),
         column(8, zoom_plot_ui("ch2_spc_plot", height = "330px"))

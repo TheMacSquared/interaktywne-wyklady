@@ -66,15 +66,11 @@ ch6_ui <- lecture_chapter(
             ),
             selected = "2"
           ),
-          sliderInput("ch6_k", "k (liczba foldów):",
-                      min = 2, max = 20, value = 5, step = 1),
-          sliderInput("ch6_n", "n (rozmiar zbioru):",
-                      min = 30, max = 200, value = 80, step = 10),
-          sliderInput("ch6_sigma", "Szum (σ):",
-                      min = 1, max = 20, value = 8, step = 1),
+          lc_slider("ch6_k", "k (liczba foldów)", 2, 20, 5, 1),
+          lc_slider("ch6_n", "n (rozmiar zbioru)", 30, 200, 80, 10),
+          lc_slider("ch6_sigma", "Szum (σ)", 1, 20, 8, 1),
           hr(),
-          actionButton("ch6_run", "Uruchom CV",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_action("ch6_run", "Uruchom CV", variant = "solid"),
           br(), br(),
           uiOutput("ch6_cv_stats")
         ),
@@ -104,11 +100,10 @@ ch6_ui <- lecture_chapter(
     figure_panel(label = "Ryc. 6.2", title = "MSE treningowy vs CV MSE",
       fluidRow(
         column(4,
-          sliderInput("ch6_cmp_n",     "n:", min = 40, max = 150, value = 80, step = 10),
-          sliderInput("ch6_cmp_sigma", "σ:", min = 2, max = 20, value = 8, step = 1),
-          sliderInput("ch6_cmp_k",     "k (folds):", min = 3, max = 15, value = 5, step = 1),
-          actionButton("ch6_cmp_run", "Porównaj wszystkie stopnie",
-                       class = "lc-btn-warning", width = "100%")
+          lc_slider("ch6_cmp_n", "n", 40, 150, 80, 10),
+          lc_slider("ch6_cmp_sigma", "σ", 2, 20, 8, 1),
+          lc_slider("ch6_cmp_k", "k (folds)", 3, 15, 5, 1),
+          lc_action("ch6_cmp_run", "Porównaj wszystkie stopnie", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch6_cmp_plot", height = "300px")

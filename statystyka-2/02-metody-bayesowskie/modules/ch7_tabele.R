@@ -61,25 +61,21 @@ ch7_ui <- lecture_chapter(
           column(3,
             h6("Presety"),
             div(class = "preset-buttons",
-              actionButton("ch7_preset_balanced", "Brak różnicy",
-                           class = "lc-btn-secondary-outline lc-btn-sm"),
-              actionButton("ch7_preset_moderate", "Umiarkowany efekt",
-                           class = "lc-btn-secondary-outline lc-btn-sm"),
-              actionButton("ch7_preset_strong", "Silny efekt",
-                           class = "lc-btn-secondary-outline lc-btn-sm")
+              lc_action("ch7_preset_balanced", "Brak różnicy", variant = "outline"),
+              lc_action("ch7_preset_moderate", "Umiarkowany efekt", variant = "outline"),
+              lc_action("ch7_preset_strong", "Silny efekt", variant = "outline")
             )
           ),
           column(3,
             h6("Prior"),
-            sliderInput("ch7_prior_alpha", "α, β (Beta prior):",
-                        min = 0.5, max = 10, value = 1, step = 0.5),
+            lc_slider("ch7_prior_alpha", "α, β (Beta prior)", 0.5, 10, 1, 0.5),
             helpText("α = β = 1: Beta(1,1) = rozkład płaski, nieinformatywny")
           )
         )
       )),
 
       br(),
-      zoom_plot_ui("ch7_data_plot", height = "220px"),
+      lc_plot("ch7_data_plot", ratio = "2.8/1", max_height = "220px"),
 
       fluidRow(
         column(6,

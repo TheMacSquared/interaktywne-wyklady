@@ -39,35 +39,28 @@ ch9_ui <- lecture_chapter(
       fluidRow(column(12,
         fluidRow(
           column(3,
-            sliderInput("ch9_n", "n:",
-                        min = 20, max = 200, value = 50, step = 10)
+            lc_slider("ch9_n", "n", 20, 200, 50, 10)
           ),
           column(3,
-            sliderInput("ch9_slope", "Prawdziwy β₁ (nachylenie):",
-                        min = -3, max = 3, value = 1.2, step = 0.1)
+            lc_slider("ch9_slope", "Prawdziwy β₁ (nachylenie)", -3, 3, 1.2, 0.1)
           ),
           column(3,
-            sliderInput("ch9_sigma", "SD reszt:",
-                        min = 1, max = 15, value = 5, step = 0.5)
+            lc_slider("ch9_sigma", "SD reszt", 1, 15, 5, 0.5)
           ),
           column(3,
-            sliderInput("ch9_prior_scale",
-                        "Skala priora (Normal(0, s)):",
-                        min = 0.5, max = 10, value = 2.5, step = 0.5)
+            lc_slider("ch9_prior_scale", "Skala priora (Normal(0, s))", 0.5, 10, 2.5, 0.5)
           )
         ),
         fluidRow(
           column(12,
-            actionButton("ch9_draw", "↻ Nowa próba",
-                         class = "lc-btn-primary", width = "200px"),
-            actionButton("ch9_fit", "Dopasuj modele",
-                         class = "lc-btn-ok", width = "200px")
+            lc_action("ch9_draw", "↻ Nowa próba", variant = "solid"),
+            lc_action("ch9_fit", "Dopasuj modele", variant = "solid")
           )
         )
       )),
 
       br(),
-      zoom_plot_ui("ch9_scatter", height = "260px"),
+      lc_plot("ch9_scatter", ratio = "2.4/1", max_height = "260px"),
 
       fluidRow(
         column(6,

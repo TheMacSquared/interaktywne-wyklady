@@ -38,11 +38,9 @@ ch12_ui <- list(
                         "ARIMA (auto)"       = "arima"
                       ),
                       selected = "ets"),
-          sliderInput("ch12_horizon", "Horyzont (miesiące):", min = 1, max = 36, value = 12, step = 1),
-          radioButtons("ch12_ci", "Przedziały ufności:",
-                       choices = c("80% i 95%" = "both", "Tylko 95%" = "only95", "Brak" = "none"),
-                       selected = "both"),
-          actionButton("ch12_run", "Prognozuj", class = "lc-btn-primary", width = "100%")
+          lc_slider("ch12_horizon", "Horyzont (miesiące)", 1, 36, 12, 1),
+          lc_segmented("ch12_ci", "Przedziały ufności", choices = c("80% i 95%" = "both", "Tylko 95%" = "only95", "Brak" = "none"), selected = "both"),
+          lc_action("ch12_run", "Prognozuj", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch12_forecast_plot", height = "320px")
@@ -71,7 +69,7 @@ ch12_ui <- list(
           selectInput("ch12_fan_data", "Szereg:",
                       choices = .ts_choices_for("noclegi", "warszawa", "bezrobocie"),
                       selected = "warszawa"),
-          actionButton("ch12_fan_run", "Przelicz", class = "lc-btn-primary", width = "100%")
+          lc_action("ch12_fan_run", "Przelicz", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch12_fan_plot", height = "280px")
@@ -101,8 +99,8 @@ ch12_ui <- list(
                         "ARIMA (auto)"    = "arima"
                       ),
                       selected = "ets"),
-          sliderInput("ch12_test_pct", "Procent danych testowych:", min = 10, max = 30, value = 20, step = 5),
-          actionButton("ch12_reveal_run", "Odsłoń", class = "lc-btn-primary", width = "100%"),
+          lc_slider("ch12_test_pct", "Procent danych testowych", 10, 30, 20, 5),
+          lc_action("ch12_reveal_run", "Odsłoń", variant = "solid"),
           uiOutput("ch12_reveal_result")
         ),
         column(8,

@@ -54,17 +54,14 @@ ch2_ui <- lecture_chapter(
       fluidRow(column(12,
         fluidRow(
           column(4,
-            sliderInput("ch2_n", "Wielkość próby n:",
-                        min = 5, max = 200, value = 30, step = 5)
+            lc_slider("ch2_n", "Wielkość próby n", 5, 200, 30, 5)
           ),
           column(4,
-            sliderInput("ch2_true_mu", "Prawdziwe μ (ukryte):",
-                        min = -1.5, max = 1.5, value = 0.3, step = 0.05)
+            lc_slider("ch2_true_mu", "Prawdziwe μ (ukryte)", -1.5, 1.5, 0.3, 0.05)
           ),
           column(4,
             br(),
-            actionButton("ch2_draw", "↻ Nowa próba",
-                         class = "lc-btn-primary", width = "100%")
+            lc_action("ch2_draw", "↻ Nowa próba", variant = "solid")
           )
         )
       )),

@@ -46,10 +46,10 @@ ch7_ui <- list(
         column(4,
           div(
             style = "display: flex; flex-direction: column; gap: 6px;",
-            actionButton("ch7_vt_wig20",   "WIG20 (tygodniowy)",       class = "lc-btn-outline", width = "100%"),
-            actionButton("ch7_vt_returns", "WIG20 log-zwroty",         class = "lc-btn-outline", width = "100%"),
-            actionButton("ch7_vt_temp",    "Temperatura (po różnicow.)", class = "lc-btn-outline", width = "100%"),
-            actionButton("ch7_vt_wn",      "Biały szum (symulacja)",   class = "lc-btn-outline", width = "100%")
+            lc_action("ch7_vt_wig20", "WIG20 (tygodniowy)", variant = "outline"),
+            lc_action("ch7_vt_returns", "WIG20 log-zwroty", variant = "outline"),
+            lc_action("ch7_vt_temp", "Temperatura (po różnicow.)", variant = "outline"),
+            lc_action("ch7_vt_wn", "Biały szum (symulacja)", variant = "outline")
           ),
           uiOutput("ch7_vt_verdict")
         ),
@@ -83,10 +83,10 @@ ch7_ui <- list(
                       selected = "bezrobocie"),
           div(
             style = "display: flex; flex-direction: column; gap: 6px; margin: 12px 0;",
-            actionButton("ch7_diff_none", "Oryginał",            class = "lc-btn-outline", width = "100%"),
-            actionButton("ch7_diff_d1",   "∇¹ (pierwsza różnica)", class = "lc-btn-outline", width = "100%"),
-            actionButton("ch7_diff_d12",  "∇¹² (sezonowa ∆)",     class = "lc-btn-outline", width = "100%"),
-            actionButton("ch7_diff_d1d12","∇¹ + ∇¹²",             class = "lc-btn-outline", width = "100%")
+            lc_action("ch7_diff_none", "Oryginał", variant = "outline"),
+            lc_action("ch7_diff_d1", "∇¹ (pierwsza różnica)", variant = "outline"),
+            lc_action("ch7_diff_d12", "∇¹² (sezonowa ∆)", variant = "outline"),
+            lc_action("ch7_diff_d1d12", "∇¹ + ∇¹²", variant = "outline")
           ),
           uiOutput("ch7_adf_result")
         ),
@@ -118,8 +118,7 @@ ch7_ui <- list(
           selectInput("ch7_bc_data", "Szereg:",
                       choices = .ts_choices_for("noclegi", "sprzedaz", "pszenica"),
                       selected = "noclegi"),
-          sliderInput("ch7_bc_lambda", "λ:",
-                      min = -1, max = 1, value = 0, step = 0.1),
+          lc_slider("ch7_bc_lambda", "λ", -1, 1, 0, 0.1),
           uiOutput("ch7_bc_info")
         ),
         column(8,

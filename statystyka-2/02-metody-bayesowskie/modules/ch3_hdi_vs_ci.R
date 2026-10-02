@@ -44,16 +44,14 @@ ch3_ui <- lecture_chapter(
       fluidRow(column(12,
         fluidRow(
           column(4,
-            sliderInput("ch3_n", "n:", min = 5, max = 200, value = 30, step = 5)
+            lc_slider("ch3_n", "n", 5, 200, 30, 5)
           ),
           column(4,
-            sliderInput("ch3_true_mu", "Prawdziwe μ:",
-                        min = -1, max = 2, value = 0.5, step = 0.1)
+            lc_slider("ch3_true_mu", "Prawdziwe μ", -1, 2, 0.5, 0.1)
           ),
           column(4,
             br(),
-            actionButton("ch3_draw", "↻ Nowa próba",
-                         class = "lc-btn-primary", width = "100%")
+            lc_action("ch3_draw", "↻ Nowa próba", variant = "solid")
           )
         )
       )),

@@ -22,8 +22,8 @@ ch3_ui <- lecture_chapter(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch3_beta", "Parametr kształtu β:", min = 0.4, max = 3.5, value = 1.6, step = 0.1),
-          sliderInput("ch3_eta", "Parametr skali η:", min = 200, max = 2000, value = 900, step = 50),
+          lc_slider("ch3_beta", "Parametr kształtu β", 0.4, 3.5, 1.6, 0.1),
+          lc_slider("ch3_eta", "Parametr skali η", 200, 2000, 900, 50),
           uiOutput("ch3_weibull_info")
         ),
         column(8, zoom_plot_ui("ch3_weibull_plot", height = "350px"))
@@ -43,8 +43,8 @@ ch3_ui <- lecture_chapter(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch3_p_a", "P(A):", min = 0, max = 0.3, value = 0.08, step = 0.01),
-          sliderInput("ch3_p_b", "P(B):", min = 0, max = 0.3, value = 0.05, step = 0.01),
+          lc_slider("ch3_p_a", "P(A)", 0, 0.3, 0.08, 0.01),
+          lc_slider("ch3_p_b", "P(B)", 0, 0.3, 0.05, 0.01),
           radioButtons("ch3_gate", "Bramka:", choices = c("OR: wystarczy jedna awaria" = "or", "AND: muszą zajść obie" = "and"), selected = "or"),
           uiOutput("ch3_gate_info")
         ),

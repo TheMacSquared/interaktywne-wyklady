@@ -60,8 +60,7 @@ ch12_server <- function(input, output, session) {
              Plony w dt/ha dla 15 poletek każdy nawoz."),
           p(tags$b("Pytanie: "), "Czy nawóz B daje wyższe plony niż A?")
         ),
-        actionButton("ch12_rol_ans1", "Pokaż rozwiązanie",
-                      class = "lc-btn-ok-outline lc-btn-sm"),
+        lc_action("ch12_rol_ans1", "Pokaż rozwiązanie", variant = "solid"),
         uiOutput("ch12_rol_sol1")
       ),
 
@@ -72,8 +71,7 @@ ch12_server <- function(input, output, session) {
           p(tags$b("Pytanie: "), "Jak silny jest dowód na skuteczność oprysku?
              Jakie OR wynika z posteriora?")
         ),
-        actionButton("ch12_rol_ans2", "Pokaż rozwiązanie",
-                      class = "lc-btn-ok-outline lc-btn-sm"),
+        lc_action("ch12_rol_ans2", "Pokaż rozwiązanie", variant = "solid"),
         uiOutput("ch12_rol_sol2")
       ),
 
@@ -82,8 +80,7 @@ ch12_server <- function(input, output, session) {
           p("Eksperyment z 2 poletkami. p = 0.04 (istotne), BF₁₀ = 1.8 (anekdotyczne).
              Jak pogodzić te wyniki? Który paradygmat jest tu wiarygodniejszy i dlaczego?")
         ),
-        actionButton("ch12_rol_ans3", "Pokaż rozwiązanie",
-                      class = "lc-btn-ok-outline lc-btn-sm"),
+        lc_action("ch12_rol_ans3", "Pokaż rozwiązanie", variant = "solid"),
         uiOutput("ch12_rol_sol3")
       )
     )
@@ -152,8 +149,7 @@ ch12_server <- function(input, output, session) {
           p(tags$b("Pytanie: "), "Czy nowa receptura jest oceniana lepiej?
              Wykonaj test bayesowski i podaj P(nowa > stara | dane).")
         ),
-        actionButton("ch12_zyw_ans1", "Pokaż rozwiązanie",
-                      class = "lc-btn-ok-outline lc-btn-sm"),
+        lc_action("ch12_zyw_ans1", "Pokaż rozwiązanie", variant = "solid"),
         uiOutput("ch12_zyw_sol1")
       ),
 
@@ -164,8 +160,7 @@ ch12_server <- function(input, output, session) {
           p(tags$b("Pytanie: "), "O ile dni skraca się trwałość na każdy dodatkowy °C?
              (regresja bayesowska, 95% HDI dla slope)")
         ),
-        actionButton("ch12_zyw_ans2", "Pokaż rozwiązanie",
-                      class = "lc-btn-ok-outline lc-btn-sm"),
+        lc_action("ch12_zyw_ans2", "Pokaż rozwiązanie", variant = "solid"),
         uiOutput("ch12_zyw_sol2")
       ),
 
@@ -175,8 +170,7 @@ ch12_server <- function(input, output, session) {
              Jak przeformułować to stwierdzenie w języku bayesowskim,
              żeby lepiej odzwierciedliło stan wiedzy?")
         ),
-        actionButton("ch12_zyw_ans3", "Pokaż rozwiązanie",
-                      class = "lc-btn-ok-outline lc-btn-sm"),
+        lc_action("ch12_zyw_ans3", "Pokaż rozwiązanie", variant = "solid"),
         uiOutput("ch12_zyw_sol3")
       )
     )
@@ -241,8 +235,7 @@ ch12_server <- function(input, output, session) {
           p(tags$b("Pytanie: "), "Jak silny jest dowód na spadek liczby incydentów?
              Podaj OR i jego 95% HDI.")
         ),
-        actionButton("ch12_bhp_ans1", "Pokaż rozwiązanie",
-                      class = "lc-btn-ok-outline lc-btn-sm"),
+        lc_action("ch12_bhp_ans1", "Pokaż rozwiązanie", variant = "solid"),
         uiOutput("ch12_bhp_sol1")
       ),
 
@@ -253,8 +246,7 @@ ch12_server <- function(input, output, session) {
           p(tags$b("Pytanie: "), "Wykonaj ", tags$code("stan_glm(blad ~ czas, family=binomial)"),
              " — podaj OR na wzrost czasu o 100 ms.")
         ),
-        actionButton("ch12_bhp_ans2", "Pokaż rozwiązanie",
-                      class = "lc-btn-ok-outline lc-btn-sm"),
+        lc_action("ch12_bhp_ans2", "Pokaż rozwiązanie", variant = "solid"),
         uiOutput("ch12_bhp_sol2")
       ),
 
@@ -265,8 +257,7 @@ ch12_server <- function(input, output, session) {
              Koszt wdrożenia: 100k zł. Żadnych innych danych.
              Jak argumentować „wdrażamy‟ / „nie wdrażamy‟ na podstawie HDI?")
         ),
-        actionButton("ch12_bhp_ans3", "Pokaż rozwiązanie",
-                      class = "lc-btn-ok-outline lc-btn-sm"),
+        lc_action("ch12_bhp_ans3", "Pokaż rozwiązanie", variant = "solid"),
         uiOutput("ch12_bhp_sol3")
       )
     )
@@ -338,8 +329,7 @@ ch12_server <- function(input, output, session) {
           p(tags$b("Pytanie: "), "BF₁₀ dla modelu z różnicami —
              czy mamy przesłanki, że metoda ma znaczenie?")
         ),
-        actionButton("ch12_edu_ans1", "Pokaż rozwiązanie",
-                      class = "lc-btn-ok-outline lc-btn-sm"),
+        lc_action("ch12_edu_ans1", "Pokaż rozwiązanie", variant = "solid"),
         uiOutput("ch12_edu_sol1")
       ),
 
@@ -349,8 +339,7 @@ ch12_server <- function(input, output, session) {
           p(tags$b("Pytanie: "), "OR na dodatkową godzinę + P(OR > 1.5 | dane).
              Co to oznacza praktycznie?")
         ),
-        actionButton("ch12_edu_ans2", "Pokaż rozwiązanie",
-                      class = "lc-btn-ok-outline lc-btn-sm"),
+        lc_action("ch12_edu_ans2", "Pokaż rozwiązanie", variant = "solid"),
         uiOutput("ch12_edu_sol2")
       ),
 
@@ -360,8 +349,7 @@ ch12_server <- function(input, output, session) {
              Test t: p = 0.06. ttestBF: BF₁₀ = 2.1.
              Jak opisać wynik w sekcji „Wyniki‟ tak, żeby nie nadinterpretować?")
         ),
-        actionButton("ch12_edu_ans3", "Pokaż rozwiązanie",
-                      class = "lc-btn-ok-outline lc-btn-sm"),
+        lc_action("ch12_edu_ans3", "Pokaż rozwiązanie", variant = "solid"),
         uiOutput("ch12_edu_sol3")
       )
     )

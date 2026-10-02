@@ -33,11 +33,9 @@ ch15_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          radioButtons("ch15_covid_view", "Widok:",
-                       choices = c("Scenariusz syntetyczny" = "data",
+          lc_segmented("ch15_covid_view", "Widok", choices = c("Scenariusz syntetyczny" = "data",
                                    "Prognoza bez korekcji" = "forecast",
-                                   "Zaznacz anomalię" = "highlight"),
-                       selected = "data"),
+                                   "Zaznacz anomalię" = "highlight"), selected = "data"),
           uiOutput("ch15_covid_info")
         ),
         column(8,
@@ -57,8 +55,8 @@ ch15_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch15_break_year", "Rok przerwy:", min = 2019, max = 2023, value = 2022, step = 1),
-          actionButton("ch15_break_run", "Porównaj modele", class = "lc-btn-primary", width = "100%"),
+          lc_slider("ch15_break_year", "Rok przerwy", 2019, 2023, 2022, 1),
+          lc_action("ch15_break_run", "Porównaj modele", variant = "solid"),
           uiOutput("ch15_break_result")
         ),
         column(8,
@@ -88,7 +86,7 @@ ch15_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          actionButton("ch15_arimax_run", "Dopasuj oba modele", class = "lc-btn-primary", width = "100%"),
+          lc_action("ch15_arimax_run", "Dopasuj oba modele", variant = "solid"),
           uiOutput("ch15_arimax_table")
         ),
         column(8,

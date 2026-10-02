@@ -85,10 +85,10 @@ ch1_ui <- list(
         column(3,
           div(
             style = "display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;",
-            actionButton("ch1_ser_warszawa",   "Temperatura Warszawa",    class = "lc-btn-outline", width = "100%"),
-            actionButton("ch1_ser_bezrobocie", "Bezrobocie PL",           class = "lc-btn-outline", width = "100%"),
-            actionButton("ch1_ser_noclegi",    "Noclegi turystyczne",     class = "lc-btn-outline", width = "100%"),
-            actionButton("ch1_ser_pszenica",   "Ceny pszenicy",           class = "lc-btn-outline", width = "100%")
+            lc_action("ch1_ser_warszawa", "Temperatura Warszawa", variant = "outline"),
+            lc_action("ch1_ser_bezrobocie", "Bezrobocie PL", variant = "outline"),
+            lc_action("ch1_ser_noclegi", "Noclegi turystyczne", variant = "outline"),
+            lc_action("ch1_ser_pszenica", "Ceny pszenicy", variant = "outline")
           ),
           uiOutput("ch1_ser_desc")
         ),

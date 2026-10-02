@@ -35,12 +35,10 @@ ch5_ui <- lecture_chapter(
       fluidRow(column(12,
         fluidRow(
           column(3,
-            sliderInput("ch5_n", "n na grupę:",
-                        min = 10, max = 100, value = 25, step = 5)
+            lc_slider("ch5_n", "n na grupę", 10, 100, 25, 5)
           ),
           column(3,
-            sliderInput("ch5_effect", "Prawdziwa różnica (A → B):",
-                        min = -10, max = 10, value = 3, step = 0.5)
+            lc_slider("ch5_effect", "Prawdziwa różnica (A → B)", -10, 10, 3, 0.5)
           ),
           column(3,
             selectInput("ch5_dist", "Rozkład:",
@@ -51,14 +49,13 @@ ch5_ui <- lecture_chapter(
           ),
           column(3,
             br(),
-            actionButton("ch5_draw", "↻ Nowa próba",
-                         class = "lc-btn-primary", width = "100%")
+            lc_action("ch5_draw", "↻ Nowa próba", variant = "solid")
           )
         )
       )),
 
       br(),
-      zoom_plot_ui("ch5_data_plot", height = "220px"),
+      lc_plot("ch5_data_plot", ratio = "2.8/1", max_height = "220px"),
 
       fluidRow(
         column(6,

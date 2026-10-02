@@ -37,9 +37,9 @@ ch9_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch9_phi",   "AR: φ₁:",   min = -0.9, max = 0.9, value = 0.7, step = 0.05),
-          sliderInput("ch9_theta", "MA: θ₁:",   min = -0.9, max = 0.9, value = 0.7, step = 0.05),
-          actionButton("ch9_ar_ma_new", "Nowa realizacja", class = "lc-btn-primary", width = "100%"),
+          lc_slider("ch9_phi", "AR: φ₁", -0.9, 0.9, 0.7, 0.05),
+          lc_slider("ch9_theta", "MA: θ₁", -0.9, 0.9, 0.7, 0.05),
+          lc_action("ch9_ar_ma_new", "Nowa realizacja", variant = "solid"),
           uiOutput("ch9_ar_ma_info")
         ),
         column(8,
@@ -78,8 +78,8 @@ ch9_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch9_theta_suw", "θ₁:", min = -0.99, max = 0.99, value = 0.8, step = 0.05),
-          actionButton("ch9_theta_new", "Nowa realizacja", class = "lc-btn-primary", width = "100%")
+          lc_slider("ch9_theta_suw", "θ₁", -0.99, 0.99, 0.8, 0.05),
+          lc_action("ch9_theta_new", "Nowa realizacja", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch9_theta_plot", height = "280px")
@@ -110,9 +110,9 @@ ch9_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch9_arma_phi",   "φ₁ (AR):", min = -0.9, max = 0.9, value = 0.5, step = 0.05),
-          sliderInput("ch9_arma_theta", "θ₁ (MA):", min = -0.9, max = 0.9, value = 0.5, step = 0.05),
-          actionButton("ch9_arma_new", "Nowa realizacja", class = "lc-btn-primary", width = "100%")
+          lc_slider("ch9_arma_phi", "φ₁ (AR)", -0.9, 0.9, 0.5, 0.05),
+          lc_slider("ch9_arma_theta", "θ₁ (MA)", -0.9, 0.9, 0.5, 0.05),
+          lc_action("ch9_arma_new", "Nowa realizacja", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch9_arma_ts_plot",   height = "200px"),

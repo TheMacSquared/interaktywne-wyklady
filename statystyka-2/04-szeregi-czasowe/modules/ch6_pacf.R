@@ -89,7 +89,7 @@ ch6_ui <- list(
                       selected = "ar1"),
           uiOutput("ch6_sim_params"),
           numericInput("ch6_sim_n", "Liczba obserwacji n:", value = 300, min = 100, max = 1000, step = 50),
-          actionButton("ch6_sim_new", "Nowa realizacja", class = "lc-btn-primary", width = "100%"),
+          lc_action("ch6_sim_new", "Nowa realizacja", variant = "solid"),
           uiOutput("ch6_sim_rule")
         ),
         column(8,
@@ -145,19 +145,19 @@ ch6_server <- function(input, output, session) {
   output$ch6_sim_params <- renderUI({
     type <- input$ch6_sim_type
     switch(type,
-      ar1    = sliderInput("ch6_phi1", "φ₁ (AR lag 1):", min = -0.99, max = 0.99, value = 0.8, step = 0.05),
+      ar1    = lc_slider("ch6_phi1", "φ₁ (AR lag 1)", -0.99, 0.99, 0.8, 0.05),
       ar2    = tagList(
-        sliderInput("ch6_phi1", "φ₁ (AR lag 1):", min = -0.99, max = 0.99, value = 0.6, step = 0.05),
-        sliderInput("ch6_phi2", "φ₂ (AR lag 2):", min = -0.99, max = 0.99, value = 0.2, step = 0.05)
+        lc_slider("ch6_phi1", "φ₁ (AR lag 1)", -0.99, 0.99, 0.6, 0.05),
+        lc_slider("ch6_phi2", "φ₂ (AR lag 2)", -0.99, 0.99, 0.2, 0.05)
       ),
-      ma1    = sliderInput("ch6_theta1", "θ₁ (MA lag 1):", min = -0.99, max = 0.99, value = 0.7, step = 0.05),
+      ma1    = lc_slider("ch6_theta1", "θ₁ (MA lag 1)", -0.99, 0.99, 0.7, 0.05),
       ma2    = tagList(
-        sliderInput("ch6_theta1", "θ₁ (MA lag 1):", min = -0.99, max = 0.99, value = 0.6, step = 0.05),
-        sliderInput("ch6_theta2", "θ₂ (MA lag 2):", min = -0.99, max = 0.99, value = 0.3, step = 0.05)
+        lc_slider("ch6_theta1", "θ₁ (MA lag 1)", -0.99, 0.99, 0.6, 0.05),
+        lc_slider("ch6_theta2", "θ₂ (MA lag 2)", -0.99, 0.99, 0.3, 0.05)
       ),
       arma11 = tagList(
-        sliderInput("ch6_phi1",   "φ₁ (AR):", min = -0.99, max = 0.99, value = 0.5, step = 0.05),
-        sliderInput("ch6_theta1", "θ₁ (MA):", min = -0.99, max = 0.99, value = 0.5, step = 0.05)
+        lc_slider("ch6_phi1", "φ₁ (AR)", -0.99, 0.99, 0.5, 0.05),
+        lc_slider("ch6_theta1", "θ₁ (MA)", -0.99, 0.99, 0.5, 0.05)
       ),
       wn     = NULL
     )

@@ -22,8 +22,8 @@ ch4_ui <- lecture_chapter(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch4_lod", "Granica wykrywalności LOD:", min = 0.2, max = 2.0, value = 0.8, step = 0.1),
-          radioButtons("ch4_scale", "Widok modelu:", choices = c("skala oryginalna" = "raw", "log-log" = "log"), selected = "raw"),
+          lc_slider("ch4_lod", "Granica wykrywalności LOD", 0.2, 2.0, 0.8, 0.1),
+          lc_segmented("ch4_scale", "Widok modelu", choices = c("skala oryginalna" = "raw", "log-log" = "log"), selected = "raw"),
           uiOutput("ch4_lod_info")
         ),
         column(8, zoom_plot_ui("ch4_env_plot", height = "350px"))

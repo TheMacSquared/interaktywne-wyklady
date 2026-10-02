@@ -59,8 +59,8 @@ ch13_ui <- list(
           selectInput("ch13_data", "Szereg:",
                       choices = .ts_choices_for("noclegi", "bezrobocie", "sprzedaz", "warszawa"),
                       selected = "noclegi"),
-          sliderInput("ch13_test_pct", "Procent danych testowych:", min = 10, max = 30, value = 20, step = 5),
-          actionButton("ch13_run", "Oblicz metryki", class = "lc-btn-primary", width = "100%")
+          lc_slider("ch13_test_pct", "Procent danych testowych", 10, 30, 20, 5),
+          lc_action("ch13_run", "Oblicz metryki", variant = "solid")
         ),
         column(8,
           uiOutput("ch13_metrics_table")

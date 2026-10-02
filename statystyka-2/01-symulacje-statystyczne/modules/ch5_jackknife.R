@@ -75,10 +75,9 @@ ch5_ui <- lecture_chapter(
             ),
             selected = "skewed"
           ),
-          sliderInput("ch5_n", "n:", min = 10, max = 80, value = 25, step = 5),
+          lc_slider("ch5_n", "n", 10, 80, 25, 5),
           hr(),
-          actionButton("ch5_run", "Oblicz jackknife",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_action("ch5_run", "Oblicz jackknife", variant = "solid"),
           br(), br(),
           uiOutput("ch5_jack_stats")
         ),
@@ -124,9 +123,8 @@ ch5_ui <- lecture_chapter(
             ),
             selected = "normal"
           ),
-          sliderInput("ch5_cmp_n", "n:", min = 10, max = 100, value = 30, step = 5),
-          actionButton("ch5_cmp_run", "Porównaj",
-                       class = "lc-btn-warning", width = "100%"),
+          lc_slider("ch5_cmp_n", "n", 10, 100, 30, 5),
+          lc_action("ch5_cmp_run", "Porównaj", variant = "solid"),
           br(), br(),
           uiOutput("ch5_cmp_stats")
         ),

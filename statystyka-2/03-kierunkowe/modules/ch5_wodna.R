@@ -22,8 +22,8 @@ ch5_ui <- lecture_chapter(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch5_t", "Okres powrotu T:", min = 2, max = 500, value = 100, step = 1),
-          sliderInput("ch5_life", "Okres eksploatacji obiektu:", min = 1, max = 100, value = 50, step = 1),
+          lc_slider("ch5_t", "Okres powrotu T", 2, 500, 100, 1),
+          lc_slider("ch5_life", "Okres eksploatacji obiektu", 1, 100, 50, 1),
           uiOutput("ch5_risk_info")
         ),
         column(8, zoom_plot_ui("ch5_frequency_plot", height = "350px"))
@@ -38,8 +38,8 @@ ch5_ui <- lecture_chapter(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch5_record_len", "Długość serii:", min = 15, max = 80, value = 35, step = 5),
-          sliderInput("ch5_boot_n", "Liczba powtórzeń bootstrap:", min = 50, max = 400, value = 150, step = 50),
+          lc_slider("ch5_record_len", "Długość serii", 15, 80, 35, 5),
+          lc_slider("ch5_boot_n", "Liczba powtórzeń bootstrap", 50, 400, 150, 50),
           uiOutput("ch5_uncertainty_info")
         ),
         column(8, zoom_plot_ui("ch5_uncertainty_plot", height = "320px"))

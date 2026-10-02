@@ -34,24 +34,20 @@ ch4_ui <- lecture_chapter(
       fluidRow(column(12,
         fluidRow(
           column(3,
-            sliderInput("ch4_n", "n:", min = 5, max = 200, value = 30, step = 5)
+            lc_slider("ch4_n", "n", 5, 200, 30, 5)
           ),
           column(3,
-            sliderInput("ch4_true_mean", "Prawdziwa średnia:",
-                        min = 495, max = 510, value = 502, step = 0.5)
+            lc_slider("ch4_true_mean", "Prawdziwa średnia", 495, 510, 502, 0.5)
           ),
           column(3,
-            sliderInput("ch4_sd", "SD populacji:",
-                        min = 2, max = 20, value = 8, step = 1)
+            lc_slider("ch4_sd", "SD populacji", 2, 20, 8, 1)
           ),
           column(3,
-            sliderInput("ch4_mu0", "μ₀ (H₀):",
-                        min = 495, max = 510, value = 500, step = 0.5)
+            lc_slider("ch4_mu0", "μ₀ (H₀)", 495, 510, 500, 0.5)
           )
         ),
         fluidRow(column(12,
-          actionButton("ch4_draw", "↻ Nowa próba",
-                       class = "lc-btn-primary", width = "200px")
+          lc_action("ch4_draw", "↻ Nowa próba", variant = "solid")
         ))
       )),
 

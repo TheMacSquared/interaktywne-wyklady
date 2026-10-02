@@ -49,19 +49,15 @@ ch7_ui <- lecture_chapter(
     figure_panel(label = "Ryc. 7.1", title = "Moc testu t — symulacja MC",
       fluidRow(
         column(4,
-          sliderInput("ch7_delta", "Prawdziwa różnica δ:",
-                      min = 0, max = 30, value = 5, step = 1),
-          sliderInput("ch7_n",     "n (na grupę):",
-                      min = 5, max = 100, value = 20, step = 5),
+          lc_slider("ch7_delta", "Prawdziwa różnica δ", 0, 30, 5, 1),
+          lc_slider("ch7_n", "n (na grupę)", 5, 100, 20, 5),
           selectInput("ch7_alpha", "Poziom istotności α:",
             choices = c("0.01" = "0.01", "0.05" = "0.05", "0.10" = "0.10"),
             selected = "0.05"
           ),
-          sliderInput("ch7_B",     "B (liczba symulacji):",
-                      min = 500, max = 5000, value = 1000, step = 500),
+          lc_slider("ch7_B", "B (liczba symulacji)", 500, 5000, 1000, 500),
           hr(),
-          actionButton("ch7_run_power", "Symuluj moc",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_action("ch7_run_power", "Symuluj moc", variant = "solid"),
           br(), br(),
           uiOutput("ch7_power_stats")
         ),
@@ -91,16 +87,13 @@ ch7_ui <- lecture_chapter(
     figure_panel(label = "Ryc. 7.2", title = "Krzywa mocy testu t",
       fluidRow(
         column(4,
-          sliderInput("ch7_pc_n",    "n (na grupę):",
-                      min = 5, max = 100, value = 20, step = 5),
-          sliderInput("ch7_pc_d_max", "Maksymalne δ na wykresie:",
-                      min = 10, max = 50, value = 30, step = 5),
+          lc_slider("ch7_pc_n", "n (na grupę)", 5, 100, 20, 5),
+          lc_slider("ch7_pc_d_max", "Maksymalne δ na wykresie", 10, 50, 30, 5),
           selectInput("ch7_pc_alpha", "α:",
             choices = c("0.01" = "0.01", "0.05" = "0.05", "0.10" = "0.10"),
             selected = "0.05"
           ),
-          actionButton("ch7_pc_run", "Oblicz krzywą mocy",
-                       class = "lc-btn-warning", width = "100%"),
+          lc_action("ch7_pc_run", "Oblicz krzywą mocy", variant = "solid"),
           br(),
           p(class = "text-muted", style = "font-size:12px;",
             "Uwaga: obliczenie krzywej trwa kilka sekund (B=500 na punkt).")
@@ -134,11 +127,9 @@ ch7_ui <- lecture_chapter(
             ),
             selected = "ttest_one"
           ),
-          sliderInput("ch7_null_n", "n:", min = 10, max = 80, value = 25, step = 5),
-          sliderInput("ch7_null_B", "B (symulacje MC):",
-                      min = 1000, max = 10000, value = 3000, step = 1000),
-          actionButton("ch7_null_run", "Symuluj pod H₀",
-                       class = "lc-btn-primary", width = "100%"),
+          lc_slider("ch7_null_n", "n", 10, 80, 25, 5),
+          lc_slider("ch7_null_B", "B (symulacje MC)", 1000, 10000, 3000, 1000),
+          lc_action("ch7_null_run", "Symuluj pod H₀", variant = "solid"),
           br(), br(),
           uiOutput("ch7_null_stats")
         ),

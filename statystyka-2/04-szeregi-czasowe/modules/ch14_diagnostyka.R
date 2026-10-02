@@ -46,7 +46,7 @@ ch14_ui <- list(
           selectInput("ch14_method", "Model:",
                       choices = c("ETS (auto)" = "ets", "ARIMA (auto)" = "arima"),
                       selected = "arima"),
-          actionButton("ch14_run", "Dopasuj i diagnozuj", class = "lc-btn-primary", width = "100%"),
+          lc_action("ch14_run", "Dopasuj i diagnozuj", variant = "solid"),
           uiOutput("ch14_verdict")
         ),
         column(8,
@@ -79,7 +79,7 @@ ch14_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch14_lb_lag", "Maksymalna liczba lagów K:", min = 5, max = 30, value = 12, step = 1),
+          lc_slider("ch14_lb_lag", "Maksymalna liczba lagów K", 5, 30, 12, 1),
           uiOutput("ch14_lb_result")
         ),
         column(8,
@@ -107,7 +107,7 @@ ch14_ui <- list(
           selectInput("ch14_cmp_data", "Szereg:",
                       choices = .ts_choices_for("bezrobocie", "noclegi"),
                       selected = "bezrobocie"),
-          actionButton("ch14_cmp_run", "Porównaj", class = "lc-btn-primary", width = "100%")
+          lc_action("ch14_cmp_run", "Porównaj", variant = "solid")
         ),
         column(8,
           fluidRow(

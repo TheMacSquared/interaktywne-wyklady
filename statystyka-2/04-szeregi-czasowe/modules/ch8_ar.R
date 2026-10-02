@@ -49,10 +49,10 @@ ch8_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch8_phi", "φ₁:", min = -0.99, max = 0.99, value = 0.8, step = 0.05),
-          sliderInput("ch8_sigma", "Szum σ:", min = 0.2, max = 3, value = 1, step = 0.1),
+          lc_slider("ch8_phi", "φ₁", -0.99, 0.99, 0.8, 0.05),
+          lc_slider("ch8_sigma", "Szum σ", 0.2, 3, 1, 0.1),
           numericInput("ch8_n", "n:", value = 200, min = 50, max = 500, step = 50),
-          actionButton("ch8_new", "Nowa realizacja", class = "lc-btn-primary", width = "100%"),
+          lc_action("ch8_new", "Nowa realizacja", variant = "solid"),
           uiOutput("ch8_phi_info")
         ),
         column(8,
@@ -75,11 +75,11 @@ ch8_ui <- list(
       fluidRow(
         column(4,
           helpText("Klikaj kroki, żeby zobaczyć jak buduje się prognoza."),
-          sliderInput("ch8_fc_phi", "φ₁:", min = 0.5, max = 0.95, value = 0.8, step = 0.05),
-          actionButton("ch8_fc_step1", "1. Scenariusz syntetyczny",       class = "lc-btn-outline", width = "100%"),
-          actionButton("ch8_fc_step2", "2. Prognoza t+1",           class = "lc-btn-outline", width = "100%"),
-          actionButton("ch8_fc_step3", "3. Prognoza t+2, t+3, ...", class = "lc-btn-outline", width = "100%"),
-          actionButton("ch8_fc_step4", "4. Zanik pamięci",          class = "lc-btn-outline", width = "100%"),
+          lc_slider("ch8_fc_phi", "φ₁", 0.5, 0.95, 0.8, 0.05),
+          lc_action("ch8_fc_step1", "1. Scenariusz syntetyczny", variant = "outline"),
+          lc_action("ch8_fc_step2", "2. Prognoza t+1", variant = "outline"),
+          lc_action("ch8_fc_step3", "3. Prognoza t+2, t+3, ...", variant = "outline"),
+          lc_action("ch8_fc_step4", "4. Zanik pamięci", variant = "outline"),
           uiOutput("ch8_fc_info")
         ),
         column(8,
@@ -100,10 +100,10 @@ ch8_ui <- list(
       full_width = TRUE,
       fluidRow(
         column(4,
-          sliderInput("ch8_est_phi", "Prawdziwe φ₁:", min = 0.3, max = 0.95, value = 0.75, step = 0.05),
-          sliderInput("ch8_est_n",   "Rozmiar próby n:", min = 30, max = 500, value = 100, step = 10),
+          lc_slider("ch8_est_phi", "Prawdziwe φ₁", 0.3, 0.95, 0.75, 0.05),
+          lc_slider("ch8_est_n", "Rozmiar próby n", 30, 500, 100, 10),
           numericInput("ch8_est_reps", "Liczba symulacji:", value = 500, min = 100, max = 2000, step = 100),
-          actionButton("ch8_est_run", "Symuluj", class = "lc-btn-primary", width = "100%"),
+          lc_action("ch8_est_run", "Symuluj", variant = "solid"),
           uiOutput("ch8_est_stats")
         ),
         column(8,

@@ -33,34 +33,28 @@ ch10_ui <- lecture_chapter(
       fluidRow(column(12,
         fluidRow(
           column(3,
-            sliderInput("ch10_n", "n:",
-                        min = 30, max = 300, value = 100, step = 10)
+            lc_slider("ch10_n", "n", 30, 300, 100, 10)
           ),
           column(3,
-            sliderInput("ch10_beta1",
-                        "Prawdziwe β₁ (logit-skala):",
-                        min = -2, max = 2, value = 1, step = 0.1)
+            lc_slider("ch10_beta1", "Prawdziwe β₁ (logit-skala)", -2, 2, 1, 0.1)
           ),
           column(3,
-            sliderInput("ch10_beta0", "Prawdziwe β₀:",
-                        min = -2, max = 2, value = -0.5, step = 0.1)
+            lc_slider("ch10_beta0", "Prawdziwe β₀", -2, 2, -0.5, 0.1)
           ),
           column(3,
             br(),
-            actionButton("ch10_draw", "↻ Nowa próba",
-                         class = "lc-btn-primary", width = "100%")
+            lc_action("ch10_draw", "↻ Nowa próba", variant = "solid")
           )
         ),
         fluidRow(
           column(12,
-            actionButton("ch10_fit", "Dopasuj modele",
-                         class = "lc-btn-ok", width = "200px")
+            lc_action("ch10_fit", "Dopasuj modele", variant = "solid")
           )
         )
       )),
 
       br(),
-      zoom_plot_ui("ch10_scatter", height = "260px"),
+      lc_plot("ch10_scatter", ratio = "2.4/1", max_height = "260px"),
 
       fluidRow(
         column(6,

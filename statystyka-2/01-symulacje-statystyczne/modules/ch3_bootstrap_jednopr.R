@@ -55,26 +55,19 @@ ch3_ui <- lecture_chapter(
             ),
             selected = "reaction"
           ),
-          sliderInput("ch3_B", "B (próby bootstrapowe):",
-                      min = 100, max = 3000, value = 1000, step = 100),
-          sliderInput("ch3_conf", "Poziom ufności:",
-                      min = 0.80, max = 0.99, value = 0.95, step = 0.01),
+          lc_slider("ch3_B", "B (próby bootstrapowe)", 100, 3000, 1000, 100),
+          lc_slider("ch3_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01),
           hr(),
           div(class = "step-buttons",
-            actionButton("ch3_step1", "1. Dane",
-                         class = "lc-btn-outline"),
-            actionButton("ch3_step2", "2. Resample",
-                         class = "lc-btn-outline")
+            lc_action("ch3_step1", "1. Dane", variant = "outline"),
+            lc_action("ch3_step2", "2. Resample", variant = "outline")
           ),
           div(class = "step-buttons",
-            actionButton("ch3_step3", "3. Rozkład",
-                         class = "lc-btn-outline"),
-            actionButton("ch3_step4", "4. CI",
-                         class = "lc-btn-ok-outline")
+            lc_action("ch3_step3", "3. Rozkład", variant = "outline"),
+            lc_action("ch3_step4", "4. CI", variant = "solid")
           ),
           br(),
-          actionButton("ch3_new_data", "↺ Nowe dane",
-                       class = "lc-btn-secondary-outline lc-btn-sm", width = "100%"),
+          lc_action("ch3_new_data", "↺ Nowe dane", variant = "outline"),
           br(), br(),
           uiOutput("ch3_step_explanation")
         ),
@@ -98,14 +91,12 @@ ch3_ui <- lecture_chapter(
     figure_panel(label = "Ryc. 3.2", title = "Stabilność CI vs B",
       fluidRow(
         column(4,
-          sliderInput("ch3_B_max", "Maksymalne B:",
-                      min = 200, max = 5000, value = 2000, step = 200),
+          lc_slider("ch3_B_max", "Maksymalne B", 200, 5000, 2000, 200),
           selectInput("ch3_stab_stat", "Statystyka:",
             choices = c("Średniana" = "mean", "Mediana" = "median"),
             selected = "median"
           ),
-          actionButton("ch3_B_run", "Pokaż stabilność",
-                       class = "lc-btn-primary", width = "100%")
+          lc_action("ch3_B_run", "Pokaż stabilność", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch3_B_stability", height = "260px")
