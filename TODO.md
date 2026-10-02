@@ -133,6 +133,10 @@ Pozostałe:
 
 - [ ] Powtórzyć pełną kontrolę ładowania statystyki na stacjonarnym
   (wcześniej przerwana limitem czasu).
+- [ ] `lc_col(type = "num")`: dodać sufiks jednostki (np. `suffix = " cm"`,
+  `"%"`). Teraz kolumna z jednostkami musi być gotowym tekstem i traci
+  wyrównanie cyfr (statystyka 01, Ryc. 4.6, kolumna „Wartość”; cm i % oraz
+  1 lub 2 miejsca po kropce w jednej kolumnie).
 
 Zasady migracji:
 
@@ -189,6 +193,9 @@ to stosują.
   „X%” i „Y%”; rozważyć wstawienie wyliczonych wartości.
 - [ ] Dane: poziom „Mezczyzna” w `app.R` bez polskiego znaku — poprawić na
   „Mężczyzna” (widoczny w tabeli krzyżowej i na wykresach).
+- [ ] Brakujące polskie znaki w tekstach dla studentów, m.in. „Wlasnosci”
+  (nagłówek tabeli Ryc. 4.6), „Rozstep”, „outlierow”, „uwage”, „porownywac”
+  — w `modules/ch3_polozenie.R`, `ch4_rozrzut.R`, `ch5_ksztalt.R`.
 
 ### 04 — wnioskowanie statystyczne
 
@@ -242,12 +249,24 @@ Brak zadań.
   prototypów do wspólnych komponentów przed wyborem.
 - [ ] Ocenić interaktywny łańcuch pojęć jako treść tego wykładu (uogólnienie —
   patrz sekcja globalna).
+- [ ] Stara tabela `lc-table` w `modules/block.R` (ok. l. 1406) → `lc_table()`
+  (nie wylewała się w audycie; etap 3 migracji).
 - [ ] Intro quizu (`jezyk_quiz`, l. 4–7): „definicji klasycznej (1.2) oraz
   działań na zdarzeniach (1.5)” → „definicji klasycznej (wzór 1.2) oraz reguły
   sumy (wzór 1.5)”. Numer w nawiasie myli się z numerem definicji, a pytanie 4
   dotyczy reguły sumy.
 
+### 02 — warunki
+
+- [ ] Stara tabela „Wniosek / Czy wynika z danych? / Co dalej?” w owijce
+  `lc-table-wrap` (`modules/block.R`, ok. l. 312) → `lc_table()` (etap 3).
+
 ### 03 — alarm i prawda
+
+- [ ] Tablica 2×2 (`a3_table`) po migracji ma polskie nagłówki (Stan, Alarm,
+  Brak alarmu, Razem), nadgłówek „Odczyt detektora” i wiersz sum; wcześniej
+  surowe nazwy `state`, `alarm`, `no_alarm` i liczby typu 95.00. Obejrzeć
+  i zatwierdzić.
 
 Odsyłacze do rozdziałów opisem zamiast tytułem (tytuły są tagami pojęć, więc
 poprawiamy odsyłacze):
