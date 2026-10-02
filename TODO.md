@@ -158,15 +158,69 @@ Brak zadań.
   prototypów do wspólnych komponentów przed wyborem.
 - [ ] Ocenić interaktywny łańcuch pojęć jako treść tego wykładu (uogólnienie —
   patrz sekcja globalna).
+- [ ] Intro quizu (`jezyk_quiz`, l. 4–7): „definicji klasycznej (1.2) oraz
+  działań na zdarzeniach (1.5)” → „definicji klasycznej (wzór 1.2) oraz reguły
+  sumy (wzór 1.5)”. Numer w nawiasie myli się z numerem definicji, a pytanie 4
+  dotyczy reguły sumy.
+
+### 03 — alarm i prawda
+
+Odsyłacze do rozdziałów opisem zamiast tytułem (tytuły są tagami pojęć, więc
+poprawiamy odsyłacze):
+
+- [ ] l. 153: „w rozdziale o naturalnych częstościach” → „w rozdziale
+  „Wzór Bayesa””.
+- [ ] l. 487: „w rozdziale o języku detektora” → „w rozdziale „Czułość
+  i swoistość””.
 
 ### 04 — wiele prób
 
-- [ ] **Decyzja:** które założenie łamie reguła „po wykryciu sprawdzam
-  dokładniej” (`modules/block.R`, `p4_chk_zalozenia`, ok. l. 248)?
-  Obecnie poprawna odpowiedź to „stałość p”, wyjaśnienie wspomina zależność
-  od historii serii, a starszy tekst mówi o „zmianie definicji próby”.
-  Warianty: stałość p / niezależność / definicja próby (wtedy przeredagować
-  pytanie i wyjaśnienie).
+- [ ] `p4_chk_zalozenia` (ok. l. 248) — ustalono 2.10.2026: reguła
+  „po wykryciu sprawdzam dokładniej” łamie **niezależność** (zmianę wywołuje
+  wynik wcześniejszej próby; p przy okazji przestaje być stałe). Zmienić
+  poprawną odpowiedź i wyjaśnienie oraz l. 242 („zmienia samą definicję
+  próby”). Reguła do zachowania w całym kursie: zmiana wywołana historią
+  wyników łamie niezależność, zmiana z przyczyn zewnętrznych (dostawy, dryf)
+  łamie stałość p.
+- [ ] l. 537: „to wzór (4.6) z k = 0 zapisany od drugiej strony” → „to warunek
+  P(X ≥ 1) = 0,95 ze wzoru (4.6) zapisany od drugiej strony” (wzór 4.6 nie
+  ma k).
+- [ ] Model hipergeometryczny — ustalono 2.10.2026: jedno zdanie w sekcji
+  `bernoulli/zalozenia`: losowanie bez zwracania dużej części małej partii to
+  model hipergeometryczny, dwumianowy jest jego przybliżeniem, gdy próbka jest
+  mała względem partii. Przewodnik i lista ćwiczeń (4.a) już tego wymagają,
+  wykład dotąd o tym nie wspomina.
+- [ ] l. 397: liczby z symulacji (0–7, 156, 67, 2,03) dotyczą n = 100,
+  p = 0,02 i ziarna 2404, a histogram bierze n i p z suwaków poprzedniego
+  rozdziału — ustalono 2.10.2026: dopisać jawnie „przy n = 100, p = 0,02”
+  zamiast samego „przy domyślnych ustawieniach”.
+
+### 05 — ile prób do zdarzenia
+
+- [ ] l. 227: „w rozdziale o tym, kiedy model zawodzi” → „w rozdziale
+  „Założenia modelu””.
+- [ ] Sekcja `rte/parametryzacje`: dopisać zdanie o konwencji „+1” dla
+  rozkładu geometrycznego — `dgeom`/`pgeom`/`qgeom` liczą porażki przed
+  pierwszym sukcesem, dlatego w kodzie kursu dodaje się 1 (serwer już robi
+  `rgeom() + 1`, `qgeom() + 1`, l. 449, 457; wykład nazywa tylko „+r”).
+- [ ] l. 388: etykieta suwaka „Odchylenie p przed ograniczeniem do
+  [0,005; 0,95]” → „Zmienność jakości partii (odchylenie p)”; informację
+  o obcięciu p przenieść do notki pod widgetem.
+
+### 06 — zmienność i próg
+
+- [ ] l. 184: Φ pojawia się przed definicją (l. 268–270) → „dokładnie
+  P(79 < T ≤ 85) ≈ 0,683”, bez Φ.
+- [ ] l. 473: „rachunki z rozdziałów 3–5 korzystały z funkcji Φ” → „z
+  rozdziałów 2–5” (przykład 6.3 w rozdziale 2 też używa Φ).
+- [ ] Rozdział `nienormalny` (Q–Q) — ustalono 2.10.2026: zostaje
+  rozszerzeniem (`extension = TRUE`); ćwiczenie 2 i pytanie `z6_chk_qq`
+  oznaczyć etykietą „rozszerzenie”. Tak samo zadania z Q–Q w
+  `~/praca/dydaktyka/materialy/analiza-ryzyka/cwiczenia-listy-zadan.md`
+  (7.2 część Q–Q, 7.d).
+
+Uwaga: powtórzone `id = "most"` w różnych rozdziałach nie jest błędem —
+kotwice sekcji to `blok-rozdział-sekcja` (`R/risk_block.R`, l. 420).
 
 ### 07 — czas życia
 
