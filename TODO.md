@@ -226,10 +226,10 @@ to stosują.
 - [ ] Przejrzeć teksty wykładów we wszystkich kursach i zamienić przecinek
   dziesiętny na kropkę (np. „p = 0,10” w analizie ryzyka 05 obok widgetu
   pokazującego 0.1). Zmieniać osobnymi commitami per wykład. Zrobione:
-  statystyka 01–06 i słownik statystyki (także minus przed liczbą).
+  statystyka 01–09 i słownik statystyki (także minus przed liczbą).
   Analiza ryzyka 01–10 zrobiona (z odczytami, 3 października 2026; zbiory
   {1,2} zostają z przecinkiem, N(82, 3) ze spacją).
-  Zostało: statystyka 07–09, statystyka 2.
+  Zostało: statystyka 2.
 - [ ] Zamienić typograficzny minus `−` w liczbach na zwykły `-` (teksty,
   formatery, etykiety wykresów).
 - [ ] Sprawdzić etykiety osi i liczby w ggplot (np. `scales::label_number`
