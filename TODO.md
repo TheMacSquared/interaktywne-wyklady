@@ -130,20 +130,10 @@ Etap 3 — przegląd widgetów wykład po wykładzie (commit per widget):
 Etap 3, widgety krokowe: przeniesione 3 października 2026 (ok. 30 widgetów
 w statystyce 01–04 i 06, statystyce 2 i analizie ryzyka 01 i 08). Zostało:
 
-- [ ] **Decyzja:** konstruktory case studies w statystyce 03 (`ch3_srednia.R`,
-  8 przykładów, i `ch4_proporcja.R`): przyciski kroków generowane
-  dynamicznie, potem faza hipotez i „Pokaż werdykt”. Warianty: hipotezy jako
-  dodatkowe kroki paska / pasek tylko dla budowy przedziału, hipotezy jako
-  `lc_chips()` obok / bez zmian.
-- [ ] **Decyzja:** statystyka 06 Ryc. 1.1 (regresja z korelacji): usunięty krok 0
-  pokazywał samą chmurę punktów z podpowiedzią. Przywrócić go jako krok
-  „Dane” (6 kroków) czy zostaje 5?
-- [ ] **Decyzja:** analiza ryzyka 08 „Krok po kroku” (redukcja układu): zostają
-  kropki (widget bez wykresu) czy pasek kroków ze schematem redukcji
-  (C + A‖B → C + blok AB → jeden blok; nowa treść) albo wariant paska bez
-  wykresu we wspólnych komponentach?
-- [ ] **Decyzja:** statystyka 01 Ryc. 2.1 (tabela częstości): zostaje na kropkach
-  czy pasek kroków?
+- [ ] Analiza ryzyka 08 „Krok po kroku” (redukcja układu C + A/B): do pełnej
+  przebudowy — widget prawdopodobnie nie działa poprawnie. Na razie zostaje
+  na kropkach (`lc_step_nav()`); przy przebudowie rozważyć
+  `lc_step_widget(body = …)` albo schemat redukcji jako wykres.
 - [ ] Do potwierdzenia: statystyka 04 Ryc. 4.1 krok 2 i Ryc. 6.4 krok 3 — dawne
   pudełko podpisane „p” pokazywało SE albo statystykę t; opis kroku podaje
   teraz SE i t.
