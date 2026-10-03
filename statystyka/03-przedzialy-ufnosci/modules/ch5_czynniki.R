@@ -685,8 +685,8 @@ ch5_server <- function(input, output, session) {
       geom_point(aes(x = center, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
       annotate("text", x = center, y = -0.22,
-               label = pm_eq(if (cfg$kind == "mean") "bar(x)" else "hat(p)",
-                             round(center, 3)), parse = TRUE,
+               label = paste0(if (cfg$kind == "mean") "x̄ = " else "p̂ = ",
+                              round(center, 3)),
                color = col_estimate, fontface = "bold", size = 4.5)
 
     # Pasek CI - tylko jezeli wybrany conf

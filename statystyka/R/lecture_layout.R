@@ -294,7 +294,7 @@ lecture_page <- function(lecture_id      = NULL,
           "https://fonts.googleapis.com/css2?",
           "family=Source+Serif+4:ital,opsz,wght@",
           "0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&",
-          "family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&",
+          "family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&",
           "family=JetBrains+Mono:wght@400;500;600&",
           "display=swap&subset=latin-ext"
         )

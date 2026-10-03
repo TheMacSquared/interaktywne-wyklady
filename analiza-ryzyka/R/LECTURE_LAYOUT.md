@@ -23,7 +23,7 @@ source(file.path(project_root, "R", "theme_upwr.R"),     local = TRUE)
 source(file.path(project_root, "R", "shared.R"),         local = TRUE)
 source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 
-lc_apply_ggplot_defaults()   # motyw upwr + Atkinson dla wszystkich geom-ów
+lc_apply_ggplot_defaults()   # motyw upwr + IBM Plex Sans dla wszystkich geom-ów
 ```
 
 ### c) Zdefiniuj listę rozdziałów i użyj `lecture_page`

@@ -339,9 +339,9 @@ ch4_server <- function(input, output, session) {
   # Grubość paska przedziału: element wprowadzany w kroku grubszy niż znany.
   ch4_bar_lw <- function(role) if (role == "new") 1.8 else 1.1
 
-  # Etykieta w kolorze roli; x̄ i p̂ jako plotmath (pm_eq()) z parse = TRUE.
-  ch4_role_text <- function(x, y, label, role, size, hjust = 0.5, parse = FALSE) {
-    annotate("text", x = x, y = y, label = label, hjust = hjust, parse = parse,
+  # Etykieta w kolorze roli, krojem wykresu.
+  ch4_role_text <- function(x, y, label, role, size, hjust = 0.5) {
+    annotate("text", x = x, y = y, label = label, hjust = hjust,
              colour = STEP_ROLES[[role]]$colour, fontface = "bold", size = size)
   }
 
@@ -387,7 +387,7 @@ ch4_server <- function(input, output, session) {
         step_line("known", xintercept = phat) +
         step_layer(geom_point, role, data = data.frame(x = phat, y = Y_EST),
                    mapping = aes(x = x, y = y), size = 7, shape = 18) +
-        ch4_role_text(phat, Y_EST - 0.13, "bold(hat(p))", role = role, parse = TRUE,
+        ch4_role_text(phat, Y_EST - 0.13, "p̂", role = role,
                    size = 5)
     }
 
@@ -520,9 +520,9 @@ ch4_server <- function(input, output, session) {
       p_top <- p_top +
         step_layer(geom_point, role, data = data.frame(x = c(p1, p2), y = c(1, 2)),
                    mapping = aes(x = x, y = y), size = 7, shape = 18) +
-        ch4_role_text(p1, 1.45, pm_eq("hat(p)[1]", round(p1, 3)), role = role, parse = TRUE,
+        ch4_role_text(p1, 1.45, paste0("p̂₁ = ", round(p1, 3)), role = role,
                    size = 4.5) +
-        ch4_role_text(p2, 2.45, pm_eq("hat(p)[2]", round(p2, 3)), role = role, parse = TRUE,
+        ch4_role_text(p2, 2.45, paste0("p̂₂ = ", round(p2, 3)), role = role,
                    size = 4.5)
     }
 
@@ -544,8 +544,8 @@ ch4_server <- function(input, output, session) {
       p_bot <- p_bot +
         step_layer(geom_point, role, data = data.frame(x = diff_val, y = 0),
                    mapping = aes(x = x, y = y), size = 7, shape = 18) +
-        ch4_role_text(diff_val, -0.22, pm_eq("hat(p)[1] - hat(p)[2]", round(diff_val, 3)),
-                   role = role, size = 4.5, parse = TRUE)
+        ch4_role_text(diff_val, -0.22, paste0("p̂₁ − p̂₂ = ", round(diff_val, 3)),
+                   role = role, size = 4.5)
     }
 
     if (step >= 4) {
@@ -841,7 +841,7 @@ ch4_server <- function(input, output, session) {
       p_right <- p_right +
         geom_point(aes(x = phat, y = 0), color = col_estimate, size = 7, shape = 18) +
         annotate("text", x = phat, y = -0.22,
-                 label = pm_eq("hat(p)", round(phat, 3)), parse = TRUE,
+                 label = paste0("p̂ = ", round(phat, 3)),
                  color = col_estimate, fontface = "bold", size = 4.8)
     }
 
@@ -1005,10 +1005,10 @@ ch4_server <- function(input, output, session) {
     if (step >= 2) {
       p_top <- p_top +
         geom_point(aes(x = p1, y = 1), color = col_estimate, size = 7, shape = 18) +
-        annotate("text", x = p1, y = 1.45, label = pm_eq("hat(p)[1]", round(p1, 3)), parse = TRUE,
+        annotate("text", x = p1, y = 1.45, label = paste0("p̂₁ = ", round(p1, 3)),
                  color = col_estimate, fontface = "bold", size = 4.2) +
         geom_point(aes(x = p2, y = 2), color = col_estimate, size = 7, shape = 18) +
-        annotate("text", x = p2, y = 2.45, label = pm_eq("hat(p)[2]", round(p2, 3)), parse = TRUE,
+        annotate("text", x = p2, y = 2.45, label = paste0("p̂₂ = ", round(p2, 3)),
                  color = col_estimate, fontface = "bold", size = 4.2)
     }
 
@@ -1064,7 +1064,7 @@ ch4_server <- function(input, output, session) {
         geom_point(aes(x = diff_val, y = 0), color = col_estimate,
                    size = 7, shape = 18) +
         annotate("text", x = diff_val, y = -0.22,
-                 label = pm_eq("hat(p)[1] - hat(p)[2]", round(diff_val, 3)), parse = TRUE,
+                 label = paste0("p̂₁ − p̂₂ = ", round(diff_val, 3)),
                  color = col_estimate, fontface = "bold", size = 4.5)
     }
 

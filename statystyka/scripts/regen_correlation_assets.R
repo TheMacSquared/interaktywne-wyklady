@@ -10,7 +10,7 @@
 #   correlation-scatter.png   — Ryc. 6.3: ten sam trend, rozny rozrzut -> rozne r
 #
 # Render przez ragg::agg_png — daje czyste znaki cyfr i polskie znaki bez
-# konfliktu z showtext (ktore w shared.R rejestruje Atkinson Hyperlegible
+# konfliktu z showtext (ktore dawniej w shared.R rejestrowalo krój webowy
 # z dpi=96 i przy ggsave(dpi=100) zniekształca cyfry).
 
 suppressPackageStartupMessages({

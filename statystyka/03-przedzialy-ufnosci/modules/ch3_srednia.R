@@ -456,9 +456,9 @@ ch3_server <- function(input, output, session) {
   # Grubość paska przedziału: element wprowadzany w kroku grubszy niż znany.
   ch3_bar_lw <- function(role) if (role == "new") 1.8 else 1.1
 
-  # Etykieta w kolorze roli; x̄ i p̂ jako plotmath (pm_eq()) z parse = TRUE.
-  ch3_role_text <- function(x, y, label, role, size, hjust = 0.5, parse = FALSE) {
-    annotate("text", x = x, y = y, label = label, hjust = hjust, parse = parse,
+  # Etykieta w kolorze roli, krojem wykresu.
+  ch3_role_text <- function(x, y, label, role, size, hjust = 0.5) {
+    annotate("text", x = x, y = y, label = label, hjust = hjust,
              colour = STEP_ROLES[[role]]$colour, fontface = "bold", size = size)
   }
 
@@ -502,7 +502,7 @@ ch3_server <- function(input, output, session) {
         step_line("known", xintercept = xbar) +
         step_layer(geom_point, role, data = data.frame(x = xbar, y = Y_MEAN),
                    mapping = aes(x = x, y = y), size = 7, shape = 18) +
-        ch3_role_text(xbar, Y_MEAN - 0.13, "bold(bar(x))", role = role, parse = TRUE,
+        ch3_role_text(xbar, Y_MEAN - 0.13, "x̄", role = role,
                    size = 5)
     }
 
@@ -637,9 +637,9 @@ ch3_server <- function(input, output, session) {
                    linetype = "22") +
         step_layer(geom_point, role, data = means_df,
                    mapping = aes(x = x, y = y), size = 7, shape = 18) +
-        ch3_role_text(x1, 2.15, pm_eq("bar(x)[1]", round(x1, 2)), role = role, parse = TRUE,
+        ch3_role_text(x1, 2.15, paste0("x̄₁ = ", round(x1, 2)), role = role,
                    size = 4.5) +
-        ch3_role_text(x2, 0.55, pm_eq("bar(x)[2]", round(x2, 2)), role = role, parse = TRUE,
+        ch3_role_text(x2, 0.55, paste0("x̄₂ = ", round(x2, 2)), role = role,
                    size = 4.5)
     }
 
@@ -664,8 +664,8 @@ ch3_server <- function(input, output, session) {
                  hjust = -0.1, size = 4) +
       step_layer(geom_point, role_diff, data = data.frame(x = diff_val, y = 0),
                  mapping = aes(x = x, y = y), size = 7, shape = 18) +
-      ch3_role_text(diff_val, -0.22, pm_eq("bar(x)[1] - bar(x)[2]", round(diff_val, 2)),
-                 role = role_diff, size = 4.5, parse = TRUE) +
+      ch3_role_text(diff_val, -0.22, paste0("x̄₁ − x̄₂ = ", round(diff_val, 2)),
+                 role = role_diff, size = 4.5) +
       labs(x = "Różnica średnich (cm)  —  Mężczyźni − Kobiety",
            y = NULL) +
       step_frame(xlim = xlims_bot, ylim = c(-0.55, 0.55), y_axis = FALSE)
@@ -994,7 +994,7 @@ ch3_server <- function(input, output, session) {
         geom_point(aes(x = xbar, y = 0), color = col_estimate,
                    size = 7, shape = 18) +
         annotate("text", x = xbar, y = -0.18,
-                 label = pm_eq("bar(x)", round(xbar, 2)), parse = TRUE,
+                 label = paste0("x̄ = ", round(xbar, 2)),
                  color = col_estimate, fontface = "bold", size = 5)
     }
     if (step >= 3) {
@@ -1178,10 +1178,10 @@ ch3_server <- function(input, output, session) {
         geom_point(aes(x = x2, y = 1.0), color = col_g2,
                    size = 7, shape = 18) +
         annotate("text", x = x1, y = 2.15,
-                 label = pm_eq("bar(x)[1]", round(x1, 2)), parse = TRUE,
+                 label = paste0("x̄₁ = ", round(x1, 2)),
                  color = col_g1, fontface = "bold", size = 4.5) +
         annotate("text", x = x2, y = 0.55,
-                 label = pm_eq("bar(x)[2]", round(x2, 2)), parse = TRUE,
+                 label = paste0("x̄₂ = ", round(x2, 2)),
                  color = col_g2, fontface = "bold", size = 4.5)
     }
 
@@ -1241,7 +1241,7 @@ ch3_server <- function(input, output, session) {
       geom_point(aes(x = diff_val, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
       annotate("text", x = diff_val, y = -0.22,
-               label = pm_eq("bar(x)[1] - bar(x)[2]", round(diff_val, 2)), parse = TRUE,
+               label = paste0("x̄₁ − x̄₂ = ", round(diff_val, 2)),
                color = col_estimate, fontface = "bold", size = 4.5)
 
     if (step >= 4) {

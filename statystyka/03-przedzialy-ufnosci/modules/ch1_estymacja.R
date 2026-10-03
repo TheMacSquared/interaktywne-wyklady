@@ -295,7 +295,7 @@ ch1_server <- function(input, output, session) {
         geom_vline(xintercept = mean(est$xbar), color = col_estimate,
                    linewidth = 1.5, linetype = "solid") +
         annotate("text", x = mean(est$xbar), y = Inf, vjust = 4,
-                 label = 'bold("średnia"~bar(x))', parse = TRUE,
+                 label = "średnia x̄",
                  color = col_estimate, fontface = "bold", size = 5) +
         labs(
              x = expression(bar(x)), y = "Gęstość") +

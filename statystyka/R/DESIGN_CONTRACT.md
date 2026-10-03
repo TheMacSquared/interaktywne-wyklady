@@ -210,9 +210,8 @@ Zasady:
 5. Żaden wykres nie ma tytułu ani podtytułu (`labs(title / subtitle)`,
    `ggtitle()`, tytuły `plot_annotation()`). Opis idzie do tytułu panelu,
    a wyniki liczbowe do `lc_readout()` albo `lc_caption()`.
-   Wykresy rysuje ragg krojem Atkinson Hyperlegible z `R/fonts/`; grekę
-   i indeksy dolne (μ₁, σ, β₀) można pisać wprost, ale x̄ i p̂ tylko jako
-   plotmath: `pm_eq("bar(x)[1]", lc_fmt(x1, 2))` z `parse = TRUE`.
+   Wykresy rysuje ragg krojem IBM Plex Sans z `R/fonts/` (ten sam co strona);
+   x̄, p̂, grekę i indeksy dolne (μ₁, σ, β₀) piszemy wprost w Unicode.
 6. Suwak bez podziałki i dymka; wartość w etykiecie, min i max pod torem.
 7. Feedback pod wykresem to jedno zdanie `lc_caption()`. `lc_feedback()`
    zostaje dla treści w toku tekstu.

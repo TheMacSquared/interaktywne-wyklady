@@ -46,7 +46,7 @@ source(file.path(project_root, "R", "theme_upwr.R"),       local = TRUE)
 source(file.path(project_root, "R", "shared.R"),           local = TRUE)
 source(file.path(project_root, "R", "lecture_layout.R"),   local = TRUE)
 
-# Globalne defaulty ggplot2 — motyw upwr + Atkinson + kolory geom-ów
+# Globalne defaulty ggplot2 — motyw upwr + IBM Plex Sans + kolory geom-ów
 lc_apply_ggplot_defaults()
 
 addResourcePath("assets", file.path(app_dir, "assets"))

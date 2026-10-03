@@ -12,24 +12,22 @@
 #' Ustaw globalny motyw i defaulty geom-ów dla całej apki.
 #' Wywołać raz w app.R po sourcowaniu palette.R + theme_upwr.R.
 lc_apply_ggplot_defaults <- function() {
-  # Atkinson Hyperlegible z R/fonts/ (OFL) rejestrowany w systemfonts i
-  # rysowany przez ragg. Krój nie ma greki, indeksów dolnych ani znaków
-  # łączących; ragg bierze brakujące glify z kroju systemowego (showtext tego
-  # nie potrafi i rysował puste kwadraty). x̄ i p̂ na wykresach pisz w plotmath:
-  # bar(x), hat(p) — znak łączący ląduje obok litery w każdym kroju.
+  # IBM Plex Sans z R/fonts/ (OFL) rejestrowany w systemfonts i rysowany przez
+  # ragg. Krój ma grekę, indeksy dolne i znaki łączące; glify spoza niego ragg
+  # bierze z kroju systemowego (showtext tego nie potrafi).
   base_family <- ""
   font_dir <- file.path(project_root, "R", "fonts")
   if (requireNamespace("ragg", quietly = TRUE) &&
       requireNamespace("systemfonts", quietly = TRUE) &&
-      file.exists(file.path(font_dir, "AtkinsonHyperlegible-Regular.ttf"))) {
-    if (!"Atkinson Hyperlegible" %in% systemfonts::registry_fonts()$family) {
-      ttf <- function(style) file.path(font_dir, paste0("AtkinsonHyperlegible-", style, ".ttf"))
-      systemfonts::register_font("Atkinson Hyperlegible",
+      file.exists(file.path(font_dir, "IBMPlexSans-Regular.ttf"))) {
+    if (!"IBM Plex Sans" %in% systemfonts::registry_fonts()$family) {
+      ttf <- function(style) file.path(font_dir, paste0("IBMPlexSans-", style, ".ttf"))
+      systemfonts::register_font("IBM Plex Sans",
         plain = ttf("Regular"), bold = ttf("Bold"),
         italic = ttf("Italic"), bolditalic = ttf("BoldItalic"))
     }
     options(shiny.useragg = TRUE)
-    base_family <- "Atkinson Hyperlegible"
+    base_family <- "IBM Plex Sans"
   }
   ggplot2::theme_set(theme_upwr(base_family = base_family))
   ggplot2::update_geom_defaults("point",   list(colour = upwr_single))
