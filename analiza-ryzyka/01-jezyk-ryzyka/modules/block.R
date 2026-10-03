@@ -1068,20 +1068,17 @@ jezyk_block <- list(
                 "A\\cap B" = "zaszły jednocześnie A i B"
               )),
             "Część wspólną odejmujemy, ponieważ przy dodawaniu została policzona dwa razy.",
-            risk_try("klikaj przycisk pod opisem i obserwuj diagram krok po kroku. Na
+            risk_try("klikaj „Dalej” i obserwuj diagram krok po kroku. Na
               kroku 2 zwróć uwagę, który obszar dostał dwa kolory; na kroku 4 sprawdź,
               dlaczego samo dodawanie przestaje być błędem."),
             figure_panel(
               label = "Demonstracja 1.1",
-              title = "Dlaczego nie wystarczy dodać P(A) i P(B)?",
               full_width = TRUE,
-              fluidRow(
-                column(
-                  4,
-                  uiOutput("ch4_venn_explanation"),
-                  lc_action("ch4_venn_next", "Dodaj P(A) i P(B)", variant = "solid")
-                ),
-                column(8, zoom_plot_ui("ch4_venn", height = "430px"))
+              lc_step_widget("ch4_venn",
+                title = "Dlaczego nie wystarczy dodać P(A) i P(B)?",
+                steps = c("Dane", "Naiwna suma", "Korekta", "Zdarzenia rozłączne"),
+                plot_id = "ch4_venn_plot",
+                ratio = "1.8/1"
               )
             ),
             "Naiwna suma 0,70 + 0,60 = 1,30 łamie własność 0 ≤ P ≤ 1 ze wzoru (1.3) —
@@ -1796,52 +1793,30 @@ jezyk_przestrzen_server <- function(input, output, session) {
 }
 
 jezyk_zbiory_server <- function(input, output, session) {
-  venn_step <- reactiveVal(1L)
+  # Krok widgetu (1..4) żyje w przeglądarce; opis kroku jako tekst inline.
+  venn_step <- lc_step_server("ch4_venn", input)$step
 
-  observeEvent(input$ch4_venn_next, {
-    next_step <- if (venn_step() >= 4L) 1L else venn_step() + 1L
-    venn_step(next_step)
-    updateActionButton(
-      session,
-      "ch4_venn_next",
-      label = switch(
-        as.character(next_step),
-        "1" = "Dodaj P(A) i P(B)",
-        "2" = "Odejmij podwójne naliczenie",
-        "3" = "Pokaż zdarzenia rozłączne",
-        "4" = "Od początku"
-      )
-    )
-  })
-
-  output$ch4_venn_explanation <- renderUI({
-    switch(
+  output$ch4_venn_text <- renderUI({
+    txt <- switch(
       as.character(venn_step()),
-      "1" = tagList(
-        tags$div(class = "lc-eyebrow", "Krok 1 · Dane"),
-        tags$h4("Dwa zachodzące na siebie zdarzenia"),
-        tags$p("P(A) = 0,70, P(B) = 0,60, a P(A ∩ B) = 0,40."),
-        tags$p("Najpierw zaznaczamy oba zbiory bez wykonywania działania.")
+      "1" = paste(
+        "Dwa zachodzące na siebie zdarzenia. P(A) = 0,70, P(B) = 0,60, a P(A ∩ B) = 0,40.",
+        "Najpierw zaznaczamy oba zbiory bez wykonywania działania."
       ),
-      "2" = tagList(
-        tags$div(class = "lc-eyebrow", "Krok 2 · Naiwna suma"),
-        tags$h4("Dodajemy całe A i całe B"),
-        lc_formula_box(withMathJax("$$0{,}70+0{,}60=1{,}30$$")),
-        tags$p("Wynik 1,30 nie może być prawdopodobieństwem. Ciemna część wspólna dostała dwa kolory — została policzona dwa razy.")
+      "2" = paste(
+        "Dodajemy całe A i całe B: \\(0{,}70+0{,}60=1{,}30\\).",
+        "Wynik 1,30 nie może być prawdopodobieństwem. Ciemna część wspólna dostała dwa kolory — została policzona dwa razy."
       ),
-      "3" = tagList(
-        tags$div(class = "lc-eyebrow", "Krok 3 · Korekta"),
-        tags$h4("Usuwamy jedną kopię części wspólnej"),
-        lc_formula_box(withMathJax("$$0{,}70+0{,}60-0{,}40=0{,}90$$")),
-        tags$p("Obszar A ∩ B nadal należy do sumy, ale jest w niej liczony tylko raz.")
+      "3" = paste(
+        "Usuwamy jedną kopię części wspólnej: \\(0{,}70+0{,}60-0{,}40=0{,}90\\).",
+        "Obszar A ∩ B nadal należy do sumy, ale jest w niej liczony tylko raz."
       ),
-      "4" = tagList(
-        tags$div(class = "lc-eyebrow", "Wyjątek · Zdarzenia rozłączne"),
-        tags$h4("Kiedy samo dodawanie działa?"),
-        lc_formula_box(withMathJax("$$0{,}40+0{,}35=0{,}75$$")),
-        tags$p("Koła nie zachodzą na siebie, więc P(A ∩ B) = 0. Niczego nie policzyliśmy dwa razy.")
+      "4" = paste(
+        "Kiedy samo dodawanie działa? \\(0{,}40+0{,}35=0{,}75\\).",
+        "Koła nie zachodzą na siebie, więc P(A ∩ B) = 0. Niczego nie policzyliśmy dwa razy."
       )
     )
+    withMathJax(txt)
   })
 
   venn_plot <- reactive({
@@ -1883,34 +1858,35 @@ jezyk_zbiory_server <- function(input, output, session) {
         fill = upwr_panel, colour = upwr_rule, linewidth = 0.7
       )
 
-    blend_with_panel <- function(colour, fraction = 0.52) {
+    blend_with_panel <- function(colour, fraction = STEP_ROLES$data$alpha) {
       grDevices::colorRampPalette(c(upwr_panel, colour))(101L)[round(fraction * 100) + 1L]
     }
+    # Role: A = dane (niebo), B = druga grupa (bursztyn); kontury wypełnionych kół czarne.
+    a_colour <- STEP_ROLES$data$colour
+    b_colour <- STEP_ROLES$group$colour
 
     if (step == 1L) {
       plot <- plot +
-        geom_polygon(data = circle_a, aes(x = x, y = y), fill = NA,
-                     colour = upwr_cat[["terakota"]], linewidth = 1.3) +
-        geom_polygon(data = circle_b, aes(x = x, y = y), fill = NA,
-                     colour = upwr_cat[["niebo"]], linewidth = 1.3)
+        step_layer(geom_polygon, "data", data = circle_a, mapping = aes(x = x, y = y),
+                   fill = NA, linewidth = 1.3) +
+        step_layer(geom_polygon, "group", data = circle_b, mapping = aes(x = x, y = y),
+                   fill = NA, linewidth = 1.3)
     } else if (step == 3L) {
-      a_fill <- blend_with_panel(upwr_cat[["terakota"]])
-      b_fill <- blend_with_panel(upwr_cat[["niebo"]])
+      a_fill <- blend_with_panel(a_colour)
+      b_fill <- blend_with_panel(b_colour)
       plot <- plot +
-        geom_polygon(data = circle_a, aes(x = x, y = y),
-                     fill = a_fill, colour = upwr_cat[["terakota"]], linewidth = 1.1) +
-        geom_polygon(data = circle_b, aes(x = x, y = y),
-                     fill = b_fill, colour = upwr_cat[["niebo"]], linewidth = 1.1) +
-        geom_polygon(data = overlap, aes(x = x, y = y),
-                     fill = a_fill, colour = upwr_accent, linewidth = 1)
+        step_result(geom_polygon, data = circle_a, mapping = aes(x = x, y = y),
+                    fill = a_fill, alpha = 1) +
+        step_result(geom_polygon, data = circle_b, mapping = aes(x = x, y = y),
+                    fill = b_fill, alpha = 1) +
+        step_layer(geom_polygon, "new", data = overlap, mapping = aes(x = x, y = y),
+                   fill = a_fill)
     } else {
       plot <- plot +
-        geom_polygon(data = circle_a, aes(x = x, y = y),
-                     fill = upwr_cat[["terakota"]], colour = upwr_cat[["terakota"]],
-                     alpha = 0.52, linewidth = 1.1) +
-        geom_polygon(data = circle_b, aes(x = x, y = y),
-                     fill = upwr_cat[["niebo"]], colour = upwr_cat[["niebo"]],
-                     alpha = 0.52, linewidth = 1.1)
+        step_result(geom_polygon, data = circle_a, mapping = aes(x = x, y = y),
+                    fill = a_colour) +
+        step_result(geom_polygon, data = circle_b, mapping = aes(x = x, y = y),
+                    fill = b_colour)
     }
 
     label_x <- if (step == 4L) c(3.15, 6.85) else c(2.7, 7.3)
@@ -1925,38 +1901,29 @@ jezyk_zbiory_server <- function(input, output, session) {
       plot <- plot + annotate(
         "label", x = 5, y = 3.25,
         label = "A ∩ B = 0,40\nPOLICZONE 2 RAZY",
-        fill = "#ffffff", colour = upwr_accent,
+        fill = "#ffffff", colour = STEP_ROLES$new$colour,
         linewidth = 0.4, fontface = "bold", size = 4.3
       )
     } else if (step == 3L) {
       plot <- plot + annotate(
         "label", x = 5, y = 3.25,
         label = "A ∩ B = 0,40\nJEDNO NALICZENIE",
-        fill = "#ffffff", colour = upwr_accent,
+        fill = "#ffffff", colour = STEP_ROLES$new$colour,
         linewidth = 0.4, fontface = "bold", size = 4,
         lineheight = 0.9
       )
     }
 
     plot +
+      # Stała rama we wszystkich krokach.
       coord_equal(xlim = c(0.5, 9.5), ylim = c(0.6, 6.25), expand = FALSE) +
-      labs(
-        subtitle = paste("Krok", step, "z 4"),
-        x = NULL,
-        y = NULL
-      ) +
+      labs(x = NULL, y = NULL) +
       theme_void() +
-      theme(
-        plot.subtitle = element_text(
-          family = "Atkinson Hyperlegible", size = 12,
-          colour = upwr_ink_soft, lineheight = 1.25,
-          margin = margin(b = 10)
-        )
-      )
+      theme(legend.position = "none")
   })
 
   zoom_plot_server(
-    "ch4_venn",
+    "ch4_venn_plot",
     venn_plot,
     alt = paste(
       "Czterostopniowy diagram Venna pokazujący podwójne policzenie części",
