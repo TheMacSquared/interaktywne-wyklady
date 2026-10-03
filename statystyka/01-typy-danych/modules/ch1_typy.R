@@ -102,8 +102,7 @@ ch1_ui <- list(
           )
         )
       ),
-      p(style = "text-align: center; font-size: 13px; color: var(--upwr-reference); margin: 8px 0 0;",
-        "Kliknij na kolorowy liść drzewa, aby zobaczyć przykłady"),
+      lc_caption("Kliknij kolorowy liść drzewa, aby zobaczyć przykłady."),
       uiOutput("ch1_leaf_detail")
     ),
 
@@ -137,68 +136,46 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.2",
       title = "Cztery typy zmiennych — jeden wykres na typ",
-      checkboxInput("ch1_show_bad",
-                    "Pokaż nieodpowiednie wykresy (przykład czego NIE robić)",
-                    value = FALSE),
-      fluidRow(
-        column(6,
-          div(class = "example-card",
-              style = paste0("border-color: ", type_colors["nominalna"], ";"),
-            span(class = "type-badge",
-                 style = paste0("background:", type_colors["nominalna"], ";"),
-                 "Jakościowa nominalna"),
-            tags$h4("Płeć"),
-            tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
-              "Kategorie bez naturalnego porządku. Możemy liczyć, ile jest
-               obserwacji w każdej kategorii, ale nie możemy ich uporządkować
-               ani uśredniać."),
-            zoom_plot_ui("ch1_ex1_plot", height = "280px")
-          )
-        ),
-        column(6,
-          div(class = "example-card",
-              style = paste0("border-color: ", type_colors["porzadkowa"], ";"),
-            span(class = "type-badge",
-                 style = paste0("background:", type_colors["porzadkowa"], ";"),
-                 "Jakościowa porządkowa"),
-            tags$h4("Zadowolenie ze studiów"),
-            tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
-              "Kategorie z naturalnym porządkiem. Wiemy, że „Bardzo zadowolony”
-               jest wyżej niż „Zadowolony”, ale nie znamy dokładnych odległości
-               między kategoriami."),
-            zoom_plot_ui("ch1_ex2_plot", height = "280px")
-          )
-        )
+      lc_toolbar(
+        checkboxInput("ch1_show_bad", "Pokaż źle dobrane wykresy", value = FALSE),
+        lc_step_nav("ch1_ex", c("Płeć", "Zadowolenie", "Liczba kursów", "Wzrost"), start = 1L)
       ),
-      fluidRow(
-        column(6,
-          div(class = "example-card",
-              style = paste0("border-color: ", type_colors["ilosciowa_dyskretna"], ";"),
-            span(class = "type-badge",
-                 style = paste0("background:", type_colors["ilosciowa_dyskretna"], ";"),
-                 "Ilościowa dyskretna"),
-            tags$h4("Liczba kursów"),
-            tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
-              "Wartości liczbowe, ale tylko całkowite. Możemy obliczać średnią
-               i ", gloss("odchylenie standardowe"), ". ", gloss("wykres słupkowy", "Wykres słupkowy"), " jest tu odpowiedni,
-               bo mamy skończoną liczbę wartości."),
-            zoom_plot_ui("ch1_ex3_plot", height = "280px")
-          )
+      # Jeden typ zmiennej na slajd; kropki przełączają slajdy.
+      conditionalPanel("input.ch1_ex == 1",
+        tags$h4("Płeć · jakościowa nominalna"),
+        tags$p(
+          "Kategorie bez naturalnego porządku. Możemy liczyć, ile jest
+          obserwacji w każdej kategorii, ale nie możemy ich uporządkować
+          ani uśredniać."
         ),
-        column(6,
-          div(class = "example-card",
-              style = paste0("border-color: ", type_colors["ilosciowa_ciagla"], ";"),
-            span(class = "type-badge",
-                 style = paste0("background:", type_colors["ilosciowa_ciagla"], ";"),
-                 "Ilościowa ciągła"),
-            tags$h4("Wzrost (cm)"),
-            tags$p(style = "color: var(--upwr-ink-soft); font-size: 13px;",
-              "Wartości liczbowe, które mogą przyjmować dowolne wartości
-               z pewnego przedziału (także ułamkowe). ", gloss("histogram", "Histogram"), " grupuje
-               wartości w przedziały, gęstość wygładza rozkład."),
-            zoom_plot_ui("ch1_ex4_plot", height = "280px")
-          )
-        )
+        lc_plot("ch1_ex1_plot", ratio = "2/1", max_height = "340px")
+      ),
+      conditionalPanel("input.ch1_ex == 2",
+        tags$h4("Zadowolenie ze studiów · jakościowa porządkowa"),
+        tags$p(
+          "Kategorie z naturalnym porządkiem. Wiemy, że „Bardzo zadowolony”
+          jest wyżej niż „Zadowolony”, ale nie znamy dokładnych odległości
+          między kategoriami."
+        ),
+        lc_plot("ch1_ex2_plot", ratio = "2/1", max_height = "340px")
+      ),
+      conditionalPanel("input.ch1_ex == 3",
+        tags$h4("Liczba kursów · ilościowa dyskretna"),
+        tags$p(
+          "Wartości liczbowe, ale tylko całkowite. Możemy obliczać średnią
+          i ", gloss("odchylenie standardowe"), ". ", gloss("wykres słupkowy", "Wykres słupkowy"), " jest tu odpowiedni,
+          bo mamy skończoną liczbę wartości."
+        ),
+        lc_plot("ch1_ex3_plot", ratio = "2/1", max_height = "340px")
+      ),
+      conditionalPanel("input.ch1_ex == 4",
+        tags$h4("Wzrost (cm) · ilościowa ciągła"),
+        tags$p(
+          "Wartości liczbowe, które mogą przyjmować dowolne wartości
+          z pewnego przedziału (także ułamkowe). ", gloss("histogram", "Histogram"), " grupuje
+          wartości w przedziały, gęstość wygładza rozkład."
+        ),
+        lc_plot("ch1_ex4_plot", ratio = "2/1", max_height = "340px")
       )
     ),
 
@@ -233,9 +210,7 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.3",
       title = "Pierwsze 10 obserwacji — nasz zbiór danych",
-      div(style = "overflow-x: auto; font-size: 12px;",
-        tableOutput("ch1_data_preview")
-      )
+      uiOutput("ch1_data_preview")
     ),
 
     lc_p("W tabeli są zmienne wszystkich czterech typów. Płeć, kierunek i grupa
@@ -253,19 +228,19 @@ ch1_ui <- list(
     # --- Variable tracker selector ---
     figure_panel(
       label = "Narzędzie",
-      title = "🔍 Śledź zmienną przez cały kurs",
+      title = "Śledź zmienną przez cały kurs",
       color = upwr_single_alt,
-      p(style = "font-family: var(--upwr-serif); font-size: 15px; color: var(--upwr-ink-soft); margin-bottom: 14px;",
+      p(
         "Wybierz jedną zmienną ilościową. W każdym kolejnym rozdziale zobaczysz,
          jakie nowe informacje dają Ci kolejne narzędzia statystyczne zastosowane
          do tej samej zmiennej."),
-      selectInput("tracked_var", "Wybierz zmienną do śledzenia:",
+      lc_toolbar(selectInput("tracked_var", "Zmienna do śledzenia",
         choices = c("Wzrost (cm)" = "wzrost",
                     "Waga (kg)" = "waga",
                     "Czas dojazdu (min)" = "czas_dojazdu",
                     "Średnia ocen" = "srednia_ocen"),
-        selected = "wzrost", width = "300px"
-      )
+        selected = "wzrost"
+          ))
     ),
 
     lc_chapter_next(
@@ -327,13 +302,11 @@ ch1_server <- function(input, output, session) {
     sel <- ch1_selected_leaf()
     if (is.null(sel)) return(NULL)
     info <- .leaf_info[[sel]]
-    div(class = "tax-detail",
-      style = paste0("border-left: 4px solid ", info$color, ";"),
-      tags$strong(style = paste0("color: ", info$color, "; font-size: 16px;"),
-        info$label),
-      p(style = "margin: 6px 0 4px; font-size: 14px;", info$desc),
-      p(style = "margin: 0; font-size: 13px; color: var(--upwr-ink-soft);",
-        tags$em("W naszych danych: "), info$examples)
+    # Znacznik w kolorze typu, jak liść drzewa.
+    lc_status(
+      p(tags$i(class = "lc-th-swatch", style = paste0("--lc-sw:", info$color)),
+        b_(info$label), " ", info$desc),
+      lc_caption(tagList(tags$em("W naszych danych: "), info$examples))
     )
   })
 
@@ -373,8 +346,9 @@ ch1_server <- function(input, output, session) {
 
   # --- Widget 4: Dataset preview ---
 
-  output$ch1_data_preview <- renderTable({
-    head(student_data, 10)
-  }, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
+  output$ch1_data_preview <- renderUI({
+    lc_table(head(student_data, 10), scroll = TRUE, sticky_first = TRUE,
+             label = "Pierwsze 10 obserwacji ankiety")
+  })
 
 }

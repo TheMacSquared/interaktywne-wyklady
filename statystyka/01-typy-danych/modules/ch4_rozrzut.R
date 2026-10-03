@@ -223,28 +223,19 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.5",
       title = "Wykresy pudełkowe w grupach",
-      fluidRow(
-        column(4,
-          selectInput("ch4_grp_var", "Zmienna ilościowa:",
+      lc_toolbar(
+        selectInput("ch4_grp_var", "Zmienna ilościowa",
             choices = c("Wzrost (cm)" = "wzrost",
                         "Waga (kg)" = "waga",
                         "Czas dojazdu (min)" = "czas_dojazdu",
                         "Średnia ocen" = "srednia_ocen"),
             selected = "wzrost"
-          )
-        ),
-        column(4,
-          selectInput("ch4_grp_by", "Grupuj wg:",
-            choices = c("Płeć" = "plec",
-                        "Kierunek" = "kierunek"),
-            selected = "plec"
-          )
-        ),
-        column(4,
-          checkboxInput("ch4_grp_violin", "Pokaż wykres skrzypcowy", value = FALSE),
-          checkboxInput("ch4_grp_points", "Pokaż punkty", value = TRUE)
-        )
-      ),
+            ),
+            lc_segmented("ch4_grp_by", "Grupuj wg",
+              choices = c("Płeć" = "plec", "Kierunek" = "kierunek")),
+            checkboxInput("ch4_grp_violin", "Pokaż wykres skrzypcowy", value = FALSE),
+            checkboxInput("ch4_grp_points", "Pokaż punkty", value = TRUE)
+            ),
       lc_plot("ch4_grp_plot", ratio = "1.6/1", max_height = "400px"),
       uiOutput("ch4_grp_table")
     ),
@@ -278,11 +269,9 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.6",
       title = "Porównanie miar rozrzutu i ich odporności",
-      div(style = "margin-bottom: 10px;",
-        actionButton("ch4_comp_add1", "Dodaj wartość odstającą (+30 cm)",
-                     class = "lc-btn-warning", style = "margin-right: 6px;"),
-        actionButton("ch4_comp_add5", "Dodaj 5 wartości odstających",
-                     class = "lc-btn-danger", style = "margin-right: 6px;"),
+      lc_toolbar(
+        lc_action("ch4_comp_add1", "Dodaj wartość odstającą (+30 cm)", variant = "solid"),
+        lc_action("ch4_comp_add5", "Dodaj 5 wartości odstających", variant = "solid"),
         lc_action("ch4_comp_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
       ),
       lc_plot("ch4_comp_plot", ratio = "1.8/1", max_height = "350px"),
@@ -332,17 +321,17 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.7",
       title = "Porównanie zmienności między zmiennymi",
-      fluidRow(
-        column(6,
-          h5(style = "text-align: center; color: var(--upwr-reference);", "SD — nieporównywalne"),
-          zoom_plot_ui("ch4_sd_compare_plot", height = "350px")
+      lc_plots(
+        tags$div(
+          tags$h4("SD: wartości nieporównywalne"),
+          lc_plot("ch4_sd_compare_plot", max_height = "350px")
         ),
-        column(6,
-          h5(style = "text-align: center; color: var(--upwr-reference);", "CV — porównywalne"),
-          zoom_plot_ui("ch4_cv_plot", height = "350px")
+        tags$div(
+          tags$h4("CV: wartości porównywalne"),
+          lc_plot("ch4_cv_plot", max_height = "350px")
         )
       ),
-      tableOutput("ch4_cv_table")
+      uiOutput("ch4_cv_table")
     ),
 
     lc_p("Według samego odchylenia standardowego kolejność to: czas dojazdu
@@ -1064,17 +1053,25 @@ ch4_server <- function(input, output, session) {
       theme()
   }))
 
-  output$ch4_cv_table <- renderTable({
+  output$ch4_cv_table <- renderUI({
     vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")
     labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "Średnia ocen")
 
-    data.frame(
-      Zmienna = labels,
-      Średnia = sapply(vars, function(v) round(mean(student_data[[v]]), 2)),
-      SD = sapply(vars, function(v) round(sd(student_data[[v]]), 2)),
-      `CV (%)` = sapply(vars, function(v) round(sd(student_data[[v]]) / mean(student_data[[v]]) * 100, 1)),
-      check.names = FALSE
+    lc_table(
+      data.frame(
+        var = labels,
+        mean = sapply(vars, function(v) mean(student_data[[v]])),
+        sd = sapply(vars, function(v) sd(student_data[[v]])),
+        cv = sapply(vars, function(v) sd(student_data[[v]]) / mean(student_data[[v]]) * 100)
+      ),
+      cols = list(
+        lc_col("var", "Zmienna", "row"),
+        lc_col("mean", "Średnia", digits = 2),
+        lc_col("sd", "SD", digits = 2),
+        lc_col("cv", "CV (%)", digits = 1)
+      ),
+      label = "Współczynnik zmienności czterech zmiennych"
     )
-  }, striped = TRUE, hover = TRUE, width = "100%", align = "c")
+    })
 
 }

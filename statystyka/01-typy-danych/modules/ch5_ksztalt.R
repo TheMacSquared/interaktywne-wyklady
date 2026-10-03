@@ -126,21 +126,14 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.3",
       title = "Porównaj rozkłady o różnej kurtozie",
-      fluidRow(
-        column(8,
-          lc_slider("ch5_kurt_val", "Nadwyżkowa kurtoza", -1.2, 6, 0, 0.2)
-        ),
-        column(4,
-          div(style = "margin-top: 25px; display: flex; gap: 4px; flex-wrap: wrap;",
-            lc_action("ch5_kurt_platy", "Platykurtyczny", variant = "outline"),
-            lc_action("ch5_kurt_mezo", "Mezokurtyczny", variant = "outline"),
-            lc_action("ch5_kurt_lepto", "Leptokurtyczny", variant = "outline")
-          )
-        )
+      lc_toolbar(
+        lc_slider("ch5_kurt_val", "Nadwyżkowa kurtoza", -1.2, 6, 0, 0.2),
+        lc_action("ch5_kurt_platy", "Platykurtyczny", variant = "outline"),
+        lc_action("ch5_kurt_mezo", "Mezokurtyczny", variant = "outline"),
+        lc_action("ch5_kurt_lepto", "Leptokurtyczny", variant = "outline")
       ),
       lc_plot("ch5_kurt_plot", ratio = "1.8/1", max_height = "350px"),
-      h5(style = "text-align: center; color: var(--upwr-reference); margin-top: 12px;",
-         "Powiększenie prawego ogona (x > 2.5)"),
+      tags$h4("Powiększenie prawego ogona (x > 2.5)"),
       lc_plot("ch5_kurt_tails", ratio = "2.8/1", max_height = "220px"),
       uiOutput("ch5_kurt_text")
     ),
@@ -173,18 +166,14 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.4",
       title = "Pełna charakterystyka rozkładu",
-      selectInput("ch5_full_var", "Wybierz zmienną:",
-        choices = c(
-          "Wzrost" = "wzrost",
-          "Średnia ocen" = "srednia_ocen",
-          "Czas dojazdu" = "czas_dojazdu",
-          "Waga" = "waga"
-        ),
-        selected = "wzrost"
+      lc_toolbar(
+        lc_segmented("ch5_full_var", "Zmienna",
+          choices = c("Wzrost" = "wzrost", "Średnia ocen" = "srednia_ocen",
+                      "Czas dojazdu" = "czas_dojazdu", "Waga" = "waga"))
       ),
       lc_plot("ch5_full_hist", ratio = "1.8/1", max_height = "350px"),
       lc_plot("ch5_full_box", ratio = "5.2/1", max_height = "120px"),
-      tableOutput("ch5_full_table"),
+      uiOutput("ch5_full_table"),
       uiOutput("ch5_full_interpretation")
     ),
 
@@ -468,7 +457,7 @@ ch5_server <- function(input, output, session) {
       )
   }))
 
-  output$ch5_full_table <- renderTable({
+  output$ch5_full_table <- renderUI({
     d <- ch5_full_data()
     vals <- d$values
 
@@ -518,9 +507,11 @@ ch5_server <- function(input, output, session) {
         formatC(ku, format = "f", digits = 3)
       ),
       stringsAsFactors = FALSE
-    )
-    stats_df
-  }, striped = TRUE, hover = TRUE, width = "100%", align = "lr")
+        )
+        lc_table(stats_df,
+          cols = list(lc_col("Statystyka", "Statystyka", "row"), lc_col("Wartość", "Wartość")),
+          label = "Pełna charakterystyka rozkładu")
+      })
 
   output$ch5_full_interpretation <- renderUI({
     d <- ch5_full_data()

@@ -156,29 +156,16 @@ ch3_ui <- list(
       label = "Ryc. 3.4",
       title = "Zarobki w firmie: średnia vs mediana",
 
-      fluidRow(
-        column(5,
-          sliderInput("ch3_svm_new_value", "Nowa wartość:",
-                      min = 2000, max = 25000, value = 5000, step = 500,
-                      pre = "", post = " zł", width = "100%")
-        ),
-        column(7,
-          div(style = "display: flex; gap: 8px; margin-top: 25px;",
-            lc_action("ch3_svm_add", "Dodaj wartość", variant = "solid"),
-            lc_action("ch3_svm_outlier", "Dodaj pensję prezesa", variant = "solid"),
-            lc_action("ch3_svm_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
-          )
-        )
+      lc_toolbar(
+        lc_slider("ch3_svm_new_value", "Nowa wartość", 2000, 25000, 5000, 500, suffix = " zł"),
+        lc_action("ch3_svm_add", "Dodaj wartość", variant = "solid"),
+        lc_action("ch3_svm_outlier", "Dodaj pensję prezesa", variant = "solid"),
+        lc_action("ch3_svm_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+        lc_readouts(uiOutput("ch3_svm_stats"))
       ),
 
-      hr(),
-
       lc_plot("ch3_svm_hist", max_height = "280px"),
-      lc_plot("ch3_svm_strip", ratio = "5.2/1", max_height = "120px"),
-
-      lc_center(
-        uiOutput("ch3_svm_stats")
-      )
+      lc_plot("ch3_svm_strip", ratio = "5.2/1", max_height = "120px")
     ),
 
     lc_p("Gdy dopisujesz pensje podobne do pozostałych, średnia i mediana
@@ -211,18 +198,16 @@ ch3_ui <- list(
       label = "Ryc. 3.5",
       title = "Odporność: średnia vs mediana vs średnia ucinana",
 
-      div(style = "display: flex; gap: 8px; margin-bottom: 8px;",
+      lc_toolbar(
         lc_action("ch3_rob_add1", "Dodaj wartość odstającą (ok. 50 000 zł)", variant = "solid"),
         lc_action("ch3_rob_add5", "Dodaj 5 wartości odstających", variant = "solid"),
-        lc_action("ch3_rob_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
+        lc_action("ch3_rob_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+        lc_readouts(uiOutput("ch3_rob_outliers_count"))
       ),
-      uiOutput("ch3_rob_outliers_count"),
 
       lc_plot("ch3_rob_plot", ratio = "1.9/1", max_height = "320px"),
 
-      div(style = "margin-top: 15px;",
-        tableOutput("ch3_rob_table")
-      )
+      uiOutput("ch3_rob_table")
     ),
 
     lc_p("Pierwsza wartość odstająca wyraźnie podnosi średnią, a średnia ucinana
@@ -252,22 +237,22 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.6",
       title = "Dyskretna vs ciągła — porównanie wizualizacji",
-      selectInput("ch3_disc_var", "Zmienna dyskretna:",
-        choices = c("Liczba nieobecności" = "liczba_nieobecnosci",
-                    "Liczba kursów" = "liczba_kursow"),
-        selected = "liczba_nieobecnosci"
+      lc_toolbar(
+        lc_segmented("ch3_disc_var", "Zmienna dyskretna",
+          choices = c("Liczba nieobecności" = "liczba_nieobecnosci",
+                      "Liczba kursów" = "liczba_kursow")),
+        lc_readouts(uiOutput("ch3_disc_stats"))
       ),
-      fluidRow(
-        column(6,
-          h5(style = "text-align: center; color: var(--upwr-cat-szalwia);", "Wykres słupkowy (poprawny)"),
-          zoom_plot_ui("ch3_disc_bar", height = "300px")
+      lc_plots(
+        tags$div(
+          tags$h4("Wykres słupkowy (poprawny)"),
+          lc_plot("ch3_disc_bar", max_height = "300px")
         ),
-        column(6,
-          h5(style = "text-align: center; color: var(--upwr-accent);", "Histogram (problematyczny)"),
-          zoom_plot_ui("ch3_disc_hist", height = "300px")
+        tags$div(
+          tags$h4("Histogram (problematyczny)"),
+          lc_plot("ch3_disc_hist", max_height = "300px")
         )
-      ),
-      tableOutput("ch3_disc_stats")
+      )
     ),
 
     lc_p("Wykres słupkowy rysuje osobny słupek dla każdej wartości: zero, jednej,
@@ -299,13 +284,10 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.7",
       title = "Unimodalny vs bimodalny vs wielomodalny",
-      radioButtons("ch3_modal_scenario", "Scenariusz:",
-        choices = c(
-          "Unimodalny — wzrost kobiet" = "unimodal",
-          "Bimodalny — wzrost (kobiety + mężczyźni)" = "bimodal",
-          "Wielomodalny — czas dojazdu (autobus vs rower vs auto)" = "multimodal"
-        ),
-        selected = "unimodal"
+      lc_toolbar(
+        lc_segmented("ch3_modal_scenario", "Scenariusz",
+          choices = c("Unimodalny" = "unimodal", "Bimodalny" = "bimodal",
+                      "Wielomodalny" = "multimodal"))
       ),
       lc_plot("ch3_modal_plot", ratio = "1.8/1", max_height = "350px"),
       uiOutput("ch3_modal_text")
@@ -340,27 +322,16 @@ ch3_ui <- list(
       label = "Ryc. 3.8",
       title = "Percentyle wzrostu studentów",
 
-      fluidRow(
-        column(6,
-          lc_slider("ch3_q_pct", "Percentyl", 0, 100, 50, 1, suffix = "%")
-        ),
-        column(6,
-          div(style = "display: flex; gap: 8px; margin-top: 25px;",
-            lc_action("ch3_q_q1", "Q1 (25%)", variant = "outline"),
-            lc_action("ch3_q_med", "Mediana (50%)", variant = "outline"),
-            lc_action("ch3_q_q3", "Q3 (75%)", variant = "outline")
-          )
-        )
+      lc_toolbar(
+        lc_slider("ch3_q_pct", "Percentyl", 0, 100, 50, 1, suffix = "%"),
+        lc_action("ch3_q_q1", "Q1 (25%)", variant = "outline"),
+        lc_action("ch3_q_med", "Mediana (50%)", variant = "outline"),
+        lc_action("ch3_q_q3", "Q3 (75%)", variant = "outline")
       ),
-
-      hr(),
 
       lc_plot("ch3_q_hist", max_height = "280px"),
       lc_plot("ch3_q_box", ratio = "5.2/1", max_height = "120px"),
-
-      lc_center(
-        uiOutput("ch3_q_text")
-      )
+      uiOutput("ch3_q_text")
     ),
 
     lc_p("W naszej ankiecie Q1 wzrostu wynosi 165.5 cm, a Q3 177.0 cm, więc
@@ -385,11 +356,9 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.9",
       title = "Kliknij na wykres, aby umieścić średnią i medianę",
-      div(style = "margin-bottom: 10px;",
-        actionButton("ch3_game_new", "Nowa runda",
-                     class = "lc-btn-primary", style = "margin-right: 6px;"),
-        actionButton("ch3_game_reveal", "Pokaż odpowiedź",
-                     class = "lc-btn-ok", style = "margin-right: 6px;")
+      lc_toolbar(
+        lc_action("ch3_game_new", "Nowa runda", variant = "solid"),
+        lc_action("ch3_game_reveal", "Pokaż odpowiedź", variant = "outline")
       ),
       uiOutput("ch3_game_status_banner"),
       lc_plot("ch3_game_plot", ratio = "1.8/1", max_height = "350px"),
@@ -834,12 +803,9 @@ ch3_server <- function(input, output, session) {
     diff_color <- if (abs(diff_val) < 500) upwr_cat["szalwia"] else upwr_cat["bursztyn"]
 
     tagList(
-      lc_stat_box("Średnia", format(round(m), big.mark = " "), " zł",
-                  color = "var(--upwr-accent)"),
-      lc_stat_box("Mediana", format(round(med), big.mark = " "), " zł",
-                  color = "var(--upwr-cat-niebo)"),
-      lc_stat_box("Różnica", format(round(diff_val), big.mark = " "), " zł",
-                  color = diff_color)
+      lc_readout("Średnia", paste0(lc_fmt(m, 0, big_mark = " "), " zł"), color = upwr_accent),
+      lc_readout("Mediana", paste0(lc_fmt(med, 0, big_mark = " "), " zł"), color = upwr_cat[["niebo"]]),
+      lc_readout("Różnica", paste0(lc_fmt(diff_val, 0, big_mark = " "), " zł"), color = unname(diff_color))
     )
   })
 
@@ -935,12 +901,10 @@ ch3_server <- function(input, output, session) {
 
   output$ch3_rob_outliers_count <- renderUI({
     n_outliers <- length(ch3_rob_outliers())
-    msg <- if (n_outliers == 0) "Brak dodanych wartości odstających"
-           else paste0("Liczba dodanych wartości odstających: ", n_outliers)
-    div(style = "font-size: 13px; color: var(--upwr-ink-soft); margin-top: 4px;", msg)
+    lc_readout("Dodane wartości odstające", n_outliers, color = upwr_secondary)
   })
 
-  output$ch3_rob_table <- renderTable({
+  output$ch3_rob_table <- renderUI({
     req(ch3_rob_all())
     req(ch3_rob_base_stats())
 
@@ -951,22 +915,22 @@ ch3_server <- function(input, output, session) {
     current_med <- median(d)
     current_tr <- mean(d, trim = 0.1)
 
-    data.frame(
-      Statystyka = c("Średnia", "Mediana", "Średnia ucinana (10%)"),
-      Wartość = paste0(
-        format(round(c(current_mean, current_med, current_tr)),
-               big.mark = " "), " zł"),
-      `Zmiana vs bazowa` = paste0(
-        ifelse(c(current_mean - base$mean,
-                 current_med - base$median,
-                 current_tr - base$trimmed) >= 0, "+", ""),
-        format(round(c(current_mean - base$mean,
-                       current_med - base$median,
-                       current_tr - base$trimmed)),
-               big.mark = " "), " zł"),
-      check.names = FALSE
+    lc_table(
+      data.frame(
+        stat = c("Średnia", "Mediana", "Średnia ucinana (10%)"),
+        value = c(current_mean, current_med, current_tr),
+        change = c(current_mean - base$mean, current_med - base$median,
+                   current_tr - base$trimmed)
+      ),
+      cols = list(
+        lc_col("stat", "Statystyka", "row"),
+        lc_col("value", "Wartość (zł)", digits = 0),
+        lc_col("change", "Zmiana (zł)", digits = 0,
+           short = "Zmiana", desc = "różnica względem danych bez dodanych wartości odstających")
+      ),
+      label = "Statystyki położenia po dodaniu wartości odstających"
     )
-  }, striped = TRUE, hover = TRUE, width = "100%", align = "lcr")
+    })
 
   # --------------------------------------------------------------------------
   # Widget 2b: Discrete variables
@@ -996,20 +960,21 @@ ch3_server <- function(input, output, session) {
       theme()
   }))
 
-  output$ch3_disc_stats <- renderTable({
+  output$ch3_disc_stats <- renderUI({
     var_name <- input$ch3_disc_var
     req(var_name)
     vals <- student_data[[var_name]]
 
     mode_val <- as.numeric(names(sort(table(vals), decreasing = TRUE))[1])
 
-    data.frame(
-      Statystyka = c("Średnia", "Mediana", "Dominanta (moda)", "SD", "Rozstęp"),
-      Wartość = c(round(mean(vals), 2), median(vals), mode_val,
-                  round(sd(vals), 2), paste0(min(vals), " - ", max(vals))),
-      check.names = FALSE
+    tagList(
+      lc_readout("Średnia", lc_fmt(mean(vals), 2)),
+      lc_readout("Mediana", median(vals)),
+      lc_readout("Moda", mode_val),
+      lc_readout("SD", lc_fmt(sd(vals), 2)),
+      lc_readout("Zakres", paste0(min(vals), "–", max(vals)))
     )
-  }, striped = TRUE, hover = TRUE, width = "100%", align = "c")
+    })
 
   # Widget 2c: Multimodality in continuous distributions
   # --------------------------------------------------------------------------
@@ -1158,12 +1123,9 @@ ch3_server <- function(input, output, session) {
 
     actual_pct <- round(100 * mean(wzrost <= q_val), 1)
 
-    div(style = "font-size: 18px; color: var(--upwr-ink); padding: 10px;",
-      paste0(input$ch3_q_pct, "% studentów"),
-      paste0(" ma wzrost poniżej ", q_val, " cm."),
-      br(),
-      tags$span(style = "font-size: 14px; color: var(--upwr-ink-soft);",
-        paste0("(Dokładnie ", actual_pct, "% obserwacji ≤ ", q_val, " cm)"))
+    lc_status(
+      p(paste0(input$ch3_q_pct, "% studentów ma wzrost poniżej ", q_val, " cm.")),
+      lc_caption(paste0("Dokładnie ", actual_pct, "% obserwacji ≤ ", q_val, " cm."))
     )
   })
 
@@ -1233,30 +1195,14 @@ ch3_server <- function(input, output, session) {
   output$ch3_game_status_banner <- renderUI({
     g <- ch3_game_guesses()
     if (is.null(g$mean)) {
-      div(style = "text-align: center; padding: 12px; margin-bottom: 10px;
-                    background: var(--upwr-accent-tint); border-radius: 8px; font-size: 18px;
-                    font-weight: bold; color: var(--upwr-accent);",
-        "↓ Kliknij na wykres, aby postawić ŚREDNIĄ"
-      )
+      lc_caption("Kliknij na wykresie, gdzie Twoim zdaniem leży średnia.", tone = "info")
     } else if (is.null(g$median)) {
-      div(style = "text-align: center; padding: 12px; margin-bottom: 10px;
-                    background: var(--upwr-accent-tint); border-radius: 8px; font-size: 18px;
-                    font-weight: bold; color: var(--upwr-cat-niebo);",
-        "↓ Teraz kliknij, aby postawić MEDIANĘ"
-      )
+      lc_caption("Teraz kliknij, gdzie leży mediana.", tone = "info")
     } else if (!ch3_game_revealed()) {
-      div(style = "text-align: center; padding: 12px; margin-bottom: 10px;
-                    background: var(--upwr-sage-tint); border-radius: 8px; font-size: 18px;
-                    font-weight: bold; color: var(--upwr-cat-szalwia);",
-        "Gotowe! Kliknij 'Pokaż odpowiedź'"
-      )
+      lc_caption("Gotowe. Kliknij „Pokaż odpowiedź”.", tone = "ok")
     } else {
       sc <- ch3_game_score()
-      div(style = "text-align: center; padding: 8px; margin-bottom: 10px;
-                    background: var(--upwr-surface-sunken); border-radius: 8px; font-size: 14px;
-                    color: var(--upwr-ink);",
-        paste0("Wynik: ", sc$good, "/", sc$total, " trafionych rund")
-      )
+      lc_status(p(paste0("Trafione rundy: ", sc$good, " z ", sc$total, ".")))
     }
   })
 

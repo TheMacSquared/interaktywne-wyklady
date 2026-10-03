@@ -96,16 +96,17 @@ ch2_ui <- list(
       label = "Ryc. 2.2",
       title = "Czy kolejność kategorii ma znaczenie?",
 
-      checkboxInput("ch2_ord_shuffle", "Losowa kolejność kategorii", value = FALSE),
-
-      fluidRow(
-        column(6,
-          h5(style = paste0("text-align: center; color: ", type_colors["nominalna"], ";"), "Nominalna: Kierunek studiów"),
-          zoom_plot_ui("ch2_ord_nom_plot", height = "300px")
+      lc_toolbar(
+        checkboxInput("ch2_ord_shuffle", "Losowa kolejność kategorii", value = FALSE)
+      ),
+      lc_plots(
+        tags$div(
+          tags$h4("Nominalna: kierunek studiów"),
+          lc_plot("ch2_ord_nom_plot", max_height = "300px")
         ),
-        column(6,
-          h5(style = paste0("text-align: center; color: ", type_colors["porzadkowa"], ";"), "Porządkowa: Zadowolenie"),
-          zoom_plot_ui("ch2_ord_ord_plot", height = "300px")
+        tags$div(
+          tags$h4("Porządkowa: zadowolenie"),
+          lc_plot("ch2_ord_ord_plot", max_height = "300px")
         )
       ),
 
@@ -138,31 +139,27 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.3",
       title = "Wykres kołowy a słupkowy — trzy scenariusze",
-      div(style = "display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;",
-        lc_action("ch2_sc1", "1. Duże różnice", variant = "outline"),
-        lc_action("ch2_sc2", "2. Podobne wartości", variant = "outline"),
-        lc_action("ch2_sc3", "3. Podobne + złe kolory", variant = "outline")
+      lc_toolbar(
+        lc_segmented("ch2_scenario", "Scenariusz",
+          choices = c("Duże różnice" = "1", "Podobne" = "2", "Złe kolory" = "3"))
       ),
-      fluidRow(
-        column(6,
-          h5(style = "text-align: center; color: var(--upwr-reference);", "Wykres kołowy"),
+      lc_plots(
+        tags$div(
+          tags$h4("Wykres kołowy"),
           div(style = "position: relative; width: 100%; height: 320px;",
             tags$canvas(id = "ch2_pie_canvas")
           ),
           uiOutput("ch2_scenario_pie_verdict")
         ),
-        column(6,
-          h5(style = "text-align: center; color: var(--upwr-reference);", "Wykres słupkowy — te same dane"),
+        tags$div(
+          tags$h4("Wykres słupkowy, te same dane"),
           div(style = "position: relative; width: 100%; height: 320px;",
             tags$canvas(id = "ch2_bar_canvas")
           ),
           uiOutput("ch2_scenario_bar_verdict")
         )
       ),
-      div(style = "display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--upwr-reference); margin-top: 8px;",
-        id = "ch2_legend",
-        uiOutput("ch2_scenario_legend")
-      )
+      lc_readouts(uiOutput("ch2_scenario_legend"))
     ),
 
     lc_p("Przy dużych różnicach (45%, 25%, 15%, 10% i 5%) oba wykresy prowadzą
@@ -199,9 +196,8 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.4",
       title = "Jak kolory zmieniają percepcję danych",
-      fluidRow(
-        column(4,
-          selectInput("ch2_color_palette", "Paleta kolorów:",
+      lc_toolbar(
+        selectInput("ch2_color_palette", "Paleta kolorów",
             choices = c(
               "Neutralna (szara)" = "neutral",
               "Ciepła (podkreśla Informatykę)" = "warm",
@@ -214,11 +210,10 @@ ch2_ui <- list(
               "Tableau 10" = "tableau"
             ),
             selected = "neutral"
-          ),
-          lc_action("ch2_color_random", "Losowe kolory", variant = "outline")
-        ),
-        column(8, zoom_plot_ui("ch2_color_plot", height = "380px"))
-      )
+            ),
+            lc_action("ch2_color_random", "Losowe kolory", icon = "shuffle", variant = "outline")
+            ),
+            lc_plot("ch2_color_plot", max_height = "380px")
     ),
 
     lc_p("Dane są za każdym razem te same: 60 osób na Informatyce, 51 na Biologii,
@@ -541,9 +536,7 @@ ch2_server <- function(input, output, session) {
   # Widget 2: Pie vs Bar — scenario comparison (Chart.js)
   # ========================================================================
 
-  observeEvent(input$ch2_sc1, { ch2_scenario_idx(1) })
-  observeEvent(input$ch2_sc2, { ch2_scenario_idx(2) })
-  observeEvent(input$ch2_sc3, { ch2_scenario_idx(3) })
+  observeEvent(input$ch2_scenario, ch2_scenario_idx(as.integer(input$ch2_scenario)))
 
   ch2_current_scenario <- reactive({
     pie_vs_bar_scenarios[[ch2_scenario_idx()]]
@@ -561,37 +554,22 @@ ch2_server <- function(input, output, session) {
 
   output$ch2_scenario_pie_verdict <- renderUI({
     s <- ch2_current_scenario()
-    badge_style <- if (s$pie_ok) "background: var(--upwr-sage-tint); color: var(--upwr-sage);" else
-                                 "background: var(--upwr-accent-tint); color: var(--upwr-accent);"
-    badge_text  <- if (s$pie_ok) "OK" else "Problem"
-    div(style = "text-align: center; font-size: 13px; color: var(--upwr-reference); margin-top: 6px;",
-      tags$span(style = paste0("display: inline-block; font-size: 11px; padding: 2px 8px;
-                                 border-radius: 6px; font-weight: 500; margin-right: 4px; ",
-                                badge_style), badge_text),
-      s$pie_verdict
-    )
+    lc_caption(lc_verdict(b_(if (s$pie_ok) "OK." else "Problem."),
+                          type = if (s$pie_ok) "ok" else "danger"),
+               " ", s$pie_verdict)
   })
 
   output$ch2_scenario_bar_verdict <- renderUI({
     s <- ch2_current_scenario()
-    div(style = "text-align: center; font-size: 13px; color: var(--upwr-reference); margin-top: 6px;",
-      tags$span(style = "display: inline-block; font-size: 11px; padding: 2px 8px;
-                         border-radius: 6px; font-weight: 500; margin-right: 4px;
-                         background: var(--upwr-sage-tint); color: var(--upwr-sage);", "OK"),
-      s$bar_verdict
-    )
+    lc_caption(lc_verdict(b_("OK."), type = "ok"), " ", s$bar_verdict)
   })
 
   output$ch2_scenario_legend <- renderUI({
     s <- ch2_current_scenario()
-    legend_items <- mapply(function(label, color, value) {
-      tags$span(style = "display: flex; align-items: center; gap: 4px;",
-        tags$span(style = paste0("width: 10px; height: 10px; border-radius: 2px;
-                                   flex-shrink: 0; background: ", color, ";")),
-        paste0(label, " ", value, "%")
-      )
-    }, s$labels, s$colors, s$data, SIMPLIFY = FALSE)
-    tagList(legend_items)
+    # Odczyty w kolorach wycinków pełnią rolę legendy obu wykresów.
+    tagList(mapply(function(label, color, value) {
+      lc_readout(label, paste0(value, "%"), color = color, swatch = TRUE)
+    }, s$labels, s$colors, s$data, SIMPLIFY = FALSE))
   })
 
   # ========================================================================

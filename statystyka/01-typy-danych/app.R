@@ -250,11 +250,6 @@ app_extras <- tagList(
     });
   ")),
   tags$style(HTML("
-  /* Type badges */
-  .type-badge {
-    display: inline-block; padding: 6px 14px; border-radius: 20px;
-    color: white; font-weight: bold; font-size: 14px; margin: 2px;
-  }
 
   /* Taxonomy tree (HTML/CSS) */
   .taxonomy-tree { overflow-x: auto; padding: 10px 0; }
@@ -304,13 +299,7 @@ app_extras <- tagList(
   .tax-leaf:hover {
     transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   }
-  .tax-example {
-    font-size: 12px; color: var(--upwr-reference); margin-top: 6px; font-style: italic;
-    white-space: normal; max-width: 130px; line-height: 1.3;
-  }
-  .tax-hint {
-    font-size: 11px; color: var(--upwr-ink-subtle); margin-top: 4px; font-style: italic;
-  }
+
   @media (max-width: 600px) {
     .taxonomy-tree li { padding: 16px 2px 0; }
     .tax-node { padding: 6px 8px; font-size: 11px; }
@@ -320,33 +309,14 @@ app_extras <- tagList(
       transform: rotate(-25deg); margin-top: 6px;
     }
     .tax-leaf:hover { transform: rotate(-25deg) translateY(-3px); }
-    .tax-example { font-size: 9px; max-width: 80px; margin-top: 10px; }
-    .tax-hint { font-size: 9px; margin-top: 10px; }
+
   }
 
-  /* Taxonomy detail panel */
-  .tax-detail {
-    background: var(--upwr-surface-sunken); border-radius: 6px;
-    padding: 14px 18px; margin-top: 12px;
-    animation: taxDetailFade 0.25s ease-out;
-  }
   @keyframes taxDetailFade {
     from { opacity: 0; transform: translateY(-6px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Gallery grid */
-  .example-card {
-    border: 2px solid var(--upwr-rule); border-radius: 8px;
-    padding: 12px; margin-bottom: 15px; background: white;
-  }
-
-  /* Variable tracker panel */
-  .tracker-panel {
-    background: color-mix(in srgb, var(--upwr-cat-niebo) 16%, var(--upwr-surface)); border: 1px solid var(--upwr-cat-niebo); border-radius: 6px;
-    padding: 10px 14px; margin-bottom: 15px; font-size: 13px;
-  }
-  .tracker-panel strong { color: var(--upwr-ink); }
   "))
 ) # end app_extras
 
@@ -392,12 +362,7 @@ server <- function(input, output, session) {
     vals <- student_data[[var_name]]
     label <- variable_meta[[var_name]]$label
 
-    div(class = "tracker-panel",
-      tags$strong(paste0("\U0001F50D Śledzona zmienna: ", label)),
-      " | Położenie: ",
-      paste0("średnia = ", round(mean(vals), 2),
-             ", mediana = ", round(median(vals), 2))
-    )
+    lc_tracker(label, c("Średnia" = lc_fmt(mean(vals), 2), "Mediana" = lc_fmt(median(vals), 2)))
   })
 
   output$tracker_ch4 <- renderUI({
@@ -406,13 +371,8 @@ server <- function(input, output, session) {
     vals <- student_data[[var_name]]
     label <- variable_meta[[var_name]]$label
 
-    div(class = "tracker-panel",
-      tags$strong(paste0("\U0001F50D Śledzona zmienna: ", label)),
-      " | Położenie: ",
-      paste0("x̄ = ", round(mean(vals), 2), ", Me = ", round(median(vals), 2)),
-      " | Rozrzut: ",
-      paste0("SD = ", round(sd(vals), 2), ", IQR = ", round(IQR(vals), 2))
-    )
+    lc_tracker(label, c("x̄" = lc_fmt(mean(vals), 2), "Me" = lc_fmt(median(vals), 2),
+                       "SD" = lc_fmt(sd(vals), 2), "IQR" = lc_fmt(IQR(vals), 2)))
   })
 
   output$tracker_ch5 <- renderUI({
@@ -423,12 +383,8 @@ server <- function(input, output, session) {
     sk <- round(e1071::skewness(vals), 2)
     ku <- round(e1071::kurtosis(vals), 2)
 
-    div(class = "tracker-panel",
-      tags$strong(paste0("\U0001F50D Śledzona zmienna: ", label)),
-      " | x̄ = ", round(mean(vals), 2),
-      ", SD = ", round(sd(vals), 2),
-      " | Kształt: skośność = ", sk, ", kurtoza = ", ku
-    )
+    lc_tracker(label, c("x̄" = lc_fmt(mean(vals), 2), "SD" = lc_fmt(sd(vals), 2),
+                       "Skośność" = lc_fmt(sk, 2), "Kurtoza" = lc_fmt(ku, 2)))
   })
 
   # ==========================================================================

@@ -47,19 +47,18 @@ ch7_ui <- list(
     figure_panel(
       label = "Ryc. 7.1",
       title = "Przypomnienie typów zmiennych",
-      fluidRow(
-        column(3, div(class = "type-badge",
-          style = paste0("background:", type_colors["nominalna"], ";"), "Nominalna")),
-        column(3, div(class = "type-badge",
-          style = paste0("background:", type_colors["porzadkowa"], ";"), "Porządkowa")),
-        column(3, div(class = "type-badge",
-          style = paste0("background:", type_colors["ilosciowa_dyskretna"], ";"), "Dyskretna")),
-        column(3, div(class = "type-badge",
-          style = paste0("background:", type_colors["ilosciowa_ciagla"], ";"), "Ciągła"))
-      ),
-      p(style = "margin-top: 10px; font-size: 13px; color: var(--upwr-reference);",
-        "Nominalna = kategorie bez porządku | Porządkowa = kategorie z porządkiem | ",
-        "Dyskretna = liczby całkowite | Ciągła = pomiary z dokładnością")
+      # Kolor typu jak na kafelkach odpowiedzi.
+      tags$ul(
+        lapply(list(
+          c("nominalna", "Nominalna:", " kategorie bez porządku."),
+          c("porzadkowa", "Porządkowa:", " kategorie z porządkiem."),
+          c("ilosciowa_dyskretna", "Dyskretna:", " liczby całkowite."),
+          c("ilosciowa_ciagla", "Ciągła:", " pomiary z dokładnością.")
+        ), function(x) tags$li(
+          tags$i(class = "lc-th-swatch", style = paste0("--lc-sw:", type_colors[[x[1]]])),
+          b_(x[2]), x[3]
+        ))
+      )
     ),
 
     # --- Quiz widget ---
@@ -68,16 +67,10 @@ ch7_ui <- list(
       title = "Quiz",
 
       # Start / status bar
-      fluidRow(
-        column(6,
-          lc_action("ch7_start", "Rozpocznij quiz", variant = "solid")
-        ),
-        column(6,
-          uiOutput("ch7_progress")
-        )
+      lc_toolbar(
+        lc_action("ch7_start", "Rozpocznij quiz", variant = "solid"),
+        lc_readouts(uiOutput("ch7_progress"))
       ),
-
-      hr(),
 
       # Pytanie
       uiOutput("ch7_question_ui"),
@@ -87,8 +80,6 @@ ch7_ui <- list(
 
       # Feedback
       uiOutput("ch7_feedback_ui"),
-
-      hr(),
 
       # Podsumowanie
       uiOutput("ch7_summary_ui")
@@ -164,22 +155,13 @@ ch7_server <- function(input, output, session) {
     total <- quiz_state$total
     pct <- round(answered / total * 100)
 
+    score_color <- if (answered == 0) upwr_secondary
+                   else if (quiz_state$correct / answered >= 0.7) type_colors[["ilosciowa_ciagla"]]
+                   else if (quiz_state$correct / answered >= 0.5) type_colors[["porzadkowa"]]
+                   else type_colors[["nominalna"]]
     tagList(
-      div(style = "display: flex; justify-content: space-between; margin-bottom: 4px;",
-        span(paste0("Pytanie ", quiz_state$current_idx, " / ", total)),
-        span(paste0("Wynik: ", quiz_state$correct, " / ", answered),
-             style = paste0("font-weight: bold; color: ",
-                            if (answered == 0) upwr_secondary
-                            else if (quiz_state$correct / answered >= 0.7) type_colors["ilosciowa_ciagla"]
-                            else if (quiz_state$correct / answered >= 0.5) type_colors["porzadkowa"]
-                            else type_colors["nominalna"]))
-      ),
-      div(style = "background: var(--upwr-rule); border-radius: 6px; height: 8px; overflow: hidden;",
-        div(style = paste0(
-          "background: ", type_colors["ilosciowa_dyskretna"], "; height: 100%; width: ", pct, "%;",
-          "border-radius: 6px; transition: width 0.3s;"
-        ))
-      )
+      lc_readout("Pytanie", paste0(quiz_state$current_idx, " / ", total), color = upwr_secondary),
+      lc_readout("Wynik", paste0(quiz_state$correct, " / ", answered), color = score_color)
     )
   })
 
@@ -189,12 +171,7 @@ ch7_server <- function(input, output, session) {
 
     q <- quiz_state$questions[[quiz_state$current_idx]]
 
-    div(
-      style = "font-size: 18px; font-weight: 500; color: var(--upwr-ink);
-               padding: 20px; background: white; border-radius: 8px;
-               border-left: 4px solid var(--upwr-cat-niebo); margin: 15px 0;",
-      q$question
-    )
+    tags$h4(q$question)
   })
 
   # --- Opcje (4 przyciski w grid 2x2) ---
@@ -257,33 +234,20 @@ ch7_server <- function(input, output, session) {
     is_correct <- quiz_state$last_correct
     explanation <- quiz_state$last_explanation
     correct_label <- QUIZ_TYPE_OPTIONS[[quiz_state$last_correct_val]]
-    correct_color <- QUIZ_TYPE_COLORS[[quiz_state$last_correct_val]]
 
     tagList(
       lc_status(
         lc_verdict(tags$strong(if (is_correct) "Dobrze!" else "Nie tym razem."), type = if (is_correct) "ok" else "danger"),
         if (!is_correct) {
-          tagList(
-            " Poprawna odpowiedź: ",
-            span(style = paste0("font-weight: bold; color: ", correct_color, ";"),
-                 correct_label)
-          )
-        }
-      ),
-
-      div(style = "background: var(--upwr-surface-sunken); border-radius: 6px; padding: 12px 16px;
-                   margin: 10px 0; font-size: 14px; color: var(--upwr-reference);",
-        explanation
+          tagList(" Poprawna odpowiedź: ", b_(correct_label))
+        },
+        p(explanation)
       ),
 
       if (quiz_state$current_idx < quiz_state$total) {
-        actionButton("ch7_next", "Następne pytanie →",
-                     class = "lc-btn-primary", width = "100%",
-                     style = "margin-top: 10px;")
+        lc_action("ch7_next", "Następne pytanie", variant = "solid")
       } else {
-        actionButton("ch7_finish", "Zobacz wynik",
-                     class = "lc-btn-ok lc-btn-lg", width = "100%",
-                     style = "margin-top: 10px;")
+        lc_action("ch7_finish", "Zobacz wynik", variant = "solid")
       }
     )
   })
@@ -309,38 +273,20 @@ ch7_server <- function(input, output, session) {
     correct <- quiz_state$correct
     pct <- round(correct / total * 100)
 
-    result_color <- if (pct >= 70) type_colors["ilosciowa_ciagla"]
-                    else if (pct >= 50) type_colors["porzadkowa"]
-                    else type_colors["nominalna"]
+    result_type <- if (pct >= 70) "ok" else if (pct >= 50) "warning" else "danger"
 
     result_text <- if (pct >= 90) "Ćwiczenie zakończone celująco!"
                    else if (pct >= 70) "Dobry wynik!"
                    else if (pct >= 50) "Nieźle, ale warto powtórzyć."
                    else "Powtórz materiał z wcześniejszych rozdziałów."
 
-    div(style = "text-align: center; padding: 30px;",
-      div(style = paste0(
-        "font-size: 64px; font-weight: bold; color: ", result_color, ";"
-      ), paste0(pct, "%")),
-
-      div(style = "font-size: 18px; color: var(--upwr-reference); margin: 10px 0;",
-        paste0("Poprawne odpowiedzi: ", correct, " / ", total)
+    tagList(
+      lc_readouts(
+        lc_readout("Wynik", paste0(pct, "%"), color = upwr_accent),
+        lc_readout("Poprawne odpowiedzi", paste0(correct, " / ", total), color = upwr_secondary)
       ),
-
-      div(style = "max-width: 300px; margin: 15px auto; background: var(--upwr-rule);
-                   border-radius: 10px; height: 16px; overflow: hidden;",
-        div(style = paste0(
-          "background: ", result_color, "; height: 100%; width: ", pct, "%;
-           border-radius: 10px; transition: width 0.5s;"
-        ))
-      ),
-
-      div(style = paste0("font-size: 16px; font-weight: bold; color: ", result_color, ";
-                          margin: 10px 0 20px 0;"),
-        result_text
-      ),
-
-      div(style = "display: flex; gap: 10px; justify-content: center;",
+      lc_status(lc_verdict(tags$strong(result_text), type = result_type)),
+      lc_toolbar(
         lc_action("ch7_start", "Spróbuj ponownie", variant = "solid"),
         lc_action("ch7_back_to_ch6", "Wróć do ściągi", variant = "outline")
       )
