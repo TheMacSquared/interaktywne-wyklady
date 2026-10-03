@@ -91,23 +91,10 @@ hypothesis_practice <- function(prefix, questions) {
   tags$div(class = "hypothesis-practice", items)
 }
 
-exercise_solution_toggle_server <- function(input, output, session, btn_id, sol_fn,
-                                            visible = reactiveVal(FALSE),
-                                            output_id = sub("_ans", "_sol", btn_id),
-                                            feedback_type = "ok") {
-  observeEvent(input[[btn_id]], {
-    nowy <- !visible()
-    visible(nowy)
-    updateActionButton(session, btn_id,
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
-  output[[output_id]] <- renderUI({
-    if (!visible()) return(NULL)
-    lc_feedback(type = feedback_type, style = "margin-top: 10px;", sol_fn())
-  })
-
-  visible
+# Rozwiązanie ćwiczenia w lc_more("Rozwiązanie", uiOutput(output_id)):
+# Shiny renderuje je dopiero po rozwinięciu.
+exercise_solution_server <- function(output, output_id, sol_fn) {
+  output[[output_id]] <- renderUI(sol_fn())
 }
 
 

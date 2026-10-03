@@ -330,8 +330,7 @@ ch5_ui <- list(
         " i wykonaj test χ² niezależności.
         Zapisz: χ², df, p. Co wynika? Czy typ szkoły jest niezależny
         od odsetka uczniów uczących się angielskiego?"),
-      lc_action("cas_ch5_ans8", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("cas_ch5_sol8")
+      lc_more("Rozwiązanie", uiOutput("cas_ch5_sol8"))
     ),
 
     figure_panel(label = "Ćwiczenie",
@@ -341,8 +340,7 @@ ch5_ui <- list(
         " i ", tags$code("high_lunch = (lunch > 50)"),
         ". Wykonaj test χ² niezależności. Czy STR i ubóstwo są ze sobą powiązane?
         Co sugeruje wynik dla interpretacji zadania 5 z korelacji?"),
-      lc_action("cas_ch5_ans9", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("cas_ch5_sol9")
+      lc_more("Rozwiązanie", uiOutput("cas_ch5_sol9"))
     ),
 
     lc_p("Porównując rozwiązania, zwróć uwagę na cenę podziału zmiennej ilościowej
@@ -721,25 +719,14 @@ ch5_server <- function(input, output, session) {
     else tags$b("Brak podstaw do odrzucenia H₀")
   }
 
-  cas_vis8 <- reactiveVal(FALSE)
-  cas_vis9 <- reactiveVal(FALSE)
-
-  observeEvent(input$cas_ch5_ans8, {
-    nowy <- !cas_vis8()
-    cas_vis8(nowy)
-    updateActionButton(session, "cas_ch5_ans8",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
   output$cas_ch5_sol8 <- renderUI({
-    if (!cas_vis8()) return(NULL)
     r <- local({
       high_eng <- .ch5_cas$english > 20
       .cas_chisq(table(grades = .ch5_cas$grades, high_english = high_eng))
     })
     tab <- r$tab
     pct_high <- 100 * tab[, "TRUE"] / rowSums(tab)
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
+    tagList(
       p(tags$b("H₀:"), " typ szkoły i high_english są niezależne · ",
         tags$b("Hₐ:"), " zmienne są zależne"),
       tags$table(class = "lc-table lc-table-bordered lc-table-sm",
@@ -771,15 +758,7 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  observeEvent(input$cas_ch5_ans9, {
-    nowy <- !cas_vis9()
-    cas_vis9(nowy)
-    updateActionButton(session, "cas_ch5_ans9",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
   output$cas_ch5_sol9 <- renderUI({
-    if (!cas_vis9()) return(NULL)
     r <- local({
       high_str   <- .ch5_cas$student_teacher_ratio > 20
       high_lunch <- .ch5_cas$lunch > 50
@@ -789,7 +768,7 @@ ch5_server <- function(input, output, session) {
     p_hi_str_poor <- tab["TRUE",  "TRUE"] / sum(tab["TRUE", ])
     p_lo_str_poor <- tab["FALSE", "TRUE"] / sum(tab["FALSE", ])
     r_cont <- cor.test(.ch5_cas$student_teacher_ratio, .ch5_cas$lunch)
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
+    tagList(
       p(tags$b("H₀:"), " high_str i high_lunch są niezależne · ",
         tags$b("Hₐ:"), " zmienne są zależne"),
       tags$table(class = "lc-table lc-table-bordered lc-table-sm",

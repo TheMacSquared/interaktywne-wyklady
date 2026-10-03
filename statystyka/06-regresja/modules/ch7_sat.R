@@ -8,8 +8,7 @@
 .ch7_sat_reg_panel <- function(id, title, ...) {
   figure_panel(
     label = paste("Ćw. S", id), title = title, tagList(...),
-    lc_action(paste0("ch7_sat_ans", id), "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput(paste0("ch7_sat_sol", id))
+    lc_more("Rozwiązanie", uiOutput(paste0("ch7_sat_sol", id)))
   )
 }
 
@@ -58,10 +57,9 @@ ch7_sat_server <- function(input, output, session) {
   d <- .ch7_sat_reg_data
 
   output$ch7_sat_sol1 <- renderUI({
-    if (!isTruthy(input$ch7_sat_ans1) || input$ch7_sat_ans1 < 1) return(NULL)
     m <- lm(sat_temp_c ~ ndvi, data = d)
     b <- coef(m); g <- broom::glance(m)
-    lc_feedback(type = "ok",
+    tagList(
       p(tags$code(sprintf("sat_temp_c = %.2f %+ .2f × ndvi", b[1], b[2]))),
       p(sprintf("Wzrost NDVI o 0.1 wiąże się przeciętnie ze zmianą temperatury o %.2f°C.",
                 0.1 * b[2])),
@@ -71,12 +69,11 @@ ch7_sat_server <- function(input, output, session) {
   })
 
   output$ch7_sat_sol2 <- renderUI({
-    if (!isTruthy(input$ch7_sat_ans2) || input$ch7_sat_ans2 < 1) return(NULL)
     m1 <- lm(sat_temp_c ~ ndvi, data = d)
     m2 <- lm(sat_temp_c ~ ndvi + wysokosc_m + zachmurzenie_pct + strefa, data = d)
     b1 <- coef(m1)["ndvi"]; b2 <- coef(m2)["ndvi"]
     g1 <- broom::glance(m1); g2 <- broom::glance(m2)
-    lc_feedback(type = "ok",
+    tagList(
       p(sprintf("β_NDVI: model prosty %.2f, model z kontrolą %.2f.", b1, b2)),
       p(sprintf("Adjusted R²: %.3f → %.3f.", g1$adj.r.squared, g2$adj.r.squared)),
       p("Kontrola zmiennych poprawia opis, ale dane obserwacyjne nadal nie
@@ -85,13 +82,12 @@ ch7_sat_server <- function(input, output, session) {
   })
 
   output$ch7_sat_sol3 <- renderUI({
-    if (!isTruthy(input$ch7_sat_ans3) || input$ch7_sat_ans3 < 1) return(NULL)
     m <- lm(grunt_temp_c ~ sat_temp_c, data = d)
     b <- coef(m); g <- broom::glance(m)
     pred <- predict(m, newdata = data.frame(sat_temp_c = 30))
     rmse <- sqrt(mean(residuals(m)^2))
     bias <- mean(d$sat_temp_c - d$grunt_temp_c)
-    lc_feedback(type = "ok",
+    tagList(
       p(tags$code(sprintf("grunt_temp_c = %.2f %+ .2f × sat_temp_c", b[1], b[2]))),
       p(sprintf("R²=%.3f, RMSE=%.2f°C, predykcja dla 30°C: %.2f°C.",
                 g$r.squared, rmse, pred)),

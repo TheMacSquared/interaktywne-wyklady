@@ -333,8 +333,7 @@ ch7_ui <- list(
         Wykonaj jednoczynnikową ANOVA dla zmiennej ", tags$code("read"),
         " między grupami. Zapisz: F, df, p.
         Wykonaj test post hoc Games-Howella i wskaż, które pary różnią się istotnie."),
-      lc_action("cas_ch7_ans10", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("cas_ch7_sol10")
+      lc_more("Rozwiązanie", uiOutput("cas_ch7_sol10"))
     ),
 
     lc_p("Zadanie przechodzi oba kroki rozdziału: najpierw ANOVA odpowiada, czy
@@ -684,17 +683,7 @@ ch7_server <- function(input, output, session) {
 
   # --- Ćwiczenia CASchools ---
 
-  cas_vis10 <- reactiveVal(FALSE)
-
-  observeEvent(input$cas_ch7_ans10, {
-    nowy <- !cas_vis10()
-    cas_vis10(nowy)
-    updateActionButton(session, "cas_ch7_ans10",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
   output$cas_ch7_sol10 <- renderUI({
-    if (!cas_vis10()) return(NULL)
     r <- local({
       edu <- .ch7_cas
       q   <- quantile(edu$income, probs = c(0, 1/3, 2/3, 1))
@@ -707,7 +696,7 @@ ch7_server <- function(input, output, session) {
       list(grp_stats = grp_stats, F = av$F, df1 = av$DFn, df2 = av$DFd,
            p = av$p, gh = gh)
     })
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
+    tagList(
       p(tags$b("H₀:"), " μ_niski = μ_średni = μ_wysoki · ",
         tags$b("Hₐ:"), " co najmniej jedna para się różni"),
       tags$table(class = "lc-table lc-table-bordered lc-table-sm",

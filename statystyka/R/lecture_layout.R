@@ -787,6 +787,7 @@ lc_chapter_next <- function(num, title, lead = NULL, target_id) {
   --upwr-single-alt-tint:   %s;
   --upwr-sage:              %s;
   --upwr-sage-tint:         %s;
+  --upwr-warning:           #8f5b17;
   --upwr-secondary:         %s;
   --upwr-cat-grafit:        %s;
   --upwr-cat-bursztyn:      %s;
@@ -817,6 +818,7 @@ html[data-lc-theme=\"dark\"] {
   --upwr-single-alt-tint:   #3a301d;
   --upwr-sage:              #82bf9c;
   --upwr-sage-tint:         #1f3528;
+  --upwr-warning:           #e0b072;
   --upwr-secondary:         #b8c7c4;
   --upwr-cat-grafit:        #b8c7c4;
   --upwr-cat-bursztyn:      #d8a35d;
@@ -1576,9 +1578,10 @@ lc_status <- function(..., live = TRUE) {
 }
 
 # Werdykt w lc_status(): kolor tylko na fragmencie tekstu, bez tła.
-lc_verdict <- function(..., type = c("ok", "danger")) {
+# ok = zgodne / poprawne, warning = uwaga (np. ekstrapolacja), danger = błąd.
+lc_verdict <- function(..., type = c("ok", "warning", "danger")) {
   type <- match.arg(type)
-  tags$span(class = if (type == "ok") "lc-status-ok" else "lc-status-danger", ...)
+  tags$span(class = paste0("lc-status-", type), ...)
 }
 
 # Przełączniki drugorzędne (np. hipotezy): jeden aktywny albo żaden.

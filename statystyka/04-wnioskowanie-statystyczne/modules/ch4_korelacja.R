@@ -480,8 +480,7 @@ ch4_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("read"), " i ", tags$code("math"),
         ". Zanim klikniesz: czy spodziewasz się korelacji dodatniej czy ujemnej?
         Silnej czy słabej? Zanotuj przewidywanie i sprawdź wynik."),
-      lc_action("cas_ch4_ans3", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("cas_ch4_sol3")
+      lc_more("Rozwiązanie", uiOutput("cas_ch4_sol3"))
     ),
 
     figure_panel(label = "Ćwiczenie",
@@ -489,8 +488,7 @@ ch4_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("income"), " a ", tags$code("read"),
         ". Jaki znak ma r? Czy korelacja jest istotna? Czy możesz wyciągnąć wniosek
         przyczynowy — że wyższy dochód ", tags$em("powoduje"), " lepsze wyniki?"),
-      lc_action("cas_ch4_ans4", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("cas_ch4_sol4")
+      lc_more("Rozwiązanie", uiOutput("cas_ch4_sol4"))
     ),
 
     figure_panel(label = "Ćwiczenie",
@@ -499,8 +497,7 @@ ch4_ui <- list(
         " (STR) a ", tags$code("read"),
         ". Dlaczego korelacja jest ujemna? Czy jest istotna statystycznie?
         Czy silna praktycznie? Pomyśl, co może być zmienną zakłócającą."),
-      lc_action("cas_ch4_ans5", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("cas_ch4_sol5")
+      lc_more("Rozwiązanie", uiOutput("cas_ch4_sol5"))
     ),
 
     lc_p("Trzy korelacje z tych samych danych pokazują trzy różne sytuacje. Przy
@@ -858,21 +855,9 @@ ch4_server <- function(input, output, session) {
     list(r = r, t = t_val, df = df, p = p_val, n = n, r2 = r^2)
   }
 
-  cas_vis3 <- reactiveVal(FALSE)
-  cas_vis4 <- reactiveVal(FALSE)
-  cas_vis5 <- reactiveVal(FALSE)
-
-  observeEvent(input$cas_ch4_ans3, {
-    nowy <- !cas_vis3()
-    cas_vis3(nowy)
-    updateActionButton(session, "cas_ch4_ans3",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
   output$cas_ch4_sol3 <- renderUI({
-    if (!cas_vis3()) return(NULL)
     r <- .cas_cor(.ch4_cas$read, .ch4_cas$math)
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
+    tagList(
       tags$ul(
         tags$li(sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
           r$r, r$df, r$t,
@@ -890,17 +875,9 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  observeEvent(input$cas_ch4_ans4, {
-    nowy <- !cas_vis4()
-    cas_vis4(nowy)
-    updateActionButton(session, "cas_ch4_ans4",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
   output$cas_ch4_sol4 <- renderUI({
-    if (!cas_vis4()) return(NULL)
     r <- .cas_cor(.ch4_cas$income, .ch4_cas$read)
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
+    tagList(
       tags$ul(
         tags$li(sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
           r$r, r$df, r$t,
@@ -918,17 +895,9 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  observeEvent(input$cas_ch4_ans5, {
-    nowy <- !cas_vis5()
-    cas_vis5(nowy)
-    updateActionButton(session, "cas_ch4_ans5",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
   output$cas_ch4_sol5 <- renderUI({
-    if (!cas_vis5()) return(NULL)
     r <- .cas_cor(.ch4_cas$student_teacher_ratio, .ch4_cas$read)
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
+    tagList(
       tags$ul(
         tags$li(sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
           r$r, r$df, r$t,

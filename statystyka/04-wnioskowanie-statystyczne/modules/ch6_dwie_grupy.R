@@ -334,8 +334,7 @@ ch6_ui <- list(
         ". Przetestuj, czy średnie wyniki ", tags$code("read"),
         " różnią się między grupami. Wykonaj test t dla prób niezależnych.
         Zapisz: t, df, p. Czy różnica jest istotna?"),
-      lc_action("cas_ch6_ans6", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("cas_ch6_sol6")
+      lc_more("Rozwiązanie", uiOutput("cas_ch6_sol6"))
     ),
 
     figure_panel(label = "Ćwiczenie",
@@ -346,8 +345,7 @@ ch6_ui <- list(
         " między okręgami z dużym (STR > 20) i małym (STR ≤ 20) stosunkiem.
         Czy różnica jest istotna? Jak duże jest przesunięcie w punktach?
         Skąd może wynikać ta różnica?"),
-      lc_action("cas_ch6_ans7", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("cas_ch6_sol7")
+      lc_more("Rozwiązanie", uiOutput("cas_ch6_sol7"))
     ),
 
     lc_p("Istotny wynik testu mówi tylko, że różnica średnich w populacji
@@ -820,21 +818,10 @@ ch6_server <- function(input, output, session) {
          t=t_val, df=df, p=p_val, d=d)
   }
 
-  cas_vis6 <- reactiveVal(FALSE)
-  cas_vis7 <- reactiveVal(FALSE)
-
-  observeEvent(input$cas_ch6_ans6, {
-    nowy <- !cas_vis6()
-    cas_vis6(nowy)
-    updateActionButton(session, "cas_ch6_ans6",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
   output$cas_ch6_sol6 <- renderUI({
-    if (!cas_vis6()) return(NULL)
     df2 <- .ch6_cas[!is.na(.ch6_cas$read) & !is.na(.ch6_cas$grades), ]
     r <- .cas_t2samp(df2$read, df2$grades)
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
+    tagList(
       p(tags$b("H₀:"), " μ(KK-06) = μ(KK-08) · ",
         tags$b("Hₐ:"), " μ(KK-06) ≠ μ(KK-08)"),
       tags$ul(
@@ -859,19 +846,11 @@ ch6_server <- function(input, output, session) {
     )
   })
 
-  observeEvent(input$cas_ch6_ans7, {
-    nowy <- !cas_vis7()
-    cas_vis7(nowy)
-    updateActionButton(session, "cas_ch6_ans7",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
   output$cas_ch6_sol7 <- renderUI({
-    if (!cas_vis7()) return(NULL)
     high_str <- .ch6_cas$student_teacher_ratio > 20
     r <- .cas_t2samp(.ch6_cas$read, high_str)
     m_lo <- .ch6_cas$read[!high_str]; m_hi <- .ch6_cas$read[high_str]
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
+    tagList(
       p(tags$b("H₀:"), " μ(STR ≤ 20) = μ(STR > 20) · ",
         tags$b("Hₐ:"), " μ(STR ≤ 20) ≠ μ(STR > 20)"),
       tags$ul(

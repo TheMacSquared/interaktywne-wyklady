@@ -2714,7 +2714,7 @@ mjx-container mjx-text {
 .lc-status{border-top:1px solid var(--upwr-rule-soft);margin-top:1em;padding-top:.75em;font-size:.92em;line-height:1.5;color:var(--upwr-ink-soft)}
 .lc-status b{color:var(--upwr-ink)}
 .lc-status-num{font-family:var(--upwr-mono);color:var(--upwr-ink)}
-.lc-status-ok{color:var(--upwr-sage)}.lc-status-danger{color:var(--upwr-accent)}
+.lc-status-ok{color:var(--upwr-sage)}.lc-status-danger{color:var(--upwr-accent)}.lc-status-warning{color:var(--upwr-warning)}
 
 /* Przełączniki dodatkowe (np. hipotezy) — drugorzędne wobec kroków */
 .lc-chips{display:flex;flex-wrap:wrap;align-items:center;gap:.4em .5em;font-size:.84em}

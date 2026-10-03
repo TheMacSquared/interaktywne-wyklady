@@ -345,8 +345,7 @@ ch3_ui <- list(
         dwustronnie, czy odsetek okręgów KK-06 różni się od 50%.
         Sformułuj H₀ i Hₐ, oblicz p-wartość testem dwumianowym (α = 0.05).
         Jak interpretujesz wynik?"),
-      lc_action("cas_ch3_ans_a", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("cas_ch3_sol_a")
+      lc_more("Rozwiązanie", uiOutput("cas_ch3_sol_a"))
     ),
 
     figure_panel(label = "Ćwiczenie",
@@ -355,8 +354,7 @@ ch3_ui <- list(
         ". Przetestuj jednostronnie (prawostronnie),
         czy odsetek takich okręgów przekracza normę 30%.
         Sformułuj H₀ i Hₐ, wykonaj test dwumianowy. Jaki wniosek?"),
-      lc_action("cas_ch3_ans_b", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("cas_ch3_sol_b")
+      lc_more("Rozwiązanie", uiOutput("cas_ch3_sol_b"))
     ),
 
     lc_p("W obu zadaniach pełna odpowiedź ma trzy części: hipotezy ustalone
@@ -526,7 +524,6 @@ ch3_server <- function(input, output, session) {
       labs(x = "Liczba sukcesów", y = "Prawdopodobieństwo") +
       step_frame(xlim = xlim, ylim = c(0, y_top))
   }
-
 
   # =============================================
   # WIDGET 1: Dwustronny
@@ -743,18 +740,7 @@ ch3_server <- function(input, output, session) {
 
   # --- Ćwiczenia CASchools ---
 
-  cas_vis_a <- reactiveVal(FALSE)
-  cas_vis_b <- reactiveVal(FALSE)
-
-  observeEvent(input$cas_ch3_ans_a, {
-    nowy <- !cas_vis_a()
-    cas_vis_a(nowy)
-    updateActionButton(session, "cas_ch3_ans_a",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
   output$cas_ch3_sol_a <- renderUI({
-    if (!cas_vis_a()) return(NULL)
     r <- local({
       k <- sum(.ch3_cas$grades == "KK-06")
       n <- nrow(.ch3_cas)
@@ -763,7 +749,7 @@ ch3_server <- function(input, output, session) {
       list(k = k, n = n, p_obs = p_obs, p_val = bt$p.value,
            ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
     })
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
+    tagList(
       p(tags$b("H₀:"), " p_KK06 = 0.5 · ", tags$b("Hₐ:"), " p_KK06 ≠ 0.5"),
       tags$ul(
         tags$li(sprintf("k = %d, n = %d, p̂ = %s (%s%%)",
@@ -789,15 +775,7 @@ ch3_server <- function(input, output, session) {
     )
   })
 
-  observeEvent(input$cas_ch3_ans_b, {
-    nowy <- !cas_vis_b()
-    cas_vis_b(nowy)
-    updateActionButton(session, "cas_ch3_ans_b",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
   output$cas_ch3_sol_b <- renderUI({
-    if (!cas_vis_b()) return(NULL)
     r <- local({
       high_lunch <- .ch3_cas$lunch > 50
       k <- sum(high_lunch)
@@ -807,7 +785,7 @@ ch3_server <- function(input, output, session) {
       list(k = k, n = n, p_obs = p_obs, p_val = bt$p.value,
            ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
     })
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
+    tagList(
       p(tags$b("H₀:"), " p_ubóstwo ≤ 0.30 · ",
         tags$b("Hₐ:"), " p_ubóstwo > 0.30"),
       tags$ul(

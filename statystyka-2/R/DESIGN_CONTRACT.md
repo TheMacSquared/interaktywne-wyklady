@@ -274,7 +274,10 @@ nie ma; treść stoi w jednej kolumnie.
 Zasady:
 
 1. Notki się nie zwijają. Zwijamy tylko rozwiązania, odpowiedzi i opcjonalne
-   rozwinięcia (`lc_more()`).
+   rozwinięcia (`lc_more()`). Rozwiązanie ćwiczenia to
+   `lc_more("Rozwiązanie", uiOutput(...))`, bez przycisku „Pokaż rozwiązanie”;
+   przycisk zostaje tylko wtedy, gdy odsłania coś w samym widgecie (np.
+   odpowiedzi w tabeli).
 2. Etykieta stoi w wiszącej kolumnie notki, nie w ramce. Pogrubione wstępy typu
    `tags$strong("Przykład:")` na początku akapitu zamieniamy na
    `lc_note("Przykład", ...)`.
@@ -282,7 +285,8 @@ Zasady:
    Pułapka jest na błędy, które student realnie popełnia.
 4. `lc_caption()` to jedno zdanie z kropką statusu pod wykresem; `lc_status()`
    to dłuższy opis kroku lub wynik testu. Oba stoją wewnątrz panelu, bez
-   osobnej ramki pod widgetem.
+   osobnej ramki pod widgetem. Kolor niesie tylko werdykt
+   (`lc_verdict(type = "ok" | "warning" | "danger")`), nie tło.
 5. Kroki demonstracji: `lc_step_widget()` (pasek z nazwami) albo
    `lc_step_nav()` (kropki); zob. „Widgety krokowe”. Opcje dodatkowe obok
    kroków: `lc_chips()`.

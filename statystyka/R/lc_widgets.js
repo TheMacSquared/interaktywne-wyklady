@@ -242,6 +242,15 @@
   registerBindings();
   document.addEventListener('DOMContentLoaded', registerBindings);
 
+  // lc_more(): wyjście Shiny w zwiniętym <details> jest ukryte i nie renderuje
+  // się; po rozwinięciu trzeba powiedzieć Shiny, że stało się widoczne.
+  document.addEventListener('toggle', function(e) {
+    var d = e.target;
+    if (d.classList && d.classList.contains('lc-more') && d.open && window.jQuery) {
+      window.jQuery(d).trigger('shown');
+    }
+  }, true);
+
   // Treść dodana przez renderUI: odśwież stan segmentów i kroków.
   if (window.jQuery) {
     window.jQuery(document).on('shiny:value shiny:bound', function() {

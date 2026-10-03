@@ -10,8 +10,7 @@
     label = "Ćwiczenie",
     h4(title),
     tagList(...),
-    lc_action(paste0("ch8_ans", id), "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput(paste0("ch8_sol", id))
+    lc_more("Rozwiązanie", uiOutput(paste0("ch8_sol", id)))
   )
 }
 
@@ -92,8 +91,7 @@
        jednostką obserwacji jest lokalizacja i termin, a bliskie lokalizacje
        mogą nie dostarczać całkowicie niezależnej informacji.")
   ),
-  lc_action("ch8_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
-  uiOutput("ch8_sol_summary")
+  lc_more("Odpowiedzi", uiOutput("ch8_sol_summary"))
 )
 
 .ch8_sat_solutions <- local({

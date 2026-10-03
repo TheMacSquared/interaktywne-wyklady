@@ -9,8 +9,7 @@
   figure_panel(
     label = "Ćwiczenie",
     h4(title), tagList(...),
-    lc_action(paste0("ch9_ans", id), "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput(paste0("ch9_sol", id))
+    lc_more("Rozwiązanie", uiOutput(paste0("ch9_sol", id)))
   )
 }
 
@@ -83,8 +82,7 @@
        kształcie histogramu. Zawsze pytaj, co jest pojedynczą próbą i czy próby
        można uznać za niezależne.")
   ),
-  lc_action("ch9_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
-  uiOutput("ch9_sol_summary")
+  lc_more("Odpowiedzi", uiOutput("ch9_sol_summary"))
 )
 
 .ch9_sat_solutions <- local({

@@ -298,8 +298,7 @@ ch2_ui <- list(
         tags$code("read"), " w okręgach Kalifornii istotnie różni się",
         " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0.05).
         Co raportowałbyś departamentowi?"),
-      lc_action("cas_ch2_ans1", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("cas_ch2_sol1")
+      lc_more("Rozwiązanie", uiOutput("cas_ch2_sol1"))
     ),
 
     figure_panel(label = "Ćwiczenie",
@@ -309,8 +308,7 @@ ch2_ui <- list(
         " zmienną ", tags$code("income"),
         ". Sformułuj H₀ i Hₐ dla hipotezy kierunkowej.
         Czy wynik jest istotny statystycznie? A praktycznie?"),
-      lc_action("cas_ch2_ans2", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("cas_ch2_sol2")
+      lc_more("Rozwiązanie", uiOutput("cas_ch2_sol2"))
     ),
 
     lc_p("Oba zadania mają ten sam schemat: pytanie, hipotezy, statystyka t,
@@ -334,7 +332,6 @@ ch2_ui <- list(
 
 .ch2_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
                      stringsAsFactors = FALSE)
-
 
 # ============================================================================
 # SERVER
@@ -633,18 +630,7 @@ ch2_server <- function(input, output, session) {
 
   # --- Ćwiczenia CASchools ---
 
-  cas_vis1 <- reactiveVal(FALSE)
-  cas_vis2 <- reactiveVal(FALSE)
-
-  observeEvent(input$cas_ch2_ans1, {
-    nowy <- !cas_vis1()
-    cas_vis1(nowy)
-    updateActionButton(session, "cas_ch2_ans1",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
   output$cas_ch2_sol1 <- renderUI({
-    if (!cas_vis1()) return(NULL)
     r <- local({
       x <- .ch2_cas$read; mu <- 650
       n <- length(x); m <- mean(x); s <- sd(x); se <- s / sqrt(n)
@@ -654,7 +640,7 @@ ch2_server <- function(input, output, session) {
       list(n = n, m = m, s = s, t = t_val, df = df, p = p_val, d = d)
     })
     div(class = "ch2-step-panel",
-      lc_feedback(type = "ok", style = "margin-top: 10px;",
+      tagList(
         p(tags$b("H₀:"), " μ_read = 650 · ", tags$b("Hₐ:"), " μ_read ≠ 650"),
         tags$ul(
           tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f", r$n, r$m, r$s)),
@@ -683,15 +669,7 @@ ch2_server <- function(input, output, session) {
     )
   })
 
-  observeEvent(input$cas_ch2_ans2, {
-    nowy <- !cas_vis2()
-    cas_vis2(nowy)
-    updateActionButton(session, "cas_ch2_ans2",
-      label = if (nowy) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
   output$cas_ch2_sol2 <- renderUI({
-    if (!cas_vis2()) return(NULL)
     r <- local({
       x <- .ch2_cas$income; mu <- 15
       n <- length(x); m <- mean(x); s <- sd(x); se <- s / sqrt(n)
@@ -701,7 +679,7 @@ ch2_server <- function(input, output, session) {
       list(n = n, m = m, s = s, t = t_val, df = df, p = p_val, d = d)
     })
     div(class = "ch2-step-panel",
-      lc_feedback(type = "ok", style = "margin-top: 10px;",
+      tagList(
         p(tags$b("H₀:"), " μ_income ≤ 15 · ", tags$b("Hₐ:"), " μ_income > 15"),
         tags$ul(
           tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f (tys. USD)", r$n, r$m, r$s)),

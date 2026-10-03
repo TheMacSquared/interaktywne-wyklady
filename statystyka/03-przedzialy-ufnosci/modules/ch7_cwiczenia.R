@@ -79,8 +79,7 @@ ch7_ui <- list(
         " Wyznacz 95% CI dla średniej zmiennej ", tags$code("read"),
         ". Zanim klikniesz rozwiązanie: ile wynosi średnia, granice CI i co powiedzielibyś kuratorium jednym zdaniem?")
     ),
-    lc_action("ch7_ans1", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol1")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol1"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -89,8 +88,7 @@ ch7_ui <- list(
       p("Powtórz analizę dla zmiennej ", tags$code("math"),
         ". Dlaczego ", tags$b("przedziały"), " mają różną szerokość? n jest takie samo, więc co decyduje?")
     ),
-    lc_action("ch7_ans2", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol2")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol2"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -98,8 +96,7 @@ ch7_ui <- list(
     tagList(
       p("Wyznacz CI dla ", tags$code("read"), " dla każdej z grup ", tags$code("grades"), " osobno.")
     ),
-    lc_action("ch7_ans3", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol3")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol3"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -109,8 +106,7 @@ ch7_ui <- list(
         " przy poziomach ufności: 90%, 95%, 99%. Zapisz marginesy błędu i porównaj."),
       p(tags$em("Dyskusja:"), " kto żądałby 99% — statystyk akademicki czy inżynier od bezpieczeństwa lotów?")
     ),
-    lc_action("ch7_ans4", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol4")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol4"))
   ),
 
   lc_h3("Blok 2: Przedział ufności dla proporcji (~20 min)"),
@@ -122,8 +118,7 @@ ch7_ui <- list(
         Stwórz zmienną binarną i wyznacz 95% CI dla proporcji okręgów z STR > 20.
         Sprawdź warunki sensowności przed interpretacją.")
     ),
-    lc_action("ch7_ans5", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol5")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol5"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -133,8 +128,7 @@ ch7_ui <- list(
         Wyznacz 95% CI dla tej proporcji i porównaj szerokość z zadaniem 5.
         Dlaczego jeden jest ciasniejszy, skoro n jest takie samo?")
     ),
-    lc_action("ch7_ans6", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol6")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol6"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -148,8 +142,7 @@ ch7_ui <- list(
       p(tags$em("Wskazówka:"), " zacznij od tabeli krzyżowej ",
         tags$code("table(english > 20, lunch > 50)"), ".")
     ),
-    lc_action("ch7_ans7", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol7")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol7"))
   ),
 
   lc_h3("Blok 3: Interpretacja i myślenie krytyczne (~25 min)"),
@@ -171,8 +164,7 @@ ch7_ui <- list(
         tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny wynik z czytania przekracza 660 punktów.”")
       )
     ),
-    lc_action("ch7_ans8", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol8")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol8"))
   ),
 
   br()
@@ -206,8 +198,7 @@ ch7_ui <- list(
         ". Przed sprawdzeniem odpowiedzi: ile wynosi średnia i granice CI?
         Jak powiedzielibyś inspekcji jednym zdaniem?")
     ),
-    lc_action("ch7_ans1", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol1")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol1"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -216,8 +207,7 @@ ch7_ui <- list(
       p("Powtórz analizę dla zmiennej ", tags$code("absencja_dni"),
         ". Porównaj szerokość obu przedziałów. n jest takie samo — co decyduje o różnicy?")
     ),
-    lc_action("ch7_ans2", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol2")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol2"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -225,8 +215,7 @@ ch7_ui <- list(
     tagList(
       p("Wyznacz CI dla ", tags$code("wskaznik_wypadkow"), " dla każdej kategorii ", tags$code("wielkosc"), " osobno.")
     ),
-    lc_action("ch7_ans3", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol3")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol3"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -236,8 +225,7 @@ ch7_ui <- list(
         " przy 90%, 95%, 99%. Zapisz marginesy błędu."),
       p(tags$em("Dyskusja:"), " przy jakim poziomie ufności raportowałaby inspekcja pracy?")
     ),
-    lc_action("ch7_ans4", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol4")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol4"))
   ),
 
   lc_h3("Blok 2: Przedział ufności dla proporcji (~20 min)"),
@@ -249,8 +237,7 @@ ch7_ui <- list(
         " mówi, czy hałas przekracza 85 dB. Wyznacz 95% CI dla proporcji takich zakładów.
         Sprawdź warunki sensowności.")
     ),
-    lc_action("ch7_ans5", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol5")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol5"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -260,8 +247,7 @@ ch7_ui <- list(
         " (więcej niż 20% kontroli kończy się naruszeniem).
         Wyznacz 95% CI i porównaj szerokość z zadaniem 5. Dlaczego różnica?")
     ),
-    lc_action("ch7_ans6", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol6")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol6"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -275,8 +261,7 @@ ch7_ui <- list(
       p(tags$em("Wskazówka:"), " zacznij od tabeli krzyżowej ",
         tags$code("table(ponad_norma_halas, naruszen_proc > 20)"), ".")
     ),
-    lc_action("ch7_ans7", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol7")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol7"))
   ),
 
   lc_h3("Blok 3: Interpretacja i myślenie krytyczne (~25 min)"),
@@ -299,8 +284,7 @@ ch7_ui <- list(
         tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny wskaźnik wypadków przekracza 11 na 1000 pracowników.”")
       )
     ),
-    lc_action("ch7_ans8", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol8")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol8"))
   ),
 
   br()
@@ -333,8 +317,7 @@ ch7_ui <- list(
         " Wyznacz 95% CI dla średniej zmiennej ", tags$code("plon_pszenicy"),
         ". Co powiedzielibyś agencji jednym zdaniem?")
     ),
-    lc_action("ch7_ans1", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol1")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol1"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -343,8 +326,7 @@ ch7_ui <- list(
       p("Powtórz analizę dla zmiennej ", tags$code("plon_rzepa"),
         ". Porównaj szerokość obu przedziałów. n jest takie samo — co decyduje?")
     ),
-    lc_action("ch7_ans2", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol2")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol2"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -352,8 +334,7 @@ ch7_ui <- list(
     tagList(
       p("Wyznacz CI dla ", tags$code("plon_pszenicy"), " dla każdej klasy gleby (", tags$code("klasa_gleby"), ") osobno.")
     ),
-    lc_action("ch7_ans3", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol3")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol3"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -363,8 +344,7 @@ ch7_ui <- list(
         " przy 90%, 95%, 99%. Zapisz marginesy błędu."),
       p(tags$em("Dyskusja:"), " przy jakim poziomie ufności raportowałaby agencja rolna?")
     ),
-    lc_action("ch7_ans4", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol4")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol4"))
   ),
 
   lc_h3("Blok 2: Przedział ufności dla proporcji (~20 min)"),
@@ -376,8 +356,7 @@ ch7_ui <- list(
         " mówi, czy plon pszenicy wynosi mniej niż 5 t/ha (próg opłacalności).
         Wyznacz 95% CI dla proporcji takich pól. Sprawdź warunki sensowności.")
     ),
-    lc_action("ch7_ans5", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol5")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol5"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -387,8 +366,7 @@ ch7_ui <- list(
         " mówi, czy wilgotność gleby przekracza 70% (ryzyko grzybów).
         Wyznacz 95% CI i porównaj szerokość z zadaniem 5. Dlaczego różnica?")
     ),
-    lc_action("ch7_ans6", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol6")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol6"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -402,8 +380,7 @@ ch7_ui <- list(
       p(tags$em("Wskazówka:"), " zacznij od tabeli krzyżowej ",
         tags$code("table(plon_ponizej_5, wilg_powyzej_70)"), ".")
     ),
-    lc_action("ch7_ans7", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol7")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol7"))
   ),
 
   lc_h3("Blok 3: Interpretacja i myślenie krytyczne (~25 min)"),
@@ -426,8 +403,7 @@ ch7_ui <- list(
         tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętny plon pszenicy przekracza 6.5 t/ha.”")
       )
     ),
-    lc_action("ch7_ans8", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol8")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol8"))
   ),
 
   br()
@@ -459,8 +435,7 @@ ch7_ui <- list(
         " Wyznacz 95% CI dla średniej zmiennej ", tags$code("zawartosc_bialka"),
         ". Co powiedzielibyś działowi jakości jednym zdaniem?")
     ),
-    lc_action("ch7_ans1", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol1")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol1"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -469,8 +444,7 @@ ch7_ui <- list(
       p("Powtórz analizę dla zmiennej ", tags$code("zawartosc_tluszczu"),
         ". Porównaj szerokość obu przedziałów. n jest takie samo — co decyduje?")
     ),
-    lc_action("ch7_ans2", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol2")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol2"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -478,8 +452,7 @@ ch7_ui <- list(
     tagList(
       p("Wyznacz CI dla ", tags$code("zawartosc_bialka"), " dla każdej linii (", tags$code("linia"), ") osobno.")
     ),
-    lc_action("ch7_ans3", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol3")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol3"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -489,8 +462,7 @@ ch7_ui <- list(
         " przy 90%, 95%, 99%. Zapisz marginesy błędu."),
       p(tags$em("Dyskusja:"), " przy jakim poziomie ufności raportowałby dział jakości?")
     ),
-    lc_action("ch7_ans4", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol4")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol4"))
   ),
 
   lc_h3("Blok 2: Przedział ufności dla proporcji (~20 min)"),
@@ -502,8 +474,7 @@ ch7_ui <- list(
         " mówi, czy zawartość białka spada poniżej 26% (norma jakościowa).
         Wyznacz 95% CI dla proporcji takich partii. Sprawdź warunki sensowności.")
     ),
-    lc_action("ch7_ans5", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol5")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol5"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -513,8 +484,7 @@ ch7_ui <- list(
         " mówi, czy zawartość tłuszczu przekracza 3.0% (norma).
         Wyznacz 95% CI i porównaj szerokość z zadaniem 5. Dlaczego różnica?")
     ),
-    lc_action("ch7_ans6", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol6")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol6"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -528,8 +498,7 @@ ch7_ui <- list(
       p(tags$em("Wskazówka:"), " zacznij od tabeli krzyżowej ",
         tags$code("table(bialko_ponizej_normy, tluszcz_powyzej_normy)"), ".")
     ),
-    lc_action("ch7_ans7", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol7")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol7"))
   ),
 
   lc_h3("Blok 3: Interpretacja i myślenie krytyczne (~25 min)"),
@@ -552,8 +521,7 @@ ch7_ui <- list(
         tags$li("„Z ufnością 95% możemy stwierdzić, że przeciętna zawartość białka przekracza 27%.”")
       )
     ),
-    lc_action("ch7_ans8", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch7_sol8")
+    lc_more("Rozwiązanie", uiOutput("ch7_sol8"))
   ),
 
   br()
@@ -1128,20 +1096,11 @@ source(file.path(app_dir, "modules", "ch7_sat.R"), local = TRUE)
 
 ch7_server <- function(input, output, session) {
 
-  sol_ids <- c("sol1","sol2","sol3","sol4","sol5","sol6","sol7","sol8")
-  btn_ids <- c("ans1","ans2","ans3","ans4","ans5","ans6","ans7","ans8")
+  sol_ids <- c("sol1", "sol2", "sol3", "sol4", "sol5", "sol6", "sol7", "sol8")
 
-  # Stan widocznosci
-  vis <- lapply(sol_ids, function(x) reactiveVal(FALSE))
-  names(vis) <- sol_ids
-
-  # Render tresci + reset stanow przy zmianie kierunku
+  # Treść wariantu po zmianie kierunku.
   observeEvent(input$ch7_kierunek, {
     k <- input$ch7_kierunek
-    for (sid in sol_ids) vis[[sid]](FALSE)
-    for (bid in btn_ids) {
-      updateActionButton(session, paste0("ch7_", bid), label = "Pokaż rozwiązanie")
-    }
     output$ch7_content <- renderUI({
       switch(k,
         edu = .ch7_content_edu(),
@@ -1153,26 +1112,11 @@ ch7_server <- function(input, output, session) {
     })
   }, ignoreNULL = FALSE)
 
-  # Toggle per zadanie
-  .make_toggle <- function(sol_id_bare, sol_id_full, btn_id_full) {
-    observeEvent(input[[btn_id_full]], {
-      nowy_stan <- !vis[[sol_id_bare]]()
-      vis[[sol_id_bare]](nowy_stan)
-      updateActionButton(session, btn_id_full,
-        label = if (nowy_stan) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-    }, ignoreInit = TRUE)
-
-    output[[sol_id_full]] <- renderUI({
-      if (!vis[[sol_id_bare]]()) return(NULL)
-      k <- isolate(input$ch7_kierunek)
-      sol <- .ch7_solutions[[k]][[sol_id_bare]]
-      lc_feedback(type = "ok", style = "margin-top: 10px;", sol)
+  # Rozwiązania siedzą w lc_more(): Shiny renderuje je dopiero po rozwinięciu.
+  lapply(sol_ids, function(sid) {
+    output[[paste0("ch7_", sid)]] <- renderUI({
+      req(input$ch7_kierunek)
+      .ch7_solutions[[input$ch7_kierunek]][[sid]]
     })
-  }
-
-  mapply(.make_toggle,
-    sol_id_bare = sol_ids,
-    sol_id_full = paste0("ch7_", sol_ids),
-    btn_id_full = paste0("ch7_", btn_ids)
-  )
+  })
 }

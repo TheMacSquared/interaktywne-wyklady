@@ -81,8 +81,7 @@ ch9_ui <- list(
       p("Przetestuj dwustronnie, czy średni ", tags$code("plon"),
         " różni się od normy 5.0 t/ha. Sformułuj H₀ i Hₐ, wykonaj test t
         jednej próby (α = 0.05) i oblicz Cohen's d."),
-      lc_action("ch9_r_ans1", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_r_sol1")
+      lc_more("Rozwiązanie", uiOutput("ch9_r_sol1"))
     ),
 
     figure_panel(label = "Ćwiczenie 1.2",
@@ -90,8 +89,7 @@ ch9_ui <- list(
       p("Przetestuj ", tags$b("lewostronnie"), ", czy odsetek pól z ",
         tags$code("nawadnianie == \"tak\""), " jest niższy niż 40% (p₀ = 0.4).
         Użyj testu dwumianowego."),
-      lc_action("ch9_r_ans2", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_r_sol2")
+      lc_more("Rozwiązanie", uiOutput("ch9_r_sol2"))
     ),
 
     figure_panel(label = "Ćwiczenie 1.3",
@@ -99,8 +97,7 @@ ch9_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("nawozenie"),
         " a ", tags$code("plon"), ". Czy korelacja jest istotna?
         Jak interpretujesz siłę i kierunek związku?"),
-      lc_action("ch9_r_ans3", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_r_sol3")
+      lc_more("Rozwiązanie", uiOutput("ch9_r_sol3"))
     ),
 
     figure_panel(label = "Ćwiczenie 1.4",
@@ -108,8 +105,7 @@ ch9_ui <- list(
       p("Porównaj średni ", tags$code("plon"),
         " między uprawą ", tags$code("pszenica"), " a ", tags$code("rzepak"),
         ". Wykonaj test t dla prób niezależnych i oblicz Cohen's d."),
-      lc_action("ch9_r_ans4", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_r_sol4")
+      lc_more("Rozwiązanie", uiOutput("ch9_r_sol4"))
     ),
 
     figure_panel(label = "Ćwiczenie 1.5",
@@ -117,8 +113,7 @@ ch9_ui <- list(
       p("Zbuduj tabelę krzyżową ", tags$code("uprawa"), " × ",
         tags$code("nawadnianie"),
         " i wykonaj test χ² niezależności. Oblicz Cramér's V."),
-      lc_action("ch9_r_ans5", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_r_sol5")
+      lc_more("Rozwiązanie", uiOutput("ch9_r_sol5"))
     ),
 
     figure_panel(label = "Ćwiczenie 1.6",
@@ -127,8 +122,7 @@ ch9_ui <- list(
         tags$code("region"),
         " (trzy regiony). Zapisz F, df, p, η². Wykonaj post-hoc Games-Howell
         i wskaż, które pary regionów różnią się istotnie."),
-      lc_action("ch9_r_ans6", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_r_sol6")
+      lc_more("Rozwiązanie", uiOutput("ch9_r_sol6"))
       )
     ),
 
@@ -154,8 +148,7 @@ ch9_ui <- list(
       p("Przetestuj ", tags$b("jednostronnie (lewostronnie)"), ", czy średni ",
         tags$code("wypadki"), " jest niższy od normy 10 wypadków/1000 pracowników.
         Sformułuj H₀ i Hₐ, oblicz Cohen's d."),
-      lc_action("ch9_b_ans1", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_b_sol1")
+      lc_more("Rozwiązanie", uiOutput("ch9_b_sol1"))
     ),
 
     figure_panel(label = "Ćwiczenie 2.2",
@@ -163,8 +156,7 @@ ch9_ui <- list(
       p('Przyjmij, że „spełnia normę" = ', tags$code("soi_rate ≥ 80%"),
         ". Przetestuj ", tags$b("jednostronnie (prawostronnie)"),
         ", czy odsetek takich firm przekracza 50% (p₀ = 0.5). Użyj testu dwumianowego."),
-      lc_action("ch9_b_ans2", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_b_sol2")
+      lc_more("Rozwiązanie", uiOutput("ch9_b_sol2"))
     ),
 
     figure_panel(label = "Ćwiczenie 2.3",
@@ -172,8 +164,7 @@ ch9_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("szkolenia"),
         " a ", tags$code("wypadki"),
         ". Jaki jest kierunek zależności? Jak silna jest korelacja?"),
-      lc_action("ch9_b_ans3", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_b_sol3")
+      lc_more("Rozwiązanie", uiOutput("ch9_b_sol3"))
     ),
 
     figure_panel(label = "Ćwiczenie 2.4",
@@ -181,8 +172,7 @@ ch9_ui <- list(
       p("Porównaj średni ", tags$code("wypadki"),
         " między grupami ", tags$code("wielkosc"),
         " (małe vs duże). Wykonaj test t dla prób niezależnych."),
-      lc_action("ch9_b_ans4", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_b_sol4")
+      lc_more("Rozwiązanie", uiOutput("ch9_b_sol4"))
     ),
 
     figure_panel(label = "Ćwiczenie 2.5",
@@ -191,8 +181,7 @@ ch9_ui <- list(
         ". Zbuduj tabelę ", tags$code("sektor"), " × ",
         tags$code("soi_ok"),
         " i wykonaj test χ² niezależności. Oblicz Cramér's V."),
-      lc_action("ch9_b_ans5", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_b_sol5")
+      lc_more("Rozwiązanie", uiOutput("ch9_b_sol5"))
     ),
 
     figure_panel(label = "Ćwiczenie 2.6",
@@ -201,8 +190,7 @@ ch9_ui <- list(
         tags$code("poziom_ryzyka"),
         " (niski/średni/wysoki). Zapisz F, df, p, η².
         Wykonaj post-hoc Games-Howell."),
-      lc_action("ch9_b_ans6", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_b_sol6")
+      lc_more("Rozwiązanie", uiOutput("ch9_b_sol6"))
       )
     ),
 
@@ -228,8 +216,7 @@ ch9_ui <- list(
       p("Przetestuj ", tags$b("dwustronnie"), ", czy średnia ",
         tags$code("bialko"), " różni się od normy 12 g/100 g.
         Sformułuj H₀ i Hₐ, oblicz Cohen's d."),
-      lc_action("ch9_t_ans1", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_t_sol1")
+      lc_more("Rozwiązanie", uiOutput("ch9_t_sol1"))
     ),
 
     figure_panel(label = "Ćwiczenie 3.2",
@@ -237,8 +224,7 @@ ch9_ui <- list(
       p("Przetestuj ", tags$b("jednostronnie (prawostronnie)"),
         ", czy odsetek partii z ", tags$code("zanieczyszczenie == \"wykryte\""),
         " przekracza 20% (p₀ = 0.2). Użyj testu dwumianowego."),
-      lc_action("ch9_t_ans2", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_t_sol2")
+      lc_more("Rozwiązanie", uiOutput("ch9_t_sol2"))
     ),
 
     figure_panel(label = "Ćwiczenie 3.3",
@@ -246,8 +232,7 @@ ch9_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("wilgotnosc"),
         " a ", tags$code("trwalosc"),
         ". Jaki jest oczekiwany kierunek? Jak silna jest zależność?"),
-      lc_action("ch9_t_ans3", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_t_sol3")
+      lc_more("Rozwiązanie", uiOutput("ch9_t_sol3"))
     ),
 
     figure_panel(label = "Ćwiczenie 3.4",
@@ -255,8 +240,7 @@ ch9_ui <- list(
       p("Porównaj średnią ", tags$code("trwalosc"),
         " między ", tags$code("typ"),
         " (tradycyjny vs funkcjonalny). Wykonaj test t dla prób niezależnych."),
-      lc_action("ch9_t_ans4", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_t_sol4")
+      lc_more("Rozwiązanie", uiOutput("ch9_t_sol4"))
     ),
 
     figure_panel(label = "Ćwiczenie 3.5",
@@ -264,8 +248,7 @@ ch9_ui <- list(
       p("Zbuduj tabelę ", tags$code("typ"), " × ",
         tags$code("zanieczyszczenie"),
         " i wykonaj test χ² niezależności. Oblicz Cramér's V."),
-      lc_action("ch9_t_ans5", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_t_sol5")
+      lc_more("Rozwiązanie", uiOutput("ch9_t_sol5"))
     ),
 
     figure_panel(label = "Ćwiczenie 3.6",
@@ -274,8 +257,7 @@ ch9_ui <- list(
         tags$code("przechowywanie"),
         " (3 metody). Zapisz F, df, p, η².
         Wykonaj post-hoc Games-Howell."),
-      lc_action("ch9_t_ans6", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_t_sol6")
+      lc_more("Rozwiązanie", uiOutput("ch9_t_sol6"))
       )
     ),
 
@@ -310,8 +292,7 @@ ch9_ui <- list(
                    więc zawsze powinniśmy go wybierać."')
         )
       ),
-      lc_action("ch9_krit_ans", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch9_krit_sol")
+      lc_more("Rozwiązanie", uiOutput("ch9_krit_sol"))
     ),
 
     br(), br(), br()
@@ -577,9 +558,8 @@ ch9_server <- function(input, output, session) {
   # ---- Rolnictwo ----
   rol <- .ch9_data$rol
 
-  r_vis <- lapply(1:6, function(i) reactiveVal(FALSE))
 
-  exercise_solution_toggle_server(input, output, session, "ch9_r_ans1", function() {
+  exercise_solution_server(output, "ch9_r_sol1", function() {
     r <- .ch9_t1(rol$plon, mu = 5.0, alternative = "two.sided")
     tagList(
       .ch9_sol_t1(r, "μ_plon = 5.0 t/ha", "μ_plon ≠ 5.0 t/ha",
@@ -591,9 +571,9 @@ ch9_server <- function(input, output, session) {
           if (r$p < 0.05) "różni istotnie" else "nie różni istotnie",
           .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
     )
-  }, visible = r_vis[[1]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_r_ans2", function() {
+  exercise_solution_server(output, "ch9_r_sol2", function() {
     k <- sum(rol$nawadnianie == "tak")
     n <- nrow(rol); p_obs <- k / n
     bt <- binom.test(k, n, p = 0.4, alternative = "less")
@@ -612,9 +592,9 @@ ch9_server <- function(input, output, session) {
           if (bt$p.value < 0.05) "istotnie leży" else "nieistotnie leży",
           .ch9_fmt_p(bt$p.value)))
     )
-  }, visible = r_vis[[2]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_r_ans3", function() {
+  exercise_solution_server(output, "ch9_r_sol3", function() {
     r <- .ch9_cor_test(rol$nawozenie, rol$plon)
     tagList(
       .ch9_sol_cor(r, "nawożenie", "plonu"),
@@ -625,9 +605,9 @@ ch9_server <- function(input, output, session) {
           effect_size_label(abs(r$r)),
           if (abs(r$r) > 0.3) "wyraźnie" else "słabo"))
     )
-  }, visible = r_vis[[3]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_r_ans4", function() {
+  exercise_solution_server(output, "ch9_r_sol4", function() {
     r <- .ch9_t2(rol$plon, rol$uprawa)
     tagList(
       .ch9_sol_t2(r, "t/ha"),
@@ -638,9 +618,9 @@ ch9_server <- function(input, output, session) {
           if (r$p < 0.05) "istotna" else "nieistotna",
           .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
     )
-  }, visible = r_vis[[4]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_r_ans5", function() {
+  exercise_solution_server(output, "ch9_r_sol5", function() {
     r <- .ch9_chi2(table(uprawa = rol$uprawa, nawadnianie = rol$nawadnianie))
     tagList(
       .ch9_sol_chi2(r),
@@ -648,9 +628,9 @@ ch9_server <- function(input, output, session) {
         "Test χ² wskazuje, czy typ uprawy i decyzja o nawadnianiu są zależne.
         Cramér's V opisuje siłę związku niezależnie od kierunku.")
     )
-  }, visible = r_vis[[5]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_r_ans6", function() {
+  exercise_solution_server(output, "ch9_r_sol6", function() {
     r <- .ch9_anova_f(rol$plon, rol$region)
     tagList(
       .ch9_sol_anova(r, "plon (t/ha)"),
@@ -660,14 +640,13 @@ ch9_server <- function(input, output, session) {
           r$df1, r$df2, r$F, .ch9_fmt_p(r$p), r$eta2,
           if (r$p < 0.05) "różnią" else "nie różnią"))
     )
-  }, visible = r_vis[[6]])
+  })
 
   # ---- Inzynieria bezpieczenstwa ----
   bhp <- .ch9_data$bhp
 
-  b_vis <- lapply(1:6, function(i) reactiveVal(FALSE))
 
-  exercise_solution_toggle_server(input, output, session, "ch9_b_ans1", function() {
+  exercise_solution_server(output, "ch9_b_sol1", function() {
     r <- .ch9_t1(bhp$wypadki, mu = 10, alternative = "less")
     tagList(
       .ch9_sol_t1(r, "μ_wypadki ≥ 10", "μ_wypadki < 10",
@@ -679,9 +658,9 @@ ch9_server <- function(input, output, session) {
           if (r$p < 0.05) "istotnie" else "nieistotnie",
           .ch9_fmt_p(r$p), effect_size_label(abs(r$d)), r$d))
     )
-  }, visible = b_vis[[1]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_b_ans2", function() {
+  exercise_solution_server(output, "ch9_b_sol2", function() {
     soi_ok <- bhp$soi_rate >= 80
     k <- sum(soi_ok); n <- length(soi_ok); p_obs <- k / n
     bt <- binom.test(k, n, p = 0.5, alternative = "greater")
@@ -700,9 +679,9 @@ ch9_server <- function(input, output, session) {
           if (bt$p.value < 0.05) "istotnie" else "nieistotnie",
           .ch9_fmt_p(bt$p.value)))
     )
-  }, visible = b_vis[[2]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_b_ans3", function() {
+  exercise_solution_server(output, "ch9_b_sol3", function() {
     r <- .ch9_cor_test(bhp$szkolenia, bhp$wypadki)
     tagList(
       .ch9_sol_cor(r, "szkolenia", "wypadkowości"),
@@ -712,9 +691,9 @@ ch9_server <- function(input, output, session) {
           r$r, effect_size_label(abs(r$r)),
           if (r$r < 0) "z niższą" else "z wyższą"))
     )
-  }, visible = b_vis[[3]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_b_ans4", function() {
+  exercise_solution_server(output, "ch9_b_sol4", function() {
     r <- .ch9_t2(bhp$wypadki, bhp$wielkosc)
     tagList(
       .ch9_sol_t2(r, "wyp./1000"),
@@ -724,9 +703,9 @@ ch9_server <- function(input, output, session) {
           if (r$p < 0.05) "istotna" else "nieistotna",
           .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
     )
-  }, visible = b_vis[[4]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_b_ans5", function() {
+  exercise_solution_server(output, "ch9_b_sol5", function() {
     soi_ok <- bhp$soi_rate >= 80
     r <- .ch9_chi2(table(sektor = bhp$sektor, soi_ok = soi_ok))
     tagList(
@@ -735,9 +714,9 @@ ch9_server <- function(input, output, session) {
         "Zależy, czy sektor (produkcja vs budownictwo) różnicuje stosowanie ŚOI.
         Cramér's V podaje siłę tego związku.")
     )
-  }, visible = b_vis[[5]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_b_ans6", function() {
+  exercise_solution_server(output, "ch9_b_sol6", function() {
     r <- .ch9_anova_f(bhp$wypadki, bhp$poziom_ryzyka)
     tagList(
       .ch9_sol_anova(r, "wypadki/1000"),
@@ -747,14 +726,13 @@ ch9_server <- function(input, output, session) {
           r$df1, r$df2, r$F, .ch9_fmt_p(r$p), r$eta2,
           if (r$p < 0.05) "różnią" else "nie różnią"))
     )
-  }, visible = b_vis[[6]])
+  })
 
   # ---- Technologia zywnosci ----
   tz <- .ch9_data$tz
 
-  t_vis <- lapply(1:6, function(i) reactiveVal(FALSE))
 
-  exercise_solution_toggle_server(input, output, session, "ch9_t_ans1", function() {
+  exercise_solution_server(output, "ch9_t_sol1", function() {
     r <- .ch9_t1(tz$bialko, mu = 12, alternative = "two.sided")
     tagList(
       .ch9_sol_t1(r, "μ_białko = 12 g/100 g", "μ_białko ≠ 12 g/100 g",
@@ -766,9 +744,9 @@ ch9_server <- function(input, output, session) {
           if (r$p < 0.05) "różni istotnie" else "nie różni istotnie",
           .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
     )
-  }, visible = t_vis[[1]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_t_ans2", function() {
+  exercise_solution_server(output, "ch9_t_sol2", function() {
     k <- sum(tz$zanieczyszczenie == "wykryte")
     n <- nrow(tz); p_obs <- k / n
     bt <- binom.test(k, n, p = 0.20, alternative = "greater")
@@ -788,9 +766,9 @@ ch9_server <- function(input, output, session) {
           if (bt$p.value < 0.05) "istotnie" else "nieistotnie",
           .ch9_fmt_p(bt$p.value)))
     )
-  }, visible = t_vis[[2]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_t_ans3", function() {
+  exercise_solution_server(output, "ch9_t_sol3", function() {
     r <- .ch9_cor_test(tz$wilgotnosc, tz$trwalosc)
     tagList(
       .ch9_sol_cor(r, "wilgotność", "trwałości"),
@@ -800,9 +778,9 @@ ch9_server <- function(input, output, session) {
           r$r, effect_size_label(abs(r$r)),
           if (r$r < 0) "z niższą" else "z wyższą"))
     )
-  }, visible = t_vis[[3]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_t_ans4", function() {
+  exercise_solution_server(output, "ch9_t_sol4", function() {
     r <- .ch9_t2(tz$trwalosc, tz$typ)
     tagList(
       .ch9_sol_t2(r, "dni"),
@@ -813,9 +791,9 @@ ch9_server <- function(input, output, session) {
           if (r$p < 0.05) "istotna" else "nieistotna",
           .ch9_fmt_p(r$p), effect_size_label(r$d), r$d))
     )
-  }, visible = t_vis[[4]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_t_ans5", function() {
+  exercise_solution_server(output, "ch9_t_sol5", function() {
     r <- .ch9_chi2(table(typ = tz$typ, zanieczyszczenie = tz$zanieczyszczenie))
     tagList(
       .ch9_sol_chi2(r),
@@ -823,9 +801,9 @@ ch9_server <- function(input, output, session) {
         "Test χ² wskazuje, czy typ produktu wiąże się z wykryciem zanieczyszczeń.
         Siłę związku opisuje Cramér's V.")
     )
-  }, visible = t_vis[[5]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_t_ans6", function() {
+  exercise_solution_server(output, "ch9_t_sol6", function() {
     r <- .ch9_anova_f(tz$trwalosc, tz$przechowywanie)
     tagList(
       .ch9_sol_anova(r, "trwałość (dni)"),
@@ -835,23 +813,11 @@ ch9_server <- function(input, output, session) {
           r$df1, r$df2, r$F, .ch9_fmt_p(r$p), r$eta2,
           if (r$p < 0.05) "różnią" else "nie różnią"))
     )
-  }, visible = t_vis[[6]])
+  })
 
   # ---- Myslenie krytyczne ----
-  krit_vis <- reactiveVal(FALSE)
 
-  observeEvent(input$ch9_kierunek, {
-    lapply(c(r_vis, b_vis, t_vis, list(krit_vis)), function(vis_rv) vis_rv(FALSE))
-    for (prefix in c("r", "b", "t")) {
-      for (i in 1:6) {
-        updateActionButton(session, paste0("ch9_", prefix, "_ans", i),
-                           label = "Pokaż rozwiązanie")
-      }
-    }
-    updateActionButton(session, "ch9_krit_ans", label = "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
-  exercise_solution_toggle_server(input, output, session, "ch9_krit_ans", function() {
+  exercise_solution_server(output, "ch9_krit_sol", function() {
       tags$ol(
         tags$li(tags$b("Fałsz."),
           " Korelacja nie implikuje przyczynowości. Wymagane byłoby badanie
@@ -879,5 +845,5 @@ ch9_server <- function(input, output, session) {
           całkowicie ślepy na efekt w przeciwnym kierunku. Kierunek hipotezy
           musimy ustalić przed zebraniem danych, nie na podstawie wyników.")
       )
-  }, visible = krit_vis)
+  })
 }

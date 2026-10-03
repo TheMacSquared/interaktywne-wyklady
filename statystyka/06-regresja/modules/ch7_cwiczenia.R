@@ -46,8 +46,7 @@ ch7_ui <- list(
           tags$li("Sprawdź R² i oceń, czy model wyjaśnia dużo zmienności.")
         )
       ),
-      lc_action("ch7_ans1", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch7_sol1")
+      lc_more("Rozwiązanie", uiOutput("ch7_sol1"))
     ),
 
     figure_panel(label = "Ćw. 2", title = "Predykcja i ekstrapolacja",
@@ -57,8 +56,7 @@ ch7_ui <- list(
         p("Następnie policz predykcję dla ", tags$code("lunch = 110"),
           ". Czy druga predykcja ma sens? Uzasadnij.")
       ),
-      lc_action("ch7_ans2", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch7_sol2")
+      lc_more("Rozwiązanie", uiOutput("ch7_sol2"))
     ),
 
     lc_h2("ch7-jakosc", "Blok 2: jakość i porównanie modeli"),
@@ -74,8 +72,7 @@ ch7_ui <- list(
         p("Porównaj R², adjusted R², AIC, BIC i RMSE. Który model wybierzesz
           do wyjaśniania, a który do predykcji?")
       ),
-      lc_action("ch7_ans3", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch7_sol3")
+      lc_more("Rozwiązanie", uiOutput("ch7_sol3"))
     ),
 
     figure_panel(label = "Ćw. 4", title = "Reszty mówią, czy model kłamie",
@@ -85,8 +82,7 @@ ch7_ui <- list(
         p("Czy widzisz sygnał nieliniowości, obserwacji odstających albo
           problemu z normalnością reszt? Co zrobiłbyś dalej?")
       ),
-      lc_action("ch7_ans4", "Pokaż wskazówkę", variant = "solid"),
-      uiOutput("ch7_sol4")
+      lc_more("Wskazówka", uiOutput("ch7_sol4"))
     ),
 
     lc_h2("ch7-wieloraka", "Blok 3: regresja wieloraka"),
@@ -99,8 +95,7 @@ ch7_ui <- list(
           " i porównaj go ze współczynnikiem w modelu prostym ",
           tags$code("math ~ income"), ".")
       ),
-      lc_action("ch7_ans5", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch7_sol5")
+      lc_more("Rozwiązanie", uiOutput("ch7_sol5"))
     ),
 
     lc_h2("ch7-kontekst", "Blok 3B: kontekst i interakcje na pingwinach"),
@@ -116,8 +111,7 @@ ch7_ui <- list(
         ),
         p("Porównaj znak współczynnika długości dzioba i wyjaśnij, dlaczego się zmienił.")
       ),
-      lc_action("ch7_ans5a", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch7_sol5a")
+      lc_more("Rozwiązanie", uiOutput("ch7_sol5a"))
     ),
 
     figure_panel(
@@ -131,8 +125,7 @@ ch7_ui <- list(
         ),
         p("Narysuj przewidywane linie, sprawdź składniki interakcji i porównaj AIC.")
       ),
-      lc_action("ch7_ans5b", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch7_sol5b")
+      lc_more("Rozwiązanie", uiOutput("ch7_sol5b"))
     ),
 
     lc_h2("ch7-logistyczna", "Blok 4: regresja logistyczna"),
@@ -151,8 +144,7 @@ model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
           z 22 godzinami nauki i średnią 3.8, a potem porównaj decyzję
           przy progach 0.5 i 0.7.")
       ),
-      lc_action("ch7_ans6", "Pokaż rozwiązanie", variant = "solid"),
-      uiOutput("ch7_sol6")
+      lc_more("Rozwiązanie", uiOutput("ch7_sol6"))
     ),
 
     ch7_sat_ui(),
@@ -171,10 +163,6 @@ model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
 ch7_server <- function(input, output, session) {
 
   ch7_sat_server(input, output, session)
-
-  ch7_show <- function(id) {
-    isTruthy(input[[id]]) && input[[id]] > 0
-  }
 
   ch7_metric_row <- function(model, name) {
     g <- broom::glance(model)
@@ -203,13 +191,11 @@ ch7_server <- function(input, output, session) {
   }
 
   output$ch7_sol1 <- renderUI({
-    if (!ch7_show("ch7_ans1")) return(NULL)
-
     model <- lm(read ~ lunch, data = .cas_data)
     coefs <- coef(model)
     g <- broom::glance(model)
 
-    lc_feedback(type = "ok",
+    tagList(
       p("Równanie: ",
         tags$code(sprintf("read = %.2f %+ .2f * lunch", coefs[1], coefs[2]))),
       p("Interpretacja: wzrost odsetka uczniów z dotacją do obiadu o 1 punkt
@@ -223,13 +209,11 @@ ch7_server <- function(input, output, session) {
   })
 
   output$ch7_sol2 <- renderUI({
-    if (!ch7_show("ch7_ans2")) return(NULL)
-
     model <- lm(read ~ lunch, data = .cas_data)
     pred <- predict(model, newdata = data.frame(lunch = c(40, 110)))
     rng <- range(.cas_data$lunch, na.rm = TRUE)
 
-    lc_feedback(type = "warning",
+    tagList(
       p("Dla ", tags$code("lunch = 40"), " predykcja wynosi ",
         tags$b(sprintf("%.1f", pred[1])), " punktu."),
       p("Dla ", tags$code("lunch = 110"), " mechaniczna predykcja wynosi ",
@@ -241,8 +225,6 @@ ch7_server <- function(input, output, session) {
   })
 
   output$ch7_sol3 <- renderUI({
-    if (!ch7_show("ch7_ans3")) return(NULL)
-
     m1 <- lm(read ~ lunch, data = .cas_data)
     m2 <- lm(read ~ lunch + income, data = .cas_data)
     m3 <- lm(read ~ lunch + income + english + student_teacher_ratio, data = .cas_data)
@@ -259,7 +241,7 @@ ch7_server <- function(input, output, session) {
 
     tagList(
       ch7_table(metrics),
-      lc_feedback(type = "ok",
+      tagList(
         p("Najniższy AIC: ", tags$b(best_aic), ". Najniższy BIC: ",
           tags$b(best_bic), "."),
         p("Jeśli AIC i BIC wybierają ten sam model, decyzja jest prosta.
@@ -270,12 +252,10 @@ ch7_server <- function(input, output, session) {
   })
 
   output$ch7_sol4 <- renderUI({
-    if (!ch7_show("ch7_ans4")) return(NULL)
-
     model <- lm(read ~ income, data = .cas_data)
     g <- broom::glance(model)
 
-    lc_feedback(type = "info",
+    tagList(
       p("W R zacznij od:"),
       tags$pre(class = "lc-code-block",
         tags$code(
@@ -291,8 +271,6 @@ plot(model, which = 2)  # Q-Q plot")
   })
 
   output$ch7_sol5 <- renderUI({
-    if (!ch7_show("ch7_ans5")) return(NULL)
-
     simple <- lm(math ~ income, data = .cas_data)
     multi <- lm(math ~ lunch + income + english + student_teacher_ratio, data = .cas_data)
     simple_income <- coef(simple)[["income"]]
@@ -305,7 +283,7 @@ plot(model, which = 2)  # Q-Q plot")
 
     tagList(
       ch7_table(coefs[, c("term", "estimate", "std.error", "statistic", "p.value")]),
-      lc_feedback(type = "ok",
+      tagList(
         p("W modelu prostym wzrost dochodu o 1 tys. USD wiąże się ze zmianą
           wyniku matematyki o ", tags$b(sprintf("%.2f", simple_income)),
           " punktu."),
@@ -319,8 +297,6 @@ plot(model, which = 2)  # Q-Q plot")
   })
 
   output$ch7_sol5a <- renderUI({
-    if (!ch7_show("ch7_ans5a")) return(NULL)
-
     simple <- lm(bill_depth_mm ~ bill_length_mm, data = .penguins_data)
     controlled <- lm(
       bill_depth_mm ~ bill_length_mm + species,
@@ -329,8 +305,7 @@ plot(model, which = 2)  # Q-Q plot")
     b_simple <- coef(simple)[["bill_length_mm"]]
     b_controlled <- coef(controlled)[["bill_length_mm"]]
 
-    lc_feedback(
-      type = "ok",
+    tagList(
       p(
         "Bez gatunku nachylenie wynosi ",
         tags$strong(sprintf("%.3f", b_simple)),
@@ -345,8 +320,6 @@ plot(model, which = 2)  # Q-Q plot")
   })
 
   output$ch7_sol5b <- renderUI({
-    if (!ch7_show("ch7_ans5b")) return(NULL)
-
     additive <- lm(
       body_mass_g ~ flipper_length_mm + species,
       data = .penguins_data
@@ -377,8 +350,7 @@ plot(model, which = 2)  # Q-Q plot")
         p_value = signif(interaction_terms$p.value, 3),
         check.names = FALSE
       )),
-      lc_feedback(
-        type = "info",
+      tagList(
         "Model z interakcją pozwala na różne nachylenia, ale płaci za to",
         " dodatkowymi parametrami. Decyzję uzasadnij wykresem, pytaniem",
         " merytorycznym i zmianą jakości dopasowania."
@@ -387,8 +359,6 @@ plot(model, which = 2)  # Q-Q plot")
   })
 
   output$ch7_sol6 <- renderUI({
-    if (!ch7_show("ch7_ans6")) return(NULL)
-
     set.seed(42)
     df <- generate_logistic_data(220)
     model <- glm(zdal_num ~ godziny_nauki + srednia_ocen, data = df, family = binomial)
@@ -408,7 +378,7 @@ plot(model, which = 2)  # Q-Q plot")
 
     tagList(
       ch7_table(or_df),
-      lc_feedback(type = "ok",
+      tagList(
         p("Przewidywane prawdopodobieństwo zdania dla 22 godzin nauki i
           średniej 3.8 wynosi ", tags$b(sprintf("%.1f%%", 100 * prob)), "."),
         p("Decyzja przy progu 0.5: ", tags$b(decision_05),

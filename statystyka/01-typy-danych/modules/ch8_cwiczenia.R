@@ -168,8 +168,7 @@ ch8_ui <- list(
           Co byś użył/a zamiast tego?")
       )
     ),
-    lc_action("ch8_ans2", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol2")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol2"))
   ),
 
   lc_h2("ch8-blok2", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
@@ -193,8 +192,7 @@ ch8_ui <- list(
           tags$b("bezsensowne"), "? Podaj przykład.")
       )
     ),
-    lc_action("ch8_ans3", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol3")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol3"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -210,8 +208,7 @@ ch8_ui <- list(
       p(tags$em("Pytanie:"), " Dlaczego histogram dla ", tags$code("liczba_wypadkow"),
         " może być mylący? (Podpowiedź: ile różnych wartości ma ta zmienna?)")
     ),
-    lc_action("ch8_ans4", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol4")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol4"))
   ),
 
   lc_h2("ch8-blok3", "Blok 3: Analiza kompleksowa (45 min)"),
@@ -231,8 +228,7 @@ ch8_ui <- list(
       p(tags$em("Wskazówka:"), " W Jamovi możesz rozbić analizę na grupy przez ",
         tags$b("Split by"), " w Descriptives.")
     ),
-    lc_action("ch8_ans5", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol5")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol5"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -249,8 +245,7 @@ ch8_ui <- list(
         tags$li("Sformułuj rekomendację jednym zdaniem: która branża wymaga pilnej kontroli i dlaczego?")
       )
     ),
-    lc_action("ch8_ans6", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol6")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol6"))
   ),
 
   lc_h2("ch8-podsumowanie", "Podsumowanie"),
@@ -262,8 +257,7 @@ ch8_ui <- list(
       tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
     )
   ),
-  lc_action("ch8_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
-  uiOutput("ch8_sol_summary")
+  lc_more("Odpowiedzi", uiOutput("ch8_sol_summary"))
 )
 
 
@@ -310,8 +304,7 @@ ch8_ui <- list(
           Co byś użył/a zamiast tego?")
       )
     ),
-    lc_action("ch8_ans2", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol2")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol2"))
   ),
 
   lc_h2("ch8-blok2", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
@@ -333,8 +326,7 @@ ch8_ui <- list(
           tags$code("uprawa"), " w Jamovi? Czy program Ci na to pozwoli?")
       )
     ),
-    lc_action("ch8_ans3", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol3")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol3"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -350,8 +342,7 @@ ch8_ui <- list(
       p(tags$em("Pytanie:"), " Dlaczego wykres kołowy dla ",
         tags$code("uprawa"), " byłby złym wyborem, jeśli upraw jest 6+?")
     ),
-    lc_action("ch8_ans4", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol4")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol4"))
   ),
 
   lc_h2("ch8-blok3", "Blok 3: Analiza kompleksowa (45 min)"),
@@ -368,8 +359,7 @@ ch8_ui <- list(
         tags$li("Porównanie: plon wg klasy gleby (boxplot)")
       )
     ),
-    lc_action("ch8_ans5", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol5")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol5"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -384,8 +374,7 @@ ch8_ui <- list(
         tags$li("Sformułuj rekomendację: które pola wymagają uwagi i dlaczego?")
       )
     ),
-    lc_action("ch8_ans6", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol6")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol6"))
   ),
 
   lc_h2("ch8-podsumowanie", "Podsumowanie"),
@@ -397,8 +386,7 @@ ch8_ui <- list(
       tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
     )
   ),
-  lc_action("ch8_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
-  uiOutput("ch8_sol_summary")
+  lc_more("Odpowiedzi", uiOutput("ch8_sol_summary"))
 )
 
 
@@ -444,8 +432,7 @@ ch8_ui <- list(
         tags$li("Czy średnia z ", tags$code("klasa_jakosci"), " ma sens? Dlaczego?")
       )
     ),
-    lc_action("ch8_ans2", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol2")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol2"))
   ),
 
   lc_h2("ch8-blok2", "Blok 2: Dobór narzędzi statystycznych (25 min)"),
@@ -467,8 +454,7 @@ ch8_ui <- list(
           tags$code("typ_produktu"), ", ale które są bezsensowne?")
       )
     ),
-    lc_action("ch8_ans3", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol3")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol3"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -484,8 +470,7 @@ ch8_ui <- list(
       p(tags$em("Pytanie:"), " Gdybyś chciał/a porównać zawartość soli między typami produktów,
         jaki wykres byś wybrał/a?")
     ),
-    lc_action("ch8_ans4", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol4")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol4"))
   ),
 
   lc_h2("ch8-blok3", "Blok 3: Analiza kompleksowa (45 min)"),
@@ -502,8 +487,7 @@ ch8_ui <- list(
         tags$li("Porównanie: zawartość soli wg typu produktu (boxplot)")
       )
     ),
-    lc_action("ch8_ans5", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol5")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol5"))
   ),
 
   figure_panel(label = "Ćwiczenie",
@@ -520,8 +504,7 @@ ch8_ui <- list(
         tags$li("Sformułuj rekomendację: która linia wymaga korekty i dlaczego?")
       )
     ),
-    lc_action("ch8_ans6", "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput("ch8_sol6")
+    lc_more("Rozwiązanie", uiOutput("ch8_sol6"))
   ),
 
   lc_h2("ch8-podsumowanie", "Podsumowanie"),
@@ -533,8 +516,7 @@ ch8_ui <- list(
       tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
     )
   ),
-  lc_action("ch8_ans_summary", "Pokaż odpowiedzi", variant = "solid"),
-  uiOutput("ch8_sol_summary")
+  lc_more("Odpowiedzi", uiOutput("ch8_sol_summary"))
 )
 
 
@@ -686,27 +668,26 @@ source(file.path(app_dir, "modules", "ch8_sat.R"), local = TRUE)
 ch8_server <- function(input, output, session) {
 
   sol_ids <- c("sol1", "sol2", "sol3", "sol4", "sol5", "sol6", "sol_summary")
-  btn_ids <- c("ans1", "ans2", "ans3", "ans4", "ans5", "ans6", "ans_summary")
 
-  # Stan widocznosci
-  vis <- lapply(sol_ids, function(x) reactiveVal(FALSE))
-  names(vis) <- sol_ids
+  # Zadanie 1: przycisk odsłania odpowiedzi w tabeli widgetu.
+  table_revealed <- reactiveVal(FALSE)
+  observeEvent(input$ch8_ans1, {
+    table_revealed(!table_revealed())
+    updateActionButton(session, "ch8_ans1",
+      label = if (table_revealed()) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
+  }, ignoreInit = TRUE)
 
   output$ch8_table1 <- renderUI({
     k <- input$ch8_kierunek
     req(k %in% names(.ch8_task1_specs))
-    .ch8_task1_table(k, reveal = vis$sol1())
+    .ch8_task1_table(k, reveal = table_revealed())
   })
 
-  # Render tresci po zmianie kierunku + reset stanow
+  # Treść wariantu po zmianie kierunku.
   observeEvent(input$ch8_kierunek, {
     k <- input$ch8_kierunek
-
-    for (sid in sol_ids) vis[[sid]](FALSE)
-    for (bid in btn_ids) {
-      updateActionButton(session, paste0("ch8_", bid), label = "Pokaż rozwiązanie")
-    }
-
+    table_revealed(FALSE)
+    updateActionButton(session, "ch8_ans1", label = "Pokaż rozwiązanie")
     output$ch8_content <- renderUI({
       switch(k,
         bhp = .ch8_content_bhp(),
@@ -717,26 +698,11 @@ ch8_server <- function(input, output, session) {
     })
   }, ignoreNULL = FALSE)
 
-  # Helper toggle
-  .make_toggle <- function(sol_id_bare, sol_id_full, btn_id_full) {
-    observeEvent(input[[btn_id_full]], {
-      nowy_stan <- !vis[[sol_id_bare]]()
-      vis[[sol_id_bare]](nowy_stan)
-      updateActionButton(session, btn_id_full,
-        label = if (nowy_stan) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-    }, ignoreInit = TRUE)
-
-    output[[sol_id_full]] <- renderUI({
-      if (!vis[[sol_id_bare]]()) return(NULL)
-      k <- isolate(input$ch8_kierunek)
-      sol <- .ch8_solutions[[k]][[sol_id_bare]]
-      lc_feedback(type = "ok", style = "margin-top: 10px;", sol)
+  # Rozwiązania siedzą w lc_more(): Shiny renderuje je dopiero po rozwinięciu.
+  lapply(sol_ids, function(sid) {
+    output[[paste0("ch8_", sid)]] <- renderUI({
+      req(input$ch8_kierunek)
+      .ch8_solutions[[input$ch8_kierunek]][[sid]]
     })
-  }
-
-  mapply(.make_toggle,
-    sol_id_bare = sol_ids,
-    sol_id_full = paste0("ch8_", sol_ids),
-    btn_id_full = paste0("ch8_", btn_ids)
-  )
+  })
 }

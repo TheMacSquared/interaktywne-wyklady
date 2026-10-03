@@ -8,8 +8,7 @@
 .ch9_sat_exercise <- function(id, title, ...) {
   figure_panel(
     label = paste("Ćwiczenie S", id), h4(title), tagList(...),
-    lc_action(paste0("ch9_s_ans", id), "Pokaż rozwiązanie", variant = "solid"),
-    uiOutput(paste0("ch9_s_sol", id))
+    lc_more("Rozwiązanie", uiOutput(paste0("ch9_s_sol", id)))
   )
 }
 
@@ -60,25 +59,16 @@ ch9_sat_ui <- function() tagList(
 
 ch9_sat_server <- function(input, output, session) {
   d <- .ch9_sat_data
-  vis <- lapply(seq_len(6), function(i) reactiveVal(FALSE))
-
-  observeEvent(input$ch9_kierunek, {
-    lapply(vis, function(x) x(FALSE))
-    for (i in seq_len(6)) {
-      updateActionButton(session, paste0("ch9_s_ans", i), label = "Pokaż rozwiązanie")
-    }
-  }, ignoreInit = TRUE)
-
-  exercise_solution_toggle_server(input, output, session, "ch9_s_ans1", function() {
+  exercise_solution_server(output, "ch9_s_sol1", function() {
     r <- .ch9_t1(d$roznica_temp_c, mu = 0)
     tagList(
       .ch9_sol_t1(r, "μ różnicy = 0", "μ różnicy ≠ 0",
                   "różnica temperatur", 0, "°C"),
       p(sprintf("Średnia różnica %.2f°C wskazuje na przeciętne zawyżanie pomiaru.", r$m))
     )
-  }, visible = vis[[1]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_s_ans2", function() {
+  exercise_solution_server(output, "ch9_s_sol2", function() {
     x <- sum(d$pomiar_dostepny == "tak"); n <- nrow(d)
     bt <- binom.test(x, n, p = 0.75, alternative = "greater")
     tagList(
@@ -86,33 +76,33 @@ ch9_sat_server <- function(input, output, session) {
                 .ch9_fmt_p(bt$p.value))),
       .ch9_decision(bt$p.value)
     )
-  }, visible = vis[[2]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_s_ans3", function() {
+  exercise_solution_server(output, "ch9_s_sol3", function() {
     r <- .ch9_cor_test(d$zachmurzenie_pct, d$roznica_temp_c)
     tagList(
       .ch9_sol_cor(r, "zachmurzenie", "różnicy temperatur"),
       p("Korelacja opisuje związek. Bez planu eksperymentalnego i kontroli innych
          warunków nie dowodzi wyłącznej przyczyny.")
     )
-  }, visible = vis[[3]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_s_ans4", function() {
+  exercise_solution_server(output, "ch9_s_sol4", function() {
     r <- .ch9_t2(d$sat_temp_c, d$strefa)
     tagList(
       .ch9_sol_t2(r, "°C"),
       p("Różnica dotyczy związku strefy z temperaturą w danych obserwacyjnych,
          nie izolowanego efektu przyczynowego zabudowy.")
     )
-  }, visible = vis[[4]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_s_ans5", function() {
+  exercise_solution_server(output, "ch9_s_sol5", function() {
     r <- .ch9_chi2(table(strefa = d$strefa, dostepny = d$pomiar_dostepny))
     .ch9_sol_chi2(r)
-  }, visible = vis[[5]])
+  })
 
-  exercise_solution_toggle_server(input, output, session, "ch9_s_ans6", function() {
+  exercise_solution_server(output, "ch9_s_sol6", function() {
     r <- .ch9_anova_f(d$sat_temp_c, d$typ_pokrycia)
     .ch9_sol_anova(r, "temperatura (°C)")
-  }, visible = vis[[6]])
+  })
 }
