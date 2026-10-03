@@ -127,6 +127,21 @@ Etap 3 — przegląd widgetów wykład po wykładzie (commit per widget):
 - [ ] Legendy ggplot wychodzące poza wykres na telefonie (np. statystyka 01
   Ryc. 2.5) — poprawiać przy migracji danego widgetu.
 
+Etap 3, widgety krokowe (handoff „Widget krokowy v2”; pilot Ryc. 3.1 w
+statystyce 01 zrobiony). Dla każdego wybrać wzorzec: pasek z nazwami
+(`lc_step_widget()`) albo kropki (`lc_step_nav()`); kolory warstw według ról
+(`step_*` w `R/theme_upwr.R`), treść kroków bez zmian:
+
+- [ ] Statystyka 01 Ryc. 2.1 (tabela częstości): zostaje na kropkach czy pasek?
+- [ ] Statystyka 2: `01-symulacje-statystyczne/modules/ch3_bootstrap_jednopr.R`,
+  `ch4_permutacje.R` (kroki zależne od losowania: akcja w pasku, krok przez
+  `s$set()`; zaktualizować testy odwołujące się do `ch4_step()`),
+  `04-szeregi-czasowe/modules/ch3_trend.R`, `ch8_ar.R`.
+- [ ] Analiza ryzyka: `01-jezyk-ryzyka` (`venn_step`), `08-niezawodnosc-systemu`
+  (`s8_step`, cykliczny „Pokaż następny krok” → pasek kroków).
+- [ ] Wyszukać pozostałe widgety krokowe (`_step\d`, `reactiveVal(0)`, serie
+  przycisków „1. …, 2. …”).
+
 Etap 3, bloki tekstu (handoff „Bloki v2”; komponenty i zasady są już we
 wspólnym `R/`, margines boczny usunięty, dawne callouty renderują się jako
 `lc_note()`):
