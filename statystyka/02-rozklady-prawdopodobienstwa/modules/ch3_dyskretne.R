@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 3: Rozklady dyskretne
+# CHAPTER 3: Rozkłady dyskretne
 # ============================================================================
 
 ch3_ui <- list(
@@ -10,29 +10,59 @@ ch3_ui <- list(
       kicker = "Rozdział 03 · Rozkłady prawdopodobieństwa",
       num    = "03",
       title  = "Rozkłady dyskretne.",
-      lead   = "Wiemy już, czym jest wartość oczekiwana i wariancja.
-                Teraz poznamy cztery klasyczne rozkłady dyskretne i zobaczymy,
-                jak ich E(X) i Var(X) zależą od parametrów."
+      lead   = "Rzut kostką, orły w serii rzutów monetą, klienci w sklepie w ciągu
+                godziny, próby do pierwszego sukcesu. Za większością zliczeń stoi
+                jeden z czterech mechanizmów, a każdy z nich ma gotowy wzór
+                na prawdopodobieństwa, wartość oczekiwaną i wariancję."
     ),
 
     lc_h2("ch3-intro", "Rozkłady dyskretne"),
 
-    tagList(
-      p("Rozkład dyskretny opisuje zmienną, która przyjmuje ",
-        "skończoną lub przeliczalną liczbę wartości
-        (np. 0, 1, 2, 3...). Każdej wartości przypisujemy prawdopodobieństwo."),
-      p("Poznamy trzy najważniejsze:")
-    ),
+    lc_p("W poprzednim rozdziale wartość oczekiwaną i wariancję liczyliśmy
+      z tabeli: każdą możliwą wartość mnożyliśmy przez jej prawdopodobieństwo
+      i sumowaliśmy. Taką tabelę trzeba jednak najpierw mieć. Na szczęście wiele
+      zupełnie różnych sytuacji powstaje według tego samego schematu: liczba
+      orłów w rzutach monetą i liczba wadliwych sztuk w partii towaru różnią się
+      tylko liczbami, a nie mechanizmem. Wystarczy więc raz opisać mechanizm,
+      a konkretną sytuację wskazać kilkoma liczbami, które nazywamy parametrami
+      rozkładu."),
+
+    lc_p("W tym rozdziale zajmujemy się zmiennymi, które przyjmują wartości
+      oddzielone od siebie, najczęściej liczby całkowite 0, 1, 2, … W wykładzie
+      o typach danych nazywaliśmy je ",
+      gloss("zmienna dyskretna", "zmiennymi dyskretnymi"), ": powstają przez
+      liczenie, a nie przez pomiar. Rozkład takiej zmiennej opisuje ",
+      gloss("funkcja prawdopodobieństwa", "funkcja prawdopodobieństwa"),
+      " P(X = k), która każdej możliwej wartości k przypisuje jej
+      prawdopodobieństwo. Poznamy cztery klasyczne rozkłady: jednostajny,
+      dwumianowy, Poissona i geometryczny. Dla każdego zapytamy, w jakiej
+      sytuacji powstaje, jak wygląda jego funkcja prawdopodobieństwa i jak
+      E(X) oraz Var(X) zależą od parametrów."),
 
     # ========================================================================
-    # WIDGET 1: Rozklad jednostajny dyskretny
+    # WIDGET 1: Rozkład jednostajny dyskretny
     # ========================================================================
     lc_h2("ch3-jednostajny", "Rozkład jednostajny dyskretny"),
 
-    tagList(
-      p("Najprostszy rozkład: każdy wynik jest jednakowo prawdopodobny.
-        Przykłady: rzut kostką, losowanie cyfry, losowanie karty z talii.")
-    ),
+    lc_p("Najprostsza sytuacja to taka, w której żaden wynik nie jest
+      wyróżniony. Rzut symetryczną kostką, rzut monetą, losowanie numeru
+      z urny: zmienna przyjmuje wartości 1, 2, …, n i każda z nich ma tę samą
+      szansę. Taki rozkład nazywamy ",
+      gloss("rozkład jednostajny", "jednostajnym"), ". Jedynym parametrem
+      jest n, liczba możliwych wyników, a prawdopodobieństwo każdego wyniku
+      to po prostu 1/n."),
+
+    lc_formula_box(withMathJax(
+      "$$P(X = k) = \\frac{1}{n}, \\quad E(X) = \\frac{n+1}{2}, \\quad Var(X) = \\frac{n^2 - 1}{12}$$"
+    )),
+
+    lc_p("Dla zwykłej kostki n = 6, więc każda ściana ma prawdopodobieństwo
+      1/6 ≈ 0,167. Wartość oczekiwana wynosi (6 + 1)/2 = 3,5, czyli dokładnie
+      środek zakresu, a wariancja (36 − 1)/12 ≈ 2,92, co daje SD ≈ 1,71.
+      Te same liczby zwróci R: ", tags$code("mean(1:6)"), " daje 3,5,
+      a ", tags$code("sum((1:6 - 3.5)^2) / 6"), " daje 2,92. Panel poniżej
+      symuluje serię rzutów i porównuje częstości względne z teoretycznym
+      prawdopodobieństwem 1/n (linia przerywana)."),
 
     figure_panel(
       label = "Ryc. 3.1",
@@ -44,30 +74,53 @@ ch3_ui <- list(
                         "Kostka (6 wyników)" = "die",
                         "Kostka 12-ścienna" = "d12"), selected = "die"),
           lc_slider("ch3_unif_n", "Liczba prób", 10, 5000, 100, 10),
-          lc_action("ch3_unif_sim", "Symuluj!", variant = "solid")
+          lc_action("ch3_unif_sim", "Symuluj", variant = "solid")
         ),
         column(8,
           zoom_plot_ui("ch3_unif_plot", height = "350px")
         )
-      ),
-      lc_formula_box(
-        withMathJax(helpText(
-          "$$P(X = k) = \\frac{1}{n}, \\quad E(X) = \\frac{n+1}{2}, \\quad Var(X) = \\frac{n^2 - 1}{12}$$"
-        ))
       )
     ),
 
+    lc_p("Przy 100 rzutach słupki wyraźnie odstają od linii 1/6: jedne ściany
+      wypadają częściej, inne rzadziej, choć kostka jest uczciwa. Przy kilku
+      tysiącach rzutów wszystkie słupki układają się tuż przy linii. To ten sam
+      mechanizm, który w pierwszym rozdziale prowadził od częstości do
+      prawdopodobieństwa: rozkład teoretyczny opisuje, do czego zbliża się
+      histogram, gdy prób jest coraz więcej. Parametr n zmienia tylko liczbę
+      słupków i ich wysokość. Im więcej wyników, tym niższy każdy słupek
+      (1/2 dla monety, 1/12 dla kostki dwunastościennej), a wartość oczekiwana
+      przesuwa się do środka nowego zakresu: 1,5 dla monety z wynikami 1 i 2,
+      6,5 dla kostki dwunastościennej."),
+
     # ========================================================================
-    # WIDGET 2: Rozklad dwumianowy — scenariusze overlay
+    # WIDGET 2: Rozkład dwumianowy — scenariusze overlay
     # ========================================================================
     lc_h2("ch3-dwumianowy", "Rozkład dwumianowy (Binomial)"),
 
-    tagList(
-      p("Powtarzamy n niezależnych ", gloss("próba Bernoulliego", "prób"), ", każda z prawdopodobieństwem
-        sukcesu p. Liczymy, ile razy wystąpił sukces."),
-      p("Przykłady: ile orłów w 10 rzutach monetą? Ile wadliwych produktów
-        w partii? Ile poprawnych odpowiedzi na teście wielokrotnego wyboru?")
-    ),
+    lc_p("Rozkład jednostajny opisuje pojedynczy rzut. Częściej interesuje
+      nas jednak wynik całej serii: ile orłów wypadnie w 10 rzutach monetą,
+      ile osób z 20 zda egzamin, ile sztuk z partii 50 okaże się wadliwych.
+      Każde pojedyncze doświadczenie ma tu dwa wyniki, sukces albo porażkę,
+      i nazywamy je ", gloss("próba Bernoulliego", "próbą Bernoulliego"), ".
+      Liczba sukcesów w serii prób ma ",
+      gloss("rozkład dwumianowy", "rozkład dwumianowy"), " B(n, p), jeśli
+      spełnione są cztery warunki: liczba prób n jest ustalona z góry, każda
+      próba kończy się sukcesem albo porażką, prawdopodobieństwo sukcesu p
+      jest w każdej próbie takie samo, a próby są od siebie niezależne."),
+
+    lc_formula_box(withMathJax(
+      "$$P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k}, \\quad E(X) = np, \\quad Var(X) = np(1-p)$$"
+    )),
+
+    lc_p("Wzór czyta się w trzech kawałkach. Czynnik \\(p^k (1-p)^{n-k}\\) to
+      prawdopodobieństwo jednego konkretnego ciągu k sukcesów i n − k porażek.
+      Współczynnik \\(\\binom{n}{k}\\) liczy, na ile sposobów można rozmieścić
+      te k sukcesów wśród n prób. Dla 10 rzutów monetą prawdopodobieństwo
+      dokładnie 5 orłów wynosi \\(\\binom{10}{5} \\cdot 0{,}5^{10} = 252/1024 \\approx 0{,}246\\).
+      W R liczy to ", tags$code("dbinom(5, size = 10, prob = 0.5)"), ".
+      Wartość oczekiwana to 10 · 0,5 = 5 orłów, wariancja 10 · 0,5 · 0,5 = 2,5,
+      a SD ≈ 1,58. Na wykresie można nałożyć na siebie cztery scenariusze."),
 
     figure_panel(
       label = "Ryc. 3.2",
@@ -89,38 +142,49 @@ ch3_ui <- list(
           zoom_plot_ui("ch3_binom_plot", height = "400px"),
           uiOutput("ch3_binom_stats")
         )
-      ),
-      lc_formula_box(
-        withMathJax(helpText(
-          "$$P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k}, \\quad E(X) = np, \\quad Var(X) = np(1-p)$$"
-        ))
       )
     ),
 
-    inline_callout(
-      label = "Obserwacja",
-      "Porównaj scenariusze i zwróć uwagę, jak zmiana p przesuwa
-       rozkład, a wzrost n sprawia, że staje się coraz bardziej 'dzwonowaty'."
-    ),
-
-    inline_callout(
-      label = "Jak rozpoznać?",
-      tagList("Kiedy w zadaniu widzisz pytanie: ile z n... — mysl ", gloss("rozkład dwumianowy", "dwumianowy"), ".
-       Np. ile z 20 studentow zda egzamin? Kluczowe: ustalona liczba prob i dwa wyniki."),
-      color = "uwaga"
-    ),
+    lc_p("Rozkład B(10; 0,5) jest symetryczny wokół 5, bo przy p = 0,5 sukces
+      i porażka są zamienne. Trzy pierwsze scenariusze mają tę samą wartość
+      oczekiwaną: 10 · 0,5 = 20 · 0,25 = 50 · 0,1 = 5. Mimo to ich kształty
+      się różnią. Im mniejsze p, tym rozkład szerszy (SD rośnie od 1,58
+      przez 1,94 do 2,12) i tym wyraźniej wydłuża się jego prawy ogon. Wynika
+      to wprost ze wzoru na wariancję: przy tej samej wartości np czynnik
+      (1 − p) jest bliższy 1, gdy p jest małe. Scenariusz egzaminu to student,
+      który zgaduje odpowiedzi w teście z 20 pytaniami po 4 warianty. Zgadując,
+      zdobędzie przeciętnie 5 punktów, a szansa na co najmniej 10 wynosi tylko
+      1,4% (", tags$code("1 - pbinom(9, 20, 0.25)"), "). Scenariusz B(20; 0,7)
+      pokazuje sytuację odwrotną: przy p powyżej 0,5 środek przesuwa się
+      w prawo, do E(X) = 14, a dłuższy ogon pojawia się po lewej stronie."),
 
     # ========================================================================
-    # WIDGET 3: Rozklad Poissona — scenariusze overlay
+    # WIDGET 3: Rozkład Poissona — scenariusze overlay
     # ========================================================================
     lc_h2("ch3-poisson", "Rozkład Poissona"),
 
-    tagList(
-      p("Zliczamy zdarzenia zachodzące w ustalonym przedziale czasu lub przestrzeni.
-        Parametr λ (lambda) mówi, ile średnio zdarzeń oczekujemy w danym przedziale."),
-      p("Przykłady: liczba błędów na stronie, klientów w sklepie na godzinę,
-        wypadków na skrzyżowaniu w miesiącu.")
-    ),
+    lc_p("Rozkład dwumianowy wymaga, żebyśmy znali liczbę prób n. W wielu
+      zliczeniach jej nie ma. Ilu klientów wejdzie do sklepu w ciągu godziny?
+      Ile literówek znajdzie się na stronie tekstu? Potencjalnych klientów
+      są tysiące, a każdy z nich wchodzi z bardzo małym prawdopodobieństwem.
+      Nie znamy ani n, ani p, znamy tylko średnią liczbę zdarzeń w danym
+      przedziale. Tę jedną liczbę oznaczamy λ (lambda). Jeśli zdarzenia
+      zachodzą niezależnie od siebie, pojedynczo i ze stałym średnim tempem,
+      to liczba zdarzeń w ustalonym przedziale czasu lub przestrzeni ma ",
+      gloss("rozkład Poissona", "rozkład Poissona"), " Pois(λ)."),
+
+    lc_formula_box(withMathJax(
+      "$$P(X = k) = \\frac{\\lambda^k e^{-\\lambda}}{k!}, \\quad E(X) = \\lambda, \\quad Var(X) = \\lambda$$"
+    )),
+
+    lc_p("Rozkład Poissona to granica rozkładu dwumianowego, gdy n jest bardzo
+      duże, p bardzo małe, a iloczyn np = λ pozostaje stały. Dla B(1000; 0,002)
+      prawdopodobieństwo dokładnie 2 sukcesów wynosi 0,2709, a dla Pois(2)
+      0,2707 (", tags$code("dpois(2, lambda = 2)"), "). Rozkład nie ma górnej
+      granicy, bo k może być dowolnie duże, ale prawdopodobieństwa dużych
+      wartości szybko maleją. Dla λ = 2 szansa na zero zdarzeń wynosi
+      e⁻² ≈ 0,135, na co najwyżej 3 zdarzenia 0,857, a na 5 lub więcej
+      tylko 0,053."),
 
     figure_panel(
       label = "Ryc. 3.3",
@@ -142,37 +206,52 @@ ch3_ui <- list(
           zoom_plot_ui("ch3_pois_plot", height = "400px"),
           uiOutput("ch3_pois_stats")
         )
-      ),
-      lc_formula_box(
-        withMathJax(helpText(
-          "$$P(X = k) = \\frac{\\lambda^k e^{-\\lambda}}{k!}, \\quad E(X) = \\lambda, \\quad Var(X) = \\lambda$$"
-        ))
       )
     ),
 
-    inline_callout(
-      label = "Ciekawostka",
-      tagList("W ", gloss("rozkład Poissona", "rozkładzie Poissona"), " wartość oczekiwana = wariancja = λ.
-       Jeśli w danych średnia ≈ wariancja, to dobry kandydat na model Poissona!")
-    ),
+    lc_p("Parametr λ jednocześnie przesuwa i poszerza rozkład, bo wartość
+      oczekiwana i wariancja są równe λ. Przy λ = 0,5 najczęstszym wynikiem
+      jest zero (prawdopodobieństwo 0,61), a rozkład jest silnie prawoskośny.
+      Wraz ze wzrostem λ środek przesuwa się w prawo, SD = √λ rośnie od 0,71
+      do 3,16, a rozkład staje się coraz bardziej symetryczny. Równość
+      E(X) = Var(X) daje praktyczny test: jeśli w danych ze zliczeń średnia
+      jest zbliżona do wariancji, model Poissona jest dobrym kandydatem.
+      Jeśli wariancja jest wyraźnie większa, zdarzenia prawdopodobnie nie są
+      niezależne, na przykład pojawiają się seriami."),
 
-    inline_callout(
-      label = "Jak rozpoznać?",
-      "Kiedy w zadaniu widzisz pytanie: ile razy w ciagu... — mysl Poisson.
-       Kluczowe: zliczasz zdarzenia w ustalonym czasie lub przestrzeni, bez gornego limitu.",
-      color = "uwaga"
-    ),
+    lc_p("Związek z rozkładem dwumianowym widać, gdy obok scenariusza
+      „Klienci: λ = 5” postawić B(50; 0,1) z poprzedniego wykresu. Oba
+      rozkłady mają wartość oczekiwaną 5 i bardzo podobny kształt:
+      P(X = 5) wynosi 0,185 dla dwumianowego i 0,175 dla Poissona. Różnica
+      zmaleje, jeśli przy tym samym np = 5 zwiększymy n i zmniejszymy p."),
 
     # ========================================================================
-    # WIDGET 4: Rozklad geometryczny — scenariusze overlay
+    # WIDGET 4: Rozkład geometryczny — scenariusze overlay
     # ========================================================================
     lc_h2("ch3-geometryczny", "Rozkład geometryczny"),
 
-    tagList(
-      p("Powtarzamy próby aż do pierwszego sukcesu. Pytamy: ile prób to zajmie?"),
-      p("Przykłady: ile rzutów kostką do pierwszej szóstki?
-        Ile losowań do trafienia nagrody? Ile prób egzaminu do zdania?")
-    ),
+    lc_p("Rozkład dwumianowy i rozkład Poissona odpowiadają na pytanie „ile
+      sukcesów?”. Można zapytać odwrotnie: ile prób trzeba wykonać, żeby
+      doczekać się pierwszego sukcesu? Ile rzutów kostką do pierwszej
+      szóstki, ile wysłanych CV do pierwszego zaproszenia na rozmowę? Założenia
+      są te same co w rozkładzie dwumianowym, czyli niezależne próby
+      Bernoulliego ze stałym p, ale tym razem to liczba prób jest zmienną
+      losową, a liczba sukcesów jest ustalona i wynosi 1. Numer próby,
+      w której pada pierwszy sukces, ma ",
+      gloss("rozkład geometryczny", "rozkład geometryczny"), " Geom(p)."),
+
+    lc_formula_box(withMathJax(
+      "$$P(X = k) = (1-p)^{k-1} \\cdot p, \\quad E(X) = \\frac{1}{p}, \\quad Var(X) = \\frac{1-p}{p^2}$$"
+    )),
+
+    lc_p("Żeby pierwszy sukces padł w próbie k, najpierw musi się zdarzyć
+      k − 1 porażek, każda z prawdopodobieństwem 1 − p, a potem jeden sukces.
+      Dla kostki p = 1/6, więc przeciętnie czekamy 1/p = 6 rzutów, przy
+      SD ≈ 5,48. Szansa, że szóstka padnie w ciągu pierwszych sześciu rzutów,
+      wynosi 1 − (5/6)⁶ ≈ 0,665, a że nie padnie przez 10 rzutów,
+      (5/6)¹⁰ ≈ 0,162. W R trzeba uważać na konwencję: funkcja ",
+      tags$code("dgeom()"), " liczy porażki przed pierwszym sukcesem, a nie
+      numer próby, dlatego P(X = k) to ", tags$code("dgeom(k - 1, p)"), "."),
 
     figure_panel(
       label = "Ryc. 3.4",
@@ -194,38 +273,33 @@ ch3_ui <- list(
           zoom_plot_ui("ch3_geom_plot", height = "400px"),
           uiOutput("ch3_geom_stats")
         )
-      ),
-      lc_formula_box(
-        withMathJax(helpText(
-          "$$P(X = k) = (1-p)^{k-1} \\cdot p, \\quad E(X) = \\frac{1}{p}, \\quad Var(X) = \\frac{1-p}{p^2}$$"
-        ))
       )
     ),
 
-    inline_callout(
-      label = "Bezpamięciowość",
-      tagList("Im mniejsze p, tym dłużej (przeciętnie) czekamy na sukces.
-       ", gloss("rozkład geometryczny", "Rozkład geometryczny"), " jest ", gloss("bezpamięciowość", "bezpamięciowy"), " — szansa sukcesu w każdej próbie jest taka sama,
-       niezależnie od liczby dotychczasowych porażek.")
-    ),
+    lc_p("Każdy rozkład geometryczny ma najwyższy słupek przy k = 1, a kolejne
+      maleją, bo każda następna próba wymaga jeszcze jednej porażki więcej.
+      Parametr p decyduje o tym, jak szybko. Przy p = 0,5 słupki spadają
+      o połowę z każdym krokiem i przeciętnie czekamy 2 próby. Przy p = 0,05
+      spadek jest powolny, rozkład ma bardzo długi prawy ogon, a wartość
+      oczekiwana to 20 prób przy SD ≈ 19,5. Rzadkie zdarzenia oznaczają nie
+      tylko długie czekanie, ale też bardzo nieprzewidywalne."),
 
-    inline_callout(
-      label = "Jak rozpoznać?",
-      "Kiedy w zadaniu widzisz pytanie: ile prob az do... — mysl geometryczny.
-       Kluczowe: powtarzasz proby az do pierwszego sukcesu.",
-      color = "uwaga"
-    ),
+    lc_p("Rozkład geometryczny ma też nieintuicyjną własność, którą nazywamy ",
+      gloss("bezpamięciowość", "bezpamięciowością"), ". Jeśli w 10 rzutach
+      nie wypadła szóstka, to szansa na szóstkę w następnym rzucie nadal
+      wynosi 1/6, a oczekiwana liczba dalszych rzutów nadal wynosi 6.
+      Kostka nie pamięta wcześniejszych porażek i nie jest nam winna
+      szóstki."),
 
     # ========================================================================
-    # WIDGET 5: Porownanie czterech rozkladow
+    # WIDGET 5: Porównanie czterech rozkładów
     # ========================================================================
     lc_h2("ch3-porownanie", "Porównanie czterech rozkładów"),
 
-    tagList(
-      p("Zobaczmy wszystkie cztery rozkłady obok siebie. Zwróć uwagę na
-        różnice w kształtach i na to, kiedy rozkład dyskretny zaczyna
-        wyglądać jak gładki 'dzwon'.")
-    ),
+    lc_p("Cztery rozkłady różnią się mechanizmem, więc różnią się też
+      kształtem. Poniżej zestawiamy po jednym przedstawicielu każdego:
+      kostkę, B(20; 0,3), Pois(4) i Geom(0,2). Wartość oczekiwaną
+      i przedział ±1 SD można włączyć na wykresie."),
 
     figure_panel(
       label = "Ryc. 3.5",
@@ -235,6 +309,28 @@ ch3_ui <- list(
       checkboxInput("ch3_compare_show_sd", "Pokaż ± odchylenie standardowe (pas)", value = FALSE),
       lc_plot("ch3_compare_plot", ratio = "1.8/1", max_height = "350px")
     ),
+
+    lc_p("Rozkład jednostajny jest płaski: E(X) = 3,5 i SD ≈ 1,71.
+      Dwumianowy B(20; 0,3) ma kształt dzwonu z lekko wydłużonym prawym
+      ogonem, E(X) = 6 i SD ≈ 2,05. Poissona Pois(4) wygląda podobnie,
+      E(X) = 4 i SD = 2, ale jego prawy ogon nie ma końca. Geometryczny
+      Geom(0,2) maleje od pierwszej wartości. Ma E(X) = 5, ale SD ≈ 4,47,
+      czyli rozrzut prawie tak duży jak sama wartość oczekiwana. Pas ±1 SD
+      sięga przy nim poniżej 1, czyli poza możliwe wartości. To sygnał,
+      że przy silnie skośnych rozkładach sama para E(X) i SD nie opisuje
+      dobrze kształtu."),
+
+    inline_callout(
+      label = "Zasada",
+      "„Ile z n prób?” — dwumianowy. „Ile razy w ciągu godziny, na stronie,
+       w miesiącu?” — Poisson. „Ile prób aż do pierwszego sukcesu?” —
+       geometryczny. „Każdy wynik tak samo prawdopodobny?” — jednostajny."
+    ),
+
+    lc_p("Wszystkie cztery rozkłady opisują zliczenia, więc ich wartości są
+      liczbami całkowitymi. Czas oczekiwania, wzrost czy temperatura mogą
+      jednak przyjąć dowolną wartość z przedziału i do nich potrzebujemy
+      innego opisu."),
 
     lc_chapter_next(
       num       = "04",
@@ -350,7 +446,7 @@ ch3_server <- function(input, output, session) {
     selected <- input$ch3_pois_scenarios
     req(length(selected) > 0)
 
-    # Wspolny zakres x dla wszystkich scenariuszy
+    # Wspólny zakres x dla wszystkich scenariuszy
     x_max <- max(sapply(selected, function(id) qpois(0.999, ch3_pois_defs[[id]]$lambda)))
 
     dfs <- lapply(seq_along(selected), function(i) {
@@ -397,7 +493,7 @@ ch3_server <- function(input, output, session) {
     selected <- input$ch3_geom_scenarios
     req(length(selected) > 0)
 
-    # Wspolny zakres x, ograniczony do 40
+    # Wspólny zakres x, ograniczony do 40
     x_max <- min(40, max(sapply(selected, function(id) {
       qgeom(0.999, ch3_geom_defs[[id]]$p) + 1
     })))
@@ -442,7 +538,7 @@ ch3_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 5: Porownanie (bez zmian) ---
+  # --- Widget 5: Porównanie (bez zmian) ---
   zoom_plot_server("ch3_compare_plot", reactive({
     show_ev <- input$ch3_compare_show_ev
     show_sd <- input$ch3_compare_show_sd

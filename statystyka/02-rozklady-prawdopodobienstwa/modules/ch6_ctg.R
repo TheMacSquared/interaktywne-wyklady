@@ -10,25 +10,63 @@ ch6_ui <- list(
       kicker = "Rozdział 06 · Rozkłady prawdopodobieństwa",
       num    = "06",
       title  = "Centralne Twierdzenie Graniczne.",
-      lead   = "Rozkład normalny pojawia się wszędzie. Ale dlaczego?
-                Odpowiedź to jedno z najważniejszych twierdzeń w statystyce."
+      lead   = "Rozkład normalny pojawia się w danych zbyt często, żeby był to przypadek.
+                Wyjaśnia to centralne twierdzenie graniczne: średnia z wielu niezależnych
+                obserwacji ma rozkład bliski normalnemu, nawet gdy pojedyncze obserwacje
+                wyglądają zupełnie inaczej."
     ),
+
+    lc_p("W poprzednim rozdziale poznaliśmy rozkład normalny i nauczyliśmy się liczyć
+      z nim prawdopodobieństwa. Rozkłady z rozdziałów 3 i 4 — dwumianowy, Poissona,
+      wykładniczy — nie przypominają jednak dzwonu: są dyskretne, skośne albo
+      ograniczone z jednej strony. Mimo to w praktyce rozkład normalny opisuje
+      bardzo wiele zjawisk. W tym rozdziale zobaczymy, skąd się bierze: pojawia się
+      za każdym razem, gdy uśredniamy lub sumujemy wiele niezależnych wartości."),
 
     lc_h2("ch6-ctg", "Centralne Twierdzenie Graniczne (CTG)"),
 
-    tagList(
-      p(gloss("centralne twierdzenie graniczne", "Centralne Twierdzenie Graniczne"), " mówi, że:"),
-      lc_feedback(type = "ok",
-        tags$strong("CTG:"),
-        " Jeśli wezmiesz próbę n obserwacji z ", tags$b("dowolnego"),
-        " rozkładu (o skończonej ", gloss("wariancja", "wariancji"), ") i obliczysz średnią,
-        to rozkład tej średniej będzie zbiegał do ", tags$b("normalnego"),
-        " wraz ze wzrostem n."
-      ),
-      p("To wyjaśnia, dlaczego ", gloss("rozkład normalny"), " jest wszędzie — wiele
-        zjawisk naturalnych to suma wielu drobnych, niezależnych czynników.
-        Zobaczmy to na własne oczy!")
-    ),
+    lc_p("W rozdziale 2 średnia z próby x̄ była przybliżeniem wartości oczekiwanej E(X),
+      które poprawia się wraz ze wzrostem próby. Średnia z konkretnej próby jest jednak
+      wynikiem losowania: druga próba z tej samej ",
+      gloss("populacja", "populacji"), " da trochę inną średnią, trzecia jeszcze inną.
+      Średnia z próby jest więc zmienną losową i ma własny rozkład. Rozkład, w jaki
+      układają się średnie z wielu prób tej samej wielkości n, nazywamy ",
+      gloss("rozkład próbkowy", "rozkładem próbkowym"), " średniej."),
+
+    lc_p("Dwie własności tego rozkładu wynikają wprost z rachunku wartości oczekiwanej
+      i ", gloss("wariancja", "wariancji"), ". Jeśli pojedyncza obserwacja ma wartość
+      oczekiwaną μ i odchylenie standardowe σ, a obserwacje w próbie są niezależne, to:"),
+
+    lc_formula_box(withMathJax(
+      "$$E(\\bar{X}) = \\mu, \\qquad SE = SD(\\bar{X}) = \\frac{\\sigma}{\\sqrt{n}}$$"
+    )),
+
+    lc_p("Średnie z prób skupiają się więc wokół tej samej wartości μ co pojedyncze
+      obserwacje, ale są mniej rozproszone. Odchylenie standardowe średniej nazywamy ",
+      gloss("błąd standardowy", "błędem standardowym"), " (SE). Maleje ono jak 1/√n,
+      a nie jak 1/n: żeby zmniejszyć SE o połowę, trzeba czterokrotnie zwiększyć próbę.
+      Oba wzory obowiązują dla każdego n i każdego rozkładu populacji."),
+
+    lc_p("Wzory mówią, gdzie leży środek rozkładu średniej i jak jest szeroki, ale nie
+      mówią nic o jego kształcie. Kształt opisuje ",
+      gloss("centralne twierdzenie graniczne"), " (CTG). Jeśli obserwacje
+      X₁, X₂, …, Xₙ są niezależne, pochodzą z tego samego rozkładu i ten rozkład ma
+      skończoną wariancję σ², to wraz ze wzrostem n rozkład średniej X̄ zbliża się do
+      rozkładu normalnego o średniej μ i odchyleniu standardowym σ/√n:"),
+
+    lc_formula_box(withMathJax(
+      "$$\\bar{X}_n \\xrightarrow{d} N\\left(\\mu, \\frac{\\sigma}{\\sqrt{n}}\\right) \\quad \\text{dla } n \\to \\infty$$"
+    )),
+
+    lc_p("Najważniejsze jest to, czego twierdzenie nie wymaga: rozkład pojedynczej
+      obserwacji może być dowolny — skośny, dyskretny, dwumodalny. Warunki dotyczą
+      czego innego. Niezależność łamią na przykład pomiary tej samej osoby powtarzane
+      w czasie. Skończona wariancja wyklucza rozkłady o tak ciężkich ogonach, że
+      jedna obserwacja potrafi zdominować całą sumę; dane z pomiarów i ankiet spełniają
+      ten warunek niemal zawsze."),
+
+    lc_p("Film wprowadzający poniżej omawia twierdzenie, a w kolejnych sekcjach
+      sprawdzimy je w symulacjach."),
 
     figure_panel(
       label = "Film",
@@ -45,9 +83,16 @@ ch6_ui <- list(
     ),
 
     # ========================================================================
-    # WIDGET 1: Eksperyment CLT (kluczowy!)
+    # WIDGET 1: Eksperyment CTG (kluczowy)
     # ========================================================================
-    lc_h2("ch6-eksperyment", "Eksperyment CLT"),
+    lc_h2("ch6-eksperyment", "Eksperyment: średnie z dowolnego rozkładu"),
+
+    lc_p("Twierdzenie najłatwiej sprawdzić, powtarzając losowanie wiele razy. Panel
+      poniżej losuje próby z wybranej populacji, której rozkład widać na górnym
+      wykresie. Z każdej próby liczy jedną średnią i odkłada ją na dolnym histogramie.
+      Przerywana linia zaznacza μ, a od 30 zebranych średnich panel dorysowuje
+      krzywą N(μ, σ/√n), czyli kształt przewidziany przez CTG. Zmiana rozkładu
+      lub n czyści zebrane średnie."),
 
     figure_panel(
       label = "Ryc. 6.1",
@@ -85,21 +130,32 @@ ch6_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Aha-moment",
-      "Zmień rozkład na najbardziej 'dziki' (U-kształtny, dwumodalny),
-       pobierz 1000 prób — histogram średnich i tak stanie się dzwonem!"
-    ),
+    lc_p("Przy ustawieniach startowych populacja ma rozkład wykładniczy z μ = 2
+      i σ = 2, a próby liczą n = 5 obserwacji. Wzory przewidują, że średnie skupią się
+      wokół 2, z odchyleniem standardowym 2/√5 ≈ 0,89. Po zebraniu 1000 średnich SD
+      z symulacji wypada blisko tej wartości. Histogram średnich jest jednak nadal
+      wyraźnie prawoskośny: przy tak skośnej populacji pięć obserwacji to za mało,
+      żeby kształt był normalny. Gdy n rośnie, asymetria stopniowo słabnie."),
+
+    lc_p("Najbardziej przekonujące są populacje, które z dzwonem nie mają nic wspólnego.
+      W rozkładzie U-kształtnym wartości ze środka są najrzadsze, a mimo to średnie
+      z prób gromadzą się właśnie w środku, bo do średniej trafiają naraz wartości
+      z obu krańców. Dla populacji symetrycznych — jednostajnej, dwumodalnej,
+      U-kształtnej i kostki — histogram średnich przypomina dzwon już przy małych
+      próbach."),
 
     # ========================================================================
-    # WIDGET 2: Wplyw wielkosci proby
+    # WIDGET 2: Wpływ wielkości próby
     # ========================================================================
     lc_h2("ch6-wielkosc-proby", "Wpływ wielkości próby"),
 
-    tagList(
-      p("Im większa próba n, tym szybciej ", gloss("rozkład próbkowy", "rozkład średnich"), " staje się
-        normalny. Zobaczmy to porównując różne n obok siebie.")
-    ),
+    lc_p("CTG opisuje granicę, do której zmierza rozkład średniej, gdy n rośnie.
+      W praktyce mamy konkretne n i potrzebujemy wiedzieć, czy jest wystarczająco duże,
+      żeby przybliżenie normalne było dobre. Odpowiedź zależy od kształtu rozkładu
+      wyjściowego, przede wszystkim od jego ",
+      gloss("skośność", "skośności"), ". Panel poniżej zestawia po 2000 średnich dla
+      n = 1, 5, 30 i 100 z krzywą normalną przewidzianą przez CTG. Każdy panel ma
+      własną skalę osi, więc porównujemy kształt, a nie szerokość."),
 
     figure_panel(
       label = "Ryc. 6.2",
@@ -116,10 +172,40 @@ ch6_ui <- list(
       lc_plot("ch6_effect_plot", ratio = "1.8/1", max_height = "350px")
     ),
 
+    lc_p("Dla rozkładu jednostajnego, który jest symetryczny, histogram pokrywa się
+      z krzywą już przy n = 5. Rozkład wykładniczy ma skośność 2, a skośność średniej
+      maleje jak 2/√n: wynosi 0,89 dla n = 5, 0,37 dla n = 30 i 0,20 dla n = 100.
+      Asymetria słabnie więc powoli i najdłużej widać ją w ogonach."),
+
+    lc_p("Dobrze to widać na konkretnym prawdopodobieństwie. W rozkładzie normalnym
+      przedział μ ± 1,96·SE obejmuje dokładnie 95% wartości, po 2,5% zostaje
+      w każdym ogonie (to dokładniejsza wersja reguły 68–95–99,7 z rozdziału 5).
+      Dla średnich z rozkładu wykładniczego przy n = 5 powyżej górnej granicy leży
+      4,3% średnich, a poniżej dolnej tylko 0,04%. Przy n = 30 jest to 3,4% i 1,4%,
+      przy n = 100 — 3,0% i 1,9%. Łącznie poza przedziałem leży za każdym razem
+      od 4,4% do 4,9% średnich, blisko 5%, ale podział między ogonami wyrównuje się
+      dopiero przy dużych n."),
+
+    inline_callout(
+      label = "Zasada",
+      "Nie ma jednej liczby obserwacji, od której przybliżenie normalne zaczyna
+       działać. Im bardziej skośny rozkład wyjściowy, tym większej próby potrzeba:
+       dla rozkładów symetrycznych wystarcza niewiele obserwacji, a przy silnej
+       skośności (dochody, czasy oczekiwania) znacznie więcej."
+    ),
+
     # ========================================================================
-    # WIDGET 3: Dlaczego to dziala?
+    # WIDGET 3: Dlaczego to działa
     # ========================================================================
     lc_h2("ch6-dlaczego", "Dlaczego to działa? — intuicja"),
+
+    lc_p("Mechanizm stojący za CTG jest prosty. Pojedyncza obserwacja z rozkładu
+      wykładniczego bywa bardzo duża, bo prawy ogon jest długi. Żeby duża była średnia
+      z kilku obserwacji, duże musiałyby być prawie wszystkie naraz, a to zdarza się
+      rzadko. Zwykle wartości duże mieszają się z małymi i odchylenia w przeciwne
+      strony się znoszą. Im więcej obserwacji uśredniamy, tym silniej to działa.
+      Kroki poniżej pokazują 5000 średnich z rozkładu wykładniczego (μ = 2, σ = 2)
+      dla n = 1, 2, 5 i 30, na wspólnych osiach."),
 
     figure_panel(
       label = "Ryc. 6.3",
@@ -131,22 +217,22 @@ ch6_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Kluczowa intuicja",
-      "Uśrednianie 'wygładza' indywidualne dziwactwa. Ekstrema w jednym
-       kierunku są niwelowane przez ekstrema w drugim. Im więcej uśredniamy,
-       tym bliżej środka lądujemy.",
-      color = "ok"
-    ),
+    lc_p("Kolejne kroki pokazują jednocześnie oba skutki uśredniania. Rozkład się zwęża:
+      SE spada z 2 dla pojedynczej obserwacji do 1,41 dla n = 2, 0,89 dla n = 5
+      i 0,37 dla n = 30. I symetryzuje się: długi prawy ogon skraca się, lewa strona
+      się wypełnia, a przy n = 30 krzywa normalna pasuje do histogramu niemal dokładnie."),
 
-    lc_formula_box(
-      withMathJax(helpText(
-        "$$\\bar{X}_n \\xrightarrow{d} N\\left(\\mu, \\frac{\\sigma}{\\sqrt{n}}\\right)$$"
-      )),
-      p(style = "font-size: 13px; color: var(--upwr-reference);",
-        "Rozkład średniej ma tę samą średnią μ co populacja, ale
-         odchylenie standardowe maleje jak 1/√n.")
-    ),
+    lc_p("To samo dotyczy sum, bo suma n obserwacji to n razy ich średnia. Dlatego
+      rozkład normalny opisuje tak wiele zjawisk: wzrost człowieka, błąd pomiaru czy
+      plon z pola są wynikiem wielu drobnych, w przybliżeniu niezależnych wpływów,
+      które się sumują. Żaden z tych wpływów nie musi mieć rozkładu normalnego,
+      normalny jest dopiero ich łączny efekt."),
+
+    lc_p("W praktyce mamy zwykle jedną próbę i jedną średnią, a μ nie znamy. CTG mówi,
+      jak daleko ta średnia może leżeć od μ: w około 95% prób nie dalej niż 1,96·SE.
+      Odwrócenie tego zdania — od średniej z próby do zakresu wiarygodnych wartości μ —
+      daje ", gloss("przedział ufności"), ", któremu poświęcony jest wykład 03.
+      Zobaczymy tam też, co zrobić, gdy σ również trzeba oszacować z danych."),
 
     lc_chapter_next(
       num       = "07",
@@ -163,7 +249,7 @@ ch6_ui <- list(
 
 ch6_server <- function(input, output, session) {
 
-  # --- Widget 1: Eksperyment CLT ---
+  # --- Widget 1: Eksperyment CTG ---
   collected_means <- reactiveVal(numeric(0))
 
   take_samples <- function(k) {
@@ -181,7 +267,7 @@ ch6_server <- function(input, output, session) {
   observeEvent(input$ch6_take_1000, take_samples(1000))
   observeEvent(input$ch6_reset, collected_means(numeric(0)))
 
-  # Reset przy zmianie rozkladu lub n
+  # Reset przy zmianie rozkładu lub n
   observeEvent(c(input$ch6_pop_dist, input$ch6_sample_size), {
     collected_means(numeric(0))
   })
@@ -200,18 +286,14 @@ ch6_server <- function(input, output, session) {
       ggplot(df, aes(x = factor(x), y = prob)) +
         geom_col(fill = unname(upwr_cat["bursztyn"]), color = "white", alpha = 0.85, width = 0.6) +
         scale_y_continuous(limits = c(0, 0.3), expand = expansion(mult = c(0, 0))) +
-        labs(
-             
-             x = "", y = "P(X=k)") +
+        labs(x = "", y = "P(X = k)") +
         theme_upwr(base_size = 11)
     } else {
       data <- generate_population_sample(dist, 10000)
       df <- data.frame(x = data)
       ggplot(df, aes(x = x)) +
         geom_density(fill = unname(upwr_cat["bursztyn"]), color = upwr_secondary, alpha = 0.5, linewidth = 0.8) +
-        labs(
-             
-             x = "", y = "Gęstość") +
+        labs(x = "", y = "Gęstość") +
         theme_upwr(base_size = 11)
     }
   }))
@@ -222,7 +304,7 @@ ch6_server <- function(input, output, session) {
     if (length(means) == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij 'Pobierz próbę', aby rozpocząć",
+                 label = "Kliknij „Pobierz 1 próbę”, aby rozpocząć",
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {
@@ -252,9 +334,7 @@ ch6_server <- function(input, output, session) {
       }
 
       p + geom_vline(xintercept = theo_mu, color = unname(upwr_cat["terakota"]), linetype = "dashed") +
-        labs(
-             
-             x = "Średnia z próby", y = "Gęstość") +
+        labs(x = "Średnia z próby", y = "Gęstość") +
         theme_upwr()
     }
   }))
@@ -279,7 +359,7 @@ ch6_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 2: Wplyw wielkosci proby ---
+  # --- Widget 2: Wpływ wielkości próby ---
   zoom_plot_server("ch6_effect_plot", reactive({
     dist <- input$ch6_effect_dist
     params <- get_population_params(dist)
@@ -313,12 +393,11 @@ ch6_server <- function(input, output, session) {
       geom_line(data = norm_data, aes(x = x, y = y),
                 color = unname(upwr_cat["terakota"]), linewidth = 1.2) +
       facet_wrap(~n_label, scales = "free") +
-      labs(
-           x = "Średnia z próby", y = "Gęstość") +
+      labs(x = "Średnia z próby", y = "Gęstość") +
       theme_upwr(base_size = 12)
   }))
 
-  # --- Widget 3: Dlaczego to dziala? ---
+  # --- Widget 3: Dlaczego to działa ---
   # Krok widgetu (1..4) żyje w przeglądarce.
   ch6_why_step <- lc_step_server("ch6_why", input)$step
   ch6_why_n <- c(1, 2, 5, 30)
@@ -360,10 +439,10 @@ ch6_server <- function(input, output, session) {
   output$ch6_why_text <- renderUI({
     step <- ch6_why_step()
     texts <- list(
-      "Pojedyncza obserwacja z rozkładu wykładniczego — wyraźnie prawoskośny!",
-      "Średnia z 2: już mniej skrajnych wartości, lewa strona zaczyna się wypełniać.",
-      "Średnia z 5: kształt staje się bardziej symetryczny. Ekstrema się niwelują.",
-      "Średnia z 30: praktycznie normalny! Krzywa gaussowska pasuje niemal idealnie."
+      "Pojedyncza obserwacja z rozkładu wykładniczego: silnie prawoskośna, SD = σ = 2.",
+      "Średnia z 2: mniej skrajnych wartości, lewa strona zaczyna się wypełniać. SE ≈ 1,41.",
+      "Średnia z 5: kształt bardziej symetryczny, prawy ogon wciąż dłuższy. SE ≈ 0,89.",
+      "Średnia z 30: krzywa normalna pasuje niemal dokładnie. SE ≈ 0,37."
     )
     texts[[step]]
   })

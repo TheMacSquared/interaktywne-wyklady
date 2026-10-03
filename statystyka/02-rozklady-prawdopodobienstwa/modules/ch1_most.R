@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 1: Od danych do prawdopodobienstwa
+# CHAPTER 1: Od danych do prawdopodobieństwa
 # ============================================================================
 
 ch1_ui <- list(
@@ -10,21 +10,44 @@ ch1_ui <- list(
       kicker = "Rozdział 01 · Rozkłady prawdopodobieństwa",
       num    = "01",
       title  = "Od danych do prawdopodobieństwa.",
-      lead   = "W statystyce opisowej nauczyliśmy się liczyć częstości, obliczać
-                średnie i rysować histogramy. Teraz zobaczymy, jak częstości względne
-                zbiegają do prawdopodobieństw i czym jest rozkład prawdopodobieństwa."
+      lead   = "Histogram z ankiety opisuje dwustu konkretnych studentów. Żeby
+                powiedzieć coś o następnym, potrzebujemy modelu: reguły, która
+                mówi, jak często pojawia się każdy wynik. Taką regułą jest rozkład
+                prawdopodobieństwa, a częstości z danych są jego przybliżeniem."
     ),
 
+    lc_p("W poprzednim wykładzie opisywaliśmy dane z ankiety: liczyliśmy
+      częstości względne kategorii, rysowaliśmy histogramy, obliczaliśmy
+      średnią i odchylenie standardowe. Wszystkie te liczby dotyczą jednej
+      konkretnej próby. Inna grupa studentów dałaby trochę inne wyniki.
+      W tym rozdziale przechodzimy od opisu danych do modelu, który je
+      wytwarza. Zaczniemy od rzutów kostką, bo tam model znamy z góry
+      i możemy sprawdzić, jak dane się do niego zbliżają."),
+
     # ========================================================================
-    # WIDGET 1: Stabilizacja czestosci (rzut kostka)
+    # WIDGET 1: Stabilizacja częstości (rzut kostką)
     # ========================================================================
     lc_h2("ch1-pwl", "Prawo wielkich liczb w akcji"),
 
-    tagList(
-      p("Wyobraź sobie, że rzucasz kostką. Jak często wypada każda ścianka?
-        Przy kilku rzutach wyniki są chaotyczne, ale im więcej rzutów,
-        tym ", gloss("częstość względna", "częstości względne"), " stają się bardziej stabilne.")
-    ),
+    lc_p("Wynik rzutu kostką oznaczmy literą \\(X\\). To ",
+      gloss("zmienna losowa"), ": jej wartość zależy od przypadku, a przed
+      rzutem znamy tylko możliwe wyniki, od 1 do 6. Dla uczciwej kostki każda
+      ścianka ma tę samą szansę, więc \\(P(X = k) = 1/6 \\approx 0{,}167\\)
+      dla każdego \\(k\\). Po \\(n\\) rzutach możemy policzyć, ile razy wypadła
+      ścianka \\(k\\), i obliczyć ",
+      gloss("częstość względna", "częstość względną"), " \\(n_k / n\\),
+      dokładnie tak jak w tabeli częstości z poprzedniego wykładu.
+      ", gloss("prawo wielkich liczb", "Prawo wielkich liczb"), " mówi, że
+      wraz ze wzrostem liczby rzutów częstość względna zbliża się do
+      prawdopodobieństwa."),
+
+    lc_formula_box(withMathJax(
+      "$$\\frac{n_k}{n} \\;\\longrightarrow\\; P(X = k) \\qquad \\text{gdy } n \\to \\infty$$"
+    )),
+
+    lc_p("Panel rzuca wirtualną kostką. Lewy wykres pokazuje częstości
+      względne wszystkich ścianek na tle linii 1/6, prawy — jak zmieniała
+      się częstość każdej ścianki w miarę dokładania rzutów."),
 
     figure_panel(
       label = "Ryc. 1.1",
@@ -48,28 +71,46 @@ ch1_ui <- list(
       )
     ),
 
-    lc_feedback(type = "info",
-      tags$strong(gloss("prawo wielkich liczb", "Prawo wielkich liczb"), ":"),
-      " Wraz ze wzrostem liczby obserwacji, częstość względna każdego
-        wyniku zbiega do jego prawdopodobieństwa teoretycznego.
-        Dla uczciwej kostki każda ścianka ma P = 1/6 ≈ 0.167."
-    ),
+    lc_p("Po kilku rzutach częstości są chaotyczne: jedna ścianka może nie
+      wypaść ani razu, inna kilka razy z rzędu. Linie na prawym wykresie
+      skaczą najpierw gwałtownie, a potem coraz spokojniej zbliżają się do
+      1/6. Wielkość tych wahań da się policzyć. Przy 10 rzutach częstość
+      ścianki odchyla się od 1/6 typowo o około 0,12, czyli prawie o tyle,
+      ile wynosi samo prawdopodobieństwo. Przy 100 rzutach typowe odchylenie
+      spada do 0,037, przy 1000 do 0,012, a przy 10 000 do 0,004. Stukrotnie
+      więcej rzutów daje dziesięciokrotnie mniejszy błąd."),
+
+    lc_p("Prawo wielkich liczb nie mówi, że kostka „wyrównuje” wyniki. Jeśli
+      szóstka długo nie wypadała, w kolejnym rzucie nadal ma szansę 1/6.
+      Częstość zbliża się do prawdopodobieństwa dlatego, że początkowe
+      nadwyżki i niedobory toną w coraz większej liczbie rzutów, a nie
+      dlatego, że ktoś je odrabia."),
 
     # ========================================================================
-    # WIDGET 0: Rozklad empiryczny vs teoretyczny
+    # WIDGET 0: Rozkład empiryczny vs teoretyczny
     # ========================================================================
     lc_h2("ch1-rozklad-emp", "Rozkład empiryczny vs teoretyczny"),
 
-    tagList(
-      p("Kostka to prosty przykład, ale ten sam mechanizm działa dla każdej
-        ", gloss("zmienna losowa", "zmiennej losowej"), ". Znasz już ", gloss("histogram"), " — pokazuje, jak często dane
-        przyjmują różne wartości. To jest ", tags$b(gloss("rozkład empiryczny")),
-        " — oparty na obserwacjach."),
-      p("A gdybyśmy znali ", tags$b("regułę generującą dane"),
-        "? Wtedy zamiast histogramu mielibyśmy gładką krzywą — ",
-        tags$b(gloss("rozkład teoretyczny")),
-        ". Zobaczmy, jak jedno przechodzi w drugie.")
-    ),
+    lc_p("Częstości policzone z danych, czy to dla ścianek kostki, grup krwi,
+      czy przedziałów wzrostu, tworzą ", gloss("rozkład empiryczny"), ": opis
+      tego, jak często każda wartość pojawiła się w zebranej próbie. Jego
+      odpowiednikiem po stronie modelu jest ", gloss("rozkład teoretyczny"),
+      ": reguła, która każdej możliwej wartości przypisuje prawdopodobieństwo.
+      Model może dotyczyć zmiennej dowolnego typu. Dla uczciwej kostki są to
+      prawdopodobieństwa 1/6, dla grupy krwi udziały grup w populacji, a dla
+      wzrostu krzywa opisana wzorem i kilkoma parametrami."),
+
+    lc_p("Dla zmiennych o kilku wartościach oba rozkłady porównujemy słupek po
+      słupku, tak jak przy kostce. Zmienne ciągłe, takie jak wzrost czy czas
+      dojazdu, przyjmują wartości z całego przedziału. Rozkład empiryczny
+      pokazuje dla nich ", gloss("histogram"), ", a teoretyczny gładka krzywa
+      gęstości. Żeby dały się porównać, oba rysujemy w skali gęstości: łączne
+      pole słupków histogramu wynosi 1 i tak samo pole pod krzywą. Wtedy pole
+      nad dowolnym przedziałem odpowiada odsetkowi obserwacji w tym przedziale.
+      Krzywym gęstości przyjrzymy się dokładniej w rozdziale 4."),
+
+    lc_p("Panel losuje próbę z jednego z trzech modeli i rysuje jej
+      histogram. Krzywą modelu można nałożyć na histogram."),
 
     figure_panel(
       label = "Ryc. 1.2",
@@ -92,33 +133,44 @@ ch1_ui <- list(
           checkboxInput("ch1_show_density", "Krzywa gęstości (model teoretyczny)", value = FALSE)
         ),
         column(8,
-          zoom_plot_ui("ch1_emp_vs_theo", height = "380px"),
-          uiOutput("ch1_emp_text")
+          zoom_plot_ui("ch1_emp_vs_theo", height = "380px")
         )
       )
     ),
 
-    inline_callout(
-      label = "Kluczowa idea",
-      tagList(
-        "Włącz obie warstwy i zwiększaj próbę. Im więcej danych,
-        tym lepiej histogram przybliża krzywą.
-        Rozkład teoretyczny to ", tags$b("ideał"), " — dane to jego ",
-        tags$b("niedoskonałe odbicie"), "."
-      )
-    ),
+    lc_p("Wzrost losujemy z rozkładu normalnego o średniej 170 cm
+      i odchyleniu standardowym 8 cm. To wartości bliskie tym z ankiety,
+      gdzie średni wzrost wynosił 171,1 cm, a odchylenie standardowe 8,1 cm.
+      Według modelu 68% osób ma od 162 do 178 cm. Czas dojazdu pochodzi
+      z rozkładu skośnego, tego samego, z którego wygenerowano dane ankiety.
+      Model ma średnią 35 min i medianę 31,7 min, a w ankiecie wyszło
+      35,7 i 32,9 min. Model przewiduje, że 8,8% osób dojeżdża dłużej niż
+      godzinę. W ankiecie takich osób było 19 na 200, czyli 9,5%."),
+
+    lc_p("Przy próbie liczącej 200 obserwacji histogram ma zarys krzywej,
+      ale jest poszarpany, a każde nowe losowanie zmienia wysokość słupków.
+      Przy kilku tysiącach obserwacji słupki układają się niemal dokładnie
+      pod krzywą i kolejne losowania prawie się od siebie nie różnią. To samo
+      prawo wielkich liczb co przy kostce, tylko zastosowane do przedziałów
+      zamiast pojedynczych ścianek. Rozkład teoretyczny jest ideałem, a dane
+      są jego niedoskonałym odbiciem, tym wierniejszym, im większa próba."),
 
     # ========================================================================
-    # WIDGET 2: Czestosci vs prawdopodobienstwo
+    # WIDGET 2: Częstości vs prawdopodobieństwo
     # ========================================================================
     lc_h2("ch1-czestosci", "Częstości vs prawdopodobieństwo"),
 
-    tagList(
-      p("Prawdopodobieństwo to ", tags$b("teoretyczny model"),
-        " opisujący, jak często powinny występować różne wyniki.
-        Częstości względne z danych to ", tags$b("empiryczne przybliżenie"),
-        " tego modelu.")
-    ),
+    lc_p("Histogram z krzywą porównywaliśmy na oko. Dla zmiennej o kilku
+      wynikach zgodność danych z modelem da się zmierzyć jedną liczbą:
+      największą różnicą między częstością względną a prawdopodobieństwem.
+      Model nie musi przy tym przypisywać wszystkim wynikom tej samej szansy.
+      Obok uczciwej kostki panel pokazuje kostkę obciążoną, na której
+      szóstka wypada z prawdopodobieństwem 0,5, a każda z pozostałych ścianek
+      z prawdopodobieństwem 0,1, oraz rzut monetą."),
+
+    lc_p("Słupki pokazują częstości z wylosowanych obserwacji, punkty
+      połączone linią — prawdopodobieństwa z modelu. Pod wykresem panel
+      podaje największą różnicę między nimi."),
 
     figure_panel(
       label = "Ryc. 1.3",
@@ -141,22 +193,39 @@ ch1_ui <- list(
       )
     ),
 
+    lc_p("Przy 100 rzutach uczciwą kostką największa różnica przekracza 0,05
+      mniej więcej w dwóch losowaniach na trzy. Przy 500 rzutach zdarza się
+      to już tylko w około 2 losowaniach na 100. Dla monety przy 100 rzutach
+      próg 0,05 zostaje przekroczony rzadziej, w około jednym losowaniu
+      na trzy, bo największą różnicę wybieramy spośród dwóch wyników,
+      a nie sześciu."),
+
+    lc_p("Obciążona kostka pokazuje drugą stronę tej zależności. Przy 100
+      rzutach częstość szóstek waha się typowo o 0,05 wokół 0,5, więc nie da
+      się jej pomylić z wartością 1/6 ≈ 0,167, jakiej oczekiwalibyśmy od
+      uczciwej kostki. Częstości nie tylko przybliżają znany model, ale
+      pozwalają też odróżnić jeden model od drugiego. Na tym pomyśle opiera
+      się wnioskowanie statystyczne, któremu poświęcimy kolejne wykłady."),
+
     # ========================================================================
-    # WIDGET 3: Czym jest rozklad?
+    # WIDGET 3: Czym jest rozkład?
     # ========================================================================
     lc_h2("ch1-rozklad", "Czym jest rozkład prawdopodobieństwa?"),
 
-    tagList(
-      p(gloss("rozkład prawdopodobieństwa", "Rozkład prawdopodobieństwa"), " to ", tags$b("kompletny opis"),
-        " wszystkich możliwych wyników i ich prawdopodobieństw.
-        Musi spełniać dwa warunki:"),
-      tags$ol(
-        tags$li("Każde prawdopodobieństwo jest nieujemne: P(x) ≥ 0"),
-        tags$li("Suma wszystkich prawdopodobieństw wynosi 1")
-      ),
-      p("Spróbuj sam(a) zbudować rozkład — ustaw prawdopodobieństwa
-        czterech wyników tak, żeby sumowały się do 1.")
-    ),
+    lc_p("Każdy z modeli w tym rozdziale przypisywał możliwym wynikom ich
+      prawdopodobieństwa. Taki kompletny opis nazywamy ",
+      gloss("rozkład prawdopodobieństwa", "rozkładem prawdopodobieństwa"),
+      ". Dla zmiennej o skończonej liczbie wyników jest to po prostu lista
+      wartości \\(k\\) i prawdopodobieństw \\(P(X = k)\\). Nie każda lista
+      liczb jest rozkładem. Prawdopodobieństwa muszą być nieujemne i muszą
+      sumować się do 1, bo któryś z wyników na pewno wystąpi."),
+
+    lc_formula_box(withMathJax(
+      "$$P(X = k) \\geq 0 \\quad \\text{dla każdego } k, \\qquad \\sum_{k} P(X = k) = 1$$"
+    )),
+
+    lc_p("Panel pozwala ustawić prawdopodobieństwa czterech wyników.
+      Słupki są zielone tylko wtedy, gdy suma wynosi 1."),
 
     figure_panel(
       label = "Ryc. 1.4",
@@ -176,14 +245,26 @@ ch1_ui <- list(
       )
     ),
 
+    lc_p("Ustawienie startowe, cztery razy 0,25, to rozkład, w którym każdy
+      wynik jest równie prawdopodobny, jak przy kostce z czterema ściankami.
+      Gdy zwiększysz jedno prawdopodobieństwo, suma przekroczy 1 i rozkład
+      przestanie być poprawny, dopóki nie zmniejszysz innego. Prawdopodobieństwa
+      w rozkładzie konkurują ze sobą: pula wynosi zawsze 1 i można ją tylko
+      inaczej podzielić. Ten sam warunek obowiązuje dla zmiennych ciągłych.
+      Tam rolę sumy przejmuje pole pod krzywą gęstości, które również
+      wynosi 1."),
+
     inline_callout(
-      label = "Zapamiętaj",
-      tagList(
-        "Rozkład prawdopodobieństwa to nie dane — to ", tags$b("model matematyczny"),
-        ". Dane to próbka z tego modelu. Im większa próbka, tym lepiej przybliża model."
-      ),
-      color = "uwaga"
+      label = "Zasada",
+      "Rozkład prawdopodobieństwa opisuje model, a nie dane. Częstości
+       z próby przybliżają ten model tym lepiej, im większa jest próba."
     ),
+
+    lc_p("Rozkład zawiera całą informację o zmiennej losowej, ale tak jak
+      histogram jest za obszerny, żeby go streścić w jednym zdaniu.
+      W statystyce opisowej streszczaliśmy dane średnią i odchyleniem
+      standardowym. Ich odpowiedniki dla rozkładów poznamy w następnym
+      rozdziale."),
 
     lc_chapter_next(
       num       = "02",
@@ -200,7 +281,7 @@ ch1_ui <- list(
 
 ch1_server <- function(input, output, session) {
 
-  # --- Widget 0: Rozklad empiryczny vs teoretyczny ---
+  # --- Widget 0: Rozkład empiryczny vs teoretyczny ---
   emp_resample_trigger <- reactiveVal(0)
   observeEvent(input$ch1_emp_resample, emp_resample_trigger(emp_resample_trigger() + 1))
 
@@ -241,7 +322,7 @@ ch1_server <- function(input, output, session) {
     )
     # Zakres empiryczny
     emp_xlim <- range(d$data)
-    # Wez szerszy z dwoch
+    # Weź szerszy z dwóch
     x_lo <- min(theo_xlim[1], emp_xlim[1])
     x_hi <- max(theo_xlim[2], emp_xlim[2])
     x_margin <- (x_hi - x_lo) * 0.05
@@ -257,11 +338,11 @@ ch1_server <- function(input, output, session) {
     theo_y[is.na(theo_y) | theo_y < 0] <- 0
     df_theo <- data.frame(x = x_seq, y = theo_y)
 
-    # Stale breaks oparte na danych (niezalezne od osi)
+    # Stałe breaks oparte na danych (niezależne od osi)
     n_bins <- min(50, max(10, d$n / 10))
     bin_breaks <- seq(min(d$data), max(d$data), length.out = n_bins + 1)
 
-    # Zakres Y: max z gestosci teoretycznej i histogramu
+    # Zakres Y: max z gęstości teoretycznej i histogramu
     theo_ymax <- max(theo_y)
     hist_obj <- hist(d$data, breaks = bin_breaks, plot = FALSE)
     hist_ymax <- max(hist_obj$density)
@@ -297,26 +378,7 @@ ch1_server <- function(input, output, session) {
     theme_upwr()
   }))
 
-  output$ch1_emp_text <- renderUI({
-    show_hist <- input$ch1_show_hist
-    show_dens <- input$ch1_show_density
-
-    if (show_hist && show_dens) {
-      lc_feedback(type = "ok",
-        "Widzisz obie warstwy. Histogram to dane, krzywa to model.
-         Zwiększaj próbę — histogram coraz lepiej przybliża krzywą!")
-    } else if (show_hist) {
-      lc_feedback(type = "info",
-        "To histogram — rozkład empiryczny oparty na danych.
-         Włącz krzywą gęstości, żeby zobaczyć model teoretyczny.")
-    } else if (show_dens) {
-      lc_feedback(type = "info",
-        "To krzywa gęstości — model teoretyczny.
-         Włącz histogram, żeby porównać z danymi.")
-    }
-  })
-
-  # --- Widget 1: Rzuty kostka ---
+  # --- Widget 1: Rzuty kostką ---
   dice_rolls <- reactiveVal(integer(0))
 
   observeEvent(input$ch1_roll_1, {
@@ -368,9 +430,9 @@ ch1_server <- function(input, output, session) {
     rolls <- dice_rolls()
     if (length(rolls) < 2) return(NULL)
 
-    # Linia zbieznosci dla kazdej scianki
+    # Linia zbieżności dla każdej ścianki
     n_total <- length(rolls)
-    # Wybierz punkty do wykreslenia (max 200 punktow dla wydajnosci)
+    # Wybierz punkty do wykreślenia (max 200 punktów dla wydajności)
     if (n_total <= 200) {
       indices <- seq_len(n_total)
     } else {
@@ -395,7 +457,7 @@ ch1_server <- function(input, output, session) {
       theme(legend.position = "right")
   }))
 
-  # --- Widget 2: Czestosci vs prawdopodobienstwo ---
+  # --- Widget 2: Częstości vs prawdopodobieństwo ---
   freq_data <- reactive({
     input$ch1_resample
     req(input$ch1_n_obs, input$ch1_scenario)
@@ -450,11 +512,11 @@ ch1_server <- function(input, output, session) {
     lc_feedback(type = if (max_diff < 0.05) "ok" else "info",
       paste0("Maksymalna różnica między częstością a prawdopodobieństwem: ",
              sprintf("%.3f", max_diff),
-             if (max_diff < 0.05) " — dobra zgodność!" else " — spróbuj zwiększyć n")
+             if (max_diff < 0.05) " — dobra zgodność" else " — słabsza zgodność")
     )
   })
 
-  # --- Widget 3: Zbuduj wlasny rozklad ---
+  # --- Widget 3: Zbuduj własny rozkład ---
   output$ch1_sum_check <- renderUI({
     s <- input$ch1_p1 + input$ch1_p2 + input$ch1_p3 + input$ch1_p4
     if (abs(s - 1) < 0.005) {

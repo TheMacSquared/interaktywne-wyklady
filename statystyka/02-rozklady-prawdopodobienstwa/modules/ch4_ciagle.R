@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 4: Rozklady ciagle
+# CHAPTER 4: Rozkłady ciągłe
 # ============================================================================
 
 ch4_ui <- list(
@@ -10,28 +10,47 @@ ch4_ui <- list(
       kicker = "Rozdział 04 · Rozkłady prawdopodobieństwa",
       num    = "04",
       title  = "Rozkłady ciągłe.",
-      lead   = "Rozkłady dyskretne opisują zmienne o skończonej liczbie wartości.
-                Ale co, gdy zmienna może przyjąć dowolną wartość z pewnego przedziału?"
+      lead   = "Wzrost, czas oczekiwania czy dochód mogą przyjąć dowolną wartość
+                z przedziału. Dla takich zmiennych pojedyncza wartość ma
+                prawdopodobieństwo zero, a prawdopodobieństwo przedziału
+                odczytujemy jako pole pod krzywą gęstości."
     ),
 
-    lc_h2("ch4-histogram", "Od histogramu do krzywej gęstości"),
-
-    tagList(
-      p("Znasz już histogramy ze statystyki opisowej. Teraz zobaczymy,
-        jak histogram przechodzi w gładką krzywą gdy zwiększamy próbę i zwężamy przedziały.
-        Ta krzywa to ", tags$b(gloss("funkcja gęstości", "funkcja gęstości prawdopodobieństwa"), " (PDF)"),
-        " — ciągły odpowiednik PMF.")
-    ),
+    lc_p("W poprzednim rozdziale każdej wartości zmiennej przypisywaliśmy
+      prawdopodobieństwo P(X = k). Taki opis, ",
+      gloss("funkcja prawdopodobieństwa", "funkcja prawdopodobieństwa"),
+      ", działa, gdy wartości da się wypisać: 0, 1, 2 i tak dalej. ",
+      gloss("zmienna ciągła", "Zmienna ciągła"), " może przyjąć każdą wartość
+      z przedziału, na przykład czas oczekiwania 1,7 min albo 1,7182 min.
+      Takich wartości jest nieskończenie wiele, więc nie da się każdej z nich
+      przypisać dodatniego prawdopodobieństwa tak, żeby suma wyniosła 1.
+      W tym rozdziale zastąpimy słupki krzywą, a sumowanie słupków liczeniem
+      pola."),
 
     # ========================================================================
     # WIDGET 1: Od histogramu do krzywej (krok po kroku)
     # ========================================================================
+    lc_h2("ch4-histogram", "Od histogramu do krzywej gęstości"),
+
+    lc_p("Punktem wyjścia jest narzędzie z wykładu o statystyce opisowej: ",
+      gloss("histogram"), ". Dzieli on oś na przedziały i nad każdym rysuje
+      słupek, którego wysokość to liczba obserwacji w przedziale. Gdy próba
+      rośnie, a przedziały się zwężają, schodkowy histogram coraz bardziej
+      przypomina gładką krzywą. Ta krzywa to ",
+      gloss("funkcja gęstości", "funkcja gęstości prawdopodobieństwa"),
+      " f(x), w skrócie PDF. Jest ciągłym odpowiednikiem funkcji
+      prawdopodobieństwa z rozdziału 3."),
+
+    lc_p("Panel losuje próbę z wybranego rozkładu, domyślnie 500 obserwacji
+      z rozkładu normalnego o średniej 5 i odchyleniu standardowym 1,5,
+      i w siedmiu krokach przechodzi od surowych danych do krzywej."),
+
     figure_panel(
       label = "Ryc. 4.1",
       full_width = TRUE,
       lc_step_widget("ch4_step",
         title = "Od histogramu do krzywej gęstości",
-        steps = c("Surowe dane (rug)", "Histogram (5 binów)", "Więcej binów (15)",
+        steps = c("Surowe dane", "Histogram (5 binów)", "Więcej binów (15)",
                   "Jeszcze więcej (30)", "Skala gęstości", "Krzywa gęstości",
                   "Tylko PDF"),
         toolbar = lc_toolbar(
@@ -46,18 +65,48 @@ ch4_ui <- list(
       )
     ),
 
+    lc_p("Kluczowy jest krok piąty. Na osi Y nie ma już liczebności, tylko
+      gęstość: liczebność przedziału dzielimy przez liczbę wszystkich obserwacji
+      i przez szerokość przedziału. Kształt histogramu się nie zmienia, zmienia
+      się sens pola. Pole słupka, czyli wysokość razy szerokość, to teraz
+      częstość względna, odsetek obserwacji w przedziale. Wszystkie słupki
+      razem mają pole równe 1, bo obejmują wszystkie dane."),
+
+    lc_p("Krzywa z kroków 6 i 7 jest wygładzeniem tej konkretnej próby, więc
+      przy każdym losowaniu wygląda trochę inaczej. Przy rosnącej próbie
+      wygładzenia kolejnych prób coraz mniej się od siebie różnią i zbliżają
+      się do jednej krzywej. Ją właśnie nazywamy funkcją gęstości rozkładu.
+      Tak jak w rozdziale 1 częstości względne zbliżały się do
+      prawdopodobieństw, tak tutaj histogram w skali gęstości zbliża się do f(x).
+      Zmień rozkład źródłowy na wykładniczy albo jednostajny: zasada jest ta
+      sama, inny jest tylko kształt krzywej."),
+
     # ========================================================================
-    # WIDGET 2: Prawdopodobienstwo = pole — BEZ ZMIAN
+    # WIDGET 2: Prawdopodobieństwo = pole
     # ========================================================================
     lc_h2("ch4-pole", "Prawdopodobieństwo = pole pod krzywą"),
 
-    tagList(
-      p("W rozkładach ciągłych prawdopodobieństwo to ",
-        tags$b("pole pod krzywą gęstości"), " w danym przedziale.
-        Wysokość krzywej to NIE prawdopodobieństwo!"),
-      p("Ważna konsekwencja: ", tags$b("P(X = dokładnie 5.0) = 0"),
-        " dla rozkładów ciągłych. Sens ma tylko pytanie o przedziały.")
-    ),
+    lc_p("W histogramie w skali gęstości pole słupka było odsetkiem obserwacji
+      w przedziale. Dla krzywej gęstości obowiązuje ta sama reguła:
+      prawdopodobieństwo, że zmienna wpadnie do przedziału od a do b, to pole
+      pod krzywą f(x) nad tym przedziałem. Pole pod krzywą liczy się całką."),
+
+    lc_formula_box(withMathJax(
+      "$$P(a \\le X \\le b) = \\int_a^b f(x) \\, dx, \\qquad \\int_{-\\infty}^{\\infty} f(x) \\, dx = 1$$"
+    )),
+
+    lc_p("Z tej definicji wynikają dwie konsekwencje, które odróżniają rozkłady
+      ciągłe od dyskretnych. Pierwsza: P(X = x) = 0 dla każdej pojedynczej
+      wartości x, bo nad odcinkiem o szerokości zero pole jest zerowe. Nie
+      pytamy więc, jakie jest prawdopodobieństwo czasu dokładnie 5,0 min, tylko
+      czasu między 4,5 a 5,5 min. Z tego samego powodu nie ma różnicy między
+      P(a ≤ X ≤ b) a P(a < X < b). Druga: wysokość krzywej f(x) nie jest
+      prawdopodobieństwem. Gęstość może być większa od 1. Rozkład jednostajny
+      na przedziale od 0 do 0,5 ma f(x) = 2 na całym przedziale, a mimo to pole
+      pod nim wynosi 2 · 0,5 = 1."),
+
+    lc_p("Panel zacienia pole między granicami a i b dla trzech rozkładów,
+      które omówimy w tym i następnym rozdziale."),
 
     figure_panel(
       label = "Ryc. 4.2",
@@ -81,24 +130,74 @@ ch4_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Zapamiętaj",
-      tagList(
-        "W rozkładzie ciągłym gęstość f(x) może być > 1 (np. U(0, 0.5) ma f(x) = 2),
-        ale ", tags$b("pole pod całą krzywą zawsze wynosi 1"), "."
-      ),
-      color = "uwaga"
-    ),
+    lc_p("Domyślnie panel pokazuje ", gloss("rozkład normalny"), " N(0, 1),
+      któremu poświęcimy cały następny rozdział. Pole między −1 a 1 wynosi
+      0,6827: około dwóch trzecich prawdopodobieństwa leży w tym przedziale.
+      Dla rozkładu wykładniczego Exp(1) domyślny przedział od 0 do 2 obejmuje
+      0,8647, a dla rozkładu jednostajnego U(0, 10) przedział od 2 do 7
+      obejmuje dokładnie 0,5. W tym ostatnim przypadku pole jest prostokątem
+      o szerokości 5 i wysokości 0,1. Zbliżaj suwaki a i b do siebie:
+      zacieniony pas zwęża się, a prawdopodobieństwo spada do zera, choć
+      krzywa nad tym miejscem ma dodatnią wysokość."),
 
     # ========================================================================
-    # WIDGET 3: Jednostajny ciagly — scenariusze overlay
+    # Dystrybuanta (bez widgetu)
+    # ========================================================================
+    lc_h2("ch4-dystrybuanta", "Dystrybuanta"),
+
+    lc_p("Liczenie całki przy każdym pytaniu o przedział byłoby uciążliwe.
+      Wystarczy jednak znać jedną funkcję: pole pod krzywą od lewego końca
+      osi do punktu x. Tę funkcję nazywamy dystrybuantą i oznaczamy F(x).
+      Dystrybuanta podaje prawdopodobieństwo, że zmienna nie przekroczy
+      wartości x."),
+
+    lc_formula_box(withMathJax(
+      "$$F(x) = P(X \\le x) = \\int_{-\\infty}^{x} f(t) \\, dt, \\qquad P(a < X \\le b) = F(b) - F(a)$$"
+    )),
+
+    lc_p("Prawdopodobieństwo przedziału to różnica dwóch pól: pola na lewo
+      od b i pola na lewo od a. Dokładnie tak liczy je panel z Ryc. 4.2.
+      Dla rozkładu N(0, 1) F(1) = 0,8413 i F(−1) = 0,1587, więc
+      P(−1 < X ≤ 1) = 0,8413 − 0,1587 = 0,6827. Dystrybuanta rośnie od 0
+      na lewym krańcu do 1 na prawym i nigdy nie maleje. Ma ją także każdy
+      rozkład dyskretny: tam F(x) jest sumą słupków P(X = k) dla k ≤ x."),
+
+    lc_p("W R każdy rozkład ma cztery funkcje o wspólnym rdzeniu nazwy:
+      litera d daje gęstość f(x), p — dystrybuantę F(x), q — kwantyl, czyli
+      wartość x, dla której F(x) osiąga zadany poziom, a r losuje próbę.
+      Wynik 0,6827 z panelu to ", tags$code("pnorm(1) - pnorm(-1)"),
+      ", a mediana rozkładu to kwantyl rzędu 0,5, na przykład ",
+      tags$code("qexp(0.5, rate = 1)"), "."),
+
+    # ========================================================================
+    # WIDGET 3: Jednostajny ciągły — scenariusze overlay
     # ========================================================================
     lc_h2("ch4-jednostajny", "Rozkład jednostajny ciągły"),
 
-    tagList(
-      p(tags$b(gloss("rozkład jednostajny", "Jednostajny ciągły"), " U(a, b)"), " — każda wartość w przedziale
-        [a, b] jest jednakowo prawdopodobna. Przykład: losowa liczba z generatora.")
-    ),
+    lc_p("Mamy już wszystkie narzędzia, żeby opisywać konkretne rozkłady
+      ciągłe. Każdy opiszemy tak samo jak dyskretne w rozdziale 3: sytuacja,
+      w której się pojawia, funkcja gęstości, wartość oczekiwana i wariancja.
+      Wzory na E(X) i Var(X) z rozdziału 2 przenosimy bez zmian w treści:
+      sumę po wartościach zastępuje całka, a prawdopodobieństwo P(X = k) —
+      gęstość f(x)."),
+
+    lc_formula_box(withMathJax(
+      "$$E(X) = \\int_{-\\infty}^{\\infty} x \\, f(x) \\, dx, \\qquad Var(X) = \\int_{-\\infty}^{\\infty} \\left(x - E(X)\\right)^2 f(x) \\, dx$$"
+    )),
+
+    lc_p("Najprostszy przypadek to ",
+      gloss("rozkład jednostajny", "rozkład jednostajny ciągły"), " U(a, b).
+      Zmienna przyjmuje wartości z przedziału od a do b i żaden fragment
+      przedziału nie jest wyróżniony: odcinki tej samej długości mają to samo
+      prawdopodobieństwo. Przykład: autobus odjeżdża co 10 minut, a Ty
+      przychodzisz na przystanek, nie patrząc na rozkład jazdy. Czas
+      oczekiwania ma rozkład U(0, 10). Gęstość jest stała na całym przedziale,
+      więc wykres jest prostokątem. Jego wysokość wynika z warunku, że pole
+      wynosi 1."),
+
+    lc_formula_box(withMathJax(
+      "$$f(x) = \\frac{1}{b-a} \\;\\text{ dla } a \\le x \\le b, \\qquad E(X) = \\frac{a+b}{2}, \\qquad Var(X) = \\frac{(b-a)^2}{12}$$"
+    )),
 
     figure_panel(
       label = "Ryc. 4.3",
@@ -120,23 +219,45 @@ ch4_ui <- list(
           zoom_plot_ui("ch4_unif_plot", height = "350px"),
           uiOutput("ch4_unif_stats")
         )
-      ),
-      lc_formula_box(
-        withMathJax(
-          helpText("$$f(x) = \\frac{1}{b-a}, \\quad E(X) = \\frac{a+b}{2}, \\quad Var(X) = \\frac{(b-a)^2}{12}$$")
-        )
       )
     ),
 
+    lc_p("Im szerszy przedział, tym niższy prostokąt: U(0, 10) ma wysokość 0,1,
+      a U(0, 2) — 0,5. Pole zawsze wynosi 1. Wartość oczekiwana leży w środku
+      przedziału, a odchylenie standardowe zależy tylko od jego szerokości.
+      U(0, 2) i U(4, 6) to ten sam prostokąt przesunięty po osi: mają różne
+      wartości oczekiwane (1 i 5), ale jednakowe SD równe 0,58."),
+
+    lc_p("Wróćmy do autobusu. Dla U(0, 10) średni czas oczekiwania to
+      E(X) = 5 min, wariancja 100/12 = 8,33, a SD = 2,89 min.
+      Prawdopodobieństwo, że poczekasz dłużej niż 7 minut, to pole prostokąta
+      od 7 do 10: 3 · 0,1 = 0,3. W R: ",
+      tags$code("1 - punif(7, min = 0, max = 10)"), "."),
+
     # ========================================================================
-    # WIDGET 3b: Wykladniczy — scenariusze overlay
+    # WIDGET 3b: Wykładniczy — scenariusze overlay
     # ========================================================================
     lc_h2("ch4-wykladniczy", "Rozkład wykładniczy"),
 
-    tagList(
-      p(tags$b(gloss("rozkład wykładniczy", "Wykładniczy"), " Exp(λ)"), " — modeluje czas oczekiwania między
-        zdarzeniami. Przykład: czas między wiadomościami na WhatsAppie, czas między awariami maszyn.")
-    ),
+    lc_p("W rozdziale 3 ", gloss("rozkład Poissona"), " liczył zdarzenia
+      w ustalonym czasie, na przykład wiadomości w ciągu godziny. To samo
+      zjawisko można opisać z drugiej strony: ile czasu mija między kolejnymi
+      zdarzeniami. Gdy zdarzenia zachodzą niezależnie, ze stałym średnim
+      tempem λ zdarzeń na jednostkę czasu, czas oczekiwania ma ",
+      gloss("rozkład wykładniczy"), " Exp(λ). Jeśli liczba wiadomości na
+      godzinę ma rozkład Poissona z λ = 1, to czas między wiadomościami ma
+      rozkład Exp(1), mierzony w godzinach. To dwie strony tego samego
+      procesu."),
+
+    lc_p("Gęstość ma największą wartość w zerze i maleje wykładniczo. Rozkład
+      wykładniczy ma też prostą dystrybuantę, więc prawdopodobieństwa można
+      liczyć bez całkowania."),
+
+    lc_formula_box(withMathJax(
+      "$$f(x) = \\lambda e^{-\\lambda x}, \\quad F(x) = 1 - e^{-\\lambda x} \\;\\text{ dla } x \\ge 0, \\qquad E(X) = \\frac{1}{\\lambda}, \\quad Var(X) = \\frac{1}{\\lambda^2}$$"
+    )),
+
+    lc_p("Scenariusze w panelu mają różne jednostki czasu, podane w etykietach."),
 
     figure_panel(
       label = "Ryc. 4.4",
@@ -158,42 +279,57 @@ ch4_ui <- list(
           zoom_plot_ui("ch4_exp_plot", height = "350px"),
           uiOutput("ch4_exp_stats")
         )
-      ),
-      lc_formula_box(
-        withMathJax(
-          helpText("$$f(x) = \\lambda e^{-\\lambda x}, \\quad E(X) = \\frac{1}{\\lambda}, \\quad Var(X) = \\frac{1}{\\lambda^2}$$")
-        )
       )
     ),
 
-    inline_callout(
-      label = "Związek z Poissonem",
-      tagList("Jeśli liczba zdarzeń w czasie ma ", gloss("rozkład Poissona", "rozkład Poissona(λ)"), ",
-       to czas między zdarzeniami ma rozkład Exp(λ) — dwie strony tego samego procesu.")
-    ),
+    lc_p("Krótkie czasy oczekiwania są najczęstsze, długie zdarzają się
+      rzadko, ale się zdarzają. Im większe λ, tym krzywa startuje wyżej
+      i szybciej opada, a średni czas oczekiwania 1/λ jest krótszy. Odchylenie
+      standardowe jest równe wartości oczekiwanej, więc rozrzut jest duży:
+      przy λ = 1 wiadomość na godzinę E(X) = 1 h i SD = 1 h."),
 
-    inline_callout(
-      label = "Bezpamięciowość",
-      tagList(
-        "Czekasz na wiadomość już 2 godziny. Czy następna przyjdzie szybciej?",
-        tags$b(" Nie."),
-        " Czas już spędzony nie wpływa na dalsze oczekiwanie."
-      ),
-      color = "uwaga"
-    ),
+    lc_p("Dla tego scenariusza F(1) = 1 − e⁻¹ = 0,632. Oznacza to, że 63%
+      odstępów jest krótszych od średniej. Mediana wynosi ln 2 / λ = 0,69 h,
+      czyli około 42 minut, mniej niż średnia, bo długi prawy ogon podnosi
+      średnią. Na wiadomość dłużej niż 2 godziny czekasz z prawdopodobieństwem
+      e⁻² = 0,135, w R: ", tags$code("1 - pexp(2, rate = 1)"), "."),
+
+    lc_p("Rozkład wykładniczy ma nietypową własność, ",
+      gloss("bezpamięciowość"), ". Załóżmy, że czekasz na wiadomość już
+      2 godziny. Prawdopodobieństwo, że poczekasz jeszcze co najmniej godzinę,
+      wynosi P(X > 3 | X > 2) = e⁻³ / e⁻² = e⁻¹ = 0,368. To dokładnie tyle
+      samo, ile prawdopodobieństwo czekania ponad godzinę od początku,
+      P(X > 1) = 0,368. Czas, który już minął, nie skraca dalszego oczekiwania.
+      Dlatego rozkład wykładniczy pasuje do zdarzeń, które nie mają pamięci,
+      jak przychodzące wiadomości, a słabo do zużywających się elementów, jak
+      starzejąca się maszyna."),
 
     # ========================================================================
-    # WIDGET 4: Rozklad t-Studenta — scenariusze overlay
+    # WIDGET 4: Rozkład t-Studenta — scenariusze overlay
     # ========================================================================
     lc_h2("ch4-t-studenta", "Rozkład t-Studenta"),
 
-    tagList(
-      p(gloss("rozkład t-Studenta", "Rozkład t-Studenta"), " wygląda jak normalny, ale ma cięższe ogony —
-        wartości ekstremalne są bardziej prawdopodobne. Jest kluczowy we
-        wnioskowaniu statystycznym (test t, przedziały ufności)."),
-      p("Parametr ", tags$b("df"), " (", gloss("stopnie swobody"), ") kontroluje 'grubość' ogonów.
-        Im więcej df, tym bliżej do rozkładu normalnego.")
-    ),
+    lc_p("Rozkłady jednostajny i wykładniczy opisują zjawiska: czas na
+      przystanku, odstępy między wiadomościami. Trzy kolejne rozkłady służą
+      głównie czemu innemu. Opisują wartości statystyk obliczanych z próby
+      i będą nam potrzebne przy przedziałach ufności i testach. Wszystkie trzy
+      są zbudowane z rozkładu normalnego, który dokładnie poznamy w rozdziale 5.
+      Tutaj wystarczy wiedzieć, że N(0, 1) to symetryczna krzywa w kształcie
+      dzwonu, o środku w zerze."),
+
+    lc_p(gloss("rozkład t-Studenta", "Rozkład t-Studenta"), " t(df) pojawia się,
+      gdy średnią z próby standaryzujemy, czyli odejmujemy od niej średnią
+      populacji i dzielimy przez rozrzut, ale prawdziwego odchylenia
+      standardowego populacji σ nie znamy i zastępujemy je odchyleniem
+      standardowym z próby. Ta dodatkowa niepewność sprawia, że gęstość
+      t-Studenta ma kształt dzwonu jak N(0, 1), ale niższy szczyt i cięższe
+      ogony: wartości daleko od zera są bardziej prawdopodobne. Parametr df
+      to ", gloss("stopnie swobody"), ". Przy średniej z n obserwacji
+      df = n − 1. Im więcej stopni swobody, tym rozkład bliższy N(0, 1)."),
+
+    lc_formula_box(withMathJax(
+      "$$E(X) = 0 \\;\\text{ dla } df > 1, \\qquad Var(X) = \\frac{df}{df - 2} \\;\\text{ dla } df > 2$$"
+    )),
 
     figure_panel(
       label = "Ryc. 4.5",
@@ -217,39 +353,40 @@ ch4_ui <- list(
           zoom_plot_ui("ch4_t_plot", height = "400px"),
           uiOutput("ch4_t_stats")
         )
-      ),
-      lc_formula_box(
-        withMathJax(helpText(
-          "$$E(X) = 0 \\; (df > 1), \\quad Var(X) = \\frac{df}{df - 2} \\; (df > 2)$$"
-        ))
       )
     ),
 
-    inline_callout(
-      label = "Dlaczego t-Studenta?",
-      tagList("Gdy nie znamy prawdziwego σ populacji i szacujemy je z próby,
-       rozkład ", gloss("statystyka testowa", "statystyki testowej"), " to t-Studenta, nie normalny.
-       Przy małych próbach (n < 30) różnica jest znacząca!")
-    ),
+    lc_p("Krzywa t(30) prawie pokrywa się z N(0, 1), a t(3) ma wyraźnie niższy
+      szczyt i grubsze ogony. Różnicę widać w liczbach. Wartość dalej niż
+      2 od zera ma w rozkładzie N(0, 1) prawdopodobieństwo 0,046, w t(30) —
+      0,055, w t(5) — 0,102, a w t(3) już 0,139, czyli trzy razy więcej niż
+      w rozkładzie normalnym. W R: ", tags$code("2 * pt(-2, df = 3)"), ".
+      Odchylenie standardowe t(3) wynosi 1,73, a t(30) — 1,04. Skrajny
+      przypadek t(1), zwany rozkładem Cauchy'ego, ma ogony tak ciężkie,
+      że nie ma wartości oczekiwanej ani wariancji."),
 
-    inline_callout(
-      label = "W praktyce",
-      "Przy df=30 krzywa t jest już prawie normalną. Przy df=3 (n=4!)
-       ogony są wyraźnie cięższe — wartości ekstremalne bardziej prawdopodobne.",
-      color = "uwaga"
-    ),
+    lc_p("Praktyczna konsekwencja: przy małej próbie, na przykład 4 obserwacjach
+      (df = 3), granice, w których mieści się środkowe 95% rozkładu, leżą
+      w ±3,18, a nie w ±1,96 jak dla N(0, 1). Wnioski z małych prób muszą
+      więc być ostrożniejsze. Przy 31 obserwacjach (df = 30) granice to ±2,04
+      i różnica staje się niewielka."),
 
     # ========================================================================
-    # WIDGET 5: Rozklad chi-kwadrat — scenariusze overlay
+    # WIDGET 5: Rozkład chi-kwadrat — scenariusze overlay
     # ========================================================================
     lc_h2("ch4-chi-kwadrat", "Rozkład chi-kwadrat (χ²)"),
 
-    tagList(
-      p(gloss("rozkład chi-kwadrat", "Rozkład chi-kwadrat"), " powstaje jako suma kwadratów niezależnych zmiennych N(0,1).
-        Jest zawsze nieujemny i prawoskośny."),
-      p("Zastosowania: testy niezależności, testy dopasowania,
-        estymacja wariancji.")
-    ),
+    lc_p("Rozkład t-Studenta opisuje statystyki, które mogą być ujemne lub
+      dodatnie. Wiele statystyk mierzy jednak odległość, na przykład sumę
+      kwadratów odchyleń, i nigdy nie jest ujemnych. Do nich służy ",
+      gloss("rozkład chi-kwadrat"), " χ²(df). Powstaje jako suma kwadratów
+      df niezależnych zmiennych o rozkładzie N(0, 1). Gęstość jest równa zeru
+      dla wartości ujemnych, a dla dodatnich ma długi prawy ogon. Liczba
+      stopni swobody df mówi, ile kwadratów sumujemy."),
+
+    lc_formula_box(withMathJax(
+      "$$X = Z_1^2 + Z_2^2 + \\ldots + Z_{df}^2, \\; Z_i \\sim N(0, 1), \\qquad E(X) = df, \\qquad Var(X) = 2 \\cdot df$$"
+    )),
 
     figure_panel(
       label = "Ryc. 4.6",
@@ -271,38 +408,42 @@ ch4_ui <- list(
           zoom_plot_ui("ch4_chisq_plot", height = "400px"),
           uiOutput("ch4_chisq_stats")
         )
-      ),
-      lc_formula_box(
-        withMathJax(helpText(
-          "$$E(X) = df, \\quad Var(X) = 2 \\cdot df$$"
-        ))
       )
     ),
 
-    inline_callout(
-      label = "Obserwacja",
-      "Przy małym df rozkład jest mocno prawoskośny.
-       Gdy df rośnie, staje się coraz bardziej symetryczny i zbliża się do normalnego (CTG!)."
-    ),
+    lc_p("Każdy składnik sumy ma wartość oczekiwaną 1, więc E(X) = df. Dla
+      χ²(5) wartość oczekiwana wynosi 5, SD = 3,16, a szczyt krzywej leży
+      w punkcie 3. Wartości powyżej 11,07 pojawiają się tylko w 5% przypadków,
+      w R: ", tags$code("qchisq(0.95, df = 5)"), ". Przy df = 2 krzywa
+      opada od zera, a przy df = 20 jest już niemal symetryczna wokół 20.
+      To nie przypadek: χ²(df) jest sumą df niezależnych składników, a suma
+      wielu składników zbliża się do rozkładu normalnego. Dlaczego tak się
+      dzieje, wyjaśni centralne twierdzenie graniczne w rozdziale 6."),
 
-    inline_callout(
-      label = "Intuicja",
-      tagList("χ² mierzy odleglosc od idealu. ", gloss("test chi-kwadrat", "Test χ²"), " sprawdza, czy obserwowane
-       czestosci sa zbyt daleko od oczekiwanych."),
-      color = "uwaga"
-    ),
+    lc_p("Intuicyjnie χ² mierzy, jak daleko dane leżą od stanu oczekiwanego.
+      W ", gloss("test chi-kwadrat", "teście χ²"), " sumujemy kwadraty różnic
+      między liczebnościami obserwowanymi a oczekiwanymi. Duża wartość tej
+      sumy, leżąca w prawym ogonie rozkładu χ², wskazuje, że różnice są
+      większe, niż wynikałoby z przypadku. Ten sam rozkład służy do
+      wnioskowania o wariancji populacji."),
 
     # ========================================================================
-    # WIDGET 6: Rozklad log-normalny — scenariusze overlay
+    # WIDGET 6: Rozkład log-normalny — scenariusze overlay
     # ========================================================================
     lc_h2("ch4-lognormalny", "Rozkład log-normalny"),
 
-    tagList(
-      p("Jeśli ", tags$b("ln(X) ~ N(μ, σ)"), ", to X ma ", gloss("rozkład log-normalny"), ".
-        Zmienna jest zawsze dodatnia i prawoskośna."),
-      p("Pojawia się wszędzie tam, gdzie dane rosną multiplikatywnie:
-        dochody, ceny akcji, czasy reakcji, stężenia substancji.")
-    ),
+    lc_p("Ostatni rozkład znów opisuje zjawiska. Wiele wielkości rośnie
+      przez mnożenie, a nie dodawanie: pensja rośnie o kilka procent rocznie,
+      cena akcji zmienia się o procent dziennie. Logarytm zamienia mnożenie
+      w dodawanie, więc to logarytm takiej wielkości ma często rozkład
+      normalny. Jeśli ln(X) ~ N(μ, σ), to X ma ",
+      gloss("rozkład log-normalny"), " LogN(μ, σ). Zmienna jest zawsze dodatnia
+      i ma prawy ogon. Parametry μ i σ to średnia i odchylenie standardowe
+      logarytmu, a nie samej zmiennej X."),
+
+    lc_formula_box(withMathJax(
+      "$$Me = e^{\\mu}, \\qquad E(X) = e^{\\mu + \\sigma^2/2}, \\qquad Var(X) = \\left(e^{\\sigma^2} - 1\\right) \\cdot e^{2\\mu + \\sigma^2}$$"
+    )),
 
     figure_panel(
       label = "Ryc. 4.7",
@@ -324,28 +465,34 @@ ch4_ui <- list(
           zoom_plot_ui("ch4_lnorm_plot", height = "400px"),
           uiOutput("ch4_lnorm_stats")
         )
-      ),
-      lc_formula_box(
-        withMathJax(helpText(
-          "$$E(X) = e^{\\mu + \\sigma^2/2}, \\quad Var(X) = \\left(e^{\\sigma^2} - 1\\right) \\cdot e^{2\\mu + \\sigma^2}$$"
-        ))
       )
     ),
 
-    inline_callout(
-      label = "Uwaga na średnią!",
-      tagList(
-        "Średnia > ", gloss("mediana"), ". Mediana = e^μ, średnia = e^(μ + σ²/2).
-         Dlatego ", tags$b("mediana"), " dochodów lepiej opisuje 'typowego' pracownika niż średnia."
-      ),
-      color = "uwaga"
-    ),
+    lc_p("Prawy ogon sprawia, że wartość oczekiwana jest zawsze większa od ",
+      gloss("mediana", "mediany"), ". Dla LogN(1, 0,5) mediana wynosi
+      e¹ = 2,72, wartość oczekiwana 3,08, a SD = 1,64. Wartość oczekiwaną
+      przekracza tylko 40% obserwacji, w R: ",
+      tags$code("1 - plnorm(3.08, meanlog = 1, sdlog = 0.5)"), ". Im większe
+      σ, tym dłuższy ogon i większa różnica. W scenariuszu dochodów
+      LogN(2, 0,8) mediana to 7,39, a wartość oczekiwana 10,18, więc ponad
+      średnią zarabia tylko 34% osób."),
+
+    lc_p("To ten sam mechanizm, który w statystyce opisowej obserwowaliśmy na
+      zarobkach w firmie: nieliczne bardzo duże wartości podnoszą średnią,
+      a mediana zostaje przy typowej osobie. Dlatego dla dochodów, cen
+      i czasów reakcji podaje się medianę obok średniej."),
 
     inline_callout(
-      label = "Jak rozpoznać?",
-      "Dane zawsze dodatnie + długi prawy ogon → myśl log-normalny.
-       Prosty test: jeśli po zlogarytmowaniu histogram wygląda normalnie — to log-normalny."
+      label = "Zasada",
+      "Dane zawsze dodatnie, z długim prawym ogonem: zlogarytmuj je i obejrzyj
+       histogram. Jeśli wygląda jak symetryczny dzwon, rozkład log-normalny
+       jest dobrym kandydatem na model."
     ),
+
+    lc_p("Rozkład normalny pojawiał się w tym rozdziale wielokrotnie: jako
+      domyślny przykład gęstości, jako punkt odniesienia dla t-Studenta,
+      jako cegiełka rozkładu χ² i jako rozkład logarytmu w modelu
+      log-normalnym. W następnym rozdziale zajmiemy się nim osobno."),
 
     lc_chapter_next(
       num       = "05",
@@ -489,18 +636,18 @@ ch4_server <- function(input, output, session) {
   output$ch4_step_text <- renderUI({
     step <- ch4_step()
     texts <- c(
-      "Każda kreska to jedna obserwacja. Trudno coś z tego odczytać.",
-      "5 binów — widzimy ogólny zarys, ale mało szczegółów.",
+      "Każda kreska to jedna obserwacja. Przy setkach kresek trudno ocenić, gdzie jest ich najwięcej.",
+      "5 binów — widać ogólny zarys, ale mało szczegółów.",
       "15 binów — kształt staje się wyraźniejszy.",
-      "30 binów — jeszcze więcej szczegółów, ale słupki są nierówne.",
-      "Zmiana osi Y na gęstość — teraz pole słupków = 1.",
-      "Nakładamy gładką krzywą, która przybliża kształt danych.",
-      "To jest PDF — teoretyczny model opisujący rozkład. Pole pod krzywą = 1."
+      "30 binów — więcej szczegółów, ale słupki są nierówne.",
+      "Oś Y w skali gęstości — łączne pole słupków wynosi 1.",
+      "Gładka krzywa przybliża kształt histogramu.",
+      "Zostaje sama krzywa gęstości f(x). Pole pod nią wynosi 1."
     )
     texts[step]
   })
 
-  # --- Widget 2: Prawdopodobienstwo = pole (bez zmian) ---
+  # --- Widget 2: Prawdopodobieństwo = pole ---
   observeEvent(input$ch4_area_dist, {
     if (input$ch4_area_dist == "norm") {
       updateSliderInput(session, "ch4_area_a", min = -4, max = 4, value = -1, step = 0.1)
@@ -621,7 +768,7 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 3b: Wykladniczy — scenariusze overlay ---
+  # --- Widget 3b: Wykładniczy — scenariusze overlay ---
   zoom_plot_server("ch4_exp_plot", reactive({
     selected <- input$ch4_exp_scenarios
     req(length(selected) > 0)
@@ -771,7 +918,7 @@ ch4_server <- function(input, output, session) {
     selected <- input$ch4_lnorm_scenarios
     req(length(selected) > 0)
 
-    # Oblicz wspolny zakres x na podstawie wybranych scenariuszy
+    # Oblicz wspólny zakres x na podstawie wybranych scenariuszy
     x_max <- max(sapply(selected, function(id) {
       s <- ch4_lnorm_defs[[id]]
       qlnorm(0.99, s$mu, s$sigma)

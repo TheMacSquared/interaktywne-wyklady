@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 5: Rozklad normalny
+# CHAPTER 5: Rozkład normalny
 # ============================================================================
 
 ch5_ui <- list(
@@ -10,25 +10,52 @@ ch5_ui <- list(
       kicker = "Rozdział 05 · Rozkłady prawdopodobieństwa",
       num    = "05",
       title  = "Rozkład normalny.",
-      lead   = "Wiemy już, czym są rozkłady ciągłe i jak interpretować gęstość.
-                Teraz poznamy najważniejszy ze wszystkich rozkładów."
+      lead   = "Wzrost, wyniki testów, błędy pomiarowe: wiele zmiennych ma rozkład
+                w kształcie dzwonu. Opisuje go jeden wzór z dwoma parametrami,
+                a każde pytanie o prawdopodobieństwo da się sprowadzić do jednego
+                rozkładu wzorcowego N(0, 1)."
     ),
 
     lc_h2("ch5-intro", "Rozkład normalny — królowa rozkładów"),
 
-    tagList(
-      p(gloss("rozkład normalny", "Rozkład normalny"), " (Gaussa) to ", tags$b("najczęściej spotykany"),
-        " rozkład w statystyce. Opisuje go tylko ",
-        tags$b("dwa parametry"), ": średnia μ (gdzie jest środek)
-        i ", gloss("odchylenie standardowe"), " σ (jak szerokie jest rozproszenie)."),
-      p("Dlaczego jest aż tak ważny? Odpowiedź poznamy w następnym rozdziale (CLT).
-        Na razie zbudujmy intuicję.")
-    ),
+    lc_p("W poprzednim rozdziale poznaliśmy kilka rozkładów ciągłych
+      i nauczyliśmy się czytać prawdopodobieństwo jako pole pod krzywą gęstości.
+      Jeden kształt pojawił się już wcześniej wiele razy. Histogram wzrostu
+      z ankiety w wykładzie 01 był w przybliżeniu symetrycznym dzwonem,
+      a reguła 68–95–99,7 sprawdzała się na nim bardzo dobrze. Teraz nadamy
+      temu kształtowi wzór."),
+
+    lc_p(gloss("rozkład normalny", "Rozkład normalny"), " (rozkład Gaussa) to
+      rozkład ciągły o symetrycznej, dzwonowej ", gloss("funkcja gęstości", "gęstości"),
+      ". Wyznaczają go dwa parametry: średnia \\(\\mu\\), która ustala położenie
+      środka krzywej, i ", gloss("odchylenie standardowe"), " \\(\\sigma\\), które
+      ustala jej szerokość. Zapisujemy to krótko \\(X \\sim N(\\mu, \\sigma)\\)."),
+
+    lc_formula_box(withMathJax(
+      "$$f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} \\, e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}} \\qquad E(X) = \\mu \\qquad Var(X) = \\sigma^2$$"
+    )),
+
+    lc_p("Parametry mają tu bezpośrednią interpretację. ",
+      gloss("wartość oczekiwana", "Wartość oczekiwana"), " rozkładu jest równa
+      \\(\\mu\\), a ", gloss("wariancja"), " jest równa \\(\\sigma^2\\), więc
+      \\(\\sigma\\) to zwykłe SD. Funkcje R przyjmują właśnie te dwie liczby: ",
+      tags$code("dnorm(x, mean = μ, sd = σ)"), ". Część podręczników pisze \\(N(\\mu, \\sigma^2)\\),
+      z wariancją zamiast SD, dlatego przy każdym zapisie warto sprawdzić,
+      o który parametr chodzi."),
+
+    lc_p("Dlaczego akurat ten rozkład jest tak ważny, wyjaśni następny rozdział
+      o centralnym twierdzeniu granicznym. Najpierw zobaczmy, jak parametry
+      zmieniają kształt krzywej."),
 
     # ========================================================================
-    # WIDGET 1: Dwa parametry, nieskonczone mozliwosci
+    # WIDGET 1: Dwa parametry, nieskończone możliwości
     # ========================================================================
     lc_h2("ch5-parametry", "Dwa parametry — nieskończone możliwości"),
+
+    lc_p("Panel rysuje gęstość N(μ, σ) dla wybranych parametrów i zaznacza pasy
+      μ ± σ, μ ± 2σ i μ ± 3σ. Przyciski ustawiają trzy przykłady z życia:
+      wzrost kobiet N(166, 6), iloraz inteligencji N(100, 15) i temperaturę
+      ciała N(36,6; 0,4)."),
 
     figure_panel(
       label = "Ryc. 5.1",
@@ -46,7 +73,7 @@ ch5_ui <- list(
             lc_action("ch5_preset_temp", "Temp.\nciała", variant = "solid")
           ),
           hr(),
-          checkboxInput("ch5_show_empirical", "Pokaż regułę 68-95-99.7", value = TRUE)
+          checkboxInput("ch5_show_empirical", "Pokaż regułę 68–95–99,7", value = TRUE)
         ),
         column(8,
           zoom_plot_ui("ch5_explore_plot", height = "400px"),
@@ -55,15 +82,32 @@ ch5_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Reguła 68-95-99.7",
-      "Około 68% danych leży w μ±σ, 95% w μ±2σ, a 99.7% w μ±3σ."
-    ),
+    lc_p("Zmiana μ przesuwa krzywą wzdłuż osi, nie zmieniając jej kształtu.
+      Zmiana σ rozciąga ją albo ściska. Ponieważ całe pole pod gęstością zawsze
+      wynosi 1, szersza krzywa musi być niższa: szczyt N(0, 1) ma wysokość
+      0,399, a szczyt N(0, 2) tylko 0,199. Dla wzrostu kobiet pas μ ± σ to
+      160–172 cm, dla IQ 85–115 punktów, a dla temperatury ciała 36,2–37,0 °C."),
+
+    lc_p("Udział pola w każdym z pasów jest jednak zawsze taki sam, niezależnie
+      od μ i σ. W pasie μ ± σ leży 68,27% prawdopodobieństwa, w pasie μ ± 2σ —
+      95,45%, a w pasie μ ± 3σ — 99,73%. To jest ",
+      gloss("reguła 68-95-99,7", "reguła 68–95–99,7"), " w wersji teoretycznej.
+      W wykładzie 01 sprawdzaliśmy ją empirycznie na wzroście studentów
+      i otrzymaliśmy 67,5%, 96,5% i 100%. Wtedy była to obserwacja o danych,
+      teraz jest to własność rozkładu normalnego. Dane z ankiety zgadzały się
+      z nią, bo rozkład wzrostu jest bliski normalnemu. Dlaczego udziały nie
+      zależą od parametrów, pokaże sekcja o standaryzacji."),
 
     # ========================================================================
-    # WIDGET 2: Porownanie rozkladow
+    # WIDGET 2: Porównanie rozkładów
     # ========================================================================
     lc_h2("ch5-porownanie", "Porównanie dwóch rozkładów normalnych"),
+
+    lc_p("Dwa parametry wystarczają też do porównania grup. W wykładzie 01
+      wykresy pudełkowe wzrostu kobiet i mężczyzn się nie nakładały, a mediany
+      wynosiły 166,4 i 177,1 cm. Panel rysuje dwie krzywe normalne naraz;
+      przycisk ustawia modele zbliżone do tych danych: N(166, 6) dla kobiet
+      i N(178, 7) dla mężczyzn."),
 
     figure_panel(
       label = "Ryc. 5.2",
@@ -88,20 +132,42 @@ ch5_ui <- list(
       )
     ),
 
+    lc_p("Przy ustawieniach startowych rozkład B, N(8, 2), leży na prawo od A,
+      N(5; 1,5), i jest szerszy, więc jego szczyt jest niższy (0,199 wobec
+      0,266). Dla wzrostu krzywe wyraźnie się nakładają, choć środkowe
+      połowy grup są rozdzielone. Na wysokości 172 cm, w połowie między
+      średnimi, model daje 15,9% kobiet wyższych od tej wartości i 19,6%
+      mężczyzn niższych od niej. Kobiet wyższych niż średni mężczyzna
+      (178 cm) jest 2,3%, a mężczyzn niższych niż średnia kobieta (166 cm)
+      4,3%. Różnica średnich mówi, która grupa jest przeciętnie wyższa,
+      ale o tym, jak często pojedyncze osoby z obu grup się mijają, decyduje
+      także σ."),
+
     # ========================================================================
     # WIDGET 3: Standaryzacja (z-score)
     # ========================================================================
     lc_h2("ch5-standaryzacja", "Standaryzacja (z-score)"),
 
-    tagList(
-      p("Każdy rozkład normalny można sprowadzić do ",
-        tags$b(gloss("standardowy rozkład normalny", "standardowego N(0, 1)")), " za pomocą ", gloss("standaryzacja", "transformacji"), ":"),
-      lc_formula_box(
-        withMathJax(helpText("$$z = \\frac{x - \\mu}{\\sigma}$$"))
-      ),
-      p("Z-score mówi nam: ", tags$b("ile odchyleń standardowych"),
-        " dana wartość leży od średniej.")
-    ),
+    lc_p("Porównanie dwóch rozkładów rodzi pytanie: jak zestawić wartości
+      mierzone na różnych skalach? Wzrost 180 cm to u kobiety coś innego niż
+      u mężczyzny. Odpowiedzią jest ", gloss("standaryzacja"), ". Od wartości
+      odejmujemy średnią i dzielimy wynik przez odchylenie standardowe:"),
+
+    lc_formula_box(withMathJax(
+      "$$z = \\frac{x - \\mu}{\\sigma} \\qquad X \\sim N(\\mu, \\sigma) \\;\\Rightarrow\\; Z = \\frac{X - \\mu}{\\sigma} \\sim N(0, 1)$$"
+    )),
+
+    lc_p("Wynik z (z-score) mówi, o ile odchyleń standardowych wartość leży
+      od średniej; znak mówi, po której stronie. Jeśli X ma rozkład normalny,
+      to Z ma ", gloss("standardowy rozkład normalny", "standardowy rozkład normalny"),
+      " N(0, 1), czyli rozkład o średniej 0 i SD 1. Kobieta o wzroście 180 cm
+      ma z = (180 − 166)/6 = 2,33, a mężczyzna o tym samym wzroście
+      z = (180 − 178)/7 = 0,29. Ta sama liczba centymetrów oznacza w pierwszej
+      grupie wartość rzadką, a w drugiej przeciętną."),
+
+    lc_p("Panel standaryzuje jedną wartość. Górny wykres pokazuje ją na
+      oryginalnej skali, dolny na skali z. Domyślnie jest to wynik egzaminu
+      80 punktów przy średniej 65 i SD 10."),
 
     figure_panel(
       label = "Ryc. 5.3",
@@ -121,15 +187,34 @@ ch5_ui <- list(
       )
     ),
 
+    lc_p("Wynik 80 punktów daje z = (80 − 65)/10 = 1,5: półtora odchylenia
+      standardowego powyżej średniej. Oba wykresy mają identyczny kształt,
+      a pionowa linia stoi w tym samym miejscu krzywej. Standaryzacja nie
+      zmienia rozkładu, tylko opisuje oś w jednostkach σ, licząc od μ."),
+
+    lc_p("Stąd bierze się uzasadnienie reguły 68–95–99,7. Pas μ ± σ na
+      dowolnej skali to po standaryzacji zawsze przedział od −1 do 1, pas
+      μ ± 2σ to przedział od −2 do 2. Każdy rozkład normalny przechodzi
+      w ten sam rozkład N(0, 1), więc odsetki w pasach muszą być wszędzie
+      takie same. Wystarczy je raz policzyć dla N(0, 1)."),
+
     # ========================================================================
-    # WIDGET 4: Obliczanie prawdopodobienstw
+    # WIDGET 4: Obliczanie prawdopodobieństw
     # ========================================================================
     lc_h2("ch5-prawdop", "Obliczanie prawdopodobieństw"),
 
-    tagList(
-      p("Znając z-score, możemy obliczyć prawdopodobieństwo dowolnego
-        przedziału. W R używamy funkcji ", tags$code("pnorm()"), ".")
-    ),
+    lc_p("Prawdopodobieństwo przedziału to pole pod gęstością, ale dla
+      rozkładu normalnego pola tego nie da się zapisać prostym wzorem. Liczy
+      się je numerycznie. W R służy do tego funkcja ", tags$code("pnorm(z)"),
+      ", która zwraca P(Z ≤ z), czyli pole na lewo od z. Pozostałe pytania wynikają z tego,
+      że całe pole wynosi 1:"),
+
+    lc_formula_box(withMathJax(
+      "$$P(Z > a) = 1 - P(Z \\le a) \\qquad P(a < Z < b) = P(Z \\le b) - P(Z \\le a)$$"
+    )),
+
+    lc_p("Panel zaznacza szukane pole pod krzywą N(0, 1) i podaje wynik
+      razem z odpowiednim wywołaniem ", tags$code("pnorm()"), "."),
 
     figure_panel(
       label = "Ryc. 5.4",
@@ -155,11 +240,23 @@ ch5_ui <- list(
       )
     ),
 
-    lc_formula_box(
-      withMathJax(helpText(
-        "$$f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}, \\quad E(X) = \\mu, \\quad Var(X) = \\sigma^2$$"
-      ))
-    ),
+    lc_p("Ustawienie startowe, P(−1 < Z < 1) = 0,6827, to pierwsza liczba
+      reguły 68–95–99,7. Wróćmy do egzaminu. Wynik powyżej 80 punktów
+      odpowiada z > 1,5, więc P(X > 80) = 1 − P(Z ≤ 1,5) = 0,0668: taki wynik
+      osiąga około 6,7% zdających. Standaryzacji nie trzeba robić ręcznie,
+      bo pnorm przyjmuje parametry rozkładu: ",
+      tags$code("1 - pnorm(80, mean = 65, sd = 10)"), " daje to samo.
+      Podobnie IQ powyżej 130 punktów (z = 2) ma 2,3% populacji."),
+
+    lc_p("Często pytanie jest odwrotne: znamy prawdopodobieństwo i szukamy
+      wartości. Odpowiada na nie funkcja ", tags$code("qnorm(p)"),
+      ", która zwraca ", gloss("percentyl"), " rozkładu, czyli wartość
+      pozostawiającą na lewo pole p. Na przykład ", tags$code("qnorm(0.975)"),
+      " = 1,96, więc środkowe 95% rozkładu normalnego leży dokładnie w pasie
+      μ ± 1,96σ; reguła 68–95–99,7 zaokrągla to do 2σ. W modelu wzrostu
+      kobiet ", tags$code("qnorm(0.9, mean = 166, sd = 6)"), " = 173,7 cm,
+      więc 10% kobiet jest wyższych. Wartość 1,96 wróci w kolejnych
+      wykładach przy przedziałach ufności."),
 
     lc_chapter_next(
       num       = "06",
@@ -169,6 +266,7 @@ ch5_ui <- list(
     )
   )
 )
+
 
 # --------------------------------------------------------------------------
 # Chapter 5 Server
@@ -248,7 +346,7 @@ ch5_server <- function(input, output, session) {
                  size = 5, fontface = "bold", color = upwr_secondary) +
         annotate("text", x = mu, y = y_top * 0.35, label = "95%",
                  size = 4.5, color = upwr_secondary) +
-        annotate("text", x = mu, y = y_top * 0.15, label = "99.7%",
+        annotate("text", x = mu, y = y_top * 0.15, label = "99,7%",
                  size = 4, color = upwr_reference)
     }
 
@@ -270,7 +368,7 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 2: Porownanie ---
+  # --- Widget 2: Porównanie ---
   observeEvent(input$ch5_cmp_preset, {
     updateSliderInput(session, "ch5_cmp_mu1", value = 166, min = 140, max = 200)
     updateSliderInput(session, "ch5_cmp_s1", value = 6, min = 1, max = 15)
@@ -318,7 +416,7 @@ ch5_server <- function(input, output, session) {
 
     div(
       lc_stat_box("z", round(z, 2),
-                  caption = paste0("(", x, " - ", mu, ") / ", sigma),
+                  caption = paste0("(", x, " − ", mu, ") / ", sigma),
                   color = col_normal),
       lc_feedback(type = "info", style = "margin-top: 8px;",
         paste0("Wartość ", x, " leży ", round(abs(z), 2),
@@ -335,7 +433,7 @@ ch5_server <- function(input, output, session) {
 
     z <- (x - mu) / sigma
 
-    # Gorny wykres: oryginalna skala
+    # Górny wykres: oryginalna skala
     x_seq <- seq(mu - 4*sigma, mu + 4*sigma, length.out = 500)
     df_orig <- data.frame(x = x_seq, y = dnorm(x_seq, mu, sigma))
 
@@ -369,7 +467,7 @@ ch5_server <- function(input, output, session) {
     gridExtra::arrangeGrob(p1, p2, ncol = 1)
   }))
 
-  # --- Widget 4: Kalkulator prawdopodobienstw ---
+  # --- Widget 4: Kalkulator prawdopodobieństw ---
   zoom_plot_server("ch5_prob_plot", reactive({
     type <- input$ch5_prob_type
     a <- input$ch5_prob_a

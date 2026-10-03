@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 2: Wartosc oczekiwana i wariancja
+# CHAPTER 2: Wartość oczekiwana i wariancja
 # ============================================================================
 
 ch2_ev_var_ui <- list(
@@ -10,37 +10,54 @@ ch2_ev_var_ui <- list(
       kicker = "Rozdział 02 · Rozkłady prawdopodobieństwa",
       num    = "02",
       title  = "Wartość oczekiwana i wariancja.",
-      lead   = "Wiemy już, czym jest rozkład prawdopodobieństwa. Teraz dwa kluczowe pytania:
-                czego możemy się spodziewać i jak bardzo wyniki mogą się różnić?"
+      lead   = "Rozkład prawdopodobieństwa wymienia wszystkie możliwe wyniki, ale do
+                porównań potrzebny jest krótszy opis. Dane streszczaliśmy średnią
+                i odchyleniem standardowym. Rozkład streszczają ich odpowiedniki:
+                wartość oczekiwana mówi, na jaki wynik można liczyć w długim okresie,
+                a wariancja — jak daleko od niego wypadają pojedyncze wyniki."
     ),
 
-    lc_h2("ch2-ev-intro", "Wartość oczekiwana i wariancja"),
+    lc_h2("ch2-ev-intro", "Od średniej do wartości oczekiwanej"),
 
-    tagList(
-      p("Każdy ", gloss("rozkład prawdopodobieństwa"), " można opisać dwoma kluczowymi
-        liczbami:"),
-      tags$ul(
-        tags$li(tags$b(gloss("wartość oczekiwana", "Wartość oczekiwana"), " E(X)"),
-          " — 'na co mogę liczyć w dłuższej perspektywie?'"),
-        tags$li(tags$b(gloss("wariancja", "Wariancja"), " / ", gloss("odchylenie standardowe")),
-          " — 'jak bardzo wyniki rozpraszają się wokół oczekiwania?'")
-      ),
-      p("To rozszerzenie pojęć, które już znasz ze statystyki opisowej
-        (", gloss("średnia"), " i odchylenie standardowe), ale teraz stosujemy je do
-        modeli teoretycznych, a nie do danych.")
-    ),
+    lc_p("W poprzednim rozdziale ", gloss("rozkład prawdopodobieństwa"), " opisywał
+      zmienną losową w całości: podawał jej możliwe wartości i prawdopodobieństwo
+      każdej z nich. Taki opis jest kompletny, ale niewygodny, gdy chcemy porównać
+      dwa rozkłady. Ten sam problem mieliśmy w wykładzie 01 z danymi. Histogram
+      pokazywał cały rozkład, a do porównań streszczaliśmy go dwiema liczbami:
+      ", gloss("średnia", "średnią"), " i odchyleniem standardowym. Teraz zrobimy
+      to samo z rozkładem prawdopodobieństwa."),
+
+    lc_p("Średnią z danych rozumieliśmy jako punkt równowagi. Każda obserwacja
+      to jednakowy ciężarek na linijce, a linijka balansuje w punkcie średniej.
+      Rozkład nie składa się z obserwacji, tylko z wartości i ich
+      prawdopodobieństw. Wystarczy więc, że ciężarek postawiony przy wartości x
+      waży tyle, ile wynosi P(X = x). Punkt równowagi tak obciążonej linijki
+      to ", gloss("wartość oczekiwana"), " E(X): suma wszystkich wartości
+      pomnożonych przez ich prawdopodobieństwa."),
+
+    lc_formula_box(withMathJax(
+      "$$E(X) = \\sum_x x \\cdot P(X = x)$$"
+    )),
+
+    lc_p("Wartość oczekiwana jest więc średnią ważoną: wartości prawdopodobne
+      ważą w niej dużo, mało prawdopodobne — mało. Nie musi przy tym być wartością,
+      którą zmienna może przyjąć. Dla rzutu kostką każda liczba oczek ma
+      prawdopodobieństwo 1/6, więc E(X) = (1 + 2 + 3 + 4 + 5 + 6) · 1/6 = 3,5,
+      choć 3,5 oczka nigdy nie wypada."),
 
     # ========================================================================
-    # WIDGET 1: Loterie -- symulacja wartosci oczekiwanej
+    # WIDGET 1: Loterie — symulacja wartości oczekiwanej
     # ========================================================================
     lc_h2("ch2-loterie", "Czego się spodziewać? — gra w loterie"),
 
-    tagList(
-      p("Wyobraź sobie, że możesz grać w jedną z trzech loterii.
-        Każda ma inne wygrane i szanse. Która opłaca się najbardziej?"),
-      p("Zagraj wiele razy i obserwuj, jak średnia wygrana na grę
-        stabilizuje się — to właśnie wartość oczekiwana.")
-    ),
+    lc_p("Nazwa „oczekiwana” bierze się z gier losowych. Wartość oczekiwana
+      wygranej mówi, ile średnio przynosi jedna gra, jeśli gramy wiele razy.
+      Panel pozwala zagrać w jedną z czterech loterii. Dla każdej znamy wygrane
+      i ich prawdopodobieństwa, więc E(X) liczymy ze wzoru. Dla loterii A
+      to 0,5 · 10 + 0,5 · 0 = 5 zł, dla B pewne 4 zł, dla C 0,1 · 100 + 0,9 · 0
+      = 10 zł, a dla D 0,6 · 8 + 0,4 · (−5) = 2,8 zł. Wykres pokazuje średnią
+      wygraną ze wszystkich dotychczasowych gier (linia ciągła) na tle E(X)
+      (linia przerywana)."),
 
     figure_panel(
       label = "Ryc. 2.1",
@@ -59,10 +76,10 @@ ch2_ev_var_ui <- list(
           ),
           hr(),
           lc_stack(gap = "md",
-            lc_action("ch2ev_play_1", "Graj 1x", variant = "solid"),
-            lc_action("ch2ev_play_10", "Graj 10x", variant = "solid"),
-            lc_action("ch2ev_play_100", "Graj 100x", variant = "solid"),
-            lc_action("ch2ev_play_1000", "Graj 1000x", variant = "solid"),
+            lc_action("ch2ev_play_1", "Graj 1×", variant = "solid"),
+            lc_action("ch2ev_play_10", "Graj 10×", variant = "solid"),
+            lc_action("ch2ev_play_100", "Graj 100×", variant = "solid"),
+            lc_action("ch2ev_play_1000", "Graj 1000×", variant = "solid"),
             hr(),
             lc_action("ch2ev_reset_lottery", icon = "reset", variant = "ghost", aria_label = "Reset")
           ),
@@ -76,24 +93,31 @@ ch2_ev_var_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Wartość oczekiwana",
-      "To 'długoterminowa średnia' — wynik, wokół którego oscyluje
-       średnia po wielu powtorzeniach. Nie musi być równa żadnemu
-       konkretnemu wynikowi! (np. E(kostki) = 3.5, choć 3.5 nigdy nie wypada)"
-    ),
+    lc_p("Po kilku grach średnia skacze. W loterii C pierwsza gra daje średnią
+      100 zł albo 0 zł, nigdy 10 zł. Z każdą kolejną grą pojedynczy wynik waży
+      w średniej coraz mniej, wahania słabną, a linia ciągła zbliża się do
+      przerywanej. To ", gloss("prawo wielkich liczb"), " z poprzedniego rozdziału,
+      tym razem dla średniej zamiast częstości: średnia z wielu powtórzeń zbliża
+      się do wartości oczekiwanej. W loterii C dzieje się to zwykle wolniej niż
+      w A, bo jej wygrane są bardziej rozrzucone. Loteria B nie ma czego
+      stabilizować: każda gra daje 4 zł, więc średnia od początku leży na E(X)."),
+
+    lc_p("Jeśli liczy się tylko średni zysk, najbardziej opłaca się loteria C:
+      10 zł na grę, dwa razy więcej niż A i dwa i pół raza więcej niż pewne 4 zł
+      z B. Mimo to wiele osób wybrałoby B, bo w loterii C dziewięć gier na dziesięć
+      kończy się niczym. Wartość oczekiwana tej różnicy nie widzi. Wrócimy do niej
+      za chwilę, przy wariancji."),
 
     # ========================================================================
-    # WIDGET 2: Punkt rownowagi
+    # WIDGET 2: Punkt równowagi
     # ========================================================================
     lc_h2("ch2-rownowaga", "E(X) jako punkt równowagi"),
 
-    tagList(
-      p("Wartość oczekiwana to punkt równowagi rozkładu — gdybyś położył(a)
-        słupki PMF na wadze, E(X) byłoby miejscem podparcia."),
-      p("Spróbuj ustawić prawdopodobieństwa i obserwuj,
-        jak przesuwa się punkt równowagi.")
-    ),
+    lc_p("Wzór na E(X) to dosłownie przepis na punkt równowagi z początku
+      rozdziału. Panel pokazuje go dla zmiennej przyjmującej wartości 1, 3, 5
+      i 9, z prawdopodobieństwami ustawianymi suwakami. Słupki są ciężarkami,
+      trójkąt pod osią to punkt podparcia, a pod wykresem widać pełne obliczenie.
+      Prawdopodobieństwa muszą sumować się do 1; licznik ∑P pokazuje, czy tak jest."),
 
     figure_panel(
       label = "Ryc. 2.2",
@@ -121,24 +145,51 @@ ch2_ev_var_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Pamiętaj",
-      "E(X) to średnia ważona prawdopodobieństwami. Wynik o dużym prawdopodobieństwie
-       ciągnie E(X) w swoją stronę — podobnie jak ciężki przedmiot na wadze.",
-      color = "uwaga"
-    ),
+    lc_p("Przy równych prawdopodobieństwach E(X) = 4,5. To zwykła średnia
+      czterech wartości, bo każda waży tyle samo. Gdyby największą wartością
+      było 7, a nie 9, punkt równowagi wypadłby w 4. Odległa wartość ciągnie
+      E(X) w swoją stronę tak samo, jak wartość odstająca ciągnie średnią
+      z danych."),
+
+    lc_p("Ustawienie „Skośny” przenosi ciężar na wysokie wartości:
+      P(X = 9) = 0,5, a E(X) rośnie do 6,5. Ustawienie „Dwumodalny” kładzie
+      po 0,4 na skrajne wartości 1 i 9 i po 0,1 na środkowe. E(X) = 4,8 wypada
+      wtedy między dwoma szczytami, w miejscu, którego zmienna w ogóle nie
+      przyjmuje. O położeniu E(X) decydują więc dwie rzeczy naraz: jak
+      prawdopodobna jest wartość i jak daleko leży od pozostałych. Sama E(X)
+      nie mówi natomiast nic o kształcie rozkładu."),
 
     # ========================================================================
-    # WIDGET 3: Ryzyko a rozrzut -- intuicja wariancji
+    # WIDGET 3: Ryzyko a rozrzut — intuicja wariancji
     # ========================================================================
     lc_h2("ch2-wariancja", "Wariancja — rozrzut wokół oczekiwania"),
 
-    tagList(
-      p("Dwie loterie mogą mieć tę samą wartość oczekiwaną, ale zupełnie różne ryzyko.
-        Wariancja (i odchylenie standardowe) mierzy właśnie to: jak bardzo wyniki
-        rozpraszają się wokół E(X)."),
-      p("Porównaj trzy loterie — wszystkie mają E(X) = 50 zł:")
-    ),
+    lc_p("Loterie A i C różniły się nie tylko wartością oczekiwaną. W A każda
+      wygrana leży 5 zł od E(X), w C wynik 100 zł leży aż 90 zł od E(X) = 10 zł.
+      W wykładzie 01 taki rozrzut danych wokół średniej mierzyliśmy wariancją
+      i odchyleniem standardowym. Dla rozkładu robimy to samo, tylko kwadraty
+      odchyleń od E(X) ważymy prawdopodobieństwami, a nie dzielimy przez liczbę
+      obserwacji. Tak powstaje ", gloss("wariancja"), " Var(X). Jej pierwiastek
+      to ", gloss("odchylenie standardowe"), " SD(X), wyrażone w tych samych
+      jednostkach co X."),
+
+    lc_formula_box(withMathJax(
+      "$$Var(X) = \\sum_x \\big(x - E(X)\\big)^2 \\cdot P(X = x) \\qquad SD(X) = \\sqrt{Var(X)}$$"
+    )),
+
+    lc_p("Dla loterii A: Var(X) = 0,5 · (10 − 5)² + 0,5 · (0 − 5)² = 25 zł²,
+      więc SD(X) = 5 zł. Dla loterii C: Var(X) = 0,1 · (100 − 10)² +
+      0,9 · (0 − 10)² = 900 zł², więc SD(X) = 30 zł. Loteria B ma wariancję 0,
+      bo jej jedyny wynik równa się E(X). Teraz widać, co odróżnia C od B:
+      C ma wyższą wartość oczekiwaną, ale jej odchylenie standardowe jest sześć
+      razy większe niż w A, a B nie ma rozrzutu wcale."),
+
+    lc_p("Żeby oddzielić rozrzut od położenia, panel porównuje trzy loterie
+      o tej samej wartości oczekiwanej, E(X) = 50 zł. Loteria A daje zawsze
+      50 zł. Loteria B daje 0 albo 100 zł, każdą kwotę z prawdopodobieństwem 0,5.
+      Loteria C wypłaca dowolną kwotę od 0 do 100 zł, a każda jest równie
+      prawdopodobna. Panel symuluje wybraną liczbę gier i rysuje histogram wygranych
+      każdej loterii."),
 
     figure_panel(
       label = "Ryc. 2.3",
@@ -147,7 +198,7 @@ ch2_ev_var_ui <- list(
       fluidRow(
         column(4,
           lc_slider("ch2ev_var_n", "Ile razy zagrać?", 10, 2000, 200, 10),
-          lc_action("ch2ev_var_sim", "Symuluj!", variant = "solid"),
+          lc_action("ch2ev_var_sim", "Symuluj", variant = "solid"),
           br(), br(),
           uiOutput("ch2ev_var_summary")
         ),
@@ -157,17 +208,26 @@ ch2_ev_var_ui <- list(
       )
     ),
 
+    lc_p("Trzy histogramy mają ten sam środek, a zupełnie różny kształt.
+      W loterii A wszystkie wygrane trafiają w jeden słupek nad 50 zł: Var(X) = 0.
+      W B wygrane tworzą dwa słupki na krańcach, każda leży 50 zł od E(X), więc
+      Var(X) = 2500 zł², a SD(X) = 50 zł. W C wygrane rozkładają się równomiernie
+      od 0 do 100 zł. To zmienna ciągła, którą poznamy w rozdziale 4; jej wariancja
+      wynosi około 833 zł², a SD(X) ≈ 28,9 zł. Średnie i odchylenia standardowe
+      w tabeli obok zmieniają się z każdą symulacją, ale przy setkach gier trzymają
+      się blisko tych wartości teoretycznych."),
+
+    lc_p("Przy grach losowych i inwestycjach odchylenie standardowe czyta się jako
+      ryzyko. Mała wariancja oznacza wyniki skupione blisko E(X), duża — wyniki,
+      które często i daleko od niej odbiegają. Zerowa wariancja oznacza brak
+      losowości: wynik jest pewny. Pełny opis zmiennej losowej wymaga więc
+      co najmniej dwóch liczb: E(X) mówi, gdzie leży środek, a SD(X), jak szeroko
+      rozkładają się wokół niego wyniki."),
+
     inline_callout(
-      label = "Kluczowa intuicja",
-      tagList(
-        tags$ul(
-          tags$li(tags$b("Mała wariancja"), " = wyniki skupione blisko E(X), małe ryzyko"),
-          tags$li(tags$b("Duża wariancja"), " = wyniki rozrzucone szeroko, duże ryzyko"),
-          tags$li(tags$b("Wariancja = 0"), " = brak losowości, wynik pewny")
-        ),
-        "SD = √Var ma tę samą jednostkę co dane — łatwiejsza w interpretacji."
-      ),
-      color = "ok"
+      label = "Zasada",
+      "Wariancja ma jednostkę do kwadratu (zł²), odchylenie standardowe — tę samą
+       co X (zł). Do opisu rozrzutu używaj SD, wariancja przydaje się w obliczeniach."
     ),
 
     # ========================================================================
@@ -175,28 +235,35 @@ ch2_ev_var_ui <- list(
     # ========================================================================
     lc_h2("ch2-od-danych", "Od danych do modelu"),
 
-    tagList(
-      p("Zwróć uwagę na analogię:"),
-      figure_panel(label = "Porównanie", title = "Dane a model", width_mode = "compact",
-        lc_table_region(
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-        tags$thead(
-          tags$tr(
-            tags$th("Statystyka opisowa (dane)"),
-            tags$th("Rachunek prawdopodobieństwa (model)")
+    lc_p("Każde pojęcie z tego rozdziału ma odpowiednik w statystyce opisowej
+      z wykładu 01. Wzory też są analogiczne: w średniej z próby każda obserwacja
+      ma wagę 1/n, a w E(X) wartość x ma wagę P(X = x). Różnica leży w źródle
+      liczb: statystyki z lewej kolumny liczymy z zebranych danych, parametry
+      z prawej — z modelu, czyli z rozkładu prawdopodobieństwa."),
+
+    figure_panel(label = "Porównanie", title = "Dane a model", width_mode = "compact",
+      lc_table_region(
+        tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
+          tags$thead(
+            tags$tr(
+              tags$th("Statystyka opisowa (dane)"),
+              tags$th("Rachunek prawdopodobieństwa (model)")
+            )
+          ),
+          tags$tbody(
+            tags$tr(tags$td("Średnia z próby x̄"), tags$td("Wartość oczekiwana E(X)")),
+            tags$tr(tags$td("Wariancja z próby s²"), tags$td("Wariancja Var(X)")),
+            tags$tr(tags$td("Odchylenie standardowe s"), tags$td("Odchylenie standardowe SD(X)")),
+            tags$tr(tags$td("Obliczane z danych"), tags$td("Obliczane z modelu (rozkładu)"))
           )
         ),
-        tags$tbody(
-          tags$tr(tags$td("Średnia z próby x̄"), tags$td("Wartość oczekiwana E(X)")),
-          tags$tr(tags$td("Wariancja z próby s²"), tags$td("Wariancja Var(X)")),
-          tags$tr(tags$td("Odchylenie standardowe s"), tags$td("Odchylenie standardowe SD(X)")),
-          tags$tr(tags$td("Obliczane z danych"), tags$td("Obliczane z modelu (rozkładu)"))
-        )
-      ),
-          label = "Porównanie statystyki opisowej i modelu")
-      ),
-      p(gloss("prawo wielkich liczb", "Prawo wielkich liczb"), " gwarantuje, że x̄ → E(X) wraz ze wzrostem próby.")
+        label = "Porównanie statystyki opisowej i modelu")
     ),
+
+    lc_p("Obie kolumny łączy prawo wielkich liczb, które widzieliśmy przy
+      loteriach: im więcej obserwacji, tym bliżej x̄ leży E(X). Dlatego
+      statystyki z próby mogą służyć do szacowania parametrów rozkładu, z którego
+      dane pochodzą."),
 
     lc_chapter_next(
       num       = "03",
@@ -254,11 +321,11 @@ ch2_ev_var_server <- function(input, output, session) {
     if (length(results) == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij 'Graj', aby rozpocząć",
+                 label = "Kliknij „Graj”, aby rozpocząć",
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {
-      # Srednia kroczaca
+      # Średnia krocząca
       running_mean <- cumsum(results) / seq_along(results)
       df <- data.frame(n = seq_along(results), mean = running_mean)
 
@@ -298,7 +365,7 @@ ch2_ev_var_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 2: Punkt rownowagi ---
+  # --- Widget 2: Punkt równowagi ---
   observeEvent(input$ch2ev_bal_sym, {
     updateSliderInput(session, "ch2ev_bal_p1", value = 0.25)
     updateSliderInput(session, "ch2ev_bal_p2", value = 0.25)
@@ -341,10 +408,10 @@ ch2_ev_var_server <- function(input, output, session) {
     ggplot(df, aes(x = x, y = prob)) +
       geom_col(fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.85, width = 0.6) +
       geom_text(aes(label = sprintf("%.2f", prob)), vjust = -0.5, size = 4.5) +
-      # Os belki
+      # Oś belki
       geom_segment(aes(x = 0, xend = 10, y = -0.01, yend = -0.01),
                    color = upwr_secondary, linewidth = 1.5) +
-      # Trojkat - punkt rownowagi
+      # Trójkąt — punkt równowagi
       annotate("point", x = ev, y = -0.03,
                shape = 17, size = 6, color = unname(upwr_cat["terakota"])) +
       annotate("text", x = ev, y = -0.06,
@@ -354,7 +421,7 @@ ch2_ev_var_server <- function(input, output, session) {
                          expand = expansion(mult = c(0, 0.05))) +
       scale_x_continuous(breaks = x_vals, limits = c(0, 10)) +
       labs(
-           x = "Wartość (x)", y = "Prawdopodobieństwo P(X=x)") +
+           x = "Wartość (x)", y = "Prawdopodobieństwo P(X = x)") +
       theme_upwr()
   }))
 
@@ -374,8 +441,8 @@ ch2_ev_var_server <- function(input, output, session) {
     )
 
     lc_feedback(type = "info",
-      tags$strong("Obliczenie: "),
-      paste0("E(X) = ", calc_parts, " = ", round(ev, 2))
+      tags$strong("Obliczenie:"),
+      paste0(" ", "E(X) = ", calc_parts, " = ", round(ev, 2))
     )
   })
 
@@ -399,7 +466,7 @@ ch2_ev_var_server <- function(input, output, session) {
       value = c(d$a, d$b, d$c),
       lottery = rep(c("A: Pewne 50 zł\n(Var = 0)",
                        "B: 0 lub 100 zł\n(Var = 2500)",
-                       "C: Losowe 0-100 zł\n(Var ≈ 833)"),
+                       "C: Losowe 0–100 zł\n(Var ≈ 833)"),
                     each = d$n)
     )
     df$lottery <- factor(df$lottery, levels = unique(df$lottery))
