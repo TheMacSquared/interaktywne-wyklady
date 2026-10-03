@@ -44,36 +44,54 @@ ch1_ui <- list(
       kicker = "Rozdział 01 · Regresja",
       num    = "01",
       title  = "Regresja liniowa prosta.",
-      lead   = "Korelacja mówiła, czy dwie zmienne są powiązane.
-                Regresja idzie dalej: modeluje ten związek i pozwala predykować."
+      lead   = "Korelacja mówi, jak ściśle dwie zmienne trzymają się prostej, ale nie
+                mówi, o ile zmienia się jedna, gdy rośnie druga. Regresja zamienia
+                chmurę punktów w równanie prostej. Z niego odczytamy tempo zmian
+                i przewidzimy wynik dla nowej obserwacji."
     ),
 
+    # ========================================================================
+    # Od korelacji do regresji
+    # ========================================================================
     lc_h2("ch1-od-korelacji", "Od korelacji do regresji"),
 
-    tagList(
-      p("W poprzednim wykładzie pytaliśmy, ", tags$em("czy"),
-        " dwie zmienne idą razem — i mierzyliśmy to korelacją. Teraz pytanie się
-        przesuwa: ", tags$em("o ile"), " zmienia się Y, kiedy X rośnie o jedną
-        jednostkę? Korelacja sama z siebie tego nie odpowie; potrzebujemy modelu,
-        który da konkretne liczby — i pozwoli przewidywać Y dla nowych X."),
-      p("Najprostszy taki model to linia prosta. Zanim ją jednak narysujemy,
-        zawsze warto najpierw rzucić okiem na wykres rozrzutu: ", gloss("regresja liniowa"), "
-        ma sens dopiero wtedy, gdy chmura punktów układa się w przybliżeniu
-        wzdłuż prostej. Jeśli widać krzywiznę albo dwie chmury, prosta będzie
-        kłamać niezależnie od tego, jak ładnie policzą się współczynniki."),
-      p("Formalnie ", gloss("regresja prosta", "regresja liniowa prosta"), " zapisuje związek X → Y tak:"),
-      lc_formula_box(
-        withMathJax(helpText("$$Y = \\beta_0 + \\beta_1 X + \\varepsilon$$")),
-        p(withMathJax("\\(\\beta_0\\)"), " — ", gloss("wyraz wolny"), " (intercept): wartość Y gdy X = 0"),
-        p(withMathJax("\\(\\beta_1\\)"), " — ", gloss("współczynnik regresji", "nachylenie"), " (slope): o ile zmieni się Y, gdy X wzrośnie o 1"),
-        p(withMathJax("\\(\\varepsilon\\)"), " — błąd losowy (reszty)")
-      ),
-      p("Greckie litery ", withMathJax("\\(\\beta_0, \\beta_1\\)"),
-        " to prawdziwe, populacyjne parametry — nieznane.
-        Z próby liczymy ich estymatory, oznaczane małymi literami ",
-        withMathJax("\\(b_0, b_1\\)"),
-        ". Zaraz zobaczysz, jak każdy z tych elementów wpływa na kształt linii.")
-    ),
+    lc_p("W wykładzie 04 (rozdział 06) związek dwóch zmiennych ilościowych
+      opisywaliśmy współczynnikiem korelacji \\(r\\). Mówił on o kierunku i sile
+      związku liniowego, a test korelacji sprawdzał, czy \\(r\\) da się odróżnić
+      od zera. Jedno pytanie zostało tam bez odpowiedzi: o ile zmienia się
+      \\(Y\\), gdy \\(X\\) rośnie o jednostkę. Trzy chmury punktów o nachyleniach
+      0.4, 0.8 i 1.6 miały prawie to samo \\(r \\approx 0.96\\). Pytanie
+      „o ile?” należy do regresji."),
+
+    lc_p(gloss("regresja liniowa", "Regresja liniowa"), " opisuje związek prostą.
+      Zanim się ją dopasuje, trzeba obejrzeć wykres rozrzutu. Prosta ma sens
+      tylko wtedy, gdy chmura punktów układa się w przybliżeniu wzdłuż linii.
+      Przy krzywiźnie, dwóch oddzielnych chmurach albo pojedynczej wartości
+      odstającej prosta źle opisze dane, choć jej współczynniki da się policzyć
+      zawsze. To te same pułapki, które w wykładzie 04 psuły współczynnik
+      korelacji."),
+
+    lc_p("Gdy jest jedna zmienna objaśniająca \\(X\\), mówimy o ",
+      gloss("regresja prosta", "regresji liniowej prostej"), ". Model zapisuje
+      każdą wartość \\(Y\\) jako punkt na prostej plus odchylenie losowe:"),
+
+    lc_formula_box(withMathJax(
+      "$$Y = \\beta_0 + \\beta_1 X + \\varepsilon$$"
+    )),
+
+    lc_p("\\(\\beta_0\\) to ", gloss("wyraz wolny"), ", czyli wysokość prostej
+      w punkcie \\(X = 0\\). \\(\\beta_1\\) to ",
+      gloss("współczynnik regresji", "nachylenie"), ": o ile zmienia się średnie
+      \\(Y\\), gdy \\(X\\) rośnie o jednostkę. \\(\\varepsilon\\) to błąd losowy,
+      czyli ta część \\(Y\\), której prosta nie wyjaśnia. Greckie litery oznaczają
+      nieznane ", gloss("parametr", "parametry"), " populacji. Z próby liczymy
+      ich ", gloss("estymator", "estymatory"), ", oznaczane łacińskimi literami
+      \\(b_0\\) i \\(b_1\\), tak jak w wykładzie 03 średnia z próby szacowała
+      średnią populacji."),
+
+    lc_p("Panel poniżej generuje dane z tego modelu dla wybranych wartości
+      \\(\\beta_0\\), \\(\\beta_1\\) i \\(\\sigma\\), czyli odchylenia
+      standardowego błędu losowego."),
 
     figure_panel(
       label = "Ryc. 1.0", title = "Co robią β₀, β₁ i szum?",
@@ -91,23 +109,39 @@ ch1_ui <- list(
       )
     ),
 
-    tagList(
-      p("Suwakami sterowałeś trzema wielkościami: ",
-        withMathJax("\\(\\beta_0\\)"), " podnosił całą linię w górę i w dół,
-        ", withMathJax("\\(\\beta_1\\)"), " ją przekręcał, a ",
-        withMathJax("\\(\\sigma\\)"),
-        " rozsypywał punkty wokół niej. Ale to była ręczna animacja: my
-        ustalaliśmy parametry i patrzyliśmy, co z nich wynika."),
-      p("W praktyce mamy odwrotny problem: widzimy ", tags$em("chmurę punktów"),
-        " i potrzebujemy z niej wyłuskać ", withMathJax("\\(b_0\\)"), " i ",
-        withMathJax("\\(b_1\\)"),
-        ". W rozdziale o korelacji policzyliśmy już r i odchylenia standardowe —
-        okaże się, że to wystarczy, żeby od razu napisać równanie prostej.")
-    ),
+    lc_p("\\(\\beta_0\\) przesuwa całą prostą w górę i w dół, nie zmieniając jej
+      kąta. \\(\\beta_1\\) obraca prostą: przy wartościach dodatnich prosta rośnie,
+      przy ujemnych opada, a przy zerze jest pozioma i znajomość \\(X\\) nic nie
+      mówi o \\(Y\\). \\(\\sigma\\) nie rusza prostej, tylko rozrzuca punkty wokół
+      niej. Przy \\(\\sigma = 0\\) wszystkie punkty leżą na linii, przy dużym
+      \\(\\sigma\\) trend ginie w szumie. Korelacja \\(r\\) zależy od nachylenia
+      i od szumu jednocześnie, dlatego sama nie wystarcza, żeby odtworzyć
+      nachylenie."),
 
+    lc_p("W panelu to my ustawialiśmy parametry i patrzyliśmy na dane.
+      W praktyce jest odwrotnie: znamy tylko chmurę punktów i musimy z niej
+      odczytać \\(b_0\\) i \\(b_1\\)."),
+
+    # ========================================================================
+    # Regresja z korelacji
+    # ========================================================================
     lc_h2("ch1-korelacja-regresja", "Regresja z korelacji"),
 
-    p("Dla jednej zmiennej X i jednej Y nachylenie regresji można policzyć bez optymalizacji: z korelacji i odchyleń standardowych."),
+    lc_p("Do wyznaczenia prostej wystarczą liczby, które już umiemy policzyć:
+      dwie średnie, dwa odchylenia standardowe i współczynnik korelacji.
+      Nachylenie i wyraz wolny wyznacza się tak:"),
+
+    lc_formula_box(withMathJax(
+      "$$b_1 = r \\cdot \\frac{s_Y}{s_X}, \\qquad b_0 = \\bar{y} - b_1 \\bar{x}$$"
+    )),
+
+    lc_p("Pierwszy wzór czyta się tak: \\(r\\) mówi, o ile odchyleń
+      standardowych zmienia się średnio \\(Y\\), gdy \\(X\\) rośnie o jedno
+      odchylenie standardowe. Mnożenie przez \\(s_Y / s_X\\) przelicza to na
+      jednostki obu zmiennych. Drugi wzór sprawia, że prosta przechodzi przez
+      punkt \\((\\bar{x}, \\bar{y})\\): obserwacji o przeciętnym \\(X\\) prosta
+      przypisuje przeciętne \\(Y\\). Panel buduje prostą w tej kolejności na
+      losowej próbie 65 punktów."),
 
     figure_panel(
       label = "Ryc. 1.1",
@@ -125,19 +159,29 @@ ch1_ui <- list(
       )
     ),
 
-    tagList(
-      p("Recepta jest więc prosta: jedno r, dwa odchylenia standardowe i dwie
-        średnie wystarczą, żeby wyznaczyć linię. W rzeczywistej pracy nikt nie
-        robi tego ręcznie — wpisujemy do R jedną komendę i dostajemy gotową
-        tabelę regresji: kolumny z estymatorami, ", gloss("błąd standardowy", "błędami standardowymi"), ", statystykami t i
-        p-value. Cały dalszy rozdział będzie ćwiczeniem w odczytywaniu właśnie
-        takich tabel."),
-      p("Zacznijmy od najprostszego ruchu: dostajesz tabelę z dwiema liczbami
-        (", withMathJax("\\(b_0\\)"), " i ", withMathJax("\\(b_1\\)"),
-        ") i twoim zadaniem jest narysować prostą, którą ta tabela opisuje.")
-    ),
+    lc_p("Odchylenia standardowe są zawsze dodatnie, więc znak \\(b_1\\) jest
+      taki sam jak znak \\(r\\), a \\(b_1 = 0\\) dokładnie wtedy, gdy \\(r = 0\\).
+      Korelacja ustala kierunek i siłę związku, a iloraz odchyleń standardowych
+      przelicza ją na jednostki \\(X\\) i \\(Y\\). Prosta otrzymana w ten sposób
+      jest dokładnie tą, którą program statystyczny podaje w tabeli wyników
+      regresji z jednym predyktorem."),
 
+    lc_p("Taka tabela zawiera dla każdego współczynnika cztery liczby:
+      estymatę, ", gloss("błąd standardowy"), ", statystykę \\(t\\)
+      i p-wartość. Do końca rozdziału nauczymy się czytać je wszystkie.
+      Zaczniemy od najprostszej czynności: odczytania z tabeli dwóch estymat
+      i narysowania prostej, którą opisują."),
+
+    # ========================================================================
+    # Ćwiczenie: narysuj prostą z tabeli
+    # ========================================================================
     lc_h2("ch1-rysuj-z-tabeli", "Ćwiczenie: narysuj prostą z tabeli"),
+
+    lc_p("Tabela w ćwiczeniu zawiera dwie liczby: wyraz wolny i współczynnik
+      przy \\(X\\). Prostą wyznaczają dowolne dwa jej punkty, więc wystarczy
+      podstawić do równania dwie wartości \\(X\\) i zaznaczyć na wykresie
+      otrzymane \\(Y\\). Po odsłonięciu odpowiedzi panel dorysuje poprawną prostą
+      i dane, z których ją policzono."),
 
     figure_panel(
       label = "Ćwiczenie", title = "Kliknij dwa punkty, przez które przechodzi prosta",
@@ -159,22 +203,39 @@ ch1_ui <- list(
       )
     ),
 
-    tagList(
-      p("Mając gotowe ", withMathJax("\\(b_0\\)"), " i ",
-        withMathJax("\\(b_1\\)"),
-        " z tabeli, narysowanie prostej jest mechaniczne. Ale przewińmy
-        pytanie o krok wstecz: skąd komputer wziął te dwie liczby?
-        Spośród nieskończenie wielu prostych, które dałoby się przeciągnąć
-        przez chmurę punktów, musi wybrać jedną. Według jakiego kryterium?"),
-      p("Zasada nazywa się ", tags$em(gloss("metoda najmniejszych kwadratów", "metodą najmniejszych kwadratów"), " (MNK / OLS)"),
-        ": wybieramy taką prostą, która minimalizuje sumę kwadratów pionowych
-        odległości między punktami a linią. Następny widget rozkłada ten pomysł
-        na sześć kroków.")
-    ),
+    lc_p("Najłatwiej liczy się punkty dla okrągłych wartości \\(X\\). Jeśli Twoja
+      prosta rozminęła się z poprawną, sprawdź najpierw znak nachylenia, a potem
+      wysokość, na której prosta przecina pionową oś \\(X = 0\\). Punkty danych
+      pojawiają się dopiero po odsłonięciu odpowiedzi, bo do narysowania prostej
+      nie są potrzebne: wystarczą dwa współczynniki."),
 
+    lc_p("Narysowanie prostej z gotowych współczynników jest więc mechaniczne.
+      Otwarte zostaje pytanie, skąd się te współczynniki biorą. Przez chmurę
+      punktów da się przeprowadzić nieskończenie wiele prostych, a tabela podaje
+      jedną."),
+
+    # ========================================================================
+    # Najmniejsze kwadraty
+    # ========================================================================
     lc_h2("ch1-ols-krok", "Najmniejsze kwadraty — krok po kroku"),
 
-    p("Ta sama próba, kolejne warstwy interpretacji."),
+    lc_p("Kryterium wyboru nazywa się ",
+      gloss("metoda najmniejszych kwadratów", "metodą najmniejszych kwadratów"),
+      " (MNK, ang. OLS). Dla każdej prostej można zmierzyć, o ile każdy punkt
+      mija się z nią w pionie, podnieść te odległości do kwadratu i zsumować.
+      Spośród wszystkich prostych wybieramy tę, dla której suma kwadratów
+      jest najmniejsza:"),
+
+    lc_formula_box(withMathJax(
+      "$$SS_{res} = \\sum_{i=1}^{n} (y_i - \\hat{y}_i)^2 = \\sum_{i=1}^{n} (y_i - b_0 - b_1 x_i)^2 \\;\\to\\; \\min$$"
+    )),
+
+    lc_p("Odległości mierzy się w pionie, bo model przewiduje \\(Y\\) na
+      podstawie \\(X\\) i to w \\(Y\\) popełnia pomyłki. Rozwiązaniem tego
+      zadania są wzory z poprzedniej sekcji. Panel pokazuje kolejne etapy
+      na losowej próbie 70 punktów: dane, średnią \\(Y\\) jako model bez
+      predyktora, prostą MNK, odległości punktów od prostej i porównanie
+      z inną prostą."),
 
     figure_panel(
       label = "Ryc. 1.1b",
@@ -191,69 +252,93 @@ ch1_ui <- list(
       )
     ),
 
+    lc_p("Pozioma linia na wysokości \\(\\bar{y}\\) to najprostszy model:
+      każdej obserwacji przewiduje to samo. Prosta MNK wykorzystuje \\(X\\)
+      i mija się z punktami mniej. Przerywana prosta z ostatniego kroku
+      przechodzi przez ten sam punkt \\((\\bar{x}, \\bar{y})\\), ale jest
+      o 55% mniej stroma. Ona też jest modelem, bo dla każdego \\(X\\) daje
+      przewidywane \\(\\hat{Y}\\), tylko jej suma kwadratów jest większa.
+      Tak samo przegra każda inna prosta: prosta MNK jest z definicji tą
+      o najmniejszej sumie kwadratów."),
+
+    # ========================================================================
+    # Reszty
+    # ========================================================================
     lc_h2("ch1-reszty", "Reszty i dlaczego kwadraty"),
 
-    tagList(
-      p("Te pionowe odcinki, które pojawiły się w kroku 4, mają swoją nazwę:
-        to ", gloss("reszta", "reszty"), ". Każda obserwacja ma własną resztę — różnicę między tym, co
-        zobaczyliśmy, a tym, co przewiduje model:"),
-      lc_formula_box(
-        withMathJax(helpText("$$e_i = y_i - \\hat{y}_i$$"))
-      ),
-      p("Reszta ze znakiem mówi nam, czy konkretny punkt leży nad linią
-        (", withMathJax("\\(e_i > 0\\)"), "), czy pod nią (",
-        withMathJax("\\(e_i < 0\\)"),
-        "). MNK nie dba o znak — sumuje kwadraty. Dlaczego nie sumy wartości
-        bezwzględnych?"),
-      p("Powody są dwa, jeden praktyczny i jeden matematyczny. Po pierwsze,
-        kwadraty ", tags$em("karzą większe błędy nieproporcjonalnie mocno"),
-        ": jeden punkt oddalony o 4 jednostki przeszkadza tak, jak szesnaście
-        punktów oddalonych o 1. To zmusza prostą, by raczej trochę odsunąć się
-        od każdej dużej obserwacji, niż zignorować skrajne odchylenia."),
-      p("Po drugie, kwadraty są ", tags$em("różniczkowalne"),
-        " — dzięki temu zadanie optymalizacji ma jedno, jawne rozwiązanie. To
-        właśnie ten wzór, który widzieliśmy wcześniej: ",
-        withMathJax("\\(b_1 = r \\cdot s_Y / s_X\\)"),
-        ". Gdybyśmy minimalizowali wartości bezwzględne, dostalibyśmy regresję
-        ", tags$em("medianową"),
-        " — sensowną, ale bez wzoru zamkniętego i trudniejszą obliczeniowo."),
-      inline_callout(label = "Zapamiętaj", color = "wskazowka",
-        "Diagnostyka modelu polega głównie na patrzeniu w reszty. Jeśli układają
-         się w wachlarz albo w łuk, znaczy, że linia kłamie — wrócimy do tego
-         w rozdziale o jakości modelu."
-      )
-    ),
+    lc_p("Pionowe odcinki z czwartego kroku to ", gloss("reszta", "reszty"),
+      ". Reszta to różnica między wartością zaobserwowaną a wartością
+      przewidzianą przez model:"),
 
-    lc_h2("ch1-pvalue", "p-value dla nachylenia"),
+    lc_formula_box(withMathJax(
+      "$$e_i = y_i - \\hat{y}_i$$"
+    )),
 
-    tagList(
-      p("Mamy linię, mamy reszty, mamy wzór. Ale ", withMathJax("\\(b_1\\)"),
-        " policzone z jednej próby to nie to samo, co prawdziwe nachylenie
-        w populacji. Gdybyśmy wzięli inną grupę 65 obserwacji, dostalibyśmy
-        trochę inne ", withMathJax("\\(b_1\\)"),
-        ". Pytanie brzmi: czy to, co widzimy, jest naprawdę różne od zera, czy
-        równie dobrze mogłoby się zdarzyć, gdyby X i Y w populacji były od siebie
-        niezależne?"),
-      p("Wzór na ", withMathJax("\\(b_1\\)"),
-        " ma swój brat-cień: błąd standardowy ",
-        withMathJax("\\(SE(b_1)\\)"),
-        ", który mierzy, jak bardzo nasza estymata mogłaby się chwiać między
-        próbami. ", gloss("statystyka testowa", "Statystyka testowa"), " jest właściwie ilorazem — ",
-        withMathJax("\\(t = b_1 / SE(b_1)\\)"),
-        " — i mówi, ", tags$em("ile błędów standardowych"),
-        " dzieli nasze nachylenie od zera. Im dalej, tym mniej prawdopodobne,
-        że to przypadek."),
-      p("Sformalizowane:"),
-      lc_formula_box(
-        withMathJax(helpText("$$H_0: \\beta_1 = 0 \\quad\\text{brak liniowego wpływu X na Y}$$")),
-        withMathJax(helpText("$$H_a: \\beta_1 \\neq 0 \\quad\\text{nachylenie jest różne od zera}$$"))
-      ),
-      p("Małe p-value mówi: gdyby prawdziwe ", withMathJax("\\(\\beta_1\\)"),
-        " wynosiło zero, zobaczenie tak skrajnego ", withMathJax("\\(b_1\\)"),
-        " byłoby mało prawdopodobne. To dokładnie ten sam mechanizm, który
-        widziałeś w teście t — kolumny ", tags$em("Estimate, SE, t, p"),
-        " w tabeli regresji to jego standardowy raport.")
-    ),
+    lc_p("Reszta dodatnia oznacza punkt nad prostą, czyli obserwację, dla której
+      model zaniżył wynik. Reszta ujemna oznacza punkt pod prostą i wynik
+      zawyżony. Reszty prostej MNK sumują się do zera. To samo dotyczy jednak
+      każdej prostej przechodzącej przez punkt \\((\\bar{x}, \\bar{y})\\), także
+      przerywanej z panelu, więc sama suma reszt nie wskaże najlepszej prostej.
+      Znaki trzeba usunąć. Można by sumować wartości bezwzględne, ale MNK
+      sumuje kwadraty, i to z dwóch powodów."),
+
+    lc_p("Pierwszy powód: kwadrat rośnie szybciej niż sama odległość. Reszta
+      równa 4 wnosi do sumy 16, tyle co szesnaście reszt równych 1. Prosta MNK
+      woli więc kilka umiarkowanych pomyłek niż jedną dużą. Ma to drugą stronę:
+      pojedyncza wartość odstająca potrafi mocno pociągnąć prostą ku sobie,
+      podobnie jak w wykładzie 04 jedna wartość odstająca zmieniała \\(r\\)."),
+
+    lc_p("Drugi powód: suma kwadratów prowadzi do jawnego rozwiązania, czyli do
+      wzorów \\(b_1 = r \\cdot s_Y / s_X\\) i \\(b_0 = \\bar{y} - b_1 \\bar{x}\\).
+      Minimalizacja sumy wartości bezwzględnych daje regresję medianową.
+      To sensowna metoda, mniej wrażliwa na wartości odstające, ale bez
+      prostego wzoru."),
+
+    lc_p("Reszty są też głównym narzędziem oceny modelu. Wykład 05 zapowiadał,
+      że w modelach założenia dotyczą reszt, a nie samych zmiennych, i że
+      sprawdza się je tymi samymi narzędziami: wykresem Q-Q, porównaniem
+      rozrzutu i wykresem reszt względem wartości przewidywanych. Jeśli reszty
+      układają się w łuk albo w wachlarz, prosta źle opisuje dane. Zajmiemy się
+      tym w rozdziale 02."),
+
+    # ========================================================================
+    # p-wartość dla nachylenia
+    # ========================================================================
+    lc_h2("ch1-pvalue", "p-wartość dla nachylenia"),
+
+    lc_p("Współczynnik \\(b_1\\) policzony z próby jest estymatorem nachylenia
+      \\(\\beta_1\\) w populacji i jak każdy estymator zmienia się od próby do
+      próby. Nawet gdy w populacji \\(X\\) nie jest związane z \\(Y\\)
+      (\\(\\beta_1 = 0\\)), \\(b_1\\) z próby prawie nigdy nie wychodzi dokładnie
+      zero. Trzeba więc rozstrzygnąć, czy obserwowane nachylenie leży na tyle
+      daleko od zera, że trudno je wytłumaczyć samym losowaniem próby.
+      Hipotezy są następujące:"),
+
+    lc_formula_box(withMathJax(
+      "$$H_0: \\beta_1 = 0 \\qquad H_a: \\beta_1 \\neq 0$$"
+    )),
+
+    lc_p("Zmienność \\(b_1\\) między próbami mierzy jego błąd standardowy
+      \\(SE(b_1)\\). Jest on tym mniejszy, im ciaśniej punkty trzymają się
+      prostej, im więcej jest obserwacji i im szerzej rozciągają się wartości
+      \\(X\\). ", gloss("statystyka testowa", "Statystyka testowa"), " ma tę samą
+      budowę co w teście t z wykładu 04: estymata podzielona przez swój błąd
+      standardowy. Mówi, ile błędów standardowych dzieli \\(b_1\\) od zera."),
+
+    lc_formula_box(withMathJax(
+      "$$t = \\frac{b_1}{SE(b_1)}, \\qquad df = n - 2$$"
+    )),
+
+    lc_p("Przy prawdziwej H₀ statystyka ma ", gloss("rozkład t-Studenta"), " o ",
+      gloss("stopnie swobody", "stopniach swobody"), " \\(n - 2\\): dwa stopnie
+      swobody zużywa oszacowanie \\(b_0\\) i \\(b_1\\). ",
+      gloss("p-wartość", "P-wartość"), " liczy się i interpretuje jak w każdym
+      teście t. Tabela wyników ma też wiersz dla wyrazu wolnego z własnym
+      \\(t\\) i p-wartością. Testuje on hipotezę \\(\\beta_0 = 0\\), czyli pyta
+      o przewidywanie przy \\(X = 0\\), co rzadko jest interesujące."),
+
+    lc_p("Panel pokazuje cztery symulowane scenariusze o znanym prawdziwym
+      nachyleniu."),
 
     figure_panel(
       label = "Ryc. 1.2", title = "Kiedy nachylenie jest istotne?",
@@ -279,28 +364,65 @@ ch1_ui <- list(
       )
     ),
 
-    tagList(
-      p("Symulacja jest wygodna, bo my znamy prawdziwe ",
-        withMathJax("\\(\\beta_1\\)"),
-        " — sami je ustawiliśmy. W rzeczywistych danych jesteśmy ślepi: widzimy
-        tylko próbę. Spróbujmy więc tej samej procedury na realnym zbiorze."),
-      p("CASchools to dane o około 420 okręgach szkolnych w Kalifornii z lat 90.
-        Każdy wiersz to jeden okręg, każda kolumna — jeden mierzony parametr:
-        dochód w tysiącach dolarów, wydatki na ucznia, stosunek liczby uczniów
-        do nauczycieli (STR), procent dzieci z angielskim jako drugim językiem,
-        średnie wyniki z czytania i matematyki. To dane, na których ekonomiści
-        edukacji testowali hipotezę: czy mniejsze klasy poprawiają wyniki?"),
-      p("Wybierz parę zmiennych i zanim klikniesz „Pokaż odpowiedź”,
-        popatrz na chmurę i na tabelę: czy znak ", withMathJax("\\(b_1\\)"),
-        " pasuje do intuicji? Czy ", withMathJax("\\(p\\)"),
-        " jest dość małe, żeby odrzucić H₀? Dopiero potem porównaj swoją diagnozę
-        z werdyktem widgetu.")
-    ),
+    lc_p("W scenariuszu z wyraźnym dodatnim wpływem prawdziwe nachylenie wynosi
+      1.25, a z 70 punktów wychodzi \\(b_1 = 1.02\\) przy \\(SE = 0.16\\).
+      Statystyka \\(t = 6.28\\), a p-wartość jest mniejsza niż 0.001.
+      W scenariuszu bez wpływu prawdziwe nachylenie to zero, a próba daje
+      \\(b_1 = -0.14\\), \\(t = -0.62\\) i \\(p = 0.54\\). Nachylenie
+      z próby nie jest zerowe, ale mieści się w zakresie wahań losowych."),
 
+    lc_p("Najwięcej uczy ostatni scenariusz. Prawdziwe nachylenie jest takie samo
+      jak w pierwszym, ale punktów jest tylko 14, a szum jest większy. Estymata
+      \\(b_1 = 1.14\\) leży blisko prawdziwej wartości, lecz \\(SE = 0.56\\)
+      jest ponad trzy razy większy niż w pierwszym scenariuszu. Wychodzi
+      \\(t = 2.04\\) i \\(p = 0.063\\). Brak istotności nie oznacza tu braku
+      efektu, tylko zbyt małą próbę, żeby go wykazać."),
+
+    lc_p("Więcej niż sama decyzja mówi ", gloss("przedział ufności"),
+      " dla \\(\\beta_1\\), zbudowany jak w wykładzie 03: estymata plus minus
+      wartość krytyczna razy błąd standardowy."),
+
+    lc_formula_box(withMathJax(
+      "$$b_1 \\pm t^*_{\\alpha/2,\\, n-2} \\cdot SE(b_1)$$"
+    )),
+
+    lc_p("Panel go nie pokazuje, ale łatwo go policzyć z tabeli. Dla pierwszego
+      scenariusza 95% przedział ufności to od 0.70 do 1.35. Dla małej próby
+      sięga od -0.07 do 2.35: obejmuje zero, ale też wartości prawie dwa razy
+      większe od prawdziwego nachylenia. Dane z małej próby nie wykluczają
+      ani braku związku, ani silnego związku."),
+
+    lc_p("Test nachylenia ma jeszcze jedną własność. W regresji prostej jest
+      równoważny testowi korelacji z wykładu 04. Statystyka
+      \\(t = b_1 / SE(b_1)\\) ma dokładnie tę samą wartość co
+      \\(t = r\\sqrt{n-2} / \\sqrt{1-r^2}\\), te same stopnie swobody \\(n - 2\\)
+      i tę samą p-wartość. W pierwszym scenariuszu \\(r = 0.61\\) i oba wzory
+      dają \\(t = 6.28\\). Nie ma w tym przypadku: \\(\\beta_1 = 0\\) dokładnie
+      wtedy, gdy korelacja w populacji jest zerowa. Na pytanie „czy jest
+      związek?” regresja prosta odpowiada tak samo jak korelacja. Dodaje
+      odpowiedź na pytanie „o ile?”."),
+
+    # ========================================================================
+    # CASchools
+    # ========================================================================
     lc_h2("ch1-caschool", "Regresja na danych CASchools"),
 
+    lc_p("W symulacji znaliśmy prawdziwe nachylenie, bo sami je ustawiliśmy.
+      W prawdziwych danych widzimy tylko próbę. Zbiór CASchools opisuje 420
+      okręgów szkolnych w Kalifornii z lat 90. Każdy wiersz to jeden okręg,
+      a kolumny opisują m.in. średni dochód w okręgu w tysiącach dolarów,
+      wydatki na ucznia, liczbę uczniów na nauczyciela (STR), odsetek uczniów
+      uczących się angielskiego jako drugiego języka, odsetek uczniów
+      z dofinansowanym lunchem oraz średnie wyniki testów z czytania
+      i matematyki. Na tych danych ekonomiści edukacji sprawdzali, czy mniejsze
+      klasy poprawiają wyniki."),
+
+    lc_p("Panel jest ćwiczeniem. Dla wybranej pary zmiennych najpierw oceń
+      z wykresu i tabeli znak nachylenia i p-wartość, a dopiero potem porównaj
+      swoją ocenę z odpowiedzią."),
+
     figure_panel(
-      label = "Ryc. 1.4", title = "CASchools: od outputu do interpretacji",
+      label = "Ryc. 1.4", title = "CASchools: od tabeli wyników do interpretacji",
       full_width = TRUE,
       fluidRow(
         column(4,
@@ -338,23 +460,52 @@ ch1_ui <- list(
       )
     ),
 
-    tagList(
-      p("Do tej pory traktowaliśmy regresję jako narzędzie do opisu zależności:
-        czy istnieje, jaki ma znak, czy jest istotna. Ale model regresji ma drugie
-        zastosowanie, równie ważne: przewidywanie. Skoro mamy równanie ",
-        withMathJax("\\(\\hat{Y} = b_0 + b_1 X\\)"),
-        ", możemy podstawić dowolne X i odczytać oczekiwane Y."),
-      p("Trzeba tylko pamiętać, co ta liczba znaczy: ", gloss("wartość przewidywana", "predykcja"), " to średnia warunkowa
-        — najlepszy strzał w Y dla okręgów o danym X, ", tags$em("nie"),
-        " obietnica konkretnej wartości. Jeśli dla okręgu o dochodzie 20 tys.
-        USD model daje ", withMathJax("\\(\\hat{Y} = 658\\)"),
-        ", to nie znaczy, że ", tags$em("każdy"),
-        " taki okręg dostanie 658 — znaczy, że średnio okręgi o tym dochodzie
-        kręcą się wokół 658."),
-      p("Sam rachunek jest banalny: podstaw X do równania. Spróbuj.")
-    ),
+    lc_p("Dla domyślnej pary, wyniku z czytania i dochodu okręgu,
+      \\(b_1 = 1.94\\): okręg zamożniejszy o 1 tys. USD ma przeciętnie wynik
+      z czytania wyższy o niecałe 2 punkty. \\(SE = 0.10\\), \\(t = 19.9\\),
+      a p-wartość jest mniejsza niż 0.001. Korelacja tych zmiennych wynosi
+      \\(r = 0.70\\) i test korelacji dałby dokładnie tę samą p-wartość.
+      Wykres pokazuje jednak coś, czego tabela nie zdradza. Najbiedniejsze
+      i najbogatsze okręgi leżą przeważnie poniżej prostej, a okręgi o średnim
+      dochodzie powyżej. Związek jest wygięty i prosta jest tylko jego
+      przybliżeniem. Takie wzorce wychwytuje analiza reszt w rozdziale 02."),
 
+    lc_p("Dla liczby uczniów na nauczyciela nachylenie przy czytaniu wynosi
+      -2.62: okręgi, w których na nauczyciela przypada o jednego ucznia więcej,
+      mają przeciętnie wynik niższy o 2.6 punktu (\\(p < 0.001\\)). To jeszcze
+      nie dowód, że mniejsze klasy poprawiają wyniki. Okręgi z mniejszymi
+      klasami są przeciętnie zamożniejsze (korelacja STR z dochodem wynosi
+      -0.23), a regresja prosta nie odróżnia wpływu klas od wpływu dochodu.
+      Do tego potrzebny jest model z kilkoma predyktorami z rozdziału 03."),
+
+    lc_p("Zmienna „Zakres klas” ma tylko dwie wartości, KK-06 i KK-08. Panel
+      koduje je jako 0 i 1. Wtedy prosta łączy średnie obu grup, a \\(b_1\\)
+      jest różnicą tych średnich. Predyktorami jakościowymi zajmuje się
+      rozdział 03B."),
+
+    # ========================================================================
+    # Predykcja
+    # ========================================================================
     lc_h2("ch1-predykcja", "Predykcja z modelu"),
+
+    lc_p("Dotąd regresja służyła do opisu związku: czy istnieje, w którą stronę
+      idzie i czy jest istotny. Równanie prostej ma też drugie zastosowanie,
+      przewidywanie. Po podstawieniu wartości \\(X\\) do równania dostajemy ",
+      gloss("wartość przewidywana", "wartość przewidywaną"), ":"),
+
+    lc_formula_box(withMathJax(
+      "$$\\hat{Y} = b_0 + b_1 X$$"
+    )),
+
+    lc_p("Wartość przewidywana szacuje średnie \\(Y\\) wśród obiektów o danym
+      \\(X\\), a nie wynik pojedynczego obiektu. Model czytania od dochodu
+      przewiduje dla okręgu o dochodzie 20 tys. USD wynik 664.1. Nie znaczy
+      to, że każdy taki okręg osiągnie 664 punkty, tylko że okręgi o tym
+      dochodzie osiągają przeciętnie około 664, a pojedyncze rozrzucają się
+      wokół tej wartości o tyle, ile wynoszą reszty."),
+
+    lc_p("Panel podaje tabelę współczynników dla kilku modeli. Policz
+      \\(\\hat{Y}\\) samodzielnie, zanim odsłonisz odpowiedź."),
 
     figure_panel(
       label = "Ryc. 1.5", title = "Użyj równania regresji do przewidywania",
@@ -379,30 +530,50 @@ ch1_ui <- list(
       )
     ),
 
+    lc_p("W domyślnym modelu wynik z czytania zależy od liczby uczniów
+      w okręgu. Nachylenie wynosi około -0.001 punktu na ucznia, więc dla
+      okręgu z 2000 uczniów model przewiduje 655.6. To prawie tyle, ile wynosi
+      średni wynik z czytania we wszystkich okręgach (655.0). Przy słabym
+      związku (\\(r = -0.19\\)) prosta jest prawie pozioma i przewidywanie
+      niewiele różni się od średniej. Małe nachylenie nie musi jednak znaczyć
+      małego efektu, bo zależy od jednostek: różnica 10 000 uczniów przekłada
+      się już na około 10 punktów."),
+
+    lc_p("Przewidywanie ma oparcie w danych tylko w zakresie \\(X\\), który
+      wystąpił w próbie. Liczba uczniów w okręgach CASchools wynosi od 81
+      do 27 176. Poza tym przedziałem nie wiadomo, czy związek nadal jest
+      liniowy. Taką ", gloss("ekstrapolacja", "ekstrapolację"), " omawia
+      rozdział 02."),
+
+    # ========================================================================
+    # Co zostawiamy na potem
+    # ========================================================================
     lc_h2("ch1-co-dalej", "Co zostawiamy na potem"),
 
-    tagList(
-      p("W jednym rozdziale przeszliśmy od chmury punktów do równania prostej,
-        nauczyliśmy się czytać tabelę regresji i przewidywać Y dla nowego X.
-        Świadomie jednak pominęliśmy kilka rzeczy, do których wrócimy."),
-      tags$ul(
-        tags$li("Co czyni model dobrym: kiedy wolno ufać prostej? Reszty zdradzają, czy model się
-                 nadaje; R² i RMSE mówią, ile wyjaśnia i jak duże robi
-                 pomyłki — to temat rozdziału 2."),
-        tags$li("Wiele predyktorów: jak dołączyć drugą i trzecią zmienną X, kiedy STR ", tags$em("i"),
-                " wydatki ", tags$em("i"),
-                " dochód wpływają na wyniki naraz — rozdział 3."),
-        tags$li("Porównywanie modeli: kiedy bogatszy model jest lepszy, a kiedy tylko przepasowany —
-                 rozdział 4. Tam dochodzą R²adj, AIC, BIC i train/test.")
-      ),
-      p("Linia regresji jest w wykresach od ponad stu lat. Reszta tego wykładu
-        pokaże, dlaczego mimo prostoty ciągle bywa nadużywana — i jak tego nie
-        robić.")
-    ),
+    lc_p("W tym rozdziale przeszliśmy od chmury punktów do równania prostej,
+      odczytaliśmy z tabeli wyników estymaty, błędy standardowe i p-wartości
+      i użyliśmy równania do przewidywania. Kilka pytań zostało otwartych."),
+
+    lc_p("Pierwsze: czy prostej można ufać. Reszty pokazują, czy model pasuje
+      do danych, ", gloss("współczynnik determinacji", "współczynnik determinacji"),
+      " \\(R^2\\) mówi, jaką część zmienności \\(Y\\) model wyjaśnia, a RMSE,
+      jak duże są typowe pomyłki. Tym zajmuje się rozdział 02."),
+
+    lc_p("Drugie: co zrobić, gdy na wynik wpływa kilka zmiennych naraz, na
+      przykład liczba uczniów na nauczyciela, wydatki i dochód. Regresja
+      wieloraka z rozdziału 03 ocenia każdą z nich przy stałych pozostałych.
+      Rozdział 03B pokazuje, co się dzieje, gdy ważną zmienną pominiemy,
+      i jak włączyć do modelu zmienną jakościową."),
+
+    lc_p("Trzecie: kiedy bogatszy model jest lepszy, a kiedy tylko lepiej
+      dopasowany do przypadkowych szczegółów próby. Do tego służą skorygowane
+      \\(R^2\\), kryteria AIC i BIC oraz podział danych na część uczącą
+      i testową w rozdziale 04. Rozdział 05 przenosi regresję na zmienną
+      \\(Y\\) o dwóch wartościach."),
 
     lc_chapter_next(
       num       = "02",
-      title     = "Co czyni model dobrym?",
+      title     = "Jakość modelu",
       lead      = "reszty, R², RMSE — diagnostyka pojedynczego modelu",
       target_id = "ch-jakosc"
     )
@@ -435,12 +606,19 @@ ch1_server <- function(input, output, session) {
   }))
 
   output$ch1_beta_info <- renderUI({
-    direction <- if (input$ch1_beta_b1 > 0) "rośnie" else if (input$ch1_beta_b1 < 0) "maleje" else "nie zmienia się"
+    b1 <- input$ch1_beta_b1
+    change <- if (b1 > 0) {
+      paste0("rośnie o ", abs(b1))
+    } else if (b1 < 0) {
+      paste0("maleje o ", abs(b1))
+    } else {
+      "nie zmienia się"
+    }
     lc_feedback(type = "info",
       p(tags$strong("Interpretacja:"),
-        paste0(" gdy X wzrasta o 1, oczekiwane Y ", direction,
-               " o ", abs(input$ch1_beta_b1), ". Szum σ = ",
-               input$ch1_beta_sigma, " rozprasza punkty wokół linii."))
+        paste0(" gdy X wzrasta o 1, oczekiwane Y ", change,
+               ". Szum σ = ", input$ch1_beta_sigma,
+               " rozprasza punkty wokół linii."))
     )
   })
 
@@ -602,10 +780,7 @@ ch1_server <- function(input, output, session) {
     parts <- list(stats[[1]])
     for (s in stats[-1]) parts <- c(parts, list(", ", s))
 
-    tagList(
-      parts, HTML("."),
-      if (step >= 5) tagList(" ", "To jest ta sama prosta, którą zwraca klasyczna regresja liniowa dla jednego predyktora. Korelacja ustala kierunek i siłę związku, a iloraz odchyleń standardowych przelicza ją na jednostki X i Y.")
-    )
+    tagList(parts, HTML("."))
   })
 
   # Wzory nachylenia i wyrazu wolnego pod opisem kroku (kroki 4–5).
@@ -641,7 +816,7 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  # --- Cwiczenie: narysuj prosta z outputu regresji ---
+  # --- Ćwiczenie: narysuj prostą z tabeli współczynników ---
   ch1_draw_model <- reactiveVal(NULL)
   ch1_draw_points <- reactiveVal(data.frame(x = numeric(), y = numeric()))
   ch1_draw_revealed <- reactiveVal(FALSE)
@@ -694,8 +869,8 @@ ch1_server <- function(input, output, session) {
     tags$table(class = "lc-table lc-table-bordered lc-table-sm",
       tags$thead(
         tags$tr(
-          tags$th("Term"),
-          tags$th("Estimate")
+          tags$th("Zmienna"),
+          tags$th("Estymata")
         )
       ),
       tags$tbody(
@@ -880,7 +1055,7 @@ ch1_server <- function(input, output, session) {
                  label = "inna prosta", hjust = 0, vjust = 1,
                  colour = STEP_ROLES$new$colour, fontface = "bold") +
         annotate("text", x = min(df$x), y = max(df$y) - 0.1 * diff(range(df$y)),
-                 label = "OLS", hjust = 0, vjust = 1,
+                 label = "MNK", hjust = 0, vjust = 1,
                  colour = STEP_ROLES$known$colour, fontface = "bold")
     }
     p + frame
@@ -895,24 +1070,26 @@ ch1_server <- function(input, output, session) {
     alt_b1 <- coefs[2] * 0.45
     alt_b0 <- mean(df$y) - alt_b1 * mean(df$x)
     alt_sse <- sum((df$y - (alt_b0 + alt_b1 * df$x))^2)
+    ss_res <- tagList("SS", tags$sub("res", .noWS = "before"))
     if (step == 6) {
       return(tagList(
-        "SSE OLS = ", tags$b(round(sse, 1)), ", SSE innej prostej = ",
-        tags$b(round(alt_sse, 1)), " (+", round((alt_sse / sse - 1) * 100, 1), "%). ",
-        "Ta przerywana linia też jest prostym modelem regresyjnym: dla każdego X daje przewidywane Ŷ. Nie jest jednak linią OLS, bo ma większą sumę kwadratów reszt. OLS wygrywa nie dlatego, że jest jedyną prostą, tylko dlatego, że minimalizuje SSE."
+        ss_res, " prostej MNK = ", tags$b(round(sse, 1)), ", ", ss_res,
+        " innej prostej = ", tags$b(round(alt_sse, 1)),
+        " (+", round((alt_sse / sse - 1) * 100, 1), "%)."
       ))
     }
     switch(as.character(step),
       "1" = "Najpierw mamy tylko punkty: pary obserwacji X i Y.",
       "2" = "Pozioma linia to średnia Y. To najprostszy model bez predyktora.",
-      "3" = "Linia regresji przechodzi tak, aby suma kwadratów pionowych błędów była możliwie mała.",
+      "3" = "Prosta MNK: najmniejsza suma kwadratów pionowych odległości od punktów.",
       "4" = "Każdy odcinek to reszta: obserwacja minus predykcja.",
       "5" = tagList("Model: Ŷ = ", tags$b(round(coefs[1], 2)), " + ",
-                    tags$b(round(coefs[2], 2)), "X; SSE = ", tags$b(round(sse, 1)), ".")
+                    tags$b(round(coefs[2], 2)), "X; ", ss_res, " = ",
+                    tags$b(round(sse, 1)), ".")
     )
   })
 
-  # --- Widget: p-value dla nachylenia ---
+  # --- Widget: p-wartość dla nachylenia ---
   ch1_pval_data <- reactive({
     scenario <- input$ch1_pval_scenario
     if (is.null(scenario)) scenario <- "strong_positive"
@@ -956,10 +1133,10 @@ ch1_server <- function(input, output, session) {
     tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
       tags$thead(
         tags$tr(
-          tags$th("Term"),
-          tags$th("Estimate"),
+          tags$th("Zmienna"),
+          tags$th("Estymata"),
           tags$th("t"),
-          tags$th("p-value")
+          tags$th("p")
         )
       ),
       tags$tbody(
@@ -1007,12 +1184,12 @@ ch1_server <- function(input, output, session) {
     if (is_sig) {
       lc_feedback(type = "ok", style = "margin-top: 12px;",
         tags$strong("Wniosek: "),
-        sprintf("odrzucamy H0. Nachylenie b1 = %.2f jest istotnie różne od zera.", b1)
+        sprintf("odrzucamy H₀. Nachylenie b₁ = %.2f jest istotnie różne od zera.", b1)
       )
     } else {
       lc_feedback(type = "warning", style = "margin-top: 12px;",
         tags$strong("Wniosek: "),
-        sprintf("nie odrzucamy H0. Dane nie dają mocnych podstaw, by uznać nachylenie b1 = %.2f za różne od zera.", b1)
+        sprintf("nie odrzucamy H₀. Dane nie dają mocnych podstaw, by uznać nachylenie b₁ = %.2f za różne od zera.", b1)
       )
     }
   })
@@ -1022,19 +1199,13 @@ ch1_server <- function(input, output, session) {
     coefs <- broom::tidy(model)
     p_val <- coefs$p.value[2]
 
-    tagList(
-      lc_stat_grid(
-        lc_stat_box("b₁", round(coefs$estimate[2], 2), color = unname(upwr_cat["szalwia"])),
-        lc_stat_box("SE(b₁)", round(coefs$std.error[2], 2), color = upwr_secondary),
-        lc_stat_box("t", round(coefs$statistic[2], 2), color = unname(upwr_cat["bursztyn"])),
-        lc_stat_box("p-value", if (p_val < 0.001) "< 0.001" else round(p_val, 3),
-                    color = if (p_val < 0.05) unname(upwr_cat["niebo"]) else upwr_reference),
-        columns = 4
-      ),
-      lc_feedback(type = "info",
-        p("p-value dotyczy testu dla współczynnika przy X, czyli pytania,
-          czy prawdziwe nachylenie prostej w populacji może wynosić zero.")
-      )
+    lc_stat_grid(
+      lc_stat_box("b₁", round(coefs$estimate[2], 2), color = unname(upwr_cat["szalwia"])),
+      lc_stat_box("SE(b₁)", round(coefs$std.error[2], 2), color = upwr_secondary),
+      lc_stat_box("t", round(coefs$statistic[2], 2), color = unname(upwr_cat["bursztyn"])),
+      lc_stat_box("p-wartość", if (p_val < 0.001) "< 0.001" else round(p_val, 3),
+                  color = if (p_val < 0.05) unname(upwr_cat["niebo"]) else upwr_reference),
+      columns = 4
     )
   })
 
@@ -1123,11 +1294,11 @@ ch1_server <- function(input, output, session) {
     tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
       tags$thead(
         tags$tr(
-          tags$th("Term"),
-          tags$th("Estimate"),
+          tags$th("Zmienna"),
+          tags$th("Estymata"),
           tags$th("SE"),
           tags$th("t"),
-          tags$th("p-value")
+          tags$th("p")
         )
       ),
       tags$tbody(
@@ -1150,7 +1321,7 @@ ch1_server <- function(input, output, session) {
 
     if (!ch1_cas_revealed()) {
       return(lc_feedback(type = "warning", style = "margin-top: 12px;",
-        p("Zanim klikniesz: sprawdź znak b₁ i p-value w tabeli. Czy wpływ X jest istotny?")
+        p("Zanim odsłonisz odpowiedź, odczytaj z tabeli znak b₁ i p-wartość.")
       ))
     }
 
@@ -1169,7 +1340,7 @@ ch1_server <- function(input, output, session) {
           sprintf("tak, %s istotnie przewiduje %s. Okręgi KK-08 różnią się od KK-06 średnio o %.3f punktu, p = %.3g.",
                   x_label, y_label, b1, p_val)
         } else {
-          sprintf("tak, %s istotnie przewiduje %s. Efekt jest %s: b1 = %.3f, p = %.3g.",
+          sprintf("tak, %s istotnie przewiduje %s. Efekt jest %s: b₁ = %.3f, p = %.3g.",
                   x_label, y_label, relation, b1, p_val)
         }
       )
@@ -1177,10 +1348,10 @@ ch1_server <- function(input, output, session) {
       lc_feedback(type = "warning", style = "margin-top: 12px;",
         tags$strong("Odpowiedź: "),
         if (identical(input$ch1_cas_x, "grades")) {
-          sprintf("nie mamy podstaw, by uznać różnicę między KK-08 i KK-06 w %s za istotną: b1 = %.3f, p = %.3g.",
+          sprintf("nie mamy podstaw, by uznać różnicę między KK-08 i KK-06 w %s za istotną: b₁ = %.3f, p = %.3g.",
                   y_label, b1, p_val)
         } else {
-          sprintf("nie mamy podstaw, by uznać wpływ %s na %s za istotny: b1 = %.3f, p = %.3g.",
+          sprintf("nie mamy podstaw, by uznać wpływ %s na %s za istotny: b₁ = %.3f, p = %.3g.",
                   x_label, y_label, b1, p_val)
         }
       )
@@ -1214,7 +1385,7 @@ ch1_server <- function(input, output, session) {
             "$$\\hat{Y} = %.2f %+ .2f \\cdot X_{\\text{KK-08}}$$",
             b0, b1
           ))),
-          p(tags$strong("Kodowanie: "), "KK-06 = 0, KK-08 = 1."),
+          p(tags$strong("Kodowanie:"), " KK-06 = 0, KK-08 = 1."),
           withMathJax(helpText(sprintf(
             "$$\\text{KK-06: } \\hat{Y} = %.2f %+ .2f \\cdot 0 = %.2f$$",
             b0, b1, y0
@@ -1294,6 +1465,12 @@ ch1_server <- function(input, output, session) {
     )
   })
 
+  # Współczynnik do ręcznego liczenia: małe wartości z cyframi znaczącymi
+  # (b₁ = -0.00097 zamiast -0.001), duże z dwoma miejscami po kropce.
+  .ch1_fmt_coef <- function(x) {
+    if (abs(x) >= 1) sprintf("%.2f", x) else format(signif(x, 3), scientific = FALSE)
+  }
+
   output$ch1_pred_table <- renderUI({
     spec <- ch1_pred_spec()
     model <- ch1_pred_model()
@@ -1303,15 +1480,15 @@ ch1_server <- function(input, output, session) {
     tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
       tags$thead(
         tags$tr(
-          tags$th("Term"),
-          tags$th("Estimate")
+          tags$th("Zmienna"),
+          tags$th("Estymata")
         )
       ),
       tags$tbody(
         lapply(seq_len(nrow(coefs)), function(i) {
           tags$tr(
             tags$td(coefs$term[i]),
-            tags$td(sprintf("%.3f", coefs$estimate[i]))
+            tags$td(.ch1_fmt_coef(coefs$estimate[i]))
           )
         })
       )
@@ -1367,7 +1544,10 @@ ch1_server <- function(input, output, session) {
 
     coefs <- coef(ch1_pred_model())
     x0 <- input$ch1_pred_x
-    y_hat <- unname(coefs[1] + coefs[2] * x0)
+    # Liczymy z wartości pokazanych w tabeli, żeby rachunek ręczny się zgadzał.
+    b0_txt <- .ch1_fmt_coef(coefs[1])
+    b1_txt <- .ch1_fmt_coef(abs(coefs[2]))
+    y_hat <- as.numeric(b0_txt) + sign(coefs[2]) * as.numeric(b1_txt) * x0
     x_label <- unname(.cas_labels[spec$x])
     y_label <- unname(.cas_labels[spec$y])
 
@@ -1376,11 +1556,12 @@ ch1_server <- function(input, output, session) {
         tags$div(style = "font-weight: 700; margin-bottom: 6px;", "Odpowiedź:"),
         withMathJax(tags$div(
           style = "font-size: 1.25rem; font-weight: 700; text-align: center;",
-          sprintf("$$\\hat{Y} = %.2f + %.3f \\cdot %.2f = %.2f$$",
-                  coefs[1], coefs[2], x0, y_hat)
+          sprintf("$$\\hat{Y} = %s %s %s \\cdot %s = %.2f$$",
+                  b0_txt, if (coefs[2] < 0) "-" else "+", b1_txt,
+                  format(x0), y_hat)
         )),
-        p(sprintf("Dla %s = %.2f przewidywane %s wynosi %.2f.",
-                  x_label, x0, y_label, y_hat))
+        p(sprintf("Dla %s = %s przewidywane %s wynosi %.2f.",
+                  x_label, format(x0), y_label, y_hat))
       )
     )
   })
@@ -1394,8 +1575,8 @@ ch1_server <- function(input, output, session) {
     y_hat <- unname(coefs[1] + coefs[2] * x0)
 
     lc_stat_grid(
-      lc_stat_box("b₀", round(coefs[1], 2), color = upwr_secondary),
-      lc_stat_box("b₁", round(coefs[2], 3), color = unname(upwr_cat["szalwia"])),
+      lc_stat_box("b₀", .ch1_fmt_coef(coefs[1]), color = upwr_secondary),
+      lc_stat_box("b₁", .ch1_fmt_coef(coefs[2]), color = unname(upwr_cat["szalwia"])),
       lc_stat_box("X", round(x0, 2), caption = unname(.cas_labels[spec$x]),
                   color = unname(upwr_cat["bursztyn"])),
       lc_stat_box("Ŷ", round(y_hat, 2), caption = unname(.cas_labels[spec$y]),

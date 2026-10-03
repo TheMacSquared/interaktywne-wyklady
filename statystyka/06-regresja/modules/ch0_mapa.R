@@ -111,7 +111,7 @@ ch0_map_ui <- list(
       num = "01",
       title = "Regresja liniowa",
       lead = "Zaczynamy od pytania, prostej i interpretacji współczynników.",
-      target_id = "ch-1"
+      target_id = "ch-liniowa"
     )
   )
 )

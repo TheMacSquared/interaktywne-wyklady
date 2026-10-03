@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 2: Co czyni model dobrym?
+# CHAPTER 2: Jakość modelu
 # ============================================================================
 
 # Scenariusze widgetu reszt vs fitted — dobrane tak, by pokazać różne wzorce.
@@ -8,34 +8,35 @@
     label = "Czytanie ~ lunch (model dobrze działa)",
     x = "lunch", y = "read",
     verdict = "ok",
-    title = "Wzorzec OK: linia ma sens",
-    comment = "Reszty rozsypane wokół zera, bez wyraźnego wzorca.
-              Model liniowy jest tu uzasadniony."
+    title = "Reszty bez wzorca",
+    comment = "Reszty leżą równą chmurą wokół zera, a Q-Q biegnie wzdłuż
+              prostej. Prosta dobrze opisuje tę zależność."
   ),
   read_income = list(
     label = "Czytanie ~ dochód (krzywizna)",
     x = "income", y = "read",
     verdict = "warning",
-    title = "Łuk w resztach: zależność jest nieliniowa",
-    comment = "Reszty układają się w łuk — zależność czytanie ~ dochód
-              jest krzywa, nie liniowa. Prosta systematycznie zaniża
-              przewidywania w środku zakresu X."
+    title = "Łuk w resztach",
+    comment = "W środku zakresu reszty są głównie dodatnie, na obu krańcach
+              ujemne. Zależność czytania od dochodu jest krzywa."
   ),
   read_str = list(
-    label = "Czytanie ~ STR (słaby model, ale bez wzorca)",
+    label = "Czytanie ~ uczniowie na nauczyciela (słaby model, bez wzorca)",
     x = "student_teacher_ratio", y = "read",
     verdict = "info",
-    title = "Słaby model, ale uczciwy",
-    comment = "Reszty są duże, bo R² jest niskie — STR słabo przewiduje
-              czytanie. Ale wzorzec sam w sobie jest losowy. To rzetelny
-              model: po prostu niewiele tłumaczy."
+    title = "Słaby model bez wzorca",
+    comment = "Reszty są prawie tak duże jak rozrzut samego wyniku, ale nie
+              układają się w żaden kształt. Model niewiele wyjaśnia,
+              choć niczego nie zniekształca."
   ),
   math_english = list(
-    label = "Matematyka ~ angielski jako 2. język (przyzwoity)",
+    label = "Matematyka ~ angielski jako 2. język (wachlarz)",
     x = "english", y = "math",
-    verdict = "ok",
-    title = "Reszty wyglądają OK",
-    comment = "Wzorzec nie krzyczy. Można patrzeć dalej — na R² i RMSE."
+    verdict = "info",
+    title = "Bez łuku, z lekkim wachlarzem",
+    comment = "Linia trendu reszt jest prawie płaska, ale rozrzut reszt rośnie
+              w prawej części wykresu, gdzie leżą okręgi z małym udziałem
+              uczniów uczących się angielskiego."
   )
 )
 
@@ -72,75 +73,79 @@
 ch2_ui <- list(
   id    = "ch-jakosc",
   num   = "02",
-  title = "Co czyni model dobrym?",
+  title = "Jakość modelu",
   content = tagList(
 
     lc_chapter_hero(
       kicker = "Rozdział 02 · Regresja",
       num    = "02",
-      title  = "Co czyni model dobrym?",
-      lead   = "W ch1 dopasowaliśmy linię. Ale czy ona w ogóle ma sens?
-                Reszty mówią prawdę o modelu."
+      title  = "Jakość modelu.",
+      lead   = "Prostą można dopasować do każdej chmury punktów, także takiej,
+                która wcale nie układa się wzdłuż prostej. O jakości modelu
+                mówi dopiero to, co po nim zostaje: reszty, odsetek wyjaśnionej
+                zmienności i wielkość typowej pomyłki."
     ),
 
-    tagList(
-      p("W rozdziale 1 mieliśmy wszystko, czego potrzeba do policzenia
-        regresji: chmurę punktów, MNK, p-value, predykcję. Każde z tych
-        narzędzi mówiło jednak: ", tags$em("jeśli model jest sensowny, to..."),
-        ". Pytanie, które dotąd omijaliśmy, brzmi: czy nasz model jest sensowny?"),
-      p("To pytanie rozkłada się na trzy konkretne podpytania, a każdemu
-        z nich odpowiada inne narzędzie:"),
-      tags$ol(
-        tags$li("Czy linia nie kłamie systematycznie? — ",
-                tags$em("wzorzec reszt")),
-        tags$li("Ile zmienności Y model wyjaśnia? — ",
-                withMathJax("\\(R^2\\)")),
-        tags$li("Jak duże są typowe pomyłki w predykcji? — ",
-                tags$em("RMSE"))
-      ),
-      p("Wszystko to są miary jakości pojedynczego modelu.
-        Porównywaniem różnych modeli — który lepszy, który gorszy
-        — zajmiemy się w rozdziale 4. Tu pytamy tylko: czy ", tags$em("ten"),
-        " model jest wart zaufania?")
+    lc_p("W rozdziale 01 dopasowaliśmy prostą metodą najmniejszych kwadratów,
+      odczytaliśmy z tabeli wyników współczynniki i ich p-wartości i użyliśmy
+      równania do przewidywania. Wszystkie te wyniki mają sens pod warunkiem,
+      że sam model jest sensowny: że zależność rzeczywiście jest liniowa,
+      a reszty zachowują się tak, jak zakłada metoda. Ten rozdział sprawdza
+      ten warunek."),
+
+    lc_p("Ocena modelu rozkłada się na trzy pytania, a każdemu odpowiada inne
+      narzędzie. Czy prosta nie myli się systematycznie? Odpowiada na to wzorzec
+      reszt. Jaką część zmienności Y model wyjaśnia? Odpowiada \\(R^2\\). Jak
+      duże są typowe pomyłki w jednostkach Y? Odpowiada RMSE. Wszystkie trzy
+      dotyczą jednego modelu. Porównywaniem kilku modeli zajmie się
+      rozdział 04."),
+
+    lc_h2("ch2-reszty", "Wzorzec reszt"),
+
+    lc_p("W rozdziale 01 ", gloss("reszta", "reszty"), " były pomocniczym pojęciem:
+      różnicami \\(e_i = y_i - \\hat{y}_i\\), których sumę kwadratów metoda
+      najmniejszych kwadratów czyni jak najmniejszą. Teraz stają się głównym
+      narzędziem oceny modelu. Reszta to ta część wyniku, której model nie
+      przewidział, więc w resztach widać to, czego model nie uchwycił."),
+
+    lc_p("Jeśli model dobrze opisuje dane, reszty są losowym szumem: tworzą
+      chmurę wokół zera bez trendu i bez zmian rozrzutu. Każde odstępstwo od
+      tego obrazu coś znaczy:"),
+
+    tags$ul(
+      tags$li(strong("Łuk:"), " zależność jest krzywa, a dopasowaliśmy prostą.
+        W jednym zakresie X prosta systematycznie zaniża przewidywania,
+        w innym je zawyża."),
+      tags$li(strong("Wachlarz:"), " rozrzut reszt rośnie albo maleje wraz
+        z przewidywaną wartością. Narusza to założenie stałej wariancji reszt,
+        czyli ", gloss("homoskedastyczność", "homoskedastyczności"), "."),
+      tags$li(strong("Pojedynczy punkt daleko od chmury:"), " ",
+        gloss("wartość odstająca", "wartość odstająca"), ", która może
+        przyciągać prostą do siebie.")
     ),
 
-    lc_h2("ch2-reszty", "Wzorzec reszt: kiedy linia kłamie"),
+    lc_p("Podstawowym narzędziem jest wykres reszt względem ",
+      gloss("wartość przewidywana", "wartości przewidywanych"), ": na osi
+      poziomej leży \\(\\hat{y}_i\\), na osi pionowej \\(e_i\\). W regresji
+      prostej \\(\\hat{y}\\) jest liniową funkcją X, więc ten wykres to
+      w istocie wykres rozrzutu przechylony tak, by prosta regresji stała się
+      poziomą linią zera. Wzorce, które w chmurze punktów łatwo przeoczyć,
+      stają się wtedy wyraźne. Drugim narzędziem jest ",
+      gloss("wykres kwantyl-kwantyl", "wykres Q-Q"), " reszt, ten sam co
+      w wykładzie 05, tylko zastosowany do reszt zamiast do surowych danych.
+      Punkty wzdłuż prostej oznaczają reszty w przybliżeniu normalne."),
 
-    tagList(
-      p("W rozdziale 1 ", gloss("reszta", "reszty"), " pojawiły się jako pojęcie pomocnicze:
-        coś, co MNK ", tags$em("kwadratuje"),
-        ", żeby znaleźć najlepszą prostą. Teraz reszty stają się głównym
-        bohaterem. Patrzymy w nie, żeby zobaczyć, ", tags$em("czego model
-        nie złapał"), "."),
-      p("Idealny model ma reszty rozsypane jak chmura wokół zera —
-        bez żadnego wzorca, bez trendu, bez wachlarza. Każde odchylenie
-        od tego ideału ma swoją wymowę:"),
-      tags$ul(
-        tags$li("Łuk w resztach: zależność jest tak naprawdę krzywa, a my dopasowaliśmy prostą.
-                 Linia systematycznie zaniża przewidywania w jednym zakresie
-                 X i zawyża w innym."),
-        tags$li("Wachlarz (lejek): wariancja Y zmienia się z X. Tam, gdzie X duże, punkty są
-                 bardziej rozproszone niż tam, gdzie X małe. Łamie to założenie
-                 stałej wariancji (", gloss("homoskedastyczność", "homoskedastyczności"), ")."),
-        tags$li("Pojedynczy odstający: kropka na wykresie reszt daleko od reszty chmury — to obserwacja,
-                 która ", tags$em("ciągnie"), " linię na siebie.")
-      ),
-      p("Standardowe narzędzie to wykres reszt vs dopasowanych
-        wartości: na osi X kładziemy ", withMathJax("\\(\\hat{Y}\\)"), ", na osi Y ",
-        withMathJax("\\(e_i = y_i - \\hat{y}_i\\)"),
-        ". Jeśli chmura nie ma struktury — model się nadaje. Jeśli ma —
-        sygnał, że trzeba coś poprawić."),
-      p("Uzupełnieniem jest ", gloss("wykres kwantyl-kwantyl", "wykres Q-Q"), " reszt: porównuje kwantyle reszt z kwantylami rozkładu normalnego.
-         Punkty biegnące wzdłuż linii prostej — reszty są w przybliżeniu normalne.
-         Łuk lub grube ogony — sygnał problemów.")
-    ),
+    lc_p("Panel pokazuje cztery proste modele dopasowane do danych z 420 okręgów
+      szkolnych w Kalifornii (zbiór CASchools). Dla każdego widać dane
+      z prostą, reszty względem wartości przewidywanych z wygładzoną linią
+      trendu reszt oraz wykres Q-Q reszt."),
 
     figure_panel(
       label = "Ryc. 2.1", title = "Reszty na danych CASchools",
       full_width = TRUE,
       fluidRow(
         column(4,
-          helpText("Cztery scenariusze na tych samych okręgach szkolnych z Kalifornii. Zobacz, jak różny model zachowuje się na tych samych danych."),
+          helpText("Te same 420 okręgów szkolnych, cztery różne pary zmiennych."),
           selectInput("ch2_resid_case", "Model:",
             choices = .ch2_resid_choices,
             selected = "read_income"
@@ -154,194 +159,285 @@ ch2_ui <- list(
       )
     ),
 
-    inline_callout(label = "Zapamiętaj", color = "wskazowka",
-      "Wykres reszt vs dopasowanych i Q-Q reszt to standardowa pierwsza diagnoza modelu
-       liniowego. Jeśli chmura nie ma struktury i Q-Q biegnie wzdłuż linii — model
-       jest OK. Pełna diagnostyka (leverage, ", gloss("obserwacja wpływowa", "wpływowe obserwacje"), ") — w kolejnych wykładach."
-    ),
+    lc_p("Model czytania zależnego od dochodu okręgu pokazuje łuk. Średnia
+      reszta w okręgach o dochodzie do 10 tys. USD wynosi -7.8 punktu,
+      w okręgach o dochodzie 15–20 tys. USD +4.7 punktu, a powyżej 30 tys. USD
+      znów -7.3 punktu. Prosta zawyża więc wyniki na obu krańcach i zaniża je
+      w środku. Wyniki rosną z dochodem coraz wolniej, a prosta tego nie
+      potrafi oddać. Wykres Q-Q tego samego modelu wygląda dobrze, co
+      przypomina, że normalność reszt nie gwarantuje poprawnego kształtu
+      zależności."),
+
+    lc_p("Model z odsetkiem uczniów z subsydiowanym lunchem nie zostawia
+      wzorca: reszty leżą równą chmurą, a ich odchylenie standardowe
+      w dolnej, środkowej i górnej trzeciej części wartości przewidywanych
+      wynosi 9.5, 9.6 i 9.8 punktu. Model z liczbą uczniów na nauczyciela też
+      nie ma wzorca, ale jego reszty są prawie tak duże jak rozrzut samych
+      wyników czytania. Brak wzorca nie znaczy więc, że model dużo wyjaśnia,
+      tylko że nie myli się systematycznie. Ile wyjaśnia, mierzą \\(R^2\\)
+      i RMSE w kolejnych sekcjach."),
+
+    lc_p("Ostatni model, matematyki zależnej od odsetka uczniów uczących się
+      angielskiego jako drugiego języka, ma prawie płaską linię trendu reszt,
+      ale ich rozrzut rośnie w prawo: odchylenie standardowe reszt w trzech
+      kolejnych częściach zakresu wartości przewidywanych wynosi 12.9, 16.1
+      i 17.1 punktu. To łagodny wachlarz. Pionowy pas punktów przy prawej
+      krawędzi to 49 okręgów, w których nikt nie uczy się angielskiego jako
+      drugiego języka; wszystkie mają tę samą wartość przewidywaną."),
 
     lc_h2("ch2-zalozenia", "Założenia, które widać w resztach"),
 
-    tagList(
-      p("W praktyce nie zaczynamy diagnostyki regresji od listy testów,
-        tylko od pytania: ", tags$em("czy model zostawił po sobie losowy szum?"),
-        " Dlatego większość klasycznych założeń modelu liniowego czytamy
-        właśnie z wykresów reszt."),
-      tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-        style = "font-size: 14px;",
-        tags$thead(
-          tags$tr(
-            tags$th("Założenie"),
-            tags$th("Co sprawdzić"),
-            tags$th("Sygnał problemu"),
-            tags$th("Co wtedy")
-          )
-        ),
-        tags$tbody(
-          tags$tr(
-            tags$td(tags$strong("Liniowość")),
-            tags$td("reszty vs dopasowane"),
-            tags$td("łuk, fala, systematyczny wzorzec"),
-            tags$td("transformacja, składnik kwadratowy, model nieliniowy")
-          ),
-          tags$tr(
-            tags$td(tags$strong("Stała wariancja")),
-            tags$td("reszty vs dopasowane / Scale-Location"),
-            tags$td("wachlarz, rosnący lub malejący rozrzut"),
-            tags$td("transformacja Y, odporne błędy standardowe, WLS")
-          ),
-          tags$tr(
-            tags$td(tags$strong("Normalność reszt")),
-            tags$td("Q-Q reszt"),
-            tags$td("grube ogony, łuk, odstające punkty"),
-            tags$td("sprawdź outliery, bootstrap CI, inny model dla Y")
-          ),
-          tags$tr(
-            tags$td(tags$strong("Brak obserwacji wpływowych")),
-            tags$td("reszty standaryzowane, leverage, Cook's distance"),
-            tags$td("pojedynczy punkt zmienia nachylenie"),
-            tags$td("zweryfikuj pomiar, pokaż analizę z/bez punktu")
-          )
+    lc_p("Wykład 05 zapowiadał, że w regresji założenia dotyczą reszt, a nie
+      samych zmiennych. To bezpośrednie przedłużenie tego, co znamy z testu t
+      i ", gloss("ANOVA"), ". Tam resztami były odchylenia obserwacji od średniej
+      ich grupy, a założenia mówiły o ich rozkładzie i rozrzucie w każdej
+      grupie. W regresji resztami są odchylenia od prostej, a „grupy”
+      zastępuje ciągły zakres wartości przewidywanych. Zmienna zależna nie
+      musi mieć rozkładu normalnego; w przybliżeniu normalne powinny być
+      reszty."),
+
+    lc_p("Narzędzia są te same co w wykładzie 05. Normalność oceniamy wykresem
+      Q-Q reszt. Jednorodność wariancji oceniamy, porównując rozrzut reszt
+      w różnych częściach zakresu, tak jak w wykładzie 05 porównywaliśmy
+      odchylenia standardowe w grupach. Liniowość i stałą wariancję naraz
+      pokazuje wykres reszt względem wartości przewidywanych. Tabela zbiera
+      typowe założenia z sygnałami problemu i możliwymi reakcjami."),
+
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
+      style = "font-size: 14px;",
+      tags$thead(
+        tags$tr(
+          tags$th("Założenie"),
+          tags$th("Co sprawdzić"),
+          tags$th("Sygnał problemu"),
+          tags$th("Co wtedy")
         )
       ),
-      p("Testy formalne — np. ", gloss("test Shapiro-Wilka", "Shapiro-Wilk"), " dla reszt albo Breusch-Pagan
-        dla ", gloss("heteroskedastyczność", "heteroscedastyczności"), " — są dodatkiem do wykresu. Przy dużych
-        próbach łatwo wykrywają drobiazgi, a przy małych często nie mają
-        mocy. W raporcie najpierw pokaż wzorzec reszt, dopiero potem
-        ewentualnie podaj test.")
+      tags$tbody(
+        tags$tr(
+          tags$td(tags$strong("Liniowość")),
+          tags$td("reszty względem wartości przewidywanych"),
+          tags$td("łuk, fala, systematyczny wzorzec"),
+          tags$td("transformacja, składnik kwadratowy, model nieliniowy")
+        ),
+        tags$tr(
+          tags$td(tags$strong("Stała wariancja")),
+          tags$td("reszty względem wartości przewidywanych, wykres Scale-Location"),
+          tags$td("wachlarz, rosnący lub malejący rozrzut"),
+          tags$td("transformacja Y, odporne błędy standardowe, ważona MNK (WLS)")
+        ),
+        tags$tr(
+          tags$td(tags$strong("Normalność reszt")),
+          tags$td("wykres Q-Q reszt"),
+          tags$td("grube ogony, łuk, punkty daleko od prostej"),
+          tags$td("sprawdź wartości odstające, przedział ufności bootstrap, inny model dla Y")
+        ),
+        tags$tr(
+          tags$td(tags$strong("Brak obserwacji wpływowych")),
+          tags$td("reszty standaryzowane, dźwignia, odległość Cooka"),
+          tags$td("pojedynczy punkt zmienia nachylenie"),
+          tags$td("zweryfikuj pomiar, pokaż analizę z punktem i bez niego")
+        )
+      )
     ),
 
-    lc_h2("ch2-r2", "R² — ile model wyjaśnia?"),
+    lc_p("Założenia nie są równie ważne. Liniowość jest najważniejsza, bo przy
+      krzywej zależności błędne są same współczynniki, a nie tylko ich
+      p-wartości. Stała wariancja wpływa na błędy standardowe, a przez nie na
+      p-wartości i przedziały ufności. Normalność reszt ma znaczenie głównie
+      w małych próbach, bo w dużych rozkład współczynników jest w przybliżeniu
+      normalny niezależnie od kształtu rozkładu reszt. Osobnym założeniem jest
+      niezależność reszt; wykresy z tego rozdziału jej nie pokazują, ocenia
+      się ją na podstawie sposobu zbierania danych, np. pomiarów powtarzanych
+      w czasie. ", gloss("obserwacja wpływowa", "Obserwacje wpływowe"),
+      " nie są założeniem w ścisłym sensie, ale pojedynczy punkt potrafi
+      zmienić nachylenie całej prostej, więc warto je wykryć."),
 
-    tagList(
-      p("Wzorzec reszt mówił o jakości ", tags$em("jakościowej"),
-        ": czy linia nie kłamie. Teraz pytanie ilościowe: ile zmienności Y rzeczywiście wyjaśnia model?"),
-      p(gloss("współczynnik determinacji", "Współczynnik determinacji"), " ", withMathJax("\\(R^2\\)"),
-        " mówi, jaki odsetek całej zmienności Y jest „zaopiekowany\" przez X.
-        Liczy się prosto:"),
-      lc_formula_box(
-        withMathJax(helpText("$$R^2 = 1 - \\frac{SS_{res}}{SS_{tot}} = 1 - \\frac{\\sum(y_i - \\hat{y}_i)^2}{\\sum(y_i - \\bar{y})^2}$$"))
-      ),
-      p("Licznik to suma kwadratów reszt — wariancja, której model nie wyjaśnił.
-        Mianownik to całkowita wariancja Y. Iloraz mierzy, ", tags$em("ile zmienności
-        został niewytłumaczonej"),
-        ", a 1 minus to jest dopełnieniem: ", tags$em("ile zmienności wyjaśniono"),
-        ". Zakres [0, 1]: 0 = model nie wyjaśnia nic, 1 = idealne dopasowanie.")
-    ),
+    lc_p("Testy formalne, np. ", gloss("test Shapiro-Wilka"), " dla reszt albo
+      test Breuscha-Pagana dla ",
+      gloss("heteroskedastyczność", "heteroskedastyczności"), ", są dodatkiem
+      do wykresu, tak jak w wykładzie 05. W dużych próbach wykrywają odchylenia
+      bez praktycznego znaczenia, w małych często ich nie wykrywają, a brak
+      podstaw do odrzucenia H₀ nie dowodzi, że założenie jest spełnione.
+      Przykład z naszych danych: dla modelu z liczbą uczniów na nauczyciela
+      test Shapiro-Wilka daje p = 0.02, choć wykres Q-Q odchyla się od prostej
+      tylko łagodnie na obu końcach, a przy 420 okręgach takie odchylenie
+      niczemu nie zagraża. Dla modelu matematyki test Breuscha-Pagana daje
+      p < 0.001, co potwierdza wachlarz widoczny na wykresie reszt. W raporcie
+      najpierw opisujemy wzorzec reszt, a test podajemy co najwyżej obok."),
+
+    lc_h2("ch2-r2", "R²: ile zmienności wyjaśnia model"),
+
+    lc_p("Wzorzec reszt mówi, czy prosta nie myli się systematycznie, ale nie
+      mówi, ile model wyjaśnia. Model z liczbą uczniów na nauczyciela był
+      wolny od wzorca, a mimo to jego reszty były prawie tak duże jak rozrzut
+      samych wyników. Potrzebujemy miary, która porówna wielkość reszt
+      z tym, jak bardzo Y zmienia się w ogóle."),
+
+    lc_p("Tą miarą jest ", gloss("współczynnik determinacji"), " \\(R^2\\).
+      Punktem odniesienia jest najprostsza prognoza, jaką można zrobić bez
+      żadnego predyktora: średnia \\(\\bar{y}\\) dla wszystkich obserwacji.
+      Jej błędy sumują się do całkowitej sumy kwadratów \\(SS_{tot}\\).
+      Model z predyktorem zostawia mniejsze błędy, czyli resztową sumę
+      kwadratów \\(SS_{res}\\), tę samą, którą minimalizuje metoda najmniejszych
+      kwadratów. \\(R^2\\) mówi, jaką część \\(SS_{tot}\\) model usunął."),
+
+    lc_formula_box(withMathJax(
+      "$$R^2 = 1 - \\frac{SS_{res}}{SS_{tot}} = 1 - \\frac{\\sum_{i=1}^{n}(y_i - \\hat{y}_i)^2}{\\sum_{i=1}^{n}(y_i - \\bar{y})^2}$$"
+    )),
+
+    lc_p("\\(R^2\\) przyjmuje wartości od 0 do 1. Zero oznacza, że model
+      przewiduje nie lepiej niż średnia, jedynka, że wszystkie punkty leżą
+      dokładnie na prostej. W regresji prostej \\(R^2\\) jest równe kwadratowi
+      współczynnika korelacji Pearsona z wykładu 04, który już tam nazwaliśmy
+      współczynnikiem determinacji. Dla czytania i odsetka uczniów
+      z subsydiowanym lunchem \\(r = -0.88\\), więc \\(R^2 = 0.77\\): model
+      wyjaśnia 77% zmienności wyników czytania między okręgami."),
+
+    lc_p("Panel pokazuje trzy zbiory danych z tą samą prawdziwą prostą
+      o nachyleniu 2.2. Różnią się tylko wielkością losowego szumu wokół
+      niej."),
 
     figure_panel(
       label = "Ryc. 2.2", title = "To samo X i Y, różna siła wyjaśniania",
       full_width = TRUE,
-      helpText("Trzy stałe przykłady: niskie, średnie i wysokie R². Im ciaśniej punkty leżą przy linii, tym większa część zmienności Y jest wyjaśniona przez X."),
       lc_plot("ch2_r2_compare_plot", ratio = "1.7/1", max_height = "360px")
     ),
 
-    tagList(
-      p("Tu pojawia się pierwsza ważna pułapka: wysokie ",
-        withMathJax("\\(R^2\\)"),
-        " nie oznacza automatycznie dobrego modelu. Model może tak mocno
-        dopasować się do przypadkowych szczegółów próby, że świetnie wygląda
-        na ", gloss("zbiór treningowy", "danych treningowych"), ", ale słabo przewiduje nowe obserwacje. To jest
-        ", tags$em(gloss("przeuczenie")), " (overfitting)."),
-      p("Niskie ", withMathJax("\\(R^2\\)"),
-        " też nie przekreśla modelu. W naukach społecznych, edukacyjnych
-        czy bezpieczeństwie pracy procesy są głośne i wieloczynnikowe, więc
-        ", withMathJax("\\(R^2 = 0.3\\)"),
-        " bywa bardzo dobrą informacją. R² mówi o sile związku w tych
-        konkretnych danych, a nie o jakości modelu w ogóle."),
-      lc_h3("Jak wygląda przeuczenie?"),
-      p("Kilka typowych sytuacji:"),
-      tags$ul(
-        tags$li(tags$b("Za dużo predyktorów przy małej próbie: "),
-                "model z 20 zmiennymi dla 40 obserwacji może przypadkiem
-                „wyjaśnić” szum, a nie zjawisko."),
-        tags$li(tags$b("Zbyt elastyczna krzywa: "),
-                "wielomian wysokiego stopnia przechodzi blisko każdego punktu,
-                ale między punktami faluje bez sensu."),
-        tags$li(tags$b("Powtarzane dobieranie modelu pod tę samą próbę: "),
-                "sprawdzamy wiele wariantów i wybieramy ten, który wygląda
-                najlepiej, choć wygrał przypadkiem."),
-        tags$li(tags$b("Wyciek informacji: "),
-                "w predyktorach znajduje się zmienna, której w praktycznej
-                predykcji jeszcze byśmy nie znali, np. wynik po egzaminie
-                użyty do przewidywania zdania egzaminu.")
-      ),
-      figure_panel(
-        label = "Ryc. 2.2b", title = "Przeuczenie: dopasowanie kontra generalizacja",
-        full_width = TRUE,
-        helpText("Te same dane treningowe i testowe, trzy poziomy elastyczności modelu.
-                  Model przeuczony potrafi mocno falować między punktami treningowymi,
-                  mimo że nie poprawia przewidywania nowych obserwacji."),
-        lc_plot("ch2_overfit_plot", ratio = "1.6/1", max_height = "380px"),
-        uiOutput("ch2_overfit_stats")
-      ),
-      figure_panel(
-        label = "Miniściąga", title = "Jak ograniczać przeuczenie?",
-        full_width = TRUE,
-        tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
-          tags$thead(
-            tags$tr(tags$th("Problem"), tags$th("Objaw"), tags$th("Co zrobić"))
+    lc_p("Przy dużym szumie \\(R^2 = 0.18\\), przy średnim 0.54, przy małym
+      0.95. Nachylenie we wszystkich trzech panelach jest takie samo, zmienia
+      się tylko to, jak ciasno punkty trzymają się prostej. To ta sama
+      lekcja co w wykładzie 04: siła związku to coś innego niż nachylenie.
+      \\(R^2\\) nie mówi, jak bardzo Y zmienia się z X, tylko jak dużo
+      zmienności zostaje poza modelem."),
+
+    lc_p("Nie istnieje uniwersalna granica „dobrego” \\(R^2\\). W naukach
+      społecznych, w edukacji czy w badaniach bezpieczeństwa pracy zjawiska
+      zależą od wielu czynników naraz i \\(R^2\\) rzędu 0.3 bywa cenną
+      informacją. Model czytania zależnego od liczby uczniów na nauczyciela
+      ma \\(R^2 = 0.06\\), a mimo to związek jest istotny statystycznie
+      (p < 0.001): wielkość klas ma znaczenie, tylko tłumaczy niewielką część
+      różnic między okręgami. \\(R^2\\) opisuje siłę związku w tych
+      konkretnych danych, a nie wartość modelu w ogóle."),
+
+    lc_p("Wysokie \\(R^2\\) też nie gwarantuje dobrego modelu. Model z łukiem
+      w resztach może mieć wysokie \\(R^2\\), a mimo to systematycznie się
+      mylić. Druga pułapka jest poważniejsza: model może dopasować się do
+      przypadkowych szczegółów próby tak mocno, że świetnie wygląda na danych,
+      na których go dopasowano (", gloss("zbiór treningowy", "zbiorze
+      treningowym"), "), a słabo przewiduje nowe obserwacje. Nazywa się to ",
+      gloss("przeuczenie", "przeuczeniem"), "."),
+
+    lc_h3("Jak wygląda przeuczenie"),
+
+    lc_p("Przeuczenie pojawia się zwykle w kilku typowych sytuacjach:"),
+
+    tags$ul(
+      tags$li(strong("Dużo predyktorów przy małej próbie:"), " model
+        z 20 zmiennymi dla 40 obserwacji może przypadkiem „wyjaśnić” szum,
+        a nie zjawisko."),
+      tags$li(strong("Zbyt elastyczna krzywa:"), " wielomian wysokiego stopnia
+        przechodzi blisko każdego punktu, ale między punktami faluje bez
+        sensu."),
+      tags$li(strong("Wielokrotne dobieranie modelu do tej samej próby:"),
+        " sprawdzamy wiele wariantów i wybieramy ten, który wygląda najlepiej,
+        choć wygrał przypadkiem."),
+      tags$li(strong("Wyciek informacji:"), " wśród predyktorów jest zmienna,
+        której w praktycznej predykcji jeszcze byśmy nie znali, np. wynik
+        po egzaminie użyty do przewidywania zdania egzaminu.")
+    ),
+
+    lc_p("Żeby przeuczenie zobaczyć, trzeba mieć dane, których model nie
+      widział. Panel dopasowuje do 30 punktów treningowych trzy wielomiany:
+      stopnia 1, 4 i 12. Punkty powstały z krzywej przypominającej falę
+      z losowym szumem o odchyleniu standardowym 0.9. Jasne punkty to 180
+      nowych obserwacji z tego samego źródła (", gloss("zbiór testowy"),
+      "). Tabela pod wykresem podaje RMSE, czyli typową wielkość błędu, osobno
+      na danych treningowych i testowych; miarę tę zdefiniujemy dokładnie
+      w następnej sekcji."),
+
+    figure_panel(
+      label = "Ryc. 2.2b", title = "Przeuczenie: dopasowanie kontra generalizacja",
+      full_width = TRUE,
+      lc_plot("ch2_overfit_plot", ratio = "1.6/1", max_height = "380px"),
+      uiOutput("ch2_overfit_stats")
+    ),
+
+    lc_p("Prosta (stopień 1) jest zbyt sztywna: myli się podobnie na obu
+      zbiorach, z RMSE 2.99 na treningu i 3.67 na teście. Wielomian stopnia 4
+      łapie kształt fali: 1.06 na treningu i 1.42 na teście, blisko wielkości
+      samego szumu. Wielomian stopnia 12 ma na treningu najmniejszy błąd ze
+      wszystkich, 0.52, mniejszy nawet niż szum, który do danych dodaliśmy.
+      To znak, że dopasował się do szumu. Na nowych danych jego błąd rośnie do
+      3.92, więcej niż przy zwykłej prostej. Przeuczenie rozpoznajemy właśnie
+      po tym rozjechaniu się błędu treningowego i testowego: model dobrze
+      pamięta punkty, które widział, ale gorzej przewiduje nowe."),
+
+    figure_panel(
+      label = "Miniściąga", title = "Jak ograniczać przeuczenie",
+      full_width = TRUE,
+      tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
+        tags$thead(
+          tags$tr(tags$th("Problem"), tags$th("Objaw"), tags$th("Co zrobić"))
+        ),
+        tags$tbody(
+          tags$tr(
+            tags$td("Model za złożony"),
+            tags$td("R² wysokie, ale interpretacja chaotyczna"),
+            tags$td("Uprościć model; usuwać predyktory bez uzasadnienia teoretycznego")
           ),
-          tags$tbody(
-            tags$tr(
-              tags$td("Model za złożony"),
-              tags$td("R² wysokie, ale interpretacja chaotyczna"),
-              tags$td("Uprościć model; usuwać predyktory bez uzasadnienia teoretycznego")
-            ),
-            tags$tr(
-              tags$td("Dopasowanie do szumu"),
-              tags$td("Błąd na danych treningowych mały, na nowych duży"),
-              tags$td("Użyć train/test albo walidacji krzyżowej")
-            ),
-            tags$tr(
-              tags$td("Dodawanie kolejnych X tylko pod R²"),
-              tags$td("R² rośnie po każdym dodatku"),
-              tags$td("Patrzeć na adjusted R², AIC, BIC i sens merytoryczny")
-            ),
-            tags$tr(
-              tags$td("Niestabilne współczynniki"),
-              tags$td("Mała zmiana danych mocno zmienia tabelę regresji"),
-              tags$td("Zebrać więcej danych, ograniczyć liczbę zmiennych, sprawdzić współliniowość")
-            )
+          tags$tr(
+            tags$td("Dopasowanie do szumu"),
+            tags$td("Błąd na danych treningowych mały, na nowych duży"),
+            tags$td("Sprawdzić model na zbiorze testowym albo walidacją krzyżową")
+          ),
+          tags$tr(
+            tags$td("Dodawanie kolejnych X tylko pod R²"),
+            tags$td("R² rośnie po każdym dodatku"),
+            tags$td("Patrzeć na skorygowane R², AIC, BIC i sens merytoryczny")
+          ),
+          tags$tr(
+            tags$td("Niestabilne współczynniki"),
+            tags$td("Mała zmiana danych mocno zmienia tabelę regresji"),
+            tags$td("Zebrać więcej danych, ograniczyć liczbę zmiennych, sprawdzić współliniowość")
           )
         )
-      ),
-      p("R² ma też siostrę używaną w porównaniach modeli — ",
-        withMathJax("\\(R^2_{adj}\\)"),
-        ", która karze za zbędne predyktory. Spotkamy ją w rozdziale 4,
-        kiedy będziemy wybierać między kilkoma modelami. Tam pokażemy też
-        train/test na przykładzie wielomianów: model może mieć świetne
-        dopasowanie do treningu i jednocześnie gorszą predykcję na danych
-        testowych.")
+      )
     ),
 
-    lc_h2("ch2-rmse", "RMSE — jak duże są typowe pomyłki?"),
+    lc_p("Zwykłe \\(R^2\\) nigdy nie maleje po dodaniu predyktora, nawet
+      zupełnie przypadkowego. Dlatego przy porównywaniu modeli używa się ",
+      gloss("skorygowany R²", "skorygowanego R²"), ", które karze za
+      zbędne predyktory. Wrócimy do niego w rozdziale 04, razem z podziałem
+      na zbiór treningowy i testowy."),
 
-    tagList(
-      p("R² jest miarą względną — daje wartość między 0 a 1, ale nie mówi
-        nic o tym, ", tags$em("jak duże w jednostkach Y"),
-        " są pomyłki modelu. Dla praktyka często to jest pytanie ważniejsze:
-        jeśli model przewiduje wynik testu, czy myli się o 5 punktów czy o 50?"),
-      p("Odpowiada na to ", gloss("RMSE"), " — Root Mean Squared Error:
-        pierwiastek ze średniej kwadratów reszt."),
-      lc_formula_box(
-        withMathJax(helpText("$$RMSE = \\sqrt{\\frac{1}{n}\\sum_{i=1}^{n}(y_i - \\hat{y}_i)^2}$$"))
-      ),
-      p("Liczone w jednostkach Y. Jeśli Y to wynik testu czytania w skali
-        600–700, a RMSE wyszło 15, znaczy: typowa pomyłka modelu to ±15
-        punktów. To dużo czy mało? Zależy od skali."),
-      p(tags$strong("Złota zasada: "),
-        "RMSE zawsze porównuj z rozrzutem Y. RMSE = 15 dla zmiennej w skali
-        600–700 (zakres ~80 punktów) to nie najgorzej. RMSE = 15 dla zmiennej
-        w skali 0–50 to katastrofa.")
-    ),
+    lc_h2("ch2-rmse", "RMSE: typowa wielkość pomyłki"),
+
+    lc_p("\\(R^2\\) jest miarą względną: mówi, jaką część zmienności wyjaśniono,
+      ale nie mówi, o ile punktów model się myli. Dla kogoś, kto chce użyć
+      modelu do przewidywania, to często ważniejsze pytanie: czy prognoza
+      wyniku testu chybia o 5 punktów, czy o 50?"),
+
+    lc_p("Odpowiada na nie ", gloss("RMSE"), " (ang. root mean squared error),
+      pierwiastek ze średniego kwadratu reszt:"),
+
+    lc_formula_box(withMathJax(
+      "$$RMSE = \\sqrt{\\frac{1}{n}\\sum_{i=1}^{n}(y_i - \\hat{y}_i)^2}$$"
+    )),
+
+    lc_p("RMSE ma jednostki Y, więc czyta się je wprost jako typową wielkość
+      pomyłki modelu. Sama liczba nic jednak nie mówi bez odniesienia do skali
+      Y. Naturalnym odniesieniem jest odchylenie standardowe Y: to RMSE
+      prognozy, która dla każdego okręgu podaje po prostu średnią. Dobry model
+      powinien mieć RMSE wyraźnie mniejsze. Panel pokazuje pasmo ±RMSE wokół
+      prostej i porównuje RMSE z zakresem Y."),
 
     figure_panel(
       label = "Ryc. 2.3", title = "RMSE i zakres Y na danych CASchools",
       full_width = TRUE,
       fluidRow(
         column(4,
-          helpText("Wybierz model i porównaj RMSE z zakresem Y. Liczbowo to różne wyniki, ale dopiero stosunek RMSE do zakresu daje intuicję jakości."),
+          helpText("Te same 420 okręgów szkolnych, cztery modele."),
           selectInput("ch2_rmse_case", "Model:",
             choices = .ch2_rmse_choices,
             selected = "read_lunch"
@@ -355,29 +451,41 @@ ch2_ui <- list(
       )
     ),
 
+    lc_p("Wyniki czytania mają zakres od 604.5 do 704 punktów i odchylenie
+      standardowe około 20 punktów. Model z subsydiowanym lunchem ma
+      RMSE 9.6 punktu, mniej niż połowę tego odchylenia: znajomość jednej
+      zmiennej o połowę zmniejsza typową pomyłkę. Model z liczbą uczniów na
+      nauczyciela ma RMSE 19.5, prawie tyle, ile prognoza samą średnią. Obie
+      miary są ze sobą powiązane: RMSE jest równe odchyleniu standardowemu Y
+      pomnożonemu przez \\(\\sqrt{1 - R^2}\\), jeśli oba liczymy z dzielnikiem
+      n. \\(R^2\\) i RMSE mówią więc o tym samym dopasowaniu, tylko
+      w innych jednostkach: względnych i w punktach testu."),
+
+    lc_p("Gdy reszty mają rozkład zbliżony do normalnego, w paśmie ±RMSE wokół
+      prostej mieści się około dwóch trzecich obserwacji. W modelu z lunchem
+      jest to 297 z 420 okręgów, czyli 71%. Czy RMSE jest wystarczająco małe,
+      zależy od zastosowania: inna dokładność wystarcza do opisu ogólnej
+      zależności, a inna do prognozy dla konkretnej szkoły."),
+
     lc_h2("ch2-ekstrapolacja", "Ekstrapolacja: poza zakresem danych"),
 
-    tagList(
-      p("Model regresji uczy się z danych, które mamy. Poza ich zakresem —
-        nie ma podstaw, żeby mu ufać. Wciąż daje liczbę, ale ta liczba
-        jest ", gloss("ekstrapolacja", "ekstrapolacją"), ": predykcją za granicę,
-        gdzie model nigdy nie był."),
-      p("Ekstrapolacja jest niebezpieczna, bo linia wygląda pewnie
-        nawet daleko od danych. Ale każdy punkt poza zakresem X to
-        predykcja bez pokrycia — model nie wie, czy zależność tam
-        jest nadal liniowa."),
-      p("Przykład: model przewiduje wyniki testu czytania na podstawie
-        dochodów okręgu. Dane obejmują dochody 5–55 tys. USD. Co jeśli
-        zapytamy o dochód 80 tys.? Prosta obliczy wynik — ale nie ma
-        żadnych danych w tym przedziale, żeby to potwierdzić.")
-    ),
+    lc_p("Wszystkie dotychczasowe miary oceniają model w zakresie danych, na
+      których go dopasowano. Równanie prostej da jednak liczbę dla dowolnego X,
+      także leżącego daleko poza tym zakresem. Taka prognoza to ",
+      gloss("ekstrapolacja"), ". Model nie ma żadnych informacji o tym, czy
+      poza zakresem danych zależność nadal jest liniowa, a reszty, \\(R^2\\)
+      i RMSE niczego tam nie sprawdzają."),
+
+    lc_p("Panel wraca do modelu czytania zależnego od dochodu okręgu. Dochody
+      w danych mieszczą się w przedziale od 5.3 do 55.3 tys. USD (szary pas).
+      Suwak wybiera dochód, dla którego liczymy prognozę."),
 
     figure_panel(
       label = "Ryc. 2.4", title = "Ekstrapolacja poza zakres danych",
       full_width = TRUE,
       fluidRow(
         column(4,
-          helpText("Przesuń suwak poza zakres danych (szary pas) i obserwuj, jak predykcja traci grunt pod nogami."),
+          helpText("Szary pas na wykresie to zakres dochodów w danych."),
           lc_slider("ch2_extrap_x", "Dochód okręgu (tys. USD)", 1, 80, 20, 1),
           uiOutput("ch2_extrap_verdict")
         ),
@@ -388,30 +496,34 @@ ch2_ui <- list(
       )
     ),
 
+    lc_p("Dla dochodu 20 tys. USD model przewiduje 664.1 punktu, w środku
+      chmury danych. Dla 80 tys. USD przewiduje 780.6 punktu, o ponad 75
+      punktów więcej niż najlepszy wynik czytania w całym zbiorze (704).
+      Prosta rośnie bez końca, a z wykresu reszt wiemy już, że wyniki rosną
+      z dochodem coraz wolniej. Nawet na samym brzegu danych, przy 55 tys.
+      USD, prognoza 732 punktów jest wyższa niż jakikolwiek obserwowany wynik.
+      Ekstrapolacja przenosi błąd kształtu modelu tam, gdzie nie ma już danych,
+      które by go zdradziły."),
+
     inline_callout(label = "Zasada", color = "wskazowka",
-      "Nigdy nie ufaj predykcji poza zakresem X, na którym model był uczony.
-       Im dalej od danych, tym bardziej ryzykowna ekstrapolacja."
+      "Prognozuj tylko w zakresie X, na którym model był dopasowany. Im dalej
+       od danych, tym mniej prognoza jest warta."
     ),
 
     lc_h2("ch2-co-dalej", "Co dalej"),
 
-    tagList(
-      p("Mamy trzy narzędzia do oceny pojedynczego modelu: wzorzec reszt
-        (czy linia kłamie), ",
-        withMathJax("\\(R^2\\)"), " (ile wyjaśnia), ",
-        "RMSE (jak duże pomyłki). To wystarczy, żeby powiedzieć, czy ",
-        tags$em("ten"), " model jest wart zaufania."),
-      p("Czego jeszcze nie umiemy:"),
-      tags$ul(
-        tags$li("Porównać dwa modele i wybrać lepszy — rozdział 4 wprowadzi R²adj, AIC, BIC
-                 i train/test."),
-        tags$li("Modelować zależności od wielu X-ów naraz — rozdział 3 rozszerzy ", gloss("regresja prosta", "regresję prostą"), " na wieloraką."),
-        tags$li("Modelować Y binarne (zdał/nie zdał, kliknął/nie kliknął) — rozdział 5
-                 wprowadzi regresję logistyczną.")
-      ),
-      p("Następnie wracamy do regresji wielorakiej — bo realne dane prawie
-        nigdy nie mają tylko jednego X.")
-    ),
+    lc_p("Mamy trzy narzędzia oceny pojedynczego modelu. Wzorzec reszt pokazuje,
+      czy prosta nie myli się systematycznie i czy spełnione są założenia.
+      \\(R^2\\) mówi, jaką część zmienności Y model wyjaśnia. RMSE mówi, jak
+      duże są typowe pomyłki w jednostkach Y. Razem pozwalają ocenić, czy
+      danemu modelowi można ufać."),
+
+    lc_p("Wszystkie modele w tym rozdziale miały tylko jeden predyktor.
+      Wyniki szkół zależą jednak od wielu czynników naraz, a pojedynczy
+      predyktor może przejmować wpływ innych, pominiętych zmiennych.
+      Następny rozdział rozszerza ", gloss("regresja prosta", "regresję prostą"),
+      " na wieloraką. Porównywaniem modeli zajmie się rozdział 04, a modelami
+      dla zmiennej zależnej binarnej, takiej jak zdał / nie zdał, rozdział 05."),
 
     lc_chapter_next(
       num       = "03",
@@ -421,6 +533,7 @@ ch2_ui <- list(
     )
   )
 )
+
 
 # ============================================================================
 # SERVER
@@ -484,7 +597,7 @@ ch2_server <- function(input, output, session) {
       df_combined <- rbind(
         data.frame(panel = "Dane + linia regresji",
                    x = df_scatter$x, y = df_scatter$y),
-        data.frame(panel = "Reszty vs dopasowane",
+        data.frame(panel = "Reszty względem wartości przewidywanych",
                    x = df_resid$fitted, y = df_resid$resid)
       )
       ggplot(df_combined, aes(x = x, y = y)) +
@@ -650,16 +763,11 @@ ch2_server <- function(input, output, session) {
       )
     })
 
-    tagList(
-      tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
-        tags$thead(
-          tags$tr(tags$th("Model"), tags$th("Stopień"), tags$th("RMSE trening"), tags$th("RMSE test"))
-        ),
-        tags$tbody(rows)
+    tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
+      tags$thead(
+        tags$tr(tags$th("Model"), tags$th("Stopień"), tags$th("RMSE trening"), tags$th("RMSE test"))
       ),
-      lc_feedback(type = "info",
-        p("Przeuczenie rozpoznajemy po rozjechaniu błędu treningowego i testowego:
-          model dobrze pamięta punkty, które widział, ale gorzej działa na nowych danych."))
+      tags$tbody(rows)
     )
   })
 
@@ -802,7 +910,7 @@ ch2_server <- function(input, output, session) {
       )
     } else {
       lc_feedback(type = "warning", style = "margin-top: 12px;",
-        tags$strong("Ekstrapolacja!"),
+        tags$strong("Ekstrapolacja"),
         p(sprintf("Predykcja: %.1f pkt. Jesteśmy %.0f%% zakresu danych poza granicą — brak gwarancji.", y_pred, dist_pct))
       )
     }
@@ -835,25 +943,12 @@ ch2_server <- function(input, output, session) {
     rmse <- sqrt(mean(residuals(model)^2))
     y_vals <- .cas_data[[spec$y]]
     y_range <- diff(range(y_vals))
-    rmse_ratio <- rmse / y_range
     y_label <- unname(.cas_labels[spec$y])
+    y_sd <- sd(y_vals)
 
-    verdict_type <- if (rmse_ratio < 0.05) "ok"
-                    else if (rmse_ratio < 0.12) "info"
-                    else "warning"
-
-    verdict_text <- if (rmse_ratio < 0.05) {
-      "Typowa pomyłka jest mała w stosunku do zakresu Y — model robi co trzeba."
-    } else if (rmse_ratio < 0.12) {
-      "Typowa pomyłka jest umiarkowana w stosunku do zakresu Y. Można dyskutować, czy to dość."
-    } else {
-      "Typowa pomyłka jest duża w stosunku do zakresu Y. Model ma ograniczoną wartość praktyczną."
-    }
-
-    lc_feedback(type = verdict_type, style = "margin-top: 12px;",
-      p(sprintf("Typowa pomyłka modelu to ±%.1f w skali „%s\" (zakres %.0f).",
-                rmse, y_label, y_range)),
-      p(verdict_text)
+    lc_feedback(type = "info", style = "margin-top: 12px;",
+      p(sprintf("Typowa pomyłka modelu to ±%.1f w skali „%s” (zakres %.0f, SD %.1f).",
+                rmse, y_label, y_range, y_sd))
     )
   })
 }

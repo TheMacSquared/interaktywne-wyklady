@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 6: Sciaga - podsumowanie regresji
+# CHAPTER 6: Ściąga — podsumowanie regresji
 # ============================================================================
 
 ch6_ui <- list(
@@ -32,8 +32,8 @@ ch6_ui <- list(
                 tags$td(withMathJax("\\(Y = \\beta_0 + \\beta_1 X + \\varepsilon\\)")),
                 tags$td(withMathJax("\\(Y = \\beta_0 + \\sum \\beta_j X_j + \\varepsilon\\)")),
                 tags$td(withMathJax("\\(\\ln\\frac{p}{1-p} = \\beta_0 + \\sum \\beta_j X_j\\)"))),
-        tags$tr(tags$td(tags$strong("Estymacja")), tags$td("OLS"), tags$td("OLS"), tags$td("MLE")),
-        tags$tr(tags$td(tags$strong("Dopasowanie")), tags$td("R², RMSE"), tags$td("adj.R², AIC, BIC, RMSE"), tags$td("AIC, BIC, dokładność")),
+        tags$tr(tags$td(tags$strong("Estymacja")), tags$td("MNK"), tags$td("MNK"), tags$td("MNW (największa wiarygodność)")),
+        tags$tr(tags$td(tags$strong("Dopasowanie")), tags$td("R², RMSE"), tags$td("skorygowane R², AIC, BIC, RMSE"), tags$td("AIC, BIC, dokładność")),
         tags$tr(tags$td(tags$strong("Interpr. β")),
                 tags$td("zmiana Y na 1 jedn. X"),
                 tags$td("zmiana Y na 1 jedn. Xj (ceteris paribus)"),
@@ -57,7 +57,7 @@ ch6_ui <- list(
           tags$td(withMathJax("\\(R^2\\)")),
           tags$td(withMathJax("\\(1 - SS_{res}/SS_{tot}\\)")),
           tags$td("↑ lepiej"),
-          tags$td("Zawsze rośnie z k; nie porównuj modeli o różnej złożoności")
+          tags$td("Nie maleje po dodaniu predyktora; nie porównuj nim modeli o różnej złożoności")
         ),
         tags$tr(
           tags$td(withMathJax("\\(R^2_{adj}\\)")),
@@ -99,9 +99,9 @@ ch6_ui <- list(
       p("Regresja logistyczna: ", withMathJax("\\(\\beta_1 = 0.5 \\Rightarrow OR = e^{0.5} = 1.65\\)"),
         " oznacza: wzrost X o 1 zwiększa szanse sukcesu 1.65-krotnie."),
 
-      p("Istotność współczynników: p < 0.05 dla ", withMathJax("\\(\\beta_j\\)"),
+      p("Istotność współczynników: p poniżej przyjętego poziomu istotności (zwykle 0.05) dla ", withMathJax("\\(\\beta_j\\)"),
         " oznacza, że predyktor ", withMathJax("\\(X_j\\)"),
-        " istotnie wpływa na Y (przy kontroli pozostałych).")
+        " jest istotnie powiązany z Y przy kontroli pozostałych. W danych obserwacyjnych nie dowodzi to wpływu przyczynowego.")
     ),
 
     ),
@@ -153,40 +153,6 @@ ch6_ui <- list(
       )
     ),
 
-    lc_h2("ch6-funkcje-r", "Funkcje R"),
-
-    tagList(
-
-    lc_formula_box(
-      tags$pre(class = "lc-code-block",
-        tags$code(
-"library(broom)
-
-# === Regresja liniowa ===
-model <- lm(y ~ x1 + x2, data = dane)
-summary(model)         # pelne podsumowanie
-tidy(model)            # wspolczynniki jako tabelka
-glance(model)          # metryki (R2, AIC, BIC, ...)
-
-# === Regresja logistyczna ===
-model_log <- glm(y ~ x1 + x2, data = dane, family = binomial)
-tidy(model_log)
-exp(coef(model_log))   # odds ratios
-tidy(model_log, conf.int = TRUE, exponentiate = TRUE)  # OR z CI
-
-# === Porownanie modeli ===
-AIC(model1, model2, model3)
-BIC(model1, model2, model3)
-
-# === Predykcja ===
-predict(model, newdata = data.frame(x1 = 5, x2 = 3))
-predict(model_log, newdata = ..., type = 'response')  # prawdopodobienstwa"
-        )
-      )
-    ),
-
-    ),
-
     lc_h2("ch6-pulapki", "Typowe pułapki"),
 
     tagList(
@@ -195,8 +161,8 @@ predict(model_log, newdata = ..., type = 'response')  # prawdopodobienstwa"
       tags$ul(
         tags$li("Ekstrapolacja: model działa w zakresie ", gloss("zbiór treningowy", "danych treningowych"), ". Predykcja poza tym zakresem jest ryzykowna."),
         tags$li("Korelacja predyktorów: silna korelacja między X1 i X2 (", gloss("współliniowość"), ") zawyża SE i utrudnia interpretację."),
-        tags$li(gloss("przeuczenie", "Overfitting"), ": więcej zmiennych = wyższe R², ale gorsze uogólnianie. Zawsze sprawdzaj adj.R² / AIC / BIC."),
-        tags$li("R² w logistycznej: nie używaj R² do oceny regresji logistycznej. Użyj AIC, BIC, dokładności, ROC-AUC.")
+        tags$li(gloss("przeuczenie", "Przeuczenie"), ": więcej zmiennych daje wyższe R², ale może pogorszyć uogólnianie na nowe dane. Porównuj modele skorygowanym R², AIC lub BIC."),
+        tags$li("R² w logistycznej: nie używaj R² do oceny regresji logistycznej. Użyj AIC, BIC, dokładności, czułości i swoistości.")
       )
     ),
 
@@ -221,23 +187,18 @@ ch6_server <- function(input, output, session) {
 
     if (y == "continuous" && x == "one") {
       model <- "Regresja liniowa prosta"
-      formula <- "lm(y ~ x)"
       note <- "Zacznij od wykresu rozrzutu, linii regresji i diagnostyki reszt."
     } else if (y == "continuous") {
       model <- "Regresja liniowa wieloraka"
-      formula <- "lm(y ~ x1 + x2 + ...)"
       note <- "Interpretuj β przy stałych pozostałych predyktorach; sprawdź współliniowość."
     } else if (y == "binary") {
       model <- "Regresja logistyczna"
-      formula <- "glm(y ~ x1 + x2, family = binomial)"
       note <- "Model zwraca prawdopodobieństwa; próg klasyfikacji dobierz do kosztu błędów."
     } else if (y == "count") {
       model <- "Regresja Poissona / ujemna dwumianowa"
-      formula <- "glm(y ~ x, family = poisson)"
       note <- "Dla nadmiernej zmienności rozważ model ujemny dwumianowy."
     } else {
       model <- "Regresja porządkowa"
-      formula <- "ordered logit/probit"
       note <- "Gdy kategorie mają naturalny porządek, nie traktuj ich jak zwykłej skali ciągłej."
     }
 
@@ -248,7 +209,7 @@ ch6_server <- function(input, output, session) {
       note <- paste(note, "Sprawdź wielomiany, splajny lub prostszy model z lepszą generalizacją.")
     }
 
-    list(model = model, formula = formula, note = note)
+    list(model = model, note = note)
   })
 
   zoom_plot_server("ch6_tree_plot", reactive({
@@ -285,7 +246,6 @@ ch6_server <- function(input, output, session) {
     res <- ch6_tree_result()
     tagList(
       lc_stat_box("Rekomendacja", res$model, color = upwr_secondary),
-      lc_formula_box(tags$code(res$formula)),
       lc_feedback(type = "info", p(res$note))
     )
   })
