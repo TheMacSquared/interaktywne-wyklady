@@ -382,6 +382,10 @@ to stosują.
 
 ### 08 — case studies
 
+- [ ] Panele Ryc. 1.6 i 1.7 są puste do kliknięcia przycisku.
+- [ ] Wynik ANOVA w kroku 3 ma na sztywno „p < 0.001” zamiast liczonej
+  p-wartości; `geom_errorbarh()` przestarzały w ggplot2 4.0.
+- [ ] Komentarze w `app.R` bez polskich znaków („Kazdy rozdzial”, „MODULY”).
 - [ ] Rozbudować wykład poza jedyny rozdział CASchools; dodać quizy.
   Kandydaci: `palmerpenguins` (ANOVA/korelacja), case binarny (regresja
   logistyczna), case czasowy.
