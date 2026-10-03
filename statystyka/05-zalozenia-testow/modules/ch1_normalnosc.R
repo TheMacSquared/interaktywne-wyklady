@@ -2,29 +2,6 @@
 # CHAPTER 1: Normalność rozkładu
 # ============================================================================
 
-# Tabela alternatyw rangowych (dane stałe, budowana raz przy starcie).
-.ch1_alt_table <- lc_table(
-  data.frame(
-    metoda = c("Test t jednej próby", "Test t dwóch grup", "Test t sparowany",
-               "ANOVA", "Korelacja Pearsona"),
-    alt = c("Test Wilcoxona dla jednej próby", "Test Manna-Whitneya",
-            "Test Wilcoxona dla par", "Test Kruskala-Wallisa",
-            "Korelacja Spearmana"),
-    co = c("Położenie środka względem wartości odniesienia; wymaga symetrycznego rozkładu",
-           "Czy wartości jednej grupy bywają systematycznie wyższe; to nie to samo co różnica średnich",
-           "Położenie różnic w parach; wymaga symetrycznego rozkładu różnic",
-           "Czy rozkłady w grupach są przesunięte względem siebie",
-           "Siłę związku monotonicznego, niekoniecznie liniowego"),
-    stringsAsFactors = FALSE
-  ),
-  list(
-    lc_col("metoda", "Metoda", "row"),
-    lc_col("alt", "Alternatywa rangowa", "text"),
-    lc_col("co", "Co porównuje", "text")
-  ),
-  narrow = "cards"
-)
-
 ch1_ui <- lecture_chapter(
   id = "ch-normalnosc",
   num = "01",
@@ -282,14 +259,13 @@ ch1_ui <- lecture_chapter(
       ". Zamiast surowych wartości analizują one ", gloss("ranga", "rangi"), ",
       czyli pozycje obserwacji po posortowaniu, więc wartości odstające i długie
       ogony nie mają na nie większego wpływu niż inne obserwacje. Każdy test
-      z wykładu 04 dla zmiennej ilościowej ma swój odpowiednik rangowy: ",
-      gloss("test Wilcoxona"), ", ", gloss("test Manna-Whitneya"), ", ",
-      gloss("test Kruskala-Wallisa"), " i ", gloss("korelacja Spearmana"), ".
-      Odpowiadają jednak na trochę inne pytanie niż testy, które zastępują.
-      Porównują położenie całych rozkładów albo rang, a nie średnie, więc wynik
-      opisuje się inaczej."),
-
-    .ch1_alt_table,
+      z wykładu 04 dla zmiennej ilościowej ma swój odpowiednik rangowy:
+      testy t jednej próby i dla par — ", gloss("test Wilcoxona"),
+      ", test t dwóch grup — ", gloss("test Manna-Whitneya"), ", ANOVA — ",
+      gloss("test Kruskala-Wallisa"), ", korelacja Pearsona — ",
+      gloss("korelacja Spearmana"), ". Odpowiadają jednak na trochę inne pytanie
+      niż testy, które zastępują. Porównują położenie całych rozkładów albo
+      rang, a nie średnie, więc wynik opisuje się inaczej."),
 
     lc_p("Test Wilcoxona dla jednej próby i dla par też ma założenie: rozkład
       (w teście dla par — rozkład różnic) powinien być symetryczny. Przy silnej

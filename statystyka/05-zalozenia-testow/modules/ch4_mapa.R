@@ -266,8 +266,8 @@ ch4_ui <- lecture_chapter(
           tags$td(tags$strong("Test Fishera")),
           tags$td("Niezależne obserwacje"),
           tags$td("Metoda dokładna, nie wymaga dużej próby. Niezależności nie
-                   zastąpi: dane sparowane (te same osoby dwa razy) wymagają
-                   innego testu, np. McNemara")
+                   zastąpi: danych sparowanych (te same osoby dwa razy) nie
+                   analizuje się tym testem")
         ),
         tags$tr(
           tags$td(tags$strong("Test dwumianowy")),
@@ -487,7 +487,7 @@ ch4_server <- function(input, output, session) {
       assumptions = c("Niezależne obserwacje"),
       checks = c("Projekt badania (niezależność)"),
       alternatives = c("Metoda dokładna, nie wymaga dużej próby",
-                       "Dane sparowane (te same osoby dwa razy): test McNemara")
+                       "Dane sparowane (te same osoby dwa razy) wymagają innego testu")
     ),
     lm = list(
       name = "Regresja liniowa",
