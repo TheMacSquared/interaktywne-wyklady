@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 3: Przedzial dla sredniej
+# CHAPTER 3: Przedział dla średniej
 # ============================================================================
 
 ch3_ui <- list(
@@ -12,60 +12,70 @@ ch3_ui <- list(
       kicker = "Rozdział 03 · Przedziały ufności",
       num    = "03",
       title  = "Przedział dla średniej.",
-      lead   = "Wiemy już, czym jest przedział ufności i jak go
-                interpretować. Czas na konkrety: wzór i obliczenia."
+      lead   = "Przedział dla średniej składa się z trzech liczb: średniej z próby,
+                błędu standardowego i wartości krytycznej. Gdy odchylenie
+                standardowe populacji trzeba oszacować z danych, wartość krytyczną
+                bierzemy z rozkładu t-Studenta, a nie z rozkładu normalnego."
     ),
+
+    lc_p("W poprzednim rozdziale przedziały ufności pojawiały się jako gotowe
+      odcinki: symulacja losowała próbę, rysowała przedział i sprawdzała, czy
+      trafił w μ. Teraz zajrzymy do środka. Zobaczymy, z czego składa się
+      przedział dla średniej, zbudujemy go krok po kroku, a potem rozszerzymy
+      tę samą konstrukcję na różnicę dwóch średnich."),
 
     lc_h2("ch3-wzor", "Wzór"),
 
-    tagList(
-      p(gloss("przedział ufności", "Przedział ufności"), " dla średniej populacji wygląda tak:"),
-      lc_formula_box(
-        withMathJax("$$CI = \\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$")
-      ),
-      p("Trzy składniki:"),
-      tags$ul(
-        tags$li(withMathJax("\\(\\bar{x}\\)"),
-                " — średnia z próby (środek przedziału)"),
-        tags$li(withMathJax("\\(s/\\sqrt{n}\\)"),
-                " — ", gloss("błąd standardowy"), " średniej (jak bardzo średnia z próby waha się z próby na próbę)"),
-        tags$li(withMathJax("\\(t^*\\)"),
-                " — ", gloss("wartość krytyczna"), " z ", gloss("rozkład t-Studenta", "rozkładu t-Studenta"),
-                " zależna od ", gloss("poziom ufności", "poziomu ufności"), " i ", withMathJax("\\(n-1\\)"), " ",
-                gloss("stopnie swobody", "stopni swobody"))
-      ),
-      p(tags$b("Dlaczego rozkład t, a nie normalny (z)?"),
-        " Bo ", withMathJax("\\(\\sigma\\)"), " populacji nie znamy — szacujemy je z próby jako ",
-        withMathJax("\\(s\\)"),
-        ". To dodaje niepewności, dlatego używamy szerszego rozkładu (t ma \"grubsze ogony\" niż normalny).
-        Im większe ", withMathJax("\\(n\\)"),
-        ", tym lepsze oszacowanie ", withMathJax("\\(\\sigma\\)"),
-        " i tym bardziej rozkład t przypomina normalny."),
-      p("W praktyce nie musisz się tym przejmować. Programy statystyczne (jamovi, SPSS, R) ",
-        tags$em("zawsze"),
-        " liczą CI dla średniej używając rozkładu t. Nie ma osobnego \"z-przedziału\"
-        do wyboru. Ten rozdział nauczy Cię interpretować gotowe przedziały — a nie liczyć je ręcznie.")
+    lc_p("Punktem wyjścia jest centralne twierdzenie graniczne z wykładu 02.
+      Średnia z próby \\(\\bar{x}\\) leży w około 95% prób nie dalej niż
+      1,96 błędu standardowego \\(\\sigma/\\sqrt{n}\\) od średniej populacji μ.
+      Skoro μ rzadko leży dalej od \\(\\bar{x}\\) niż 1,96 błędu standardowego,
+      możemy odwrócić to zdanie: zakres \\(\\bar{x} \\pm 1{,}96 \\cdot \\sigma/\\sqrt{n}\\)
+      obejmuje μ w 95% prób. Przeszkoda jest jedna: σ populacji zwykle nie znamy."),
+
+    lc_p("Zastępujemy je więc ", gloss("odchylenie standardowe", "odchyleniem
+      standardowym"), " z próby \\(s\\). Wynik \\(s/\\sqrt{n}\\) to ",
+      gloss("błąd standardowy"), " średniej (SE) oszacowany z danych. Ponieważ
+      \\(s\\) też zmienia się z próby na próbę, do niepewności średniej
+      dochodzi niepewność samego SE. Z tego powodu mnożnik 1,96 z rozkładu
+      normalnego zastępujemy kwantylem ", gloss("rozkład t-Studenta",
+      "rozkładu t-Studenta"), " z \\(n - 1\\) ", gloss("stopnie swobody",
+      "stopniami swobody"), ", który poznaliśmy w wykładzie 02. Tak powstaje ",
+      gloss("przedział ufności"), " dla średniej populacji:"),
+
+    lc_formula_box(
+      withMathJax("$$CI = \\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$")
     ),
 
-    inline_callout(label = "W jamovi", color = "wskazowka",
-      tagList(
-        "Analyses → T-Tests → One Sample T-Test → przeciągnij ",
-        gloss("zmienna ilościowa", "zmienną ilościową"),
-        " do Dependent Variables → w panelu Additional
-         Statistics zaznacz Confidence interval (domyślnie 95%).
-         W tabeli wyników odczytasz kolumny ",
-        tags$code("Mean"), ", ", tags$code("Lower"), ", ",
-        tags$code("Upper"), "."
-      )
-    ),
+    lc_p("Środkiem przedziału jest średnia z próby \\(\\bar{x}\\). Jego połowę
+      szerokości, czyli ", gloss("margines błędu"), " \\(ME = t^* \\cdot SE\\),
+      wyznaczają dwa czynniki. Błąd standardowy mówi, jak bardzo średnia
+      waha się z próby na próbę. ", gloss("wartość krytyczna", "Wartość krytyczna"),
+      " \\(t^*\\) mówi, ile błędów standardowych trzeba odłożyć w każdą stronę,
+      żeby osiągnąć wybrany ", gloss("poziom ufności"), ". Dla 95% jest to
+      kwantyl 0,975 rozkładu t."),
+
+    lc_p("Rozkład t ma cięższe ogony niż rozkład normalny, więc jego kwantyle
+      są większe, a przedział szerszy. Różnica szybko maleje wraz z liczebnością
+      próby. W wykładzie 02 kwantyl 0,975 wynosił 3,18 dla df = 3 i 2,04 dla
+      df = 30. Dla próby 25 osób (df = 24) jest to 2,06, a przy bardzo dużych
+      próbach wartość zbliża się do 1,96 z rozkładu normalnego."),
+
+    lc_p("Programy statystyczne liczą przedział dla średniej zawsze z rozkładu t,
+      więc nie trzeba wybierać między wersją z a t. W jamovi wystarczy
+      wybrać Analyses → T-Tests → One Sample T-Test, przeciągnąć ",
+      gloss("zmienna ilościowa", "zmienną ilościową"), " do Dependent Variables
+      i w panelu Additional Statistics zaznaczyć Confidence interval (domyślnie
+      95%). Średnią i granice przedziału odczytamy z kolumn ", tags$code("Mean"),
+      ", ", tags$code("Lower"), " i ", tags$code("Upper"), ". Program liczy za nas,
+      ale żeby przedział dobrze odczytać, warto raz zobaczyć, jak powstaje."),
 
     lc_h2("ch3-budowa", "Budowa przedziału — krok po kroku"),
 
-    tagList(
-      p("Zobaczmy, jak z konkretnej próby (25 pomiarów wzrostu) powstaje
-        przedział ufności. Przejdź przez 4 kroki, obserwując co pojawia
-        się na wykresie.")
-    ),
+    lc_p("Panel składa przedział z próby 25 pomiarów wzrostu losowanej
+      z populacji o średniej μ = 170 cm i odchyleniu standardowym σ = 10 cm.
+      Kolejne kroki dodają do wykresu średnią, pasek ±1 SE i pełny 95% przedział.
+      Przycisk „Nowa próba” losuje kolejne 25 osób."),
 
     figure_panel(
       label = "Ryc. 3.1",
@@ -81,16 +91,49 @@ ch3_ui <- list(
       )
     ),
 
+    lc_p("Pojedyncze pomiary rozrzucone są szeroko, zwykle o kilka do
+      kilkunastu centymetrów od 170 cm. Średnia z 25 pomiarów jest dużo
+      stabilniejsza: przy σ = 10 cm jej błąd standardowy wynosi około
+      \\(10/\\sqrt{25} = 2\\) cm, pięć razy mniej niż rozrzut pojedynczych
+      osób. Uśrednianie znosi większość przypadkowych odchyleń w górę i w dół."),
+
+    lc_p("Pasek ±1 SE obejmuje μ tylko w około dwóch trzecich prób. Żeby
+      osiągnąć 95%, mnożymy SE przez \\(t^*\\) = 2,06 (df = 24). Przy SE
+      równym około 2 cm margines błędu wynosi około 4,1 cm, a cały przedział
+      ma około 8 cm szerokości. Większa część tego poszerzenia wynika
+      z wyboru poziomu ufności: dla 95% potrzeba około dwóch błędów
+      standardowych, a nie jednego. Za oszacowanie σ z próby płacimy tylko
+      różnicą między 1,96 a 2,06. Każda nowa próba daje inną średnią, inne
+      \\(s\\) i inny przedział. Tak jak w symulacji z poprzedniego rozdziału,
+      mniej więcej co dwudziesty z nich ominie μ = 170 cm."),
+
     lc_h2("ch3-roznica", "Budowa przedziału dla różnicy średnich"),
 
-    tagList(
-      p("CI dla różnicy dwóch średnich buduje się analogicznie, ale błąd
-        standardowy jest inny — trzeba połączyć niepewność z obu prób:"),
-      lc_formula_box(
-        withMathJax("$$CI = (\\bar{x}_1 - \\bar{x}_2) \\pm t^* \\cdot \\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}}$$")
-      ),
-      p("Porównamy wzrost mężczyzn i kobiet — po 25 osób w każdej grupie.")
+    lc_p("Pojedyncza średnia rzadko jest celem badania. Częściej porównujemy
+      dwie grupy: mężczyzn i kobiety, lek i placebo, dwóch dostawców.
+      Interesuje nas wtedy różnica średnich populacji \\(\\mu_1 - \\mu_2\\),
+      a jej estymatą jest różnica średnich z prób \\(\\bar{x}_1 - \\bar{x}_2\\).
+      Obie średnie mają własną niepewność. Dla niezależnych prób
+      wariancje estymatorów się dodają, więc błąd standardowy różnicy to
+      pierwiastek z sumy kwadratów błędów standardowych obu średnich:"),
+
+    lc_formula_box(
+      withMathJax("$$CI = (\\bar{x}_1 - \\bar{x}_2) \\pm t^* \\cdot \\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}}$$")
     ),
+
+    lc_p("Każda grupa ma tu własne odchylenie standardowe, nie zakładamy
+      równych wariancji. To wersja Welcha. Liczbę stopni swobody dla \\(t^*\\)
+      wyznacza wtedy osobny wzór (Welcha–Satterthwaite'a). Wynik zwykle
+      nie jest liczbą całkowitą i leży między \\(\\min(n_1, n_2) - 1\\)
+      a \\(n_1 + n_2 - 2\\). W jamovi tę wersję daje Independent Samples
+      T-Test z zaznaczoną opcją Welch's. Domyślna opcja Student's zakłada równe
+      wariancje i łączy je w jedną. Przy równych licznościach obie wersje
+      mają ten sam błąd standardowy, a różnią się tylko liczbą stopni swobody."),
+
+    lc_p("Panel porównuje wzrost 25 mężczyzn i 25 kobiet. Próby losowane są
+      z populacji o średnich 178 cm (σ = 7 cm) i 165 cm (σ = 6 cm), więc
+      prawdziwa różnica wynosi 13 cm. Od trzeciego kroku dolny panel przechodzi
+      na skalę różnicy, na której zero oznacza brak różnicy."),
 
     figure_panel(
       label = "Ryc. 3.2",
@@ -107,20 +150,31 @@ ch3_ui <- list(
       )
     ),
 
+    lc_p("Przy tych parametrach błąd standardowy różnicy wynosi około
+      \\(\\sqrt{7^2/25 + 6^2/25} \\approx 1{,}84\\) cm, liczba stopni swobody
+      Welcha około 47, a \\(t^* \\approx 2{,}01\\). Margines błędu to około
+      3,7 cm, więc przedział leży typowo w okolicach 9–17 cm, daleko od zera.
+      Przy tak dużej różnicy wniosek, że mężczyźni są średnio wyżsi, nie
+      zależy od tego, którą próbę wylosujemy."),
+
+    lc_p("Warto zauważyć jedną rzecz. Błędy standardowe obu średnich to
+      około 1,4 cm i 1,2 cm, razem 2,6 cm. Błąd standardowy różnicy jest
+      mniejszy, bo dodają się wariancje, a nie błędy standardowe:
+      \\(\\sqrt{1{,}4^2 + 1{,}2^2} \\approx 1{,}84\\). Działa to jak
+      w trójkącie prostokątnym: przeciwprostokątna jest krótsza niż suma
+      przyprostokątnych. Ta własność ma praktyczne
+      skutki przy porównywaniu przedziałów dwóch grup na wykresie."),
+
     lc_h2("ch3-scenariusze", "Dwa CI grup czy CI różnicy? — trzy scenariusze"),
 
-    tagList(
-      p("Gdy porównujesz dwie grupy, masz dwa sposoby, żeby spojrzeć na wynik:"),
-      tags$ol(
-        tags$li(tags$b("Dwa osobne CI"),
-                " — rysujemy CI dla każdej grupy i patrzymy, czy się nakrywają."),
-        tags$li(tags$b("CI różnicy"),
-                " — liczymy bezpośrednio CI dla ", withMathJax("\\(\\mu_1 - \\mu_2\\)"),
-                " i patrzymy, czy zawiera 0.")
-      ),
-      p("Zwykle dają tę samą odpowiedź. Ale nie zawsze — zobacz trzy przykłady
-        z technologii żywności.")
-    ),
+    lc_p("Wyniki dla dwóch grup można odczytać na dwa sposoby. Pierwszy to
+      narysować przedział ufności dla każdej grupy osobno i sprawdzić, czy
+      się nakrywają. Drugi to policzyć przedział dla różnicy
+      \\(\\mu_1 - \\mu_2\\) i sprawdzić, czy zawiera zero. Zwykle oba
+      sposoby prowadzą do tego samego wniosku, ale nie zawsze. Trzy przykłady
+      z technologii żywności pokazują oba spojrzenia na tych samych danych.
+      Górny wykres to przedziały grup z zaznaczonym na żółto odcinkiem, na
+      którym się nakrywają, dolny to przedział różnicy (wersja Welcha)."),
 
     # --- Scenariusz A ---
     tags$details(class = "case-study", open = NA,
@@ -142,7 +196,7 @@ ch3_ui <- list(
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f964"),
-        "B. Jogurt w szkle vs w plastiku — zgodne sygnały, brak różnicy"
+        "B. Jogurt w szkle i w plastiku — zgodne sygnały, brak różnicy"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
@@ -154,11 +208,11 @@ ch3_ui <- list(
       )
     ),
 
-    # --- Scenariusz C (PULAPKA) ---
+    # --- Scenariusz C (pułapka) ---
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U000026a0️"),
-        "C. Dwie linie płatków — UWAGA, pułapka wzrokowa"
+        "C. Dwie linie płatków — pułapka wzrokowa"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
@@ -171,22 +225,54 @@ ch3_ui <- list(
       )
     ),
 
-    inline_callout(label = "Zasada praktyczna", color = "uwaga",
-      "Kiedy porównujesz grupy, patrz przede wszystkim na CI różnicy —
-       to liczba, która uwzględnia niepewność obu pomiarów naraz.
-       Porównywanie dwóch osobnych CI na oko to szybki skrót — często
-       działa, ale przy granicznych różnicach potrafi wprowadzić w błąd
-       (tak jak w scenariuszu C)."
+    lc_p("W scenariuszu A oba spojrzenia się zgadzają. Przedziały dostawców,
+      [11,76; 12,16] i [10,80; 11,15], są rozłączne, a przedział różnicy
+      [0,72; 1,25] leży w całości powyżej zera. Mąka dostawcy A zawiera
+      średnio o 0,7–1,3 punktu procentowego więcej białka."),
+
+    lc_p("W scenariuszu B też nie ma sprzeczności, choć wynik jest bliski
+      granicy. Przedziały dla szkła [3,03; 3,17] i plastiku [3,11; 3,28]
+      nakładają się, a przedział różnicy [−0,21; 0,01] obejmuje zero, choć
+      jego górna granica leży tuż nad nim. Dane nie dają podstaw, by twierdzić,
+      że opakowanie wpływa na zawartość tłuszczu. Nie dowodzą jednak, że
+      wpływu nie ma: zgodne z nimi są zarówno brak różnicy, jak i różnica
+      około 0,2 punktu procentowego na korzyść plastiku."),
+
+    lc_p("Scenariusz C to pułapka. Przedziały linii, [9,24; 9,61] i [8,91; 9,25],
+      nakładają się na odcinku zaledwie 0,01 g, ale się nakładają. Patrząc na nie,
+      łatwo uznać, że linie produkują podobne płatki. Tymczasem przedział
+      różnicy [0,09; 0,59] nie zawiera zera: linia 1 daje płatki bogatsze
+      w błonnik. Źródłem rozbieżności jest własność, którą widzieliśmy przy
+      wzroście. Błąd standardowy różnicy to"),
+
+    lc_formula_box(
+      withMathJax("$$SE_{różnicy} = \\sqrt{SE_1^2 + SE_2^2} \\;<\\; SE_1 + SE_2$$")
+    ),
+
+    lc_p("W scenariuszu C błędy standardowe grup wynoszą 0,093 i 0,086 g.
+      Ich suma to 0,179, a pierwiastek z sumy kwadratów tylko 0,127. Dlatego
+      połowa szerokości przedziału różnicy (0,25 g) jest wyraźnie mniejsza
+      niż suma połówek przedziałów obu grup (0,36 g). Przedziały grup mogą
+      się więc lekko nakładać, mimo że różnica jest istotna. Rozłączne
+      przedziały grup są mocnym sygnałem różnicy, ale nakładające się nie
+      rozstrzygają niczego."),
+
+    inline_callout(label = "Zasada",
+      "Porównując dwie grupy, patrz na przedział różnicy. Nakładanie się
+       przedziałów grup nie dowodzi, że różnicy nie ma."
     ),
 
     lc_h2("ch3-case-studies", "Case studies — jak interpretować CI w praktyce"),
 
-    tagList(
-      p("Poniżej kilka realistycznych sytuacji. W każdej budujesz CI krok po kroku
-        (jak w poprzednich sekcjach), a na końcu weryfikujesz dwie hipotezy:
-        jedną, która jest prawdziwa, i jedną, która nie jest. Klikaj nagłówki,
-        żeby rozwijać case'y.")
-    ),
+    lc_p("Na koniec kilka realistycznych sytuacji do samodzielnej analizy.
+      W każdej przedział buduje się w tych samych krokach co wyżej. Po
+      ostatnim kroku można wybrać hipotezę: na wykresie pojawia się
+      zacieniowany obszar wartości, które ją spełniają. Jeśli cały przedział
+      leży w tym obszarze, dane potwierdzają hipotezę. Jeśli cały leży poza
+      nim, dane ją wykluczają. Jeśli przedział przecina granicę, dane nie
+      rozstrzygają. Zanim klikniesz „Pokaż werdykt”, spróbuj odpowiedzieć sam.
+      Przypadki A dotyczą jednej średniej, B różnicy dwóch średnich, a C
+      wielu grup naraz."),
 
     lc_h3("A. Przedział dla jednej średniej"),
 
@@ -197,10 +283,10 @@ ch3_ui <- list(
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Zmierzyłeś wzrost 30 studentów. Średnia z próby ",
-            withMathJax("\\(\\bar{x} = 173.4\\)"), " cm,
-            ", gloss("odchylenie standardowe"), " ", withMathJax("\\(s = 8.2\\)"), " cm.
-            Zbudujmy CI dla średniego wzrostu i sprawdźmy dwie hipotezy.")
+          p("Zmierzyłeś wzrost 30 studentów. Średnia z próby wynosi ",
+            withMathJax("\\(\\bar{x} = 173{,}4\\)"), " cm, odchylenie standardowe ",
+            withMathJax("\\(s = 8{,}2\\)"), " cm. Zbudujmy przedział dla średniego
+            wzrostu i sprawdźmy dwie hipotezy.")
         ),
         uiOutput("ch3_caseA1_widget")
       )
@@ -213,10 +299,9 @@ ch3_ui <- list(
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Porównaj trzy badania mierzące stężenie zanieczyszczenia
-            (µg/m³). Średnia = 32.0, s = 8.0, ale ",
-            tags$b("n różne"), " (10, 50, 200). Dodawaj CI jeden po drugim
-            i patrz, jak się zwężają.")
+          p("Trzy badania mierzą stężenie zanieczyszczenia (µg/m³). Wszystkie
+            dały średnią 32,0 i s = 8,0, ale różnią się liczebnością próby:
+            n = 10, 50 i 200. Kolejne kroki dodają przedziały jeden po drugim.")
         ),
         uiOutput("ch3_caseA2_widget")
       )
@@ -231,9 +316,9 @@ ch3_ui <- list(
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Badamy nowy lek na obniżenie ciśnienia krwi.
-            ", tags$b("Lek:"), " n=40, średnie obniżenie 12.3 mmHg, s=4.5.
-            ", tags$b("Placebo:"), " n=40, średnie obniżenie 4.1 mmHg, s=4.2.")
+          p("Badamy nowy lek na obniżenie ciśnienia krwi. ",
+            tags$b("Lek:"), " n = 40, średnie obniżenie 12,3 mmHg, s = 4,5. ",
+            tags$b("Placebo:"), " n = 40, średnie obniżenie 4,1 mmHg, s = 4,2.")
         ),
         uiOutput("ch3_caseB1_widget")
       )
@@ -246,9 +331,9 @@ ch3_ui <- list(
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Porównujesz plon kukurydzy dla dwóch nawozów.
-            ", tags$b("Nawoz X:"), " n=25, średnia 8.4 t/ha, s=1.2.
-            ", tags$b("Nawoz Y:"), " n=25, średnia 8.1 t/ha, s=1.3.")
+          p("Porównujesz plon kukurydzy dla dwóch nawozów. ",
+            tags$b("Nawóz X:"), " n = 25, średnia 8,4 t/ha, s = 1,2. ",
+            tags$b("Nawóz Y:"), " n = 25, średnia 8,1 t/ha, s = 1,3.")
         ),
         uiOutput("ch3_caseB2_widget")
       )
@@ -261,10 +346,10 @@ ch3_ui <- list(
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Mierzysz czas reakcji w dwóch grupach (n=150 każda).
-            ", tags$b("Grupa A:"), " średnia 350 ms, s=45.
-            ", tags$b("Grupa B:"), " średnia 362 ms, s=45.
-            CI każdej grupy osobno się nakładają — czy różnica jest istotna?")
+          p("Mierzysz czas reakcji w dwóch grupach po 150 osób. ",
+            tags$b("Grupa A:"), " średnia 350 ms, s = 45. ",
+            tags$b("Grupa B:"), " średnia 362 ms, s = 45. Przedziały
+            obu grup nakładają się. Czy różnica jest istotna?")
         ),
         uiOutput("ch3_caseB3_widget")
       )
@@ -277,10 +362,10 @@ ch3_ui <- list(
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Bardzo duże badanie porównuje IQ w dwóch województwach.
-            ", tags$b("Wojew. A:"), " n=20 000, średnia 100.4, s=15.
-            ", tags$b("Wojew. B:"), " n=20 000, średnia 100.0, s=15.
-            Różnica 0.4 pkt IQ — dużo czy mało?")
+          p("Bardzo duże badanie porównuje IQ w dwóch województwach. ",
+            tags$b("Wojew. A:"), " n = 20 000, średnia 100,4, s = 15. ",
+            tags$b("Wojew. B:"), " n = 20 000, średnia 100,0, s = 15.
+            Różnica 0,4 pkt IQ — dużo czy mało?")
         ),
         uiOutput("ch3_caseB4_widget")
       )
@@ -295,9 +380,9 @@ ch3_ui <- list(
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Porównujesz średni wynik egzaminu (0–40 pkt) dla studentów
-            uczących się czterema metodami (po 25 studentów w każdej).
-            Dodawaj CI jeden po drugim i obserwuj.")
+          p("Porównujesz średni wynik egzaminu (0–40 pkt) studentów uczących
+            się czterema metodami, po 25 osób w każdej grupie. Kolejne kroki
+            dodają punkty, średnie i przedziały.")
         ),
         uiOutput("ch3_caseC1_widget")
       )
@@ -317,27 +402,31 @@ ch3_ui <- list(
       )
     ),
 
-    tagList(
-      lc_feedback(type = "info",
-        tags$strong("Najważniejsze do zapamiętania:"),
-        tags$ol(
-          tags$li("CI dla różnicy mówi czy różnica jest istotna — sprawdź
-                   czy zawiera 0."),
-          tags$li("Przy wielu grupach użyj ", gloss("forest plot", "forest plotu"), " jako szybkiej mapy:
-                   rozłączne CI wskazują wyraźne różnice, ale nakładające się CI
-                   nie pozwalają stwierdzić, że różnicy nie ma."),
-          tags$li("Gdy chcesz precyzyjnie rozstrzygnąć dwie konkretne grupy,
-                   policz CI bezpośrednio dla różnicy średnich."),
-          tags$li("„Istotne statystycznie” ≠ „",
-                  gloss("istotność praktyczna", "ważne praktycznie"), "”.
-                   Przy bardzo dużym n nawet trywialne różnice
-                   będą istotne."),
-          tags$li("Forest plot to standardowy sposób porównania wielu
-                   grup. Patrz nie tylko na średnie, ale przede
-                   wszystkim na długość każdego CI.")
-        )
-      )
-    ),
+    lc_p("Przypadki powtarzają wnioski z całego rozdziału. W A2 przedział
+      zwęża się wraz z liczebnością próby: ma około 11,4 µg/m³ szerokości
+      przy n = 10, 4,5 przy n = 50 i 2,2 przy n = 200. Czterokrotnie większa
+      próba daje mniej więcej dwukrotnie węższy przedział, bo błąd
+      standardowy maleje jak \\(1/\\sqrt{n}\\). B3 to pułapka ze scenariusza C:
+      przedziały grup się nakładają, a przedział różnicy [−22,2; −1,8] ms
+      leży w całości poniżej zera. B4 pokazuje drugą stronę dużych prób.
+      Przy 20 000 osób w grupie przedział różnicy [0,11; 0,69] pkt nie
+      zawiera zera, ale różnica 0,4 punktu to około 0,03 odchylenia
+      standardowego IQ. Wynik jest istotny statystycznie, ale nie ma ",
+      gloss("istotność praktyczna", "istotności praktycznej"), "."),
+
+    lc_p("Przy wielu grupach przedziały zestawia się na jednej osi w ",
+      gloss("forest plot", "forest plocie"), ". Taki wykres to szybka mapa:
+      rozłączne przedziały wskazują wyraźne różnice, a nakładające się
+      nie rozstrzygają. W C1 rozłączne przedziały mają tylko metoda tradycyjna
+      i tutoring. W C2 SOR (średnio 75 min, przedział [69,4; 80,6]) odstaje od
+      wszystkich pozostałych oddziałów, a wśród pozostałych rozłączne
+      przedziały mają jeszcze trzy pary. Żeby rozstrzygnąć konkretną parę grup,
+      liczymy przedział dla różnicy ich średnich."),
+
+    lc_p("Ta sama konstrukcja, estymata ± wartość krytyczna × błąd standardowy,
+      działa także dla odsetków. Przy proporcjach błąd standardowy zależy jednak
+      od samego szacowanego odsetka, co przy małych próbach sprawia kłopoty.
+      Tym zajmiemy się w następnym rozdziale."),
 
     lc_chapter_next(
       num       = "04",
@@ -354,7 +443,7 @@ ch3_ui <- list(
 
 ch3_server <- function(input, output, session) {
 
-  # --- Widget 1: Budowa przedzialu krok po kroku ---
+  # --- Widget 1: Budowa przedziału krok po kroku ---
   # Krok widgetu (1..4) żyje w przeglądarce; nowa próba nie zmienia kroku.
   ch3_step <- lc_step_server("ch3_step", input)$step
 
@@ -388,29 +477,29 @@ ch3_server <- function(input, output, session) {
     t_star <- qt(0.975, df = n - 1)
     me <- t_star * se
 
-    # Stala os X dla wszystkich krokow (oparta na surowych danych + CI)
+    # Stała oś X dla wszystkich kroków (oparta na surowych danych + CI)
     xlims <- range(c(samp, xbar - 1.2 * me, xbar + 1.2 * me))
     pad <- diff(xlims) * 0.05
     xlims <- c(xlims[1] - pad, xlims[2] + pad)
 
-    # Jitter punktow na Y (deterministyczny na podstawie wartosci)
+    # Jitter punktów na Y (deterministyczny na podstawie wartości)
     set.seed(42)
     jitter_y <- runif(n, min = 0.55, max = 0.90)
     samp_df <- data.frame(x = samp, y = jitter_y)
 
-    # Oddzielne poziomy Y - kazdy element na swojej linii
+    # Oddzielne poziomy Y - każdy element na swojej linii
     Y_MEAN <- 0.38
     Y_SE   <- 0.12
     Y_CI   <- -0.18
 
-    # Krok 1+: surowe punkty z proby
+    # Krok 1+: surowe punkty z próby
     p <- ggplot() +
       step_layer(geom_point, "data", data = samp_df,
                  mapping = aes(x = x, y = y), size = 3) +
       labs(x = "Wzrost (cm)", y = NULL) +
       step_frame(xlim = xlims, ylim = c(-0.45, 0.98), y_axis = FALSE)
 
-    # Krok 2+: pionowa linia prowadzaca + diament sredniej
+    # Krok 2+: pionowa linia prowadząca + diament średniej
     if (step >= 2) {
       role <- step_role(step, 2)
       p <- p +
@@ -421,7 +510,7 @@ ch3_server <- function(input, output, session) {
                    size = 5)
     }
 
-    # Krok 3+: przedzial +/- SE (wezszy)
+    # Krok 3+: przedział +/- SE (węższy)
     if (step >= 3) {
       role <- step_role(step, 3)
       p <- p +
@@ -433,7 +522,7 @@ ch3_server <- function(input, output, session) {
                    size = 4.5)
     }
 
-    # Krok 4: pelny CI (t* * SE, szerszy)
+    # Krok 4: pełny CI (t* * SE, szerszy)
     if (step >= 4) {
       p <- p +
         step_layer(geom_errorbar, "new",
@@ -459,64 +548,29 @@ ch3_server <- function(input, output, session) {
     me <- t_star * se
 
     switch(as.character(step),
-      "1" = tagList(
-        p("Próba.",
-          " Pobraliśmy ", tags$b(n), " pomiarów wzrostu. Każda kropka to jedna osoba.
-          Zauważ, jak bardzo surowe obserwacje są ", tags$strong("rozrzucone"),
-          " — rozrzut indywidualny w populacji jest duży."),
-        p("Statystyki z próby: ",
-          withMathJax(paste0("\\(\\bar{x} = ", round(xbar, 2), "\\)")),
-          ", ",
-          withMathJax(paste0("\\(s = ", round(s, 2), "\\)")),
-          ", ",
-          withMathJax(paste0("\\(n = ", n, "\\)")), ".")
-      ),
-      "2" = tagList(
-        p("Średnia z próby.",
-          " Obliczamy ",
-          withMathJax(paste0("\\(\\bar{x} = ", round(xbar, 2), "\\)")), " cm.
-          To nasz ", tags$strong("estymator punktowy"),
-          " — najlepsze pojedyncze oszacowanie prawdziwej średniej populacji."),
-        p("Ale pojedyncza liczba nie wystarczy. Inna próba dałaby inną średnią.
-          Musimy wyrazić ", tags$strong("niepewność"), " tego oszacowania.")
-      ),
-      "3" = tagList(
-        p("Błąd standardowy (± SE).",
-          " Błąd standardowy średniej to:"),
-        p(withMathJax(paste0("\\(SE = \\frac{s}{\\sqrt{n}} = \\frac{", round(s, 2),
-                             "}{\\sqrt{", n, "}} = ", round(se, 2), "\\)"))),
-        p("SE mówi, jak bardzo ", withMathJax("\\(\\bar{x}\\)"),
-          " waha się z próby na próbę. Zauważ — jest ",
-          tags$strong("znacznie mniejszy"),
-          " niż rozrzut surowych danych! To dlatego, że średnia z próby \"uśrednia\"
-          losowe odchylenia poszczególnych obserwacji."),
-        p("Ale ", tags$strong("± 1 SE"), " to tylko około 68% ufności.
-          Żeby dostać 95%, trzeba tę szerokość ", tags$em("powiększyć"),
-          " przez wartość krytyczną.")
-      ),
+      "1" = withMathJax(paste0(
+        n, " pomiarów wzrostu, każda kropka to jedna osoba. ",
+        "\\(\\bar{x} = ", round(xbar, 2), "\\) cm, \\(s = ", round(s, 2), "\\) cm.")),
+      "2" = withMathJax(paste0(
+        "Średnia z próby \\(\\bar{x} = ", round(xbar, 2),
+        "\\) cm to estymata punktowa μ. Inna próba dałaby inną wartość.")),
+      "3" = withMathJax(paste0(
+        "\\(SE = s/\\sqrt{n} = ", round(s, 2), "/\\sqrt{", n, "} = ",
+        round(se, 2), "\\) cm. Pasek \\(\\bar{x} \\pm SE\\) to tylko około 67% ufności.")),
       "4" = {
         covers <- (xbar - me <= 170) & (170 <= xbar + me)
-        tagList(
-          p("Przedział ufności (± t* · SE)."),
-          p("Mnożymy SE przez wartość krytyczną ",
-            withMathJax(paste0("\\(t^*_{0.975, ", n - 1, "} = ",
-                               round(t_star, 3), "\\)")), ":"),
-          p(withMathJax(paste0("\\(ME = t^* \\cdot SE = ", round(t_star, 3),
-                               " \\cdot ", round(se, 2), " = ", round(me, 2), "\\)"))),
-          p("95% CI: ",
-            tags$b(paste0("[", round(xbar - me, 2), " ; ", round(xbar + me, 2), "]"))),
-          p("Zauważ, jak burgundowy (pełny) przedział jest ",
-            tags$strong("szerszy"), " niż grafitowy (± SE) — dokładnie ",
-            round(t_star, 2), "× szerszy. To dodatkowa niepewność z tego,
-            że szacujemy σ z próby (a nie znamy go)."),
-          p(tags$em(if (covers) "Ten przedział zawiera prawdziwą średnią populacji (μ = 170 cm)."
-                    else "Ten przedział NIE zawiera prawdziwej średniej populacji (μ = 170 cm) — klikaj 'Nowa próba', żeby zobaczyć jak rzadko to się zdarza."))
-        )
+        withMathJax(paste0(
+          "\\(t^* = ", round(t_star, 3), "\\) (df = ", n - 1, "), ",
+          "\\(ME = ", round(t_star, 3), " \\cdot ", round(se, 2), " = ",
+          round(me, 2), "\\) cm. 95% CI: [", round(xbar - me, 2), " ; ",
+          round(xbar + me, 2), "]. ",
+          if (covers) "Ten przedział zawiera μ = 170 cm."
+          else "Ten przedział nie zawiera μ = 170 cm."))
       }
     )
   })
 
-  # --- Widget 2: Budowa przedzialu dla roznicy srednich ---
+  # --- Widget 2: Budowa przedziału dla różnicy średnich ---
   # Krok widgetu (1..5) żyje w przeglądarce; nowe próby nie zmieniają kroku.
   ch3_dstep <- lc_step_server("ch3_dstep", input)$step
 
@@ -552,7 +606,7 @@ ch3_server <- function(input, output, session) {
     col_men <- STEP_ROLES$data$colour
     col_women <- STEP_ROLES$group$colour
 
-    # ---- GORNY PANEL: dwie grupy na skali wzrostu ----
+    # ---- GÓRNY PANEL: dwie grupy na skali wzrostu ----
     xlims_top <- range(c(men, women))
     pad_top <- diff(xlims_top) * 0.06
     xlims_top <- c(xlims_top[1] - pad_top, xlims_top[2] + pad_top)
@@ -576,7 +630,7 @@ ch3_server <- function(input, output, session) {
       labs(x = "Wzrost (cm)", y = NULL) +
       step_frame(xlim = xlims_top, ylim = c(0.35, 2.25), y_axis = FALSE)
 
-    # Krok 2+: srednie (diamenty + linie)
+    # Krok 2+: średnie (diamenty + linie)
     if (step >= 2) {
       role <- step_role(step, 2)
       means_df <- data.frame(x = c(x1, x2), y = c(1.8, 1.0))
@@ -595,18 +649,18 @@ ch3_server <- function(input, output, session) {
 
     library(patchwork)
 
-    # Kroki 1-2: tylko gorny panel; miejsce dolnego zostaje puste (stala rama)
+    # Kroki 1-2: tylko górny panel; miejsce dolnego zostaje puste (stała rama)
     if (step < 3) {
       return((p_top / plot_spacer()) + plot_layout(heights = c(2, 1)))
     }
 
-    # ---- DOLNY PANEL: roznica w skali wycentrowanej na 0 ----
+    # ---- DOLNY PANEL: różnica w skali wycentrowanej na 0 ----
     # Limity: obejmij 0 i CI z marginesem
     xlims_bot <- range(c(0, diff_val - 1.3 * me, diff_val + 1.3 * me))
     pad_bot <- diff(xlims_bot) * 0.08
     xlims_bot <- c(xlims_bot[1] - pad_bot, xlims_bot[2] + pad_bot)
 
-    # Krok 3+: punkt roznicy
+    # Krok 3+: punkt różnicy
     role_diff <- step_role(step, 3)
     p_bot <- ggplot() +
       step_line("known", xintercept = 0) +
@@ -620,7 +674,7 @@ ch3_server <- function(input, output, session) {
            y = NULL) +
       step_frame(xlim = xlims_bot, ylim = c(-0.55, 0.55), y_axis = FALSE)
 
-    # Krok 4+: waski przedzial SE
+    # Krok 4+: wąski przedział SE
     if (step >= 4) {
       role <- step_role(step, 4)
       p_bot <- p_bot +
@@ -632,7 +686,7 @@ ch3_server <- function(input, output, session) {
                    size = 4)
     }
 
-    # Krok 5: pelen CI
+    # Krok 5: pełen CI
     if (step >= 5) {
       p_bot <- p_bot +
         step_layer(geom_errorbar, "new",
@@ -645,7 +699,7 @@ ch3_server <- function(input, output, session) {
                    role = "new", size = 4.8)
     }
 
-    # Polacz patchworkiem
+    # Połącz patchworkiem
     (p_top / p_bot) + plot_layout(heights = c(2, 1))
   }))
 
@@ -666,66 +720,28 @@ ch3_server <- function(input, output, session) {
     me <- t_star * se
 
     switch(as.character(step),
-      "1" = tagList(
-        p("Dwie próby.",
-          " Mierzymy wzrost w obu grupach: ", tags$b(n1), " mężczyzn i ",
-          tags$b(n2), " kobiet. Każdy punkt to jedna osoba.
-          Zauważ — rozrzut surowych danych jest duży, ale wyraźnie widać,
-          że średnia \"niebieska\" leży na prawo od średniej \"bursztynowej\".")
-      ),
-      "2" = tagList(
-        p("Dwie średnie.",
-          " Obliczamy średnią w każdej grupie:"),
-        p(withMathJax(paste0("\\(\\bar{x}_1 = ", round(x1, 2), "\\)"))),
-        p(withMathJax(paste0("\\(\\bar{x}_2 = ", round(x2, 2), "\\)"))),
-        p("Każda średnia ma własną niepewność — ale interesuje nas
-          nie każda z osobna, tylko ", tags$strong("różnica między nimi"), ".")
-      ),
-      "3" = tagList(
-        p("Różnica.",
-          " Estymator punktowy różnicy: ",
-          withMathJax(paste0("\\(\\bar{x}_1 - \\bar{x}_2 = ", round(x1, 2),
-                             " - ", round(x2, 2), " = ",
-                             round(diff_val, 2), "\\)")), " cm."),
-        p("W dolnym panelu przenosimy się do nowej skali — ", tags$strong("skali różnicy"),
-          ". Punkt = nasze oszacowanie różnicy. Pionowa linia na 0 oznacza ",
-          tags$em("\"gdyby różnicy nie było\""),
-          ". Teraz musimy otoczyć naszą różnicę przedziałem niepewności.")
-      ),
-      "4" = tagList(
-        p("Błąd standardowy różnicy (± SE).",
-          " SE różnicy łączy niepewności z obu prób:"),
-        p(withMathJax(paste0(
-          "\\(SE_{różnicy} = \\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}} = ",
-          "\\sqrt{\\frac{", round(s1, 2), "^2}{", n1, "} + \\frac{",
-          round(s2, 2), "^2}{", n2, "}} = ", round(se, 2), "\\)"))),
-        p(tags$strong("Ważne:"), " wariancje się ", tags$em("dodają"),
-          ", nie SE. Dlatego SE różnicy jest ", tags$em("mniejszy"),
-          " niż suma SE poszczególnych średnich — to właśnie źródło ",
-          tags$strong("pułapki nakładających się CI"),
-          " (patrz case B3 poniżej).")
-      ),
+      "1" = paste0(n1, " mężczyzn (niebieskie punkty) i ", n2,
+                   " kobiet (bursztynowe). Każdy punkt to jedna osoba."),
+      "2" = withMathJax(paste0(
+        "\\(\\bar{x}_1 = ", round(x1, 2), "\\) cm, \\(\\bar{x}_2 = ",
+        round(x2, 2), "\\) cm. Każda średnia ma własną niepewność.")),
+      "3" = withMathJax(paste0(
+        "\\(\\bar{x}_1 - \\bar{x}_2 = ", round(diff_val, 2),
+        "\\) cm. Dolny panel to skala różnicy: linia 0 oznacza brak różnicy.")),
+      "4" = withMathJax(paste0(
+        "\\(SE = \\sqrt{", round(s1, 2), "^2/", n1, " + ", round(s2, 2), "^2/", n2,
+        "} = ", round(se, 2), "\\) cm, mniej niż suma SE obu średnich (",
+        round(s1 / sqrt(n1) + s2 / sqrt(n2), 2), " cm).")),
       "5" = {
         covers_zero <- (diff_val - me <= 0) & (0 <= diff_val + me)
-        tagList(
-          p("Przedział ufności dla różnicy."),
-          p("Wartość krytyczna z rozkładu t (df Welcha ≈ ",
-            round(df_w, 1), "): ",
-            withMathJax(paste0("\\(t^* = ", round(t_star, 3), "\\)"))),
-          p(withMathJax(paste0("\\(ME = t^* \\cdot SE = ", round(t_star, 3),
-                               " \\cdot ", round(se, 2), " = ",
-                               round(me, 2), "\\)"))),
-          p("95% CI: ",
-            tags$b(paste0("[", round(diff_val - me, 2), " ; ",
-                          round(diff_val + me, 2), "]")), " cm"),
-          p(tags$em(if (covers_zero)
-              "CI obejmuje 0 — nie możemy stwierdzić, że różnica jest istotna."
-            else
-              paste0("CI nie obejmuje 0 — różnica jest istotna. ",
-                     "Możemy stwierdzić z 95% ufnością, że mężczyźni są średnio ",
-                     "o co najmniej ", round(diff_val - me, 1),
-                     " cm wyżsi od kobiet.")))
-        )
+        withMathJax(paste0(
+          "df Welcha ≈ ", round(df_w, 1), ", \\(t^* = ", round(t_star, 3),
+          "\\), \\(ME = ", round(t_star, 3), " \\cdot ", round(se, 2), " = ",
+          round(me, 2), "\\) cm. 95% CI: [", round(diff_val - me, 2), " ; ",
+          round(diff_val + me, 2), "] cm. ",
+          if (covers_zero) "Przedział obejmuje 0."
+          else paste0("Przedział nie obejmuje 0: mężczyźni są średnio wyżsi o co najmniej ",
+                      round(diff_val - me, 1), " cm.")))
       }
     )
   })
@@ -779,10 +795,10 @@ ch3_server <- function(input, output, session) {
   col_hyp <- "#8e44ad"
 
   # ---- CONFIG case'ow ----
-  # Kazdy case: type, data, xlab, steps (labele przyciskow), hypotheses (lista 2)
+  # Każdy case: type, data, xlab, steps (labele przycisków), hypotheses (lista 2)
   # hypotheses: list of list(text, bound, dir, interval_fn)
   # Dla "single_mean" / "diff_means" / "compare_n" / "forest" interval_fn
-  # wyciaga (lower, upper) z konfiguracji.
+  # wyciąga (lower, upper) z konfiguracji.
 
   cases_config <- list(
     A1 = list(
@@ -793,10 +809,10 @@ ch3_server <- function(input, output, session) {
       hypotheses = list(
         list(text = "Średni wzrost przekracza 168 cm",
              bound = 168, dir = "gt",
-             explain_yes = "Dolna granica CI (≈ 170.3) leży powyżej 168. Cały CI jest w obszarze hipotezy — z 95% ufnością średni wzrost w populacji przekracza 168 cm."),
+             explain_yes = "Dolna granica CI (≈ 170,3) leży powyżej 168, cały przedział jest w obszarze hipotezy. Z 95% ufnością średni wzrost w populacji przekracza 168 cm."),
         list(text = "Średni wzrost przekracza 180 cm",
              bound = 180, dir = "gt",
-             explain_no = "Górna granica CI (≈ 176.5) leży poniżej 180. Cały CI jest poza obszarem hipotezy — nie możemy stwierdzić, że średnia wzrostu przekracza 180 cm.")
+             explain_no = "Górna granica CI (≈ 176,5) leży poniżej 180, cały przedział jest poza obszarem hipotezy. Dane wykluczają średni wzrost powyżej 180 cm.")
       )
     ),
     A2 = list(
@@ -807,10 +823,10 @@ ch3_server <- function(input, output, session) {
       hypotheses = list(
         list(text = "Stężenie przekracza 25 µg/m³",
              bound = 25, dir = "gt",
-             explain_yes = "Wszystkie trzy CI leżą powyżej 25 — nawet najszerszy (n=10) ma dolną granicę ≈ 26.3. Każde z badan potwierdza hipotezę. Większe n daje tylko bardziej precyzyjne oszacowanie, ale wniosek jest ten sam."),
+             explain_yes = "Wszystkie trzy przedziały leżą powyżej 25, nawet najszerszy (n = 10) ma dolną granicę ≈ 26,3. Każde z badań potwierdza hipotezę, większe n daje tylko węższy przedział."),
         list(text = "Stężenie przekracza 35 µg/m³",
              bound = 35, dir = "gt",
-             explain_no = "Górna granica CI nawet dla n=200 (≈ 33.1) leży poniżej 35 — nawet najdokładniejsze badanie nie pozwala stwierdzić, że stężenie przekracza 35. Zauważ: dla n=10 CI sięga aż do 37.7 i przecina 35, więc tam sytuacja byłaby niepewna — to pokazuje, dlaczego duży n jest cenny: daje bardziej definitywną odpowiedź.")
+             explain_no = "Werdykt dotyczy najdokładniejszego badania: dla n = 200 górna granica (≈ 33,1) leży poniżej 35. Dla n = 10 przedział sięga do 37,7 i przecina 35, więc samo małe badanie by tego nie rozstrzygnęło.")
       )
     ),
     B1 = list(
@@ -823,26 +839,26 @@ ch3_server <- function(input, output, session) {
       hypotheses = list(
         list(text = "Lek skuteczniej obniża ciśnienie niż placebo (różnica > 0)",
              bound = 0, dir = "gt",
-             explain_yes = "Cały CI dla różnicy leży powyżej 0 — lek rzeczywiście obniża ciśnienie skuteczniej niż placebo. To ten sam wniosek co \"różnica istotna statystycznie\"."),
+             explain_yes = "Cały przedział dla różnicy (≈ 6,3–10,1 mmHg) leży powyżej 0: lek obniża ciśnienie skuteczniej niż placebo."),
         list(text = "Lek działa o więcej niż 12 mmHg lepiej niż placebo",
              bound = 12, dir = "gt",
-             explain_no = "Górna granica CI (≈ 10.1) leży poniżej 12. Cały CI jest w przedziale 6–10 mmHg — efekt leku jest wyraźny, ale nie tak duży jak głosi hipoteza.")
+             explain_no = "Górna granica CI (≈ 10,1) leży poniżej 12. Efekt leku jest wyraźny, ale mniejszy, niż głosi hipoteza.")
       )
     ),
     B2 = list(
       type = "diff_means",
       data = list(x1 = 8.4, s1 = 1.2, n1 = 25, x2 = 8.1, s2 = 1.3, n2 = 25,
-                  label1 = "Nawoz X", label2 = "Nawoz Y",
+                  label1 = "Nawóz X", label2 = "Nawóz Y",
                   unit = "t/ha", diff_label = "X − Y"),
       xlab = "Plon (t/ha)",
       steps = c("1. Próby", "2. Średnie", "3. Różnica", "4. ± SE", "5. Przedział"),
       hypotheses = list(
         list(text = "Różnica plonów jest mniejsza niż 2 t/ha",
              bound = 2, dir = "lt",
-             explain_yes = "Cały CI dla różnicy leży poniżej 2 t/ha. Możemy być pewni, że nawet jeśli któryś nawoz jest lepszy, to różnica nie jest duża (mniej niż 2 t/ha)."),
-        list(text = "Nawoz X daje więcej niż 2 t/ha większy plon niż Y",
+             explain_yes = "Cały przedział dla różnicy (≈ −0,4–1,0 t/ha) leży poniżej 2 t/ha. Nawet jeśli któryś nawóz jest lepszy, przewaga nie sięga 2 t/ha."),
+        list(text = "Nawóz X daje plon większy o ponad 2 t/ha niż Y",
              bound = 2, dir = "gt",
-             explain_no = "Górna granica CI (≈ 1.0) leży poniżej 2 — nawet najbardziej optymistyczny scenariusz nie przewiduje tak dużej przewagi X nad Y. Uwaga: to nie znaczy, że X jest lepszy od Y — CI obejmuje też wartości ujemne, więc nie wiemy nawet, który nawoz jest lepszy.")
+             explain_no = "Górna granica CI (≈ 1,0) leży poniżej 2. Przedział obejmuje też wartości ujemne, więc dane nie mówią nawet, który nawóz jest lepszy.")
       )
     ),
     B3 = list(
@@ -855,10 +871,10 @@ ch3_server <- function(input, output, session) {
       hypotheses = list(
         list(text = "Grupa A reaguje szybciej niż B (różnica < 0)",
              bound = 0, dir = "lt",
-             explain_yes = "Mimo że CI każdej grupy osobno się nakładają (zobacz górny panel!), CI dla różnicy cały leży poniżej 0. To jest właśnie pułapka nakładających się CI: SE różnicy jest mniejszy niż suma SE pojedynczych średnich, dlatego CI dla różnicy bywa węższy niż by sugerowały nakładające się CI grup."),
+             explain_yes = "Przedziały grup się nakładają, ale przedział dla różnicy (≈ −22,2 do −1,8 ms) leży w całości poniżej 0. Grupa A reaguje szybciej."),
         list(text = "Grupa A jest szybsza o co najmniej 25 ms",
              bound = -25, dir = "lt",
-             explain_no = "Dolna granica CI (≈ -22) nie dosięga -25 — cały CI jest powyżej tej wartości. Nie możemy stwierdzić, że różnica wynosi co najmniej 25 ms. Wiemy tylko, że różnica jest istotna (A szybsza) i mieści się między 2 a 22 ms.")
+             explain_no = "Dolna granica CI (≈ −22) nie sięga −25, cały przedział leży powyżej tej wartości. Grupa A jest szybsza o około 2–22 ms, nie o 25 ms lub więcej.")
       )
     ),
     B4 = list(
@@ -871,10 +887,10 @@ ch3_server <- function(input, output, session) {
       hypotheses = list(
         list(text = "Województwo A ma wyższe średnie IQ niż B (różnica > 0)",
              bound = 0, dir = "gt",
-             explain_yes = "Dzięki ogromnej próbie (n=20000 w każdej grupie) CI jest bardzo wąski i nie obejmuje 0. Formalnie: różnica jest istotna statystycznie."),
+             explain_yes = "Przy n = 20 000 w każdej grupie przedział (≈ 0,11–0,69 pkt) jest bardzo wąski i nie obejmuje 0. Różnica jest istotna statystycznie."),
         list(text = "Różnica wynosi co najmniej 1 punkt IQ",
              bound = 1, dir = "gt",
-             explain_no = "Cały CI leży poniżej 1 (górna granica ≈ 0.7). Różnica jest statystycznie istotna, ale rozmiarowo trywialna — 0.4 punktu IQ to ~0.03 SD, nic zauważalnego w życiu. To klasyczna ilustracja, że istotność statystyczna ≠ ważność praktyczna.")
+             explain_no = "Cały przedział leży poniżej 1 (górna granica ≈ 0,7). Różnica 0,4 punktu IQ to około 0,03 SD.")
       )
     ),
     C1 = list(
@@ -912,8 +928,8 @@ ch3_server <- function(input, output, session) {
   )
 
 
-  # ---- Helper: narysuj pasek CI dla pojedynczej sredniej ----
-  # step: 0 = nic, 1 = punkty, 2 = +srednia, 3 = +SE, 4 = +CI
+  # ---- Helper: narysuj pasek CI dla pojedynczej średniej ----
+  # step: 0 = nic, 1 = punkty, 2 = +średnia, 3 = +SE, 4 = +CI
   # hypothesis: NULL lub list(bound, dir)
   plot_single_mean_step <- function(data, step, xlab,
                                      hypothesis = NULL, title = NULL) {
@@ -922,10 +938,10 @@ ch3_server <- function(input, output, session) {
     se <- ci$se; me <- ci$me
     t_star <- ci$t_star
 
-    # Generujemy "fake" punkty z parametrow (reproducowalnie)
+    # Generujemy "fake" punkty z parametrów (reprodukowalnie)
     set.seed(42)
     samp <- rnorm(n, mean = xbar, sd = s)
-    samp <- (samp - mean(samp)) / sd(samp) * s + xbar  # wymus dokladnie xbar, s
+    samp <- (samp - mean(samp)) / sd(samp) * s + xbar  # wymuś dokładnie xbar, s
 
     # Limity
     xlims <- range(c(samp, xbar - 1.2 * me, xbar + 1.2 * me))
@@ -1011,7 +1027,7 @@ ch3_server <- function(input, output, session) {
   plot_compare_n_step <- function(data, step, xlab, hypothesis = NULL) {
     xbar <- data$xbar; s <- data$s; ns <- data$ns
 
-    # Kazdy step = jeden dodatkowy CI
+    # Każdy step = jeden dodatkowy CI
     ci_list <- lapply(ns, function(n) {
       ci <- ci_mean(xbar, s, n)
       list(n = n, lower = ci$lower, upper = ci$upper, me = ci$me)
@@ -1099,7 +1115,7 @@ ch3_server <- function(input, output, session) {
   }
 
   # ---- Plot dla diff_means ----
-  # step 1=proby, 2=srednie, 3=roznica, 4=+SE, 5=+CI
+  # step 1=próby, 2=średnie, 3=różnica, 4=+SE, 5=+CI
   plot_diff_means_step <- function(data, step, xlab, hypothesis = NULL) {
     x1 <- data$x1; s1 <- data$s1; n1 <- data$n1
     x2 <- data$x2; s2 <- data$s2; n2 <- data$n2
@@ -1111,7 +1127,7 @@ ch3_server <- function(input, output, session) {
     col_g1 <- col_ci
     col_g2 <- col_miss
 
-    # Generuj reprezentatywne probki z parametrow
+    # Generuj reprezentatywne próbki z parametrów
     set.seed(11)
     samp1 <- rnorm(n1, mean = x1, sd = s1)
     samp1 <- (samp1 - mean(samp1)) / sd(samp1) * s1 + x1
@@ -1124,7 +1140,7 @@ ch3_server <- function(input, output, session) {
     if (n1 > max_show) samp1 <- sample(samp1, max_show)
     if (n2 > max_show) samp2 <- sample(samp2, max_show)
 
-    # ---- GORNY PANEL ----
+    # ---- GÓRNY PANEL ----
     xlims_top <- range(c(samp1, samp2))
     pad_t <- diff(xlims_top) * 0.06
     xlims_top <- c(xlims_top[1] - pad_t, xlims_top[2] + pad_t)
@@ -1278,7 +1294,7 @@ ch3_server <- function(input, output, session) {
     pad <- diff(xlims) * 0.12
     xlims <- c(xlims[1] - pad, xlims[2] + pad)
 
-    # Wygeneruj fake punkty dla kazdej grupy
+    # Wygeneruj fake punkty dla każdej grupy
     points_df <- do.call(rbind, lapply(seq_len(k), function(i) {
       set.seed(50 + i)
       samp <- rnorm(ns[i], mean = means[i], sd = sds[i])
@@ -1336,7 +1352,7 @@ ch3_server <- function(input, output, session) {
       p <- p + geom_point(data = points_df, aes(x = x, y = y),
                           color = col_ci, size = 2.3, alpha = 0.55)
     }
-    # Krok 2+: srednie
+    # Krok 2+: średnie
     if (step >= 2) {
       p <- p + geom_point(data = group_df, aes(x = mean, y = y),
                           color = col_estimate, size = 6, shape = 18)
@@ -1351,7 +1367,7 @@ ch3_server <- function(input, output, session) {
     p
   }
 
-  # ---- Liczba "core" krokow budowy CI (bez hipotez) ----
+  # ---- Liczba "core" kroków budowy CI (bez hipotez) ----
   n_core_steps <- function(cfg) length(cfg$steps)
   # ---- Wykres case'a: krok budowy CI i (na ostatnim kroku) obszar hipotezy ----
   render_case_plot <- function(cfg, step, hyp_idx) {
@@ -1377,7 +1393,7 @@ ch3_server <- function(input, output, session) {
     )
   }
 
-  # ---- Pairwise: szybka macierz rozlacznych CI dla forest plot ----
+  # ---- Pairwise: szybka macierz rozłącznych CI dla forest plot ----
   # TRUE oznacza rozłączne 95% CI, co jest mocnym sygnałem różnicy.
   # FALSE jest wynikiem nierozstrzygającym: nakładanie CI nie dowodzi braku różnicy.
   forest_pairwise_matrix <- function(data) {
@@ -1453,35 +1469,40 @@ ch3_server <- function(input, output, session) {
       ))
     }
 
-    # Sprawdz czy jedna grupa odstaje od WSZYSTKICH innych (np. SOR vs reszta)
+    # Para jako tekst „wyższa > niższa”.
+    pair_str <- function(pp) paste0(pp$hi, " > ", pp$lo)
+    join_pairs <- function(strs) {
+      if (length(strs) == 1) strs
+      else paste0(paste(strs[-length(strs)], collapse = ", "), " oraz ", strs[length(strs)])
+    }
+
+    # Sprawdź, czy jedna grupa odstaje od WSZYSTKICH innych (np. SOR vs reszta)
     standout_idx <- which(sapply(seq_len(k), function(i) all(mat[i, -i])))
     if (length(standout_idx) == 1) {
       i <- standout_idx
       others <- means[-i]
       direction <- if (means[i] > max(others)) "wyższą" else "niższą"
+      rest_pairs <- Filter(function(pp) pp$hi != groups[i] && pp$lo != groups[i], diff_pairs)
+      rest_txt <- if (length(rest_pairs) == 0) {
+        ", a ich CI nakładają się — ten wykres nie rozstrzyga różnic między nimi."
+      } else {
+        paste0(". Wśród nich rozłączne CI mają jeszcze: ",
+               join_pairs(sapply(rest_pairs, pair_str)),
+               "; pozostałe pary się nakładają.")
+      }
       return(paste0(
         "Spośród wszystkich badanych grup wyraźnie odstaje ",
-        tags$b(groups[i]), " (średnia ", round(means[i], 1), unit_str,
+        groups[i], " (średnia ", round(means[i], 1), unit_str,
         ") — szybkie porównanie wskazuje na ", direction, " wartość niż w każdej z pozostałych grup ",
         "(jej 95% CI nie nakłada się z żadnym innym). ",
         "Pozostałe grupy mają średnie w przedziale ",
         round(min(others), 1), "–", round(max(others), 1), unit_str,
-        ", a ich CI nakładają się — ten wykres nie rozstrzyga różnic między nimi."
+        rest_txt
       ))
     }
 
-    # Wymien konkretne istotne pary
-    pair_strs <- sapply(diff_pairs, function(pp) {
-      paste0(tags$b(pp$hi), " > ", tags$b(pp$lo))
-    })
-    pairs_inline <- if (length(pair_strs) == 1) {
-      pair_strs[1]
-    } else if (length(pair_strs) == 2) {
-      paste(pair_strs, collapse = " oraz ")
-    } else {
-      paste0(paste(pair_strs[-length(pair_strs)], collapse = ", "),
-             " oraz ", pair_strs[length(pair_strs)])
-    }
+    # Wymień konkretne pary z rozłącznymi CI
+    pairs_inline <- join_pairs(sapply(diff_pairs, pair_str))
 
     intro <- if (n_diff == 1) {
       "Spośród wszystkich porównań jedynie jedna para ma rozłączne 95% CI: "
@@ -1557,7 +1578,7 @@ ch3_server <- function(input, output, session) {
         hypothesis_verdict(ci$lower, ci$upper, hyp$bound, hyp$dir)
       },
       "compare_n" = {
-        # Werdykt bazujemy na najwazszym (najwiekszym n) CI
+        # Werdykt bazujemy na najwęższym (największym n) CI
         # (= najbardziej precyzyjnym oszacowaniu)
         largest_n <- max(cfg$data$ns)
         ci <- ci_mean(cfg$data$xbar, cfg$data$s, largest_n)
@@ -1569,7 +1590,7 @@ ch3_server <- function(input, output, session) {
         hypothesis_verdict(cid$lower, cid$upper, hyp$bound, hyp$dir)
       },
       "forest" = {
-        # Znajdz odpowiednia grupe
+        # Znajdź odpowiednią grupę
         idx <- which(cfg$data$groups == hyp$which)
         ci <- ci_mean(cfg$data$means[idx], cfg$data$sds[idx], cfg$data$ns[idx])
         hypothesis_verdict(ci$lower, ci$upper, hyp$bound, hyp$dir)
@@ -1621,8 +1642,8 @@ ch3_server <- function(input, output, session) {
   }
 
   # ==========================================================================
-  # WIDGET 2B: NAKLADAJACE SIE CI GRUP vs CI ROZNICY
-  # Trzy statyczne scenariusze z dziedziny technologii zywnosci
+  # WIDGET 2B: NAKŁADAJĄCE SIĘ CI GRUP vs CI RÓŻNICY
+  # Trzy statyczne scenariusze z dziedziny technologii żywności
   # ==========================================================================
 
   # --- Dane (statyczne, przygotowane z ustalonymi seedami) ---
@@ -1683,7 +1704,7 @@ ch3_server <- function(input, output, session) {
     )
   )
 
-  # Helper: liczy CI dla dwoch grup + CI roznicy (Welch)
+  # Helper: liczy CI dla dwóch grup + CI różnicy (Welch)
   ch3_comp_cis <- function(g1, g2, conf = 0.95) {
     alpha <- 1 - conf
     n1 <- length(g1); n2 <- length(g2)
@@ -1701,12 +1722,12 @@ ch3_server <- function(input, output, session) {
          overlap_hi = min(ci1[2], ci2[2]))
   }
 
-  # Helper: plot trzech CI (grupa 1, grupa 2, roznica) z paskiem nakladania
+  # Helper: plot trzech CI (grupa 1, grupa 2, różnica) z paskiem nakładania
   ch3_comp_plot <- function(scenario_key) {
     dat <- ch3_comp_data[[scenario_key]]
     cis <- ch3_comp_cis(dat$g1, dat$g2)
 
-    # Rama wykresu: lewy panel (CI grup), prawy panel (CI roznicy)
+    # Rama wykresu: górny panel (CI grup), dolny panel (CI różnicy)
     # Zrobimy w jednym plocie z facet_grid
     df_groups <- data.frame(
       row   = c(2, 1),
@@ -1767,7 +1788,7 @@ ch3_server <- function(input, output, session) {
       theme_upwr() +
       theme(plot.title = element_text(size = 13, face = "bold"))
 
-    # Uklad jeden pod drugim
+    # Układ jeden pod drugim
     gridExtra::arrangeGrob(p_groups, p_diff, ncol = 1, heights = c(1, 1))
   }
 
@@ -1782,16 +1803,15 @@ ch3_server <- function(input, output, session) {
     fmt <- function(x) sprintf("%.2f", x)
     ci_txt <- function(ci) paste0("[", fmt(ci[1]), "; ", fmt(ci[2]), "]")
 
-    # Wspolna czesc opisu
-    facts <- tagList(
+    # Same fakty liczbowe; wnioski ze scenariuszy są w narracji pod nimi.
+    lc_feedback(type = if (scenario_key == "C") "warning" else "ok",
       p(tags$b("Co widzimy:")),
       tags$ul(
         tags$li(dat$g1_name, ": średnia ", fmt(cis$m1),
                 ", 95% CI ", ci_txt(cis$ci1)),
         tags$li(dat$g2_name, ": średnia ", fmt(cis$m2),
                 ", 95% CI ", ci_txt(cis$ci2)),
-        tags$li(tags$b("CI różnicy"), " (",
-                dat$g1_name, " − ", dat$g2_name, "): ",
+        tags$li("CI różnicy (", dat$g1_name, " − ", dat$g2_name, "): ",
                 ci_txt(cis$ci_d))
       ),
       tags$ul(
@@ -1803,48 +1823,6 @@ ch3_server <- function(input, output, session) {
                 tags$b(if (diff_excludes_0) "NIE" else "TAK"))
       )
     )
-
-    # Werdykt w zaleznosci od scenariusza
-    if (scenario_key == "A") {
-      lc_feedback(type = "ok",
-        facts,
-        p(tags$b("Werdykt:"),
-          " Oba spojrzenia zgodne. CI grup się nie nakrywają, a CI różnicy
-          nie zawiera 0 — średnia zawartość białka różni się istotnie.
-          Najlepsze oszacowanie: mąka Dostawcy A ma o ",
-          fmt(cis$ci_d[1]), "–", fmt(cis$ci_d[2]),
-          " punktu procentowego więcej białka.")
-      )
-    } else if (scenario_key == "B") {
-      lc_feedback(type = "ok",
-        facts,
-        p(tags$b("Werdykt:"),
-          " Oba spojrzenia zgodne. CI grup mocno się nakrywają, a CI różnicy
-          zawiera 0 — nie mamy podstaw mówić, że materiał opakowania
-          wpływa na zawartość tłuszczu w jogurcie.")
-      )
-    } else {
-      lc_feedback(type = "warning",
-        facts,
-        p(tags$b("Spojrzenia się rozjeżdżają:")),
-        tags$ul(
-          tags$li("Wzrokiem: CI grup ledwo się stykają (nakrywają się na odcinku ",
-                  fmt(overlap_w),
-                  " g) — naiwnie powiedzielibyśmy \"linie produkują podobne płatki\"."),
-          tags$li("Liczbowo: CI różnicy to ", ci_txt(cis$ci_d),
-                  " — nie zawiera 0, więc różnica jest istotna.
-                   Linia 1 produkuje płatki o ",
-                   fmt(cis$ci_d[1]), "–", fmt(cis$ci_d[2]),
-                   " g / 100 g bogatsze w błonnik.")
-        ),
-        p(tags$b("Dlaczego CI różnicy jest węższe niż suma CI grup?"),
-          " Bo błąd standardowy różnicy to ",
-          withMathJax("\\(\\sqrt{SE_1^2 + SE_2^2}\\)"),
-          ", a nie ", withMathJax("\\(SE_1 + SE_2\\)"),
-          ". Matematyka łączy niepewności \"po pitagorasie\", nie przez sumowanie —
-          dlatego CI różnicy jest ostrzejszym narzędziem niż porównywanie CI grup na oko.")
-      )
-    }
   }
 
   zoom_plot_server("ch3_comp_A_plot", reactive({ ch3_comp_plot("A") }))

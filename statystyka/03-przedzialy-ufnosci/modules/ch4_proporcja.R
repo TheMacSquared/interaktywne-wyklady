@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 4: Przedzial dla proporcji
+# CHAPTER 4: Przedział dla proporcji
 # ============================================================================
 
 ch4_ui <- list(
@@ -12,55 +12,86 @@ ch4_ui <- list(
       kicker = "Rozdział 04 · Przedziały ufności",
       num    = "04",
       title  = "Przedział dla proporcji.",
-      lead   = "Umiemy już budować przedział dla średniej.
-                A co, gdy interesuje nas odsetek (proporcja)?"
+      lead   = "Odsetek zdających, poparcie w sondażu, udział wadliwych sztuk:
+                wiele pytań dotyczy proporcji, a nie średniej. Przedział buduje
+                się tak samo jak dla średniej, inny jest tylko wzór na błąd
+                standardowy."
     ),
 
     lc_h2("ch4-wzor", "Wzór"),
 
-    tagList(
-      p("Często chcemy oszacować odsetek — jaki procent studentów zdał egzamin,
-        jaki odsetek wyborców głosuje na partię X, jaki procent produktów jest wadliwy."),
-      p("Estymator punktowy to ", gloss("proporcja z próby"), ":"),
-      lc_formula_box(
-        withMathJax("$$\\hat{p} = \\frac{x}{n}$$")
-      ),
-      p("Najprostszy ", gloss("przedział ufności"), " dla proporcji to ", tags$b(gloss("przedział Walda")), ":"),
-      lc_formula_box(
-        withMathJax("$$CI = \\hat{p} \\pm z^*_{\\alpha/2} \\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$$")
-      ),
-      p("Składniki:"),
-      tags$ul(
-        tags$li(withMathJax("\\(\\hat{p}\\)"),
-                " — proporcja z próby (środek przedziału)"),
-        tags$li(withMathJax("\\(\\sqrt{\\hat{p}(1-\\hat{p})/n}\\)"),
-                " — ", gloss("błąd standardowy"), " proporcji"),
-        tags$li(withMathJax("\\(z^*\\)"),
-                " — ", gloss("wartość krytyczna"), " z ",
-                gloss("rozkład normalny", "rozkładu normalnego"), " (dla 95% ≈ 1.96)")
-      ),
-      p(tags$b("Dlaczego z, a nie t?"),
-        " Bo proporcja — inaczej niż średnia — nie wymaga osobnego oszacowania
-        \"odchylenia standardowego\". ", gloss("wariancja", "Wariancja"), " proporcji to ", withMathJax("\\(p(1-p)\\)"),
-        ", więc jest jednoznacznie wyznaczona przez samą ", withMathJax("\\(p\\)"), "."),
-      p("Uwaga — Wald nie zawsze działa dobrze. Gdy ",
-        withMathJax("\\(n\\)"), " jest małe lub ", withMathJax("\\(\\hat{p}\\)"),
-        " bardzo bliskie 0 lub 1, przedział Walda może mieć zaskakująco niskie
-        ", gloss("pokrycie"), ". W takich sytuacjach lepiej użyć ",
-        tags$b(gloss("przedział Wilsona", "przedziału Wilsona")),
-        ", który koryguje wzór. W tym wykładzie skupiamy się na Waldzie —
-        bo łatwo go zrozumieć, a w przykładach trzymamy się \"bezpiecznych\"
-        wartości ", withMathJax("\\(np \\geq 10\\)"), " i ",
-        withMathJax("\\(n(1-p) \\geq 10\\)"), ".")
+    lc_p("W poprzednim rozdziale przedział dla średniej składał się z trzech
+      elementów: estymatora \\(\\bar{x}\\), błędu standardowego \\(s/\\sqrt{n}\\)
+      i wartości krytycznej \\(t^*\\). Wiele pytań badawczych dotyczy jednak
+      odsetka: jaka część studentów zdała egzamin, jaka część wyborców popiera
+      partię, ile procent produktów jest wadliwych. Każda pojedyncza odpowiedź
+      ma tu dwa warianty, TAK albo NIE, a parametrem populacji jest proporcja
+      \\(p\\), czyli odsetek odpowiedzi TAK."),
+
+    lc_p("Estymatorem \\(p\\) jest ", gloss("proporcja z próby"), " \\(\\hat{p}\\):
+      liczba odpowiedzi TAK \\(x\\) podzielona przez liczebność próby \\(n\\)."),
+
+    lc_formula_box(
+      withMathJax("$$\\hat{p} = \\frac{x}{n}$$")
     ),
+
+    lc_p("Jak bardzo \\(\\hat{p}\\) waha się z próby na próbę, wynika z wykładu 02.
+      Liczba odpowiedzi TAK wśród \\(n\\) niezależnych odpowiedzi ma ",
+      gloss("rozkład dwumianowy"), " B(n, p), z wartością oczekiwaną
+      \\(E(X) = np\\) i ", gloss("wariancja", "wariancją"), " \\(Var(X) = np(1-p)\\). Proporcja z próby to
+      \\(X\\) podzielone przez \\(n\\), więc \\(E(\\hat{p}) = p\\), a wariancja
+      dzieli się przez \\(n^2\\) i wynosi \\(p(1-p)/n\\). Pierwiastek z niej to ",
+      gloss("błąd standardowy"), " proporcji. CTG z wykładu 02 dodaje drugą
+      informację: \\(\\hat{p}\\) jest średnią z \\(n\\) zer i jedynek, więc przy
+      dużej próbie ma w przybliżeniu rozkład normalny."),
+
+    lc_formula_box(
+      withMathJax("$$E(\\hat{p}) = p \\qquad SE(\\hat{p}) = \\sqrt{\\frac{p(1-p)}{n}}$$")
+    ),
+
+    lc_p("Prawdziwego \\(p\\) nie znamy, więc we wzorze na SE zastępujemy je przez
+      \\(\\hat{p}\\). Dalej konstrukcja jest taka sama jak w rozdziale 3:
+      estymator ± wartość krytyczna · SE. Ponieważ opieramy się na przybliżeniu
+      normalnym, ", gloss("wartość krytyczna"), " pochodzi z ",
+      gloss("rozkład normalny", "rozkładu normalnego"), ".
+      Dla poziomu 95% to \\(z^* = 1{,}96\\), w R ", tags$code("qnorm(0.975)"),
+      ", jak w wykładzie 02. Tak zbudowany ", gloss("przedział ufności"),
+      " nazywa się ", gloss("przedział Walda", "przedziałem Walda"), "."),
+
+    lc_formula_box(
+      withMathJax("$$CI = \\hat{p} \\pm z^*_{\\alpha/2} \\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$$")
+    ),
+
+    lc_p("W odróżnieniu od rozdziału 3 nie sięgamy po rozkład t-Studenta.
+      Rozkład t opisuje średnią z danych o rozkładzie normalnym, gdy \\(\\sigma\\)
+      szacujemy z próby niezależnie od średniej. Dane zero-jedynkowe nie mają
+      rozkładu normalnego, a ich odchylenie standardowe \\(\\sqrt{p(1-p)}\\)
+      wynika wprost z \\(p\\). Uzasadnieniem przedziału jest tu przybliżenie
+      normalne rozkładu \\(\\hat{p}\\), więc i wartość krytyczna pochodzi
+      z rozkładu normalnego."),
+
+    lc_p("To przybliżenie zawodzi, gdy próba jest mała albo \\(\\hat{p}\\) leży
+      blisko 0 lub 1. Rozkład dwumianowy jest wtedy wyraźnie skośny, jak
+      B(50; 0,1) w wykładzie 02, a 95-procentowy przedział Walda obejmuje
+      prawdziwe \\(p\\) rzadziej, niż obiecuje. Dla \\(p = 0{,}08\\) i \\(n = 50\\)
+      jego rzeczywiste ", gloss("pokrycie"), " wynosi około 91%. Przy 4 wadliwych
+      sztukach na 50 Wald daje przedział od 0,5% do 15,5%, a ",
+      gloss("przedział Wilsona"), ", który poprawia wzór Walda, od 3,2% do 18,8%
+      (w R: ", tags$code("prop.test(4, 50, correct = FALSE)"), "). Im bliżej
+      0 lub 1 leży proporcja i im mniejsza jest próba, tym gorzej działa
+      przybliżenie Walda. W tym rozdziale liczymy przedziały Walda, bo ich wzór
+      najprościej pokazuje konstrukcję. W części przykładów poniżej sukcesów
+      albo porażek jest niewiele i tam przedziały są tylko przybliżone."),
 
     inline_callout(label = "W jamovi", color = "wskazowka",
       tagList(
         "Analyses → Frequencies → 2 Outcomes — Binomial test → przeciągnij
          zmienną binarną (np. zdany/niezdany) do pola zmiennych → zaznacz
-         Confidence interval (domyślnie 95%, metoda ",
-        gloss("przedział Cloppera-Pearsona", "Cloppera-Pearsona"),
-        " — bezpieczniejsza niż Wald). W tabeli odczytasz kolumny ",
+         Confidence interval (domyślnie 95%). jamovi nie liczy przedziału Walda,
+         tylko ",
+        gloss("przedział Cloppera-Pearsona", "przedział Cloppera-Pearsona"),
+        ", oparty bezpośrednio na rozkładzie dwumianowym i bezpieczniejszy przy
+         małych próbach. W tabeli odczytasz kolumny ",
         tags$code("Proportion"), ", ", tags$code("Lower"), ", ",
         tags$code("Upper"), "."
       )
@@ -68,11 +99,10 @@ ch4_ui <- list(
 
     lc_h2("ch4-budowa", "Budowa przedziału — krok po kroku"),
 
-    tagList(
-      p("Zobaczmy, jak z konkretnej próby (50 odpowiedzi TAK/NIE) powstaje
-        przedział ufności dla proporcji. Pytamy 50 studentów, czy zdali
-        egzamin, i estymujemy odsetek zdających w całej populacji.")
-    ),
+    lc_p("Panel przeprowadza tę konstrukcję na jednej próbie. Symulujemy
+      50 odpowiedzi TAK/NIE, na przykład pytając 50 studentów, czy zdali
+      egzamin, z populacji, w której prawdziwy odsetek TAK wynosi 60%.
+      Przycisk „Nowa próba” losuje kolejnych 50 odpowiedzi."),
 
     figure_panel(
       label = "Ryc. 4.1",
@@ -88,17 +118,39 @@ ch4_ui <- list(
       )
     ),
 
+    lc_p("Przy \\(p = 0{,}6\\) i \\(n = 50\\) błąd standardowy wynosi około
+      \\(\\sqrt{0{,}6 \\cdot 0{,}4 / 50} \\approx 0{,}069\\), a margines błędu
+      \\(1{,}96 \\cdot 0{,}069 \\approx 0{,}14\\). Przedział ma więc szerokość
+      około 27 punktów procentowych: dla \\(\\hat{p} = 0{,}60\\) sięga od 46%
+      do 74%. Kolejne próby przesuwają \\(\\hat{p}\\), a razem z nim cały
+      przedział. Szerokość zmienia się przy tym niewiele, bo zależy od
+      \\(\\hat{p}\\) tylko przez iloczyn \\(\\hat{p}(1-\\hat{p})\\), który w okolicy
+      0,5 prawie się nie zmienia."),
+
+    lc_p("Tak jak w rozdziale 2, poziom 95% opisuje metodę, a nie pojedynczy
+      przedział. Konkretny przedział albo obejmuje 0,6, albo nie. Przy tych
+      parametrach przedział Walda trafia w prawdziwe \\(p\\) w 94,1% prób,
+      czyli niemal tak często, jak obiecuje. Przybliżenie normalne działa
+      tu dobrze, bo w próbie jest typowo około 30 odpowiedzi TAK i 20 NIE."),
+
     lc_h2("ch4-roznica", "Budowa przedziału dla różnicy proporcji"),
 
-    tagList(
-      p("CI dla różnicy dwóch proporcji buduje się analogicznie do różnicy
-        średnich — trzeba połączyć niepewność z obu prób:"),
-      lc_formula_box(
-        withMathJax("$$CI = (\\hat{p}_1 - \\hat{p}_2) \\pm z^* \\cdot \\sqrt{\\frac{\\hat{p}_1(1-\\hat{p}_1)}{n_1} + \\frac{\\hat{p}_2(1-\\hat{p}_2)}{n_2}}$$")
-      ),
-      p("Porównamy odsetek osób zadowolonych z usługi w dwóch grupach —
-        po 60 osób w każdej.")
+    lc_p("Częściej niż jeden odsetek porównujemy dwa: zdawalność w dwóch grupach,
+      skuteczność leku i placebo, odsetek braków na dwóch liniach produkcyjnych.
+      Parametrem jest wtedy różnica \\(p_1 - p_2\\), a jej estymatorem różnica
+      proporcji z prób \\(\\hat{p}_1 - \\hat{p}_2\\). Gdy próby są niezależne,
+      wariancja różnicy jest sumą wariancji obu proporcji, tak samo jak przy
+      różnicy średnich w rozdziale 3. Błąd standardowy różnicy to pierwiastek
+      z tej sumy:"),
+
+    lc_formula_box(
+      withMathJax("$$CI = (\\hat{p}_1 - \\hat{p}_2) \\pm z^* \\cdot \\sqrt{\\frac{\\hat{p}_1(1-\\hat{p}_1)}{n_1} + \\frac{\\hat{p}_2(1-\\hat{p}_2)}{n_2}}$$")
     ),
+
+    lc_p("Dodają się wariancje, a nie błędy standardowe. Dlatego SE różnicy
+      jest większy od SE każdej z proporcji, ale mniejszy od ich sumy. Panel
+      losuje dwie niezależne próby po 60 osób z populacji, w których odsetek
+      osób zadowolonych z usługi wynosi 70% i 50%."),
 
     figure_panel(
       label = "Ryc. 4.2",
@@ -115,14 +167,30 @@ ch4_ui <- list(
       )
     ),
 
+    lc_p("Dla tych parametrów SE obu proporcji wynosi około 0,059 i 0,065,
+      a SE różnicy około 0,088, czyli mniej niż suma 0,124. Margines błędu to
+      \\(1{,}96 \\cdot 0{,}088 \\approx 0{,}17\\), więc przedział dla różnicy ma
+      szerokość około 34 punktów procentowych. To więcej niż przedział dla
+      jednej proporcji na Ryc. 4.1, choć każda z prób jest większa, bo przedział
+      różnicy zbiera niepewność z obu prób."),
+
+    lc_p("Pionowa linia w zerze oznacza brak różnicy. Przedział, który jej nie
+      obejmuje, wskazuje z 95% ufnością, która grupa ma wyższy odsetek.
+      Prawdziwa różnica wynosi tu 20 punktów procentowych, a mimo to przedział
+      leży w całości powyżej zera tylko w około 62% par prób. W pozostałych
+      obejmuje zero i nie pozwala rozstrzygnąć, która grupa jest bardziej
+      zadowolona. Dwie próby po 60 osób to za mało, żeby tak dużą różnicę
+      wykrywać niezawodnie."),
+
     lc_h2("ch4-case-studies", "Case studies — jak interpretować CI w praktyce"),
 
-    tagList(
-      p("Poniżej kilka realistycznych sytuacji. W każdej budujesz CI krok po kroku
-        (jak w poprzednich sekcjach), a na końcu weryfikujesz dwie hipotezy:
-        jedną, która jest prawdziwa, i jedną, która nie jest. Klikaj nagłówki,
-        żeby rozwijać case'y.")
-    ),
+    lc_p("Poniższe sytuacje mają ustalone dane, więc ich przedziały się nie
+      zmieniają. W każdej budujemy przedział tymi samymi krokami co wyżej,
+      a potem sprawdzamy dwie hipotezy. Werdykt zależy od położenia całego
+      przedziału względem granicy hipotezy. Przedział w całości po stronie
+      hipotezy oznacza TAK, w całości po drugiej stronie NIE, a przedział
+      przecinający granicę nie pozwala rozstrzygnąć. Każdy przypadek rozwija
+      się po kliknięciu nagłówka."),
 
     lc_h3("A. Przedział dla jednej proporcji"),
 
@@ -133,9 +201,9 @@ ch4_ui <- list(
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Pracownia sondażowa zapytała 400 wyborców, czy poprze partię X.
-            212 odpowiedzi TAK (czyli ", withMathJax("\\(\\hat{p} = 0.53\\)"),
-            "). Zbudujmy CI dla poparcia w populacji i sprawdźmy dwie hipotezy.")
+          p("Pracownia sondażowa zapytała 400 wyborców, czy poprą partię X.
+            212 odpowiedziało TAK, czyli ", withMathJax("\\(\\hat{p} = 0{,}53\\)"),
+            ". Budujemy przedział dla poparcia w populacji i sprawdzamy dwie hipotezy.")
         ),
         uiOutput("ch4_caseA1_widget")
       )
@@ -148,10 +216,10 @@ ch4_ui <- list(
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Porównaj trzy badania mierzące odsetek wadliwych produktów
-            w fabryce. W każdym ", withMathJax("\\(\\hat{p} = 0.08\\)"), " (8%),
-            ale ", tags$b("n różne"), " (50, 200, 1000). Dodawaj CI jeden
-            po drugim i patrz, jak się zwężają.")
+          p("Trzy badania mierzą odsetek wadliwych produktów w fabryce.
+            W każdym ", withMathJax("\\(\\hat{p} = 0{,}08\\)"), " (8%), ale próby
+            mają różną liczebność: 50, 200 i 1000 sztuk. Kolejne kroki dokładają
+            przedziały od najmniejszej próby do największej.")
         ),
         uiOutput("ch4_caseA2_widget")
       )
@@ -162,7 +230,7 @@ ch4_ui <- list(
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f48a"),
-        "B1. Lek vs placebo — odsetek wyleczonych"
+        "B1. Lek a placebo — odsetek wyleczonych"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
@@ -181,9 +249,9 @@ ch4_ui <- list(
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Porównujesz dwie linie produkcyjne pod kątem odsetka wadliwych produktów.
-            ", tags$b("Linia A:"), " skontrolowano 250, 22 wadliwych (8.8%).
-            ", tags$b("Linia B:"), " skontrolowano 250, 18 wadliwych (7.2%).")
+          p("Porównujemy dwie linie produkcyjne pod względem odsetka wadliwych produktów.
+            ", tags$b("Linia A:"), " skontrolowano 250 sztuk, 22 wadliwe (8,8%).
+            ", tags$b("Linia B:"), " skontrolowano 250 sztuk, 18 wadliwych (7,2%).")
         ),
         uiOutput("ch4_caseB2_widget")
       )
@@ -199,8 +267,8 @@ ch4_ui <- list(
           p("Pilotaż nowej procedury BHP w dwóch zakładach.
             ", tags$b("Zakład A:"), " 30 pracowników, 6 miało wypadek (20%).
             ", tags$b("Zakład B:"), " 30 pracowników, 9 miało wypadek (30%).
-            Różnica wygląda na dużą — ale czy możemy z 95% ufnością
-            powiedzieć, że procedura A jest skuteczniejsza?")
+            Różnica wygląda na dużą, ale czy z 95% ufnością możemy
+            powiedzieć, że w zakładzie A jest bezpieczniej?")
         ),
         uiOutput("ch4_caseB3_widget")
       )
@@ -215,13 +283,30 @@ ch4_ui <- list(
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Porównujesz odsetek powikłań po tej samej operacji w czterech szpitalach.
-            Dla każdego masz liczbę wykonanych zabiegów i liczbę powikłań.
-            Dodawaj CI jeden po drugim i obserwuj.")
+          p("Porównujemy odsetek powikłań po tej samej operacji w czterech szpitalach.
+            Dla każdego znamy liczbę wykonanych zabiegów i liczbę powikłań.
+            Kolejne kroki pokazują liczby, proporcje i przedziały.")
         ),
         uiOutput("ch4_caseC1_widget")
       )
     ),
+
+    lc_p("Przypadki powtarzają kilka lekcji. W A2 ta sama proporcja 8% daje
+      przedział o szerokości 15 punktów procentowych przy 50 sztukach i tylko
+      3,4 punktu przy 1000 sztukach. Dwudziestokrotnie większa próba zwęża
+      przedział około 4,5 raza, bo \\(n\\) stoi we wzorze pod pierwiastkiem.
+      W B2 i B3 obserwowana różnica nie wystarcza do wniosku: w B3 dziesięć
+      punktów procentowych różnicy przy 30 osobach w grupie daje przedział od
+      −32 do +12 punktów, który obejmuje zero i różnice w obu kierunkach.
+      W C1 szpital D (20,6% powikłań) odstaje od pozostałych trzech (od 5,6%
+      do 10%), bo jego przedział nie nakłada się z żadnym innym. Porównywanie
+      nakładania się osobnych przedziałów jest jednak kryterium ostrożnym.
+      Jak pokazał rozdział 3, o różnicy dwóch grup rozstrzyga przedział
+      dla różnicy."),
+
+    lc_p("We wszystkich przykładach szerokość przedziału zależała od liczebności
+      próby, a pośrednio także od samej proporcji i od przyjętego poziomu
+      ufności. Tym czynnikom przyjrzymy się w następnym rozdziale."),
 
     lc_chapter_next(
       num       = "05",
@@ -239,12 +324,12 @@ ch4_ui <- list(
 ch4_server <- function(input, output, session) {
 
   # ==========================================================================
-  # WIDGET 1: Budowa przedzialu dla proporcji krok po kroku
+  # WIDGET 1: Budowa przedziału dla proporcji krok po kroku
   # ==========================================================================
   # Krok widgetu (1..4) żyje w przeglądarce; nowa próba nie zmienia kroku.
   ch4_step <- lc_step_server("ch4_step", input)$step
 
-  # Generuje probke n bernoulli z true_p = 0.6 (z drobna wariancja)
+  # Generuje próbkę n prób Bernoulliego z true_p = 0.6
   generate_step_prop_sample <- function() {
     set.seed(sample.int(.Machine$integer.max, 1))
     n <- 50
@@ -279,7 +364,7 @@ ch4_server <- function(input, output, session) {
     se <- sqrt(phat * (1 - phat) / n)
     me <- z_star * se
 
-    # ---- LEWY PANEL: slupki TAK / NIE (liczebnosci bezwzgledne) ----
+    # ---- LEWY PANEL: słupki TAK / NIE (liczebności bezwzględne) ----
     bar_df <- data.frame(
       val = factor(c("NIE", "TAK"), levels = c("NIE", "TAK")),
       count = c(n - x, x)
@@ -293,8 +378,8 @@ ch4_server <- function(input, output, session) {
       theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
 
-    # ---- PRAWY PANEL: os proporcji z p_hat, SE, CI ----
-    # Oddzielne poziomy Y - kazdy element na swojej linii
+    # ---- PRAWY PANEL: oś proporcji z p_hat, SE, CI ----
+    # Oddzielne poziomy Y — każdy element na swojej linii
     Y_EST <- 0.30
     Y_SE  <- 0.05
     Y_CI  <- -0.25
@@ -303,7 +388,7 @@ ch4_server <- function(input, output, session) {
       labs(x = "Proporcja", y = NULL) +
       step_frame(xlim = c(0, 1), ylim = c(-0.6, 0.6), y_axis = FALSE)
 
-    # Krok 2+: pionowa linia prowadzaca + punkt p_hat
+    # Krok 2+: pionowa linia prowadząca + punkt p_hat
     if (step >= 2) {
       role <- step_role(step, 2)
       p_right <- p_right +
@@ -314,7 +399,7 @@ ch4_server <- function(input, output, session) {
                    size = 5)
     }
 
-    # Krok 3+: waski przedzial SE
+    # Krok 3+: wąski przedział SE
     if (step >= 3) {
       role <- step_role(step, 3)
       p_right <- p_right +
@@ -326,7 +411,7 @@ ch4_server <- function(input, output, session) {
                    size = 4.2)
     }
 
-    # Krok 4: pelen CI
+    # Krok 4: pełen CI
     if (step >= 4) {
       p_right <- p_right +
         step_layer(geom_errorbar, "new",
@@ -354,46 +439,31 @@ ch4_server <- function(input, output, session) {
 
     switch(as.character(step),
       "1" = tagList(
-        p("Próba.",
-          " Mamy ", tags$b(n), " obserwacji TAK/NIE: ", tags$b(x), " razy TAK, ",
-          tags$b(n - x), " razy NIE. Niebieskie punkty (TAK) po prawej, bursztynowe (NIE)
-          po lewej. Sama tabelka liczb — jeszcze nie zaczęliśmy estymować.")
+        p(n, " odpowiedzi: ", x, " razy TAK, ", n - x, " razy NIE.")
       ),
       "2" = tagList(
-        p("Estymacja punktowa p̂.",
-          " Liczymy proporcję z próby:"),
         p(withMathJax(paste0("\\(\\hat{p} = \\frac{x}{n} = \\frac{", x, "}{", n,
-                             "} = ", round(phat, 3), "\\)"))),
-        p("To nasza najlepsza pojedyncza wartość — ale potrzebujemy
-          jeszcze wiedzieć, jak bardzo niepewna jest ta estymata.")
+                             "} = ", round(phat, 3), "\\)")))
       ),
       "3" = tagList(
-        p("Błąd standardowy (± SE).",
-          " Niepewność oszacowania proporcji liczymy ze wzoru:"),
         p(withMathJax(paste0(
           "\\(SE = \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}} = \\sqrt{\\frac{",
           round(phat, 2), " \\cdot ", round(1 - phat, 2), "}{", n, "}} = ",
           round(se, 3), "\\)"))),
-        p("Burgundowy pasek ± SE to zakres \"jednego odchylenia\" wokół
-          p̂. Ale 95% CI to około ", tags$strong("dwa SE w każdą stronę"),
-          " (dokładniej: 1.96).")
+        p("Pasek ± SE to jeden błąd standardowy w każdą stronę. Przedział 95%
+          sięga 1,96 SE.")
       ),
       "4" = tagList(
-        p("Przedział ufności."),
-        p("Wartość krytyczna z rozkładu normalnego: ",
-          withMathJax("\\(z^* = 1.96\\)")),
         p(withMathJax(paste0("\\(ME = z^* \\cdot SE = 1.96 \\cdot ",
                              round(se, 3), " = ", round(me, 3), "\\)"))),
         p("95% CI: ",
-          tags$b(paste0("[", round(phat - me, 3), " ; ", round(phat + me, 3), "]"))),
-        p(tags$em("Z 95% ufnością prawdziwy odsetek w populacji leży w tym
-                 przedziale. Sprawdź, jak zmienia się CI po wylosowaniu nowej próby!"))
+          tags$b(paste0("[", round(phat - me, 3), " ; ", round(phat + me, 3), "]")))
       )
     )
   })
 
   # ==========================================================================
-  # WIDGET 2: Budowa CI dla roznicy proporcji
+  # WIDGET 2: Budowa CI dla różnicy proporcji
   # ==========================================================================
   # Krok widgetu (1..5) żyje w przeglądarce; nowe próby nie zmieniają kroku.
   ch4_dstep <- lc_step_server("ch4_dstep", input)$step
@@ -425,7 +495,7 @@ ch4_server <- function(input, output, session) {
     z_star <- qnorm(0.975)
     me <- z_star * se
 
-    # ---- LEWY PANEL: slupki TAK/NIE x 2 grupy ----
+    # ---- LEWY PANEL: słupki TAK/NIE × 2 grupy ----
     # Bez legendy: kategorie TAK/NIE na osi X, grupy w panelach.
     bar_df <- data.frame(
       grp = factor(rep(c("Grupa 1", "Grupa 2"), each = 2),
@@ -444,7 +514,7 @@ ch4_server <- function(input, output, session) {
       theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
 
-    # ---- PRAWY GORNY PANEL: dwie p_hat na osi proporcji ----
+    # ---- PRAWY GÓRNY PANEL: dwie p_hat na osi proporcji ----
     p_top <- ggplot() +
       scale_y_continuous(breaks = c(1, 2), labels = c("Grupa 1", "Grupa 2")) +
       labs(x = "Proporcja", y = NULL) +
@@ -464,7 +534,7 @@ ch4_server <- function(input, output, session) {
                    size = 4.5)
     }
 
-    # ---- PRAWY DOLNY PANEL: roznica + CI ----
+    # ---- PRAWY DOLNY PANEL: różnica + CI ----
     xlims_bot <- range(c(-0.5, 0.5, diff_val - 1.3 * me, diff_val + 1.3 * me))
     pad_bot <- diff(xlims_bot) * 0.08
     xlims_bot <- c(xlims_bot[1] - pad_bot, xlims_bot[2] + pad_bot)
@@ -510,7 +580,7 @@ ch4_server <- function(input, output, session) {
     }
 
     library(patchwork)
-    # Layout: lewy slupki | (prawy gora p_hat / prawy dol roznica)
+    # Layout: lewy słupki | (prawy góra p_hat / prawy dół różnica)
     right_col <- p_top / p_bot + plot_layout(heights = c(1, 1))
     (p_left | right_col) + plot_layout(widths = c(1, 2))
   }))
@@ -530,59 +600,41 @@ ch4_server <- function(input, output, session) {
 
     switch(as.character(step),
       "1" = tagList(
-        p("Dwie próby.",
-          " Mamy odpowiedzi TAK/NIE z dwóch grup: ", tags$b(n1),
-          " osób w grupie 1 (", x1, " TAK / ", n1 - x1, " NIE) i ",
-          tags$b(n2), " w grupie 2 (", x2, " TAK / ", n2 - x2, " NIE).
-          Widać już, że w grupie 1 jest więcej TAKów, ale jak duża to
-          różnica i czy istotna?")
+        p("Grupa 1: ", x1, " TAK i ", n1 - x1, " NIE. Grupa 2: ",
+          x2, " TAK i ", n2 - x2, " NIE.")
       ),
       "2" = tagList(
-        p("Dwie proporcje.",
-          " Obliczamy proporcję TAKów w każdej grupie:"),
-        p(withMathJax(paste0("\\(\\hat{p}_1 = ", x1, "/", n1, " = ", round(p1, 3), "\\)"))),
-        p(withMathJax(paste0("\\(\\hat{p}_2 = ", x2, "/", n2, " = ", round(p2, 3), "\\)"))),
-        p("Każda proporcja ma własną niepewność — ale interesuje nas
-          ", tags$strong("różnica między nimi"), ".")
+        p(withMathJax(paste0("\\(\\hat{p}_1 = ", x1, "/", n1, " = ", round(p1, 3),
+                             " \\qquad \\hat{p}_2 = ", x2, "/", n2, " = ",
+                             round(p2, 3), "\\)")))
       ),
       "3" = tagList(
-        p("Różnica.",
-          " Estymator punktowy różnicy:"),
         p(withMathJax(paste0("\\(\\hat{p}_1 - \\hat{p}_2 = ", round(p1, 3),
                              " - ", round(p2, 3), " = ",
                              round(diff_val, 3), "\\)"))),
-        p("W dolnym panelu przenosimy się do nowej skali — ", tags$strong("skali różnicy"),
-          ". Punkt = nasze oszacowanie różnicy. Pionowa linia na 0 oznacza ",
-          tags$em("\"gdyby różnicy nie było\""),
-          ". Teraz musimy otoczyć naszą różnicę przedziałem niepewności.")
+        p("Dolny panel ma skalę różnicy. Linia w zerze oznacza brak różnicy.")
       ),
       "4" = tagList(
-        p("Błąd standardowy różnicy (± SE).",
-          " SE różnicy proporcji łączy niepewności z obu grup:"),
         p(withMathJax(paste0(
           "\\(SE = \\sqrt{\\frac{\\hat{p}_1(1-\\hat{p}_1)}{n_1} + \\frac{\\hat{p}_2(1-\\hat{p}_2)}{n_2}} = ",
-          round(se, 3), "\\)"))),
-        p(tags$strong("Ważne:"), " wariancje się ", tags$em("dodają"),
-          ", nie odchylenia. Dlatego SE różnicy jest mniejszy niż suma SE
-          poszczególnych proporcji.")
+          round(se, 3), "\\)")))
       ),
       "5" = {
-        covers_zero <- (diff_val - me <= 0) & (0 <= diff_val + me)
+        lower <- diff_val - me
+        upper <- diff_val + me
         tagList(
-          p("Przedział ufności dla różnicy."),
-          p("Wartość krytyczna z rozkładu normalnego: ",
-            withMathJax("\\(z^* = 1.96\\)")),
           p(withMathJax(paste0("\\(ME = z^* \\cdot SE = 1.96 \\cdot ",
                                round(se, 3), " = ", round(me, 3), "\\)"))),
           p("95% CI: ",
-            tags$b(paste0("[", round(diff_val - me, 3), " ; ",
-                          round(diff_val + me, 3), "]"))),
-          p(tags$em(if (covers_zero)
-              "CI obejmuje 0 — nie możemy stwierdzić, że różnica jest istotna."
+            tags$b(paste0("[", round(lower, 3), " ; ", round(upper, 3), "]"))),
+          p(if (lower > 0)
+              paste0("Przedział nie obejmuje 0: w grupie 1 odsetek TAK jest ",
+                     "wyższy, z 95% ufnością o co najmniej ", round(lower, 3), ".")
+            else if (upper < 0)
+              paste0("Przedział nie obejmuje 0: w grupie 2 odsetek TAK jest ",
+                     "wyższy, z 95% ufnością o co najmniej ", round(-upper, 3), ".")
             else
-              paste0("CI nie obejmuje 0 — różnica jest istotna. ",
-                     "Możemy stwierdzić z 95% ufnością, że w grupie 1 odsetek TAK ",
-                     "jest większy o co najmniej ", round(diff_val - me, 3), ".")))
+              "Przedział obejmuje 0: te próby nie rozstrzygają, która grupa ma wyższy odsetek.")
         )
       }
     )
@@ -635,7 +687,7 @@ ch4_server <- function(input, output, session) {
 
   col_hyp <- "#8e44ad"
 
-  # ---- CONFIG case'ow ----
+  # ---- CONFIG case'ów ----
   cases_config <- list(
     A1 = list(
       type = "single_prop",
@@ -643,13 +695,12 @@ ch4_server <- function(input, output, session) {
       xlab = "Poparcie dla partii X",
       steps = c("1. Próba", "2. p̂", "3. ± SE", "4. Przedział"),
       hypotheses = list(
-        list(text = "Poparcie dla partii X przekracza 50% (\"progów większości\")",
+        list(text = "Poparcie dla partii X przekracza 50% (próg większości)",
              bound = 0.50, dir = "gt",
-             explain_yes = "Dolna granica CI leży powyżej 50%. Możemy z 95% ufnością stwierdzić, że większość wyborców popiera partię X.",
-             explain_no = "Dolna granica CI leży poniżej 50% — mimo że p̂ = 53%, niepewność sondażu nie pozwala stwierdzić z 95% ufnością że poparcie przekracza 50%."),
+             explain_maybe = "CI (ok. 48–58%) obejmuje 50%. Mimo że p̂ = 53%, niepewność sondażu nie pozwala stwierdzić z 95% ufnością, że poparcie przekracza 50%."),
         list(text = "Poparcie dla partii X przekracza 60%",
              bound = 0.60, dir = "gt",
-             explain_no = "Górna granica CI leży poniżej 60%. Cały CI poza obszarem hipotezy — nie ma podstaw do twierdzenia, że poparcie przekracza 60%.")
+             explain_no = "Górna granica CI leży poniżej 60%. Cały CI leży poza obszarem hipotezy, więc nie ma podstaw do twierdzenia, że poparcie przekracza 60%.")
       )
     ),
     A2 = list(
@@ -660,11 +711,10 @@ ch4_server <- function(input, output, session) {
       hypotheses = list(
         list(text = "Odsetek wadliwych produktów przekracza 5%",
              bound = 0.05, dir = "gt",
-             explain_yes = "Dla największej próby (n=1000) dolna granica CI leży powyżej 5% — z 95% ufnością odsetek wadliwych przekracza normę 5%. Zauważ: dla n=50 CI jest tak szeroki, że obejmuje również 5%, więc na małej próbie nie móglbyś nic stwierdzić.",
-             explain_no = "Nawet przy n=1000 nie możemy stwierdzić z 95% pewnością, że odsetek przekracza 5%."),
+             explain_yes = "Dla największej próby (n = 1000) dolna granica CI leży powyżej 5%, więc z 95% ufnością odsetek wadliwych przekracza normę 5%. Dla n = 50 i n = 200 CI obejmuje 5%, więc na mniejszej próbie nie dałoby się tego stwierdzić."),
         list(text = "Odsetek wadliwych produktów przekracza 12%",
              bound = 0.12, dir = "gt",
-             explain_no = "Górna granica CI nawet dla n=1000 leży poniżej 12%. Dla n=50 CI sięga prawie 16% — mała próba mogłaby błędnie sugerować problem. To pokazuje, dlaczego duże n daje bardziej definitywne odpowiedzi.")
+             explain_no = "Dla n = 1000 górna granica CI leży poniżej 12%. Dla n = 50 CI sięga prawie 16%, więc na małej próbie tej hipotezy nie dałoby się wykluczyć. Duże n daje bardziej jednoznaczne odpowiedzi.")
       )
     ),
     B1 = list(
@@ -676,10 +726,10 @@ ch4_server <- function(input, output, session) {
       hypotheses = list(
         list(text = "Lek działa skuteczniej niż placebo (różnica > 0)",
              bound = 0, dir = "gt",
-             explain_yes = "Cały CI dla różnicy leży powyżej 0. Lek rzeczywiście pomaga skuteczniej niż placebo — różnica jest istotna statystycznie."),
+             explain_yes = "Cały CI dla różnicy leży powyżej 0. Lek pomaga skuteczniej niż placebo, różnica jest istotna statystycznie."),
         list(text = "Lek poprawia skuteczność o więcej niż 25 punktów procentowych",
              bound = 0.25, dir = "gt",
-             explain_no = "Górna granica CI dla różnicy leży poniżej 0.25. Lek działa, ale poprawa skuteczności względem placebo jest mniejsza niż 25 pkt proc.")
+             explain_maybe = "CI dla różnicy (ok. 10–30 punktów procentowych) obejmuje 25 punktów. Lek działa, ale dane nie rozstrzygają, czy poprawa względem placebo przekracza 25 punktów procentowych.")
       )
     ),
     B2 = list(
@@ -691,10 +741,10 @@ ch4_server <- function(input, output, session) {
       hypotheses = list(
         list(text = "Linia A produkuje więcej braków niż linia B (różnica > 0)",
              bound = 0, dir = "gt",
-             explain_no = "CI dla różnicy obejmuje 0 — mimo że p̂₁ (8.8%) jest wyższe niż p̂₂ (7.2%), nie możemy z 95% ufnością stwierdzić, że linia A jest gorsza. Różnica może być efektem przypadku."),
-        list(text = "Różnica w odsetku braków między liniami jest mniejsza niż 5 pkt proc",
+             explain_maybe = "CI dla różnicy obejmuje 0. Mimo że p̂₁ (8,8%) jest wyższe niż p̂₂ (7,2%), nie możemy z 95% ufnością stwierdzić, że linia A jest gorsza. Różnica może być efektem przypadku."),
+        list(text = "Linia A ma najwyżej o 5 punktów procentowych więcej braków niż B (różnica < 0,05)",
              bound = 0.05, dir = "lt",
-             explain_yes = "Górna granica CI dla różnicy leży poniżej 0.05. Możemy być pewni, że nawet jeśli któraś linia jest gorsza, to różnica nie przekracza 5 pkt proc.")
+             explain_maybe = "Górna granica CI (ok. 6,4 punktu procentowego) przekracza 5 punktów, więc nie możemy wykluczyć, że linia A jest gorsza o więcej niż 5 punktów procentowych. Żeby to rozstrzygnąć, potrzebna byłaby większa próba.")
       )
     ),
     B3 = list(
@@ -706,10 +756,10 @@ ch4_server <- function(input, output, session) {
       hypotheses = list(
         list(text = "Zakład A jest bezpieczniejszy niż B (różnica < 0)",
              bound = 0, dir = "lt",
-             explain_no = "Mimo że p̂₁ = 20% jest wyraźnie mniejsze od p̂₂ = 30%, CI dla różnicy obejmuje 0. Próba 30 osób w każdym zakładzie to za mało, żeby z 95% ufnością stwierdzić, który jest bezpieczniejszy. To klasyczna pułapka: \"duża\" różnica w punktach procentowych może być statystycznie nieistotna przy małej próbie."),
-        list(text = "Różnica wypadkowości między zakładami przekracza 30 pkt proc",
-             bound = 0.30, dir = "lt",
-             explain_yes = "Górna granica CI leży wyraźnie poniżej 0.30 — możemy wykluczyć aż tak dużą różnicę, ale mała próba nie pozwala nam dokładnie wskazać, jaka ona jest.")
+             explain_maybe = "Mimo że p̂₁ = 20% jest wyraźnie mniejsze od p̂₂ = 30%, CI dla różnicy obejmuje 0. Próba 30 osób w każdym zakładzie to za mało, żeby z 95% ufnością stwierdzić, który jest bezpieczniejszy. To klasyczna pułapka: „duża” różnica w punktach procentowych może być statystycznie nieistotna przy małej próbie."),
+        list(text = "Zakład A ma wypadkowość wyższą o ponad 30 punktów procentowych (różnica > 0,30)",
+             bound = 0.30, dir = "gt",
+             explain_no = "Górna granica CI (ok. 12 punktów procentowych) leży poniżej 30, więc dane wykluczają, że A jest aż o 30 punktów gorszy od B. W drugą stronę przedział sięga ok. −32 punktów: dużej przewagi B nad A wykluczyć nie można. Mała próba daje przedział zbyt szeroki, żeby wskazać, jaka jest różnica.")
       )
     ),
     C1 = list(
@@ -730,14 +780,14 @@ ch4_server <- function(input, output, session) {
   )
 
 
-  # ---- Helper: pasek CI dla pojedynczej proporcji (slupki + panel CI) ----
+  # ---- Helper: pasek CI dla pojedynczej proporcji (słupki + panel CI) ----
   plot_single_prop_step <- function(data, step, xlab,
                                      hypothesis = NULL, title = NULL) {
     x <- data$x; n <- data$n
     ci <- ci_prop(x, n)
     phat <- ci$phat; se <- ci$se; me <- ci$me
 
-    # ---- LEWY PANEL: slupki TAK / NIE ----
+    # ---- LEWY PANEL: słupki TAK / NIE ----
     bar_df <- data.frame(
       val = factor(c("NIE", "TAK"), levels = c("NIE", "TAK")),
       count = c(n - x, x)
@@ -754,7 +804,7 @@ ch4_server <- function(input, output, session) {
       theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
 
-    # ---- PRAWY PANEL: os proporcji ----
+    # ---- PRAWY PANEL: oś proporcji ----
     xlims <- c(0, 1)
     if (!is.null(hypothesis)) {
       xlims <- range(c(xlims, hypothesis$bound))
@@ -828,14 +878,14 @@ ch4_server <- function(input, output, session) {
     p_left + p_right + plot_layout(widths = c(1, 2.5))
   }
 
-  # ---- Plot dla compare_n_prop (te same dane, rozne n) ----
+  # ---- Plot dla compare_n_prop (te same dane, różne n) ----
   plot_compare_n_prop_step <- function(data, step, xlab,
                                         hypothesis = NULL, title = NULL) {
     phat <- data$phat
     ns <- data$ns
     k <- length(ns)
 
-    # CI dla kazdego n
+    # CI dla każdego n
     cis <- lapply(ns, function(n) {
       x <- round(phat * n)
       ci_prop(x, n)
@@ -915,7 +965,7 @@ ch4_server <- function(input, output, session) {
     p
   }
 
-  # ---- Plot dla diff_props (porownanie dwoch grup, slupki + 2 panele CI) ----
+  # ---- Plot dla diff_props (porównanie dwóch grup, słupki + 2 panele CI) ----
   plot_diff_props_step <- function(data, step, xlab,
                                     hypothesis = NULL, title = NULL) {
     x1 <- data$x1; n1 <- data$n1
@@ -927,7 +977,7 @@ ch4_server <- function(input, output, session) {
     diff_val <- cd$diff
     se <- cd$se; me <- cd$me
 
-    # ---- LEWY PANEL: slupki TAK/NIE x 2 grupy ----
+    # ---- LEWY PANEL: słupki TAK/NIE × 2 grupy ----
     bar_df <- data.frame(
       grp = factor(rep(c(label1, label2), each = 2),
                    levels = c(label1, label2)),
@@ -948,7 +998,7 @@ ch4_server <- function(input, output, session) {
             panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
 
-    # ---- PRAWY GORNY PANEL: dwie p_hat na osi proporcji ----
+    # ---- PRAWY GÓRNY PANEL: dwie p_hat na osi proporcji ----
     p_top <- ggplot() +
       xlim(0, 1) +
       ylim(0.4, 2.6) +
@@ -970,7 +1020,7 @@ ch4_server <- function(input, output, session) {
                  color = col_estimate, fontface = "bold", size = 4.2)
     }
 
-    # ---- PRAWY DOLNY PANEL: roznica + CI + obszar hipotezy ----
+    # ---- PRAWY DOLNY PANEL: różnica + CI + obszar hipotezy ----
     xlims_bot <- range(c(-0.3, 0.3, diff_val - 1.3 * me, diff_val + 1.3 * me))
     if (!is.null(hypothesis)) {
       xlims_bot <- range(c(xlims_bot, hypothesis$bound))
@@ -1112,7 +1162,7 @@ ch4_server <- function(input, output, session) {
     p
   }
 
-  # ---- Liczba "core" krokow budowy CI (bez hipotez) ----
+  # ---- Liczba "core" kroków budowy CI (bez hipotez) ----
   n_core_steps <- function(cfg) length(cfg$steps)
   # ---- Wykres case'a: krok budowy CI i (na ostatnim kroku) obszar hipotezy ----
   render_case_plot <- function(cfg, step, hyp_idx) {
@@ -1138,7 +1188,7 @@ ch4_server <- function(input, output, session) {
     )
   }
 
-  # ---- Pairwise: macierz nakladania CI dla forest_prop ----
+  # ---- Pairwise: macierz nakładania CI dla forest_prop ----
   forest_prop_pairwise_matrix <- function(data) {
     k <- length(data$groups)
     cis <- lapply(seq_len(k), function(i) ci_prop(data$x[i], data$n[i]))
@@ -1287,6 +1337,8 @@ ch4_server <- function(input, output, session) {
       p(hyp$explain_yes)
     } else if (verdict == "no" && !is.null(hyp$explain_no)) {
       p(hyp$explain_no)
+    } else if (verdict == "maybe" && !is.null(hyp$explain_maybe)) {
+      p(hyp$explain_maybe)
     } else {
       p("CI przecina granicę hipotezy — nie możemy jednoznacznie
         stwierdzić, czy jest prawdziwa.")
@@ -1308,7 +1360,7 @@ ch4_server <- function(input, output, session) {
         hypothesis_verdict(ci$lower, ci$upper, hyp$bound, hyp$dir)
       },
       "compare_n_prop" = {
-        # Werdykt na podstawie najwiekszego n (najbardziej precyzyjne CI)
+        # Werdykt na podstawie największego n (najbardziej precyzyjne CI)
         largest_n <- max(cfg$data$ns)
         x <- round(cfg$data$phat * largest_n)
         ci <- ci_prop(x, largest_n)

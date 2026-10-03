@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 5: Co wplywa na szerokosc przedzialu?
+# CHAPTER 5: Co wpływa na szerokość przedziału?
 # ============================================================================
 
 ch5_ui <- list(
@@ -12,27 +12,52 @@ ch5_ui <- list(
       kicker = "Rozdział 05 · Przedziały ufności",
       num    = "05",
       title  = "Co wpływa na szerokość przedziału?",
-      lead   = "Umiemy już budować przedziały dla średniej i proporcji.
-                Teraz zbadamy, co decyduje o ich precyzji."
+      lead   = "Szerokość przedziału zależy od trzech rzeczy: liczby obserwacji,
+                zmienności danych i tego, jak dużej pewności żądamy. Realny wpływ
+                mamy głównie na pierwszą z nich, a każde zawężenie przedziału
+                o połowę kosztuje czterokrotnie więcej danych."
     ),
+
+    lc_p("W dwóch poprzednich rozdziałach budowaliśmy przedziały dla średniej
+      i dla proporcji. Za każdym razem wynik miał tę samą postać: estymata
+      punktowa plus minus pewna odległość. Od tej odległości zależy, czy
+      przedział jest użyteczny. Przedział „wzrost studentów leży między 150
+      a 190 cm” jest poprawny, ale nic nie mówi. W tym rozdziale sprawdzimy,
+      co tę odległość wydłuża i skraca oraz jak zaplanować badanie, żeby
+      wynik był wystarczająco precyzyjny."),
 
     lc_h2("ch5-czynniki", "Trzy czynniki szerokości przedziału"),
 
-    tagList(
-      p(gloss("margines błędu", "Margines błędu"), " (a więc szerokość przedziału) zależy od trzech rzeczy:"),
-      lc_formula_box(
-        withMathJax(helpText(
-          "$$ME = t^* \\cdot \\frac{s}{\\sqrt{n}}$$"
-        ))
-      ),
-      tags$ol(
-        tags$li(tags$b(gloss("wielkość próby", "Wielkość próby"), " (n)"), " — więcej danych = węższy przedział"),
-        tags$li(tags$b(gloss("poziom ufności", "Poziom ufności")), " — większa pewność = szerszy przedział"),
-        tags$li(tags$b("Zmienność danych (s)"), " — większe rozproszenie = szerszy przedział")
-      )
-    ),
+    lc_p("Odległość od estymaty do każdej z granic przedziału nazywamy ",
+      gloss("margines błędu", "marginesem błędu"), " (ME, od ang. margin of
+      error). Cały przedział ma szerokość 2·ME. Dla średniej margines błędu
+      to iloczyn wartości krytycznej rozkładu t i błędu standardowego:"),
 
-    lc_h2("ch5-eksploracja", "Interaktywna eksploracja"),
+    lc_formula_box(withMathJax(
+      "$$ME = t^* \\cdot \\frac{s}{\\sqrt{n}}$$"
+    )),
+
+    lc_p("We wzorze widać trzy czynniki. Pierwszy to ",
+      gloss("wielkość próby", "wielkość próby"), " n: stoi w mianowniku pod
+      pierwiastkiem, więc im więcej obserwacji, tym węższy przedział. Drugi to ",
+      gloss("poziom ufności", "poziom ufności"), ", który wyznacza wartość
+      krytyczną t*: im większej pewności żądamy, tym większe t* i szerszy
+      przedział. Trzeci to zmienność danych mierzona ",
+      gloss("odchylenie standardowe", "odchyleniem standardowym"), " s:
+      im bardziej rozproszone obserwacje, tym mniej precyzyjna średnia."),
+
+    lc_p("Ta sama logika obowiązuje dla proporcji. Wzór ma postać
+      z*·√(p̂(1 − p̂)/n), a rolę s pełni √(p̂(1 − p̂)), które jest największe
+      przy p̂ = 0,5. Wszystko, co dalej powiemy o średniej, przenosi się
+      więc na proporcje."),
+
+    lc_h2("ch5-eksploracja", "Jak szybko maleje margines błędu"),
+
+    lc_p("Panel poniżej pozwala zmieniać każdy z trzech czynników osobno.
+      Górny wykres pokazuje, jak margines błędu maleje wraz z n przy
+      ustalonym poziomie ufności i ustalonym s, a punkt zaznacza bieżące n.
+      Dolny pokazuje odpowiadający mu przedział na stałej osi, więc łatwo
+      porównać jego szerokość między ustawieniami."),
 
     figure_panel(
       label = "Ryc. 5.1", title = "Jak zmienia się szerokość przedziału?",
@@ -51,22 +76,42 @@ ch5_ui <- list(
       )
     ),
 
-    inline_callout(label = "Malejące korzyści", color = "wskazowka",
-      "Zwiększenie n z 25 do 100 (4×) skraca przedział o połowę (2×).
-       Ale z 100 do 400 (4×) też tylko o połowę. To efekt 1/√n."
-    ),
+    lc_p("Przy ustawieniach początkowych (n = 30, s = 8, poziom ufności 95%)
+      wartość krytyczna wynosi t* = 2,045, a margines błędu 2,99, więc przedział
+      ma szerokość około 6. Każdy z suwaków działa na tę liczbę inaczej."),
+
+    lc_p("Odchylenie standardowe działa proporcjonalnie: przy s = 4 margines
+      spada dokładnie o połowę, do 1,49. Poziom ufności działa przez t*:
+      przy 90% margines wynosi 2,48, przy 99% już 4,03. Najciekawsza jest
+      krzywa dla n. Na początku opada stromo: przy n = 5 margines wynosi
+      9,93, przy n = 30 już tylko 2,99. Dalej spłaszcza się i kolejne
+      obserwacje dają coraz mniej."),
+
+    lc_p("To ten sam mechanizm, który poznaliśmy w wykładzie 02: błąd standardowy
+      maleje jak 1/√n, więc żeby zmniejszyć go o połowę, trzeba czterokrotnie
+      większej próby. Margines błędu dziedziczy tę zależność. Przejście z n = 25
+      do n = 100 skraca go z 3,30 do 1,59, czyli nieco ponad dwukrotnie,
+      bo przy większym n maleje też t*. Kolejne czterokrotne powiększenie
+      próby, do 400 obserwacji, znowu skróci przedział mniej więcej o połowę.
+      Każde następne zawężenie przedziału jest więc droższe od poprzedniego."),
 
     lc_h2("ch5-planowanie", "Planowanie wielkości próby"),
 
-    tagList(
-      p("Odwróćmy pytanie: ile obserwacji potrzebuję,
-        żeby margines błędu był nie większy niż zakładany?"),
-      lc_formula_box(
-        withMathJax(helpText(
-          "$$n = \\left(\\frac{z^* \\cdot s}{ME_{\\text{max}}}\\right)^2$$"
-        ))
-      )
-    ),
+    lc_p("Skoro wiemy, jak margines błędu zależy od n, możemy odwrócić pytanie.
+      Zamiast liczyć, jak precyzyjny wynik dała próba, którą już mamy,
+      ustalamy z góry, jakiej precyzji potrzebujemy, i liczymy, ile obserwacji
+      trzeba zebrać. Wystarczy rozwiązać wzór na margines błędu względem n:"),
+
+    lc_formula_box(withMathJax(
+      "$$n = \\left(\\frac{z^* \\cdot s}{ME_{\\text{max}}}\\right)^2$$"
+    )),
+
+    lc_p("Wynik zaokrąglamy zawsze w górę. Zamiast t* używamy tu z* z rozkładu
+      normalnego, bo t* zależy od n, którego jeszcze nie znamy. Przy próbach,
+      jakie zwykle wychodzą z tego wzoru, różnica między t* a z* jest niewielka.
+      Najtrudniejsze jest s: przed badaniem nie mamy danych, więc odchylenie
+      standardowe trzeba założyć na podstawie badania pilotażowego, wcześniejszych
+      publikacji albo rozsądnego szacunku zakresu wartości."),
 
     figure_panel(
       label = "Ryc. 5.2", title = "Kalkulator wielkości próby",
@@ -86,12 +131,24 @@ ch5_ui <- list(
       )
     ),
 
-    lc_h2("ch5-porownanie", "90% vs 95% vs 99%"),
+    lc_p("Przy domyślnych ustawieniach (margines 2, s = 10, poziom ufności 95%)
+      wzór daje (1,96 · 10 / 2)² = 96,04, czyli potrzeba 97 obserwacji. Żądanie
+      dwa razy większej precyzji, czyli marginesu 1, podnosi wymaganą próbę
+      do 385 osób, prawie czterokrotnie. Poziom ufności też kosztuje: przy 90%
+      wystarczy 68 obserwacji, przy 99% potrzeba 166."),
 
-    tagList(
-      p("Zobaczmy jak wyglądają trzy przedziały z tych samych danych,
-        ale przy różnych poziomach ufności.")
-    ),
+    lc_p("Dla proporcji rachunek jest analogiczny, z p(1 − p) w miejscu s².
+      Gdy nie wiemy nic o spodziewanej proporcji, przyjmujemy najgorszy
+      przypadek p = 0,5. Margines 3 punktów procentowych przy poziomie ufności
+      95% wymaga wtedy 1068 respondentów. Stąd biorą się typowe sondaże
+      na około tysiącu osób."),
+
+    lc_h2("ch5-porownanie", "Ten sam zbiór, trzy poziomy ufności"),
+
+    lc_p("W kalkulatorze wybór poziomu ufności był częścią planu badania.
+      Teraz spójrzmy na niego od strony gotowych danych. Panel poniżej liczy
+      z jednej próby trzy przedziały: 90%, 95% i 99%. Dane i ich środek
+      są za każdym razem te same, zmienia się tylko t*."),
 
     figure_panel(
       label = "Ryc. 5.3", title = "Trzy poziomy ufności",
@@ -123,34 +180,43 @@ ch5_ui <- list(
       )
     ),
 
-    inline_callout(label = "Kompromis", color = "ok",
-      "95% to standardowy wybór — rozsądna równowaga między pewnością
-       a precyzją. 99% daje szerszy przedział (większa pewność, mniejsza
-       precyzja), 90% węższy (mniej pewny, bardziej precyzyjny)."
-    ),
+    lc_p("Dla próby wzrostu 30 studentów (średnia 170,69 cm, s = 12,55 cm)
+      przedział 90% to [166,79; 174,58], 95% to [166,00; 175,37], a 99% to
+      [164,37; 177,00]. Przedział 99% jest o ponad 60% szerszy niż 90%.
+      Przy danych kierunkowych, gdzie próby liczą około 300 obserwacji,
+      wszystkie trzy przedziały są wąskie i różnice między nimi stają się
+      niewielkie w porównaniu ze skalą zmiennej."),
 
-    lc_h2("ch5-edge-case", "Edge case: kiedy poziom ufności zmienia wniosek"),
+    lc_p("Wybór poziomu ufności to więc kompromis między pewnością a precyzją.
+      Przedział 99% rzadziej mija prawdziwą wartość, ale jest szeroki.
+      Przedział 90% jest węższy, za to częściej się myli. Poziom 95% przyjął się
+      jako rozsądny środek i jest domyślny w większości programów, ale to umowa,
+      a nie prawo statystyki."),
 
-    tagList(
-      p("Czasami ten sam zbiór danych pozwala stwierdzić hipotezę
-        przy 90% ufności, a nie pozwala przy 95%. To jest często nieintuicyjne —
-        student myśli, że skoro ", tags$em("p̂ jest powyżej granicy"),
-        ", to wniosek jest oczywisty. Nie jest. Liczy się cały przedział
-        względem granicy hipotezy, a szerokość przedziału zależy od poziomu ufności."),
-      p("Poniżej trzy case'y. W każdym kliknij ", tags$b("90%"), ", ", tags$b("95%"),
-        " i ", tags$b("99%"), " i obserwuj, jak werdykt się zmienia.")
-    ),
+    lc_h2("ch5-edge-case", "Przypadek graniczny: poziom ufności zmienia wniosek"),
+
+    lc_p("Kompromis między pewnością a precyzją ma praktyczne konsekwencje,
+      gdy pytamy, czy parametr przekracza jakiś próg. Jeśli cały przedział leży
+      powyżej progu, wszystkie wiarygodne wartości parametru go przekraczają
+      i możemy to stwierdzić. Jeśli przedział przecina próg, dane są zgodne
+      zarówno z wartościami powyżej, jak i poniżej. Nie wystarczy więc, że
+      sama średnia czy proporcja z próby leży nad granicą. Liczy się położenie
+      całego przedziału, a jego szerokość zależy od wybranego poziomu ufności."),
+
+    lc_p("W trzech przykładach poniżej ta sama próba jest oceniana przy
+      poziomach 90%, 95% i 99%. Po wybraniu poziomu wykres pokazuje przedział
+      na tle obszaru hipotezy. Zanim odsłonisz werdykt, oceń sam, czy przedział
+      pozwala ją przyjąć."),
 
     tags$details(class = "case-study", open = NA,
       tags$summary(
         span(class = "case-icon", "\U0001f697"),
-        "Edge 1. Czas dojazdu — czy średni czas przekracza 26 min?"
+        "Przykład 1. Czas dojazdu — czy średni czas przekracza 26 min?"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Zmierzono czas dojazdu dla 40 pracowników. Średnia z próby ",
-            withMathJax("\\(\\bar{x} = 28.5\\)"), " min,
-            ", gloss("odchylenie standardowe"), " ", withMathJax("\\(s = 8\\)"), " min.
+          p("Zmierzono czas dojazdu 40 pracowników. Średnia z próby wynosi ",
+            withMathJax("\\(\\bar{x} = 28{,}5\\)"), " min, odchylenie standardowe ", withMathJax("\\(s = 8\\)"), " min.
             Hipoteza: średni czas dojazdu w populacji przekracza 26 min.")
         ),
         uiOutput("ch5_edge1_buttons"),
@@ -162,12 +228,12 @@ ch5_ui <- list(
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f5f3️"),
-        "Edge 2. Sondaż — czy poparcie przekracza 50%?"
+        "Przykład 2. Sondaż — czy poparcie przekracza 50%?"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("Pracownia sondażowa zapytała 1000 wyborców, czy poprze partię X.
-            540 odpowiedzi TAK (", withMathJax("\\(\\hat{p} = 0.54\\)"), ").
+          p("Pracownia sondażowa zapytała 1000 wyborców, czy poprą partię X.
+            Odpowiedzi TAK udzieliło 540 osób (", withMathJax("\\(\\hat{p} = 0{,}54\\)"), ").
             Hipoteza: poparcie w populacji przekracza próg 50%.")
         ),
         uiOutput("ch5_edge2_buttons"),
@@ -179,11 +245,11 @@ ch5_ui <- list(
     tags$details(class = "case-study",
       tags$summary(
         span(class = "case-icon", "\U0001f4d8"),
-        "Edge 3. Wynik szkolenia — czy średnia przekracza 65 pkt?"
+        "Przykład 3. Wynik szkolenia — czy średnia przekracza 65 pkt?"
       ),
       div(class = "case-body",
         div(class = "case-scenario",
-          p("W szkoleniu BHP 20 pracowników uzyskało średni wynik ",
+          p("Po szkoleniu BHP 20 pracowników uzyskało średni wynik ",
             withMathJax("\\(\\bar{x} = 68\\)"), " pkt
             (na 100), ", withMathJax("\\(s = 10\\)"), " pkt.
             Hipoteza: średni wynik w populacji przekracza próg 65 pkt.")
@@ -194,23 +260,42 @@ ch5_ui <- list(
       )
     ),
 
-    tagList(
-      p(tags$strong("Dlaczego to jest nieintuicyjne?"),
-        " Bo w codziennym myśleniu nie odróżniamy 95% od 93% — dla nas
-        jest „dużo”, „średnio”, „mało”. Statystyka pozwala na precyzyjne
-        kwantyfikowanie pewności i to jest jej moc, nie wada.
-        Stwierdzenie ",
-        tags$em("„nie możemy być pewni z 95%, ale możemy z 93%”"),
-        " nie jest sprzecznością — to jest dokładnie ten poziom precyzji,
-        do którego służy ten aparat matematyczny."),
-      p(tags$strong("W praktyce:"),
-        " 95% to umowny standard. Jeśli wiesz, że ", tags$em("Twój problem"),
-        " toleruje więcej ryzyka (np. wstępna eksploracja, niskie koszty
-        błędu), możesz legalnie użyć 90%. Jeśli mniej (np. badania
-        medyczne, kontrola jakości), użyj 99%. Ważne jest tylko, żeby
-        poziom ufności wybrać zanim spojrzysz na wyniki — i potem ten
-        wybór jasno raportować.")
+    lc_p("Gdy przedział leży blisko progu, sama zmiana poziomu ufności może
+      przesunąć jego granicę na drugą stronę i zmienić wniosek. Bywa też
+      odwrotnie: próba jest tak mała, że przedział obejmuje próg przy każdym
+      rozsądnym poziomie ufności. Wtedy zmiana poziomu nie pomoże, a
+      rozstrzygnięcie wymaga większej próby, czyli powrotu do planowania
+      z poprzednich sekcji."),
+
+    lc_p("Takie wyniki często wydają się podejrzane: skoro przy 90% wniosek
+      jest pozytywny, a przy 95% już nie, to jak jest naprawdę? Obie odpowiedzi
+      są poprawne, bo odpowiadają na różne pytania. Zdanie „nie możemy tego
+      stwierdzić przy ufności 95%, ale możemy przy 90%” nie jest sprzecznością,
+      tylko precyzyjnym opisem siły dowodów. Potoczne myślenie zna tylko
+      „pewne”, „prawdopodobne” i „wątpliwe”, a statystyka pozwala tę pewność
+      zmierzyć."),
+
+    lc_p("Wybór poziomu ufności powinien wynikać z kosztu pomyłki. Przy wstępnej
+      eksploracji, gdy błąd niewiele kosztuje, można przyjąć 90%. W badaniach
+      medycznych czy kontroli jakości uzasadnione bywa 99%. Ten swobodny wybór
+      ma jedno ograniczenie: poziom trzeba ustalić przed obejrzeniem wyników.
+      Kto najpierw patrzy na przedziały, a potem wybiera poziom, przy którym
+      wniosek wychodzi „po jego myśli”, przestaje mierzyć siłę dowodów."),
+
+    inline_callout(label = "Zasada",
+      "Poziom ufności ustal przed analizą danych i zawsze podawaj go w raporcie
+       razem z przedziałem."
     ),
+
+    lc_p("Ten rozdział zamyka wykład o przedziałach ufności. Zaczęliśmy od
+      pytania, jak z jednej próby powiedzieć coś o populacji, a skończyliśmy
+      na przedziale, którego szerokość umiemy wyjaśnić i zaplanować.
+      Przykłady z ostatniej sekcji zadawały jednak pytanie innego rodzaju:
+      nie „gdzie leży parametr?”, tylko „czy przekracza konkretną wartość?”.
+      Takie pytania są tematem wykładu 04 o testowaniu hipotez. Zobaczymy tam,
+      że sprawdzenie, czy przedział obejmuje wartość progową, jest blisko
+      spokrewnione z testem statystycznym, a rolę poziomu ufności przejmie ",
+      gloss("poziom istotności", "poziom istotności"), "."),
 
     lc_chapter_next(
       num       = "06",
@@ -276,7 +361,7 @@ ch5_server <- function(input, output, session) {
       geom_errorbarh(aes(xmin = xbar - me, xmax = xbar + me, y = 0),
                      height = 0.18, color = col_ci, linewidth = 2.4, alpha = 0.7) +
       annotate("text", x = xbar, y = -0.42,
-               label = "95% CI",
+               label = paste0(round(conf * 100), "% CI"),
                color = col_ci, fontface = "bold", size = 4.8)
 
     library(patchwork)
@@ -372,7 +457,7 @@ ch5_server <- function(input, output, session) {
     (p_top / p_bot) + plot_layout(heights = c(2, 1))
   }))
 
-  # --- Widget 3: Porownanie 90/95/99 ---
+  # --- Widget 3: Porównanie 90/95/99 ---
   ch5_cmp_data <- reactiveVal(NULL)
 
   observeEvent(input$ch5_cmp_calc, {
@@ -406,7 +491,7 @@ ch5_server <- function(input, output, session) {
     df <- ch5_cmp_data()
     if (is.null(df)) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Oblicz'",
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Oblicz 3 przedziały”",
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {
@@ -441,7 +526,7 @@ ch5_server <- function(input, output, session) {
   })
 
   # ==========================================================================
-  # WIDGET 4: Edge case'y - poziom ufnosci zmienia werdykt
+  # WIDGET 4: Przypadki graniczne — poziom ufności zmienia werdykt
   # ==========================================================================
   col_hyp <- "#8e44ad"
 
@@ -633,19 +718,18 @@ ch5_server <- function(input, output, session) {
     if (is.na(conf)) {
       return(lc_feedback(type = "info",
         p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
-        p(tags$em("Kliknij jeden z przycisków 90% / 95% / 99% żeby zobaczyć
-                  przedział ufności."))
+        p(tags$em("Wybierz poziom ufności (90%, 95% lub 99%), żeby zobaczyć
+                  przedział."))
       ))
     }
 
-    # Faza 1: tylko CI + tresc hipotezy, czas na dyskusje
+    # Faza 1: tylko CI + treść hipotezy, czas na zastanowienie
     if (!revealed) {
       return(lc_feedback(type = "info",
         p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
-        p("Wybrany poziom ufności: ", tags$b(round(conf * 100), "%")),
-        p(tags$em("Spojrz na wykres: gdzie leży CI względem granicy hipotezy?
-                  Co o tym sądzicie? Kliknięcie ", tags$b("Pokaż werdykt"),
-                  " odsloni odpowiedź."))
+        p(tags$strong("Poziom ufności:"), " ", round(conf * 100), "%"),
+        p(tags$em("Gdzie leży przedział względem granicy hipotezy? Przycisk
+                  „Pokaż werdykt” odsłoni odpowiedź."))
       ))
     }
 
@@ -657,20 +741,18 @@ ch5_server <- function(input, output, session) {
     label <- verdict_label_edge(verdict)
 
     body <- if (verdict == "yes") {
-      p("Cały ", round(conf * 100), "% CI leży w obszarze hipotezy. Możemy ",
-        tags$b("z ", round(conf * 100), "% pewnością"), " stwierdzić, że ",
-        cfg$hypothesis$text, ".")
+      p("Cały przedział ", round(conf * 100), "% leży w obszarze hipotezy.
+        Przy tym poziomie ufności możemy stwierdzić: ",
+        paste0(tolower(substr(cfg$hypothesis$text, 1, 1)),
+               substring(cfg$hypothesis$text, 2)), ".")
     } else if (verdict == "no") {
-      p("Cały ", round(conf * 100), "% CI leży poza obszarem hipotezy. Z ",
-        round(conf * 100), "% pewnością ", tags$b("nie możemy"),
-        " stwierdzić hipotezy — dane przemawiają wręcz przeciwko niej.")
+      p("Cały przedział ", round(conf * 100), "% leży poza obszarem hipotezy.
+        Dane przemawiają przeciwko niej.")
     } else {
-      p(round(conf * 100), "% CI ", tags$b("przecina granicę hipotezy"),
-        " (", round(cfg$hypothesis$bound, 3), "). Część przedziału jest w obszarze
-        hipotezy, część poza. Z ", round(conf * 100), "% pewnością ",
-        tags$b("nie możemy stwierdzić"),
-        ", że hipoteza jest prawdziwa — ale też nie możemy jej odrzucić.
-        Spróbuj zmienić poziom ufności i zobacz, jak werdykt się zmienia.")
+      p("Przedział ", round(conf * 100), "% przecina granicę hipotezy (",
+        round(cfg$hypothesis$bound, 3), "). Dane są zgodne z wartościami
+        po obu stronach progu, więc przy tym poziomie ufności nie możemy
+        hipotezy ani przyjąć, ani odrzucić. Sprawdź pozostałe poziomy.")
     }
 
     lc_feedback(type = cls,

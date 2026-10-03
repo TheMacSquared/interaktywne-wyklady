@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 1: Od proby do populacji
+# CHAPTER 1: Od próby do populacji
 # ============================================================================
 
 ch1_ui <- list(
@@ -12,32 +12,47 @@ ch1_ui <- list(
       kicker = "Rozdział 01 · Przedziały ufności",
       num    = "01",
       title  = "Od próby do populacji.",
-      lead   = "Wiemy już, że średnia z próby zbiega do rozkładu normalnego
-                (CTG). Teraz wykorzystamy to do szacowania parametrów populacji."
+      lead   = "Średniego wzrostu wszystkich studentów nikt nie zmierzy. Mierzymy
+                kilkadziesiąt osób i liczymy z nich jedną liczbę, choć następna grupa
+                dałaby trochę inną. Ten wykład pokazuje, jak z jednej próby powiedzieć,
+                gdzie leży wartość dla wszystkich i z jakim zapasem."
     ),
+
+    lc_p("Wykład 02 zakończyliśmy centralnym twierdzeniem granicznym. Pokazało ono,
+      że średnia z próby jest zmienną losową: każda nowa próba daje inną średnią,
+      a średnie z wielu prób układają się w ", gloss("rozkład próbkowy"), "
+      o środku μ i odchyleniu standardowym σ/√n. Tam patrzyliśmy na to od strony
+      populacji: znaliśmy μ i σ i pytaliśmy, jakie średnie z prób mogą wyjść.
+      W praktyce sytuacja jest odwrotna. Mamy jedną próbę, a μ nie znamy.
+      W tym rozdziale nazwiemy to zadanie i zobaczymy, czego wymagamy od liczby,
+      którą szacujemy nieznany parametr."),
 
     lc_h2("ch1-estymacja", "Estymacja — od próby do populacji"),
 
-    tagList(
-      p("W statystyce rzadko znamy ", gloss("parametr"), " całej ",
-        gloss("populacja", "populacji"), ". Zamiast tego pobieramy ",
-        gloss("próba", "próbę"),
-        " i na jej podstawie szacujemy (estymujemy) nieznany parametr."),
-      p("Na przykład: nie znamy średniego wzrostu wszystkich studentów
-        w Polsce, ale możemy zmierzyć 100 osób i obliczyć ", gloss("średnia", "średnią"),
-        " z próby ", withMathJax("\\(\\bar{x}\\)"), " jako ",
-        gloss("estymator"), " średniej populacyjnej ",
-        withMathJax("\\(\\mu\\)"), ".")
-    ),
+    lc_p("Liczbę opisującą całą ", gloss("populacja", "populację"), ", na przykład
+      średni wzrost wszystkich studentów w Polsce, nazywamy ", gloss("parametr", "parametrem"),
+      ". Parametr ma jedną, stałą wartość, ale zwykle jej nie znamy, bo nie da się
+      zmierzyć wszystkich. Zamiast tego pobieramy ", gloss("próba", "próbę"), ",
+      na przykład 100 osób, i liczymy z niej ", gloss("statystyka", "statystykę"),
+      ". Szacowanie nieznanego parametru na podstawie próby nazywamy ",
+      gloss("estymacja", "estymacją"), "."),
+
+    lc_p("Regułę, według której z danych liczymy oszacowanie, nazywamy ",
+      gloss("estymator", "estymatorem"), ", a liczbę otrzymaną z konkretnej próby — ",
+      gloss("estymata", "estymatą"), ". ", gloss("średnia", "Średnia"), " z próby ",
+      withMathJax("\\(\\bar{x}\\)"), " jest estymatorem średniej populacji ",
+      withMathJax("\\(\\mu\\)"), ". Jeśli w naszej próbie wyszło ",
+      withMathJax("\\(\\bar{x} = 171{,}3\\)"), " cm, to 171,3 cm jest estymatą.
+      Estymator to przepis, estymata to wynik zastosowania go do jednej próby."),
 
     lc_h2("ch1-estymator", "Estymator w akcji"),
 
-    tagList(
-      p("Zobaczmy, jak działa estymacja. Znamy prawdziwe ",
-        withMathJax("\\(\\mu\\)"), " populacji (wrzosowa linia).
-        Za każdym razem losujemy próbę i obliczamy ",
-        withMathJax("\\(\\bar{x}\\)"), ".")
-    ),
+    lc_p("Żeby ocenić, jak działa estymator, trzeba odwrócić typową sytuację:
+      wybrać populację o znanym μ, losować z niej wiele prób i sprawdzać,
+      gdzie lądują kolejne estymaty. Panel poniżej robi to dla czterech
+      rozkładów populacji. Wrzosowa przerywana linia to prawdziwe μ,
+      bursztynowa — średnia ze wszystkich dotąd uzyskanych estymat ",
+      withMathJax("\\(\\bar{x}\\)"), "."),
 
     figure_panel(
       label = "Ryc. 1.1", title = "Losowanie prób z populacji",
@@ -70,109 +85,119 @@ ch1_ui <- list(
       )
     ),
 
-    inline_callout(label = "Obserwacja", color = "ok",
-      "Każda próba daje inny wynik. Ale średnie z prób skupiają się
-       wokół prawdziwego μ — im większe n, tym bliżej."
-    ),
+    lc_p("Populacja „wzrostu” ma rozkład normalny ze średnią μ = 170 cm
+      i odchyleniem standardowym σ = 10 cm. Przy n = 30 średnie z prób rozkładają
+      się wokół 170 cm z błędem standardowym σ/√n = 10/√30 ≈ 1,83 cm, więc około
+      95% z nich wypada między 166,4 a 173,6 cm. Po kilkudziesięciu losowaniach
+      dwie rzeczy są wyraźne. Pojedyncze estymaty rozrzucają się po obu stronach μ,
+      ale ich średnia leży tuż przy μ. Wartość „SD estymat” w panelu jest bliska
+      1,83 cm, czyli błędowi standardowemu z wykładu 02. Po wyczyszczeniu panelu
+      i zwiększeniu n histogram estymat jest węższy, a zmiana rozkładu populacji na wykładniczy, jednostajny czy
+      dwumodalny nie zmienia tego obrazu: estymaty dalej skupiają się wokół μ."),
 
     lc_h2("ch1-wlasnosci", "Trzy własności dobrego estymatora"),
 
-    tagList(
-      p("Skąd wiemy, czy dany estymator jest „dobry”? Statystycy oceniają
-        estymatory względem trzech podstawowych własności: ",
-        tags$strong(gloss("nieobciążoność", "nieobciążoności")), ", ",
-        tags$strong(gloss("efektywność estymatora", "efektywności")), " i ",
-        tags$strong(gloss("zgodność estymatora", "zgodności")), "."),
+    lc_p("Średnia z próby nie jest jedynym możliwym estymatorem środka populacji.
+      Równie dobrze można by użyć mediany z próby, średniej z najmniejszej
+      i największej obserwacji albo średniej ucinanej. Żeby wybrać między nimi,
+      potrzebujemy kryteriów. Statystyka ocenia estymatory według trzech
+      podstawowych własności: ",
+      gloss("nieobciążoność", "nieobciążoności"), ", ",
+      gloss("efektywność estymatora", "efektywności"), " i ",
+      gloss("zgodność estymatora", "zgodności"), ". Poniżej ",
+      withMathJax("\\(\\hat{\\theta}\\)"), " oznacza estymator parametru ",
+      withMathJax("\\(\\theta\\)"), "."),
 
-      lc_h3("(1) Nieobciążoność"),
-      p("Estymator ", withMathJax("\\(\\hat{\\theta}\\)"), " parametru ",
-        withMathJax("\\(\\theta\\)"), " jest ", tags$strong("nieobciążony"),
-        ", gdy:"),
-      lc_formula_box(
-        withMathJax("$$E[\\hat{\\theta}] = \\theta$$")
-      ),
-      p("Czyli: ", tags$em("średnio"),
-        " (z bardzo wielu hipotetycznych prób) trafia dokładnie w prawdziwy
-        parametr. Brak systematycznego błędu w jedną stronę."),
-      p(tags$strong("Przykład:"),
-        " średnia z próby ", withMathJax("\\(\\bar{x}\\)"),
-        " jest nieobciążonym estymatorem średniej populacji ",
-        withMathJax("\\(\\mu\\)"),
-        ". Jakkolwiek pojedynczy ", withMathJax("\\(\\bar{x}\\)"),
-        " może być większy lub mniejszy od ", withMathJax("\\(\\mu\\)"),
-        ", to średnia ze ", tags$em("wszystkich możliwych"),
-        " prób równa się dokładnie ", withMathJax("\\(\\mu\\)"), "."),
-      p(tags$strong("Kontrprzykład:"),
-        " ", gloss("wariancja"), " z próby liczona ze wzoru ",
-        withMathJax("\\(\\frac{1}{n}\\sum(x_i - \\bar{x})^2\\)"),
-        " jest ", tags$em("obciążona"),
-        " (średnio zaniża prawdziwą wariancję populacji). Dlatego
-        standardowo dzielimy przez ", withMathJax("\\(n-1\\)"),
-        " zamiast przez ", withMathJax("\\(n\\)"),
-        " — to poprawka, która czyni estymator nieobciążonym."),
+    lc_h3("(1) Nieobciążoność"),
 
-      lc_h3("(2) Efektywność"),
-      p("Spośród wszystkich estymatorów nieobciążonych najlepszy jest ten,
-        który ma ", tags$strong("najmniejszą wariancję"),
-        " — czyli najmniej waha się z próby na próbę. Taki estymator nazywamy ",
-        tags$strong("efektywnym"), "."),
-      p("Intuicja: dwa estymatory mogą być ", tags$em("średnio"),
-        " równie celne (oba nieobciążone), ale jeden może regularnie dać
-        wynik bliższy prawdy, a drugi często strzelać daleko — w różne
-        strony, co po uśrednieniu się znosi. Wybieramy ten ",
-        tags$em("ciasny"), "."),
-      p(tags$strong("Przykład:"),
-        " dla rozkładu normalnego zarówno średnia, jak i mediana z próby
-        są nieobciążone. Ale średnia ma mniejszą wariancję — dokładnie ",
-        tags$strong("π/2 ≈ 1.57 razy mniejszą"),
-        " niż mediana. Dlatego w fizyce, chemii i każdym laboratoryjnym
-        pomiarze standardem jest średnia arytmetyczna."),
-      p(tags$strong("Uwaga:"),
-        " efektywność zależy od rozkładu danych. Dla danych z ",
-        gloss("wartość odstająca", "outlierami"), "
-        mediana może być efektywniejsza niż średnia."),
+    lc_p("Estymator jest nieobciążony, gdy jego wartość oczekiwana jest równa
+      szacowanemu parametrowi:"),
 
-      lc_h3("(3) Zgodność"),
-      p("Estymator jest ", tags$strong("zgodny"),
-        ", gdy z rosnącą wielkością próby zbiega do prawdziwego parametru:"),
-      lc_formula_box(
-        withMathJax("$$\\hat{\\theta}_n \\xrightarrow{p} \\theta \\quad \\text{gdy} \\quad n \\to \\infty$$")
-      ),
-      p("Innymi słowy: dla bardzo dużej próby estymator trafia w parametr ",
-        tags$em("prawie na pewno"),
-        ". Im więcej obserwacji, tym mniejszy rozrzut estymatora wokół prawdy."),
-      p(tags$strong("Przykład:"),
-        " średnia z próby jest zgodnym estymatorem średniej populacji.
-        Z ", gloss("prawo wielkich liczb", "prawa wielkich liczb"), " wiemy, że ", withMathJax("\\(\\bar{x} \\to \\mu\\)"),
-        " gdy ", withMathJax("\\(n \\to \\infty\\)"),
-        ". Dla średniej obowiązuje wzór ",
-        withMathJax("\\(SD(\\bar{x}) = \\sigma/\\sqrt{n}\\)"),
-        " — ", gloss("odchylenie standardowe"), " maleje proporcjonalnie do ",
-        withMathJax("\\(1/\\sqrt{n}\\)"), "."),
-      p(tags$strong("Praktyczna konsekwencja:"),
-        " żeby zmniejszyć niepewność estymatora dwa razy, musisz ",
-        tags$strong("czterokrotnie"), " zwiększyć próbę.
-        To dlatego duże badania są takie drogie.")
+    lc_formula_box(withMathJax(
+      "$$E(\\hat{\\theta}) = \\theta$$"
+    )),
+
+    lc_p("Pojedyncza estymata może wypaść za wysoko albo za nisko, ale średnio,
+      w bardzo wielu hipotetycznych próbach, estymator trafia w parametr.
+      Nie ma błędu systematycznego w jedną stronę."),
+
+    lc_p(strong("Przykład:"), " średnia z próby jest nieobciążonym estymatorem μ.
+      To wzór E(X̄) = μ z wykładu 02 i to właśnie widać na Ryc. 1.1:
+      bursztynowa linia średniej z estymat leży tuż przy wrzosowej linii μ."),
+
+    lc_p(strong("Kontrprzykład:"), " ", gloss("wariancja"), " z próby liczona
+      z dzieleniem przez n, ",
+      withMathJax("\\(\\frac{1}{n}\\sum(x_i - \\bar{x})^2\\)"), ", jest obciążona.
+      Jej wartość oczekiwana wynosi (n − 1)/n · σ², więc średnio zaniża wariancję
+      populacji. Dla n = 10 i σ² = 100 daje średnio 90 zamiast 100. Dlatego
+      wariancję z próby liczy się z dzieleniem przez n − 1: ta poprawka usuwa
+      obciążenie."),
+
+    lc_h3("(2) Efektywność"),
+
+    lc_p("Nieobciążoność mówi tylko, że estymator trafia średnio. Dwa estymatory
+      nieobciążone mogą jednak różnić się rozrzutem: jeden daje estymaty
+      skupione blisko parametru, drugi często myli się mocno w jedną lub drugą
+      stronę, a błędy znoszą się dopiero po uśrednieniu wielu prób. Spośród
+      estymatorów nieobciążonych lepszy jest ten o mniejszej wariancji,
+      bo w pojedynczej próbie, a tylko taką zwykle mamy, częściej wypada blisko
+      prawdy. Taki estymator nazywamy efektywniejszym."),
+
+    lc_p(strong("Przykład:"), " gdy populacja ma rozkład normalny, zarówno średnia,
+      jak i ", gloss("mediana"), " z próby są nieobciążonymi estymatorami μ.
+      Przy dużych próbach wariancja mediany jest jednak około π/2 ≈ 1,57 raza
+      większa niż wariancja średniej. Mediana z próby liczącej 157 obserwacji
+      jest więc mniej więcej tak dokładna jak średnia ze 100 obserwacji.
+      Dlatego przy pomiarach o rozkładzie zbliżonym do normalnego standardem
+      jest średnia arytmetyczna."),
+
+    lc_p(strong("Uwaga:"), " efektywność zależy od rozkładu populacji. Gdy w danych
+      zdarzają się ", gloss("wartość odstająca", "wartości odstające"), ",
+      średnia mocno na nie reaguje i mediana może okazać się efektywniejsza."),
+
+    lc_h3("(3) Zgodność"),
+
+    lc_p("Trzecia własność dotyczy tego, co dzieje się, gdy zbieramy więcej danych.
+      Estymator jest zgodny, gdy wraz ze wzrostem wielkości próby zbiega
+      (według prawdopodobieństwa) do prawdziwego parametru:"),
+
+    lc_formula_box(withMathJax(
+      "$$\\hat{\\theta}_n \\xrightarrow{p} \\theta \\quad \\text{gdy} \\quad n \\to \\infty$$"
+    )),
+
+    lc_p("Oznacza to, że dla dowolnie małego marginesu prawdopodobieństwo,
+      że estymata odbiegnie od parametru o więcej niż ten margines, maleje
+      do zera, gdy n rośnie. W dużej próbie estymator praktycznie nie może
+      trafić daleko od prawdy."),
+
+    lc_p(strong("Przykład:"), " średnia z próby jest zgodnym estymatorem μ.
+      Wynika to z ", gloss("prawo wielkich liczb", "prawa wielkich liczb"),
+      ", a widać to też we wzorze na błąd standardowy: ",
+      gloss("odchylenie standardowe"), " średniej, SE = σ/√n, maleje do zera
+      wraz ze wzrostem n. Wariancja z próby jest zgodna zarówno w wersji
+      z n − 1, jak i z n: obciążenie (n − 1)/n znika, gdy n rośnie."),
+
+    lc_p("Z trzech własności wynika praktyczna kolejność wyboru. Najpierw szukamy
+      estymatorów nieobciążonych, spośród nich wybieramy najefektywniejszy,
+      a zgodność gwarantuje, że więcej danych daje dokładniejszy wynik.
+      Średnia z próby spełnia wszystkie trzy warunki dla μ i dlatego jest
+      punktem wyjścia dla przedziałów ufności w tym wykładzie. Zgodność ma
+      jednak swoją cenę: SE maleje jak 1/√n, a nie jak 1/n."),
+
+    inline_callout(
+      label = "Zasada",
+      "Żeby zmniejszyć błąd standardowy średniej o połowę, trzeba czterokrotnie
+       zwiększyć próbę."
     ),
 
-    inline_callout(label = "Hierarchia", color = "wskazowka",
-      "Najpierw chcemy, żeby estymator był nieobciążony (trafiał średnio
-       w cel). Spośród nieobciążonych wybieramy najefektywniejszy
-       (najmniej się waha). I oczywiście chcemy, żeby był zgodny —
-       trafiał dokładniej, gdy zbieramy więcej danych."
-    ),
+    lc_h2("ch1-punkt-nie-wystarczy", "Sam punkt nie wystarczy"),
 
-    lc_h2("ch1-punkt-nie-wystarczy", "Dlaczego sam punkt nie wystarczy?"),
-
-    tagList(
-      p("Nawet najlepszy estymator punktowy zmienia się z próby na próbę.
-        Podanie samej liczby ", withMathJax("\\(\\bar{x} = 171.3\\)"),
-        " nie mówi nic o tym, jak bardzo możemy się mylić."),
-      p("Potrzebujemy czegoś więcej — ", tags$strong("przedziału"),
-        ", który powie: ",
-        tags$em("„z 95% pewnością prawdziwa wartość leży między … a …”"),
-        ".")
-    ),
+    lc_p("Nawet najlepszy estymator daje w każdej próbie inną estymatę.
+      Liczba ", withMathJax("\\(\\bar{x} = 171{,}3\\)"), " cm podana bez komentarza
+      nie mówi, czy prawdziwe μ może wynosić 171 cm, czy równie dobrze 165 cm.
+      O tym decyduje rozrzut estymatora, a więc błąd standardowy. Poniższy panel
+      losuje kolejne próby z populacji wzrostu (μ = 170 cm, σ = 10 cm) i zapisuje
+      ich średnie jedna po drugiej."),
 
     figure_panel(
       label = "Ryc. 1.2", title = "Wahania estymatora",
@@ -180,8 +205,7 @@ ch1_ui <- list(
       fluidRow(
         column(4,
           lc_slider("ch1_fluct_n", "Wielkość próby (n)", 5, 200, 10, 5),
-          helpText("Każde kliknięcie losuje nową próbę. Obserwuj,
-                    jak bardzo skacze estymata."),
+          helpText("Każde kliknięcie losuje nową próbę."),
           lc_action("ch1_fluct_draw", "Losuj próbę", icon = "shuffle", variant = "solid")
         ),
         column(8,
@@ -190,14 +214,19 @@ ch1_ui <- list(
       )
     ),
 
-    inline_callout(label = "Wniosek", color = "uwaga",
-      tagList(
-        "Estymacja punktowa to za mało. Potrzebujemy ",
-        gloss("przedział ufności", "przedziału ufności"),
-        " — zakresu wartości, który z określonym
-         prawdopodobieństwem zawiera prawdziwy parametr."
-      )
-    ),
+    lc_p("Przy n = 10 błąd standardowy wynosi 10/√10 ≈ 3,16 cm, więc około 95%
+      średnich z prób wypada między 163,8 a 176,2 cm. Kolejne punkty skaczą
+      o kilka centymetrów w górę i w dół od linii μ. Przy n = 40 SE spada
+      do 1,58 cm i skoki są o połowę mniejsze, ale nie znikają. Dowolna
+      pojedyncza estymata może więc leżeć kilka centymetrów od μ, a sama
+      liczba nie zdradza, jak daleko."),
+
+    lc_p("Dlatego oprócz estymaty podaje się zakres wartości, który uwzględnia
+      tę niepewność: ", gloss("przedział ufności"), ". Punktem wyjścia jest
+      zdanie z wykładu 02: w około 95% prób średnia leży nie dalej niż 1,96·SE
+      od μ. Jeśli tak jest, to również μ leży nie dalej niż 1,96·SE od średniej
+      z próby. Następny rozdział zamienia to odwrócenie w konstrukcję przedziału
+      i wyjaśnia, co dokładnie oznacza jego poziom ufności."),
 
     lc_chapter_next(
       num       = "02",
@@ -251,7 +280,7 @@ ch1_server <- function(input, output, session) {
 
     if (nrow(est) == 0) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Pobierz próbę'",
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Pobierz 1 próbę”",
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {
@@ -310,7 +339,7 @@ ch1_server <- function(input, output, session) {
 
     if (nrow(df) == 0) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Losuj próbę'",
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Losuj próbę”",
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {
