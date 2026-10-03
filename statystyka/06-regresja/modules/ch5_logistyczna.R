@@ -206,12 +206,14 @@ ch5_ui <- list(
       full_width = TRUE,
       lc_toolbar(
         lc_slider("ch5_n", "n", 50, 300, 150, 25),
-        selectInput("ch5_predictor", "Prezentowany predyktor",
-          choices = c(
-            "Godziny nauki" = "godziny_nauki",
-            "Średnia ocen"  = "srednia_ocen"
-          ),
-          selected = "godziny_nauki"
+        lc_group(NULL, grow = TRUE,
+          selectInput("ch5_predictor", "Prezentowany predyktor",
+            choices = c(
+              "Godziny nauki" = "godziny_nauki",
+              "Średnia ocen"  = "srednia_ocen"
+            ),
+            selected = "godziny_nauki"
+          )
         ),
         lc_action("ch5_fit", "Dopasuj model", variant = "solid"),
         lc_readouts(uiOutput("ch5_model_summary"))
@@ -219,8 +221,12 @@ ch5_ui <- list(
       lc_plot("ch5_logit_plot", max_height = "350px"),
       tags$h4("Predykcja dla nowego studenta"),
       lc_toolbar(
-        numericInput("ch5_pred_hours", "Godziny nauki", value = 20, min = 0, max = 40),
-        numericInput("ch5_pred_gpa", "Średnia ocen", value = 3.5, min = 2, max = 5, step = 0.1),
+        lc_group(NULL, grow = TRUE,
+          numericInput("ch5_pred_hours", "Godziny nauki", value = 20, min = 0, max = 40)
+        ),
+        lc_group(NULL, grow = TRUE,
+          numericInput("ch5_pred_gpa", "Średnia ocen", value = 3.5, min = 2, max = 5, step = 0.1)
+        ),
         lc_readouts(uiOutput("ch5_prediction"))
       )
     ),
