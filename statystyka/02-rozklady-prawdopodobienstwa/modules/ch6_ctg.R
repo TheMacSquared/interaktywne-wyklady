@@ -98,36 +98,26 @@ ch6_ui <- list(
       label = "Ryc. 6.1",
       title = "Symulacja: średnie z dowolnego rozkładu → normalny",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          selectInput("ch6_pop_dist", "Rozkład populacji:",
-            choices = c(
-              "Jednostajny"         = "uniform",
-              "Wykładniczy (skośny)" = "exponential",
-              "Dwumodalny"          = "bimodal",
-              "U-kształtny"          = "u_shape",
-              "Kostka (dyskretny)"  = "die"
-            ),
-            selected = "exponential"
+      lc_toolbar(
+        selectInput("ch6_pop_dist", "Rozkład populacji",
+          choices = c(
+            "Jednostajny"         = "uniform",
+            "Wykładniczy (skośny)" = "exponential",
+            "Dwumodalny"          = "bimodal",
+            "U-kształtny"          = "u_shape",
+            "Kostka (dyskretny)"  = "die"
           ),
-          lc_slider("ch6_sample_size", "Wielkość próby (n)", 1, 100, 5, 1),
-          hr(),
-          lc_stack(gap = "md",
-            lc_action("ch6_take_1", "Pobierz 1 próbę", variant = "solid"),
-            lc_action("ch6_take_100", "Pobierz 100 prób", variant = "solid"),
-            lc_action("ch6_take_1000", "Pobierz 1000 prób", variant = "solid"),
-            hr(),
-            lc_action("ch6_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
-          ),
-          br(),
-          uiOutput("ch6_sample_count")
+          selected = "exponential"
         ),
-        column(8,
-          zoom_plot_ui("ch6_pop_plot", height = "180px"),
-          zoom_plot_ui("ch6_means_plot", height = "300px"),
-          uiOutput("ch6_means_stats")
-        )
-      )
+        lc_slider("ch6_sample_size", "Wielkość próby (n)", 1, 100, 5, 1),
+        lc_action("ch6_take_1", "Pobierz 1 próbę", variant = "solid"),
+        lc_action("ch6_take_100", "Pobierz 100 prób", variant = "solid"),
+        lc_action("ch6_take_1000", "Pobierz 1000 prób", variant = "solid"),
+        lc_action("ch6_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+        lc_readouts(uiOutput("ch6_sample_count"), uiOutput("ch6_means_stats"))
+      ),
+      lc_plot("ch6_pop_plot", ratio = "4/1", max_height = "180px"),
+      lc_plot("ch6_means_plot", max_height = "300px")
     ),
 
     lc_p("Przy ustawieniach startowych populacja ma rozkład wykładniczy z μ = 2
@@ -274,7 +264,7 @@ ch6_server <- function(input, output, session) {
 
   output$ch6_sample_count <- renderUI({
     n <- length(collected_means())
-    lc_stat_box("Prób", n, color = unname(upwr_cat["niebo"]))
+    lc_readout("Prób", n, color = unname(upwr_cat["niebo"]))
   })
 
   zoom_plot_server("ch6_pop_plot", reactive({
@@ -348,14 +338,10 @@ ch6_server <- function(input, output, session) {
     params <- get_population_params(dist)
     theo_sd <- params$sigma / sqrt(n)
 
-    lc_center(
-      lc_stat_box("Śr. średnich", round(mean(means), 3),
-                  color = unname(upwr_cat["niebo"])),
-      lc_stat_box("SD średnich", round(sd(means), 3),
-                  color = upwr_secondary),
-      lc_stat_box("Teor. SD", round(theo_sd, 3),
-                  caption = "σ/√n",
-                  color = unname(upwr_cat["bursztyn"]))
+    tagList(
+      lc_readout("Śr. średnich", round(mean(means), 3), color = unname(upwr_cat["niebo"])),
+      lc_readout("SD średnich", round(sd(means), 3), color = upwr_secondary),
+      lc_readout("Teoretyczne SD (σ/√n)", round(theo_sd, 3), color = unname(upwr_cat["bursztyn"]))
     )
   })
 

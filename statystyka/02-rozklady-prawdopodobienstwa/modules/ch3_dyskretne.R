@@ -67,18 +67,14 @@ ch3_ui <- list(
       label = "Ryc. 3.1",
       title = "Symulacja: moneta i kostka",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_segmented("ch3_unif_type", "Eksperyment", choices = c("Moneta (2 wyniki)" = "coin",
+      lc_toolbar(
+        lc_segmented("ch3_unif_type", "Eksperyment", choices = c("Moneta (2 wyniki)" = "coin",
                         "Kostka (6 wyników)" = "die",
                         "Kostka 12-ścienna" = "d12"), selected = "die"),
-          lc_slider("ch3_unif_n", "Liczba prób", 10, 5000, 100, 10),
-          lc_action("ch3_unif_sim", "Symuluj", variant = "solid")
-        ),
-        column(8,
-          zoom_plot_ui("ch3_unif_plot", height = "350px")
-        )
-      )
+        lc_slider("ch3_unif_n", "Liczba prób", 10, 5000, 100, 10),
+        lc_action("ch3_unif_sim", "Symuluj", variant = "solid")
+      ),
+      lc_plot("ch3_unif_plot", max_height = "350px")
     ),
 
     lc_p("Przy 100 rzutach słupki wyraźnie odstają od linii 1/6: jedne ściany
@@ -124,9 +120,8 @@ ch3_ui <- list(
       label = "Ryc. 3.2",
       title = "Rozkład dwumianowy B(n, p)",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          checkboxGroupInput("ch3_binom_scenarios", "Scenariusze:",
+      lc_toolbar(
+        checkboxGroupInput("ch3_binom_scenarios", "Scenariusze",
             choices = c(
               "Moneta: B(10, 0.5)" = "binom_1",
               "Egzamin: B(20, 0.25)" = "binom_2",
@@ -135,12 +130,9 @@ ch3_ui <- list(
             ),
             selected = "binom_1"
           )
-        ),
-        column(8,
-          zoom_plot_ui("ch3_binom_plot", height = "400px"),
-          uiOutput("ch3_binom_stats")
-        )
-      )
+      ),
+      lc_plot("ch3_binom_plot", max_height = "400px"),
+      uiOutput("ch3_binom_stats")
     ),
 
     lc_p("Rozkład B(10, 0.5) jest symetryczny wokół 5, bo przy p = 0.5 sukces
@@ -188,9 +180,8 @@ ch3_ui <- list(
       label = "Ryc. 3.3",
       title = "Rozkład Poissona Pois(λ)",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          checkboxGroupInput("ch3_pois_scenarios", "Scenariusze:",
+      lc_toolbar(
+        checkboxGroupInput("ch3_pois_scenarios", "Scenariusze",
             choices = c(
               "Wypadki: λ = 0.5" = "pois_1",
               "Błędy: λ = 2" = "pois_2",
@@ -199,12 +190,9 @@ ch3_ui <- list(
             ),
             selected = "pois_2"
           )
-        ),
-        column(8,
-          zoom_plot_ui("ch3_pois_plot", height = "400px"),
-          uiOutput("ch3_pois_stats")
-        )
-      )
+      ),
+      lc_plot("ch3_pois_plot", max_height = "400px"),
+      uiOutput("ch3_pois_stats")
     ),
 
     lc_p("Parametr λ jednocześnie przesuwa i poszerza rozkład, bo wartość
@@ -253,9 +241,8 @@ ch3_ui <- list(
       label = "Ryc. 3.4",
       title = "Rozkład geometryczny Geom(p)",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          checkboxGroupInput("ch3_geom_scenarios", "Scenariusze:",
+      lc_toolbar(
+        checkboxGroupInput("ch3_geom_scenarios", "Scenariusze",
             choices = c(
               "Rzadkie: p = 0.05" = "geom_1",
               "Szóstka: p = 1/6" = "geom_2",
@@ -264,12 +251,9 @@ ch3_ui <- list(
             ),
             selected = "geom_2"
           )
-        ),
-        column(8,
-          zoom_plot_ui("ch3_geom_plot", height = "400px"),
-          uiOutput("ch3_geom_stats")
-        )
-      )
+      ),
+      lc_plot("ch3_geom_plot", max_height = "400px"),
+      uiOutput("ch3_geom_stats")
     ),
 
     lc_p("Każdy rozkład geometryczny ma najwyższy słupek przy k = 1, a kolejne
@@ -432,9 +416,7 @@ ch3_server <- function(input, output, session) {
       sigma <- sqrt(s$n * s$p * (1 - s$p))
       paste0(s$label, ":  E(X) = ", round(mu, 1), ",  SD = ", round(sigma, 2))
     })
-    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
-      lapply(stats, function(s) div(s))
-    )
+    tags$ul(lapply(stats, tags$li))
   })
 
   # --- Widget 3: Poissona — scenariusze overlay ---
@@ -479,9 +461,7 @@ ch3_server <- function(input, output, session) {
       paste0(s$label, ":  E(X) = Var(X) = ", s$lambda,
              ",  SD = ", round(sqrt(s$lambda), 2))
     })
-    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
-      lapply(stats, function(s) div(s))
-    )
+    tags$ul(lapply(stats, tags$li))
   })
 
   # --- Widget 4: Geometryczny — scenariusze overlay ---
@@ -529,9 +509,7 @@ ch3_server <- function(input, output, session) {
       sigma <- sqrt((1 - s$p) / s$p^2)
       paste0(s$label, ":  E(X) = ", round(mu, 1), ",  SD = ", round(sigma, 2))
     })
-    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
-      lapply(stats, function(s) div(s))
-    )
+    tags$ul(lapply(stats, tags$li))
   })
 
   # --- Widget 5: Porównanie (bez zmian) ---

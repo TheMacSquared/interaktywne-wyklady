@@ -112,22 +112,18 @@ ch4_ui <- list(
       label = "Ryc. 4.2",
       title = "Zacieniuj przedział i odczytaj prawdopodobieństwo",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          selectInput("ch4_area_dist", "Rozkład:",
+      lc_toolbar(
+        selectInput("ch4_area_dist", "Rozkład",
             choices = c("Normalny N(0, 1)" = "norm",
                         "Wykładniczy Exp(1)" = "exp",
                         "Jednostajny U(0, 10)" = "unif"),
             selected = "norm"
           ),
-          lc_slider("ch4_area_a", "Dolna granica (a)", -4, 4, -1, 0.1),
-          lc_slider("ch4_area_b", "Górna granica (b)", -4, 4, 1, 0.1)
-        ),
-        column(8,
-          zoom_plot_ui("ch4_area_plot", height = "350px"),
-          uiOutput("ch4_area_stats")
-        )
-      )
+        lc_slider("ch4_area_a", "Dolna granica (a)", -4, 4, -1, 0.1),
+        lc_slider("ch4_area_b", "Górna granica (b)", -4, 4, 1, 0.1),
+        lc_readouts(uiOutput("ch4_area_stats"))
+      ),
+      lc_plot("ch4_area_plot", max_height = "350px")
     ),
 
     lc_p("Domyślnie panel pokazuje ", gloss("rozkład normalny"), " N(0, 1),
@@ -202,9 +198,8 @@ ch4_ui <- list(
       label = "Ryc. 4.3",
       title = "Rozkład jednostajny U(a, b)",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          checkboxGroupInput("ch4_unif_scenarios", "Scenariusze:",
+      lc_toolbar(
+        checkboxGroupInput("ch4_unif_scenarios", "Scenariusze",
             choices = c(
               "U(0, 10)" = "unif_1",
               "U(2, 8)" = "unif_2",
@@ -213,12 +208,9 @@ ch4_ui <- list(
             ),
             selected = "unif_1"
           )
-        ),
-        column(8,
-          zoom_plot_ui("ch4_unif_plot", height = "350px"),
-          uiOutput("ch4_unif_stats")
-        )
-      )
+      ),
+      lc_plot("ch4_unif_plot", max_height = "350px"),
+      uiOutput("ch4_unif_stats")
     ),
 
     lc_p("Im szerszy przedział, tym niższy prostokąt: U(0, 10) ma wysokość 0.1,
@@ -261,9 +253,8 @@ ch4_ui <- list(
       label = "Ryc. 4.4",
       title = "Rozkład wykładniczy Exp(λ)",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          checkboxGroupInput("ch4_exp_scenarios", "Scenariusze:",
+      lc_toolbar(
+        checkboxGroupInput("ch4_exp_scenarios", "Scenariusze",
             choices = c(
               "Awarie: λ = 0.3/dzień" = "exp_1",
               "Wiadomości: λ = 1/godz" = "exp_2",
@@ -272,12 +263,9 @@ ch4_ui <- list(
             ),
             selected = "exp_2"
           )
-        ),
-        column(8,
-          zoom_plot_ui("ch4_exp_plot", height = "350px"),
-          uiOutput("ch4_exp_stats")
-        )
-      )
+      ),
+      lc_plot("ch4_exp_plot", max_height = "350px"),
+      uiOutput("ch4_exp_stats")
     ),
 
     lc_p("Krótkie czasy oczekiwania są najczęstsze, długie zdarzają się
@@ -333,9 +321,8 @@ ch4_ui <- list(
       label = "Ryc. 4.5",
       title = "Rozkład t-Studenta t(df)",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          checkboxGroupInput("ch4_t_scenarios", "Scenariusze:",
+      lc_toolbar(
+        checkboxGroupInput("ch4_t_scenarios", "Scenariusze",
             choices = c(
               "t(df=1) — Cauchy" = "t_1",
               "t(df=3)" = "t_2",
@@ -344,14 +331,10 @@ ch4_ui <- list(
             ),
             selected = c("t_2", "t_4")
           ),
-          hr(),
-          checkboxInput("ch4_t_show_normal", "Pokaż N(0, 1) jako odniesienie", value = TRUE)
-        ),
-        column(8,
-          zoom_plot_ui("ch4_t_plot", height = "400px"),
-          uiOutput("ch4_t_stats")
-        )
-      )
+        checkboxInput("ch4_t_show_normal", "Pokaż N(0, 1) jako odniesienie", value = TRUE)
+      ),
+      lc_plot("ch4_t_plot", max_height = "400px"),
+      uiOutput("ch4_t_stats")
     ),
 
     lc_p("Krzywa t(30) prawie pokrywa się z N(0, 1), a t(3) ma wyraźnie niższy
@@ -389,9 +372,8 @@ ch4_ui <- list(
       label = "Ryc. 4.6",
       title = "Rozkład χ²(df)",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          checkboxGroupInput("ch4_chisq_scenarios", "Scenariusze:",
+      lc_toolbar(
+        checkboxGroupInput("ch4_chisq_scenarios", "Scenariusze",
             choices = c(
               "χ²(df=2)" = "chisq_1",
               "χ²(df=5)" = "chisq_2",
@@ -400,12 +382,9 @@ ch4_ui <- list(
             ),
             selected = "chisq_2"
           )
-        ),
-        column(8,
-          zoom_plot_ui("ch4_chisq_plot", height = "400px"),
-          uiOutput("ch4_chisq_stats")
-        )
-      )
+      ),
+      lc_plot("ch4_chisq_plot", max_height = "400px"),
+      uiOutput("ch4_chisq_stats")
     ),
 
     lc_p("Każdy składnik sumy ma wartość oczekiwaną 1, więc E(X) = df. Dla
@@ -446,9 +425,8 @@ ch4_ui <- list(
       label = "Ryc. 4.7",
       title = "Rozkład LogN(μ, σ)",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          checkboxGroupInput("ch4_lnorm_scenarios", "Scenariusze:",
+      lc_toolbar(
+        checkboxGroupInput("ch4_lnorm_scenarios", "Scenariusze",
             choices = c(
               "Czas reakcji: LogN(0, 0.3)" = "lnorm_1",
               "Ceny akcji: LogN(1, 0.5)" = "lnorm_2",
@@ -457,12 +435,9 @@ ch4_ui <- list(
             ),
             selected = "lnorm_2"
           )
-        ),
-        column(8,
-          zoom_plot_ui("ch4_lnorm_plot", height = "400px"),
-          uiOutput("ch4_lnorm_stats")
-        )
-      )
+      ),
+      lc_plot("ch4_lnorm_plot", max_height = "400px"),
+      uiOutput("ch4_lnorm_stats")
     ),
 
     lc_p("Prawy ogon sprawia, że wartość oczekiwana jest zawsze większa od ",
@@ -710,12 +685,9 @@ ch4_server <- function(input, output, session) {
       prob <- punif(b, 0, 10) - punif(a, 0, 10)
     }
 
-    lc_center(
-      lc_stat_box(paste0("P(", a, " < X < ", b, ")"),
-                  sprintf("%.4f", max(0, prob)),
-                  color = unname(upwr_cat["niebo"])),
-      lc_stat_box("Procent", sprintf("%.1f", max(0, prob) * 100), "%",
-                  color = upwr_secondary)
+    tagList(
+      lc_readout(paste0("P(", a, " < X < ", b, ")"), sprintf("%.4f", max(0, prob)), color = unname(upwr_cat["niebo"])),
+      lc_readout("Procent", paste0(sprintf("%.1f", max(0, prob) * 100), "%"), color = upwr_secondary)
     )
   })
 
@@ -759,9 +731,7 @@ ch4_server <- function(input, output, session) {
       sd_val <- sqrt((s$b - s$a)^2 / 12)
       paste0(s$label, ":  E(X) = ", round(mu, 1), ",  SD = ", round(sd_val, 2))
     })
-    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
-      lapply(stats, function(s) div(s))
-    )
+    tags$ul(lapply(stats, tags$li))
   })
 
   # --- Widget 3b: Wykładniczy — scenariusze overlay ---
@@ -805,9 +775,7 @@ ch4_server <- function(input, output, session) {
       mu <- 1 / s$lambda
       paste0(s$label, ":  E(X) = 1/λ = ", round(mu, 2), ",  SD = ", round(mu, 2))
     })
-    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
-      lapply(stats, function(s) div(s))
-    )
+    tags$ul(lapply(stats, tags$li))
   })
 
   # --- Widget 4: t-Studenta — scenariusze overlay ---
@@ -860,9 +828,7 @@ ch4_server <- function(input, output, session) {
       } else "SD = ∞"
       paste0(s$label, ":  ", mu_text, ",  ", sd_text)
     })
-    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
-      lapply(stats, function(s) div(s))
-    )
+    tags$ul(lapply(stats, tags$li))
   })
 
   # --- Widget 5: Chi-kwadrat — scenariusze overlay ---
@@ -904,9 +870,7 @@ ch4_server <- function(input, output, session) {
       s <- ch4_chisq_defs[[id]]
       paste0(s$label, ":  E(X) = ", s$df, ",  SD = ", round(sqrt(2 * s$df), 2))
     })
-    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
-      lapply(stats, function(s) div(s))
-    )
+    tags$ul(lapply(stats, tags$li))
   })
 
   # --- Widget 6: Log-normalny — scenariusze overlay ---
@@ -958,9 +922,7 @@ ch4_server <- function(input, output, session) {
              ",  Me = ", round(med, 1),
              ",  SD = ", round(sd_val, 1))
     })
-    div(style = "font-size: 13px; margin-top: 10px; line-height: 1.8;",
-      lapply(stats, function(s) div(s))
-    )
+    tags$ul(lapply(stats, tags$li))
   })
 
 }

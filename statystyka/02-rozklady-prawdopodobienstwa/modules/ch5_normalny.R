@@ -60,25 +60,17 @@ ch5_ui <- list(
       label = "Ryc. 5.1",
       title = "Eksploracja N(μ, σ)",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_slider("ch5_mu", "μ (średnia)", -10, 10, 0, 0.5),
-          lc_slider("ch5_sigma", "σ (odch. std.)", 0.5, 5, 1, 0.1),
-          hr(),
-          div(class = "preset-buttons",
-            lc_action("ch5_preset_std", "N(0, 1)\nStandardowy", variant = "outline"),
-            lc_action("ch5_preset_wzrost_k", "Wzrost\nkobiet", variant = "solid"),
-            lc_action("ch5_preset_iq", "IQ", variant = "solid"),
-            lc_action("ch5_preset_temp", "Temp.\nciała", variant = "solid")
-          ),
-          hr(),
-          checkboxInput("ch5_show_empirical", "Pokaż regułę 68–95–99.7", value = TRUE)
-        ),
-        column(8,
-          zoom_plot_ui("ch5_explore_plot", height = "400px"),
-          uiOutput("ch5_explore_stats")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch5_mu", "μ (średnia)", -10, 10, 0, 0.5),
+        lc_slider("ch5_sigma", "σ (odch. std.)", 0.5, 5, 1, 0.1),
+        lc_action("ch5_preset_std", "N(0, 1)", variant = "outline"),
+        lc_action("ch5_preset_wzrost_k", "Wzrost kobiet", variant = "outline"),
+        lc_action("ch5_preset_iq", "IQ", variant = "outline"),
+        lc_action("ch5_preset_temp", "Temp. ciała", variant = "outline"),
+        checkboxInput("ch5_show_empirical", "Reguła 68–95–99.7", value = TRUE),
+        lc_readouts(uiOutput("ch5_explore_stats"))
+      ),
+      lc_plot("ch5_explore_plot", max_height = "400px")
     ),
 
     lc_p("Zmiana μ przesuwa krzywą wzdłuż osi, nie zmieniając jej kształtu.
@@ -112,23 +104,18 @@ ch5_ui <- list(
       label = "Ryc. 5.2",
       title = "Dwie krzywe normalne",
       full_width = TRUE,
-      fluidRow(
-        column(3,
-          h5("Rozkład A", style = "color: var(--upwr-cat-niebo);"),
+      lc_toolbar(
+        lc_group("Rozkład A",
           lc_slider("ch5_cmp_mu1", "μ₁", -5, 15, 5, 0.5),
           lc_slider("ch5_cmp_s1", "σ₁", 0.5, 5, 1.5, 0.1)
         ),
-        column(3,
-          h5("Rozkład B", style = "color: var(--upwr-accent);"),
+        lc_group("Rozkład B",
           lc_slider("ch5_cmp_mu2", "μ₂", -5, 15, 8, 0.5),
-          lc_slider("ch5_cmp_s2", "σ₂", 0.5, 5, 2, 0.1),
-          hr(),
-          lc_action("ch5_cmp_preset", "Mężczyźni vs\nkobiety (wzrost)", variant = "outline")
+          lc_slider("ch5_cmp_s2", "σ₂", 0.5, 5, 2, 0.1)
         ),
-        column(6,
-          zoom_plot_ui("ch5_compare_plot", height = "350px")
-        )
-      )
+        lc_action("ch5_cmp_preset", "Mężczyźni vs kobiety (wzrost)", variant = "outline")
+      ),
+      lc_plot("ch5_compare_plot", max_height = "350px")
     ),
 
     lc_p("Przy ustawieniach startowych rozkład B, N(8, 2), leży na prawo od A,
@@ -172,18 +159,13 @@ ch5_ui <- list(
       label = "Ryc. 5.3",
       title = "Kalkulator z-score",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          numericInput("ch5_z_mu", "μ (np. średnia egzaminu):", value = 65),
-          numericInput("ch5_z_sigma", "σ (np. odch. std.):", value = 10, min = 0.1),
-          numericInput("ch5_z_x", "x (wartość do standaryzacji):", value = 80),
-          hr(),
-          uiOutput("ch5_z_result")
-        ),
-        column(8,
-          zoom_plot_ui("ch5_z_plot", height = "350px")
-        )
-      )
+      lc_toolbar(
+        numericInput("ch5_z_mu", "μ (np. średnia egzaminu)", value = 65),
+        numericInput("ch5_z_sigma", "σ (np. odch. std.)", value = 10, min = 0.1),
+        numericInput("ch5_z_x", "x (wartość do standaryzacji)", value = 80)
+      ),
+      lc_plot("ch5_z_plot", max_height = "350px"),
+      uiOutput("ch5_z_result")
     ),
 
     lc_p("Wynik 80 punktów daje z = (80 - 65)/10 = 1.5: półtora odchylenia
@@ -218,24 +200,20 @@ ch5_ui <- list(
       label = "Ryc. 5.4",
       title = "Kalkulator prawdopodobieństw N(0, 1)",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_segmented("ch5_prob_type", "Typ pytania", choices = c(
-              "P(Z < a)" = "less",
-              "P(Z > a)" = "greater",
-              "P(a < Z < b)" = "between"
-            ), selected = "between"),
-          lc_slider("ch5_prob_a", "a", -4, 4, -1, 0.05),
-          conditionalPanel(
-            condition = "input.ch5_prob_type == 'between'",
-            lc_slider("ch5_prob_b", "b", -4, 4, 1, 0.05)
-          )
+      lc_toolbar(
+        lc_segmented("ch5_prob_type", "Typ pytania", choices = c(
+            "P(Z < a)" = "less",
+            "P(Z > a)" = "greater",
+            "P(a < Z < b)" = "between"
+          ), selected = "between"),
+        lc_slider("ch5_prob_a", "a", -4, 4, -1, 0.05),
+        conditionalPanel(
+          condition = "input.ch5_prob_type == 'between'",
+          lc_slider("ch5_prob_b", "b", -4, 4, 1, 0.05)
         ),
-        column(8,
-          zoom_plot_ui("ch5_prob_plot", height = "300px"),
-          uiOutput("ch5_prob_result")
-        )
-      )
+        lc_readouts(uiOutput("ch5_prob_result"))
+      ),
+      lc_plot("ch5_prob_plot", max_height = "300px")
     ),
 
     lc_p("Ustawienie startowe, P(-1 < Z < 1) = 0.6827, to pierwsza liczba
@@ -353,12 +331,11 @@ ch5_server <- function(input, output, session) {
   output$ch5_explore_stats <- renderUI({
     mu <- input$ch5_mu
     sigma <- input$ch5_sigma
-    lc_center(
-      lc_stat_box("μ", mu, color = col_normal),
-      lc_stat_box("σ", sigma, color = upwr_secondary),
-      lc_stat_box("68%", paste0("[", round(mu - sigma, 1), ", ",
-                                round(mu + sigma, 1), "]"),
-                  color = unname(upwr_cat["bursztyn"]))
+    tagList(
+      lc_readout("μ", mu, color = col_normal),
+      lc_readout("σ", sigma, color = upwr_secondary),
+      lc_readout("68%", paste0("[", round(mu - sigma, 1), ", ",
+                                round(mu + sigma, 1), "]"), color = unname(upwr_cat["bursztyn"]))
     )
   })
 
@@ -408,12 +385,10 @@ ch5_server <- function(input, output, session) {
 
     z <- (x - mu) / sigma
 
-    div(
-      lc_stat_box("z", round(z, 2),
-                  caption = paste0("(", x, " − ", mu, ") / ", sigma),
-                  color = col_normal),
+    tagList(
+      lc_readouts(lc_readout("z", lc_fmt(z, 2), color = col_normal)),
       lc_caption(
-        paste0("Wartość ", x, " leży ", round(abs(z), 2),
+        paste0("z = (", x, " - ", mu, ") / ", sigma, ". Wartość ", x, " leży ", round(abs(z), 2),
                " odchyleń standardowych ",
                if (z >= 0) "powyżej" else "poniżej", " średniej."),
         tone = "info"
@@ -518,10 +493,9 @@ ch5_server <- function(input, output, session) {
       "between" = paste0("P(", a, " < Z < ", b, ")")
     )
 
-    lc_center(
-      lc_stat_box(label, sprintf("%.4f", prob), color = col_normal),
-      lc_stat_box("Procent", sprintf("%.2f", prob * 100), "%",
-                  color = upwr_secondary)
+    tagList(
+      lc_readout(label, sprintf("%.4f", prob), color = col_normal),
+      lc_readout("Procent", paste0(sprintf("%.2f", prob * 100), "%"), color = upwr_secondary)
     )
   })
 

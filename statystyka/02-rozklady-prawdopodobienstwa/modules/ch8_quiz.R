@@ -51,16 +51,10 @@ ch8_ui <- list(
       full_width = TRUE,
 
       # Start / status bar
-      fluidRow(
-        column(6,
-          lc_action("ch8_start", "Rozpocznij quiz", variant = "solid")
-        ),
-        column(6,
-          uiOutput("ch8_progress")
-        )
+      lc_toolbar(
+        lc_action("ch8_start", "Rozpocznij quiz", variant = "solid"),
+        lc_readouts(uiOutput("ch8_progress"))
       ),
-
-      hr(),
 
       # Pytanie
       uiOutput("ch8_question_ui"),
@@ -70,8 +64,6 @@ ch8_ui <- list(
 
       # Feedback
       uiOutput("ch8_feedback_ui"),
-
-      hr(),
 
       # Podsumowanie
       uiOutput("ch8_summary_ui")
@@ -152,22 +144,13 @@ ch8_server <- function(input, output, session) {
     total <- quiz_state$total
     pct <- round(answered / total * 100)
 
+    score_color <- if (answered == 0) upwr_secondary
+                   else if (quiz_state$correct / answered >= 0.7) unname(upwr_cat["szalwia"])
+                   else if (quiz_state$correct / answered >= 0.5) unname(upwr_cat["bursztyn"])
+                   else unname(upwr_cat["terakota"])
     tagList(
-      div(style = "display: flex; justify-content: space-between; margin-bottom: 4px;",
-        span(paste0("Pytanie ", quiz_state$current_idx, " / ", total)),
-        span(paste0("Wynik: ", quiz_state$correct, " / ", answered),
-             style = paste0("font-weight: bold; color: ",
-                            if (answered == 0) upwr_secondary
-                            else if (quiz_state$correct / answered >= 0.7) unname(upwr_cat["szalwia"])
-                            else if (quiz_state$correct / answered >= 0.5) unname(upwr_cat["bursztyn"])
-                            else unname(upwr_cat["terakota"])))
-      ),
-      div(style = "background: var(--upwr-rule); border-radius: 6px; height: 8px; overflow: hidden;",
-        div(style = paste0(
-          "background: ", unname(upwr_cat["niebo"]), "; height: 100%; width: ", pct, "%;",
-          "border-radius: 6px; transition: width 0.3s;"
-        ))
-      )
+      lc_readout("Pytanie", paste0(quiz_state$current_idx, " / ", total), color = upwr_secondary),
+      lc_readout("Wynik", paste0(quiz_state$correct, " / ", answered), color = score_color)
     )
   })
 
@@ -177,12 +160,7 @@ ch8_server <- function(input, output, session) {
 
     q <- quiz_state$questions[[quiz_state$current_idx]]
 
-    div(
-      style = "font-size: 18px; font-weight: 500; color: var(--upwr-ink);
-               padding: 20px; background: white; border-radius: 8px;
-               border-left: 4px solid var(--upwr-cat-niebo); margin: 15px 0;",
-      q$question
-    )
+    tags$h4(q$question)
   })
 
   # --- Opcje (3 przyciski) ---
@@ -248,26 +226,15 @@ ch8_server <- function(input, output, session) {
       # Wynik
       lc_status(
         lc_verdict(tags$strong(if (is_correct) "Dobrze!" else "Nie tym razem."), type = if (is_correct) "ok" else "danger"),
-        if (!is_correct) {
-          paste0(" Poprawna odpowiedź: ", correct_label)
-        }
-      ),
-
-      # Wyjasnienie
-      div(style = "background: var(--upwr-surface-sunken); border-radius: 6px; padding: 12px 16px;
-                   margin: 10px 0; font-size: 14px; color: var(--upwr-reference);",
-        explanation
-      ),
+        if (!is_correct) tagList(" Poprawna odpowiedź: ", b_(correct_label)),
+        p(explanation)
+        ),
 
       # Przycisk dalej
       if (quiz_state$current_idx < quiz_state$total) {
-        actionButton("ch8_next", "Następne pytanie →",
-                     class = "lc-btn-primary", width = "100%",
-                     style = "margin-top: 10px;")
+        lc_action("ch8_next", "Następne pytanie", variant = "solid")
       } else {
-        actionButton("ch8_finish", "Zobacz wynik",
-                     class = "lc-btn-ok lc-btn-lg", width = "100%",
-                     style = "margin-top: 10px;")
+        lc_action("ch8_finish", "Zobacz wynik", variant = "solid")
       }
     )
   })
@@ -293,43 +260,20 @@ ch8_server <- function(input, output, session) {
     correct <- quiz_state$correct
     pct <- round(correct / total * 100)
 
-    result_color <- if (pct >= 70) unname(upwr_cat["szalwia"])
-                    else if (pct >= 50) unname(upwr_cat["bursztyn"])
-                    else unname(upwr_cat["terakota"])
+    result_type <- if (pct >= 70) "ok" else if (pct >= 50) "warning" else "danger"
 
     result_text <- if (pct >= 90) "Ćwiczenie zakończone celująco!"
                    else if (pct >= 70) "Dobry wynik!"
                    else if (pct >= 50) "Nieźle, ale warto powtórzyć."
                    else "Powtórz materiał z wcześniejszych rozdziałów."
 
-    div(style = "text-align: center; padding: 30px;",
-      # Procent
-      div(style = paste0(
-        "font-size: 64px; font-weight: bold; color: ", result_color, ";"
-      ), paste0(pct, "%")),
-
-      # Szczegoly
-      div(style = "font-size: 18px; color: var(--upwr-reference); margin: 10px 0;",
-        paste0("Poprawne odpowiedzi: ", correct, " / ", total)
+    tagList(
+      lc_readouts(
+        lc_readout("Wynik", paste0(pct, "%"), color = upwr_accent),
+        lc_readout("Poprawne odpowiedzi", paste0(correct, " / ", total), color = upwr_secondary)
       ),
-
-      # Pasek wyniku
-      div(style = "max-width: 300px; margin: 15px auto; background: var(--upwr-rule);
-                   border-radius: 10px; height: 16px; overflow: hidden;",
-        div(style = paste0(
-          "background: ", result_color, "; height: 100%; width: ", pct, "%;
-           border-radius: 10px; transition: width 0.5s;"
-        ))
-      ),
-
-      # Tekst oceny
-      div(style = paste0("font-size: 16px; font-weight: bold; color: ", result_color, ";
-                          margin: 10px 0 20px 0;"),
-        result_text
-      ),
-
-      # Przyciski
-      div(style = "display: flex; gap: 10px; justify-content: center;",
+      lc_status(lc_verdict(tags$strong(result_text), type = result_type)),
+      lc_toolbar(
         lc_action("ch8_start", "Spróbuj ponownie", variant = "solid"),
         lc_action("ch8_back_to_ch7", "Wróć do ściągi", variant = "outline")
       )

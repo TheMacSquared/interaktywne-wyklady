@@ -116,9 +116,8 @@ ch1_ui <- list(
       label = "Ryc. 1.2",
       title = "Histogram (dane) vs krzywa gęstości (model)",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          selectInput("ch1_emp_dist", "Rozkład źródłowy:",
+      lc_toolbar(
+        selectInput("ch1_emp_dist", "Rozkład źródłowy",
             choices = c(
               "Wzrost studentów (normalny)" = "normal",
               "Czas dojazdu (skośny)"       = "skewed",
@@ -126,16 +125,12 @@ ch1_ui <- list(
             ),
             selected = "normal"
           ),
-          lc_slider("ch1_emp_n", "Wielkość próby", 20, 5000, 200, 20),
-          lc_action("ch1_emp_resample", "Losuj nową próbę", icon = "shuffle", variant = "solid"),
-          hr(),
-          checkboxInput("ch1_show_hist", "Histogram (dane empiryczne)", value = TRUE),
-          checkboxInput("ch1_show_density", "Krzywa gęstości (model teoretyczny)", value = FALSE)
-        ),
-        column(8,
-          zoom_plot_ui("ch1_emp_vs_theo", height = "380px")
-        )
-      )
+        lc_slider("ch1_emp_n", "Wielkość próby", 20, 5000, 200, 20),
+        lc_action("ch1_emp_resample", "Losuj nową próbę", icon = "shuffle", variant = "solid"),
+        checkboxInput("ch1_show_hist", "Histogram (dane empiryczne)", value = TRUE),
+        checkboxInput("ch1_show_density", "Krzywa gęstości (model teoretyczny)", value = FALSE)
+      ),
+      lc_plot("ch1_emp_vs_theo", max_height = "380px")
     ),
 
     lc_p("Wzrost losujemy z rozkładu normalnego o średniej 170 cm
@@ -176,21 +171,17 @@ ch1_ui <- list(
       label = "Ryc. 1.3",
       title = "Porównanie: teoria vs obserwacja",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_segmented("ch1_scenario", "Scenariusz", choices = c(
+      lc_toolbar(
+        lc_segmented("ch1_scenario", "Scenariusz", choices = c(
               "Uczciwa kostka"   = "fair",
               "Obciążona kostka" = "loaded",
               "Moneta"           = "coin"
             ), selected = "fair"),
-          lc_slider("ch1_n_obs", "Liczba obserwacji", 10, 5000, 100, 10),
-          lc_action("ch1_resample", "Losuj ponownie", icon = "shuffle", variant = "solid")
-        ),
-        column(8,
-          zoom_plot_ui("ch1_freq_vs_prob", height = "350px"),
-          uiOutput("ch1_freq_vs_prob_text")
-        )
-      )
+        lc_slider("ch1_n_obs", "Liczba obserwacji", 10, 5000, 100, 10),
+        lc_action("ch1_resample", "Losuj ponownie", icon = "shuffle", variant = "solid")
+      ),
+      lc_plot("ch1_freq_vs_prob", max_height = "350px"),
+      uiOutput("ch1_freq_vs_prob_text")
     ),
 
     lc_p("Przy 100 rzutach uczciwą kostką największa różnica przekracza 0.05
@@ -231,18 +222,14 @@ ch1_ui <- list(
       label = "Ryc. 1.4",
       title = "Zbuduj własny rozkład",
       full_width = TRUE,
-      fluidRow(
-        column(6,
-          lc_slider("ch1_p1", "P(Wynik A)", 0, 1, 0.25, 0.01),
-          lc_slider("ch1_p2", "P(Wynik B)", 0, 1, 0.25, 0.01),
-          lc_slider("ch1_p3", "P(Wynik C)", 0, 1, 0.25, 0.01),
-          lc_slider("ch1_p4", "P(Wynik D)", 0, 1, 0.25, 0.01),
-          uiOutput("ch1_sum_check")
-        ),
-        column(6,
-          zoom_plot_ui("ch1_custom_dist", height = "300px")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch1_p1", "P(Wynik A)", 0, 1, 0.25, 0.01),
+        lc_slider("ch1_p2", "P(Wynik B)", 0, 1, 0.25, 0.01),
+        lc_slider("ch1_p3", "P(Wynik C)", 0, 1, 0.25, 0.01),
+        lc_slider("ch1_p4", "P(Wynik D)", 0, 1, 0.25, 0.01),
+        lc_readouts(uiOutput("ch1_sum_check"))
+      ),
+      lc_plot("ch1_custom_dist", max_height = "300px")
     ),
 
     lc_p("Ustawienie startowe, cztery razy 0.25, to rozkład, w którym każdy
@@ -520,9 +507,9 @@ ch1_server <- function(input, output, session) {
   output$ch1_sum_check <- renderUI({
     s <- input$ch1_p1 + input$ch1_p2 + input$ch1_p3 + input$ch1_p4
     if (abs(s - 1) < 0.005) {
-      lc_stat_box("∑", sprintf("%.2f", s), " ✔", color = unname(upwr_cat["szalwia"]))
+      lc_readout("∑", paste0(sprintf("%.2f", s), " ✔"), color = unname(upwr_cat["szalwia"]))
     } else {
-      lc_stat_box("∑", sprintf("%.2f", s), " ≠ 1 ✘", color = unname(upwr_cat["terakota"]))
+      lc_readout("∑", paste0(sprintf("%.2f", s), " ≠ 1 ✘"), color = unname(upwr_cat["terakota"]))
     }
   })
 

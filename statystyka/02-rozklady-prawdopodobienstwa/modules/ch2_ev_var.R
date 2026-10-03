@@ -63,34 +63,24 @@ ch2_ev_var_ui <- list(
       label = "Ryc. 2.1",
       title = "Gra w loterie",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          radioButtons("ch2ev_lottery", "Wybierz loterię:",
-            choices = c(
-              "A: 50% → 10 zł, 50% → 0 zł"     = "A",
-              "B: 100% → 4 zł (pewna)"              = "B",
-              "C: 10% → 100 zł, 90% → 0 zł"    = "C",
-              "D: 60% → 8 zł, 40% → -5 zł"    = "D"
-            ),
-            selected = "A"
+      lc_toolbar(
+        radioButtons("ch2ev_lottery", "Loteria",
+          choices = c(
+            "A: 50% → 10 zł, 50% → 0 zł"     = "A",
+            "B: 100% → 4 zł (pewna)"              = "B",
+            "C: 10% → 100 zł, 90% → 0 zł"    = "C",
+            "D: 60% → 8 zł, 40% → -5 zł"    = "D"
           ),
-          hr(),
-          lc_stack(gap = "md",
-            lc_action("ch2ev_play_1", "Graj 1×", variant = "solid"),
-            lc_action("ch2ev_play_10", "Graj 10×", variant = "solid"),
-            lc_action("ch2ev_play_100", "Graj 100×", variant = "solid"),
-            lc_action("ch2ev_play_1000", "Graj 1000×", variant = "solid"),
-            hr(),
-            lc_action("ch2ev_reset_lottery", icon = "reset", variant = "ghost", aria_label = "Reset")
-          ),
-          br(),
-          uiOutput("ch2ev_play_count")
+          selected = "A"
         ),
-        column(8,
-          zoom_plot_ui("ch2ev_convergence_plot", height = "300px"),
-          uiOutput("ch2ev_lottery_stats")
-        )
-      )
+        lc_action("ch2ev_play_1", "Graj 1×", variant = "solid"),
+        lc_action("ch2ev_play_10", "Graj 10×", variant = "solid"),
+        lc_action("ch2ev_play_100", "Graj 100×", variant = "solid"),
+        lc_action("ch2ev_play_1000", "Graj 1000×", variant = "solid"),
+        lc_action("ch2ev_reset_lottery", icon = "reset", variant = "ghost", aria_label = "Reset"),
+        lc_readouts(uiOutput("ch2ev_play_count"), uiOutput("ch2ev_lottery_stats"))
+      ),
+      lc_plot("ch2ev_convergence_plot", max_height = "300px")
     ),
 
     lc_p("Po kilku grach średnia skacze. W loterii C pierwsza gra daje średnią
@@ -123,26 +113,18 @@ ch2_ev_var_ui <- list(
       label = "Ryc. 2.2",
       title = "Punkt równowagi rozkładu",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          h5("Prawdopodobieństwa:"),
-          lc_slider("ch2ev_bal_p1", "P(X = 1)", 0, 1, 0.25, 0.01),
-          lc_slider("ch2ev_bal_p2", "P(X = 3)", 0, 1, 0.25, 0.01),
-          lc_slider("ch2ev_bal_p3", "P(X = 5)", 0, 1, 0.25, 0.01),
-          lc_slider("ch2ev_bal_p4", "P(X = 9)", 0, 1, 0.25, 0.01),
-          uiOutput("ch2ev_bal_sum"),
-          hr(),
-          div(class = "preset-buttons",
-            lc_action("ch2ev_bal_sym", "Symetryczny", variant = "outline"),
-            lc_action("ch2ev_bal_skew", "Skośny", variant = "solid"),
-            lc_action("ch2ev_bal_bimod", "Dwumodalny", variant = "solid")
-          )
-        ),
-        column(8,
-          zoom_plot_ui("ch2ev_balance_plot", height = "350px"),
-          uiOutput("ch2ev_balance_text")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch2ev_bal_p1", "P(X = 1)", 0, 1, 0.25, 0.01),
+        lc_slider("ch2ev_bal_p2", "P(X = 3)", 0, 1, 0.25, 0.01),
+        lc_slider("ch2ev_bal_p3", "P(X = 5)", 0, 1, 0.25, 0.01),
+        lc_slider("ch2ev_bal_p4", "P(X = 9)", 0, 1, 0.25, 0.01),
+        lc_action("ch2ev_bal_sym", "Symetryczny", variant = "outline"),
+        lc_action("ch2ev_bal_skew", "Skośny", variant = "outline"),
+        lc_action("ch2ev_bal_bimod", "Dwumodalny", variant = "outline"),
+        lc_readouts(uiOutput("ch2ev_bal_sum"))
+      ),
+      lc_plot("ch2ev_balance_plot", max_height = "350px"),
+      uiOutput("ch2ev_balance_text")
     ),
 
     lc_p("Przy równych prawdopodobieństwach E(X) = 4.5. To zwykła średnia
@@ -195,17 +177,12 @@ ch2_ev_var_ui <- list(
       label = "Ryc. 2.3",
       title = "Trzy loterie, jedno E(X), różne ryzyko",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_slider("ch2ev_var_n", "Ile razy zagrać?", 10, 2000, 200, 10),
-          lc_action("ch2ev_var_sim", "Symuluj", variant = "solid"),
-          br(), br(),
-          uiOutput("ch2ev_var_summary")
-        ),
-        column(8,
-          zoom_plot_ui("ch2ev_var_plot", height = "400px")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch2ev_var_n", "Ile razy zagrać?", 10, 2000, 200, 10),
+        lc_action("ch2ev_var_sim", "Symuluj", variant = "solid")
+      ),
+      lc_plot("ch2ev_var_plot", max_height = "400px"),
+      uiOutput("ch2ev_var_summary")
     ),
 
     lc_p("Trzy histogramy mają ten sam środek, a zupełnie różny kształt.
@@ -242,22 +219,18 @@ ch2_ev_var_ui <- list(
       z prawej — z modelu, czyli z rozkładu prawdopodobieństwa."),
 
     figure_panel(label = "Porównanie", title = "Dane a model", width_mode = "compact",
-      lc_table_region(
-        tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-          tags$thead(
-            tags$tr(
-              tags$th("Statystyka opisowa (dane)"),
-              tags$th("Rachunek prawdopodobieństwa (model)")
-            )
-          ),
-          tags$tbody(
-            tags$tr(tags$td("Średnia z próby x̄"), tags$td("Wartość oczekiwana E(X)")),
-            tags$tr(tags$td("Wariancja z próby s²"), tags$td("Wariancja Var(X)")),
-            tags$tr(tags$td("Odchylenie standardowe s"), tags$td("Odchylenie standardowe SD(X)")),
-            tags$tr(tags$td("Obliczane z danych"), tags$td("Obliczane z modelu (rozkładu)"))
-          )
+      lc_table(
+        data.frame(
+          data = c("Średnia z próby x̄", "Wariancja z próby s²", "Odchylenie standardowe s", "Obliczane z danych"),
+          model = c("Wartość oczekiwana E(X)", "Wariancja Var(X)", "Odchylenie standardowe SD(X)", "Obliczane z modelu (rozkładu)")
         ),
-        label = "Porównanie statystyki opisowej i modelu")
+        cols = list(
+          lc_col("data", "Statystyka opisowa (dane)", "text"),
+          lc_col("model", "Rachunek prawdopodobieństwa (model)", "text")
+        ),
+        narrow = "cards", prose = TRUE,
+        label = "Porównanie statystyki opisowej i modelu"
+      )
     ),
 
     lc_p("Obie kolumny łączy prawo wielkich liczb, które widzieliśmy przy
@@ -311,7 +284,7 @@ ch2_ev_var_server <- function(input, output, session) {
 
   output$ch2ev_play_count <- renderUI({
     n <- length(lottery_results())
-    lc_stat_box("Gier", n, color = unname(upwr_cat["niebo"]))
+    lc_readout("Gier", n, color = unname(upwr_cat["niebo"]))
   })
 
   zoom_plot_server("ch2ev_convergence_plot", reactive({
@@ -355,13 +328,10 @@ ch2_ev_var_server <- function(input, output, session) {
     obs_mean <- round(mean(results), 2)
     diff <- abs(obs_mean - lot$ev)
 
-    lc_center(
-      lc_stat_box("Śr. dotychczasowa", obs_mean, " zł",
-                  color = unname(upwr_cat["niebo"])),
-      lc_stat_box("E(X)", lot$ev, " zł",
-                  color = unname(upwr_cat["terakota"])),
-      lc_stat_box("Różnica", round(diff, 2), " zł",
-                  color = if (diff < 0.5) unname(upwr_cat["szalwia"]) else unname(upwr_cat["bursztyn"]))
+    tagList(
+      lc_readout("Śr. dotychczasowa", paste0(obs_mean, " zł"), color = unname(upwr_cat["niebo"])),
+      lc_readout("E(X)", paste0(lot$ev, " zł"), color = unname(upwr_cat["terakota"])),
+      lc_readout("Różnica", paste0(round(diff, 2), " zł"), color = if (diff < 0.5) unname(upwr_cat["szalwia"]) else unname(upwr_cat["bursztyn"]))
     )
   })
 
@@ -388,9 +358,9 @@ ch2_ev_var_server <- function(input, output, session) {
   output$ch2ev_bal_sum <- renderUI({
     s <- input$ch2ev_bal_p1 + input$ch2ev_bal_p2 + input$ch2ev_bal_p3 + input$ch2ev_bal_p4
     if (abs(s - 1) < 0.005) {
-      lc_stat_box("∑P", sprintf("%.2f", s), " ✔", color = unname(upwr_cat["szalwia"]))
+      lc_readout("∑P", paste0(sprintf("%.2f", s), " ✔"), color = unname(upwr_cat["szalwia"]))
     } else {
-      lc_stat_box("∑P", sprintf("%.2f", s), " ≠ 1", color = unname(upwr_cat["terakota"]))
+      lc_readout("∑P", paste0(sprintf("%.2f", s), " ≠ 1"), color = unname(upwr_cat["terakota"]))
     }
   })
 
@@ -485,28 +455,18 @@ ch2_ev_var_server <- function(input, output, session) {
   output$ch2ev_var_summary <- renderUI({
     d <- ch2ev_var_data()
 
-    div(
-      h5("Statystyki:"),
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm", style = "font-size: 13px;",
-        tags$thead(tags$tr(tags$th("Loteria"), tags$th("SD"), tags$th("Śr."))),
-        tags$tbody(
-          tags$tr(
-            tags$td("A: Pewna"),
-            tags$td(round(sd(d$a), 1)),
-            tags$td(round(mean(d$a), 1))
-          ),
-          tags$tr(
-            tags$td("B: 0/100"),
-            tags$td(round(sd(d$b), 1)),
-            tags$td(round(mean(d$b), 1))
-          ),
-          tags$tr(
-            tags$td("C: Losowa"),
-            tags$td(round(sd(d$c), 1)),
-            tags$td(round(mean(d$c), 1))
-          )
-        )
-      )
+    lc_table(
+      data.frame(
+        lottery = c("A: pewna", "B: 0/100", "C: losowa"),
+        sd = c(sd(d$a), sd(d$b), sd(d$c)),
+        mean = c(mean(d$a), mean(d$b), mean(d$c))
+      ),
+      cols = list(
+        lc_col("lottery", "Loteria", "row"),
+        lc_col("sd", "SD", digits = 1),
+        lc_col("mean", "Średnia", digits = 1)
+      ),
+      fit = TRUE, label = "Rozrzut wygranych w trzech loteriach"
     )
   })
 

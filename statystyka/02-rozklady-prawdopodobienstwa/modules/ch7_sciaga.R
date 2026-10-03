@@ -129,42 +129,38 @@ ch7_ui <- list(
       label = "Ryc. 7.1",
       title = "Który rozkład wybrać?",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_segmented("ch7_tree_choice", "Wybierz typ zmiennej", choices = c(
-              "Zmienna dyskretna" = "discrete",
-              "Zmienna ciągła"   = "continuous"
-            ), selected = "discrete"),
-          conditionalPanel(
-            condition = "input.ch7_tree_choice == 'discrete'",
-            radioButtons("ch7_disc_type", "Jaki mechanizm?",
-              choices = c(
-                "Każdy wynik jednakowo prawdop." = "d_uniform",
-                "Stała liczba prób, sukces/porażka" = "d_binomial",
-                "Zliczanie zdarzeń w czasie/przestrzeni" = "d_poisson",
-                "Ile prób do pierwszego sukcesu" = "d_geometric"
-              )
-            )
-          ),
-          conditionalPanel(
-            condition = "input.ch7_tree_choice == 'continuous'",
-            radioButtons("ch7_cont_type", "Jaki kształt/mechanizm?",
-              choices = c(
-                "Symetryczny dzwon" = "c_normal",
-                "Czas oczekiwania (prawoskośny)" = "c_exponential",
-                "Każda wartość w przedziale jednakowo" = "c_uniform",
-                "Ciężkie ogony (wnioskowanie)" = "c_t_student",
-                "Suma kwadratów (testy χ²)" = "c_chi_sq",
-                "Dane prawoskośne, dodatnie" = "c_lognormal"
-              )
+      lc_toolbar(
+        lc_segmented("ch7_tree_choice", "Typ zmiennej", choices = c(
+            "Zmienna dyskretna" = "discrete",
+            "Zmienna ciągła"   = "continuous"
+          ), selected = "discrete"),
+        conditionalPanel(
+          condition = "input.ch7_tree_choice == 'discrete'",
+          radioButtons("ch7_disc_type", "Jaki mechanizm?",
+            choices = c(
+              "Każdy wynik jednakowo prawdop." = "d_uniform",
+              "Stała liczba prób, sukces/porażka" = "d_binomial",
+              "Zliczanie zdarzeń w czasie/przestrzeni" = "d_poisson",
+              "Ile prób do pierwszego sukcesu" = "d_geometric"
             )
           )
         ),
-        column(8,
-          uiOutput("ch7_tree_info"),
-          zoom_plot_ui("ch7_tree_plot", height = "250px")
+        conditionalPanel(
+          condition = "input.ch7_tree_choice == 'continuous'",
+          radioButtons("ch7_cont_type", "Jaki kształt/mechanizm?",
+            choices = c(
+              "Symetryczny dzwon" = "c_normal",
+              "Czas oczekiwania (prawoskośny)" = "c_exponential",
+              "Każda wartość w przedziale jednakowo" = "c_uniform",
+              "Ciężkie ogony (wnioskowanie)" = "c_t_student",
+              "Suma kwadratów (testy χ²)" = "c_chi_sq",
+              "Dane prawoskośne, dodatnie" = "c_lognormal"
+            )
+          )
         )
-      )
+      ),
+      lc_plot("ch7_tree_plot", max_height = "250px"),
+      uiOutput("ch7_tree_info")
     ),
 
     lc_chapter_next(
@@ -248,7 +244,7 @@ ch7_server <- function(input, output, session) {
     )
 
     div(class = "dist-card",
-      h4(info$name, style = "margin-top: 0;"),
+      h4(info$name),
       p(tags$strong("Opis: "), info$desc),
       p(tags$strong("Przykład: "), info$example)
     )
