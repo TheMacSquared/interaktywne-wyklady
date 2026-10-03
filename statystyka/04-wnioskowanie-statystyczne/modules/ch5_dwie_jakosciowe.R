@@ -569,7 +569,7 @@ ch5_server <- function(input, output, session) {
                  alpha = STEP_ROLES$data$alpha, colour = STEP_EDGE$colour,
                  linewidth = STEP_EDGE$linewidth) +
         geom_text(aes(label = label), position = position_dodge(width = 0.9),
-                  vjust = -0.3, size = 4, family = "mono",
+                  vjust = -0.3, size = 4, family = lc_mono_family,
                   colour = STEP_ROLES$known$colour) +
         scale_fill_manual(values = ch5_cat_colours(ncol(tab))) +
         labs(x = par$lab1, y = if (step == 1) "Liczebność" else "Procent") +

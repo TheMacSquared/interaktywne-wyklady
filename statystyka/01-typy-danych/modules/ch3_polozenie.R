@@ -572,7 +572,7 @@ ch3_server <- function(input, output, session) {
         geom_text(data = stats,
                   aes(x = bin_mid, y = 0.45,
                       label = ifelse(count > 0, paste0("n=", count), "")),
-                  size = 4, fontface = "bold", family = "mono", colour = STEP_ROLES$new$colour) +
+                  size = 4, fontface = "bold", family = lc_mono_family, colour = STEP_ROLES$new$colour) +
         labs(x = x_label, y = "") + strip_theme +
         step_frame(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.6))
 
@@ -583,7 +583,7 @@ ch3_server <- function(input, output, session) {
       ggplot(stats, aes(x = bin_mid, y = count)) +
         step_result(geom_col, width = w * 0.95, linewidth = 0.9) +
         geom_text(aes(label = count), vjust = -0.5, size = 4, fontface = "bold",
-                  family = "mono", colour = STEP_ROLES$known$colour) +
+                  family = lc_mono_family, colour = STEP_ROLES$known$colour) +
         labs(x = x_label, y = "Liczba obserwacji") +
         step_frame(xlim = c(x_lo, x_hi))
 

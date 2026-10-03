@@ -148,6 +148,23 @@ Migracja dawnych fragmentów powinna iść wprost:
 | Wyśrodkowany blok statusu | `lc_center()` |
 | Świadomy odstęp końcowy | `lc_spacer()` |
 
+## Kroje
+
+Dwa kroje z rodziny IBM Plex (licencja OFL), te same na stronie i na wykresach:
+
+- IBM Plex Sans (`--upwr-sans`): cały tekst; ma grekę, indeksy dolne i znaki
+  łączące, więc x̄, p̂, μ₁, σ², β₀ piszemy wprost w Unicode, także w etykietach
+  wykresów (bez plotmath).
+- IBM Plex Mono (`--upwr-mono`): liczby w odczytach, trackerze i tabelach,
+  etykiety kickerów, kod. Nie ma greki ani indeksów dolnych, więc symbole
+  zostają w Plex Sans.
+
+Strona ładuje kroje z Google Fonts (`lecture_page()` i `shared_styles.css`).
+Wykresy rysuje ragg z plików w `R/fonts/`, rejestrowanych w
+`lc_apply_ggplot_defaults()`; cyfry w etykietach wykresu:
+`geom_text(family = lc_mono_family)`. `--upwr-serif` to alias `--upwr-sans`;
+nie dodajemy innych krojów.
+
 ## Kolory i Wykresy
 
 Źródłem prawdy dla kolorów jest `R/palette.R`.
@@ -257,8 +274,7 @@ Zasady:
 5. Żaden wykres nie ma tytułu ani podtytułu (`labs(title / subtitle)`,
    `ggtitle()`, tytuły `plot_annotation()`). Opis idzie do tytułu panelu,
    a wyniki liczbowe do `lc_readout()` albo `lc_caption()`.
-   Wykresy rysuje ragg krojem IBM Plex Sans z `R/fonts/` (ten sam co strona);
-   x̄, p̂, grekę i indeksy dolne (μ₁, σ, β₀) piszemy wprost w Unicode.
+   Symbole (x̄, p̂, μ₁, σ, β₀) w etykietach piszemy wprost w Unicode (zob. „Kroje”).
 6. Suwak bez podziałki i dymka; wartość w etykiecie, min i max pod torem.
 7. Feedback pod wykresem to jedno zdanie `lc_caption()`. `lc_feedback()`
    zostaje dla treści w toku tekstu.

@@ -5,8 +5,8 @@
 # Wymaga: R/palette.R (stałe upwr_*)
 # Używa: ggplot2
 #
-# Domyślne fonty zostawione systemowe — docelowo warto podpiąć Fraunces
-# (display) + Inter (sans) + JetBrains Mono przez sysfonts/showtext albo ragg.
+# Krój: base_family ustawia lc_apply_ggplot_defaults() w R/shared.R (IBM Plex
+# Sans z R/fonts/, rysowany przez ragg); cyfry w etykietach: lc_mono_family.
 #
 # ==============================================================================
 

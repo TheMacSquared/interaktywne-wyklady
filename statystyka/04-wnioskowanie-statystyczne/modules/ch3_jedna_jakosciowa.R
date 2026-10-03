@@ -498,7 +498,7 @@ ch3_server <- function(input, output, session) {
       step_result(geom_col, data = df[2, ], width = 0.6,
                   fill = STEP_ROLES$group$colour) +
       geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold",
-                family = "mono", colour = STEP_ROLES$known$colour) +
+                family = lc_mono_family, colour = STEP_ROLES$known$colour) +
       step_symbol_label(1.5, max(k, n - k) * 0.7, phat_label, role = "new",
                         hjust = 0.5, size = 5) +
       labs(x = NULL, y = "Liczba") +

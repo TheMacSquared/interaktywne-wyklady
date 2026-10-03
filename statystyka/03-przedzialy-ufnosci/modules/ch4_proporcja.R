@@ -364,7 +364,7 @@ ch4_server <- function(input, output, session) {
     p_left <- ggplot(bar_df, aes(x = val, y = count)) +
       step_result(geom_col, width = 0.6, fill = ch4_yes_no_fill[as.character(bar_df$val)]) +
       geom_text(aes(label = count), vjust = -0.4, fontface = "bold",
-                family = "mono", size = 5, colour = STEP_ROLES$known$colour) +
+                family = lc_mono_family, size = 5, colour = STEP_ROLES$known$colour) +
       labs(x = NULL, y = "Liczebność") +
       step_frame(xlim = c(0.4, 2.6), ylim = c(0, max(bar_df$count) * 1.15)) +
       theme(panel.grid.major.x = element_blank(),
@@ -499,7 +499,7 @@ ch4_server <- function(input, output, session) {
       step_result(geom_col, width = 0.65,
                   fill = ch4_yes_no_fill[as.character(bar_df$val)]) +
       geom_text(aes(label = count), vjust = -0.4, fontface = "bold",
-                family = "mono", size = 4.5, colour = STEP_ROLES$known$colour) +
+                family = lc_mono_family, size = 4.5, colour = STEP_ROLES$known$colour) +
       facet_wrap(~grp, nrow = 1) +
       labs(x = NULL, y = "Liczebność") +
       step_frame(xlim = c(0.4, 2.6), ylim = c(0, max(bar_df$count) * 1.2)) +

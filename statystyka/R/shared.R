@@ -9,25 +9,33 @@
 # upwr_ord*), theme_upwr(). Sourcowanie odbywa się w app.R po ustaleniu
 # project_root — patrz typy-danych/app.R.
 
+# Krój cyfr w etykietach wykresów (geom_text(family = lc_mono_family)).
+# lc_apply_ggplot_defaults() przestawia go na IBM Plex Mono, gdy krój jest dostępny.
+lc_mono_family <- "mono"
+
 #' Ustaw globalny motyw i defaulty geom-ów dla całej apki.
 #' Wywołać raz w app.R po sourcowaniu palette.R + theme_upwr.R.
 lc_apply_ggplot_defaults <- function() {
-  # IBM Plex Sans z R/fonts/ (OFL) rejestrowany w systemfonts i rysowany przez
-  # ragg. Krój ma grekę, indeksy dolne i znaki łączące; glify spoza niego ragg
-  # bierze z kroju systemowego (showtext tego nie potrafi).
+  # IBM Plex Sans i IBM Plex Mono z R/fonts/ (OFL), te same co na stronie,
+  # rejestrowane w systemfonts i rysowane przez ragg. Plex Sans ma grekę,
+  # indeksy dolne i znaki łączące; Plex Mono tylko cyfry, łacinę i μ.
+  # Glify spoza kroju ragg bierze z kroju systemowego (showtext tego nie potrafi).
   base_family <- ""
   font_dir <- file.path(project_root, "R", "fonts")
   if (requireNamespace("ragg", quietly = TRUE) &&
       requireNamespace("systemfonts", quietly = TRUE) &&
       file.exists(file.path(font_dir, "IBMPlexSans-Regular.ttf"))) {
-    if (!"IBM Plex Sans" %in% systemfonts::registry_fonts()$family) {
-      ttf <- function(style) file.path(font_dir, paste0("IBMPlexSans-", style, ".ttf"))
-      systemfonts::register_font("IBM Plex Sans",
+    registered <- systemfonts::registry_fonts()$family
+    for (fam in c("IBM Plex Sans", "IBM Plex Mono")) {
+      if (fam %in% registered) next
+      ttf <- function(style) file.path(font_dir, paste0(gsub(" ", "", fam), "-", style, ".ttf"))
+      systemfonts::register_font(fam,
         plain = ttf("Regular"), bold = ttf("Bold"),
         italic = ttf("Italic"), bolditalic = ttf("BoldItalic"))
     }
     options(shiny.useragg = TRUE)
     base_family <- "IBM Plex Sans"
+    lc_mono_family <<- "IBM Plex Mono"
   }
   ggplot2::theme_set(theme_upwr(base_family = base_family))
   ggplot2::update_geom_defaults("point",   list(colour = upwr_single))
