@@ -48,13 +48,15 @@ ch4_ui <- lecture_chapter(
 
     lc_h2("ch4-sec-02", "Test permutacyjny — krok po kroku"),
 
-    figure_panel(label = "Ryc. 4.1", title = "Permutacyjny test różnicy średnich",
-      fluidRow(
-        column(4,
+    figure_panel(label = "Ryc. 4.1",
+      lc_step_widget("ch4_perm",
+        title = "Permutacyjny test różnicy średnich",
+        steps = c("Dane", "Permutacja", "Rozkład", "p-wartość"),
+        toolbar = lc_toolbar(
           lc_slider("ch4_n_per_group", "n na grupę", 10, 50, 20, 5),
           lc_slider("ch4_true_diff", "Prawdziwa różnica średnich (efekt)", 0, 20, 0, 1),
-          lc_slider("ch4_n_perms", "Liczba permutacji (B)", 200, 5000, 1000, 200),
-          selectInput("ch4_dist", "Rozkład:",
+          lc_step_from(3, lc_slider("ch4_n_perms", "Liczba permutacji (B)", 200, 5000, 1000, 200)),
+          selectInput("ch4_dist", "Rozkład",
             choices = c(
               "Prawoskosśny (Gamma)" = "skewed",
               "Normalny"               = "normal",
@@ -62,24 +64,12 @@ ch4_ui <- lecture_chapter(
             ),
             selected = "skewed"
           ),
-          hr(),
-          div(class = "step-buttons",
-            lc_action("ch4_perm_step1", "1. Dane", variant = "outline"),
-            lc_action("ch4_perm_step2", "2. Permutacja", variant = "outline")
-          ),
-          div(class = "step-buttons",
-            lc_action("ch4_perm_step3", "3. Rozkład", variant = "outline"),
-            lc_action("ch4_perm_step4", "4. p-wartość", variant = "solid")
-          ),
-          br(),
-          lc_action("ch4_perm_new", "↺ Nowe dane", variant = "outline"),
-          br(), br(),
-          uiOutput("ch4_perm_explanation")
+          lc_step_from(2, lc_action("ch4_perm_shuffle", "Nowa permutacja", icon = "shuffle",
+                                    variant = "outline")),
+          lc_action("ch4_perm_new", "Nowe dane", icon = "shuffle", variant = "outline")
         ),
-        column(8,
-          zoom_plot_ui("ch4_perm_plot", height = "440px"),
-          uiOutput("ch4_perm_result")
-        )
+        plot_id = "ch4_perm_plot",
+        extra = uiOutput("ch4_perm_result")
       )
     ),
 
@@ -138,181 +128,146 @@ ch4_ui <- lecture_chapter(
 
 ch4_server <- function(input, output, session) {
 
-  ch4_step      <- reactiveVal(0)
-  ch4_data      <- reactiveVal(NULL)
-  ch4_one_perm  <- reactiveVal(NULL)
-  ch4_perm_res  <- reactiveVal(NULL)
-
-  # Reset
-  observeEvent(input$ch4_perm_new, {
-    ch4_step(0); ch4_data(NULL); ch4_one_perm(NULL); ch4_perm_res(NULL)
-  })
-  observeEvent(list(input$ch4_n_per_group, input$ch4_true_diff, input$ch4_dist), {
-    ch4_step(0); ch4_data(NULL); ch4_one_perm(NULL); ch4_perm_res(NULL)
-  }, ignoreInit = TRUE)
+  # Krok widgetu (1..4) żyje w przeglądarce. Losowania są reaktywne: dane od
+  # parametrów i „Nowe dane”, permutacja od danych i „Nowa permutacja”,
+  # rozkład permutacyjny od danych i B. Przyciski losowania przesuwają krok.
+  ch4_s    <- lc_step_server("ch4_perm", input)
+  ch4_step <- ch4_s$step
 
   # Krok 1: dane
-  observeEvent(input$ch4_perm_step1, {
-    df <- generate_two_groups_data(
+  ch4_data <- reactive({
+    input$ch4_perm_new
+    generate_two_groups_data(
       n_per_group = input$ch4_n_per_group,
       effect      = input$ch4_true_diff,
       dist        = input$ch4_dist
     )
-    ch4_data(df)
-    ch4_step(1)
   })
+
+  observeEvent(input$ch4_perm_new, ch4_s$set(1), ignoreInit = TRUE)
 
   # Krok 2: jedna permutacja
-  observeEvent(input$ch4_perm_step2, {
-    req(ch4_data())
-    df          <- ch4_data()
-    df_perm     <- df
-    df_perm$group <- sample(df$group)
-    ch4_one_perm(df_perm)
-    ch4_step(2)
+  ch4_one_perm <- reactive({
+    input$ch4_perm_shuffle
+    df_perm       <- ch4_data()
+    df_perm$group <- sample(df_perm$group)
+    df_perm
   })
 
-  # Krok 3: pokazuje, ze uruchomimy duzo permutacji (uruchamia je)
-  observeEvent(input$ch4_perm_step3, {
-    req(ch4_data())
+  observeEvent(input$ch4_perm_shuffle, ch4_s$set(2), ignoreInit = TRUE)
+
+  # Krok 3: rozklad permutacyjny (B permutacji)
+  ch4_perm_res <- reactive({
+    df <- ch4_data()
+    B  <- input$ch4_n_perms
     withProgress(message = "Wykonuję permutacje...", value = 0, {
-      result <- run_permutation_test_twosample(ch4_data(), B = input$ch4_n_perms)
+      result <- run_permutation_test_twosample(df, B = B)
       setProgress(1)
     })
-    ch4_perm_res(result)
-    ch4_step(3)
+    result
   })
 
-  # Krok 4: p-wartosc (dane juz sa, tylko zmiana widoku)
-  observeEvent(input$ch4_perm_step4, {
-    req(ch4_perm_res())
-    ch4_step(4)
+  # Stała rama kroków 1–2 (te same wartości, przetasowane etykiety).
+  ch4_data_ylim <- reactive({
+    v <- ch4_data()$value
+    c(min(v) - diff(range(v)) * 0.05, max(v) + diff(range(v)) * 0.15)
   })
+
+  # Stała rama kroków 3–4: zakres i liczebności rozkładu permutacyjnego.
+  ch4_perm_frame <- reactive({
+    result <- ch4_perm_res()
+    lims   <- range(result$perm_diffs, result$observed_diff, -abs(result$observed_diff))
+    pad    <- diff(lims) * 0.06 + 1e-9
+    breaks <- seq(lims[1] - pad, lims[2] + pad, length.out = 41)
+    counts <- hist(result$perm_diffs, breaks = breaks, plot = FALSE)$counts
+    list(breaks = breaks, xlim = range(breaks), ylim = c(0, max(counts) * 1.15))
+  })
+
+  # Dwie grupy: A = dane (niebo), B = grupa (bursztyn); kontury pudełek czarne.
+  ch4_group_plot <- function(df, label, x_lab) {
+    ylim <- ch4_data_ylim()
+    ggplot(df, aes(x = group, y = value)) +
+      geom_boxplot(aes(fill = group), alpha = STEP_ROLES$data$alpha,
+                   colour = STEP_EDGE$colour, linewidth = STEP_EDGE$linewidth,
+                   outlier.shape = NA) +
+      geom_jitter(aes(colour = group), width = 0.15, size = 2,
+                  alpha = STEP_ROLES$data$alpha) +
+      scale_fill_manual(values = c("A" = STEP_ROLES$data$colour,
+                                   "B" = STEP_ROLES$group$colour)) +
+      scale_colour_manual(values = c("A" = STEP_ROLES$data$colour,
+                                     "B" = STEP_ROLES$group$colour)) +
+      step_label(1.5, ylim[2], label, role = "new", hjust = 0.5, vjust = 1, size = 4.6) +
+      labs(x = x_lab, y = "Wartość") +
+      step_frame(xlim = c(0.4, 2.6), ylim = ylim)
+  }
 
   zoom_plot_server("ch4_perm_plot", reactive({
     step <- ch4_step()
     df   <- ch4_data()
 
-    if (step == 0 || is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij '1. Dane'",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-      return()
-    }
-
     if (step == 1) {
-      # Boxplots + dane punktowe
       obs_diff <- mean(df$value[df$group == "B"]) - mean(df$value[df$group == "A"])
-      ggplot(df, aes(x = group, y = value, fill = group)) +
-        geom_boxplot(alpha = 0.6, outlier.shape = NA) +
-        geom_jitter(width = 0.15, size = 2, alpha = 0.7, aes(color = group)) +
-        scale_fill_manual(values  = c("A" = sim_bootstrap,  "B" = sim_warning),
-                          guide   = "none") +
-        scale_color_manual(values = c("A" = sim_bootstrap,  "B" = sim_warning),
-                           guide  = "none") +
-        annotate("text", x = 1.5, y = max(df$value) * 1.05,
-                 label = paste0("Δ obs = ", round(obs_diff, 2)),
-                 size = 5, fontface = "bold", color = sim_observed) +
-        labs(
-             
-             x = "Grupa", y = "Wartość") +
-        theme_upwr()
+      ch4_group_plot(df, paste0("Δ obs = ", round(obs_diff, 2)), "Grupa")
     } else if (step == 2) {
-      # Jedna permutacja
-      perm_df  <- ch4_one_perm()
+      perm_df   <- ch4_one_perm()
       perm_diff <- mean(perm_df$value[perm_df$group == "B"]) -
                    mean(perm_df$value[perm_df$group == "A"])
-      ggplot(perm_df, aes(x = group, y = value, fill = group)) +
-        geom_boxplot(alpha = 0.6, outlier.shape = NA) +
-        geom_jitter(width = 0.15, size = 2, alpha = 0.7, aes(color = group)) +
-        scale_fill_manual(values  = c("A" = sim_bootstrap, "B" = sim_warning),
-                          guide   = "none") +
-        scale_color_manual(values = c("A" = sim_bootstrap, "B" = sim_warning),
-                           guide  = "none") +
-        annotate("text", x = 1.5, y = max(perm_df$value) * 1.05,
-                 label = paste0("Δ perm = ", round(perm_diff, 2)),
-                 size = 5, fontface = "bold", color = sim_success) +
-        labs(
-             
-             x = "Grupa (przetasowana)", y = "Wartość") +
-        theme_upwr()
+      ch4_group_plot(perm_df, paste0("Δ perm = ", round(perm_diff, 2)),
+                     "Grupa (przetasowana)")
     } else {
-      # Krok 3 i 4: rozklad permutacyjny
-      result <- ch4_perm_res()
-      df_perm_dist <- data.frame(diff = result$perm_diffs)
-      obs_diff     <- result$observed_diff
-      extreme      <- abs(df_perm_dist$diff) >= abs(obs_diff)
+      # Krok 3 i 4: rozklad permutacyjny; ogony równie ekstremalne jako druga grupa.
+      result   <- ch4_perm_res()
+      fr       <- ch4_perm_frame()
+      obs_diff <- result$observed_diff
+      df_perm_dist <- data.frame(diff = result$perm_diffs,
+                                 extreme = abs(result$perm_diffs) >= abs(obs_diff))
+      line_role <- step_role(step, 3)
 
       p <- ggplot(df_perm_dist, aes(x = diff, fill = extreme)) +
-        geom_histogram(bins = 40, color = "white", alpha = 0.85) +
-        scale_fill_manual(values = c("FALSE" = sim_null_dist, "TRUE" = sim_observed),
-                          guide  = "none") +
-        geom_vline(xintercept = obs_diff,
-                   color = sim_observed, linewidth = 1.6) +
-        geom_vline(xintercept = -abs(obs_diff),
-                   color = sim_observed, linewidth = 1.2, linetype = "dashed")
+        geom_histogram(breaks = fr$breaks, alpha = STEP_ROLES$data$alpha,
+                       colour = STEP_EDGE$colour, linewidth = STEP_EDGE$linewidth) +
+        scale_fill_manual(values = c("FALSE" = STEP_ROLES$data$colour,
+                                     "TRUE"  = STEP_ROLES$group$colour)) +
+        step_line(line_role, xintercept = obs_diff, helper = FALSE) +
+        step_line(line_role, xintercept = -abs(obs_diff)) +
+        labs(x = "Permutacyjna różnica średnich (Δ*)", y = "Liczba permutacji")
 
       if (step == 4) {
-        p_val <- result$p_value
-        p <- p + annotate("text", x = obs_diff, y = Inf,
-                           label = paste0("obs Δ = ", round(obs_diff, 2)),
-                           vjust = -0.3, hjust = -0.1,
-                           color = sim_observed, size = 4.5, fontface = "bold") +
-          labs(
-            
-            
-            x        = "Permutacyjna różnica średnich (Δ*)",
-            y        = "Liczba permutacji"
-          )
-      } else {
-        p <- p + labs(
-          
-          
-          x        = "Permutacyjna różnica średnich (Δ*)",
-          y        = "Liczba permutacji"
-        )
+        p <- p + step_label(obs_diff, fr$ylim[2],
+                            paste0(" obs Δ = ", round(obs_diff, 2)),
+                            role = "new", vjust = 1)
       }
-      p + theme_upwr()
+      p + step_frame(xlim = fr$xlim, ylim = fr$ylim)
     }
   }))
 
-  output$ch4_perm_explanation <- renderUI({
+  output$ch4_perm_text <- renderUI({
     step <- ch4_step()
-    txt <- switch(as.character(step),
-      "0" = "Ustaw parametry i kliknij kolejne kroki.",
+    switch(as.character(step),
       "1" = "Dane pobrane. Obserwujemy różnicę średnich między grupami.",
       "2" = "Jedna permutacja: etykiety grup przetasowane losowo pod H₀.",
       "3" = paste0("Rozkład z B = ", input$ch4_n_perms,
                    " permutacji gotowy. To empiryczny rozkład pod H₀."),
-      "4" = {
-        res <- ch4_perm_res()
-        pv  <- format_pval_pl(res$p_value)
-        pv$decision
-      },
+      "4" = format_pval_pl(ch4_perm_res()$p_value)$decision,
       ""
     )
-    lc_feedback(type = "info", txt)
   })
 
   output$ch4_perm_result <- renderUI({
-    req(ch4_step() >= 3, ch4_perm_res())
+    req(ch4_step() >= 3)
     result <- ch4_perm_res()
     # Ttest do porownania
     tt <- tryCatch(classical_ttest_twosample(ch4_data()), error = function(e) NULL)
 
-    out <- list(
-      lc_stat_box("Δ obs", round(result$observed_diff, 3), color = sim_observed),
-      lc_stat_box("p (perm)", round(result$p_value, 4),
-                  color = format_pval_pl(result$p_value)$color)
+    lc_status(
+      lc_readouts(
+        lc_readout("Δ obs", lc_fmt(result$observed_diff, 3), color = STEP_ROLES$known$colour),
+        lc_readout("p (perm)", lc_fmt(result$p_value, 4),
+                   color = format_pval_pl(result$p_value)$color),
+        if (!is.null(tt)) lc_readout("p (t-test)", lc_fmt(tt$p, 4), color = sim_classical)
+      ),
+      p(simulation_precision_note(result))
     )
-    if (!is.null(tt)) {
-      out <- c(out, list(lc_stat_box("p (t-test)", round(tt$p, 4),
-                                     color = sim_classical)))
-    }
-    tagList(do.call(lc_stat_grid, out),
-      lc_feedback(type = "info", simulation_precision_note(result)))
   })
 
   # --- Widget 2: Test permutacyjny korelacji ---

@@ -44,10 +44,12 @@ ch3_ui <- lecture_chapter(
     # ========================================================================
     lc_h2("ch3-sec-02", "Bootstrap CI krok po kroku"),
 
-    figure_panel(label = "Ryc. 3.1", title = "Budowanie CI krok po kroku",
-      fluidRow(
-        column(4,
-          selectInput("ch3_scenario", "Scenariusz:",
+    figure_panel(label = "Ryc. 3.1",
+      lc_step_widget("ch3_boot",
+        title = "Budowanie CI krok po kroku",
+        steps = c("Dane", "Resample", "Rozkład", "CI"),
+        toolbar = lc_toolbar(
+          selectInput("ch3_scenario", "Scenariusz",
             choices = c(
               "Czas reakcji (skośny, n=18)"         = "reaction",
               "Zawartość białka (normalny, n=20)" = "protein",
@@ -55,26 +57,14 @@ ch3_ui <- lecture_chapter(
             ),
             selected = "reaction"
           ),
-          lc_slider("ch3_B", "B (próby bootstrapowe)", 100, 3000, 1000, 100),
-          lc_slider("ch3_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01),
-          hr(),
-          div(class = "step-buttons",
-            lc_action("ch3_step1", "1. Dane", variant = "outline"),
-            lc_action("ch3_step2", "2. Resample", variant = "outline")
-          ),
-          div(class = "step-buttons",
-            lc_action("ch3_step3", "3. Rozkład", variant = "outline"),
-            lc_action("ch3_step4", "4. CI", variant = "solid")
-          ),
-          br(),
-          lc_action("ch3_new_data", "↺ Nowe dane", variant = "outline"),
-          br(), br(),
-          uiOutput("ch3_step_explanation")
+          lc_step_from(3, lc_slider("ch3_B", "B (próby bootstrapowe)", 100, 3000, 1000, 100)),
+          lc_step_from(4, lc_slider("ch3_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01)),
+          lc_step_from(2, lc_action("ch3_resample", "Nowy resample", icon = "shuffle",
+                                    variant = "outline")),
+          lc_action("ch3_new_data", "Nowe dane", icon = "shuffle", variant = "outline")
         ),
-        column(8,
-          zoom_plot_ui("ch3_step_plot", height = "400px"),
-          uiOutput("ch3_step_result")
-        )
+        plot_id = "ch3_step_plot",
+        extra = uiOutput("ch3_step_result")
       )
     ),
 
@@ -143,10 +133,11 @@ ch3_ui <- lecture_chapter(
 
 ch3_server <- function(input, output, session) {
 
-  ch3_step     <- reactiveVal(0)
-  ch3_data     <- reactiveVal(NULL)
-  ch3_boot_res <- reactiveVal(NULL)
-  ch3_one_rs   <- reactiveVal(NULL)   # jeden resample do kroku 2
+  # Krok widgetu (1..4) żyje w przeglądarce. Losowania są reaktywne: dane od
+  # scenariusza i przycisku „Nowe dane”, resample od danych i „Nowy resample”,
+  # rozkład bootstrapowy od danych i B. Przyciski losowania przesuwają krok.
+  ch3_s    <- lc_step_server("ch3_boot", input)
+  ch3_step <- ch3_s$step
 
   # Parametry scenariuszy
   ch3_scenario_params <- reactive({
@@ -160,140 +151,158 @@ ch3_server <- function(input, output, session) {
     )
   })
 
-  # Reset przy zmianie scenariusza
-  observeEvent(input$ch3_scenario, {
-    ch3_step(0); ch3_data(NULL); ch3_boot_res(NULL); ch3_one_rs(NULL)
-  })
-
-  observeEvent(input$ch3_new_data, {
-    ch3_step(0); ch3_data(NULL); ch3_boot_res(NULL); ch3_one_rs(NULL)
-  })
-
   # Krok 1: dane
-  observeEvent(input$ch3_step1, {
+  ch3_data <- reactive({
+    input$ch3_new_data
     params <- ch3_scenario_params()
-    x      <- generate_sample_data(params$n, dist = params$dist)
-    ch3_data(x)
-    ch3_step(1)
+    generate_sample_data(params$n, dist = params$dist)
   })
 
-  # Krok 2: jeden resample
-  observeEvent(input$ch3_step2, {
-    req(ch3_data())
-    x  <- ch3_data()
-    rs <- sample(x, size = length(x), replace = TRUE)
-    ch3_one_rs(rs)
-    ch3_step(2)
+  observeEvent(input$ch3_new_data, ch3_s$set(1), ignoreInit = TRUE)
+
+  # Krok 2: jeden resample (indeksy, żeby liczyć krotność także przy remisach)
+  ch3_one_rs <- reactive({
+    input$ch3_resample
+    x   <- ch3_data()
+    idx <- sample(seq_along(x), size = length(x), replace = TRUE)
+    list(values = x[idx], freq = tabulate(idx, nbins = length(x)))
   })
+
+  observeEvent(input$ch3_resample, ch3_s$set(2), ignoreInit = TRUE)
 
   # Krok 3: pelny rozklad (B resampli)
-  observeEvent(input$ch3_step3, {
-    req(ch3_data())
-    params <- ch3_scenario_params()
-    result <- run_bootstrap(ch3_data(), params$stat, B = input$ch3_B)
-    ch3_boot_res(result)
-    ch3_step(3)
+  ch3_boot_res <- reactive({
+    run_bootstrap(ch3_data(), ch3_scenario_params()$stat, B = input$ch3_B)
   })
 
-  # Krok 4: CI
-  observeEvent(input$ch3_step4, {
-    req(ch3_boot_res())
-    ch3_step(4)
+  ch3_ci <- reactive({
+    bootstrap_ci_percentile(ch3_boot_res(), conf_level = input$ch3_conf)
+  })
+
+  # Stała rama kroków 3–4: zakres i liczebności rozkładu bootstrapowego.
+  ch3_boot_frame <- reactive({
+    result <- ch3_boot_res()
+    lims   <- range(result$boot_stats, result$observed)
+    pad    <- diff(lims) * 0.06 + 1e-9
+    breaks <- seq(lims[1] - pad, lims[2] + pad, length.out = 41)
+    counts <- hist(result$boot_stats, breaks = breaks, plot = FALSE)$counts
+    list(breaks = breaks, xlim = range(breaks), ylim = c(0, max(counts) * 1.15))
   })
 
   zoom_plot_server("ch3_step_plot", reactive({
     step   <- ch3_step()
     x      <- ch3_data()
     params <- ch3_scenario_params()
+    obs    <- params$stat(x)
 
-    if (step == 0 || is.null(x)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij '1. Dane'",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else if (step == 1) {
-      df <- data.frame(val = x, idx = seq_along(x))
-      ggplot(df, aes(x = val)) +
-        geom_histogram(bins = 15, fill = sim_bootstrap, color = "white", alpha = 0.8) +
-        geom_vline(xintercept = params$stat(x), color = sim_observed,
-                   linewidth = 1.4, linetype = "dashed") +
-        annotate("text", x = params$stat(x), y = Inf,
-                 label = paste0("obs = ", round(params$stat(x), 2)),
-                 vjust = -0.3, hjust = -0.1, color = sim_observed, size = 4) +
-        labs(
-             x = params$stat_lbl, y = "Liczebność") +
-        theme_upwr()
+    # Rama kroków 1–2: zakres danych.
+    pad    <- diff(range(x)) * 0.06 + 1e-9
+    x_lims <- range(x) + c(-pad, pad)
+
+    if (step == 1) {
+      breaks <- seq(x_lims[1], x_lims[2], length.out = 16)
+      y_max  <- max(hist(x, breaks = breaks, plot = FALSE)$counts) * 1.15
+      ggplot(data.frame(val = x), aes(x = val)) +
+        step_result(geom_histogram, breaks = breaks) +
+        step_line("new", xintercept = obs) +
+        step_label(obs, y_max, paste0(" obs = ", round(obs, 2)),
+                   role = "new", vjust = 1) +
+        labs(x = params$stat_lbl, y = "Liczebność") +
+        step_frame(xlim = x_lims, ylim = c(0, y_max))
     } else if (step == 2) {
       rs <- ch3_one_rs()
-      plot_bootstrap_step(x, rs, sim_bootstrap, sim_warning, sim_secondary)
-    } else if (step >= 3) {
+      freq_role <- ifelse(rs$freq == 0, "background",
+                          ifelse(rs$freq == 1, "data", "group"))
+      df_orig <- data.frame(x = x, y = 0,
+        colour = vapply(freq_role, function(r) STEP_ROLES[[r]]$colour, ""),
+        alpha  = vapply(freq_role, function(r) STEP_ROLES[[r]]$alpha, 0))
+      df_boot <- data.frame(x = rs$values, y = 1)
+      ggplot() +
+        geom_jitter(data = df_orig, aes(x = x, y = y),
+                    colour = df_orig$colour, alpha = df_orig$alpha,
+                    height = 0.12, size = 3) +
+        step_layer(geom_jitter, "new", data = df_boot, mapping = aes(x = x, y = y),
+                   height = 0.12, size = 2.5) +
+        step_line("known", xintercept = mean(x)) +
+        step_layer(geom_segment, "new",
+                   data = data.frame(xm = mean(rs$values)),
+                   mapping = aes(x = xm, xend = xm, y = 0.65, yend = 1.35),
+                   linetype = "22") +
+        scale_y_continuous(breaks = 0:1,
+                           labels = c("Oryginalna próba", "Bootstrap 1")) +
+        labs(x = "Wartość", y = NULL) +
+        step_frame(xlim = x_lims, ylim = c(-0.5, 1.5))
+    } else {
       result <- ch3_boot_res()
-      ci     <- bootstrap_ci_percentile(result, conf_level = input$ch3_conf)
-      if (step == 3) {
-        # Tylko rozklad bez CI
-        df <- data.frame(stat = result$boot_stats)
-        ggplot(df, aes(x = stat)) +
-          geom_histogram(bins = 40, fill = sim_bootstrap, color = "white", alpha = 0.8) +
-          geom_vline(xintercept = result$observed, color = sim_observed,
-                     linewidth = 1.4) +
-          labs(
-               x = params$stat_lbl, y = "Liczba prób") +
-          theme_upwr()
-      } else {
-        # Krok 4: z CI
-        plot_bootstrap_distribution(result, ci,
-                                     stat_label = params$stat_lbl,
-                                     sim_bootstrap = sim_bootstrap,
-                                     sim_observed = sim_observed,
-                                     sim_success = sim_success,
-                                     conf_level = input$ch3_conf)
+      fr     <- ch3_boot_frame()
+      p <- ggplot(data.frame(stat = result$boot_stats), aes(x = stat)) +
+        step_result(geom_histogram, breaks = fr$breaks) +
+        step_line("known", xintercept = result$observed) +
+        labs(x = params$stat_lbl, y = "Liczba prób")
+      if (step == 4) {
+        ci <- ch3_ci()
+        p <- p +
+          step_line("new", xintercept = ci$lower) +
+          step_line("new", xintercept = ci$upper) +
+          step_label(result$observed, fr$ylim[2],
+                     paste0(" obs = ", round(result$observed, 2)),
+                     role = "known", vjust = 1)
       }
+      p + step_frame(xlim = fr$xlim, ylim = fr$ylim)
     }
   }))
 
-  output$ch3_step_explanation <- renderUI({
+  output$ch3_boot_text <- renderUI({
     step   <- ch3_step()
     params <- ch3_scenario_params()
-    txt <- switch(as.character(step),
-      "0" = "Kliknij kolejne kroki, aby przejść przez algorytm bootstrap CI.",
+    switch(as.character(step),
       "1" = paste0("Próba pobrana. Obserwowana statystyka: ",
                    round(params$stat(ch3_data()), 3), ". Teraz wylosujemy z niej próbę bootstrapową."),
-      "2" = "Jedna próba bootstrapowa (ze zwracaniem). Jej statystyka będzie się nieco różnić od oryginalnej.",
+      "2" = paste0("Jedna próba bootstrapowa (ze zwracaniem). Jej statystyka będzie się nieco różnić od oryginalnej. ",
+                   "Średnia oryginału: ", round(mean(ch3_data()), 2),
+                   ", średnia próby bootstrapowej: ", round(mean(ch3_one_rs()$values), 2), "."),
       "3" = paste0("Rozkład bootstrapowy z B = ", input$ch3_B,
                    " prób. Odch. stand. = SE = ", round(ch3_boot_res()$se, 4), "."),
       "4" = {
-        ci <- bootstrap_ci_percentile(ch3_boot_res(), conf_level = input$ch3_conf)
+        ci <- ch3_ci()
         paste0(round(input$ch3_conf * 100), "% bootstrap CI: [",
                round(ci$lower, 3), ", ", round(ci$upper, 3), "].")
       },
       ""
     )
-    lc_feedback(type = "info", txt)
   })
 
+  # Odczyty pod wykresem: w kroku 2 legenda krotności, w kroku 4 wynik CI.
   output$ch3_step_result <- renderUI({
-    req(ch3_step() == 4, ch3_boot_res())
-    ci <- bootstrap_ci_percentile(ch3_boot_res(), conf_level = input$ch3_conf)
-    lc_stat_grid(
-      lc_stat_box("Dół", round(ci$lower, 3), color = sim_success),
-      lc_stat_box("Obs", round(ch3_boot_res()$observed, 3), color = sim_observed),
-      lc_stat_box("Góra", round(ci$upper, 3), color = sim_success),
-      lc_stat_box("SE", round(ch3_boot_res()$se, 4), color = sim_bootstrap),
-      columns = 4
-    )
+    step <- ch3_step()
+    if (step == 2) {
+      freq <- ch3_one_rs()$freq
+      bg   <- grDevices::adjustcolor(STEP_ROLES$background$colour,
+                                     alpha.f = STEP_ROLES$background$alpha)
+      lc_status(lc_readouts(
+        lc_readout("Pominięty (0x)", sum(freq == 0), color = bg, swatch = TRUE),
+        lc_readout("Raz (1x)", sum(freq == 1),
+                   color = STEP_ROLES$data$colour, swatch = TRUE),
+        lc_readout("Wielokrotnie (2x+)", sum(freq >= 2),
+                   color = STEP_ROLES$group$colour, swatch = TRUE)
+      ))
+    } else if (step == 4) {
+      ci  <- ch3_ci()
+      res <- ch3_boot_res()
+      lc_status(lc_readouts(
+        lc_readout("Dół", lc_fmt(ci$lower, 3), color = STEP_ROLES$new$colour),
+        lc_readout("Obs", lc_fmt(res$observed, 3), color = STEP_ROLES$known$colour),
+        lc_readout("Góra", lc_fmt(ci$upper, 3), color = STEP_ROLES$new$colour),
+        lc_readout("SE", lc_fmt(res$se, 4), color = STEP_ROLES$data$colour)
+      ))
+    }
   })
 
   # --- Widget 2: Stabilnosc wg B ---
   zoom_plot_server("ch3_B_stability", reactive({
     input$ch3_B_run
     isolate({
-      if (is.null(ch3_data())) {
-        # Generuj dane jesli nie ma
-        x <- generate_sample_data(20, dist = "skewed")
-      } else {
-        x <- ch3_data()
-      }
+      x <- ch3_data()
       stat_fn <- if (input$ch3_stab_stat == "mean") mean else median
       B_max   <- input$ch3_B_max
       B_seq   <- unique(c(seq(50, min(500, B_max), by = 50),

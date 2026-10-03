@@ -23,7 +23,7 @@ testthat::test_that("losowe p-wartości zachowują granice i rozdzielczość", {
   testthat::expect_gt(null$mc_interval[2], 0)
 })
 
-testthat::test_that("widget permutacji pokazuje precyzję i resetuje wynik po zmianie danych", {
+testthat::test_that("widget permutacji pokazuje precyzję i przelicza wynik po zmianie danych", {
   testthat::skip_if_not_installed("callr")
   result <- callr::r(function(path) {
     setwd(path)
@@ -33,12 +33,22 @@ testthat::test_that("widget permutacji pokazuje precyzję i resetuje wynik po zm
       session$setInputs(ch4_n_per_group = 50, ch4_true_diff = 20, ch4_dist = "normal",
                         ch4_n_perms = 200)
       set.seed(1)
-      session$setInputs(ch4_perm_step1 = 1)
-      session$setInputs(ch4_perm_step3 = 1)
-      stopifnot(ch4_perm_res()$p_value > 0)
+      session$setInputs(ch4_perm_step = 3)
+      stopifnot(ch4_step() == 3)
+      before <- ch4_perm_res()
+      stopifnot(before$p_value > 0)
       stopifnot(grepl("b + 1", output$ch4_perm_result$html, fixed = TRUE))
+      # Zmiana parametrów danych nie zmienia kroku, ale wynik liczy się od nowa
+      # z nowych danych (bez starego rozkładu permutacyjnego).
       session$setInputs(ch4_true_diff = 0)
-      stopifnot(is.null(ch4_perm_res()), ch4_step() == 0)
+      after <- ch4_perm_res()
+      d <- ch4_data()
+      stopifnot(ch4_step() == 3, !identical(after, before),
+                isTRUE(all.equal(after$observed_diff,
+                  mean(d$value[d$group == "B"]) - mean(d$value[d$group == "A"]))))
+      # Nowe dane: nowa próba i nowy rozkład.
+      session$setInputs(ch4_perm_new = 1)
+      stopifnot(!identical(ch4_data(), d), !identical(ch4_perm_res(), after))
       session$setInputs(ch4_cor_n = 30, ch4_cor_true_r = .5, ch4_cor_B = 200,
                         ch4_cor_run = 1)
       stopifnot(grepl("b + 1", output$ch4_cor_result$html, fixed = TRUE))
