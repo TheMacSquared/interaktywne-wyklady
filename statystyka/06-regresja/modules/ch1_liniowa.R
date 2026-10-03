@@ -96,17 +96,13 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.0", title = "Co robią β₀, β₁ i szum?",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_slider("ch1_beta_b0", "β₀ (punkt startu)", -10, 20, 5, 1),
-          lc_slider("ch1_beta_b1", "β₁ (nachylenie)", -3, 3, 1, 0.25),
-          lc_slider("ch1_beta_sigma", "Szum σ", 0, 8, 2, 0.5)
-        ),
-        column(8,
-          zoom_plot_ui("ch1_beta_plot", height = "320px"),
-          uiOutput("ch1_beta_info")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch1_beta_b0", "β₀ (punkt startu)", -10, 20, 5, 1),
+        lc_slider("ch1_beta_b1", "β₁ (nachylenie)", -3, 3, 1, 0.25),
+        lc_slider("ch1_beta_sigma", "Szum σ", 0, 8, 2, 0.5)
+      ),
+      lc_plot("ch1_beta_plot", max_height = "320px"),
+      uiOutput("ch1_beta_info")
     ),
 
     lc_p("\\(\\beta_0\\) przesuwa całą prostą w górę i w dół, nie zmieniając jej
@@ -186,21 +182,17 @@ ch1_ui <- list(
     figure_panel(
       label = "Ćwiczenie", title = "Kliknij dwa punkty, przez które przechodzi prosta",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Przeczytaj tabelę współczynników. Potem kliknij na wykresie dwa punkty, które wyznaczają prostą regresji."),
-          uiOutput("ch1_draw_table"),
-          lc_action("ch1_draw_reset", "Wyczyść punkty", variant = "outline"),
-          lc_action("ch1_draw_reveal", "Pokaż odpowiedź", variant = "solid"),
-          lc_action("ch1_draw_new", "Nowe ćwiczenie", variant = "solid"),
-          uiOutput("ch1_draw_feedback")
-        ),
-        column(8,
-          zoom_plot_ui("ch1_draw_plot", height = "360px",
+      lc_toolbar(
+        lc_action("ch1_draw_reset", "Wyczyść punkty", variant = "outline"),
+        lc_action("ch1_draw_reveal", "Pokaż odpowiedź", variant = "solid"),
+        lc_action("ch1_draw_new", "Nowe ćwiczenie", variant = "solid"),
+        lc_readouts(uiOutput("ch1_draw_stats"))
+      ),
+      zoom_plot_ui("ch1_draw_plot", height = "360px",
                      click = "ch1_draw_plot_click"),
-          uiOutput("ch1_draw_stats")
-        )
-      )
+      uiOutput("ch1_draw_table"),
+      uiOutput("ch1_draw_feedback"),
+      lc_caption("Przeczytaj tabelę współczynników. Potem kliknij na wykresie dwa punkty, które wyznaczają prostą regresji.")
     ),
 
     lc_p("Najłatwiej liczy się punkty dla okrągłych wartości \\(X\\). Jeśli Twoja
@@ -343,9 +335,8 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.2", title = "Kiedy nachylenie jest istotne?",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          selectInput("ch1_pval_scenario", "Scenariusz:",
+      lc_toolbar(
+        selectInput("ch1_pval_scenario", "Scenariusz",
             choices = c(
               "Wyraźny dodatni wpływ" = "strong_positive",
               "Brak wpływu" = "none",
@@ -354,14 +345,11 @@ ch1_ui <- list(
             ),
             selected = "strong_positive"
           ),
-          uiOutput("ch1_pval_table"),
-          uiOutput("ch1_pval_verdict")
-        ),
-        column(8,
-          zoom_plot_ui("ch1_pval_plot", height = "360px"),
-          uiOutput("ch1_pval_stats")
-        )
-      )
+        lc_readouts(uiOutput("ch1_pval_stats"))
+      ),
+      lc_plot("ch1_pval_plot", max_height = "360px"),
+      uiOutput("ch1_pval_table"),
+      uiOutput("ch1_pval_verdict")
     ),
 
     lc_p("W scenariuszu z wyraźnym dodatnim wpływem prawdziwe nachylenie wynosi
@@ -424,10 +412,8 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.4", title = "CASchools: od tabeli wyników do interpretacji",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Wybierz zmienne, obejrzyj wykres i tabelę regresji. Najpierw samodzielnie zdecyduj, czy X istotnie przewiduje Y, a potem pokaż odpowiedź."),
-          selectInput("ch1_cas_x", "Zmienna X:",
+      lc_toolbar(
+        selectInput("ch1_cas_x", "Zmienna X",
             choices = c(
               "Dochód okręgu (income)" = "income",
               "Uczniowie na nauczyciela (STR)" = "student_teacher_ratio",
@@ -439,7 +425,7 @@ ch1_ui <- list(
             ),
             selected = "income"
           ),
-          selectInput("ch1_cas_y", "Zmienna Y:",
+        selectInput("ch1_cas_y", "Zmienna Y",
             choices = c(
               "Czytanie (read)" = "read",
               "Matematyka (math)" = "math",
@@ -449,15 +435,13 @@ ch1_ui <- list(
             ),
             selected = "read"
           ),
-          lc_action("ch1_cas_reveal", "Pokaż odpowiedź", variant = "solid"),
-          uiOutput("ch1_cas_answer")
-        ),
-        column(8,
-          zoom_plot_ui("ch1_cas_plot", height = "360px"),
-          uiOutput("ch1_cas_table"),
-          uiOutput("ch1_cas_summary")
-        )
-      )
+        lc_action("ch1_cas_reveal", "Pokaż odpowiedź", variant = "solid")
+      ),
+      lc_plot("ch1_cas_plot", max_height = "360px"),
+      uiOutput("ch1_cas_table"),
+      uiOutput("ch1_cas_summary"),
+      uiOutput("ch1_cas_answer"),
+      lc_caption("Wybierz zmienne, obejrzyj wykres i tabelę regresji. Najpierw samodzielnie zdecyduj, czy X istotnie przewiduje Y, a potem pokaż odpowiedź.")
     ),
 
     lc_p("Dla domyślnej pary, wyniku z czytania i dochodu okręgu,
@@ -510,24 +494,20 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.5", title = "Użyj równania regresji do przewidywania",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Wybierz gotowy model, ustaw wartość X i spróbuj policzyć przewidywane Y z równania regresji."),
-          selectInput("ch1_pred_case", "Model:",
+      lc_toolbar(
+        selectInput("ch1_pred_case", "Model",
             choices = .ch1_pred_choices,
             selected = "read_students"
           ),
-          uiOutput("ch1_pred_x_input"),
-          uiOutput("ch1_pred_question"),
-          lc_action("ch1_pred_reveal", "Pokaż odpowiedź", variant = "solid"),
-          uiOutput("ch1_pred_answer")
-        ),
-        column(8,
-          zoom_plot_ui("ch1_pred_plot", height = "360px"),
-          uiOutput("ch1_pred_table"),
-          uiOutput("ch1_pred_stats")
-        )
-      )
+        lc_action("ch1_pred_reveal", "Pokaż odpowiedź", variant = "solid"),
+        lc_readouts(uiOutput("ch1_pred_stats"))
+      ),
+      lc_plot("ch1_pred_plot", max_height = "360px"),
+      uiOutput("ch1_pred_table"),
+      uiOutput("ch1_pred_x_input"),
+      uiOutput("ch1_pred_question"),
+      uiOutput("ch1_pred_answer"),
+      lc_caption("Wybierz gotowy model, ustaw wartość X i spróbuj policzyć przewidywane Y z równania regresji.")
     ),
 
     lc_p("W domyślnym modelu wynik z czytania zależy od liczby uczniów
@@ -807,12 +787,9 @@ ch1_server <- function(input, output, session) {
                                      y_bar, b1, x_bar, b0)))
       ),
       if (step >= 5) lc_status(
-                       tags$div(style = "font-weight: 700; margin-bottom: 6px;", "Końcowy model:"),
-                       withMathJax(tags$div(
-          style = "font-size: 1.35rem; font-weight: 700; text-align: center;",
-          sprintf("$$\\hat{Y} = %.2f + %.3fX$$", b0, b1)
-        ))
-                     )
+        p(tags$strong("Końcowy model:")),
+        withMathJax(sprintf("$$\\hat{Y} = %.2f + %.3fX$$", b0, b1))
+      )
     )
   })
 
@@ -866,16 +843,17 @@ ch1_server <- function(input, output, session) {
 
   output$ch1_draw_table <- renderUI({
     model <- ch1_draw_model()
-    tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-      tags$thead(
-        tags$tr(
-          tags$th("Zmienna"),
-          tags$th("Estymata")
-        )
+    lc_table(
+      data.frame(
+        c1 = c("wyraz wolny", "X"),
+        c2 = I(list(
+          sprintf("%.2f", model$beta0),
+          sprintf("%.2f", model$beta1)
+        ))
       ),
-      tags$tbody(
-        tags$tr(tags$td("wyraz wolny"), tags$td(sprintf("%.2f", model$beta0))),
-        tags$tr(tags$td("X"), tags$td(sprintf("%.2f", model$beta1)))
+      cols = list(
+        lc_col("c1", "Zmienna", "row"),
+        lc_col("c2", "Estymata", "num")
       )
     )
   })
@@ -996,13 +974,10 @@ ch1_server <- function(input, output, session) {
     user_b1 <- diff(pts$y) / diff(pts$x)
     user_b0 <- pts$y[1] - user_b1 * pts$x[1]
     tagList(
-      lc_stat_grid(
-        lc_stat_box("Twoje b₀", round(user_b0, 2), color = unname(upwr_cat["terakota"])),
-        lc_stat_box("Poprawne b₀", round(model$beta0, 2), color = unname(upwr_cat["niebo"])),
-        lc_stat_box("Twoje b₁", round(user_b1, 2), color = unname(upwr_cat["terakota"])),
-        lc_stat_box("Poprawne b₁", round(model$beta1, 2), color = unname(upwr_cat["niebo"])),
-        columns = 4
-      )
+        lc_readout("Twoje b₀", round(user_b0, 2), color = unname(upwr_cat["terakota"])),
+        lc_readout("Poprawne b₀", round(model$beta0, 2), color = unname(upwr_cat["niebo"])),
+        lc_readout("Twoje b₁", round(user_b1, 2), color = unname(upwr_cat["terakota"])),
+        lc_readout("Poprawne b₁", round(model$beta1, 2), color = unname(upwr_cat["niebo"]))
     )
   })
 
@@ -1128,28 +1103,13 @@ ch1_server <- function(input, output, session) {
     coefs <- broom::tidy(model)
     coefs$term <- ifelse(coefs$term == "(Intercept)", "wyraz wolny", "X")
 
-    fmt_p <- function(p) {
-      ifelse(p < 0.001, "< 0.001", sprintf("%.3f", p))
-    }
-
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
-      tags$thead(
-        tags$tr(
-          tags$th("Zmienna"),
-          tags$th("Estymata"),
-          tags$th("t"),
-          tags$th("p")
-        )
-      ),
-      tags$tbody(
-        lapply(seq_len(nrow(coefs)), function(i) {
-          tags$tr(
-            tags$td(coefs$term[i]),
-            tags$td(sprintf("%.2f", coefs$estimate[i])),
-            tags$td(sprintf("%.2f", coefs$statistic[i])),
-            tags$td(fmt_p(coefs$p.value[i]))
-          )
-        })
+    coefs$p_txt <- lc_pval(coefs$p.value)
+    lc_table(as.data.frame(coefs),
+      cols = list(
+        lc_col("term", "Zmienna", "row"),
+        lc_col("estimate", "Estymata", digits = 2),
+        lc_col("statistic", "t", digits = 2),
+        lc_col("p_txt", "p")
       )
     )
   })
@@ -1201,13 +1161,11 @@ ch1_server <- function(input, output, session) {
     coefs <- broom::tidy(model)
     p_val <- coefs$p.value[2]
 
-    lc_stat_grid(
-      lc_stat_box("b₁", round(coefs$estimate[2], 2), color = unname(upwr_cat["szalwia"])),
-      lc_stat_box("SE(b₁)", round(coefs$std.error[2], 2), color = upwr_secondary),
-      lc_stat_box("t", round(coefs$statistic[2], 2), color = unname(upwr_cat["bursztyn"])),
-      lc_stat_box("p-wartość", if (p_val < 0.001) "< 0.001" else round(p_val, 3),
-                  color = if (p_val < 0.05) unname(upwr_cat["niebo"]) else upwr_reference),
-      columns = 4
+    tagList(
+      lc_readout("b₁", round(coefs$estimate[2], 2), color = unname(upwr_cat["szalwia"])),
+      lc_readout("SE(b₁)", round(coefs$std.error[2], 2), color = upwr_secondary),
+      lc_readout("t", round(coefs$statistic[2], 2), color = unname(upwr_cat["bursztyn"])),
+      lc_readout("p-wartość", if (p_val < 0.001) "< 0.001" else round(p_val, 3), color = if (p_val < 0.05) unname(upwr_cat["niebo"]) else upwr_reference)
     )
   })
 
@@ -1291,30 +1249,14 @@ ch1_server <- function(input, output, session) {
     coefs$term <- ifelse(coefs$term == "(Intercept)", "wyraz wolny",
                          ifelse(coefs$term == "grades01", "grades: KK-08 vs KK-06", input$ch1_cas_x))
 
-    fmt_p <- function(p) {
-      ifelse(p < 0.001, "< 0.001", sprintf("%.3f", p))
-    }
-
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
-      tags$thead(
-        tags$tr(
-          tags$th("Zmienna"),
-          tags$th("Estymata"),
-          tags$th("SE"),
-          tags$th("t"),
-          tags$th("p")
-        )
-      ),
-      tags$tbody(
-        lapply(seq_len(nrow(coefs)), function(i) {
-          tags$tr(
-            tags$td(coefs$term[i]),
-            tags$td(sprintf("%.3f", coefs$estimate[i])),
-            tags$td(sprintf("%.3f", coefs$std.error[i])),
-            tags$td(sprintf("%.2f", coefs$statistic[i])),
-            tags$td(fmt_p(coefs$p.value[i]))
-          )
-        })
+    coefs$p_txt <- lc_pval(coefs$p.value)
+    lc_table(as.data.frame(coefs),
+      cols = list(
+        lc_col("term", "Zmienna", "row"),
+        lc_col("estimate", "Estymata", digits = 3),
+        lc_col("std.error", "SE", digits = 3),
+        lc_col("statistic", "t", digits = 2),
+        lc_col("p_txt", "p")
       )
     )
   })
@@ -1378,11 +1320,10 @@ ch1_server <- function(input, output, session) {
       y1 <- b0 + b1
 
       return(tagList(
-        lc_stat_grid(
-          lc_stat_box("b₀", round(b0, 2), color = upwr_secondary),
-          lc_stat_box("b₁", round(b1, 3), color = unname(upwr_cat["szalwia"])),
-          lc_stat_box("p dla b₁", signif(coefs$p.value[2], 3), color = unname(upwr_cat["bursztyn"])),
-          columns = 3
+        lc_readouts(
+          lc_readout("b₀", round(b0, 2), color = upwr_secondary),
+          lc_readout("b₁", round(b1, 3), color = unname(upwr_cat["szalwia"])),
+          lc_readout("p dla b₁", signif(coefs$p.value[2], 3), color = unname(upwr_cat["bursztyn"]))
         ),
         lc_formula_box(
           withMathJax(helpText(sprintf(
@@ -1408,11 +1349,10 @@ ch1_server <- function(input, output, session) {
     }
 
     tagList(
-      lc_stat_grid(
-        lc_stat_box("b₀", round(coefs$estimate[1], 2), color = upwr_secondary),
-        lc_stat_box("b₁", round(coefs$estimate[2], 3), color = unname(upwr_cat["szalwia"])),
-        lc_stat_box("p dla b₁", signif(coefs$p.value[2], 3), color = unname(upwr_cat["bursztyn"])),
-        columns = 3
+      lc_readouts(
+        lc_readout("b₀", round(coefs$estimate[1], 2), color = upwr_secondary),
+        lc_readout("b₁", round(coefs$estimate[2], 3), color = unname(upwr_cat["szalwia"])),
+        lc_readout("p dla b₁", signif(coefs$p.value[2], 3), color = unname(upwr_cat["bursztyn"]))
       ),
       lc_status(
         p(tags$strong("Interpretacja: "),
@@ -1481,20 +1421,12 @@ ch1_server <- function(input, output, session) {
     coefs <- broom::tidy(model)
     coefs$term <- ifelse(coefs$term == "(Intercept)", "wyraz wolny", spec$x)
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
-      tags$thead(
-        tags$tr(
-          tags$th("Zmienna"),
-          tags$th("Estymata")
-        )
-      ),
-      tags$tbody(
-        lapply(seq_len(nrow(coefs)), function(i) {
-          tags$tr(
-            tags$td(coefs$term[i]),
-            tags$td(.ch1_fmt_coef(coefs$estimate[i]))
-          )
-        })
+    lc_table(
+      data.frame(term = coefs$term,
+                 estimate = vapply(coefs$estimate, .ch1_fmt_coef, character(1))),
+      cols = list(
+        lc_col("term", "Zmienna", "row"),
+        lc_col("estimate", "Estymata")
       )
     )
   })
@@ -1557,13 +1489,10 @@ ch1_server <- function(input, output, session) {
 
     tagList(
       lc_status(
-        tags$div(style = "font-weight: 700; margin-bottom: 6px;", "Odpowiedź:"),
-        withMathJax(tags$div(
-          style = "font-size: 1.25rem; font-weight: 700; text-align: center;",
-          sprintf("$$\\hat{Y} = %s %s %s \\cdot %s = %.2f$$",
+        p(tags$strong("Odpowiedź:")),
+        withMathJax(sprintf("$$\\hat{Y} = %s %s %s \\cdot %s = %.2f$$",
                   b0_txt, if (coefs[2] < 0) "-" else "+", b1_txt,
-                  format(x0), y_hat)
-        )),
+                  format(x0), y_hat)),
         p(sprintf("Dla %s = %s przewidywane %s wynosi %.2f.",
                   x_label, format(x0), y_label, y_hat))
       )
@@ -1578,14 +1507,11 @@ ch1_server <- function(input, output, session) {
     x0 <- input$ch1_pred_x
     y_hat <- unname(coefs[1] + coefs[2] * x0)
 
-    lc_stat_grid(
-      lc_stat_box("b₀", .ch1_fmt_coef(coefs[1]), color = upwr_secondary),
-      lc_stat_box("b₁", .ch1_fmt_coef(coefs[2]), color = unname(upwr_cat["szalwia"])),
-      lc_stat_box("X", round(x0, 2), caption = unname(.cas_labels[spec$x]),
-                  color = unname(upwr_cat["bursztyn"])),
-      lc_stat_box("Ŷ", round(y_hat, 2), caption = unname(.cas_labels[spec$y]),
-                  color = unname(upwr_cat["terakota"])),
-      columns = 4
+    tagList(
+      lc_readout("b₀", .ch1_fmt_coef(coefs[1]), color = upwr_secondary),
+      lc_readout("b₁", .ch1_fmt_coef(coefs[2]), color = unname(upwr_cat["szalwia"])),
+      lc_readout(paste("X:", unname(.cas_labels[spec$x])), round(x0, 2), color = unname(upwr_cat["bursztyn"])),
+      lc_readout(paste("Ŷ:", unname(.cas_labels[spec$y])), round(y_hat, 2), color = unname(upwr_cat["terakota"]))
     )
   })
 }

@@ -62,16 +62,12 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.1", title = "Krok po kroku",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Modele z 1–4 predyktorami i model z dodanym szumem."),
-          lc_action("ch4_stepwise", "Buduj modele krok po kroku", variant = "solid")
-        ),
-        column(8,
-          zoom_plot_ui("ch4_step_plot", height = "300px"),
-          uiOutput("ch4_step_table")
-        )
-      )
+      lc_toolbar(
+        lc_action("ch4_stepwise", "Buduj modele krok po kroku", variant = "solid")
+      ),
+      lc_plot("ch4_step_plot", max_height = "300px"),
+      uiOutput("ch4_step_table"),
+      lc_caption("Modele z 1–4 predyktorami i model z dodanym szumem.")
     ),
 
     lc_p("W pierwszych czterech krokach R² rośnie, przeciętnie od około 0.41 dla
@@ -153,18 +149,14 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.2", title = "Porównanie modeli regresji",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Generujemy dane i budujemy 4 modele z różną
-                    liczbą predyktorów."),
-          lc_slider("ch4_n", "n", 50, 300, 150, 25),
-          lc_action("ch4_compare", "Buduj i porównaj modele", variant = "solid")
-        ),
-        column(8,
-          zoom_plot_ui("ch4_metrics_plot", height = "350px"),
-          uiOutput("ch4_metrics_table")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch4_n", "n", 50, 300, 150, 25),
+        lc_action("ch4_compare", "Buduj i porównaj modele", variant = "solid")
+      ),
+      lc_plot("ch4_metrics_plot", max_height = "350px"),
+      uiOutput("ch4_metrics_table"),
+      lc_caption("Generujemy dane i budujemy 4 modele z różną
+                    liczbą predyktorów.")
     ),
 
     lc_p("Przy n = 150 wszystkie kryteria praktycznie zawsze wskazują pełny model.
@@ -209,17 +201,13 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.3", title = "Wielomian: dopasowanie a uogólnianie",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_slider("ch4_poly_degree", "Stopień wielomianu", 1, 15, 1, 1),
-          lc_slider("ch4_poly_n", "n (punktów)", 15, 100, 30, 5),
-          lc_action("ch4_poly_gen", "Generuj", variant = "solid")
-        ),
-        column(8,
-          zoom_plot_ui("ch4_poly_plot", height = "300px"),
-          uiOutput("ch4_poly_stats")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch4_poly_degree", "Stopień wielomianu", 1, 15, 1, 1),
+        lc_slider("ch4_poly_n", "n (punktów)", 15, 100, 30, 5),
+        lc_action("ch4_poly_gen", "Generuj", variant = "solid"),
+        lc_readouts(uiOutput("ch4_poly_stats"))
+      ),
+      lc_plot("ch4_poly_plot", max_height = "300px")
     ),
 
     lc_p("Przy 30 punktach prosta (stopień 1) nie łapie fali, a R² jest bliski
@@ -258,16 +246,13 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.4", title = "Zbiór uczący i testowy: kiedy model przestaje uogólniać",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_slider("ch4_tt_degree", "Stopień wielomianu", 1, 15, 1, 1),
-          lc_action("ch4_tt_new", "Nowy podział danych", variant = "solid")
-        ),
-        column(8,
-          zoom_plot_ui("ch4_tt_plot", height = "330px"),
-          uiOutput("ch4_tt_info")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch4_tt_degree", "Stopień wielomianu", 1, 15, 1, 1),
+        lc_action("ch4_tt_new", "Nowy podział danych", variant = "solid"),
+        lc_readouts(uiOutput("ch4_tt_info"))
+      ),
+      lc_plot("ch4_tt_plot", max_height = "330px"),
+      uiOutput("ch4_tt_note")
     ),
 
     lc_p("Błąd na zbiorze uczącym maleje z każdym stopniem: typowo od około 2.2
@@ -390,24 +375,16 @@ ch4_server <- function(input, output, session) {
     df <- ch4_step_data()
     if (is.null(df)) return(NULL)
 
-    rows <- lapply(1:nrow(df), function(i) {
-      tags$tr(
-        tags$td(df$predictors[i]),
-        tags$td(round(df$r_squared[i], 3)),
-        tags$td(round(df$adj_r_squared[i], 3)),
-        tags$td(round(df$aic[i], 1)),
-        tags$td(round(df$bic[i], 1)),
-        tags$td(round(df$rmse[i], 3))
-      )
-    })
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 13px;",
-      tags$thead(
-        tags$tr(tags$th("Predyktory"), tags$th("R²"), tags$th("R² skor."),
-                tags$th("AIC"), tags$th("BIC"), tags$th("RMSE"))
-      ),
-      tags$tbody(rows)
+    lc_table(df,
+      cols = list(
+        lc_col("predictors", "Predyktory", "row"),
+        lc_col("r_squared", "R²", digits = 3),
+        lc_col("adj_r_squared", "R² skor.", digits = 3),
+        lc_col("aic", "AIC", digits = 1),
+        lc_col("bic", "BIC", digits = 1),
+        lc_col("rmse", "RMSE", digits = 3)
+      )
     )
   })
 
@@ -475,28 +452,19 @@ ch4_server <- function(input, output, session) {
     best_bic <- which.min(df$bic)
     best_rmse <- which.min(df$rmse)
 
-    rows <- lapply(1:nrow(df), function(i) {
-      tags$tr(
-        tags$td(df$model[i]),
-        tags$td(round(df$r_squared[i], 3)),
-        tags$td(style = if (i == best_adj_r2) "font-weight:bold; color:var(--upwr-sage);" else "",
-                round(df$adj_r_squared[i], 3)),
-        tags$td(style = if (i == best_aic) "font-weight:bold; color:var(--upwr-sage);" else "",
-                round(df$aic[i], 1)),
-        tags$td(style = if (i == best_bic) "font-weight:bold; color:var(--upwr-sage);" else "",
-                round(df$bic[i], 1)),
-        tags$td(style = if (i == best_rmse) "font-weight:bold; color:var(--upwr-sage);" else "",
-                round(df$rmse[i], 3))
-      )
-    })
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 13px;",
-      tags$thead(
-        tags$tr(tags$th("Model"), tags$th("R²"), tags$th("R² skor."),
-                tags$th("AIC"), tags$th("BIC"), tags$th("RMSE"))
+    best <- function(i) ifelse(seq_len(nrow(df)) == i, "is-best", NA)
+    lc_table(df,
+      cols = list(
+        lc_col("model", "Model", "row"),
+        lc_col("r_squared", "R²", digits = 3),
+        lc_col("adj_r_squared", "R² skor.", digits = 3),
+        lc_col("aic", "AIC", digits = 1),
+        lc_col("bic", "BIC", digits = 1),
+        lc_col("rmse", "RMSE", digits = 3)
       ),
-      tags$tbody(rows)
+      cell_class = list(adj_r_squared = best(best_adj_r2), aic = best(best_aic),
+                        bic = best(best_bic), rmse = best(best_rmse))
     )
   })
 
@@ -543,10 +511,10 @@ ch4_server <- function(input, output, session) {
     metrics <- compute_model_metrics(model)
 
     tagList(
-      lc_stat_box("R²", round(metrics$r_squared, 3), color = unname(upwr_cat["niebo"])),
-      lc_stat_box("R² skor.", round(metrics$adj_r_squared, 3), color = unname(upwr_cat["szalwia"])),
-      lc_stat_box("AIC", round(metrics$aic, 1), color = unname(upwr_cat["bursztyn"])),
-      lc_stat_box("BIC", round(metrics$bic, 1), color = upwr_secondary)
+      lc_readout("R²", round(metrics$r_squared, 3), color = unname(upwr_cat["niebo"])),
+      lc_readout("R² skor.", round(metrics$adj_r_squared, 3), color = unname(upwr_cat["szalwia"])),
+      lc_readout("AIC", round(metrics$aic, 1), color = unname(upwr_cat["bursztyn"])),
+      lc_readout("BIC", round(metrics$bic, 1), color = upwr_secondary)
     )
   })
 
@@ -577,7 +545,7 @@ ch4_server <- function(input, output, session) {
       theme_upwr()
   }))
 
-  output$ch4_tt_info <- renderUI({
+  ch4_tt_state <- reactive({
     sets <- ch4_tt_data()
     train <- sets$train
     test <- sets$test
@@ -594,16 +562,29 @@ ch4_server <- function(input, output, session) {
     current <- metrics[metrics$degree == degree, ]
     best <- metrics[which.min(metrics$test_rmse), ]
 
+    list(current = current, best = best)
+  })
+
+  output$ch4_tt_info <- renderUI({
+    st <- ch4_tt_state()
+    current <- st$current
+    best <- st$best
     tagList(
-      lc_stat_box("RMSE uczący", round(current$train_rmse, 2), color = unname(upwr_cat["niebo"])),
-      lc_stat_box("RMSE testowy", round(current$test_rmse, 2), color = unname(upwr_cat["bursztyn"])),
-      lc_stat_box("Najlepszy na teście", paste0("stopień ", best$degree), caption = paste("RMSE", round(best$test_rmse, 2)), color = unname(upwr_cat["szalwia"])),
-      lc_caption(
+      lc_readout("RMSE uczący", round(current$train_rmse, 2), color = unname(upwr_cat["niebo"])),
+      lc_readout("RMSE testowy", round(current$test_rmse, 2), color = unname(upwr_cat["bursztyn"])),
+      lc_readout("Najlepszy na teście", paste0("stopień ", best$degree, " · RMSE ", round(best$test_rmse, 2)), color = unname(upwr_cat["szalwia"]))
+    )
+  })
+
+  output$ch4_tt_note <- renderUI({
+    st <- ch4_tt_state()
+    current <- st$current
+    best <- st$best
+    lc_caption(
         if (current$test_rmse > best$test_rmse * 1.25)
             "Błąd testowy wyraźnie wyższy niż przy najlepszym stopniu."
           else
             "Błąd testowy bliski najmniejszego."
       )
-    )
   })
 }

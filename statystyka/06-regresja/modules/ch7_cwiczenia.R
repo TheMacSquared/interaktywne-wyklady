@@ -178,16 +178,21 @@ ch7_server <- function(input, output, session) {
   }
 
   ch7_table <- function(df) {
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
-      tags$thead(
-        tags$tr(lapply(names(df), tags$th))
-      ),
-      tags$tbody(
-        lapply(seq_len(nrow(df)), function(i) {
-          tags$tr(lapply(df[i, ], function(x) tags$td(as.character(x))))
-        })
-      )
-    )
+    # Kolumny liczbowe: tyle miejsc po przecinku, ile mają wartości (max 4).
+    decimals <- function(x) {
+      d <- nchar(sub("^[^.]*\\.?", "", vapply(x, function(v)
+        format(v, scientific = FALSE, drop0trailing = TRUE), character(1))))
+      min(max(d, 0), 4)
+    }
+    cols <- lapply(seq_along(df), function(j) {
+      key <- names(df)[j]
+      if (j == 1) return(lc_col(key, key, "row"))
+      if (key == "p.value") return(lc_col(key, "p"))
+      if (!is.numeric(df[[j]])) return(lc_col(key, key, "text"))
+      lc_col(key, key, digits = decimals(df[[j]]))
+    })
+    if ("p.value" %in% names(df)) df$p.value <- lc_pval(df$p.value)
+    lc_table(df, cols = cols)
   }
 
   output$ch7_sol1 <- renderUI({

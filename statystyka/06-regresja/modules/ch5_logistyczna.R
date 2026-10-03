@@ -61,20 +61,16 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.0", title = "Od wyniku punktowego do prawdopodobieństwa zdania",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_slider("ch5_cas_y_cut", "Próg zaliczenia: zdał od", 630, 680, 656, 1),
-          uiOutput("ch5_cas_threshold_note")
-        ),
-        column(8,
-          tags$h4("Krok 1: wynik ciągły i próg zaliczenia"),
-          lc_plot_fullscreen("ch5_cas_continuous_plot", height = "280px"),
-          tags$h4("Krok 2: model logistyczny daje prawdopodobieństwo klasy 1"),
-          lc_plot_fullscreen("ch5_cas_logit_plot", height = "310px"),
-          uiOutput("ch5_cas_model_table"),
-          uiOutput("ch5_cas_model_metrics")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch5_cas_y_cut", "Próg zaliczenia: zdał od", 630, 680, 656, 1),
+        lc_readouts(uiOutput("ch5_cas_model_metrics"))
+      ),
+      tags$h4("Krok 1: wynik ciągły i próg zaliczenia"),
+      lc_plot("ch5_cas_continuous_plot", max_height = "280px"),
+      tags$h4("Krok 2: model logistyczny daje prawdopodobieństwo klasy 1"),
+      lc_plot("ch5_cas_logit_plot", max_height = "310px"),
+      uiOutput("ch5_cas_model_table"),
+      uiOutput("ch5_cas_threshold_note")
     ),
 
     lc_p("Domyślny próg 656 pkt leży niemal dokładnie w medianie wyników
@@ -104,15 +100,9 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.1", title = "Liniowy vs logistyczny na danych binarnych",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Stały przykład: zdanie egzaminu (0/1) a liczba godzin nauki.")
-        ),
-        column(8,
-          zoom_plot_ui("ch5_lin_log_plot", height = "300px"),
-          uiOutput("ch5_lin_log_stats")
-        )
-      )
+      lc_toolbar(lc_readouts(uiOutput("ch5_lin_log_stats"))),
+      lc_plot("ch5_lin_log_plot", max_height = "300px"),
+      lc_caption("Stały przykład: zdanie egzaminu (0/1) a liczba godzin nauki.")
     ),
 
     lc_p("Prosta przecina zero przy około 5.7 godziny nauki i przekracza
@@ -163,21 +153,16 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.2", title = "Sigmoida w akcji",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_slider("ch5_b0", "β₀ (wyraz wolny)", -10, 10, -4, 0.5),
-          lc_slider("ch5_b1", "β₁ (nachylenie)", -3, 3, 0.2, 0.05),
-          hr(),
-          div(class = "preset-buttons",
-            lc_action("ch5_preset_steep", "Stromy", variant = "outline"),
-            lc_action("ch5_preset_flat", "Płaski", variant = "outline"),
-            lc_action("ch5_preset_neg", "Odwrotny", variant = "solid")
-          )
-        ),
-        column(8,
-          zoom_plot_ui("ch5_sigmoid_plot", height = "350px")
+      lc_toolbar(
+        lc_slider("ch5_b0", "β₀ (wyraz wolny)", -10, 10, -4, 0.5),
+        lc_slider("ch5_b1", "β₁ (nachylenie)", -3, 3, 0.2, 0.05),
+        lc_group("Ustawienia",
+          lc_action("ch5_preset_steep", "Stromy", variant = "outline"),
+          lc_action("ch5_preset_flat", "Płaski", variant = "outline"),
+          lc_action("ch5_preset_neg", "Odwrotny", variant = "outline")
         )
-      )
+      ),
+      lc_plot("ch5_sigmoid_plot", max_height = "350px")
     ),
 
     lc_p("Przy ustawieniu startowym, β₀ = -4 i β₁ = 0.2, krzywa przechodzi
@@ -219,27 +204,24 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.3", title = "Predykcja zdania egzaminu",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_slider("ch5_n", "n", 50, 300, 150, 25),
-          selectInput("ch5_predictor", "Prezentowany predyktor:",
-            choices = c(
-              "Godziny nauki" = "godziny_nauki",
-              "Średnia ocen"  = "srednia_ocen"
-            ),
-            selected = "godziny_nauki"
+      lc_toolbar(
+        lc_slider("ch5_n", "n", 50, 300, 150, 25),
+        selectInput("ch5_predictor", "Prezentowany predyktor",
+          choices = c(
+            "Godziny nauki" = "godziny_nauki",
+            "Średnia ocen"  = "srednia_ocen"
           ),
-          lc_action("ch5_fit", "Dopasuj model", variant = "solid"),
-          hr(),
-          h5("Predykcja dla nowego studenta:"),
-          numericInput("ch5_pred_hours", "Godziny nauki:", value = 20, min = 0, max = 40),
-          numericInput("ch5_pred_gpa", "Średnia ocen:", value = 3.5, min = 2, max = 5, step = 0.1),
-          uiOutput("ch5_prediction")
+          selected = "godziny_nauki"
         ),
-        column(8,
-          zoom_plot_ui("ch5_logit_plot", height = "350px"),
-          uiOutput("ch5_model_summary")
-        )
+        lc_action("ch5_fit", "Dopasuj model", variant = "solid"),
+        lc_readouts(uiOutput("ch5_model_summary"))
+      ),
+      lc_plot("ch5_logit_plot", max_height = "350px"),
+      tags$h4("Predykcja dla nowego studenta"),
+      lc_toolbar(
+        numericInput("ch5_pred_hours", "Godziny nauki", value = 20, min = 0, max = 40),
+        numericInput("ch5_pred_gpa", "Średnia ocen", value = 3.5, min = 2, max = 5, step = 0.1),
+        lc_readouts(uiOutput("ch5_prediction"))
       )
     ),
 
@@ -294,8 +276,8 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.4", title = "Ilorazy szans",
       full_width = TRUE,
-      helpText("Używa modelu dopasowanego w Ryc. 5.3."),
-      uiOutput("ch5_odds_ratios")
+      uiOutput("ch5_odds_ratios"),
+      lc_caption("Używa modelu dopasowanego w Ryc. 5.3.")
     ),
 
     lc_p("Prawdziwe ilorazy szans w modelu, z którego panel losuje dane, to
@@ -332,16 +314,12 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.5", title = "Próg klasyfikacji i macierz pomyłek",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Używa modelu dopasowanego w Ryc. 5.3."),
-          lc_slider("ch5_threshold", "Próg decyzji", 0.1, 0.9, 0.5, 0.05)
-        ),
-        column(8,
-          zoom_plot_ui("ch5_threshold_plot", height = "280px"),
-          uiOutput("ch5_threshold_info")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch5_threshold", "Próg decyzji", 0.1, 0.9, 0.5, 0.05),
+        lc_readouts(uiOutput("ch5_threshold_info"))
+      ),
+      lc_plot("ch5_threshold_plot", max_height = "280px"),
+      lc_caption("Używa modelu dopasowanego w Ryc. 5.3.")
     ),
 
     lc_p("Obniżenie progu sprawia, że więcej osób trafia do klasy „zda”:
@@ -398,37 +376,30 @@ ch5_ui <- list(
       danych albo estymacja z karą, która odsuwa współczynniki od wartości
       skrajnych. Najczęściej stosowaną odmianą jest regresja Firtha."),
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 14px;",
-      tags$thead(
-        tags$tr(tags$th("Warunek"), tags$th("Co oznacza w praktyce"))
-      ),
-      tags$tbody(
-        tags$tr(
-          tags$td(tags$strong("Y jest binarne")),
-          tags$td("modelujemy zdarzenie 0/1: zdał/nie zdał, kupił/nie kupił")
+    lc_table(
+      data.frame(
+        c1 = c(
+          "Y jest binarne",
+          "Niezależne obserwacje",
+          "Liniowość logitu",
+          "Umiarkowana współliniowość",
+          "Dość zdarzeń",
+          "Brak separacji"
         ),
-        tags$tr(
-          tags$td(tags$strong("Niezależne obserwacje")),
-          tags$td("ten sam student, klient lub zakład nie powinien pojawiać się wiele razy bez modelu z powtórzeniami")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Liniowość logitu")),
-          tags$td("dla predyktorów ilościowych zależność ma być mniej więcej liniowa na skali logarytmu szans")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Umiarkowana współliniowość")),
-          tags$td("tak jak w regresji wielorakiej: predyktory nie powinny powtarzać tej samej informacji")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Dość zdarzeń")),
-          tags$td("liczy się mniej liczna klasa; orientacyjnie około 10 zdarzeń na predyktor, bez sztywnej granicy")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Brak separacji")),
-          tags$td("gdy predyktor idealnie oddziela 0 od 1, współczynniki uciekają do nieskończoności; pomaga estymacja z karą (regresja Firtha)")
+        c2 = c(
+          "modelujemy zdarzenie 0/1: zdał/nie zdał, kupił/nie kupił",
+          "ten sam student, klient lub zakład nie powinien pojawiać się wiele razy bez modelu z powtórzeniami",
+          "dla predyktorów ilościowych zależność ma być mniej więcej liniowa na skali logarytmu szans",
+          "tak jak w regresji wielorakiej: predyktory nie powinny powtarzać tej samej informacji",
+          "liczy się mniej liczna klasa; orientacyjnie około 10 zdarzeń na predyktor, bez sztywnej granicy",
+          "gdy predyktor idealnie oddziela 0 od 1, współczynniki uciekają do nieskończoności; pomaga estymacja z karą (regresja Firtha)"
         )
-      )
+      ),
+      cols = list(
+        lc_col("c1", "Warunek", "row"),
+        lc_col("c2", "Co oznacza w praktyce", "text")
+      ),
+      prose = TRUE
     ),
 
     # ========================================================================
@@ -506,7 +477,7 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  output$ch5_cas_continuous_plot <- renderPlot({
+  zoom_plot_server("ch5_cas_continuous_plot", reactive({
     df <- ch5_cas_data()
 
     ggplot(df, aes(income, read, color = factor(zdal_read))) +
@@ -534,9 +505,9 @@ ch5_server <- function(input, output, session) {
         y = "Wynik z czytania"
       ) +
       theme_upwr()
-  })
+  }))
 
-  output$ch5_cas_logit_plot <- renderPlot({
+  zoom_plot_server("ch5_cas_logit_plot", reactive({
     df <- ch5_cas_data()
     mod <- ch5_cas_model()
     df$prob <- fitted(mod)
@@ -550,7 +521,7 @@ ch5_server <- function(input, output, session) {
       ) +
       labs(x = "Dochód okręgu (tys. USD)", y = "Prawdopodobieństwo zdania") +
       theme_upwr()
-  })
+  }))
 
   output$ch5_cas_model_table <- renderUI({
     tb <- broom::tidy(ch5_cas_model(), exponentiate = TRUE, conf.int = TRUE)
@@ -587,13 +558,10 @@ ch5_server <- function(input, output, session) {
     y <- model$y
     rmse <- sqrt(mean((y - p_hat)^2))
 
-    lc_stat_grid(
-      lc_stat_box("AIC", ch5_fmt(AIC(model), 1), color = unname(upwr_cat["wrzos"])),
-      lc_stat_box("BIC", ch5_fmt(BIC(model), 1), color = upwr_secondary),
-      lc_stat_box("RMSE prawdop.", ch5_fmt(rmse, 3),
-                  caption = "dla przewidywanych prawdopodobieństw",
-                  color = unname(upwr_cat["bursztyn"])),
-      columns = 3
+    tagList(
+      lc_readout("AIC", ch5_fmt(AIC(model), 1), color = unname(upwr_cat["wrzos"])),
+      lc_readout("BIC", ch5_fmt(BIC(model), 1), color = upwr_secondary),
+      lc_readout("RMSE prawdop.", ch5_fmt(rmse, 3), color = unname(upwr_cat["bursztyn"]))
     )
   })
 
@@ -646,10 +614,10 @@ ch5_server <- function(input, output, session) {
 
     outside <- mean(fitted(lin) < 0 | fitted(lin) > 1) * 100
 
-    lc_stat_grid(columns = 3,
-      lc_stat_box("Liniowy", round(acc_lin, 1), "%", color = unname(upwr_cat["niebo"])),
-      lc_stat_box("Logistyczny", round(acc_log, 1), "%", color = unname(upwr_cat["wrzos"])),
-      lc_stat_box("Liniowy poza [0, 1]", round(outside, 1), "%", color = unname(upwr_cat["terakota"]))
+    tagList(
+      lc_readout("Liniowy", paste0(round(acc_lin, 1), "%"), color = unname(upwr_cat["niebo"])),
+      lc_readout("Logistyczny", paste0(round(acc_log, 1), "%"), color = unname(upwr_cat["wrzos"])),
+      lc_readout("Liniowy poza [0, 1]", paste0(round(outside, 1), "%"), color = unname(upwr_cat["terakota"]))
     )
   })
 
@@ -741,9 +709,9 @@ ch5_server <- function(input, output, session) {
     accuracy <- mean(pred_class == df$zdal_num) * 100
 
     tagList(
-      lc_stat_box("AIC", round(g$AIC, 1), color = unname(upwr_cat["wrzos"])),
-      lc_stat_box("BIC", round(g$BIC, 1), color = upwr_secondary),
-      lc_stat_box("Dokładność", round(accuracy, 1), "%", color = unname(upwr_cat["szalwia"]))
+      lc_readout("AIC", round(g$AIC, 1), color = unname(upwr_cat["wrzos"])),
+      lc_readout("BIC", round(g$BIC, 1), color = upwr_secondary),
+      lc_readout("Dokładność", paste0(round(accuracy, 1), "%"), color = unname(upwr_cat["szalwia"]))
     )
   })
 
@@ -760,7 +728,10 @@ ch5_server <- function(input, output, session) {
     color <- if (prob >= 0.5) unname(upwr_cat["szalwia"]) else unname(upwr_cat["terakota"])
     decision <- if (prob >= 0.5) "Prawdopodobnie zda" else "Raczej nie zda"
 
-    lc_stat_box("P(zdanie)", round(prob, 3), caption = decision, color = color)
+    tagList(
+      lc_readout("P(zdanie)", round(prob, 3), color = color),
+      lc_readout("Prognoza", decision, color = color)
+    )
   })
 
   # --- Widget 3: Odds ratios ---
@@ -786,24 +757,18 @@ ch5_server <- function(input, output, session) {
     coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
                              labels_pl[coefs$term], coefs$term)
 
-    rows <- lapply(2:nrow(coefs), function(i) {  # pomijamy intercept
-      tags$tr(
-        tags$td(coefs$term_pl[i]),
-        tags$td(round(coefs$estimate[i], 3)),
-        tags$td(tags$strong(round(coefs$or[i], 3))),
-        tags$td(paste0("[", round(coefs$or_low[i], 3), " ; ",
-                        round(coefs$or_high[i], 3), "]")),
-        tags$td(format_p_value(coefs$p.value[i]))
-      )
-    })
 
-    tags$table(class = "lc-table lc-table-bordered",
-      style = "font-size: 14px;",
-      tags$thead(
-        tags$tr(tags$th("Zmienna"), tags$th("β"), tags$th("OR"),
-                tags$th("95% CI (OR)"), tags$th("p"))
-      ),
-      tags$tbody(rows)
+    tab <- as.data.frame(coefs)[-1, ]  # bez wyrazu wolnego
+    tab$ci <- paste0("[", round(tab$or_low, 3), " ; ", round(tab$or_high, 3), "]")
+    tab$p_txt <- lc_pval(tab$p.value)
+    lc_table(tab,
+      cols = list(
+        lc_col("term_pl", "Zmienna", "row"),
+        lc_col("estimate", "β", digits = 3),
+        lc_col("or", "OR", digits = 3),
+        lc_col("ci", "95% CI (OR)", "text"),
+        lc_col("p_txt", "p")
+      )
     )
   })
 
@@ -847,9 +812,9 @@ ch5_server <- function(input, output, session) {
     sensitivity <- ifelse(tp + fn == 0, NA, tp / (tp + fn))
     specificity <- ifelse(tn + fp == 0, NA, tn / (tn + fp))
     tagList(
-      lc_stat_box("Dokładność", paste0(round(accuracy * 100, 1), "%"), color = unname(upwr_cat["szalwia"])),
-      lc_stat_box("Czułość", paste0(round(sensitivity * 100, 1), "%"), caption = "wykrywa Tak", color = unname(upwr_cat["niebo"])),
-      lc_stat_box("Swoistość", paste0(round(specificity * 100, 1), "%"), caption = "wykrywa Nie", color = unname(upwr_cat["bursztyn"]))
+      lc_readout("Dokładność", paste0(round(accuracy * 100, 1), "%"), color = unname(upwr_cat["szalwia"])),
+      lc_readout("Czułość (wykrywa Tak)", paste0(round(sensitivity * 100, 1), "%"), color = unname(upwr_cat["niebo"])),
+      lc_readout("Swoistość (wykrywa Nie)", paste0(round(specificity * 100, 1), "%"), color = unname(upwr_cat["bursztyn"]))
     )
   })
 }

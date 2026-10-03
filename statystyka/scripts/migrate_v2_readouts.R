@@ -80,7 +80,11 @@ for (f in files) {
     }
     if (mode == "apply" && length(edits)) {
       src <- apply_edits(src, edits)
-      src <- gsub(",\\s*columns = NULL", "", src)
+      # columns = NULL zostaje po usuniętym argumencie, także w osobnej linii
+      txt <- paste(src, collapse = "\n")
+      txt <- gsub(",\\s*columns = NULL", "", txt, perl = TRUE)
+      txt <- gsub("\\(columns = NULL,\\s*", "(", txt, perl = TRUE)
+      src <- strsplit(txt, "\n", fixed = TRUE)[[1]]
       writeLines(src, f, useBytes = TRUE)
     }
   } else {

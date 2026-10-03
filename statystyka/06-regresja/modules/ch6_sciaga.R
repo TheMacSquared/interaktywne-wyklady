@@ -20,25 +20,42 @@ ch6_ui <- list(
 
     tagList(
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 14px;",
-      tags$thead(
-        tags$tr(tags$th(""), tags$th("Liniowa prosta"), tags$th("Wieloraka"), tags$th("Logistyczna"))
+    lc_table(
+      data.frame(
+        c1 = c("Y", "X", "Wzór", "Estymacja", "Dopasowanie", "Interpr. β"),
+        c2 = I(list(
+          "Ciągła",
+          "1 predyktor",
+          withMathJax("\\(Y = \\beta_0 + \\beta_1 X + \\varepsilon\\)"),
+          "MNK",
+          "R², RMSE",
+          "zmiana Y na 1 jedn. X"
+        )),
+        c3 = I(list(
+          "Ciągła",
+          "k predyktorów",
+          withMathJax("\\(Y = \\beta_0 + \\sum \\beta_j X_j + \\varepsilon\\)"),
+          "MNK",
+          "skorygowane R², AIC, BIC, RMSE",
+          "zmiana Y na 1 jedn. Xj (ceteris paribus)"
+        )),
+        c4 = I(list(
+          "Binarna (0/1)",
+          "k predyktorów",
+          withMathJax("\\(\\ln\\frac{p}{1-p} = \\beta_0 + \\sum \\beta_j X_j\\)"),
+          "MNW (największa wiarygodność)",
+          "AIC, BIC, dokładność",
+          withMathJax("\\(OR = e^\\beta\\)")
+        ))
       ),
-      tags$tbody(
-        tags$tr(tags$td(tags$strong("Y")), tags$td("Ciągła"), tags$td("Ciągła"), tags$td("Binarna (0/1)")),
-        tags$tr(tags$td(tags$strong("X")), tags$td("1 predyktor"), tags$td("k predyktorów"), tags$td("k predyktorów")),
-        tags$tr(tags$td(tags$strong("Wzór")),
-                tags$td(withMathJax("\\(Y = \\beta_0 + \\beta_1 X + \\varepsilon\\)")),
-                tags$td(withMathJax("\\(Y = \\beta_0 + \\sum \\beta_j X_j + \\varepsilon\\)")),
-                tags$td(withMathJax("\\(\\ln\\frac{p}{1-p} = \\beta_0 + \\sum \\beta_j X_j\\)"))),
-        tags$tr(tags$td(tags$strong("Estymacja")), tags$td("MNK"), tags$td("MNK"), tags$td("MNW (największa wiarygodność)")),
-        tags$tr(tags$td(tags$strong("Dopasowanie")), tags$td("R², RMSE"), tags$td("skorygowane R², AIC, BIC, RMSE"), tags$td("AIC, BIC, dokładność")),
-        tags$tr(tags$td(tags$strong("Interpr. β")),
-                tags$td("zmiana Y na 1 jedn. X"),
-                tags$td("zmiana Y na 1 jedn. Xj (ceteris paribus)"),
-                tags$td(withMathJax("\\(OR = e^\\beta\\)")))
-      )
+      cols = list(
+        lc_col("c1", "", "row"),
+        lc_col("c2", "Liniowa prosta", "text"),
+        lc_col("c3", "Wieloraka", "text"),
+        lc_col("c4", "Logistyczna", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     ),
@@ -47,43 +64,39 @@ ch6_ui <- list(
 
     tagList(
 
-    tags$table(class = "lc-table lc-table-bordered",
-      style = "font-size: 14px;",
-      tags$thead(
-        tags$tr(tags$th("Metryka"), tags$th("Wzór"), tags$th("Kierunek"), tags$th("Uwagi"))
-      ),
-      tags$tbody(
-        tags$tr(
-          tags$td(withMathJax("\\(R^2\\)")),
-          tags$td(withMathJax("\\(1 - SS_{res}/SS_{tot}\\)")),
-          tags$td("↑ lepiej"),
-          tags$td("Nie maleje po dodaniu predyktora; nie porównuj nim modeli o różnej złożoności")
-        ),
-        tags$tr(
-          tags$td(withMathJax("\\(R^2_{adj}\\)")),
-          tags$td(withMathJax("\\(1 - \\frac{(1-R^2)(n-1)}{n-k-1}\\)")),
-          tags$td("↑ lepiej"),
-          tags$td("Karze za zbędne predyktory; bezpieczniejsze niż R²")
-        ),
-        tags$tr(
-          tags$td("AIC"),
-          tags$td(withMathJax("\\(-2\\ln L + 2k\\)")),
-          tags$td("↓ lepiej"),
-          tags$td("Lepszy do predykcji; łagodniejsza kara")
-        ),
-        tags$tr(
-          tags$td("BIC"),
-          tags$td(withMathJax("\\(-2\\ln L + k\\ln n\\)")),
-          tags$td("↓ lepiej"),
-          tags$td("Silniejsza kara za parametry; preferuje prostsze modele")
-        ),
-        tags$tr(
-          tags$td("RMSE"),
-          tags$td(withMathJax("\\(\\sqrt{\\frac{1}{n}\\sum e_i^2}\\)")),
-          tags$td("↓ lepiej"),
-          tags$td("W jednostkach Y; intuicyjne")
+    lc_table(
+      data.frame(
+        c1 = I(list(
+          withMathJax("\\(R^2\\)"),
+          withMathJax("\\(R^2_{adj}\\)"),
+          "AIC",
+          "BIC",
+          "RMSE"
+        )),
+        c2 = I(list(
+          withMathJax("\\(1 - SS_{res}/SS_{tot}\\)"),
+          withMathJax("\\(1 - \\frac{(1-R^2)(n-1)}{n-k-1}\\)"),
+          withMathJax("\\(-2\\ln L + 2k\\)"),
+          withMathJax("\\(-2\\ln L + k\\ln n\\)"),
+          withMathJax("\\(\\sqrt{\\frac{1}{n}\\sum e_i^2}\\)")
+        )),
+        c3 = c("↑ lepiej", "↑ lepiej", "↓ lepiej", "↓ lepiej", "↓ lepiej"),
+        c4 = c(
+          "Nie maleje po dodaniu predyktora; nie porównuj nim modeli o różnej złożoności",
+          "Karze za zbędne predyktory; bezpieczniejsze niż R²",
+          "Lepszy do predykcji; łagodniejsza kara",
+          "Silniejsza kara za parametry; preferuje prostsze modele",
+          "W jednostkach Y; intuicyjne"
         )
-      )
+      ),
+      cols = list(
+        lc_col("c1", "Metryka", "row"),
+        lc_col("c2", "Wzór", "text"),
+        lc_col("c3", "Kierunek", "text"),
+        lc_col("c4", "Uwagi", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     ),
@@ -123,9 +136,8 @@ ch6_ui <- list(
     figure_panel(
       label = "Ryc. 6.1", title = "Mini-drzewko wyboru modelu regresyjnego",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          selectInput("ch6_tree_y", "Jaka jest zmienna zależna Y?",
+      lc_toolbar(
+        selectInput("ch6_tree_y", "Jaka jest zmienna zależna Y?",
             choices = c(
               "Ilościowa / ciągła" = "continuous",
               "Binarna 0/1" = "binary",
@@ -133,22 +145,20 @@ ch6_ui <- list(
               "Porządkowa" = "ordinal"
             )
           ),
-          selectInput("ch6_tree_x", "Ile predyktorów?",
+        selectInput("ch6_tree_x", "Ile predyktorów?",
             choices = c("Jeden" = "one", "Wiele" = "many")
           ),
-          selectInput("ch6_tree_goal", "Główny cel:",
+        selectInput("ch6_tree_goal", "Główny cel",
             choices = c(
               "Interpretacja efektów" = "explain",
               "Predykcja nowych obserwacji" = "predict"
             )
           ),
-          checkboxInput("ch6_tree_nonlinear", "Podejrzewam nieliniowość / przeuczenie", value = FALSE)
-        ),
-        column(8,
-          zoom_plot_ui("ch6_tree_plot", height = "310px"),
-          uiOutput("ch6_tree_info")
-        )
-      )
+        checkboxInput("ch6_tree_nonlinear", "Podejrzewam nieliniowość / przeuczenie", value = FALSE),
+        lc_readouts(uiOutput("ch6_tree_info"))
+      ),
+      lc_plot("ch6_tree_plot", max_height = "310px"),
+      uiOutput("ch6_tree_note")
     ),
 
     lc_h2("ch6-pulapki", "Typowe pułapki"),
@@ -242,12 +252,10 @@ ch6_server <- function(input, output, session) {
 
   output$ch6_tree_info <- renderUI({
     res <- ch6_tree_result()
-    tagList(
-      lc_stat_box("Rekomendacja", res$model, color = upwr_secondary),
-      lc_caption(
-        res$note,
-        tone = "info"
-      )
-    )
+    lc_readout("Rekomendacja", res$model, color = upwr_secondary)
+  })
+
+  output$ch6_tree_note <- renderUI({
+    lc_caption(ch6_tree_result()$note, tone = "info")
   })
 }

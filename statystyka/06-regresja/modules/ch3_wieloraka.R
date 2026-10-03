@@ -74,47 +74,36 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.1", title = "CASchools: model z wieloma predyktorami",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Dane: 420 okręgów szkolnych w Kalifornii. Przełączaj
-                    predyktory — model przelicza się na tych samych realnych
-                    danych."),
-          selectInput("ch3_outcome", "Zmienna zależna Y:",
-            choices = c(
-              "Wynik: czytanie" = "read",
-              "Wynik: matematyka" = "math"
-            ),
-            selected = "read"
+      lc_toolbar(
+        selectInput("ch3_outcome", "Zmienna zależna Y",
+          choices = c(
+            "Wynik: czytanie" = "read",
+            "Wynik: matematyka" = "math"
           ),
-          tags$div(class = "form-group shiny-input-container",
-            tags$label(class = "control-label", "Predyktor bazowy:"),
-            tags$div(tags$strong("Dochód okręgu (tys. USD)"))
-          ),
-          checkboxGroupInput("ch3_predictors", "Dodaj predyktory:",
-            choices = c(
-              "Dotacje do obiadów (%)" = "lunch",
-              "Angielski jako drugi język (%)" = "english",
-              "Uczniowie / nauczyciel" = "student_teacher_ratio",
-              "Wydatki na ucznia" = "expenditure",
-              "Komputery" = "computer",
-              "CalWORKs (%)" = "calworks"
-            ),
-            selected = "lunch"
-          ),
-          helpText(style = "margin-top: 8px; font-size: 12px;",
-            "Model zawsze zaczyna od dochodu okręgu. Kolejne checkboxy
-             dodają następne predyktory do tego samego równania.")
+          selected = "read"
         ),
-        column(8,
-          lc_note("Jak czytać",
-            p("Tabela pokazuje współczynniki pełnego modelu addytywnego,
-              bez interakcji. Gwiazdka przy p-wartości oznacza p < 0.05.")
+        checkboxGroupInput("ch3_predictors", "Predyktory dodane do dochodu okręgu",
+          choices = c(
+            "Dotacje do obiadów (%)" = "lunch",
+            "Angielski jako drugi język (%)" = "english",
+            "Uczniowie / nauczyciel" = "student_teacher_ratio",
+            "Wydatki na ucznia" = "expenditure",
+            "Komputery" = "computer",
+            "CalWORKs (%)" = "calworks"
           ),
-          uiOutput("ch3_model_coefs"),
-          uiOutput("ch3_prediction_plot_ui"),
-          uiOutput("ch3_model_stats")
-        )
-      )
+          selected = "lunch", inline = TRUE
+        ),
+        lc_readouts(uiOutput("ch3_model_stats"))
+      ),
+      lc_caption("Dane: 420 okręgów szkolnych w Kalifornii. Model zawsze zaczyna od
+        dochodu okręgu (tys. USD); zaznaczone predyktory dochodzą do tego samego
+        równania."),
+      lc_note("Jak czytać",
+        p("Tabela pokazuje współczynniki pełnego modelu addytywnego,
+          bez interakcji. Gwiazdka przy p-wartości oznacza p < 0.05.")
+      ),
+      uiOutput("ch3_model_coefs"),
+      uiOutput("ch3_prediction_plot_ui")
     ),
 
     lc_p("W ustawieniu startowym model wyjaśnia wynik z czytania dochodem
@@ -229,16 +218,13 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.3", title = "Gdy predyktory mówią prawie to samo",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_slider("ch3_collin_rho", "Korelacja X₁–X₂", 0, 0.98, 0.8, 0.02),
-          lc_action("ch3_collin_new", "Generuj i dopasuj", variant = "solid")
-        ),
-        column(8,
-          lc_plot_fullscreen("ch3_collin_plot", height = "300px"),
-          uiOutput("ch3_collin_info")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch3_collin_rho", "Korelacja X₁–X₂", 0, 0.98, 0.8, 0.02),
+        lc_action("ch3_collin_new", "Generuj i dopasuj", variant = "solid"),
+        lc_readouts(uiOutput("ch3_collin_info"))
+      ),
+      lc_plot("ch3_collin_plot", max_height = "300px"),
+      uiOutput("ch3_collin_table")
     ),
 
     lc_p("Przy korelacji 0.8 VIF wynosi około 2.8, a błąd standardowy każdego
@@ -423,14 +409,14 @@ ch3_server <- function(input, output, session) {
   output$ch3_prediction_plot_ui <- renderUI({
     if (length(ch3_selected_predictors()) > 4) return(NULL)
     tagList(
-      lc_plot_fullscreen("ch3_coef_plot", height = "320px"),
+      lc_plot("ch3_coef_plot", max_height = "320px"),
       if (length(ch3_selected_predictors()) > 1) {
-        lc_plot_fullscreen("ch3_compare_plot", height = "230px")
+        lc_plot("ch3_compare_plot", max_height = "230px")
       }
     )
   })
 
-  output$ch3_coef_plot <- renderPlot({
+  zoom_plot_server("ch3_coef_plot", reactive({
     model <- ch3_model()
     if (is.null(model)) return(NULL)
 
@@ -513,9 +499,9 @@ ch3_server <- function(input, output, session) {
     }
 
     p
-  })
+  }))
 
-  output$ch3_compare_plot <- renderPlot({
+  zoom_plot_server("ch3_compare_plot", reactive({
     model <- ch3_model()
     if (is.null(model)) return(NULL)
 
@@ -561,17 +547,17 @@ ch3_server <- function(input, output, session) {
       labs(x = ch3_labels_pl[[x_var]], y = ch3_labels_pl[[outcome]]) +
       theme_upwr() +
       theme(legend.position = "top")
-  }, alt = "Linia regresji prostej i linia aktualnego modelu wielorakiego przy średnich wartościach pozostałych predyktorów.")
+  }), alt = "Linia regresji prostej i linia aktualnego modelu wielorakiego przy średnich wartościach pozostałych predyktorów.")
 
   output$ch3_model_stats <- renderUI({
     model <- ch3_model()
     if (is.null(model)) return(NULL)
     metrics <- compute_model_metrics(model)
-    lc_stat_grid(columns = 4,
-      lc_stat_box("R²", round(metrics$r_squared, 3), color = unname(upwr_cat["niebo"])),
-      lc_stat_box("adj.R²", round(metrics$adj_r_squared, 3), color = unname(upwr_cat["szalwia"])),
-      lc_stat_box("AIC", round(metrics$aic, 1), color = unname(upwr_cat["bursztyn"])),
-      lc_stat_box("RMSE", round(metrics$rmse, 3), color = unname(upwr_cat["terakota"]))
+    tagList(
+      lc_readout("R²", round(metrics$r_squared, 3), color = unname(upwr_cat["niebo"])),
+      lc_readout("adj.R²", round(metrics$adj_r_squared, 3), color = unname(upwr_cat["szalwia"])),
+      lc_readout("AIC", round(metrics$aic, 1), color = unname(upwr_cat["bursztyn"])),
+      lc_readout("RMSE", round(metrics$rmse, 3), color = unname(upwr_cat["terakota"]))
     )
   })
 
@@ -675,7 +661,7 @@ ch3_server <- function(input, output, session) {
     ch3_collin_data(generate_collinearity_data(140, input$ch3_collin_rho))
   })
 
-  output$ch3_collin_plot <- renderPlot({
+  zoom_plot_server("ch3_collin_plot", reactive({
     df <- ch3_collin_data()
     if (is.null(df)) {
       ggplot() +
@@ -689,31 +675,33 @@ ch3_server <- function(input, output, session) {
         labs(x = "X₁", y = "X₂") +
         theme_upwr()
     }
-  }, alt = "Wykres punktowy dwóch coraz silniej współliniowych predyktorów.")
+  }), alt = "Wykres punktowy dwóch coraz silniej współliniowych predyktorów.")
 
   output$ch3_collin_info <- renderUI({
     df <- ch3_collin_data()
     if (is.null(df)) return(NULL)
     model <- lm(y ~ x1 + x2, data = df)
-    coefs <- broom::tidy(model)
-    vifs <- compute_vif_simple(df, c("x1", "x2"))
-    rows <- lapply(2:nrow(coefs), function(i) {
-      term <- coefs$term[i]
-      tags$tr(
-        tags$td(term),
-        tags$td(round(coefs$estimate[i], 3)),
-        tags$td(round(coefs$std.error[i], 3)),
-        tags$td(format_p_value(coefs$p.value[i])),
-        tags$td(round(vifs[[term]], 2))
-      )
-    })
     tagList(
-      lc_stat_box("corr(X₁,X₂)", round(cor(df$x1, df$x2), 2), color = unname(upwr_cat["niebo"])),
-      lc_stat_box("R² modelu", round(summary(model)$r.squared, 3), color = unname(upwr_cat["szalwia"])),
-      tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-        style = "font-size: 13px;",
-        tags$thead(tags$tr(tags$th("Zmienna"), tags$th("β"), tags$th("SE"), tags$th("p"), tags$th("VIF"))),
-        tags$tbody(rows)
+      lc_readout("corr(X₁,X₂)", round(cor(df$x1, df$x2), 2), color = unname(upwr_cat["niebo"])),
+      lc_readout("R² modelu", round(summary(model)$r.squared, 3), color = unname(upwr_cat["szalwia"]))
+    )
+  })
+
+  output$ch3_collin_table <- renderUI({
+    df <- ch3_collin_data()
+    if (is.null(df)) return(NULL)
+    model <- lm(y ~ x1 + x2, data = df)
+    coefs <- as.data.frame(broom::tidy(model))[-1, ]
+    vifs <- compute_vif_simple(df, c("x1", "x2"))
+    coefs$p_txt <- lc_pval(coefs$p.value)
+    coefs$vif <- unname(vifs[coefs$term])
+    lc_table(coefs,
+      cols = list(
+        lc_col("term", "Zmienna", "row"),
+        lc_col("estimate", "β", digits = 3),
+        lc_col("std.error", "SE", digits = 3),
+        lc_col("p_txt", "p"),
+        lc_col("vif", "VIF", digits = 2)
       )
     )
   })

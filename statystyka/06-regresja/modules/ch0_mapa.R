@@ -64,45 +64,38 @@ ch0_map_ui <- list(
 
     lc_h2("mapa-tematy", "Mapa tematów"),
 
-    tags$table(
-      class = "lc-table lc-table-bordered lc-table-striped",
-      tags$thead(tags$tr(
-        tags$th("Nr"),
-        tags$th("Temat"),
-        tags$th("Rozdział"),
-        tags$th("Poziom")
-      )),
-      tags$tbody(lapply(seq_len(nrow(.regression_topics)), function(index) {
-        tags$tr(
-          tags$td(.regression_topics$order[[index]]),
-          tags$td(.regression_topics$topic[[index]]),
-          tags$td(.regression_topics$chapter[[index]]),
-          tags$td(.regression_topics$level[[index]])
-        )
-      }))
+    lc_table(.regression_topics[, c("order", "topic", "chapter", "level")],
+      cols = list(
+        lc_col("order", "Nr", "row"),
+        lc_col("topic", "Temat", "text"),
+        lc_col("chapter", "Rozdział", "text"),
+        lc_col("level", "Poziom", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_h2("mapa-przypadki", "Dwa przypadki, dwie funkcje"),
 
-    tags$table(
-      class = "lc-table lc-table-bordered lc-table-striped",
-      tags$thead(tags$tr(
-        tags$th("Przypadek"),
-        tags$th("Najlepiej pokazuje"),
-        tags$th("Dlaczego pozostaje w kursie")
-      )),
-      tags$tbody(
-        tags$tr(
-          tags$td("CASchools"),
-          tags$td("regresję prostą, diagnostykę, model wieloraki i kontekst społeczny"),
-          tags$td("wynik wymaga ostrożnej interpretacji i dobrze otwiera rozmowę o przyczynowości")
+    lc_table(
+      data.frame(
+        c1 = c("CASchools", "Palmer Penguins"),
+        c2 = c(
+          "regresję prostą, diagnostykę, model wieloraki i kontekst społeczny",
+          "predyktory jakościowe, paradoks Simpsona i interakcje"
         ),
-        tags$tr(
-          tags$td("Palmer Penguins"),
-          tags$td("predyktory jakościowe, paradoks Simpsona i interakcje"),
-          tags$td("trzy naturalne grupy tworzą czytelny mechanizm wizualny")
+        c3 = c(
+          "wynik wymaga ostrożnej interpretacji i dobrze otwiera rozmowę o przyczynowości",
+          "trzy naturalne grupy tworzą czytelny mechanizm wizualny"
         )
-      )
+      ),
+      cols = list(
+        lc_col("c1", "Przypadek", "row"),
+        lc_col("c2", "Najlepiej pokazuje", "text"),
+        lc_col("c3", "Dlaczego pozostaje w kursie", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_chapter_next(

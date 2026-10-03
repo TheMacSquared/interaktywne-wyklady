@@ -63,20 +63,14 @@ ch3b_ui <- list(
       label = "Ryc. 3B.1",
       title = "Paradoks Simpsona krok po kroku",
       full_width = TRUE,
-      fluidRow(
-        column(
-          4,
-          lc_action("ch3b_simpson_all", "1. Jedna linia dla wszystkich", variant = "outline"),
-          lc_action("ch3b_simpson_groups", "2. Pokaż gatunki", variant = "outline"),
-          lc_action("ch3b_simpson_control", "3. Kontroluj gatunek", variant = "solid"),
-          uiOutput("ch3b_simpson_stats")
-        ),
-        column(
-          8,
-          zoom_plot_ui("ch3b_simpson_plot", height = "430px"),
-          uiOutput("ch3b_simpson_explanation")
-        )
-      )
+      lc_toolbar(
+        lc_action("ch3b_simpson_all", "1. Jedna linia dla wszystkich", variant = "outline"),
+        lc_action("ch3b_simpson_groups", "2. Pokaż gatunki", variant = "outline"),
+        lc_action("ch3b_simpson_control", "3. Kontroluj gatunek", variant = "solid")
+      ),
+      lc_plot("ch3b_simpson_plot", max_height = "430px"),
+      uiOutput("ch3b_simpson_explanation"),
+      uiOutput("ch3b_simpson_stats")
     ),
 
     lc_p("W danych połączonych prosta lekko opada: każdy dodatkowy milimetr
@@ -163,26 +157,20 @@ ch3b_ui <- list(
       label = "Ryc. 3B.2",
       title = "Model addytywny kontra model z interakcją",
       full_width = TRUE,
-      fluidRow(
-        column(
-          4,
-          radioButtons(
+      lc_toolbar(
+        lc_segmented(
             "ch3b_interaction_model",
-            "Model:",
+            "Model",
             choices = c(
               "Addytywny: płetwa + gatunek" = "add",
               "Z interakcją: płetwa × gatunek" = "interaction"
             ),
             selected = "add"
           ),
-          uiOutput("ch3b_interaction_metrics")
-        ),
-        column(
-          8,
-          zoom_plot_ui("ch3b_interaction_plot", height = "400px"),
-          uiOutput("ch3b_interaction_table")
-        )
-      )
+        lc_readouts(uiOutput("ch3b_interaction_metrics"))
+      ),
+      lc_plot("ch3b_interaction_plot", max_height = "400px"),
+      uiOutput("ch3b_interaction_table")
     ),
 
     lc_p("Zacznij od wykresu, a dopiero potem czytaj tabelę. W modelu
@@ -308,13 +296,9 @@ ch3b_server <- function(input, output, session) {
   output$ch3b_simpson_stats <- renderUI({
     b_simple <- coef(simple_model)[["bill_length_mm"]]
     b_control <- coef(controlled_model)[["bill_length_mm"]]
-    lc_stat_grid(
-      lc_stat_box("Bez gatunku", round(b_simple, 3), caption = "nachylenie"),
-      lc_stat_box(
-        "Po kontroli gatunku", round(b_control, 3),
-        caption = "nachylenie", color = upwr_accent
-      ),
-      columns = 1
+    tagList(
+      lc_readout("Nachylenie bez gatunku", round(b_simple, 3)),
+      lc_readout("Nachylenie po kontroli gatunku", round(b_control, 3), color = upwr_accent)
     )
   })
 
@@ -391,11 +375,10 @@ ch3b_server <- function(input, output, session) {
   output$ch3b_interaction_metrics <- renderUI({
     model <- interaction_model()
     rmse <- sqrt(mean(residuals(model)^2))
-    lc_stat_grid(
-      lc_stat_box("AIC", round(AIC(model), 1), color = unname(upwr_cat["wrzos"])),
-      lc_stat_box("RMSE", round(rmse, 1), color = upwr_secondary),
-      lc_stat_box("Parametry", length(coef(model)), color = unname(upwr_cat["bursztyn"])),
-      columns = 1
+    tagList(
+      lc_readout("AIC", round(AIC(model), 1), color = unname(upwr_cat["wrzos"])),
+      lc_readout("RMSE", round(rmse, 1), color = upwr_secondary),
+      lc_readout("Parametry", length(coef(model)), color = unname(upwr_cat["bursztyn"]))
     )
   })
 

@@ -143,20 +143,16 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.1", title = "Reszty na danych CASchools",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Te same 420 okręgów szkolnych, cztery różne pary zmiennych."),
-          selectInput("ch2_resid_case", "Model:",
+      lc_toolbar(
+        selectInput("ch2_resid_case", "Model",
             choices = .ch2_resid_choices,
             selected = "read_income"
           ),
-          uiOutput("ch2_resid_verdict")
-        ),
-        column(8,
-          zoom_plot_ui("ch2_resid_plot", height = "340px"),
-          uiOutput("ch2_resid_stats")
-        )
-      )
+        lc_readouts(uiOutput("ch2_resid_stats"))
+      ),
+      lc_plot("ch2_resid_plot", max_height = "340px"),
+      uiOutput("ch2_resid_verdict"),
+      lc_caption("Te same 420 okręgów szkolnych, cztery różne pary zmiennych.")
     ),
 
     lc_p("Model czytania zależnego od dochodu okręgu pokazuje łuk. Średnia
@@ -203,42 +199,41 @@ ch2_ui <- list(
       pokazuje wykres reszt względem wartości przewidywanych. Tabela zbiera
       typowe założenia z sygnałami problemu i możliwymi reakcjami."),
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 14px;",
-      tags$thead(
-        tags$tr(
-          tags$th("Założenie"),
-          tags$th("Co sprawdzić"),
-          tags$th("Sygnał problemu"),
-          tags$th("Co wtedy")
+    lc_table(
+      data.frame(
+        c1 = c(
+          "Liniowość",
+          "Stała wariancja",
+          "Normalność reszt",
+          "Brak obserwacji wpływowych"
+        ),
+        c2 = c(
+          "reszty względem wartości przewidywanych",
+          "reszty względem wartości przewidywanych, wykres Scale-Location",
+          "wykres Q-Q reszt",
+          "reszty standaryzowane, dźwignia, odległość Cooka"
+        ),
+        c3 = c(
+          "łuk, fala, systematyczny wzorzec",
+          "wachlarz, rosnący lub malejący rozrzut",
+          "grube ogony, łuk, punkty daleko od prostej",
+          "pojedynczy punkt zmienia nachylenie"
+        ),
+        c4 = c(
+          "transformacja, składnik kwadratowy, model nieliniowy",
+          "transformacja Y, odporne błędy standardowe, ważona MNK (WLS)",
+          "sprawdź wartości odstające, przedział ufności bootstrap, inny model dla Y",
+          "zweryfikuj pomiar, pokaż analizę z punktem i bez niego"
         )
       ),
-      tags$tbody(
-        tags$tr(
-          tags$td(tags$strong("Liniowość")),
-          tags$td("reszty względem wartości przewidywanych"),
-          tags$td("łuk, fala, systematyczny wzorzec"),
-          tags$td("transformacja, składnik kwadratowy, model nieliniowy")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Stała wariancja")),
-          tags$td("reszty względem wartości przewidywanych, wykres Scale-Location"),
-          tags$td("wachlarz, rosnący lub malejący rozrzut"),
-          tags$td("transformacja Y, odporne błędy standardowe, ważona MNK (WLS)")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Normalność reszt")),
-          tags$td("wykres Q-Q reszt"),
-          tags$td("grube ogony, łuk, punkty daleko od prostej"),
-          tags$td("sprawdź wartości odstające, przedział ufności bootstrap, inny model dla Y")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Brak obserwacji wpływowych")),
-          tags$td("reszty standaryzowane, dźwignia, odległość Cooka"),
-          tags$td("pojedynczy punkt zmienia nachylenie"),
-          tags$td("zweryfikuj pomiar, pokaż analizę z punktem i bez niego")
-        )
-      )
+      cols = list(
+        lc_col("c1", "Założenie", "row"),
+        lc_col("c2", "Co sprawdzić", "text"),
+        lc_col("c3", "Sygnał problemu", "text"),
+        lc_col("c4", "Co wtedy", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_p("Założenia nie są równie ważne. Liniowość jest najważniejsza, bo przy
@@ -376,32 +371,33 @@ ch2_ui <- list(
     figure_panel(
       label = "Miniściąga", title = "Jak ograniczać przeuczenie",
       full_width = TRUE,
-      tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
-        tags$thead(
-          tags$tr(tags$th("Problem"), tags$th("Objaw"), tags$th("Co zrobić"))
-        ),
-        tags$tbody(
-          tags$tr(
-            tags$td("Model za złożony"),
-            tags$td("R² wysokie, ale interpretacja chaotyczna"),
-            tags$td("Uprościć model; usuwać predyktory bez uzasadnienia teoretycznego")
+      lc_table(
+        data.frame(
+          c1 = c(
+            "Model za złożony",
+            "Dopasowanie do szumu",
+            "Dodawanie kolejnych X tylko pod R²",
+            "Niestabilne współczynniki"
           ),
-          tags$tr(
-            tags$td("Dopasowanie do szumu"),
-            tags$td("Błąd na danych treningowych mały, na nowych duży"),
-            tags$td("Sprawdzić model na zbiorze testowym albo walidacją krzyżową")
+          c2 = c(
+            "R² wysokie, ale interpretacja chaotyczna",
+            "Błąd na danych treningowych mały, na nowych duży",
+            "R² rośnie po każdym dodatku",
+            "Mała zmiana danych mocno zmienia tabelę regresji"
           ),
-          tags$tr(
-            tags$td("Dodawanie kolejnych X tylko pod R²"),
-            tags$td("R² rośnie po każdym dodatku"),
-            tags$td("Patrzeć na skorygowane R², AIC, BIC i sens merytoryczny")
-          ),
-          tags$tr(
-            tags$td("Niestabilne współczynniki"),
-            tags$td("Mała zmiana danych mocno zmienia tabelę regresji"),
-            tags$td("Zebrać więcej danych, ograniczyć liczbę zmiennych, sprawdzić współliniowość")
+          c3 = c(
+            "Uprościć model; usuwać predyktory bez uzasadnienia teoretycznego",
+            "Sprawdzić model na zbiorze testowym albo walidacją krzyżową",
+            "Patrzeć na skorygowane R², AIC, BIC i sens merytoryczny",
+            "Zebrać więcej danych, ograniczyć liczbę zmiennych, sprawdzić współliniowość"
           )
-        )
+        ),
+        cols = list(
+          lc_col("c1", "Problem", "row"),
+          lc_col("c2", "Objaw", "text"),
+          lc_col("c3", "Co zrobić", "text")
+        ),
+        narrow = "cards"
       )
     ),
 
@@ -435,20 +431,16 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.3", title = "RMSE i zakres Y na danych CASchools",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Te same 420 okręgów szkolnych, cztery modele."),
-          selectInput("ch2_rmse_case", "Model:",
+      lc_toolbar(
+        selectInput("ch2_rmse_case", "Model",
             choices = .ch2_rmse_choices,
             selected = "read_lunch"
           ),
-          uiOutput("ch2_rmse_interpretation")
-        ),
-        column(8,
-          zoom_plot_ui("ch2_rmse_plot", height = "320px"),
-          uiOutput("ch2_rmse_stats")
-        )
-      )
+        lc_readouts(uiOutput("ch2_rmse_stats"))
+      ),
+      lc_plot("ch2_rmse_plot", max_height = "320px"),
+      uiOutput("ch2_rmse_interpretation"),
+      lc_caption("Te same 420 okręgów szkolnych, cztery modele.")
     ),
 
     lc_p("Wyniki czytania mają zakres od 604.5 do 704 punktów i odchylenie
@@ -483,17 +475,13 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.4", title = "Ekstrapolacja poza zakres danych",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Szary pas na wykresie to zakres dochodów w danych."),
-          lc_slider("ch2_extrap_x", "Dochód okręgu (tys. USD)", 1, 80, 20, 1),
-          uiOutput("ch2_extrap_verdict")
-        ),
-        column(8,
-          zoom_plot_ui("ch2_extrap_plot", height = "320px"),
-          uiOutput("ch2_extrap_stats")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch2_extrap_x", "Dochód okręgu (tys. USD)", 1, 80, 20, 1)
+      ),
+      lc_plot("ch2_extrap_plot", max_height = "320px"),
+      uiOutput("ch2_extrap_stats"),
+      uiOutput("ch2_extrap_verdict"),
+      lc_caption("Szary pas na wykresie to zakres dochodów w danych.")
     ),
 
     lc_p("Dla dochodu 20 tys. USD model przewiduje 664.1 punktu, w środku
@@ -620,14 +608,10 @@ ch2_server <- function(input, output, session) {
     model <- ch2_resid_model()
     g <- broom::glance(model)
 
-    lc_stat_grid(
-      lc_stat_box("R²", round(g$r.squared, 3),
-                  color = unname(upwr_cat["niebo"])),
-      lc_stat_box("RMSE", round(sqrt(mean(residuals(model)^2)), 2),
-                  color = unname(upwr_cat["bursztyn"])),
-      lc_stat_box("n", nrow(.cas_data),
-                  color = upwr_secondary),
-      columns = 3
+    tagList(
+      lc_readout("R²", round(g$r.squared, 3), color = unname(upwr_cat["niebo"])),
+      lc_readout("RMSE", round(sqrt(mean(residuals(model)^2)), 2), color = unname(upwr_cat["bursztyn"])),
+      lc_readout("n", nrow(.cas_data), color = upwr_secondary)
     )
   })
 
@@ -753,21 +737,15 @@ ch2_server <- function(input, output, session) {
       "4" = "Rozsądnie elastyczny",
       "12" = "Przeuczony"
     )
-    metrics$model <- labels[as.character(metrics$degree)]
-    rows <- lapply(seq_len(nrow(metrics)), function(i) {
-      tags$tr(
-        tags$td(metrics$model[i]),
-        tags$td(metrics$degree[i]),
-        tags$td(round(metrics$train_rmse[i], 2)),
-        tags$td(round(metrics$test_rmse[i], 2))
-      )
-    })
+    metrics$model <- unname(labels[as.character(metrics$degree)])
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped lc-table-sm",
-      tags$thead(
-        tags$tr(tags$th("Model"), tags$th("Stopień"), tags$th("RMSE trening"), tags$th("RMSE test"))
-      ),
-      tags$tbody(rows)
+    lc_table(as.data.frame(metrics),
+      cols = list(
+        lc_col("model", "Model", "row"),
+        lc_col("degree", "Stopień"),
+        lc_col("train_rmse", "RMSE trening", digits = 2),
+        lc_col("test_rmse", "RMSE test", digits = 2)
+      )
     )
   })
 
@@ -831,18 +809,11 @@ ch2_server <- function(input, output, session) {
     y_range <- diff(range(y_vals))
     rmse_ratio <- rmse / y_range
 
-    lc_stat_grid(
-      lc_stat_box("R²", round(g$r.squared, 3),
-                  color = unname(upwr_cat["niebo"])),
-      lc_stat_box("RMSE", round(rmse, 2),
-                  caption = paste("jednostek", unname(.cas_labels[spec$y])),
-                  color = unname(upwr_cat["bursztyn"])),
-      lc_stat_box("Zakres Y", round(y_range, 1),
-                  caption = "max − min",
-                  color = upwr_secondary),
-      lc_stat_box("RMSE / zakres", paste0(round(rmse_ratio * 100, 1), "%"),
-                  color = unname(upwr_cat["terakota"])),
-      columns = 4
+    tagList(
+      lc_readout("R²", round(g$r.squared, 3), color = unname(upwr_cat["niebo"])),
+      lc_readout("RMSE", round(rmse, 2), color = unname(upwr_cat["bursztyn"])),
+      lc_readout("Zakres Y (max − min)", round(y_range, 1), color = upwr_secondary),
+      lc_readout("RMSE / zakres", paste0(round(rmse_ratio * 100, 1), "%"), color = unname(upwr_cat["terakota"]))
     )
   })
 
@@ -922,18 +893,10 @@ ch2_server <- function(input, output, session) {
     x_range <- .ch2_extrap_x_range
     y_pred <- predict(.ch2_extrap_model, newdata = data.frame(income = x_val))
 
-    lc_stat_grid(
-      lc_stat_box("X podany", x_val,
-                  caption = "tys. USD",
-                  color = unname(upwr_cat["niebo"])),
-      lc_stat_box("Predykcja", round(y_pred, 1),
-                  caption = "pkt czytania",
-                  color = unname(upwr_cat["bursztyn"])),
-      lc_stat_box("Zakres X danych",
-                  paste0(round(x_range[1], 0), "–", round(x_range[2], 0)),
-                  caption = "tys. USD",
-                  color = upwr_secondary),
-      columns = 3
+    tagList(
+      lc_readout("X podany", paste(x_val, "tys. USD"), color = unname(upwr_cat["niebo"])),
+      lc_readout("Predykcja", paste(round(y_pred, 1), "pkt"), color = unname(upwr_cat["bursztyn"])),
+      lc_readout("Zakres X danych", paste0(round(x_range[1], 0), "–", round(x_range[2], 0), " tys. USD"), color = upwr_secondary)
     )
   })
 
