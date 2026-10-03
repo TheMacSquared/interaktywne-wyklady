@@ -2375,6 +2375,7 @@ mjx-container mjx-text {
 .lc-stepper-title{margin:0;font-size:1.18em;font-weight:700;line-height:1.25;color:var(--upwr-ink)}
 .lc-stepper-head .lc-toolbar{flex:1 1 22em;justify-content:flex-end;border:0;padding:0;margin:0}
 .lc-stepper-head .lc-toolbar>*{flex:0 1 14em}
+.lc-stepper-head .lc-toolbar>*:has(.lc-chips){flex:0 1 auto}
 
 /* Kontrolka nieaktywna w bieżącym kroku: widoczna, wyszarzona */
 .lc-is-off{opacity:.45;pointer-events:none}

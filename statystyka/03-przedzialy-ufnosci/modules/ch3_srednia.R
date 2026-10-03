@@ -202,9 +202,7 @@ ch3_ui <- list(
             ", gloss("odchylenie standardowe"), " ", withMathJax("\\(s = 8.2\\)"), " cm.
             Zbudujmy CI dla średniego wzrostu i sprawdźmy dwie hipotezy.")
         ),
-        uiOutput("ch3_caseA1_buttons"),
-        lc_plot("ch3_caseA1_plot", ratio = "2.4/1", max_height = "260px"),
-        uiOutput("ch3_caseA1_explain")
+        uiOutput("ch3_caseA1_widget")
       )
     ),
 
@@ -220,9 +218,7 @@ ch3_ui <- list(
             tags$b("n różne"), " (10, 50, 200). Dodawaj CI jeden po drugim
             i patrz, jak się zwężają.")
         ),
-        uiOutput("ch3_caseA2_buttons"),
-        lc_plot("ch3_caseA2_plot", ratio = "2.4/1", max_height = "260px"),
-        uiOutput("ch3_caseA2_explain")
+        uiOutput("ch3_caseA2_widget")
       )
     ),
 
@@ -239,9 +235,7 @@ ch3_ui <- list(
             ", tags$b("Lek:"), " n=40, średnie obniżenie 12.3 mmHg, s=4.5.
             ", tags$b("Placebo:"), " n=40, średnie obniżenie 4.1 mmHg, s=4.2.")
         ),
-        uiOutput("ch3_caseB1_buttons"),
-        lc_plot("ch3_caseB1_plot", ratio = "1.6/1", max_height = "380px"),
-        uiOutput("ch3_caseB1_explain")
+        uiOutput("ch3_caseB1_widget")
       )
     ),
 
@@ -256,9 +250,7 @@ ch3_ui <- list(
             ", tags$b("Nawoz X:"), " n=25, średnia 8.4 t/ha, s=1.2.
             ", tags$b("Nawoz Y:"), " n=25, średnia 8.1 t/ha, s=1.3.")
         ),
-        uiOutput("ch3_caseB2_buttons"),
-        lc_plot("ch3_caseB2_plot", ratio = "1.6/1", max_height = "380px"),
-        uiOutput("ch3_caseB2_explain")
+        uiOutput("ch3_caseB2_widget")
       )
     ),
 
@@ -274,9 +266,7 @@ ch3_ui <- list(
             ", tags$b("Grupa B:"), " średnia 362 ms, s=45.
             CI każdej grupy osobno się nakładają — czy różnica jest istotna?")
         ),
-        uiOutput("ch3_caseB3_buttons"),
-        lc_plot("ch3_caseB3_plot", ratio = "1.6/1", max_height = "380px"),
-        uiOutput("ch3_caseB3_explain")
+        uiOutput("ch3_caseB3_widget")
       )
     ),
 
@@ -292,9 +282,7 @@ ch3_ui <- list(
             ", tags$b("Wojew. B:"), " n=20 000, średnia 100.0, s=15.
             Różnica 0.4 pkt IQ — dużo czy mało?")
         ),
-        uiOutput("ch3_caseB4_buttons"),
-        lc_plot("ch3_caseB4_plot", ratio = "1.6/1", max_height = "380px"),
-        uiOutput("ch3_caseB4_explain")
+        uiOutput("ch3_caseB4_widget")
       )
     ),
 
@@ -311,9 +299,7 @@ ch3_ui <- list(
             uczących się czterema metodami (po 25 studentów w każdej).
             Dodawaj CI jeden po drugim i obserwuj.")
         ),
-        uiOutput("ch3_caseC1_buttons"),
-        lc_plot("ch3_caseC1_plot", max_height = "300px"),
-        uiOutput("ch3_caseC1_explain")
+        uiOutput("ch3_caseC1_widget")
       )
     ),
 
@@ -327,9 +313,7 @@ ch3_ui <- list(
           p("Mierzysz średni czas oczekiwania na konsultację (minuty) w pięciu
             oddziałach szpitala. Który wymaga interwencji?")
         ),
-        uiOutput("ch3_caseC2_buttons"),
-        lc_plot("ch3_caseC2_plot", ratio = "1.8/1", max_height = "340px"),
-        uiOutput("ch3_caseC2_explain")
+        uiOutput("ch3_caseC2_widget")
       )
     ),
 
@@ -927,13 +911,6 @@ ch3_server <- function(input, output, session) {
     )
   )
 
-  # ---- Reactive state per case ----
-  # Dla kazdego case'a: aktualny step (0 = nic, 1..n = budowa CI,
-  #                     n+1 = hipoteza 1, n+2 = hipoteza 2)
-  ch3_case_state <- reactiveValues()
-  for (cid in names(cases_config)) {
-    ch3_case_state[[cid]] <- 0
-  }
 
   # ---- Helper: narysuj pasek CI dla pojedynczej sredniej ----
   # step: 0 = nic, 1 = punkty, 2 = +srednia, 3 = +SE, 4 = +CI
@@ -1376,101 +1353,16 @@ ch3_server <- function(input, output, session) {
 
   # ---- Liczba "core" krokow budowy CI (bez hipotez) ----
   n_core_steps <- function(cfg) length(cfg$steps)
-
-  # ---- Dekoder fazy hipotezy ze stanu ----
-  # State po n_core: kazda hipoteza ma 2 stany (treść, werdykt).
-  #   n_core + 1 = hipoteza 1 (tylko treść)
-  #   n_core + 2 = hipoteza 1 (z werdyktem)
-  #   n_core + 3 = hipoteza 2 (tylko treść)
-  #   n_core + 4 = hipoteza 2 (z werdyktem)
-  # Zwraca NULL jezeli step jest w fazie budowy CI lub poza zakresem.
-  hyp_phase <- function(step, n_core, n_hyp) {
-    if (step <= n_core) return(NULL)
-    offset <- step - n_core
-    j <- (offset - 1) %/% 2 + 1
-    reveal <- (offset - 1) %% 2 == 1
-    if (j > n_hyp) return(NULL)
-    list(idx = j, reveal = reveal)
-  }
-  # Konwersja: idx hipotezy + reveal -> wartosc state
-  hyp_state <- function(n_core, j, reveal) {
-    n_core + (j - 1) * 2 + (if (reveal) 2 else 1)
-  }
-
-  # ---- Generator przyciskow dla case'a ----
-  case_buttons_ui <- function(case_id) {
-    cfg <- cases_config[[case_id]]
-    current <- ch3_case_state[[case_id]]
-    n_core <- n_core_steps(cfg)
-    n_hyp <- length(cfg$hypotheses)
-    phase <- hyp_phase(current, n_core, n_hyp)
-
-    # Przyciski budowy CI
-    core_btns <- lapply(seq_along(cfg$steps), function(i) {
-      btn_class <- if (current == i) "lc-btn-primary" else "lc-btn-outline"
-      actionButton(paste0("ch3_case", case_id, "_step", i),
-                   cfg$steps[i], class = btn_class)
-    })
-
-    # Przyciski hipotez (pojawiaja sie dopiero po wybudowaniu CI).
-    # Hipoteza jest "aktywna" gdy state odpowiada jej idx (tresc lub werdykt).
-    hyp_btns <- if (current >= n_core) {
-      lapply(seq_along(cfg$hypotheses), function(j) {
-        is_active <- !is.null(phase) && phase$idx == j
-        btn_class <- if (is_active) "lc-btn-warning" else "lc-btn-warning-outline"
-        actionButton(paste0("ch3_case", case_id, "_hyp", j),
-                     paste0("Hipoteza ", j), class = btn_class)
-      })
-    } else {
-      list(helpText("Wybuduj pełny przedział, żeby sprawdzić hipotezy."))
-    }
-
-    # Drugi rzad: przycisk "Pokaż werdykt" - tylko gdy hipoteza wybrana i jeszcze nie odkryta
-    reveal_row <- if (!is.null(phase) && !phase$reveal) {
-      div(class = "step-buttons lc-mt-xs",
-        lc_action(paste0("ch3_case", case_id, "_reveal"), "\U0001f50d Pokaż werdykt", variant = "solid"))
-    } else {
-      NULL
-    }
-
-    tagList(
-      div(class = "step-buttons", core_btns),
-      div(class = "step-buttons lc-mt-xs", hyp_btns),
-      reveal_row
-    )
-  }
-
-  # ---- Glowny render: plot + explanation dla case'a ----
-  render_case_plot <- function(case_id) {
-    cfg <- cases_config[[case_id]]
-    step <- ch3_case_state[[case_id]]
-    n_core <- n_core_steps(cfg)
-
-    if (step == 0) {
-      return(
-        ggplot() +
-          annotate("text", x = 0.5, y = 0.5,
-                   label = "Kliknij pierwszy krok, żeby zacząć",
-                   size = 5, color = upwr_reference) +
-          theme_void()
-      )
-    }
-
-    # Czy jesteśmy w fazie hipotezy?
-    n_hyp <- length(cfg$hypotheses)
-    phase <- hyp_phase(step, n_core, n_hyp)
+  # ---- Wykres case'a: krok budowy CI i (na ostatnim kroku) obszar hipotezy ----
+  render_case_plot <- function(cfg, step, hyp_idx) {
     hypothesis <- NULL
     plot_step <- step
-    if (!is.null(phase)) {
-      # W obu sub-fazach (tresc i werdykt) plot wyglada tak samo:
-      # pelny CI + obszar hipotezy. Werdykt jest tylko w wyjasnieniu.
-      hyp_obj <- cfg$hypotheses[[phase$idx]]
-      # Hipoteza pairwise (dla forest plot) nie ma bound/dir - nie rysujemy obszaru,
-      # studenci patrza na nakladanie sie CI poszczegolnych grup.
+    if (!is.null(hyp_idx)) {
+      hyp_obj <- cfg$hypotheses[[hyp_idx]]
+      # Hipoteza pairwise (forest) nie ma bound/dir — nie rysujemy obszaru.
       if (is.null(hyp_obj$kind) || hyp_obj$kind != "pairwise") {
         hypothesis <- hyp_obj
       }
-      plot_step <- n_core
     }
 
     switch(cfg$type,
@@ -1605,74 +1497,55 @@ ch3_server <- function(input, output, session) {
     )
   }
 
-  # ---- Render: explanation ----
-  render_case_explain <- function(case_id) {
-    cfg <- cases_config[[case_id]]
-    step <- ch3_case_state[[case_id]]
-    n_core <- n_core_steps(cfg)
+  # ---- Opis hipotezy i werdykt pod widgetem case'a ----
+  render_case_explain <- function(cfg, hyp_idx, revealed, widget_id) {
+    if (is.null(hyp_idx)) return(NULL)
+    hyp <- cfg$hypotheses[[hyp_idx]]
 
-    if (step == 0) return(NULL)
-
-    # Faza hipotezy
-    n_hyp <- length(cfg$hypotheses)
-    phase <- hyp_phase(step, n_core, n_hyp)
-    if (!is.null(phase)) {
-      hyp <- cfg$hypotheses[[phase$idx]]
-
-      # Sub-faza 1: tylko tresc hipotezy (czas na dyskusje ze studentami)
-      if (!phase$reveal) {
-        return(lc_feedback(type = "info",
-          p(tags$strong("Hipoteza ", phase$idx, ": "), hyp$text),
-          p(tags$em("Spojrz na wykres: gdzie lezy CI wzgledem obszaru hipotezy?
-                    Co o tym sadzicie? Kliknięcie ", tags$b("Pokaż werdykt"),
-                    " odsloni odpowiedź."))
-        ))
-      }
-
-      # Sub-faza 2: werdykt + wyjasnienie
-      # Specjalny przypadek: hipoteza pairwise dla forest plot
-      if (!is.null(hyp$kind) && hyp$kind == "pairwise") {
-        mat <- forest_pairwise_matrix(cfg$data)
-        narrative <- pairwise_narrative(cfg$data, mat,
-                                         unit = if (!is.null(hyp$unit)) hyp$unit else "")
-        return(lc_feedback(type = "ok",
-          p(tags$strong("Hipoteza: "), hyp$text),
-          p(tags$strong("Szybka mapa porównań:")),
-          p(tags$em("✓ = rozłączne CI: wyraźny sygnał różnicy;  ",
-                    "× = CI nakładają się: wykres nie rozstrzyga"),
-            style = "font-size: 12px; color: var(--upwr-reference);"),
-          render_pairwise_table(mat),
-          p(tags$strong("Jak to opisać na tym etapie:"),
-            style = "margin-top: 12px;"),
-          p(HTML(narrative), style = "font-style: italic;")
-        ))
-      }
-
-      verdict <- compute_verdict_for_case(cfg, hyp)
-      cls <- verdict_class(verdict)
-      label <- verdict_label(verdict)
-
-      body <- if (verdict == "yes" && !is.null(hyp$explain_yes)) {
-        p(hyp$explain_yes)
-      } else if (verdict == "no" && !is.null(hyp$explain_no)) {
-        p(hyp$explain_no)
-      } else {
-        p("CI przecina granicę hipotezy — nie możemy jednoznacznie
-          stwierdzić, czy jest prawdziwa.")
-      }
-
-      return(lc_feedback(type = cls,
-        p(tags$strong("Hipoteza ", phase$idx, ": "), hyp$text),
-        p(tags$strong("Werdykt: ", label)),
-        body
+    # Najpierw sama treść hipotezy (czas na dyskusję), werdykt po kliknięciu.
+    if (!revealed) {
+      return(lc_status(
+        p(tags$strong(paste0("Hipoteza ", hyp_idx, ":")), " ", hyp$text),
+        p("Spójrz na wykres: gdzie leży CI względem obszaru hipotezy?
+          Co o tym sądzicie?"),
+        lc_action(paste0(widget_id, "_reveal"), "Pokaż werdykt", variant = "solid")
       ))
     }
 
-    # Faza budowy CI — wyjaśnienie ostatniego kroku
-    # Dla uproszczenia: krótki neutralny feedback.
-    lc_feedback(type = "info",
-      p(tags$strong(cfg$steps[step])),
-      p("Krok ", step, " z ", n_core, ".")
+    if (!is.null(hyp$kind) && hyp$kind == "pairwise") {
+      mat <- forest_pairwise_matrix(cfg$data)
+      narrative <- pairwise_narrative(cfg$data, mat,
+                                       unit = if (!is.null(hyp$unit)) hyp$unit else "")
+      return(lc_status(
+        p(tags$strong("Hipoteza:"), " ", hyp$text),
+        p(tags$strong("Szybka mapa porównań:")),
+        p(tags$em("✓ = rozłączne CI: wyraźny sygnał różnicy;  ",
+                  "× = CI nakładają się: wykres nie rozstrzyga"),
+          style = "font-size: 12px; color: var(--upwr-reference);"),
+        render_pairwise_table(mat),
+        p(tags$strong("Jak to opisać na tym etapie:"),
+          style = "margin-top: 12px;"),
+        p(HTML(narrative), style = "font-style: italic;")
+      ))
+    }
+
+    verdict <- compute_verdict_for_case(cfg, hyp)
+    label <- verdict_label(verdict)
+
+    body <- if (verdict == "yes" && !is.null(hyp$explain_yes)) {
+      p(hyp$explain_yes)
+    } else if (verdict == "no" && !is.null(hyp$explain_no)) {
+      p(hyp$explain_no)
+    } else {
+      p("CI przecina granicę hipotezy — nie możemy jednoznacznie
+        stwierdzić, czy jest prawdziwa.")
+    }
+
+    lc_status(
+      p(tags$strong(paste0("Hipoteza ", hyp_idx, ":")), " ", hyp$text),
+      p(tags$strong("Werdykt:"), " ",
+        if (verdict %in% c("yes", "no")) lc_verdict(label, type = if (verdict == "yes") "ok" else "danger") else label),
+      body
     )
   }
 
@@ -1704,52 +1577,43 @@ ch3_server <- function(input, output, session) {
     )
   }
 
-  # ---- Podlaczenie observerow + outputow dla kazdego case'a ----
-  # case_id przekazywany jako argument funkcji = wlasciwe closure dla kazdego case'a
-  # (zastepuje wczesniejszy wzorzec for + local({}), ktory cicho gubil rejestracje).
+  # ---- Widget krokowy case'a: pasek budowy CI, hipotezy jako przełączniki ----
   register_case <- function(case_id) {
     cfg <- cases_config[[case_id]]
     n_core <- length(cfg$steps)
-
-    # Observery dla przyciskow core stepow
-    lapply(seq_along(cfg$steps), function(i) {
-      force(i)
-      observeEvent(input[[paste0("ch3_case", case_id, "_step", i)]], {
-        ch3_case_state[[case_id]] <- i
-      }, ignoreInit = TRUE)
+    widget_id <- paste0("ch3_case", case_id)
+    step <- lc_step_server(widget_id, input)$step
+    # Hipoteza liczy się tylko na ostatnim kroku (pełny przedział).
+    hyp_idx <- reactive({
+      h <- input[[paste0(widget_id, "_hyp")]]
+      if (is.null(h) || step() < n_core) NULL else as.integer(h)
     })
+    revealed <- reactiveVal(FALSE)
+    observeEvent(input[[paste0(widget_id, "_hyp")]], revealed(FALSE), ignoreNULL = FALSE)
+    observeEvent(input[[paste0(widget_id, "_reveal")]], revealed(TRUE))
 
-    # Observery dla przyciskow hipotez (kazda hipoteza -> faza "tylko tresc")
-    lapply(seq_along(cfg$hypotheses), function(j) {
-      force(j)
-      observeEvent(input[[paste0("ch3_case", case_id, "_hyp", j)]], {
-        ch3_case_state[[case_id]] <- hyp_state(n_core, j, reveal = FALSE)
-      }, ignoreInit = TRUE)
+    hyp_choices <- stats::setNames(as.character(seq_along(cfg$hypotheses)),
+                                   paste("Hipoteza", seq_along(cfg$hypotheses)))
+    output[[paste0(widget_id, "_widget")]] <- renderUI({
+      lc_step_widget(widget_id,
+        steps = sub("^[0-9]+\\.\\s*", "", cfg$steps),
+        plot_id = paste0(widget_id, "_plot"),
+        ratio = if (cfg$type %in% c("single_mean", "compare_n")) "2.4/1" else "1.6/1",
+        toolbar = lc_toolbar(
+          lc_step_from(n_core, lc_chips(paste0(widget_id, "_hyp"), hyp_choices, label = "Sprawdź"))
+        ),
+        extra = uiOutput(paste0(widget_id, "_explain"))
+      )
     })
-
-    # Observer dla przycisku "Pokaz werdykt" - przelacza obecna hipoteze w faze "werdykt"
-    observeEvent(input[[paste0("ch3_case", case_id, "_reveal")]], {
-      current <- ch3_case_state[[case_id]]
-      n_hyp <- length(cfg$hypotheses)
-      phase <- hyp_phase(current, n_core, n_hyp)
-      if (!is.null(phase) && !phase$reveal) {
-        ch3_case_state[[case_id]] <- hyp_state(n_core, phase$idx, reveal = TRUE)
-      }
-    }, ignoreInit = TRUE)
-
-    # Rendery z jawna reaktywna zaleznoscia na ch3_case_state[[case_id]]
-    output[[paste0("ch3_case", case_id, "_buttons")]] <- renderUI({
-      ch3_case_state[[case_id]]
-      case_buttons_ui(case_id)
+    output[[paste0(widget_id, "_text")]] <- renderUI({
+      if (step() == n_core) "Przedział gotowy. Wybierz hipotezę, żeby sprawdzić ją na wykresie."
     })
-    zoom_plot_server(paste0("ch3_case", case_id, "_plot"), reactive({
-      ch3_case_state[[case_id]]
-      render_case_plot(case_id)
-    }))
-    output[[paste0("ch3_case", case_id, "_explain")]] <- renderUI({
-      ch3_case_state[[case_id]]
-      render_case_explain(case_id)
-    })
+    zoom_plot_server(paste0(widget_id, "_plot"), reactive(
+      render_case_plot(cfg, step(), hyp_idx())
+    ))
+    output[[paste0(widget_id, "_explain")]] <- renderUI(
+      render_case_explain(cfg, hyp_idx(), revealed(), widget_id)
+    )
   }
 
   for (cid in names(cases_config)) {
