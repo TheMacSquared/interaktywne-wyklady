@@ -42,7 +42,7 @@ ch3_ui <- list(
         title = "Budowa histogramu",
         steps = c("Surowe dane", "Posortuj dane", "Podziel na przedziały",
                   "Przypisz do binów", "Zlicz obserwacje", "Zbuduj słupki",
-                  "Gotowy histogram", "Wpływ szerokości binu"),
+                  "Wpływ szerokości binu"),
         toolbar = lc_toolbar(
           selectInput("ch3_hist_var", "Zmienna",
             choices = c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
@@ -546,22 +546,14 @@ ch3_server <- function(input, output, session) {
     } else if (step == 7) {
       df <- data.frame(value = x)
       w <- input$ch3_hist_bin_width
-
-      ggplot(df, aes(x = value)) +
-        step_result(geom_histogram, binwidth = w) +
-        labs(x = x_label, y = "Liczba obserwacji") +
-        step_frame(xlim = c(x_lo, x_hi))
-
-    } else if (step == 8) {
-      df <- data.frame(value = x)
-      w <- input$ch3_hist_bin_width
       widths <- c(w / 2, w, w * 2)
       unit <- ch3_hist_defaults[[var_name]]$unit
       labels <- paste0("Bin = ", widths, " ", unit)
 
       plots <- lapply(seq_along(widths), function(i) {
         ggplot(df, aes(x = value)) +
-          geom_histogram(binwidth = widths[i],
+          # Granice binów od tej samej dolnej krawędzi co w krokach 3–6.
+          geom_histogram(binwidth = widths[i], boundary = floor(min(x) / w) * w,
                          fill = c(upwr_accent, upwr_cat["niebo"], upwr_cat["szalwia"])[i],
                          alpha = 0.7, color = upwr_secondary, linewidth = 0.3) +
           labs(x = if (i == 2) x_label else "", y = if (i == 1) "Liczba obs." else "") +
@@ -592,10 +584,8 @@ ch3_server <- function(input, output, session) {
                    ". Każdy bin to 'koszyk' na obserwacje."),
       "4" = "Każda obserwacja trafia do swojego binu — kolor = przynależność.",
       "5" = "Liczymy obserwacje w każdym binie. Te liczby staną się wysokością słupków.",
-      "6" = "Zamieniamy punkty na słupki — wysokość = liczba obserwacji. To już prawie histogram!",
-      "7" = paste0("Gotowy histogram (n = ", n, ", bin = ", input$ch3_hist_bin_width,
-                   " ", unit, "). Spróbuj zmienić szerokość binu suwakiem!"),
-      "8" = paste0("Te same dane z trzema szerokościami binu. ",
+      "6" = "Zamieniamy punkty na słupki — wysokość = liczba obserwacji. To już jest histogram.",
+      "7" = paste0("Te same dane z trzema szerokościami binu. ",
                    "Za wąskie → szum. Za szerokie → utrata szczegółów.")
     )
     txt
