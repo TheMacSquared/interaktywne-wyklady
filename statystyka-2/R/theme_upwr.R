@@ -168,8 +168,17 @@ step_line <- function(role, xintercept = NULL, yintercept = NULL, helper = TRUE)
   step_layer(ggplot2::geom_hline, role, yintercept = yintercept, linetype = lt)
 }
 
+# Etykieta plotmath „symbol = liczba” do annotate(..., parse = TRUE).
+# x̄ i p̂ na wykresach tylko tak: znak łączący z Unicode ląduje obok litery.
+# plotmath ignoruje fontface, więc pogrubienie daje bold(); samotny symbol:
+# "bold(bar(x))". pm_eq("bar(x)[1] - bar(x)[2]", lc_fmt(d, 2)) → x̄₁ − x̄₂ = 0.53
+pm_eq <- function(lhs, value, bold = TRUE) {
+  out <- paste0(lhs, ' == "', value, '"')
+  if (isTRUE(bold)) paste0("bold(", out, ")") else out
+}
+
 # Etykieta przy elemencie: krótki symbol (Me, Q1, n = 12), pogrubiony, kolor roli.
-# Domyślny krój ma znaki x̄, p̂, ₁, β (mono ich nie ma); parse = TRUE dla plotmath.
+# Greka i indeksy dolne działają wprost; x̄, p̂ przez pm_eq() i parse = TRUE.
 step_label <- function(x, y, label, role = "known", hjust = 0, vjust = 0, size = 3.6,
                        family = "", parse = FALSE) {
   ggplot2::annotate("text", x = x, y = y, label = label, hjust = hjust, vjust = vjust,

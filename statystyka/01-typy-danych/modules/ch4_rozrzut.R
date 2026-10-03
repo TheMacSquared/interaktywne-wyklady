@@ -638,7 +638,7 @@ ch4_server <- function(input, output, session) {
                      bins = 25, fill = upwr_cat["niebo"], color = "white", alpha = 0.85) +
       geom_vline(xintercept = m, color = upwr_secondary, linewidth = 1.2, linetype = "solid") +
       annotate("text", x = m, y = Inf, label = pm_eq("bar(x)", round(m, 1)), parse = TRUE,
-               vjust = -0.5, color = upwr_secondary, fontface = "bold", size = 4.5) +
+               vjust = 1.5, hjust = -0.1, color = upwr_secondary, fontface = "bold", size = 4.5) +
       annotate("text",
                x = c(m - s, m + s, m - 2 * s, m + 2 * s, m - 3 * s, m + 3 * s),
                y = -Inf,

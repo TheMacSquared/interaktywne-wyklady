@@ -134,9 +134,6 @@ w statystyce 01–04 i 06, statystyce 2 i analizie ryzyka 01 i 08). Zostało:
   przebudowy — widget prawdopodobnie nie działa poprawnie. Na razie zostaje
   na kropkach (`lc_step_nav()`); przy przebudowie rozważyć
   `lc_step_widget(body = …)` albo schemat redukcji jako wykres.
-- [ ] Znaki x̄, p̂, ₁, β na wykresach: w części środowisk (showtext, mono) wychodzą
-  jako puste kwadraty — sprawdzić w przeglądarce; `step_label()` ma już
-  domyślnie zwykły krój i `parse = TRUE` dla plotmath.
 
 Etap 3, bloki tekstu (handoff „Bloki v2”; komponenty i zasady są już we
 wspólnym `R/`, margines boczny usunięty, dawne callouty renderują się jako

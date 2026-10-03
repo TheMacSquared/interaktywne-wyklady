@@ -12,20 +12,24 @@
 #' Ustaw globalny motyw i defaulty geom-ów dla całej apki.
 #' Wywołać raz w app.R po sourcowaniu palette.R + theme_upwr.R.
 lc_apply_ggplot_defaults <- function() {
-  # Zarejestruj Atkinson Hyperlegible w ggplot przez showtext (jeśli dostępne).
-  # Bez showtext ggplot nie wyrenderuje fontu webowego — spadnie na systemowy sans.
+  # Atkinson Hyperlegible z R/fonts/ (OFL) rejestrowany w systemfonts i
+  # rysowany przez ragg. Krój nie ma greki, indeksów dolnych ani znaków
+  # łączących; ragg bierze brakujące glify z kroju systemowego (showtext tego
+  # nie potrafi i rysował puste kwadraty). x̄ i p̂ na wykresach pisz w plotmath:
+  # bar(x), hat(p) — znak łączący ląduje obok litery w każdym kroju.
   base_family <- ""
-  if (requireNamespace("showtext", quietly = TRUE) &&
-      requireNamespace("sysfonts", quietly = TRUE)) {
-    if (!"Atkinson Hyperlegible" %in% sysfonts::font_families()) {
-      try(sysfonts::font_add_google("Atkinson Hyperlegible", "Atkinson Hyperlegible"),
-          silent = TRUE)
+  font_dir <- file.path(project_root, "R", "fonts")
+  if (requireNamespace("ragg", quietly = TRUE) &&
+      requireNamespace("systemfonts", quietly = TRUE) &&
+      file.exists(file.path(font_dir, "AtkinsonHyperlegible-Regular.ttf"))) {
+    if (!"Atkinson Hyperlegible" %in% systemfonts::registry_fonts()$family) {
+      ttf <- function(style) file.path(font_dir, paste0("AtkinsonHyperlegible-", style, ".ttf"))
+      systemfonts::register_font("Atkinson Hyperlegible",
+        plain = ttf("Regular"), bold = ttf("Bold"),
+        italic = ttf("Italic"), bolditalic = ttf("BoldItalic"))
     }
-    if ("Atkinson Hyperlegible" %in% sysfonts::font_families()) {
-      showtext::showtext_auto()
-      showtext::showtext_opts(dpi = 96)
-      base_family <- "Atkinson Hyperlegible"
-    }
+    options(shiny.useragg = TRUE)
+    base_family <- "Atkinson Hyperlegible"
   }
   ggplot2::theme_set(theme_upwr(base_family = base_family))
   ggplot2::update_geom_defaults("point",   list(colour = upwr_single))
