@@ -181,7 +181,7 @@ ch4_ui <- list(
     lc_h2("ch4-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
     lc_p("Zanim przeprowadzimy test na danych, przećwicz pierwszy krok:
-      przełożenie pytania na parę hipotez. Najważniejsze jest to, czy pytanie
+      zamianę pytania na parę hipotez. Najważniejsze jest to, czy pytanie
       wskazuje kierunek związku. Dla każdej sytuacji zapisz H₀ i Hₐ, a potem
       porównaj swoją odpowiedź z rozwiązaniem."),
 

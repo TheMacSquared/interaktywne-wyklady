@@ -96,7 +96,7 @@ ch2_ui <- list(
     lc_h2("ch2-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
     lc_p("Zanim zobaczysz test w działaniu, przećwicz jego pierwszy krok,
-      czyli przekład pytania na hipotezy. Dla każdego pytania ustal, o jaką
+      czyli zamianę pytania na hipotezy. Dla każdego pytania ustal, o jaką
       średnią chodzi, jaka jest wartość referencyjna i czy pytanie wskazuje
       kierunek. Dopiero potem odkryj odpowiedź."),
 

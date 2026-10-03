@@ -12,15 +12,15 @@ ch2h_ui <- list(
       num    = "02",
       title  = "Od pytania do hipotezy.",
       lead   = "Test statystyczny nie odpowiada na pytanie zadane potocznie. Najpierw
-                trzeba je przełożyć na dwie przeciwstawne hipotezy o parametrze
-                populacji, a od tego przekładu zależy, co test w ogóle może wykazać."
+                trzeba je zamienić na dwie przeciwstawne hipotezy o parametrze
+                populacji, a od tej zamiany zależy, co test w ogóle może wykazać."
     ),
 
     lc_p("Eksperyment z telefonem z rozdziału 01 zostawił nas z różnicą średnich
       i z wątpliwością, czy nie jest ona dziełem przypadku. Zanim policzymy
       cokolwiek, musimy ustalić, o co dokładnie pytamy: jakiej liczby dotyczy
       pytanie i jaki wynik uznamy za sygnał efektu. Ten rozdział jest
-      w całości poświęcony temu przekładowi."),
+      w całości poświęcony tej zamianie."),
 
     lc_h2("ch2h-zasada", "Zasada: od potocznego do formalnego"),
 
@@ -134,7 +134,7 @@ ch2h_ui <- list(
     # ========================================================================
     lc_h2("ch2h-galeria", "Galeria: sformułuj hipotezy sam"),
 
-    lc_p("Czas przećwiczyć ten przekład na pytaniach z różnych dziedzin.
+    lc_p("Czas przećwiczyć tę zamianę na pytaniach z różnych dziedzin.
       Dla każdego pytania ustal, jakiego parametru dotyczy i jakiej relacji
       szuka Hₐ. Zapisz obie hipotezy na boku w języku naturalnym, bez symboli,
       i dopiero wtedy porównaj je z odpowiedzią pod przyciskiem."),
@@ -331,7 +331,7 @@ ch2h_ui <- list(
     # ========================================================================
     lc_h2("ch2h-bledy", "Typowe błędy przy formułowaniu hipotez"),
 
-    lc_p("Ćwiczenia pokazują, że przekład pytania na hipotezy wymaga kilku
+    lc_p("Ćwiczenia pokazują, że zamiana pytania na hipotezy wymaga kilku
       decyzji, a każda z nich może pójść źle. Najczęstsze pomyłki są
       następujące:"),
     tags$ol(

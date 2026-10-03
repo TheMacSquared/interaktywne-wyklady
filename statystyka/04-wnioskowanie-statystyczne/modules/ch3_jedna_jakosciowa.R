@@ -96,7 +96,7 @@ ch3_ui <- list(
     lc_h2("ch3-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
     lc_p("Zanim policzymy pierwszy test, warto przećwiczyć krok, od którego
-      wszystko się zaczyna: przekład pytania potocznego na parę hipotez
+      wszystko się zaczyna: zamiana pytania potocznego na parę hipotez
       o \\(p\\). W każdym przykładzie zdecyduj, czy pytanie wskazuje kierunek,
       zapisz H₀ i Hₐ, a dopiero potem odsłoń odpowiedź."),
 
