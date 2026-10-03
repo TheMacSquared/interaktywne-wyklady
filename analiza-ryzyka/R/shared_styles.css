@@ -1829,6 +1829,13 @@ mjx-container mjx-text {
    JS w shared_toc.js (sekcja "Image zoom").
    ============================================================================ */
 
+.lc-figure-panel > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
 .lc-figure-panel > img,
 .lc-figure-panel .lc-zoomable img {
   cursor: zoom-in;

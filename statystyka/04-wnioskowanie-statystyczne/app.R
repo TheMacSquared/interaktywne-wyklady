@@ -83,14 +83,9 @@ header_extras <- tagList(
       transform-origin: top center;
     }
 
-    .ch2-step-panel .lc-feedback,
-    .ch2-step-panel .lc-stat-box,
     .ch2-step-panel .lc-formula-box {
       animation: ch2SoftPop 320ms ease-out both;
     }
-
-    .ch2-step-panel .lc-stat-box:nth-of-type(2) { animation-delay: 45ms; }
-    .ch2-step-panel .lc-stat-box:nth-of-type(3) { animation-delay: 90ms; }
 
     @keyframes ch2StepEnter {
       from { opacity: 0; transform: translateY(10px); }
@@ -104,8 +99,6 @@ header_extras <- tagList(
 
     @media (prefers-reduced-motion: reduce) {
       .ch2-step-panel,
-      .ch2-step-panel .lc-feedback,
-      .ch2-step-panel .lc-stat-box,
       .ch2-step-panel .lc-formula-box {
         animation: none !important;
         transition: none !important;

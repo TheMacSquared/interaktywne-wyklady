@@ -59,9 +59,8 @@ ch10_ui <- list(
     figure_panel(
       label = "Ryc. 10.1",
       title = "p kontra d: to nie to samo",
-      fluidRow(
-        column(4,
-          selectInput("ch10_dist_scenario", "Przykład:",
+      lc_toolbar(
+        selectInput("ch10_dist_scenario", "Przykład",
             choices = c(
               "Enzym (TŻ)"   = "TZ",
               "Ziarno (ROL)" = "ROL",
@@ -69,15 +68,12 @@ ch10_ui <- list(
             ),
             selected = "TZ"
           ),
-          lc_slider("ch10_d", "Cohen's d (wielkość efektu)", 0.1, 1.5, 0.3, 0.05),
-          lc_slider("ch10_n", "n na grupę", 20, 300, 50, 10),
-          uiOutput("ch10_dist_hint")
-        ),
-        column(8,
-          zoom_plot_ui("ch10_dist_plot", height = "280px"),
-          uiOutput("ch10_dist_stats")
-        )
-      )
+        lc_slider("ch10_d", "Cohen's d (wielkość efektu)", 0.1, 1.5, 0.3, 0.05),
+        lc_slider("ch10_n", "n na grupę", 20, 300, 50, 10)
+      ),
+      lc_plot("ch10_dist_plot", max_height = "280px"),
+      uiOutput("ch10_dist_stats"),
+      uiOutput("ch10_dist_hint")
     ),
 
     lc_p("Przy ustawieniach startowych (d = 0.3, po 50 obserwacji w grupie)
@@ -135,19 +131,19 @@ ch10_ui <- list(
       poniżej. Różnica IQ z przykładu B4 (d ≈ 0.03) leży daleko poniżej
       progu efektu małego."),
 
-    tags$table(class = "lc-table lc-table-bordered",
-      style = "font-size: 15px; margin: 10px 0;",
-      tags$thead(tags$tr(
-        tags$th("Wielkość efektu"), tags$th("|d|"), tags$th("Przykład")
-      )),
-      tags$tbody(
-        tags$tr(tags$td("mały"),   tags$td("0.2"),
-                tags$td("pH jogurtu 4.50 i 4.56 przy SD 0.30")),
-        tags$tr(tags$td("średni"), tags$td("0.5"),
-                tags$td("wilgotność suszu 20.0% i 22.5% przy SD 5")),
-        tags$tr(tags$td("duży"),   tags$td("0.8"),
-                tags$td("czas inaktywacji enzymów 8 i 10 min przy SD 2.5"))
-      )
+    lc_table(
+      data.frame(
+        c1 = c("mały", "średni", "duży"),
+        c2 = c("0.2", "0.5", "0.8"),
+        c3 = c("pH jogurtu 4.50 i 4.56 przy SD 0.30", "wilgotność suszu 20.0% i 22.5% przy SD 5", "czas inaktywacji enzymów 8 i 10 min przy SD 2.5")
+      ),
+      cols = list(
+        lc_col("c1", "Wielkość efektu", "row"),
+        lc_col("c2", "|d|", "num"),
+        lc_col("c3", "Przykład", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_p("Panel zamienia wybraną wartość d na konkretne średnie i odchylenia
@@ -156,9 +152,8 @@ ch10_ui <- list(
     figure_panel(
       label = "Ryc. 10.2",
       title = "Cohen's d w surowych liczbach",
-      fluidRow(
-        column(4,
-          selectInput("ch10_d_scenario", "Przykład:",
+      lc_toolbar(
+        selectInput("ch10_d_scenario", "Przykład",
             choices = c(
               "Jogurt (TŻ)"    = "TZ",
               "Pszenica (ROL)" = "ROL",
@@ -166,18 +161,15 @@ ch10_ui <- list(
             ),
             selected = "TZ"
           ),
-          lc_segmented("ch10_d_level", "Wielkość efektu", choices = c(
+        lc_segmented("ch10_d_level", "Wielkość efektu", choices = c(
               "d = 0.2 (mały)"      = "0.2",
               "d = 0.5 (średni)"    = "0.5",
               "d = 0.8 (duży)"      = "0.8",
               "d = 1.2 (b. duży)"   = "1.2"
             ), selected = "0.5")
-        ),
-        column(8,
-          zoom_plot_ui("ch10_d_plot", height = "240px"),
-          uiOutput("ch10_d_table")
-        )
-      )
+      ),
+      lc_plot("ch10_d_plot", max_height = "240px"),
+      uiOutput("ch10_d_table")
     ),
 
     lc_p("Nawet efekt średni oznacza silnie zachodzące na siebie rozkłady.
@@ -212,16 +204,19 @@ ch10_ui <- list(
       krzywoliniowa może dać r bliskie zeru. Orientacyjne progi Cohena dla |r|
       to 0.1, 0.3 i 0.5."),
 
-    tags$table(class = "lc-table lc-table-bordered",
-      style = "font-size: 15px; margin: 10px 0;",
-      tags$thead(tags$tr(
-        tags$th("Wielkość efektu"), tags$th("|r|"), tags$th("r²")
-      )),
-      tags$tbody(
-        tags$tr(tags$td("mała"),    tags$td("0.1"), tags$td("1% zmienności wyjaśnione")),
-        tags$tr(tags$td("średnia"), tags$td("0.3"), tags$td("9% zmienności wyjaśnione")),
-        tags$tr(tags$td("duża"),    tags$td("0.5"), tags$td("25% zmienności wyjaśnione"))
-      )
+    lc_table(
+      data.frame(
+        c1 = c("mała", "średnia", "duża"),
+        c2 = c("0.1", "0.3", "0.5"),
+        c3 = c("1% zmienności wyjaśnione", "9% zmienności wyjaśnione", "25% zmienności wyjaśnione")
+      ),
+      cols = list(
+        lc_col("c1", "Wielkość efektu", "row"),
+        lc_col("c2", "|r|", "num"),
+        lc_col("c3", "r²", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_p("Panel pokazuje 50 punktów wylosowanych z populacji o zadanej
@@ -230,9 +225,8 @@ ch10_ui <- list(
     figure_panel(
       label = "Ryc. 10.3",
       title = "r w surowych liczbach",
-      fluidRow(
-        column(4,
-          selectInput("ch10_r_scenario", "Przykład:",
+      lc_toolbar(
+        selectInput("ch10_r_scenario", "Przykład",
             choices = c(
               "Jogurt (TŻ)"   = "TZ",
               "Plon (ROL)"    = "ROL",
@@ -240,7 +234,7 @@ ch10_ui <- list(
             ),
             selected = "TZ"
           ),
-          radioButtons("ch10_r_level", "Wielkość korelacji:",
+        lc_segmented("ch10_r_level", "Wielkość korelacji",
             choices = c(
               "r = 0.1 (mała)"       = "0.1",
               "r = 0.3 (średnia)"    = "0.3",
@@ -249,14 +243,11 @@ ch10_ui <- list(
               "r = 0.9 (b. duża)"    = "0.9"
             ),
             selected = "0.5"
-          ),
-          uiOutput("ch10_r_hint")
-        ),
-        column(8,
-          zoom_plot_ui("ch10_r_plot", height = "240px"),
-          uiOutput("ch10_r_table")
-        )
-      )
+          )
+      ),
+      lc_plot("ch10_r_plot", max_height = "240px"),
+      uiOutput("ch10_r_table"),
+      uiOutput("ch10_r_hint")
     ),
 
     lc_p("Przy ustawieniach startowych (zadane r = 0.5) z wylosowanych punktów
@@ -291,18 +282,18 @@ ch10_ui <- list(
       odsetków w grupach: V = 0.30 odpowiada na przykład 35% i 65%. Progi
       Cohena zależą od mniejszego wymiaru tabeli."),
 
-    tags$table(class = "lc-table lc-table-bordered",
-      style = "font-size: 15px; margin: 10px 0;",
-      tags$thead(tags$tr(
-        tags$th("Wielkość efektu"),
-        tags$th("V (min(r, c) = 2, np. 2×2, 2×3)"),
-        tags$th("V (min(r, c) = 3, np. 3×3)")
-      )),
-      tags$tbody(
-        tags$tr(tags$td("mały"),   tags$td("0.10"), tags$td("0.07")),
-        tags$tr(tags$td("średni"), tags$td("0.30"), tags$td("0.21")),
-        tags$tr(tags$td("duży"),   tags$td("0.50"), tags$td("0.35"))
-      )
+    lc_table(
+      data.frame(
+        c1 = c("mały", "średni", "duży"),
+        c2 = c("0.10", "0.30", "0.50"),
+        c3 = c("0.07", "0.21", "0.35")
+      ),
+      cols = list(
+        lc_col("c1", "Wielkość efektu", "row"),
+        lc_col("c2", "V (min(r, c) = 2, np. 2×2, 2×3)", "num"),
+        lc_col("c3", "V (min(r, c) = 3, np. 3×3)", "num")
+      ),
+      prose = TRUE
     ),
 
     lc_p("Panel pokazuje odsetki w dwóch równolicznych grupach dla wybranej
@@ -311,9 +302,8 @@ ch10_ui <- list(
     figure_panel(
       label = "Ryc. 10.4",
       title = "Cramér's V w tabeli 2×2",
-      fluidRow(
-        column(4,
-          selectInput("ch10_v_scenario", "Przykład:",
+      lc_toolbar(
+        selectInput("ch10_v_scenario", "Przykład",
             choices = c(
               "Pleśń (TŻ)"      = "TZ",
               "Chwasty (ROL)"   = "ROL",
@@ -321,19 +311,16 @@ ch10_ui <- list(
             ),
             selected = "TZ"
           ),
-          lc_segmented("ch10_v_level", "Wielkość efektu", choices = c(
+        lc_segmented("ch10_v_level", "Wielkość efektu", choices = c(
               "V = 0.10 (mały)"   = "0.10",
               "V = 0.30 (średni)" = "0.30",
               "V = 0.50 (duży)"   = "0.50",
               "V = 0.70 (b. duży)" = "0.70"
-            ), selected = "0.30"),
-          uiOutput("ch10_v_hint")
-        ),
-        column(8,
-          zoom_plot_ui("ch10_v_plot", height = "240px"),
-          uiOutput("ch10_v_table")
-        )
-      )
+            ), selected = "0.30")
+      ),
+      lc_plot("ch10_v_plot", max_height = "240px"),
+      uiOutput("ch10_v_table"),
+      uiOutput("ch10_v_hint")
     ),
 
     lc_p("Przy ustawieniach startowych pleśń pojawia się na 35% produktów
@@ -366,20 +353,19 @@ ch10_ui <- list(
       dopiero w modelach z kilkoma czynnikami. Orientacyjne progi Cohena to
       0.01, 0.06 i 0.14."),
 
-    tags$table(class = "lc-table lc-table-bordered",
-      style = "font-size: 15px; margin: 10px 0;",
-      tags$thead(tags$tr(
-        tags$th("Wielkość efektu"), tags$th(withMathJax("\\(\\eta^2\\)")),
-        tags$th("Interpretacja")
-      )),
-      tags$tbody(
-        tags$tr(tags$td("mały"),   tags$td("0.01"),
-                tags$td("czynnik tłumaczy około 1% zmienności")),
-        tags$tr(tags$td("średni"), tags$td("0.06"),
-                tags$td("czynnik tłumaczy około 6% zmienności")),
-        tags$tr(tags$td("duży"),   tags$td("0.14"),
-                tags$td("czynnik tłumaczy co najmniej 14% zmienności"))
-      )
+    lc_table(
+      data.frame(
+        c1 = c("mały", "średni", "duży"),
+        c2 = c("0.01", "0.06", "0.14"),
+        c3 = c("czynnik tłumaczy około 1% zmienności", "czynnik tłumaczy około 6% zmienności", "czynnik tłumaczy co najmniej 14% zmienności")
+      ),
+      cols = list(
+        lc_col("c1", "Wielkość efektu", "row"),
+        lc_col("c2", "η²", "num"),
+        lc_col("c3", "Interpretacja", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_p("Panel losuje po 30 obserwacji w trzech grupach z populacji o zadanym
@@ -388,9 +374,8 @@ ch10_ui <- list(
     figure_panel(
       label = "Ryc. 10.5",
       title = "η² w ANOVA — trzy grupy",
-      fluidRow(
-        column(4,
-          selectInput("ch10_eta_scenario", "Przykład:",
+      lc_toolbar(
+        selectInput("ch10_eta_scenario", "Przykład",
             choices = c(
               "Pasteryzacja (TŻ)" = "TZ",
               "Nawozy (ROL)"      = "ROL",
@@ -398,19 +383,16 @@ ch10_ui <- list(
             ),
             selected = "TZ"
           ),
-          lc_segmented("ch10_eta_level", "Wielkość efektu", choices = c(
+        lc_segmented("ch10_eta_level", "Wielkość efektu", choices = c(
               "η² = 0.01 (mały)"    = "0.01",
               "η² = 0.06 (średni)"  = "0.06",
               "η² = 0.14 (duży)"    = "0.14",
               "η² = 0.30 (b. duży)" = "0.30"
-            ), selected = "0.06"),
-          uiOutput("ch10_eta_hint")
-        ),
-        column(8,
-          zoom_plot_ui("ch10_eta_plot", height = "240px"),
-          uiOutput("ch10_eta_table")
-        )
-      )
+            ), selected = "0.06")
+      ),
+      lc_plot("ch10_eta_plot", max_height = "240px"),
+      uiOutput("ch10_eta_table"),
+      uiOutput("ch10_eta_hint")
     ),
 
     lc_p("Przy ustawieniach startowych (η² = 0.06) średnie grup wynoszą 46.9,
@@ -700,17 +682,28 @@ ch10_server <- function(input, output, session) {
                     if (abs(d) < 0.8) "średnia" else "duża"
 
     tagList(
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        style = "margin-top: 8px;",
-        tags$thead(tags$tr(
-          tags$th("n / grupę"), tags$th("Cohen's d"), tags$th("t"), tags$th("p")
-        )),
-        tags$tbody(tags$tr(
-          tags$td(n),
-          tags$td(paste0(d, "  (", effect_label, ")")),
-          tags$td(round(t_val, 2)),
-          tags$td(format_p_value(p_val))
-        ))
+      lc_table(
+        data.frame(
+          c1 = I(list(
+            n
+          )),
+          c2 = I(list(
+            paste0(d, "  (", effect_label, ")")
+          )),
+          c3 = I(list(
+            round(t_val, 2)
+          )),
+          c4 = I(list(
+            format_p_value(p_val)
+          ))
+        ),
+        cols = list(
+          lc_col("c1", "n / grupę", "row"),
+          lc_col("c2", "Cohen's d", "text"),
+          lc_col("c3", "t", "num"),
+          lc_col("c4", "p", "num")
+        ),
+        narrow = "cards"
       ),
       lc_status(
         lc_verdict(tags$strong(res$decision), type = fb_type)
@@ -751,28 +744,18 @@ ch10_server <- function(input, output, session) {
     e <- ch10_d_scenarios[[input$ch10_d_scenario]][[input$ch10_d_level]]
     diff <- e$x2 - e$x1
     tagList(
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        style = "margin-top: 8px;",
-        tags$thead(tags$tr(
-          tags$th("Grupa"),
-          tags$th(HTML("&xbar; &plusmn; s")),
-          tags$th("Różnica"),
-          tags$th("d")
-        )),
-        tags$tbody(
-          tags$tr(
-            tags$td(e$etyk1),
-            tags$td(paste0(e$x1, " ± ", e$s, " ", e$jednostka)),
-            tags$td(rowspan = 2, paste0(round(diff, 2), " ", e$jednostka)),
-            tags$td(rowspan = 2, input$ch10_d_level)
-          ),
-          tags$tr(
-            tags$td(e$etyk2),
-            tags$td(paste0(e$x2, " ± ", e$s, " ", e$jednostka))
-          )
-        )
+      lc_readouts(
+        lc_readout("Różnica", paste0(round(diff, 2), " ", e$jednostka)),
+        lc_readout("d", input$ch10_d_level)
       ),
-      p(style = "margin-top: 8px;", tags$em(e$kontekst))
+      lc_table(
+        data.frame(
+          group = c(e$etyk1, e$etyk2),
+          ms = paste0(c(e$x1, e$x2), " ± ", e$s, " ", e$jednostka)
+        ),
+        cols = list(lc_col("group", "Grupa", "row"), lc_col("ms", "x̄ ± s"))
+      ),
+      lc_caption(e$kontekst)
     )
   })
 
@@ -823,18 +806,26 @@ ch10_server <- function(input, output, session) {
       "0.9" = "Punkty bardzo blisko linii prostej — 81% zmienności y wyjaśnione przez x."
     )
     tagList(
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        style = "margin-top: 8px;",
-        tags$thead(tags$tr(
-          tags$th("r"), tags$th("r²"), tags$th("% wariancji wyjaśnione")
-        )),
-        tags$tbody(tags$tr(
-          tags$td(r_val),
-          tags$td(round(r2, 2)),
-          tags$td(paste0(round(100 * r2), "%"))
-        ))
+      lc_table(
+        data.frame(
+          c1 = I(list(
+            r_val
+          )),
+          c2 = I(list(
+            round(r2, 2)
+          )),
+          c3 = I(list(
+            paste0(round(100 * r2), "%")
+          ))
+        ),
+        cols = list(
+          lc_col("c1", "r", "row"),
+          lc_col("c2", "r²", "num"),
+          lc_col("c3", "% wariancji wyjaśnione", "text")
+        ),
+        narrow = "cards"
       ),
-      p(style = "margin-top: 8px;", tags$em(opis))
+      lc_caption(opis)
     )
   })
 
@@ -877,30 +868,22 @@ ch10_server <- function(input, output, session) {
     sc <- ch10_v_scenarios[[input$ch10_v_scenario]]
     diff_pp <- round(100 * (e$p_b - e$p_a))
     tagList(
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        style = "margin-top: 8px;",
-        tags$thead(tags$tr(
-          tags$th("Grupa"),
-          tags$th(paste0(sc$stan_pos, " (%)")),
-          tags$th(paste0(sc$stan_neg, " (%)")),
-          tags$th("V")
-        )),
-        tags$tbody(
-          tags$tr(
-            tags$td(sc$grp_a),
-            tags$td(paste0(round(100 * e$p_a), "%")),
-            tags$td(paste0(round(100 * (1 - e$p_a)), "%")),
-            tags$td(rowspan = 2, input$ch10_v_level)
-          ),
-          tags$tr(
-            tags$td(sc$grp_b),
-            tags$td(paste0(round(100 * e$p_b), "%")),
-            tags$td(paste0(round(100 * (1 - e$p_b)), "%"))
-          )
-        )
+      lc_readouts(
+        lc_readout("Różnica", paste0(diff_pp, " pp")),
+        lc_readout("V", input$ch10_v_level)
       ),
-      p(style = "margin-top: 8px;",
-        tags$em(paste0("Różnica między grupami: ", diff_pp, " pp.")))
+      lc_table(
+        data.frame(
+          group = c(sc$grp_a, sc$grp_b),
+          pos = round(100 * c(e$p_a, e$p_b)),
+          neg = round(100 * (1 - c(e$p_a, e$p_b)))
+        ),
+        cols = list(
+          lc_col("group", "Grupa", "row"),
+          lc_col("pos", paste0(sc$stan_pos, " (%)")),
+          lc_col("neg", paste0(sc$stan_neg, " (%)"))
+        )
+      )
     )
   })
 
@@ -948,26 +931,19 @@ ch10_server <- function(input, output, session) {
     mus <- ch10_eta_means(eta, sc$mu_ctr, sc$s)
     pct <- round(100 * eta)
     tagList(
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        style = "margin-top: 8px;",
-        tags$thead(tags$tr(
-          tags$th("Grupa"),
-          tags$th(HTML("&xbar;")),
-          tags$th("s"),
-          tags$th("η²"),
-          tags$th("% wariancji wyjaśnione")
-        )),
-        tags$tbody(
-          tags$tr(
-            tags$td(sc$grp[1]), tags$td(round(mus[1], 1)), tags$td(sc$s),
-            tags$td(rowspan = 3, input$ch10_eta_level),
-            tags$td(rowspan = 3, paste0(pct, "%"))
-          ),
-          tags$tr(tags$td(sc$grp[2]), tags$td(round(mus[2], 1)), tags$td(sc$s)),
-          tags$tr(tags$td(sc$grp[3]), tags$td(round(mus[3], 1)), tags$td(sc$s))
+      lc_readouts(
+        lc_readout("η²", input$ch10_eta_level),
+        lc_readout("Wariancji wyjaśnione", paste0(pct, "%"))
+      ),
+      lc_table(
+        data.frame(group = sc$grp[1:3], mean = mus[1:3], s = sc$s),
+        cols = list(
+          lc_col("group", "Grupa", "row"),
+          lc_col("mean", "x̄", digits = 1),
+          lc_col("s", "s", digits = if (sc$s %% 1 == 0) 0 else 1)
         )
       ),
-      p(style = "margin-top: 8px;", tags$em(e$kontekst))
+      lc_caption(e$kontekst)
     )
   })
 

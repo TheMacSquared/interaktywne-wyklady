@@ -252,7 +252,8 @@ ch6_ui <- list(
         lc_col("effect", "Efekt na CI", "text"),
         lc_col("action", "Co z tym zrobić?", "text")
       ),
-      narrow = "cards"
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_h2("ch6-wzory", "Dla zainteresowanych: wzory"),

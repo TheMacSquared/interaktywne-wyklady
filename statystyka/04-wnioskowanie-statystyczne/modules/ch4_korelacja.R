@@ -60,8 +60,7 @@ ch4_ui <- list(
       title = "Kierunek korelacji",
       tags$img(src = "assets/correlation-direction.png",
                alt = "Trzy wykresy punktowe pokazujące korelację dodatnią, brak korelacji liniowej i korelację ujemną.",
-               tabindex = "0", role = "button",
-               style = "width: 100%; border-radius: 4px;")
+               tabindex = "0", role = "button")
     ),
 
     lc_p("Przy \\(r = 0\\) prosta dopasowana do punktów jest pozioma: znajomość
@@ -79,8 +78,7 @@ ch4_ui <- list(
       title = "Siła korelacji",
       tags$img(src = "assets/correlation-scatter.png",
                alt = "Trzy chmury punktów o rosnącej sile korelacji liniowej.",
-               tabindex = "0", role = "button",
-               style = "width: 100%; border-radius: 4px;")
+               tabindex = "0", role = "button")
     ),
 
     lc_p("Przy \\(r = 0.31\\) trend ledwie widać w chmurze punktów, przy 0.69
@@ -100,8 +98,7 @@ ch4_ui <- list(
       title = "r nie zależy od nachylenia",
       tags$img(src = "assets/correlation-strength.png",
                alt = "Trzy zależności liniowe o różnych nachyleniach, ale podobnej sile korelacji.",
-               tabindex = "0", role = "button",
-               style = "width: 100%; border-radius: 4px;")
+               tabindex = "0", role = "button")
     ),
 
     lc_p("Mimo czterokrotnej różnicy nachyleń \\(r\\) wynosi w panelach 0.96, 0.96
@@ -286,7 +283,7 @@ ch4_ui <- list(
         steps = c("Dane", "Korelacja z próby", "Statystyka testowa",
                   "p-wartość i decyzja"),
         toolbar = lc_toolbar(
-          helpText("Dane: te same co w teście dwustronnym powyżej.")
+          lc_caption("Dane: te same co w teście dwustronnym powyżej.")
         ),
         plot_id = "ch4b_step_plot"
       )
@@ -328,8 +325,7 @@ ch4_ui <- list(
       title = "Kwartet Anscombe’a",
       tags$img(src = "assets/anscombe-quartet.png",
                alt = "Kwartet Anscombe’a: cztery bardzo różne chmury punktów o niemal identycznych statystykach opisowych i korelacji.",
-               tabindex = "0", role = "button",
-               style = "width: 100%; border-radius: 4px;")
+               tabindex = "0", role = "button")
     ),
 
     lc_p("Tylko zbiór 1 wygląda tak, jak sugeruje \\(r \\approx 0.82\\): chmura
@@ -357,8 +353,7 @@ ch4_ui <- list(
       title = "Nieliniowość przy r ≈ 0",
       tags$img(src = "assets/correlation-nonlinear.png",
                alt = "Silna zależność w kształcie litery U, dla której korelacja liniowa jest bliska zeru.",
-               tabindex = "0", role = "button",
-               style = "max-width: 500px; width: 100%; border-radius: 4px;")
+               tabindex = "0", role = "button")
     ),
 
     lc_p("Choć \\(y\\) jest niemal wyznaczone przez \\(x\\), \\(r\\) wynosi -0.004.
@@ -379,17 +374,12 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 6.8",
       title = "Wpływ wartości odstającej na r",
-      fluidRow(
-        column(4,
-          lc_action("ch4_gen_outlier", "Nowe dane (brak korelacji)", variant = "solid"),
-          lc_action("ch4_add_outlier", "Dodaj wartość odstającą", variant = "solid"),
-          br(), br(),
-          uiOutput("ch4_outlier_r")
-        ),
-        column(8,
-          zoom_plot_ui("ch4_outlier_plot", height = "300px")
-        )
-      )
+      lc_toolbar(
+        lc_action("ch4_gen_outlier", "Nowe dane (brak korelacji)", variant = "solid"),
+        lc_action("ch4_add_outlier", "Dodaj wartość odstającą", variant = "solid"),
+        lc_readouts(uiOutput("ch4_outlier_r"))
+      ),
+      lc_plot("ch4_outlier_plot", max_height = "300px")
     ),
 
     lc_p("Bez dodatkowego punktu \\(r\\) z 50 obserwacji leży zwykle blisko zera:
@@ -663,9 +653,7 @@ ch4_server <- function(input, output, session) {
         p(withMathJax(par$h1_text))
       ),
       if (is.null(d)) {
-        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
-          p(tags$em("Kliknij „Losuj próbę”"))
-        )
+        lc_empty("Kliknij „Losuj próbę”")
       }
     )
   })
@@ -738,9 +726,7 @@ ch4_server <- function(input, output, session) {
         p(withMathJax(par$h1_text_1s))
       ),
       if (is.null(d)) {
-        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
-          p(tags$em("Najpierw wylosuj próbę w teście dwustronnym powyżej"))
-        )
+        lc_empty("Najpierw wylosuj próbę w teście dwustronnym powyżej")
       }
     )
   })
@@ -840,8 +826,8 @@ ch4_server <- function(input, output, session) {
     r_val <- cor(df$x, df$y)
     n_outliers <- max(0, nrow(df) - 50)
     tagList(
-      lc_stat_box("r", round(r_val, 3), color = col_h0),
-      lc_stat_box("Wartości odstające", n_outliers, color = col_reject)
+      lc_readout("r", round(r_val, 3), color = col_h0),
+      lc_readout("Wartości odstające", n_outliers, color = col_reject)
     )
   })
 
@@ -866,7 +852,7 @@ ch4_server <- function(input, output, session) {
         tags$li(sprintf("R² = %.3f → czytanie wyjaśnia %.1f%% wariancji wyników z matematyki",
                         r$r2, 100 * r$r2))
       ),
-      tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀"),
+      lc_verdict(tags$strong("Odrzucamy H₀"), type = "danger"),
       p(tags$b("Interpretacja:"), " ",
         sprintf("r = %.3f — korelacja silnie dodatnia.
           Okręgi z lepszymi wynikami z czytania osiągają też wyższe wyniki z matematyki
@@ -886,7 +872,7 @@ ch4_server <- function(input, output, session) {
         tags$li(sprintf("R² = %.3f — dochód wyjaśnia %.1f%% wariancji wyników",
                         r$r2, 100 * r$r2))
       ),
-      tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀"),
+      lc_verdict(tags$strong("Odrzucamy H₀"), type = "danger"),
       p(tags$b("Korelacja ≠ przyczynowość:"),
         " Korelacja jest istotna i dodatnia — bogatsze okręgi mają wyższe wyniki.
         Jednak nie możemy stwierdzić, że dochód ", tags$em("powoduje"),
@@ -906,7 +892,7 @@ ch4_server <- function(input, output, session) {
         tags$li(sprintf("R² = %.3f — STR wyjaśnia %.1f%% wariancji wyników",
                         r$r2, 100 * r$r2))
       ),
-      tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀"),
+      lc_verdict(tags$strong("Odrzucamy H₀"), type = "danger"),
       p(tags$b("Interpretacja:"), " ",
         sprintf("r = %.3f — korelacja ujemna: wyższy STR (więcej uczniów na nauczyciela)
           wiąże się z niższymi wynikami z czytania. STR wyjaśnia tylko %.1f%%

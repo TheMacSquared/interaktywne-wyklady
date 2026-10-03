@@ -46,7 +46,7 @@ ch9_ui <- list(
         tags$b("Narzędzie:"), " Jamovi lub R · ",
         tags$b("Format:"), " 1 wariant kierunkowy × 6 zadań + krytyczne myślenie, ukryte rozwiązania."),
       tagList(
-        selectInput("ch9_kierunek", tags$b("Wybierz wariant dla kierunku:"),
+        selectInput("ch9_kierunek", "Wariant dla kierunku",
           choices = list(
             "Rolnictwo" = "rol",
             "Inżynieria bezpieczeństwa (BHP)" = "bhp",
@@ -446,9 +446,9 @@ ch9_ui <- list(
 
 .ch9_decision <- function(p) {
   if (p < 0.05)
-    tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀ (p < 0.05)")
+    lc_verdict(tags$strong("Odrzucamy H₀ (p < 0.05)"), type = "danger")
   else
-    tags$b("Brak podstaw do odrzucenia H₀ (p ≥ 0.05)")
+    lc_verdict(tags$strong("Brak podstaw do odrzucenia H₀ (p ≥ 0.05)"), type = "ok")
 }
 
 .ch9_sol_t1 <- function(r, h0_text, ha_text, var_label, mu, unit = "") {
@@ -495,18 +495,8 @@ ch9_ui <- list(
 .ch9_sol_chi2 <- function(r) {
   tab <- r$tab
   tagList(
-    tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-      tags$thead(tags$tr(
-        tags$th(""),
-        lapply(colnames(tab), tags$th),
-        tags$th("suma")
-      )),
-      tags$tbody(lapply(rownames(tab), function(g) {
-        tags$tr(tags$td(g),
-          lapply(colnames(tab), function(cn) tags$td(tab[g, cn])),
-          tags$td(sum(tab[g, ])))
-      }))
-    ),
+    lc_crosstab(tab, row_name = names(dimnames(tab))[1] %||% "",
+                col_name = names(dimnames(tab))[2] %||% "", lead = FALSE),
     tags$ul(
       tags$li(sprintf("χ²(%d) = %.3f, %s", r$df, r$chi2, .ch9_fmt_p(r$p))),
       tags$li(sprintf("Cramér's V = %.3f (%s efekt)", r$v, effect_size_label(r$v)))
@@ -517,15 +507,19 @@ ch9_ui <- list(
 
 .ch9_sol_anova <- function(r, outcome_label = "y") {
   tagList(
-    tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-      tags$thead(tags$tr(tags$th("Grupa"), tags$th("n"),
-                         tags$th(paste0("x̄ (", outcome_label, ")")), tags$th("s"))),
-      tags$tbody(lapply(r$lvls, function(g) {
-        v <- r$grp_stats[[g]]
-        tags$tr(tags$td(g), tags$td(v["n"]),
-                tags$td(round(v["m"], 2)), tags$td(round(v["s"], 2)))
-      }))
-    ),
+    lc_table(
+      data.frame(
+        group = r$lvls,
+        n = vapply(r$lvls, function(g) unname(r$grp_stats[[g]]["n"]), numeric(1)),
+        m = vapply(r$lvls, function(g) unname(r$grp_stats[[g]]["m"]), numeric(1)),
+        s = vapply(r$lvls, function(g) unname(r$grp_stats[[g]]["s"]), numeric(1))
+      ),
+      cols = list(
+        lc_col("group", "Grupa", "row"),
+        lc_col("n", "n"),
+        lc_col("m", paste0("x̄ (", outcome_label, ")"), digits = 2),
+        lc_col("s", "s", digits = 2)
+      )),
     tags$ul(
       tags$li(sprintf("F(%d, %d) = %.3f, %s",
                       r$df1, r$df2, r$F, .ch9_fmt_p(r$p))),

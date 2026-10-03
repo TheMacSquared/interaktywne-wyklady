@@ -253,8 +253,7 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 7.3",
       title = "Porównanie: χ² vs Fisher",
-      lc_action("ch5_compare", "Porównaj χ² i Fishera (na tych samych danych)", variant = "solid"),
-      br(), br(),
+      lc_toolbar(lc_action("ch5_compare", "Porównaj χ² i Fishera (na tych samych danych)", variant = "solid")),
       uiOutput("ch5_compare_result")
     ),
 
@@ -269,32 +268,20 @@ ch5_ui <- list(
 
     lc_p("Najważniejsze różnice między testami zbiera tabela:"),
 
-    tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-      tags$thead(
-        tags$tr(tags$th(""), tags$th("Test χ²"), tags$th("Test Fishera"))
+    lc_table(
+      data.frame(
+        c1 = c("Metoda", "Warunek", "Duże n", "Małe n"),
+        c2 = c("Przybliżony (rozkład χ²)", "Liczebności oczekiwane niezbyt małe (orientacyjnie ≥ 5)", "Szybki, praktycznie identyczny wynik", "Może być niedokładny"),
+        c3 = c("Dokładny (kombinatoryka)", "Działa zawsze", "Działa, ale wolniejszy", "Bezpieczny wybór")
       ),
-      tags$tbody(
-        tags$tr(
-          tags$td(tags$b("Metoda")),
-          tags$td("Przybliżony (rozkład χ²)"),
-          tags$td("Dokładny (kombinatoryka)")
-        ),
-        tags$tr(
-          tags$td(tags$b("Warunek")),
-          tags$td("Liczebności oczekiwane niezbyt małe (orientacyjnie ≥ 5)"),
-          tags$td("Działa zawsze")
-        ),
-        tags$tr(
-          tags$td(tags$b("Duże n")),
-          tags$td(style = "background: var(--upwr-sage-tint);", "Szybki, praktycznie identyczny wynik"),
-          tags$td("Działa, ale wolniejszy")
-        ),
-        tags$tr(
-          tags$td(tags$b("Małe n")),
-          tags$td(style = "background: var(--upwr-accent-tint);", "Może być niedokładny"),
-          tags$td(style = "background: var(--upwr-sage-tint);", "Bezpieczny wybór")
-        )
-      )
+      cols = list(
+        lc_col("c1", "", "row"),
+        lc_col("c2", "Test χ²", "text"),
+        lc_col("c3", "Test Fishera", "text")
+      ),
+      cell_class = list(c2 = c(NA, NA, "is-best", "is-base"), c3 = c(NA, NA, NA, "is-best")),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_p("Oba testy stosuje się do tej samej tabeli. Przy dużych próbach dają
@@ -529,9 +516,7 @@ ch5_server <- function(input, output, session) {
         p(withMathJax(par$h1_text))
       ),
       if (is.null(tab)) {
-        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
-          p(tags$em("Kliknij „Losuj próbę”"))
-        )
+        lc_empty("Kliknij „Losuj próbę”")
       }
     )
   })
@@ -664,23 +649,22 @@ ch5_server <- function(input, output, session) {
     n_low <- sum(test_chi$expected < 5)
 
     div(
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-        tags$thead(
-          tags$tr(tags$th(""), tags$th("Test χ²"), tags$th("Test Fishera"))
+      lc_table(
+        data.frame(
+          row = c("p-wartość", "Decyzja"),
+          chi = c(format_p_value(test_chi$p.value),
+                  format_test_result(test_chi$p.value)$decision),
+          fisher = c(format_p_value(test_fisher$p.value),
+                     format_test_result(test_fisher$p.value)$decision)
         ),
-        tags$tbody(
-          tags$tr(
-            tags$td(tags$b("p-wartość")),
-            tags$td(tags$b(format_p_value(test_chi$p.value))),
-            tags$td(tags$b(format_p_value(test_fisher$p.value)))
-          ),
-          tags$tr(
-            tags$td(tags$b("Decyzja")),
-            tags$td(style = paste0("color:", format_test_result(test_chi$p.value)$color),
-                    format_test_result(test_chi$p.value)$decision),
-            tags$td(style = paste0("color:", format_test_result(test_fisher$p.value)$color),
-                    format_test_result(test_fisher$p.value)$decision)
-          )
+        cols = list(
+          lc_col("row", "", "row"),
+          lc_col("chi", "Test χ²", "text"),
+          lc_col("fisher", "Test Fishera", "text")
+        ),
+        cell_class = list(
+          chi = c(NA, if (test_chi$p.value < 0.05) "is-base" else NA),
+          fisher = c(NA, if (test_fisher$p.value < 0.05) "is-base" else NA)
         )
       ),
       lc_status(
@@ -716,8 +700,8 @@ ch5_server <- function(input, output, session) {
   }
 
   .cas_verdict <- function(r) {
-    if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
-    else tags$b("Brak podstaw do odrzucenia H₀")
+    lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+               type = if (r$p < 0.05) "danger" else "ok")
   }
 
   output$cas_ch5_sol8 <- renderUI({
@@ -730,17 +714,7 @@ ch5_server <- function(input, output, session) {
     tagList(
       p(tags$b("H₀:"), " typ szkoły i high_english są niezależne · ",
         tags$b("Hₐ:"), " zmienne są zależne"),
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        tags$thead(tags$tr(
-          tags$th("grades"), tags$th("high_english = FALSE"),
-          tags$th("high_english = TRUE"), tags$th("suma")
-        )),
-        tags$tbody(lapply(rownames(tab), function(g) {
-          tags$tr(tags$td(g),
-            tags$td(tab[g, "FALSE"]), tags$td(tab[g, "TRUE"]),
-            tags$td(sum(tab[g, ])))
-        }))
-      ),
+      lc_crosstab(tab, row_name = "grades", col_name = "high_english", lead = FALSE),
       tags$ul(
         .cas_result_lines(r),
         lapply(rownames(tab), function(g) {
@@ -772,17 +746,7 @@ ch5_server <- function(input, output, session) {
     tagList(
       p(tags$b("H₀:"), " high_str i high_lunch są niezależne · ",
         tags$b("Hₐ:"), " zmienne są zależne"),
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        tags$thead(tags$tr(
-          tags$th("high_str"), tags$th("high_lunch = FALSE"),
-          tags$th("high_lunch = TRUE"), tags$th("suma")
-        )),
-        tags$tbody(lapply(rownames(tab), function(g) {
-          tags$tr(tags$td(g),
-            tags$td(tab[g, "FALSE"]), tags$td(tab[g, "TRUE"]),
-            tags$td(sum(tab[g, ])))
-        }))
-      ),
+      lc_crosstab(tab, row_name = "high_str", col_name = "high_lunch", lead = FALSE),
       tags$ul(
         .cas_result_lines(r),
         tags$li(paste0("Odsetek high_lunch wśród STR > 20: ",

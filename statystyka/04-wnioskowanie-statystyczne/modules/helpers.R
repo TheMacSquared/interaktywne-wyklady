@@ -296,6 +296,7 @@ format_test_result <- function(p_value, alpha = 0.05) {
     list(
       decision = "Odrzucamy H₀",
       color = upwr_accent,
+      verdict = "danger",
       explanation = paste0(format_p(p_value),
                            " < α = ", alpha,
                            " — wynik istotny statystycznie")
@@ -304,6 +305,7 @@ format_test_result <- function(p_value, alpha = 0.05) {
     list(
       decision = "Brak podstaw do odrzucenia H₀",
       color = unname(upwr_cat["szalwia"]),
+      verdict = "ok",
       explanation = paste0(format_p(p_value),
                            " ≥ α = ", alpha,
                            " — wynik nieistotny statystycznie")

@@ -47,52 +47,16 @@ ch8_ui <- list(
     # ========================================================================
     lc_h2("ch8-tabela", "Tabela testów"),
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 13px;",
-      tags$thead(
-        tags$tr(
-          tags$th("Sytuacja"),
-          tags$th("Test")
-        )
+    lc_table(
+      data.frame(
+        c1 = c("1 ilościowa wobec μ₀", "1 jakościowa (2 kat.)", "1 jakościowa (3+ kat.)", "2 ilościowe", "2 jakościowe", "2 grupy niezależne", "2 grupy sparowane", "3+ grupy", "Post-hoc (3+ grupy)"),
+        c2 = c("Test t jednej próby", "Test dwumianowy", "χ² zgodności", "Pearson / Spearman", "χ² niezależności / Fisher", "Test t niezależny", "Test t dla danych sparowanych", "ANOVA", "Games-Howell")
       ),
-      tags$tbody(
-        tags$tr(
-          tags$td("1 ilościowa wobec μ₀"),
-          tags$td("Test t jednej próby")
-        ),
-        tags$tr(
-          tags$td("1 jakościowa (2 kat.)"),
-          tags$td("Test dwumianowy")
-        ),
-        tags$tr(
-          tags$td("1 jakościowa (3+ kat.)"),
-          tags$td("χ² zgodności")
-        ),
-        tags$tr(
-          tags$td("2 ilościowe"),
-          tags$td("Pearson / Spearman")
-        ),
-        tags$tr(
-          tags$td("2 jakościowe"),
-          tags$td("χ² niezależności / Fisher")
-        ),
-        tags$tr(
-          tags$td("2 grupy niezależne"),
-          tags$td("Test t niezależny")
-        ),
-        tags$tr(
-          tags$td("2 grupy sparowane"),
-          tags$td("Test t dla danych sparowanych")
-        ),
-        tags$tr(
-          tags$td("3+ grupy"),
-          tags$td("ANOVA")
-        ),
-        tags$tr(
-          tags$td("Post-hoc (3+ grupy)"),
-          tags$td("Games-Howell")
-        )
-      )
+      cols = list(
+        lc_col("c1", "Sytuacja", "row"),
+        lc_col("c2", "Test", "text")
+      ),
+      prose = TRUE
     ),
 
     lc_note("Uwaga",
@@ -113,75 +77,51 @@ ch8_ui <- list(
         " — poniżej ścieżka w menu oraz to, co odczytać z wyniku.")
     ),
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 13px;",
-      tags$thead(
-        tags$tr(
-          tags$th("Test"),
-          tags$th("Kiedy używać (1 zdanie)"),
-          tags$th("Ścieżka w jamovi"),
-          tags$th("Co odczytać z outputu")
-        )
+    lc_table(
+      data.frame(
+        c1 = c("Test dwumianowy", "χ² zgodności", "χ² niezależności", "Fisher exact", "Pearson / Spearman", "Test t niezależny", "Test t dla danych sparowanych", "ANOVA (1-czynnikowa)", "Post-hoc: Games-Howell"),
+        c2 = I(list(
+          "Jedna proporcja (np. odsetek złych partii) wobec wartości referencyjnej.",
+          "Zgodność rozkładu 3+ kategorii z oczekiwaniami.",
+          "Związek między dwiema zmiennymi jakościowymi.",
+          "Jak χ², ale gdy oczekiwane liczebności są < 5.",
+          "Siła liniowego / monotonicznego związku dwóch zmiennych ilościowych.",
+          "Porównanie średnich w 2 niezależnych grupach.",
+          "Porównanie: ta sama jednostka zmierzona dwukrotnie (przed/po).",
+          "Porównanie średnich w 3+ niezależnych grupach.",
+          tagList("Porównania par grup ", tags$em("po"), " istotnej ANOVA.")
+        )),
+        c3 = I(list(
+          tags$code("Frequencies → 2 Outcomes Binomial test"),
+          tags$code("Frequencies → N Outcomes χ² test"),
+          tags$code("Frequencies → Independent Samples χ²"),
+          tagList(tags$code("Frequencies → Independent Samples χ²"), br(), "→ zaznacz ", tags$b("Fisher's exact test")),
+          tagList(tags$code("Regression → Correlation Matrix"), br(), "zaznacz ", tags$b("Pearson"), " lub ", tags$b("Spearman")),
+          tags$code("T-Tests → Independent Samples T-Test"),
+          tags$code("T-Tests → Paired Samples T-Test"),
+          tags$code("ANOVA → One-Way ANOVA"),
+          tagList(tags$code("ANOVA → One-Way ANOVA"), br(), "→ sekcja ", tags$b("Post-Hoc Tests"), ", zaznacz ", tags$b("Games-Howell"))
+        )),
+        c4 = I(list(
+          "p-wartość, proporcja, 95% CI",
+          "χ², df, p",
+          "χ², df, p, Cramér's V, reszty standaryzowane",
+          "p (Fisher)",
+          "r (lub ρ), p, 95% CI",
+          "t, df, p, Mean difference, Cohen's d, 95% CI różnicy",
+          "t, df, p, Cohen's d, średnia różnic",
+          tagList("F, df₁/df₂, p, η² (w ", tags$em("Effect Size"), ")"),
+          "Mean difference, p-tukey, 95% CI różnic parowych"
+        ))
       ),
-      tags$tbody(
-        tags$tr(
-          tags$td(tags$b("Test dwumianowy")),
-          tags$td("Jedna proporcja (np. odsetek złych partii) wobec wartości referencyjnej."),
-          tags$td(tags$code("Frequencies → 2 Outcomes Binomial test")),
-          tags$td("p-wartość, proporcja, 95% CI")
-        ),
-        tags$tr(
-          tags$td(tags$b("χ² zgodności")),
-          tags$td("Zgodność rozkładu 3+ kategorii z oczekiwaniami."),
-          tags$td(tags$code("Frequencies → N Outcomes χ² test")),
-          tags$td("χ², df, p")
-        ),
-        tags$tr(
-          tags$td(tags$b("χ² niezależności")),
-          tags$td("Związek między dwiema zmiennymi jakościowymi."),
-          tags$td(tags$code("Frequencies → Independent Samples χ²")),
-          tags$td("χ², df, p, Cramér's V, reszty standaryzowane")
-        ),
-        tags$tr(
-          tags$td(tags$b("Fisher exact")),
-          tags$td("Jak χ², ale gdy oczekiwane liczebności są < 5."),
-          tags$td(tags$code("Frequencies → Independent Samples χ²"), br(),
-                  "→ zaznacz ", tags$b("Fisher's exact test")),
-          tags$td("p (Fisher)")
-        ),
-        tags$tr(
-          tags$td(tags$b("Pearson / Spearman")),
-          tags$td("Siła liniowego / monotonicznego związku dwóch zmiennych ilościowych."),
-          tags$td(tags$code("Regression → Correlation Matrix"), br(),
-                  "zaznacz ", tags$b("Pearson"), " lub ", tags$b("Spearman")),
-          tags$td("r (lub ρ), p, 95% CI")
-        ),
-        tags$tr(
-          tags$td(tags$b("Test t niezależny")),
-          tags$td("Porównanie średnich w 2 niezależnych grupach."),
-          tags$td(tags$code("T-Tests → Independent Samples T-Test")),
-          tags$td("t, df, p, Mean difference, Cohen's d, 95% CI różnicy")
-        ),
-        tags$tr(
-          tags$td(tags$b("Test t dla danych sparowanych")),
-          tags$td("Porównanie: ta sama jednostka zmierzona dwukrotnie (przed/po)."),
-          tags$td(tags$code("T-Tests → Paired Samples T-Test")),
-          tags$td("t, df, p, Cohen's d, średnia różnic")
-        ),
-        tags$tr(
-          tags$td(tags$b("ANOVA (1-czynnikowa)")),
-          tags$td("Porównanie średnich w 3+ niezależnych grupach."),
-          tags$td(tags$code("ANOVA → One-Way ANOVA")),
-          tags$td("F, df₁/df₂, p, η² (w ", tags$em("Effect Size"), ")")
-        ),
-        tags$tr(
-          tags$td(tags$b("Post-hoc: Games-Howell")),
-          tags$td("Porównania par grup ", tags$em("po"), " istotnej ANOVA."),
-          tags$td(tags$code("ANOVA → One-Way ANOVA"), br(),
-                  "→ sekcja ", tags$b("Post-Hoc Tests"), ", zaznacz ", tags$b("Games-Howell")),
-          tags$td("Mean difference, p-tukey, 95% CI różnic parowych")
-        )
-      )
+      cols = list(
+        lc_col("c1", "Test", "row"),
+        lc_col("c2", "Kiedy używać (1 zdanie)", "text"),
+        lc_col("c3", "Ścieżka w jamovi", "text"),
+        lc_col("c4", "Co odczytać z outputu", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_note("Zasada", rule = TRUE,
@@ -195,37 +135,30 @@ ch8_ui <- list(
     # ========================================================================
     lc_h2("ch8-efekt", "Miary wielkości efektu"),
 
-    tags$table(class = "lc-table lc-table-bordered",
-      style = "font-size: 14px;",
-      tags$thead(
-        tags$tr(
-          tags$th("Miara"), tags$th("Test"),
-          tags$th("Mały"), tags$th("Średni"), tags$th("Duży"),
-          tags$th("Co to znaczy praktycznie?")
-        )
+    lc_table(
+      data.frame(
+        c1 = I(list(
+          "Cohen's d",
+          "r (korelacja)",
+          "Cramér's V",
+          withMathJax("\\(\\eta^2\\)")
+        )),
+        c2 = c("Test t (2 grupy)", "Pearson/Spearman", "χ² niezależności", "ANOVA"),
+        c3 = c("0.2", "0.1", "0.1", "0.01"),
+        c4 = c("0.5", "0.3", "0.3", "0.06"),
+        c5 = c("0.8", "0.5", "0.5", "0.14"),
+        c6 = c("d = 0.2 ledwie uchwytne; d = 0.5 wykryje wyszkolony panel sensoryczny; d = 0.8 zauważy konsument w teście ślepym.", "|r| = 0.3 → związek widoczny na wykresie; |r| = 0.5 → wyraźny trend; |r| > 0.7 → bardzo silny.", "V = 0.1 odsetki w grupach różnią się o kilka punktów proc.; V = 0.5 różnice rzędu kilkudziesięciu pp.", "η² = 0.06 czynnik tłumaczy ~6% zmienności (reszta: inne przyczyny); η² = 0.14 to ~14% — czynnik dominujący.")
       ),
-      tags$tbody(
-        tags$tr(
-          tags$td("Cohen's d"), tags$td("Test t (2 grupy)"),
-          tags$td("0.2"), tags$td("0.5"), tags$td("0.8"),
-          tags$td("d = 0.2 ledwie uchwytne; d = 0.5 wykryje wyszkolony panel sensoryczny; d = 0.8 zauważy konsument w teście ślepym.")
-        ),
-        tags$tr(
-          tags$td("r (korelacja)"), tags$td("Pearson/Spearman"),
-          tags$td("0.1"), tags$td("0.3"), tags$td("0.5"),
-          tags$td("|r| = 0.3 → związek widoczny na wykresie; |r| = 0.5 → wyraźny trend; |r| > 0.7 → bardzo silny.")
-        ),
-        tags$tr(
-          tags$td("Cramér's V"), tags$td("χ² niezależności"),
-          tags$td("0.1"), tags$td("0.3"), tags$td("0.5"),
-          tags$td("V = 0.1 odsetki w grupach różnią się o kilka punktów proc.; V = 0.5 różnice rzędu kilkudziesięciu pp.")
-        ),
-        tags$tr(
-          tags$td(withMathJax("\\(\\eta^2\\)")), tags$td("ANOVA"),
-          tags$td("0.01"), tags$td("0.06"), tags$td("0.14"),
-          tags$td("η² = 0.06 czynnik tłumaczy ~6% zmienności (reszta: inne przyczyny); η² = 0.14 to ~14% — czynnik dominujący.")
-        )
-      )
+      cols = list(
+        lc_col("c1", "Miara", "row"),
+        lc_col("c2", "Test", "text"),
+        lc_col("c3", "Mały", "num"),
+        lc_col("c4", "Średni", "num"),
+        lc_col("c5", "Duży", "num"),
+        lc_col("c6", "Co to znaczy praktycznie?", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_note("Zasada", rule = TRUE,

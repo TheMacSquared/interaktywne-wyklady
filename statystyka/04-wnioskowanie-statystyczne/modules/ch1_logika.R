@@ -50,16 +50,11 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.1",
       title = "Wyniki eksperymentu",
-      fluidRow(
-        column(4,
-          lc_action("ch1_case_generate", "Przeprowadź eksperyment", variant = "solid"),
-          br(), br(),
-          uiOutput("ch1_case_stats")
-        ),
-        column(8,
-          zoom_plot_ui("ch1_case_plot", height = "350px")
-        )
-      )
+      lc_toolbar(
+        lc_action("ch1_case_generate", "Przeprowadź eksperyment", variant = "solid"),
+        lc_readouts(uiOutput("ch1_case_stats"))
+      ),
+      lc_plot("ch1_case_plot", max_height = "350px")
     ),
 
     lc_p("W typowym losowaniu średnia w grupie „biurko” wypada o kilka punktów
@@ -89,32 +84,24 @@ ch1_ui <- list(
       zaprzeczenie, czyli twierdzenie, że efekt istnieje, to ",
       gloss("hipoteza alternatywna"), " Hₐ."),
 
-    tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-      tags$thead(
-        tags$tr(tags$th("Element"), tags$th("Sąd"), tags$th("Nasz eksperyment z telefonem"))
+    lc_table(
+      data.frame(
+        element = c("H₀", "Hₐ", "Dane", "Możliwy werdykt"),
+        court = c("Oskarżony jest niewinny", "Oskarżony jest winny",
+                  "Dowody złożone w sądzie",
+                  "Wina nie została wykazana — albo dowody wystarczają, by uznać oskarżonego za winnego"),
+        phone = c("Telefon nie wpływa na koncentrację (różnica = 0)",
+                  "Telefon wpływa na koncentrację (różnica ≠ 0)",
+                  "Wyniki testu 80 studentów",
+                  "Nie mamy podstaw, by twierdzić, że telefon wpływa — albo odrzucamy hipotezę o braku wpływu")
       ),
-      tags$tbody(
-        tags$tr(
-          tags$td(tags$strong("H₀")),
-          tags$td("Oskarżony jest niewinny"),
-          tags$td("Telefon nie wpływa na koncentrację (różnica = 0)")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Hₐ")),
-          tags$td("Oskarżony jest winny"),
-          tags$td("Telefon wpływa na koncentrację (różnica ≠ 0)")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Dane")),
-          tags$td("Dowody złożone w sądzie"),
-          tags$td("Wyniki testu 80 studentów")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Możliwy werdykt")),
-          tags$td("Wina nie została wykazana — albo dowody wystarczają, by uznać oskarżonego za winnego"),
-          tags$td("Nie mamy podstaw, by twierdzić, że telefon wpływa — albo odrzucamy hipotezę o braku wpływu")
-        )
-      )
+      cols = list(
+        lc_col("element", "Element", "row"),
+        lc_col("court", "Sąd", "text"),
+        lc_col("phone", "Nasz eksperyment z telefonem", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_p("Z tej analogii wynikają dwie własności testu. Pierwsza: dane oceniamy
@@ -186,23 +173,20 @@ ch1d_ui <- list(
     lc_p("Test statystyczny ma tę samą strukturę. Stany świata to „H₀ prawdziwa”
       i „H₀ fałszywa”, decyzje to „nie odrzucamy H₀” i „odrzucamy H₀”."),
 
-    tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-      tags$thead(
-        tags$tr(tags$th(""), tags$th("H₀ prawdziwa"),
-                tags$th("H₀ fałszywa"))
+    lc_table(
+      data.frame(
+        decision = c("Nie odrzucamy H₀", "Odrzucamy H₀"),
+        h0_true = c("Decyzja trafna", "Błąd I rodzaju (α)"),
+        h0_false = c("Błąd II rodzaju (β)", "Decyzja trafna (moc, 1 − β)")
       ),
-      tags$tbody(
-        tags$tr(
-          tags$td(tags$strong("Nie odrzucamy H₀")),
-          tags$td(style = "background: var(--upwr-sage-tint);", "Decyzja trafna"),
-          tags$td(style = "background: var(--upwr-accent-tint);", "Błąd II rodzaju (β)")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Odrzucamy H₀")),
-          tags$td(style = "background: var(--upwr-accent-tint);", "Błąd I rodzaju (α)"),
-          tags$td(style = "background: var(--upwr-sage-tint);", "Decyzja trafna (moc, 1 − β)")
-        )
-      )
+      cols = list(
+        lc_col("decision", "", "row"),
+        lc_col("h0_true", "H₀ prawdziwa", "text"),
+        lc_col("h0_false", "H₀ fałszywa", "text")
+      ),
+      cell_class = list(h0_true = c("is-best", "is-base"),
+                        h0_false = c("is-base", "is-best")),
+      prose = TRUE
     ),
 
     lc_p(gloss("błąd pierwszego rodzaju", "Błąd I rodzaju"), " to odrzucenie H₀,
@@ -273,19 +257,13 @@ ch1d_ui <- list(
     figure_panel(
       label = "Ryc. 3.1",
       title = "Moc testu i błędy",
-      fluidRow(
-        column(4,
-          lc_slider("ch1_alpha", "α (poziom istotności)", 0.01, 0.20, 0.05, 0.01)
-        ),
-        column(4,
-          lc_slider("ch1_effect", "Odległość μ od μ₀ (pkt)", 0, 15, 7, 1)
-        ),
-        column(4,
-          lc_slider("ch1_power_n", "n (liczebność próby)", 10, 200, 40, 5)
-        )
+      lc_toolbar(
+        lc_slider("ch1_alpha", "α (poziom istotności)", 0.01, 0.20, 0.05, 0.01),
+        lc_slider("ch1_effect", "Odległość μ od μ₀ (pkt)", 0, 15, 7, 1),
+        lc_slider("ch1_power_n", "n (liczebność próby)", 10, 200, 40, 5),
+        lc_readouts(uiOutput("ch1_power_stats"))
       ),
-      lc_plot("ch1_power_plot", ratio = "1.6/1", max_height = "380px"),
-      uiOutput("ch1_power_stats")
+      lc_plot("ch1_power_plot", ratio = "1.6/1", max_height = "380px")
     ),
 
     lc_p("Przy ustawieniach startowych (\\(\\alpha = 0.05\\), różnica 7 pkt,
@@ -356,23 +334,15 @@ ch1d_ui <- list(
     figure_panel(
       label = "Ryc. 3.2",
       title = "Powtórzone eksperymenty pod H₀",
-      fluidRow(
-        column(4,
-          lc_slider("ch1_sim_n", "n (na grupę)", 10, 100, 40, 5),
-          hr(),
-          lc_stack(gap = "md",
-            lc_action("ch1_sim_10", "Powtórz 10 razy", variant = "solid"),
-            lc_action("ch1_sim_200", "Powtórz 200 razy", variant = "solid"),
-            lc_action("ch1_sim_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
-          ),
-          br(),
-          uiOutput("ch1_sim_info")
-        ),
-        column(8,
-          zoom_plot_ui("ch1_sim_plot", height = "350px"),
-          uiOutput("ch1_sim_stats")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch1_sim_n", "n (na grupę)", 10, 100, 40, 5),
+        lc_action("ch1_sim_10", "Powtórz 10 razy", variant = "solid"),
+        lc_action("ch1_sim_200", "Powtórz 200 razy", variant = "solid"),
+        lc_action("ch1_sim_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+        lc_readouts(uiOutput("ch1_sim_info"))
+      ),
+      lc_plot("ch1_sim_plot", max_height = "350px"),
+      uiOutput("ch1_sim_stats")
     ),
 
     lc_p("Przy 40 osobach w grupie losowe różnice mają odchylenie standardowe
@@ -573,9 +543,9 @@ ch1_server <- function(input, output, session) {
     diff_val <- round(stats$m[1] - stats$m[2], 1)
 
     tagList(
-      lc_stat_box("Plecak", stats$m[1], " pkt (s=", stats$s[1], ")", color = col_accept),
-      lc_stat_box("Biurko", stats$m[2], " pkt (s=", stats$s[2], ")", color = col_pvalue),
-      lc_stat_box("Różnica", diff_val, " pkt", color = upwr_secondary)
+      lc_readout("Plecak", paste0(stats$m[1], " pkt (s="), color = col_accept),
+      lc_readout("Biurko", paste0(stats$m[2], " pkt (s="), color = col_pvalue),
+      lc_readout("Różnica", paste0(diff_val, " pkt"), color = upwr_secondary)
     )
   })
 
@@ -608,8 +578,8 @@ ch1_server <- function(input, output, session) {
     n_s <- length(ch1_sim_diffs())
     obs <- round(ch1_observed_diff(), 1)
     tagList(
-      lc_stat_box("Eksperymentów", n_s, color = col_h0),
-      lc_stat_box("Obs. różnica", obs, " pkt", color = col_reject)
+      lc_readout("Eksperymentów", n_s, color = col_h0),
+      lc_readout("Obs. różnica", paste0(obs, " pkt"), color = col_reject)
     )
   })
 
@@ -650,16 +620,9 @@ ch1_server <- function(input, output, session) {
     if (is.null(alpha)) alpha <- 0.05
     n_extreme <- sum(abs(diffs) >= abs(obs))
     pval <- n_extreme / length(diffs)
-    tagList(
-      lc_stat_box(
-        "Błąd I",
-        alpha * 100, "%",
-        caption = paste0("p ≈ ", round(pval, 3),
-                         " (", n_extreme, "/", length(diffs),
-                         " eksperymentów co najmniej tak skrajnych)"),
-        color = col_pvalue
-      )
-    )
+    lc_caption(paste0("p ≈ ", round(pval, 3), " (", n_extreme, "/", length(diffs),
+                      " eksperymentów co najmniej tak skrajnych); błąd I rodzaju przy α = ",
+                      alpha, " wynosi ", alpha * 100, "%."))
   })
 
   output$ch1_pvalue_meaning_feedback <- renderUI({
@@ -755,8 +718,8 @@ ch1_server <- function(input, output, session) {
       (1 - pnorm(crit_high, mean = mu1, sd = se))
 
     tagList(
-      lc_stat_box("Moc", round(power * 100, 1), "%", color = col_accept),
-      lc_stat_box("Błąd II", round((1 - power) * 100, 1), "%", color = upwr_secondary)
+      lc_readout("Moc", paste0(round(power * 100, 1), "%"), color = col_accept),
+      lc_readout("Błąd II", paste0(round((1 - power) * 100, 1), "%"), color = upwr_secondary)
     )
   })
 

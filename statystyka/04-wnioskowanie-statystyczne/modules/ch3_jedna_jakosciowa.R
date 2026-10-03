@@ -220,7 +220,7 @@ ch3_ui <- list(
       lc_step_widget("ch3b_test",
         steps = c("Dane", "Rozkład pod H₀", "p-wartość i decyzja"),
         toolbar = lc_toolbar(
-          helpText("Dane: te same co w teście dwustronnym powyżej.")
+          lc_caption("Dane: te same co w teście dwustronnym powyżej.")
         ),
         plot_id = "ch3b_step_plot"
       )
@@ -269,8 +269,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 5.3",
       title = "Porównanie wyników: dwumianowy vs z-test",
-      lc_action("ch3_compare", "Porównaj testy", variant = "solid"),
-      br(), br(),
+      lc_toolbar(lc_action("ch3_compare", "Porównaj testy", variant = "solid")),
       uiOutput("ch3_compare_result")
     ),
 
@@ -291,27 +290,20 @@ ch3_ui <- list(
       dużych próbach i proporcjach z dala od krańców oba testy dają
       praktycznie ten sam wynik."),
 
-    tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-      tags$thead(
-        tags$tr(tags$th(""), tags$th("Test dwumianowy"), tags$th("Test proporcji (z-test)"))
+    lc_table(
+      data.frame(
+        c1 = c("Metoda", "Mała próba, p₀ blisko 0 lub 1", "Duża próba, p₀ z dala od 0 i 1"),
+        c2 = c("Dokładny — liczy z rozkładu B(n, p₀)", "Działa", "Działa"),
+        c3 = c("Przybliżony — używa rozkładu normalnego", "Może być niedokładny", "Daje praktycznie ten sam wynik")
       ),
-      tags$tbody(
-        tags$tr(
-          tags$td("Metoda"),
-          tags$td("Dokładny — liczy z rozkładu B(n, p₀)"),
-          tags$td("Przybliżony — używa rozkładu normalnego")
-        ),
-        tags$tr(
-          tags$td("Mała próba, p₀ blisko 0 lub 1"),
-          tags$td(style = "background: var(--upwr-sage-tint);", "Działa"),
-          tags$td(style = "background: var(--upwr-accent-tint);", "Może być niedokładny")
-        ),
-        tags$tr(
-          tags$td("Duża próba, p₀ z dala od 0 i 1"),
-          tags$td(style = "background: var(--upwr-sage-tint);", "Działa"),
-          tags$td(style = "background: var(--upwr-sage-tint);", "Daje praktycznie ten sam wynik")
-        )
-      )
+      cols = list(
+        lc_col("c1", "", "row"),
+        lc_col("c2", "Test dwumianowy", "text"),
+        lc_col("c3", "Test proporcji (z-test)", "text")
+      ),
+      cell_class = list(c2 = c(NA, "is-best", "is-best"), c3 = c(NA, "is-base", "is-best")),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_p("Skoro test dwumianowy działa zawsze, a przy dużych próbach daje to
@@ -544,9 +536,7 @@ ch3_server <- function(input, output, session) {
         p(withMathJax(par$h1_text))
       ),
       if (is.null(d)) {
-        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
-          p(tags$em("Kliknij „Losuj próbę”"))
-        )
+        lc_empty("Kliknij „Losuj próbę”")
       }
     )
   })
@@ -614,9 +604,7 @@ ch3_server <- function(input, output, session) {
         p(withMathJax(par$h1_text_1s))
       ),
       if (is.null(d)) {
-        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
-          p(tags$em("Najpierw wylosuj próbę w teście dwustronnym powyżej"))
-        )
+        lc_empty("Najpierw wylosuj próbę w teście dwustronnym powyżej")
       }
     )
   })
@@ -698,33 +686,24 @@ ch3_server <- function(input, output, session) {
     ok <- np0 >= 10 && nq0 >= 10
 
     div(
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-        tags$thead(
-          tags$tr(tags$th(""), tags$th("Test dwumianowy"), tags$th("Test proporcji (z)"))
-        ),
-        tags$tbody(
-          tags$tr(
-            tags$td(tags$b("Dane")),
-            tags$td(paste0("k = ", k, ", n = ", n)),
-            tags$td(paste0("k = ", k, ", n = ", n))
-          ),
-          tags$tr(
-            tags$td(tags$b("Statystyka")),
-            tags$td(paste0("k = ", k, " (dokładna)")),
-            tags$td(paste0("z = ", round(z_stat, 3)))
-          ),
-          tags$tr(
-            tags$td(tags$b("p-wartość")),
-            tags$td(tags$b(format_p_value(binom_res$p.value))),
-            tags$td(tags$b(format_p_value(prop_res$p.value)))
-          ),
-          tags$tr(
-            tags$td(tags$b("Decyzja")),
-            tags$td(style = paste0("color:", format_test_result(binom_res$p.value)$color),
+      lc_table(
+        data.frame(
+          row = c("Dane", "Statystyka", "p-wartość", "Decyzja"),
+          binom = c(paste0("k = ", k, ", n = ", n), paste0("k = ", k, " (dokładna)"),
+                    format_p_value(binom_res$p.value),
                     format_test_result(binom_res$p.value)$decision),
-            tags$td(style = paste0("color:", format_test_result(prop_res$p.value)$color),
-                    format_test_result(prop_res$p.value)$decision)
-          )
+          prop = c(paste0("k = ", k, ", n = ", n), paste0("z = ", round(z_stat, 3)),
+                   format_p_value(prop_res$p.value),
+                   format_test_result(prop_res$p.value)$decision)
+        ),
+        cols = list(
+          lc_col("row", "", "row"),
+          lc_col("binom", "Test dwumianowy", "text"),
+          lc_col("prop", "Test proporcji (z)", "text")
+        ),
+        cell_class = list(
+          binom = c(NA, NA, NA, if (binom_res$p.value < 0.05) "is-base" else NA),
+          prop = c(NA, NA, NA, if (prop_res$p.value < 0.05) "is-base" else NA)
         )
       ),
       lc_status(
@@ -761,8 +740,8 @@ ch3_server <- function(input, output, session) {
         tags$li(sprintf("95%% przedział ufności: [%s; %s]",
                         .ch3_dec(r$ci_lo, 3), .ch3_dec(r$ci_hi, 3)))
       ),
-      if (r$p_val < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
-      else tags$b("Brak podstaw do odrzucenia H₀"),
+      lc_verdict(tags$strong(if (r$p_val < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+                 type = if (r$p_val < 0.05) "danger" else "ok"),
       p(tags$b("Interpretacja:"), " ",
         sprintf("%s%% okręgów to szkoły KK-06. %s",
           .ch3_dec(100 * r$p_obs, 1),
@@ -798,8 +777,8 @@ ch3_server <- function(input, output, session) {
         tags$li(sprintf("Dolna granica jednostronnego 95%% przedziału ufności: %s",
                         .ch3_dec(r$ci_lo, 3)))
       ),
-      if (r$p_val < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
-      else tags$b("Brak podstaw do odrzucenia H₀"),
+      lc_verdict(tags$strong(if (r$p_val < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+                 type = if (r$p_val < 0.05) "danger" else "ok"),
       p(tags$b("Interpretacja:"), " ",
         sprintf("%s%% okręgów ma wysoki poziom ubóstwa (lunch > 50). %s",
           .ch3_dec(100 * r$p_obs, 1),

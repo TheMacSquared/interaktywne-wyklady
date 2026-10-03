@@ -243,7 +243,7 @@ ch2_ui <- list(
         steps = c("Dane", "Statystyki opisowe", "Statystyka testowa",
                   "p-wartość i decyzja"),
         toolbar = lc_toolbar(
-          helpText("Dane: te same co w teście dwustronnym powyżej.")
+          lc_caption("Dane: te same co w teście dwustronnym powyżej.")
         ),
         plot_id = "ch2b_step_plot"
       )
@@ -451,9 +451,7 @@ ch2_server <- function(input, output, session) {
         p(withMathJax(par$h1_text))
       ),
       if (is.null(samp)) {
-        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
-          p(tags$em("Kliknij „Losuj próbę”, żeby zebrać dane"))
-        )
+        lc_empty("Kliknij „Losuj próbę”, żeby zebrać dane")
       }
     )
   })
@@ -556,9 +554,7 @@ ch2_server <- function(input, output, session) {
         p(withMathJax(par1s$h1_text))
       ),
       if (is.null(samp)) {
-        div(style = "text-align: center; margin: 10px 0; color: var(--upwr-reference);",
-          p(tags$em("Najpierw wylosuj próbę w teście dwustronnym powyżej"))
-        )
+        lc_empty("Najpierw wylosuj próbę w teście dwustronnym powyżej")
       }
     )
   })
@@ -649,8 +645,8 @@ ch2_server <- function(input, output, session) {
             if (r$p < 0.001) "<" else "=",
             if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
         ),
-        if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
-        else tags$b("Brak podstaw do odrzucenia H₀"),
+        lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+                   type = if (r$p < 0.05) "danger" else "ok"),
         p(tags$b("Interpretacja:"), " ",
           if (r$p < 0.05) {
             sprintf(
@@ -688,8 +684,8 @@ ch2_server <- function(input, output, session) {
             if (r$p < 0.001) "<" else "=",
             if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
         ),
-        if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
-        else tags$b("Brak podstaw do odrzucenia H₀"),
+        lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+                   type = if (r$p < 0.05) "danger" else "ok"),
         p(tags$b("Interpretacja:"), " ",
           if (r$p < 0.05) {
             sprintf(

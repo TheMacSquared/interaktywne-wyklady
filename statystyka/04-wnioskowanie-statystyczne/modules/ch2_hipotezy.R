@@ -185,30 +185,25 @@ ch2h_ui <- list(
       Hₐ zawiera znak „>” albo „<”, a test nazywamy ",
       gloss("test jednostronny", "jednostronnym"), ". Sformułowanie Hₐ
       decyduje o typie testu:"),
-    tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-      tags$thead(
-        tags$tr(tags$th("Typ"), tags$th("Hₐ"), tags$th("Przykład"), tags$th("Kiedy?"))
+    lc_table(
+      data.frame(
+        c1 = c("Dwustronny", "Prawostronny", "Lewostronny"),
+        c2 = I(list(
+          withMathJax("\\(\\mu_1 \\neq \\mu_2\\)"),
+          withMathJax("\\(\\mu_1 > \\mu_2\\)"),
+          withMathJax("\\(\\mu_1 < \\mu_2\\)")
+        )),
+        c3 = c("„Czy grupy się różnią?”", "„Czy lek działa lepiej niż placebo?”", "„Czy nowa metoda skraca czas pracy?”"),
+        c4 = c("Gdy pytanie nie przesądza kierunku — wybór domyślny", "Gdy pytanie dotyczy tylko wzrostu, a kierunek ustalono przed zebraniem danych", "Gdy pytanie dotyczy tylko spadku, a kierunek ustalono przed zebraniem danych")
       ),
-      tags$tbody(
-        tags$tr(
-          tags$td(tags$strong("Dwustronny")),
-          tags$td(withMathJax("\\(\\mu_1 \\neq \\mu_2\\)")),
-          tags$td("„Czy grupy się różnią?”"),
-          tags$td("Gdy pytanie nie przesądza kierunku — wybór domyślny")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Prawostronny")),
-          tags$td(withMathJax("\\(\\mu_1 > \\mu_2\\)")),
-          tags$td("„Czy lek działa lepiej niż placebo?”"),
-          tags$td("Gdy pytanie dotyczy tylko wzrostu, a kierunek ustalono przed zebraniem danych")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Lewostronny")),
-          tags$td(withMathJax("\\(\\mu_1 < \\mu_2\\)")),
-          tags$td("„Czy nowa metoda skraca czas pracy?”"),
-          tags$td("Gdy pytanie dotyczy tylko spadku, a kierunek ustalono przed zebraniem danych")
-        )
-      )
+      cols = list(
+        lc_col("c1", "Typ", "row"),
+        lc_col("c2", "Hₐ", "text"),
+        lc_col("c3", "Przykład", "text"),
+        lc_col("c4", "Kiedy?", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_p("Żeby zobaczyć, co ten wybór zmienia, trzeba zajrzeć na chwilę do
@@ -235,21 +230,17 @@ ch2h_ui <- list(
     figure_panel(
       label = "Ryc. 2.4",
       title = "Wizualizacja: jedno- i dwustronny",
-      fluidRow(
-        column(4,
-          lc_segmented("ch2h_sided", "Typ testu", choices = c(
+      lc_toolbar(
+        lc_segmented("ch2h_sided", "Typ testu", choices = c(
               "Dwustronny (≠)" = "two.sided",
               "Prawostronny (>)" = "greater",
               "Lewostronny (<)" = "less"
             ), selected = "two.sided"),
-          lc_slider("ch2h_alpha", "α", 0.01, 0.10, 0.05, 0.01)
-        ),
-        column(8,
-          div(class = "ws-chart-wrap",
+        lc_slider("ch2h_alpha", "α", 0.01, 0.10, 0.05, 0.01)
+      ),
+      div(class = "ws-chart-wrap",
             tags$canvas(id = "ch2h_sided_chart")
           )
-        )
-      )
     ),
 
     lc_p("Przy α = 0.05 test dwustronny odrzuca H₀, gdy statystyka jest

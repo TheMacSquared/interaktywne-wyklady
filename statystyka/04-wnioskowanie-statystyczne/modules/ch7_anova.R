@@ -54,19 +54,13 @@ ch7_ui <- list(
     figure_panel(
       label = "Ryc. 9.1",
       title = "Dodaj grupy i obserwuj inflację błędu I rodzaju",
-      fluidRow(
-        column(4,
-          p(tags$em("Zacznij od 2 grup. Każde kliknięcie dodaje jedną.")),
-          lc_action("ch7_motyw_add", "Dodaj grupę +", variant = "solid"),
-          br(), br(),
-          lc_action("ch7_motyw_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
-          br(), br(),
-          uiOutput("ch7_motyw_stats")
-        ),
-        column(8,
-          zoom_plot_ui("ch7_motyw_plot", height = "340px")
-        )
-      )
+      lc_toolbar(
+        lc_action("ch7_motyw_add", "Dodaj grupę +", variant = "solid"),
+        lc_action("ch7_motyw_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+        lc_readouts(uiOutput("ch7_motyw_stats"))
+      ),
+      lc_plot("ch7_motyw_plot", max_height = "340px"),
+      lc_caption("Start od 2 grup. Każde kliknięcie dodaje jedną.")
     ),
 
     lc_p("Dla dwóch grup jest jeden test i ryzyko wynosi dokładnie 5%. Przy trzech
@@ -197,9 +191,8 @@ ch7_ui <- list(
     figure_panel(
       label = "Ryc. 9.2",
       title = "ANOVA jednoczynnikowa",
-      fluidRow(
-        column(4,
-          selectInput("ch7_scenario", "Scenariusz:",
+      lc_toolbar(
+        selectInput("ch7_scenario", "Scenariusz",
             choices = c(
               "Fermentacja jogurtu (TŻ)" = "fermentation",
               "Kierunki studiów" = "students",
@@ -207,15 +200,12 @@ ch7_ui <- list(
             ),
             selected = "fermentation"
           ),
-          uiOutput("ch7_var_ui"),
-          lc_slider("ch7_n", "n (ogółem)", 80, 300, 160, 20),
-          lc_action("ch7_run_anova", "Generuj i testuj", variant = "solid")
-        ),
-        column(8,
-          zoom_plot_ui("ch7_boxplot", height = "350px"),
-          uiOutput("ch7_anova_result")
-        )
-      )
+        lc_slider("ch7_n", "n (ogółem)", 80, 300, 160, 20),
+        lc_action("ch7_run_anova", "Generuj i testuj", variant = "solid")
+      ),
+      lc_plot("ch7_boxplot", max_height = "350px"),
+      uiOutput("ch7_anova_result"),
+      uiOutput("ch7_var_ui")
     ),
 
     lc_p("W domyślnym scenariuszu dane pochodzą z populacji, w których średnie pH
@@ -276,18 +266,13 @@ ch7_ui <- list(
     figure_panel(
       label = "Ryc. 9.3",
       title = "Games-Howell",
-      helpText("Panel używa danych z Ryc. 9.2. Najpierw uruchom tam ANOVA."),
-      lc_action("ch7_run_tukey", "Testuj Games-Howellem", variant = "solid"),
-      br(), br(),
-
-      h5("Macierz p-wartości"),
-      p(class = "text-muted",
-        style = "font-size: 13px; margin-top: -4px;",
-        "Odczytaj p-wartość dla każdej pary grup."),
+      lc_toolbar(
+        lc_action("ch7_run_tukey", "Testuj Games-Howellem", variant = "solid")
+      ),
+      lc_caption("Panel używa danych z Ryc. 9.2. Najpierw uruchom tam ANOVA."),
+      tags$h4("Macierz p-wartości"),
       uiOutput("ch7_tukey_matrix"),
-
-      br(),
-      h5("Różnice parowe z 95% CI"),
+      tags$h4("Różnice parowe z 95% CI"),
       lc_plot("ch7_tukey_plot", ratio = "2.4/1", max_height = "260px"),
 
       uiOutput("ch7_tukey_result")
@@ -422,17 +407,14 @@ ch7_server <- function(input, output, session) {
     fwer    <- 1 - (1 - 0.05)^n_tests
     fwer_pct <- round(fwer * 100, 1)
 
-    fb_type <- if (fwer < 0.10) "ok" else if (fwer < 0.30) "warning" else "danger"
+    risk_color <- if (fwer < 0.10) "var(--upwr-sage)"
+                  else if (fwer < 0.30) "var(--upwr-warning)"
+                  else "var(--upwr-accent)"
 
-    lc_status(
-      tags$table(class = "lc-table lc-table-sm", style = "margin: 0;",
-        tags$tbody(
-          tags$tr(tags$td("Grup:"),      tags$td(tags$b(k))),
-          tags$tr(tags$td("Testów t:"),  tags$td(tags$b(n_tests))),
-          tags$tr(tags$td("Ryzyko ≥ 1 błędu:"),
-                  tags$td(lc_verdict(tags$b(paste0(format(fwer_pct), "%")), type = fb_type)))
-        )
-      )
+    tagList(
+      lc_readout("Grup", k),
+      lc_readout("Testów t", n_tests),
+      lc_readout("Ryzyko ≥ 1 błędu", paste0(format(fwer_pct), "%"), color = risk_color)
     )
   })
 
@@ -481,7 +463,7 @@ ch7_server <- function(input, output, session) {
 
   output$ch7_var_ui <- renderUI({
     cfg <- ch7_scenario_cfg(input$ch7_scenario)
-    selectInput("ch7_var", "Zmienna zależna:",
+    selectInput("ch7_var", "Zmienna zależna",
                 choices = cfg$vars,
                 selected = unname(cfg$vars[1]))
   })
@@ -548,8 +530,7 @@ ch7_server <- function(input, output, session) {
       p(paste0("F(", tidy_res$DFn, ", ", tidy_res$DFd, ") = ",
                round(tidy_res$F, 3))),
       ui_p_value(p_val),
-      p(style = paste0("color:", res$color, "; font-weight: bold;"),
-        res$decision)
+      p(lc_verdict(tags$strong(res$decision), type = res$verdict))
     )
   })
 
@@ -585,53 +566,29 @@ ch7_server <- function(input, output, session) {
       list(txt = txt, stars = stars, sig = p < 0.05)
     }
 
-    # Budujemy wiersze: pierwsza kolumna to nazwa grupy (wiersz),
-    # potem po jednej komórce na każdą grupę wcześniejszą (dolno-trójkątna)
-    rows <- lapply(seq_len(k), function(i) {
-      cells <- lapply(seq_len(k), function(j) {
-        if (j > i) {
-          tags$td(style = "background: transparent; border: none;", "")
-        } else if (j == i) {
-          tags$td(style = "background: var(--upwr-surface-sunken); color: var(--upwr-reference); text-align: center;", "—")
-        } else {
-          # szukamy pary (groups[j], groups[i]) w gh_df
-          idx <- which((gh$group1 == groups[j] & gh$group2 == groups[i]) |
-                       (gh$group1 == groups[i] & gh$group2 == groups[j]))
-          if (length(idx) == 0) return(tags$td(""))
-          p  <- gh$p.adj[idx[1]]
-          fp <- fmt_p(p)
-          bg <- if (fp$sig) "var(--upwr-accent-tint)" else "var(--upwr-surface)"
-          color <- if (fp$sig) "var(--upwr-accent)" else "var(--upwr-ink-soft)"
-          weight <- if (fp$sig) "600" else "400"
-          tags$td(
-            style = paste0("background:", bg, "; color: ", color,
-                           "; font-weight: ", weight,
-                           "; text-align: right; font-variant-numeric: tabular-nums;"),
-            fp$txt, tags$span(style = "color: var(--upwr-accent);", fp$stars)
-          )
-        }
-      })
-      tags$tr(
-        tags$th(style = "text-align: left;", groups[i]),
-        cells
-      )
-    })
-
-    tags$table(
-      class = "lc-table lc-table-bordered",
-      style = "font-size: 14px; max-width: 560px;",
-      tags$thead(
-        tags$tr(
-          tags$th(""),
-          lapply(groups, function(g) tags$th(style = "text-align: center;", g))
-        )
-      ),
-      tags$tbody(rows),
-      tags$caption(style = "caption-side: bottom; font-size: 12px; color: var(--upwr-reference);",
-        "p-wartości skorygowane metodą Games-Howella. ",
-        tags$b("*"), " p < 0.05    ", tags$b("**"), " p < 0.01    ",
-        tags$b("***"), " p < 0.001"
-      )
+    # Macierz dolno-trójkątna: wiersz i, kolumna j < i to para (j, i).
+    cell <- function(i, j) {
+      if (j > i) return(list(txt = "", cls = NA))
+      if (j == i) return(list(txt = "—", cls = "is-dim"))
+      idx <- which((gh$group1 == groups[j] & gh$group2 == groups[i]) |
+                   (gh$group1 == groups[i] & gh$group2 == groups[j]))
+      if (length(idx) == 0) return(list(txt = "", cls = NA))
+      fp <- fmt_p(gh$p.adj[idx[1]])
+      list(txt = paste0(fp$txt, fp$stars), cls = if (fp$sig) "is-base" else NA)
+    }
+    df <- data.frame(group = groups)
+    cell_class <- list()
+    for (j in seq_len(k)) {
+      key <- paste0("g", j)
+      cells <- lapply(seq_len(k), function(i) cell(i, j))
+      df[[key]] <- vapply(cells, `[[`, character(1), "txt")
+      cell_class[[key]] <- vapply(cells, function(x) as.character(x$cls), character(1))
+    }
+    lc_table(df,
+      cols = c(list(lc_col("group", "", "row")),
+               lapply(seq_len(k), function(j) lc_col(paste0("g", j), groups[j], "num"))),
+      cell_class = cell_class,
+      note = "p-wartości skorygowane metodą Games-Howella. * p < 0.05, ** p < 0.01, *** p < 0.001"
     )
   })
 
@@ -703,22 +660,25 @@ ch7_server <- function(input, output, session) {
     tagList(
       p(tags$b("H₀:"), " μ_niski = μ_średni = μ_wysoki · ",
         tags$b("Hₐ:"), " co najmniej jedna para się różni"),
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        tags$thead(tags$tr(
-          tags$th("Tercyl"), tags$th("n"), tags$th("x̄ read"), tags$th("s")
-        )),
-        tags$tbody(lapply(c("Niski","Średni","Wysoki"), function(g) {
-          v <- r$grp_stats[[g]]
-          tags$tr(tags$td(g), tags$td(v["n"]),
-                  tags$td(round(v["m"], 2)), tags$td(round(v["s"], 2)))
-        }))
-      ),
+      local({
+        lv <- c("Niski", "Średni", "Wysoki")
+        stat <- function(k) vapply(lv, function(g) unname(r$grp_stats[[g]][k]), numeric(1))
+        lc_table(
+          data.frame(group = lv, n = stat("n"), m = stat("m"), s = stat("s")),
+          cols = list(
+            lc_col("group", "Tercyl", "row"),
+            lc_col("n", "n"),
+            lc_col("m", "x̄ read", digits = 2),
+            lc_col("s", "s", digits = 2)
+          )
+        )
+      }),
       tags$ul(
         tags$li(sprintf("F(%d, %d) = %.3f, %s",
           r$df1, r$df2, r$F, format_p(r$p)))
       ),
-      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
-      else tags$b("Brak podstaw do odrzucenia H₀"),
+      lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+                 type = if (r$p < 0.05) "danger" else "ok"),
       p(tags$b("Post hoc Games-Howell:")),
       tags$ul(lapply(seq_len(nrow(r$gh)), function(i) {
         g <- r$gh[i, ]

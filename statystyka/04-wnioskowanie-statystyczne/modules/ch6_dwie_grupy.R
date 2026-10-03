@@ -212,17 +212,13 @@ ch6_ui <- list(
     figure_panel(
       label = "Ryc. 8.2",
       title = "Test t dla danych sparowanych: przed i po",
-      fluidRow(
-        column(4,
-          lc_slider("ch6_paired_n", "Liczba studentów", 10, 50, 25, 5),
-          lc_slider("ch6_paired_effect", "Efekt interwencji (pkt)", 0, 15, 5, 1),
-          lc_action("ch6_run_paired", "Generuj i testuj", variant = "solid")
-        ),
-        column(8,
-          zoom_plot_ui("ch6_paired_plot", height = "300px"),
-          uiOutput("ch6_paired_result")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch6_paired_n", "Liczba studentów", 10, 50, 25, 5),
+        lc_slider("ch6_paired_effect", "Efekt interwencji (pkt)", 0, 15, 5, 1),
+        lc_action("ch6_run_paired", "Generuj i testuj", variant = "solid")
+      ),
+      lc_plot("ch6_paired_plot", max_height = "300px"),
+      uiOutput("ch6_paired_result")
     ),
 
     lc_p("Przy ustawieniach startowych (25 studentów, efekt 5 pkt) różnice mają
@@ -267,15 +263,15 @@ ch6_ui <- list(
     figure_panel(
       label = "Ryc. 8.3",
       title = "Błąd wykruszania próby: sparowane vs. niesparowane na tych samych danych",
-      fluidRow(
-        column(6,
-          p(tags$strong("Analiza niesparowana"), " (n₁ = 20, n₂ = 15)"),
-          zoom_plot_ui("ch6_compare_ind_plot", height = "260px"),
+      lc_plots(
+        tags$div(
+          tags$h4("Analiza niesparowana (n₁ = 20, n₂ = 15)"),
+          lc_plot("ch6_compare_ind_plot", max_height = "260px"),
           uiOutput("ch6_compare_ind_result")
         ),
-        column(6,
-          p(tags$strong("Analiza sparowana"), " (15 par)"),
-          zoom_plot_ui("ch6_compare_paired_plot", height = "260px"),
+        tags$div(
+          tags$h4("Analiza sparowana (15 par)"),
+          lc_plot("ch6_compare_paired_plot", max_height = "260px"),
           uiOutput("ch6_compare_paired_result")
         )
       )
@@ -689,8 +685,7 @@ ch6_server <- function(input, output, session) {
       p(paste0("Średnia różnica (po − przed): ", round(mean_diff, 2), " pkt")),
       p(paste0("t(", tidy_res$df, ") = ", round(tidy_res$statistic, 3))),
       ui_p_value(tidy_res$p),
-      p(style = paste0("color:", res$color, "; font-weight: bold;"),
-        res$decision),
+      p(lc_verdict(tags$strong(res$decision), type = res$verdict)),
       if (tidy_res$p < 0.05) {
         p(tags$strong("Werdykt:"),
           " wyniki istotnie się zmieniły — średnio ", direction,
@@ -742,24 +737,18 @@ ch6_server <- function(input, output, session) {
       summarise(n = n(), m = round(mean(wartosc), 1), s = round(sd(wartosc), 1),
                 .groups = "drop")
     tagList(
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        tags$thead(tags$tr(
-          tags$th("Grupa"), tags$th("n"),
-          tags$th(HTML("<span style='text-decoration:overline'>x</span>")),
-          tags$th("s")
-        )),
-        tags$tbody(lapply(seq_len(nrow(smry)), function(i) {
-          tags$tr(
-            tags$td(as.character(smry$grupa[i])),
-            tags$td(smry$n[i]),
-            tags$td(smry$m[i]),
-            tags$td(smry$s[i])
-          )
-        }))
+      lc_table(
+        data.frame(group = as.character(smry$grupa), n = smry$n, m = smry$m, s = smry$s),
+        cols = list(
+          lc_col("group", "Grupa", "row"),
+          lc_col("n", "n"),
+          lc_col("m", "x̄", digits = 1),
+          lc_col("s", "s", digits = 1)
+        )
       ),
       p(paste0("t(", round(result$df, 0), ") = ", round(result$statistic, 3))),
       ui_p_value(result$p),
-      p(style = paste0("color:", res$color, "; font-weight: bold;"), res$decision)
+      p(lc_verdict(tags$strong(res$decision), type = res$verdict))
     )
   })
 
@@ -781,22 +770,30 @@ ch6_server <- function(input, output, session) {
     res <- format_test_result(result$p)
     diffs <- .ch6_compare$pairs$po - .ch6_compare$pairs$przed
     tagList(
-      tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-        tags$thead(tags$tr(
-          tags$th("Miara"), tags$th("n"),
-          tags$th(HTML("<span style='text-decoration:overline'>d</span>")),
-          tags$th("s_d")
-        )),
-        tags$tbody(tags$tr(
-          tags$td("po − przed"),
-          tags$td(15),
-          tags$td(round(mean(diffs), 2)),
-          tags$td(round(sd(diffs), 2))
-        ))
+      lc_table(
+        data.frame(
+          c1 = c("po − przed"),
+          c2 = I(list(
+            15
+          )),
+          c3 = I(list(
+            round(mean(diffs), 2)
+          )),
+          c4 = I(list(
+            round(sd(diffs), 2)
+          ))
+        ),
+        cols = list(
+          lc_col("c1", "Miara", "row"),
+          lc_col("c2", "n", "text"),
+          lc_col("c3", "d̄", "num"),
+          lc_col("c4", "s_d", "num")
+        ),
+        narrow = "cards"
       ),
       p(paste0("t(14) = ", round(result$statistic, 3))),
       ui_p_value(result$p),
-      p(style = paste0("color:", res$color, "; font-weight: bold;"), res$decision)
+      p(lc_verdict(tags$strong(res$decision), type = res$verdict))
     )
   })
 
@@ -834,8 +831,8 @@ ch6_server <- function(input, output, session) {
           if (r$p < 0.001) "<" else "=",
           if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
       ),
-      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
-      else tags$b("Brak podstaw do odrzucenia H₀"),
+      lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+                 type = if (r$p < 0.05) "danger" else "ok"),
       p(tags$b("Interpretacja:"), " ",
         sprintf(
           "Różnica %.2f pkt jest %s (p %s 0.05).",
@@ -865,8 +862,8 @@ ch6_server <- function(input, output, session) {
           if (r$p < 0.001) "<" else "=",
           if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
       ),
-      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
-      else tags$b("Brak podstaw do odrzucenia H₀"),
+      lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+                 type = if (r$p < 0.05) "danger" else "ok"),
       p(tags$b("Uwaga:"),
         " STR > 20 mają często okręgi biedniejsze. Część różnicy może wynikać
         z dochodu, który działa tu jak zmienna zakłócająca. Żeby to sprawdzić,
