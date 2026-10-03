@@ -365,6 +365,21 @@ to stosują.
   Odniesienie: ryc. 6.1–6.3 w `04-wnioskowanie-statystyczne/modules/ch4_korelacja.R`
   i `scripts/regen_correlation_assets.R`.
 
+### 07 — dobre dane
+
+- [ ] Ryc. 3.x (moc, `ch3_grupa.R`): punkt bieżącego n przeskakuje na siatkę
+  co 5 (przy n = 8 rysowany przy n = 5, moc ~2% zamiast ~9%); przy
+  nieparzystym n grupy dzielą się nierówno (`rnorm(n/2)`); symulacja
+  (40 × 500 testów) przelicza się przy każdym ruchu suwaka.
+- [ ] Kawiarnia: wykres sprzedaży dzień po dniu (`tab10_lineplot`) usuwa
+  braki przed rysowaniem, więc linia łączy dni niesąsiadujące.
+- [ ] Rozdz. 8: przełącznik „Surowe / Po standaryzacji” stoi nad panelem,
+  poza nim.
+- [ ] Pasek oceny listy kontrolnej (`ch0_wprowadzenie.R`): długi komunikat
+  w całości pogrubiony przez styl diva z werdyktem — skrócić albo zmienić styl.
+- [ ] Martwy kod w `ch1_katalog.R` (wykresy problemów 2–3: `pct_45`, `r2`,
+  `title_txt`).
+
 ### 08 — case studies
 
 - [ ] Rozbudować wykład poza jedyny rozdział CASchools; dodać quizy.
