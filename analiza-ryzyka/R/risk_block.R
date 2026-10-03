@@ -17,6 +17,14 @@ risk_format_probability <- function(x, digits = 3L) {
   )
 }
 
+# Prawdopodobieństwo do odczytu (lc_readout): kropka, bez procentu; dla małych
+# wartości tyle miejsc, żeby były widoczne dwie cyfry znaczące.
+risk_fmt_p <- function(x, digits = 3L) {
+  if (length(x) != 1L || is.na(x) || !is.finite(x)) return("—")
+  if (x > 0 && x < .01) digits <- max(digits, min(12L, ceiling(-log10(x)) + 2L))
+  sprintf(paste0("%.", digits, "f"), x)
+}
+
 risk_natural_frequency <- function(p, population = 1000L) {
   if (is.na(p) || !is.finite(p)) {
     return("—")

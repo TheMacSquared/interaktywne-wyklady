@@ -25,7 +25,7 @@ testthat::test_that("alarm działa przed odwiedzeniem kontrolek i używa dokład
       stopifnot(grepl("Po dwóch alarmach", output$a3_second$html))
       session$setInputs(a3_prev = .001, a3_sens = .95, a3_fpr = .05)
       stopifnot(abs(posterior() - .00095 / (.00095 + .04995)) < 1e-12)
-      stopifnot(grepl(app$lc_fmt(posterior(), 3), output$a3_counts$html, fixed = TRUE))
+      stopifnot(grepl(app$risk_fmt_p(posterior()), output$a3_counts$html, fixed = TRUE))
     })
     # Zmiana rozdziału nie odtwarza kontrolek z wartościami początkowymi.
     shiny::testServer(app$server, {

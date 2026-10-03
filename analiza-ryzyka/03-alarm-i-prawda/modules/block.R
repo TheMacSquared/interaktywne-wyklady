@@ -658,7 +658,7 @@ alarm_server <- function(input, output, session) {
     tagList(
       lc_readout("Prawdziwe alarmy", d$alarm[1], color = upwr_accent, swatch = TRUE),
       lc_readout("Fałszywe alarmy", d$alarm[2], color = upwr_single_alt, swatch = TRUE),
-      lc_readout("P(awaria | alarm)", lc_fmt(posterior(), 3), color = upwr_secondary)
+      lc_readout("P(awaria | alarm)", risk_fmt_p(posterior()), color = upwr_secondary)
     )
   })
   # Siatka pokazuje tylko alarmy (prawdziwe i fałszywe): 10 000 pól byłoby
@@ -709,7 +709,7 @@ alarm_server <- function(input, output, session) {
   })
   zoom_plot_server("a3_curve", curve_plot, alt = "Rosnąca krzywa wiarygodności alarmu względem częstości bazowej awarii.")
   output$a3_posterior <- renderUI(lc_readout("P(awaria | alarm) przy P(awarii) = 0.01",
-    lc_fmt(risk_bayes(.01, input$a3_curve_sens, input$a3_curve_fpr), 3),
+    risk_fmt_p(risk_bayes(.01, input$a3_curve_sens, input$a3_curve_fpr)),
     color = upwr_accent
   ))
   output$a3_second <- renderUI({
@@ -717,8 +717,8 @@ alarm_server <- function(input, output, session) {
     adjusted <- do.call(risk_two_alarm_posterior, c(detector_parameters(),
       list(dependence = input$a3_dependence %||% 0)))
     tagList(
-      lc_readout("Po jednym alarmie", lc_fmt(p1, 3), color = upwr_secondary),
-      lc_readout("Po dwóch alarmach", lc_fmt(adjusted, 3), color = upwr_accent)
+      lc_readout("Po jednym alarmie", risk_fmt_p(p1), color = upwr_secondary),
+      lc_readout("Po dwóch alarmach", risk_fmt_p(adjusted), color = upwr_accent)
     )
   })
   risk_assessment_server("a3", alarm_quiz, input, output)
