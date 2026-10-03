@@ -382,7 +382,7 @@ ch1d_ui <- list(
       title = "Co naprawdę oznacza p-wartość?",
       p("Załóżmy, że w badaniu wyszło p = 0.03. Które zdanie jest poprawną
         interpretacją?"),
-      tags$div(class = "lc-choices",
+      tags$div(class = "lc-choices", `data-correct` = "tail_prob",
         radioButtons("ch1_pvalue_meaning", NULL,
           choices = c(
             "Jest 3% szans, że H₀ jest prawdziwa." = "h0_prob",

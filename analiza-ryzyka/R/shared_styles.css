@@ -2442,6 +2442,8 @@ mjx-container mjx-text {
 .lc-choices .radio label:has(input:checked),.lc-choices .checkbox label:has(input:checked),.lc-choices .lc-check-option:has(input:checked){border-color:var(--upwr-accent);background:var(--upwr-accent-tint)}
 .lc-choices input[type="radio"],.lc-choices input[type="checkbox"]{position:static;flex:none;margin:.3em 0 0;accent-color:var(--upwr-accent)}
 .lc-choices .radio label:has(input:focus-visible),.lc-choices .checkbox label:has(input:focus-visible),.lc-choices .lc-check-option:has(input:focus-visible){outline:2px solid var(--upwr-accent);outline-offset:2px}
+.lc-choices[data-answered="correct"] .radio label:has(input:checked){border-color:var(--upwr-sage);background:var(--upwr-sage-tint)}
+.lc-choices[data-answered="correct"] input[type="radio"]{accent-color:var(--upwr-sage)}
 @media (prefers-reduced-motion:reduce){.lc-choices .radio label,.lc-choices .checkbox label,.lc-choices .lc-check-option{transition:none}}
 
 /* Segment: grupa akcji albo radio ≤ 4 krótkie opcje */

@@ -70,6 +70,15 @@
     syncAllExclusive(document);
   });
 
+  // --- Karty odpowiedzi z kluczem: div.lc-choices[data-correct] ---
+  // Po wyborze kontener dostaje data-answered="correct" | "wrong"; kolor w CSS.
+  document.addEventListener('change', function(e) {
+    var box = e.target.closest && e.target.closest('.lc-choices[data-correct]');
+    if (!box || e.target.type !== 'radio') return;
+    box.setAttribute('data-answered',
+      e.target.value === box.getAttribute('data-correct') ? 'correct' : 'wrong');
+  });
+
   // --- Klikalne komórki tabeli: input$<id> = c(i, j) ---
   document.addEventListener('click', function(e) {
     var btn = e.target.closest && e.target.closest('.lc-cell-btn[data-lc-cell-input]');

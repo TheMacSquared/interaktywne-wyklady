@@ -224,7 +224,9 @@ Zasady:
    zmienna w wierszach i kolumnach) łączy `exclusive_with`.
    Odpowiedzi będące zdaniami (quiz, głosowanie przed widgetem, wybór
    wniosku) zostają radiem albo polami wyboru opakowanymi w `div.lc-choices`:
-   każda opcja to karta, zaznaczona ma obwódkę i tło akcentu.
+   każda opcja to karta, zaznaczona ma obwódkę i tło akcentu. Gdy odpowiedź
+   jest oceniana od razu, `data-correct = "<wartość>"` na tym `div` zmienia
+   kolor zaznaczonej poprawnej karty na zielony (`--upwr-sage`).
 4. Odczyty (`lc_readout()`) zastępują `lc_stat_box()` w widgetach. Gdy
    kolor odczytu jest kolorem serii (`swatch = TRUE`), odczyt zastępuje
    legendę ggplot.
