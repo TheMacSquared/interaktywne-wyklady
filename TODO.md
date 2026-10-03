@@ -255,13 +255,23 @@ to stosują.
 
 ### 01 — typy danych
 
-- [ ] Ryc. 2.1, krok 4 dla zmiennej porządkowej: tekst używa zastępczych
-  „X%” i „Y%”; rozważyć wstawienie wyliczonych wartości.
-- [ ] Dane: poziom „Mezczyzna” w `app.R` bez polskiego znaku — poprawić na
-  „Mężczyzna” (widoczny w tabeli krzyżowej i na wykresach).
-- [ ] Brakujące polskie znaki w tekstach dla studentów, m.in. „Wlasnosci”
-  (nagłówek tabeli Ryc. 4.6), „Rozstep”, „outlierow”, „uwage”, „porownywac”
-  — w `modules/ch3_polozenie.R`, `ch4_rozrzut.R`, `ch5_ksztalt.R`.
+- [ ] Widget autobusów (rozdz. 4, kroki 3–4): w symulowanych danych żaden
+  autobus nie przyjeżdża przed czasem, więc „zdążysz” wynosi zawsze 100%
+  dla obu linii niezależnie od suwaka. Widget do przebudowy (np. czas
+  oczekiwania zamiast „zdążysz”).
+- [ ] Reguła empiryczna (rozdz. 4): na danych ankiety widget nigdy nie
+  pokazuje stanu „słaba zgodność” (wszystkie zmienne mieszczą się w progu).
+
+### 02 — rozkłady prawdopodobieństwa
+
+- [ ] Dystrybuanta (rozdz. 4, sekcja `ch4-dystrybuanta`): dodać wersję
+  skrótową — wzór i wykres. Hasło „dystrybuanta” dopisać do
+  `R/glossary.R`.
+- [ ] Punkt równowagi (rozdz. 2): prawdopodobieństwa są normalizowane
+  dopiero przy odchyleniu sumy od 1 o ponad 0,05, więc przy sumie np. 1,04
+  E(X) na wykresie i w obliczeniu jest lekko błędne.
+- [ ] Widget krokowy (rozdz. 4): wygładzona krzywa wychodzi poza dziedzinę
+  dla rozkładu wykładniczego i jednostajnego.
 
 ### 04 — wnioskowanie statystyczne
 
