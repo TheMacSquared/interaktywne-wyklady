@@ -118,8 +118,11 @@ Etap 3 — przegląd widgetów wykład po wykładzie (commit per widget):
   - `statystyka/04-wnioskowanie-statystyczne/modules/ch10_sila_efektu.R` (l. 677)
   - `statystyka/06-regresja/modules/ch3b_kontekst.R` (l. 188, 272)
 - [ ] `lc_stat_box()` w widgetach → `lc_readout()`; odczyt z kolorem serii
-  zastępuje legendę ggplot (90 paneli; w analizie ryzyka dotyczy prawie
-  każdego `risk_widget_panel()`, w którym pudełka siedzą teraz w pasku).
+  zastępuje legendę ggplot. Analiza ryzyka zrobiona 3 października 2026
+  (101 pudełek; zostało 16 w 01 Ćw. 2 i prototypach — po wyborze wariantu).
+  Wzorce: wartości z `risk_fmt_p()` / `lc_fmt()`, krótka etykieta, parametry
+  w `lc_caption()` pod odczytami; dynamiczny tytuł wykresu → odczyty.
+  Zostało: statystyka.
 - [x] `lc_feedback()` w panelach → `lc_status()` / `lc_caption()` (statystyka
   90, analiza ryzyka 44; 3 października 2026). Rozwiązania ćwiczeń →
   `lc_more("Rozwiązanie", …)` bez przycisków (128).
@@ -217,14 +220,16 @@ Decyzja: wszędzie kropka dziesiętna i zwykły minus `-`, jak w R i jamovi.
 Helpery v2 (`lc_fmt()`, `lc_num()`, `lc_pval()`, `R/lc_widgets.js`) już
 to stosują.
 
-- [ ] Przestawić stare formatery na kropkę, m.in. `risk_format_probability()`
-  w `analiza-ryzyka/R/risk_block.R` (zamiana `.` na `,`). Zrobione:
-  `format_p_value()` / `format_p()` / `ui_p_value()` we wspólnym `R/shared.R`.
+- [x] Przestawić stare formatery na kropkę: `format_p_value()` / `format_p()` /
+  `ui_p_value()` we wspólnym `R/shared.R`, `risk_format_probability()` i
+  lokalne formatery analizy ryzyka.
 - [ ] Przejrzeć teksty wykładów we wszystkich kursach i zamienić przecinek
   dziesiętny na kropkę (np. „p = 0,10” w analizie ryzyka 05 obok widgetu
   pokazującego 0.1). Zmieniać osobnymi commitami per wykład. Zrobione:
   statystyka 01–06 i słownik statystyki (także minus przed liczbą).
-  Zostało: statystyka 07–09, statystyka 2, analiza ryzyka.
+  Analiza ryzyka 01–10 zrobiona (z odczytami, 3 października 2026; zbiory
+  {1,2} zostają z przecinkiem, N(82, 3) ze spacją).
+  Zostało: statystyka 07–09, statystyka 2.
 - [ ] Zamienić typograficzny minus `−` w liczbach na zwykły `-` (teksty,
   formatery, etykiety wykresów).
 - [ ] Sprawdzić etykiety osi i liczby w ggplot (np. `scales::label_number`
