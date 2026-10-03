@@ -105,13 +105,10 @@ ch5_ui <- list(
           tags$em("„Czy szansa dostania mandatu jest niezależna od płci?”"))
       ),
 
-      lc_toolbar(
-        lc_step_nav("ch5_narr_step",
-          c("Pokaż dane", "Załóżmy niezależność — co by było?",
-            "Porównaj: obserwowane i oczekiwane"),
-          start = 1)
-      ),
-      uiOutput("ch5_narr")
+      lc_step_widget("ch5_narr",
+        steps = c("Pokaż dane", "Załóżmy niezależność", "Porównaj"),
+        body = uiOutput("ch5_narr_body")
+      )
     ),
 
     lc_p("Mandat dostało 30 ze 100 kontrolowanych kobiet i 50 ze 100 mężczyzn,
@@ -487,45 +484,53 @@ ch5_server <- function(input, output, session) {
                     c("Mandat", "Brak mandatu")))
   narr_exp <- matrix(c(40, 60, 40, 60), nrow = 2, byrow = TRUE,
     dimnames = dimnames(narr_tab))
-  narr_steps <- c("Pokaż dane", "Załóżmy niezależność — co by było?",
-                  "Porównaj: obserwowane i oczekiwane")
+  ch5_narr_step <- lc_step_server("ch5_narr", input)$step
 
-  # Kroki 1..3 (kropki); wartość 0 po „Wstecz” z kroku 1 pokazuje krok 1.
-  ch5_narr_step <- reactive(max(1L, as.integer(input$ch5_narr_step %||% 1L)))
-
-  output$ch5_narr <- renderUI({
-    step <- ch5_narr_step()
-    kicker <- paste0("Krok ", step, " z 3 · ", narr_steps[step])
-
-    switch(as.character(step),
-      "1" = lc_step_text(kicker, title = "Dane z 200 kontroli:",
-        lc_crosstab(narr_tab, measure = "n", label = "Dane z 200 kontroli"),
-        p("Mandat dostało 30% kobiet i 50% mężczyzn. Różnica jest widoczna,
-          ale czy mogła powstać przez przypadek?")
+  # Tabele kroku: 1 obserwowana, 2 obserwowana | oczekiwana, 3 różnice.
+  output$ch5_narr_body <- renderUI({
+    obs <- tags$div(
+      tags$p(class = "lc-tbl-lead", tags$b("Obserwowane")),
+      lc_crosstab(narr_tab, measure = "n", lead = FALSE, label = "Dane z 200 kontroli")
+    )
+    switch(as.character(ch5_narr_step()),
+      "1" = obs,
+      "2" = tags$div(class = "lc-tbl-row",
+        obs,
+        tags$div(
+          tags$p(class = "lc-tbl-lead", tags$b("Oczekiwane przy H₀")),
+          lc_crosstab(narr_exp, measure = "n", lead = FALSE, label = "Tabela oczekiwana")
+        )
       ),
-      "2" = lc_step_text(kicker, title = "Załóżmy, że płeć nie ma znaczenia (H₀).",
-        p("Jeśli płeć nie ma związku z mandatami, nie musimy dzielić danych na kobiety
-          i mężczyzn. W całej próbie jest 80 mandatów na 200 kontroli, czyli 40%."),
-        p("Przy niezależności te 40% dotyczy tak samo kobiet, jak i mężczyzn:"),
-        lc_crosstab(narr_exp, measure = "n", lead = FALSE, label = "Tabela oczekiwana"),
-        p("To tabela oczekiwana: tyle obserwacji byłoby w komórkach, gdyby płeć nie miała znaczenia.")
+      "3" = lc_table(
+        data.frame(group = rownames(narr_tab), obs = narr_tab[, "Mandat"],
+                   exp = narr_exp[, "Mandat"],
+                   diff = narr_tab[, "Mandat"] - narr_exp[, "Mandat"]),
+        cols = list(
+          lc_col("group", "", "row"),
+          lc_col("obs", "Mandat (obs.)"),
+          lc_col("exp", "Mandat (oczek.)"),
+          lc_col("diff", "Różnica")
+        )
+      )
+    )
+  })
+
+  output$ch5_narr_text <- renderUI({
+    switch(as.character(ch5_narr_step()),
+      "1" = p("Mandat dostało 30% kobiet i 50% mężczyzn. Różnica jest widoczna,
+          ale czy mogła powstać przez przypadek?"),
+      "2" = tagList(
+        p(tags$strong("Załóżmy, że płeć nie ma znaczenia (H₀)."),
+          " Jeśli płeć nie ma związku z mandatami, nie musimy dzielić danych na kobiety
+          i mężczyzn. W całej próbie jest 80 mandatów na 200 kontroli, czyli 40%.
+          Przy niezależności te 40% dotyczy tak samo kobiet, jak i mężczyzn."),
+        p("Tabela oczekiwana pokazuje, ile obserwacji byłoby w komórkach, gdyby płeć
+          nie miała znaczenia.")
       ),
-      "3" = lc_step_text(kicker, title = "Porównanie: obserwowane i oczekiwane",
-        lc_table(
-          data.frame(group = rownames(narr_tab), obs = narr_tab[, "Mandat"],
-                     exp = narr_exp[, "Mandat"],
-                     diff = narr_tab[, "Mandat"] - narr_exp[, "Mandat"]),
-          cols = list(
-            lc_col("group", "", "row"),
-            lc_col("obs", "Mandat (obs.)"),
-            lc_col("exp", "Mandat (oczek.)"),
-            lc_col("diff", "Różnica")
-          )
-        ),
+      "3" = tagList(
         p("Kobiety dostały o 10 mandatów mniej, niż oczekiwano, mężczyźni o 10 więcej."),
         p("Test χ² podnosi takie różnice do kwadratu, dzieli przez liczebności
-          oczekiwane i sumuje po wszystkich komórkach:"),
-        p(
+          oczekiwane i sumuje po wszystkich komórkach: ",
           withMathJax("\\(\\chi^2 = \\sum \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}\\)"))
       )
     )
