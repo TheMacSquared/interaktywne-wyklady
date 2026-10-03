@@ -215,7 +215,9 @@ to stosują.
   `format_p_value()` / `format_p()` / `ui_p_value()` we wspólnym `R/shared.R`.
 - [ ] Przejrzeć teksty wykładów we wszystkich kursach i zamienić przecinek
   dziesiętny na kropkę (np. „p = 0,10” w analizie ryzyka 05 obok widgetu
-  pokazującego 0.1). Zmieniać osobnymi commitami per wykład.
+  pokazującego 0.1). Zmieniać osobnymi commitami per wykład. Zrobione:
+  statystyka 01–06 i słownik statystyki (także minus przed liczbą).
+  Zostało: statystyka 07–09, statystyka 2, analiza ryzyka.
 - [ ] Zamienić typograficzny minus `−` w liczbach na zwykły `-` (teksty,
   formatery, etykiety wykresów).
 - [ ] Sprawdzić etykiety osi i liczby w ggplot (np. `scales::label_number`
@@ -319,6 +321,29 @@ to stosują.
 
 ### 06 — regresja
 
+- [ ] Rozdział 00 „Mapa wykładu” jest pisany do prowadzącego („wybierz cel
+  zajęć”). Przepisać na wstęp dla czytelnika: nawiązanie do korelacji
+  (wykład 04) i założeń na resztach (05), jak czytać rdzeń i pogłębienia,
+  dlaczego CASchools i pingwiny. Tabela tematów zostaje.
+- [ ] Ryc. 4.1 i 4.2 prawie się dublują (ten sam generator i modele; 4.2 ma
+  suwak n). W arenie (4.2) RMSE liczone na danych uczących, więc
+  wyróżnienie „najlepszej” wartości zawsze trafia w największy model.
+- [ ] Ryc. 1.2: scenariusz „Ten sam trend, mała próba” ma też większy szum
+  (σ = 5 zamiast 3) — etykieta sugeruje, że różni się tylko n.
+- [ ] Ryc. 1.4: w tabeli surowe nazwy zmiennych („income”); na liście X
+  zmienna 0/1 „grades” w rozdziale o regresji prostej.
+- [ ] Ryc. 1.1b, krok 5: równanie sklejane jako „b₀ + b₁X” — przy ujemnym b₁
+  dałoby „+ -”.
+- [ ] Panel współliniowości (rozdz. 03): pokazuje tylko chmurę X₁–X₂,
+  niestabilności β nie widać bez wielokrotnego losowania; w tabeli `x1`/`x2`,
+  na wykresie X₁/X₂.
+- [ ] Rozdz. 03B: nagłówek „p-value” w tabeli modelu z interakcją → „p”.
+- [ ] Rozdz. 05: widget liniowa a logistyczna pokazuje identyczną dokładność
+  obu modeli (różnicę niesie tylko „poza [0, 1]”); `ch5_model_summary`
+  liczy nieużywane `coefs`.
+- [ ] Ściąga: k w dwóch znaczeniach (liczba predyktorów w R² skorygowanym,
+  liczba parametrów w AIC/BIC) — ujednolicić z rozdz. 04 (k = liczba
+  predyktorów, kara 2(k + 2)).
 - [ ] Quiz interpretacji b₁ w jednostkach w `ch1_liniowa.R`, sekcja
   `ch1-caschool`: „read ~ income”, b₁ = 1,88 — co znaczy wzrost dochodu
   o 1 tys. USD? Dystraktory: mylone jednostki i skale.
