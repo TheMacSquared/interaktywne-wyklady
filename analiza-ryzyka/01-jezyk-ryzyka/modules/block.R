@@ -929,20 +929,14 @@ jezyk_block <- list(
               label = "Ćwiczenie 3",
               title = "Losowa kontrola jednej palety",
               full_width = TRUE,
-              fluidRow(
-                column(
-                  4,
-                  lc_slider("ch3_favourable", "Palety z uszkodzonym zabezpieczeniem", 0, 24, 6, 1),
-                  uiOutput("ch3_stats"),
-                  lc_caption(
-                    "Zdarzenie A: wylosowana paleta ma uszkodzone zabezpieczenie.",
-                    tone = "info"
-                  )
-                ),
-                column(
-                  8,
-                  zoom_plot_ui("ch3_grid", height = "430px")
-                )
+              lc_toolbar(
+                lc_slider("ch3_favourable", "Palety z uszkodzonym zabezpieczeniem", 0, 24, 6, 1)
+              ),
+              uiOutput("ch3_stats"),
+              lc_plot("ch3_grid", ratio = "1.4/1", max_height = "430px"),
+              lc_caption(
+                "Zdarzenie A: wylosowana paleta ma uszkodzone zabezpieczenie.",
+                tone = "info"
               )
             ),
             "Siatka pokazuje całe Ω naraz: 24 kafelki to mianownik, kafelki w kolorze
@@ -1110,19 +1104,13 @@ jezyk_block <- list(
               label = "Ćwiczenie 4",
               title = "Suma, iloczyn i dopełnienie zdarzeń",
               full_width = TRUE,
-              fluidRow(
-                column(
-                  4,
-                  lc_slider("ch4_n_a", "Liczba kontroli ze zdarzeniem A", 0, 80, 30, 1),
-                  lc_slider("ch4_n_b", "Liczba kontroli ze zdarzeniem B", 0, 80, 20, 1),
-                  lc_slider("ch4_overlap", "Liczba kontroli z A i B", 0, 20, 8, 1),
-                  uiOutput("ch4_stats")
-                ),
-                column(
-                  8,
-                  zoom_plot_ui("ch4_event_grid", height = "480px")
-                )
-              )
+              lc_toolbar(
+                lc_slider("ch4_n_a", "Liczba kontroli ze zdarzeniem A", 0, 80, 30, 1),
+                lc_slider("ch4_n_b", "Liczba kontroli ze zdarzeniem B", 0, 80, 20, 1),
+                lc_slider("ch4_overlap", "Liczba kontroli z A i B", 0, 20, 8, 1)
+              ),
+              uiOutput("ch4_stats"),
+              lc_plot("ch4_event_grid", ratio = "1.3/1", max_height = "480px")
             ),
             "Przy ustawieniach startowych panel pokazuje P(A ∩ B) = 0,08, P(A ∪ B) =
                0,42, P(Aᶜ) = 0,70 i „ani A, ani B” = 0,58. Sprawdzenie wzorem (1.5):

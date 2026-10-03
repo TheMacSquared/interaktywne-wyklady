@@ -277,15 +277,13 @@ alarm_block <- list(
             figure_panel(
               label = "Tablica 2×2", title = "Zmień parametry detektora",
               lc_p("Liczebności są zaokrągloną ilustracją dla 10 000 zmian. Prawdopodobieństwa obliczamy bezpośrednio z parametrów modelu."),
-              fluidRow(
-                column(
-                  4,
-                  lc_slider("a3_prev", "Częstość awarii", 0.001, 0.10, 0.01, 0.001),
-                  lc_slider("a3_sens", "Czułość", 0.50, 1, 0.95, 0.01),
-                  lc_slider("a3_fpr", "Fałszywie dodatnie", 0, 0.30, 0.05, 0.01)
-                ),
-                column(8, uiOutput("a3_table"))
-              ), full_width = TRUE
+              lc_toolbar(
+                lc_slider("a3_prev", "Częstość awarii", 0.001, 0.10, 0.01, 0.001),
+                lc_slider("a3_sens", "Czułość", 0.50, 1, 0.95, 0.01),
+                lc_slider("a3_fpr", "Fałszywie dodatnie", 0, 0.30, 0.05, 0.01)
+              ),
+              uiOutput("a3_table"),
+              full_width = TRUE
             ),
             c(
               "Przy ustawieniach domyślnych wiersz awarii ma 100 zmian: 95 z alarmem i 5 bez. Wiersz bez awarii ma 9900 zmian: 495 z alarmem i 9405 bez. Kolumna alarmów zawiera więc 95 + 495 = 590 zmian, z których prawdziwych jest mniej niż jedna szósta. Czujnik jest dobry w obu wierszach — myli się w 5% przypadków — a mimo to w kolumnie alarmów przeważają pomyłki, bo wiersz bez awarii jest 99 razy liczniejszy.",

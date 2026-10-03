@@ -226,9 +226,9 @@ warunki_views_targets <- list(
 warunki_views_widget <- figure_panel(
   label = "Trzy widoki", title = "Te same liczby: tabela, drzewo i udziały",
   lc_plot("w2_views_tree", ratio = "1.6/1", max_height = "380px"),
-  fluidRow(
-    column(5, uiOutput("w2_table")),
-    column(7, zoom_plot_ui("w2_views_shares", height = "320px"))
+  lc_plots(
+    uiOutput("w2_table"),
+    lc_plot("w2_views_shares", max_height = "320px")
   ),
   lc_caption(
     "Zmiana widoku nie zmienia zdarzenia ani mianownika.",
@@ -297,19 +297,10 @@ warunki_signal_panel <- figure_panel(
   label = "Interpretacja",
   title = "Co mówi wzrost prawdopodobieństwa warunkowego?",
   full_width = TRUE,
-  fluidRow(
-    column(
-      4,
-      lc_stat_box("Bez warunku", "P(A) = 0,017", caption = "17 incydentów na 1000 zmian")
-    ),
-    column(
-      4,
-      lc_stat_box("Po przegrzaniu", "P(A | B) = 0,120", caption = "12 incydentów na 100 zmian", color = upwr_accent)
-    ),
-    column(
-      4,
-      lc_stat_box("Porównanie", "około 7× więcej", caption = "silny sygnał do dalszego sprawdzenia", color = upwr_cat[["bursztyn"]])
-    )
+  lc_stat_grid(columns = 3,
+    lc_stat_box("Bez warunku", "P(A) = 0,017", caption = "17 incydentów na 1000 zmian"),
+    lc_stat_box("Po przegrzaniu", "P(A | B) = 0,120", caption = "12 incydentów na 100 zmian", color = upwr_accent),
+    lc_stat_box("Porównanie", "około 7× więcej", caption = "silny sygnał do dalszego sprawdzenia", color = upwr_cat[["bursztyn"]])
   ),
   lc_table(
     data.frame(
