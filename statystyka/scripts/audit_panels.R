@@ -39,7 +39,7 @@ audit_js <- "(function(){
         plots: plots.length,
         old_feedback: p.querySelectorAll('.lc-feedback').length,
         old_buttons: p.querySelectorAll('button.btn, .btn[class*=\"lc-btn-\"]').length,
-        radios: p.querySelectorAll('.shiny-input-radiogroup:not(.lc-seg-input)').length,
+        radios: p.querySelectorAll('.shiny-input-radiogroup:not(.lc-seg-input):not(.lc-choices *)').length,
         errors: p.querySelectorAll('.shiny-output-error:not(.shiny-output-error-validation)').length,
         v2: p.querySelectorAll('.lc-toolbar, .lc-tbl, .lc-plot').length
       });

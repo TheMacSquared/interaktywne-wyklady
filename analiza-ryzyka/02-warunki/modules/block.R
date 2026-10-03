@@ -239,10 +239,12 @@ warunki_views_widget <- figure_panel(
 
 warunki_tree_read_widget <- figure_panel(
   label = "Czytaj od mianownika", title = "Licznik i mianownik na drzewie",
-  radioButtons(
-    "w2_target", "Zaznacz na drzewie",
-    choices = setNames(names(warunki_views_targets), vapply(warunki_views_targets, `[[`, "", "label")),
-    selected = "a"
+  tags$div(class = "lc-choices",
+    radioButtons(
+      "w2_target", "Zaznacz na drzewie",
+      choices = setNames(names(warunki_views_targets), vapply(warunki_views_targets, `[[`, "", "label")),
+      selected = "a"
+    )
   ),
   lc_plot("w2_target_plot", ratio = "1.4/1"),
   uiOutput("w2_target_result"),

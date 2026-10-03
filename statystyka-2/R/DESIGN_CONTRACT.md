@@ -175,6 +175,7 @@ z odczytami, wykres i podpis.
 | Pasek sterowania nad treścią | `lc_toolbar()` |
 | Grupa z etykietą | `lc_group()` |
 | Radio z ≤ 4 krótkimi opcjami | `lc_segmented()` |
+| Odpowiedzi-zdania (quiz, „Najpierw zdecyduj”) | `radioButtons()` / `checkboxGroupInput()` w `tags$div(class = "lc-choices", …)` |
 | Seria akcji (np. +1 · +10 · +100) | `lc_action_group()` |
 | Pojedyncza akcja | `lc_action(variant = "outline" / "solid" / "ghost")` |
 | Suwak z wartością w etykiecie | `lc_slider()` |
@@ -193,6 +194,9 @@ Zasady:
    variant = "ghost")`).
 3. Radio z ≤ 4 krótkimi opcjami to segment. Segmenty wykluczające się (np.
    zmienna w wierszach i kolumnach) łączy `exclusive_with`.
+   Odpowiedzi będące zdaniami (quiz, głosowanie przed widgetem, wybór
+   wniosku) zostają radiem albo polami wyboru opakowanymi w `div.lc-choices`:
+   każda opcja to karta, zaznaczona ma obwódkę i tło akcentu.
 4. Odczyty (`lc_readout()`) zastępują `lc_stat_box()` w widgetach. Gdy
    kolor odczytu jest kolorem serii (`swatch = TRUE`), odczyt zastępuje
    legendę ggplot.

@@ -51,10 +51,10 @@ risk_vote_panel <- function(input_id, output_id, question, choices, full_width =
   figure_panel(
     label = "Najpierw zdecyduj",
     title = question,
-    radioButtons(input_id, NULL, choices = choices, selected = character(0)),
-    actionButton(paste0(input_id, "_check"), "Sprawdź intuicję",
-      class = "lc-btn-primary"
+    tags$div(class = "lc-choices",
+      radioButtons(input_id, NULL, choices = choices, selected = character(0))
     ),
+    lc_action(paste0(input_id, "_check"), "Sprawdź intuicję", variant = "solid"),
     uiOutput(output_id),
     full_width = full_width
   )
@@ -81,14 +81,14 @@ risk_assessment_ui <- function(prefix, quiz, exercises, exercises_intro = NULL) 
         question <- questions[[index]]
         tags$li(
           tags$p(question$question),
-          radioButtons(paste0(prefix, "_quiz_", index), NULL,
-            choices = question$choices, selected = character(0)
+          tags$div(class = "lc-choices",
+            radioButtons(paste0(prefix, "_quiz_", index), NULL,
+              choices = question$choices, selected = character(0)
+            )
           )
         )
       })),
-      actionButton(paste0(prefix, "_quiz_check"), "Sprawdź wszystkie",
-        class = "lc-btn-primary"
-      ),
+      lc_action(paste0(prefix, "_quiz_check"), "Sprawdź wszystkie", variant = "solid"),
       uiOutput(paste0(prefix, "_quiz_feedback")),
       full_width = TRUE
     ),
@@ -322,7 +322,7 @@ risk_check <- function(id, question, choices, correct, explanation, hints = NULL
     tags$div(class = "lc-check-label", "Sprawdź się"),
     tags$p(class = "lc-check-question", question),
     tags$div(
-      class = "lc-check-options",
+      class = "lc-check-options lc-choices",
       lapply(seq_along(choices), function(i) {
         value <- unname(choices[[i]])
         tags$label(

@@ -74,25 +74,29 @@ jezyk_exercises <- list(
        pełne ryzyko obu magazynów. Wszystkie wybrane informacje powinny mieć tę
        samą definicję po obu stronach porównania."
     ),
-    checkboxGroupInput(
-      "ch8_fields",
-      "Czego brakuje?",
-      choices = c(
-        "Jednoznacznej definicji zdarzenia i zasad rejestracji" = "definition",
-        "Liczby porównywalnych ekspozycji, np. przejść lub pracownikogodzin" = "exposure",
-        "Wspólnego okresu i informacji o warunkach pracy" = "period",
-        "Informacji o rodzaju oraz dotkliwości skutków" = "consequence"
+    tags$div(class = "lc-choices",
+      checkboxGroupInput(
+        "ch8_fields",
+        "Czego brakuje?",
+        choices = c(
+          "Jednoznacznej definicji zdarzenia i zasad rejestracji" = "definition",
+          "Liczby porównywalnych ekspozycji, np. przejść lub pracownikogodzin" = "exposure",
+          "Wspólnego okresu i informacji o warunkach pracy" = "period",
+          "Informacji o rodzaju oraz dotkliwości skutków" = "consequence"
+        )
       )
     ),
-    radioButtons(
-      "ch8_conclusion",
-      "Który wniosek jest teraz uzasadniony?",
-      choices = c(
-        "Bananpol jest bezpieczniejszy, bo 3 < 5" = "safer",
-        "Magazyny są równie bezpieczne" = "equal",
-        "Na podstawie samych liczników nie da się ich porównać" = "insufficient"
-      ),
-      selected = character(0)
+    tags$div(class = "lc-choices",
+      radioButtons(
+        "ch8_conclusion",
+        "Który wniosek jest teraz uzasadniony?",
+        choices = c(
+          "Bananpol jest bezpieczniejszy, bo 3 < 5" = "safer",
+          "Magazyny są równie bezpieczne" = "equal",
+          "Na podstawie samych liczników nie da się ich porównać" = "insufficient"
+        ),
+        selected = character(0)
+      )
     ),
     lc_action("ch8_check", "Sprawdź rekomendację", variant = "solid"),
     uiOutput("ch8_feedback")
@@ -1255,16 +1259,18 @@ jezyk_block <- list(
             figure_panel(
               label = "Decyzja",
               title = "Jaki priorytet można teraz uzasadnić?",
-              radioButtons(
-                "ch5_priority",
-                "Wybierz najlepiej uzasadnione stwierdzenie",
-                choices = c(
-                  "Najpierw A, bo ma większe prawdopodobieństwo" = "a",
-                  "Najpierw B, bo może mieć cięższy skutek" = "b",
-                  "Oba problemy mają takie samo ryzyko" = "equal",
-                  "Same prawdopodobieństwa nie wystarczają do ustalenia priorytetu" = "insufficient"
-                ),
-                selected = character(0)
+              tags$div(class = "lc-choices",
+                radioButtons(
+                  "ch5_priority",
+                  "Wybierz najlepiej uzasadnione stwierdzenie",
+                  choices = c(
+                    "Najpierw A, bo ma większe prawdopodobieństwo" = "a",
+                    "Najpierw B, bo może mieć cięższy skutek" = "b",
+                    "Oba problemy mają takie samo ryzyko" = "equal",
+                    "Same prawdopodobieństwa nie wystarczają do ustalenia priorytetu" = "insufficient"
+                  ),
+                  selected = character(0)
+                )
               ),
               lc_action("ch5_check", "Sprawdź rozumowanie", variant = "solid"),
               uiOutput("ch5_feedback")
