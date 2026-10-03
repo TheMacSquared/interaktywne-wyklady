@@ -84,7 +84,8 @@ ch2_ui <- lecture_chapter(
           uiOutput("ch2a_stats")
         ),
         column(8,
-          zoom_plot_ui("ch2a_plot")
+          # Wysokość zależy od liczby przedziałów (renderPlot(height = ...)).
+          plotOutput("ch2a_plot", height = "auto")
         )
       )
     ),
@@ -127,7 +128,8 @@ ch2_ui <- lecture_chapter(
           uiOutput("ch2b_stats")
         ),
         column(8,
-          zoom_plot_ui("ch2b_plot", height = "420px")
+          # Wysokość zależy od liczby przedziałów (renderPlot(height = ...)).
+          plotOutput("ch2b_plot", height = "auto")
         )
       )
     ),
@@ -160,7 +162,8 @@ ch2_ui <- lecture_chapter(
           uiOutput("ch2c_stats")
         ),
         column(8,
-          zoom_plot_ui("ch2c_plot", height = "500px")
+          # Wysokość zależy od liczby przedziałów (renderPlot(height = ...)).
+          plotOutput("ch2c_plot", height = "auto")
         )
       )
     ),

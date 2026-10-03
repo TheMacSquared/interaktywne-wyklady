@@ -149,7 +149,8 @@ ch1_ui <- lecture_chapter(
           uiOutput("ch1_demo_stats")
         ),
         column(8,
-          zoom_plot_ui("ch1_bootstrap_demo")
+          # Wysokość zależy od liczby przedziałów (renderPlot(height = ...)).
+          plotOutput("ch1_bootstrap_demo", height = "auto")
         )
       )
     ),
