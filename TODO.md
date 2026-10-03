@@ -136,21 +136,12 @@ w statystyce 01–04 i 06, statystyce 2 i analizie ryzyka 01 i 08). Zostało:
   `lc_step_widget(body = …)` albo schemat redukcji jako wykres.
 - [ ] Do obejrzenia zmiany treści z migracji: nazwy kolorów w opisach
   dopasowane do ról (statystyka 01 Ryc. 4.2 „zacieniowany pas”, statystyka 03
-  Ryc. 3.1–4.1, statystyka 04 „pionowa linia”); statystyka 2 Ryc. 3.2 (stabilność CI) zawsze używa próby
-  z Ryc. 3.1; „Losuj …” nie cofa kroku.
+  Ryc. 3.1–4.1, statystyka 04 „pionowa linia”); „Losuj …” nie cofa kroku.
 - [ ] Nazwy kroków dłuższe niż 3 słowa (np. „Ta sama średnia, ale…”, „Surowe
   dane (rug)”) — skrócić przy przeglądzie wykładu.
 - [ ] Sprzątanie: martwe style i JS po starym widgecie (`.ch2-animated-widget`,
   `.ch2-step-btn`, `.ch2-step-stage`) w `statystyka/04-wnioskowanie-statystyczne/app.R`;
   `format_test_result()` w `helpers.R` statystyki 04 formatuje p z przecinkiem.
-- [ ] Tytuły i legenda w `plot_bootstrap_step()` / `plot_bootstrap_distribution()`
-  (`statystyka-2/01-symulacje-statystyczne/modules/helpers.R`), używanych przez
-  `ch1_idea.R` — usunąć przy migracji rozdziału 1; tytuły Ryc. 8.1 i 8.3
-  w `statystyka-2/04-szeregi-czasowe/modules/ch8_ar.R`.
-- [ ] Wykresy bootstrapu w statystyce 2 (rozdziały 1–2) stoją na zwykłym
-  `plotOutput(height = "auto")` (wysokość rośnie z liczbą przedziałów) i nie
-  mają przycisku powiększenia; rozważyć wariant `zoom_plot` z dynamiczną
-  wysokością.
 - [ ] Znaki x̄, p̂, ₁, β na wykresach: w części środowisk (showtext, mono) wychodzą
   jako puste kwadraty — sprawdzić w przeglądarce; `step_label()` ma już
   domyślnie zwykły krój i `parse = TRUE` dla plotmath.
@@ -329,7 +320,23 @@ to stosują.
 
 ## Statystyka 2
 
-Brak zadań.
+Robocze rozdziały „na kiedyś” — nie są teraz prowadzone. Zmiany wspólnych
+komponentów trafiają tu automatycznie; treść odkładamy do wznowienia kursu.
+Rekomendacje (do przyjęcia przy wznowieniu, bez dalszych decyzji teraz):
+
+- Ryc. 3.2 (stabilność CI, `01-symulacje-statystyczne/modules/ch3_bootstrap_jednopr.R`)
+  zawsze używa próby z widgetu Ryc. 3.1 — zostawić: jedna próba w rozdziale
+  jest spójniejsza niż osobne losowanie.
+- Tytuły z wynikami (lista w sekcji migracji) i tytuły w `plot_bootstrap_step()` /
+  `plot_bootstrap_distribution()` (`01-symulacje-statystyczne/modules/helpers.R`,
+  używane przez `ch1_idea.R`) oraz Ryc. 8.1 i 8.3 w `04-szeregi-czasowe/modules/ch8_ar.R`
+  — przy migracji rozdziału przenieść liczby do opisu kroku albo odczytów,
+  tytuły usunąć.
+- Wykresy bootstrapu (rozdziały 1–2) na `plotOutput(height = "auto")` bez
+  powiększenia — zostawić, dopóki kurs jest odłożony; przy wznowieniu dodać do
+  `zoom_plot` obsługę wysokości liczonej w serwerze.
+- Migracja etapu 3 (układy kolumn: 81 z 91 paneli, statyczne `lc_feedback`) —
+  dopiero przy wznowieniu kursu.
 
 ---
 
