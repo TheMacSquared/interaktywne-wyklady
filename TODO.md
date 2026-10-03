@@ -273,6 +273,13 @@ to stosują.
 - [ ] Widget krokowy (rozdz. 4): wygładzona krzywa wychodzi poza dziedzinę
   dla rozkładu wykładniczego i jednostajnego.
 
+### 03 — przedziały ufności
+
+- [ ] Ryc. 1.1: zmiana suwaka n nie czyści historii estymat (czyści ją tylko
+  zmiana rozkładu).
+- [ ] Case studies w rozdz. 3: ostrzeżenia ggplot („Removed rows…”
+  w `geom_point`, przestarzały `geom_errorbarh`).
+
 ### 04 — wnioskowanie statystyczne
 
 - [ ] Ograniczyć `tags$strong()` / `tags$b()` w `modules/ch1_logika.R`
