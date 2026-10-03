@@ -179,10 +179,10 @@
     "Test z Hₐ określającą kierunek (> lub <); mocniejszy w tym kierunku, ale ślepy na przeciwny. Kierunek ustala się przed zebraniem danych.",
   "test dwumianowy" =
     "Dokładny test porównujący odsetek sukcesów w próbie z wartością referencyjną p₀.",
-  "liczność oczekiwana" =
-    "Liczność komórki tabeli, jakiej oczekiwalibyśmy przy niezależności zmiennych: suma wiersza × suma kolumny / n.",
+  "liczebność oczekiwana" =
+    "Liczebność komórki tabeli, jakiej oczekiwalibyśmy przy niezależności zmiennych: suma wiersza × suma kolumny / n.",
   "test dokładny Fishera" =
-    "Test niezależności dla tabeli kontyngencji liczący p-wartość dokładnie; stosowany, gdy liczności oczekiwane są małe (< 5).",
+    "Test niezależności dla tabeli kontyngencji liczący p-wartość dokładnie; stosowany zwłaszcza wtedy, gdy liczebności oczekiwane są małe.",
   "próby zależne" =
     "Pomiary powiązane w pary (np. te same osoby przed i po); analizuje się różnice w parach.",
   "porównania wielokrotne" =

@@ -20,7 +20,7 @@ ch3_ui <- lecture_chapter(
       p(gloss("test chi-kwadrat", "Test chi-kwadrat"), " (zgodności i niezależności) wymaga:"),
       tags$ol(
         tags$li(tags$b(gloss("niezależność obserwacji", "Niezależność obserwacji")), " — każda obserwacja należy do jednej kategorii"),
-        tags$li(tags$b(gloss("liczność oczekiwana", "Oczekiwane liczności"), " ≥ 5"), " — w każdej komórce tabeli"),
+        tags$li(tags$b(gloss("liczebność oczekiwana", "Oczekiwane liczebności"), " ≥ 5"), " — w każdej komórce tabeli"),
         tags$li("Próba losowa z populacji")
       ),
       p("Gdy oczekiwane liczności < 5, test χ² jest niedokładny.")
