@@ -106,7 +106,7 @@ ch0_server <- function(input, output, session) {
           paste0(n_total, "/9")
         )
       ),
-      lc_status(lc_verdict(tags$strong(label), type = verdict)),
+      lc_status(lc_verdict(label, type = verdict)),
       if (n_critical < 6 && n_fixable > 0)
         lc_caption("Naprawialne kryteria nie ratują krytycznych problemów.")
     )

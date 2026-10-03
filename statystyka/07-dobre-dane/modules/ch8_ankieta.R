@@ -134,14 +134,13 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     z kilku kategorii. Porównując obie wersje tabeli, zwróć uwagę, które wpisy
     nie mają odpowiednika po standaryzacji."),
 
-  lc_toolbar(
-    lc_segmented("tab7b_view", NULL,
-      choices = c("Surowe" = "raw", "Po standaryzacji" = "cat"))
-  ),
-
   figure_panel(
     label = "Ryc. 8.4",
     title = "12 zgłoszeń przed i po standaryzacji",
+    lc_toolbar(
+      lc_segmented("tab7b_view", NULL,
+        choices = c("Surowe" = "raw", "Po standaryzacji" = "cat"))
+    ),
     uiOutput("tab7b_table")
   ),
 
