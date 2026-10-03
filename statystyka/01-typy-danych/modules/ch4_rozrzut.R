@@ -11,34 +11,33 @@ ch4_ui <- list(
       kicker = "Rozdział 04 · Statystyka opisowa",
       num    = "04",
       title  = "Statystyki rozrzutu.",
-      lead   = "Średnia mówi gdzie jest środek, ale nic o tym, jak bardzo dane są
-                rozproszone. Dwie grupy mogą mieć tę samą średnią, a wyglądać
-                zupełnie inaczej — pora zmierzyć rozrzut."
+      lead   = "Średnia mówi, gdzie leży środek danych, ale milczy o tym, jak daleko
+                od niego leżą pojedyncze obserwacje. Dwa zbiory z tą samą średnią
+                mogą wyglądać zupełnie inaczej. Różnicę między nimi mierzą
+                statystyki rozrzutu."
     ),
 
     uiOutput("tracker_ch4"),
 
-    tagList(
-      p("W tym rozdziale poznamy miary rozrzutu: ", gloss("odchylenie standardowe"), ",
-        ", gloss("wariancja", "wariancję"), ", ", gloss("rozstęp"), ", ",
-        gloss("rozstęp międzykwartylowy"), " (IQR) oraz
-        ", gloss("współczynnik zmienności"), ". Nauczymy się też budować ",
-        gloss("wykres pudełkowy", "boxplot"), " od podstaw.")
-    ),
+    lc_p("W poprzednim rozdziale streszczaliśmy dane jedną liczbą opisującą
+      położenie: średnią, medianą albo percentylem. Taka liczba nie mówi
+      jednak, czy obserwacje skupiają się ciasno wokół środka, czy są szeroko
+      rozrzucone. W tym rozdziale poznamy miary, które to opisują, zbudujemy
+      wykres pudełkowy, zapowiedziany przy percentylach, i sprawdzimy, które
+      miary rozrzutu są odporne na wartości odstające."),
 
     # ====================================================================
     # WIDGET 1: Bus scenario - "Mean is not everything"
     # ====================================================================
     lc_h2("ch4-srednia", "Średnia to nie wszystko"),
 
-    tagList(
-      p("Wyobraź sobie dwie linie autobusowe. Obie mają takie samo
-        średnie spóźnienie -- około 2 minuty. Którą wybierzesz?"),
-      p("Większość autobusów jest blisko rozkładu (0-4 min spóźnienia),
-        rzadko który przyjeżdża za wcześnie, a od czasu do czasu
-        zdarza się duże spóźnienie. Ale rozrzut tych spóźnień
-        może być bardzo różny.")
-    ),
+    lc_p("Wyobraź sobie dwie linie autobusowe o tym samym średnim spóźnieniu,
+      równym 2 minuty. Na linii A prawie każdy kurs przyjeżdża z niewielkim,
+      podobnym opóźnieniem. Na linii B większość kursów jest niemal punktualna,
+      ale co jakiś czas autobus spóźnia się bardzo. Panel pokazuje rozkłady
+      spóźnień z 1000 symulowanych kursów każdej linii. Odczyty nad wykresem
+      podają odchylenie standardowe, miarę rozrzutu, którą zdefiniujemy
+      w następnej sekcji."),
 
     figure_panel(
       label = "Ryc. 4.1",
@@ -57,15 +56,47 @@ ch4_ui <- list(
       )
     ),
 
+    lc_p("Krzywa linii A jest wąska i wysoka: prawie wszystkie spóźnienia
+      mieszczą się między 0 a 4 minutami, a odchylenie standardowe wynosi
+      0,7 min. Krzywa linii B ma ostry szczyt tuż przy zerze i długi prawy ogon,
+      a jej odchylenie standardowe to 3,0 min. Na linii B 3,4% kursów spóźnia
+      się o ponad 10 minut, średnio o 13,1 min. Na linii A takie spóźnienie
+      się nie zdarza."),
+
+    lc_p("Dla pasażera to różnica zasadnicza. Linia A jest przewidywalna: wiesz,
+      kiedy autobus przyjedzie. Na linii B zwykle czekasz krócej, ale musisz
+      liczyć się z tym, że raz na kilkadziesiąt kursów spóźnisz się na zajęcia.
+      Średnia tej różnicy nie widzi. Potrzebujemy liczby, która ją zmierzy."),
+
     # ====================================================================
     # WIDGET 2: SD step-by-step
     # ====================================================================
     lc_h2("ch4-odchylenie", "Odchylenie standardowe krok po kroku"),
 
-    tagList(
-      p("Jak obliczamy odchylenie standardowe? Krok po kroku.
-        Zobaczmy to na przykładzie 10 pomiarów wzrostu.")
-    ),
+    lc_p("Rozrzut to odległość obserwacji od środka danych. Dla każdej obserwacji
+      liczymy więc odchylenie od średniej \\(x_i - \\bar{x}\\). Samych odchyleń
+      nie można po prostu uśrednić: dodatnie i ujemne zawsze sumują się do
+      zera. Dlatego podnosimy je do kwadratu, sumujemy i dzielimy przez
+      \\(n - 1\\). Wynik to ", gloss("wariancja"), " \\(s^2\\). Wariancja ma
+      jednostki do kwadratu (dla wzrostu: cm²), więc na koniec wyciągamy z niej
+      pierwiastek. Otrzymujemy ", gloss("odchylenie standardowe"), " \\(s\\),
+      wyrażone w tych samych jednostkach co dane."),
+
+    lc_formula_box(withMathJax(
+      "$$s^2 = \\frac{1}{n-1} \\sum_{i=1}^{n} (x_i - \\bar{x})^2 \\qquad s = \\sqrt{s^2}$$"
+    )),
+
+    lc_p("Dzielimy przez \\(n - 1\\), a nie przez \\(n\\), bo odchylenia liczymy od
+      średniej obliczonej z tej samej próby. Średnia próby leży zawsze
+      w środku tych konkretnych danych, więc suma kwadratów odchyleń wychodzi
+      nieco mniejsza niż wokół prawdziwej średniej populacji. Dzielenie przez
+      \\(n - 1\\) koryguje to zaniżenie. Przy dużych próbach różnica jest
+      niewielka."),
+
+    lc_p("Panel przeprowadza to obliczenie na 10 losowych pomiarach wzrostu.
+      W kroku drugim strzałki pokazują odchylenia od średniej, a tabela
+      ich kwadraty. W kroku trzecim suma kwadratów zamienia się w wariancję
+      i odchylenie standardowe."),
 
     figure_panel(
       label = "Ryc. 4.2",
@@ -81,22 +112,32 @@ ch4_ui <- list(
       )
     ),
 
+    lc_p("Najdłuższe strzałki dają największy wkład do sumy, bo podnosimy je
+      do kwadratu: obserwacja dwa razy dalej od średniej waży cztery razy
+      więcej. Odchylenie standardowe można czytać jako typową odległość
+      obserwacji od średniej. W naszej ankiecie średni wzrost to 171,1 cm,
+      a odchylenie standardowe 8,1 cm, więc wzrost typowego studenta różni się
+      od średniej o kilka do kilkunastu centymetrów."),
+
     # ====================================================================
     # WIDGET 2b: Empirical rule (68-95-99.7)
     # ====================================================================
-    lc_h2("ch4-regula", "Reguła empiryczna (68-95-99.7)"),
+    lc_h2("ch4-regula", "Reguła empiryczna (68–95–99,7)"),
 
-    tagList(
-      p("Wiemy juz jak obliczyć odchylenie standardowe. Ale co ono oznacza
-        w praktyce? Dla rozkładow zbliżonych do normalnego obowiązuje
-        ", gloss("reguła 68-95-99,7", "regula empiryczna"), ": okolo 68% danych miesci sie w zakresie
-        srednia ±1 SD, 95% w ±2 SD, a 99.7% w ±3 SD.")
-    ),
+    lc_p("Ostatni krok panelu zaznaczył pas od \\(\\bar{x} - s\\) do
+      \\(\\bar{x} + s\\). Ile danych powinno się w nim zmieścić? Dla rozkładów
+      symetrycznych, o kształcie dzwonu, odpowiedź daje ",
+      gloss("reguła 68-95-99,7", "reguła 68–95–99,7"), ": około 68% obserwacji leży w odległości
+      najwyżej jednego odchylenia standardowego od średniej, około 95% —
+      dwóch, a 99,7% — trzech."),
+
+    lc_p("Panel nakłada te trzy pasy na histogram wybranej zmiennej z ankiety
+      i podaje, jaki odsetek danych naprawdę w nich leży."),
 
     figure_panel(
       label = "Ryc. 4.3",
-      title = "Regula 68-95-99.7 -- czy zawsze dziala?",
-      selectInput("ch4_emp_var", "Wybierz zmienna:",
+      title = "Reguła 68–95–99,7 — czy zawsze działa?",
+      selectInput("ch4_emp_var", "Wybierz zmienną:",
         choices = c("Wzrost (cm)" = "wzrost",
                     "Waga (kg)" = "waga",
                     "Czas dojazdu (min)" = "czas_dojazdu",
@@ -107,23 +148,46 @@ ch4_ui <- list(
       uiOutput("ch4_emp_text")
     ),
 
+    lc_p("Dla wzrostu reguła sprawdza się bardzo dobrze: w pasie ±1 SD leży
+      67,5% studentów, w pasie ±2 SD — 96,5%, a w pasie ±3 SD wszyscy.
+      Podobnie jest dla średniej ocen (68,5% i 96%) i wagi (64% i 97,5%)."),
+
+    lc_p("Ciekawszy jest czas dojazdu. W pasie ±1 SD leży 71% danych, więc
+      łączny odsetek się zgadza, ale rozkład nie jest symetryczny: poniżej pasa
+      leży 13% obserwacji, a powyżej 16%. Pas ±3 SD sięga od −13 do 85 minut.
+      Jego lewy kraniec to wartość niemożliwa, a po prawej stronie i tak
+      zostają dwie obserwacje. Średnia i odchylenie standardowe opisują
+      rozkład dobrze tylko wtedy, gdy jest on w przybliżeniu symetryczny.
+      Dla rozkładów skośnych lepiej sięgnąć po miary oparte na kwartylach."),
+
     # ====================================================================
     # WIDGET 3: Boxplot builder
     # ====================================================================
-    lc_h2("ch4-boxplot", "Budujemy boxplot od podstaw"),
+    lc_h2("ch4-boxplot", "Wykres pudełkowy od podstaw"),
 
-    tagList(
-      p("Boxplot to wizualne podsumowanie rozkładu oparte na kwartylach.
-        Zbudujmy go od podstaw, krok po kroku, aby zrozumieć co
-        oznacza każdy element tego wykresu.")
-    ),
+    lc_p("Kwartyle poznaliśmy w poprzednim rozdziale: Q1 i Q3 ograniczają
+      środkowe 50% danych, a ich odległość to ",
+      gloss("rozstęp międzykwartylowy"), " (IQR). Na nim opiera się ",
+      gloss("wykres pudełkowy"), " (boxplot), który widzieliśmy pod histogramem
+      percentyli. Pudełko rozciąga się od Q1 do Q3, a kreska w środku to
+      mediana. Wąsy sięgają do najdalszych obserwacji leżących nie dalej niż
+      1,5 IQR od pudełka. Punkty poza tymi granicami rysujemy osobno jako ",
+      gloss("wartość odstająca", "wartości odstające"), "."),
+
+    lc_formula_box(withMathJax(
+      "$$\\text{IQR} = Q_3 - Q_1 \\qquad \\text{granice wąsów: } Q_1 - 1{,}5 \\cdot \\text{IQR}, \\;\\; Q_3 + 1{,}5 \\cdot \\text{IQR}$$"
+    )),
+
+    lc_p("Panel buduje wykres krok po kroku na 30 pomiarach wzrostu. 27 z nich
+      to losowe wartości wokół 170 cm, a trzy dodaliśmy celowo: 145, 198
+      i 200 cm."),
 
     figure_panel(
       label = "Ryc. 4.4",
       lc_step_widget("ch4_bp",
-        title = "Boxplot — budowa krok po kroku",
-        steps = c("Surowe dane", "Mediana", "Kwartyle i pudełko", "Wąsy i outliers",
-                  "Gotowy boxplot"),
+        title = "Wykres pudełkowy — budowa krok po kroku",
+        steps = c("Surowe dane", "Mediana", "Kwartyle i pudełko",
+                  "Wąsy i wartości odstające", "Gotowy wykres"),
         toolbar = lc_toolbar(
           lc_action("ch4_bp_new", "Losuj nowe dane", variant = "outline")
         ),
@@ -132,21 +196,33 @@ ch4_ui <- list(
       )
     ),
 
+    lc_p("Trzy dodane wartości zwykle wypadają poza granice wąsów i zostają
+      oznaczone jako wartości odstające. Pudełko ich nie zauważa: kwartyle,
+      tak jak mediana, zależą tylko od kolejności obserwacji. W danych
+      z ankiety wzrost ma IQR = 11,5 cm, a granice wąsów to 148,2 i 194,3 cm.
+      Najniższy student ma 150 cm, najwyższy 191,2 cm, więc wykres pudełkowy
+      wzrostu nie pokazuje żadnej wartości odstającej."),
+
+    lc_p("Ostatni krok zestawia gotowy wykres z histogramem. Wykres pudełkowy
+      streszcza rozkład w pięciu liczbach i zajmuje mało miejsca, ale gubi
+      szczegóły kształtu. Na przykład dwa szczyty rozkładu są na nim
+      niewidoczne. Jego największą zaletą jest porównywanie kilku rozkładów
+      obok siebie."),
+
     # ====================================================================
     # WIDGET 3b: Group comparison -- side-by-side boxplots
     # ====================================================================
     lc_h2("ch4-porownanie", "Porównanie grup"),
 
-    tagList(
-      p("Dotychczas analizowalismy caly zbior danych naraz. Ale jednym z
-        najczestszych pytan w statystyce jest: czy grupy sie roznia?
-        Boxploty obok siebie to doskonałe narzędzie do porównywania rozkładow
-        miedzy grupami.")
-    ),
+    lc_p("Dotąd opisywaliśmy cały zbiór danych naraz. Jedno z najczęstszych
+      pytań w analizie danych brzmi jednak: czy grupy się różnią? Wykresy
+      pudełkowe ustawione obok siebie pozwalają porównać jednocześnie
+      położenie i rozrzut. Panel rysuje je dla wybranej zmiennej z podziałem
+      na płeć albo kierunek studiów; pod wykresem są statystyki każdej grupy."),
 
     figure_panel(
       label = "Ryc. 4.5",
-      title = "Boxploty grupowane",
+      title = "Wykresy pudełkowe w grupach",
       fluidRow(
         column(4,
           selectInput("ch4_grp_var", "Zmienna ilościowa:",
@@ -165,32 +241,47 @@ ch4_ui <- list(
           )
         ),
         column(4,
-          checkboxInput("ch4_grp_violin", "Pokaz violin plot", value = FALSE),
-          checkboxInput("ch4_grp_points", "Pokaz punkty", value = TRUE)
+          checkboxInput("ch4_grp_violin", "Pokaż wykres skrzypcowy", value = FALSE),
+          checkboxInput("ch4_grp_points", "Pokaż punkty", value = TRUE)
         )
       ),
       lc_plot("ch4_grp_plot", ratio = "1.6/1", max_height = "400px"),
       uiOutput("ch4_grp_table")
     ),
 
+    lc_p("Przy podziale wzrostu według płci pudełka się nie nakładają: Q3 kobiet
+      wynosi 170,5 cm, a Q1 mężczyzn 172,2 cm. Mediany to 166,4 i 177,1 cm.
+      Zwróć uwagę na rozrzut. Odchylenie standardowe w grupach wynosi 6,0 cm
+      u kobiet i 6,5 cm u mężczyzn, a w całej próbie 8,1 cm. Część rozrzutu
+      całej próby bierze się z różnicy między grupami, a nie ze zmienności
+      wewnątrz nich."),
+
+    lc_p("Podział według kierunku daje inny obraz. Mediany wzrostu na czterech
+      kierunkach mieszczą się między 169,3 a 171,3 cm, a pudełka w dużej
+      części się pokrywają. Różnice między kierunkami są małe w porównaniu
+      z rozrzutem wewnątrz każdego z nich. Wykres skrzypcowy dodaje do pudełek
+      kształt rozkładu, podobnie jak wygładzony histogram."),
+
     # ====================================================================
     # WIDGET 4: Spread measures comparison
     # ====================================================================
     lc_h2("ch4-miary", "Porównanie miar rozrzutu"),
 
-    tagList(
-      p("Porównajmy rozne miary rozrzutu i ich ", gloss("odporność"), " na ",
-        gloss("wartość odstająca", "wartości odstające"), ". Dodaj outliera i obserwuj, ktore miary sie zmieniaja,
-        a ktore pozostaja stabilne.")
-    ),
+    lc_p("Mamy już trzy miary rozrzutu. Do odchylenia standardowego i IQR
+      dołóżmy najprostszą: ", gloss("rozstęp"), ", czyli różnicę między
+      największą a najmniejszą wartością. W poprzednim rozdziale porównywaliśmy
+      ", gloss("odporność"), " średniej i mediany. Teraz zrobimy to samo dla
+      miar rozrzutu. Panel startuje od wzrostu 200 studentów z ankiety. Każde
+      kliknięcie dopisuje wartość około 30 cm większą od dotychczasowego
+      maksimum."),
 
     figure_panel(
       label = "Ryc. 4.6",
       title = "Porównanie miar rozrzutu i ich odporności",
       div(style = "margin-bottom: 10px;",
-        actionButton("ch4_comp_add1", "Dodaj outlier (+30 cm)",
+        actionButton("ch4_comp_add1", "Dodaj wartość odstającą (+30 cm)",
                      class = "lc-btn-warning", style = "margin-right: 6px;"),
-        actionButton("ch4_comp_add5", "Dodaj 5 outlierow",
+        actionButton("ch4_comp_add5", "Dodaj 5 wartości odstających",
                      class = "lc-btn-danger", style = "margin-right: 6px;"),
         lc_action("ch4_comp_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
       ),
@@ -198,12 +289,23 @@ ch4_ui <- list(
       uiOutput("ch4_comp_table")
     ),
 
+    lc_p("Na początku rozstęp wynosi 41,2 cm, IQR 11,5 cm, a odchylenie
+      standardowe 8,1 cm. Jedna wartość odstająca (około 220 cm) podnosi
+      rozstęp do około 71 cm, czyli o trzy czwarte. Odchylenie standardowe
+      rośnie do 8,9 cm, a IQR prawie się nie zmienia. Po dodaniu pięciu takich
+      wartości odchylenie standardowe sięga około 11 cm, a IQR wciąż wynosi
+      około 11,8 cm."),
+
+    lc_p("Rozstęp zależy tylko od dwóch skrajnych obserwacji, więc jedna
+      nietypowa wartość wystarczy, żeby go zmienić. Odchylenie standardowe
+      uwzględnia wszystkie dane, a odległe punkty, podniesione do kwadratu,
+      ważą w nim szczególnie dużo. IQR, oparty na kwartylach, jest z tych
+      trzech miar najbardziej odporny."),
+
     inline_callout(
-      label = "Wniosek",
-      "Rozstęp jest bardzo wrażliwy na outliery — wystarczy jedna wartość
-       odstająca, aby go zmienić. IQR i odchylenie standardowe są bardziej
-       odporne, a IQR jest z nich najbardziej stabilny.",
-      color = "uwaga"
+      label = "Zasada",
+      "Rozkład symetryczny bez wartości odstających opisuj średnią i odchyleniem
+       standardowym, a rozkład skośny lub z wartościami odstającymi — medianą i IQR."
     ),
 
     # ====================================================================
@@ -211,16 +313,25 @@ ch4_ui <- list(
     # ====================================================================
     lc_h2("ch4-cv", "Współczynnik zmienności (CV)"),
 
-    tagList(
-      p("Odchylenie standardowe mówi o rozrzucie, ale w jakich jednostkach?
-        SD wzrostu (w cm) i SD wagi (w kg) nie są porownywalne!
-        Aby porownac zmiennosc zmiennych w roznych skalach, uzywamy
-        współczynnika zmienności (CV = SD / średnia × 100%).")
-    ),
+    lc_p("Odchylenie standardowe ma jednostki danych. Odchylenia wzrostu w cm
+      i wagi w kg nie da się porównać, podobnie jak minut z ocenami. Liczy się
+      też skala: rozrzut 8 cm przy średniej 171 cm to co innego niż rozrzut
+      8 minut przy średniej 36 minut. Do porównań między zmiennymi służy ",
+      gloss("współczynnik zmienności"), ". Wyraża on odchylenie standardowe
+      jako procent średniej, więc nie ma jednostek."),
+
+    lc_formula_box(withMathJax(
+      "$$\\text{CV} = \\frac{s}{\\bar{x}} \\cdot 100\\%$$"
+    )),
+
+    lc_p("CV ma sens tylko dla zmiennych mierzonych na skali ilorazowej,
+      z naturalnym zerem i wartościami dodatnimi, takich jak wzrost, waga
+      czy czas. Panel zestawia odchylenia standardowe czterech zmiennych
+      z ankiety (po lewej) z ich współczynnikami zmienności (po prawej)."),
 
     figure_panel(
       label = "Ryc. 4.7",
-      title = "Porównanie zmienności miedzy zmiennymi",
+      title = "Porównanie zmienności między zmiennymi",
       fluidRow(
         column(6,
           h5(style = "text-align: center; color: var(--upwr-reference);", "SD — nieporównywalne"),
@@ -231,15 +342,17 @@ ch4_ui <- list(
           zoom_plot_ui("ch4_cv_plot", height = "350px")
         )
       ),
-      tableOutput("ch4_cv_table"),
-      lc_feedback(type = "info",
-        tags$strong("Interpretacja: "),
-        "Lewy wykres pokazuje SD w oryginalnych jednostkach -- wartości są nieporównywalne,
-         bo każda zmienna ma inna skalę. Prawy wykres pokazuje CV (%), które normalizuje
-         rozrzut wzgledem średniej -- teraz widać, że czas dojazdu
-        ma największa względna zmienność, choć jego SD nie jest największe."
-      )
+      tableOutput("ch4_cv_table")
     ),
+
+    lc_p("Według samego odchylenia standardowego kolejność to: czas dojazdu
+      (16,3 min), waga (13,7 kg), wzrost (8,1 cm) i średnia ocen (0,6). Te liczby
+      mają jednak różne jednostki, więc ich porównanie nic nie mówi.
+      Współczynnik zmienności czasu dojazdu wynosi 45,6%, wagi 19,2%, średniej
+      ocen 15,7%, a wzrostu tylko 4,8%. Średnia ocen, z najmniejszym
+      odchyleniem standardowym, okazuje się względnie trzy razy bardziej
+      zmienna niż wzrost. Wzrost studentów jest najbardziej jednorodną
+      z czterech zmiennych."),
 
     lc_chapter_next(
       num       = "05",
@@ -330,57 +443,38 @@ ch4_server <- function(input, output, session) {
     bus <- ch4_bus_data()
 
     if (step == 1) {
-      "Obie linie mają średnie spóźnienie około 2 minut.
-       Patrząc tylko na średnią, są identyczne.
-       Wartości ujemne = przyjazd przed czasem (rzadko się zdarza)."
+      "Obie linie mają średnie spóźnienie 2 minuty. Patrząc tylko na średnią,
+       są identyczne."
     } else if (step == 2) {
       pct_10_a <- round(mean(bus$a > 10) * 100, 1)
       pct_10_b <- round(mean(bus$b > 10) * 100, 1)
-      mean_late_a <- if (any(bus$a > 10)) round(mean(bus$a[bus$a > 10]), 1) else 0
       mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
       tagList(
-        paste0("Linia A ma SD = ", bus$sd_a, " min (spóźnienia skupione 0-4 min),
-        a linia B ma SD = ", bus$sd_b, " min (zdarza się i punktualnie,
-        i 10+ min spóźnienia)."),
-        tags$br(),
-        tags$strong("Spóźnienia >10 min:"),
-        paste0(" Linia A: ", pct_10_a, "% kursów",
-               if (pct_10_a > 0) paste0(" (śr. ", mean_late_a, " min)") else "",
-               "; Linia B: ", pct_10_b, "% kursów",
-               if (pct_10_b > 0) paste0(" (śr. ", mean_late_b, " min)") else "",
+        tags$strong("Spóźnienia ponad 10 min:"),
+        paste0(" linia A — ", lc_fmt(pct_10_a, 1), "% kursów; linia B — ",
+               lc_fmt(pct_10_b, 1), "% kursów",
+               if (pct_10_b > 0) paste0(" (średnio ", lc_fmt(mean_late_b, 1), " min)") else "",
                ".")
       )
     } else if (step == 3) {
-      lbl <- if (buffer == 0) "na stówkę (0 min zapasu)"
-             else paste0(buffer, " min wcześniej")
+      lbl <- if (buffer == 0) "bez zapasu" else paste0(buffer, " min wcześniej")
       paste0("Wychodzisz ", lbl,
-             ". Jesteś na przystanku o ", buffer,
-             " min przed rozkładem. Zdążysz na każdy autobus,
-             który nie odjedzie wcześniej niż ", buffer,
-             " min przed rozkładem. Zacieniowany obszar = kursy,
-             na które zdążysz. Przesuń suwak!")
+             ". Zacieniowany obszar to kursy, na które zdążysz.")
     } else if (step == 4) {
       prob_a <- mean(bus$a >= -buffer)
       prob_b <- mean(bus$b >= -buffer)
       pct_10_b <- round(mean(bus$b > 10) * 100, 1)
       mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
-      lbl <- if (buffer == 0) "na stówkę" else paste0(buffer, " min wcześniej")
+      lbl <- if (buffer == 0) "bez zapasu" else paste0(buffer, " min wcześniej")
       tagList(
-        paste0("Wychodzisz ", lbl, ":"),
-        tags$br(),
-        paste0("Linia A: zdążysz na ", round(prob_a * 100, 1), "% kursów."),
-        tags$br(),
-        paste0("Linia B: zdążysz na ", round(prob_b * 100, 1), "% kursów."),
-        tags$br(),
+        paste0("Wychodzisz ", lbl, ". Linia A: zdążysz na ",
+               lc_fmt(prob_a * 100, 1), "% kursów; linia B: na ",
+               lc_fmt(prob_b * 100, 1), "%."),
         if (pct_10_b > 0) tagList(
-          tags$em(paste0("A gdy linia B się spóźni poważnie (>10 min, ",
-                         pct_10_b, "% kursów), średnie czekasz ",
-                         mean_late_b, " min. ",
-                         "Linia A praktycznie nigdy tak się nie spóźnia.")),
-          tags$br()
-        ),
-        "To dlatego sama średnia nie wystarczy -- rozrzut danych
-        ma realne konsekwencje!"
+          tags$br(),
+          paste0("Gdy linia B spóźnia się ponad 10 min (", lc_fmt(pct_10_b, 1),
+                 "% kursów), czekasz średnio ", lc_fmt(mean_late_b, 1), " min.")
+        )
       )
     }
   })
@@ -437,7 +531,7 @@ ch4_server <- function(input, output, session) {
                    ymin = 0, ymax = n + 0.3, fill = STEP_ROLES$new$colour, alpha = 0.08) +
           step_line("new", xintercept = x_bar - s) +
           step_line("new", xintercept = x_bar + s) +
-          step_label(x_bar - s, 0.3, paste0("śr. - SD\n", round(x_bar - s, 1)),
+          step_label(x_bar - s, 0.3, paste0("śr. − SD\n", round(x_bar - s, 1)),
                      role = "new", hjust = 0.5) +
           step_label(x_bar + s, 0.3, paste0("śr. + SD\n", round(x_bar + s, 1)),
                      role = "new", hjust = 0.5) +
@@ -483,9 +577,9 @@ ch4_server <- function(input, output, session) {
 
     lc_table(df, cols = list(
       lc_col("i", "i", "row"),
-      lc_col("x", "xi", digits = 1),
-      lc_col("dev", "xi - x_bar", digits = 2),
-      lc_col("sq", "(xi - x_bar)^2", digits = 2)
+      lc_col("x", "xᵢ", digits = 1),
+      lc_col("dev", "xᵢ − x̄", digits = 2),
+      lc_col("sq", "(xᵢ − x̄)²", digits = 2)
     ), foot = foot)
   })
 
@@ -493,16 +587,12 @@ ch4_server <- function(input, output, session) {
     step <- ch4_sd_step()
 
     if (step == 1) {
-      "Mamy 10 pomiarów wzrostu. Na osi liczbowej każdy punkt to jedna
-       obserwacja. Jak bardzo są rozproszone?"
+      "Dziesięć pomiarów wzrostu na osi liczbowej. Każdy punkt to jedna obserwacja."
     } else if (step == 2) {
       vals <- ch4_sd_data()
       x_bar <- mean(vals)
-      paste0("Obliczamy srednia: x̄ = ", round(x_bar, 2),
-             " cm. Nastepnie liczymy odchylenie każdego punktu od średniej
-             (strzalki na wykresie). W tabeli widzisz odchylenia i ich kwadraty.
-             Kwadraty gwarantuja, ze odchylenia dodatnie i ujemne sie nie
-             znosa.")
+      paste0("Średnia wynosi ", round(x_bar, 2),
+             " cm. Strzałki to odchylenia od średniej, tabela podaje ich kwadraty.")
     } else if (step == 3) {
       vals <- ch4_sd_data()
       n <- length(vals)
@@ -511,21 +601,11 @@ ch4_server <- function(input, output, session) {
       sq_deviations <- deviations^2
       variance <- sum(sq_deviations) / (n - 1)
       s <- sqrt(variance)
-      tagList(
-        withMathJax(helpText(
-          "$$s = \\sqrt{\\frac{1}{n-1} \\sum_{i=1}^{n} (x_i - \\bar{x})^2}$$"
-        )),
-        paste0("Suma kwadratów odchyleń = ", round(sum(sq_deviations), 2)),
-        tags$br(),
-        paste0("Wariancja \\(s^2\\) = suma / (n-1) = ",
-               round(sum(sq_deviations), 2), " / ", n - 1, " = ",
-               round(variance, 2)),
-        tags$br(),
-        paste0("Odchylenie standardowe \\(s = \\sqrt{",
-               round(variance, 2), "} = ", round(s, 2), "\\) cm"),
-        tags$br(),
-        "Zacieniowany pas na wykresie oznacza przedział \\(\\bar{x} \\pm s\\).
-        W rozkładzie normalnym ok. 68% danych leży w tym przedziale."
+      withMathJax(
+        paste0("Wariancja \\(s^2\\) = ", round(sum(sq_deviations), 2), " / ", n - 1,
+               " = ", round(variance, 2), " cm². ",
+               "Odchylenie standardowe \\(s = \\sqrt{", round(variance, 2), "} = ",
+               round(s, 2), "\\) cm. Pas na wykresie to \\(\\bar{x} \\pm s\\).")
       )
     }
   })
@@ -586,23 +666,17 @@ ch4_server <- function(input, output, session) {
     })
 
     diff_1sd <- abs(pct_in[1] - 68)
+    pct_txt <- paste0(" W pasach ±1, ±2 i ±3 SD leży ", lc_fmt(pct_in[1], 1), "%, ",
+                      lc_fmt(pct_in[2], 1), "% i ", lc_fmt(pct_in[3], 1),
+                      "% danych (reguła: 68%, 95% i 99,7%).")
 
     if (diff_1sd < 5) {
       lc_feedback(type = "info",
-        tags$strong("Dobra zgodność z regułą! "),
-        paste0("W przedziale ±1 SD leży ", pct_in[1], "% danych (teoria: 68%). "),
-        "To oznacza, że rozkład tej zmiennej jest zbliżony do normalnego. ",
-        "Odchylenie standardowe dobrze podsumowuje rozrzut."
+        tags$strong("Dobra zgodność z regułą."), pct_txt
       )
     } else {
       lc_feedback(type = "warning",
-        tags$strong("Słaba zgodność z regułą! "),
-        paste0("W przedziale ±1 SD leży ", pct_in[1], "% danych (teoria: 68%). "),
-        "Dlaczego? Reguła 68-95-99.7 zakłada rozkład symetryczny ",
-        "(zbliżony do normalnego). Gdy rozkład jest skośny, dane koncentrują się ",
-        "asymetrycznie wokół średniej -- więcej obserwacji leży po jednej stronie ",
-        "niż po drugiej, co łamie założenie reguły. ",
-        "W takim przypadku IQR lepiej opisuje rozrzut niż odchylenie standardowe."
+        tags$strong("Słaba zgodność z regułą."), pct_txt
       )
     }
   })
@@ -742,7 +816,7 @@ ch4_server <- function(input, output, session) {
 
       if (length(outliers) > 0) {
         p <- p +
-          step_label(mean(outliers), 0.55, paste0(length(outliers), " outlier(s)"),
+          step_label(mean(outliers), 0.55, paste0("wartości odstające: ", length(outliers)),
                      role = "new", hjust = 0.5, vjust = 0.5)
       }
 
@@ -753,21 +827,17 @@ ch4_server <- function(input, output, session) {
   output$ch4_bp_text <- renderUI({
     step <- ch4_bp_step()
     if (step == 1) {
-      "Zaczynamy od surowych danych. 30 pomiarów wzrostu rozrzuconych
-       na osi liczbowej. Widać ogolny zakres, ale ciężko wyciagnac
-       szybkie wnioski."
+      "30 pomiarów wzrostu na osi liczbowej. Widać zakres, ale trudno coś szybko odczytać."
     } else if (step == 2) {
       vals <- ch4_bp_data()
-      paste0("Sortujemy dane i wyznaczamy mediane = ", round(median(vals), 1),
-             " cm. Mediana dzieli posortowane dane na dwie rowne polowy.")
+      paste0("Mediana = ", round(median(vals), 1),
+             " cm dzieli posortowane dane na dwie połowy.")
     } else if (step == 3) {
       vals <- ch4_bp_data()
       q1 <- quantile(vals, 0.25)
       q3 <- quantile(vals, 0.75)
-      paste0("Wyznaczamy kwartyle: Q1 = ", round(q1, 1),
-             " (25% danych poniżej), Q3 = ", round(q3, 1),
-             " (75% danych poniżej). Pudelko (box) rozciaga sie od Q1 do Q3
-             i zawiera srodkowe 50% danych. IQR = Q3 - Q1 = ",
+      paste0("Q1 = ", round(q1, 1), " cm, Q3 = ", round(q3, 1),
+             " cm. Pudełko obejmuje środkowe 50% danych, IQR = ",
              round(q3 - q1, 1), " cm.")
     } else if (step == 4) {
       vals <- ch4_bp_data()
@@ -777,23 +847,16 @@ ch4_server <- function(input, output, session) {
       lower_fence <- q1 - 1.5 * iqr_val
       upper_fence <- q3 + 1.5 * iqr_val
       outliers <- vals[vals < lower_fence | vals > upper_fence]
-      paste0("Wąsy siagaja do najdalszych punktow w granicach
-             1.5 * IQR od pudełka — czyli od Q1 − 1.5·IQR = ",
-             round(lower_fence, 1), " cm do Q3 + 1.5·IQR = ",
-             round(upper_fence, 1),
-             " cm. Wszystko poza wąsami to wartości odstające (outliers). ",
+      paste0("Granice wąsów: ", round(lower_fence, 1), " i ",
+             round(upper_fence, 1), " cm. ",
              if (length(outliers) > 0) {
-               paste0("Znaleziono ", length(outliers),
-                      " wartosc(i) odstająca(e): ",
-                      paste(round(outliers, 1), collapse = ", "), " cm.")
+               paste0("Wartości odstające: ",
+                      paste(round(sort(outliers), 1), collapse = ", "), " cm.")
              } else {
                "Brak wartości odstających."
              })
     } else if (step == 5) {
-      "Gotowy boxplot (gora) w porownaniu z histogramem (dol).
-       Boxplot kompaktowo podsumowuje rozkład: mediana, kwartyle,
-       rozstęp i outlierow - wszystko w jednym wykresie. Histogram
-       pokazuje więcej szczegółów o kształcie rozkładu."
+      "Gotowy wykres pudełkowy (u góry) obok histogramu tych samych danych (u dołu)."
     }
   })
 
@@ -933,7 +996,7 @@ ch4_server <- function(input, output, session) {
     if (is.null(vals)) return(NULL)
 
     df <- data.frame(
-      measure = c("Rozstep", "IQR (rozstęp międzykwartylowy)",
+      measure = c("Rozstęp", "IQR (rozstęp międzykwartylowy)",
                   "Odchylenie standardowe (SD)",
                   "Współczynnik zmienności (CV)"),
       value = c(
@@ -943,10 +1006,10 @@ ch4_server <- function(input, output, session) {
         paste0(lc_num(sd(vals) / mean(vals) * 100, 1), "%")
       ),
       notes = c(
-        "Bardzo wrażliwy na outlierow - zależy tylko od min i max",
-        "Odporny na outlierow - oparty na kwartylach",
-        "Umiarkowanie wrażliwy - bierze pod uwage wszystkie dane",
-        "Bezjednostkowy - pozwala porownywac zmiennosc roznych zmiennych"
+        "Bardzo wrażliwy na wartości odstające — zależy tylko od min i max",
+        "Odporny na wartości odstające — oparty na kwartylach",
+        "Umiarkowanie wrażliwe — uwzględnia wszystkie dane",
+        "Bezjednostkowy — pozwala porównywać zmienność różnych zmiennych"
       ),
       stringsAsFactors = FALSE
     )
@@ -955,7 +1018,7 @@ ch4_server <- function(input, output, session) {
       cols = list(
         lc_col("measure", "Miara", "row"),
         lc_col("value", "Wartość", "num"),
-        lc_col("notes", "Wlasnosci", "text")
+        lc_col("notes", "Własności", "text")
       ),
       narrow = "stack-last"
     )

@@ -11,31 +11,61 @@ ch5_ui <- list(
       kicker = "Rozdział 05 · Statystyka opisowa",
       num    = "05",
       title  = "Kształt rozkładu.",
-      lead   = "Dwa rozkłady mogą mieć tę samą średnią i odchylenie standardowe,
-                a wyglądać zupełnie inaczej. Kształt rozkładu mówi nam o asymetrii
-                i „ciężkości” ogonów — poznasz dwie miary: skośność i kurtozę."
+      lead   = "Dwa rozkłady mogą mieć tę samą średnią i to samo odchylenie
+                standardowe, a wyglądać zupełnie inaczej. Położenie i rozrzut
+                to nie wszystko: liczy się też to, czy rozkład jest symetryczny
+                i jak często trafiają się w nim wartości skrajne."
     ),
 
     uiOutput("tracker_ch5"),
 
+    lc_p("W rozdziale 3 opisywaliśmy, gdzie leży środek danych, a w rozdziale 4,
+      jak bardzo dane są wokół niego rozproszone. Te dwie informacje nie mówią
+      jeszcze, jak wygląda histogram. Rozkład może mieć długi ogon po jednej
+      stronie albo częściej niż zwykle wyrzucać wartości daleko od środka.
+      Do opisu kształtu służą dwie kolejne miary: skośność i kurtoza."),
+
     # --- Widget 1: Skewness ---
     lc_h2("ch5-skosnosc", "Skośność (asymetria)"),
 
-    tagList(
-      p(gloss("skośność", "Skośność"), " mierzy asymetrię rozkładu. Wartość skośności = 0 oznacza
-        idealną symetrię, wartości dodatnie wskazują na dłuższy ogon w prawo,
-        a ujemne — w lewo.")
-    ),
+    lc_p("W rozdziale 3 zauważyliśmy, że dla czasu dojazdu średnia (35,7 min)
+      jest wyraźnie większa od mediany (32,9 min). Przyczyną był długi prawy
+      ogon: kilka bardzo długich dojazdów podnosiło średnią, a mediana na nie
+      nie reagowała. Taką asymetrię rozkładu mierzy ",
+      gloss("skośność"), ". Liczymy ją, standaryzując każdą obserwację, czyli
+      wyrażając jej odległość od średniej w odchyleniach standardowych,
+      a następnie uśredniając trzecie potęgi tych odległości."),
+
+    lc_formula_box(withMathJax(
+      "$$g_1 = \\frac{1}{n} \\sum_{i=1}^{n} \\left( \\frac{x_i - \\bar{x}}{s} \\right)^3$$"
+    )),
+
+    lc_p("Trzecia potęga zachowuje znak, więc odchylenia w prawo i w lewo
+      mogą się znosić. W rozkładzie symetrycznym znoszą się całkowicie
+      i skośność wynosi około zera. Potęgowanie wzmacnia duże odległości,
+      więc o wyniku decydują głównie obserwacje w ogonach. Długi ogon
+      w prawo daje skośność dodatnią (rozkład prawostronnie skośny), długi
+      ogon w lewo — ujemną (rozkład lewostronnie skośny). Poniżej dwa
+      rozkłady skośne, będące swoimi lustrzanymi odbiciami, i między nimi
+      rozkład symetryczny."),
 
     figure_panel(
       label = "Ryc. 5.1",
       title = "Porównanie trzech typów skośności",
-      lc_plot("ch5_skew_comparison", max_height = "300px"),
-      lc_feedback(type = "info",
-        tags$strong("Trzy typy rozkładów: "),
-        "lewostronnie skośny (ogon w lewo), symetryczny (brak ogona), prawostronnie skośny (ogon w prawo)."
-      )
+      lc_plot("ch5_skew_comparison", max_height = "300px")
     ),
+
+    lc_p("Rozkład prawostronnie skośny ma skośność około 0,99, jego lustrzane
+      odbicie około −0,99, a rozkład symetryczny wartość bliską zera. Znak
+      mówi, po której stronie leży dłuższy ogon, a wartość bezwzględna,
+      jak silna jest asymetria. Jako orientacyjną skalę przyjmuje się
+      często: poniżej 0,5 rozkład jest w przybliżeniu symetryczny, od 0,5
+      do 1 umiarkowanie skośny, powyżej 1 silnie skośny."),
+
+    lc_p("Skośność idzie w parze z relacją średniej i mediany. Średnia
+      przesuwa się w stronę ogona, a mediana zostaje bliżej szczytu, dlatego
+      przy skośności dodatniej zwykle średnia jest większa od mediany,
+      a przy ujemnej mniejsza. Sprawdźmy to na danych z ankiety."),
 
     figure_panel(
       label = "Ryc. 5.2",
@@ -53,15 +83,45 @@ ch5_ui <- list(
       uiOutput("ch5_skew_info")
     ),
 
+    lc_p("Czas dojazdu ma skośność 1,02, czyli silną asymetrię prawostronną,
+      i średnia leży na prawo od mediany. Liczba nieobecności (0,69) jest
+      skośna umiarkowanie: nikt nie może mieć mniej niż zero nieobecności,
+      ale kilka osób ma ich wyraźnie więcej niż reszta. Wzrost (0,11)
+      i średnia ocen (−0,17) są w przybliżeniu symetryczne, a ich średnie
+      i mediany niemal się pokrywają."),
+
+    inline_callout(
+      label = "Zasada",
+      "Gdy skośność jest wyraźnie różna od zera, a średnia i mediana się
+       rozjeżdżają, podawaj obie albo opisuj dane medianą."
+    ),
+
     # --- Widget 2: Kurtosis ---
     lc_h2("ch5-kurtoza", "Kurtoza (ciężkość ogonów)"),
 
-    tagList(
-      p(gloss("kurtoza", "Kurtoza"), " mierzy, jak 'ciężkie' są ogony rozkładu — czyli
-        jak często pojawiają się wartości ekstremalne. Nie chodzi
-        o 'spłaszczenie' szczytu, lecz o to, ile obserwacji leży daleko
-        od średniej.")
-    ),
+    lc_p("Rozkład może być idealnie symetryczny, a mimo to różnić się od
+      innych tym, jak często daje wartości daleko od środka. Skośność tego
+      nie wychwyci, bo ogony po obu stronach znoszą się w trzeciej potędze.
+      Tę cechę mierzy ", gloss("kurtoza"), ". Wzór ma tę samą budowę co
+      skośność, ale z czwartą potęgą. Od wyniku odejmujemy 3, czyli wartość
+      dla rozkładu normalnego, i otrzymujemy kurtozę nadwyżkową."),
+
+    lc_formula_box(withMathJax(
+      "$$g_2 = \\frac{1}{n} \\sum_{i=1}^{n} \\left( \\frac{x_i - \\bar{x}}{s} \\right)^4 - 3$$"
+    )),
+
+    lc_p("Czwarta potęga jest zawsze dodatnia i bardzo silnie wzmacnia duże
+      odległości: obserwacja odległa o 3 odchylenia standardowe wnosi 81,
+      a odległa o 1 — tylko 1. Kurtoza mówi więc przede wszystkim o ogonach,
+      a nie o tym, czy szczyt jest ostry czy płaski. Względem rozkładu
+      normalnego (kurtoza nadwyżkowa 0, rozkład mezokurtyczny) wyróżniamy
+      rozkłady leptokurtyczne (dodatnia: ciężkie ogony, częstsze wartości
+      skrajne) i platykurtyczne (ujemna: lekkie ogony, wartości skupione
+      w ograniczonym zakresie)."),
+
+    lc_p("W panelu poniżej porównujemy z rozkładem normalnym rozkład o tej
+      samej średniej (0) i tym samym odchyleniu standardowym (1), ale
+      o wybranej kurtozie. Dolny wykres powiększa prawy ogon."),
 
     figure_panel(
       label = "Ryc. 5.3",
@@ -80,23 +140,40 @@ ch5_ui <- list(
       ),
       lc_plot("ch5_kurt_plot", ratio = "1.8/1", max_height = "350px"),
       h5(style = "text-align: center; color: var(--upwr-reference); margin-top: 12px;",
-         "Powiększenie prawego ogona (x > 2.5)"),
+         "Powiększenie prawego ogona (x > 2,5)"),
       lc_plot("ch5_kurt_tails", ratio = "2.8/1", max_height = "220px"),
       uiOutput("ch5_kurt_text")
     ),
 
+    lc_p("Choć oba rozkłady mają to samo odchylenie standardowe, przy kurtozie
+      4 prawdopodobieństwo wartości większej niż 2,5 odchylenia standardowego
+      wynosi około 1,1%, a w rozkładzie normalnym 0,6%. Dla wartości powyżej
+      3 odchyleń różnica jest już czterokrotna. Rozkład leptokurtyczny ma
+      przy tym wyższy, węższy szczyt: część obserwacji przesuwa się do
+      środka, a część daleko w ogony. Rozkład platykurtyczny przy kurtozie
+      −1 w ogóle nie sięga poza 2 odchylenia standardowe, więc w powiększeniu
+      ogona jego krzywa leży na zerze."),
+
+    lc_p("W praktyce dodatnia kurtoza jest sygnałem ostrzegawczym. Oznacza,
+      że wartości skrajne zdarzają się częściej, niż sugerowałby rozkład
+      normalny, a reguła 68–95–99,7 zaniża ich częstość. W finansach tak
+      wyglądają rozkłady stóp zwrotu: duże straty, rzadkie w modelu
+      normalnym, w rzeczywistości zdarzają się zaskakująco często."),
+
     # --- Widget 3: Full picture ---
     lc_h2("ch5-pelny-obraz", "Pełny obraz"),
 
-    tagList(
-      p("Na koniec - pelny obraz. Dla każdej ", gloss("zmienna ilościowa", "zmiennej ilościowej"), " mozemy
-        opisać jej położenie, rozrzut i kształt.")
-    ),
+    lc_p("Mamy już trzy grupy narzędzi. Statystyki położenia mówią, gdzie leży
+      środek danych, statystyki rozrzutu — jak szeroko dane się rozkładają,
+      a skośność i kurtoza — jaki mają kształt. Razem dają pełny opis
+      rozkładu ", gloss("zmienna ilościowa", "zmiennej ilościowej"), ".
+      Panel poniżej zestawia histogram, wykres pudełkowy i tabelę wszystkich
+      omówionych statystyk dla wybranej zmiennej."),
 
     figure_panel(
       label = "Ryc. 5.4",
       title = "Pełna charakterystyka rozkładu",
-      selectInput("ch5_full_var", "Wybierz zmienna:",
+      selectInput("ch5_full_var", "Wybierz zmienną:",
         choices = c(
           "Wzrost" = "wzrost",
           "Średnia ocen" = "srednia_ocen",
@@ -110,6 +187,22 @@ ch5_ui <- list(
       tableOutput("ch5_full_table"),
       uiOutput("ch5_full_interpretation")
     ),
+
+    lc_p("Różne miary opowiadają o tej samej zmiennej spójną historię
+      i warto czytać je razem. Czas dojazdu ma dodatnią skośność (1,02),
+      średnią większą od mediany, a wykres pudełkowy pokazuje 7 wartości
+      odstających, wszystkie po prawej stronie. Dodatnia kurtoza (0,75)
+      potwierdza, że długie dojazdy zdarzają się częściej niż w rozkładzie
+      normalnym."),
+
+    lc_p("Waga jest prawie symetryczna (skośność 0,30), ale ma wyraźnie ujemną
+      kurtozę (−0,72): rozkład jest płaski i szeroki, bez wyraźnych ogonów.
+      To skutek zjawiska z rozdziału 3, omawianego przy modalności. W danych
+      są pomieszane dwie grupy, kobiety i mężczyźni, o różnych średnich wagach.
+      Każda grupa osobno ma rozkład zbliżony do normalnego, ale razem
+      wypełniają szeroki przedział, a środek rozkładu się spłaszcza. Ujemna
+      kurtoza bywa więc wskazówką, żeby obejrzeć histogram i sprawdzić,
+      czy w danych nie kryje się kilka grup."),
 
     lc_chapter_next(
       num       = "06",
@@ -301,32 +394,23 @@ ch5_server <- function(input, output, session) {
     if (ek < -0.5) {
       type_class <- "warning"
       type_name <- "Platykurtyczny"
-      desc <- "Rozkład ma lżejsze ogony niż normalny — wartości ekstremalne
-               są rzadsze. Dane są bardziej 'skoncentrowane' w okolicy średniej,
-               bez dalekich obserwacji."
+      desc <- "Ogony lżejsze niż w rozkładzie normalnym — wartości skrajne
+               są rzadsze."
     } else if (ek < 0.5) {
       type_class <- "info"
       type_name <- "Mezokurtyczny"
-      desc <- "Rozkład jest zbliżony do normalnego — ogony mają 'typową'
-               ciężkość. To punkt odniesienia, względem którego porównujemy
-               inne rozkłady."
+      desc <- "Ogony zbliżone do rozkładu normalnego."
     } else {
       type_class <- "danger"
       type_name <- "Leptokurtyczny"
-      desc <- paste0("Rozkład ma cięższe ogony niż normalny — wartości
-               ekstremalne pojawiają się częściej niż byśmy oczekiwali.
-               W finansach to oznacza większe ryzyko ekstremalnych strat
-               ('czarne łabędzie').")
+      desc <- "Ogony cięższe niż w rozkładzie normalnym — wartości skrajne
+               są częstsze."
     }
 
     lc_feedback(type = type_class,
-      tags$strong(paste0(type_name, " (nadwyżkowa kurtoza = ", round(ek, 1), ")")),
-      p(desc),
-      tags$ul(
-        tags$li(tags$b("Platykurtyczny"), " (kurtoza < 0): lekkie ogony, mniej ekstremałów"),
-        tags$li(tags$b("Mezokurtyczny"), " (kurtoza ≈ 0): rozkład normalny — punkt odniesienia"),
-        tags$li(tags$b("Leptokurtyczny"), " (kurtoza > 0): ciężkie ogony, więcej ekstremałów")
-      )
+      tags$strong(paste0(type_name, " (nadwyżkowa kurtoza = ",
+                         format(round(ek, 1), decimal.mark = ","), "):")),
+      " ", desc
     )
   })
 
@@ -408,11 +492,11 @@ ch5_server <- function(input, output, session) {
 
     stats_df <- data.frame(
       Statystyka = c(
-        "n", "Srednia", "Mediana", "Dominanta (środek przedziałowy)",
-        "Sr. ucinana 10%",
-        "Odch. std.", "Wariancja", "Rozstep", "IQR", "CV (%)",
+        "n", "Średnia", "Mediana", "Dominanta (środek przedziałowy)",
+        "Śr. ucinana 10%",
+        "Odch. std.", "Wariancja", "Rozstęp", "IQR", "CV (%)",
         "Minimum", "Q1", "Q3", "Maksimum",
-        "Skośność", "Kurtoza"
+        "Skośność", "Kurtoza (nadwyżkowa)"
       ),
       Wartość = c(
         as.character(n),
@@ -440,7 +524,6 @@ ch5_server <- function(input, output, session) {
   output$ch5_full_interpretation <- renderUI({
     d <- ch5_full_data()
     vals <- d$values
-    label <- d$label
 
     m <- mean(vals)
     med <- median(vals)
@@ -464,15 +547,15 @@ ch5_server <- function(input, output, session) {
         round(upper_fence, 2), "])."
       )
     } else {
-      outlier_text <- "Brak wartości odstających (wg kryterium 1.5 * IQR)."
+      outlier_text <- "Brak wartości odstających (wg kryterium 1,5 · IQR)."
     }
 
     lc_feedback(type = "info",
       p(tags$strong("Podsumowanie:")),
       tags$ul(
         tags$li(paste0("Średnia = ", round(m, 2), ", Mediana = ", round(med, 2))),
-        tags$li(paste0("Typowy student ma ", tolower(label),
-          " między ", round(q1, 2), " a ", round(q3, 2), ".")),
+        tags$li(paste0("Środkowe 50% obserwacji leży między ",
+          round(q1, 2), " a ", round(q3, 2), " (Q1–Q3).")),
         tags$li(paste0("Skośność = ", round(sk, 3), ", Kurtoza = ", round(e1071::kurtosis(vals), 3))),
         tags$li(outlier_text)
       )

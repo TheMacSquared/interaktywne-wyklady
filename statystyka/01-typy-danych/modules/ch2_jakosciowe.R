@@ -11,14 +11,40 @@ ch2_ui <- list(
       kicker = "Rozdział 02 · Statystyka opisowa",
       num    = "02",
       title  = "Zmienne jakościowe.",
-      lead   = "Zmienne jakościowe opisują cechy, nie liczby. Podstawowym narzędziem
-                ich opisu jest tabela częstości — zobaczmy krok po kroku, jak ją
-                zbudować na przykładzie zmiennej „kierunek studiów”."
+      lead   = "Kierunku studiów ani grupy krwi nie da się dodać ani uśrednić.
+                Takie dane można tylko policzyć, ale z samego liczenia da się
+                wyciągnąć zaskakująco dużo: tabelę, wykres, porównanie grup
+                i wartość typową."
     ),
+
+    lc_p("W poprzednim rozdziale podzieliliśmy zmienne na typy. Zaczynamy od ",
+      gloss("zmienna jakościowa", "zmiennych jakościowych"), ", czyli takich,
+      których wartościami są kategorie: kierunek studiów, płeć, grupa krwi,
+      poziom zadowolenia. Kategorii nie da się dodawać ani mnożyć, więc
+      podstawowe, co możemy z nimi zrobić, to policzyć, ile razy każda z nich
+      występuje. Wszystkie narzędzia w tym rozdziale wyrastają z tego liczenia."),
 
     # ========================================================================
     # WIDGET 1: Frequency table step-by-step
     # ========================================================================
+    lc_h2("ch2-tabela-czestosci", "Tabela częstości"),
+
+    lc_p("Wynik liczenia zapisujemy w ", gloss("tabela częstości", "tabeli częstości"),
+      ". Dla każdej kategorii podaje ona ", gloss("liczebność"), " \\(n_i\\),
+      czyli liczbę obserwacji w tej kategorii, oraz ",
+      gloss("częstość względna", "częstość względną"), " \\(f_i\\), czyli udział
+      kategorii w całej próbie liczącej \\(n\\) obserwacji. Częstość względną
+      podajemy jako ułamek albo jako procent."),
+
+    lc_formula_box(withMathJax(
+      "$$f_i = \\frac{n_i}{n}, \\qquad p_i = f_i \\cdot 100\\%$$"
+    )),
+
+    lc_p("Tabelę uzupełnia ", gloss("częstość skumulowana"), ": suma częstości
+      od pierwszej kategorii do bieżącej, podawana zwykle w procentach. Panel poniżej buduje tabelę krok
+      po kroku dla dwóch zmiennych z ankiety 200 studentów: kierunku studiów
+      i zadowolenia ze studiów."),
+
     figure_panel(
       label = "Ryc. 2.1",
       width_mode = "text",
@@ -38,17 +64,33 @@ ch2_ui <- list(
       )
     ),
 
+    lc_p("Najliczniejszym kierunkiem w ankiecie jest Informatyka: 60 osób, czyli
+      30% próby. Dalej są Biologia (51 osób, 25,5%), Ekonomia (49 osób, 24,5%)
+      i Psychologia (40 osób, 20%). Częstości względne sumują się do 1,
+      a procenty do 100, co jest prostym sprawdzianem poprawności tabeli."),
+
+    lc_p("Ostatni krok wygląda dla obu zmiennych tak samo, ale znaczy co innego.
+      Dla zadowolenia procent skumulowany odpowiada na sensowne pytanie: 18,5%
+      studentów jest niezadowolonych lub bardzo niezadowolonych, a 53,5% ocenia
+      studia co najwyżej neutralnie. Dla kierunku ta sama kolumna sumuje
+      kategorie w kolejności alfabetycznej, więc liczba 80% przy Informatyce
+      niczego nie opisuje. O tym, czy liczenie narastająco ma sens, decyduje
+      rodzaj zmiennej."),
+
     # ========================================================================
     # WIDGET 1b: Nominal vs Ordinal comparison
     # ========================================================================
     lc_h2("ch2-nominalna-vs-porzadkowa", "Nominalna vs porządkowa — czy kolejność ma znaczenie?"),
 
-    tagList(
-      p("Zanim przejdziemy do wizualizacji, zatrzymajmy sie na waznym rozróżnieniu.
-        ", gloss("zmienna jakościowa", "Zmienne jakościowe"), " dzielimy na ", tags$b(gloss("zmienna nominalna", "nominalne")), " (kategorie bez naturalnej
-        kolejnośći) i ", tags$b(gloss("zmienna porządkowa", "porzadkowe"))," (kategorie z logiczna kolejnośćia).
-        Ta roznica ma praktyczne konsekwencje.")
-    ),
+    lc_p("Zmienne jakościowe dzielimy na dwa rodzaje. ",
+      gloss("zmienna nominalna", "Zmienne nominalne"), " mają kategorie bez
+      naturalnej kolejności, jak kierunek studiów czy grupa krwi. ",
+      gloss("zmienna porządkowa", "Zmienne porządkowe"), " mają kategorie,
+      które da się uszeregować, jak zadowolenie od „bardzo niezadowolony” do
+      „bardzo zadowolony”. Od tego podziału zależy, które operacje mają sens:
+      kategorie porządkowe można sumować narastająco i porównywać jako „wyżej”
+      i „niżej”, nominalnych nie. Panel pokazuje obie zmienne obok siebie,
+      a przełącznik ustawia słupki w losowej kolejności."),
 
     figure_panel(
       label = "Ryc. 2.2",
@@ -62,7 +104,7 @@ ch2_ui <- list(
           zoom_plot_ui("ch2_ord_nom_plot", height = "300px")
         ),
         column(6,
-          h5(style = paste0("text-align: center; color: ", type_colors["porzadkowa"], ";"), "Porzadkowa: Zadowolenie"),
+          h5(style = paste0("text-align: center; color: ", type_colors["porzadkowa"], ";"), "Porządkowa: Zadowolenie"),
           zoom_plot_ui("ch2_ord_ord_plot", height = "300px")
         )
       ),
@@ -70,25 +112,36 @@ ch2_ui <- list(
       uiOutput("ch2_ord_explanation")
     ),
 
-    # --- Narrative before Widget 2 ---
+    lc_p("Po przetasowaniu wykres kierunków mówi dokładnie to samo co wcześniej:
+      wysokości słupków się nie zmieniają, a porządek alfabetyczny i tak był
+      umowny. Wykres zadowolenia traci natomiast informację. W naturalnej
+      kolejności widać, że odpowiedzi skupiają się w środku i po dodatniej
+      stronie skali (70 osób neutralnych, 65 zadowolonych) i że ocen pozytywnych
+      jest wyraźnie więcej niż negatywnych (93 wobec 37). Po przetasowaniu
+      tego kształtu już nie widać. Dlatego kategorie zmiennej porządkowej
+      zawsze pokazujemy w ich naturalnej kolejności, a dla nominalnej wybieramy
+      kolejność, która ułatwia porównanie, na przykład od najliczniejszej."),
+
+    # ========================================================================
+    # WIDGET 2: Pie vs Bar — scenario comparison
+    # ========================================================================
     lc_h2("ch2-kolowy-vs-slupkowy", "Wykres kołowy vs słupkowy"),
 
-    tagList(
-      p("Jak wizualizować zmienne jakościowe? Porównajmy wykres kołowy ze słupkowym
-        w trzech scenariuszach -- od latwego do trudnego. Zobaczysz, dlaczego
-        ", gloss("wykres słupkowy"), " jest ", tags$b("zawsze"), " co najmniej tak samo czytelny.")
-    ),
+    lc_p("Tabela podaje dokładne liczby, ale różnice między kategoriami szybciej
+      widać na wykresie. Dla zmiennych jakościowych używa się zwykle dwóch
+      wykresów. Wykres kołowy przedstawia udział kategorii jako kąt wycinka, a ",
+      gloss("wykres słupkowy"), " jako długość słupka odmierzaną na wspólnej
+      osi. Oba niosą tę samą informację, ale oko nie odczytuje ich równie dobrze.
+      Panel zestawia oba wykresy w trzech scenariuszach z fikcyjnymi udziałami
+      pięciu produktów."),
 
-    # ========================================================================
-    # WIDGET 2: Pie vs Bar -- scenario comparison
-    # ========================================================================
     figure_panel(
       label = "Ryc. 2.3",
-      title = "Pie vs Bar — trzy scenariusze porównawcze",
+      title = "Wykres kołowy a słupkowy — trzy scenariusze",
       div(style = "display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;",
-        lc_action("ch2_sc1", "1. Duze różnice", variant = "outline"),
+        lc_action("ch2_sc1", "1. Duże różnice", variant = "outline"),
         lc_action("ch2_sc2", "2. Podobne wartości", variant = "outline"),
-        lc_action("ch2_sc3", "3. Podobne + zle kolory", variant = "outline")
+        lc_action("ch2_sc3", "3. Podobne + złe kolory", variant = "outline")
       ),
       fluidRow(
         column(6,
@@ -99,7 +152,7 @@ ch2_ui <- list(
           uiOutput("ch2_scenario_pie_verdict")
         ),
         column(6,
-          h5(style = "text-align: center; color: var(--upwr-reference);", "Wykres słupkowy -- te same dane"),
+          h5(style = "text-align: center; color: var(--upwr-reference);", "Wykres słupkowy — te same dane"),
           div(style = "position: relative; width: 100%; height: 320px;",
             tags$canvas(id = "ch2_bar_canvas")
           ),
@@ -112,18 +165,37 @@ ch2_ui <- list(
       )
     ),
 
-    # --- Narrative before Widget 4 ---
-    lc_h2("ch2-kolory", "Manipulacja kolorami"),
+    lc_p("Przy dużych różnicach (45%, 25%, 15%, 10% i 5%) oba wykresy prowadzą
+      do tego samego wniosku, choć na kołowym trudniej ocenić, o ile jeden
+      wycinek jest większy od drugiego. Przy udziałach 22%, 21%, 20%, 19% i 18%
+      wycinki wyglądają na równe i z samego koła nie da się ustalić, który
+      produkt prowadzi. Słupki na wspólnej osi pokazują tę kolejność od razu.
+      Trzeci scenariusz dokłada zbliżone odcienie jednego koloru: na kołowym
+      kategorie zlewają się ze sobą, a na słupkowym nadal decyduje pozycja
+      na osi."),
 
-    tagList(
-      p("Kolory na wykresie mogą manipulowac odbiorem danych. Zobaczmy,
-        jak ten sam zestaw danych moze wyglądać zupełnie inaczej w
-        zależności od doboru palety kolorow.")
+    lc_p("Źródłem tej różnicy jest percepcja. Długości odmierzone od wspólnej
+      linii porównujemy znacznie dokładniej niż kąty i pola, więc wykres
+      słupkowy jest co najmniej tak samo czytelny jak kołowy, a przy
+      zbliżonych udziałach wyraźnie czytelniejszy."),
+
+    inline_callout(
+      label = "Zasada",
+      "Do porównywania kategorii używaj wykresu słupkowego. Wykres kołowy
+       sprawdza się tylko przy kilku kategoriach o wyraźnie różnych udziałach."
     ),
 
     # ========================================================================
     # WIDGET 4: Color manipulation demo
     # ========================================================================
+    lc_h2("ch2-kolory", "Manipulacja kolorami"),
+
+    lc_p("Nawet poprawnie dobrany wykres słupkowy można odczytać na różne
+      sposoby, zależnie od kolorów. Kolor nie zmienia wysokości słupków, ale
+      decyduje, na który z nich najpierw padnie wzrok. Panel pokazuje liczebności
+      kierunków z ankiety w kilku paletach: neutralnej, trzech wyróżniających
+      wybrane kategorie i czterech standardowych paletach używanych w R."),
+
     figure_panel(
       label = "Ryc. 2.4",
       title = "Jak kolory zmieniają percepcję danych",
@@ -135,7 +207,7 @@ ch2_ui <- list(
               "Ciepła (podkreśla Informatykę)" = "warm",
               "Zimna (podkreśla Biologię)" = "cool",
               "Stronnicza" = "biased",
-              "--- Klasyczne palety R ---" = "sep1",
+              "— Klasyczne palety R —" = "sep1",
               "Viridis" = "viridis",
               "Set2 (ColorBrewer)" = "set2",
               "Okabe-Ito (colorblind-safe)" = "okabe_ito",
@@ -146,40 +218,45 @@ ch2_ui <- list(
           lc_action("ch2_color_random", "Losowe kolory", variant = "outline")
         ),
         column(8, zoom_plot_ui("ch2_color_plot", height = "380px"))
-      ),
-      lc_feedback(type = "warning",
-        tags$b("Pamiętaj: "),
-        "Wybór kolorów nie jest neutralny. Intensywne, cieplejsze barwy
-         przyciągają uwagę, a jasne/szare marginalizują kategorie.",
-        tags$br(), tags$br(),
-        tags$b("Dobre praktyki: "),
-        tags$ul(
-          tags$li(tags$b("Viridis"), " -- percepcyjnie równomierna (różnice
-            wartości = różnice w kolorze), czytelna w skali szarości
-            i bezpieczna dla daltonistów. Domyślna w wielu pakietach R."),
-          tags$li(tags$b("Okabe-Ito"), " -- paleta zaprojektowana specjalnie
-            pod kątem daltoniśtów (ok. 8% mężczyzn). Klasyczny wybór
-            w publikacjach naukowych."),
-          tags$li(tags$b("ColorBrewer (Set2, Set3, Paired...)"), " -- rodzina palet
-            stworzonych przez kartografę Cynthia Brewer. W R dostępne przez ",
-            tags$code("scale_fill_brewer()"), "."),
-          tags$li(tags$b("Tableau 10"), " -- standard w narzędziach BI,
-            zbalansowana jasność i kontrast.")
-        )
       )
     ),
+
+    lc_p("Dane są za każdym razem te same: 60 osób na Informatyce, 51 na Biologii,
+      49 na Ekonomii i 40 na Psychologii. Przy palecie neutralnej wszystkie
+      słupki mają jednakową wagę i porównujemy tylko ich wysokość. Paleta ciepła
+      maluje Informatykę intensywnym burgundem, a pozostałe kierunki jasnym
+      beżem, więc wykres zaczyna opowiadać o Informatyce. Paleta zimna robi to
+      samo z Biologią. Paleta stronnicza nadaje własne kolory tylko
+      najliczniejszej i najmniej licznej kategorii, a resztę zostawia szarą,
+      więc wzrok od razu porównuje skrajności. Intensywne barwy przyciągają
+      uwagę, a jasne i szare spychają kategorie na margines. Wybór kolorów nie
+      jest więc neutralny i powinien wynikać z tego, co wykres ma pokazać."),
+
+    lc_p("Gdy wszystkie kategorie mają być równorzędne, warto sięgnąć po palety
+      zaprojektowane z myślą o czytelności. Viridis jest percepcyjnie
+      równomierna (równe różnice wartości dają równe różnice w odbiorze
+      koloru), pozostaje czytelna w skali szarości i dla osób z zaburzeniami
+      widzenia barw; w wielu pakietach R jest domyślna. Okabe-Ito zaprojektowano
+      specjalnie z myślą o daltonistach, którzy stanowią około 8% mężczyzn,
+      i jest częstym wyborem w publikacjach naukowych. Palety ColorBrewer
+      (Set2, Set3, Paired i inne) opracowała kartografka Cynthia Brewer; w R
+      są dostępne przez ", tags$code("scale_fill_brewer()"), ". Tableau 10 to
+      standard w narzędziach analityki biznesowej, z wyrównaną jasnością
+      i kontrastem kolorów."),
 
     # ========================================================================
     # WIDGET 4b: Cross-tabulation
     # ========================================================================
     lc_h2("ch2-krzyzowa", "Tabela krzyżowa — dwie zmienne jednocześnie"),
 
-    tagList(
-      p("Dotychczas analizowalismy po jednej zmiennej. Ale często chcemy
-        zbadac ", tags$b("zaleznosc miedzy dwiema zmiennymi jakościowymi"),
-        ". Sluzy do tego tabela krzyzowa (",
-        gloss("tabela kontyngencji", "kontyngencji"), ").")
-    ),
+    lc_p("Dotąd każdą zmienną opisywaliśmy osobno. Często jednak pytamy
+      o związek dwóch zmiennych jakościowych, na przykład o to, czy kobiety
+      i mężczyźni wybierają te same kierunki. Do tego służy tabela krzyżowa,
+      zwana też ", gloss("tabela kontyngencji", "tabelą kontyngencji"), ".
+      Jej wiersze to kategorie jednej zmiennej, kolumny to kategorie drugiej,
+      a w każdej komórce stoi liczba osób, które mają obie cechy jednocześnie.
+      Pod tabelą widać odczyt zaznaczonej komórki; kliknięcie innej komórki
+      go zmienia."),
 
     figure_panel(
       label = "Ryc. 2.5",
@@ -214,19 +291,35 @@ ch2_ui <- list(
       lc_plot("ch2_cross_plot")
     ),
 
-    # --- Narrative before Widget 5 ---
-    lc_h2("ch2-dominanta", "Dominanta (moda)"),
+    lc_p("Same liczebności łatwo źle odczytać. W ankiecie jest 109 kobiet
+      i 91 mężczyzn, więc kobiet jest więcej na prawie każdym kierunku
+      (na Informatyce 33 wobec 27) przede wszystkim dlatego, że jest ich więcej
+      w całej próbie. Żeby porównać grupy różnej wielkości, przechodzimy
+      na procenty."),
 
-    tagList(
-      p(gloss("dominanta", "Dominanta"), " (moda) to jedyna ",
-        gloss("miara tendencji centralnej"), " dla
-        zmiennych nominalnych. Jest to wartość (kategoria), ktora
-        występuje najczęściej w zbiorze danych.")
-    ),
+    lc_p("Procenty wierszowe pokazują, jak rozkładają się kierunki w obrębie
+      każdej płci: Informatykę studiuje 30,3% kobiet i 29,7% mężczyzn,
+      Psychologię 18,3% kobiet i 22,0% mężczyzn. Procenty kolumnowe pokazują
+      skład płci na każdym kierunku: kobiety stanowią od 50,0% studentów
+      Psychologii do 57,1% studentów Ekonomii. Rozkłady kierunków u kobiet
+      i mężczyzn są do siebie podobne, więc w tej próbie wybór kierunku
+      niewiele zależy od płci. To, które procenty policzyć, zależy od pytania:
+      zmienna, której grupy porównujemy, wyznacza kierunek procentowania."),
 
     # ========================================================================
     # WIDGET 5: Mode (dominanta)
     # ========================================================================
+    lc_h2("ch2-dominanta", "Dominanta (moda)"),
+
+    lc_p("Tabele i wykresy pokazują cały rozkład. Czasem potrzebujemy jednej
+      wartości, która powie, co w danych jest typowe; taką wartość nazywamy ",
+      gloss("miara tendencji centralnej", "miarą tendencji centralnej"), ".
+      Dla zmiennych jakościowych jest nią ", gloss("dominanta"), " (inaczej
+      moda): kategoria, która występuje w danych najczęściej. Na wykresie
+      słupkowym to po prostu najwyższy słupek. Panel startuje od danych
+      z ankiety, a przycisk losuje 200 nowych obserwacji z przypadkowymi
+      proporcjami kierunków."),
+
     figure_panel(
       label = "Ryc. 2.6",
       title = "Dominanta — najczęściej występująca kategoria",
@@ -234,6 +327,21 @@ ch2_ui <- list(
       lc_plot("ch2_mode_plot", ratio = "1.8/1", max_height = "350px"),
       uiOutput("ch2_mode_text")
     ),
+
+    lc_p("W ankiecie dominantą kierunku jest Informatyka: 60 z 200 osób, czyli
+      30%. Sama dominanta nie mówi jednak, jak wyraźnie kategoria przeważa.
+      Tutaj Informatyka wyprzedza Biologię tylko o 9 osób i obejmuje mniej niż
+      jedną trzecią próby, dlatego dominantę podajemy razem z jej liczebnością
+      albo procentem. Po wylosowaniu nowych proporcji najwyższy słupek może
+      przypaść dowolnemu kierunkowi, a gdy dwa słupki są prawie równe, nawet
+      niewielka zmiana w danych przenosi dominantę na inną kategorię."),
+
+    lc_p("Dla zmiennych nominalnych dominanta jest jedyną sensowną miarą
+      tendencji centralnej. Średniej nie da się obliczyć z nazw kategorii,
+      bo „Biologii” nie można dodać do „Ekonomii”, a bez naturalnej kolejności
+      nie istnieje też kategoria środkowa. Dla zmiennych porządkowych,
+      takich jak zadowolenie, kategorię środkową już można wskazać; tę miarę,
+      medianę, poznamy w następnym rozdziale."),
 
     lc_chapter_next(
       num       = "03",
@@ -247,6 +355,7 @@ ch2_ui <- list(
 
   )
 )
+
 
 # --------------------------------------------------------------------------
 # Chapter 2 Server
@@ -278,53 +387,35 @@ ch2_server <- function(input, output, session) {
 
     if (step == 1) {
       tagList(
-          "Tak wyglądają pierwsze obserwacje zmiennej ",
+          "Pierwsze obserwacje zmiennej ",
           tags$code(var_label, .noWS = "outside"), ". Każdy wiersz to odpowiedź jednego studenta.",
-          if (is_ord) tagList(
-            tags$br(),
-            tags$em("Uwaga: kategorie mają naturalną kolejność -- od
-                    'Bardzo niezadowolony' do 'Bardzo zadowolony'.")
-          )
+          if (is_ord) " Kategorie mają naturalną kolejność: od „Bardzo niezadowolony” do „Bardzo zadowolony”."
       )
     } else if (step == 2) {
       tagList(
-          "Liczymy, ile razy występuje każda kategoria. To są ",
-          tags$b("częstości bezwzględne"), " (liczebności).",
-          if (is_ord) tagList(
-            tags$br(),
-            tags$em("Kategorie są uporządkowane -- ich kolejność w tabeli
-                    ma znaczenie.")
-          )
+          "Liczymy, ile razy występuje każda kategoria. To są liczebności (częstości bezwzględne).",
+          if (is_ord) " Kolejność wierszy wynika z porządku kategorii."
       )
     } else if (step == 3) {
       tagList(
-          paste0("Dzielimy każdą liczebność przez całkowitą liczbę obserwacji (n = ",
-                 nrow(student_data), "). Wynik możemy wyrazić jako ułamek lub procent."))
+          paste0("Dzielimy każdą liczebność przez liczbę obserwacji (n = ",
+                 nrow(student_data), ") i wynik podajemy jako ułamek lub procent."))
     } else if (step == 4) {
       if (is_ord) {
+        cum_pct <- cumsum(prop.table(table(student_data$zadowolenie))) * 100
+        low_pct <- cum_pct[["Niezadowolony"]]
         tagList(
-          "Sumujemy częstości narastająco. ",
-          tags$b("Dla zmiennej porządkowej to ma głęboki sens!"),
-          tags$br(), tags$br(),
-          "Możemy powiedzieć np.: ",
-          tags$em("'X% studentów jest neutralnych lub bardziej zadowolonych'"),
-          " albo ",
-          tags$em("'Y% studentów jest niezadowolonych lub bardzo niezadowolonych'"),
-          ".",
-          tags$br(), tags$br(),
-          "Skumulowany procent daje sensowną interpretację ",
-          tags$b("tylko wtedy, gdy kategorie mają naturalną kolejność."))
+          "Sumujemy częstości narastająco. Dla zmiennej porządkowej wynik da się
+           odczytać: ", lc_fmt(low_pct, 1), "% studentów jest niezadowolonych
+           lub bardzo niezadowolonych, a ", lc_fmt(100 - low_pct, 1),
+          "% neutralnych lub bardziej zadowolonych.")
       } else {
+        cum_pct <- cumsum(prop.table(table(student_data$kierunek))) * 100
         tagList(
-          "Sumujemy częstości narastająco. ",
-          tags$b("Ale uwaga!"), " Dla zmiennej ",
-          tags$b("nominalnej"), " kolejność kategorii jest umowna.",
-          tags$br(), tags$br(),
-          "Stwierdzenie '72% studentów studiuje Informatykę lub wcześniej'
-           nie ma sensu -- bo co znaczy 'wcześniej' w liście kierunków?",
-          tags$br(), tags$br(),
-          tags$em("Przełącz na zmienną porządkową (Zadowolenie), żeby
-                  zobaczyć, kiedy skumulowany procent jest naprawdę przydatny."))
+          "Sumujemy częstości narastająco. Dla zmiennej nominalnej kolejność
+           kategorii jest umowna, więc wynik nic nie znaczy: „",
+          lc_fmt(cum_pct[["Informatyka"]], 1), "% studentów studiuje kierunki
+           do Informatyki włącznie” to tylko skutek porządku alfabetycznego.")
       }
     }
   })
@@ -433,26 +524,21 @@ ch2_server <- function(input, output, session) {
   output$ch2_ord_explanation <- renderUI({
     if (isTRUE(input$ch2_ord_shuffle)) {
       lc_feedback(type = "warning",
-        tags$strong("Losowa kolejność: "),
-        "Dla ", tags$b("kierunku studiow"), " (zmienna nominalna) zmiana kolejnośći
-         nie zmienia interpretacji -- kategorie nie maja naturalnego porzadku.
-         Ale dla ", tags$b("zadowolenia"), " (zmienna porządkowa) losowa kolejność
-         jest mylaca! Tracimy informacje o naturalnym porzadku od 'bardzo niezadowolony'
-         do 'bardzo zadowolony'."
+        tags$strong("Losowa kolejność:"),
+        " wykres kierunków znaczy to samo co wcześniej, a wykres zadowolenia
+         gubi porządek od „bardzo niezadowolony” do „bardzo zadowolony”."
       )
     } else {
       lc_feedback(type = "info",
-        tags$strong("Domyslna kolejność: "),
-        "Kierunek studiów pokazujemy w kolejnośći alfabetycznej (umownej) --
-         moglibymy uzyc dowolnej innej. Zadowolenie natomiast ma naturalny
-         porzadek: od 'bardzo niezadowolony' do 'bardzo zadowolony'. ",
-        tags$em("Wlacz 'Losowa kolejność', zeby zobaczyc różnice!")
+        tags$strong("Domyślna kolejność:"),
+        " kierunki alfabetycznie (umownie), zadowolenie od „bardzo niezadowolony”
+         do „bardzo zadowolony”."
       )
     }
   })
 
   # ========================================================================
-  # Widget 2: Pie vs Bar -- scenario comparison (Chart.js)
+  # Widget 2: Pie vs Bar — scenario comparison (Chart.js)
   # ========================================================================
 
   observeEvent(input$ch2_sc1, { ch2_scenario_idx(1) })
@@ -541,22 +627,22 @@ ch2_server <- function(input, output, session) {
 
     if (!is.null(rand_cols)) {
       fill_colors <- setNames(rand_cols, levels_order)
-      subtitle <- "Losowa paleta kolorow"
+      subtitle <- "Losowa paleta kolorów"
     } else if (palette_choice == "neutral") {
       fill_colors <- setNames(rep(upwr_reference, 4), levels_order)
-      subtitle <- "Neutralna - wszystkie kategorie rowne"
+      subtitle <- "Neutralna — wszystkie kategorie równe"
     } else if (palette_choice == "warm") {
       fill_colors <- setNames(
         ifelse(levels_order == "Informatyka", upwr_accent, upwr_rule),
         levels_order
       )
-      subtitle <- "Ciepla paleta - uwaga przyciagana do Informatyki"
+      subtitle <- "Ciepła paleta — uwaga przyciągana do Informatyki"
     } else if (palette_choice == "cool") {
       fill_colors <- setNames(
         ifelse(levels_order == "Biologia", upwr_cat["indygo"], upwr_rule),
         levels_order
       )
-      subtitle <- "Zimna paleta - uwaga przyciagana do Biologii"
+      subtitle <- "Zimna paleta — uwaga przyciągana do Biologii"
     } else if (palette_choice == "biased") {
       biggest <- df_counts$Kierunek[which.max(df_counts$n)]
       smallest <- df_counts$Kierunek[which.min(df_counts$n)]
@@ -564,28 +650,28 @@ ch2_server <- function(input, output, session) {
       cols[as.character(biggest)]  <- upwr_accent
       cols[as.character(smallest)] <- upwr_secondary
       fill_colors <- cols
-      subtitle <- paste0("Stronnicza - ", biggest,
-                         " wyróżniona, ", smallest, " wyciszona")
+      subtitle <- paste0("Stronnicza — wyróżnione skrajności: ", biggest,
+                         " i ", smallest)
     } else if (palette_choice == "viridis") {
       fill_colors <- setNames(
         c("#440154", "#31688e", "#35b779", "#fde725")[1:length(levels_order)],
         levels_order)
-      subtitle <- "Viridis -- percepcyjnie równomierna, colorblind-safe"
+      subtitle <- "Viridis — percepcyjnie równomierna, bezpieczna dla daltonistów"
     } else if (palette_choice == "set2") {
       fill_colors <- setNames(
         c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3")[1:length(levels_order)],
         levels_order)
-      subtitle <- "Set2 (ColorBrewer) -- popularny domyślny wybór"
+      subtitle <- "Set2 (ColorBrewer) — popularny domyślny wybór"
     } else if (palette_choice == "okabe_ito") {
       fill_colors <- setNames(
         c("#E69F00", "#56B4E9", "#009E73", "#CC79A7")[1:length(levels_order)],
         levels_order)
-      subtitle <- "Okabe-Ito -- zaprojektowana specjalnie dla daltonistów"
+      subtitle <- "Okabe-Ito — zaprojektowana specjalnie dla daltonistów"
     } else if (palette_choice == "tableau") {
       fill_colors <- setNames(
         c("#4e79a7", "#f28e2b", "#e15759", "#76b7b2")[1:length(levels_order)],
         levels_order)
-      subtitle <- "Tableau 10 -- standard w wizualizacji danych"
+      subtitle <- "Tableau 10 — standard w wizualizacji danych"
     } else {
       fill_colors <- setNames(rep(upwr_reference, length(levels_order)), levels_order)
       subtitle <- ""
@@ -754,14 +840,10 @@ ch2_server <- function(input, output, session) {
     mode_pct <- round(mode_n / total_n * 100, 1)
 
     lc_feedback(type = "info",
-      tags$b("Dominanta: "), mode_cat,
+      tags$b("Dominanta:"), " ", mode_cat,
       tags$br(),
-      paste0("Wystepuje ", mode_n, " razy (", mode_pct, "% z ", total_n,
-             " obserwacji)."),
-      tags$br(),
-      tags$em("Dla zmiennych nominalnych dominanta to jedyna sensowna miara
-              tendencji centralnej - nie mozemy obliczyć średniej ani mediany
-              z nazw kategorii.")
+      paste0("Występuje ", mode_n, " razy (", mode_pct, "% z ", total_n,
+             " obserwacji).")
     )
   })
 
