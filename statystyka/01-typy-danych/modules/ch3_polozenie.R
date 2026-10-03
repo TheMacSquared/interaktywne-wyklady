@@ -38,39 +38,22 @@ ch3_ui <- list(
 
     figure_panel(
       label = "Ryc. 3.1",
-      title = "Budowa histogramu",
-      fluidRow(
-        column(4,
-          selectInput("ch3_hist_var", "Zmienna:",
+      lc_step_widget("ch3_hist",
+        title = "Budowa histogramu",
+        steps = c("Surowe dane", "Posortuj dane", "Podziel na przedziały",
+                  "Przypisz do binów", "Zlicz obserwacje", "Zbuduj słupki",
+                  "Gotowy histogram", "Wpływ szerokości binu"),
+        toolbar = lc_toolbar(
+          selectInput("ch3_hist_var", "Zmienna",
             choices = c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
                         "Czas dojazdu (min)" = "czas_dojazdu",
                         "Średnia ocen" = "srednia_ocen"),
             selected = "wzrost"
           ),
-          uiOutput("ch3_hist_bin_slider"),
-          lc_action("ch3_hist_step1", "1. Surowe dane", variant = "outline"),
-          br(), br(),
-          lc_action("ch3_hist_step2", "2. Posortuj dane", variant = "outline"),
-          br(), br(),
-          lc_action("ch3_hist_step3", "3. Podziel na przedziały", variant = "outline"),
-          br(), br(),
-          lc_action("ch3_hist_step4", "4. Przypisz do binów", variant = "outline"),
-          br(), br(),
-          lc_action("ch3_hist_step5", "5. Zlicz obserwacje", variant = "outline"),
-          br(), br(),
-          lc_action("ch3_hist_step6", "6. Zbuduj słupki", variant = "outline"),
-          br(), br(),
-          lc_action("ch3_hist_step7", "7. Gotowy histogram", variant = "outline"),
-          br(), br(),
-          lc_action("ch3_hist_step8", "8. Wpływ szerokości binu", variant = "outline"),
-          br(), br(),
-          lc_action("ch3_hist_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
+          lc_step_from(3, uiOutput("ch3_hist_bin_slider"))
         ),
-        column(8,
-          zoom_plot_ui("ch3_hist_plot", height = "400px"),
-          uiOutput("ch3_hist_text"),
-          tableOutput("ch3_hist_table")
-        )
+        plot_id = "ch3_hist_plot",
+        extra = uiOutput("ch3_hist_table")
       )
     ),
 
@@ -391,18 +374,8 @@ ch3_server <- function(input, output, session) {
   # Widget: Histogram krok po kroku
   # --------------------------------------------------------------------------
 
-  ch3_hist_step <- reactiveVal(0)
-
-  observeEvent(input$ch3_hist_var, { ch3_hist_step(0) })
-  observeEvent(input$ch3_hist_reset, { ch3_hist_step(0) })
-  observeEvent(input$ch3_hist_step1, { ch3_hist_step(1) })
-  observeEvent(input$ch3_hist_step2, { ch3_hist_step(2) })
-  observeEvent(input$ch3_hist_step3, { ch3_hist_step(3) })
-  observeEvent(input$ch3_hist_step4, { ch3_hist_step(4) })
-  observeEvent(input$ch3_hist_step5, { ch3_hist_step(5) })
-  observeEvent(input$ch3_hist_step6, { ch3_hist_step(6) })
-  observeEvent(input$ch3_hist_step7, { ch3_hist_step(7) })
-  observeEvent(input$ch3_hist_step8, { ch3_hist_step(8) })
+  # Krok widgetu (1..8) żyje w przeglądarce; zmiana zmiennej nie cofa kroku.
+  ch3_hist_step <- lc_step_server("ch3_hist", input)$step
 
   # Default bin widths per variable
   ch3_hist_defaults <- list(
@@ -482,30 +455,28 @@ ch3_server <- function(input, output, session) {
     x_lo <- min(x) - diff(range(x)) * 0.05
     x_hi <- max(x) + diff(range(x)) * 0.05
 
-    strip_theme <-       theme(axis.text.y = element_blank(),
+    strip_theme <- theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank())
+    # Dwie grupy przynależności do binów: naprzemiennie dane / grupa.
+    bin_role_colour <- function(bin_num) {
+      ifelse(bin_num %% 2 == 1, STEP_ROLES$data$colour, STEP_ROLES$group$colour)
+    }
 
-    if (step == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij Krok 1", size = 6, color = "gray50") +
-        theme_void() + xlim(0, 1) + ylim(0, 1)
-
-    } else if (step == 1) {
+    if (step == 1) {
       df <- data.frame(value = x)
       ggplot(df, aes(x = value, y = 0)) +
-        geom_jitter(height = 0.3, size = 3, alpha = 0.6, color = upwr_cat["niebo"]) +
+        step_layer(geom_jitter, "data", height = 0.3, size = 3) +
         labs(x = x_label, y = "") + strip_theme +
-        coord_cartesian(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.5))
+        step_frame(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.5))
 
     } else if (step == 2) {
       df <- data.frame(value = sort(x))
       ggplot(df, aes(x = value, y = 0)) +
-        geom_point(size = 3, alpha = 0.7, color = upwr_cat["szalwia"]) +
+        step_layer(geom_point, "data", size = 3) +
         labs(x = x_label, y = "") + strip_theme +
-        coord_cartesian(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.5))
+        step_frame(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.5))
 
     } else if (step == 3) {
       breaks <- ch3_hist_breaks()
@@ -515,18 +486,16 @@ ch3_server <- function(input, output, session) {
       ) %>% filter(xmax > x_lo, xmin < x_hi)
 
       ggplot() +
-        geom_rect(data = bin_rects,
-                  aes(xmin = xmin, xmax = xmax, ymin = -0.35, ymax = 0.35),
-                  fill = NA, color = upwr_secondary, linewidth = 0.8,
-                  linetype = "dashed") +
-        geom_point(data = df, aes(x = value, y = 0),
-                   size = 2.5, alpha = 0.5, color = upwr_reference) +
+        step_layer(geom_rect, "new", data = bin_rects,
+                   mapping = aes(xmin = xmin, xmax = xmax, ymin = -0.35, ymax = 0.35),
+                   fill = NA, linetype = "22") +
+        step_layer(geom_point, "data", data = df, mapping = aes(x = value, y = 0), size = 2.5) +
         geom_text(data = bin_rects,
                   aes(x = (xmin + xmax) / 2, y = -0.45,
                       label = paste0("[", xmin, ", ", xmax, ")")),
-                  size = 2.8, color = upwr_secondary) +
+                  size = 2.8, colour = STEP_ROLES$new$colour) +
         labs(x = x_label, y = "") + strip_theme +
-        coord_cartesian(xlim = c(x_lo, x_hi), ylim = c(-0.55, 0.5))
+        step_frame(xlim = c(x_lo, x_hi), ylim = c(-0.55, 0.5))
 
     } else if (step == 4) {
       df <- ch3_hist_binned()
@@ -535,64 +504,53 @@ ch3_server <- function(input, output, session) {
         xmin = breaks[-length(breaks)], xmax = breaks[-1],
         bin_num = seq_len(length(breaks) - 1)
       ) %>% filter(xmax > x_lo, xmin < x_hi)
+      df <- df %>% filter(!is.na(bin))
 
       ggplot() +
-        geom_rect(data = bin_rects,
-                  aes(xmin = xmin, xmax = xmax, ymin = -0.35, ymax = 0.35,
-                      fill = bin_num),
-                  alpha = 0.15, color = upwr_secondary, linewidth = 0.5) +
-        geom_jitter(data = df %>% filter(!is.na(bin)),
-                    aes(x = value, y = 0, color = bin_num),
-                    height = 0.2, size = 3, alpha = 0.8) +
-        scale_fill_upwr_seq(guide = "none") +
-        scale_color_upwr_seq(guide = "none") +
+        step_layer(geom_rect, "known", data = bin_rects,
+                   mapping = aes(xmin = xmin, xmax = xmax, ymin = -0.35, ymax = 0.35),
+                   fill = NA, linetype = "22") +
+        geom_jitter(data = df, aes(x = value, y = 0), colour = bin_role_colour(df$bin_num),
+                    height = 0.2, size = 3, alpha = STEP_ROLES$data$alpha) +
         labs(x = x_label, y = "") + strip_theme +
-        coord_cartesian(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.5))
+        step_frame(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.5))
 
     } else if (step == 5) {
-      df <- ch3_hist_binned()
+      df <- ch3_hist_binned() %>% filter(!is.na(bin))
       stats <- ch3_hist_stats()
 
       ggplot() +
-        geom_rect(data = stats,
-                  aes(xmin = bin_start, xmax = bin_end,
-                      ymin = -0.35, ymax = 0.35,
-                      fill = bin_num),
-                  alpha = 0.15, color = upwr_secondary, linewidth = 0.5) +
-        geom_jitter(data = df %>% filter(!is.na(bin)),
-                    aes(x = value, y = 0, color = bin_num),
-                    height = 0.2, size = 2, alpha = 0.6) +
+        step_layer(geom_rect, "known", data = stats,
+                   mapping = aes(xmin = bin_start, xmax = bin_end, ymin = -0.35, ymax = 0.35),
+                   fill = NA, linetype = "22") +
+        geom_jitter(data = df, aes(x = value, y = 0), colour = bin_role_colour(df$bin_num),
+                    height = 0.2, size = 2, alpha = STEP_ROLES$data$alpha) +
         geom_text(data = stats,
                   aes(x = bin_mid, y = 0.45,
                       label = ifelse(count > 0, paste0("n=", count), "")),
-                  size = 4, fontface = "bold", color = upwr_secondary) +
-        scale_fill_upwr_seq(guide = "none") +
-        scale_color_upwr_seq(guide = "none") +
+                  size = 4, fontface = "bold", family = "mono", colour = STEP_ROLES$new$colour) +
         labs(x = x_label, y = "") + strip_theme +
-        coord_cartesian(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.6))
+        step_frame(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.6))
 
     } else if (step == 6) {
       stats <- ch3_hist_stats()
       w <- input$ch3_hist_bin_width
 
       ggplot(stats, aes(x = bin_mid, y = count)) +
-        geom_col(aes(fill = bin_num),
-                 width = w * 0.95, alpha = 0.7,
-                 color = upwr_secondary, linewidth = 0.3) +
-        geom_text(aes(label = count), vjust = -0.5, size = 4, fontface = "bold") +
-        scale_fill_upwr_seq(guide = "none") +
+        step_result(geom_col, width = w * 0.95, linewidth = 0.9) +
+        geom_text(aes(label = count), vjust = -0.5, size = 4, fontface = "bold",
+                  family = "mono", colour = STEP_ROLES$known$colour) +
         labs(x = x_label, y = "Liczba obserwacji") +
-                coord_cartesian(xlim = c(x_lo, x_hi))
+        step_frame(xlim = c(x_lo, x_hi))
 
     } else if (step == 7) {
       df <- data.frame(value = x)
       w <- input$ch3_hist_bin_width
 
       ggplot(df, aes(x = value)) +
-        geom_histogram(binwidth = w, fill = upwr_cat["niebo"], alpha = 0.7,
-                       color = upwr_secondary, linewidth = 0.3) +
+        step_result(geom_histogram, binwidth = w) +
         labs(x = x_label, y = "Liczba obserwacji") +
-        theme()
+        step_frame(xlim = c(x_lo, x_hi))
 
     } else if (step == 8) {
       df <- data.frame(value = x)
@@ -624,7 +582,6 @@ ch3_server <- function(input, output, session) {
     unit <- ch3_hist_defaults[[var_name]]$unit
 
     txt <- switch(as.character(step),
-      "0" = "Kliknij Krok 1, aby rozpocząć budowę histogramu.",
       "1" = paste0("Mamy ", n, " obserwacji — każdy punkt to jedna wartość. ",
                    "Trudno z tego odczytać rozkład, prawda?"),
       "2" = paste0("Sortujemy od min = ", round(min(x), 1),
@@ -641,10 +598,10 @@ ch3_server <- function(input, output, session) {
       "8" = paste0("Te same dane z trzema szerokościami binu. ",
                    "Za wąskie → szum. Za szerokie → utrata szczegółów.")
     )
-    lc_feedback(type = "info", p(txt))
+    txt
   })
 
-  output$ch3_hist_table <- renderTable({
+  output$ch3_hist_table <- renderUI({
     if (ch3_hist_step() < 5) return(NULL)
     stats <- ch3_hist_stats()
     n <- length(student_data[[input$ch3_hist_var]])
@@ -652,13 +609,16 @@ ch3_server <- function(input, output, session) {
     result <- stats %>% filter(count > 0) %>%
       mutate(pct = round(count / n * 100, 1))
     out <- data.frame(
-      a = paste0("[", result$bin_start, ", ", result$bin_end, ")"),
-      b = result$count,
-      c = paste0(result$pct, "%")
+      bin = paste0("[", result$bin_start, ", ", result$bin_end, ")"),
+      count = result$count,
+      pct = result$pct
     )
-    names(out) <- c("Przedział", "Liczba obs.", "Procent")
-    out
-  }, striped = TRUE, hover = TRUE, bordered = TRUE)
+    lc_table(out, cols = list(
+      lc_col("bin", "Przedział", "row"),
+      lc_col("count", "Liczba obs."),
+      lc_col("pct", "Procent (%)", digits = 1)
+    ))
+  })
 
   # --------------------------------------------------------------------------
   # Widget 0a: Mean introduction
