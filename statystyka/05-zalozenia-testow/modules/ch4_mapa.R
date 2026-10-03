@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 4: Mapa metod - kompletna tablica zalozenia -> alternatywa
+# CHAPTER 4: Mapa metod - kompletna tablica założenia -> alternatywa
 # ============================================================================
 
 ch4_ui <- lecture_chapter(
@@ -11,15 +11,68 @@ ch4_ui <- lecture_chapter(
       kicker = "Rozdział 04 · Założenia testów",
       num    = "04",
       title  = "Mapa metod.",
-      lead   = "Zbierzmy wszystko w jedną mapę: każda metoda, jej założenia i co robić, gdy są naruszone."
+      lead   = "Każda metoda z wykładu 04 opiera się na innym zestawie założeń
+                i ma inną drogę wyjścia, gdy założenia zawodzą. Ten rozdział
+                zbiera je w jednej mapie, do której można wracać przy każdej
+                analizie."
     ),
 
     lc_h2("ch4-kompletna-mapa", "Kompletna mapa: metoda → założenia → alternatywa"),
+
+    lc_p("Trzy poprzednie rozdziały omawiały założenia po kolei: kształt rozkładu,
+      równy rozrzut w porównywanych grupach, liczebności w tabelach i kształt
+      związku w korelacji. Każda metoda z wykładu 04 korzysta z innej kombinacji
+      tych założeń. Test t dla par nie pyta o wariancje, test χ² nie pyta
+      o normalność, a korelacja Pearsona wymaga liniowości, której nie wymaga
+      żaden test porównujący grupy. Poniższe tabele zestawiają te kombinacje
+      w jednym miejscu."),
+
+    lc_p("Jedno założenie powtarza się we wszystkich wierszach: ",
+      gloss("niezależność obserwacji"), ". Każda osoba lub jednostka powinna
+      wnosić do analizy jedną obserwację, a wynik jednej nie powinien wpływać
+      na wynik drugiej. Tego założenia nie sprawdza się wykresem ani testem.
+      Wynika z projektu badania: z tego, jak dobrano jednostki i jak zbierano
+      pomiary. Gdy jest naruszone, na przykład gdy te same osoby zmierzono dwa
+      razy, nie pomaga żadna alternatywa z kolumny po prawej. Trzeba wybrać
+      metodę, która tę zależność uwzględnia, jak test dla par."),
+
+    lc_p("Tabele czyta się od lewej do prawej. Kolumna z założeniami mówi, czego
+      metoda potrzebuje, kolumna diagnostyki — czym to ocenić, a ostatnia
+      kolumna — po co sięgnąć, gdy założenie wyraźnie zawodzi. Diagnostykę
+      zawsze zaczynamy od wykresu. Test formalny, taki jak Shapiro-Wilk czy
+      Levene, jest tylko pomocą: przy małej próbie ma małą moc i przeoczy
+      nawet wyraźne odchylenie, a przy dużej wykryje odchylenia bez znaczenia
+      dla wniosków. Brak podstaw do odrzucenia H₀ normalności nie oznacza,
+      że rozkład jest normalny."),
 
     # ========================================================================
     # Testy parametryczne
     # ========================================================================
     lc_h2("ch4-parametryczne", "Testy parametryczne"),
+
+    lc_p(gloss("test parametryczny", "Testy parametryczne"), " z wykładu 04
+      wnioskują o parametrach populacji: średniej, różnicy średnich albo
+      współczynniku korelacji. P-wartość biorą z rozkładu t lub F. Ten rozkład
+      jest dokładny, gdy dane pochodzą z rozkładu normalnego, a w pozostałych
+      przypadkach jest przybliżeniem. Założenie normalności dotyczy więc
+      w gruncie rzeczy rozkładu średniej z próby, a nie surowych danych. Z ",
+      gloss("centralne twierdzenie graniczne", "centralnego twierdzenia granicznego"),
+      " z wykładu 02 wiemy, że rozkład średniej zbliża się do normalnego wraz
+      ze wzrostem próby. Im bardziej skośny rozkład danych i im więcej wartości
+      odstających, tym większej próby potrzeba, żeby to przybliżenie było dobre."),
+
+    lc_p("Równe wariancje to osobna sprawa. Wymaga ich tylko klasyczny test t
+      Studenta i klasyczna ANOVA. ", gloss("test t Welcha", "Test t Welcha"),
+      ", którego używają wszystkie panele kursu, tego założenia nie potrzebuje.
+      Dla trzech i więcej grup odpowiednikiem jest ANOVA Welcha."),
+
+    lc_p("Wersję Welcha warto traktować jako wybór domyślny, a nie jako ratunek
+      po nieudanym teście Levene'a. Procedura dwuetapowa, w której najpierw
+      testujemy równość wariancji, a potem od wyniku uzależniamy wybór testu,
+      dziedziczy słabości testu formalnego: przy małych grupach Levene przeoczy
+      różnicę wariancji, przy dużych wykryje nieistotną. Wersja Studenta jest
+      w porządku przy równych licznościach grup albo wtedy, gdy równe wariancje
+      wynikają z wiedzy o badanym zjawisku, a nie z braku istotności testu."),
 
     tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
@@ -29,42 +82,96 @@ ch4_ui <- lecture_chapter(
       ),
       tags$tbody(
         tags$tr(
-          tags$td(tags$strong("Test t jednej pr.")),
-          tags$td("Brak silnej skośności i groźnych outlierów"),
-          tags$td("Q-Q plot; pomocniczo Shapiro-Wilk"),
-          tags$td("Wilcoxon jednej próby tylko przy symetrii; przy silnej skośności najpierw wróć do pytania i danych")
+          tags$td(tags$strong("Test t jednej próby")),
+          tags$td("Niezależne obserwacje; średnia z próby w przybliżeniu normalna:
+                   dane bez silnej skośności i wartości odstających albo odpowiednio
+                   duża próba"),
+          tags$td("Wykres Q-Q; pomocniczo Shapiro-Wilk"),
+          tags$td("Wilcoxon jednej próby, gdy rozkład jest symetryczny; przy silnej
+                   skośności najpierw wróć do pytania: czy interesuje cię średnia,
+                   czy typowa wartość")
         ),
         tags$tr(
-          tags$td(tags$strong("Test t niezależny")),
-          tags$td("Niezależne grupy; dla dokładnego testu normalność w grupach. Równe wariancje tylko w wersji Studenta"),
-          tags$td("Q-Q w grupach + Levene; pomocniczo Shapiro"),
-          tags$td("Welch przy nierównych wariancjach; Mann–Whitney przy pytaniu o położenie rozkładów, nie automatycznie o średnie")
+          tags$td(tags$strong("Test t dla prób niezależnych")),
+          tags$td("Niezależne obserwacje i grupy; średnie w obu grupach
+                   w przybliżeniu normalne. Równe wariancje tylko w wersji Studenta"),
+          tags$td("Wykresy Q-Q w grupach; porównanie odchyleń standardowych
+                   w grupach (opisowo, nie jako podstawa wyboru testu)"),
+          tags$td("Welch jako wybór domyślny; Mann–Whitney, gdy pytanie dotyczy tego, czy wartości
+                   w jednej grupie bywają większe, a nie średnich. Mann–Whitney
+                   nie rozwiązuje problemu nierównych wariancji")
         ),
         tags$tr(
-          tags$td(tags$strong("Test t sparowany")),
-          tags$td("Normalność różnic"),
-          tags$td("Shapiro na różnicach"),
-          tags$td("Wilcoxon dla par, jeśli rozkład różnic jest symetryczny")
+          tags$td(tags$strong("Test t dla par")),
+          tags$td("Niezależne pary; średnia różnic w przybliżeniu normalna
+                   (dotyczy rozkładu różnic, nie obu pomiarów osobno)"),
+          tags$td("Wykres Q-Q różnic; pomocniczo Shapiro-Wilk na różnicach"),
+          tags$td("Wilcoxon dla par, gdy rozkład różnic jest symetryczny")
         ),
         tags$tr(
-          tags$td(tags$strong("ANOVA")),
-          tags$td("Normalność reszt, równe wariancje"),
-          tags$td("Shapiro + Levene"),
-          tags$td("Welch ANOVA (war.), Kruskal-Wallis (norm.)")
+          tags$td(tags$strong("ANOVA jednoczynnikowa")),
+          tags$td("Niezależne obserwacje; reszty (odchylenia od średniej grupy)
+                   w przybliżeniu normalne; w wersji klasycznej równe wariancje"),
+          tags$td("Wykres Q-Q reszt; porównanie odchyleń standardowych w grupach
+                   (opisowo, nie jako podstawa wyboru testu)"),
+          tags$td("ANOVA Welcha jako wybór domyślny, z post hoc Games-Howella; Kruskal-Wallis z testem Dunna przy silnej
+                   skośności w małych grupach lub danych porządkowych")
         ),
         tags$tr(
-          tags$td(tags$strong("Pearson")),
-          tags$td("Liniowość, normalność 2D, brak outlierów"),
-          tags$td("Scatterplot, Q-Q obu zmiennych"),
-          tags$td("Spearman (monotoniczny), Kendall (odporny)")
+          tags$td(tags$strong("Korelacja Pearsona")),
+          tags$td("Niezależne pary; związek liniowy; brak silnych wartości
+                   odstających; dla testu i przedziału ufności rozkład obu
+                   zmiennych łącznie zbliżony do normalnego"),
+          tags$td("Wykres rozrzutu (najpierw); pomocniczo wykresy Q-Q obu zmiennych"),
+          tags$td("Spearman przy związku monotonicznym, wartościach odstających
+                   lub danych porządkowych; tau Kendalla przy małych próbach
+                   i wielu remisach")
         )
       )
     ),
+
+    lc_p("Para ANOVA Welcha i Games-Howell jest spójna: ani test ogólny, ani
+      porównania parami nie zakładają równych wariancji. Panel ANOVA w wykładzie
+      04 łączył klasyczną ANOVA z testem ",
+      gloss("test Games-Howella", "Games-Howella"), ". Przy podobnych wariancjach
+      obie wersje ANOVA dają prawie ten sam wynik, przy wyraźnie różnych
+      bezpieczniej użyć wersji Welcha."),
+
+    lc_p("Po alternatywę z ostatniej kolumny sięgamy w trzech sytuacjach. Pierwsza:
+      próba jest mała, a wykres pokazuje silną skośność albo wartości odstające,
+      więc nie można liczyć na centralne twierdzenie graniczne. Druga: dane są
+      porządkowe, na przykład odpowiedzi na skali Likerta, i średnia nie ma
+      dobrej interpretacji. Trzecia: rozkład jest tak skośny, że średnia
+      przestaje opisywać typową wartość, a pytanie badawcze i tak dotyczy
+      czegoś innego niż średnia. Łagodne odchylenia od normalności, zwłaszcza
+      przy podobnych liczebnościach grup, testy t i ANOVA zwykle znoszą dobrze."),
 
     # ========================================================================
     # Testy nieparametryczne
     # ========================================================================
     lc_h2("ch4-nieparametryczne", "Testy nieparametryczne"),
+
+    lc_p(gloss("test nieparametryczny", "Testy nieparametryczne"), " z ostatniej
+      kolumny nie są wersjami testu t pozbawionymi założeń. Zastępują wartości
+      ich ", gloss("ranga", "rangami"), ", czyli pozycjami w uporządkowanych
+      danych, i dlatego testują inną hipotezę niż ich parametryczne odpowiedniki.
+      Ani ", gloss("test Manna-Whitneya", "test Manna–Whitneya"), ", ani ",
+      gloss("test Kruskala-Wallisa", "test Kruskala-Wallisa"), " nie porównuje
+      średnich. Hipoteza zerowa mówi, że wszystkie grupy mają ten sam rozkład,
+      a test wykrywa przede wszystkim tendencję wartości z jednej grupy do
+      bycia większymi od wartości z drugiej. Jako porównanie median wynik można
+      czytać tylko wtedy, gdy rozkłady w grupach mają podobny kształt i różnią
+      się jedynie przesunięciem. Z tego samego powodu test Manna–Whitneya
+      nie jest lekarstwem na nierówne wariancje. Gdy grupy mają równe średnie,
+      ale różny rozrzut i różne liczebności, test odrzuca H₀ częściej, niż
+      wynikałoby z przyjętego poziomu α."),
+
+    lc_p(gloss("test Wilcoxona", "Test Wilcoxona"), " dla jednej próby i dla par
+      ma inne założenie: symetrię rozkładu wokół badanej wartości. Przy
+      symetrycznym rozkładzie środek symetrii jest jednocześnie medianą
+      i średnią, więc test odpowiada na pytanie o położenie. Przy silnej
+      skośności tego założenia nie ma, a przejście na rangi problemu nie usuwa.
+      Testy rangowe nadal wymagają też niezależnych obserwacji."),
 
     tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
@@ -74,36 +181,68 @@ ch4_ui <- lecture_chapter(
       tags$tbody(
         tags$tr(
           tags$td(tags$strong("Wilcoxon jednej próby")),
-          tags$td("Niezależne obserwacje; symetria wokół badanego położenia"),
-          tags$td("H₀: rozkład jest symetryczny wokół zadanej wartości. Przy symetrii jest ona również medianą; silna skośność nie znika po użyciu rang.")
+          tags$td("Niezależne obserwacje; symetria rozkładu wokół badanej wartości"),
+          tags$td("H₀: rozkład jest symetryczny wokół zadanej wartości. Przy symetrii
+                   jest ona również medianą; silna skośność nie znika po użyciu rang.")
         ),
         tags$tr(
           tags$td(tags$strong("Wilcoxon dla par")),
           tags$td("Niezależne pary; symetria rozkładu różnic w parach"),
-          tags$td("H₀: rozkład różnic jest symetryczny wokół zera. Obliczamy różnice w parach, a nie mieszamy wszystkich pomiarów.")
+          tags$td("H₀: rozkład różnic jest symetryczny wokół zera. Obliczamy różnice
+                   w parach, a nie mieszamy wszystkich pomiarów.")
         ),
         tags$tr(
           tags$td(tags$strong("Mann–Whitney (suma rang)")),
           tags$td("Niezależne grupy i obserwacje; dane co najmniej porządkowe"),
-          tags$td("Pod H₀ grupy mają ten sam rozkład; test wykrywa tendencję do większych wartości w jednej grupie. Interpretacja jako przesunięcie median wymaga tego samego kształtu rozkładów; symetria nie jest wymagana.")
+          tags$td("H₀: obie grupy mają ten sam rozkład; test wykrywa tendencję do
+                   większych wartości w jednej grupie. Nie porównuje średnich.
+                   Interpretacja jako przesunięcie median wymaga tego samego
+                   kształtu rozkładów; symetria nie jest wymagana.")
         ),
         tags$tr(
           tags$td(tags$strong("Kruskal-Wallis")),
-          tags$td("Niezależność, podobne kształty rozkładów w grupach"),
-          tags$td("Post-hoc: test Dunna z korektą")
+          tags$td("Niezależne grupy i obserwacje; dane co najmniej porządkowe"),
+          tags$td("H₀: wszystkie grupy mają ten sam rozkład. Nie porównuje średnich;
+                   porównanie median tylko przy podobnych kształtach rozkładów.
+                   Post hoc: test Dunna z korektą na porównania wielokrotne.")
         ),
         tags$tr(
           tags$td(tags$strong("Spearman")),
-          tags$td("Monotoniczność związku"),
-          tags$td("Działa na rangach, odporny na outliery")
+          tags$td("Niezależne pary; związek monotoniczny"),
+          tags$td("Działa na rangach, więc jest mniej wrażliwy na wartości odstające
+                   niż Pearson; nie wykrywa związków niemonotonicznych (np. w kształcie U).")
         )
       )
     ),
 
+    lc_p("Konsekwencja dla raportu jest prosta: wynik testu rangowego opisujemy
+      jako różnicę w rozkładach albo tendencję jednej grupy do wyższych
+      wartości, a nie jako różnicę średnich. Gdy pytanie badawcze naprawdę
+      dotyczy średnich, na przykład średniego kosztu na osobę, test
+      nieparametryczny na nie nie odpowie, nawet jeśli założenia testu t są
+      wątpliwe. Wtedy lepiej zostać przy teście Welcha i ocenić, czy próba
+      jest wystarczająco duża jak na skośność danych."),
+
     # ========================================================================
-    # Testy dla jakosciowych
+    # Testy dla zmiennych jakościowych
     # ========================================================================
     lc_h2("ch4-jakosciowe", "Testy dla zmiennych jakościowych"),
+
+    lc_p("Testy dla zmiennych jakościowych nie pytają o normalność ani wariancje,
+      bo pracują na liczebnościach kategorii. Ich założenia są dwa: niezależne
+      obserwacje (każda osoba trafia do tabeli raz) oraz liczebności, a nie
+      procenty, w komórkach. Test χ² ma trzecie, omówione w rozdziale 03:
+      rozkład χ² jest tylko przybliżeniem rozkładu statystyki, więc ",
+      gloss("liczebność oczekiwana", "liczebności oczekiwane"), " nie mogą być
+      zbyt małe. Często podawana orientacyjna reguła to co najmniej 5 w każdej
+      komórce. Nie jest to ostra granica, tylko sygnał, że wynik warto sprawdzić
+      metodą, która z przybliżenia nie korzysta."),
+
+    lc_p("Takimi metodami są ", gloss("test dokładny Fishera"), " i ",
+      gloss("test dwumianowy"), ". Liczą p-wartość dokładnie, więc założenie
+      o wielkości próby ich nie dotyczy. Drugą możliwością jest p-wartość
+      z symulacji Monte Carlo, w której komputer losuje wiele tabel zgodnych
+      z H₀ zamiast korzystać z rozkładu χ²."),
 
     tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
@@ -113,23 +252,28 @@ ch4_ui <- lecture_chapter(
       tags$tbody(
         tags$tr(
           tags$td(tags$strong("χ² zgodności")),
-          tags$td("Oczekiwane ≥ 5 w każdej kategorii"),
-          tags$td("Test dwumianowy (2 kat.), symulacja MC")
+          tags$td("Niezależne obserwacje; liczebności oczekiwane niezbyt małe
+                   (orientacyjnie co najmniej 5 w każdej kategorii)"),
+          tags$td("Test dwumianowy (2 kategorie); p-wartość z symulacji Monte Carlo")
         ),
         tags$tr(
           tags$td(tags$strong("χ² niezależności")),
-          tags$td("Oczekiwane ≥ 5 w każdej komórce"),
-          tags$td("Test Fishera (dokładny)")
+          tags$td("Niezależne obserwacje; liczebności oczekiwane niezbyt małe
+                   (orientacyjnie co najmniej 5 w każdej komórce)"),
+          tags$td("Test dokładny Fishera; p-wartość z symulacji Monte Carlo")
         ),
         tags$tr(
           tags$td(tags$strong("Test Fishera")),
-          tags$td("Niezależność obserwacji"),
-          tags$td("Brak — to już metoda dokładna")
+          tags$td("Niezależne obserwacje"),
+          tags$td("Metoda dokładna, nie wymaga dużej próby. Niezależności nie
+                   zastąpi: dane sparowane (te same osoby dwa razy) wymagają
+                   innego testu, np. McNemara")
         ),
         tags$tr(
           tags$td(tags$strong("Test dwumianowy")),
-          tags$td("Niezależność, binarne dane"),
-          tags$td("Brak — to metoda dokładna")
+          tags$td("Niezależne obserwacje; dwie kategorie; to samo prawdopodobieństwo
+                   sukcesu dla każdej obserwacji"),
+          tags$td("Metoda dokładna, nie wymaga dużej próby")
         )
       )
     ),
@@ -139,6 +283,18 @@ ch4_ui <- lecture_chapter(
     # ========================================================================
     lc_h2("ch4-regresja", "Regresja"),
 
+    lc_p("Ostatnia grupa wybiega w przyszłość, do wykładu 06. ",
+      gloss("regresja liniowa", "Regresja liniowa"), " ma założenia podobne do
+      ANOVA, ale formułuje się je dla ", gloss("reszta", "reszt"), ", czyli
+      różnic między obserwowaną a przewidywaną wartością, a nie dla surowych
+      danych. Zmienna zależna nie musi mieć rozkładu normalnego. Normalne
+      w przybliżeniu powinny być reszty, a i to ma znaczenie głównie przy
+      małych próbach. Ważniejsze są liniowość związku i ",
+      gloss("homoskedastyczność"), ", czyli podobny rozrzut reszt dla wszystkich
+      wartości predyktora. W regresji wielorakiej dochodzi ",
+      gloss("współliniowość"), " predyktorów. Tabela służy na razie jako
+      zapowiedź: każdą z tych diagnostyk omówimy na przykładach."),
+
     tags$table(class = "lc-table lc-table-bordered lc-table-striped",
       style = "font-size: 13px;",
       tags$thead(
@@ -147,15 +303,22 @@ ch4_ui <- lecture_chapter(
       tags$tbody(
         tags$tr(
           tags$td(tags$strong("Regresja liniowa")),
-          tags$td("Liniowość, normalność reszt, homoscedastyczność, niezależność reszt, brak współliniowości"),
-          tags$td("Reszty vs fitted, Q-Q, Scale-Location, Breusch-Pagan, Durbin-Watson, VIF"),
-          tags$td("Transformacje, odporne SE (HC), WLS, GLM, GAM, bootstrap")
+          tags$td("Liniowość, niezależność reszt, homoskedastyczność, reszty
+                   w przybliżeniu normalne, brak silnej współliniowości"),
+          tags$td("Reszty względem wartości przewidywanych, wykres Q-Q reszt,
+                   Scale-Location; pomocniczo Breusch-Pagan, Durbin-Watson
+                   (dane uporządkowane w czasie), VIF"),
+          tags$td("Transformacje, odporne błędy standardowe (HC), ważona MNK (WLS),
+                   GLM, GAM, bootstrap")
         ),
         tags$tr(
           tags$td(tags$strong("Regresja logistyczna")),
-          tags$td("Liniowość logitów, niezależność obserwacji, brak współliniowości, wystarczająco dużo zdarzeń na predyktor (reguła EPV ≥ 10)"),
-          tags$td("Test Hosmera-Lemeshowa, residuals deviance, VIF"),
-          tags$td("Dokładna regresja logistyczna (Firtha), regularyzacja, drzewa decyzyjne")
+          tags$td("Liniowa zależność logitu od predyktorów, niezależne obserwacje,
+                   brak silnej współliniowości, wystarczająco dużo zdarzeń
+                   rzadszej kategorii na każdy predyktor (orientacyjnie około 10)"),
+          tags$td("Test Hosmera-Lemeshowa, reszty dewiancji, VIF"),
+          tags$td("Regresja Firtha (przy rzadkich zdarzeniach i separacji),
+                   regularyzacja, drzewa decyzyjne")
         )
       )
     ),
@@ -165,6 +328,10 @@ ch4_ui <- lecture_chapter(
     # ========================================================================
     lc_h2("ch4-selektor", "Selektor: mam tę metodę — co sprawdzić?"),
 
+    lc_p("Tabele dobrze się przegląda, ale przy konkretnej analizie zwykle wychodzi
+      się od jednej metody. Selektor poniżej zbiera dla niej w jednym miejscu
+      założenia, diagnostykę i alternatywy."),
+
     figure_panel(
       label = "Ryc. 4.1",
       title = "Sprawdzarka założeń",
@@ -173,12 +340,12 @@ ch4_ui <- lecture_chapter(
           selectInput("ch4_method", "Metoda:",
             choices = c(
               "Test t jednej próby" = "t_one",
-              "Test t niezależny" = "t_ind",
-              "Test t sparowany" = "t_paired",
+              "Test t dla prób niezależnych" = "t_ind",
+              "Test t dla par" = "t_paired",
               "ANOVA" = "anova",
               "Korelacja Pearsona" = "pearson",
               "Korelacja Spearmana" = "spearman",
-              "Mann-Whitney U" = "mann_whitney",
+              "Mann–Whitney" = "mann_whitney",
               "Kruskal-Wallis" = "kruskal",
               "χ² niezależności" = "chi_sq",
               "Test Fishera" = "fisher",
@@ -193,6 +360,40 @@ ch4_ui <- lecture_chapter(
         )
       )
     ),
+
+    lc_p("Domyślnie wybrany test t dla prób niezależnych dobrze pokazuje, jak
+      czytać selektor. Założenie równych wariancji jest opisane jako dotyczące
+      tylko wersji Studenta, a pierwsza alternatywa to test Welcha, który
+      ten kurs przyjmuje jako wybór domyślny. Druga alternatywa, test Manna–Whitneya,
+      ma dopisek, że porównuje rangi, a nie średnie, i nie pomaga przy
+      nierównych wariancjach. Wybór między nimi zależy
+      od pytania badawczego, a nie od tego, który test daje mniejszą p-wartość."),
+
+    inline_callout(label = "Zasada",
+      "Niezależność wynika z projektu badania. Pozostałe założenia oceniaj
+       najpierw na wykresie, a test formalny traktuj pomocniczo. Alternatywa
+       nieparametryczna odpowiada na inne pytanie niż test, który zastępuje."
+    ),
+
+    # ========================================================================
+    # Domknięcie wykładu
+    # ========================================================================
+    lc_p("Ten wykład uzupełnił wykład 04 o pytanie, kiedy wynikowi testu można
+      ufać. Normalność nie jest celem samym w sobie: liczy się rozkład
+      średniej, różnic w parach albo reszt, a wykres surowych danych pomaga
+      ocenić, czy przybliżenie jest wiarygodne. Przy większych próbach
+      i umiarkowanej skośności centralne twierdzenie graniczne robi większość
+      pracy. Problem nierównych wariancji w porównaniu grup najprościej
+      rozwiązuje wersja Welcha. Dla tabel kluczowe są liczebności
+      oczekiwane, a gdy są małe, zostaje test Fishera. W korelacji najpierw
+      patrzy się na wykres rozrzutu, bo to on pokazuje, czy związek jest
+      liniowy, czy tylko monotoniczny."),
+
+    lc_p("Następny wykład, poświęcony regresji, przenosi te same pomysły na
+      modele. Tam założenia dotyczą reszt, a nie samych zmiennych, i ocenia
+      się je tymi samymi narzędziami: wykresem Q-Q, porównaniem rozrzutu
+      i wykresem reszt względem wartości przewidywanych. Zanim do niego
+      przejdziemy, rozdział 05 zbiera cały ten wykład w zwięzłej ściądze."),
 
     lc_chapter_next(
       num = "05",
@@ -212,87 +413,101 @@ ch4_server <- function(input, output, session) {
   method_info <- list(
     t_one = list(
       name = "Test t jednej próby",
-      assumptions = c("Dane ilościowe", "Brak silnej skośności i groźnych outlierów"),
-      checks = c("Q-Q plot (najpierw)", "shapiro_test() pomocniczo"),
-      alternatives = c("Przy symetrii: Wilcoxon jednej próby, wilcox_test(x ~ 1, mu = ...); przy silnej skośności nie jest automatycznym zamiennikiem"),
-      r_code = "rstatix::t_test(data, var ~ 1, mu = wartość)"
+      assumptions = c("Niezależne obserwacje",
+                      "Średnia z próby w przybliżeniu normalna: dane bez silnej skośności i wartości odstających albo odpowiednio duża próba"),
+      checks = c("Wykres Q-Q (najpierw)", "Pomocniczo: test Shapiro-Wilka"),
+      alternatives = c("Przy symetrii: test Wilcoxona dla jednej próby",
+                       "Przy silnej skośności Wilcoxon nie jest automatycznym zamiennikiem; najpierw ustal, czy pytasz o średnią")
     ),
     t_ind = list(
-      name = "Test t niezależny",
-      assumptions = c("Dane ilościowe", "Brak silnych odchyleń w grupach", "Równe wariancje (lub użyj Welcha)"),
-      checks = c("Q-Q per group (najpierw)", "shapiro_test() pomocniczo", "levene_test()"),
-      alternatives = c("Welch t (domyślny!): t_test(var.equal = FALSE)", "Mann–Whitney: wilcox_test(); porównuje rangi, nie średnie"),
-      r_code = "rstatix::t_test(data, var ~ group)"
+      name = "Test t dla prób niezależnych",
+      assumptions = c("Niezależne obserwacje i grupy",
+                      "Średnie w obu grupach w przybliżeniu normalne (brak silnej skośności lub odpowiednio duże grupy)",
+                      "Równe wariancje — tylko w wersji Studenta"),
+      checks = c("Wykresy Q-Q w grupach (najpierw)", "Pomocniczo: test Shapiro-Wilka",
+                 "Odchylenia standardowe w grupach (opisowo); wyboru między Welchem a Studentem nie uzależniaj od testu Levene'a"),
+      alternatives = c("Test t Welcha jako wybór domyślny",
+                       "Test Manna–Whitneya: porównuje rangi, nie średnie, i nie rozwiązuje problemu nierównych wariancji")
     ),
     t_paired = list(
-      name = "Test t sparowany",
-      assumptions = c("Dane ilościowe", "Normalność różnic"),
-      checks = c("shapiro_test() na różnicach"),
-      alternatives = c("Przy symetrii różnic: Wilcoxon dla par, wilcox_test(paired = TRUE)"),
-      r_code = "rstatix::t_test(data, var ~ time, paired = TRUE)"
+      name = "Test t dla par",
+      assumptions = c("Niezależne pary",
+                      "Średnia różnic w przybliżeniu normalna (rozkład różnic, nie obu pomiarów osobno)"),
+      checks = c("Wykres Q-Q różnic (najpierw)", "Pomocniczo: test Shapiro-Wilka na różnicach"),
+      alternatives = c("Przy symetrii różnic: test Wilcoxona dla par")
     ),
     anova = list(
       name = "ANOVA jednoczynnikowa",
-      assumptions = c("Normalność reszt w grupach", "Równe wariancje między grupami"),
-      checks = c("shapiro_test() per group", "levene_test()"),
-      alternatives = c("Welch ANOVA: oneway.test()", "Kruskal-Wallis: kruskal_test()"),
-      r_code = "rstatix::anova_test(data, var ~ group)"
+      assumptions = c("Niezależne obserwacje",
+                      "Reszty (odchylenia od średniej grupy) w przybliżeniu normalne",
+                      "Równe wariancje — tylko w wersji klasycznej"),
+      checks = c("Wykres Q-Q reszt (najpierw)", "Odchylenia standardowe w grupach (opisowo); wyboru wersji ANOVA nie uzależniaj od testu Levene'a"),
+      alternatives = c("ANOVA Welcha + post hoc Games-Howella",
+                       "Test Kruskala-Wallisa + post hoc Dunna; nie porównuje średnich")
     ),
     pearson = list(
       name = "Korelacja Pearsona",
-      assumptions = c("Liniowość związku", "Normalność dwuwymiarowa", "Brak ekstremalnych outlierów"),
-      checks = c("Scatterplot!", "shapiro_test() na obu zmiennych"),
-      alternatives = c("Spearman: cor_test(method='spearman')", "Kendall: cor_test(method='kendall')"),
-      r_code = "rstatix::cor_test(data, x, y, method = 'pearson')"
+      assumptions = c("Niezależne pary", "Związek liniowy", "Brak silnych wartości odstających",
+                      "Dla testu: rozkład obu zmiennych łącznie zbliżony do normalnego"),
+      checks = c("Wykres rozrzutu (najpierw)", "Pomocniczo: wykresy Q-Q obu zmiennych"),
+      alternatives = c("Korelacja Spearmana",
+                       "Tau Kendalla")
     ),
     spearman = list(
       name = "Korelacja Spearmana",
-      assumptions = c("Monotoniczność związku"),
-      checks = c("Scatterplot"),
-      alternatives = c("Kendall tau (bardziej odporny, wolniejszy)"),
-      r_code = "rstatix::cor_test(data, x, y, method = 'spearman')"
+      assumptions = c("Niezależne pary", "Związek monotoniczny"),
+      checks = c("Wykres rozrzutu"),
+      alternatives = c("Tau Kendalla przy małych próbach i wielu remisach")
     ),
     mann_whitney = list(
-      name = "Mann-Whitney U",
-      assumptions = c("Niezależne grupy i obserwacje", "Dane co najmniej porządkowe", "H₀: identyczne rozkłady; interpretacja median wymaga tego samego kształtu"),
-      checks = c("Sprawdzenie projektu badawczego"),
-      alternatives = c("Test permutacyjny"),
-      r_code = "rstatix::wilcox_test(data, var ~ group)"
+      name = "Test Manna–Whitneya",
+      assumptions = c("Niezależne grupy i obserwacje", "Dane co najmniej porządkowe",
+                      "H₀: oba rozkłady identyczne; to nie jest test średnich, a porównanie median wymaga tego samego kształtu rozkładów"),
+      checks = c("Projekt badania (niezależność)", "Histogramy lub wykresy pudełkowe w grupach (kształt)"),
+      alternatives = c("Test t Welcha, gdy pytanie dotyczy średnich", "Test permutacyjny")
     ),
     kruskal = list(
-      name = "Kruskal-Wallis",
-      assumptions = c("Niezależność obserwacji", "Podobne kształty rozkładów w grupach"),
-      checks = c("Boxploty, histogramy per grupa"),
-      alternatives = c("Test permutacyjny, bootstrap ANOVA"),
-      r_code = "rstatix::kruskal_test(data, var ~ group)"
+      name = "Test Kruskala-Wallisa",
+      assumptions = c("Niezależne grupy i obserwacje", "Dane co najmniej porządkowe",
+                      "H₀: wszystkie rozkłady identyczne; porównanie median tylko przy podobnych kształtach"),
+      checks = c("Projekt badania (niezależność)", "Wykresy pudełkowe, histogramy w grupach (kształt)"),
+      alternatives = c("Post hoc: test Dunna z korektą", "ANOVA Welcha, gdy pytanie dotyczy średnich",
+                       "Test permutacyjny")
     ),
     chi_sq = list(
-      name = "χ² niezależności",
-      assumptions = c("Niezależność obserwacji", "Oczekiwane liczności ≥ 5 w każdej komórce"),
-      checks = c("chisq.test()$expected — sprawdź wartości"),
-      alternatives = c("Test Fishera: fisher.test()", "χ² z MC: chisq.test(simulate.p.value=TRUE)"),
-      r_code = "chisq.test(table(var1, var2))"
+      name = "Test χ² niezależności",
+      assumptions = c("Niezależne obserwacje", "W komórkach liczebności, nie procenty",
+                      "Liczebności oczekiwane niezbyt małe (orientacyjnie co najmniej 5)"),
+      checks = c("Tabela liczebności oczekiwanych"),
+      alternatives = c("Test dokładny Fishera",
+                       "P-wartość z symulacji Monte Carlo")
     ),
     fisher = list(
-      name = "Test Fishera",
-      assumptions = c("Niezależność obserwacji"),
-      checks = c("Brak specjalnych wymagań"),
-      alternatives = c("Brak — to metoda dokładna"),
-      r_code = "fisher.test(table(var1, var2))"
+      name = "Test dokładny Fishera",
+      assumptions = c("Niezależne obserwacje"),
+      checks = c("Projekt badania (niezależność)"),
+      alternatives = c("Metoda dokładna, nie wymaga dużej próby",
+                       "Dane sparowane (te same osoby dwa razy): test McNemara")
     ),
     lm = list(
       name = "Regresja liniowa",
-      assumptions = c("Liniowość związku", "Normalność reszt", "Homoscedastyczność reszt", "Niezależność reszt", "Brak współliniowości (wieloraka)"),
-      checks = c("Reszty vs fitted", "Q-Q reszt", "Scale-Location", "Breusch-Pagan: bptest()", "Durbin-Watson: dwtest()", "VIF: car::vif()"),
-      alternatives = c("Transformacja Y lub X", "Odporne SE: sandwich::vcovHC()", "WLS: lm(weights=)", "GLM, GAM, bootstrap"),
-      r_code = "model <- lm(y ~ x1 + x2, data = dane); summary(model)"
+      assumptions = c("Liniowość związku", "Niezależność reszt", "Homoskedastyczność reszt",
+                      "Reszty w przybliżeniu normalne", "Brak silnej współliniowości (w regresji wielorakiej)"),
+      checks = c("Reszty względem wartości przewidywanych", "Wykres Q-Q reszt", "Scale-Location",
+                 "Test Breuscha-Pagana",
+                 "Test Durbina-Watsona (dane w czasie)", "VIF"),
+      alternatives = c("Transformacja Y lub X", "Odporne błędy standardowe (HC)",
+                       "Ważona MNK (WLS)", "GLM, GAM, bootstrap")
     ),
     glm = list(
       name = "Regresja logistyczna",
-      assumptions = c("Liniowość logitów", "Niezależność obserwacji", "Brak współliniowości", "EPV ≥ 10 (zdarzeń na predyktor)"),
-      checks = c("Hosmer-Lemeshow: hoslem.test()", "VIF: car::vif()", "Sprawdź EPV"),
-      alternatives = c("Firth logistic: logistf::logistf()", "Regularyzacja: glmnet", "Drzewa decyzyjne"),
-      r_code = "model <- glm(y ~ x1 + x2, family = binomial, data = dane)"
+      assumptions = c("Liniowa zależność logitu od predyktorów", "Niezależne obserwacje",
+                      "Brak silnej współliniowości",
+                      "Wystarczająco dużo zdarzeń rzadszej kategorii na predyktor (orientacyjnie około 10)"),
+      checks = c("Test Hosmera-Lemeshowa", "VIF",
+                 "Liczba zdarzeń na predyktor"),
+      alternatives = c("Regresja Firtha", "Regularyzacja",
+                       "Drzewa decyzyjne")
     )
   )
 
@@ -308,15 +523,11 @@ ch4_server <- function(input, output, session) {
       ),
       lc_feedback(type = "info",
         tags$strong("Jak sprawdzić:"),
-        tags$ul(lapply(info$checks, function(c) tags$li(tags$code(c))))
+        tags$ul(lapply(info$checks, tags$li))
       ),
       lc_feedback(type = "ok",
         tags$strong("Alternatywy:"),
         tags$ul(lapply(info$alternatives, tags$li))
-      ),
-      lc_formula_box(
-        tags$strong("Kod R:"),
-        tags$pre(style = "margin-top: 5px;", tags$code(info$r_code))
       )
     )
   })

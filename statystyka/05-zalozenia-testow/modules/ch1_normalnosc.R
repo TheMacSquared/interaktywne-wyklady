@@ -1,6 +1,29 @@
 # ============================================================================
-# CHAPTER 1: Normalnosc rozkladu
+# CHAPTER 1: Normalność rozkładu
 # ============================================================================
+
+# Tabela alternatyw rangowych (dane stałe, budowana raz przy starcie).
+.ch1_alt_table <- lc_table(
+  data.frame(
+    metoda = c("Test t jednej próby", "Test t dwóch grup", "Test t sparowany",
+               "ANOVA", "Korelacja Pearsona"),
+    alt = c("Test Wilcoxona dla jednej próby", "Test Manna-Whitneya",
+            "Test Wilcoxona dla par", "Test Kruskala-Wallisa",
+            "Korelacja Spearmana"),
+    co = c("Położenie środka względem wartości odniesienia; wymaga symetrycznego rozkładu",
+           "Czy wartości jednej grupy bywają systematycznie wyższe; to nie to samo co różnica średnich",
+           "Położenie różnic w parach; wymaga symetrycznego rozkładu różnic",
+           "Czy rozkłady w grupach są przesunięte względem siebie",
+           "Siłę związku monotonicznego, niekoniecznie liniowego"),
+    stringsAsFactors = FALSE
+  ),
+  list(
+    lc_col("metoda", "Metoda", "row"),
+    lc_col("alt", "Alternatywa rangowa", "text"),
+    lc_col("co", "Co porównuje", "text")
+  ),
+  narrow = "cards"
+)
 
 ch1_ui <- lecture_chapter(
   id = "ch-normalnosc",
@@ -11,31 +34,109 @@ ch1_ui <- lecture_chapter(
       kicker = "Rozdział 01 · Założenia testów",
       num    = "01",
       title  = "Normalność rozkładu.",
-      lead   = "Nie pytamy, czy dane są idealnie normalne, lecz czy ich kształt zagraża wnioskom. Zaczynamy od wykresu, a test traktujemy pomocniczo."
+      lead   = "Dane z prawdziwych badań prawie nigdy nie układają się w idealny
+                dzwon i nie muszą. Liczy się to, czy ich kształt może zepsuć wnioski
+                z testu, a to najlepiej widać na wykresie."
     ),
+
+    lc_p("Każdy test z wykładu 04 kończył się krótką listą założeń: test t, ANOVA
+      i korelacja Pearsona zakładały rozkład zbliżony do normalnego, test t
+      Studenta i klasyczna ANOVA — także równe wariancje w grupach, a test χ² —
+      niezbyt małe liczebności oczekiwane. Wtedy przyjmowaliśmy je na wiarę.
+      Ten wykład pokazuje, jak je sprawdzić i co zrobić, gdy nie są spełnione.
+      Zaczynamy od normalności, bo to założenie pojawia się najczęściej i jest
+      najczęściej źle rozumiane."),
 
     lc_h2("ch1-metody", "Które metody wymagają normalności?"),
 
-    tagList(
-      p("To, co oceniamy, zależy od metody:"),
-      tags$ul(
-        tags$li(tags$b(gloss("test t", "Test t"), " jednej próby"), " — rozkład badanej zmiennej wokół średniej"),
-        tags$li(tags$b("Test t dla grup"), " — rozkład wyników (", gloss("reszta", "reszt"), ") w porównywanych grupach"),
-        tags$li(tags$b(gloss("test t dla prób zależnych", "Test t sparowany")), " — rozkład różnic między pomiarami, nie obu pomiarów osobno"),
-        tags$li(tags$b(gloss("ANOVA")), " — normalność reszt w każdej grupie"),
-        tags$li(tags$b(gloss("korelacja Pearsona", "Korelacja Pearsona")), " — rozkład dwuwymiarowy normalny"),
-        tags$li(tags$b("Regresja liniowa"), " — normalność reszt (nie danych!)")
-      ),
-      p(tags$b("Ważne:"), " Testy t i ANOVA zwykle tolerują łagodne odchylenia,
-        zwłaszcza przy podobnych liczebnościach grup. Nie istnieje jednak jeden
-        próg n, po którym można automatycznie zignorować silną ", gloss("skośność"), " lub ",
-        gloss("wartość odstająca", "obserwacje odstające"), ".")
+    lc_p(gloss("test t", "Test t"), " nie analizuje pojedynczych obserwacji, tylko ich średnią.
+      Założenie normalności jest mu potrzebne po to, żeby statystyka t miała
+      rozkład t-Studenta, a to zależy od rozkładu średniej z próby. Jeśli dane
+      pochodzą z ", gloss("rozkład normalny", "rozkładu normalnego"), ", średnia
+      ma rozkład normalny przy każdej liczebności. Jeśli nie, z pomocą przychodzi ",
+      gloss("centralne twierdzenie graniczne"), " z wykładu 02: rozkład średniej
+      z próby zbliża się do normalnego, gdy próba rośnie, niezależnie od kształtu
+      rozkładu wyjściowego."),
+
+    lc_p("Tempo tego zbliżania zależy od kształtu danych. W wykładzie 02 widzieliśmy,
+      że ", gloss("skośność"), " średniej maleje jak skośność rozkładu wyjściowego
+      podzielona przez √n. Rozkład prawoskośny z panelu w następnej sekcji ma
+      skośność 1,41, więc średnia z 10 obserwacji ma skośność 0,45, a średnia
+      z 50 obserwacji — 0,20. Dla rozkładu symetrycznego skośność średniej jest
+      zerowa od początku. Im bardziej skośny rozkład wyjściowy i im więcej w nim ",
+      gloss("wartość odstająca", "wartości odstających"), ", tym większej próby
+      potrzeba, żeby przybliżenie było dobre. Jednej liczby obserwacji, od
+      której można przestać patrzeć na dane, nie ma."),
+
+    lc_p("Co dokładnie sprawdzamy, zależy od metody:"),
+
+    tags$ul(
+      tags$li(strong("Test t jednej próby:"), " rozkład badanej zmiennej."),
+      tags$li(strong("Test t dwóch grup:"), " rozkład zmiennej osobno w każdej
+        grupie, a nie w połączonych danych. Dwie grupy o różnych średnich dają
+        razem rozkład dwumodalny, nawet gdy każda z osobna jest normalna."),
+      tags$li(strong(gloss("test t dla prób zależnych", "Test t sparowany"), ":"),
+        " rozkład różnic w parach, a nie obu pomiarów osobno."),
+      tags$li(strong(gloss("ANOVA"), ":"), " rozkład zmiennej w każdej grupie,
+        czyli rozkład ", gloss("reszta", "reszt"), ": odchyleń obserwacji od
+        średniej ich grupy."),
+      tags$li(strong(gloss("korelacja Pearsona", "Korelacja Pearsona"), ":"),
+        " sam współczynnik r można policzyć zawsze, ale test i przedział ufności
+        zakładają, że obie zmienne razem mają rozkład normalny dwuwymiarowy.
+        W praktyce oglądamy rozkład każdej zmiennej i wykres rozrzutu."),
+      tags$li(strong(gloss("regresja liniowa", "Regresja liniowa"), ":"),
+        " rozkład reszt, a nie samych zmiennych. Wrócimy do tego w wykładzie 06.")
     ),
 
+    lc_p("Test t i ANOVA dobrze znoszą łagodne odchylenia od normalności, zwłaszcza
+      gdy grupy mają podobne liczebności. Ta ", gloss("odporność"), " ma jednak
+      granice: silna skośność albo kilka wartości odstających w małej próbie
+      potrafią zmienić wynik. Dlatego pytanie nie brzmi „czy dane są normalne”,
+      tylko „czy ich kształt jest na tyle daleki od normalnego, że zagraża
+      wnioskom przy tej liczebności”. Odpowiedź zaczyna się od wykresu."),
+
     # ========================================================================
-    # WIDGET 1: Wizualne sprawdzanie normalnosci
+    # WIDGET 1: Wizualne sprawdzanie normalności
     # ========================================================================
     lc_h2("ch1-wizualnie", "Wizualne sprawdzanie normalności"),
+
+    lc_p("Pierwszym narzędziem jest histogram z dorysowaną krzywą normalną o tej
+      samej średniej i tym samym odchyleniu standardowym co dane. Pokazuje ogólny
+      kształt, ale przy małej próbie jest poszarpany i zależy od szerokości
+      przedziałów. Dokładniejszy jest ",
+      gloss("wykres kwantyl-kwantyl"), " (Q-Q). Powstaje tak: obserwacje
+      sortujemy od najmniejszej do największej i każdej przypisujemy miejsce,
+      w którym powinna leżeć, gdyby dane pochodziły z rozkładu normalnego.
+      Najmniejsza obserwacja z 50 powinna leżeć około 2,3 odchylenia
+      standardowego poniżej średniej, środkowa — przy średniej, największa —
+      około 2,3 odchylenia powyżej. Na osi poziomej są te oczekiwane położenia
+      (kwantyle teoretyczne, w odchyleniach standardowych), na osi pionowej
+      faktyczne wartości (kwantyle próbkowe). Każdy punkt to jedna obserwacja."),
+
+    lc_p("Jeśli rozkład jest normalny, punkty układają się wzdłuż prostej. Prosta
+      na wykresie przechodzi przez punkty odpowiadające pierwszemu i trzeciemu
+      kwartylowi, więc dopasowuje się do środka danych, a odchylenia widać na
+      końcach. Typowe wzory:"),
+
+    tags$ul(
+      tags$li(strong("Prawoskośność:"), " punkty tworzą łuk wygięty w dół, oba
+        końce leżą nad prostą. Najmniejsze wartości są większe, niż przewiduje
+        rozkład normalny (krótki lewy ogon), a największe znacznie większe
+        (długi prawy ogon)."),
+      tags$li(strong("Ciężkie ogony:"), " kształt litery S, lewy koniec pod
+        prostą, prawy nad nią. Skrajnych wartości jest więcej i są dalej, niż
+        przewiduje rozkład normalny."),
+      tags$li(strong("Lekkie ogony:"), " odwrócone S, lewy koniec nad prostą,
+        prawy pod nią. Tak wygląda rozkład jednostajny, w którym wartości
+        skrajnych brakuje."),
+      tags$li(strong("Dwa skupienia:"), " dwa płaskie odcinki rozdzielone
+        stromym skokiem w środku wykresu."),
+      tags$li(strong("Pojedyncza wartość odstająca:"), " jeden punkt daleko od
+        prostej przy prawie idealnym ułożeniu reszty.")
+    ),
+
+    lc_p("Panel losuje próbę z wybranego rozkładu i rysuje obok siebie histogram
+      i wykres Q-Q."),
 
     figure_panel(
       label = "Ryc. 1.1",
@@ -61,24 +162,28 @@ ch1_ui <- lecture_chapter(
       )
     ),
 
-    lc_feedback(type = "info",
-      tags$strong("Jak czytać ", gloss("wykres kwantyl-kwantyl", "Q-Q plot"), ":"),
-      " Punkty blisko linii oznaczają, że rozkład jest wystarczająco podobny do normalnego.
-        Systematyczne odchylenia na końcach wskazują ciężkie lub lekkie ogony,
-        wygięcie — skośność, a pojedyncze dalekie punkty — możliwe obserwacje odstające."
-    ),
+    lc_p("Nawet dane wylosowane z rozkładu normalnego nie leżą idealnie na prostej.
+      Na środku punkty trzymają się jej blisko, a na końcach odchylają się w obie
+      strony, bo skrajnych obserwacji jest mało i każda z nich jest losowa.
+      Po wyborze rozkładu prawoskośnego, o ciężkich ogonach, dwumodalnego albo
+      jednostajnego pojawiają się opisane wyżej wzory. Przy n = 200 są wyraźne
+      za każdym losowaniem. Przy n = 10 trudno je odróżnić od przypadkowych
+      wahań, a histogram z kilkoma słupkami niewiele mówi. Wykres trzeba więc
+      czytać jako cały wzór, a nie punkt po punkcie, i pamiętać, że przy małej
+      próbie żadna metoda nie oceni kształtu rozkładu pewnie."),
 
     # ========================================================================
-    # WIDGET 2: Testy normalnosci
+    # WIDGET 2: Testy normalności
     # ========================================================================
     lc_h2("ch1-testy-formalne", "Test formalny jako pomoc"),
 
-    tagList(
-      p(tags$b(gloss("test Shapiro-Wilka", "Shapiro–Wilk")), " sprawdza zgodność danych z ",
-        gloss("rozkład normalny", "rozkładem normalnym"), "."),
-      p(withMathJax("\\(H_0\\)"), ": dane pochodzą z rozkładu normalnego. ",
-        "Małe p jest sygnałem odchylenia, ale nie mówi, czy odchylenie jest ważne dla naszej analizy.")
-    ),
+    lc_p("Ocena wykresu jest subiektywna, dlatego kusi, żeby zastąpić ją liczbą. ",
+      gloss("test Shapiro-Wilka", "Test Shapiro-Wilka"), " sprawdza hipotezę
+      zerową, że dane pochodzą z rozkładu normalnego. Jego statystyka W mierzy,
+      jak blisko prostej leżą punkty wykresu Q-Q: wartość 1 oznacza idealną
+      zgodność, a im mniejsza, tym większe odchylenie. Mała p-wartość jest
+      sygnałem, że kształt danych odbiega od normalnego. Panel poniżej liczy
+      test dla danych wylosowanych w poprzednim panelu."),
 
     figure_panel(
       label = "Ryc. 1.2",
@@ -94,57 +199,104 @@ ch1_ui <- lecture_chapter(
       )
     ),
 
-    lc_feedback(type = "warning",
-      tags$strong("Problem z testami formalnymi:"),
-      " Przy dużym n test może wykryć drobne, praktycznie niegroźne odchylenie.
-        Przy małym n może nie zauważyć poważnego problemu. ",
-      tags$strong("Decyzję opieraj przede wszystkim na Q-Q plocie, outlierach i rodzaju analizy.")
+    lc_p("Wynik pojedynczego losowania niewiele mówi o samym teście, więc
+      sprawdziliśmy go na 5000 próbach dla każdego rozkładu z panelu, przy
+      α = 0,05. Dla danych normalnych test odrzuca H₀ w 5% prób, zgodnie
+      z poziomem istotności. Przy n = 50 wykrywa rozkład prawoskośny w 95% prób,
+      jednostajny w 74%, a rozkład o ciężkich ogonach w 63%. Przy n = 10 te same
+      odsetki spadają do 24%, 9% i 19%: test w większości prób nie zauważa
+      odchylenia, które przy małej próbie jest najgroźniejsze. Przy n = 200
+      wykrywa każde z nich prawie zawsze, także rozkład jednostajny, który dla
+      testu t przy takiej liczebności nie stanowi żadnego problemu, bo jest
+      symetryczny i nie ma wartości odstających."),
+
+    lc_p("Test normalności ma więc tę samą słabość co każdy test istotności: jego
+      wynik zależy od liczebności. Przy małej próbie ma niską ",
+      gloss("moc testu", "moc"), " i przepuszcza poważne odchylenia, przy dużej
+      wykrywa odchylenia bez praktycznego znaczenia. Jak w wykładzie 04, brak
+      podstaw do odrzucenia H₀ nie dowodzi, że H₀ jest prawdziwa: p > 0,05
+      w teście Shapiro-Wilka nie znaczy, że dane są normalne. Test odpowiada
+      też na inne pytanie niż to, które nas interesuje. Sprawdza, czy rozkład
+      jest dokładnie normalny, a nas obchodzi, czy jest wystarczająco bliski
+      normalnemu dla wybranej metody."),
+
+    inline_callout(
+      label = "Zasada",
+      "O normalności decyduj na podstawie wykresu Q-Q, wartości odstających,
+       liczebności i wymagań metody. Test Shapiro-Wilka traktuj jako uzupełnienie
+       wykresu, a nie rozstrzygnięcie."
     ),
 
     # ========================================================================
-    # WIDGET 3: Co robic gdy naruszone?
+    # WIDGET 3: Co robić, gdy naruszone?
     # ========================================================================
     lc_h2("ch1-naruszenia", "Gdy normalność jest naruszona"),
 
-    tagList(
-      p("Praktyczna kolejność postępowania:"),
-      tags$ol(
-        tags$li(tags$b("Sprawdź wykres i dane"), " — czy problemem jest łagodna skośność, czy pojedynczy błąd/outlier?"),
-        tags$li(tags$b("Oceń ", gloss("odporność"), " metody"), " — łagodne odchylenie często nie wymaga zmiany analizy."),
-        tags$li(tags$b("Użyj alternatywy rangowej"), " — przy silnym naruszeniu albo zmiennej quasi-ilościowej; patrz tabela."),
-        tags$li(tags$b("Transformuj tylko z uzasadnieniem"), " — np. log dla dodatnich danych o różnicach względnych. Transformacja zmienia skalę interpretacji.")
-      )
-    ),
+    lc_p("Jeśli wykres pokazuje wyraźne odchylenie, najpierw trzeba ustalić jego
+      źródło. Pojedyncza wartość odstająca bywa błędem wprowadzania danych albo
+      pomiaru i wtedy poprawia się dane, a nie metodę. Wartości odstającej, która
+      jest prawdziwą obserwacją, nie usuwa się tylko dlatego, że psuje wykres.
+      Łagodna skośność przy umiarkowanej liczebności zwykle nie wymaga zmiany
+      analizy, bo test t i ANOVA są na nią odporne. Gdy odchylenie jest silne,
+      a próba mała, są dwie drogi: przekształcić dane albo użyć testu, który
+      normalności nie zakłada."),
+
+    lc_p("Pierwsza droga to ", gloss("transformacja logarytmiczna"), ". Logarytm
+      ściska duże wartości silniej niż małe, więc skraca długi prawy ogon. Działa
+      tylko dla danych dodatnich i ma sens tam, gdzie naturalne są porównania
+      względne: dochody, ceny, stężenia, czasy. Panel losuje dane prawoskośne
+      z rozkładu gamma (przesuniętego o 1, żeby wszystkie wartości były dodatnie)
+      i zestawia wykres Q-Q danych surowych (po lewej) z wykresem Q-Q ich
+      logarytmów (po prawej)."),
 
     figure_panel(
       label = "Ryc. 1.3",
       title = "Efekt transformacji logarytmicznej",
       fluidRow(
         column(4,
-          helpText("Generujemy dane prawoskośne i stosujemy log()."),
+          helpText("Generujemy dane prawoskośne i je logarytmujemy."),
           lc_slider("ch1_trans_n", "n", 30, 200, 80, 10),
           lc_action("ch1_transform", "Generuj i transformuj", variant = "solid")
         ),
         column(8,
-          zoom_plot_ui("ch1_transform_plots", height = "300px"),
-          uiOutput("ch1_transform_results")
+          zoom_plot_ui("ch1_transform_plots", height = "300px")
         )
       )
     ),
 
-    lc_feedback(type = "ok",
-      tags$strong("Praktyczne alternatywy rangowe:"),
-      p("To użyteczne zamienniki narzędziowe, ale ich wynik nie zawsze opisuje dokładnie tę samą wielkość co średnia."),
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 14px;",
-        tags$tbody(
-          tags$tr(tags$td("Test t jednej próby"), tags$td("→ Wilcoxon jednej próby, gdy rozkład jest symetryczny")),
-          tags$tr(tags$td("Test t niezależny"), tags$td("→ Mann–Whitney: porównanie rang, nie średnich")),
-          tags$tr(tags$td("Test t sparowany"), tags$td("→ Wilcoxon dla par, gdy różnice są symetryczne")),
-          tags$tr(tags$td("ANOVA"), tags$td("→ Kruskal-Wallis")),
-          tags$tr(tags$td("Pearson"), tags$td("→ Spearman"))
-        )
-      )
-    ),
+    lc_p("Na lewym wykresie widać łuk typowy dla prawoskośności. Po logarytmowaniu
+      punkty leżą znacznie bliżej prostej. Teoretyczna skośność spada z 1,41
+      do −0,30, czyli logarytm nie tylko usunął prawy ogon, ale lekko przechylił
+      rozkład w drugą stronę: przy większym n końce prawego wykresu mogą
+      układać się nieco pod prostą. Transformacja nie gwarantuje więc rozkładu
+      normalnego, tylko zmienia jego kształt."),
+
+    lc_p("Ma też koszt interpretacyjny. Po logarytmowaniu test porównuje średnie
+      logarytmów, a różnica średnich logarytmów odpowiada ilorazowi, a nie
+      różnicy, na skali wyjściowej. Wynik trzeba więc opisać jako różnicę
+      względną („o 20% więcej”), nie bezwzględną. Dlatego transformację stosuje
+      się wtedy, gdy porównanie względne ma sens merytoryczny, a nie tylko po to,
+      żeby wykres Q-Q wyglądał lepiej."),
+
+    lc_p("Druga droga to ", gloss("test nieparametryczny", "testy nieparametryczne"),
+      ". Zamiast surowych wartości analizują one ", gloss("ranga", "rangi"), ",
+      czyli pozycje obserwacji po posortowaniu, więc wartości odstające i długie
+      ogony nie mają na nie większego wpływu niż inne obserwacje. Każdy test
+      z wykładu 04 dla zmiennej ilościowej ma swój odpowiednik rangowy: ",
+      gloss("test Wilcoxona"), ", ", gloss("test Manna-Whitneya"), ", ",
+      gloss("test Kruskala-Wallisa"), " i ", gloss("korelacja Spearmana"), ".
+      Odpowiadają jednak na trochę inne pytanie niż testy, które zastępują.
+      Porównują położenie całych rozkładów albo rang, a nie średnie, więc wynik
+      opisuje się inaczej."),
+
+    .ch1_alt_table,
+
+    lc_p("Test Wilcoxona dla jednej próby i dla par też ma założenie: rozkład
+      (w teście dla par — rozkład różnic) powinien być symetryczny. Przy silnej
+      skośności nie rozwiązuje więc problemu automatycznie. Mapa w rozdziale 04
+      zestawia wszystkie metody z ich założeniami i alternatywami. Normalność
+      nie jest jednak jedynym założeniem testu t dwóch grup i ANOVA. Drugim
+      jest podobny rozrzut w porównywanych grupach."),
 
     lc_chapter_next(
       num = "02",
@@ -171,7 +323,7 @@ ch1_server <- function(input, output, session) {
     x <- ch1_data()
     if (is.null(x)) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj dane'",
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Generuj dane”",
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {
@@ -197,7 +349,7 @@ ch1_server <- function(input, output, session) {
     }
   }))
 
-  # --- Widget 2: Testy normalnosci ---
+  # --- Widget 2: Testy normalności ---
   output$ch1_norm_results <- renderUI({
     req(input$ch1_test_norm)
     x <- isolate(ch1_data())
@@ -205,15 +357,17 @@ ch1_server <- function(input, output, session) {
 
     sw <- shapiro_test(data.frame(value = x), value)
     sw_color <- if (sw$p >= 0.05) col_ok else col_fail
+    w_txt <- gsub(".", ",", formatC(sw$statistic, format = "f", digits = 3),
+                  fixed = TRUE)
 
     lc_feedback(type = "info",
-      p(tags$strong("Shapiro–Wilk:"), " W = ", round(sw$statistic, 4),
+      p(tags$strong("Shapiro–Wilk:"), " W = ", w_txt,
         ", p = ", format_p_value(sw$p)),
       p(style = paste0("color:", sw_color, ";"),
         if (sw$p >= 0.05) {
-          "Test nie wykrył wyraźnego odstępstwa. Nadal spójrz na Q-Q plot."
+          "Test nie wykrył odstępstwa. To nie dowodzi, że rozkład jest normalny."
         } else {
-          "Test wykrył odstępstwo. Oceń na Q-Q plocie jego rodzaj i znaczenie dla wybranej metody."
+          "Test wykrył odstępstwo. Jego rodzaj i wagę oceń na wykresie Q-Q."
         })
     )
   })
@@ -230,7 +384,7 @@ ch1_server <- function(input, output, session) {
     x <- ch1_trans_data()
     if (is.null(x)) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i transformuj'",
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Generuj i transformuj”",
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {
@@ -251,15 +405,4 @@ ch1_server <- function(input, output, session) {
       gridExtra::arrangeGrob(p1, p2, ncol = 2)
     }
   }))
-
-  output$ch1_transform_results <- renderUI({
-    x <- ch1_trans_data()
-    if (is.null(x)) return(NULL)
-
-    lc_feedback(type = "info",
-      tags$strong("Porównaj kształt, nie tylko liczbę:"),
-      " po transformacji punkty zwykle leżą bliżej prostej. Pamiętaj, że wynik
-        interpretujemy teraz na skali logarytmicznej, czyli przez różnice względne/ilorazy."
-    )
-  })
 }
