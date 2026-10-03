@@ -378,10 +378,12 @@ to stosują.
   (40 × 500 testów) przelicza się przy każdym ruchu suwaka.
 - [ ] Kawiarnia: wykres sprzedaży dzień po dniu (`tab10_lineplot`) usuwa
   braki przed rysowaniem, więc linia łączy dni niesąsiadujące.
-- [ ] Rozdz. 8: przełącznik „Surowe / Po standaryzacji” stoi nad panelem,
-  poza nim.
-- [ ] Pasek oceny listy kontrolnej (`ch0_wprowadzenie.R`): długi komunikat
-  w całości pogrubiony przez styl diva z werdyktem — skrócić albo zmienić styl.
+- [ ] Panele bez tytułu (sama etykieta „Ryc. …”): Ryc. 5.1 (`ch5_tarantino.R`),
+  Ryc. 6.1–6.7 (`ch6_hotel.R`), Ryc. 7.1 (`ch7_wynagrodzenia.R`), ćwiczenie
+  z klasyfikacją rekordów w rozdz. 9 (`ch9_laboratorium.R`, panel „Ćwiczenie”).
+  Rozdz. 12: dwie tabele (podsumowanie 10 zbiorów, dopasowanie analizy) w ręcznym
+  `div(class = "lc-figure-panel")` bez etykiety i tytułu — przy dopisaniu tytułu
+  zamienić na `figure_panel()`.
 - [ ] Martwy kod w `ch1_katalog.R` (wykresy problemów 2–3: `pct_45`, `r2`,
   `title_txt`).
 
