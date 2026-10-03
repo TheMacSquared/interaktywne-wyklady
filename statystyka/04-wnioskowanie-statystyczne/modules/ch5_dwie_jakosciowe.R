@@ -92,18 +92,14 @@ ch5_ui <- list(
     lc_h2("ch5-intuicja", "Budowanie intuicji: co to znaczy „niezależność”?"),
 
     lc_p("Zanim zastosujemy wzory do większych tabel, prześledźmy je na
-      najprostszej tabeli 2 × 2. Panel pokazuje w trzech krokach dane z 200
-      kontroli drogowych, tabelę oczekiwaną przy założeniu niezależności
-      i porównanie obu tabel."),
+      najprostszej tabeli 2 × 2. Mamy dane z 200 kontroli drogowych i pytamy,
+      czy szansa dostania mandatu jest niezależna od płci. Panel pokazuje
+      w trzech krokach tabelę obserwowaną, tabelę oczekiwaną przy założeniu
+      niezależności i porównanie obu tabel."),
 
     figure_panel(
       label = "Ryc. 7.1",
       title = "Przykład: czy płeć wpływa na dostawanie mandatów?",
-
-      tagList(
-        p("Mamy dane z 200 kontroli drogowych. Pytanie: ",
-          tags$em("„Czy szansa dostania mandatu jest niezależna od płci?”"))
-      ),
 
       lc_step_widget("ch5_narr",
         steps = c("Pokaż dane", "Załóżmy niezależność", "Porównaj"),
@@ -111,12 +107,14 @@ ch5_ui <- list(
       )
     ),
 
-    lc_p("Mandat dostało 30 ze 100 kontrolowanych kobiet i 50 ze 100 mężczyzn,
-      łącznie 80 osób, czyli 40%. Przy niezależności te same 40% dotyczyłoby obu
-      płci, więc oczekujemy po 40 mandatów i po 60 kontroli bez mandatu w każdej
-      grupie. Każda komórka odbiega od oczekiwań o 10 obserwacji. Wkład komórek
-      z mandatem do statystyki wynosi 10²/40 = 2,5, a komórek bez mandatu
-      10²/60 ≈ 1,67. Razem χ² = 8,33 przy df = (2 − 1)(2 − 1) = 1."),
+    lc_p("Krok drugi to sedno testu. Tabela oczekiwana nie pochodzi z danych
+      o poszczególnych płciach, tylko z łącznego odsetka mandatów w całej próbie:
+      tak wyglądałaby tabela, gdyby płeć nie miała znaczenia. Krok trzeci mierzy,
+      jak daleko dane od niej odeszły. W tabeli 2 × 2 przy ustalonych sumach
+      wierszy i kolumn wszystkie cztery komórki odbiegają od oczekiwań o tę samą
+      liczbę obserwacji, dlatego wystarcza jeden stopień swobody. Te same
+      odchylenia ważą jednak różnie: komórki z mniejszą liczebnością oczekiwaną,
+      tu komórki z mandatem, wnoszą do χ² więcej."),
 
     lc_p("Przy poziomie istotności α = 0,05, ustalonym jak zwykle przed
       spojrzeniem na dane, wartość krytyczna rozkładu χ² z jednym stopniem
@@ -516,22 +514,13 @@ ch5_server <- function(input, output, session) {
 
   output$ch5_narr_text <- renderUI({
     switch(as.character(ch5_narr_step()),
-      "1" = p("Mandat dostało 30% kobiet i 50% mężczyzn. Różnica jest widoczna,
-          ale czy mogła powstać przez przypadek?"),
-      "2" = tagList(
-        p(tags$strong("Załóżmy, że płeć nie ma znaczenia (H₀)."),
-          " Jeśli płeć nie ma związku z mandatami, nie musimy dzielić danych na kobiety
-          i mężczyzn. W całej próbie jest 80 mandatów na 200 kontroli, czyli 40%.
-          Przy niezależności te 40% dotyczy tak samo kobiet, jak i mężczyzn."),
-        p("Tabela oczekiwana pokazuje, ile obserwacji byłoby w komórkach, gdyby płeć
-          nie miała znaczenia.")
-      ),
-      "3" = tagList(
-        p("Kobiety dostały o 10 mandatów mniej, niż oczekiwano, mężczyźni o 10 więcej."),
-        p("Test χ² podnosi takie różnice do kwadratu, dzieli przez liczebności
-          oczekiwane i sumuje po wszystkich komórkach: ",
-          withMathJax("\\(\\chi^2 = \\sum \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}\\)"))
-      )
+      "1" = tagList("Mandat: ", step_num("30"), " ze 100 kobiet i ", step_num("50"),
+        " ze 100 mężczyzn; łącznie 80 z 200, czyli 40%."),
+      "2" = tagList("Przy niezależności 40% dotyczy obu płci: oczekujemy po ",
+        step_num("40"), " mandatów i po ", step_num("60"),
+        " kontroli bez mandatu w każdej grupie."),
+      "3" = tagList("Każda komórka odbiega o 10: χ² = 10²/40 + 10²/60 + 10²/40 + 10²/60 = ",
+        step_num("8,33"), " (df = 1).")
     )
   })
 
