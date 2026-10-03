@@ -107,25 +107,21 @@ ch1_ui <- list(
 
     lc_h2("ch1-korelacja-regresja", "Regresja z korelacji"),
 
+    p("Dla jednej zmiennej X i jednej Y nachylenie regresji można policzyć bez optymalizacji: z korelacji i odchyleń standardowych."),
+
     figure_panel(
-      label = "Ryc. 1.1", title = "Jak policzyć regresję z korelacji?",
+      label = "Ryc. 1.1",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Dla jednej zmiennej X i jednej Y nachylenie regresji można policzyć bez optymalizacji: z korelacji i odchyleń standardowych."),
-          lc_action("ch1_corr_new", "Nowa próba", variant = "solid"),
-          hr(),
-          h5("Kroki:"),
-          lc_action("ch1_corr_step1", "1. Średnie X i Y", variant = "outline"),
-          lc_action("ch1_corr_step2", "2. Odchylenia standardowe", variant = "outline"),
-          lc_action("ch1_corr_step3", "3. Korelacja r", variant = "outline"),
-          lc_action("ch1_corr_step4", "4. Nachylenie b₁", variant = "outline"),
-          lc_action("ch1_corr_step5", "5. Wyraz wolny b₀", variant = "outline")
+      lc_step_widget("ch1_corr",
+        title = "Jak policzyć regresję z korelacji?",
+        steps = c("Średnie X i Y", "Odchylenia standardowe", "Korelacja r",
+                  "Nachylenie b₁", "Wyraz wolny b₀"),
+        toolbar = lc_toolbar(
+          lc_action("ch1_corr_new", "Nowa próba", icon = "shuffle", variant = "outline")
         ),
-        column(8,
-          zoom_plot_ui("ch1_corr_plot", height = "360px"),
-          uiOutput("ch1_corr_info")
-        )
+        plot_id = "ch1_corr_plot",
+        ratio = "2/1",
+        extra = uiOutput("ch1_corr_info")
       )
     ),
 
@@ -178,26 +174,20 @@ ch1_ui <- list(
 
     lc_h2("ch1-ols-krok", "Najmniejsze kwadraty — krok po kroku"),
 
+    p("Ta sama próba, kolejne warstwy interpretacji."),
+
     figure_panel(
-      label = "Ryc. 1.1b", title = "Jak linia staje się modelem",
+      label = "Ryc. 1.1b",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Ta sama próba, kolejne warstwy interpretacji."),
-          lc_action("ch1_ols_new", "Nowa próba", variant = "solid"),
-          hr(),
-          h5("Kroki:"),
-          lc_action("ch1_ols_step1", "1. Dane", variant = "outline"),
-          lc_action("ch1_ols_step2", "2. Średnia Y", variant = "outline"),
-          lc_action("ch1_ols_step3", "3. Linia regresji", variant = "outline"),
-          lc_action("ch1_ols_step4", "4. Reszty", variant = "outline"),
-          lc_action("ch1_ols_step5", "5. Wynik modelu", variant = "outline"),
-          lc_action("ch1_ols_step6", "6. Inna prosta?", variant = "outline")
+      lc_step_widget("ch1_ols",
+        title = "Jak linia staje się modelem",
+        steps = c("Dane", "Średnia Y", "Linia regresji", "Reszty",
+                  "Wynik modelu", "Inna prosta?"),
+        toolbar = lc_toolbar(
+          lc_action("ch1_ols_new", "Nowa próba", icon = "shuffle", variant = "outline")
         ),
-        column(8,
-          zoom_plot_ui("ch1_ols_plot", height = "360px"),
-          uiOutput("ch1_ols_info")
-        )
+        plot_id = "ch1_ols_plot",
+        ratio = "2/1"
       )
     ),
 
@@ -455,18 +445,19 @@ ch1_server <- function(input, output, session) {
   })
 
   # --- Widget: regresja z korelacji ---
+  # Krok widgetu (1..5) żyje w przeglądarce; nowa próba nie zmienia kroku.
   ch1_corr_data <- reactiveVal(generate_regression_data(n = 65, beta0 = 8, beta1 = 1.6, sigma = 4))
-  ch1_corr_step <- reactiveVal(0)
+  ch1_corr_step <- lc_step_server("ch1_corr", input)$step
 
   observeEvent(input$ch1_corr_new, {
     ch1_corr_data(generate_regression_data(n = 65, beta0 = 8, beta1 = 1.6, sigma = 4))
-    ch1_corr_step(0)
   })
-  observeEvent(input$ch1_corr_step1, ch1_corr_step(1))
-  observeEvent(input$ch1_corr_step2, ch1_corr_step(2))
-  observeEvent(input$ch1_corr_step3, ch1_corr_step(3))
-  observeEvent(input$ch1_corr_step4, ch1_corr_step(4))
-  observeEvent(input$ch1_corr_step5, ch1_corr_step(5))
+
+  # Etykieta w kolorze roli (krój wykresu, jak dotąd).
+  ch1_role_text <- function(x, y, label, role, ...) {
+    annotate("text", x = x, y = y, label = label,
+             colour = STEP_ROLES[[role]]$colour, fontface = "bold", ...)
+  }
 
   zoom_plot_server("ch1_corr_plot", reactive({
     df <- ch1_corr_data()
@@ -483,124 +474,139 @@ ch1_server <- function(input, output, session) {
     slope_y_mid <- (slope_y0 + slope_y1) / 2
     slope_y_pad <- max(1.8, abs(b1) * 1.4)
 
+    # Stała rama z pełnych danych (z punktem x = 0 i b₀ z kroku 5).
+    pad <- function(v, m = 0.05) v + c(-1, 1) * diff(v) * m
+    frame <- step_frame(
+      xlim = pad(range(c(df$x, 0))),
+      ylim = pad(range(c(df$y, 0, b0, b1 * min(df$x))))
+    )
+    marker_df <- function(x, y) data.frame(x = x, y = y)
+
+    # W kroku 4 dane ustępują konstrukcji nachylenia (tło).
     p <- ggplot(df, aes(x = x, y = y)) +
-      geom_point(color = upwr_secondary,
-                 alpha = if (step == 4) 0.24 else 0.55,
+      step_layer(geom_point, if (step == 4) "background" else "data",
                  size = if (step == 4) 1.8 else 2.2) +
-      labs(x = "X", y = "Y") +
-      theme_upwr()
+      labs(x = "X", y = "Y")
 
     if (step >= 1 && !(step %in% c(4, 5))) {
+      role <- step_role(step, 1)
       p <- p +
-        geom_vline(xintercept = x_bar, linetype = "dashed",
-                   color = unname(upwr_cat["bursztyn"]), linewidth = 0.9) +
-        geom_hline(yintercept = y_bar, linetype = "dashed",
-                   color = unname(upwr_cat["bursztyn"]), linewidth = 0.9)
+        step_line(role, xintercept = x_bar) +
+        step_line(role, yintercept = y_bar)
     }
     if (step == 2) {
       p <- p +
-        geom_segment(aes(xend = x_bar, yend = y),
-                     color = unname(upwr_cat["niebo"]),
-                     linetype = "dashed", alpha = 0.35, linewidth = 0.5) +
-        geom_segment(aes(xend = x, yend = y_bar),
-                     color = unname(upwr_cat["terakota"]),
-                     linetype = "dashed", alpha = 0.35, linewidth = 0.5) +
-        annotate("text", x = x_bar, y = max(df$y),
-                 label = "odchylenia X", hjust = -0.05, vjust = 1,
-                 color = unname(upwr_cat["niebo"]), fontface = "bold") +
-        annotate("text", x = min(df$x), y = y_bar,
-                 label = "odchylenia Y", hjust = 0, vjust = -0.7,
-                 color = unname(upwr_cat["terakota"]), fontface = "bold")
+        step_layer(geom_segment, "new", mapping = aes(xend = x_bar, yend = y),
+                   linetype = "22", alpha = 0.35, linewidth = 0.5) +
+        step_layer(geom_segment, "new", mapping = aes(xend = x, yend = y_bar),
+                   linetype = "22", alpha = 0.35, linewidth = 0.5) +
+        ch1_role_text(x_bar, max(df$y), "odchylenia X", "new",
+                      hjust = -0.05, vjust = 1) +
+        ch1_role_text(min(df$x), y_bar, "odchylenia Y", "new",
+                      hjust = 0, vjust = -0.7)
     }
     if (step == 3) {
-      p <- p + geom_abline(intercept = b0, slope = b1,
-                           color = unname(upwr_cat["niebo"]), linewidth = 1.3)
+      p <- p + step_layer(geom_abline, "new", intercept = b0, slope = b1,
+                          linewidth = 1.3)
     }
     if (step == 4) {
       p <- p +
-        geom_abline(intercept = b0, slope = b1,
-                    color = unname(upwr_cat["niebo"]), linewidth = 1.8) +
-        geom_segment(aes(x = slope_x0, xend = slope_x1,
-                         y = slope_y0, yend = slope_y0),
-                     inherit.aes = FALSE,
-                     color = unname(upwr_cat["bursztyn"]),
-                     linewidth = 1.2,
-                     arrow = arrow(length = grid::unit(0.12, "inches"))) +
-        geom_segment(aes(x = slope_x1, xend = slope_x1,
-                         y = slope_y0, yend = slope_y1),
-                     inherit.aes = FALSE,
-                     color = unname(upwr_cat["terakota"]),
-                     linewidth = 1.2,
-                     arrow = arrow(length = grid::unit(0.12, "inches"))) +
+        step_layer(geom_abline, "known", intercept = b0, slope = b1,
+                   linewidth = 1.8) +
+        step_layer(geom_segment, "new",
+                   data = data.frame(x = slope_x0, xend = slope_x1,
+                                     y = slope_y0, yend = slope_y0),
+                   mapping = aes(x = x, xend = xend, y = y, yend = yend),
+                   linewidth = 1.2,
+                   arrow = arrow(length = grid::unit(0.12, "inches"))) +
+        step_layer(geom_segment, "new",
+                   data = data.frame(x = slope_x1, xend = slope_x1,
+                                     y = slope_y0, yend = slope_y1),
+                   mapping = aes(x = x, xend = xend, y = y, yend = yend),
+                   linewidth = 1.2,
+                   arrow = arrow(length = grid::unit(0.12, "inches"))) +
         geom_point(
-          data = data.frame(
-            x = c(slope_x0, slope_x1, slope_x1),
-            y = c(slope_y0, slope_y0, slope_y1)
-          ),
-          aes(x = x, y = y),
-          inherit.aes = FALSE,
-          color = upwr_secondary,
-          fill = "white",
-          shape = 21,
-          stroke = 1.1,
-          size = 3.2
+          data = marker_df(c(slope_x0, slope_x1, slope_x1),
+                           c(slope_y0, slope_y0, slope_y1)),
+          colour = STEP_ROLES$known$colour, fill = "white",
+          shape = 21, stroke = 1.1, size = 3.2
         ) +
-        annotate("text", x = (slope_x0 + slope_x1) / 2, y = slope_y0,
-                 label = "ΔX = 1", vjust = 1.6,
-                 color = unname(upwr_cat["bursztyn"]), fontface = "bold") +
-        annotate("text", x = slope_x1, y = (slope_y0 + slope_y1) / 2,
-                 label = paste0("ΔY = b₁ = ", round(b1, 2)),
-                 hjust = -0.08,
-                 color = unname(upwr_cat["terakota"]), fontface = "bold") +
-        coord_cartesian(
-          xlim = c(slope_x0 - 1.1, slope_x1 + 1.45),
-          ylim = c(slope_y_mid - slope_y_pad, slope_y_mid + slope_y_pad)
-        )
+        ch1_role_text((slope_x0 + slope_x1) / 2, slope_y0, "ΔX = 1", "new",
+                      vjust = 1.6) +
+        ch1_role_text(slope_x1, (slope_y0 + slope_y1) / 2,
+                      paste0("ΔY = b₁ = ", round(b1, 2)), "new", hjust = -0.08)
     }
     if (step == 5) {
       p <- p +
-        geom_abline(intercept = 0, slope = b1,
-                    color = unname(upwr_cat["bursztyn"]),
-                    linewidth = 1.2, linetype = "longdash") +
-        geom_abline(intercept = b0, slope = b1,
-                    color = unname(upwr_cat["niebo"]), linewidth = 1.5) +
-        geom_segment(aes(x = 0, xend = 0,
-                         y = 0, yend = b0),
-                     inherit.aes = FALSE,
-                     color = unname(upwr_cat["terakota"]),
-                     linewidth = 1.2,
-                     arrow = arrow(length = grid::unit(0.12, "inches"),
-                                   ends = "both")) +
+        step_layer(geom_abline, "known", intercept = 0, slope = b1,
+                   linewidth = 1.2, linetype = "22") +
+        step_layer(geom_abline, "known", intercept = b0, slope = b1,
+                   linewidth = 1.5) +
+        step_layer(geom_segment, "new",
+                   data = data.frame(x = 0, xend = 0, y = 0, yend = b0),
+                   mapping = aes(x = x, xend = xend, y = y, yend = yend),
+                   linewidth = 1.2,
+                   arrow = arrow(length = grid::unit(0.12, "inches"),
+                                 ends = "both")) +
         geom_point(
-          data = data.frame(x = 0, y = c(0, b0)),
-          aes(x = x, y = y),
-          inherit.aes = FALSE,
-          color = upwr_secondary,
-          fill = "white",
-          shape = 21,
-          stroke = 1.1,
-          size = 3
+          data = marker_df(0, c(0, b0)),
+          colour = STEP_ROLES$known$colour, fill = "white",
+          shape = 21, stroke = 1.1, size = 3
         ) +
-        annotate("text", x = min(df$x), y = b1 * min(df$x),
-                 label = "b[0] == 0", parse = TRUE,
-                 hjust = 0, vjust = -0.6,
-                 color = unname(upwr_cat["bursztyn"]), fontface = "bold") +
-        annotate("text", x = 0.15, y = b0 / 2,
-                 label = paste0("b[0] == ", round(b0, 2)), parse = TRUE,
-                 hjust = 0,
-                 color = unname(upwr_cat["terakota"]), fontface = "bold")
+        ch1_role_text(min(df$x), b1 * min(df$x), "b[0] == 0", "known",
+                      parse = TRUE, hjust = 0, vjust = -0.6) +
+        ch1_role_text(0.15, b0 / 2, paste0("b[0] == ", round(b0, 2)), "new",
+                      parse = TRUE, hjust = 0)
     }
-    if (step == 0) {
-      p <- p + annotate("text", x = mean(df$x), y = mean(df$y),
-                        label = "Klikaj kroki po lewej", color = upwr_reference, size = 5)
+
+    # Krok 4 przybliża trójkąt nachylenia; pozostałe kroki mają wspólną ramę.
+    if (step == 4) {
+      p + coord_cartesian(
+            xlim = c(slope_x0 - 1.1, slope_x1 + 1.45),
+            ylim = c(slope_y_mid - slope_y_pad, slope_y_mid + slope_y_pad)
+          ) +
+        theme(legend.position = "none")
+    } else {
+      p + frame
     }
-    p
   }))
 
+  # Opis kroku: statystyki z dotychczasowych kroków (dawniej kafelki).
+  output$ch1_corr_text <- renderUI({
+    df <- ch1_corr_data()
+    step <- ch1_corr_step()
+
+    x_bar <- mean(df$x)
+    y_bar <- mean(df$y)
+    sx <- sd(df$x)
+    sy <- sd(df$y)
+    r <- cor(df$x, df$y)
+    b1 <- r * sy / sx
+    b0 <- y_bar - b1 * x_bar
+
+    stat <- function(label, value) tagList(label, " = ", tags$b(value))
+    stats <- list(
+      if (step >= 1) stat("x̄", round(x_bar, 2)),
+      if (step >= 1) stat("ȳ", round(y_bar, 2)),
+      if (step >= 2) stat("sX", round(sx, 2)),
+      if (step >= 2) stat("sY", round(sy, 2)),
+      if (step >= 3) stat("r", round(r, 3))
+    )
+    stats <- Filter(Negate(is.null), stats)
+    parts <- list(stats[[1]])
+    for (s in stats[-1]) parts <- c(parts, list(", ", s))
+
+    tagList(
+      parts, ".",
+      if (step >= 5) tagList(" ", "To jest ta sama prosta, którą zwraca klasyczna regresja liniowa dla jednego predyktora. Korelacja ustala kierunek i siłę związku, a iloraz odchyleń standardowych przelicza ją na jednostki X i Y.")
+    )
+  })
+
+  # Wzory nachylenia i wyrazu wolnego pod opisem kroku (kroki 4–5).
   output$ch1_corr_info <- renderUI({
     df <- ch1_corr_data()
     step <- ch1_corr_step()
-    if (step == 0) return(NULL)
+    if (step < 4) return(NULL)
 
     x_bar <- mean(df$x)
     y_bar <- mean(df$y)
@@ -611,15 +617,7 @@ ch1_server <- function(input, output, session) {
     b0 <- y_bar - b1 * x_bar
 
     tagList(
-      lc_stat_grid(
-        if (step >= 1) lc_stat_box("x̄", round(x_bar, 2), color = unname(upwr_cat["bursztyn"])),
-        if (step >= 1) lc_stat_box("ȳ", round(y_bar, 2), color = unname(upwr_cat["bursztyn"])),
-        if (step >= 2) lc_stat_box("sX", round(sx, 2), color = upwr_secondary),
-        if (step >= 2) lc_stat_box("sY", round(sy, 2), color = upwr_secondary),
-        if (step >= 3) lc_stat_box("r", round(r, 3), color = unname(upwr_cat["szalwia"])),
-        columns = if (step >= 3) 5 else 4
-      ),
-      if (step >= 4) lc_formula_box(
+      lc_formula_box(
         withMathJax(helpText(sprintf("$$b_1 = r \\cdot \\frac{s_Y}{s_X} = %.3f \\cdot \\frac{%.2f}{%.2f} = %.3f$$",
                                      r, sy, sx, b1)))
       ),
@@ -633,9 +631,6 @@ ch1_server <- function(input, output, session) {
           style = "font-size: 1.35rem; font-weight: 700; text-align: center;",
           sprintf("$$\\hat{Y} = %.2f + %.3fX$$", b0, b1)
         ))
-      ),
-      if (step >= 5) lc_feedback(type = "info",
-        p("To jest ta sama prosta, którą zwraca klasyczna regresja liniowa dla jednego predyktora. Korelacja ustala kierunek i siłę związku, a iloraz odchyleń standardowych przelicza ją na jednostki X i Y.")
       )
     )
   })
@@ -829,19 +824,13 @@ ch1_server <- function(input, output, session) {
   })
 
   # --- Widget: OLS krok po kroku ---
+  # Krok widgetu (1..6) żyje w przeglądarce; nowa próba nie zmienia kroku.
   ch1_ols_data <- reactiveVal(generate_regression_data(n = 70, beta0 = 4, beta1 = 1.4, sigma = 4))
-  ch1_ols_step <- reactiveVal(0)
+  ch1_ols_step <- lc_step_server("ch1_ols", input)$step
 
   observeEvent(input$ch1_ols_new, {
     ch1_ols_data(generate_regression_data(n = 70, beta0 = 4, beta1 = 1.4, sigma = 4))
-    ch1_ols_step(0)
   })
-  observeEvent(input$ch1_ols_step1, ch1_ols_step(1))
-  observeEvent(input$ch1_ols_step2, ch1_ols_step(2))
-  observeEvent(input$ch1_ols_step3, ch1_ols_step(3))
-  observeEvent(input$ch1_ols_step4, ch1_ols_step(4))
-  observeEvent(input$ch1_ols_step5, ch1_ols_step(5))
-  observeEvent(input$ch1_ols_step6, ch1_ols_step(6))
 
   zoom_plot_server("ch1_ols_plot", reactive({
     df <- ch1_ols_data()
@@ -855,48 +844,45 @@ ch1_server <- function(input, output, session) {
     alt_b0 <- mean_y - alt_b1 * mean(df$x)
     df$alt_fitted <- alt_b0 + alt_b1 * df$x
 
+    # Stała rama z pełnych danych (z prostą z kroku 6).
+    pad <- function(v, m = 0.05) v + c(-1, 1) * diff(v) * m
+    frame <- step_frame(xlim = pad(range(df$x)),
+                        ylim = pad(range(c(df$y, df$fitted, df$alt_fitted))))
+
     p <- ggplot(df, aes(x = x, y = y)) +
-      geom_point(color = upwr_secondary, alpha = 0.55, size = 2) +
-      labs(x = "X", y = "Y") +
-      theme_upwr()
+      step_layer(geom_point, "data", size = 2) +
+      labs(x = "X", y = "Y")
 
     if (step >= 2) {
-      p <- p + geom_hline(yintercept = mean_y, linetype = "dashed",
-                          color = unname(upwr_cat["bursztyn"]), linewidth = 1)
+      p <- p + step_line(step_role(step, 2), yintercept = mean_y)
     }
     if (step >= 3) {
-      p <- p + geom_smooth(method = "lm", se = FALSE,
-                           color = unname(upwr_cat["niebo"]), linewidth = 1.2)
+      p <- p + step_layer(geom_smooth, step_role(step, 3), method = "lm",
+                          formula = y ~ x, se = FALSE, linewidth = 1.2)
     }
     if (step >= 4) {
-      p <- p + geom_segment(aes(xend = x, yend = fitted),
-                            color = unname(upwr_cat["terakota"]), alpha = 0.35)
+      p <- p + step_layer(geom_segment, step_role(step, 4),
+                          mapping = aes(xend = x, yend = fitted), alpha = 0.35)
     }
     if (step >= 6) {
       p <- p +
-        geom_abline(intercept = alt_b0, slope = alt_b1,
-                    color = unname(upwr_cat["bursztyn"]), linewidth = 1.1,
-                    linetype = "longdash") +
-        geom_segment(aes(xend = x, yend = alt_fitted),
-                     color = unname(upwr_cat["bursztyn"]), alpha = 0.22) +
+        step_layer(geom_abline, "new", intercept = alt_b0, slope = alt_b1,
+                   linewidth = 1.1, linetype = "longdash") +
+        step_layer(geom_segment, "new", mapping = aes(xend = x, yend = alt_fitted),
+                   alpha = 0.22) +
         annotate("text", x = min(df$x), y = max(df$y),
                  label = "inna prosta", hjust = 0, vjust = 1,
-                 color = unname(upwr_cat["bursztyn"]), fontface = "bold") +
+                 colour = STEP_ROLES$new$colour, fontface = "bold") +
         annotate("text", x = min(df$x), y = max(df$y) - 0.1 * diff(range(df$y)),
                  label = "OLS", hjust = 0, vjust = 1,
-                 color = unname(upwr_cat["niebo"]), fontface = "bold")
+                 colour = STEP_ROLES$known$colour, fontface = "bold")
     }
-    if (step == 0) {
-      p <- p + annotate("text", x = mean(df$x), y = mean(df$y),
-                        label = "Klikaj kroki po lewej", color = upwr_reference, size = 5)
-    }
-    p
+    p + frame
   }))
 
-  output$ch1_ols_info <- renderUI({
+  output$ch1_ols_text <- renderUI({
     df <- ch1_ols_data()
     step <- ch1_ols_step()
-    if (step == 0) return(NULL)
     model <- lm(y ~ x, data = df)
     coefs <- coef(model)
     sse <- sum(residuals(model)^2)
@@ -905,27 +891,19 @@ ch1_server <- function(input, output, session) {
     alt_sse <- sum((df$y - (alt_b0 + alt_b1 * df$x))^2)
     if (step == 6) {
       return(tagList(
-        lc_stat_grid(
-          lc_stat_box("SSE OLS", round(sse, 1), color = unname(upwr_cat["niebo"])),
-          lc_stat_box("SSE innej prostej", round(alt_sse, 1),
-                      caption = paste0("+", round((alt_sse / sse - 1) * 100, 1), "%"),
-                      color = unname(upwr_cat["bursztyn"])),
-          columns = 2
-        ),
-        lc_feedback(type = "warning",
-          p("Ta przerywana linia też jest prostym modelem regresyjnym: dla każdego X daje przewidywane Ŷ. Nie jest jednak linią OLS, bo ma większą sumę kwadratów reszt. OLS wygrywa nie dlatego, że jest jedyną prostą, tylko dlatego, że minimalizuje SSE.")
-        )
+        "SSE OLS = ", tags$b(round(sse, 1)), ", SSE innej prostej = ",
+        tags$b(round(alt_sse, 1)), " (+", round((alt_sse / sse - 1) * 100, 1), "%). ",
+        "Ta przerywana linia też jest prostym modelem regresyjnym: dla każdego X daje przewidywane Ŷ. Nie jest jednak linią OLS, bo ma większą sumę kwadratów reszt. OLS wygrywa nie dlatego, że jest jedyną prostą, tylko dlatego, że minimalizuje SSE."
       ))
     }
-    info <- switch(as.character(step),
+    switch(as.character(step),
       "1" = "Najpierw mamy tylko punkty: pary obserwacji X i Y.",
       "2" = "Pozioma linia to średnia Y. To najprostszy model bez predyktora.",
       "3" = "Linia regresji przechodzi tak, aby suma kwadratów pionowych błędów była możliwie mała.",
       "4" = "Każdy odcinek to reszta: obserwacja minus predykcja.",
-      "5" = paste0("Model: Ŷ = ", round(coefs[1], 2), " + ",
-                   round(coefs[2], 2), "X; SSE = ", round(sse, 1), ".")
+      "5" = tagList("Model: Ŷ = ", tags$b(round(coefs[1], 2)), " + ",
+                    tags$b(round(coefs[2], 2)), "X; SSE = ", tags$b(round(sse, 1)), ".")
     )
-    lc_feedback(type = "info", p(info))
   })
 
   # --- Widget: p-value dla nachylenia ---

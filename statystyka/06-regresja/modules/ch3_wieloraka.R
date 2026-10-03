@@ -120,22 +120,18 @@ ch3_ui <- list(
         się angielskiego jako drugiego języka.")
     ),
 
+    p("Porównujemy modele proste i model wieloraki na tych samych
+      420 okręgach szkolnych."),
+
     figure_panel(
-      label = "Ryc. 3.2", title = "Efekt pozorny i kontrola zmiennych",
+      label = "Ryc. 3.2",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Porównujemy modele proste i model wieloraki na tych samych
-                    420 okręgach szkolnych."),
-          h5("Kroki:"),
-          lc_action("ch3_control_step1", "1. Czytanie ~ dochód", variant = "outline"),
-          lc_action("ch3_control_step2", "2. Czytanie ~ lunch", variant = "outline"),
-          lc_action("ch3_control_step3", "3. Model z kontrolą", variant = "outline")
-        ),
-        column(8,
-          lc_plot_fullscreen("ch3_control_plot", height = "320px"),
-          uiOutput("ch3_control_info")
-        )
+      lc_step_widget("ch3_control",
+        title = "Efekt pozorny i kontrola zmiennych",
+        steps = c("Czytanie ~ dochód", "Czytanie ~ lunch", "Model z kontrolą"),
+        plot_id = "ch3_control_plot",
+        ratio = "2/1",
+        extra = uiOutput("ch3_control_table")
       )
     ),
 
@@ -490,27 +486,25 @@ ch3_server <- function(input, output, session) {
   })
 
   # --- Widget: kontrola zmiennych na CASchools ---
-  ch3_control_step <- reactiveVal(1)
+  # Krok widgetu (1..3) żyje w przeglądarce.
+  ch3_control_step <- lc_step_server("ch3_control", input)$step
 
-  observeEvent(input$ch3_control_step1, ch3_control_step(1))
-  observeEvent(input$ch3_control_step2, ch3_control_step(2))
-  observeEvent(input$ch3_control_step3, ch3_control_step(3))
-
-  output$ch3_control_plot <- renderPlot({
+  zoom_plot_server("ch3_control_plot", reactive({
     df <- .cas_data
     step <- ch3_control_step()
+    pad <- function(v, m = 0.05) v + c(-1, 1) * diff(v) * m
     if (step == 1) {
       ggplot(df, aes(x = income, y = read)) +
-        geom_point(color = upwr_secondary, alpha = 0.5) +
-        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"])) +
+        step_layer(geom_point, "data") +
+        step_layer(geom_smooth, "new", method = "lm", formula = y ~ x, se = FALSE) +
         labs(x = "Dochód okręgu (tys. USD)", y = "Wynik: czytanie") +
-        theme_upwr()
+        step_frame(xlim = pad(range(df$income)), ylim = pad(range(df$read)))
     } else if (step == 2) {
       ggplot(df, aes(x = lunch, y = read)) +
-        geom_point(color = upwr_secondary, alpha = 0.5) +
-        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["szalwia"])) +
+        step_layer(geom_point, "data") +
+        step_layer(geom_smooth, "new", method = "lm", formula = y ~ x, se = FALSE) +
         labs(x = "Dotacje do obiadów (%)", y = "Wynik: czytanie") +
-        theme_upwr()
+        step_frame(xlim = pad(range(df$lunch)), ylim = pad(range(df$read)))
     } else {
       model <- lm(read ~ income + lunch + english, data = df)
       coefs <- broom::tidy(model)
@@ -521,61 +515,64 @@ ch3_server <- function(input, output, session) {
         english = "Angielski jako drugi język"
       )
       coefs$term <- labels[coefs$term]
+      coefs$lower <- coefs$estimate - 1.96 * coefs$std.error
+      coefs$upper <- coefs$estimate + 1.96 * coefs$std.error
       ggplot(coefs, aes(x = estimate, y = term)) +
-        geom_vline(xintercept = 0, linetype = "dashed", color = upwr_secondary) +
-        geom_point(color = unname(upwr_cat["wrzos"]), size = 3) +
-        geom_errorbarh(aes(xmin = estimate - 1.96 * std.error,
-                           xmax = estimate + 1.96 * std.error),
-                       height = 0.2, color = unname(upwr_cat["wrzos"])) +
+        step_line("known", xintercept = 0) +
+        step_layer(geom_point, "new", size = 3) +
+        step_layer(geom_errorbar, "new", mapping = aes(xmin = lower, xmax = upper),
+                   width = 0.2, orientation = "y") +
         labs(x = "β w modelu wielorakim", y = NULL) +
-        theme_upwr()
+        step_frame(xlim = pad(range(c(0, coefs$lower, coefs$upper))),
+                   ylim = c(0.5, nrow(coefs) + 0.5))
     }
-  }, alt = "Wykres pokazujący zależności proste i współczynniki po kontroli pozostałych zmiennych.")
+  }), alt = "Wykres pokazujący zależności proste i współczynniki po kontroli pozostałych zmiennych.")
 
-  output$ch3_control_info <- renderUI({
+  output$ch3_control_text <- renderUI({
     df <- .cas_data
     step <- ch3_control_step()
-    m_income <- lm(read ~ income, data = df)
-    m_lunch <- lm(read ~ lunch, data = df)
-    m_both <- lm(read ~ income + lunch + english, data = df)
-    ti <- broom::tidy(m_income)
-    tl <- broom::tidy(m_lunch)
-    tb <- broom::tidy(m_both)
     if (step == 1) {
+      ti <- broom::tidy(lm(read ~ income, data = df))
       tagList(
-        lc_stat_box("β dochód", round(ti$estimate[2], 3), color = unname(upwr_cat["niebo"])),
-        lc_stat_box("p", format_p_value(ti$p.value[2]), color = upwr_secondary),
-        lc_feedback(type = "info",
-          p("W modelu prostym bogatsze okręgi mają wyższe wyniki czytania.
-            Ale dochód niesie też informację o składzie społecznym okręgu,
-            więc nie traktujemy tego jeszcze jako czystego efektu dochodu."))
+        "β dochód = ", tags$b(round(ti$estimate[2], 3)), ", p = ",
+        tags$b(HTML(lc_pval(ti$p.value[2]))), ". ",
+        "W modelu prostym bogatsze okręgi mają wyższe wyniki czytania.
+         Ale dochód niesie też informację o składzie społecznym okręgu,
+         więc nie traktujemy tego jeszcze jako czystego efektu dochodu."
       )
     } else if (step == 2) {
+      tl <- broom::tidy(lm(read ~ lunch, data = df))
       tagList(
-        lc_stat_box("β lunch", round(tl$estimate[2], 3), color = unname(upwr_cat["szalwia"])),
-        lc_stat_box("p", format_p_value(tl$p.value[2]), color = upwr_secondary),
-        lc_feedback(type = "info",
-          p("Odsetek uczniów z dotacją do obiadu jest silnie ujemnie
-            powiązany z wynikiem czytania. W kolejnym kroku sprawdzimy,
-            co zostaje po kontroli dochodu i odsetka uczniów uczących się
-            angielskiego."))
+        "β lunch = ", tags$b(round(tl$estimate[2], 3)), ", p = ",
+        tags$b(HTML(lc_pval(tl$p.value[2]))), ". ",
+        "Odsetek uczniów z dotacją do obiadu jest silnie ujemnie
+         powiązany z wynikiem czytania. W kolejnym kroku sprawdzimy,
+         co zostaje po kontroli dochodu i odsetka uczniów uczących się
+         angielskiego."
       )
     } else {
-      rows <- lapply(2:nrow(tb), function(i) {
-        tags$tr(tags$td(tb$term[i]), tags$td(round(tb$estimate[i], 4)),
-                tags$td(round(tb$std.error[i], 4)), tags$td(format_p_value(tb$p.value[i])))
-      })
-      tagList(
-        tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-          tags$thead(tags$tr(tags$th("Zmienna"), tags$th("β"), tags$th("SE"), tags$th("p"))),
-          tags$tbody(rows)
-        ),
-        lc_feedback(type = "warning",
-          p("Współczynnik oznacza efekt danej zmiennej po odjęciu informacji
-            wspólnej z pozostałymi predyktorami. To nadal nie jest dowód
-            przyczynowy, tylko lepszy opis zależności w danych obserwacyjnych."))
-      )
+      "Współczynnik oznacza efekt danej zmiennej po odjęciu informacji
+       wspólnej z pozostałymi predyktorami. To nadal nie jest dowód
+       przyczynowy, tylko lepszy opis zależności w danych obserwacyjnych."
     }
+  })
+
+  # Tabela współczynników modelu z kontrolą (krok 3).
+  output$ch3_control_table <- renderUI({
+    if (ch3_control_step() < 3) return(NULL)
+    tb <- broom::tidy(lm(read ~ income + lunch + english, data = .cas_data))[-1, ]
+    out <- data.frame(
+      term = tb$term,
+      estimate = tb$estimate,
+      se = tb$std.error,
+      p = lc_pval(tb$p.value)
+    )
+    lc_table(out, cols = list(
+      lc_col("term", "Zmienna", "row"),
+      lc_col("estimate", "β", digits = 4),
+      lc_col("se", "SE", digits = 4),
+      lc_col("p", "p")
+    ))
   })
 
   # Widget "Efekt dodawania zmiennych" został przeniesiony do ch4
