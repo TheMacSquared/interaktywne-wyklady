@@ -1449,10 +1449,11 @@ lc_table_preview <- function(df, n = 20, split = 2, cols = NULL, total = nrow(df
 # input_id: komórki stają się przyciskami; kliknięcie ustawia input$<id>
 # na c(i, j). short_labels: krótkie etykiety kolumn na wąskim kontenerze.
 # cell_tags: macierz etykiet znaczeniowych komórek (np. „trafienie”).
+# col_colours: kolory kategorii kolumn (próbka w nagłówku zamiast legendy wykresu).
 lc_crosstab <- function(tab, measure = c("n", "row", "col"), target = NULL,
                         row_name = "", col_name = "", short_labels = NULL,
                         cell_tags = NULL, input_id = NULL, digits = 1,
-                        lead = TRUE, label = "Tabela krzyżowa") {
+                        lead = TRUE, label = "Tabela krzyżowa", col_colours = NULL) {
   measure <- match.arg(measure)
   tab <- as.matrix(tab)
   storage.mode(tab) <- "double"
@@ -1481,8 +1482,12 @@ lc_crosstab <- function(tab, measure = c("n", "row", "col"), target = NULL,
   is_base_col <- function(j) measure == "col" && !is.null(target) && target[2] == j
   has_short <- !is.null(short_labels) && any(short_labels != cols)
   col_label <- function(j) {
-    if (!has_short) return(cols[j])
-    tagList(tags$span(class = "lc-l-full", cols[j]),
+    swatch <- if (!is.null(col_colours)) {
+      tags$i(class = "lc-th-swatch", `aria-hidden` = "true",
+             style = paste0("--lc-sw:", col_colours[[j]], ";"))
+    }
+    if (!has_short) return(tagList(swatch, cols[j]))
+    tagList(swatch, tags$span(class = "lc-l-full", cols[j]),
             tags$span(class = "lc-l-short", `aria-hidden` = "true", short_labels[j]))
   }
   cell <- function(i, j) {
@@ -1650,8 +1655,9 @@ em_ <- function(...) tags$em(..., .noWS = "outside")
 # kroku i nawigacja. Kroki od 1. Serwer czyta input$<id>_step (lc_step_server),
 # opis kroku renderuje output$<id>_text jako tekst inline. Logika: R/lc_widgets.js.
 # Widget bez wykresu (np. tabela budowana krok po kroku): body zamiast plot_id.
+# above: treść między paskiem kroków a wykresem (np. tabela i odczyty w rzędzie).
 lc_step_widget <- function(id, steps, plot_id = NULL, toolbar = NULL, title = NULL,
-                           extra = NULL, ratio = "2.5/1", body = NULL) {
+                           extra = NULL, ratio = "2.5/1", body = NULL, above = NULL) {
   n <- length(steps)
   stopifnot(n >= 2, !is.null(plot_id) || !is.null(body))
   tags$div(
@@ -1669,6 +1675,7 @@ lc_step_widget <- function(id, steps, plot_id = NULL, toolbar = NULL, title = NU
                     tags$b(i), tags$span(steps[[i]]))
       ))
     ),
+    if (!is.null(above)) tags$div(class = "lc-step-above", above),
     if (!is.null(plot_id)) {
       tags$div(class = "lc-plot lc-step-plot",
         style = sprintf("--lc-plot-ratio:%s;", ratio),

@@ -193,12 +193,11 @@ ch5_ui <- list(
             selected = "packaging"
           ),
           lc_slider("ch5_n", "Wielkość próby (n)", 50, 300, 120, 10),
-          lc_action("ch5_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
-          # Kolory kategorii zmiennej w kolumnach zamiast legendy wykresu.
-          lc_readouts(uiOutput("ch5_test_legend"))
+          lc_action("ch5_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid")
         ),
-        plot_id = "ch5_step_plot",
-        extra = uiOutput("ch5_test_table")
+        # Tabela kroku nad wykresem; kolory kategorii w nagłówkach zastępują legendę.
+        above = uiOutput("ch5_test_table"),
+        plot_id = "ch5_step_plot"
       )
     ),
 
@@ -564,18 +563,6 @@ ch5_server <- function(input, output, session) {
       unname(upwr_cat["szalwia"]))[seq_len(n_cat)]
   }
 
-  # Odczyty z kolorem kategorii zastępują legendę wykresu słupkowego.
-  output$ch5_test_legend <- renderUI({
-    tab <- ch5_tab()
-    if (is.null(tab) || ch5_step() > 2) return(NULL)
-    par <- scenario_params[[input$ch5_scenario]]
-    cols <- ch5_cat_colours(ncol(tab))
-    lapply(seq_len(ncol(tab)), function(j) {
-      lc_readout(paste0(par$lab2, ": ", colnames(tab)[j]), lc_fmt(sum(tab[, j])),
-                 color = cols[j], swatch = TRUE)
-    })
-  })
-
   # --- Krokowy wykres ---
   zoom_plot_server("ch5_step_plot", reactive({
     tab <- ch5_tab()
@@ -660,10 +647,11 @@ ch5_server <- function(input, output, session) {
     tab <- as.matrix(unclass(tab))
     switch(as.character(step),
       "1" = lc_crosstab(tab, measure = "n", row_name = par$lab1,
-                        col_name = par$lab2,
+                        col_name = par$lab2, col_colours = ch5_cat_colours(ncol(tab)),
                         label = paste0("Tabela krzyżowa: ", par$lab1, " × ", par$lab2)),
       "2" = lc_crosstab(tab, measure = "row", row_name = par$lab1,
-                        col_name = par$lab2, label = "Procenty w każdej grupie (wierszu)"),
+                        col_name = par$lab2, col_colours = ch5_cat_colours(ncol(tab)),
+                        label = "Procenty w każdej grupie (wierszu)"),
       "3" = {
         expected <- chisq.test(tab)$expected
         keys <- paste0("c", seq_len(ncol(expected)))

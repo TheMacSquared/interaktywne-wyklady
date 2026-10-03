@@ -2135,6 +2135,7 @@ mjx-container mjx-text {
 .lc-tbl th:last-child,.lc-tbl td:last-child{padding-right:0!important}
 .lc-tbl .lc-tbl-span{text-align:left;font:500 .7em var(--upwr-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--upwr-ink-subtle);border-bottom:1px solid var(--upwr-rule);padding-bottom:.35em}
 .lc-tbl .lc-tbl-corner{font-weight:700;color:var(--upwr-ink)}
+.lc-th-swatch{display:inline-block;width:.8em;height:.8em;border-radius:2px;background:var(--lc-sw);margin-right:.35em;vertical-align:-.05em}
 
 /* Sumy: wiersz w tfoot, kolumna .is-total */
 .lc-tbl tfoot th,.lc-tbl tfoot td{border-top:1.5px solid var(--upwr-ink);border-bottom:0;font-weight:700}
@@ -2369,6 +2370,11 @@ mjx-container mjx-text {
 /* Wykres: ta sama proporcja we wszystkich krokach */
 .lc-step-plot{--lc-plot-ratio:2.5/1}
 .lc-step-body{margin:.4em 0 .2em}
+/* Treść nad wykresem: np. tabela kroku po lewej, odczyty (legenda) po prawej */
+.lc-step-above{display:flex;flex-wrap:wrap;align-items:flex-start;gap:1em 2.4em;margin:.5em 0 .9em}
+.lc-step-above>*{min-width:0}
+.lc-step-above>.shiny-html-output:first-child{flex:1 1 22em}
+.lc-step-above>.lc-reads{flex:0 1 auto;flex-direction:column;margin-left:auto}
 
 /* Stopka: opis kroku + nawigacja */
 .lc-stepper-foot{display:flex;flex-wrap:wrap;align-items:center;gap:.9em 1.5em;border-top:1px solid var(--upwr-rule-soft);padding-top:.9em;margin-top:.4em}
