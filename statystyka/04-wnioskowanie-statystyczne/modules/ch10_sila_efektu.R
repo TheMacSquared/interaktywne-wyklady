@@ -135,7 +135,11 @@ ch10_ui <- list(
       data.frame(
         c1 = c("mały", "średni", "duży"),
         c2 = c("0.2", "0.5", "0.8"),
-        c3 = c("pH jogurtu 4.50 i 4.56 przy SD 0.30", "wilgotność suszu 20.0% i 22.5% przy SD 5", "czas inaktywacji enzymów 8 i 10 min przy SD 2.5")
+        c3 = c(
+          "pH jogurtu 4.50 i 4.56 przy SD 0.30",
+          "wilgotność suszu 20.0% i 22.5% przy SD 5",
+          "czas inaktywacji enzymów 8 i 10 min przy SD 2.5"
+        )
       ),
       cols = list(
         lc_col("c1", "Wielkość efektu", "row"),
@@ -208,7 +212,11 @@ ch10_ui <- list(
       data.frame(
         c1 = c("mała", "średnia", "duża"),
         c2 = c("0.1", "0.3", "0.5"),
-        c3 = c("1% zmienności wyjaśnione", "9% zmienności wyjaśnione", "25% zmienności wyjaśnione")
+        c3 = c(
+          "1% zmienności wyjaśnione",
+          "9% zmienności wyjaśnione",
+          "25% zmienności wyjaśnione"
+        )
       ),
       cols = list(
         lc_col("c1", "Wielkość efektu", "row"),
@@ -357,7 +365,11 @@ ch10_ui <- list(
       data.frame(
         c1 = c("mały", "średni", "duży"),
         c2 = c("0.01", "0.06", "0.14"),
-        c3 = c("czynnik tłumaczy około 1% zmienności", "czynnik tłumaczy około 6% zmienności", "czynnik tłumaczy co najmniej 14% zmienności")
+        c3 = c(
+          "czynnik tłumaczy około 1% zmienności",
+          "czynnik tłumaczy około 6% zmienności",
+          "czynnik tłumaczy co najmniej 14% zmienności"
+        )
       ),
       cols = list(
         lc_col("c1", "Wielkość efektu", "row"),

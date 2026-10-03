@@ -193,8 +193,16 @@ ch2h_ui <- list(
           withMathJax("\\(\\mu_1 > \\mu_2\\)"),
           withMathJax("\\(\\mu_1 < \\mu_2\\)")
         )),
-        c3 = c("„Czy grupy się różnią?”", "„Czy lek działa lepiej niż placebo?”", "„Czy nowa metoda skraca czas pracy?”"),
-        c4 = c("Gdy pytanie nie przesądza kierunku — wybór domyślny", "Gdy pytanie dotyczy tylko wzrostu, a kierunek ustalono przed zebraniem danych", "Gdy pytanie dotyczy tylko spadku, a kierunek ustalono przed zebraniem danych")
+        c3 = c(
+          "„Czy grupy się różnią?”",
+          "„Czy lek działa lepiej niż placebo?”",
+          "„Czy nowa metoda skraca czas pracy?”"
+        ),
+        c4 = c(
+          "Gdy pytanie nie przesądza kierunku — wybór domyślny",
+          "Gdy pytanie dotyczy tylko wzrostu, a kierunek ustalono przed zebraniem danych",
+          "Gdy pytanie dotyczy tylko spadku, a kierunek ustalono przed zebraniem danych"
+        )
       ),
       cols = list(
         lc_col("c1", "Typ", "row"),

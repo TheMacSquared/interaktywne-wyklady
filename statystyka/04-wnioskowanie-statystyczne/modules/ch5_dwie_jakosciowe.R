@@ -271,8 +271,18 @@ ch5_ui <- list(
     lc_table(
       data.frame(
         c1 = c("Metoda", "Warunek", "Duże n", "Małe n"),
-        c2 = c("Przybliżony (rozkład χ²)", "Liczebności oczekiwane niezbyt małe (orientacyjnie ≥ 5)", "Szybki, praktycznie identyczny wynik", "Może być niedokładny"),
-        c3 = c("Dokładny (kombinatoryka)", "Działa zawsze", "Działa, ale wolniejszy", "Bezpieczny wybór")
+        c2 = c(
+          "Przybliżony (rozkład χ²)",
+          "Liczebności oczekiwane niezbyt małe (orientacyjnie ≥ 5)",
+          "Szybki, praktycznie identyczny wynik",
+          "Może być niedokładny"
+        ),
+        c3 = c(
+          "Dokładny (kombinatoryka)",
+          "Działa zawsze",
+          "Działa, ale wolniejszy",
+          "Bezpieczny wybór"
+        )
       ),
       cols = list(
         lc_col("c1", "", "row"),

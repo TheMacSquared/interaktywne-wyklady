@@ -33,43 +33,40 @@ ch5_ui <- lecture_chapter(
     # ========================================================================
     lc_h2("ch5-testy", "Testy diagnostyczne — szybka referencja"),
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 13px;",
-      tags$thead(
-        tags$tr(tags$th("Założenie"), tags$th("Test"), tags$th("H₀ (w populacji)"))
-      ),
-      tags$tbody(
-        tags$tr(
-          tags$td("Normalność"),
-          tags$td("Shapiro-Wilk"),
-          tags$td("Rozkład jest normalny")
+    lc_table(
+      data.frame(
+        c1 = c(
+          "Normalność",
+          "Równe wariancje",
+          "Równe wariancje",
+          "Stała wariancja reszt",
+          "Niezależność reszt",
+          "Współliniowość"
         ),
-        tags$tr(
-          tags$td("Równe wariancje"),
-          tags$td("Levene"),
-          tags$td("Wariancje w grupach są równe")
+        c2 = c(
+          "Shapiro-Wilk",
+          "Levene",
+          "Bartlett",
+          "Breusch-Pagan",
+          "Durbin-Watson",
+          "VIF (wskaźnik, nie test)"
         ),
-        tags$tr(
-          tags$td("Równe wariancje"),
-          tags$td("Bartlett"),
-          tags$td("Wariancje w grupach są równe")
-        ),
-        tags$tr(
-          tags$td("Stała wariancja reszt"),
-          tags$td("Breusch-Pagan"),
-          tags$td("Wariancja reszt stała")
-        ),
-        tags$tr(
-          tags$td("Niezależność reszt"),
-          tags$td("Durbin-Watson"),
-          tags$td("Brak autokorelacji")
-        ),
-        tags$tr(
-          tags$td("Współliniowość"),
-          tags$td("VIF (wskaźnik, nie test)"),
-          tags$td("— im większy VIF, tym silniejsza współliniowość")
+        c3 = c(
+          "Rozkład jest normalny",
+          "Wariancje w grupach są równe",
+          "Wariancje w grupach są równe",
+          "Wariancja reszt stała",
+          "Brak autokorelacji",
+          "— im większy VIF, tym silniejsza współliniowość"
         )
-      )
+      ),
+      cols = list(
+        lc_col("c1", "Założenie", "row"),
+        lc_col("c2", "Test", "text"),
+        lc_col("c3", "H₀ (w populacji)", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_p("Brak podstaw do odrzucenia H₀ w teście diagnostycznym nie potwierdza
@@ -79,22 +76,36 @@ ch5_ui <- lecture_chapter(
     # ========================================================================
     lc_h2("ch5-alternatywy", "Metoda → alternatywa"),
 
-    tags$table(class = "lc-table lc-table-bordered",
-      style = "font-size: 13px;",
-      tags$thead(
-        tags$tr(tags$th("Metoda"), tags$th("→ Alternatywa"))
+    lc_table(
+      data.frame(
+        c1 = c(
+          "Test t jednej próby",
+          "Test t Studenta",
+          "Test t dla prób niezależnych",
+          "Test t dla par",
+          "ANOVA klasyczna",
+          "ANOVA",
+          "Pearson",
+          "χ² (małe n)",
+          "Regresja OLS"
+        ),
+        c2 = c(
+          "Wilcoxon jednej próby — wymaga symetrii",
+          "Test t Welcha — nierówne wariancje (wybór domyślny)",
+          "Mann–Whitney: porównanie rang, nie średnich",
+          "Wilcoxon dla par — wymaga symetrii różnic",
+          "ANOVA Welcha + post hoc Games-Howella — nierówne wariancje",
+          "Kruskal-Wallis + post hoc Dunna — porównanie rang, nie średnich",
+          "Spearman",
+          "Fisher (dokładny)",
+          "Odporne SE / bootstrap / GLM"
+        )
       ),
-      tags$tbody(
-        tags$tr(tags$td("Test t jednej próby"), tags$td("Wilcoxon jednej próby — wymaga symetrii")),
-        tags$tr(tags$td("Test t Studenta"), tags$td("Test t Welcha — nierówne wariancje (wybór domyślny)")),
-        tags$tr(tags$td("Test t dla prób niezależnych"), tags$td("Mann–Whitney: porównanie rang, nie średnich")),
-        tags$tr(tags$td("Test t dla par"), tags$td("Wilcoxon dla par — wymaga symetrii różnic")),
-        tags$tr(tags$td("ANOVA klasyczna"), tags$td("ANOVA Welcha + post hoc Games-Howella — nierówne wariancje")),
-        tags$tr(tags$td("ANOVA"), tags$td("Kruskal-Wallis + post hoc Dunna — porównanie rang, nie średnich")),
-        tags$tr(tags$td("Pearson"), tags$td("Spearman")),
-        tags$tr(tags$td("χ² (małe n)"), tags$td("Fisher (dokładny)")),
-        tags$tr(tags$td("Regresja OLS"), tags$td("Odporne SE / bootstrap / GLM"))
-      )
+      cols = list(
+        lc_col("c1", "Metoda", "row"),
+        lc_col("c2", "→ Alternatywa", "text")
+      ),
+      prose = TRUE
     ),
 
     # ========================================================================

@@ -118,9 +118,8 @@ ch1_ui <- lecture_chapter(
     figure_panel(
       label = "Ryc. 1.1",
       title = "Histogram + Q-Q plot",
-      fluidRow(
-        column(4,
-          selectInput("ch1_dist", "Rozkład danych:",
+      lc_toolbar(
+        selectInput("ch1_dist", "Rozkład danych",
             choices = c(
               "Normalny" = "normal",
               "Prawoskośny" = "skewed",
@@ -130,13 +129,10 @@ ch1_ui <- lecture_chapter(
             ),
             selected = "normal"
           ),
-          lc_slider("ch1_n", "Wielkość próby (n)", 10, 200, 50, 10),
-          lc_action("ch1_gen", "Generuj dane", variant = "solid")
-        ),
-        column(8,
-          zoom_plot_ui("ch1_normality_plots", height = "350px")
-        )
-      )
+        lc_slider("ch1_n", "Wielkość próby (n)", 10, 200, 50, 10),
+        lc_action("ch1_gen", "Generuj dane", variant = "solid")
+      ),
+      lc_plot("ch1_normality_plots", max_height = "350px")
     ),
 
     lc_p("Nawet dane wylosowane z rozkładu normalnego nie leżą idealnie na prostej.
@@ -165,15 +161,11 @@ ch1_ui <- lecture_chapter(
     figure_panel(
       label = "Ryc. 1.2",
       title = "Shapiro–Wilk — wynik obok Q-Q plotu",
-      fluidRow(
-        column(4,
-          helpText("Używa danych z widgetu powyżej."),
-          lc_action("ch1_test_norm", "Policz test Shapiro–Wilka", variant = "solid")
-        ),
-        column(8,
-          uiOutput("ch1_norm_results")
-        )
-      )
+      lc_toolbar(
+        lc_action("ch1_test_norm", "Policz test Shapiro–Wilka", variant = "solid")
+      ),
+      uiOutput("ch1_norm_results"),
+      lc_caption("Używa danych z widgetu powyżej.")
     ),
 
     lc_p("Wynik pojedynczego losowania niewiele mówi o samym teście, więc
@@ -229,16 +221,12 @@ ch1_ui <- lecture_chapter(
     figure_panel(
       label = "Ryc. 1.3",
       title = "Efekt transformacji logarytmicznej",
-      fluidRow(
-        column(4,
-          helpText("Generujemy dane prawoskośne i je logarytmujemy."),
-          lc_slider("ch1_trans_n", "n", 30, 200, 80, 10),
-          lc_action("ch1_transform", "Generuj i transformuj", variant = "solid")
-        ),
-        column(8,
-          zoom_plot_ui("ch1_transform_plots", height = "300px")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch1_trans_n", "n", 30, 200, 80, 10),
+        lc_action("ch1_transform", "Generuj i transformuj", variant = "solid")
+      ),
+      lc_plot("ch1_transform_plots", max_height = "300px"),
+      lc_caption("Generujemy dane prawoskośne i je logarytmujemy.")
     ),
 
     lc_p("Na lewym wykresie widać łuk typowy dla prawoskośności. Po logarytmowaniu
@@ -329,23 +317,20 @@ ch1_server <- function(input, output, session) {
   output$ch1_norm_results <- renderUI({
     req(input$ch1_test_norm)
     x <- isolate(ch1_data())
-    if (is.null(x)) return(lc_caption(
-                             "Najpierw wygeneruj dane."
-                           ))
+    if (is.null(x)) return(lc_caption("Najpierw wygeneruj dane."))
 
     sw <- shapiro_test(data.frame(value = x), value)
-    sw_color <- if (sw$p >= 0.05) col_ok else col_fail
     w_txt <- formatC(sw$statistic, format = "f", digits = 3)
 
     lc_status(
       p(tags$strong("Shapiro–Wilk:"), " W = ", w_txt,
         ", p = ", format_p_value(sw$p)),
-      p(style = paste0("color:", sw_color, ";"),
+      p(lc_verdict(
         if (sw$p >= 0.05) {
           "Test nie wykrył odstępstwa. To nie dowodzi, że rozkład jest normalny."
         } else {
           "Test wykrył odstępstwo. Jego rodzaj i wagę oceń na wykresie Q-Q."
-        })
+        }, type = if (sw$p >= 0.05) "ok" else "danger"))
     )
   })
 

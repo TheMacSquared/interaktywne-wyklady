@@ -74,60 +74,61 @@ ch4_ui <- lecture_chapter(
       w porządku przy równych licznościach grup albo wtedy, gdy równe wariancje
       wynikają z wiedzy o badanym zjawisku, a nie z braku istotności testu."),
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 13px;",
-      tags$thead(
-        tags$tr(tags$th("Metoda"), tags$th("Założenia"), tags$th("Jak sprawdzić"),
-                tags$th("Gdy naruszone → alternatywa"))
-      ),
-      tags$tbody(
-        tags$tr(
-          tags$td(tags$strong("Test t jednej próby")),
-          tags$td("Niezależne obserwacje; średnia z próby w przybliżeniu normalna:
-                   dane bez silnej skośności i wartości odstających albo odpowiednio
-                   duża próba"),
-          tags$td("Wykres Q-Q; pomocniczo Shapiro-Wilk"),
-          tags$td("Wilcoxon jednej próby, gdy rozkład jest symetryczny; przy silnej
-                   skośności najpierw wróć do pytania: czy interesuje cię średnia,
-                   czy typowa wartość")
+    lc_table(
+      data.frame(
+        c1 = c(
+          "Test t jednej próby",
+          "Test t dla prób niezależnych",
+          "Test t dla par",
+          "ANOVA jednoczynnikowa",
+          "Korelacja Pearsona"
         ),
-        tags$tr(
-          tags$td(tags$strong("Test t dla prób niezależnych")),
-          tags$td("Niezależne obserwacje i grupy; średnie w obu grupach
-                   w przybliżeniu normalne. Równe wariancje tylko w wersji Studenta"),
-          tags$td("Wykresy Q-Q w grupach; porównanie odchyleń standardowych
-                   w grupach (opisowo, nie jako podstawa wyboru testu)"),
-          tags$td("Welch jako wybór domyślny; Mann–Whitney, gdy pytanie dotyczy tego, czy wartości
-                   w jednej grupie bywają większe, a nie średnich. Mann–Whitney
-                   nie rozwiązuje problemu nierównych wariancji")
+        c2 = c(
+          "Niezależne obserwacje; średnia z próby w przybliżeniu normalna:
+           dane bez silnej skośności i wartości odstających albo odpowiednio
+           duża próba",
+          "Niezależne obserwacje i grupy; średnie w obu grupach
+           w przybliżeniu normalne. Równe wariancje tylko w wersji Studenta",
+          "Niezależne pary; średnia różnic w przybliżeniu normalna
+           (dotyczy rozkładu różnic, nie obu pomiarów osobno)",
+          "Niezależne obserwacje; reszty (odchylenia od średniej grupy)
+           w przybliżeniu normalne; w wersji klasycznej równe wariancje",
+          "Niezależne pary; związek liniowy; brak silnych wartości
+           odstających; dla testu i przedziału ufności rozkład obu
+           zmiennych łącznie zbliżony do normalnego"
         ),
-        tags$tr(
-          tags$td(tags$strong("Test t dla par")),
-          tags$td("Niezależne pary; średnia różnic w przybliżeniu normalna
-                   (dotyczy rozkładu różnic, nie obu pomiarów osobno)"),
-          tags$td("Wykres Q-Q różnic; pomocniczo Shapiro-Wilk na różnicach"),
-          tags$td("Wilcoxon dla par, gdy rozkład różnic jest symetryczny")
+        c3 = c(
+          "Wykres Q-Q; pomocniczo Shapiro-Wilk",
+          "Wykresy Q-Q w grupach; porównanie odchyleń standardowych
+           w grupach (opisowo, nie jako podstawa wyboru testu)",
+          "Wykres Q-Q różnic; pomocniczo Shapiro-Wilk na różnicach",
+          "Wykres Q-Q reszt; porównanie odchyleń standardowych w grupach
+           (opisowo, nie jako podstawa wyboru testu)",
+          "Wykres rozrzutu (najpierw); pomocniczo wykresy Q-Q obu zmiennych"
         ),
-        tags$tr(
-          tags$td(tags$strong("ANOVA jednoczynnikowa")),
-          tags$td("Niezależne obserwacje; reszty (odchylenia od średniej grupy)
-                   w przybliżeniu normalne; w wersji klasycznej równe wariancje"),
-          tags$td("Wykres Q-Q reszt; porównanie odchyleń standardowych w grupach
-                   (opisowo, nie jako podstawa wyboru testu)"),
-          tags$td("ANOVA Welcha jako wybór domyślny, z post hoc Games-Howella; Kruskal-Wallis z testem Dunna przy silnej
-                   skośności w małych grupach lub danych porządkowych")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Korelacja Pearsona")),
-          tags$td("Niezależne pary; związek liniowy; brak silnych wartości
-                   odstających; dla testu i przedziału ufności rozkład obu
-                   zmiennych łącznie zbliżony do normalnego"),
-          tags$td("Wykres rozrzutu (najpierw); pomocniczo wykresy Q-Q obu zmiennych"),
-          tags$td("Spearman przy związku monotonicznym, wartościach odstających
-                   lub danych porządkowych; tau Kendalla przy małych próbach
-                   i wielu remisach")
+        c4 = c(
+          "Wilcoxon jednej próby, gdy rozkład jest symetryczny; przy silnej
+           skośności najpierw wróć do pytania: czy interesuje cię średnia,
+           czy typowa wartość",
+          "Welch jako wybór domyślny; Mann–Whitney, gdy pytanie dotyczy tego, czy wartości
+           w jednej grupie bywają większe, a nie średnich. Mann–Whitney
+           nie rozwiązuje problemu nierównych wariancji",
+          "Wilcoxon dla par, gdy rozkład różnic jest symetryczny",
+          "ANOVA Welcha jako wybór domyślny, z post hoc Games-Howella; Kruskal-Wallis z testem Dunna przy silnej
+           skośności w małych grupach lub danych porządkowych",
+          "Spearman przy związku monotonicznym, wartościach odstających
+           lub danych porządkowych; tau Kendalla przy małych próbach
+           i wielu remisach"
         )
-      )
+      ),
+      cols = list(
+        lc_col("c1", "Metoda", "row"),
+        lc_col("c2", "Założenia", "text"),
+        lc_col("c3", "Jak sprawdzić", "text"),
+        lc_col("c4", "Gdy naruszone → alternatywa", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_p("Para ANOVA Welcha i Games-Howell jest spójna: ani test ogólny, ani
@@ -173,46 +174,45 @@ ch4_ui <- lecture_chapter(
       skośności tego założenia nie ma, a przejście na rangi problemu nie usuwa.
       Testy rangowe nadal wymagają też niezależnych obserwacji."),
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 13px;",
-      tags$thead(
-        tags$tr(tags$th("Metoda"), tags$th("Założenia"), tags$th("Uwagi"))
-      ),
-      tags$tbody(
-        tags$tr(
-          tags$td(tags$strong("Wilcoxon jednej próby")),
-          tags$td("Niezależne obserwacje; symetria rozkładu wokół badanej wartości"),
-          tags$td("H₀: rozkład jest symetryczny wokół zadanej wartości. Przy symetrii
-                   jest ona również medianą; silna skośność nie znika po użyciu rang.")
+    lc_table(
+      data.frame(
+        c1 = c(
+          "Wilcoxon jednej próby",
+          "Wilcoxon dla par",
+          "Mann–Whitney (suma rang)",
+          "Kruskal-Wallis",
+          "Spearman"
         ),
-        tags$tr(
-          tags$td(tags$strong("Wilcoxon dla par")),
-          tags$td("Niezależne pary; symetria rozkładu różnic w parach"),
-          tags$td("H₀: rozkład różnic jest symetryczny wokół zera. Obliczamy różnice
-                   w parach, a nie mieszamy wszystkich pomiarów.")
+        c2 = c(
+          "Niezależne obserwacje; symetria rozkładu wokół badanej wartości",
+          "Niezależne pary; symetria rozkładu różnic w parach",
+          "Niezależne grupy i obserwacje; dane co najmniej porządkowe",
+          "Niezależne grupy i obserwacje; dane co najmniej porządkowe",
+          "Niezależne pary; związek monotoniczny"
         ),
-        tags$tr(
-          tags$td(tags$strong("Mann–Whitney (suma rang)")),
-          tags$td("Niezależne grupy i obserwacje; dane co najmniej porządkowe"),
-          tags$td("H₀: obie grupy mają ten sam rozkład; test wykrywa tendencję do
-                   większych wartości w jednej grupie. Nie porównuje średnich.
-                   Interpretacja jako przesunięcie median wymaga tego samego
-                   kształtu rozkładów; symetria nie jest wymagana.")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Kruskal-Wallis")),
-          tags$td("Niezależne grupy i obserwacje; dane co najmniej porządkowe"),
-          tags$td("H₀: wszystkie grupy mają ten sam rozkład. Nie porównuje średnich;
-                   porównanie median tylko przy podobnych kształtach rozkładów.
-                   Post hoc: test Dunna z korektą na porównania wielokrotne.")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Spearman")),
-          tags$td("Niezależne pary; związek monotoniczny"),
-          tags$td("Działa na rangach, więc jest mniej wrażliwy na wartości odstające
-                   niż Pearson; nie wykrywa związków niemonotonicznych (np. w kształcie U).")
+        c3 = c(
+          "H₀: rozkład jest symetryczny wokół zadanej wartości. Przy symetrii
+           jest ona również medianą; silna skośność nie znika po użyciu rang.",
+          "H₀: rozkład różnic jest symetryczny wokół zera. Obliczamy różnice
+           w parach, a nie mieszamy wszystkich pomiarów.",
+          "H₀: obie grupy mają ten sam rozkład; test wykrywa tendencję do
+           większych wartości w jednej grupie. Nie porównuje średnich.
+           Interpretacja jako przesunięcie median wymaga tego samego
+           kształtu rozkładów; symetria nie jest wymagana.",
+          "H₀: wszystkie grupy mają ten sam rozkład. Nie porównuje średnich;
+           porównanie median tylko przy podobnych kształtach rozkładów.
+           Post hoc: test Dunna z korektą na porównania wielokrotne.",
+          "Działa na rangach, więc jest mniej wrażliwy na wartości odstające
+           niż Pearson; nie wykrywa związków niemonotonicznych (np. w kształcie U)."
         )
-      )
+      ),
+      cols = list(
+        lc_col("c1", "Metoda", "row"),
+        lc_col("c2", "Założenia", "text"),
+        lc_col("c3", "Uwagi", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_p("Konsekwencja dla raportu jest prosta: wynik testu rangowego opisujemy
@@ -244,38 +244,34 @@ ch4_ui <- lecture_chapter(
       z symulacji Monte Carlo, w której komputer losuje wiele tabel zgodnych
       z H₀ zamiast korzystać z rozkładu χ²."),
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 13px;",
-      tags$thead(
-        tags$tr(tags$th("Metoda"), tags$th("Założenia"), tags$th("Gdy naruszone"))
-      ),
-      tags$tbody(
-        tags$tr(
-          tags$td(tags$strong("χ² zgodności")),
-          tags$td("Niezależne obserwacje; liczebności oczekiwane niezbyt małe
-                   (orientacyjnie co najmniej 5 w każdej kategorii)"),
-          tags$td("Test dwumianowy (2 kategorie); p-wartość z symulacji Monte Carlo")
+    lc_table(
+      data.frame(
+        c1 = c("χ² zgodności", "χ² niezależności", "Test Fishera", "Test dwumianowy"),
+        c2 = c(
+          "Niezależne obserwacje; liczebności oczekiwane niezbyt małe
+           (orientacyjnie co najmniej 5 w każdej kategorii)",
+          "Niezależne obserwacje; liczebności oczekiwane niezbyt małe
+           (orientacyjnie co najmniej 5 w każdej komórce)",
+          "Niezależne obserwacje",
+          "Niezależne obserwacje; dwie kategorie; to samo prawdopodobieństwo
+           sukcesu dla każdej obserwacji"
         ),
-        tags$tr(
-          tags$td(tags$strong("χ² niezależności")),
-          tags$td("Niezależne obserwacje; liczebności oczekiwane niezbyt małe
-                   (orientacyjnie co najmniej 5 w każdej komórce)"),
-          tags$td("Test dokładny Fishera; p-wartość z symulacji Monte Carlo")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Test Fishera")),
-          tags$td("Niezależne obserwacje"),
-          tags$td("Metoda dokładna, nie wymaga dużej próby. Niezależności nie
-                   zastąpi: danych sparowanych (te same osoby dwa razy) nie
-                   analizuje się tym testem")
-        ),
-        tags$tr(
-          tags$td(tags$strong("Test dwumianowy")),
-          tags$td("Niezależne obserwacje; dwie kategorie; to samo prawdopodobieństwo
-                   sukcesu dla każdej obserwacji"),
-          tags$td("Metoda dokładna, nie wymaga dużej próby")
+        c3 = c(
+          "Test dwumianowy (2 kategorie); p-wartość z symulacji Monte Carlo",
+          "Test dokładny Fishera; p-wartość z symulacji Monte Carlo",
+          "Metoda dokładna, nie wymaga dużej próby. Niezależności nie
+           zastąpi: danych sparowanych (te same osoby dwa razy) nie
+           analizuje się tym testem",
+          "Metoda dokładna, nie wymaga dużej próby"
         )
-      )
+      ),
+      cols = list(
+        lc_col("c1", "Metoda", "row"),
+        lc_col("c2", "Założenia", "text"),
+        lc_col("c3", "Gdy naruszone", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     # ========================================================================
@@ -295,32 +291,37 @@ ch4_ui <- lecture_chapter(
       gloss("współliniowość"), " predyktorów. Tabela służy na razie jako
       zapowiedź: każdą z tych diagnostyk omówimy na przykładach."),
 
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      style = "font-size: 13px;",
-      tags$thead(
-        tags$tr(tags$th("Metoda"), tags$th("Założenia"), tags$th("Diagnostyka"), tags$th("Alternatywy"))
-      ),
-      tags$tbody(
-        tags$tr(
-          tags$td(tags$strong("Regresja liniowa")),
-          tags$td("Liniowość, niezależność reszt, homoskedastyczność, reszty
-                   w przybliżeniu normalne, brak silnej współliniowości"),
-          tags$td("Reszty względem wartości przewidywanych, wykres Q-Q reszt,
-                   Scale-Location; pomocniczo Breusch-Pagan, Durbin-Watson
-                   (dane uporządkowane w czasie), VIF"),
-          tags$td("Transformacje, odporne błędy standardowe (HC), ważona MNK (WLS),
-                   GLM, GAM, bootstrap")
+    lc_table(
+      data.frame(
+        c1 = c("Regresja liniowa", "Regresja logistyczna"),
+        c2 = c(
+          "Liniowość, niezależność reszt, homoskedastyczność, reszty
+           w przybliżeniu normalne, brak silnej współliniowości",
+          "Liniowa zależność logitu od predyktorów, niezależne obserwacje,
+           brak silnej współliniowości, wystarczająco dużo zdarzeń
+           rzadszej kategorii na każdy predyktor (orientacyjnie około 10)"
         ),
-        tags$tr(
-          tags$td(tags$strong("Regresja logistyczna")),
-          tags$td("Liniowa zależność logitu od predyktorów, niezależne obserwacje,
-                   brak silnej współliniowości, wystarczająco dużo zdarzeń
-                   rzadszej kategorii na każdy predyktor (orientacyjnie około 10)"),
-          tags$td("Test Hosmera-Lemeshowa, reszty dewiancji, VIF"),
-          tags$td("Regresja Firtha (przy rzadkich zdarzeniach i separacji),
-                   regularyzacja, drzewa decyzyjne")
+        c3 = c(
+          "Reszty względem wartości przewidywanych, wykres Q-Q reszt,
+           Scale-Location; pomocniczo Breusch-Pagan, Durbin-Watson
+           (dane uporządkowane w czasie), VIF",
+          "Test Hosmera-Lemeshowa, reszty dewiancji, VIF"
+        ),
+        c4 = c(
+          "Transformacje, odporne błędy standardowe (HC), ważona MNK (WLS),
+           GLM, GAM, bootstrap",
+          "Regresja Firtha (przy rzadkich zdarzeniach i separacji),
+           regularyzacja, drzewa decyzyjne"
         )
-      )
+      ),
+      cols = list(
+        lc_col("c1", "Metoda", "row"),
+        lc_col("c2", "Założenia", "text"),
+        lc_col("c3", "Diagnostyka", "text"),
+        lc_col("c4", "Alternatywy", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     # ========================================================================
@@ -335,9 +336,8 @@ ch4_ui <- lecture_chapter(
     figure_panel(
       label = "Ryc. 4.1",
       title = "Sprawdzarka założeń",
-      fluidRow(
-        column(4,
-          selectInput("ch4_method", "Metoda:",
+      lc_toolbar(
+        selectInput("ch4_method", "Metoda",
             choices = c(
               "Test t jednej próby" = "t_one",
               "Test t dla prób niezależnych" = "t_ind",
@@ -354,11 +354,8 @@ ch4_ui <- lecture_chapter(
             ),
             selected = "t_ind"
           )
-        ),
-        column(8,
-          uiOutput("ch4_method_info")
-        )
-      )
+      ),
+      uiOutput("ch4_method_info")
     ),
 
     lc_p("Domyślnie wybrany test t dla prób niezależnych dobrze pokazuje, jak

@@ -66,18 +66,14 @@ ch2_ui <- lecture_chapter(
     figure_panel(
       label = "Ryc. 2.1",
       title = "Dwie grupy o różnej wariancji",
-      fluidRow(
-        column(4,
-          lc_slider("ch2_sd1", "SD grupy A", 2, 30, 10, 1),
-          lc_slider("ch2_sd2", "SD grupy B", 2, 30, 10, 1),
-          lc_slider("ch2_n_per", "n (na grupę)", 15, 100, 40, 5),
-          lc_action("ch2_gen", "Generuj dane", variant = "solid")
-        ),
-        column(8,
-          zoom_plot_ui("ch2_boxplot", height = "300px"),
-          uiOutput("ch2_var_stats")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch2_sd1", "SD grupy A", 2, 30, 10, 1),
+        lc_slider("ch2_sd2", "SD grupy B", 2, 30, 10, 1),
+        lc_slider("ch2_n_per", "n (na grupę)", 15, 100, 40, 5),
+        lc_action("ch2_gen", "Generuj dane", variant = "solid"),
+        lc_readouts(uiOutput("ch2_var_stats"))
+      ),
+      lc_plot("ch2_boxplot", max_height = "300px")
     ),
 
     lc_p("Naruszenie widać na wykresie pudełkowym od razu: przy odchyleniach 10
@@ -122,15 +118,11 @@ ch2_ui <- lecture_chapter(
     figure_panel(
       label = "Ryc. 2.2",
       title = "Levene i Bartlett",
-      fluidRow(
-        column(4,
-          helpText("Panel testuje dane wygenerowane na Ryc. 2.1."),
-          lc_action("ch2_test_var", "Testuj", variant = "solid")
-        ),
-        column(8,
-          uiOutput("ch2_test_results")
-        )
-      )
+      lc_toolbar(
+        lc_action("ch2_test_var", "Testuj", variant = "solid")
+      ),
+      uiOutput("ch2_test_results"),
+      lc_caption("Panel testuje dane wygenerowane na Ryc. 2.1.")
     ),
 
     lc_p("Wynik testu wariancji zależy w dużej mierze od liczebności. Gdy
@@ -173,16 +165,12 @@ ch2_ui <- lecture_chapter(
     figure_panel(
       label = "Ryc. 2.3",
       title = "Test t Studenta vs Welcha",
-      fluidRow(
-        column(4,
-          helpText("Test t Studenta zakłada równe wariancje, test Welcha
-                    tego nie zakłada."),
-          lc_action("ch2_compare_t", "Porównaj testy", variant = "solid")
-        ),
-        column(8,
-          uiOutput("ch2_t_comparison")
-        )
-      )
+      lc_toolbar(
+        lc_action("ch2_compare_t", "Porównaj testy", variant = "solid")
+      ),
+      uiOutput("ch2_t_comparison"),
+      lc_caption("Test t Studenta zakłada równe wariancje, test Welcha
+                    tego nie zakłada.")
     ),
 
     lc_p("Statystyka t wychodzi w obu testach identyczna. To nie przypadek: przy
@@ -288,10 +276,9 @@ ch2_server <- function(input, output, session) {
     ratio <- max(stats$var) / min(stats$var)
 
     tagList(
-      lc_stat_box("SD(A)", round(stats$sd[1], 2), color = col_test),
-      lc_stat_box("SD(B)", round(stats$sd[2], 2), color = col_alt),
-      lc_stat_box("Iloraz wariancji", round(ratio, 2),
-                  color = if (ratio < 4) col_ok else col_fail)
+      lc_readout("SD(A)", round(stats$sd[1], 2), color = col_test),
+      lc_readout("SD(B)", round(stats$sd[2], 2), color = col_alt),
+      lc_readout("Iloraz wariancji", round(ratio, 2), color = if (ratio < 4) col_ok else col_fail)
     )
   })
 
@@ -299,32 +286,27 @@ ch2_server <- function(input, output, session) {
   output$ch2_test_results <- renderUI({
     req(input$ch2_test_var)
     df <- isolate(ch2_data())
-    if (is.null(df)) return(lc_caption(
-                              "Najpierw wygeneruj dane."
-                            ))
+    if (is.null(df)) return(lc_caption("Najpierw wygeneruj dane."))
 
     lev <- rstatix::levene_test(df, value ~ group)
     bart <- bartlett.test(value ~ group, data = df)
 
-    lev_color <- if (lev$p >= 0.05) col_ok else col_fail
-    bart_color <- if (bart$p.value >= 0.05) col_ok else col_fail
-
-    lc_status(
-      fluidRow(
-        column(6,
-          p(tags$strong("Test Levene'a:")),
-          p(paste0("F = ", round(lev$statistic, 3))),
-          p(paste0("p = ", format_p_value(lev$p))),
-          p(style = paste0("color:", lev_color, "; font-weight: bold;"),
-            if (lev$p >= 0.05) "Brak podstaw do odrzucenia H₀" else "Odrzucamy H₀: wariancje różne")
-        ),
-        column(6,
-          p(tags$strong("Test Bartletta:")),
-          p(paste0("χ² = ", round(bart$statistic, 3))),
-          p(paste0("p = ", format_p_value(bart$p.value))),
-          p(style = paste0("color:", bart_color, "; font-weight: bold;"),
-            if (bart$p.value >= 0.05) "Brak podstaw do odrzucenia H₀" else "Odrzucamy H₀: wariancje różne")
-        )
+    decision <- function(p) if (p >= 0.05) "Brak podstaw do odrzucenia H₀" else "Odrzucamy H₀: wariancje różne"
+    lc_table(
+      data.frame(
+        row = c("Statystyka", "p-wartość", "Decyzja"),
+        lev = c(paste0("F = ", round(lev$statistic, 3)), format_p_value(lev$p), decision(lev$p)),
+        bart = c(paste0("χ² = ", round(bart$statistic, 3)), format_p_value(bart$p.value),
+                 decision(bart$p.value))
+      ),
+      cols = list(
+        lc_col("row", "", "row"),
+        lc_col("lev", "Test Levene'a", "text"),
+        lc_col("bart", "Test Bartletta", "text")
+      ),
+      cell_class = list(
+        lev = c(NA, NA, if (lev$p < 0.05) "is-base" else "is-best"),
+        bart = c(NA, NA, if (bart$p.value < 0.05) "is-base" else "is-best")
       )
     )
   })
@@ -333,27 +315,23 @@ ch2_server <- function(input, output, session) {
   output$ch2_t_comparison <- renderUI({
     req(input$ch2_compare_t)
     df <- isolate(ch2_data())
-    if (is.null(df)) return(lc_caption(
-                              "Najpierw wygeneruj dane."
-                            ))
+    if (is.null(df)) return(lc_caption("Najpierw wygeneruj dane."))
 
     t_classic <- t_test(df, value ~ group, var.equal = TRUE)
     t_welch <- t_test(df, value ~ group, var.equal = FALSE)
 
-    lc_status(
-      fluidRow(
-        column(6,
-          p(tags$strong("Test t Studenta"), " (zakłada równe wariancje):"),
-          p(paste0("t(", round(t_classic$df, 1), ") = ",
-                   round(t_classic$statistic, 3))),
-          p(paste0("p = ", format_p_value(t_classic$p)))
-        ),
-        column(6,
-          p(tags$strong("Test Welcha"), " (nie zakłada równych wariancji):"),
-          p(paste0("t(", round(t_welch$df, 1), ") = ",
-                   round(t_welch$statistic, 3))),
-          p(paste0("p = ", format_p_value(t_welch$p)))
-        )
+    lc_table(
+      data.frame(
+        row = c("Statystyka", "p-wartość"),
+        classic = c(paste0("t(", round(t_classic$df, 1), ") = ", round(t_classic$statistic, 3)),
+                    format_p_value(t_classic$p)),
+        welch = c(paste0("t(", round(t_welch$df, 1), ") = ", round(t_welch$statistic, 3)),
+                  format_p_value(t_welch$p))
+      ),
+      cols = list(
+        lc_col("row", "", "row"),
+        lc_col("classic", "Test t Studenta", "text", sub = "zakłada równe wariancje"),
+        lc_col("welch", "Test Welcha", "text", sub = "nie zakłada równych wariancji")
       )
     )
   })

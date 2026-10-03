@@ -87,17 +87,13 @@ ch3_ui <- lecture_chapter(
     figure_panel(
       label = "Ryc. 3.1",
       title = "Symulacja: χ² a Fisher przy małych n",
-      fluidRow(
-        column(4,
-          lc_slider("ch3_n", "Wielkość próby", 10, 200, 20, 5),
-          helpText("500 prób z prawdziwą H₀ (brak związku), α = 0.05."),
-          lc_action("ch3_sim", "Symuluj", variant = "solid")
-        ),
-        column(8,
-          uiOutput("ch3_sim_results"),
-          zoom_plot_ui("ch3_sim_plot", height = "250px")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch3_n", "Wielkość próby", 10, 200, 20, 5),
+        lc_action("ch3_sim", "Symuluj", variant = "solid"),
+        lc_readouts(uiOutput("ch3_sim_results"))
+      ),
+      lc_plot("ch3_sim_plot", max_height = "250px"),
+      lc_caption("500 prób z prawdziwą H₀ (brak związku), α = 0.05.")
     ),
 
     lc_p("Przy domyślnym n = 20 prawie każda wylosowana tabela (97%) ma
@@ -212,26 +208,27 @@ ch3_ui <- lecture_chapter(
       gloss("tau Kendalla"), ", inną korelację rangową. Tabela zbiera
       założenia i alternatywy."),
 
-    tagList(
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 14px;",
-        tags$thead(
-          tags$tr(tags$th("Test"), tags$th("Założenia"), tags$th("Alternatywa"))
+    lc_table(
+      data.frame(
+        c1 = c("Pearson", "Spearman"),
+        c2 = c(
+          "Niezależne pary, związek liniowy, brak silnych wartości
+           odstających; dla testu rozkład zbliżony do normalnego",
+          "Niezależne pary, związek monotoniczny (słabszy warunek
+           niż liniowość)"
         ),
-        tags$tbody(
-          tags$tr(
-            tags$td("Pearson"),
-            tags$td("Niezależne pary, związek liniowy, brak silnych wartości
-                     odstających; dla testu rozkład zbliżony do normalnego"),
-            tags$td("Spearman (rangi)")
-          ),
-          tags$tr(
-            tags$td("Spearman"),
-            tags$td("Niezależne pary, związek monotoniczny (słabszy warunek
-                     niż liniowość)"),
-            tags$td("Tau Kendalla (małe próby, wiele powtarzających się wartości)")
-          )
+        c3 = c(
+          "Spearman (rangi)",
+          "Tau Kendalla (małe próby, wiele powtarzających się wartości)"
         )
-      )
+      ),
+      cols = list(
+        lc_col("c1", "Test", "row"),
+        lc_col("c2", "Założenia", "text"),
+        lc_col("c3", "Alternatywa", "text")
+      ),
+      narrow = "cards",
+      prose = TRUE
     ),
 
     lc_p("Trzy rozdziały przeszły przez założenia najczęściej używanych testów:
@@ -287,9 +284,9 @@ ch3_server <- function(input, output, session) {
     fisher_color <- if (abs(fpr_fisher - 5) <= 2) col_ok else col_fail
 
     tagList(
-      lc_stat_box("χ²", round(fpr_chi, 1), "% fałszywych alarmów", color = chi_color),
-      lc_stat_box("Fisher", round(fpr_fisher, 1), "% fałszywych alarmów", color = fisher_color),
-      lc_stat_box("Poziom α", "5%", color = upwr_secondary)
+      lc_readout("Fałszywe alarmy χ²", paste0(round(fpr_chi, 1), "%"), color = chi_color),
+      lc_readout("Fałszywe alarmy Fisher", paste0(round(fpr_fisher, 1), "%"), color = fisher_color),
+      lc_readout("Poziom α", "5%", color = upwr_secondary)
     )
   })
 

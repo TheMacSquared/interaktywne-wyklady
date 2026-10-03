@@ -49,8 +49,28 @@ ch8_ui <- list(
 
     lc_table(
       data.frame(
-        c1 = c("1 ilościowa wobec μ₀", "1 jakościowa (2 kat.)", "1 jakościowa (3+ kat.)", "2 ilościowe", "2 jakościowe", "2 grupy niezależne", "2 grupy sparowane", "3+ grupy", "Post-hoc (3+ grupy)"),
-        c2 = c("Test t jednej próby", "Test dwumianowy", "χ² zgodności", "Pearson / Spearman", "χ² niezależności / Fisher", "Test t niezależny", "Test t dla danych sparowanych", "ANOVA", "Games-Howell")
+        c1 = c(
+          "1 ilościowa wobec μ₀",
+          "1 jakościowa (2 kat.)",
+          "1 jakościowa (3+ kat.)",
+          "2 ilościowe",
+          "2 jakościowe",
+          "2 grupy niezależne",
+          "2 grupy sparowane",
+          "3+ grupy",
+          "Post-hoc (3+ grupy)"
+        ),
+        c2 = c(
+          "Test t jednej próby",
+          "Test dwumianowy",
+          "χ² zgodności",
+          "Pearson / Spearman",
+          "χ² niezależności / Fisher",
+          "Test t niezależny",
+          "Test t dla danych sparowanych",
+          "ANOVA",
+          "Games-Howell"
+        )
       ),
       cols = list(
         lc_col("c1", "Sytuacja", "row"),
@@ -79,7 +99,17 @@ ch8_ui <- list(
 
     lc_table(
       data.frame(
-        c1 = c("Test dwumianowy", "χ² zgodności", "χ² niezależności", "Fisher exact", "Pearson / Spearman", "Test t niezależny", "Test t dla danych sparowanych", "ANOVA (1-czynnikowa)", "Post-hoc: Games-Howell"),
+        c1 = c(
+          "Test dwumianowy",
+          "χ² zgodności",
+          "χ² niezależności",
+          "Fisher exact",
+          "Pearson / Spearman",
+          "Test t niezależny",
+          "Test t dla danych sparowanych",
+          "ANOVA (1-czynnikowa)",
+          "Post-hoc: Games-Howell"
+        ),
         c2 = I(list(
           "Jedna proporcja (np. odsetek złych partii) wobec wartości referencyjnej.",
           "Zgodność rozkładu 3+ kategorii z oczekiwaniami.",
@@ -147,7 +177,12 @@ ch8_ui <- list(
         c3 = c("0.2", "0.1", "0.1", "0.01"),
         c4 = c("0.5", "0.3", "0.3", "0.06"),
         c5 = c("0.8", "0.5", "0.5", "0.14"),
-        c6 = c("d = 0.2 ledwie uchwytne; d = 0.5 wykryje wyszkolony panel sensoryczny; d = 0.8 zauważy konsument w teście ślepym.", "|r| = 0.3 → związek widoczny na wykresie; |r| = 0.5 → wyraźny trend; |r| > 0.7 → bardzo silny.", "V = 0.1 odsetki w grupach różnią się o kilka punktów proc.; V = 0.5 różnice rzędu kilkudziesięciu pp.", "η² = 0.06 czynnik tłumaczy ~6% zmienności (reszta: inne przyczyny); η² = 0.14 to ~14% — czynnik dominujący.")
+        c6 = c(
+          "d = 0.2 ledwie uchwytne; d = 0.5 wykryje wyszkolony panel sensoryczny; d = 0.8 zauważy konsument w teście ślepym.",
+          "|r| = 0.3 → związek widoczny na wykresie; |r| = 0.5 → wyraźny trend; |r| > 0.7 → bardzo silny.",
+          "V = 0.1 odsetki w grupach różnią się o kilka punktów proc.; V = 0.5 różnice rzędu kilkudziesięciu pp.",
+          "η² = 0.06 czynnik tłumaczy ~6% zmienności (reszta: inne przyczyny); η² = 0.14 to ~14% — czynnik dominujący."
+        )
       ),
       cols = list(
         lc_col("c1", "Miara", "row"),

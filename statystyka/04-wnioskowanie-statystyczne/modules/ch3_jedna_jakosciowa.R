@@ -292,9 +292,17 @@ ch3_ui <- list(
 
     lc_table(
       data.frame(
-        c1 = c("Metoda", "Mała próba, p₀ blisko 0 lub 1", "Duża próba, p₀ z dala od 0 i 1"),
+        c1 = c(
+          "Metoda",
+          "Mała próba, p₀ blisko 0 lub 1",
+          "Duża próba, p₀ z dala od 0 i 1"
+        ),
         c2 = c("Dokładny — liczy z rozkładu B(n, p₀)", "Działa", "Działa"),
-        c3 = c("Przybliżony — używa rozkładu normalnego", "Może być niedokładny", "Daje praktycznie ten sam wynik")
+        c3 = c(
+          "Przybliżony — używa rozkładu normalnego",
+          "Może być niedokładny",
+          "Daje praktycznie ten sam wynik"
+        )
       ),
       cols = list(
         lc_col("c1", "", "row"),
