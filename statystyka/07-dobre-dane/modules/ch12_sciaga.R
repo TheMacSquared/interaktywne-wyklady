@@ -1,73 +1,72 @@
 # Tab 12: Ściąga — podsumowanie i lista kontrolna jakości danych
 
 ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content = tagList(
-  fluidRow(column(8, offset = 2,
 
-    lc_chapter_hero(
-      kicker = "Rozdział 12 · Co czyni dobry zbiór danych?",
-      num    = "12",
-      title  = "Ściąga jakości danych.",
-      lead   = "Krótka lista kontrolna: co dyskwalifikuje zbiór,
-                co da się naprawić i jak dopasować analizę do struktury danych."
-    ),
+  lc_chapter_hero(
+    kicker = "Rozdział 12 · Co czyni dobry zbiór danych?",
+    num    = "12",
+    title  = "Ściąga jakości danych.",
+    lead   = "Krótka lista kontrolna: co dyskwalifikuje zbiór,
+              co da się naprawić i jak dopasować analizę do struktury danych."
+  ),
 
-    lc_h2("sec-01", "Podsumowanie 10 zbiorów"),
+  lc_h2("sec-01", "Podsumowanie 10 zbiorów"),
 
-    div(class = "lc-figure-panel",
-      uiOutput("tab11_summary")
-    ),
+  div(class = "lc-figure-panel",
+    uiOutput("tab11_summary")
+  ),
 
-    lc_h2("sec-02", "Lista kontrolna jakości danych"),
+  lc_h2("sec-02", "Lista kontrolna jakości danych"),
 
-    lc_note("Krytyczne", title = "Jeśli zbiór ich nie spełnia, poszukaj innego",
-      tags$ol(
-        tags$li(tags$strong("Czy dane odpowiadają hipotezie badawczej?"),
-          " Najpierw sformułuj, co chcesz badać, potem sprawdź, czy dane to mierzą."),
-        tags$li(tags$strong("Czy liczebność wystarcza w każdej grupie?"),
-          " Liczy się n w każdej porównywanej podgrupie, nie w całym zbiorze.
-          Ile obserwacji potrzeba, zależy od spodziewanej wielkości efektu i planowanej analizy."),
-        tags$li(tags$strong("Czy zbiór zawiera różne typy zmiennych?"),
-          " Zmienne ilościowe do korelacji i regresji, jakościowe do porównań grup
-          (test t) i testu chi-kwadrat."),
-        tags$li(tags$strong("Czy jest zmienność?"),
-          " Zmienna o SD bliskim zera nie nadaje się do analizy."),
-        tags$li(tags$strong("Czy struktura danych pasuje do analiz?"),
-          " Sprawdź, czy masz odpowiednie zmienne do każdej planowanej analizy
-          i czy wiersz tabeli to jednostka obserwacji."),
-        tags$li(tags$strong("Czy obserwacje są niezależne?"),
-          " Dane czasowe lub pogrupowane wymagają specjalnych metod albo agregacji.")
-      )
-    ),
+  lc_note("Krytyczne", title = "Jeśli zbiór ich nie spełnia, poszukaj innego",
+    tags$ol(
+      tags$li(tags$strong("Czy dane odpowiadają hipotezie badawczej?"),
+        " Najpierw sformułuj, co chcesz badać, potem sprawdź, czy dane to mierzą."),
+      tags$li(tags$strong("Czy liczebność wystarcza w każdej grupie?"),
+        " Liczy się n w każdej porównywanej podgrupie, nie w całym zbiorze.
+        Ile obserwacji potrzeba, zależy od spodziewanej wielkości efektu i planowanej analizy."),
+      tags$li(tags$strong("Czy zbiór zawiera różne typy zmiennych?"),
+        " Zmienne ilościowe do korelacji i regresji, jakościowe do porównań grup
+        (test t) i testu chi-kwadrat."),
+      tags$li(tags$strong("Czy jest zmienność?"),
+        " Zmienna o SD bliskim zera nie nadaje się do analizy."),
+      tags$li(tags$strong("Czy struktura danych pasuje do analiz?"),
+        " Sprawdź, czy masz odpowiednie zmienne do każdej planowanej analizy
+        i czy wiersz tabeli to jednostka obserwacji."),
+      tags$li(tags$strong("Czy obserwacje są niezależne?"),
+        " Dane czasowe lub pogrupowane wymagają specjalnych metod albo agregacji.")
+    )
+  ),
 
-    lc_note("Naprawialne", title = "Wymagają pracy, ale się da",
-      tags$ol(start = 7,
-        tags$li(tags$strong("Czy braków danych jest niewiele?"),
-          " Przy niewielkim odsetku braków można usunąć obserwacje z brakami albo
-          zastosować imputację. Gdy w zmiennej brakuje dużej części wartości
-          (orientacyjnie powyżej 20–30%), ta zmienna może odpaść."),
-        tags$li(tags$strong("Czy zmienne są jednoznacznie zdefiniowane?"),
-          " Można rekodować albo przejść na kategorie lub rangi, ale każda decyzja
-          ma konsekwencje."),
-        tags$li(tags$strong("Czy nie ma błędów i wartości odstających?"),
-          " Sprawdź zakresy i literówki. Odróżniaj błędy (popraw albo usuń) od
-          prawdziwych wartości odstających (przemyśl, czy je zostawić).")
-      )
-    ),
+  lc_note("Naprawialne", title = "Wymagają pracy, ale się da",
+    tags$ol(start = 7,
+      tags$li(tags$strong("Czy braków danych jest niewiele?"),
+        " Przy niewielkim odsetku braków można usunąć obserwacje z brakami albo
+        zastosować imputację. Gdy w zmiennej brakuje dużej części wartości
+        (orientacyjnie powyżej 20–30%), ta zmienna może odpaść."),
+      tags$li(tags$strong("Czy zmienne są jednoznacznie zdefiniowane?"),
+        " Można rekodować albo przejść na kategorie lub rangi, ale każda decyzja
+        ma konsekwencje."),
+      tags$li(tags$strong("Czy nie ma błędów i wartości odstających?"),
+        " Sprawdź zakresy i literówki. Odróżniaj błędy (popraw albo usuń) od
+        prawdziwych wartości odstających (przemyśl, czy je zostawić).")
+    )
+  ),
 
-    lc_h2("sec-03", "Dopasowanie analizy do danych"),
+  lc_h2("sec-03", "Dopasowanie analizy do danych"),
 
-    div(class = "lc-figure-panel",
-      uiOutput("tab11_analysis_table")
-    ),
+  div(class = "lc-figure-panel",
+    uiOutput("tab11_analysis_table")
+  ),
 
-    lc_note("Wskazówka",
-      "Użyj tej listy kontrolnej, oceniając dane do swojego projektu końcowego.
-      Jeśli zbiór nie spełnia kryteriów krytycznych, poszukaj innego. Jeśli ma
-      problemy naprawialne, można z nim pracować, ale zaplanuj czas na czyszczenie."
-    ),
+  lc_note("Wskazówka",
+    "Użyj tej listy kontrolnej, oceniając dane do swojego projektu końcowego.
+    Jeśli zbiór nie spełnia kryteriów krytycznych, poszukaj innego. Jeśli ma
+    problemy naprawialne, można z nim pracować, ale zaplanuj czas na czyszczenie."
+  ),
 
-    div(style = "height: 60px;")
-  ))))
+  div(style = "height: 60px;")
+))
 
 ch12_server <- function(input, output, session) {
 

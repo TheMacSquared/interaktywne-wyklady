@@ -1,163 +1,162 @@
 # Tab 9: Badania laboratoryjne — błędy danych, zbiór mieszany
 
 ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content = tagList(
-  fluidRow(column(8, offset = 2,
 
-    lc_chapter_hero(
-      kicker = "Rozdział 09 · Co czyni dobry zbiór danych?",
-      num    = "09",
-      title  = "Badania laboratoryjne.",
-      lead   = "Nie każda wartość odstająca jest błędem. Ten rozdział oddziela
-                wartości niemożliwe od rzadkich, ale prawdziwych obserwacji."
+  lc_chapter_hero(
+    kicker = "Rozdział 09 · Co czyni dobry zbiór danych?",
+    num    = "09",
+    title  = "Badania laboratoryjne.",
+    lead   = "Nie każda wartość odstająca jest błędem. Ten rozdział oddziela
+              wartości niemożliwe od rzadkich, ale prawdziwych obserwacji."
+  ),
+
+  lc_h2("sec-01", "Opis"),
+
+  lc_p("Zbiór zawiera wyniki badań laboratoryjnych 150 pacjentów: wiek, płeć,
+    stężenie hemoglobiny, stężenie glukozy i ciśnienie skurczowe. Wyniki
+    przepisywano ręcznie z papierowych kart do arkusza kalkulacyjnego.
+    Chcemy sprawdzić, czy stężenie hemoglobiny zmienia się z wiekiem. To
+    pytanie o zależność dwóch zmiennych ilościowych, na które w wykładzie 06
+    odpowiadała ", gloss("regresja liniowa"), "."),
+
+  lc_h2("sec-02", "Podgląd danych"),
+
+  lc_p("Przeglądając tabelę, zwróć uwagę na wartości, które nie mieszczą się
+    w zakresie możliwym dla danej wielkości."),
+
+  figure_panel(
+    label = "Ryc. 9.1",
+    title = "Wyniki badań 150 pacjentów",
+    uiOutput("tab8_table")
+  ),
+
+  lc_p("W 150 wierszach trudno wypatrzyć pojedyncze usterki, ale proste
+    sprawdzenie zakresów zdradza je od razu. Najmniejsza wartość hemoglobiny
+    to -14.2 g/dL, największa 1420 g/dL, a najstarszy pacjent ma 108 lat.
+    Pozostałe zmienne też warto sprawdzić tą samą metodą: minimum i maksimum
+    każdej kolumny, zanim policzymy cokolwiek innego."),
+
+  lc_h2("sec-03", "Wiek a hemoglobina"),
+
+  lc_p("Wykres rozrzutu z prostą regresji pokazuje, co dałaby analiza
+    uruchomiona bez sprawdzenia danych. Zwróć uwagę na skalę osi pionowej."),
+
+  figure_panel(
+    label = "Ryc. 9.2",
+    title = "Hemoglobina względem wieku, dane surowe",
+    zoom_plot_ui("tab8_scatter_raw", height = "350px")
+  ),
+
+  lc_p("Prawie wszystkie punkty zbijają się w wąski pas przy dole wykresu,
+    bo oś musi pomieścić wartość 1420. Prosta dopasowana do surowych danych
+    ma nachylenie -0.69 g/dL na rok, a ", gloss("współczynnik determinacji", "R²"),
+    " wynosi 0.010: wiek wyjaśniałby 1% zmienności hemoglobiny. Oba wyniki
+    opisują głównie jeden błędny wpis, a nie pacjentów. To problem, który
+    w katalogu z rozdziału 1 nazwaliśmy błędami i literówkami w danych."),
+
+  lc_h2("sec-04", "Szukanie wartości odstających"),
+
+  lc_p("Pojedyncze podejrzane wartości najłatwiej wskazać na ",
+    gloss("wykres pudełkowy", "wykresach pudełkowych"), ". Jako punkty
+    zaznaczone są obserwacje leżące dalej niż 1.5 ",
+    gloss("rozstęp międzykwartylowy", "IQR"), " od kwartyli, tak jak
+    w wykładzie 01. Zwróć uwagę, które z zaznaczonych punktów są niemożliwe,
+    a które tylko nietypowe."),
+
+  figure_panel(
+    label = "Ryc. 9.3",
+    title = "Rozkłady czterech zmiennych ilościowych",
+    fluidRow(
+      column(6, zoom_plot_ui("tab8_box_hemoglobina", height = "260px")),
+      column(6, zoom_plot_ui("tab8_box_glukoza",     height = "260px"))
     ),
+    fluidRow(
+      column(6, zoom_plot_ui("tab8_box_wiek",        height = "260px")),
+      column(6, zoom_plot_ui("tab8_box_cisnienie",   height = "260px"))
+    )
+  ),
 
-    lc_h2("sec-01", "Opis"),
+  lc_p("Wykresy wskazują osiem punktów: cztery dla hemoglobiny, dwa dla
+    glukozy i po jednym dla wieku i ciśnienia. Reguła pudełka nie odróżnia
+    błędu od rzadkiej wartości. Hemoglobina 18.7 g/dL jest zaznaczona tak samo
+    jak -14.2 g/dL, choć pierwsza to wysoki, ale możliwy wynik, a druga nie
+    może wystąpić. Zero w kolumnie hemoglobiny wygląda z kolei na kod braku
+    danych wpisany jako liczba. O tym, co jest błędem, decyduje wiedza o tym,
+    co mierzymy, a nie sam wykres."),
 
-    lc_p("Zbiór zawiera wyniki badań laboratoryjnych 150 pacjentów: wiek, płeć,
-      stężenie hemoglobiny, stężenie glukozy i ciśnienie skurczowe. Wyniki
-      przepisywano ręcznie z papierowych kart do arkusza kalkulacyjnego.
-      Chcemy sprawdzić, czy stężenie hemoglobiny zmienia się z wiekiem. To
-      pytanie o zależność dwóch zmiennych ilościowych, na które w wykładzie 06
-      odpowiadała ", gloss("regresja liniowa"), "."),
+  lc_p("Panel poniżej usuwa sześć wierszy uznanych za błędy wpisywania
+    i rysuje wykres rozrzutu jeszcze raz."),
 
-    lc_h2("sec-02", "Podgląd danych"),
+  figure_panel(
+    label = "Ryc. 9.4",
+    title = "Hemoglobina względem wieku po usunięciu błędów",
+    checkboxInput("tab8_clean", "Usuń podejrzane obserwacje", value = FALSE),
+    conditionalPanel("input.tab8_clean",
+      zoom_plot_ui("tab8_scatter_clean", height = "350px")
+    )
+  ),
 
-    lc_p("Przeglądając tabelę, zwróć uwagę na wartości, które nie mieszczą się
-      w zakresie możliwym dla danej wielkości."),
+  lc_p("Po usunięciu sześciu wierszy zostaje 144 pacjentów, a obraz się
+    zmienia. Nachylenie wynosi -0.048 g/dL na rok, czyli około 0.5 g/dL na
+    dekadę, a R² rośnie z 0.010 do 0.231. Sześć błędnych wpisów, 4% wierszy,
+    wystarczyło, żeby ukryć wyraźną zależność."),
 
-    figure_panel(
-      label = "Ryc. 9.1",
-      title = "Wyniki badań 150 pacjentów",
-      uiOutput("tab8_table")
-    ),
+  lc_p("Usuwanie całych wierszy nie jest jedynym wyjściem. Błąd w glukozie
+    czy w ciśnieniu nie psuje hemoglobiny tego samego pacjenta, więc w takim
+    przypadku można zamienić na brak danych tylko błędną wartość i zachować
+    resztę rekordu. Jeśli w oryginalnych kartach da się odnaleźć prawdziwy
+    wynik, najlepiej go po prostu poprawić."),
 
-    lc_p("W 150 wierszach trudno wypatrzyć pojedyncze usterki, ale proste
-      sprawdzenie zakresów zdradza je od razu. Najmniejsza wartość hemoglobiny
-      to -14.2 g/dL, największa 1420 g/dL, a najstarszy pacjent ma 108 lat.
-      Pozostałe zmienne też warto sprawdzić tą samą metodą: minimum i maksimum
-      każdej kolumny, zanim policzymy cokolwiek innego."),
+  lc_note("Zasada", rule = TRUE,
+    "Błąd danych poprawiasz albo usuwasz. Prawdziwą wartość odstającą
+     zostawiasz i sprawdzasz, jak wpływa na wynik."
+  ),
 
-    lc_h2("sec-03", "Wiek a hemoglobina"),
+  lc_h2("sec-05", "Ćwiczenie: błąd czy prawdziwa wartość odstająca?"),
 
-    lc_p("Wykres rozrzutu z prostą regresji pokazuje, co dałaby analiza
-      uruchomiona bez sprawdzenia danych. Zwróć uwagę na skalę osi pionowej."),
+  lc_p("Ta sama liczba może być błędem albo prawdziwą, choć rzadką obserwacją.
+    Zależy to od zmiennej, od jej jednostki i od reszty rekordu. Poniżej
+    pięć podejrzanych wpisów z tego zbioru. Oceń każdy z nich, zanim
+    sprawdzisz odpowiedzi."),
 
-    figure_panel(
-      label = "Ryc. 9.2",
-      title = "Hemoglobina względem wieku, dane surowe",
-      zoom_plot_ui("tab8_scatter_raw", height = "350px")
-    ),
+  figure_panel(
+    label = "Ćwiczenie",
+    uiOutput("tab8_quiz"),
+    lc_action("tab8_check_quiz", "Sprawdź odpowiedzi", variant = "solid"),
+    uiOutput("tab8_quiz_result")
+  ),
 
-    lc_p("Prawie wszystkie punkty zbijają się w wąski pas przy dole wykresu,
-      bo oś musi pomieścić wartość 1420. Prosta dopasowana do surowych danych
-      ma nachylenie -0.69 g/dL na rok, a ", gloss("współczynnik determinacji", "R²"),
-      " wynosi 0.010: wiek wyjaśniałby 1% zmienności hemoglobiny. Oba wyniki
-      opisują głównie jeden błędny wpis, a nie pacjentów. To problem, który
-      w katalogu z rozdziału 1 nazwaliśmy błędami i literówkami w danych."),
+  lc_p("Przy każdym wpisie pomaga to samo pytanie: czy taka wartość może
+    wystąpić u żywego człowieka? Jeśli nie, mamy błąd i warto szukać jego
+    źródła, na przykład zgubionej kropki dziesiętnej albo przypadkowego
+    minusa. Jeśli tak, obserwacja zostaje w danych, nawet gdy bardzo odstaje
+    od reszty."),
 
-    lc_h2("sec-04", "Szukanie wartości odstających"),
+  lc_h2("sec-06", "Werdykt"),
 
-    lc_p("Pojedyncze podejrzane wartości najłatwiej wskazać na ",
-      gloss("wykres pudełkowy", "wykresach pudełkowych"), ". Jako punkty
-      zaznaczone są obserwacje leżące dalej niż 1.5 ",
-      gloss("rozstęp międzykwartylowy", "IQR"), " od kwartyli, tak jak
-      w wykładzie 01. Zwróć uwagę, które z zaznaczonych punktów są niemożliwe,
-      a które tylko nietypowe."),
+  lc_p("Struktura zbioru jest dobra: 150 pacjentów, cztery zmienne ilościowe
+    z jasnymi jednostkami i płeć (88 kobiet, 62 mężczyzn). Problemy wynikają
+    z ręcznego przepisywania i dotyczą sześciu wpisów. Po ich poprawieniu
+    albo usunięciu dane nadają się do regresji hemoglobiny względem wieku,
+    do porównania kobiet i mężczyzn testem t z wykładu 04 i do sprawdzenia
+    założeń z wykładu 05. Glukozę 310 mg/dL zostawiamy: to prawdziwy pacjent,
+    a usunięcie go byłoby ukrywaniem niewygodnych danych."),
 
-    figure_panel(
-      label = "Ryc. 9.3",
-      title = "Rozkłady czterech zmiennych ilościowych",
-      fluidRow(
-        column(6, zoom_plot_ui("tab8_box_hemoglobina", height = "260px")),
-        column(6, zoom_plot_ui("tab8_box_glukoza",     height = "260px"))
-      ),
-      fluidRow(
-        column(6, zoom_plot_ui("tab8_box_wiek",        height = "260px")),
-        column(6, zoom_plot_ui("tab8_box_cisnienie",   height = "260px"))
-      )
-    ),
+  lc_note("Werdykt",
+    "Zbiór dobry po czyszczeniu: błędy przepisywania trzeba znaleźć i poprawić,
+     a prawdziwe wartości odstające zostawić."
+  ),
 
-    lc_p("Wykresy wskazują osiem punktów: cztery dla hemoglobiny, dwa dla
-      glukozy i po jednym dla wieku i ciśnienia. Reguła pudełka nie odróżnia
-      błędu od rzadkiej wartości. Hemoglobina 18.7 g/dL jest zaznaczona tak samo
-      jak -14.2 g/dL, choć pierwsza to wysoki, ale możliwy wynik, a druga nie
-      może wystąpić. Zero w kolumnie hemoglobiny wygląda z kolei na kod braku
-      danych wpisany jako liczba. O tym, co jest błędem, decyduje wiedza o tym,
-      co mierzymy, a nie sam wykres."),
+  lc_chapter_next(
+    num = "10",
+    title = "Ankieta studencka",
+    lead = "Po dwóch zbiorach z usterkami czas na wzorzec: ankietę, której dane
+            nadają się do analizy bez czyszczenia.",
+    target_id = "ch10"
+  ),
 
-    lc_p("Panel poniżej usuwa sześć wierszy uznanych za błędy wpisywania
-      i rysuje wykres rozrzutu jeszcze raz."),
-
-    figure_panel(
-      label = "Ryc. 9.4",
-      title = "Hemoglobina względem wieku po usunięciu błędów",
-      checkboxInput("tab8_clean", "Usuń podejrzane obserwacje", value = FALSE),
-      conditionalPanel("input.tab8_clean",
-        zoom_plot_ui("tab8_scatter_clean", height = "350px")
-      )
-    ),
-
-    lc_p("Po usunięciu sześciu wierszy zostaje 144 pacjentów, a obraz się
-      zmienia. Nachylenie wynosi -0.048 g/dL na rok, czyli około 0.5 g/dL na
-      dekadę, a R² rośnie z 0.010 do 0.231. Sześć błędnych wpisów, 4% wierszy,
-      wystarczyło, żeby ukryć wyraźną zależność."),
-
-    lc_p("Usuwanie całych wierszy nie jest jedynym wyjściem. Błąd w glukozie
-      czy w ciśnieniu nie psuje hemoglobiny tego samego pacjenta, więc w takim
-      przypadku można zamienić na brak danych tylko błędną wartość i zachować
-      resztę rekordu. Jeśli w oryginalnych kartach da się odnaleźć prawdziwy
-      wynik, najlepiej go po prostu poprawić."),
-
-    lc_note("Zasada", rule = TRUE,
-      "Błąd danych poprawiasz albo usuwasz. Prawdziwą wartość odstającą
-       zostawiasz i sprawdzasz, jak wpływa na wynik."
-    ),
-
-    lc_h2("sec-05", "Ćwiczenie: błąd czy prawdziwa wartość odstająca?"),
-
-    lc_p("Ta sama liczba może być błędem albo prawdziwą, choć rzadką obserwacją.
-      Zależy to od zmiennej, od jej jednostki i od reszty rekordu. Poniżej
-      pięć podejrzanych wpisów z tego zbioru. Oceń każdy z nich, zanim
-      sprawdzisz odpowiedzi."),
-
-    figure_panel(
-      label = "Ćwiczenie",
-      uiOutput("tab8_quiz"),
-      lc_action("tab8_check_quiz", "Sprawdź odpowiedzi", variant = "solid"),
-      uiOutput("tab8_quiz_result")
-    ),
-
-    lc_p("Przy każdym wpisie pomaga to samo pytanie: czy taka wartość może
-      wystąpić u żywego człowieka? Jeśli nie, mamy błąd i warto szukać jego
-      źródła, na przykład zgubionej kropki dziesiętnej albo przypadkowego
-      minusa. Jeśli tak, obserwacja zostaje w danych, nawet gdy bardzo odstaje
-      od reszty."),
-
-    lc_h2("sec-06", "Werdykt"),
-
-    lc_p("Struktura zbioru jest dobra: 150 pacjentów, cztery zmienne ilościowe
-      z jasnymi jednostkami i płeć (88 kobiet, 62 mężczyzn). Problemy wynikają
-      z ręcznego przepisywania i dotyczą sześciu wpisów. Po ich poprawieniu
-      albo usunięciu dane nadają się do regresji hemoglobiny względem wieku,
-      do porównania kobiet i mężczyzn testem t z wykładu 04 i do sprawdzenia
-      założeń z wykładu 05. Glukozę 310 mg/dL zostawiamy: to prawdziwy pacjent,
-      a usunięcie go byłoby ukrywaniem niewygodnych danych."),
-
-    lc_note("Werdykt",
-      "Zbiór dobry po czyszczeniu: błędy przepisywania trzeba znaleźć i poprawić,
-       a prawdziwe wartości odstające zostawić."
-    ),
-
-    lc_chapter_next(
-      num = "10",
-      title = "Ankieta studencka",
-      lead = "Po dwóch zbiorach z usterkami czas na wzorzec: ankietę, której dane
-              nadają się do analizy bez czyszczenia.",
-      target_id = "ch10"
-    ),
-
-    div(style = "height: 40px;")
-  ))))
+  div(style = "height: 40px;")
+))
 
 ch9_server <- function(input, output, session) {
 
