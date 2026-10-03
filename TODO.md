@@ -25,11 +25,13 @@ Kolejność najbliższych prac (szczegóły w „Migracja widgetów do v2”):
 
 1. [ ] Przegląd wykład po wykładzie: widgety (układy kolumn, odczyty, podpisy,
    tabele) i bloki tekstu (notki, pułapki, podsumowania, statusy).
-   Statystyka 01–06 gotowe (3 października 2026; audyt: 0 przelewów,
-   0 błędów). Zostały świadome wyjątki: quizy z długimi etykietami na radio
-   (02, 04 Ryc. 3.4), wykres z kliknięciem na `zoom_plot_ui` (06 ćwiczenie
-   z prostą), drzewo decyzyjne 04 z własnym przyciskiem pełnego ekranu,
-   schemat `type-error.jpg` w 04 rozdz. 3 poza panelem.
+   Widgety: statystyka 00–09 i analiza ryzyka gotowe (audyt 3 października
+   2026: 510 paneli, 0 przelewów, 0 błędów). Zostały statystyka 2 (niski
+   priorytet) i bloki tekstu — lista w „Migracja widgetów do v2”. Świadome
+   wyjątki w statystyce: quizy z długimi etykietami na radio (02, 04 Ryc. 3.4),
+   wykres z kliknięciem na `zoom_plot_ui` (06 ćwiczenie z prostą), drzewo
+   decyzyjne 04 z własnym przyciskiem pełnego ekranu, schemat
+   `type-error.jpg` w 04 rozdz. 3 poza panelem.
 
 ---
 
@@ -39,146 +41,85 @@ Kolejność najbliższych prac (szczegóły w „Migracja widgetów do v2”):
 
 Stan:
 
-- Komponenty v2 (widgety i tabele) są w sekcji „WIDGETY V2 I TABELE V2”
-  w `R/lecture_layout.R`, `R/shared_styles.css` i `R/lc_widgets.js`,
-  identyczne we wszystkich kursach. Zasady: `R/DESIGN_CONTRACT.md`.
-- Style v2 obejmują każdy `figure_panel()`; elementy sprzed v2 działają dalej.
-- Gotowe widgety: statystyka 01 Ryc. 2.1 i 2.5, statystyka 02 Ryc. 1.1,
-  analiza ryzyka 05 `d5_geo`, analiza ryzyka 07 „Cztery funkcje”.
-- Audyt z 2 października 2026 (23 aplikacje, 1440 i 390 px, stan po
-  wejściu do rozdziału, bez interakcji): 477 paneli, 27 gotowych, 402 ze
-  starymi elementami, 48 wylewa się na telefonie (46 z nich także przed v2).
-- Stare elementy w panelach do migracji: przyciski Bootstrapa 376, wykresy
-  o stałej wysokości 238, układy `fluidRow` 201, `lc_feedback` w panelu 116,
-  `lc_stat_box` 90, stare tabele 77, suwaki 150, radio 46.
+- Komponenty v2 (widgety, tabele, bloki tekstu) są we wspólnym `R/`
+  (`lecture_layout.R`, `shared_styles.css`, `lc_widgets.js`), identyczne we
+  wszystkich kursach. Zasady: `R/DESIGN_CONTRACT.md`.
+- Audyt z 3 października 2026 (`statystyka/scripts/audit_panels.R`,
+  24 aplikacje, 1440 i 390 px, stan po wejściu do rozdziału, bez interakcji):
+  510 paneli, 405 bez starych elementów, 0 wylewa się na telefonie,
+  0 błędów Shiny.
+- Statystyka 00–09 i analiza ryzyka 01–10 są przeniesione (skrypty
+  `statystyka/scripts/migrate_v2_*.R` plus ręczne poprawki). Zostały
+  pojedyncze wyjątki wypisane niżej. Prawie całe pozostałe stare elementy
+  to statystyka 2.
 
-Panele per wykład (paneli / gotowe / wylewa się / układ kolumn / pudełka
-statystyk / stare tabele):
+Panele ze starymi elementami (audyt 3 października 2026; paneli / gotowe /
+układ kolumn / pudełka statystyk / wykres o stałej wysokości / `lc_feedback`):
 
-| Wykład | Pan. | Got. | Wyl. | Kol. | Stat. | Tab. |
+| Wykład | Pan. | Got. | Kol. | Stat. | Wykr. | Feedb. |
 |---|---|---|---|---|---|---|
-| analiza-ryzyka 01-jezyk-ryzyka | 16 | 1 | 3 | 4 | 5 | 4 |
-| analiza-ryzyka 02-warunki | 11 | 2 | 1 | 3 | 5 | 3 |
-| analiza-ryzyka 03-alarm-i-prawda | 11 | 2 | 2 | 1 | 4 | 3 |
-| analiza-ryzyka 04-wiele-prob | 11 | 2 | 1 | 0 | 5 | 2 |
-| analiza-ryzyka 05-do-zdarzenia | 8 | 1 | 1 | 0 | 3 | 1 |
-| analiza-ryzyka 06-zmiennosc-i-prog | 9 | 1 | 0 | 0 | 5 | 0 |
-| analiza-ryzyka 07-czas-zycia | 13 | 1 | 0 | 0 | 5 | 1 |
-| analiza-ryzyka 08-niezawodnosc-systemu | 13 | 1 | 1 | 0 | 5 | 1 |
-| analiza-ryzyka 09-drzewo-bledow | 10 | 1 | 0 | 0 | 3 | 0 |
-| analiza-ryzyka 10-model-do-decyzji | 13 | 1 | 0 | 0 | 6 | 0 |
-| statystyka-2 01-symulacje-statystyczne | 23 | 0 | 0 | 18 | 0 | 0 |
-| statystyka-2 02-metody-bayesowskie | 13 | 0 | 0 | 10 | 0 | 0 |
-| statystyka-2 03-kierunkowe | 14 | 0 | 0 | 14 | 11 | 1 |
-| statystyka-2 04-szeregi-czasowe | 41 | 0 | 0 | 39 | 4 | 0 |
-| statystyka 01-typy-danych | 44 | 4 | 8 | 13 | 1 | 12 |
-| statystyka 02-rozklady-prawdopodobienstwa | 44 | 2 | 13 | 25 | 8 | 5 |
-| statystyka 03-przedzialy-ufnosci | 19 | 0 | 0 | 6 | 2 | 0 |
-| statystyka 04-wnioskowanie-statystyczne | 55 | 6 | 0 | 22 | 3 | 7 |
-| statystyka 05-zalozenia-testow | 8 | 0 | 0 | 8 | 0 | 0 |
-| statystyka 06-regresja | 40 | 0 | 3 | 25 | 12 | 9 |
-| statystyka 07-dobre-dane | 38 | 1 | 4 | 7 | 0 | 14 |
-| statystyka 08-case-studies | 7 | 0 | 1 | 5 | 2 | 0 |
-| statystyka 09-projekt-badawczy | 16 | 1 | 10 | 1 | 1 | 14 |
+| statystyka-2 01-symulacje-statystyczne | 23 | 7 | 16 | 0 | 16 | 0 |
+| statystyka-2 02-metody-bayesowskie | 13 | 3 | 10 | 0 | 10 | 10 |
+| statystyka-2 03-kierunkowe | 14 | 0 | 14 | 11 | 14 | 3 |
+| statystyka-2 04-szeregi-czasowe | 41 | 4 | 37 | 4 | 35 | 21 |
+| analiza-ryzyka 01-jezyk-ryzyka | 16 | 10 | 1 | 3 | 1 | 0 |
 
-Etap 1 — panele wylewające się na telefonie: zrobione (audyt 2 października
-2026: 0 z 477 paneli wylewa się przy 390 px). Tabele przeniesione do
-`lc_table()`, szerokie wzory przewijają się w panelu, statystyka 07 bez DT
-(podglądy i stronicowanie `lc_table(page_size = )`).
+W pozostałych wykładach statystyki i analizy ryzyka stare elementy to tylko
+radio (patrz niżej) i jeden wykres z kliknięciem (statystyka 06).
 
-Etap 2 — mechaniczne zamiany: zrobione 2 października 2026 skryptem
-`statystyka/scripts/migrate_v2_mechanical.R` (suwaki 259, przyciski 494,
-radio 23, wykresy poza kolumnami 68). Audyt `statystyka/scripts/audit_panels.R`:
-0 wylewających się paneli, 0 błędów Shiny, wszystkie suwaki z widoczną
-wartością. Przypadki pominięte przez skrypt przechodzą do etapu 3.
+Zostało:
 
-Etap 3 — przegląd widgetów wykład po wykładzie (commit per widget):
-
-- [ ] `fluidRow(column(…))` → `lc_toolbar()` nad treścią (201 paneli;
-  najwięcej w statystyce 2: 81 z 91 paneli). Przy okazji wykresy w kolumnach
-  (`zoom_plot_ui` o stałej wysokości, 246) → `lc_plot()` / `lc_plots()`.
-- [ ] Pozostałości po etapie 2: serie akcji („Rzuć 1x / 10x / 100x”) →
-  `lc_action_group()`; przyciski bez klasy `lc-btn` albo ze `style` /
-  `onclick` (36); radio z ponad 4 opcjami lub długimi etykietami (11);
-  suwak z `pre` (1).
-- [ ] Wykresy bez tytułów (decyzja: żadnych tytułów). Stałe i opisowe tytuły
-  są usunięte; zostały 36 dynamicznych tytułów i podtytułów z wynikami
-  (p-wartość, moc, HDI, CI, r, SE, „Krok 2 z 4”) albo z objaśnieniem
-  oznaczeń. Przy migracji widgetu: liczby → `lc_readout()` w pasku albo
-  `lc_caption()` pod wykresem, objaśnienie → `lc_caption()`, potem usunąć
-  tytuł. Miejsca (numery linii ze stanu 2 października 2026):
-  - `analiza-ryzyka/01-jezyk-ryzyka/modules/block.R` (l. 1704, 1944, 2254, 2263, 2303)
-  - `analiza-ryzyka/02-warunki/modules/monty_server.R` (l. 201, 202)
-  - `analiza-ryzyka/03-alarm-i-prawda/modules/block.R` (l. 691)
-  - `statystyka-2/01-symulacje-statystyczne/modules/helpers.R` (l. 493, 494, 523, 524, 621, 625, 661, 662, 711, 712, 734)
-  - `statystyka-2/02-metody-bayesowskie/modules/helpers.R` (l. 414, 682)
-  - `statystyka-2/04-szeregi-czasowe/modules/ch11_ets.R` (l. 155, 181)
-  - `statystyka-2/04-szeregi-czasowe/modules/ch5_acf.R` (l. 179, 245)
-  - `statystyka-2/04-szeregi-czasowe/modules/ch8_ar.R` (l. 148, 294)
-  - `statystyka-2/04-szeregi-czasowe/modules/ch9_ma_arma.R` (l. 194, 219)
-  - `statystyka/01-typy-danych/modules/ch4_rozrzut.R` (l. 1034)
-  - `statystyka/01-typy-danych/modules/helpers.R` (l. 98)
-  - `statystyka/03-przedzialy-ufnosci/modules/ch3_srednia.R` (l. 759)
-  - `statystyka/03-przedzialy-ufnosci/modules/ch4_proporcja.R` (l. 600)
-  - `statystyka/04-wnioskowanie-statystyczne/modules/ch10_sila_efektu.R` (l. 677)
-  - `statystyka/06-regresja/modules/ch3b_kontekst.R` (l. 188, 272)
-- [ ] `lc_stat_box()` w widgetach → `lc_readout()`; odczyt z kolorem serii
-  zastępuje legendę ggplot. Analiza ryzyka zrobiona 3 października 2026
-  (101 pudełek; zostało 16 w 01 Ćw. 2 i prototypach — po wyborze wariantu).
-  Wzorce: wartości z `risk_fmt_p()` / `lc_fmt()`, krótka etykieta, parametry
-  w `lc_caption()` pod odczytami; dynamiczny tytuł wykresu → odczyty.
-  Zostało: statystyka.
-- [x] `lc_feedback()` w panelach → `lc_status()` / `lc_caption()` (statystyka
-  90, analiza ryzyka 44; 3 października 2026). Rozwiązania ćwiczeń →
-  `lc_more("Rozwiązanie", …)` bez przycisków (128).
-- [ ] Pozostałe stare tabele → `lc_table()` / `lc_crosstab()` (77 paneli),
-  potem usunąć `lc_table_region()` i klasy `lc-table*`.
-  Na telefonie (390 px) po zmianie kroju na IBM Plex wylewają się o kilka px:
-  statystyka 06 Ryc. 1.4 (tabela współczynników CASchools) i miniściąga
-  „Jak ograniczać przeuczenie” — od nich zacząć. Analiza ryzyka: wszystkie
-  tabele już na `lc_table()` (3 października 2026).
+- [ ] Statystyka 2 (niski priorytet): przegląd wykład po wykładzie tym samym
+  wzorcem co statystyka — skrypty `migrate_v2_columns.R`,
+  `migrate_v2_readouts.R` (report → apply → apply2), potem tabele i ręczne
+  układy. W kodzie: `fluidRow` 112, `lc_stat_box` 76, `lc_feedback` 171,
+  wykresy `zoom_plot_ui` o stałej wysokości 99, stare tabele 16.
+- [ ] Analiza ryzyka 01 Ćw. 2 i prototypy: 16 `lc_stat_box` i jeden układ
+  kolumn — po wyborze wariantu ćwiczenia.
+- [ ] Radio w panelach (25): w analizie ryzyka po 2 w każdym wykładzie
+  (sprawdzić, czy to wspólny element — wtedy jedna zmiana), statystyka 02 (2),
+  04 Ryc. 3.4 (quiz z długimi etykietami, zostaje), statystyka 2 (1).
+- [ ] Wykresy bez tytułów (decyzja: żadnych tytułów). Zostały dynamiczne
+  tytuły z wynikami albo objaśnieniem oznaczeń; przy migracji widgetu liczby
+  → `lc_readout()`, objaśnienie → `lc_caption()`, potem usunąć tytuł.
+  Miejsca (stan 3 października 2026):
+  - `analiza-ryzyka/01-jezyk-ryzyka/modules/block.R` (l. 1654, 2163, 2172, 2212)
+  - `analiza-ryzyka/02-warunki/modules/monty_server.R` (l. 195)
+  - `statystyka/01-typy-danych/modules/ch4_rozrzut.R` (l. 979)
+  - `statystyka/04-wnioskowanie-statystyczne/modules/ch10_sila_efektu.R` (l. 803)
+  - `statystyka/06-regresja/modules/ch3b_kontekst.R` (l. 281, 359)
+  - statystyka 2: `01-symulacje-statystyczne/modules/helpers.R` (6),
+    `02-metody-bayesowskie/modules/helpers.R` (2),
+    `04-szeregi-czasowe/modules/` `ch11_ets.R`, `ch5_acf.R`, `ch8_ar.R`,
+    `ch9_ma_arma.R` (po 2)
+- [ ] Usunąć `lc_table_region()` i klasy `lc-table*`, gdy statystyka 2 nie
+  będzie już używać starych tabel.
 - [ ] Legendy ggplot wychodzące poza wykres na telefonie (np. statystyka 01
-  Ryc. 2.5) — poprawiać przy migracji danego widgetu.
-
-Etap 3, widgety krokowe: przeniesione 3 października 2026 (ok. 30 widgetów
-w statystyce 01–04 i 06, statystyce 2 i analizie ryzyka 01 i 08). Zostało:
-
+  Ryc. 2.5) — audyt ich nie wykrywa, sprawdzać na zrzutach.
 - [ ] Analiza ryzyka 08 „Krok po kroku” (redukcja układu C + A/B): do pełnej
   przebudowy — widget prawdopodobnie nie działa poprawnie. Na razie zostaje
   na kropkach (`lc_step_nav()`); przy przebudowie rozważyć
   `lc_step_widget(body = …)` albo schemat redukcji jako wykres.
 
-Etap 3, bloki tekstu (handoff „Bloki v2”; komponenty i zasady są już we
-wspólnym `R/`, margines boczny usunięty, dawne callouty renderują się jako
-`lc_note()`):
+Bloki tekstu (stan 3 października 2026; ramki `lc-feedback`, zwijane
+`tags$details` i ikony `case-icon` są już usunięte we wszystkich kursach):
 
-- [x] Statyczne `lc_feedback()` w toku tekstu → `lc_note()` / `lc_warn()` /
-  `lc_recap()`: statystyka (72) i analiza ryzyka 01 (8) zrobione 3 października
-  2026. Statystyka 2 odłożona.
-- [ ] Ręczne ramki `div(class = "lc-feedback …")` w statystyce 07 (ok. 50),
-  09 (20) i 08 (14) → `lc_note()` / `lc_warn()` / `lc_status()` /
-  `lc_caption()`. Czeka na przepisanie części treści na prozę (prowadzący,
-  równolegle) — część ramek zniknie. Przy okazji usunąć martwe reguły
-  `.ch2-step-panel .lc-feedback` w `app.R` statystyki 04.
-- [ ] Pogrubione wstępy `tags$strong("Przykład:" / "Kontrprzykład:" /
-  "Uwaga:" / "Zasada:")` na początku akapitu → `lc_note()` (statystyka 17,
-  statystyka 2: 2).
-- [ ] Ręczna numeracja podsekcji („(1) Nieobciążoność”, „A. …”) →
-  `lc_h3("…", num = "1")`.
-- [ ] Zwijane `tags$details` (statystyka: 25) — zostawić tylko rozwiązania
-  i odpowiedzi (`lc_more()`); krótkie notki pokazywać zawsze.
-- [ ] Emoji w treści (statystyka: 20 linii, statystyka 2: 4) — usunąć;
-  pasek „Śledzona zmienna” w `app.R` statystyki → `lc_tracker()`; listy
-  przykładów z emoji → `lc_index()`.
-- [ ] Ramki „Najważniejsze do zapamiętania” → `lc_recap()`.
-- [ ] Spacje przed interpunkcją po `tags$strong()` / `tags$em()` w treści
-  (np. „nieobciążoności , efektywności”) → `b_()` / `em_()`.
 - [ ] Wywołania `inline_callout()`, `margin_callout()`, `margin_note()`,
-  `margin_code_note()` w treści → `lc_note()` (działają, ale są zakazane
-  w nowym kodzie).
+  `margin_code_note()` → `lc_note()` (statystyka 32, statystyka 2: 11;
+  działają, ale są zakazane w nowym kodzie).
+- [ ] Pogrubione wstępy `strong("Przykład:" / "Kontrprzykład:" / "Uwaga:" /
+  "Zasada:")` na początku akapitu → `lc_note()` (statystyka 5,
+  statystyka 2: 1).
+- [ ] Spacje przed interpunkcją po `tags$strong()` / `tags$em()` → `b_()` /
+  `em_()` (statystyka 3, statystyka 2: 11, analiza ryzyka 5).
+- [ ] Ręczna numeracja podsekcji („(1) Nieobciążoność”, „A. …”) →
+  `lc_h3("…", num = "1")` — do sprawdzenia, ile zostało.
+- [ ] Emoji w treści statystyki 2 (4 linie); w statystyce zostało tylko pole
+  `icon` w `08-case-studies/modules/helpers.R`.
 - [ ] Usunąć martwy CSS po marginesie i starych blokach: `.lc-margin*`,
   `.lc-inline-callout*`, `.lc-callout-*`, `.lc-def*`, `.lc-example*`,
-  `.lc-try` (po sprawdzeniu, że nic ich nie używa).
+  `.lc-try` (po sprawdzeniu, że nic ich nie używa; `inline_callout()`
+  renderuje się już jako `lc_note()`).
 
 Decyzje:
 
@@ -192,8 +133,6 @@ Decyzje:
 
 Pozostałe:
 
-- [ ] Powtórzyć pełną kontrolę ładowania statystyki na stacjonarnym
-  (wcześniej przerwana limitem czasu).
 - [ ] `lc_col(type = "num")`: dodać sufiks jednostki (np. `suffix = " cm"`,
   `"%"`). Teraz kolumna z jednostkami musi być gotowym tekstem i traci
   wyrównanie cyfr (statystyka 01, Ryc. 4.6, kolumna „Wartość”; cm i % oraz
