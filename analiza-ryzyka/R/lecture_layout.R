@@ -1109,12 +1109,14 @@ lc_compare_rows <- function(rows) {
 }
 
 # Nawigacja kroków demonstracji. Wartość input$<id>: numer kroku (0 = start).
+# Nie da się cofnąć poniżej kroku `start` (start = 1: bez pustego stanu).
 # Stan trzyma klient (R/lc_widgets.js); lc_update_step() ustawia go z serwera.
 lc_step_nav <- function(input_id, steps, start = 0L,
                         start_label = "Zacznij", next_label = "Dalej") {
   tags$div(
     id = input_id, class = "lc-step-nav lc-push",
     `data-lc-steps` = length(steps), `data-step` = as.integer(start),
+    `data-lc-min` = as.integer(start),
     `data-start-label` = start_label, `data-next-label` = next_label,
     tags$button(type = "button", class = "lc-action is-ghost is-icon",
       `data-lc-step` = "prev", `aria-label` = "Poprzedni krok",

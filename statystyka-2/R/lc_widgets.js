@@ -186,9 +186,10 @@
   function renderSteps(el) {
     var n = Number(el.getAttribute('data-lc-steps'));
     var step = Number(el.getAttribute('data-step')) || 0;
+    var min = Number(el.getAttribute('data-lc-min')) || 0;
     var prev = el.querySelector('[data-lc-step="prev"]');
     var next = el.querySelector('[data-lc-step="next"]');
-    if (prev) prev.disabled = step <= 0;
+    if (prev) prev.disabled = step <= min;
     if (next) {
       next.disabled = step >= n;
       var label = next.querySelector('span');
@@ -204,7 +205,8 @@
   }
   function setStep(el, step) {
     var n = Number(el.getAttribute('data-lc-steps'));
-    step = Math.max(0, Math.min(n, step));
+    var min = Number(el.getAttribute('data-lc-min')) || 0;
+    step = Math.max(min, Math.min(n, step));
     el.setAttribute('data-step', step);
     renderSteps(el);
     if (window.jQuery) window.jQuery(el).trigger('lc-step-change');

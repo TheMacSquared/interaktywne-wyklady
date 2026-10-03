@@ -149,9 +149,10 @@ step_layer <- function(geom, role, ..., fill_role = FALSE) {
 }
 
 # Słupki / pudełko wyniku: wypełnienie w roli „data”, czarna krawędź.
+# Wypełnienie zmapowane w aes(fill = …) nie jest nadpisywane.
 step_result <- function(geom, ...) {
   a <- list(...)
-  a$fill <- a$fill %||% STEP_ROLES$data$colour
+  if (is.null(a$mapping$fill)) a$fill <- a$fill %||% STEP_ROLES$data$colour
   a$alpha <- a$alpha %||% STEP_ROLES$data$alpha
   a$colour <- a$colour %||% STEP_EDGE$colour
   a$linewidth <- a$linewidth %||% STEP_EDGE$linewidth
@@ -168,10 +169,13 @@ step_line <- function(role, xintercept = NULL, yintercept = NULL, helper = TRUE)
 }
 
 # Etykieta przy elemencie: krótki symbol (Me, Q1, n = 12), pogrubiony, kolor roli.
-step_label <- function(x, y, label, role = "known", hjust = 0, vjust = 0, size = 3.6) {
+# Domyślny krój ma znaki x̄, p̂, ₁, β (mono ich nie ma); parse = TRUE dla plotmath.
+step_label <- function(x, y, label, role = "known", hjust = 0, vjust = 0, size = 3.6,
+                       family = "", parse = FALSE) {
   ggplot2::annotate("text", x = x, y = y, label = label, hjust = hjust, vjust = vjust,
-                    colour = STEP_ROLES[[role]]$colour, family = "mono",
-                    fontface = "bold", size = size)
+                    colour = STEP_ROLES[[role]]$colour, family = family,
+                    fontface = if (isTRUE(parse)) "plain" else "bold",
+                    size = size, parse = parse)
 }
 
 # Stała rama: limity osi liczone raz z pełnych danych, wspólne dla kroków.
