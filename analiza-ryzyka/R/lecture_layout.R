@@ -1626,8 +1626,9 @@ lc_status <- function(..., live = TRUE) {
 }
 
 # Werdykt w lc_status(): kolor tylko na fragmencie tekstu, bez tła.
-# ok = zgodne / poprawne, warning = uwaga (np. ekstrapolacja), danger = błąd.
-lc_verdict <- function(..., type = c("ok", "warning", "danger")) {
+# ok = zgodne / poprawne, warning = uwaga (np. ekstrapolacja), danger = błąd,
+# info = bez koloru (gdy typ liczy się w locie i bywa neutralny).
+lc_verdict <- function(..., type = c("ok", "warning", "danger", "info")) {
   type <- match.arg(type)
   tags$span(class = paste0("lc-status-", type), ...)
 }
