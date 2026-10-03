@@ -1649,10 +1649,11 @@ em_ <- function(...) tags$em(..., .noWS = "outside")
 # Układ: tytuł + sterowanie, pasek kroków, wykres o stałej proporcji, opis
 # kroku i nawigacja. Kroki od 1. Serwer czyta input$<id>_step (lc_step_server),
 # opis kroku renderuje output$<id>_text jako tekst inline. Logika: R/lc_widgets.js.
-lc_step_widget <- function(id, steps, plot_id, toolbar = NULL, title = NULL,
-                           extra = NULL, ratio = "2.5/1") {
+# Widget bez wykresu (np. tabela budowana krok po kroku): body zamiast plot_id.
+lc_step_widget <- function(id, steps, plot_id = NULL, toolbar = NULL, title = NULL,
+                           extra = NULL, ratio = "2.5/1", body = NULL) {
   n <- length(steps)
-  stopifnot(n >= 2)
+  stopifnot(n >= 2, !is.null(plot_id) || !is.null(body))
   tags$div(
     class = "lc-stepper", id = id, `data-lc-step` = 1L,
     tags$div(class = "lc-stepper-head",
@@ -1668,10 +1669,14 @@ lc_step_widget <- function(id, steps, plot_id, toolbar = NULL, title = NULL,
                     tags$b(i), tags$span(steps[[i]]))
       ))
     ),
-    tags$div(class = "lc-plot lc-step-plot",
-      style = sprintf("--lc-plot-ratio:%s;", ratio),
-      zoom_plot_ui(plot_id, height = "100%")
-    ),
+    if (!is.null(plot_id)) {
+      tags$div(class = "lc-plot lc-step-plot",
+        style = sprintf("--lc-plot-ratio:%s;", ratio),
+        zoom_plot_ui(plot_id, height = "100%")
+      )
+    } else {
+      tags$div(class = "lc-step-body", body)
+    },
     tags$div(class = "lc-stepper-foot",
       tags$div(class = "lc-stepper-text", `aria-live` = "polite",
         tags$span(class = "lc-stepper-kicker", sprintf("Krok 1 z %d · %s", n, steps[[1]])),
