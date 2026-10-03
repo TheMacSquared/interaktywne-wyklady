@@ -136,9 +136,7 @@ w statystyce 01–04 i 06, statystyce 2 i analizie ryzyka 01 i 08). Zostało:
   `lc_step_widget(body = …)` albo schemat redukcji jako wykres.
 - [ ] Do obejrzenia zmiany treści z migracji: nazwy kolorów w opisach
   dopasowane do ról (statystyka 01 Ryc. 4.2 „zacieniowany pas”, statystyka 03
-  Ryc. 3.1–4.1, statystyka 04 „pionowa linia”); statystyka 04 Ryc. 7.1 pokazuje
-  tylko bieżący krok (dawniej treści się dokładały), Ryc. 7.2 obszar odrzucenia
-  dopiero w kroku 4; statystyka 2 Ryc. 3.2 (stabilność CI) zawsze używa próby
+  Ryc. 3.1–4.1, statystyka 04 „pionowa linia”); statystyka 2 Ryc. 3.2 (stabilność CI) zawsze używa próby
   z Ryc. 3.1; „Losuj …” nie cofa kroku.
 - [ ] Nazwy kroków dłuższe niż 3 słowa (np. „Ta sama średnia, ale…”, „Surowe
   dane (rug)”) — skrócić przy przeglądzie wykładu.

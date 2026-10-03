@@ -615,10 +615,8 @@ ch5_server <- function(input, output, session) {
     df_val <- as.numeric(test$parameter)
 
     switch(as.character(step),
-      "1" = tagList(
-        "n = ", step_num(sum(tab)), ". To liczebności obserwowane. Grupy mogą mieć
-        różne rozmiary, więc same liczby trudno porównać."
-      ),
+      "1" = "To liczebności obserwowane. Grupy mogą mieć różne rozmiary,
+        więc same liczby trudno porównać.",
       "2" = tagList(
         "Przy niezależności procenty w populacji byłyby takie same w każdym wierszu;
         w próbie różnią się także przez przypadek."
@@ -646,7 +644,7 @@ ch5_server <- function(input, output, session) {
 
     tab <- as.matrix(unclass(tab))
     switch(as.character(step),
-      "1" = lc_crosstab(tab, measure = "n", row_name = par$lab1,
+      "1" = lc_crosstab(tab, measure = "n", row_name = par$lab1, lead = FALSE,
                         col_name = par$lab2, col_colours = ch5_cat_colours(ncol(tab)),
                         label = paste0("Tabela krzyżowa: ", par$lab1, " × ", par$lab2)),
       "2" = lc_crosstab(tab, measure = "row", row_name = par$lab1,
