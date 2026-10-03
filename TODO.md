@@ -25,6 +25,11 @@ Kolejność najbliższych prac (szczegóły w „Migracja widgetów do v2”):
 
 1. [ ] Przegląd wykład po wykładzie: widgety (układy kolumn, odczyty, podpisy,
    tabele) i bloki tekstu (notki, pułapki, podsumowania, statusy).
+   Statystyka 01–06 gotowe (3 października 2026; audyt: 0 przelewów,
+   0 błędów). Zostały świadome wyjątki: quizy z długimi etykietami na radio
+   (02, 04 Ryc. 3.4), wykres z kliknięciem na `zoom_plot_ui` (06 ćwiczenie
+   z prostą), drzewo decyzyjne 04 z własnym przyciskiem pełnego ekranu,
+   schemat `type-error.jpg` w 04 rozdz. 3 poza panelem.
 
 ---
 
