@@ -90,11 +90,10 @@ alarm_paths_widget <- figure_panel(
   label = "Przykład liczbowy",
   title = "Dwie drogi do alarmu na 10 000 zmian",
   full_width = TRUE,
-  lc_stat_grid(
-    lc_stat_box("Krok 1 · Awarie", "100 na 10 000 zmian", caption = "P(awaria) = 0,01", color = upwr_cat[["terakota"]]),
-    lc_stat_box("Krok 2a · Prawdziwe alarmy", "95 na 100 awarii", caption = "czułość 0,95", color = upwr_cat[["niebo"]]),
-    lc_stat_box("Krok 2b · Fałszywe alarmy", "495 na 9900 zmian bez awarii", caption = "FPR 0,05", color = upwr_cat[["bursztyn"]]),
-    columns = 3
+  lc_readouts(
+    lc_readout("1 · Awarie (P = 0.01)", "100", color = upwr_cat[["terakota"]]),
+    lc_readout("2a · Prawdziwe alarmy (czułość 0.95)", "95", color = upwr_cat[["niebo"]]),
+    lc_readout("2b · Fałszywe alarmy (FPR 0.05 z 9900)", "495", color = upwr_cat[["bursztyn"]])
   ),
   lc_formula_box(withMathJax("$$P(\\text{awaria}\\mid\\text{alarm})=\\frac{95}{95+495}\\approx 0{,}16$$")),
   lc_status(
@@ -312,10 +311,10 @@ alarm_block <- list(
             )),
             "W tablicy 2×2 wartości predykcyjne to ilorazy w kolumnach: PPV = TP/(TP + FP), NPV = TN/(TN + FN). Czułość i swoistość czytamy wierszami, wartości predykcyjne — kolumnami. Siatka poniżej pokazuje, dlaczego kolumna alarmów wygląda tak niekorzystnie.",
             risk_try("odczytaj liczbę prawdziwych i fałszywych alarmów przy ustawieniach domyślnych i znajdź je na siatce. Potem w tablicy 2×2 z poprzedniego rozdziału zmniejsz FPR do 0,01 i wróć tutaj — parametry obu widoków są wspólne."),
-            risk_widget_panel("Symulacja", "10 000 zmian Bananpolu", tagList(
-              p("Parametry są synchronizowane z tablicą 2×2."), uiOutput("a3_counts")
-            ),
-            plot_id = "a3_grid", ratio = "1.9/1", max_height = "470px"
+            risk_widget_panel("Symulacja", "10 000 zmian Bananpolu", NULL,
+              plot_id = "a3_grid", stats_id = "a3_counts",
+              note = "Każde pole to jeden alarm. Parametry detektora są wspólne z tablicą 2×2.",
+              ratio = "1.9/1", max_height = "470px"
             ),
             c(
               "Przy ustawieniach domyślnych panel pokazuje 95 prawdziwych i 495 fałszywych alarmów, a P(awaria | alarm) = 0,161. Na siatce prawdziwe alarmy to niewielka grupa pól, a fałszywe — obszar pięć razy większy. Pozostałe zmiany, bez alarmu, leżą poza siatką. Przy FPR = 0,01 fałszywych alarmów jest 99, prawdziwych nadal 95, a wiarygodność alarmu rośnie do 0,490.",
@@ -489,8 +488,11 @@ alarm_block <- list(
             risk_try("zacznij od prawdopodobieństwa skopiowania 0 i porównaj wynik z przykładem 3.6. Następnie ustaw 0,25, 0,5 i 1. Czujniki mają parametry ustawione w tablicy 2×2 w rozdziale o języku detektora."),
             figure_panel(
               label = "Porównanie", title = "Dwa alarmy",
-              lc_slider("a3_dependence", "Prawdopodobieństwo skopiowania pierwszego alarmu", 0, 1, 0, 0.05),
-              uiOutput("a3_second"), full_width = TRUE
+              lc_toolbar(
+                lc_slider("a3_dependence", "Prawdopodobieństwo skopiowania pierwszego alarmu", 0, 1, 0, 0.05),
+                lc_readouts(uiOutput("a3_second"))
+              ),
+              full_width = TRUE
             ),
             c(
               "Przy parametrach domyślnych i braku kopiowania panel pokazuje 0,785 — dokładnie wynik przykładu 3.6. Przy kopiowaniu 0,25 posterior po dwóch alarmach spada do 0,391, przy 0,5 do 0,263, a przy pełnym kopiowaniu wraca do 0,161, czyli do wartości po jednym alarmie. Nawet umiarkowana zależność zjada większość zysku z drugiego czujnika.",
@@ -650,10 +652,11 @@ alarm_server <- function(input, output, session) {
   })
   output$a3_counts <- renderUI({
     d <- detector()
-    lc_stat_grid(lc_stat_box("Prawdziwe alarmy", d$alarm[1]),
-      lc_stat_box("Fałszywe alarmy", d$alarm[2]),
-      lc_stat_box("P(awaria | alarm)", risk_format_probability(posterior()), color = upwr_accent),
-      columns = 1
+    # Kolory jak pola siatki: odczyty pełnią rolę legendy.
+    tagList(
+      lc_readout("Prawdziwe alarmy", d$alarm[1], color = upwr_accent, swatch = TRUE),
+      lc_readout("Fałszywe alarmy", d$alarm[2], color = upwr_single_alt, swatch = TRUE),
+      lc_readout("P(awaria | alarm)", lc_fmt(posterior(), 3), color = upwr_secondary)
     )
   })
   # Siatka pokazuje tylko alarmy (prawdziwe i fałszywe): 10 000 pól byłoby
@@ -681,20 +684,13 @@ alarm_server <- function(input, output, session) {
       geom_tile(colour = if (n <= 1500) "white" else NA, linewidth = 0.3) +
       scale_y_reverse() +
       coord_equal(expand = FALSE) +
-      scale_fill_manual(
-        values = c(upwr_accent, upwr_single_alt),
-        labels = paste0(labels, " (", c(tp, fp), ")"), drop = FALSE
-      ) +
-      guides(fill = guide_legend(ncol = 1)) +
-      labs(
-        title = paste0("Każde pole to jeden alarm (", format(n, big.mark = " ", trim = TRUE), ")"),
-        caption = outside, x = NULL, y = NULL, fill = NULL
-      ) +
+      scale_fill_manual(values = c(upwr_accent, upwr_single_alt), drop = FALSE) +
+      labs(caption = outside, x = NULL, y = NULL, fill = NULL) +
       theme_upwr() +
       theme(
         axis.text = element_blank(), axis.ticks = element_blank(),
         axis.line = element_blank(), panel.grid = element_blank(),
-        legend.position = "bottom", legend.key.size = grid::unit(1.1, "lines")
+        legend.position = "none"
       )
   })
   zoom_plot_server("a3_grid", grid_plot, alt = "Siatka wszystkich alarmów w dziesięciu tysiącach zmian: prawdziwe i fałszywe alarmy jako pola dwóch kolorów.")
@@ -710,17 +706,17 @@ alarm_server <- function(input, output, session) {
       theme_upwr()
   })
   zoom_plot_server("a3_curve", curve_plot, alt = "Rosnąca krzywa wiarygodności alarmu względem częstości bazowej awarii.")
-  output$a3_posterior <- renderUI(lc_stat_grid(lc_stat_box("Dla P(awarii)=0,01",
-    risk_format_probability(risk_bayes(.01, input$a3_curve_sens, input$a3_curve_fpr)),
+  output$a3_posterior <- renderUI(lc_readout("P(awaria | alarm) przy P(awarii) = 0.01",
+    lc_fmt(risk_bayes(.01, input$a3_curve_sens, input$a3_curve_fpr), 3),
     color = upwr_accent
-  ), columns = 1))
+  ))
   output$a3_second <- renderUI({
     p1 <- posterior()
     adjusted <- do.call(risk_two_alarm_posterior, c(detector_parameters(),
       list(dependence = input$a3_dependence %||% 0)))
-    lc_stat_grid(lc_stat_box("Po jednym alarmie", risk_format_probability(p1)),
-      lc_stat_box("Po dwóch alarmach", risk_format_probability(adjusted), color = upwr_accent),
-      columns = 1
+    tagList(
+      lc_readout("Po jednym alarmie", lc_fmt(p1, 3), color = upwr_secondary),
+      lc_readout("Po dwóch alarmach", lc_fmt(adjusted, 3), color = upwr_accent)
     )
   })
   risk_assessment_server("a3", alarm_quiz, input, output)
