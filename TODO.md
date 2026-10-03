@@ -127,20 +127,48 @@ Etap 3 — przegląd widgetów wykład po wykładzie (commit per widget):
 - [ ] Legendy ggplot wychodzące poza wykres na telefonie (np. statystyka 01
   Ryc. 2.5) — poprawiać przy migracji danego widgetu.
 
-Etap 3, widgety krokowe (handoff „Widget krokowy v2”; pilot Ryc. 3.1 w
-statystyce 01 zrobiony). Dla każdego wybrać wzorzec: pasek z nazwami
-(`lc_step_widget()`) albo kropki (`lc_step_nav()`); kolory warstw według ról
-(`step_*` w `R/theme_upwr.R`), treść kroków bez zmian:
+Etap 3, widgety krokowe: przeniesione 3 października 2026 (ok. 30 widgetów
+w statystyce 01–04 i 06, statystyce 2 i analizie ryzyka 01 i 08). Zostało:
 
-- [ ] Statystyka 01 Ryc. 2.1 (tabela częstości): zostaje na kropkach czy pasek?
-- [ ] Statystyka 2: `01-symulacje-statystyczne/modules/ch3_bootstrap_jednopr.R`,
-  `ch4_permutacje.R` (kroki zależne od losowania: akcja w pasku, krok przez
-  `s$set()`; zaktualizować testy odwołujące się do `ch4_step()`),
-  `04-szeregi-czasowe/modules/ch3_trend.R`, `ch8_ar.R`.
-- [ ] Analiza ryzyka: `01-jezyk-ryzyka` (`venn_step`), `08-niezawodnosc-systemu`
-  (`s8_step`, cykliczny „Pokaż następny krok” → pasek kroków).
-- [ ] Wyszukać pozostałe widgety krokowe (`_step\d`, `reactiveVal(0)`, serie
-  przycisków „1. …, 2. …”).
+- [ ] **Decyzja:** konstruktory case studies w statystyce 03 (`ch3_srednia.R`,
+  8 przykładów, i `ch4_proporcja.R`): przyciski kroków generowane
+  dynamicznie, potem faza hipotez i „Pokaż werdykt”. Warianty: hipotezy jako
+  dodatkowe kroki paska / pasek tylko dla budowy przedziału, hipotezy jako
+  `lc_chips()` obok / bez zmian.
+- [ ] **Decyzja:** statystyka 06 Ryc. 1.1 (regresja z korelacji): usunięty krok 0
+  pokazywał samą chmurę punktów z podpowiedzią. Przywrócić go jako krok
+  „Dane” (6 kroków) czy zostaje 5?
+- [ ] **Decyzja:** analiza ryzyka 08 „Krok po kroku” (redukcja układu): zostają
+  kropki (widget bez wykresu) czy pasek kroków ze schematem redukcji
+  (C + A‖B → C + blok AB → jeden blok; nowa treść) albo wariant paska bez
+  wykresu we wspólnych komponentach?
+- [ ] **Decyzja:** statystyka 01 Ryc. 2.1 (tabela częstości): zostaje na kropkach
+  czy pasek kroków?
+- [ ] Do potwierdzenia: statystyka 04 Ryc. 4.1 krok 2 i Ryc. 6.4 krok 3 — dawne
+  pudełko podpisane „p” pokazywało SE albo statystykę t; opis kroku podaje
+  teraz SE i t.
+- [ ] Do obejrzenia zmiany treści z migracji: nazwy kolorów w opisach
+  dopasowane do ról (statystyka 01 Ryc. 4.2 „zacieniowany pas”, statystyka 03
+  Ryc. 3.1–4.1, statystyka 04 „pionowa linia”); statystyka 04 Ryc. 7.1 pokazuje
+  tylko bieżący krok (dawniej treści się dokładały), Ryc. 7.2 obszar odrzucenia
+  dopiero w kroku 4; statystyka 2 Ryc. 3.2 (stabilność CI) zawsze używa próby
+  z Ryc. 3.1; „Losuj …” nie cofa kroku.
+- [ ] Nazwy kroków dłuższe niż 3 słowa (np. „Ta sama średnia, ale…”, „Surowe
+  dane (rug)”) — skrócić przy przeglądzie wykładu.
+- [ ] Sprzątanie: martwe style i JS po starym widgecie (`.ch2-animated-widget`,
+  `.ch2-step-btn`, `.ch2-step-stage`) w `statystyka/04-wnioskowanie-statystyczne/app.R`;
+  `format_test_result()` w `helpers.R` statystyki 04 formatuje p z przecinkiem.
+- [ ] Tytuły i legenda w `plot_bootstrap_step()` / `plot_bootstrap_distribution()`
+  (`statystyka-2/01-symulacje-statystyczne/modules/helpers.R`), używanych przez
+  `ch1_idea.R` — usunąć przy migracji rozdziału 1; tytuły Ryc. 8.1 i 8.3
+  w `statystyka-2/04-szeregi-czasowe/modules/ch8_ar.R`.
+- [ ] Wykresy bootstrapu w statystyce 2 (rozdziały 1–2) stoją na zwykłym
+  `plotOutput(height = "auto")` (wysokość rośnie z liczbą przedziałów) i nie
+  mają przycisku powiększenia; rozważyć wariant `zoom_plot` z dynamiczną
+  wysokością.
+- [ ] Znaki x̄, p̂, ₁, β na wykresach: w części środowisk (showtext, mono) wychodzą
+  jako puste kwadraty — sprawdzić w przeglądarce; `step_label()` ma już
+  domyślnie zwykły krój i `parse = TRUE` dla plotmath.
 
 Etap 3, bloki tekstu (handoff „Bloki v2”; komponenty i zasady są już we
 wspólnym `R/`, margines boczny usunięty, dawne callouty renderują się jako
