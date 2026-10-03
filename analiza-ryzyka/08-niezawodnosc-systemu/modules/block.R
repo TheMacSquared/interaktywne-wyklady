@@ -85,6 +85,9 @@ system_sciaga_widget <- figure_panel(
   )
 )
 
+# Nazwy kroków redukcji układu mieszanego (kropki lc_step_nav i znacznik opisu).
+s8_reduction_steps <- c("Zdefiniuj sukces", "Zredukuj A/B", "Połącz szeregowo")
+
 system_block <- list(id = "system", title = "Niezawodność systemu", chapters = list(
   list(
     id = "intuicja", title = "Logika sukcesu", hook = "Te same części, trzy różne systemy",
@@ -304,8 +307,8 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           c(
             "Redukcja wykorzystuje prostą własność wzorów (8.2) i (8.3): grupa niezależnych elementów połączonych równolegle zachowuje się jak jeden blok o niezawodności R_p, a grupa połączona szeregowo — jak jeden blok o niezawodności R_s. Schemat zwija się więc od środka, aż zostanie jeden blok. Warunek: grupy nie mogą dzielić elementów, bo wtedy ich zastępcze bloki nie są niezależne."
           ),
-          risk_try("klikaj „Pokaż następny krok” i przy każdym kroku zapisz, który fragment schematu z poprzedniego rozdziału został właśnie zastąpiony jednym blokiem."),
-          figure_panel(label = "Krok po kroku", title = "Sterownik C oraz wentylatory A/B", lc_action("s8_step", "Pokaż następny krok", variant = "solid"), uiOutput("s8_reduction"), full_width = TRUE),
+          risk_try("klikaj „Dalej” i przy każdym kroku zapisz, który fragment schematu z poprzedniego rozdziału został właśnie zastąpiony jednym blokiem."),
+          figure_panel(label = "Krok po kroku", title = "Sterownik C oraz wentylatory A/B", lc_toolbar(lc_step_nav("s8_step", s8_reduction_steps, start = 1L)), uiOutput("s8_reduction"), full_width = TRUE),
           "Trzy kroki redukcji, które właśnie przeszliśmy, składają się w gotowy wzór całego układu:",
           risk_formula("R_{sys}=R_C\\,[1-(1-R_A)(1-R_B)]", num = "8.4",
             legend = c("R_C" = "niezawodność sterownika (blok szeregowy)", "R_A, R_B" = "niezawodności wentylatorów", "[1-(1-R_A)(1-R_B)]" = "zastępczy blok równoległy wentylatorów")),
@@ -687,11 +690,11 @@ system_server <- function(input, output, session) {
   })
   zoom_plot_server("s8_arch_plot", arch_plot, alt = "Słupki niezawodności dwóch elementów i systemu dla wybranej architektury.")
   output$s8_arch_stats <- renderUI(lc_stat_grid(lc_stat_box("R systemu", risk_format_probability(arch_value()), color = upwr_accent), columns = 1))
-  step <- reactiveVal(0L)
-  observeEvent(input$s8_step, step((step() + 1L) %% 3L))
   output$s8_reduction <- renderUI({
-    texts <- c("1. Zdefiniuj sukces: C działa oraz A lub B działa.", "2. Zredukuj A/B: R_AB=1−(1−R_A)(1−R_B).", "3. Połącz szeregowo: R_sys=R_C·R_AB.")
-    lc_feedback(type = "info", texts[[step() + 1L]])
+    # Kroki od 1; cofnięcie przed krok 1 pokazuje nadal krok 1.
+    k <- max(1L, as.integer(input$s8_step %||% 1L))
+    texts <- c("Zdefiniuj sukces: C działa oraz A lub B działa.", "Zredukuj A/B: R_AB=1−(1−R_A)(1−R_B).", "Połącz szeregowo: R_sys=R_C·R_AB.")
+    lc_step_text(paste0("Krok ", k, " z 3 · ", s8_reduction_steps[[k]]), texts[[k]])
   })
   time_plot <- reactive({
     t <- seq(0, 3000, length.out = 400)
