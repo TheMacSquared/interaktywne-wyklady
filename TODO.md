@@ -232,6 +232,31 @@ to stosują.
 
 ### Cały kurs
 
+- [ ] Ściągi „jak zrobić to w jamovi” (na razie bez instrukcji programowych
+  w treści wykładów). Materiał usunięty z wykładów 01–05 (2026-10-03),
+  do weryfikacji w jUPWR:
+  - 03 rozdz. 3 (ch3_srednia.R): CI dla średniej — Analyses → T-Tests → One Sample T-Test, przeciągnąć zmienną ilościową do Dependent Variables, w panelu Additional Statistics zaznaczyć Confidence interval (domyślnie 95%); średnią i granice odczytać z kolumn Mean, Lower, Upper.
+  - 03 rozdz. 3 (ch3_srednia.R): CI dla różnicy średnich w wersji Welcha — Independent Samples T-Test z zaznaczoną opcją Welch's; domyślnie zaznaczona jest opcja Student's (równe wariancje, wariancja łączona).
+  - 03 rozdz. 4 (ch4_proporcja.R): CI dla proporcji — Analyses → Frequencies → 2 Outcomes — Binomial test → przeciągnąć zmienną binarną (np. zdany/niezdany) do pola zmiennych → zaznaczyć Confidence interval (domyślnie 95%); jamovi nie liczy przedziału Walda, tylko Cloppera-Pearsona; w tabeli odczytać kolumny Proportion, Lower, Upper.
+  - 04 rozdz. 04 (ch2_jedna_ilosciowa.R): test t jednej próby — T-Tests → One Sample T-Test, wartość μ₀ wpisujemy w polu Test value.
+  - 04 rozdz. 04 (ch2_jedna_ilosciowa.R): test jednostronny — kierunek Hₐ wybieramy w sekcji Hypothesis okna One Sample T-Test.
+  - 04 rozdz. 05 (ch3_jedna_jakosciowa.R): test dwumianowy — Analyses → Frequencies → 2 Outcomes — Binomial test, wartość p₀ w polu Test value.
+  - 04 rozdz. 05 (ch3_jedna_jakosciowa.R): tabela porównawcza — test dwumianowy: 2 Outcomes — Binomial test; test proporcji (z-test): N Outcomes — χ² Goodness of fit (dla dwóch kategorii odpowiada z-testowi bez poprawki).
+  - 04 rozdz. 07 (ch5_dwie_jakosciowe.R): tabela χ² vs Fisher — w jamovi χ² jest domyślny, test Fishera: zaznacz Fisher's exact test.
+  - 04 rozdz. 08 (ch6_dwie_grupy.R): Independent Samples T-Test ma domyślnie zaznaczoną opcję Student's; żeby dostać test Welcha (zgodny z panelami wykładu), zaznacz Welch's.
+  - 04 rozdz. 08 (ch6_dwie_grupy.R): test t dla prób zależnych — Paired Samples T-Test, oba pomiary jako osobne kolumny.
+  - 04 rozdz. 08 (ch6_dwie_grupy.R): ćwiczenia CASchools (akapit wprowadzający) — w jamovi zaznacz opcję Welch's, żeby wynik był zgodny z rozwiązaniem.
+  - 04 rozdz. 09 (ch7_anova.R): w oknie One-Way ANOVA domyślnie liczony jest wariant Welcha, więc jamovi pokaże inną wartość F i niecałkowitą drugą liczbę stopni swobody niż klasyczna ANOVA.
+  - 04 rozdz. 09 (ch7_anova.R): post hoc — One-Way ANOVA → Post-Hoc Tests → ✓ Games-Howell (dawna notka margin_code_note „W jamovi”).
+  - 04 rozdz. 09 (ch7_anova.R): macierz p-wartości w panelu Ryc. 9.3 ma układ tabeli post hoc z jamovi („Tak wygląda tabela post hoc w jamovi — odczytaj p-wartość dla każdej pary grup”).
+  - 04 rozdz. 09 (ch7_anova.R): ćwiczenia CASchools (akapit wprowadzający) — klasyczna ANOVA jak w rozwiązaniu: w oknie One-Way ANOVA zaznacz opcję Assume equal (Fisher's).
+  - 05 rozdz. 01 (ch1_normalnosc.R): Okna testu t i ANOVA mają sekcję Assumption Checks z opcjami Normality test (Shapiro-Wilk) i Q-Q plot.
+  - 05 rozdz. 02 (ch2_wariancje.R): Independent Samples T-Test ma domyślnie zaznaczoną opcję Student's; żeby dostać test Welcha, zaznacz Welch's.
+  - 05 rozdz. 02 (ch2_wariancje.R): ANOVA Welcha jest domyślna w oknie One-Way ANOVA.
+  - 05 rozdz. 04 (ch4_mapa.R): Test t Welcha trzeba zaznaczyć (opcja Welch's), bo okno Independent Samples T-Test domyślnie liczy wersję Studenta.
+  - 05 rozdz. 04 (ch4_mapa.R): ANOVA Welcha — okno One-Way ANOVA liczy ją domyślnie.
+  - 05 rozdz. 04 (ch4_mapa.R): tabela testów parametrycznych, test t dla prób niezależnych — „w jamovi zaznacz Welch's”.
+  - 05 rozdz. 04 (ch4_mapa.R): selektor, test t dla prób niezależnych — „w jamovi zaznacz Welch's”; ANOVA — ANOVA Welcha „domyślna w jamovi”.
 - [ ] Wdrożyć `gloss()` we wszystkich wykładach: owijać pierwsze
   wprowadzenie kluczowego terminu w rozdziale, nie każde wystąpienie. Nowe
   hasła dopisywać do `statystyka/R/glossary.R`. Wzorzec:
