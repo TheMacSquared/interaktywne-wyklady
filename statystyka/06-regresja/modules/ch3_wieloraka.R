@@ -106,7 +106,7 @@ ch3_ui <- list(
              dodają następne predyktory do tego samego równania.")
         ),
         column(8,
-          lc_feedback(type = "info",
+          lc_note("Jak czytać",
             p("Tabela pokazuje współczynniki pełnego modelu addytywnego,
               bez interakcji. Gwiazdka przy p-wartości oznacza p < 0.05.")
           ),

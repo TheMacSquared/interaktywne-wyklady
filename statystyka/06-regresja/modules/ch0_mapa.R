@@ -57,10 +57,8 @@ ch0_map_ui <- list(
       " i interakcje."
     ),
 
-    lc_feedback(
-      type = "info",
-      tags$strong("Jak korzystać:"),
-      " na zajęciach wybieraj rozdziały i sekcje według celu. Materiał oznaczony",
+    lc_note("Jak korzystać",
+      "Na zajęciach wybieraj rozdziały i sekcje według celu. Materiał oznaczony",
       " jako pogłębienie można ominąć bez utraty głównej historii."
     ),
 

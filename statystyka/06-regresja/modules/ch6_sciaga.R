@@ -92,13 +92,11 @@ ch6_ui <- list(
 
     tagList(
 
-    lc_feedback(type = "info",
+    lc_note("Interpretacja",
       p("Regresja liniowa: ", withMathJax("\\(\\beta_1 = 0.5\\)"),
         " oznacza wzrost Y o 0.5 przy wzroście X o 1 (ceteris paribus)."),
-
       p("Regresja logistyczna: ", withMathJax("\\(\\beta_1 = 0.5 \\Rightarrow OR = e^{0.5} = 1.65\\)"),
         " oznacza: wzrost X o 1 zwiększa szanse sukcesu 1.65-krotnie."),
-
       p("Istotność współczynników: p poniżej przyjętego poziomu istotności (zwykle 0.05) dla ", withMathJax("\\(\\beta_j\\)"),
         " oznacza, że predyktor ", withMathJax("\\(X_j\\)"),
         " jest istotnie powiązany z Y przy kontroli pozostałych. W danych obserwacyjnych nie dowodzi to wpływu przyczynowego.")
@@ -110,7 +108,7 @@ ch6_ui <- list(
 
     tagList(
 
-    lc_feedback(type = "ok",
+    tagList(
       tags$ul(
         tags$li("Y ciągła, 1 predyktor → ", gloss("regresja prosta", "regresja liniowa prosta")),
         tags$li("Y ciągła, wiele predyktorów → ", gloss("regresja wieloraka")),
@@ -157,7 +155,7 @@ ch6_ui <- list(
 
     tagList(
 
-    lc_feedback(type = "danger",
+    lc_warn("Pułapki",
       tags$ul(
         tags$li("Ekstrapolacja: model działa w zakresie ", gloss("zbiór treningowy", "danych treningowych"), ". Predykcja poza tym zakresem jest ryzykowna."),
         tags$li("Korelacja predyktorów: silna korelacja między X1 i X2 (", gloss("współliniowość"), ") zawyża SE i utrudnia interpretację."),
