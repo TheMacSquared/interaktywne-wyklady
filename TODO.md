@@ -77,8 +77,8 @@ Zostało:
 - [ ] Analiza ryzyka 01 Ćw. 2 i prototypy: 16 `lc_stat_box` i jeden układ
   kolumn — po wyborze wariantu ćwiczenia.
 - [ ] Radio w panelach: analiza ryzyka zrobiona 3 października 2026 (karty
-  `lc-choices`). Zostały statystyka 02 Ryc. 2.1 i 7.1, 04 Ryc. 3.4 (quiz —
-  kandydat na `lc-choices`) i statystyka 2 (1).
+  `lc-choices`). Statystyka 04 Ryc. 3.4 też na kartach. Zostały statystyka
+  02 Ryc. 2.1 i 7.1 oraz statystyka 2 (1).
 - [ ] Wykresy bez tytułów (decyzja: żadnych tytułów). Zostały dynamiczne
   tytuły z wynikami albo objaśnieniem oznaczeń; przy migracji widgetu liczby
   → `lc_readout()`, objaśnienie → `lc_caption()`, potem usunąć tytuł.

@@ -382,13 +382,15 @@ ch1d_ui <- list(
       title = "Co naprawdę oznacza p-wartość?",
       p("Załóżmy, że w badaniu wyszło p = 0.03. Które zdanie jest poprawną
         interpretacją?"),
-      radioButtons("ch1_pvalue_meaning", NULL,
-        choices = c(
-          "Jest 3% szans, że H₀ jest prawdziwa." = "h0_prob",
-          "Jest 3% szans, że wynik jest przypadkowy." = "random_prob",
-          "Gdyby H₀ była prawdziwa, taki lub bardziej skrajny wynik pojawiłby się w 3% powtórzeń." = "tail_prob"
-        ),
-        selected = character(0)
+      tags$div(class = "lc-choices",
+        radioButtons("ch1_pvalue_meaning", NULL,
+          choices = c(
+            "Jest 3% szans, że H₀ jest prawdziwa." = "h0_prob",
+            "Jest 3% szans, że wynik jest przypadkowy." = "random_prob",
+            "Gdyby H₀ była prawdziwa, taki lub bardziej skrajny wynik pojawiłby się w 3% powtórzeń." = "tail_prob"
+          ),
+          selected = character(0)
+        )
       ),
       uiOutput("ch1_pvalue_meaning_feedback")
     ),
