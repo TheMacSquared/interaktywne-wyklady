@@ -7,7 +7,7 @@
 #   - pola „Jak to zrobić w jUPWR” w aplikacjach wykładów (jupwr_box.R).
 #
 # Etykiety menu i opcji przepisane z jUPWR 1.0.6 (pliki .a.yaml/.u.yaml modułów
-# jEksplor, jdistrACTION, jCI, jTestyT, jCzest, jANOVA, jRegr). Po zmianie UI
+# jEksplor, jdistrACTION, jCI, jTestyT, jCzest, jANOVA, jRegr, scatr). Po zmianie UI
 # w jUPWR poprawiać TUTAJ — PDF i pola w wykładach odświeżą się same.
 #
 # Pola wpisu:
@@ -40,6 +40,7 @@ wyklady:
 grupy:
   dane: Przygotowanie danych
   opis: Opis danych
+  wykresy: Wykresy
   rozklady: Rozkłady
   estymacja: Oszacowanie z niepewnością (przedziały ufności)
   testy: Testy — porównania
@@ -118,9 +119,8 @@ wpisy:
       Zmienne: "zmienna jakościowa"
     kroki:
       - "Tabela: Liczności i procenty skumulowane."
-      - "Wykres: Słupkowy."
     wynik: "Tabela liczności z procentami; dominanta i liczba kategorii w tabeli Podsumowanie."
-    uwaga: "Wykresu kołowego w jUPWR nie ma celowo — słupkowy jest czytelniejszy."
+    uwaga: "Wykres: Wykresy → Ranking → Wykres słupkowy. Kołowego w jUPWR nie ma celowo."
 
   - id: tabela-krzyzowa-opis
     wyklady: ["01"]
@@ -132,9 +132,8 @@ wpisy:
       Podziel według: "druga zmienna jakościowa"
     kroki:
       - "Procenty (przy podziale): % w kolumnie, % w wierszu albo % ogółem."
-      - "Wykres: Słupkowy albo Mozaikowy."
     wynik: "Tabela krzyżowa liczności z wybranymi procentami."
-    uwaga: "Test χ² dla tej tabeli jest w Częstości → Tabela kontyngencji."
+    uwaga: "Test χ²: Częstości → Tabela kontyngencji. Wykres: Wykresy → Zależności → Wykres mozaikowy."
 
   - id: statystyki-opisowe
     wyklady: ["01", "07", "08", "09"]
@@ -159,37 +158,8 @@ wpisy:
     zmienne:
       Zmienne: "zmienna ilościowa"
       Podziel według: "zmienna grupująca (można kilka)"
-    kroki:
-      - "Wykres: Pudełkowy — pudełka grup obok siebie."
     wynik: "Jeden wiersz (lub kolumna) statystyk na grupę."
-
-  - id: histogram
-    wyklady: ["01", "05", "08"]
-    temat: Histogram
-    pytanie: Jaki kształt ma rozkład zmiennej?
-    grupa: opis
-    menu: ["Analizy", "Eksploracja", "Zmienne ilościowe"]
-    zmienne:
-      Zmienne: "zmienna ilościowa"
-    kroki:
-      - "Wykres: Histogram."
-      - "Zaawansowane → Wykresy dodatkowe: Gęstość na histogramie."
-    wynik: "Histogram pod tabelą statystyk."
-    uwaga: "Osobny, bardziej konfigurowalny histogram: Wykresy → Rozkład → Histogram."
-
-  - id: pudelkowy
-    wyklady: ["01", "07", "08"]
-    temat: Wykres pudełkowy
-    pytanie: Gdzie jest mediana, kwartyle i wartości odstające?
-    grupa: opis
-    menu: ["Analizy", "Eksploracja", "Zmienne ilościowe"]
-    zmienne:
-      Zmienne: "zmienna ilościowa"
-      Podziel według: "(opcjonalnie) grupy"
-    kroki:
-      - "Wykres: Pudełkowy (Zaznacz średnią jest włączone)."
-      - "Zaawansowane → Wykresy dodatkowe: Punkty na pudełkowym, Skrzypce na pudełkowym."
-    wynik: "Pudełko = Q1–Q3, kreska = mediana, punkty poza wąsami = wartości odstające."
+    uwaga: "Wykres: Wykresy → Porównania → Wykres skrzynkowy."
 
   - id: ksztalt
     wyklady: ["01"]
@@ -225,9 +195,96 @@ wpisy:
     kroki:
       - "Braki: wiersz Braki w tabeli (domyślnie)."
       - "Zaawansowane → Wartości skrajne: pięć najmniejszych i największych wartości z numerami wierszy."
-      - "Wykres: Pudełkowy z Punktami."
     wynik: "Tabela wartości skrajnych wskazuje wiersze do sprawdzenia w arkuszu."
-    uwaga: "Dla zmiennych jakościowych braki pokazuje Eksploracja → Zmienne jakościowe → Podsumowanie."
+    uwaga: "Odstające na wykresie: Wykresy → Porównania → Wykres skrzynkowy. Braki zmiennych jakościowych: Eksploracja → Zmienne jakościowe → Podsumowanie."
+
+  # ------------------------------------------------------------- wykresy -----
+
+  - id: w-histogram
+    wyklady: ["01", "05", "08"]
+    temat: Histogram
+    pytanie: Jaki kształt ma rozkład zmiennej ilościowej?
+    grupa: wykresy
+    menu: ["Wykresy", "Rozkład", "Histogram"]
+    zmienne:
+      Zmienna: "zmienna ilościowa"
+      Zmienna grupująca: "(opcjonalnie) grupy — histogramy nałożone"
+    kroki:
+      - "Opcje ogólne → Szerokość słupka: dopasuj do skali danych."
+      - "Gęstości: Pokaż gęstości. Grupowanie: Rozdzielone wykresy (facet) — osobny panel na grupę."
+    wynik: "Histogram; przy grupach — nałożone albo w osobnych panelach."
+
+  - id: w-skrzynkowy
+    wyklady: ["01", "07", "08"]
+    temat: Wykres skrzynkowy (pudełkowy)
+    pytanie: Gdzie są mediana, kwartyle i wartości odstające? Jak porównać grupy?
+    grupa: wykresy
+    menu: ["Wykresy", "Porównania", "Wykres skrzynkowy"]
+    zmienne:
+      Zmienna: "zmienna ilościowa"
+      Zmienna grupująca 1: "(opcjonalnie) grupy na osi X"
+      Zmienna grupująca 2: "(opcjonalnie) podział kolorem"
+    kroki:
+      - "Opcje ogólne → Element skrzynki: Pokaż przypadki odstające (włączone), Średnia."
+    wynik: "Skrzynka = Q1–Q3, kreska = mediana, punkty poza wąsami = wartości odstające."
+    uwaga: "Rozkład jednej zmiennej z punktami i gęstością: Wykresy → Rozkład → Wykres chmurowy (raincloud)."
+
+  - id: w-slupkowy
+    wyklady: ["01"]
+    temat: Wykres słupkowy
+    pytanie: Jak pokazać liczności kategorii?
+    grupa: wykresy
+    menu: ["Wykresy", "Ranking", "Wykres słupkowy"]
+    zmienne:
+      Typ zmiennej: "Kategorialne"
+      Zmienna kategorialna: "zmienna jakościowa"
+      Zmienna grupująca: "(opcjonalnie) druga zmienna jakościowa"
+    kroki:
+      - "Opcje ogólne → Słupek: Etykiety wartości."
+      - "Opcje dla grupy → Typ słupków: Zgrupowane (obok siebie) albo Stos (skumulowane)."
+    wynik: "Słupki liczności kategorii (przy grupie — w podziale na grupy)."
+    uwaga: "Typ zmiennej Ciągła: słupki średnich ze słupkami błędów."
+
+  - id: w-mozaikowy
+    wyklady: ["01", "04"]
+    temat: Wykres mozaikowy
+    pytanie: Jak pokazać zależność dwóch zmiennych jakościowych?
+    grupa: wykresy
+    menu: ["Wykresy", "Zależności", "Wykres mozaikowy"]
+    zmienne:
+      Zmienna X: "pierwsza zmienna jakościowa"
+      Zmienna Y: "druga zmienna jakościowa"
+    kroki:
+      - "Opcje ogólne → Etykiety: Pokaż etykiety procentowe."
+    wynik: "Szerokość kolumny = udział kategorii X, wysokość pola = udział Y w tej kategorii."
+
+  - id: w-rozrzutu
+    wyklady: ["04", "06", "08"]
+    temat: Wykres rozrzutu
+    pytanie: Jak pokazać zależność dwóch zmiennych ilościowych?
+    grupa: wykresy
+    menu: ["Wykresy", "Zależności", "Wykres rozrzutu"]
+    zmienne:
+      Oś X: "zmienna objaśniająca"
+      Oś Y: "zmienna objaśniana"
+      Zmienna grupująca: "(opcjonalnie) grupy kolorem — np. paradoks Simpsona"
+    kroki:
+      - "Opcje ogólne → Linia regresji: Pokaż linię; Metoda Liniowa albo Wygładzona; Przedział ufności."
+    wynik: "Punkty z linią trendu (przy grupie — osobna linia dla każdej grupy)."
+
+  - id: w-qq
+    wyklady: ["05"]
+    temat: Wykres Q-Q
+    pytanie: Czy rozkład jest zbliżony do normalnego (na wykresie)?
+    grupa: wykresy
+    menu: ["Wykresy", "Rozkład", "Wykres Q-Q"]
+    zmienne:
+      Zmienna: "zmienna ilościowa"
+      Zmienna grupująca: "(opcjonalnie) grupy"
+    kroki:
+      - "Opcje ogólne → Wykres Q-Q: Pokaż linię odniesienia, Standaryzuj dane (oba włączone)."
+      - "Grupowanie: Rozdzielone wykresy (facet)."
+    wynik: "Punkty blisko prostej = rozkład bliski normalnemu."
 
   # ------------------------------------------------------------ rozkłady -----
 
@@ -267,7 +324,7 @@ wpisy:
 
   - id: normalnosc
     wyklady: ["05"]
-    temat: Sprawdzenie normalności (Shapiro-Wilk, wykres Q-Q)
+    temat: Test normalności (Shapiro-Wilk)
     pytanie: Czy rozkład zmiennej jest zbliżony do normalnego?
     grupa: rozklady
     menu: ["Analizy", "Eksploracja", "Zmienne ilościowe"]
@@ -275,9 +332,9 @@ wpisy:
       Zmienne: "zmienna ilościowa"
       Podziel według: "(opcjonalnie) grupy — normalność sprawdza się w każdej grupie"
     kroki:
-      - "Założenia → Normalność: Shapiro-Wilk, Wykres Q-Q."
-    wynik: "Tabela testu (W, p) i wykres Q-Q: punkty blisko prostej = rozkład bliski normalnemu."
-    uwaga: "W testach t to samo jest w sekcji Sprawdzenie założeń; w ANOVA i regresji sprawdza się reszty (Założenia → Normalność reszt)."
+      - "Założenia → Normalność: Shapiro-Wilk (także Lilliefors, Anderson-Darling)."
+    wynik: "Tabela testu (W, p); p < α = rozkład istotnie różny od normalnego."
+    uwaga: "Wykres: Wykresy → Rozkład → Wykres Q-Q. W testach t: Sprawdzenie założeń; w ANOVA i regresji — reszty (Założenia → Normalność reszt)."
 
   # ----------------------------------------------------------- estymacja -----
 

@@ -1,41 +1,82 @@
 ---
-title: "Ściąga jUPWR"
-subtitle: "Gdzie w jUPWR robi się to, czego potrzeba na wykładzie ze statystyki"
+pagetitle: "Ściąga jUPWR"
 lang: pl
 format:
   pdf:
     pdf-engine: xelatex
     documentclass: scrartcl
+    classoption: [9pt]
     papersize: a4
-    geometry: "margin=1.6cm, top=1.6cm, bottom=1.8cm"
-    fontsize: 10pt
+    geometry: "margin=1.25cm, top=1.6cm, bottom=1.5cm, headsep=0.4cm"
     mainfont: Lato
     toc: false
     number-sections: false
     colorlinks: true
-    linkcolor: "upwraccent"
+    linkcolor: "ink"
+    include-before-body:
+      text: |
+        \thispagestyle{empty}
     include-in-header:
       text: |
         \usepackage{xcolor}
-        \definecolor{upwraccent}{HTML}{6b1a2a}
-        \definecolor{upwrpanel}{HTML}{faf6ec}
-        \definecolor{upwrrule}{HTML}{d9cfbc}
-        \definecolor{upwrsoft}{HTML}{3d3832}
+        \definecolor{analizy}{HTML}{6b1a2a}
+        \definecolor{wykresy}{HTML}{b48a2a}
+        \definecolor{dane}{HTML}{2d3b3d}
+        \definecolor{panel}{HTML}{faf6ec}
+        \definecolor{cream}{HTML}{f5f0e6}
+        \definecolor{rule}{HTML}{d9cfbc}
+        \definecolor{ink}{HTML}{1c1a17}
+        \definecolor{soft}{HTML}{6b625a}
+        \colorlet{tabcol}{analizy}
         \usepackage[most]{tcolorbox}
+        \usepackage{tikz}
+        \usetikzlibrary{babel}
+        \usepackage{multicol}
         \usepackage{enumitem}
-        \usepackage{longtable,booktabs,array}
+        \usepackage{tabularx,array,booktabs,longtable,colortbl}
+        \usepackage{amssymb}
+        \usepackage{scrlayer-scrpage}
         \usepackage{needspace}
         \newfontfamily\symfont{DejaVu Sans}
-        \setlist{nosep, leftmargin=1.4em}
         \setlength{\parindent}{0pt}
-        \setkomafont{section}{\Large\bfseries\color{upwraccent}}
-        \setkomafont{subsection}{\large\bfseries\color{upwraccent}}
-        \newtcolorbox{jbox}[1]{enhanced, breakable=false, colback=upwrpanel,
-          colframe=upwrrule, boxrule=0.4pt, arc=1.5pt, left=5pt, right=5pt,
-          top=3pt, bottom=3pt, before skip=6pt, after skip=6pt,
-          title={#1}, coltitle=upwraccent, colbacktitle=upwrpanel,
-          fonttitle=\bfseries, titlerule=0pt, toptitle=2pt, bottomtitle=0pt}
-        \newcommand{\jmenu}[1]{{\leavevmode\color{upwraccent}\small #1}}
+        \setlength{\columnsep}{0.5cm}
+        \setlength{\multicolsep}{4pt}
+        \raggedcolumns
+        \color{ink}
+        % --- running head
+        \clearpairofpagestyles
+        \ihead{\small\color{soft}\textbf{Ściąga jUPWR}}
+        \ohead{\small\color{soft}\pagemark}
+        \setkomafont{pageheadfoot}{\normalfont}
+        \pagestyle{scrheadings}
+        % --- menu path chips: first chip filled with the tab colour
+        \newtcbox{\chipA}[1][tabcol]{on line, colback=#1, colframe=#1, coltext=white,
+          boxrule=0.4pt, arc=2pt, boxsep=0pt, left=2.6pt, right=2.6pt, top=1.4pt, bottom=1.4pt,
+          fontupper=\footnotesize\bfseries}
+        \newtcbox{\chipB}[1][tabcol]{on line, colback=white, colframe=#1, coltext=#1,
+          boxrule=0.4pt, arc=2pt, boxsep=0pt, left=2.6pt, right=2.6pt, top=1.4pt, bottom=1.4pt,
+          fontupper=\footnotesize\bfseries}
+        \newcommand{\chipsep}{\,{\color{soft}\footnotesize$\rightarrow$}\,\allowbreak}
+        % --- numbered steps
+        \newcommand{\stepnum}[1]{\tikz[baseline=(n.base)]\node[circle, fill=tabcol, text=white,
+          inner sep=0pt, minimum size=1.05em, font=\scriptsize\bfseries](n){#1};}
+        \newlist{kroki}{enumerate}{1}
+        \setlist[kroki]{label=\protect\stepnum{\arabic*}, leftmargin=1.55em, labelsep=0.4em,
+          itemsep=1.5pt, topsep=2pt, parsep=0pt}
+        % --- entry box: tinted panel with a thick rule in the tab colour
+        \newtcolorbox{wpis}{enhanced, breakable=false, colback=panel, frame hidden,
+          borderline west={2.4pt}{0pt}{tabcol}, arc=0pt, left=6pt, right=5pt, top=4pt,
+          bottom=4pt, before skip=0pt, after skip=7pt, fontupper=\small}
+        \newcommand{\wtitle}[1]{{\normalsize\bfseries #1}\par\smallskip}
+        \newcommand{\wynik}[1]{\par\smallskip{\color{tabcol}$\blacktriangleright$}\,#1}
+        \newcommand{\uwaga}[1]{\par\smallskip{\footnotesize\color{soft}\textbf{!}\,\,#1}}
+        % --- lecture band
+        \newcommand{\wyklad}[2]{\par\needspace{16\baselineskip}\bigskip
+          \begin{tcolorbox}[enhanced, colback=analizy, frame hidden, arc=0pt, left=8pt,
+            right=8pt, top=5pt, bottom=5pt, before skip=0pt, after skip=8pt]
+          {\color{white}\fontsize{20}{20}\selectfont\bfseries #1\hspace{0.6em}%
+           \fontsize{13}{13}\selectfont #2}
+          \end{tcolorbox}}
 execute:
   echo: false
   warning: false
@@ -47,7 +88,7 @@ library(yaml)
 d <- read_yaml("jupwr.yaml")
 wpisy <- d$wpisy
 
-# --- LaTeX: escape and small renderers ---------------------------------------
+# --- LaTeX helpers ------------------------------------------------------------
 tex <- function(x) {
   x <- gsub("\\", "\001", x, fixed = TRUE)
   x <- gsub("([&%$#_{}])", "\\\\\\1", x)
@@ -56,94 +97,135 @@ tex <- function(x) {
   x <- gsub("^", "\\textasciicircum{}", x, fixed = TRUE)
   x <- gsub("<", "\\textless{}", x, fixed = TRUE)
   x <- gsub(">", "\\textgreater{}", x, fixed = TRUE)
+  # „X → Y” inside running text: keep the arrow, let lines break after it
+  x <- gsub(" → ", " $\\\\rightarrow$\\\\allowbreak{} ", x, fixed = FALSE)
   gsub("☰", "{\\symfont ☰}", x, fixed = TRUE)
 }
 
-menu_tex <- function(menu) {
-  paste0("\\jmenu{", paste0("\\textbf{", tex(unlist(menu)), "}", collapse = " → "), "}")
+tab_colour <- function(menu) {
+  switch(menu[[1]], "Analizy" = "analizy", "Wykresy" = "wykresy", "dane")
+}
+
+chips <- function(menu) {
+  m <- unlist(menu)
+  paste0("\\chipA{", tex(m[1]), "}",
+         if (length(m) > 1) paste0("\\chipsep\\chipB{", tex(m[-1]), "}", collapse = ""))
 }
 
 first_lecture <- function(w) sort(unlist(w$wyklady))[1]
 
 entry_tex <- function(w) {
-  out <- c(sprintf("\\begin{jbox}{%s}\\label{w:%s}", tex(w$temat), w$id),
-           menu_tex(w$menu), "")
+  out <- c(sprintf("\\colorlet{tabcol}{%s}", tab_colour(w$menu)),
+           "\\begin{wpis}",
+           sprintf("\\wtitle{%s}\\label{w:%s}", tex(w$temat), w$id),
+           paste0("{\\raggedright ", chips(w$menu), "\\par}"))
   if (length(w$zmienne)) {
-    out <- c(out, "\\begin{itemize}",
-             sprintf("\\item[$\\triangleright$] \\textbf{%s}: %s",
-                     tex(names(w$zmienne)), tex(unlist(w$zmienne))),
-             "\\end{itemize}")
+    out <- c(out, "\\smallskip",
+             "\\begin{tabularx}{\\linewidth}{@{}>{\\raggedright\\arraybackslash\\leavevmode\\footnotesize\\bfseries\\color{tabcol}}p{0.33\\linewidth}>{\\raggedright\\arraybackslash\\footnotesize}X@{}}",
+             paste0(tex(names(w$zmienne)), " & ", tex(unlist(w$zmienne)), " \\\\"),
+             "\\end{tabularx}")
   }
-  if (length(w$kroki)) {
-    out <- c(out, "\\begin{enumerate}",
-             paste0("\\item ", tex(unlist(w$kroki))), "\\end{enumerate}")
-  }
-  if (!is.null(w$wynik)) out <- c(out, paste0("\\textit{Wynik:} ", tex(w$wynik)), "")
-  if (!is.null(w$uwaga)) out <- c(out, paste0("{\\color{upwrsoft}\\small\\textit{Uwaga:} ",
-                                               tex(w$uwaga), "}"))
-  c(out, "\\end{jbox}", "")
+  if (length(w$kroki))
+    out <- c(out, "\\begin{kroki}", paste0("\\item ", tex(unlist(w$kroki))), "\\end{kroki}")
+  if (!is.null(w$wynik)) out <- c(out, sprintf("\\wynik{%s}", tex(w$wynik)))
+  if (!is.null(w$uwaga)) out <- c(out, sprintf("\\uwaga{%s}", tex(w$uwaga)))
+  c(out, "\\end{wpis}", "")
 }
 ```
 
-```{r mapa, results='asis'}
-cat(sprintf("\\textit{Stan na jUPWR %s. Wpis każdego tematu jest raz — przy pierwszym wykładzie, na którym się pojawia; dalsze wykłady odsyłają do strony.}\n\n",
+```{=latex}
+\begin{tcolorbox}[enhanced, colback=analizy, frame hidden, arc=0pt, left=10pt, right=10pt,
+  top=10pt, bottom=10pt, before skip=0pt, after skip=10pt]
+{\color{white}\fontsize{28}{30}\selectfont\bfseries Ściąga jUPWR}\par\smallskip
+{\color{white}\large Gdzie w jUPWR robi się to, czego potrzeba na wykładzie ze statystyki}
+\end{tcolorbox}
+```
+
+```{r wersja, results='asis'}
+cat(sprintf("\\begingroup\\small\\color{soft}Stan na jUPWR %s. Część A idzie za wykładami 01–09: każdy temat opisany jest raz, przy pierwszym wykładzie, na którym się pojawia; dalej są odsyłacze do strony. Część B to tabela „pytanie → gdzie kliknąć”.\\par\\endgroup\n\n",
             tex(d$wersja_jupwr)))
 ```
 
-## Mapa menu
-
-\begin{jbox}{Wstążka jUPWR}
-\textbf{Zakładki:} Zmienne · Dane · Analizy · Wykresy · Edytuj. \quad Plik: przycisk {\symfont ☰} w lewym górnym rogu.
-
+```{=latex}
+\medskip
+\begin{multicols}{3}
+\colorlet{tabcol}{analizy}
+\begin{wpis}
+\wtitle{\chipA{Analizy}}
+\footnotesize
+\textbf{Eksploracja}: zmienne ilościowe, jakościowe, szereg rozdzielczy\par
+\textbf{Rozkłady}: normalny, t, χ², F, dwumianowy, Poissona …\par
+\textbf{Przedziały ufności}: średnie, proporcje, korelacja, regresja, bootstrap\par
+\textbf{Testy t}: jedna próba, dwie grupy, próby sparowane\par
+\textbf{ANOVA}: ANOVA, powtórzone pomiary\par
+\textbf{Regresja}: korelacja, liniowa, logistyczna\par
+\textbf{Częstości}: jedna zmienna, tabela kontyngencji, próby zależne\par
+\textbf{Testy permutacyjne}
+\end{wpis}
+\colorlet{tabcol}{wykresy}
+\begin{wpis}
+\wtitle{\chipA{Wykresy}}
+\footnotesize
+\textbf{Rozkład}: histogram, gęstość, Q-Q, chmurowy, ridgeline\par
+\textbf{Porównania}: skrzynkowy, punktowy grup, skrzypcowy\par
+\textbf{Ranking}: słupkowy, lizakowy, radarowy …\par
+\textbf{Zależności}: rozrzutu, mozaikowy, korelogram, mapa ciepła …\par
+\textbf{Trendy}: liniowy, warstwowy\par
+\textbf{Części całości}: skumulowany słupkowy, waflowy, mapa drzewa\par
+\textbf{Inne}: Pareto
+\end{wpis}
+\colorlet{tabcol}{dane}
+\begin{wpis}
+\wtitle{\chipA{Dane} \chipA{\symfont ☰}}
+\footnotesize
+\textbf{Edytuj}: poziom pomiaru, typ danych, poziomy\par
+\textbf{Oblicz}: nowa zmienna z formuły\par
+\textbf{Filtry}: wykluczanie wierszy\par
+\textbf{☰ → Otwórz}: pliki CSV, XLSX, .omv; Biblioteka zbiorów z zajęć\par
 \smallskip
-\begin{tabular}{@{}>{\leavevmode\bfseries\color{upwraccent}}p{3.6cm}p{13cm}@{}}
-Eksploracja & Zmienne ilościowe · Zmienne jakościowe · Szereg rozdzielczy \\
-Rozkłady & rozkłady ciągłe (normalny, t, χ², F, wykładniczy …) i dyskretne (dwumianowy, Poissona …) \\
-Przedziały ufności & Średnie · Proporcje · Korelacja i regresja · Dydaktyka (Jak działa bootstrap) \\
-Testy t & Jedna próba · Dwie grupy · Próby sparowane \\
-ANOVA & ANOVA · ANOVA powtórzonych pomiarów \\
-Regresja & Korelacja · Korelacja cząstkowa · Regresja liniowa · Regresja logistyczna \\
-Częstości & Jedna zmienna · Tabela kontyngencji · Próby zależne \\
-Testy permutacyjne & Jedna próba · Dwie grupy · Próby sparowane \\
-\end{tabular}
-
-\smallskip
-\textbf{Panel analizy:} najważniejsze opcje są widoczne od razu; reszta w zwiniętych sekcjach \textbf{Założenia} i \textbf{Zaawansowane}. Na dole każdej analizy: \textbf{Opis zastosowanych metod} (do raportu).
-\end{jbox}
-
-# Część A — wg wykładów
+\textbf{Panel analizy}: rdzeń widoczny od razu, reszta w sekcjach \textbf{Założenia} i \textbf{Zaawansowane}. Na dole: \textbf{Opis zastosowanych metod}.
+\end{wpis}
+\end{multicols}
+```
 
 ```{r czesc-a, results='asis'}
 for (nr in names(d$wyklady)) {
-  cat(sprintf("\n\\needspace{8\\baselineskip}\n## Wykład %s — %s\n\n", nr, tex(d$wyklady[[nr]])))
+  cat(sprintf("\n\\wyklad{%s}{%s}\n", nr, tex(d$wyklady[[nr]])))
   here <- Filter(function(w) nr %in% unlist(w$wyklady), wpisy)
   own <- Filter(function(w) first_lecture(w) == nr, here)
   ref <- Filter(function(w) first_lecture(w) != nr, here)
+  cat("\\begin{multicols}{2}\n")
   for (w in own) cat(entry_tex(w), sep = "\n")
   if (length(ref)) {
-    cat("\\textbf{Także na tym wykładzie:} ",
+    cat("{\\footnotesize\\color{soft}\\textbf{Także na tym wykładzie:} ",
         paste(sprintf("%s (s.~\\pageref{w:%s})", tex(vapply(ref, `[[`, "", "temat")),
                       vapply(ref, `[[`, "", "id")), collapse = "; "),
-        ".\n\n", sep = "")
+        ".\\par}\n", sep = "")
   }
+  cat("\\end{multicols}\n")
 }
 ```
 
+```{=latex}
 \newpage
-
-# Część B — pytanie → analiza
+\begin{tcolorbox}[enhanced, colback=analizy, frame hidden, arc=0pt, left=10pt, right=10pt,
+  top=6pt, bottom=6pt, before skip=0pt, after skip=8pt]
+{\color{white}\fontsize{18}{20}\selectfont\bfseries Pytanie → gdzie kliknąć}
+\end{tcolorbox}
+```
 
 ```{r czesc-b, results='asis'}
 for (g in names(d$grupy)) {
   ws <- Filter(function(w) identical(w$grupa, g) && !is.null(w$pytanie), wpisy)
   if (!length(ws)) next
-  cat(sprintf("\n\\needspace{6\\baselineskip}\n## %s\n\n", tex(d$grupy[[g]])))
-  cat("\\begin{longtable}{@{}p{6.4cm}p{9.2cm}r@{}}\n\\toprule\n",
-      "\\textbf{Pytanie} & \\textbf{Gdzie w jUPWR} & \\textbf{s.} \\\\\n\\midrule\n\\endhead\n",
+  cat(sprintf("\n\\subsection*{\\color{analizy}%s}\n", tex(d$grupy[[g]])))
+  cat("\\begin{longtable}{@{}>{\\raggedright\\arraybackslash}p{6.3cm}>{\\raggedright\\arraybackslash}p{10.4cm}r@{}}\n",
+      "\\arrayrulecolor{rule}\\toprule\n",
+      "\\leavevmode{\\footnotesize\\color{soft}\\textbf{Pytanie}} & \\leavevmode{\\footnotesize\\color{soft}\\textbf{Gdzie w jUPWR}} & \\leavevmode{\\footnotesize\\color{soft}\\textbf{s.}} \\\\\n\\midrule\n\\endhead\n",
       sep = "")
   for (w in ws) {
-    cat(sprintf("%s & %s & \\pageref{w:%s} \\\\[2pt]\n",
-                tex(w$pytanie), menu_tex(w$menu), w$id))
+    cat(sprintf("%s & \\colorlet{tabcol}{%s}%s & \\pageref{w:%s} \\\\[3pt]\n",
+                tex(w$pytanie), tab_colour(w$menu), chips(w$menu), w$id))
   }
   cat("\\bottomrule\n\\end{longtable}\n")
 }
