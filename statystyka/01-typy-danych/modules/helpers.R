@@ -91,25 +91,27 @@ render_bad_plot <- function(x, label, type) {
       labs(x = paste0(label, " (zakodowane jako liczby)"), y = "Liczebność") +
       theme(plot.title = element_text(color = upwr_accent),
             plot.subtitle = element_text(color = upwr_accent, face = "italic"))
+  } else if (type == "ilosciowa_dyskretna") {
+    # Gęstość wygładza skończony zbiór wartości całkowitych w ciągłą krzywą.
+    ggplot(df, aes(x = x)) +
+      geom_density(fill = upwr_reference, color = NA, alpha = 0.8) +
+      labs(x = label, y = "Gęstość")
   } else {
-    n_unique <- length(unique(x))
     ggplot(df, aes(x = x)) +
       geom_bar(fill = upwr_reference, width = 0.3) +
-      labs(subtitle = paste0(n_unique, " unikalnych wartości - wykres słupkowy jest nieczytelny!"), x = label, y = "Liczebność") +
-      theme(plot.title = element_text(color = upwr_accent),
-            plot.subtitle = element_text(color = upwr_accent, face = "italic"),
-            axis.text.x = element_text(size = 5, angle = 90))
+      labs(x = label, y = "Liczebność") +
+      theme(axis.text.x = element_text(size = 5, angle = 90))
   }
 }
 
 pie_vs_bar_scenarios <- list(
   list(
-    name = "Duze różnice",
+    name = "Duże różnice",
     labels = c("Produkt A", "Produkt B", "Produkt C", "Produkt D", "Produkt E"),
     data = c(45, 25, 15, 10, 5),
     colors = upwr_cat_n(5),
     pie_verdict = "Różnice widoczne, ale porównanie kątów jest trudniejsze niż długości",
-    bar_verdict = "Natychmiastowe porównanie -- różnice czytelne od razu",
+    bar_verdict = "Natychmiastowe porównanie — różnice czytelne od razu",
     pie_ok = TRUE
   ),
   list(
@@ -117,19 +119,19 @@ pie_vs_bar_scenarios <- list(
     labels = c("Produkt A", "Produkt B", "Produkt C", "Produkt D", "Produkt E"),
     data = c(22, 21, 20, 19, 18),
     colors = upwr_cat_n(5),
-    pie_verdict = "Wycinki prawie identyczne -- nie widać która kategoria prowadzi",
-    bar_verdict = "Różnice 1-2 pp. wciąż czytelne dzięki wspólnej osi",
+    pie_verdict = "Wycinki prawie identyczne — nie widać, która kategoria prowadzi",
+    bar_verdict = "Różnice 1–2 pp. wciąż czytelne dzięki wspólnej osi",
     pie_ok = FALSE
   ),
   list(
-    name = "Podobne + zle kolory",
+    name = "Podobne + złe kolory",
     labels = c("Produkt A", "Produkt B", "Produkt C", "Produkt D", "Produkt E"),
     data = c(22, 21, 20, 19, 18),
-    # Świadomie zły dobór kolorów — pięć odcieni tego samego niebieskiego.
+    # Świadomie zły dobór kolorów — pięć odcieni tego samego burgundu.
     # Ilustracja problemu: "zbliżone wielkości + zbliżone kolory = nieczytelny wykres".
     colors = upwr_seq_burgundy[3:7],
-    pie_verdict = "Zblizone wielkości + zbliżone kolory = nieczytelny wykres",
-    bar_verdict = "Nawet przy podobnych kolorach pozycja na osi ratuje czytelnosc",
+    pie_verdict = "Zbliżone wielkości + zbliżone kolory = nieczytelny wykres",
+    bar_verdict = "Nawet przy podobnych kolorach pozycja na osi ratuje czytelność",
     pie_ok = FALSE
   )
 )

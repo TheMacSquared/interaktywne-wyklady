@@ -27,7 +27,7 @@ type_labels <- c(
 set.seed(2024)
 n <- 200
 
-plec <- sample(c("Kobieta", "Mezczyzna"), n, replace = TRUE, prob = c(0.55, 0.45))
+plec <- sample(c("Kobieta", "Mężczyzna"), n, replace = TRUE, prob = c(0.55, 0.45))
 
 student_data <- data.frame(
   plec = factor(plec),
@@ -393,7 +393,7 @@ server <- function(input, output, session) {
     label <- variable_meta[[var_name]]$label
 
     div(class = "tracker-panel",
-      tags$strong(paste0("\U0001F50D Sledzona zmienna: ", label)),
+      tags$strong(paste0("\U0001F50D Śledzona zmienna: ", label)),
       " | Położenie: ",
       paste0("średnia = ", round(mean(vals), 2),
              ", mediana = ", round(median(vals), 2))
@@ -407,7 +407,7 @@ server <- function(input, output, session) {
     label <- variable_meta[[var_name]]$label
 
     div(class = "tracker-panel",
-      tags$strong(paste0("\U0001F50D Sledzona zmienna: ", label)),
+      tags$strong(paste0("\U0001F50D Śledzona zmienna: ", label)),
       " | Położenie: ",
       paste0("x̄ = ", round(mean(vals), 2), ", Me = ", round(median(vals), 2)),
       " | Rozrzut: ",
@@ -424,7 +424,7 @@ server <- function(input, output, session) {
     ku <- round(e1071::kurtosis(vals), 2)
 
     div(class = "tracker-panel",
-      tags$strong(paste0("\U0001F50D Sledzona zmienna: ", label)),
+      tags$strong(paste0("\U0001F50D Śledzona zmienna: ", label)),
       " | x̄ = ", round(mean(vals), 2),
       ", SD = ", round(sd(vals), 2),
       " | Kształt: skośność = ", sk, ", kurtoza = ", ku
