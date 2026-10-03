@@ -70,21 +70,16 @@ ch8_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 8.2", title = "Budowanie prognozy AR(1)",
+      label = "Ryc. 8.2",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Klikaj kroki, żeby zobaczyć jak buduje się prognoza."),
-          lc_slider("ch8_fc_phi", "φ₁", 0.5, 0.95, 0.8, 0.05),
-          lc_action("ch8_fc_step1", "1. Scenariusz syntetyczny", variant = "outline"),
-          lc_action("ch8_fc_step2", "2. Prognoza t+1", variant = "outline"),
-          lc_action("ch8_fc_step3", "3. Prognoza t+2, t+3, ...", variant = "outline"),
-          lc_action("ch8_fc_step4", "4. Zanik pamięci", variant = "outline"),
-          uiOutput("ch8_fc_info")
+      lc_step_widget("ch8_fc",
+        title = "Budowanie prognozy AR(1)",
+        steps = c("Scenariusz syntetyczny", "Prognoza t+1",
+                  "Prognoza t+2, t+3, ...", "Zanik pamięci"),
+        toolbar = lc_toolbar(
+          lc_slider("ch8_fc_phi", "φ₁", 0.5, 0.95, 0.8, 0.05)
         ),
-        column(8,
-          zoom_plot_ui("ch8_fc_plot", height = "300px")
-        )
+        plot_id = "ch8_fc_plot"
       )
     ),
 
@@ -170,11 +165,8 @@ ch8_server <- function(input, output, session) {
     lc_feedback(type = "info", p(desc))
   })
 
-  ch8_fc_step <- reactiveVal(0)
-  observeEvent(input$ch8_fc_step1, ch8_fc_step(1))
-  observeEvent(input$ch8_fc_step2, ch8_fc_step(2))
-  observeEvent(input$ch8_fc_step3, ch8_fc_step(3))
-  observeEvent(input$ch8_fc_step4, ch8_fc_step(4))
+  # Krok widgetu (1..4) żyje w przeglądarce; zmiana φ₁ nie zmienia kroku.
+  ch8_fc_step <- lc_step_server("ch8_fc", input)$step
 
   ch8_fc_hist <- reactive({
     set.seed(77)
@@ -184,11 +176,6 @@ ch8_server <- function(input, output, session) {
 
   zoom_plot_server("ch8_fc_plot", reactive({
     step <- ch8_fc_step()
-    if (step == 0) {
-      return(ggplot() +
-               annotate("text", x = 0.5, y = 0.5, label = "Klikaj kroki po lewej",
-                        color = upwr_reference, size = 6) + theme_upwr())
-    }
     phi  <- if (!is.null(input$ch8_fc_phi)) input$ch8_fc_phi else 0.8
     hist <- ch8_fc_hist()
     n    <- length(hist)
@@ -200,59 +187,64 @@ ch8_server <- function(input, output, session) {
 
     df_hist <- data.frame(t = seq_len(n), x = hist, type = "Historia")
     df_fc   <- data.frame(t = n + seq_len(n_fc), x = fc_vals, type = "Prognoza")
-    df_all  <- rbind(df_hist, df_fc)
+
+    # Stała rama: historia i cała prognoza, niezależnie od kroku.
+    y_pad  <- diff(range(hist, fc_vals, 0)) * 0.08
+    y_lims <- range(hist, fc_vals, 0) + c(-y_pad, y_pad)
+    x_max  <- n + n_fc + 1
+    y_off  <- diff(y_lims) * 0.07
+    side   <- if (fc_vals[1] >= 0) 1 else -1
 
     p <- ggplot(df_hist, aes(x = t, y = x)) +
-      geom_line(color = upwr_secondary, linewidth = 0.9) +
-      geom_hline(yintercept = 0, color = upwr_reference, linetype = "dashed") +
-      labs(x = "Czas", y = "x_t") +
-      theme_upwr()
+      step_layer(geom_line, "data") +
+      step_line("known", yintercept = 0) +
+      labs(x = "Czas", y = "x_t")
 
     if (step >= 2) {
-      p <- p + annotate("point", x = n + 1, y = fc_vals[1],
-                        color = upwr_accent, size = 3.5)
-      p <- p + annotate("segment",
-                        x = n, xend = n + 1, y = hist[n], yend = fc_vals[1],
-                        color = upwr_accent, linewidth = 1.2, linetype = "dashed")
-      p <- p + annotate("text", x = n + 1.2, y = fc_vals[1] + 0.2,
-                        label = paste0("x̂(t+1) = ", round(phi, 2), "·", round(hist[n], 2),
-                                       " = ", round(fc_vals[1], 2)),
-                        hjust = 0, color = upwr_accent, size = 3.5)
+      role <- step_role(step, 2)
+      p <- p +
+        step_layer(geom_segment, role,
+                   data = data.frame(x0 = n, x1 = n + 1, y0 = hist[n], y1 = fc_vals[1]),
+                   mapping = aes(x = x0, xend = x1, y = y0, yend = y1),
+                   linetype = "22") +
+        step_layer(geom_point, role, data = df_fc[1, ], mapping = aes(x = t, y = x),
+                   size = 3.5) +
+        # Etykieta po stronie z dala od zera (tam zmierza prognoza), dosunięta
+        # do prawej krawędzi ramy. Zwykły krój: mono nie ma znaku x̂.
+        annotate("text", x = x_max, y = fc_vals[1] + side * y_off,
+                 label = paste0("x̂(t+1) = ", round(phi, 2), "·", round(hist[n], 2),
+                                " = ", round(fc_vals[1], 2)),
+                 hjust = 1, vjust = 0.5, colour = STEP_ROLES[[role]]$colour,
+                 fontface = "bold", size = 3.5)
     }
     if (step >= 3) {
-      fc_shown <- if (step == 3) seq_len(n_fc) else seq_len(n_fc)
-      p <- p + geom_line(data = df_fc[fc_shown, ], aes(x = t, y = x),
-                         color = upwr_accent, linewidth = 1.2, linetype = "dashed") +
-               geom_point(data = df_fc[fc_shown, ], aes(x = t, y = x),
-                          color = upwr_accent, size = 2.5)
+      role <- step_role(step, 3)
+      p <- p +
+        step_layer(geom_line, role, data = df_fc, mapping = aes(x = t, y = x),
+                   linetype = "22") +
+        step_layer(geom_point, role, data = df_fc, mapping = aes(x = t, y = x),
+                   size = 2.5)
     }
     if (step >= 4) {
-      mean_line <- data.frame(t = (n + 1):(n + n_fc), y = 0)
-      p <- p + geom_hline(yintercept = 0,
-                          color = unname(upwr_cat["szalwia"]),
-                          linewidth = 1.2, linetype = "longdash") +
-               annotate("text", x = n + 2, y = 0.3,
-                        label = "Prognoza → E[x] = 0", hjust = 0,
-                        color = unname(upwr_cat["szalwia"]), fontface = "bold")
+      p <- p + step_line("new", yintercept = 0) +
+        step_label(x_max, -side * y_off, "Prognoza → E[x] = 0", role = "new",
+                   hjust = 1, vjust = 0.5)
     }
-    p
+    p + step_frame(xlim = c(0, x_max), ylim = y_lims)
   }))
 
-  output$ch8_fc_info <- renderUI({
+  output$ch8_fc_text <- renderUI({
     step <- ch8_fc_step()
     phi  <- if (!is.null(input$ch8_fc_phi)) input$ch8_fc_phi else 0.8
-    msgs <- list(
-      "0" = NULL,
+    switch(as.character(step),
       "1" = "Scenariusz syntetyczny: ostatnia wartość x_t to punkt startowy.",
       "2" = paste0("Prognoza na 1 krok: x̂(t+1) = φ₁ · x_t = ", round(phi, 2), " · x_t."),
       "3" = paste0("Prognoza wielokrokowa: każdy kolejny krok iterujemy: x̂(t+k) = φ₁^k · x_t."),
       "4" = paste0("Zanik pamięci: przy φ₁ = ", phi,
                    " prognoza zmierza do 0 (średniej). Po ~",
-                   ceiling(-3 / log10(phi)), " krokach jesteśmy blisko 0.")
+                   ceiling(-3 / log10(phi)), " krokach jesteśmy blisko 0."),
+      ""
     )
-    if (!is.null(msgs[[as.character(step)]])) {
-      lc_feedback(type = "info", p(msgs[[as.character(step)]]))
-    }
   })
 
   ch8_est_results <- reactiveVal(NULL)

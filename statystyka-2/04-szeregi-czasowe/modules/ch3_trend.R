@@ -35,22 +35,16 @@ ch3_ui <- list(
     lc_h2("ch3-step-methods", "Trzy metody — krok po kroku"),
 
     figure_panel(
-      label = "Ryc. 3.1", title = "Nałóż kolejne metody estymacji trendu",
+      label = "Ryc. 3.1",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          helpText("Klikaj kolejno przyciski, żeby dodawać metody do wykresu."),
-          lc_action("ch3_step1", "1. Dane", variant = "outline"),
-          lc_action("ch3_step2", "2. Regresja liniowa", variant = "outline"),
-          lc_action("ch3_step3", "3. Średnia krocząca (k=12)", variant = "outline"),
-          lc_action("ch3_step4", "4. LOESS", variant = "outline"),
-          hr(),
-          lc_slider("ch3_loess_span", "Span LOESS (gładkość)", 0.1, 1.0, 0.3, 0.05),
-          uiOutput("ch3_step_info")
+      lc_step_widget("ch3_trend",
+        title = "Nałóż kolejne metody estymacji trendu",
+        steps = c("Dane", "Regresja liniowa", "Średnia krocząca (k=12)", "LOESS"),
+        toolbar = lc_toolbar(
+          lc_step_from(4, lc_slider("ch3_loess_span", "Span LOESS (gładkość)",
+                                    0.1, 1.0, 0.3, 0.05))
         ),
-        column(8,
-          zoom_plot_ui("ch3_step_plot", height = "340px")
-        )
+        plot_id = "ch3_step_plot"
       )
     ),
 
@@ -152,11 +146,8 @@ ch3_ui <- list(
 
 ch3_server <- function(input, output, session) {
 
-  ch3_step <- reactiveVal(0)
-  observeEvent(input$ch3_step1, ch3_step(1))
-  observeEvent(input$ch3_step2, ch3_step(2))
-  observeEvent(input$ch3_step3, ch3_step(3))
-  observeEvent(input$ch3_step4, ch3_step(4))
+  # Krok widgetu (1..4) żyje w przeglądarce; suwak span nie zmienia kroku.
+  ch3_step <- lc_step_server("ch3_trend", input)$step
 
   ch3_plot_data <- reactive({
     df   <- .ts_datasets[["warszawa"]]$get_df()
@@ -170,66 +161,64 @@ ch3_server <- function(input, output, session) {
     step <- ch3_step()
     span <- if (!is.null(input$ch3_loess_span)) input$ch3_loess_span else 0.3
 
+    # Stała rama: zakres danych, z miejscem na etykiety metod po prawej.
+    x_lims <- c(min(df$date), max(df$date) + as.numeric(diff(range(df$date))) * 0.14)
+    y_pad  <- diff(range(df$temp)) * 0.04
+    y_lims <- range(df$temp) + c(-y_pad, y_pad)
+    x_end  <- max(df$date) + as.numeric(diff(range(df$date))) * 0.01
+    last_value <- function(v) utils::tail(v[!is.na(v)], 1)
+
+    # Surowe dane w kroku 1; potem tło pod liniami trendu.
     p <- ggplot(df, aes(x = date, y = temp)) +
-      labs(x = NULL, y = "°C") +
-      theme_upwr()
+      step_layer(geom_line, if (step == 1) "data" else "background", linewidth = 0.5) +
+      labs(x = NULL, y = "°C")
 
-    if (step == 0) {
-      p <- p + annotate("text", x = median(df$date), y = 10,
-                        label = "Klikaj kroki po lewej",
-                        color = upwr_reference, size = 5)
-      return(p)
-    }
-
-    p <- p + geom_line(color = upwr_secondary, linewidth = 0.6, alpha = 0.7)
-
+    # Etykiety metod przy końcach linii; rozsunięte w pionie, gdy końce są blisko.
+    ends <- list()
     if (step >= 2) {
       lm_fit  <- lm(temp ~ t, data = df)
       df$lm_trend <- predict(lm_fit)
-      p <- p + geom_line(aes(y = lm_trend),
-                         color = unname(upwr_cat["terakota"]),
-                         linewidth = 1.4, linetype = "longdash")
+      role <- step_role(step, 2)
+      p <- p + step_layer(geom_line, role, data = df, mapping = aes(y = lm_trend),
+                          linetype = "longdash")
+      ends$lm <- list(y = last_value(df$lm_trend), role = role)
     }
     if (step >= 3) {
       k <- 12
-      df$ma_trend <- stats::filter(df$temp, rep(1/k, k), sides = 2)
-      p <- p + geom_line(aes(y = ma_trend),
-                         color = unname(upwr_cat["bursztyn"]),
-                         linewidth = 1.4, na.rm = TRUE)
+      df$ma_trend <- as.numeric(stats::filter(df$temp, rep(1/k, k), sides = 2))
+      role <- step_role(step, 3)
+      p <- p + step_layer(geom_line, role, data = df, mapping = aes(y = ma_trend),
+                          na.rm = TRUE)
+      ends$`MA(12)` <- list(y = last_value(df$ma_trend), role = role)
     }
     if (step >= 4) {
       lo_fit  <- loess(temp ~ t, data = df, span = span)
       df$loess_trend <- predict(lo_fit)
-      p <- p + geom_line(aes(y = loess_trend),
-                         color = unname(upwr_cat["niebo"]),
-                         linewidth = 1.6)
+      p <- p + step_layer(geom_line, "new", data = df, mapping = aes(y = loess_trend))
+      ends$LOESS <- list(y = last_value(df$loess_trend), role = "new")
+    }
+    if (length(ends)) {
+      ends <- ends[order(vapply(ends, `[[`, 0, "y"))]
+      gap  <- diff(y_lims) * 0.07
+      y_lab <- vapply(ends, `[[`, 0, "y")
+      for (i in seq_along(y_lab)[-1]) y_lab[i] <- max(y_lab[i], y_lab[i - 1] + gap)
+      for (i in seq_along(ends)) {
+        p <- p + step_label(x_end, y_lab[i], names(ends)[i],
+                            role = ends[[i]]$role, vjust = 0.5)
+      }
     }
 
-    p
+    p + step_frame(xlim = x_lims, ylim = y_lims)
   }))
 
-  output$ch3_step_info <- renderUI({
-    step <- ch3_step()
-    if (step == 0) return(NULL)
-    msgs <- list(
+  output$ch3_trend_text <- renderUI({
+    switch(as.character(ch3_step()),
       "1" = "Surowe dane: temperatura z wyraźną sezonowością.",
-      "2" = list(
-        tags$span(style = paste0("color:", unname(upwr_cat["terakota"]), ";font-weight:bold;"),
-                  "Regresja liniowa (przerywana): "),
-        "zakłada stały trend. Słabo radzi sobie z krzywizną."
-      ),
-      "3" = list(
-        tags$span(style = paste0("color:", unname(upwr_cat["bursztyn"]), ";font-weight:bold;"),
-                  "Średnia krocząca MA(12): "),
-        "wygładza miesięczną sezonowość. Traci 6 obserwacji z każdej strony."
-      ),
-      "4" = list(
-        tags$span(style = paste0("color:", unname(upwr_cat["niebo"]), ";font-weight:bold;"),
-                  "LOESS: "),
-        "elastyczna krzywa lokalna. Wyłapuje przyspieszenie trendu po 2000 r."
-      )
+      "2" = "Regresja liniowa (przerywana): zakłada stały trend. Słabo radzi sobie z krzywizną.",
+      "3" = "Średnia krocząca MA(12): wygładza miesięczną sezonowość. Traci 6 obserwacji z każdej strony.",
+      "4" = "LOESS: elastyczna krzywa lokalna. Wyłapuje przyspieszenie trendu po 2000 r.",
+      ""
     )
-    lc_feedback(type = "info", p(msgs[[as.character(step)]]))
   })
 
   ch3_res_ts <- reactive({
