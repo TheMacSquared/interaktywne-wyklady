@@ -352,11 +352,8 @@ risk_callout <- function(callout) {
   if (is.null(callout)) {
     return(NULL)
   }
-  margin_callout(
-    label = callout$label,
-    callout$text,
-    color = callout$color %||% "wskazowka"
-  )
+  # callout$color zostaje w konfiguracjach, ale notki nie mają koloru.
+  lc_note(callout$label, callout$text, rule = identical(callout$label, "Zasada"))
 }
 
 # Wspólne dodatki rozdziału albo sekcji: wzór → widget → takeaway → decyzja → pułapka

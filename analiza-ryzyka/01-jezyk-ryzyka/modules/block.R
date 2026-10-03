@@ -447,17 +447,13 @@ jezyk_block <- list(
                drzewo błędów całej instalacji w finale. Każde nowe pojęcie dostanie
                swoje miejsce w tym samym zakładzie, więc wyniki z kolejnych wykładów
                będą do siebie pasować.",
-            margin_callout(
-              label = "Dane fikcyjne",
+            lc_note("Dane fikcyjne",
               "Wszystkie liczby w kursie są wymyślone na potrzeby dydaktyki i nie
-               opisują żadnej prawdziwej firmy. Prawdziwe są tylko metody.",
-              color = "uwaga"
+               opisują żadnej prawdziwej firmy. Prawdziwe są tylko metody."
             ),
-            margin_callout(
-              label = "Pytanie na start",
+            lc_note("Pytanie na start",
               "Czy obecność skórki oznacza, że doszło do wypadku? Najpierw odpowiedz
-               intuicyjnie, dopiero potem uporządkuj historię.",
-              color = "wskazowka"
+               intuicyjnie, dopiero potem uporządkuj historię."
             ),
             "Pierwszy dzień pracy zaczyna się od notatki z porannego obchodu:
                „skórka od banana na korytarzu przy dojrzewalni, ryzyko wypadku”.
@@ -604,13 +600,11 @@ jezyk_block <- list(
         odsłania dopiero wiele porównywalnych okresów.",
       teaser = "Sprawdzimy, dlaczego jeden miesiąc obserwacji potrafi mylić.",
       body = list(
-        margin_callout(
-          label = "Jednostka obserwacji",
+        lc_note("Jednostka obserwacji",
           "Jedna próba oznacza jedną 8-godzinną zmianę w konkretnym korytarzu.
            Zdarzenie rejestrowe: co najmniej jedno poślizgnięcie (utrata
            przyczepności i upadek) podczas tej zmiany. Rejestr zlicza zmiany ze
-           zdarzeniem, nie pojedyncze poślizgnięcia.",
-          color = "ok"
+           zdarzeniem, nie pojedyncze poślizgnięcia."
         )
       ),
       sections = list(
@@ -777,11 +771,9 @@ jezyk_block <- list(
         zostać wybrane, i uzasadnić, że są jednakowo możliwe.",
       teaser = "Zobaczymy, kiedy wolno liczyć przypadki sprzyjające.",
       body = list(
-        margin_callout(
-          label = "Eksperyment",
+        lc_note("Eksperyment",
           "Inspektor losuje dokładnie jedną z 24 palet. Każda paleta ma własny
-           numer w generatorze losowym i tę samą szansę wyboru.",
-          color = "ok"
+           numer w generatorze losowym i tę samą szansę wyboru."
         ),
         "Do Bananpolu przyjechała dostawa 24 palet. Inspektor nie ma czasu
            skontrolować wszystkich, więc losuje jedną i sprawdza zabezpieczenie
@@ -1004,11 +996,9 @@ jezyk_block <- list(
         działania na zdarzeniach: sumę, część wspólną i dopełnienie.",
       teaser = "Przetłumaczymy słowa „lub”, „i” oraz „nie” na działania na zbiorach.",
       body = list(
-        margin_callout(
-          label = "Dwa zdarzenia",
+        lc_note("Dwa zdarzenia",
           tags$div("A — podczas kontroli znaleziono skórkę na przejściu."),
-          tags$div("B — podczas kontroli posadzka była mokra."),
-          color = "wskazowka"
+          tags$div("B — podczas kontroli posadzka była mokra.")
         ),
         "Kierownik zmiany pyta inspektora: „Jak często przejście jest
            niebezpieczne?”. Inspektor ma w notesie dwie osobne kolumny — skórka na
@@ -1308,11 +1298,9 @@ jezyk_block <- list(
                liczbę — a takiej reguły nikt jeszcze nie ustalił. Poprawna odpowiedź nie
                jest uchylaniem się od decyzji, tylko wskazaniem, jakich informacji
                brakuje, żeby ją podjąć.",
-            margin_callout(
-              label = "Granica wykładu",
+            lc_note("Granica wykładu",
               "Ten kurs buduje przede wszystkim składową probabilistyczną analizy.
-               Skutków nie zamieniamy automatycznie w pieniądze ani punkty.",
-              color = "uwaga"
+               Skutków nie zamieniamy automatycznie w pieniądze ani punkty."
             )
           )
         ),
