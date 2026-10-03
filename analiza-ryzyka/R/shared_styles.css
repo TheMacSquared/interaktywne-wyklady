@@ -2421,6 +2421,8 @@ mjx-container mjx-text {
 /* Szeroki wzór (MathJax 2 i 3) przewija się w poziomie zamiast wylewać się z panelu. */
 .lc-figure-panel .MathJax_Display,.lc-figure-panel mjx-container[display="true"]{max-width:100%;overflow-x:auto;overflow-y:hidden}
 .lc-toolbar .form-group,.lc-toolbar .shiny-input-container{margin:0}
+/* Pole wyboru w pasku ma szerokość treści, żeby inne elementy (np. kropki kroków) zmieściły się w tym samym rzędzie. */
+.lc-toolbar>.shiny-input-container:has(>.checkbox){width:auto!important;flex:0 1 auto}
 .lc-grp{display:flex;flex-direction:column;gap:.35em;min-width:0}
 .lc-grp-l{font-size:.78em;font-weight:700;color:var(--upwr-ink-soft)}
 
@@ -2457,7 +2459,7 @@ mjx-container mjx-text {
 .lc-read-value{font:700 1.35em/1.1 var(--upwr-mono);color:var(--upwr-ink);font-variant-numeric:tabular-nums}
 .lc-read-swatch{flex:none;width:.9em;height:.9em;border-radius:2px;background:var(--lc-read-color)}
 @container lc-fig (max-width:400px){
-  .lc-reads{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:.8em;width:100%;margin-left:0}
+  .lc-reads{display:grid;grid-template-columns:repeat(auto-fit,minmax(5.5em,1fr));gap:.8em;width:100%;margin-left:0}
   .lc-read{padding-left:.55em}
   .lc-read-label{font-size:.68em;letter-spacing:0;line-height:1.25;align-items:flex-start}
   .lc-read-swatch{margin-top:.1em}
