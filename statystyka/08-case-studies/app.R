@@ -54,25 +54,6 @@ source(file.path(app_dir, "modules", "helpers.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch1_caschools.R"), local = TRUE)
 
 # ============================================================================
-# LOKALNE STYLE
-# ============================================================================
-
-header_extras <- tagList(
-  tags$style(HTML("
-  /* Case study specific */
-  .analysis-step {
-    background: var(--upwr-panel); border-left: 4px solid var(--upwr-szalwia);
-    padding: 12px 16px; margin: 15px 0; border-radius: 0 6px 6px 0;
-  }
-  .analysis-step .step-number {
-    display: inline-block; background: var(--upwr-szalwia); color: white;
-    width: 28px; height: 28px; border-radius: 50%; text-align: center;
-    line-height: 28px; font-weight: bold; margin-right: 8px;
-  }
-  "))
-)
-
-# ============================================================================
 # UI
 # ============================================================================
 
@@ -83,8 +64,7 @@ ui <- lecture_page(
   lecture_num   = "08",
   lecture_title = "Case studies",
   module_label  = "Statystyka",
-  chapters      = .chapters,
-  header_extras = header_extras
+  chapters      = .chapters
 )
 
 # ============================================================================
