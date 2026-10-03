@@ -308,9 +308,17 @@ to stosują.
 
 ### 05 — założenia testów
 
-- [ ] **Decyzja:** `ks.test()` w `modules/ch1_normalnosc.R` — zostaje jako
-  wyjątek dydaktyczny czy zamiana na `rstatix`? Reszta modułu używa już
-  `shapiro_test()`.
+- [ ] Ryc. 1.2 czyta dane przez `isolate()`: po „Generuj dane” wynik testu
+  dotyczy starych danych, dopóki nie kliknie się testu ponownie.
+- [ ] Ryc. 1.3: dwa wykresy Q-Q (surowe dane, logarytm) bez podpisów —
+  rozróżnia je tylko kolor.
+- [ ] Ryc. 2.3: jedno n dla obu grup — przy równych n test Studenta i Welcha
+  dają identyczne t, więc panel nie pokazuje, kiedy Student zawodzi
+  (osobne suwaki n₁, n₂).
+- [ ] Ryc. 2.x: iloraz wariancji kolorowany ukrytym progiem 4.
+- [ ] Symulacja χ² a Fisher (rozdz. 03): tylko kategorie 50/50 (nie pokazuje
+  liberalnego χ² przy rzadkich kategoriach); konserwatywny Fisher
+  kolorowany jak „porażka”.
 
 ### 06 — regresja
 
