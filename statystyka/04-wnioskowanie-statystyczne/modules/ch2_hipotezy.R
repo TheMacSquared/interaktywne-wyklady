@@ -58,7 +58,7 @@ ch2h_ui <- list(
     lc_h2("ch2h-rozbior", "Rozbiór przykładu: telefon a koncentracja"),
 
     lc_p("Przełóżmy w ten sposób pytanie z rozdziału 01:"),
-    lc_feedback(type = "info", style = "font-size: 17px;",
+    lc_note("Pytanie",
       tags$em("„Czy telefon na biurku wpływa na koncentrację?”")
     ),
     lc_p(strong("Krok 1 — parametr:"), " mamy dwie grupy (telefon w plecaku

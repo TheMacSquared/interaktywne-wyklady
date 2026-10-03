@@ -15,7 +15,7 @@
 
 ch7_sat_ui <- function() tagList(
   lc_h2("ch7-satelitarne", "Wariant: dane satelitarne"),
-  lc_feedback(type = "info",
+  lc_note("Dane",
     p("Użyj ", tags$code("../dane/satelitarne_obserwacje.csv"),
       ". NDVI jest tu tylko liczbowym wskaźnikiem roślinności; nie omawiamy
        sposobu jego wyznaczania z pasm spektralnych.")
@@ -47,7 +47,7 @@ ch7_sat_ui <- function() tagList(
       tags$li("Sprawdź także średnią ", tags$code("sat_temp_c - grunt_temp_c"), ".")
     )),
 
-  lc_feedback(type = "warning",
+  lc_note("Ograniczenie",
     p("W rzeczywistych danych podział trening/test powinien uwzględniać miejsce
        i czas. Losowe rozdzielenie sąsiednich pikseli może dać zbyt optymistyczną
        ocenę predykcji. Na tym kursie wystarczy rozpoznać problem.")

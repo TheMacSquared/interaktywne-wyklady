@@ -23,8 +23,7 @@ ch_drzewo_ui <- list(
     ),
 
     tagList(
-      lc_feedback(type = "warning",
-        tags$strong("Zanim wejdziesz do drzewa:"),
+      lc_note("Zanim zaczniesz",
         tags$ul(
           tags$li("Nazwij pytanie: opis, porównanie czy związek?"),
           tags$li("ρ oznacza korelację w populacji, r — wynik w próbie. Zerowa ", gloss("korelacja Pearsona"), " nie wyklucza związku nieliniowego."),

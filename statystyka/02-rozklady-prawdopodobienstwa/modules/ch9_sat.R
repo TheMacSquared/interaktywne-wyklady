@@ -15,7 +15,7 @@
 }
 
 .ch9_content_sat <- function() tagList(
-  lc_feedback(type = "info",
+  lc_note("Kontekst",
     p("Kontekst dotyczy pomiarów i zdarzeń związanych z sensorami. Nie trzeba znać
        budowy instrumentu — rozpoznajemy wyłącznie strukturę losowego zjawiska."),
     p("W bloku danych użyj pliku ",
@@ -78,7 +78,7 @@
     p("Raport mówi: „mamy milion pikseli, więc dzięki CTG niepewność jest
        praktycznie zerowa”. Wskaż dwa problemy z tym zdaniem.")),
 
-  lc_feedback(type = "warning",
+  lc_warn("Pułapka",
     p("Rozkład jest modelem zjawiska, a nie etykietą dobieraną wyłącznie po
        kształcie histogramu. Zawsze pytaj, co jest pojedynczą próbą i czy próby
        można uznać za niezależne.")

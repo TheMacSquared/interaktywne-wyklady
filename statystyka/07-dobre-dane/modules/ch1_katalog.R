@@ -199,8 +199,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       )
     ),
 
-    lc_feedback(type = "warning",
-      tags$strong("Ten sam problem w danych satelitarnych:"),
+    lc_note("Przykład", title = "Ten sam problem w danych satelitarnych",
       " sąsiednie piksele często mają podobną temperaturę, wilgotność czy NDVI.
         Obraz z milionem pikseli nie musi więc zawierać miliona niezależnych
         informacji. Dodatkowo braki wywołane zachmurzeniem mają strukturę

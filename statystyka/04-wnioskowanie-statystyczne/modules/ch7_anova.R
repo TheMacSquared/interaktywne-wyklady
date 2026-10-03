@@ -316,8 +316,8 @@ ch7_ui <- list(
       i dopiero potem porównaj wynik z rozwiązaniem. Rozwiązanie podaje
       klasyczną ANOVA, która zakłada równe wariancje w grupach."),
 
-    lc_feedback(type = "info",
-      p(tags$b("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+    lc_note("Dane",
+      p("420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
         tags$code("dane/caschools.csv"), "."),
       p("Zmienne w zadaniu: ", tags$code("read"),
         " (wyniki z czytania), ", tags$code("income"),

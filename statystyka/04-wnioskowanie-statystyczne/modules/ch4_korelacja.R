@@ -466,8 +466,8 @@ ch4_ui <- list(
       W każdym zadaniu, zanim odsłonisz rozwiązanie, przewidź znak i siłę
       korelacji, a potem przeprowadź test."),
 
-    lc_feedback(type = "info",
-      p(tags$b("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+    lc_note("Dane",
+      p("420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
         tags$code("dane/caschools.csv"), "."),
       p("Zmienne w zadaniach: ", tags$code("read"), " i ", tags$code("math"),
         " (wyniki testów), ", tags$code("income"),

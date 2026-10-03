@@ -32,7 +32,7 @@ ch2_ui <- list(
     lc_p("Analiza nie zaczyna się od wzorów, tylko od pytania. Ktoś przychodzi
       i pyta w języku potocznym:"),
 
-    lc_feedback(type = "info", style = "font-size: 18px; text-align: center;",
+    lc_note("Pytanie",
       tags$em("„Czy nasi studenci mają typowy poziom koncentracji?
       Bo wydaje mi się, że coś z nimi jest nie tak.”")
     ),
@@ -284,8 +284,8 @@ ch2_ui <- list(
       wykonaj test i sformułuj wniosek w języku pytania,
       a dopiero potem porównaj go z rozwiązaniem."),
 
-    lc_feedback(type = "info",
-      p(tags$b("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+    lc_note("Dane",
+      p("420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
         tags$code("dane/caschools.csv"), "."),
       p("Zmienne w zadaniach: ", tags$code("read"),
         " (średni wynik z czytania, ok. 655 pkt), ",

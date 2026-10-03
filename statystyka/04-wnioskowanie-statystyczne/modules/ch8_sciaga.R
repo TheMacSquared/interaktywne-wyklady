@@ -18,29 +18,26 @@ ch8_ui <- list(
     # ========================================================================
     lc_h2("ch8-drzewo", "Drzewo decyzyjne: jaki test?"),
 
-    lc_feedback(type = "info",
-      tags$strong("Krok 1:"), " Ile zmiennych?",
+    tagList(
+      p(tags$strong("Krok 1:"), " Ile zmiennych?"),
       tags$ul(
         tags$li(tags$b("Jedna zmienna"), " → Krok 2a"),
         tags$li(tags$b("Dwie zmienne"), " → Krok 2b")
       ),
-
-      tags$strong("Krok 2a:"), " Jedna zmienna — jaki typ?",
+      p(tags$strong("Krok 2a:"), " Jedna zmienna — jaki typ?"),
       tags$ul(
         tags$li(tags$b("Ilościowa"), " → test t jednej próby"),
         tags$li(tags$b("Jakościowa (2 kat.)"), " → test dwumianowy"),
         tags$li(tags$b("Jakościowa (3+ kat.)"), " → χ² zgodności")
       ),
-
-      tags$strong("Krok 2b:"), " Dwie zmienne — jakie typy?",
+      p(tags$strong("Krok 2b:"), " Dwie zmienne — jakie typy?"),
       tags$ul(
         tags$li(tags$b("Ilościowa + ilościowa"), " → Pearson / Spearman"),
         tags$li(tags$b("Jakościowa + jakościowa"), " → χ² niezależności / Fisher"),
         tags$li(tags$b("Ilościowa + jakościowa (2 grupy)"), " → Krok 3"),
         tags$li(tags$b("Ilościowa + jakościowa (3+ grup)"), " → ANOVA + post-hoc ", gloss("test Games-Howella", "Games-Howell"))
       ),
-
-      tags$strong("Krok 3:"), " Próby niezależne czy sparowane?",
+      p(tags$strong("Krok 3:"), " Próby niezależne czy sparowane?"),
       tags$ul(
         tags$li(tags$b("Niezależne"), " → test t niezależny"),
         tags$li(tags$b("Sparowane"), " → ", gloss("test t dla prób zależnych", "test t dla danych sparowanych"))
@@ -98,10 +95,13 @@ ch8_ui <- list(
       )
     ),
 
-    lc_feedback(type = "info",
-      tags$strong("Uwaga: "),
-      "gdy dane mocno naruszają założenia ", gloss("test parametryczny", "testów parametrycznych"), " (skrajna skośność,
-       małe n, dane porządkowe), stosuje się ", gloss("test nieparametryczny", "testy nieparametryczne"), " (Mann-Whitney, Wilcoxon,
+    lc_note("Uwaga",
+      "gdy dane mocno naruszają założenia ",
+      gloss("test parametryczny", "testów parametrycznych"),
+      " (skrajna skośność,
+       małe n, dane porządkowe), stosuje się ",
+      gloss("test nieparametryczny", "testy nieparametryczne"),
+      " (Mann-Whitney, Wilcoxon,
        Kruskal-Wallis). Omówimy je w osobnym wykładzie."
     ),
 
@@ -184,8 +184,7 @@ ch8_ui <- list(
       )
     ),
 
-    lc_feedback(type = "info",
-      tags$strong("Zasada: "),
+    lc_note("Zasada", rule = TRUE,
       "najpierw ANOVA. Jeśli istotna → post-hoc (Games-Howell).
        Jeśli nieistotna → w tym podstawowym, eksploracyjnym schemacie post-hoc pomijamy.",
       p(tags$em("Wyjątek na później: wcześniej zaplanowane porównanie dwóch konkretnych
@@ -229,8 +228,7 @@ ch8_ui <- list(
       )
     ),
 
-    lc_feedback(type = "info",
-      tags$strong("Reguła interpretacji: "),
+    lc_note("Zasada", rule = TRUE,
       "progi Cohena to punkt wyjścia, nie wyrocznia. To, czy d = 0.3 jest \"małe\" czy \"ważne\", zależy od dziedziny.
        Dla bezpieczeństwa żywności (toksyny, patogeny) nawet mały efekt bywa krytyczny. Dla sensoryki — liczy się dopiero efekt średni."
     ),
@@ -238,13 +236,12 @@ ch8_ui <- list(
     # ========================================================================
     lc_h2("ch8-pvalue", "P-wartość — przypomnienie"),
 
-    lc_feedback(type = "ok",
-      tags$strong("P-wartość to:"),
+    lc_note("Definicja",
       p("Prawdopodobieństwo uzyskania wyniku co najmniej tak skrajnego,
         zakładając że H₀ jest prawdziwa.")
     ),
 
-    lc_feedback(type = "danger",
+    lc_warn("Pułapka",
       tags$strong("P-wartość NIE jest:"),
       tags$ul(
         tags$li("Prawdopodobieństwem, że H₀ jest prawdziwa"),
@@ -256,7 +253,7 @@ ch8_ui <- list(
     # ========================================================================
     lc_h2("ch8-pulapki", "Typowe pułapki"),
 
-    lc_feedback(type = "danger",
+    lc_warn("Pułapki",
       tags$ul(
         tags$li(tags$b("P-hacking:"),
                 " próbowanie testu aż wyjdzie p < 0.05 (parametryczny → nieparametryczny → usuwanie \"outlierów\" → zmiana hipotezy).

@@ -311,8 +311,8 @@ ch5_ui <- list(
       podzielić na dwie kategorie według podanego progu. Powstaje tabela 2 × 2
       i test χ² z jednym stopniem swobody."),
 
-    lc_feedback(type = "info",
-      p(tags$b("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+    lc_note("Dane",
+      p("420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
         tags$code("dane/caschools.csv"), "."),
       p("Zmienne w zadaniach: ", tags$code("grades"),
         " (typ szkoły: KK-06/KK-08), ",

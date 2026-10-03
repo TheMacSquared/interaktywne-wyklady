@@ -17,15 +17,18 @@ ch5_ui <- lecture_chapter(
     # ========================================================================
     lc_h2("ch5-schemat", "Schemat postępowania"),
 
-    lc_feedback(type = "info",
-      tags$strong("Krok 1:"), " Wybierz metodę na podstawie typu zmiennych i ", gloss("pytanie badawcze", "pytania badawczego"), ".",
-      br(), br(),
-      tags$strong("Krok 2:"), " Obejrzyj wykresy (histogram, Q-Q, wykres rozrzutu); test formalny traktuj pomocniczo.",
-      br(), br(),
-      tags$strong("Krok 3:"), " Oceń, czy naruszenie jest poważne dla tej metody przy tej wielkości próby. Jeśli tak, sięgnij po alternatywę; decyzję podejmij przed testem głównym, a nie po jego wyniku.",
-      br(), br(),
-      tags$strong("Krok 4:"), " Raportuj wyniki z ", gloss("wielkość efektu", "wielkością efektu"), " i ", gloss("p-wartość", "p-wartością"), "."
+    tagList(
+      p(tags$strong("Krok 1:"), " Wybierz metodę na podstawie typu zmiennych i ",
+        gloss("pytanie badawcze", "pytania badawczego"), "."),
+      p(tags$strong("Krok 2:"),
+        " Obejrzyj wykresy (histogram, Q-Q, wykres rozrzutu); test formalny traktuj pomocniczo."),
+      p(tags$strong("Krok 3:"),
+        " Oceń, czy naruszenie jest poważne dla tej metody przy tej wielkości próby. Jeśli tak, sięgnij po alternatywę; decyzję podejmij przed testem głównym, a nie po jego wyniku."),
+      p(tags$strong("Krok 4:"), " Raportuj wyniki z ",
+        gloss("wielkość efektu", "wielkością efektu"), " i ",
+        gloss("p-wartość", "p-wartością"), ".")
     ),
+
 
     # ========================================================================
     lc_h2("ch5-testy", "Testy diagnostyczne — szybka referencja"),
@@ -97,7 +100,7 @@ ch5_ui <- lecture_chapter(
     # ========================================================================
     lc_h2("ch5-rady", "Praktyczne rady"),
 
-    lc_feedback(type = "ok",
+    tagList(
       tags$ul(
         tags$li(tags$b("Wykres:"),
                 " najpierw histogram, Q-Q albo wykres rozrzutu; test formalny tylko pomocniczo."),

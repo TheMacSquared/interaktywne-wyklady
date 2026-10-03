@@ -88,7 +88,7 @@ ch9_ui <- list(
 .ch9_content_bhp <- function() tagList(
 
   lc_h3("Blok 1: Kalkulator rozkładów (25 min)"),
-  lc_feedback(type = "info",
+  lc_note("Jamovi",
     p("W Jamovi: ", tags$b("Analyses → Exploration → Distribution"),
       " (lub moduł ", tags$code("distrACTION"), ")."),
     p("Dla każdego zadania: wybierz odpowiedni rozkład, ustaw parametry, odczytaj prawdopodobieństwo.")
@@ -208,7 +208,7 @@ ch9_ui <- list(
   ),
 
   lc_h3("Blok 3: Analiza danych w Jamowi (40 min)"),
-  lc_feedback(type = "info",
+  lc_note("Dane",
     p("Otwórz pliki CSV z folderu ", tags$code("cwiczenia/dane/"), " w Jamovi.")
   ),
 
@@ -277,8 +277,7 @@ ch9_ui <- list(
   ),
 
   lc_h3("Podsumowanie"),
-  lc_feedback(type = "warning",
-    p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
+  lc_note("Pytania",
     tags$ol(
       tags$li("Który rozkład najczęściej widzisz w kontekście BHP i dlaczego?"),
       tags$li("Jak wygląda histogram danych z rozkładu wykładniczego? Czym różni się od normalnego?"),
@@ -296,7 +295,7 @@ ch9_ui <- list(
 .ch9_content_rol <- function() tagList(
 
   lc_h3("Blok 1: Kalkulator rozkładów (25 min)"),
-  lc_feedback(type = "info",
+  lc_note("Jamovi",
     p("W Jamovi: ", tags$b("Analyses → Exploration → Distribution"),
       " (lub moduł ", tags$code("distrACTION"), ")."),
     p("Dla każdego zadania: wybierz odpowiedni rozkład, ustaw parametry, odczytaj prawdopodobieństwo.")
@@ -413,7 +412,7 @@ ch9_ui <- list(
   ),
 
   lc_h3("Blok 3: Analiza danych w Jamovi (40 min)"),
-  lc_feedback(type = "info",
+  lc_note("Dane",
     p("Otwórz pliki CSV z folderu ", tags$code("cwiczenia/rolnictwo/dane/"), " w Jamovi.")
   ),
 
@@ -482,8 +481,7 @@ ch9_ui <- list(
   ),
 
   lc_h3("Podsumowanie"),
-  lc_feedback(type = "warning",
-    p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
+  lc_note("Pytania",
     tags$ol(
       tags$li("Który rozkład najczęściej pojawia się w kontekście rolniczym i dlaczego?"),
       tags$li("Co mówi nam średnia i wariancja, gdy są do siebie zbliżone?"),
@@ -501,7 +499,7 @@ ch9_ui <- list(
 .ch9_content_zyw <- function() tagList(
 
   lc_h3("Blok 1: Kalkulator rozkładów (25 min)"),
-  lc_feedback(type = "info",
+  lc_note("Jamovi",
     p("W Jamovi: ", tags$b("Analyses → Exploration → Distribution"),
       " (lub moduł ", tags$code("distrACTION"), ")."),
     p("Dla każdego zadania: wybierz odpowiedni rozkład, ustaw parametry, odczytaj prawdopodobieństwo.")
@@ -617,7 +615,7 @@ ch9_ui <- list(
   ),
 
   lc_h3("Blok 3: Analiza danych w Jamovi (40 min)"),
-  lc_feedback(type = "info",
+  lc_note("Dane",
     p("Otwórz pliki CSV z folderu ", tags$code("cwiczenia/zywnosc/dane/"), " w Jamovi.")
   ),
 
@@ -686,8 +684,7 @@ ch9_ui <- list(
   ),
 
   lc_h3("Podsumowanie"),
-  lc_feedback(type = "warning",
-    p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
+  lc_note("Pytania",
     tags$ol(
       tags$li("Który rozkład najczęściej pojawia się w kontroli jakości żywności i dlaczego?"),
       tags$li("Co oznacza w praktyce, gdy średnia i wariancja liczby reklamacji są zbliżone?"),

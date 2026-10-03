@@ -45,7 +45,7 @@ ch9_ui <- list(
       p(tags$b("Czas:"), " ~2 h · ",
         tags$b("Narzędzie:"), " Jamovi lub R · ",
         tags$b("Format:"), " 1 wariant kierunkowy × 6 zadań + krytyczne myślenie, ukryte rozwiązania."),
-      lc_feedback(type = "info",
+      tagList(
         selectInput("ch9_kierunek", tags$b("Wybierz wariant dla kierunku:"),
           choices = list(
             "Rolnictwo" = "rol",
@@ -64,8 +64,8 @@ ch9_ui <- list(
       condition = "input.ch9_kierunek == 'rol'",
       lc_h2("ch9-rol", "Blok 1", "Rolnictwo — pola uprawne Dolnego Śląska"),
 
-      lc_feedback(type = "info",
-        p(tags$b("Dane: "), tags$code("dane/rolnictwo.csv"),
+      lc_note("Dane",
+        p(tags$code("dane/rolnictwo.csv"),
           " — 200 pól uprawnych (Dolny Śląsk, sezon 2022–2023)."),
         p("Zmienne: ", tags$code("plon"), " (t/ha), ",
           tags$code("nawozenie"), " (kg NPK/ha), ",
@@ -137,8 +137,8 @@ ch9_ui <- list(
       condition = "input.ch9_kierunek == 'bhp'",
       lc_h2("ch9-bhp", "Blok 2", "Inżynieria bezpieczeństwa — przedsiębiorstwa"),
 
-      lc_feedback(type = "info",
-        p(tags$b("Dane: "), tags$code("dane/bezpieczenstwo.csv"),
+      lc_note("Dane",
+        p(tags$code("dane/bezpieczenstwo.csv"),
           " — 200 przedsiębiorstw (Polska, 2022)."),
         p("Zmienne: ", tags$code("wypadki"), " (wypadki/rok na 1000 pracowników), ",
           tags$code("szkolenia"), " (godz. BHP/rok), ",
@@ -211,8 +211,8 @@ ch9_ui <- list(
       condition = "input.ch9_kierunek == 'tz'",
       lc_h2("ch9-tz", "Blok 3", "Technologia żywności — partie produktów"),
 
-      lc_feedback(type = "info",
-        p(tags$b("Dane: "), tags$code("dane/technologia_zywnosci.csv"),
+      lc_note("Dane",
+        p(tags$code("dane/technologia_zywnosci.csv"),
           " — 200 partii produktów spożywczych (Polska, 2023)."),
         p("Zmienne: ", tags$code("bialko"), " (g białka/100 g), ",
           tags$code("wilgotnosc"), " (%), ",

@@ -14,7 +14,7 @@
 }
 
 .ch7_content_sat <- function() tagList(
-  lc_feedback(type = "info",
+  lc_note("Dane",
     p("Otwórz ", tags$code("../dane/satelitarne_obserwacje.csv"), " w Jamovi."),
     p("Jednostką obserwacji jest lokalizacja w określonym terminie. Przedziały
        liczymy tutaj klasycznie, traktując wiersze jako próbę; na końcu wrócimy
@@ -66,7 +66,7 @@
       tags$li("CI dla średniej różnicy satelita−grunt służy do oceny przeciętnego obciążenia.")
     )),
 
-  lc_feedback(type = "warning",
+  lc_note("Ograniczenie",
     p("Klasyczny CI zakłada niezależne obserwacje. Tutaj używamy go dydaktycznie,
        ale dla gęstej siatki przestrzennej należałoby uwzględnić podobieństwo
        sąsiednich lokalizacji. Na pierwszym semestrze wystarczy umieć nazwać to ograniczenie.")

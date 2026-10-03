@@ -26,7 +26,7 @@ ch7_ui <- list(
       p("Zadania opierają się na danych ", tags$code("dane/caschools.csv"),
         " oraz jednym małym zbiorze symulowanym dla regresji logistycznej.
         Najpierw wykonaj analizę samodzielnie, potem odsłoń rozwiązanie."),
-      lc_feedback(type = "info",
+      lc_note("Uwaga",
         p("Nie chodzi o przepisywanie tabeli. W każdym zadaniu zapisz jedno
           zdanie interpretacji w języku problemu: wynik testu szkolnego,
           dochód okręgu, odsetek uczniów z dotacją do obiadu albo
@@ -159,13 +159,11 @@ model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
 
     lc_h2("ch7-podsumowanie", "Na koniec"),
 
-    lc_feedback(type = "ok",
-      tags$ul(
-        tags$li("Model najpierw interpretuj w jednostkach danych, dopiero potem przez ", gloss("p-wartość", "p-value"), "."),
-        tags$li("Nie porównuj modeli tylko po R², gdy różnią się liczbą predyktorów."),
-        tags$li("Predykcja poza zakresem danych to ", gloss("ekstrapolacja"), ", nie zwykłe użycie modelu."),
-        tags$li("W regresji logistycznej decyzja zależy od ", gloss("próg klasyfikacji", "progu"), " i kosztu błędów.")
-      )
+    lc_recap(
+      tagList("Model najpierw interpretuj w jednostkach danych, dopiero potem przez ", gloss("p-wartość", "p-value"), "."),
+      "Nie porównuj modeli tylko po R², gdy różnią się liczbą predyktorów.",
+      tagList("Predykcja poza zakresem danych to ", gloss("ekstrapolacja"), ", nie zwykłe użycie modelu."),
+      tagList("W regresji logistycznej decyzja zależy od ", gloss("próg klasyfikacji", "progu"), " i kosztu błędów.")
     )
   )
 )

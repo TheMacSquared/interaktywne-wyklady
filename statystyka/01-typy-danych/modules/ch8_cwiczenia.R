@@ -130,7 +130,7 @@ ch8_ui <- list(
 .ch8_content_bhp <- function() tagList(
 
   lc_h2("ch8-blok1", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
-  lc_feedback(type = "info",
+  lc_note("Jamovi",
     p("W Jamovi: ", tags$b("Data → Setup"), " — sprawdź, jak Jamovi automatycznie rozpoznał typy zmiennych.
       Czy ma rację? Popraw, jeśli trzeba.")
   ),
@@ -254,8 +254,7 @@ ch8_ui <- list(
   ),
 
   lc_h2("ch8-podsumowanie", "Podsumowanie"),
-  lc_feedback(type = "warning",
-    p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
+  lc_note("Pytania",
     tags$ol(
       tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest ważna ",
               tags$em("zanim"), " zaczniemy analizę?"),
@@ -275,7 +274,7 @@ ch8_ui <- list(
 .ch8_content_rol <- function() tagList(
 
   lc_h2("ch8-blok1", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
-  lc_feedback(type = "info",
+  lc_note("Jamovi",
     p("W Jamovi: ", tags$b("Data → Setup"), " — sprawdź, jak Jamovi automatycznie rozpoznał typy zmiennych.
       Czy ma rację? Popraw, jeśli trzeba.")
   ),
@@ -390,8 +389,7 @@ ch8_ui <- list(
   ),
 
   lc_h2("ch8-podsumowanie", "Podsumowanie"),
-  lc_feedback(type = "warning",
-    p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
+  lc_note("Pytania",
     tags$ol(
       tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest ważna ",
               tags$em("zanim"), " zaczniemy analizę?"),
@@ -411,7 +409,7 @@ ch8_ui <- list(
 .ch8_content_zyw <- function() tagList(
 
   lc_h2("ch8-blok1", "Blok 1: Rozpoznawanie typów zmiennych (20 min)"),
-  lc_feedback(type = "info",
+  lc_note("Jamovi",
     p("W Jamovi: ", tags$b("Data → Setup"), " — sprawdź, jak Jamovi automatycznie rozpoznał typy zmiennych.
       Czy ma rację? Popraw, jeśli trzeba.")
   ),
@@ -527,8 +525,7 @@ ch8_ui <- list(
   ),
 
   lc_h2("ch8-podsumowanie", "Podsumowanie"),
-  lc_feedback(type = "warning",
-    p(tags$b("Po zakończeniu ćwiczeń odpowiedz na pytania:")),
+  lc_note("Pytania",
     tags$ol(
       tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest ważna ",
               tags$em("zanim"), " zaczniemy analizę?"),

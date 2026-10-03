@@ -24,8 +24,7 @@ ch6_ui <- list(
         gdy zaznaczysz jeden checkbox. Twoja robota: nazwać go,
         zinterpretować, wyciągnąć wniosek."),
 
-      lc_feedback(type = "info",
-        tags$strong("Przedział dla średniej (jedna zmienna ilościowa):"),
+      lc_note("Jamovi", title = "Przedział dla średniej (jedna zmienna ilościowa)",
         tags$ol(
           tags$li(tags$b("Analyses → T-Tests → One Sample T-Test")),
           tags$li("Przeciągnij ", gloss("zmienna ilościowa", "zmienną ilościową"), " (np. wzrost, plon,
@@ -40,8 +39,7 @@ ch6_ui <- list(
                    między z a t."))
       ),
 
-      lc_feedback(type = "info",
-        tags$strong("Przedział dla różnicy średnich (dwie grupy):"),
+      lc_note("Jamovi", title = "Przedział dla różnicy średnich (dwie grupy)",
         tags$ol(
           tags$li(tags$b("Analyses → T-Tests → Independent Samples T-Test")),
           tags$li("Zmienna ilościowa → ", tags$em("Dependent Variable"),
@@ -57,9 +55,8 @@ ch6_ui <- list(
           " — grupy różnią się istotnie.")
       ),
 
-      lc_feedback(type = "info",
-        tags$strong("Przedział dla proporcji (jedna zmienna kategorialna,
-                     2 kategorie):"),
+      lc_note("Jamovi", title = "Przedział dla proporcji (jedna zmienna kategorialna,
+                     2 kategorie)",
         tags$ol(
           tags$li(tags$b("Analyses → Frequencies → 2 Outcomes — Binomial test")),
           tags$li("Przeciągnij zmienną binarną (np. zdany/niezdany)
@@ -73,8 +70,7 @@ ch6_ui <- list(
         )
       ),
 
-      lc_feedback(type = "info",
-        tags$strong("Przedział dla różnicy proporcji (dwie grupy):"),
+      lc_note("Jamovi", title = "Przedział dla różnicy proporcji (dwie grupy)",
         tags$ol(
           tags$li(tags$b("Analyses → Frequencies → Independent Samples — χ² test of association")),
           tags$li("Dwie zmienne kategorialne w polach ", tags$em("Rows"),
@@ -119,8 +115,7 @@ ch6_ui <- list(
     lc_h2("ch6-szablony", "Szablony wniosków — co napisać w raporcie"),
 
     tagList(
-      lc_feedback(type = "ok",
-        tags$strong("Średnia (pojedyncza zmienna):"),
+      lc_note("Przykład", title = "Średnia (pojedyncza zmienna)",
         p(tags$em("„Średni wzrost studentów wyniósł 171.3 cm
                    (95% CI: [168.4, 174.2]).”")),
         p("Trzy liczby — i gotowe. Jeśli masz wartość odniesienia
@@ -129,8 +124,7 @@ ch6_ui <- list(
                    że średnia w populacji różni się od normy.”"))
       ),
 
-      lc_feedback(type = "ok",
-        tags$strong("Różnica średnich (dwie grupy):"),
+      lc_note("Przykład", title = "Różnica średnich (dwie grupy)",
         p(tags$em("„Grupa eksperymentalna osiągnęła średni wynik
                    wyższy o 4.7 punktu od grupy kontrolnej
                    (95% CI różnicy: [1.2, 8.2]).”")),
@@ -139,8 +133,7 @@ ch6_ui <- list(
            Jeśli zawierałby 0 — nie mamy podstaw mówić o różnicy.")
       ),
 
-      lc_feedback(type = "ok",
-        tags$strong("Proporcja:"),
+      lc_note("Przykład", title = "Proporcja",
         p(tags$em("„Odsetek zdających egzamin wyniósł 68%
                    (95% CI: [62%, 73%]).”")),
         p(tags$strong("Sprawdź wartość progową:"),
@@ -153,8 +146,7 @@ ch6_ui <- list(
     lc_h2("ch6-ci-hipoteza", "Kiedy CI daje odpowiedź na hipotezę?"),
 
     tagList(
-      lc_feedback(type = "warning",
-        tags$strong("Zasada prosta:"),
+      lc_note("Zasada", rule = TRUE,
         tags$ul(
           tags$li(tags$b("CI dla średniej"), " vs wartość hipotetyczna ",
                   tags$code("μ₀"), ": jeśli ",
@@ -174,8 +166,7 @@ ch6_ui <- list(
     lc_h2("ch6-typowe-bledy", "Typowe błędy interpretacji"),
 
     tagList(
-      lc_feedback(type = "danger",
-        tags$strong("BŁĘDNE:"),
+      lc_warn("Błąd",
         tags$ul(
           tags$li("„Średnia populacji leży w tym przedziale z 95%
                    prawdopodobieństwem” — ",
@@ -190,8 +181,7 @@ ch6_ui <- list(
         )
       ),
 
-      lc_feedback(type = "ok",
-        tags$strong("POPRAWNE:"),
+      lc_note("Poprawnie",
         tags$ul(
           tags$li("„Gdybyśmy powtarzali badanie, 95% tak skonstruowanych
                    przedziałów zawierałoby prawdziwą średnią populacji.”"),
@@ -206,8 +196,8 @@ ch6_ui <- list(
     lc_h2("ch6-drzewo", "Drzewo decyzyjne — który CI wybrać?"),
 
     tagList(
-      lc_feedback(type = "info",
-        tags$strong("1. Co chcesz oszacować?"),
+      tagList(
+        p(tags$strong("1. Co chcesz oszacować?")),
         tags$ul(
           tags$li(tags$b("Liczbę"),
                   " (średnią, np. wzrost, plon, czas) → CI dla średniej"),
@@ -216,7 +206,7 @@ ch6_ui <- list(
           tags$li(tags$b("Różnicę między grupami"),
                   " → CI dla różnicy średnich lub proporcji")
         ),
-        tags$strong("2. Ile masz grup?"),
+        p(tags$strong("2. Ile masz grup?")),
         tags$ul(
           tags$li(tags$b("Jedna"), " → jeden CI (np. One Sample T-Test)"),
           tags$li(tags$b("Dwie"),
@@ -225,7 +215,7 @@ ch6_ui <- list(
           tags$li(tags$b("Więcej niż dwie"),
                   " → ", gloss("ANOVA"), " + osobne CI dla każdej pary")
         ),
-        tags$strong("3. Jaki poziom ufności?"),
+        p(tags$strong("3. Jaki poziom ufności?")),
         tags$ul(
           tags$li("Standard: ", tags$b("95%"),
                   " (zaznaczony domyślnie w jamovi)"),

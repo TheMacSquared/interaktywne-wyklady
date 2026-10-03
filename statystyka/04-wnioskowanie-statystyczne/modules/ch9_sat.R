@@ -15,8 +15,8 @@
 
 ch9_sat_ui <- function() tagList(
   lc_h2("ch9-sat", "Wariant kierunkowy", "Dane satelitarne — pomiar powierzchni"),
-  lc_feedback(type = "info",
-    p(tags$b("Dane: "), tags$code("../dane/satelitarne_obserwacje.csv"),
+  lc_note("Dane",
+    p(tags$code("../dane/satelitarne_obserwacje.csv"),
       " — 180 syntetycznych obserwacji lokalizacji."),
     p("Zmienne: temperatura satelitarna i naziemna, ich różnica, NDVI,
        zachmurzenie, typ pokrycia, strefa oraz jakość pomiaru.")
@@ -50,8 +50,8 @@ ch9_sat_ui <- function() tagList(
     p("Wykonaj ANOVA: ", tags$code("sat_temp_c ~ typ_pokrycia"),
       ". Podaj F, p, η² i wskaż, które średnie warto porównać post-hoc.")),
 
-  lc_feedback(type = "warning",
-    p(tags$b("Ograniczenie:"), " w tych ćwiczeniach traktujemy lokalizacje jako
+  lc_note("Ograniczenie",
+    p("W tych ćwiczeniach traktujemy lokalizacje jako
        niezależne, aby przećwiczyć podstawowe testy. Sąsiednie piksele mogą być
        podobne, więc analiza rzeczywistej gęstej siatki wymagałaby ostrożniejszej
        oceny niepewności. Nie rozwiązujemy tego jeszcze formalnie.")

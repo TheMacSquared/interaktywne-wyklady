@@ -319,8 +319,8 @@ ch6_ui <- list(
       a grupy są niezależne. Zapisz hipotezy, wykonaj test t Welcha
       i dopiero potem porównaj swój wynik z rozwiązaniem."),
 
-    lc_feedback(type = "info",
-      p(strong("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+    lc_note("Dane",
+      p("420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
         tags$code("dane/caschools.csv"), "."),
       p("Zmienne w zadaniach: ", tags$code("read"),
         " (wyniki z czytania), ", tags$code("grades"),

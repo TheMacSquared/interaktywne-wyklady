@@ -16,7 +16,7 @@
 }
 
 .ch8_content_sat <- function() tagList(
-  lc_feedback(type = "info",
+  lc_note("Dane",
     p("Otwórz plik ", tags$code("../dane/satelitarne_obserwacje.csv"),
       " w Jamovi. To syntetyczna tabela dydaktyczna: jeden wiersz oznacza
        lokalizację obserwowaną jednego dnia, a nie pojedynczy surowy obraz."),
@@ -87,7 +87,7 @@
   ),
 
   lc_h2("ch8-sat-podsumowanie", "Podsumowanie"),
-  lc_feedback(type = "warning",
+  lc_note("Ograniczenie",
     p("Na tym etapie nie modelujemy zależności przestrzennej. Wystarczy zapamiętać:
        jednostką obserwacji jest lokalizacja i termin, a bliskie lokalizacje
        mogą nie dostarczać całkowicie niezależnej informacji.")

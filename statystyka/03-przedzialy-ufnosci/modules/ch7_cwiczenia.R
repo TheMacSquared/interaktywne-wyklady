@@ -31,7 +31,7 @@ ch7_ui <- list(
         tags$b("ukryte rozwiązanie"),
         " — kliknij przycisk, aby je zobaczyć."),
 
-      lc_feedback(type = "info",
+      tagList(
         selectInput("ch7_kierunek", tags$b("Wybierz wariant dla kierunku:"),
           choices = list(
             "Edukacja (CASchools)" = "edu",
@@ -60,7 +60,7 @@ ch7_ui <- list(
 
 .ch7_content_edu <- function() tagList(
 
-  lc_feedback(type = "info",
+  lc_note("Dane",
     p(tags$b("Otwórz plik "), tags$code("dane/caschools.csv"), tags$b(" w Jamovi"), "."),
     p("Dane ze 420 okręgów szkolnych w Kalifornii. Zmienne: wyniki z czytania (",
       tags$code("read"), ") i matematyki (", tags$code("math"),
@@ -184,7 +184,7 @@ ch7_ui <- list(
 
 .ch7_content_bhp <- function() tagList(
 
-  lc_feedback(type = "info",
+  lc_note("Dane",
     p(tags$b("Otwórz plik "), tags$code("dane/bhp_zaklady.csv"), tags$b(" w Jamovi"), "."),
     p("Dane z 320 zakładów produkcyjnych. Zmienne: wskaźnik wypadków (",
       tags$code("wskaznik_wypadkow"), "), absencja (",
@@ -312,7 +312,7 @@ ch7_ui <- list(
 
 .ch7_content_rol <- function() tagList(
 
-  lc_feedback(type = "info",
+  lc_note("Dane",
     p(tags$b("Otwórz plik "), tags$code("dane/rolnictwo_pola.csv"), tags$b(" w Jamovi"), "."),
     p("Dane z 280 pól uprawnych. Zmienne: plon pszenicy (",
       tags$code("plon_pszenicy"), " t/ha), plon rzepaku (",
@@ -439,7 +439,7 @@ ch7_ui <- list(
 
 .ch7_content_zyw <- function() tagList(
 
-  lc_feedback(type = "info",
+  lc_note("Dane",
     p(tags$b("Otwórz plik "), tags$code("dane/zywnosc_partie.csv"), tags$b(" w Jamovi"), "."),
     p("Dane z 350 partii produkcyjnych. Zmienne: zawartość białka (",
       tags$code("zawartosc_bialka"), " %), tłuszczu (",

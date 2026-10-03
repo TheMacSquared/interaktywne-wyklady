@@ -331,8 +331,8 @@ ch3_ui <- list(
       W każdym zadaniu zapisz hipotezy, zanim policzysz p-wartość, i zanim
       zajrzysz do rozwiązania."),
 
-    lc_feedback(type = "info",
-      p(strong("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+    lc_note("Dane",
+      p("420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
         tags$code("dane/caschools.csv"), "."),
       p(strong("Zmienne w zadaniach:"), " ", tags$code("grades"),
         " (typ szkoły: KK-06 lub KK-08), ",
