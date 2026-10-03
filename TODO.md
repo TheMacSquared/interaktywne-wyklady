@@ -395,6 +395,13 @@ to stosują.
   Kandydaci: `palmerpenguins` (ANOVA/korelacja), case binarny (regresja
   logistyczna), case czasowy.
 
+### 09 — projekt badawczy
+
+- [ ] Rozdz. 7: `geom_errorbarh()` przestarzały w ggplot2 4.0; panel modelu
+  używa `lc_stat_box` zamiast `lc_readout`.
+- [ ] Rozdz. 1: karta celu ma ręczną klasę `lc-feedback lc-feedback-warning
+  lecture-goal-card` — zastąpić komponentem z layoutu.
+
 ---
 
 ## Statystyka 2
