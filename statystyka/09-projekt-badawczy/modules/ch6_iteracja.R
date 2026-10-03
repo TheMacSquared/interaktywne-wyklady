@@ -211,18 +211,18 @@ ch6_server <- function(input, output, session) {
     cards <- lapply(tr_trop_order, function(id) {
       tr  <- tr_tropy[[id]]
       row <- tr_board_row(id)
-      div(class = "trop-card",
-        h4(tr$short, " · ", lc_verdict(row$verdict, type = if (row$supported) "ok" else "danger")),
+      tagList(
+        lc_h3(tagList(tr$short, " · ", lc_verdict(row$verdict, type = if (row$supported) "ok" else "danger"))),
         p(tags$strong("Po wstępnym wyniku:"), " ", cases[[id]]$narrative),
         p(tags$strong("Co sprawdzamy dalej:")),
-        tags$ul(class = "trop-alt",
+        tags$ul(
           lapply(cases[[id]]$checks, function(x) {
             tags$li(HTML(gsub("`([^`]+)`", "<code>\\1</code>", x)))
           })
         )
       )
     })
-    div(class = "trop-stack", cards)
+    tagList(cards)
   })
 
   # Zmienne zakłócające — przykład rozpisany (płeć) + tabela zbiorcza.

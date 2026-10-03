@@ -82,143 +82,11 @@ header_extras <- tagList(
       color: var(--upwr-ink-soft);
     }
 
-    .research-ladder {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin: 18px 0;
-    }
-    .research-ladder > div {
-      background: var(--upwr-surface);
-      border: 1px solid var(--upwr-rule);
-      border-radius: 8px;
-      padding: 14px;
-    }
-    .research-ladder strong {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--upwr-ink);
-    }
-
-    .data-legend {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px 14px;
-      margin-top: 10px;
-    }
-    .data-legend-item {
-      border-left: 3px solid var(--upwr-szalwia);
-      background: var(--upwr-surface);
-      padding: 8px 10px;
-      border-radius: 0 6px 6px 0;
-      font-size: calc(13px * var(--lc-font-scale));
-      line-height: 1.35;
-    }
-    .data-legend-item code {
-      font-weight: 700;
-    }
-
     /* --- Tablica tropów: narastający widok zbiorczy całej wiązki --- */
     .tropy-row-off { opacity: 0.6; }
     .tropy-row-on  { opacity: 1; transition: opacity .25s; }
     .tropy-muted   { color: var(--upwr-ink-subtle); font-style: italic; }
 
-    /* --- Rozłożone karty tropów: wszystkie hipotezy/wyniki naraz --- */
-    .trop-stack { display: grid; gap: 14px; margin: 16px 0; }
-    .trop-card {
-      background: var(--upwr-surface);
-      border: 1px solid var(--upwr-rule);
-      border-left: 4px solid var(--upwr-szalwia);
-      border-radius: 8px;
-      padding: 14px 16px;
-    }
-    .trop-card h4 {
-      margin: 0 0 6px 0;
-      font-size: calc(15px * var(--lc-font-scale));
-      color: var(--upwr-ink);
-    }
-    .trop-card p {
-      margin: 4px 0;
-      font-size: calc(13px * var(--lc-font-scale));
-      line-height: 1.45;
-      color: var(--upwr-ink-soft);
-    }
-    .trop-card .trop-alt {
-      margin: 6px 0 0 0;
-      padding-left: 18px;
-    }
-    .trop-card .trop-alt li {
-      font-size: calc(12.5px * var(--lc-font-scale));
-      color: var(--upwr-ink-soft);
-      line-height: 1.4;
-    }
-    .trop-plan-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .trop-plan-box {
-      background: var(--upwr-panel);
-      border: 1px solid var(--upwr-rule);
-      border-radius: 6px;
-      padding: 10px 12px;
-    }
-    .trop-plan-box strong {
-      display: block;
-      margin-bottom: 4px;
-      font-size: calc(12.5px * var(--lc-font-scale));
-      color: var(--upwr-ink);
-    }
-    .trop-plan-box p {
-      margin: 0;
-    }
-    .proposal-skeleton {
-      display: grid;
-      gap: 12px;
-      margin: 18px 0;
-    }
-    .proposal-step {
-      display: grid;
-      grid-template-columns: 44px 1fr;
-      gap: 12px;
-      align-items: start;
-      background: var(--upwr-surface);
-      border: 1px solid var(--upwr-rule);
-      border-radius: 8px;
-      padding: 14px;
-    }
-    .proposal-step-num {
-      display: inline-flex;
-      width: 34px;
-      height: 34px;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: var(--upwr-szalwia);
-      color: #fff;
-      font-weight: 700;
-      font-family: var(--upwr-sans);
-    }
-    .proposal-step h4 {
-      margin: 0 0 6px 0;
-      font-size: calc(15px * var(--lc-font-scale));
-      color: var(--upwr-ink);
-    }
-    .proposal-step p {
-      margin: 4px 0;
-      font-size: calc(13px * var(--lc-font-scale));
-      line-height: 1.45;
-      color: var(--upwr-ink-soft);
-    }
-    .proposal-step code {
-      font-size: calc(12.5px * var(--lc-font-scale));
-    }
-    .proposal-example {
-      margin-top: 8px;
-      padding-left: 12px;
-      border-left: 3px solid var(--upwr-szalwia);
-    }
     .proposal-draft-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -274,10 +142,7 @@ header_extras <- tagList(
 
     @media (max-width: 992px) {
       .construct-map { grid-template-columns: 1fr; }
-      .research-ladder { grid-template-columns: 1fr; }
 
-      .data-legend { grid-template-columns: 1fr; }
-      .trop-plan-grid { grid-template-columns: 1fr; }
       .proposal-draft-grid { grid-template-columns: 1fr; }
 
     }

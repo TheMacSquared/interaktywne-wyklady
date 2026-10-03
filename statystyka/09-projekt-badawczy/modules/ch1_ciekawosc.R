@@ -60,24 +60,26 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
           )
           ),
           uiOutput("ch1_data_view"),
-    div(class = "data-legend",
-      lapply(list(
-        c("eval", "ocena kursu z ankiety studenckiej, uśredniona po osobach, które ją wypełniły; skala od 1 (bardzo źle) do 5 (znakomicie)"),
-        c("beauty", "ocena wyglądu prowadzącego wystawiona przez panel sześciu studentów, uśredniona i przesunięta tak, by średnia w zbiorze wynosiła 0"),
-        c("gender, age", "płeć i wiek prowadzącego"),
-        c("minority", "czy prowadzący należy do mniejszości (w oryginalnym opisie danych: osoba niebiała)"),
-        c("native, tenure", "czy angielski jest językiem ojczystym prowadzącego; czy prowadzący jest na ścieżce stałego zatrudnienia (tenure track)"),
-        c("division, credits", "poziom kursu (niższy to głównie duże kursy pierwszych lat) i czy jest to jednopunktowy kurs fakultatywny, np. joga albo taniec"),
-        c("students, allstudents", "liczba osób, które wypełniły ankietę, i liczba osób zapisanych na kurs"),
-        c("response.rate", "odsetek zapisanych, którzy wypełnili ankietę (w %); policzony z dwóch poprzednich kolumn"),
-        c("prof", "identyfikator prowadzącego; ta sama osoba prowadzi zwykle kilka kursów")
-      ), function(x) {
-        div(class = "data-legend-item",
-          tags$code(x[[1]]),
-          tags$br(),
-          x[[2]]
+    lc_table(
+      data.frame(
+        var = c("eval", "beauty", "gender, age", "minority", "native, tenure", "division, credits", "students, allstudents", "response.rate", "prof"),
+        desc = c(
+        "ocena kursu z ankiety studenckiej, uśredniona po osobach, które ją wypełniły; skala od 1 (bardzo źle) do 5 (znakomicie)",
+        "ocena wyglądu prowadzącego wystawiona przez panel sześciu studentów, uśredniona i przesunięta tak, by średnia w zbiorze wynosiła 0",
+        "płeć i wiek prowadzącego",
+        "czy prowadzący należy do mniejszości (w oryginalnym opisie danych: osoba niebiała)",
+        "czy angielski jest językiem ojczystym prowadzącego; czy prowadzący jest na ścieżce stałego zatrudnienia (tenure track)",
+        "poziom kursu (niższy to głównie duże kursy pierwszych lat) i czy jest to jednopunktowy kurs fakultatywny, np. joga albo taniec",
+        "liczba osób, które wypełniły ankietę, i liczba osób zapisanych na kurs",
+        "odsetek zapisanych, którzy wypełnili ankietę (w %); policzony z dwóch poprzednich kolumn",
+        "identyfikator prowadzącego; ta sama osoba prowadzi zwykle kilka kursów"
         )
-      })
+      ),
+      cols = list(
+        lc_col("var", "Kolumna", "row"),
+        lc_col("desc", "Co opisuje", "text")
+      ),
+      narrow = "cards", prose = TRUE
     )
   ),
 
@@ -108,10 +110,10 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     które mówi, czego chcemy się dowiedzieć i po co, a pojedyncze pytania
     porządkuje jako jego części. Droga od pomysłu do planu ma trzy szczeble."),
 
-  div(class = "research-ladder",
-    div(tags$strong("Pomysł badawczy"), "Zaczynamy od przypuszczenia: ocena z ankiety może mieć kilka źródeł."),
-    div(tags$strong("Cel badania"), "Formułujemy pytanie, które da się rozważyć na danych."),
-    div(tags$strong("Plan analizy"), "Zamieniamy cel na hipotezy, zmienne i porównania.")
+  tags$ol(
+    tags$li(b_("Pomysł badawczy."), " Zaczynamy od przypuszczenia: ocena z ankiety może mieć kilka źródeł."),
+    tags$li(b_("Cel badania."), " Formułujemy pytanie, które da się rozważyć na danych."),
+    tags$li(b_("Plan analizy."), " Zamieniamy cel na hipotezy, zmienne i porównania.")
   ),
 
   lc_p("Na tych danych cel może brzmieć następująco."),
@@ -194,14 +196,10 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
 
 ch1_server <- function(input, output, session) {
   output$ch1_tropy_bundle <- renderUI({
-    cards <- lapply(tr_trop_order, function(id) {
+    tags$ul(lapply(tr_trop_order, function(id) {
       tr <- tr_tropy[[id]]
-      div(class = "trop-card",
-        h4(tr$short),
-        p(tags$strong("Pytanie:"), " ", tr$question)
-      )
-    })
-    div(class = "trop-stack", cards)
+      tags$li(b_(paste0(tr$short, ":")), " ", tr$question)
+    }))
   })
 
   output$ch1_extra_tropy <- renderUI({

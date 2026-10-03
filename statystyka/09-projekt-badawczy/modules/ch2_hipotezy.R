@@ -90,25 +90,17 @@ ch2_server <- function(input, output, session) {
   output$ch2_bundle <- renderUI({
     cards <- lapply(tr_trop_order, function(id) {
       tr <- tr_tropy[[id]]
-      div(class = "trop-card",
-        h4(tr$short),
+      tagList(
+        lc_h3(tr$short),
         p(tags$strong("Pytanie:"), " ", tr$question),
         p(tags$strong("Robocza hipoteza:"), " ",
           HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$hypothesis))),
         p(tags$strong("Alternatywne wyjaśnienia:")),
-        tags$ul(class = "trop-alt", lapply(tr$alt, tags$li)),
-        div(class = "trop-plan-grid",
-          div(class = "trop-plan-box",
-            tags$strong("Dostępne dane i braki:"),
-            p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$data_check)))
-          ),
-          div(class = "trop-plan-box",
-            tags$strong("Co uwzględnić w analizie:"),
-            p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$plan_check)))
-          )
+        tags$ul(lapply(tr$alt, tags$li)),
+          lc_note("Dane i braki", p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$data_check)))),
+          lc_note("W analizie", p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$plan_check))))
         )
-      )
     })
-    div(class = "trop-stack", cards)
+    tagList(cards)
   })
 }

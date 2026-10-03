@@ -24,52 +24,29 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
     z wykładu 04 (rozdział 9). Konspekt ma cztery części; przy każdej podajemy, jak
     wygląda ona w naszym projekcie."),
 
-  div(class = "proposal-skeleton",
-    div(class = "proposal-step",
-      span(class = "proposal-step-num", "1"),
-      div(
-        h4("Cel badania"),
-        p("Jedno główne ", gloss("pytanie badawcze", "pytanie"), ", które porządkuje cały projekt."),
-        div(class = "proposal-example",
-          p(tags$strong("U nas:"), " ", tags$em(tr_goal))
-        )
-      )
-    ),
-    div(class = "proposal-step",
-      span(class = "proposal-step-num", "2"),
-      div(
-        h4("Zmienne, dane i pomiar"),
-        p("Źródło danych, ", gloss("jednostka obserwacji"), ", ", gloss("zmienna zależna", "zmienna wynikowa"), ", zmienne główne,
-          zmienne kontekstowe oraz ograniczenia pomiaru."),
-        div(class = "proposal-example",
-          p(tags$strong("U nas:"), " ", "jedna obserwacja to kurs; mamy oceny,
-            cechy prowadzących i cechy kursów. ", tags$code("eval"), " jest oceną z ankiety,
-            ale nie jest czystą miarą jakości nauczania.")
-        )
-      )
-    ),
-    div(class = "proposal-step",
-      span(class = "proposal-step-num", "3"),
-      div(
-        h4("Tropy i hipotezy"),
-        p("Każdy trop zapisujemy w tym samym porządku: pytanie, ", gloss("hipoteza badawcza", "hipoteza"), ",
-          zmienne do użycia, alternatywne wyjaśnienia i plan interpretacji."),
-        div(class = "proposal-example",
-          p(tags$strong("U nas:"), " ", "atrakcyjność, płeć, status native speaker,
-            status mniejszościowy i odsetek odpowiedzi (response rate) jako
-            różne tropy interpretacji ", tags$code("eval"), ".")
-        )
-      )
-    ),
-    div(class = "proposal-step",
-      span(class = "proposal-step-num", "4"),
-      div(
-        h4("Plan interpretacji"),
-        p("Co opiszemy, co porównamy, które zmienne uwzględnimy jako kontekst
-          i jak ostrożnie połączymy wyniki z celem badania.")
-      )
-    )
-  ),
+  lc_h3("Cel badania", num = "1"),
+  lc_p("Jedno główne ", gloss("pytanie badawcze", "pytanie"), ", które porządkuje cały projekt."),
+  lc_note("U nas", p(tags$em(tr_goal))),
+
+  lc_h3("Zmienne, dane i pomiar", num = "2"),
+  lc_p("Źródło danych, ", gloss("jednostka obserwacji"), ", ",
+    gloss("zmienna zależna", "zmienna wynikowa"), ", zmienne główne,
+    zmienne kontekstowe oraz ograniczenia pomiaru."),
+  lc_note("U nas", p("Jedna obserwacja to kurs; mamy oceny, cechy prowadzących
+    i cechy kursów. ", tags$code("eval"), " jest oceną z ankiety, ale nie jest
+    czystą miarą jakości nauczania.")),
+
+  lc_h3("Tropy i hipotezy", num = "3"),
+  lc_p("Każdy trop zapisujemy w tym samym porządku: pytanie, ",
+    gloss("hipoteza badawcza", "hipoteza"), ", zmienne do użycia, alternatywne
+    wyjaśnienia i plan interpretacji."),
+  lc_note("U nas", p("Atrakcyjność, płeć, status native speaker, status
+    mniejszościowy i odsetek odpowiedzi (response rate) jako różne tropy
+    interpretacji ", tags$code("eval"), ".")),
+
+  lc_h3("Plan interpretacji", num = "4"),
+  lc_p("Co opiszemy, co porównamy, które zmienne uwzględnimy jako kontekst
+    i jak ostrożnie połączymy wyniki z celem badania."),
 
   lc_p("Pierwsze trzy części opisują, co badamy. Czwarta mówi, jak będziemy
     czytać wyniki, i jest najczęściej pomijana, choć to ona chroni przed

@@ -22,61 +22,33 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
     celu, ograniczenia i następny krok. Każda ma przykład dla naszych
     danych."),
 
-  div(class = "proposal-skeleton",
-    div(class = "proposal-step",
-      span(class = "proposal-step-num", "1"),
-      div(
-        h4("Wyniki przy tropach"),
-        p("Przy każdym tropie zapisujemy, czy dane go wzmocniły, czy
-          osłabiły, i jak duży jest efekt. Cel się nie zmienia tylko
-          dlatego, że jeden wynik okazał się ciekawy."),
-        div(class = "proposal-example",
-          p(tags$strong("U nas:"), " atrakcyjność, płeć, status native
-            speaker i odsetek odpowiedzi wiążą się z ", tags$code("eval"),
-            " także w modelu kontrolnym. Status mniejszościowy w prostym
-            porównaniu był nieistotny, a w pełnym modelu istotny.")
-        )
-      )
-    ),
-    div(class = "proposal-step",
-      span(class = "proposal-step-num", "2"),
-      div(
-        h4("Interpretacja celu"),
-        p("Zbieramy tropy razem i piszemy, co cała wiązka mówi o głównym ",
-          gloss("pytanie badawcze", "pytaniu badawczym"), "."),
-        div(class = "proposal-example",
-          p(tags$strong("U nas:"), " ocena z ankiety wygląda raczej na
-            wskaźnik mieszany niż na czystą miarę jakości nauczania.")
-        )
-      )
-    ),
-    div(class = "proposal-step",
-      span(class = "proposal-step-num", "3"),
-      div(
-        h4("Ograniczenia"),
-        p("Nazywamy, czego dane nie pozwalają stwierdzić. To część jakości
-          projektu, a nie porażka analizy."),
-        div(class = "proposal-example",
-          p(tags$strong("U nas:"), " ", gloss("dane obserwacyjne"),
-            " pokazują współwystępowanie, ale nie pozwalają rozstrzygnąć ",
-            gloss("przyczynowość", "przyczynowości"), "; kursy tego samego
-            prowadzącego nie są niezależnymi obserwacjami.")
-        )
-      )
-    ),
-    div(class = "proposal-step",
-      span(class = "proposal-step-num", "4"),
-      div(
-        h4("Następny krok"),
-        p("Zapisujemy, jak rozwinąć projekt: jakie dane, pomiary albo
-          porównania byłyby potrzebne po pierwszej analizie."),
-        div(class = "proposal-example",
-          p(tags$strong("U nas:"), " pomiar efektów uczenia się, dane
-            o trudności kursu i oczekiwanej ocenie, komentarze z ankiet.")
-        )
-      )
-    )
-  ),
+  lc_h3("Wyniki przy tropach", num = "1"),
+  lc_p("Przy każdym tropie zapisujemy, czy dane go wzmocniły, czy
+    osłabiły, i jak duży jest efekt. Cel się nie zmienia tylko
+    dlatego, że jeden wynik okazał się ciekawy."),
+  lc_note("U nas", p("Atrakcyjność, płeć, status native speaker i odsetek
+    odpowiedzi wiążą się z ", tags$code("eval"), " także w modelu kontrolnym.
+    Status mniejszościowy w prostym porównaniu był nieistotny, a w pełnym
+    modelu istotny.")),
+
+  lc_h3("Interpretacja celu", num = "2"),
+  lc_p("Zbieramy tropy razem i piszemy, co cała wiązka mówi o głównym ",
+    gloss("pytanie badawcze", "pytaniu badawczym"), "."),
+  lc_note("U nas", p("Ocena z ankiety wygląda raczej na wskaźnik mieszany niż
+    na czystą miarę jakości nauczania.")),
+
+  lc_h3("Ograniczenia", num = "3"),
+  lc_p("Nazywamy, czego dane nie pozwalają stwierdzić. To część jakości
+    projektu, a nie porażka analizy."),
+  lc_note("U nas", p(gloss("dane obserwacyjne", "Dane obserwacyjne"), " pokazują współwystępowanie,
+    ale nie pozwalają rozstrzygnąć ", gloss("przyczynowość", "przyczynowości"),
+    "; kursy tego samego prowadzącego nie są niezależnymi obserwacjami.")),
+
+  lc_h3("Następny krok", num = "4"),
+  lc_p("Zapisujemy, jak rozwinąć projekt: jakie dane, pomiary albo
+    porównania byłyby potrzebne po pierwszej analizie."),
+  lc_note("U nas", p("Pomiar efektów uczenia się, dane o trudności kursu
+    i oczekiwanej ocenie, komentarze z ankiet.")),
 
   lc_h2("sec-02", "Wniosek dla naszych danych"),
 
