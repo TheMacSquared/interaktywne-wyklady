@@ -1,33 +1,33 @@
 # Blok 09: Analiza drzewa błędów ----------------------------------------
 
 fta_quiz <- list(questions = list(
-  list(question = "Czy dla bramki OR wolno zawsze dodać prawdopodobieństwa wejść?", choices = c("Nie — suma podwójnie liczy część wspólną" = "no", "Tak — OR z definicji jest sumą" = "yes", "Tylko gdy wartości są większe od 0,5" = "large"), correct = "no", explanation = "Dla niezależnych wejść używamy 1−∏(1−p_i); dla zdarzeń rozłącznych suma jest dokładna; dla niezależnych rzadkich zdarzeń stanowi przybliżenie."),
+  list(question = "Czy dla bramki OR wolno zawsze dodać prawdopodobieństwa wejść?", choices = c("Nie — suma podwójnie liczy część wspólną" = "no", "Tak — OR z definicji jest sumą" = "yes", "Tylko gdy wartości są większe od 0.5" = "large"), correct = "no", explanation = "Dla niezależnych wejść używamy 1-∏(1-p_i); dla zdarzeń rozłącznych suma jest dokładna; dla niezależnych rzadkich zdarzeń stanowi przybliżenie."),
   list(question = "Dla I ∩ (D ∪ S), jakie są minimalne przekroje?",
     choices = c("{D,S}" = "a", "{I,D,S} jako jedyny" = "b", "{I,D} i {I,S}" = "c"), correct = "c",
     explanation = "Każdy z dwóch zestawów wystarcza; usunięcie dowolnego jego elementu odbiera wystarczalność."),
-  list(question = "Ten sam liść C o q=0,05 pojawia się dwa razy pod AND. Ile wynosi P(C ∩ C)?",
-    choices = c("0,0975" = "a", "0,05" = "b", "0,0025" = "c"), correct = "b",
+  list(question = "Ten sam liść C o q=0.05 pojawia się dwa razy pod AND. Ile wynosi P(C ∩ C)?",
+    choices = c("0.0975" = "a", "0.05" = "b", "0.0025" = "c"), correct = "b",
     explanation = "C ∩ C=C; powtórzenie rysunku nie tworzy niezależnego zdarzenia."),
   list(question = "Dwie samodzielne bariery zastępują się w opanowaniu inicjacji. Kiedy zawodzi ochrona?",
     choices = c("Gdy zawiodą obie — AND" = "a", "Gdy zawiedzie jedna — OR" = "b", "Zawsze przy inicjacji" = "c"), correct = "a",
     explanation = "Logika jest inna niż w łańcuchu, w którym detekcja i wykonanie są wymagane razem."),
-  list(question = "Co trzeba założyć w P(I)[1−(1−d)(1−s)], gdzie d=P(D | I), s=P(S | I)?",
+  list(question = "Co trzeba założyć w P(I)[1-(1-d)(1-s)], gdzie d=P(D | I), s=P(S | I)?",
     choices = c("Niezależność I od skutku TOP" = "a", "Rozłączność D i S" = "b", "Niezależność D i S warunkowo przy I" = "c"), correct = "c",
     explanation = "Reguła iloczynu z warunkowaniem jest ogólna; niezależność potrzebna jest do dopełnienia iloczynu wewnątrz OR.")
 ))
 fta_exercises <- list(
   list(
-    task = "Architektura: dla P(I)=0,005, d=0,05 i s=0,08 porównaj łańcuch wymagający obu funkcji z dwiema samodzielnymi barierami. Następnie dodaj wspólną przyczynę q=0,01 do łańcucha i wyznacz minimalne przekroje.",
+    task = "Architektura: dla P(I)=0.005, d=0.05 i s=0.08 porównaj łańcuch wymagający obu funkcji z dwiema samodzielnymi barierami. Następnie dodaj wspólną przyczynę q=0.01 do łańcucha i wyznacz minimalne przekroje.",
     answer = c(
-      "Łańcuch (obie funkcje wymagane, niepowodzenia łączy OR): P(TOP) = 0,005 · [1 − 0,95 · 0,92] = 0,005 · 0,126 = 0,00063. Dwie samodzielne bariery (niepowodzenia łączy AND): P(TOP) = 0,005 · 0,05 · 0,08 = 0,00002. Ta sama para urządzeń daje ryzyko różne o czynnik 31,5 — wyłącznie przez architekturę.",
-      "Wspólna przyczyna w łańcuchu: TOP = I ∩ (C ∪ D₀ ∪ S₀), a d = 0,05 i s = 0,08 traktujemy jako lokalne niepowodzenia bez C. Ze wzoru (9.8): P(TOP) = 0,005 · [0,01 + 0,99 · 0,126] ≈ 0,000674, o około 7% więcej niż bez C. Minimalne przekroje: {I, C}, {I, D₀}, {I, S₀}."
+      "Łańcuch (obie funkcje wymagane, niepowodzenia łączy OR): P(TOP) = 0.005 · [1 - 0.95 · 0.92] = 0.005 · 0.126 = 0.00063. Dwie samodzielne bariery (niepowodzenia łączy AND): P(TOP) = 0.005 · 0.05 · 0.08 = 0.00002. Ta sama para urządzeń daje ryzyko różne o czynnik 31.5 — wyłącznie przez architekturę.",
+      "Wspólna przyczyna w łańcuchu: TOP = I ∩ (C ∪ D₀ ∪ S₀), a d = 0.05 i s = 0.08 traktujemy jako lokalne niepowodzenia bez C. Ze wzoru (9.8): P(TOP) = 0.005 · [0.01 + 0.99 · 0.126] ≈ 0.000674, o około 7% więcej niż bez C. Minimalne przekroje: {I, C}, {I, D₀}, {I, S₀}."
     )
   ),
   list(
-    task = "Bananpol: policz P(top) dla inicjacji 0,005 oraz OR warunkowych niepowodzeń detekcji 0,05 i modułu tłumienia 0,08 przy I.",
+    task = "Bananpol: policz P(top) dla inicjacji 0.005 oraz OR warunkowych niepowodzeń detekcji 0.05 i modułu tłumienia 0.08 przy I.",
     answer = c(
-      "Bramka OR przy I, wzór (9.2): P(D ∪ S | I) = 1 − (1 − 0,05)(1 − 0,08) = 1 − 0,874 = 0,126.",
-      "Bramka AND z inicjacją, wzór (9.4): P(TOP) = 0,005 · 0,126 = 0,00063, czyli około 6,3 nieopanowanego pożaru na 10 000 magazyno-lat. Przybliżenie rzadkich zdarzeń dałoby 0,005 · 0,13 = 0,00065 — o około 3% za dużo."
+      "Bramka OR przy I, wzór (9.2): P(D ∪ S | I) = 1 - (1 - 0.05)(1 - 0.08) = 1 - 0.874 = 0.126.",
+      "Bramka AND z inicjacją, wzór (9.4): P(TOP) = 0.005 · 0.126 = 0.00063, czyli około 6.3 nieopanowanego pożaru na 10 000 magazyno-lat. Przybliżenie rzadkich zdarzeń dałoby 0.005 · 0.13 = 0.00065 — o około 3% za dużo."
     )
   ),
   list(
@@ -45,16 +45,16 @@ fta_exercises <- list(
     )
   ),
   list(
-    task = "Istotność: dla drzewa Bananpolu (P(I)=0,005, d=0,05, s=0,08) oblicz istotność Birnbauma każdego liścia i spadek P(TOP) po obniżeniu każdego parametru o 20%. Czy kolejność zależy od wielkości redukcji?",
+    task = "Istotność: dla drzewa Bananpolu (P(I)=0.005, d=0.05, s=0.08) oblicz istotność Birnbauma każdego liścia i spadek P(TOP) po obniżeniu każdego parametru o 20%. Czy kolejność zależy od wielkości redukcji?",
     answer = c(
-      "Ze wzoru (9.9): I_B(I) = 1 − 0,95 · 0,92 = 0,126; I_B(D) = 0,005 · 0,92 = 0,0046; I_B(S) = 0,005 · 0,95 = 0,00475.",
-      "Ze wzoru (9.10) przy r = 0,2: inicjacja 0,2 · 0,005 · 0,126 = 0,000126; tłumienie 0,2 · 0,08 · 0,00475 = 0,000076; detekcja 0,2 · 0,05 · 0,0046 = 0,000046. Kolejność nie zależy od r, bo spadek jest proporcjonalny do r dla każdego liścia; od r zależy tylko skala słupków."
+      "Ze wzoru (9.9): I_B(I) = 1 - 0.95 · 0.92 = 0.126; I_B(D) = 0.005 · 0.92 = 0.0046; I_B(S) = 0.005 · 0.95 = 0.00475.",
+      "Ze wzoru (9.10) przy r = 0.2: inicjacja 0.2 · 0.005 · 0.126 = 0.000126; tłumienie 0.2 · 0.08 · 0.00475 = 0.000076; detekcja 0.2 · 0.05 · 0.0046 = 0.000046. Kolejność nie zależy od r, bo spadek jest proporcjonalny do r dla każdego liścia; od r zależy tylko skala słupków."
     )
   ),
   list(
-    task = "Przybliżenie: przy P(I)=0,005 i gorszych barierach d=s=0,30 porównaj dokładne P(TOP) z przybliżeniem rzadkich zdarzeń. Czy przybliżenie wolno tu zastosować bez komentarza?",
+    task = "Przybliżenie: przy P(I)=0.005 i gorszych barierach d=s=0.30 porównaj dokładne P(TOP) z przybliżeniem rzadkich zdarzeń. Czy przybliżenie wolno tu zastosować bez komentarza?",
     answer = c(
-      "Dokładnie: P(D ∪ S | I) = 1 − 0,7 · 0,7 = 0,51, więc P(TOP) = 0,005 · 0,51 = 0,00255. Przybliżenie: 0,005 · (0,30 + 0,30) = 0,003.",
+      "Dokładnie: P(D ∪ S | I) = 1 - 0.7 · 0.7 = 0.51, więc P(TOP) = 0.005 · 0.51 = 0.00255. Przybliżenie: 0.005 · (0.30 + 0.30) = 0.003.",
       "Przybliżenie zawyża wynik o około 18%. Samo P(TOP) jest małe, ale wejścia bramki OR już nie — a to od nich zależy błąd przybliżenia. Tu trzeba liczyć dokładnie albo przynajmniej podać, że wynik jest górnym oszacowaniem."
     )
   )
@@ -70,7 +70,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     ),
     callout = list(
       label = "Dane Bananpolu",
-      text = "Małe drzewo pożaru magazynu: P(inicjacji w roku) 0,005, P(braku detekcji | inicjacja) 0,05, P(niepowodzenia modułu tłumienia | inicjacja) 0,08. Analizujemy co najwyżej jedną inicjację w roku; parametry barier dotyczą tej inicjacji. Moduł tłumienia oznacza zdolność wykonawczą przy poprawnym sygnale, a detekcja ma osobne zasilanie. Liczby są fikcyjne.",
+      text = "Małe drzewo pożaru magazynu: P(inicjacji w roku) 0.005, P(braku detekcji | inicjacja) 0.05, P(niepowodzenia modułu tłumienia | inicjacja) 0.08. Analizujemy co najwyżej jedną inicjację w roku; parametry barier dotyczą tej inicjacji. Moduł tłumienia oznacza zdolność wykonawczą przy poprawnym sygnale, a detekcja ma osobne zasilanie. Liczby są fikcyjne.",
       color = "uwaga"
     ),
     sections = list(
@@ -94,7 +94,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           )),
           c(
             "Kryterium rozstrzygnięcia jest najczęściej pomijanym składnikiem. „Nieopanowany” może znaczyć: pożar, który przeniósł się poza strefę zapłonu; pożar, do którego wezwano straż; albo pożar, który zniszczył towar o wartości powyżej ustalonego progu. Każda z tych wersji prowadzi do nieco innego drzewa. Nie ma jednej właściwej — ważne, żeby wybór był jawny i żeby wszyscy uczestnicy analizy używali tego samego.",
-            "Horyzont ma też znaczenie rachunkowe. Prawdopodobieństwo inicjacji 0,005 dotyczy jednego roku; gdybyśmy pytali o pięć lat, liczba ta byłaby inna, a pozostałe parametry — warunkowe względem jednej inicjacji — pozostałyby bez zmian. Mieszanie horyzontów w jednym drzewie jest tym samym błędem, co mieszanie czasów misji w układzie szeregowym z wykładu 08."
+            "Horyzont ma też znaczenie rachunkowe. Prawdopodobieństwo inicjacji 0.005 dotyczy jednego roku; gdybyśmy pytali o pięć lat, liczba ta byłaby inna, a pozostałe parametry — warunkowe względem jednej inicjacji — pozostałyby bez zmian. Mieszanie horyzontów w jednym drzewie jest tym samym błędem, co mieszanie czasów misji w układzie szeregowym z wykładu 08."
           ),
           risk_example("9.1", "Poprawianie definicji zdarzenia szczytowego",
             problem = "Kierownik logistyki proponuje zdarzenie szczytowe: „Awaria chłodni”. Popraw tę definicję tak, żeby spełniała definicję 9.1, i wskaż, które decyzje musiałeś podjąć.",
@@ -186,23 +186,23 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             legend = c("A_i" = "i-te zdarzenie wejściowe bramki AND", "p_i" = "jego prawdopodobieństwo; wejścia niezależne")),
           risk_formula("P(A_1\\cup\\cdots\\cup A_n)=1-\\prod_{i=1}^{n}(1-p_i)", num = "9.2",
             legend = c("1-p_i" = "prawdopodobieństwo, że i-te wejście nie zachodzi", "\\prod(1-p_i)" = "prawdopodobieństwo, że nie zachodzi żadne wejście")),
-          "Wzór (9.2) liczy OR przez dopełnienie: bramka OR nie zachodzi tylko wtedy, gdy nie zachodzi żadne wejście. Gdy p_i = 1 − R_i jest prawdopodobieństwem awarii elementu, iloczyn Π(1 − p_i) = Π R_i to niezawodność układu szeregowego. Stąd dualność:",
+          "Wzór (9.2) liczy OR przez dopełnienie: bramka OR nie zachodzi tylko wtedy, gdy nie zachodzi żadne wejście. Gdy p_i = 1 - R_i jest prawdopodobieństwem awarii elementu, iloczyn Π(1 - p_i) = Π R_i to niezawodność układu szeregowego. Stąd dualność:",
           risk_formula("P(\\text{OR awarii})=1-R_{\\text{szereg}},\\qquad P(\\text{AND awarii})=1-R_{\\text{równoległy}}", num = "9.3",
             legend = c("R_{\\text{szereg}}" = "niezawodność układu szeregowego tych samych elementów", "R_{\\text{równoległy}}" = "niezawodność układu równoległego")),
           risk_example("9.2", "Ta sama para barier w dwóch językach",
             problem = list(
-              "Przy zaistniałej inicjacji detekcja działa z prawdopodobieństwem 0,95, a moduł tłumienia z prawdopodobieństwem 0,92 (niezależnie). Oblicz prawdopodobieństwo niepowodzenia ochrony w dwóch wariantach. Każdy wynik policz dwiema drogami: drzewem błędów i schematem blokowym.",
+              "Przy zaistniałej inicjacji detekcja działa z prawdopodobieństwem 0.95, a moduł tłumienia z prawdopodobieństwem 0.92 (niezależnie). Oblicz prawdopodobieństwo niepowodzenia ochrony w dwóch wariantach. Każdy wynik policz dwiema drogami: drzewem błędów i schematem blokowym.",
               risk_parts(
                 "Obie funkcje są wymagane.",
                 "Są to dwie samodzielne bariery."
               )
             ),
             steps = c(
-              "Drzewo: OR niepowodzeń, wzór (9.2): 1 − (1 − 0,05)(1 − 0,08) = 1 − 0,874 = 0,126. Schemat: układ szeregowy, R = 0,95 · 0,92 = 0,874, więc awaria 1 − 0,874 = 0,126.",
-              "Drzewo: AND niepowodzeń, wzór (9.1): 0,05 · 0,08 = 0,004. Schemat: układ równoległy, R = 1 − 0,05 · 0,08 = 0,996, więc awaria 0,004. Obie drogi dają te same liczby, bo to ten sam system; zmienia się tylko język opisu — zgodnie z (9.3)."
+              "Drzewo: OR niepowodzeń, wzór (9.2): 1 - (1 - 0.05)(1 - 0.08) = 1 - 0.874 = 0.126. Schemat: układ szeregowy, R = 0.95 · 0.92 = 0.874, więc awaria 1 - 0.874 = 0.126.",
+              "Drzewo: AND niepowodzeń, wzór (9.1): 0.05 · 0.08 = 0.004. Schemat: układ równoległy, R = 1 - 0.05 · 0.08 = 0.996, więc awaria 0.004. Obie drogi dają te same liczby, bo to ten sam system; zmienia się tylko język opisu — zgodnie z (9.3)."
             ),
             steps_type = "a",
-            answer = "(a) 0,126; (b) 0,004. Różnica między architekturami to czynnik 31,5 — przy tych samych urządzeniach."
+            answer = "(a) 0.126; (b) 0.004. Różnica między architekturami to czynnik 31.5 — przy tych samych urządzeniach."
           ),
           risk_check("f9_chk_brama",
             "Układ szeregowy trzech czujników zawodzi, gdy zawiedzie którykolwiek z nich. Jaką bramką zapiszesz jego awarię w drzewie błędów?",
@@ -219,8 +219,8 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     id = "rachunek", title = "Rachunek bramka po bramce", hook = "Liczymy od liści do korzenia",
     lead = "Najpierw liczymy niepowodzenie wymaganych funkcji przy inicjacji, potem ważymy je P(I).",
     intro = c(
-      "Gdy struktura przeszła test logiczny, liczby wchodzą od dołu. Oznaczmy d=P(D | I), s=P(S | I). Zakładamy niezależność detekcji i modułu wykonawczego warunkowo przy inicjacji: P(D ∪ S | I)=1−(1−d)(1−s). Potem stosujemy ogólną regułę iloczynu P(TOP)=P(I)P(D ∪ S | I); ten krok nie wymaga niezależności od I.",
-      "Zauważ, że dla rzadkich zdarzeń suma d + s jest dobrym przybliżeniem bramki OR — tutaj 0,13 wobec dokładnego 0,126 — ale to przybliżenie trzeba oznaczyć, a przy większych prawdopodobieństwach przestaje być dopuszczalne. Kurs liczy dokładnie; sumę zostawiamy do szybkich szacunków na marginesie."
+      "Gdy struktura przeszła test logiczny, liczby wchodzą od dołu. Oznaczmy d=P(D | I), s=P(S | I). Zakładamy niezależność detekcji i modułu wykonawczego warunkowo przy inicjacji: P(D ∪ S | I)=1-(1-d)(1-s). Potem stosujemy ogólną regułę iloczynu P(TOP)=P(I)P(D ∪ S | I); ten krok nie wymaga niezależności od I.",
+      "Zauważ, że dla rzadkich zdarzeń suma d + s jest dobrym przybliżeniem bramki OR — tutaj 0.13 wobec dokładnego 0.126 — ale to przybliżenie trzeba oznaczyć, a przy większych prawdopodobieństwach przestaje być dopuszczalne. Kurs liczy dokładnie; sumę zostawiamy do szybkich szacunków na marginesie."
     ),
     sections = list(
       list(
@@ -236,25 +236,25 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             "Zdarzenie szczytowe to TOP = I ∩ (D ∪ S). Reguła iloczynu daje P(TOP) = P(I) · P(D ∪ S | I).",
             "Wewnątrz bramki OR przechodzimy do dopełnienia: D ∪ S nie zachodzi dokładnie wtedy, gdy nie zachodzi ani D, ani S. Przy warunkowej niezależności D i S względem I prawdopodobieństwo tego dopełnienia to iloczyn."
           ), lines = c(
-            "P(D ∪ S | I) = 1 − P(D' ∩ S' | I)",
-            "             = 1 − P(D' | I) · P(S' | I)",
-            "             = 1 − (1 − d)(1 − s)",
-            "P(TOP)       = P(I) · [1 − (1 − d)(1 − s)]"
+            "P(D ∪ S | I) = 1 - P(D' ∩ S' | I)",
+            "             = 1 - P(D' | I) · P(S' | I)",
+            "             = 1 - (1 - d)(1 - s)",
+            "P(TOP)       = P(I) · [1 - (1 - d)(1 - s)]"
           )),
           risk_example("9.3", "Nieopanowany pożar magazynu",
-            problem = "Dla danych Bananpolu (P(I) = 0,005, d = 0,05, s = 0,08) oblicz P(TOP) rachunkiem od liści do korzenia. Zinterpretuj wynik w skali 10 000 magazyno-lat.",
+            problem = "Dla danych Bananpolu (P(I) = 0.005, d = 0.05, s = 0.08) oblicz P(TOP) rachunkiem od liści do korzenia. Zinterpretuj wynik w skali 10 000 magazyno-lat.",
             steps = c(
-              "Poziom 1, bramka OR przy I: P(D ∪ S | I) = 1 − 0,95 · 0,92 = 1 − 0,874 = 0,126.",
-              "Poziom 2, bramka AND z inicjacją: P(TOP) = 0,005 · 0,126 = 0,00063.",
-              "Skala: 0,00063 · 10 000 = 6,3. Spośród 10 000 magazyno-lat średnio około 6 kończy się nieopanowanym pożarem.",
-              "Kontrola rzędu wielkości: inicjacja zdarza się w 50 na 10 000 magazyno-lat, a bariery zawodzą w 12,6% z nich — 50 · 0,126 = 6,3."
+              "Poziom 1, bramka OR przy I: P(D ∪ S | I) = 1 - 0.95 · 0.92 = 1 - 0.874 = 0.126.",
+              "Poziom 2, bramka AND z inicjacją: P(TOP) = 0.005 · 0.126 = 0.00063.",
+              "Skala: 0.00063 · 10 000 = 6.3. Spośród 10 000 magazyno-lat średnio około 6 kończy się nieopanowanym pożarem.",
+              "Kontrola rzędu wielkości: inicjacja zdarza się w 50 na 10 000 magazyno-lat, a bariery zawodzą w 12.6% z nich — 50 · 0.126 = 6.3."
             ),
-            answer = "P(TOP) = 0,00063, czyli około 6,3 nieopanowanego pożaru na 10 000 magazyno-lat."
+            answer = "P(TOP) = 0.00063, czyli około 6.3 nieopanowanego pożaru na 10 000 magazyno-lat."
           ),
           risk_try("zacznij od wartości domyślnych i sprawdź wynik przykładu 9.3. Potem podwój P(inicjacji), a osobno podwój P(braku detekcji) — porównaj, jak zmienia się P(top) w obu przypadkach."),
           risk_widget_panel("Obliczenia", "Parametry małego drzewa", tagList(lc_slider("f9_init", "P(inicjacji)", 0, .03, .005, .001), lc_slider("f9_detect", "P(braku detekcji | I)", 0, .3, .05, .01), lc_slider("f9_suppress", "P(niepowodzenia modułu tłumienia | I)", 0, .3, .08, .01)), "f9_tree_plot", "f9_tree_stats"),
           c(
-            "Przy wartościach domyślnych panel pokazuje P(D ∪ S | I) = 0,126 i P(top) = 0,000630. Podwojenie inicjacji do 0,010 podwaja wynik do 0,00126 — inicjacja wchodzi przez AND, więc działa proporcjonalnie. Podwojenie braku detekcji do 0,10 zmienia wynik słabiej: P(D ∪ S | I) = 1 − 0,90 · 0,92 = 0,172, a P(top) = 0,00086, czyli wzrost o około 37%.",
+            "Przy wartościach domyślnych panel pokazuje P(D ∪ S | I) = 0.126 i P(top) = 0.000630. Podwojenie inicjacji do 0.010 podwaja wynik do 0.00126 — inicjacja wchodzi przez AND, więc działa proporcjonalnie. Podwojenie braku detekcji do 0.10 zmienia wynik słabiej: P(D ∪ S | I) = 1 - 0.90 · 0.92 = 0.172, a P(top) = 0.00086, czyli wzrost o około 37%.",
             "Ta asymetria jest pierwszym sygnałem, że miejsce liścia w drzewie decyduje o jego wadze. Wrócimy do niej w rozdziale o rankingu."
           )
         )
@@ -263,7 +263,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
         id = "przyblizenie", title = "Przybliżenie rzadkich zdarzeń",
         body = list(
           c(
-            "Suma d + s wygląda jak naturalny wzór na OR, ale liczy dwukrotnie sytuację, w której zawodzą obie bariery naraz. Dla dwóch wejść poprawka jest dokładnie znana: P(D ∪ S) = d + s − P(D ∩ S). Przy niezależności część wspólna to d · s = 0,004, więc 0,13 − 0,004 = 0,126. Dla wielu wejść poprawek jest więcej, ale mają ten sam charakter: im mniejsze prawdopodobieństwa wejść, tym mniejsze iloczyny i tym mniejszy błąd sumy.",
+            "Suma d + s wygląda jak naturalny wzór na OR, ale liczy dwukrotnie sytuację, w której zawodzą obie bariery naraz. Dla dwóch wejść poprawka jest dokładnie znana: P(D ∪ S) = d + s - P(D ∩ S). Przy niezależności część wspólna to d · s = 0.004, więc 0.13 - 0.004 = 0.126. Dla wielu wejść poprawek jest więcej, ale mają ten sam charakter: im mniejsze prawdopodobieństwa wejść, tym mniejsze iloczyny i tym mniejszy błąd sumy.",
             "Z tej obserwacji wynikają dwa oszacowania, które ograniczają wynik bramki OR z góry i z dołu. Pierwsze to sama suma. Drugie odejmuje od sumy wszystkie iloczyny par."
           ),
           risk_formula("\\sum_i p_i-\\sum_{i<j}p_ip_j\\;\\le\\;1-\\prod_i(1-p_i)\\;\\le\\;\\sum_i p_i", num = "9.5",
@@ -272,23 +272,23 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             problem = list(
               "Porównaj dokładny wynik bramki OR z przybliżeniem rzadkich zdarzeń:",
               risk_parts(
-                "Dla trzech wejść 0,05; 0,08; 0,02.",
-                "Dla dwóch wejść 0,30 i 0,30."
+                "Dla trzech wejść 0.05; 0.08; 0.02.",
+                "Dla dwóch wejść 0.30 i 0.30."
               )
             ),
             steps = c(
-              "Dokładnie: 1 − 0,95 · 0,92 · 0,98 = 1 − 0,85652 = 0,14348. Suma: 0,15. Dolne oszacowanie z (9.5): 0,15 − (0,004 + 0,001 + 0,0016) = 0,1434. Błąd sumy: 0,15 / 0,14348 ≈ 1,045, czyli około 4,5% za dużo.",
-              "Dokładnie: 1 − 0,7 · 0,7 = 0,51. Suma: 0,60, o około 18% za dużo. Dla dwóch wejść dolne oszacowanie jest dokładne: 0,60 − 0,09 = 0,51."
+              "Dokładnie: 1 - 0.95 · 0.92 · 0.98 = 1 - 0.85652 = 0.14348. Suma: 0.15. Dolne oszacowanie z (9.5): 0.15 - (0.004 + 0.001 + 0.0016) = 0.1434. Błąd sumy: 0.15 / 0.14348 ≈ 1.045, czyli około 4.5% za dużo.",
+              "Dokładnie: 1 - 0.7 · 0.7 = 0.51. Suma: 0.60, o około 18% za dużo. Dla dwóch wejść dolne oszacowanie jest dokładne: 0.60 - 0.09 = 0.51."
             ),
             steps_type = "a",
-            answer = "Przy wejściach rzędu kilku procent suma myli się o kilka procent; przy wejściach rzędu 0,3 błąd sięga kilkunastu procent. O jakości przybliżenia decydują prawdopodobieństwa wejść bramki, a nie wynik końcowy."
+            answer = "Przy wejściach rzędu kilku procent suma myli się o kilka procent; przy wejściach rzędu 0.3 błąd sięga kilkunastu procent. O jakości przybliżenia decydują prawdopodobieństwa wejść bramki, a nie wynik końcowy."
           ),
           risk_check("f9_chk_przybl",
-            "Zdarzenie szczytowe ma prawdopodobieństwo 0,0003, ale jest wynikiem bramki OR dwóch wejść po 0,4 pomnożonej przez małe P(I). Czy przybliżenie rzadkich zdarzeń w tej bramce jest bezpieczne?",
+            "Zdarzenie szczytowe ma prawdopodobieństwo 0.0003, ale jest wynikiem bramki OR dwóch wejść po 0.4 pomnożonej przez małe P(I). Czy przybliżenie rzadkich zdarzeń w tej bramce jest bezpieczne?",
             c("Tak, bo wynik jest bardzo mały" = "yes", "Nie, bo wejścia bramki nie są rzadkie" = "no", "Tak, bo przybliżenie zawsze zaniża wynik" = "under"),
             correct = "no",
-            explanation = "Błąd sumy wynosi tu d · s = 0,16 wobec dokładnego 0,64 — suma 0,8 zawyża wynik bramki o 25%. Małe P(I) nie poprawia tego błędu, tylko go przenosi.",
-            hints = c(yes = "Błąd przybliżenia zależy od iloczynów wejść bramki OR. Policz 0,4 · 0,4.", under = "Suma liczy część wspólną podwójnie, więc zawyża wynik, nie zaniża.")
+            explanation = "Błąd sumy wynosi tu d · s = 0.16 wobec dokładnego 0.64 — suma 0.8 zawyża wynik bramki o 25%. Małe P(I) nie poprawia tego błędu, tylko go przenosi.",
+            hints = c(yes = "Błąd przybliżenia zależy od iloczynów wejść bramki OR. Policz 0.4 · 0.4.", under = "Suma liczy część wspólną podwójnie, więc zawyża wynik, nie zaniża.")
           ),
           "Rachunek bramka po bramce ma jeszcze jedno ograniczenie, poważniejsze niż przybliżenie: działa poprawnie tylko wtedy, gdy każde zdarzenie bazowe występuje w drzewie jeden raz. Jeśli ten sam liść pojawia się w dwóch gałęziach, wyniki bramek przestają być niezależne i mnożenie ich daje błędny wynik. Tym zajmuje się następny rozdział."
         )
@@ -328,7 +328,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           risk_try("przełączaj między przekrojami i dla każdego zadaj pytanie: którego liścia usunięcie wyłącza ten scenariusz?"),
           figure_panel(label = "Podświetlenie", title = "Wybierz przekrój", lc_segmented("f9_cut", NULL, choices = c("I + D" = "id", "I + S" = "is"), selected = "id"), uiOutput("f9_cut_text"), full_width = TRUE),
           c(
-            "Oba scenariusze dzielą inicjację: jej wyeliminowanie wyłącza oba naraz, a wyeliminowanie D albo S tylko jeden. To jakościowa zapowiedź rankingu z następnego rozdziału. Lista przekrojów pozwala też policzyć P(TOP) bez rysowania drzewa. Ze wzoru (9.6): P(K₁) = P(I) · d = 0,005 · 0,05 = 0,00025 oraz P(K₂) = P(I) · s = 0,005 · 0,08 = 0,0004.",
+            "Oba scenariusze dzielą inicjację: jej wyeliminowanie wyłącza oba naraz, a wyeliminowanie D albo S tylko jeden. To jakościowa zapowiedź rankingu z następnego rozdziału. Lista przekrojów pozwala też policzyć P(TOP) bez rysowania drzewa. Ze wzoru (9.6): P(K₁) = P(I) · d = 0.005 · 0.05 = 0.00025 oraz P(K₂) = P(I) · s = 0.005 · 0.08 = 0.0004.",
             "Przekroje nie są rozłączne — oba zachodzą, gdy zajdą I, D i S naraz — więc dokładna wartość wymaga odjęcia części wspólnej. Dla przekrojów obowiązuje ta sama zasada włączeń i wyłączeń, co dla bramki OR, a jej pierwszy wyraz daje przybliżenie rzadkich zdarzeń, powszechnie stosowane w dużych drzewach."
           ),
           risk_formula("P(\\mathrm{TOP})\\approx\\sum_{j=1}^{m}P(K_j),\\qquad P(K_1\\cup K_2)=P(K_1)+P(K_2)-P(K_1\\cap K_2)", num = "9.7",
@@ -342,11 +342,11 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
               )
             ),
             steps = c(
-              "Ze wzoru (9.7): P(TOP) ≈ 0,00025 + 0,0004 = 0,00065.",
-              "Część wspólna: K₁ ∩ K₂ = {I, D, S}; w iloczynie I występuje raz (idempotentność), więc P(K₁ ∩ K₂) = 0,005 · 0,05 · 0,08 = 0,00002. Stąd P(TOP) = 0,00025 + 0,0004 − 0,00002 = 0,00063 — dokładnie tyle, co w przykładzie 9.3."
+              "Ze wzoru (9.7): P(TOP) ≈ 0.00025 + 0.0004 = 0.00065.",
+              "Część wspólna: K₁ ∩ K₂ = {I, D, S}; w iloczynie I występuje raz (idempotentność), więc P(K₁ ∩ K₂) = 0.005 · 0.05 · 0.08 = 0.00002. Stąd P(TOP) = 0.00025 + 0.0004 - 0.00002 = 0.00063 — dokładnie tyle, co w przykładzie 9.3."
             ),
             steps_type = "a",
-            answer = "(a) 0,00065, około 3% powyżej wyniku dokładnego; (b) 0,00063. Obie drogi — bramka po bramce i przez przekroje — dają ten sam wynik dokładny."
+            answer = "(a) 0.00065, około 3% powyżej wyniku dokładnego; (b) 0.00063. Obie drogi — bramka po bramce i przez przekroje — dają ten sam wynik dokładny."
           ),
           risk_check("f9_chk_mcs",
             "Drzewo ma minimalne przekroje {A}, {B, C} i {B, D}. Który z tych zbiorów jest przekrojem, ale nie minimalnym?",
@@ -361,32 +361,35 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
         id = "powtorzenie", title = "Powtórzone zdarzenie bazowe",
         text = c(
           "W większych drzewach to samo zdarzenie bazowe — utrata zasilania, błąd tego samego zespołu, ta sama partia komponentów — pojawia się w kilku gałęziach. Rysunek może je pokazywać wielokrotnie, ale rachunek musi pamiętać, że to jedno zdarzenie: zachodzi albo nie zachodzi wszędzie naraz.",
-          "Potraktowanie dwóch wystąpień jako niezależnych zdarzeń fałszuje wynik w sposób zależny od struktury: pod bramką OR zawyża (liczymy to samo dwa razy), pod bramką AND drastycznie zaniża — kwadrat małej liczby wygląda uspokajająco. Porównanie poniżej pokazuje oba błędy: q, błędne OR 1−(1−q)² oraz błędne AND q²."
+          "Potraktowanie dwóch wystąpień jako niezależnych zdarzeń fałszuje wynik w sposób zależny od struktury: pod bramką OR zawyża (liczymy to samo dwa razy), pod bramką AND drastycznie zaniża — kwadrat małej liczby wygląda uspokajająco. Porównanie poniżej pokazuje oba błędy: q, błędne OR 1-(1-q)² oraz błędne AND q²."
         ),
         body = list(
-          risk_try("ustaw P(utraty wspólnego zasilania) na 0,05, a potem przesuń suwak do 0,01 i do 0,20. Porównaj, jak zmienia się rozjazd każdego błędnego wyniku z poprawnym."),
-          figure_panel(label = "Pułapka", title = "Dwa wystąpienia, jedno źródło", lc_slider("f9_repeat", "P(utraty wspólnego zasilania)", 0, .2, .05, .01), uiOutput("f9_repeat_result"), full_width = TRUE),
+          risk_try("ustaw P(utraty wspólnego zasilania) na 0.05, a potem przesuń suwak do 0.01 i do 0.20. Porównaj, jak zmienia się rozjazd każdego błędnego wyniku z poprawnym."),
+          figure_panel(label = "Pułapka", title = "Dwa wystąpienia, jedno źródło", lc_toolbar(
+              lc_slider("f9_repeat", "P(utraty wspólnego zasilania)", 0, .2, .05, .01),
+              lc_readouts(uiOutput("f9_repeat_result"))
+            ), full_width = TRUE),
           c(
-            "Przy q = 0,05 poprawna wartość to 0,050. Błędne OR daje 1 − 0,95² = 0,0975 (panel zaokrągla do 0,098) — prawie dwa razy za dużo. Błędne AND daje 0,05² = 0,0025, dwadzieścia razy za mało. Im mniejsze q, tym gorzej wypada AND: przy q = 0,01 kwadrat zaniża wynik stukrotnie. To dlatego pomyłka pod bramką AND jest groźniejsza: daje wrażenie redundancji tam, gdzie jej nie ma.",
+            "Przy q = 0.05 poprawna wartość to 0.050. Błędne OR daje 1 - 0.95² = 0.0975 (panel zaokrągla do 0.098) — prawie dwa razy za dużo. Błędne AND daje 0.05² = 0.0025, dwadzieścia razy za mało. Im mniejsze q, tym gorzej wypada AND: przy q = 0.01 kwadrat zaniża wynik stukrotnie. To dlatego pomyłka pod bramką AND jest groźniejsza: daje wrażenie redundancji tam, gdzie jej nie ma.",
             "W prawdziwych drzewach powtórzenie rzadko jest tak jawne jak C ∩ C. Zwykle ten sam liść wchodzi do dwóch różnych gałęzi, a jego wpływ ukrywa się w mieszance innych zdarzeń. Poniższy przykład pokazuje, jak redukcja do minimalnych przekrojów usuwa ten problem."
           ),
           risk_example("9.6", "Dwa kanały detekcji ze wspólnym zasilaniem",
             problem = list(
               "Detekcję w magazynie zapewniają dwa kanały czujek; każdy sam wystarcza, więc brak detekcji wymaga awarii obu (AND). Kanał k zawodzi, gdy uszkodzi się jego czujka Bₖ albo gdy zabraknie wspólnego zasilania Z (OR). Zatem: brak detekcji = (Z ∪ B₁) ∩ (Z ∪ B₂).",
-              "Przyjmij P(Z) = 0,02 i P(B₁) = P(B₂) = 0,10, wszystkie niezależne. Oblicz P(brak detekcji):",
+              "Przyjmij P(Z) = 0.02 i P(B₁) = P(B₂) = 0.10, wszystkie niezależne. Oblicz P(brak detekcji):",
               risk_parts(
                 "Naiwnie, bramka po bramce.",
                 "Z minimalnych przekrojów."
               )
             ),
             steps = c(
-              "Naiwnie: każdy kanał 1 − 0,98 · 0,90 = 0,118; AND dwóch kanałów 0,118² ≈ 0,0139. Rachunek traktuje dwa wystąpienia Z jak dwa niezależne zdarzenia.",
-              "Rozwijamy: (Z ∪ B₁) ∩ (Z ∪ B₂) = Z ∪ (Z ∩ B₂) ∪ (B₁ ∩ Z) ∪ (B₁ ∩ B₂). Pochłanianie usuwa oba iloczyny zawierające Z: zostaje Z ∪ (B₁ ∩ B₂). Minimalne przekroje: {Z} (rzędu 1) i {B₁, B₂} (rzędu 2). Ze wzoru (9.7): P = 0,02 + 0,01 − 0,02 · 0,01 = 0,0298. Przybliżenie rzadkich zdarzeń: 0,03. Porównanie: 0,0298 / 0,0139 ≈ 2,1."
+              "Naiwnie: każdy kanał 1 - 0.98 · 0.90 = 0.118; AND dwóch kanałów 0.118² ≈ 0.0139. Rachunek traktuje dwa wystąpienia Z jak dwa niezależne zdarzenia.",
+              "Rozwijamy: (Z ∪ B₁) ∩ (Z ∪ B₂) = Z ∪ (Z ∩ B₂) ∪ (B₁ ∩ Z) ∪ (B₁ ∩ B₂). Pochłanianie usuwa oba iloczyny zawierające Z: zostaje Z ∪ (B₁ ∩ B₂). Minimalne przekroje: {Z} (rzędu 1) i {B₁, B₂} (rzędu 2). Ze wzoru (9.7): P = 0.02 + 0.01 - 0.02 · 0.01 = 0.0298. Przybliżenie rzadkich zdarzeń: 0.03. Porównanie: 0.0298 / 0.0139 ≈ 2.1."
             ),
             steps_type = "a",
-            answer = "Poprawnie 0,0298; rachunek naiwny zaniża wynik ponad dwukrotnie. Redukcja ujawnia też pojedynczy punkt awarii {Z}, którego rysunek z dwoma kanałami nie pokazywał wprost."
+            answer = "Poprawnie 0.0298; rachunek naiwny zaniża wynik ponad dwukrotnie. Redukcja ujawnia też pojedynczy punkt awarii {Z}, którego rysunek z dwoma kanałami nie pokazywał wprost."
           ),
-          "Ten sam mechanizm działa w drzewie Bananpolu w drugą stronę. Inicjacja I występuje w obu przekrojach. Gdyby potraktować przekroje jak niezależne zdarzenia i połączyć je wzorem (9.2), wyszłoby 1 − (1 − 0,00025)(1 − 0,0004) ≈ 0,00064990 zamiast 0,00063 — około 3% za dużo. Pod OR błąd jest łagodny i idzie w bezpieczną stronę; pod AND bywa wielokrotny i idzie w stronę fałszywego spokoju.",
+          "Ten sam mechanizm działa w drzewie Bananpolu w drugą stronę. Inicjacja I występuje w obu przekrojach. Gdyby potraktować przekroje jak niezależne zdarzenia i połączyć je wzorem (9.2), wyszłoby 1 - (1 - 0.00025)(1 - 0.0004) ≈ 0.00064990 zamiast 0.00063 — około 3% za dużo. Pod OR błąd jest łagodny i idzie w bezpieczną stronę; pod AND bywa wielokrotny i idzie w stronę fałszywego spokoju.",
           risk_check("f9_chk_powt",
             "W drzewie liść Z występuje w dwóch gałęziach połączonych bramką AND. Analityk policzył je jak niezależne kopie. Jaki jest najbardziej prawdopodobny skutek?",
             c("Wynik zawyżony" = "over", "Wynik zaniżony" = "under", "Wynik poprawny, bo niezależność kopii nie ma znaczenia" = "ok"),
@@ -401,36 +404,41 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
         id = "wspolna", title = "Wspólna przyczyna zmienia strukturę",
         text = c(
           "Skoro utrata zasilania wyłącza jednocześnie detekcję i tłumienie, poprawka liczbowa nie wystarczy — trzeba przebudować drzewo. Wspólna przyczyna staje się osobnym zdarzeniem bazowym, które przez własną gałąź prowadzi do obu niesprawności, a minimalne przekroje trzeba wyznaczyć od nowa. W naszym drzewie pojawia się {I,C}. Ma dwa elementy, tak samo jak {I,D₀} i {I,S₀}; nowy przekrój nie musi być krótszy ani dominujący. D₀ i S₀ oznaczają lokalne niepowodzenia bez wspólnej przyczyny C.",
-          "D=C ∪ D₀ i S=C ∪ S₀, więc TOP=I ∩ (C ∪ D₀ ∪ S₀). Przy niezależnych C, D₀, S₀ warunkowo przy I: P(TOP)=P(I)[q+(1−q)(1−(1−d₀)(1−s₀))]. Parametry d₀ i s₀ wykluczają wspólną przyczynę; nie dodajemy q do danych, które już ją zawierają."
+          "D=C ∪ D₀ i S=C ∪ S₀, więc TOP=I ∩ (C ∪ D₀ ∪ S₀). Przy niezależnych C, D₀, S₀ warunkowo przy I: P(TOP)=P(I)[q+(1-q)(1-(1-d₀)(1-s₀))]. Parametry d₀ i s₀ wykluczają wspólną przyczynę; nie dodajemy q do danych, które już ją zawierają."
         ),
         body = list(
           risk_formula("P(\\mathrm{TOP})=P(I)\\,\\bigl[q+(1-q)\\bigl(1-(1-d_0)(1-s_0)\\bigr)\\bigr]", num = "9.8",
             legend = c("q=P(C\\mid I)" = "prawdopodobieństwo wspólnego niepowodzenia obu funkcji przy inicjacji", "d_0, s_0" = "lokalne niepowodzenia detekcji i tłumienia bez przyczyny C")),
-          "Wzór (9.8) czyta się jak drzewo: albo zachodzi wspólna przyczyna (q), albo nie zachodzi (1 − q) i wtedy działa zwykła bramka OR lokalnych niepowodzeń. Zapis przez przekroje daje to samo: TOP = (I ∩ C) ∪ (I ∩ D₀) ∪ (I ∩ S₀).",
+          "Wzór (9.8) czyta się jak drzewo: albo zachodzi wspólna przyczyna (q), albo nie zachodzi (1 - q) i wtedy działa zwykła bramka OR lokalnych niepowodzeń. Zapis przez przekroje daje to samo: TOP = (I ∩ C) ∪ (I ∩ D₀) ∪ (I ∩ S₀).",
           risk_example("9.7", "Ile kosztuje wspólne zasilanie?",
             problem = list(
-              "Przyjmij q = 0,01 oraz lokalne d₀ = 0,05 i s₀ = 0,08. Oblicz P(TOP) i porównaj z wersjami bez wspólnej przyczyny:",
+              "Przyjmij q = 0.01 oraz lokalne d₀ = 0.05 i s₀ = 0.08. Oblicz P(TOP) i porównaj z wersjami bez wspólnej przyczyny:",
               risk_parts(
                 "Dla łańcucha z drzewa Bananpolu.",
                 "Dla wariantu z dwiema samodzielnymi barierami (AND lokalnych niepowodzeń)."
               )
             ),
             steps = c(
-              "Łańcuch, wzór (9.8): 0,005 · [0,01 + 0,99 · 0,126] = 0,005 · 0,13474 ≈ 0,000674. Bez C: 0,00063. Wzrost o około 7%.",
-              "Bariery samodzielne: TOP = I ∩ (C ∪ (D₀ ∩ S₀)), więc P(TOP) = 0,005 · [0,01 + 0,99 · 0,004] = 0,005 · 0,01396 ≈ 0,0000698. Bez C: 0,005 · 0,004 = 0,00002. Wzrost 3,49-krotny. W tym wariancie przekrój {I, C} jest rzędu 2, a przekrój {I, D₀, S₀} rzędu 3 — wspólna przyczyna skraca najkrótszą drogę do katastrofy."
+              "Łańcuch, wzór (9.8): 0.005 · [0.01 + 0.99 · 0.126] = 0.005 · 0.13474 ≈ 0.000674. Bez C: 0.00063. Wzrost o około 7%.",
+              "Bariery samodzielne: TOP = I ∩ (C ∪ (D₀ ∩ S₀)), więc P(TOP) = 0.005 · [0.01 + 0.99 · 0.004] = 0.005 · 0.01396 ≈ 0.0000698. Bez C: 0.005 · 0.004 = 0.00002. Wzrost 3.49-krotny. W tym wariancie przekrój {I, C} jest rzędu 2, a przekrój {I, D₀, S₀} rzędu 3 — wspólna przyczyna skraca najkrótszą drogę do katastrofy."
             ),
             steps_type = "a",
-            answer = "(a) ≈ 0,000674, (b) ≈ 0,0000698. Wspólna przyczyna najmocniej uderza w redundancję: w łańcuchu dodaje kilka procent, w układzie z dwiema barierami zjada większość zysku z redundancji."
+            answer = "(a) ≈ 0.000674, (b) ≈ 0.0000698. Wspólna przyczyna najmocniej uderza w redundancję: w łańcuchu dodaje kilka procent, w układzie z dwiema barierami zjada większość zysku z redundancji."
           ),
           risk_try("ustaw P(C | I) na 0 i sprawdź, że oba wyniki się pokrywają. Potem zwiększaj q i obserwuj różnicę; na koniec wróć do rozdziału o rachunku i zmniejsz tam P(braku detekcji) do zera."),
-          figure_panel(label = "Rachunek", title = "Trzy minimalne przekroje", lc_slider("f9_common", "P(C | I): wspólne niepowodzenie funkcji", 0, .2, .01, .005), uiOutput("f9_common_result"), full_width = TRUE),
+          figure_panel(label = "Rachunek", title = "Trzy minimalne przekroje", lc_toolbar(
+              lc_slider("f9_common", "P(C | I): wspólne niepowodzenie funkcji", 0, .2, .01, .005),
+              lc_readouts(uiOutput("f9_common_result"))
+            ),
+            lc_caption("Przekroje: {I,C}, {I,D₀}, {I,S₀}. Suwaki detekcji i tłumienia interpretujemy tu jako lokalne niepowodzenia bez C."),
+            full_width = TRUE),
           c(
-            "Panel korzysta z suwaków detekcji i tłumienia z rozdziału o rachunku, interpretując je jako d₀ i s₀. Przy wartościach domyślnych i q = 0,01 pokazuje 0,000630 bez wspólnej przyczyny i 0,000674 z nią — zgodnie z przykładem 9.7(a). Nawet gdy lokalne niepowodzenia sprowadzimy do zera, wynik nie spadnie poniżej P(I) · q: przekroju {I, C} nie da się usunąć poprawianiem pojedynczych urządzeń.",
-            "Dla q = 1 wynik osiąga P(I) = 0,005: każda inicjacja kończy się nieopanowanym pożarem, bo wspólna przyczyna wyłącza obie funkcje zawsze. To skrajny, ale pouczający przypadek — pokazuje, że wspólna przyczyna działa jak most łączący inicjację bezpośrednio ze zdarzeniem szczytowym."
+            "Panel korzysta z suwaków detekcji i tłumienia z rozdziału o rachunku, interpretując je jako d₀ i s₀. Przy wartościach domyślnych i q = 0.01 pokazuje 0.000630 bez wspólnej przyczyny i 0.000674 z nią — zgodnie z przykładem 9.7(a). Nawet gdy lokalne niepowodzenia sprowadzimy do zera, wynik nie spadnie poniżej P(I) · q: przekroju {I, C} nie da się usunąć poprawianiem pojedynczych urządzeń.",
+            "Dla q = 1 wynik osiąga P(I) = 0.005: każda inicjacja kończy się nieopanowanym pożarem, bo wspólna przyczyna wyłącza obie funkcje zawsze. To skrajny, ale pouczający przypadek — pokazuje, że wspólna przyczyna działa jak most łączący inicjację bezpośrednio ze zdarzeniem szczytowym."
           ),
           risk_check("f9_chk_wspolna",
-            "Dane o niezawodności detekcji (d = 0,05) pochodzą z przeglądów, w których liczono także awarie spowodowane zanikiem zasilania. Co trzeba zrobić, dodając do drzewa osobny liść C?",
-            c("Nic — dodać C z q i zostawić d = 0,05" = "keep", "Oczyścić d z przypadków zaniku zasilania, żeby otrzymać d₀" = "clean", "Usunąć D z drzewa, bo zawiera się w C" = "drop"),
+            "Dane o niezawodności detekcji (d = 0.05) pochodzą z przeglądów, w których liczono także awarie spowodowane zanikiem zasilania. Co trzeba zrobić, dodając do drzewa osobny liść C?",
+            c("Nic — dodać C z q i zostawić d = 0.05" = "keep", "Oczyścić d z przypadków zaniku zasilania, żeby otrzymać d₀" = "clean", "Usunąć D z drzewa, bo zawiera się w C" = "drop"),
             correct = "clean",
             explanation = "Jeśli d już zawiera wspólną przyczynę, dodanie C liczy ją podwójnie. Wzór (9.8) wymaga lokalnych parametrów d₀ i s₀, z których wyłączono C.",
             hints = c(keep = "Wtedy zanik zasilania byłby w drzewie dwa razy: raz w d, raz w q.", drop = "D ma też przyczyny lokalne, niezwiązane z zasilaniem.")
@@ -458,20 +466,20 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           risk_formula("I_B(i)=P(\\mathrm{TOP}\\mid i\\text{ zachodzi})-P(\\mathrm{TOP}\\mid i\\text{ nie zachodzi})=\\frac{\\partial P(\\mathrm{TOP})}{\\partial p_i}", num = "9.9",
             legend = c("I_B(i)" = "istotność Birnbauma zdarzenia i", "p_i" = "prawdopodobieństwo zdarzenia i")),
           risk_derivation("dlaczego różnica równa się pochodnej", c(
-            "Przy niezależnych zdarzeniach bazowych P(TOP) jest liniowe względem każdego p_i z osobna: rozkładając względem stanu zdarzenia i, dostajemy P(TOP) = p_i · P(TOP | i) + (1 − p_i) · P(TOP | nie i). Współczynnik przy p_i to właśnie różnica z (9.9), a więc i pochodna."
+            "Przy niezależnych zdarzeniach bazowych P(TOP) jest liniowe względem każdego p_i z osobna: rozkładając względem stanu zdarzenia i, dostajemy P(TOP) = p_i · P(TOP | i) + (1 - p_i) · P(TOP | nie i). Współczynnik przy p_i to właśnie różnica z (9.9), a więc i pochodna."
           ), lines = c(
-            "P(TOP) = p_i · A + (1 − p_i) · B",
-            "       = B + p_i · (A − B)",
-            "∂P(TOP)/∂p_i = A − B = I_B(i)"
+            "P(TOP) = p_i · A + (1 - p_i) · B",
+            "       = B + p_i · (A - B)",
+            "∂P(TOP)/∂p_i = A - B = I_B(i)"
           )),
           risk_example("9.8", "Istotności w drzewie Bananpolu",
-            problem = "Oblicz istotność Birnbauma inicjacji I, braku detekcji D i niepowodzenia tłumienia S dla P(I) = 0,005, d = 0,05, s = 0,08.",
+            problem = "Oblicz istotność Birnbauma inicjacji I, braku detekcji D i niepowodzenia tłumienia S dla P(I) = 0.005, d = 0.05, s = 0.08.",
             steps = c(
-              "I: gdy I zachodzi, P(TOP) = 0,126; gdy nie — 0. I_B(I) = 0,126.",
-              "D: gdy D zachodzi, TOP = I, więc P = 0,005; gdy nie — TOP = I ∩ S, więc P = 0,005 · 0,08 = 0,0004. I_B(D) = 0,0046 = 0,005 · (1 − 0,08).",
-              "S: analogicznie 0,005 − 0,005 · 0,05 = 0,00475 = 0,005 · (1 − 0,05)."
+              "I: gdy I zachodzi, P(TOP) = 0.126; gdy nie — 0. I_B(I) = 0.126.",
+              "D: gdy D zachodzi, TOP = I, więc P = 0.005; gdy nie — TOP = I ∩ S, więc P = 0.005 · 0.08 = 0.0004. I_B(D) = 0.0046 = 0.005 · (1 - 0.08).",
+              "S: analogicznie 0.005 - 0.005 · 0.05 = 0.00475 = 0.005 · (1 - 0.05)."
             ),
-            answer = "I_B(I) = 0,126, I_B(D) = 0,0046, I_B(S) = 0,00475. Istotność Birnbauma mierzy wrażliwość na bezwzględną zmianę p_i — ale zmiana inicjacji o 0,01 i zmiana braku detekcji o 0,01 to w praktyce zupełnie różne przedsięwzięcia."
+            answer = "I_B(I) = 0.126, I_B(D) = 0.0046, I_B(S) = 0.00475. Istotność Birnbauma mierzy wrażliwość na bezwzględną zmianę p_i — ale zmiana inicjacji o 0.01 i zmiana braku detekcji o 0.01 to w praktyce zupełnie różne przedsięwzięcia."
           )
         )
       ),
@@ -479,27 +487,27 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
         id = "krytycznosc", title = "Ta sama względna poprawa",
         body = list(
           c(
-            "Ostatnie zdanie przykładu 9.8 wskazuje słabość istotności Birnbauma w zastosowaniach: nie uwzględnia ona, jak duże jest samo p_i. Obniżenie P(I) z 0,005 do 0,004 to redukcja o 20%, a obniżenie d z 0,05 do 0,04 — również o 20%, choć bezwzględnie dziesięć razy większa. Dlatego widget porównuje liście przy tej samej względnej redukcji r.",
-            "Z liniowości P(TOP) względem p_i wynika, że obniżenie p_i do (1 − r) · p_i zmniejsza wynik dokładnie o r · p_i · I_B(i). Podzielone przez P(TOP) daje to miarę, która nie zależy od r."
+            "Ostatnie zdanie przykładu 9.8 wskazuje słabość istotności Birnbauma w zastosowaniach: nie uwzględnia ona, jak duże jest samo p_i. Obniżenie P(I) z 0.005 do 0.004 to redukcja o 20%, a obniżenie d z 0.05 do 0.04 — również o 20%, choć bezwzględnie dziesięć razy większa. Dlatego widget porównuje liście przy tej samej względnej redukcji r.",
+            "Z liniowości P(TOP) względem p_i wynika, że obniżenie p_i do (1 - r) · p_i zmniejsza wynik dokładnie o r · p_i · I_B(i). Podzielone przez P(TOP) daje to miarę, która nie zależy od r."
           ),
           risk_formula("\\Delta P_i=r\\,p_i\\,I_B(i)=r\\,P(\\mathrm{TOP})\\,I_{CR}(i),\\qquad I_{CR}(i)=\\frac{p_i\\,I_B(i)}{P(\\mathrm{TOP})}", num = "9.10",
-            legend = c("r" = "względna redukcja parametru, np. 0,5", "\\Delta P_i" = "spadek P(TOP) po redukcji liścia i", "I_{CR}(i)" = "istotność krytyczna liścia i")),
+            legend = c("r" = "względna redukcja parametru, np. 0.5", "\\Delta P_i" = "spadek P(TOP) po redukcji liścia i", "I_{CR}(i)" = "istotność krytyczna liścia i")),
           risk_definition("9.5", "Istotność krytyczna", c(
             "Istotność krytyczna zdarzenia bazowego i to względny spadek P(TOP) przypadający na względny spadek p_i. Równoważnie: prawdopodobieństwo, że zdarzenie i zaszło i było krytyczne, pod warunkiem że zaszło zdarzenie szczytowe."
           )),
-          risk_try("zostaw redukcję 0,5 i odczytaj kolejność słupków. Potem zmień redukcję na 0,2 i 0,9 — sprawdź, czy kolejność się zmienia."),
+          risk_try("zostaw redukcję 0.5 i odczytaj kolejność słupków. Potem zmień redukcję na 0.2 i 0.9 — sprawdź, czy kolejność się zmienia."),
           risk_widget_panel("Wrażliwość", "Ta sama redukcja względna każdego liścia", lc_slider("f9_reduction", "Redukcja parametru", 0, .9, .5, .05), "f9_rank_plot", "f9_rank_stats"),
           c(
-            "Widget liczy ranking dla wartości bazowych 0,005; 0,05; 0,08, niezależnie od suwaków z rozdziału o rachunku. Przy r = 0,5 słupki mają wysokości 0,000315 dla inicjacji, 0,000190 dla tłumienia i 0,000115 dla detekcji — to 50%, 30% i 18% wyjściowego P(TOP). Istotności krytyczne wynoszą więc 1, około 0,60 dla tłumienia i około 0,37 dla detekcji.",
-            "Zmiana r skaluje wszystkie słupki w tej samej proporcji i nie zmienia kolejności — tak mówi wzór (9.10). Inicjacja wygrywa, bo każdy scenariusz przez nią przechodzi: należy do obu minimalnych przekrojów. Tłumienie wyprzedza detekcję, bo zawodzi częściej (0,08 wobec 0,05), więc jego przekrój {I, S} odpowiada za większą część ryzyka."
+            "Widget liczy ranking dla wartości bazowych 0.005; 0.05; 0.08, niezależnie od suwaków z rozdziału o rachunku. Przy r = 0.5 słupki mają wysokości 0.000315 dla inicjacji, 0.000190 dla tłumienia i 0.000115 dla detekcji — to 50%, 30% i 18% wyjściowego P(TOP). Istotności krytyczne wynoszą więc 1, około 0.60 dla tłumienia i około 0.37 dla detekcji.",
+            "Zmiana r skaluje wszystkie słupki w tej samej proporcji i nie zmienia kolejności — tak mówi wzór (9.10). Inicjacja wygrywa, bo każdy scenariusz przez nią przechodzi: należy do obu minimalnych przekrojów. Tłumienie wyprzedza detekcję, bo zawodzi częściej (0.08 wobec 0.05), więc jego przekrój {I, S} odpowiada za większą część ryzyka."
           ),
-          "W literaturze spotkasz też miarę Fussella–Vesely’ego: udział w P(TOP) przekrojów zawierających dane zdarzenie. Dla inicjacji wynosi 1, dla detekcji 0,00025 / 0,00063 ≈ 0,40, dla tłumienia 0,0004 / 0,00063 ≈ 0,63 — kolejność jest ta sama co dla istotności krytycznej. Różne miary odpowiadają na nieco różne pytania, ale w małych drzewach zwykle prowadzą do tego samego rankingu.",
+          "W literaturze spotkasz też miarę Fussella–Vesely’ego: udział w P(TOP) przekrojów zawierających dane zdarzenie. Dla inicjacji wynosi 1, dla detekcji 0.00025 / 0.00063 ≈ 0.40, dla tłumienia 0.0004 / 0.00063 ≈ 0.63 — kolejność jest ta sama co dla istotności krytycznej. Różne miary odpowiadają na nieco różne pytania, ale w małych drzewach zwykle prowadzą do tego samego rankingu.",
           risk_check("f9_chk_rank",
             "Dlaczego obniżenie P(I) o połowę obniża P(TOP) dokładnie o połowę?",
             c("Bo I należy do każdego minimalnego przekroju, a P(TOP) jest proporcjonalne do P(I)" = "all", "Bo I ma największe prawdopodobieństwo w drzewie" = "largest", "Bo redukcja o połowę zawsze działa proporcjonalnie" = "always"),
             correct = "all",
             explanation = "P(TOP) = P(I) · P(D ∪ S | I), więc wynik jest wprost proporcjonalny do P(I). Istotność krytyczna I równa się 1, bo I występuje w każdym scenariuszu.",
-            hints = c(largest = "P(I) = 0,005 jest najmniejszym parametrem w drzewie.", always = "Połowa d obniża P(TOP) tylko o około 18%. Co odróżnia I od D?")
+            hints = c(largest = "P(I) = 0.005 jest najmniejszym parametrem w drzewie.", always = "Połowa d obniża P(TOP) tylko o około 18%. Co odróżnia I od D?")
           )
         )
       )
@@ -522,17 +530,17 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             "Statyczność oznacza, że drzewo zapisuje, które zdarzenia zaszły, ale nie w jakiej kolejności ani jak szybko. Detekcja, która zadziała po dwudziestu minutach, jest w drzewie „sprawna”, choć w praktyce przegapiła moment, w którym tłumienie mogło jeszcze pomóc. Takie zależności modeluje się drzewami zdarzeń albo analizą czasową; w FTA trzeba je przynajmniej wpisać do definicji zdarzeń, np. „brak detekcji w ciągu 2 minut od zapłonu”."
           ),
           risk_example("9.9", "Zapomniany zawór",
-            problem = "Przegląd ekspercki wskazuje brakującą przyczynę: po konserwacji zawór zasilający instalację tłumienia bywa pozostawiany zamknięty. Przy inicjacji zdarza się to z prawdopodobieństwem 0,02, niezależnie od D i S. Jak zmienia się P(TOP) i lista minimalnych przekrojów?",
+            problem = "Przegląd ekspercki wskazuje brakującą przyczynę: po konserwacji zawór zasilający instalację tłumienia bywa pozostawiany zamknięty. Przy inicjacji zdarza się to z prawdopodobieństwem 0.02, niezależnie od D i S. Jak zmienia się P(TOP) i lista minimalnych przekrojów?",
             steps = c(
               "Zamknięty zawór V wystarcza, żeby tłumienie zawiodło, więc dołącza do bramki OR: TOP = I ∩ (D ∪ S ∪ V).",
-              "Ze wzoru (9.2): P(D ∪ S ∪ V | I) = 1 − 0,95 · 0,92 · 0,98 = 0,14348.",
-              "P(TOP) = 0,005 · 0,14348 ≈ 0,000717, o około 14% więcej niż 0,00063.",
+              "Ze wzoru (9.2): P(D ∪ S ∪ V | I) = 1 - 0.95 · 0.92 · 0.98 = 0.14348.",
+              "P(TOP) = 0.005 · 0.14348 ≈ 0.000717, o około 14% więcej niż 0.00063.",
               "Nowy minimalny przekrój: {I, V}. Pozostałe: {I, D}, {I, S}."
             ),
-            answer = "P(TOP) rośnie do około 0,000717 (+14%), a lista przekrojów zyskuje {I, V}. Przed przeglądem ten scenariusz miał w rachunku prawdopodobieństwo zero."
+            answer = "P(TOP) rośnie do około 0.000717 (+14%), a lista przekrojów zyskuje {I, V}. Przed przeglądem ten scenariusz miał w rachunku prawdopodobieństwo zero."
           ),
           c(
-            "Niepewność danych można przynajmniej pokazać. Jeśli o d wiemy tylko tyle, że leży między 0,02 a 0,10, wzór (9.4) daje P(TOP) od 0,005 · (1 − 0,98 · 0,92) = 0,000492 do 0,005 · (1 − 0,90 · 0,92) = 0,00086. Uczciwy raport podaje taki przedział obok wartości punktowej — i wskazuje, który parametr go najbardziej rozszerza."
+            "Niepewność danych można przynajmniej pokazać. Jeśli o d wiemy tylko tyle, że leży między 0.02 a 0.10, wzór (9.4) daje P(TOP) od 0.005 · (1 - 0.98 · 0.92) = 0.000492 do 0.005 · (1 - 0.90 · 0.92) = 0.00086. Uczciwy raport podaje taki przedział obok wartości punktowej — i wskazuje, który parametr go najbardziej rozszerza."
           ),
           risk_check("f9_chk_granice",
             "Zespół uzupełnia drzewo o przeoczoną przyczynę, dołączając ją do istniejącej bramki OR. Co może się stać z P(TOP)?",
@@ -619,7 +627,10 @@ fta_server <- function(input, output, session) {
       theme(axis.text = element_blank(), axis.ticks = element_blank())
   })
   zoom_plot_server("f9_tree_plot", tree_plot, alt = "Drzewo błędów z inicjacją połączoną przez AND z bramką OR dwóch niesprawności zabezpieczeń.")
-  output$f9_tree_stats <- renderUI(lc_stat_grid(lc_stat_box("P(D ∪ S | I)", risk_format_probability(risk_gate_or(c(input$f9_detect, input$f9_suppress)))), lc_stat_box("P(top)", risk_format_probability(tree_value()), color = upwr_accent), columns = 1))
+  output$f9_tree_stats <- renderUI(tagList(
+    lc_readout("P(D ∪ S | I)", risk_fmt_p(risk_gate_or(c(input$f9_detect, input$f9_suppress)))),
+    lc_readout("P(top)", risk_fmt_p(tree_value()), color = upwr_accent)
+  ))
   output$f9_cut_text <- renderUI(lc_caption(
                                    if (input$f9_cut == "id") "Inicjacja + brak detekcji wystarczają do TOP." else "Inicjacja + brak tłumienia wystarczają do TOP.",
                                    tone = "info"
@@ -627,13 +638,20 @@ fta_server <- function(input, output, session) {
   output$f9_repeat_result <- renderUI({
     q <- input$f9_repeat
     wrong <- risk_gate_or(c(q, q))
-    lc_stat_grid(lc_stat_box("Jedno wspólne zdarzenie", risk_format_probability(q), color = upwr_accent), lc_stat_box("Błędne OR niezależnych kopii", risk_format_probability(wrong)), lc_stat_box("Błędne AND niezależnych kopii", risk_format_probability(q^2)), columns = 1)
+    tagList(
+      lc_readout("Jedno wspólne zdarzenie", risk_fmt_p(q), color = upwr_accent),
+      lc_readout("Błędne OR kopii", risk_fmt_p(wrong)),
+      lc_readout("Błędne AND kopii", risk_fmt_p(q^2))
+    )
   })
   output$f9_common_result <- renderUI({
     q <- input$f9_common
     local_failure <- risk_gate_or(c(input$f9_detect, input$f9_suppress))
     result <- input$f9_init * (q + (1 - q) * local_failure)
-    tagList(lc_stat_grid(lc_stat_box("Bez wspólnej przyczyny", risk_format_probability(tree_value(), 6)), lc_stat_box("Ze wspólną przyczyną", risk_format_probability(result, 6)), columns = 1), lc_p("Przekroje: {I,C}, {I,D₀}, {I,S₀}. Suwaki detekcji i tłumienia interpretujemy tu jako lokalne niepowodzenia bez C."))
+    tagList(
+      lc_readout("Bez wspólnej przyczyny", risk_fmt_p(tree_value(), 6)),
+      lc_readout("Ze wspólną przyczyną", risk_fmt_p(result, 6))
+    )
   })
   rank_plot <- reactive({
     base <- c(init = .005, detect = .05, suppress = .08)
