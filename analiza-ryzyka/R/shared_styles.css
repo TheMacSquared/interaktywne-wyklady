@@ -2645,7 +2645,7 @@ mjx-container mjx-text {
 .lc-content-wrap{container-type:inline-size;--lc-gutter:7.5em}
 
 /* Notka z wiszącą etykietą: Zasada, Uwaga, Przykład, Kontrprzykład, Jak czytać */
-.lc-note{display:grid;grid-template-columns:var(--lc-gutter) minmax(0,40em);gap:.2em 1.2em;margin:1.3em 0;line-height:1.55}
+.lc-note{display:grid;grid-template-columns:var(--lc-gutter) minmax(0,1fr);gap:.2em 1.2em;margin:1.3em 0;line-height:1.55}
 .lc-note-l{font:700 .64em/2.3 var(--upwr-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--upwr-ink-subtle);text-align:right}
 .lc-note-b{color:var(--upwr-ink-soft);text-wrap:pretty}
 .lc-note-b>:first-child{margin-top:0}.lc-note-b>:last-child{margin-bottom:0}
@@ -2723,4 +2723,75 @@ mjx-container mjx-text {
   .lc-note{grid-template-columns:minmax(0,1fr);gap:0}
   .lc-note-l{text-align:left;line-height:1.6}
   .lc-tracker{gap:.15em .9em}
+}
+
+/* --- Kolumna treści v2: jedna szerokość dla tekstu, notek, tabel i widgetów,
+   bez prawego marginesu. Justowanie z dzieleniem wyrazów; na wąskim ekranie
+   wyrównanie do lewej. --- */
+.lc-content-wrap{--lc-col:51.25em}
+.lc-chapter.lc-content-wrap{max-width:calc(var(--lc-col) + 96px)}
+.lc-chapter .lc-p,.lc-chapter>p,.lc-chapter>ul,.lc-chapter>ol,.lc-chapter>h4,.lc-chapter>h5,
+.lc-chapter table.lc-table,.lc-formula-box,.lc-feedback,.hypothesis-practice,.lc-tbl-prose,
+.lc-warn,.lc-recap,.lc-index,.lc-more{max-width:none}
+.lc-figure-panel,.lc-figure-panel.lc-panel-text,.lc-figure-panel.lc-panel-wide{width:100%;max-width:none}
+.lc-figure-panel.lc-panel-compact{width:fit-content;max-width:100%}
+/* Pudełka statystyk (przed migracją na lc_readout): kolumny mogą się zwężać. */
+.lc-stat-grid{grid-template-columns:repeat(var(--lc-stat-cols),minmax(0,1fr))}
+.lc-chapter .lc-p,.lc-chapter>p,.lc-note-b,.lc-warn-b,.lc-more-b,.lc-recap li{text-align:justify;-webkit-hyphens:auto;hyphens:auto}
+@container (max-width:35em){
+  .lc-chapter .lc-p,.lc-chapter>p,.lc-note-b,.lc-warn-b,.lc-more-b,.lc-recap li{text-align:left;-webkit-hyphens:manual;hyphens:manual}
+}
+
+/* Przejście do następnego rozdziału: blok w treści, wyrównany do prawej */
+.lc-next{display:block;width:fit-content;max-width:min(100%,26em);margin:2.6em 0 1.2em auto;padding:.55em 0 .6em 1em;border-left:2px solid var(--upwr-rule);color:var(--upwr-ink);text-decoration:none}
+.lc-next:hover,.lc-next:focus-visible{border-left-color:var(--upwr-accent);color:var(--upwr-ink);text-decoration:none}
+.lc-next:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
+.lc-next-l{display:block;font:700 .64em var(--upwr-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--upwr-ink-subtle)}
+.lc-next:hover .lc-next-l{color:var(--upwr-accent)}
+.lc-next-t{display:block;font-weight:700;line-height:1.3;margin-top:.2em}
+.lc-next-num{font-family:var(--upwr-mono);color:var(--upwr-accent);margin-right:.4em}
+.lc-next-lead{display:block;font-size:.84em;line-height:1.45;color:var(--upwr-ink-subtle);margin-top:.2em}
+
+/* --- Widget krokowy z paskiem kroków (handoff „Widget krokowy v2”) --- */
+.lc-stepper-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:.9em 1.6em;margin-bottom:1.1em}
+.lc-stepper-title{margin:0;font-size:1.18em;font-weight:700;line-height:1.25;color:var(--upwr-ink)}
+.lc-stepper-head .lc-toolbar{flex:1 1 22em;justify-content:flex-end;border:0;padding:0;margin:0}
+.lc-stepper-head .lc-toolbar>*{flex:0 1 14em}
+
+/* Kontrolka nieaktywna w bieżącym kroku: widoczna, wyszarzona */
+.lc-is-off{opacity:.45;pointer-events:none}
+.lc-is-off .lc-slider-label output{color:var(--upwr-ink-subtle)}
+
+/* Pasek kroków */
+.lc-step-track{list-style:none;margin:0 0 .4em;padding:0;display:grid;grid-template-columns:repeat(var(--lc-steps,8),minmax(0,1fr));gap:.25em}
+.lc-step-tab{all:unset;box-sizing:border-box;width:100%;min-height:3.75em;display:flex;flex-direction:column;gap:.3em;padding:.5em .1em .25em;border-top:3px solid var(--upwr-rule);font-size:.74em;line-height:1.25;color:var(--upwr-ink-subtle);cursor:pointer;text-wrap:balance}
+.lc-step-tab b{font:700 1em var(--upwr-mono)}
+.lc-step-tab:hover{color:var(--upwr-ink)}
+.lc-step-tab:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
+.lc-step-tab.is-done{border-top-color:color-mix(in oklab,var(--upwr-accent) 45%,var(--upwr-rule))}
+.lc-step-tab[aria-current="step"]{border-top-color:var(--upwr-accent);color:var(--upwr-ink);font-weight:700}
+.lc-step-tab[aria-current="step"] b{color:var(--upwr-accent)}
+.lc-step-track[data-dense] .lc-step-tab span{display:none}
+
+/* Wykres: ta sama proporcja we wszystkich krokach */
+.lc-step-plot{--lc-plot-ratio:2.5/1}
+
+/* Stopka: opis kroku + nawigacja */
+.lc-stepper-foot{display:flex;flex-wrap:wrap;align-items:center;gap:.9em 1.5em;border-top:1px solid var(--upwr-rule-soft);padding-top:.9em;margin-top:.4em}
+.lc-stepper-text{flex:1 1 20em;margin:0;min-height:3.1em;line-height:1.55;color:var(--upwr-ink-soft);text-wrap:pretty}
+.lc-stepper-text b{font-family:var(--upwr-mono);font-weight:700;color:var(--upwr-ink)}
+.lc-stepper-kicker{display:none;font:500 .7em var(--upwr-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--upwr-accent);margin-bottom:.2em}
+.lc-stepper-actions{display:flex;gap:.5em;margin-left:auto}
+
+/* Telefon / wąska kolumna */
+@container lc-fig (max-width:520px){
+  .lc-stepper-head .lc-toolbar{justify-content:stretch}
+  .lc-stepper-head .lc-toolbar>*{flex:1 1 12em}
+  .lc-step-tab{align-items:center;padding-top:.4em}
+  .lc-step-tab span{display:none}
+  .lc-stepper-kicker{display:block}
+  .lc-stepper-text{flex-basis:100%}
+  .lc-stepper-actions{width:100%;margin:0}
+  .lc-stepper-actions .lc-action.is-solid{flex:1;justify-content:center}
+  .lc-step-plot{--lc-plot-ratio-narrow:5/4}
 }

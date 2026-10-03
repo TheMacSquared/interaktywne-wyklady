@@ -771,13 +771,13 @@ margin_code_note <- function(code, description = NULL, label = "W kodzie") {
 }
 
 # ============================================================================
-# lc_chapter_next() — navigational "→ Dalej — 02 · Tytuł" na marginesie.
+# lc_chapter_next() — przejście „Dalej — 02 · Tytuł” jako blok w treści.
 # Klika → session$sendCustomMessage("switchToChapter", target_id) przez JS.
 # ============================================================================
 
 lc_chapter_next <- function(num, title, lead = NULL, target_id) {
   tags$a(
-    class = "lc-margin lc-margin-callout lc-callout-next",
+    class = "lc-next",
     href  = "#",
     `data-lc-next-target` = target_id,
     onclick = paste0(
@@ -785,15 +785,12 @@ lc_chapter_next <- function(num, title, lead = NULL, target_id) {
       "Shiny.setInputValue('lc__switch_chapter', '", target_id,
       "', {priority:'event'});"
     ),
-    tags$div(class = "lc-margin-callout-label", "Dalej"),
-    tags$div(
-      class = "lc-margin-callout-body",
-      tags$div(class = "lc-chapter-next-title",
-        tags$span(class = "lc-chapter-next-num", num), " · ", title
-      ),
-      if (!is.null(lead) && nchar(lead) > 0)
-        tags$div(class = "lc-chapter-next-lead", lead)
-    )
+    tags$span(class = "lc-next-l", "Dalej"),
+    tags$span(class = "lc-next-t",
+      tags$span(class = "lc-next-num", num), title
+    ),
+    if (!is.null(lead) && nchar(lead) > 0)
+      tags$span(class = "lc-next-lead", lead)
   )
 }
 
@@ -1643,3 +1640,70 @@ lc_chips <- function(input_id, choices, label = NULL) {
 # renderuje się jako „x , gdy”.
 b_ <- function(...) tags$strong(..., .noWS = "outside")
 em_ <- function(...) tags$em(..., .noWS = "outside")
+
+# --- Widget krokowy z paskiem kroków -----------------------------------------
+# Źródło: handoff „Widget krokowy v2”. Drugi wzorzec obok lc_step_nav()
+# (kropki): pasek z numerami i nazwami kroków, gdy nazwy niosą narrację.
+# Układ: tytuł + sterowanie, pasek kroków, wykres o stałej proporcji, opis
+# kroku i nawigacja. Kroki od 1. Serwer czyta input$<id>_step (lc_step_server),
+# opis kroku renderuje output$<id>_text jako tekst inline. Logika: R/lc_widgets.js.
+lc_step_widget <- function(id, steps, plot_id, toolbar = NULL, title = NULL,
+                           extra = NULL, ratio = "2.5/1") {
+  n <- length(steps)
+  stopifnot(n >= 2)
+  tags$div(
+    class = "lc-stepper", id = id, `data-lc-step` = 1L,
+    tags$div(class = "lc-stepper-head",
+      if (!is.null(title)) tags$div(class = "lc-stepper-title", title),
+      toolbar
+    ),
+    tags$ol(
+      class = "lc-step-track", style = sprintf("--lc-steps:%d;", n),
+      `data-dense` = if (n > 8) NA,
+      lapply(seq_len(n), function(i) tags$li(
+        tags$button(type = "button", class = "lc-step-tab", `data-lc-go` = i,
+                    `aria-current` = if (i == 1L) "step",
+                    tags$b(i), tags$span(steps[[i]]))
+      ))
+    ),
+    tags$div(class = "lc-plot lc-step-plot",
+      style = sprintf("--lc-plot-ratio:%s;", ratio),
+      zoom_plot_ui(plot_id, height = "100%")
+    ),
+    tags$div(class = "lc-stepper-foot",
+      tags$div(class = "lc-stepper-text", `aria-live` = "polite",
+        tags$span(class = "lc-stepper-kicker", sprintf("Krok 1 z %d · %s", n, steps[[1]])),
+        uiOutput(paste0(id, "_text"), inline = TRUE)
+      ),
+      tags$div(class = "lc-stepper-actions",
+        tags$button(type = "button", class = "lc-action is-ghost is-icon",
+          `data-lc-nav` = "reset", title = "Od początku", `aria-label` = "Od początku",
+          lc_icon("reset")),
+        tags$button(type = "button", class = "lc-action is-outline", `data-lc-nav` = "prev",
+          disabled = NA, lc_icon("prev"), tags$span("Wstecz")),
+        tags$button(type = "button", class = "lc-action is-solid", `data-lc-nav` = "next",
+          tags$span("Dalej"), lc_icon("next"))
+      )
+    ),
+    extra
+  )
+}
+
+# Kontrolka aktywna od kroku `from`; wcześniej widoczna i wyszarzona.
+lc_step_from <- function(from, ...) {
+  tags$div(class = "lc-step-ctl", `data-lc-from` = from, ...)
+}
+
+# Serwer widgetu krokowego: reaktywny numer kroku (1..n) i ustawianie kroku.
+lc_step_server <- function(id, input, session = shiny::getDefaultReactiveDomain()) {
+  key <- paste0(id, "_step")
+  list(
+    step = reactive({
+      s <- input[[key]]
+      if (is.null(s)) 1L else as.integer(s)
+    }),
+    set = function(k) {
+      session$sendCustomMessage("lc-step-set", list(id = id, step = as.integer(k)))
+    }
+  )
+}

@@ -3,6 +3,9 @@
 (function() {
   'use strict';
 
+  // Język strony: potrzebny do dzielenia wyrazów (hyphens: auto) w justowanym tekście.
+  document.documentElement.setAttribute('lang', 'pl');
+
   // --- Liczby jak lc_fmt() w R: kropka dziesiętna, bez końcowych zer ---
   function lcFormat(value, digits, suffix) {
     var x = Number(value);
@@ -119,6 +122,65 @@
         on ? chip.getAttribute('data-value') : null, { priority: 'event' });
     }
   });
+
+  // --- Widget krokowy z paskiem kroków: stan w przeglądarce, input$<id>_step ---
+  function stepperSync(root, k, send) {
+    var tabs = root.querySelectorAll('.lc-step-tab'), n = tabs.length;
+    k = Math.max(1, Math.min(n, k | 0 || 1));
+    root.setAttribute('data-lc-step', k);
+    tabs.forEach(function(b, i) {
+      if (i + 1 === k) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+      b.classList.toggle('is-done', i + 1 < k);
+    });
+    var kick = root.querySelector('.lc-stepper-kicker'), cur = tabs[k - 1];
+    if (kick && cur) kick.textContent = 'Krok ' + k + ' z ' + n + ' · ' + (cur.querySelector('span') || cur).textContent;
+    var nav = function(a) { return root.querySelector('[data-lc-nav="' + a + '"]'); };
+    if (nav('prev')) nav('prev').disabled = k === 1;
+    if (nav('next')) nav('next').disabled = k === n;
+    root.querySelectorAll('[data-lc-from]').forEach(function(c) {
+      var off = k < Number(c.getAttribute('data-lc-from'));
+      c.classList.toggle('lc-is-off', off);
+      c.setAttribute('aria-disabled', off ? 'true' : 'false');
+    });
+    if (send && window.Shiny && window.Shiny.setInputValue) {
+      window.Shiny.setInputValue(root.id + '_step', k, { priority: 'event' });
+    }
+  }
+  document.addEventListener('click', function(e) {
+    var root = e.target.closest && e.target.closest('.lc-stepper');
+    if (!root) return;
+    var cur = Number(root.getAttribute('data-lc-step')) || 1;
+    var go = e.target.closest('[data-lc-go]'), nav = e.target.closest('[data-lc-nav]');
+    if (go) stepperSync(root, Number(go.getAttribute('data-lc-go')), true);
+    else if (nav) {
+      var a = nav.getAttribute('data-lc-nav');
+      stepperSync(root, a === 'next' ? cur + 1 : a === 'prev' ? cur - 1 : 1, true);
+    }
+  });
+  document.addEventListener('keydown', function(e) {
+    var root = e.target.closest && e.target.closest('.lc-stepper');
+    if (!root || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+    if (e.target.closest('.irs, .lc-seg')) return;
+    var cur = Number(root.getAttribute('data-lc-step')) || 1;
+    if (e.key === 'ArrowRight') { stepperSync(root, cur + 1, true); e.preventDefault(); }
+    if (e.key === 'ArrowLeft') { stepperSync(root, cur - 1, true); e.preventDefault(); }
+  });
+  function stepperInitAll() {
+    document.querySelectorAll('.lc-stepper').forEach(function(r) {
+      stepperSync(r, Number(r.getAttribute('data-lc-step')) || 1, false);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', stepperInitAll);
+  if (window.jQuery) {
+    window.jQuery(document).on('shiny:connected', function() {
+      window.Shiny.addCustomMessageHandler('lc-step-set', function(m) {
+        var r = document.getElementById(m.id);
+        if (r) stepperSync(r, m.step, true);
+      });
+    });
+    // Kontrolki z renderUI pojawiają się później: odśwież stan po każdym renderze.
+    window.jQuery(document).on('shiny:value', function() { setTimeout(stepperInitAll, 0); });
+  }
 
   // --- Kroki demonstracji: input binding, wartość = numer kroku ---
   function renderSteps(el) {

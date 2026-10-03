@@ -280,8 +280,9 @@ Zasady:
 4. `lc_caption()` to jedno zdanie z kropką statusu pod wykresem; `lc_status()`
    to dłuższy opis kroku lub wynik testu. Oba stoją wewnątrz panelu, bez
    osobnej ramki pod widgetem.
-5. Kroki demonstracji: `lc_step_nav()` (kropki i „Dalej”). Opcje dodatkowe
-   obok kroków: `lc_chips()`.
+5. Kroki demonstracji: `lc_step_widget()` (pasek z nazwami) albo
+   `lc_step_nav()` (kropki); zob. „Widgety krokowe”. Opcje dodatkowe obok
+   kroków: `lc_chips()`.
 6. Bez emoji w tytułach, listach, trackerze i statusach. Kod przykładu (A1, B2)
    trafia do plakietki panelu albo do `lc_index()`.
 7. Podsekcje bez kursywy i ręcznej numeracji: `lc_h3("…", num = "1")`.
@@ -299,3 +300,38 @@ Zakazane wzorce (uzupełnienie):
 - `lc_feedback()` jako osobna ramka pod `figure_panel()`; statyczne
   `lc_feedback()` w toku tekstu zastępują `lc_note()` albo `lc_warn()`;
 - więcej niż jedna `lc_warn()` i jedna `lc_note(rule = TRUE)` na sekcję.
+
+## Kolumna treści
+
+Treść rozdziału stoi w jednej kolumnie o szerokości `--lc-col` (51.25em, ok.
+820 px przy zwykłym rozmiarze tekstu; skaluje się z trybem rzutnika). Tekst,
+notki, tabele i panele mają tę samą szerokość; prawego marginesu nie ma.
+`width_mode = "text"` i `"wide"` dają ten sam panel na całą szerokość kolumny,
+`"compact"` dopasowuje panel do treści. Akapity i notki są justowane
+z dzieleniem wyrazów (`lang="pl"`), a na wąskim ekranie wyrównane do lewej.
+`lc_chapter_next()` to blok w treści, wyrównany do prawej.
+
+## Widgety krokowe
+
+Dwa wzorce, wybierane per widget:
+
+- `lc_step_widget()` — pasek kroków z numerami i nazwami (≤ 3 słowa),
+  wykres o stałej proporcji, opis kroku i nawigacja „‹ Wstecz” / „Dalej ›”,
+  strzałki ← →. Gdy nazwy kroków niosą narrację (np. budowa histogramu).
+  Serwer: `s <- lc_step_server(id, input); s$step()`; opis w
+  `output$<id>_text` jako tekst inline; kontrolka aktywna od kroku k w
+  `lc_step_from(k, ...)` (wcześniej wyszarzona).
+- `lc_step_nav()` + `lc_step_text()` — kropki i „Dalej”, gdy liczy się
+  miejsce (np. krótka sekwencja tabeli).
+
+Zasady wspólne: kroki od 1 (bez pustego kroku startowego, chyba że widget
+celowo zaczyna od pustego stanu), zmiana kontrolki nie zmienia kroku, reset
+wraca do kroku 1, bez osobnego licznika „Krok X z N” na szerokim ekranie.
+
+Gramatyka wykresu krokowego (`R/theme_upwr.R`): każdy element ma w danym
+kroku jedną rolę — `data` (niebo), `group` (bursztyn, druga kategoria),
+`new` (burgund, tylko w kroku wprowadzenia), `known` (grafit, z wcześniejszych
+kroków), `background` (niebo, mocno przezroczyste). Kontury słupków i pudełek
+czarne (`step_result()`), linie pomocnicze przerywane (`step_line()`), stała
+rama osi we wszystkich krokach (`step_frame()`), etykiety przy elementach
+(`step_label()`), bez tytułów i legend.
