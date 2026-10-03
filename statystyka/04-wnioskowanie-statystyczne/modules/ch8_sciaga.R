@@ -55,55 +55,45 @@ ch8_ui <- list(
       tags$thead(
         tags$tr(
           tags$th("Sytuacja"),
-          tags$th("Test"),
-          tags$th("R (rstatix)")
+          tags$th("Test")
         )
       ),
       tags$tbody(
         tags$tr(
           tags$td("1 ilościowa wobec μ₀"),
-          tags$td("Test t jednej próby"),
-          tags$td(tags$code("t_test(x~1, mu=)"))
+          tags$td("Test t jednej próby")
         ),
         tags$tr(
           tags$td("1 jakościowa (2 kat.)"),
-          tags$td("Test dwumianowy"),
-          tags$td(tags$code("binom.test()"))
+          tags$td("Test dwumianowy")
         ),
         tags$tr(
           tags$td("1 jakościowa (3+ kat.)"),
-          tags$td("χ² zgodności"),
-          tags$td(tags$code("chisq.test()"))
+          tags$td("χ² zgodności")
         ),
         tags$tr(
           tags$td("2 ilościowe"),
-          tags$td("Pearson / Spearman"),
-          tags$td(tags$code("cor_test(method=)"))
+          tags$td("Pearson / Spearman")
         ),
         tags$tr(
           tags$td("2 jakościowe"),
-          tags$td("χ² niezależności / Fisher"),
-          tags$td(tags$code("chisq.test()"), br(), tags$code("fisher.test()"))
+          tags$td("χ² niezależności / Fisher")
         ),
         tags$tr(
           tags$td("2 grupy niezależne"),
-          tags$td("Test t niezależny"),
-          tags$td(tags$code("t_test(y~gr)"))
+          tags$td("Test t niezależny")
         ),
         tags$tr(
           tags$td("2 grupy sparowane"),
-          tags$td("Test t dla danych sparowanych"),
-          tags$td(tags$code("t_test(y~t, paired=T)"))
+          tags$td("Test t dla danych sparowanych")
         ),
         tags$tr(
           tags$td("3+ grupy"),
-          tags$td("ANOVA"),
-          tags$td(tags$code("anova_test(y~gr)"))
+          tags$td("ANOVA")
         ),
         tags$tr(
           tags$td("Post-hoc (3+ grupy)"),
-          tags$td("Games-Howell"),
-          tags$td(tags$code("games_howell_test(y~gr)"))
+          tags$td("Games-Howell")
         )
       )
     ),
@@ -281,43 +271,6 @@ ch8_ui <- list(
         tags$li(tags$b("Istotność statystyczna ≠ ", gloss("istotność praktyczna"), ":"),
                 " przy n = 10 000 nawet różnica 0.01 pH może być istotna — ale technologicznie nic nie znaczy.
                  Zawsze raportuj p ", tags$b("i"), " wielkość efektu (d, η², V).")
-      )
-    ),
-
-    # ========================================================================
-    lc_h2("ch8-kod", "Kod R — rstatix"),
-
-    lc_formula_box(
-      tags$pre(class = "lc-code-block",
-        tags$code(
-"library(rstatix)
-library(broom)
-
-# === Jedna zmienna ===
-# Test t jednej proby
-data %>% t_test(oceny ~ 1, mu = 3.5)
-
-# === Korelacja ===
-data %>% cor_test(wzrost, waga, method = \"pearson\")
-data %>% cor_test(wzrost, waga, method = \"spearman\")
-
-# === Dwie grupy ===
-# Niezalezne
-data %>% t_test(wzrost ~ plec)
-data %>% cohens_d(wzrost ~ plec)
-
-# Parowe
-data %>% t_test(wynik ~ moment, paired = TRUE)
-
-# === Chi-kwadrat ===
-tab <- table(data$plec, data$kierunek)
-chisq.test(tab)
-fisher.test(tab)
-
-# === ANOVA ===
-data %>% anova_test(oceny ~ kierunek)
-data %>% games_howell_test(oceny ~ kierunek)"
-        )
       )
     )
 

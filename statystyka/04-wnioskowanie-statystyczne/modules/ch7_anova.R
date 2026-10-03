@@ -192,8 +192,7 @@ ch7_ui <- list(
     lc_p("Panel losuje dane z jednego z trzech scenariuszy, rysuje wykresy pudełkowe
       w grupach i liczy ANOVA. Suwak n ustala liczebność całej próby; każda
       obserwacja trafia do grupy losowo, więc liczebności grup są zbliżone, ale
-      nie równe. Wynik liczy funkcja ", tags$code("anova_test(dane, pH ~ temperatura)"),
-      " z pakietu rstatix, czyli klasyczna ANOVA."),
+      nie równe. Panel liczy klasyczną ANOVA."),
 
     figure_panel(
       label = "Ryc. 9.2",
@@ -238,10 +237,9 @@ ch7_ui <- list(
       przeciw tej hipotezie."),
 
     lc_p("Klasyczna ANOVA zakłada podobne wariancje w grupach. Gdy wariancje wyraźnie
-      się różnią, stosuje się wariant Welcha (w R ", tags$code("welch_anova_test()"),
-      "), który tego założenia nie potrzebuje. W jamovi to ustawienie domyślne okna
-      One-Way ANOVA, więc jamovi pokaże inną wartość F i niecałkowitą drugą liczbę
-      stopni swobody niż panel powyżej."),
+      się różnią, stosuje się wariant Welcha, który tego założenia nie potrzebuje. Daje on
+      inną wartość F i niecałkowitą drugą liczbę stopni swobody niż klasyczna
+      ANOVA z panelu powyżej."),
 
     # ========================================================================
     # WIDGET 2: Post-hoc Games-Howell
@@ -255,10 +253,9 @@ ch7_ui <- list(
       w tabeli post hoc są skorygowane (p.adj) i zwykle większe niż p-wartości
       zwykłych testów t dla tych samych par."),
 
-    lc_p("Panel używa ", gloss("test Games-Howella", "testu Games-Howella"), " (",
-      tags$code("games_howell_test()"), " z pakietu rstatix). Każdą parę porównuje
-      statystyką podobną do testu t, ale nie zakłada równych wariancji ani równych
-      liczebności grup, a wartości krytyczne bierze z rozkładu, który uwzględnia
+    lc_p("Panel używa ", gloss("test Games-Howella", "testu Games-Howella"), ".
+      Każdą parę porównuje statystyką podobną do testu t, ale nie zakłada
+      równych wariancji ani równych liczebności grup, a wartości krytyczne bierze z rozkładu, który uwzględnia
       liczbę porównywanych grup. To bezpieczny wybór domyślny: gdy wariancje są
       podobne, daje wyniki zbliżone do popularnego testu Tukeya, a gdy się różnią,
       nie traci kontroli nad błędem I rodzaju. Panel łączy klasyczną ANOVA,
@@ -272,14 +269,8 @@ ch7_ui <- list(
        porównań parami nie interpretujemy."
     ),
 
-    margin_code_note(
-      label = "W jamovi",
-      code = "jamovi: One-Way ANOVA\n→ Post-Hoc Tests\n→ ✓ Games-Howell",
-      description = "Ścieżka w jamovi dla testu post hoc po ANOVA."
-    ),
-
     lc_p("Panel korzysta z danych wylosowanych w Ryc. 9.2. Macierz p-wartości ma
-      układ tabeli z jamovi, a wykres pokazuje różnicę średnich dla każdej pary
+      układ typowej tabeli post hoc, a wykres pokazuje różnicę średnich dla każdej pary
       z 95-procentowym przedziałem ufności."),
 
     figure_panel(
@@ -292,7 +283,7 @@ ch7_ui <- list(
       h5("Macierz p-wartości"),
       p(class = "text-muted",
         style = "font-size: 13px; margin-top: -4px;",
-        "Tak wygląda tabela post hoc w jamovi — odczytaj p-wartość dla każdej pary grup."),
+        "Odczytaj p-wartość dla każdej pary grup."),
       uiOutput("ch7_tukey_matrix"),
 
       br(),
@@ -321,10 +312,9 @@ ch7_ui <- list(
 
     lc_p("Na koniec ćwiczenie na prawdziwych danych. W rozdziale 08 porównywaliśmy
       wyniki czytania w dwóch grupach okręgów szkolnych; teraz grup jest trzy,
-      wyznaczonych przez dochód. Wykonaj analizę samodzielnie w jamovi albo w R
+      wyznaczonych przez dochód. Wykonaj analizę samodzielnie
       i dopiero potem porównaj wynik z rozwiązaniem. Rozwiązanie podaje
-      klasyczną ANOVA; żeby otrzymać w jamovi te same liczby, zaznacz
-      w oknie One-Way ANOVA opcję ", tags$em("Assume equal (Fisher's)"), "."),
+      klasyczną ANOVA, która zakłada równe wariancje w grupach."),
 
     lc_feedback(type = "info",
       p(tags$b("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",

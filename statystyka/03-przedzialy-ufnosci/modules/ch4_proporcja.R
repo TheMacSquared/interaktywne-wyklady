@@ -54,8 +54,8 @@ ch4_ui <- list(
       estymator ± wartość krytyczna · SE. Ponieważ opieramy się na przybliżeniu
       normalnym, ", gloss("wartość krytyczna"), " pochodzi z ",
       gloss("rozkład normalny", "rozkładu normalnego"), ".
-      Dla poziomu 95% to \\(z^* = 1{,}96\\), w R ", tags$code("qnorm(0.975)"),
-      ", jak w wykładzie 02. Tak zbudowany ", gloss("przedział ufności"),
+      Dla poziomu 95% to \\(z^* = 1{,}96\\),
+      jak w wykładzie 02. Tak zbudowany ", gloss("przedział ufności"),
       " nazywa się ", gloss("przedział Walda", "przedziałem Walda"), "."),
 
     lc_formula_box(
@@ -76,26 +76,18 @@ ch4_ui <- list(
       prawdziwe \\(p\\) rzadziej, niż obiecuje. Dla \\(p = 0{,}08\\) i \\(n = 50\\)
       jego rzeczywiste ", gloss("pokrycie"), " wynosi około 91%. Przy 4 wadliwych
       sztukach na 50 Wald daje przedział od 0,5% do 15,5%, a ",
-      gloss("przedział Wilsona"), ", który poprawia wzór Walda, od 3,2% do 18,8%
-      (w R: ", tags$code("prop.test(4, 50, correct = FALSE)"), "). Im bliżej
+      gloss("przedział Wilsona"), ", który poprawia wzór Walda, od 3,2% do 18,8%.
+      Im bliżej
       0 lub 1 leży proporcja i im mniejsza jest próba, tym gorzej działa
       przybliżenie Walda. W tym rozdziale liczymy przedziały Walda, bo ich wzór
       najprościej pokazuje konstrukcję. W części przykładów poniżej sukcesów
       albo porażek jest niewiele i tam przedziały są tylko przybliżone."),
 
-    inline_callout(label = "W jamovi", color = "wskazowka",
-      tagList(
-        "Analyses → Frequencies → 2 Outcomes — Binomial test → przeciągnij
-         zmienną binarną (np. zdany/niezdany) do pola zmiennych → zaznacz
-         Confidence interval (domyślnie 95%). jamovi nie liczy przedziału Walda,
-         tylko ",
-        gloss("przedział Cloppera-Pearsona", "przedział Cloppera-Pearsona"),
-        ", oparty bezpośrednio na rozkładzie dwumianowym i bezpieczniejszy przy
-         małych próbach. W tabeli odczytasz kolumny ",
-        tags$code("Proportion"), ", ", tags$code("Lower"), ", ",
-        tags$code("Upper"), "."
-      )
-    ),
+    lc_p("Programy statystyczne często nie podają przedziału Walda, tylko ",
+      gloss("przedział Cloppera-Pearsona", "przedział Cloppera-Pearsona"),
+      ", oparty bezpośrednio na rozkładzie dwumianowym i bezpieczniejszy przy
+      małych próbach. Jego granice mogą się więc nieco różnić od przedziałów
+      Walda liczonych w tym rozdziale."),
 
     lc_h2("ch4-budowa", "Budowa przedziału — krok po kroku"),
 

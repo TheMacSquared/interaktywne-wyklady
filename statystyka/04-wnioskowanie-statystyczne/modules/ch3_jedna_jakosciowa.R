@@ -188,13 +188,10 @@ ch3_ui <- list(
       jest przy tym umową ustaloną przed analizą, podobnie jak poziom
       ufności 95% w wykładzie 03."),
 
-    lc_p("W R test dwumianowy wykonuje ",
-      tags$code("binom.test(43, 50, p = 0.8)"), ". Funkcja podaje też
-      95-procentowy przedział Cloppera-Pearsona z wykładu 03, tutaj od 0,73
+    lc_p("Wynik testu warto zestawić z 95-procentowym przedziałem
+      Cloppera-Pearsona z wykładu 03, który dla tej próby wynosi od 0,73
       do 0,94. Obejmuje on \\(p_0 = 0{,}8\\), co zgadza się z decyzją testu:
-      wartość, której przedział nie wyklucza, nie zostaje odrzucona. W jamovi
-      ten sam test znajdziesz w Analyses → Frequencies → 2 Outcomes —
-      Binomial test, z wartością \\(p_0\\) wpisaną w polu Test value."),
+      wartość, której przedział nie wyklucza, nie zostaje odrzucona."),
 
     # ========================================================================
     # WIDGET 2: Test dwumianowy jednostronny (te same dane)
@@ -264,9 +261,8 @@ ch3_ui <- list(
       jest prawdziwa. Przy prawdziwej H₀ statystyka \\(z\\) ma w przybliżeniu ",
       gloss("standardowy rozkład normalny"), ", więc dwustronna p-wartość to
       \\(P(|Z| \\geq |z|)\\). Panel zestawia oba testy dla próby wylosowanej
-      w panelu Ryc. 5.1. Kolumnę z-testu liczy funkcja ",
-      tags$code("prop.test()"), ", która domyślnie stosuje poprawkę na
-      ciągłość: zmniejsza różnicę \\(\\hat{p} - p_0\\) o \\(1/(2n)\\), żeby
+      w panelu Ryc. 5.1. W kolumnie z-testu panel stosuje poprawkę na
+      ciągłość, którą część programów włącza domyślnie: zmniejsza różnicę \\(\\hat{p} - p_0\\) o \\(1/(2n)\\), żeby
       złagodzić zastąpienie słupków ciągłą krzywą. Jej p-wartość różni się
       więc nieco od tej, którą dałby sam wzór."),
 
@@ -314,16 +310,6 @@ ch3_ui <- list(
           tags$td("Duża próba, p₀ z dala od 0 i 1"),
           tags$td(style = "background: var(--upwr-sage-tint);", "Działa"),
           tags$td(style = "background: var(--upwr-sage-tint);", "Daje praktycznie ten sam wynik")
-        ),
-        tags$tr(
-          tags$td("W R"),
-          tags$td(tags$code("binom.test()")),
-          tags$td(tags$code("prop.test()"))
-        ),
-        tags$tr(
-          tags$td("W jamovi"),
-          tags$td("2 Outcomes — Binomial test"),
-          tags$td("N Outcomes — χ² Goodness of fit (dla dwóch kategorii odpowiada z-testowi bez poprawki)")
         )
       )
     ),

@@ -66,16 +66,13 @@ ch6_ui <- list(
       dla różnicy z wykładu 03. Przy prawdziwej H₀ statystyka ma w przybliżeniu
       rozkład t, a liczbę ", gloss("stopnie swobody", "stopni swobody"), " wyznacza
       wzór Welcha–Satterthwaite'a. Wynik zwykle nie jest liczbą całkowitą
-      i leży między \\(\\min(n_1, n_2) - 1\\) a \\(n_1 + n_2 - 2\\). Funkcja ",
-      tags$code("t_test()"), " z pakietu rstatix, której używają wszystkie panele
-      tego rozdziału, domyślnie liczy właśnie wersję Welcha."),
+      i leży między \\(\\min(n_1, n_2) - 1\\) a \\(n_1 + n_2 - 2\\). Wszystkie panele
+      tego rozdziału liczą właśnie wersję Welcha."),
 
-    lc_p("W jamovi Independent Samples T-Test ma domyślnie zaznaczoną opcję
-      Student's. Wersja Studenta zakłada równe wariancje w obu grupach, łączy
+    lc_p("Klasyczna wersja Studenta zakłada równe wariancje w obu grupach, łączy
       je w jedno wspólne odchylenie standardowe i używa \\(n_1 + n_2 - 2\\)
-      stopni swobody. Żeby dostać wynik zgodny z R, zaznacz opcję Welch's. Przy
-      podobnych wariancjach i licznościach obie wersje dają prawie to samo,
-      przy wyraźnie różnych mogą się rozejść. Wracamy do tego w wykładzie 05."),
+      stopni swobody. Przy podobnych wariancjach i licznościach obie wersje
+      dają prawie to samo, przy wyraźnie różnych mogą się rozejść. Wracamy do tego w wykładzie 05."),
 
     lc_p("Decyzja przebiega jak w poprzednich rozdziałach. ",
       gloss("p-wartość", "P-wartość"), " to prawdopodobieństwo, że przy
@@ -164,9 +161,10 @@ ch6_ui <- list(
       \\(\\sqrt{6^2/40 + 7^2/40} \\approx 1{,}5\\) cm, a różnica w populacji
       to 12 cm, czyli około ośmiu błędów standardowych. Statystyka t wychodzi
       daleko w ogonie rozkładu t, p-wartość jest znikoma i H₀ odrzucamy
-      praktycznie przy każdym losowaniu. Podobnie jest z wagą. Znak t zależy tylko od kolejności
-      odejmowania: R odejmuje średnie w kolejności alfabetycznej grup, czyli
-      kobiety minus mężczyźni, dlatego dla wzrostu t jest ujemne."),
+      praktycznie przy każdym losowaniu. Podobnie jest z wagą. Znak t zależy tylko
+      od kolejności odejmowania: panel odejmuje średnie w kolejności
+      alfabetycznej grup, czyli kobiety minus mężczyźni, dlatego dla wzrostu
+      t jest ujemne."),
 
     lc_p("Ciekawiej jest dla średniej ocen i czasu dojazdu. Tu różnica
       w populacji wynosi zero, a mimo to średnie w próbie nigdy nie są równe.
@@ -177,10 +175,7 @@ ch6_ui <- list(
       brak podstaw do odrzucenia H₀ nie dowodzi, że średnie są równe.
       Mówi tylko, że ta próba nie wystarcza, by wykazać różnicę."),
 
-    lc_p("W R test wykonuje jedno wywołanie: ",
-      tags$code("dane %>% t_test(wzrost ~ plec)"), ". Po lewej stronie tyldy
-      stoi zmienna ilościowa, po prawej zmienna grupująca. W wyniku znajdziesz
-      statystykę t, niecałkowitą liczbę stopni swobody (znak, że to wersja
+    lc_p("W wyniku testu znajdziesz statystykę t, niecałkowitą liczbę stopni swobody (znak, że to wersja
       Welcha) i p-wartość. Ile wart jest wynik 12 cm w praktyce, to pytanie
       o wielkość efektu, którym zajmiemy się w rozdziale 10."),
 
@@ -237,16 +232,9 @@ ch6_ui <- list(
       losowań. To jest ", gloss("moc testu", "moc testu"), " z rozdziału 03
       przy tych ustawieniach. Przy efekcie 0 H₀ jest prawdziwa i odrzucamy ją tylko
       w około 5% losowań. Panel liczy różnicę jako po − przed, więc gdy wyniki
-      rosną, statystyka t jest dodatnia. R odejmuje w kolejności poziomów
-      zmiennej grupującej: żeby dostać po − przed, poziom „po” musi być
-      pierwszy."),
-
-    lc_p("W R dane trzymamy w formacie długim, posortowane tak, by pomiary tej
-      samej osoby szły w tej samej kolejności w obu momentach, i dopisujemy ",
-      tags$code("paired = TRUE"), ": ",
-      tags$code("dane %>% t_test(wynik ~ moment, paired = TRUE)"), ". W jamovi
-      służy do tego Paired Samples T-Test, w którym oba pomiary są osobnymi
-      kolumnami."),
+      rosną, statystyka t jest dodatnia. Test ma sens tylko wtedy, gdy w danych
+      każdemu pomiarowi „przed” odpowiada pomiar „po” tej samej osoby: różnice
+      liczymy w parach, a nie między dowolnymi obserwacjami z obu momentów."),
 
     # ========================================================================
     # WIDGET 3: Sparowane vs. niesparowane — te same dane, inny wynik
@@ -328,8 +316,7 @@ ch6_ui <- list(
 
     lc_p("Na koniec dwa zadania na prawdziwych danych. W obu porównujemy
       średni wynik z czytania między dwiema grupami okręgów szkolnych,
-      a grupy są niezależne. Zapisz hipotezy, wykonaj test w R lub w jamovi
-      (w jamovi zaznacz opcję Welch's, żeby wynik był zgodny z rozwiązaniem)
+      a grupy są niezależne. Zapisz hipotezy, wykonaj test t Welcha
       i dopiero potem porównaj swój wynik z rozwiązaniem."),
 
     lc_feedback(type = "info",

@@ -162,12 +162,11 @@ ch4_ui <- list(
       na lewym krańcu do 1 na prawym i nigdy nie maleje. Ma ją także każdy
       rozkład dyskretny: tam F(x) jest sumą słupków P(X = k) dla k ≤ x."),
 
-    lc_p("W R każdy rozkład ma cztery funkcje o wspólnym rdzeniu nazwy:
-      litera d daje gęstość f(x), p — dystrybuantę F(x), q — kwantyl, czyli
-      wartość x, dla której F(x) osiąga zadany poziom, a r losuje próbę.
-      Wynik 0,6827 z panelu to ", tags$code("pnorm(1) - pnorm(-1)"),
-      ", a mediana rozkładu to kwantyl rzędu 0,5, na przykład ",
-      tags$code("qexp(0.5, rate = 1)"), "."),
+    lc_p("Dystrybuantę można też czytać odwrotnie: zamiast pytać o pole na lewo
+      od danej wartości, pytamy, przy jakiej wartości to pole osiąga zadany
+      poziom. Taka wartość to kwantyl rzędu q, czyli x, dla którego F(x) = q.
+      Mediana jest kwantylem rzędu 0,5, a percentyle z wykładu 01 to kwantyle
+      wyrażone w procentach."),
 
     # ========================================================================
     # WIDGET 3: Jednostajny ciągły — scenariusze overlay
@@ -231,8 +230,7 @@ ch4_ui <- list(
     lc_p("Wróćmy do autobusu. Dla U(0, 10) średni czas oczekiwania to
       E(X) = 5 min, wariancja 100/12 = 8,33, a SD = 2,89 min.
       Prawdopodobieństwo, że poczekasz dłużej niż 7 minut, to pole prostokąta
-      od 7 do 10: 3 · 0,1 = 0,3. W R: ",
-      tags$code("1 - punif(7, min = 0, max = 10)"), "."),
+      od 7 do 10: 3 · 0,1 = 0,3."),
 
     # ========================================================================
     # WIDGET 3b: Wykładniczy — scenariusze overlay
@@ -292,7 +290,7 @@ ch4_ui <- list(
       odstępów jest krótszych od średniej. Mediana wynosi ln 2 / λ = 0,69 h,
       czyli około 42 minut, mniej niż średnia, bo długi prawy ogon podnosi
       średnią. Na wiadomość dłużej niż 2 godziny czekasz z prawdopodobieństwem
-      e⁻² = 0,135, w R: ", tags$code("1 - pexp(2, rate = 1)"), "."),
+      e⁻² = 0,135."),
 
     lc_p("Rozkład wykładniczy ma nietypową własność, ",
       gloss("bezpamięciowość"), ". Załóżmy, że czekasz na wiadomość już
@@ -360,8 +358,7 @@ ch4_ui <- list(
       szczyt i grubsze ogony. Różnicę widać w liczbach. Wartość dalej niż
       2 od zera ma w rozkładzie N(0, 1) prawdopodobieństwo 0,046, w t(30) —
       0,055, w t(5) — 0,102, a w t(3) już 0,139, czyli trzy razy więcej niż
-      w rozkładzie normalnym. W R: ", tags$code("2 * pt(-2, df = 3)"), ".
-      Odchylenie standardowe t(3) wynosi 1,73, a t(30) — 1,04. Skrajny
+      w rozkładzie normalnym. Odchylenie standardowe t(3) wynosi 1,73, a t(30) — 1,04. Skrajny
       przypadek t(1), zwany rozkładem Cauchy'ego, ma ogony tak ciężkie,
       że nie ma wartości oczekiwanej ani wariancji."),
 
@@ -413,8 +410,8 @@ ch4_ui <- list(
 
     lc_p("Każdy składnik sumy ma wartość oczekiwaną 1, więc E(X) = df. Dla
       χ²(5) wartość oczekiwana wynosi 5, SD = 3,16, a szczyt krzywej leży
-      w punkcie 3. Wartości powyżej 11,07 pojawiają się tylko w 5% przypadków,
-      w R: ", tags$code("qchisq(0.95, df = 5)"), ". Przy df = 2 krzywa
+      w punkcie 3. Wartości powyżej 11,07 pojawiają się tylko w 5% przypadków.
+      Przy df = 2 krzywa
       opada od zera, a przy df = 20 jest już niemal symetryczna wokół 20.
       To nie przypadek: χ²(df) jest sumą df niezależnych składników, a suma
       wielu składników zbliża się do rozkładu normalnego. Dlaczego tak się
@@ -471,8 +468,7 @@ ch4_ui <- list(
     lc_p("Prawy ogon sprawia, że wartość oczekiwana jest zawsze większa od ",
       gloss("mediana", "mediany"), ". Dla LogN(1, 0,5) mediana wynosi
       e¹ = 2,72, wartość oczekiwana 3,08, a SD = 1,64. Wartość oczekiwaną
-      przekracza tylko 40% obserwacji, w R: ",
-      tags$code("1 - plnorm(3.08, meanlog = 1, sdlog = 0.5)"), ". Im większe
+      przekracza tylko 40% obserwacji. Im większe
       σ, tym dłuższy ogon i większa różnica. W scenariuszu dochodów
       LogN(2, 0,8) mediana to 7,39, a wartość oczekiwana 10,18, więc ponad
       średnią zarabia tylko 34% osób."),

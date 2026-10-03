@@ -38,8 +38,7 @@ ch5_ui <- list(
     lc_p("Parametry mają tu bezpośrednią interpretację. ",
       gloss("wartość oczekiwana", "Wartość oczekiwana"), " rozkładu jest równa
       \\(\\mu\\), a ", gloss("wariancja"), " jest równa \\(\\sigma^2\\), więc
-      \\(\\sigma\\) to zwykłe SD. Funkcje R przyjmują właśnie te dwie liczby: ",
-      tags$code("dnorm(x, mean = μ, sd = σ)"), ". Część podręczników pisze \\(N(\\mu, \\sigma^2)\\),
+      \\(\\sigma\\) to zwykłe SD. Część podręczników pisze \\(N(\\mu, \\sigma^2)\\),
       z wariancją zamiast SD, dlatego przy każdym zapisie warto sprawdzić,
       o który parametr chodzi."),
 
@@ -205,16 +204,15 @@ ch5_ui <- list(
 
     lc_p("Prawdopodobieństwo przedziału to pole pod gęstością, ale dla
       rozkładu normalnego pola tego nie da się zapisać prostym wzorem. Liczy
-      się je numerycznie. W R służy do tego funkcja ", tags$code("pnorm(z)"),
-      ", która zwraca P(Z ≤ z), czyli pole na lewo od z. Pozostałe pytania wynikają z tego,
+      się je numerycznie, a podstawą jest dystrybuanta F(z) = P(Z ≤ z),
+      czyli pole na lewo od z. Pozostałe pytania wynikają z tego,
       że całe pole wynosi 1:"),
 
     lc_formula_box(withMathJax(
       "$$P(Z > a) = 1 - P(Z \\le a) \\qquad P(a < Z < b) = P(Z \\le b) - P(Z \\le a)$$"
     )),
 
-    lc_p("Panel zaznacza szukane pole pod krzywą N(0, 1) i podaje wynik
-      razem z odpowiednim wywołaniem ", tags$code("pnorm()"), "."),
+    lc_p("Panel zaznacza szukane pole pod krzywą N(0, 1) i podaje wynik."),
 
     figure_panel(
       label = "Ryc. 5.4",
@@ -243,18 +241,14 @@ ch5_ui <- list(
     lc_p("Ustawienie startowe, P(−1 < Z < 1) = 0,6827, to pierwsza liczba
       reguły 68–95–99,7. Wróćmy do egzaminu. Wynik powyżej 80 punktów
       odpowiada z > 1,5, więc P(X > 80) = 1 − P(Z ≤ 1,5) = 0,0668: taki wynik
-      osiąga około 6,7% zdających. Standaryzacji nie trzeba robić ręcznie,
-      bo pnorm przyjmuje parametry rozkładu: ",
-      tags$code("1 - pnorm(80, mean = 65, sd = 10)"), " daje to samo.
-      Podobnie IQ powyżej 130 punktów (z = 2) ma 2,3% populacji."),
+      osiąga około 6,7% zdających. Podobnie IQ powyżej 130 punktów (z = 2) ma 2,3% populacji."),
 
     lc_p("Często pytanie jest odwrotne: znamy prawdopodobieństwo i szukamy
-      wartości. Odpowiada na nie funkcja ", tags$code("qnorm(p)"),
-      ", która zwraca ", gloss("percentyl"), " rozkładu, czyli wartość
-      pozostawiającą na lewo pole p. Na przykład ", tags$code("qnorm(0.975)"),
-      " = 1,96, więc środkowe 95% rozkładu normalnego leży dokładnie w pasie
+      wartości. Odpowiedzią jest ", gloss("percentyl"), " rozkładu, czyli wartość
+      pozostawiającą na lewo pole p. Na przykład percentyl rzędu 0,975
+      rozkładu N(0, 1) wynosi 1,96, więc środkowe 95% rozkładu normalnego leży dokładnie w pasie
       μ ± 1,96σ; reguła 68–95–99,7 zaokrągla to do 2σ. W modelu wzrostu
-      kobiet ", tags$code("qnorm(0.9, mean = 166, sd = 6)"), " = 173,7 cm,
+      kobiet N(166, 6) percentyl rzędu 0,9 wynosi 173,7 cm,
       więc 10% kobiet jest wyższych. Wartość 1,96 wróci w kolejnych
       wykładach przy przedziałach ufności."),
 
@@ -522,18 +516,10 @@ ch5_server <- function(input, output, session) {
       "between" = paste0("P(", a, " < Z < ", b, ")")
     )
 
-    r_code <- switch(type,
-      "less" = paste0("pnorm(", a, ")"),
-      "greater" = paste0("1 - pnorm(", a, ")"),
-      "between" = paste0("pnorm(", b, ") - pnorm(", a, ")")
-    )
-
     lc_center(
       lc_stat_box(label, sprintf("%.4f", prob), color = col_normal),
       lc_stat_box("Procent", sprintf("%.2f", prob * 100), "%",
-                  color = upwr_secondary),
-      div(style = "margin-top: 8px; font-size: 13px; color: var(--upwr-reference);",
-          paste0("W R: ", r_code))
+                  color = upwr_secondary)
     )
   })
 

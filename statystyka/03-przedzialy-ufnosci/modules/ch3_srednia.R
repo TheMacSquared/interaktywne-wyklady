@@ -62,13 +62,9 @@ ch3_ui <- list(
       próbach wartość zbliża się do 1,96 z rozkładu normalnego."),
 
     lc_p("Programy statystyczne liczą przedział dla średniej zawsze z rozkładu t,
-      więc nie trzeba wybierać między wersją z a t. W jamovi wystarczy
-      wybrać Analyses → T-Tests → One Sample T-Test, przeciągnąć ",
-      gloss("zmienna ilościowa", "zmienną ilościową"), " do Dependent Variables
-      i w panelu Additional Statistics zaznaczyć Confidence interval (domyślnie
-      95%). Średnią i granice przedziału odczytamy z kolumn ", tags$code("Mean"),
-      ", ", tags$code("Lower"), " i ", tags$code("Upper"), ". Program liczy za nas,
-      ale żeby przedział dobrze odczytać, warto raz zobaczyć, jak powstaje."),
+      więc nie trzeba wybierać między wersją z a t. Średnią i granice
+      przedziału program poda za nas, ale żeby przedział dobrze odczytać,
+      warto raz zobaczyć, jak powstaje."),
 
     lc_h2("ch3-budowa", "Budowa przedziału — krok po kroku"),
 
@@ -125,8 +121,8 @@ ch3_ui <- list(
       równych wariancji. To wersja Welcha. Liczbę stopni swobody dla \\(t^*\\)
       wyznacza wtedy osobny wzór (Welcha–Satterthwaite'a). Wynik zwykle
       nie jest liczbą całkowitą i leży między \\(\\min(n_1, n_2) - 1\\)
-      a \\(n_1 + n_2 - 2\\). W jamovi tę wersję daje Independent Samples
-      T-Test z zaznaczoną opcją Welch's. Domyślna opcja Student's zakłada równe
+      a \\(n_1 + n_2 - 2\\). Panele w tym wykładzie liczą wersję Welcha.
+      Klasyczna wersja Studenta, w wielu programach domyślna, zakłada równe
       wariancje i łączy je w jedną. Przy równych licznościach obie wersje
       mają ten sam błąd standardowy, a różnią się tylko liczbą stopni swobody."),
 

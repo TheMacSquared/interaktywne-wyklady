@@ -218,14 +218,6 @@ ch2_ui <- list(
       wszystkie wartości \\(\\mu_0\\), których test by nie odrzucił, a więc
       także to, jak duża może być różnica."),
 
-    lc_p("W R test wykonuje funkcja ", tags$code("t_test()"), " z pakietu
-      rstatix, np. ", tags$code("dane %>% t_test(koncentracja ~ 1, mu = 70)"),
-      ". Wynik zawiera statystykę t (", tags$code("statistic"), "), stopnie
-      swobody (", tags$code("df"), ") i p-wartość (", tags$code("p"), "),
-      a z argumentem ", tags$code("detailed = TRUE"), " także granice
-      przedziału ufności. W jamovi ten sam test jest w menu T-Tests → One
-      Sample T-Test, a \\(\\mu_0\\) wpisujemy w polu Test value."),
-
     lc_p("Test opiera się na założeniach: obserwacje są niezależne, a średnia
       z próby ma rozkład zbliżony do normalnego. Drugie założenie spełniają
       dane bez silnej skośności albo odpowiednio duża próba; im bardziej
@@ -282,12 +274,6 @@ ch2_ui <- list(
        I rodzaju: przy α = 0,05 faktycznie wynosi ono 10%."
     ),
 
-    lc_p("W R kierunek podajemy argumentem ", tags$code("alternative"), ", np. ",
-      tags$code("t_test(koncentracja ~ 1, mu = 70, alternative = \"less\")"),
-      " dla Hₐ: μ < 70 albo ", tags$code("alternative = \"greater\""),
-      " dla Hₐ: μ > 70. W jamovi wybieramy odpowiednią opcję w sekcji
-      Hypothesis."),
-
     # ========================================================================
     # Ćwiczenia — CASchools
     # ========================================================================
@@ -295,7 +281,7 @@ ch2_ui <- list(
 
     lc_p("Na koniec dwa zadania na prawdziwych danych. Pierwsze wymaga testu
       dwustronnego, drugie jednostronnego. W obu najpierw zapisz H₀ i Hₐ,
-      wykonaj test w R albo w jamovi i sformułuj wniosek w języku pytania,
+      wykonaj test i sformułuj wniosek w języku pytania,
       a dopiero potem porównaj go z rozwiązaniem."),
 
     lc_feedback(type = "info",

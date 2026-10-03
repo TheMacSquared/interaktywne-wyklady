@@ -330,8 +330,7 @@ ch6_ui <- list(
           ),
           lc_formula_box(
             h4("Przedział Wilsona (zalecany)"),
-            p("Lepsze ", gloss("pokrycie"), " niż Wald. Używa go ",
-              tags$code("prop.test()"), " w R.")
+            p("Lepsze ", gloss("pokrycie"), " niż Wald.")
           ),
           lc_formula_box(
             h4("Przedział Cloppera-Pearsona (dokładny)"),
@@ -365,31 +364,6 @@ ch6_ui <- list(
           p(style = "color: var(--upwr-reference); font-size: 14px;",
             "Dla ", gloss("rozkład t-Studenta", "rozkładu t"), " wartości zależą od df = n−1; dla dużych
              n są bardzo bliskie z.")
-        )
-      ),
-
-      tags$details(class = "case-study",
-        tags$summary(
-          span(class = "case-icon", "\U0001f4bb"),
-          "Jak policzyć CI w R (zamiast jamovi)"
-        ),
-        div(class = "case-body",
-          tags$pre(class = "lc-code-block",
-            tags$code(
-"# Przedzial dla sredniej (rstatix — preferowany)
-library(rstatix)
-dane %>% t_test(zmienna ~ 1, mu = 0, conf.level = 0.95)
-
-# Lub base R
-t.test(dane$zmienna, conf.level = 0.95)$conf.int
-
-# Przedzial dla proporcji (Wilson, domyslnie)
-prop.test(x = liczba_sukcesow, n = liczba_prob, conf.level = 0.95)
-
-# Dokladny przedzial Cloppera-Pearsona (jak jamovi)
-binom.test(x = liczba_sukcesow, n = liczba_prob, conf.level = 0.95)"
-            )
-          )
         )
       ),
 

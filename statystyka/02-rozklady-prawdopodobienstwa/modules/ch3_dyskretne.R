@@ -59,8 +59,7 @@ ch3_ui <- list(
     lc_p("Dla zwykłej kostki n = 6, więc każda ściana ma prawdopodobieństwo
       1/6 ≈ 0,167. Wartość oczekiwana wynosi (6 + 1)/2 = 3,5, czyli dokładnie
       środek zakresu, a wariancja (36 − 1)/12 ≈ 2,92, co daje SD ≈ 1,71.
-      Te same liczby zwróci R: ", tags$code("mean(1:6)"), " daje 3,5,
-      a ", tags$code("sum((1:6 - 3.5)^2) / 6"), " daje 2,92. Panel poniżej
+      Panel poniżej
       symuluje serię rzutów i porównuje częstości względne z teoretycznym
       prawdopodobieństwem 1/n (linia przerywana)."),
 
@@ -118,7 +117,6 @@ ch3_ui <- list(
       Współczynnik \\(\\binom{n}{k}\\) liczy, na ile sposobów można rozmieścić
       te k sukcesów wśród n prób. Dla 10 rzutów monetą prawdopodobieństwo
       dokładnie 5 orłów wynosi \\(\\binom{10}{5} \\cdot 0{,}5^{10} = 252/1024 \\approx 0{,}246\\).
-      W R liczy to ", tags$code("dbinom(5, size = 10, prob = 0.5)"), ".
       Wartość oczekiwana to 10 · 0,5 = 5 orłów, wariancja 10 · 0,5 · 0,5 = 2,5,
       a SD ≈ 1,58. Na wykresie można nałożyć na siebie cztery scenariusze."),
 
@@ -154,7 +152,7 @@ ch3_ui <- list(
       (1 − p) jest bliższy 1, gdy p jest małe. Scenariusz egzaminu to student,
       który zgaduje odpowiedzi w teście z 20 pytaniami po 4 warianty. Zgadując,
       zdobędzie przeciętnie 5 punktów, a szansa na co najmniej 10 wynosi tylko
-      1,4% (", tags$code("1 - pbinom(9, 20, 0.25)"), "). Scenariusz B(20; 0,7)
+      1,4%. Scenariusz B(20; 0,7)
       pokazuje sytuację odwrotną: przy p powyżej 0,5 środek przesuwa się
       w prawo, do E(X) = 14, a dłuższy ogon pojawia się po lewej stronie."),
 
@@ -180,7 +178,7 @@ ch3_ui <- list(
     lc_p("Rozkład Poissona to granica rozkładu dwumianowego, gdy n jest bardzo
       duże, p bardzo małe, a iloczyn np = λ pozostaje stały. Dla B(1000; 0,002)
       prawdopodobieństwo dokładnie 2 sukcesów wynosi 0,2709, a dla Pois(2)
-      0,2707 (", tags$code("dpois(2, lambda = 2)"), "). Rozkład nie ma górnej
+      0,2707. Rozkład nie ma górnej
       granicy, bo k może być dowolnie duże, ale prawdopodobieństwa dużych
       wartości szybko maleją. Dla λ = 2 szansa na zero zdarzeń wynosi
       e⁻² ≈ 0,135, na co najwyżej 3 zdarzenia 0,857, a na 5 lub więcej
@@ -249,9 +247,7 @@ ch3_ui <- list(
       Dla kostki p = 1/6, więc przeciętnie czekamy 1/p = 6 rzutów, przy
       SD ≈ 5,48. Szansa, że szóstka padnie w ciągu pierwszych sześciu rzutów,
       wynosi 1 − (5/6)⁶ ≈ 0,665, a że nie padnie przez 10 rzutów,
-      (5/6)¹⁰ ≈ 0,162. W R trzeba uważać na konwencję: funkcja ",
-      tags$code("dgeom()"), " liczy porażki przed pierwszym sukcesem, a nie
-      numer próby, dlatego P(X = k) to ", tags$code("dgeom(k - 1, p)"), "."),
+      (5/6)¹⁰ ≈ 0,162."),
 
     figure_panel(
       label = "Ryc. 3.4",

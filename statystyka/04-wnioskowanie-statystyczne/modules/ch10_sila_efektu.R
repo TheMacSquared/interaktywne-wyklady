@@ -126,10 +126,9 @@ ch10_ui <- list(
       egzaminie to zupełnie inne sytuacje, ale przeliczone na liczbę odchyleń
       standardowych dają się porównać. W przeciwieństwie do t, d nie rośnie
       wraz z n. Większa próba pozwala oszacować d dokładniej, ale nie robi go
-      większym. W R d dla dwóch grup liczy ",
-      tags$code("cohens_d(wynik ~ grupa)"), " z pakietu rstatix. Domyślnie
-      w mianowniku używa pierwiastka ze średniej z dwóch wariancji, co przy
-      równolicznych grupach daje dokładnie \\(s_p\\)."),
+      większym. Niektóre programy w mianowniku d dla dwóch grup używają
+      pierwiastka ze średniej z dwóch wariancji zamiast \\(s_p\\); przy
+      równolicznych grupach obie wersje dają ten sam wynik."),
 
     lc_p("Cohen zaproponował orientacyjne progi: 0,2 to efekt mały, 0,5 średni,
       a 0,8 duży. Tabela pokazuje, jak wyglądają one w przykładach z panelu
@@ -290,8 +289,7 @@ ch10_ui <- list(
       Dla tabeli 2×2 V jest równe współczynnikowi φ (fi). Gdy obie grupy są
       równoliczne, a ogólny odsetek wynosi 50%, φ jest po prostu różnicą
       odsetków w grupach: V = 0,30 odpowiada na przykład 35% i 65%. Progi
-      Cohena zależą od mniejszego wymiaru tabeli. W R V liczy ",
-      tags$code("cramer_v(tab)"), " z pakietu rstatix."),
+      Cohena zależą od mniejszego wymiaru tabeli."),
 
     tags$table(class = "lc-table lc-table-bordered",
       style = "font-size: 15px; margin: 10px 0;",
@@ -363,8 +361,7 @@ ch10_ui <- list(
     )),
 
     lc_p("Programy podają kilka wariantów tej miary: η² częściowe (ang. partial)
-      i η² uogólnione. Funkcja ", tags$code("anova_test()"), " z pakietu rstatix
-      zwraca η² uogólnione w kolumnie ges. W jednoczynnikowej ANOVA dla grup
+      i η² uogólnione. W jednoczynnikowej ANOVA dla grup
       niezależnych wszystkie trzy warianty są równe zwykłemu η². Różnią się
       dopiero w modelach z kilkoma czynnikami. Orientacyjne progi Cohena to
       0,01, 0,06 i 0,14."),
@@ -459,7 +456,7 @@ ch10_ui <- list(
     lc_p("Pozostaje praktyczne pytanie: który test wybrać do konkretnych danych.
       Odpowiada na nie drzewo decyzyjne w następnym rozdziale. Prowadzi ono
       od typu zmiennych i liczby grup do testu, a ściąga zbiera w jednym
-      miejscu wzory, wywołania R i miary siły efektu."),
+      miejscu wzory, tabele testów i miary siły efektu."),
 
     lc_chapter_next(
       num       = "11",

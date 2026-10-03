@@ -218,12 +218,11 @@ ch5_ui <- list(
       odrzucenia H₀. To nie dowodzi, że płeć i kierunek są niezależne, tylko
       że dane nie przemawiają przeciw niezależności."),
 
-    lc_p("W R tabelę tworzy ", tags$code("tab <- table(data$plec, data$kierunek)"),
-      ", a test wykonuje ", tags$code("chisq.test(tab)"), ". Dla tabel 2 × 2
-      funkcja domyślnie stosuje poprawkę Yatesa na ciągłość, która nieco zmniejsza
-      statystykę: dla danych o mandatach daje χ² = 7,52 i p = 0,006 zamiast 8,33
-      i 0,004. Wynik zgodny ze wzorem daje ",
-      tags$code("chisq.test(tab, correct = FALSE)"), ". Sam test mówi tylko,
+    lc_p("Dla tabel 2 × 2 część programów domyślnie stosuje poprawkę Yatesa
+      na ciągłość, która nieco zmniejsza statystykę: dla danych o mandatach
+      daje χ² = 7,52 i p = 0,006 zamiast 8,33 i 0,004 ze wzoru. Porównując
+      wynik z obliczeniem ręcznym, sprawdź więc, czy poprawka została
+      zastosowana. Sam test mówi tylko,
       czy związek istnieje. W którą stronę przebiega, pokazują procenty wierszowe,
       a jak jest silny, mierzy ", gloss("V Cramera"), " omówione w rozdziale 10."),
 
@@ -294,19 +293,12 @@ ch5_ui <- list(
           tags$td(tags$b("Małe n")),
           tags$td(style = "background: var(--upwr-accent-tint);", "Może być niedokładny"),
           tags$td(style = "background: var(--upwr-sage-tint);", "Bezpieczny wybór")
-        ),
-        tags$tr(
-          tags$td(tags$b("W jamovi")),
-          tags$td("χ² (domyślnie)"),
-          tags$td("Zaznacz: Fisher's exact test")
         )
       )
     ),
 
-    lc_p("W R oba testy wywołujemy na tej samej tabeli: ",
-      tags$code("chisq.test(tab)"), " i ", tags$code("fisher.test(tab)"), ".
-      Przy dużych próbach dają praktycznie ten sam wynik, więc wybór nie ma
-      znaczenia. Przy małych próbach albo rzadkich kategoriach bezpieczniej
+    lc_p("Oba testy stosuje się do tej samej tabeli. Przy dużych próbach dają
+      praktycznie ten sam wynik, więc wybór nie ma znaczenia. Przy małych próbach albo rzadkich kategoriach bezpieczniej
       oprzeć decyzję na teście Fishera."),
 
     # ========================================================================

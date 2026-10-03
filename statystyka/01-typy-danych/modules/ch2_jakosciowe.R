@@ -194,7 +194,7 @@ ch2_ui <- list(
       sposoby, zależnie od kolorów. Kolor nie zmienia wysokości słupków, ale
       decyduje, na który z nich najpierw padnie wzrok. Panel pokazuje liczebności
       kierunków z ankiety w kilku paletach: neutralnej, trzech wyróżniających
-      wybrane kategorie i czterech standardowych paletach używanych w R."),
+      wybrane kategorie i czterech standardowych paletach."),
 
     figure_panel(
       label = "Ryc. 2.4",
@@ -207,7 +207,7 @@ ch2_ui <- list(
               "Ciepła (podkreśla Informatykę)" = "warm",
               "Zimna (podkreśla Biologię)" = "cool",
               "Stronnicza" = "biased",
-              "— Klasyczne palety R —" = "sep1",
+              "— Palety standardowe —" = "sep1",
               "Viridis" = "viridis",
               "Set2 (ColorBrewer)" = "set2",
               "Okabe-Ito (colorblind-safe)" = "okabe_ito",
@@ -236,11 +236,11 @@ ch2_ui <- list(
       zaprojektowane z myślą o czytelności. Viridis jest percepcyjnie
       równomierna (równe różnice wartości dają równe różnice w odbiorze
       koloru), pozostaje czytelna w skali szarości i dla osób z zaburzeniami
-      widzenia barw; w wielu pakietach R jest domyślna. Okabe-Ito zaprojektowano
-      specjalnie z myślą o daltonistach, którzy stanowią około 8% mężczyzn,
-      i jest częstym wyborem w publikacjach naukowych. Palety ColorBrewer
-      (Set2, Set3, Paired i inne) opracowała kartografka Cynthia Brewer; w R
-      są dostępne przez ", tags$code("scale_fill_brewer()"), ". Tableau 10 to
+      widzenia barw; w wielu programach statystycznych jest domyślna.
+      Okabe-Ito zaprojektowano specjalnie z myślą o daltonistach, którzy
+      stanowią około 8% mężczyzn, i jest częstym wyborem w publikacjach
+      naukowych. Palety ColorBrewer (Set2, Set3, Paired i inne) opracowała
+      kartografka Cynthia Brewer. Tableau 10 to
       standard w narzędziach analityki biznesowej, z wyrównaną jasnością
       i kontrastem kolorów."),
 

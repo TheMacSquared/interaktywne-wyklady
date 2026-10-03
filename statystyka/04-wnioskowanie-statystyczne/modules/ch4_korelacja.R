@@ -50,8 +50,7 @@ ch4_ui <- list(
       niezależnej od jednostek, dlatego \\(r\\) zawsze leży między −1 a +1
       i nie zmienia się, gdy wzrost zapiszemy w metrach zamiast w centymetrach.
       Wartość +1 oznacza, że wszystkie punkty leżą dokładnie na rosnącej prostej,
-      −1 że na malejącej, a 0 brak związku liniowego. W R współczynnik liczy ",
-      tags$code("cor(x, y)"), "."),
+      −1 że na malejącej, a 0 brak związku liniowego."),
 
     lc_p("Znak \\(r\\) mówi o kierunku związku. Trzy panele poniżej pokazują
       po 90 punktów o korelacji −0,6, 0 i +0,6."),
@@ -161,11 +160,9 @@ ch4_ui <- list(
       " to prawdopodobieństwo, że przy prawdziwej H₀ statystyka \\(t\\) wypadnie
       co najmniej tak daleko od zera jak obserwowana. Jeśli jest mniejsza od ",
       gloss("poziom istotności", "poziomu istotności"), " α = 0,05, ustalonego
-      przed zebraniem danych, odrzucamy H₀. W R test wykonuje ",
-      tags$code("dane %>% cor_test(x, y)"), " z pakietu rstatix. Oprócz \\(r\\),
-      \\(t\\) i p-wartości funkcja podaje ", gloss("przedział ufności"),
-      " dla \\(\\rho\\) (kolumny ", tags$code("conf.low"), " i ",
-      tags$code("conf.high"), "). Jak w wykładzie 03, przedział mówi więcej
+      przed zebraniem danych, odrzucamy H₀. Oprócz \\(r\\), \\(t\\)
+      i p-wartości warto podać ", gloss("przedział ufności"),
+      " dla \\(\\rho\\). Jak w wykładzie 03, przedział mówi więcej
       niż sama decyzja, bo pokazuje, jak silny może być związek w populacji.
       Przedział, który nie obejmuje zera, w praktyce idzie w parze z odrzuceniem
       H₀ w teście dwustronnym. Oba wyniki liczy się jednak innymi przybliżeniami,
@@ -324,8 +321,7 @@ ch4_ui <- list(
       zbiory po 11 punktów o niemal identycznych statystykach. W każdym średnia
       \\(x\\) wynosi 9, średnia \\(y\\) 7,50, wariancja \\(x\\) 11, wariancja
       \\(y\\) 4,12–4,13, korelacja 0,816–0,817, a prosta regresji to
-      \\(y = 3 + 0{,}5x\\). W R zbiory są dostępne jako ",
-      tags$code("anscombe"), "."),
+      \\(y = 3 + 0{,}5x\\)."),
 
     figure_panel(
       label = "Ryc. 6.6",
@@ -468,7 +464,7 @@ ch4_ui <- list(
 
     lc_p("Na koniec trzy zadania na prawdziwych danych o szkołach w Kalifornii.
       W każdym zadaniu, zanim odsłonisz rozwiązanie, przewidź znak i siłę
-      korelacji, a potem przeprowadź test w R albo w jamovi."),
+      korelacji, a potem przeprowadź test."),
 
     lc_feedback(type = "info",
       p(tags$b("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",

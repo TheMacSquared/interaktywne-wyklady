@@ -198,70 +198,59 @@ ch7_server <- function(input, output, session) {
       "d_uniform" = list(
         name = "Jednostajny dyskretny",
         desc = "Każdy z k wyników ma P = 1/k",
-        example = "Rzut kostką, losowanie cyfry",
-        r_func = "sample(1:k, n, replace=TRUE)"
+        example = "Rzut kostką, losowanie cyfry"
       ),
       "d_binomial" = list(
         name = "Dwumianowy B(n, p)",
         desc = "Liczba sukcesów w n niezależnych próbach",
-        example = "Wadliwe produkty w partii, poprawne odpowiedzi",
-        r_func = "rbinom(n, size, prob)"
+        example = "Wadliwe produkty w partii, poprawne odpowiedzi"
       ),
       "d_poisson" = list(
         name = "Poissona Pois(λ)",
         desc = "Liczba zdarzeń w ustalonym czasie/przestrzeni",
-        example = "Klienci na godzinę, błędy na stronie",
-        r_func = "rpois(n, lambda)"
+        example = "Klienci na godzinę, błędy na stronie"
       ),
       "c_normal" = list(
         name = "Normalny N(μ, σ)",
         desc = "Symetryczny, dzwonowaty, suma wielu małych efektów",
-        example = "Wzrost, IQ, błędy pomiarowe",
-        r_func = "rnorm(n, mean, sd)"
+        example = "Wzrost, IQ, błędy pomiarowe"
       ),
       "c_exponential" = list(
         name = "Wykładniczy Exp(λ)",
         desc = "Czas między zdarzeniami (bezpamięciowy)",
-        example = "Czas do awarii, czas między wiadomościami",
-        r_func = "rexp(n, rate)"
+        example = "Czas do awarii, czas między wiadomościami"
       ),
       "c_uniform" = list(
         name = "Jednostajny ciągły U(a, b)",
         desc = "Każda wartość w [a,b] jednakowo prawdopodobna",
-        example = "Generator liczb losowych, błąd zaokrąglenia",
-        r_func = "runif(n, min, max)"
+        example = "Generator liczb losowych, błąd zaokrąglenia"
       ),
       "d_geometric" = list(
         name = "Geometryczny Geom(p)",
         desc = "Liczba prób do pierwszego sukcesu",
-        example = "Ile rzutów do szóstki, próby egzaminu do zdania",
-        r_func = "rgeom(n, prob) + 1"
+        example = "Ile rzutów do szóstki, próby egzaminu do zdania"
       ),
       "c_t_student" = list(
         name = "t-Studenta t(df)",
         desc = "Jak normalny, ale z cięższymi ogonami; kluczowy we wnioskowaniu",
-        example = "Test t, przedziały ufności przy małych próbach",
-        r_func = "rt(n, df)"
+        example = "Test t, przedziały ufności przy małych próbach"
       ),
       "c_chi_sq" = list(
         name = "Chi-kwadrat χ²(df)",
         desc = "Suma kwadratów zmiennych N(0,1); nieujemny, prawoskośny",
-        example = "Test niezależności, test dopasowania, estymacja wariancji",
-        r_func = "rchisq(n, df)"
+        example = "Test niezależności, test dopasowania, estymacja wariancji"
       ),
       "c_lognormal" = list(
         name = "Log-normalny LogN(μ, σ)",
         desc = "ln(X) ~ N(μ, σ); zawsze dodatni, prawoskośny",
-        example = "Dochody, ceny akcji, czasy reakcji",
-        r_func = "rlnorm(n, meanlog, sdlog)"
+        example = "Dochody, ceny akcji, czasy reakcji"
       )
     )
 
     div(class = "dist-card",
       h4(info$name, style = "margin-top: 0;"),
       p(tags$strong("Opis: "), info$desc),
-      p(tags$strong("Przykład: "), info$example),
-      p(tags$strong("R: "), tags$code(info$r_func))
+      p(tags$strong("Przykład: "), info$example)
     )
   })
 

@@ -250,11 +250,6 @@ ch1_ui <- list(
       rozkładu. Panel poniżej pozwala wybrać jedną zmienną ilościową, która
       będzie towarzyszyć tym rozdziałom."),
 
-    margin_code_note(
-      code = "str(student_data)\nsummary(student_data)",
-      description = "Dwa podstawowe narzędzia do podglądu struktury zbioru w R."
-    ),
-
     # --- Variable tracker selector ---
     figure_panel(
       label = "Narzędzie",
