@@ -370,7 +370,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     label = "Ryc. 1.7",
     title = "Model wieloraki — wybór predyktorów",
     lc_toolbar(
-      checkboxGroupInput("ch1_reg_vars", "Predyktory",
+      checkboxGroupInput("ch1_reg_vars", "Predyktory", inline = TRUE,
           choices = c(
             "Uczniowie na nauczyciela (STR)" = "str",
             "Dochód okręgu (tys. USD)" = "income",
