@@ -59,7 +59,7 @@ tr_labels <- c(
   native = "Native speaker",
   tenure = "Tenure track",
   division = "Poziom kursu",
-  credits = "Punkty ECTS/credits"
+  credits = "Kurs jednopunktowy (credits)"
 )
 
 tr_numeric_vars <- c("eval", "beauty", "age", "students", "allstudents", "response.rate")
@@ -67,8 +67,8 @@ tr_confounder_vars <- c("gender", "age", "tenure", "minority", "native", "credit
 
 tr_fmt_p <- function(p) {
   if (is.na(p)) return("NA")
-  if (p < 0.001) return("< 0,001")
-  gsub("\\.", ",", sprintf("%.3f", p))
+  if (p < 0.001) return("< 0.001")
+  sprintf("%.3f", p)
 }
 
 tr_model_table <- function(models) {
@@ -145,7 +145,7 @@ tr_mean_diff <- function(group_var) {
 # Liczba z polskim przecinkiem dziesiętnym.
 tr_fmt_num <- function(x, digits = 2) {
   if (is.na(x)) return("—")
-  gsub("\\.", ",", sprintf(paste0("%.", digits, "f"), x))
+  sprintf(paste0("%.", digits, "f"), x)
 }
 
 # Pełne statystyki opisowe do panelu wyniku: średnia, SD, mediana, Q1, Q3.
@@ -220,13 +220,12 @@ tr_assoc_strength <- function(x, z) {
   z <- z[ok]
   if (is.numeric(z)) {
     val <- suppressWarnings(abs(cor(x, z, use = "complete.obs")))
-    list(value = val, label = paste0("|r| = ", round(val, 3)), is_linked = val > 0.10)
+    list(value = val, label = paste0("|r| = ", round(val, 3)))
   } else {
     z <- droplevels(factor(z))
     meds <- tapply(x, z, median, na.rm = TRUE)
     val <- max(meds, na.rm = TRUE) - min(meds, na.rm = TRUE)
-    list(value = val, label = paste0("różnica median = ", round(val, 3)),
-         is_linked = val > 0.05)
+    list(value = val, label = paste0("różnica median = ", round(val, 3)))
   }
 }
 
@@ -239,11 +238,8 @@ tr_confounder_summary <- local({
       label = unname(tr_labels[var]),
       beauty_value = bx$value,
       beauty_label = bx$label,
-      beauty_linked = bx$is_linked,
       eval_value = ey$value,
       eval_label = ey$label,
-      eval_linked = ey$is_linked,
-      confounder = bx$is_linked && ey$is_linked,
       stringsAsFactors = FALSE
     )
   })
@@ -261,7 +257,7 @@ tr_confounder_row <- function(var) {
 # jakość nauczania, czy raczej mieszankę innych rzeczy? Tego celu NIE da się
 # rozstrzygnąć jedną hipotezą — potrzebujemy wiązki konkurujących tropów, które
 # razem oświetlają cel. Ta lista to ta sama wiązka, którą śledzimy od ciekawości
-# (ch1), przez hipotezy (ch2), testy (ch4), iterację (ch5) aż po model (ch6).
+# (ch1), przez hipotezy (ch2), testy (ch5), iterację (ch6) aż po model (ch7).
 # Wszystkie moduły czytają stąd, zamiast powielać własne listy.
 # ============================================================================
 
@@ -294,7 +290,7 @@ tr_tropy <- list(
     short     = "Płeć",
     var       = "gender",
     question  = "Czy kobiety i mężczyźni prowadzący są oceniani podobnie?",
-    hypothesis = "Średnie `eval` różni się między grupami `gender`.",
+    hypothesis = "Średnia `eval` różni się między grupami `gender`.",
     method    = "t",
     test_name = "test t dla dwóch grup",
     analysis  = "boxplot + porównanie średnich",
@@ -312,7 +308,7 @@ tr_tropy <- list(
     short     = "Native speaker",
     var       = "native",
     question  = "Czy status native speaker wiąże się z oceną kursu?",
-    hypothesis = "Średnie `eval` różni się między `native = tak` i `native = nie`.",
+    hypothesis = "Średnia `eval` różni się między `native = tak` i `native = nie`.",
     method    = "wilcox",
     test_name = "Mann-Whitney",
     analysis  = "boxplot + porównanie rozkładów",
@@ -330,7 +326,7 @@ tr_tropy <- list(
     short     = "Mniejszość",
     var       = "minority",
     question  = "Czy prowadzący z grup mniejszościowych są oceniani inaczej?",
-    hypothesis = "Średnie `eval` różni się między `minority = tak` i `minority = nie`.",
+    hypothesis = "Średnia `eval` różni się między `minority = tak` i `minority = nie`.",
     method    = "wilcox",
     test_name = "Mann-Whitney",
     analysis  = "boxplot + porównanie rozkładów",
@@ -379,14 +375,14 @@ tr_board_summary <- local({
       res <- cor.test(tr_data[[tr$var]], tr_data$eval)
       r <- unname(res$estimate)
       p <- res$p.value
-      effect_text <- paste0("r = ", gsub("\\.", ",", sprintf("%.3f", r)))
+      effect_text <- paste0("r = ", sprintf("%.3f", r))
       effect_label <- effect_text
     } else {
       res  <- tr_group_test(tr$var, tr$method)
       diff <- tr_mean_diff(tr$var)
       p <- res$p
       effect_text <- paste0("różnica średnich = ", round(diff$diff, 3))
-      effect_label <- paste0("Δ = ", gsub("\\.", ",", sprintf("%.2f", diff$diff)),
+      effect_label <- paste0("Δ = ", sprintf("%.2f", diff$diff),
                              " (", diff$group2, " − ", diff$group1, ")")
     }
     supported <- !is.na(p) && p < 0.05
@@ -422,9 +418,9 @@ tr_board_row <- function(id) {
 # tr_board_ui — narastająca tablica tropów.
 #   reveal: które tropy są już "odkryte" (mają widoczny wynik). Pozostałe są
 #           wyszarzone z placeholderem "—". Domyślnie wszystkie odkryte.
-#   show_verdict: czy pokazać kolumnę werdyktu (włączamy od ch4 w górę).
+#   show_verdict: czy pokazać kolumnę werdyktu (włączamy od ch5 w górę).
 # Ten sam komponent służy jako pusta tablica (ch1, reveal=character(0)),
-# narastająca (ch4) i pełne podsumowanie (ch5, reveal=tr_trop_order).
+# narastająca (ch5) i pełne podsumowanie (ch6, ch8, reveal=tr_trop_order).
 # ----------------------------------------------------------------------------
 
 tr_board_ui <- function(reveal = tr_trop_order, show_verdict = TRUE) {

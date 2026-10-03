@@ -4,28 +4,47 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
       kicker = "Rozdział 01 · Start badania",
       num = "01",
       title = "Od ciekawości do celu.",
-      lead = "Projekt badawczy zaczyna się przed testem: od celu i zestawu
-              konkurujących tropów, które ten cel pomogą wyjaśnić."
+      lead = "Projekt badawczy zaczyna się przed pierwszym testem: od celu
+              i od kilku konkurujących wyjaśnień, które razem pozwalają ten
+              cel ocenić."
     ),
 
     lc_h2("sec-01", "Zaczynamy od sytuacji, nie od metody"),
 
-    div(class = "lc-prose",
-      p("Mamy dane o 463 kursach: oceny studenckie, cechy prowadzących i kilka
-        informacji o kontekście zajęć. To nie jest jeszcze projekt badawczy.
-        To dopiero materiał, z którego można zbudować kilka różnych historii."),
-      p("Dzisiejsze ćwiczenie polega na tym, żeby zobaczyć, jak z luźnej ciekawości
-        powstaje jeden cel badawczy, z celu wiązka ", gloss("hipoteza badawcza", "hipotez"), ", a z hipotez plan analizy.
-        Ten sam cel i tę samą wiązkę będziemy ciągnąć przez cały wykład.")
-    ),
+    lc_p("Wykład 08 przeprowadził jedną analizę od pytania do wniosku. Na końcu
+      padła odpowiedź ostrożna: dane są obserwacyjne, efekt podaliśmy
+      w jednostkach praktycznych razem z przedziałem ufności, a obok niego
+      listę ograniczeń. Pytanie było tam jednak dane z góry. We własnym
+      projekcie pytanie trzeba postawić samodzielnie i to ten etap, a nie
+      wybór testu, najczęściej decyduje o tym, czy z analizy wyjdzie
+      coś sensownego."),
 
-    div(class = "lc-figure-panel",
-      h4("Podgląd danych"),
-      div(class = "lc-prose",
-        p("Zanim zaczniemy formułować hipotezy, zobaczmy samą tabelę:
-          co jest jedną ", gloss("jednostka obserwacji", "obserwacją"), ", jakie są typy zmiennych i czego w danych
-          nie widać.")
-      ),
+    lc_p("Ten wykład pokazuje całą drogę na jednym zbiorze danych. Opisuje on
+      463 kursy prowadzone w latach 2000–2002 na University of Texas at
+      Austin przez 94 wykładowców. Dla każdego kursu mamy ocenę z ankiety
+      studenckiej, kilka cech prowadzącego (płeć, wiek, ocenę wyglądu,
+      język ojczysty) i kilka informacji o samym kursie. To nie jest jeszcze
+      projekt badawczy. To materiał, z którego da się zbudować wiele różnych
+      historii, i pierwszym zadaniem jest wybrać jedną."),
+
+    lc_p("Kolejne rozdziały idą w tej samej kolejności, w jakiej powstaje
+      prawdziwy projekt. W tym rozdziale z luźnej ciekawości robimy cel
+      badania. W rozdziale 2 zamieniamy go na wiązkę ",
+      gloss("hipoteza badawcza", "hipotez badawczych"), ", w rozdziale 3
+      sprawdzamy, co naprawdę mierzą zmienne, a w rozdziale 4 składamy
+      z tego konspekt. Dopiero rozdział 5 sięga po testy. Rozdziały 6 i 7
+      sprawdzają, czy pierwsze wyniki nie są zasługą innych zmiennych,
+      a rozdział 8 kończy projekt wnioskiem."),
+
+    lc_p("Zanim sformułujemy jakiekolwiek pytanie, warto obejrzeć samą tabelę
+      i ustalić, co jest w niej jedną ",
+      gloss("jednostka obserwacji", "jednostką obserwacji"), ", jakiego typu
+      są zmienne (wykład 01) i czego w danych nie ma. Panel pokazuje po
+      dziesięć wierszy; pod tabelą jest opis wszystkich kolumn."),
+
+    figure_panel(
+      label = "Ryc. 1.1",
+      title = "Podgląd danych",
       fluidRow(
         column(4,
           numericInput("ch1_row_from", "Pokaż od wiersza:", value = 1,
@@ -48,16 +67,53 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
         )
       ),
       uiOutput("ch1_data_view"),
-      uiOutput("ch1_data_legend")
+      div(class = "data-legend",
+        lapply(list(
+          c("eval", "ocena kursu z ankiety studenckiej, uśredniona po osobach, które ją wypełniły; skala od 1 (bardzo źle) do 5 (znakomicie)"),
+          c("beauty", "ocena wyglądu prowadzącego wystawiona przez panel sześciu studentów, uśredniona i przesunięta tak, by średnia w zbiorze wynosiła 0"),
+          c("gender, age", "płeć i wiek prowadzącego"),
+          c("minority", "czy prowadzący należy do mniejszości (w oryginalnym opisie danych: osoba niebiała)"),
+          c("native, tenure", "czy angielski jest językiem ojczystym prowadzącego; czy prowadzący jest na ścieżce stałego zatrudnienia (tenure track)"),
+          c("division, credits", "poziom kursu (niższy to głównie duże kursy pierwszych lat) i czy jest to jednopunktowy kurs fakultatywny, np. joga albo taniec"),
+          c("students, allstudents", "liczba osób, które wypełniły ankietę, i liczba osób zapisanych na kurs"),
+          c("response.rate", "odsetek zapisanych, którzy wypełnili ankietę (w %); policzony z dwóch poprzednich kolumn"),
+          c("prof", "identyfikator prowadzącego; ta sama osoba prowadzi zwykle kilka kursów")
+        ), function(x) {
+          div(class = "data-legend-item",
+            tags$code(x[[1]]),
+            tags$br(),
+            x[[2]]
+          )
+        })
+      )
     ),
 
-    lc_h2("sec-02", "Jak zdefiniować cel badania?"),
+    lc_p("Jednym wierszem jest kurs, a nie prowadzący ani student. Ma to dwie
+      konsekwencje. Po pierwsze, eval jest już podsumowaniem: średnią z ankiet
+      wszystkich osób, które odpowiedziały. Po drugie, 94 prowadzących
+      rozkłada się na 463 kursy nierówno, od jednego do trzynastu kursów na
+      osobę, przy medianie 4. Cechy prowadzącego, w tym ocena wyglądu i wiek,
+      powtarzają się więc identycznie we wszystkich jego kursach. Wiersze nie
+      są w pełni niezależne, a to problem, który w wykładzie 07 (rozdział 1)
+      opisaliśmy jako brak niezależności obserwacji."),
 
-    div(class = "lc-prose",
-      p("Dobry cel badania nie zaczyna się od testu statystycznego. Zaczyna się
-        od pomysłu, który trzeba uporządkować: nazwać przypuszczenie, zawęzić je
-        do ", gloss("pytanie badawcze", "pytania"), " i przełożyć na plan sprawdzenia.")
-    ),
+    lc_p("Posortowanie tabeli po ocenie kursu pokazuje, że studenci korzystają
+      głównie z górnej części skali. Średnia eval wynosi 4.00, mediana 4.0, a wartości leżą między 2.1 a 5.0.
+      Tylko 18 kursów dostało ocenę niższą niż 3, a 56% kursów co najmniej 4.
+      Wśród zmiennych opisujących prowadzącego większość ma tylko dwie
+      kategorie i są to kategorie bardzo nierówne: 64 kursy prowadzą osoby
+      z mniejszości, a 28 kursów osoby, dla których angielski nie jest językiem
+      ojczystym. Te liczby wrócą, gdy będziemy porównywać grupy."),
+
+    lc_h2("sec-02", "Od pomysłu do celu badania"),
+
+    lc_p("Tabela podsuwa wiele pytań naraz: czy atrakcyjni prowadzący dostają
+      lepsze oceny, czy kobiety są oceniane surowiej, czy w dużych kursach
+      ankietę wypełniają tylko niezadowoleni. Każde z nich może stać się ",
+      gloss("pytanie badawcze", "pytaniem badawczym"), ", ale samo w sobie
+      nie jest jeszcze celem badania. Cel to jedno zdanie,
+      które mówi, czego chcemy się dowiedzieć i po co, a pojedyncze pytania
+      porządkuje jako jego części. Droga od pomysłu do planu ma trzy szczeble."),
 
     div(class = "research-ladder",
       div(tags$strong("Pomysł badawczy"), "Zaczynamy od przypuszczenia: ocena z ankiety może mieć kilka źródeł."),
@@ -65,56 +121,83 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
       div(tags$strong("Plan analizy"), "Zamieniamy cel na hipotezy, zmienne i porównania.")
     ),
 
+    lc_p("Na tych danych cel może brzmieć następująco."),
+
     div(class = "lc-feedback lc-feedback-warning lecture-goal-card",
       tags$strong(class = "lecture-goal-label", "Nasz cel badawczy"),
-      p(class = "lecture-goal-question", tags$em(tr_goal)),
-      p("Tego pytania nie rozstrzyga pojedynczy test. To cel, do którego dochodzimy
-        przez zestaw konkurujących hipotez (tropów). Każdy trop dotyczy innego
-        możliwego składnika oceny z ankiety; dopiero razem pozwalają ocenić cel.")
+      p(class = "lecture-goal-question", tags$em(tr_goal))
     ),
+
+    lc_p("Na tak postawione pytanie nie odpowie pojedynczy test, bo w danych
+      nie ma osobnej miary jakości nauczania, z którą można by porównać eval.
+      Da się natomiast sprawdzić, czy ocena zależy od rzeczy, które z jakością
+      zajęć nie powinny mieć nic wspólnego: od wyglądu prowadzącego, jego płci,
+      języka ojczystego, przynależności do mniejszości albo od tego, jaka
+      część grupy wypełniła ankietę. Jeśli zależy, to ocena miesza jakość
+      z czymś innym. Każde takie podejrzenie nazywamy w tym wykładzie tropem."),
 
     lc_h2("sec-03", "Wiązka tropów, którą będziemy śledzić"),
 
-    div(class = "lc-prose",
-      p("Rozważamy wszystkie tropy naraz, a nie pojedynczo. Tworzą one wiązkę
-        hipotez projektu. Każdy trop dotyczy innego możliwego składnika oceny;
-        żaden nie odpowiada na cel samodzielnie, ale razem dają pełniejszy obraz.")
-    ),
+    lc_p("Trop to robocze przypuszczenie o jednym możliwym składniku oceny
+      z ankiety. Zestaw tropów podporządkowanych wspólnemu celowi nazywamy
+      wiązką. Żaden trop nie odpowiada na cel samodzielnie: wynik dla
+      wyglądu mówi tylko o wyglądzie. Dopiero zestawienie kilku tropów
+      pozwala powiedzieć coś o tym, co mierzy eval. Nasza wiązka ma pięć
+      tropów."),
 
     uiOutput("ch1_tropy_bundle"),
 
-    div(class = "research-step",
-      span(class = "step-number", "1"),
-      "Kolejność pracy: najpierw cel i tropy, potem dobór metody statystycznej.
-       Test jest narzędziem do sprawdzenia tropu, nie punktem wyjścia."
+    lc_p("Cztery pierwsze tropy dotyczą cech prowadzącego, za które nie
+      powinien być ani nagradzany, ani karany. Piąty jest innego rodzaju:
+      dotyczy samego pomiaru, czyli tego, czy ankieta wypełniona przez część
+      grupy mówi coś o całej grupie. Na tym etapie żaden trop nie ma jeszcze
+      przypisanego testu. Metodę dobierzemy w rozdziale 5, gdy będzie
+      wiadomo, jakiego typu są zmienne i jakie porównanie odpowiada na
+      pytanie."),
+
+    inline_callout(label = "Zasada",
+      "Najpierw cel i tropy, potem metoda. Test jest narzędziem do sprawdzenia
+       tropu, a nie punktem wyjścia badania."
     ),
 
-    lc_h2("sec-04", "Tablica tropów — tu będziemy zbierać wyniki"),
+    lc_h2("sec-04", "Tablica tropów"),
 
-    div(class = "lc-prose",
-      p("Przez cały wykład będziemy wracać do jednej tablicy. Na razie jest pusta:
-        mamy pytania, ale jeszcze żadnego kontaktu z danymi. W rozdziale 4 zaczniemy
-        ją wypełniać, a w rozdziale 5 odczytamy, co cała wiązka mówi o celu.")
-    ),
+    lc_p("Wyniki będziemy zbierać w jednej tablicy, do której wraca cały wykład.
+      Każdy wiersz to jeden trop z pytaniem badawczym. Kolumny z narzędziem,
+      miarą efektu i werdyktem są na razie puste, bo nie mieliśmy jeszcze
+      kontaktu z danymi."),
 
-    div(class = "lc-figure-panel",
-      h4("Tablica tropów (stan początkowy)"),
+    figure_panel(
+      label = "Ryc. 1.2",
+      title = "Tablica tropów (stan początkowy)",
       tr_board_ui(reveal = character(0), show_verdict = TRUE)
     ),
 
+    lc_p("Tablica zapełni się w rozdziale 5, po pierwszych testach. W rozdziale 6
+      odczytamy ją w całości i zapytamy, co cała wiązka mówi o celu,
+      a w rozdziale 8 wróci jako podsumowanie projektu. Puste pola mają też
+      znaczenie same w sobie: pytania zostały zapisane, zanim zobaczyliśmy
+      jakikolwiek wynik, więc nie da się ich później dopasować do tego,
+      co akurat wyszło."),
+
     lc_h2("sec-05", "Tropy poza naszą wiązką"),
 
-    div(class = "lc-prose",
-      p("Pięć tropów to nasz wybór na dziś, nie pełna lista. Ten sam cel można
-        badać wieloma innymi pytaniami — poniżej kilka przykładów. Zasadą przy
-        własnym projekcie jest dążenie do wyczerpania tematu, a nie zatrzymanie
-        się na pierwszych tropach.")
-    ),
+    lc_p("Pięć tropów to wybór na potrzeby tego wykładu, a nie pełna lista.
+      Ten sam cel można badać wieloma innymi pytaniami. Kilka przykładów
+      zebrano w tabeli."),
 
     uiOutput("ch1_extra_tropy"),
 
+    lc_p("Część z tych tropów da się sprawdzić na naszych danych: wielkość
+      kursu opisuje liczba zapisanych (od 8 do 581 osób), a identyfikator
+      prowadzącego pozwala porównać oceny tej samej osoby na różnych kursach.
+      Pory zajęć, trudności kursu ani dyscypliny w tabeli nie ma; poziom
+      kursu to co innego niż wydział. W projekcie warto dążyć do tego, żeby
+      wiązka obejmowała możliwie wszystkie rozsądne wyjaśnienia, a te,
+      których nie da się sprawdzić, zapisać jako ograniczenia."),
+
     lc_chapter_next("02", "Hipotezy jako tropy",
-      "Mamy cel i wiązkę. Teraz nadajemy każdemu tropowi kształt hipotezy z alternatywnymi wyjaśnieniami.",
+      "Mamy cel i wiązkę. Teraz każdy trop dostaje postać hipotezy badawczej z alternatywnymi wyjaśnieniami.",
       "ch2"),
     div(style = "height: 40px;")
   )))
@@ -126,7 +209,7 @@ ch1_server <- function(input, output, session) {
       tr <- tr_tropy[[id]]
       div(class = "trop-card",
         h4(tr$short),
-        p(tags$strong("Pytanie: "), tr$question)
+        p(tags$strong("Pytanie:"), " ", tr$question)
       )
     })
     div(class = "trop-stack", cards)
@@ -186,35 +269,5 @@ ch1_server <- function(input, output, session) {
     )
     lc_table(out, cols, scroll = TRUE, sticky_first = TRUE,
              label = "Podgląd danych TeachingRatings")
-  })
-
-  output$ch1_data_legend <- renderUI({
-    items <- list(
-      c("eval", "ogólna ocena kursu w ewaluacji studenckiej; główny wynik, ale nie idealna miara jakości"),
-      c("beauty", "ocena atrakcyjności prowadzącego; główny trop dotyczący możliwego obciążenia ocen"),
-      c("gender, age", "cechy prowadzącego, które mogą współwystępować z ocenami"),
-      c("minority", "czy prowadzący należy do grupy mniejszościowej; kluczowa zmienna dla pytań o obciążenie i sprawiedliwość ocen"),
-      c("native, tenure", "status językowy i zawodowy prowadzącego; potencjalne alternatywne wyjaśnienia"),
-      c("division, credits", "cechy kursu: poziom i liczba punktów; kontekst, który może zmieniać oczekiwania"),
-      c("students, allstudents", "liczba odpowiedzi i liczba zapisanych studentów"),
-      c("response.rate", "odsetek studentów, którzy wypełnili ankietę; ważny dla reprezentatywności opinii"),
-      c("prof", "identyfikator prowadzącego; jedna osoba może pojawiać się przy więcej niż jednym kursie")
-    )
-    tagList(
-      lc_status(
-        tags$p(tags$strong("Jak czytać tabelę?")),
-        tags$p("Jedna obserwacja to kurs/ewaluacja. Już na tym etapie pytamy:
-          które kolumny są wynikiem, które są tropem, a które mogą zmieniać interpretację?")
-      ),
-      div(class = "data-legend",
-        lapply(items, function(x) {
-          div(class = "data-legend-item",
-            tags$code(x[[1]]),
-            tags$br(),
-            x[[2]]
-          )
-        })
-      )
-    )
   })
 }

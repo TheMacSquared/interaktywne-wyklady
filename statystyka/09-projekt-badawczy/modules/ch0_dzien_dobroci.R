@@ -1,10 +1,10 @@
-ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Dzień Dziecka", content = tagList(
+ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Dzień Dobroci dla Studenta", content = tagList(
   fluidRow(column(8, offset = 2,
     lc_chapter_hero(
-      kicker = "Rozdział 00 · Dzień Dziecka",
+      kicker = "Rozdział 00 · Dzień Dobroci dla Studenta",
       num = "00",
-      title = "Dzień Dziecka.",
-      lead = "Z okazji Dnia Dziecka uruchamiamy specjalne losowanie nagród
+      title = "Dzień Dobroci dla Studenta.",
+      lead = "Z okazji Dnia Dobroci dla Studenta uruchamiamy specjalne losowanie nagród
               dydaktycznych. Regulamin jest prosty: klikamy, wierzymy w los,
               a potem sprawdzamy, co los wie o statystyce."
     ),
@@ -24,7 +24,7 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Dzień Dziecka", conte
         div(
           class = "child-wheel",
           id = "child-wheel",
-          `aria-label` = "Dzień Dziecka z nagrodami",
+          `aria-label` = "Koło nagród na Dzień Dobroci dla Studenta",
           div(class = "child-wheel-label child-wheel-label-0", "kartkówka"),
           div(class = "child-wheel-label child-wheel-label-1", "1 pkt aktywności"),
           div(class = "child-wheel-label child-wheel-label-2", "2 pkt aktywności"),

@@ -8,18 +8,22 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
               badania: zmienne, hipotezy, alternatywne wyjaśnienia i sposób interpretacji."
     ),
 
-    div(class = "lc-feedback lc-feedback-info",
-      tags$strong("Przypomnienie celu:"),
-      p(tags$em(tr_goal))
-    ),
+    lc_h2("sec-01", "Cztery części konspektu"),
 
-    lc_h2("sec-01", "Co musi znaleźć się w konspekcie?"),
+    lc_p("Rozdziały 1–3 dały trzy elementy projektu: cel badania, wiązkę
+      tropów z alternatywnymi wyjaśnieniami i opis tego, co naprawdę mierzą
+      zmienne. Konspekt składa je w jeden dokument, który powstaje przed
+      analizą. Nie jest jeszcze raportem ani listą testów. To plan, po którego
+      przeczytaniu wiadomo, co dokładnie będzie sprawdzane w danych i jak
+      zostaną odczytane wyniki."),
 
-    div(class = "lc-prose",
-      p("Konspekt nie jest jeszcze raportem i nie jest listą testów. To roboczy
-        plan badania. Powinien być na tyle konkretny, żeby po jego przeczytaniu
-        było wiadomo, co dokładnie będziemy sprawdzać w danych.")
-    ),
+    lc_p("Kolejność ma znaczenie. Gdy pytania i sposób interpretacji zapisuje
+      się przed obejrzeniem wyników, trudniej ulec pokusie, żeby po fakcie
+      wybrać te porównania, które akurat wyszły. Przy wielu tropach
+      sprawdzanych naraz łatwo bowiem o przypadkowo istotny wynik: to problem ",
+      gloss("porównania wielokrotne", "porównań wielokrotnych"), " znany
+      z wykładu 04 (rozdział 9). Konspekt ma cztery części; przy każdej podajemy, jak
+      wygląda ona w naszym projekcie."),
 
     div(class = "proposal-skeleton",
       div(class = "proposal-step",
@@ -28,7 +32,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
           h4("Cel badania"),
           p("Jedno główne ", gloss("pytanie badawcze", "pytanie"), ", które porządkuje cały projekt."),
           div(class = "proposal-example",
-            p(tags$strong("U nas: "), tags$em(tr_goal))
+            p(tags$strong("U nas:"), " ", tags$em(tr_goal))
           )
         )
       ),
@@ -39,7 +43,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
           p("Źródło danych, ", gloss("jednostka obserwacji"), ", ", gloss("zmienna zależna", "zmienna wynikowa"), ", zmienne główne,
             zmienne kontekstowe oraz ograniczenia pomiaru."),
           div(class = "proposal-example",
-            p(tags$strong("U nas: "), "jedna obserwacja to kurs/ewaluacja; mamy oceny,
+            p(tags$strong("U nas:"), " ", "jedna obserwacja to kurs; mamy oceny,
               cechy prowadzących i cechy kursów. ", tags$code("eval"), " jest oceną z ankiety,
               ale nie jest czystą miarą jakości nauczania.")
           )
@@ -52,8 +56,9 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
           p("Każdy trop zapisujemy w tym samym porządku: pytanie, ", gloss("hipoteza badawcza", "hipoteza"), ",
             zmienne do użycia, alternatywne wyjaśnienia i plan interpretacji."),
           div(class = "proposal-example",
-            p(tags$strong("U nas: "), "atrakcyjność, płeć, status native speaker,
-              status mniejszościowy i response rate jako różne tropy interpretacji ", tags$code("eval"), ".")
+            p(tags$strong("U nas:"), " ", "atrakcyjność, płeć, status native speaker,
+              status mniejszościowy i odsetek odpowiedzi (response rate) jako
+              różne tropy interpretacji ", tags$code("eval"), ".")
           )
         )
       ),
@@ -67,21 +72,46 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
       )
     ),
 
+    lc_p("Pierwsze trzy części opisują, co badamy. Czwarta mówi, jak będziemy
+      czytać wyniki, i jest najczęściej pomijana, choć to ona chroni przed
+      wnioskami mocniejszymi, niż pozwalają dane."),
+
     lc_h2("sec-02", "Wypełniony konspekt dla naszych danych"),
 
-    div(class = "lc-figure-panel",
-      h4("Konspekt roboczy"),
+    lc_p("Tak wygląda kompletny konspekt naszego projektu. Część o zmiennych
+      porządkuje kolumny tabeli według ról: zmienna wynikowa, zmienne
+      tropów, kontekst kursu i pozostałe cechy prowadzącego. Przy każdej
+      roli zapisano ograniczenie pomiaru z rozdziału 3. Karty tropów
+      powtarzają układ z rozdziału 2 i dodają listę zmiennych do użycia."),
+
+    figure_panel(
+      label = "Ryc. 4.1",
+      title = "Konspekt roboczy",
       uiOutput("ch4_full_proposal")
     ),
 
+    lc_p("W konspekcie nie ma nazw testów ani żadnych wyników. Nie ma ich
+      celowo: test dobiera się do typu zmiennych i do pytania, a to
+      zrobimy dopiero w rozdziale 5. Jest za to plan interpretacji, który
+      z góry ustala kolejność pracy: najpierw opis, potem każdy trop osobno,
+      potem alternatywne wyjaśnienia, a na końcu zestawienie wszystkich
+      tropów. Ostatni punkt planu przesądza też o formie wniosku. Mamy ",
+      gloss("dane obserwacyjne", "dane obserwacyjne"), ", więc niezależnie
+      od wyników nie pozwolą one stwierdzić,
+      że któraś cecha prowadzącego powoduje wyższe oceny."),
+
     lc_h2("sec-03", "Konspekt własnej pracy"),
 
-    div(class = "lc-figure-panel",
-      h4("Wypełnij konspekt"),
-      div(class = "lc-prose",
-        p("Wypełnijcie pola roboczo. To nie musi być piękny tekst, ale musi być
-          konkretne: cel, zmienne, tropy i plan powinny pasować do siebie.")
-      ),
+    lc_p("Ten sam schemat służy do planowania własnego projektu. W panelu
+      są cztery pola odpowiadające czterem częściom konspektu. Wystarczy
+      wersja robocza, ale konkretna: cel, zmienne, tropy i plan powinny do
+      siebie pasować. Pod polami pojawia się podgląd całości. Wpisany tekst
+      nie jest nigdzie zapisywany, więc przed zamknięciem strony warto
+      go skopiować."),
+
+    figure_panel(
+      label = "Ćwiczenie",
+      title = "Wypełnij konspekt",
       div(class = "proposal-draft-grid",
         textAreaInput("ch4_goal", "Cel badania", height = "120px",
           placeholder = "Chcemy sprawdzić, czy..."),
@@ -94,6 +124,13 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
       ),
       uiOutput("ch4_proposal_preview")
     ),
+
+    lc_p("Gotowy konspekt warto przeczytać tak, jakby napisał go ktoś inny.
+      Czy da się z niego odtworzyć, jakie zmienne zostaną porównane? Czy
+      przy każdej hipotezie jest alternatywne wyjaśnienie? Czy plan
+      interpretacji mówi, co zrobimy, jeśli wynik wyjdzie inaczej, niż
+      zakładamy? Konspekt wróci w rozdziale 8, gdzie dopiszemy do niego
+      wyniki."),
 
     lc_chapter_next("05", "Pierwsze sprawdzenia w danych",
       "Dopiero teraz wybieramy testy i wykresy, bo mamy pełny konspekt badania.",
@@ -124,8 +161,8 @@ ch4_server <- function(input, output, session) {
       list(
         role = "Kontekst kursu",
         vars = "`division`, `credits`, `students`, `allstudents`",
-        meaning = "Informacje o poziomie kursu, liczbie punktów i wielkości grupy.",
-        caveat = "Mogą zmieniać interpretację ocen i response rate; nie są pełnym opisem trudności lub organizacji zajęć."
+        meaning = "Poziom kursu, to, czy jest jednopunktowym kursem fakultatywnym, oraz liczba odpowiedzi i zapisanych.",
+        caveat = "Mogą zmieniać interpretację ocen i odsetka odpowiedzi; nie są pełnym opisem trudności lub organizacji zajęć."
       ),
       list(
         role = "Cechy prowadzącego",
@@ -156,14 +193,14 @@ ch4_server <- function(input, output, session) {
       tr <- tr_tropy[[id]]
       div(class = "proposal-trop",
         h5(paste0("Trop: ", tr$short)),
-        p(tags$strong("Pytanie badawcze: "), tr$question),
-        p(tags$strong("Hipoteza robocza: "), code_html(tr$hypothesis)),
-        p(tags$strong("Zmienne do użycia: "),
+        p(tags$strong("Pytanie badawcze:"), " ", tr$question),
+        p(tags$strong("Hipoteza robocza:"), " ", code_html(tr$hypothesis)),
+        p(tags$strong("Zmienne do użycia:"), " ",
           "wynik: ", tags$code("eval"), "; trop: ", tags$code(tr$var), "."),
-        p(tags$strong("Dostępne dane i braki: "), code_html(tr$data_check)),
+        p(tags$strong("Dostępne dane i braki:"), " ", code_html(tr$data_check)),
         tags$strong("Alternatywne wyjaśnienia:"),
         tags$ul(lapply(tr$alt, tags$li)),
-        p(tags$strong("Co uwzględnić w analizie: "), code_html(tr$plan_check))
+        p(tags$strong("Co uwzględnić w analizie:"), " ", code_html(tr$plan_check))
       )
     })
 
@@ -176,14 +213,13 @@ ch4_server <- function(input, output, session) {
       ),
       div(class = "proposal-preview",
         h4("2. Zmienne, dane i pomiar"),
-        p("Jednostką obserwacji jest kurs/ewaluacja. Dane zawierają oceny studenckie,
+        p("Jednostką obserwacji jest kurs (463 kursy, 94 prowadzących). Dane zawierają oceny studenckie,
           cechy prowadzących i kilka informacji o kontekście kursu."),
         variable_table
       ),
       div(class = "proposal-preview",
         h4("3. Tropy i hipotezy"),
-        p("Poniższe pola są częścią konspektu. Każdy trop dotyczy innego możliwego
-          składnika oceny z ankiety; dopiero razem tworzą plan badania."),
+        p("Pięć tropów; każdy dotyczy innego możliwego składnika oceny z ankiety."),
         div(class = "proposal-trop-list", trop_cards)
       ),
       div(class = "proposal-preview",
@@ -214,7 +250,7 @@ ch4_server <- function(input, output, session) {
     if (length(filled) == 0) {
       return(div(class = "proposal-preview",
         h4("Podgląd konspektu"),
-        p("Wpiszcie roboczą wersję każdej części. Tu pojawi się konspekt projektu.")
+        p("Wpisz roboczą wersję każdej części. Tu pojawi się konspekt projektu.")
       ))
     }
 
@@ -222,7 +258,7 @@ ch4_server <- function(input, output, session) {
       h4("Podgląd konspektu"),
       tags$ol(lapply(names(fields), function(label) {
         value <- clean(fields[[label]])
-        tags$li(tags$strong(paste0(label, ": ")),
+        tags$li(tags$strong(paste0(label, ":")), " ",
           if (nzchar(value)) value else tags$span(class = "tropy-muted", "do uzupełnienia"))
       }))
     )

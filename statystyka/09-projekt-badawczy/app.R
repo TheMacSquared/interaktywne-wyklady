@@ -43,7 +43,7 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch0_dzien_dziecka.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch0_dzien_dobroci.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch1_ciekawosc.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_hipotezy.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch3_pomiar.R"), local = TRUE)
