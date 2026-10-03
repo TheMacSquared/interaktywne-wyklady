@@ -55,25 +55,7 @@ source(file.path(app_dir, "modules", "ch8_konspekt.R"), local = TRUE)
 
 header_extras <- tagList(
   tags$style(HTML("
-    .research-step {
-      background: var(--upwr-panel);
-      border-left: 4px solid var(--upwr-szalwia);
-      padding: 12px 16px;
-      margin: 16px 0;
-      border-radius: 0 6px 6px 0;
-    }
-    .research-step .step-number {
-      display: inline-flex;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      align-items: center;
-      justify-content: center;
-      background: var(--upwr-szalwia);
-      color: #fff;
-      font-weight: 700;
-      margin-right: 8px;
-    }
+
     .construct-map {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -99,63 +81,7 @@ header_extras <- tagList(
       line-height: 1.45;
       color: var(--upwr-ink-soft);
     }
-    .design-option {
-      background: var(--upwr-surface);
-      border: 1px solid var(--upwr-rule);
-      border-radius: 8px;
-      padding: 16px;
-      margin: 12px 0;
-    }
-    .question-card {
-      background: var(--upwr-surface);
-      border: 1px solid var(--upwr-rule);
-      border-radius: 8px;
-      padding: 16px;
-      margin: 12px 0;
-    }
-    .question-card h4 {
-      margin-top: 0;
-      margin-bottom: 8px;
-      font-size: calc(16px * var(--lc-font-scale));
-      color: var(--upwr-ink);
-    }
-    .lecture-goal-card {
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(90deg, rgba(107, 26, 42, 0.14), var(--upwr-panel));
-      border: 1px solid rgba(107, 26, 42, 0.22);
-      border-left: 6px solid var(--upwr-accent);
-      box-shadow: 0 10px 26px rgba(28, 26, 23, 0.08);
-    }
-    .lecture-goal-card::after {
-      content: \"\";
-      position: absolute;
-      top: 16px;
-      right: 18px;
-      width: 52px;
-      height: 52px;
-      border: 1px solid rgba(107, 26, 42, 0.18);
-      border-radius: 50%;
-    }
-    .lecture-goal-label {
-      display: inline-block;
-      margin-bottom: 8px;
-      color: var(--upwr-accent);
-      font-family: var(--upwr-sans);
-      font-size: calc(13px * var(--lc-font-scale));
-      letter-spacing: 0;
-      text-transform: uppercase;
-    }
-    .lecture-goal-question {
-      max-width: 92%;
-      margin-bottom: 16px;
-      color: var(--upwr-ink);
-      font-size: calc(19px * var(--lc-font-scale));
-      line-height: 1.45;
-    }
-    .lecture-goal-card p:last-child {
-      margin-bottom: 0;
-    }
+
     .research-ladder {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -173,11 +99,7 @@ header_extras <- tagList(
       margin-bottom: 6px;
       color: var(--upwr-ink);
     }
-    .two-plot-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
+
     .data-legend {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -200,15 +122,6 @@ header_extras <- tagList(
     .tropy-row-off { opacity: 0.6; }
     .tropy-row-on  { opacity: 1; transition: opacity .25s; }
     .tropy-muted   { color: var(--upwr-ink-subtle); font-style: italic; }
-    .tropy-verdict {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: calc(12px * var(--lc-font-scale));
-    }
-    .tropy-verdict-on  { background: var(--upwr-sage-tint);   color: var(--upwr-sage); }
-    .tropy-verdict-off { background: var(--upwr-accent-tint); color: var(--upwr-accent); }
 
     /* --- Rozłożone karty tropów: wszystkie hipotezy/wyniki naraz --- */
     .trop-stack { display: grid; gap: 14px; margin: 16px 0; }
@@ -358,49 +271,15 @@ header_extras <- tagList(
       line-height: 1.4;
       color: var(--upwr-ink-soft);
     }
-    .control-model-layout {
-      display: grid;
-      grid-template-columns: minmax(180px, 0.9fr) minmax(0, 2.1fr);
-      gap: 18px;
-      align-items: start;
-    }
-    .control-model-sidebar {
-      min-width: 0;
-    }
-    .control-model-sidebar .form-group {
-      margin-bottom: 12px;
-    }
-    .control-model-metrics {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 14px;
-    }
-    .control-model-metrics .lc-stat-box {
-      min-width: 0;
-      padding: 10px 12px;
-    }
-    .control-model-metrics .lc-stat-value {
-      font-size: calc(19px * var(--lc-font-scale));
-      overflow-wrap: anywhere;
-    }
-    .control-model-results {
-      min-width: 0;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 14px;
-    }
+
     @media (max-width: 992px) {
       .construct-map { grid-template-columns: 1fr; }
       .research-ladder { grid-template-columns: 1fr; }
-      .two-plot-grid { grid-template-columns: 1fr; }
+
       .data-legend { grid-template-columns: 1fr; }
       .trop-plan-grid { grid-template-columns: 1fr; }
       .proposal-draft-grid { grid-template-columns: 1fr; }
-      .lecture-goal-question { max-width: 100%; }
-      .lecture-goal-card::after { display: none; }
-      .control-model-layout { grid-template-columns: 1fr; }
-      .control-model-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
     }
     .child-wheel-panel {
       background: var(--upwr-panel);
@@ -547,9 +426,7 @@ header_extras <- tagList(
       font-size: calc(15px * var(--lc-font-scale));
       line-height: 1.35;
     }
-    .child-wheel-note {
-      margin-top: 18px;
-    }
+
     @media (max-width: 700px) {
       .child-wheel-panel { padding: 16px; }
       .child-wheel-stage { width: min(340px, 82vw); }

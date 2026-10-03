@@ -110,21 +110,6 @@ tr_label_term <- function(term) {
   ifelse(is.na(out), term, out)
 }
 
-tr_discussion_box <- function(title, ...) {
-  div(class = "lc-feedback lc-feedback-info",
-    tags$strong(title),
-    tags$ul(...)
-  )
-}
-
-tr_question_card <- function(title, lead, ...) {
-  div(class = "question-card",
-    h4(title),
-    p(lead),
-    tags$ul(...)
-  )
-}
-
 tr_mean_diff <- function(group_var) {
   dat <- tr_data[!is.na(tr_data$eval) & !is.na(tr_data[[group_var]]), ]
   grp <- droplevels(dat[[group_var]])
@@ -428,15 +413,14 @@ tr_board_ui <- function(reveal = tr_trop_order, show_verdict = TRUE) {
   cells <- lapply(tr_trop_order, function(id) {
     row <- tr_board_row(id)
     revealed <- id %in% reveal
-    verdict_cls <- if (row$supported)
-      "tropy-verdict tropy-verdict-on" else "tropy-verdict tropy-verdict-off"
+    verdict_type <- if (row$supported) "ok" else "danger"
     list(
       short = row$short,
       question = row$question,
       test = if (revealed) row$test_name else muted("—"),
       effect = if (revealed) HTML(paste0(row$effect, " · p ", row$p_label))
                else muted("czeka na sprawdzenie"),
-      verdict = if (revealed) tags$span(class = verdict_cls, row$verdict)
+      verdict = if (revealed) lc_verdict(tags$strong(row$verdict), type = verdict_type)
                 else muted("—")
     )
   })
