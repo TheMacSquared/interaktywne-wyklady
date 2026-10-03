@@ -27,7 +27,7 @@
     "Rozkład próbkowy średniej dąży do normalnego, gdy n rośnie — niezależnie od rozkładu populacji.",
 
   # Przedziały ufności ---------------------------------------------------------
-  "przedział ufności"     = "Zakres wartości, który z zadanym prawdopodobieństwem (poziomem ufności) pokrywa nieznany parametr.",
+  "przedział ufności"     = "Zakres wartości wyznaczany metodą, która z zadanym prawdopodobieństwem (poziomem ufności) daje przedział pokrywający nieznany parametr.",
   "poziom ufności"        = "Prawdopodobieństwo, że przedział ufności pokryje prawdziwy parametr. Typowo 95%.",
   "margines błędu"        = "Połowa szerokości przedziału ufności: ±z·SE lub ±t·SE.",
 
