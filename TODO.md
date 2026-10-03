@@ -134,11 +134,6 @@ w statystyce 01–04 i 06, statystyce 2 i analizie ryzyka 01 i 08). Zostało:
   przebudowy — widget prawdopodobnie nie działa poprawnie. Na razie zostaje
   na kropkach (`lc_step_nav()`); przy przebudowie rozważyć
   `lc_step_widget(body = …)` albo schemat redukcji jako wykres.
-- [ ] Do obejrzenia zmiany treści z migracji: nazwy kolorów w opisach
-  dopasowane do ról (statystyka 01 Ryc. 4.2 „zacieniowany pas”, statystyka 03
-  Ryc. 3.1–4.1, statystyka 04 „pionowa linia”); „Losuj …” nie cofa kroku.
-- [ ] Nazwy kroków dłuższe niż 3 słowa (np. „Ta sama średnia, ale…”, „Surowe
-  dane (rug)”) — skrócić przy przeglądzie wykładu.
 - [ ] Sprzątanie: martwe style i JS po starym widgecie (`.ch2-animated-widget`,
   `.ch2-step-btn`, `.ch2-step-stage`) w `statystyka/04-wnioskowanie-statystyczne/app.R`;
   `format_test_result()` w `helpers.R` statystyki 04 formatuje p z przecinkiem.

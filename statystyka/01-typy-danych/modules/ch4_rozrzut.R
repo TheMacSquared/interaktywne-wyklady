@@ -43,7 +43,7 @@ ch4_ui <- list(
       label = "Ryc. 4.1",
       lc_step_widget("ch4_spread",
         title = "Dwie linie autobusowe — ta sama średnia, inny rozrzut",
-        steps = c("Dwie linie", "Ta sama średnia, ale...", "Wychodzisz wcześniej",
+        steps = c("Dwie linie", "Inny rozrzut", "Wychodzisz wcześniej",
                   "Konsekwencje"),
         toolbar = lc_toolbar(
           lc_step_from(3,
@@ -187,7 +187,7 @@ ch4_ui <- list(
       lc_step_widget("ch4_bp",
         title = "Wykres pudełkowy — budowa krok po kroku",
         steps = c("Surowe dane", "Mediana", "Kwartyle i pudełko",
-                  "Wąsy i wartości odstające", "Gotowy wykres"),
+                  "Wąsy i odstające", "Gotowy wykres"),
         toolbar = lc_toolbar(
           lc_action("ch4_bp_new", "Losuj nowe dane", variant = "outline")
         ),

@@ -181,8 +181,8 @@ ch5_ui <- list(
       title = "Test χ² niezależności — krok po kroku",
       uiOutput("ch5_hypothesis_panel"),
       lc_step_widget("ch5_test",
-        steps = c("Tabela obserwowana", "Procenty — co widzimy?",
-                  "Tabela oczekiwana + χ²", "p-wartość i decyzja"),
+        steps = c("Tabela obserwowana", "Procenty w wierszach",
+                  "Oczekiwane i χ²", "p-wartość i decyzja"),
         toolbar = lc_toolbar(
           selectInput("ch5_scenario", "Scenariusz",
             choices = c(
