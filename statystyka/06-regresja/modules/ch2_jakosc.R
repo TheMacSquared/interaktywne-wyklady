@@ -5,7 +5,7 @@
 # Scenariusze widgetu reszt vs fitted — dobrane tak, by pokazać różne wzorce.
 .ch2_resid_specs <- list(
   read_lunch = list(
-    label = "Czytanie ~ lunch (model dobrze działa)",
+    label = "Czytanie ~ dotacje do obiadu (model dobrze działa)",
     x = "lunch", y = "read",
     verdict = "ok",
     title = "Reszty bez wzorca",
@@ -48,7 +48,7 @@
 # Scenariusze widgetu RMSE — modele różnej jakości, ten sam zbiór.
 .ch2_rmse_specs <- list(
   read_lunch = list(
-    label = "Czytanie ~ lunch (najlepsze dopasowanie)",
+    label = "Czytanie ~ dotacje do obiadu (najlepsze dopasowanie)",
     x = "lunch", y = "read"
   ),
   read_income = list(
@@ -168,7 +168,7 @@ ch2_ui <- list(
       przypomina, że normalność reszt nie gwarantuje poprawnego kształtu
       zależności."),
 
-    lc_p("Model z odsetkiem uczniów z subsydiowanym lunchem nie zostawia
+    lc_p("Model z odsetkiem uczniów z dotacją do obiadu nie zostawia
       wzorca: reszty leżą równą chmurą, a ich odchylenie standardowe
       w dolnej, środkowej i górnej trzeciej części wartości przewidywanych
       wynosi 9.5, 9.6 i 9.8 punktu. Model z liczbą uczniów na nauczyciela też
@@ -291,7 +291,7 @@ ch2_ui <- list(
       dokładnie na prostej. W regresji prostej \\(R^2\\) jest równe kwadratowi
       współczynnika korelacji Pearsona z wykładu 04, który już tam nazwaliśmy
       współczynnikiem determinacji. Dla czytania i odsetka uczniów
-      z subsydiowanym lunchem \\(r = -0.88\\), więc \\(R^2 = 0.77\\): model
+      z dotacją do obiadu \\(r = -0.88\\), więc \\(R^2 = 0.77\\): model
       wyjaśnia 77% zmienności wyników czytania między okręgami."),
 
     lc_p("Panel pokazuje trzy zbiory danych z tą samą prawdziwą prostą
@@ -452,7 +452,7 @@ ch2_ui <- list(
     ),
 
     lc_p("Wyniki czytania mają zakres od 604.5 do 704 punktów i odchylenie
-      standardowe około 20 punktów. Model z subsydiowanym lunchem ma
+      standardowe około 20 punktów. Model z dotacją do obiadu ma
       RMSE 9.6 punktu, mniej niż połowę tego odchylenia: znajomość jednej
       zmiennej o połowę zmniejsza typową pomyłkę. Model z liczbą uczniów na
       nauczyciela ma RMSE 19.5, prawie tyle, ile prognoza samą średnią. Obie
@@ -462,7 +462,7 @@ ch2_ui <- list(
       w innych jednostkach: względnych i w punktach testu."),
 
     lc_p("Gdy reszty mają rozkład zbliżony do normalnego, w paśmie ±RMSE wokół
-      prostej mieści się około dwóch trzecich obserwacji. W modelu z lunchem
+      prostej mieści się około dwóch trzecich obserwacji. W modelu z dotacjami do obiadu
       jest to 297 z 420 okręgów, czyli 71%. Czy RMSE jest wystarczająco małe,
       zależy od zastosowania: inna dokładność wystarcza do opisu ogólnej
       zależności, a inna do prognozy dla konkretnej szkoły."),

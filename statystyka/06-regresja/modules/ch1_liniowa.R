@@ -413,7 +413,7 @@ ch1_ui <- list(
       a kolumny opisują m.in. średni dochód w okręgu w tysiącach dolarów,
       wydatki na ucznia, liczbę uczniów na nauczyciela (STR), odsetek uczniów
       uczących się angielskiego jako drugiego języka, odsetek uczniów
-      z dofinansowanym lunchem oraz średnie wyniki testów z czytania
+      z dotacją do obiadu oraz średnie wyniki testów z czytania
       i matematyki. Na tych danych ekonomiści edukacji sprawdzali, czy mniejsze
       klasy poprawiają wyniki."),
 
@@ -433,7 +433,7 @@ ch1_ui <- list(
               "Uczniowie na nauczyciela (STR)" = "student_teacher_ratio",
               "Wydatki na ucznia (expenditure)" = "expenditure",
               "Udział uczniów z angielskim jako drugim językiem (english)" = "english",
-              "Udział lunch subsydiowany (lunch)" = "lunch",
+              "Uczniowie z dotacją do obiadu (lunch)" = "lunch",
               "Komputery" = "computer",
               "Zakres klas (grades)" = "grades"
             ),

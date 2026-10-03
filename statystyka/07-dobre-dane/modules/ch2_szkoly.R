@@ -7,7 +7,7 @@
   expenditure = "Wydatki na ucznia, USD (expenditure)",
   income      = "Średni dochód w okręgu, tys. USD (income)",
   english     = "Uczniowie uczący się angielskiego, % (english)",
-  lunch       = "Uczniowie z dofinansowanym lunchem, % (lunch)",
+  lunch       = "Uczniowie z dotacją do obiadu, % (lunch)",
   students    = "Liczba uczniów (students)",
   teachers    = "Liczba nauczycieli (teachers)",
   calworks    = "Uczniowie z rodzin na zasiłku, % (calworks)"
@@ -32,7 +32,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
       szkolnym 1998–1999. Każdy wiersz to jeden okręg, a 14 kolumn opisuje
       jego wielkość (liczba uczniów i nauczycieli), zasoby (wydatki na ucznia),
       sytuację społeczną (średni dochód, odsetek uczniów uczących się
-      angielskiego, odsetek uczniów z dofinansowanym lunchem i z rodzin na
+      angielskiego, odsetek uczniów z dotacją do obiadu i z rodzin na
       zasiłku) oraz średnie wyniki uczniów klas piątych w standaryzowanym
       teście z czytania i matematyki. Dane zebrał kalifornijski departament
       edukacji, a spopularyzował je podręcznik ekonometrii Stocka i Watsona."),
@@ -54,7 +54,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
       tags$li(tags$code("expenditure"), " — wydatki na ucznia (USD),"),
       tags$li(tags$code("income"), " — średni dochód w okręgu (tys. USD),"),
       tags$li(tags$code("english"), " — odsetek uczniów uczących się angielskiego (%),"),
-      tags$li(tags$code("lunch"), " — odsetek uczniów z dofinansowanym lunchem (%),"),
+      tags$li(tags$code("lunch"), " — odsetek uczniów z dotacją do obiadu (%),"),
       tags$li(tags$code("calworks"), " — odsetek uczniów z rodzin na zasiłku CalWorks (%),"),
       tags$li(tags$code("read"), ", ", tags$code("math"),
         " — średni wynik testu Stanford 9 z czytania i matematyki (pkt).")
@@ -131,7 +131,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
       a prosta rośnie o około 1.9 pkt na każdy tysiąc dolarów dochodu.
       Chmura punktów lekko się jednak wygina: przy najwyższych dochodach
       wyniki rosną wolniej, niż przewiduje prosta. Najsilniejszy związek
-      ma odsetek uczniów z dofinansowanym lunchem (r = -0.88), a najsłabszy
+      ma odsetek uczniów z dotacją do obiadu (r = -0.88), a najsłabszy
       wydatki na ucznia (r = 0.22). Zmienność jest duża we wszystkich
       kolumnach, więc problem braku zmienności z katalogu też nie
       występuje."),

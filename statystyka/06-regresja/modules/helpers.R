@@ -16,7 +16,7 @@
   student_teacher_ratio = "Uczniowie / nauczyciel",
   expenditure = "Wydatki na ucznia",
   english = "Angielski jako drugi język (%)",
-  lunch = "Lunch subsydiowany (%)",
+  lunch = "Uczniowie z dotacją do obiadu (%)",
   computer = "Komputery",
   read = "Wynik: czytanie",
   math = "Wynik: matematyka"

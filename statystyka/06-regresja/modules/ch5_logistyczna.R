@@ -55,7 +55,7 @@ ch5_ui <- list(
     lc_p("Górny wykres w panelu pokazuje oryginalne wyniki i próg, czyli
       jeszcze nie model, tylko definicję Y. Dolny pokazuje prawdopodobieństwa
       zdania, które model logistyczny przypisał okręgom na podstawie dochodu,
-      odsetka uczniów z subsydiowanym lunchem i odsetka uczniów uczących się
+      odsetka uczniów z dotacją do obiadu i odsetka uczniów uczących się
       angielskiego jako drugiego języka."),
 
     figure_panel(
@@ -80,7 +80,7 @@ ch5_ui <- list(
     lc_p("Domyślny próg 656 pkt leży niemal dokładnie w medianie wyników
       (655.75 pkt), więc „zdaje” 208 z 420 okręgów, czyli 49.5%. Na dolnym
       wykresie każdy okręg dostaje własne prawdopodobieństwo. Okręgi zamożne
-      i z małym odsetkiem subsydiowanego lunchu mają prawdopodobieństwa bliskie 1,
+      i z małym odsetkiem dotacji do obiadu mają prawdopodobieństwa bliskie 1,
       biedniejsze bliskie 0, a środek skali zajmują okręgi, o których model
       nie ma pewności. Kolor punktu mówi, jak było naprawdę: wśród okręgów
       z wysokim prawdopodobieństwem zdarzają się takie, które progu nie
@@ -267,8 +267,8 @@ ch5_ui <- list(
     lc_p("OR = 1 oznacza brak związku, OR > 1 wzrost szans, a OR < 1 ich spadek.
       W modelu CASchools z progiem 656 pkt iloraz szans dla dochodu wynosi 1.18.
       Każdy dodatkowy tysiąc dolarów dochodu mnoży szanse zdania przez 1.18,
-      czyli podnosi je o 18%, przy tych samych odsetkach subsydiowanego lunchu
-      i uczniów uczących się angielskiego. Dla lunchu OR wynosi 0.93, a dla
+      czyli podnosi je o 18%, przy tych samych odsetkach dotacji do obiadu
+      i uczniów uczących się angielskiego. Dla dotacji do obiadu OR wynosi 0.93, a dla
       angielskiego 0.92: każdy dodatkowy punkt procentowy obniża szanse
       zdania o około 7–8%. Jak w każdej regresji na danych obserwacyjnych, to
       opis związku, a nie dowód, że dochód sam podnosi wyniki."),
@@ -557,7 +557,7 @@ ch5_server <- function(input, output, session) {
     labels <- c(
       "(Intercept)" = "Stała (szanse wyjściowe, nie OR)",
       "income" = "Dochód okręgu (tys. USD)",
-      "lunch" = "Lunch subsydiowany (%)",
+      "lunch" = "Uczniowie z dotacją do obiadu (%)",
       "english" = "Angielski jako drugi język (%)"
     )
     df <- data.frame(
