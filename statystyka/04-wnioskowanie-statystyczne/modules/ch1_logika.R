@@ -210,7 +210,7 @@ ch1d_ui <- list(
       skazanie niewinnego, w nauce ogłoszenie efektu, którego nie ma.
       Prawdopodobieństwo tego błędu oznaczamy \\(\\alpha\\) i ustalamy je sami,
       wybierając ", gloss("poziom istotności"), ". Najczęściej przyjmuje się
-      \\(\\alpha = 0{,}05\\)."),
+      \\(\\alpha = 0.05\\)."),
 
     lc_p(gloss("błąd drugiego rodzaju", "Błąd II rodzaju"), " to nieodrzucenie H₀,
       która jest fałszywa, czyli przegapiony efekt. W analogii sądowej oznacza
@@ -230,16 +230,16 @@ ch1d_ui <- list(
     )),
 
     lc_p("Oba prawdopodobieństwa są warunkowe i opisują procedurę, a nie pojedynczy
-      wynik, podobnie jak poziom ufności w wykładzie 03. \\(\\alpha = 0{,}05\\)
+      wynik, podobnie jak poziom ufności w wykładzie 03. \\(\\alpha = 0.05\\)
       znaczy, że gdyby H₀ była prawdziwa, test zastosowany do wielu prób
       odrzucałby ją średnio w 5 przypadkach na 100. Nie znaczy, że konkretna
       decyzja jest błędna z prawdopodobieństwem 5%."),
 
     lc_p("Poziom istotności, tak jak poziom ufności, jest umową. Konwencja
-      \\(\\alpha = 0{,}05\\) nie wynika z żadnego twierdzenia. Ustala się ją przed
+      \\(\\alpha = 0.05\\) nie wynika z żadnego twierdzenia. Ustala się ją przed
       analizą danych i dobiera do kosztów pomyłki. Przy planowaniu badań
-      przyjmuje się zwykle także, że moc ma wynosić co najmniej 0,80, czyli
-      \\(\\beta \\leq 0{,}20\\). Schemat poniżej zestawia oba błędy w jednym
+      przyjmuje się zwykle także, że moc ma wynosić co najmniej 0.80, czyli
+      \\(\\beta \\leq 0.20\\). Schemat poniżej zestawia oba błędy w jednym
       obrazie."),
 
     div(style = "text-align: center; margin: 15px 0;",
@@ -288,14 +288,14 @@ ch1d_ui <- list(
       uiOutput("ch1_power_stats")
     ),
 
-    lc_p("Przy ustawieniach startowych (\\(\\alpha = 0{,}05\\), różnica 7 pkt,
-      n = 40) błąd standardowy wynosi 2,06 pkt, a wartości krytyczne leżą przy
-      65,97 i 74,03 pkt. Moc wynosi 92,6%, a \\(\\beta\\) 7,4%. Trzy suwaki
-      pokazują trzy mechanizmy. Zmniejszenie \\(\\alpha\\) do 0,01 odsuwa wartości
-      krytyczne od środka: fałszywych alarmów jest mniej, ale moc spada do 79,7%.
-      Mniejsza różnica zbliża krzywe do siebie: przy 3 pkt moc wynosi tylko 30,9%.
+    lc_p("Przy ustawieniach startowych (\\(\\alpha = 0.05\\), różnica 7 pkt,
+      n = 40) błąd standardowy wynosi 2.06 pkt, a wartości krytyczne leżą przy
+      65.97 i 74.03 pkt. Moc wynosi 92.6%, a \\(\\beta\\) 7.4%. Trzy suwaki
+      pokazują trzy mechanizmy. Zmniejszenie \\(\\alpha\\) do 0.01 odsuwa wartości
+      krytyczne od środka: fałszywych alarmów jest mniej, ale moc spada do 79.7%.
+      Mniejsza różnica zbliża krzywe do siebie: przy 3 pkt moc wynosi tylko 30.9%.
       Większa próba zwęża obie krzywe, bo błąd standardowy maleje jak
-      \\(1/\\sqrt{n}\\): przy n = 10 moc to 39,9%, przy n = 100 ponad 99,9%."),
+      \\(1/\\sqrt{n}\\): przy n = 10 moc to 39.9%, przy n = 100 ponad 99.9%."),
 
     lc_p("Wynika z tego ten sam kompromis co przy czujniku dymu. Przy ustalonej
       próbie zmniejszenie \\(\\alpha\\) zwiększa \\(\\beta\\). Oba błędy naraz
@@ -376,9 +376,9 @@ ch1d_ui <- list(
     ),
 
     lc_p("Przy 40 osobach w grupie losowe różnice mają odchylenie standardowe
-      około 2,9 pkt, a w 95% eksperymentów bez efektu mieszczą się między −5,7
-      a 5,7 pkt. Różnica 7 pkt zdarza się bez efektu rzadko, jej p-wartość wynosi
-      około 0,016. Różnica 4 pkt dałaby p ≈ 0,17, czyli wynik zupełnie zwyczajny
+      około 2.9 pkt, a w 95% eksperymentów bez efektu mieszczą się między -5.7
+      a 5.7 pkt. Różnica 7 pkt zdarza się bez efektu rzadko, jej p-wartość wynosi
+      około 0.016. Różnica 4 pkt dałaby p ≈ 0.17, czyli wynik zupełnie zwyczajny
       w świecie bez efektu. Przy kilkuset symulacjach odsetek bursztynowych
       słupków zbliża się do teoretycznej p-wartości. Przy dziesięciu mocno skacze,
       tak jak pokrycie przedziałów ufności w wykładzie 03."),
@@ -389,7 +389,7 @@ ch1d_ui <- list(
       takie statystyki po kolei: t, χ² i F. p-wartość jest wtedy polem pod krzywą
       tego rozkładu w ogonach, za wartością statystyki obliczoną z próby. Wykres
       poniżej pokazuje to dla statystyki o standardowym rozkładzie normalnym
-      i wyniku 2,17."),
+      i wyniku 2.17."),
 
     figure_panel(
       label = "Ryc. 3.3",
@@ -399,18 +399,18 @@ ch1d_ui <- list(
       )
     ),
 
-    lc_p("Zacieniowane pole w obu ogonach, na lewo od −2,17 i na prawo od 2,17,
-      wynosi 0,030. Tyle wynosi p-wartość tego wyniku w teście dwustronnym. Im
+    lc_p("Zacieniowane pole w obu ogonach, na lewo od -2.17 i na prawo od 2.17,
+      wynosi 0.030. Tyle wynosi p-wartość tego wyniku w teście dwustronnym. Im
       dalej od zera leży statystyka, tym mniejsze pole w ogonach i tym mniejsza
       p-wartość."),
 
     lc_p("Definicja p-wartości jest krótka, ale łatwo ją przekręcić. Sprawdź,
-      którą z trzech interpretacji wyniku p = 0,03 uważasz za poprawną."),
+      którą z trzech interpretacji wyniku p = 0.03 uważasz za poprawną."),
 
     figure_panel(
       label = "Ryc. 3.4",
       title = "Co naprawdę oznacza p-wartość?",
-      p("Załóżmy, że w badaniu wyszło p = 0,03. Które zdanie jest poprawną
+      p("Załóżmy, że w badaniu wyszło p = 0.03. Które zdanie jest poprawną
         interpretacją?"),
       radioButtons("ch1_pvalue_meaning", NULL,
         choices = c(
@@ -428,7 +428,7 @@ ch1d_ui <- list(
       prawdopodobieństwem H₀ jest prawdziwa. P(wynik co najmniej tak skrajny | H₀)
       to inna wielkość niż P(H₀ | wynik), tak jak prawdopodobieństwo, że zawodowy
       koszykarz jest wysoki, to coś innego niż prawdopodobieństwo, że wysoki
-      człowiek jest zawodowym koszykarzem. Z tego samego powodu p = 0,03 nie
+      człowiek jest zawodowym koszykarzem. Z tego samego powodu p = 0.03 nie
       oznacza 3% szans, że wynik jest dziełem przypadku: „wynik jest przypadkowy”
       to tylko inne sformułowanie H₀."),
 
@@ -476,7 +476,7 @@ ch1d_ui <- list(
 
     lc_p("Decyzja testu łączy się bezpośrednio z przedziałami ufności z wykładu 03.
       Poziomowi istotności \\(\\alpha\\) odpowiada poziom ufności
-      \\(1 - \\alpha\\). Test dwustronny na poziomie 0,05 odrzuca H₀ o braku
+      \\(1 - \\alpha\\). Test dwustronny na poziomie 0.05 odrzuca H₀ o braku
       różnicy średnich dokładnie wtedy, gdy odpowiadający mu 95% przedział
       ufności dla różnicy nie obejmuje zera. Przedział mówi przy tym więcej niż
       sam werdykt, bo pokazuje także, jak duża może być różnica."),
@@ -501,8 +501,8 @@ ch1d_ui <- list(
     ),
 
     lc_p("Reguła \\(p < \\alpha\\) wyznacza ostrą granicę, choć siła dowodów
-      zmienia się płynnie. Wyniki p = 0,048 i p = 0,052 prowadzą przy
-      \\(\\alpha = 0{,}05\\) do przeciwnych werdyktów, a przemawiają przeciw H₀
+      zmienia się płynnie. Wyniki p = 0.048 i p = 0.052 prowadzą przy
+      \\(\\alpha = 0.05\\) do przeciwnych werdyktów, a przemawiają przeciw H₀
       niemal tak samo mocno. To kolejny powód, by w raporcie podawać samą
       p-wartość. W kolejnych rozdziałach ten sam schemat — hipotezy, statystyka
       testowa, p-wartość, decyzja — zastosujemy do konkretnych testów, zaczynając
@@ -768,17 +768,17 @@ ch1_server <- function(input, output, session) {
   generate_quiz <- function() {
     scenarios <- list(
       list(p = 0.003, alpha = 0.05,
-           context = "Badanie wpływu kawy na czas reakcji: p = 0,003, α = 0,05"),
+           context = "Badanie wpływu kawy na czas reakcji: p = 0.003, α = 0.05"),
       list(p = 0.12, alpha = 0.05,
-           context = "Czy notatki odręczne dają lepsze wyniki niż notatki na laptopie? p = 0,12, α = 0,05"),
+           context = "Czy notatki odręczne dają lepsze wyniki niż notatki na laptopie? p = 0.12, α = 0.05"),
       list(p = 0.048, alpha = 0.05,
-           context = "Korelacja między długością snu a oceną z egzaminu: p = 0,048, α = 0,05"),
+           context = "Korelacja między długością snu a oceną z egzaminu: p = 0.048, α = 0.05"),
       list(p = 0.06, alpha = 0.01,
-           context = "Czy kierunek studiów wpływa na zarobki po 5 latach? ANOVA: p = 0,06, α = 0,01"),
+           context = "Czy kierunek studiów wpływa na zarobki po 5 latach? ANOVA: p = 0.06, α = 0.01"),
       list(p = 0.001, alpha = 0.01,
-           context = "Czy płeć wpływa na wybór specjalizacji? Test χ²: p = 0,001, α = 0,01"),
+           context = "Czy płeć wpływa na wybór specjalizacji? Test χ²: p = 0.001, α = 0.01"),
       list(p = 0.052, alpha = 0.05,
-           context = "Porównanie skuteczności dwóch metod nauki: p = 0,052, α = 0,05")
+           context = "Porównanie skuteczności dwóch metod nauki: p = 0.052, α = 0.05")
     )
     ch1_quiz_data(scenarios[[sample(length(scenarios), 1)]])
     ch1_quiz_answered(FALSE)
@@ -837,7 +837,7 @@ ch1_server <- function(input, output, session) {
     if (is.null(sc) || is.null(answer)) return(NULL)
 
     correct <- if (sc$p < sc$alpha) "reject" else "fail_to_reject"
-    fmt <- function(x) format(x, decimal.mark = ",")
+    fmt <- function(x) format(x)
     comparison <- paste0("p = ", fmt(sc$p), " ", ifelse(sc$p < sc$alpha, "<", "≥"),
                          " α = ", fmt(sc$alpha))
     if (answer == correct) {

@@ -32,14 +32,14 @@ ch7_ui <- list(
     lc_p("Najprostszy pomysł to wykonać ", gloss("test t", "test t"), " dla każdej
       pary grup. Przy trzech grupach A, B i C są to trzy porównania: A z B, A z C
       oraz B z C. Kłopot leży w tym, co oznacza poziom istotności. Każdy test na
-      poziomie ", withMathJax("\\(\\alpha = 0{,}05\\)"), " ma 5% szans na ",
+      poziomie ", withMathJax("\\(\\alpha = 0.05\\)"), " ma 5% szans na ",
       gloss("błąd pierwszego rodzaju"), ", czyli fałszywy alarm: odrzucenie H₀,
       choć w populacji różnicy nie ma. Te 5% dotyczy jednego testu. Gdy testów
       jest kilka, szansa, że co najmniej jeden z nich da fałszywy alarm, rośnie
       z każdym kolejnym porównaniem. To zjawisko nazywamy problemem ",
       gloss("porównania wielokrotne", "porównań wielokrotnych"), "."),
 
-    lc_p("Przy k grupach liczba par wynosi m = k(k − 1)/2. Jeśli we wszystkich
+    lc_p("Przy k grupach liczba par wynosi m = k(k - 1)/2. Jeśli we wszystkich
       grupach średnia w populacji jest taka sama, a testy potraktujemy w uproszczeniu
       jako niezależne, prawdopodobieństwo co najmniej jednego fałszywego alarmu
       w całej serii wynosi:"),
@@ -70,9 +70,9 @@ ch7_ui <- list(
     ),
 
     lc_p("Dla dwóch grup jest jeden test i ryzyko wynosi dokładnie 5%. Przy trzech
-      grupach mamy 3 pary i ryzyko 14,3%, przy czterech — 6 par i 26,5%, przy
-      pięciu — 10 par i 40,1%. Przy ośmiu grupach, największej liczbie w panelu,
-      28 porównań daje 76,2%: w trzech badaniach na cztery co najmniej jedna para
+      grupach mamy 3 pary i ryzyko 14.3%, przy czterech — 6 par i 26.5%, przy
+      pięciu — 10 par i 40.1%. Przy ośmiu grupach, największej liczbie w panelu,
+      28 porównań daje 76.2%: w trzech badaniach na cztery co najmniej jedna para
       wyjdzie istotna, choć wszystkie grupy pochodzą z populacji o tej samej
       średniej. Liczba par rośnie mniej więcej z kwadratem liczby grup, więc
       ryzyko szybko wymyka się spod kontroli."),
@@ -103,8 +103,8 @@ ch7_ui <- list(
 
     lc_p("Nazwa „analiza wariancji” bierze się ze sposobu działania testu.
       W wykładzie 01, przy porównaniu wzrostu kobiet i mężczyzn, odchylenie
-      standardowe wynosiło 6,0 cm w grupie kobiet i 6,5 cm w grupie mężczyzn,
-      a w całej próbie 8,1 cm. Część rozrzutu całej próby brała się z różnicy
+      standardowe wynosiło 6.0 cm w grupie kobiet i 6.5 cm w grupie mężczyzn,
+      a w całej próbie 8.1 cm. Część rozrzutu całej próby brała się z różnicy
       między grupami, a nie ze zmienności wewnątrz nich. ANOVA zamienia tę
       obserwację w test. Całkowitą zmienność danych rozkłada na zmienność ",
       tags$em("między"), " grupami (jak daleko średnie grup leżą od średniej
@@ -119,12 +119,12 @@ ch7_ui <- list(
     lc_p("Tu \\(\\bar{x}_j\\) i \\(n_j\\) to średnia i liczebność j-tej grupy,
       \\(\\bar{x}\\) — średnia wszystkich n obserwacji. Licznik i mianownik to ",
       gloss("wariancja", "wariancje"), ": sumy kwadratów odchyleń podzielone przez
-      liczby stopni swobody, k − 1 i n − k."),
+      liczby stopni swobody, k - 1 i n − k."),
 
     lc_p("Gdy H₀ jest prawdziwa, średnie grup różnią się tylko przypadkowo. Licznik
       i mianownik mierzą wtedy ten sam losowy szum, więc F wychodzi w okolicach 1.
       Gdy średnie w populacji się różnią, licznik rośnie i F staje się duże. Przy
-      prawdziwej H₀ statystyka F ma rozkład F z k − 1 i n − k stopniami swobody.
+      prawdziwej H₀ statystyka F ma rozkład F z k - 1 i n − k stopniami swobody.
       P-wartość to prawdopodobieństwo, że przy prawdziwej H₀ wypadnie wartość F
       co najmniej tak duża jak obserwowana. Liczy się tylko prawy ogon, bo małe F
       oznacza średnie bliższe sobie, niż wynikałoby z szumu, a to nie przemawia
@@ -219,20 +219,20 @@ ch7_ui <- list(
     ),
 
     lc_p("W domyślnym scenariuszu dane pochodzą z populacji, w których średnie pH
-      wynoszą 4,55 przy 20 °C, 4,30 przy 25 °C i 4,05 przy 30 °C, a odchylenie
-      standardowe wewnątrz każdej grupy to 0,14. Różnica między sąsiednimi
+      wynoszą 4.55 przy 20 °C, 4.30 przy 25 °C i 4.05 przy 30 °C, a odchylenie
+      standardowe wewnątrz każdej grupy to 0.14. Różnica między sąsiednimi
       temperaturami jest prawie dwa razy większa niż rozrzut wewnątrz grupy,
       więc pudełka praktycznie się nie nakładają. Przy n = 160 statystyka ma
-      rozkład F(2, 157), którego wartość krytyczna dla α = 0,05 wynosi około 3,05.
+      rozkład F(2, 157), którego wartość krytyczna dla α = 0.05 wynosi około 3.05.
       W tym scenariuszu F wychodzi zwykle ponad sto, a H₀ jest odrzucana
       w praktycznie każdym losowaniu."),
 
     lc_p("Scenariusz kierunków studiów pokazuje drugą stronę testu. Średnia ocen
-      ma w populacji różne średnie na kierunkach (od 3,4 do 3,8), więc test zwykle
+      ma w populacji różne średnie na kierunkach (od 3.4 do 3.8), więc test zwykle
       tę różnicę wykrywa. Wzrost i czas dojazdu generator losuje niezależnie od
       kierunku: dla tych zmiennych H₀ jest prawdziwa. Test odrzuci ją wtedy średnio
       w co dwudziestym losowaniu. To są fałszywe alarmy, na które godzimy się,
-      wybierając α = 0,05. Brak podstaw do odrzucenia H₀ w pozostałych losowaniach
+      wybierając α = 0.05. Brak podstaw do odrzucenia H₀ w pozostałych losowaniach
       nie dowodzi jednak, że średnie są równe, tylko że dane nie przemawiają
       przeciw tej hipotezie."),
 
@@ -297,7 +297,7 @@ ch7_ui <- list(
       jak przy związku testu z przedziałem z wykładu 03: para różni się istotnie
       dokładnie wtedy, gdy jej przedział nie obejmuje zera (linia przerywana).
       W scenariuszu fermentacji wszystkie trzy pary różnią się istotnie, bo
-      sąsiednie temperatury dzieli w populacji 0,25 pH, a skrajne 0,5.
+      sąsiednie temperatury dzieli w populacji 0.25 pH, a skrajne 0.5.
       Ciekawszy jest scenariusz stanowisk pracy ze zmienną stres. Średnie
       w populacji wynoszą 62 punkty na budowie, 58 w magazynie i 48 w biurze,
       przy odchyleniu standardowym 12. ANOVA jest istotna, ale post hoc zwykle
@@ -431,7 +431,7 @@ ch7_server <- function(input, output, session) {
           tags$tr(tags$td("Grup:"),      tags$td(tags$b(k))),
           tags$tr(tags$td("Testów t:"),  tags$td(tags$b(n_tests))),
           tags$tr(tags$td("Ryzyko ≥ 1 błędu:"),
-                  tags$td(tags$b(paste0(format(fwer_pct, decimal.mark = ","), "%"))))
+                  tags$td(tags$b(paste0(format(fwer_pct), "%"))))
         )
       )
     )
@@ -582,7 +582,7 @@ ch7_server <- function(input, output, session) {
     # Pretty-print p (z gwiazdką przy istotnym)
     fmt_p <- function(p) {
       stars <- if (p < 0.001) " ***" else if (p < 0.01) " **" else if (p < 0.05) " *" else ""
-      txt <- if (p < 0.001) "< 0,001" else sprintf("%.3f", p)
+      txt <- if (p < 0.001) "< 0.001" else sprintf("%.3f", p)
       list(txt = txt, stars = stars, sig = p < 0.05)
     }
 
@@ -630,8 +630,8 @@ ch7_server <- function(input, output, session) {
       tags$tbody(rows),
       tags$caption(style = "caption-side: bottom; font-size: 12px; color: var(--upwr-reference);",
         "p-wartości skorygowane metodą Games-Howella. ",
-        tags$b("*"), " p < 0,05    ", tags$b("**"), " p < 0,01    ",
-        tags$b("***"), " p < 0,001"
+        tags$b("*"), " p < 0.05    ", tags$b("**"), " p < 0.01    ",
+        tags$b("***"), " p < 0.001"
       )
     )
   })
@@ -649,7 +649,7 @@ ch7_server <- function(input, output, session) {
       geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
       geom_vline(xintercept = 0, linetype = "dashed", color = upwr_secondary) +
       scale_color_manual(values = c("TRUE" = col_reject, "FALSE" = col_accept),
-                         labels = c("TRUE" = "p < 0,05", "FALSE" = "p ≥ 0,05"),
+                         labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),
                          name = NULL) +
       labs(x = "Różnica średnich", y = NULL) +
       theme(legend.position = "top")

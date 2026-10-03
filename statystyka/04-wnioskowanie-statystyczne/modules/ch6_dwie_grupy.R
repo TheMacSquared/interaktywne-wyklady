@@ -78,7 +78,7 @@ ch6_ui <- list(
       gloss("p-wartość", "P-wartość"), " to prawdopodobieństwo, że przy
       prawdziwej H₀ dostalibyśmy statystykę co najmniej tak odległą od zera jak
       nasza. Jeśli jest mniejsza niż ustalony przed analizą poziom istotności,
-      zwykle α = 0,05, odrzucamy H₀. Test dwustronny przy α = 0,05 i 95% przedział
+      zwykle α = 0.05, odrzucamy H₀. Test dwustronny przy α = 0.05 i 95% przedział
       ufności dla różnicy z wykładu 03 mają ten sam błąd standardowy i te same
       stopnie swobody, więc dają zgodną odpowiedź: H₀ odrzucamy dokładnie wtedy,
       gdy przedział dla \\(\\mu_1 - \\mu_2\\) nie obejmuje zera."),
@@ -158,7 +158,7 @@ ch6_ui <- list(
 
     lc_p("Przy ustawieniach startowych losujemy 40 kobiet i 40 mężczyzn.
       Dla wzrostu błąd standardowy różnicy wynosi wtedy około
-      \\(\\sqrt{6^2/40 + 7^2/40} \\approx 1{,}5\\) cm, a różnica w populacji
+      \\(\\sqrt{6^2/40 + 7^2/40} \\approx 1.5\\) cm, a różnica w populacji
       to 12 cm, czyli około ośmiu błędów standardowych. Statystyka t wychodzi
       daleko w ogonie rozkładu t, p-wartość jest znikoma i H₀ odrzucamy
       praktycznie przy każdym losowaniu. Podobnie jest z wagą. Znak t zależy tylko
@@ -169,7 +169,7 @@ ch6_ui <- list(
     lc_p("Ciekawiej jest dla średniej ocen i czasu dojazdu. Tu różnica
       w populacji wynosi zero, a mimo to średnie w próbie nigdy nie są równe.
       Zwykle test nie daje podstaw do odrzucenia H₀, ale mniej więcej co
-      dwudzieste losowanie da p < 0,05. To ",
+      dwudzieste losowanie da p < 0.05. To ",
       gloss("błąd pierwszego rodzaju", "błąd pierwszego rodzaju"), " z rozdziału 03,
       którego prawdopodobieństwo ustaliliśmy, wybierając α. Z drugiej strony
       brak podstaw do odrzucenia H₀ nie dowodzi, że średnie są równe.
@@ -227,7 +227,7 @@ ch6_ui <- list(
 
     lc_p("Przy ustawieniach startowych (25 studentów, efekt 5 pkt) różnice mają
       odchylenie standardowe około 8 pkt, więc błąd standardowy średniej
-      różnicy to około \\(8 / \\sqrt{25} = 1{,}6\\) pkt. Efekt 5 pkt to około
+      różnicy to około \\(8 / \\sqrt{25} = 1.6\\) pkt. Efekt 5 pkt to około
       trzech błędów standardowych i test wykrywa go w mniej więcej 85%
       losowań. To jest ", gloss("moc testu", "moc testu"), " z rozdziału 03
       przy tych ustawieniach. Przy efekcie 0 H₀ jest prawdziwa i odrzucamy ją tylko
@@ -244,8 +244,8 @@ ch6_ui <- list(
     lc_p("Gdybyśmy dane z poprzedniego panelu potraktowali jak dwie niezależne
       grupy, test porównywałby średnie przed i po, a za zmienność uznałby całe
       zróżnicowanie studentów. Wyniki przed mają odchylenie 12 pkt, wyniki po
-      około 14 pkt, więc błąd standardowy różnicy wyniósłby około 3,75 pkt
-      zamiast 1,6 pkt. Ten sam efekt 5 pkt dałby t około 1,3 zamiast 3,1
+      około 14 pkt, więc błąd standardowy różnicy wyniósłby około 3.75 pkt
+      zamiast 1.6 pkt. Ten sam efekt 5 pkt dałby t około 1.3 zamiast 3.1
       i zwykle nie byłby istotny. Sparowanie usuwa różnice między osobami,
       bo każda osoba jest porównywana sama ze sobą. Zostaje tylko zmienność
       zmiany. Analiza niesparowana byłaby tu zresztą błędna także formalnie,
@@ -281,12 +281,12 @@ ch6_ui <- list(
       )
     ),
 
-    lc_p("Analiza niesparowana pokazuje średnią 148,8 mmHg przed i 140,9 mmHg
-      po, czyli spadek o prawie 8 mmHg. Test daje t(30) = 2,17 i p = 0,038,
-      więc przy α = 0,05 odrzucamy H₀ i dieta wygląda na skuteczną. Analiza
+    lc_p("Analiza niesparowana pokazuje średnią 148.8 mmHg przed i 140.9 mmHg
+      po, czyli spadek o prawie 8 mmHg. Test daje t(30) = 2.17 i p = 0.038,
+      więc przy α = 0.05 odrzucamy H₀ i dieta wygląda na skuteczną. Analiza
       sparowana mówi coś innego. U 15 pacjentów, którzy wrócili, ciśnienie
-      spadło średnio o 0,9 mmHg (odchylenie różnic 3,9 mmHg), t(14) = −0,86,
-      p = 0,405. Nie ma podstaw do odrzucenia H₀."),
+      spadło średnio o 0.9 mmHg (odchylenie różnic 3.9 mmHg), t(14) = -0.86,
+      p = 0.405. Nie ma podstaw do odrzucenia H₀."),
 
     lc_p("Skąd ta rozbieżność? Pięciu nieobecnych pacjentów miało ciśnienie
       wyjściowe od 161 do 178 mmHg. W analizie niesparowanej podnoszą średnią

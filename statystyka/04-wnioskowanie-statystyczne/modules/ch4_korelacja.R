@@ -47,13 +47,13 @@ ch4_ui <- list(
       średniej w obu zmiennych albo poniżej w obu, dodaje do sumy wartość
       dodatnią. Punkt, który w jednej zmiennej leży powyżej średniej, a w drugiej
       poniżej, dodaje wartość ujemną. Mianownik sprowadza wynik do skali
-      niezależnej od jednostek, dlatego \\(r\\) zawsze leży między −1 a +1
+      niezależnej od jednostek, dlatego \\(r\\) zawsze leży między -1 a +1
       i nie zmienia się, gdy wzrost zapiszemy w metrach zamiast w centymetrach.
       Wartość +1 oznacza, że wszystkie punkty leżą dokładnie na rosnącej prostej,
-      −1 że na malejącej, a 0 brak związku liniowego."),
+      -1 że na malejącej, a 0 brak związku liniowego."),
 
     lc_p("Znak \\(r\\) mówi o kierunku związku. Trzy panele poniżej pokazują
-      po 90 punktów o korelacji −0,6, 0 i +0,6."),
+      po 90 punktów o korelacji -0.6, 0 i +0.6."),
 
     figure_panel(
       label = "Ryc. 6.1",
@@ -66,7 +66,7 @@ ch4_ui <- list(
 
     lc_p("Przy \\(r = 0\\) prosta dopasowana do punktów jest pozioma: znajomość
       \\(x\\) nic nie mówi o tym, czy \\(y\\) wypadnie powyżej, czy poniżej
-      średniej. Przy −0,6 i +0,6 trend widać wyraźnie, choć punkty wciąż
+      średniej. Przy -0.6 i +0.6 trend widać wyraźnie, choć punkty wciąż
       rozpraszają się szeroko wokół prostej. Ten rozrzut opisuje druga
       informacja zawarta w \\(r\\)."),
 
@@ -83,16 +83,16 @@ ch4_ui <- list(
                style = "width: 100%; border-radius: 4px;")
     ),
 
-    lc_p("Przy \\(r = 0{,}31\\) trend ledwie widać w chmurze punktów, przy 0,69
-      jest wyraźny, a przy 0,94 punkty prawie układają się w linię. Kwadrat
+    lc_p("Przy \\(r = 0.31\\) trend ledwie widać w chmurze punktów, przy 0.69
+      jest wyraźny, a przy 0.94 punkty prawie układają się w linię. Kwadrat
       współczynnika ma prostą interpretację: \\(r^2\\) to część zmienności
       \\(y\\), którą da się przypisać liniowemu związkowi z \\(x\\). Nazywa się go ",
       gloss("współczynnik determinacji", "współczynnikiem determinacji"),
-      ". Dla \\(r = 0{,}31\\) to około 10%, dla 0,69 około 48%, a dla 0,94 około
+      ". Dla \\(r = 0.31\\) to około 10%, dla 0.69 około 48%, a dla 0.94 około
       88%. Wrócimy do niego w wykładzie 06 o regresji."),
 
     lc_p("Siła związku to jednak nie to samo co nachylenie prostej. Trzy panele
-      poniżej mają nachylenia 0,4, 0,8 i 1,6, a punkty w każdym równie ciasno
+      poniżej mają nachylenia 0.4, 0.8 i 1.6, a punkty w każdym równie ciasno
       trzymają się prostej."),
 
     figure_panel(
@@ -104,8 +104,8 @@ ch4_ui <- list(
                style = "width: 100%; border-radius: 4px;")
     ),
 
-    lc_p("Mimo czterokrotnej różnicy nachyleń \\(r\\) wynosi w panelach 0,96, 0,96
-      i 0,95. Współczynnik korelacji nie mówi, o ile wzrośnie \\(y\\), gdy \\(x\\)
+    lc_p("Mimo czterokrotnej różnicy nachyleń \\(r\\) wynosi w panelach 0.96, 0.96
+      i 0.95. Współczynnik korelacji nie mówi, o ile wzrośnie \\(y\\), gdy \\(x\\)
       wzrośnie o jednostkę. Mówi tylko, jak ściśle punkty trzymają się prostej.
       Pytanie „o ile?” należy do regresji."),
 
@@ -122,7 +122,7 @@ ch4_ui <- list(
       oznaczanej grecką literą \\(\\rho\\) (ro). Jak każda statystyka z próby,
       \\(r\\) zmienia się od próby do próby. Nawet gdy w populacji związku nie ma
       (\\(\\rho = 0\\)), \\(r\\) z próby prawie nigdy nie wychodzi dokładnie zero.
-      Przy 40 parach obserwacji wartości od −0,31 do 0,31 pojawiają się wtedy
+      Przy 40 parach obserwacji wartości od -0.31 do 0.31 pojawiają się wtedy
       w 95% prób. Test korelacji rozstrzyga, czy obserwowane \\(r\\) leży na tyle
       daleko od zera, że trudno je wytłumaczyć samym losowaniem próby."),
 
@@ -152,14 +152,14 @@ ch4_ui <- list(
       gloss("rozkład t-Studenta"), " o \\(n - 2\\) ",
       gloss("stopnie swobody", "stopniach swobody"), ". Wzór łączy dwa składniki.
       Im większe \\(|r|\\), tym większe \\(|t|\\). Przy tym samym \\(r\\) statystyka
-      rośnie razem z pierwiastkiem z liczebności próby. Ta sama korelacja 0,3
+      rośnie razem z pierwiastkiem z liczebności próby. Ta sama korelacja 0.3
       przy 15 parach obserwacji jest zgodna z przypadkiem, a przy 100 parach
       już nie."),
 
     lc_p("Dalej postępujemy jak w każdym teście. ", gloss("p-wartość", "P-wartość"),
       " to prawdopodobieństwo, że przy prawdziwej H₀ statystyka \\(t\\) wypadnie
       co najmniej tak daleko od zera jak obserwowana. Jeśli jest mniejsza od ",
-      gloss("poziom istotności", "poziomu istotności"), " α = 0,05, ustalonego
+      gloss("poziom istotności", "poziomu istotności"), " α = 0.05, ustalonego
       przed zebraniem danych, odrzucamy H₀. Oprócz \\(r\\), \\(t\\)
       i p-wartości warto podać ", gloss("przedział ufności"),
       " dla \\(\\rho\\). Jak w wykładzie 03, przedział mówi więcej
@@ -219,9 +219,9 @@ ch4_ui <- list(
     lc_h2("ch4-krok", "Test korelacji — krok po kroku"),
 
     lc_p("Panel przeprowadza test dwustronny na danych symulowanych. Każdy
-      scenariusz losuje pary obserwacji z populacji o zadanej korelacji: od 0,45
-      (sen a ocena) do 0,6 (nawadnianie a plon), a w scenariuszu szkoleń BHP
-      −0,55. Kolejne kroki prowadzą od wykresu rozrzutu przez \\(r\\)
+      scenariusz losuje pary obserwacji z populacji o zadanej korelacji: od 0.45
+      (sen a ocena) do 0.6 (nawadnianie a plon), a w scenariuszu szkoleń BHP
+      -0.55. Kolejne kroki prowadzą od wykresu rozrzutu przez \\(r\\)
       i statystykę \\(t\\) do decyzji."),
 
     figure_panel(
@@ -249,18 +249,18 @@ ch4_ui <- list(
       )
     ),
 
-    lc_p("W scenariuszu domyślnym (\\(\\rho = 0{,}45\\), \\(n = 40\\)) wartość
-      krytyczna statystyki \\(t\\) wynosi 2,02, co odpowiada \\(|r|\\) około 0,31.
-      Próba, w której \\(r\\) wyszłoby dokładnie 0,45, dałaby \\(t = 3{,}11\\)
-      i p-wartość 0,004, a więc odrzucenie H₀. Wylosowane \\(r\\) rozrzuca się
-      jednak wokół 0,45: w 90% prób leży między 0,24 a 0,63. Test odrzuca H₀
+    lc_p("W scenariuszu domyślnym (\\(\\rho = 0.45\\), \\(n = 40\\)) wartość
+      krytyczna statystyki \\(t\\) wynosi 2.02, co odpowiada \\(|r|\\) około 0.31.
+      Próba, w której \\(r\\) wyszłoby dokładnie 0.45, dałaby \\(t = 3.11\\)
+      i p-wartość 0.004, a więc odrzucenie H₀. Wylosowane \\(r\\) rozrzuca się
+      jednak wokół 0.45: w 90% prób leży między 0.24 a 0.63. Test odrzuca H₀
       w około 87% prób. W pozostałych związek w populacji istnieje, ale próba
       nie wystarcza, żeby go wykazać. To ",
       gloss("błąd drugiego rodzaju"), " z rozdziału 3. Przy \\(n = 15\\) test
       odrzuca H₀ tylko w około 42% prób, przy \\(n = 100\\) praktycznie zawsze."),
 
     lc_p("Wynik nieistotny zapisujemy więc jako brak podstaw do odrzucenia H₀,
-      a nie jako dowód, że korelacji nie ma. Przy \\(n = 15\\) i \\(\\rho = 0{,}45\\)
+      a nie jako dowód, że korelacji nie ma. Przy \\(n = 15\\) i \\(\\rho = 0.45\\)
       taki wynik pojawia się częściej niż w co drugiej próbie. Odrzucenie H₀
       też mówi niewiele o samej korelacji: tylko tyle, że tak dużego \\(|r|\\)
       trudno się spodziewać, gdy w populacji \\(\\rho = 0\\). Ile wynosi
@@ -294,12 +294,12 @@ ch4_ui <- list(
 
     lc_p("Wartości \\(r\\) i \\(t\\) są w obu panelach identyczne, bo zależą tylko
       od danych. Zmienia się p-wartość. Gdy \\(r\\) ma znak zgodny z Hₐ,
-      jednostronna p-wartość jest połową dwustronnej: dla \\(r = 0{,}45\\)
-      i \\(n = 40\\) wynosi 0,002 zamiast 0,004. Wartość krytyczna spada z 2,02
-      do 1,69, więc do odrzucenia H₀ wystarcza \\(|r|\\) około 0,26 zamiast 0,31."),
+      jednostronna p-wartość jest połową dwustronnej: dla \\(r = 0.45\\)
+      i \\(n = 40\\) wynosi 0.002 zamiast 0.004. Wartość krytyczna spada z 2.02
+      do 1.69, więc do odrzucenia H₀ wystarcza \\(|r|\\) około 0.26 zamiast 0.31."),
 
     lc_p("Ceną jest ślepota na drugi kierunek. Jeśli próba pokaże korelację
-      przeciwnego znaku, nawet silną, jednostronna p-wartość przekroczy 0,5
+      przeciwnego znaku, nawet silną, jednostronna p-wartość przekroczy 0.5
       i H₀ nie odrzucimy. Dlatego kierunek wybiera się przed zebraniem danych,
       na podstawie pytania badawczego. Wybranie go po obejrzeniu wykresu
       dzieliłoby p-wartość na pół bez żadnego uzasadnienia."),
@@ -319,9 +319,9 @@ ch4_ui <- list(
     # --- 1. Kwartet Anscombe'a ---
     lc_p("Pierwszą pokazał statystyk Francis Anscombe w 1973 roku. Zbudował cztery
       zbiory po 11 punktów o niemal identycznych statystykach. W każdym średnia
-      \\(x\\) wynosi 9, średnia \\(y\\) 7,50, wariancja \\(x\\) 11, wariancja
-      \\(y\\) 4,12–4,13, korelacja 0,816–0,817, a prosta regresji to
-      \\(y = 3 + 0{,}5x\\)."),
+      \\(x\\) wynosi 9, średnia \\(y\\) 7.50, wariancja \\(x\\) 11, wariancja
+      \\(y\\) 4.12–4.13, korelacja 0.816–0.817, a prosta regresji to
+      \\(y = 3 + 0.5x\\)."),
 
     figure_panel(
       label = "Ryc. 6.6",
@@ -332,11 +332,11 @@ ch4_ui <- list(
                style = "width: 100%; border-radius: 4px;")
     ),
 
-    lc_p("Tylko zbiór 1 wygląda tak, jak sugeruje \\(r \\approx 0{,}82\\): chmura
+    lc_p("Tylko zbiór 1 wygląda tak, jak sugeruje \\(r \\approx 0.82\\): chmura
       punktów rozproszona wokół prostej. W zbiorze 2 punkty leżą na gładkim łuku,
       związek jest więc niemal doskonały, ale nie liniowy. W zbiorze 3 dziesięć
       punktów leży na jednej prostej (bez jedenastego punktu \\(r\\) wynosiłoby
-      1,000), a jeden punkt odstaje i obniża korelację. W zbiorze 4 dziesięć
+      1.000), a jeden punkt odstaje i obniża korelację. W zbiorze 4 dziesięć
       punktów ma to samo \\(x = 8\\), a całą korelację tworzy jedenasty punkt
       z \\(x = 19\\). Statystyki opisowe i test korelacji nie odróżnią tych
       sytuacji, wykres odróżnia je od razu."),
@@ -361,7 +361,7 @@ ch4_ui <- list(
                style = "max-width: 500px; width: 100%; border-radius: 4px;")
     ),
 
-    lc_p("Choć \\(y\\) jest niemal wyznaczone przez \\(x\\), \\(r\\) wynosi −0,004.
+    lc_p("Choć \\(y\\) jest niemal wyznaczone przez \\(x\\), \\(r\\) wynosi -0.004.
       Lewa połowa wykresu ma trend malejący, prawa rosnący, a iloczyny odchyleń
       w liczniku \\(r\\) z obu połówek wzajemnie się znoszą. Test korelacji nie
       odrzuciłby tu H₀, choć zależność jest bardzo silna. Wartość \\(r\\) bliska
@@ -393,10 +393,10 @@ ch4_ui <- list(
     ),
 
     lc_p("Bez dodatkowego punktu \\(r\\) z 50 obserwacji leży zwykle blisko zera:
-      w 90% losowań między −0,23 a 0,23. Jeden dopisany punkt podnosi je typowo
-      do około 0,52, a w 90% losowań do wartości między 0,39 a 0,63. Drugi taki
-      punkt, położony jeszcze dalej, podnosi \\(r\\) do około 0,8. Przy
-      51 obserwacjach \\(r = 0{,}52\\) daje p-wartość około 0,0001, więc test
+      w 90% losowań między -0.23 a 0.23. Jeden dopisany punkt podnosi je typowo
+      do około 0.52, a w 90% losowań do wartości między 0.39 a 0.63. Drugi taki
+      punkt, położony jeszcze dalej, podnosi \\(r\\) do około 0.8. Przy
+      51 obserwacjach \\(r = 0.52\\) daje p-wartość około 0.0001, więc test
       wskazuje związek, którego w populacji nie ma. Wartości odstającej nie
       usuwa się jednak automatycznie. Najpierw trzeba ustalić, czy to błąd
       pomiaru, czy prawdziwa, nietypowa obserwacja. Bezpieczną praktyką jest
@@ -438,9 +438,9 @@ ch4_ui <- list(
       uiOutput("ch4_simpson_caption")
     ),
 
-    lc_p("W danych połączonych \\(r = -0{,}49\\): wygląda na to, że im więcej
+    lc_p("W danych połączonych \\(r = -0.49\\): wygląda na to, że im więcej
       nauki, tym gorszy wynik. W każdej szkole osobno korelacja jest jednak
-      dodatnia: 0,78 w szkole słabej, 0,62 w średniej i 0,57 w silnej.
+      dodatnia: 0.78 w szkole słabej, 0.62 w średniej i 0.57 w silnej.
       Odwrócenie bierze się z różnic między szkołami. Uczniowie szkoły słabej
       uczą się średnio 24 godziny tygodniowo i zdobywają średnio 47 punktów,
       uczniowie szkoły silnej uczą się 9 godzin i zdobywają 82 punkty, bo

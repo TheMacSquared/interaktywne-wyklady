@@ -103,10 +103,10 @@ ch2_ui <- list(
     hypothesis_practice("ch2", list(
       list(
         question = "Producent deklaruje, że średnia zawartość soli w chlebie
-                    wynosi 1,2 g / 100 g. Chcemy sprawdzić, czy jego deklaracja
+                    wynosi 1.2 g / 100 g. Chcemy sprawdzić, czy jego deklaracja
                     pasuje do rzeczywistości.",
-        h0 = "\\(H_0: \\mu = 1{,}2\\) (zgodnie z deklaracją)",
-        ha = "\\(H_a: \\mu \\neq 1{,}2\\) (odbiega od deklaracji)",
+        h0 = "\\(H_0: \\mu = 1.2\\) (zgodnie z deklaracją)",
+        ha = "\\(H_a: \\mu \\neq 1.2\\) (odbiega od deklaracji)",
         note = "Dwustronny — nie wiemy, w którą stronę może odbiegać."
       ),
       list(
@@ -184,7 +184,7 @@ ch2_ui <- list(
     lc_p("Jak w rozdziale 03, p-wartość to prawdopodobieństwo, że przy
       prawdziwej H₀ statystyka wypadnie co najmniej tak daleko od zera jak
       nasza. Nie jest to prawdopodobieństwo, że H₀ jest prawdziwa. Porównujemy
-      ją z poziomem istotności \\(\\alpha\\). Wartość 0,05 to konwencja, ale
+      ją z poziomem istotności \\(\\alpha\\). Wartość 0.05 to konwencja, ale
       tak jak poziom ufności w wykładzie 03 trzeba ją ustalić przed analizą,
       a nie dobierać do wyniku. Gdy \\(p < \\alpha\\), odrzucamy H₀. Gdy
       \\(p \\geq \\alpha\\), nie mamy podstaw do odrzucenia H₀, co nie znaczy,
@@ -193,12 +193,12 @@ ch2_ui <- list(
     lc_p("Scenariusz koncentracji dobrze pokazuje, co znaczy to ostatnie
       zastrzeżenie. Dane losowane są z populacji o średniej 72 pkt
       i odchyleniu standardowym 13 pkt, więc H₀: μ = 70 jest fałszywa. Przy
-      n = 40 błąd standardowy wynosi około \\(13/\\sqrt{40} \\approx 2{,}06\\)
+      n = 40 błąd standardowy wynosi około \\(13/\\sqrt{40} \\approx 2.06\\)
       pkt, a różnica 2 pkt to średnio mniej niż jeden błąd standardowy.
-      Wartość krytyczna dla df = 39 wynosi 2,02, więc test odrzuca H₀ tylko
+      Wartość krytyczna dla df = 39 wynosi 2.02, więc test odrzuca H₀ tylko
       w około 16% prób. W pozostałych popełnia błąd II rodzaju. Przy n = 100
       moc rośnie do około 33%. W scenariuszu hałasu prawdziwa średnia
-      (87,5 dB) leży ponad pół odchylenia standardowego (4 dB) od normy
+      (87.5 dB) leży ponad pół odchylenia standardowego (4 dB) od normy
       i już przy n = 40 test odrzuca H₀ w około 97% prób."),
 
     lc_p("Test t i przedział ufności dla średniej z wykładu 03 są zbudowane
@@ -213,7 +213,7 @@ ch2_ui <- list(
 
     lc_p("Test dwustronny na poziomie \\(\\alpha\\) odrzuca H₀: μ = μ₀
       dokładnie wtedy, gdy ", gloss("przedział ufności"), " na poziomie
-      \\(1 - \\alpha\\) nie obejmuje \\(\\mu_0\\). Przy α = 0,05 odpowiada mu
+      \\(1 - \\alpha\\) nie obejmuje \\(\\mu_0\\). Przy α = 0.05 odpowiada mu
       przedział 95%. Przedział mówi przy tym więcej niż sam werdykt: pokazuje
       wszystkie wartości \\(\\mu_0\\), których test by nie odrzucił, a więc
       także to, jak duża może być różnica."),
@@ -251,8 +251,8 @@ ch2_ui <- list(
 
     lc_p("Średnia, odchylenie standardowe i statystyka t są takie same jak
       w teście dwustronnym, bo dane się nie zmieniły. Zmienia się obszar
-      odrzucenia: całe α = 0,05 leży w jednym ogonie, więc wartość krytyczna
-      przy n = 40 (df = 39) spada z 2,02 do 1,68. Zmienia się też p-wartość. Jeśli t
+      odrzucenia: całe α = 0.05 leży w jednym ogonie, więc wartość krytyczna
+      przy n = 40 (df = 39) spada z 2.02 do 1.68. Zmienia się też p-wartość. Jeśli t
       leży po stronie wskazanej przez Hₐ, p-wartość jednostronna jest
       dokładnie połową dwustronnej. W scenariuszu zużycia wody (prawdziwa
       średnia 158 l przy normie 150 l) test dwustronny przy n = 40 odrzuca
@@ -263,7 +263,7 @@ ch2_ui <- list(
       norma 70 pkt?”,
       a dane pochodzą z populacji o średniej 72 pkt. Średnia z próby zwykle
       wypada więc powyżej 70, t jest dodatnie, a p-wartość lewostronna
-      przekracza 0,5. Test odrzuca H₀ w mniej niż 1% prób, choć średnia
+      przekracza 0.5. Test odrzuca H₀ w mniej niż 1% prób, choć średnia
       naprawdę różni się od normy. Test jednostronny nie widzi odchylenia
       w przeciwną stronę, niezależnie od jego wielkości."),
 
@@ -271,7 +271,7 @@ ch2_ui <- list(
       label = "Zasada",
       "Kierunek testu ustal przed zebraniem danych, na podstawie pytania.
        Wybór strony po obejrzeniu wyników podwaja rzeczywiste ryzyko błędu
-       I rodzaju: przy α = 0,05 faktycznie wynosi ono 10%."
+       I rodzaju: przy α = 0.05 faktycznie wynosi ono 10%."
     ),
 
     # ========================================================================
@@ -296,7 +296,7 @@ ch2_ui <- list(
       h4("Zadanie 1 — Czy wyniki z czytania różnią się od normy 650 pkt?"),
       p("Departament edukacji podaje normę 650 pkt. Przetestuj, czy średni wynik ",
         tags$code("read"), " w okręgach Kalifornii istotnie różni się",
-        " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0,05).
+        " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0.05).
         Co raportowałbyś departamentowi?"),
       lc_action("cas_ch2_ans1", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch2_sol1")

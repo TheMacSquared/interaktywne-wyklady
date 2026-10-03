@@ -105,23 +105,23 @@ ch3_ui <- list(
         question = "Producent deklaruje, że 80% słoików jego dżemu spełnia
                     wymóg minimalnej zawartości owoców. Kontrola sprawdza,
                     czy ten odsetek się zgadza.",
-        h0 = "\\(H_0: p = 0{,}80\\)",
-        ha = "\\(H_a: p \\neq 0{,}80\\)",
+        h0 = "\\(H_0: p = 0.80\\)",
+        ha = "\\(H_a: p \\neq 0.80\\)",
         note = "Dwustronny — interesuje nas każde odchylenie od deklaracji."
       ),
       list(
         question = "W standardowej produkcji 3% opakowań jest wadliwych.
                     Sprawdzamy, czy nowa linia produkcyjna generuje więcej braków.",
-        h0 = "\\(H_0: p \\leq 0{,}03\\) (nie gorzej niż standard)",
-        ha = "\\(H_a: p > 0{,}03\\) (więcej wadliwych)",
+        h0 = "\\(H_0: p \\leq 0.03\\) (nie gorzej niż standard)",
+        ha = "\\(H_a: p > 0.03\\) (więcej wadliwych)",
         note = "Jednostronny (prawostronny) — pytamy tylko o pogorszenie."
       ),
       list(
         question = "Rolnik twierdzi, że kiełkuje mu co najmniej 90% nasion.
                     Chcemy sprawdzić, czy ta deklaracja jest prawdziwa
                     (z perspektywy klienta, który ryzykuje zakup słabszych nasion).",
-        h0 = "\\(H_0: p \\geq 0{,}90\\)",
-        ha = "\\(H_a: p < 0{,}90\\)",
+        h0 = "\\(H_0: p \\geq 0.90\\)",
+        ha = "\\(H_a: p < 0.90\\)",
         note = "Jednostronny (lewostronny) — klienta martwi tylko to, że jest gorzej."
       )
     )),
@@ -139,7 +139,7 @@ ch3_ui <- list(
     lc_p("Panel przeprowadza test dwumianowy na symulowanych danych. Każdy
       scenariusz ma wartość referencyjną \\(p_0\\) i prawdziwy odsetek,
       z którego losowana jest próba. W domyślnym scenariuszu jakości wody
-      \\(p_0 = 0{,}8\\), a próbki pochodzą z populacji, w której normę spełnia
+      \\(p_0 = 0.8\\), a próbki pochodzą z populacji, w której normę spełnia
       85% z nich. H₀ jest więc fałszywa, ale to, czy próba to pokaże, zależy
       od losowania i od \\(n\\). Kolejne kroki pokazują dane, rozkład
       \\(B(n, p_0)\\) przy prawdziwej H₀ i wyniki składające się na
@@ -169,28 +169,28 @@ ch3_ui <- list(
       )
     ),
 
-    lc_p("Przy \\(n = 50\\) i \\(p_0 = 0{,}8\\) rozkład z kroku 2 ma środek
+    lc_p("Przy \\(n = 50\\) i \\(p_0 = 0.8\\) rozkład z kroku 2 ma środek
       w \\(np_0 = 40\\) sukcesach, a jego odchylenie standardowe wynosi
-      \\(\\sqrt{50 \\cdot 0{,}8 \\cdot 0{,}2} \\approx 2{,}8\\). Prawdziwy
-      odsetek 85% daje średnio 42,5 sukcesu, czyli niecałe jedno odchylenie
+      \\(\\sqrt{50 \\cdot 0.8 \\cdot 0.2} \\approx 2.8\\). Prawdziwy
+      odsetek 85% daje średnio 42.5 sukcesu, czyli niecałe jedno odchylenie
       od środka. Typowa próba trafia więc w gęstą część rozkładu: dla
-      \\(k = 43\\) dwustronna p-wartość wynosi 0,38, a poniżej 0,05 spada
-      dopiero od \\(k = 46\\) (0,033) w górę albo od \\(k = 34\\) w dół.
+      \\(k = 43\\) dwustronna p-wartość wynosi 0.38, a poniżej 0.05 spada
+      dopiero od \\(k = 46\\) (0.033) w górę albo od \\(k = 34\\) w dół.
       Takie wyniki zdarzają się przy prawdziwym odsetku 85% w około 11% prób.
       W pozostałych decyzja brzmi „brak podstaw do odrzucenia H₀”, chociaż
       H₀ jest fałszywa."),
 
     lc_p("Ten przykład dobrze pokazuje, czego brak odrzucenia nie oznacza.
-      Nie dowodzi, że \\(p = 0{,}8\\). Mówi tylko, że 50 próbek nie wystarcza,
+      Nie dowodzi, że \\(p = 0.8\\). Mówi tylko, że 50 próbek nie wystarcza,
       by odróżnić 80% od 85%. Przy \\(n = 200\\) ten sam test wykrywa różnicę
       w około 39% prób, bo rozkład \\(\\hat{p}\\) zwęża się wraz z \\(n\\).
-      To ", gloss("moc testu"), " z rozdziału 03. Próg \\(\\alpha = 0{,}05\\)
+      To ", gloss("moc testu"), " z rozdziału 03. Próg \\(\\alpha = 0.05\\)
       jest przy tym umową ustaloną przed analizą, podobnie jak poziom
       ufności 95% w wykładzie 03."),
 
     lc_p("Wynik testu warto zestawić z 95-procentowym przedziałem
-      Cloppera-Pearsona z wykładu 03, który dla tej próby wynosi od 0,73
-      do 0,94. Obejmuje on \\(p_0 = 0{,}8\\), co zgadza się z decyzją testu:
+      Cloppera-Pearsona z wykładu 03, który dla tej próby wynosi od 0.73
+      do 0.94. Obejmuje on \\(p_0 = 0.8\\), co zgadza się z decyzją testu:
       wartość, której przedział nie wyklucza, nie zostaje odrzucona."),
 
     # ========================================================================
@@ -227,16 +227,16 @@ ch3_ui <- list(
     ),
 
     lc_p("Weźmy próbę, w której normę spełnia 45 z 50 próbek wody. Test
-      dwustronny daje p = 0,079, więc nie odrzuca H₀. Prawostronny,
-      z Hₐ: \\(p > 0{,}8\\), daje p = 0,048 i odrzuca. Te same dane prowadzą
+      dwustronny daje p = 0.079, więc nie odrzuca H₀. Prawostronny,
+      z Hₐ: \\(p > 0.8\\), daje p = 0.048 i odrzuca. Te same dane prowadzą
       do różnych decyzji, bo odpowiadają na różne pytania. Jednostronna
       p-wartość nie jest tu dokładnie połową dwustronnej. Rozkład
-      \\(B(50;\\ 0{,}8)\\) jest lewoskośny, a test dwustronny dolicza
+      \\(B(50;\\ 0.8)\\) jest lewoskośny, a test dwustronny dolicza
       z lewego ogona wyniki nie bardziej prawdopodobne niż \\(k = 45\\),
       a nie ich lustrzane odbicie."),
 
     lc_p("Przewaga testu jednostronnego ma swoją cenę, omówioną w rozdziale 02.
-      Test z Hₐ: \\(p > 0{,}8\\) nie zauważy odsetka wyraźnie niższego niż 80%.
+      Test z Hₐ: \\(p > 0.8\\) nie zauważy odsetka wyraźnie niższego niż 80%.
       A jeśli kierunek wybiera się po obejrzeniu danych, prawdopodobieństwo
       fałszywego alarmu przekracza deklarowane α."),
 
@@ -275,13 +275,13 @@ ch3_ui <- list(
     ),
 
     lc_p("Wynik porównania zależy od scenariusza. Przy jakości wody
-      (\\(p_0 = 0{,}8\\), \\(n = 50\\)) i \\(k = 43\\) oba testy dają
-      p = 0,38. Inaczej przy produktach poza normą: \\(p_0 = 0{,}03\\), więc
-      przy \\(n = 50\\) spodziewamy się przy H₀ średnio 1,5 wadliwej sztuki,
-      a rozkład \\(B(50;\\ 0{,}03)\\) jest silnie prawoskośny. Dla \\(k = 4\\)
-      test dwumianowy daje p = 0,063, z-test z poprawką 0,097, a z-test
-      wprost ze wzoru powyżej 0,038. Trzy odpowiedzi na to samo pytanie
-      lądują po obu stronach progu 0,05."),
+      (\\(p_0 = 0.8\\), \\(n = 50\\)) i \\(k = 43\\) oba testy dają
+      p = 0.38. Inaczej przy produktach poza normą: \\(p_0 = 0.03\\), więc
+      przy \\(n = 50\\) spodziewamy się przy H₀ średnio 1.5 wadliwej sztuki,
+      a rozkład \\(B(50;\\ 0.03)\\) jest silnie prawoskośny. Dla \\(k = 4\\)
+      test dwumianowy daje p = 0.063, z-test z poprawką 0.097, a z-test
+      wprost ze wzoru powyżej 0.038. Trzy odpowiedzi na to samo pytanie
+      lądują po obu stronach progu 0.05."),
 
     lc_p("Wniosek jest taki sam jak przy przedziale Walda: im bliżej 0 lub 1
       leży \\(p_0\\) i im mniejsza jest próba, tym gorzej działa przybliżenie
@@ -343,7 +343,7 @@ ch3_ui <- list(
       h4("Zadanie A — Czy większość okręgów obejmuje klasy tylko do 6.?"),
       p("Okręgi dzielą się na szkoły klas KK-06 i KK-08. Przetestuj
         dwustronnie, czy odsetek okręgów KK-06 różni się od 50%.
-        Sformułuj H₀ i Hₐ, oblicz p-wartość testem dwumianowym (α = 0,05).
+        Sformułuj H₀ i Hₐ, oblicz p-wartość testem dwumianowym (α = 0.05).
         Jak interpretujesz wynik?"),
       lc_action("cas_ch3_ans_a", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch3_sol_a")
@@ -383,7 +383,7 @@ ch3_ui <- list(
 
 # Liczba z przecinkiem dziesiętnym do tekstów rozwiązań.
 .ch3_dec <- function(x, digits) {
-  formatC(x, format = "f", digits = digits, decimal.mark = ",")
+  formatC(x, format = "f", digits = digits)
 }
 
 # ============================================================================
@@ -399,55 +399,55 @@ ch3_server <- function(input, output, session) {
       success_label = "spełnia normę", failure_label = "nie spełnia",
       title = "Jakość próbek wody",
       question = "Czy odsetek próbek spełniających normy różni się od deklarowanych 80%?",
-      h0_text = "\\(H_0: p = 0{,}80\\) (odsetek zgodny z deklaracją)",
-      h1_text = "\\(H_a: p \\neq 0{,}80\\) (odsetek odbiega od deklaracji)",
+      h0_text = "\\(H_0: p = 0.80\\) (odsetek zgodny z deklaracją)",
+      h1_text = "\\(H_a: p \\neq 0.80\\) (odsetek odbiega od deklaracji)",
       question_1s = "Czy odsetek próbek spełniających normy jest wyższy niż 80%?",
-      h0_text_1s = "\\(H_0: p \\leq 0{,}80\\)",
-      h1_text_1s = "\\(H_a: p > 0{,}80\\)",
+      h0_text_1s = "\\(H_0: p \\leq 0.80\\)",
+      h1_text_1s = "\\(H_a: p > 0.80\\)",
       alt_1s = "greater"),
     exam_pass = list(
       p0 = 0.60, p_true = 0.68, n_default = 50,
       success_label = "zdał", failure_label = "nie zdał",
       title = "Zdawalność egzaminu",
       question = "Czy zdawalność różni się od 60% (wartość historyczna)?",
-      h0_text = "\\(H_0: p = 0{,}60\\) (zdawalność typowa)",
-      h1_text = "\\(H_a: p \\neq 0{,}60\\) (zdawalność odbiega od normy)",
+      h0_text = "\\(H_0: p = 0.60\\) (zdawalność typowa)",
+      h1_text = "\\(H_a: p \\neq 0.60\\) (zdawalność odbiega od normy)",
       question_1s = "Czy zdawalność jest wyższa niż historyczne 60%?",
-      h0_text_1s = "\\(H_0: p \\leq 0{,}60\\)",
-      h1_text_1s = "\\(H_a: p > 0{,}60\\)",
+      h0_text_1s = "\\(H_0: p \\leq 0.60\\)",
+      h1_text_1s = "\\(H_a: p > 0.60\\)",
       alt_1s = "greater"),
     germination = list(
       p0 = 0.90, p_true = 0.86, n_default = 50,
       success_label = "wykiełkowało", failure_label = "nie wykiełkowało",
       title = "Kiełkowalność nasion",
       question = "Czy kiełkowalność partii nasion różni się od deklarowanych 90%?",
-      h0_text = "\\(H_0: p = 0{,}90\\) (kiełkowalność zgodna z deklaracją)",
-      h1_text = "\\(H_a: p \\neq 0{,}90\\) (kiełkowalność odbiega)",
+      h0_text = "\\(H_0: p = 0.90\\) (kiełkowalność zgodna z deklaracją)",
+      h1_text = "\\(H_a: p \\neq 0.90\\) (kiełkowalność odbiega)",
       question_1s = "Czy kiełkowalność jest niższa niż deklarowane 90%?",
-      h0_text_1s = "\\(H_0: p \\geq 0{,}90\\)",
-      h1_text_1s = "\\(H_a: p < 0{,}90\\)",
+      h0_text_1s = "\\(H_0: p \\geq 0.90\\)",
+      h1_text_1s = "\\(H_a: p < 0.90\\)",
       alt_1s = "less"),
     defects = list(
       p0 = 0.03, p_true = 0.06, n_default = 50,
       success_label = "poza normą", failure_label = "w normie",
       title = "Kontrola jakości produktów",
       question = "Czy odsetek produktów niespełniających normy różni się od dopuszczalnych 3%?",
-      h0_text = "\\(H_0: p = 0{,}03\\) (odsetek wadliwych zgodny z normą)",
-      h1_text = "\\(H_a: p \\neq 0{,}03\\) (odsetek odbiega od normy)",
+      h0_text = "\\(H_0: p = 0.03\\) (odsetek wadliwych zgodny z normą)",
+      h1_text = "\\(H_a: p \\neq 0.03\\) (odsetek odbiega od normy)",
       question_1s = "Czy odsetek produktów poza normą przekracza dopuszczalne 3%?",
-      h0_text_1s = "\\(H_0: p \\leq 0{,}03\\)",
-      h1_text_1s = "\\(H_a: p > 0{,}03\\)",
+      h0_text_1s = "\\(H_0: p \\leq 0.03\\)",
+      h1_text_1s = "\\(H_a: p > 0.03\\)",
       alt_1s = "greater"),
     helmets = list(
       p0 = 0.95, p_true = 0.88, n_default = 80,
       success_label = "nosi kask", failure_label = "bez kasku",
       title = "Używanie kasków na budowie",
       question = "Czy odsetek pracowników używających kasków odbiega od zakładanych 95%?",
-      h0_text = "\\(H_0: p = 0{,}95\\) (odsetek zgodny z wymaganiem)",
-      h1_text = "\\(H_a: p \\neq 0{,}95\\) (odsetek odbiega od wymagania)",
+      h0_text = "\\(H_0: p = 0.95\\) (odsetek zgodny z wymaganiem)",
+      h1_text = "\\(H_a: p \\neq 0.95\\) (odsetek odbiega od wymagania)",
       question_1s = "Czy odsetek pracowników używających kasków jest niższy niż wymagane 95%?",
-      h0_text_1s = "\\(H_0: p \\geq 0{,}95\\)",
-      h1_text_1s = "\\(H_a: p < 0{,}95\\)",
+      h0_text_1s = "\\(H_0: p \\geq 0.95\\)",
+      h1_text_1s = "\\(H_a: p < 0.95\\)",
       alt_1s = "less")
   )
 
@@ -764,13 +764,13 @@ ch3_server <- function(input, output, session) {
            ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
     })
     lc_feedback(type = "ok", style = "margin-top: 10px;",
-      p(tags$b("H₀:"), " p_KK06 = 0,5 · ", tags$b("Hₐ:"), " p_KK06 ≠ 0,5"),
+      p(tags$b("H₀:"), " p_KK06 = 0.5 · ", tags$b("Hₐ:"), " p_KK06 ≠ 0.5"),
       tags$ul(
         tags$li(sprintf("k = %d, n = %d, p̂ = %s (%s%%)",
                         r$k, r$n, .ch3_dec(r$p_obs, 3), .ch3_dec(100 * r$p_obs, 1))),
         tags$li(sprintf("p %s %s (test dwumianowy, dwustronny)",
           if (r$p_val < 0.001) "<" else "=",
-          if (r$p_val < 0.001) "0,001" else .ch3_dec(r$p_val, 4))),
+          if (r$p_val < 0.001) "0.001" else .ch3_dec(r$p_val, 4))),
         tags$li(sprintf("95%% przedział ufności: [%s; %s]",
                         .ch3_dec(r$ci_lo, 3), .ch3_dec(r$ci_hi, 3)))
       ),
@@ -780,11 +780,11 @@ ch3_server <- function(input, output, session) {
         sprintf("%s%% okręgów to szkoły KK-06. %s",
           .ch3_dec(100 * r$p_obs, 1),
           if (r$p_val >= 0.05) {
-            "Dane nie dają podstaw, by twierdzić, że odsetek różni się od 50% (p ≥ 0,05)."
+            "Dane nie dają podstaw, by twierdzić, że odsetek różni się od 50% (p ≥ 0.05)."
           } else if (r$p_obs > 0.5) {
-            "Odsetek istotnie różni się od 50% (p < 0,05): okręgi KK-06 stanowią większość."
+            "Odsetek istotnie różni się od 50% (p < 0.05): okręgi KK-06 stanowią większość."
           } else {
-            "Odsetek istotnie różni się od 50% (p < 0,05), ale w przeciwną stronę, niż sugeruje pytanie: okręgów KK-06 jest wyraźnie mniej niż połowa."
+            "Odsetek istotnie różni się od 50% (p < 0.05), ale w przeciwną stronę, niż sugeruje pytanie: okręgów KK-06 jest wyraźnie mniej niż połowa."
           }))
     )
   })
@@ -808,14 +808,14 @@ ch3_server <- function(input, output, session) {
            ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
     })
     lc_feedback(type = "ok", style = "margin-top: 10px;",
-      p(tags$b("H₀:"), " p_ubóstwo ≤ 0,30 · ",
-        tags$b("Hₐ:"), " p_ubóstwo > 0,30"),
+      p(tags$b("H₀:"), " p_ubóstwo ≤ 0.30 · ",
+        tags$b("Hₐ:"), " p_ubóstwo > 0.30"),
       tags$ul(
         tags$li(sprintf("k = %d okręgów z lunch > 50, n = %d, p̂ = %s (%s%%)",
                         r$k, r$n, .ch3_dec(r$p_obs, 3), .ch3_dec(100 * r$p_obs, 1))),
         tags$li(sprintf("p %s %s (test dwumianowy, prawostronny)",
           if (r$p_val < 0.001) "<" else "=",
-          if (r$p_val < 0.001) "0,001" else .ch3_dec(r$p_val, 4))),
+          if (r$p_val < 0.001) "0.001" else .ch3_dec(r$p_val, 4))),
         tags$li(sprintf("Dolna granica jednostronnego 95%% przedziału ufności: %s",
                         .ch3_dec(r$ci_lo, 3)))
       ),
@@ -825,9 +825,9 @@ ch3_server <- function(input, output, session) {
         sprintf("%s%% okręgów ma wysoki poziom ubóstwa (lunch > 50). %s",
           .ch3_dec(100 * r$p_obs, 1),
           if (r$p_val < 0.05) {
-            "Odsetek ten istotnie przekracza normę 30% (p < 0,05)."
+            "Odsetek ten istotnie przekracza normę 30% (p < 0.05)."
           } else {
-            "Dane nie dają podstaw, by twierdzić, że odsetek przekracza normę 30% (p ≥ 0,05)."
+            "Dane nie dają podstaw, by twierdzić, że odsetek przekracza normę 30% (p ≥ 0.05)."
           }))
     )
   })

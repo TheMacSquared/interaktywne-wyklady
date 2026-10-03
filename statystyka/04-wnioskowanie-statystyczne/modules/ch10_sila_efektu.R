@@ -31,11 +31,11 @@ ch10_ui <- list(
     lc_h2("ch10-motywacja", "p-wartość nie mierzy ważności"),
 
     lc_p("Wróćmy do przykładu B4 z wykładu 03. Badanie porównywało IQ w dwóch
-      województwach, po 20 000 osób w każdym. Średnie wyniosły 100,4 i 100,0
+      województwach, po 20 000 osób w każdym. Średnie wyniosły 100.4 i 100.0
       punktu przy odchyleniu standardowym 15. Przedział ufności dla różnicy,
-      [0,11; 0,69] pkt, nie obejmował zera. Test t daje ten sam werdykt:
-      t ≈ 2,67, p ≈ 0,008, więc na poziomie α = 0,05 odrzucamy H₀ o równości
-      średnich. Mimo to różnica 0,4 punktu to około 0,03 odchylenia
+      [0.11, 0.69] pkt, nie obejmował zera. Test t daje ten sam werdykt:
+      t ≈ 2.67, p ≈ 0.008, więc na poziomie α = 0.05 odrzucamy H₀ o równości
+      średnich. Mimo to różnica 0.4 punktu to około 0.03 odchylenia
       standardowego IQ. Wynik jest istotny statystycznie, ale nie ma ",
       gloss("istotność praktyczna", "istotności praktycznej"), "."),
 
@@ -80,13 +80,13 @@ ch10_ui <- list(
       )
     ),
 
-    lc_p("Przy ustawieniach startowych (d = 0,3, po 50 obserwacji w grupie)
-      t = 1,50 i p ≈ 0,14, więc nie mamy podstaw do odrzucenia H₀. Ta sama
-      różnica przy 90 obserwacjach w grupie daje p ≈ 0,046, a przy 300
-      p < 0,001. Krzywe na wykresie przez cały czas wyglądają tak samo, bo
+    lc_p("Przy ustawieniach startowych (d = 0.3, po 50 obserwacji w grupie)
+      t = 1.50 i p ≈ 0.14, więc nie mamy podstaw do odrzucenia H₀. Ta sama
+      różnica przy 90 obserwacjach w grupie daje p ≈ 0.046, a przy 300
+      p < 0.001. Krzywe na wykresie przez cały czas wyglądają tak samo, bo
       efekt się nie zmienia. Zmienia się tylko precyzja, z jaką go mierzymy.
-      Działa to także w drugą stronę: przy 20 obserwacjach w grupie d = 0,8
-      daje p ≈ 0,016, ale d = 0,5 już tylko p ≈ 0,12. Brak istotności przy
+      Działa to także w drugą stronę: przy 20 obserwacjach w grupie d = 0.8
+      daje p ≈ 0.016, ale d = 0.5 już tylko p ≈ 0.12. Brak istotności przy
       małej próbie nie dowodzi, że efektu nie ma. Oznacza jedynie, że próba
       była za mała, żeby odróżnić go od przypadku."),
 
@@ -130,9 +130,9 @@ ch10_ui <- list(
       pierwiastka ze średniej z dwóch wariancji zamiast \\(s_p\\); przy
       równolicznych grupach obie wersje dają ten sam wynik."),
 
-    lc_p("Cohen zaproponował orientacyjne progi: 0,2 to efekt mały, 0,5 średni,
-      a 0,8 duży. Tabela pokazuje, jak wyglądają one w przykładach z panelu
-      poniżej. Różnica IQ z przykładu B4 (d ≈ 0,03) leży daleko poniżej
+    lc_p("Cohen zaproponował orientacyjne progi: 0.2 to efekt mały, 0.5 średni,
+      a 0.8 duży. Tabela pokazuje, jak wyglądają one w przykładach z panelu
+      poniżej. Różnica IQ z przykładu B4 (d ≈ 0.03) leży daleko poniżej
       progu efektu małego."),
 
     tags$table(class = "lc-table lc-table-bordered",
@@ -141,12 +141,12 @@ ch10_ui <- list(
         tags$th("Wielkość efektu"), tags$th("|d|"), tags$th("Przykład")
       )),
       tags$tbody(
-        tags$tr(tags$td("mały"),   tags$td("0,2"),
-                tags$td("pH jogurtu 4,50 i 4,56 przy SD 0,30")),
-        tags$tr(tags$td("średni"), tags$td("0,5"),
-                tags$td("wilgotność suszu 20,0% i 22,5% przy SD 5")),
-        tags$tr(tags$td("duży"),   tags$td("0,8"),
-                tags$td("czas inaktywacji enzymów 8 i 10 min przy SD 2,5"))
+        tags$tr(tags$td("mały"),   tags$td("0.2"),
+                tags$td("pH jogurtu 4.50 i 4.56 przy SD 0.30")),
+        tags$tr(tags$td("średni"), tags$td("0.5"),
+                tags$td("wilgotność suszu 20.0% i 22.5% przy SD 5")),
+        tags$tr(tags$td("duży"),   tags$td("0.8"),
+                tags$td("czas inaktywacji enzymów 8 i 10 min przy SD 2.5"))
       )
     ),
 
@@ -167,10 +167,10 @@ ch10_ui <- list(
             selected = "TZ"
           ),
           lc_segmented("ch10_d_level", "Wielkość efektu", choices = c(
-              "d = 0,2 (mały)"      = "0.2",
-              "d = 0,5 (średni)"    = "0.5",
-              "d = 0,8 (duży)"      = "0.8",
-              "d = 1,2 (b. duży)"   = "1.2"
+              "d = 0.2 (mały)"      = "0.2",
+              "d = 0.5 (średni)"    = "0.5",
+              "d = 0.8 (duży)"      = "0.8",
+              "d = 1.2 (b. duży)"   = "1.2"
             ), selected = "0.5")
         ),
         column(8,
@@ -181,11 +181,11 @@ ch10_ui <- list(
     ),
 
     lc_p("Nawet efekt średni oznacza silnie zachodzące na siebie rozkłady.
-      Przy d = 0,5 krzywe dzielą około 80% powierzchni, a losowo wybrana
+      Przy d = 0.5 krzywe dzielą około 80% powierzchni, a losowo wybrana
       obserwacja z grupy o wyższej średniej przewyższa losowo wybraną
-      obserwację z drugiej grupy w około 64% przypadków. Przy d = 0,2 to
-      tylko 56%, czyli niewiele więcej niż rzut monetą, a przy d = 0,8 około
-      71%. Dopiero przy d = 1,2 wspólna część rozkładów spada do mniej więcej
+      obserwację z drugiej grupy w około 64% przypadków. Przy d = 0.2 to
+      tylko 56%, czyli niewiele więcej niż rzut monetą, a przy d = 0.8 około
+      71%. Dopiero przy d = 1.2 wspólna część rozkładów spada do mniej więcej
       połowy. Efekt duży w sensie Cohena nie oznacza więc, że grupy się
       nie pokrywają."),
 
@@ -197,7 +197,7 @@ ch10_ui <- list(
     lc_p("Dla korelacji z rozdziału 06 nie trzeba liczyć osobnej miary.
       Współczynnik ", gloss("korelacja Pearsona", "korelacji Pearsona"),
       " \\(r\\) sam jest miarą siły efektu: nie zależy od n i ma stałą skalę
-      od −1 do +1. Test korelacji sprawdzał tylko, czy r z próby różni się od
+      od -1 do +1. Test korelacji sprawdzał tylko, czy r z próby różni się od
       zera bardziej, niż wynikałoby z przypadku."),
 
     lc_formula_box(withMathJax(
@@ -206,11 +206,11 @@ ch10_ui <- list(
 
     lc_p("Łatwiejszy do interpretacji jest często ",
       gloss("współczynnik determinacji", "kwadrat korelacji r²"), ". Mówi on,
-      jaką część zmienności y wyjaśnia liniowa zależność od x. Przy r = 0,5
-      mamy r² = 0,25: x wyjaśnia 25% zmienności y, a 75% zostaje na inne
+      jaką część zmienności y wyjaśnia liniowa zależność od x. Przy r = 0.5
+      mamy r² = 0.25: x wyjaśnia 25% zmienności y, a 75% zostaje na inne
       czynniki. Pamiętaj, że r mierzy tylko zależność liniową. Silna zależność
       krzywoliniowa może dać r bliskie zeru. Orientacyjne progi Cohena dla |r|
-      to 0,1, 0,3 i 0,5."),
+      to 0.1, 0.3 i 0.5."),
 
     tags$table(class = "lc-table lc-table-bordered",
       style = "font-size: 15px; margin: 10px 0;",
@@ -218,9 +218,9 @@ ch10_ui <- list(
         tags$th("Wielkość efektu"), tags$th("|r|"), tags$th("r²")
       )),
       tags$tbody(
-        tags$tr(tags$td("mała"),    tags$td("0,1"), tags$td("1% zmienności wyjaśnione")),
-        tags$tr(tags$td("średnia"), tags$td("0,3"), tags$td("9% zmienności wyjaśnione")),
-        tags$tr(tags$td("duża"),    tags$td("0,5"), tags$td("25% zmienności wyjaśnione"))
+        tags$tr(tags$td("mała"),    tags$td("0.1"), tags$td("1% zmienności wyjaśnione")),
+        tags$tr(tags$td("średnia"), tags$td("0.3"), tags$td("9% zmienności wyjaśnione")),
+        tags$tr(tags$td("duża"),    tags$td("0.5"), tags$td("25% zmienności wyjaśnione"))
       )
     ),
 
@@ -242,11 +242,11 @@ ch10_ui <- list(
           ),
           radioButtons("ch10_r_level", "Wielkość korelacji:",
             choices = c(
-              "r = 0,1 (mała)"       = "0.1",
-              "r = 0,3 (średnia)"    = "0.3",
-              "r = 0,5 (duża)"       = "0.5",
-              "r = 0,7 (b. duża)"    = "0.7",
-              "r = 0,9 (b. duża)"    = "0.9"
+              "r = 0.1 (mała)"       = "0.1",
+              "r = 0.3 (średnia)"    = "0.3",
+              "r = 0.5 (duża)"       = "0.5",
+              "r = 0.7 (b. duża)"    = "0.7",
+              "r = 0.9 (b. duża)"    = "0.9"
             ),
             selected = "0.5"
           ),
@@ -259,11 +259,11 @@ ch10_ui <- list(
       )
     ),
 
-    lc_p("Przy ustawieniach startowych (zadane r = 0,5) z wylosowanych punktów
-      wychodzi r = 0,55. Trend widać wyraźnie, ale punkty leżą daleko od
-      prostej: x wyjaśnia około jednej czwartej zmienności y. Przy r = 0,3
+    lc_p("Przy ustawieniach startowych (zadane r = 0.5) z wylosowanych punktów
+      wychodzi r = 0.55. Trend widać wyraźnie, ale punkty leżą daleko od
+      prostej: x wyjaśnia około jednej czwartej zmienności y. Przy r = 0.3
       zależność da się jeszcze dostrzec, ale wyjaśnia tylko 9% zmienności,
-      a przy r = 0,1 trudno ją zauważyć na wykresie. Różnica między r zadanym
+      a przy r = 0.1 trudno ją zauważyć na wykresie. Różnica między r zadanym
       a policzonym z 50 punktów przypomina, że r z próby jest
       estymatorem i ma własny rozrzut."),
 
@@ -288,7 +288,7 @@ ch10_ui <- list(
     lc_p("We wzorze \\(r\\) i \\(c\\) oznaczają liczbę wierszy i kolumn tabeli.
       Dla tabeli 2×2 V jest równe współczynnikowi φ (fi). Gdy obie grupy są
       równoliczne, a ogólny odsetek wynosi 50%, φ jest po prostu różnicą
-      odsetków w grupach: V = 0,30 odpowiada na przykład 35% i 65%. Progi
+      odsetków w grupach: V = 0.30 odpowiada na przykład 35% i 65%. Progi
       Cohena zależą od mniejszego wymiaru tabeli."),
 
     tags$table(class = "lc-table lc-table-bordered",
@@ -299,9 +299,9 @@ ch10_ui <- list(
         tags$th("V (min(r, c) = 3, np. 3×3)")
       )),
       tags$tbody(
-        tags$tr(tags$td("mały"),   tags$td("0,10"), tags$td("0,07")),
-        tags$tr(tags$td("średni"), tags$td("0,30"), tags$td("0,21")),
-        tags$tr(tags$td("duży"),   tags$td("0,50"), tags$td("0,35"))
+        tags$tr(tags$td("mały"),   tags$td("0.10"), tags$td("0.07")),
+        tags$tr(tags$td("średni"), tags$td("0.30"), tags$td("0.21")),
+        tags$tr(tags$td("duży"),   tags$td("0.50"), tags$td("0.35"))
       )
     ),
 
@@ -322,10 +322,10 @@ ch10_ui <- list(
             selected = "TZ"
           ),
           lc_segmented("ch10_v_level", "Wielkość efektu", choices = c(
-              "V = 0,10 (mały)"   = "0.10",
-              "V = 0,30 (średni)" = "0.30",
-              "V = 0,50 (duży)"   = "0.50",
-              "V = 0,70 (b. duży)" = "0.70"
+              "V = 0.10 (mały)"   = "0.10",
+              "V = 0.30 (średni)" = "0.30",
+              "V = 0.50 (duży)"   = "0.50",
+              "V = 0.70 (b. duży)" = "0.70"
             ), selected = "0.30"),
           uiOutput("ch10_v_hint")
         ),
@@ -339,8 +339,8 @@ ch10_ui <- list(
     lc_p("Przy ustawieniach startowych pleśń pojawia się na 35% produktów
       w opakowaniu A i na 65% w opakowaniu B. To różnica 30 punktów
       procentowych, a mimo to według progów Cohena jest to dopiero efekt
-      średni. Efekt mały (V = 0,10) oznacza w tym układzie odsetki 45% i 55%,
-      a duży (V = 0,50) 25% i 75%. Przy innych proporcjach grup albo innym
+      średni. Efekt mały (V = 0.10) oznacza w tym układzie odsetki 45% i 55%,
+      a duży (V = 0.50) 25% i 75%. Przy innych proporcjach grup albo innym
       ogólnym odsetku ta sama wartość V odpowiada nieco innej różnicy."),
 
     # ========================================================================
@@ -364,7 +364,7 @@ ch10_ui <- list(
       i η² uogólnione. W jednoczynnikowej ANOVA dla grup
       niezależnych wszystkie trzy warianty są równe zwykłemu η². Różnią się
       dopiero w modelach z kilkoma czynnikami. Orientacyjne progi Cohena to
-      0,01, 0,06 i 0,14."),
+      0.01, 0.06 i 0.14."),
 
     tags$table(class = "lc-table lc-table-bordered",
       style = "font-size: 15px; margin: 10px 0;",
@@ -373,11 +373,11 @@ ch10_ui <- list(
         tags$th("Interpretacja")
       )),
       tags$tbody(
-        tags$tr(tags$td("mały"),   tags$td("0,01"),
+        tags$tr(tags$td("mały"),   tags$td("0.01"),
                 tags$td("czynnik tłumaczy około 1% zmienności")),
-        tags$tr(tags$td("średni"), tags$td("0,06"),
+        tags$tr(tags$td("średni"), tags$td("0.06"),
                 tags$td("czynnik tłumaczy około 6% zmienności")),
-        tags$tr(tags$td("duży"),   tags$td("0,14"),
+        tags$tr(tags$td("duży"),   tags$td("0.14"),
                 tags$td("czynnik tłumaczy co najmniej 14% zmienności"))
       )
     ),
@@ -399,10 +399,10 @@ ch10_ui <- list(
             selected = "TZ"
           ),
           lc_segmented("ch10_eta_level", "Wielkość efektu", choices = c(
-              "η² = 0,01 (mały)"    = "0.01",
-              "η² = 0,06 (średni)"  = "0.06",
-              "η² = 0,14 (duży)"    = "0.14",
-              "η² = 0,30 (b. duży)" = "0.30"
+              "η² = 0.01 (mały)"    = "0.01",
+              "η² = 0.06 (średni)"  = "0.06",
+              "η² = 0.14 (duży)"    = "0.14",
+              "η² = 0.30 (b. duży)" = "0.30"
             ), selected = "0.06"),
           uiOutput("ch10_eta_hint")
         ),
@@ -413,13 +413,13 @@ ch10_ui <- list(
       )
     ),
 
-    lc_p("Przy ustawieniach startowych (η² = 0,06) średnie grup wynoszą 46,9,
-      50 i 53,1 przy odchyleniu standardowym 10 w każdej grupie. Różnice
+    lc_p("Przy ustawieniach startowych (η² = 0.06) średnie grup wynoszą 46.9,
+      50 i 53.1 przy odchyleniu standardowym 10 w każdej grupie. Różnice
       średnich o około 3 jednostki giną w rozrzucie wewnątrz grup i pudełka
-      niemal całkowicie na siebie zachodzą. Dopiero przy η² = 0,30 (średnie
-      42,0, 50 i 58,0) grupy wyraźnie się rozsuwają, choć nadal częściowo
+      niemal całkowicie na siebie zachodzą. Dopiero przy η² = 0.30 (średnie
+      42.0, 50 i 58.0) grupy wyraźnie się rozsuwają, choć nadal częściowo
       się pokrywają. η² policzone z wylosowanych 90 punktów nie musi równać
-      się wartości w populacji. Dla ustawień startowych wynosi 0,02, bo przy
+      się wartości w populacji. Dla ustawień startowych wynosi 0.02, bo przy
       30 obserwacjach w grupie średnie z próby mocno się wahają."),
 
     # ========================================================================
@@ -429,7 +429,7 @@ ch10_ui <- list(
       w latach 60. jako punkt odniesienia na wypadek, gdy nic lepszego nie
       jest dostępne. Nie są bezwzględnym standardem. To, czy efekt jest ważny,
       zależy od dziedziny i od stawki. Lek, który obniża śmiertelność
-      z 10% do 8%, ma według progów Cohena efekt poniżej małego (φ ≈ 0,035),
+      z 10% do 8%, ma według progów Cohena efekt poniżej małego (φ ≈ 0.035),
       a w dużej populacji może uratować wiele osób. Z kolei w ocenie sensorycznej żywności efekt mały bywa
       niezauważalny dla konsumenta. Najlepiej oceniać efekt także w jego
       naturalnych jednostkach: punktach IQ, minutach, tonach z hektara."),
@@ -487,13 +487,13 @@ ch10_server <- function(input, output, session) {
     TZ = list(
       "0.2" = list(
         x1 = 4.50, x2 = 4.56, s = 0.30,
-        kontekst  = "pH jogurtu po fermentacji — różnica 0,06 pH między dwoma zakwasami.",
+        kontekst  = "pH jogurtu po fermentacji — różnica 0.06 pH między dwoma zakwasami.",
         jednostka = "pH",
         etyk1 = "Zakwas A", etyk2 = "Zakwas B"
       ),
       "0.5" = list(
         x1 = 20.0, x2 = 22.5, s = 5.0,
-        kontekst  = "Wilgotność produktu suszonego (%) — bez vs ze stabilizatorem, różnica 2,5 pp.",
+        kontekst  = "Wilgotność produktu suszonego (%) — bez vs ze stabilizatorem, różnica 2.5 pp.",
         jednostka = "%",
         etyk1 = "Bez stabilizatora", etyk2 = "Ze stabilizatorem"
       ),
@@ -505,7 +505,7 @@ ch10_server <- function(input, output, session) {
       ),
       "1.2" = list(
         x1 = 5.0, x2 = 8.6, s = 3.0,
-        kontekst  = "Liczba drożdży (×10⁶/mL) — dwa szczepy hodowlane, różnica 3,6 × 10⁶/mL.",
+        kontekst  = "Liczba drożdży (×10⁶/mL) — dwa szczepy hodowlane, różnica 3.6 × 10⁶/mL.",
         jednostka = "×10⁶/mL",
         etyk1 = "Szczep A", etyk2 = "Szczep B"
       )
@@ -513,7 +513,7 @@ ch10_server <- function(input, output, session) {
     ROL = list(
       "0.2" = list(
         x1 = 5.0, x2 = 5.4, s = 2.0,
-        kontekst  = "Plon pszenicy (t/ha) — kontrola vs nawożenie lekkie, różnica 0,4 t/ha.",
+        kontekst  = "Plon pszenicy (t/ha) — kontrola vs nawożenie lekkie, różnica 0.4 t/ha.",
         jednostka = "t/ha",
         etyk1 = "Kontrola", etyk2 = "Nawożenie lekkie"
       ),
@@ -531,7 +531,7 @@ ch10_server <- function(input, output, session) {
       ),
       "1.2" = list(
         x1 = 5.0, x2 = 8.6, s = 3.0,
-        kontekst  = "Wzrost sadzonek w 30 dni (cm) — kontrola vs fitohormon, różnica 3,6 cm.",
+        kontekst  = "Wzrost sadzonek w 30 dni (cm) — kontrola vs fitohormon, różnica 3.6 cm.",
         jednostka = "cm",
         etyk1 = "Kontrola", etyk2 = "Fitohormon"
       )
@@ -557,7 +557,7 @@ ch10_server <- function(input, output, session) {
       ),
       "1.2" = list(
         x1 = 5.0, x2 = 8.6, s = 3.0,
-        kontekst  = "Sen (godz.) — okres egzaminacyjny vs ferie, różnica 3,6 h.",
+        kontekst  = "Sen (godz.) — okres egzaminacyjny vs ferie, różnica 3.6 h.",
         jednostka = "godz.",
         etyk1 = "Egzaminy", etyk2 = "Ferie"
       )

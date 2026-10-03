@@ -34,7 +34,7 @@ ch5_ui <- list(
       gloss("tabela kontyngencji", "Tabela kontyngencji"), " (krzyżowa) płci
       i kierunku studiów w ankiecie 200 studentów pokazała, że rozkłady kierunków
       u kobiet i mężczyzn są podobne, choć nie identyczne: Informatykę studiuje
-      30,3% kobiet i 29,7% mężczyzn, Psychologię 18,3% kobiet i 22,0% mężczyzn.
+      30.3% kobiet i 29.7% mężczyzn, Psychologię 18.3% kobiet i 22.0% mężczyzn.
       Wtedy wystarczyło stwierdzić, że w tej próbie wybór kierunku niewiele zależy
       od płci. Teraz pytamy o populację: czy takie różnice mogły powstać przez
       przypadek przy losowaniu próby, czy świadczą o rzeczywistym związku."),
@@ -78,7 +78,7 @@ ch5_ui <- list(
 
     lc_p("Gdy H₀ jest prawdziwa, a próba dostatecznie duża, statystyka ta ma
       w przybliżeniu ", gloss("rozkład chi-kwadrat", "rozkład χ²"), " znany
-      z wykładu 02 (rozdz. 4), o df = (r − 1)(c − 1) ",
+      z wykładu 02 (rozdz. 4), o df = (r - 1)(c - 1) ",
       gloss("stopnie swobody", "stopniach swobody"), ", gdzie r i c to liczby
       wierszy i kolumn. Tyle komórek tabeli można wypełnić dowolnie, zanim sumy
       wierszy i kolumn wyznaczą resztę. Pełna niezależność w próbie dałaby χ² = 0,
@@ -116,10 +116,10 @@ ch5_ui <- list(
       odchylenia ważą jednak różnie: komórki z mniejszą liczebnością oczekiwaną,
       tu komórki z mandatem, wnoszą do χ² więcej."),
 
-    lc_p("Przy poziomie istotności α = 0,05, ustalonym jak zwykle przed
+    lc_p("Przy poziomie istotności α = 0.05, ustalonym jak zwykle przed
       spojrzeniem na dane, wartość krytyczna rozkładu χ² z jednym stopniem
-      swobody wynosi 3,84. Obliczone 8,33 leży daleko za nią, a p-wartość
-      wynosi 0,004. Gdyby płeć nie miała związku
+      swobody wynosi 3.84. Obliczone 8.33 leży daleko za nią, a p-wartość
+      wynosi 0.004. Gdyby płeć nie miała związku
       z mandatami, rozbieżność co najmniej tak duża jak w tych danych zdarzałaby
       się mniej więcej w 4 próbach na 1000. Odrzucamy H₀. Test nie mówi natomiast,
       skąd ten związek się bierze. To dane obserwacyjne, więc nie wiemy, czy chodzi
@@ -213,14 +213,14 @@ ch5_ui <- list(
     lc_p("Wróćmy do ankiety z wykładu 01. Tabela płci i czterech kierunków ma
       2 × 4 komórki, więc df = 3. Liczebności obserwowane leżą bardzo blisko
       oczekiwanych, na przykład Informatykę studiują 33 kobiety, a przy
-      niezależności oczekiwalibyśmy 32,7. Statystyka wynosi χ² = 0,47, daleko
-      poniżej wartości krytycznej 7,81, a p-wartość 0,92. Nie ma podstaw do
+      niezależności oczekiwalibyśmy 32.7. Statystyka wynosi χ² = 0.47, daleko
+      poniżej wartości krytycznej 7.81, a p-wartość 0.92. Nie ma podstaw do
       odrzucenia H₀. To nie dowodzi, że płeć i kierunek są niezależne, tylko
       że dane nie przemawiają przeciw niezależności."),
 
     lc_p("Dla tabel 2 × 2 część programów domyślnie stosuje poprawkę Yatesa
       na ciągłość, która nieco zmniejsza statystykę: dla danych o mandatach
-      daje χ² = 7,52 i p = 0,006 zamiast 8,33 i 0,004 ze wzoru. Porównując
+      daje χ² = 7.52 i p = 0.006 zamiast 8.33 i 0.004 ze wzoru. Porównując
       wynik z obliczeniem ręcznym, sprawdź więc, czy poprawka została
       zastosowana. Sam test mówi tylko,
       czy związek istnieje. W którą stronę przebiega, pokazują procenty wierszowe,
@@ -260,11 +260,11 @@ ch5_ui <- list(
 
     lc_p("W domyślnym scenariuszu przy n = 120 na każdy rodzaj opakowania
       przypada średnio 40 prób, a pleśń pojawia się łącznie w około 12% z nich.
-      Oczekiwana liczba spleśniałych opakowań w wierszu wynosi więc około 4,9
+      Oczekiwana liczba spleśniałych opakowań w wierszu wynosi więc około 4.9
       i ostrzeżenie o małych liczebnościach oczekiwanych pojawia się często,
       w symulacji w trzech losowaniach na cztery. Mimo to oba testy prowadzą
       zwykle do tej samej decyzji (w symulacji w 96% prób), a ich p-wartości
-      różnią się typowo o około 0,01. Przy n = 50 różnice są kilkakrotnie
+      różnią się typowo o około 0.01. Przy n = 50 różnice są kilkakrotnie
       większe, a przy n = 300 praktycznie znikają."),
 
     lc_p("Najważniejsze różnice między testami zbiera tabela:"),
@@ -512,7 +512,7 @@ ch5_server <- function(input, output, session) {
         step_num("40"), " mandatów i po ", step_num("60"),
         " kontroli bez mandatu w każdej grupie."),
       "3" = tagList("Każda komórka odbiega o 10: χ² = 10²/40 + 10²/60 + 10²/40 + 10²/60 = ",
-        step_num("8,33"), " (df = 1).")
+        step_num("8.33"), " (df = 1).")
     )
   })
 
@@ -706,7 +706,7 @@ ch5_server <- function(input, output, session) {
 
   # Liczba z przecinkiem dziesiętnym (polski zapis).
   .cas_num <- function(x, digits = 3) {
-    formatC(x, format = "f", digits = digits, decimal.mark = ",")
+    formatC(x, format = "f", digits = digits)
   }
 
   .cas_result_lines <- function(r) {

@@ -221,10 +221,10 @@ ch2h_ui <- list(
       do niego wpada, odrzucamy H₀."),
     lc_p("Prawdopodobieństwo obszaru odrzucenia przy prawdziwej H₀ to ",
       gloss("poziom istotności"), " α. Jest to ryzyko, że odrzucimy H₀, choć
-      jest prawdziwa. Zwyczajowo przyjmuje się α = 0,05. To umowa, którą
+      jest prawdziwa. Zwyczajowo przyjmuje się α = 0.05. To umowa, którą
       ustala się przed analizą, tak jak poziom ufności w wykładzie 03. Oba
       pojęcia są zresztą ze sobą powiązane: poziom ufności 95% odpowiada
-      α = 0,05. W teście dwustronnym α dzielimy na dwa ogony rozkładu, po α/2
+      α = 0.05. W teście dwustronnym α dzielimy na dwa ogony rozkładu, po α/2
       na każdy. W teście jednostronnym całe α leży w ogonie wskazanym
       przez Hₐ."),
     lc_p("Panel pokazuje rozkład statystyki testowej przy prawdziwej H₀
@@ -252,21 +252,21 @@ ch2h_ui <- list(
       )
     ),
 
-    lc_p("Przy α = 0,05 test dwustronny odrzuca H₀, gdy statystyka jest
-      większa niż 1,96 lub mniejsza niż −1,96; w każdym ogonie leży 2,5%
-      rozkładu. Test prawostronny odrzuca H₀ już powyżej 1,645, bo całe 5%
+    lc_p("Przy α = 0.05 test dwustronny odrzuca H₀, gdy statystyka jest
+      większa niż 1.96 lub mniejsza niż -1.96; w każdym ogonie leży 2.5%
+      rozkładu. Test prawostronny odrzuca H₀ już powyżej 1.645, bo całe 5%
       mieści się w jednym ogonie. Lewostronny działa symetrycznie: odrzuca
-      poniżej −1,645. Zmniejszenie α odsuwa granice od środka: przy α = 0,01
-      wynoszą one 2,576 dla testu dwustronnego i 2,326 dla jednostronnego.
-      Zwiększenie α do 0,10 przysuwa je do 1,645 i 1,282."),
-    lc_p("Weźmy statystykę równą 1,8. W teście prawostronnym wpada ona
+      poniżej -1.645. Zmniejszenie α odsuwa granice od środka: przy α = 0.01
+      wynoszą one 2.576 dla testu dwustronnego i 2.326 dla jednostronnego.
+      Zwiększenie α do 0.10 przysuwa je do 1.645 i 1.282."),
+    lc_p("Weźmy statystykę równą 1.8. W teście prawostronnym wpada ona
       w obszar odrzucenia, w dwustronnym nie. Test jednostronny łatwiej więc
       wykrywa efekt w zapowiedzianym kierunku, czyli ma w tym kierunku większą ",
       gloss("moc testu", "moc"), ". Płaci za to ślepotą na kierunek przeciwny:
-      statystyka równa −3 w teście prawostronnym nie prowadzi do odrzucenia H₀,
+      statystyka równa -3 w teście prawostronnym nie prowadzi do odrzucenia H₀,
       choć jest daleko od zera. Stąd wymóg, by kierunek ustalić przed
       zebraniem danych. Kto wybiera ogon po zobaczeniu znaku wyniku,
-      w praktyce odrzuca H₀ zawsze, gdy statystyka wychodzi poza ±1,645.
+      w praktyce odrzuca H₀ zawsze, gdy statystyka wychodzi poza ±1.645.
       Przy prawdziwej H₀ zdarza się to w 10% prób, a nie w deklarowanych 5%."),
 
     inline_callout(
