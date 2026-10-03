@@ -114,7 +114,7 @@ ch1_ui <- list(
       full_width = TRUE,
       lc_step_widget("ch1_corr",
         title = "Jak policzyć regresję z korelacji?",
-        steps = c("Średnie X i Y", "Odchylenia standardowe", "Korelacja r",
+        steps = c("Dane", "Średnie X i Y", "Odchylenia standardowe", "Korelacja r",
                   "Nachylenie b₁", "Wyraz wolny b₀"),
         toolbar = lc_toolbar(
           lc_action("ch1_corr_new", "Nowa próba", icon = "shuffle", variant = "outline")
@@ -447,7 +447,9 @@ ch1_server <- function(input, output, session) {
   # --- Widget: regresja z korelacji ---
   # Krok widgetu (1..5) żyje w przeglądarce; nowa próba nie zmienia kroku.
   ch1_corr_data <- reactiveVal(generate_regression_data(n = 65, beta0 = 8, beta1 = 1.6, sigma = 4))
-  ch1_corr_step <- lc_step_server("ch1_corr", input)$step
+  # Pierwszy krok paska („Dane”) to stan 0 rysunku: sama chmura punktów.
+  ch1_corr_pos <- lc_step_server("ch1_corr", input)$step
+  ch1_corr_step <- reactive(ch1_corr_pos() - 1L)
 
   observeEvent(input$ch1_corr_new, {
     ch1_corr_data(generate_regression_data(n = 65, beta0 = 8, beta1 = 1.6, sigma = 4))
@@ -584,7 +586,11 @@ ch1_server <- function(input, output, session) {
     b1 <- r * sy / sx
     b0 <- y_bar - b1 * x_bar
 
-    stat <- function(label, value) tagList(label, " = ", tags$b(value))
+    if (step == 0) {
+      return(paste0("Chmura ", nrow(df), " punktów: każdy punkt to jedna obserwacja (X, Y)."))
+    }
+
+    stat <- function(label, value) tagList(label, " = ", tags$b(value, .noWS = "outside"))
     stats <- list(
       if (step >= 1) stat("x̄", round(x_bar, 2)),
       if (step >= 1) stat("ȳ", round(y_bar, 2)),
@@ -597,7 +603,7 @@ ch1_server <- function(input, output, session) {
     for (s in stats[-1]) parts <- c(parts, list(", ", s))
 
     tagList(
-      parts, ".",
+      parts, HTML("."),
       if (step >= 5) tagList(" ", "To jest ta sama prosta, którą zwraca klasyczna regresja liniowa dla jednego predyktora. Korelacja ustala kierunek i siłę związku, a iloraz odchyleń standardowych przelicza ją na jednostki X i Y.")
     )
   })
