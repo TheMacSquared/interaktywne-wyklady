@@ -71,7 +71,7 @@ get_population_params <- function(dist_type) {
     "uniform"     = list(mu = 5, sigma = sqrt(100/12)),
     "bimodal"     = list(mu = 5, sigma = sqrt(0.8^2 + 4)),
     "skewed"      = list(mu = 3, sigma = sqrt(2) * 1.5),
-    "u_shape"     = list(mu = 5, sigma = sqrt(10^2 / 4)),
+    "u_shape"     = list(mu = 5, sigma = sqrt(10^2 / 8)),
     "skewed_left" = list(mu = 10 - 2*1.5, sigma = sqrt(2) * 1.5),
     "die"         = list(mu = 3.5, sigma = sqrt(35/12)),
     list(mu = 0, sigma = 1)
@@ -84,7 +84,7 @@ dist_names_pl <- c(
   "exponential" = "Wykładniczy (prawoskośny)",
   "uniform"     = "Jednostajny",
   "bimodal"     = "Dwumodalny",
-  "skewed"      = "Prawoskosńny (Gamma)",
+  "skewed"      = "Prawoskośny (Gamma)",
   "u_shape"     = "U-kształtny (Beta)",
   "skewed_left" = "Lewoskośny",
   "die"         = "Kostka (dyskretny)"
