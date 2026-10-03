@@ -11,30 +11,30 @@ ch3_ui <- list(
       kicker = "Rozdział 03 · Statystyka opisowa",
       num    = "03",
       title  = "Statystyki położenia.",
-      lead   = "Po co nam jedna liczba, skoro mamy 200 obserwacji? Średnia,
-                mediana i moda to trzy różne odpowiedzi na pytanie „jak wygląda
-                typowy student” — zobaczmy, kiedy każda z nich ma sens."
+      lead   = "Dwustu wyników nikt nie przeczyta jeden po drugim. Potrzebujemy jednej
+                liczby, która powie, gdzie leży typowa wartość. Średnia, mediana
+                i percentyle robią to na różne sposoby i każda z nich ma słabe miejsca."
     ),
 
     uiOutput("tracker_ch3"),
 
-    tagList(
-      p(gloss("zmienna ilościowa", "Zmienne ilościowe"), " wymagają nowych narzędzi. Zanim przejdziemy do
-        statystyk, poznajmy podstawową wizualizację — ", gloss("histogram"), ".
-        Potem zbadamy miary położenia: ", gloss("średnia", "średnią"), ", ",
-        gloss("mediana", "medianę"), " i ", gloss("percentyl", "percentyle"), ".")
-    ),
+    lc_p("W poprzednim rozdziale opisywaliśmy zmienne jakościowe: liczyliśmy
+      kategorie i szukaliśmy najczęstszej z nich. ",
+      gloss("zmienna ilościowa", "Zmienne ilościowe"), ", takie jak wzrost czy
+      czas dojazdu, wymagają innych narzędzi, bo ich wartości są liczbami,
+      a nie etykietami. Zaczniemy od tego, żeby takie dane zobaczyć, a potem
+      streścimy je jedną liczbą."),
 
     # ========================================================================
     # WIDGET: Histogram krok po kroku
     # ========================================================================
     lc_h2("ch3-histogram", "Histogram — krok po kroku"),
 
-    tagList(
-      p("Histogram to podstawowy wykres dla ", gloss("zmienna ciągła", "zmiennych ciągłych"), ". Pokazuje
-        jak często występują wartości w poszczególnych
-        przedziałach (binach). Zbudujmy go krok po kroku.")
-    ),
+    lc_p(gloss("histogram", "Histogram"), " to podstawowy wykres dla ",
+      gloss("zmienna ciągła", "zmiennych ciągłych"), ". Zakres wartości dzielimy
+      na przedziały równej szerokości (biny), a wysokość słupka nad przedziałem
+      pokazuje, ile obserwacji do niego wpadło. Poniżej budujemy histogram
+      krok po kroku na danych z ankiety 200 studentów."),
 
     figure_panel(
       label = "Ryc. 3.1",
@@ -57,25 +57,32 @@ ch3_ui <- list(
       )
     ),
 
-    tagList(
-      p("Histogram pokazuje kształt rozkładu, ale nie daje jednej liczby
-        opisującej 'środek'. Do tego służą statystyki położenia:
-        średnia, mediana i percentyle. Każda odpowiada na to pytanie inaczej.")
-    ),
+    lc_p("Ostatni krok pokazuje rzecz, o której łatwo zapomnieć: kształt
+      histogramu zależy od szerokości binu. Zbyt wąskie przedziały dają
+      poszarpany wykres, w którym przypadkowe wahania przesłaniają kształt
+      rozkładu. Zbyt szerokie zlewają dane w kilka słupków i ukrywają
+      szczegóły. Domyślne ustawienie programu jest tylko punktem wyjścia."),
+
+    lc_p("Histogram pokazuje cały rozkład, ale do porównań i raportów potrzebujemy
+      czegoś krótszego: liczby, która mówi, gdzie leży środek danych. Takie
+      liczby nazywamy statystykami położenia."),
 
     # ========================================================================
     # WIDGET 0a: Mean introduction
     # ========================================================================
     lc_h2("ch3-srednia", "Średnia arytmetyczna"),
 
-    tagList(
-      p("Średnia arytmetyczna to suma wszystkich wartości podzielona
-        przez ich liczbę. Jest to 'punkt równowagi' danych -- gdybyśmy
-        położyli dane na wadze, średnia byłaby punktem podparcia."),
-      withMathJax(helpText(
-        "$$\\bar{x} = \\frac{1}{n} \\sum_{i=1}^{n} x_i = \\frac{x_1 + x_2 + \\ldots + x_n}{n}$$"
-      ))
-    ),
+    lc_p("Najbardziej znaną statystyką położenia jest ",
+      gloss("średnia", "średnia arytmetyczna"), ": sumujemy wszystkie wartości
+      i dzielimy przez ich liczbę."),
+
+    lc_formula_box(withMathJax(
+      "$$\\bar{x} = \\frac{1}{n} \\sum_{i=1}^{n} x_i = \\frac{x_1 + x_2 + \\ldots + x_n}{n}$$"
+    )),
+
+    lc_p("Średnią można rozumieć jako punkt równowagi. Gdyby każdą obserwację
+      położyć jako jednakowy ciężarek na linijce, linijka balansowałaby
+      dokładnie w punkcie średniej."),
 
     figure_panel(
       label = "Ryc. 3.2",
@@ -89,17 +96,30 @@ ch3_ui <- list(
       uiOutput("ch3_mean_text")
     ),
 
+    lc_p("Średni wzrost w naszej ankiecie wynosi 171,1 cm. Do sumy trafia każda
+      wartość, więc każda ciągnie średnią w swoją stronę, także wartości skrajne.
+      Obserwacja odległa od reszty przesuwa punkt równowagi bardziej niż kilka
+      obserwacji leżących blisko środka. To zaleta, gdy chcemy uwzględnić
+      wszystkie dane, i słabość, gdy w danych trafiają się wartości nietypowe.
+      Dlatego potrzebujemy drugiej miary, która na skrajności nie reaguje."),
+
     # ========================================================================
     # WIDGET 0b: Median introduction
     # ========================================================================
     lc_h2("ch3-mediana", "Mediana"),
 
-    tagList(
-      p("Mediana to wartość, która dzieli posortowane dane na dwie
-        równe połowy: 50% obserwacji leży poniżej, 50% powyżej.
-        Nie zależy od tego, jak bardzo skrajne są wartości
-        na końcach -- liczy się tylko pozycja środkowa.")
-    ),
+    lc_p(gloss("mediana", "Mediana"), " to wartość środkowa: po posortowaniu danych
+      połowa obserwacji leży poniżej niej, a połowa powyżej. Przy nieparzystej
+      liczbie obserwacji jest to środkowy element, przy parzystej — średnia
+      z dwóch środkowych. Zapis \\(x_{(i)}\\) oznacza i-tą wartość po posortowaniu."),
+
+    lc_formula_box(withMathJax(
+      "$$\\text{Me} = \\begin{cases} x_{((n+1)/2)} & n \\text{ nieparzyste} \\\\[4pt] \\dfrac{x_{(n/2)} + x_{(n/2+1)}}{2} & n \\text{ parzyste} \\end{cases}$$"
+    )),
+
+    lc_p("Mediana zależy tylko od kolejności obserwacji. Nie ma znaczenia, jak
+      daleko od środka leżą wartości skrajne, liczy się tylko to, po której
+      stronie się znajdują."),
 
     figure_panel(
       label = "Ryc. 3.3",
@@ -113,19 +133,24 @@ ch3_ui <- list(
       uiOutput("ch3_median_text")
     ),
 
+    lc_p("Porównaj obie miary dla dwóch zmiennych. Dla wzrostu mediana (170,7 cm)
+      i średnia (171,1 cm) prawie się pokrywają, bo rozkład jest w przybliżeniu
+      symetryczny. Dla czasu dojazdu różnica jest wyraźniejsza: mediana wynosi
+      32,9 min, a średnia 35,7 min. Rozkład czasu dojazdu ma długi prawy ogon:
+      19 osób dojeżdża dłużej niż godzinę i to one podnoszą średnią. Mediana
+      tylko odnotowuje, że leżą powyżej środka."),
+
     # ========================================================================
     # WIDGET 1: Mean vs Median -- comparison
     # ========================================================================
     lc_h2("ch3-srednia-vs-mediana", "Średnia vs mediana — kiedy się różnią?"),
 
-    tagList(
-      p("Dla danych symetrycznych średnia i mediana są blisko siebie.
-        Ale co się dzieje, gdy rozkład jest skośny lub pojawi się
-        ", gloss("wartość odstająca"), "?"),
-      p("Wyobraźmy sobie zarobki w pewnej firmie. Większość pracowników
-        zarabia umiarkowanie, ale są też osoby z bardzo wysokimi pensjami.
-        Zobaczmy, jak średnia i mediana reagują na nowe wartości.")
-    ),
+    lc_p("Różnica między średnią a medianą mówi więc coś o kształcie rozkładu.
+      Mechanizm najlepiej widać na danych, w których skrajności są normą:
+      na zarobkach. W typowej firmie większość pracowników zarabia umiarkowanie,
+      a nieliczni bardzo dużo. W panelu poniżej możesz dopisywać kolejne pensje
+      do wylosowanej listy 30 wynagrodzeń, w tym ",
+      gloss("wartość odstająca", "wartość odstającą"), " — pensję prezesa."),
 
     figure_panel(
       label = "Ryc. 3.4",
@@ -140,7 +165,7 @@ ch3_ui <- list(
         column(7,
           div(style = "display: flex; gap: 8px; margin-top: 25px;",
             lc_action("ch3_svm_add", "Dodaj wartość", variant = "solid"),
-            lc_action("ch3_svm_outlier", "Dodaj outlier (CEO)", variant = "solid"),
+            lc_action("ch3_svm_outlier", "Dodaj pensję prezesa", variant = "solid"),
             lc_action("ch3_svm_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
           )
         )
@@ -156,36 +181,39 @@ ch3_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Obserwacja",
-      "Dodaj kilka „normalnych” zarobków — średnia i mediana będą blisko
-       siebie. Teraz kliknij „Dodaj outlier (CEO)” — zobacz, jak średnia
-       skacze w górę, a mediana prawie się nie zmienia!"
-    ),
+    lc_p("Gdy dopisujesz pensje podobne do pozostałych, średnia i mediana
+      przesuwają się nieznacznie i trzymają się blisko siebie. Jedna pensja
+      prezesa zmienia obraz: przy 30 pensjach średnia skacze o ponad tysiąc złotych, a mediana
+      przesuwa się najwyżej o pół pozycji w posortowanej liście."),
+
+    lc_p("Obie liczby odpowiadają na inne pytania. Średnia mówi, ile przypadłoby
+      na osobę, gdyby sumę wszystkich pensji podzielić po równo. Mediana mówi,
+      ile zarabia osoba stojąca w środku kolejki. Przy zarobkach to drugie pytanie
+      zwykle lepiej opisuje typowego pracownika, dlatego w raportach
+      o wynagrodzeniach obok średniej podaje się medianę."),
 
     # ========================================================================
     # WIDGET 2: Robustness mini-demo
     # ========================================================================
-    lc_h2("ch3-odpornosc", "Odporność miar na outliery"),
+    lc_h2("ch3-odpornosc", "Odporność miar na wartości odstające"),
 
-    tagList(
-      p("Która statystyka jest bardziej ", gloss("odporność", "odporna"), " na outliery? Średnia
-        arytmetyczna bierze pod uwagę każdą wartość -- więc jedna
-        ekstremalna obserwacja może ją znacząco przesunąć. Mediana
-        ignoruje skrajne wartości, patrząc tylko na 'środek' danych."),
-      p(gloss("średnia ucinana", "Średnia ucinana"), " (trimmed mean) to kompromis: odrzuca pewien
-        procent najbardziej skrajnych obserwacji z obu stron, a następnie
-        oblicza średnią z pozostałych. Dodajmy kilka ekstremalnych
-        zarobków i zobaczmy, co się stanie.")
-    ),
+    lc_p("Własność, którą właśnie zaobserwowaliśmy, ma nazwę: ",
+      gloss("odporność"), ". Statystyka jest odporna, jeśli pojedyncze skrajne
+      obserwacje nie zmieniają jej znacząco. Średnia nie jest odporna,
+      mediana jest."),
+
+    lc_p("Między nimi leży ", gloss("średnia ucinana"), ". Odrzucamy ustalony
+      odsetek najmniejszych i największych wartości, a ze środka liczymy zwykłą
+      średnią. W panelu poniżej ucinamy po 10% z każdej strony: przy 40 pensjach
+      odpadają cztery najniższe i cztery najwyższe."),
 
     figure_panel(
       label = "Ryc. 3.5",
       title = "Odporność: średnia vs mediana vs średnia ucinana",
 
       div(style = "display: flex; gap: 8px; margin-bottom: 8px;",
-        lc_action("ch3_rob_add1", "Dodaj outlier (+50 000 zl)", variant = "solid"),
-        lc_action("ch3_rob_add5", "Dodaj 5 outlierow", variant = "solid"),
+        lc_action("ch3_rob_add1", "Dodaj wartość odstającą (ok. 50 000 zł)", variant = "solid"),
+        lc_action("ch3_rob_add5", "Dodaj 5 wartości odstających", variant = "solid"),
         lc_action("ch3_rob_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
       ),
       uiOutput("ch3_rob_outliers_count"),
@@ -197,14 +225,18 @@ ch3_ui <- list(
       )
     ),
 
+    lc_p("Pierwsza wartość odstająca wyraźnie podnosi średnią, a średnia ucinana
+      i mediana prawie stoją w miejscu. Średnia ucinana chroni jednak tylko
+      do pewnej granicy. Gdy wartości odstających jest więcej, niż wynosi
+      obcięty odsetek, część z nich trafia do obliczeń. Przy pięciu dodanych
+      pensjach obcinamy cztery największe, więc piąta już podnosi wynik.
+      Mediana wytrzymuje znacznie więcej: zmienia się wyraźnie dopiero wtedy,
+      gdy skrajne wartości stanowią blisko połowę danych."),
+
     inline_callout(
-      label = "Wniosek",
-      "Średnia arytmetyczna jest bardzo wrażliwa na wartości odstające.
-       Mediana jest najbardziej odporna. Średnia ucinana oferuje
-       kompromis — jest mniej wrażliwa niż średnia, ale bardziej niż mediana.
-       Dlatego przy skośnych rozkładach (np. zarobki) mediana jest często
-       lepszą miarą „typowej” wartości.",
-      color = "uwaga"
+      label = "Zasada",
+      "Przy rozkładach skośnych, takich jak zarobki, ceny czy czasy oczekiwania,
+       podawaj medianę obok średniej albo zamiast niej."
     ),
 
     # ========================================================================
@@ -212,17 +244,15 @@ ch3_ui <- list(
     # ========================================================================
     lc_h2("ch3-dyskretna", "Zmienne dyskretne — te same statystyki, inne wykresy"),
 
-    tagList(
-      p("Dotychczas uzywalismy zmiennych ciągłych (wzrost, zarobki). Ale co ze
-        ", gloss("zmienna dyskretna", "zmiennymi dyskretnymi"), " -- takimi jak liczba kursow czy
-        liczba nieobecnosci? Statystyki polozenia (średnia, mediana) obliczamy
-        tak samo, ale wizualizacja wymaga uwagi.")
-    ),
+    lc_p("Dotąd pracowaliśmy na zmiennych ciągłych: wzroście i zarobkach. ",
+      gloss("zmienna dyskretna", "Zmienne dyskretne"), ", takie jak liczba kursów
+      czy liczba nieobecności, przyjmują tylko wartości całkowite. Średnią
+      i medianę liczymy dla nich tak samo, ale wykres trzeba wybrać ostrożniej."),
 
     figure_panel(
       label = "Ryc. 3.6",
-      title = "Dyskretna vs ciągła -- porównanie wizualizacji",
-      selectInput("ch3_disc_var", "Wybierz zmienna dyskretna:",
+      title = "Dyskretna vs ciągła — porównanie wizualizacji",
+      selectInput("ch3_disc_var", "Zmienna dyskretna:",
         choices = c("Liczba nieobecności" = "liczba_nieobecnosci",
                     "Liczba kursów" = "liczba_kursow"),
         selected = "liczba_nieobecnosci"
@@ -237,32 +267,43 @@ ch3_ui <- list(
           zoom_plot_ui("ch3_disc_hist", height = "300px")
         )
       ),
-      tableOutput("ch3_disc_stats"),
-      uiOutput("ch3_disc_explanation")
+      tableOutput("ch3_disc_stats")
     ),
+
+    lc_p("Wykres słupkowy rysuje osobny słupek dla każdej wartości: zero, jednej,
+      dwóch nieobecności i tak dalej, więc pokazuje liczebności dokładnie.
+      Histogram dzieli oś na przedziały, których granice nie pokrywają się
+      z liczbami całkowitymi. Dwie sąsiednie wartości mogą trafić do jednego
+      słupka, a niektóre przedziały zostają puste, choć w danych nie ma
+      żadnej luki."),
+
+    lc_p("Zwróć też uwagę na średnią. Średnia liczba nieobecności wynosi 2,87,
+      choć nikt nie opuścił 2,87 zajęć. Średnia nie musi być wartością, którą
+      ktokolwiek faktycznie przyjmuje. Mediana zmiennej dyskretnej zwykle jest
+      jedną z jej wartości, tutaj wynosi 3."),
 
     # ========================================================================
     # WIDGET 2c: Multimodality in continuous distributions
     # ========================================================================
     lc_h2("ch3-modalnosc", "Modalność rozkładu — ile „górek” ma histogram?"),
 
-    tagList(
-      p("W rozdziale o ", gloss("zmienna jakościowa", "zmiennych jakościowych"), " poznaliśmy dominantę -- najczęstszą
-        kategorię. Dla danych ciągłych dominanta pojedynczej wartości nie ma sensu
-        (prawie każda wartość jest unikatowa). Ale pojęcie ",
-        gloss("moda", "mody"), " działa na przedziałach -- szukamy, który bin histogramu jest najwyższy."),
-      p("Co ważniejsze, rozkład może mieć więcej niż jeden szczyt (modę). To często
-        sygnał, że dane pochodzą z kilku różnych grup.")
-    ),
+    lc_p("W rozdziale o ", gloss("zmienna jakościowa", "zmiennych jakościowych"),
+      " dominantą nazywaliśmy najczęstszą kategorię. Dla zmiennej ciągłej to
+      pojęcie trzeba przerobić: prawie każda wartość występuje tylko raz, więc
+      zamiast najczęstszej wartości szukamy najwyższego miejsca histogramu,
+      czyli szczytu rozkładu. Szczyt nazywamy ", gloss("moda", "modą"), "."),
+
+    lc_p("Ważniejsze od położenia szczytu bywa to, ile ich jest. Rozkład może
+      mieć jeden szczyt (unimodalny), dwa (bimodalny) albo więcej (wielomodalny)."),
 
     figure_panel(
       label = "Ryc. 3.7",
       title = "Unimodalny vs bimodalny vs wielomodalny",
       radioButtons("ch3_modal_scenario", "Scenariusz:",
         choices = c(
-          "Unimodalny -- wzrost kobiet" = "unimodal",
-          "Bimodalny -- wzrost (kobiety + mężczyźni)" = "bimodal",
-          "Wielomodalny -- czas dojazdu (autobus vs rower vs auto)" = "multimodal"
+          "Unimodalny — wzrost kobiet" = "unimodal",
+          "Bimodalny — wzrost (kobiety + mężczyźni)" = "bimodal",
+          "Wielomodalny — czas dojazdu (autobus vs rower vs auto)" = "multimodal"
         ),
         selected = "unimodal"
       ),
@@ -270,39 +311,34 @@ ch3_ui <- list(
       uiOutput("ch3_modal_text")
     ),
 
+    lc_p("Kilka szczytów to zwykle znak, że w danych są pomieszane różne grupy.
+      Wtedy jedna statystyka położenia może opisywać wartość, której prawie nikt
+      nie ma: średnia wzrostu kobiet i mężczyzn razem wypada pomiędzy szczytami.
+      Zanim policzysz średnią, obejrzyj histogram. Jeśli widać kilka szczytów,
+      opisz grupy osobno."),
+
     # ========================================================================
     # WIDGET 3: Percentile explorer
     # ========================================================================
     lc_h2("ch3-percentyle", "Percentyle i kwantyle"),
 
-    inline_callout(
-      label = "IQR",
-      tagList(
-        tags$strong(gloss("rozstęp międzykwartylowy", "Rozstęp międzykwartylowy"), ":"),
-        " różnica Q3 − Q1. Miara rozrzutu odporna na outliery.
-          Boxplot używa właśnie ", gloss("kwartyl", "kwartyli"), " do wizualizacji rozkładu danych.
-          Więcej w kolejnym rozdziale."
-      )
-    ),
+    lc_p("Mediana dzieli dane na dwie połowy. Ten sam pomysł można uogólnić na
+      dowolny podział. ", gloss("percentyl", "Percentyl"), " rzędu p to wartość,
+      poniżej której leży p% obserwacji. Na przykład 75. percentyl wzrostu to
+      wzrost, którego nie przekracza 75% studentów. Ogólniej mówimy
+      o kwantylach rzędu q, gdzie q jest ułamkiem od 0 do 1."),
 
-    tagList(
-      p("Kwantyle i percentyle dziela dane na czesci. Percentyl mówi nam,
-        jaki procent obserwacji jest poniżej danej wartości. Na przykład
-        percentyl 75. oznacza, ze 75% obserwacji ma wartość mniejsza
-        lub rowna tej wartości."),
-      p("Trzy najwazniejsze kwantyle to kwartyle:"),
-      tags$ul(
-        tags$li(tags$strong("Q1 (25. percentyl)"), " - pierwsza cwiartka danych"),
-        tags$li(tags$strong("Q2 (50. percentyl)"), " - mediana, czyli środek"),
-        tags$li(tags$strong("Q3 (75. percentyl)"), " - trzecia cwiartka danych")
-      ),
-      p("Przesuwaj suwak, aby zobaczyc rozne percentyle wzrostu studentow
-        z naszej ankiety.")
+    lc_p("Najczęściej używamy trzech ", gloss("kwartyl", "kwartyli"),
+      ", które dzielą dane na cztery równe części:"),
+    tags$ul(
+      tags$li(tags$strong("Q1 (25. percentyl)"), " — poniżej leży pierwsza ćwiartka danych"),
+      tags$li(tags$strong("Q2 (50. percentyl)"), " — mediana"),
+      tags$li(tags$strong("Q3 (75. percentyl)"), " — powyżej leży ostatnia ćwiartka danych")
     ),
 
     figure_panel(
       label = "Ryc. 3.8",
-      title = "Explorer percentyli: wzrost studentow",
+      title = "Percentyle wzrostu studentów",
 
       fluidRow(
         column(6,
@@ -327,15 +363,24 @@ ch3_ui <- list(
       )
     ),
 
+    lc_p("W naszej ankiecie Q1 wzrostu wynosi 165,5 cm, a Q3 177,0 cm, więc
+      połowa studentów ma wzrost między tymi wartościami. Odległość Q3 − Q1,
+      tutaj 11,5 cm, to ",
+      gloss("rozstęp międzykwartylowy"), " (IQR). Jest to miara rozrzutu
+      odporna na wartości odstające, z tego samego powodu co mediana. Korzysta
+      z niej wykres pudełkowy pod histogramem; wrócimy do niego w następnym
+      rozdziale."),
+
     # ====================================================================
     # WIDGET 4: Guess the statistic game
     # ====================================================================
-    lc_h2("ch3-gra", "Gra: Zgadnij średnią i medianę!"),
+    lc_h2("ch3-gra", "Gra: zgadnij średnią i medianę"),
 
-    tagList(
-      p("Sprawdzmy Twoją intuicję! Na histogramie zobaczysz rozkład danych. ",
-        "Kliknij na wykres, aby postawić swój typ: najpierw średnia, potem mediana. Czy potrafisz je odroznic?")
-    ),
+    lc_p("Na koniec sprawdź, czy potrafisz odczytać obie miary z samego
+      histogramu. Kliknij na wykres dwa razy: pierwszy punkt to Twój typ
+      średniej, drugi — mediany. Zanim klikniesz, ustal, w którą stronę
+      ciągnie ogon rozkładu i po której stronie mediany powinna wtedy
+      leżeć średnia."),
 
     figure_panel(
       label = "Ryc. 3.9",
@@ -350,7 +395,6 @@ ch3_ui <- list(
       lc_plot("ch3_game_plot", ratio = "1.8/1", max_height = "350px"),
       uiOutput("ch3_game_feedback")
     ),
-
     lc_chapter_next(
       num       = "04",
       title     = "Statystyki rozrzutu",
@@ -648,9 +692,7 @@ ch3_server <- function(input, output, session) {
     lc_feedback(type = "info",
       withMathJax(paste0(
         "$$\\bar{x} = \\frac{", round(s, 1), "}{", n, "} = ", round(m, 2), "$$"
-      )),
-      tags$em("Średnia uwzględnia każdą wartość -- jest wrażliwa
-              na wartości skrajne, bo przeciąga ją w ich stronę.")
+      ))
     )
   })
 
@@ -745,17 +787,17 @@ ch3_server <- function(input, output, session) {
 
     ggplot(d, aes(x = x)) +
       geom_histogram(fill = upwr_reference, color = "white", bins = 25) +
-      geom_vline(aes(xintercept = m, color = "Srednia"),
+      geom_vline(aes(xintercept = m, color = "Średnia"),
                  linewidth = 1.2, linetype = "solid") +
       geom_vline(aes(xintercept = med, color = "Mediana"),
                  linewidth = 1.2, linetype = "dashed") +
       scale_color_manual(
         name = NULL,
-        breaks = c("Srednia", "Mediana"),
-        values = c("Srednia" = upwr_accent, "Mediana" = upwr_cat["niebo"])
+        breaks = c("Średnia", "Mediana"),
+        values = c("Średnia" = upwr_accent, "Mediana" = upwr_cat["niebo"])
       ) +
       scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
-      labs(x = "Zarobki (zl)", y = "Liczba osob") +
+      labs(x = "Zarobki (zł)", y = "Liczba osób") +
       theme(legend.position = "top")
   }))
 
@@ -773,7 +815,7 @@ ch3_server <- function(input, output, session) {
       geom_point(aes(x = med), y = 0, color = upwr_cat["niebo"],
                  size = 5, shape = 18) +
       scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
-      labs(x = "Zarobki (zl)", y = NULL) +
+      labs(x = "Zarobki (zł)", y = NULL) +
             theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(),
@@ -790,11 +832,11 @@ ch3_server <- function(input, output, session) {
     diff_color <- if (abs(diff_val) < 500) upwr_cat["szalwia"] else upwr_cat["bursztyn"]
 
     tagList(
-      lc_stat_box("Srednia", format(round(m), big.mark = " "), " zl",
+      lc_stat_box("Średnia", format(round(m), big.mark = " "), " zł",
                   color = "var(--upwr-accent)"),
-      lc_stat_box("Mediana", format(round(med), big.mark = " "), " zl",
+      lc_stat_box("Mediana", format(round(med), big.mark = " "), " zł",
                   color = "var(--upwr-cat-niebo)"),
-      lc_stat_box("Roznica", format(round(diff_val), big.mark = " "), " zl",
+      lc_stat_box("Różnica", format(round(diff_val), big.mark = " "), " zł",
                   color = diff_color)
     )
   })
@@ -858,8 +900,8 @@ ch3_server <- function(input, output, session) {
     line_data <- data.frame(
       xval = c(m, med, tr),
       Statystyka = factor(
-        c("Srednia", "Mediana", "Sr. ucinana (10%)"),
-        levels = c("Srednia", "Mediana", "Sr. ucinana (10%)")
+        c("Średnia", "Mediana", "Śr. ucinana (10%)"),
+        levels = c("Średnia", "Mediana", "Śr. ucinana (10%)")
       ),
       ltype = c("solid", "dashed", "dotted")
     )
@@ -872,27 +914,27 @@ ch3_server <- function(input, output, session) {
                  linewidth = 1.2) +
       scale_color_manual(
         name = NULL,
-        breaks = c("Srednia", "Mediana", "Sr. ucinana (10%)"),
-        values = c("Srednia" = upwr_accent,
+        breaks = c("Średnia", "Mediana", "Śr. ucinana (10%)"),
+        values = c("Średnia" = upwr_accent,
                    "Mediana" = upwr_cat["niebo"],
-                   "Sr. ucinana (10%)" = upwr_cat["szalwia"])
+                   "Śr. ucinana (10%)" = upwr_cat["szalwia"])
       ) +
       scale_linetype_manual(
         name = NULL,
-        breaks = c("Srednia", "Mediana", "Sr. ucinana (10%)"),
-        values = c("Srednia" = "solid",
+        breaks = c("Średnia", "Mediana", "Śr. ucinana (10%)"),
+        values = c("Średnia" = "solid",
                    "Mediana" = "dashed",
-                   "Sr. ucinana (10%)" = "dotted")
+                   "Śr. ucinana (10%)" = "dotted")
       ) +
       scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
-      labs(x = "Zarobki (zl)", y = "Liczba osob") +
+      labs(x = "Zarobki (zł)", y = "Liczba osób") +
       theme(legend.position = "top")
   }))
 
   output$ch3_rob_outliers_count <- renderUI({
     n_outliers <- length(ch3_rob_outliers())
-    msg <- if (n_outliers == 0) "Brak dodanych outlierów"
-           else paste0("Liczba dodanych outlierów: ", n_outliers)
+    msg <- if (n_outliers == 0) "Brak dodanych wartości odstających"
+           else paste0("Liczba dodanych wartości odstających: ", n_outliers)
     div(style = "font-size: 13px; color: var(--upwr-ink-soft); margin-top: 4px;", msg)
   })
 
@@ -908,10 +950,10 @@ ch3_server <- function(input, output, session) {
     current_tr <- mean(d, trim = 0.1)
 
     data.frame(
-      Statystyka = c("Srednia", "Mediana", "Średnia ucinana (10%)"),
+      Statystyka = c("Średnia", "Mediana", "Średnia ucinana (10%)"),
       Wartość = paste0(
         format(round(c(current_mean, current_med, current_tr)),
-               big.mark = " "), " zl"),
+               big.mark = " "), " zł"),
       `Zmiana vs bazowa` = paste0(
         ifelse(c(current_mean - base$mean,
                  current_med - base$median,
@@ -919,7 +961,7 @@ ch3_server <- function(input, output, session) {
         format(round(c(current_mean - base$mean,
                        current_med - base$median,
                        current_tr - base$trimmed)),
-               big.mark = " "), " zl"),
+               big.mark = " "), " zł"),
       check.names = FALSE
     )
   }, striped = TRUE, hover = TRUE, width = "100%", align = "lcr")
@@ -960,23 +1002,12 @@ ch3_server <- function(input, output, session) {
     mode_val <- as.numeric(names(sort(table(vals), decreasing = TRUE))[1])
 
     data.frame(
-      Statystyka = c("Srednia", "Mediana", "Dominanta (moda)", "SD", "Rozstep"),
+      Statystyka = c("Średnia", "Mediana", "Dominanta (moda)", "SD", "Rozstęp"),
       Wartość = c(round(mean(vals), 2), median(vals), mode_val,
                   round(sd(vals), 2), paste0(min(vals), " - ", max(vals))),
       check.names = FALSE
     )
   }, striped = TRUE, hover = TRUE, width = "100%", align = "c")
-
-  output$ch3_disc_explanation <- renderUI({
-    lc_feedback(type = "info",
-      tags$strong("Dlaczego wykres słupkowy jest lepszy? "),
-      "Zmienna dyskretna przyjmuje skończenie wiele wartości calkowitych.
-       Wykres słupkowy pokazuje każdą wartość osobno i poprawnie oddaje liczebności.
-       Histogram natomiast grupuje dane w 'kubly' (bins), co moze niepoprawnie
-       rozbic lub polaczyc wartości całkowite. ",
-      tags$em("Statystyki (średnia, mediana, SD) liczymy tak samo jak dla zmiennych ciągłych.")
-    )
-  })
 
   # Widget 2c: Multimodality in continuous distributions
   # --------------------------------------------------------------------------
@@ -1036,27 +1067,19 @@ ch3_server <- function(input, output, session) {
 
     if (scenario == "unimodal") {
       lc_feedback(type = "info",
-        tags$b("Rozkład unimodalny: "), "jeden szczyt, jedna 'górka'. ",
+        tags$b("Rozkład unimodalny: "), "jeden szczyt. ",
         "Dla rozkładu symetrycznego moda ≈ średnia ≈ mediana. ",
         "Większość statystyk opisowych zakłada właśnie taki rozkład.")
     } else if (scenario == "bimodal") {
       lc_feedback(type = "warning",
-        tags$b("Rozkład bimodalny: "), "dwa szczyty! ",
-        "To sygnał, że dane prawdopodobnie pochodzą z ",
-        "dwóch różnych grup. ",
-        "Podawanie jednej średniej dla całości jest mylace -- ",
-        "średnia wyląduje między szczytami, gdzie prawie nikt nie jest!",
-        tags$br(), tags$br(),
-        tags$em("Praktyka: rozdziel grupy i analizuj osobno."))
+        tags$b("Rozkład bimodalny: "), "dwa szczyty, osobno dla kobiet ",
+        "i mężczyzn. Średnia całości wypada między szczytami, ",
+        "gdzie obserwacji jest niewiele.")
     } else {
       lc_feedback(type = "warning",
         tags$b("Rozkład wielomodalny: "), "trzy szczyty = trzy podgrupy. ",
         "Każda podgrupa (rowerzyści, pasażerowie autobusów, kierowcy) ",
-        "ma własną 'typową' wartość. ",
-        tags$br(), tags$br(),
-        tags$em("Wielomodalność to jeden z najważniejszych sygnałów w danych -- ",
-                "mówi, że patrzenie na całość bez podziału na grupy ",
-                "może prowadzić do błędnych wniosków."))
+        "ma własną typową wartość.")
     }
   })
 
@@ -1094,7 +1117,7 @@ ch3_server <- function(input, output, session) {
                vjust = -0.5, hjust = -0.1,
                fontface = "bold", size = 5, color = upwr_secondary) +
       scale_fill_manual(values = c("TRUE" = upwr_cat["niebo"], "FALSE" = upwr_reference)) +
-      labs(x = "Wzrost (cm)", y = "Liczba studentow") +
+      labs(x = "Wzrost (cm)", y = "Liczba studentów") +
       theme()
   }))
 
@@ -1128,11 +1151,11 @@ ch3_server <- function(input, output, session) {
     actual_pct <- round(100 * mean(wzrost <= q_val), 1)
 
     div(style = "font-size: 18px; color: var(--upwr-ink); padding: 10px;",
-      paste0(input$ch3_q_pct, "% studentow"),
+      paste0(input$ch3_q_pct, "% studentów"),
       paste0(" ma wzrost poniżej ", q_val, " cm."),
       br(),
       tags$span(style = "font-size: 14px; color: var(--upwr-ink-soft);",
-        paste0("(Dokladnie ", actual_pct, "% obserwacji <= ", q_val, " cm)"))
+        paste0("(Dokładnie ", actual_pct, "% obserwacji ≤ ", q_val, " cm)"))
     )
   })
 
@@ -1257,7 +1280,7 @@ ch3_server <- function(input, output, session) {
       real_med <- median(vals)
       p <- p +
         geom_vline(xintercept = real_mean, color = upwr_accent, linewidth = 1.5) +
-        annotate("text", x = real_mean, y = Inf, label = paste0("Srednia\n", round(real_mean, 1)),
+        annotate("text", x = real_mean, y = Inf, label = paste0("Średnia\n", round(real_mean, 1)),
                  vjust = 1, color = upwr_accent, fontface = "bold", size = 4) +
         geom_vline(xintercept = real_med, color = upwr_cat["niebo"], linewidth = 1.5) +
         annotate("text", x = real_med, y = Inf, label = paste0("Mediana\n", round(real_med, 1)),
@@ -1286,7 +1309,7 @@ ch3_server <- function(input, output, session) {
       grade <- "Nieźle!"
       cls <- "warning"
     } else {
-      grade <- "Mozna lepiej!"
+      grade <- "Można lepiej!"
       cls <- "danger"
     }
 

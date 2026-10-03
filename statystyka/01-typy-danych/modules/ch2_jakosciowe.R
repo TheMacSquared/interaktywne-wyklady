@@ -21,21 +21,21 @@ ch2_ui <- list(
     # ========================================================================
     figure_panel(
       label = "Ryc. 2.1",
-      title = "Tabela częstości — krok po kroku",
       width_mode = "text",
-      lc_toolbar(
-        lc_segmented("ch2_freq_var", "Zmienna",
-          choices = c(
-            "Kierunek (nominalna)" = "kierunek",
-            "Zadowolenie (porządkowa)" = "zadowolenie"
-          ),
-          selected = "kierunek"
+      lc_step_widget("ch2_freq",
+        title = "Tabela częstości — krok po kroku",
+        steps = c("Surowe dane", "Zliczanie", "Częstości względne", "Skumulowane"),
+        toolbar = lc_toolbar(
+          lc_segmented("ch2_freq_var", "Zmienna",
+            choices = c(
+              "Kierunek (nominalna)" = "kierunek",
+              "Zadowolenie (porządkowa)" = "zadowolenie"
+            ),
+            selected = "kierunek"
+          )
         ),
-        lc_step_nav("ch2_freq_step",
-          c("Surowe dane", "Zliczanie", "Częstości względne", "Skumulowane"))
-      ),
-      uiOutput("ch2_freq_explanation"),
-      uiOutput("ch2_freq_table")
+        body = uiOutput("ch2_freq_table")
+      )
     ),
 
     # ========================================================================
@@ -254,7 +254,7 @@ ch2_ui <- list(
 
 ch2_server <- function(input, output, session) {
 
-  ch2_freq_step <- reactive(input$ch2_freq_step %||% 0)
+  ch2_freq_step <- lc_step_server("ch2_freq", input)$step
   ch2_scenario_idx <- reactiveVal(1)
   ch2_random_colors <- reactiveVal(NULL)
   ch2_mode_data <- reactiveVal(NULL)
@@ -270,21 +270,16 @@ ch2_server <- function(input, output, session) {
   # Widget 1: Frequency table step-by-step
   # ========================================================================
 
-  output$ch2_freq_explanation <- renderUI({
+  output$ch2_freq_text <- renderUI({
     step <- ch2_freq_step()
     var_name <- input$ch2_freq_var
     is_ord <- (!is.null(var_name) && var_name == "zadowolenie")
     var_label <- if (is_ord) "zadowolenie" else "kierunek"
-    step_names <- c("Surowe dane", "Zliczanie", "Częstości względne", "Skumulowane")
-    kicker <- if (step == 0) "Start" else paste0("Krok ", step, " z 4 · ", step_names[step])
 
-    if (step == 0) {
-      lc_step_text(kicker,
-          "Kliknij „Zacznij”, aby zbudować tabelę częstości krok po kroku.")
-    } else if (step == 1) {
-      lc_step_text(kicker,
+    if (step == 1) {
+      tagList(
           "Tak wyglądają pierwsze obserwacje zmiennej ",
-          tags$code(var_label), ". Każdy wiersz to odpowiedź jednego studenta.",
+          tags$code(var_label, .noWS = "outside"), ". Każdy wiersz to odpowiedź jednego studenta.",
           if (is_ord) tagList(
             tags$br(),
             tags$em("Uwaga: kategorie mają naturalną kolejność -- od
@@ -292,7 +287,7 @@ ch2_server <- function(input, output, session) {
           )
       )
     } else if (step == 2) {
-      lc_step_text(kicker,
+      tagList(
           "Liczymy, ile razy występuje każda kategoria. To są ",
           tags$b("częstości bezwzględne"), " (liczebności).",
           if (is_ord) tagList(
@@ -302,12 +297,12 @@ ch2_server <- function(input, output, session) {
           )
       )
     } else if (step == 3) {
-      lc_step_text(kicker,
-          "Dzielimy każdą liczebność przez całkowitą liczbę obserwacji (n = ",
-          nrow(student_data), "). Wynik możemy wyrazić jako ułamek lub procent.")
+      tagList(
+          paste0("Dzielimy każdą liczebność przez całkowitą liczbę obserwacji (n = ",
+                 nrow(student_data), "). Wynik możemy wyrazić jako ułamek lub procent."))
     } else if (step == 4) {
       if (is_ord) {
-        lc_step_text(kicker,
+        tagList(
           "Sumujemy częstości narastająco. ",
           tags$b("Dla zmiennej porządkowej to ma głęboki sens!"),
           tags$br(), tags$br(),
@@ -320,7 +315,7 @@ ch2_server <- function(input, output, session) {
           "Skumulowany procent daje sensowną interpretację ",
           tags$b("tylko wtedy, gdy kategorie mają naturalną kolejność."))
       } else {
-        lc_step_text(kicker,
+        tagList(
           "Sumujemy częstości narastająco. ",
           tags$b("Ale uwaga!"), " Dla zmiennej ",
           tags$b("nominalnej"), " kolejność kategorii jest umowna.",
@@ -336,7 +331,6 @@ ch2_server <- function(input, output, session) {
 
   output$ch2_freq_table <- renderUI({
     step <- ch2_freq_step()
-    if (step == 0) return(lc_table_empty("Tabela pojawi się po pierwszym kroku"))
 
     var_name <- input$ch2_freq_var
     is_ord <- (!is.null(var_name) && var_name == "zadowolenie")
