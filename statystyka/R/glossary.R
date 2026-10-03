@@ -35,13 +35,13 @@
   "hipoteza zerowa"       = "H₀ — hipoteza o braku efektu lub braku różnicy. Odrzucamy ją lub nie.",
   "hipoteza alternatywna" = "Hₐ — hipoteza konkurencyjna wobec H₀; przyjmujemy ją, gdy dane przemawiają przeciw H₀ (p < α).",
   "p-wartość"             = "Prawdopodobieństwo uzyskania wyniku co najmniej tak ekstremalnego, zakładając że H₀ jest prawdziwa.",
-  "poziom istotności"     = "Próg α (zazwyczaj 0,05), poniżej którego odrzucamy H₀.",
+  "poziom istotności"     = "Próg α (zazwyczaj 0.05), poniżej którego odrzucamy H₀.",
   "statystyka testowa"    = "Wartość obliczona z próby (np. t, z, χ²) służąca do podjęcia decyzji o H₀.",
   "test t"                = "Test sprawdzający hipotezę o średniej (lub różnicy średnich) gdy odchylenie populacji jest nieznane.",
   "test chi-kwadrat"      = "Test zgodności lub niezależności dla danych kategorycznych.",
 
   # Regresja -------------------------------------------------------------------
-  "korelacja"             = "Miara liniowego związku między dwiema zmiennymi. Zakres: −1 do +1.",
+  "korelacja"             = "Miara liniowego związku między dwiema zmiennymi. Zakres: -1 do +1.",
   "regresja liniowa"      = "Model opisujący liniową zależność zmiennej odpowiedzi od predyktorów.",
   "współczynnik determinacji" = "R² — odsetek wariancji zmiennej zależnej wyjaśniony przez model.",
 
@@ -82,11 +82,11 @@
   "rozstęp międzykwartylowy" =
     "IQR = Q3 − Q1 — rozrzut środkowych 50% obserwacji, odporny na wartości odstające.",
   "wykres pudełkowy" =
-    "Wykres oparty na kwartylach: pudełko to Q1–Q3, kreska w środku to mediana, wąsy sięgają do 1,5·IQR.",
+    "Wykres oparty na kwartylach: pudełko to Q1–Q3, kreska w środku to mediana, wąsy sięgają do 1.5·IQR.",
   "współczynnik zmienności" =
     "CV = SD / średnia × 100% — względna miara rozrzutu, pozwala porównać zmienne mierzone w różnych skalach.",
-  "reguła 68-95-99,7" =
-    "W rozkładzie normalnym ok. 68% wartości leży w odległości ±1 SD od średniej, 95% w ±2 SD, 99,7% w ±3 SD.",
+  "reguła 68-95-99.7" =
+    "W rozkładzie normalnym ok. 68% wartości leży w odległości ±1 SD od średniej, 95% w ±2 SD, 99.7% w ±3 SD.",
   "skośność" =
     "Miara asymetrii rozkładu: dodatnia oznacza dłuższy ogon w prawo, ujemna — w lewo, zero — symetrię.",
   "kurtoza" =
@@ -126,21 +126,21 @@
   "rozkład wykładniczy" =
     "Ciągły rozkład czasu oczekiwania między zdarzeniami w procesie Poissona.",
   "rozkład t-Studenta" =
-    "Symetryczny rozkład podobny do normalnego, ale z cięższymi ogonami; im więcej stopni swobody, tym bliżej N(0,1).",
+    "Symetryczny rozkład podobny do normalnego, ale z cięższymi ogonami; im więcej stopni swobody, tym bliżej N(0, 1).",
   "stopnie swobody" =
-    "Parametr df rozkładów t, χ² i F; zwykle liczba obserwacji pomniejszona o liczbę oszacowanych parametrów (np. n − 1).",
+    "Parametr df rozkładów t, χ² i F; zwykle liczba obserwacji pomniejszona o liczbę oszacowanych parametrów (np. n - 1).",
   "rozkład chi-kwadrat" =
-    "Rozkład sumy kwadratów k niezależnych zmiennych N(0,1); nieujemny i prawoskośny, z k stopniami swobody.",
+    "Rozkład sumy kwadratów k niezależnych zmiennych N(0, 1); nieujemny i prawoskośny, z k stopniami swobody.",
   "rozkład log-normalny" =
     "Rozkład zmiennej, której logarytm ma rozkład normalny; typowy dla wielkości rosnących multiplikatywnie (dochody, ceny).",
   "standaryzacja" =
     "Przekształcenie z = (x − μ)/σ; wynik z mówi, o ile odchyleń standardowych wartość leży od średniej.",
   "standardowy rozkład normalny" =
-    "Rozkład normalny o średniej 0 i odchyleniu standardowym 1, oznaczany N(0,1).",
+    "Rozkład normalny o średniej 0 i odchyleniu standardowym 1, oznaczany N(0, 1).",
 
   # Estymacja (W03) -----------------------------------------------------------
   "estymata" =
-    "Konkretna wartość estymatora obliczona z danej próby (np. x̄ = 172,3 cm).",
+    "Konkretna wartość estymatora obliczona z danej próby (np. x̄ = 172.3 cm).",
   "nieobciążoność" =
     "Estymator jest nieobciążony, gdy jego wartość oczekiwana równa się parametrowi — nie myli się systematycznie w jedną stronę.",
   "efektywność estymatora" =
@@ -148,7 +148,7 @@
   "zgodność estymatora" =
     "Estymator jest zgodny, gdy wraz ze wzrostem próby zbiega do prawdziwej wartości parametru.",
   "wartość krytyczna" =
-    "Wartość z rozkładu (np. z = 1,96 dla 95%) wyznaczająca szerokość przedziału ufności lub granicę obszaru odrzucenia H₀.",
+    "Wartość z rozkładu (np. z = 1.96 dla 95%) wyznaczająca szerokość przedziału ufności lub granicę obszaru odrzucenia H₀.",
   "pokrycie" =
     "Odsetek przedziałów ufności (w wielu powtórzeniach), które zawierają prawdziwy parametr; powinien odpowiadać poziomowi ufności.",
   "proporcja z próby" =
@@ -332,7 +332,7 @@
   "przedział Cloppera-Pearsona" =
     "Dokładny przedział ufności dla proporcji oparty na rozkładzie dwumianowym; konserwatywny, zwykle nieco szerszy niż trzeba.",
   "korelacja Pearsona" =
-    "Współczynnik r mierzący siłę i kierunek związku liniowego dwóch zmiennych ilościowych; od −1 do +1.",
+    "Współczynnik r mierzący siłę i kierunek związku liniowego dwóch zmiennych ilościowych; od -1 do +1.",
   "tau Kendalla" =
     "Korelacja rangowa oparta na zgodności par obserwacji; alternatywa dla korelacji Spearmana przy małych próbach i wielu remisach.",
   "test t dla prób zależnych" =
@@ -350,7 +350,7 @@
   "heteroskedastyczność" =
     "Nierówne wariancje — np. rozrzut reszt rośnie wraz z wartością predyktora; przeciwieństwo homoskedastyczności.",
   "VIF" =
-    "Współczynnik inflacji wariancji — ile razy wariancja współczynnika rośnie przez współliniowość; VIF > 5 to ostrzeżenie, > 10 poważny problem.",
+    "Współczynnik inflacji wariancji — ile razy wariancja współczynnika rośnie przez współliniowość; im dalej od 1, tym mniej stabilne oszacowanie (bez jednej ostrej granicy).",
   "odległość Cooka" =
     "Miara wpływu pojedynczej obserwacji na model — jak bardzo zmieniłyby się przewidywania po jej usunięciu.",
   "zbiór treningowy" =
@@ -360,7 +360,7 @@
   "funkcja logistyczna" =
     "Krzywa w kształcie litery S (sigmoida), która zamienia dowolną liczbę na prawdopodobieństwo z przedziału od 0 do 1.",
   "próg klasyfikacji" =
-    "Wartość prawdopodobieństwa (np. 0,5), powyżej której model logistyczny przypisuje obserwację do klasy „1”.",
+    "Wartość prawdopodobieństwa (np. 0.5), powyżej której model logistyczny przypisuje obserwację do klasy „1”.",
   "macierz pomyłek" =
     "Tabela zestawiająca klasy przewidziane przez model z prawdziwymi: trafienia i oba rodzaje błędów.",
 
