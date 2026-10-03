@@ -176,5 +176,5 @@ format_probability_pl <- function(probability, digits = 3L) {
     stop("Prawdopodobieństwo musi należeć do przedziału [0, 1].", call. = FALSE)
   }
   decimal <- formatC(probability, format = "f", digits = digits)
-  paste0(gsub("\\.", ",", decimal), " (", round(100 * probability, 1), "%)")
+  paste0(decimal, " (", round(100 * probability, 1), "%)")
 }

@@ -91,7 +91,7 @@ testthat::test_that("FTA pokazuje oba błędy powtórzenia i przelicza wspólną
         f9_gate = "or", f9_causes = c("detect", "suppress"), f9_cut = "id",
         f9_reduction = .5)
       stopifnot(abs(tree_value() - .00063) < 1e-12)
-      stopifnot(grepl("0,000674", output$f9_common_result$html, fixed = TRUE))
+      stopifnot(grepl("0.000674", output$f9_common_result$html, fixed = TRUE))
       stopifnot(grepl("AND", output$f9_repeat_result$html, fixed = TRUE))
       stopifnot(grepl("OR", output$f9_repeat_result$html, fixed = TRUE))
       # Enumeracja zdarzeń bazowych niezależnie od wzoru aplikacji.
@@ -101,7 +101,7 @@ testthat::test_that("FTA pokazuje oba błędy powtórzenia i przelicza wspólną
       active <- with(states, i == 1 & (c == 1 | d == 1 | s == 1))
       stopifnot(abs(sum(weights[active]) - .0006737) < 1e-12)
       session$setInputs(f9_common = 1)
-      stopifnot(grepl("0,005000", output$f9_common_result$html, fixed = TRUE))
+      stopifnot(grepl("0.005000", output$f9_common_result$html, fixed = TRUE))
     })
     TRUE
   }, args = list(path = file.path(risk_root, "09-drzewo-bledow")), timeout = 60)

@@ -12,8 +12,8 @@ risk_format_probability <- function(x, digits = 3L) {
   if (x > 0 && x < .01) digits <- max(digits, min(12L, ceiling(-log10(x)) + 2L))
   percent_digits <- max(1L, digits - 2L)
   paste0(
-    gsub("\\.", ",", sprintf(paste0("%.", digits, "f"), x)),
-    " (", gsub("\\.", ",", sprintf(paste0("%.", percent_digits, "f"), 100 * x)), "%)"
+    sprintf(paste0("%.", digits, "f"), x),
+    " (", sprintf(paste0("%.", percent_digits, "f"), 100 * x), "%)"
   )
 }
 
@@ -180,7 +180,7 @@ risk_confusion_matrix <- function() {
     `aria-label` = "Tablica wyników detektora: cztery wyniki",
     tags$div(class = "lc-cm-corner"),
     tags$div(class = "lc-cm-head", "Alarm (+)"),
-    tags$div(class = "lc-cm-head", "Brak alarmu (−)"),
+    tags$div(class = "lc-cm-head", "Brak alarmu (-)"),
     tags$div(class = "lc-cm-side", "Awaria (A)"),
     cell("ok", "prawdziwie dodatni", "TP", "awaria i alarm"),
     cell("bad", "fałszywie ujemny", "FN", "awaria bez alarmu"),

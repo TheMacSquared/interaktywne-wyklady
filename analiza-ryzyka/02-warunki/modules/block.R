@@ -913,7 +913,7 @@ warunki_server <- function(input, output, session) {
   tree_plot <- function(target = NULL) {
     d <- warunki_views_counts
     prm <- warunki_views_params
-    fmt <- function(p) gsub("\\.", ",", sprintf("%.3f", p))
+    fmt <- function(p) sprintf("%.3f", p)
     amber <- unname(upwr_cat[["bursztyn"]])
     num_nodes <- target$num_nodes %||% integer(0)
     den_nodes <- target$den_nodes %||% integer(0)
