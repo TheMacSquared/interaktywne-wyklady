@@ -89,9 +89,11 @@ ch6_ui <- list(
     figure_panel(
       label = "Ryc. 8.1",
       title = "Porównanie dwóch grup",
-      fluidRow(
-        column(4,
-          selectInput("ch6_ind_var", "Zmienna ilościowa:",
+      uiOutput("ch6_ind_hypothesis"),
+      lc_step_widget("ch6_ind",
+        steps = c("Dane", "Średnie w grupach", "Statystyka t", "p-wartość i decyzja"),
+        toolbar = lc_toolbar(
+          selectInput("ch6_ind_var", "Zmienna ilościowa",
             choices = c(
               "Wzrost" = "wzrost",
               "Waga" = "waga",
@@ -101,21 +103,10 @@ ch6_ui <- list(
             selected = "wzrost"
           ),
           lc_slider("ch6_ind_n", "n (na grupę)", 15, 100, 40, 5),
-          lc_action("ch6_run_ind_t", "Losuj próbę", icon = "shuffle", variant = "solid"),
-          hr(),
-          h5("Kroki testu:"),
-          lc_stack(gap = "sm",
-            lc_action("ch6_ind_step1", "1. Dane", variant = "outline"),
-            lc_action("ch6_ind_step2", "2. Średnie w grupach", variant = "outline"),
-            lc_action("ch6_ind_step3", "3. Statystyka t", variant = "outline"),
-            lc_action("ch6_ind_step4", "4. p-wartość i decyzja", variant = "outline")
-          )
+          lc_action("ch6_run_ind_t", "Losuj próbę", icon = "shuffle", variant = "solid")
         ),
-        column(8,
-          uiOutput("ch6_ind_hypothesis"),
-          zoom_plot_ui("ch6_ind_boxplot", height = "300px"),
-          uiOutput("ch6_ind_result")
-        )
+        plot_id = "ch6_ind_boxplot",
+        extra = uiOutput("ch6_ind_table")
       )
     ),
 
@@ -298,7 +289,10 @@ ch6_server <- function(input, output, session) {
 
     state$data
   })
-  ch6_ind_step <- reactiveVal(0)
+
+  # Krok widgetu (1..4) żyje w przeglądarce; nowa próba ani zmiana
+  # zmiennej nie cofa kroku.
+  ch6_ind_step <- lc_step_server("ch6_ind", input)$step
 
   observeEvent(input$ch6_run_ind_t, {
     req(input$ch6_ind_var, input$ch6_ind_n)
@@ -309,17 +303,7 @@ ch6_server <- function(input, output, session) {
       n_per_group = n,
       data = data
     ))
-    ch6_ind_step(0)
   }, ignoreInit = TRUE)
-
-  observeEvent(list(input$ch6_ind_var, input$ch6_ind_n), {
-    ch6_ind_step(0)
-  }, ignoreInit = TRUE)
-
-  observeEvent(input$ch6_ind_step1, ch6_ind_step(1))
-  observeEvent(input$ch6_ind_step2, ch6_ind_step(2))
-  observeEvent(input$ch6_ind_step3, ch6_ind_step(3))
-  observeEvent(input$ch6_ind_step4, ch6_ind_step(4))
 
   # Shared paired data
   ch6_paired_data_state <- reactiveVal(NULL)
@@ -396,66 +380,57 @@ ch6_server <- function(input, output, session) {
       var_label <- ch6_ind_var_label(var)
       step <- ch6_ind_step()
 
-      if (step == 0) {
-        ggplot() +
-          annotate("text", x = 0.5, y = 0.5,
-                   label = "Próba gotowa! Klikaj kroki po kolei.",
-                   size = 5, color = upwr_reference) +
-          theme_void()
-      } else if (step <= 2) {
-        p <- ggplot(data, aes(x = plec, y = .data[[var]], fill = plec)) +
-          geom_boxplot(alpha = 0.45, outlier.alpha = 0.3, width = 0.5) +
-          geom_jitter(width = 0.15, alpha = 0.35, size = 1.5) +
-          scale_fill_manual(values = c(col_h0, col_reject)) +
-          labs(
-               x = "Płeć", y = var_label) +
-          theme(legend.position = "none")
+      if (step <= 2) {
+        # Pierwsza grupa w roli danych, druga w roli grupy; rama z danych.
+        groups <- sort(unique(data$plec))
+        roles <- c("data", "group")
+        y_rng <- range(data[[var]], na.rm = TRUE)
+        y_pad <- diff(y_rng) * 0.08
+        jitter <- position_jitter(width = 0.15, height = 0, seed = 1)
+
+        p <- ggplot(data, aes(x = plec, y = .data[[var]]))
+        for (i in seq_along(groups)) {
+          sub <- data[data$plec == groups[i], ]
+          p <- p +
+            step_result(geom_boxplot, data = sub, width = 0.5, alpha = 0.35,
+                        outlier.shape = NA,
+                        fill = STEP_ROLES[[roles[i]]]$colour) +
+            step_layer(geom_point, roles[i], data = sub, position = jitter,
+                       size = 1.5, alpha = 0.5)
+        }
 
         if (step >= 2) {
           means <- ch6_ind_stats()$means
           means$hj <- ifelse(seq_len(nrow(means)) == 1, 1.15, -0.15)
           p <- p +
-            stat_summary(fun = mean, geom = "point", shape = 23,
-                         size = 4, fill = "white", color = upwr_secondary) +
+            step_layer(geom_point, "new", data = means,
+                       mapping = aes(x = plec, y = m), inherit.aes = FALSE,
+                       shape = 23, size = 4, fill = "white", stroke = 1.2) +
             geom_text(
               data = means,
-              aes(x = plec, y = m, label = paste0("x = ", round(m, 1)), hjust = hj),
-              inherit.aes = FALSE,
-              nudge_y = diff(range(data[[var]], na.rm = TRUE)) * 0.04,
-              color = upwr_secondary,
+              aes(x = plec, y = m, label = paste0("bar(x) == ", lc_fmt(m, 1)), hjust = hj),
+              inherit.aes = FALSE, parse = TRUE,
+              nudge_y = diff(y_rng) * 0.04,
+              colour = STEP_ROLES$new$colour,
               fontface = "bold"
             )
         }
-        p
-      } else if (step == 3) {
-        st <- ch6_ind_stats()
-        t_stat <- st$test$statistic
-        df <- st$test$df
-        x_seq <- seq(-4, 4, length.out = 500)
-        y_seq <- dt(x_seq, df = df)
-        plot_df <- data.frame(x = x_seq, y = y_seq)
-        ggplot(plot_df, aes(x = x, y = y)) +
-          geom_line(color = col_h0, linewidth = 1.2) +
-          geom_vline(xintercept = t_stat, color = col_reject,
-                     linewidth = 1.2, linetype = "dashed") +
-          annotate("text", x = t_stat, y = max(y_seq) * 0.9,
-                   label = paste0("t = ", round(t_stat, 3)),
-                   hjust = if (t_stat > 0) -0.1 else 1.1,
-                   color = col_reject, fontface = "bold") +
-          labs(
-               x = "Statystyka testowa", y = "Gęstość") +
-          theme()
+        p +
+          labs(x = "Płeć", y = var_label) +
+          step_frame(xlim = c(0.4, length(groups) + 0.6),
+                     ylim = y_rng + c(-y_pad, y_pad))
       } else {
         st <- ch6_ind_stats()
-        plot_test_distribution(st$test$statistic, df = st$test$df, test_type = "t")
+        step_null_plot(st$test$statistic, df = st$test$df, type = "t",
+                       phase = if (step == 3) "stat" else "decision")
       }
     }
   }))
 
-  output$ch6_ind_result <- renderUI({
+  output$ch6_ind_text <- renderUI({
     data <- ch6_ind_data()
     step <- ch6_ind_step()
-    if (is.null(data) || step == 0) return(NULL)
+    if (is.null(data)) return(NULL)
 
     var <- input$ch6_ind_var
     var_label <- tolower(ch6_ind_var_label(var))
@@ -464,61 +439,60 @@ ch6_server <- function(input, output, session) {
     means <- st$means
     higher <- means$plec[which.max(means$m)]
     lower <- means$plec[which.min(means$m)]
-    diff_val <- round(max(means$m) - min(means$m), 2)
-    res <- format_test_result(tidy_res$p)
+    diff_val <- lc_fmt(max(means$m) - min(means$m), 2)
 
-    info <- switch(as.character(step),
+    switch(as.character(step),
       "1" = tagList(
-        lc_stat_box("n", nrow(data), caption = "osób łącznie", color = col_h0),
-        p("Każdy punkt to jedna osoba. Najpierw patrzymy, czy grupy wizualnie
-          wyglądają na przesunięte względem siebie.")
+        "n = ", step_num(nrow(data)), " osób łącznie. Każdy punkt to jedna osoba.
+        Najpierw patrzymy, czy grupy wizualnie wyglądają na przesunięte względem siebie."
       ),
       "2" = tagList(
-        tags$table(class = "lc-table lc-table-bordered lc-table-sm",
-          tags$thead(tags$tr(tags$th("Grupa"), tags$th("n"), tags$th(HTML("<span style='text-decoration:overline'>x</span>")), tags$th("s"))),
-          tags$tbody(lapply(seq_len(nrow(means)), function(i) {
-            tags$tr(
-              tags$td(as.character(means$plec[i])),
-              tags$td(means$n[i]),
-              tags$td(round(means$m[i], 2)),
-              tags$td(round(means$s[i], 2))
-            )
-          }))
-        ),
-        p("Różnica średnich w próbie wynosi ", tags$b(diff_val),
-          ". Test pyta, czy taka różnica jest duża względem zmienności w grupach.")
+        "Różnica średnich w próbie wynosi ", step_num(diff_val),
+        ". Test pyta, czy taka różnica jest duża względem zmienności w grupach."
       ),
       "3" = tagList(
-        lc_stat_box("t", round(tidy_res$statistic, 3),
-                    caption = paste0("df = ", round(tidy_res$df, 1)),
-                    color = col_effect),
-        p("Statystyka t to różnica średnich przeliczona na jednostki błędu
-          standardowego. Im dalej od zera, tym bardziej skrajny wynik pod H₀.")
+        "t = ", step_num(lc_fmt(tidy_res$statistic, 3)),
+        paste0(" (df = ", lc_fmt(tidy_res$df, 1), ")."),
+        "Statystyka t to różnica średnich przeliczona na jednostki błędu
+        standardowego. Im dalej od zera, tym bardziej skrajny wynik pod H₀."
       ),
       "4" = tagList(
-        p(tags$strong("Wynik testu t niezależnego:")),
-        p(paste0("t(", round(tidy_res$df, 1), ") = ",
-                 round(tidy_res$statistic, 3))),
-        ui_p_value(tidy_res$p),
-        p(style = paste0("color:", res$color, "; font-weight: bold;"),
-          res$decision),
+        paste0("Wynik testu t niezależnego: t(", lc_fmt(tidy_res$df, 1), ") = "),
+        step_num(lc_fmt(tidy_res$statistic, 3)), ". ", step_verdict(tidy_res$p), " ",
+        tags$strong("Werdykt:", .noWS = "outside"),
         if (tidy_res$p < 0.05) {
-          p(tags$strong("Werdykt: "),
-            "średnia ", var_label, " różni się istotnie między grupami — ",
-            "w próbie była wyższa w grupie ", tags$b(as.character(higher)),
-            " niż ", tags$b(as.character(lower)),
-            " o ", tags$b(diff_val), ".")
+          tagList(
+            " średnia ", var_label, " różni się istotnie między grupami — ",
+            "w próbie była wyższa w grupie ", b_(as.character(higher)),
+            " niż ", b_(as.character(lower)), " o ", step_num(diff_val), "."
+          )
         } else {
-          p(tags$strong("Werdykt: "),
-            "nie ma podstaw, by twierdzić, że średnia ", var_label,
+          tagList(
+            " nie ma podstaw, by twierdzić, że średnia ", var_label,
             " różni się między grupami. Obserwowana w próbie różnica ",
-            tags$b(diff_val),
-            " (na korzyść grupy ", tags$b(as.character(higher)),
-            ") mieści się w zakresie wahań losowych.")
+            step_num(diff_val), " (na korzyść grupy ", b_(as.character(higher)),
+            ") mieści się w zakresie wahań losowych."
+          )
         }
       )
     )
-    lc_feedback(type = "info", info)
+  })
+
+  # Tabela średnich pod wykresem (krok 2)
+  output$ch6_ind_table <- renderUI({
+    data <- ch6_ind_data()
+    if (is.null(data) || ch6_ind_step() != 2) return(NULL)
+    means <- ch6_ind_stats()$means
+    lc_table(
+      data.frame(group = as.character(means$plec), n = means$n,
+                 m = means$m, s = means$s),
+      cols = list(
+        lc_col("group", "Grupa", "row"),
+        lc_col("n", "n"),
+        lc_col("m", "x̄", digits = 2),
+        lc_col("s", "s", digits = 2)
+      )
+    )
   })
 
   # --- Widget 2: Test t parowy ---

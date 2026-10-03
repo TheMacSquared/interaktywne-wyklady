@@ -55,22 +55,13 @@ ch5_ui <- list(
           tags$em("„Czy szansa dostania mandatu jest niezależna od płci?”"))
       ),
 
-      lc_action("ch5_narr_step1", "1. Pokaż dane", variant = "outline"),
-      uiOutput("ch5_narr1"),
-      br(),
-
-      conditionalPanel(
-        condition = "input.ch5_narr_step1 % 2 == 1",
-        lc_action("ch5_narr_step2", "2. Załóżmy niezależność — co by było?", variant = "outline"),
-        uiOutput("ch5_narr2"),
-        br(),
-
-        conditionalPanel(
-          condition = "input.ch5_narr_step2 % 2 == 1",
-          lc_action("ch5_narr_step3", "3. Porównaj: obserwowane i oczekiwane", variant = "outline"),
-          uiOutput("ch5_narr3")
-        )
-      )
+      lc_toolbar(
+        lc_step_nav("ch5_narr_step",
+          c("Pokaż dane", "Załóżmy niezależność — co by było?",
+            "Porównaj: obserwowane i oczekiwane"),
+          start = 1)
+      ),
+      uiOutput("ch5_narr")
     ),
 
     # ========================================================================
@@ -113,9 +104,12 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 7.2",
       title = "Test χ² niezależności — krok po kroku",
-      fluidRow(
-        column(4,
-          selectInput("ch5_scenario", "Scenariusz (2×2):",
+      uiOutput("ch5_hypothesis_panel"),
+      lc_step_widget("ch5_test",
+        steps = c("Tabela obserwowana", "Procenty — co widzimy?",
+                  "Tabela oczekiwana + χ²", "p-wartość i decyzja"),
+        toolbar = lc_toolbar(
+          selectInput("ch5_scenario", "Scenariusz (2×2)",
             choices = c(
               "Opakowanie a pleśń (TŻ)" = "packaging",
               "Typ gleby a kategoria plonu (R)" = "soil",
@@ -125,20 +119,11 @@ ch5_ui <- list(
           ),
           lc_slider("ch5_n", "Wielkość próby (n)", 50, 300, 120, 10),
           lc_action("ch5_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
-          hr(),
-          h5("Kroki testu:"),
-          lc_stack(gap = "sm",
-            lc_action("ch5_step1", "1. Tabela obserwowana", variant = "outline"),
-            lc_action("ch5_step2", "2. Procenty — co widzimy?", variant = "outline"),
-            lc_action("ch5_step3", "3. Tabela oczekiwana + χ²", variant = "outline"),
-            lc_action("ch5_step4", "4. p-wartość i decyzja", variant = "outline")
-          )
+          # Kolory kategorii zmiennej w kolumnach zamiast legendy wykresu.
+          lc_readouts(uiOutput("ch5_test_legend"))
         ),
-        column(8,
-          uiOutput("ch5_hypothesis_panel"),
-          zoom_plot_ui("ch5_step_plot", height = "350px"),
-          uiOutput("ch5_step_info")
-        )
+        plot_id = "ch5_step_plot",
+        extra = uiOutput("ch5_test_table")
       )
     ),
 
@@ -321,7 +306,10 @@ ch5_server <- function(input, output, session) {
 
     state$tab
   })
-  ch5_step <- reactiveVal(0)
+
+  # Krok widgetu (1..4) żyje w przeglądarce; nowa próba ani zmiana
+  # scenariusza nie cofa kroku.
+  ch5_step <- lc_step_server("ch5_test", input)$step
 
   observeEvent(input$ch5_new_sample, {
     req(input$ch5_scenario, input$ch5_n)
@@ -344,7 +332,6 @@ ch5_server <- function(input, output, session) {
       n = n,
       tab = table(df$var1, df$var2)
     ))
-    ch5_step(0)
   }, ignoreInit = TRUE)
 
   # --- Widget 0: Narracja niezaleznosci (mandaty) ---
@@ -352,77 +339,55 @@ ch5_server <- function(input, output, session) {
   narr_tab <- matrix(c(30, 70, 50, 50), nrow = 2, byrow = TRUE,
     dimnames = list(c("Kobiety", "Mężczyźni"),
                     c("Mandat", "Brak mandatu")))
+  narr_exp <- matrix(c(40, 60, 40, 60), nrow = 2, byrow = TRUE,
+    dimnames = dimnames(narr_tab))
+  narr_steps <- c("Pokaż dane", "Załóżmy niezależność — co by było?",
+                  "Porównaj: obserwowane i oczekiwane")
 
-  output$ch5_narr1 <- renderUI({
-    req(input$ch5_narr_step1 %% 2 == 1)
+  # Kroki 1..3 (kropki); wartość 0 po „Wstecz” z kroku 1 pokazuje krok 1.
+  ch5_narr_step <- reactive(max(1L, as.integer(input$ch5_narr_step %||% 1L)))
 
-    lc_feedback(type = "info", style = "margin-top: 10px;",
-      p(tags$b("Dane z 200 kontroli:")),
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-        tags$thead(tags$tr(tags$th(""), tags$th("Mandat"), tags$th("Brak mandatu"), tags$th("Razem"))),
-        tags$tbody(
-          tags$tr(tags$td(tags$b("Kobiety")), tags$td("30"), tags$td("70"), tags$td("100")),
-          tags$tr(tags$td(tags$b("Mężczyźni")), tags$td("50"), tags$td("50"), tags$td("100")),
-          tags$tr(tags$td(tags$b("Razem")), tags$td("80"), tags$td("120"), tags$td("200"))
-        )
+  output$ch5_narr <- renderUI({
+    step <- ch5_narr_step()
+    kicker <- paste0("Krok ", step, " z 3 · ", narr_steps[step])
+
+    switch(as.character(step),
+      "1" = lc_step_text(kicker, title = "Dane z 200 kontroli:",
+        lc_crosstab(narr_tab, measure = "n", label = "Dane z 200 kontroli"),
+        p("Kobiety: 30% dostało mandat. Mężczyźni: 50%. Wygląda na różnicę.
+          Ale czy to może być przypadek?")
       ),
-      p("Kobiety: 30% dostało mandat. Mężczyźni: 50%. Wygląda na różnicę.
-        Ale czy to może być przypadek?")
+      "2" = lc_step_text(kicker, title = "Załóżmy, że płeć NIE ma znaczenia (H₀).",
+        p("Skoro płeć nie wpływa na mandaty, to nie musimy dzielić danych na kobiety i mężczyzn.
+          Patrzymy na ", tags$b("całość"), ": 80 mandatów na 200 kontroli = ",
+          tags$b("40%"), "."),
+        p("Jeśli płeć jest niezależna, to te 40% powinno być ",
+          tags$b("takie samo"), " dla kobiet i mężczyzn:"),
+        lc_crosstab(narr_exp, measure = "n", lead = FALSE, label = "Tabela oczekiwana"),
+        p("To jest ", tags$b("tabela oczekiwana"), " — ile by było, gdyby płeć nie miała wpływu.")
+      ),
+      "3" = lc_step_text(kicker, title = "Porównanie: obserwowane i oczekiwane",
+        lc_table(
+          data.frame(group = rownames(narr_tab), obs = narr_tab[, "Mandat"],
+                     exp = narr_exp[, "Mandat"],
+                     diff = narr_tab[, "Mandat"] - narr_exp[, "Mandat"]),
+          cols = list(
+            lc_col("group", "", "row"),
+            lc_col("obs", "Mandat (obs.)"),
+            lc_col("exp", "Mandat (oczek.)"),
+            lc_col("diff", "Różnica")
+          )
+        ),
+        p("Kobiety dostały ", tags$b("10 mandatów mniej"), " niż oczekiwano,
+          mężczyźni ", tags$b("10 więcej"), "."),
+        p("Test χ² bierze te różnice, podnosi do kwadratu, dzieli przez oczekiwane
+          i sumuje po wszystkich komórkach. Im większa ta suma, tym trudniej
+          wytłumaczyć różnice przypadkiem."),
+        p(tags$em("To właśnie robi wzór: "),
+          withMathJax("\\(\\chi^2 = \\sum \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}\\)"))
+      )
     )
   })
-
-  output$ch5_narr2 <- renderUI({
-    req(input$ch5_narr_step2 %% 2 == 1)
-
-    lc_feedback(type = "warning", style = "margin-top: 10px;",
-      p(tags$b("Załóżmy, że płeć NIE ma znaczenia (H₀).")),
-      p("Skoro płeć nie wpływa na mandaty, to nie musimy dzielić danych na kobiety i mężczyzn.
-        Patrzymy na ", tags$b("całość"), ": 80 mandatów na 200 kontroli = ",
-        tags$b("40%"), "."),
-      p("Jeśli płeć jest niezależna, to te 40% powinno być ",
-        tags$b("takie samo"), " dla kobiet i mężczyzn:"),
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-        tags$thead(tags$tr(tags$th(""), tags$th("Mandat"), tags$th("Brak mandatu"), tags$th("Razem"))),
-        tags$tbody(
-          tags$tr(tags$td(tags$b("Kobiety")), tags$td(tags$em("40")), tags$td(tags$em("60")), tags$td("100")),
-          tags$tr(tags$td(tags$b("Mężczyźni")), tags$td(tags$em("40")), tags$td(tags$em("60")), tags$td("100")),
-          tags$tr(tags$td(tags$b("Razem")), tags$td("80"), tags$td("120"), tags$td("200"))
-        )
-      ),
-      p("To jest ", tags$b("tabela oczekiwana"), " — ile by było, gdyby płeć nie miała wpływu.")
-    )
-  })
-
-  output$ch5_narr3 <- renderUI({
-    req(input$ch5_narr_step3 %% 2 == 1)
-
-    lc_feedback(type = "ok", style = "margin-top: 10px;",
-      p(tags$b("Porównanie: obserwowane i oczekiwane")),
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-        tags$thead(tags$tr(tags$th(""), tags$th("Mandat (obs.)"), tags$th("Mandat (oczek.)"), tags$th("Różnica"))),
-        tags$tbody(
-          tags$tr(tags$td(tags$b("Kobiety")), tags$td("30"), tags$td("40"), tags$td(tags$b("−10"))),
-          tags$tr(tags$td(tags$b("Mężczyźni")), tags$td("50"), tags$td("40"), tags$td(tags$b("+10")))
-        )
-      ),
-      p("Kobiety dostały ", tags$b("10 mandatów mniej"), " niż oczekiwano,
-        mężczyźni ", tags$b("10 więcej"), "."),
-      p("Test χ² bierze te różnice, podnosi do kwadratu, dzieli przez oczekiwane
-        i sumuje po wszystkich komórkach. Im większa ta suma, tym trudniej
-        wytłumaczyć różnice przypadkiem."),
-      p(tags$em("To właśnie robi wzór: "),
-        withMathJax("\\(\\chi^2 = \\sum \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}\\)"))
-    )
-  })
-
-  observeEvent(list(input$ch5_scenario, input$ch5_n), {
-    ch5_step(0)
-  }, ignoreInit = TRUE)
-
-  observeEvent(input$ch5_step1, ch5_step(1))
-  observeEvent(input$ch5_step2, ch5_step(2))
-  observeEvent(input$ch5_step3, ch5_step(3))
-  observeEvent(input$ch5_step4, ch5_step(4))
 
   # --- Panel hipotezy ---
   output$ch5_hypothesis_panel <- renderUI({
@@ -446,136 +411,125 @@ ch5_server <- function(input, output, session) {
     )
   })
 
+  # Kolory kategorii zmiennej w kolumnach (kroki 1–2): dane, grupa, trzecia.
+  ch5_cat_colours <- function(n_cat) {
+    c(STEP_ROLES$data$colour, STEP_ROLES$group$colour,
+      unname(upwr_cat["szalwia"]))[seq_len(n_cat)]
+  }
+
+  # Odczyty z kolorem kategorii zastępują legendę wykresu słupkowego.
+  output$ch5_test_legend <- renderUI({
+    tab <- ch5_tab()
+    if (is.null(tab) || ch5_step() > 2) return(NULL)
+    par <- scenario_params[[input$ch5_scenario]]
+    cols <- ch5_cat_colours(ncol(tab))
+    lapply(seq_len(ncol(tab)), function(j) {
+      lc_readout(paste0(par$lab2, ": ", colnames(tab)[j]), lc_fmt(sum(tab[, j])),
+                 color = cols[j], swatch = TRUE)
+    })
+  })
+
   # --- Krokowy wykres ---
   zoom_plot_server("ch5_step_plot", reactive({
     tab <- ch5_tab()
     step <- ch5_step()
     par <- scenario_params[[input$ch5_scenario]]
 
-    if (is.null(tab) || step == 0) return(NULL)
+    if (is.null(tab)) return(NULL)
 
     if (step <= 2) {
       df <- as.data.frame(tab)
       names(df) <- c("Var1", "Var2", "Freq")
+      df <- df %>%
+        group_by(Var1) %>%
+        mutate(pct = round(Freq / sum(Freq) * 100, 1)) %>%
+        ungroup()
+      # Krok 1: liczności; krok 2: procenty w obrębie wiersza.
+      df$value <- if (step == 1) df$Freq else df$pct
+      df$label <- if (step == 1) df$Freq else paste0(df$pct, "%")
+      y_top <- if (step == 1) max(df$Freq) * 1.15 else 110
 
-      if (step == 1) {
-        # Slupki z liczebnosciami
-        ggplot(df, aes(x = Var1, y = Freq, fill = Var2)) +
-          geom_col(position = "dodge", alpha = 0.8) +
-          geom_text(aes(label = Freq), position = position_dodge(width = 0.9),
-                    vjust = -0.3, size = 4) +
-          labs(
-               x = par$lab1, y = "Liczność", fill = par$lab2) +
-          scale_fill_upwr() +
-                    theme(legend.position = "top")
-      } else {
-        # Slupki z procentami (w obrębie wiersza)
-        df_pct <- df %>%
-          group_by(Var1) %>%
-          mutate(pct = round(Freq / sum(Freq) * 100, 1)) %>%
-          ungroup()
-
-        ggplot(df_pct, aes(x = Var1, y = pct, fill = Var2)) +
-          geom_col(position = "dodge", alpha = 0.8) +
-          geom_text(aes(label = paste0(pct, "%")),
-                    position = position_dodge(width = 0.9),
-                    vjust = -0.3, size = 4) +
-          labs(
-               x = par$lab1, y = "Procent", fill = par$lab2) +
-          scale_fill_upwr() +
-                    theme(legend.position = "top")
-      }
+      # Wypełnienie z kategorii (aes), więc krawędź wyniku podana wprost:
+      # step_result() ustawia stałe wypełnienie.
+      ggplot(df, aes(x = Var1, y = value, fill = Var2)) +
+        geom_col(position = position_dodge(width = 0.9), width = 0.85,
+                 alpha = STEP_ROLES$data$alpha, colour = STEP_EDGE$colour,
+                 linewidth = STEP_EDGE$linewidth) +
+        geom_text(aes(label = label), position = position_dodge(width = 0.9),
+                  vjust = -0.3, size = 4, family = "mono",
+                  colour = STEP_ROLES$known$colour) +
+        scale_fill_manual(values = ch5_cat_colours(ncol(tab))) +
+        labs(x = par$lab1, y = if (step == 1) "Liczność" else "Procent") +
+        step_frame(xlim = c(0.4, nrow(tab) + 0.6), ylim = c(0, y_top))
     } else {
-      # Krok 3-4: rozklad chi-kwadrat
+      # Krok 3: statystyka χ²; krok 4: obszar odrzucenia i decyzja
       test <- chisq.test(tab)
-      chi_stat <- as.numeric(test$statistic)
-      df_val <- as.numeric(test$parameter)
-      plot_test_distribution(chi_stat, df = df_val, test_type = "chisq")
+      step_null_plot(as.numeric(test$statistic), df = as.numeric(test$parameter),
+                     type = "chisq", phase = if (step == 3) "stat" else "decision")
     }
   }))
 
-  # --- Krokowe info ---
-  output$ch5_step_info <- renderUI({
+  # --- Opis kroku ---
+  output$ch5_test_text <- renderUI({
+    tab <- ch5_tab()
+    step <- ch5_step()
+
+    if (is.null(tab)) return(NULL)
+
+    test <- chisq.test(tab)
+    chi_stat <- as.numeric(test$statistic)
+    df_val <- as.numeric(test$parameter)
+
+    switch(as.character(step),
+      "1" = tagList(
+        "n = ", step_num(sum(tab)), ". To są obserwowane liczności. Ale same liczby
+        trudno porównać, bo grupy mogą mieć różne rozmiary. Kliknij krok 2."
+      ),
+      "2" = tagList(
+        "Gdyby zmienne były niezależne, procenty byłyby ",
+        tags$strong("takie same", .noWS = "outside"), " w każdym wierszu.
+        Czy widzisz różnice?"
+      ),
+      "3" = tagList(
+        "χ² = ", step_num(lc_fmt(chi_stat, 3)), paste0(" (df = ", df_val, ")."),
+        "Statystyka χ² mierzy łączną rozbieżność między tabelą obserwowaną a tabelą oczekiwaną.",
+        if (any(test$expected < 5)) tagList(" ",
+          lc_verdict("Uwaga: niektóre oczekiwane liczności < 5!", type = "danger"))
+      ),
+      "4" = tagList(
+        paste0("Wynik testu χ² niezależności: χ²(", df_val, ") = "),
+        step_num(lc_fmt(chi_stat, 3)), ". ", step_verdict(test$p.value)
+      )
+    )
+  })
+
+  # --- Tabele kroków pod wykresem ---
+  output$ch5_test_table <- renderUI({
     tab <- ch5_tab()
     step <- ch5_step()
     par <- scenario_params[[input$ch5_scenario]]
 
-    if (is.null(tab) || step == 0) return(NULL)
+    if (is.null(tab) || step == 4) return(NULL)
 
-    test <- chisq.test(tab)
-    n_total <- sum(tab)
-
-    # Buduj HTML tabele krzyzowa
-    .html_table <- function(mat, caption = "") {
-      header <- tags$tr(tags$th(""),
-        lapply(colnames(mat), function(cn) tags$th(cn)))
-      rows <- lapply(seq_len(nrow(mat)), function(i) {
-        tags$tr(tags$td(tags$b(rownames(mat)[i])),
-          lapply(seq_len(ncol(mat)), function(j) tags$td(mat[i, j])))
-      })
-      div(
-        if (nchar(caption) > 0) p(tags$b(caption)),
-        tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-                   style = "font-size: 14px;",
-          tags$thead(header),
-          tags$tbody(rows))
-      )
-    }
-
-    info <- switch(as.character(step),
-      "1" = tagList(
-        lc_stat_box("n", n_total, color = col_h0),
-        .html_table(tab, paste0("Tabela krzyżowa: ", par$lab1, " × ", par$lab2)),
-        p("To są obserwowane liczności. Ale same liczby trudno porównać,
-          bo grupy mogą mieć różne rozmiary. Kliknij krok 2.")
-      ),
-      "2" = {
-        pct_tab <- round(prop.table(tab, margin = 1) * 100, 1)
-        pct_mat <- matrix(paste0(pct_tab, "%"), nrow = nrow(pct_tab),
-                          dimnames = dimnames(pct_tab))
-        tagList(
-          .html_table(pct_mat, "Procenty w każdej grupie (wierszu):"),
-          p("Gdyby zmienne były niezależne, procenty byłyby ",
-            tags$b("takie same"), " w każdym wierszu.
-            Czy widzisz różnice?")
-        )
-      },
+    tab <- as.matrix(unclass(tab))
+    switch(as.character(step),
+      "1" = lc_crosstab(tab, measure = "n", row_name = par$lab1,
+                        col_name = par$lab2,
+                        label = paste0("Tabela krzyżowa: ", par$lab1, " × ", par$lab2)),
+      "2" = lc_crosstab(tab, measure = "row", row_name = par$lab1,
+                        col_name = par$lab2, label = "Procenty w każdej grupie (wierszu)"),
       "3" = {
-        chi_stat <- as.numeric(test$statistic)
-        df_val <- as.numeric(test$parameter)
-        exp_mat <- round(test$expected, 1)
-        low_exp <- any(test$expected < 5)
-        tagList(
-          .html_table(exp_mat, "Liczności oczekiwane (gdyby H₀ prawdziwa):"),
-          lc_stat_box(
-            "χ²",
-            round(chi_stat, 3),
-            caption = paste0("df = ", df_val),
-            color = col_effect
-          ),
-          p("Statystyka χ² mierzy łączną rozbieżność między tabelą obserwowaną
-            a tabelą oczekiwaną."),
-          if (low_exp) p(style = "color: var(--upwr-accent); font-weight: bold;",
-            "⚠ Uwaga: niektóre oczekiwane liczności < 5!")
-        )
-      },
-      "4" = {
-        p_val <- test$p.value
-        res <- format_test_result(p_val)
-        chi_stat <- as.numeric(test$statistic)
-        df_val <- as.numeric(test$parameter)
-
-        tagList(
-          p(tags$strong("Wynik testu χ² niezależności:")),
-          p(paste0("χ²(", df_val, ") = ", round(chi_stat, 3))),
-          ui_p_value(p_val),
-          p(style = paste0("color:", res$color, "; font-weight: bold;"),
-            res$decision),
-          p(res$explanation)
-        )
+        expected <- chisq.test(tab)$expected
+        keys <- paste0("c", seq_len(ncol(expected)))
+        df <- data.frame(group = rownames(expected), check.names = FALSE)
+        for (j in seq_along(keys)) df[[keys[j]]] <- expected[, j]
+        lc_table(df,
+          cols = c(list(lc_col("group", par$lab1, "row")),
+                   Map(function(k, lab) lc_col(k, lab, digits = 1),
+                       keys, colnames(expected))),
+          lead = "Liczności oczekiwane (gdyby H₀ prawdziwa):")
       }
     )
-    lc_feedback(type = "info", info)
   })
 
   # --- Widget 2: Porownanie chi-kwadrat vs Fisher ---

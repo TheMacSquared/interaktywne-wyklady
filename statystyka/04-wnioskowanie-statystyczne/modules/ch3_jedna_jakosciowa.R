@@ -105,9 +105,11 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 5.1",
       title = "Test dwumianowy — krok po kroku",
-      fluidRow(
-        column(4,
-          selectInput("ch3_scenario", "Scenariusz:",
+      uiOutput("ch3_hypothesis_panel"),
+      lc_step_widget("ch3_test",
+        steps = c("Dane", "Rozkład pod H₀", "p-wartość i decyzja"),
+        toolbar = lc_toolbar(
+          selectInput("ch3_scenario", "Scenariusz",
             choices = c(
               "Jakość wody (p₀ = 80%)" = "water_quality",
               "Zdawalność egzaminu (p₀ = 60%)" = "exam_pass",
@@ -118,20 +120,9 @@ ch3_ui <- list(
             selected = "water_quality"
           ),
           lc_slider("ch3_n", "Wielkość próby (n)", 20, 200, 50, 10),
-          lc_action("ch3_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
-          hr(),
-          h5("Kroki testu:"),
-          lc_stack(gap = "sm",
-            lc_action("ch3_step1", "1. Dane", variant = "outline"),
-            lc_action("ch3_step3", "2. Rozkład pod H₀", variant = "outline"),
-            lc_action("ch3_step4", "3. p-wartość i decyzja", variant = "outline")
-          )
+          lc_action("ch3_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid")
         ),
-        column(8,
-          uiOutput("ch3_hypothesis_panel"),
-          zoom_plot_ui("ch3_step_plot", height = "350px"),
-          uiOutput("ch3_step_info")
-        )
+        plot_id = "ch3_step_plot"
       )
     ),
 
@@ -161,22 +152,13 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 5.2",
       title = "Test dwumianowy jednostronny",
-      fluidRow(
-        column(4,
-          helpText("Dane: te same co w teście dwustronnym powyżej."),
-          hr(),
-          h5("Kroki testu:"),
-          lc_stack(gap = "sm",
-            lc_action("ch3b_step1", "1. Dane", variant = "outline"),
-            lc_action("ch3b_step3", "2. Rozkład pod H₀", variant = "outline"),
-            lc_action("ch3b_step4", "3. p-wartość i decyzja", variant = "outline")
-          )
+      uiOutput("ch3b_hypothesis_panel"),
+      lc_step_widget("ch3b_test",
+        steps = c("Dane", "Rozkład pod H₀", "p-wartość i decyzja"),
+        toolbar = lc_toolbar(
+          helpText("Dane: te same co w teście dwustronnym powyżej.")
         ),
-        column(8,
-          uiOutput("ch3b_hypothesis_panel"),
-          zoom_plot_ui("ch3b_step_plot", height = "350px"),
-          uiOutput("ch3b_step_info")
-        )
+        plot_id = "ch3b_step_plot"
       )
     ),
 
@@ -378,8 +360,11 @@ ch3_server <- function(input, output, session) {
 
     list(k = state$k, n = state$n)
   })
-  ch3_step <- reactiveVal(0)
-  ch3b_step <- reactiveVal(0)
+
+  # Kroki widgetów (1..3) żyją w przeglądarce; nowa próba ani zmiana
+  # scenariusza nie cofa kroku.
+  ch3_step <- lc_step_server("ch3_test", input)$step
+  ch3b_step <- lc_step_server("ch3b_test", input)$step
 
   observeEvent(input$ch3_new_sample, {
     req(input$ch3_scenario, input$ch3_n)
@@ -392,22 +377,49 @@ ch3_server <- function(input, output, session) {
       n = n,
       k = k
     ))
-    ch3_step(0)
-    ch3b_step(0)
   }, ignoreInit = TRUE)
 
-  observeEvent(list(input$ch3_scenario, input$ch3_n), {
-    ch3_step(0)
-    ch3b_step(0)
-  }, ignoreInit = TRUE)
+  # Krok 1: słupki sukces / porażka (dane i druga kategoria) z proporcją.
+  ch3_counts_plot <- function(k, n, par, phat_label) {
+    df <- data.frame(
+      kat = factor(c(par$success_label, par$failure_label),
+                   levels = c(par$success_label, par$failure_label)),
+      count = c(k, n - k)
+    )
+    y_top <- max(k, n - k) * 1.2
 
-  observeEvent(input$ch3_step1, ch3_step(1))
-  observeEvent(input$ch3_step3, ch3_step(3))
-  observeEvent(input$ch3_step4, ch3_step(4))
+    ggplot(df, aes(x = kat, y = count)) +
+      step_result(geom_col, data = df[1, ], width = 0.6) +
+      step_result(geom_col, data = df[2, ], width = 0.6,
+                  fill = STEP_ROLES$group$colour) +
+      geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold",
+                family = "mono", colour = STEP_ROLES$known$colour) +
+      step_symbol_label(1.5, max(k, n - k) * 0.7, phat_label, role = "new",
+                        hjust = 0.5, size = 5) +
+      labs(x = NULL, y = "Liczba") +
+      step_frame(xlim = c(0.4, 2.6), ylim = c(0, y_top))
+  }
 
-  observeEvent(input$ch3b_step1, ch3b_step(1))
-  observeEvent(input$ch3b_step3, ch3b_step(3))
-  observeEvent(input$ch3b_step4, ch3b_step(4))
+  # Kroki 2–3: rozkład dwumianowy pod H₀; extreme = słupki p-wartości.
+  # Rama: zakres z niepomijalnym prawdopodobieństwem plus wynik k.
+  ch3_binom_plot <- function(k, n, p0, extreme, step) {
+    df <- data.frame(x = 0:n, prob = dbinom(0:n, n, p0), extreme = extreme)
+    shown <- df$x[df$prob >= max(df$prob) * 1e-3]
+    xlim <- range(c(shown, k)) + c(-1.5, 1.5)
+    y_top <- max(df$prob) * 1.15
+    k_role <- step_role(step, 2)
+
+    ggplot(df, aes(x = x, y = prob)) +
+      step_result(geom_col, data = df[!(df$extreme & step >= 3), ], width = 0.8) +
+      step_show(step, 3, step_result(geom_col, data = df[df$extreme, ], width = 0.8,
+                                     fill = STEP_ROLES$new$colour)) +
+      step_line(k_role, xintercept = k, helper = FALSE) +
+      step_label(k, y_top * 0.9, paste0("k = ", k), role = k_role,
+                 hjust = if (k > n * p0) -0.2 else 1.2) +
+      labs(x = "Liczba sukcesów", y = "Prawdopodobieństwo") +
+      step_frame(xlim = xlim, ylim = c(0, y_top))
+  }
+
 
   # =============================================
   # WIDGET 1: Dwustronny
@@ -444,102 +456,40 @@ ch3_server <- function(input, output, session) {
 
     k <- d$k; n <- d$n; p0 <- par$p0
 
-    if (step == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Próba gotowa! Klikaj kroki po kolei.",
-                 size = 5, color = upwr_reference) +
-        theme_void()
-    } else if (step == 1) {
-      # Krok 1: slupki sukces/porazka z proporcją
-      phat <- k / n
-      df <- data.frame(
-        kat = c(par$success_label, par$failure_label),
-        count = c(k, n - k)
-      )
-      df$kat <- factor(df$kat, levels = c(par$success_label, par$failure_label))
-
-      ggplot(df, aes(x = kat, y = count, fill = kat)) +
-        geom_col(alpha = 0.8, width = 0.6) +
-        geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold") +
-        scale_fill_manual(values = c(col_accept, col_reject)) +
-        annotate("text", x = 1.5, y = max(k, n - k) * 0.7,
-                 label = paste0("p̂ = ", k, "/", n, " = ", round(phat, 3)),
-                 size = 5, color = col_pvalue, fontface = "bold") +
-        labs(x = NULL, y = "Liczba") +
-        theme(legend.position = "none")
+    if (step == 1) {
+      ch3_counts_plot(k, n, par,
+                      paste0("hat(p) == '", k, "/", n, " = ", lc_fmt(k / n, 3), "'"))
     } else {
-      # Krok 3-4: rozklad dwumianowy pod H0
-      x_vals <- 0:n
-      probs <- dbinom(x_vals, n, p0)
-      df <- data.frame(x = x_vals, prob = probs)
-
-      # Wyznacz skrajne wartosci (dwustronnie)
-      if (step == 4) {
-        p_lower <- pbinom(k, n, p0)
-        p_upper <- 1 - pbinom(k - 1, n, p0)
-        # Dwustronna p-wartosc
-        p_val <- binom.test(k, n, p0, alternative = "two.sided")$p.value
-        df$extreme <- dbinom(x_vals, n, p0) <= dbinom(k, n, p0)
-      } else {
-        df$extreme <- FALSE
-      }
-
-      ggplot(df, aes(x = x, y = prob, fill = extreme)) +
-        geom_col(width = 0.8, alpha = 0.7) +
-        geom_vline(xintercept = k, color = col_reject, linewidth = 1.2) +
-        scale_fill_manual(values = c("TRUE" = col_pvalue, "FALSE" = col_h0),
-                          guide = "none") +
-        annotate("text", x = k, y = max(probs) * 0.9,
-                 label = paste0("k = ", k),
-                 hjust = if (k > n * p0) -0.2 else 1.2,
-                 color = col_reject, fontface = "bold") +
-        labs(
-             x = "Liczba sukcesów", y = "Prawdopodobieństwo") +
-        theme()
+      # Wartości co najmniej tak mało prawdopodobne jak k (dwustronnie)
+      extreme <- dbinom(0:n, n, p0) <= dbinom(k, n, p0)
+      ch3_binom_plot(k, n, p0, extreme, step)
     }
   }))
 
-  output$ch3_step_info <- renderUI({
+  output$ch3_test_text <- renderUI({
     d <- ch3_data()
     step <- ch3_step()
     par <- scenario_params[[input$ch3_scenario]]
 
-    if (is.null(d) || step == 0) return(NULL)
+    if (is.null(d)) return(NULL)
 
     k <- d$k; n <- d$n; p0 <- par$p0; phat <- k / n
 
-    info <- switch(as.character(step),
+    switch(as.character(step),
       "1" = tagList(
-        lc_stat_box("n", n, color = col_h0),
-        lc_stat_box("p̂", k, "/", n, " = ", round(phat, 3),
-                    caption = paste0(par$success_label, ": ", k),
-                    color = col_accept),
-        lc_stat_box("p₀", p0, color = upwr_secondary),
-        p("Proporcja z próby: ", tags$b(round(phat, 3)),
-          ". Wartość referencyjna: ", tags$b(p0),
-          ". Różnica: ", tags$b(round(phat - p0, 3)),
-          ". Ale czy to dużo?")
+        "n = ", step_num(n), paste0(", ", par$success_label, ": "), step_num(k),
+        paste0(". Proporcja z próby: p̂ = ", k, "/", n, " = "), step_num(lc_fmt(phat, 3)),
+        ". Wartość referencyjna: p₀ = ", step_num(p0),
+        ". Różnica: ", step_num(lc_fmt(phat - p0, 3)), ". Ale czy to dużo?"
       ),
-      "3" = tagList(
-        p("Rozkład dwumianowy B(", n, ", ", p0,
-          ") pokazuje ile sukcesów ",
-          tags$em("spodziewalibyśmy się"), " gdyby H₀ była prawdziwa."),
-        p("Czerwona linia = nasz wynik k = ", tags$b(k),
-          ". Czy wypada w centrum czy na obrzeżach?")
+      "2" = tagList(
+        paste0("Rozkład dwumianowy B(", n, ", ", p0, ") pokazuje ile sukcesów "),
+        tags$em("spodziewalibyśmy się", .noWS = "outside"),
+        " gdyby H₀ była prawdziwa. Pionowa linia = nasz wynik k = ", step_num(k),
+        ". Czy wypada w centrum czy na obrzeżach?"
       ),
-      "4" = {
-        test <- binom.test(k, n, p0, alternative = "two.sided")
-        res <- format_test_result(test$p.value)
-        tagList(
-          lc_stat_box("p", format_p_value(test$p.value), color = col_pvalue),
-          p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
-            res$decision),
-          p(res$explanation)
-        )
-      }
+      "3" = step_verdict(binom.test(k, n, p0, alternative = "two.sided")$p.value)
     )
-    lc_feedback(type = "info", info)
   })
 
   # =============================================
@@ -573,95 +523,46 @@ ch3_server <- function(input, output, session) {
     step <- ch3b_step()
     par <- scenario_params[[input$ch3_scenario]]
 
-    if (is.null(d) || step == 0) return(NULL)
+    if (is.null(d)) return(NULL)
 
     k <- d$k; n <- d$n; p0 <- par$p0
 
     if (step == 1) {
-      phat <- k / n
-      df <- data.frame(
-        kat = c(par$success_label, par$failure_label),
-        count = c(k, n - k)
-      )
-      df$kat <- factor(df$kat, levels = c(par$success_label, par$failure_label))
-
-      ggplot(df, aes(x = kat, y = count, fill = kat)) +
-        geom_col(alpha = 0.8, width = 0.6) +
-        geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold") +
-        scale_fill_manual(values = c(col_accept, col_reject)) +
-        annotate("text", x = 1.5, y = max(k, n - k) * 0.7,
-                 label = paste0("p̂ = ", round(phat, 3), " (te same dane)"),
-                 size = 5, color = col_pvalue, fontface = "bold") +
-        labs(x = NULL, y = "Liczba") +
-        theme(legend.position = "none")
+      ch3_counts_plot(k, n, par,
+                      paste0("hat(p) == ", lc_fmt(k / n, 3), " ~ '(te same dane)'"))
     } else {
-      # Krok 3-4: rozklad z zaznaczonym jednym ogonem
-      x_vals <- 0:n
-      probs <- dbinom(x_vals, n, p0)
-      df <- data.frame(x = x_vals, prob = probs)
-
-      if (step == 4) {
-        if (par$alt_1s == "greater") {
-          df$extreme <- x_vals >= k
-        } else {
-          df$extreme <- x_vals <= k
-        }
-      } else {
-        df$extreme <- FALSE
-      }
-
-      ggplot(df, aes(x = x, y = prob, fill = extreme)) +
-        geom_col(width = 0.8, alpha = 0.7) +
-        geom_vline(xintercept = k, color = col_reject, linewidth = 1.2) +
-        scale_fill_manual(values = c("TRUE" = col_pvalue, "FALSE" = col_h0),
-                          guide = "none") +
-        annotate("text", x = k, y = max(probs) * 0.9,
-                 label = paste0("k = ", k),
-                 hjust = if (k > n * p0) -0.2 else 1.2,
-                 color = col_reject, fontface = "bold") +
-        labs(
-             
-             x = "Liczba sukcesów", y = "Prawdopodobieństwo") +
-        theme()
+      # Jeden ogon: wartości co najmniej tak skrajne jak k w kierunku Hₐ
+      extreme <- if (par$alt_1s == "greater") 0:n >= k else 0:n <= k
+      ch3_binom_plot(k, n, p0, extreme, step)
     }
   }))
 
-  output$ch3b_step_info <- renderUI({
+  output$ch3b_test_text <- renderUI({
     d <- ch3_data()
     step <- ch3b_step()
     par <- scenario_params[[input$ch3_scenario]]
 
-    if (is.null(d) || step == 0) return(NULL)
+    if (is.null(d)) return(NULL)
 
     k <- d$k; n <- d$n; p0 <- par$p0; phat <- k / n
-    dir_label <- if (par$alt_1s == "greater") "większa" else "mniejsza"
 
-    info <- switch(as.character(step),
+    switch(as.character(step),
       "1" = tagList(
-        lc_stat_box("n", n, " (te same dane co wyżej)", color = col_h0),
-        lc_stat_box("p̂", round(phat, 3), " (ta sama wartość!)", color = col_pvalue),
-        p("Statystyki takie same — dane się nie zmieniły. Zmieniło się tylko pytanie (kierunek).")
+        "n = ", step_num(n), " (te same dane co wyżej), p̂ = ",
+        step_num(lc_fmt(phat, 3)), " (ta sama wartość!). Statystyki takie same —
+        dane się nie zmieniły. Zmieniło się tylko pytanie (kierunek)."
+      ),
+      "2" = tagList(
+        paste0("Ten sam rozkład B(", n, ", ", p0, "), ale teraz patrzymy tylko na ",
+               if (par$alt_1s == "greater") "prawy" else "lewy", " ogon.")
       ),
       "3" = tagList(
-        p("Ten sam rozkład B(", n, ", ", p0,
-          "), ale teraz patrzymy tylko na ",
-          tags$b(if (par$alt_1s == "greater") "prawy" else "lewy"), " ogon.")
-      ),
-      "4" = {
-        test <- binom.test(k, n, p0, alternative = par$alt_1s)
-        res <- format_test_result(test$p.value)
-        tagList(
-          lc_stat_box("p", format_p_value(test$p.value),
-                     " (jednostronnie!)", color = col_pvalue),
-          p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
-            res$decision),
-          p(res$explanation),
-          p(tags$em("Porównaj z testem dwustronnym wyżej — te same dane,
-            ale inna p-wartość!"))
-        )
-      }
+        "Jednostronnie: ",
+        step_verdict(binom.test(k, n, p0, alternative = par$alt_1s)$p.value), " ",
+        tags$em("Porównaj z testem dwustronnym wyżej — te same dane,
+          ale inna p-wartość!")
+      )
     )
-    lc_feedback(type = "info", info)
   })
 
   # =============================================

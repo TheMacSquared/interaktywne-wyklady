@@ -109,38 +109,25 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 4.1",
       title = "Test t jednej próby — krok po kroku",
-      div(class = "ch2-animated-widget",
-        fluidRow(
-          column(4,
-            selectInput("ch2_scenario", "Scenariusz:",
-              choices = c(
-                "Koncentracja (μ₀ = 70 pkt)" = "concentration",
-                "Zużycie wody (μ₀ = 150 l)" = "water",
-                "Plon pszenicy (μ₀ = 5 t/ha)" = "yield",
-                "Trwałość jogurtu (μ₀ = 14 dni)" = "yogurt",
-                "Hałas w hali (μ₀ = 85 dB, IB)" = "noise"
-              ),
-              selected = "concentration"
+      uiOutput("ch2_hypothesis_panel"),
+      lc_step_widget("ch2_test",
+        steps = c("Dane", "Statystyki opisowe", "Statystyka testowa",
+                  "p-wartość i decyzja"),
+        toolbar = lc_toolbar(
+          selectInput("ch2_scenario", "Scenariusz",
+            choices = c(
+              "Koncentracja (μ₀ = 70 pkt)" = "concentration",
+              "Zużycie wody (μ₀ = 150 l)" = "water",
+              "Plon pszenicy (μ₀ = 5 t/ha)" = "yield",
+              "Trwałość jogurtu (μ₀ = 14 dni)" = "yogurt",
+              "Hałas w hali (μ₀ = 85 dB, IB)" = "noise"
             ),
-            lc_slider("ch2_n", "Wielkość próby (n)", 10, 100, 40, 5),
-            lc_action("ch2_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
-            hr(),
-            h5("Kroki testu:"),
-            lc_stack(gap = "sm",
-              lc_action("ch2_step1", "1. Dane", variant = "outline"),
-              lc_action("ch2_step2", "2. Statystyki opisowe", variant = "outline"),
-              lc_action("ch2_step3", "3. Statystyka testowa", variant = "outline"),
-              lc_action("ch2_step4", "4. p-wartość i decyzja", variant = "outline")
-            )
+            selected = "concentration"
           ),
-          column(8,
-            div(class = "ch2-step-stage",
-              uiOutput("ch2_hypothesis_panel"),
-              zoom_plot_ui("ch2_step_plot", height = "350px"),
-              uiOutput("ch2_step_info")
-            )
-          )
-        )
+          lc_slider("ch2_n", "Wielkość próby (n)", 10, 100, 40, 5),
+          lc_action("ch2_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid")
+        ),
+        plot_id = "ch2_step_plot"
       )
     ),
 
@@ -177,27 +164,14 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 4.2",
       title = "Test t jednostronny — krok po kroku",
-      div(class = "ch2-animated-widget",
-        fluidRow(
-          column(4,
-            helpText("Dane: te same co w teście dwustronnym powyżej."),
-            hr(),
-            h5("Kroki testu:"),
-            lc_stack(gap = "sm",
-              lc_action("ch2b_step1", "1. Dane", variant = "outline"),
-              lc_action("ch2b_step2", "2. Statystyki opisowe", variant = "outline"),
-              lc_action("ch2b_step3", "3. Statystyka testowa", variant = "outline"),
-              lc_action("ch2b_step4", "4. p-wartość i decyzja", variant = "outline")
-            )
-          ),
-          column(8,
-            div(class = "ch2-step-stage",
-              uiOutput("ch2b_hypothesis_panel"),
-              zoom_plot_ui("ch2b_step_plot", height = "350px"),
-              uiOutput("ch2b_step_info")
-            )
-          )
-        )
+      uiOutput("ch2b_hypothesis_panel"),
+      lc_step_widget("ch2b_test",
+        steps = c("Dane", "Statystyki opisowe", "Statystyka testowa",
+                  "p-wartość i decyzja"),
+        toolbar = lc_toolbar(
+          helpText("Dane: te same co w teście dwustronnym powyżej.")
+        ),
+        plot_id = "ch2b_step_plot"
       )
     ),
 
@@ -261,6 +235,112 @@ ch2_ui <- list(
 
 .ch2_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
                      stringsAsFactors = FALSE)
+
+# ============================================================================
+# WIDGETY KROKOWE TESTÓW — wspólne dla rozdziałów 04–08
+# ============================================================================
+# app.R ładuje ten plik przed ch3–ch6; funkcje są wołane dopiero w serwerze.
+
+# Liczba w opisie kroku: <b> (mono w .lc-stepper-text), bez spacji wokół.
+step_num <- function(x) tags$b(x, .noWS = "outside")
+
+# step_label() z wyrażeniem plotmath (np. "mu[0] == 70", "bar(x) == 73.9"):
+# indeksy i znaki łączące (μ₀, x̄, p̂) nie mają glifów w czcionkach showtext.
+step_symbol_label <- function(x, y, label, role = "known", hjust = 0, vjust = 0,
+                              size = 3.6) {
+  annotate("text", x = x, y = y, label = label, parse = TRUE, hjust = hjust,
+           vjust = vjust, colour = STEP_ROLES[[role]]$colour, fontface = "bold",
+           size = size)
+}
+
+# Rozkład statystyki pod H₀ w rolach widgetu krokowego.
+# phase = "stat": krzywa (znana) i statystyka (nowa);
+# phase = "decision": statystyka znana, obszar odrzucenia i wartości krytyczne nowe.
+# Rama osi zależy tylko od statystyki i df, więc oba kroki mają tę samą.
+step_null_plot <- function(stat, df, type = c("t", "chisq"),
+                           alternative = "two.sided",
+                           phase = c("stat", "decision"), alpha = 0.05) {
+  type <- match.arg(type)
+  phase <- match.arg(phase)
+  stat <- as.numeric(stat)
+
+  if (type == "t") {
+    half <- max(4, abs(stat) * 1.1 + 0.5)
+    xlim <- c(-half, half)
+    dens <- function(x) dt(x, df)
+    crit <- switch(alternative,
+      two.sided = qt(1 - alpha / 2, df) * c(-1, 1),
+      greater   = qt(1 - alpha, df),
+      less      = qt(alpha, df)
+    )
+    reject <- function(x) switch(alternative,
+      two.sided = abs(x) >= crit[2],
+      greater   = x >= crit,
+      less      = x <= crit
+    )
+  } else {
+    xlim <- c(0, max(stat * 2, 15))
+    dens <- function(x) dchisq(x, df)
+    crit <- qchisq(1 - alpha, df)
+    reject <- function(x) x >= crit
+  }
+
+  curve <- data.frame(x = seq(xlim[1], xlim[2], length.out = 600))
+  curve$y <- dens(curve$x)
+  visible <- is.finite(curve$y) & curve$x >= xlim[1] + diff(xlim) * 0.02
+  y_top <- max(curve$y[visible]) * 1.25
+  curve$y <- pmin(curve$y, y_top)
+
+  stat_role <- if (phase == "stat") "new" else "known"
+  label_hjust <- if (stat > xlim[1] + 0.7 * diff(xlim)) 1.1 else -0.1
+  stat_text <- step_label(
+    stat, y_top * 0.97,
+    paste0(if (type == "t") "t" else "χ²", " = ", lc_fmt(stat, 3)),
+    role = stat_role, hjust = label_hjust, vjust = 1
+  )
+
+  p <- ggplot(curve, aes(x = x, y = y))
+  if (phase == "decision") {
+    in_reject <- reject(curve$x)
+    # Obszar odrzucenia: osobne fragmenty, żeby geom_area nie łączył ogonów.
+    for (part in split(curve[in_reject, ], cumsum(!in_reject)[in_reject])) {
+      p <- p + step_layer(geom_area, "new", data = part, fill_role = TRUE,
+                          colour = NA, alpha = 0.3)
+    }
+    p <- p +
+      step_layer(geom_area, "background", data = curve[!in_reject, ],
+                 fill_role = TRUE, colour = NA) +
+      step_line("new", xintercept = crit)
+    if (type == "t" && alternative == "two.sided") {
+      tail_mid <- (crit[2] + xlim[2]) / 2
+      p <- p +
+        step_label(0, y_top * 0.45, "nie odrzucamy H0", role = "known", hjust = 0.5) +
+        step_label(-tail_mid, y_top * 0.25, "Ha", role = "new", hjust = 0.5) +
+        step_label(tail_mid, y_top * 0.25, "Ha", role = "new", hjust = 0.5)
+    }
+  }
+  p +
+    step_layer(geom_line, "known") +
+    step_line(stat_role, xintercept = stat, helper = FALSE) +
+    stat_text +
+    labs(x = "Statystyka testowa", y = "Gęstość") +
+    step_frame(xlim = xlim, ylim = c(0, y_top))
+}
+
+# Decyzja w opisie kroku: werdykt, p z kropką dziesiętną i porównanie z α.
+step_verdict <- function(p_value, alpha = 0.05) {
+  res <- format_test_result(p_value, alpha)
+  sig <- p_value < alpha
+  verdict <- lc_verdict(res$decision, type = if (sig) "danger" else "ok")
+  verdict$.noWS <- "outside"
+  tagList(
+    verdict, ". ",
+    if (p_value < 0.001) "p < " else "p = ",
+    step_num(if (p_value < 0.001) "0.001" else lc_fmt(p_value, 3)),
+    if (sig) " < α = " else " ≥ α = ", alpha,
+    if (sig) " — wynik istotny statystycznie." else " — wynik nieistotny statystycznie."
+  )
+}
 
 # ============================================================================
 # SERVER
@@ -333,15 +413,36 @@ ch2_server <- function(input, output, session) {
     state$values
   })
 
-  ch2_step <- reactiveVal(0)
+  # Krok widgetu (1..4) żyje w przeglądarce; nowa próba ani zmiana
+  # scenariusza nie cofa kroku.
+  ch2_step <- lc_step_server("ch2_test", input)$step
 
-  observeEvent(input$ch2_new_sample, ch2_step(0), ignoreInit = TRUE)
-  observeEvent(list(input$ch2_scenario, input$ch2_n), ch2_step(0), ignoreInit = TRUE)
+  # Histogram danych (kroki 1–2): rama z danych i μ₀, wspólna dla obu kroków.
+  ch2_hist_plot <- function(samp, mu0, xlab, step) {
+    rng <- range(c(samp, mu0))
+    pad <- diff(rng) * 0.06
+    breaks <- seq(min(samp), max(samp), length.out = 16)
+    y_top <- max(hist(samp, breaks = breaks, plot = FALSE)$counts) * 1.3
+    x_bar <- mean(samp)
 
-  observeEvent(input$ch2_step1, ch2_step(1))
-  observeEvent(input$ch2_step2, ch2_step(2))
-  observeEvent(input$ch2_step3, ch2_step(3))
-  observeEvent(input$ch2_step4, ch2_step(4))
+    p <- ggplot(data.frame(x = samp), aes(x = x)) +
+      step_result(geom_histogram, breaks = breaks) +
+      labs(x = xlab, y = "Liczba")
+
+    if (step >= 2) {
+      # μ₀ znamy z hipotezy; średnia z próby jest nowa w kroku 2.
+      mean_right <- x_bar >= mu0
+      p <- p +
+        step_line("known", xintercept = mu0) +
+        step_line(step_role(step, 2), xintercept = x_bar, helper = FALSE) +
+        step_symbol_label(mu0, y_top * 0.95, paste0("mu[0] == ", mu0), role = "known",
+                          hjust = if (mean_right) 1.1 else -0.1, vjust = 1) +
+        step_symbol_label(x_bar, y_top * 0.95, paste0("bar(x) == ", lc_fmt(x_bar, 2)),
+                          role = step_role(step, 2),
+                          hjust = if (mean_right) -0.1 else 1.1, vjust = 1)
+    }
+    p + step_frame(xlim = rng + c(-pad, pad), ylim = c(0, y_top))
+  }
 
   # --- Panel hipotezy (zawsze widoczny) ---
   output$ch2_hypothesis_panel <- renderUI({
@@ -375,70 +476,24 @@ ch2_server <- function(input, output, session) {
 
     if (is.null(samp)) return(NULL)
 
-    if (step == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Próba gotowa! Klikaj kroki po kolei.",
-                 size = 5, color = upwr_reference) +
-        theme_void()
-    } else if (step <= 2) {
-      # Krok 1-2: histogram danych
-      p <- ggplot(data.frame(x = samp), aes(x = x)) +
-        geom_histogram(bins = 15, fill = col_h0, alpha = 0.6, color = "white") +
-        labs(x = par$xlab, y = "Liczba") +
-        theme()
-
-      if (step >= 2) {
-        # Dodaj srednia i mu0
-        p <- p +
-          geom_vline(xintercept = mu0, color = col_reject, linewidth = 1.2,
-                     linetype = "dashed") +
-          geom_vline(xintercept = mean(samp), color = col_pvalue, linewidth = 1.2) +
-          annotate("text", x = mu0, y = Inf, vjust = 2,
-                   label = paste0("μ₀ = ", mu0), color = col_reject,
-                   fontface = "bold") +
-          annotate("text", x = mean(samp), y = Inf, vjust = 3.5,
-                   label = paste0("x̄ = ", round(mean(samp), 2)),
-                   color = col_pvalue, fontface = "bold")
-      }
-      p
-    } else if (step == 3) {
-      # Krok 3: rozklad t — tylko linia statystyki, bez zacienionego pola
-      n <- length(samp)
-      t_stat <- (mean(samp) - mu0) / (sd(samp) / sqrt(n))
-
-      x <- seq(-4, 4, length.out = 500)
-      y <- dt(x, df = n - 1)
-      plot_df <- data.frame(x = x, y = y)
-
-      ggplot(plot_df, aes(x = x, y = y)) +
-        geom_line(color = col_h0, linewidth = 1.2) +
-        geom_vline(xintercept = t_stat, color = col_reject,
-                   linewidth = 1.2, linetype = "dashed") +
-        annotate("text", x = t_stat, y = max(y) * 0.9,
-                 label = paste0("t = ", round(t_stat, 3)),
-                 hjust = if (t_stat > 0) -0.1 else 1.1,
-                 color = col_reject, fontface = "bold") +
-        labs(
-             x = "Statystyka testowa", y = "Gęstość") +
-        theme()
-
+    if (step <= 2) {
+      ch2_hist_plot(samp, mu0, par$xlab, step)
     } else {
-      # Krok 4: rozklad t z zacienionym polem p-wartosci
       n <- length(samp)
       t_stat <- (mean(samp) - mu0) / (sd(samp) / sqrt(n))
-      plot_test_distribution(t_stat, df = n - 1, test_type = "t")
+      step_null_plot(t_stat, df = n - 1, type = "t",
+                     phase = if (step == 3) "stat" else "decision")
     }
   }))
 
-  # --- Krokowe info ---
-  output$ch2_step_info <- renderUI({
+  # --- Opis kroku ---
+  output$ch2_test_text <- renderUI({
     samp <- ch2_sample()
     step <- ch2_step()
     par <- scenario_params[[input$ch2_scenario]]
     mu0 <- par$mu0
 
-    if (is.null(samp) || step == 0) return(NULL)
+    if (is.null(samp)) return(NULL)
 
     n <- length(samp)
     x_bar <- mean(samp)
@@ -446,45 +501,25 @@ ch2_server <- function(input, output, session) {
     se <- s / sqrt(n)
     t_stat <- (x_bar - mu0) / se
     p_val <- 2 * pt(-abs(t_stat), df = n - 1)
-    res <- format_test_result(p_val)
 
-    info <- switch(as.character(step),
+    switch(as.character(step),
       "1" = tagList(
-        lc_stat_box("n", n, color = col_h0),
-        p("Mamy próbę ", n, " obserwacji. Chcemy sprawdzić, czy średnia różni się od μ₀ = ", mu0, ".")
+        "Mamy próbę ", step_num(n), " obserwacji. Chcemy sprawdzić, czy średnia
+        różni się od μ₀ = ", step_num(mu0), "."
       ),
       "2" = tagList(
-        lc_stat_box("x̄", round(x_bar, 2), color = col_pvalue),
-        lc_stat_box("s", round(s, 2), color = col_h0),
-        lc_stat_box(
-          "p",
-          format_p_value(p_val),
-          caption = paste0("SE = s/√n = ", round(se, 2)),
-          color = upwr_secondary
-        ),
-        p("Różnica między x̄ a μ₀: ", tags$b(round(x_bar - mu0, 2)),
-          ". Ale czy to dużo? Musimy to odnieść do zmienności (SE).")
+        "x̄ = ", step_num(lc_fmt(x_bar, 2)), ", s = ", step_num(lc_fmt(s, 2)),
+        ", SE = s/√n = ", step_num(lc_fmt(se, 2)), ". Różnica między x̄ a μ₀: ",
+        step_num(lc_fmt(x_bar - mu0, 2)),
+        ". Ale czy to dużo? Musimy to odnieść do zmienności (SE)."
       ),
       "3" = tagList(
-        lc_stat_box(
-          "t",
-          round(t_stat, 3),
-          caption = paste0("(", round(x_bar, 2), " − ", mu0, ") / ", round(se, 2)),
-          color = col_effect
-        ),
-        p("Statystyka t mówi: średnia z próby jest ",
-          tags$b(round(abs(t_stat), 1)), " błędów standardowych od μ₀.",
-          if (abs(t_stat) > 2) " To sporo!" else " To niewiele.")
+        paste0("t = (", lc_fmt(x_bar, 2), " − ", mu0, ") / ", lc_fmt(se, 2), " = "),
+        step_num(lc_fmt(t_stat, 3)), ". Statystyka t mówi: średnia z próby jest ",
+        step_num(lc_fmt(abs(t_stat), 1)), " błędów standardowych od μ₀.",
+        if (abs(t_stat) > 2) " To sporo!" else " To niewiele."
       ),
-      "4" = tagList(
-        lc_stat_box("p", format_p_value(p_val), color = col_pvalue),
-        p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
-          res$decision),
-        p(res$explanation)
-      )
-    )
-    div(class = "ch2-step-panel",
-      lc_feedback(type = "info", info)
+      "4" = step_verdict(p_val)
     )
   })
 
@@ -512,16 +547,8 @@ ch2_server <- function(input, output, session) {
                   h1_text = "\\(H_a: \\mu > 85\\) (hałas przekracza normę)")
   )
 
-  ch2b_step <- reactiveVal(0)
-
-  # Reset krokow Widget 2 gdy wspolna probka jest nowa albo nieaktualna.
-  observeEvent(input$ch2_new_sample, ch2b_step(0), ignoreInit = TRUE)
-  observeEvent(list(input$ch2_scenario, input$ch2_n), ch2b_step(0), ignoreInit = TRUE)
-
-  observeEvent(input$ch2b_step1, ch2b_step(1))
-  observeEvent(input$ch2b_step2, ch2b_step(2))
-  observeEvent(input$ch2b_step3, ch2b_step(3))
-  observeEvent(input$ch2b_step4, ch2b_step(4))
+  # Krok widgetu 2 (1..4); wspólna próba nie cofa kroku.
+  ch2b_step <- lc_step_server("ch2b_test", input)$step
 
   # Panel hipotezy (jednostronny) — zawsze widoczny jako naglowek
   output$ch2b_hypothesis_panel <- renderUI({
@@ -554,64 +581,27 @@ ch2_server <- function(input, output, session) {
     par1s <- scenario_params_1s[[input$ch2_scenario]]
     mu0 <- par$mu0
 
-    if (is.null(samp) || step == 0) return(NULL)
+    if (is.null(samp)) return(NULL)
 
     if (step <= 2) {
-      p <- ggplot(data.frame(x = samp), aes(x = x)) +
-        geom_histogram(bins = 15, fill = col_h0, alpha = 0.6, color = "white") +
-        labs(x = par$xlab, y = "Liczba") +
-        theme()
-
-      if (step >= 2) {
-        p <- p +
-          geom_vline(xintercept = mu0, color = col_reject, linewidth = 1.2,
-                     linetype = "dashed") +
-          geom_vline(xintercept = mean(samp), color = col_pvalue, linewidth = 1.2) +
-          annotate("text", x = mu0, y = Inf, vjust = 2,
-                   label = paste0("μ₀ = ", mu0), color = col_reject,
-                   fontface = "bold") +
-          annotate("text", x = mean(samp), y = Inf, vjust = 3.5,
-                   label = paste0("x̄ = ", round(mean(samp), 2)),
-                   color = col_pvalue, fontface = "bold")
-      }
-      p
-    } else if (step == 3) {
-      n <- length(samp)
-      t_stat <- (mean(samp) - mu0) / (sd(samp) / sqrt(n))
-
-      x <- seq(-4, 4, length.out = 500)
-      y <- dt(x, df = n - 1)
-      plot_df <- data.frame(x = x, y = y)
-
-      ggplot(plot_df, aes(x = x, y = y)) +
-        geom_line(color = col_h0, linewidth = 1.2) +
-        geom_vline(xintercept = t_stat, color = col_reject,
-                   linewidth = 1.2, linetype = "dashed") +
-        annotate("text", x = t_stat, y = max(y) * 0.9,
-                 label = paste0("t = ", round(t_stat, 3)),
-                 hjust = if (t_stat > 0) -0.1 else 1.1,
-                 color = col_reject, fontface = "bold") +
-        labs(
-             
-             x = "Statystyka testowa", y = "Gęstość") +
-        theme()
+      ch2_hist_plot(samp, mu0, par$xlab, step)
     } else {
       n <- length(samp)
       t_stat <- (mean(samp) - mu0) / (sd(samp) / sqrt(n))
-      plot_test_distribution(t_stat, df = n - 1, test_type = "t",
-                             alternative = par1s$alt)
+      step_null_plot(t_stat, df = n - 1, type = "t", alternative = par1s$alt,
+                     phase = if (step == 3) "stat" else "decision")
     }
   }))
 
-  # Krokowe info (jednostronny)
-  output$ch2b_step_info <- renderUI({
+  # Opis kroku (jednostronny)
+  output$ch2b_test_text <- renderUI({
     samp <- ch2_sample()
     step <- ch2b_step()
     par <- scenario_params[[input$ch2_scenario]]
     par1s <- scenario_params_1s[[input$ch2_scenario]]
     mu0 <- par$mu0
 
-    if (is.null(samp) || step == 0) return(NULL)
+    if (is.null(samp)) return(NULL)
 
     n <- length(samp)
     x_bar <- mean(samp)
@@ -625,45 +615,30 @@ ch2_server <- function(input, output, session) {
     } else {
       pt(t_stat, df = n - 1, lower.tail = FALSE)
     }
-    res <- format_test_result(p_val)
 
     dir_label <- if (par1s$alt == "less") "mniejsza" else "większa"
 
-    info <- switch(as.character(step),
+    switch(as.character(step),
       "1" = tagList(
-        lc_stat_box("n", n, caption = "te same dane co wyżej", color = col_h0),
-        p("Pytamy, czy średnia jest ",
-          dir_label, " niż μ₀ = ", mu0, ".")
+        "n = ", step_num(n), " (te same dane co wyżej). Pytamy, czy średnia jest ",
+        dir_label, " niż μ₀ = ", step_num(mu0), "."
       ),
       "2" = tagList(
-        lc_stat_box("x̄", round(x_bar, 2), color = col_pvalue),
-        lc_stat_box("s", round(s, 2), color = col_h0),
-        lc_stat_box(
-          "t",
-          round(t_stat, 3),
-          caption = paste0("SE = s/√n = ", round(se, 2), "; taka sama wartość"),
-          color = upwr_secondary
-        ),
-        p("Statystyki takie same jak wyżej — dane się nie zmieniły.
-          Zmieniło się tylko pytanie (kierunek).")
+        "x̄ = ", step_num(lc_fmt(x_bar, 2)), ", s = ", step_num(lc_fmt(s, 2)),
+        ", SE = s/√n = ", step_num(lc_fmt(se, 2)), ", t = ",
+        step_num(lc_fmt(t_stat, 3)), " (taka sama wartość). Statystyki takie same
+        jak wyżej — dane się nie zmieniły. Zmieniło się tylko pytanie (kierunek)."
       ),
       "3" = tagList(
-        lc_stat_box("t", round(t_stat, 3), color = col_effect),
-        p("Statystyka t jest identyczna. Ale w teście jednostronnym patrzymy tylko na ",
-          tags$b(if (par1s$alt == "less") "lewy" else "prawy"), " ogon rozkładu.")
+        "t = ", step_num(lc_fmt(t_stat, 3)), ". Statystyka t jest identyczna.
+        Ale w teście jednostronnym patrzymy tylko na ",
+        if (par1s$alt == "less") "lewy" else "prawy", " ogon rozkładu."
       ),
       "4" = tagList(
-        lc_stat_box("p", format_p_value(p_val),
-                    caption = "jednostronnie", color = col_pvalue),
-        p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
-          res$decision),
-        p(res$explanation),
-        p(tags$em("Porównaj z testem dwustronnym wyżej — te same dane,
-          ten sam t, ale inna p-wartość!"))
+        "Jednostronnie: ", step_verdict(p_val), " ",
+        tags$em("Porównaj z testem dwustronnym wyżej — te same dane, ten sam t,
+          ale inna p-wartość!")
       )
-    )
-    div(class = "ch2-step-panel",
-      lc_feedback(type = "info", info)
     )
   })
 

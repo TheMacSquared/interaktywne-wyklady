@@ -157,9 +157,12 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 6.4",
       title = "Test korelacji — krok po kroku",
-      fluidRow(
-        column(4,
-          selectInput("ch4_scenario", "Scenariusz:",
+      uiOutput("ch4_hypothesis_panel"),
+      lc_step_widget("ch4_test",
+        steps = c("Dane (wykres rozrzutu)", "Korelacja z próby",
+                  "Statystyka testowa", "p-wartość i decyzja"),
+        toolbar = lc_toolbar(
+          selectInput("ch4_scenario", "Scenariusz",
             choices = c(
               "Sen a ocena z egzaminu" = "sleep_grade",
               "Azotany a odległość od źródła" = "nitrate_dist",
@@ -170,21 +173,9 @@ ch4_ui <- list(
             selected = "sleep_grade"
           ),
           lc_slider("ch4_n", "Wielkość próby (n)", 15, 100, 40, 5),
-          lc_action("ch4_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
-          hr(),
-          h5("Kroki testu:"),
-          lc_stack(gap = "sm",
-            lc_action("ch4_step1", "1. Dane (wykres rozrzutu)", variant = "outline"),
-            lc_action("ch4_step2", "2. Korelacja z próby", variant = "outline"),
-            lc_action("ch4_step3", "3. Statystyka testowa", variant = "outline"),
-            lc_action("ch4_step4", "4. p-wartość i decyzja", variant = "outline")
-          )
+          lc_action("ch4_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid")
         ),
-        column(8,
-          uiOutput("ch4_hypothesis_panel"),
-          zoom_plot_ui("ch4_step_plot", height = "350px"),
-          uiOutput("ch4_step_info")
-        )
+        plot_id = "ch4_step_plot"
       )
     ),
 
@@ -201,23 +192,14 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 6.5",
       title = "Test korelacji jednostronny",
-      fluidRow(
-        column(4,
-          helpText("Dane: te same co w teście dwustronnym powyżej."),
-          hr(),
-          h5("Kroki testu:"),
-          lc_stack(gap = "sm",
-            lc_action("ch4b_step1", "1. Dane", variant = "outline"),
-            lc_action("ch4b_step2", "2. Korelacja z próby", variant = "outline"),
-            lc_action("ch4b_step3", "3. Statystyka testowa", variant = "outline"),
-            lc_action("ch4b_step4", "4. p-wartość i decyzja", variant = "outline")
-          )
+      uiOutput("ch4b_hypothesis_panel"),
+      lc_step_widget("ch4b_test",
+        steps = c("Dane", "Korelacja z próby", "Statystyka testowa",
+                  "p-wartość i decyzja"),
+        toolbar = lc_toolbar(
+          helpText("Dane: te same co w teście dwustronnym powyżej.")
         ),
-        column(8,
-          uiOutput("ch4b_hypothesis_panel"),
-          zoom_plot_ui("ch4b_step_plot", height = "350px"),
-          uiOutput("ch4b_step_info")
-        )
+        plot_id = "ch4b_step_plot"
       )
     ),
 
@@ -486,8 +468,11 @@ ch4_server <- function(input, output, session) {
 
     state$data
   })
-  ch4_step <- reactiveVal(0)
-  ch4b_step <- reactiveVal(0)
+
+  # Kroki widgetów (1..4) żyją w przeglądarce; nowa próba ani zmiana
+  # scenariusza nie cofa kroku.
+  ch4_step <- lc_step_server("ch4_test", input)$step
+  ch4b_step <- lc_step_server("ch4b_test", input)$step
 
   observeEvent(input$ch4_new_sample, {
     req(input$ch4_scenario, input$ch4_n)
@@ -501,24 +486,18 @@ ch4_server <- function(input, output, session) {
                                        x_mean = par$x_mean, x_sd = par$x_sd,
                                        y_mean = par$y_mean, y_sd = par$y_sd)
     ))
-    ch4_step(0)
-    ch4b_step(0)
   }, ignoreInit = TRUE)
 
-  observeEvent(list(input$ch4_scenario, input$ch4_n), {
-    ch4_step(0)
-    ch4b_step(0)
-  }, ignoreInit = TRUE)
-
-  observeEvent(input$ch4_step1, ch4_step(1))
-  observeEvent(input$ch4_step2, ch4_step(2))
-  observeEvent(input$ch4_step3, ch4_step(3))
-  observeEvent(input$ch4_step4, ch4_step(4))
-
-  observeEvent(input$ch4b_step1, ch4b_step(1))
-  observeEvent(input$ch4b_step2, ch4b_step(2))
-  observeEvent(input$ch4b_step3, ch4b_step(3))
-  observeEvent(input$ch4b_step4, ch4b_step(4))
+  # Kroki 1–2: wykres rozrzutu; prosta MNK nowa w kroku 2. Rama z danych.
+  ch4_scatter_plot <- function(d, par, step) {
+    pad <- function(v) range(v) + c(-1, 1) * diff(range(v)) * 0.06
+    ggplot(d, aes(x = x, y = y)) +
+      step_layer(geom_point, "data", size = 2.5) +
+      step_show(step, 2, step_layer(geom_smooth, step_role(step, 2), method = "lm",
+                                    formula = y ~ x, se = FALSE)) +
+      labs(x = par$xlab, y = par$ylab) +
+      step_frame(xlim = pad(d$x), ylim = pad(d$y))
+  }
 
   # =============================================
   # WIDGET 1: Test dwustronny
@@ -552,97 +531,47 @@ ch4_server <- function(input, output, session) {
 
     if (is.null(d)) return(NULL)
 
-    if (step == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Próba gotowa! Klikaj kroki po kolei.",
-                 size = 5, color = upwr_reference) +
-        theme_void()
-    } else if (step <= 2) {
-      p <- ggplot(d, aes(x = x, y = y)) +
-        geom_point(color = col_h0, alpha = 0.6, size = 2.5) +
-        labs(x = par$xlab, y = par$ylab) +
-        theme()
-
-      if (step >= 2) {
-        p <- p + geom_smooth(method = "lm", se = FALSE,
-                             color = col_reject, linewidth = 1)
-      }
-      p
-    } else if (step == 3) {
-      # Rozklad t bez zacienionego pola
-      n <- nrow(d)
-      r_val <- cor(d$x, d$y)
-      t_stat <- r_val * sqrt(n - 2) / sqrt(1 - r_val^2)
-
-      x_seq <- seq(-4, 4, length.out = 500)
-      y_seq <- dt(x_seq, df = n - 2)
-      plot_df <- data.frame(x = x_seq, y = y_seq)
-
-      ggplot(plot_df, aes(x = x, y = y)) +
-        geom_line(color = col_h0, linewidth = 1.2) +
-        geom_vline(xintercept = t_stat, color = col_reject,
-                   linewidth = 1.2, linetype = "dashed") +
-        annotate("text", x = t_stat, y = max(y_seq) * 0.9,
-                 label = paste0("t = ", round(t_stat, 3)),
-                 hjust = if (t_stat > 0) -0.1 else 1.1,
-                 color = col_reject, fontface = "bold") +
-        labs(
-             x = "Statystyka testowa", y = "Gęstość") +
-        theme()
+    if (step <= 2) {
+      ch4_scatter_plot(d, par, step)
     } else {
       n <- nrow(d)
       r_val <- cor(d$x, d$y)
       t_stat <- r_val * sqrt(n - 2) / sqrt(1 - r_val^2)
-      plot_test_distribution(t_stat, df = n - 2, test_type = "t")
+      step_null_plot(t_stat, df = n - 2, type = "t",
+                     phase = if (step == 3) "stat" else "decision")
     }
   }))
 
-  output$ch4_step_info <- renderUI({
+  output$ch4_test_text <- renderUI({
     d <- ch4_data()
     step <- ch4_step()
     par <- scenario_params[[input$ch4_scenario]]
 
-    if (is.null(d) || step == 0) return(NULL)
+    if (is.null(d)) return(NULL)
 
     n <- nrow(d)
     r_val <- cor(d$x, d$y)
     t_stat <- r_val * sqrt(n - 2) / sqrt(1 - r_val^2)
     p_val <- 2 * pt(-abs(t_stat), df = n - 2)
-    res <- format_test_result(p_val)
 
-    info <- switch(as.character(step),
+    switch(as.character(step),
       "1" = tagList(
-        lc_stat_box("n", n,
-                    caption = "par obserwacji",
-                    color = col_h0),
-        p("Każdy punkt to jedna obserwacja z dwiema wartościami: ",
-          par$xlab, " i ", par$ylab, ". Czy widać trend?")
+        "n = ", step_num(n), " par obserwacji. Każdy punkt to jedna obserwacja
+        z dwiema wartościami: ", paste0(par$xlab, " i ", par$ylab, ". Czy widać trend?")
       ),
       "2" = tagList(
-        lc_stat_box("r", round(r_val, 3), color = col_pvalue),
-        p("Korelacja z próby: ", tags$b(round(r_val, 3)),
-          ". Ale czy to wystarczająco daleko od zera, by odrzucić H₀?")
+        "Korelacja z próby: r = ", step_num(lc_fmt(r_val, 3)),
+        ". Ale czy to wystarczająco daleko od zera, by odrzucić H₀?"
       ),
       "3" = tagList(
-        lc_stat_box(
-          "p",
-          format_p_value(p_val),
-          caption = paste0("t = ", round(r_val, 3), " · √", n - 2,
-                           " / √(1 − ", round(r_val^2, 3),
-                           ") = ", round(t_stat, 3)),
-          color = col_effect
-        ),
-        p("Zamieniamy r na statystykę t, żeby móc porównać z rozkładem t(", n - 2, ").")
+        paste0("t = ", lc_fmt(r_val, 3), " · √", n - 2, " / √(1 − ",
+               lc_fmt(r_val^2, 3), ") = "),
+        step_num(lc_fmt(t_stat, 3)),
+        paste0(". Zamieniamy r na statystykę t, żeby móc porównać z rozkładem t(",
+               n - 2, ").")
       ),
-      "4" = tagList(
-        lc_stat_box("p", format_p_value(p_val), color = col_pvalue),
-        p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
-          res$decision),
-        p(res$explanation)
-      )
+      "4" = step_verdict(p_val)
     )
-    lc_feedback(type = "info", info)
   })
 
   # =============================================
@@ -675,81 +604,52 @@ ch4_server <- function(input, output, session) {
     step <- ch4b_step()
     par <- scenario_params[[input$ch4_scenario]]
 
-    if (is.null(d) || step == 0) return(NULL)
+    if (is.null(d)) return(NULL)
 
     n <- nrow(d)
     r_val <- cor(d$x, d$y)
     t_stat <- r_val * sqrt(n - 2) / sqrt(1 - r_val^2)
 
     if (step <= 2) {
-      p <- ggplot(d, aes(x = x, y = y)) +
-        geom_point(color = col_h0, alpha = 0.6, size = 2.5) +
-        labs(x = par$xlab, y = par$ylab) +
-        theme()
-      if (step >= 2) {
-        p <- p + geom_smooth(method = "lm", se = FALSE,
-                             color = col_reject, linewidth = 1)
-      }
-      p
-    } else if (step == 3) {
-      x_seq <- seq(-4, 4, length.out = 500)
-      y_seq <- dt(x_seq, df = n - 2)
-      plot_df <- data.frame(x = x_seq, y = y_seq)
-
-      ggplot(plot_df, aes(x = x, y = y)) +
-        geom_line(color = col_h0, linewidth = 1.2) +
-        geom_vline(xintercept = t_stat, color = col_reject,
-                   linewidth = 1.2, linetype = "dashed") +
-        annotate("text", x = t_stat, y = max(y_seq) * 0.9,
-                 label = paste0("t = ", round(t_stat, 3)),
-                 hjust = if (t_stat > 0) -0.1 else 1.1,
-                 color = col_reject, fontface = "bold") +
-        labs(
-             
-             x = "Statystyka testowa", y = "Gęstość") +
-        theme()
+      ch4_scatter_plot(d, par, step)
     } else {
-      plot_test_distribution(t_stat, df = n - 2, test_type = "t",
-                             alternative = par$alt_1s)
+      step_null_plot(t_stat, df = n - 2, type = "t", alternative = par$alt_1s,
+                     phase = if (step == 3) "stat" else "decision")
     }
   }))
 
-  output$ch4b_step_info <- renderUI({
+  output$ch4b_test_text <- renderUI({
     d <- ch4_data()
     step <- ch4b_step()
     par <- scenario_params[[input$ch4_scenario]]
 
-    if (is.null(d) || step == 0) return(NULL)
+    if (is.null(d)) return(NULL)
 
     n <- nrow(d)
     r_val <- cor(d$x, d$y)
     t_stat <- r_val * sqrt(n - 2) / sqrt(1 - r_val^2)
     p_val <- pt(t_stat, df = n - 2, lower.tail = (par$alt_1s == "less"))
-    res <- format_test_result(p_val)
 
-    info <- switch(as.character(step),
+    switch(as.character(step),
       "1" = tagList(
-        lc_stat_box("n", n, " (te same dane co wyżej)", color = col_h0),
-        p("Te same obserwacje, ale pytamy o kierunek związku.")
+        "n = ", step_num(n), " (te same dane co wyżej). Te same obserwacje,
+        ale pytamy o kierunek związku."
       ),
       "2" = tagList(
-        lc_stat_box("r", round(r_val, 3), " (ta sama wartość!)", color = col_pvalue),
-        p("Korelacja się nie zmieniła. Zmieniło się pytanie.")
+        "r = ", step_num(lc_fmt(r_val, 3)), " (ta sama wartość!). Korelacja się
+        nie zmieniła. Zmieniło się pytanie."
       ),
       "3" = tagList(
-        lc_stat_box("t", round(t_stat, 3), " (ta sama wartość!)", color = col_effect),
-        p("W teście jednostronnym patrzymy tylko na ",
-          tags$b(if (par$alt_1s == "greater") "prawy" else "lewy"), " ogon.")
+        "t = ", step_num(lc_fmt(t_stat, 3)), " (ta sama wartość!). W teście
+        jednostronnym patrzymy tylko na ",
+        if (par$alt_1s == "greater") "prawy" else "lewy", " ogon."
       ),
       "4" = tagList(
-        lc_stat_box("p", format_p_value(p_val), " (jednostronnie!)", color = col_pvalue),
-        p(style = paste0("color: ", res$color, "; font-weight: bold; font-size: 16px;"),
-          res$decision),
-        p(res$explanation),
-        p(tags$em("Porównaj z testem dwustronnym wyżej — te same dane, ten sam r i t, ale inna p-wartość!"))
+        "Jednostronnie: ", step_verdict(p_val), " ",
+        tags$em("Porównaj z testem dwustronnym wyżej — te same dane, ten sam r i t,
+          ale inna p-wartość!")
       )
     )
-    lc_feedback(type = "info", info)
   })
 
   # =============================================
