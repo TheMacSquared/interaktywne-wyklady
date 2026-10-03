@@ -42,7 +42,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
   figure_panel(
     label = "Ryc. 11.2",
     title = "Odsetek braków w zmiennych",
-    zoom_plot_ui("tab10_missing", height = "300px"),
+    lc_plot("tab10_missing", max_height = "300px"),
     uiOutput("tab10_missing_info")
   ),
 
@@ -66,7 +66,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     title = "Sprzedaż w kolejnych dniach roku akademickiego",
     lc_action("tab10_reveal", "Pokaż dane w kolejności", variant = "solid"),
     conditionalPanel("input.tab10_reveal > 0",
-      zoom_plot_ui("tab10_lineplot", height = "350px"),
+      lc_plot("tab10_lineplot", ratio = "1.8/1", max_height = "350px"),
       lc_caption("Sprzedaż powtarza tygodniowy rytm: wysoka w dni robocze,
                   niska w weekendy.")
     )
@@ -96,7 +96,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     figure_panel(
       label = "Ryc. 11.4",
       title = "Sprzedaż danego dnia i dnia następnego",
-      zoom_plot_ui("tab10_lag", height = "300px"),
+      lc_plot("tab10_lag", max_height = "300px"),
       uiOutput("tab10_autocorr_info")
     )
   ),
@@ -162,9 +162,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     lead = "Ściąga zbiera kryteria z dziesięciu przypadków w jedną listę
             kontrolną do oceny własnych danych.",
     target_id = "ch12"
-  ),
-
-  div(style = "height: 40px;")
+  )
 ))
 
 # Pary (dzień t, dzień t + lag) w kolejności kalendarza; pomija pary z brakiem.

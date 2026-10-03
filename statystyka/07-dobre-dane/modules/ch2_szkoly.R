@@ -85,12 +85,12 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
   figure_panel(
     label = "Ryc. 2.1",
     title = "Rozkład wybranej zmiennej",
-    fluidRow(
-      column(4, selectInput("tab1_var", "Wybierz zmienną:",
+    lc_toolbar(
+      selectInput("tab1_var", "Zmienna",
         choices = .ch2_choices(c("read", "math", "expenditure", "income", "english",
-                                 "lunch", "students", "teachers", "calworks")))),
-      column(8, zoom_plot_ui("tab1_hist", height = "300px"))
+                                 "lunch", "students", "teachers", "calworks")))
     ),
+    lc_plot("tab1_hist", max_height = "300px"),
     verbatimTextOutput("tab1_summary")
   ),
 
@@ -114,15 +114,15 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
   figure_panel(
     label = "Ryc. 2.2",
     title = "Wynik testu a cechy okręgu",
-    fluidRow(
-      column(4, selectInput("tab1_x", "Zmienna X:",
+    lc_toolbar(
+      selectInput("tab1_x", "Zmienna X",
         choices = .ch2_choices(c("expenditure", "income", "english", "lunch",
                                  "calworks", "students")),
-        selected = "income")),
-      column(4, selectInput("tab1_y", "Zmienna Y:",
-        choices = .ch2_choices(c("read", "math")), selected = "read"))
+        selected = "income"),
+      selectInput("tab1_y", "Zmienna Y",
+        choices = .ch2_choices(c("read", "math")), selected = "read")
     ),
-    zoom_plot_ui("tab1_scatter_plot", height = "350px")
+    lc_plot("tab1_scatter_plot", max_height = "350px")
   ),
 
   lc_p("Dochód okręgu i wynik z czytania są wyraźnie powiązane:
@@ -171,9 +171,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
     lead = "Następny zbiór ma poprawne zmienne, ale za mało obserwacji,
             żeby cokolwiek z nich wynikało.",
     target_id = "ch3"
-  ),
-
-  div(style = "height: 40px;")
+  )
 ))
 
 ch2_server <- function(input, output, session) {

@@ -87,9 +87,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
     lead = "Ostatni zbiór wygląda równie porządnie, ale jego wiersze to kolejne
             dni, a kolejne dni nie są od siebie niezależne.",
     target_id = "ch11"
-  ),
-
-  div(style = "height: 40px;")
+  )
 ))
 
 ch10_server <- function(input, output, session) {

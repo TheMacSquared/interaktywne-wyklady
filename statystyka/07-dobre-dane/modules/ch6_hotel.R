@@ -52,7 +52,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.1",
-    zoom_plot_ui("tab5_plot_zadowolenie", height = "300px")
+    lc_plot("tab5_plot_zadowolenie", max_height = "300px")
   ),
 
   lc_p("73 z 80 gości, czyli 91%, wystawiło ocenę 4 albo 5. Ocenę 3 dało
@@ -69,7 +69,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.2",
-    zoom_plot_ui("tab5_plot_departament", height = "300px")
+    lc_plot("tab5_plot_departament", max_height = "300px")
   ),
 
   lc_p("59 gości (74%) nocowało w Apartamencie Premium, 17 (21%) w pokoju
@@ -89,11 +89,11 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.3",
-    div(class = "toggle-pills",
-      actionButton("tab5_staz_normal", "Dane", class = "pill-btn active"),
-      actionButton("tab5_staz_wide", "Pełna skala (1–14 nocy)", class = "pill-btn")
+    lc_toolbar(
+      lc_segmented("tab5_staz_view", NULL,
+        choices = c("Dane" = "normal", "Pełna skala (1–14 nocy)" = "wide"))
     ),
-    zoom_plot_ui("tab5_plot_staz", height = "300px")
+    lc_plot("tab5_plot_staz", max_height = "300px")
   ),
 
   lc_p("Wszyscy goście zostali na 1–3 noce: 49 osób na jedną, 21 na dwie,
@@ -110,7 +110,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.4",
-    zoom_plot_ui("tab5_plot_wynagrodzenie", height = "300px")
+    lc_plot("tab5_plot_wynagrodzenie", max_height = "300px")
   ),
 
   lc_p("Tu obraz jest inny. Ceny wahają się od 208 do 641 zł, mediana
@@ -126,7 +126,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.5",
-    zoom_plot_ui("tab5_plot_plec", height = "300px")
+    lc_plot("tab5_plot_plec", max_height = "300px")
   ),
 
   lc_p("69 gości (86%) to turyści z Polski. Z Wielkiej Brytanii przyjechały
@@ -143,7 +143,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.6",
-    zoom_plot_ui("tab5_scatter", height = "300px")
+    lc_plot("tab5_scatter", max_height = "300px")
   ),
 
   lc_p("Punkty układają się w trzy pionowe kolumny nad wartościami 1, 2 i 3.
@@ -164,7 +164,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
   figure_panel(
     label = "Ryc. 6.7",
     lc_slider("tab5_sd_mult", "Mnożnik rozrzutu danych", 1, 5, 1, 0.5),
-    zoom_plot_ui("tab5_scatter_sim", height = "300px")
+    lc_plot("tab5_scatter_sim", max_height = "300px")
   ),
 
   lc_p("Przy mnożniku 1 długość pobytu zostaje taka jak w danych i mimo
@@ -202,9 +202,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     lead = "Dla porównania duży zbiór, w którym zmienność, liczebność grup
             i kompletność są takie, jak powinny.",
     target_id = "ch7"
-  ),
-
-  div(style = "height: 40px;")
+  )
 ))
 
 ch6_server <- function(input, output, session) {
@@ -236,16 +234,9 @@ ch6_server <- function(input, output, session) {
       theme_upwr(base_size = 14)
   }))
 
-  tab5_staz_view <- reactiveVal("normal")
-  observeEvent(input$tab5_staz_normal, {
-    tab5_staz_view("normal")
-    session$sendCustomMessage(type = "shinyjs-runjs", message = list(code =
-      "$('#tab5_staz_normal').addClass('active'); $('#tab5_staz_wide').removeClass('active');"))
-  })
-  observeEvent(input$tab5_staz_wide, {
-    tab5_staz_view("wide")
-    session$sendCustomMessage(type = "shinyjs-runjs", message = list(code =
-      "$('#tab5_staz_wide').addClass('active'); $('#tab5_staz_normal').removeClass('active');"))
+  tab5_staz_view <- reactive({
+    v <- input$tab5_staz_view
+    if (is.null(v)) "normal" else v
   })
 
   zoom_plot_server("tab5_plot_staz", reactive({

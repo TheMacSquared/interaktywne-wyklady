@@ -134,9 +134,9 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     z kilku kategorii. Porównując obie wersje tabeli, zwróć uwagę, które wpisy
     nie mają odpowiednika po standaryzacji."),
 
-  div(class = "toggle-pills",
-    actionButton("tab7b_raw", "Surowe", class = "pill-btn active"),
-    actionButton("tab7b_cat", "Po standaryzacji", class = "pill-btn")
+  lc_toolbar(
+    lc_segmented("tab7b_view", NULL,
+      choices = c("Surowe" = "raw", "Po standaryzacji" = "cat"))
   ),
 
   figure_panel(
@@ -166,9 +166,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     lead = "Formularz psuł dane już na etapie pytań. W badaniach laboratoryjnych
             pytania są dobre, a błędy pojawiają się przy przepisywaniu wyników.",
     target_id = "ch9"
-  ),
-
-  div(style = "height: 40px;")
+  )
 ))
 
 ch8_server <- function(input, output, session) {
@@ -255,16 +253,9 @@ ch8_server <- function(input, output, session) {
 
 
 
-  tab7b_view <- reactiveVal("raw")
-  observeEvent(input$tab7b_raw, {
-    tab7b_view("raw")
-    session$sendCustomMessage(type = "shinyjs-runjs", message = list(code =
-      "$('#tab7b_raw').addClass('active'); $('#tab7b_cat').removeClass('active');"))
-  })
-  observeEvent(input$tab7b_cat, {
-    tab7b_view("cat")
-    session$sendCustomMessage(type = "shinyjs-runjs", message = list(code =
-      "$('#tab7b_cat').addClass('active'); $('#tab7b_raw').removeClass('active');"))
+  tab7b_view <- reactive({
+    v <- input$tab7b_view
+    if (is.null(v)) "raw" else v
   })
 
   output$tab7b_table <- renderUI({

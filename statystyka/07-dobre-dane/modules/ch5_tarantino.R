@@ -57,11 +57,11 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
 
   figure_panel(
     label = "Ryc. 5.1",
-    fluidRow(
-      column(6, lc_action("tab4_hist", "Histogram: minutes_in", variant = "outline")),
-      column(6, lc_action("tab4_bar", "Porównanie filmów", variant = "outline"))
+    lc_toolbar(
+      lc_segmented("tab4_view", NULL,
+        choices = c("Histogram: minutes_in" = "hist", "Porównanie filmów" = "bar"))
     ),
-    zoom_plot_ui("tab4_explore_plot", height = "350px")
+    lc_plot("tab4_explore_plot", ratio = "1.8/1", max_height = "350px")
   ),
 
   lc_p("Histogram minuty zdarzenia wrzuca do jednego worka siedem filmów
@@ -143,9 +143,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
             a mimo to nie nadawać się do analizy, bo jego zmienne prawie
             się nie różnią.",
     target_id = "ch6"
-  ),
-
-  div(style = "height: 40px;")
+  )
 ))
 
 ch5_server <- function(input, output, session) {
@@ -155,7 +153,7 @@ ch5_server <- function(input, output, session) {
   })
 
   zoom_plot_server("tab4_explore_plot", reactive({
-    if (input$tab4_bar > input$tab4_hist) {
+    if (identical(input$tab4_view, "bar")) {
       tarantino %>%
         count(movie, type) %>%
         ggplot(aes(x = reorder(movie, n), y = n, fill = type)) +

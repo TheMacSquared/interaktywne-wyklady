@@ -66,72 +66,6 @@ source(file.path(app_dir, "modules", "ch11_kawiarnia.R"),     local = TRUE)
 source(file.path(app_dir, "modules", "ch12_sciaga.R"),        local = TRUE)
 
 # ============================================================================
-# LOKALNE STYLE I JS
-# ============================================================================
-
-header_extras <- tagList(
-  tags$style(HTML("
-    /* Verdict badge */
-    .verdict-badge {
-      display: inline-block; padding: 4px 12px; border-radius: 12px;
-      color: white; font-weight: bold; font-size: 13px;
-    }
-    .verdict-good { background: var(--upwr-szalwia); }
-    .verdict-mixed { background: var(--upwr-bursztyn); }
-    .verdict-bad { background: var(--upwr-accent); }
-
-    /* Reveal sections */
-    .reveal-section {
-      border: 2px dashed var(--upwr-niebo); border-radius: 8px;
-      padding: 15px; margin: 15px 0; background: var(--upwr-panel);
-    }
-
-    /* Problem card in catalog */
-    .problem-card {
-      background: white; border: 1px solid var(--upwr-rule); border-radius: 8px;
-      padding: 25px; margin: 25px 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .problem-card .problem-header {
-      display: flex; align-items: center; gap: 12px; margin-bottom: 15px;
-    }
-    .problem-card .problem-number {
-      display: inline-flex; width: 36px; height: 36px; border-radius: 50%;
-      background: var(--upwr-accent); color: white; font-weight: 700; font-size: 16px;
-      align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .problem-card .problem-name {
-      font-size: 20px; font-weight: 700; color: var(--upwr-ink); margin: 0;
-    }
-    .problem-card .problem-desc {
-      font-size: 15px; color: var(--upwr-ink-soft); line-height: 1.6; margin-bottom: 15px;
-    }
-    .dual-view { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0; }
-    .dual-view .view-panel { min-width: 0; }
-    .view-label {
-      font-size: 12px; font-weight: 600; color: var(--upwr-reference);
-      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
-    }
-    @media (max-width: 992px) { .dual-view { grid-template-columns: 1fr; } }
-
-    /* Toggle pill buttons */
-    .toggle-pills { display: inline-flex; border: 2px solid var(--upwr-accent); border-radius: 20px; overflow: hidden; margin: 10px 0; }
-    .toggle-pills .pill-btn {
-      border: none; background: white; color: var(--upwr-accent); padding: 6px 18px;
-      font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
-    }
-    .toggle-pills .pill-btn.active { background: var(--upwr-accent); color: white; }
-    .toggle-pills .pill-btn:hover:not(.active) { background: var(--upwr-panel); }
-  ")),
-    tags$script(HTML("
-    // Custom message handler for toggle button styling
-    Shiny.addCustomMessageHandler('shinyjs-runjs', function(message) {
-      eval(message.code);
-    });
-  "))
-)
-
-# ============================================================================
 # UI
 # ============================================================================
 
@@ -143,8 +77,7 @@ ui <- lecture_page(
   lecture_num   = "07",
   lecture_title = "Co czyni dobry zbiór danych?",
   module_label  = "Statystyka",
-  chapters      = .chapters,
-  header_extras = header_extras
+  chapters      = .chapters
 )
 
 # ============================================================================

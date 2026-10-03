@@ -61,11 +61,11 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     label = "Ryc. 3.1",
     title = "Liczba obserwacji a precyzja i moc",
     lc_slider("tab2_n", "Liczba obserwacji", 5, 200, 8, 1),
-    fluidRow(
-      column(6, zoom_plot_ui("tab2_hist", height = "280px")),
-      column(6, zoom_plot_ui("tab2_ci", height = "280px"))
+    lc_plots(
+      lc_plot("tab2_hist", max_height = "280px"),
+      lc_plot("tab2_ci", max_height = "280px")
     ),
-    zoom_plot_ui("tab2_power", height = "280px")
+    lc_plot("tab2_power", max_height = "280px")
   ),
 
   lc_p("Wszystkie trzy wykresy prowadzą do tego samego wniosku. Przy n = 8
@@ -110,9 +110,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     lead = "Kolejny zbiór ma kilkaset obserwacji i drobne braki, które
             da się uczciwie obsłużyć.",
     target_id = "ch4"
-  ),
-
-  div(style = "height: 40px;")
+  )
 ))
 
 ch3_server <- function(input, output, session) {

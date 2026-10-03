@@ -63,9 +63,7 @@ ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content 
     "Użyj tej listy kontrolnej, oceniając dane do swojego projektu końcowego.
     Jeśli zbiór nie spełnia kryteriów krytycznych, poszukaj innego. Jeśli ma
     problemy naprawialne, można z nim pracować, ale zaplanuj czas na czyszczenie."
-  ),
-
-  div(style = "height: 60px;")
+  )
 ))
 
 ch12_server <- function(input, output, session) {

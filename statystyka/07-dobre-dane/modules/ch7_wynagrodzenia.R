@@ -61,16 +61,16 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
 
   figure_panel(
     label = "Ryc. 7.1",
-    fluidRow(
-      column(4, selectInput("tab6_var", "Zmienna:",
+    lc_toolbar(
+      selectInput("tab6_var", "Zmienna",
         choices = c("wage — wynagrodzenie" = "wage", "age — wiek" = "age",
                     "education — wykształcenie" = "education",
                     "jobclass — rodzaj pracy" = "jobclass",
                     "health — zdrowie" = "health",
                     "maritl — stan cywilny" = "maritl",
-                    "race — rasa" = "race"))),
-      column(8, zoom_plot_ui("tab6_hist", height = "300px"))
-    )
+                    "race — rasa" = "race"))
+                    ),
+                    lc_plot("tab6_hist", max_height = "300px")
   ),
 
   lc_p("Wynagrodzenia mają duży rozrzut: od około 20 do 318 tys. dolarów,
@@ -122,9 +122,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
             to nie nadawać się do analizy, bo pytania zadano tak, że
             odpowiedzi nie da się policzyć.",
     target_id = "ch8"
-  ),
-
-  div(style = "height: 40px;")
+  )
 ))
 
 ch7_server <- function(input, output, session) {

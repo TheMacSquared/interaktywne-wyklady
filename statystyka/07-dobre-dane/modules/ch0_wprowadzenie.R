@@ -67,9 +67,7 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Wprowadzenie", content
     title = "Katalog problemów",
     lead = "Siedem typowych problemów w danych i to, jak rozpoznać je w tabeli i na wykresie.",
     target_id = "ch1"
-  ),
-
-  div(style = "height: 40px;")
+  )
 ))
 
 ch0_server <- function(input, output, session) {
@@ -85,15 +83,19 @@ ch0_server <- function(input, output, session) {
     # zbiór; naprawialne decydują tylko o tym, czy potrzebne jest czyszczenie.
     if (n_total == 0) {
       color <- "var(--upwr-reference)"
+      verdict <- "info"
       label <- "Zaznacz kryteria, które spełnia oceniany zbiór."
     } else if (n_critical < 6) {
       color <- data_bad
+      verdict <- "danger"
       label <- "Zbiór nie nadaje się do zaplanowanej analizy: poszukaj innego zbioru albo zbierz nowe dane."
     } else if (n_fixable < 3) {
       color <- data_mixed
+      verdict <- "warning"
       label <- "Zbiór wymaga czyszczenia i przygotowania przed analizą."
     } else {
       color <- data_good
+      verdict <- "ok"
       label <- "Dane gotowe do analizy."
     }
 
@@ -104,10 +106,9 @@ ch0_server <- function(input, output, session) {
           paste0(n_total, "/9")
         )
       ),
-      div(style = paste0("text-align: center; margin-top: 8px; font-weight: bold; color: ", color, ";"), label),
+      lc_status(lc_verdict(tags$strong(label), type = verdict)),
       if (n_critical < 6 && n_fixable > 0)
-        div(style = "text-align: center; margin-top: 4px; font-size: 13px; color: var(--upwr-reference);",
-          "Naprawialne kryteria nie ratują krytycznych problemów.")
+        lc_caption("Naprawialne kryteria nie ratują krytycznych problemów.")
     )
   })
 }

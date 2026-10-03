@@ -44,7 +44,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
   figure_panel(
     label = "Ryc. 9.2",
     title = "Hemoglobina względem wieku, dane surowe",
-    zoom_plot_ui("tab8_scatter_raw", height = "350px")
+    lc_plot("tab8_scatter_raw", ratio = "1.8/1", max_height = "350px")
   ),
 
   lc_p("Prawie wszystkie punkty zbijają się w wąski pas przy dole wykresu,
@@ -66,13 +66,11 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
   figure_panel(
     label = "Ryc. 9.3",
     title = "Rozkłady czterech zmiennych ilościowych",
-    fluidRow(
-      column(6, zoom_plot_ui("tab8_box_hemoglobina", height = "260px")),
-      column(6, zoom_plot_ui("tab8_box_glukoza",     height = "260px"))
-    ),
-    fluidRow(
-      column(6, zoom_plot_ui("tab8_box_wiek",        height = "260px")),
-      column(6, zoom_plot_ui("tab8_box_cisnienie",   height = "260px"))
+    lc_plots(
+      lc_plot("tab8_box_hemoglobina", max_height = "260px"),
+      lc_plot("tab8_box_glukoza", max_height = "260px"),
+      lc_plot("tab8_box_wiek", max_height = "260px"),
+      lc_plot("tab8_box_cisnienie", max_height = "260px")
     )
   ),
 
@@ -92,7 +90,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     title = "Hemoglobina względem wieku po usunięciu błędów",
     checkboxInput("tab8_clean", "Usuń podejrzane obserwacje", value = FALSE),
     conditionalPanel("input.tab8_clean",
-      zoom_plot_ui("tab8_scatter_clean", height = "350px")
+      lc_plot("tab8_scatter_clean", ratio = "1.8/1", max_height = "350px")
     )
   ),
 
@@ -153,9 +151,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     lead = "Po dwóch zbiorach z usterkami czas na wzorzec: ankietę, której dane
             nadają się do analizy bez czyszczenia.",
     target_id = "ch10"
-  ),
-
-  div(style = "height: 40px;")
+  )
 ))
 
 ch9_server <- function(input, output, session) {
@@ -210,43 +206,33 @@ ch9_server <- function(input, output, session) {
   output$tab8_quiz <- renderUI({
     tagList(
       h4("Sklasyfikuj każdą podejrzaną obserwację: błąd danych czy prawdziwa wartość odstająca?"),
-      tags$p(style = "color: var(--upwr-reference); font-size: 13px;",
-        "Czytaj cały rekord, nie tylko podejrzaną liczbę."),
+      lc_caption("Czytaj cały rekord, nie tylko podejrzaną liczbę."),
+      tags$ol(
+        tags$li(
+          paste0("Hemoglobina: -14.2 g/dL | Wiek: ", lab_data$wiek[3], " lat | Płeć: ", lab_data$plec[3]),
+          lc_segmented("tab8_q1", NULL, choices = c("Błąd danych", "Prawdziwa wartość odstająca"))
+        ),
 
-      div(style = "margin: 14px 0; padding: 10px; background: var(--upwr-panel); border-radius: 6px;",
-        tags$strong("1."),
-        paste0(" Hemoglobina: -14.2 g/dL | Wiek: ", lab_data$wiek[3], " lat | Płeć: ", lab_data$plec[3]),
-        tags$br(),
-        lc_segmented("tab8_q1", NULL, choices = c("Błąd danych", "Prawdziwa wartość odstająca"))
-      ),
+        tags$li(
+          paste0("Hemoglobina: 1420 g/dL | Wiek: ", lab_data$wiek[17], " lat | Płeć: ", lab_data$plec[17]),
+          lc_segmented("tab8_q2", NULL, choices = c("Błąd danych", "Prawdziwa wartość odstająca"))
+        ),
 
-      div(style = "margin: 14px 0; padding: 10px; background: var(--upwr-panel); border-radius: 6px;",
-        tags$strong("2."),
-        paste0(" Hemoglobina: 1420 g/dL | Wiek: ", lab_data$wiek[17], " lat | Płeć: ", lab_data$plec[17]),
-        tags$br(),
-        lc_segmented("tab8_q2", NULL, choices = c("Błąd danych", "Prawdziwa wartość odstająca"))
-      ),
+        tags$li(
+          paste0("Ciśnienie skurczowe: -70 mmHg | Wiek: ", lab_data$wiek[42], " lat | Płeć: ", lab_data$plec[42]),
+          lc_segmented("tab8_q3", NULL, choices = c("Błąd danych", "Prawdziwa wartość odstająca"))
+        ),
 
-      div(style = "margin: 14px 0; padding: 10px; background: var(--upwr-panel); border-radius: 6px;",
-        tags$strong("3."),
-        paste0(" Ciśnienie skurczowe: -70 mmHg | Wiek: ", lab_data$wiek[42], " lat | Płeć: ", lab_data$plec[42]),
-        tags$br(),
-        lc_segmented("tab8_q3", NULL, choices = c("Błąd danych", "Prawdziwa wartość odstająca"))
-      ),
+        tags$li(
+          paste0("Glukoza: 11 000 mg/dL | Wiek: ", lab_data$wiek[28], " lat | Płeć: ", lab_data$plec[28]),
+          lc_segmented("tab8_q4", NULL, choices = c("Błąd danych", "Prawdziwa wartość odstająca"))
+        ),
 
-      div(style = "margin: 14px 0; padding: 10px; background: var(--upwr-panel); border-radius: 6px;",
-        tags$strong("4."),
-        paste0(" Glukoza: 11 000 mg/dL | Wiek: ", lab_data$wiek[28], " lat | Płeć: ", lab_data$plec[28]),
-        tags$br(),
-        lc_segmented("tab8_q4", NULL, choices = c("Błąd danych", "Prawdziwa wartość odstająca"))
-      ),
-
-      div(style = "margin: 14px 0; padding: 10px; background: var(--upwr-panel); border-radius: 6px;",
-        tags$strong("5."),
-        paste0(" Glukoza: 310 mg/dL | Wiek: ", lab_data$wiek[100], " lat | Płeć: ", lab_data$plec[100],
-               " | Hemoglobina: ", lab_data$hemoglobina[100], " g/dL"),
-        tags$br(),
-        lc_segmented("tab8_q5", NULL, choices = c("Błąd danych", "Prawdziwa wartość odstająca"))
+        tags$li(
+          paste0("Glukoza: 310 mg/dL | Wiek: ", lab_data$wiek[100], " lat | Płeć: ", lab_data$plec[100],
+                 " | Hemoglobina: ", lab_data$hemoglobina[100], " g/dL"),
+          lc_segmented("tab8_q5", NULL, choices = c("Błąd danych", "Prawdziwa wartość odstająca"))
+      )
       )
     )
   })

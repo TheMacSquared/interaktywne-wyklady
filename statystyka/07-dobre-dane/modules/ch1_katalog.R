@@ -446,9 +446,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     title = "Szkoły w Kalifornii",
     lead = "Katalog sprawdzimy na dziesięciu zbiorach danych, zaczynając od wzorcowego.",
     target_id = "ch2"
-  ),
-
-  div(style = "height: 40px;")
+  )
 ))
 
 ch1_server <- function(input, output, session) {

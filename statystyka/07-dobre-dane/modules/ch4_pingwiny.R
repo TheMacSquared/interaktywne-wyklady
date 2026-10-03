@@ -60,7 +60,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
   figure_panel(
     label = "Ryc. 4.1",
     title = "Odsetek braków w każdej zmiennej",
-    zoom_plot_ui("tab3_missing", height = "250px")
+    lc_plot("tab3_missing", ratio = "2.5/1", max_height = "250px")
   ),
 
   lc_p("Braki są nieliczne i skupione. Cztery pomiary ciała mają po 2 braki
@@ -78,11 +78,11 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
   figure_panel(
     label = "Ryc. 4.2",
     title = "Pomiary ciała według gatunku",
-    fluidRow(
-      column(4, selectInput("tab3_var", "Zmienna:",
-        choices = stats::setNames(names(.ch4_var_labels), .ch4_var_labels))),
-      column(8, zoom_plot_ui("tab3_boxplot", height = "300px"))
-    )
+    lc_toolbar(
+      selectInput("tab3_var", "Zmienna",
+        choices = stats::setNames(names(.ch4_var_labels), .ch4_var_labels))
+    ),
+    lc_plot("tab3_boxplot", max_height = "300px")
   ),
 
   lc_p("Gatunki wyraźnie się różnią. Mediana długości dzioba wynosi 38.8 mm
@@ -123,9 +123,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     lead = "Następny zbiór ma prawie dwa tysiące wierszy, ale wiersz nie
             jest w nim jednostką, którą chcemy porównywać.",
     target_id = "ch5"
-  ),
-
-  div(style = "height: 40px;")
+  )
 ))
 
 ch4_server <- function(input, output, session) {
