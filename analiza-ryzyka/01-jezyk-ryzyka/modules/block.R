@@ -86,7 +86,7 @@ jezyk_exercises <- list(
         )
       )
     ),
-    tags$div(class = "lc-choices",
+    tags$div(class = "lc-choices", `data-correct` = "insufficient", `data-reveal` = "ch8_check",
       radioButtons(
         "ch8_conclusion",
         "Który wniosek jest teraz uzasadniony?",
@@ -1259,7 +1259,7 @@ jezyk_block <- list(
             figure_panel(
               label = "Decyzja",
               title = "Jaki priorytet można teraz uzasadnić?",
-              tags$div(class = "lc-choices",
+              tags$div(class = "lc-choices", `data-correct` = "insufficient", `data-reveal` = "ch5_check",
                 radioButtons(
                   "ch5_priority",
                   "Wybierz najlepiej uzasadnione stwierdzenie",

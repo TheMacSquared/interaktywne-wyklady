@@ -82,7 +82,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             "Ta zmiana kierunku ma praktyczny powód. Schemat blokowy z wykładu 08 wymaga, żeby najpierw dało się wyliczyć wszystkie elementy, bez których system nie działa. Przy pożarze magazynu nie ma takiej listy: przyczyną może być zwarcie, niedopałek, przegrzany wózek, a opanowanie zależy od ludzi, czujników i instalacji. Łatwiej zacząć od jednego jasno opisanego skutku i schodzić w dół, pytając za każdym razem: co musiało się stać, żeby to nastąpiło?",
             "Zanim jednak zejdziemy w dół, trzeba ustalić, co dokładnie stoi na szczycie. Spróbuj ocenić trzy kandydatury."
           ),
-          risk_vote_panel("f9_vote", "f9_vote_feedback", "Która definicja jest audytowalna?", c("Nieopanowany pożar magazynu w ciągu roku" = "good", "Problem z bezpieczeństwem" = "vague", "Awaria" = "failure")),
+          risk_vote_panel("f9_vote", "f9_vote_feedback", "Która definicja jest audytowalna?", c("Nieopanowany pożar magazynu w ciągu roku" = "good", "Problem z bezpieczeństwem" = "vague", "Awaria" = "failure"), correct = "good"),
           "„Problem z bezpieczeństwem” i „awaria” nie mówią, o jaki stan chodzi, w jakim obiekcie ani w jakim czasie. Każdy uczestnik analizy dopisze do nich inne scenariusze, więc drzewo rozrośnie się bez końca, a wynik liczbowy nie będzie miał jednostki. Pierwsza definicja nazywa stan (pożar nieopanowany, czyli taki, którego nie ugasiła instalacja ani obsługa), obiekt (magazyn Bananpolu) i horyzont (jeden rok). Dopiero taka definicja pozwala zapytać o prawdopodobieństwo."
         )
       ),

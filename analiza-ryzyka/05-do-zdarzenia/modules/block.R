@@ -105,7 +105,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             "Przy regule „stała liczba prób” zatrzymujemy się po n-tej próbie, niezależnie od wyników; losowa jest wtedy liczba sukcesów. Przy regule „stała liczba sukcesów” zatrzymujemy się w chwili r-tego sukcesu, niezależnie od tego, ile prób to zajęło; losowa jest wtedy liczba prób."
           )),
           "Te same próby, z tym samym p, mogą więc prowadzić do dwóch różnych zmiennych losowych. Rozkład dwumianowy z poprzedniego wykładu opisuje pierwszą regułę. Ten wykład dotyczy drugiej. Zanim przejdziemy do wzorów, sprawdź, czy potrafisz wskazać regułę w konkretnym planie audytu.",
-          risk_vote_panel("d5_vote", "d5_vote_feedback", "Chcemy znaleźć trzy wadliwe zabezpieczenia. Który element eksperymentu jest stały?", c("r=3 znalezione wady" = "r", "n — liczba kontroli" = "n", "odsetek wad w zebranej próbie" = "share")),
+          risk_vote_panel("d5_vote", "d5_vote_feedback", "Chcemy znaleźć trzy wadliwe zabezpieczenia. Który element eksperymentu jest stały?", c("r=3 znalezione wady" = "r", "n — liczba kontroli" = "n", "odsetek wad w zebranej próbie" = "share"), correct = "r"),
           "Kuszącą odpowiedzią jest odsetek wad: przecież p = 0.10 jest stałe. Ale p to parametr modelu, a nie element planu eksperymentu. Odsetek wad w zebranej próbie jest wynikiem i zmienia się od serii do serii. Plan audytu ustala tylko jedno: kończymy po trzeciej wykrytej wadzie."
         )
       ),

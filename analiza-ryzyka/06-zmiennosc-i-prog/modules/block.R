@@ -74,7 +74,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             "Pytanie z raportu brzmi: jak często łożysko pracuje w temperaturze wyższej niż 85°C? Średnia mówi tylko, gdzie leży środek zbioru pomiarów. Nie mówi, jak daleko od tego środka odchodzą pojedyncze wyniki — a przekroczenie progu to właśnie sprawa pojedynczych wyników, nie średniej. Łożysko, którego temperatura trzyma się w przedziale 81–83°C, i łożysko, które skacze między 75 a 90°C, mogą mieć identyczną średnią.",
             "Zanim zaczniemy liczyć, zdecyduj, co można powiedzieć o ryzyku, znając tylko średnią i próg."
           ),
-          risk_vote_panel("z6_vote", "z6_vote_feedback", "Średnia temperatura wynosi 82°C, próg 85°C. Czy ryzyko jest pomijalne?", c("Tak" = "yes", "Nie — potrzebujemy rozrzutu" = "sd", "Zawsze wynosi 50%" = "half")),
+          risk_vote_panel("z6_vote", "z6_vote_feedback", "Średnia temperatura wynosi 82°C, próg 85°C. Czy ryzyko jest pomijalne?", c("Tak" = "yes", "Nie — potrzebujemy rozrzutu" = "sd", "Zawsze wynosi 50%" = "half"), correct = "sd"),
           c(
             "Odpowiedź „tak” zakłada, że wszystkie pomiary leżą blisko średniej. Odpowiedź „50%” myli średnią z progiem: połowa wyników leży powyżej średniej, a nie powyżej dowolnego progu. Poprawna odpowiedź jest mniej efektowna, ale uczciwa: z samych dwóch liczb, 82 i 85, nie da się wyznaczyć ryzyka. Brakuje trzeciej — miary rozrzutu, czyli odchylenia standardowego σ.",
             "Ile zmienia ta trzecia liczba? Poniższy przykład wyprzedza rachunek, który wyprowadzimy w rozdziale 3; na razie wystarczy zauważyć skalę różnic."

@@ -47,11 +47,15 @@ risk_widget_panel <- function(label = "Eksperyment", title, controls,
   )
 }
 
-risk_vote_panel <- function(input_id, output_id, question, choices, full_width = TRUE) {
+# correct: wartość poprawnej odpowiedzi (karta zielenieje po „Sprawdź intuicję”);
+# NULL, gdy żadna odpowiedź nie jest jedyną poprawną.
+risk_vote_panel <- function(input_id, output_id, question, choices, full_width = TRUE,
+                            correct = NULL) {
   figure_panel(
     label = "Najpierw zdecyduj",
     title = question,
-    tags$div(class = "lc-choices",
+    tags$div(class = "lc-choices", `data-correct` = correct,
+      `data-reveal` = if (!is.null(correct)) paste0(input_id, "_check"),
       radioButtons(input_id, NULL, choices = choices, selected = character(0))
     ),
     lc_action(paste0(input_id, "_check"), "Sprawdź intuicję", variant = "solid"),
@@ -81,7 +85,8 @@ risk_assessment_ui <- function(prefix, quiz, exercises, exercises_intro = NULL) 
         question <- questions[[index]]
         tags$li(
           tags$p(question$question),
-          tags$div(class = "lc-choices",
+          tags$div(class = "lc-choices", `data-correct` = question$correct,
+            `data-reveal` = paste0(prefix, "_quiz_check"),
             radioButtons(paste0(prefix, "_quiz_", index), NULL,
               choices = question$choices, selected = character(0)
             )

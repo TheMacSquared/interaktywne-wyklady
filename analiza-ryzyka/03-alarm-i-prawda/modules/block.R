@@ -159,7 +159,8 @@ alarm_block <- list(
             risk_vote_panel(
               "a3_vote", "a3_vote_feedback",
               "Po alarmie: jak duża jest szansa rzeczywistej awarii?",
-              c("Około 95%" = "95", "Około 16%" = "16", "Nie da się określić bez częstości bazowej" = "base")
+              c("Około 95%" = "95", "Około 16%" = "16", "Nie da się określić bez częstości bazowej" = "base"),
+              correct = "16"
             ),
             c(
               "Odpowiedź „około 95%” jest kusząca, bo 95 to jedyna duża liczba w opisie czujnika i brzmi jak jego „skuteczność”. Ale 95% opisuje zachowanie czujnika w świecie, w którym awaria już nastąpiła. Dyżurny nie wie, w którym świecie jest — wie tylko, że zadzwonił telefon. Liczba, której potrzebuje, musi uwzględniać oba światy naraz: ten z awarią i ten, w którym awarii nie ma, a czujnik i tak alarmuje.",

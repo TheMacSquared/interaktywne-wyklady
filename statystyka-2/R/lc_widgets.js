@@ -71,12 +71,27 @@
   });
 
   // --- Karty odpowiedzi z kluczem: div.lc-choices[data-correct] ---
-  // Po wyborze kontener dostaje data-answered="correct" | "wrong"; kolor w CSS.
+  // Kontener dostaje data-answered="correct" | "wrong"; kolor w CSS. Bez
+  // data-reveal ocena przychodzi od razu po wyborze; z data-reveal="<id
+  // przycisku>" dopiero po kliknięciu przycisku, a zmiana wyboru ją kasuje.
+  function markChoices(box) {
+    var checked = box.querySelector('input[type="radio"]:checked');
+    if (!checked) { box.removeAttribute('data-answered'); return; }
+    box.setAttribute('data-answered',
+      checked.value === box.getAttribute('data-correct') ? 'correct' : 'wrong');
+  }
   document.addEventListener('change', function(e) {
     var box = e.target.closest && e.target.closest('.lc-choices[data-correct]');
     if (!box || e.target.type !== 'radio') return;
-    box.setAttribute('data-answered',
-      e.target.value === box.getAttribute('data-correct') ? 'correct' : 'wrong');
+    if (box.hasAttribute('data-reveal')) box.removeAttribute('data-answered');
+    else markChoices(box);
+  });
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest && e.target.closest('button[id]');
+    if (!btn) return;
+    document.querySelectorAll('.lc-choices[data-correct][data-reveal]').forEach(function(box) {
+      if (box.getAttribute('data-reveal') === btn.id) markChoices(box);
+    });
   });
 
   // --- Klikalne komórki tabeli: input$<id> = c(i, j) ---

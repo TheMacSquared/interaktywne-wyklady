@@ -169,7 +169,8 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
               "Każdy skontrolowany zawór; wynik: sprawny/niesprawny" = "valve",
               "Każdy dzień; wynik: dowolna liczba usterek" = "day",
               "Cała fabryka; wynik: wszystkie obserwacje" = "factory"
-            )
+            ),
+            correct = "valve"
           ),
           "Definicja „dzień i dowolna liczba usterek” łamie kryterium dwóch wyników, a „cała fabryka” nie wyodrębnia żadnej powtarzalnej jednostki — mamy jedną obserwację, a nie serię. Tylko kontrola pojedynczego zaworu daje sto porównywalnych prób, a wtedy pytanie „ile niesprawnych w partii?” ma jasny sens.",
           risk_check("p4_chk_proba",

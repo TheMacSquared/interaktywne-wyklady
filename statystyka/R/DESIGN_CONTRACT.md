@@ -226,7 +226,9 @@ Zasady:
    wniosku) zostają radiem albo polami wyboru opakowanymi w `div.lc-choices`:
    każda opcja to karta, zaznaczona ma obwódkę i tło akcentu. Gdy odpowiedź
    jest oceniana od razu, `data-correct = "<wartość>"` na tym `div` zmienia
-   kolor zaznaczonej poprawnej karty na zielony (`--upwr-sage`).
+   kolor zaznaczonej poprawnej karty na zielony (`--upwr-sage`). Gdy ocenę
+   uruchamia przycisk („Sprawdź…”), dochodzi `data-reveal = "<id przycisku>"`:
+   kolor pojawia się po kliknięciu, a zmiana wyboru go kasuje.
 4. Odczyty (`lc_readout()`) zastępują `lc_stat_box()` w widgetach. Gdy
    kolor odczytu jest kolorem serii (`swatch = TRUE`), odczyt zastępuje
    legendę ggplot.
