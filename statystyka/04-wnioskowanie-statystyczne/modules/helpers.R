@@ -191,126 +191,109 @@ generate_correlation_data <- function(n = 50, r = 0.7, type = "linear",
   }
 }
 
-# Rysowanie rozkladu pod H0 z zaznaczeniem statystyki testowej
-plot_test_distribution <- function(stat_value, df = NULL, test_type = "t",
-                                    alternative = "two.sided") {
-  if (test_type == "t") {
-    x <- seq(-4, 4, length.out = 500)
-    y <- if (!is.null(df)) dt(x, df) else dnorm(x)
-    label <- if (!is.null(df)) paste0("t(", df, ")") else "N(0,1)"
-  } else if (test_type == "chisq") {
-    x <- seq(0, max(stat_value * 2, 15), length.out = 500)
-    y <- dchisq(x, df)
-    label <- paste0("χ²(", df, ")")
-  } else if (test_type == "f") {
-    x <- seq(0, max(stat_value * 2, 8), length.out = 500)
-    df1 <- df[1]; df2 <- df[2]
-    y <- df(x, df1, df2)
-    label <- paste0("F(", df1, ",", df2, ")")
+# ============================================================================
+# WIDGETY KROKOWE TESTÓW — wspólne dla rozdziałów 04–08
+# ============================================================================
+
+# Liczba w opisie kroku: <b> (mono w .lc-stepper-text), bez spacji wokół.
+step_num <- function(x) tags$b(x, .noWS = "outside")
+
+# step_label() z wyrażeniem plotmath (np. "mu[0] == 70", "bar(x) == 73.9"):
+# indeksy i znaki łączące (μ₀, x̄, p̂) nie mają glifów w czcionkach showtext.
+step_symbol_label <- function(x, y, label, role = "known", hjust = 0, vjust = 0,
+                              size = 3.6) {
+  annotate("text", x = x, y = y, label = label, parse = TRUE, hjust = hjust,
+           vjust = vjust, colour = STEP_ROLES[[role]]$colour, fontface = "bold",
+           size = size)
+}
+
+# Rozkład statystyki pod H₀ w rolach widgetu krokowego.
+# phase = "stat": krzywa (znana) i statystyka (nowa);
+# phase = "decision": statystyka znana, obszar odrzucenia i wartości krytyczne nowe.
+# Rama osi zależy tylko od statystyki i df, więc oba kroki mają tę samą.
+step_null_plot <- function(stat, df, type = c("t", "chisq"),
+                           alternative = "two.sided",
+                           phase = c("stat", "decision"), alpha = 0.05) {
+  type <- match.arg(type)
+  phase <- match.arg(phase)
+  stat <- as.numeric(stat)
+
+  if (type == "t") {
+    half <- max(4, abs(stat) * 1.1 + 0.5)
+    xlim <- c(-half, half)
+    dens <- function(x) dt(x, df)
+    crit <- switch(alternative,
+      two.sided = qt(1 - alpha / 2, df) * c(-1, 1),
+      greater   = qt(1 - alpha, df),
+      less      = qt(alpha, df)
+    )
+    reject <- function(x) switch(alternative,
+      two.sided = abs(x) >= crit[2],
+      greater   = x >= crit,
+      less      = x <= crit
+    )
   } else {
-    x <- seq(-4, 4, length.out = 500)
-    y <- dnorm(x)
-    label <- "N(0,1)"
+    xlim <- c(0, max(stat * 2, 15))
+    dens <- function(x) dchisq(x, df)
+    crit <- qchisq(1 - alpha, df)
+    reject <- function(x) x >= crit
   }
 
-  plot_df <- data.frame(x = x, y = y)
+  curve <- data.frame(x = seq(xlim[1], xlim[2], length.out = 600))
+  curve$y <- dens(curve$x)
+  visible <- is.finite(curve$y) & curve$x >= xlim[1] + diff(xlim) * 0.02
+  y_top <- max(curve$y[visible]) * 1.25
+  curve$y <- pmin(curve$y, y_top)
 
-  # Obszar p-wartosci
-  if (test_type %in% c("chisq", "f")) {
-    shade_df <- plot_df[plot_df$x >= stat_value, ]
-  } else if (alternative == "two.sided") {
-    shade_df <- plot_df[abs(plot_df$x) >= abs(stat_value), ]
-  } else if (alternative == "greater") {
-    shade_df <- plot_df[plot_df$x >= stat_value, ]
-  } else {
-    shade_df <- plot_df[plot_df$x <= stat_value, ]
-  }
+  stat_role <- if (phase == "stat") "new" else "known"
+  label_hjust <- if (stat > xlim[1] + 0.7 * diff(xlim)) 1.1 else -0.1
+  stat_text <- step_label(
+    stat, y_top * 0.97,
+    paste0(if (type == "t") "t" else "χ²", " = ", lc_fmt(stat, 3)),
+    role = stat_role, hjust = label_hjust, vjust = 1
+  )
 
-  # Punkty krytyczne i strefy
-  alpha <- 0.05
-
-  if (test_type %in% c("chisq", "f")) {
-    if (test_type == "chisq") {
-      crit_right <- qchisq(1 - alpha, df)
-    } else {
-      crit_right <- qf(1 - alpha, df[1], df[2])
+  p <- ggplot(curve, aes(x = x, y = y))
+  if (phase == "decision") {
+    in_reject <- reject(curve$x)
+    # Obszar odrzucenia: osobne fragmenty, żeby geom_area nie łączył ogonów.
+    for (part in split(curve[in_reject, ], cumsum(!in_reject)[in_reject])) {
+      p <- p + step_layer(geom_area, "new", data = part, fill_role = TRUE,
+                          colour = NA, alpha = 0.3)
     }
-    shade_h0 <- plot_df[plot_df$x <= crit_right, ]
-    shade_h1 <- plot_df[plot_df$x >= crit_right, ]
-
-    p <- ggplot(plot_df, aes(x = x, y = y)) +
-      geom_area(data = shade_h0, fill = unname(upwr_cat["szalwia"]), alpha = 0.15) +
-      geom_area(data = shade_h1, fill = upwr_accent, alpha = 0.25) +
-      geom_line(color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-      geom_vline(xintercept = crit_right, color = upwr_secondary,
-                 linewidth = 0.8, linetype = "dashed") +
-      geom_vline(xintercept = stat_value, color = upwr_accent,
-                 linewidth = 1.2) +
-      annotate("text", x = stat_value, y = max(y) * 0.85,
-               label = paste0("stat = ", round(stat_value, 3)),
-               hjust = -0.1, color = upwr_accent, fontface = "bold") +
-      labs(x = "Statystyka testowa", y = "Gęstość") +
-      theme()
-
-  } else if (alternative == "two.sided") {
-    crit <- qt(1 - alpha / 2, df)
-    shade_h0 <- plot_df[plot_df$x >= -crit & plot_df$x <= crit, ]
-    shade_left <- plot_df[plot_df$x <= -crit, ]
-    shade_right <- plot_df[plot_df$x >= crit, ]
-
-    p <- ggplot(plot_df, aes(x = x, y = y)) +
-      geom_area(data = shade_h0, fill = unname(upwr_cat["szalwia"]), alpha = 0.15) +
-      geom_area(data = shade_left, fill = upwr_accent, alpha = 0.25) +
-      geom_area(data = shade_right, fill = upwr_accent, alpha = 0.25) +
-      geom_line(color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-      geom_vline(xintercept = c(-crit, crit), color = upwr_secondary,
-                 linewidth = 0.8, linetype = "dashed") +
-      geom_vline(xintercept = stat_value, color = upwr_accent,
-                 linewidth = 1.2) +
-      annotate("text", x = 0, y = max(y) * 0.45,
-               label = "nie odrzucamy H0", color = unname(upwr_cat["szalwia"]),
-               fontface = "bold", size = 4) +
-      annotate("text", x = -3.3, y = max(y) * 0.25,
-               label = "Ha", color = upwr_accent,
-               fontface = "bold", size = 4) +
-      annotate("text", x = 3.3, y = max(y) * 0.25,
-               label = "Ha", color = upwr_accent,
-               fontface = "bold", size = 4) +
-      annotate("text", x = stat_value, y = max(y) * 0.85,
-               label = paste0("t = ", round(stat_value, 3)),
-               hjust = if (stat_value > 0) -0.1 else 1.1,
-               color = upwr_accent, fontface = "bold") +
-      labs(x = "Statystyka testowa", y = "Gęstość") +
-      theme()
-
-  } else {
-    # Jednostronny
-    if (alternative == "greater") {
-      crit <- qt(1 - alpha, df)
-      shade_h0 <- plot_df[plot_df$x <= crit, ]
-      shade_h1 <- plot_df[plot_df$x >= crit, ]
-    } else {
-      crit <- qt(alpha, df)
-      shade_h0 <- plot_df[plot_df$x >= crit, ]
-      shade_h1 <- plot_df[plot_df$x <= crit, ]
+    p <- p +
+      step_layer(geom_area, "background", data = curve[!in_reject, ],
+                 fill_role = TRUE, colour = NA) +
+      step_line("new", xintercept = crit)
+    if (type == "t" && alternative == "two.sided") {
+      tail_mid <- (crit[2] + xlim[2]) / 2
+      p <- p +
+        step_label(0, y_top * 0.45, "nie odrzucamy H0", role = "known", hjust = 0.5) +
+        step_label(-tail_mid, y_top * 0.25, "Ha", role = "new", hjust = 0.5) +
+        step_label(tail_mid, y_top * 0.25, "Ha", role = "new", hjust = 0.5)
     }
-    p <- ggplot(plot_df, aes(x = x, y = y)) +
-      geom_area(data = shade_h0, fill = unname(upwr_cat["szalwia"]), alpha = 0.15) +
-      geom_area(data = shade_h1, fill = upwr_accent, alpha = 0.25) +
-      geom_line(color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-      geom_vline(xintercept = crit, color = upwr_secondary,
-                 linewidth = 0.8, linetype = "dashed") +
-      geom_vline(xintercept = stat_value, color = upwr_accent,
-                 linewidth = 1.2) +
-      annotate("text", x = stat_value, y = max(y) * 0.85,
-               label = paste0("t = ", round(stat_value, 3)),
-               hjust = if (stat_value > 0) -0.1 else 1.1,
-               color = upwr_accent, fontface = "bold") +
-      labs(x = "Statystyka testowa", y = "Gęstość") +
-      theme()
   }
+  p +
+    step_layer(geom_line, "known") +
+    step_line(stat_role, xintercept = stat, helper = FALSE) +
+    stat_text +
+    labs(x = "Statystyka testowa", y = "Gęstość") +
+    step_frame(xlim = xlim, ylim = c(0, y_top))
+}
 
-  p
+# Decyzja w opisie kroku: werdykt, p z kropką dziesiętną i porównanie z α.
+step_verdict <- function(p_value, alpha = 0.05) {
+  res <- format_test_result(p_value, alpha)
+  sig <- p_value < alpha
+  verdict <- lc_verdict(res$decision, type = if (sig) "danger" else "ok")
+  verdict$.noWS <- "outside"
+  tagList(
+    verdict, ". ",
+    if (p_value < 0.001) "p < " else "p = ",
+    step_num(if (p_value < 0.001) "0.001" else lc_fmt(p_value, 3)),
+    if (sig) " < α = " else " ≥ α = ", alpha,
+    if (sig) " — wynik istotny statystycznie." else " — wynik nieistotny statystycznie."
+  )
 }
 
 # format_p_value(), format_p(), ui_p_value() — zdefiniowane w R/shared.R
