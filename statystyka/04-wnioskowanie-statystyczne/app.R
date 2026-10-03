@@ -78,30 +78,6 @@ header_extras <- tagList(
       height: 320px;
     }
 
-    .ch2-animated-widget .ch2-step-btn {
-      transition: transform 160ms ease, box-shadow 180ms ease,
-                  background-color 180ms ease, color 180ms ease;
-    }
-
-    .ch2-animated-widget .ch2-step-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(107, 26, 42, 0.14);
-    }
-
-    .ch2-animated-widget .ch2-step-btn.ch2-step-active {
-      background: var(--upwr-accent) !important;
-      color: #fff !important;
-      box-shadow: 0 0 0 3px rgba(107, 26, 42, 0.14);
-    }
-
-    .ch2-animated-widget .ch2-step-stage {
-      transition: background-color 220ms ease, box-shadow 220ms ease;
-    }
-
-    .ch2-animated-widget .ch2-step-stage.ch2-stage-refresh {
-      animation: ch2StageRefresh 420ms ease-out;
-    }
-
     .ch2-step-panel {
       animation: ch2StepEnter 360ms cubic-bezier(.2, .75, .25, 1);
       transform-origin: top center;
@@ -126,15 +102,7 @@ header_extras <- tagList(
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    @keyframes ch2StageRefresh {
-      0%   { box-shadow: inset 0 0 0 0 rgba(180, 138, 42, 0); }
-      35%  { box-shadow: inset 0 0 0 999px rgba(180, 138, 42, 0.08); }
-      100% { box-shadow: inset 0 0 0 0 rgba(180, 138, 42, 0); }
-    }
-
     @media (prefers-reduced-motion: reduce) {
-      .ch2-animated-widget .ch2-step-btn,
-      .ch2-animated-widget .ch2-step-stage,
       .ch2-step-panel,
       .ch2-step-panel .lc-feedback,
       .ch2-step-panel .lc-stat-box,
@@ -282,41 +250,6 @@ header_extras <- tagList(
       wsFlushPendingCharts();
       var observer = new MutationObserver(wsFlushPendingCharts);
       observer.observe(document.body, { childList: true, subtree: true });
-    });
-
-    document.addEventListener('click', function(event) {
-      var btn = event.target.closest('.ch2-step-btn');
-      if (!btn) return;
-
-      var widget = btn.closest('.ch2-animated-widget');
-      if (!widget) return;
-
-      widget.querySelectorAll('.ch2-step-btn').forEach(function(other) {
-        other.classList.remove('ch2-step-active');
-      });
-      btn.classList.add('ch2-step-active');
-
-      var stage = widget.querySelector('.ch2-step-stage');
-      if (stage) {
-        stage.classList.remove('ch2-stage-refresh');
-        void stage.offsetWidth;
-        stage.classList.add('ch2-stage-refresh');
-      }
-    });
-
-    document.addEventListener('click', function(event) {
-      var reset = event.target.closest('.ch2-sample-reset');
-      if (!reset) return;
-      document.querySelectorAll('.ch2-animated-widget .ch2-step-btn').forEach(function(btn) {
-        btn.classList.remove('ch2-step-active');
-      });
-    });
-
-    document.addEventListener('change', function(event) {
-      if (!event.target || !['ch2_scenario', 'ch2_n'].includes(event.target.id)) return;
-      document.querySelectorAll('.ch2-animated-widget .ch2-step-btn').forEach(function(btn) {
-        btn.classList.remove('ch2-step-active');
-      });
     });
   "))
 )

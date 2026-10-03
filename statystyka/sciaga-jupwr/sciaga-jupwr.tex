@@ -1,0 +1,1047 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  polish,
+  10pt,
+  a4paper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+\usepackage{xcolor}
+\usepackage[margin=1.6cm, top=1.6cm, bottom=1.8cm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+  \setmainfont[]{Lato}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+
+\ifLuaTeX
+\usepackage[bidi=basic,shorthands=off]{babel}
+\else
+\usepackage[bidi=default,shorthands=off]{babel}
+\fi
+\ifPDFTeX
+\else
+\babelfont{rm}[]{Lato}
+\fi
+\ifLuaTeX
+  \usepackage{selnolig} % disable illegal ligatures
+\fi
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
+
+\usepackage{xcolor}
+\definecolor{upwraccent}{HTML}{6b1a2a}
+\definecolor{upwrpanel}{HTML}{faf6ec}
+\definecolor{upwrrule}{HTML}{d9cfbc}
+\definecolor{upwrsoft}{HTML}{3d3832}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{longtable,booktabs,array}
+\usepackage{needspace}
+\newfontfamily\symfont{DejaVu Sans}
+\setlist{nosep, leftmargin=1.4em}
+\setlength{\parindent}{0pt}
+\setkomafont{section}{\Large\bfseries\color{upwraccent}}
+\setkomafont{subsection}{\large\bfseries\color{upwraccent}}
+\newtcolorbox{jbox}[1]{enhanced, breakable=false, colback=upwrpanel,
+  colframe=upwrrule, boxrule=0.4pt, arc=1.5pt, left=5pt, right=5pt,
+  top=3pt, bottom=3pt, before skip=6pt, after skip=6pt,
+  title={#1}, coltitle=upwraccent, colbacktitle=upwrpanel,
+  fonttitle=\bfseries, titlerule=0pt, toptitle=2pt, bottomtitle=0pt}
+\newcommand{\jmenu}[1]{{\color{upwraccent}\small #1}}
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Spis treści}
+\else
+  \newcommand\contentsname{Spis treści}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{Spis rycin}
+\else
+  \newcommand\listfigurename{Spis rycin}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{Spis tabel}
+\else
+  \newcommand\listtablename{Spis tabel}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Rysunek}
+\else
+  \newcommand\figurename{Rysunek}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Tabela}
+\else
+  \newcommand\tablename{Tabela}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Wykaz}
+\newcommand*\listoflistings{\listof{codelisting}{Spis wykazów}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+% fallback for those not using the hyperref driver hyperxmp:
+\makeatletter
+\@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
+\makeatother
+\hypersetup{
+  pdftitle={Ściąga jUPWR},
+  pdflang={pl},
+  colorlinks=true,
+  linkcolor={upwraccent},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{Ściąga jUPWR}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Gdzie w jUPWR robi się to, czego potrzeba na wykładzie ze
+statystyki}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+
+
+\textit{Stan na jUPWR 1.0.5. Wpis każdego tematu jest raz — przy pierwszym wykładzie, na którym się pojawia; dalsze wykłady odsyłają do strony.}
+
+\subsection{Mapa menu}\label{mapa-menu}
+
+\begin{jbox}{Wstążka jUPWR}
+\textbf{Zakładki:} Zmienne · Dane · Analizy · Wykresy · Edytuj. \quad Plik: przycisk {\symfont ☰} w lewym górnym rogu.
+
+\smallskip
+\begin{tabular}{@{}>{\bfseries\color{upwraccent}}p{3.6cm}p{13cm}@{}}
+Eksploracja & Zmienne ilościowe · Zmienne jakościowe · Szereg rozdzielczy \\
+Rozkłady & rozkłady ciągłe (normalny, t, χ², F, wykładniczy …) i dyskretne (dwumianowy, Poissona …) \\
+Przedziały ufności & Średnie · Proporcje · Korelacja i regresja · Dydaktyka (Jak działa bootstrap) \\
+Testy t & Jedna próba · Dwie grupy · Próby sparowane \\
+ANOVA & ANOVA · ANOVA powtórzonych pomiarów \\
+Regresja & Korelacja · Korelacja cząstkowa · Regresja liniowa · Regresja logistyczna \\
+Częstości & Jedna zmienna · Tabela kontyngencji · Próby zależne \\
+Testy permutacyjne & Jedna próba · Dwie grupy · Próby sparowane \\
+\end{tabular}
+
+\smallskip
+\textbf{Panel analizy:} najważniejsze opcje są widoczne od razu; reszta w zwiniętych sekcjach \textbf{Założenia} i \textbf{Zaawansowane}. Na dole każdej analizy: \textbf{Opis zastosowanych metod} (do raportu).
+\end{jbox}
+
+\section{Część A --- wg
+wykładów}\label{czux119ux15bux107-a-wg-wykux142aduxf3w}
+
+\needspace{8\baselineskip}
+
+\subsection{Wykład 01 --- Statystyka
+opisowa}\label{wykux142ad-01-statystyka-opisowa}
+
+\begin{jbox}{Otwarcie pliku z danymi}\label{w:otworz-plik}
+\jmenu{\textbf{{\symfont ☰} (menu pliku)} → \textbf{Otwórz} → \textbf{Przeglądaj}}
+
+\begin{enumerate}
+\item Wybierz plik CSV, XLSX albo zapisany projekt .omv.
+\item Gotowe zbiory z zajęć: {\symfont ☰} → Otwórz → Biblioteka.
+\end{enumerate}
+\textit{Wynik:} Dane pojawiają się w arkuszu na zakładce Dane.
+
+\end{jbox}
+
+\begin{jbox}{Typ zmiennej (poziom pomiaru)}\label{w:poziom-pomiaru}
+\jmenu{\textbf{Dane} → \textbf{Edytuj}}
+
+\begin{enumerate}
+\item Kliknij nagłówek kolumny, potem Edytuj (albo kliknij nagłówek dwukrotnie).
+\item Poziom pomiaru: Nominalna (kategorie bez porządku), Porządkowa (kategorie z porządkiem), Ciągła (liczby).
+\item Typ danych: Liczba całkowita / Dziesiętny / Tekst.
+\end{enumerate}
+\textit{Wynik:} Ikona w nagłówku kolumny pokazuje poziom pomiaru; analizy przyjmują tylko zmienne właściwego typu.
+
+{\color{upwrsoft}\small\textit{Uwaga:} Liczby zapisane jako tekst (np. „3-4h”, przecinek dziesiętny) trafiają jako Nominalna — popraw dane, zanim zmienisz typ.}
+\end{jbox}
+
+\begin{jbox}{Tabela liczności zmiennej jakościowej}\label{w:tabela-licznosci}
+\jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne jakościowe}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienne}: zmienna jakościowa
+\end{itemize}
+\begin{enumerate}
+\item Tabela: Liczności i procenty skumulowane.
+\item Wykres: Słupkowy.
+\end{enumerate}
+\textit{Wynik:} Tabela liczności z procentami; dominanta i liczba kategorii w tabeli Podsumowanie.
+
+{\color{upwrsoft}\small\textit{Uwaga:} Wykresu kołowego w jUPWR nie ma celowo — słupkowy jest czytelniejszy.}
+\end{jbox}
+
+\begin{jbox}{Tabela krzyżowa (opis dwóch zmiennych jakościowych)}\label{w:tabela-krzyzowa-opis}
+\jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne jakościowe}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienne}: pierwsza zmienna jakościowa
+\item[$\triangleright$] \textbf{Podziel według}: druga zmienna jakościowa
+\end{itemize}
+\begin{enumerate}
+\item Procenty (przy podziale): \% w kolumnie, \% w wierszu albo \% ogółem.
+\item Wykres: Słupkowy albo Mozaikowy.
+\end{enumerate}
+\textit{Wynik:} Tabela krzyżowa liczności z wybranymi procentami.
+
+{\color{upwrsoft}\small\textit{Uwaga:} Test χ² dla tej tabeli jest w Częstości → Tabela kontyngencji.}
+\end{jbox}
+
+\begin{jbox}{Średnia, mediana, kwartyle, odchylenie standardowe}\label{w:statystyki-opisowe}
+\jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienne}: jedna lub kilka zmiennych ilościowych
+\end{itemize}
+\begin{enumerate}
+\item Domyślnie: N, Braki, Średnia, Mediana, Kwartyle, Odchylenie standardowe, Minimum, Maksimum, Współczynnik zmienności V (\%).
+\item Zaawansowane → Rozproszenie: Wariancja, Rozstęp, Rozstęp ćwiartkowy (IQR).
+\item Zaawansowane → Położenie: Dominanta. Zaawansowane → Kwantyle: Percentyle (np. 10, 90).
+\end{enumerate}
+\textit{Wynik:} Tabela statystyk; Układ tabeli przełącza zmienne w wierszach / w kolumnach.
+
+\end{jbox}
+
+\begin{jbox}{Statystyki opisowe osobno w grupach}\label{w:porownanie-grup-opis}
+\jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienne}: zmienna ilościowa
+\item[$\triangleright$] \textbf{Podziel według}: zmienna grupująca (można kilka)
+\end{itemize}
+\begin{enumerate}
+\item Wykres: Pudełkowy — pudełka grup obok siebie.
+\end{enumerate}
+\textit{Wynik:} Jeden wiersz (lub kolumna) statystyk na grupę.
+
+\end{jbox}
+
+\begin{jbox}{Histogram}\label{w:histogram}
+\jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienne}: zmienna ilościowa
+\end{itemize}
+\begin{enumerate}
+\item Wykres: Histogram.
+\item Zaawansowane → Wykresy dodatkowe: Gęstość na histogramie.
+\end{enumerate}
+\textit{Wynik:} Histogram pod tabelą statystyk.
+
+{\color{upwrsoft}\small\textit{Uwaga:} Osobny, bardziej konfigurowalny histogram: Wykresy → Rozkład → Histogram.}
+\end{jbox}
+
+\begin{jbox}{Wykres pudełkowy}\label{w:pudelkowy}
+\jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienne}: zmienna ilościowa
+\item[$\triangleright$] \textbf{Podziel według}: (opcjonalnie) grupy
+\end{itemize}
+\begin{enumerate}
+\item Wykres: Pudełkowy (Zaznacz średnią jest włączone).
+\item Zaawansowane → Wykresy dodatkowe: Punkty na pudełkowym, Skrzypce na pudełkowym.
+\end{enumerate}
+\textit{Wynik:} Pudełko = Q1–Q3, kreska = mediana, punkty poza wąsami = wartości odstające.
+
+\end{jbox}
+
+\begin{jbox}{Skośność i kurtoza}\label{w:ksztalt}
+\jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienne}: zmienna ilościowa
+\end{itemize}
+\begin{enumerate}
+\item Zaawansowane → Kształt: Skośność, Kurtoza.
+\end{enumerate}
+\textit{Wynik:} Kolumny/wiersze Skośność i Kurtoza w tabeli statystyk (z błędem standardowym).
+
+\end{jbox}
+
+\begin{jbox}{Szereg rozdzielczy (dane w klasach)}\label{w:szereg-rozdzielczy}
+\jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Szereg rozdzielczy}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienna}: zmienna ilościowa
+\end{itemize}
+\begin{enumerate}
+\item Podział na klasy: Reguła Sturgesa, Liczba klas albo Szerokość klasy.
+\item Wykres: Histogram klas, Krzywa częstości skumulowanych.
+\end{enumerate}
+\textit{Wynik:} Tabela klas z licznościami i częstościami skumulowanymi; miary z szeregu obok wartości z danych.
+
+\end{jbox}
+
+\needspace{8\baselineskip}
+
+\subsection{Wykład 02 --- Rozkłady
+prawdopodobieństwa}\label{wykux142ad-02-rozkux142ady-prawdopodobieux144stwa}
+
+\begin{jbox}{Prawdopodobieństwo i kwantyl w rozkładzie normalnym}\label{w:rozklad-normalny}
+\jmenu{\textbf{Analizy} → \textbf{Rozkłady} → \textbf{Rozkład normalny}}
+
+\begin{enumerate}
+\item Parametry: Średnia =, Odch. std. = (dla wartości z: 0 i 1).
+\item Oblicz prawdopodobieństwo: P(X ≤ x1), P(X ≥ x1) albo P(x1 ≤ X ≤ x2); wpisz x1 (i x2).
+\item Oblicz kwantyl(e): kwantyl kumulatywny albo kwantyle przedziału centralnego dla p =
+\end{enumerate}
+\textit{Wynik:} Tabela z prawdopodobieństwem / kwantylem i wykres gęstości z zakreślonym obszarem.
+
+\end{jbox}
+
+\begin{jbox}{Rozkład dwumianowy, Poissona, geometryczny}\label{w:rozklady-dyskretne}
+\jmenu{\textbf{Analizy} → \textbf{Rozkłady} → \textbf{Rozkład dwumianowy / Poissona / geometryczny}}
+
+\begin{enumerate}
+\item Parametry rozkładu (dwumianowy: n =, Prawdopodb. =).
+\item Oblicz prawdopodobieństwo: P(X = x1), P(X ≤ x1), P(X ≥ x1) albo P(x1 ≤ X ≤ x2).
+\item Momenty: Pokaż wartość oczekiwaną E[X], Pokaż wariancję Var[X].
+\end{enumerate}
+\textit{Wynik:} Tabela z prawdopodobieństwem i wykres funkcji prawdopodobieństwa.
+
+\end{jbox}
+
+\begin{jbox}{Rozkłady t, χ², F, wykładniczy}\label{w:rozklady-ciagle}
+\jmenu{\textbf{Analizy} → \textbf{Rozkłady} → \textbf{Rozkład t / χ² / F / wykładniczy}}
+
+\begin{enumerate}
+\item Ten sam układ co rozkład normalny: parametry → Oblicz prawdopodobieństwo albo Oblicz kwantyl(e).
+\item Przykład: wartość krytyczna t dla 95\% — rozkład t, kwantyle przedziału centralnego, p = 0.95.
+\end{enumerate}
+\textit{Wynik:} Tabela z prawdopodobieństwem / kwantylem i wykres gęstości.
+
+\end{jbox}
+
+\needspace{8\baselineskip}
+
+\subsection{Wykład 03 --- Przedziały
+ufności}\label{wykux142ad-03-przedziaux142y-ufnoux15bci}
+
+\begin{jbox}{Przedział ufności dla średniej}\label{w:ci-srednia}
+\jmenu{\textbf{Analizy} → \textbf{Przedziały ufności} → \textbf{Średnie} → \textbf{Średnia}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienna}: zmienna ilościowa
+\item[$\triangleright$] \textbf{Grupy (opcjonalnie)}: osobny przedział w każdej grupie
+\end{itemize}
+\begin{enumerate}
+\item Poziom ufności = 95 (zmień, żeby zobaczyć wpływ na szerokość).
+\item Metoda przedziału: t-Studenta.
+\end{enumerate}
+\textit{Wynik:} Tabela: średnia i granice przedziału; wykres przedziału.
+
+\end{jbox}
+
+\begin{jbox}{Przedział ufności dla różnicy średnich (dwie grupy)}\label{w:ci-roznica-srednich}
+\jmenu{\textbf{Analizy} → \textbf{Przedziały ufności} → \textbf{Średnie} → \textbf{Różnica średnich}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienna}: zmienna ilościowa
+\item[$\triangleright$] \textbf{Zmienna grupująca}: dwie grupy (przy więcej: wybierz Grupa 1 i Grupa 2)
+\end{itemize}
+\begin{enumerate}
+\item Metoda przedziału: Welcha (nierówne wariancje) — domyślnie; t-Studenta (wspólna wariancja) dla wersji klasycznej.
+\item Wielkość efektu: d Cohena z przedziałem ufności.
+\end{enumerate}
+\textit{Wynik:} Tabela: różnica średnich z przedziałem (i d Cohena z przedziałem); wykres różnicy.
+
+\end{jbox}
+
+\begin{jbox}{Przedział ufności dla średniej różnic (pomiary sparowane)}\label{w:ci-srednia-roznic}
+\jmenu{\textbf{Analizy} → \textbf{Przedziały ufności} → \textbf{Średnie} → \textbf{Średnia różnic}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Pomiar 1}: pierwszy pomiar (kolumna)
+\item[$\triangleright$] \textbf{Pomiar 2}: drugi pomiar (kolumna)
+\end{itemize}
+\begin{enumerate}
+\item Metoda przedziału: t-Studenta. Opcjonalnie: d Cohena z przedziałem ufności.
+\end{enumerate}
+\textit{Wynik:} Tabela: średnia różnic z przedziałem.
+
+\end{jbox}
+
+\begin{jbox}{Przedział ufności dla proporcji}\label{w:ci-proporcja}
+\jmenu{\textbf{Analizy} → \textbf{Przedziały ufności} → \textbf{Proporcje} → \textbf{Proporcja}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienna}: zmienna jakościowa
+\end{itemize}
+\begin{enumerate}
+\item Kategoria „sukces”: wybierz kategorię, której udział liczysz.
+\item Metoda przedziału: Wilsona (score) — domyślnie; Cloppera-Pearsona (dokładna); Walda (wzór z wykładu).
+\end{enumerate}
+\textit{Wynik:} Tabela: proporcja z próby i granice przedziału; wykres.
+
+{\color{upwrsoft}\small\textit{Uwaga:} Przedział Walda przy małym n lub proporcji blisko 0 albo 1 bywa za wąski albo wychodzi poza [0, 1].}
+\end{jbox}
+
+\begin{jbox}{Przedział ufności dla różnicy proporcji}\label{w:ci-roznica-proporcji}
+\jmenu{\textbf{Analizy} → \textbf{Przedziały ufności} → \textbf{Proporcje} → \textbf{Różnica proporcji}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienna}: zmienna jakościowa (wynik)
+\item[$\triangleright$] \textbf{Zmienna grupująca}: dwie grupy
+\end{itemize}
+\begin{enumerate}
+\item Kategoria „sukces”, Grupa 1, Grupa 2.
+\item Metoda przedziału: Newcombe’a (score) — domyślnie; Walda.
+\end{enumerate}
+\textit{Wynik:} Tabela: różnica proporcji z przedziałem; wykres.
+
+\end{jbox}
+
+\begin{jbox}{Przedział bootstrapowy}\label{w:bootstrap}
+\jmenu{\textbf{Analizy} → \textbf{Przedziały ufności} → \textbf{(dowolna analiza)}}
+
+\begin{enumerate}
+\item Metoda przedziału: Bootstrap percentylowy albo Bootstrap BCa.
+\item Zaawansowane → Bootstrap: Liczba losowań B, Ziarno generatora (powtarzalny wynik), Histogram rozkładu bootstrapowego.
+\item Idea krok po kroku: Przedziały ufności → Dydaktyka → Jak działa bootstrap.
+\end{enumerate}
+\textit{Wynik:} Ta sama tabela co dla metody klasycznej.
+
+\end{jbox}
+
+\needspace{8\baselineskip}
+
+\subsection{Wykład 04 --- Testowanie
+hipotez}\label{wykux142ad-04-testowanie-hipotez}
+
+\begin{jbox}{Nowa zmienna z formuły}\label{w:oblicz-zmienna}
+\jmenu{\textbf{Dane} → \textbf{Oblicz}}
+
+\begin{enumerate}
+\item Nadaj nazwę nowej zmiennej.
+\item Wpisz formułę, np. english \textgreater{} 20, (read + math) / 2, Z(wzrost), read \textgreater{}= VMED(read).
+\item Przycisk fx pokazuje listę funkcji.
+\end{enumerate}
+\textit{Wynik:} Nowa kolumna na końcu arkusza (lub obok zaznaczonej), przelicza się sama po zmianie danych.
+
+\end{jbox}
+
+\begin{jbox}{Test t dla jednej próby}\label{w:t-jedna-proba}
+\jmenu{\textbf{Analizy} → \textbf{Testy t} → \textbf{Jedna próba}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienne}: zmienna ilościowa
+\end{itemize}
+\begin{enumerate}
+\item Hipoteza: Wartość testowa = (np. 650).
+\item Hipoteza alternatywna: Dwustronna (≠), Większa (\textgreater{}) albo Mniejsza (\textless{}).
+\item Wykres pudełkowy z punktami jest włączony; linia pokazuje wartość testową.
+\end{enumerate}
+\textit{Wynik:} Tabela testu: Statystyka t, df, p, różnica średnich, wielkość efektu (d Cohena).
+
+{\color{upwrsoft}\small\textit{Uwaga:} Przedział ufności dla średniej: Przedziały ufności → Średnie → Średnia.}
+\end{jbox}
+
+\begin{jbox}{Test dla jednej proporcji (dwumianowy)}\label{w:test-proporcji}
+\jmenu{\textbf{Analizy} → \textbf{Częstości} → \textbf{Jedna zmienna}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienna}: zmienna o dwóch kategoriach
+\end{itemize}
+\begin{enumerate}
+\item Proporcje oczekiwane: wpisz proporcję z H₀ (np. 0,5 i 0,5).
+\item Przy dwóch kategoriach test dwumianowy (dokładny) wybiera się sam.
+\item Zaawansowane → Hipoteza (2 kategorie): Hipoteza alternatywna.
+\end{enumerate}
+\textit{Wynik:} Tabela testu z p; Wykres: Obserwowane i oczekiwane.
+
+{\color{upwrsoft}\small\textit{Uwaga:} Przedział ufności dla proporcji: Przedziały ufności → Proporcje → Proporcja (Cloppera-Pearsona = dokładny).}
+\end{jbox}
+
+\begin{jbox}{Test χ² zgodności}\label{w:chi2-zgodnosc}
+\jmenu{\textbf{Analizy} → \textbf{Częstości} → \textbf{Jedna zmienna}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienna}: zmienna o trzech lub więcej kategoriach
+\end{itemize}
+\begin{enumerate}
+\item Proporcje oczekiwane: wpisz udziały z H₀ (domyślnie równe).
+\item Wielkość efektu (w Cohena) — włączona.
+\item Zaawansowane → Post-hoc: Reszty standaryzowane (które kategorie odbiegają).
+\end{enumerate}
+\textit{Wynik:} Tabela testu χ² (χ², df, p) i w Cohena.
+
+\end{jbox}
+
+\begin{jbox}{Test χ² niezależności (tabela kontyngencji)}\label{w:chi2-niezaleznosc}
+\jmenu{\textbf{Analizy} → \textbf{Częstości} → \textbf{Tabela kontyngencji}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Wiersze}: pierwsza zmienna jakościowa
+\item[$\triangleright$] \textbf{Kolumny}: druga zmienna jakościowa
+\end{itemize}
+\begin{enumerate}
+\item Test i wielkość efektu: χ² niezależności i Wielkość efektu (V Craméra) — włączone.
+\item Procenty: Wierszami (domyślnie) albo Kolumnami — w kierunku, w którym porównujesz grupy.
+\item Zaawansowane → Post-hoc: Reszty standaryzowane (które komórki decydują).
+\item Wykres: Słupkowy albo Mozaikowy.
+\end{enumerate}
+\textit{Wynik:} Tabela liczności z procentami, tabela testu (χ², df, p) i V Craméra.
+
+\end{jbox}
+
+\begin{jbox}{Mała tabela — liczebności oczekiwane i test Fishera}\label{w:fisher}
+\jmenu{\textbf{Analizy} → \textbf{Częstości} → \textbf{Tabela kontyngencji}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Wiersze}: zmienna jakościowa
+\item[$\triangleright$] \textbf{Kolumny}: zmienna jakościowa
+\end{itemize}
+\begin{enumerate}
+\item Zaawansowane → Liczności: Liczebności oczekiwane.
+\item Test i wielkość efektu: Dokładny test Fishera.
+\item Zaawansowane → Dodatkowe testy: Poprawka ciągłości (2×2) — poprawka Yatesa.
+\end{enumerate}
+\textit{Wynik:} Gdy liczebności oczekiwane są za małe (E \textless{} 5), pod tabelą testu pojawia się ostrzeżenie; wynik Fishera jest w tabeli testów.
+
+\end{jbox}
+
+\begin{jbox}{Test t dla dwóch grup niezależnych}\label{w:t-dwie-grupy}
+\jmenu{\textbf{Analizy} → \textbf{Testy t} → \textbf{Dwie grupy}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienne zależne}: zmienna ilościowa
+\item[$\triangleright$] \textbf{Zmienna grupująca}: zmienna o dwóch kategoriach
+\end{itemize}
+\begin{enumerate}
+\item Testy: t Welcha (nierówne wariancje); t Studenta jest zaznaczony domyślnie — odznacz, jeśli niepotrzebny.
+\item Hipoteza alternatywna: Dwustronna (≠), Większa (\textgreater{}) albo Mniejsza (\textless{}).
+\item Sprawdzenie założeń: Jednorodność wariancji (Levene), Normalność (Shapiro-Wilk).
+\end{enumerate}
+\textit{Wynik:} Tabela testu: Statystyka t, df, p, różnica średnich, wielkość efektu (d Cohena) — po jednym wierszu na test.
+
+{\color{upwrsoft}\small\textit{Uwaga:} Przedział ufności dla różnicy średnich i d Cohena z przedziałem: Przedziały ufności → Średnie → Różnica średnich.}
+\end{jbox}
+
+\begin{jbox}{Test t dla prób sparowanych}\label{w:t-sparowane}
+\jmenu{\textbf{Analizy} → \textbf{Testy t} → \textbf{Próby sparowane}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Pary zmiennych}: dwie kolumny: pomiar 1 i pomiar 2
+\end{itemize}
+\begin{enumerate}
+\item Testy: t Studenta (domyślnie); Wilcoxona (rangowanych znaków) jako wersja nieparametryczna.
+\item Sprawdzenie założeń: Normalność (Shapiro-Wilk) — dotyczy różnic.
+\end{enumerate}
+\textit{Wynik:} Tabela testu: t, df, p, średnia różnica, d Cohena; wykres z trzecim pudełkiem różnic.
+
+{\color{upwrsoft}\small\textit{Uwaga:} Dane muszą być w formacie szerokim: jeden wiersz = jedna osoba, dwa pomiary w dwóch kolumnach.}
+\end{jbox}
+
+\begin{jbox}{ANOVA jednoczynnikowa i porównania post-hoc}\label{w:anova}
+\jmenu{\textbf{Analizy} → \textbf{ANOVA} → \textbf{ANOVA}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienna zależna}: zmienna ilościowa
+\item[$\triangleright$] \textbf{Czynniki}: zmienna grupująca (trzy lub więcej grup)
+\end{itemize}
+\begin{enumerate}
+\item Test: Wielkość efektu (η²p) — przy jednym czynniku równa η².
+\item Test: Nierówne wariancje (Welch), gdy wariancje w grupach się różnią.
+\item Porównania: metoda Tukeya (HSD) domyślnie; Tabela porównań parami.
+\item Założenia: Jednorodność wariancji, Normalność reszt, Wykres Q-Q reszt.
+\end{enumerate}
+\textit{Wynik:} Tabela ANOVA (F, df, p, η²p); wykres średnich z literami — grupy z tą samą literą nie różnią się istotnie.
+
+\end{jbox}
+
+\begin{jbox}{Gdzie są wielkości efektu}\label{w:sila-efektu}
+\jmenu{\textbf{Analizy} → \textbf{(zależnie od testu)}}
+
+\begin{enumerate}
+\item d Cohena: Testy t (w tabeli testu); z przedziałem: Przedziały ufności → Różnica średnich / Średnia różnic.
+\item r: Regresja → Korelacja (sam współczynnik jest wielkością efektu).
+\item V Craméra: Częstości → Tabela kontyngencji (włączone). w Cohena: Częstości → Jedna zmienna.
+\item η²: ANOVA → Wielkość efektu (η²p); Zaawansowane → Model: η², ω².
+\end{enumerate}
+\textit{Wynik:} Kolumna wielkości efektu w tabeli danego testu.
+
+\end{jbox}
+
+\begin{jbox}{Korelacja (Pearson, Spearman) i macierz korelacji}\label{w:korelacja}
+\jmenu{\textbf{Analizy} → \textbf{Regresja} → \textbf{Korelacja}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienne}: 2 zmienne = jedna para; 3 i więcej = macierz
+\end{itemize}
+\begin{enumerate}
+\item Współczynnik: r Pearsona, ρ Spearmana (monotoniczna, rangi) albo τ-b Kendalla.
+\item Wykres rozrzutu — włączony.
+\item Zaawansowane → Hipoteza: Korelacja \textgreater{} 0 / \textless{} 0 (test jednostronny); Przedział ufności.
+\item Macierz: Zaawansowane → N w macierzy, Oznacz istotne gwiazdkami.
+\end{enumerate}
+\textit{Wynik:} Para: jeden wiersz (r, p, N); macierz: dolny trójkąt z r i p w komórkach.
+
+{\color{upwrsoft}\small\textit{Uwaga:} Korelacja nie mówi o przyczynie — sprawdź, czy związek nie wynika z trzeciej zmiennej.}
+\end{jbox}
+
+\textbf{Także na tym wykładzie:} Rozkłady t, χ², F, wykładniczy
+(s.\textasciitilde{}\pageref{w:rozklady-ciagle}); Przedział ufności dla
+różnicy średnich (dwie grupy)
+(s.\textasciitilde{}\pageref{w:ci-roznica-srednich}); Przedział ufności
+dla średniej różnic (pomiary sparowane)
+(s.\textasciitilde{}\pageref{w:ci-srednia-roznic}); Przedział ufności
+dla proporcji (s.\textasciitilde{}\pageref{w:ci-proporcja}).
+
+\needspace{8\baselineskip}
+
+\subsection{Wykład 05 --- Założenia
+testów}\label{wykux142ad-05-zaux142oux17cenia-testuxf3w}
+
+\begin{jbox}{Sprawdzenie normalności (Shapiro-Wilk, wykres Q-Q)}\label{w:normalnosc}
+\jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienne}: zmienna ilościowa
+\item[$\triangleright$] \textbf{Podziel według}: (opcjonalnie) grupy — normalność sprawdza się w każdej grupie
+\end{itemize}
+\begin{enumerate}
+\item Założenia → Normalność: Shapiro-Wilk, Wykres Q-Q.
+\end{enumerate}
+\textit{Wynik:} Tabela testu (W, p) i wykres Q-Q: punkty blisko prostej = rozkład bliski normalnemu.
+
+{\color{upwrsoft}\small\textit{Uwaga:} W testach t to samo jest w sekcji Sprawdzenie założeń; w ANOVA i regresji sprawdza się reszty (Założenia → Normalność reszt).}
+\end{jbox}
+
+\begin{jbox}{Testy nieparametryczne (rangowe)}\label{w:nieparametryczne}
+\jmenu{\textbf{Analizy} → \textbf{Testy t / ANOVA}}
+
+\begin{enumerate}
+\item Jedna próba, Próby sparowane: Testy → Wilcoxona (rangowanych znaków).
+\item Dwie grupy: Testy → Manna-Whitneya U.
+\item ANOVA (jeden czynnik): Test → Nieparametrycznie (rangi) = Kruskal-Wallis z porównaniami Dunna.
+\item ANOVA powtórzonych pomiarów (jeden czynnik): Nieparametrycznie (rangi) = Friedman.
+\end{enumerate}
+\textit{Wynik:} Dodatkowy wiersz albo tabela testu rangowego obok wersji parametrycznej.
+
+\end{jbox}
+
+\begin{jbox}{Jednorodność wariancji (Levene, Bartlett)}\label{w:wariancje}
+\jmenu{\textbf{Analizy} → \textbf{Testy t / ANOVA}}
+
+\begin{enumerate}
+\item Testy t → Dwie grupy → Sprawdzenie założeń: Jednorodność wariancji (Levene).
+\item ANOVA → Założenia: Jednorodność wariancji (test Levene’a i Bartletta).
+\item Przy różnych wariancjach: t Welcha albo ANOVA → Nierówne wariancje (Welch).
+\end{enumerate}
+\textit{Wynik:} Tabela testu z F i p.
+
+\end{jbox}
+
+\begin{jbox}{Diagnostyka regresji (reszty, VIF)}\label{w:jakosc-modelu}
+\jmenu{\textbf{Analizy} → \textbf{Regresja} → \textbf{Regresja liniowa}}
+
+\begin{enumerate}
+\item Założenia → Reszty: Normalność reszt (Shapiro-Wilk), Wykres Q-Q reszt, Reszty vs dopasowane (lejek = niejednorodna wariancja).
+\item Założenia → Predyktory i obserwacje: Autokorelacja (Durbin-Watson), Współliniowość (VIF), Odległość Cooka.
+\end{enumerate}
+\textit{Wynik:} Tabele testów i wykresy reszt pod modelem.
+
+{\color{upwrsoft}\small\textit{Uwaga:} Testu Breuscha-Pagana w jUPWR nie ma — niejednorodność wariancji ocenia się z wykresu Reszty vs dopasowane.}
+\end{jbox}
+
+\textbf{Także na tym wykładzie:} Histogram
+(s.\textasciitilde{}\pageref{w:histogram}); Test χ² niezależności
+(tabela kontyngencji)
+(s.\textasciitilde{}\pageref{w:chi2-niezaleznosc}); Mała tabela ---
+liczebności oczekiwane i test Fishera
+(s.\textasciitilde{}\pageref{w:fisher}); Test t dla dwóch grup
+niezależnych (s.\textasciitilde{}\pageref{w:t-dwie-grupy}); ANOVA
+jednoczynnikowa i porównania post-hoc
+(s.\textasciitilde{}\pageref{w:anova}); Korelacja (Pearson, Spearman) i
+macierz korelacji (s.\textasciitilde{}\pageref{w:korelacja}).
+
+\needspace{8\baselineskip}
+
+\subsection{Wykład 06 --- Regresja}\label{wykux142ad-06-regresja}
+
+\begin{jbox}{Przedział ufności dla korelacji i nachylenia regresji}\label{w:ci-korelacja-regresja}
+\jmenu{\textbf{Analizy} → \textbf{Przedziały ufności} → \textbf{Korelacja i regresja} → \textbf{Korelacja / Regresja liniowa}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienna 1, Zmienna 2}: dwie zmienne ilościowe (Korelacja)
+\item[$\triangleright$] \textbf{Zmienna zależna (Y), Predyktor (X)}: (Regresja liniowa)
+\end{itemize}
+\begin{enumerate}
+\item Korelacja: Współczynnik r Pearsona albo ρ Spearmana; Metoda: Transformacja Fishera z.
+\item Regresja liniowa: Metoda t-Studenta (lm).
+\end{enumerate}
+\textit{Wynik:} Tabela z przedziałem dla r albo dla wyrazu wolnego i nachylenia; wykres z pasmem.
+
+\end{jbox}
+
+\begin{jbox}{Regresja liniowa prosta}\label{w:regresja-prosta}
+\jmenu{\textbf{Analizy} → \textbf{Regresja} → \textbf{Regresja liniowa}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienna zależna}: Y — zmienna ilościowa
+\item[$\triangleright$] \textbf{Predyktory ilościowe}: X
+\end{itemize}
+\begin{enumerate}
+\item Wykres rozrzutu z prostą (jeden predyktor) — włączony.
+\item Zaawansowane → Zapis do arkusza: Wartości przewidywane do arkusza.
+\end{enumerate}
+\textit{Wynik:} Dopasowanie modelu: R², R² skoryg., F, p, RMSE. Współczynniki: b (nachylenie), SE, t, p, przedział ufności.
+
+\end{jbox}
+
+\begin{jbox}{Regresja wieloraka (także z predyktorem jakościowym)}\label{w:regresja-wieloraka}
+\jmenu{\textbf{Analizy} → \textbf{Regresja} → \textbf{Regresja liniowa}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienna zależna}: Y
+\item[$\triangleright$] \textbf{Predyktory ilościowe}: zmienne ilościowe
+\item[$\triangleright$] \textbf{Predyktory jakościowe}: zmienne jakościowe (np. płeć, gatunek)
+\end{itemize}
+\begin{enumerate}
+\item Poziomy odniesienia predyktorów jakościowych: wybierz poziom, z którym porównujesz pozostałe.
+\item Zaawansowane → Model: Współczynniki standaryzowane β, AIC i BIC.
+\item Założenia: Współliniowość (VIF).
+\end{enumerate}
+\textit{Wynik:} Współczynniki: każdy b = zmiana Y przy wzroście predyktora o 1, gdy pozostałe są stałe; R² skoryg. do porównania modeli.
+
+\end{jbox}
+
+\begin{jbox}{Regresja logistyczna}\label{w:logistyczna}
+\jmenu{\textbf{Analizy} → \textbf{Regresja} → \textbf{Regresja logistyczna} → \textbf{Regresja logistyczna}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienna zależna (2 poziomy)}: zmienna dwukategorialna (np. zdał / nie zdał)
+\item[$\triangleright$] \textbf{Predyktory ilościowe}: zmienne ilościowe
+\item[$\triangleright$] \textbf{Predyktory jakościowe}: zmienne jakościowe
+\end{itemize}
+\begin{enumerate}
+\item Kategoria „zdarzenie”: poziom, którego szansę modelujesz (domyślnie drugi alfabetycznie).
+\item Zaawansowane → Klasyfikacja: Próg klasyfikacji = 0.5, Krzywa ROC.
+\end{enumerate}
+\textit{Wynik:} Współczynniki: b, p i iloraz szans (OR) z przedziałem; tabela klasyfikacji z trafnością, czułością i swoistością.
+
+{\color{upwrsoft}\small\textit{Uwaga:} Zmienną 0/1 z ilościowej utworzysz przez Dane → Oblicz, np. read \textgreater{}= VMED(read).}
+\end{jbox}
+
+\textbf{Także na tym wykładzie:} Nowa zmienna z formuły
+(s.\textasciitilde{}\pageref{w:oblicz-zmienna}); Diagnostyka regresji
+(reszty, VIF) (s.\textasciitilde{}\pageref{w:jakosc-modelu}).
+
+\needspace{8\baselineskip}
+
+\subsection{Wykład 07 --- Dobre dane}\label{wykux142ad-07-dobre-dane}
+
+\begin{jbox}{Wykluczenie obserwacji (filtr)}\label{w:filtry}
+\jmenu{\textbf{Dane} → \textbf{Filtry}}
+
+\begin{enumerate}
+\item Wpisz warunek, który mają SPEŁNIAĆ pozostawione wiersze, np. wiek \textless{} 100 albo gatunek != 'Adelie'.
+\item Kolejny warunek: Dodaj nowy filtr. Wyłączenie bez kasowania: Filtr jest aktywny.
+\end{enumerate}
+\textit{Wynik:} Odfiltrowane wiersze są wyszarzone i znikają ze wszystkich analiz.
+
+\end{jbox}
+
+\begin{jbox}{Braki danych i wartości skrajne}\label{w:braki-odstajace}
+\jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}}
+
+\begin{itemize}
+\item[$\triangleright$] \textbf{Zmienne}: wszystkie zmienne ilościowe
+\end{itemize}
+\begin{enumerate}
+\item Braki: wiersz Braki w tabeli (domyślnie).
+\item Zaawansowane → Wartości skrajne: pięć najmniejszych i największych wartości z numerami wierszy.
+\item Wykres: Pudełkowy z Punktami.
+\end{enumerate}
+\textit{Wynik:} Tabela wartości skrajnych wskazuje wiersze do sprawdzenia w arkuszu.
+
+{\color{upwrsoft}\small\textit{Uwaga:} Dla zmiennych jakościowych braki pokazuje Eksploracja → Zmienne jakościowe → Podsumowanie.}
+\end{jbox}
+
+\textbf{Także na tym wykładzie:} Otwarcie pliku z danymi
+(s.\textasciitilde{}\pageref{w:otworz-plik}); Typ zmiennej (poziom
+pomiaru) (s.\textasciitilde{}\pageref{w:poziom-pomiaru}); Nowa zmienna z
+formuły (s.\textasciitilde{}\pageref{w:oblicz-zmienna}); Średnia,
+mediana, kwartyle, odchylenie standardowe
+(s.\textasciitilde{}\pageref{w:statystyki-opisowe}); Wykres pudełkowy
+(s.\textasciitilde{}\pageref{w:pudelkowy}).
+
+\needspace{8\baselineskip}
+
+\subsection{Wykład 08 --- Case study --- szkoły w
+Kalifornii}\label{wykux142ad-08-case-study-szkoux142y-w-kalifornii}
+
+\textbf{Także na tym wykładzie:} Średnia, mediana, kwartyle, odchylenie
+standardowe (s.\textasciitilde{}\pageref{w:statystyki-opisowe});
+Histogram (s.\textasciitilde{}\pageref{w:histogram}); Wykres pudełkowy
+(s.\textasciitilde{}\pageref{w:pudelkowy}); Korelacja (Pearson,
+Spearman) i macierz korelacji
+(s.\textasciitilde{}\pageref{w:korelacja}); Regresja liniowa prosta
+(s.\textasciitilde{}\pageref{w:regresja-prosta}); Regresja wieloraka
+(także z predyktorem jakościowym)
+(s.\textasciitilde{}\pageref{w:regresja-wieloraka}).
+
+\needspace{8\baselineskip}
+
+\subsection{Wykład 09 --- Projekt
+badawczy}\label{wykux142ad-09-projekt-badawczy}
+
+\begin{jbox}{Opis metod do raportu}\label{w:opis-metod}
+\jmenu{\textbf{(dowolna analiza jUPWR)} → \textbf{Opis metod}}
+
+\begin{enumerate}
+\item Zaznacz „Opis zastosowanych metod” — na końcu wyników pojawi się opis: dane, test, parametry, wielkość efektu.
+\end{enumerate}
+\textit{Wynik:} Akapit pod tabelami analizy; opisuje metody, nie wyniki.
+
+\end{jbox}
+
+\textbf{Także na tym wykładzie:} Otwarcie pliku z danymi
+(s.\textasciitilde{}\pageref{w:otworz-plik}); Nowa zmienna z formuły
+(s.\textasciitilde{}\pageref{w:oblicz-zmienna}); Wykluczenie obserwacji
+(filtr) (s.\textasciitilde{}\pageref{w:filtry}); Średnia, mediana,
+kwartyle, odchylenie standardowe
+(s.\textasciitilde{}\pageref{w:statystyki-opisowe}); Statystyki opisowe
+osobno w grupach (s.\textasciitilde{}\pageref{w:porownanie-grup-opis});
+Test t dla dwóch grup niezależnych
+(s.\textasciitilde{}\pageref{w:t-dwie-grupy}); Testy nieparametryczne
+(rangowe) (s.\textasciitilde{}\pageref{w:nieparametryczne}); Korelacja
+(Pearson, Spearman) i macierz korelacji
+(s.\textasciitilde{}\pageref{w:korelacja}); Regresja wieloraka (także z
+predyktorem jakościowym)
+(s.\textasciitilde{}\pageref{w:regresja-wieloraka}).
+
+\newpage
+
+\section{Część B --- pytanie →
+analiza}\label{czux119ux15bux107-b-pytanie-analiza}
+
+\needspace{6\baselineskip}
+
+\subsection{Przygotowanie danych}\label{przygotowanie-danych}
+
+\begin{longtable*}{@{}p{6.4cm}p{9.2cm}r@{}}
+\toprule
+\textbf{Pytanie} & \textbf{Gdzie w jUPWR} & \textbf{s.} \\
+\midrule
+\endhead
+Jak wczytać dane (CSV, Excel, .omv)? & \jmenu{\textbf{{\symfont ☰} (menu pliku)} → \textbf{Otwórz} → \textbf{Przeglądaj}} & \pageref{w:otworz-plik} \\[2pt]
+Jak ustawić, czy zmienna jest jakościowa czy ilościowa? & \jmenu{\textbf{Dane} → \textbf{Edytuj}} & \pageref{w:poziom-pomiaru} \\[2pt]
+Jak utworzyć zmienną, np. „czy english \textgreater{} 20”, średnią dwóch kolumn albo z-score? & \jmenu{\textbf{Dane} → \textbf{Oblicz}} & \pageref{w:oblicz-zmienna} \\[2pt]
+Jak pominąć część obserwacji, np. błędne wartości albo jedną grupę? & \jmenu{\textbf{Dane} → \textbf{Filtry}} & \pageref{w:filtry} \\[2pt]
+Jak opisać w raporcie, co zostało policzone? & \jmenu{\textbf{(dowolna analiza jUPWR)} → \textbf{Opis metod}} & \pageref{w:opis-metod} \\[2pt]
+Czy w danych są braki albo podejrzane wartości? & \jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}} & \pageref{w:braki-odstajace} \\[2pt]
+\bottomrule
+\end{longtable*}
+
+\needspace{6\baselineskip}
+
+\subsection{Opis danych}\label{opis-danych}
+
+\begin{longtable*}{@{}p{6.4cm}p{9.2cm}r@{}}
+\toprule
+\textbf{Pytanie} & \textbf{Gdzie w jUPWR} & \textbf{s.} \\
+\midrule
+\endhead
+Ile jest obserwacji w każdej kategorii? & \jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne jakościowe}} & \pageref{w:tabela-licznosci} \\[2pt]
+Jak opisać zmienną ilościową (położenie i rozrzut)? & \jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}} & \pageref{w:statystyki-opisowe} \\[2pt]
+Jak porównać opis zmiennej ilościowej między grupami? & \jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}} & \pageref{w:porownanie-grup-opis} \\[2pt]
+Jaki kształt ma rozkład zmiennej? & \jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}} & \pageref{w:histogram} \\[2pt]
+Gdzie jest mediana, kwartyle i wartości odstające? & \jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}} & \pageref{w:pudelkowy} \\[2pt]
+\bottomrule
+\end{longtable*}
+
+\needspace{6\baselineskip}
+
+\subsection{Rozkłady}\label{rozkux142ady}
+
+\begin{longtable*}{@{}p{6.4cm}p{9.2cm}r@{}}
+\toprule
+\textbf{Pytanie} & \textbf{Gdzie w jUPWR} & \textbf{s.} \\
+\midrule
+\endhead
+Ile wynosi P(X \textless{} a) albo P(a \textless{} X \textless{} b) dla rozkładu normalnego? & \jmenu{\textbf{Analizy} → \textbf{Rozkłady} → \textbf{Rozkład normalny}} & \pageref{w:rozklad-normalny} \\[2pt]
+Ile wynosi P(X = k) albo P(X ≤ k) w rozkładzie dyskretnym? & \jmenu{\textbf{Analizy} → \textbf{Rozkłady} → \textbf{Rozkład dwumianowy / Poissona / geometryczny}} & \pageref{w:rozklady-dyskretne} \\[2pt]
+Czy rozkład zmiennej jest zbliżony do normalnego? & \jmenu{\textbf{Analizy} → \textbf{Eksploracja} → \textbf{Zmienne ilościowe}} & \pageref{w:normalnosc} \\[2pt]
+\bottomrule
+\end{longtable*}
+
+\needspace{6\baselineskip}
+
+\subsection{Oszacowanie z niepewnością (przedziały
+ufności)}\label{oszacowanie-z-niepewnoux15bciux105-przedziaux142y-ufnoux15bci}
+
+\begin{longtable*}{@{}p{6.4cm}p{9.2cm}r@{}}
+\toprule
+\textbf{Pytanie} & \textbf{Gdzie w jUPWR} & \textbf{s.} \\
+\midrule
+\endhead
+Jaka jest średnia w populacji (z niepewnością)? & \jmenu{\textbf{Analizy} → \textbf{Przedziały ufności} → \textbf{Średnie} → \textbf{Średnia}} & \pageref{w:ci-srednia} \\[2pt]
+O ile różnią się średnie dwóch grup (z niepewnością)? & \jmenu{\textbf{Analizy} → \textbf{Przedziały ufności} → \textbf{Średnie} → \textbf{Różnica średnich}} & \pageref{w:ci-roznica-srednich} \\[2pt]
+Jaki jest udział kategorii w populacji (z niepewnością)? & \jmenu{\textbf{Analizy} → \textbf{Przedziały ufności} → \textbf{Proporcje} → \textbf{Proporcja}} & \pageref{w:ci-proporcja} \\[2pt]
+\bottomrule
+\end{longtable*}
+
+\needspace{6\baselineskip}
+
+\subsection{Testy --- porównania}\label{testy-poruxf3wnania}
+
+\begin{longtable*}{@{}p{6.4cm}p{9.2cm}r@{}}
+\toprule
+\textbf{Pytanie} & \textbf{Gdzie w jUPWR} & \textbf{s.} \\
+\midrule
+\endhead
+Czy średnia różni się od zadanej wartości (np. 650)? & \jmenu{\textbf{Analizy} → \textbf{Testy t} → \textbf{Jedna próba}} & \pageref{w:t-jedna-proba} \\[2pt]
+Czy udział kategorii różni się od zadanej wartości (np. 50\%)? & \jmenu{\textbf{Analizy} → \textbf{Częstości} → \textbf{Jedna zmienna}} & \pageref{w:test-proporcji} \\[2pt]
+Czy rozkład kategorii zgadza się z oczekiwanym (np. równe udziały)? & \jmenu{\textbf{Analizy} → \textbf{Częstości} → \textbf{Jedna zmienna}} & \pageref{w:chi2-zgodnosc} \\[2pt]
+Czy dwie zmienne jakościowe są powiązane? & \jmenu{\textbf{Analizy} → \textbf{Częstości} → \textbf{Tabela kontyngencji}} & \pageref{w:chi2-niezaleznosc} \\[2pt]
+Co zrobić, gdy liczebności w tabeli są małe? & \jmenu{\textbf{Analizy} → \textbf{Częstości} → \textbf{Tabela kontyngencji}} & \pageref{w:fisher} \\[2pt]
+Czy średnie w dwóch grupach się różnią? & \jmenu{\textbf{Analizy} → \textbf{Testy t} → \textbf{Dwie grupy}} & \pageref{w:t-dwie-grupy} \\[2pt]
+Czy wynik zmienił się między dwoma pomiarami tych samych osób? & \jmenu{\textbf{Analizy} → \textbf{Testy t} → \textbf{Próby sparowane}} & \pageref{w:t-sparowane} \\[2pt]
+Czy średnie w trzech lub więcej grupach się różnią — i które? & \jmenu{\textbf{Analizy} → \textbf{ANOVA} → \textbf{ANOVA}} & \pageref{w:anova} \\[2pt]
+Czego użyć, gdy założenia testu t / ANOVA nie są spełnione? & \jmenu{\textbf{Analizy} → \textbf{Testy t / ANOVA}} & \pageref{w:nieparametryczne} \\[2pt]
+Czy wariancje w grupach są podobne? & \jmenu{\textbf{Analizy} → \textbf{Testy t / ANOVA}} & \pageref{w:wariancje} \\[2pt]
+Jak duży jest efekt (a nie tylko: czy istotny)? & \jmenu{\textbf{Analizy} → \textbf{(zależnie od testu)}} & \pageref{w:sila-efektu} \\[2pt]
+\bottomrule
+\end{longtable*}
+
+\needspace{6\baselineskip}
+
+\subsection{Zależności między
+zmiennymi}\label{zaleux17cnoux15bci-miux119dzy-zmiennymi}
+
+\begin{longtable*}{@{}p{6.4cm}p{9.2cm}r@{}}
+\toprule
+\textbf{Pytanie} & \textbf{Gdzie w jUPWR} & \textbf{s.} \\
+\midrule
+\endhead
+Czy dwie zmienne ilościowe są powiązane — jak silnie i w którą stronę? & \jmenu{\textbf{Analizy} → \textbf{Regresja} → \textbf{Korelacja}} & \pageref{w:korelacja} \\[2pt]
+Jak zmienia się Y, gdy X rośnie o jednostkę? Jak przewidzieć Y? & \jmenu{\textbf{Analizy} → \textbf{Regresja} → \textbf{Regresja liniowa}} & \pageref{w:regresja-prosta} \\[2pt]
+Czy model regresji jest poprawny? & \jmenu{\textbf{Analizy} → \textbf{Regresja} → \textbf{Regresja liniowa}} & \pageref{w:jakosc-modelu} \\[2pt]
+Jak kilka zmiennych naraz wpływa na Y? & \jmenu{\textbf{Analizy} → \textbf{Regresja} → \textbf{Regresja liniowa}} & \pageref{w:regresja-wieloraka} \\[2pt]
+Od czego zależy szansa zdarzenia (zmienna tak/nie)? & \jmenu{\textbf{Analizy} → \textbf{Regresja} → \textbf{Regresja logistyczna} → \textbf{Regresja logistyczna}} & \pageref{w:logistyczna} \\[2pt]
+\bottomrule
+\end{longtable*}
+
+
+
+
+\end{document}

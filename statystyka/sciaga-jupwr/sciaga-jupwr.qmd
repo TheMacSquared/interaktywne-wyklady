@@ -1,0 +1,150 @@
+---
+title: "Ściąga jUPWR"
+subtitle: "Gdzie w jUPWR robi się to, czego potrzeba na wykładzie ze statystyki"
+lang: pl
+format:
+  pdf:
+    pdf-engine: xelatex
+    documentclass: scrartcl
+    papersize: a4
+    geometry: "margin=1.6cm, top=1.6cm, bottom=1.8cm"
+    fontsize: 10pt
+    mainfont: Lato
+    toc: false
+    number-sections: false
+    colorlinks: true
+    linkcolor: "upwraccent"
+    include-in-header:
+      text: |
+        \usepackage{xcolor}
+        \definecolor{upwraccent}{HTML}{6b1a2a}
+        \definecolor{upwrpanel}{HTML}{faf6ec}
+        \definecolor{upwrrule}{HTML}{d9cfbc}
+        \definecolor{upwrsoft}{HTML}{3d3832}
+        \usepackage[most]{tcolorbox}
+        \usepackage{enumitem}
+        \usepackage{longtable,booktabs,array}
+        \usepackage{needspace}
+        \newfontfamily\symfont{DejaVu Sans}
+        \setlist{nosep, leftmargin=1.4em}
+        \setlength{\parindent}{0pt}
+        \setkomafont{section}{\Large\bfseries\color{upwraccent}}
+        \setkomafont{subsection}{\large\bfseries\color{upwraccent}}
+        \newtcolorbox{jbox}[1]{enhanced, breakable=false, colback=upwrpanel,
+          colframe=upwrrule, boxrule=0.4pt, arc=1.5pt, left=5pt, right=5pt,
+          top=3pt, bottom=3pt, before skip=6pt, after skip=6pt,
+          title={#1}, coltitle=upwraccent, colbacktitle=upwrpanel,
+          fonttitle=\bfseries, titlerule=0pt, toptitle=2pt, bottomtitle=0pt}
+        \newcommand{\jmenu}[1]{{\color{upwraccent}\small #1}}
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+library(yaml)
+d <- read_yaml("jupwr.yaml")
+wpisy <- d$wpisy
+
+# --- LaTeX: escape and small renderers ---------------------------------------
+tex <- function(x) {
+  x <- gsub("\\", "\001", x, fixed = TRUE)
+  x <- gsub("([&%$#_{}])", "\\\\\\1", x)
+  x <- gsub("\001", "\\textbackslash{}", x, fixed = TRUE)
+  x <- gsub("~", "\\textasciitilde{}", x, fixed = TRUE)
+  x <- gsub("^", "\\textasciicircum{}", x, fixed = TRUE)
+  x <- gsub("<", "\\textless{}", x, fixed = TRUE)
+  x <- gsub(">", "\\textgreater{}", x, fixed = TRUE)
+  gsub("☰", "{\\symfont ☰}", x, fixed = TRUE)
+}
+
+menu_tex <- function(menu) {
+  paste0("\\jmenu{", paste0("\\textbf{", tex(unlist(menu)), "}", collapse = " → "), "}")
+}
+
+first_lecture <- function(w) sort(unlist(w$wyklady))[1]
+
+entry_tex <- function(w) {
+  out <- c(sprintf("\\begin{jbox}{%s}\\label{w:%s}", tex(w$temat), w$id),
+           menu_tex(w$menu), "")
+  if (length(w$zmienne)) {
+    out <- c(out, "\\begin{itemize}",
+             sprintf("\\item[$\\triangleright$] \\textbf{%s}: %s",
+                     tex(names(w$zmienne)), tex(unlist(w$zmienne))),
+             "\\end{itemize}")
+  }
+  if (length(w$kroki)) {
+    out <- c(out, "\\begin{enumerate}",
+             paste0("\\item ", tex(unlist(w$kroki))), "\\end{enumerate}")
+  }
+  if (!is.null(w$wynik)) out <- c(out, paste0("\\textit{Wynik:} ", tex(w$wynik)), "")
+  if (!is.null(w$uwaga)) out <- c(out, paste0("{\\color{upwrsoft}\\small\\textit{Uwaga:} ",
+                                               tex(w$uwaga), "}"))
+  c(out, "\\end{jbox}", "")
+}
+```
+
+```{r mapa, results='asis'}
+cat(sprintf("\\textit{Stan na jUPWR %s. Wpis każdego tematu jest raz — przy pierwszym wykładzie, na którym się pojawia; dalsze wykłady odsyłają do strony.}\n\n",
+            tex(d$wersja_jupwr)))
+```
+
+## Mapa menu
+
+\begin{jbox}{Wstążka jUPWR}
+\textbf{Zakładki:} Zmienne · Dane · Analizy · Wykresy · Edytuj. \quad Plik: przycisk {\symfont ☰} w lewym górnym rogu.
+
+\smallskip
+\begin{tabular}{@{}>{\bfseries\color{upwraccent}}p{3.6cm}p{13cm}@{}}
+Eksploracja & Zmienne ilościowe · Zmienne jakościowe · Szereg rozdzielczy \\
+Rozkłady & rozkłady ciągłe (normalny, t, χ², F, wykładniczy …) i dyskretne (dwumianowy, Poissona …) \\
+Przedziały ufności & Średnie · Proporcje · Korelacja i regresja · Dydaktyka (Jak działa bootstrap) \\
+Testy t & Jedna próba · Dwie grupy · Próby sparowane \\
+ANOVA & ANOVA · ANOVA powtórzonych pomiarów \\
+Regresja & Korelacja · Korelacja cząstkowa · Regresja liniowa · Regresja logistyczna \\
+Częstości & Jedna zmienna · Tabela kontyngencji · Próby zależne \\
+Testy permutacyjne & Jedna próba · Dwie grupy · Próby sparowane \\
+\end{tabular}
+
+\smallskip
+\textbf{Panel analizy:} najważniejsze opcje są widoczne od razu; reszta w zwiniętych sekcjach \textbf{Założenia} i \textbf{Zaawansowane}. Na dole każdej analizy: \textbf{Opis zastosowanych metod} (do raportu).
+\end{jbox}
+
+# Część A — wg wykładów
+
+```{r czesc-a, results='asis'}
+for (nr in names(d$wyklady)) {
+  cat(sprintf("\n\\needspace{8\\baselineskip}\n## Wykład %s — %s\n\n", nr, tex(d$wyklady[[nr]])))
+  here <- Filter(function(w) nr %in% unlist(w$wyklady), wpisy)
+  own <- Filter(function(w) first_lecture(w) == nr, here)
+  ref <- Filter(function(w) first_lecture(w) != nr, here)
+  for (w in own) cat(entry_tex(w), sep = "\n")
+  if (length(ref)) {
+    cat("\\textbf{Także na tym wykładzie:} ",
+        paste(sprintf("%s (s.~\\pageref{w:%s})", tex(vapply(ref, `[[`, "", "temat")),
+                      vapply(ref, `[[`, "", "id")), collapse = "; "),
+        ".\n\n", sep = "")
+  }
+}
+```
+
+\newpage
+
+# Część B — pytanie → analiza
+
+```{r czesc-b, results='asis'}
+for (g in names(d$grupy)) {
+  ws <- Filter(function(w) identical(w$grupa, g) && !is.null(w$pytanie), wpisy)
+  if (!length(ws)) next
+  cat(sprintf("\n\\needspace{6\\baselineskip}\n## %s\n\n", tex(d$grupy[[g]])))
+  cat("\\begin{longtable}{@{}p{6.4cm}p{9.2cm}r@{}}\n\\toprule\n",
+      "\\textbf{Pytanie} & \\textbf{Gdzie w jUPWR} & \\textbf{s.} \\\\\n\\midrule\n\\endhead\n",
+      sep = "")
+  for (w in ws) {
+    cat(sprintf("%s & %s & \\pageref{w:%s} \\\\[2pt]\n",
+                tex(w$pytanie), menu_tex(w$menu), w$id))
+  }
+  cat("\\bottomrule\n\\end{longtable}\n")
+}
+```

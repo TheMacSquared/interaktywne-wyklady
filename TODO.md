@@ -134,9 +134,6 @@ w statystyce 01–04 i 06, statystyce 2 i analizie ryzyka 01 i 08). Zostało:
   przebudowy — widget prawdopodobnie nie działa poprawnie. Na razie zostaje
   na kropkach (`lc_step_nav()`); przy przebudowie rozważyć
   `lc_step_widget(body = …)` albo schemat redukcji jako wykres.
-- [ ] Sprzątanie: martwe style i JS po starym widgecie (`.ch2-animated-widget`,
-  `.ch2-step-btn`, `.ch2-step-stage`) w `statystyka/04-wnioskowanie-statystyczne/app.R`;
-  `format_test_result()` w `helpers.R` statystyki 04 formatuje p z przecinkiem.
 - [ ] Znaki x̄, p̂, ₁, β na wykresach: w części środowisk (showtext, mono) wychodzą
   jako puste kwadraty — sprawdzić w przeglądarce; `step_label()` ma już
   domyślnie zwykły krój i `parse = TRUE` dla plotmath.
@@ -217,7 +214,8 @@ Helpery v2 (`lc_fmt()`, `lc_num()`, `lc_pval()`, `R/lc_widgets.js`) już
 to stosują.
 
 - [ ] Przestawić stare formatery na kropkę, m.in. `risk_format_probability()`
-  w `analiza-ryzyka/R/risk_block.R` (zamiana `.` na `,`).
+  w `analiza-ryzyka/R/risk_block.R` (zamiana `.` na `,`). Zrobione:
+  `format_p_value()` / `format_p()` / `ui_p_value()` we wspólnym `R/shared.R`.
 - [ ] Przejrzeć teksty wykładów we wszystkich kursach i zamienić przecinek
   dziesiętny na kropkę (np. „p = 0,10” w analizie ryzyka 05 obok widgetu
   pokazującego 0.1). Zmieniać osobnymi commitami per wykład.

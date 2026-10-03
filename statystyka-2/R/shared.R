@@ -95,18 +95,18 @@ dist_names_pl <- c(
 # Uzywane we wszystkich wykladach z testami statystycznymi.
 # ============================================================================
 
-# Formatuje p-wartość: "0,023", "<0,0001", ">0,99". Bez prefiksu "p =".
+# Formatuje p-wartość: "0.023", "<0.0001", ">0.99". Bez prefiksu "p =".
 format_p_value <- function(p_value) {
   if (is.na(p_value)) return("NA")
-  if (p_value < 0.0001) return("<0,0001")
+  if (p_value < 0.0001) return("<0.0001")
   rounded <- signif(p_value, 2)
-  if (rounded >= 1) return(">0,99")
+  if (rounded >= 1) return(">0.99")
   s <- formatC(rounded, format = "fg", digits = 2)
   if (!grepl("\\.", s)) s <- paste0(s, ".0")
-  gsub("\\.", ",", s)
+  s
 }
 
-# Wersja z prefiksem: "p = 0,023" lub "p < 0,0001".
+# Wersja z prefiksem: "p = 0.023" lub "p < 0.0001".
 format_p <- function(p_value) {
   v <- format_p_value(p_value)
   if (startsWith(v, "<") || startsWith(v, ">")) {
@@ -116,7 +116,7 @@ format_p <- function(p_value) {
   }
 }
 
-# UI: linia "p = 0,023" w werdyktach — liczba pogrubiona i powiększona.
+# UI: linia "p = 0.023" w werdyktach — liczba pogrubiona i powiększona.
 # Zwraca tag <p> gotowy do wstawienia w lc_feedback / tagList.
 ui_p_value <- function(p_value) {
   v <- format_p_value(p_value)

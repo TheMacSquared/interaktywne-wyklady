@@ -1,0 +1,610 @@
+# ==============================================================================
+# Ściąga jUPWR — jedno źródło treści
+# ==============================================================================
+#
+# Z tego pliku powstają:
+#   - sciaga-jupwr.pdf (sciaga-jupwr.qmd): część A wg wykładów, część B wg pytań,
+#   - pola „Jak to zrobić w jUPWR” w aplikacjach wykładów (jupwr_box.R).
+#
+# Etykiety menu i opcji przepisane z jUPWR 1.0.5 (pliki .a.yaml/.u.yaml modułów
+# jEksplor, jdistrACTION, jCI, jTestyT, jCzest, jANOVA, jRegr). Po zmianie UI
+# w jUPWR poprawiać TUTAJ — PDF i pola w wykładach odświeżą się same.
+#
+# Pola wpisu:
+#   id       — klucz, po którym wykład wywołuje pole: jupwr_box("t-dwie-grupy")
+#   wyklady  — numery wykładów, w których temat występuje ("01".."09")
+#   temat    — nagłówek wpisu
+#   pytanie  — (opcjonalnie) pytanie studenta do tabeli „pytanie → analiza”
+#   grupa    — sekcja tabeli pytań: dane | opis | rozklady | estymacja |
+#              testy | zaleznosci
+#   menu     — ścieżka kliknięć, od zakładki na wstążce
+#   zmienne  — co przeciągnąć do którego pola (etykieta pola: co tam trafia)
+#   kroki    — co zaznaczyć / ustawić (w kolejności)
+#   wynik    — gdzie odczytać odpowiedź
+#   uwaga    — (opcjonalnie) jedna pułapka
+# ==============================================================================
+
+wersja_jupwr: "1.0.5"
+
+wyklady:
+  "01": Statystyka opisowa
+  "02": Rozkłady prawdopodobieństwa
+  "03": Przedziały ufności
+  "04": Testowanie hipotez
+  "05": Założenia testów
+  "06": Regresja
+  "07": Dobre dane
+  "08": Case study — szkoły w Kalifornii
+  "09": Projekt badawczy
+
+grupy:
+  dane: Przygotowanie danych
+  opis: Opis danych
+  rozklady: Rozkłady
+  estymacja: Oszacowanie z niepewnością (przedziały ufności)
+  testy: Testy — porównania
+  zaleznosci: Zależności między zmiennymi
+
+wpisy:
+
+  # ---------------------------------------------------------------- dane -----
+
+  - id: otworz-plik
+    wyklady: ["01", "07", "09"]
+    temat: Otwarcie pliku z danymi
+    pytanie: Jak wczytać dane (CSV, Excel, .omv)?
+    grupa: dane
+    menu: ["☰ (menu pliku)", "Otwórz", "Przeglądaj"]
+    kroki:
+      - "Wybierz plik CSV, XLSX albo zapisany projekt .omv."
+      - "Gotowe zbiory z zajęć: ☰ → Otwórz → Biblioteka."
+    wynik: "Dane pojawiają się w arkuszu na zakładce Dane."
+
+  - id: poziom-pomiaru
+    wyklady: ["01", "07"]
+    temat: Typ zmiennej (poziom pomiaru)
+    pytanie: Jak ustawić, czy zmienna jest jakościowa czy ilościowa?
+    grupa: dane
+    menu: ["Dane", "Edytuj"]
+    kroki:
+      - "Kliknij nagłówek kolumny, potem Edytuj (albo kliknij nagłówek dwukrotnie)."
+      - "Poziom pomiaru: Nominalna (kategorie bez porządku), Porządkowa (kategorie z porządkiem), Ciągła (liczby)."
+      - "Typ danych: Liczba całkowita / Dziesiętny / Tekst."
+    wynik: "Ikona w nagłówku kolumny pokazuje poziom pomiaru; analizy przyjmują tylko zmienne właściwego typu."
+    uwaga: "Liczby zapisane jako tekst (np. „3-4h”, przecinek dziesiętny) trafiają jako Nominalna — popraw dane, zanim zmienisz typ."
+
+  - id: oblicz-zmienna
+    wyklady: ["04", "06", "07", "09"]
+    temat: Nowa zmienna z formuły
+    pytanie: Jak utworzyć zmienną, np. „czy english > 20”, średnią dwóch kolumn albo z-score?
+    grupa: dane
+    menu: ["Dane", "Oblicz"]
+    kroki:
+      - "Nadaj nazwę nowej zmiennej."
+      - "Wpisz formułę, np. english > 20, (read + math) / 2, Z(wzrost), read >= VMED(read)."
+      - "Przycisk fx pokazuje listę funkcji."
+    wynik: "Nowa kolumna na końcu arkusza (lub obok zaznaczonej), przelicza się sama po zmianie danych."
+
+  - id: filtry
+    wyklady: ["07", "09"]
+    temat: Wykluczenie obserwacji (filtr)
+    pytanie: Jak pominąć część obserwacji, np. błędne wartości albo jedną grupę?
+    grupa: dane
+    menu: ["Dane", "Filtry"]
+    kroki:
+      - "Wpisz warunek, który mają SPEŁNIAĆ pozostawione wiersze, np. wiek < 100 albo gatunek != 'Adelie'."
+      - "Kolejny warunek: Dodaj nowy filtr. Wyłączenie bez kasowania: Filtr jest aktywny."
+    wynik: "Odfiltrowane wiersze są wyszarzone i znikają ze wszystkich analiz."
+
+  - id: opis-metod
+    wyklady: ["09"]
+    temat: Opis metod do raportu
+    pytanie: Jak opisać w raporcie, co zostało policzone?
+    grupa: dane
+    menu: ["(dowolna analiza jUPWR)", "Opis metod"]
+    kroki:
+      - "Zaznacz „Opis zastosowanych metod” — na końcu wyników pojawi się opis: dane, test, parametry, wielkość efektu."
+    wynik: "Akapit pod tabelami analizy; opisuje metody, nie wyniki."
+
+  # ---------------------------------------------------------------- opis -----
+
+  - id: tabela-licznosci
+    wyklady: ["01"]
+    temat: Tabela liczności zmiennej jakościowej
+    pytanie: Ile jest obserwacji w każdej kategorii?
+    grupa: opis
+    menu: ["Analizy", "Eksploracja", "Zmienne jakościowe"]
+    zmienne:
+      Zmienne: "zmienna jakościowa"
+    kroki:
+      - "Tabela: Liczności i procenty skumulowane."
+      - "Wykres: Słupkowy."
+    wynik: "Tabela liczności z procentami; dominanta i liczba kategorii w tabeli Podsumowanie."
+    uwaga: "Wykresu kołowego w jUPWR nie ma celowo — słupkowy jest czytelniejszy."
+
+  - id: tabela-krzyzowa-opis
+    wyklady: ["01"]
+    temat: Tabela krzyżowa (opis dwóch zmiennych jakościowych)
+    grupa: opis
+    menu: ["Analizy", "Eksploracja", "Zmienne jakościowe"]
+    zmienne:
+      Zmienne: "pierwsza zmienna jakościowa"
+      Podziel według: "druga zmienna jakościowa"
+    kroki:
+      - "Procenty (przy podziale): % w kolumnie, % w wierszu albo % ogółem."
+      - "Wykres: Słupkowy albo Mozaikowy."
+    wynik: "Tabela krzyżowa liczności z wybranymi procentami."
+    uwaga: "Test χ² dla tej tabeli jest w Częstości → Tabela kontyngencji."
+
+  - id: statystyki-opisowe
+    wyklady: ["01", "07", "08", "09"]
+    temat: Średnia, mediana, kwartyle, odchylenie standardowe
+    pytanie: Jak opisać zmienną ilościową (położenie i rozrzut)?
+    grupa: opis
+    menu: ["Analizy", "Eksploracja", "Zmienne ilościowe"]
+    zmienne:
+      Zmienne: "jedna lub kilka zmiennych ilościowych"
+    kroki:
+      - "Domyślnie: N, Braki, Średnia, Mediana, Kwartyle, Odchylenie standardowe, Minimum, Maksimum, Współczynnik zmienności V (%)."
+      - "Zaawansowane → Rozproszenie: Wariancja, Rozstęp, Rozstęp ćwiartkowy (IQR)."
+      - "Zaawansowane → Położenie: Dominanta. Zaawansowane → Kwantyle: Percentyle (np. 10, 90)."
+    wynik: "Tabela statystyk; Układ tabeli przełącza zmienne w wierszach / w kolumnach."
+
+  - id: porownanie-grup-opis
+    wyklady: ["01", "09"]
+    temat: Statystyki opisowe osobno w grupach
+    pytanie: Jak porównać opis zmiennej ilościowej między grupami?
+    grupa: opis
+    menu: ["Analizy", "Eksploracja", "Zmienne ilościowe"]
+    zmienne:
+      Zmienne: "zmienna ilościowa"
+      Podziel według: "zmienna grupująca (można kilka)"
+    kroki:
+      - "Wykres: Pudełkowy — pudełka grup obok siebie."
+    wynik: "Jeden wiersz (lub kolumna) statystyk na grupę."
+
+  - id: histogram
+    wyklady: ["01", "05", "08"]
+    temat: Histogram
+    pytanie: Jaki kształt ma rozkład zmiennej?
+    grupa: opis
+    menu: ["Analizy", "Eksploracja", "Zmienne ilościowe"]
+    zmienne:
+      Zmienne: "zmienna ilościowa"
+    kroki:
+      - "Wykres: Histogram."
+      - "Zaawansowane → Wykresy dodatkowe: Gęstość na histogramie."
+    wynik: "Histogram pod tabelą statystyk."
+    uwaga: "Osobny, bardziej konfigurowalny histogram: Wykresy → Rozkład → Histogram."
+
+  - id: pudelkowy
+    wyklady: ["01", "07", "08"]
+    temat: Wykres pudełkowy
+    pytanie: Gdzie jest mediana, kwartyle i wartości odstające?
+    grupa: opis
+    menu: ["Analizy", "Eksploracja", "Zmienne ilościowe"]
+    zmienne:
+      Zmienne: "zmienna ilościowa"
+      Podziel według: "(opcjonalnie) grupy"
+    kroki:
+      - "Wykres: Pudełkowy (Zaznacz średnią jest włączone)."
+      - "Zaawansowane → Wykresy dodatkowe: Punkty na pudełkowym, Skrzypce na pudełkowym."
+    wynik: "Pudełko = Q1–Q3, kreska = mediana, punkty poza wąsami = wartości odstające."
+
+  - id: ksztalt
+    wyklady: ["01"]
+    temat: Skośność i kurtoza
+    grupa: opis
+    menu: ["Analizy", "Eksploracja", "Zmienne ilościowe"]
+    zmienne:
+      Zmienne: "zmienna ilościowa"
+    kroki:
+      - "Zaawansowane → Kształt: Skośność, Kurtoza."
+    wynik: "Kolumny/wiersze Skośność i Kurtoza w tabeli statystyk (z błędem standardowym)."
+
+  - id: szereg-rozdzielczy
+    wyklady: ["01"]
+    temat: Szereg rozdzielczy (dane w klasach)
+    grupa: opis
+    menu: ["Analizy", "Eksploracja", "Szereg rozdzielczy"]
+    zmienne:
+      Zmienna: "zmienna ilościowa"
+    kroki:
+      - "Podział na klasy: Reguła Sturgesa, Liczba klas albo Szerokość klasy."
+      - "Wykres: Histogram klas, Krzywa częstości skumulowanych."
+    wynik: "Tabela klas z licznościami i częstościami skumulowanymi; miary z szeregu obok wartości z danych."
+
+  - id: braki-odstajace
+    wyklady: ["07"]
+    temat: Braki danych i wartości skrajne
+    pytanie: Czy w danych są braki albo podejrzane wartości?
+    grupa: dane
+    menu: ["Analizy", "Eksploracja", "Zmienne ilościowe"]
+    zmienne:
+      Zmienne: "wszystkie zmienne ilościowe"
+    kroki:
+      - "Braki: wiersz Braki w tabeli (domyślnie)."
+      - "Zaawansowane → Wartości skrajne: pięć najmniejszych i największych wartości z numerami wierszy."
+      - "Wykres: Pudełkowy z Punktami."
+    wynik: "Tabela wartości skrajnych wskazuje wiersze do sprawdzenia w arkuszu."
+    uwaga: "Dla zmiennych jakościowych braki pokazuje Eksploracja → Zmienne jakościowe → Podsumowanie."
+
+  # ------------------------------------------------------------ rozkłady -----
+
+  - id: rozklad-normalny
+    wyklady: ["02"]
+    temat: Prawdopodobieństwo i kwantyl w rozkładzie normalnym
+    pytanie: Ile wynosi P(X < a) albo P(a < X < b) dla rozkładu normalnego?
+    grupa: rozklady
+    menu: ["Analizy", "Rozkłady", "Rozkład normalny"]
+    kroki:
+      - "Parametry: Średnia =, Odch. std. = (dla wartości z: 0 i 1)."
+      - "Oblicz prawdopodobieństwo: P(X ≤ x1), P(X ≥ x1) albo P(x1 ≤ X ≤ x2); wpisz x1 (i x2)."
+      - "Oblicz kwantyl(e): kwantyl kumulatywny albo kwantyle przedziału centralnego dla p ="
+    wynik: "Tabela z prawdopodobieństwem / kwantylem i wykres gęstości z zakreślonym obszarem."
+
+  - id: rozklady-dyskretne
+    wyklady: ["02"]
+    temat: Rozkład dwumianowy, Poissona, geometryczny
+    pytanie: Ile wynosi P(X = k) albo P(X ≤ k) w rozkładzie dyskretnym?
+    grupa: rozklady
+    menu: ["Analizy", "Rozkłady", "Rozkład dwumianowy / Poissona / geometryczny"]
+    kroki:
+      - "Parametry rozkładu (dwumianowy: n =, Prawdopodb. =)."
+      - "Oblicz prawdopodobieństwo: P(X = x1), P(X ≤ x1), P(X ≥ x1) albo P(x1 ≤ X ≤ x2)."
+      - "Momenty: Pokaż wartość oczekiwaną E[X], Pokaż wariancję Var[X]."
+    wynik: "Tabela z prawdopodobieństwem i wykres funkcji prawdopodobieństwa."
+
+  - id: rozklady-ciagle
+    wyklady: ["02", "04"]
+    temat: Rozkłady t, χ², F, wykładniczy
+    grupa: rozklady
+    menu: ["Analizy", "Rozkłady", "Rozkład t / χ² / F / wykładniczy"]
+    kroki:
+      - "Ten sam układ co rozkład normalny: parametry → Oblicz prawdopodobieństwo albo Oblicz kwantyl(e)."
+      - "Przykład: wartość krytyczna t dla 95% — rozkład t, kwantyle przedziału centralnego, p = 0.95."
+    wynik: "Tabela z prawdopodobieństwem / kwantylem i wykres gęstości."
+
+  - id: normalnosc
+    wyklady: ["05"]
+    temat: Sprawdzenie normalności (Shapiro-Wilk, wykres Q-Q)
+    pytanie: Czy rozkład zmiennej jest zbliżony do normalnego?
+    grupa: rozklady
+    menu: ["Analizy", "Eksploracja", "Zmienne ilościowe"]
+    zmienne:
+      Zmienne: "zmienna ilościowa"
+      Podziel według: "(opcjonalnie) grupy — normalność sprawdza się w każdej grupie"
+    kroki:
+      - "Założenia → Normalność: Shapiro-Wilk, Wykres Q-Q."
+    wynik: "Tabela testu (W, p) i wykres Q-Q: punkty blisko prostej = rozkład bliski normalnemu."
+    uwaga: "W testach t to samo jest w sekcji Sprawdzenie założeń; w ANOVA i regresji sprawdza się reszty (Założenia → Normalność reszt)."
+
+  # ----------------------------------------------------------- estymacja -----
+
+  - id: ci-srednia
+    wyklady: ["03"]
+    temat: Przedział ufności dla średniej
+    pytanie: Jaka jest średnia w populacji (z niepewnością)?
+    grupa: estymacja
+    menu: ["Analizy", "Przedziały ufności", "Średnie", "Średnia"]
+    zmienne:
+      Zmienna: "zmienna ilościowa"
+      Grupy (opcjonalnie): "osobny przedział w każdej grupie"
+    kroki:
+      - "Poziom ufności = 95 (zmień, żeby zobaczyć wpływ na szerokość)."
+      - "Metoda przedziału: t-Studenta."
+    wynik: "Tabela: średnia i granice przedziału; wykres przedziału."
+
+  - id: ci-roznica-srednich
+    wyklady: ["03", "04"]
+    temat: Przedział ufności dla różnicy średnich (dwie grupy)
+    pytanie: O ile różnią się średnie dwóch grup (z niepewnością)?
+    grupa: estymacja
+    menu: ["Analizy", "Przedziały ufności", "Średnie", "Różnica średnich"]
+    zmienne:
+      Zmienna: "zmienna ilościowa"
+      Zmienna grupująca: "dwie grupy (przy więcej: wybierz Grupa 1 i Grupa 2)"
+    kroki:
+      - "Metoda przedziału: Welcha (nierówne wariancje) — domyślnie; t-Studenta (wspólna wariancja) dla wersji klasycznej."
+      - "Wielkość efektu: d Cohena z przedziałem ufności."
+    wynik: "Tabela: różnica średnich z przedziałem (i d Cohena z przedziałem); wykres różnicy."
+
+  - id: ci-srednia-roznic
+    wyklady: ["03", "04"]
+    temat: Przedział ufności dla średniej różnic (pomiary sparowane)
+    grupa: estymacja
+    menu: ["Analizy", "Przedziały ufności", "Średnie", "Średnia różnic"]
+    zmienne:
+      Pomiar 1: "pierwszy pomiar (kolumna)"
+      Pomiar 2: "drugi pomiar (kolumna)"
+    kroki:
+      - "Metoda przedziału: t-Studenta. Opcjonalnie: d Cohena z przedziałem ufności."
+    wynik: "Tabela: średnia różnic z przedziałem."
+
+  - id: ci-proporcja
+    wyklady: ["03", "04"]
+    temat: Przedział ufności dla proporcji
+    pytanie: Jaki jest udział kategorii w populacji (z niepewnością)?
+    grupa: estymacja
+    menu: ["Analizy", "Przedziały ufności", "Proporcje", "Proporcja"]
+    zmienne:
+      Zmienna: "zmienna jakościowa"
+    kroki:
+      - "Kategoria „sukces”: wybierz kategorię, której udział liczysz."
+      - "Metoda przedziału: Wilsona (score) — domyślnie; Cloppera-Pearsona (dokładna); Walda (wzór z wykładu)."
+    wynik: "Tabela: proporcja z próby i granice przedziału; wykres."
+    uwaga: "Przedział Walda przy małym n lub proporcji blisko 0 albo 1 bywa za wąski albo wychodzi poza [0, 1]."
+
+  - id: ci-roznica-proporcji
+    wyklady: ["03"]
+    temat: Przedział ufności dla różnicy proporcji
+    grupa: estymacja
+    menu: ["Analizy", "Przedziały ufności", "Proporcje", "Różnica proporcji"]
+    zmienne:
+      Zmienna: "zmienna jakościowa (wynik)"
+      Zmienna grupująca: "dwie grupy"
+    kroki:
+      - "Kategoria „sukces”, Grupa 1, Grupa 2."
+      - "Metoda przedziału: Newcombe’a (score) — domyślnie; Walda."
+    wynik: "Tabela: różnica proporcji z przedziałem; wykres."
+
+  - id: ci-korelacja-regresja
+    wyklady: ["06"]
+    temat: Przedział ufności dla korelacji i nachylenia regresji
+    grupa: estymacja
+    menu: ["Analizy", "Przedziały ufności", "Korelacja i regresja", "Korelacja / Regresja liniowa"]
+    zmienne:
+      Zmienna 1, Zmienna 2: "dwie zmienne ilościowe (Korelacja)"
+      Zmienna zależna (Y), Predyktor (X): "(Regresja liniowa)"
+    kroki:
+      - "Korelacja: Współczynnik r Pearsona albo ρ Spearmana; Metoda: Transformacja Fishera z."
+      - "Regresja liniowa: Metoda t-Studenta (lm)."
+    wynik: "Tabela z przedziałem dla r albo dla wyrazu wolnego i nachylenia; wykres z pasmem."
+
+  - id: bootstrap
+    wyklady: ["03"]
+    temat: Przedział bootstrapowy
+    grupa: estymacja
+    menu: ["Analizy", "Przedziały ufności", "(dowolna analiza)"]
+    kroki:
+      - "Metoda przedziału: Bootstrap percentylowy albo Bootstrap BCa."
+      - "Zaawansowane → Bootstrap: Liczba losowań B, Ziarno generatora (powtarzalny wynik), Histogram rozkładu bootstrapowego."
+      - "Idea krok po kroku: Przedziały ufności → Dydaktyka → Jak działa bootstrap."
+    wynik: "Ta sama tabela co dla metody klasycznej."
+
+  # ---------------------------------------------------------------- testy ----
+
+  - id: t-jedna-proba
+    wyklady: ["04"]
+    temat: Test t dla jednej próby
+    pytanie: Czy średnia różni się od zadanej wartości (np. 650)?
+    grupa: testy
+    menu: ["Analizy", "Testy t", "Jedna próba"]
+    zmienne:
+      Zmienne: "zmienna ilościowa"
+    kroki:
+      - "Hipoteza: Wartość testowa = (np. 650)."
+      - "Hipoteza alternatywna: Dwustronna (≠), Większa (>) albo Mniejsza (<)."
+      - "Wykres pudełkowy z punktami jest włączony; linia pokazuje wartość testową."
+    wynik: "Tabela testu: Statystyka t, df, p, różnica średnich, wielkość efektu (d Cohena)."
+    uwaga: "Przedział ufności dla średniej: Przedziały ufności → Średnie → Średnia."
+
+  - id: test-proporcji
+    wyklady: ["04"]
+    temat: Test dla jednej proporcji (dwumianowy)
+    pytanie: Czy udział kategorii różni się od zadanej wartości (np. 50%)?
+    grupa: testy
+    menu: ["Analizy", "Częstości", "Jedna zmienna"]
+    zmienne:
+      Zmienna: "zmienna o dwóch kategoriach"
+    kroki:
+      - "Proporcje oczekiwane: wpisz proporcję z H₀ (np. 0,5 i 0,5)."
+      - "Przy dwóch kategoriach test dwumianowy (dokładny) wybiera się sam."
+      - "Zaawansowane → Hipoteza (2 kategorie): Hipoteza alternatywna."
+    wynik: "Tabela testu z p; Wykres: Obserwowane i oczekiwane."
+    uwaga: "Przedział ufności dla proporcji: Przedziały ufności → Proporcje → Proporcja (Cloppera-Pearsona = dokładny)."
+
+  - id: chi2-zgodnosc
+    wyklady: ["04"]
+    temat: Test χ² zgodności
+    pytanie: Czy rozkład kategorii zgadza się z oczekiwanym (np. równe udziały)?
+    grupa: testy
+    menu: ["Analizy", "Częstości", "Jedna zmienna"]
+    zmienne:
+      Zmienna: "zmienna o trzech lub więcej kategoriach"
+    kroki:
+      - "Proporcje oczekiwane: wpisz udziały z H₀ (domyślnie równe)."
+      - "Wielkość efektu (w Cohena) — włączona."
+      - "Zaawansowane → Post-hoc: Reszty standaryzowane (które kategorie odbiegają)."
+    wynik: "Tabela testu χ² (χ², df, p) i w Cohena."
+
+  - id: chi2-niezaleznosc
+    wyklady: ["04", "05"]
+    temat: Test χ² niezależności (tabela kontyngencji)
+    pytanie: Czy dwie zmienne jakościowe są powiązane?
+    grupa: testy
+    menu: ["Analizy", "Częstości", "Tabela kontyngencji"]
+    zmienne:
+      Wiersze: "pierwsza zmienna jakościowa"
+      Kolumny: "druga zmienna jakościowa"
+    kroki:
+      - "Test i wielkość efektu: χ² niezależności i Wielkość efektu (V Craméra) — włączone."
+      - "Procenty: Wierszami (domyślnie) albo Kolumnami — w kierunku, w którym porównujesz grupy."
+      - "Zaawansowane → Post-hoc: Reszty standaryzowane (które komórki decydują)."
+      - "Wykres: Słupkowy albo Mozaikowy."
+    wynik: "Tabela liczności z procentami, tabela testu (χ², df, p) i V Craméra."
+
+  - id: fisher
+    wyklady: ["04", "05"]
+    temat: Mała tabela — liczebności oczekiwane i test Fishera
+    pytanie: Co zrobić, gdy liczebności w tabeli są małe?
+    grupa: testy
+    menu: ["Analizy", "Częstości", "Tabela kontyngencji"]
+    zmienne:
+      Wiersze: "zmienna jakościowa"
+      Kolumny: "zmienna jakościowa"
+    kroki:
+      - "Zaawansowane → Liczności: Liczebności oczekiwane."
+      - "Test i wielkość efektu: Dokładny test Fishera."
+      - "Zaawansowane → Dodatkowe testy: Poprawka ciągłości (2×2) — poprawka Yatesa."
+    wynik: "Gdy liczebności oczekiwane są za małe (E < 5), pod tabelą testu pojawia się ostrzeżenie; wynik Fishera jest w tabeli testów."
+
+  - id: t-dwie-grupy
+    wyklady: ["04", "05", "09"]
+    temat: Test t dla dwóch grup niezależnych
+    pytanie: Czy średnie w dwóch grupach się różnią?
+    grupa: testy
+    menu: ["Analizy", "Testy t", "Dwie grupy"]
+    zmienne:
+      Zmienne zależne: "zmienna ilościowa"
+      Zmienna grupująca: "zmienna o dwóch kategoriach"
+    kroki:
+      - "Testy: t Welcha (nierówne wariancje); t Studenta jest zaznaczony domyślnie — odznacz, jeśli niepotrzebny."
+      - "Hipoteza alternatywna: Dwustronna (≠), Większa (>) albo Mniejsza (<)."
+      - "Sprawdzenie założeń: Jednorodność wariancji (Levene), Normalność (Shapiro-Wilk)."
+    wynik: "Tabela testu: Statystyka t, df, p, różnica średnich, wielkość efektu (d Cohena) — po jednym wierszu na test."
+    uwaga: "Przedział ufności dla różnicy średnich i d Cohena z przedziałem: Przedziały ufności → Średnie → Różnica średnich."
+
+  - id: t-sparowane
+    wyklady: ["04"]
+    temat: Test t dla prób sparowanych
+    pytanie: Czy wynik zmienił się między dwoma pomiarami tych samych osób?
+    grupa: testy
+    menu: ["Analizy", "Testy t", "Próby sparowane"]
+    zmienne:
+      Pary zmiennych: "dwie kolumny: pomiar 1 i pomiar 2"
+    kroki:
+      - "Testy: t Studenta (domyślnie); Wilcoxona (rangowanych znaków) jako wersja nieparametryczna."
+      - "Sprawdzenie założeń: Normalność (Shapiro-Wilk) — dotyczy różnic."
+    wynik: "Tabela testu: t, df, p, średnia różnica, d Cohena; wykres z trzecim pudełkiem różnic."
+    uwaga: "Dane muszą być w formacie szerokim: jeden wiersz = jedna osoba, dwa pomiary w dwóch kolumnach."
+
+  - id: anova
+    wyklady: ["04", "05"]
+    temat: ANOVA jednoczynnikowa i porównania post-hoc
+    pytanie: Czy średnie w trzech lub więcej grupach się różnią — i które?
+    grupa: testy
+    menu: ["Analizy", "ANOVA", "ANOVA"]
+    zmienne:
+      Zmienna zależna: "zmienna ilościowa"
+      Czynniki: "zmienna grupująca (trzy lub więcej grup)"
+    kroki:
+      - "Test: Wielkość efektu (η²p) — przy jednym czynniku równa η²."
+      - "Test: Nierówne wariancje (Welch), gdy wariancje w grupach się różnią."
+      - "Porównania: metoda Tukeya (HSD) domyślnie; Tabela porównań parami."
+      - "Założenia: Jednorodność wariancji, Normalność reszt, Wykres Q-Q reszt."
+    wynik: "Tabela ANOVA (F, df, p, η²p); wykres średnich z literami — grupy z tą samą literą nie różnią się istotnie."
+
+  - id: nieparametryczne
+    wyklady: ["05", "09"]
+    temat: Testy nieparametryczne (rangowe)
+    pytanie: Czego użyć, gdy założenia testu t / ANOVA nie są spełnione?
+    grupa: testy
+    menu: ["Analizy", "Testy t / ANOVA"]
+    kroki:
+      - "Jedna próba, Próby sparowane: Testy → Wilcoxona (rangowanych znaków)."
+      - "Dwie grupy: Testy → Manna-Whitneya U."
+      - "ANOVA (jeden czynnik): Test → Nieparametrycznie (rangi) = Kruskal-Wallis z porównaniami Dunna."
+      - "ANOVA powtórzonych pomiarów (jeden czynnik): Nieparametrycznie (rangi) = Friedman."
+    wynik: "Dodatkowy wiersz albo tabela testu rangowego obok wersji parametrycznej."
+
+  - id: wariancje
+    wyklady: ["05"]
+    temat: Jednorodność wariancji (Levene, Bartlett)
+    pytanie: Czy wariancje w grupach są podobne?
+    grupa: testy
+    menu: ["Analizy", "Testy t / ANOVA"]
+    kroki:
+      - "Testy t → Dwie grupy → Sprawdzenie założeń: Jednorodność wariancji (Levene)."
+      - "ANOVA → Założenia: Jednorodność wariancji (test Levene’a i Bartletta)."
+      - "Przy różnych wariancjach: t Welcha albo ANOVA → Nierówne wariancje (Welch)."
+    wynik: "Tabela testu z F i p."
+
+  - id: sila-efektu
+    wyklady: ["04"]
+    temat: Gdzie są wielkości efektu
+    pytanie: "Jak duży jest efekt (a nie tylko: czy istotny)?"
+    grupa: testy
+    menu: ["Analizy", "(zależnie od testu)"]
+    kroki:
+      - "d Cohena: Testy t (w tabeli testu); z przedziałem: Przedziały ufności → Różnica średnich / Średnia różnic."
+      - "r: Regresja → Korelacja (sam współczynnik jest wielkością efektu)."
+      - "V Craméra: Częstości → Tabela kontyngencji (włączone). w Cohena: Częstości → Jedna zmienna."
+      - "η²: ANOVA → Wielkość efektu (η²p); Zaawansowane → Model: η², ω²."
+    wynik: "Kolumna wielkości efektu w tabeli danego testu."
+
+  # ----------------------------------------------------------- zależności ----
+
+  - id: korelacja
+    wyklady: ["04", "05", "08", "09"]
+    temat: Korelacja (Pearson, Spearman) i macierz korelacji
+    pytanie: Czy dwie zmienne ilościowe są powiązane — jak silnie i w którą stronę?
+    grupa: zaleznosci
+    menu: ["Analizy", "Regresja", "Korelacja"]
+    zmienne:
+      Zmienne: "2 zmienne = jedna para; 3 i więcej = macierz"
+    kroki:
+      - "Współczynnik: r Pearsona, ρ Spearmana (monotoniczna, rangi) albo τ-b Kendalla."
+      - "Wykres rozrzutu — włączony."
+      - "Zaawansowane → Hipoteza: Korelacja > 0 / < 0 (test jednostronny); Przedział ufności."
+      - "Macierz: Zaawansowane → N w macierzy, Oznacz istotne gwiazdkami."
+    wynik: "Para: jeden wiersz (r, p, N); macierz: dolny trójkąt z r i p w komórkach."
+    uwaga: "Korelacja nie mówi o przyczynie — sprawdź, czy związek nie wynika z trzeciej zmiennej."
+
+  - id: regresja-prosta
+    wyklady: ["06", "08"]
+    temat: Regresja liniowa prosta
+    pytanie: Jak zmienia się Y, gdy X rośnie o jednostkę? Jak przewidzieć Y?
+    grupa: zaleznosci
+    menu: ["Analizy", "Regresja", "Regresja liniowa"]
+    zmienne:
+      Zmienna zależna: "Y — zmienna ilościowa"
+      Predyktory ilościowe: "X"
+    kroki:
+      - "Wykres rozrzutu z prostą (jeden predyktor) — włączony."
+      - "Zaawansowane → Zapis do arkusza: Wartości przewidywane do arkusza."
+    wynik: "Dopasowanie modelu: R², R² skoryg., F, p, RMSE. Współczynniki: b (nachylenie), SE, t, p, przedział ufności."
+
+  - id: jakosc-modelu
+    wyklady: ["05", "06"]
+    temat: Diagnostyka regresji (reszty, VIF)
+    pytanie: Czy model regresji jest poprawny?
+    grupa: zaleznosci
+    menu: ["Analizy", "Regresja", "Regresja liniowa"]
+    kroki:
+      - "Założenia → Reszty: Normalność reszt (Shapiro-Wilk), Wykres Q-Q reszt, Reszty vs dopasowane (lejek = niejednorodna wariancja)."
+      - "Założenia → Predyktory i obserwacje: Autokorelacja (Durbin-Watson), Współliniowość (VIF), Odległość Cooka."
+    wynik: "Tabele testów i wykresy reszt pod modelem."
+    uwaga: "Testu Breuscha-Pagana w jUPWR nie ma — niejednorodność wariancji ocenia się z wykresu Reszty vs dopasowane."
+
+  - id: regresja-wieloraka
+    wyklady: ["06", "08", "09"]
+    temat: Regresja wieloraka (także z predyktorem jakościowym)
+    pytanie: Jak kilka zmiennych naraz wpływa na Y?
+    grupa: zaleznosci
+    menu: ["Analizy", "Regresja", "Regresja liniowa"]
+    zmienne:
+      Zmienna zależna: "Y"
+      Predyktory ilościowe: "zmienne ilościowe"
+      Predyktory jakościowe: "zmienne jakościowe (np. płeć, gatunek)"
+    kroki:
+      - "Poziomy odniesienia predyktorów jakościowych: wybierz poziom, z którym porównujesz pozostałe."
+      - "Zaawansowane → Model: Współczynniki standaryzowane β, AIC i BIC."
+      - "Założenia: Współliniowość (VIF)."
+    wynik: "Współczynniki: każdy b = zmiana Y przy wzroście predyktora o 1, gdy pozostałe są stałe; R² skoryg. do porównania modeli."
+
+  - id: logistyczna
+    wyklady: ["06"]
+    temat: Regresja logistyczna
+    pytanie: Od czego zależy szansa zdarzenia (zmienna tak/nie)?
+    grupa: zaleznosci
+    menu: ["Analizy", "Regresja", "Regresja logistyczna", "Regresja logistyczna"]
+    zmienne:
+      Zmienna zależna (2 poziomy): "zmienna dwukategorialna (np. zdał / nie zdał)"
+      Predyktory ilościowe: "zmienne ilościowe"
+      Predyktory jakościowe: "zmienne jakościowe"
+    kroki:
+      - "Kategoria „zdarzenie”: poziom, którego szansę modelujesz (domyślnie drugi alfabetycznie)."
+      - "Zaawansowane → Klasyfikacja: Próg klasyfikacji = 0.5, Krzywa ROC."
+    wynik: "Współczynniki: b, p i iloraz szans (OR) z przedziałem; tabela klasyfikacji z trafnością, czułością i swoistością."
+    uwaga: "Zmienną 0/1 z ilościowej utworzysz przez Dane → Oblicz, np. read >= VMED(read)."
