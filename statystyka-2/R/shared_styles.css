@@ -2044,13 +2044,13 @@ mjx-container mjx-text {
 .lc-reads{display:flex;flex-wrap:wrap;gap:.6em 1.6em}
 .lc-reads>.shiny-html-output{display:contents}
 .lc-read{display:flex;flex-direction:column;gap:.15em;padding-left:.7em;border-left:2px solid var(--lc-read-color,var(--upwr-accent))}
-.lc-read-label{font:500 .64em var(--upwr-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--upwr-ink-subtle);display:flex;align-items:center;gap:.5em}
+.lc-read-label{font:500 .72em var(--upwr-mono);letter-spacing:.02em;color:var(--upwr-ink-subtle);display:flex;align-items:center;gap:.5em}
 .lc-read-value{font:700 1.35em/1.1 var(--upwr-mono);color:var(--upwr-ink);font-variant-numeric:tabular-nums}
 .lc-read-swatch{flex:none;width:.9em;height:.9em;border-radius:2px;background:var(--lc-read-color)}
 @container lc-fig (max-width:400px){
   .lc-reads{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:.8em;width:100%;margin-left:0}
   .lc-read{padding-left:.55em}
-  .lc-read-label{font-size:.6em;letter-spacing:.04em;line-height:1.25;align-items:flex-start}
+  .lc-read-label{font-size:.68em;letter-spacing:0;line-height:1.25;align-items:flex-start}
   .lc-read-swatch{margin-top:.1em}
   .lc-read-value{font-size:1.15em}
 }
