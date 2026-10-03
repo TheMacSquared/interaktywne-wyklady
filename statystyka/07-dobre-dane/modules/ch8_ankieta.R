@@ -11,94 +11,163 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
                 po prostu naprawić jednym kliknięciem w analizie."
     ),
 
-    lc_h2("sec-01", "Formularz rejestracyjny kursu"),
+    lc_h2("sec-01", "Opis"),
 
-    div(class = "lc-prose",
-      p("Organizatorzy kursu wakacyjnego zebrali zapisy przez formularz online.
-        Nie wszystkie pola były dobrze przemyślane. Zebrano 90 zgłoszeń.")
-    ),
+    lc_p("Organizatorzy wakacyjnego kursu zbierali zapisy przez formularz online
+      i otrzymali 90 zgłoszeń. Formularz miał pięć pól: wiek, wykształcenie,
+      doświadczenie, dostępność i samoocenę umiejętności. Część pól była listą
+      do wyboru albo polem liczbowym, a część zwykłym polem tekstowym, w które
+      każdy wpisywał, co chciał. Naturalne pytanie dla takiego zbioru brzmi:
+      czy doświadczenie i wykształcenie uczestników wiążą się z tym, jak
+      oceniają swoje umiejętności?"),
 
     lc_h2("sec-02", "Podgląd danych"),
 
-    div(class = "lc-figure-panel",
+    lc_p("Przeglądając tabelę, zwróć uwagę, które kolumny zawierają liczby albo
+      powtarzające się kategorie, a które swobodny tekst."),
+
+    figure_panel(
+      label = "Ryc. 8.1",
+      title = "Zgłoszenia na kurs (90 osób)",
       uiOutput("tab7_table")
     ),
 
-    lc_h2("sec-03", "Spróbuj policzyć średnią"),
+    lc_p("Już pierwsze wiersze pokazują dwa rodzaje kolumn. Wiek to liczba
+      całkowita od 19 do 36 lat, a wykształcenie przyjmuje tylko cztery wartości:
+      technikum, licencjat, inżynier i magister. W polu doświadczenia obok „3”
+      i „5 lat” stoją „trochę”, „tak mam” i „licencjat znam”, dostępność to
+      opisy w rodzaju „nie w piątki” czy „kiedy trzeba”, a samoocena miesza
+      liczby z ocenami słownymi i szkolnymi („dobry”, „B+”, „8/10”)."),
 
-    div(class = "lc-figure-panel",
+    lc_h2("sec-03", "Próba policzenia średniej"),
+
+    lc_p("Najprostszy sprawdzian, czy kolumna nadaje się do analizy ilościowej,
+      to próba policzenia jej średniej. Panel liczy średnią wybranej zmiennej
+      i pokazuje, ile wartości program w ogóle rozpoznał jako liczby."),
+
+    figure_panel(
+      label = "Ryc. 8.2",
+      title = "Średnia wybranej zmiennej",
       selectInput("tab7_var", "Wybierz zmienną:",
         choices = c("wiek", "wyksztalcenie", "doswiadczenie", "dostepnosc", "ocena_umiejetnosci")),
       lc_action("tab7_mean", "Policz średnią", variant = "solid"),
       uiOutput("tab7_mean_result")
     ),
 
-    lc_h2("sec-04", "Jak to naprawić?"),
+    lc_p("Średni wiek uczestników wynosi 27.4 roku i nie wymaga żadnej obróbki.
+      Wykształcenie jest ", gloss("zmienna jakościowa", "zmienną jakościową"),
+      ", więc średniej się dla niego nie liczy, ale kategorie są spójne
+      i wystarczy je zliczyć: 33 osoby po licencjacie, 27 po magisterium,
+      17 inżynierów i 13 absolwentów technikum. Trzy pozostałe kolumny
+      zawodzą. W doświadczeniu tylko 8 z 90 wpisów to liczby, więc 91.1%
+      wartości nie da się odczytać. W dostępności nie da się odczytać żadnej,
+      a w samoocenie liczbami jest 38 wpisów, czyli 57.8% wartości przepada."),
 
-    div(class = "lc-figure-panel",
+    lc_p("To problem, który w katalogu z rozdziału 1 nazwaliśmy źle
+      zdefiniowanymi zmiennymi. Pytanie otwarte zamiast skali sprawia, że ta sama
+      cecha jest zapisana na kilkanaście sposobów, a program statystyczny nie
+      ma jak przeliczyć „trochę” albo „elastycznie” na liczbę."),
+
+    lc_h2("sec-04", "Czyszczenie danych"),
+
+    lc_p("Część wpisów da się przetłumaczyć na liczby, jeśli przyjmiemy reguły
+      przekodowania, na przykład „ponad rok” = 1 rok doświadczenia, „brak” = 0,
+      „dobry” = 7 na skali od 1 do 10. Porównując wersję surową z oczyszczoną,
+      zwróć uwagę, ile braków powstało i ile decyzji podjęliśmy za respondentów."),
+
+    figure_panel(
+      label = "Ryc. 8.3",
+      title = "Dane surowe i po przekodowaniu",
       lc_segmented("tab7_toggle", "Widok danych", choices = c("Surowe", "Oczyszczone")),
       uiOutput("tab7_clean_table"),
       uiOutput("tab7_clean_info")
     ),
 
-    div(class = "lc-feedback lc-feedback-info",
-      tags$strong("Jak tego uniknąć:"),
-      tags$br(),
-      "1. Zamknięte pytania dla zmiennych kluczowych (gotowe opcje do wyboru)",
-      tags$br(),
-      "2. Rozróżnij zmienne analizowane od informacyjnych (wiek → liczba, nie tekst)",
-      tags$br(),
-      "3. Pilotaż formularza (przetestuj na 5 osobach przed uruchomieniem)",
-      tags$br(),
-      "4. Jasna instrukcja (np. 'podaj lata doświadczenia jako liczbę')"
+    lc_p("Po przekodowaniu wiek i wykształcenie zostają bez zmian. W kolumnie
+      doświadczenia udało się przypisać liczbę lat 47 osobom, a 43 zostały
+      z brakiem danych, i to przy założeniu, że „ponad rok” znaczy dokładnie rok.
+      Samoocenę przekodowaliśmy w całości, ale tylko 38 wpisów było liczbami od
+      początku. 11 odpowiedzi „8/10” dało się przeliczyć wprost, a 41 ocen
+      słownych zamieniliśmy na liczby według reguły, którą sami wymyśliliśmy.
+      Dostępności nie da się sprowadzić ani do liczby, ani do krótkiej listy
+      kategorii, więc kolumna wypada z analizy. Każda taka reguła to decyzja
+      analityka, która nie wynika z danych, i trzeba ją opisać w raporcie."),
+
+    lc_p("Tych kłopotów można było uniknąć na etapie projektowania formularza.
+      Zmienne, które chcemy analizować, powinny mieć zamknięte odpowiedzi: listę
+      kategorii albo pole liczbowe z podaną jednostką, np. „liczba lat
+      doświadczenia”. Pola czysto informacyjne, których nie zamierzamy liczyć,
+      mogą zostać otwarte. Przed uruchomieniem formularza warto dać go do
+      wypełnienia kilku osobom i sprawdzić, czy odpowiedzi od razu dają się
+      wczytać jako dane."),
+
+    inline_callout(
+      label = "Zasada",
+      "Pytania o zmienne, które będziesz analizować, zamykaj: lista kategorii
+       albo liczba z podaną jednostką."
     ),
 
     lc_h2("sec-05", "Werdykt"),
 
-    div(class = "lc-feedback lc-feedback-warning",
-      "Dane częściowo nadają się do analizy.",
-      tags$br(),
-      tags$strong("Dobre zmienne:"), " wiek (liczbowy, czysty) i wykształcenie (kategoryczne, spójne).",
-      tags$br(),
-      tags$strong("Złe zmienne:"), " doświadczenie i dostępność — tekst bez struktury, nieprzeliczalny.",
-      tags$br(),
-      "ocena_umiejętności — mieszanka liczb i tekstu, ~50% można uratować.",
-      tags$br(),
-      "R nie wie, co zrobić z 'trochę' albo 'elastycznie' jako wartością liczbową."
+    lc_p("Formularz daje dwie zmienne gotowe do analizy: wiek i wykształcenie.
+      Wystarczą do opisu uczestników, a nawet do porównania średniego wieku
+      w grupach wykształcenia, choć technikum reprezentuje tylko 13 osób.
+      Pytanie postawione na początku wymaga jednak doświadczenia i samooceny,
+      a te istnieją tylko w wersji przekodowanej: doświadczenie z brakami
+      u prawie połowy osób, samoocena z liczbami, które w dużej części sami
+      przypisaliśmy. Wynik takiej analizy mówiłby więcej o naszych regułach
+      przekodowania niż o uczestnikach kursu."),
+
+    lc_p("Braki w doświadczeniu nie są przy tym losowe. Powstają tam, gdzie ktoś
+      odpowiedział opisowo („trochę”, „dużo”, „tak mam”), czyli zależą od samej
+      odpowiedzi. Usunięcie tych osób zmieniłoby skład próby w sposób, którego
+      nie potrafimy opisać."),
+
+    inline_callout(
+      label = "Werdykt",
+      "Zbiór zły do postawionego pytania: kluczowe zmienne są źle zdefiniowane
+       i nie da się ich naprawić bez arbitralnych decyzji."
     ),
 
     lc_h2("sec-06", "Drugi przykład: dane do uratowania"),
 
-    div(class = "lc-prose",
-      p("Inny formularz kursu, podobny problem — respondenci odpowiadali różnie na te same pola.
-        Ale tym razem prawie każdą odpowiedź można przypisać do kategorii.
-        Porównaj surowe dane z wersją po standaryzacji.")
-    ),
+    lc_p("Nie każdy formularz z polami tekstowymi jest stracony. W innym
+      formularzu tego samego kursu respondenci też wpisywali odpowiedzi po
+      swojemu, ale prawie każdą z nich da się jednoznacznie przypisać do jednej
+      z kilku kategorii. Porównując obie wersje tabeli, zwróć uwagę, które wpisy
+      nie mają odpowiednika po standaryzacji."),
 
     div(class = "toggle-pills",
       actionButton("tab7b_raw", "Surowe", class = "pill-btn active"),
       actionButton("tab7b_cat", "Po standaryzacji", class = "pill-btn")
     ),
 
-    div(class = "lc-figure-panel",
+    figure_panel(
+      label = "Ryc. 8.4",
+      title = "12 zgłoszeń przed i po standaryzacji",
       uiOutput("tab7b_table")
     ),
 
-    div(class = "lc-feedback lc-feedback-ok",
-      "10 z 12 wierszy można uratować (83%).",
-      tags$br(),
-      tags$b("poziom:"), " \"podst.\", \"PODSTAWOWY\" → wszystkie to \"podstawowy\".",
-      tags$br(),
-      tags$b("platnosc:"), " \"przel.\", \"przelew bankowy\" → \"przelew\"; \"paypal\" → \"karta\".",
-      tags$br(),
-      tags$b("godziny_tyg:"), " \"ok. 5\", \"4-6h\", \"5h\" → kategoria \"srednie (4-6h)\".
-        Straty: \"duzo\" i \"malo\" — za mało informacji żeby przypisać do kategorii."
-    ),
+    lc_p("Standaryzacja sprowadza różne zapisy tej samej odpowiedzi do jednej
+      etykiety. „podst.”, „PODSTAWOWY” i „podstawowy” to ten sam poziom, a
+      „przel.”, „przelew bankowy” i „PRZELEW” to ten sam sposób płatności.
+      Umowna jest tylko decyzja, by „paypal” zaliczyć do kart. Godziny nauki
+      zamieniamy na trzy przedziały: „ok. 5”, „4-6h” i „5h” trafiają do
+      kategorii średniej (4–6 h). Po standaryzacji kompletnych jest 10 z 12
+      wierszy (83%). Wpisów „dużo” i „mało” nie da się przypisać do żadnego
+      przedziału, więc zostają brakami danych."),
+
+    lc_p("Ceną jest utrata dokładności: zamiast liczby godzin mamy ",
+      gloss("zmienna porządkowa", "zmienną porządkową"), " z trzema poziomami.
+      W zamian zmienna staje się użyteczna. Różnica wobec pierwszego formularza
+      polega na tym, że tu reguły przypisania wynikają z samych odpowiedzi,
+      a nie z pomysłu analityka."),
 
     lc_chapter_next(
       num = "09",
       title = "Badania laboratoryjne",
-      lead = "Następny zbiór ma inny rodzaj problemów — błędy w danych.",
+      lead = "Formularz psuł dane już na etapie pytań. W badaniach laboratoryjnych
+              pytania są dobre, a błędy pojawiają się przy przepisywaniu wyników.",
       target_id = "ch9"
     ),
 
@@ -106,6 +175,11 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
   ))))
 
 ch8_server <- function(input, output, session) {
+
+  # Reguły przekodowania (wspólne dla tabeli i opisu zmian)
+  dosw_map  <- c("3" = 3, "5 lat" = 5, "ponad rok" = 1, "nie mam" = 0, "brak" = 0)
+  ocena_map <- c("7" = 7, "6" = 6, "4" = 4, "9" = 9, "7.5" = 7.5,
+                 "dobry" = 7, "bardzo dobry" = 9, "średni" = 5, "B+" = 7, "8/10" = 8)
 
   output$tab7_table <- renderUI({
     dd_data_table(round_df(reg_data), page_size = 10, page = input$tab7_table_page, page_input = "tab7_table_page")
@@ -118,14 +192,14 @@ ch8_server <- function(input, output, session) {
       vals <- reg_data[[var]]
 
       if (var == "wiek") {
-        div(class = "lc-feedback lc-feedback-ok", style = "margin-top: 10px;",
-          paste0("Średnia wieku: ", round(mean(vals, na.rm = TRUE), 1), " lat. "),
-          "Ta zmienna jest czysta i liczbowa — nie ma problemów z kodowaniem."
+        lc_status(
+          lc_verdict(type = "ok", "Średnia wieku (lata):"),
+          paste0(" ", round(mean(vals, na.rm = TRUE), 1), ". Wszystkie wartości są liczbami.")
         )
       } else if (var == "wyksztalcenie") {
-        div(class = "lc-feedback lc-feedback-info", style = "margin-top: 10px;",
-          "Wykształcenie to zmienna kategoryczna — średnia nie ma matematycznego sensu. ",
-          "Ale przynajmniej jest dobrze zakodowana: gotowe, spójne kategorie."
+        lc_status(
+          lc_verdict(type = "info", "Średniej nie da się policzyć:"),
+          " to zmienna jakościowa z czterema spójnymi kategoriami."
         )
       } else {
         nums  <- safe_numeric(vals)
@@ -133,17 +207,14 @@ ch8_server <- function(input, output, session) {
         pct_na <- round(n_na / length(nums) * 100, 1)
 
         if (n_na == 0) {
-          div(class = "lc-feedback lc-feedback-info", style = "margin-top: 10px;",
-            paste0("Średnia: ", round(mean(nums, na.rm = TRUE), 2))
-          )
+          lc_status(paste0("Średnia: ", round(mean(nums, na.rm = TRUE), 2)))
         } else {
-          div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
-            paste0(n_na, " z ", length(nums), " wartości (", pct_na, "%) nie dało się przekonwertować na liczby!"),
+          lc_status(
+            lc_verdict(type = "danger",
+              paste0(n_na, " z ", length(nums), " wartości (", pct_na, "%) nie da się odczytać jako liczby.")),
             tags$br(),
-            "Przykłady problematycznych wartości: ",
-            paste(head(vals[is.na(nums)], 5), collapse = ", "),
-            tags$br(), tags$br(),
-            "R nie wie, co zrobić z tekstem jak 'dobry' albo 'elastycznie'."
+            "Przykłady: ",
+            paste(head(vals[is.na(nums)], 5), collapse = ", ")
           )
         }
       }
@@ -154,9 +225,6 @@ ch8_server <- function(input, output, session) {
     if (input$tab7_toggle == "Surowe") {
       dd_data_table(round_df(reg_data), page_size = 8, page = input$tab7_clean_table_page, page_input = "tab7_clean_table_page")
     } else {
-      dosw_map  <- c("3" = 3, "5 lat" = 5, "ponad rok" = 1, "nie mam" = 0, "brak" = 0)
-      ocena_map <- c("7" = 7, "6" = 6, "4" = 4, "9" = 9, "7.5" = 7.5,
-                     "dobry" = 7, "bardzo dobry" = 9, "sredni" = 5, "B+" = 7, "8/10" = 8)
       clean <- data.frame(
         wiek             = reg_data$wiek,
         wyksztalcenie    = reg_data$wyksztalcenie,
@@ -170,16 +238,20 @@ ch8_server <- function(input, output, session) {
 
   output$tab7_clean_info <- renderUI({
     if (input$tab7_toggle == "Oczyszczone") {
-      div(class = "lc-feedback lc-feedback-info", style = "margin-top: 10px;",
+      n       <- nrow(reg_data)
+      dosw_ok <- sum(!is.na(dosw_map[reg_data$doswiadczenie]))
+      oc_num  <- sum(!is.na(safe_numeric(reg_data$ocena_umiejetnosci)))
+      oc_frac <- sum(reg_data$ocena_umiejetnosci == "8/10")
+      oc_word <- n - oc_num - oc_frac
+      lc_status(
         tags$strong("Zmiany:"),
-        tags$br(), "- wiek: bez zmian — już był czysty",
-        tags$br(), "- wyksztalcenie: bez zmian — już były spójne kategorie",
-        tags$br(), "- doswiadczenie_lat: tylko wpisy numeryczne i kilka słów kluczowych → reszta NA",
-        tags$br(), "- ocena_1_10: słowne oceny zamienione na liczby ('dobry' → 7 itd.) — ~50% odzyskane",
-        tags$br(), "- dostepnosc: USUNIĘTO — nie da się zakodować",
-        tags$br(), tags$br(),
-        tags$em("Wniosek: dwie zmienne są od razu użyteczne, dwie wymagają pracy i tracą dane,
-                 jedna jest nie do odratowania. Lepiej zaprojektować formularz poprawnie od początku.")
+        tags$br(), "wiek, wyksztalcenie: bez zmian",
+        tags$br(), paste0("doswiadczenie_lat: ", dosw_ok, " z ", n,
+                          " wpisów przekodowanych, braki: ", n - dosw_ok),
+        tags$br(), paste0("ocena_1_10: ", oc_num, " liczb bez zmian, ", oc_frac,
+                          " × „8/10” → 8, ", oc_word,
+                          " ocen słownych przypisanych umownie („dobry” → 7, „B+” → 7)"),
+        tags$br(), "dostepnosc: usunięta, nie da się zakodować"
       )
     }
   })

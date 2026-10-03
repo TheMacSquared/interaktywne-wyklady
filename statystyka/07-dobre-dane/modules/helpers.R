@@ -37,7 +37,7 @@ set.seed(2025)
 # Tab 2: Za malo danych (n=8)
 small_n <- 8
 small_data <- data.frame(
-  plec = factor(sample(c("Kobieta", "Mezczyzna"), small_n, replace = TRUE)),
+  plec = factor(sample(c("Kobieta", "Mężczyzna"), small_n, replace = TRUE)),
   kierunek = factor(sample(c("Informatyka", "Biologia", "Psychologia", "Ekonomia"), small_n, replace = TRUE)),
   godziny_nauki = round(rnorm(small_n, mean = 15, sd = 5), 1),
   stres = round(pmin(10, pmax(1, rnorm(small_n, mean = 5.5, sd = 2))), 1),
@@ -50,7 +50,7 @@ hotel_n <- 80
 hotel_data <- data.frame(
   ocena_ogolna   = sample(1:5, hotel_n, replace = TRUE,
                           prob = c(0.01, 0.01, 0.06, 0.32, 0.60)),
-  typ_pokoju     = factor(sample(c("Apartament Premium", "Pokoj standardowy", "Pokoj ekonomiczny"),
+  typ_pokoju     = factor(sample(c("Apartament Premium", "Pokój standardowy", "Pokój ekonomiczny"),
                                  hotel_n, replace = TRUE, prob = c(0.84, 0.09, 0.07))),
   dlugosc_pobytu = sample(1:3, hotel_n, replace = TRUE, prob = c(0.50, 0.35, 0.15)),
   cena_za_noc    = round(rnorm(hotel_n, mean = 450, sd = 85)),
@@ -63,16 +63,16 @@ hotel_data <- data.frame(
 reg_n <- 90
 reg_data <- data.frame(
   wiek = sample(19:36, reg_n, replace = TRUE),
-  wyksztalcenie = sample(c("technikum", "licencjat", "inzynier", "magister"),
+  wyksztalcenie = sample(c("technikum", "licencjat", "inżynier", "magister"),
                          reg_n, replace = TRUE, prob = c(0.12, 0.38, 0.22, 0.28)),
-  doswiadczenie = sample(c("troche", "5 lat", "tak mam", "licencjat znam",
-                            "3", "ponad rok", "nie mam", "duzo", "pare miesiecy", "brak"),
+  doswiadczenie = sample(c("trochę", "5 lat", "tak mam", "licencjat znam",
+                            "3", "ponad rok", "nie mam", "dużo", "parę miesięcy", "brak"),
                           reg_n, replace = TRUE),
-  dostepnosc = sample(c("weekendy", "nie w piatki", "elastycznie", "kiedy trzeba",
-                         "tylko rano", "po 16:00", "zawsze", "pon-sr"),
+  dostepnosc = sample(c("weekendy", "nie w piątki", "elastycznie", "kiedy trzeba",
+                         "tylko rano", "po 16:00", "zawsze", "pon-śr"),
                        reg_n, replace = TRUE),
   ocena_umiejetnosci = sample(c("7", "dobry", "8/10", "6", "bardzo dobry",
-                                 "4", "B+", "9", "sredni", "7.5"),
+                                 "4", "B+", "9", "średni", "7.5"),
                                reg_n, replace = TRUE),
   stringsAsFactors = FALSE
 )
@@ -81,31 +81,31 @@ reg_data <- data.frame(
 fixable_data <- data.frame(
   id = 1:12,
   poziom = c("podstawowy", "podst.", "PODSTAWOWY",
-             "sredniozaawansowany", "srednio zaawans.", "srednio-zaawansowany",
+             "średniozaawansowany", "średnio zaawans.", "średnio-zaawansowany",
              "zaawansowany", "zaawans.", "expert",
-             "podstawowy", "sred. zaawans.", "Zaawansowany"),
+             "podstawowy", "śred. zaawans.", "Zaawansowany"),
   platnosc = c("przelew", "przel.", "przelew bankowy",
-               "gotowka", "gotowka", "Gotowka",
+               "gotówka", "gotówka", "Gotówka",
                "karta", "karta kredytowa", "paypal",
-               "przelew", "gotowka", "PRZELEW"),
-  godziny_tyg = c("5", "ok. 5", "4-6h", "8", "duzo", "3h",
-                  "10", "7-8h", "malo", "6", "5h", "9"),
+               "przelew", "gotówka", "PRZELEW"),
+  godziny_tyg = c("5", "ok. 5", "4-6h", "8", "dużo", "3h",
+                  "10", "7-8h", "mało", "6", "5h", "9"),
   stringsAsFactors = FALSE
 )
 fixable_data_cat <- data.frame(
   id = 1:12,
   poziom_kat = c("podstawowy","podstawowy","podstawowy",
-                 "srednio-zaaw.","srednio-zaaw.","srednio-zaaw.",
+                 "średnio-zaaw.","średnio-zaaw.","średnio-zaaw.",
                  "zaawansowany","zaawansowany","zaawansowany",
-                 "podstawowy","srednio-zaaw.","zaawansowany"),
+                 "podstawowy","średnio-zaaw.","zaawansowany"),
   platnosc_kat = c("przelew","przelew","przelew",
-                   "gotowka","gotowka","gotowka",
+                   "gotówka","gotówka","gotówka",
                    "karta","karta","karta",
-                   "przelew","gotowka","przelew"),
-  nauka_kat = c("srednie (4-6h)","srednie (4-6h)","srednie (4-6h)",
-                "duzo (7h+)", NA, "malo (1-3h)",
-                "duzo (7h+)","duzo (7h+)", NA,
-                "srednie (4-6h)","srednie (4-6h)","duzo (7h+)"),
+                   "przelew","gotówka","przelew"),
+  nauka_kat = c("średnie (4-6h)","średnie (4-6h)","średnie (4-6h)",
+                "dużo (7h+)", NA, "mało (1-3h)",
+                "dużo (7h+)","dużo (7h+)", NA,
+                "średnie (4-6h)","średnie (4-6h)","dużo (7h+)"),
   stringsAsFactors = FALSE
 )
 
@@ -140,17 +140,23 @@ cafe_dates <- seq(as.Date("2023-10-01"), by = "day", length.out = cafe_n)
 cafe_dow   <- as.integer(format(cafe_dates, "%u"))  # 1=Pon, 7=Nd
 cafe_dow_effect <- c(75, 70, 80, 68, 58, 28, 20)[cafe_dow]
 cafe_sem_idx    <- seq_len(cafe_n)
-cafe_sem_effect <- 15 * sin(2 * pi * cafe_sem_idx / 245)
+# Wspólny rytm pór roku. Klimat Polski: minimum temperatury w połowie
+# stycznia (ok. -1 °C), maksimum w lipcu. Sprzedaż zależy od pory roku
+# (więcej zimą), a nie od temperatury konkretnego dnia: korelacja
+# temperatury ze sprzedażą powstaje wyłącznie przez wspólny przebieg w czasie.
+cafe_doy        <- as.numeric(format(cafe_dates, "%j"))
+cafe_season     <- cos(2 * pi * (cafe_doy - 200) / 365)
+cafe_sem_effect <- -20 * cafe_season
 cafe_base <- 60 + cafe_dow_effect + cafe_sem_effect
 cafe_kawy <- round(cafe_base + rnorm(cafe_n, 0, 10))
 cafe_kawy <- pmax(8, cafe_kawy)
 cafe_kawy[sort(sample(cafe_n, round(0.13 * cafe_n)))] <- NA   # ~13% brakow
-cafe_temp <- round(12 - 10 * cos(2 * pi * cafe_sem_idx / 365) + rnorm(cafe_n, 0, 3.5), 1)
+cafe_temp <- round(9 + 10 * cafe_season + rnorm(cafe_n, 0, 3.5), 1)
 cafe_temp[sample(cafe_n, round(0.03 * cafe_n))] <- NA         # ~3% brakow
 cafe_data <- data.frame(
   dzien       = cafe_sem_idx,
   data        = format(cafe_dates, "%d.%m"),
-  dzien_tyg   = c("Pon", "Wt", "Sr", "Czw", "Pt", "Sob", "Nd")[cafe_dow],
+  dzien_tyg   = c("Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Nd")[cafe_dow],
   kawy        = cafe_kawy,
   temperatura = cafe_temp,
   stringsAsFactors = FALSE
@@ -158,7 +164,7 @@ cafe_data <- data.frame(
 
 # Tab 9: Ankieta studencka - wzorcowa (n=150)
 surv_n <- 150
-surv_plec <- sample(c("Kobieta", "Mezczyzna"), surv_n, replace = TRUE, prob = c(0.55, 0.45))
+surv_plec <- sample(c("Kobieta", "Mężczyzna"), surv_n, replace = TRUE, prob = c(0.55, 0.45))
 survey_data <- data.frame(
   plec = factor(surv_plec),
   kierunek = factor(sample(c("Informatyka", "Biologia", "Psychologia", "Ekonomia"),
@@ -203,8 +209,8 @@ cat_errors <- data.frame(
            -300000, 470000, 5500000, 310000, 440000, 360000),
   powierzchnia = c(55, 72, 48, 85, 40, 64, 52, 78, 90, 1200, 68, 58),
   pokoje = c(2, 3, 2, 4, 1, 3, 2, 3, 42, 2, 3, 2),
-  dzielnica = c("Mokotow","Wola","Praga","Srodmiescie","Ursynow","Bielany",
-                "Mokotow","Wola","Srodmiescie","Praga","Mokotow","Ursynow"),
+  dzielnica = c("Mokotów","Wola","Praga","Śródmieście","Ursynów","Bielany",
+                "Mokotów","Wola","Śródmieście","Praga","Mokotów","Ursynów"),
   stringsAsFactors = FALSE
 )
 cat_errors_clean <- data.frame(
@@ -213,18 +219,18 @@ cat_errors_clean <- data.frame(
            300000, 470000, 550000, 310000, 440000, 360000),
   powierzchnia = c(55, 72, 48, 85, 40, 64, 52, 78, 90, 120, 68, 58),
   pokoje = c(2, 3, 2, 4, 1, 3, 2, 3, 4, 2, 3, 2),
-  dzielnica = c("Mokotow","Wola","Praga","Srodmiescie","Ursynow","Bielany",
-                "Mokotow","Wola","Srodmiescie","Praga","Mokotow","Ursynow"),
+  dzielnica = c("Mokotów","Wola","Praga","Śródmieście","Ursynów","Bielany",
+                "Mokotów","Wola","Śródmieście","Praga","Mokotów","Ursynów"),
   stringsAsFactors = FALSE
 )
 
 # Problem 4: Zle zdefiniowane zmienne
 cat_messy <- data.frame(
   id = 1:10,
-  czas_nauki = c("duzo", "3-4h", "5", "caly dzien", "malo",
+  czas_nauki = c("dużo", "3-4h", "5", "cały dzień", "mało",
                  "ok. 2 godziny", "nie wiem", "3", "6h dziennie", "weekendy"),
   ocena_kursu = c("8/10", "dobrze", "4", "B+", "7.5",
-                  "srednia", "9", "bardzo dobrze", "6/10", "slabo"),
+                  "średnia", "9", "bardzo dobrze", "6/10", "słabo"),
   aktywnosc = c("tak", "nie", "czasami", "3 razy/tyg", "rzadko",
                 "codziennie", "2x", "nie wiem", "tak", "nie"),
   stringsAsFactors = FALSE

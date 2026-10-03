@@ -1,4 +1,4 @@
-# Tab 12: Ściąga — podsumowanie i checklist jakości danych
+# Tab 12: Ściąga — podsumowanie i lista kontrolna jakości danych
 
 ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content = tagList(
   fluidRow(column(8, offset = 2,
@@ -11,54 +11,59 @@ ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content 
                 co da się naprawić i jak dopasować analizę do struktury danych."
     ),
 
-    lc_h2("sec-01", "Ściąga - jak ocenić zbiór danych"),
-
-    lc_h2("sec-02", "Podsumowanie 10 zbiorów"),
+    lc_h2("sec-01", "Podsumowanie 10 zbiorów"),
 
     div(class = "lc-figure-panel",
       uiOutput("tab11_summary")
     ),
 
-    lc_h2("sec-03", "Checklist jakości danych"),
+    lc_h2("sec-02", "Lista kontrolna jakości danych"),
 
-    div(class = "lc-feedback lc-feedback-danger",
-      HTML("
-        <strong style='font-size: 15px;'>KRYTYCZNE - jeśli nie spełniasz, szukaj innego zbioru:</strong>
-        <ol>
-          <li><strong>Czy dane odpowiadają hipotezie badawczej?</strong> Najpierw sformułuj co chcesz badać, potem sprawdź czy dane to mierzą.</li>
-          <li><strong>Czy masz n &ge; 20-30 na grupę?</strong> Liczy się n w każdej podgrupie. Porównujesz 3 grupy? Potrzebujesz 3 &times; 30 = 90.</li>
-          <li><strong>Czy masz mix typów zmiennych?</strong> Ilościowe do korelacji/regresji, jakościowe do t-testów i chi-kwadrat.</li>
-          <li><strong>Czy jest zmienność?</strong> SD &asymp; 0 oznacza brak możliwości analizy.</li>
-          <li><strong>Czy struktura danych pasuje do analiz?</strong> Sprawdź czy masz odpowiednie zmienne do każdej planowanej analizy.</li>
-          <li><strong>Czy obserwacje są niezależne?</strong> Dane czasowe lub z klastrów wymagają specjalnych metod (lub agregacji).</li>
-        </ol>
-      ")
+    lc_note("Krytyczne", title = "Jeśli zbiór ich nie spełnia, poszukaj innego",
+      tags$ol(
+        tags$li(tags$strong("Czy dane odpowiadają hipotezie badawczej?"),
+          " Najpierw sformułuj, co chcesz badać, potem sprawdź, czy dane to mierzą."),
+        tags$li(tags$strong("Czy liczebność wystarcza w każdej grupie?"),
+          " Liczy się n w każdej porównywanej podgrupie, nie w całym zbiorze.
+          Ile obserwacji potrzeba, zależy od spodziewanej wielkości efektu i planowanej analizy."),
+        tags$li(tags$strong("Czy zbiór zawiera różne typy zmiennych?"),
+          " Zmienne ilościowe do korelacji i regresji, jakościowe do porównań grup
+          (test t) i testu chi-kwadrat."),
+        tags$li(tags$strong("Czy jest zmienność?"),
+          " Zmienna o SD bliskim zera nie nadaje się do analizy."),
+        tags$li(tags$strong("Czy struktura danych pasuje do analiz?"),
+          " Sprawdź, czy masz odpowiednie zmienne do każdej planowanej analizy
+          i czy wiersz tabeli to jednostka obserwacji."),
+        tags$li(tags$strong("Czy obserwacje są niezależne?"),
+          " Dane czasowe lub pogrupowane wymagają specjalnych metod albo agregacji.")
+      )
     ),
 
-    div(class = "lc-feedback lc-feedback-warning",
-      HTML("
-        <strong style='font-size: 15px;'>NAPRAWIALNE - wymagają pracy, ale się da:</strong>
-        <ol start='7'>
-          <li><strong>Czy braki &lt; 5%?</strong> Można usunąć obserwacje z brakami lub imputować. Powyżej 20-30% w zmiennej - ta zmienna może odpaść.</li>
-          <li><strong>Czy zmienne są jednoznacznie zdefiniowane?</strong> Można rekodować, przejść na rangi - ale każda decyzja ma konsekwencje.</li>
-          <li><strong>Czy nie ma błędów i outlierów?</strong> Sprawdź zakresy, literówki. Odróżniaj błędy (usuń) od prawdziwych outlierów (przemyśl).</li>
-        </ol>
-      ")
+    lc_note("Naprawialne", title = "Wymagają pracy, ale się da",
+      tags$ol(start = 7,
+        tags$li(tags$strong("Czy braków danych jest niewiele?"),
+          " Przy niewielkim odsetku braków można usunąć obserwacje z brakami albo
+          zastosować imputację. Gdy w zmiennej brakuje dużej części wartości
+          (orientacyjnie powyżej 20–30%), ta zmienna może odpaść."),
+        tags$li(tags$strong("Czy zmienne są jednoznacznie zdefiniowane?"),
+          " Można rekodować albo przejść na kategorie lub rangi, ale każda decyzja
+          ma konsekwencje."),
+        tags$li(tags$strong("Czy nie ma błędów i wartości odstających?"),
+          " Sprawdź zakresy i literówki. Odróżniaj błędy (popraw albo usuń) od
+          prawdziwych wartości odstających (przemyśl, czy je zostawić).")
+      )
     ),
 
-    lc_h2("sec-04", "Dopasowanie analizy do danych"),
+    lc_h2("sec-03", "Dopasowanie analizy do danych"),
 
     div(class = "lc-figure-panel",
       uiOutput("tab11_analysis_table")
     ),
 
-    div(class = "lc-feedback lc-feedback-info",
-      tags$strong("Wskazówka:"),
-      " Użyj tego checklistu oceniając dane do swojego projektu końcowego.",
-      tags$br(),
-      "Jeśli nie spełniasz kryteriów krytycznych - szukaj innego zbioru.",
-      tags$br(),
-      "Jeśli masz problemy naprawialne - możesz pracować z tymi danymi, ale zaplanuj czas na czyszczenie."
+    lc_note("Wskazówka",
+      "Użyj tej listy kontrolnej, oceniając dane do swojego projektu końcowego.
+      Jeśli zbiór nie spełnia kryteriów krytycznych, poszukaj innego. Jeśli ma
+      problemy naprawialne, można z nim pracować, ale zaplanuj czas na czyszczenie."
     ),
 
     div(style = "height: 60px;")
@@ -71,18 +76,20 @@ ch12_server <- function(input, output, session) {
       Nr = 2:11,
       Zbior = c("Szkoły w Kalifornii", "Ankieta na grupie", "Pingwiny",
                 "Filmy Tarantino", "Hotel boutique", "Wynagrodzenia USA",
-                "Trudna ankieta", "Badania laboratoryjne", "Ankieta studencka", "Kawiarnia"),
-      n = c(420, 8, 344, "~1800 zdarzeń", 80, 3000, 90, 150, 150, 245),
+                "Formularz rejestracyjny kursu", "Badania laboratoryjne", "Ankieta studencka", "Kawiarnia"),
+      n = c("420", "8", "344", "1894 zdarzenia (7 filmów)", "80", "3000", "90", "150", "150", "245"),
       Werdykt = c("DOBRY", "ZŁY", "DOBRY", "ZŁY", "ZŁY", "DOBRY", "ZŁY", "MIESZANY", "DOBRY", "ZŁY"),
-      Problem = c("Brak", "Za mała próba", "Niewielkie braki", "Zła struktura, n=7 po agregacji",
-                  "Brak zmienności", "Brak", "Źle zdefiniowane zmienne",
-                  "Outliery i błędy", "Brak", "Braki danych + szereg czasowy"),
+      Problem = c("Brak poważnych problemów", "Za mało danych", "Niewielkie braki danych",
+                  "Zła struktura danych (po agregacji n = 7)",
+                  "Brak zmienności", "Brak poważnych problemów", "Źle zdefiniowane zmienne",
+                  "Błędy i literówki w danych, wartości odstające", "Brak poważnych problemów",
+                  "Braki danych, brak niezależności obserwacji"),
       stringsAsFactors = FALSE
     )
     lc_table(df,
       cols = list(
         lc_col("Nr", "Nr", "row"),
-        lc_col("Zbior", "Zbior", "text"),
+        lc_col("Zbior", "Zbiór", "text"),
         lc_col("n", "n", "text"),
         lc_col("Werdykt", "Werdykt", "text"),
         lc_col("Problem", "Problem", "text")
@@ -94,7 +101,10 @@ ch12_server <- function(input, output, session) {
   output$tab11_analysis_table <- renderUI({
     df <- data.frame(
       Analiza = c("Test t", "Korelacja Pearsona", "Regresja liniowa", "Test chi-kwadrat"),
-      Min_n = c("20-30 na grupę", "30 ogólnie", "10k + 50 (k = predyktory)", "5 w każdej komórce tabeli"),
+      Min_n = c("zależy od wielkości efektu; zwykle kilkadziesiąt na grupę",
+                "zwykle co najmniej kilkadziesiąt par obserwacji",
+                "więcej predyktorów wymaga więcej obserwacji",
+                "liczebności oczekiwane w komórkach nie za małe (wykład 05)"),
       Zmienne = c("1 ilościowa + 1 jakościowa (2 grupy)", "2 ilościowe (ciągłe)",
                   "1 ilościowa (Y) + k ilościowych/jakościowych (X)", "2 jakościowe"),
       Dodatkowe = c("Normalność, równość wariancji", "Liniowość, normalność",
@@ -104,9 +114,9 @@ ch12_server <- function(input, output, session) {
     lc_table(df,
       cols = list(
         lc_col("Analiza", "Analiza", "row"),
-        lc_col("Min_n", "Min_n", "text"),
+        lc_col("Min_n", "Liczebność (orientacyjnie)", "text"),
         lc_col("Zmienne", "Zmienne", "text"),
-        lc_col("Dodatkowe", "Dodatkowe", "text")
+        lc_col("Dodatkowe", "Dodatkowe założenia", "text")
       ),
       narrow = "cards"
     )

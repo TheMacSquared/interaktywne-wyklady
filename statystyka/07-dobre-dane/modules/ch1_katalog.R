@@ -8,27 +8,55 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       num    = "01",
       title  = "Katalog problemów.",
       lead   = "Siedem typowych usterek, które potrafią zepsuć analizę:
-                za mała próba, brak zmienności, błędy, braki, zła struktura,
-                niejasne zmienne i brak niezależności."
+                za mało danych, brak zmienności, błędy, niejasne zmienne,
+                braki, brak niezależności i zła struktura."
     ),
 
     lc_h2("sec-01", "Katalog problemów w danych"),
 
-    div(class = "lc-prose",
-      p("Poniżej zobaczysz 7 typowych problemów, które mogą dyskwalifikować zbiór danych.
-        Każdy problem pokazujemy tak, jak wyglądałoby to w jamovi lub Excelu (tabela)
-        oraz na wykresie. Gdzie to możliwe - pokaz surowe vs oczyszczone dane.")
-    ),
+    lc_p("Metody z wykładów 01–06 zakładały milcząco, że dane są w porządku:
+      obserwacji jest dość, zmienne mają ustalone znaczenie, wartości są
+      wpisane poprawnie, a każdy wiersz to osobna, niezależna obserwacja.
+      W prawdziwych zbiorach każde z tych założeń może zawieść. Ten rozdział
+      zbiera siedem najczęstszych problemów w jeden katalog, do którego
+      będziemy się odwoływać przy ocenie dziesięciu zbiorów w rozdziałach 2–11."),
+
+    lc_p("Każdy problem opisujemy w tym samym porządku. Najpierw definicja,
+      potem mały przykład pokazany na dwa sposoby: jako tabela, tak jak
+      wygląda w arkuszu albo programie statystycznym, i jako wykres. Dalej
+      pytamy, czym problem grozi w analizie i co można z nim zrobić. Przy
+      kilku problemach przełącznik nad panelem pokazuje te same dane przed
+      naprawą i po niej."),
+
+    lc_p("Problemy nie są równie groźne. Za mało danych, brak zmienności,
+      brak niezależności i zła struktura zwykle dyskwalifikują zbiór albo
+      wymagają innych metod niż te z kursu. Błędy, niejasne zmienne i braki
+      danych da się często naprawić, choć naprawa kosztuje czas i część
+      informacji."),
 
     # --- Problem 1: Za mało danych ---
-    div(class = "problem-card",
-      div(class = "problem-header",
-        span(class = "problem-number", "1"),
-        h3(class = "problem-name", "Za mało danych")
-      ),
-      div(class = "problem-desc",
-        "Kolega przepytał 6 znajomych i chce robić test t. Czy to wystarczy?"
-      ),
+    lc_h2("sec-p1", "1", "Za mało danych"),
+
+    lc_p("Każda statystyka policzona z próby jest tylko oszacowaniem wartości
+      w populacji. Jak bardzo to oszacowanie może się mylić, mówi ",
+      gloss("błąd standardowy"), ". Dla średniej jest to:"),
+
+    lc_formula_box(withMathJax(
+      "$$SE = \\frac{s}{\\sqrt{n}}$$"
+    )),
+
+    lc_p("Błąd standardowy maleje dopiero z pierwiastkiem z liczby obserwacji.
+      Przy małym \\(n\\) oszacowania są tak niepewne, że prawdziwego efektu
+      nie da się odróżnić od przypadkowych wahań. O zbiorze z za małą liczbą
+      obserwacji mówimy, że ma za mało danych do planowanej analizy."),
+
+    lc_p("Przykład: kolega przepytał sześcioro znajomych (cztery kobiety
+      i dwóch mężczyzn) i chce testem t sprawdzić, czy kobiety i mężczyźni
+      różnią się średnią ocen. Panel pokazuje jego dane i histogram średnich ocen."),
+
+    figure_panel(
+      label = "Ryc. 1.1",
+      title = "Sześć ankiet",
       div(class = "dual-view",
         div(class = "view-panel",
           div(class = "view-label", "Widok danych"),
@@ -38,25 +66,49 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
           div(class = "view-label", "Co widać na wykresie"),
           zoom_plot_ui("cat1_plot", height = "280px")
         )
-      ),
-      div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
-        tags$strong("Problem:"), " Przy n = 6 histogram ma ogromne dziury, ",
-        gloss("przedział ufności"), " jest bardzo szeroki, a ", gloss("moc testu"), " < 10%. ",
-        "Nawet duży efekt będzie nieistotny statystycznie.",
-        tags$br(),
-        tags$strong("Zasada:"), " Minimum 20-30 obserwacji na grupę."
       )
     ),
 
+    lc_p("Histogram z sześciu wartości ma cztery słupki o wysokości jednej
+      do trzech obserwacji. Nie da się z niego odczytać kształtu rozkładu,
+      więc nie da się też ocenić normalności, o której była mowa w wykładzie 05.
+      Średnia ocen wynosi 3.92, ale 95% ", gloss("przedział ufności"), " dla niej
+      rozciąga się od 3.30 do 4.53, czyli obejmuje ponad jeden pełny stopień
+      oceny."),
+
+    lc_p("Jeszcze gorzej wygląda porównanie grup. Przy czterech kobietach
+      i dwóch mężczyznach ", gloss("moc testu"), " t dla średniego efektu
+      (d Cohena = 0.5) wynosi około 7%, a dla dużego (d = 0.8) około 11%. Nawet
+      jeśli różnica w populacji istnieje, test przeoczy ją w zdecydowanej
+      większości takich badań i popełni ",
+      gloss("błąd drugiego rodzaju"), ". Wynik nieistotny przy tak małej
+      próbie nie jest dowodem, że różnicy nie ma."),
+
+    lc_p("Za mało danych nie da się naprawić po fakcie. Jedyne lekarstwo to
+      więcej obserwacji, a ile ich potrzeba, warto oszacować przed badaniem
+      na podstawie spodziewanej ", gloss("wielkość efektu", "wielkości efektu"),
+      ". Dla ilustracji: żeby test t wykrył duży efekt z mocą 80%, potrzeba
+      około 26 osób w każdej grupie, a dla średniego efektu około 64.
+      Liczy się liczebność w każdej porównywanej grupie, nie w całym zbiorze."),
+
     # --- Problem 2: Brak zmienności ---
-    div(class = "problem-card",
-      div(class = "problem-header",
-        span(class = "problem-number", "2"),
-        h3(class = "problem-name", "Brak zmienności")
-      ),
-      div(class = "problem-desc",
-        "Firma przeprowadziła ankietę zadowolenia. Ale wszyscy wiedzą, że szef ją czyta..."
-      ),
+    lc_h2("sec-p2", "2", "Brak zmienności"),
+
+    lc_p("Statystyka zajmuje się zmiennością. Korelacja i regresja pytają,
+      czy różnice w jednej zmiennej idą w parze z różnicami w drugiej, a testy
+      porównują grupy. Zmienna, która prawie się nie zmienia, nie niesie
+      takiej informacji: jej ", gloss("odchylenie standardowe"), " jest bliskie
+      zera albo niemal wszystkie obserwacje trafiają do jednej kategorii.
+      Taki stan nazywamy brakiem zmienności."),
+
+    lc_p("Przykład: firma przeprowadziła wśród pracowników działu IT ankietę
+      zadowolenia, a wszyscy wiedzieli, że odpowiedzi czyta szef. W tym samym
+      pliku zapisano staż pracy i wynagrodzenie. Panel pokazuje rozkład ocen
+      zadowolenia i wykres rozrzutu stażu i wynagrodzenia."),
+
+    figure_panel(
+      label = "Ryc. 1.2",
+      title = "Ankieta zadowolenia w dziale IT",
       div(class = "dual-view",
         div(class = "view-panel",
           div(class = "view-label", "Widok danych"),
@@ -67,24 +119,50 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
           zoom_plot_ui("cat2_plot_zadowolenie", height = "200px"),
           zoom_plot_ui("cat2_plot", height = "200px")
         )
-      ),
-      div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
-        tags$strong("Problem:"), " staż pracy jest prawie stały (zakres 2.8–3.2 lata). ",
-        "Wynagrodzenia się różnią, ale nie widać żadnego wzorca — punkty tworzą pionową chmurę.",
-        tags$br(),
-        "Gdy jedna zmienna nie ma żadnego rozrzutu, nie da się ocenić czy i jak wpływa na drugą."
       )
     ),
 
+    lc_p("Wszystkie 12 ocen zadowolenia to 4 albo 5 (trzy czwórki i dziewięć
+      piątek), a niższe wartości skali nie pojawiają się wcale. Nie da się
+      więc sprawdzić, co różni zadowolonych od niezadowolonych, bo tych
+      drugich w danych nie ma. Podobnie ze stażem: wszyscy pracują od 2.8 do
+      3.2 roku, odchylenie standardowe wynosi 0.12 roku. Wynagrodzenia
+      różnią się mocno, od 3200 do 7500 PLN, ale na wykresie punkty tworzą
+      pionowy pas. Korelacja stażu z wynagrodzeniem wynosi 0.20, tyle że
+      opiera się na różnicach stażu rzędu kilku miesięcy i nic nie mówi
+      o pracownikach z rocznym czy dziesięcioletnim stażem. Dział ma jedną
+      wartość, IT, więc działów też nie porównamy."),
+
+    lc_p("Brak zmienności grozi dwojako. Albo analiza nic nie wykaże, bo
+      nie ma czego wyjaśniać, albo pokaże coś przypadkowego: nachylenie
+      prostej regresji (wykład 06) szacowane na bardzo wąskim zakresie
+      \\(X\\) ma ogromny błąd standardowy i łatwo je przenieść poza zakres
+      danych, gdzie nie ma żadnego uzasadnienia. Tego problemu nie naprawi
+      żadna metoda. Potrzebne są dane z szerszym zakresem wartości, a przy
+      ankietach także warunki, w których respondenci mogą odpowiadać
+      szczerze, na przykład anonimowość. Przed analizą warto sprawdzić
+      zakres i odchylenie standardowe każdej zmiennej ilościowej oraz
+      liczebności kategorii każdej zmiennej jakościowej."),
+
     # --- Problem 3: Błędy i literówki ---
-    div(class = "problem-card",
-      div(class = "problem-header",
-        span(class = "problem-number", "3"),
-        h3(class = "problem-name", "Błędy i literówki w danych")
-      ),
-      div(class = "problem-desc",
-        "Dane z portalu nieruchomości skopiowane do Excela. Wszystko wygląda OK... na pierwszy rzut oka."
-      ),
+    lc_h2("sec-p3", "3", "Błędy i literówki w danych"),
+
+    lc_p("Jeśli zakres zmiennej jest szeroki, warto zapytać, czy wszystkie
+      wartości są prawdziwe. Błędy i literówki w danych to wartości
+      niemożliwe albo niewiarygodne, które powstały przy wpisywaniu lub
+      kopiowaniu: brakujące lub nadmiarowe zera, zły znak, przesunięty
+      przecinek, sklejone cyfry. Trzeba je odróżniać od prawdziwych ",
+      gloss("wartość odstająca", "wartości odstających"), ", czyli obserwacji
+      rzadkich, ale możliwych. Do tego rozróżnienia wrócimy w rozdziale 9."),
+
+    lc_p("Przykład: dwanaście ogłoszeń z portalu nieruchomości skopiowanych
+      do arkusza. Na pierwszy rzut oka wszystko wygląda dobrze. W surowych
+      danych podejrzane komórki są podświetlone, a przełącznik pokazuje
+      tabelę i wykres ceny względem powierzchni przed poprawkami i po nich."),
+
+    figure_panel(
+      label = "Ryc. 1.3",
+      title = "Ogłoszenia mieszkań",
       div(class = "toggle-pills",
         actionButton("cat3_raw", "Surowe", class = "pill-btn active"),
         actionButton("cat3_clean", "Oczyszczone", class = "pill-btn")
@@ -98,25 +176,54 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
           div(class = "view-label", "Cena vs powierzchnia"),
           zoom_plot_ui("cat3_plot", height = "280px")
         )
-      ),
-      div(class = "lc-feedback lc-feedback-warning", style = "margin-top: 10px;",
-        tags$strong("Typowe błędy:"),
-        " brak zer (45 zamiast 450 000), dodatkowe zero (5 500 000 zamiast 550 000), ",
-        "ujemna cena (-300 000), literówka w pokojach (42 zamiast 4).",
-        tags$br(),
-        tags$strong("Zasada:"), " Zawsze sprawdź zakresy zmiennych (min, max) zanim zaczniesz analizę."
       )
     ),
 
+    lc_p("W czterech wierszach jest pięć błędów: cena 45 PLN zamiast 450 000
+      (zgubione zera), cena -300 000 (zły znak), cena 5 500 000 zamiast
+      550 000 (nadmiarowe zero), powierzchnia 1200 m² zamiast 120 m²
+      i 42 pokoje zamiast 4. Średnia cena w surowych danych wynosi około
+      727 500 PLN, a mediana 375 000 PLN. Po poprawkach średnia spada do
+      402 500 PLN i niemal zrównuje się z medianą (405 000 PLN). Na
+      regresję błędy działają jeszcze mocniej: w surowych danych
+      nachylenie prostej jest ujemne (około -270 PLN za metr kwadratowy),
+      jakby większe mieszkania były tańsze. Po poprawkach nachylenie wynosi
+      około +1190 PLN za metr kwadratowy. Związek pozostaje słaby
+      (R² = 0.09), bo dwanaście mieszkań z różnych dzielnic to mało danych,
+      ale jego kierunek jest wreszcie sensowny."),
+
+    lc_p("Takie błędy psują wszystko, co liczy się z sumy wartości: średnią
+      i odchylenie standardowe (wykład 01), korelację i regresję (wykłady
+      04 i 06). Pojedynczy punkt daleko od reszty potrafi odwrócić kierunek
+      prostej. Błąd można poprawić tylko wtedy, gdy wiadomo, jaka jest
+      prawdziwa wartość, na przykład ze źródła danych. W przeciwnym razie
+      bezpieczniej oznaczyć ją jako brak. Każdą poprawkę warto zapisać, żeby
+      analizę dało się odtworzyć."),
+
+    inline_callout(label = "Zasada",
+      "Zanim zaczniesz analizę, sprawdź minimum i maksimum każdej zmiennej
+      ilościowej i zapytaj, czy takie wartości są w ogóle możliwe."
+    ),
+
     # --- Problem 4: Źle zdefiniowane zmienne ---
-    div(class = "problem-card",
-      div(class = "problem-header",
-        span(class = "problem-number", "4"),
-        h3(class = "problem-name", "Źle zdefiniowane zmienne")
-      ),
-      div(class = "problem-desc",
-        "Student zrobił ankietę z pytaniami otwartymi. Każdy odpowiedział po swojemu."
-      ),
+    lc_h2("sec-p4", "4", "Źle zdefiniowane zmienne"),
+
+    lc_p("Żeby sprawdzić zakres zmiennej, trzeba najpierw wiedzieć, co ona
+      mierzy i w jakich jednostkach. W wykładzie 01 każda zmienna miała
+      jasny typ: ilościowa albo jakościowa, z ustaloną jednostką lub listą
+      kategorii. Zmienna jest źle zdefiniowana, gdy tego brakuje: respondent
+      sam decyduje o jednostce, skali i sposobie zapisu, więc odpowiedzi nie
+      są ze sobą porównywalne."),
+
+    lc_p("Przykład: student przygotował ankietę z pytaniami otwartymi
+      o czas nauki, ocenę kursu i aktywność fizyczną. Każdy odpowiedział
+      po swojemu. W surowych danych wykres pokazuje, ile odpowiedzi
+      o czas nauki program statystyczny rozpozna jako liczbę, a po
+      oczyszczeniu — histogram odzyskanych wartości."),
+
+    figure_panel(
+      label = "Ryc. 1.4",
+      title = "Ankieta z pytaniami otwartymi",
       div(class = "toggle-pills",
         actionButton("cat4_raw", "Surowe", class = "pill-btn active"),
         actionButton("cat4_clean", "Oczyszczone", class = "pill-btn")
@@ -130,52 +237,102 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
           div(class = "view-label", "Próba zrobienia histogramu"),
           zoom_plot_ui("cat4_plot", height = "280px")
         )
-      ),
-      div(class = "lc-feedback lc-feedback-warning", style = "margin-top: 10px;",
-        tags$strong("Problem:"), " R/jamovi nie wie, co zrobić z '3-4h' albo 'dobrze'. ",
-        "Czyszczenie jest możliwe, ale tracimy dużo danych (NA).",
-        tags$br(),
-        tags$strong("Zasada:"), " Zamknięte pytania + spójne skale + pilotaż ankiety."
       )
     ),
 
+    lc_p("Z dziesięciu odpowiedzi o czas nauki tylko dwie („5” i „3”) są
+      liczbami. Pozostałe to tekst: „3-4h”, „ok. 2 godziny”, „cały dzień”,
+      „weekendy”. Program statystyczny nie wie, co z nimi zrobić, więc
+      zmienna, która miała być ilościowa, staje się tekstowa. Ręczne
+      czyszczenie odzyskuje po pięć wartości w każdej z trzech zmiennych,
+      czyli połowa odpowiedzi zamienia się w braki danych. Każda decyzja
+      przy czyszczeniu jest przy tym arbitralna: czy „3-4h” to 3.5 godziny?
+      Czy „6h dziennie” to 6, czy 42 godziny tygodniowo? Czy ocena „4” jest
+      w skali od 1 do 5, czy od 1 do 10?"),
+
+    lc_p("Źle zdefiniowana zmienna grozi utratą danych i wynikami, które
+      zależą bardziej od decyzji osoby czyszczącej niż od odpowiedzi
+      respondentów. Część takich zmiennych da się uratować, sprowadzając
+      odpowiedzi do kilku kategorii (wrócimy do tego w rozdziale 8), ale
+      wtedy zmienna ilościowa staje się jakościowa i traci część informacji.
+      Najskuteczniej zapobiegać: zadawać pytania zamknięte, podawać jednostkę
+      w treści pytania i używać spójnych skal, na przykład ",
+      gloss("skala Likerta", "skali Likerta"), "."),
+
+    inline_callout(label = "Zasada",
+      "Jednostkę, skalę i listę odpowiedzi ustal przed zbieraniem danych
+      i sprawdź je w pilotażu ankiety na kilku osobach."
+    ),
+
     # --- Problem 5: Braki danych ---
-    div(class = "problem-card",
-      div(class = "problem-header",
-        span(class = "problem-number", "5"),
-        h3(class = "problem-name", "Braki danych (NA)")
-      ),
-      div(class = "problem-desc",
-        "Ankieta ze 12 odpowiedziami. Nie każdy odpowiedział na wszystkie pytania."
-      ),
+    lc_h2("sec-p5", "5", "Braki danych (NA)"),
+
+    lc_p("Czyszczenie z poprzedniego przykładu zostawiło puste komórki.
+      W prawdziwych danych pojawiają się one także dlatego, że ktoś pominął
+      pytanie, przyrząd się zepsuł albo pomiaru nie dało się wykonać. ",
+      gloss("braki danych", "Braki danych"), " to komórki bez wartości;
+      programy statystyczne oznaczają je zwykle jako NA. Przy ocenie liczą
+      się dwie rzeczy: ile ich jest i dlaczego się pojawiły."),
+
+    lc_p("Przykład: ankieta wśród dwunastu studentów, w której nie każdy
+      odpowiedział na wszystkie pytania. Wykres pokazuje odsetek braków
+      w każdej zmiennej."),
+
+    figure_panel(
+      label = "Ryc. 1.5",
+      title = "Ankieta z pominiętymi pytaniami",
       div(class = "dual-view",
         div(class = "view-panel",
           div(class = "view-label", "Widok danych"),
           uiOutput("cat5_table")
         ),
         div(class = "view-panel",
-          div(class = "view-label", "Procent brakow na zmienna"),
+          div(class = "view-label", "Procent braków na zmienną"),
           zoom_plot_ui("cat5_plot", height = "280px")
         )
-      ),
-      div(class = "lc-feedback lc-feedback-info", style = "margin-top: 10px;",
-        tags$strong("Progi:"),
-        " < 5% ", gloss("braki danych", "braków"), " = OK (usuń wiersze). 5-20% = ostrożnie (rozważ ", gloss("imputacja", "imputację"), "). ",
-        "> 20% = zmienna może odpaść z analizy.",
-        tags$br(),
-        tags$strong("Uwaga:"), " Braki rzadko są losowe! Może ludzie pomijali trudne pytania?"
       )
     ),
 
+    lc_p("W wieku i kierunku brakuje po 3 z 12 wartości (25%), w stresie
+      i ocenach po 4 (33%). Każda zmienna osobno wygląda na uszkodzoną,
+      ale nie zniszczoną. Braki leżą jednak w różnych wierszach, więc
+      komplet odpowiedzi mają tylko 2 z 12 osób. Gdybyśmy usunęli każdy
+      wiersz z jakimkolwiek brakiem, z dwunastu ankiet zostałyby dwie."),
+
+    lc_p("Braki zmniejszają liczebność próby, a więc i moc testu (wykład 04).
+      Groźniejsze jest jednak obciążenie. Braki rzadko pojawiają się
+      losowo: jeśli o swoje oceny nie chcą mówić głównie osoby ze słabymi
+      wynikami, średnia z pozostałych będzie zawyżona i żadne zwiększenie
+      próby tego nie naprawi. Dlatego przed analizą warto policzyć braki
+      w każdej zmiennej i liczbę kompletnych wierszy, a potem zastanowić się
+      nad ich przyczyną. Gdy braków jest niewiele i nie widać powodu, by
+      dotyczyły konkretnej grupy, usunięcie niepełnych wierszy jest zwykle
+      bezpieczne. Przy większym odsetku można rozważyć ",
+      gloss("imputacja", "imputację"), ", czyli uzupełnienie braków
+      oszacowanymi wartościami, albo zrezygnować z najbardziej dziurawej
+      zmiennej. Braki bywają też ukryte pod liczbą, na przykład zerem albo
+      999 wpisanym zamiast pustej komórki. Taki przypadek zobaczymy
+      w rozdziale 9."),
+
     # --- Problem 6: Brak niezależności ---
-    div(class = "problem-card",
-      div(class = "problem-header",
-        span(class = "problem-number", "6"),
-        h3(class = "problem-name", "Brak niezależności obserwacji")
-      ),
-      div(class = "problem-desc",
-        "Temperatura - pół roku pomiarów dziennych (październik 2023 - marzec 2024). W tabeli wygląda normalnie..."
-      ),
+    lc_h2("sec-p6", "6", "Brak niezależności obserwacji"),
+
+    lc_p("Dotąd zakładaliśmy, że każdy wiersz to nowa, osobna informacja.
+      Testy z wykładów 04 i 05, korelacja i regresja wymagają ",
+      gloss("niezależność obserwacji", "niezależności obserwacji"), ":
+      wartość jednej obserwacji nie powinna nic mówić o wartości innej.
+      Założenie to łamią pomiary powtarzane w czasie (dzień po dniu),
+      w przestrzeni (sąsiednie działki) i w grupach (uczniowie z tej samej
+      klasy). Takie dane mają w tabeli wiele wierszy, ale mniej
+      niezależnej informacji, niż wskazuje liczba wierszy."),
+
+    lc_p("Przykład: dzienna temperatura powietrza przez pół roku, od października
+      2023 do marca 2024. W tabeli dane wyglądają zwyczajnie. Wykres pokazuje
+      je w kolejności pomiarów, a przełącznik zamienia dni na średnie miesięczne."),
+
+    figure_panel(
+      label = "Ryc. 1.6",
+      title = "Dzienna temperatura przez pół roku",
       div(class = "toggle-pills",
         actionButton("cat6_daily", "Dzienne (surowe)", class = "pill-btn active"),
         actionButton("cat6_monthly", "Miesięczne (agregat)", class = "pill-btn")
@@ -189,15 +346,28 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
           div(class = "view-label", "Dane w kolejności"),
           zoom_plot_ui("cat6_plot", height = "280px")
         )
-      ),
-      div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
-        tags$strong("Problem:"), " W tabeli te dane wyglądają jak 183 niezależne pomiary. ",
-        "Ale wykres liniowy zdradza ", gloss("sezonowość"), " - każdy dzień zależy od poprzedniego.",
-        tags$br(),
-        tags$strong("Po ", gloss("agregacja", "agregacji"), " do miesięcy:"), " znika problem zależności w obrębie miesiąca, ",
-        "ale zostaje nam tylko 6 obserwacji. Agregacja to wybór, nie darmowa naprawa."
       )
     ),
+
+    lc_p("W tabeli są 183 wiersze, ale wykres liniowy zdradza wyraźną ",
+      gloss("sezonowość"), ": średnia temperatura spada z 7.8 °C w październiku
+      do -4.2 °C w styczniu i wraca do 2.4 °C w marcu. Kolejne dni są do
+      siebie podobne. Korelacja temperatury z temperaturą dnia poprzedniego
+      wynosi 0.79, więc znając dzisiejszy pomiar, dobrze przewidzimy jutrzejszy.
+      Taką zależność obserwacji od poprzednich nazywamy ",
+      gloss("autokorelacja", "autokorelacją"), "."),
+
+    lc_p("Test, który traktuje 183 dni jak 183 niezależne obserwacje,
+      zakłada więcej informacji, niż jest w danych. Błąd standardowy wychodzi
+      za mały, przedziały ufności za wąskie, a p-wartości za małe, więc
+      łatwo o fałszywe odkrycie. Jednym wyjściem jest ",
+      gloss("agregacja", "agregacja"), " do większych jednostek. Po
+      przejściu na średnie miesięczne znika zależność w obrębie miesiąca,
+      ale zostaje tylko 6 obserwacji, a średnie z kolejnych miesięcy wciąż
+      układają się w gładką krzywą sezonową. Agregacja jest więc wyborem
+      z kosztem, a nie darmową naprawą. Drugim wyjściem są metody dla ",
+      gloss("szereg czasowy", "szeregów czasowych"), " i danych pogrupowanych,
+      które wykraczają poza ten kurs."),
 
     lc_note("Przykład", title = "Ten sam problem w danych satelitarnych",
       " sąsiednie piksele często mają podobną temperaturę, wilgotność czy NDVI.
@@ -207,14 +377,24 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     ),
 
     # --- Problem 7: Zła struktura ---
-    div(class = "problem-card",
-      div(class = "problem-header",
-        span(class = "problem-number", "7"),
-        h3(class = "problem-name", "Zła struktura danych")
-      ),
-      div(class = "problem-desc",
-        "Ciśnienie skurczowe u pacjentów - 30 pacjentów, każdy był na kilku wizytach. Każdy wiersz to jedna wizyta, nie jeden pacjent."
-      ),
+    lc_h2("sec-p7", "7", "Zła struktura danych"),
+
+    lc_p("Szczególnie częsty przypadek zależności powstaje wtedy, gdy wiersz
+      tabeli nie odpowiada temu, o co pyta analiza. ",
+      gloss("jednostka obserwacji", "Jednostką obserwacji"), " nazywamy
+      obiekt, o którym chcemy wnioskować: osobę, firmę, okręg szkolny, dzień.
+      Zła struktura danych oznacza, że wiersze opisują coś innego, najczęściej
+      zdarzenia (wizyty, transakcje, wypowiedzi), a pytanie dotyczy osób
+      albo obiektów, do których te zdarzenia należą."),
+
+    lc_p("Przykład: pomiary ciśnienia skurczowego u 30 pacjentów, z których
+      każdy był na kilku wizytach. Każdy wiersz to jedna wizyta, a nie jeden
+      pacjent. Przełącznik zamienia tabelę wizyt na tabelę pacjentów, a wykres
+      pokazuje, ile obserwacji mamy w każdej z wersji."),
+
+    figure_panel(
+      label = "Ryc. 1.7",
+      title = "Wizyty pacjentów",
       div(class = "toggle-pills",
         actionButton("cat7_events", "Wizyty (surowe)", class = "pill-btn active"),
         actionButton("cat7_agg", "Pacjenci (agregat)", class = "pill-btn")
@@ -228,45 +408,67 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
           div(class = "view-label", "Ile masz obserwacji?"),
           zoom_plot_ui("cat7_plot", height = "280px")
         )
-      ),
-      div(class = "lc-feedback lc-feedback-danger", style = "margin-top: 10px;",
-        tags$strong("Problem:"), " Wierszy jest ", nrow(cat_patients_visits),
-        ", ale to wizyty - ten sam pacjent pojawia się wielokrotnie. ",
-        "Jeśli pytamy o różnice między pacjentami (np. kobiety vs mężczyźni), ", gloss("jednostka obserwacji", "jednostką obserwacji"), " jest pacjent (n = ",
-        nrow(cat_patients_agg), ").",
-        tags$br(),
-        tags$strong("Zasada:"), " Zawsze pytaj: co jest jednostką obserwacji? ",
-        "Osoba? Firma? Dzień? Wiersz w tabeli ≠ obserwacja."
       )
     ),
 
-    # --- Podsumowanie: Checklist ---
-    lc_h2("sec-02", "Podsumowanie: Checklist jakości danych"),
+    lc_p("Tabela ma ", nrow(cat_patients_visits), " wierszy, ale opisują one
+      tylko ", nrow(cat_patients_agg), " pacjentów: każdy był na 3–6 wizytach.
+      Jeśli pytamy o różnicę ciśnienia między kobietami a mężczyznami,
+      jednostką obserwacji jest pacjent. Na poziomie wizyt porównalibyśmy
+      83 wiersze kobiet z 45 wierszami mężczyzn, choć w rzeczywistości to
+      20 kobiet i 10 mężczyzn. Test t na wizytach traktowałby każdą kolejną
+      wizytę tej samej osoby jak nowego pacjenta i dawałby wynik pewniejszy,
+      niż uzasadniają dane. To ten sam brak niezależności co przy
+      temperaturze, tylko ukryty w strukturze tabeli."),
 
-    div(class = "lc-prose",
-      p("Teraz już znasz typowe problemy. Użyj poniższego checklistu,
-        żeby systematycznie oceniać każdy zbiór danych.")
+    lc_p("Rozwiązaniem jest przekształcenie danych do właściwej jednostki
+      obserwacji, na przykład policzenie średniego ciśnienia każdego
+      pacjenta. Po takiej agregacji mamy n = ", nrow(cat_patients_agg),
+      ", a nie ", nrow(cat_patients_visits), ". Jeśli po przekształceniu
+      zostaje zbyt mało obserwacji, wracamy do problemu nr 1. Tak będzie
+      z filmami Tarantino w rozdziale 5."),
+
+    inline_callout(label = "Zasada",
+      "Przed analizą odpowiedz, co jest jednostką obserwacji: osoba, firma,
+      dzień czy zdarzenie. Wiersz w tabeli nie zawsze jest obserwacją."
     ),
 
-    div(class = "lc-figure-panel",
-      h4("Checklist jakości danych"),
-      tags$p(tags$strong(style = "color: var(--upwr-accent);", "KRYTYCZNE"),
-        " - jeśli nie spełniasz, szukaj innego zbioru:"),
+    # --- Podsumowanie: lista kontrolna ---
+    lc_h2("sec-02", "Podsumowanie: lista kontrolna jakości danych"),
+
+    lc_p("Siedem problemów z katalogu da się zamienić w listę pytań, które
+      warto zadać każdemu zbiorowi, zanim zacznie się analizę. Lista ma dwie
+      części. Kryteria krytyczne obejmują dopasowanie danych do pytania
+      badawczego, liczebność, typy zmiennych, zmienność, strukturę
+      i niezależność obserwacji. Jeśli zbiór ich nie spełnia, lepiej szukać
+      innego. Kryteria naprawialne dotyczą braków danych, definicji zmiennych
+      i błędów: wymagają pracy, ale da się je spełnić po oczyszczeniu."),
+
+    lc_p("Panel poniżej pozwala przejść przez listę dla dowolnego zbioru.
+      Pasek pod listą podsumowuje zaznaczone kryteria. Jeśli którekolwiek
+      kryterium krytyczne nie jest spełnione, werdykt jest negatywny bez
+      względu na kryteria naprawialne."),
+
+    figure_panel(
+      label = "Lista kontrolna",
+      title = "Lista kontrolna jakości danych",
+      tags$p(tags$strong(style = "color: var(--upwr-accent);", "Krytyczne:"),
+        " jeśli zbiór ich nie spełnia, poszukaj innego"),
       checkboxGroupInput("intro_critical", NULL,
         choices = c(
           "Dane odpowiadają hipotezie badawczej (mierzą to, co chcesz badać)" = "hyp",
-          "Wystarczająca liczba obserwacji (n ≥ 20-30 na grupę/podgrupę)" = "n",
-          "Mix typów zmiennych (ilościowe + jakościowe)" = "mix",
+          "Wystarczająca liczba obserwacji w każdej porównywanej grupie" = "n",
+          "Różne typy zmiennych (ilościowe i jakościowe)" = "mix",
           "Zmienność w danych (nie wszystko takie samo)" = "var",
           "Struktura danych pasuje do planowanych analiz" = "fit",
-          "Niezależność obserwacji (lub możliwość agregacji)" = "indep"
+          "Niezależność obserwacji (albo możliwość agregacji)" = "indep"
         )
       ),
-      tags$p(tags$strong(style = "color: var(--upwr-bursztyn);", "NAPRAWIALNE"),
-        " - wymagają pracy, ale się da:"),
+      tags$p(tags$strong(style = "color: var(--upwr-bursztyn);", "Naprawialne:"),
+        " wymagają pracy, ale się da"),
       checkboxGroupInput("intro_fixable", NULL,
         choices = c(
-          "Mało braków danych (< 5%)" = "missing",
+          "Niewiele braków danych" = "missing",
           "Jednoznaczne definicje zmiennych" = "def",
           "Brak błędów i podejrzanych wartości" = "errors"
         )
@@ -274,10 +476,16 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       uiOutput("intro_thermometer")
     ),
 
+    lc_p("Kryteria naprawialne nie rekompensują krytycznych. Zbiór bez
+      braków i błędów, ale z sześcioma obserwacjami albo z jedną wartością
+      w kluczowej zmiennej, nadal nie odpowie na pytanie badawcze. W kolejnych
+      dziesięciu rozdziałach tę samą listę przyłożymy do konkretnych zbiorów
+      danych."),
+
     lc_chapter_next(
       num = "02",
       title = "Szkoły w Kalifornii",
-      lead = "Pora przetestować tę wiedzę na prawdziwych zbiorach danych.",
+      lead = "Katalog sprawdzimy na dziesięciu zbiorach danych, zaczynając od wzorcowego.",
       target_id = "ch2"
     ),
 
@@ -286,7 +494,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
 
 ch1_server <- function(input, output, session) {
 
-  # --- Problem 1: Za malo danych ---
+  # --- Problem 1: Za mało danych ---
   output$cat1_table <- renderUI({
     dd_data_table(cat_small,
       types = c("id", "nominalna", "ciagla", "porzadkowa", "ciagla"))
@@ -303,7 +511,7 @@ ch1_server <- function(input, output, session) {
       theme_upwr(base_size = 14)
   }))
 
-  # --- Problem 2: Brak zmiennosci ---
+  # --- Problem 2: Brak zmienności ---
   output$cat2_table <- renderUI({
     dd_data_table(cat_novar,
       types = c("id", "porzadkowa", "ciagla", "ciagla", "nominalna"))
@@ -329,7 +537,7 @@ ch1_server <- function(input, output, session) {
       theme_upwr(base_size = 13)
   }))
 
-  # --- Problem 3: Bledy i literowki (toggle) ---
+  # --- Problem 3: Błędy i literówki (przełącznik) ---
   cat3_view <- reactiveVal("raw")
   observeEvent(input$cat3_raw, {
     cat3_view("raw")
@@ -380,7 +588,7 @@ ch1_server <- function(input, output, session) {
       theme_upwr(base_size = 14)
   }))
 
-  # --- Problem 4: Zle zdefiniowane zmienne (toggle) ---
+  # --- Problem 4: Źle zdefiniowane zmienne (przełącznik) ---
   cat4_view <- reactiveVal("raw")
   observeEvent(input$cat4_raw, {
     cat4_view("raw")
@@ -440,22 +648,16 @@ ch1_server <- function(input, output, session) {
   zoom_plot_server("cat5_plot", reactive({
     miss_pct <- sapply(cat_missing[, -1], function(x) mean(is.na(x)) * 100)
     df_miss <- data.frame(variable = names(miss_pct), pct = miss_pct)
-    df_miss$color <- ifelse(df_miss$pct > 20, data_bad, ifelse(df_miss$pct > 5, data_mixed, data_good))
 
-    ggplot(df_miss, aes(x = reorder(variable, -pct), y = pct, fill = color)) +
-      geom_col(width = 0.6) +
-      scale_fill_identity() +
+    ggplot(df_miss, aes(x = reorder(variable, -pct), y = pct)) +
+      geom_col(width = 0.6, fill = data_bad) +
       geom_text(aes(label = paste0(round(pct), "%")), vjust = -0.5, size = 5, fontface = "bold") +
-      geom_hline(yintercept = 5, linetype = "dashed", color = data_mixed) +
-      geom_hline(yintercept = 20, linetype = "dashed", color = data_bad) +
-      annotate("text", x = 3.5, y = 7, label = "5% = OK", color = data_mixed, size = 3.5) +
-      annotate("text", x = 3.5, y = 22, label = "20% = problem", color = data_bad, size = 3.5) +
       labs(x = NULL, y = "% braków (NA)") +
       theme_upwr(base_size = 14) +
       ylim(0, 35)
   }))
 
-  # --- Problem 6: Brak niezaleznosci (toggle) ---
+  # --- Problem 6: Brak niezależności (przełącznik) ---
   cat6_view <- reactiveVal("daily")
   observeEvent(input$cat6_daily, {
     cat6_view("daily")
@@ -506,7 +708,7 @@ ch1_server <- function(input, output, session) {
     }
   }))
 
-  # --- Problem 7: Zla struktura (toggle) ---
+  # --- Problem 7: Zła struktura (przełącznik) ---
   cat7_view <- reactiveVal("events")
   observeEvent(input$cat7_events, {
     cat7_view("events")

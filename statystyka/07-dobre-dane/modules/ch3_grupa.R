@@ -11,22 +11,56 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
                 którego nie da się naprawić kosmetyką: zbyt małe n."
     ),
 
-    lc_h2("sec-01", "Ankieta na grupie"),
+    lc_h2("sec-01", "Opis"),
 
-    div(class = "lc-prose",
-      p("Kolega zbiera dane do projektu. Dzień przed deadline'em pyta 8 znajomych
-        ze swojej grupy. Oto co uzyskał:")
-    ),
+    lc_p("Drugie studium przypadku to typowy projekt zaliczeniowy. Dzień przed
+      terminem oddania student pyta 8 znajomych o płeć, kierunek studiów,
+      liczbę godzin nauki w tygodniu, poziom stresu w skali od 1 do 10
+      i średnią ocen. Powstaje zbiór z 8 wierszami i 5 zmiennymi. Pytania,
+      które chciałby na nim zadać, brzmią rozsądnie: czy osoby uczące się
+      dłużej mają wyższą średnią, czy kobiety i mężczyźni różnią się poziomem
+      stresu, czy kierunki różnią się ocenami. Zanim przeczytasz dalej, oceń
+      sam, czy te dane pozwolą na nie odpowiedzieć."),
 
     lc_h2("sec-02", "Podgląd danych"),
 
-    div(class = "lc-figure-panel",
+    lc_p("W podglądzie policz, ile osób trafia do każdej grupy, którą
+      chciałbyś porównać."),
+
+    figure_panel(
+      label = "Tab. 3.1",
+      title = "Ankieta: 8 odpowiedzi",
       uiOutput("tab2_table")
     ),
 
+    lc_p("Same zmienne nie budzą zastrzeżeń: dwie jakościowe (płeć, kierunek)
+      i trzy ilościowe, bez braków i bez wartości spoza skali. Kłopot widać
+      dopiero po policzeniu osób w grupach. Kobiet i mężczyzn jest po 4,
+      a na kierunkach od 1 osoby (biologia) do 3 osób (psychologia).
+      Porównanie kierunków opierałoby się więc na pojedynczych odpowiedziach,
+      a porównanie płci na czterech osobach z każdej strony."),
+
     lc_h2("sec-03", "Ile obserwacji naprawdę potrzebujesz?"),
 
-    div(class = "lc-figure-panel",
+    lc_p("Z wykładu 03 wiemy, że precyzję oszacowania średniej opisuje
+      szerokość ", gloss("przedział ufności", "przedziału ufności"), ".
+      Zależy ona od rozrzutu danych i od liczby obserwacji:"),
+
+    lc_formula_box(withMathJax(
+      "$$\\text{szerokość} = 2 \\cdot t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$"
+    )),
+
+    lc_p("Z wykładu 04 wiemy z kolei, że ", gloss("moc testu"), " to
+      prawdopodobieństwo, że test wykryje różnicę, która naprawdę istnieje.
+      Panel pokazuje, jak od liczby obserwacji zależą trzy rzeczy: kształt
+      histogramu, szerokość 95% przedziału ufności dla średniej ocen (przy
+      odchyleniu standardowym 0.6) i moc testu t porównującego dwie
+      równoliczne grupy, gdy różnica średnich wynosi pół odchylenia
+      standardowego (d = 0.5)."),
+
+    figure_panel(
+      label = "Ryc. 3.1",
+      title = "Liczba obserwacji a precyzja i moc",
       lc_slider("tab2_n", "Liczba obserwacji", 5, 200, 8, 1),
       fluidRow(
         column(6, zoom_plot_ui("tab2_hist", height = "280px")),
@@ -35,25 +69,47 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
       zoom_plot_ui("tab2_power", height = "280px")
     ),
 
+    lc_p("Wszystkie trzy wykresy prowadzą do tego samego wniosku. Przy n = 8
+      histogram ma tylko kilka słupków i nie da się z niego odczytać kształtu
+      rozkładu. W naszej ankiecie średnia ocen wynosi 3.71, odchylenie
+      standardowe 0.62, a 95% przedział ufności rozciąga się od 3.20 do 4.23.
+      Ma ponad 1 punkt szerokości, czyli nie odróżnia grupy ze średnią
+      na poziomie 3.2 od grupy ze średnią 4.2. Szerokość
+      maleje proporcjonalnie do 1/√n, więc każde kolejne zawężenie kosztuje
+      coraz więcej obserwacji: przy 30 osobach przedział ma około 0.45 pkt
+      szerokości, a przy 100 osobach około 0.24 pkt."),
+
+    lc_p("Jeszcze gorzej wygląda moc. Przy 8 osobach, po 4 w każdej grupie,
+      test t wykrywa różnicę d = 0.5 tylko w około 9% przypadków. W dziewięciu
+      badaniach na dziesięć wynik byłby nieistotny, choć różnica istnieje.
+      Moc 80% wymaga około 64 osób w każdej grupie, czyli ponad 120 łącznie.
+      To problem „Za mało danych” z katalogu z rozdziału 1, i w tym zbiorze
+      dotyka on każdej analizy naraz."),
+
     lc_h2("sec-04", "Werdykt"),
 
-    div(class = "lc-feedback lc-feedback-danger",
-      tags$strong("Problem:"), " n = 8 to zdecydowanie za mało.",
-      tags$br(),
-      "Przy tak małej próbie ", gloss("moc testu"), " wynosi ok. 10-15% - nawet duża różnica ",
-      "między grupami będzie nieistotna statystycznie.",
-      tags$br(), tags$br(),
-      tags$strong("Zasada:"), " Liczy się n na grupę, nie n ogólne! ",
-      "Jeśli porównujesz 3 grupy i masz n = 30, to tylko 10 na grupę - wciąż za mało.",
-      tags$br(),
-      "Minimum 20-30 obserwacji w każdej podgrupie, którą chcesz analizować. ",
-      "Regresja z k ", gloss("predyktor", "predyktorami"), " potrzebuje n > 10k + 50."
-    ),
+    lc_p("Tego zbioru nie da się uratować czyszczeniem ani przekodowaniem, bo
+      brakuje w nim nie jakości, lecz informacji. Jedyną naprawą jest zebranie
+      większej liczby odpowiedzi, najlepiej po wcześniejszym oszacowaniu, ile
+      osób potrzeba do wykrycia różnicy, która nas interesuje. Przy tym
+      szacowaniu liczy się liczebność w każdej porównywanej grupie, a nie
+      łączna liczba wierszy: 30 osób podzielonych na trzy kierunki to tylko
+      po 10 osób na kierunek."),
+
+    lc_p("Z 8 odpowiedzi można co najwyżej opisać te konkretne osoby, na
+      przykład tabelą lub wykresem punktowym. Testy, przedziały ufności
+      i regresja wymagają uogólnienia na populację studentów, a ta
+      próba jest za mała i w dodatku dobrana spośród znajomych."),
+
+    inline_callout(label = "Werdykt",
+      "Zbiór do odrzucenia: przy 8 osobach żadna analiza wnioskująca nie da
+      wiarygodnego wyniku, a jedyną naprawą jest zebranie nowych danych."),
 
     lc_chapter_next(
       num = "04",
       title = "Pingwiny",
-      lead = "Zobaczmy teraz zbiór, który radzi sobie lepiej.",
+      lead = "Kolejny zbiór ma kilkaset obserwacji i drobne braki, które
+              da się uczciwie obsłużyć.",
       target_id = "ch4"
     ),
 
@@ -93,9 +149,7 @@ ch3_server <- function(input, output, session) {
       geom_line(color = data_bad, linewidth = 1.2) +
       geom_point(data = df_ci[df_ci$n == max(ns[ns <= input$tab2_n]), ],
                  color = data_bad, size = 4) +
-      geom_hline(yintercept = 0.5, linetype = "dashed", color = data_good) +
-      annotate("text", x = 150, y = 0.55, label = "Akceptowalna szerokość", color = data_good, size = 4) +
-      labs(x = "Liczba obserwacji (n)", y = "Szerokość CI") +
+      labs(x = "Liczba obserwacji (n)", y = "Szerokość przedziału ufności") +
       theme_upwr(base_size = 14)
   }))
 
@@ -117,8 +171,8 @@ ch3_server <- function(input, output, session) {
       geom_line(color = data_primary, linewidth = 1.2) +
       geom_point(data = df_pow[df_pow$n == max(ns[ns <= input$tab2_n]), ],
                  color = data_primary, size = 4) +
-      geom_hline(yintercept = 0.8, linetype = "dashed", color = data_good) +
-      annotate("text", x = 150, y = 0.83, label = "Moc = 80% (standard)", color = data_good, size = 4) +
+      geom_hline(yintercept = 0.8, linetype = "dashed", color = data_reference) +
+      annotate("text", x = 150, y = 0.83, label = "Moc 80%", color = data_reference, size = 4) +
       scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
       labs(x = "Liczba obserwacji (n)", y = "Moc testu") +
       theme_upwr(base_size = 14)
