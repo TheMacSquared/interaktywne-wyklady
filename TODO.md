@@ -139,10 +139,12 @@ Etap 3, bloki tekstu (handoff „Bloki v2”; komponenty i zasady są już we
 wspólnym `R/`, margines boczny usunięty, dawne callouty renderują się jako
 `lc_note()`):
 
-- [ ] Statyczne `lc_feedback()` w toku tekstu (Problem / Zasada / Werdykt /
-  Uwaga) → `lc_note()` albo `lc_warn()`; najwyżej jedna pułapka i jedna
-  „Zasada” na sekcję (statystyka ok. 280, statystyka 2 ok. 175, analiza
-  ryzyka ok. 50 wywołań, część z nich to `renderUI()` w widgetach).
+- [x] Statyczne `lc_feedback()` w toku tekstu → `lc_note()` / `lc_warn()` /
+  `lc_recap()`: statystyka (72) i analiza ryzyka 01 (8) zrobione 3 października
+  2026. Zostały: statyczne `lc_feedback()` wewnątrz paneli (analiza ryzyka
+  01, 02, 03, 04 — idą z punktem `lc_caption()`), wyjaśnienia konstruktorów
+  w statystyce 03 (`ch3_srednia.R`, `ch5_czynniki.R` — z punktem
+  `lc_status()`) i statystyka 2 (odłożona).
 - [ ] `lc_feedback()` w `renderUI()` pod widgetem → `lc_status()` /
   `lc_caption()` wewnątrz panelu.
 - [ ] Pogrubione wstępy `tags$strong("Przykład:" / "Kontrprzykład:" /
