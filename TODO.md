@@ -134,9 +134,6 @@ w statystyce 01–04 i 06, statystyce 2 i analizie ryzyka 01 i 08). Zostało:
   przebudowy — widget prawdopodobnie nie działa poprawnie. Na razie zostaje
   na kropkach (`lc_step_nav()`); przy przebudowie rozważyć
   `lc_step_widget(body = …)` albo schemat redukcji jako wykres.
-- [ ] Do potwierdzenia: statystyka 04 Ryc. 4.1 krok 2 i Ryc. 6.4 krok 3 — dawne
-  pudełko podpisane „p” pokazywało SE albo statystykę t; opis kroku podaje
-  teraz SE i t.
 - [ ] Do obejrzenia zmiany treści z migracji: nazwy kolorów w opisach
   dopasowane do ról (statystyka 01 Ryc. 4.2 „zacieniowany pas”, statystyka 03
   Ryc. 3.1–4.1, statystyka 04 „pionowa linia”); statystyka 04 Ryc. 7.1 pokazuje
