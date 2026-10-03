@@ -6,7 +6,7 @@ dozd_quiz <- list(questions = list(
   choices = c("Liczba oczekiwanych zdarzeń r" = "r", "Łączna liczba prób n" = "n", "Dokładny moment ostatniego zdarzenia" = "time"),
   correct = "r", explanation = "Eksperyment trwa do r-tego zdarzenia, więc liczba prób jest losowa."
 ),
-  list(question = "Przy p=0,1 ile wynosi średnia liczba wszystkich prób do trzeciej wady?",
+  list(question = "Przy p=0.1 ile wynosi średnia liczba wszystkich prób do trzeciej wady?",
     choices = c("3" = "a", "27" = "b", "30" = "c"), correct = "c",
     explanation = "E(X)=r/p=30; 27 to średnia liczba niepowodzeń przed trzecim sukcesem."),
   list(question = "R zwrócił 27 niepowodzeń przed trzecim sukcesem. Ile było wszystkich prób?",
@@ -21,10 +21,10 @@ dozd_quiz <- list(questions = list(
 ))
 dozd_exercises <- list(
   list(
-    task = "Bananpol: przy p=0,10 wyznacz średnią liczbę kontroli do znalezienia trzech wadliwych zabezpieczeń i P(ukończenia do 40. kontroli).",
+    task = "Bananpol: przy p=0.10 wyznacz średnią liczbę kontroli do znalezienia trzech wadliwych zabezpieczeń i P(ukończenia do 40. kontroli).",
     answer = c(
-      "E(X) = r/p = 3/0,10 = 30 kontroli.",
-      "Audyt kończy się do 40. kontroli wtedy i tylko wtedy, gdy w 40 kontrolach znajdziemy co najmniej 3 wady: P(X ≤ 40) = P(B ≥ 3) dla B ~ Bin(40; 0,10) = 1 − [P(B=0) + P(B=1) + P(B=2)] ≈ 0,777. Mimo limitu o jedną trzecią wyższego od średniej mniej więcej co piąta seria go przekroczy."
+      "E(X) = r/p = 3/0.10 = 30 kontroli.",
+      "Audyt kończy się do 40. kontroli wtedy i tylko wtedy, gdy w 40 kontrolach znajdziemy co najmniej 3 wady: P(X ≤ 40) = P(B ≥ 3) dla B ~ Bin(40; 0.10) = 1 - [P(B=0) + P(B=1) + P(B=2)] ≈ 0.777. Mimo limitu o jedną trzecią wyższego od średniej mniej więcej co piąta seria go przekroczy."
     )
   ),
   list(
@@ -35,22 +35,22 @@ dozd_exercises <- list(
     )
   ),
   list(
-    task = "Transfer: audyt procedur BHP wykrywa naruszenie w pojedynczym audycie z prawdopodobieństwem p=0,05. Ile audytów zaplanować, żeby z prawdopodobieństwem co najmniej 90% zaobserwować dwa naruszenia?",
+    task = "Transfer: audyt procedur BHP wykrywa naruszenie w pojedynczym audycie z prawdopodobieństwem p=0.05. Ile audytów zaplanować, żeby z prawdopodobieństwem co najmniej 90% zaobserwować dwa naruszenia?",
     answer = c(
-      "Reguła zatrzymania: r = 2 naruszenia, więc X ~ ujemny dwumianowy z r = 2 i p = 0,05. Średnia: E(X) = 2/0,05 = 40 audytów.",
-      "Szukamy najmniejszego n, dla którego P(X ≤ n) ≥ 0,90. W R: qnbinom(0.9, size = 2, prob = 0.05) + 2 = 77. Plan na 90% wymaga niemal dwukrotności średniej."
+      "Reguła zatrzymania: r = 2 naruszenia, więc X ~ ujemny dwumianowy z r = 2 i p = 0.05. Średnia: E(X) = 2/0.05 = 40 audytów.",
+      "Szukamy najmniejszego n, dla którego P(X ≤ n) ≥ 0.90. W R: qnbinom(0.9, size = 2, prob = 0.05) + 2 = 77. Plan na 90% wymaga niemal dwukrotności średniej."
     )
   ),
   list(
-    task = "Geometryczny: przy p=0,10 oblicz prawdopodobieństwo, że pierwsza wada nie pojawi się w pierwszych 30 kontrolach. Czy taki wynik audytu byłby mocnym dowodem, że p < 0,10?",
+    task = "Geometryczny: przy p=0.10 oblicz prawdopodobieństwo, że pierwsza wada nie pojawi się w pierwszych 30 kontrolach. Czy taki wynik audytu byłby mocnym dowodem, że p < 0.10?",
     answer = c(
-      "P(X > 30) = (1 − p)^30 = 0,9^30 ≈ 0,042.",
-      "To mniej niż 5%, więc wynik jest mało prawdopodobny przy p = 0,10 i przemawia za niższym p. Nie jest jednak dowodem: zdarza się w mniej więcej jednej serii na 24. Decyzja wymaga jawnego kryterium, a nie samego wrażenia „długo nic”."
+      "P(X > 30) = (1 - p)^30 = 0.9^30 ≈ 0.042.",
+      "To mniej niż 5%, więc wynik jest mało prawdopodobny przy p = 0.10 i przemawia za niższym p. Nie jest jednak dowodem: zdarza się w mniej więcej jednej serii na 24. Decyzja wymaga jawnego kryterium, a nie samego wrażenia „długo nic”."
     )
   ),
   list(
-    task = "Brak pamięci: po 15 kontrolach bez wykrycia kierownik mówi: „wada musi się zaraz pojawić”. Oblicz P(wykrycia w kolejnych 5 kontrolach) przy p=0,10 i porównaj z prawdopodobieństwem wykrycia w pierwszych 5 kontrolach audytu.",
-    answer = "Z własności braku pamięci oba prawdopodobieństwa są równe: 1 − 0,9^5 ≈ 0,410. Piętnaście kontroli bez wykrycia nie przybliża wykrycia — przy stałym p i niezależności proces „zaczyna się od nowa” po każdej kontroli."
+    task = "Brak pamięci: po 15 kontrolach bez wykrycia kierownik mówi: „wada musi się zaraz pojawić”. Oblicz P(wykrycia w kolejnych 5 kontrolach) przy p=0.10 i porównaj z prawdopodobieństwem wykrycia w pierwszych 5 kontrolach audytu.",
+    answer = "Z własności braku pamięci oba prawdopodobieństwa są równe: 1 - 0.9^5 ≈ 0.410. Piętnaście kontroli bez wykrycia nie przybliża wykrycia — przy stałym p i niezależności proces „zaczyna się od nowa” po każdej kontroli."
   )
 )
 
@@ -88,7 +88,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
     ),
     callout = list(
       label = "Dane Bananpolu",
-      text = "Audyt zabezpieczeń ładunku: prawdopodobieństwo, że losowo wybrana paleta ma wadliwe zabezpieczenie, wynosi 0,10; cel audytu to r = 3 wykryte wady. Jednostka: kontrola jednej palety; horyzont: jedna seria audytowa. Liczby są fikcyjne.",
+      text = "Audyt zabezpieczeń ładunku: prawdopodobieństwo, że losowo wybrana paleta ma wadliwe zabezpieczenie, wynosi 0.10; cel audytu to r = 3 wykryte wady. Jednostka: kontrola jednej palety; horyzont: jedna seria audytowa. Liczby są fikcyjne.",
       color = "uwaga"
     ),
     sections = list(
@@ -106,7 +106,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
           )),
           "Te same próby, z tym samym p, mogą więc prowadzić do dwóch różnych zmiennych losowych. Rozkład dwumianowy z poprzedniego wykładu opisuje pierwszą regułę. Ten wykład dotyczy drugiej. Zanim przejdziemy do wzorów, sprawdź, czy potrafisz wskazać regułę w konkretnym planie audytu.",
           risk_vote_panel("d5_vote", "d5_vote_feedback", "Chcemy znaleźć trzy wadliwe zabezpieczenia. Który element eksperymentu jest stały?", c("r=3 znalezione wady" = "r", "n — liczba kontroli" = "n", "odsetek wad w zebranej próbie" = "share")),
-          "Kuszącą odpowiedzią jest odsetek wad: przecież p = 0,10 jest stałe. Ale p to parametr modelu, a nie element planu eksperymentu. Odsetek wad w zebranej próbie jest wynikiem i zmienia się od serii do serii. Plan audytu ustala tylko jedno: kończymy po trzeciej wykrytej wadzie."
+          "Kuszącą odpowiedzią jest odsetek wad: przecież p = 0.10 jest stałe. Ale p to parametr modelu, a nie element planu eksperymentu. Odsetek wad w zebranej próbie jest wynikiem i zmienia się od serii do serii. Plan audytu ustala tylko jedno: kończymy po trzeciej wykrytej wadzie."
         )
       ),
       list(
@@ -148,16 +148,16 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
     id = "geometryczny", title = "Rozkład geometryczny", hook = "Pierwsze wykrycie bywa szybkie albo bardzo późne", lead = "Rozkład geometryczny ma długi ogon: sukces może nadejść szybko albo bardzo późno.",
     intro = c(
       "Najprostsza wersja pytania: ile kontroli do pierwszej wady? Zanim padnie jakikolwiek wzór, zbuduj wyczucie — uruchom symulację kilka razy i obserwuj kształt histogramu: gdzie jest szczyt, jak długo ciągnie się ogon, jak często seria kończy się już przy pierwszych kontrolach.",
-      "Dwie rzeczy powinny zwrócić uwagę. Najbardziej prawdopodobna jest zawsze pierwsza kontrola, a każda kolejna coraz mniej — mimo to średnia bywa myląca: przy p = 0,10 średnio czekamy 10 kontroli, ale co dziesiąta seria przekroczy 22 kontrole."
+      "Dwie rzeczy powinny zwrócić uwagę. Najbardziej prawdopodobna jest zawsze pierwsza kontrola, a każda kolejna coraz mniej — mimo to średnia bywa myląca: przy p = 0.10 średnio czekamy 10 kontroli, ale co dziesiąta seria przekroczy 22 kontrole."
     ),
     sections = list(
       list(
         id = "symulacja", title = "Symulacja: jak długo czekamy?",
         body = list(
-          risk_try("zostaw p = 0,10 i kliknij „Losuj ponownie” kilka razy. Zapisz, gdzie leży najwyższy słupek i jak daleko sięga najdłuższa seria. Potem zmień p na 0,30 i na 0,03."),
+          risk_try("zostaw p = 0.10 i kliknij „Losuj ponownie” kilka razy. Zapisz, gdzie leży najwyższy słupek i jak daleko sięga najdłuższa seria. Potem zmień p na 0.30 i na 0.03."),
           risk_widget_panel("Symulacja", "Ile kontroli do pierwszej wady?", tagList(lc_slider("d5_geo_p", "Prawdopodobieństwo wady p", .01, .5, .1, .01), lc_action("d5_geo_run", "Losuj ponownie", icon = "shuffle")), "d5_geo", "d5_geo_stats"),
           c(
-            "Niezależnie od p najwyższy słupek stoi przy pierwszej kontroli. Kolejne słupki systematycznie maleją, ale bardzo powoli, gdy p jest małe. Pojedyncze serie ciągną się kilka razy dłużej niż średnia. Przy p = 0,03 średni czas oczekiwania to około 33 kontroli, a najdłuższe serie wychodzą poza prawą krawędź wykresu, czyli ponad 80 kontroli.",
+            "Niezależnie od p najwyższy słupek stoi przy pierwszej kontroli. Kolejne słupki systematycznie maleją, ale bardzo powoli, gdy p jest małe. Pojedyncze serie ciągną się kilka razy dłużej niż średnia. Przy p = 0.03 średni czas oczekiwania to około 33 kontroli, a najdłuższe serie wychodzą poza prawą krawędź wykresu, czyli ponad 80 kontroli.",
             "Te obserwacje mają proste wyjaśnienie rachunkowe, które wyprowadzimy w następnej sekcji. Warto je jednak najpierw zobaczyć: w planowaniu zasobów to właśnie długi ogon, a nie średnia, sprawia kłopot."
           )
         )
@@ -166,28 +166,28 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
         id = "wzor", title = "Wzór na pierwsze wykrycie",
         body = list(
           c(
-            "Oznaczmy przez X numer kontroli, w której pojawia się pierwsza wada. Zdarzenie {X = x} zachodzi dokładnie wtedy, gdy pierwsze x − 1 kontroli kończy się bez wykrycia, a x-ta kontrola wykrywa wadę. Z niezależności prób prawdopodobieństwo takiej drogi to iloczyn prawdopodobieństw wzdłuż niej — ten sam mechanizm, który w wykładzie o warunkach stosowaliśmy do drzewa zdarzeń."
+            "Oznaczmy przez X numer kontroli, w której pojawia się pierwsza wada. Zdarzenie {X = x} zachodzi dokładnie wtedy, gdy pierwsze x - 1 kontroli kończy się bez wykrycia, a x-ta kontrola wykrywa wadę. Z niezależności prób prawdopodobieństwo takiej drogi to iloczyn prawdopodobieństw wzdłuż niej — ten sam mechanizm, który w wykładzie o warunkach stosowaliśmy do drzewa zdarzeń."
           ),
           risk_definition("5.2", "Rozkład geometryczny", c(
             "Zmienna X ma rozkład geometryczny z parametrem p (0 < p ≤ 1), jeśli przyjmuje wartości 1, 2, 3, … z prawdopodobieństwami danymi wzorem (5.1). X to numer próby, w której w schemacie Bernoulliego pojawia się pierwszy sukces."
           )),
           risk_formula("P(X=x)=(1-p)^{x-1}\\,p,\\qquad x=1,2,3,\\ldots", num = "5.1",
-            legend = c("x" = "numer kontroli z pierwszym wykryciem", "p" = "prawdopodobieństwo wykrycia w jednej kontroli", "(1-p)^{x-1}" = "prawdopodobieństwo x − 1 kontroli bez wykrycia z rzędu")),
+            legend = c("x" = "numer kontroli z pierwszym wykryciem", "p" = "prawdopodobieństwo wykrycia w jednej kontroli", "(1-p)^{x-1}" = "prawdopodobieństwo x - 1 kontroli bez wykrycia z rzędu")),
           c(
-            "Wzór od razu tłumaczy kształt histogramu z symulacji. Iloraz sąsiednich prawdopodobieństw jest stały: P(X = x + 1) / P(X = x) = 1 − p. Każdy słupek jest więc poprzednim pomnożonym przez 1 − p. Przy p = 0,10 słupki maleją zaledwie o 10% na krok — stąd powolne opadanie i długi ogon.",
+            "Wzór od razu tłumaczy kształt histogramu z symulacji. Iloraz sąsiednich prawdopodobieństw jest stały: P(X = x + 1) / P(X = x) = 1 - p. Każdy słupek jest więc poprzednim pomnożonym przez 1 - p. Przy p = 0.10 słupki maleją zaledwie o 10% na krok — stąd powolne opadanie i długi ogon.",
             "Do planowania częściej niż pojedyncze słupki potrzebne jest prawdopodobieństwo, że czekamy dłużej niż x kontroli. Tu przydaje się trik z dopełnieniem: X > x oznacza dokładnie tyle, że pierwsze x kontroli nie wykryło niczego."
           ),
           risk_formula("P(X>x)=(1-p)^{x},\\qquad P(X\\le x)=1-(1-p)^{x}", num = "5.2"),
           "Średnia i wariancja rozkładu geometrycznego mają proste postaci:",
           risk_formula("E(X)=\\frac{1}{p},\\qquad \\operatorname{Var}(X)=\\frac{1-p}{p^{2}}", num = "5.3"),
           risk_derivation("E(X) = 1/p", c(
-            "Najkrótsze uzasadnienie wykorzystuje analizę pierwszego kroku. Pierwsza kontrola zawsze się odbywa. Z prawdopodobieństwem p kończy serię; z prawdopodobieństwem 1 − p nic nie wykrywa i — dzięki niezależności — sytuacja zaczyna się od nowa, z tą samą oczekiwaną liczbą dalszych kontroli.",
+            "Najkrótsze uzasadnienie wykorzystuje analizę pierwszego kroku. Pierwsza kontrola zawsze się odbywa. Z prawdopodobieństwem p kończy serię; z prawdopodobieństwem 1 - p nic nie wykrywa i — dzięki niezależności — sytuacja zaczyna się od nowa, z tą samą oczekiwaną liczbą dalszych kontroli.",
             "Oznaczając m = E(X), dostajemy równanie, które ma jedno rozwiązanie:"
-          ), lines = c("m = 1 + (1 − p) · m", "m − (1 − p) · m = 1", "p · m = 1", "m = 1/p")),
-          "Wzór (5.3) mówi coś intuicyjnego: przy p = 0,10 wada trafia się średnio raz na dziesięć kontroli, więc średnio czekamy dziesięć kontroli. Wariancja jest jednak duża — odchylenie standardowe przy p = 0,10 to około 9,5 kontroli, prawie tyle co średnia. Średnia sama nie opisuje ryzyka długiego czekania.",
+          ), lines = c("m = 1 + (1 - p) · m", "m - (1 - p) · m = 1", "p · m = 1", "m = 1/p")),
+          "Wzór (5.3) mówi coś intuicyjnego: przy p = 0.10 wada trafia się średnio raz na dziesięć kontroli, więc średnio czekamy dziesięć kontroli. Wariancja jest jednak duża — odchylenie standardowe przy p = 0.10 to około 9.5 kontroli, prawie tyle co średnia. Średnia sama nie opisuje ryzyka długiego czekania.",
           risk_example("5.2", "Pierwsza wada w audycie Bananpolu",
             problem = list(
-              "Przy p = 0,10 oblicz:",
+              "Przy p = 0.10 oblicz:",
               risk_parts(
                 "P(X = 1) i P(X = 3).",
                 "Prawdopodobieństwo znalezienia wady najpóźniej w 10. kontroli; porównaj wynik z tym, co sugeruje średnia E(X) = 10.",
@@ -195,19 +195,19 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
               )
             ),
             steps = c(
-              "Ze wzoru (5.1): P(X = 1) = 0,10; P(X = 3) = 0,9² · 0,1 = 0,081.",
-              "Ze wzoru (5.2): P(X ≤ 10) = 1 − 0,9¹⁰ ≈ 1 − 0,349 = 0,651. Mediana to najmniejsze x, dla którego P(X ≤ x) ≥ 0,5: 0,9⁶ ≈ 0,531, a 0,9⁷ ≈ 0,478, więc mediana wynosi 7 — wyraźnie mniej niż średnia 10.",
-              "P(X > 22) = 0,9²² ≈ 0,098 — mniej więcej co dziesiąta seria."
+              "Ze wzoru (5.1): P(X = 1) = 0.10; P(X = 3) = 0.9² · 0.1 = 0.081.",
+              "Ze wzoru (5.2): P(X ≤ 10) = 1 - 0.9¹⁰ ≈ 1 - 0.349 = 0.651. Mediana to najmniejsze x, dla którego P(X ≤ x) ≥ 0.5: 0.9⁶ ≈ 0.531, a 0.9⁷ ≈ 0.478, więc mediana wynosi 7 — wyraźnie mniej niż średnia 10.",
+              "P(X > 22) = 0.9²² ≈ 0.098 — mniej więcej co dziesiąta seria."
             ),
             steps_type = "a",
             answer = "W 65% serii wada pojawia się do 10. kontroli, a połowa serii kończy się do 7. kontroli. Średnią 10 podnoszą rzadkie, bardzo długie serie z prawego ogona."
           ),
           risk_check("d5_chk_geo",
-            "Przy p = 0,10 która wartość jest bardziej prawdopodobna: X = 1 czy X = 10?",
+            "Przy p = 0.10 która wartość jest bardziej prawdopodobna: X = 1 czy X = 10?",
             c("X = 1" = "one", "X = 10, bo to średnia" = "ten", "Są jednakowo prawdopodobne" = "equal"),
             correct = "one",
-            explanation = "P(X = 1) = 0,1, a P(X = 10) = 0,9⁹ · 0,1 ≈ 0,039. W rozkładzie geometrycznym najbardziej prawdopodobna jest zawsze pierwsza próba; średnia nie jest wartością najczęstszą.",
-            hints = c(ten = "Średnia nie musi być wartością najbardziej prawdopodobną. Porównaj słupki ze wzoru (5.1).", equal = "Każdy kolejny słupek to poprzedni pomnożony przez 1 − p.")
+            explanation = "P(X = 1) = 0.1, a P(X = 10) = 0.9⁹ · 0.1 ≈ 0.039. W rozkładzie geometrycznym najbardziej prawdopodobna jest zawsze pierwsza próba; średnia nie jest wartością najczęstszą.",
+            hints = c(ten = "Średnia nie musi być wartością najbardziej prawdopodobną. Porównaj słupki ze wzoru (5.1).", equal = "Każdy kolejny słupek to poprzedni pomnożony przez 1 - p.")
           )
         )
       ),
@@ -219,15 +219,15 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             "Formalnie: jeśli wiemy, że pierwsze s kontroli nic nie wykryło, prawdopodobieństwo czekania jeszcze ponad t kontroli jest takie samo, jak prawdopodobieństwo czekania ponad t kontroli od początku."
           ),
           risk_formula("P(X>s+t\\mid X>s)=P(X>t)", num = "5.4"),
-          "Dowód wymaga tylko definicji prawdopodobieństwa warunkowego z wykładu 02 i wzoru (5.2). Zdarzenie {X > s + t} zawiera się w {X > s}, więc ich iloczyn to po prostu {X > s + t}. Stąd P(X > s + t | X > s) = P(X > s + t) / P(X > s) = (1 − p)^(s+t) / (1 − p)^s = (1 − p)^t = P(X > t).",
+          "Dowód wymaga tylko definicji prawdopodobieństwa warunkowego z wykładu 02 i wzoru (5.2). Zdarzenie {X > s + t} zawiera się w {X > s}, więc ich iloczyn to po prostu {X > s + t}. Stąd P(X > s + t | X > s) = P(X > s + t) / P(X > s) = (1 - p)^(s+t) / (1 - p)^s = (1 - p)^t = P(X > t).",
           risk_example("5.3", "Dwadzieścia kontroli bez wykrycia",
-            problem = "Audyt przy p = 0,10 trwa już 20 kontroli i nie wykrył żadnej wady. Jakie jest prawdopodobieństwo, że wada pojawi się w ciągu kolejnych 10 kontroli? Jak częsta jest w ogóle seria 20 kontroli bez wykrycia?",
+            problem = "Audyt przy p = 0.10 trwa już 20 kontroli i nie wykrył żadnej wady. Jakie jest prawdopodobieństwo, że wada pojawi się w ciągu kolejnych 10 kontroli? Jak częsta jest w ogóle seria 20 kontroli bez wykrycia?",
             steps = c(
-              "Z braku pamięci (5.4): P(X ≤ 30 | X > 20) = 1 − P(X > 30 | X > 20) = 1 − P(X > 10) = 1 − 0,9¹⁰ ≈ 0,651.",
+              "Z braku pamięci (5.4): P(X ≤ 30 | X > 20) = 1 - P(X > 30 | X > 20) = 1 - P(X > 10) = 1 - 0.9¹⁰ ≈ 0.651.",
               "To dokładnie ta sama liczba co w przykładzie 5.2(b): szansa wykrycia w najbliższych 10 kontrolach nie zależy od tego, ile już czekaliśmy.",
-              "Sama seria 20 kontroli bez wykrycia: P(X > 20) = 0,9²⁰ ≈ 0,122 — zdarza się w mniej więcej jednym audycie na osiem."
+              "Sama seria 20 kontroli bez wykrycia: P(X > 20) = 0.9²⁰ ≈ 0.122 — zdarza się w mniej więcej jednym audycie na osiem."
             ),
-            answer = "Około 0,65, tak samo jak na początku audytu. Seria 20 kontroli bez wykrycia nie jest ani rzadka, ani nie „zbliża” wykrycia."
+            answer = "Około 0.65, tak samo jak na początku audytu. Seria 20 kontroli bez wykrycia nie jest ani rzadka, ani nie „zbliża” wykrycia."
           ),
           "Brak pamięci jest własnością modelu, a nie świata. Jeśli kontroler się męczy, jeśli palety są ustawione w kolejności dostaw albo jeśli wady występują skupiskami, historia serii niesie informację i model geometryczny przestaje obowiązywać. Do tych założeń wrócimy w rozdziale o tym, kiedy model zawodzi."
         )
@@ -239,7 +239,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
     id = "rte", title = "Rozkład ujemny dwumianowy", hook = "Trzy wykrycia to trzy kolejki czekania", lead = "Łączna liczba prób jest sumą czasów oczekiwania na kolejne wykrycia, a oprogramowanie może liczyć ją na dwa sposoby.",
     intro = c(
       "Audytor potrzebuje trzech wykrytych wad, nie jednej. Oczekiwanie na trzecią wadę to trzy sklejone oczekiwania geometryczne: do pierwszej, potem do drugiej, potem do trzeciej. Suma tych trzech czasów ma rozkład ujemny dwumianowy.",
-      "Współczynnik we wzorze zlicza układy: ostatnia, x-ta kontrola musi zakończyć się wykryciem, a wcześniejsze r−1 wykryć może rozmieścić się dowolnie wśród x−1 poprzednich kontroli. Porównaj kształt rozkładu z geometrycznym: im większe r, tym rozkład bardziej symetryczny i dalszy od zera."
+      "Współczynnik we wzorze zlicza układy: ostatnia, x-ta kontrola musi zakończyć się wykryciem, a wcześniejsze r-1 wykryć może rozmieścić się dowolnie wśród x-1 poprzednich kontroli. Porównaj kształt rozkładu z geometrycznym: im większe r, tym rozkład bardziej symetryczny i dalszy od zera."
     ),
     sections = list(
       list(
@@ -251,45 +251,45 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
           ),
           risk_formula("E(X)=\\frac{r}{p},\\qquad \\operatorname{Var}(X)=\\frac{r(1-p)}{p^{2}}", num = "5.5",
             legend = c("r" = "liczba wykryć, na którą czekamy", "p" = "prawdopodobieństwo wykrycia w jednej kontroli")),
-          "Dla audytu Bananpolu (r = 3, p = 0,10): E(X) = 30 kontroli, Var(X) = 270, odchylenie standardowe około 16,4 kontroli. Rozrzut względem średniej jest mniejszy niż w rozkładzie geometrycznym — dodawanie niezależnych oczekiwań częściowo uśrednia pecha i szczęście — ale wciąż duży."
+          "Dla audytu Bananpolu (r = 3, p = 0.10): E(X) = 30 kontroli, Var(X) = 270, odchylenie standardowe około 16.4 kontroli. Rozrzut względem średniej jest mniejszy niż w rozkładzie geometrycznym — dodawanie niezależnych oczekiwań częściowo uśrednia pecha i szczęście — ale wciąż duży."
         )
       ),
       list(
         id = "rozklad", title = "Wzór na r-te wykrycie",
         body = list(
           c(
-            "Średnia to za mało do planowania; potrzebujemy całego rozkładu. Zdarzenie {X = x} — trzecia wada pojawia się dokładnie w x-tej kontroli — rozkłada się na dwa niezależne warunki. Po pierwsze, x-ta kontrola wykrywa wadę (prawdopodobieństwo p). Po drugie, wśród wcześniejszych x − 1 kontroli jest dokładnie r − 1 wykryć. Drugi warunek to rozkład dwumianowy z poprzedniego wykładu: C(x−1, r−1) · p^(r−1) · (1 − p)^(x−r). Mnożąc oba czynniki, dostajemy wzór (5.6)."
+            "Średnia to za mało do planowania; potrzebujemy całego rozkładu. Zdarzenie {X = x} — trzecia wada pojawia się dokładnie w x-tej kontroli — rozkłada się na dwa niezależne warunki. Po pierwsze, x-ta kontrola wykrywa wadę (prawdopodobieństwo p). Po drugie, wśród wcześniejszych x - 1 kontroli jest dokładnie r - 1 wykryć. Drugi warunek to rozkład dwumianowy z poprzedniego wykładu: C(x-1, r-1) · p^(r-1) · (1 - p)^(x-r). Mnożąc oba czynniki, dostajemy wzór (5.6)."
           ),
           risk_definition("5.3", "Rozkład ujemny dwumianowy", c(
             "Zmienna X ma rozkład ujemny dwumianowy z parametrami r (liczba całkowita, r ≥ 1) i p (0 < p ≤ 1), jeśli przyjmuje wartości r, r + 1, r + 2, … z prawdopodobieństwami danymi wzorem (5.6). X to numer próby, w której w schemacie Bernoulliego pojawia się r-ty sukces."
           )),
           risk_formula("P(X=x)=\\binom{x-1}{r-1}p^{r}(1-p)^{x-r},\\qquad x=r,r+1,\\ldots", num = "5.6",
-            legend = c("\\binom{x-1}{r-1}" = "liczba sposobów rozmieszczenia r − 1 wcześniejszych wykryć wśród x − 1 kontroli", "p^{r}" = "r kontroli z wykryciem", "(1-p)^{x-r}" = "x − r kontroli bez wykrycia")),
+            legend = c("\\binom{x-1}{r-1}" = "liczba sposobów rozmieszczenia r - 1 wcześniejszych wykryć wśród x - 1 kontroli", "p^{r}" = "r kontroli z wykryciem", "(1-p)^{x-r}" = "x - r kontroli bez wykrycia")),
           risk_example("5.4", "Trzecia wada w konkretnej kontroli",
             problem = list(
-              "Przy p = 0,10 i r = 3 oblicz:",
+              "Przy p = 0.10 i r = 3 oblicz:",
               risk_parts(
                 "Prawdopodobieństwo, że trzecia wada pojawi się dokładnie w 5. kontroli, wypisując wszystkie sprzyjające układy.",
                 "Prawdopodobieństwo, że trzecia wada pojawi się dokładnie w 30. kontroli."
               )
             ),
             steps = c(
-              "Piąta kontrola musi wykryć wadę; dwa wcześniejsze wykrycia mieszczą się wśród kontroli 1–4. Możliwe pary pozycji: {1,2}, {1,3}, {1,4}, {2,3}, {2,4}, {3,4} — to C(4, 2) = 6 układów. Każdy układ ma 3 wykrycia i 2 kontrole bez wykrycia, więc prawdopodobieństwo każdego to 0,1³ · 0,9² = 0,00081. Razem: 6 · 0,00081 = 0,00486.",
-              "C(29, 2) = 406 układów; każdy ma prawdopodobieństwo 0,1³ · 0,9²⁷ ≈ 0,001 · 0,0581. Razem: 406 · 0,0000581 ≈ 0,0236."
+              "Piąta kontrola musi wykryć wadę; dwa wcześniejsze wykrycia mieszczą się wśród kontroli 1–4. Możliwe pary pozycji: {1,2}, {1,3}, {1,4}, {2,3}, {2,4}, {3,4} — to C(4, 2) = 6 układów. Każdy układ ma 3 wykrycia i 2 kontrole bez wykrycia, więc prawdopodobieństwo każdego to 0.1³ · 0.9² = 0.00081. Razem: 6 · 0.00081 = 0.00486.",
+              "C(29, 2) = 406 układów; każdy ma prawdopodobieństwo 0.1³ · 0.9²⁷ ≈ 0.001 · 0.0581. Razem: 406 · 0.0000581 ≈ 0.0236."
             ),
             steps_type = "a",
-            answer = "(a) około 0,005; (b) około 0,024. Nawet wartość równa średniej ma małe prawdopodobieństwo — rozkład rozciąga się na kilkadziesiąt możliwych wartości."
+            answer = "(a) około 0.005; (b) około 0.024. Nawet wartość równa średniej ma małe prawdopodobieństwo — rozkład rozciąga się na kilkadziesiąt możliwych wartości."
           ),
           risk_try("ustaw r = 1 i porównaj wykres z histogramem z rozdziału o pierwszym wykryciu. Potem zwiększaj r do 10 przy stałym p i obserwuj, jak przesuwa się szczyt i zmienia symetria."),
           risk_widget_panel("Rozkład", "Łączna liczba kontroli", tagList(lc_slider("d5_p", "p wykrycia", .01, .5, .1, .01), lc_slider("d5_r", "r", 1, 10, 3, 1)), "d5_nb", "d5_nb_stats"),
           c(
-            "Dla r = 3 i p = 0,10 najwyższe słupki stoją przy 20 i 21 kontrolach, mediana wynosi 27, a średnia 30. Trzy różne „środki” rozkładu leżą w różnych miejscach, bo rozkład jest prawostronnie skośny. W miarę wzrostu r skośność maleje, a kształt coraz bardziej przypomina dzwon — to zapowiedź rozkładu normalnego z następnego wykładu."
+            "Dla r = 3 i p = 0.10 najwyższe słupki stoją przy 20 i 21 kontrolach, mediana wynosi 27, a średnia 30. Trzy różne „środki” rozkładu leżą w różnych miejscach, bo rozkład jest prawostronnie skośny. W miarę wzrostu r skośność maleje, a kształt coraz bardziej przypomina dzwon — to zapowiedź rozkładu normalnego z następnego wykładu."
           ),
           risk_check("d5_chk_nb",
-            "Dlaczego we wzorze (5.6) jest C(x−1, r−1), a nie C(x, r)?",
+            "Dlaczego we wzorze (5.6) jest C(x-1, r-1), a nie C(x, r)?",
             c("Bo ostatnia, x-ta kontrola musi być wykryciem" = "last", "Bo pierwsza kontrola nigdy nie wykrywa wady" = "first", "To tylko inna konwencja zapisu, wynik jest ten sam" = "same"),
             correct = "last",
-            explanation = "Pozycja ostatniego wykrycia jest wymuszona przez regułę zatrzymania. Swobodnie rozmieszczamy tylko r − 1 wcześniejszych wykryć wśród x − 1 wcześniejszych kontroli.",
+            explanation = "Pozycja ostatniego wykrycia jest wymuszona przez regułę zatrzymania. Swobodnie rozmieszczamy tylko r - 1 wcześniejszych wykryć wśród x - 1 wcześniejszych kontroli.",
             hints = c(first = "Pierwsza kontrola może wykryć wadę. Który element serii jest wymuszony przez regułę zatrzymania?", same = "C(x, r) liczyłoby też układy, w których r-te wykrycie nastąpiło przed x-tą kontrolą — audyt skończyłby się wcześniej.")
           )
         ),
@@ -299,18 +299,18 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
         id = "parametryzacje", title = "Dwie parametryzacje",
         text = c(
           "Podręczniki i biblioteki liczą ten sam rozkład na dwa sposoby: jako łączną liczbę prób X albo jako liczbę niepowodzeń Y przed r-tym sukcesem. Funkcje R z rodziny nbinom używają drugiej konwencji — dlatego w kodzie tego kursu do wyniku dodaje się r. Obie wersje opisują tę samą serię kontroli; różnią się tylko tym, co liczą.",
-          "Jeżeli znaleziono r zdarzeń po X wszystkich próbach, liczba wcześniejszych niepowodzeń wynosi X−r. Przeliczenie jest trywialne, ale tylko wtedy, gdy wiadomo, którą wielkość podaje źródło — w raporcie zawsze nazwij, co oznacza oś."
+          "Jeżeli znaleziono r zdarzeń po X wszystkich próbach, liczba wcześniejszych niepowodzeń wynosi X-r. Przeliczenie jest trywialne, ale tylko wtedy, gdy wiadomo, którą wielkość podaje źródło — w raporcie zawsze nazwij, co oznacza oś."
         ),
         formula = "X_{wszystkie}=Y_{niepowodzenia}+r",
         body = list(
           risk_example("5.5", "Co zwraca R?",
-            problem = "Wywołanie dnbinom(27, size = 3, prob = 0.1) zwraca około 0,0236, a qnbinom(0.5, size = 3, prob = 0.1) zwraca 24. Zinterpretuj oba wyniki w języku audytu Bananpolu.",
+            problem = "Wywołanie dnbinom(27, size = 3, prob = 0.1) zwraca około 0.0236, a qnbinom(0.5, size = 3, prob = 0.1) zwraca 24. Zinterpretuj oba wyniki w języku audytu Bananpolu.",
             steps = c(
               "R liczy Y — liczbę kontroli bez wykrycia przed trzecim wykryciem. dnbinom(27, …) to P(Y = 27).",
-              "Y = 27 oznacza X = 27 + 3 = 30 kontroli łącznie. Wynik 0,0236 zgadza się z przykładem 5.4(b).",
+              "Y = 27 oznacza X = 27 + 3 = 30 kontroli łącznie. Wynik 0.0236 zgadza się z przykładem 5.4(b).",
               "qnbinom(0.5, …) = 24 to mediana Y. Mediana łącznej liczby kontroli to 24 + 3 = 27."
             ),
-            answer = "Prawdopodobieństwo, że audyt skończy się dokładnie na 30. kontroli, to około 0,024; mediana czasu audytu to 27 kontroli. Bez dodania r do kwantyla plan byłby zaniżony o trzy kontrole."
+            answer = "Prawdopodobieństwo, że audyt skończy się dokładnie na 30. kontroli, to około 0.024; mediana czasu audytu to 27 kontroli. Bez dodania r do kwantyla plan byłby zaniżony o trzy kontrole."
           )
         ),
         pitfall = "Bez nazwania parametryzacji wynik może różnić się dokładnie o r."
@@ -320,7 +320,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
   list(
     id = "zasoby", title = "Limit planistyczny", hook = "Średnio wystarczy, a i tak zabraknie", lead = "Średnia r/p nie gwarantuje ukończenia przed limitem.",
     intro = c(
-      "Przy p = 0,10 i celu r = 3 średnia liczba kontroli wynosi 30. Czy zaplanowanie dokładnie 30 kontroli wystarczy? Kalkulator poniżej pokazuje, że szansa ukończenia audytu w 30 kontrolach to niespełna 60% — rozkład jest skośny i długa seria pechowych kontroli wcale nie jest rzadka.",
+      "Przy p = 0.10 i celu r = 3 średnia liczba kontroli wynosi 30. Czy zaplanowanie dokładnie 30 kontroli wystarczy? Kalkulator poniżej pokazuje, że szansa ukończenia audytu w 30 kontrolach to niespełna 60% — rozkład jest skośny i długa seria pechowych kontroli wcale nie jest rzadka.",
       "Plan zasobów buduje się więc na kwantylu, nie na średniej: limit kontroli dobieramy tak, żeby prawdopodobieństwo ukończenia audytu przed limitem osiągnęło uzgodniony poziom, na przykład 95%. Różnica między średnią a kwantylem to właśnie zapas planistyczny."
     ),
     sections = list(
@@ -335,21 +335,24 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
           risk_formula("P(X\\le n)=P(B_n\\ge r),\\qquad B_n\\sim \\mathrm{Bin}(n,p)", num = "5.7",
             legend = c("X" = "łączna liczba kontroli do r-tego wykrycia", "B_n" = "liczba wykryć w pierwszych n kontrolach")),
           risk_example("5.6", "Czy średnia wystarczy jako limit?",
-            problem = "Przy p = 0,10 i r = 3 oblicz prawdopodobieństwo ukończenia audytu w limicie 30 kontroli, czyli limicie równym średniej.",
+            problem = "Przy p = 0.10 i r = 3 oblicz prawdopodobieństwo ukończenia audytu w limicie 30 kontroli, czyli limicie równym średniej.",
             steps = c(
-              "Ze wzoru (5.7): P(X ≤ 30) = P(B ≥ 3) dla B ~ Bin(30; 0,1) = 1 − [P(B=0) + P(B=1) + P(B=2)].",
-              "P(B=0) = 0,9³⁰ ≈ 0,0424.",
-              "P(B=1) = 30 · 0,1 · 0,9²⁹ ≈ 0,1413.",
-              "P(B=2) = C(30, 2) · 0,1² · 0,9²⁸ = 435 · 0,01 · 0,0523 ≈ 0,2277.",
-              "P(X ≤ 30) ≈ 1 − 0,4114 = 0,589."
+              "Ze wzoru (5.7): P(X ≤ 30) = P(B ≥ 3) dla B ~ Bin(30; 0.1) = 1 - [P(B=0) + P(B=1) + P(B=2)].",
+              "P(B=0) = 0.9³⁰ ≈ 0.0424.",
+              "P(B=1) = 30 · 0.1 · 0.9²⁹ ≈ 0.1413.",
+              "P(B=2) = C(30, 2) · 0.1² · 0.9²⁸ = 435 · 0.01 · 0.0523 ≈ 0.2277.",
+              "P(X ≤ 30) ≈ 1 - 0.4114 = 0.589."
             ),
-            answer = "Około 0,59. Limit równy średniej zawodzi w ponad czterech audytach na dziesięć."
+            answer = "Około 0.59. Limit równy średniej zawodzi w ponad czterech audytach na dziesięć."
           ),
           risk_definition("5.4", "Limit planistyczny", c(
             "Limit planistyczny na poziomie α to najmniejsza liczba prób n, dla której P(X ≤ n) ≥ α. Jest to kwantyl rzędu α rozkładu liczby prób. Różnicę między limitem planistycznym a średnią nazywamy zapasem planistycznym."
           )),
-          risk_try("przesuwaj limit i znajdź najmniejszą wartość, przy której P(ukończenia do limitu) przekracza 0,95. Porównaj ją ze średnią i z 95. percentylem wyświetlanym w kalkulatorze."),
-          figure_panel(label = "Kalkulator", title = "Limit liczby kontroli", lc_slider("d5_limit", "Limit", 3, 200, 40, 1), uiOutput("d5_plan"), full_width = TRUE),
+          risk_try("przesuwaj limit i znajdź najmniejszą wartość, przy której P(ukończenia do limitu) przekracza 0.95. Porównaj ją ze średnią i z 95. percentylem wyświetlanym w kalkulatorze."),
+          figure_panel(label = "Kalkulator", title = "Limit liczby kontroli", lc_toolbar(
+              lc_slider("d5_limit", "Limit", 3, 200, 40, 1),
+              lc_readouts(uiOutput("d5_plan"))
+            ), full_width = TRUE),
           "Dla audytu Bananpolu limit na poziomie 95% wynosi 61 kontroli — dwa razy więcej niż średnia. Zapas planistyczny to 31 kontroli. Nie jest to zapas „na wszelki wypadek”; to bezpośrednia konsekwencja kształtu rozkładu. Im mniejsze p, tym dłuższy ogon i tym większy zapas przy tym samym poziomie pewności.",
           risk_check("d5_chk_plan",
             "Mediana liczby kontroli wynosi 27, a średnia 30. Co to mówi o limicie równym średniej?",
@@ -381,23 +384,23 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
         body = list(
           "Najłatwiej zobaczyć mechanizm na najprostszej mieszance: dwóch rodzajach partii. Średnie p się nie zmienia, a mimo to średni czas audytu rośnie.",
           risk_example("5.7", "Dwaj dostawcy",
-            problem = "Połowa partii pochodzi od dostawcy A (p = 0,05), połowa od dostawcy B (p = 0,15). Średnie p wynosi 0,10, tak jak dotąd. Audyt obejmuje jedną losowo wybraną partię i trwa do trzeciej wady. Oblicz średnią liczbę kontroli.",
+            problem = "Połowa partii pochodzi od dostawcy A (p = 0.05), połowa od dostawcy B (p = 0.15). Średnie p wynosi 0.10, tak jak dotąd. Audyt obejmuje jedną losowo wybraną partię i trwa do trzeciej wady. Oblicz średnią liczbę kontroli.",
             steps = c(
-              "Warunkowo, przy znanej partii, liczba kontroli ma rozkład ujemny dwumianowy, więc ze wzoru (5.5): dla A średnia 3/0,05 = 60, dla B średnia 3/0,15 = 20.",
-              "Uśredniamy po partiach (wzór na prawdopodobieństwo całkowite w wersji dla średnich): 0,5 · 60 + 0,5 · 20 = 40.",
-              "Naiwny rachunek r/E(p) = 3/0,10 = 30 zaniża średnią o 10 kontroli."
+              "Warunkowo, przy znanej partii, liczba kontroli ma rozkład ujemny dwumianowy, więc ze wzoru (5.5): dla A średnia 3/0.05 = 60, dla B średnia 3/0.15 = 20.",
+              "Uśredniamy po partiach (wzór na prawdopodobieństwo całkowite w wersji dla średnich): 0.5 · 60 + 0.5 · 20 = 40.",
+              "Naiwny rachunek r/E(p) = 3/0.10 = 30 zaniża średnią o 10 kontroli."
             ),
             answer = "40 kontroli, a nie 30. Partie o niskim p wydłużają audyt bardziej, niż partie o wysokim p go skracają, bo czas oczekiwania zależy od 1/p, a nie od p."
           ),
           risk_try("zacznij od odchylenia p równego zero i sprawdź, że oba histogramy się pokrywają. Potem zwiększaj odchylenie i obserwuj prawy ogon oraz średnie w panelu."),
-          risk_widget_panel("Porównanie", "Stałe p kontra partie o różnej jakości", lc_slider("d5_variation", "Odchylenie p przed ograniczeniem do [0,005; 0,95]", 0, .09, .04, .005), "d5_failure", "d5_failure_stats"),
-          "Przy rosnącym odchyleniu histogram „zmiennego p” wyraźnie wyciąga się w prawo, a średnia symulowana rośnie. Szczególnie groźne są partie o bardzo małym p: przy p = 0,02 średni czas do trzech wad to 150 kontroli. Kilka takich partii wystarczy, by plan oparty na stałym p stał się fikcją.",
+          risk_widget_panel("Porównanie", "Stałe p kontra partie o różnej jakości", lc_slider("d5_variation", "Odchylenie p przed ograniczeniem do [0.005; 0.95]", 0, .09, .04, .005), "d5_failure", "d5_failure_stats"),
+          "Przy rosnącym odchyleniu histogram „zmiennego p” wyraźnie wyciąga się w prawo, a średnia symulowana rośnie. Szczególnie groźne są partie o bardzo małym p: przy p = 0.02 średni czas do trzech wad to 150 kontroli. Kilka takich partii wystarczy, by plan oparty na stałym p stał się fikcją.",
           risk_check("d5_chk_mix",
-            "Średnie p w dwóch rodzajach partii wynosi 0,10. Średni czas do trzeciej wady w mieszance jest…",
+            "Średnie p w dwóch rodzajach partii wynosi 0.10. Średni czas do trzeciej wady w mieszance jest…",
             c("równy 30, bo średnie p się nie zmieniło" = "equal", "większy niż 30" = "greater", "mniejszy niż 30" = "smaller"),
             correct = "greater",
             explanation = "Czas oczekiwania rośnie jak 1/p, a ta funkcja jest wypukła. Uśrednianie po partiach daje r·E(1/p) ≥ r/E(p); równość zachodzi tylko wtedy, gdy p jest stałe.",
-            hints = c(equal = "Średnia czasu zależy od średniej 1/p, nie od 1/(średnia p). Policz przykład 5.7.", smaller = "Porównaj, o ile wydłuża audyt partia z p = 0,05, a o ile skraca go partia z p = 0,15.")
+            hints = c(equal = "Średnia czasu zależy od średniej 1/p, nie od 1/(średnia p). Policz przykład 5.7.", smaller = "Porównaj, o ile wydłuża audyt partia z p = 0.05, a o ile skraca go partia z p = 0.15.")
           )
         )
       ),
@@ -475,10 +478,17 @@ dozd_server <- function(input, output, session) {
       theme_upwr()
   })
   zoom_plot_server("d5_nb", nb_plot, alt = "Rozkład liczby wszystkich prób do osiągnięcia ustalonej liczby wykryć.")
-  output$d5_nb_stats <- renderUI(lc_stat_grid(lc_stat_box("E(X)=r/p", round(input$d5_r / input$d5_p, 1)), lc_stat_box("Niepowodzenia średnio", round(input$d5_r * (1 - input$d5_p) / input$d5_p, 1)), columns = 1))
+  output$d5_nb_stats <- renderUI(tagList(
+    lc_readout("E(X)=r/p", round(input$d5_r / input$d5_p, 1)),
+    lc_readout("Niepowodzenia średnio", round(input$d5_r * (1 - input$d5_p) / input$d5_p, 1))
+  ))
   output$d5_plan <- renderUI({
     pfinish <- risk_negative_binomial_finish(input$d5_limit, input$d5_r, input$d5_p)
-    lc_stat_grid(lc_stat_box("Średnia", round(input$d5_r / input$d5_p, 1)), lc_stat_box("P(ukończenia do limitu)", risk_format_probability(pfinish), color = upwr_accent), lc_stat_box("95. percentyl", qnbinom(.95, input$d5_r, input$d5_p) + input$d5_r), columns = 1)
+    tagList(
+      lc_readout("Średnia", round(input$d5_r / input$d5_p, 1)),
+      lc_readout("P(ukończenia do limitu)", risk_fmt_p(pfinish), color = upwr_accent),
+      lc_readout("95. percentyl", qnbinom(.95, input$d5_r, input$d5_p) + input$d5_r)
+    )
   })
   failure_data <- reactive({
     set.seed(505)
@@ -499,7 +509,10 @@ dozd_server <- function(input, output, session) {
   output$d5_failure_stats <- renderUI({
     dat <- failure_data()
     means <- tapply(dat$x, dat$model, mean)
-    lc_stat_grid(lc_stat_box("Średnia symulowana — stałe p", round(means[["Stałe p"]], 1)), lc_stat_box("Średnia symulowana — zmienne p", round(means[["Zmienne p między partiami"]], 1)), columns = 1)
+    tagList(
+      lc_readout("Średnia: stałe p", round(means[["Stałe p"]], 1)),
+      lc_readout("Średnia: zmienne p", round(means[["Zmienne p między partiami"]], 1))
+    )
   })
   risk_assessment_server("d5", dozd_quiz, input, output)
 }
