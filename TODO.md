@@ -266,6 +266,11 @@ to stosują.
   - 05 rozdz. 04 (ch4_mapa.R): ANOVA Welcha — okno One-Way ANOVA liczy ją domyślnie.
   - 05 rozdz. 04 (ch4_mapa.R): tabela testów parametrycznych, test t dla prób niezależnych — „w jamovi zaznacz Welch's”.
   - 05 rozdz. 04 (ch4_mapa.R): selektor, test t dla prób niezależnych — „w jamovi zaznacz Welch's”; ANOVA — ANOVA Welcha „domyślna w jamovi”.
+- [ ] Tekst bezosobowo w całym kursie: zamiast zwracania się do studenta
+  („zmierzyłeś”, „policzyłeś”, „spróbuj odpowiedzieć sam”) formy
+  bezosobowe („zmierzono”, „policzono”, „warto najpierw odpowiedzieć”).
+  Unikamy w ten sposób odmiany przez rodzaj i zaimków. Przykład:
+  03 rozdz. 3 (ch3_srednia.R), przypadek A1 „Zmierzyłeś wzrost 30 studentów”.
 - [ ] Wdrożyć `gloss()` we wszystkich wykładach: owijać pierwsze
   wprowadzenie kluczowego terminu w rozdziale, nie każde wystąpienie. Nowe
   hasła dopisywać do `statystyka/R/glossary.R`. Wzorzec:

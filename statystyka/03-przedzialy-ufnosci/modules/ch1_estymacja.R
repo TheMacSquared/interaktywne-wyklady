@@ -57,9 +57,8 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.1", title = "Losowanie prób z populacji",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          selectInput("ch1_dist", "Rozkład populacji:",
+      lc_toolbar(
+        selectInput("ch1_dist", "Rozkład populacji",
             choices = c(
               "Normalny (wzrost)"         = "normal",
               "Wykładniczy (prawoskośny)" = "exponential",
@@ -68,21 +67,13 @@ ch1_ui <- list(
             ),
             selected = "normal"
           ),
-          lc_slider("ch1_n", "Wielkość próby (n)", 5, 200, 30, 5),
-          hr(),
-          lc_stack(gap = "md",
-            lc_action("ch1_draw_1", "Pobierz 1 próbę", variant = "solid"),
-            lc_action("ch1_draw_20", "Pobierz 20 prób", variant = "solid"),
-            lc_action("ch1_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
-          ),
-          br(),
-          uiOutput("ch1_count_info")
-        ),
-        column(8,
-          zoom_plot_ui("ch1_estimates_plot", height = "400px"),
-          uiOutput("ch1_estimates_stats")
-        )
-      )
+        lc_slider("ch1_n", "Wielkość próby (n)", 5, 200, 30, 5),
+        lc_action("ch1_draw_1", "Pobierz 1 próbę", variant = "solid"),
+        lc_action("ch1_draw_20", "Pobierz 20 prób", variant = "solid"),
+        lc_action("ch1_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+        lc_readouts(uiOutput("ch1_estimates_stats"), uiOutput("ch1_count_info"))
+      ),
+      lc_plot("ch1_estimates_plot", max_height = "400px")
     ),
 
     lc_p("Populacja „wzrostu” ma rozkład normalny ze średnią μ = 170 cm
@@ -202,16 +193,12 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.2", title = "Wahania estymatora",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_slider("ch1_fluct_n", "Wielkość próby (n)", 5, 200, 10, 5),
-          helpText("Każde kliknięcie losuje nową próbę."),
-          lc_action("ch1_fluct_draw", "Losuj próbę", icon = "shuffle", variant = "solid")
-        ),
-        column(8,
-          zoom_plot_ui("ch1_fluct_plot", height = "300px")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch1_fluct_n", "Wielkość próby (n)", 5, 200, 10, 5),
+        lc_action("ch1_fluct_draw", "Losuj próbę", icon = "shuffle", variant = "solid")
+      ),
+      lc_plot("ch1_fluct_plot", max_height = "300px"),
+      lc_caption("Każde kliknięcie losuje nową próbę.")
     ),
 
     lc_p("Przy n = 10 błąd standardowy wynosi 10/√10 ≈ 3.16 cm, więc około 95%
@@ -271,7 +258,7 @@ ch1_server <- function(input, output, session) {
 
   output$ch1_count_info <- renderUI({
     n_est <- nrow(ch1_estimates())
-    lc_stat_box("Prób", n_est, color = col_ci)
+    lc_readout("Prób", n_est, color = col_ci)
   })
 
   zoom_plot_server("ch1_estimates_plot", reactive({
@@ -308,9 +295,9 @@ ch1_server <- function(input, output, session) {
     if (nrow(est) == 0) return(NULL)
     params <- get_population_params(input$ch1_dist)
     tagList(
-      lc_stat_box("μ", round(params$mu, 2), color = col_true),
-      lc_stat_box("Śr. estymat", round(mean(est$xbar), 2), color = col_estimate),
-      lc_stat_box("SD estymat", round(sd(est$xbar), 2), color = upwr_secondary)
+      lc_readout("μ", round(params$mu, 2), color = col_true),
+      lc_readout("Śr. estymat", round(mean(est$xbar), 2), color = col_estimate),
+      lc_readout("SD estymat", round(sd(est$xbar), 2), color = upwr_secondary)
     )
   })
 

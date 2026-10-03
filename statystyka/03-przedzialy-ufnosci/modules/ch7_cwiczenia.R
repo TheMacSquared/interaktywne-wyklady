@@ -540,6 +540,25 @@ ch7_ui <- list(
   zyw = read.csv(file.path(app_dir, "dane", "zywnosc_partie.csv"))
 )
 
+# Tabela CI przy trzech poziomach ufności (zadanie 4).
+.ch7_levels_table <- function(ci90, ci95, ci99) {
+  cis <- list(ci90, ci95, ci99)
+  lc_table(
+    data.frame(
+      level = c("90%", "95%", "99%"),
+      lo = vapply(cis, function(ci) ci$lo, numeric(1)),
+      hi = vapply(cis, function(ci) ci$hi, numeric(1)),
+      me = vapply(cis, function(ci) ci$me, numeric(1))
+    ),
+    cols = list(
+      lc_col("level", "Poziom", "row"),
+      lc_col("lo", "Dolne", digits = 2),
+      lc_col("hi", "Górne", digits = 2),
+      lc_col("me", "ME", digits = 2)
+    )
+  )
+}
+
 # Helper dla zadania 7: tabela krzyżowa 2x2 + 95% CI dla różnicy proporcji
 # (Wald przez prop.test, correct = FALSE). Wnioski: kierunek zależności
 # formułowany w kategoriach jednostek danego kierunku.
@@ -579,22 +598,18 @@ ch7_ui <- list(
 
   tagList(
     p(tags$b("Tabela krzyżowa "), tags$code(x_lab), tags$b(" × "), tags$code(y_lab), tags$b(":")),
-    tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-      tags$thead(tags$tr(
-        tags$th(""),
-        tags$th(sprintf("%s = FALSE", y_lab)),
-        tags$th(sprintf("%s = TRUE",  y_lab)),
-        tags$th("suma")
-      )),
-      tags$tbody(
-        tags$tr(tags$td(sprintf("%s = FALSE", x_lab)),
-                tags$td(tab["FALSE","FALSE"]),
-                tags$td(tab["FALSE","TRUE"]),
-                tags$td(n2)),
-        tags$tr(tags$td(sprintf("%s = TRUE", x_lab)),
-                tags$td(tab["TRUE","FALSE"]),
-                tags$td(tab["TRUE","TRUE"]),
-                tags$td(n1))
+    lc_table(
+      data.frame(
+        x = sprintf("%s = %s", x_lab, c("FALSE", "TRUE")),
+        f = c(tab["FALSE", "FALSE"], tab["TRUE", "FALSE"]),
+        t = c(tab["FALSE", "TRUE"],  tab["TRUE", "TRUE"]),
+        n = c(n2, n1)
+      ),
+      cols = list(
+        lc_col("x", "", "row"),
+        lc_col("f", sprintf("%s = FALSE", y_lab)),
+        lc_col("t", sprintf("%s = TRUE",  y_lab)),
+        lc_col("n", "suma")
       )
     ),
     tags$ul(
@@ -666,17 +681,7 @@ source(file.path(app_dir, "modules", "ch7_sat.R"), local = TRUE)
       tagList(
         p(tags$b("CI dla "), tags$code("read"), tags$b(" przy różnych poziomach ufności"),
           sprintf(" (n=%d):", ci95$n)),
-        tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-          tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
-          tags$tbody(
-            tags$tr(tags$td("90%"), tags$td(.fmt_mean(list(mean = ci90$lo))),
-                    tags$td(.fmt_mean(list(mean = ci90$hi))), tags$td(.fmt_me(ci90))),
-            tags$tr(tags$td("95%"), tags$td(.fmt_mean(list(mean = ci95$lo))),
-                    tags$td(.fmt_mean(list(mean = ci95$hi))), tags$td(.fmt_me(ci95))),
-            tags$tr(tags$td("99%"), tags$td(.fmt_mean(list(mean = ci99$lo))),
-                    tags$td(.fmt_mean(list(mean = ci99$hi))), tags$td(.fmt_me(ci99)))
-          )
-        ),
+        .ch7_levels_table(ci90, ci95, ci99),
         p(sprintf("ME(99%%)/ME(90%%) ≈ %.2f/%.2f ≈ ", ci99$me, ci90$me),
           tags$b(sprintf("%.2f", ci99$me / ci90$me)), ".")
       )
@@ -784,17 +789,7 @@ source(file.path(app_dir, "modules", "ch7_sat.R"), local = TRUE)
       tagList(
         p(tags$b("CI dla wskaznik_wypadkow przy różnych poziomach ufności"),
           sprintf(" (n=%d):", ci95$n)),
-        tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-          tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
-          tags$tbody(
-            tags$tr(tags$td("90%"), tags$td(sprintf("%.2f", ci90$lo)),
-                    tags$td(sprintf("%.2f", ci90$hi)), tags$td(.fmt_me(ci90))),
-            tags$tr(tags$td("95%"), tags$td(sprintf("%.2f", ci95$lo)),
-                    tags$td(sprintf("%.2f", ci95$hi)), tags$td(.fmt_me(ci95))),
-            tags$tr(tags$td("99%"), tags$td(sprintf("%.2f", ci99$lo)),
-                    tags$td(sprintf("%.2f", ci99$hi)), tags$td(.fmt_me(ci99)))
-          )
-        ),
+        .ch7_levels_table(ci90, ci95, ci99),
         p(sprintf("ME(99%%)/ME(90%%) ≈ %.2f.", ci99$me / ci90$me))
       )
     }),
@@ -901,17 +896,7 @@ source(file.path(app_dir, "modules", "ch7_sat.R"), local = TRUE)
       tagList(
         p(tags$b("CI dla plon_pszenicy przy różnych poziomach ufności"),
           sprintf(" (n=%d):", ci95$n)),
-        tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-          tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
-          tags$tbody(
-            tags$tr(tags$td("90%"), tags$td(sprintf("%.2f", ci90$lo)),
-                    tags$td(sprintf("%.2f", ci90$hi)), tags$td(.fmt_me(ci90))),
-            tags$tr(tags$td("95%"), tags$td(sprintf("%.2f", ci95$lo)),
-                    tags$td(sprintf("%.2f", ci95$hi)), tags$td(.fmt_me(ci95))),
-            tags$tr(tags$td("99%"), tags$td(sprintf("%.2f", ci99$lo)),
-                    tags$td(sprintf("%.2f", ci99$hi)), tags$td(.fmt_me(ci99)))
-          )
-        ),
+        .ch7_levels_table(ci90, ci95, ci99),
         p(sprintf("ME(99%%)/ME(90%%) ≈ %.2f.", ci99$me / ci90$me))
       )
     }),
@@ -1018,17 +1003,7 @@ source(file.path(app_dir, "modules", "ch7_sat.R"), local = TRUE)
       tagList(
         p(tags$b("CI dla zawartosc_bialka przy różnych poziomach ufności"),
           sprintf(" (n=%d):", ci95$n)),
-        tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-          tags$thead(tags$tr(tags$th("Poziom"), tags$th("Dolne"), tags$th("Górne"), tags$th("ME"))),
-          tags$tbody(
-            tags$tr(tags$td("90%"), tags$td(sprintf("%.2f", ci90$lo)),
-                    tags$td(sprintf("%.2f", ci90$hi)), tags$td(.fmt_me(ci90))),
-            tags$tr(tags$td("95%"), tags$td(sprintf("%.2f", ci95$lo)),
-                    tags$td(sprintf("%.2f", ci95$hi)), tags$td(.fmt_me(ci95))),
-            tags$tr(tags$td("99%"), tags$td(sprintf("%.2f", ci99$lo)),
-                    tags$td(sprintf("%.2f", ci99$hi)), tags$td(.fmt_me(ci99)))
-          )
-        ),
+        .ch7_levels_table(ci90, ci95, ci99),
         p(sprintf("ME(99%%)/ME(90%%) ≈ %.2f.", ci99$me / ci90$me))
       )
     }),

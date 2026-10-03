@@ -77,9 +77,8 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.1", title = "Symulacja przedziałów ufności",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          selectInput("ch2_dist", "Rozkład populacji:",
+      lc_toolbar(
+        selectInput("ch2_dist", "Rozkład populacji",
             choices = c(
               "Normalny (wzrost)"         = "normal",
               "Wykładniczy (prawoskośny)" = "exponential",
@@ -87,21 +86,14 @@ ch2_ui <- list(
             ),
             selected = "normal"
           ),
-          lc_slider("ch2_n", "Wielkość próby (n)", 5, 100, 30, 5),
-          lc_slider("ch2_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01),
-          hr(),
-          lc_stack(gap = "md",
-            lc_action("ch2_sim_10", "Dolosuj 10 przedziałów", variant = "solid"),
-            lc_action("ch2_sim_50", "Dolosuj 50 przedziałów", variant = "solid"),
-            lc_action("ch2_sim_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
-          ),
-          br(),
-          uiOutput("ch2_coverage_info")
-        ),
-        column(8,
-          zoom_plot_ui("ch2_ci_plot", height = "500px")
-        )
-      )
+        lc_slider("ch2_n", "Wielkość próby (n)", 5, 100, 30, 5),
+        lc_slider("ch2_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01),
+        lc_action("ch2_sim_10", "Dolosuj 10 przedziałów", variant = "solid"),
+        lc_action("ch2_sim_50", "Dolosuj 50 przedziałów", variant = "solid"),
+        lc_action("ch2_sim_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+        lc_readouts(uiOutput("ch2_coverage_info"))
+      ),
+      lc_plot("ch2_ci_plot", max_height = "500px")
     ),
 
     lc_p("Przy domyślnych ustawieniach (n = 30, poziom 95%) każdy przedział sięga
@@ -266,9 +258,9 @@ ch2_server <- function(input, output, session) {
     # Kolor pokrycia: zielony, jeśli w ±5 pp od nominalnego, czerwony w przeciwnym razie
     color <- if (abs(coverage - nominal) <= 5) col_hit else col_miss
     tagList(
-      lc_stat_box("Prób", n_total, color = upwr_secondary),
-      lc_stat_box("Pokrycie", coverage, "% (", n_hits, "/", n_total, ")", color = color),
-      lc_stat_box("Oczekiwane", nominal, "%", color = col_ci)
+      lc_readout("Prób", n_total, color = upwr_secondary),
+      lc_readout("Pokrycie", paste0(coverage, "% ("), color = color),
+      lc_readout("Oczekiwane", paste0(nominal, "%"), color = col_ci)
     )
   })
 

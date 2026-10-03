@@ -10,6 +10,8 @@
 #      → lc_toolbar(kontrolki), potem zawartość drugiej kolumny; uiOutput()
 #        z kolumny kontrolek (statusy) przechodzi pod zawartość, hr() znika;
 #   2. każda kolumna to jeden wykres → lc_plots(...).
+# W kolumnie kontrolek lc_stack(...) jest rozpakowywany do paska (bez hr/br),
+# a helpText(...) przechodzi pod zawartość jako lc_caption(...).
 # zoom_plot_ui(id, height = "Npx") → lc_plot(id, max_height = "Npx").
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -52,6 +54,11 @@ for (f in files) {
     tag <- sprintf("%s:%d", basename(f), node$line1)
     if (!length(cols) || !all(vapply(cols, function(x) identical(x$fn, "column"), logical(1)))) { cat("RĘCZNIE", tag, "(nie same column)\n"); next }
     content <- lapply(cols, function(cl) Filter(function(x) is.na(x$name), call_args(pd, cl$id))[-1])
+    # lc_stack w kolumnie: jego dzieci (bez hr/br) wchodzą na miejsce stosu
+    content <- lapply(content, function(cc) unlist(lapply(cc, function(x) {
+      if (identical(x$fn, "lc_stack")) Filter(function(y) is.na(y$name) && !(y$fn %in% c("hr", "br")), call_args(pd, x$id))
+      else list(x)
+    }), recursive = FALSE))
     fns <- lapply(content, function(cc) vapply(cc, function(x) if (is.na(x$fn)) "?" else x$fn, ""))
     ind <- strrep(" ", node$col1 - 1); ind2 <- paste0(ind, "  ")
     new <- NULL
@@ -59,12 +66,14 @@ for (f in files) {
       items <- vapply(content, function(cc) fix_text(cc[[1]]$text), "")
       new <- paste0("lc_plots(\n", ind2, paste(items, collapse = paste0(",\n", ind2)), "\n", ind, ")")
       kind <- "lc_plots"
-    } else if (length(cols) == 2 && all(fns[[1]] %in% c(controls, "hr", "br", "uiOutput")) &&
+    } else if (length(cols) == 2 && all(fns[[1]] %in% c(controls, "hr", "br", "uiOutput", "helpText")) &&
                any(fns[[1]] %in% controls) && !any(fns[[2]] %in% controls)) {
       ctrl <- content[[1]][fns[[1]] %in% controls]
       outs <- content[[1]][fns[[1]] == "uiOutput"]
       tb <- paste0("lc_toolbar(\n", ind2, paste(vapply(ctrl, function(x) fix_text(x$text), ""), collapse = paste0(",\n", ind2)), "\n", ind, ")")
-      rest <- c(vapply(content[[2]], function(x) fix_text(x$text), ""), vapply(outs, `[[`, "", "text"))
+      helps <- content[[1]][fns[[1]] == "helpText"]
+      rest <- c(vapply(content[[2]], function(x) fix_text(x$text), ""), vapply(outs, `[[`, "", "text"),
+                vapply(helps, function(x) sub("^helpText\\(", "lc_caption(", x$text), ""))
       new <- paste(c(tb, rest), collapse = paste0(",\n", ind))
       kind <- "toolbar"
     } else { cat("RĘCZNIE", tag, paste(vapply(fns, paste, "", collapse = "+"), collapse = " | "), "\n"); next }

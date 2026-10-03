@@ -186,101 +186,65 @@ ch4_ui <- list(
 
     lc_h3("A. Przedział dla jednej proporcji"),
 
-    tags$details(class = "case-study", open = NA,
-      tags$summary(
-        span(class = "case-icon", "\U0001f5f3️"),
-        "A1. Sondaż wyborczy — czytanie pojedynczego CI"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Pracownia sondażowa zapytała 400 wyborców, czy poprą partię X.
-            212 odpowiedziało TAK, czyli ", withMathJax("\\(\\hat{p} = 0.53\\)"),
-            ". Budujemy przedział dla poparcia w populacji i sprawdzamy dwie hipotezy.")
-        ),
-        uiOutput("ch4_caseA1_widget")
-      )
+    figure_panel(
+      label = "Przykład A1",
+      title = "Sondaż wyborczy — czytanie pojedynczego CI",
+      p("Pracownia sondażowa zapytała 400 wyborców, czy poprą partię X.
+        212 odpowiedziało TAK, czyli ", withMathJax("\\(\\hat{p} = 0.53\\)"),
+        ". Budujemy przedział dla poparcia w populacji i sprawdzamy dwie hipotezy."),
+      uiOutput("ch4_caseA1_widget")
     ),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f50d"),
-        "A2. Ten sam odsetek, trzy różne wielkości próby"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Trzy badania mierzą odsetek wadliwych produktów w fabryce.
-            W każdym ", withMathJax("\\(\\hat{p} = 0.08\\)"), " (8%), ale próby
-            mają różną liczebność: 50, 200 i 1000 sztuk. Kolejne kroki dokładają
-            przedziały od najmniejszej próby do największej.")
-        ),
-        uiOutput("ch4_caseA2_widget")
-      )
+    figure_panel(
+      label = "Przykład A2",
+      title = "Ten sam odsetek, trzy różne wielkości próby",
+      p("Trzy badania mierzą odsetek wadliwych produktów w fabryce.
+        W każdym ", withMathJax("\\(\\hat{p} = 0.08\\)"), " (8%), ale próby
+        mają różną liczebność: 50, 200 i 1000 sztuk. Kolejne kroki dokładają
+        przedziały od najmniejszej próby do największej."),
+      uiOutput("ch4_caseA2_widget")
     ),
 
     lc_h3("B. Przedział dla różnicy proporcji"),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f48a"),
-        "B1. Lek a placebo — odsetek wyleczonych"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Badamy nowy lek przeciwbólowy.
-            ", tags$b("Lek:"), " 200 pacjentów, 124 zgłosiło ustąpienie bólu (62%).
-            ", tags$b("Placebo:"), " 200 pacjentów, 84 zgłosiło ustąpienie bólu (42%).")
-        ),
-        uiOutput("ch4_caseB1_widget")
-      )
+    figure_panel(
+      label = "Przykład B1",
+      title = "Lek a placebo — odsetek wyleczonych",
+      p("Badamy nowy lek przeciwbólowy.
+        ", tags$b("Lek:"), " 200 pacjentów, 124 zgłosiło ustąpienie bólu (62%).
+        ", tags$b("Placebo:"), " 200 pacjentów, 84 zgłosiło ustąpienie bólu (42%)."),
+      uiOutput("ch4_caseB1_widget")
     ),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f3ed"),
-        "B2. Dwie linie produkcyjne — odsetek braków"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Porównujemy dwie linie produkcyjne pod względem odsetka wadliwych produktów.
-            ", tags$b("Linia A:"), " skontrolowano 250 sztuk, 22 wadliwe (8.8%).
-            ", tags$b("Linia B:"), " skontrolowano 250 sztuk, 18 wadliwych (7.2%).")
-        ),
-        uiOutput("ch4_caseB2_widget")
-      )
+    figure_panel(
+      label = "Przykład B2",
+      title = "Dwie linie produkcyjne — odsetek braków",
+      p("Porównujemy dwie linie produkcyjne pod względem odsetka wadliwych produktów.
+        ", tags$b("Linia A:"), " skontrolowano 250 sztuk, 22 wadliwe (8.8%).
+        ", tags$b("Linia B:"), " skontrolowano 250 sztuk, 18 wadliwych (7.2%)."),
+      uiOutput("ch4_caseB2_widget")
     ),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "⚠️"),
-        "B3. Pułapka małej próby"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Pilotaż nowej procedury BHP w dwóch zakładach.
-            ", tags$b("Zakład A:"), " 30 pracowników, 6 miało wypadek (20%).
-            ", tags$b("Zakład B:"), " 30 pracowników, 9 miało wypadek (30%).
-            Różnica wygląda na dużą, ale czy z 95% ufnością możemy
-            powiedzieć, że w zakładzie A jest bezpieczniej?")
-        ),
-        uiOutput("ch4_caseB3_widget")
-      )
+    figure_panel(
+      label = "Przykład B3",
+      title = "Pułapka małej próby",
+      p("Pilotaż nowej procedury BHP w dwóch zakładach.
+        ", tags$b("Zakład A:"), " 30 pracowników, 6 miało wypadek (20%).
+        ", tags$b("Zakład B:"), " 30 pracowników, 9 miało wypadek (30%).
+        Różnica wygląda na dużą, ale czy z 95% ufnością możemy
+        powiedzieć, że w zakładzie A jest bezpieczniej?"),
+      uiOutput("ch4_caseB3_widget")
     ),
 
     lc_h3("C. Wiele grup — forest plot"),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f3e5"),
-        "C1. Cztery szpitale — odsetek powikłań pooperacyjnych"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Porównujemy odsetek powikłań po tej samej operacji w czterech szpitalach.
-            Dla każdego znamy liczbę wykonanych zabiegów i liczbę powikłań.
-            Kolejne kroki pokazują liczby, proporcje i przedziały.")
-        ),
-        uiOutput("ch4_caseC1_widget")
-      )
+    figure_panel(
+      label = "Przykład C1",
+      title = "Cztery szpitale — odsetek powikłań pooperacyjnych",
+      p("Porównujemy odsetek powikłań po tej samej operacji w czterech szpitalach.
+        Dla każdego znamy liczbę wykonanych zabiegów i liczbę powikłań.
+        Kolejne kroki pokazują liczby, proporcje i przedziały."),
+      uiOutput("ch4_caseC1_widget")
     ),
 
     lc_p("Przypadki powtarzają kilka lekcji. W A2 ta sama proporcja 8% daje
@@ -1197,29 +1161,19 @@ ch4_server <- function(input, output, session) {
   render_pairwise_table <- function(mat) {
     groups <- rownames(mat)
     k <- length(groups)
-    header <- tags$tr(
-      tags$th(""),
-      lapply(groups, function(g) tags$th(g, style = "padding: 4px 8px; text-align: center; font-size: 12px;"))
-    )
-    rows <- lapply(seq_len(k), function(i) {
-      tags$tr(
-        tags$th(groups[i], style = "padding: 4px 8px; text-align: right; font-size: 12px;"),
-        lapply(seq_len(k), function(j) {
-          if (i == j) {
-            tags$td("—", style = "padding: 4px 8px; text-align: center; color: var(--upwr-reference);")
-          } else if (mat[i, j]) {
-            tags$td("✓", style = "padding: 4px 8px; text-align: center; color: var(--upwr-sage); font-weight: bold; font-size: 16px;")
-          } else {
-            tags$td("×", style = "padding: 4px 8px; text-align: center; color: var(--upwr-accent); font-size: 16px;")
-          }
-        })
-      )
-    })
-    tags$table(
-      style = "border-collapse: collapse; margin: 8px auto; border: 1px solid var(--upwr-rule);",
-      tags$thead(header),
-      tags$tbody(rows)
-    )
+    sym <- function(i, j) if (i == j) "—" else if (mat[i, j]) "✓" else "×"
+    cls <- function(i, j) if (i == j) "is-dim" else if (mat[i, j]) "is-best" else NA
+    df <- data.frame(group = groups)
+    cell_class <- list()
+    for (j in seq_len(k)) {
+      key <- paste0("g", j)
+      df[[key]] <- vapply(seq_len(k), function(i) sym(i, j), character(1))
+      cell_class[[key]] <- vapply(seq_len(k), function(i) cls(i, j), character(1))
+    }
+    lc_table(df,
+      cols = c(list(lc_col("group", "", "row")),
+               lapply(seq_len(k), function(j) lc_col(paste0("g", j), groups[j], "text"))),
+      cell_class = cell_class, fit = TRUE)
   }
 
   # Narracja "jak w raporcie" dla pairwise (proporcje, prezentacja w %)
@@ -1312,13 +1266,11 @@ ch4_server <- function(input, output, session) {
       return(lc_status(
         p(tags$strong("Hipoteza:"), " ", hyp$text),
         p(tags$strong("Werdykt — macierz par:")),
-        p(tags$em("✓ = grupy różnią się istotnie (CI nie nakładają się);  ",
+        lc_caption("✓ = grupy różnią się istotnie (CI nie nakładają się);  ",
                   "× = nie można stwierdzić różnicy (CI nakładają się)"),
-          style = "font-size: 12px; color: var(--upwr-reference);"),
         render_pairwise_table(mat),
-        p(tags$strong("Jak to opisać w raporcie:"),
-          style = "margin-top: 12px;"),
-        p(HTML(narrative), style = "font-style: italic;")
+        p(tags$strong("Jak to opisać w raporcie:")),
+        p(tags$em(HTML(narrative)))
       ))
     }
 

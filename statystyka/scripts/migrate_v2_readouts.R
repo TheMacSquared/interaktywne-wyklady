@@ -120,6 +120,13 @@ for (f in files) {
       txt <- paste(src, collapse = "\n"); txt <- gsub(",\\n(\\s*)NULL,", ",", txt); txt <- gsub("\\n\\s*NULL,\\n", "\n", txt)
       txt <- gsub("\\n\\s*,\\n(\\s*lc_readouts\\()", ",\n\\1", txt, perl = TRUE)
       txt <- gsub(",\\n\\s*NULL(\\n\\s*\\))", "\\1", txt, perl = TRUE)
+      # sąsiednie kontenery odczytów w jednym pasku → jeden kontener
+      repeat {
+        t2 <- gsub('lc_readouts\\(((?:uiOutput\\("[A-Za-z0-9_]+"\\)(?:, )?)+)\\),\\n\\s*lc_readouts\\((uiOutput\\("[A-Za-z0-9_]+"\\))\\)',
+                   "lc_readouts(\\1, \\2)", txt, perl = TRUE)
+        if (identical(t2, txt)) break
+        txt <- t2
+      }
       writeLines(strsplit(txt, "\n", fixed = TRUE)[[1]], f, useBytes = TRUE)
     }
   }

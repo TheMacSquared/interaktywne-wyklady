@@ -173,52 +173,34 @@ ch3_ui <- list(
       którym się nakrywają, dolny to przedział różnicy (wersja Welcha)."),
 
     # --- Scenariusz A ---
-    tags$details(class = "case-study", open = NA,
-      tags$summary(
-        span(class = "case-icon", "\U0001f33e"),
-        "A. Dwaj dostawcy mąki — zgodne sygnały, różnica istotna"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Zakład piekarniczy porównuje dwóch dostawców mąki pszennej typu 550
-            pod względem zawartości białka (%). Pobrano po 40 partii od każdego dostawcy.")
-        ),
-        lc_plot("ch3_comp_A_plot", ratio = "1.8/1", max_height = "340px"),
-        uiOutput("ch3_comp_A_verdict")
-      )
+    figure_panel(
+      label = "Przykład A",
+      title = "Dwaj dostawcy mąki — zgodne sygnały, różnica istotna",
+      p("Zakład piekarniczy porównuje dwóch dostawców mąki pszennej typu 550
+        pod względem zawartości białka (%). Pobrano po 40 partii od każdego dostawcy."),
+      lc_plot("ch3_comp_A_plot", ratio = "1.8/1", max_height = "340px"),
+      uiOutput("ch3_comp_A_verdict")
     ),
 
     # --- Scenariusz B ---
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f964"),
-        "B. Jogurt w szkle i w plastiku — zgodne sygnały, brak różnicy"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Technolog sprawdza, czy materiał opakowania wpływa na zawartość tłuszczu (%)
-            w jogurcie naturalnym po 7 dniach przechowywania. Po 30 próbek z każdego typu.")
-        ),
-        lc_plot("ch3_comp_B_plot", ratio = "1.8/1", max_height = "340px"),
-        uiOutput("ch3_comp_B_verdict")
-      )
+    figure_panel(
+      label = "Przykład B",
+      title = "Jogurt w szkle i w plastiku — zgodne sygnały, brak różnicy",
+      p("Technolog sprawdza, czy materiał opakowania wpływa na zawartość tłuszczu (%)
+        w jogurcie naturalnym po 7 dniach przechowywania. Po 30 próbek z każdego typu."),
+      lc_plot("ch3_comp_B_plot", ratio = "1.8/1", max_height = "340px"),
+      uiOutput("ch3_comp_B_verdict")
     ),
 
     # --- Scenariusz C (pułapka) ---
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U000026a0️"),
-        "C. Dwie linie płatków — pułapka wzrokowa"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Zakład sprawdza, czy dwie linie produkcyjne płatków śniadaniowych
-            dają produkt o tej samej zawartości błonnika (g / 100 g).
-            Po 120 partii z każdej linii.")
-        ),
-        lc_plot("ch3_comp_C_plot", ratio = "1.8/1", max_height = "340px"),
-        uiOutput("ch3_comp_C_verdict")
-      )
+    figure_panel(
+      label = "Przykład C",
+      title = "Dwie linie płatków — pułapka wzrokowa",
+      p("Zakład sprawdza, czy dwie linie produkcyjne płatków śniadaniowych
+        dają produkt o tej samej zawartości błonnika (g / 100 g).
+        Po 120 partii z każdej linii."),
+      lc_plot("ch3_comp_C_plot", ratio = "1.8/1", max_height = "340px"),
+      uiOutput("ch3_comp_C_verdict")
     ),
 
     lc_p("W scenariuszu A oba spojrzenia się zgadzają. Przedziały dostawców,
@@ -272,130 +254,82 @@ ch3_ui <- list(
 
     lc_h3("A. Przedział dla jednej średniej"),
 
-    tags$details(class = "case-study", open = NA,
-      tags$summary(
-        span(class = "case-icon", "\U0001f4cf"),
-        "A1. Wzrost studentów — czytanie pojedynczego CI"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Zmierzyłeś wzrost 30 studentów. Średnia z próby wynosi ",
-            withMathJax("\\(\\bar{x} = 173.4\\)"), " cm, odchylenie standardowe ",
-            withMathJax("\\(s = 8.2\\)"), " cm. Zbudujmy przedział dla średniego
-            wzrostu i sprawdźmy dwie hipotezy.")
-        ),
-        uiOutput("ch3_caseA1_widget")
-      )
+    figure_panel(
+      label = "Przykład A1",
+      title = "Wzrost studentów — czytanie pojedynczego CI",
+      p("Zmierzyłeś wzrost 30 studentów. Średnia z próby wynosi ",
+        withMathJax("\\(\\bar{x} = 173.4\\)"), " cm, odchylenie standardowe ",
+        withMathJax("\\(s = 8.2\\)"), " cm. Zbudujmy przedział dla średniego
+        wzrostu i sprawdźmy dwie hipotezy."),
+      uiOutput("ch3_caseA1_widget")
     ),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f50d"),
-        "A2. Ten sam pomiar, trzy różne wielkości próby"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Trzy badania mierzą stężenie zanieczyszczenia (µg/m³). Wszystkie
-            dały średnią 32.0 i s = 8.0, ale różnią się liczebnością próby:
-            n = 10, 50 i 200. Kolejne kroki dodają przedziały jeden po drugim.")
-        ),
-        uiOutput("ch3_caseA2_widget")
-      )
+    figure_panel(
+      label = "Przykład A2",
+      title = "Ten sam pomiar, trzy różne wielkości próby",
+      p("Trzy badania mierzą stężenie zanieczyszczenia (µg/m³). Wszystkie
+        dały średnią 32.0 i s = 8.0, ale różnią się liczebnością próby:
+        n = 10, 50 i 200. Kolejne kroki dodają przedziały jeden po drugim."),
+      uiOutput("ch3_caseA2_widget")
     ),
 
     lc_h3("B. Przedział dla różnicy średnich"),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f48a"),
-        "B1. Test leku na ciśnienie — CI dla różnicy nie obejmuje 0"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Badamy nowy lek na obniżenie ciśnienia krwi. ",
-            tags$b("Lek:"), " n = 40, średnie obniżenie 12.3 mmHg, s = 4.5. ",
-            tags$b("Placebo:"), " n = 40, średnie obniżenie 4.1 mmHg, s = 4.2.")
-        ),
-        uiOutput("ch3_caseB1_widget")
-      )
+    figure_panel(
+      label = "Przykład B1",
+      title = "Test leku na ciśnienie — CI dla różnicy nie obejmuje 0",
+      p("Badamy nowy lek na obniżenie ciśnienia krwi. ",
+        tags$b("Lek:"), " n = 40, średnie obniżenie 12.3 mmHg, s = 4.5. ",
+        tags$b("Placebo:"), " n = 40, średnie obniżenie 4.1 mmHg, s = 4.2."),
+      uiOutput("ch3_caseB1_widget")
     ),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f33f"),
-        "B2. Dwa nawozy — CI dla różnicy obejmuje 0"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Porównujesz plon kukurydzy dla dwóch nawozów. ",
-            tags$b("Nawóz X:"), " n = 25, średnia 8.4 t/ha, s = 1.2. ",
-            tags$b("Nawóz Y:"), " n = 25, średnia 8.1 t/ha, s = 1.3.")
-        ),
-        uiOutput("ch3_caseB2_widget")
-      )
+    figure_panel(
+      label = "Przykład B2",
+      title = "Dwa nawozy — CI dla różnicy obejmuje 0",
+      p("Porównujesz plon kukurydzy dla dwóch nawozów. ",
+        tags$b("Nawóz X:"), " n = 25, średnia 8.4 t/ha, s = 1.2. ",
+        tags$b("Nawóz Y:"), " n = 25, średnia 8.1 t/ha, s = 1.3."),
+      uiOutput("ch3_caseB2_widget")
     ),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "⚠️"),
-        "B3. Pułapka nakładających się CI"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Mierzysz czas reakcji w dwóch grupach po 150 osób. ",
-            tags$b("Grupa A:"), " średnia 350 ms, s = 45. ",
-            tags$b("Grupa B:"), " średnia 362 ms, s = 45. Przedziały
-            obu grup nakładają się. Czy różnica jest istotna?")
-        ),
-        uiOutput("ch3_caseB3_widget")
-      )
+    figure_panel(
+      label = "Przykład B3",
+      title = "Pułapka nakładających się CI",
+      p("Mierzysz czas reakcji w dwóch grupach po 150 osób. ",
+        tags$b("Grupa A:"), " średnia 350 ms, s = 45. ",
+        tags$b("Grupa B:"), " średnia 362 ms, s = 45. Przedziały
+        obu grup nakładają się. Czy różnica jest istotna?"),
+      uiOutput("ch3_caseB3_widget")
     ),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f4ca"),
-        "B4. Istotne statystycznie ≠ ważne praktycznie"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Bardzo duże badanie porównuje IQ w dwóch województwach. ",
-            tags$b("Wojew. A:"), " n = 20 000, średnia 100.4, s = 15. ",
-            tags$b("Wojew. B:"), " n = 20 000, średnia 100.0, s = 15.
-            Różnica 0.4 pkt IQ — dużo czy mało?")
-        ),
-        uiOutput("ch3_caseB4_widget")
-      )
+    figure_panel(
+      label = "Przykład B4",
+      title = "Istotne statystycznie ≠ ważne praktycznie",
+      p("Bardzo duże badanie porównuje IQ w dwóch województwach. ",
+        tags$b("Wojew. A:"), " n = 20 000, średnia 100.4, s = 15. ",
+        tags$b("Wojew. B:"), " n = 20 000, średnia 100.0, s = 15.
+        Różnica 0.4 pkt IQ — dużo czy mało?"),
+      uiOutput("ch3_caseB4_widget")
     ),
 
     lc_h3("C. Wiele grup — forest plot"),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f3eb"),
-        "C1. Cztery metody nauczania — czy któraś wystaje?"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Porównujesz średni wynik egzaminu (0–40 pkt) studentów uczących
-            się czterema metodami, po 25 osób w każdej grupie. Kolejne kroki
-            dodają punkty, średnie i przedziały.")
-        ),
-        uiOutput("ch3_caseC1_widget")
-      )
+    figure_panel(
+      label = "Przykład C1",
+      title = "Cztery metody nauczania — czy któraś wystaje?",
+      p("Porównujesz średni wynik egzaminu (0–40 pkt) studentów uczących
+        się czterema metodami, po 25 osób w każdej grupie. Kolejne kroki
+        dodają punkty, średnie i przedziały."),
+      uiOutput("ch3_caseC1_widget")
     ),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f3e5"),
-        "C2. Pięć oddziałów szpitalnych — czas oczekiwania"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Mierzysz średni czas oczekiwania na konsultację (minuty) w pięciu
-            oddziałach szpitala. Który wymaga interwencji?")
-        ),
-        uiOutput("ch3_caseC2_widget")
-      )
+    figure_panel(
+      label = "Przykład C2",
+      title = "Pięć oddziałów szpitalnych — czas oczekiwania",
+      p("Mierzysz średni czas oczekiwania na konsultację (minuty) w pięciu
+        oddziałach szpitala. Który wymaga interwencji?"),
+      uiOutput("ch3_caseC2_widget")
     ),
 
     lc_p("Przypadki powtarzają wnioski z całego rozdziału. W A2 przedział
@@ -1412,30 +1346,21 @@ ch3_server <- function(input, output, session) {
   render_pairwise_table <- function(mat) {
     groups <- rownames(mat)
     k <- length(groups)
-    header <- tags$tr(
-      tags$th(""),
-      lapply(groups, function(g) tags$th(g, style = "padding: 4px 8px; text-align: center; font-size: 12px;"))
-    )
-    rows <- lapply(seq_len(k), function(i) {
-      tags$tr(
-        tags$th(groups[i], style = "padding: 4px 8px; text-align: right; font-size: 12px;"),
-        lapply(seq_len(k), function(j) {
-          if (i == j) {
-            tags$td("—", style = "padding: 4px 8px; text-align: center; color: var(--upwr-reference);")
-          } else if (mat[i, j]) {
-            tags$td("✓", style = "padding: 4px 8px; text-align: center; color: var(--upwr-sage); font-weight: bold; font-size: 16px;")
-          } else {
-            tags$td("×", style = "padding: 4px 8px; text-align: center; color: var(--upwr-accent); font-size: 16px;")
-          }
-        })
-      )
-    })
-    tags$table(
-      style = "border-collapse: collapse; margin: 8px auto; border: 1px solid var(--upwr-rule);",
-      tags$thead(header),
-      tags$tbody(rows)
-    )
+    sym <- function(i, j) if (i == j) "—" else if (mat[i, j]) "✓" else "×"
+    cls <- function(i, j) if (i == j) "is-dim" else if (mat[i, j]) "is-best" else NA
+    df <- data.frame(group = groups)
+    cell_class <- list()
+    for (j in seq_len(k)) {
+      key <- paste0("g", j)
+      df[[key]] <- vapply(seq_len(k), function(i) sym(i, j), character(1))
+      cell_class[[key]] <- vapply(seq_len(k), function(i) cls(i, j), character(1))
+    }
+    lc_table(df,
+      cols = c(list(lc_col("group", "", "row")),
+               lapply(seq_len(k), function(j) lc_col(paste0("g", j), groups[j], "text"))),
+      cell_class = cell_class, fit = TRUE)
   }
+
 
   # Narracja "jak w raporcie" dla pairwise
   pairwise_narrative <- function(data, mat, unit = "") {
@@ -1536,13 +1461,11 @@ ch3_server <- function(input, output, session) {
       return(lc_status(
         p(tags$strong("Hipoteza:"), " ", hyp$text),
         p(tags$strong("Szybka mapa porównań:")),
-        p(tags$em("✓ = rozłączne CI: wyraźny sygnał różnicy;  ",
-                  "× = CI nakładają się: wykres nie rozstrzyga"),
-          style = "font-size: 12px; color: var(--upwr-reference);"),
+        lc_caption("✓ = rozłączne CI: wyraźny sygnał różnicy; ",
+                   "× = CI nakładają się: wykres nie rozstrzyga"),
         render_pairwise_table(mat),
-        p(tags$strong("Jak to opisać na tym etapie:"),
-          style = "margin-top: 12px;"),
-        p(HTML(narrative), style = "font-style: italic;")
+        p(tags$strong("Jak to opisać na tym etapie:")),
+        p(tags$em(HTML(narrative)))
       ))
     }
 

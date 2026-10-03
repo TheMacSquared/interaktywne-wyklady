@@ -62,18 +62,13 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.1", title = "Jak zmienia się szerokość przedziału?",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_slider("ch5_n", "Wielkość próby (n)", 5, 100, 30, 1),
-          lc_slider("ch5_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01),
-          lc_slider("ch5_s", "Odchylenie std. (s)", 1, 12, 8, 1),
-          hr(),
-          uiOutput("ch5_me_display")
-        ),
-        column(8,
-          zoom_plot_ui("ch5_factors_plot", height = "480px")
-        )
-      )
+      lc_toolbar(
+        lc_slider("ch5_n", "Wielkość próby (n)", 5, 100, 30, 1),
+        lc_slider("ch5_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01),
+        lc_slider("ch5_s", "Odchylenie std. (s)", 1, 12, 8, 1),
+        lc_readouts(uiOutput("ch5_me_display"))
+      ),
+      lc_plot("ch5_factors_plot", max_height = "480px")
     ),
 
     lc_p("Przy ustawieniach początkowych (n = 30, s = 8, poziom ufności 95%)
@@ -116,19 +111,15 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.2", title = "Kalkulator wielkości próby",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          numericInput("ch5_plan_me", "Pożądany margines błędu:",
+      lc_toolbar(
+        numericInput("ch5_plan_me", "Pożądany margines błędu",
                        value = 2, min = 0.1, step = 0.1),
-          numericInput("ch5_plan_s", "Spodziewane s:",
+        numericInput("ch5_plan_s", "Spodziewane s",
                        value = 10, min = 0.1, step = 0.5),
-          lc_slider("ch5_plan_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01)
-        ),
-        column(8,
-          uiOutput("ch5_plan_result"),
-          zoom_plot_ui("ch5_plan_plot", height = "440px")
-        )
-      )
+        lc_slider("ch5_plan_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01)
+      ),
+      uiOutput("ch5_plan_result"),
+      lc_plot("ch5_plan_plot", max_height = "440px")
     ),
 
     lc_p("Przy domyślnych ustawieniach (margines 2, s = 10, poziom ufności 95%)
@@ -153,9 +144,8 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.3", title = "Trzy poziomy ufności",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          selectInput("ch5_cmp_data", "Dane:",
+      lc_toolbar(
+        selectInput("ch5_cmp_data", "Dane",
             choices = list(
               "Przykłady ogólne" = c(
                 "Wzrost studentów (n=30)" = "height",
@@ -170,14 +160,10 @@ ch5_ui <- list(
             ),
             selected = "height"
           ),
-          lc_action("ch5_cmp_calc", "Oblicz 3 przedziały", variant = "solid"),
-          br(), br(),
-          uiOutput("ch5_cmp_stats")
-        ),
-        column(8,
-          zoom_plot_ui("ch5_cmp_plot", height = "250px")
-        )
-      )
+        lc_action("ch5_cmp_calc", "Oblicz 3 przedziały", variant = "solid"),
+        lc_readouts(uiOutput("ch5_cmp_stats"))
+      ),
+      lc_plot("ch5_cmp_plot", max_height = "250px")
     ),
 
     lc_p("Dla próby wzrostu 30 studentów (średnia 170.69 cm, s = 12.55 cm)
@@ -208,56 +194,38 @@ ch5_ui <- list(
       na tle obszaru hipotezy. Zanim odsłonisz werdykt, oceń sam, czy przedział
       pozwala ją przyjąć."),
 
-    tags$details(class = "case-study", open = NA,
-      tags$summary(
-        span(class = "case-icon", "\U0001f697"),
-        "Przykład 1. Czas dojazdu — czy średni czas przekracza 26 min?"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Zmierzono czas dojazdu 40 pracowników. Średnia z próby wynosi ",
-            withMathJax("\\(\\bar{x} = 28.5\\)"), " min, odchylenie standardowe ", withMathJax("\\(s = 8\\)"), " min.
-            Hipoteza: średni czas dojazdu w populacji przekracza 26 min.")
-        ),
-        uiOutput("ch5_edge1_buttons"),
-        lc_plot("ch5_edge1_plot", ratio = "2.6/1", max_height = "240px"),
-        uiOutput("ch5_edge1_explain")
-      )
+    figure_panel(
+      label = "Przykład 1",
+      title = "Czas dojazdu — czy średni czas przekracza 26 min?",
+      p("Zmierzono czas dojazdu 40 pracowników. Średnia z próby wynosi ",
+        withMathJax("\\(\\bar{x} = 28.5\\)"), " min, odchylenie standardowe ", withMathJax("\\(s = 8\\)"), " min.
+        Hipoteza: średni czas dojazdu w populacji przekracza 26 min."),
+      uiOutput("ch5_edge1_buttons"),
+      lc_plot("ch5_edge1_plot", ratio = "2.6/1", max_height = "240px"),
+      uiOutput("ch5_edge1_explain")
     ),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f5f3️"),
-        "Przykład 2. Sondaż — czy poparcie przekracza 50%?"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Pracownia sondażowa zapytała 1000 wyborców, czy poprą partię X.
-            Odpowiedzi TAK udzieliło 540 osób (", withMathJax("\\(\\hat{p} = 0.54\\)"), ").
-            Hipoteza: poparcie w populacji przekracza próg 50%.")
-        ),
-        uiOutput("ch5_edge2_buttons"),
-        lc_plot("ch5_edge2_plot", ratio = "2.6/1", max_height = "240px"),
-        uiOutput("ch5_edge2_explain")
-      )
+    figure_panel(
+      label = "Przykład 2",
+      title = "Sondaż — czy poparcie przekracza 50%?",
+      p("Pracownia sondażowa zapytała 1000 wyborców, czy poprą partię X.
+        Odpowiedzi TAK udzieliło 540 osób (", withMathJax("\\(\\hat{p} = 0.54\\)"), ").
+        Hipoteza: poparcie w populacji przekracza próg 50%."),
+      uiOutput("ch5_edge2_buttons"),
+      lc_plot("ch5_edge2_plot", ratio = "2.6/1", max_height = "240px"),
+      uiOutput("ch5_edge2_explain")
     ),
 
-    tags$details(class = "case-study",
-      tags$summary(
-        span(class = "case-icon", "\U0001f4d8"),
-        "Przykład 3. Wynik szkolenia — czy średnia przekracza 65 pkt?"
-      ),
-      div(class = "case-body",
-        div(class = "case-scenario",
-          p("Po szkoleniu BHP 20 pracowników uzyskało średni wynik ",
-            withMathJax("\\(\\bar{x} = 68\\)"), " pkt
-            (na 100), ", withMathJax("\\(s = 10\\)"), " pkt.
-            Hipoteza: średni wynik w populacji przekracza próg 65 pkt.")
-        ),
-        uiOutput("ch5_edge3_buttons"),
-        lc_plot("ch5_edge3_plot", ratio = "2.6/1", max_height = "240px"),
-        uiOutput("ch5_edge3_explain")
-      )
+    figure_panel(
+      label = "Przykład 3",
+      title = "Wynik szkolenia — czy średnia przekracza 65 pkt?",
+      p("Po szkoleniu BHP 20 pracowników uzyskało średni wynik ",
+        withMathJax("\\(\\bar{x} = 68\\)"), " pkt
+        (na 100), ", withMathJax("\\(s = 10\\)"), " pkt.
+        Hipoteza: średni wynik w populacji przekracza próg 65 pkt."),
+      uiOutput("ch5_edge3_buttons"),
+      lc_plot("ch5_edge3_plot", ratio = "2.6/1", max_height = "240px"),
+      uiOutput("ch5_edge3_explain")
     ),
 
     lc_p("Gdy przedział leży blisko progu, sama zmiana poziomu ufności może
@@ -377,9 +345,9 @@ ch5_server <- function(input, output, session) {
     width <- 2 * me
 
     tagList(
-      lc_stat_box("ME", round(me, 2), color = col_ci),
-      lc_stat_box("Szer.", round(width, 2), color = upwr_secondary),
-      lc_stat_box("t*", round(t_star, 3), color = col_estimate)
+      lc_readout("ME", round(me, 2), color = col_ci),
+      lc_readout("Szer.", round(width, 2), color = upwr_secondary),
+      lc_readout("t*", round(t_star, 3), color = col_estimate)
     )
   })
 
@@ -519,8 +487,7 @@ ch5_server <- function(input, output, session) {
     if (is.null(df)) return(NULL)
     tagList(
       lapply(1:3, function(i) {
-        lc_stat_box(df$conf[i], "±", round(df$me[i], 2),
-                    color = c(col_estimate, col_ci, col_true)[i])
+        lc_readout(df$conf[i], paste0("±", round(df$me[i], 2)), color = c(col_estimate, col_ci, col_true)[i])
       })
     )
   })
@@ -615,22 +582,20 @@ ch5_server <- function(input, output, session) {
     levels <- c(0.90, 0.95, 0.99)
     btns <- lapply(levels, function(lv) {
       is_active <- !is.na(current_conf) && abs(current_conf - lv) < 1e-9
-      btn_class <- if (is_active) "lc-btn-warning" else "lc-btn-warning-outline"
-      actionButton(paste0("ch5_", case_id, "_conf", round(lv * 100)),
-                   paste0(round(lv * 100), "%"), class = btn_class)
+      lc_action(paste0("ch5_", case_id, "_conf", round(lv * 100)),
+                paste0(round(lv * 100), "%"),
+                variant = if (is_active) "solid" else "outline")
     })
 
     # Drugi rzad: przycisk "Pokaz werdykt" - tylko gdy conf wybrany i jeszcze nie odkryty
     reveal_row <- if (!is.na(current_conf) && !revealed) {
-      div(class = "step-buttons lc-mt-xs",
-        lc_action(paste0("ch5_", case_id, "_reveal"), "\U0001f50d Pokaż werdykt", variant = "solid"))
+      lc_action(paste0("ch5_", case_id, "_reveal"), "Pokaż werdykt", variant = "solid")
     } else {
       NULL
     }
 
     tagList(
-      div(class = "step-buttons", btns),
-      reveal_row
+      lc_toolbar(lc_group("Poziom ufności", btns), reveal_row)
     )
   }
 

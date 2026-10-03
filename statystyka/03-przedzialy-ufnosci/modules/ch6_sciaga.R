@@ -234,40 +234,25 @@ ch6_ui <- list(
 
     lc_h2("ch6-szerokosc-tab", "Co wpływa na szerokość CI"),
 
-    tagList(
-      tags$table(class = "lc-table lc-table-bordered",
-        style = "font-size: 15px;",
-        tags$thead(
-          tags$tr(
-            tags$th("Czynnik"),
-            tags$th("Wzrost →"),
-            tags$th("Efekt na CI"),
-            tags$th("Co z tym zrobić?")
-          )
-        ),
-        tags$tbody(
-          tags$tr(
-            tags$td("Wielkość próby (n)"),
-            tags$td("↑"),
-            tags$td("↓ węższy (dokładniejszy)"),
-            tags$td("Zbierz więcej danych — ale 4× więcej, by zawęzić
-                     CI o połowę")
-          ),
-          tags$tr(
-            tags$td("Poziom ufności"),
-            tags$td("↑"),
-            tags$td("↑ szerszy (bardziej ostrożny)"),
-            tags$td("Wybierz świadomie, ", tags$em("przed"),
-                    " patrzeniem na wyniki")
-          ),
-          tags$tr(
-            tags$td("Zmienność danych"),
-            tags$td("↑"),
-            tags$td("↑ szerszy (więcej szumu)"),
-            tags$td("Kontroluj warunki pomiaru, sprawdź outliery")
-          )
-        )
-      )
+    lc_table(
+      data.frame(
+        factor = c("Wielkość próby (n)", "Poziom ufności", "Zmienność danych"),
+        up = c("↑", "↑", "↑"),
+        effect = c("↓ węższy (dokładniejszy)", "↑ szerszy (bardziej ostrożny)",
+                   "↑ szerszy (więcej szumu)"),
+        action = I(list(
+          "Zbierz więcej danych — ale 4× więcej, by zawęzić CI o połowę",
+          tagList("Wybierz świadomie, ", tags$em("przed"), " patrzeniem na wyniki"),
+          "Kontroluj warunki pomiaru, sprawdź outliery"
+        ))
+      ),
+      cols = list(
+        lc_col("factor", "Czynnik", "row"),
+        lc_col("up", "Wzrost →", "text"),
+        lc_col("effect", "Efekt na CI", "text"),
+        lc_col("action", "Co z tym zrobić?", "text")
+      ),
+      narrow = "cards"
     ),
 
     lc_h2("ch6-wzory", "Dla zainteresowanych: wzory"),
@@ -279,108 +264,79 @@ ch6_ui <- list(
                 tags$code("Lower"), " / ", tags$code("Upper"),
                 ", rozwiń którąś z sekcji.")),
 
-      tags$details(class = "case-study",
-        tags$summary(
-          span(class = "case-icon", "\U0001f4d0"),
-          "Wzór dla średniej"
+      lc_more("Wzór dla średniej",
+        lc_formula_box(
+          h4("Przedział dla średniej (nieznane σ — STANDARDOWY)"),
+          withMathJax(helpText(
+            "$$\\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$"
+          )),
+          p("Wymaga: dane ilościowe, w przybliżeniu normalne
+             (lub duże n). To wzór, którego używa jamovi
+             w One Sample T-Test.")
         ),
-        div(class = "case-body",
-          lc_formula_box(
-            h4("Przedział dla średniej (nieznane σ — STANDARDOWY)"),
-            withMathJax(helpText(
-              "$$\\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$"
-            )),
-            p("Wymaga: dane ilościowe, w przybliżeniu normalne
-               (lub duże n). To wzór, którego używa jamovi
-               w One Sample T-Test.")
-          ),
-          lc_formula_box(
-            h4("Jeśli znamy σ populacji (rzadko)"),
-            withMathJax(helpText(
-              "$$\\bar{x} \\pm z^* \\cdot \\frac{\\sigma}{\\sqrt{n}}$$"
-            )),
-            p("W praktyce prawie nigdy nie używany — σ zwykle jest
-               nieznane.")
-          )
+        lc_formula_box(
+          h4("Jeśli znamy σ populacji (rzadko)"),
+          withMathJax(helpText(
+            "$$\\bar{x} \\pm z^* \\cdot \\frac{\\sigma}{\\sqrt{n}}$$"
+          )),
+          p("W praktyce prawie nigdy nie używany — σ zwykle jest
+             nieznane.")
         )
       ),
 
-      tags$details(class = "case-study",
-        tags$summary(
-          span(class = "case-icon", "\U0001f4d0"),
-          "Wzory dla proporcji"
+      lc_more("Wzory dla proporcji",
+        lc_formula_box(
+          h4("Przedział Walda (prosty, ale niedokładny)"),
+          withMathJax(helpText(
+            "$$\\hat{p} \\pm z^* \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$$"
+          )),
+          p("Działa źle przy małych n lub skrajnych p (blisko 0 albo 1).")
         ),
-        div(class = "case-body",
-          lc_formula_box(
-            h4("Przedział Walda (prosty, ale niedokładny)"),
-            withMathJax(helpText(
-              "$$\\hat{p} \\pm z^* \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$$"
-            )),
-            p("Działa źle przy małych n lub skrajnych p (blisko 0 albo 1).")
-          ),
-          lc_formula_box(
-            h4("Przedział Wilsona (zalecany)"),
-            p("Lepsze ", gloss("pokrycie"), " niż Wald.")
-          ),
-          lc_formula_box(
-            h4("Przedział Cloppera-Pearsona (dokładny)"),
-            p("Najbezpieczniejszy — używa dwumianu bez aproksymacji.
-               jamovi stosuje go w Binomial test.")
-          )
+        lc_formula_box(
+          h4("Przedział Wilsona (zalecany)"),
+          p("Lepsze ", gloss("pokrycie"), " niż Wald.")
+        ),
+        lc_formula_box(
+          h4("Przedział Cloppera-Pearsona (dokładny)"),
+          p("Najbezpieczniejszy — używa dwumianu bez aproksymacji.
+             jamovi stosuje go w Binomial test.")
         )
       ),
 
-      tags$details(class = "case-study",
-        tags$summary(
-          span(class = "case-icon", "\U0001f4cf"),
-          "Wartości krytyczne (dla poziomów ufności)"
+      lc_more("Wartości krytyczne (dla poziomów ufności)",
+        lc_table(
+          data.frame(level = c("90%", "95%", "99%"),
+                     z = c(1.645, 1.960, 2.576),
+                     alpha = c(0.10, 0.05, 0.01)),
+          cols = list(
+            lc_col("level", "Poziom ufności", "row"),
+            lc_col("z", "z*", digits = 3),
+            lc_col("alpha", "α", digits = 2)
+          )
         ),
-        div(class = "case-body",
-          tags$table(class = "lc-table lc-table-bordered lc-table-striped",
-            style = "font-size: 15px;",
-            tags$thead(
-              tags$tr(
-                tags$th("Poziom ufności"),
-                tags$th(withMathJax("\\(z^*\\)")),
-                tags$th(withMathJax("\\(\\alpha\\)"))
-              )
-            ),
-            tags$tbody(
-              tags$tr(tags$td("90%"), tags$td("1.645"), tags$td("0.10")),
-              tags$tr(tags$td("95%"), tags$td("1.960"), tags$td("0.05")),
-              tags$tr(tags$td("99%"), tags$td("2.576"), tags$td("0.01"))
-            )
-          ),
-          p(style = "color: var(--upwr-reference); font-size: 14px;",
-            "Dla ", gloss("rozkład t-Studenta", "rozkładu t"), " wartości zależą od df = n-1; dla dużych
-             n są bardzo bliskie z.")
-        )
+        lc_caption(
+          "Dla ", gloss("rozkład t-Studenta", "rozkładu t"), " wartości zależą od df = n-1; dla dużych
+           n są bardzo bliskie z.")
       ),
 
-      tags$details(class = "case-study",
-        tags$summary(
-          span(class = "case-icon", "\U0001f522"),
-          "Planowanie wielkości próby"
+      lc_more("Planowanie wielkości próby",
+        lc_formula_box(
+          h4("Dla średniej"),
+          withMathJax(helpText(
+            "$$n = \\left(\\frac{z^* \\cdot s}{ME_{max}}\\right)^2$$"
+          )),
+          p("Podaj oczekiwany ", gloss("margines błędu"), " ",
+            withMathJax("\\(ME_{max}\\)"),
+            " i przybliżonej zmienności ",
+            withMathJax("\\(s\\)"),
+            " — dostaniesz minimalne n.")
         ),
-        div(class = "case-body",
-          lc_formula_box(
-            h4("Dla średniej"),
-            withMathJax(helpText(
-              "$$n = \\left(\\frac{z^* \\cdot s}{ME_{max}}\\right)^2$$"
-            )),
-            p("Podaj oczekiwany ", gloss("margines błędu"), " ",
-              withMathJax("\\(ME_{max}\\)"),
-              " i przybliżonej zmienności ",
-              withMathJax("\\(s\\)"),
-              " — dostaniesz minimalne n.")
-          ),
-          lc_formula_box(
-            h4("Dla proporcji"),
-            withMathJax(helpText(
-              "$$n = \\frac{z^{*2} \\cdot \\hat{p}(1-\\hat{p})}{ME_{max}^2}$$"
-            )),
-            p("Gdy nie znamy p, używamy p = 0.5 (daje maksymalne n).")
-          )
+        lc_formula_box(
+          h4("Dla proporcji"),
+          withMathJax(helpText(
+            "$$n = \\frac{z^{*2} \\cdot \\hat{p}(1-\\hat{p})}{ME_{max}^2}$$"
+          )),
+          p("Gdy nie znamy p, używamy p = 0.5 (daje maksymalne n).")
         )
       )
     ),
