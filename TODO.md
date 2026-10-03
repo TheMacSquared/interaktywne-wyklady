@@ -282,8 +282,22 @@ to stosują.
 
 ### 04 — wnioskowanie statystyczne
 
-- [ ] Ograniczyć `tags$strong()` / `tags$b()` w `modules/ch1_logika.R`
-  (ok. 37 wystąpień) do etykiet, werdyktów i statusów.
+- [ ] Post hoc w ANOVA (rozdz. 09) i porównanie χ²/Fisher (rozdz. 07) czytają
+  dane przez `isolate()`: po nowym losowaniu pokazują wyniki dla starych
+  danych, dopóki ktoś nie kliknie przycisku ponownie.
+- [ ] Ryc. 3.2: statbox „Błąd I” pokazuje α z panelu mocy, a p-wartość jest
+  tylko w podpisie; suwak n zmienia tylko symulację pod H₀, obserwowana
+  różnica zawsze pochodzi z n = 40.
+- [ ] Ryc. 3.3 (`wsRenderPValueChart` w `app.R`): zacieniowane pole p-wartości
+  nazywa się w kodzie „Obszar odrzucenia”; nieużywany parametr `alpha`;
+  oś x bez podpisu.
+- [ ] Ryc. 5.3: z liczone bez poprawki na ciągłość, p-wartość obok
+  z poprawką (`prop.test(correct = TRUE)`).
+- [ ] Ryc. 6.x: PNG `anscombe-quartet.png` i `correlation-nonlinear.png` mają
+  kropkę dziesiętną i nie mają skryptu generującego.
+- [ ] Ryc. 10.5: η² z próby (seed 202) wyraźnie mniejsze niż η² populacji
+  w tabeli; kolumna „x̄” pokazuje średnie populacji.
+- [ ] `helpers.R`: `step_null_plot` — etykiety „H0”, „Ha” bez indeksów.
 
 ### 05 — założenia testów
 
@@ -293,8 +307,6 @@ to stosują.
 
 ### 06 — regresja
 
-- [ ] Przeredagować `lead` sześciu rozdziałów na pytania-hooki tam, gdzie to
-  naturalne (wzorzec: 04 ch1, ch4, ch6).
 - [ ] Quiz interpretacji b₁ w jednostkach w `ch1_liniowa.R`, sekcja
   `ch1-caschool`: „read ~ income”, b₁ = 1,88 — co znaczy wzrost dochodu
   o 1 tys. USD? Dystraktory: mylone jednostki i skale.
