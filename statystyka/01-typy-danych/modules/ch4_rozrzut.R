@@ -42,16 +42,19 @@ ch4_ui <- list(
 
     figure_panel(
       label = "Ryc. 4.1",
-      title = "Dwie linie autobusowe — ta sama średnia, inny rozrzut",
-      div(class = "step-buttons",
-        lc_action("ch4_spread_s1", "1. Dwie linie", variant = "outline"),
-        lc_action("ch4_spread_s2", "2. Ta sama średnia, ale...", variant = "outline"),
-        lc_action("ch4_spread_s3", "3. Wychodzisz wcześniej", variant = "outline"),
-        lc_action("ch4_spread_s4", "4. Konsekwencje", variant = "outline")
-      ),
-      lc_slider("ch4_spread_buffer", "Wychodzisz wcześniej o (minuty)", 0, 10, 0, 1),
-      lc_plot("ch4_spread_plot", ratio = "1.4/1", max_height = "450px"),
-      uiOutput("ch4_spread_text")
+      lc_step_widget("ch4_spread",
+        title = "Dwie linie autobusowe — ta sama średnia, inny rozrzut",
+        steps = c("Dwie linie", "Ta sama średnia, ale...", "Wychodzisz wcześniej",
+                  "Konsekwencje"),
+        toolbar = lc_toolbar(
+          lc_step_from(3,
+            lc_slider("ch4_spread_buffer", "Wychodzisz wcześniej o (minuty)", 0, 10, 0, 1)
+          ),
+          lc_readouts(uiOutput("ch4_spread_reads"))
+        ),
+        plot_id = "ch4_spread_plot",
+        ratio = "2/1"
+      )
     ),
 
     # ====================================================================
@@ -66,20 +69,16 @@ ch4_ui <- list(
 
     figure_panel(
       label = "Ryc. 4.2",
-      title = "Obliczanie odchylenia standardowego",
-      div(class = "step-buttons",
-        lc_action("ch4_sd_s1", "1. Dane", variant = "outline"),
-        lc_action("ch4_sd_s2", "2. Odchylenia od średniej", variant = "outline"),
-        lc_action("ch4_sd_s3", "3. Wariancja i SD", variant = "outline")
-      ),
-      div(style = "margin-bottom: 10px;",
-        actionButton("ch4_sd_new", "Losuj nowy zestaw",
-                     class = "lc-btn-ok lc-btn-sm", style = "margin-right: 6px;"),
-        lc_action("ch4_sd_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
-      ),
-      lc_plot("ch4_sd_plot", ratio = "1.6/1", max_height = "400px"),
-      tableOutput("ch4_sd_table"),
-      uiOutput("ch4_sd_text")
+      lc_step_widget("ch4_sd",
+        title = "Obliczanie odchylenia standardowego",
+        steps = c("Dane", "Odchylenia od średniej", "Wariancja i SD"),
+        toolbar = lc_toolbar(
+          lc_action("ch4_sd_new", "Losuj nowy zestaw", variant = "outline")
+        ),
+        plot_id = "ch4_sd_plot",
+        ratio = "2/1",
+        extra = uiOutput("ch4_sd_table")
+      )
     ),
 
     # ====================================================================
@@ -121,21 +120,16 @@ ch4_ui <- list(
 
     figure_panel(
       label = "Ryc. 4.4",
-      title = "Boxplot — budowa krok po kroku",
-      div(class = "step-buttons",
-        lc_action("ch4_bp_s1", "1. Surowe dane", variant = "outline"),
-        lc_action("ch4_bp_s2", "2. Mediana", variant = "outline"),
-        lc_action("ch4_bp_s3", "3. Kwartyle i pudełko", variant = "outline"),
-        lc_action("ch4_bp_s4", "4. Wąsy i outliers", variant = "outline"),
-        lc_action("ch4_bp_s5", "5. Gotowy boxplot", variant = "outline")
-      ),
-      div(style = "margin-bottom: 10px;",
-        actionButton("ch4_bp_new", "Losuj nowe dane",
-                     class = "lc-btn-ok lc-btn-sm", style = "margin-right: 6px;"),
-        lc_action("ch4_bp_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
-      ),
-      lc_plot("ch4_bp_plot", ratio = "1.8/1", max_height = "350px"),
-      uiOutput("ch4_bp_text")
+      lc_step_widget("ch4_bp",
+        title = "Boxplot — budowa krok po kroku",
+        steps = c("Surowe dane", "Mediana", "Kwartyle i pudełko", "Wąsy i outliers",
+                  "Gotowy boxplot"),
+        toolbar = lc_toolbar(
+          lc_action("ch4_bp_new", "Losuj nowe dane", variant = "outline")
+        ),
+        plot_id = "ch4_bp_plot",
+        ratio = "2/1"
+      )
     ),
 
     # ====================================================================
@@ -268,12 +262,8 @@ ch4_server <- function(input, output, session) {
 
   # --- Widget 1: Bus scenario ---
 
-  ch4_spread_step <- reactiveVal(0)
-
-  observeEvent(input$ch4_spread_s1, { ch4_spread_step(1) })
-  observeEvent(input$ch4_spread_s2, { ch4_spread_step(2) })
-  observeEvent(input$ch4_spread_s3, { ch4_spread_step(3) })
-  observeEvent(input$ch4_spread_s4, { ch4_spread_step(4) })
+  # Krok widgetu (1..4) żyje w przeglądarce; suwak działa od kroku 3.
+  ch4_spread_step <- lc_step_server("ch4_spread", input)$step
 
   # Helper: generate bus delay data (deterministic seed)
   ch4_bus_data <- function() {
@@ -286,38 +276,34 @@ ch4_server <- function(input, output, session) {
          sd_a = round(sd(data_a), 1), sd_b = round(sd(data_b), 1))
   }
 
+  # Odczyty SD zastępują legendę: kolor odczytu = kolor linii.
+  output$ch4_spread_reads <- renderUI({
+    bus <- ch4_bus_data()
+    tagList(
+      lc_readout("Linia A", paste0("SD = ", lc_fmt(bus$sd_a, 1), " min"),
+                 color = STEP_ROLES$data$colour, swatch = TRUE),
+      lc_readout("Linia B", paste0("SD = ", lc_fmt(bus$sd_b, 1), " min"),
+                 color = STEP_ROLES$group$colour, swatch = TRUE)
+    )
+  })
+
   zoom_plot_server("ch4_spread_plot", reactive({
     step <- ch4_spread_step()
-    if (step == 0) return(NULL)
 
     buffer <- input$ch4_spread_buffer
+    req(!is.null(buffer))
     bus <- ch4_bus_data()
 
     dens_a <- density(bus$a, from = -3, to = 30, n = 500)
     dens_b <- density(bus$b, from = -3, to = 30, n = 500)
-    df_a <- data.frame(x = dens_a$x, y = dens_a$y,
-                       linia = paste0("Linia A (SD = ", bus$sd_a, ")"))
-    df_b <- data.frame(x = dens_b$x, y = dens_b$y,
-                       linia = paste0("Linia B (SD = ", bus$sd_b, ")"))
-    df_all <- rbind(df_a, df_b)
+    df_a <- data.frame(x = dens_a$x, y = dens_a$y)
+    df_b <- data.frame(x = dens_b$x, y = dens_b$y)
+    # Stała rama: oś Y z obu krzywych, wspólna dla kroków.
+    y_hi <- max(df_a$y, df_b$y) * 1.08
 
-    col_a <- upwr_cat["niebo"]; col_b <- upwr_accent
-    lbl_a <- paste0("Linia A (SD = ", bus$sd_a, ")")
-    lbl_b <- paste0("Linia B (SD = ", bus$sd_b, ")")
-
-    p <- ggplot(df_all, aes(x = x, y = y, color = linia, fill = linia)) +
-      geom_line(linewidth = 1.2) +
-      scale_color_manual(values = setNames(c(col_a, col_b), c(lbl_a, lbl_b))) +
-      scale_fill_manual(values = setNames(c(col_a, col_b), c(lbl_a, lbl_b))) +
-      geom_vline(xintercept = 2, linetype = "dashed", color = upwr_secondary,
-                 linewidth = 0.8) +
-      geom_vline(xintercept = 0, linetype = "solid", color = upwr_reference,
-                 linewidth = 0.5, alpha = 0.5) +
-      labs(x = "Spóźnienie (minuty)    ← za wcześnie | za późno →",
-           y = "Gęstość",
-           color = NULL, fill = NULL) +
-      coord_cartesian(xlim = c(-3, 25)) +
-      theme(legend.position = "top")
+    p <- ggplot(mapping = aes(x = x, y = y)) +
+      step_line("known", xintercept = 2) +
+      step_layer(geom_vline, "known", xintercept = 0, linewidth = 0.5, alpha = 0.5)
 
     if (step >= 3) {
       cutoff <- -buffer
@@ -325,13 +311,17 @@ ch4_server <- function(input, output, session) {
       shade_b <- df_b[df_b$x >= cutoff, ]
 
       p <- p +
-        geom_area(data = shade_a, aes(x = x, y = y), alpha = 0.25) +
-        geom_area(data = shade_b, aes(x = x, y = y), alpha = 0.15) +
-        geom_vline(xintercept = cutoff, linetype = "dotted",
-                   color = upwr_cat["szalwia"], linewidth = 1)
+        geom_area(data = shade_a, fill = STEP_ROLES$data$colour, alpha = 0.25) +
+        geom_area(data = shade_b, fill = STEP_ROLES$group$colour, alpha = 0.15) +
+        step_line(step_role(step, 3), xintercept = cutoff)
     }
 
-    p
+    p +
+      step_layer(geom_line, "data", data = df_a, linewidth = 1.2, alpha = 1) +
+      step_layer(geom_line, "group", data = df_b, linewidth = 1.2, alpha = 1) +
+      labs(x = "Spóźnienie (minuty)    ← za wcześnie | za późno →",
+           y = "Gęstość") +
+      step_frame(xlim = c(-3, 25), ylim = c(0, y_hi))
   }))
 
   output$ch4_spread_text <- renderUI({
@@ -339,112 +329,94 @@ ch4_server <- function(input, output, session) {
     buffer <- input$ch4_spread_buffer
     bus <- ch4_bus_data()
 
-    if (step == 0) {
-      lc_feedback(type = "info",
-          "Kliknij przycisk kroku, aby rozpocząć.")
-    } else if (step == 1) {
-      lc_feedback(type = "info",
-          tags$strong("Krok 1:"),
-          " Obie linie mają średnie spóźnienie około 2 minut.
-          Patrząc tylko na średnią, są identyczne.
-          Wartości ujemne = przyjazd przed czasem (rzadko się zdarza).")
+    if (step == 1) {
+      "Obie linie mają średnie spóźnienie około 2 minut.
+       Patrząc tylko na średnią, są identyczne.
+       Wartości ujemne = przyjazd przed czasem (rzadko się zdarza)."
     } else if (step == 2) {
       pct_10_a <- round(mean(bus$a > 10) * 100, 1)
       pct_10_b <- round(mean(bus$b > 10) * 100, 1)
       mean_late_a <- if (any(bus$a > 10)) round(mean(bus$a[bus$a > 10]), 1) else 0
       mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
-      lc_feedback(type = "info",
-          tags$strong("Krok 2:"),
-          paste0(" Linia A ma SD = ", bus$sd_a, " min (spóźnienia skupione 0-4 min),
-          a linia B ma SD = ", bus$sd_b, " min (zdarza się i punktualnie,
-          i 10+ min spóźnienia)."),
-          tags$br(), tags$br(),
-          tags$strong("Spóźnienia >10 min: "),
-          paste0("Linia A: ", pct_10_a, "% kursów",
-                 if (pct_10_a > 0) paste0(" (śr. ", mean_late_a, " min)") else "",
-                 "; Linia B: ", pct_10_b, "% kursów",
-                 if (pct_10_b > 0) paste0(" (śr. ", mean_late_b, " min)") else "",
-                 "."))
+      tagList(
+        paste0("Linia A ma SD = ", bus$sd_a, " min (spóźnienia skupione 0-4 min),
+        a linia B ma SD = ", bus$sd_b, " min (zdarza się i punktualnie,
+        i 10+ min spóźnienia)."),
+        tags$br(),
+        tags$strong("Spóźnienia >10 min:"),
+        paste0(" Linia A: ", pct_10_a, "% kursów",
+               if (pct_10_a > 0) paste0(" (śr. ", mean_late_a, " min)") else "",
+               "; Linia B: ", pct_10_b, "% kursów",
+               if (pct_10_b > 0) paste0(" (śr. ", mean_late_b, " min)") else "",
+               ".")
+      )
     } else if (step == 3) {
       lbl <- if (buffer == 0) "na stówkę (0 min zapasu)"
              else paste0(buffer, " min wcześniej")
-      lc_feedback(type = "info",
-          tags$strong("Krok 3:"),
-          paste0(" Wychodzisz ", lbl,
-                 ". Jesteś na przystanku o ", buffer,
-                 " min przed rozkładem. Zdążysz na każdy autobus,
-                 który nie odjedzie wcześniej niż ", buffer,
-                 " min przed rozkładem. Zacieniowany obszar = kursy,
-                 na które zdążysz. Przesuń suwak!"))
+      paste0("Wychodzisz ", lbl,
+             ". Jesteś na przystanku o ", buffer,
+             " min przed rozkładem. Zdążysz na każdy autobus,
+             który nie odjedzie wcześniej niż ", buffer,
+             " min przed rozkładem. Zacieniowany obszar = kursy,
+             na które zdążysz. Przesuń suwak!")
     } else if (step == 4) {
       prob_a <- mean(bus$a >= -buffer)
       prob_b <- mean(bus$b >= -buffer)
-      pct_10_a <- round(mean(bus$a > 10) * 100, 1)
       pct_10_b <- round(mean(bus$b > 10) * 100, 1)
       mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
       lbl <- if (buffer == 0) "na stówkę" else paste0(buffer, " min wcześniej")
-      lc_feedback(type = "info",
-          tags$strong("Krok 4:"), " Konsekwencje",
-          tags$br(),
-          paste0("Wychodzisz ", lbl, ":"),
-          tags$br(),
-          paste0("Linia A: zdążysz na ", round(prob_a * 100, 1),
-                             "% kursów."),
-          tags$br(),
-          paste0("Linia B: zdążysz na ", round(prob_b * 100, 1),
-                             "% kursów."),
-          tags$br(), tags$br(),
-          if (pct_10_b > 0) tagList(
-            tags$em(paste0("A gdy linia B się spóźni poważnie (>10 min, ",
-                           pct_10_b, "% kursów), średnie czekasz ",
-                           mean_late_b, " min. ",
-                           "Linia A praktycznie nigdy tak się nie spóźnia.")),
-            tags$br(), tags$br()
-          ),
-          "To dlatego sama średnia nie wystarczy -- rozrzut danych
-          ma realne konsekwencje!")
+      tagList(
+        paste0("Wychodzisz ", lbl, ":"),
+        tags$br(),
+        paste0("Linia A: zdążysz na ", round(prob_a * 100, 1), "% kursów."),
+        tags$br(),
+        paste0("Linia B: zdążysz na ", round(prob_b * 100, 1), "% kursów."),
+        tags$br(),
+        if (pct_10_b > 0) tagList(
+          tags$em(paste0("A gdy linia B się spóźni poważnie (>10 min, ",
+                         pct_10_b, "% kursów), średnie czekasz ",
+                         mean_late_b, " min. ",
+                         "Linia A praktycznie nigdy tak się nie spóźnia.")),
+          tags$br()
+        ),
+        "To dlatego sama średnia nie wystarczy -- rozrzut danych
+        ma realne konsekwencje!"
+      )
     }
   })
 
   # --- Widget 2: SD step-by-step ---
 
-  ch4_sd_step <- reactiveVal(0)
+  # Krok widgetu (1..3) żyje w przeglądarce; nowy zestaw nie cofa kroku.
+  ch4_sd_step <- lc_step_server("ch4_sd", input)$step
   ch4_sd_data <- reactiveVal(round(rnorm(10, mean = 170, sd = 8), 1))
-
-  observeEvent(input$ch4_sd_s1, { ch4_sd_step(1) })
-  observeEvent(input$ch4_sd_s2, { ch4_sd_step(2) })
-  observeEvent(input$ch4_sd_s3, { ch4_sd_step(3) })
 
   observeEvent(input$ch4_sd_new, {
     set.seed(NULL)
     ch4_sd_data(round(rnorm(10, mean = 170, sd = 8), 1))
-    ch4_sd_step(0)
-  })
-
-  observeEvent(input$ch4_sd_reset, {
-    ch4_sd_step(0)
   })
 
   zoom_plot_server("ch4_sd_plot", reactive({
     step <- ch4_sd_step()
-    if (step == 0) return(NULL)
 
     vals <- ch4_sd_data()
     n <- length(vals)
     x_bar <- mean(vals)
     s <- sd(vals)
 
+    # Stała rama: dane i pas średnia ± SD, wspólne dla kroków.
+    x_rng <- range(vals, x_bar - s, x_bar + s)
+    x_pad <- diff(x_rng) * 0.08
+    frame <- step_frame(xlim = x_rng + c(-x_pad, x_pad), ylim = c(0, n + 1.2),
+                        y_axis = FALSE)
+
     if (step == 1) {
       # Krok 1: punkty na osi liczbowej
       df <- data.frame(x = vals)
-      p <- ggplot(df, aes(x = x, y = 0)) +
-        geom_point(size = 4, color = upwr_cat["niebo"]) +
+      p <- ggplot(df, aes(x = x, y = (n + 1) / 2)) +
+        step_layer(geom_point, "data", size = 4, alpha = 1) +
         labs(x = "Wzrost (cm)", y = "") +
-        theme(axis.text.y = element_blank(),
-              axis.ticks.y = element_blank(),
-              panel.grid.major.y = element_blank(),
-              panel.grid.minor.y = element_blank()) +
-        scale_y_continuous(limits = c(-0.3, 0.3))
+        frame
 
     } else {
       # Kroki 2-3: punkty jedna pod drugą, posortowane wg odległości od średniej
@@ -455,48 +427,40 @@ ch4_server <- function(input, output, session) {
         dev = deviations[ord],
         y = seq(n, 1)  # najdalszy na górze
       )
+      dev_role <- step_role(step, 2)
 
-      p <- ggplot(df, aes(x = x, y = y)) +
-        geom_vline(xintercept = x_bar, linetype = "dashed", color = upwr_accent,
-                   linewidth = 1) +
-        geom_segment(aes(x = x_bar, xend = x, y = y, yend = y),
-                     color = upwr_cat["bursztyn"], linewidth = 0.8,
-                     arrow = arrow(length = unit(0.15, "cm"), type = "closed")) +
-        geom_point(size = 4, color = upwr_cat["niebo"]) +
-        annotate("text", x = x_bar, y = n + 0.8,
-                 label = paste0("średnia = ", round(x_bar, 2)),
-                 color = upwr_accent, size = 5, fontface = "bold") +
-        labs(x = "Wzrost (cm)", y = "") +
-        theme(axis.text.y = element_blank(),
-              axis.ticks.y = element_blank(),
-              panel.grid.major.y = element_blank(),
-              panel.grid.minor.y = element_blank()) +
-        scale_y_continuous(limits = c(0, n + 1.2))
+      p <- ggplot(df, aes(x = x, y = y))
 
       if (step >= 3) {
         p <- p +
           annotate("rect", xmin = x_bar - s, xmax = x_bar + s,
-                   ymin = 0, ymax = n + 0.3, fill = upwr_cat["szalwia"], alpha = 0.08) +
-          geom_vline(xintercept = x_bar - s, linetype = "dotted",
-                     color = upwr_cat["szalwia"], linewidth = 0.8) +
-          geom_vline(xintercept = x_bar + s, linetype = "dotted",
-                     color = upwr_cat["szalwia"], linewidth = 0.8) +
-          annotate("text", x = x_bar - s, y = 0.3,
-                   label = paste0("śr. - SD\n", round(x_bar - s, 1)),
-                   color = upwr_cat["szalwia"], size = 3.5, fontface = "bold", vjust = 0) +
-          annotate("text", x = x_bar + s, y = 0.3,
-                   label = paste0("śr. + SD\n", round(x_bar + s, 1)),
-                   color = upwr_cat["szalwia"], size = 3.5, fontface = "bold", vjust = 0) +
-          annotate("text", x = x_bar, y = 0.5,
-                   label = paste0("SD = ", round(s, 2), " cm"),
-                   color = upwr_cat["szalwia"], size = 4.5, fontface = "bold")
+                   ymin = 0, ymax = n + 0.3, fill = STEP_ROLES$new$colour, alpha = 0.08) +
+          step_line("new", xintercept = x_bar - s) +
+          step_line("new", xintercept = x_bar + s) +
+          step_label(x_bar - s, 0.3, paste0("śr. - SD\n", round(x_bar - s, 1)),
+                     role = "new", hjust = 0.5) +
+          step_label(x_bar + s, 0.3, paste0("śr. + SD\n", round(x_bar + s, 1)),
+                     role = "new", hjust = 0.5) +
+          step_label(x_bar, 0.5, paste0("SD = ", round(s, 2), " cm"),
+                     role = "new", hjust = 0.5, vjust = 0.5, size = 4.2)
       }
+
+      p <- p +
+        step_line(dev_role, xintercept = x_bar) +
+        step_layer(geom_segment, dev_role,
+                   mapping = aes(x = x_bar, xend = x, y = y, yend = y),
+                   arrow = arrow(length = unit(0.15, "cm"), type = "closed")) +
+        step_layer(geom_point, "data", size = 4, alpha = 1) +
+        step_label(x_bar, n + 0.8, paste0("średnia = ", round(x_bar, 2)),
+                   role = dev_role, hjust = 0.5, vjust = 0.5) +
+        labs(x = "Wzrost (cm)", y = "") +
+        frame
     }
 
     p
   }))
 
-  output$ch4_sd_table <- renderTable({
+  output$ch4_sd_table <- renderUI({
     step <- ch4_sd_step()
     if (step < 2) return(NULL)
 
@@ -508,60 +472,37 @@ ch4_server <- function(input, output, session) {
     sq_deviations <- deviations^2
 
     df <- data.frame(
-      i = 1:n,
-      `xi` = vals,
-      `xi - x_bar` = round(deviations, 2),
-      `(xi - x_bar)^2` = round(sq_deviations, 2),
-      check.names = FALSE
+      i = as.character(1:n),
+      x = vals,
+      dev = round(deviations, 2),
+      sq = round(sq_deviations, 2)
     )
+    # Od kroku 3: wiersz sumy kwadratów odchyleń.
+    foot <- if (step >= 3) list(i = "SUMA", x = "", dev = "",
+                                sq = round(sum(sq_deviations), 2))
 
-    if (step >= 3) {
-      variance <- sum(sq_deviations) / (n - 1)
-      s <- sqrt(variance)
-      summary_row <- data.frame(
-        i = NA,
-        `xi` = NA,
-        `xi - x_bar` = NA,
-        `(xi - x_bar)^2` = round(sum(sq_deviations), 2),
-        check.names = FALSE
-      )
-      # Mark the summary row
-      summary_row$i <- "SUMA"
-      summary_row$`xi` <- ""
-      summary_row$`xi - x_bar` <- ""
-      df$i <- as.character(df$i)
-      df$`xi` <- as.character(df$`xi`)
-      df$`xi - x_bar` <- as.character(round(deviations, 2))
-      summary_row$`(xi - x_bar)^2` <- as.character(round(sum(sq_deviations), 2))
-      df$`(xi - x_bar)^2` <- as.character(round(sq_deviations, 2))
-      df <- rbind(df, summary_row)
-    }
-
-    df
-  }, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%",
-     align = "cccc")
+    lc_table(df, cols = list(
+      lc_col("i", "i", "row"),
+      lc_col("x", "xi", digits = 1),
+      lc_col("dev", "xi - x_bar", digits = 2),
+      lc_col("sq", "(xi - x_bar)^2", digits = 2)
+    ), foot = foot)
+  })
 
   output$ch4_sd_text <- renderUI({
     step <- ch4_sd_step()
 
-    if (step == 0) {
-      lc_feedback(type = "info",
-          "Kliknij przycisk kroku, aby rozpoczac obliczanie odchylenia standardowego.")
-    } else if (step == 1) {
-      lc_feedback(type = "info",
-          tags$strong("Krok 1:"),
-          " Mamy 10 pomiarów wzrostu. Na osi liczbowej każdy punkt to jedna
-          obserwacja. Jak bardzo są rozproszone?")
+    if (step == 1) {
+      "Mamy 10 pomiarów wzrostu. Na osi liczbowej każdy punkt to jedna
+       obserwacja. Jak bardzo są rozproszone?"
     } else if (step == 2) {
       vals <- ch4_sd_data()
       x_bar <- mean(vals)
-      lc_feedback(type = "info",
-          tags$strong("Krok 2:"),
-          paste0(" Obliczamy srednia: x̄ = ", round(x_bar, 2),
-                 " cm. Nastepnie liczymy odchylenie każdego punktu od średniej
-                 (strzalki na wykresie). W tabeli widzisz odchylenia i ich kwadraty.
-                 Kwadraty gwarantuja, ze odchylenia dodatnie i ujemne sie nie
-                 znosa."))
+      paste0("Obliczamy srednia: x̄ = ", round(x_bar, 2),
+             " cm. Nastepnie liczymy odchylenie każdego punktu od średniej
+             (strzalki na wykresie). W tabeli widzisz odchylenia i ich kwadraty.
+             Kwadraty gwarantuja, ze odchylenia dodatnie i ujemne sie nie
+             znosa.")
     } else if (step == 3) {
       vals <- ch4_sd_data()
       n <- length(vals)
@@ -570,23 +511,22 @@ ch4_server <- function(input, output, session) {
       sq_deviations <- deviations^2
       variance <- sum(sq_deviations) / (n - 1)
       s <- sqrt(variance)
-      lc_feedback(type = "info",
-          tags$strong("Krok 3:"),
-          tags$br(), tags$br(),
-          withMathJax(helpText(
-            "$$s = \\sqrt{\\frac{1}{n-1} \\sum_{i=1}^{n} (x_i - \\bar{x})^2}$$"
-          )),
-          paste0("Suma kwadratów odchyleń = ", round(sum(sq_deviations), 2)),
-          tags$br(),
-          paste0("Wariancja \\(s^2\\) = suma / (n-1) = ",
-                 round(sum(sq_deviations), 2), " / ", n - 1, " = ",
-                 round(variance, 2)),
-          tags$br(),
-          paste0("Odchylenie standardowe \\(s = \\sqrt{",
-                             round(variance, 2), "} = ", round(s, 2), "\\) cm"),
-          tags$br(), tags$br(),
-          "Zielony pas na wykresie oznacza przedział \\(\\bar{x} \\pm s\\).
-          W rozkładzie normalnym ok. 68% danych leży w tym przedziale.")
+      tagList(
+        withMathJax(helpText(
+          "$$s = \\sqrt{\\frac{1}{n-1} \\sum_{i=1}^{n} (x_i - \\bar{x})^2}$$"
+        )),
+        paste0("Suma kwadratów odchyleń = ", round(sum(sq_deviations), 2)),
+        tags$br(),
+        paste0("Wariancja \\(s^2\\) = suma / (n-1) = ",
+               round(sum(sq_deviations), 2), " / ", n - 1, " = ",
+               round(variance, 2)),
+        tags$br(),
+        paste0("Odchylenie standardowe \\(s = \\sqrt{",
+               round(variance, 2), "} = ", round(s, 2), "\\) cm"),
+        tags$br(),
+        "Zacieniowany pas na wykresie oznacza przedział \\(\\bar{x} \\pm s\\).
+        W rozkładzie normalnym ok. 68% danych leży w tym przedziale."
+      )
     }
   })
 
@@ -669,28 +609,17 @@ ch4_server <- function(input, output, session) {
 
   # --- Widget 3: Boxplot builder ---
 
-  ch4_bp_step <- reactiveVal(0)
+  # Krok widgetu (1..5) żyje w przeglądarce; nowe dane nie cofają kroku.
+  ch4_bp_step <- lc_step_server("ch4_bp", input)$step
   ch4_bp_data <- reactiveVal(round(c(rnorm(27, 170, 8), 145, 198, 200), 1))
-
-  observeEvent(input$ch4_bp_s1, { ch4_bp_step(1) })
-  observeEvent(input$ch4_bp_s2, { ch4_bp_step(2) })
-  observeEvent(input$ch4_bp_s3, { ch4_bp_step(3) })
-  observeEvent(input$ch4_bp_s4, { ch4_bp_step(4) })
-  observeEvent(input$ch4_bp_s5, { ch4_bp_step(5) })
 
   observeEvent(input$ch4_bp_new, {
     set.seed(NULL)
     ch4_bp_data(round(c(rnorm(27, 170, 8), 145, 198, 200), 1))
-    ch4_bp_step(0)
-  })
-
-  observeEvent(input$ch4_bp_reset, {
-    ch4_bp_step(0)
   })
 
   zoom_plot_server("ch4_bp_plot", reactive({
     step <- ch4_bp_step()
-    if (step == 0) return(NULL)
 
     vals <- ch4_bp_data()
     sorted_vals <- sort(vals)
@@ -704,31 +633,31 @@ ch4_server <- function(input, output, session) {
     whisker_high <- max(vals[vals <= upper_fence])
     outliers <- vals[vals < lower_fence | vals > upper_fence]
 
+    # Stała rama osi X z pełnych danych, wspólna dla kroków.
+    x_lim <- range(vals) + c(-1, 1) * diff(range(vals)) * 0.06
+    frame <- step_frame(xlim = x_lim, ylim = c(-0.9, 0.9), y_axis = FALSE)
+
     if (step == 5) {
       # Final: clean boxplot + histogram for comparison
       df <- data.frame(x = vals)
-      p_box <- ggplot(df, aes(y = x, x = "")) +
-        geom_boxplot(fill = upwr_cat["niebo"], alpha = 0.5, color = upwr_secondary,
-                     outlier.color = upwr_accent, outlier.size = 3,
-                     width = 0.4) +
-        geom_jitter(width = 0.05, alpha = 0.4, size = 2, color = upwr_secondary) +
-        coord_flip() +
-        labs(x = "", y = "Wzrost (cm)") +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+      p_box <- ggplot(df, aes(x = x, y = "")) +
+        step_result(geom_boxplot, outlier.colour = STEP_ROLES$known$colour,
+                    outlier.size = 3, width = 0.4) +
+        step_layer(geom_jitter, "known", width = 0, height = 0.05, alpha = 0.4, size = 2) +
+        labs(x = "", y = "") +
+        step_frame(xlim = x_lim, ylim = c(0.5, 1.5), y_axis = FALSE)
 
       p_hist <- ggplot(df, aes(x = x)) +
-        geom_histogram(bins = 15, fill = upwr_cat["niebo"], color = "white", alpha = 0.7) +
-        geom_vline(xintercept = med, color = upwr_accent, linewidth = 1,
-                   linetype = "dashed") +
-        geom_vline(xintercept = q1, color = upwr_cat["bursztyn"], linewidth = 0.8,
-                   linetype = "dotted") +
-        geom_vline(xintercept = q3, color = upwr_cat["bursztyn"], linewidth = 0.8,
-                   linetype = "dotted") +
+        step_result(geom_histogram, bins = 15)
+      count_max <- max(layer_data(p_hist)$count)
+      p_hist <- p_hist +
+        step_line("known", xintercept = med, helper = FALSE) +
+        step_line("known", xintercept = q1) +
+        step_line("known", xintercept = q3) +
         labs(x = "Wzrost (cm)", y = "Liczebność") +
-        theme()
+        step_frame(xlim = x_lim, ylim = c(0, count_max * 1.08))
 
-      gridExtra::arrangeGrob(p_box, p_hist, nrow = 2, heights = c(1, 1.2))
-      return()
+      return(gridExtra::arrangeGrob(p_box, p_hist, nrow = 2, heights = c(1, 1.2)))
     }
 
     # Steps 1-4: manual construction
@@ -740,28 +669,20 @@ ch4_server <- function(input, output, session) {
       df$y_jit <- runif(nrow(df), -0.3, 0.3)
 
       ggplot(df, aes(x = x, y = y_jit)) +
-        geom_point(size = 3, color = upwr_cat["niebo"], alpha = 0.7) +
+        step_layer(geom_point, "data", size = 3) +
         labs(x = "Wzrost (cm)", y = "") +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-              panel.grid.major.y = element_blank(),
-              panel.grid.minor.y = element_blank()) +
-        scale_y_continuous(limits = c(-0.8, 0.8))
+        frame
 
     } else if (step == 2) {
       set.seed(42)
       df$y_jit <- runif(nrow(df), -0.3, 0.3)
 
       ggplot(df, aes(x = x, y = y_jit)) +
-        geom_point(size = 3, color = upwr_cat["niebo"], alpha = 0.7) +
-        geom_vline(xintercept = med, color = upwr_accent, linewidth = 1.5) +
-        annotate("text", x = med, y = 0.65,
-                 label = "Mediana",
-                 color = upwr_accent, size = 5, fontface = "bold") +
+        step_layer(geom_point, "data", size = 3) +
+        step_line("new", xintercept = med, helper = FALSE) +
+        step_label(med, 0.65, "Mediana", role = "new", hjust = 0.5, vjust = 0.5) +
         labs(x = "Wzrost (cm)", y = "") +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-              panel.grid.major.y = element_blank(),
-              panel.grid.minor.y = element_blank()) +
-        scale_y_continuous(limits = c(-0.8, 0.8))
+        frame
 
     } else if (step == 3) {
       set.seed(42)
@@ -769,33 +690,20 @@ ch4_server <- function(input, output, session) {
 
       ggplot(df, aes(x = x, y = y_jit)) +
         # IQR box
-        annotate("rect", xmin = q1, xmax = q3, ymin = -0.5, ymax = 0.5,
-                 fill = upwr_cat["niebo"], alpha = 0.2, color = upwr_cat["niebo"],
-                 linewidth = 1) +
-        geom_point(size = 3, color = upwr_cat["niebo"], alpha = 0.7) +
-        geom_vline(xintercept = med, color = upwr_accent, linewidth = 1.5) +
-        geom_vline(xintercept = q1, color = upwr_cat["bursztyn"], linewidth = 1,
-                   linetype = "dashed") +
-        geom_vline(xintercept = q3, color = upwr_cat["bursztyn"], linewidth = 1,
-                   linetype = "dashed") +
-        annotate("text", x = med, y = 0.7,
-                 label = "Mediana",
-                 color = upwr_accent, size = 4.5, fontface = "bold") +
-        annotate("text", x = q1, y = -0.65,
-                 label = "Q1",
-                 color = upwr_cat["bursztyn"], size = 4, fontface = "bold") +
-        annotate("text", x = q3, y = -0.65,
-                 label = "Q3",
-                 color = upwr_cat["bursztyn"], size = 4, fontface = "bold") +
-        annotate("text", x = (q1 + q3) / 2, y = 0.7,
-                 label = "IQR",
-                 color = upwr_cat["niebo"], size = 4, fontface = "bold",
-                 hjust = ifelse(abs(med - (q1 + q3) / 2) < 3, 2, 0.5)) +
+        step_result(geom_rect, data = data.frame(xmin = q1, xmax = q3),
+                    mapping = aes(xmin = xmin, xmax = xmax, ymin = -0.5, ymax = 0.5),
+                    inherit.aes = FALSE, alpha = 0.2) +
+        step_layer(geom_point, "data", size = 3) +
+        step_line("known", xintercept = med, helper = FALSE) +
+        step_line("new", xintercept = q1) +
+        step_line("new", xintercept = q3) +
+        step_label(med, 0.7, "Mediana", role = "known", hjust = 0.5, vjust = 0.5) +
+        step_label(q1, -0.65, "Q1", role = "new", hjust = 0.5, vjust = 0.5) +
+        step_label(q3, -0.65, "Q3", role = "new", hjust = 0.5, vjust = 0.5) +
+        step_label((q1 + q3) / 2, 0.7, "IQR", role = "new", vjust = 0.5,
+                   hjust = ifelse(abs(med - (q1 + q3) / 2) < 3, 2, 0.5)) +
         labs(x = "Wzrost (cm)", y = "") +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-              panel.grid.major.y = element_blank(),
-              panel.grid.minor.y = element_blank()) +
-        scale_y_continuous(limits = c(-0.9, 0.9))
+        frame
 
     } else if (step == 4) {
       is_outlier <- vals < lower_fence | vals > upper_fence
@@ -803,42 +711,39 @@ ch4_server <- function(input, output, session) {
       set.seed(42)
       df$y_jit <- runif(nrow(df), -0.2, 0.2)
 
+      whiskers <- data.frame(
+        x    = c(whisker_low, whisker_low, q3, whisker_high),
+        xend = c(q1, whisker_low, whisker_high, whisker_high),
+        y    = c(0, -0.2, 0, -0.2),
+        yend = c(0, 0.2, 0, 0.2)
+      )
+
       p <- ggplot(df) +
         # IQR box
-        annotate("rect", xmin = q1, xmax = q3, ymin = -0.4, ymax = 0.4,
-                 fill = upwr_cat["niebo"], alpha = 0.2, color = upwr_cat["niebo"],
-                 linewidth = 1) +
+        step_result(geom_rect, data = data.frame(xmin = q1, xmax = q3),
+                    mapping = aes(xmin = xmin, xmax = xmax, ymin = -0.4, ymax = 0.4),
+                    alpha = 0.2) +
         # Median line inside box
-        geom_segment(aes(x = med, xend = med, y = -0.4, yend = 0.4),
-                     color = upwr_accent, linewidth = 1.5) +
-        # Left whisker
-        geom_segment(aes(x = whisker_low, xend = q1, y = 0, yend = 0),
-                     color = upwr_secondary, linewidth = 0.8) +
-        geom_segment(aes(x = whisker_low, xend = whisker_low, y = -0.2, yend = 0.2),
-                     color = upwr_secondary, linewidth = 0.8) +
-        # Right whisker
-        geom_segment(aes(x = q3, xend = whisker_high, y = 0, yend = 0),
-                     color = upwr_secondary, linewidth = 0.8) +
-        geom_segment(aes(x = whisker_high, xend = whisker_high, y = -0.2, yend = 0.2),
-                     color = upwr_secondary, linewidth = 0.8) +
+        step_layer(geom_segment, "known",
+                   data = data.frame(x = med, xend = med, y = -0.4, yend = 0.4),
+                   mapping = aes(x = x, xend = xend, y = y, yend = yend),
+                   linewidth = 1.2) +
+        # Whiskers
+        step_layer(geom_segment, "new", data = whiskers,
+                   mapping = aes(x = x, xend = xend, y = y, yend = yend)) +
         # Points: normal
-        geom_point(data = df[!df$outlier, ], aes(x = x, y = y_jit),
-                   size = 2.5, color = upwr_cat["niebo"], alpha = 0.5) +
+        step_layer(geom_point, "data", data = df[!df$outlier, ],
+                   mapping = aes(x = x, y = y_jit), size = 2.5, alpha = 0.5) +
         # Points: outliers
-        geom_point(data = df[df$outlier, ], aes(x = x, y = y_jit),
-                   size = 4, color = upwr_accent, shape = 18) +
+        step_layer(geom_point, "new", data = df[df$outlier, ],
+                   mapping = aes(x = x, y = y_jit), size = 4, shape = 18) +
         labs(x = "Wzrost (cm)", y = "") +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-              panel.grid.major.y = element_blank(),
-              panel.grid.minor.y = element_blank()) +
-        scale_y_continuous(limits = c(-0.8, 0.7))
+        frame
 
       if (length(outliers) > 0) {
         p <- p +
-          annotate("label", x = mean(outliers), y = 0.55,
-                   label = paste0(length(outliers), " outlier(s)"),
-                   fill = upwr_seq_burgundy[2], color = upwr_accent, size = 4,
-                   fontface = "bold", linewidth = 0.5)
+          step_label(mean(outliers), 0.55, paste0(length(outliers), " outlier(s)"),
+                     role = "new", hjust = 0.5, vjust = 0.5)
       }
 
       p
@@ -847,32 +752,23 @@ ch4_server <- function(input, output, session) {
 
   output$ch4_bp_text <- renderUI({
     step <- ch4_bp_step()
-    if (step == 0) {
-      lc_feedback(type = "info",
-          "Kliknij przycisk kroku, aby zacząć budowę boxplota.")
-    } else if (step == 1) {
-      lc_feedback(type = "info",
-          tags$strong("Krok 1:"),
-          " Zaczynamy od surowych danych. 30 pomiarów wzrostu rozrzuconych
-          na osi liczbowej. Widać ogolny zakres, ale ciężko wyciagnac
-          szybkie wnioski.")
+    if (step == 1) {
+      "Zaczynamy od surowych danych. 30 pomiarów wzrostu rozrzuconych
+       na osi liczbowej. Widać ogolny zakres, ale ciężko wyciagnac
+       szybkie wnioski."
     } else if (step == 2) {
       vals <- ch4_bp_data()
-      lc_feedback(type = "info",
-          tags$strong("Krok 2:"),
-          paste0(" Sortujemy dane i wyznaczamy mediane = ", round(median(vals), 1),
-                 " cm. Mediana dzieli posortowane dane na dwie rowne polowy."))
+      paste0("Sortujemy dane i wyznaczamy mediane = ", round(median(vals), 1),
+             " cm. Mediana dzieli posortowane dane na dwie rowne polowy.")
     } else if (step == 3) {
       vals <- ch4_bp_data()
       q1 <- quantile(vals, 0.25)
       q3 <- quantile(vals, 0.75)
-      lc_feedback(type = "info",
-          tags$strong("Krok 3:"),
-          paste0(" Wyznaczamy kwartyle: Q1 = ", round(q1, 1),
-                 " (25% danych poniżej), Q3 = ", round(q3, 1),
-                 " (75% danych poniżej). Pudelko (box) rozciaga sie od Q1 do Q3
-                 i zawiera srodkowe 50% danych. IQR = Q3 - Q1 = ",
-                 round(q3 - q1, 1), " cm."))
+      paste0("Wyznaczamy kwartyle: Q1 = ", round(q1, 1),
+             " (25% danych poniżej), Q3 = ", round(q3, 1),
+             " (75% danych poniżej). Pudelko (box) rozciaga sie od Q1 do Q3
+             i zawiera srodkowe 50% danych. IQR = Q3 - Q1 = ",
+             round(q3 - q1, 1), " cm.")
     } else if (step == 4) {
       vals <- ch4_bp_data()
       q1 <- quantile(vals, 0.25)
@@ -881,27 +777,23 @@ ch4_server <- function(input, output, session) {
       lower_fence <- q1 - 1.5 * iqr_val
       upper_fence <- q3 + 1.5 * iqr_val
       outliers <- vals[vals < lower_fence | vals > upper_fence]
-      lc_feedback(type = "info",
-          tags$strong("Krok 4:"),
-          paste0(" Wąsy siagaja do najdalszych punktow w granicach
-                 1.5 * IQR od pudełka — czyli od Q1 − 1.5·IQR = ",
-                 round(lower_fence, 1), " cm do Q3 + 1.5·IQR = ",
-                 round(upper_fence, 1),
-                 " cm. Wszystko poza wąsami to wartości odstające (outliers). "),
-          if (length(outliers) > 0) {
-            paste0("Znaleziono ", length(outliers),
-                   " wartosc(i) odstająca(e): ",
-                   paste(round(outliers, 1), collapse = ", "), " cm.")
-          } else {
-            "Brak wartości odstających."
-          })
+      paste0("Wąsy siagaja do najdalszych punktow w granicach
+             1.5 * IQR od pudełka — czyli od Q1 − 1.5·IQR = ",
+             round(lower_fence, 1), " cm do Q3 + 1.5·IQR = ",
+             round(upper_fence, 1),
+             " cm. Wszystko poza wąsami to wartości odstające (outliers). ",
+             if (length(outliers) > 0) {
+               paste0("Znaleziono ", length(outliers),
+                      " wartosc(i) odstająca(e): ",
+                      paste(round(outliers, 1), collapse = ", "), " cm.")
+             } else {
+               "Brak wartości odstających."
+             })
     } else if (step == 5) {
-      lc_feedback(type = "info",
-          tags$strong("Krok 5:"),
-          " Gotowy boxplot (gora) w porownaniu z histogramem (dol).
-          Boxplot kompaktowo podsumowuje rozkład: mediana, kwartyle,
-          rozstęp i outlierow - wszystko w jednym wykresie. Histogram
-          pokazuje więcej szczegółów o kształcie rozkładu.")
+      "Gotowy boxplot (gora) w porownaniu z histogramem (dol).
+       Boxplot kompaktowo podsumowuje rozkład: mediana, kwartyle,
+       rozstęp i outlierow - wszystko w jednym wykresie. Histogram
+       pokazuje więcej szczegółów o kształcie rozkładu."
     }
   })
 
