@@ -147,6 +147,11 @@ wspólnym `R/`, margines boczny usunięty, dawne callouty renderują się jako
 - [x] Statyczne `lc_feedback()` w toku tekstu → `lc_note()` / `lc_warn()` /
   `lc_recap()`: statystyka (72) i analiza ryzyka 01 (8) zrobione 3 października
   2026. Statystyka 2 odłożona.
+- [ ] Ręczne ramki `div(class = "lc-feedback …")` w statystyce 07 (ok. 50),
+  09 (20) i 08 (14) → `lc_note()` / `lc_warn()` / `lc_status()` /
+  `lc_caption()`. Czeka na przepisanie części treści na prozę (prowadzący,
+  równolegle) — część ramek zniknie. Przy okazji usunąć martwe reguły
+  `.ch2-step-panel .lc-feedback` w `app.R` statystyki 04.
 - [ ] Pogrubione wstępy `tags$strong("Przykład:" / "Kontrprzykład:" /
   "Uwaga:" / "Zasada:")` na początku akapitu → `lc_note()` (statystyka 17,
   statystyka 2: 2).
