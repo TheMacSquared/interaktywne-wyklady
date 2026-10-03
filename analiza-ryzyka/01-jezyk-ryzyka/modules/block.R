@@ -46,7 +46,7 @@ jezyk_quiz <- list(
       question = "W 100 kontrolach zdarzenie A wystąpiło 30 razy, B — 20 razy, a oba naraz — 8 razy. Ile razy wystąpiło A lub B?",
       choices = c("42" = "a", "50" = "b", "58" = "c", "8" = "d"),
       correct = "a",
-      explanation = "30 + 20 − 8 = 42. Część wspólna została uwzględniona w obu licznikach, więc odejmujemy ją raz."
+      explanation = "30 + 20 - 8 = 42. Część wspólna została uwzględniona w obu licznikach, więc odejmujemy ją raz."
     ),
     list(
       question = "Zdarzenia A i B mają takie samo prawdopodobieństwo. Czy wymagają automatycznie tego samego priorytetu?",
@@ -175,29 +175,29 @@ jezyk_exercises <- list(
       Oblicz P(C ∪ D) oraz prawdopodobieństwo, że nie zaszło ani C, ani D.",
     answer = c(
       "|C| = 5, |D| = 2 · 3 = 6, C ∩ D = {(pon, ranna), (wt, ranna)}, więc |C ∩ D| = 2.",
-      "Ze wzoru (1.5): P(C ∪ D) = 5/15 + 6/15 − 2/15 = 9/15 = 0,6.",
-      "Z praw de Morgana (1.6) i wzoru (1.4): P(Cᶜ ∩ Dᶜ) = 1 − 0,6 = 0,4. Sprawdzenie: 3 dni (śr–pt) × 2 zmiany nieranne = 6 wyników, 6/15 = 0,4."
+      "Ze wzoru (1.5): P(C ∪ D) = 5/15 + 6/15 - 2/15 = 9/15 = 0.6.",
+      "Z praw de Morgana (1.6) i wzoru (1.4): P(Cᶜ ∩ Dᶜ) = 1 - 0.6 = 0.4. Sprawdzenie: 3 dni (śr–pt) × 2 zmiany nieranne = 6 wyników, 6/15 = 0.4."
     )
   ),
   list(
     task = "W arkuszu oceny czujnika gazu w chłodni wpisano prawdopodobieństwa
       czterech wyników, które wykluczają się i wyczerpują wszystkie możliwości
-      w ciągu jednej zmiany: brak alarmu 0,70; alarm fałszywy 0,20; alarm
-      prawdziwy 0,15; awaria czujnika 0,02. Czy takie przypisanie jest
+      w ciągu jednej zmiany: brak alarmu 0.70; alarm fałszywy 0.20; alarm
+      prawdziwy 0.15; awaria czujnika 0.02. Czy takie przypisanie jest
       dopuszczalne?",
     answer = c(
-      "Nie. Wyniki są rozłączne i razem tworzą Ω, więc z aksjomatów (1.7) ich prawdopodobieństwa muszą sumować się do P(Ω) = 1. Tymczasem 0,70 + 0,20 + 0,15 + 0,02 = 1,07.",
+      "Nie. Wyniki są rozłączne i razem tworzą Ω, więc z aksjomatów (1.7) ich prawdopodobieństwa muszą sumować się do P(Ω) = 1. Tymczasem 0.70 + 0.20 + 0.15 + 0.02 = 1.07.",
       "Arkusz jest wewnętrznie sprzeczny niezależnie od danych: co najmniej jedna wartość jest błędna. Trzeba wrócić do źródła każdej liczby, a nie „przeskalować” wszystkie tak, żeby suma wyszła 1."
     )
   ),
   list(
     task = "W rejestrze korytarza przy pakowni 12 ze 150 zmian zawierało
-      poślizgnięcie. Oblicz częstość empiryczną. Przyjmując p = 0,08, oszacuj
+      poślizgnięcie. Oblicz częstość empiryczną. Przyjmując p = 0.08, oszacuj
       typowe odchylenie częstości w serii 150 zmian i oceń, czy wynik różny o
-      0,01 od poprzedniego roku jest mocnym sygnałem zmiany.",
+      0.01 od poprzedniego roku jest mocnym sygnałem zmiany.",
     answer = c(
-      "Ze wzoru (1.1): p̂ = 12/150 = 0,08.",
-      "Typowe odchylenie: √(0,08 · 0,92 / 150) ≈ 0,022. Różnica 0,01 jest ponad dwa razy mniejsza niż typowe wahanie częstości przy tej liczbie zmian, więc nie jest mocnym sygnałem zmiany. Potrzeba dłuższej serii albo informacji o zmianie warunków."
+      "Ze wzoru (1.1): p̂ = 12/150 = 0.08.",
+      "Typowe odchylenie: √(0.08 · 0.92 / 150) ≈ 0.022. Różnica 0.01 jest ponad dwa razy mniejsza niż typowe wahanie częstości przy tej liczbie zmian, więc nie jest mocnym sygnałem zmiany. Potrzeba dłuższej serii albo informacji o zmianie warunków."
     )
   ),
   list(
@@ -242,12 +242,12 @@ jezyk_exercises <- list(
   ),
   list(
     task = list(
-      "Jeśli P(A) = 0,18, to P(Aᶜ) wynosi:",
-      risk_parts("0,18", "0,82", "1,18", "nie da się obliczyć")
+      "Jeśli P(A) = 0.18, to P(Aᶜ) wynosi:",
+      risk_parts("0.18", "0.82", "1.18", "nie da się obliczyć")
     ),
     answer = c(
-      "b) 0,82.",
-      "A i jego dopełnienie wyczerpują całą przestrzeń, dlatego P(Aᶜ) = 1 − 0,18 = 0,82."
+      "b) 0.82.",
+      "A i jego dopełnienie wyczerpują całą przestrzeń, dlatego P(Aᶜ) = 1 - 0.18 = 0.82."
     )
   )
 )
@@ -646,14 +646,14 @@ jezyk_block <- list(
                  bo „było więcej wypadków”. Oblicz częstości i oceń ten argument."
               ),
               steps = c(
-                "Dojrzewalnia: ze wzoru (1.1) p̂ = 3/40 = 0,075.",
-                "Pakownia: p̂ = 5/120 ≈ 0,042.",
+                "Dojrzewalnia: ze wzoru (1.1) p̂ = 3/40 = 0.075.",
+                "Pakownia: p̂ = 5/120 ≈ 0.042.",
                 "Licznik jest większy w pakowni, ale mianownik jest trzykrotnie większy.
                  Na zmianę przypada tam mniej zdarzeń.",
                 "Porównanie ma sens tylko wtedy, gdy obie serie używają tej samej definicji
                  zdarzenia i tej samej jednostki obserwacji (zmiana w jednym korytarzu)."
               ),
-              answer = "0,075 wobec około 0,042 — to dojrzewalnia ma wyższą częstość. Argument
+              answer = "0.075 wobec około 0.042 — to dojrzewalnia ma wyższą częstość. Argument
                 „więcej wypadków” pomija mianownik. Seria 40 zmian jest jednak krótka, więc
                 różnica może częściowo wynikać z przypadku; to sprawdzi symulacja poniżej."
             )
@@ -716,27 +716,27 @@ jezyk_block <- list(
                kompensowania.",
             risk_derivation("jak szybko częstość się stabilizuje", c(
               "Typowe odchylenie częstości p̂ₙ od prawdopodobieństwa p wynosi około
-               √(p(1 − p)/n). Wzór wyprowadzimy w wykładzie 04 przy rozkładzie
+               √(p(1 - p)/n). Wzór wyprowadzimy w wykładzie 04 przy rozkładzie
                dwumianowym; tutaj wystarczy jego skutek.",
-              "Przy p = 0,10 typowe odchylenie wynosi około 0,095 po 10 zmianach, 0,030
-               po 100 zmianach i 0,0095 po 1000 zmianach. Aby zmniejszyć rozrzut
+              "Przy p = 0.10 typowe odchylenie wynosi około 0.095 po 10 zmianach, 0.030
+               po 100 zmianach i 0.0095 po 1000 zmianach. Aby zmniejszyć rozrzut
                dziesięciokrotnie, potrzeba stukrotnie więcej obserwacji. Dlatego seria
                40 zmian z przykładu 1.2 nie wystarcza, by rozstrzygnąć, który korytarz
                jest naprawdę bardziej śliski."
             ), lines = c(
-              "n = 10:    √(0,1 · 0,9 / 10)   ≈ 0,095",
-              "n = 100:   √(0,1 · 0,9 / 100)  = 0,030",
-              "n = 1000:  √(0,1 · 0,9 / 1000) ≈ 0,0095"
+              "n = 10:    √(0.1 · 0.9 / 10)   ≈ 0.095",
+              "n = 100:   √(0.1 · 0.9 / 100)  = 0.030",
+              "n = 1000:  √(0.1 · 0.9 / 1000) ≈ 0.0095"
             )),
             risk_check("j1_chk_seria",
-              "Model przyjmuje P = 0,08 poślizgnięcia na zmianę. W ostatnich 20 zmianach nie było ani jednego zdarzenia. Co z tego wynika?",
+              "Model przyjmuje P = 0.08 poślizgnięcia na zmianę. W ostatnich 20 zmianach nie było ani jednego zdarzenia. Co z tego wynika?",
               c(
                 "Model jest błędny, bo częstość wyniosła 0" = "wrong",
-                "Taka seria jest przy P = 0,08 całkiem możliwa; 20 zmian to za mało, by odrzucić model" = "possible",
+                "Taka seria jest przy P = 0.08 całkiem możliwa; 20 zmian to za mało, by odrzucić model" = "possible",
                 "Następne zmiany muszą przynieść więcej zdarzeń, żeby wyrównać średnią" = "compensate"
               ),
               correct = "possible",
-              explanation = "Przy niezależnych zmianach seria 20 zmian bez zdarzenia ma prawdopodobieństwo 0,92²⁰ ≈ 0,19 — zdarza się mniej więcej w co piątej takiej serii (rachunek pokażemy w wykładzie 04). Częstość 0 z krótkiej serii nie przeczy modelowi.",
+              explanation = "Przy niezależnych zmianach seria 20 zmian bez zdarzenia ma prawdopodobieństwo 0.92²⁰ ≈ 0.19 — zdarza się mniej więcej w co piątej takiej serii (rachunek pokażemy w wykładzie 04). Częstość 0 z krótkiej serii nie przeczy modelowi.",
               hints = c(
                 wrong = "Częstość z krótkiej serii mocno się waha. Przypomnij sobie początek linii w symulacji.",
                 compensate = "Prawo wielkich liczb działa przez rozcieńczanie, nie przez wyrównywanie. Zmiany nie „pamiętają” poprzednich wyników."
@@ -832,7 +832,7 @@ jezyk_block <- list(
                 "|\\Omega|" = "liczba wszystkich zdarzeń elementarnych"
               )
             ),
-            "Dla dostawy Bananpolu P(A) = 6/24 = 0,25. Oba założenia definicji są
+            "Dla dostawy Bananpolu P(A) = 6/24 = 0.25. Oba założenia definicji są
                tu spełnione z konstrukcji: palet jest skończenie wiele, a równe szanse
                gwarantuje generator losowy, który przypisuje każdej palecie jeden numer.
                Gdyby inspektor wybierał „na oko” paletę stojącą najbliżej drzwi, drugie
@@ -852,11 +852,11 @@ jezyk_block <- list(
                 "Ω zawiera 5 · 3 = 15 par, wszystkie jednakowo możliwe — definicja 1.5 ma
                  zastosowanie.",
                 "A = {(pon, nocna), (wt, nocna), (śr, nocna), (czw, nocna), (pt, nocna)},
-                 |A| = 5, więc ze wzoru (1.2) P(A) = 5/15 = 1/3 ≈ 0,333.",
+                 |A| = 5, więc ze wzoru (1.2) P(A) = 5/15 = 1/3 ≈ 0.333.",
                 "B = {(pt, ranna), (pt, popołudniowa), (pt, nocna)}, |B| = 3, więc
-                 P(B) = 3/15 = 0,2."
+                 P(B) = 3/15 = 0.2."
               ),
-              answer = "|Ω| = 15, P(A) = 1/3, P(B) = 0,2. Do tych samych zdarzeń wrócimy
+              answer = "|Ω| = 15, P(A) = 1/3, P(B) = 0.2. Do tych samych zdarzeń wrócimy
                 w przykładzie 1.4, łącząc je spójnikami „i” oraz „lub”."
             )
           )
@@ -930,9 +930,9 @@ jezyk_block <- list(
               title = "Losowa kontrola jednej palety",
               full_width = TRUE,
               lc_toolbar(
-                lc_slider("ch3_favourable", "Palety z uszkodzonym zabezpieczeniem", 0, 24, 6, 1)
+                lc_slider("ch3_favourable", "Palety z uszkodzonym zabezpieczeniem", 0, 24, 6, 1),
+                lc_readouts(uiOutput("ch3_stats"))
               ),
-              uiOutput("ch3_stats"),
               lc_plot("ch3_grid", ratio = "1.4/1", max_height = "430px"),
               lc_caption(
                 "Zdarzenie A: wylosowana paleta ma uszkodzone zabezpieczenie.",
@@ -940,8 +940,8 @@ jezyk_block <- list(
               )
             ),
             "Siatka pokazuje całe Ω naraz: 24 kafelki to mianownik, kafelki w kolorze
-               zdarzenia A to licznik. Przy sześciu uszkodzonych paletach P(A) = 0,25, a
-               pozostałe 18 kafelków tworzy dopełnienie Aᶜ o prawdopodobieństwie 0,75.
+               zdarzenia A to licznik. Przy sześciu uszkodzonych paletach P(A) = 0.25, a
+               pozostałe 18 kafelków tworzy dopełnienie Aᶜ o prawdopodobieństwie 0.75.
                Przy ustawieniu 0 zdarzenie A staje się zbiorem pustym, a przy 24 —
                całą przestrzenią; obie skrajności to własności (1.3). Niezależnie od
                położenia suwaka P(A) i P(Aᶜ) sumują się do 1, bo każdy kafelek ma
@@ -1038,7 +1038,7 @@ jezyk_block <- list(
                i 08.",
             "Suma zdarzeń jest trudniejsza. Kusi, żeby dodać P(A) i P(B), ale wyniki
                należące do obu zdarzeń zostałyby wtedy policzone dwa razy — raz w A i raz
-               w B. W definicji klasycznej |A ∪ B| = |A| + |B| − |A ∩ B|, bo część
+               w B. W definicji klasycznej |A ∪ B| = |A| + |B| - |A ∩ B|, bo część
                wspólną trzeba odjąć raz. Po podzieleniu przez |Ω| dostajemy wzór (1.5).",
             risk_formula("P(A\\cup B)=P(A)+P(B)-P(A\\cap B)", num = "1.5",
               legend = c(
@@ -1059,9 +1059,9 @@ jezyk_block <- list(
                 ratio = "1.8/1"
               )
             ),
-            "Naiwna suma 0,70 + 0,60 = 1,30 łamie własność 0 ≤ P ≤ 1 ze wzoru (1.3) —
+            "Naiwna suma 0.70 + 0.60 = 1.30 łamie własność 0 ≤ P ≤ 1 ze wzoru (1.3) —
                to sygnał, że coś policzono podwójnie. Po odjęciu części wspólnej wynik
-               0,90 jest poprawny: to prawdopodobieństwo, że zaszło przynajmniej jedno z
+               0.90 jest poprawny: to prawdopodobieństwo, że zaszło przynajmniej jedno z
                dwóch zdarzeń. W ostatnim kroku koła się nie stykają, P(A ∩ B) = 0 i
                wzór (1.5) upraszcza się do zwykłego dodawania. Dodawanie prawdopodobieństw
                bez poprawki jest więc poprawne tylko dla zdarzeń rozłącznych
@@ -1073,12 +1073,12 @@ jezyk_block <- list(
                  że wylosowana zmiana nie jest ani nocna, ani piątkowa."
               ),
               steps = c(
-                "A ∩ B = {(pt, nocna)} — jeden wynik, więc P(A ∩ B) = 1/15 ≈ 0,067.",
-                "Ze wzoru (1.5): P(A ∪ B) = 5/15 + 3/15 − 1/15 = 7/15 ≈ 0,467. Bez
+                "A ∩ B = {(pt, nocna)} — jeden wynik, więc P(A ∩ B) = 1/15 ≈ 0.067.",
+                "Ze wzoru (1.5): P(A ∪ B) = 5/15 + 3/15 - 1/15 = 7/15 ≈ 0.467. Bez
                  odjęcia części wspólnej wyszłoby 8/15 — piątkowa nocka zostałaby
                  policzona dwa razy.",
-                "Ze wzoru (1.4): P(Aᶜ) = 1 − 5/15 = 10/15 ≈ 0,667.",
-                "„Ani A, ani B” to dopełnienie sumy: P((A ∪ B)ᶜ) = 1 − 7/15 = 8/15 ≈ 0,533.
+                "Ze wzoru (1.4): P(Aᶜ) = 1 - 5/15 = 10/15 ≈ 0.667.",
+                "„Ani A, ani B” to dopełnienie sumy: P((A ∪ B)ᶜ) = 1 - 7/15 = 8/15 ≈ 0.533.
                  Sprawdzenie przez wyliczenie: 4 dni pon–czw × 2 zmiany dzienne = 8 wyników."
               ),
               answer = "P(A ∩ B) = 1/15, P(A ∪ B) = 7/15, P(Aᶜ) = 2/3, P(ani A, ani B) = 8/15."
@@ -1107,14 +1107,14 @@ jezyk_block <- list(
               lc_toolbar(
                 lc_slider("ch4_n_a", "Liczba kontroli ze zdarzeniem A", 0, 80, 30, 1),
                 lc_slider("ch4_n_b", "Liczba kontroli ze zdarzeniem B", 0, 80, 20, 1),
-                lc_slider("ch4_overlap", "Liczba kontroli z A i B", 0, 20, 8, 1)
+                lc_slider("ch4_overlap", "Liczba kontroli z A i B", 0, 20, 8, 1),
+                lc_readouts(uiOutput("ch4_stats"))
               ),
-              uiOutput("ch4_stats"),
               lc_plot("ch4_event_grid", ratio = "1.3/1", max_height = "480px")
             ),
-            "Przy ustawieniach startowych panel pokazuje P(A ∩ B) = 0,08, P(A ∪ B) =
-               0,42, P(Aᶜ) = 0,70 i „ani A, ani B” = 0,58. Sprawdzenie wzorem (1.5):
-               0,30 + 0,20 − 0,08 = 0,42. Ostatnia wartość to 1 − 0,42, bo kontrola,
+            "Przy ustawieniach startowych panel pokazuje P(A ∩ B) = 0.08, P(A ∪ B) =
+               0.42, P(Aᶜ) = 0.70 i „ani A, ani B” = 0.58. Sprawdzenie wzorem (1.5):
+               0.30 + 0.20 - 0.08 = 0.42. Ostatnia wartość to 1 - 0.42, bo kontrola,
                w której nie było ani skórki, ani mokrej posadzki, jest dokładnie
                dopełnieniem sumy. Tę równoważność zapisują prawa de Morgana.",
             risk_formula("(A\\cup B)^{c}=A^{c}\\cap B^{c},\\qquad (A\\cap B)^{c}=A^{c}\\cup B^{c}", num = "1.6"),
@@ -1126,16 +1126,16 @@ jezyk_block <- list(
                A = 80 i B = 40 część wspólna musi mieć co najmniej 20 kontroli, bo
                inaczej suma przekroczyłaby 100.",
             risk_check("j1_chk_suma",
-              "W 100 kontrolach P(A) = 0,30, P(B) = 0,20, a P(A ∪ B) = 0,50. Co można powiedzieć o zdarzeniach A i B?",
+              "W 100 kontrolach P(A) = 0.30, P(B) = 0.20, a P(A ∪ B) = 0.50. Co można powiedzieć o zdarzeniach A i B?",
               c(
                 "Są rozłączne — w żadnej kontroli nie wystąpiły razem" = "disjoint",
                 "Wystąpiły razem w 50 kontrolach" = "fifty",
                 "Nie da się nic powiedzieć bez P(A ∩ B)" = "unknown"
               ),
               correct = "disjoint",
-              explanation = "Ze wzoru (1.5): P(A ∩ B) = P(A) + P(B) − P(A ∪ B) = 0,30 + 0,20 − 0,50 = 0. Część wspólna jest pusta, więc zdarzenia są rozłączne (definicja 1.7).",
+              explanation = "Ze wzoru (1.5): P(A ∩ B) = P(A) + P(B) - P(A ∪ B) = 0.30 + 0.20 - 0.50 = 0. Część wspólna jest pusta, więc zdarzenia są rozłączne (definicja 1.7).",
               hints = c(
-                fifty = "0,50 to prawdopodobieństwo sumy, nie części wspólnej. Przekształć wzór (1.5).",
+                fifty = "0.50 to prawdopodobieństwo sumy, nie części wspólnej. Przekształć wzór (1.5).",
                 unknown = "Wzór (1.5) łączy cztery wielkości. Znasz trzy z nich — wylicz czwartą."
               )
             )
@@ -1175,16 +1175,16 @@ jezyk_block <- list(
               "Dopełnienie: A i Aᶜ są rozłączne, a ich suma to Ω. Zdarzenie niemożliwe:
                ∅ = Ωᶜ. Suma dowolnych zdarzeń: A ∪ B rozkładamy na rozłączne kawałki A
                oraz B \\ A, a B na rozłączne kawałki A ∩ B oraz B \\ A. Ograniczenie z
-               góry: skoro P(Aᶜ) ≥ 0, to P(A) = 1 − P(Aᶜ) ≤ 1."
+               góry: skoro P(Aᶜ) ≥ 0, to P(A) = 1 - P(Aᶜ) ≤ 1."
             ), lines = c(
-              "1 = P(Ω) = P(A ∪ Aᶜ) = P(A) + P(Aᶜ)       ⇒  P(Aᶜ) = 1 − P(A)          (1.4)",
-              "P(∅) = P(Ωᶜ) = 1 − P(Ω) = 0                                           (1.3)",
+              "1 = P(Ω) = P(A ∪ Aᶜ) = P(A) + P(Aᶜ)       ⇒  P(Aᶜ) = 1 - P(A)          (1.4)",
+              "P(∅) = P(Ωᶜ) = 1 - P(Ω) = 0                                           (1.3)",
               "P(A ∪ B) = P(A) + P(B \\ A)",
-              "P(B)     = P(A ∩ B) + P(B \\ A)            ⇒  P(A ∪ B) = P(A) + P(B) − P(A ∩ B)   (1.5)"
+              "P(B)     = P(A ∩ B) + P(B \\ A)            ⇒  P(A ∪ B) = P(A) + P(B) - P(A ∩ B)   (1.5)"
             )),
             "Aksjomaty mają też praktyczną funkcję kontrolną. Jeśli w arkuszu oceny
                ryzyka trzy wykluczające się scenariusze awarii mają prawdopodobieństwa
-               0,5, 0,4 i 0,3, to arkusz jest wewnętrznie sprzeczny: ich suma 1,2
+               0.5, 0.4 i 0.3, to arkusz jest wewnętrznie sprzeczny: ich suma 1.2
                przekracza P(Ω) = 1. Nie trzeba znać żadnych danych, żeby wykryć taki błąd.",
             risk_example("1.5", "Co najmniej jedna uszkodzona paleta",
               problem = c(
@@ -1199,12 +1199,12 @@ jezyk_block <- list(
                 "Zdarzenie „co najmniej jedna uszkodzona” obejmuje pary z jedną albo dwiema
                  uszkodzonymi paletami. Łatwiej policzyć dopełnienie: „obie nieuszkodzone”.
                  Takich par jest C(18, 2) = 18 · 17 / 2 = 153.",
-                "Ze wzoru (1.2): P(obie nieuszkodzone) = 153/276 ≈ 0,554.",
-                "Ze wzoru (1.4): P(co najmniej jedna uszkodzona) = 1 − 153/276 = 123/276 ≈ 0,446.",
+                "Ze wzoru (1.2): P(obie nieuszkodzone) = 153/276 ≈ 0.554.",
+                "Ze wzoru (1.4): P(co najmniej jedna uszkodzona) = 1 - 153/276 = 123/276 ≈ 0.446.",
                 "Sprawdzenie wprost: dokładnie jedna uszkodzona to 6 · 18 = 108 par, obie
                  uszkodzone to C(6, 2) = 15 par; razem 123 pary, jak wyżej."
               ),
-              answer = "Około 0,446. Dopełnienie sprowadziło rachunek do jednego przypadku
+              answer = "Około 0.446. Dopełnienie sprowadziło rachunek do jednego przypadku
                 zamiast dwóch."
             )
           )
@@ -1237,24 +1237,15 @@ jezyk_block <- list(
           body = list(
             "Poniższe liczby są fikcyjne i służą wyłącznie temu ćwiczeniu. Porównaj
                oba przypadki, zwracając uwagę na dokładne brzmienie każdej odpowiedzi.",
-            lc_stat_grid(
-              lc_stat_box(
-                "A · Poślizgnięcie",
-                "P = 0,08 na zmianę",
-                caption = "Możliwy skutek: od braku urazu do złamania",
-                color = upwr_cat[["bursztyn"]]
-              ),
-              lc_stat_box(
-                "B · Kolizja z wózkiem",
-                "P = 0,002 na zmianę",
-                caption = "Możliwy skutek: ciężki lub śmiertelny uraz",
-                color = upwr_cat[["terakota"]]
-              ),
-              columns = 2
+            lc_readouts(
+              lc_readout("A · Poślizgnięcie, P na zmianę", "0.08", color = upwr_cat[["bursztyn"]]),
+              lc_readout("B · Kolizja z wózkiem, P na zmianę", "0.002", color = upwr_cat[["terakota"]])
             ),
-            "Obie liczby łatwiej porównać jako częstości naturalne. P = 0,08 na zmianę
+            lc_caption("Możliwe skutki: poślizgnięcie od braku urazu do złamania,
+              kolizja z wózkiem: ciężki lub śmiertelny uraz."),
+            "Obie liczby łatwiej porównać jako częstości naturalne. P = 0.08 na zmianę
                oznacza w modelu około 80 zmian z poślizgnięciem na 1000 zmian w tym
-               korytarzu. P = 0,002 oznacza około 2 zmiany z kolizją na 1000 zmian w
+               korytarzu. P = 0.002 oznacza około 2 zmiany z kolizją na 1000 zmian w
                strefie transportu. Poślizgnięcie jest więc czterdzieści razy częstsze.
                Pytanie brzmi, czy ta różnica sama rozstrzyga, czym dyrektor powinien
                zająć się najpierw.",
@@ -1305,11 +1296,11 @@ jezyk_block <- list(
                ze sobą powiązane; zrobimy to porządnie w wykładzie 04. Już teraz wzory
                z tego wykładu pozwalają jednak wykryć błąd, który pojawia się bardzo
                często: mnożenie prawdopodobieństwa na zmianę przez liczbę zmian.",
-            risk_example("1.6", "Czy 250 · 0,002 to prawdopodobieństwo w roku?",
+            risk_example("1.6", "Czy 250 · 0.002 to prawdopodobieństwo w roku?",
               problem = c(
-                "Analityk pisze: „P(kolizji na zmianę) = 0,002, w roku jest 250 zmian,
-                 więc P(co najmniej jednej kolizji w roku) = 250 · 0,002 = 0,5”. Tą samą
-                 metodą dla poślizgnięcia dostałby 250 · 0,08. Oceń ten rachunek."
+                "Analityk pisze: „P(kolizji na zmianę) = 0.002, w roku jest 250 zmian,
+                 więc P(co najmniej jednej kolizji w roku) = 250 · 0.002 = 0.5”. Tą samą
+                 metodą dla poślizgnięcia dostałby 250 · 0.08. Oceń ten rachunek."
               ),
               steps = c(
                 "Zdarzenie „co najmniej jedna kolizja w roku” to suma zdarzeń K₁ ∪ K₂ ∪ … ∪ K₂₅₀,
@@ -1317,17 +1308,17 @@ jezyk_block <- list(
                 "Dodawanie prawdopodobieństw jest poprawne tylko dla zdarzeń rozłącznych
                  (aksjomat (1.7)). Kolizje na różnych zmianach nie są rozłączne — w roku
                  mogą zdarzyć się dwie.",
-                "Ze wzoru (1.5) dla dwóch zdarzeń: P(K₁ ∪ K₂) = P(K₁) + P(K₂) − P(K₁ ∩ K₂)
+                "Ze wzoru (1.5) dla dwóch zdarzeń: P(K₁ ∪ K₂) = P(K₁) + P(K₂) - P(K₁ ∩ K₂)
                  ≤ P(K₁) + P(K₂). Suma prawdopodobieństw jest więc tylko górnym
                  ograniczeniem, bo pomija odjęcie części wspólnych.",
-                "Dla poślizgnięcia 250 · 0,08 = 20 — liczba większa od 1, co łamie
+                "Dla poślizgnięcia 250 · 0.08 = 20 — liczba większa od 1, co łamie
                  własność (1.3). To ostateczny dowód, że metoda jest błędna.",
                 "Przy dodatkowym założeniu niezależności zmian (wykład 04) i wzorze (1.4):
-                 P(co najmniej jednej kolizji) = 1 − 0,998²⁵⁰ ≈ 0,394, a dla poślizgnięcia
-                 1 − 0,92²⁵⁰ — praktycznie 1."
+                 P(co najmniej jednej kolizji) = 1 - 0.998²⁵⁰ ≈ 0.394, a dla poślizgnięcia
+                 1 - 0.92²⁵⁰ — praktycznie 1."
               ),
-              answer = "0,5 to górne ograniczenie, nie prawdopodobieństwo; przy niezależnych
-                zmianach właściwa wartość to około 0,39. Iloczyn 250 · 0,002 = 0,5 ma
+              answer = "0.5 to górne ograniczenie, nie prawdopodobieństwo; przy niezależnych
+                zmianach właściwa wartość to około 0.39. Iloczyn 250 · 0.002 = 0.5 ma
                 jednak inną, poprawną interpretację: średnio pół kolizji na rok, czyli
                 około jedna kolizja na dwa lata."
             ),
@@ -1466,14 +1457,13 @@ jezyk_block <- list(
         list(
           id = "checklista", title = "Sześć pytań przed obliczeniem",
           body = list(
-            lc_stat_grid(
-              lc_stat_box("1", "Jak brzmi zdarzenie?", caption = "Jednoznacznie i obserwowalnie"),
-              lc_stat_box("2", "Spośród czego liczę?", caption = "Mianownik albo przestrzeń wyników"),
-              lc_stat_box("3", "Jaka jest jednostka?", caption = "Np. zmiana, przejście, paleta"),
-              lc_stat_box("4", "Jaki jest okres?", caption = "Wspólny dla porównań"),
-              lc_stat_box("5", "Jakie są założenia?", caption = "Zwłaszcza porównywalność i symetria"),
-              lc_stat_box("6", "Jakie są skutki?", caption = "Prawdopodobieństwo nie kończy analizy"),
-              columns = 3
+            tags$ol(
+              tags$li(b_("Jak brzmi zdarzenie?"), " Jednoznacznie i obserwowalnie."),
+              tags$li(b_("Spośród czego liczę?"), " Mianownik albo przestrzeń wyników."),
+              tags$li(b_("Jaka jest jednostka?"), " Np. zmiana, przejście, paleta."),
+              tags$li(b_("Jaki jest okres?"), " Wspólny dla porównań."),
+              tags$li(b_("Jakie są założenia?"), " Zwłaszcza porównywalność i symetria."),
+              tags$li(b_("Jakie są skutki?"), " Prawdopodobieństwo nie kończy analizy.")
             )
           )
         ),
@@ -1538,7 +1528,7 @@ jezyk_block <- list(
 
             lc_note("Przykład",
               "„W 100 porównywalnych zmianach zarejestrowano 8 zmian ze zdarzeniem,
-                czyli częstość 0,08. Dane nie opisują jeszcze dotkliwości skutków ani
+                czyli częstość 0.08. Dane nie opisują jeszcze dotkliwości skutków ani
                 przyczyn różnic między zmianami.”"
             )
           )
@@ -1710,12 +1700,11 @@ jezyk_przestrzen_server <- function(input, output, session) {
     favourable <- as.integer(input$ch3_favourable)
     probability <- classical_probability(favourable, 24L)
 
-    lc_stat_grid(
-      lc_stat_box("Licznik |A|", favourable, color = upwr_cat[["terakota"]]),
-      lc_stat_box("Mianownik |Ω|", 24, color = upwr_secondary),
-      lc_stat_box("P(A)", format_probability_pl(probability), color = upwr_accent),
-      lc_stat_box("P(Aᶜ)", format_probability_pl(1 - probability), color = upwr_cat[["szalwia"]]),
-      columns = 2
+    tagList(
+      lc_readout("Licznik |A|", favourable, color = upwr_cat[["terakota"]]),
+      lc_readout("Mianownik |Ω|", 24, color = upwr_secondary),
+      lc_readout("P(A)", risk_fmt_p(probability), color = upwr_accent),
+      lc_readout("P(Aᶜ)", risk_fmt_p(1 - probability), color = upwr_cat[["szalwia"]])
     )
   })
 
@@ -1763,19 +1752,19 @@ jezyk_zbiory_server <- function(input, output, session) {
     txt <- switch(
       as.character(venn_step()),
       "1" = paste(
-        "Dwa zachodzące na siebie zdarzenia. P(A) = 0,70, P(B) = 0,60, a P(A ∩ B) = 0,40.",
+        "Dwa zachodzące na siebie zdarzenia. P(A) = 0.70, P(B) = 0.60, a P(A ∩ B) = 0.40.",
         "Najpierw zaznaczamy oba zbiory bez wykonywania działania."
       ),
       "2" = paste(
-        "Dodajemy całe A i całe B: \\(0{,}70+0{,}60=1{,}30\\).",
-        "Wynik 1,30 nie może być prawdopodobieństwem. Ciemna część wspólna dostała dwa kolory — została policzona dwa razy."
+        "Dodajemy całe A i całe B: \\(0.70+0.60=1.30\\).",
+        "Wynik 1.30 nie może być prawdopodobieństwem. Ciemna część wspólna dostała dwa kolory — została policzona dwa razy."
       ),
       "3" = paste(
-        "Usuwamy jedną kopię części wspólnej: \\(0{,}70+0{,}60-0{,}40=0{,}90\\).",
+        "Usuwamy jedną kopię części wspólnej: \\(0.70+0.60-0.40=0.90\\).",
         "Obszar A ∩ B nadal należy do sumy, ale jest w niej liczony tylko raz."
       ),
       "4" = paste(
-        "Kiedy samo dodawanie działa? \\(0{,}40+0{,}35=0{,}75\\).",
+        "Kiedy samo dodawanie działa? \\(0.40+0.35=0.75\\).",
         "Koła nie zachodzą na siebie, więc P(A ∩ B) = 0. Niczego nie policzyliśmy dwa razy."
       )
     )
@@ -1853,8 +1842,8 @@ jezyk_zbiory_server <- function(input, output, session) {
     }
 
     label_x <- if (step == 4L) c(3.15, 6.85) else c(2.7, 7.3)
-    label_text <- if (step == 4L) c("A\nP(A) = 0,40", "B\nP(B) = 0,35") else
-      c("A\nP(A) = 0,70", "B\nP(B) = 0,60")
+    label_text <- if (step == 4L) c("A\nP(A) = 0.40", "B\nP(B) = 0.35") else
+      c("A\nP(A) = 0.70", "B\nP(B) = 0.60")
 
     plot <- plot +
       annotate("text", x = label_x, y = 3.35, label = label_text,
@@ -1863,14 +1852,14 @@ jezyk_zbiory_server <- function(input, output, session) {
     if (step == 2L) {
       plot <- plot + annotate(
         "label", x = 5, y = 3.25,
-        label = "A ∩ B = 0,40\nPOLICZONE 2 RAZY",
+        label = "A ∩ B = 0.40\nPOLICZONE 2 RAZY",
         fill = "#ffffff", colour = STEP_ROLES$new$colour,
         linewidth = 0.4, fontface = "bold", size = 4.3
       )
     } else if (step == 3L) {
       plot <- plot + annotate(
         "label", x = 5, y = 3.25,
-        label = "A ∩ B = 0,40\nJEDNO NALICZENIE",
+        label = "A ∩ B = 0.40\nJEDNO NALICZENIE",
         fill = "#ffffff", colour = STEP_ROLES$new$colour,
         linewidth = 0.4, fontface = "bold", size = 4,
         lineheight = 0.9
@@ -1927,16 +1916,11 @@ jezyk_zbiory_server <- function(input, output, session) {
     values <- event_values()
     union <- values$n_a + values$n_b - values$overlap
 
-    lc_stat_grid(
-      lc_stat_box("P(A ∩ B)", format_probability_pl(values$overlap / 100),
-                  color = upwr_cat[["wrzos"]]),
-      lc_stat_box("P(A ∪ B)", format_probability_pl(union / 100),
-                  color = upwr_accent),
-      lc_stat_box("P(Aᶜ)", format_probability_pl(1 - values$n_a / 100),
-                  color = upwr_cat[["szalwia"]]),
-      lc_stat_box("Ani A, ani B", format_probability_pl((100 - union) / 100),
-                  color = upwr_reference),
-      columns = 2
+    tagList(
+      lc_readout("P(A ∩ B)", risk_fmt_p(values$overlap / 100), color = upwr_cat[["wrzos"]]),
+      lc_readout("P(A ∪ B)", risk_fmt_p(union / 100), color = upwr_accent),
+      lc_readout("P(Aᶜ)", risk_fmt_p(1 - values$n_a / 100), color = upwr_cat[["szalwia"]]),
+      lc_readout("Ani A, ani B", risk_fmt_p((100 - union) / 100), color = upwr_reference)
     )
   })
 
@@ -2069,8 +2053,8 @@ jezyk_cwiczenia_server <- function(input, output, session) {
     lc_status(
       tags$ol(
         tags$li("A ∩ B zawiera 6 kontroli — tę liczbę podano w treści."),
-        tags$li(sprintf("A ∪ B zawiera 28 + 17 − 6 = %d kontroli.", union_count)),
-        tags$li(sprintf("Ani A, ani B: 100 − %d = %d kontroli.", union_count, neither_count)),
+        tags$li(sprintf("A ∪ B zawiera 28 + 17 - 6 = %d kontroli.", union_count)),
+        tags$li(sprintf("Ani A, ani B: 100 - %d = %d kontroli.", union_count, neither_count)),
         tags$li("Zdarzenia nie są rozłączne, ponieważ ich część wspólna zawiera 6 wyników.")
       )
     )
@@ -2198,7 +2182,7 @@ jezyk_prototypes_server <- function(input, output, session) {
       lc_stat_box("Twoje oszacowanie", format_probability_pl(input$ch2b_guess), color = upwr_cat[["bursztyn"]]),
       lc_stat_box("Częstość po zmianach", if (n) format_probability_pl(mean(h)) else "—", caption = paste("n =", format(n, big.mark = " ")), color = upwr_cat[["niebo"]]),
       lc_stat_box("Modelowe P", format_probability_pl(p)),
-      lc_stat_box("Typowe odchylenie", if (n) formatC(sqrt(p * (1 - p) / n), format = "f", digits = 3, decimal.mark = ",") else "—", caption = "√(p(1 − p)/n)")
+      lc_stat_box("Typowe odchylenie", if (n) formatC(sqrt(p * (1 - p) / n), format = "f", digits = 3, decimal.mark = ",") else "—", caption = "√(p(1 - p)/n)")
     )
   })
 
@@ -2225,7 +2209,7 @@ jezyk_prototypes_server <- function(input, output, session) {
     # Modelowe P leży w [0,01; 0,30], więc oś do 0,6 pokazuje rozrzut serii;
     # pojedyncze skoki na samym początku są przycięte.
     plot <- ggplot() + coord_cartesian(ylim = c(0, 0.6)) +
-      labs(subtitle = if (cc$revealed()) "Pas: P ± 2 typowe odchylenia √(p(1 − p)/n)" else "Modelowe P pozostaje ukryte", x = "Liczba obserwowanych zmian (skala logarytmiczna)", y = "Skumulowana częstość", colour = NULL)
+      labs(subtitle = if (cc$revealed()) "Pas: P ± 2 typowe odchylenia √(p(1 - p)/n)" else "Modelowe P pozostaje ukryte", x = "Liczba obserwowanych zmian (skala logarytmiczna)", y = "Skumulowana częstość", colour = NULL)
     if (is.null(data) || nrow(data) == 0) {
       return(plot + annotate("text", x = 10, y = 0.5, label = "Dodaj pierwsze zmiany", colour = upwr_secondary, size = 5) +
         scale_x_log10(limits = c(1, 100)))
