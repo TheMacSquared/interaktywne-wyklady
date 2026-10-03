@@ -1634,7 +1634,8 @@ mjx-container mjx-text {
 .lc-stat-grid {
   --lc-stat-cols: 3;
   display: grid;
-  grid-template-columns: repeat(var(--lc-stat-cols), minmax(150px, 1fr));
+  /* Kolumny mogą się zwężać w węższej kolumnie treści (przed migracją na lc_readout). */
+  grid-template-columns: repeat(var(--lc-stat-cols), minmax(0, 1fr));
   gap: 12px;
   width: 100%;
   margin: 16px 0;
@@ -2326,8 +2327,6 @@ mjx-container mjx-text {
 .lc-warn,.lc-recap,.lc-index,.lc-more{max-width:none}
 .lc-figure-panel,.lc-figure-panel.lc-panel-text,.lc-figure-panel.lc-panel-wide{width:100%;max-width:none}
 .lc-figure-panel.lc-panel-compact{width:fit-content;max-width:100%}
-/* Pudełka statystyk (przed migracją na lc_readout): kolumny mogą się zwężać. */
-.lc-stat-grid{grid-template-columns:repeat(var(--lc-stat-cols),minmax(0,1fr))}
 .lc-chapter .lc-p,.lc-chapter>p,.lc-note-b,.lc-warn-b,.lc-more-b,.lc-recap li{text-align:justify;-webkit-hyphens:auto;hyphens:auto}
 @container (max-width:35em){
   .lc-chapter .lc-p,.lc-chapter>p,.lc-note-b,.lc-warn-b,.lc-more-b,.lc-recap li{text-align:left;-webkit-hyphens:manual;hyphens:manual}
