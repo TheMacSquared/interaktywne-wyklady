@@ -58,9 +58,9 @@ ch4_ui <- list(
 
     lc_p("Krzywa linii A jest wąska i wysoka: prawie wszystkie spóźnienia
       mieszczą się między 0 a 4 minutami, a odchylenie standardowe wynosi
-      0,7 min. Krzywa linii B ma ostry szczyt tuż przy zerze i długi prawy ogon,
-      a jej odchylenie standardowe to 3,0 min. Na linii B 3,4% kursów spóźnia
-      się o ponad 10 minut, średnio o 13,1 min. Na linii A takie spóźnienie
+      0.7 min. Krzywa linii B ma ostry szczyt tuż przy zerze i długi prawy ogon,
+      a jej odchylenie standardowe to 3.0 min. Na linii B 3.4% kursów spóźnia
+      się o ponad 10 minut, średnio o 13.1 min. Na linii A takie spóźnienie
       się nie zdarza."),
 
     lc_p("Dla pasażera to różnica zasadnicza. Linia A jest przewidywalna: wiesz,
@@ -115,28 +115,28 @@ ch4_ui <- list(
     lc_p("Najdłuższe strzałki dają największy wkład do sumy, bo podnosimy je
       do kwadratu: obserwacja dwa razy dalej od średniej waży cztery razy
       więcej. Odchylenie standardowe można czytać jako typową odległość
-      obserwacji od średniej. W naszej ankiecie średni wzrost to 171,1 cm,
-      a odchylenie standardowe 8,1 cm, więc wzrost typowego studenta różni się
+      obserwacji od średniej. W naszej ankiecie średni wzrost to 171.1 cm,
+      a odchylenie standardowe 8.1 cm, więc wzrost typowego studenta różni się
       od średniej o kilka do kilkunastu centymetrów."),
 
     # ====================================================================
     # WIDGET 2b: Empirical rule (68-95-99.7)
     # ====================================================================
-    lc_h2("ch4-regula", "Reguła empiryczna (68–95–99,7)"),
+    lc_h2("ch4-regula", "Reguła empiryczna (68–95–99.7)"),
 
     lc_p("Ostatni krok panelu zaznaczył pas od \\(\\bar{x} - s\\) do
       \\(\\bar{x} + s\\). Ile danych powinno się w nim zmieścić? Dla rozkładów
       symetrycznych, o kształcie dzwonu, odpowiedź daje ",
-      gloss("reguła 68-95-99,7", "reguła 68–95–99,7"), ": około 68% obserwacji leży w odległości
+      gloss("reguła 68-95-99.7", "reguła 68–95–99.7"), ": około 68% obserwacji leży w odległości
       najwyżej jednego odchylenia standardowego od średniej, około 95% —
-      dwóch, a 99,7% — trzech."),
+      dwóch, a 99.7% — trzech."),
 
     lc_p("Panel nakłada te trzy pasy na histogram wybranej zmiennej z ankiety
       i podaje, jaki odsetek danych naprawdę w nich leży."),
 
     figure_panel(
       label = "Ryc. 4.3",
-      title = "Reguła 68–95–99,7 — czy zawsze działa?",
+      title = "Reguła 68–95–99.7 — czy zawsze działa?",
       selectInput("ch4_emp_var", "Wybierz zmienną:",
         choices = c("Wzrost (cm)" = "wzrost",
                     "Waga (kg)" = "waga",
@@ -149,12 +149,12 @@ ch4_ui <- list(
     ),
 
     lc_p("Dla wzrostu reguła sprawdza się bardzo dobrze: w pasie ±1 SD leży
-      67,5% studentów, w pasie ±2 SD — 96,5%, a w pasie ±3 SD wszyscy.
-      Podobnie jest dla średniej ocen (68,5% i 96%) i wagi (64% i 97,5%)."),
+      67.5% studentów, w pasie ±2 SD — 96.5%, a w pasie ±3 SD wszyscy.
+      Podobnie jest dla średniej ocen (68.5% i 96%) i wagi (64% i 97.5%)."),
 
     lc_p("Ciekawszy jest czas dojazdu. W pasie ±1 SD leży 71% danych, więc
       łączny odsetek się zgadza, ale rozkład nie jest symetryczny: poniżej pasa
-      leży 13% obserwacji, a powyżej 16%. Pas ±3 SD sięga od −13 do 85 minut.
+      leży 13% obserwacji, a powyżej 16%. Pas ±3 SD sięga od -13 do 85 minut.
       Jego lewy kraniec to wartość niemożliwa, a po prawej stronie i tak
       zostają dwie obserwacje. Średnia i odchylenie standardowe opisują
       rozkład dobrze tylko wtedy, gdy jest on w przybliżeniu symetryczny.
@@ -171,11 +171,11 @@ ch4_ui <- list(
       gloss("wykres pudełkowy"), " (boxplot), który widzieliśmy pod histogramem
       percentyli. Pudełko rozciąga się od Q1 do Q3, a kreska w środku to
       mediana. Wąsy sięgają do najdalszych obserwacji leżących nie dalej niż
-      1,5 IQR od pudełka. Punkty poza tymi granicami rysujemy osobno jako ",
+      1.5 IQR od pudełka. Punkty poza tymi granicami rysujemy osobno jako ",
       gloss("wartość odstająca", "wartości odstające"), "."),
 
     lc_formula_box(withMathJax(
-      "$$\\text{IQR} = Q_3 - Q_1 \\qquad \\text{granice wąsów: } Q_1 - 1{,}5 \\cdot \\text{IQR}, \\;\\; Q_3 + 1{,}5 \\cdot \\text{IQR}$$"
+      "$$\\text{IQR} = Q_3 - Q_1 \\qquad \\text{granice wąsów: } Q_1 - 1.5 \\cdot \\text{IQR}, \\;\\; Q_3 + 1.5 \\cdot \\text{IQR}$$"
     )),
 
     lc_p("Panel buduje wykres krok po kroku na 30 pomiarach wzrostu. 27 z nich
@@ -199,8 +199,8 @@ ch4_ui <- list(
     lc_p("Trzy dodane wartości zwykle wypadają poza granice wąsów i zostają
       oznaczone jako wartości odstające. Pudełko ich nie zauważa: kwartyle,
       tak jak mediana, zależą tylko od kolejności obserwacji. W danych
-      z ankiety wzrost ma IQR = 11,5 cm, a granice wąsów to 148,2 i 194,3 cm.
-      Najniższy student ma 150 cm, najwyższy 191,2 cm, więc wykres pudełkowy
+      z ankiety wzrost ma IQR = 11.5 cm, a granice wąsów to 148.2 i 194.3 cm.
+      Najniższy student ma 150 cm, najwyższy 191.2 cm, więc wykres pudełkowy
       wzrostu nie pokazuje żadnej wartości odstającej."),
 
     lc_p("Ostatni krok zestawia gotowy wykres z histogramem. Wykres pudełkowy
@@ -250,14 +250,14 @@ ch4_ui <- list(
     ),
 
     lc_p("Przy podziale wzrostu według płci pudełka się nie nakładają: Q3 kobiet
-      wynosi 170,5 cm, a Q1 mężczyzn 172,2 cm. Mediany to 166,4 i 177,1 cm.
-      Zwróć uwagę na rozrzut. Odchylenie standardowe w grupach wynosi 6,0 cm
-      u kobiet i 6,5 cm u mężczyzn, a w całej próbie 8,1 cm. Część rozrzutu
+      wynosi 170.5 cm, a Q1 mężczyzn 172.2 cm. Mediany to 166.4 i 177.1 cm.
+      Zwróć uwagę na rozrzut. Odchylenie standardowe w grupach wynosi 6.0 cm
+      u kobiet i 6.5 cm u mężczyzn, a w całej próbie 8.1 cm. Część rozrzutu
       całej próby bierze się z różnicy między grupami, a nie ze zmienności
       wewnątrz nich."),
 
     lc_p("Podział według kierunku daje inny obraz. Mediany wzrostu na czterech
-      kierunkach mieszczą się między 169,3 a 171,3 cm, a pudełka w dużej
+      kierunkach mieszczą się między 169.3 a 171.3 cm, a pudełka w dużej
       części się pokrywają. Różnice między kierunkami są małe w porównaniu
       z rozrzutem wewnątrz każdego z nich. Wykres skrzypcowy dodaje do pudełek
       kształt rozkładu, podobnie jak wygładzony histogram."),
@@ -289,12 +289,12 @@ ch4_ui <- list(
       uiOutput("ch4_comp_table")
     ),
 
-    lc_p("Na początku rozstęp wynosi 41,2 cm, IQR 11,5 cm, a odchylenie
-      standardowe 8,1 cm. Jedna wartość odstająca (około 220 cm) podnosi
+    lc_p("Na początku rozstęp wynosi 41.2 cm, IQR 11.5 cm, a odchylenie
+      standardowe 8.1 cm. Jedna wartość odstająca (około 220 cm) podnosi
       rozstęp do około 71 cm, czyli o trzy czwarte. Odchylenie standardowe
-      rośnie do 8,9 cm, a IQR prawie się nie zmienia. Po dodaniu pięciu takich
+      rośnie do 8.9 cm, a IQR prawie się nie zmienia. Po dodaniu pięciu takich
       wartości odchylenie standardowe sięga około 11 cm, a IQR wciąż wynosi
-      około 11,8 cm."),
+      około 11.8 cm."),
 
     lc_p("Rozstęp zależy tylko od dwóch skrajnych obserwacji, więc jedna
       nietypowa wartość wystarczy, żeby go zmienić. Odchylenie standardowe
@@ -346,10 +346,10 @@ ch4_ui <- list(
     ),
 
     lc_p("Według samego odchylenia standardowego kolejność to: czas dojazdu
-      (16,3 min), waga (13,7 kg), wzrost (8,1 cm) i średnia ocen (0,6). Te liczby
+      (16.3 min), waga (13.7 kg), wzrost (8.1 cm) i średnia ocen (0.6). Te liczby
       mają jednak różne jednostki, więc ich porównanie nic nie mówi.
-      Współczynnik zmienności czasu dojazdu wynosi 45,6%, wagi 19,2%, średniej
-      ocen 15,7%, a wzrostu tylko 4,8%. Średnia ocen, z najmniejszym
+      Współczynnik zmienności czasu dojazdu wynosi 45.6%, wagi 19.2%, średniej
+      ocen 15.7%, a wzrostu tylko 4.8%. Średnia ocen, z najmniejszym
       odchyleniem standardowym, okazuje się względnie trzy razy bardziej
       zmienna niż wzrost. Wzrost studentów jest najbardziej jednorodną
       z czterech zmiennych."),
@@ -637,12 +637,12 @@ ch4_server <- function(input, output, session) {
       geom_histogram(aes(y = after_stat(density)),
                      bins = 25, fill = upwr_cat["niebo"], color = "white", alpha = 0.85) +
       geom_vline(xintercept = m, color = upwr_secondary, linewidth = 1.2, linetype = "solid") +
-      annotate("text", x = m, y = Inf, label = paste0("x̄ = ", round(m, 1)),
+      annotate("text", x = m, y = Inf, label = pm_eq("bar(x)", round(m, 1)), parse = TRUE,
                vjust = -0.5, color = upwr_secondary, fontface = "bold", size = 4.5) +
       annotate("text",
                x = c(m - s, m + s, m - 2 * s, m + 2 * s, m - 3 * s, m + 3 * s),
                y = -Inf,
-               label = c("−1 SD", "+1 SD", "−2 SD", "+2 SD", "−3 SD", "+3 SD"),
+               label = c("-1 SD", "+1 SD", "-2 SD", "+2 SD", "-3 SD", "+3 SD"),
                vjust = -0.5, hjust = c(1.1, -0.1, 1.1, -0.1, 1.1, -0.1),
                size = 3.2, color = upwr_secondary, fontface = "italic") +
       labs(
@@ -668,7 +668,7 @@ ch4_server <- function(input, output, session) {
     diff_1sd <- abs(pct_in[1] - 68)
     pct_txt <- paste0(" W pasach ±1, ±2 i ±3 SD leży ", lc_fmt(pct_in[1], 1), "%, ",
                       lc_fmt(pct_in[2], 1), "% i ", lc_fmt(pct_in[3], 1),
-                      "% danych (reguła: 68%, 95% i 99,7%).")
+                      "% danych (reguła: 68%, 95% i 99.7%).")
 
     if (diff_1sd < 5) {
       lc_feedback(type = "info",

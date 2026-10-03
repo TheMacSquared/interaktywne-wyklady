@@ -27,7 +27,7 @@ ch1_ui <- list(
       zakodowano liczbami. W ankiecie, którą będziemy analizować przez cały kurs,
       jest pytanie o kierunek studiów. Gdyby Biologię zapisać jako 1, Ekonomię
       jako 2, Informatykę jako 3, a Psychologię jako 4, „średni kierunek” 200
-      ankietowanych wyniósłby 2,45 — coś między Ekonomią a Informatyką, czyli nic.
+      ankietowanych wyniósłby 2.45 — coś między Ekonomią a Informatyką, czyli nic.
       Zanim więc cokolwiek policzymy, musimy rozpoznać typ każdej zmiennej."),
 
     # --- Widget 1: Taxonomy tree ---
@@ -209,7 +209,7 @@ ch1_ui <- list(
       stoją w kolejności kategorii, przy nominalnej kolejność jest umowna.
       Liczba kursów przyjmuje tylko siedem wartości, od 3 do 9, więc również
       tu każda wartość dostaje własny słupek. Wzrost to inna sytuacja: wśród
-      200 pomiarów jest 148 różnych wartości, od 150 do 191,2 cm. Słupek dla
+      200 pomiarów jest 148 różnych wartości, od 150 do 191.2 cm. Słupek dla
       każdej z nich miałby wysokość od 1 do 4, dlatego histogram łączy wartości
       w przedziały i dopiero wtedy widać kształt rozkładu."),
 
@@ -217,7 +217,7 @@ ch1_ui <- list(
       zakodowane jako liczby trafiają na histogram, który sugeruje ciągłą oś
       wartości, choć między kategoriami nie ma nic pośrodku, a etykiety
       kategorii znikają. Liczba kursów pokazana jako gładka krzywa gęstości
-      sugeruje, że ktoś może mieć 4,5 kursu, choć zmienna przyjmuje tylko
+      sugeruje, że ktoś może mieć 4.5 kursu, choć zmienna przyjmuje tylko
       wartości całkowite. Wzrost na wykresie słupkowym rozpada się na 148 cienkich
       kresek, z których nie da się odczytać kształtu rozkładu. Wykres nie naprawi
       złego rozpoznania typu, tylko je utrwali."),

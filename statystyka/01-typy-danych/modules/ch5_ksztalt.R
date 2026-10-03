@@ -28,8 +28,8 @@ ch5_ui <- list(
     # --- Widget 1: Skewness ---
     lc_h2("ch5-skosnosc", "Skośność (asymetria)"),
 
-    lc_p("W rozdziale 3 zauważyliśmy, że dla czasu dojazdu średnia (35,7 min)
-      jest wyraźnie większa od mediany (32,9 min). Przyczyną był długi prawy
+    lc_p("W rozdziale 3 zauważyliśmy, że dla czasu dojazdu średnia (35.7 min)
+      jest wyraźnie większa od mediany (32.9 min). Przyczyną był długi prawy
       ogon: kilka bardzo długich dojazdów podnosiło średnią, a mediana na nie
       nie reagowała. Taką asymetrię rozkładu mierzy ",
       gloss("skośność"), ". Liczymy ją, standaryzując każdą obserwację, czyli
@@ -55,11 +55,11 @@ ch5_ui <- list(
       lc_plot("ch5_skew_comparison", max_height = "300px")
     ),
 
-    lc_p("Rozkład prawostronnie skośny ma skośność około 0,99, jego lustrzane
-      odbicie około −0,99, a rozkład symetryczny wartość bliską zera. Znak
+    lc_p("Rozkład prawostronnie skośny ma skośność około 0.99, jego lustrzane
+      odbicie około -0.99, a rozkład symetryczny wartość bliską zera. Znak
       mówi, po której stronie leży dłuższy ogon, a wartość bezwzględna,
       jak silna jest asymetria. Jako orientacyjną skalę przyjmuje się
-      często: poniżej 0,5 rozkład jest w przybliżeniu symetryczny, od 0,5
+      często: poniżej 0.5 rozkład jest w przybliżeniu symetryczny, od 0.5
       do 1 umiarkowanie skośny, powyżej 1 silnie skośny."),
 
     lc_p("Skośność idzie w parze z relacją średniej i mediany. Średnia
@@ -83,11 +83,11 @@ ch5_ui <- list(
       uiOutput("ch5_skew_info")
     ),
 
-    lc_p("Czas dojazdu ma skośność 1,02, czyli silną asymetrię prawostronną,
-      i średnia leży na prawo od mediany. Liczba nieobecności (0,69) jest
+    lc_p("Czas dojazdu ma skośność 1.02, czyli silną asymetrię prawostronną,
+      i średnia leży na prawo od mediany. Liczba nieobecności (0.69) jest
       skośna umiarkowanie: nikt nie może mieć mniej niż zero nieobecności,
-      ale kilka osób ma ich wyraźnie więcej niż reszta. Wzrost (0,11)
-      i średnia ocen (−0,17) są w przybliżeniu symetryczne, a ich średnie
+      ale kilka osób ma ich wyraźnie więcej niż reszta. Wzrost (0.11)
+      i średnia ocen (-0.17) są w przybliżeniu symetryczne, a ich średnie
       i mediany niemal się pokrywają."),
 
     inline_callout(
@@ -140,23 +140,23 @@ ch5_ui <- list(
       ),
       lc_plot("ch5_kurt_plot", ratio = "1.8/1", max_height = "350px"),
       h5(style = "text-align: center; color: var(--upwr-reference); margin-top: 12px;",
-         "Powiększenie prawego ogona (x > 2,5)"),
+         "Powiększenie prawego ogona (x > 2.5)"),
       lc_plot("ch5_kurt_tails", ratio = "2.8/1", max_height = "220px"),
       uiOutput("ch5_kurt_text")
     ),
 
     lc_p("Choć oba rozkłady mają to samo odchylenie standardowe, przy kurtozie
-      4 prawdopodobieństwo wartości większej niż 2,5 odchylenia standardowego
-      wynosi około 1,1%, a w rozkładzie normalnym 0,6%. Dla wartości powyżej
+      4 prawdopodobieństwo wartości większej niż 2.5 odchylenia standardowego
+      wynosi około 1.1%, a w rozkładzie normalnym 0.6%. Dla wartości powyżej
       3 odchyleń różnica jest już czterokrotna. Rozkład leptokurtyczny ma
       przy tym wyższy, węższy szczyt: część obserwacji przesuwa się do
       środka, a część daleko w ogony. Rozkład platykurtyczny przy kurtozie
-      −1 w ogóle nie sięga poza 2 odchylenia standardowe, więc w powiększeniu
+      -1 w ogóle nie sięga poza 2 odchylenia standardowe, więc w powiększeniu
       ogona jego krzywa leży na zerze."),
 
     lc_p("W praktyce dodatnia kurtoza jest sygnałem ostrzegawczym. Oznacza,
       że wartości skrajne zdarzają się częściej, niż sugerowałby rozkład
-      normalny, a reguła 68–95–99,7 zaniża ich częstość. W finansach tak
+      normalny, a reguła 68–95–99.7 zaniża ich częstość. W finansach tak
       wyglądają rozkłady stóp zwrotu: duże straty, rzadkie w modelu
       normalnym, w rzeczywistości zdarzają się zaskakująco często."),
 
@@ -189,14 +189,14 @@ ch5_ui <- list(
     ),
 
     lc_p("Różne miary opowiadają o tej samej zmiennej spójną historię
-      i warto czytać je razem. Czas dojazdu ma dodatnią skośność (1,02),
+      i warto czytać je razem. Czas dojazdu ma dodatnią skośność (1.02),
       średnią większą od mediany, a wykres pudełkowy pokazuje 7 wartości
-      odstających, wszystkie po prawej stronie. Dodatnia kurtoza (0,75)
+      odstających, wszystkie po prawej stronie. Dodatnia kurtoza (0.75)
       potwierdza, że długie dojazdy zdarzają się częściej niż w rozkładzie
       normalnym."),
 
-    lc_p("Waga jest prawie symetryczna (skośność 0,30), ale ma wyraźnie ujemną
-      kurtozę (−0,72): rozkład jest płaski i szeroki, bez wyraźnych ogonów.
+    lc_p("Waga jest prawie symetryczna (skośność 0.30), ale ma wyraźnie ujemną
+      kurtozę (-0.72): rozkład jest płaski i szeroki, bez wyraźnych ogonów.
       To skutek zjawiska z rozdziału 3, omawianego przy modalności. W danych
       są pomieszane dwie grupy, kobiety i mężczyźni, o różnych średnich wagach.
       Każda grupa osobno ma rozkład zbliżony do normalnego, ale razem
@@ -409,7 +409,7 @@ ch5_server <- function(input, output, session) {
 
     lc_feedback(type = type_class,
       tags$strong(paste0(type_name, " (nadwyżkowa kurtoza = ",
-                         format(round(ek, 1), decimal.mark = ","), "):")),
+                         format(round(ek, 1)), "):")),
       " ", desc
     )
   })
@@ -547,7 +547,7 @@ ch5_server <- function(input, output, session) {
         round(upper_fence, 2), "])."
       )
     } else {
-      outlier_text <- "Brak wartości odstających (wg kryterium 1,5 · IQR)."
+      outlier_text <- "Brak wartości odstających (wg kryterium 1.5 · IQR)."
     }
 
     lc_feedback(type = "info",

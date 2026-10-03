@@ -96,7 +96,7 @@ ch3_ui <- list(
       uiOutput("ch3_mean_text")
     ),
 
-    lc_p("Średni wzrost w naszej ankiecie wynosi 171,1 cm. Do sumy trafia każda
+    lc_p("Średni wzrost w naszej ankiecie wynosi 171.1 cm. Do sumy trafia każda
       wartość, więc każda ciągnie średnią w swoją stronę, także wartości skrajne.
       Obserwacja odległa od reszty przesuwa punkt równowagi bardziej niż kilka
       obserwacji leżących blisko środka. To zaleta, gdy chcemy uwzględnić
@@ -133,10 +133,10 @@ ch3_ui <- list(
       uiOutput("ch3_median_text")
     ),
 
-    lc_p("Porównaj obie miary dla dwóch zmiennych. Dla wzrostu mediana (170,7 cm)
-      i średnia (171,1 cm) prawie się pokrywają, bo rozkład jest w przybliżeniu
+    lc_p("Porównaj obie miary dla dwóch zmiennych. Dla wzrostu mediana (170.7 cm)
+      i średnia (171.1 cm) prawie się pokrywają, bo rozkład jest w przybliżeniu
       symetryczny. Dla czasu dojazdu różnica jest wyraźniejsza: mediana wynosi
-      32,9 min, a średnia 35,7 min. Rozkład czasu dojazdu ma długi prawy ogon:
+      32.9 min, a średnia 35.7 min. Rozkład czasu dojazdu ma długi prawy ogon:
       19 osób dojeżdża dłużej niż godzinę i to one podnoszą średnią. Mediana
       tylko odnotowuje, że leżą powyżej środka."),
 
@@ -277,8 +277,8 @@ ch3_ui <- list(
       słupka, a niektóre przedziały zostają puste, choć w danych nie ma
       żadnej luki."),
 
-    lc_p("Zwróć też uwagę na średnią. Średnia liczba nieobecności wynosi 2,87,
-      choć nikt nie opuścił 2,87 zajęć. Średnia nie musi być wartością, którą
+    lc_p("Zwróć też uwagę na średnią. Średnia liczba nieobecności wynosi 2.87,
+      choć nikt nie opuścił 2.87 zajęć. Średnia nie musi być wartością, którą
       ktokolwiek faktycznie przyjmuje. Mediana zmiennej dyskretnej zwykle jest
       jedną z jej wartości, tutaj wynosi 3."),
 
@@ -363,9 +363,9 @@ ch3_ui <- list(
       )
     ),
 
-    lc_p("W naszej ankiecie Q1 wzrostu wynosi 165,5 cm, a Q3 177,0 cm, więc
+    lc_p("W naszej ankiecie Q1 wzrostu wynosi 165.5 cm, a Q3 177.0 cm, więc
       połowa studentów ma wzrost między tymi wartościami. Odległość Q3 − Q1,
-      tutaj 11,5 cm, to ",
+      tutaj 11.5 cm, to ",
       gloss("rozstęp międzykwartylowy"), " (IQR). Jest to miara rozrzutu
       odporna na wartości odstające, z tego samego powodu co mediana. Korzysta
       z niej wykres pudełkowy pod histogramem; wrócimy do niego w następnym

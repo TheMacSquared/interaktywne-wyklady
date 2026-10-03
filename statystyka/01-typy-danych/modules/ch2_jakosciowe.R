@@ -65,13 +65,13 @@ ch2_ui <- list(
     ),
 
     lc_p("Najliczniejszym kierunkiem w ankiecie jest Informatyka: 60 osób, czyli
-      30% próby. Dalej są Biologia (51 osób, 25,5%), Ekonomia (49 osób, 24,5%)
+      30% próby. Dalej są Biologia (51 osób, 25.5%), Ekonomia (49 osób, 24.5%)
       i Psychologia (40 osób, 20%). Częstości względne sumują się do 1,
       a procenty do 100, co jest prostym sprawdzianem poprawności tabeli."),
 
     lc_p("Ostatni krok wygląda dla obu zmiennych tak samo, ale znaczy co innego.
-      Dla zadowolenia procent skumulowany odpowiada na sensowne pytanie: 18,5%
-      studentów jest niezadowolonych lub bardzo niezadowolonych, a 53,5% ocenia
+      Dla zadowolenia procent skumulowany odpowiada na sensowne pytanie: 18.5%
+      studentów jest niezadowolonych lub bardzo niezadowolonych, a 53.5% ocenia
       studia co najwyżej neutralnie. Dla kierunku ta sama kolumna sumuje
       kategorie w kolejności alfabetycznej, więc liczba 80% przy Informatyce
       niczego nie opisuje. O tym, czy liczenie narastająco ma sens, decyduje
@@ -298,10 +298,10 @@ ch2_ui <- list(
       na procenty."),
 
     lc_p("Procenty wierszowe pokazują, jak rozkładają się kierunki w obrębie
-      każdej płci: Informatykę studiuje 30,3% kobiet i 29,7% mężczyzn,
-      Psychologię 18,3% kobiet i 22,0% mężczyzn. Procenty kolumnowe pokazują
-      skład płci na każdym kierunku: kobiety stanowią od 50,0% studentów
-      Psychologii do 57,1% studentów Ekonomii. Rozkłady kierunków u kobiet
+      każdej płci: Informatykę studiuje 30.3% kobiet i 29.7% mężczyzn,
+      Psychologię 18.3% kobiet i 22.0% mężczyzn. Procenty kolumnowe pokazują
+      skład płci na każdym kierunku: kobiety stanowią od 50.0% studentów
+      Psychologii do 57.1% studentów Ekonomii. Rozkłady kierunków u kobiet
       i mężczyzn są do siebie podobne, więc w tej próbie wybór kierunku
       niewiele zależy od płci. To, które procenty policzyć, zależy od pytania:
       zmienna, której grupy porównujemy, wyznacza kierunek procentowania."),
