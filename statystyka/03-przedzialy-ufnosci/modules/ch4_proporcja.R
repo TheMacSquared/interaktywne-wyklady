@@ -75,19 +75,17 @@ ch4_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.1", title = "Konstruowanie przedziału",
+      label = "Ryc. 4.1",
       full_width = TRUE,
-      div(class = "step-buttons",
-        lc_action("ch4_step1", "1. Próba", variant = "outline"),
-        lc_action("ch4_step2", "2. p̂", variant = "outline"),
-        lc_action("ch4_step3", "3. ± SE", variant = "outline"),
-        lc_action("ch4_step4", "4. Przedział", variant = "outline")
-      ),
-      lc_inline_row(gap = "md",
-        lc_action("ch4_step_new_sample", "↻ Nowa próba", variant = "outline")
-      ),
-      lc_plot("ch4_step_plot", ratio = "1.8/1", max_height = "340px"),
-      uiOutput("ch4_step_explanation")
+      lc_step_widget("ch4_step",
+        title = "Konstruowanie przedziału",
+        steps = c("Próba", "p̂", "± SE", "Przedział"),
+        toolbar = lc_toolbar(
+          lc_action("ch4_step_new_sample", "Nowa próba", icon = "shuffle",
+                    variant = "outline")
+        ),
+        plot_id = "ch4_step_plot"
+      )
     ),
 
     lc_h2("ch4-roznica", "Budowa przedziału dla różnicy proporcji"),
@@ -103,20 +101,18 @@ ch4_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.2", title = "Konstruowanie CI dla różnicy",
+      label = "Ryc. 4.2",
       full_width = TRUE,
-      div(class = "step-buttons",
-        lc_action("ch4_dstep1", "1. Dwie próby", variant = "outline"),
-        lc_action("ch4_dstep2", "2. Dwie p̂", variant = "outline"),
-        lc_action("ch4_dstep3", "3. Różnica", variant = "outline"),
-        lc_action("ch4_dstep4", "4. ± SE", variant = "outline"),
-        lc_action("ch4_dstep5", "5. Przedział", variant = "outline")
-      ),
-      lc_inline_row(gap = "md",
-        lc_action("ch4_dstep_new_sample", "↻ Nowe próby", variant = "outline")
-      ),
-      lc_plot("ch4_dstep_plot", ratio = "1.5/1", max_height = "420px"),
-      uiOutput("ch4_dstep_explanation")
+      lc_step_widget("ch4_dstep",
+        title = "Konstruowanie CI dla różnicy",
+        steps = c("Dwie próby", "Dwie p̂", "Różnica", "± SE", "Przedział"),
+        toolbar = lc_toolbar(
+          lc_action("ch4_dstep_new_sample", "Nowe próby", icon = "shuffle",
+                    variant = "outline")
+        ),
+        plot_id = "ch4_dstep_plot",
+        ratio = "2/1"
+      )
     ),
 
     lc_h2("ch4-case-studies", "Case studies — jak interpretować CI w praktyce"),
@@ -257,8 +253,8 @@ ch4_server <- function(input, output, session) {
   # ==========================================================================
   # WIDGET 1: Budowa przedzialu dla proporcji krok po kroku
   # ==========================================================================
-  ch4_step <- reactiveVal(0)
-  ch4_step_sample <- reactiveVal(NULL)
+  # Krok widgetu (1..4) żyje w przeglądarce; nowa próba nie zmienia kroku.
+  ch4_step <- lc_step_server("ch4_step", input)$step
 
   # Generuje probke n bernoulli z true_p = 0.6 (z drobna wariancja)
   generate_step_prop_sample <- function() {
@@ -266,40 +262,27 @@ ch4_server <- function(input, output, session) {
     n <- 50
     rbinom(n, 1, 0.6)  # 50 odpowiedzi TAK/NIE
   }
+  ch4_step_sample <- reactiveVal(generate_step_prop_sample())
 
-  observeEvent(input$ch4_step1, {
-    if (is.null(ch4_step_sample())) ch4_step_sample(generate_step_prop_sample())
-    ch4_step(1)
-  })
-  observeEvent(input$ch4_step2, {
-    if (is.null(ch4_step_sample())) ch4_step_sample(generate_step_prop_sample())
-    ch4_step(2)
-  })
-  observeEvent(input$ch4_step3, {
-    if (is.null(ch4_step_sample())) ch4_step_sample(generate_step_prop_sample())
-    ch4_step(3)
-  })
-  observeEvent(input$ch4_step4, {
-    if (is.null(ch4_step_sample())) ch4_step_sample(generate_step_prop_sample())
-    ch4_step(4)
-  })
   observeEvent(input$ch4_step_new_sample, {
     ch4_step_sample(generate_step_prop_sample())
-    ch4_step(1)
   })
 
-  output$ch4_step_plot <- renderPlot({
+  # TAK: dane (niebo), NIE: druga grupa (bursztyn)
+  ch4_yes_no_fill <- c("NIE" = STEP_ROLES$group$colour, "TAK" = STEP_ROLES$data$colour)
+
+  # Grubość paska przedziału: element wprowadzany w kroku grubszy niż znany.
+  ch4_bar_lw <- function(role) if (role == "new") 1.8 else 1.1
+
+  # Etykieta w kolorze roli, krojem wykresu (mono nie ma znaków x̄, p̂, ₁).
+  ch4_role_text <- function(x, y, label, role, size, hjust = 0.5) {
+    annotate("text", x = x, y = y, label = label, hjust = hjust,
+             colour = STEP_ROLES[[role]]$colour, fontface = "bold", size = size)
+  }
+
+  zoom_plot_server("ch4_step_plot", reactive({
     step <- ch4_step()
     samp <- ch4_step_sample()
-    if (step == 0 || is.null(samp)) {
-      return(
-        ggplot() +
-          annotate("text", x = 0.5, y = 0.5,
-                   label = "Kliknij '1. Próba' żeby zacząć",
-                   size = 6, color = upwr_reference) +
-          theme_void()
-      )
-    }
 
     n <- length(samp)
     x <- sum(samp)
@@ -313,15 +296,12 @@ ch4_server <- function(input, output, session) {
       val = factor(c("NIE", "TAK"), levels = c("NIE", "TAK")),
       count = c(n - x, x)
     )
-    p_left <- ggplot(bar_df, aes(x = val, y = count, fill = val)) +
-      geom_col(width = 0.6) +
+    p_left <- ggplot(bar_df, aes(x = val, y = count)) +
+      step_result(geom_col, width = 0.6, fill = ch4_yes_no_fill[as.character(bar_df$val)]) +
       geom_text(aes(label = count), vjust = -0.4, fontface = "bold",
-                size = 5, color = upwr_secondary) +
-      scale_fill_manual(values = c("NIE" = col_miss, "TAK" = col_ci),
-                        guide = "none") +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+                family = "mono", size = 5, colour = STEP_ROLES$known$colour) +
       labs(x = NULL, y = "Liczebność") +
-      theme_upwr() +
+      step_frame(xlim = c(0.4, 2.6), ylim = c(0, max(bar_df$count) * 1.15)) +
       theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
 
@@ -331,61 +311,51 @@ ch4_server <- function(input, output, session) {
     Y_SE  <- 0.05
     Y_CI  <- -0.25
 
-    # Wyszarzanie poprzednich elementow
-    c_faded <- "#adb5bd"
-    c_est <- if (step >= 3) c_faded else col_estimate
-    c_se  <- if (step >= 4) c_faded else col_hit
-
     p_right <- ggplot() +
-      xlim(0, 1) +
-      ylim(-0.6, 0.6) +
       labs(x = "Proporcja", y = NULL) +
-      theme_upwr() +
-      theme(axis.text.y = element_blank(),
-            axis.ticks.y = element_blank(),
-            panel.grid.major.y = element_blank(),
-            panel.grid.minor.y = element_blank())
+      step_frame(xlim = c(0, 1), ylim = c(-0.6, 0.6), y_axis = FALSE)
 
     # Krok 2+: pionowa linia prowadzaca + punkt p_hat
     if (step >= 2) {
+      role <- step_role(step, 2)
       p_right <- p_right +
-        geom_vline(xintercept = phat, color = "#adb5bd",
-                   linewidth = 0.8, linetype = "dotted") +
-        geom_point(aes(x = phat, y = Y_EST), color = c_est,
-                   size = 7, shape = 18) +
-        annotate("text", x = phat, y = Y_EST - 0.13,
-                 label = "p̂",
-                 color = c_est, fontface = "bold", size = 5)
+        step_line("known", xintercept = phat) +
+        step_layer(geom_point, role, data = data.frame(x = phat, y = Y_EST),
+                   mapping = aes(x = x, y = y), size = 7, shape = 18) +
+        ch4_role_text(phat, Y_EST - 0.13, "p̂", role = role,
+                   size = 5)
     }
 
     # Krok 3+: waski przedzial SE
     if (step >= 3) {
+      role <- step_role(step, 3)
       p_right <- p_right +
-        geom_errorbarh(aes(xmin = phat - se, xmax = phat + se, y = Y_SE),
-                       height = 0.08, color = c_se, linewidth = 1.8) +
-        annotate("text", x = phat, y = Y_SE - 0.12,
-                 label = "± SE",
-                 color = c_se, fontface = "bold", size = 4.2)
+        step_layer(geom_errorbar, role,
+                   data = data.frame(xmin = phat - se, xmax = phat + se, y = Y_SE),
+                   mapping = aes(xmin = xmin, xmax = xmax, y = y),
+                   width = 0.08, linewidth = ch4_bar_lw(role)) +
+        ch4_role_text(phat, Y_SE - 0.12, "± SE", role = role,
+                   size = 4.2)
     }
 
     # Krok 4: pelen CI
     if (step >= 4) {
       p_right <- p_right +
-        geom_errorbarh(aes(xmin = phat - me, xmax = phat + me, y = Y_CI),
-                       height = 0.12, color = col_ci, linewidth = 2.2) +
-        annotate("text", x = phat, y = Y_CI - 0.13,
-                 label = "95% CI",
-                 color = col_ci, fontface = "bold", size = 5)
+        step_layer(geom_errorbar, "new",
+                   data = data.frame(xmin = phat - me, xmax = phat + me, y = Y_CI),
+                   mapping = aes(xmin = xmin, xmax = xmax, y = y),
+                   width = 0.12, linewidth = 2.2) +
+        ch4_role_text(phat, Y_CI - 0.13, "95% CI", role = "new",
+                   size = 5)
     }
 
     library(patchwork)
     p_left + p_right + plot_layout(widths = c(1, 2.5))
-  })
+  }))
 
-  output$ch4_step_explanation <- renderUI({
+  output$ch4_step_text <- renderUI({
     step <- ch4_step()
     samp <- ch4_step_sample()
-    if (step == 0 || is.null(samp)) return(NULL)
 
     n <- length(samp)
     x <- sum(samp)
@@ -395,53 +365,50 @@ ch4_server <- function(input, output, session) {
     me <- z_star * se
 
     switch(as.character(step),
-      "1" = lc_feedback(type = "info",
-        p(tags$strong("Krok 1:"), " Próba.",
+      "1" = tagList(
+        p("Próba.",
           " Mamy ", tags$b(n), " obserwacji TAK/NIE: ", tags$b(x), " razy TAK, ",
-          tags$b(n - x), " razy NIE. Niebieskie punkty (TAK) po prawej, czerwone (NIE)
+          tags$b(n - x), " razy NIE. Niebieskie punkty (TAK) po prawej, bursztynowe (NIE)
           po lewej. Sama tabelka liczb — jeszcze nie zaczęliśmy estymować.")
       ),
-      "2" = lc_feedback(type = "info",
-        p(tags$strong("Krok 2:"), " Estymacja punktowa p̂.",
+      "2" = tagList(
+        p("Estymacja punktowa p̂.",
           " Liczymy proporcję z próby:"),
         p(withMathJax(paste0("\\(\\hat{p} = \\frac{x}{n} = \\frac{", x, "}{", n,
                              "} = ", round(phat, 3), "\\)"))),
         p("To nasza najlepsza pojedyncza wartość — ale potrzebujemy
           jeszcze wiedzieć, jak bardzo niepewna jest ta estymata.")
       ),
-      "3" = lc_feedback(type = "info",
-        p(tags$strong("Krok 3:"), " Błąd standardowy (± SE).",
+      "3" = tagList(
+        p("Błąd standardowy (± SE).",
           " Niepewność oszacowania proporcji liczymy ze wzoru:"),
         p(withMathJax(paste0(
           "\\(SE = \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}} = \\sqrt{\\frac{",
           round(phat, 2), " \\cdot ", round(1 - phat, 2), "}{", n, "}} = ",
           round(se, 3), "\\)"))),
-        p("Zielony pasek ± SE to zakres \"jednego odchylenia\" wokół
-          p̂. Ale 95% CI to około ", tags$b("dwa SE w każdą stronę"),
+        p("Burgundowy pasek ± SE to zakres \"jednego odchylenia\" wokół
+          p̂. Ale 95% CI to około ", tags$strong("dwa SE w każdą stronę"),
           " (dokładniej: 1.96).")
       ),
-      "4" = {
-        lc_feedback(type = "ok",
-          p(tags$strong("Krok 4:"), " Przedział ufności."),
-          p("Wartość krytyczna z rozkładu normalnego: ",
-            withMathJax("\\(z^* = 1.96\\)")),
-          p(withMathJax(paste0("\\(ME = z^* \\cdot SE = 1.96 \\cdot ",
-                               round(se, 3), " = ", round(me, 3), "\\)"))),
-          p(tags$b("95% CI: ["),
-            round(phat - me, 3), " ; ", round(phat + me, 3),
-            tags$b("]")),
-          p(tags$em("Z 95% ufnością prawdziwy odsetek w populacji leży w tym
-                   przedziale. Sprawdź, jak zmienia się CI po wylosowaniu nowej próby!"))
-        )
-      }
+      "4" = tagList(
+        p("Przedział ufności."),
+        p("Wartość krytyczna z rozkładu normalnego: ",
+          withMathJax("\\(z^* = 1.96\\)")),
+        p(withMathJax(paste0("\\(ME = z^* \\cdot SE = 1.96 \\cdot ",
+                             round(se, 3), " = ", round(me, 3), "\\)"))),
+        p("95% CI: ",
+          tags$b(paste0("[", round(phat - me, 3), " ; ", round(phat + me, 3), "]"))),
+        p(tags$em("Z 95% ufnością prawdziwy odsetek w populacji leży w tym
+                 przedziale. Sprawdź, jak zmienia się CI po wylosowaniu nowej próby!"))
+      )
     )
   })
 
   # ==========================================================================
   # WIDGET 2: Budowa CI dla roznicy proporcji
   # ==========================================================================
-  ch4_dstep <- reactiveVal(0)
-  ch4_dstep_samples <- reactiveVal(NULL)
+  # Krok widgetu (1..5) żyje w przeglądarce; nowe próby nie zmieniają kroku.
+  ch4_dstep <- lc_step_server("ch4_dstep", input)$step
 
   generate_dstep_prop_samples <- function() {
     set.seed(sample.int(.Machine$integer.max, 1))
@@ -451,44 +418,15 @@ ch4_server <- function(input, output, session) {
       g2 = rbinom(n2, 1, 0.50)   # grupa 2: 50% zadowolonych
     )
   }
+  ch4_dstep_samples <- reactiveVal(generate_dstep_prop_samples())
 
-  observeEvent(input$ch4_dstep1, {
-    if (is.null(ch4_dstep_samples())) ch4_dstep_samples(generate_dstep_prop_samples())
-    ch4_dstep(1)
-  })
-  observeEvent(input$ch4_dstep2, {
-    if (is.null(ch4_dstep_samples())) ch4_dstep_samples(generate_dstep_prop_samples())
-    ch4_dstep(2)
-  })
-  observeEvent(input$ch4_dstep3, {
-    if (is.null(ch4_dstep_samples())) ch4_dstep_samples(generate_dstep_prop_samples())
-    ch4_dstep(3)
-  })
-  observeEvent(input$ch4_dstep4, {
-    if (is.null(ch4_dstep_samples())) ch4_dstep_samples(generate_dstep_prop_samples())
-    ch4_dstep(4)
-  })
-  observeEvent(input$ch4_dstep5, {
-    if (is.null(ch4_dstep_samples())) ch4_dstep_samples(generate_dstep_prop_samples())
-    ch4_dstep(5)
-  })
   observeEvent(input$ch4_dstep_new_sample, {
     ch4_dstep_samples(generate_dstep_prop_samples())
-    ch4_dstep(1)
   })
 
-  output$ch4_dstep_plot <- renderPlot({
+  zoom_plot_server("ch4_dstep_plot", reactive({
     step <- ch4_dstep()
     samples <- ch4_dstep_samples()
-    if (step == 0 || is.null(samples)) {
-      return(
-        ggplot() +
-          annotate("text", x = 0.5, y = 0.5,
-                   label = "Kliknij '1. Dwie próby' aby zacząć",
-                   size = 6, color = upwr_reference) +
-          theme_void()
-      )
-    }
 
     g1 <- samples$g1; g2 <- samples$g2
     n1 <- length(g1); n2 <- length(g2)
@@ -500,46 +438,42 @@ ch4_server <- function(input, output, session) {
     me <- z_star * se
 
     # ---- LEWY PANEL: slupki TAK/NIE x 2 grupy ----
+    # Bez legendy: kategorie TAK/NIE na osi X, grupy w panelach.
     bar_df <- data.frame(
       grp = factor(rep(c("Grupa 1", "Grupa 2"), each = 2),
                    levels = c("Grupa 1", "Grupa 2")),
       val = factor(rep(c("NIE", "TAK"), 2), levels = c("NIE", "TAK")),
       count = c(n1 - x1, x1, n2 - x2, x2)
     )
-    p_left <- ggplot(bar_df, aes(x = grp, y = count, fill = val)) +
-      geom_col(position = position_dodge(width = 0.75), width = 0.65) +
-      geom_text(aes(label = count),
-                position = position_dodge(width = 0.75),
-                vjust = -0.4, fontface = "bold", size = 4.5, color = upwr_secondary) +
-      scale_fill_manual(values = c("NIE" = col_miss, "TAK" = col_ci),
-                        name = NULL) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
+    p_left <- ggplot(bar_df, aes(x = val, y = count)) +
+      step_result(geom_col, width = 0.65,
+                  fill = ch4_yes_no_fill[as.character(bar_df$val)]) +
+      geom_text(aes(label = count), vjust = -0.4, fontface = "bold",
+                family = "mono", size = 4.5, colour = STEP_ROLES$known$colour) +
+      facet_wrap(~grp, nrow = 1) +
       labs(x = NULL, y = "Liczebność") +
-      theme_upwr() +
-      theme(legend.position = "top",
-            panel.grid.major.x = element_blank(),
+      step_frame(xlim = c(0.4, 2.6), ylim = c(0, max(bar_df$count) * 1.2)) +
+      theme(panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank())
 
     # ---- PRAWY GORNY PANEL: dwie p_hat na osi proporcji ----
     p_top <- ggplot() +
-      xlim(0, 1) +
-      ylim(0.4, 2.6) +
+      scale_y_continuous(breaks = c(1, 2), labels = c("Grupa 1", "Grupa 2")) +
       labs(x = "Proporcja", y = NULL) +
-      theme_upwr() +
+      step_frame(xlim = c(0, 1), ylim = c(0.4, 2.6)) +
       theme(axis.text.y = element_text(face = "bold", size = 12),
             panel.grid.major.y = element_blank(),
-            panel.grid.minor.y = element_blank()) +
-      scale_y_continuous(breaks = c(1, 2), labels = c("Grupa 1", "Grupa 2"),
-                         limits = c(0.4, 2.6))
+            panel.grid.minor.y = element_blank())
 
     if (step >= 2) {
+      role <- step_role(step, 2)
       p_top <- p_top +
-        geom_point(aes(x = p1, y = 1), color = col_estimate, size = 7, shape = 18) +
-        annotate("text", x = p1, y = 1.45, label = paste0("p̂₁ = ", round(p1, 3)),
-                 color = col_estimate, fontface = "bold", size = 4.5) +
-        geom_point(aes(x = p2, y = 2), color = col_estimate, size = 7, shape = 18) +
-        annotate("text", x = p2, y = 2.45, label = paste0("p̂₂ = ", round(p2, 3)),
-                 color = col_estimate, fontface = "bold", size = 4.5)
+        step_layer(geom_point, role, data = data.frame(x = c(p1, p2), y = c(1, 2)),
+                   mapping = aes(x = x, y = y), size = 7, shape = 18) +
+        ch4_role_text(p1, 1.45, paste0("p̂₁ = ", round(p1, 3)), role = role,
+                   size = 4.5) +
+        ch4_role_text(p2, 2.45, paste0("p̂₂ = ", round(p2, 3)), role = role,
+                   size = 4.5)
     }
 
     # ---- PRAWY DOLNY PANEL: roznica + CI ----
@@ -547,63 +481,55 @@ ch4_server <- function(input, output, session) {
     pad_bot <- diff(xlims_bot) * 0.08
     xlims_bot <- c(xlims_bot[1] - pad_bot, xlims_bot[2] + pad_bot)
 
-    col_true_local <- "#9b59b6"
-
     p_bot <- ggplot() +
-      xlim(xlims_bot) +
-      ylim(-0.55, 0.55) +
+      step_line("known", xintercept = 0) +
+      ch4_role_text(0, 0.45, "0 = brak różnicy", role = "known",
+                 hjust = -0.1, size = 4) +
       labs(x = "Różnica proporcji  —  Grupa 1 − Grupa 2",
            y = NULL) +
-      theme_upwr() +
-      theme(axis.text.y = element_blank(),
-            axis.ticks.y = element_blank(),
-            panel.grid.major.y = element_blank(),
-            panel.grid.minor.y = element_blank()) +
-      geom_vline(xintercept = 0, color = col_true_local,
-                 linewidth = 1, linetype = "dashed") +
-      annotate("text", x = 0, y = 0.45, label = "0 = brak różnicy",
-               color = col_true_local, fontface = "bold", size = 4, hjust = -0.1)
+      step_frame(xlim = xlims_bot, ylim = c(-0.55, 0.55), y_axis = FALSE)
 
     if (step >= 3) {
+      role <- step_role(step, 3)
       p_bot <- p_bot +
-        geom_point(aes(x = diff_val, y = 0), color = col_estimate,
-                   size = 7, shape = 18) +
-        annotate("text", x = diff_val, y = -0.22,
-                 label = paste0("p̂₁ − p̂₂ = ", round(diff_val, 3)),
-                 color = col_estimate, fontface = "bold", size = 4.5)
+        step_layer(geom_point, role, data = data.frame(x = diff_val, y = 0),
+                   mapping = aes(x = x, y = y), size = 7, shape = 18) +
+        ch4_role_text(diff_val, -0.22, paste0("p̂₁ − p̂₂ = ", round(diff_val, 3)),
+                   role = role, size = 4.5)
     }
 
     if (step >= 4) {
+      role <- step_role(step, 4)
       p_bot <- p_bot +
-        geom_errorbarh(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
-                       height = 0.08, color = col_hit, linewidth = 1.8) +
-        annotate("text", x = diff_val, y = 0.17,
-                 label = paste0("± SE = ±", round(se, 3)),
-                 color = col_hit, fontface = "bold", size = 4)
+        step_layer(geom_errorbar, role,
+                   data = data.frame(xmin = diff_val - se, xmax = diff_val + se, y = 0),
+                   mapping = aes(xmin = xmin, xmax = xmax, y = y),
+                   width = 0.08, linewidth = ch4_bar_lw(role)) +
+        ch4_role_text(diff_val, 0.17, paste0("± SE = ±", round(se, 3)), role = role,
+                   size = 4)
     }
 
     if (step >= 5) {
       p_bot <- p_bot +
-        geom_errorbarh(aes(xmin = diff_val - me, xmax = diff_val + me, y = 0),
-                       height = 0.14, color = col_ci, linewidth = 2.2, alpha = 0.6) +
-        annotate("text", x = diff_val, y = -0.42,
-                 label = paste0("95% CI: [", round(diff_val - me, 3),
-                                " ; ", round(diff_val + me, 3), "]"),
-                 color = col_ci, fontface = "bold", size = 4.8)
+        step_layer(geom_errorbar, "new",
+                   data = data.frame(xmin = diff_val - me, xmax = diff_val + me, y = 0),
+                   mapping = aes(xmin = xmin, xmax = xmax, y = y),
+                   width = 0.14, linewidth = 2.2, alpha = 0.6) +
+        ch4_role_text(diff_val, -0.42,
+                   paste0("95% CI: [", round(diff_val - me, 3),
+                          " ; ", round(diff_val + me, 3), "]"),
+                   role = "new", size = 4.8)
     }
 
     library(patchwork)
     # Layout: lewy slupki | (prawy gora p_hat / prawy dol roznica)
     right_col <- p_top / p_bot + plot_layout(heights = c(1, 1))
-    (p_left | right_col) +
-      plot_layout(widths = c(1, 2)) +
-      plot_annotation(title = paste0("Krok ", step, " z 5"))
-  })
+    (p_left | right_col) + plot_layout(widths = c(1, 2))
+  }))
 
-  output$ch4_dstep_explanation <- renderUI({
+  output$ch4_dstep_text <- renderUI({
     step <- ch4_dstep()
     samples <- ch4_dstep_samples()
-    if (step == 0 || is.null(samples)) return(NULL)
 
     g1 <- samples$g1; g2 <- samples$g2
     n1 <- length(g1); n2 <- length(g2)
@@ -615,54 +541,54 @@ ch4_server <- function(input, output, session) {
     me <- z_star * se
 
     switch(as.character(step),
-      "1" = lc_feedback(type = "info",
-        p(tags$strong("Krok 1:"), " Dwie próby.",
+      "1" = tagList(
+        p("Dwie próby.",
           " Mamy odpowiedzi TAK/NIE z dwóch grup: ", tags$b(n1),
           " osób w grupie 1 (", x1, " TAK / ", n1 - x1, " NIE) i ",
           tags$b(n2), " w grupie 2 (", x2, " TAK / ", n2 - x2, " NIE).
           Widać już, że w grupie 1 jest więcej TAKów, ale jak duża to
           różnica i czy istotna?")
       ),
-      "2" = lc_feedback(type = "info",
-        p(tags$strong("Krok 2:"), " Dwie proporcje.",
+      "2" = tagList(
+        p("Dwie proporcje.",
           " Obliczamy proporcję TAKów w każdej grupie:"),
         p(withMathJax(paste0("\\(\\hat{p}_1 = ", x1, "/", n1, " = ", round(p1, 3), "\\)"))),
         p(withMathJax(paste0("\\(\\hat{p}_2 = ", x2, "/", n2, " = ", round(p2, 3), "\\)"))),
         p("Każda proporcja ma własną niepewność — ale interesuje nas
-          ", tags$b("różnica między nimi"), ".")
+          ", tags$strong("różnica między nimi"), ".")
       ),
-      "3" = lc_feedback(type = "info",
-        p(tags$strong("Krok 3:"), " Różnica.",
+      "3" = tagList(
+        p("Różnica.",
           " Estymator punktowy różnicy:"),
         p(withMathJax(paste0("\\(\\hat{p}_1 - \\hat{p}_2 = ", round(p1, 3),
                              " - ", round(p2, 3), " = ",
                              round(diff_val, 3), "\\)"))),
-        p("W dolnym panelu przenosimy się do nowej skali — ", tags$b("skali różnicy"),
+        p("W dolnym panelu przenosimy się do nowej skali — ", tags$strong("skali różnicy"),
           ". Punkt = nasze oszacowanie różnicy. Pionowa linia na 0 oznacza ",
           tags$em("\"gdyby różnicy nie było\""),
           ". Teraz musimy otoczyć naszą różnicę przedziałem niepewności.")
       ),
-      "4" = lc_feedback(type = "info",
-        p(tags$strong("Krok 4:"), " Błąd standardowy różnicy (± SE).",
+      "4" = tagList(
+        p("Błąd standardowy różnicy (± SE).",
           " SE różnicy proporcji łączy niepewności z obu grup:"),
         p(withMathJax(paste0(
           "\\(SE = \\sqrt{\\frac{\\hat{p}_1(1-\\hat{p}_1)}{n_1} + \\frac{\\hat{p}_2(1-\\hat{p}_2)}{n_2}} = ",
           round(se, 3), "\\)"))),
-        p(tags$b("Ważne:"), " wariancje się ", tags$em("dodają"),
+        p(tags$strong("Ważne:"), " wariancje się ", tags$em("dodają"),
           ", nie odchylenia. Dlatego SE różnicy jest mniejszy niż suma SE
           poszczególnych proporcji.")
       ),
       "5" = {
         covers_zero <- (diff_val - me <= 0) & (0 <= diff_val + me)
-        lc_feedback(type = if (covers_zero) "warning" else "ok",
-          p(tags$strong("Krok 5:"), " Przedział ufności dla różnicy."),
+        tagList(
+          p("Przedział ufności dla różnicy."),
           p("Wartość krytyczna z rozkładu normalnego: ",
             withMathJax("\\(z^* = 1.96\\)")),
           p(withMathJax(paste0("\\(ME = z^* \\cdot SE = 1.96 \\cdot ",
                                round(se, 3), " = ", round(me, 3), "\\)"))),
-          p(tags$b("95% CI: ["),
-            round(diff_val - me, 3), " ; ", round(diff_val + me, 3),
-            tags$b("]")),
+          p("95% CI: ",
+            tags$b(paste0("[", round(diff_val - me, 3), " ; ",
+                          round(diff_val + me, 3), "]"))),
           p(tags$em(if (covers_zero)
               "CI obejmuje 0 — nie możemy stwierdzić, że różnica jest istotna."
             else

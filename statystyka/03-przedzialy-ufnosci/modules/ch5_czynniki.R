@@ -228,7 +228,7 @@ ch5_ui <- list(
 ch5_server <- function(input, output, session) {
 
   # --- Widget 1: Trzy suwaki ---
-  output$ch5_factors_plot <- renderPlot({
+  zoom_plot_server("ch5_factors_plot", reactive({
     n <- input$ch5_n
     conf <- input$ch5_conf
     s <- input$ch5_s
@@ -281,7 +281,7 @@ ch5_server <- function(input, output, session) {
 
     library(patchwork)
     (p_top / p_bot) + plot_layout(heights = c(2, 1))
-  })
+  }))
 
   output$ch5_me_display <- renderUI({
     n <- input$ch5_n
@@ -316,7 +316,7 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  output$ch5_plan_plot <- renderPlot({
+  zoom_plot_server("ch5_plan_plot", reactive({
     me_max <- input$ch5_plan_me
     s <- input$ch5_plan_s
     conf <- input$ch5_plan_conf
@@ -370,7 +370,7 @@ ch5_server <- function(input, output, session) {
 
     library(patchwork)
     (p_top / p_bot) + plot_layout(heights = c(2, 1))
-  })
+  }))
 
   # --- Widget 3: Porownanie 90/95/99 ---
   ch5_cmp_data <- reactiveVal(NULL)
@@ -402,7 +402,7 @@ ch5_server <- function(input, output, session) {
     ch5_cmp_data(do.call(rbind, results))
   })
 
-  output$ch5_cmp_plot <- renderPlot({
+  zoom_plot_server("ch5_cmp_plot", reactive({
     df <- ch5_cmp_data()
     if (is.null(df)) {
       ggplot() +
@@ -427,7 +427,7 @@ ch5_server <- function(input, output, session) {
              x = "Wartość", y = "Poziom ufności") +
         theme_upwr()
     }
-  })
+  }))
 
   output$ch5_cmp_stats <- renderUI({
     df <- ch5_cmp_data()
