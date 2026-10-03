@@ -192,8 +192,8 @@ ch2_ui <- lecture_chapter(
       odchyleniach 10 i 30 zwykle w okolicach 48. Przy równych grupach wersja
       Studenta jest więc w dużej mierze odporna na nierówne wariancje:
       w symulacji z odchyleniami 10 i 30 i 40 obserwacjami w grupie, przy
-      równych średnich, odrzuca prawdziwą H₀ w około 5,5% losowań, a Welch
-      w około 5,2%. Ponieważ średnie w panelu zawsze różnią się o 5, oba testy przy
+      równych średnich, odrzuca prawdziwą H₀ w około 5.5% losowań, a Welch
+      w około 5.2%. Ponieważ średnie w panelu zawsze różnią się o 5, oba testy przy
       domyślnych ustawieniach odrzucają H₀ w podobnej części losowań, około 60%."),
 
     lc_p("Kłopot pojawia się, gdy grupy mają różne liczebności, a tego panel
@@ -203,7 +203,7 @@ ch2_ui <- lecture_chapter(
       Wariancja wspólna jest zdominowana przez liczniejszą grupę o małym
       rozrzucie, więc błąd standardowy wychodzi za mały. Gdy odwrócimy układ
       i większy rozrzut ma liczniejsza grupa, test Studenta prawie nigdy nie
-      odrzuca H₀ (około 0,1%) i traci moc. Test Welcha w obu układach trzyma
+      odrzuca H₀ (około 0.1%) i traci moc. Test Welcha w obu układach trzyma
       się poziomu 5%."),
 
     lc_p("Dlatego coraz częściej zaleca się używanie testu Welcha domyślnie,

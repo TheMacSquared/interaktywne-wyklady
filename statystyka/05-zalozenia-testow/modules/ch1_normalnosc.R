@@ -38,8 +38,8 @@ ch1_ui <- lecture_chapter(
     lc_p("Tempo tego zbliżania zależy od kształtu danych. W wykładzie 02 widzieliśmy,
       że ", gloss("skośność"), " średniej maleje jak skośność rozkładu wyjściowego
       podzielona przez √n. Rozkład prawoskośny z panelu w następnej sekcji ma
-      skośność 1,41, więc średnia z 10 obserwacji ma skośność 0,45, a średnia
-      z 50 obserwacji — 0,20. Dla rozkładu symetrycznego skośność średniej jest
+      skośność 1.41, więc średnia z 10 obserwacji ma skośność 0.45, a średnia
+      z 50 obserwacji — 0.20. Dla rozkładu symetrycznego skośność średniej jest
       zerowa od początku. Im bardziej skośny rozkład wyjściowy i im więcej w nim ",
       gloss("wartość odstająca", "wartości odstających"), ", tym większej próby
       potrzeba, żeby przybliżenie było dobre. Jednej liczby obserwacji, od
@@ -84,9 +84,9 @@ ch1_ui <- lecture_chapter(
       gloss("wykres kwantyl-kwantyl"), " (Q-Q). Powstaje tak: obserwacje
       sortujemy od najmniejszej do największej i każdej przypisujemy miejsce,
       w którym powinna leżeć, gdyby dane pochodziły z rozkładu normalnego.
-      Najmniejsza obserwacja z 50 powinna leżeć około 2,3 odchylenia
+      Najmniejsza obserwacja z 50 powinna leżeć około 2.3 odchylenia
       standardowego poniżej średniej, środkowa — przy średniej, największa —
-      około 2,3 odchylenia powyżej. Na osi poziomej są te oczekiwane położenia
+      około 2.3 odchylenia powyżej. Na osi poziomej są te oczekiwane położenia
       (kwantyle teoretyczne, w odchyleniach standardowych), na osi pionowej
       faktyczne wartości (kwantyle próbkowe). Każdy punkt to jedna obserwacja."),
 
@@ -178,7 +178,7 @@ ch1_ui <- lecture_chapter(
 
     lc_p("Wynik pojedynczego losowania niewiele mówi o samym teście, więc
       sprawdziliśmy go na 5000 próbach dla każdego rozkładu z panelu, przy
-      α = 0,05. Dla danych normalnych test odrzuca H₀ w 5% prób, zgodnie
+      α = 0.05. Dla danych normalnych test odrzuca H₀ w 5% prób, zgodnie
       z poziomem istotności. Przy n = 50 wykrywa rozkład prawoskośny w 95% prób,
       jednostajny w 74%, a rozkład o ciężkich ogonach w 63%. Przy n = 10 te same
       odsetki spadają do 24%, 9% i 19%: test w większości prób nie zauważa
@@ -191,7 +191,7 @@ ch1_ui <- lecture_chapter(
       wynik zależy od liczebności. Przy małej próbie ma niską ",
       gloss("moc testu", "moc"), " i przepuszcza poważne odchylenia, przy dużej
       wykrywa odchylenia bez praktycznego znaczenia. Jak w wykładzie 04, brak
-      podstaw do odrzucenia H₀ nie dowodzi, że H₀ jest prawdziwa: p > 0,05
+      podstaw do odrzucenia H₀ nie dowodzi, że H₀ jest prawdziwa: p > 0.05
       w teście Shapiro-Wilka nie znaczy, że dane są normalne. Test odpowiada
       też na inne pytanie niż to, które nas interesuje. Sprawdza, czy rozkład
       jest dokładnie normalny, a nas obchodzi, czy jest wystarczająco bliski
@@ -242,8 +242,8 @@ ch1_ui <- lecture_chapter(
     ),
 
     lc_p("Na lewym wykresie widać łuk typowy dla prawoskośności. Po logarytmowaniu
-      punkty leżą znacznie bliżej prostej. Teoretyczna skośność spada z 1,41
-      do −0,30, czyli logarytm nie tylko usunął prawy ogon, ale lekko przechylił
+      punkty leżą znacznie bliżej prostej. Teoretyczna skośność spada z 1.41
+      do -0.30, czyli logarytm nie tylko usunął prawy ogon, ale lekko przechylił
       rozkład w drugą stronę: przy większym n końce prawego wykresu mogą
       układać się nieco pod prostą. Transformacja nie gwarantuje więc rozkładu
       normalnego, tylko zmienia jego kształt."),
@@ -333,8 +333,7 @@ ch1_server <- function(input, output, session) {
 
     sw <- shapiro_test(data.frame(value = x), value)
     sw_color <- if (sw$p >= 0.05) col_ok else col_fail
-    w_txt <- gsub(".", ",", formatC(sw$statistic, format = "f", digits = 3),
-                  fixed = TRUE)
+    w_txt <- formatC(sw$statistic, format = "f", digits = 3)
 
     lc_feedback(type = "info",
       p(tags$strong("Shapiro–Wilk:"), " W = ", w_txt,

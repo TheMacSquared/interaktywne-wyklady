@@ -72,7 +72,7 @@ ch3_ui <- lecture_chapter(
 
     lc_p("Reguła mówi, kiedy uważać, ale nie mówi, jak bardzo test się myli,
       gdy liczebności są małe. Można to sprawdzić symulacją. Jeśli zmienne
-      są naprawdę niezależne, test na poziomie istotności α = 0,05 powinien
+      są naprawdę niezależne, test na poziomie istotności α = 0.05 powinien
       odrzucać H₀ w 5% prób. Każde odrzucenie jest wtedy fałszywym alarmem,
       czyli ", gloss("błąd pierwszego rodzaju", "błędem I rodzaju"), ". Test,
       którego przybliżenie zawodzi, popełnia go częściej albo rzadziej niż
@@ -90,7 +90,7 @@ ch3_ui <- lecture_chapter(
       fluidRow(
         column(4,
           lc_slider("ch3_n", "Wielkość próby", 10, 200, 20, 5),
-          helpText("500 prób z prawdziwą H₀ (brak związku), α = 0,05."),
+          helpText("500 prób z prawdziwą H₀ (brak związku), α = 0.05."),
           lc_action("ch3_sim", "Symuluj", variant = "solid")
         ),
         column(8,
@@ -102,8 +102,8 @@ ch3_ui <- lecture_chapter(
 
     lc_p("Przy domyślnym n = 20 prawie każda wylosowana tabela (97%) ma
       przynajmniej jedną liczebność oczekiwaną mniejszą od 5. Mimo to test χ²
-      trzyma poziom α: dokładny rachunek daje 5,1% fałszywych alarmów. Test
-      Fishera odrzuca prawdziwą H₀ tylko w 2,1% prób. Pojedyncza symulacja
+      trzyma poziom α: dokładny rachunek daje 5.1% fałszywych alarmów. Test
+      Fishera odrzuca prawdziwą H₀ tylko w 2.1% prób. Pojedyncza symulacja
       z 500 prób odchyla się od tych wartości typowo o jeden punkt procentowy,
       dlatego okienko Fishera zwykle świeci się na czerwono. Tym razem nie
       dlatego, że test się myli zbyt często, ale dlatego, że myli się zbyt
@@ -112,20 +112,20 @@ ch3_ui <- lecture_chapter(
     lc_p("Widać to też na histogramie. Gdy H₀ jest prawdziwa, p-wartości
       powinny rozkładać się mniej więcej równomiernie między 0 a 1. P-wartości
       testu Fishera gromadzą się przy prawym końcu: przy n = 20 około 40%
-      z nich trafia do ostatniego przedziału, od 0,95 do 1. Test jest ", tags$em("konserwatywny"), ": jego
+      z nich trafia do ostatniego przedziału, od 0.95 do 1. Test jest ", tags$em("konserwatywny"), ": jego
       rzeczywisty poziom istotności jest niższy od deklarowanego. Bierze się
       to stąd, że z małej tabeli da się uzyskać niewiele różnych p-wartości.
       Ceną jest mniejsza ", gloss("moc testu"), ": test, który rzadko odrzuca
       prawdziwą H₀, rzadziej odrzuca też fałszywą. Wraz z próbą różnica
-      maleje. Przy n = 100 test χ² daje 5,4% fałszywych alarmów, a Fisher 4,3%."),
+      maleje. Przy n = 100 test χ² daje 5.4% fałszywych alarmów, a Fisher 4.3%."),
 
     lc_p("W tej symulacji obie zmienne mają równie częste kategorie, co jest
       dla testu χ² sytuacją najłatwiejszą. Kłopoty zaczynają się przy rzadkich
       kategoriach i wtedy przybliżenie potrafi mylić się w obie strony. Przy
       n = 20, gdy jedna zmienna ma kategorie po 50%, a odpowiedź „Tak” daje
-      tylko 10% badanych, test χ² odrzuca prawdziwą H₀ w 2,6% prób. Gdy
+      tylko 10% badanych, test χ² odrzuca prawdziwą H₀ w 2.6% prób. Gdy
       dodatkowo pierwsza zmienna ma kategorie w proporcji 20% do 80%,
-      fałszywych alarmów jest już 6,7%, więcej niż zakłada α. Reguła ≥ 5 nie
+      fałszywych alarmów jest już 6.7%, więcej niż zakłada α. Reguła ≥ 5 nie
       wyznacza więc granicy, za którą test przestaje działać. Jest sygnałem,
       że wynik zależy od przybliżenia i warto go potwierdzić metodą, która
       przybliżenia nie potrzebuje."),
@@ -152,7 +152,7 @@ ch3_ui <- lecture_chapter(
 
     lc_p("Dwie uwagi praktyczne. Dla tabel 2 × 2 część programów domyślnie
       stosuje w teście χ² poprawkę Yatesa, która zmniejsza statystykę. W warunkach z panelu przy n = 20 test z poprawką
-      odrzuca prawdziwą H₀ tylko w 1,3% prób, czyli jest jeszcze ostrożniejszy
+      odrzuca prawdziwą H₀ tylko w 1.3% prób, czyli jest jeszcze ostrożniejszy
       niż Fisher. Przy małych tabelach 2 × 2 prościej więc od razu użyć testu
       Fishera. Dla większych tabel test Fishera też działa, ale przy wielu
       komórkach i dużym n liczy się długo. Wtedy można wyznaczyć p-wartość
@@ -189,7 +189,7 @@ ch3_ui <- lecture_chapter(
       normalności. Nieliniowości ani wartości odstających większa próba nie
       naprawia. Dlatego głównym narzędziem kontroli jest wykres rozrzutu,
       a nie test formalny. Kwartet Anscombe’a z wykładu 04 pokazał cztery
-      zbiory o tym samym \\(r = 0{,}82\\) i zupełnie różnych kształtach."),
+      zbiory o tym samym \\(r = 0.82\\) i zupełnie różnych kształtach."),
 
     lc_p("Gdy założenia Pearsona zawodzą, stosuje się ",
       gloss("korelacja Spearmana", "korelację Spearmana"), ". To ten sam
@@ -200,14 +200,14 @@ ch3_ui <- lecture_chapter(
       choćby nierównomiernie. Pojedyncza wartość odstająca dostaje po prostu
       najwyższą rangę, więc nie może ciągnąć współczynnika dowolnie daleko.
       W panelu z wykładu 04 jeden dopisany punkt podnosił \\(r\\) Pearsona
-      z okolic zera typowo do około 0,52, a korelacja Spearmana na tych samych
-      danych zostaje typowo przy 0,06. W zbiorze 3 Anscombe’a, gdzie jeden
-      punkt odstaje od idealnej prostej, korelacja Spearmana wynosi 0,99."),
+      z okolic zera typowo do około 0.52, a korelacja Spearmana na tych samych
+      danych zostaje typowo przy 0.06. W zbiorze 3 Anscombe’a, gdzie jeden
+      punkt odstaje od idealnej prostej, korelacja Spearmana wynosi 0.99."),
 
     lc_p("Spearman nie rozwiązuje jednak każdego problemu. W zbiorze 2,
       w którym punkty leżą na łuku, związek nie jest monotoniczny i korelacja
-      Spearmana (0,69) opisuje go gorzej niż Pearson. W zbiorze 4, gdzie
-      dziesięć punktów ma to samo \\(x\\), wynosi 0,50. Przy wielu powtarzających
+      Spearmana (0.69) opisuje go gorzej niż Pearson. W zbiorze 4, gdzie
+      dziesięć punktów ma to samo \\(x\\), wynosi 0.50. Przy wielu powtarzających
       się wartościach i małych próbach stosuje się też ",
       gloss("tau Kendalla"), ", inną korelację rangową. Tabela zbiera
       założenia i alternatywy."),
