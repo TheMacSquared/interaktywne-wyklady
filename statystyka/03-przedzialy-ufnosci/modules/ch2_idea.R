@@ -18,8 +18,8 @@ ch2_ui <- list(
     ),
 
     lc_p("Poprzedni rozdział skończył się odwróceniem zdania z wykładu 02: skoro
-      w około 95% prób średnia leży nie dalej niż 1,96·SE od μ, to w tych samych
-      próbach μ leży nie dalej niż 1,96·SE od średniej. W tym rozdziale zapiszemy
+      w około 95% prób średnia leży nie dalej niż 1.96·SE od μ, to w tych samych
+      próbach μ leży nie dalej niż 1.96·SE od średniej. W tym rozdziale zapiszemy
       to odwrócenie wzorem, nazwiemy powstały zakres i sprawdzimy, czego
       dokładnie dotyczy liczba 95%."),
 
@@ -29,38 +29,38 @@ ch2_ui <- list(
       granicznego"), " wiemy, że średnia z próby X̄ ma w przybliżeniu rozkład
       normalny o średniej μ i odchyleniu standardowym SE = σ/√n, czyli ",
       gloss("błąd standardowy", "błędzie standardowym"), ". W rozkładzie normalnym
-      95% wartości leży nie dalej niż 1,96 odchylenia standardowego od środka.
-      Dla średniej oznacza to, że w około 95% prób X̄ leży nie dalej niż 1,96·SE
+      95% wartości leży nie dalej niż 1.96 odchylenia standardowego od środka.
+      Dla średniej oznacza to, że w około 95% prób X̄ leży nie dalej niż 1.96·SE
       od μ:"),
 
     lc_formula_box(withMathJax(
-      "$$P\\left(\\mu - 1{,}96 \\cdot SE \\le \\bar{X} \\le \\mu + 1{,}96 \\cdot SE\\right) = 0{,}95$$"
+      "$$P\\left(\\mu - 1.96 \\cdot SE \\le \\bar{X} \\le \\mu + 1.96 \\cdot SE\\right) = 0.95$$"
     )),
 
     lc_p("To zdanie opisuje średnią, a nas interesuje μ. Odległość działa jednak
       w obie strony, więc wystarczy przekształcić obie nierówności tak, żeby μ
       znalazło się w środku. Zdarzenie jest to samo, zmienia się tylko zapis,
-      dlatego prawdopodobieństwo pozostaje równe 0,95:"),
+      dlatego prawdopodobieństwo pozostaje równe 0.95:"),
 
     lc_formula_box(withMathJax(
-      "$$P\\left(\\bar{X} - 1{,}96 \\cdot SE \\le \\mu \\le \\bar{X} + 1{,}96 \\cdot SE\\right) = 0{,}95$$"
+      "$$P\\left(\\bar{X} - 1.96 \\cdot SE \\le \\mu \\le \\bar{X} + 1.96 \\cdot SE\\right) = 0.95$$"
     )),
 
-    lc_p("Przedział od x̄ − 1,96·SE do x̄ + 1,96·SE to 95% ",
+    lc_p("Przedział od x̄ - 1.96·SE do x̄ + 1.96·SE to 95% ",
       gloss("przedział ufności"), " dla μ (CI, od ang. ",
       tags$em("confidence interval"), "), a 95% to jego ",
       gloss("poziom ufności"), ". Warto zauważyć, co w tym wzorze jest losowe.
       Nieznany ", gloss("parametr"), " μ stoi w miejscu. Z próby na próbę zmienia
-      się średnia, a razem z nią oba końce przedziału. Prawdopodobieństwo 0,95
+      się średnia, a razem z nią oba końce przedziału. Prawdopodobieństwo 0.95
       opisuje więc metodę: zanim wylosujemy próbę, wiemy, że przedział zbudowany
-      w ten sposób obejmie μ z prawdopodobieństwem 0,95."),
+      w ten sposób obejmie μ z prawdopodobieństwem 0.95."),
 
-    lc_p("Ten wzór wymaga dwóch uzupełnień. Po pierwsze, liczba 1,96 odpowiada
-      poziomowi 95%. Dla 90% w jej miejsce wchodzi 1,645, a dla 99% — 2,576,
-      czyli kwantyle rozkładu N(0, 1), które odcinają odpowiednio po 5% i po 0,5%
+    lc_p("Ten wzór wymaga dwóch uzupełnień. Po pierwsze, liczba 1.96 odpowiada
+      poziomowi 95%. Dla 90% w jej miejsce wchodzi 1.645, a dla 99% — 2.576,
+      czyli kwantyle rozkładu N(0, 1), które odcinają odpowiednio po 5% i po 0.5%
       w każdym ogonie. Po drugie, SE zawiera σ, którego zwykle nie znamy. W praktyce
-      zastępujemy je odchyleniem standardowym z próby s, a 1,96 — kwantylem
-      rozkładu t-Studenta z wykładu 02 (dla n = 30 jest to 2,05). Szczegółami tej
+      zastępujemy je odchyleniem standardowym z próby s, a 1.96 — kwantylem
+      rozkładu t-Studenta z wykładu 02 (dla n = 30 jest to 2.05). Szczegółami tej
       wersji zajmiemy się w rozdziale 3, ale symulacja poniżej już jej używa."),
 
     lc_h2("ch2-wiele-ci", "Wiele przedziałów ufności"),
@@ -105,16 +105,16 @@ ch2_ui <- list(
     ),
 
     lc_p("Przy domyślnych ustawieniach (n = 30, poziom 95%) każdy przedział sięga
-      około 3,7 cm w każdą stronę od swojej średniej (t = 2,05, σ/√n = 1,83 cm),
+      około 3.7 cm w każdą stronę od swojej średniej (t = 2.05, σ/√n = 1.83 cm),
       a średnie rozrzucają się wokół 170 cm. Przedziały różnią się położeniem
       i nieco szerokością, bo s też zmienia się z próby na próbę. Większość z nich
       obejmuje μ, ale co jakiś czas trafia się chybiony."),
 
     lc_p("Przy małej liczbie przedziałów pokrycie mocno skacze. Wszystkie 10
-      przedziałów trafia w około 60% serii (0,95¹⁰ ≈ 0,60), a w około 9% serii
+      przedziałów trafia w około 60% serii (0.95¹⁰ ≈ 0.60), a w około 9% serii
       chybiają co najmniej dwa, co daje pokrycie 80% lub mniej. Im więcej
       przedziałów, tym bliżej 95%: przy 200 przedziałach odchylenie standardowe
-      pokrycia wynosi około 1,5 punktu procentowego, a wynik prawie na pewno
+      pokrycia wynosi około 1.5 punktu procentowego, a wynik prawie na pewno
       mieści się między 90% a 100%. Poziom ufności jest więc długookresową
       częstością trafień metody, a nie gwarancją dla żadnej pojedynczej serii."),
 
@@ -124,8 +124,8 @@ ch2_ui <- list(
       rozpoznać, czy nasz jedyny przedział jest jednym z trafionych."),
 
     lc_p("Suwak poziomu ufności pokazuje cenę pewności. Przy 99% kwantyl t rośnie
-      do 2,76, przedziały są wyraźniej szersze i chybia średnio jeden na sto.
-      Przy 80% kwantyl spada do 1,31, przedziały się zwężają, a chybia średnio co
+      do 2.76, przedziały są wyraźniej szersze i chybia średnio jeden na sto.
+      Przy 80% kwantyl spada do 1.31, przedziały się zwężają, a chybia średnio co
       piąty. Zmiana rozkładu pokazuje z kolei, kiedy metoda przestaje dotrzymywać
       obietnicy. Dla populacji jednostajnej pokrycie przy n = 30 pozostaje bliskie
       95%. Dla wykładniczej, silnie prawoskośnej, wynosi w długim okresie około 93%
@@ -161,7 +161,7 @@ ch2_ui <- list(
 
     lc_p("Zdanie B myli parametr z pojedynczymi obserwacjami. Przedział ufności
       szacuje średnią populacji, a nie zakres, w którym mieszczą się ludzie. Przy
-      σ = 10 cm 95% wzrostów w populacji leży w pasie μ ± 19,6 cm, prawie czterokrotnie
+      σ = 10 cm 95% wzrostów w populacji leży w pasie μ ± 19.6 cm, prawie czterokrotnie
       szerszym niż przedział [165, 175]. Co więcej, przedział ufności zwęża się
       wraz ze wzrostem próby, a rozrzut wzrostu w populacji nie zależy od tego,
       ilu ludzi zmierzyliśmy. Zdanie D nie mówi nic: średnia z próby, 170 cm,

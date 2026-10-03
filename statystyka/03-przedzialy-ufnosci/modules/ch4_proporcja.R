@@ -54,7 +54,7 @@ ch4_ui <- list(
       estymator ± wartość krytyczna · SE. Ponieważ opieramy się na przybliżeniu
       normalnym, ", gloss("wartość krytyczna"), " pochodzi z ",
       gloss("rozkład normalny", "rozkładu normalnego"), ".
-      Dla poziomu 95% to \\(z^* = 1{,}96\\),
+      Dla poziomu 95% to \\(z^* = 1.96\\),
       jak w wykładzie 02. Tak zbudowany ", gloss("przedział ufności"),
       " nazywa się ", gloss("przedział Walda", "przedziałem Walda"), "."),
 
@@ -72,11 +72,11 @@ ch4_ui <- list(
 
     lc_p("To przybliżenie zawodzi, gdy próba jest mała albo \\(\\hat{p}\\) leży
       blisko 0 lub 1. Rozkład dwumianowy jest wtedy wyraźnie skośny, jak
-      B(50; 0,1) w wykładzie 02, a 95-procentowy przedział Walda obejmuje
-      prawdziwe \\(p\\) rzadziej, niż obiecuje. Dla \\(p = 0{,}08\\) i \\(n = 50\\)
+      B(50, 0.1) w wykładzie 02, a 95-procentowy przedział Walda obejmuje
+      prawdziwe \\(p\\) rzadziej, niż obiecuje. Dla \\(p = 0.08\\) i \\(n = 50\\)
       jego rzeczywiste ", gloss("pokrycie"), " wynosi około 91%. Przy 4 wadliwych
-      sztukach na 50 Wald daje przedział od 0,5% do 15,5%, a ",
-      gloss("przedział Wilsona"), ", który poprawia wzór Walda, od 3,2% do 18,8%.
+      sztukach na 50 Wald daje przedział od 0.5% do 15.5%, a ",
+      gloss("przedział Wilsona"), ", który poprawia wzór Walda, od 3.2% do 18.8%.
       Im bliżej
       0 lub 1 leży proporcja i im mniejsza jest próba, tym gorzej działa
       przybliżenie Walda. W tym rozdziale liczymy przedziały Walda, bo ich wzór
@@ -110,18 +110,18 @@ ch4_ui <- list(
       )
     ),
 
-    lc_p("Przy \\(p = 0{,}6\\) i \\(n = 50\\) błąd standardowy wynosi około
-      \\(\\sqrt{0{,}6 \\cdot 0{,}4 / 50} \\approx 0{,}069\\), a margines błędu
-      \\(1{,}96 \\cdot 0{,}069 \\approx 0{,}14\\). Przedział ma więc szerokość
-      około 27 punktów procentowych: dla \\(\\hat{p} = 0{,}60\\) sięga od 46%
+    lc_p("Przy \\(p = 0.6\\) i \\(n = 50\\) błąd standardowy wynosi około
+      \\(\\sqrt{0.6 \\cdot 0.4 / 50} \\approx 0.069\\), a margines błędu
+      \\(1.96 \\cdot 0.069 \\approx 0.14\\). Przedział ma więc szerokość
+      około 27 punktów procentowych: dla \\(\\hat{p} = 0.60\\) sięga od 46%
       do 74%. Kolejne próby przesuwają \\(\\hat{p}\\), a razem z nim cały
       przedział. Szerokość zmienia się przy tym niewiele, bo zależy od
       \\(\\hat{p}\\) tylko przez iloczyn \\(\\hat{p}(1-\\hat{p})\\), który w okolicy
-      0,5 prawie się nie zmienia."),
+      0.5 prawie się nie zmienia."),
 
     lc_p("Tak jak w rozdziale 2, poziom 95% opisuje metodę, a nie pojedynczy
-      przedział. Konkretny przedział albo obejmuje 0,6, albo nie. Przy tych
-      parametrach przedział Walda trafia w prawdziwe \\(p\\) w 94,1% prób,
+      przedział. Konkretny przedział albo obejmuje 0.6, albo nie. Przy tych
+      parametrach przedział Walda trafia w prawdziwe \\(p\\) w 94.1% prób,
       czyli niemal tak często, jak obiecuje. Przybliżenie normalne działa
       tu dobrze, bo w próbie jest typowo około 30 odpowiedzi TAK i 20 NIE."),
 
@@ -159,9 +159,9 @@ ch4_ui <- list(
       )
     ),
 
-    lc_p("Dla tych parametrów SE obu proporcji wynosi około 0,059 i 0,065,
-      a SE różnicy około 0,088, czyli mniej niż suma 0,124. Margines błędu to
-      \\(1{,}96 \\cdot 0{,}088 \\approx 0{,}17\\), więc przedział dla różnicy ma
+    lc_p("Dla tych parametrów SE obu proporcji wynosi około 0.059 i 0.065,
+      a SE różnicy około 0.088, czyli mniej niż suma 0.124. Margines błędu to
+      \\(1.96 \\cdot 0.088 \\approx 0.17\\), więc przedział dla różnicy ma
       szerokość około 34 punktów procentowych. To więcej niż przedział dla
       jednej proporcji na Ryc. 4.1, choć każda z prób jest większa, bo przedział
       różnicy zbiera niepewność z obu prób."),
@@ -194,7 +194,7 @@ ch4_ui <- list(
       div(class = "case-body",
         div(class = "case-scenario",
           p("Pracownia sondażowa zapytała 400 wyborców, czy poprą partię X.
-            212 odpowiedziało TAK, czyli ", withMathJax("\\(\\hat{p} = 0{,}53\\)"),
+            212 odpowiedziało TAK, czyli ", withMathJax("\\(\\hat{p} = 0.53\\)"),
             ". Budujemy przedział dla poparcia w populacji i sprawdzamy dwie hipotezy.")
         ),
         uiOutput("ch4_caseA1_widget")
@@ -209,7 +209,7 @@ ch4_ui <- list(
       div(class = "case-body",
         div(class = "case-scenario",
           p("Trzy badania mierzą odsetek wadliwych produktów w fabryce.
-            W każdym ", withMathJax("\\(\\hat{p} = 0{,}08\\)"), " (8%), ale próby
+            W każdym ", withMathJax("\\(\\hat{p} = 0.08\\)"), " (8%), ale próby
             mają różną liczebność: 50, 200 i 1000 sztuk. Kolejne kroki dokładają
             przedziały od najmniejszej próby do największej.")
         ),
@@ -242,8 +242,8 @@ ch4_ui <- list(
       div(class = "case-body",
         div(class = "case-scenario",
           p("Porównujemy dwie linie produkcyjne pod względem odsetka wadliwych produktów.
-            ", tags$b("Linia A:"), " skontrolowano 250 sztuk, 22 wadliwe (8,8%).
-            ", tags$b("Linia B:"), " skontrolowano 250 sztuk, 18 wadliwych (7,2%).")
+            ", tags$b("Linia A:"), " skontrolowano 250 sztuk, 22 wadliwe (8.8%).
+            ", tags$b("Linia B:"), " skontrolowano 250 sztuk, 18 wadliwych (7.2%).")
         ),
         uiOutput("ch4_caseB2_widget")
       )
@@ -285,12 +285,12 @@ ch4_ui <- list(
 
     lc_p("Przypadki powtarzają kilka lekcji. W A2 ta sama proporcja 8% daje
       przedział o szerokości 15 punktów procentowych przy 50 sztukach i tylko
-      3,4 punktu przy 1000 sztukach. Dwudziestokrotnie większa próba zwęża
-      przedział około 4,5 raza, bo \\(n\\) stoi we wzorze pod pierwiastkiem.
+      3.4 punktu przy 1000 sztukach. Dwudziestokrotnie większa próba zwęża
+      przedział około 4.5 raza, bo \\(n\\) stoi we wzorze pod pierwiastkiem.
       W B2 i B3 obserwowana różnica nie wystarcza do wniosku: w B3 dziesięć
       punktów procentowych różnicy przy 30 osobach w grupie daje przedział od
-      −32 do +12 punktów, który obejmuje zero i różnice w obu kierunkach.
-      W C1 szpital D (20,6% powikłań) odstaje od pozostałych trzech (od 5,6%
+      -32 do +12 punktów, który obejmuje zero i różnice w obu kierunkach.
+      W C1 szpital D (20.6% powikłań) odstaje od pozostałych trzech (od 5.6%
       do 10%), bo jego przedział nie nakłada się z żadnym innym. Porównywanie
       nakładania się osobnych przedziałów jest jednak kryterium ostrożnym.
       Jak pokazał rozdział 3, o różnicy dwóch grup rozstrzyga przedział
@@ -339,9 +339,9 @@ ch4_server <- function(input, output, session) {
   # Grubość paska przedziału: element wprowadzany w kroku grubszy niż znany.
   ch4_bar_lw <- function(role) if (role == "new") 1.8 else 1.1
 
-  # Etykieta w kolorze roli, krojem wykresu (mono nie ma znaków x̄, p̂, ₁).
-  ch4_role_text <- function(x, y, label, role, size, hjust = 0.5) {
-    annotate("text", x = x, y = y, label = label, hjust = hjust,
+  # Etykieta w kolorze roli; x̄ i p̂ jako plotmath (pm_eq()) z parse = TRUE.
+  ch4_role_text <- function(x, y, label, role, size, hjust = 0.5, parse = FALSE) {
+    annotate("text", x = x, y = y, label = label, hjust = hjust, parse = parse,
              colour = STEP_ROLES[[role]]$colour, fontface = "bold", size = size)
   }
 
@@ -387,7 +387,7 @@ ch4_server <- function(input, output, session) {
         step_line("known", xintercept = phat) +
         step_layer(geom_point, role, data = data.frame(x = phat, y = Y_EST),
                    mapping = aes(x = x, y = y), size = 7, shape = 18) +
-        ch4_role_text(phat, Y_EST - 0.13, "p̂", role = role,
+        ch4_role_text(phat, Y_EST - 0.13, "bold(hat(p))", role = role, parse = TRUE,
                    size = 5)
     }
 
@@ -443,7 +443,7 @@ ch4_server <- function(input, output, session) {
           round(phat, 2), " \\cdot ", round(1 - phat, 2), "}{", n, "}} = ",
           round(se, 3), "\\)"))),
         p("Pasek ± SE to jeden błąd standardowy w każdą stronę. Przedział 95%
-          sięga 1,96 SE.")
+          sięga 1.96 SE.")
       ),
       "4" = tagList(
         p(withMathJax(paste0("\\(ME = z^* \\cdot SE = 1.96 \\cdot ",
@@ -520,9 +520,9 @@ ch4_server <- function(input, output, session) {
       p_top <- p_top +
         step_layer(geom_point, role, data = data.frame(x = c(p1, p2), y = c(1, 2)),
                    mapping = aes(x = x, y = y), size = 7, shape = 18) +
-        ch4_role_text(p1, 1.45, paste0("p̂₁ = ", round(p1, 3)), role = role,
+        ch4_role_text(p1, 1.45, pm_eq("hat(p)[1]", round(p1, 3)), role = role, parse = TRUE,
                    size = 4.5) +
-        ch4_role_text(p2, 2.45, paste0("p̂₂ = ", round(p2, 3)), role = role,
+        ch4_role_text(p2, 2.45, pm_eq("hat(p)[2]", round(p2, 3)), role = role, parse = TRUE,
                    size = 4.5)
     }
 
@@ -544,8 +544,8 @@ ch4_server <- function(input, output, session) {
       p_bot <- p_bot +
         step_layer(geom_point, role, data = data.frame(x = diff_val, y = 0),
                    mapping = aes(x = x, y = y), size = 7, shape = 18) +
-        ch4_role_text(diff_val, -0.22, paste0("p̂₁ − p̂₂ = ", round(diff_val, 3)),
-                   role = role, size = 4.5)
+        ch4_role_text(diff_val, -0.22, pm_eq("hat(p)[1] - hat(p)[2]", round(diff_val, 3)),
+                   role = role, size = 4.5, parse = TRUE)
     }
 
     if (step >= 4) {
@@ -733,10 +733,10 @@ ch4_server <- function(input, output, session) {
       hypotheses = list(
         list(text = "Linia A produkuje więcej braków niż linia B (różnica > 0)",
              bound = 0, dir = "gt",
-             explain_maybe = "CI dla różnicy obejmuje 0. Mimo że p̂₁ (8,8%) jest wyższe niż p̂₂ (7,2%), nie możemy z 95% ufnością stwierdzić, że linia A jest gorsza. Różnica może być efektem przypadku."),
-        list(text = "Linia A ma najwyżej o 5 punktów procentowych więcej braków niż B (różnica < 0,05)",
+             explain_maybe = "CI dla różnicy obejmuje 0. Mimo że p̂₁ (8.8%) jest wyższe niż p̂₂ (7.2%), nie możemy z 95% ufnością stwierdzić, że linia A jest gorsza. Różnica może być efektem przypadku."),
+        list(text = "Linia A ma najwyżej o 5 punktów procentowych więcej braków niż B (różnica < 0.05)",
              bound = 0.05, dir = "lt",
-             explain_maybe = "Górna granica CI (ok. 6,4 punktu procentowego) przekracza 5 punktów, więc nie możemy wykluczyć, że linia A jest gorsza o więcej niż 5 punktów procentowych. Żeby to rozstrzygnąć, potrzebna byłaby większa próba.")
+             explain_maybe = "Górna granica CI (ok. 6.4 punktu procentowego) przekracza 5 punktów, więc nie możemy wykluczyć, że linia A jest gorsza o więcej niż 5 punktów procentowych. Żeby to rozstrzygnąć, potrzebna byłaby większa próba.")
       )
     ),
     B3 = list(
@@ -749,9 +749,9 @@ ch4_server <- function(input, output, session) {
         list(text = "Zakład A jest bezpieczniejszy niż B (różnica < 0)",
              bound = 0, dir = "lt",
              explain_maybe = "Mimo że p̂₁ = 20% jest wyraźnie mniejsze od p̂₂ = 30%, CI dla różnicy obejmuje 0. Próba 30 osób w każdym zakładzie to za mało, żeby z 95% ufnością stwierdzić, który jest bezpieczniejszy. To klasyczna pułapka: „duża” różnica w punktach procentowych może być statystycznie nieistotna przy małej próbie."),
-        list(text = "Zakład A ma wypadkowość wyższą o ponad 30 punktów procentowych (różnica > 0,30)",
+        list(text = "Zakład A ma wypadkowość wyższą o ponad 30 punktów procentowych (różnica > 0.30)",
              bound = 0.30, dir = "gt",
-             explain_no = "Górna granica CI (ok. 12 punktów procentowych) leży poniżej 30, więc dane wykluczają, że A jest aż o 30 punktów gorszy od B. W drugą stronę przedział sięga ok. −32 punktów: dużej przewagi B nad A wykluczyć nie można. Mała próba daje przedział zbyt szeroki, żeby wskazać, jaka jest różnica.")
+             explain_no = "Górna granica CI (ok. 12 punktów procentowych) leży poniżej 30, więc dane wykluczają, że A jest aż o 30 punktów gorszy od B. W drugą stronę przedział sięga ok. -32 punktów: dużej przewagi B nad A wykluczyć nie można. Mała próba daje przedział zbyt szeroki, żeby wskazać, jaka jest różnica.")
       )
     ),
     C1 = list(
@@ -841,7 +841,7 @@ ch4_server <- function(input, output, session) {
       p_right <- p_right +
         geom_point(aes(x = phat, y = 0), color = col_estimate, size = 7, shape = 18) +
         annotate("text", x = phat, y = -0.22,
-                 label = paste0("p̂ = ", round(phat, 3)),
+                 label = pm_eq("hat(p)", round(phat, 3)), parse = TRUE,
                  color = col_estimate, fontface = "bold", size = 4.8)
     }
 
@@ -1005,10 +1005,10 @@ ch4_server <- function(input, output, session) {
     if (step >= 2) {
       p_top <- p_top +
         geom_point(aes(x = p1, y = 1), color = col_estimate, size = 7, shape = 18) +
-        annotate("text", x = p1, y = 1.45, label = paste0("p̂₁ = ", round(p1, 3)),
+        annotate("text", x = p1, y = 1.45, label = pm_eq("hat(p)[1]", round(p1, 3)), parse = TRUE,
                  color = col_estimate, fontface = "bold", size = 4.2) +
         geom_point(aes(x = p2, y = 2), color = col_estimate, size = 7, shape = 18) +
-        annotate("text", x = p2, y = 2.45, label = paste0("p̂₂ = ", round(p2, 3)),
+        annotate("text", x = p2, y = 2.45, label = pm_eq("hat(p)[2]", round(p2, 3)), parse = TRUE,
                  color = col_estimate, fontface = "bold", size = 4.2)
     }
 
@@ -1064,7 +1064,7 @@ ch4_server <- function(input, output, session) {
         geom_point(aes(x = diff_val, y = 0), color = col_estimate,
                    size = 7, shape = 18) +
         annotate("text", x = diff_val, y = -0.22,
-                 label = paste0("p̂₁ − p̂₂ = ", round(diff_val, 3)),
+                 label = pm_eq("hat(p)[1] - hat(p)[2]", round(diff_val, 3)), parse = TRUE,
                  color = col_estimate, fontface = "bold", size = 4.5)
     }
 

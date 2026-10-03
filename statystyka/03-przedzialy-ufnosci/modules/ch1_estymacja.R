@@ -42,7 +42,7 @@ ch1_ui <- list(
       gloss("estymata", "estymatą"), ". ", gloss("średnia", "Średnia"), " z próby ",
       withMathJax("\\(\\bar{x}\\)"), " jest estymatorem średniej populacji ",
       withMathJax("\\(\\mu\\)"), ". Jeśli w naszej próbie wyszło ",
-      withMathJax("\\(\\bar{x} = 171{,}3\\)"), " cm, to 171,3 cm jest estymatą.
+      withMathJax("\\(\\bar{x} = 171.3\\)"), " cm, to 171.3 cm jest estymatą.
       Estymator to przepis, estymata to wynik zastosowania go do jednej próby."),
 
     lc_h2("ch1-estymator", "Estymator w akcji"),
@@ -87,11 +87,11 @@ ch1_ui <- list(
 
     lc_p("Populacja „wzrostu” ma rozkład normalny ze średnią μ = 170 cm
       i odchyleniem standardowym σ = 10 cm. Przy n = 30 średnie z prób rozkładają
-      się wokół 170 cm z błędem standardowym σ/√n = 10/√30 ≈ 1,83 cm, więc około
-      95% z nich wypada między 166,4 a 173,6 cm. Po kilkudziesięciu losowaniach
+      się wokół 170 cm z błędem standardowym σ/√n = 10/√30 ≈ 1.83 cm, więc około
+      95% z nich wypada między 166.4 a 173.6 cm. Po kilkudziesięciu losowaniach
       dwie rzeczy są wyraźne. Pojedyncze estymaty rozrzucają się po obu stronach μ,
       ale ich średnia leży tuż przy μ. Wartość „SD estymat” w panelu jest bliska
-      1,83 cm, czyli błędowi standardowemu z wykładu 02. Po wyczyszczeniu panelu
+      1.83 cm, czyli błędowi standardowemu z wykładu 02. Po wyczyszczeniu panelu
       i zwiększeniu n histogram estymat jest węższy, a zmiana rozkładu populacji na wykładniczy, jednostajny czy
       dwumodalny nie zmienia tego obrazu: estymaty dalej skupiają się wokół μ."),
 
@@ -128,9 +128,9 @@ ch1_ui <- list(
     lc_p(strong("Kontrprzykład:"), " ", gloss("wariancja"), " z próby liczona
       z dzieleniem przez n, ",
       withMathJax("\\(\\frac{1}{n}\\sum(x_i - \\bar{x})^2\\)"), ", jest obciążona.
-      Jej wartość oczekiwana wynosi (n − 1)/n · σ², więc średnio zaniża wariancję
+      Jej wartość oczekiwana wynosi (n - 1)/n · σ², więc średnio zaniża wariancję
       populacji. Dla n = 10 i σ² = 100 daje średnio 90 zamiast 100. Dlatego
-      wariancję z próby liczy się z dzieleniem przez n − 1: ta poprawka usuwa
+      wariancję z próby liczy się z dzieleniem przez n - 1: ta poprawka usuwa
       obciążenie."),
 
     lc_h3("(2) Efektywność"),
@@ -145,7 +145,7 @@ ch1_ui <- list(
 
     lc_p(strong("Przykład:"), " gdy populacja ma rozkład normalny, zarówno średnia,
       jak i ", gloss("mediana"), " z próby są nieobciążonymi estymatorami μ.
-      Przy dużych próbach wariancja mediany jest jednak około π/2 ≈ 1,57 raza
+      Przy dużych próbach wariancja mediany jest jednak około π/2 ≈ 1.57 raza
       większa niż wariancja średniej. Mediana z próby liczącej 157 obserwacji
       jest więc mniej więcej tak dokładna jak średnia ze 100 obserwacji.
       Dlatego przy pomiarach o rozkładzie zbliżonym do normalnego standardem
@@ -175,7 +175,7 @@ ch1_ui <- list(
       ", a widać to też we wzorze na błąd standardowy: ",
       gloss("odchylenie standardowe"), " średniej, SE = σ/√n, maleje do zera
       wraz ze wzrostem n. Wariancja z próby jest zgodna zarówno w wersji
-      z n − 1, jak i z n: obciążenie (n − 1)/n znika, gdy n rośnie."),
+      z n - 1, jak i z n: obciążenie (n - 1)/n znika, gdy n rośnie."),
 
     lc_p("Z trzech własności wynika praktyczna kolejność wyboru. Najpierw szukamy
       estymatorów nieobciążonych, spośród nich wybieramy najefektywniejszy,
@@ -193,7 +193,7 @@ ch1_ui <- list(
     lc_h2("ch1-punkt-nie-wystarczy", "Sam punkt nie wystarczy"),
 
     lc_p("Nawet najlepszy estymator daje w każdej próbie inną estymatę.
-      Liczba ", withMathJax("\\(\\bar{x} = 171{,}3\\)"), " cm podana bez komentarza
+      Liczba ", withMathJax("\\(\\bar{x} = 171.3\\)"), " cm podana bez komentarza
       nie mówi, czy prawdziwe μ może wynosić 171 cm, czy równie dobrze 165 cm.
       O tym decyduje rozrzut estymatora, a więc błąd standardowy. Poniższy panel
       losuje kolejne próby z populacji wzrostu (μ = 170 cm, σ = 10 cm) i zapisuje
@@ -214,17 +214,17 @@ ch1_ui <- list(
       )
     ),
 
-    lc_p("Przy n = 10 błąd standardowy wynosi 10/√10 ≈ 3,16 cm, więc około 95%
-      średnich z prób wypada między 163,8 a 176,2 cm. Kolejne punkty skaczą
+    lc_p("Przy n = 10 błąd standardowy wynosi 10/√10 ≈ 3.16 cm, więc około 95%
+      średnich z prób wypada między 163.8 a 176.2 cm. Kolejne punkty skaczą
       o kilka centymetrów w górę i w dół od linii μ. Przy n = 40 SE spada
-      do 1,58 cm i skoki są o połowę mniejsze, ale nie znikają. Dowolna
+      do 1.58 cm i skoki są o połowę mniejsze, ale nie znikają. Dowolna
       pojedyncza estymata może więc leżeć kilka centymetrów od μ, a sama
       liczba nie zdradza, jak daleko."),
 
     lc_p("Dlatego oprócz estymaty podaje się zakres wartości, który uwzględnia
       tę niepewność: ", gloss("przedział ufności"), ". Punktem wyjścia jest
-      zdanie z wykładu 02: w około 95% prób średnia leży nie dalej niż 1,96·SE
-      od μ. Jeśli tak jest, to również μ leży nie dalej niż 1,96·SE od średniej
+      zdanie z wykładu 02: w około 95% prób średnia leży nie dalej niż 1.96·SE
+      od μ. Jeśli tak jest, to również μ leży nie dalej niż 1.96·SE od średniej
       z próby. Następny rozdział zamienia to odwrócenie w konstrukcję przedziału
       i wyjaśnia, co dokładnie oznacza jego poziom ufności."),
 
@@ -295,7 +295,7 @@ ch1_server <- function(input, output, session) {
         geom_vline(xintercept = mean(est$xbar), color = col_estimate,
                    linewidth = 1.5, linetype = "solid") +
         annotate("text", x = mean(est$xbar), y = Inf, vjust = 4,
-                 label = "średnia x̄",
+                 label = 'bold("średnia"~bar(x))', parse = TRUE,
                  color = col_estimate, fontface = "bold", size = 5) +
         labs(
              x = expression(bar(x)), y = "Gęstość") +

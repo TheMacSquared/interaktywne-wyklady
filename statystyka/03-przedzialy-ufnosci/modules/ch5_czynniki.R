@@ -48,7 +48,7 @@ ch5_ui <- list(
 
     lc_p("Ta sama logika obowiązuje dla proporcji. Wzór ma postać
       z*·√(p̂(1 − p̂)/n), a rolę s pełni √(p̂(1 − p̂)), które jest największe
-      przy p̂ = 0,5. Wszystko, co dalej powiemy o średniej, przenosi się
+      przy p̂ = 0.5. Wszystko, co dalej powiemy o średniej, przenosi się
       więc na proporcje."),
 
     lc_h2("ch5-eksploracja", "Jak szybko maleje margines błędu"),
@@ -77,20 +77,20 @@ ch5_ui <- list(
     ),
 
     lc_p("Przy ustawieniach początkowych (n = 30, s = 8, poziom ufności 95%)
-      wartość krytyczna wynosi t* = 2,045, a margines błędu 2,99, więc przedział
+      wartość krytyczna wynosi t* = 2.045, a margines błędu 2.99, więc przedział
       ma szerokość około 6. Każdy z suwaków działa na tę liczbę inaczej."),
 
     lc_p("Odchylenie standardowe działa proporcjonalnie: przy s = 4 margines
-      spada dokładnie o połowę, do 1,49. Poziom ufności działa przez t*:
-      przy 90% margines wynosi 2,48, przy 99% już 4,03. Najciekawsza jest
+      spada dokładnie o połowę, do 1.49. Poziom ufności działa przez t*:
+      przy 90% margines wynosi 2.48, przy 99% już 4.03. Najciekawsza jest
       krzywa dla n. Na początku opada stromo: przy n = 5 margines wynosi
-      9,93, przy n = 30 już tylko 2,99. Dalej spłaszcza się i kolejne
+      9.93, przy n = 30 już tylko 2.99. Dalej spłaszcza się i kolejne
       obserwacje dają coraz mniej."),
 
     lc_p("To ten sam mechanizm, który poznaliśmy w wykładzie 02: błąd standardowy
       maleje jak 1/√n, więc żeby zmniejszyć go o połowę, trzeba czterokrotnie
       większej próby. Margines błędu dziedziczy tę zależność. Przejście z n = 25
-      do n = 100 skraca go z 3,30 do 1,59, czyli nieco ponad dwukrotnie,
+      do n = 100 skraca go z 3.30 do 1.59, czyli nieco ponad dwukrotnie,
       bo przy większym n maleje też t*. Kolejne czterokrotne powiększenie
       próby, do 400 obserwacji, znowu skróci przedział mniej więcej o połowę.
       Każde następne zawężenie przedziału jest więc droższe od poprzedniego."),
@@ -132,14 +132,14 @@ ch5_ui <- list(
     ),
 
     lc_p("Przy domyślnych ustawieniach (margines 2, s = 10, poziom ufności 95%)
-      wzór daje (1,96 · 10 / 2)² = 96,04, czyli potrzeba 97 obserwacji. Żądanie
+      wzór daje (1.96 · 10 / 2)² = 96.04, czyli potrzeba 97 obserwacji. Żądanie
       dwa razy większej precyzji, czyli marginesu 1, podnosi wymaganą próbę
       do 385 osób, prawie czterokrotnie. Poziom ufności też kosztuje: przy 90%
       wystarczy 68 obserwacji, przy 99% potrzeba 166."),
 
     lc_p("Dla proporcji rachunek jest analogiczny, z p(1 − p) w miejscu s².
       Gdy nie wiemy nic o spodziewanej proporcji, przyjmujemy najgorszy
-      przypadek p = 0,5. Margines 3 punktów procentowych przy poziomie ufności
+      przypadek p = 0.5. Margines 3 punktów procentowych przy poziomie ufności
       95% wymaga wtedy 1068 respondentów. Stąd biorą się typowe sondaże
       na około tysiącu osób."),
 
@@ -180,9 +180,9 @@ ch5_ui <- list(
       )
     ),
 
-    lc_p("Dla próby wzrostu 30 studentów (średnia 170,69 cm, s = 12,55 cm)
-      przedział 90% to [166,79; 174,58], 95% to [166,00; 175,37], a 99% to
-      [164,37; 177,00]. Przedział 99% jest o ponad 60% szerszy niż 90%.
+    lc_p("Dla próby wzrostu 30 studentów (średnia 170.69 cm, s = 12.55 cm)
+      przedział 90% to [166.79, 174.58], 95% to [166.00, 175.37], a 99% to
+      [164.37, 177.00]. Przedział 99% jest o ponad 60% szerszy niż 90%.
       Przy danych kierunkowych, gdzie próby liczą około 300 obserwacji,
       wszystkie trzy przedziały są wąskie i różnice między nimi stają się
       niewielkie w porównaniu ze skalą zmiennej."),
@@ -216,7 +216,7 @@ ch5_ui <- list(
       div(class = "case-body",
         div(class = "case-scenario",
           p("Zmierzono czas dojazdu 40 pracowników. Średnia z próby wynosi ",
-            withMathJax("\\(\\bar{x} = 28{,}5\\)"), " min, odchylenie standardowe ", withMathJax("\\(s = 8\\)"), " min.
+            withMathJax("\\(\\bar{x} = 28.5\\)"), " min, odchylenie standardowe ", withMathJax("\\(s = 8\\)"), " min.
             Hipoteza: średni czas dojazdu w populacji przekracza 26 min.")
         ),
         uiOutput("ch5_edge1_buttons"),
@@ -233,7 +233,7 @@ ch5_ui <- list(
       div(class = "case-body",
         div(class = "case-scenario",
           p("Pracownia sondażowa zapytała 1000 wyborców, czy poprą partię X.
-            Odpowiedzi TAK udzieliło 540 osób (", withMathJax("\\(\\hat{p} = 0{,}54\\)"), ").
+            Odpowiedzi TAK udzieliło 540 osób (", withMathJax("\\(\\hat{p} = 0.54\\)"), ").
             Hipoteza: poparcie w populacji przekracza próg 50%.")
         ),
         uiOutput("ch5_edge2_buttons"),
@@ -685,8 +685,8 @@ ch5_server <- function(input, output, session) {
       geom_point(aes(x = center, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
       annotate("text", x = center, y = -0.22,
-               label = paste0(if (cfg$kind == "mean") "x̄ = " else "p̂ = ",
-                              round(center, 3)),
+               label = pm_eq(if (cfg$kind == "mean") "bar(x)" else "hat(p)",
+                             round(center, 3)), parse = TRUE,
                color = col_estimate, fontface = "bold", size = 4.5)
 
     # Pasek CI - tylko jezeli wybrany conf

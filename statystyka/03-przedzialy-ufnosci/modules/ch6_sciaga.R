@@ -121,8 +121,8 @@ ch6_ui <- list(
     tagList(
       lc_feedback(type = "ok",
         tags$strong("Średnia (pojedyncza zmienna):"),
-        p(tags$em("„Średni wzrost studentów wyniósł 171,3 cm
-                   (95% CI: [168,4; 174,2]).”")),
+        p(tags$em("„Średni wzrost studentów wyniósł 171.3 cm
+                   (95% CI: [168.4, 174.2]).”")),
         p("Trzy liczby — i gotowe. Jeśli masz wartość odniesienia
            (np. norma = 170):"),
         p(tags$em("„Przedział nie zawiera wartości 170, co sugeruje,
@@ -132,8 +132,8 @@ ch6_ui <- list(
       lc_feedback(type = "ok",
         tags$strong("Różnica średnich (dwie grupy):"),
         p(tags$em("„Grupa eksperymentalna osiągnęła średni wynik
-                   wyższy o 4,7 punktu od grupy kontrolnej
-                   (95% CI różnicy: [1,2; 8,2]).”")),
+                   wyższy o 4.7 punktu od grupy kontrolnej
+                   (95% CI różnicy: [1.2, 8.2]).”")),
         p(tags$strong("Sprawdź zero:"),
           " przedział nie zawiera 0 — różnica istotna.
            Jeśli zawierałby 0 — nie mamy podstaw mówić o różnicy.")
@@ -142,7 +142,7 @@ ch6_ui <- list(
       lc_feedback(type = "ok",
         tags$strong("Proporcja:"),
         p(tags$em("„Odsetek zdających egzamin wyniósł 68%
-                   (95% CI: [62%; 73%]).”")),
+                   (95% CI: [62%, 73%]).”")),
         p(tags$strong("Sprawdź wartość progową:"),
           " jeśli interesuje cię pytanie „czy więcej niż połowa?” —
            patrz czy 50% leży w CI. Jeśli nie — masz odpowiedź z 95%
@@ -362,7 +362,7 @@ ch6_ui <- list(
             )
           ),
           p(style = "color: var(--upwr-reference); font-size: 14px;",
-            "Dla ", gloss("rozkład t-Studenta", "rozkładu t"), " wartości zależą od df = n−1; dla dużych
+            "Dla ", gloss("rozkład t-Studenta", "rozkładu t"), " wartości zależą od df = n-1; dla dużych
              n są bardzo bliskie z.")
         )
       ),
