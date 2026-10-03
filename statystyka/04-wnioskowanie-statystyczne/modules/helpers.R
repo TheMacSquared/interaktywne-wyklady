@@ -112,9 +112,14 @@ exercise_solution_toggle_server <- function(input, output, session, btn_id, sol_
 
 
 # Generowanie danych studenckich (n=200)
-generate_student_data <- function(n = 200) {
+# equal_sex = TRUE: po n/2 kobiet i mężczyzn (porównanie dwóch grup).
+generate_student_data <- function(n = 200, equal_sex = FALSE) {
   set.seed(NULL)
-  plec <- sample(c("Kobieta", "Mężczyzna"), n, replace = TRUE, prob = c(0.55, 0.45))
+  plec <- if (equal_sex) {
+    sample(rep(c("Kobieta", "Mężczyzna"), length.out = n))
+  } else {
+    sample(c("Kobieta", "Mężczyzna"), n, replace = TRUE, prob = c(0.55, 0.45))
+  }
   kierunek <- sample(c("Informatyka", "Ekonomia", "Psychologia", "Biologia"),
                      n, replace = TRUE, prob = c(0.3, 0.25, 0.25, 0.2))
 

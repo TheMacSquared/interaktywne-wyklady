@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 5: Dwie zmienne ilosciowe (korelacja Pearsona)
+# CHAPTER 6: Dwie zmienne ilościowe (korelacja Pearsona)
 # ============================================================================
 
 ch4_ui <- list(
@@ -11,36 +11,51 @@ ch4_ui <- list(
       kicker = "Rozdział 06 · Testowanie hipotez",
       num    = "06",
       title  = "Korelacja.",
-      lead   = "„Czy wraz ze wzrostem temperatury rośnie sprzedaż lodów?” Współczynnik
-                Pearsona pokazuje kierunek i siłę zależności między dwiema zmiennymi
-                ilościowymi — a test istotności mówi, czy to nie przypadek."
+      lead   = "Więcej snu, lepsza ocena; cieplejszy dzień, więcej sprzedanych lodów.
+                Współczynnik korelacji streszcza taki związek dwóch zmiennych
+                ilościowych jedną liczbą, a test mówi, czy da się go odróżnić
+                od przypadku. Ta sama liczba łatwo jednak wprowadza w błąd, jeśli
+                nie spojrzy się na wykres."
     ),
 
+    lc_p("Dotąd każdy test dotyczył jednej zmiennej: w rozdziale 4 średniej,
+      w rozdziale 5 proporcji. Hipoteza zerowa wskazywała konkretną wartość
+      parametru, a test sprawdzał, czy próba do niej pasuje. Od tego rozdziału
+      pytamy o związek dwóch zmiennych mierzonych na tych samych obiektach:
+      czy studenci, którzy śpią dłużej, mają lepsze oceny, czy plon rośnie
+      z ilością nawadniania. Zaczynamy od sytuacji, w której obie zmienne
+      są ilościowe."),
+
     # ========================================================================
-    # Wprowadzenie: wspolczynnik korelacji
+    # Wprowadzenie: współczynnik korelacji
     # ========================================================================
     lc_h2("ch4-pearson", "Współczynnik korelacji Pearsona"),
 
-    tagList(
-      p("Współczynnik ", gloss("korelacja Pearsona", "korelacji Pearsona"), " ", withMathJax("\\(r\\)"),
-        " mierzy siłę i kierunek liniowego związku między dwiema ", gloss("zmienna ilościowa", "zmiennymi ilościowymi"), "."),
-      p("Przyjmuje wartości od −1 do +1:"),
-      tags$ul(
-        tags$li(tags$b("r = +1"), " — doskonała korelacja dodatnia (wzrost jednej = wzrost drugiej)"),
-        tags$li(tags$b("r = 0"), " — brak korelacji liniowej"),
-        tags$li(tags$b("r = −1"), " — doskonała korelacja ujemna (wzrost jednej = spadek drugiej)")
-      ),
-      lc_formula_box(
-        p(withMathJax("\\(r = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum(x_i-\\bar{x})^2 \\cdot \\sum(y_i-\\bar{y})^2}}\\)"))
-      )
-    ),
+    lc_p("Związek dwóch ", gloss("zmienna ilościowa", "zmiennych ilościowych"),
+      " najpierw się rysuje. Na wykresie rozrzutu każdy punkt to jedna
+      obserwacja: współrzędna pozioma to wartość pierwszej zmiennej, pionowa
+      wartość drugiej. Jeśli punkty układają się wzdłuż rosnącej prostej,
+      zmienne rosną razem. Jeśli wzdłuż malejącej, wysokim wartościom jednej
+      towarzyszą niskie wartości drugiej. Jedną liczbą opisuje to współczynnik ",
+      gloss("korelacja Pearsona", "korelacji Pearsona"), " \\(r\\):"),
 
-    # --- Wykres 1: kierunek korelacji ---
-    tagList(
-      p("Znak ", withMathJax("\\(r\\)"),
-        " mówi o kierunku: dodatni oznacza, że obie zmienne rosną razem;
-        ujemny — jedna rośnie, druga maleje; zero — brak trendu liniowego.")
-    ),
+    lc_formula_box(withMathJax(
+      "$$r = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum(x_i-\\bar{x})^2 \\cdot \\sum(y_i-\\bar{y})^2}}$$"
+    )),
+
+    lc_p("Licznik sumuje iloczyny odchyleń od średnich. Punkt, który leży powyżej
+      średniej w obu zmiennych albo poniżej w obu, dodaje do sumy wartość
+      dodatnią. Punkt, który w jednej zmiennej leży powyżej średniej, a w drugiej
+      poniżej, dodaje wartość ujemną. Mianownik sprowadza wynik do skali
+      niezależnej od jednostek, dlatego \\(r\\) zawsze leży między −1 a +1
+      i nie zmienia się, gdy wzrost zapiszemy w metrach zamiast w centymetrach.
+      Wartość +1 oznacza, że wszystkie punkty leżą dokładnie na rosnącej prostej,
+      −1 że na malejącej, a 0 brak związku liniowego. W R współczynnik liczy ",
+      tags$code("cor(x, y)"), "."),
+
+    lc_p("Znak \\(r\\) mówi o kierunku związku. Trzy panele poniżej pokazują
+      po 90 punktów o korelacji −0,6, 0 i +0,6."),
+
     figure_panel(
       label = "Ryc. 6.1",
       title = "Kierunek korelacji",
@@ -50,13 +65,16 @@ ch4_ui <- list(
                style = "width: 100%; border-radius: 4px;")
     ),
 
-    # --- Wykres 2: sila korelacji (rozrzut wokol prostej) ---
-    tagList(
-      p("Wartość bezwzględna ", withMathJax("\\(|r|\\)"),
-        " mówi o ", tags$em("sile"), " związku liniowego — czyli o tym,
-        jak ciaśnie punkty grupują się wokół prostej. Trzy panele poniżej
-        pokazują zbiory o coraz większej sile korelacji.")
-    ),
+    lc_p("Przy \\(r = 0\\) prosta dopasowana do punktów jest pozioma: znajomość
+      \\(x\\) nic nie mówi o tym, czy \\(y\\) wypadnie powyżej, czy poniżej
+      średniej. Przy −0,6 i +0,6 trend widać wyraźnie, choć punkty wciąż
+      rozpraszają się szeroko wokół prostej. Ten rozrzut opisuje druga
+      informacja zawarta w \\(r\\)."),
+
+    lc_p("Wartość bezwzględna \\(|r|\\) mówi o sile związku liniowego, czyli
+      o tym, jak ciasno punkty skupiają się wokół prostej. Trzy panele poniżej
+      mają ten sam trend i różnią się tylko rozrzutem punktów."),
+
     figure_panel(
       label = "Ryc. 6.2",
       title = "Siła korelacji",
@@ -66,15 +84,18 @@ ch4_ui <- list(
                style = "width: 100%; border-radius: 4px;")
     ),
 
-    # --- Wykres 3: r vs nachylenie ---
-    tagList(
-      p("Uwaga na pułapkę: ", withMathJax("\\(r\\)"),
-        " mierzy ciasność punktów wokół prostej, ale ", tags$em("nie"),
-        " jej nachylenie. Trzy panele poniżej mają wyraźnie różne nachylenia,
-        a mimo to ", withMathJax("\\(r\\)"),
-        " jest w każdym z nich podobnie wysokie — bo punkty równie ciasno
-        trzymają się prostej, niezależnie od tego, jak ostro idzie ona w górę.")
-    ),
+    lc_p("Przy \\(r = 0{,}31\\) trend ledwie widać w chmurze punktów, przy 0,69
+      jest wyraźny, a przy 0,94 punkty prawie układają się w linię. Kwadrat
+      współczynnika ma prostą interpretację: \\(r^2\\) to część zmienności
+      \\(y\\), którą da się przypisać liniowemu związkowi z \\(x\\). Nazywa się go ",
+      gloss("współczynnik determinacji", "współczynnikiem determinacji"),
+      ". Dla \\(r = 0{,}31\\) to około 10%, dla 0,69 około 48%, a dla 0,94 około
+      88%. Wrócimy do niego w wykładzie 06 o regresji."),
+
+    lc_p("Siła związku to jednak nie to samo co nachylenie prostej. Trzy panele
+      poniżej mają nachylenia 0,4, 0,8 i 1,6, a punkty w każdym równie ciasno
+      trzymają się prostej."),
+
     figure_panel(
       label = "Ryc. 6.3",
       title = "r nie zależy od nachylenia",
@@ -84,51 +105,88 @@ ch4_ui <- list(
                style = "width: 100%; border-radius: 4px;")
     ),
 
-    # ========================================================================
-    # WIDGET 1: Test korelacji dwustronny (krokowy)
-    # ========================================================================
-    lc_h2("ch4-krok", "Test korelacji — krok po kroku"),
+    lc_p("Mimo czterokrotnej różnicy nachyleń \\(r\\) wynosi w panelach 0,96, 0,96
+      i 0,95. Współczynnik korelacji nie mówi, o ile wzrośnie \\(y\\), gdy \\(x\\)
+      wzrośnie o jednostkę. Mówi tylko, jak ściśle punkty trzymają się prostej.
+      Pytanie „o ile?” należy do regresji."),
 
-    tagList(
-      p("Korelacja z próby (", withMathJax("\\(r\\)"),
-        ") prawie nigdy nie wynosi dokładnie zero, nawet gdy w populacji związku nie ma.
-        Pytanie: czy obserwowane ", withMathJax("\\(r\\)"),
-        " jest wystarczająco dalekie od zera, by odrzucić brak związku?"),
-      p("Trzy warianty par hipotez:"),
-      lc_formula_box(
-        p(tags$b("Dwustronna"), " (jakikolwiek związek liniowy):"),
-        p(withMathJax("\\(H_0: \\rho = 0 \\quad\\)"),
-          withMathJax("\\(H_a: \\rho \\neq 0\\)"))
-      ),
-      lc_formula_box(
-        p(tags$b("Prawostronna"), " (dodatni związek — obie rosną razem):"),
-        p(withMathJax("\\(H_0: \\rho \\leq 0 \\quad\\)"),
-          withMathJax("\\(H_a: \\rho > 0\\)"))
-      ),
-      lc_formula_box(
-        p(tags$b("Lewostronna"), " (ujemny związek — jedna rośnie, druga maleje):"),
-        p(withMathJax("\\(H_0: \\rho \\geq 0 \\quad\\)"),
-          withMathJax("\\(H_a: \\rho < 0\\)"))
-      ),
-      p("Dla wszystkich trzech wariantów używamy tej samej ", gloss("statystyka testowa", "statystyki testowej"), " —
-        transformacja ", withMathJax("\\(r\\)"),
-        " na skalę rozkładu t o ", withMathJax("\\(n-2\\)"),
-        " ", gloss("stopnie swobody", "stopniach swobody"), ". Im dalej od zera, tym bardziej nieprawdopodobny jest
-        taki wynik gdy w populacji korelacji nie ma."),
-      lc_formula_box(
-        p("Statystyka testowa: ",
-          withMathJax("\\(t = \\frac{r\\sqrt{n-2}}{\\sqrt{1-r^2}}, \\quad df = n - 2\\)"))
-      )
-    ),
+    lc_p("Wszystkie dotychczasowe wartości \\(r\\) policzono z próby. Następne
+      pytanie jest takie samo jak w poprzednich rozdziałach: co wynik z próby
+      mówi o populacji."),
 
     # ========================================================================
-    # Cwiczenie: sformuluj hipotezy
+    # Od współczynnika do testu
+    # ========================================================================
+    lc_h2("ch4-test", "Od współczynnika do testu"),
+
+    lc_p("Współczynnik \\(r\\) z próby jest estymatorem korelacji w populacji,
+      oznaczanej grecką literą \\(\\rho\\) (ro). Jak każda statystyka z próby,
+      \\(r\\) zmienia się od próby do próby. Nawet gdy w populacji związku nie ma
+      (\\(\\rho = 0\\)), \\(r\\) z próby prawie nigdy nie wychodzi dokładnie zero.
+      Przy 40 parach obserwacji wartości od −0,31 do 0,31 pojawiają się wtedy
+      w 95% prób. Test korelacji rozstrzyga, czy obserwowane \\(r\\) leży na tyle
+      daleko od zera, że trudno je wytłumaczyć samym losowaniem próby."),
+
+    lc_p(gloss("hipoteza zerowa", "Hipoteza zerowa"), " mówi, że w populacji nie
+      ma związku liniowego. ", gloss("hipoteza alternatywna", "Hipoteza alternatywna"),
+      " zależy od pytania, tak samo jak w teście t i w teście proporcji:"),
+
+    lc_formula_box(withMathJax(
+      "$$\\begin{aligned}
+        &\\text{dwustronna:}   &&H_0: \\rho = 0    &&H_a: \\rho \\neq 0 \\\\
+        &\\text{prawostronna:} &&H_0: \\rho \\leq 0 &&H_a: \\rho > 0 \\\\
+        &\\text{lewostronna:}  &&H_0: \\rho \\geq 0 &&H_a: \\rho < 0
+      \\end{aligned}$$"
+    )),
+
+    lc_p("Wariant dwustronny pyta o jakikolwiek związek, jednostronne o związek
+      w określonym kierunku: dodatni, gdy obie zmienne rosną razem, albo ujemny,
+      gdy jedna rośnie, a druga maleje. We wszystkich trzech ",
+      gloss("statystyka testowa", "statystyka testowa"), " jest ta sama:
+      \\(r\\) przeliczone na skalę rozkładu t."),
+
+    lc_formula_box(withMathJax(
+      "$$t = \\frac{r\\sqrt{n-2}}{\\sqrt{1-r^2}}, \\qquad df = n - 2$$"
+    )),
+
+    lc_p("Gdy H₀: \\(\\rho = 0\\) jest prawdziwa, statystyka \\(t\\) ma ",
+      gloss("rozkład t-Studenta"), " o \\(n - 2\\) ",
+      gloss("stopnie swobody", "stopniach swobody"), ". Wzór łączy dwa składniki.
+      Im większe \\(|r|\\), tym większe \\(|t|\\). Przy tym samym \\(r\\) statystyka
+      rośnie razem z pierwiastkiem z liczebności próby. Ta sama korelacja 0,3
+      przy 15 parach obserwacji jest zgodna z przypadkiem, a przy 100 parach
+      już nie."),
+
+    lc_p("Dalej postępujemy jak w każdym teście. ", gloss("p-wartość", "P-wartość"),
+      " to prawdopodobieństwo, że przy prawdziwej H₀ statystyka \\(t\\) wypadnie
+      co najmniej tak daleko od zera jak obserwowana. Jeśli jest mniejsza od ",
+      gloss("poziom istotności", "poziomu istotności"), " α = 0,05, ustalonego
+      przed zebraniem danych, odrzucamy H₀. W R test wykonuje ",
+      tags$code("dane %>% cor_test(x, y)"), " z pakietu rstatix. Oprócz \\(r\\),
+      \\(t\\) i p-wartości funkcja podaje ", gloss("przedział ufności"),
+      " dla \\(\\rho\\) (kolumny ", tags$code("conf.low"), " i ",
+      tags$code("conf.high"), "). Jak w wykładzie 03, przedział mówi więcej
+      niż sama decyzja, bo pokazuje, jak silny może być związek w populacji.
+      Przedział, który nie obejmuje zera, w praktyce idzie w parze z odrzuceniem
+      H₀ w teście dwustronnym. Oba wyniki liczy się jednak innymi przybliżeniami,
+      więc w przypadkach granicznych mogą się rozminąć."),
+
+    lc_p("Test zakłada, że pary obserwacji są od siebie niezależne, związek jest
+      liniowy, a obie zmienne mają rozkład zbliżony do normalnego, bez silnych
+      wartości odstających. Sprawdzaniem założeń zajmuje się wykład 05. Pojawi
+      się tam też ", gloss("korelacja Spearmana"), ", stosowana, gdy te warunki
+      nie są spełnione. Co się dzieje przy związku nieliniowym albo przy
+      wartości odstającej, zobaczymy w sekcji o pułapkach korelacji."),
+
+    # ========================================================================
+    # Ćwiczenie: sformułuj hipotezy
     # ========================================================================
     lc_h2("ch4-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    tagList(
-      p("Jak wyglądają H₀ i Hₐ w poniższych sytuacjach? Zastanów się i sprawdź.")
-    ),
+    lc_p("Zanim przeprowadzimy test na danych, przećwicz pierwszy krok:
+      przełożenie pytania na parę hipotez. Najważniejsze jest to, czy pytanie
+      wskazuje kierunek związku. Dla każdej sytuacji zapisz H₀ i Hₐ, a potem
+      porównaj swoją odpowiedź z rozwiązaniem."),
 
     hypothesis_practice("ch4", list(
       list(
@@ -153,6 +211,21 @@ ch4_ui <- list(
         note = "Jednostronny (lewostronny) — hipoteza kierunkowa ujemna."
       )
     )),
+
+    lc_p("W każdej z tych sytuacji kierunek hipotezy alternatywnej wynika ze słów
+      pytania, a nie z danych. Ustala się go, zanim ktokolwiek zobaczy wykres
+      rozrzutu."),
+
+    # ========================================================================
+    # WIDGET 1: Test korelacji dwustronny (krokowy)
+    # ========================================================================
+    lc_h2("ch4-krok", "Test korelacji — krok po kroku"),
+
+    lc_p("Panel przeprowadza test dwustronny na danych symulowanych. Każdy
+      scenariusz losuje pary obserwacji z populacji o zadanej korelacji: od 0,45
+      (sen a ocena) do 0,6 (nawadnianie a plon), a w scenariuszu szkoleń BHP
+      −0,55. Kolejne kroki prowadzą od wykresu rozrzutu przez \\(r\\)
+      i statystykę \\(t\\) do decyzji."),
 
     figure_panel(
       label = "Ryc. 6.4",
@@ -179,15 +252,34 @@ ch4_ui <- list(
       )
     ),
 
+    lc_p("W scenariuszu domyślnym (\\(\\rho = 0{,}45\\), \\(n = 40\\)) wartość
+      krytyczna statystyki \\(t\\) wynosi 2,02, co odpowiada \\(|r|\\) około 0,31.
+      Próba, w której \\(r\\) wyszłoby dokładnie 0,45, dałaby \\(t = 3{,}11\\)
+      i p-wartość 0,004, a więc odrzucenie H₀. Wylosowane \\(r\\) rozrzuca się
+      jednak wokół 0,45: w 90% prób leży między 0,24 a 0,63. Test odrzuca H₀
+      w około 87% prób. W pozostałych związek w populacji istnieje, ale próba
+      nie wystarcza, żeby go wykazać. To ",
+      gloss("błąd drugiego rodzaju"), " z rozdziału 3. Przy \\(n = 15\\) test
+      odrzuca H₀ tylko w około 42% prób, przy \\(n = 100\\) praktycznie zawsze."),
+
+    lc_p("Wynik nieistotny zapisujemy więc jako brak podstaw do odrzucenia H₀,
+      a nie jako dowód, że korelacji nie ma. Przy \\(n = 15\\) i \\(\\rho = 0{,}45\\)
+      taki wynik pojawia się częściej niż w co drugiej próbie. Odrzucenie H₀
+      też mówi niewiele o samej korelacji: tylko tyle, że tak dużego \\(|r|\\)
+      trudno się spodziewać, gdy w populacji \\(\\rho = 0\\). Ile wynosi
+      \\(\\rho\\), lepiej pokazuje przedział ufności."),
+
     # ========================================================================
     # WIDGET 2: Test jednostronny (te same dane)
     # ========================================================================
     lc_h2("ch4-jednostronny", "A jeśli znamy kierunek?"),
 
-    tagList(
-      p("Tak jak wcześniej — czasem nie pytamy „czy jest związek?”,
-        ale „czy więcej X = więcej Y?” Te same dane, zmienione pytanie.")
-    ),
+    lc_p("Pytanie badawcze często wskazuje kierunek: nie „czy sen ma związek
+      z oceną?”, tylko „czy więcej snu wiąże się z wyższą oceną?”. Wtedy
+      stosujemy ", gloss("test jednostronny"), ". Hipoteza alternatywna obejmuje
+      tylko jeden kierunek, a obszar odrzucenia leży w całości w jednym ogonie
+      rozkładu t. Panel poniżej używa tej samej próby co test dwustronny powyżej,
+      zmienia się tylko para hipotez."),
 
     figure_panel(
       label = "Ryc. 6.5",
@@ -203,24 +295,38 @@ ch4_ui <- list(
       )
     ),
 
+    lc_p("Wartości \\(r\\) i \\(t\\) są w obu panelach identyczne, bo zależą tylko
+      od danych. Zmienia się p-wartość. Gdy \\(r\\) ma znak zgodny z Hₐ,
+      jednostronna p-wartość jest połową dwustronnej: dla \\(r = 0{,}45\\)
+      i \\(n = 40\\) wynosi 0,002 zamiast 0,004. Wartość krytyczna spada z 2,02
+      do 1,69, więc do odrzucenia H₀ wystarcza \\(|r|\\) około 0,26 zamiast 0,31."),
+
+    lc_p("Ceną jest ślepota na drugi kierunek. Jeśli próba pokaże korelację
+      przeciwnego znaku, nawet silną, jednostronna p-wartość przekroczy 0,5
+      i H₀ nie odrzucimy. Dlatego kierunek wybiera się przed zebraniem danych,
+      na podstawie pytania badawczego. Wybranie go po obejrzeniu wykresu
+      dzieliłoby p-wartość na pół bez żadnego uzasadnienia."),
+
     # ========================================================================
-    # Pulapki korelacji
+    # Pułapki korelacji
     # ========================================================================
     lc_h2("ch4-pulapki", "Pułapki korelacji"),
 
-    tagList(
-      p("Współczynnik korelacji to potężne narzędzie, ale łatwo go
-        źle zinterpretować. Oto cztery klasyczne pułapki:")
-    ),
+    lc_p("Istotny test mówi tylko tyle, że \\(r\\) z próby trudno wytłumaczyć
+      przypadkiem. Nie mówi, jaki kształt ma związek, czy nie zależy od
+      pojedynczego punktu ani czy jedna zmienna wpływa na drugą. Te pytania
+      trzeba rozstrzygnąć poza testem: patrząc na wykres i zastanawiając się,
+      skąd pochodzą dane. Poniżej pięć klasycznych sytuacji, w których \\(r\\)
+      wprowadza w błąd."),
 
     # --- 1. Kwartet Anscombe'a ---
-    tagList(
-      p("1. Kwartet Anscombe’a — te same statystyki, różne dane."),
-      p("Poniższe cztery zbiory danych mają identyczną korelację (~0,82),
-        tę samą średnią i wariancję — a zupełnie inną strukturę. Tylko wykres
-        pozwala odkleić statystykę od rzeczywistości. To najmocniejszy argument
-        za tym, żeby zawsze rysować wykres przed interpretacją r.")
-    ),
+    lc_p("Pierwszą pokazał statystyk Francis Anscombe w 1973 roku. Zbudował cztery
+      zbiory po 11 punktów o niemal identycznych statystykach. W każdym średnia
+      \\(x\\) wynosi 9, średnia \\(y\\) 7,50, wariancja \\(x\\) 11, wariancja
+      \\(y\\) 4,12–4,13, korelacja 0,816–0,817, a prosta regresji to
+      \\(y = 3 + 0{,}5x\\). W R zbiory są dostępne jako ",
+      tags$code("anscombe"), "."),
+
     figure_panel(
       label = "Ryc. 6.6",
       title = "Kwartet Anscombe’a",
@@ -230,59 +336,28 @@ ch4_ui <- list(
                style = "width: 100%; border-radius: 4px;")
     ),
 
-    # --- 2. Korelacja pozorna (spurious) ---
-    tagList(
-      p("2. ", gloss("korelacja pozorna", "Korelacja pozorna"), " (spurious correlation)."),
-      p("Spożycie lodów i liczba utonięć korelują dodatnio. Czy lody zabijają?
-        Oczywiście nie — obie zmienne zależą od temperatury (zmienna ukryta /
-        konfounder). Korelacja między X i Y może wynikać z tego, że obie
-        zależą od Z. Bez kontroli ", gloss("zmienna zakłócająca", "zmiennych zakłócających"), " nie można wnioskować
-        o ", gloss("przyczynowość", "przyczynowości"), "."),
-      p("Więcej absurdalnych przykładów: ",
-        tags$a(href = "https://www.tylervigen.com/spurious-correlations",
-               target = "_blank",
-               "Spurious Correlations (Tyler Vigen) →"))
+    lc_p("Tylko zbiór 1 wygląda tak, jak sugeruje \\(r \\approx 0{,}82\\): chmura
+      punktów rozproszona wokół prostej. W zbiorze 2 punkty leżą na gładkim łuku,
+      związek jest więc niemal doskonały, ale nie liniowy. W zbiorze 3 dziesięć
+      punktów leży na jednej prostej (bez jedenastego punktu \\(r\\) wynosiłoby
+      1,000), a jeden punkt odstaje i obniża korelację. W zbiorze 4 dziesięć
+      punktów ma to samo \\(x = 8\\), a całą korelację tworzy jedenasty punkt
+      z \\(x = 19\\). Statystyki opisowe i test korelacji nie odróżnią tych
+      sytuacji, wykres odróżnia je od razu."),
+
+    inline_callout(label = "Zasada",
+      "Zanim zinterpretujesz r albo wynik testu korelacji, obejrzyj wykres
+       rozrzutu."
     ),
 
-    # --- 3. Paradoks Simpsona ---
-    tagList(
-      p("3. ", gloss("paradoks Simpsona", "Paradoks Simpsona"), "."),
-      p("Globalnie: więcej nauki wydaje się obniżać wyniki (r ujemne, czarna
-        linia). Ale w każdej szkole z osobna więcej nauki daje ",
-        "wyższy", " wynik (r dodatnie, kolorowe linie). Jak to
-        możliwe? Uczniowie słabej szkoły uczą się dużo (materiał jest dla nich
-        trudniejszy), ale mimo to mają niskie wyniki. Uczniowie silnej szkoły
-        uczą się mniej (materiał przychodzi łatwiej) i mają wysokie wyniki.
-        Po połączeniu danych „wychodzi”, że nauka obniża wyniki."),
-      p(tags$em("Zmienna ukryta:"), " poziom szkoły (konfounder). ", gloss("agregacja", "Agregacja"), "
-        danych bez uwzględnienia grup może odwrócić",
-        " rzeczywisty kierunek zależności."),
-      p("Więcej: ",
-        tags$a(href = "https://en.wikipedia.org/wiki/Simpson%27s_paradox",
-               target = "_blank", "Wikipedia →"), " | ",
-        tags$a(href = "https://www.youtube.com/watch?v=ebEkn-BiW5k",
-               target = "_blank", "Film TED-Ed →"))
-    ),
-    figure_panel(
-      label = "Ryc. 6.8",
-      title = "Paradoks Simpsona",
-      div(class = "step-buttons",
-        lc_action("ch4_simpson_global", "Spojrzenie globalne", variant = "outline"),
-        lc_action("ch4_simpson_groups", "Paradoks", variant = "outline")
-      ),
-      lc_plot("ch4_simpson_plot", ratio = "1.5/1", max_height = "420px"),
-      uiOutput("ch4_simpson_caption")
-    ),
+    # --- 2. Nieliniowość przy r ≈ 0 ---
+    lc_p("Zbiór 2 prowadzi do drugiej pułapki. Współczynnik Pearsona mierzy tylko
+      związek liniowy, więc związek silny, ale zakrzywiony, może dać \\(r\\)
+      bliskie zeru. Na wykresie poniżej \\(y\\) zależy od \\(x\\) kwadratowo:
+      punkty układają się w literę U."),
 
-    # --- 4. Nieliniowość przy r ~ 0 ---
-    tagList(
-      p("4. Nieliniowość przy r ≈ 0."),
-      p("Zależność kwadratowa (U-kształtna) daje r bliskie zeru, choć związek
-        jest silny i deterministyczny. Pearson mierzy wyłącznie zależność
-        liniową — nie każdą.")
-    ),
     figure_panel(
-      label = "Ryc. 6.9",
+      label = "Ryc. 6.7",
       title = "Nieliniowość przy r ≈ 0",
       tags$img(src = "assets/correlation-nonlinear.png",
                alt = "Silna zależność w kształcie litery U, dla której korelacja liniowa jest bliska zeru.",
@@ -290,21 +365,28 @@ ch4_ui <- list(
                style = "max-width: 500px; width: 100%; border-radius: 4px;")
     ),
 
-    # --- 5. Outlier (widget interaktywny) ---
-    tagList(
-      p("5. Wpływ ", gloss("wartość odstająca", "outliera"), " na r."),
-      p("Jeden punkt odległy od reszty może sztucznie wytworzyć korelację tam,
-        gdzie jej nie ma — albo drastycznie ją zmienić. Pobaw się poniższym
-        widgetem: wygeneruj dane bez korelacji, potem dodaj outliera i zobacz,
-        jak r skacze.")
-    ),
+    lc_p("Choć \\(y\\) jest niemal wyznaczone przez \\(x\\), \\(r\\) wynosi −0,004.
+      Lewa połowa wykresu ma trend malejący, prawa rosnący, a iloczyny odchyleń
+      w liczniku \\(r\\) z obu połówek wzajemnie się znoszą. Test korelacji nie
+      odrzuciłby tu H₀, choć zależność jest bardzo silna. Wartość \\(r\\) bliska
+      zeru oznacza brak związku liniowego, a nie brak związku."),
+
+    # --- 3. Wartość odstająca (widget interaktywny) ---
+    lc_p("Zbiory 3 i 4 pokazały, że pojedynczy punkt potrafi wyraźnie zmienić
+      \\(r\\). ", gloss("wartość odstająca", "Wartość odstająca"), " ma tak duży
+      wpływ, bo jej odchylenia od średnich są duże w obu zmiennych naraz, a ich
+      iloczyn może przeważyć całą resztę sumy w liczniku. Panel losuje 50 punktów
+      z dwóch niezależnych zmiennych, czyli z populacji, w której \\(\\rho = 0\\).
+      Drugi przycisk dopisuje punkt leżący o 15 jednostek dalej niż największe
+      \\(x\\) i największe \\(y\\) w danych."),
+
     figure_panel(
-      label = "Ryc. 6.10",
-      title = "Wpływ outliera na r",
+      label = "Ryc. 6.8",
+      title = "Wpływ wartości odstającej na r",
       fluidRow(
         column(4,
           lc_action("ch4_gen_outlier", "Nowe dane (brak korelacji)", variant = "solid"),
-          lc_action("ch4_add_outlier", "Dodaj outliera!", variant = "solid"),
+          lc_action("ch4_add_outlier", "Dodaj wartość odstającą", variant = "solid"),
           br(), br(),
           uiOutput("ch4_outlier_r")
         ),
@@ -314,21 +396,82 @@ ch4_ui <- list(
       )
     ),
 
-    tagList(
-      p("Podsumowanie pułapek:"),
-      tags$ol(
-        tags$li("Zawsze rysuj wykres przed interpretacją r (Anscombe)."),
-        tags$li("Korelacja nie oznacza przyczynowości — szukaj konfounderów."),
-        tags$li("Agregacja danych może odwrócić kierunek zależności (Simpson)."),
-        tags$li("r mierzy tylko zależność liniową (nieliniowość)."),
-        tags$li("Jeden outlier może drastycznie zmienić r.")
-      )
+    lc_p("Bez dodatkowego punktu \\(r\\) z 50 obserwacji leży zwykle blisko zera:
+      w 90% losowań między −0,23 a 0,23. Jeden dopisany punkt podnosi je typowo
+      do około 0,52, a w 90% losowań do wartości między 0,39 a 0,63. Drugi taki
+      punkt, położony jeszcze dalej, podnosi \\(r\\) do około 0,8. Przy
+      51 obserwacjach \\(r = 0{,}52\\) daje p-wartość około 0,0001, więc test
+      wskazuje związek, którego w populacji nie ma. Wartości odstającej nie
+      usuwa się jednak automatycznie. Najpierw trzeba ustalić, czy to błąd
+      pomiaru, czy prawdziwa, nietypowa obserwacja. Bezpieczną praktyką jest
+      podanie wyniku z tym punktem i bez niego."),
+
+    # --- 4. Korelacja pozorna ---
+    lc_p("Ostatnie dwie pułapki dotyczą interpretacji, a nie liczenia. Nawet silna,
+      liniowa i istotna korelacja nie mówi, czy jedna zmienna wpływa na drugą.
+      Klasyczny przykład: w dni, gdy sprzedaje się więcej lodów, dochodzi też
+      do większej liczby utonięć. Lody nie powodują utonięć. Obie liczby rosną,
+      gdy jest ciepło, bo wtedy więcej osób kupuje lody i więcej osób się kąpie.
+      Temperatura jest tu ", gloss("zmienna zakłócająca", "zmienną zakłócającą"),
+      ": wpływa na obie zmienne i wytwarza między nimi ",
+      gloss("korelacja pozorna", "korelację pozorną"), ". Wniosek
+      o ", gloss("przyczynowość", "przyczynowości"), " wymaga eksperymentu albo
+      kontroli zmiennych zakłócających, a sam współczynnik korelacji nie zapewnia
+      żadnego z nich. Wiele absurdalnych, a przy tym silnych korelacji zebrał
+      Tyler Vigen: ",
+      tags$a(href = "https://www.tylervigen.com/spurious-correlations",
+             target = "_blank",
+             "Spurious Correlations →"), "."),
+
+    # --- 5. Paradoks Simpsona ---
+    lc_p("Zmienna zakłócająca potrafi nawet odwrócić kierunek związku. Takie
+      odwrócenie nazywa się ", gloss("paradoks Simpsona", "paradoksem Simpsona"),
+      ". Panel pokazuje symulowane dane 210 uczniów z trzech szkół, po 70
+      z każdej: liczbę godzin nauki w tygodniu i wynik egzaminu. W widoku
+      globalnym wszystkie punkty analizujemy razem, w drugim widoku osobno
+      w każdej szkole."),
+
+    figure_panel(
+      label = "Ryc. 6.9",
+      title = "Paradoks Simpsona",
+      div(class = "step-buttons",
+        lc_action("ch4_simpson_global", "Spojrzenie globalne", variant = "outline"),
+        lc_action("ch4_simpson_groups", "Paradoks", variant = "outline")
+      ),
+      lc_plot("ch4_simpson_plot", ratio = "1.5/1", max_height = "420px"),
+      uiOutput("ch4_simpson_caption")
     ),
+
+    lc_p("W danych połączonych \\(r = -0{,}49\\): wygląda na to, że im więcej
+      nauki, tym gorszy wynik. W każdej szkole osobno korelacja jest jednak
+      dodatnia: 0,78 w szkole słabej, 0,62 w średniej i 0,57 w silnej.
+      Odwrócenie bierze się z różnic między szkołami. Uczniowie szkoły słabej
+      uczą się średnio 24 godziny tygodniowo i zdobywają średnio 47 punktów,
+      uczniowie szkoły silnej uczą się 9 godzin i zdobywają 82 punkty, bo
+      materiał przychodzi im łatwiej. Po połączeniu grup, czyli ",
+      gloss("agregacja", "agregacji"), ", korelacja porównuje głównie szkoły
+      między sobą, a nie uczniów w obrębie szkoły. Poziom szkoły jest tu zmienną
+      zakłócającą. Pytanie, czy dodatkowa godzina nauki pomaga uczniowi,
+      dotyczy związku w obrębie szkoły. Więcej o paradoksie: ",
+      tags$a(href = "https://en.wikipedia.org/wiki/Simpson%27s_paradox",
+             target = "_blank", "Wikipedia →"), ", ",
+      tags$a(href = "https://www.youtube.com/watch?v=ebEkn-BiW5k",
+             target = "_blank", "film TED-Ed →"), "."),
+
+    lc_p("Pięć pułapek układa się w dwie grupy. Kwartet Anscombe’a, nieliniowość
+      i wartości odstające pokazują, że \\(r\\) może źle opisywać dane, a chroni
+      przed tym wykres rozrzutu. Korelacja pozorna i paradoks Simpsona pokazują,
+      że nawet trafnie policzone \\(r\\) może źle opisywać mechanizm. Przed tym
+      chroni dopiero wiedza o tym, jak powstały dane i jakie zmienne pominięto."),
 
     lc_h2("ch4-cas", "Ćwiczenia", "CASchools — korelacja Pearsona"),
 
+    lc_p("Na koniec trzy zadania na prawdziwych danych o szkołach w Kalifornii.
+      W każdym zadaniu, zanim odsłonisz rozwiązanie, przewidź znak i siłę
+      korelacji, a potem przeprowadź test w R albo w jamovi."),
+
     lc_feedback(type = "info",
-      p(tags$b("Dane: "), "420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+      p(tags$b("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
         tags$code("dane/caschools.csv"), "."),
       p("Zmienne w zadaniach: ", tags$code("read"), " i ", tags$code("math"),
         " (wyniki testów), ", tags$code("income"),
@@ -359,10 +502,20 @@ ch4_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("student_teacher_ratio"),
         " (STR) a ", tags$code("read"),
         ". Dlaczego korelacja jest ujemna? Czy jest istotna statystycznie?
-        Czy silna praktycznie? Pomyśl, co może być konfunderem."),
+        Czy silna praktycznie? Pomyśl, co może być zmienną zakłócającą."),
       lc_action("cas_ch4_ans5", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch4_sol5")
     ),
+
+    lc_p("Trzy korelacje z tych samych danych pokazują trzy różne sytuacje. Przy
+      420 okręgach nawet słaba korelacja daje bardzo małą p-wartość, dlatego
+      obok p-wartości zawsze podaje się samo \\(r\\), najlepiej z przedziałem
+      ufności. Jak opisywać siłę efektu, pokazuje rozdział 10."),
+
+    lc_p("Korelacja wymaga dwóch zmiennych ilościowych. Gdy obie zmienne są
+      jakościowe, na przykład płeć i wybrany kierunek studiów, nie ma czego
+      wstawić do wzoru na \\(r\\). Związek opisuje wtedy tabela kontyngencji,
+      a sprawdza go test χ² z następnego rozdziału."),
 
     lc_chapter_next(
       num       = "07",
@@ -374,7 +527,7 @@ ch4_ui <- list(
 )
 
 # ============================================================================
-# DANE — CASchools (wczytane raz przy ladowaniu modulu)
+# DANE — CASchools (wczytane raz przy ładowaniu modułu)
 # ============================================================================
 
 .ch4_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
@@ -452,9 +605,9 @@ ch4_server <- function(input, output, session) {
       alt_1s = "less")
   )
 
-  # --- Wspoldzielone dane ---
-  # Jedna probka dla testu dwustronnego i jednostronnego; po zmianie
-  # scenariusza albo n stara probka nie pasuje juz do opisu pytania.
+  # --- Współdzielone dane ---
+  # Jedna próbka dla testu dwustronnego i jednostronnego; po zmianie
+  # scenariusza albo n stara próbka nie pasuje już do opisu pytania.
   ch4_data_state <- reactiveVal(NULL)
   ch4_data <- reactive({
     state <- ch4_data_state()
@@ -587,7 +740,7 @@ ch4_server <- function(input, output, session) {
         p(tags$em(paste0("„", par$question_1s, "”")))
       ),
       lc_formula_box(
-        p(tags$b("Hipoteza formalna (jednostronna!):")),
+        p(tags$b("Hipoteza formalna (jednostronna):")),
         p(withMathJax(par$h0_text_1s)),
         p(withMathJax(par$h1_text_1s))
       ),
@@ -636,24 +789,22 @@ ch4_server <- function(input, output, session) {
         ale pytamy o kierunek związku."
       ),
       "2" = tagList(
-        "r = ", step_num(lc_fmt(r_val, 3)), " (ta sama wartość!). Korelacja się
-        nie zmieniła. Zmieniło się pytanie."
+        "r = ", step_num(lc_fmt(r_val, 3)), ", tak samo jak w teście dwustronnym.
+        Zmieniło się tylko pytanie."
       ),
       "3" = tagList(
-        "t = ", step_num(lc_fmt(t_stat, 3)), " (ta sama wartość!). W teście
-        jednostronnym patrzymy tylko na ",
-        if (par$alt_1s == "greater") "prawy" else "lewy", " ogon."
+        "t = ", step_num(lc_fmt(t_stat, 3)), ", bez zmian. Obszar odrzucenia
+        leży teraz tylko w ",
+        if (par$alt_1s == "greater") "prawym" else "lewym", " ogonie."
       ),
       "4" = tagList(
-        "Jednostronnie: ", step_verdict(p_val), " ",
-        tags$em("Porównaj z testem dwustronnym wyżej — te same dane, ten sam r i t,
-          ale inna p-wartość!")
+        "Jednostronnie: ", step_verdict(p_val)
       )
     )
   })
 
   # =============================================
-  # Pulapka 5: Outlier
+  # Pułapka: wartość odstająca
   # =============================================
   ch4_outlier_data <- reactiveVal(NULL)
 
@@ -697,11 +848,11 @@ ch4_server <- function(input, output, session) {
     n_outliers <- max(0, nrow(df) - 50)
     tagList(
       lc_stat_box("r", round(r_val, 3), color = col_h0),
-      lc_stat_box("Outlierów", n_outliers, color = col_reject)
+      lc_stat_box("Wartości odstające", n_outliers, color = col_reject)
     )
   })
 
-  # --- Cwiczenia CASchools ---
+  # --- Ćwiczenia CASchools ---
 
   .cas_cor <- function(x, y) {
     ok <- complete.cases(x, y); x <- x[ok]; y <- y[ok]
@@ -735,7 +886,7 @@ ch4_server <- function(input, output, session) {
                         r$r2, 100 * r$r2))
       ),
       tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀"),
-      p(tags$b("Interpretacja: "),
+      p(tags$b("Interpretacja:"), " ",
         sprintf("r = %.3f — korelacja silnie dodatnia.
           Okręgi z lepszymi wynikami z czytania osiągają też wyższe wyniki z matematyki
           (%.1f%% wspólnej wariancji). Obie zmienne mierzą ogólny poziom edukacji.",
@@ -763,8 +914,8 @@ ch4_server <- function(input, output, session) {
                         r$r2, 100 * r$r2))
       ),
       tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀"),
-      p(tags$b("Korelacja ≠ przyczynowość: "),
-        "Korelacja jest istotna i dodatnia — bogatsze okręgi mają wyższe wyniki.
+      p(tags$b("Korelacja ≠ przyczynowość:"),
+        " Korelacja jest istotna i dodatnia — bogatsze okręgi mają wyższe wyniki.
         Jednak nie możemy stwierdzić, że dochód ", tags$em("powoduje"),
         " lepsze wyniki. Trzecia zmienna (jakość nauczycieli, kapitał kulturowy rodziny)
         może tłumaczyć obie. Potrzeba badania eksperymentalnego lub quasi-eksperymentalnego.")
@@ -791,11 +942,11 @@ ch4_server <- function(input, output, session) {
                         r$r2, 100 * r$r2))
       ),
       tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀"),
-      p(tags$b("Interpretacja: "),
+      p(tags$b("Interpretacja:"), " ",
         sprintf("r = %.3f — korelacja ujemna: wyższy STR (więcej uczniów na nauczyciela)
           wiąże się z niższymi wynikami z czytania. STR wyjaśnia tylko %.1f%%
-          wariancji. Uwaga: STR jest często proxy dla zasobności okręgu — dochód może
-          być konfunderem tej zależności.",
+          wariancji. STR często odzwierciedla zamożność okręgu, więc dochód może
+          być zmienną zakłócającą tej zależności.",
           r$r, 100 * r$r2))
     )
   })
@@ -870,11 +1021,9 @@ ch4_server <- function(input, output, session) {
 
     if (view == "global") {
       lc_feedback(type = "warning",
-        tags$strong("Spojrzenie globalne: "),
-        sprintf("r = %s. Więcej godzin nauki → niższy wynik z egzaminu? ",
-                format(r_global, nsmall = 2)),
-        "To wygląda na absurd — przecież nauka powinna pomagać. ",
-        tags$em("Kliknij „Paradoks”, żeby zobaczyć, co tu się naprawdę dzieje.")
+        tags$strong("Spojrzenie globalne:"),
+        sprintf(" r = %s. Więcej godzin nauki → niższy wynik z egzaminu?",
+                format(r_global, nsmall = 2))
       )
     } else {
       r_per_school <- df %>%
@@ -884,17 +1033,9 @@ ch4_server <- function(input, output, session) {
                        collapse = "; ")
 
       lc_feedback(type = "ok",
-        tags$strong("Podział na szkoły: "),
-        "w każdej szkole z osobna więcej nauki → ",
-        tags$b("wyższy"), " wynik (",
-        r_text, "). ",
-        tags$br(), tags$br(),
-        "Globalnie wychodziło odwrotnie, bo ",
-        tags$b("poziom szkoły"),
-        " jest ukrytym konfunderem: uczniowie słabej szkoły uczą się
-         więcej (materiał trudniejszy), ale i tak mają niższe wyniki niż
-         uczniowie szkoły silnej. Po połączeniu grup ten efekt szkoły
-         maskuje rzeczywisty pozytywny wpływ nauki w obrębie szkoły."
+        tags$strong("Podział na szkoły:"),
+        " w każdej szkole z osobna więcej nauki → wyższy wynik (",
+        r_text, ")."
       )
     }
   })

@@ -8,31 +8,53 @@ ch10_ui <- list(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 10 — Testowanie hipotez",
+      kicker = "Rozdział 10 · Testowanie hipotez",
       num    = "10",
       title  = "Siła efektu.",
-      lead   = "Istotność mówi 'coś tam jest' — ale nie mówi 'jak duże'. Cohen's d, r,
-                Cramér's V i eta kwadrat to miary, które odpowiadają na pytanie 'ile?'."
+      lead   = "Wynik może być istotny statystycznie i jednocześnie zbyt mały, żeby
+                cokolwiek znaczył w praktyce. Miary siły efektu mówią, jak duża jest
+                różnica albo zależność, a ta informacja nie zmienia się wraz
+                z liczebnością próby."
     ),
+
+    lc_p("Każdy test z rozdziałów 04–09 kończył się jedną z dwóch decyzji:
+      odrzucamy H₀ albo nie mamy podstaw, żeby ją odrzucić. Ta decyzja mówi,
+      czy dane dają się pogodzić z brakiem efektu. Nie mówi natomiast, jak duży
+      jest efekt, który wykryliśmy. Do tego służą miary ",
+      gloss("wielkość efektu", "siły efektu"), ". W tym rozdziale każdemu
+      poznanemu testowi przypiszemy jego miarę: testom t odpowiada d Cohena,
+      korelacji współczynnik r, testowi χ² V Cramera, a ANOVA η²."),
 
     # ========================================================================
     # Sekcja 1: Motywacja
     # ========================================================================
     lc_h2("ch10-motywacja", "p-wartość nie mierzy ważności"),
 
-    tagList(
-      p("Wyobraź sobie, że badasz skuteczność nowego szkolenia BHP. Mierzysz czas reakcji
-        operatorów przed i po szkoleniu. Wynik: ", tags$b("p = 0,03"), " — istotne!"),
-      p("Ale czy szkolenie cokolwiek zmieniło? Tego p nie mówi.",
-        " Przy wystarczająco dużej próbie nawet różnica 2 ms (bez żadnego praktycznego znaczenia)
-        będzie 'wysoce istotna statystycznie'."),
-      p("I odwrotnie: przy małej próbie nawet duży efekt może nie osiągnąć istotności."),
-      lc_formula_box(
-        p(tags$b("Reguła: "), "p informuje o tym, czy efekt istnieje w populacji.
-          Siła efektu informuje o tym, jak duży jest ten efekt.
-          Obie liczby są potrzebne.")
-      )
-    ),
+    lc_p("Wróćmy do przykładu B4 z wykładu 03. Badanie porównywało IQ w dwóch
+      województwach, po 20 000 osób w każdym. Średnie wyniosły 100,4 i 100,0
+      punktu przy odchyleniu standardowym 15. Przedział ufności dla różnicy,
+      [0,11; 0,69] pkt, nie obejmował zera. Test t daje ten sam werdykt:
+      t ≈ 2,67, p ≈ 0,008, więc na poziomie α = 0,05 odrzucamy H₀ o równości
+      średnich. Mimo to różnica 0,4 punktu to około 0,03 odchylenia
+      standardowego IQ. Wynik jest istotny statystycznie, ale nie ma ",
+      gloss("istotność praktyczna", "istotności praktycznej"), "."),
+
+    lc_p("Rozbieżność bierze się stąd, że statystyka testowa dzieli różnicę średnich
+      przez ", gloss("błąd standardowy", "błąd standardowy"), ", a błąd
+      standardowy maleje jak \\(1/\\sqrt{n}\\). Dla dwóch równolicznych grup
+      o tym samym odchyleniu standardowym s statystykę t można zapisać przez
+      różnicę wyrażoną w odchyleniach standardowych, którą oznaczymy d:"),
+
+    lc_formula_box(withMathJax(
+      "$$t = \\frac{\\bar{x}_1 - \\bar{x}_2}{s\\sqrt{2/n}} = d \\cdot \\sqrt{\\frac{n}{2}}, \\qquad d = \\frac{\\bar{x}_1 - \\bar{x}_2}{s}$$"
+    )),
+
+    lc_p("Ten sam efekt d daje tym większe t i tym mniejszą p-wartość, im
+      większa jest próba. Przy dostatecznie dużym n każda niezerowa różnica
+      stanie się istotna, a przy małym n nawet duża różnica może nie przekroczyć
+      progu. Panel pokazuje dwie populacje oddalone o d odchyleń standardowych
+      oraz wynik testu t dla prób po n obserwacji, w których różnica średnich
+      wynosi dokładnie d."),
 
     figure_panel(
       label = "Ryc. 10.1",
@@ -49,7 +71,6 @@ ch10_ui <- list(
           ),
           lc_slider("ch10_d", "Cohen's d (wielkość efektu)", 0.1, 1.5, 0.3, 0.05),
           lc_slider("ch10_n", "n na grupę", 20, 300, 50, 10),
-          p(tags$em("Zmień n przy stałym d i obserwuj, jak zmienia się p.")),
           uiOutput("ch10_dist_hint")
         ),
         column(8,
@@ -59,45 +80,79 @@ ch10_ui <- list(
       )
     ),
 
+    lc_p("Przy ustawieniach startowych (d = 0,3, po 50 obserwacji w grupie)
+      t = 1,50 i p ≈ 0,14, więc nie mamy podstaw do odrzucenia H₀. Ta sama
+      różnica przy 90 obserwacjach w grupie daje p ≈ 0,046, a przy 300
+      p < 0,001. Krzywe na wykresie przez cały czas wyglądają tak samo, bo
+      efekt się nie zmienia. Zmienia się tylko precyzja, z jaką go mierzymy.
+      Działa to także w drugą stronę: przy 20 obserwacjach w grupie d = 0,8
+      daje p ≈ 0,016, ale d = 0,5 już tylko p ≈ 0,12. Brak istotności przy
+      małej próbie nie dowodzi, że efektu nie ma. Oznacza jedynie, że próba
+      była za mała, żeby odróżnić go od przypadku."),
+
+    lc_p("Dlatego p-wartość i siła efektu odpowiadają na dwa różne pytania.
+      p-wartość mówi, jak trudno pogodzić dane z H₀. Miara siły efektu mówi,
+      jak duża jest różnica albo zależność. W raporcie potrzebne są obie,
+      a najlepiej razem z przedziałem ufności z wykładu 03, który pokazuje
+      jednocześnie, gdzie leży efekt i jak dokładnie go znamy."),
+
     # ========================================================================
     # Sekcja 2: Cohen's d
     # ========================================================================
     lc_h2("ch10-cohens-d", "Cohen's d — testy t"),
 
-    tagList(
-      p(gloss("d Cohena", "Cohen's d"), " wyraża różnicę średnich w jednostkach ",
-        gloss("odchylenie standardowe", "odchylenia standardowego"), ".
-        Używamy go dla wszystkich wariantów testu t:
-        jednej próby, dwóch prób niezależnych i próby sparowanej."),
-      lc_formula_box(
-        p(tags$b("Dwie grupy: "),
-          withMathJax("\\(d = \\dfrac{\\bar{x}_1 - \\bar{x}_2}{s_{\\text{pooled}}}\\)")),
-        p(tags$b("Jedna próba: "),
-          withMathJax("\\(d = \\dfrac{\\bar{x} - \\mu_0}{s}\\)")),
-        p(tags$b("Sparowany: "),
-          withMathJax("\\(d = \\dfrac{\\bar{d}}{s_d}\\)"),
-          " (średnia różnic przez odchylenie różnic)")
-      ),
-      p("Dlaczego dzielimy przez s? Żeby różnice z różnych dziedzin
-        były porównywalne. Różnica 5 cm wzrostu i różnica 5 punktów na egzaminie
-        to zupełnie inne sytuacje — ale przeliczone na ", tags$em("liczbę odchyleń standardowych"),
-        " dają wspólną skalę. d nie zależy od n",
-        " — mówi 'jak duża jest różnica', a nie 'jak pewni jej jesteśmy'."),
-      tags$table(class = "lc-table lc-table-bordered",
-        style = "font-size: 15px; margin: 10px 0;",
-        tags$thead(tags$tr(
-          tags$th("Wielkość efektu"), tags$th("|d|"), tags$th("Przykład (dwie grupy)")
-        )),
-        tags$tbody(
-          tags$tr(tags$td("mały"),   tags$td("0,2"),
-                  tags$td("różnica tętna spoczynkowego ~2 ud./min między grupą kontrolną a po wypiciu herbaty")),
-          tags$tr(tags$td("średni"), tags$td("0,5"),
-                  tags$td("różnica wyników między szkołami z różnym finansowaniem")),
-          tags$tr(tags$td("duży"),   tags$td("0,8"),
-                  tags$td("różnica wzrostu między 13- a 18-latkami"))
-        )
+    lc_p("Wielkość d z poprzedniej sekcji ma swoją nazwę: ",
+      gloss("d Cohena", "d Cohena"), " (ang. Cohen's d). Wyraża różnicę średnich
+      w jednostkach ", gloss("odchylenie standardowe", "odchylenia standardowego"),
+      ". Używamy go przy wszystkich wariantach testu t: dla dwóch grup
+      niezależnych z rozdziału 08 w mianowniku stoi odchylenie standardowe
+      połączone z obu grup."),
+
+    lc_formula_box(withMathJax(
+      "$$d = \\frac{\\bar{x}_1 - \\bar{x}_2}{s_p}, \\qquad s_p = \\sqrt{\\frac{(n_1 - 1)\\,s_1^2 + (n_2 - 1)\\,s_2^2}{n_1 + n_2 - 2}}$$"
+    )),
+
+    lc_p("W teście t jednej próby z rozdziału 04 porównujemy średnią z wartością
+      odniesienia \\(\\mu_0\\), a w teście dla prób zależnych z rozdziału 08
+      liczymy średnią różnic w parach \\(\\bar{d}\\) i dzielimy ją przez
+      odchylenie standardowe tych różnic \\(s_d\\)."),
+
+    lc_formula_box(withMathJax(
+      "$$d = \\frac{\\bar{x} - \\mu_0}{s} \\quad \\text{(jedna próba)}, \\qquad d = \\frac{\\bar{d}}{s_d} \\quad \\text{(próby zależne)}$$"
+    )),
+
+    lc_p("Dzielenie przez odchylenie standardowe sprowadza różnice z różnych
+      dziedzin do wspólnej skali. Różnica 5 cm wzrostu i różnica 5 punktów na
+      egzaminie to zupełnie inne sytuacje, ale przeliczone na liczbę odchyleń
+      standardowych dają się porównać. W przeciwieństwie do t, d nie rośnie
+      wraz z n. Większa próba pozwala oszacować d dokładniej, ale nie robi go
+      większym. W R d dla dwóch grup liczy ",
+      tags$code("cohens_d(wynik ~ grupa)"), " z pakietu rstatix. Domyślnie
+      w mianowniku używa pierwiastka ze średniej z dwóch wariancji, co przy
+      równolicznych grupach daje dokładnie \\(s_p\\)."),
+
+    lc_p("Cohen zaproponował orientacyjne progi: 0,2 to efekt mały, 0,5 średni,
+      a 0,8 duży. Tabela pokazuje, jak wyglądają one w przykładach z panelu
+      poniżej. Różnica IQ z przykładu B4 (d ≈ 0,03) leży daleko poniżej
+      progu efektu małego."),
+
+    tags$table(class = "lc-table lc-table-bordered",
+      style = "font-size: 15px; margin: 10px 0;",
+      tags$thead(tags$tr(
+        tags$th("Wielkość efektu"), tags$th("|d|"), tags$th("Przykład")
+      )),
+      tags$tbody(
+        tags$tr(tags$td("mały"),   tags$td("0,2"),
+                tags$td("pH jogurtu 4,50 i 4,56 przy SD 0,30")),
+        tags$tr(tags$td("średni"), tags$td("0,5"),
+                tags$td("wilgotność suszu 20,0% i 22,5% przy SD 5")),
+        tags$tr(tags$td("duży"),   tags$td("0,8"),
+                tags$td("czas inaktywacji enzymów 8 i 10 min przy SD 2,5"))
       )
     ),
+
+    lc_p("Panel zamienia wybraną wartość d na konkretne średnie i odchylenia
+      standardowe w trzech dziedzinach."),
 
     figure_panel(
       label = "Ryc. 10.2",
@@ -117,8 +172,7 @@ ch10_ui <- list(
               "d = 0,5 (średni)"    = "0.5",
               "d = 0,8 (duży)"      = "0.8",
               "d = 1,2 (b. duży)"   = "1.2"
-            ), selected = "0.5"),
-          p(tags$em("Zobacz, jak ta sama wartość d wygląda w konkretnych liczbach."))
+            ), selected = "0.5")
         ),
         column(8,
           zoom_plot_ui("ch10_d_plot", height = "240px"),
@@ -127,35 +181,52 @@ ch10_ui <- list(
       )
     ),
 
+    lc_p("Nawet efekt średni oznacza silnie zachodzące na siebie rozkłady.
+      Przy d = 0,5 krzywe dzielą około 80% powierzchni, a losowo wybrana
+      obserwacja z grupy o wyższej średniej przewyższa losowo wybraną
+      obserwację z drugiej grupy w około 64% przypadków. Przy d = 0,2 to
+      tylko 56%, czyli niewiele więcej niż rzut monetą, a przy d = 0,8 około
+      71%. Dopiero przy d = 1,2 wspólna część rozkładów spada do mniej więcej
+      połowy. Efekt duży w sensie Cohena nie oznacza więc, że grupy się
+      nie pokrywają."),
+
     # ========================================================================
     # Sekcja 3: r
     # ========================================================================
     lc_h2("ch10-r", "r — korelacja Pearsona"),
 
-    tagList(
-      p("Współczynnik ", gloss("korelacja Pearsona", "korelacji Pearsona"), " ", withMathJax("\\(r\\)"),
-        " jest jednocześnie statystyką testową i miarą ", gloss("wielkość efektu", "siły efektu"), ".
-        Przyjmuje wartości od −1 do +1, więc od razu widać skalę zależności."),
-      lc_formula_box(
-        p(withMathJax("\\(r = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum(x_i-\\bar{x})^2 \\cdot \\sum(y_i-\\bar{y})^2}}\\)"))
-      ),
-      p("Wygodniejsze do interpretacji jest często ", gloss("współczynnik determinacji", "r²"),
-        " — mówi, ", tags$em("ile procent zmienności y wyjaśnia x"),
-        ". Przy r = 0,5 mamy r² = 0,25, czyli 25% zmienności wyjaśnione, a 75%
-        zostaje na inne czynniki. Ważne: r mierzy tylko zależność liniową",
-        " — silna zależność krzywoliniowa może dać r bliskie zeru."),
-      tags$table(class = "lc-table lc-table-bordered",
-        style = "font-size: 15px; margin: 10px 0;",
-        tags$thead(tags$tr(
-          tags$th("Wielkość efektu"), tags$th("|r|"), tags$th("Interpretacja")
-        )),
-        tags$tbody(
-          tags$tr(tags$td("mała"),    tags$td("0,1"), tags$td("słaby związek liniowy")),
-          tags$tr(tags$td("średnia"), tags$td("0,3"), tags$td("umiarkowany związek")),
-          tags$tr(tags$td("duża"),    tags$td("0,5"), tags$td("silny związek liniowy"))
-        )
+    lc_p("Dla korelacji z rozdziału 06 nie trzeba liczyć osobnej miary.
+      Współczynnik ", gloss("korelacja Pearsona", "korelacji Pearsona"),
+      " \\(r\\) sam jest miarą siły efektu: nie zależy od n i ma stałą skalę
+      od −1 do +1. Test korelacji sprawdzał tylko, czy r z próby różni się od
+      zera bardziej, niż wynikałoby z przypadku."),
+
+    lc_formula_box(withMathJax(
+      "$$r = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum (x_i - \\bar{x})^2 \\cdot \\sum (y_i - \\bar{y})^2}}$$"
+    )),
+
+    lc_p("Łatwiejszy do interpretacji jest często ",
+      gloss("współczynnik determinacji", "kwadrat korelacji r²"), ". Mówi on,
+      jaką część zmienności y wyjaśnia liniowa zależność od x. Przy r = 0,5
+      mamy r² = 0,25: x wyjaśnia 25% zmienności y, a 75% zostaje na inne
+      czynniki. Pamiętaj, że r mierzy tylko zależność liniową. Silna zależność
+      krzywoliniowa może dać r bliskie zeru. Orientacyjne progi Cohena dla |r|
+      to 0,1, 0,3 i 0,5."),
+
+    tags$table(class = "lc-table lc-table-bordered",
+      style = "font-size: 15px; margin: 10px 0;",
+      tags$thead(tags$tr(
+        tags$th("Wielkość efektu"), tags$th("|r|"), tags$th("r²")
+      )),
+      tags$tbody(
+        tags$tr(tags$td("mała"),    tags$td("0,1"), tags$td("1% zmienności wyjaśnione")),
+        tags$tr(tags$td("średnia"), tags$td("0,3"), tags$td("9% zmienności wyjaśnione")),
+        tags$tr(tags$td("duża"),    tags$td("0,5"), tags$td("25% zmienności wyjaśnione"))
       )
     ),
+
+    lc_p("Panel pokazuje 50 punktów wylosowanych z populacji o zadanej
+      korelacji. Podtytuł wykresu podaje r policzone z tych punktów."),
 
     figure_panel(
       label = "Ryc. 10.3",
@@ -172,10 +243,10 @@ ch10_ui <- list(
           ),
           radioButtons("ch10_r_level", "Wielkość korelacji:",
             choices = c(
-              "r = 0,1 (znikoma)"    = "0.1",
-              "r = 0,3 (mała)"       = "0.3",
-              "r = 0,5 (średnia)"    = "0.5",
-              "r = 0,7 (duża)"       = "0.7",
+              "r = 0,1 (mała)"       = "0.1",
+              "r = 0,3 (średnia)"    = "0.3",
+              "r = 0,5 (duża)"       = "0.5",
+              "r = 0,7 (b. duża)"    = "0.7",
               "r = 0,9 (b. duża)"    = "0.9"
             ),
             selected = "0.5"
@@ -189,36 +260,55 @@ ch10_ui <- list(
       )
     ),
 
+    lc_p("Przy ustawieniach startowych (zadane r = 0,5) z wylosowanych punktów
+      wychodzi r = 0,55. Trend widać wyraźnie, ale punkty leżą daleko od
+      prostej: x wyjaśnia około jednej czwartej zmienności y. Przy r = 0,3
+      zależność da się jeszcze dostrzec, ale wyjaśnia tylko 9% zmienności,
+      a przy r = 0,1 trudno ją zauważyć na wykresie. Różnica między r zadanym
+      a policzonym z 50 punktów przypomina, że r z próby jest
+      estymatorem i ma własny rozrzut."),
+
     # ========================================================================
     # Sekcja 4: Cramér's V
     # ========================================================================
     lc_h2("ch10-cramers-v", "Cramér's V — test chi kwadrat"),
 
-    tagList(
-      p("Dla ", gloss("zmienna jakościowa", "zmiennych jakościowych"), " χ² mówi, czy są powiązane,
-        ale jego wartość bezwzględna rośnie wraz z n i rozmiarem tabeli — sam χ²
-        nie jest porównywalny między badaniami. ", gloss("V Cramera", "Cramér's V"), " normalizuje χ² do
-        przedziału [0, 1] i nie zależy od n."),
-      lc_formula_box(
-        p(withMathJax("\\(V = \\sqrt{\\frac{\\chi^2}{n \\cdot (\\min(r,c)-1)}}\\)")),
-        p("gdzie ", withMathJax("\\(r\\)"), " i ", withMathJax("\\(c\\)"),
-          " to liczby wierszy i kolumn tabeli kontyngencji.")
-      ),
-      p("Dla tabeli 2×2 Cramér's V = φ (fi) — najprostsza miara powiązania
-        dwóch zmiennych binarnych. Im większe V, tym wyraźniejsza różnica
-        proporcji między grupami."),
-      tags$table(class = "lc-table lc-table-bordered",
-        style = "font-size: 15px; margin: 10px 0;",
-        tags$thead(tags$tr(
-          tags$th("Wielkość efektu"), tags$th("V (tabela 2×2)"), tags$th("V (tabela 2×3+)")
-        )),
-        tags$tbody(
-          tags$tr(tags$td("mały"),   tags$td("0,10"), tags$td("0,07")),
-          tags$tr(tags$td("średni"), tags$td("0,30"), tags$td("0,21")),
-          tags$tr(tags$td("duży"),   tags$td("0,50"), tags$td("0,35"))
-        )
+    lc_p("Test χ² z rozdziału 07 ma ten sam problem co test t. Przy tych samych
+      proporcjach w ", gloss("tabela kontyngencji", "tabeli kontyngencji"),
+      " statystyka χ² rośnie proporcjonalnie do n, a do tego zależy od rozmiaru
+      tabeli. Sama wartość χ² nie mówi więc, jak silny jest związek dwóch ",
+      gloss("zmienna jakościowa", "zmiennych jakościowych"), ". ",
+      gloss("V Cramera", "V Cramera"), " (ang. Cramér's V) dzieli χ² przez n
+      i przez rozmiar tabeli, dzięki czemu przyjmuje wartości od 0 (brak
+      związku) do 1 (pełna zależność)."),
+
+    lc_formula_box(withMathJax(
+      "$$V = \\sqrt{\\frac{\\chi^2}{n \\cdot (\\min(r, c) - 1)}}$$"
+    )),
+
+    lc_p("We wzorze \\(r\\) i \\(c\\) oznaczają liczbę wierszy i kolumn tabeli.
+      Dla tabeli 2×2 V jest równe współczynnikowi φ (fi). Gdy obie grupy są
+      równoliczne, a ogólny odsetek wynosi 50%, φ jest po prostu różnicą
+      odsetków w grupach: V = 0,30 odpowiada na przykład 35% i 65%. Progi
+      Cohena zależą od mniejszego wymiaru tabeli. W R V liczy ",
+      tags$code("cramer_v(tab)"), " z pakietu rstatix."),
+
+    tags$table(class = "lc-table lc-table-bordered",
+      style = "font-size: 15px; margin: 10px 0;",
+      tags$thead(tags$tr(
+        tags$th("Wielkość efektu"),
+        tags$th("V (min(r, c) = 2, np. 2×2, 2×3)"),
+        tags$th("V (min(r, c) = 3, np. 3×3)")
+      )),
+      tags$tbody(
+        tags$tr(tags$td("mały"),   tags$td("0,10"), tags$td("0,07")),
+        tags$tr(tags$td("średni"), tags$td("0,30"), tags$td("0,21")),
+        tags$tr(tags$td("duży"),   tags$td("0,50"), tags$td("0,35"))
       )
     ),
+
+    lc_p("Panel pokazuje odsetki w dwóch równolicznych grupach dla wybranej
+      wartości V w tabeli 2×2."),
 
     figure_panel(
       label = "Ryc. 10.4",
@@ -248,41 +338,55 @@ ch10_ui <- list(
       )
     ),
 
+    lc_p("Przy ustawieniach startowych pleśń pojawia się na 35% produktów
+      w opakowaniu A i na 65% w opakowaniu B. To różnica 30 punktów
+      procentowych, a mimo to według progów Cohena jest to dopiero efekt
+      średni. Efekt mały (V = 0,10) oznacza w tym układzie odsetki 45% i 55%,
+      a duży (V = 0,50) 25% i 75%. Przy innych proporcjach grup albo innym
+      ogólnym odsetku ta sama wartość V odpowiada nieco innej różnicy."),
+
     # ========================================================================
     # Sekcja 5: eta kwadrat
     # ========================================================================
     lc_h2("ch10-eta2", "eta kwadrat — ANOVA"),
 
-    tagList(
-      p(withMathJax("\\(\\eta^2\\)"),
-        " (", gloss("eta kwadrat"), ") to udział wariancji całkowitej wyjaśniany przez przynależność do grupy.
-        Można je rozumieć jako 'procent zmienności wyników tłumaczony przez badany czynnik'."),
-      lc_formula_box(
-        p(withMathJax("\\(\\eta^2 = \\frac{SS_{\\text{między}}}{SS_{\\text{całkowite}}}\\)"))
-      ),
-      p("W jamovi i niektórych podręcznikach zobaczysz różne warianty: ",
-        "klasyczne η², η² częściowe (partial) i η² uogólnione (ges)",
-        " — różnią się tym, co dokładnie znajduje
-        się w mianowniku. Dla prostej ANOVA jednoczynnikowej wszystkie zwracają
-        zbliżone wartości. Progi Cohena (0,01 / 0,06 / 0,14) to ",
-        tags$em("dolne piętra"), " — w eksperymentach kontrolowanych często
-        oczekujemy efektów znacznie powyżej 0,15."),
-      tags$table(class = "lc-table lc-table-bordered",
-        style = "font-size: 15px; margin: 10px 0;",
-        tags$thead(tags$tr(
-          tags$th("Wielkość efektu"), tags$th(withMathJax("\\(\\eta^2\\)")),
-          tags$th("Interpretacja")
-        )),
-        tags$tbody(
-          tags$tr(tags$td("mały"),   tags$td("0,01"),
-                  tags$td("czynnik tłumaczy ~1% zmienności")),
-          tags$tr(tags$td("średni"), tags$td("0,06"),
-                  tags$td("czynnik tłumaczy ~6% zmienności")),
-          tags$tr(tags$td("duży"),   tags$td("0,14"),
-                  tags$td("czynnik tłumaczy ≥ 14% zmienności"))
-        )
+    lc_p("ANOVA z rozdziału 09 dzieliła całkowitą zmienność wyników na część
+      między grupami i część wewnątrz grup. Statystyka F porównywała te części,
+      ale podobnie jak t rośnie wraz z n. ",
+      gloss("eta kwadrat", "Eta kwadrat"), " (\\(\\eta^2\\)) mówi, jaki udział
+      całkowitej zmienności przypada na różnice między grupami, czyli jaką część
+      zmienności wyników tłumaczy badany czynnik. To ta sama idea co r²
+      w korelacji."),
+
+    lc_formula_box(withMathJax(
+      "$$\\eta^2 = \\frac{SS_{\\text{między}}}{SS_{\\text{całkowita}}}$$"
+    )),
+
+    lc_p("Programy podają kilka wariantów tej miary: η² częściowe (ang. partial)
+      i η² uogólnione. Funkcja ", tags$code("anova_test()"), " z pakietu rstatix
+      zwraca η² uogólnione w kolumnie ges. W jednoczynnikowej ANOVA dla grup
+      niezależnych wszystkie trzy warianty są równe zwykłemu η². Różnią się
+      dopiero w modelach z kilkoma czynnikami. Orientacyjne progi Cohena to
+      0,01, 0,06 i 0,14."),
+
+    tags$table(class = "lc-table lc-table-bordered",
+      style = "font-size: 15px; margin: 10px 0;",
+      tags$thead(tags$tr(
+        tags$th("Wielkość efektu"), tags$th(withMathJax("\\(\\eta^2\\)")),
+        tags$th("Interpretacja")
+      )),
+      tags$tbody(
+        tags$tr(tags$td("mały"),   tags$td("0,01"),
+                tags$td("czynnik tłumaczy około 1% zmienności")),
+        tags$tr(tags$td("średni"), tags$td("0,06"),
+                tags$td("czynnik tłumaczy około 6% zmienności")),
+        tags$tr(tags$td("duży"),   tags$td("0,14"),
+                tags$td("czynnik tłumaczy co najmniej 14% zmienności"))
       )
     ),
+
+    lc_p("Panel losuje po 30 obserwacji w trzech grupach z populacji o zadanym
+      η². Tabela pod wykresem podaje średnie i η² tej populacji."),
 
     figure_panel(
       label = "Ryc. 10.5",
@@ -312,17 +416,50 @@ ch10_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Kontekst",
-      tagList(
-        "Wartości Cohena ('mały/średni/duży') to konwencje z lat 60. — służą jako punkt
-         odniesienia, nie bezwzględny standard. W wielu dziedzinach ",
-        "d = 0,2 może być kluczowe",
-        " (np. zmiana śmiertelności o 2 pp.). Zawsze interpretuj efekt
-         w kontekście stawek i kosztów dziedziny."
-      ),
-      color = "uwaga"
+    lc_p("Przy ustawieniach startowych (η² = 0,06) średnie grup wynoszą 46,9,
+      50 i 53,1 przy odchyleniu standardowym 10 w każdej grupie. Różnice
+      średnich o około 3 jednostki giną w rozrzucie wewnątrz grup i pudełka
+      niemal całkowicie na siebie zachodzą. Dopiero przy η² = 0,30 (średnie
+      42,0, 50 i 58,0) grupy wyraźnie się rozsuwają, choć nadal częściowo
+      się pokrywają. η² policzone z wylosowanych 90 punktów nie musi równać
+      się wartości w populacji. Dla ustawień startowych wynosi 0,02, bo przy
+      30 obserwacjach w grupie średnie z próby mocno się wahają."),
+
+    # ========================================================================
+    # Domknięcie
+    # ========================================================================
+    lc_p("Progi Cohena (mały, średni, duży) to konwencja zaproponowana
+      w latach 60. jako punkt odniesienia na wypadek, gdy nic lepszego nie
+      jest dostępne. Nie są bezwzględnym standardem. To, czy efekt jest ważny,
+      zależy od dziedziny i od stawki. Lek, który obniża śmiertelność
+      z 10% do 8%, ma według progów Cohena efekt poniżej małego (φ ≈ 0,035),
+      a w dużej populacji może uratować wiele osób. Z kolei w ocenie sensorycznej żywności efekt mały bywa
+      niezauważalny dla konsumenta. Najlepiej oceniać efekt także w jego
+      naturalnych jednostkach: punktach IQ, minutach, tonach z hektara."),
+
+    lc_p("Dla testu proporcji z rozdziału 05 nie wprowadzaliśmy osobnej miary.
+      Tam efektem jest sama różnica między odsetkiem w próbie a wartością
+      odniesienia, wyrażona w punktach procentowych, najlepiej razem
+      z przedziałem ufności."),
+
+    inline_callout(label = "Zasada",
+      "Raportuj p-wartość razem z miarą siły efektu i oceniaj efekt w kontekście
+       dziedziny, a nie tylko według progów Cohena."
     ),
+
+    lc_p("Ten rozdział zamyka część narracyjną wykładu. Zaczęliśmy od logiki
+      testu: zakładamy H₀ i sprawdzamy, jak zaskakujące byłyby przy niej
+      nasze dane. Poziom istotności α ustalamy przed analizą, a p-wartość
+      to prawdopodobieństwo wyniku co najmniej tak skrajnego jak obserwowany,
+      gdy H₀ jest prawdziwa. Nie jest to prawdopodobieństwo, że H₀ jest
+      prawdziwa, a brak podstaw do odrzucenia H₀ nie dowodzi, że jest ona
+      prawdziwa. Potem poznaliśmy sześć testów dla różnych typów zmiennych,
+      a na koniec miary, które mówią, jak duży jest wykryty efekt."),
+
+    lc_p("Pozostaje praktyczne pytanie: który test wybrać do konkretnych danych.
+      Odpowiada na nie drzewo decyzyjne w następnym rozdziale. Prowadzi ono
+      od typu zmiennych i liczby grup do testu, a ściąga zbiera w jednym
+      miejscu wzory, wywołania R i miary siły efektu."),
 
     lc_chapter_next(
       num       = "11",
@@ -460,7 +597,7 @@ ch10_server <- function(input, output, session) {
   ch10_r_hints <- list(
     TZ  = "Korelacja między temperaturą fermentacji a pH jogurtu.",
     ROL = "Korelacja między opadem atmosferycznym a plonem pszenicy.",
-    IB  = "Korelacja ujemna: więcej szkoleń BHP → mniej wypadków."
+    IB  = "Korelacja ujemna: im więcej godzin szkolenia BHP, tym mniej wypadków."
   )
 
   ch10_v_scenarios <- list(
@@ -734,7 +871,7 @@ ch10_server <- function(input, output, session) {
       scale_fill_manual(
         values = setNames(c(col_h0, col_reject), c(sc$stan_neg, sc$stan_pos))
       ) +
-      labs(x = NULL, y = "Odsetek osób w grupie", fill = NULL) +
+      labs(x = NULL, y = "Odsetek w grupie", fill = NULL) +
       theme(legend.position = "bottom")
   }))
 
@@ -767,7 +904,7 @@ ch10_server <- function(input, output, session) {
         )
       ),
       p(style = "margin-top: 8px;",
-        tags$em(paste0("Różnica między grupami: ", diff_pp, " pp. — ", sc$hint)))
+        tags$em(paste0("Różnica między grupami: ", diff_pp, " pp.")))
     )
   })
 

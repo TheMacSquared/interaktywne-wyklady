@@ -10,13 +10,13 @@ source(file.path(app_dir, "modules", "drzewo_data.R"), local = TRUE)
 # UI
 # ----------------------------------------------------------------------------
 ch_drzewo_ui <- list(
-  id = "ch-drzewo", num = "10", title = "Drzewo decyzyjne",
+  id = "ch-drzewo", num = "11", title = "Drzewo decyzyjne",
   content = tagList(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 10 · Testowanie hipotez",
-      num    = "10",
+      kicker = "Rozdział 11 · Testowanie hipotez",
+      num    = "11",
       title  = "Drzewo decyzyjne.",
       lead   = "„Mam pytanie i dane — jaki test zastosować?” Najpierw sprawdź plan
                 badania, potem przejdź od typu zmiennych i liczby grup do konkretnego testu."
@@ -76,7 +76,7 @@ ch_drzewo_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "11",
+      num       = "12",
       title     = "Ściąga",
       lead      = "kompaktowe podsumowanie wszystkich testów w tabelach.",
       target_id = "ch-sciaga"

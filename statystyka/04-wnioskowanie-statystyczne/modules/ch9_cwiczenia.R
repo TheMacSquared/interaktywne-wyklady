@@ -11,13 +11,13 @@
 source(file.path(app_dir, "modules", "ch9_sat.R"), local = TRUE)
 
 ch9_ui <- list(
-  id = "ch-cwiczenia", num = "12", title = "Ćwiczenia",
+  id = "ch-cwiczenia", num = "13", title = "Ćwiczenia",
 
   content = tagList(
 
     lc_chapter_hero(
-      kicker = "Rozdział 12 · Testowanie hipotez",
-      num    = "12",
+      kicker = "Rozdział 13 · Testowanie hipotez",
+      num    = "13",
       title  = "Ćwiczenia z danych UPWr.",
       lead   = "Cztery zestawy danych z kierunków studiów UPWr — zastosuj wszystkie
                 narzędzia z wykładu na danych ze swojej dziedziny:

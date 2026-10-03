@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 4: Jedna zmienna ilosciowa — test t jednej proby
+# CHAPTER 4: Jedna zmienna ilościowa — test t jednej próby
 # ============================================================================
 
 ch2_ui <- list(
@@ -11,68 +11,94 @@ ch2_ui <- list(
       kicker = "Rozdział 04 · Testowanie hipotez",
       num    = "04",
       title  = "Test t jednej próby.",
-      lead   = "„Czy nasi studenci mają typowy poziom koncentracji?” Jeden pomiar na
-                osobie, porównanie średniej z wartością referencyjną — od danych, przez
-                statystykę testową, do p-wartości."
+      lead   = "Test t jednej próby sprawdza, czy średnia w populacji może być
+                równa wartości referencyjnej. Korzysta z tych samych składników
+                co przedział ufności dla średniej: średniej z próby, błędu
+                standardowego i rozkładu t-Studenta."
     ),
 
+    lc_p("Poprzednie rozdziały opisywały logikę testowania w ogólnej postaci:
+      hipotezy, dwa rodzaje błędów, p-wartość i werdykt. Teraz zastosujemy
+      ją do pierwszego konkretnego testu. Zaczynamy od najprostszej sytuacji:
+      mamy jedną zmienną ilościową i pytamy, czy jej średnia w populacji
+      zgadza się ze znaną z góry wartością, na przykład z normą, deklaracją
+      producenta albo średnią krajową. Taką wartość oznaczamy \\(\\mu_0\\)."),
+
     # ========================================================================
-    # Case study otwierajacy
+    # Case study otwierający
     # ========================================================================
     lc_h2("ch2-pytanie", "Od pytania do testu"),
 
-    tagList(
-      p("Statystyk nie zaczyna od wzorów — zaczyna od pytania. Ktoś przychodzi i pyta w języku potocznym:"),
-      lc_feedback(type = "info", style = "font-size: 18px; text-align: center;",
-        tags$em("„Czy nasi studenci mają typowy poziom koncentracji?
-        Bo wydaje mi się, że coś z nimi jest nie tak.”")
-      ),
-      p("Zadanie statystyka: przełożyć to na formalną hipotezę i dodać kontekst —
-        typowy to ile? Mamy wartość referencyjną
-        z pilotażu: średni wynik testu koncentracji w populacji = 70 pkt."),
-      p("Pytanie potoczne zamienia się w jedną z trzech par hipotez
-        — zależnie od tego, w którą stronę pytamy:"),
-      lc_formula_box(
-        p(tags$b("Dwustronna"), " (sprawdzamy, czy średnia w ogóle się różni):"),
-        p(withMathJax("\\(H_0: \\mu = 70 \\quad\\)"),
-          withMathJax("\\(H_a: \\mu \\neq 70\\)"))
-      ),
-      lc_formula_box(
-        p(tags$b("Prawostronna"), " (pytamy, czy średnia jest ",
-          tags$em("wyższa"), " niż norma):"),
-        p(withMathJax("\\(H_0: \\mu \\leq 70 \\quad\\)"),
-          withMathJax("\\(H_a: \\mu > 70\\)"))
-      ),
-      lc_formula_box(
-        p(tags$b("Lewostronna"), " (pytamy, czy średnia jest ",
-          tags$em("niższa"), " niż norma):"),
-        p(withMathJax("\\(H_0: \\mu \\geq 70 \\quad\\)"),
-          withMathJax("\\(H_a: \\mu < 70\\)"))
-      ),
-      p("Wybór wariantu wynika z brzmienia ", gloss("pytanie badawcze", "pytania badawczego"), " i musi być
-        zdecydowany przed zbieraniem danych."),
-      p("Niezależnie od wybranego wariantu, liczymy tę samą ",
-        gloss("statystyka testowa", "statystykę testową"), " — mierzy ona, ile ",
-        gloss("błąd standardowy", "błędów standardowych"), "
-        dzieli średnią z próby od wartości referencyjnej ",
-        withMathJax("\\(\\mu_0\\)"),
-        ". Różni się tylko sposób liczenia ", gloss("p-wartość", "p-wartości"), " (po jednej albo po obu stronach rozkładu)."),
-      p("Wzór na ", gloss("test t"), " jednej próby:"),
-      lc_formula_box(
-        p(withMathJax("\\(t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}}, \\quad df = n - 1\\)"))
-      )
+    lc_p("Analiza nie zaczyna się od wzorów, tylko od pytania. Ktoś przychodzi
+      i pyta w języku potocznym:"),
+
+    lc_feedback(type = "info", style = "font-size: 18px; text-align: center;",
+      tags$em("„Czy nasi studenci mają typowy poziom koncentracji?
+      Bo wydaje mi się, że coś z nimi jest nie tak.”")
     ),
 
+    lc_p("Żeby na to odpowiedzieć, trzeba najpierw ustalić, co znaczy „typowy”.
+      Załóżmy, że mamy wartość referencyjną z badania pilotażowego: średni
+      wynik testu koncentracji w populacji wynosi 70 pkt. Pytanie dotyczy
+      średniej \\(\\mu\\) w populacji naszych studentów, a nie średniej
+      z konkretnej próby. Jak w rozdziale 02, zależnie od tego, w którą stronę
+      pytamy, otrzymujemy jedną z trzech par hipotez:"),
+
+    lc_formula_box(
+      p(tags$b("Dwustronna"), " (czy średnia w ogóle się różni):"),
+      p(withMathJax("\\(H_0: \\mu = 70 \\quad\\)"),
+        withMathJax("\\(H_a: \\mu \\neq 70\\)"))
+    ),
+    lc_formula_box(
+      p(tags$b("Prawostronna"), " (czy średnia jest ",
+        tags$em("wyższa"), " niż norma):"),
+      p(withMathJax("\\(H_0: \\mu \\leq 70 \\quad\\)"),
+        withMathJax("\\(H_a: \\mu > 70\\)"))
+    ),
+    lc_formula_box(
+      p(tags$b("Lewostronna"), " (czy średnia jest ",
+        tags$em("niższa"), " niż norma):"),
+      p(withMathJax("\\(H_0: \\mu \\geq 70 \\quad\\)"),
+        withMathJax("\\(H_a: \\mu < 70\\)"))
+    ),
+
+    lc_p("Wariant wynika z brzmienia ", gloss("pytanie badawcze", "pytania
+      badawczego"), " i trzeba go wybrać przed zebraniem danych. Zdanie
+      „coś z nimi jest nie tak” nie wskazuje kierunku, więc odpowiada mu
+      wariant dwustronny."),
+
+    lc_p("Niezależnie od wariantu liczymy tę samą ",
+      gloss("statystyka testowa", "statystykę testową"), ". Mierzy ona, ile ",
+      gloss("błąd standardowy", "błędów standardowych"), " dzieli średnią
+      z próby od wartości referencyjnej \\(\\mu_0\\). Oba składniki znamy
+      z wykładu 03: błąd standardowy średniej \\(SE = s/\\sqrt{n}\\) i rozkład
+      t-Studenta z \\(n - 1\\) stopniami swobody. Tak powstaje statystyka ",
+      gloss("test t", "testu t"), " jednej próby:"),
+
+    lc_formula_box(
+      withMathJax("$$t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}}, \\quad df = n - 1$$")
+    ),
+
+    lc_p("Licznik mówi, jak daleko średnia z próby leży od \\(\\mu_0\\)
+      w jednostkach pomiaru. Mianownik przelicza tę odległość na błędy
+      standardowe. Dzięki temu ta sama różnica 2 pkt znaczy co innego, gdy
+      średnia waha się z próby na próbę o pół punktu, a co innego, gdy waha
+      się o pięć punktów. Jeśli H₀ jest prawdziwa, czyli \\(\\mu = \\mu_0\\),
+      statystyka t ma rozkład t-Studenta z \\(df = n - 1\\). Ten rozkład
+      pokazuje, jakie wartości t pojawiają się z samego przypadku, i na nim
+      liczymy ", gloss("p-wartość", "p-wartość"), ". Warianty testu różnią się
+      tylko tym, które ogony rozkładu biorą do p-wartości: dwustronny oba,
+      jednostronny jeden."),
+
     # ========================================================================
-    # Cwiczenie: sformuluj hipotezy
+    # Ćwiczenie: sformułuj hipotezy
     # ========================================================================
     lc_h2("ch2-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    tagList(
-      p("Zanim zobaczysz test w działaniu — spróbuj sam. Dla każdego pytania
-        badawczego zastanów się, jak wyglądałyby H₀ i Hₐ",
-        ". Przedyskutuj w grupie, a potem kliknij „Pokaż odpowiedź”.")
-    ),
+    lc_p("Zanim zobaczysz test w działaniu, przećwicz jego pierwszy krok,
+      czyli przekład pytania na hipotezy. Dla każdego pytania ustal, o jaką
+      średnią chodzi, jaka jest wartość referencyjna i czy pytanie wskazuje
+      kierunek. Dopiero potem odkryj odpowiedź."),
 
     hypothesis_practice("ch2", list(
       list(
@@ -89,7 +115,7 @@ ch2_ui <- list(
                     skraca ten czas.",
         h0 = "\\(H_0: \\mu \\geq 45\\) (nie krócej niż norma)",
         ha = "\\(H_a: \\mu < 45\\) (krócej)",
-        note = "Jednostronny (lewostronny) — hipoteza kierunkowa wynika z treści pytania."
+        note = "Jednostronny (lewostronny) — kierunek wynika z treści pytania."
       ),
       list(
         question = "Sprawdzamy, czy średnia waga paczki kawy (deklarowana 250 g)
@@ -101,10 +127,21 @@ ch2_ui <- list(
       )
     )),
 
+    lc_p("We wszystkich trzech pytaniach wartość \\(\\mu_0\\) pochodzi spoza
+      danych: z deklaracji, normy albo obietnicy producenta. Kierunek testu
+      także wynika z treści pytania, a nie z tego, co pokażą pomiary. Dane
+      potrzebne są dopiero w następnym kroku."),
+
     # ========================================================================
-    # WIDGET 1: Krokowy test t jednej proby
+    # WIDGET 1: Krokowy test t jednej próby
     # ========================================================================
     lc_h2("ch2-krok", "Test t jednej próby — krok po kroku"),
+
+    lc_p("Panel przeprowadza test dwustronny w pięciu scenariuszach. W każdym
+      dane losowane są z rozkładu normalnego, którego prawdziwa średnia nieco
+      różni się od \\(\\mu_0\\), więc H₀ jest w nich fałszywa. Kolejne kroki
+      prowadzą od histogramu ", gloss("próba", "próby"), " przez średnią
+      i statystykę t do decyzji."),
 
     figure_panel(
       label = "Ryc. 4.1",
@@ -131,35 +168,80 @@ ch2_ui <- list(
       )
     ),
 
-    # ========================================================================
-    # Interpretacja
-    # ========================================================================
-    inline_callout(
-      label = "Co zrobiliśmy?",
-      tagList(
-        tags$ol(
-          tags$li("Zebraliśmy dane (", gloss("próba", "próbę"), ")"),
-          tags$li("Obliczyliśmy średnią i ", gloss("odchylenie standardowe")),
-          tags$li("Policzyliśmy, jak daleko średnia z próby jest od μ₀ — to statystyka t"),
-          tags$li("Sprawdziliśmy, czy taka wartość t jest zaskakująca (p-wartość)")
-        ),
-        tags$p("Jeśli p < 0.05, różnica między naszą próbą a wartością referencyjną
-               jest zbyt duża, by ją wytłumaczyć przypadkiem.")
-      )
+    lc_p("Cztery kroki panelu to cały test. Najpierw oglądamy próbę. Potem
+      liczymy jej średnią \\(\\bar{x}\\) i ", gloss("odchylenie standardowe"),
+      " \\(s\\), a z nich błąd standardowy. W trzecim kroku przeliczamy
+      odległość \\(\\bar{x}\\) od \\(\\mu_0\\) na statystykę t i nanosimy ją
+      na rozkład t, jakiego oczekiwalibyśmy przy prawdziwej H₀. W czwartym
+      sprawdzamy, czy wynik leży w obszarze odrzucenia, i liczymy
+      p-wartość. W teście dwustronnym jest to pole obu ogonów rozkładu
+      poza \\(\\pm|t|\\):"),
+
+    lc_formula_box(
+      withMathJax("$$p = P\\left(|T| \\geq |t| \\;\\middle|\\; H_0\\right), \\qquad T \\sim t_{n-1}$$")
     ),
+
+    lc_p("Jak w rozdziale 03, p-wartość to prawdopodobieństwo, że przy
+      prawdziwej H₀ statystyka wypadnie co najmniej tak daleko od zera jak
+      nasza. Nie jest to prawdopodobieństwo, że H₀ jest prawdziwa. Porównujemy
+      ją z poziomem istotności \\(\\alpha\\). Wartość 0,05 to konwencja, ale
+      tak jak poziom ufności w wykładzie 03 trzeba ją ustalić przed analizą,
+      a nie dobierać do wyniku. Gdy \\(p < \\alpha\\), odrzucamy H₀. Gdy
+      \\(p \\geq \\alpha\\), nie mamy podstaw do odrzucenia H₀, co nie znaczy,
+      że średnia w populacji wynosi dokładnie \\(\\mu_0\\)."),
+
+    lc_p("Scenariusz koncentracji dobrze pokazuje, co znaczy to ostatnie
+      zastrzeżenie. Dane losowane są z populacji o średniej 72 pkt
+      i odchyleniu standardowym 13 pkt, więc H₀: μ = 70 jest fałszywa. Przy
+      n = 40 błąd standardowy wynosi około \\(13/\\sqrt{40} \\approx 2{,}06\\)
+      pkt, a różnica 2 pkt to średnio mniej niż jeden błąd standardowy.
+      Wartość krytyczna dla df = 39 wynosi 2,02, więc test odrzuca H₀ tylko
+      w około 16% prób. W pozostałych popełnia błąd II rodzaju. Przy n = 100
+      moc rośnie do około 33%. W scenariuszu hałasu prawdziwa średnia
+      (87,5 dB) leży ponad pół odchylenia standardowego (4 dB) od normy
+      i już przy n = 40 test odrzuca H₀ w około 97% prób."),
+
+    lc_p("Test t i przedział ufności dla średniej z wykładu 03 są zbudowane
+      z tych samych elementów. Przedział to \\(\\bar{x} \\pm t^* \\cdot SE\\),
+      a test odrzuca H₀, gdy \\(|t| \\geq t^*\\), czyli gdy \\(\\mu_0\\) leży
+      dalej od \\(\\bar{x}\\) niż \\(t^* \\cdot SE\\). To dwa zapisy tego
+      samego warunku:"),
+
+    lc_formula_box(
+      withMathJax("$$|t| \\geq t^*_{\\alpha/2,\\, n-1} \\iff \\mu_0 \\notin \\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$")
+    ),
+
+    lc_p("Test dwustronny na poziomie \\(\\alpha\\) odrzuca H₀: μ = μ₀
+      dokładnie wtedy, gdy ", gloss("przedział ufności"), " na poziomie
+      \\(1 - \\alpha\\) nie obejmuje \\(\\mu_0\\). Przy α = 0,05 odpowiada mu
+      przedział 95%. Przedział mówi przy tym więcej niż sam werdykt: pokazuje
+      wszystkie wartości \\(\\mu_0\\), których test by nie odrzucił, a więc
+      także to, jak duża może być różnica."),
+
+    lc_p("W R test wykonuje funkcja ", tags$code("t_test()"), " z pakietu
+      rstatix, np. ", tags$code("dane %>% t_test(koncentracja ~ 1, mu = 70)"),
+      ". Wynik zawiera statystykę t (", tags$code("statistic"), "), stopnie
+      swobody (", tags$code("df"), ") i p-wartość (", tags$code("p"), "),
+      a z argumentem ", tags$code("detailed = TRUE"), " także granice
+      przedziału ufności. W jamovi ten sam test jest w menu T-Tests → One
+      Sample T-Test, a \\(\\mu_0\\) wpisujemy w polu Test value."),
+
+    lc_p("Test opiera się na założeniach: obserwacje są niezależne, a średnia
+      z próby ma rozkład zbliżony do normalnego. Drugie założenie spełniają
+      dane bez silnej skośności albo odpowiednio duża próba; im bardziej
+      skośny rozkład, tym większej próby potrzeba. Jak to sprawdzać, omawia
+      wykład 05."),
 
     # ========================================================================
     # WIDGET 2: Test jednostronny — to samo pytanie, ale z kierunkiem
     # ========================================================================
     lc_h2("ch2-jednostronny", "A jeśli znamy kierunek? Test jednostronny"),
 
-    tagList(
-      p("W pierwszym teście pytaliśmy: „czy średnia różni się od μ₀?” (dwustronny, ≠).
-        Ale czasem mamy silniejsze podejrzenie — nie tylko „czy różni się”,
-        ale „czy jest większa / mniejsza”."),
-      p("Użyjemy tych samych danych co powyżej, ale zmienimy pytanie na kierunkowe.
-        Zobaczcie, jak zmienia się hipoteza i wykres.")
-    ),
+    lc_p("Test powyżej pytał, czy średnia różni się od \\(\\mu_0\\) w którąkolwiek
+      stronę. Czasem pytanie od początku wskazuje kierunek: czy zużycie wody
+      przekracza normę, czy hałas jest wyższy niż dopuszczalny. Wtedy, jak
+      w rozdziale 02, Hₐ jest jednostronna. Panel poniżej bierze tę samą
+      próbę co panel dwustronny i zadaje jej pytanie kierunkowe."),
 
     figure_panel(
       label = "Ryc. 4.2",
@@ -175,24 +257,49 @@ ch2_ui <- list(
       )
     ),
 
+    lc_p("Średnia, odchylenie standardowe i statystyka t są takie same jak
+      w teście dwustronnym, bo dane się nie zmieniły. Zmienia się obszar
+      odrzucenia: całe α = 0,05 leży w jednym ogonie, więc wartość krytyczna
+      przy n = 40 (df = 39) spada z 2,02 do 1,68. Zmienia się też p-wartość. Jeśli t
+      leży po stronie wskazanej przez Hₐ, p-wartość jednostronna jest
+      dokładnie połową dwustronnej. W scenariuszu zużycia wody (prawdziwa
+      średnia 158 l przy normie 150 l) test dwustronny przy n = 40 odrzuca
+      H₀ w około 51% prób, a prawostronny w około 63%."),
+
+    lc_p("Ta przewaga działa tylko w jednym kierunku. W scenariuszu koncentracji
+      pytanie kierunkowe brzmi „Czy studenci mają niższą koncentrację niż
+      norma 70 pkt?”,
+      a dane pochodzą z populacji o średniej 72 pkt. Średnia z próby zwykle
+      wypada więc powyżej 70, t jest dodatnie, a p-wartość lewostronna
+      przekracza 0,5. Test odrzuca H₀ w mniej niż 1% prób, choć średnia
+      naprawdę różni się od normy. Test jednostronny nie widzi odchylenia
+      w przeciwną stronę, niezależnie od jego wielkości."),
+
     inline_callout(
-      label = "Dwustronny a jednostronny",
-      tagList(
-        tags$ul(
-          tags$li(tags$b("Dwustronny (≠):"), " bezpieczniejszy, wykrywa efekt w obie strony.
-            Punkt krytyczny dalej od zera — trudniej odrzucić H₀."),
-          tags$li(tags$b("Jednostronny (> lub <):"), " mocniejszy w jednym kierunku,
-            ale ", tags$em("ślepy"), " na efekt w drugim."),
-          tags$li("Regułą: jednostronny decydujemy przed zbieraniem danych!")
-        )
-      ),
-      color = "uwaga"
+      label = "Zasada",
+      "Kierunek testu ustal przed zebraniem danych, na podstawie pytania.
+       Wybór strony po obejrzeniu wyników podwaja rzeczywiste ryzyko błędu
+       I rodzaju: przy α = 0,05 faktycznie wynosi ono 10%."
     ),
 
+    lc_p("W R kierunek podajemy argumentem ", tags$code("alternative"), ", np. ",
+      tags$code("t_test(koncentracja ~ 1, mu = 70, alternative = \"less\")"),
+      " dla Hₐ: μ < 70 albo ", tags$code("alternative = \"greater\""),
+      " dla Hₐ: μ > 70. W jamovi wybieramy odpowiednią opcję w sekcji
+      Hypothesis."),
+
+    # ========================================================================
+    # Ćwiczenia — CASchools
+    # ========================================================================
     lc_h2("ch2-cas", "Ćwiczenia", "CASchools — test t jednej próby"),
 
+    lc_p("Na koniec dwa zadania na prawdziwych danych. Pierwsze wymaga testu
+      dwustronnego, drugie jednostronnego. W obu najpierw zapisz H₀ i Hₐ,
+      wykonaj test w R albo w jamovi i sformułuj wniosek w języku pytania,
+      a dopiero potem porównaj go z rozwiązaniem."),
+
     lc_feedback(type = "info",
-      p(tags$b("Dane: "), "420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+      p(tags$b("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
         tags$code("dane/caschools.csv"), "."),
       p("Zmienne w zadaniach: ", tags$code("read"),
         " (średni wynik z czytania, ok. 655 pkt), ",
@@ -203,7 +310,7 @@ ch2_ui <- list(
       h4("Zadanie 1 — Czy wyniki z czytania różnią się od normy 650 pkt?"),
       p("Departament edukacji podaje normę 650 pkt. Przetestuj, czy średni wynik ",
         tags$code("read"), " w okręgach Kalifornii istotnie różni się",
-        " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0.05).
+        " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0,05).
         Co raportowałbyś departamentowi?"),
       lc_action("cas_ch2_ans1", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch2_sol1")
@@ -211,7 +318,7 @@ ch2_ui <- list(
 
     figure_panel(label = "Ćwiczenie",
       h4("Zadanie 2 — Czy typowy dochód okręgu przekracza 15 tys. USD?"),
-      p("Hipoteza dyrekcji: „Nasz stan to stan zamożnych\" — typowy okrąg ma dochód
+      p("Hipoteza dyrekcji: „Nasz stan to stan zamożnych” — typowy okręg ma dochód
         powyżej 15 tys. USD. Przetestuj jednostronnie (prawostronnie)",
         " zmienną ", tags$code("income"),
         ". Sformułuj H₀ i Hₐ dla hipotezy kierunkowej.
@@ -220,17 +327,23 @@ ch2_ui <- list(
       uiOutput("cas_ch2_sol2")
     ),
 
+    lc_p("Oba zadania mają ten sam schemat: pytanie, hipotezy, statystyka t,
+      p-wartość i powrót do języka pytania. Drugie pytanie z zadania 2,
+      o znaczenie praktyczne, wykracza poza sam test. Werdykt mówi, czy
+      różnicę da się odróżnić od przypadku, ale nie mówi, czy jest duża.
+      Do tego wrócimy w rozdziale 10."),
+
     lc_chapter_next(
       num       = "05",
       title     = "Test proporcji",
-      lead      = "a co gdy pytamy nie o średnią, lecz o procent?",
+      lead      = "ta sama logika dla odsetka zamiast średniej.",
       target_id = "ch-jedna-jakosciowa"
     )
   )
 )
 
 # ============================================================================
-# DANE — CASchools (wczytane raz przy ladowaniu modulu)
+# DANE — CASchools (wczytane raz przy ładowaniu modułu)
 # ============================================================================
 
 .ch2_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
@@ -406,13 +519,12 @@ ch2_server <- function(input, output, session) {
         "x̄ = ", step_num(lc_fmt(x_bar, 2)), ", s = ", step_num(lc_fmt(s, 2)),
         ", SE = s/√n = ", step_num(lc_fmt(se, 2)), ". Różnica między x̄ a μ₀: ",
         step_num(lc_fmt(x_bar - mu0, 2)),
-        ". Ale czy to dużo? Musimy to odnieść do zmienności (SE)."
+        ". Żeby ocenić, czy to dużo, odnosimy ją do SE."
       ),
       "3" = tagList(
         paste0("t = (", lc_fmt(x_bar, 2), " − ", mu0, ") / ", lc_fmt(se, 2), " = "),
         step_num(lc_fmt(t_stat, 3)), ". Statystyka t mówi: średnia z próby jest ",
-        step_num(lc_fmt(abs(t_stat), 1)), " błędów standardowych od μ₀.",
-        if (abs(t_stat) > 2) " To sporo!" else " To niewiele."
+        step_num(lc_fmt(abs(t_stat), 1)), " błędów standardowych od μ₀."
       ),
       "4" = step_verdict(p_val)
     )
@@ -445,7 +557,7 @@ ch2_server <- function(input, output, session) {
   # Krok widgetu 2 (1..4); wspólna próba nie cofa kroku.
   ch2b_step <- lc_step_server("ch2b_test", input)$step
 
-  # Panel hipotezy (jednostronny) — zawsze widoczny jako naglowek
+  # Panel hipotezy (jednostronny) — zawsze widoczny jako nagłówek
   output$ch2b_hypothesis_panel <- renderUI({
     par1s <- scenario_params_1s[[input$ch2_scenario]]
     samp <- ch2_sample()
@@ -456,7 +568,7 @@ ch2_server <- function(input, output, session) {
         p(tags$em(paste0("„", par1s$question, "”")))
       ),
       lc_formula_box(
-        p(tags$b("Hipoteza formalna (jednostronna!):")),
+        p(tags$b("Hipoteza formalna (jednostronna):")),
         p(withMathJax(par1s$h0_text)),
         p(withMathJax(par1s$h1_text))
       ),
@@ -504,7 +616,7 @@ ch2_server <- function(input, output, session) {
     se <- s / sqrt(n)
     t_stat <- (x_bar - mu0) / se
 
-    # p-wartosc jednostronna
+    # p-wartość jednostronna
     p_val <- if (par1s$alt == "less") {
       pt(t_stat, df = n - 1)
     } else {
@@ -521,23 +633,19 @@ ch2_server <- function(input, output, session) {
       "2" = tagList(
         "x̄ = ", step_num(lc_fmt(x_bar, 2)), ", s = ", step_num(lc_fmt(s, 2)),
         ", SE = s/√n = ", step_num(lc_fmt(se, 2)), ", t = ",
-        step_num(lc_fmt(t_stat, 3)), " (taka sama wartość). Statystyki takie same
-        jak wyżej — dane się nie zmieniły. Zmieniło się tylko pytanie (kierunek)."
+        step_num(lc_fmt(t_stat, 3)), " — te same wartości co w teście dwustronnym."
       ),
       "3" = tagList(
-        "t = ", step_num(lc_fmt(t_stat, 3)), ". Statystyka t jest identyczna.
-        Ale w teście jednostronnym patrzymy tylko na ",
-        if (par1s$alt == "less") "lewy" else "prawy", " ogon rozkładu."
+        "t = ", step_num(lc_fmt(t_stat, 3)), ". W teście jednostronnym patrzymy
+        tylko na ", if (par1s$alt == "less") "lewy" else "prawy", " ogon rozkładu."
       ),
       "4" = tagList(
-        "Jednostronnie: ", step_verdict(p_val), " ",
-        tags$em("Porównaj z testem dwustronnym wyżej — te same dane, ten sam t,
-          ale inna p-wartość!")
+        "Jednostronnie: ", step_verdict(p_val)
       )
     )
   })
 
-  # --- Cwiczenia CASchools ---
+  # --- Ćwiczenia CASchools ---
 
   cas_vis1 <- reactiveVal(FALSE)
   cas_vis2 <- reactiveVal(FALSE)
@@ -561,7 +669,7 @@ ch2_server <- function(input, output, session) {
     })
     div(class = "ch2-step-panel",
       lc_feedback(type = "ok", style = "margin-top: 10px;",
-        p(tags$b("H₀: "), "μ_read = 650 · ", tags$b("Hₐ: "), "μ_read ≠ 650"),
+        p(tags$b("H₀:"), " μ_read = 650 · ", tags$b("Hₐ:"), " μ_read ≠ 650"),
         tags$ul(
           tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f", r$n, r$m, r$s)),
           tags$li(sprintf("t(%s) = %.3f, p %s %s",
@@ -571,12 +679,20 @@ ch2_server <- function(input, output, session) {
         ),
         if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
         else tags$b("Brak podstaw do odrzucenia H₀"),
-        p(tags$b("Interpretacja: "),
-          sprintf(
-            "Średni wynik (%.2f pkt) różni się istotnie od normy 650 pkt (p < 0.05).
-             Różnica wynosi %.2f pkt.",
-            r$m, r$m - 650
-          ))
+        p(tags$b("Interpretacja:"), " ",
+          if (r$p < 0.05) {
+            sprintf(
+              "średni wynik z czytania (%.2f pkt) istotnie statystycznie różni się
+               od normy 650 pkt. Różnica wynosi %.2f pkt.",
+              r$m, r$m - 650
+            )
+          } else {
+            sprintf(
+              "nie mamy podstaw, by twierdzić, że średni wynik z czytania (%.2f pkt)
+               różni się od normy 650 pkt.",
+              r$m
+            )
+          })
       )
     )
   })
@@ -600,7 +716,7 @@ ch2_server <- function(input, output, session) {
     })
     div(class = "ch2-step-panel",
       lc_feedback(type = "ok", style = "margin-top: 10px;",
-        p(tags$b("H₀: "), "μ_income ≤ 15 · ", tags$b("Hₐ: "), "μ_income > 15"),
+        p(tags$b("H₀:"), " μ_income ≤ 15 · ", tags$b("Hₐ:"), " μ_income > 15"),
         tags$ul(
           tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f (tys. USD)", r$n, r$m, r$s)),
           tags$li(sprintf("t(%s) = %.3f, p %s %s (jednostronnie)",
@@ -610,13 +726,26 @@ ch2_server <- function(input, output, session) {
         ),
         if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
         else tags$b("Brak podstaw do odrzucenia H₀"),
-        p(tags$b("Interpretacja: "),
-          sprintf(
-            "Średni dochód (%.2f tys. USD) jest istotnie wyższy od 15 tys. (p < 0.05).
-             Uwaga: hipotezę kierunkową formułujemy PRZED zebraniem danych — inaczej
-             influjemy błąd I rodzaju.",
-            r$m
-          ))
+        p(tags$b("Interpretacja:"), " ",
+          if (r$p < 0.05) {
+            sprintf(
+              "średni dochód okręgu (%.2f tys. USD) jest istotnie statystycznie wyższy
+               od 15 tys. USD. Różnica wynosi %.2f tys. USD.",
+              r$m, r$m - 15
+            )
+          } else {
+            sprintf(
+              "średni dochód w próbie (%.2f tys. USD) jest wyższy od 15 tys. USD
+               o %.2f tys. USD, ale taka nadwyżka mieści się w przypadkowych wahaniach.
+               Nie mamy podstaw, by twierdzić, że średni dochód okręgu przekracza
+               15 tys. USD. Brak istotności nie dowodzi też, że średnia wynosi
+               15 tys. USD lub mniej. Praktycznie różnica też jest niewielka:
+               to około %.2f odchylenia standardowego dochodu.",
+              r$m, r$m - 15, r$d
+            )
+          }),
+        p("Hipotezę kierunkową formułujemy przed zebraniem danych; wybór kierunku
+          po obejrzeniu wyników zawyża ryzyko błędu I rodzaju.")
       )
     )
   })

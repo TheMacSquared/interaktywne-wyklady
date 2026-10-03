@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 6: Ilosciowa i jakosciowa (2 grupy)
+# CHAPTER 6: Zmienna ilościowa w dwóch grupach — test t dwóch grup
 # ============================================================================
 
 ch6_ui <- list(
@@ -11,52 +11,90 @@ ch6_ui <- list(
       kicker = "Rozdział 08 · Testowanie hipotez",
       num    = "08",
       title  = "Test t dwóch grup.",
-      lead   = "„Czy mężczyźni jeżdżą szybciej niż kobiety?” Porównanie średnich między
-                dwiema grupami — czy obserwowana różnica jest realna, czy wynika
-                z losowości próby."
+      lead   = "Średnie dwóch grup w próbie prawie nigdy nie wychodzą identyczne.
+                Test t mierzy różnicę między nimi w błędach standardowych i mówi,
+                czy jest większa, niż mogłoby ją zrobić samo losowanie. Gdy te same
+                osoby zmierzono dwa razy, ten sam test liczy się na różnicach w parach."
     ),
+
+    lc_p("W rozdziale 04 porównywaliśmy średnią jednej próby z ustaloną wartością
+      \\(\\mu_0\\). W poprzednim rozdziale badaliśmy związek dwóch zmiennych
+      jakościowych. Teraz łączymy oba wątki: mamy zmienną ilościową, na przykład
+      wzrost, i zmienną jakościową z dwiema kategoriami, na przykład płeć.
+      Pytanie brzmi, czy średnia zmiennej ilościowej jest taka sama w obu grupach."),
 
     lc_h2("ch6-intro", "Test t dla dwóch prób niezależnych"),
 
-    tagList(
-      p("Pytanie: czy średnie w dwóch grupach różnią się istotnie?"),
-      p("Przykład: czy mężczyźni i kobiety różnią się wzrostem?"),
-      p("Trzy warianty par hipotez:"),
-      lc_formula_box(
-        p(tags$b("Dwustronna"), " (grupy różnią się):"),
-        p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 \\quad\\)"),
-          withMathJax("\\(H_a: \\mu_1 \\neq \\mu_2\\)"))
-      ),
-      lc_formula_box(
-        p(tags$b("Prawostronna"), " (grupa 1 ma ",
-          tags$em("wyższą"), " średnią):"),
-        p(withMathJax("\\(H_0: \\mu_1 \\leq \\mu_2 \\quad\\)"),
-          withMathJax("\\(H_a: \\mu_1 > \\mu_2\\)"))
-      ),
-      lc_formula_box(
-        p(tags$b("Lewostronna"), " (grupa 1 ma ",
-          tags$em("niższą"), " średnią):"),
-        p(withMathJax("\\(H_0: \\mu_1 \\geq \\mu_2 \\quad\\)"),
-          withMathJax("\\(H_a: \\mu_1 < \\mu_2\\)"))
-      ),
-      p(gloss("statystyka testowa", "Statystyka testowa"), " mierzy różnicę średnich wyrażoną w jednostkach ",
-        gloss("błąd standardowy", "błędu standardowego"), ". Im większa wartość bezwzględna ", withMathJax("\\(|t|\\)"),
-        ", tym bardziej nieprawdopodobne jest zobaczenie takiej różnicy gdy
-        H₀ jest prawdziwa."),
-      lc_formula_box(
-        p("Statystyka testowa: ",
-          withMathJax("\\(t = \\frac{\\bar{x}_1 - \\bar{x}_2}{SE}\\)"))
-      )
+    lc_p("Próby są niezależne, gdy w obu grupach są różne osoby i wynik jednej
+      osoby nic nie mówi o wyniku innej: kobiety i mężczyźni, dwie odmiany
+      pszenicy, dwie partie towaru. Parametrem, o który pytamy, jest różnica
+      średnich populacji \\(\\mu_1 - \\mu_2\\). Tak jak w teście jednej próby,
+      hipotezę zapisujemy w jednym z trzech wariantów, zależnie od brzmienia
+      pytania badawczego."),
+
+    lc_formula_box(
+      p(strong("Dwustronna"), " (grupy różnią się w dowolną stronę):"),
+      p(withMathJax("\\(H_0: \\mu_1 = \\mu_2 \\quad\\)"),
+        withMathJax("\\(H_a: \\mu_1 \\neq \\mu_2\\)"))
     ),
+    lc_formula_box(
+      p(strong("Prawostronna"), " (grupa 1 ma wyższą średnią):"),
+      p(withMathJax("\\(H_0: \\mu_1 \\leq \\mu_2 \\quad\\)"),
+        withMathJax("\\(H_a: \\mu_1 > \\mu_2\\)"))
+    ),
+    lc_formula_box(
+      p(strong("Lewostronna"), " (grupa 1 ma niższą średnią):"),
+      p(withMathJax("\\(H_0: \\mu_1 \\geq \\mu_2 \\quad\\)"),
+        withMathJax("\\(H_a: \\mu_1 < \\mu_2\\)"))
+    ),
+
+    lc_p("Hipoteza zerowa \\(\\mu_1 = \\mu_2\\) to to samo co \\(\\mu_1 - \\mu_2 = 0\\).
+      Mamy więc znów jedną liczbę z próby, różnicę \\(\\bar{x}_1 - \\bar{x}_2\\),
+      i wartość, z którą ją porównujemy: zero. ",
+      gloss("statystyka testowa", "Statystyka testowa"), " mówi, ile ",
+      gloss("błąd standardowy", "błędów standardowych"), " dzieli tę różnicę od zera.
+      Błąd standardowy różnicy znamy z wykładu 03, z przedziału ufności dla
+      różnicy średnich: wariancje obu średnich się dodają."),
+
+    lc_formula_box(withMathJax(
+      "$$t = \\frac{\\bar{x}_1 - \\bar{x}_2}{\\sqrt{\\dfrac{s_1^2}{n_1} + \\dfrac{s_2^2}{n_2}}}$$"
+    )),
+
+    lc_p("Każda grupa ma tu własne odchylenie standardowe, czyli nie zakładamy
+      równych wariancji. To ",
+      gloss("test t Welcha", "test t Welcha"), ", ten sam wariant co w przedziale
+      dla różnicy z wykładu 03. Przy prawdziwej H₀ statystyka ma w przybliżeniu
+      rozkład t, a liczbę ", gloss("stopnie swobody", "stopni swobody"), " wyznacza
+      wzór Welcha–Satterthwaite'a. Wynik zwykle nie jest liczbą całkowitą
+      i leży między \\(\\min(n_1, n_2) - 1\\) a \\(n_1 + n_2 - 2\\). Funkcja ",
+      tags$code("t_test()"), " z pakietu rstatix, której używają wszystkie panele
+      tego rozdziału, domyślnie liczy właśnie wersję Welcha."),
+
+    lc_p("W jamovi Independent Samples T-Test ma domyślnie zaznaczoną opcję
+      Student's. Wersja Studenta zakłada równe wariancje w obu grupach, łączy
+      je w jedno wspólne odchylenie standardowe i używa \\(n_1 + n_2 - 2\\)
+      stopni swobody. Żeby dostać wynik zgodny z R, zaznacz opcję Welch's. Przy
+      podobnych wariancjach i licznościach obie wersje dają prawie to samo,
+      przy wyraźnie różnych mogą się rozejść. Wracamy do tego w wykładzie 05."),
+
+    lc_p("Decyzja przebiega jak w poprzednich rozdziałach. ",
+      gloss("p-wartość", "P-wartość"), " to prawdopodobieństwo, że przy
+      prawdziwej H₀ dostalibyśmy statystykę co najmniej tak odległą od zera jak
+      nasza. Jeśli jest mniejsza niż ustalony przed analizą poziom istotności,
+      zwykle α = 0,05, odrzucamy H₀. Test dwustronny przy α = 0,05 i 95% przedział
+      ufności dla różnicy z wykładu 03 mają ten sam błąd standardowy i te same
+      stopnie swobody, więc dają zgodną odpowiedź: H₀ odrzucamy dokładnie wtedy,
+      gdy przedział dla \\(\\mu_1 - \\mu_2\\) nie obejmuje zera."),
 
     # ========================================================================
     # Cwiczenie: sformuluj hipotezy
     # ========================================================================
     lc_h2("ch6-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    tagList(
-      p("Porównanie dwóch grup — jak zapisać H₀ i Hₐ?")
-    ),
+    lc_p("Zanim zobaczysz test w działaniu, zapisz hipotezy dla trzech pytań
+      badawczych. Zwróć uwagę, czy pytanie wskazuje kierunek różnicy i czy
+      w obu grupach są na pewno różne osoby. Swoją odpowiedź porównaj
+      z rozwiązaniem po kliknięciu „Pokaż odpowiedź”."),
 
     hypothesis_practice("ch6", list(
       list(
@@ -77,14 +115,25 @@ ch6_ui <- list(
                     (słowa na minutę). Czy kurs poprawił wyniki?",
         h0 = "\\(H_0: \\mu_d \\leq 0\\) (d = po − przed)",
         ha = "\\(H_a: \\mu_d > 0\\) (poprawa)",
-        note = "Dane sparowane (nie niezależne!) — te same osoby mierzone dwa razy. Analizujemy różnice."
+        note = "Dane sparowane, a nie niezależne — te same osoby zmierzono dwa razy,
+                więc analizujemy różnice."
       )
     )),
+
+    lc_p("Trzecie pytanie ma inną budowę danych niż dwa pierwsze. Wrócimy do
+      niego w sekcji o teście dla danych sparowanych."),
 
     # ========================================================================
     # WIDGET 1: Test t niezalezny
     # ========================================================================
     lc_h2("ch6-niezalezny", "Test t niezależny"),
+
+    lc_p("Panel losuje próbę studentów z symulowanej populacji i porównuje
+      kobiety z mężczyznami. W populacji kobiety mają średnio 166 cm wzrostu
+      (σ = 6 cm), a mężczyźni 178 cm (σ = 7 cm). Średnia waga to 62 kg i 78 kg.
+      Średnia ocen i czas dojazdu od płci nie zależą, więc dla tych dwóch
+      zmiennych H₀ jest prawdziwa. Suwak ustala liczebność każdej z dwóch
+      grup."),
 
     figure_panel(
       label = "Ryc. 8.1",
@@ -110,19 +159,60 @@ ch6_ui <- list(
       )
     ),
 
+    lc_p("Przy ustawieniach startowych losujemy 40 kobiet i 40 mężczyzn.
+      Dla wzrostu błąd standardowy różnicy wynosi wtedy około
+      \\(\\sqrt{6^2/40 + 7^2/40} \\approx 1{,}5\\) cm, a różnica w populacji
+      to 12 cm, czyli około ośmiu błędów standardowych. Statystyka t wychodzi
+      daleko w ogonie rozkładu t, p-wartość jest znikoma i H₀ odrzucamy
+      praktycznie przy każdym losowaniu. Podobnie jest z wagą. Znak t zależy tylko od kolejności
+      odejmowania: R odejmuje średnie w kolejności alfabetycznej grup, czyli
+      kobiety minus mężczyźni, dlatego dla wzrostu t jest ujemne."),
+
+    lc_p("Ciekawiej jest dla średniej ocen i czasu dojazdu. Tu różnica
+      w populacji wynosi zero, a mimo to średnie w próbie nigdy nie są równe.
+      Zwykle test nie daje podstaw do odrzucenia H₀, ale mniej więcej co
+      dwudzieste losowanie da p < 0,05. To ",
+      gloss("błąd pierwszego rodzaju", "błąd pierwszego rodzaju"), " z rozdziału 03,
+      którego prawdopodobieństwo ustaliliśmy, wybierając α. Z drugiej strony
+      brak podstaw do odrzucenia H₀ nie dowodzi, że średnie są równe.
+      Mówi tylko, że ta próba nie wystarcza, by wykazać różnicę."),
+
+    lc_p("W R test wykonuje jedno wywołanie: ",
+      tags$code("dane %>% t_test(wzrost ~ plec)"), ". Po lewej stronie tyldy
+      stoi zmienna ilościowa, po prawej zmienna grupująca. W wyniku znajdziesz
+      statystykę t, niecałkowitą liczbę stopni swobody (znak, że to wersja
+      Welcha) i p-wartość. Ile wart jest wynik 12 cm w praktyce, to pytanie
+      o wielkość efektu, którym zajmiemy się w rozdziale 10."),
+
     # ========================================================================
     # WIDGET 2: Test t parowy
     # ========================================================================
     lc_h2("ch6-parowy", "Test t dla prób zależnych (sparowany)"),
 
-    tagList(
-      p("Gdy mierzymy tych samych osobników dwa razy
-        (przed i po interwencji), używamy ",
-        gloss("test t dla prób zależnych", "testu t dla danych sparowanych"), "."),
-      p("Przykład: wyniki studentów przed i po korepetycjach."),
-      p("Testujemy różnice: ", withMathJax("\\(d_i = x_{\\text{po},i} - x_{\\text{przed},i}\\)"),
-        ". Pytamy, czy średnia różnic ≠ 0.")
-    ),
+    lc_p("Test niezależny zakłada, że w obu grupach są różne osoby. Często
+      jednak mierzymy te same osoby dwa razy: przed interwencją i po niej,
+      lewą i prawą rękę, ten sam produkt w dwóch laboratoriach. Takie ",
+      gloss("próby zależne", "próby zależne"), " nie są dwiema niezależnymi grupami.
+      Student, który przed korepetycjami miał wysoki wynik, zwykle ma wysoki
+      wynik także po nich. Tę informację wykorzystuje ",
+      gloss("test t dla prób zależnych", "test t dla danych sparowanych"), "."),
+
+    lc_p("Pomysł jest prosty. Dla każdej osoby liczymy różnicę
+      \\(d_i = x_{\\text{po},i} - x_{\\text{przed},i}\\) i dalej pracujemy już
+      tylko na tych różnicach. Hipotezy dotyczą średniej różnicy w populacji
+      \\(\\mu_d\\), na przykład \\(H_0: \\mu_d = 0\\) i \\(H_a: \\mu_d \\neq 0\\).
+      To jest test t jednej próby z rozdziału 04 z wartością odniesienia
+      \\(\\mu_0 = 0\\), policzony na kolumnie różnic:"),
+
+    lc_formula_box(withMathJax(
+      "$$t = \\frac{\\bar{d}}{s_d / \\sqrt{n}}, \\qquad df = n - 1$$"
+    )),
+
+    lc_p("Tu \\(\\bar{d}\\) i \\(s_d\\) to średnia i odchylenie standardowe
+      różnic, a \\(n\\) to liczba par. Panel generuje wyniki studentów przed
+      korepetycjami i po nich. Wyniki przed mają średnią 50 pkt i odchylenie
+      12 pkt. Wynik po to wynik przed plus efekt ustawiony suwakiem plus losowy
+      szum o odchyleniu 8 pkt. Linie łączą dwa pomiary tej samej osoby."),
 
     figure_panel(
       label = "Ryc. 8.2",
@@ -140,22 +230,50 @@ ch6_ui <- list(
       )
     ),
 
+    lc_p("Przy ustawieniach startowych (25 studentów, efekt 5 pkt) różnice mają
+      odchylenie standardowe około 8 pkt, więc błąd standardowy średniej
+      różnicy to około \\(8 / \\sqrt{25} = 1{,}6\\) pkt. Efekt 5 pkt to około
+      trzech błędów standardowych i test wykrywa go w mniej więcej 85%
+      losowań. To jest ", gloss("moc testu", "moc testu"), " z rozdziału 03
+      przy tych ustawieniach. Przy efekcie 0 H₀ jest prawdziwa i odrzucamy ją tylko
+      w około 5% losowań. Panel liczy różnicę jako po − przed, więc gdy wyniki
+      rosną, statystyka t jest dodatnia. R odejmuje w kolejności poziomów
+      zmiennej grupującej: żeby dostać po − przed, poziom „po” musi być
+      pierwszy."),
+
+    lc_p("W R dane trzymamy w formacie długim, posortowane tak, by pomiary tej
+      samej osoby szły w tej samej kolejności w obu momentach, i dopisujemy ",
+      tags$code("paired = TRUE"), ": ",
+      tags$code("dane %>% t_test(wynik ~ moment, paired = TRUE)"), ". W jamovi
+      służy do tego Paired Samples T-Test, w którym oba pomiary są osobnymi
+      kolumnami."),
+
     # ========================================================================
     # WIDGET 3: Sparowane vs. niesparowane — te same dane, inny wynik
     # ========================================================================
     lc_h2("ch6-compare", "Dlaczego sparowanie ma znaczenie?"),
 
-    tagList(
-      p("Wyobraź sobie badanie: 20 pacjentów zmierzono ciśnienie ",
-        "przed", " nową dietą. Po 3 miesiącach na kontrolę wróciło",
-        " tylko 15 — 5 pacjentów z najwyższym ciśnieniem wyjściowym nie zgłosiło się."),
-      p("Te same dane, dwa podejścia:"),
-      tags$ul(
-        tags$li(tags$b("Niesparowane:"),
-          " porównujemy 20 pomiarów 'przed' z 15 pomiarami 'po' — jak dwie niezależne grupy."),
-        tags$li(tags$b("Sparowane:"),
-          " bierzemy tylko 15 pacjentów z obydwoma pomiarami i liczymy różnice.")
-      )
+    lc_p("Gdybyśmy dane z poprzedniego panelu potraktowali jak dwie niezależne
+      grupy, test porównywałby średnie przed i po, a za zmienność uznałby całe
+      zróżnicowanie studentów. Wyniki przed mają odchylenie 12 pkt, wyniki po
+      około 14 pkt, więc błąd standardowy różnicy wyniósłby około 3,75 pkt
+      zamiast 1,6 pkt. Ten sam efekt 5 pkt dałby t około 1,3 zamiast 3,1
+      i zwykle nie byłby istotny. Sparowanie usuwa różnice między osobami,
+      bo każda osoba jest porównywana sama ze sobą. Zostaje tylko zmienność
+      zmiany. Analiza niesparowana byłaby tu zresztą błędna także formalnie,
+      bo pomiary tej samej osoby nie są niezależne."),
+
+    lc_p("Sparowanie chroni też przed drugim problemem: zmianą składu grup
+      między pomiarami. Wyobraź sobie badanie, w którym 20 pacjentom zmierzono
+      ciśnienie przed nową dietą. Po trzech miesiącach na kontrolę wróciło
+      tylko 15 osób. Pięciu pacjentów z najwyższym ciśnieniem wyjściowym się
+      nie zgłosiło. Te same dane można przeanalizować na dwa sposoby."),
+
+    tags$ul(
+      tags$li(strong("Niesparowane:"),
+        " porównujemy 20 pomiarów przed z 15 pomiarami po, jak dwie niezależne grupy."),
+      tags$li(strong("Sparowane:"),
+        " bierzemy tylko 15 pacjentów z oboma pomiarami i liczymy różnice.")
     ),
 
     figure_panel(
@@ -163,7 +281,7 @@ ch6_ui <- list(
       title = "Błąd wykruszania próby: sparowane vs. niesparowane na tych samych danych",
       fluidRow(
         column(6,
-          p(tags$strong("Analiza niesparowana"), " (n₁=20, n₂=15)"),
+          p(tags$strong("Analiza niesparowana"), " (n₁ = 20, n₂ = 15)"),
           zoom_plot_ui("ch6_compare_ind_plot", height = "260px"),
           uiOutput("ch6_compare_ind_result")
         ),
@@ -175,32 +293,52 @@ ch6_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Błąd wykruszania próby",
-      "5 pacjentów nie wróciło na kontrolę — nie było to przypadkowe, lecz związane
-       z wyższym ciśnieniem wyjściowym (MNAR). Analiza niesparowana 'widzi' tę różnicę
-       jako efekt diety; analiza sparowana eliminuje błąd, porównując każdego pacjenta
-       ze sobą.",
-      color = "info"
+    lc_p("Analiza niesparowana pokazuje średnią 148,8 mmHg przed i 140,9 mmHg
+      po, czyli spadek o prawie 8 mmHg. Test daje t(30) = 2,17 i p = 0,038,
+      więc przy α = 0,05 odrzucamy H₀ i dieta wygląda na skuteczną. Analiza
+      sparowana mówi coś innego. U 15 pacjentów, którzy wrócili, ciśnienie
+      spadło średnio o 0,9 mmHg (odchylenie różnic 3,9 mmHg), t(14) = −0,86,
+      p = 0,405. Nie ma podstaw do odrzucenia H₀."),
+
+    lc_p("Skąd ta rozbieżność? Pięciu nieobecnych pacjentów miało ciśnienie
+      wyjściowe od 161 do 178 mmHg. W analizie niesparowanej podnoszą średnią
+      przed, ale w grupie po już ich nie ma. Pozorny spadek ciśnienia to
+      w większości zmiana składu grupy, a nie efekt diety. Analiza sparowana
+      porównuje każdego pacjenta z nim samym, więc odejście tych pięciu osób
+      nie tworzy sztucznej różnicy. Ma to swoją cenę: wynik dotyczy tylko
+      pacjentów, którzy wrócili, i nic nie mówi o tych z najwyższym ciśnieniem."),
+
+    inline_callout(label = "Zasada",
+      "Gdy te same jednostki zmierzono dwa razy, analizuj różnice w parach.
+       Rodzaj testu wynika z planu badania, a nie z tego, który daje mniejszą
+       p-wartość."
     ),
 
-    inline_callout(
-      label = "Uwaga",
-      "gdy założenia testu t nie są spełnione (skrajne odstające, mocno skośny
-       rozkład, małe n), stosuje się ", gloss("test nieparametryczny", "testy nieparametryczne"), " — omówimy je w osobnym
-       wykładzie.",
-      color = "uwaga"
-    ),
+    lc_p("Oba warianty testu t opierają się na założeniach. Obserwacje (a w teście
+      sparowanym pary) muszą być od siebie niezależne. Średnie, a w teście
+      sparowanym średnia różnic, powinny mieć w przybliżeniu rozkład normalny.
+      Przy dużych próbach zapewnia to ",
+      gloss("centralne twierdzenie graniczne", "centralne twierdzenie graniczne"), ", ale im bardziej skośny rozkład
+      i im więcej wartości odstających, tym większej próby potrzeba. Wersja
+      Studenta zakłada dodatkowo równe wariancje. Sprawdzaniu tych założeń
+      i ", gloss("test nieparametryczny", "testom nieparametrycznym"), ",
+      których używa się, gdy założenia zawodzą, poświęcony jest wykład 05."),
 
     lc_h2("ch6-cas", "Ćwiczenia", "CASchools — test t dwóch grup"),
 
+    lc_p("Na koniec dwa zadania na prawdziwych danych. W obu porównujemy
+      średni wynik z czytania między dwiema grupami okręgów szkolnych,
+      a grupy są niezależne. Zapisz hipotezy, wykonaj test w R lub w jamovi
+      (w jamovi zaznacz opcję Welch's, żeby wynik był zgodny z rozwiązaniem)
+      i dopiero potem porównaj swój wynik z rozwiązaniem."),
+
     lc_feedback(type = "info",
-      p(tags$b("Dane: "), "420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+      p(strong("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
         tags$code("dane/caschools.csv"), "."),
       p("Zmienne w zadaniach: ", tags$code("read"),
         " (wyniki z czytania), ", tags$code("grades"),
         " (typ szkoły: KK-06/KK-08), ",
-        tags$code("student_teacher_ratio"), " (STR).")
+        tags$code("student_teacher_ratio"), " (STR, liczba uczniów na nauczyciela).")
     ),
 
     figure_panel(label = "Ćwiczenie",
@@ -214,7 +352,7 @@ ch6_ui <- list(
     ),
 
     figure_panel(label = "Ćwiczenie",
-      h4("Zadanie 7 — Duże klasy vs małe — czy STR ma znaczenie?"),
+      h4("Zadanie 7 — Duże klasy czy małe — czy STR ma znaczenie?"),
       p("Utwórz zmienną binarną: ",
         tags$code("high_str = (student_teacher_ratio > 20)"),
         ". Porównaj wyniki ", tags$code("read"),
@@ -225,23 +363,34 @@ ch6_ui <- list(
       uiOutput("cas_ch6_sol7")
     ),
 
+    lc_p("Istotny wynik testu mówi tylko, że różnica średnich w populacji
+      najpewniej nie jest zerowa. Nie mówi, czy jest duża, ani skąd się bierze.
+      Przy dużych próbach nawet niewielka różnica może dać małą p-wartość,
+      a grupy okręgów mogą różnić się także innymi cechami, na przykład
+      zamożnością. Pierwszym problemem zajmiemy się w rozdziale 10, drugim
+      w wykładzie o regresji."),
+
+    lc_p("Test t porównuje dokładnie dwie grupy. Gdy grup jest więcej,
+      kusi, by porównać je parami kilkoma testami t. Następny rozdział pokazuje,
+      dlaczego to zły pomysł i jak porównać wszystkie średnie jednym testem."),
+
     lc_chapter_next(
       num       = "09",
       title     = "ANOVA",
-      lead      = "a gdy grup jest więcej niż dwie?",
+      lead      = "trzy grupy i więcej porównane jednym testem",
       target_id = "ch-anova"
     )
   )
 )
 
 # ============================================================================
-# DANE — CASchools (wczytane raz przy ladowaniu modulu)
+# DANE — CASchools (wczytane raz przy ładowaniu modułu)
 # ============================================================================
 
 .ch6_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
                      stringsAsFactors = FALSE)
 
-# Statyczne dane do widgetu porownania sparowany vs. niesparowany (Ryc. 8.3)
+# Statyczne dane do widgetu porównania sparowany vs. niesparowany (Ryc. 8.3)
 .ch6_compare <- local({
   przed_paired  <- c(132, 138, 145, 141, 136, 152, 143, 139,
                      147, 134, 148, 141, 137, 144, 150)
@@ -297,7 +446,7 @@ ch6_server <- function(input, output, session) {
   observeEvent(input$ch6_run_ind_t, {
     req(input$ch6_ind_var, input$ch6_ind_n)
     n <- input$ch6_ind_n
-    data <- generate_student_data(n * 2)
+    data <- generate_student_data(n * 2, equal_sex = TRUE)
     ch6_ind_data_state(list(
       var = input$ch6_ind_var,
       n_per_group = n,
@@ -329,13 +478,24 @@ ch6_server <- function(input, output, session) {
     ))
   }, ignoreInit = TRUE)
 
-  # --- Widget 1: Test t niezalezny ---
+  # --- Widget 1: Test t niezależny ---
   ch6_ind_var_label <- function(var) {
     switch(var,
       "wzrost" = "Wzrost (cm)",
       "waga" = "Waga (kg)",
       "srednia_ocen" = "Średnia ocen",
       "czas_dojazdu" = "Czas dojazdu (min)",
+      var
+    )
+  }
+
+  # Nazwa zmiennej do zdań („średnia zmiennej „wzrost”…”) — bez kłopotów z rodzajem.
+  ch6_ind_var_name <- function(var) {
+    switch(var,
+      "wzrost" = "wzrost",
+      "waga" = "waga",
+      "srednia_ocen" = "średnia ocen",
+      "czas_dojazdu" = "czas dojazdu",
       var
     )
   }
@@ -358,13 +518,13 @@ ch6_server <- function(input, output, session) {
   })
 
   output$ch6_ind_hypothesis <- renderUI({
-    var_label <- tolower(ch6_ind_var_label(input$ch6_ind_var))
+    var_name <- ch6_ind_var_name(input$ch6_ind_var)
     lc_formula_box(
       p(tags$b("Hipoteza formalna (dwustronna):")),
       p(withMathJax("\\(H_0: \\mu_{K} = \\mu_{M}\\)"),
-        " — średni ", var_label, " jest taki sam w obu grupach."),
+        " — średnia zmiennej „", var_name, "” jest taka sama u kobiet i mężczyzn."),
       p(withMathJax("\\(H_a: \\mu_{K} \\neq \\mu_{M}\\)"),
-        " — średni ", var_label, " różni się między grupami.")
+        " — średnia zmiennej „", var_name, "” różni się między grupami.")
     )
   })
 
@@ -433,7 +593,7 @@ ch6_server <- function(input, output, session) {
     if (is.null(data)) return(NULL)
 
     var <- input$ch6_ind_var
-    var_label <- tolower(ch6_ind_var_label(var))
+    var_name <- ch6_ind_var_name(var)
     st <- ch6_ind_stats()
     tidy_res <- st$test
     means <- st$means
@@ -452,9 +612,8 @@ ch6_server <- function(input, output, session) {
       ),
       "3" = tagList(
         "t = ", step_num(lc_fmt(tidy_res$statistic, 3)),
-        paste0(" (df = ", lc_fmt(tidy_res$df, 1), ")."),
-        "Statystyka t to różnica średnich przeliczona na jednostki błędu
-        standardowego. Im dalej od zera, tym bardziej skrajny wynik pod H₀."
+        paste0(" (df Welcha = ", lc_fmt(tidy_res$df, 1), "). "),
+        "Tyle błędów standardowych dzieli średnie obu grup (kobiety − mężczyźni)."
       ),
       "4" = tagList(
         paste0("Wynik testu t niezależnego: t(", lc_fmt(tidy_res$df, 1), ") = "),
@@ -462,15 +621,15 @@ ch6_server <- function(input, output, session) {
         tags$strong("Werdykt:", .noWS = "outside"),
         if (tidy_res$p < 0.05) {
           tagList(
-            " średnia ", var_label, " różni się istotnie między grupami — ",
-            "w próbie była wyższa w grupie ", b_(as.character(higher)),
-            " niż ", b_(as.character(lower)), " o ", step_num(diff_val), "."
+            " średnia zmiennej „", var_name, "” różni się istotnie między grupami — ",
+            "w próbie była wyższa w grupie ", as.character(higher),
+            " niż ", as.character(lower), " o ", step_num(diff_val), "."
           )
         } else {
           tagList(
-            " nie ma podstaw, by twierdzić, że średnia ", var_label,
-            " różni się między grupami. Obserwowana w próbie różnica ",
-            step_num(diff_val), " (na korzyść grupy ", b_(as.character(higher)),
+            " nie ma podstaw, by twierdzić, że średnia zmiennej „", var_name,
+            "” różni się między grupami. Obserwowana w próbie różnica ",
+            step_num(diff_val), " (na korzyść grupy ", as.character(higher),
             ") mieści się w zakresie wahań losowych."
           )
         }
@@ -500,7 +659,7 @@ ch6_server <- function(input, output, session) {
     data <- ch6_paired_data()
     if (is.null(data)) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij 'Generuj i testuj'",
+        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Generuj i testuj”",
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {
@@ -529,8 +688,9 @@ ch6_server <- function(input, output, session) {
     long <- data %>%
       pivot_longer(cols = c(wynik_przed, wynik_po),
                    names_to = "moment", values_to = "wynik")
+    # Kolejność poziomów: t liczone dla różnicy po − przed, jak w tabeli.
     long$moment <- factor(long$moment,
-                          levels = c("wynik_przed", "wynik_po"))
+                          levels = c("wynik_po", "wynik_przed"))
 
     result <- rstatix::t_test(long, wynik ~ moment, paired = TRUE)
     tidy_res <- as.data.frame(result)
@@ -541,31 +701,31 @@ ch6_server <- function(input, output, session) {
 
     lc_feedback(type = "info",
       p(tags$strong("Wynik testu t dla danych sparowanych:")),
-      p(paste0("Średnia różnica: ", round(mean_diff, 2), " pkt")),
+      p(paste0("Średnia różnica (po − przed): ", round(mean_diff, 2), " pkt")),
       p(paste0("t(", tidy_res$df, ") = ", round(tidy_res$statistic, 3))),
       ui_p_value(tidy_res$p),
       p(style = paste0("color:", res$color, "; font-weight: bold;"),
         res$decision),
       if (tidy_res$p < 0.05) {
-        p(tags$strong("Werdykt: "),
-          "wyniki istotnie się zmieniły — średnio ", tags$b(direction),
-          " o ", tags$b(round(abs(mean_diff), 2)), " pkt.")
+        p(tags$strong("Werdykt:"),
+          " wyniki istotnie się zmieniły — średnio ", direction,
+          " o ", round(abs(mean_diff), 2), " pkt.")
       } else {
-        p(tags$strong("Werdykt: "),
-          "nie ma podstaw, by twierdzić, że wyniki się zmieniły. ",
-          "Obserwowana w próbie zmiana (", tags$b(round(mean_diff, 2)),
+        p(tags$strong("Werdykt:"),
+          " nie ma podstaw, by twierdzić, że wyniki się zmieniły. ",
+          "Obserwowana w próbie zmiana (", round(mean_diff, 2),
           " pkt) mieści się w zakresie wahań losowych.")
       }
     )
   })
 
-  # --- Widget: porownanie sparowany vs. niesparowany (Ryc. 8.3) ---
+  # --- Widget: porównanie sparowany vs. niesparowany (Ryc. 8.3) ---
 
   zoom_plot_server("ch6_compare_ind_plot", reactive({
     d <- .ch6_compare$ind_data
     d$kolor <- factor(
-      ifelse(d$typ == "dropout", "Brak kontroli (n=5)", as.character(d$grupa)),
-      levels = c("Przed", "Po", "Brak kontroli (n=5)")
+      ifelse(d$typ == "dropout", "Brak kontroli (n = 5)", as.character(d$grupa)),
+      levels = c("Przed", "Po", "Brak kontroli (n = 5)")
     )
     means <- d %>% group_by(grupa) %>% summarise(m = mean(wartosc), .groups = "drop")
 
@@ -575,15 +735,15 @@ ch6_server <- function(input, output, session) {
       geom_jitter(aes(color = kolor, shape = kolor),
                   width = 0.12, alpha = 0.8, size = 2.2) +
       geom_text(data = means,
-                aes(y = m, label = paste0("x = ", round(m, 1)),
+                aes(y = m, label = paste0("bar(x) == ", round(m, 1)),
                     hjust = ifelse(as.integer(grupa) == 1, 1.15, -0.15)),
-                nudge_y = 2, color = upwr_secondary, fontface = "bold", size = 3.5) +
+                parse = TRUE, nudge_y = 2, color = upwr_secondary, fontface = "bold", size = 3.5) +
       scale_fill_manual(values = c("Przed" = col_h0, "Po" = col_reject)) +
       scale_color_manual(values = c("Przed"             = col_h0,
                                     "Po"                = col_reject,
-                                    "Brak kontroli (n=5)" = "#8B1A1A")) +
+                                    "Brak kontroli (n = 5)" = "#8B1A1A")) +
       scale_shape_manual(values = c("Przed" = 16, "Po" = 16,
-                                    "Brak kontroli (n=5)" = 17)) +
+                                    "Brak kontroli (n = 5)" = 17)) +
       labs(x = NULL, y = "Ciśnienie skurczowe (mmHg)", color = NULL, shape = NULL) +
       guides(fill = "none") +
       theme(legend.position = "bottom", legend.text = element_text(size = 9))
@@ -629,7 +789,9 @@ ch6_server <- function(input, output, session) {
   }))
 
   output$ch6_compare_paired_result <- renderUI({
-    long <- .ch6_compare$long_pairs
+    # t dla różnicy po − przed, zgodnie z tabelą.
+    long <- .ch6_compare$long_pairs %>%
+      mutate(moment = factor(moment, levels = c("Po", "Przed")))
     result <- rstatix::t_test(long, cisnienie ~ moment, paired = TRUE)
     res <- format_test_result(result$p)
     diffs <- .ch6_compare$pairs$po - .ch6_compare$pairs$przed
@@ -653,7 +815,7 @@ ch6_server <- function(input, output, session) {
     )
   })
 
-  # --- Cwiczenia CASchools ---
+  # --- Ćwiczenia CASchools ---
 
   .cas_t2samp <- function(x, grp) {
     grp <- as.factor(grp); lvls <- levels(grp)
@@ -686,8 +848,8 @@ ch6_server <- function(input, output, session) {
     df2 <- .ch6_cas[!is.na(.ch6_cas$read) & !is.na(.ch6_cas$grades), ]
     r <- .cas_t2samp(df2$read, df2$grades)
     lc_feedback(type = "ok", style = "margin-top: 10px;",
-      p(tags$b("H₀: "), "μ(KK-06) = μ(KK-08) · ",
-        tags$b("Hₐ: "), "μ(KK-06) ≠ μ(KK-08)"),
+      p(tags$b("H₀:"), " μ(KK-06) = μ(KK-08) · ",
+        tags$b("Hₐ:"), " μ(KK-06) ≠ μ(KK-08)"),
       tags$ul(
         tags$li(sprintf("%s: n = %d, x̄ = %.2f, s = %.2f",
                         r$lvls[1], r$n1, r$m1, r$s1)),
@@ -700,7 +862,7 @@ ch6_server <- function(input, output, session) {
       ),
       if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
       else tags$b("Brak podstaw do odrzucenia H₀"),
-      p(tags$b("Interpretacja: "),
+      p(tags$b("Interpretacja:"), " ",
         sprintf(
           "Różnica %.2f pkt jest %s (p %s 0.05).",
           abs(r$m1 - r$m2),
@@ -723,8 +885,8 @@ ch6_server <- function(input, output, session) {
     r <- .cas_t2samp(.ch6_cas$read, high_str)
     m_lo <- .ch6_cas$read[!high_str]; m_hi <- .ch6_cas$read[high_str]
     lc_feedback(type = "ok", style = "margin-top: 10px;",
-      p(tags$b("H₀: "), "μ(STR ≤ 20) = μ(STR > 20) · ",
-        tags$b("Hₐ: "), "μ(STR ≤ 20) ≠ μ(STR > 20)"),
+      p(tags$b("H₀:"), " μ(STR ≤ 20) = μ(STR > 20) · ",
+        tags$b("Hₐ:"), " μ(STR ≤ 20) ≠ μ(STR > 20)"),
       tags$ul(
         tags$li(sprintf("STR ≤ 20: n = %d, x̄ = %.2f",
                         sum(!high_str), mean(m_lo))),
@@ -739,10 +901,10 @@ ch6_server <- function(input, output, session) {
       ),
       if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
       else tags$b("Brak podstaw do odrzucenia H₀"),
-      p(tags$b("Uwaga: "),
-        "STR > 20 to często okręgi biedniejsze. Różnica może być częściowo
-        konfundowana dochodem — by to zbadać, potrzeba analizy regresji
-        z kontrolą zmiennych towarzyszących.")
+      p(tags$b("Uwaga:"),
+        " STR > 20 mają często okręgi biedniejsze. Część różnicy może wynikać
+        z dochodu, który działa tu jak zmienna zakłócająca. Żeby to sprawdzić,
+        potrzeba regresji, która uwzględnia dochód obok STR.")
     )
   })
 

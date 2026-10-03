@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 4: Jedna zmienna jakosciowa — test dwumianowy
+# CHAPTER 5: Jedna zmienna jakościowa — test dwumianowy
 # ============================================================================
 
 ch3_ui <- list(
@@ -11,65 +11,94 @@ ch3_ui <- list(
       kicker = "Rozdział 05 · Testowanie hipotez",
       num    = "05",
       title  = "Test proporcji.",
-      lead   = "„Czy w naszej populacji faktycznie 30% osób to leworęczni?” Gdy pytanie
-                dotyczy odsetka, nie średniej — test dwumianowy i jego z-przybliżenie."
+      lead   = "Odsetek zdających, udział wadliwych sztuk, kiełkowalność nasion:
+                wiele hipotez dotyczy proporcji, a nie średniej. Liczba sukcesów
+                w próbie ma wtedy znany rozkład, więc p-wartość można policzyć
+                dokładnie, bez przybliżenia normalnego."
     ),
+
+    lc_p("Test t z poprzedniego rozdziału sprawdzał hipotezę o średniej zmiennej
+      ilościowej. Wiele pytań dotyczy jednak zmiennej o dwóch kategoriach:
+      próbka wody spełnia normę albo nie, student zdał albo nie zdał, produkt
+      jest wadliwy albo sprawny. Parametrem populacji jest wtedy proporcja
+      \\(p\\), czyli odsetek sukcesów, a jej estymatorem ",
+      gloss("proporcja z próby", "proporcja z próby"), " \\(\\hat{p} = k/n\\),
+      gdzie \\(k\\) to liczba sukcesów w próbie liczącej \\(n\\) obserwacji.
+      W wykładzie 03 budowaliśmy dla \\(p\\) przedział ufności. Teraz pytanie
+      brzmi inaczej: czy \\(p\\) jest równe konkretnej wartości referencyjnej
+      \\(p_0\\), na przykład deklaracji producenta, normie albo wartości
+      historycznej."),
 
     # ========================================================================
     # Wprowadzenie
     # ========================================================================
     lc_h2("ch3-pytanie", "Od pytania do testu dwumianowego"),
 
-    tagList(
-      p("Gdy zmienna ma dwie kategorie (sukces/porażka, tak/nie, spełnia/nie spełnia),
-        pytamy o proporcję w populacji."),
-      p("Narzędzie: ", gloss("test dwumianowy"),
-        " — porównuje obserwowany odsetek z wartością referencyjną p₀."),
-      p("Test dwumianowy jest dokładny — nie opiera się na przybliżeniu normalnym,
-        działa nawet przy małych próbach."),
-      p("Trzy warianty par hipotez — zależnie od brzmienia pytania:"),
-      lc_formula_box(
-        p(tags$b("Dwustronna"), " (proporcja różni się od ",
-          withMathJax("\\(p_0\\)"), "):"),
-        p(withMathJax("\\(H_0: p = p_0 \\quad\\)"),
-          withMathJax("\\(H_a: p \\neq p_0\\)"))
-      ),
-      lc_formula_box(
-        p(tags$b("Prawostronna"), " (proporcja ",
-          tags$em("wyższa"), " niż ", withMathJax("\\(p_0\\)"), "):"),
-        p(withMathJax("\\(H_0: p \\leq p_0 \\quad\\)"),
-          withMathJax("\\(H_a: p > p_0\\)"))
-      ),
-      lc_formula_box(
-        p(tags$b("Lewostronna"), " (proporcja ",
-          tags$em("niższa"), " niż ", withMathJax("\\(p_0\\)"), "):"),
-        p(withMathJax("\\(H_0: p \\geq p_0 \\quad\\)"),
-          withMathJax("\\(H_a: p < p_0\\)"))
-      ),
-      p("W teście dwumianowym ", gloss("statystyka testowa", "statystyką testową"), " jest sama liczba sukcesów ",
-        withMathJax("\\(k\\)"),
-        " — nie trzeba jej standaryzować, bo pod H₀ zna jej rozkład dokładnie
-        (to ", gloss("rozkład dwumianowy"), " ", withMathJax("\\(B(n, p_0)\\)"),
-        "). ", gloss("p-wartość"), " liczymy bezpośrednio jako prawdopodobieństwo wyniku co najmniej
-        tak skrajnego jak obserwowany:"),
-      lc_formula_box(
-        p("Statystyka: ", withMathJax("\\(k\\)"),
-          " (liczba sukcesów w ", withMathJax("\\(n\\)"), " próbach)"),
-        p("p-wartość (dwustronna): ",
-          withMathJax("\\(P(K \\leq k\\ \\text{lub}\\ K \\geq k)\\)"),
-          " przy ", withMathJax("\\(K \\sim B(n, p_0)\\)"))
-      )
+    lc_p("Hipotezy zapisujemy tak samo jak w teście t, tylko w miejscu
+      \\(\\mu_0\\) stoi \\(p_0\\). Wariant wynika z brzmienia pytania i, jak
+      w rozdziale 02, ustala się go przed zebraniem danych."),
+
+    lc_formula_box(
+      p(strong("Dwustronna"), " (proporcja różni się od ",
+        withMathJax("\\(p_0\\)"), "):"),
+      p(withMathJax("\\(H_0: p = p_0 \\quad\\)"),
+        withMathJax("\\(H_a: p \\neq p_0\\)"))
+    ),
+    lc_formula_box(
+      p(strong("Prawostronna"), " (proporcja wyższa niż ",
+        withMathJax("\\(p_0\\)"), "):"),
+      p(withMathJax("\\(H_0: p \\leq p_0 \\quad\\)"),
+        withMathJax("\\(H_a: p > p_0\\)"))
+    ),
+    lc_formula_box(
+      p(strong("Lewostronna"), " (proporcja niższa niż ",
+        withMathJax("\\(p_0\\)"), "):"),
+      p(withMathJax("\\(H_0: p \\geq p_0 \\quad\\)"),
+        withMathJax("\\(H_a: p < p_0\\)"))
     ),
 
+    lc_p("Do oceny hipotezy potrzebujemy ",
+      gloss("statystyka testowa", "statystyki testowej"), " i jej rozkładu
+      przy prawdziwej H₀. W teście t średnią trzeba było standaryzować
+      i sięgać po rozkład t. Tu jest prościej: statystyką testową jest sama
+      liczba sukcesów \\(k\\). Z wykładu 02 wiemy, że jeśli każda z \\(n\\)
+      niezależnych obserwacji jest sukcesem z prawdopodobieństwem \\(p_0\\),
+      liczba sukcesów \\(K\\) ma ", gloss("rozkład dwumianowy"),
+      " \\(B(n, p_0)\\) z wartością oczekiwaną \\(E(K) = np_0\\). Ten rozkład
+      znamy dokładnie, więc prawdopodobieństwo każdego możliwego wyniku przy
+      prawdziwej H₀ możemy po prostu policzyć."),
+
+    lc_formula_box(withMathJax(
+      "$$P(K = j) = \\binom{n}{j}\\, p_0^{\\,j} (1-p_0)^{n-j}, \\qquad j = 0, 1, \\ldots, n$$"
+    )),
+
+    lc_p(gloss("p-wartość", "P-wartość"), " to prawdopodobieństwo, że przy
+      prawdziwej H₀ próba da wynik co najmniej tak skrajny jak obserwowany.
+      W teście dwustronnym za co najmniej tak skrajne uznajemy wszystkie
+      wyniki, które przy H₀ są nie bardziej prawdopodobne niż nasze \\(k\\),
+      po obu stronach rozkładu. P-wartość jest sumą ich prawdopodobieństw."),
+
+    lc_formula_box(withMathJax(
+      "$$p = \\sum_{j:\\ P(K = j)\\, \\leq\\, P(K = k)} P(K = j)$$"
+    )),
+
+    lc_p("Tak zbudowany ", gloss("test dwumianowy"), " jest testem dokładnym:
+      p-wartość pochodzi wprost z rozkładu dwumianowego, a nie z przybliżenia
+      normalnego. Dlatego działa także przy małych próbach i przy proporcjach
+      bliskich 0 lub 1, czyli tam, gdzie w wykładzie 03 zawodził przedział
+      Walda. Jak zawsze, p-wartość mówi, jak nietypowe byłyby nasze dane,
+      gdyby H₀ była prawdziwa. Nie jest prawdopodobieństwem, że H₀ jest
+      prawdziwa."),
+
     # ========================================================================
-    # Cwiczenie: sformuluj hipotezy
+    # Ćwiczenie: sformułuj hipotezy
     # ========================================================================
     lc_h2("ch3-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    tagList(
-      p("Spróbuj sam przełożyć pytanie potoczne na H₀ i Hₐ. Przedyskutuj
-        w grupie, a potem sprawdź.")
-    ),
+    lc_p("Zanim policzymy pierwszy test, warto przećwiczyć krok, od którego
+      wszystko się zaczyna: przekład pytania potocznego na parę hipotez
+      o \\(p\\). W każdym przykładzie zdecyduj, czy pytanie wskazuje kierunek,
+      zapisz H₀ i Hₐ, a dopiero potem odsłoń odpowiedź."),
 
     hypothesis_practice("ch3", list(
       list(
@@ -90,17 +119,31 @@ ch3_ui <- list(
       list(
         question = "Rolnik twierdzi, że kiełkuje mu co najmniej 90% nasion.
                     Chcemy sprawdzić, czy ta deklaracja jest prawdziwa
-                    (z perspektywy klienta — ryzykujemy kupując słabsze nasiona).",
+                    (z perspektywy klienta, który ryzykuje zakup słabszych nasion).",
         h0 = "\\(H_0: p \\geq 0{,}90\\)",
         ha = "\\(H_a: p < 0{,}90\\)",
-        note = "Jednostronny (lewostronny) — klienta martwi tylko, że jest gorzej."
+        note = "Jednostronny (lewostronny) — klienta martwi tylko to, że jest gorzej."
       )
     )),
+
+    lc_p("We wszystkich trzech przykładach H₀ zawiera znak równości,
+      a wartość \\(p_0\\) pochodzi spoza danych: z deklaracji, ze standardu
+      produkcji albo z obietnicy sprzedawcy. Kierunek Hₐ wynika z tego, które
+      odchylenie ma dla pytającego konsekwencje."),
 
     # ========================================================================
     # WIDGET 1: Test dwumianowy dwustronny (krokowy)
     # ========================================================================
     lc_h2("ch3-krok", "Test dwumianowy — krok po kroku"),
+
+    lc_p("Panel przeprowadza test dwumianowy na symulowanych danych. Każdy
+      scenariusz ma wartość referencyjną \\(p_0\\) i prawdziwy odsetek,
+      z którego losowana jest próba. W domyślnym scenariuszu jakości wody
+      \\(p_0 = 0{,}8\\), a próbki pochodzą z populacji, w której normę spełnia
+      85% z nich. H₀ jest więc fałszywa, ale to, czy próba to pokaże, zależy
+      od losowania i od \\(n\\). Kolejne kroki pokazują dane, rozkład
+      \\(B(n, p_0)\\) przy prawdziwej H₀ i wyniki składające się na
+      p-wartość."),
 
     figure_panel(
       label = "Ryc. 5.1",
@@ -126,28 +169,52 @@ ch3_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Co zrobiliśmy?",
-      tagList(
-        tags$ol(
-          tags$li("Zebraliśmy dane i obliczyliśmy ", gloss("proporcja z próby", "proporcję z próby"), ": ",
-                  withMathJax("\\(\\hat{p} = k/n\\)")),
-          tags$li("Sprawdziliśmy jak wygląda rozkład dwumianowy pod H₀"),
-          tags$li("Policzyliśmy p-wartość — jak prawdopodobny jest nasz wynik jeśli H₀ prawdziwa")
-        )
-      )
-    ),
+    lc_p("Przy \\(n = 50\\) i \\(p_0 = 0{,}8\\) rozkład z kroku 2 ma środek
+      w \\(np_0 = 40\\) sukcesach, a jego odchylenie standardowe wynosi
+      \\(\\sqrt{50 \\cdot 0{,}8 \\cdot 0{,}2} \\approx 2{,}8\\). Prawdziwy
+      odsetek 85% daje średnio 42,5 sukcesu, czyli niecałe jedno odchylenie
+      od środka. Typowa próba trafia więc w gęstą część rozkładu: dla
+      \\(k = 43\\) dwustronna p-wartość wynosi 0,38, a poniżej 0,05 spada
+      dopiero od \\(k = 46\\) (0,033) w górę albo od \\(k = 34\\) w dół.
+      Takie wyniki zdarzają się przy prawdziwym odsetku 85% w około 11% prób.
+      W pozostałych decyzja brzmi „brak podstaw do odrzucenia H₀”, chociaż
+      H₀ jest fałszywa."),
+
+    lc_p("Ten przykład dobrze pokazuje, czego brak odrzucenia nie oznacza.
+      Nie dowodzi, że \\(p = 0{,}8\\). Mówi tylko, że 50 próbek nie wystarcza,
+      by odróżnić 80% od 85%. Przy \\(n = 200\\) ten sam test wykrywa różnicę
+      w około 39% prób, bo rozkład \\(\\hat{p}\\) zwęża się wraz z \\(n\\).
+      To ", gloss("moc testu"), " z rozdziału 03. Próg \\(\\alpha = 0{,}05\\)
+      jest przy tym umową ustaloną przed analizą, podobnie jak poziom
+      ufności 95% w wykładzie 03."),
+
+    lc_p("W R test dwumianowy wykonuje ",
+      tags$code("binom.test(43, 50, p = 0.8)"), ". Funkcja podaje też
+      95-procentowy przedział Cloppera-Pearsona z wykładu 03, tutaj od 0,73
+      do 0,94. Obejmuje on \\(p_0 = 0{,}8\\), co zgadza się z decyzją testu:
+      wartość, której przedział nie wyklucza, nie zostaje odrzucona. W jamovi
+      ten sam test znajdziesz w Analyses → Frequencies → 2 Outcomes —
+      Binomial test, z wartością \\(p_0\\) wpisaną w polu Test value."),
 
     # ========================================================================
     # WIDGET 2: Test dwumianowy jednostronny (te same dane)
     # ========================================================================
     lc_h2("ch3-jednostronny", "A jeśli znamy kierunek?"),
 
-    tagList(
-      p("Tak jak przy teście t — czasem nie pytamy „czy różni się?”,
-        ale „czy jest większa / mniejsza niż p₀?”"),
-      p("Użyjemy tych samych danych co powyżej, ale zmienimy pytanie na kierunkowe.")
-    ),
+    lc_p("Pytanie z panelu było dwustronne: czy odsetek różni się od 80%.
+      Często jednak liczy się tylko jeden kierunek. Instytucję chwalącą się
+      jakością wody interesuje, czy jest lepiej niż 80%, a klienta kupującego
+      nasiona, czy jest gorzej niż obiecane 90%. Jak w teście t, kierunek
+      wynika z pytania, a nie z danych. Wtedy ", gloss("test jednostronny"),
+      " liczy p-wartość tylko w jednym ogonie: jako prawdopodobieństwo wyniku
+      co najmniej tak skrajnego w kierunku Hₐ."),
+
+    lc_formula_box(withMathJax(
+      "$$H_a: p > p_0: \\ \\ p = P(K \\geq k) \\qquad\\qquad H_a: p < p_0: \\ \\ p = P(K \\leq k)$$"
+    )),
+
+    lc_p("Panel używa tej samej próby co test dwustronny powyżej. Zmienia się
+      tylko pytanie, a razem z nim zbiór wyników uznanych za skrajne."),
 
     figure_panel(
       label = "Ryc. 5.2",
@@ -162,33 +229,46 @@ ch3_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Dwu- a jednostronny",
-      tagList(
-        tags$ul(
-          tags$li(tags$b("Dwustronny (≠):"), " p-wartość liczymy po obu stronach. Bezpieczniejszy."),
-          tags$li(tags$b("Jednostronny (> lub <):"), " p-wartość tylko po jednej stronie. Mocniejszy, ale ślepy na efekt w drugą stronę.")
-        ),
-        tags$p("Te same dane, ten sam wynik k/n, ale inna p-wartość",
-               " — bo inaczej zadane pytanie!")
-      ),
-      color = "uwaga"
-    ),
+    lc_p("Weźmy próbę, w której normę spełnia 45 z 50 próbek wody. Test
+      dwustronny daje p = 0,079, więc nie odrzuca H₀. Prawostronny,
+      z Hₐ: \\(p > 0{,}8\\), daje p = 0,048 i odrzuca. Te same dane prowadzą
+      do różnych decyzji, bo odpowiadają na różne pytania. Jednostronna
+      p-wartość nie jest tu dokładnie połową dwustronnej. Rozkład
+      \\(B(50;\\ 0{,}8)\\) jest lewoskośny, a test dwustronny dolicza
+      z lewego ogona wyniki nie bardziej prawdopodobne niż \\(k = 45\\),
+      a nie ich lustrzane odbicie."),
+
+    lc_p("Przewaga testu jednostronnego ma swoją cenę, omówioną w rozdziale 02.
+      Test z Hₐ: \\(p > 0{,}8\\) nie zauważy odsetka wyraźnie niższego niż 80%.
+      A jeśli kierunek wybiera się po obejrzeniu danych, prawdopodobieństwo
+      fałszywego alarmu przekracza deklarowane α."),
 
     # ========================================================================
-    # WIDGET 3: Porownanie — test dwumianowy vs test proporcji
+    # WIDGET 3: Porównanie — test dwumianowy vs test proporcji
     # ========================================================================
     lc_h2("ch3-porownanie", "Test dwumianowy a test proporcji"),
 
-    tagList(
-      p("W Jamovi i wielu podręcznikach spotkasz też ",
-        "test proporcji (z-test)",
-        ". Działa na przybliżeniu normalnym:"),
-      lc_formula_box(
-        p(withMathJax("\\(z = \\frac{\\hat{p} - p_0}{\\sqrt{p_0(1-p_0)/n}}\\)"))
-      ),
-      p("Porównajmy oba testy na tych samych danych:")
-    ),
+    lc_p("Wiele podręczników i programów zamiast testu dwumianowego podaje
+      test proporcji, nazywany też z-testem. Zastępuje on rozkład dwumianowy
+      ", gloss("rozkład normalny", "rozkładem normalnym"), ", czyli korzysta
+      z tego samego przybliżenia, na którym w wykładzie 03 opierał się
+      ", gloss("przedział Walda"), ". Statystyka testowa mierzy, o ile
+      błędów standardowych \\(\\hat{p}\\) odbiega od \\(p_0\\)."),
+
+    lc_formula_box(withMathJax(
+      "$$z = \\frac{\\hat{p} - p_0}{\\sqrt{p_0(1-p_0)/n}}$$"
+    )),
+
+    lc_p("W odróżnieniu od przedziału Walda błąd standardowy liczymy z \\(p_0\\),
+      a nie z \\(\\hat{p}\\), bo p-wartość wyznacza się przy założeniu, że H₀
+      jest prawdziwa. Przy prawdziwej H₀ statystyka \\(z\\) ma w przybliżeniu ",
+      gloss("standardowy rozkład normalny"), ", więc dwustronna p-wartość to
+      \\(P(|Z| \\geq |z|)\\). Panel zestawia oba testy dla próby wylosowanej
+      w panelu Ryc. 5.1. Kolumnę z-testu liczy funkcja ",
+      tags$code("prop.test()"), ", która domyślnie stosuje poprawkę na
+      ciągłość: zmniejsza różnicę \\(\\hat{p} - p_0\\) o \\(1/(2n)\\), żeby
+      złagodzić zastąpienie słupków ciągłą krzywą. Jej p-wartość różni się
+      więc nieco od tej, którą dałby sam wzór."),
 
     figure_panel(
       label = "Ryc. 5.3",
@@ -198,47 +278,77 @@ ch3_ui <- list(
       uiOutput("ch3_compare_result")
     ),
 
-    tagList(
-      p("Kiedy który?"),
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-        tags$thead(
-          tags$tr(tags$th(""), tags$th("Test dwumianowy"), tags$th("Test proporcji (z-test)"))
-        ),
-        tags$tbody(
-          tags$tr(
-            tags$td(tags$b("Metoda")),
-            tags$td("Dokładny — liczy z rozkładu B(n, p₀)"),
-            tags$td("Przybliżony — używa rozkładu normalnego")
-          ),
-          tags$tr(
-            tags$td(tags$b("Małe n")),
-            tags$td(style = "background: var(--upwr-sage-tint);", "Działa zawsze"),
-            tags$td(style = "background: var(--upwr-accent-tint);", "Może być niedokładny")
-          ),
-          tags$tr(
-            tags$td(tags$b("Duże n")),
-            tags$td("Działa, ale wolniejszy"),
-            tags$td(style = "background: var(--upwr-sage-tint);", "Daje praktycznie ten sam wynik")
-          ),
-          tags$tr(
-            tags$td(tags$b("W Jamovi")),
-            tags$td("Binomial test"),
-            tags$td("Proportion test (N Outcomes)")
-          )
-        )
+    lc_p("Wynik porównania zależy od scenariusza. Przy jakości wody
+      (\\(p_0 = 0{,}8\\), \\(n = 50\\)) i \\(k = 43\\) oba testy dają
+      p = 0,38. Inaczej przy produktach poza normą: \\(p_0 = 0{,}03\\), więc
+      przy \\(n = 50\\) spodziewamy się przy H₀ średnio 1,5 wadliwej sztuki,
+      a rozkład \\(B(50;\\ 0{,}03)\\) jest silnie prawoskośny. Dla \\(k = 4\\)
+      test dwumianowy daje p = 0,063, z-test z poprawką 0,097, a z-test
+      wprost ze wzoru powyżej 0,038. Trzy odpowiedzi na to samo pytanie
+      lądują po obu stronach progu 0,05."),
+
+    lc_p("Wniosek jest taki sam jak przy przedziale Walda: im bliżej 0 lub 1
+      leży \\(p_0\\) i im mniejsza jest próba, tym gorzej działa przybliżenie
+      normalne. Panel pokazuje dlatego oczekiwane przy H₀ liczby sukcesów
+      \\(np_0\\) i porażek \\(n(1-p_0)\\). Gdy któraś z nich jest mała,
+      rozkład dwumianowy jest wyraźnie skośny i z-test może się mylić. Przy
+      dużych próbach i proporcjach z dala od krańców oba testy dają
+      praktycznie ten sam wynik."),
+
+    tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
+      tags$thead(
+        tags$tr(tags$th(""), tags$th("Test dwumianowy"), tags$th("Test proporcji (z-test)"))
       ),
-      p("Reguła kciuka:",
-        " jeśli ", withMathJax("\\(np_0 \\geq 10\\)"), " i ",
-        withMathJax("\\(n(1-p_0) \\geq 10\\)"),
-        " — oba testy dadzą praktycznie ten sam wynik.")
+      tags$tbody(
+        tags$tr(
+          tags$td("Metoda"),
+          tags$td("Dokładny — liczy z rozkładu B(n, p₀)"),
+          tags$td("Przybliżony — używa rozkładu normalnego")
+        ),
+        tags$tr(
+          tags$td("Mała próba, p₀ blisko 0 lub 1"),
+          tags$td(style = "background: var(--upwr-sage-tint);", "Działa"),
+          tags$td(style = "background: var(--upwr-accent-tint);", "Może być niedokładny")
+        ),
+        tags$tr(
+          tags$td("Duża próba, p₀ z dala od 0 i 1"),
+          tags$td(style = "background: var(--upwr-sage-tint);", "Działa"),
+          tags$td(style = "background: var(--upwr-sage-tint);", "Daje praktycznie ten sam wynik")
+        ),
+        tags$tr(
+          tags$td("W R"),
+          tags$td(tags$code("binom.test()")),
+          tags$td(tags$code("prop.test()"))
+        ),
+        tags$tr(
+          tags$td("W jamovi"),
+          tags$td("2 Outcomes — Binomial test"),
+          tags$td("N Outcomes — χ² Goodness of fit (dla dwóch kategorii odpowiada z-testowi bez poprawki)")
+        )
+      )
     ),
 
+    lc_p("Skoro test dwumianowy działa zawsze, a przy dużych próbach daje to
+      samo co z-test, przy jednej proporcji nie ma powodu z niego rezygnować.
+      Z-test warto jednak rozpoznawać, bo podaje go wiele źródeł, a jego
+      konstrukcja, różnica podzielona przez błąd standardowy, jest taka sama
+      jak w teście t. Założenia testu dwumianowego, przede wszystkim
+      niezależność obserwacji, omawiamy w wykładzie 05."),
+
+    # ========================================================================
+    # Ćwiczenia CASchools
+    # ========================================================================
     lc_h2("ch3-cas", "Ćwiczenia", "CASchools — test proporcji"),
 
+    lc_p("Na koniec dwa zadania na prawdziwych danych. Tym razem nic nie
+      losujemy: liczbę sukcesów \\(k\\) i liczebność \\(n\\) odczytasz z pliku.
+      W każdym zadaniu zapisz hipotezy, zanim policzysz p-wartość, i zanim
+      zajrzysz do rozwiązania."),
+
     lc_feedback(type = "info",
-      p(tags$b("Dane: "), "420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+      p(strong("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
         tags$code("dane/caschools.csv"), "."),
-      p("Zmienne w zadaniach: ", tags$code("grades"),
+      p(strong("Zmienne w zadaniach:"), " ", tags$code("grades"),
         " (typ szkoły: KK-06 lub KK-08), ",
         tags$code("lunch"), " (% uczniów z dotacją do obiadów — wskaźnik ubóstwa).")
     ),
@@ -247,7 +357,7 @@ ch3_ui <- list(
       h4("Zadanie A — Czy większość okręgów obejmuje klasy tylko do 6.?"),
       p("Okręgi dzielą się na szkoły klas KK-06 i KK-08. Przetestuj
         dwustronnie, czy odsetek okręgów KK-06 różni się od 50%.
-        Sformułuj H₀ i Hₐ, oblicz p-wartość testem dwumianowym (α = 0.05).
+        Sformułuj H₀ i Hₐ, oblicz p-wartość testem dwumianowym (α = 0,05).
         Jak interpretujesz wynik?"),
       lc_action("cas_ch3_ans_a", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch3_sol_a")
@@ -255,13 +365,19 @@ ch3_ui <- list(
 
     figure_panel(label = "Ćwiczenie",
       h4("Zadanie B — Czy więcej niż 30% okręgów ma wysoki poziom ubóstwa?"),
-      p("Przyjmij, że okrąg ma wysoki poziom ubóstwa, gdy ", tags$code("lunch > 50%"),
+      p("Przyjmij, że okręg ma wysoki poziom ubóstwa, gdy ", tags$code("lunch > 50"),
         ". Przetestuj jednostronnie (prawostronnie),
         czy odsetek takich okręgów przekracza normę 30%.
         Sformułuj H₀ i Hₐ, wykonaj test dwumianowy. Jaki wniosek?"),
       lc_action("cas_ch3_ans_b", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch3_sol_b")
     ),
+
+    lc_p("W obu zadaniach pełna odpowiedź ma trzy części: hipotezy ustalone
+      przed analizą, p-wartość z testu dwumianowego i zdanie o odsetku
+      w populacji okręgów, a nie tylko o liczbach z tabeli. Dotąd test
+      dotyczył zawsze jednej zmiennej porównywanej z wartością referencyjną.
+      Następny rozdział zaczyna od pytań o związek dwóch zmiennych."),
 
     lc_chapter_next(
       num       = "06",
@@ -273,11 +389,16 @@ ch3_ui <- list(
 )
 
 # ============================================================================
-# DANE — CASchools (wczytane raz przy ladowaniu modulu)
+# DANE — CASchools (wczytane raz przy ładowaniu modułu)
 # ============================================================================
 
 .ch3_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
                      stringsAsFactors = FALSE)
+
+# Liczba z przecinkiem dziesiętnym do tekstów rozwiązań.
+.ch3_dec <- function(x, digits) {
+  formatC(x, format = "f", digits = digits, decimal.mark = ",")
+}
 
 # ============================================================================
 # SERVER
@@ -292,61 +413,61 @@ ch3_server <- function(input, output, session) {
       success_label = "spełnia normę", failure_label = "nie spełnia",
       title = "Jakość próbek wody",
       question = "Czy odsetek próbek spełniających normy różni się od deklarowanych 80%?",
-      h0_text = "\\(H_0: p = 0.80\\) (odsetek zgodny z deklaracją)",
-      h1_text = "\\(H_a: p \\neq 0.80\\) (odsetek odbiega od deklaracji)",
+      h0_text = "\\(H_0: p = 0{,}80\\) (odsetek zgodny z deklaracją)",
+      h1_text = "\\(H_a: p \\neq 0{,}80\\) (odsetek odbiega od deklaracji)",
       question_1s = "Czy odsetek próbek spełniających normy jest wyższy niż 80%?",
-      h0_text_1s = "\\(H_0: p \\leq 0.80\\)",
-      h1_text_1s = "\\(H_a: p > 0.80\\)",
+      h0_text_1s = "\\(H_0: p \\leq 0{,}80\\)",
+      h1_text_1s = "\\(H_a: p > 0{,}80\\)",
       alt_1s = "greater"),
     exam_pass = list(
       p0 = 0.60, p_true = 0.68, n_default = 50,
       success_label = "zdał", failure_label = "nie zdał",
       title = "Zdawalność egzaminu",
       question = "Czy zdawalność różni się od 60% (wartość historyczna)?",
-      h0_text = "\\(H_0: p = 0.60\\) (zdawalność typowa)",
-      h1_text = "\\(H_a: p \\neq 0.60\\) (zdawalność odbiega od normy)",
+      h0_text = "\\(H_0: p = 0{,}60\\) (zdawalność typowa)",
+      h1_text = "\\(H_a: p \\neq 0{,}60\\) (zdawalność odbiega od normy)",
       question_1s = "Czy zdawalność jest wyższa niż historyczne 60%?",
-      h0_text_1s = "\\(H_0: p \\leq 0.60\\)",
-      h1_text_1s = "\\(H_a: p > 0.60\\)",
+      h0_text_1s = "\\(H_0: p \\leq 0{,}60\\)",
+      h1_text_1s = "\\(H_a: p > 0{,}60\\)",
       alt_1s = "greater"),
     germination = list(
       p0 = 0.90, p_true = 0.86, n_default = 50,
       success_label = "wykiełkowało", failure_label = "nie wykiełkowało",
       title = "Kiełkowalność nasion",
       question = "Czy kiełkowalność partii nasion różni się od deklarowanych 90%?",
-      h0_text = "\\(H_0: p = 0.90\\) (kiełkowalność zgodna z deklaracją)",
-      h1_text = "\\(H_a: p \\neq 0.90\\) (kiełkowalność odbiega)",
+      h0_text = "\\(H_0: p = 0{,}90\\) (kiełkowalność zgodna z deklaracją)",
+      h1_text = "\\(H_a: p \\neq 0{,}90\\) (kiełkowalność odbiega)",
       question_1s = "Czy kiełkowalność jest niższa niż deklarowane 90%?",
-      h0_text_1s = "\\(H_0: p \\geq 0.90\\)",
-      h1_text_1s = "\\(H_a: p < 0.90\\)",
+      h0_text_1s = "\\(H_0: p \\geq 0{,}90\\)",
+      h1_text_1s = "\\(H_a: p < 0{,}90\\)",
       alt_1s = "less"),
     defects = list(
       p0 = 0.03, p_true = 0.06, n_default = 50,
       success_label = "poza normą", failure_label = "w normie",
       title = "Kontrola jakości produktów",
-      question = "Czy odsetek produktów nie spełniających normy różni się od dopuszczalnych 3%?",
-      h0_text = "\\(H_0: p = 0.03\\) (odsetek wadliwych zgodny z normą)",
-      h1_text = "\\(H_a: p \\neq 0.03\\) (odsetek odbiega od normy)",
+      question = "Czy odsetek produktów niespełniających normy różni się od dopuszczalnych 3%?",
+      h0_text = "\\(H_0: p = 0{,}03\\) (odsetek wadliwych zgodny z normą)",
+      h1_text = "\\(H_a: p \\neq 0{,}03\\) (odsetek odbiega od normy)",
       question_1s = "Czy odsetek produktów poza normą przekracza dopuszczalne 3%?",
-      h0_text_1s = "\\(H_0: p \\leq 0.03\\)",
-      h1_text_1s = "\\(H_a: p > 0.03\\)",
+      h0_text_1s = "\\(H_0: p \\leq 0{,}03\\)",
+      h1_text_1s = "\\(H_a: p > 0{,}03\\)",
       alt_1s = "greater"),
     helmets = list(
       p0 = 0.95, p_true = 0.88, n_default = 80,
       success_label = "nosi kask", failure_label = "bez kasku",
       title = "Używanie kasków na budowie",
       question = "Czy odsetek pracowników używających kasków odbiega od zakładanych 95%?",
-      h0_text = "\\(H_0: p = 0.95\\) (odsetek zgodny z wymaganiem)",
-      h1_text = "\\(H_a: p \\neq 0.95\\) (odsetek odbiega od wymagania)",
+      h0_text = "\\(H_0: p = 0{,}95\\) (odsetek zgodny z wymaganiem)",
+      h1_text = "\\(H_a: p \\neq 0{,}95\\) (odsetek odbiega od wymagania)",
       question_1s = "Czy odsetek pracowników używających kasków jest niższy niż wymagane 95%?",
-      h0_text_1s = "\\(H_0: p \\geq 0.95\\)",
-      h1_text_1s = "\\(H_a: p < 0.95\\)",
+      h0_text_1s = "\\(H_0: p \\geq 0{,}95\\)",
+      h1_text_1s = "\\(H_a: p < 0{,}95\\)",
       alt_1s = "less")
   )
 
-  # --- Wspoldzielone dane ---
-  # Jedna probka dla testu dwustronnego i jednostronnego; po zmianie
-  # scenariusza albo n stara probka nie jest juz zgodna z pytaniem.
+  # --- Współdzielone dane ---
+  # Jedna próbka dla testu dwustronnego i jednostronnego; po zmianie
+  # scenariusza albo n stara próbka nie jest już zgodna z pytaniem.
   ch3_data_state <- reactiveVal(NULL)
   ch3_data <- reactive({
     state <- ch3_data_state()
@@ -483,10 +604,9 @@ ch3_server <- function(input, output, session) {
         ". Różnica: ", step_num(lc_fmt(phat - p0, 3)), ". Ale czy to dużo?"
       ),
       "2" = tagList(
-        paste0("Rozkład dwumianowy B(", n, ", ", p0, ") pokazuje ile sukcesów "),
-        tags$em("spodziewalibyśmy się", .noWS = "outside"),
-        " gdyby H₀ była prawdziwa. Pionowa linia = nasz wynik k = ", step_num(k),
-        ". Czy wypada w centrum czy na obrzeżach?"
+        paste0("Rozkład B(", n, "; ", lc_fmt(p0, 2), ") — liczba sukcesów, "),
+        "jakiej należałoby się spodziewać przy prawdziwej H₀. Pionowa linia: nasz wynik k = ",
+        step_num(k), "."
       ),
       "3" = step_verdict(binom.test(k, n, p0, alternative = "two.sided")$p.value)
     )
@@ -506,7 +626,7 @@ ch3_server <- function(input, output, session) {
         p(tags$em(paste0("„", par$question_1s, "”")))
       ),
       lc_formula_box(
-        p(tags$b("Hipoteza formalna (jednostronna!):")),
+        p(tags$b("Hipoteza formalna (jednostronna):")),
         p(withMathJax(par$h0_text_1s)),
         p(withMathJax(par$h1_text_1s))
       ),
@@ -548,25 +668,23 @@ ch3_server <- function(input, output, session) {
 
     switch(as.character(step),
       "1" = tagList(
-        "n = ", step_num(n), " (te same dane co wyżej), p̂ = ",
-        step_num(lc_fmt(phat, 3)), " (ta sama wartość!). Statystyki takie same —
-        dane się nie zmieniły. Zmieniło się tylko pytanie (kierunek)."
+        "n = ", step_num(n), ", p̂ = ", step_num(lc_fmt(phat, 3)),
+        " — te same dane co w teście dwustronnym."
       ),
       "2" = tagList(
-        paste0("Ten sam rozkład B(", n, ", ", p0, "), ale teraz patrzymy tylko na ",
+        paste0("Ten sam rozkład B(", n, "; ", lc_fmt(p0, 2), "), ale teraz liczy się tylko ",
                if (par$alt_1s == "greater") "prawy" else "lewy", " ogon.")
       ),
       "3" = tagList(
         "Jednostronnie: ",
         step_verdict(binom.test(k, n, p0, alternative = par$alt_1s)$p.value), " ",
-        tags$em("Porównaj z testem dwustronnym wyżej — te same dane,
-          ale inna p-wartość!")
+        tags$em("Porównaj z p-wartością testu dwustronnego wyżej.")
       )
     )
   })
 
   # =============================================
-  # WIDGET 3: Porownanie dwumianowy vs proporcji
+  # WIDGET 3: Porównanie dwumianowy vs proporcji
   # =============================================
 
   output$ch3_compare_result <- renderUI({
@@ -626,17 +744,18 @@ ch3_server <- function(input, output, session) {
         )
       ),
       lc_feedback(type = if (ok) "ok" else "danger",
-        p(tags$b("Warunki przybliżenia normalnego: "),
+        p(tags$b("Oczekiwane przy H₀:"), " ",
           withMathJax(paste0("\\(np_0 = ", round(np0, 1), "\\)")),
-          " i ",
+          " sukcesów i ",
           withMathJax(paste0("\\(n(1-p_0) = ", round(nq0, 1), "\\)")),
-          if (ok) " — oba ≥ 10, przybliżenie działa dobrze."
-          else " — warunek niespiełniony! Test proporcji może być niedokładny.")
+          " porażek",
+          if (ok) " — obie liczby są duże, przybliżenie normalne działa dobrze."
+          else " — jedna z liczb jest mała, więc test proporcji może być niedokładny.")
       )
     )
   })
 
-  # --- Cwiczenia CASchools ---
+  # --- Ćwiczenia CASchools ---
 
   cas_vis_a <- reactiveVal(FALSE)
   cas_vis_b <- reactiveVal(FALSE)
@@ -659,26 +778,28 @@ ch3_server <- function(input, output, session) {
            ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
     })
     lc_feedback(type = "ok", style = "margin-top: 10px;",
-      p(tags$b("H₀: "), "p_KK06 = 0.5 · ", tags$b("Hₐ: "), "p_KK06 ≠ 0.5"),
+      p(tags$b("H₀:"), " p_KK06 = 0,5 · ", tags$b("Hₐ:"), " p_KK06 ≠ 0,5"),
       tags$ul(
-        tags$li(sprintf("k = %d, n = %d, p̂ = %.3f (%.1f%%)",
-                        r$k, r$n, r$p_obs, 100 * r$p_obs)),
+        tags$li(sprintf("k = %d, n = %d, p̂ = %s (%s%%)",
+                        r$k, r$n, .ch3_dec(r$p_obs, 3), .ch3_dec(100 * r$p_obs, 1))),
         tags$li(sprintf("p %s %s (test dwumianowy, dwustronny)",
           if (r$p_val < 0.001) "<" else "=",
-          if (r$p_val < 0.001) "0.001" else format(round(r$p_val, 4), nsmall = 4))),
-        tags$li(sprintf("95%% CI: [%.3f, %.3f]", r$ci_lo, r$ci_hi))
+          if (r$p_val < 0.001) "0,001" else .ch3_dec(r$p_val, 4))),
+        tags$li(sprintf("95%% przedział ufności: [%s; %s]",
+                        .ch3_dec(r$ci_lo, 3), .ch3_dec(r$ci_hi, 3)))
       ),
       if (r$p_val < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
       else tags$b("Brak podstaw do odrzucenia H₀"),
-      p(tags$b("Interpretacja: "),
-        sprintf(
-          "%.1f%% okręgów to szkoły KK-06. Odsetek istotnie %s się od 50%%
-           (p %s 0.05) — szkoły KK-06 %s dominują.",
-          100 * r$p_obs,
-          if (r$p_val < 0.05) "różni" else "nie różni",
-          if (r$p_val < 0.05) "<" else ">",
-          if (r$p_obs > 0.5 && r$p_val < 0.05) "istotnie" else "nieistotnie"
-        ))
+      p(tags$b("Interpretacja:"), " ",
+        sprintf("%s%% okręgów to szkoły KK-06. %s",
+          .ch3_dec(100 * r$p_obs, 1),
+          if (r$p_val >= 0.05) {
+            "Dane nie dają podstaw, by twierdzić, że odsetek różni się od 50% (p ≥ 0,05)."
+          } else if (r$p_obs > 0.5) {
+            "Odsetek istotnie różni się od 50% (p < 0,05): okręgi KK-06 stanowią większość."
+          } else {
+            "Odsetek istotnie różni się od 50% (p < 0,05), ale w przeciwną stronę, niż sugeruje pytanie: okręgów KK-06 jest wyraźnie mniej niż połowa."
+          }))
     )
   })
 
@@ -701,26 +822,27 @@ ch3_server <- function(input, output, session) {
            ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
     })
     lc_feedback(type = "ok", style = "margin-top: 10px;",
-      p(tags$b("H₀: "), "p_ubóstwo ≤ 0.30 · ",
-        tags$b("Hₐ: "), "p_ubóstwo > 0.30"),
+      p(tags$b("H₀:"), " p_ubóstwo ≤ 0,30 · ",
+        tags$b("Hₐ:"), " p_ubóstwo > 0,30"),
       tags$ul(
-        tags$li(sprintf("k = %d okręgów z lunch > 50%%, n = %d, p̂ = %.3f (%.1f%%)",
-                        r$k, r$n, r$p_obs, 100 * r$p_obs)),
-        tags$li(sprintf("p %s %s (test dwumianowy, jednostronny prawy)",
+        tags$li(sprintf("k = %d okręgów z lunch > 50, n = %d, p̂ = %s (%s%%)",
+                        r$k, r$n, .ch3_dec(r$p_obs, 3), .ch3_dec(100 * r$p_obs, 1))),
+        tags$li(sprintf("p %s %s (test dwumianowy, prawostronny)",
           if (r$p_val < 0.001) "<" else "=",
-          if (r$p_val < 0.001) "0.001" else format(round(r$p_val, 4), nsmall = 4))),
-        tags$li(sprintf("95%% CI dolne: %.3f", r$ci_lo))
+          if (r$p_val < 0.001) "0,001" else .ch3_dec(r$p_val, 4))),
+        tags$li(sprintf("Dolna granica jednostronnego 95%% przedziału ufności: %s",
+                        .ch3_dec(r$ci_lo, 3)))
       ),
       if (r$p_val < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
       else tags$b("Brak podstaw do odrzucenia H₀"),
-      p(tags$b("Interpretacja: "),
-        sprintf(
-          "%.1f%% okręgów ma wysoki poziom ubóstwa (lunch > 50%%).
-           Odsetek ten istotnie %s normę 30%% (p %s 0.05).",
-          100 * r$p_obs,
-          if (r$p_val < 0.05) "przekracza" else "nie przekracza",
-          if (r$p_val < 0.05) "<" else ">"
-        ))
+      p(tags$b("Interpretacja:"), " ",
+        sprintf("%s%% okręgów ma wysoki poziom ubóstwa (lunch > 50). %s",
+          .ch3_dec(100 * r$p_obs, 1),
+          if (r$p_val < 0.05) {
+            "Odsetek ten istotnie przekracza normę 30% (p < 0,05)."
+          } else {
+            "Dane nie dają podstaw, by twierdzić, że odsetek przekracza normę 30% (p ≥ 0,05)."
+          }))
     )
   })
 }

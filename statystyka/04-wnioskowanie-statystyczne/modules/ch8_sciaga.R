@@ -3,13 +3,13 @@
 # ============================================================================
 
 ch8_ui <- list(
-  id = "ch-sciaga", num = "11", title = "Ściąga",
+  id = "ch-sciaga", num = "12", title = "Ściąga",
   content = tagList(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 11 · Testowanie hipotez",
-      num    = "11",
+      kicker = "Rozdział 12 · Testowanie hipotez",
+      num    = "12",
       title  = "Ściąga.",
       lead   = "Kompaktowe podsumowanie wszystkich testów omówionych w wykładzie —
                 tabele referencyjne do trzymania pod ręką podczas analiz w Jamovi."

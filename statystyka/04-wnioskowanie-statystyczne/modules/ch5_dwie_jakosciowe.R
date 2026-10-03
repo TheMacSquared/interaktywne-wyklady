@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 6: Dwie zmienne jakosciowe (chi-kwadrat, Fisher)
+# CHAPTER 7: Dwie zmienne jakościowe (chi-kwadrat, Fisher)
 # ============================================================================
 
 ch5_ui <- list(
@@ -11,40 +11,90 @@ ch5_ui <- list(
       kicker = "Rozdział 07 · Testowanie hipotez",
       num    = "07",
       title  = "Test χ² niezależności.",
-      lead   = "„Czy wybór kierunku studiów zależy od płci?” Dwie zmienne jakościowe —
-                tabela kontyngencji, liczebności oczekiwane i statystyka χ² rozstrzygają,
-                czy to niezależność czy zależność."
+      lead   = "Płeć a kierunek studiów, rodzaj opakowania a pleśń, środki ochrony
+                a ciężkość urazu: gdy obie zmienne są jakościowe, ich związek
+                zapisujemy w tabeli liczebności. Test χ² porównuje tę tabelę z tabelą,
+                jaką dałaby niezależność, i rozstrzyga, czy różnica jest większa
+                niż losowa."
     ),
+
+    lc_p("W poprzednim rozdziale obie zmienne były ilościowe, a związek mierzyliśmy
+      współczynnikiem korelacji. Dla zmiennych jakościowych ta droga jest zamknięta:
+      kierunków studiów nie da się dodawać ani mnożyć, nie ma więc średnich ani
+      wykresu rozrzutu. Pozostaje policzyć, ile obserwacji wpada do każdej
+      kombinacji kategorii, i sprawdzić, czy te liczebności układają się tak,
+      jak przy braku związku."),
 
     # ========================================================================
     # Wprowadzenie
     # ========================================================================
     lc_h2("ch5-intro", "Tabela kontyngencji i test χ²"),
 
-    tagList(
-      p("Gdy mamy dwie ", gloss("zmienna jakościowa", "zmienne jakościowe"), ", pytamy: czy są ze sobą powiązane?",
-        " Narzędzie: ", gloss("tabela kontyngencji"), " (krzyżowa) + ",
-        gloss("test chi-kwadrat", "test χ²"), " niezależności."),
-      p("Idea: porównujemy to, co zaobserwowaliśmy",
-        " z tym, czego oczekiwalibyśmy, gdyby zmienne były niezależne."),
-      lc_formula_box(
-        p(withMathJax("\\(H_0:\\)"), " zmienne są niezależne"),
-        p(withMathJax("\\(H_a:\\)"), " zmienne są powiązane")
-      ),
-      lc_formula_box(
-        p("Liczności oczekiwane: ", withMathJax("\\(E_{ij} = \\frac{n_{i\\cdot} \\cdot n_{\\cdot j}}{n}\\)")),
-        p("Statystyka testowa: ", withMathJax("\\(\\chi^2 = \\sum \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}\\)"))
-      )
+    lc_p("Taką tabelę znamy z wykładu 01. ",
+      gloss("tabela kontyngencji", "Tabela kontyngencji"), " (krzyżowa) płci
+      i kierunku studiów w ankiecie 200 studentów pokazała, że rozkłady kierunków
+      u kobiet i mężczyzn są podobne, choć nie identyczne: Informatykę studiuje
+      30,3% kobiet i 29,7% mężczyzn, Psychologię 18,3% kobiet i 22,0% mężczyzn.
+      Wtedy wystarczyło stwierdzić, że w tej próbie wybór kierunku niewiele zależy
+      od płci. Teraz pytamy o populację: czy takie różnice mogły powstać przez
+      przypadek przy losowaniu próby, czy świadczą o rzeczywistym związku."),
+
+    lc_p("Dwie ", gloss("zmienna jakościowa", "zmienne jakościowe"), " są niezależne,
+      jeśli rozkład jednej jest taki sam w każdej kategorii drugiej. W języku
+      tabeli oznacza to, że procenty wierszowe są w populacji identyczne we
+      wszystkich wierszach. W próbie nigdy nie wyjdą dokładnie równe, bo każda
+      próba różni się od populacji losowo. ",
+      gloss("test chi-kwadrat", "Test χ²"), " niezależności sprawdza, czy
+      obserwowane różnice są większe od tych, które zwykle daje sam przypadek.
+      Hipotezy mają zawsze tę samą postać:"),
+
+    lc_formula_box(
+      p(withMathJax("\\(H_0:\\)"), " zmienne są niezależne"),
+      p(withMathJax("\\(H_a:\\)"), " zmienne są powiązane")
     ),
 
+    lc_p("Punktem odniesienia jest tabela, jakiej spodziewalibyśmy się przy
+      prawdziwej H₀. Jeśli zmienne są niezależne, odsetek obserwacji w danej
+      kolumnie powinien być w każdym wierszu taki sam jak w całej próbie. ",
+      gloss("liczebność oczekiwana", "Liczebność oczekiwana"), " komórki to więc
+      liczba obserwacji w jej wierszu pomnożona przez odsetek jej kolumny w całej
+      próbie. Po uproszczeniu:"),
+
+    lc_formula_box(withMathJax(
+      "$$E_{ij} = \\frac{n_{i\\cdot} \\cdot n_{\\cdot j}}{n}$$"
+    )),
+
+    lc_p("gdzie \\(n_{i\\cdot}\\) to suma i-tego wiersza, \\(n_{\\cdot j}\\) suma
+      j-tej kolumny, a n liczba wszystkich obserwacji. Statystyka testowa zbiera
+      rozbieżności między liczebnościami obserwowanymi \\(O_{ij}\\) a oczekiwanymi
+      \\(E_{ij}\\) ze wszystkich komórek tabeli. Różnice podnosimy do kwadratu,
+      żeby nadwyżki i niedobory się nie znosiły, i dzielimy przez \\(E_{ij}\\),
+      bo odchylenie o 10 znaczy więcej w komórce, w której spodziewamy się
+      20 obserwacji, niż w tej, w której spodziewamy się 200:"),
+
+    lc_formula_box(withMathJax(
+      "$$\\chi^2 = \\sum_{i,j} \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}, \\qquad df = (r - 1)(c - 1)$$"
+    )),
+
+    lc_p("Gdy H₀ jest prawdziwa, a próba dostatecznie duża, statystyka ta ma
+      w przybliżeniu ", gloss("rozkład chi-kwadrat", "rozkład χ²"), " znany
+      z wykładu 02 (rozdz. 4), o df = (r − 1)(c − 1) ",
+      gloss("stopnie swobody", "stopniach swobody"), ", gdzie r i c to liczby
+      wierszy i kolumn. Tyle komórek tabeli można wypełnić dowolnie, zanim sumy
+      wierszy i kolumn wyznaczą resztę. Pełna niezależność w próbie dałaby χ² = 0,
+      a każde odstępstwo od niej, w dowolną stronę, powiększa χ². Dlatego H₀
+      odrzucamy tylko przy dużych wartościach statystyki, a p-wartość to pole pod
+      krzywą rozkładu χ² na prawo od obliczonej wartości."),
+
     # ========================================================================
-    # WIDGET 0: Budowanie intuicji — co to znaczy niezaleznosc?
+    # WIDGET 0: Budowanie intuicji — co to znaczy niezależność?
     # ========================================================================
     lc_h2("ch5-intuicja", "Budowanie intuicji: co to znaczy „niezależność”?"),
 
-    tagList(
-      p("Zanim przejdziemy do wzorów, zbudujmy intuicję na przykładzie:")
-    ),
+    lc_p("Zanim zastosujemy wzory do większych tabel, prześledźmy je na
+      najprostszej tabeli 2 × 2. Panel pokazuje w trzech krokach dane z 200
+      kontroli drogowych, tabelę oczekiwaną przy założeniu niezależności
+      i porównanie obu tabel."),
 
     figure_panel(
       label = "Ryc. 7.1",
@@ -64,42 +114,70 @@ ch5_ui <- list(
       uiOutput("ch5_narr")
     ),
 
+    lc_p("Mandat dostało 30 ze 100 kontrolowanych kobiet i 50 ze 100 mężczyzn,
+      łącznie 80 osób, czyli 40%. Przy niezależności te same 40% dotyczyłoby obu
+      płci, więc oczekujemy po 40 mandatów i po 60 kontroli bez mandatu w każdej
+      grupie. Każda komórka odbiega od oczekiwań o 10 obserwacji. Wkład komórek
+      z mandatem do statystyki wynosi 10²/40 = 2,5, a komórek bez mandatu
+      10²/60 ≈ 1,67. Razem χ² = 8,33 przy df = (2 − 1)(2 − 1) = 1."),
+
+    lc_p("Przy poziomie istotności α = 0,05, ustalonym jak zwykle przed
+      spojrzeniem na dane, wartość krytyczna rozkładu χ² z jednym stopniem
+      swobody wynosi 3,84. Obliczone 8,33 leży daleko za nią, a p-wartość
+      wynosi 0,004. Gdyby płeć nie miała związku
+      z mandatami, rozbieżność co najmniej tak duża jak w tych danych zdarzałaby
+      się mniej więcej w 4 próbach na 1000. Odrzucamy H₀. Test nie mówi natomiast,
+      skąd ten związek się bierze. To dane obserwacyjne, więc nie wiemy, czy chodzi
+      o płeć, czy na przykład o to, że mężczyźni więcej jeżdżą."),
+
     # ========================================================================
-    # Cwiczenie: sformuluj hipotezy
+    # Ćwiczenie: sformułuj hipotezy
     # ========================================================================
     lc_h2("ch5-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    tagList(
-      p("Jak wyglądają H₀ i Hₐ dla pytań o związek dwóch zmiennych jakościowych?")
-    ),
+    lc_p("Pierwszym krokiem każdego testu jest zapis hipotez. Przy każdym
+      z trzech pytań poniżej nazwij najpierw obie zmienne jakościowe i ich
+      kategorie, potem zapisz H₀ i Hₐ, a dopiero na końcu porównaj swój zapis
+      z odpowiedzią."),
 
     hypothesis_practice("ch5", list(
       list(
         question = "Czy wybór kierunku studiów zależy od płci?",
         h0 = "\\(H_0:\\) kierunek i płeć są niezależne",
         ha = "\\(H_a:\\) kierunek i płeć są powiązane",
-        note = "Test χ² niezależności zawsze testuje niezależność vs. związek — nie mówi nic o kierunku zależności."
+        note = "Test χ² niezależności zawsze zestawia niezależność ze związkiem i nie mówi nic o kierunku zależności."
       ),
       list(
         question = "Czy typ opakowania (szkło / plastik / karton) ma związek
                     z występowaniem pleśni w sokach?",
-        h0 = "\\(H_0:\\) rodzaj opakowania nie wpływa na ryzyko pojawienia się pleśni",
-        ha = "\\(H_a:\\) przynajmniej jedno opakowanie wiąże się z innym ryzykiem pleśni",
-        note = "Choć merytorycznie spodziewamy się kierunku (niektóre opakowania pleśnieją częściej), test χ² jest zawsze dwustronny."
+        h0 = "\\(H_0:\\) ryzyko pojawienia się pleśni jest takie samo dla wszystkich rodzajów opakowań",
+        ha = "\\(H_a:\\) dla przynajmniej jednego rodzaju opakowania ryzyko pleśni jest inne",
+        note = "Choć merytorycznie spodziewamy się kierunku (niektóre opakowania pleśnieją częściej), Hₐ w teście χ² nie ma kierunku: statystyka rośnie przy każdym odstępstwie od niezależności."
       ),
       list(
         question = "Czy preferencje konsumentów (lubi / nie lubi) zależą od regionu
                     Polski (płd. / pn. / centr. / wsch. / zach.)?",
         h0 = "\\(H_0:\\) rozkład preferencji jest taki sam we wszystkich regionach",
         ha = "\\(H_a:\\) rozkład preferencji różni się między przynajmniej dwoma regionami",
-        note = "Tabela 2 × 5. Test χ² działa na dowolne wymiary tabeli kontyngencji."
+        note = "Tabela 2 × 5. Test χ² działa dla tabeli kontyngencji o dowolnych wymiarach."
       )
     )),
+
+    lc_p("Pytania różnią się liczbą kategorii, a więc wymiarem tabeli. Wymiar
+      zmienia liczbę stopni swobody, ale nie sposób liczenia statystyki χ².
+      Ten rachunek przejdziemy teraz krok po kroku."),
 
     # ========================================================================
     # WIDGET 1: Chi-kwadrat krokowy
     # ========================================================================
     lc_h2("ch5-krok", "Test χ² niezależności — krok po kroku"),
+
+    lc_p("Panel losuje próbę o zadanej wielkości z jednego z trzech scenariuszy.
+      Każda tabela ma sześć komórek (3 × 2 albo 2 × 3), więc df = 2. Kolejne
+      kroki prowadzą od liczebności obserwowanych przez procenty wierszowe,
+      znane z wykładu 01, i tabelę oczekiwaną do p-wartości i decyzji. Procenty
+      wierszowe są tu właściwym wyborem, bo pytamy, czy rozkład drugiej zmiennej
+      jest taki sam w każdej kategorii pierwszej."),
 
     figure_panel(
       label = "Ryc. 7.2",
@@ -109,7 +187,7 @@ ch5_ui <- list(
         steps = c("Tabela obserwowana", "Procenty — co widzimy?",
                   "Tabela oczekiwana + χ²", "p-wartość i decyzja"),
         toolbar = lc_toolbar(
-          selectInput("ch5_scenario", "Scenariusz (2×2)",
+          selectInput("ch5_scenario", "Scenariusz",
             choices = c(
               "Opakowanie a pleśń (TŻ)" = "packaging",
               "Typ gleby a kategoria plonu (R)" = "soil",
@@ -127,17 +205,57 @@ ch5_ui <- list(
       )
     ),
 
+    lc_p("We wszystkich scenariuszach populacja jest ustawiona tak, że zmienne
+      są powiązane, czyli H₀ jest fałszywa. W domyślnym scenariuszu pleśń pojawia
+      się w 5% opakowań szklanych, 12% plastikowych i 20% kartonowych. Mimo to
+      przy n = 120 test nie zawsze odrzuca H₀: w symulacji 2000 prób zrobił to
+      tylko w około 44% losowań, a przy n = 300 w około 85%. To ",
+      gloss("moc testu"), " z rozdziału 03 w działaniu. Przy słabym związku
+      i małej próbie wynik „brak podstaw do odrzucenia H₀” jest częsty i nie
+      oznacza, że zmienne są niezależne. W scenariuszach gleby i środków ochrony
+      różnice między wierszami są większe, więc już przy n = 120 test wykrywa
+      związek w ponad 90% losowań."),
+
+    lc_p("Wróćmy do ankiety z wykładu 01. Tabela płci i czterech kierunków ma
+      2 × 4 komórki, więc df = 3. Liczebności obserwowane leżą bardzo blisko
+      oczekiwanych, na przykład Informatykę studiują 33 kobiety, a przy
+      niezależności oczekiwalibyśmy 32,7. Statystyka wynosi χ² = 0,47, daleko
+      poniżej wartości krytycznej 7,81, a p-wartość 0,92. Nie ma podstaw do
+      odrzucenia H₀. To nie dowodzi, że płeć i kierunek są niezależne, tylko
+      że dane nie przemawiają przeciw niezależności."),
+
+    lc_p("W R tabelę tworzy ", tags$code("tab <- table(data$plec, data$kierunek)"),
+      ", a test wykonuje ", tags$code("chisq.test(tab)"), ". Dla tabel 2 × 2
+      funkcja domyślnie stosuje poprawkę Yatesa na ciągłość, która nieco zmniejsza
+      statystykę: dla danych o mandatach daje χ² = 7,52 i p = 0,006 zamiast 8,33
+      i 0,004. Wynik zgodny ze wzorem daje ",
+      tags$code("chisq.test(tab, correct = FALSE)"), ". Sam test mówi tylko,
+      czy związek istnieje. W którą stronę przebiega, pokazują procenty wierszowe,
+      a jak jest silny, mierzy ", gloss("V Cramera"), " omówione w rozdziale 10."),
+
     # ========================================================================
-    # WIDGET 2: Chi-kwadrat vs Fisher (porownanie)
+    # WIDGET 2: Chi-kwadrat vs Fisher (porównanie)
     # ========================================================================
     lc_h2("ch5-fisher", "Test χ² a test Fishera"),
 
-    tagList(
-      p("Test χ² opiera się na przybliżeniu. Gdy próba jest mała,
-        niektóre ", gloss("liczność oczekiwana", "oczekiwane liczności"), " mogą być < 5 — wtedy przybliżenie zawodzi."),
-      p("Alternatywa: ", gloss("test dokładny Fishera"),
-        " — liczy p-wartość dokładnie, jak test dwumianowy dla proporcji.")
-    ),
+    lc_p("Test χ² ma założenia, które dokładnie omówimy w wykładzie 05.
+      Obserwacje muszą być niezależne, czyli każda osoba trafia do tabeli tylko
+      raz, a w komórkach stoją liczebności, nie procenty. Trzecie założenie
+      dotyczy wielkości próby. Rozkład χ² jest tylko przybliżeniem rozkładu
+      statystyki i sprawdza się, gdy ",
+      gloss("liczebność oczekiwana", "liczebności oczekiwane"), " nie są zbyt małe.
+      Często podawana orientacyjna reguła wymaga co najmniej 5 obserwacji
+      oczekiwanych w każdej komórce. Nie jest to ostra granica, tylko sygnał,
+      że wynik warto sprawdzić inną metodą."),
+
+    lc_p("Taką metodą jest ", gloss("test dokładny Fishera"), ". Zamiast korzystać
+      z przybliżenia, rozważa wszystkie tabele o tych samych sumach wierszy
+      i kolumn co obserwowana. Dla każdej liczy dokładne prawdopodobieństwo
+      przy H₀, a p-wartość to suma prawdopodobieństw tych tabel, które są
+      nie bardziej prawdopodobne niż obserwowana. To ta sama idea co w teście
+      dwumianowym z rozdziału 05, który liczył p-wartość wprost z rozkładu, bez
+      przybliżenia normalnego. Panel stosuje oba testy do próby wylosowanej
+      w panelu powyżej."),
 
     figure_panel(
       label = "Ryc. 7.3",
@@ -147,46 +265,68 @@ ch5_ui <- list(
       uiOutput("ch5_compare_result")
     ),
 
-    tagList(
-      p("Kiedy który?"),
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-        tags$thead(
-          tags$tr(tags$th(""), tags$th("Test χ²"), tags$th("Test Fishera"))
+    lc_p("W domyślnym scenariuszu przy n = 120 na każdy rodzaj opakowania
+      przypada średnio 40 prób, a pleśń pojawia się łącznie w około 12% z nich.
+      Oczekiwana liczba spleśniałych opakowań w wierszu wynosi więc około 4,9
+      i ostrzeżenie o małych liczebnościach oczekiwanych pojawia się często,
+      w symulacji w trzech losowaniach na cztery. Mimo to oba testy prowadzą
+      zwykle do tej samej decyzji (w symulacji w 96% prób), a ich p-wartości
+      różnią się typowo o około 0,01. Przy n = 50 różnice są kilkakrotnie
+      większe, a przy n = 300 praktycznie znikają."),
+
+    lc_p("Najważniejsze różnice między testami zbiera tabela:"),
+
+    tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
+      tags$thead(
+        tags$tr(tags$th(""), tags$th("Test χ²"), tags$th("Test Fishera"))
+      ),
+      tags$tbody(
+        tags$tr(
+          tags$td(tags$b("Metoda")),
+          tags$td("Przybliżony (rozkład χ²)"),
+          tags$td("Dokładny (kombinatoryka)")
         ),
-        tags$tbody(
-          tags$tr(
-            tags$td(tags$b("Metoda")),
-            tags$td("Przybliżony (rozkład χ²)"),
-            tags$td("Dokładny (kombinatoryka)")
-          ),
-          tags$tr(
-            tags$td(tags$b("Warunek")),
-            tags$td("Wszystkie E₀ ≥ 5"),
-            tags$td("Działa zawsze")
-          ),
-          tags$tr(
-            tags$td(tags$b("Duże n")),
-            tags$td(style = "background: var(--upwr-sage-tint);", "Szybki, praktycznie identyczny wynik"),
-            tags$td("Działa, ale wolniejszy")
-          ),
-          tags$tr(
-            tags$td(tags$b("Małe n")),
-            tags$td(style = "background: var(--upwr-accent-tint);", "Może być niedokładny"),
-            tags$td(style = "background: var(--upwr-sage-tint);", "Bezpieczny wybór")
-          ),
-          tags$tr(
-            tags$td(tags$b("W Jamovi")),
-            tags$td("χ² (domyślnie)"),
-            tags$td("Zaznacz: Fisher's exact test")
-          )
+        tags$tr(
+          tags$td(tags$b("Warunek")),
+          tags$td("Liczebności oczekiwane niezbyt małe (orientacyjnie ≥ 5)"),
+          tags$td("Działa zawsze")
+        ),
+        tags$tr(
+          tags$td(tags$b("Duże n")),
+          tags$td(style = "background: var(--upwr-sage-tint);", "Szybki, praktycznie identyczny wynik"),
+          tags$td("Działa, ale wolniejszy")
+        ),
+        tags$tr(
+          tags$td(tags$b("Małe n")),
+          tags$td(style = "background: var(--upwr-accent-tint);", "Może być niedokładny"),
+          tags$td(style = "background: var(--upwr-sage-tint);", "Bezpieczny wybór")
+        ),
+        tags$tr(
+          tags$td(tags$b("W jamovi")),
+          tags$td("χ² (domyślnie)"),
+          tags$td("Zaznacz: Fisher's exact test")
         )
       )
     ),
 
+    lc_p("W R oba testy wywołujemy na tej samej tabeli: ",
+      tags$code("chisq.test(tab)"), " i ", tags$code("fisher.test(tab)"), ".
+      Przy dużych próbach dają praktycznie ten sam wynik, więc wybór nie ma
+      znaczenia. Przy małych próbach albo rzadkich kategoriach bezpieczniej
+      oprzeć decyzję na teście Fishera."),
+
+    # ========================================================================
+    # Ćwiczenia CASchools
+    # ========================================================================
     lc_h2("ch5-cas", "Ćwiczenia", "CASchools — test χ² niezależności"),
 
+    lc_p("Na koniec dwa zadania na danych o szkołach w Kalifornii. W obu
+      przynajmniej jedna zmienna jest ilościowa, więc przed testem trzeba ją
+      podzielić na dwie kategorie według podanego progu. Powstaje tabela 2 × 2
+      i test χ² z jednym stopniem swobody."),
+
     lc_feedback(type = "info",
-      p(tags$b("Dane: "), "420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
+      p(tags$b("Dane:"), " 420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
         tags$code("dane/caschools.csv"), "."),
       p("Zmienne w zadaniach: ", tags$code("grades"),
         " (typ szkoły: KK-06/KK-08), ",
@@ -218,6 +358,12 @@ ch5_ui <- list(
       lc_action("cas_ch5_ans9", "Pokaż rozwiązanie", variant = "solid"),
       uiOutput("cas_ch5_sol9")
     ),
+
+    lc_p("Porównując rozwiązania, zwróć uwagę na cenę podziału zmiennej ilościowej
+      na dwie kategorie. Próg jest arbitralny, a obserwacje leżące tuż pod nim
+      i tuż nad nim trafiają do różnych klas, choć prawie się nie różnią. Gdy obie
+      zmienne są z natury ilościowe, test korelacji z rozdziału 06 zwykle lepiej
+      wykorzystuje informację zawartą w danych."),
 
     lc_chapter_next(
       num       = "08",
@@ -354,17 +500,15 @@ ch5_server <- function(input, output, session) {
     switch(as.character(step),
       "1" = lc_step_text(kicker, title = "Dane z 200 kontroli:",
         lc_crosstab(narr_tab, measure = "n", label = "Dane z 200 kontroli"),
-        p("Kobiety: 30% dostało mandat. Mężczyźni: 50%. Wygląda na różnicę.
-          Ale czy to może być przypadek?")
+        p("Mandat dostało 30% kobiet i 50% mężczyzn. Różnica jest widoczna,
+          ale czy mogła powstać przez przypadek?")
       ),
-      "2" = lc_step_text(kicker, title = "Załóżmy, że płeć NIE ma znaczenia (H₀).",
-        p("Skoro płeć nie wpływa na mandaty, to nie musimy dzielić danych na kobiety i mężczyzn.
-          Patrzymy na ", tags$b("całość"), ": 80 mandatów na 200 kontroli = ",
-          tags$b("40%"), "."),
-        p("Jeśli płeć jest niezależna, to te 40% powinno być ",
-          tags$b("takie samo"), " dla kobiet i mężczyzn:"),
+      "2" = lc_step_text(kicker, title = "Załóżmy, że płeć nie ma znaczenia (H₀).",
+        p("Jeśli płeć nie ma związku z mandatami, nie musimy dzielić danych na kobiety
+          i mężczyzn. W całej próbie jest 80 mandatów na 200 kontroli, czyli 40%."),
+        p("Przy niezależności te 40% dotyczy tak samo kobiet, jak i mężczyzn:"),
         lc_crosstab(narr_exp, measure = "n", lead = FALSE, label = "Tabela oczekiwana"),
-        p("To jest ", tags$b("tabela oczekiwana"), " — ile by było, gdyby płeć nie miała wpływu.")
+        p("To tabela oczekiwana: tyle obserwacji byłoby w komórkach, gdyby płeć nie miała znaczenia.")
       ),
       "3" = lc_step_text(kicker, title = "Porównanie: obserwowane i oczekiwane",
         lc_table(
@@ -378,12 +522,10 @@ ch5_server <- function(input, output, session) {
             lc_col("diff", "Różnica")
           )
         ),
-        p("Kobiety dostały ", tags$b("10 mandatów mniej"), " niż oczekiwano,
-          mężczyźni ", tags$b("10 więcej"), "."),
-        p("Test χ² bierze te różnice, podnosi do kwadratu, dzieli przez oczekiwane
-          i sumuje po wszystkich komórkach. Im większa ta suma, tym trudniej
-          wytłumaczyć różnice przypadkiem."),
-        p(tags$em("To właśnie robi wzór: "),
+        p("Kobiety dostały o 10 mandatów mniej, niż oczekiwano, mężczyźni o 10 więcej."),
+        p("Test χ² podnosi takie różnice do kwadratu, dzieli przez liczebności
+          oczekiwane i sumuje po wszystkich komórkach:"),
+        p(
           withMathJax("\\(\\chi^2 = \\sum \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}\\)"))
       )
     )
@@ -459,7 +601,7 @@ ch5_server <- function(input, output, session) {
                   vjust = -0.3, size = 4, family = "mono",
                   colour = STEP_ROLES$known$colour) +
         scale_fill_manual(values = ch5_cat_colours(ncol(tab))) +
-        labs(x = par$lab1, y = if (step == 1) "Liczność" else "Procent") +
+        labs(x = par$lab1, y = if (step == 1) "Liczebność" else "Procent") +
         step_frame(xlim = c(0.4, nrow(tab) + 0.6), ylim = c(0, y_top))
     } else {
       # Krok 3: statystyka χ²; krok 4: obszar odrzucenia i decyzja
@@ -482,19 +624,18 @@ ch5_server <- function(input, output, session) {
 
     switch(as.character(step),
       "1" = tagList(
-        "n = ", step_num(sum(tab)), ". To są obserwowane liczności. Ale same liczby
-        trudno porównać, bo grupy mogą mieć różne rozmiary. Kliknij krok 2."
+        "n = ", step_num(sum(tab)), ". To liczebności obserwowane. Grupy mogą mieć
+        różne rozmiary, więc same liczby trudno porównać."
       ),
       "2" = tagList(
-        "Gdyby zmienne były niezależne, procenty byłyby ",
-        tags$strong("takie same", .noWS = "outside"), " w każdym wierszu.
-        Czy widzisz różnice?"
+        "Przy niezależności procenty w populacji byłyby takie same w każdym wierszu;
+        w próbie różnią się także przez przypadek."
       ),
       "3" = tagList(
-        "χ² = ", step_num(lc_fmt(chi_stat, 3)), paste0(" (df = ", df_val, ")."),
-        "Statystyka χ² mierzy łączną rozbieżność między tabelą obserwowaną a tabelą oczekiwaną.",
+        "χ² = ", step_num(lc_fmt(chi_stat, 3)), paste0(" (df = ", df_val, ") — "),
+        "łączna rozbieżność między tabelą obserwowaną a oczekiwaną.",
         if (any(test$expected < 5)) tagList(" ",
-          lc_verdict("Uwaga: niektóre oczekiwane liczności < 5!", type = "danger"))
+          lc_verdict("Uwaga: niektóre liczebności oczekiwane są mniejsze od 5", type = "danger"))
       ),
       "4" = tagList(
         paste0("Wynik testu χ² niezależności: χ²(", df_val, ") = "),
@@ -527,7 +668,7 @@ ch5_server <- function(input, output, session) {
           cols = c(list(lc_col("group", par$lab1, "row")),
                    Map(function(k, lab) lc_col(k, lab, digits = 1),
                        keys, colnames(expected))),
-          lead = "Liczności oczekiwane (gdyby H₀ prawdziwa):")
+          lead = "Liczebności oczekiwane (gdyby H₀ była prawdziwa):")
       }
     )
   })
@@ -572,14 +713,15 @@ ch5_server <- function(input, output, session) {
         )
       ),
       lc_feedback(type = if (low_exp) "danger" else "ok",
-        p(tags$b("Oczekiwane liczności < 5: "),
-          if (low_exp) paste0("TAK (", n_low, " komórek) — χ² może być niedokładny, preferuj Fishera!")
-          else "NIE — oba testy dają wiarygodne wyniki.")
+        p(tags$b("Liczebności oczekiwane poniżej 5:"),
+          if (low_exp) paste0(" tak (komórki: ", n_low, ") — przybliżenie χ² może być
+            niedokładne, bezpieczniejszy jest wynik testu Fishera.")
+          else " nie — przybliżenie χ² powinno być wystarczające.")
       )
     )
   })
 
-  # --- Cwiczenia CASchools ---
+  # --- Ćwiczenia CASchools ---
 
   .cas_chisq <- function(tab) {
     ct <- chisq.test(tab, correct = FALSE)
@@ -587,7 +729,24 @@ ch5_server <- function(input, output, session) {
     k  <- min(nrow(tab), ncol(tab))
     v  <- sqrt(ct$statistic / (n * (k - 1)))
     list(chi2 = unname(ct$statistic), df = unname(ct$parameter),
-         p = ct$p.value, tab = tab, v = v, n = n)
+         p = ct$p.value, tab = tab, v = unname(v), n = n)
+  }
+
+  # Liczba z przecinkiem dziesiętnym (polski zapis).
+  .cas_num <- function(x, digits = 3) {
+    formatC(x, format = "f", digits = digits, decimal.mark = ",")
+  }
+
+  .cas_result_lines <- function(r) {
+    tagList(
+      tags$li(paste0("χ²(", r$df, ") = ", .cas_num(r$chi2), ", ", format_p(r$p))),
+      tags$li(paste0("Cramér's V = ", .cas_num(r$v)))
+    )
+  }
+
+  .cas_verdict <- function(r) {
+    if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
+    else tags$b("Brak podstaw do odrzucenia H₀")
   }
 
   cas_vis8 <- reactiveVal(FALSE)
@@ -607,9 +766,10 @@ ch5_server <- function(input, output, session) {
       .cas_chisq(table(grades = .ch5_cas$grades, high_english = high_eng))
     })
     tab <- r$tab
+    pct_high <- 100 * tab[, "TRUE"] / rowSums(tab)
     lc_feedback(type = "ok", style = "margin-top: 10px;",
-      p(tags$b("H₀: "), "typ szkoły i high_english są niezależne · ",
-        tags$b("Hₐ: "), "zmienne są zależne"),
+      p(tags$b("H₀:"), " typ szkoły i high_english są niezależne · ",
+        tags$b("Hₐ:"), " zmienne są zależne"),
       tags$table(class = "lc-table lc-table-bordered lc-table-sm",
         tags$thead(tags$tr(
           tags$th("grades"), tags$th("high_english = FALSE"),
@@ -622,18 +782,20 @@ ch5_server <- function(input, output, session) {
         }))
       ),
       tags$ul(
-        tags$li(sprintf("χ²(%d) = %.3f, p %s %s",
-          r$df, r$chi2,
-          if (r$p < 0.001) "<" else "=",
-          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("Cramér's V = %.3f", r$v))
+        .cas_result_lines(r),
+        lapply(rownames(tab), function(g) {
+          tags$li(paste0("Odsetek high_english w ", g, ": ",
+                         .cas_num(pct_high[[g]], 1), "%"))
+        })
       ),
-      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
-      else tags$b("Brak podstaw do odrzucenia H₀"),
-      p(tags$b("Interpretacja: "),
-        "Test χ² stwierdza, czy zmienne są zależne — nie jak duże jest przesunięcie ani
-        w jakim kierunku. Siłę związku wyraża Cramér's V. By zobaczyć kierunek —
-        porównaj proporcje high_english w każdej grupie grades.")
+      .cas_verdict(r),
+      p(tags$b("Interpretacja:"),
+        " Test χ² rozstrzyga tylko, czy dane przemawiają przeciw niezależności.
+        Kierunek pokazuje porównanie odsetków high_english w obu typach szkół,
+        a siłę związku — Cramér's V.",
+        if (r$p >= 0.05) " Brak podstaw do odrzucenia H₀ nie dowodzi, że typ
+        szkoły i odsetek uczniów ELL są niezależne: różnica w odsetkach mogła
+        powstać przez przypadek, ale mogła też być zbyt mała, by test ją wykrył.")
     )
   })
 
@@ -654,9 +816,10 @@ ch5_server <- function(input, output, session) {
     tab <- r$tab
     p_hi_str_poor <- tab["TRUE",  "TRUE"] / sum(tab["TRUE", ])
     p_lo_str_poor <- tab["FALSE", "TRUE"] / sum(tab["FALSE", ])
+    r_cont <- cor.test(.ch5_cas$student_teacher_ratio, .ch5_cas$lunch)
     lc_feedback(type = "ok", style = "margin-top: 10px;",
-      p(tags$b("H₀: "), "high_str i high_lunch są niezależne · ",
-        tags$b("Hₐ: "), "zmienne są zależne"),
+      p(tags$b("H₀:"), " high_str i high_lunch są niezależne · ",
+        tags$b("Hₐ:"), " zmienne są zależne"),
       tags$table(class = "lc-table lc-table-bordered lc-table-sm",
         tags$thead(tags$tr(
           tags$th("high_str"), tags$th("high_lunch = FALSE"),
@@ -669,20 +832,27 @@ ch5_server <- function(input, output, session) {
         }))
       ),
       tags$ul(
-        tags$li(sprintf("χ²(%d) = %.3f, p %s %s",
-          r$df, r$chi2,
-          if (r$p < 0.001) "<" else "=",
-          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("Cramér's V = %.3f", r$v)),
-        tags$li(sprintf("Odsetek high_lunch wśród STR > 20: %.1f%%", 100 * p_hi_str_poor)),
-        tags$li(sprintf("Odsetek high_lunch wśród STR ≤ 20: %.1f%%", 100 * p_lo_str_poor))
+        .cas_result_lines(r),
+        tags$li(paste0("Odsetek high_lunch wśród STR > 20: ",
+                       .cas_num(100 * p_hi_str_poor, 1), "%")),
+        tags$li(paste0("Odsetek high_lunch wśród STR ≤ 20: ",
+                       .cas_num(100 * p_lo_str_poor, 1), "%")),
+        tags$li(paste0("Dla porównania korelacja Pearsona ciągłych STR i lunch: r = ",
+                       .cas_num(unname(r_cont$estimate)), ", ",
+                       format_p(r_cont$p.value)))
       ),
-      if (r$p < 0.05) tags$b(style = paste0("color:", upwr_accent), "Odrzucamy H₀")
-      else tags$b("Brak podstaw do odrzucenia H₀"),
-      p(tags$b("Wniosek: "),
-        "Okręgi z przeładowanymi klasami mają wyraźnie wyższy odsetek ubogich uczniów.
-        STR może być proxy dla zasobności — dlatego korelacja STR–read z zadania 5
-        jest częściowo konfundowana dochodem.")
+      .cas_verdict(r),
+      p(tags$b("Wniosek:"),
+        if (r$p < 0.05) " Okręgi z przeładowanymi klasami mają istotnie wyższy
+        odsetek ubogich uczniów."
+        else " Okręgi z przeładowanymi klasami mają nieco wyższy odsetek ubogich
+        uczniów, ale po podziale obu zmiennych na dwie klasy test nie daje podstaw
+        do odrzucenia H₀. Korelacja ciągłych zmiennych jest natomiast
+        istotna, choć słaba: podział na dwie klasy wyrzucił część informacji.",
+        " Słaby związek STR z ubóstwem oznacza, że ubóstwo może tłumaczyć
+        korelację STR–read z zadania 5 tylko częściowo. Żeby to sprawdzić,
+        potrzebny jest model uwzględniający obie zmienne naraz (regresja wieloraka,
+        wykład 06).")
     )
   })
 }

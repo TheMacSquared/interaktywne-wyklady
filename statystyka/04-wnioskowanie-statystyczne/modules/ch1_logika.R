@@ -11,28 +11,41 @@ ch1_ui <- list(
       kicker = "Rozdział 01 · Testowanie hipotez",
       num    = "01",
       title  = "Logika testowania.",
-      lead   = "„Czy telefon na biurku wpływa na koncentrację?” — statystyk zaczyna nie
-                od wzorów, tylko od pytania. Najpierw zobaczymy, skąd bierze się
-                potrzeba testu, a w kolejnym kroku nazwiemy hipotezy."
+      lead   = "Studenci z telefonem na biurku wypadli w teście koncentracji słabiej
+                niż studenci z telefonem w plecaku. Różnice między grupami powstają
+                jednak także przypadkiem. Test statystyczny sprawdza, czy obserwowana
+                różnica jest większa, niż przypadek zwykle wytwarza."
     ),
 
+    lc_p("Wykład 03 skończył się na pytaniach innego rodzaju niż „gdzie leży
+      parametr?”. Pytaliśmy, czy średni czas dojazdu przekracza 26 minut albo
+      czy poparcie przekracza 50%, i rozstrzygaliśmy to, sprawdzając, czy
+      przedział ufności obejmuje wartość progową. Testowanie hipotez zajmuje się
+      właśnie takimi pytaniami: czy parametr ma konkretną wartość, czy dwie grupy
+      się różnią, czy dwie zmienne są ze sobą powiązane. Odpowiedzią nie jest
+      zakres wartości, tylko decyzja. Zaczniemy od przykładu, w którym taka
+      decyzja jest potrzebna."),
+
     # ========================================================================
-    # SEKCJA 0: Case study otwierajacy
+    # SEKCJA 0: Case study otwierający
     # ========================================================================
     lc_h2("ch1-case", "Case study: telefon a koncentracja"),
 
-    tagList(
-      p("Wyobraźcie sobie następujący eksperyment na waszej uczelni
-        (inspirowany badaniem Ward et al., 2017):"),
-      tags$ul(
-        tags$li("80 studentów losowo przydzielonych do dwóch grup po 40 osób"),
-        tags$li(tags$b("Grupa A:"), " telefon schowany w plecaku"),
-        tags$li(tags$b("Grupa B:"), " telefon leży na biurku (ekranem w dół, wyciszony)"),
-        tags$li("Wszyscy rozwiązują ten sam test koncentracji (0–100 punktów)")
-      ),
-      p("Nikt nie używa telefonu. Różnica jest ",
-        tags$em("tylko"), " w tym, czy telefon leży w zasięgu wzroku.")
+    lc_p("Wyobraź sobie eksperyment przeprowadzony na uczelni, inspirowany
+      badaniem Ward i in. (2017):"),
+    tags$ul(
+      tags$li("80 studentów losowo przydzielonych do dwóch grup po 40 osób"),
+      tags$li(tags$strong("Grupa A:"), " telefon schowany w plecaku"),
+      tags$li(tags$strong("Grupa B:"), " telefon leży na biurku (ekranem w dół, wyciszony)"),
+      tags$li("Wszyscy rozwiązują ten sam test koncentracji (0–100 punktów)")
     ),
+
+    lc_p("Nikt nie używa telefonu w trakcie testu. Grupy różnią się tylko tym,
+      czy telefon leży w zasięgu wzroku. O przydziale do grupy decydowało
+      losowanie, więc wszystkie inne cechy studentów rozkładają się między
+      grupami przypadkowo. Jeśli wyniki grup się różnią, zostają dwa
+      wyjaśnienia: wpływ telefonu albo przypadek. Panel poniżej losuje wyniki
+      takiego eksperymentu, a każde kliknięcie to nowa grupa 80 studentów."),
 
     figure_panel(
       label = "Ryc. 1.1",
@@ -49,56 +62,80 @@ ch1_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Pytanie kluczowe",
-      "Średnia w grupie „biurko” jest niższa. Ale czy to nie może być przypadek?
-       Gdybyśmy powtórzyli eksperyment z innymi 80 osobami, różnica mogłaby być
-       w drugą stronę. Testowanie hipotez rozstrzyga: czy obserwowana różnica
-       jest zbyt duża, żeby być przypadkiem?",
-      color = "uwaga"
-    ),
+    lc_p("W typowym losowaniu średnia w grupie „biurko” wypada o kilka punktów
+      niżej niż w grupie „plecak”. Wyniki obu grup mocno się jednak nakładają:
+      odchylenie standardowe w każdej z nich wynosi kilkanaście punktów, więc
+      wielu studentów z telefonem na biurku wypada lepiej niż przeciętny student
+      z telefonem w plecaku. Kolejne kliknięcia pokazują też, że sama różnica
+      średnich zmienia się od eksperymentu do eksperymentu."),
+
+    lc_p("Stąd pytanie, na które odpowiada ten wykład. Gdyby telefon nie miał
+      żadnego wpływu, średnie dwóch losowych grup i tak by się różniły, bo każda
+      grupa to inna próba. To ta sama zmienność próbkowa, którą w wykładzie 03
+      mierzył błąd standardowy. Czy zaobserwowana różnica jest na tyle duża,
+      że trudno ją wytłumaczyć samą zmiennością próbkową? Taką decyzję
+      podejmuje test statystyczny."),
 
     # ========================================================================
     # SEKCJA 1: Logika testowania z odniesieniem do case study
     # ========================================================================
     lc_h2("ch1-logika", "Testowanie hipotez — logika rozumowania"),
 
-    tagList(
-      p("Testowanie hipotez statystycznych przypomina proces sądowy:"),
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-        tags$thead(
-          tags$tr(tags$th("Element"), tags$th("Sąd"), tags$th("Nasz eksperyment z telefonem"))
-        ),
-        tags$tbody(
-          tags$tr(
-            tags$td(tags$b("H₀")),
-            tags$td("Oskarżony jest niewinny"),
-            tags$td("Telefon nie wpływa na koncentrację (różnica = 0)")
-          ),
-          tags$tr(
-            tags$td(tags$b("Hₐ")),
-            tags$td("Oskarżony jest winny"),
-            tags$td("Telefon wpływa na koncentrację (różnica ≠ 0)")
-          ),
-          tags$tr(
-            tags$td(tags$b("Dane")),
-            tags$td("Dowody złożone w sądzie"),
-            tags$td("Wyniki testu 80 studentów")
-          ),
-          tags$tr(
-            tags$td(tags$b("Możliwy werdykt")),
-            tags$td("Nie mamy podstaw, by twierdzić, że jest winny — albo uznajemy, że dowody są wystarczające"),
-            tags$td("Nie mamy podstaw, by twierdzić, że telefon wpływa — albo odrzucamy hipotezę o braku wpływu")
-          )
-        )
+    lc_p("Test statystyczny rozumuje podobnie jak sąd w procesie karnym. Sąd
+      zaczyna od domniemania niewinności: oskarżonego uważa się za niewinnego,
+      dopóki dowody wyraźnie nie przemawiają przeciw temu. Test zaczyna od
+      założenia, że efektu nie ma. To założenie nazywamy ",
+      gloss("hipoteza zerowa", "hipotezą zerową"), " i oznaczamy H₀. Jego
+      zaprzeczenie, czyli twierdzenie, że efekt istnieje, to ",
+      gloss("hipoteza alternatywna"), " Hₐ."),
+
+    tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
+      tags$thead(
+        tags$tr(tags$th("Element"), tags$th("Sąd"), tags$th("Nasz eksperyment z telefonem"))
       ),
-      p("Na razie najważniejsze jest samo uporządkowanie pytania: ",
-        "jaki stan uznajemy za domyślny",
-        " i ",
-        "co byłoby sygnałem efektu",
-        ". W następnym rozdziale zapiszemy to jako parę H₀/Hₐ. Dopiero potem
-        wrócimy do błędów, ", gloss("p-wartość", "p-wartości"), " i formalnej decyzji.")
+      tags$tbody(
+        tags$tr(
+          tags$td(tags$strong("H₀")),
+          tags$td("Oskarżony jest niewinny"),
+          tags$td("Telefon nie wpływa na koncentrację (różnica = 0)")
+        ),
+        tags$tr(
+          tags$td(tags$strong("Hₐ")),
+          tags$td("Oskarżony jest winny"),
+          tags$td("Telefon wpływa na koncentrację (różnica ≠ 0)")
+        ),
+        tags$tr(
+          tags$td(tags$strong("Dane")),
+          tags$td("Dowody złożone w sądzie"),
+          tags$td("Wyniki testu 80 studentów")
+        ),
+        tags$tr(
+          tags$td(tags$strong("Możliwy werdykt")),
+          tags$td("Wina nie została wykazana — albo dowody wystarczają, by uznać oskarżonego za winnego"),
+          tags$td("Nie mamy podstaw, by twierdzić, że telefon wpływa — albo odrzucamy hipotezę o braku wpływu")
+        )
+      )
     ),
+
+    lc_p("Z tej analogii wynikają dwie własności testu. Pierwsza: dane oceniamy
+      z perspektywy H₀. Pytamy, czy wyniki takie jak nasze byłyby czymś
+      zwyczajnym w świecie, w którym telefon nie ma wpływu. Jeśli byłyby bardzo
+      rzadkie, uznajemy, że dane przemawiają przeciw H₀, i ją odrzucamy. Druga:
+      oba werdykty nie są symetryczne. Sąd, który uniewinnia z braku dowodów,
+      nie stwierdza, że oskarżony jest niewinny, tylko że wina nie została
+      wykazana. Test, który nie odrzuca H₀, również nie dowodzi braku efektu.
+      Mówi tylko, że dane nie dają podstaw, by efekt stwierdzić."),
+
+    lc_p("Ta sama logika stała za przedziałami ufności z wykładu 03. Gdy 95%
+      przedział ufności dla różnicy średnich nie obejmuje zera, zero nie należy
+      do wartości, z którymi dane są zgodne. Test robi to samo, ale zamiast
+      zakresu wartości daje decyzję i liczbę mierzącą, jak bardzo wynik odstaje
+      od H₀: ", gloss("p-wartość"), "."),
+
+    lc_p("Zanim cokolwiek policzymy, trzeba uporządkować samo pytanie: jaki stan
+      uznajemy za domyślny i co byłoby sygnałem efektu. Następny rozdział zapisuje
+      to jako parę hipotez H₀ i Hₐ. Błędy, p-wartość i formalną decyzję omawia
+      rozdział 03."),
 
     lc_chapter_next(
       num       = "02",
@@ -111,7 +148,7 @@ ch1_ui <- list(
 )
 
 # ============================================================================
-# CHAPTER 3: Bledy, p-wartosc i decyzja
+# CHAPTER 3: Błędy, p-wartość i decyzja
 # ============================================================================
 
 ch1d_ui <- list(
@@ -122,97 +159,88 @@ ch1d_ui <- list(
       kicker = "Rozdział 03 · Testowanie hipotez",
       num    = "03",
       title  = "Błędy, p-wartość i decyzja.",
-      lead   = "Skoro mamy już H₀ i Hₐ, możemy zapytać, jakie błędy grożą przy decyzji, czym jest p-wartość i jak poprawnie sformułować werdykt."
+      lead   = "Test kończy się decyzją podjętą na podstawie jednej próby, a taka
+                decyzja może się mylić na dwa sposoby. Częstość obu pomyłek da się
+                kontrolować, a p-wartość prowadzi od danych do werdyktu."
     ),
 
+    lc_p("W poprzednim rozdziale zapisaliśmy pytanie o telefon jako parę hipotez:
+      H₀ mówi, że średnia koncentracja w obu warunkach jest taka sama, Hₐ — że
+      się różni. Test kończy się jedną z dwóch decyzji: odrzucamy H₀ albo nie mamy
+      podstaw, by ją odrzucić. Zanim zobaczymy, jak tę decyzję podjąć, ustalmy,
+      na czym polega jej pomyłka."),
+
     # ========================================================================
-    # SEKCJA 1: Bledy I i II rodzaju
+    # SEKCJA 1: Błędy I i II rodzaju
     # ========================================================================
     lc_h2("ch1-bledy", "Błędy I i II rodzaju"),
 
-    tagList(
-      p("Zanim nauczymy się podejmować decyzje w testach hipotez, musimy
-        zauważyć coś fundamentalnego: rzeczywistość i nasza decyzja
-        to dwie różne rzeczy. Test statystyczny daje nam werdykt —
-        ale werdykt może się nie zgadzać z tym, co naprawdę jest w świecie."),
-      p("Analogia: alarm przeciwpożarowy."),
-      p("Wyobraź sobie czujnik dymu. W świecie są dwa możliwe stany: ",
-        tags$em("pożar faktycznie trwa"), " albo ", tags$em("nic się nie pali"),
-        ". Czujnik może podjąć dwie decyzje: ",
-        tags$em("włączyć alarm"), " albo ", tags$em("milczeć"),
-        ". To daje cztery kombinacje — dwie trafne i dwa błędy:"),
-      tags$ul(
-        tags$li(tags$b("Fałszywy alarm"), " — czujnik wyje, choć nie ma pożaru.
-                Przykry, ale bezpieczny błąd."),
-        tags$li(tags$b("Przegapiony pożar"), " — czujnik milczy, choć pali się
-                naprawdę. Groźny błąd.")
+    lc_p("Decyzja testu i stan rzeczywistości to dwie różne rzeczy. Dobrą analogią
+      jest czujnik dymu. W świecie są dwa możliwe stany: pożar albo jego brak.
+      Czujnik podejmuje jedną z dwóch decyzji: włącza alarm albo milczy. Dwie
+      z czterech kombinacji są trafne, dwie to błędy. Fałszywy alarm, gdy nic się
+      nie pali, jest uciążliwy, ale niegroźny. Przegapiony pożar jest groźny.
+      Obu błędów nie da się wyeliminować jednocześnie: czulszy czujnik rzadziej
+      przegapia pożar, ale częściej włącza się bez powodu, a mniej czuły odwrotnie."),
+
+    lc_p("Test statystyczny ma tę samą strukturę. Stany świata to „H₀ prawdziwa”
+      i „H₀ fałszywa”, decyzje to „nie odrzucamy H₀” i „odrzucamy H₀”."),
+
+    tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
+      tags$thead(
+        tags$tr(tags$th(""), tags$th("H₀ prawdziwa"),
+                tags$th("H₀ fałszywa"))
       ),
-      p("Zauważ, że nie możemy wyeliminować obu błędów jednocześnie:
-        jeśli zwiększymy czułość czujnika (więcej fałszywych alarmów),
-        rzadziej będzie przegapiał pożar. Jeśli zmniejszymy czułość
-        (mniej fałszywych alarmów), częściej przegapi prawdziwy pożar.
-        To ten sam kompromis, który pojawi się w testach statystycznych."),
-      p("W testowaniu hipotez mamy dokładnie tę samą strukturę: dwa możliwe
-        stany świata (H₀ prawdziwa / H₀ fałszywa) i dwie możliwe decyzje
-        (nie odrzucamy / odrzucamy H₀). Cztery kombinacje — dwie dobre,
-        dwie błędne:"),
-      tags$table(class = "lc-table lc-table-bordered", style = "font-size: 15px;",
-        tags$thead(
-          tags$tr(tags$th(""), tags$th("H₀ prawdziwa"),
-                  tags$th("H₀ fałszywa"))
+      tags$tbody(
+        tags$tr(
+          tags$td(tags$strong("Nie odrzucamy H₀")),
+          tags$td(style = "background: var(--upwr-sage-tint);", "Decyzja trafna"),
+          tags$td(style = "background: var(--upwr-accent-tint);", "Błąd II rodzaju (β)")
         ),
-        tags$tbody(
-          tags$tr(
-            tags$td(tags$strong("Nie odrzucamy H₀")),
-            tags$td(style = "background: var(--upwr-sage-tint);", "OK (trafna negacja)"),
-            tags$td(style = "background: var(--upwr-accent-tint);", "Błąd II rodzaju (β)")
-          ),
-          tags$tr(
-            tags$td(tags$strong("Odrzucamy H₀")),
-            tags$td(style = "background: var(--upwr-accent-tint);", "Błąd I rodzaju (α)"),
-            tags$td(style = "background: var(--upwr-sage-tint);", "OK (moc = 1−β)")
-          )
+        tags$tr(
+          tags$td(tags$strong("Odrzucamy H₀")),
+          tags$td(style = "background: var(--upwr-accent-tint);", "Błąd I rodzaju (α)"),
+          tags$td(style = "background: var(--upwr-sage-tint);", "Decyzja trafna (moc, 1 − β)")
         )
-      ),
-      p(tags$b(gloss("błąd pierwszego rodzaju", "Błąd I rodzaju"), " (α):"),
-        " odrzucamy H₀, choć jest prawdziwa — fałszywy alarm.
-        W analogii sądowej: skazujemy niewinnego. W nauce: publikujemy odkrycie,
-        którego ", tags$em("nie"), " ma. Ryzyko tego błędu kontrolujemy sami,
-        ustalając ", gloss("poziom istotności"), " ", withMathJax("\\(\\alpha\\)"),
-        " — zwykle 0,05 (5%)."),
-      p(tags$b(gloss("błąd drugiego rodzaju", "Błąd II rodzaju"), " (β):"),
-        " nie odrzucamy H₀, choć jest fałszywa — przegapiony efekt.
-        W analogii sądowej: uniewinniamy winnego. W nauce: nie wykrywamy
-        realnej zależności. Ryzyko tego błędu (", withMathJax("\\(\\beta\\)"),
-        ") zależy od wielkości efektu, rozrzutu danych i wielkości próby."),
-      p(tags$b(gloss("moc testu", "Moc testu"), " "), withMathJax("\\(1 - \\beta\\)"),
-        ": prawdopodobieństwo wykrycia efektu, gdy ten ", tags$em("naprawdę"),
-        " istnieje. Moc rośnie z: (1) większą próbą n, (2) większym efektem
-        (różnicą rzeczywistą między grupami), (3) mniejszym rozrzutem w grupach."),
-      lc_formula_box(
-        p(withMathJax("\\(\\alpha\\)"),
-          " = P(odrzucamy ", withMathJax("\\(H_0\\)"), " | ",
-          withMathJax("\\(H_0\\)"), " prawdziwa)"),
-        p(withMathJax("\\(\\beta\\)"),
-          " = P(nie odrzucamy ", withMathJax("\\(H_0\\)"), " | ",
-          withMathJax("\\(H_0\\)"), " fałszywa)"),
-        p("Moc = ", withMathJax("\\(1 - \\beta\\)"),
-          " = P(odrzucamy ", withMathJax("\\(H_0\\)"), " | ",
-          withMathJax("\\(H_0\\)"), " fałszywa)")
-      ),
-      p(tags$b("Kompromis α–β:"),
-        " te dwa ryzyka są ze sobą związane — zmniejszenie ",
-        withMathJax("\\(\\alpha\\)"),
-        " (np. z 0,05 do 0,01) redukuje fałszywe alarmy, ale zwiększa ryzyko
-        przegapiania prawdziwych efektów (", withMathJax("\\(\\beta\\)"),
-        " rośnie). Jedyny sposób, by zmniejszyć oba jednocześnie — zwiększyć n."),
-      p("Konwencje: w badaniach stosuje się ",
-        withMathJax("\\(\\alpha = 0{,}05\\)"),
-        " i planuje próbę tak, by moc ", withMathJax("\\(1 - \\beta \\geq 0{,}80\\)"),
-        " (czyli ", withMathJax("\\(\\beta \\leq 0{,}20\\)"),
-        "). Poniżej możesz pobawić się tymi wartościami i zobaczyć, jak zmienia się
-        obszar błędów dla różnych poziomów istotności, wielkości efektu i n.")
+      )
     ),
+
+    lc_p(gloss("błąd pierwszego rodzaju", "Błąd I rodzaju"), " to odrzucenie H₀,
+      która jest prawdziwa, czyli fałszywy alarm. W analogii sądowej oznacza
+      skazanie niewinnego, w nauce ogłoszenie efektu, którego nie ma.
+      Prawdopodobieństwo tego błędu oznaczamy \\(\\alpha\\) i ustalamy je sami,
+      wybierając ", gloss("poziom istotności"), ". Najczęściej przyjmuje się
+      \\(\\alpha = 0{,}05\\)."),
+
+    lc_p(gloss("błąd drugiego rodzaju", "Błąd II rodzaju"), " to nieodrzucenie H₀,
+      która jest fałszywa, czyli przegapiony efekt. W analogii sądowej oznacza
+      uniewinnienie winnego, w nauce przeoczenie zależności, która istnieje.
+      Jego prawdopodobieństwo oznaczamy \\(\\beta\\). Tej wartości nie wybieramy
+      bezpośrednio: zależy od tego, jak duży jest prawdziwy efekt, jak duży jest
+      rozrzut danych i jak liczna jest próba. Dopełnienie \\(\\beta\\), czyli
+      prawdopodobieństwo wykrycia efektu, który naprawdę istnieje, nazywamy ",
+      gloss("moc testu", "mocą testu"), "."),
+
+    lc_formula_box(withMathJax(
+      "$$\\begin{aligned}
+      \\alpha &= P(\\text{odrzucamy } H_0 \\mid H_0 \\text{ prawdziwa}) \\\\
+      \\beta &= P(\\text{nie odrzucamy } H_0 \\mid H_0 \\text{ fałszywa}) \\\\
+      \\text{moc} = 1 - \\beta &= P(\\text{odrzucamy } H_0 \\mid H_0 \\text{ fałszywa})
+      \\end{aligned}$$"
+    )),
+
+    lc_p("Oba prawdopodobieństwa są warunkowe i opisują procedurę, a nie pojedynczy
+      wynik, podobnie jak poziom ufności w wykładzie 03. \\(\\alpha = 0{,}05\\)
+      znaczy, że gdyby H₀ była prawdziwa, test zastosowany do wielu prób
+      odrzucałby ją średnio w 5 przypadkach na 100. Nie znaczy, że konkretna
+      decyzja jest błędna z prawdopodobieństwem 5%."),
+
+    lc_p("Poziom istotności, tak jak poziom ufności, jest umową. Konwencja
+      \\(\\alpha = 0{,}05\\) nie wynika z żadnego twierdzenia. Ustala się ją przed
+      analizą danych i dobiera do kosztów pomyłki. Przy planowaniu badań
+      przyjmuje się zwykle także, że moc ma wynosić co najmniej 0,80, czyli
+      \\(\\beta \\leq 0{,}20\\). Schemat poniżej zestawia oba błędy w jednym
+      obrazie."),
 
     div(style = "text-align: center; margin: 15px 0;",
       tags$img(src = "assets/type-error.jpg",
@@ -222,44 +250,25 @@ ch1d_ui <- list(
 
     lc_h2("ch1-moc", "Wizualizacja α, β i mocy testu"),
 
-    tagList(
-      p("Żeby zobaczyć, co kryje się pod literami α i β, rozrysujmy ",
-        "dwa rozkłady", " obok siebie — rozkłady ",
-        tags$em("średniej z próby"), ":"),
-      tags$ul(
-        tags$li(tags$b("Niebieski"), " — rozkład średniej, gdy H₀ jest prawdziwa
-                (telefon nie ma wpływu; średnia populacyjna = wartość referencyjna)."),
-        tags$li(tags$b("Burgundowy"), " — rozkład średniej, gdy Hₐ jest prawdziwa
-                (telefon ", tags$em("naprawdę"), " wpływa o konkretną liczbę punktów).")
-      ),
-      p("Punkty krytyczne (czarne przerywane pionowe linie) to wartości
-        na osi średnich, poza którymi odrzucamy H₀ — wynikają one bezpośrednio z ",
-        withMathJax("\\(\\alpha\\)"),
-        ": przy ", gloss("test dwustronny", "teście dwustronnym"), " dzielimy 5% na dwa ogony po 2,5%."),
-      p("Cztery obszary na wykresie:"),
-      tags$ul(
-        tags$li(tags$b("α (szary w niebieskim, oba ogony):"),
-                " pole pod niebieskim rozkładem poza punktami krytycznymi
-                — fałszywe alarmy, gdy H₀ jest prawdziwa."),
-        tags$li(tags$b("1 − α (niebieski, środek rozkładu):"),
-                " trafne negacje — H₀ prawdziwa i nie odrzucamy."),
-        tags$li(tags$b("β (burgundowy, między punktami krytycznymi):"),
-                " pole pod burgundowym rozkładem po złej stronie — przegapione efekty."),
-        tags$li(tags$b("Moc (zielony obszar, poza punktami krytycznymi):"),
-                " pole pod burgundowym rozkładem w ", gloss("obszar odrzucenia", "obszarze odrzucenia"), " H₀
-                — trafne wykrycia efektu.")
-      ),
-      p("Przesuwając suwaki zauważysz kilka mechanik:"),
-      tags$ul(
-        tags$li("Zmniejszenie ", withMathJax("\\(\\alpha\\)"),
-                " odsuwa punkty krytyczne od środka → mniej fałszywych alarmów,
-                ale ", tags$em("więcej"), " przegapionych efektów (β rośnie, moc spada)."),
-        tags$li("Większa różnica średnich oddala od siebie oba rozkłady → moc rośnie,
-                β maleje."),
-        tags$li("Większa próba n zwęża oba rozkłady (", gloss("błąd standardowy"), " ∝ 1/√n) →
-                znów rośnie moc.")
-      )
-    ),
+    lc_p("Definicje \\(\\alpha\\) i \\(\\beta\\) łatwiej zrozumieć na wykresie.
+      Panel poniżej rysuje dwa ", gloss("rozkład próbkowy", "rozkłady próbkowe"),
+      " średniej koncentracji. Niebieska krzywa to rozkład średniej z próby, gdy
+      prawdziwa jest H₀ i średnia w populacji wynosi 70 pkt. Burgundowa krzywa
+      to rozkład średniej, gdy prawdziwa jest Hₐ i średnia jest większa o różnicę
+      ustawioną suwakiem. Odchylenie standardowe wyników w populacji wynosi
+      w panelu 13 pkt, więc szerokość obu krzywych wyznacza ",
+      gloss("błąd standardowy"), " \\(13/\\sqrt{n}\\)."),
+
+    lc_p("Przerywane pionowe linie to ", gloss("wartość krytyczna", "wartości krytyczne"),
+      ". Wyznacza je samo \\(\\alpha\\): w ", gloss("test dwustronny", "teście dwustronnym"),
+      " odcinają po \\(\\alpha/2\\) w każdym ogonie niebieskiej krzywej. Średnia
+      z próby, która wypadnie poza nimi, trafia do ",
+      gloss("obszar odrzucenia", "obszaru odrzucenia"), " i prowadzi do odrzucenia
+      H₀. Burgundowe pole pod niebieską krzywą w obu ogonach to \\(\\alpha\\).
+      Zielone pole pod burgundową krzywą poza liniami krytycznymi to moc.
+      Niezacieniowana część burgundowej krzywej między liniami to \\(\\beta\\):
+      prawdopodobieństwo, że mimo prawdziwego efektu średnia z próby nie wyjdzie
+      poza wartości krytyczne."),
 
     figure_panel(
       label = "Ryc. 3.1",
@@ -269,74 +278,80 @@ ch1d_ui <- list(
           lc_slider("ch1_alpha", "α (poziom istotności)", 0.01, 0.20, 0.05, 0.01)
         ),
         column(4,
-          lc_slider("ch1_effect", "Różnica średnich (pkt)", 0, 15, 7, 1)
+          lc_slider("ch1_effect", "Odległość μ od μ₀ (pkt)", 0, 15, 7, 1)
         ),
         column(4,
-          lc_slider("ch1_power_n", "n (na grupę)", 10, 200, 40, 5)
+          lc_slider("ch1_power_n", "n (liczebność próby)", 10, 200, 40, 5)
         )
       ),
       lc_plot("ch1_power_plot", ratio = "1.6/1", max_height = "380px"),
       uiOutput("ch1_power_stats")
     ),
 
-    inline_callout(
-      label = "Kompromis",
-      tagList(
-        "Zmniejszenie α redukuje błąd I rodzaju, ale zwiększa błąd II rodzaju. ",
-        "Jedyny sposób na zmniejszenie obu naraz: zwiększenie n!"
-      ),
-      color = "uwaga"
-    ),
+    lc_p("Przy ustawieniach startowych (\\(\\alpha = 0{,}05\\), różnica 7 pkt,
+      n = 40) błąd standardowy wynosi 2,06 pkt, a wartości krytyczne leżą przy
+      65,97 i 74,03 pkt. Moc wynosi 92,6%, a \\(\\beta\\) 7,4%. Trzy suwaki
+      pokazują trzy mechanizmy. Zmniejszenie \\(\\alpha\\) do 0,01 odsuwa wartości
+      krytyczne od środka: fałszywych alarmów jest mniej, ale moc spada do 79,7%.
+      Mniejsza różnica zbliża krzywe do siebie: przy 3 pkt moc wynosi tylko 30,9%.
+      Większa próba zwęża obie krzywe, bo błąd standardowy maleje jak
+      \\(1/\\sqrt{n}\\): przy n = 10 moc to 39,9%, przy n = 100 ponad 99,9%."),
+
+    lc_p("Wynika z tego ten sam kompromis co przy czujniku dymu. Przy ustalonej
+      próbie zmniejszenie \\(\\alpha\\) zwiększa \\(\\beta\\). Oba błędy naraz
+      zmniejsza tylko większa próba. Dlatego liczebność próby planuje się przed
+      badaniem, tak żeby moc dla efektu, który uznajemy za praktycznie ważny,
+      była wystarczająca."),
+
+    lc_p("Panel opisuje najprostszy test: średnią jednej próby porównujemy ze
+      znaną wartością \\(\\mu_0 = 70\\) pkt (takim testem zajmie się rozdział 04).
+      Eksperyment z telefonem porównuje jednak dwie grupy. Przy dwóch grupach po n osób błąd
+      standardowy różnicy średnich jest około \\(\\sqrt{2}\\) razy większy, więc
+      moc jest niższa. W eksperymencie z rozdziału 01 wyniki losujemy z populacji,
+      których średnie różnią się o 7 pkt, a odchylenia standardowe wynoszą 12
+      i 14 pkt. Test porównujący dwie grupy po 40 osób ma dla takich danych moc
+      około 67%: mniej więcej co trzecie powtórzenie eksperymentu nie wykryje
+      różnicy, która naprawdę istnieje."),
 
     # ========================================================================
     # SEKCJA 2: P-wartość (po błędach — bo α jest już zdefiniowane)
     # ========================================================================
     lc_h2("ch1-pvalue", "Co to jest p-wartość?"),
 
-    tagList(
-      p("Wiemy już, że ryzyko błędu I rodzaju ", withMathJax("\\(\\alpha\\)"),
-        " ustalamy sami — zwykle na 5%. Ale jak z danego eksperymentu wyciągnąć ",
-        tags$em("decyzję"), ": odrzucić H₀ czy nie? Służy do tego ",
-        gloss("p-wartość"), "."),
-      p("Eksperyment z telefonem dał pewną różnicę średnich między grupami.
-        Czy to dowód, że telefon wpływa na koncentrację? A może gdybyśmy powtórzyli
-        badanie z innymi studentami, różnica wyszłaby mniejsza, większa albo w drugą stronę?
-        p-wartość formalizuje tę intuicję — mierzy, jak ",
-        tags$em("zaskakująca"),
-        " jest nasza obserwacja w świecie, w którym H₀ byłaby prawdziwa."),
-      p("Definicja formalna:"),
-      lc_formula_box(
-        p(withMathJax(
-          "\\(p = P(|\\bar{X}_A - \\bar{X}_B| \\geq |d_{\\text{obs}}| \\mid H_0)\\)"
-        )),
-        p("czyli: prawdopodobieństwo zaobserwowania różnicy co najmniej tak
-          skrajnej jak nasza (", withMathJax("\\(d_{\\text{obs}}\\)"), "), ",
-          tags$em("gdyby H₀ była prawdziwa"), ".")
-      ),
-      p("„Co najmniej tak skrajnej” oznacza tu ",
-        tags$em("w obie strony"), " — i na plus, i na minus. Hₐ z naszego eksperymentu
-        mówi tylko, że telefon „wpływa” na koncentrację, bez wskazania kierunku,
-        więc każde wystarczająco duże odchylenie od zera — w dół albo w górę —
-        jest dla nas tak samo zaskakujące. Wariant jednostronny (gdy z góry zakładamy
-        kierunek różnicy) pojawi się w następnym rozdziale, kiedy przyjrzymy się
-        formułowaniu hipotez."),
-      p("Jak to obliczyć?",
-        " W praktyce używamy ", gloss("statystyka testowa", "statystyki testowej"), " (np. t, χ², F) i znanych rozkładów
-        pod H₀ — ale dla intuicji najlepiej wyobrazić sobie, że ",
-        tags$em("wielokrotnie powtarzamy eksperyment"),
-        " w świecie, gdzie H₀ jest prawdziwa. Każdy powtórzony eksperyment da inną
-        różnicę średnich — losowy szum. Rozkład tych różnic ",
-        "pod H₀", " pokazuje, co „normalne” bez żadnego efektu."),
-      p("Reguła decyzyjna:",
-        " jeśli ", withMathJax("\\(p < \\alpha\\)"), " — mówimy, że zaobserwowana
-        różnica jest ", tags$em("zbyt skrajna"),
-        ", by ją wytłumaczyć samym przypadkiem i odrzucamy H₀. W przeciwnym razie
-        brak podstaw do odrzucenia — co ", tags$em("nie"), " znaczy „H₀ jest prawdziwa”,
-        tylko „nasze dane jej nie wykluczają”."),
-      p("Poniższy widget pokazuje tę intuicję wizualnie: symulujemy setki eksperymentów
-        w świecie bez efektu i patrzymy, jak daleko od zera naprawdę „nasza” różnica wypada
-        na tle rozkładu losowych różnic.")
-    ),
+    lc_p("\\(\\alpha\\) i \\(\\beta\\) opisują test, zanim zobaczymy dane.
+      Po eksperymencie mamy jednak jedną konkretną różnicę średnich i trzeba
+      zdecydować, co z nią zrobić. Potrzebujemy liczby, która powie, jak bardzo
+      ten wynik odstaje od tego, czego spodziewalibyśmy się przy prawdziwej H₀.
+      Tą liczbą jest ", gloss("p-wartość"), "."),
+
+    lc_p("p-wartość to prawdopodobieństwo, że gdyby H₀ była prawdziwa,
+      otrzymalibyśmy wynik co najmniej tak skrajny jak zaobserwowany. Dla różnicy
+      średnich w eksperymencie z telefonem:"),
+
+    lc_formula_box(withMathJax(
+      "$$p = P\\left(|\\bar{X}_A - \\bar{X}_B| \\geq |d_{\\text{obs}}| \\;\\middle|\\; H_0\\right)$$"
+    )),
+
+    lc_p("gdzie \\(d_{\\text{obs}}\\) to różnica średnich zaobserwowana w naszej
+      próbie. Wartość bezwzględna oznacza, że „co najmniej tak skrajny” liczymy
+      w obie strony. Hₐ mówi tylko, że telefon wpływa na koncentrację, bez
+      wskazania kierunku, więc równie mocnym sygnałem byłaby różnica tej samej
+      wielkości na korzyść grupy „biurko”. Wariant jednostronny, w którym liczy się
+      tylko jeden ogon, omówiliśmy w poprzednim rozdziale."),
+
+    lc_p("Definicję najłatwiej zrozumieć przez symulację. Wyobraźmy sobie, że
+      eksperyment powtarzamy wiele razy w świecie, w którym telefon nie ma wpływu.
+      Każde powtórzenie da inną różnicę średnich, bo każda grupa to inna losowa
+      próba. Rozkład tych różnic pokazuje, jakie wyniki wytwarza sam przypadek,
+      a p-wartość to odsetek powtórzeń, w których różnica wyszła co najmniej tak
+      daleko od zera jak nasza."),
+
+    lc_p("Panel poniżej losuje takie eksperymenty: obie grupy pochodzą z tej samej
+      populacji o średniej 70 pkt i odchyleniu standardowym 13 pkt. Każdy słupek
+      histogramu zlicza różnice średnich z symulowanych eksperymentów. Burgundowa
+      linia ciągła to różnica z eksperymentu z rozdziału 01, przerywana to jej
+      lustrzane odbicie po drugiej stronie zera. Bursztynowe słupki to różnice
+      co najmniej tak skrajne jak nasza."),
 
     figure_panel(
       label = "Ryc. 3.2",
@@ -360,27 +375,43 @@ ch1d_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Jak to czytać",
-      "Każdy słupek to różnica średnich z jednego symulowanego eksperymentu,
-       w którym telefon nie ma wpływu. Czerwona linia to różnica z prawdziwego
-       eksperymentu. p-wartość = jaki odsetek tych słupków jest co najmniej tak
-       daleko od zera jak nasza czerwona linia?"
-    ),
+    lc_p("Przy 40 osobach w grupie losowe różnice mają odchylenie standardowe
+      około 2,9 pkt, a w 95% eksperymentów bez efektu mieszczą się między −5,7
+      a 5,7 pkt. Różnica 7 pkt zdarza się bez efektu rzadko, jej p-wartość wynosi
+      około 0,016. Różnica 4 pkt dałaby p ≈ 0,17, czyli wynik zupełnie zwyczajny
+      w świecie bez efektu. Przy kilkuset symulacjach odsetek bursztynowych
+      słupków zbliża się do teoretycznej p-wartości. Przy dziesięciu mocno skacze,
+      tak jak pokrycie przedziałów ufności w wykładzie 03."),
+
+    lc_p("W praktyce nikt nie symuluje tysięcy eksperymentów. Wynik przelicza się
+      na ", gloss("statystyka testowa", "statystykę testową"), ", czyli liczbę,
+      której rozkład przy prawdziwej H₀ znamy z teorii. Kolejne rozdziały wprowadzą
+      takie statystyki po kolei: t, χ² i F. p-wartość jest wtedy polem pod krzywą
+      tego rozkładu w ogonach, za wartością statystyki obliczoną z próby. Wykres
+      poniżej pokazuje to dla statystyki o standardowym rozkładzie normalnym
+      i wyniku 2,17."),
 
     figure_panel(
       label = "Ryc. 3.3",
-      title = "P-wartość jako obszar ogonów",
+      title = "p-wartość jako pole ogonów",
       div(class = "ws-chart-wrap",
         tags$canvas(id = "ch1_pvalue_chart")
       )
     ),
 
+    lc_p("Zacieniowane pole w obu ogonach, na lewo od −2,17 i na prawo od 2,17,
+      wynosi 0,030. Tyle wynosi p-wartość tego wyniku w teście dwustronnym. Im
+      dalej od zera leży statystyka, tym mniejsze pole w ogonach i tym mniejsza
+      p-wartość."),
+
+    lc_p("Definicja p-wartości jest krótka, ale łatwo ją przekręcić. Sprawdź,
+      którą z trzech interpretacji wyniku p = 0,03 uważasz za poprawną."),
+
     figure_panel(
       label = "Ryc. 3.4",
       title = "Co naprawdę oznacza p-wartość?",
-      p("Załóżmy, że w badaniu wyszło ", tags$b("p = 0,03"),
-        ". Które zdanie jest poprawną interpretacją?"),
+      p("Załóżmy, że w badaniu wyszło p = 0,03. Które zdanie jest poprawną
+        interpretacją?"),
       radioButtons("ch1_pvalue_meaning", NULL,
         choices = c(
           "Jest 3% szans, że H₀ jest prawdziwa." = "h0_prob",
@@ -392,42 +423,72 @@ ch1d_ui <- list(
       uiOutput("ch1_pvalue_meaning_feedback")
     ),
 
+    lc_p("Najczęstszy błąd polega na odwróceniu warunku. p-wartość liczymy przy
+      założeniu, że H₀ jest prawdziwa, więc nie może jednocześnie mówić, z jakim
+      prawdopodobieństwem H₀ jest prawdziwa. P(wynik co najmniej tak skrajny | H₀)
+      to inna wielkość niż P(H₀ | wynik), tak jak prawdopodobieństwo, że zawodowy
+      koszykarz jest wysoki, to coś innego niż prawdopodobieństwo, że wysoki
+      człowiek jest zawodowym koszykarzem. Z tego samego powodu p = 0,03 nie
+      oznacza 3% szans, że wynik jest dziełem przypadku: „wynik jest przypadkowy”
+      to tylko inne sformułowanie H₀."),
+
+    lc_p("Mała p-wartość mówi więc tyle, że dane byłyby rzadkie, gdyby H₀ była
+      prawdziwa. Nie mówi też, jak duży jest efekt: przy bardzo licznej próbie
+      nawet znikoma różnica daje małą p-wartość. Wielkością efektu zajmuje się
+      rozdział 10."),
+
     # ========================================================================
-    # SEKCJA 3: Quiz - decyzja
+    # SEKCJA 3: Quiz — decyzja
     # ========================================================================
     lc_h2("ch1-decyzja", "Decyzja w praktyce"),
 
-    tagList(
-      p("Znamy już regułę porównania p-wartości z poziomem istotności.
-        Ale sama decyzja „odrzucamy / nie odrzucamy” to nie wszystko —
-        trzeba ją też poprawnie sformułować słowami. Dwa możliwe werdykty:"),
-      p(tags$b("Jeśli "), withMathJax("\\(p < \\alpha\\)"), tags$b(":")),
-      lc_formula_box(
-        tags$em("„Na przyjętym poziomie istotności α odrzucamy hipotezę zerową
-                na rzecz hipotezy alternatywnej.”")
-      ),
-      p(tags$b("Jeśli "), withMathJax("\\(p \\geq \\alpha\\)"), tags$b(":")),
-      lc_formula_box(
-        tags$em("„Na przyjętym poziomie istotności α nie mamy podstaw do
-                odrzucenia hipotezy zerowej.”")
-      ),
-      p("Zwróć uwagę na szczegół w drugim werdykcie: mówimy ",
-        tags$em("„nie mamy podstaw do odrzucenia”"), ", a nie",
-        tags$em(" „H₀ jest prawdziwa”"),
-        ". Brak dowodu to nie dowód braku — może efekt istnieje, ale nasza próba
-        była za mała albo efekt za słaby, żeby go wykryć. Stąd tak ostrożny język."),
-      p("Ale to jeszcze nie koniec interpretacji.",
-        " Werdykt o hipotezach to krok formalny — trzeba go dodatkowo ",
-        tags$em("przetłumaczyć z powrotem na język pytania badawczego"),
-        ". Jeśli H₀ brzmiała „średni czas dojazdu jest równy 30 minut”, a Hₐ
-        „różni się od 30 minut”, to po odrzuceniu H₀ mówimy: ",
-        tags$em("„średni czas dojazdu statystycznie istotnie różni się od 30 minut”"),
-        " — a nie: „odrzuciliśmy hipotezę zerową”. W raportach i publikacjach
-        zawsze wracamy do języka problemu."),
-      p("Hipotezy umiemy już zapisać, teraz domykamy drugi ruch: jak wrócić
-        z formalnego werdyktu do języka badania. Na razie poćwiczmy samo
-        podjęcie decyzji na podstawie p-wartości:")
+    lc_p("Pozostaje połączyć p-wartość z poziomem istotności. Reguła decyzyjna
+      jest prosta: jeśli \\(p < \\alpha\\), odrzucamy H₀; jeśli
+      \\(p \\geq \\alpha\\), nie mamy podstaw do jej odrzucenia. p-wartość spada
+      poniżej \\(\\alpha\\) dokładnie wtedy, gdy wynik trafia do obszaru
+      odrzucenia, więc ta reguła odrzuca prawdziwą H₀ z prawdopodobieństwem
+      \\(\\alpha\\). Werdykt formułuje się w ustalony sposób. Gdy
+      \\(p < \\alpha\\):"),
+
+    lc_formula_box(
+      tags$em("„Na przyjętym poziomie istotności α odrzucamy hipotezę zerową
+              na rzecz hipotezy alternatywnej.”")
     ),
+
+    lc_p("Gdy \\(p \\geq \\alpha\\):"),
+
+    lc_formula_box(
+      tags$em("„Na przyjętym poziomie istotności α nie mamy podstaw do
+              odrzucenia hipotezy zerowej.”")
+    ),
+
+    lc_p("Drugi werdykt jest celowo ostrożny. Nie mówimy „H₀ jest prawdziwa”, bo
+      brak dowodu efektu nie jest dowodem jego braku. Efekt może istnieć, a próba
+      mogła być za mała, by go wykryć. To właśnie błąd II rodzaju, a przy małej
+      mocy jego prawdopodobieństwo jest duże."),
+
+    lc_p("Formalny werdykt trzeba jeszcze przetłumaczyć z powrotem na język pytania
+      badawczego. W eksperymencie z telefonem po odrzuceniu H₀ piszemy: „średnia
+      koncentracja studentów z telefonem na biurku istotnie statystycznie różni się
+      od średniej koncentracji studentów z telefonem w plecaku”, a nie
+      „odrzuciliśmy hipotezę zerową”. Raport podaje też samą p-wartość i poziom
+      istotności, a nie tylko werdykt."),
+
+    lc_p("Decyzja testu łączy się bezpośrednio z przedziałami ufności z wykładu 03.
+      Poziomowi istotności \\(\\alpha\\) odpowiada poziom ufności
+      \\(1 - \\alpha\\). Test dwustronny na poziomie 0,05 odrzuca H₀ o braku
+      różnicy średnich dokładnie wtedy, gdy odpowiadający mu 95% przedział
+      ufności dla różnicy nie obejmuje zera. Przedział mówi przy tym więcej niż
+      sam werdykt, bo pokazuje także, jak duża może być różnica."),
+
+    inline_callout(
+      label = "Zasada",
+      "Poziom istotności ustal przed analizą danych. W raporcie podawaj p-wartość
+       obok werdyktu, a werdykt formułuj w języku pytania badawczego."
+    ),
+
+    lc_p("Na koniec poćwicz samą decyzję. Każdy scenariusz podaje p-wartość
+      i przyjęty poziom istotności."),
 
     figure_panel(
       label = "Ryc. 3.5",
@@ -438,6 +499,14 @@ ch1d_ui <- list(
       uiOutput("ch1_quiz_feedback"),
       lc_action("ch1_quiz_next", "Nowy scenariusz", variant = "outline")
     ),
+
+    lc_p("Reguła \\(p < \\alpha\\) wyznacza ostrą granicę, choć siła dowodów
+      zmienia się płynnie. Wyniki p = 0,048 i p = 0,052 prowadzą przy
+      \\(\\alpha = 0{,}05\\) do przeciwnych werdyktów, a przemawiają przeciw H₀
+      niemal tak samo mocno. To kolejny powód, by w raporcie podawać samą
+      p-wartość. W kolejnych rozdziałach ten sam schemat — hipotezy, statystyka
+      testowa, p-wartość, decyzja — zastosujemy do konkretnych testów, zaczynając
+      od testu t dla jednej średniej."),
 
     lc_chapter_next(
       num       = "04",
@@ -510,7 +579,7 @@ ch1_server <- function(input, output, session) {
     )
   })
 
-  # Oblicz prawdziwa roznice z case study
+  # Obserwowana różnica średnich z case study
   ch1_observed_diff <- reactive({
     d <- ch1_case_data()
     if (is.null(d)) return(0)
@@ -518,7 +587,7 @@ ch1_server <- function(input, output, session) {
     unname(means["Telefon w plecaku"] - means["Telefon na biurku"])
   })
 
-  # --- Widget 1: Histogram roznic z powtorzonych eksperymentow ---
+  # --- Widget 1: Histogram różnic z powtórzonych eksperymentów ---
   ch1_sim_diffs <- reactiveVal(numeric(0))
 
   do_simulations <- function(k) {
@@ -599,16 +668,16 @@ ch1_server <- function(input, output, session) {
 
     if (identical(choice, "tail_prob")) {
       lc_feedback(type = "ok",
-        tags$b("Tak."),
-        " p-wartość zakłada, że H₀ jest prawdziwa, i pyta o częstość danych
-        co najmniej tak skrajnych jak nasze."
+        tags$strong("Tak."),
+        " p-wartość zakłada, że H₀ jest prawdziwa, i mówi, jak często wynik
+        byłby co najmniej tak skrajny jak nasz."
       )
     } else {
       lc_feedback(type = "danger",
-        tags$b("Nie."),
-        " p-wartość nie mówi, jakie jest prawdopodobieństwo H₀ ani
-        prawdopodobieństwo „przypadkowości” wyniku. To prawdopodobieństwo
-        danych przy założeniu H₀."
+        tags$strong("Nie."),
+        " p-wartość liczymy przy założeniu, że H₀ jest prawdziwa, więc nie jest
+        prawdopodobieństwem H₀ ani „przypadkowości” wyniku. To prawdopodobieństwo
+        wyniku co najmniej tak skrajnego przy prawdziwej H₀."
       )
     }
   })
@@ -616,9 +685,9 @@ ch1_server <- function(input, output, session) {
   # --- Widget 2: Moc testu ---
   zoom_plot_server("ch1_power_plot", reactive({
     alpha <- input$ch1_alpha
-    diff_means <- input$ch1_effect  # roznica srednich w punktach
+    diff_means <- input$ch1_effect  # różnica średnich w punktach
     n <- input$ch1_power_n
-    sigma <- 13  # stale odchylenie std (ukryte)
+    sigma <- 13  # stałe odchylenie standardowe (ukryte)
     mu0 <- 70
     mu1 <- mu0 + diff_means
 
@@ -634,7 +703,7 @@ ch1_server <- function(input, output, session) {
     df_plot <- data.frame(
       x = rep(x, 2),
       y = c(y_h0, y_h1),
-      dist = rep(c("H0: brak efektu", "Ha: telefon wpływa"), each = 500)
+      dist = rep(c("H₀: μ = 70", "Hₐ: μ = 70 + odległość"), each = 500)
     )
 
     p <- ggplot(df_plot, aes(x = x, y = y, color = dist)) +
@@ -699,17 +768,17 @@ ch1_server <- function(input, output, session) {
   generate_quiz <- function() {
     scenarios <- list(
       list(p = 0.003, alpha = 0.05,
-           context = "Badanie wpływu kawy na czas reakcji: p = 0.003, α = 0.05"),
+           context = "Badanie wpływu kawy na czas reakcji: p = 0,003, α = 0,05"),
       list(p = 0.12, alpha = 0.05,
-           context = "Czy notatki ręczne dają lepsze wyniki niż na laptopie? p = 0.12, α = 0.05"),
+           context = "Czy notatki odręczne dają lepsze wyniki niż notatki na laptopie? p = 0,12, α = 0,05"),
       list(p = 0.048, alpha = 0.05,
-           context = "Korelacja między ilością snu a oceną z egzaminu: p = 0.048, α = 0.05"),
+           context = "Korelacja między długością snu a oceną z egzaminu: p = 0,048, α = 0,05"),
       list(p = 0.06, alpha = 0.01,
-           context = "Czy kierunek studiów wpływa na zarobki po 5 latach? ANOVA: p = 0.06, α = 0.01"),
+           context = "Czy kierunek studiów wpływa na zarobki po 5 latach? ANOVA: p = 0,06, α = 0,01"),
       list(p = 0.001, alpha = 0.01,
-           context = "Czy płeć wpływa na wybór specjalizacji? χ²: p = 0.001, α = 0.01"),
+           context = "Czy płeć wpływa na wybór specjalizacji? Test χ²: p = 0,001, α = 0,01"),
       list(p = 0.052, alpha = 0.05,
-           context = "Porównanie skuteczności dwóch metod nauki: p = 0.052, α = 0.05")
+           context = "Porównanie skuteczności dwóch metod nauki: p = 0,052, α = 0,05")
     )
     ch1_quiz_data(scenarios[[sample(length(scenarios), 1)]])
     ch1_quiz_answered(FALSE)
@@ -723,7 +792,7 @@ ch1_server <- function(input, output, session) {
     sc <- ch1_quiz_data()
     if (is.null(sc)) return(NULL)
     lc_feedback(type = "info",
-      p(tags$strong("Scenariusz:"), sc$context)
+      p(tags$strong("Scenariusz:"), " ", sc$context)
     )
   })
 
@@ -768,19 +837,20 @@ ch1_server <- function(input, output, session) {
     if (is.null(sc) || is.null(answer)) return(NULL)
 
     correct <- if (sc$p < sc$alpha) "reject" else "fail_to_reject"
+    fmt <- function(x) format(x, decimal.mark = ",")
+    comparison <- paste0("p = ", fmt(sc$p), " ", ifelse(sc$p < sc$alpha, "<", "≥"),
+                         " α = ", fmt(sc$alpha))
     if (answer == correct) {
       lc_feedback(type = "ok",
-        tags$strong("Poprawnie!"),
-        p(paste0("p = ", sc$p, " ", ifelse(sc$p < sc$alpha, "<", "≥"),
-                 " α = ", sc$alpha))
+        tags$strong("Poprawnie."),
+        p(comparison)
       )
     } else {
       lc_feedback(type = "danger",
-        tags$strong("Nie! "),
-        p(paste0("p = ", sc$p, " ", ifelse(sc$p < sc$alpha, "<", "≥"),
-                 " α = ", sc$alpha, ". Zatem: ",
+        tags$strong("Niepoprawnie."),
+        p(paste0(comparison, ", zatem ",
                  ifelse(correct == "reject", "odrzucamy H₀",
-                        "brak podstaw do odrzucenia H₀"), "."))
+                        "nie mamy podstaw do odrzucenia H₀"), "."))
       )
     }
   })
