@@ -391,8 +391,8 @@ ch5_server <- function(input, output, session) {
     z_star <- qnorm(1 - (1 - conf) / 2)
     n_req <- ceiling((z_star * s / me_max)^2)
 
-    lc_feedback(type = "ok",
-      p(tags$strong("Wymagana wielkość próby:")),
+    lc_status(
+      p(lc_verdict(tags$strong("Wymagana wielkość próby:"), type = "ok")),
       p(withMathJax(paste0(
         "\\(n = \\left(\\frac{", round(z_star, 3), " \\cdot ", s, "}{",
         me_max, "}\\right)^2 = ", round((z_star * s / me_max)^2, 1),
@@ -716,21 +716,21 @@ ch5_server <- function(input, output, session) {
     revealed <- state$revealed
 
     if (is.na(conf)) {
-      return(lc_feedback(type = "info",
-        p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
-        p(tags$em("Wybierz poziom ufności (90%, 95% lub 99%), żeby zobaczyć
+      return(lc_status(
+               p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
+               p(tags$em("Wybierz poziom ufności (90%, 95% lub 99%), żeby zobaczyć
                   przedział."))
-      ))
+             ))
     }
 
     # Faza 1: tylko CI + treść hipotezy, czas na zastanowienie
     if (!revealed) {
-      return(lc_feedback(type = "info",
-        p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
-        p(tags$strong("Poziom ufności:"), " ", round(conf * 100), "%"),
-        p(tags$em("Gdzie leży przedział względem granicy hipotezy? Przycisk
+      return(lc_status(
+               p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
+               p(tags$strong("Poziom ufności:"), " ", round(conf * 100), "%"),
+               p(tags$em("Gdzie leży przedział względem granicy hipotezy? Przycisk
                   „Pokaż werdykt” odsłoni odpowiedź."))
-      ))
+             ))
     }
 
     # Faza 2: werdykt
@@ -755,9 +755,10 @@ ch5_server <- function(input, output, session) {
         hipotezy ani przyjąć, ani odrzucić. Sprawdź pozostałe poziomy.")
     }
 
-    lc_feedback(type = cls,
+    lc_status(
       p(tags$strong("Hipoteza: "), cfg$hypothesis$text),
-      p(tags$strong("Werdykt przy ", round(conf * 100), "% ufności: ", label)),
+      p(lc_verdict(tags$strong("Werdykt przy ", round(conf * 100), "% ufności: ", label),
+                   type = cls)),
       body
     )
   }

@@ -329,13 +329,15 @@ ch1_server <- function(input, output, session) {
   output$ch1_norm_results <- renderUI({
     req(input$ch1_test_norm)
     x <- isolate(ch1_data())
-    if (is.null(x)) return(lc_feedback(type = "warning", "Najpierw wygeneruj dane."))
+    if (is.null(x)) return(lc_caption(
+                             "Najpierw wygeneruj dane."
+                           ))
 
     sw <- shapiro_test(data.frame(value = x), value)
     sw_color <- if (sw$p >= 0.05) col_ok else col_fail
     w_txt <- formatC(sw$statistic, format = "f", digits = 3)
 
-    lc_feedback(type = "info",
+    lc_status(
       p(tags$strong("Shapiro–Wilk:"), " W = ", w_txt,
         ", p = ", format_p_value(sw$p)),
       p(style = paste0("color:", sw_color, ";"),

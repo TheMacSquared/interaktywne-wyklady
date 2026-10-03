@@ -712,9 +712,8 @@ ch10_server <- function(input, output, session) {
           tags$td(format_p_value(p_val))
         ))
       ),
-      lc_feedback(type = fb_type,
-        p(style = paste0("color:", res$color, "; font-weight: bold; margin: 0;"),
-          res$decision)
+      lc_status(
+        lc_verdict(tags$strong(res$decision), type = fb_type)
       )
     )
   })

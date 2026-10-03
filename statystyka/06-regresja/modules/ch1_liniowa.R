@@ -614,7 +614,7 @@ ch1_server <- function(input, output, session) {
     } else {
       "nie zmienia się"
     }
-    lc_feedback(type = "info",
+    lc_status(
       p(tags$strong("Interpretacja:"),
         paste0(" gdy X wzrasta o 1, oczekiwane Y ", change,
                ". Szum σ = ", input$ch1_beta_sigma,
@@ -806,13 +806,13 @@ ch1_server <- function(input, output, session) {
         withMathJax(helpText(sprintf("$$b_0 = \\bar{y} - b_1\\bar{x} = %.2f - %.3f \\cdot %.2f = %.2f$$",
                                      y_bar, b1, x_bar, b0)))
       ),
-      if (step >= 5) lc_feedback(type = "ok",
-        tags$div(style = "font-weight: 700; margin-bottom: 6px;", "Końcowy model:"),
-        withMathJax(tags$div(
+      if (step >= 5) lc_status(
+                       tags$div(style = "font-weight: 700; margin-bottom: 6px;", "Końcowy model:"),
+                       withMathJax(tags$div(
           style = "font-size: 1.35rem; font-weight: 700; text-align: center;",
           sprintf("$$\\hat{Y} = %.2f + %.3fX$$", b0, b1)
         ))
-      )
+                     )
     )
   })
 
@@ -961,22 +961,24 @@ ch1_server <- function(input, output, session) {
   output$ch1_draw_feedback <- renderUI({
     pts <- ch1_draw_points()
     if (nrow(pts) < 2) {
-      return(lc_feedback(type = "info", style = "margin-top: 12px;",
-        p(if (nrow(pts) == 0) {
+      return(lc_caption(
+               if (nrow(pts) == 0) {
           "Kliknij pierwszy punkt prostej."
         } else {
           "Kliknij drugi punkt prostej."
-        })
-      ))
+        },
+               tone = "info"
+             ))
     }
     if (!ch1_draw_revealed()) {
-      return(lc_feedback(type = "warning", style = "margin-top: 12px;",
-        p("Gotowe. Kliknij „Pokaż odpowiedź”, żeby porównać z modelem.")
-      ))
+      return(lc_caption(
+               "Gotowe. Kliknij „Pokaż odpowiedź”, żeby porównać z modelem."
+             ))
     }
 
-    lc_feedback(type = "ok", style = "margin-top: 12px;",
-      p("Porównaj czerwoną przerywaną prostą z niebieską poprawną prostą.")
+    lc_caption(
+      "Porównaj czerwoną przerywaną prostą z niebieską poprawną prostą.",
+      tone = "ok"
     )
   })
 
@@ -986,9 +988,9 @@ ch1_server <- function(input, output, session) {
     if (nrow(pts) < 2 || !ch1_draw_revealed()) return(NULL)
 
     if (abs(diff(pts$x)) < 0.05) {
-      return(lc_feedback(type = "warning",
-        p("Punkty mają prawie ten sam X. Wybierz dwa punkty bardziej oddalone poziomo.")
-      ))
+      return(lc_caption(
+               "Punkty mają prawie ten sam X. Wybierz dwa punkty bardziej oddalone poziomo."
+             ))
     }
 
     user_b1 <- diff(pts$y) / diff(pts$x)
@@ -1182,13 +1184,13 @@ ch1_server <- function(input, output, session) {
     is_sig <- p_val < 0.05
 
     if (is_sig) {
-      lc_feedback(type = "ok", style = "margin-top: 12px;",
-        tags$strong("Wniosek: "),
+      lc_status(
+        lc_verdict(tags$strong("Wniosek: "), type = "ok"),
         sprintf("odrzucamy H₀. Nachylenie b₁ = %.2f jest istotnie różne od zera.", b1)
       )
     } else {
-      lc_feedback(type = "warning", style = "margin-top: 12px;",
-        tags$strong("Wniosek: "),
+      lc_status(
+        lc_verdict(tags$strong("Wniosek: "), type = "warning"),
         sprintf("nie odrzucamy H₀. Dane nie dają mocnych podstaw, by uznać nachylenie b₁ = %.2f za różne od zera.", b1)
       )
     }
@@ -1279,7 +1281,9 @@ ch1_server <- function(input, output, session) {
   output$ch1_cas_table <- renderUI({
     req(input$ch1_cas_x, input$ch1_cas_y)
     if (input$ch1_cas_x == input$ch1_cas_y) {
-      return(lc_feedback(type = "warning", p("Wybierz dwie różne zmienne.")))
+      return(lc_caption(
+               "Wybierz dwie różne zmienne."
+             ))
     }
 
     model <- ch1_cas_model()
@@ -1320,9 +1324,9 @@ ch1_server <- function(input, output, session) {
     if (input$ch1_cas_x == input$ch1_cas_y) return(NULL)
 
     if (!ch1_cas_revealed()) {
-      return(lc_feedback(type = "warning", style = "margin-top: 12px;",
-        p("Zanim odsłonisz odpowiedź, odczytaj z tabeli znak b₁ i p-wartość.")
-      ))
+      return(lc_caption(
+               "Zanim odsłonisz odpowiedź, odczytaj z tabeli znak b₁ i p-wartość."
+             ))
     }
 
     model <- ch1_cas_model()
@@ -1334,8 +1338,8 @@ ch1_server <- function(input, output, session) {
     relation <- if (b1 > 0) "dodatni" else "ujemny"
 
     if (p_val < 0.05) {
-      lc_feedback(type = "ok", style = "margin-top: 12px;",
-        tags$strong("Odpowiedź: "),
+      lc_status(
+        lc_verdict(tags$strong("Odpowiedź: "), type = "ok"),
         if (identical(input$ch1_cas_x, "grades")) {
           sprintf("tak, %s istotnie przewiduje %s. Okręgi KK-08 różnią się od KK-06 średnio o %.3f punktu, p = %.3g.",
                   x_label, y_label, b1, p_val)
@@ -1345,8 +1349,8 @@ ch1_server <- function(input, output, session) {
         }
       )
     } else {
-      lc_feedback(type = "warning", style = "margin-top: 12px;",
-        tags$strong("Odpowiedź: "),
+      lc_status(
+        lc_verdict(tags$strong("Odpowiedź: "), type = "warning"),
         if (identical(input$ch1_cas_x, "grades")) {
           sprintf("nie mamy podstaw, by uznać różnicę między KK-08 i KK-06 w %s za istotną: b₁ = %.3f, p = %.3g.",
                   y_label, b1, p_val)
@@ -1395,7 +1399,7 @@ ch1_server <- function(input, output, session) {
             b0, b1, y1
           )))
         ),
-        lc_feedback(type = "info", style = "margin-top: 10px;",
+        lc_status(
           p(tags$strong("Interpretacja: "),
             paste0("w tym kodowaniu b₀ to średni przewidywany ", y_label,
                    " dla KK-06, a b₁ to różnica KK-08 minus KK-06."))
@@ -1410,7 +1414,7 @@ ch1_server <- function(input, output, session) {
         lc_stat_box("p dla b₁", signif(coefs$p.value[2], 3), color = unname(upwr_cat["bursztyn"])),
         columns = 3
       ),
-      lc_feedback(type = "info", style = "margin-top: 10px;",
+      lc_status(
         p(tags$strong("Interpretacja: "),
           paste0("gdy ", x_label, " rośnie o 1, przewidywane ", y_label,
                  " zmienia się średnio o ", round(coefs$estimate[2], 3), "."))
@@ -1458,7 +1462,7 @@ ch1_server <- function(input, output, session) {
   output$ch1_pred_question <- renderUI({
     spec <- ch1_pred_spec()
     req(input$ch1_pred_x)
-    lc_feedback(type = "info", style = "margin-top: 12px;",
+    lc_status(
       p(tags$strong("Pytanie: "), spec$question),
       p("Podstaw do równania wartość X = ",
         tags$strong(input$ch1_pred_x), " i spróbuj policzyć przewidywane Y.")
@@ -1537,9 +1541,9 @@ ch1_server <- function(input, output, session) {
     req(input$ch1_pred_x)
 
     if (!ch1_pred_revealed()) {
-      return(lc_feedback(type = "warning", style = "margin-top: 12px;",
-        p("Odpowiedź jest ukryta. Najpierw policz predykcję z tabeli współczynników.")
-      ))
+      return(lc_caption(
+               "Odpowiedź jest ukryta. Najpierw policz predykcję z tabeli współczynników."
+             ))
     }
 
     coefs <- coef(ch1_pred_model())
@@ -1552,7 +1556,7 @@ ch1_server <- function(input, output, session) {
     y_label <- unname(.cas_labels[spec$y])
 
     tagList(
-      lc_feedback(type = "ok", style = "margin-top: 12px;",
+      lc_status(
         tags$div(style = "font-weight: 700; margin-bottom: 6px;", "Odpowiedź:"),
         withMathJax(tags$div(
           style = "font-size: 1.25rem; font-weight: 700; text-align: center;",

@@ -228,14 +228,13 @@ ch6_server <- function(input, output, session) {
 
   output$ch6_conf_example_verdict <- renderUI({
     r <- tr_confounder_row("gender")
-    lc_feedback(
-      tags$p(tags$strong("Co widać: "),
+    lc_status(
+      tags$p(lc_verdict(tags$strong("Co widać: "), type = "warning"),
         "płeć wiąże się z atrakcyjnością (", tags$code(r$beauty_label),
         ") i z oceną kursu (", tags$code(r$eval_label), ")."),
       tags$p(tags$strong("Werdykt: "),
         "oba związki są wyraźne, więc płeć jest kandydatem na zmienną zakłócającą.
-         Relacji beauty → eval nie można czytać bez uwzględnienia płci."),
-      type = "warning"
+         Relacji beauty → eval nie można czytać bez uwzględnienia płci.")
     )
   })
 

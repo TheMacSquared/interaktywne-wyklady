@@ -412,10 +412,12 @@ ch5_server <- function(input, output, session) {
       lc_stat_box("z", round(z, 2),
                   caption = paste0("(", x, " − ", mu, ") / ", sigma),
                   color = col_normal),
-      lc_feedback(type = "info", style = "margin-top: 8px;",
+      lc_caption(
         paste0("Wartość ", x, " leży ", round(abs(z), 2),
                " odchyleń standardowych ",
-               if (z >= 0) "powyżej" else "poniżej", " średniej."))
+               if (z >= 0) "powyżej" else "poniżej", " średniej."),
+        tone = "info"
+      )
     )
   })
 

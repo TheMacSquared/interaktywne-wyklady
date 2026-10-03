@@ -579,18 +579,30 @@ fta_server <- function(input, output, session) {
   output$f9_vote_feedback <- renderUI({
     req(v())
     if (is.null(input$f9_vote)) {
-      return(lc_feedback(type = "info", "Najpierw zaznacz jedną z odpowiedzi."))
+      return(lc_caption(
+               "Najpierw zaznacz jedną z odpowiedzi.",
+               tone = "info"
+             ))
     }
-    lc_feedback(type = if (identical(input$f9_vote, "good")) "ok" else "warning", tags$strong("Dobra definicja:"), " nieopanowany pożar magazynu w ciągu jednego roku.")
+    lc_status(
+      lc_verdict(tags$strong("Dobra definicja:"), type = if (identical(input$f9_vote, "good")) "ok" else "warning"),
+      " nieopanowany pożar magazynu w ciągu jednego roku."
+    )
   })
   output$f9_structure <- renderUI({
     n <- length(input$f9_causes)
-    lc_feedback(type = if (n >= 2) "info" else "warning", paste0("Wybrano bramkę ", toupper(input$f9_gate), " i ", n, " wejść. "), if (input$f9_gate == "or") "Każde wejście może wystarczyć." else "Wszystkie wybrane wejścia są potrzebne.")
+    lc_status(
+      paste0("Wybrano bramkę ", toupper(input$f9_gate), " i ", n, " wejść. "),
+      if (input$f9_gate == "or") "Każde wejście może wystarczyć." else "Wszystkie wybrane wejścia są potrzebne."
+    )
   })
   output$f9_state_result <- renderUI({
     s <- input$f9_states
     active <- "init" %in% s && ("detect" %in% s || "suppress" %in% s)
-    lc_feedback(type = if (active) "warning" else "ok", tags$strong(if (active) "Top event aktywny." else "Top event nieaktywny."), " Logika: inicjacja AND (brak detekcji OR brak tłumienia).")
+    lc_status(
+      lc_verdict(tags$strong(if (active) "Top event aktywny." else "Top event nieaktywny."), type = if (active) "warning" else "ok"),
+      " Logika: inicjacja AND (brak detekcji OR brak tłumienia)."
+    )
   })
   tree_value <- reactive(risk_fta_top(input$f9_init, input$f9_detect, input$f9_suppress))
   tree_plot <- reactive({
@@ -608,7 +620,10 @@ fta_server <- function(input, output, session) {
   })
   zoom_plot_server("f9_tree_plot", tree_plot, alt = "Drzewo błędów z inicjacją połączoną przez AND z bramką OR dwóch niesprawności zabezpieczeń.")
   output$f9_tree_stats <- renderUI(lc_stat_grid(lc_stat_box("P(D ∪ S | I)", risk_format_probability(risk_gate_or(c(input$f9_detect, input$f9_suppress)))), lc_stat_box("P(top)", risk_format_probability(tree_value()), color = upwr_accent), columns = 1))
-  output$f9_cut_text <- renderUI(lc_feedback(type = "info", if (input$f9_cut == "id") "Inicjacja + brak detekcji wystarczają do TOP." else "Inicjacja + brak tłumienia wystarczają do TOP."))
+  output$f9_cut_text <- renderUI(lc_caption(
+                                   if (input$f9_cut == "id") "Inicjacja + brak detekcji wystarczają do TOP." else "Inicjacja + brak tłumienia wystarczają do TOP.",
+                                   tone = "info"
+                                 ))
   output$f9_repeat_result <- renderUI({
     q <- input$f9_repeat
     wrong <- risk_gate_or(c(q, q))
@@ -636,6 +651,9 @@ fta_server <- function(input, output, session) {
       theme_upwr()
   })
   zoom_plot_server("f9_rank_plot", rank_plot, alt = "Słupki redukcji prawdopodobieństwa zdarzenia szczytowego po poprawie każdego liścia.")
-  output$f9_rank_stats <- renderUI(lc_feedback(type = "info", "Porównanie dotyczy modelu bazowego i jednakowej redukcji względnej."))
+  output$f9_rank_stats <- renderUI(lc_caption(
+                                     "Porównanie dotyczy modelu bazowego i jednakowej redukcji względnej.",
+                                     tone = "info"
+                                   ))
   risk_assessment_server("f9", fta_quiz, input, output)
 }

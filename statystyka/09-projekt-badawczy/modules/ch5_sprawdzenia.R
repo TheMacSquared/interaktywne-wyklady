@@ -108,9 +108,8 @@ ch5_server <- function(input, output, session) {
                row$effect,
                tags$span(style = "margin-left: 16px;", tags$strong("Test: ")),
                tr$test_name, "; ", p_disp),
-        lc_feedback(
-          tags$p(tags$strong("Interpretacja badawcza: "), row$full_verdict),
-          type = fb_type
+        lc_status(
+          tags$p(lc_verdict(tags$strong("Interpretacja badawcza: "), type = fb_type), row$full_verdict)
         )
       )
     })

@@ -689,7 +689,7 @@ ch3_server <- function(input, output, session) {
     m <- mean(x)
     s <- sum(x)
     n <- length(x)
-    lc_feedback(type = "info",
+    lc_status(
       withMathJax(paste0(
         "$$\\bar{x} = \\frac{", round(s, 1), "}{", n, "} = ", round(m, 2), "$$"
       ))
@@ -742,10 +742,12 @@ ch3_server <- function(input, output, session) {
     m <- mean(x)
     diff <- abs(m - med)
 
-    lc_feedback(type = "info",
+    lc_status(
       paste0("Mediana = ", round(med, 1)),
-      " | Średnia = ", round(m, 2),
-      " | Różnica = ", round(diff, 2)
+      " | Średnia = ",
+      round(m, 2),
+      " | Różnica = ",
+      round(diff, 2)
     )
   })
 
@@ -1066,20 +1068,26 @@ ch3_server <- function(input, output, session) {
     req(scenario)
 
     if (scenario == "unimodal") {
-      lc_feedback(type = "info",
-        tags$b("Rozkład unimodalny: "), "jeden szczyt. ",
+      lc_status(
+        tags$b("Rozkład unimodalny: "),
+        "jeden szczyt. ",
         "Dla rozkładu symetrycznego moda ≈ średnia ≈ mediana. ",
-        "Większość statystyk opisowych zakłada właśnie taki rozkład.")
+        "Większość statystyk opisowych zakłada właśnie taki rozkład."
+      )
     } else if (scenario == "bimodal") {
-      lc_feedback(type = "warning",
-        tags$b("Rozkład bimodalny: "), "dwa szczyty, osobno dla kobiet ",
+      lc_status(
+        lc_verdict(tags$b("Rozkład bimodalny: "), type = "warning"),
+        "dwa szczyty, osobno dla kobiet ",
         "i mężczyzn. Średnia całości wypada między szczytami, ",
-        "gdzie obserwacji jest niewiele.")
+        "gdzie obserwacji jest niewiele."
+      )
     } else {
-      lc_feedback(type = "warning",
-        tags$b("Rozkład wielomodalny: "), "trzy szczyty = trzy podgrupy. ",
+      lc_status(
+        lc_verdict(tags$b("Rozkład wielomodalny: "), type = "warning"),
+        "trzy szczyty = trzy podgrupy. ",
         "Każda podgrupa (rowerzyści, pasażerowie autobusów, kierowcy) ",
-        "ma własną typową wartość.")
+        "ma własną typową wartość."
+      )
     }
   })
 
@@ -1313,8 +1321,8 @@ ch3_server <- function(input, output, session) {
       cls <- "danger"
     }
 
-    lc_feedback(type = cls,
-      tags$strong(paste0(grade, " ")),
+    lc_status(
+      lc_verdict(tags$strong(paste0(grade, " ")), type = cls),
       paste0("Błąd średniej: ", mean_err, ", błąd mediany: ", med_err, ".")
     )
   })

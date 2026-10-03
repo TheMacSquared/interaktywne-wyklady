@@ -424,13 +424,13 @@ ch7_server <- function(input, output, session) {
 
     fb_type <- if (fwer < 0.10) "ok" else if (fwer < 0.30) "warning" else "danger"
 
-    lc_feedback(type = fb_type,
+    lc_status(
       tags$table(class = "lc-table lc-table-sm", style = "margin: 0;",
         tags$tbody(
           tags$tr(tags$td("Grup:"),      tags$td(tags$b(k))),
           tags$tr(tags$td("Testów t:"),  tags$td(tags$b(n_tests))),
           tags$tr(tags$td("Ryzyko ≥ 1 błędu:"),
-                  tags$td(tags$b(paste0(format(fwer_pct), "%"))))
+                  tags$td(lc_verdict(tags$b(paste0(format(fwer_pct), "%")), type = fb_type)))
         )
       )
     )
@@ -543,7 +543,7 @@ ch7_server <- function(input, output, session) {
     p_val <- tidy_res$p
     res <- format_test_result(p_val)
 
-    lc_feedback(type = "info",
+    lc_status(
       p(tags$strong("Wynik ANOVA jednoczynnikowej:")),
       p(paste0("F(", tidy_res$DFn, ", ", tidy_res$DFd, ") = ",
                round(tidy_res$F, 3))),
@@ -657,19 +657,23 @@ ch7_server <- function(input, output, session) {
   output$ch7_tukey_result <- renderUI({
     gd <- ch7_gh_data()
     if (is.null(gd)) {
-      return(lc_feedback(type = "warning", "Najpierw uruchom ANOVA."))
+      return(lc_caption(
+               "Najpierw uruchom ANOVA."
+             ))
     }
     gh_df <- gd$gh
     sig_pairs <- gh_df[gh_df$p.adj < 0.05, ]
     n_sig <- nrow(sig_pairs)
 
     if (n_sig == 0) {
-      lc_feedback(type = "info",
-        p(tags$strong("Żadna para nie różni się istotnie"),
-          " (po korekcie Games-Howella)."))
+      lc_caption(
+        tags$strong("Żadna para nie różni się istotnie"),
+        " (po korekcie Games-Howella).",
+        tone = "info"
+      )
     } else {
-      lc_feedback(type = "ok",
-        p(tags$strong(paste0(n_sig, " ", ch7_plural_diff(n_sig), ":"))),
+      lc_status(
+        p(lc_verdict(tags$strong(paste0(n_sig, " ", ch7_plural_diff(n_sig), ":")), type = "ok")),
         tags$ul(
           lapply(1:n_sig, function(i) {
             tags$li(paste0(sig_pairs$group1[i], " — ", sig_pairs$group2[i],

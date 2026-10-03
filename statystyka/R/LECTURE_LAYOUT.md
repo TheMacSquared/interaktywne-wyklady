@@ -256,7 +256,7 @@ Polskie cudzysłowy typograficzne `„..."` (U+201E/U+201D) mogą być **wewnąt
 | `lc_formula_box(...)` | blok wzoru lub krótkiego zapisu matematycznego |
 | `lc_stat_grid(..., columns)` | siatka metryk/statystyk |
 | `lc_stat_box(label, value, ..., caption, color)` | pojedyncza metryka z lewym akcentem |
-| `lc_feedback(..., type)` | dynamiczny komunikat w `renderUI()`; `type`: `"info"` / `"ok"` / `"warning"` / `"danger"` |
+| `lc_feedback(..., type)` | przestarzały; komunikat widgetu: `lc_status()` + `lc_verdict(type = "ok" / "warning" / "danger" / "info")` albo jedno zdanie `lc_caption()` |
 | `lc_chapter_next(num, title, lead, target_id)` | link „→ Dalej" na marginesie |
 
 ---

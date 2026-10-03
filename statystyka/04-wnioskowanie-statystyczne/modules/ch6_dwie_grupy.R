@@ -684,7 +684,7 @@ ch6_server <- function(input, output, session) {
     res <- format_test_result(tidy_res$p)
     direction <- if (mean_diff > 0) "wzrosły" else if (mean_diff < 0) "spadły" else "nie zmieniły się"
 
-    lc_feedback(type = "info",
+    lc_status(
       p(tags$strong("Wynik testu t dla danych sparowanych:")),
       p(paste0("Średnia różnica (po − przed): ", round(mean_diff, 2), " pkt")),
       p(paste0("t(", tidy_res$df, ") = ", round(tidy_res$statistic, 3))),

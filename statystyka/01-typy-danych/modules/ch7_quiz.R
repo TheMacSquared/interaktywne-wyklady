@@ -260,8 +260,8 @@ ch7_server <- function(input, output, session) {
     correct_color <- QUIZ_TYPE_COLORS[[quiz_state$last_correct_val]]
 
     tagList(
-      lc_feedback(type = if (is_correct) "ok" else "danger",
-        tags$strong(if (is_correct) "Dobrze!" else "Nie tym razem."),
+      lc_status(
+        lc_verdict(tags$strong(if (is_correct) "Dobrze!" else "Nie tym razem."), type = if (is_correct) "ok" else "danger"),
         if (!is_correct) {
           tagList(
             " Poprawna odpowiedź: ",

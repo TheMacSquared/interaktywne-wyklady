@@ -230,7 +230,10 @@ warunki_views_widget <- figure_panel(
     column(5, uiOutput("w2_table")),
     column(7, zoom_plot_ui("w2_views_shares", height = "320px"))
   ),
-  lc_feedback(type = "info", "Zmiana widoku nie zmienia zdarzenia ani mianownika."),
+  lc_caption(
+    "Zmiana widoku nie zmienia zdarzenia ani mianownika.",
+    tone = "info"
+  ),
   full_width = TRUE
 )
 

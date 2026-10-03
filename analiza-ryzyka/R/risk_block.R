@@ -129,18 +129,18 @@ risk_assessment_server <- function(prefix, quiz, input, output) {
     score <- sum(correct)
     missing <- sum(!nzchar(answers))
     tagList(
-      lc_feedback(
-        type = if (score == length(questions)) "ok" else "warning",
-        tags$strong(sprintf("Wynik: %d/%d.", score, length(questions))),
+      lc_status(
+        lc_verdict(tags$strong(sprintf("Wynik: %d/%d.", score, length(questions))), type = if (score == length(questions)) "ok" else "warning"),
         if (missing) paste0(" Bez odpowiedzi: ", missing, ".") else " Poniżej omówienie każdej odpowiedzi."
       ),
       tags$ol(lapply(seq_along(questions), function(i) {
         question <- questions[[i]]
         answer_label <- names(question$choices)[match(question$correct, unname(question$choices))]
         tags$li(
-          lc_feedback(type = if (correct[i]) "ok" else "warning",
-            tags$strong(if (correct[i]) "Poprawnie:" else if (!nzchar(answers[i])) "Brak odpowiedzi:" else "Do poprawy:"),
-            paste0(" ", question$question, " Poprawna odpowiedź: ", answer_label, ". ", question$explanation))
+          lc_status(
+            lc_verdict(tags$strong(if (correct[i]) "Poprawnie:" else if (!nzchar(answers[i])) "Brak odpowiedzi:" else "Do poprawy:"), type = if (correct[i]) "ok" else "warning"),
+            paste0(" ", question$question, " Poprawna odpowiedź: ", answer_label, ". ", question$explanation)
+          )
         )
       }))
     )

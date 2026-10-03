@@ -671,12 +671,14 @@ ch4_server <- function(input, output, session) {
                       "% danych (reguła: 68%, 95% i 99.7%).")
 
     if (diff_1sd < 5) {
-      lc_feedback(type = "info",
-        tags$strong("Dobra zgodność z regułą."), pct_txt
+      lc_status(
+        tags$strong("Dobra zgodność z regułą."),
+        pct_txt
       )
     } else {
-      lc_feedback(type = "warning",
-        tags$strong("Słaba zgodność z regułą."), pct_txt
+      lc_status(
+        lc_verdict(tags$strong("Słaba zgodność z regułą."), type = "warning"),
+        pct_txt
       )
     }
   })

@@ -246,8 +246,8 @@ ch8_server <- function(input, output, session) {
 
     tagList(
       # Wynik
-      lc_feedback(type = if (is_correct) "ok" else "danger",
-        tags$strong(if (is_correct) "Dobrze!" else "Nie tym razem."),
+      lc_status(
+        lc_verdict(tags$strong(if (is_correct) "Dobrze!" else "Nie tym razem."), type = if (is_correct) "ok" else "danger"),
         if (!is_correct) {
           paste0(" Poprawna odpowiedź: ", correct_label)
         }

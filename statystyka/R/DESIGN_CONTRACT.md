@@ -54,7 +54,7 @@ Kanoniczne komponenty:
 | Wykres, tabela, widget | `figure_panel()` |
 | Wzór | `lc_formula_box()` |
 | Metryki i statystyki | `lc_stat_grid()` + `lc_stat_box()` |
-| Dynamiczny feedback | `lc_feedback()` |
+| Dynamiczny feedback | `lc_status()` / `lc_caption()` w `renderUI()` |
 | Notka marginalna | `margin_callout()` albo `margin_note()` |
 | Notka z kodem | `margin_code_note()` |
 | Przejście do następnego rozdziału | `lc_chapter_next()` |
@@ -90,7 +90,7 @@ Migracja dawnych fragmentów powinna iść wprost:
 | Panel z widgetem | `figure_panel()` |
 | Blok wzoru | `lc_formula_box()` |
 | Kafelki metryk | `lc_stat_grid()` + `lc_stat_box()` |
-| Feedback po interakcji | `lc_feedback()` |
+| Feedback po interakcji | `lc_status()` + `lc_verdict()`; jedno zdanie: `lc_caption()` |
 | Notka boczna | `margin_callout()` albo `margin_note()` |
 | Przycisk | klasy `lc-btn-primary`, `lc-btn-outline`, `lc-btn-ok`, `lc-btn-warning`, `lc-btn-danger`, `lc-btn-secondary-outline` |
 | Tabela HTML | klasy `lc-table`, `lc-table-bordered`, `lc-table-striped`, `lc-table-sm` |
@@ -229,8 +229,8 @@ Zasady:
    a wyniki liczbowe do `lc_readout()` albo `lc_caption()`.
    Symbole (x̄, p̂, μ₁, σ, β₀) w etykietach piszemy wprost w Unicode (zob. „Kroje”).
 6. Suwak bez podziałki i dymka; wartość w etykiecie, min i max pod torem.
-7. Feedback pod wykresem to jedno zdanie `lc_caption()`. `lc_feedback()`
-   zostaje dla treści w toku tekstu.
+7. Feedback pod wykresem to jedno zdanie `lc_caption()`, dłuższy wynik lub
+   odpowiedź quizu `lc_status()`. `lc_feedback()` jest przestarzały.
 8. Wykres ma wysokość z proporcji (`lc_plot()`), nie `height = "250px"`.
    Serwer bez zmian: `zoom_plot_server()` rysuje w rozmiarze kontenera.
 9. Rozmiary w `em`, progi z szerokości panelu (container queries), więc tryb
@@ -347,8 +347,8 @@ Zakazane wzorce (uzupełnienie):
 - `inline_callout()` i zwijane `tags$details` dla notek krótszych niż trzy
   zdania;
 - emoji w tytułach, listach i statusach;
-- `lc_feedback()` jako osobna ramka pod `figure_panel()`; statyczne
-  `lc_feedback()` w toku tekstu zastępują `lc_note()` albo `lc_warn()`;
+- `lc_feedback()` w nowym kodzie: komunikat widgetu to `lc_status()` /
+  `lc_caption()`, blok w toku tekstu to `lc_note()` / `lc_warn()`;
 - więcej niż jedna `lc_warn()` i jedna `lc_note(rule = TRUE)` na sekcję.
 
 ## Kolumna treści

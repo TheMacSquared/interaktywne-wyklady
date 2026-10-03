@@ -609,8 +609,8 @@ ch2_server <- function(input, output, session) {
 
   output$ch2_resid_verdict <- renderUI({
     spec <- ch2_resid_spec()
-    lc_feedback(type = spec$verdict, style = "margin-top: 12px;",
-      tags$strong(spec$title),
+    lc_status(
+      lc_verdict(tags$strong(spec$title), type = spec$verdict),
       p(spec$comment)
     )
   })
@@ -904,13 +904,13 @@ ch2_server <- function(input, output, session) {
                 diff(x_range) * 100
 
     if (in_range) {
-      lc_feedback(type = "ok", style = "margin-top: 12px;",
-        tags$strong("W zakresie danych"),
+      lc_status(
+        lc_verdict(tags$strong("W zakresie danych"), type = "ok"),
         p(sprintf("Predykcja: %.1f pkt. Jesteśmy wewnątrz zakresu danych — predykcja ma sens.", y_pred))
       )
     } else {
-      lc_feedback(type = "warning", style = "margin-top: 12px;",
-        tags$strong("Ekstrapolacja"),
+      lc_status(
+        lc_verdict(tags$strong("Ekstrapolacja"), type = "warning"),
         p(sprintf("Predykcja: %.1f pkt. Jesteśmy %.0f%% zakresu danych poza granicą — brak gwarancji.", y_pred, dist_pct))
       )
     }
@@ -946,9 +946,10 @@ ch2_server <- function(input, output, session) {
     y_label <- unname(.cas_labels[spec$y])
     y_sd <- sd(y_vals)
 
-    lc_feedback(type = "info", style = "margin-top: 12px;",
-      p(sprintf("Typowa pomyłka modelu to ±%.1f w skali „%s” (zakres %.0f, SD %.1f).",
-                rmse, y_label, y_range, y_sd))
+    lc_caption(
+      sprintf("Typowa pomyłka modelu to ±%.1f w skali „%s” (zakres %.0f, SD %.1f).",
+                rmse, y_label, y_range, y_sd),
+      tone = "info"
     )
   })
 }

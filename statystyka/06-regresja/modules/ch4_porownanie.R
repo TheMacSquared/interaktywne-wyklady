@@ -598,11 +598,12 @@ ch4_server <- function(input, output, session) {
       lc_stat_box("RMSE uczący", round(current$train_rmse, 2), color = unname(upwr_cat["niebo"])),
       lc_stat_box("RMSE testowy", round(current$test_rmse, 2), color = unname(upwr_cat["bursztyn"])),
       lc_stat_box("Najlepszy na teście", paste0("stopień ", best$degree), caption = paste("RMSE", round(best$test_rmse, 2)), color = unname(upwr_cat["szalwia"])),
-      lc_feedback(type = if (current$test_rmse > best$test_rmse * 1.25) "warning" else "info",
-        p(if (current$test_rmse > best$test_rmse * 1.25)
+      lc_caption(
+        if (current$test_rmse > best$test_rmse * 1.25)
             "Błąd testowy wyraźnie wyższy niż przy najlepszym stopniu."
           else
-            "Błąd testowy bliski najmniejszego."))
+            "Błąd testowy bliski najmniejszego."
+      )
     )
   })
 }

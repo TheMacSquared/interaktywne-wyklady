@@ -440,7 +440,7 @@ ch2_ev_var_server <- function(input, output, session) {
       collapse = " + "
     )
 
-    lc_feedback(type = "info",
+    lc_status(
       tags$strong("Obliczenie:"),
       paste0(" ", "E(X) = ", calc_parts, " = ", round(ev, 2))
     )

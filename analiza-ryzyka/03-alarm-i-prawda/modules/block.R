@@ -97,8 +97,7 @@ alarm_paths_widget <- figure_panel(
     columns = 3
   ),
   lc_formula_box(withMathJax("$$P(\\text{awaria}\\mid\\text{alarm})=\\frac{95}{95+495}\\approx 0{,}16$$")),
-  lc_feedback(
-    type = "info",
+  lc_status(
     tags$strong("Czytaj mianownik:"),
     " licznik to jedna droga (awaria i alarm), a mianownik to wszystkie zmiany
       kończące się alarmem — z awarią i bez niej. Fałszywych alarmów jest pięć
@@ -619,24 +618,24 @@ alarm_server <- function(input, output, session) {
   output$a3_vote_feedback <- renderUI({
     req(checked())
     if (is.null(input$a3_vote)) {
-      return(lc_feedback(type = "info", "Najpierw zaznacz jedną z odpowiedzi."))
+      return(lc_caption(
+               "Najpierw zaznacz jedną z odpowiedzi.",
+               tone = "info"
+             ))
     }
     if (identical(input$a3_vote, "16")) {
-      lc_feedback(
-        type = "ok",
-        tags$strong("Około 16%."),
+      lc_status(
+        lc_verdict(tags$strong("Około 16%."), type = "ok"),
         " Na 1000 zmian przypada około 10 awarii i 9–10 prawdziwych alarmów, ale też około 50 fałszywych alarmów z 990 zmian bez awarii. Większość alarmów jest fałszywa."
       )
     } else if (identical(input$a3_vote, "base")) {
-      lc_feedback(
-        type = "info",
+      lc_status(
         tags$strong("Dobry odruch, ale częstość bazowa jest podana:"),
         " 1 awaria na 100 zmian. Z nią wynik da się policzyć — około 16%. Bez częstości bazowej odpowiedź rzeczywiście byłaby niemożliwa."
       )
     } else {
-      lc_feedback(
-        type = "warning",
-        tags$strong("95% to czułość, czyli P(alarm | awaria)."),
+      lc_status(
+        lc_verdict(tags$strong("95% to czułość, czyli P(alarm | awaria)."), type = "warning"),
         " Pytanie po alarmie dotyczy P(awaria | alarm). Przy rzadkich awariach większość alarmów pochodzi ze zmian bez awarii i wynik spada do około 16%."
       )
     }

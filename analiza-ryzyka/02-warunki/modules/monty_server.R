@@ -115,16 +115,14 @@ warunki_monty_server <- function(input, output, session) {
       return(NULL)
     }
     if (is.null(monty$final)) {
-      return(lc_feedback(
-        type = "info",
-        tags$strong("Nowa informacja:"),
-        paste(" bramka", monty$opened, "na pewno nie zawiera nagrody. Zostajesz czy zmieniasz?")
-      ))
+      return(lc_status(
+               tags$strong("Nowa informacja:"),
+               paste(" bramka", monty$opened, "na pewno nie zawiera nagrody. Zostajesz czy zmieniasz?")
+             ))
     }
     won <- identical(monty$final, monty$prize)
-    lc_feedback(
-      type = if (won) "ok" else "warning",
-      tags$strong(if (won) "Nagroda!" else "Zonk."),
+    lc_status(
+      lc_verdict(tags$strong(if (won) "Nagroda!" else "Zonk."), type = if (won) "ok" else "warning"),
       paste0(
         " Strategia: ", monty$strategy, ". Nagroda była za bramką ", monty$prize,
         ". Jedna gra nie rozstrzyga, która strategia jest lepsza — uruchom symulację."

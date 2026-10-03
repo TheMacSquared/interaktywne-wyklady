@@ -319,8 +319,8 @@ ch2_server <- function(input, output, session) {
     req(ch2_quiz_answered())
     answer <- ch2_quiz_selected()
     if (answer == "C") {
-      lc_feedback(type = "ok",
-        tags$strong("Poprawnie."),
+      lc_status(
+        lc_verdict(tags$strong("Poprawnie."), type = "ok"),
         p("Poziom ufności opisuje metodę, nie konkretny wynik.")
       )
     } else {
@@ -329,8 +329,8 @@ ch2_server <- function(input, output, session) {
         "B" = "Przedział dotyczy parametru (średniej), a nie pojedynczych obserwacji.",
         "D" = "Średnia z próby jest środkiem przedziału, więc leży w nim zawsze."
       )
-      lc_feedback(type = "danger",
-        tags$strong("Nie do końca."),
+      lc_status(
+        lc_verdict(tags$strong("Nie do końca."), type = "danger"),
         p(feedback),
         p("Poprawna odpowiedź to C.")
       )

@@ -622,17 +622,29 @@ system_server <- function(input, output, session) {
   output$s8_vote_feedback <- renderUI({
     req(v())
     if (is.null(input$s8_vote)) {
-      return(lc_feedback(type = "info", "Najpierw zaznacz jedną z odpowiedzi."))
+      return(lc_caption(
+               "Najpierw zaznacz jedną z odpowiedzi.",
+               tone = "info"
+             ))
     }
-    lc_feedback(type = "info", tags$strong("Każda odpowiedź może być poprawna:"), " 0,81 dla szeregu, 0,90 dla pojedynczego wymagania i 0,99 dla redundancji równoległej.")
+    lc_status(
+      tags$strong("Każda odpowiedź może być poprawna:"),
+      " 0,81 dla szeregu, 0,90 dla pojedynczego wymagania i 0,99 dla redundancji równoległej."
+    )
   })
   output$s8_series_state <- renderUI({
     ok <- length(input$s8_series_states) == 3
-    lc_feedback(type = if (ok) "ok" else "warning", tags$strong(if (ok) "System działa." else "System nie działa."), " Układ szeregowy wymaga wszystkich elementów.")
+    lc_status(
+      lc_verdict(tags$strong(if (ok) "System działa." else "System nie działa."), type = if (ok) "ok" else "warning"),
+      " Układ szeregowy wymaga wszystkich elementów."
+    )
   })
   output$s8_parallel_state <- renderUI({
     ok <- length(input$s8_parallel_states) >= 1
-    lc_feedback(type = if (ok) "ok" else "warning", tags$strong(if (ok) "System działa." else "System nie działa."), " Wystarcza co najmniej jedna gałąź.")
+    lc_status(
+      lc_verdict(tags$strong(if (ok) "System działa." else "System nie działa."), type = if (ok) "ok" else "warning"),
+      " Wystarcza co najmniej jedna gałąź."
+    )
   })
   diagram_plot <- reactive({
     if (input$s8_diagram == "series") {

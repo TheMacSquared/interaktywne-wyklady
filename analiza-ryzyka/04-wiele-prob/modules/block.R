@@ -84,8 +84,7 @@ proby_variable_widget <- figure_panel(
     lc_stat_box("Suma X₁ + … + X₁₀₀", "licznik niesprawnych", caption = "zmienna, o którą naprawdę pytamy", color = upwr_cat[["niebo"]]),
     columns = 2
   ),
-  lc_feedback(
-    type = "info",
+  lc_status(
     tags$strong("Po co ta konstrukcja:"),
     " zdarzeń nie da się dodawać, ale liczby już tak. Zapisanie wyniku próby
       jako 0/1 pozwala sumować kontrole, liczyć średnie i budować rozkłady —
@@ -586,9 +585,15 @@ proby_server <- function(input, output, session) {
   output$p4_vote_feedback <- renderUI({
     req(vote())
     if (is.null(input$p4_vote)) {
-      return(lc_feedback(type = "info", "Najpierw zaznacz jedną z odpowiedzi."))
+      return(lc_caption(
+               "Najpierw zaznacz jedną z odpowiedzi.",
+               tone = "info"
+             ))
     }
-    lc_feedback(type = if (identical(input$p4_vote, "valve")) "ok" else "warning", tags$strong("Jednostka:"), " jeden zawór i dwa rozłączne wyniki.")
+    lc_status(
+      lc_verdict(tags$strong("Jednostka:"), type = if (identical(input$p4_vote, "valve")) "ok" else "warning"),
+      " jeden zawór i dwa rozłączne wyniki."
+    )
   })
   series <- reactive({
     input$p4_run
@@ -598,7 +603,9 @@ proby_server <- function(input, output, session) {
   output$p4_series_stats <- renderUI(lc_stat_grid(lc_stat_box("Niesprawne", sum(series()), color = upwr_accent), lc_stat_box("Oczekiwano średnio", round(length(series()) * .02, 1)), columns = 1))
   output$p4_scenario_feedback <- renderUI({
     messages <- c(stable = "Założenia są wiarygodne, jeśli kontrole nie wpływają na siebie.", mixture = "Zmienia się p: rozważ warstwy dostaw.", dependent = "Zagrożona jest niezależność prób.")
-    lc_feedback(type = if (identical(input$p4_scenario, "stable")) "ok" else "warning", messages[[input$p4_scenario]])
+    lc_caption(
+      messages[[input$p4_scenario]]
+    )
   })
   binom_plot <- reactive({
     kmax <- max(15, qbinom(.999, input$p4_n, input$p4_p))

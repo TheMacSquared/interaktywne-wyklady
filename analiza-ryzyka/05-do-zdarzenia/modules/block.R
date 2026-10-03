@@ -445,9 +445,15 @@ dozd_server <- function(input, output, session) {
   output$d5_vote_feedback <- renderUI({
     req(vote())
     if (is.null(input$d5_vote)) {
-      return(lc_feedback(type = "info", "Najpierw zaznacz jedną z odpowiedzi."))
+      return(lc_caption(
+               "Najpierw zaznacz jedną z odpowiedzi.",
+               tone = "info"
+             ))
     }
-    lc_feedback(type = if (identical(input$d5_vote, "r")) "ok" else "warning", tags$strong("Stały jest cel:"), " r=3; liczba kontroli pozostaje losowa.")
+    lc_status(
+      lc_verdict(tags$strong("Stały jest cel:"), type = if (identical(input$d5_vote, "r")) "ok" else "warning"),
+      " r=3; liczba kontroli pozostaje losowa."
+    )
   })
   geo_sample <- reactive({
     input$d5_geo_run

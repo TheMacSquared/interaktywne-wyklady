@@ -244,7 +244,10 @@ ch6_server <- function(input, output, session) {
     res <- ch6_tree_result()
     tagList(
       lc_stat_box("Rekomendacja", res$model, color = upwr_secondary),
-      lc_feedback(type = "info", p(res$note))
+      lc_caption(
+        res$note,
+        tone = "info"
+      )
     )
   })
 }

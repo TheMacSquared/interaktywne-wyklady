@@ -519,7 +519,7 @@ ch5_server <- function(input, output, session) {
     par <- scenario_params[[input$ch5_scenario]]
     tab <- ch5_tab()
     tagList(
-      lc_feedback(type = "info", style = "font-size: 16px;",
+      lc_status(
         p(tags$b("Pytanie potoczne:")),
         p(tags$em(paste0("„", par$question, "”")))
       ),
@@ -649,8 +649,9 @@ ch5_server <- function(input, output, session) {
     tab <- isolate(ch5_tab())
 
     if (is.null(tab)) {
-      return(lc_feedback(type = "warning",
-        "Najpierw wylosuj próbę w widgecie powyżej."))
+      return(lc_caption(
+               "Najpierw wylosuj próbę w widgecie powyżej."
+             ))
     }
 
     test_chi <- chisq.test(tab)
@@ -682,8 +683,8 @@ ch5_server <- function(input, output, session) {
           )
         )
       ),
-      lc_feedback(type = if (low_exp) "danger" else "ok",
-        p(tags$b("Liczebności oczekiwane poniżej 5:"),
+      lc_status(
+        p(lc_verdict(tags$b("Liczebności oczekiwane poniżej 5:"), type = if (low_exp) "danger" else "ok"),
           if (low_exp) paste0(" tak (komórki: ", n_low, ") — przybliżenie χ² może być
             niedokładne, bezpieczniejszy jest wynik testu Fishera.")
           else " nie — przybliżenie χ² powinno być wystarczające.")

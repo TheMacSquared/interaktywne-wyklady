@@ -120,10 +120,15 @@ Etap 3 — przegląd widgetów wykład po wykładzie (commit per widget):
 - [ ] `lc_stat_box()` w widgetach → `lc_readout()`; odczyt z kolorem serii
   zastępuje legendę ggplot (90 paneli; w analizie ryzyka dotyczy prawie
   każdego `risk_widget_panel()`, w którym pudełka siedzą teraz w pasku).
-- [ ] `lc_feedback()` pod wykresem → `lc_caption()`; `lc_feedback()` zostaje
-  w toku tekstu (116 paneli).
+- [x] `lc_feedback()` w panelach → `lc_status()` / `lc_caption()` (statystyka
+  90, analiza ryzyka 44; 3 października 2026). Rozwiązania ćwiczeń →
+  `lc_more("Rozwiązanie", …)` bez przycisków (128).
 - [ ] Pozostałe stare tabele → `lc_table()` / `lc_crosstab()` (77 paneli),
   potem usunąć `lc_table_region()` i klasy `lc-table*`.
+  Na telefonie (390 px) po zmianie kroju na IBM Plex wylewają się o kilka px:
+  statystyka 06 Ryc. 1.4 (tabela współczynników CASchools) i miniściąga
+  „Jak ograniczać przeuczenie”, analiza ryzyka 01 „Profil ryzyka” i 03
+  Ściąga 3.1 „Audyt alarmu w pięciu krokach” — od nich zacząć.
 - [ ] Legendy ggplot wychodzące poza wykres na telefonie (np. statystyka 01
   Ryc. 2.5) — poprawiać przy migracji danego widgetu.
 
@@ -141,12 +146,7 @@ wspólnym `R/`, margines boczny usunięty, dawne callouty renderują się jako
 
 - [x] Statyczne `lc_feedback()` w toku tekstu → `lc_note()` / `lc_warn()` /
   `lc_recap()`: statystyka (72) i analiza ryzyka 01 (8) zrobione 3 października
-  2026. Zostały: statyczne `lc_feedback()` wewnątrz paneli (analiza ryzyka
-  01, 02, 03, 04 — idą z punktem `lc_caption()`), wyjaśnienia konstruktorów
-  w statystyce 03 (`ch3_srednia.R`, `ch5_czynniki.R` — z punktem
-  `lc_status()`) i statystyka 2 (odłożona).
-- [ ] `lc_feedback()` w `renderUI()` pod widgetem → `lc_status()` /
-  `lc_caption()` wewnątrz panelu.
+  2026. Statystyka 2 odłożona.
 - [ ] Pogrubione wstępy `tags$strong("Przykład:" / "Kontrprzykład:" /
   "Uwaga:" / "Zasada:")` na początku akapitu → `lc_note()` (statystyka 17,
   statystyka 2: 2).
@@ -385,8 +385,10 @@ Rekomendacje (do przyjęcia przy wznowieniu, bez dalszych decyzji teraz):
 - Wykresy bootstrapu (rozdziały 1–2) na `plotOutput(height = "auto")` bez
   powiększenia — zostawić, dopóki kurs jest odłożony; przy wznowieniu dodać do
   `zoom_plot` obsługę wysokości liczonej w serwerze.
-- Migracja etapu 3 (układy kolumn: 81 z 91 paneli, statyczne `lc_feedback`) —
-  dopiero przy wznowieniu kursu.
+- Migracja etapu 3 (układy kolumn: 81 z 91 paneli, ok. 170 wywołań
+  `lc_feedback()` → `lc_note()` / `lc_warn()` / `lc_status()` / `lc_caption()`,
+  rozwiązania → `lc_more()`) — dopiero przy wznowieniu kursu. Po niej można
+  usunąć `lc_feedback()` i klasy `.lc-feedback*` ze wspólnego `R/`.
 
 ---
 

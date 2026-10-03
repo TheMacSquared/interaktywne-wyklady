@@ -201,11 +201,10 @@ ch1_server <- function(input, output, session) {
       c("prof", "identyfikator prowadzącego; jedna osoba może pojawiać się przy więcej niż jednym kursie")
     )
     tagList(
-      lc_feedback(
+      lc_status(
         tags$p(tags$strong("Jak czytać tabelę?")),
         tags$p("Jedna obserwacja to kurs/ewaluacja. Już na tym etapie pytamy:
-          które kolumny są wynikiem, które są tropem, a które mogą zmieniać interpretację?"),
-        type = "info"
+          które kolumny są wynikiem, które są tropem, a które mogą zmieniać interpretację?")
       ),
       div(class = "data-legend",
         lapply(items, function(x) {

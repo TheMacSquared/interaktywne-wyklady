@@ -517,16 +517,16 @@ ch4_server <- function(input, output, session) {
 
     tagList(
       h4(info$name),
-      lc_feedback(type = "warning",
-        tags$strong("Założenia:"),
+      lc_status(
+        lc_verdict(tags$strong("Założenia:"), type = "warning"),
         tags$ul(lapply(info$assumptions, tags$li))
       ),
-      lc_feedback(type = "info",
+      lc_status(
         tags$strong("Jak sprawdzić:"),
         tags$ul(lapply(info$checks, tags$li))
       ),
-      lc_feedback(type = "ok",
-        tags$strong("Alternatywy:"),
+      lc_status(
+        lc_verdict(tags$strong("Alternatywy:"), type = "ok"),
         tags$ul(lapply(info$alternatives, tags$li))
       )
     )

@@ -299,7 +299,9 @@ ch2_server <- function(input, output, session) {
   output$ch2_test_results <- renderUI({
     req(input$ch2_test_var)
     df <- isolate(ch2_data())
-    if (is.null(df)) return(lc_feedback(type = "warning", "Najpierw wygeneruj dane."))
+    if (is.null(df)) return(lc_caption(
+                              "Najpierw wygeneruj dane."
+                            ))
 
     lev <- rstatix::levene_test(df, value ~ group)
     bart <- bartlett.test(value ~ group, data = df)
@@ -307,7 +309,7 @@ ch2_server <- function(input, output, session) {
     lev_color <- if (lev$p >= 0.05) col_ok else col_fail
     bart_color <- if (bart$p.value >= 0.05) col_ok else col_fail
 
-    lc_feedback(type = "info",
+    lc_status(
       fluidRow(
         column(6,
           p(tags$strong("Test Levene'a:")),
@@ -331,12 +333,14 @@ ch2_server <- function(input, output, session) {
   output$ch2_t_comparison <- renderUI({
     req(input$ch2_compare_t)
     df <- isolate(ch2_data())
-    if (is.null(df)) return(lc_feedback(type = "warning", "Najpierw wygeneruj dane."))
+    if (is.null(df)) return(lc_caption(
+                              "Najpierw wygeneruj dane."
+                            ))
 
     t_classic <- t_test(df, value ~ group, var.equal = TRUE)
     t_welch <- t_test(df, value ~ group, var.equal = FALSE)
 
-    lc_feedback(type = "info",
+    lc_status(
       fluidRow(
         column(6,
           p(tags$strong("Test t Studenta"), " (zakłada równe wariancje):"),

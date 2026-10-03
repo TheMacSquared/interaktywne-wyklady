@@ -653,7 +653,7 @@ ch4_server <- function(input, output, session) {
     par <- scenario_params[[input$ch4_scenario]]
     d <- ch4_data()
     tagList(
-      lc_feedback(type = "info", style = "font-size: 16px;",
+      lc_status(
         p(tags$b("Pytanie potoczne:")),
         p(tags$em(paste0("„", par$question, "”")))
       ),
@@ -728,7 +728,7 @@ ch4_server <- function(input, output, session) {
     par <- scenario_params[[input$ch4_scenario]]
     d <- ch4_data()
     tagList(
-      lc_feedback(type = "info", style = "font-size: 16px;",
+      lc_status(
         p(tags$b("Pytanie potoczne (kierunkowe):")),
         p(tags$em(paste0("„", par$question_1s, "”")))
       ),
@@ -985,8 +985,8 @@ ch4_server <- function(input, output, session) {
     r_global <- round(cor(df$godziny, df$wynik), 2)
 
     if (view == "global") {
-      lc_feedback(type = "warning",
-        tags$strong("Spojrzenie globalne:"),
+      lc_status(
+        lc_verdict(tags$strong("Spojrzenie globalne:"), type = "warning"),
         sprintf(" r = %s. Więcej godzin nauki → niższy wynik z egzaminu?",
                 format(r_global, nsmall = 2))
       )
@@ -997,10 +997,11 @@ ch4_server <- function(input, output, session) {
       r_text <- paste0(r_per_school$szkola, ": r = ", round(r_per_school$r, 2),
                        collapse = "; ")
 
-      lc_feedback(type = "ok",
-        tags$strong("Podział na szkoły:"),
+      lc_status(
+        lc_verdict(tags$strong("Podział na szkoły:"), type = "ok"),
         " w każdej szkole z osobna więcej nauki → wyższy wynik (",
-        r_text, ")."
+        r_text,
+        ")."
       )
     }
   })

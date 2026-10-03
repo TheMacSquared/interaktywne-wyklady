@@ -441,7 +441,7 @@ ch2_server <- function(input, output, session) {
     samp <- ch2_sample()
 
     div(class = "ch2-step-panel",
-      lc_feedback(type = "info", style = "font-size: 16px;",
+      lc_status(
         p(tags$b("Pytanie potoczne:")),
         p(tags$em(paste0("„", par$question, "”")))
       ),
@@ -546,7 +546,7 @@ ch2_server <- function(input, output, session) {
     samp <- ch2_sample()
 
     div(class = "ch2-step-panel",
-      lc_feedback(type = "info", style = "font-size: 16px;",
+      lc_status(
         p(tags$b("Pytanie potoczne (kierunkowe):")),
         p(tags$em(paste0("„", par1s$question, "”")))
       ),

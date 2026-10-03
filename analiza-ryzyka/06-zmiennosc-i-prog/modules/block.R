@@ -581,9 +581,15 @@ prog_server <- function(input, output, session) {
   output$z6_vote_feedback <- renderUI({
     req(v())
     if (is.null(input$z6_vote)) {
-      return(lc_feedback(type = "info", "Najpierw zaznacz jedną z odpowiedzi."))
+      return(lc_caption(
+               "Najpierw zaznacz jedną z odpowiedzi.",
+               tone = "info"
+             ))
     }
-    lc_feedback(type = if (identical(input$z6_vote, "sd")) "ok" else "warning", tags$strong("Potrzebujemy σ:"), " przy σ=3°C przekroczenie dotyczy około 16% porównywalnych pomiarów.")
+    lc_status(
+      lc_verdict(tags$strong("Potrzebujemy σ:"), type = if (identical(input$z6_vote, "sd")) "ok" else "warning"),
+      " przy σ=3°C przekroczenie dotyczy około 16% porównywalnych pomiarów."
+    )
   })
   sample_values <- reactive({
     set.seed(606)
@@ -670,6 +676,9 @@ prog_server <- function(input, output, session) {
     }
   })
   zoom_plot_server("z6_shapes", shapes_plot, alt = "Histogram albo wykres kwantylowy wybranego rozkładu względem modelu normalnego.")
-  output$z6_shapes_stats <- renderUI(lc_feedback(type = "info", "Punkty układające się wzdłuż prostej na wykresie kwantylowym oznaczają zgodność z modelem normalnym; zagięcia w ogonach ostrzegają, że ocena przekroczeń może być błędna. Porównuj prawdopodobieństwo przekroczenia, nie tylko średnią i odchylenie."))
+  output$z6_shapes_stats <- renderUI(lc_caption(
+                                       "Punkty układające się wzdłuż prostej na wykresie kwantylowym oznaczają zgodność z modelem normalnym; zagięcia w ogonach ostrzegają, że ocena przekroczeń może być błędna. Porównuj prawdopodobieństwo przekroczenia, nie tylko średnią i odchylenie.",
+                                       tone = "info"
+                                     ))
   risk_assessment_server("z6", prog_quiz, input, output)
 }

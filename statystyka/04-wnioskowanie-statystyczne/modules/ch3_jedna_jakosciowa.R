@@ -534,7 +534,7 @@ ch3_server <- function(input, output, session) {
     d <- ch3_data()
 
     tagList(
-      lc_feedback(type = "info", style = "font-size: 16px;",
+      lc_status(
         p(tags$b("Pytanie potoczne:")),
         p(tags$em(paste0("„", par$question, "”")))
       ),
@@ -604,7 +604,7 @@ ch3_server <- function(input, output, session) {
     d <- ch3_data()
 
     tagList(
-      lc_feedback(type = "info", style = "font-size: 16px;",
+      lc_status(
         p(tags$b("Pytanie potoczne (kierunkowe):")),
         p(tags$em(paste0("„", par$question_1s, "”")))
       ),
@@ -676,8 +676,9 @@ ch3_server <- function(input, output, session) {
     par <- isolate(scenario_params[[input$ch3_scenario]])
 
     if (is.null(d)) {
-      return(lc_feedback(type = "warning",
-        "Najpierw wylosuj próbę w widgecie powyżej."))
+      return(lc_caption(
+               "Najpierw wylosuj próbę w widgecie powyżej."
+             ))
     }
 
     k <- d$k; n <- d$n; p0 <- par$p0; phat <- k / n
@@ -726,8 +727,8 @@ ch3_server <- function(input, output, session) {
           )
         )
       ),
-      lc_feedback(type = if (ok) "ok" else "danger",
-        p(tags$b("Oczekiwane przy H₀:"), " ",
+      lc_status(
+        p(lc_verdict(tags$b("Oczekiwane przy H₀:"), type = if (ok) "ok" else "danger"), " ",
           withMathJax(paste0("\\(np_0 = ", round(np0, 1), "\\)")),
           " sukcesów i ",
           withMathJax(paste0("\\(n(1-p_0) = ", round(nq0, 1), "\\)")),

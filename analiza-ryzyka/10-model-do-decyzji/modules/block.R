@@ -607,12 +607,20 @@ integracja_server <- function(input, output, session) {
   observeEvent(input$i10_vote_check, vote(TRUE))
   output$i10_vote_feedback <- renderUI({
     req(vote())
-    lc_feedback(type = if (identical(input$i10_vote, "audit")) "ok" else "warning", "Najpierw definicje, czas, warunki i źródła danych.")
+    lc_caption(
+      "Najpierw definicje, czas, warunki i źródła danych."
+    )
   })
-  output$i10_dossier <- renderUI(lc_feedback(type = "info", paste(length(input$i10_fields), "z 4 pól oznaczono jako sprawdzone. Samo zaznaczenie nie zastępuje uzasadnienia.")))
+  output$i10_dossier <- renderUI(lc_caption(
+                                   paste(length(input$i10_fields), "z 4 pól oznaczono jako sprawdzone. Samo zaznaczenie nie zastępuje uzasadnienia."),
+                                   tone = "info"
+                                 ))
   output$i10_model <- renderUI({
     models <- c(conditional = "Warunkowe i całkowite", bayes = "Bayes", binomial = "Dwumianowy", geometric = "Geometryczny", negative = "Ujemny dwumianowy", threshold = "Rozkład ciągły i ogon", survival = "Funkcje czasu życia", system = "Funkcja struktury i FTA")
-    lc_feedback(type = "info", models[[input$i10_question]])
+    lc_caption(
+      models[[input$i10_question]],
+      tone = "info"
+    )
   })
   output$i10_alarm_result <- renderUI({
     p <- risk_bayes(input$i10_init, input$i10_sens, input$i10_fpr)
@@ -686,7 +694,10 @@ integracja_server <- function(input, output, session) {
       best <- x$label[abs(x$result - min(x$result)) < 1e-12]
       paste(best, collapse = " / ")
     })
-    lc_feedback(type = "info", paste(paste(names(winners), unlist(winners), sep = ": "), collapse = "; "), ". Ranking minimalnego P(TOP) w budżecie; równe wyniki pokazano razem. To nie jest przedział ufności.")
+    lc_status(
+      paste(paste(names(winners), unlist(winners), sep = ": "), collapse = "; "),
+      ". Ranking minimalnego P(TOP) w budżecie; równe wyniki pokazano razem. To nie jest przedział ufności."
+    )
   })
   output$i10_memo <- renderUI({
     d <- bananpol$interventions[bananpol$interventions$id == input$i10_recommend, ]

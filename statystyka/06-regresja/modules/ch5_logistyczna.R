@@ -494,10 +494,15 @@ ch5_server <- function(input, output, session) {
 
   output$ch5_cas_threshold_note <- renderUI({
     df <- ch5_cas_data()
-    lc_feedback(type = "ok",
-      p("Y = 1 („zdał”) oznacza wynik czytania od ",
-        ch5_fmt(input$ch5_cas_y_cut, 0), " pkt: ",
-        sum(df$zdal_read), " z ", nrow(df), " okręgów.")
+    lc_caption(
+      "Y = 1 („zdał”) oznacza wynik czytania od ",
+      ch5_fmt(input$ch5_cas_y_cut, 0),
+      " pkt: ",
+      sum(df$zdal_read),
+      " z ",
+      nrow(df),
+      " okręgów.",
+      tone = "ok"
     )
   })
 
@@ -762,7 +767,9 @@ ch5_server <- function(input, output, session) {
   output$ch5_odds_ratios <- renderUI({
     model <- ch5_model()
     if (is.null(model)) {
-      return(lc_feedback(type = "warning", "Najpierw dopasuj model."))
+      return(lc_caption(
+               "Najpierw dopasuj model."
+             ))
     }
 
     coefs <- broom::tidy(model, conf.int = TRUE)

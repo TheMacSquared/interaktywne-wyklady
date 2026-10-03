@@ -509,7 +509,7 @@ ch1_server <- function(input, output, session) {
     n <- length(fd$obs)
     max_diff <- max(abs(table(factor(fd$obs, levels = 1:length(fd$labels))) / n - fd$theo))
 
-    lc_feedback(type = if (max_diff < 0.05) "ok" else "info",
+    lc_caption(
       paste0("Maksymalna różnica między częstością a prawdopodobieństwem: ",
              sprintf("%.3f", max_diff),
              if (max_diff < 0.05) " — dobra zgodność" else " — słabsza zgodność")

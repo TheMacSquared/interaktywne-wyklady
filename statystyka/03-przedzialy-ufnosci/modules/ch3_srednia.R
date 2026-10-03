@@ -1800,8 +1800,8 @@ ch3_server <- function(input, output, session) {
     ci_txt <- function(ci) paste0("[", fmt(ci[1]), "; ", fmt(ci[2]), "]")
 
     # Same fakty liczbowe; wnioski ze scenariuszy są w narracji pod nimi.
-    lc_feedback(type = if (scenario_key == "C") "warning" else "ok",
-      p(tags$b("Co widzimy:")),
+    lc_status(
+      p(lc_verdict(tags$b("Co widzimy:"), type = if (scenario_key == "C") "warning" else "ok")),
       tags$ul(
         tags$li(dat$g1_name, ": średnia ", fmt(cis$m1),
                 ", 95% CI ", ci_txt(cis$ci1)),

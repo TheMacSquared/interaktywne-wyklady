@@ -407,10 +407,11 @@ ch5_server <- function(input, output, session) {
                są częstsze."
     }
 
-    lc_feedback(type = type_class,
-      tags$strong(paste0(type_name, " (nadwyżkowa kurtoza = ",
-                         format(round(ek, 1)), "):")),
-      " ", desc
+    lc_status(
+      lc_verdict(tags$strong(paste0(type_name, " (nadwyżkowa kurtoza = ",
+                         format(round(ek, 1)), "):")), type = type_class),
+      " ",
+      desc
     )
   })
 
@@ -550,7 +551,7 @@ ch5_server <- function(input, output, session) {
       outlier_text <- "Brak wartości odstających (wg kryterium 1.5 · IQR)."
     }
 
-    lc_feedback(type = "info",
+    lc_status(
       p(tags$strong("Podsumowanie:")),
       tags$ul(
         tags$li(paste0("Średnia = ", round(m, 2), ", Mediana = ", round(med, 2))),

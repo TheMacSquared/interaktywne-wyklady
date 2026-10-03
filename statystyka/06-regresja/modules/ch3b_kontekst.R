@@ -321,20 +321,19 @@ ch3b_server <- function(input, output, session) {
   output$ch3b_simpson_explanation <- renderUI({
     step <- simpson_step()
     if (identical(step, "all")) {
-      return(lc_feedback(
-        type = "warning",
-        "Jedna prosta dla 333 pingwinów. Model nie wie, że punkty pochodzą z trzech gatunków."
-      ))
+      return(lc_caption(
+               "Jedna prosta dla 333 pingwinów. Model nie wie, że punkty pochodzą z trzech gatunków."
+             ))
     }
     if (identical(step, "groups")) {
-      return(lc_feedback(
-        type = "info",
-        "Kolor ujawnia trzy skupiska. W każdym gatunku prosta rośnie."
-      ))
+      return(lc_caption(
+               "Kolor ujawnia trzy skupiska. W każdym gatunku prosta rośnie.",
+               tone = "info"
+             ))
     }
-    lc_feedback(
-      type = "ok",
-      "Model z gatunkiem: nachylenie zmienia znak z ujemnego na dodatni."
+    lc_caption(
+      "Model z gatunkiem: nachylenie zmienia znak z ujemnego na dodatni.",
+      tone = "ok"
     )
   })
 

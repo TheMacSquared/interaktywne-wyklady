@@ -942,9 +942,9 @@ jezyk_block <- list(
                   4,
                   lc_slider("ch3_favourable", "Palety z uszkodzonym zabezpieczeniem", 0, 24, 6, 1),
                   uiOutput("ch3_stats"),
-                  lc_feedback(
-                    type = "info",
-                    "Zdarzenie A: wylosowana paleta ma uszkodzone zabezpieczenie."
+                  lc_caption(
+                    "Zdarzenie A: wylosowana paleta ma uszkodzone zabezpieczenie.",
+                    tone = "info"
                   )
                 ),
                 column(
@@ -1619,9 +1619,8 @@ jezyk_sytuacja_server <- function(input, output, session) {
       )
     })
 
-    lc_feedback(
-      type = if (result$score == result$total) "ok" else "warning",
-      tags$strong(sprintf("Wynik: %d/%d.", result$score, result$total)),
+    lc_status(
+      lc_verdict(tags$strong(sprintf("Wynik: %d/%d.", result$score, result$total)), type = if (result$score == result$total) "ok" else "warning"),
       if (result$score == result$total) {
         " Historia jest uporządkowana — można teraz zdefiniować zdarzenie do obliczeń."
       } else {
@@ -2017,9 +2016,8 @@ jezyk_decyzja_server <- function(input, output, session) {
     if (is.null(answer)) answer <- ""
     is_correct <- identical(answer, "insufficient")
 
-    lc_feedback(
-      type = if (is_correct) "ok" else "warning",
-      tags$strong(if (is_correct) "Dobrze." else "To zbyt szybki ranking."),
+    lc_status(
+      lc_verdict(tags$strong(if (is_correct) "Dobrze." else "To zbyt szybki ranking."), type = if (is_correct) "ok" else "warning"),
       if (is_correct) {
         paste(
           "Prawdopodobieństwa odpowiadają tylko na część pytania.",
@@ -2069,9 +2067,8 @@ jezyk_cwiczenia_server <- function(input, output, session) {
       consequence = "rodzaj skutków"
     )
 
-    lc_feedback(
-      type = if (all_ok) "ok" else "warning",
-      tags$strong(if (all_ok) "Rekomendacja jest kompletna." else "Wstrzymaj decyzję."),
+    lc_status(
+      lc_verdict(tags$strong(if (all_ok) "Rekomendacja jest kompletna." else "Wstrzymaj decyzję."), type = if (all_ok) "ok" else "warning"),
       if (!fields_ok) {
         paste0(
           " Brakuje: ",
@@ -2093,8 +2090,7 @@ jezyk_cwiczenia_server <- function(input, output, session) {
     union_count <- 28 + 17 - 6
     neither_count <- 100 - union_count
 
-    lc_feedback(
-      type = "ok",
+    lc_status(
       tags$ol(
         tags$li("A ∩ B zawiera 6 kontroli — tę liczbę podano w treści."),
         tags$li(sprintf("A ∪ B zawiera 28 + 17 − 6 = %d kontroli.", union_count)),
@@ -2111,9 +2107,8 @@ jezyk_cwiczenia_server <- function(input, output, session) {
     correct <- c("classical", "empirical", "model")
     score <- sum(answers == correct)
 
-    lc_feedback(
-      type = if (score == 3) "ok" else "warning",
-      tags$strong(sprintf("Wynik: %d/3.", score)),
+    lc_status(
+      lc_verdict(tags$strong(sprintf("Wynik: %d/3.", score)), type = if (score == 3) "ok" else "warning"),
       tags$ol(
         tags$li("Losowanie palety: definicja klasyczna, jeśli procedura zapewnia równe szanse."),
         tags$li("Rejestr zmian: częstość empiryczna z konkretnych obserwacji."),
@@ -2124,8 +2119,7 @@ jezyk_cwiczenia_server <- function(input, output, session) {
 
   output$ch8_transfer_feedback <- renderUI({
     req(rubric_revealed())
-    lc_feedback(
-      type = "info",
+    lc_status(
       tags$strong("Sprawdź, czy odpowiedź zawiera:"),
       tags$ul(
         tags$li("źródło możliwej szkody, a nie tylko nazwę wypadku;"),

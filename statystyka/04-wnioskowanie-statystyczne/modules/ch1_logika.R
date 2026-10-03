@@ -667,14 +667,14 @@ ch1_server <- function(input, output, session) {
     if (is.null(choice) || identical(choice, character(0))) return(NULL)
 
     if (identical(choice, "tail_prob")) {
-      lc_feedback(type = "ok",
-        tags$strong("Tak."),
+      lc_status(
+        lc_verdict(tags$strong("Tak."), type = "ok"),
         " p-wartość zakłada, że H₀ jest prawdziwa, i mówi, jak często wynik
         byłby co najmniej tak skrajny jak nasz."
       )
     } else {
-      lc_feedback(type = "danger",
-        tags$strong("Nie."),
+      lc_status(
+        lc_verdict(tags$strong("Nie."), type = "danger"),
         " p-wartość liczymy przy założeniu, że H₀ jest prawdziwa, więc nie jest
         prawdopodobieństwem H₀ ani „przypadkowości” wyniku. To prawdopodobieństwo
         wyniku co najmniej tak skrajnego przy prawdziwej H₀."
@@ -791,7 +791,7 @@ ch1_server <- function(input, output, session) {
   output$ch1_quiz_scenario <- renderUI({
     sc <- ch1_quiz_data()
     if (is.null(sc)) return(NULL)
-    lc_feedback(type = "info",
+    lc_status(
       p(tags$strong("Scenariusz:"), " ", sc$context)
     )
   })
@@ -841,13 +841,13 @@ ch1_server <- function(input, output, session) {
     comparison <- paste0("p = ", fmt(sc$p), " ", ifelse(sc$p < sc$alpha, "<", "≥"),
                          " α = ", fmt(sc$alpha))
     if (answer == correct) {
-      lc_feedback(type = "ok",
-        tags$strong("Poprawnie."),
+      lc_status(
+        lc_verdict(tags$strong("Poprawnie."), type = "ok"),
         p(comparison)
       )
     } else {
-      lc_feedback(type = "danger",
-        tags$strong("Niepoprawnie."),
+      lc_status(
+        lc_verdict(tags$strong("Niepoprawnie."), type = "danger"),
         p(paste0(comparison, ", zatem ",
                  ifelse(correct == "reject", "odrzucamy H₀",
                         "nie mamy podstaw do odrzucenia H₀"), "."))

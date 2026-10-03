@@ -523,13 +523,13 @@ ch2_server <- function(input, output, session) {
 
   output$ch2_ord_explanation <- renderUI({
     if (isTRUE(input$ch2_ord_shuffle)) {
-      lc_feedback(type = "warning",
-        tags$strong("Losowa kolejność:"),
+      lc_status(
+        lc_verdict(tags$strong("Losowa kolejność:"), type = "warning"),
         " wykres kierunków znaczy to samo co wcześniej, a wykres zadowolenia
          gubi porządek od „bardzo niezadowolony” do „bardzo zadowolony”."
       )
     } else {
-      lc_feedback(type = "info",
+      lc_status(
         tags$strong("Domyślna kolejność:"),
         " kierunki alfabetycznie (umownie), zadowolenie od „bardzo niezadowolony”
          do „bardzo zadowolony”."
@@ -839,8 +839,10 @@ ch2_server <- function(input, output, session) {
     total_n  <- sum(counts)
     mode_pct <- round(mode_n / total_n * 100, 1)
 
-    lc_feedback(type = "info",
-      tags$b("Dominanta:"), " ", mode_cat,
+    lc_status(
+      tags$b("Dominanta:"),
+      " ",
+      mode_cat,
       tags$br(),
       paste0("Występuje ", mode_n, " razy (", mode_pct, "% z ", total_n,
              " obserwacji).")

@@ -727,9 +727,15 @@ zycie_server <- function(input, output, session) {
   output$c7_vote_feedback <- renderUI({
     req(v())
     if (is.null(input$c7_vote)) {
-      return(lc_feedback(type = "info", "Najpierw zaznacz jedną z odpowiedzi."))
+      return(lc_caption(
+               "Najpierw zaznacz jedną z odpowiedzi.",
+               tone = "info"
+             ))
     }
-    lc_feedback(type = if (identical(input$c7_vote, "distribution")) "ok" else "warning", tags$strong("Nie."), " Rozkłady o tym samym MTTF mogą mieć odmienne R(t).")
+    lc_status(
+      lc_verdict(tags$strong("Nie."), type = if (identical(input$c7_vote, "distribution")) "ok" else "warning"),
+      " Rozkłady o tym samym MTTF mogą mieć odmienne R(t)."
+    )
   })
   times <- c(220, 480, 760, 990, 1350, 1750, 2300, 3100)
   observed_records <- reactive({
@@ -822,7 +828,10 @@ zycie_server <- function(input, output, session) {
       theme_upwr()
   })
   zoom_plot_server("c7_same_mean", same_plot, alt = "Trzy krzywe Weibulla o tym samym średnim czasie życia i różnych kształtach.")
-  output$c7_same_mean_stats <- renderUI(lc_feedback(type = "info", "Odczytaj trzy różne wartości na pionowej linii czasu misji."))
+  output$c7_same_mean_stats <- renderUI(lc_caption(
+                                          "Odczytaj trzy różne wartości na pionowej linii czasu misji.",
+                                          tone = "info"
+                                        ))
   bathtub_plot <- reactive({
     t <- seq(1, 4000, length.out = 500)
     early <- 1.2 * exp(-t / 350)
@@ -838,7 +847,9 @@ zycie_server <- function(input, output, session) {
       theme_upwr()
   })
   zoom_plot_server("c7_bathtub", bathtub_plot, alt = "Krzywa hazardu w kształcie wanny i jej trzy składowe.")
-  output$c7_bathtub_stats <- renderUI(lc_feedback(type = "warning", "Zmiana mechanizmu wymaga innej interwencji utrzymaniowej."))
+  output$c7_bathtub_stats <- renderUI(lc_caption(
+                                        "Zmiana mechanizmu wymaga innej interwencji utrzymaniowej."
+                                      ))
   output$c7_plan <- renderUI({
     r <- risk_weibull(input$c7_plan_time, 2, 1700)$reliability
     lc_stat_grid(lc_stat_box("R(t)", risk_format_probability(r), color = upwr_accent), lc_stat_box("Ryzyko awarii", risk_format_probability(1 - r)), columns = 1)
