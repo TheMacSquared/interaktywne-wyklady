@@ -311,17 +311,18 @@ warunki_signal_panel <- figure_panel(
       lc_stat_box("Porównanie", "około 7× więcej", caption = "silny sygnał do dalszego sprawdzenia", color = upwr_cat[["bursztyn"]])
     )
   ),
-  tags$div(
-    class = "lc-table-wrap",
-    tags$table(
-      class = "lc-table lc-table-striped lc-table-bordered",
-      tags$thead(tags$tr(tags$th("Wniosek"), tags$th("Czy wynika z danych?"), tags$th("Co dalej?"))),
-      tags$tbody(
-        tags$tr(tags$td("Przegrzanie identyfikuje grupę o wyższej częstości"), tags$td("Tak"), tags$td("Sprawdź stabilność wyniku i jakość rejestru")),
-        tags$tr(tags$td("Przegrzanie powoduje incydenty"), tags$td("Jeszcze nie"), tags$td("Poszukaj mechanizmu i zmiennych wspólnych")),
-        tags$tr(tags$td("Warto skierować kontrolę na zmiany z przegrzaniem"), tags$td("Możliwa decyzja operacyjna"), tags$td("Określ koszt i skutek fałszywych alarmów"))
-      )
-    )
+  lc_table(
+    data.frame(
+      wniosek = c("Przegrzanie identyfikuje grupę o wyższej częstości", "Przegrzanie powoduje incydenty", "Warto skierować kontrolę na zmiany z przegrzaniem"),
+      czy_wynika_z_danych = c("Tak", "Jeszcze nie", "Możliwa decyzja operacyjna"),
+      co_dalej = c("Sprawdź stabilność wyniku i jakość rejestru", "Poszukaj mechanizmu i zmiennych wspólnych", "Określ koszt i skutek fałszywych alarmów")
+    ),
+    cols = list(
+      lc_col("wniosek", "Wniosek", "row"),
+      lc_col("czy_wynika_z_danych", "Czy wynika z danych?", "text"),
+      lc_col("co_dalej", "Co dalej?", "text")
+    ),
+    narrow = "cards", prose = TRUE
   )
 )
 
@@ -330,17 +331,18 @@ warunki_sciaga_widget <- tagList(
     label = "Ściąga 2.1",
     title = "Trzy zapisy, trzy pytania",
     full_width = TRUE,
-    tags$table(
-      class = "lc-table lc-table-striped lc-table-bordered",
-      tags$thead(tags$tr(
-        tags$th("Zapis"), tags$th("Pytanie"), tags$th("Mianownik")
-      )),
-      tags$tbody(
-        tags$tr(tags$td("P(A)"), tags$td("Jak często zachodzi incydent?"), tags$td("wszystkie porównywalne zmiany")),
-        tags$tr(tags$td("P(A | B)"), tags$td("Jak często incydent zachodzi w grupie z warunkiem?"), tags$td("tylko zmiany spełniające B")),
-        tags$tr(tags$td("P(B | A)"), tags$td("Jak często warunek towarzyszył incydentowi?"), tags$td("tylko zmiany ze zdarzeniem A")),
-        tags$tr(tags$td("P(A ∩ B)"), tags$td("Jak często oba naraz?"), tags$td("wszystkie porównywalne zmiany"))
-      )
+    lc_table(
+      data.frame(
+        zapis = c("P(A)", "P(A | B)", "P(B | A)", "P(A ∩ B)"),
+        pytanie = c("Jak często zachodzi incydent?", "Jak często incydent zachodzi w grupie z warunkiem?", "Jak często warunek towarzyszył incydentowi?", "Jak często oba naraz?"),
+        mianownik = c("wszystkie porównywalne zmiany", "tylko zmiany spełniające B", "tylko zmiany ze zdarzeniem A", "wszystkie porównywalne zmiany")
+      ),
+      cols = list(
+        lc_col("zapis", "Zapis", "row"),
+        lc_col("pytanie", "Pytanie", "text"),
+        lc_col("mianownik", "Mianownik", "text")
+      ),
+      narrow = "cards", prose = TRUE
     )
   ),
   lc_formula_box(

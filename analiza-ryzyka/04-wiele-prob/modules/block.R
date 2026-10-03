@@ -97,16 +97,18 @@ proby_sciaga_widget <- tagList(
     label = "Ściąga 4.1",
     title = "Pytania i odpowiedzi modelu dwumianowego",
     full_width = TRUE,
-    tags$table(
-      class = "lc-table lc-table-striped lc-table-bordered",
-      tags$thead(tags$tr(tags$th("Pytanie"), tags$th("Zapis"), tags$th("Narzędzie"))),
-      tags$tbody(
-        tags$tr(tags$td("Dokładnie k niesprawnych"), tags$td("P(X = k)"), tags$td("wzór dwumianowy")),
-        tags$tr(tags$td("Co najwyżej k"), tags$td("P(X ≤ k)"), tags$td("suma od 0 do k")),
-        tags$tr(tags$td("Co najmniej k"), tags$td("P(X ≥ k) = 1 − P(X ≤ k−1)"), tags$td("dopełnienie")),
-        tags$tr(tags$td("Co najmniej jedna"), tags$td("P(X ≥ 1) = 1 − (1−p)ⁿ"), tags$td("dopełnienie zera zdarzeń")),
-        tags$tr(tags$td("Typowa liczba"), tags$td("E(X) = np"), tags$td("środek rozkładu, nie prognoza"))
-      )
+    lc_table(
+      data.frame(
+        pytanie = c("Dokładnie k niesprawnych", "Co najwyżej k", "Co najmniej k", "Co najmniej jedna", "Typowa liczba"),
+        zapis = c("P(X = k)", "P(X ≤ k)", "P(X ≥ k) = 1 − P(X ≤ k−1)", "P(X ≥ 1) = 1 − (1−p)ⁿ", "E(X) = np"),
+        narzedzie = c("wzór dwumianowy", "suma od 0 do k", "dopełnienie", "dopełnienie zera zdarzeń", "środek rozkładu, nie prognoza")
+      ),
+      cols = list(
+        lc_col("pytanie", "Pytanie", "row"),
+        lc_col("zapis", "Zapis", "text"),
+        lc_col("narzedzie", "Narzędzie", "text")
+      ),
+      narrow = "cards", prose = TRUE
     )
   ),
   risk_assessment_ui("p4", proby_quiz, proby_exercises)

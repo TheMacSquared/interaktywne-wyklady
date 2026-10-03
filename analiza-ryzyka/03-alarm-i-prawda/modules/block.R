@@ -110,16 +110,18 @@ alarm_sciaga_widget <- tagList(
     label = "Ściąga 3.1",
     title = "Audyt alarmu w pięciu krokach",
     full_width = TRUE,
-    tags$table(
-      class = "lc-table lc-table-striped lc-table-bordered",
-      tags$thead(tags$tr(tags$th("Krok"), tags$th("Pytanie"), tags$th("Typowy błąd"))),
-      tags$tbody(
-        tags$tr(tags$td("Pytanie"), tags$td("Czy pytamy o P(alarm | awaria), czy o P(awaria | alarm)?"), tags$td("utożsamienie obu kierunków")),
-        tags$tr(tags$td("Populacja"), tags$td("W jakiej populacji zmian działa detektor?"), tags$td("pominięcie częstości bazowej")),
-        tags$tr(tags$td("Detektor"), tags$td("Skąd znamy czułość i FPR i czy są stabilne?"), tags$td("dane z innej populacji lub innych warunków")),
-        tags$tr(tags$td("Posterior"), tags$td("Ile alarmów jest prawdziwych na 10 000 zmian?"), tags$td("raportowanie samego procentu bez liczebności")),
-        tags$tr(tags$td("Konsekwencje"), tags$td("Co kosztuje reakcja, a co jej brak?"), tags$td("automatyczne utożsamienie posterioru z decyzją"))
-      )
+    lc_table(
+      data.frame(
+        krok = c("Pytanie", "Populacja", "Detektor", "Posterior", "Konsekwencje"),
+        pytanie = c("Czy pytamy o P(alarm | awaria), czy o P(awaria | alarm)?", "W jakiej populacji zmian działa detektor?", "Skąd znamy czułość i FPR i czy są stabilne?", "Ile alarmów jest prawdziwych na 10 000 zmian?", "Co kosztuje reakcja, a co jej brak?"),
+        typowy_blad = c("utożsamienie obu kierunków", "pominięcie częstości bazowej", "dane z innej populacji lub innych warunków", "raportowanie samego procentu bez liczebności", "automatyczne utożsamienie posterioru z decyzją")
+      ),
+      cols = list(
+        lc_col("krok", "Krok", "row"),
+        lc_col("pytanie", "Pytanie", "text"),
+        lc_col("typowy_blad", "Typowy błąd", "text")
+      ),
+      narrow = "cards", prose = TRUE
     )
   ),
   lc_formula_box(

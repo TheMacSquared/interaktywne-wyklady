@@ -127,8 +127,8 @@ Etap 3 — przegląd widgetów wykład po wykładzie (commit per widget):
   potem usunąć `lc_table_region()` i klasy `lc-table*`.
   Na telefonie (390 px) po zmianie kroju na IBM Plex wylewają się o kilka px:
   statystyka 06 Ryc. 1.4 (tabela współczynników CASchools) i miniściąga
-  „Jak ograniczać przeuczenie”, analiza ryzyka 01 „Profil ryzyka” i 03
-  Ściąga 3.1 „Audyt alarmu w pięciu krokach” — od nich zacząć.
+  „Jak ograniczać przeuczenie” — od nich zacząć. Analiza ryzyka: wszystkie
+  tabele już na `lc_table()` (3 października 2026).
 - [ ] Legendy ggplot wychodzące poza wykres na telefonie (np. statystyka 01
   Ryc. 2.5) — poprawiać przy migracji danego widgetu.
 

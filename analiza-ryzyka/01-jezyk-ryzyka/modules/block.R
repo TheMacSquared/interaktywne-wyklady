@@ -1360,18 +1360,18 @@ jezyk_block <- list(
             figure_panel(
               label = "Profil ryzyka",
               full_width = TRUE,
-              tags$table(
-                class = "lc-table lc-table-striped lc-table-bordered",
-                tags$thead(tags$tr(
-                  tags$th("Pytanie"), tags$th("Poślizgnięcie"), tags$th("Kolizja z wózkiem")
-                )),
-                tags$tbody(
-                  tags$tr(tags$td("Co może się zdarzyć?"), tags$td("Upadek w korytarzu"), tags$td("Potrącenie pieszego")),
-                  tags$tr(tags$td("Kto jest eksponowany?"), tags$td("Osoby korzystające z przejścia"), tags$td("Piesi w strefie transportu")),
-                  tags$tr(tags$td("Jakie są skutki?"), tags$td("Różna dotkliwość urazu"), tags$td("Możliwy uraz ciężki")),
-                  tags$tr(tags$td("Jakie bariery działają?"), tags$td("Sprzątanie i oznakowanie"), tags$td("Separacja ruchu i ograniczenie prędkości")),
-                  tags$tr(tags$td("Czego nie wiemy?"), tags$td("Kompletność rejestru"), tags$td("Ruch pieszych i zdarzenia bliskie wypadku"))
-                )
+              lc_table(
+                data.frame(
+                  pytanie = c("Co może się zdarzyć?", "Kto jest eksponowany?", "Jakie są skutki?", "Jakie bariery działają?", "Czego nie wiemy?"),
+                  poslizgniecie = c("Upadek w korytarzu", "Osoby korzystające z przejścia", "Różna dotkliwość urazu", "Sprzątanie i oznakowanie", "Kompletność rejestru"),
+                  kolizja_z_wozkiem = c("Potrącenie pieszego", "Piesi w strefie transportu", "Możliwy uraz ciężki", "Separacja ruchu i ograniczenie prędkości", "Ruch pieszych i zdarzenia bliskie wypadku")
+                ),
+                cols = list(
+                  lc_col("pytanie", "Pytanie", "row"),
+                  lc_col("poslizgniecie", "Poślizgnięcie", "text"),
+                  lc_col("kolizja_z_wozkiem", "Kolizja z wózkiem", "text")
+                ),
+                narrow = "cards", prose = TRUE
               )
             )
           )
