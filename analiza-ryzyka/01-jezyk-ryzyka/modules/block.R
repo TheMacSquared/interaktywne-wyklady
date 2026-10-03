@@ -265,8 +265,7 @@ jezyk_sciaga_widget <- tagList(
      mają odpowiedzi zwinięte pod treścią."
   )),
   lc_h2("jezyk-sprawdzenie-wzorzec", "Wzorzec poprawionego komunikatu"),
-  lc_feedback(
-    type = "ok",
+  lc_note("Przykład",
     "„W czerwcu magazyn A zgłosił 3 zdarzenia, a magazyn B — 5. Przed
       porównaniem potrzebujemy wspólnej definicji zdarzenia, porównywalnej
       ekspozycji i danych o skutkach. Same liczniki nie uzasadniają rankingu
@@ -278,10 +277,8 @@ jezyk_sciaga_widget <- tagList(
      sprawdzimy, jak informacja o warunkach — mokrej posadzce, natężeniu ruchu
      albo niesprawnym sprzątaniu — zmienia ocenę prawdopodobieństwa."
   ),
-  lc_feedback(
-    type = "info",
-    tags$strong("Pytanie wyjściowe:"),
-    " Jakiego jednego zdania zabrakło w ostatnim raporcie o bezpieczeństwie,
+  lc_note("Pytanie",
+    "Jakiego jednego zdania zabrakło w ostatnim raporcie o bezpieczeństwie,
       który czytałeś lub przygotowywałeś?"
   )
 )
@@ -703,8 +700,9 @@ jezyk_block <- list(
                 )
               )
             ),
-            lc_feedback(type = "info", tags$strong("Prototypy:"),
-              " trzy alternatywne układy tego samego eksperymentu, do porównania z widżetem powyżej."),
+            lc_note("Prototypy",
+              "Trzy alternatywne układy tego samego eksperymentu, do porównania z widżetem powyżej."
+            ),
             jezyk_proto_a,
             jezyk_proto_b,
             jezyk_proto_c,
@@ -750,17 +748,13 @@ jezyk_block <- list(
                 compensate = "Prawo wielkich liczb działa przez rozcieńczanie, nie przez wyrównywanie. Zmiany nie „pamiętają” poprzednich wyników."
               )
             ),
-            lc_feedback(
-              type = "info",
-              tags$strong("Aha:"),
-              " prawdopodobieństwo jest własnością modelu, a częstość jest wynikiem
+            lc_note("Wniosek",
+              "Prawdopodobieństwo jest własnością modelu, a częstość jest wynikiem
                 konkretnej serii obserwacji. Nie oczekujemy, że w każdej małej serii
                 będą identyczne."
             ),
-            lc_feedback(
-              type = "warning",
-              tags$strong("Ważne:"),
-              " stabilizacja częstości nie naprawia złej definicji zdarzenia, zmiany
+            lc_warn("Pułapka",
+              "Stabilizacja częstości nie naprawia złej definicji zdarzenia, zmiany
                 warunków ani błędów rejestracji. Więcej danych nie zastępuje dobrego
                 modelu obserwacji."
             ),
@@ -1244,10 +1238,8 @@ jezyk_block <- list(
                pusta. Zdarzenia niezależne mogą zajść razem, ale informacja o jednym nie
                zmienia prawdopodobieństwa drugiego. Dwa niezerowe zdarzenia rozłączne
                nie są niezależne: gdy A zaszło, wiemy na pewno, że B nie zaszło.",
-            lc_feedback(
-              type = "warning",
-              tags$strong("Pułapka językowa:"),
-              " w rachunku prawdopodobieństwa „A lub B” obejmuje także przypadek
+            lc_warn("Pułapka",
+              "W rachunku prawdopodobieństwa „A lub B” obejmuje także przypadek
                 „A i B”, chyba że wyraźnie mówimy o alternatywie wykluczającej."
             )
           )
@@ -1425,10 +1417,8 @@ jezyk_block <- list(
                 severity = "To może być rozsądna reguła, ale trzeba ją jawnie przyjąć. Sama macierz jej nie zawiera."
               )
             ),
-            lc_feedback(
-              type = "ok",
-              tags$strong("Dobra praktyka:"),
-              " wynik probabilistyczny kończ zdaniem: co ten wynik zmienia, jakiego
+            lc_note("Dobra praktyka",
+              "Wynik probabilistyczny kończ zdaniem: co ten wynik zmienia, jakiego
                 skutku dotyczy i które założenie jest najważniejsze."
             )
           )
@@ -1570,10 +1560,8 @@ jezyk_block <- list(
               )
             ),
 
-            lc_feedback(
-              type = "ok",
-              tags$strong("Minimalny komunikat:"),
-              " „W 100 porównywalnych zmianach zarejestrowano 8 zmian ze zdarzeniem,
+            lc_note("Przykład",
+              "„W 100 porównywalnych zmianach zarejestrowano 8 zmian ze zdarzeniem,
                 czyli częstość 0,08. Dane nie opisują jeszcze dotkliwości skutków ani
                 przyczyn różnic między zmianami.”"
             )
