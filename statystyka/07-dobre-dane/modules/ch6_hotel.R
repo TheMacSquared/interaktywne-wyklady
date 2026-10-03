@@ -193,7 +193,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
       gości o różnych doświadczeniach, na przykład z kilku hoteli albo
       z dłuższego okresu."),
 
-    inline_callout(label = "Werdykt",
+    lc_note("Werdykt",
       "Zbiór nie nadaje się do analizy zależności: prawie wszystkie zmienne
       mają zbyt małą zmienność albo skrajnie niezbalansowane grupy."),
 

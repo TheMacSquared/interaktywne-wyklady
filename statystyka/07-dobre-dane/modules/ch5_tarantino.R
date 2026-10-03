@@ -133,7 +133,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
       jednego filmu. Nie nadają się do testów i modeli, które uogólniają
       wynik poza te siedem tytułów."),
 
-    inline_callout(label = "Werdykt",
+    lc_note("Werdykt",
       "Zły zbiór do klasycznej statystyki: dane zdarzeniowe o złej strukturze,
       a po agregacji zostaje tylko 7 obserwacji."),
 

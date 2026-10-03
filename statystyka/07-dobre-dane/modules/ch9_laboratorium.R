@@ -108,8 +108,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
       resztę rekordu. Jeśli w oryginalnych kartach da się odnaleźć prawdziwy
       wynik, najlepiej go po prostu poprawić."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Błąd danych poprawiasz albo usuwasz. Prawdziwą wartość odstającą
        zostawiasz i sprawdzasz, jak wpływa na wynik."
     ),
@@ -144,8 +143,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
       założeń z wykładu 05. Glukozę 310 mg/dL zostawiamy: to prawdziwy pacjent,
       a usunięcie go byłoby ukrywaniem niewygodnych danych."),
 
-    inline_callout(
-      label = "Werdykt",
+    lc_note("Werdykt",
       "Zbiór dobry po czyszczeniu: błędy przepisywania trzeba znaleźć i poprawić,
        a prawdziwe wartości odstające zostawić."
     ),

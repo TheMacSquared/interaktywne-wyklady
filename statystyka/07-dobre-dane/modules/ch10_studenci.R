@@ -77,8 +77,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
       grupie z rozdziału 3: tematy są podobne, a o jakości danych zdecydowały
       liczba odpowiedzi i sposób zadania pytań."),
 
-    inline_callout(
-      label = "Werdykt",
+    lc_note("Werdykt",
       "Zbiór dobry: dane nadają się do analizy bez czyszczenia, a jedynym
        ograniczeniem jest mała liczebność najstarszych roczników."
     ),

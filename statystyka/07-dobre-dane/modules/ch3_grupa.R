@@ -101,7 +101,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
       i regresja wymagają uogólnienia na populację studentów, a ta
       próba jest za mała i w dodatku dobrana spośród znajomych."),
 
-    inline_callout(label = "Werdykt",
+    lc_note("Werdykt",
       "Zbiór do odrzucenia: przy 8 osobach żadna analiza wnioskująca nie da
       wiarygodnego wyniku, a jedyną naprawą jest zebranie nowych danych."),
 

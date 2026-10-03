@@ -57,15 +57,9 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     figure_panel(
       label = "Ryc. 1.1",
       title = "Sześć ankiet",
-      div(class = "dual-view",
-        div(class = "view-panel",
-          div(class = "view-label", "Widok danych"),
-          uiOutput("cat1_table")
-        ),
-        div(class = "view-panel",
-          div(class = "view-label", "Co widać na wykresie"),
-          zoom_plot_ui("cat1_plot", height = "280px")
-        )
+      lc_plots(
+        uiOutput("cat1_table"),
+        lc_plot("cat1_plot", max_height = "280px")
       )
     ),
 
@@ -109,15 +103,11 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     figure_panel(
       label = "Ryc. 1.2",
       title = "Ankieta zadowolenia w dziale IT",
-      div(class = "dual-view",
-        div(class = "view-panel",
-          div(class = "view-label", "Widok danych"),
-          uiOutput("cat2_table")
-        ),
-        div(class = "view-panel",
-          div(class = "view-label", "Co widać na wykresach"),
-          zoom_plot_ui("cat2_plot_zadowolenie", height = "200px"),
-          zoom_plot_ui("cat2_plot", height = "200px")
+      lc_plots(
+        uiOutput("cat2_table"),
+        tags$div(
+          lc_plot("cat2_plot_zadowolenie", max_height = "200px"),
+          lc_plot("cat2_plot", max_height = "200px")
         )
       )
     ),
@@ -163,19 +153,13 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     figure_panel(
       label = "Ryc. 1.3",
       title = "Ogłoszenia mieszkań",
-      div(class = "toggle-pills",
-        actionButton("cat3_raw", "Surowe", class = "pill-btn active"),
-        actionButton("cat3_clean", "Oczyszczone", class = "pill-btn")
+      lc_toolbar(
+        lc_segmented("cat3_view", NULL,
+          choices = c("Surowe" = "raw", "Oczyszczone" = "clean"))
       ),
-      div(class = "dual-view",
-        div(class = "view-panel",
-          div(class = "view-label", "Widok danych"),
-          uiOutput("cat3_table")
-        ),
-        div(class = "view-panel",
-          div(class = "view-label", "Cena vs powierzchnia"),
-          zoom_plot_ui("cat3_plot", height = "280px")
-        )
+      lc_plots(
+        uiOutput("cat3_table"),
+        lc_plot("cat3_plot", max_height = "280px")
       )
     ),
 
@@ -200,7 +184,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       bezpieczniej oznaczyć ją jako brak. Każdą poprawkę warto zapisać, żeby
       analizę dało się odtworzyć."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Zanim zaczniesz analizę, sprawdź minimum i maksimum każdej zmiennej
       ilościowej i zapytaj, czy takie wartości są w ogóle możliwe."
     ),
@@ -224,19 +208,13 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     figure_panel(
       label = "Ryc. 1.4",
       title = "Ankieta z pytaniami otwartymi",
-      div(class = "toggle-pills",
-        actionButton("cat4_raw", "Surowe", class = "pill-btn active"),
-        actionButton("cat4_clean", "Oczyszczone", class = "pill-btn")
+      lc_toolbar(
+        lc_segmented("cat4_view", NULL,
+          choices = c("Surowe" = "raw", "Oczyszczone" = "clean"))
       ),
-      div(class = "dual-view",
-        div(class = "view-panel",
-          div(class = "view-label", "Widok danych"),
-          uiOutput("cat4_table")
-        ),
-        div(class = "view-panel",
-          div(class = "view-label", "Próba zrobienia histogramu"),
-          zoom_plot_ui("cat4_plot", height = "280px")
-        )
+      lc_plots(
+        uiOutput("cat4_table"),
+        lc_plot("cat4_plot", max_height = "280px")
       )
     ),
 
@@ -259,7 +237,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       w treści pytania i używać spójnych skal, na przykład ",
       gloss("skala Likerta", "skali Likerta"), "."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Jednostkę, skalę i listę odpowiedzi ustal przed zbieraniem danych
       i sprawdź je w pilotażu ankiety na kilku osobach."
     ),
@@ -281,15 +259,9 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     figure_panel(
       label = "Ryc. 1.5",
       title = "Ankieta z pominiętymi pytaniami",
-      div(class = "dual-view",
-        div(class = "view-panel",
-          div(class = "view-label", "Widok danych"),
-          uiOutput("cat5_table")
-        ),
-        div(class = "view-panel",
-          div(class = "view-label", "Procent braków na zmienną"),
-          zoom_plot_ui("cat5_plot", height = "280px")
-        )
+      lc_plots(
+        uiOutput("cat5_table"),
+        lc_plot("cat5_plot", max_height = "280px")
       )
     ),
 
@@ -333,19 +305,13 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     figure_panel(
       label = "Ryc. 1.6",
       title = "Dzienna temperatura przez pół roku",
-      div(class = "toggle-pills",
-        actionButton("cat6_daily", "Dzienne (surowe)", class = "pill-btn active"),
-        actionButton("cat6_monthly", "Miesięczne (agregat)", class = "pill-btn")
+      lc_toolbar(
+        lc_segmented("cat6_view", NULL,
+          choices = c("Dzienne (surowe)" = "daily", "Miesięczne (agregat)" = "monthly"))
       ),
-      div(class = "dual-view",
-        div(class = "view-panel",
-          div(class = "view-label", "Widok danych"),
-          uiOutput("cat6_table")
-        ),
-        div(class = "view-panel",
-          div(class = "view-label", "Dane w kolejności"),
-          zoom_plot_ui("cat6_plot", height = "280px")
-        )
+      lc_plots(
+        uiOutput("cat6_table"),
+        lc_plot("cat6_plot", max_height = "280px")
       )
     ),
 
@@ -395,19 +361,13 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     figure_panel(
       label = "Ryc. 1.7",
       title = "Wizyty pacjentów",
-      div(class = "toggle-pills",
-        actionButton("cat7_events", "Wizyty (surowe)", class = "pill-btn active"),
-        actionButton("cat7_agg", "Pacjenci (agregat)", class = "pill-btn")
+      lc_toolbar(
+        lc_segmented("cat7_view", NULL,
+          choices = c("Wizyty (surowe)" = "events", "Pacjenci (agregat)" = "agg"))
       ),
-      div(class = "dual-view",
-        div(class = "view-panel",
-          div(class = "view-label", "Widok danych"),
-          uiOutput("cat7_table")
-        ),
-        div(class = "view-panel",
-          div(class = "view-label", "Ile masz obserwacji?"),
-          zoom_plot_ui("cat7_plot", height = "280px")
-        )
+      lc_plots(
+        uiOutput("cat7_table"),
+        lc_plot("cat7_plot", max_height = "280px")
       )
     ),
 
@@ -428,7 +388,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       zostaje zbyt mało obserwacji, wracamy do problemu nr 1. Tak będzie
       z filmami Tarantino w rozdziale 5."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Przed analizą odpowiedz, co jest jednostką obserwacji: osoba, firma,
       dzień czy zdarzenie. Wiersz w tabeli nie zawsze jest obserwacją."
     ),
@@ -452,7 +412,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     figure_panel(
       label = "Lista kontrolna",
       title = "Lista kontrolna jakości danych",
-      tags$p(tags$strong(style = "color: var(--upwr-accent);", "Krytyczne:"),
+      tags$p(lc_verdict(tags$strong("Krytyczne:"), type = "danger"),
         " jeśli zbiór ich nie spełnia, poszukaj innego"),
       checkboxGroupInput("intro_critical", NULL,
         choices = c(
@@ -464,7 +424,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
           "Niezależność obserwacji (albo możliwość agregacji)" = "indep"
         )
       ),
-      tags$p(tags$strong(style = "color: var(--upwr-bursztyn);", "Naprawialne:"),
+      tags$p(lc_verdict(tags$strong("Naprawialne:"), type = "warning"),
         " wymagają pracy, ale się da"),
       checkboxGroupInput("intro_fixable", NULL,
         choices = c(
@@ -497,7 +457,7 @@ ch1_server <- function(input, output, session) {
   # --- Problem 1: Za mało danych ---
   output$cat1_table <- renderUI({
     dd_data_table(cat_small,
-      types = c("id", "nominalna", "ciagla", "porzadkowa", "ciagla"))
+      types = c("id", "nominalna", "ciągła", "porządkowa", "ciągła"))
   })
 
   zoom_plot_server("cat1_plot", reactive({
@@ -514,7 +474,7 @@ ch1_server <- function(input, output, session) {
   # --- Problem 2: Brak zmienności ---
   output$cat2_table <- renderUI({
     dd_data_table(cat_novar,
-      types = c("id", "porzadkowa", "ciagla", "ciagla", "nominalna"))
+      types = c("id", "porządkowa", "ciągła", "ciągła", "nominalna"))
   })
 
   zoom_plot_server("cat2_plot_zadowolenie", reactive({
@@ -538,20 +498,9 @@ ch1_server <- function(input, output, session) {
   }))
 
   # --- Problem 3: Błędy i literówki (przełącznik) ---
-  cat3_view <- reactiveVal("raw")
-  observeEvent(input$cat3_raw, {
-    cat3_view("raw")
-    shinyjs_js <- paste0(
-      "$('#cat3_raw').addClass('active'); $('#cat3_clean').removeClass('active');"
-    )
-    session$sendCustomMessage(type = "shinyjs-runjs", message = list(code = shinyjs_js))
-  })
-  observeEvent(input$cat3_clean, {
-    cat3_view("clean")
-    shinyjs_js <- paste0(
-      "$('#cat3_clean').addClass('active'); $('#cat3_raw').removeClass('active');"
-    )
-    session$sendCustomMessage(type = "shinyjs-runjs", message = list(code = shinyjs_js))
+  cat3_view <- reactive({
+    v <- input$cat3_view
+    if (is.null(v)) "raw" else v
   })
 
   output$cat3_table <- renderUI({
@@ -564,7 +513,7 @@ ch1_server <- function(input, output, session) {
       pokoje = ifelse(d$pokoje > 10, "is-target", NA)
     )
     dd_data_table(d,
-      types = c("id", "ciagla", "ciagla", "dyskretna", "nominalna"),
+      types = c("id", "ciągła", "ciągła", "dyskretna", "nominalna"),
       cell_class = errors)
   })
 
@@ -583,22 +532,15 @@ ch1_server <- function(input, output, session) {
     ggplot(d, aes(x = powierzchnia, y = cena)) +
       geom_point(size = 3, alpha = 0.7, color = data_reference) +
       geom_smooth(method = "lm", color = col, se = TRUE) +
-      labs(
-           x = "Powierzchnia (m²)", y = "Cena (PLN)") +
+      scale_y_continuous(labels = scales::label_number(big.mark = " ")) +
+      labs(x = "Powierzchnia (m²)", y = "Cena (PLN)") +
       theme_upwr(base_size = 14)
   }))
 
   # --- Problem 4: Źle zdefiniowane zmienne (przełącznik) ---
-  cat4_view <- reactiveVal("raw")
-  observeEvent(input$cat4_raw, {
-    cat4_view("raw")
-    session$sendCustomMessage(type = "shinyjs-runjs",
-      message = list(code = "$('#cat4_raw').addClass('active'); $('#cat4_clean').removeClass('active');"))
-  })
-  observeEvent(input$cat4_clean, {
-    cat4_view("clean")
-    session$sendCustomMessage(type = "shinyjs-runjs",
-      message = list(code = "$('#cat4_clean').addClass('active'); $('#cat4_raw').removeClass('active');"))
+  cat4_view <- reactive({
+    v <- input$cat4_view
+    if (is.null(v)) "raw" else v
   })
 
   output$cat4_table <- renderUI({
@@ -607,7 +549,7 @@ ch1_server <- function(input, output, session) {
         types = c("id", "tekst?!", "tekst?!", "tekst?!"))
     } else {
       dd_data_table(cat_messy_clean,
-        types = c("id", "ciagla", "ciagla", "ciagla"))
+        types = c("id", "ciągła", "ciągła", "ciągła"))
     }
   })
 
@@ -642,7 +584,7 @@ ch1_server <- function(input, output, session) {
   # --- Problem 5: Braki danych ---
   output$cat5_table <- renderUI({
     dd_data_table(cat_missing,
-      types = c("id", "ciagla", "porzadkowa", "ciagla", "nominalna"))
+      types = c("id", "ciągła", "porządkowa", "ciągła", "nominalna"))
   })
 
   zoom_plot_server("cat5_plot", reactive({
@@ -658,16 +600,9 @@ ch1_server <- function(input, output, session) {
   }))
 
   # --- Problem 6: Brak niezależności (przełącznik) ---
-  cat6_view <- reactiveVal("daily")
-  observeEvent(input$cat6_daily, {
-    cat6_view("daily")
-    session$sendCustomMessage(type = "shinyjs-runjs",
-      message = list(code = "$('#cat6_daily').addClass('active'); $('#cat6_monthly').removeClass('active');"))
-  })
-  observeEvent(input$cat6_monthly, {
-    cat6_view("monthly")
-    session$sendCustomMessage(type = "shinyjs-runjs",
-      message = list(code = "$('#cat6_monthly').addClass('active'); $('#cat6_daily').removeClass('active');"))
+  cat6_view <- reactive({
+    v <- input$cat6_view
+    if (is.null(v)) "daily" else v
   })
 
   output$cat6_table <- renderUI({
@@ -675,10 +610,10 @@ ch1_server <- function(input, output, session) {
       df_show <- cat_timeseries
       df_show$data <- format(df_show$data, "%Y-%m-%d")
       dd_data_table(df_show, page_size = 10, page = input$cat6_table_page, page_input = "cat6_table_page",
-        types = c("data", "nominalna", "ciagla"))
+        types = c("data", "nominalna", "ciągła"))
     } else {
       dd_data_table(cat_timeseries_monthly,
-        types = c("nominalna", "ciagla", "dyskretna"))
+        types = c("nominalna", "ciągła", "dyskretna"))
     }
   })
 
@@ -709,16 +644,9 @@ ch1_server <- function(input, output, session) {
   }))
 
   # --- Problem 7: Zła struktura (przełącznik) ---
-  cat7_view <- reactiveVal("events")
-  observeEvent(input$cat7_events, {
-    cat7_view("events")
-    session$sendCustomMessage(type = "shinyjs-runjs",
-      message = list(code = "$('#cat7_events').addClass('active'); $('#cat7_agg').removeClass('active');"))
-  })
-  observeEvent(input$cat7_agg, {
-    cat7_view("agg")
-    session$sendCustomMessage(type = "shinyjs-runjs",
-      message = list(code = "$('#cat7_agg').addClass('active'); $('#cat7_events').removeClass('active');"))
+  cat7_view <- reactive({
+    v <- input$cat7_view
+    if (is.null(v)) "events" else v
   })
 
   output$cat7_table <- renderUI({
@@ -726,10 +654,10 @@ ch1_server <- function(input, output, session) {
       df_show <- cat_patients_visits
       df_show$data_wizyty <- format(df_show$data_wizyty, "%Y-%m-%d")
       dd_data_table(df_show, page_size = 10, page = input$cat7_table_page, page_input = "cat7_table_page",
-        types = c("id", "nominalna", "data", "ciagla"))
+        types = c("id", "nominalna", "data", "ciągła"))
     } else {
       dd_data_table(cat_patients_agg, page_size = 10, page = input$cat7_table_page, page_input = "cat7_table_page",
-        types = c("id", "nominalna", "ciagla", "dyskretna"))
+        types = c("id", "nominalna", "ciągła", "dyskretna"))
     }
   })
 

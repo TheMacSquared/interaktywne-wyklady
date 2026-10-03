@@ -139,8 +139,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
       w tych samych tygodniach bywa różna, oraz metody szeregów czasowych,
       których ten kurs nie obejmuje."),
 
-    inline_callout(
-      label = "Werdykt",
+    lc_note("Werdykt",
       "Zbiór zły do prostych testów: obserwacje dzienne są zależne, a związek
        temperatury ze sprzedażą miesza się z porą roku."
     ),

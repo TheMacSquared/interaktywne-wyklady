@@ -113,7 +113,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
       bez niego związek długości z wysokością dzioba odwraca znak, co jest
       przykładem ", gloss("paradoks Simpsona", "paradoksu Simpsona"), "."),
 
-    inline_callout(label = "Werdykt",
+    lc_note("Werdykt",
       "Dobry zbiór: drobne, jawne braki (11 z 344 wierszy) można usunąć,
       a jedynym poważnym zastrzeżeniem jest konieczność uwzględniania
       gatunku w analizach."),

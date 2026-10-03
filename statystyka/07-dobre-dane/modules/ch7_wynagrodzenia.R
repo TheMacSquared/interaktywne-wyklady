@@ -111,7 +111,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
       ale niezmierzonych już nie. Po drugie, badani to wyłącznie mężczyźni z jednego regionu USA, więc
       wyników nie można przenosić na kobiety ani na inne regiony."),
 
-    inline_callout(label = "Werdykt",
+    lc_note("Werdykt",
       "Bardzo dobry zbiór: 3000 kompletnych obserwacji i bogata mieszanka
       zmiennych, z zastrzeżeniem, że wnioski dotyczą tylko mężczyzn z jednego
       regionu USA."),

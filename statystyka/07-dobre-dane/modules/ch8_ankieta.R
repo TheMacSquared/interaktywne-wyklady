@@ -101,8 +101,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
       wypełnienia kilku osobom i sprawdzić, czy odpowiedzi od razu dają się
       wczytać jako dane."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Pytania o zmienne, które będziesz analizować, zamykaj: lista kategorii
        albo liczba z podaną jednostką."
     ),
@@ -123,8 +122,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
       odpowiedzi. Usunięcie tych osób zmieniłoby skład próby w sposób, którego
       nie potrafimy opisać."),
 
-    inline_callout(
-      label = "Werdykt",
+    lc_note("Werdykt",
       "Zbiór zły do postawionego pytania: kluczowe zmienne są źle zdefiniowane
        i nie da się ich naprawić bez arbitralnych decyzji."
     ),

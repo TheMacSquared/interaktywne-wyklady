@@ -161,7 +161,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
       opisują też Kalifornię sprzed ćwierć wieku, więc nie mówią nic
       bezpośrednio o polskich szkołach."),
 
-    inline_callout(label = "Werdykt",
+    lc_note("Werdykt",
       "Bardzo dobry zbiór: duże n, jasne zmienne bez braków i błędów,
       ograniczony tylko obserwacyjnym charakterem danych i jednostką
       obserwacji na poziomie okręgu."),
