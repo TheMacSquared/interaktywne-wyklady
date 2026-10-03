@@ -24,41 +24,25 @@ ch4_ui <- list(
     ),
 
     # ========================================================================
-    # WIDGET 1: Od histogramu do krzywej (krok po kroku) — BEZ ZMIAN
+    # WIDGET 1: Od histogramu do krzywej (krok po kroku)
     # ========================================================================
     figure_panel(
       label = "Ryc. 4.1",
-      title = "Od histogramu do krzywej gęstości",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          selectInput("ch4_step_dist", "Rozkład źródłowy:",
+      lc_step_widget("ch4_step",
+        title = "Od histogramu do krzywej gęstości",
+        steps = c("Surowe dane (rug)", "Histogram (5 binów)", "Więcej binów (15)",
+                  "Jeszcze więcej (30)", "Skala gęstości", "Krzywa gęstości",
+                  "Tylko PDF"),
+        toolbar = lc_toolbar(
+          selectInput("ch4_step_dist", "Rozkład źródłowy",
             choices = c("Normalny" = "normal", "Wykładniczy" = "exp",
                         "Jednostajny" = "unif"),
             selected = "normal"
           ),
-          lc_slider("ch4_step_n", "Wielkość próby", 50, 10000, 500, 50),
-          hr(),
-          lc_action("ch4_step1", "1. Surowe dane (rug)", variant = "outline"),
-          br(), br(),
-          lc_action("ch4_step2", "2. Histogram (5 binów)", variant = "outline"),
-          br(), br(),
-          lc_action("ch4_step3", "3. Więcej binów (15)", variant = "outline"),
-          br(), br(),
-          lc_action("ch4_step4", "4. Jeszcze więcej (30)", variant = "outline"),
-          br(), br(),
-          lc_action("ch4_step5", "5. Skala gęstości", variant = "outline"),
-          br(), br(),
-          lc_action("ch4_step6", "6. Krzywa gęstości", variant = "outline"),
-          br(), br(),
-          lc_action("ch4_step7", "7. Tylko PDF", variant = "outline"),
-          br(), br(),
-          lc_action("ch4_step_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
+          lc_slider("ch4_step_n", "Wielkość próby", 50, 10000, 500, 50)
         ),
-        column(8,
-          zoom_plot_ui("ch4_step_plot", height = "400px"),
-          uiOutput("ch4_step_text")
-        )
+        plot_id = "ch4_step_plot"
       )
     ),
 
@@ -417,8 +401,9 @@ ch4_lnorm_defs <- list(
 
 ch4_server <- function(input, output, session) {
 
-  # --- Widget 1: Krok po kroku (bez zmian) ---
-  ch4_step <- reactiveVal(0)
+  # --- Widget 1: Krok po kroku ---
+  # Krok widgetu (1..7) żyje w przeglądarce; zmiana rozkładu lub próby nie cofa kroku.
+  ch4_step <- lc_step_server("ch4_step", input)$step
 
   ch4_sample_data <- reactive({
     req(input$ch4_step_n, input$ch4_step_dist)
@@ -429,81 +414,81 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  observeEvent(list(input$ch4_step_dist, input$ch4_step_n), {
-    ch4_step(0)
-  }, ignoreInit = TRUE)
-
-  observeEvent(input$ch4_step1, ch4_step(1))
-  observeEvent(input$ch4_step2, ch4_step(2))
-  observeEvent(input$ch4_step3, ch4_step(3))
-  observeEvent(input$ch4_step4, ch4_step(4))
-  observeEvent(input$ch4_step5, ch4_step(5))
-  observeEvent(input$ch4_step6, ch4_step(6))
-  observeEvent(input$ch4_step7, ch4_step(7))
-  observeEvent(input$ch4_step_reset, ch4_step(0))
+  # Stała rama z pełnej próby: oś X wspólna dla kroków, oś Y wspólna dla
+  # kroków na skali gęstości (5–7). Zapas 14% mieści skrajne słupki 5 binów.
+  ch4_step_frame <- reactive({
+    data <- ch4_sample_data()
+    df <- data.frame(x = data)
+    x_pad <- diff(range(data)) * 0.14
+    hist_max <- function(bins, stat) {
+      max(layer_data(ggplot(df, aes(x = x)) + geom_histogram(bins = bins))[[stat]])
+    }
+    dens_max <- max(hist_max(30, "density"), max(density(data)$y))
+    list(
+      xlim = range(data) + c(-x_pad, x_pad),
+      count_max = c(`5` = hist_max(5, "count"), `15` = hist_max(15, "count"),
+                    `30` = hist_max(30, "count")),
+      dens_max = dens_max
+    )
+  })
 
   zoom_plot_server("ch4_step_plot", reactive({
     step <- ch4_step()
     data <- ch4_sample_data()
+    fr <- ch4_step_frame()
 
     df <- data.frame(x = data)
+    count_frame <- function(bins) {
+      step_frame(xlim = fr$xlim, ylim = c(0, fr$count_max[[as.character(bins)]] * 1.08))
+    }
+    dens_frame <- step_frame(xlim = fr$xlim, ylim = c(0, fr$dens_max * 1.08))
 
-    if (step == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij krok 1, aby zacząć",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else if (step == 1) {
+    if (step == 1) {
       ggplot(df, aes(x = x)) +
-        geom_rug(color = unname(upwr_cat["niebo"]), alpha = 0.3) +
+        step_layer(geom_rug, "data", alpha = 0.3) +
+        scale_y_continuous() +
         labs(x = "Wartość", y = "") +
-        theme_upwr()
+        step_frame(xlim = fr$xlim, ylim = c(0, 1), y_axis = FALSE)
     } else if (step == 2) {
       ggplot(df, aes(x = x)) +
-        geom_histogram(bins = 5, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
-        geom_rug(alpha = 0.2) +
-        labs( x = "Wartość", y = "Liczebność") +
-        theme_upwr()
+        step_result(geom_histogram, bins = 5) +
+        step_layer(geom_rug, "background") +
+        labs(x = "Wartość", y = "Liczebność") +
+        count_frame(5)
     } else if (step == 3) {
       ggplot(df, aes(x = x)) +
-        geom_histogram(bins = 15, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
-        labs( x = "Wartość", y = "Liczebność") +
-        theme_upwr()
+        step_result(geom_histogram, bins = 15) +
+        labs(x = "Wartość", y = "Liczebność") +
+        count_frame(15)
     } else if (step == 4) {
       ggplot(df, aes(x = x)) +
-        geom_histogram(bins = 30, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
-        labs( x = "Wartość", y = "Liczebność") +
-        theme_upwr()
+        step_result(geom_histogram, bins = 30) +
+        labs(x = "Wartość", y = "Liczebność") +
+        count_frame(30)
     } else if (step == 5) {
       ggplot(df, aes(x = x)) +
-        geom_histogram(aes(y = after_stat(density)), bins = 30,
-                       fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7) +
-        labs(
-             x = "Wartość", y = "Gęstość") +
-        theme_upwr()
+        step_result(geom_histogram, mapping = aes(y = after_stat(density)), bins = 30) +
+        labs(x = "Wartość", y = "Gęstość") +
+        dens_frame
     } else if (step == 6) {
       ggplot(df, aes(x = x)) +
-        geom_histogram(aes(y = after_stat(density)), bins = 30,
-                       fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.5) +
-        geom_density(color = unname(upwr_cat["terakota"]), linewidth = 1.5) +
-        labs(
-             x = "Wartość", y = "Gęstość") +
-        theme_upwr()
+        step_result(geom_histogram, mapping = aes(y = after_stat(density)), bins = 30,
+                    alpha = 0.5) +
+        step_layer(geom_density, "new", linewidth = 1.5) +
+        labs(x = "Wartość", y = "Gęstość") +
+        dens_frame
     } else {
       ggplot(df, aes(x = x)) +
-        geom_density(fill = unname(upwr_cat["niebo"]), color = upwr_secondary, linewidth = 1.2, alpha = 0.3) +
-        labs(
-             
-             x = "Wartość", y = "Gęstość f(x)") +
-        theme_upwr()
+        step_layer(geom_density, "known", fill = STEP_ROLES$data$colour,
+                   linewidth = 1.2, alpha = 0.3) +
+        labs(x = "Wartość", y = "Gęstość f(x)") +
+        dens_frame
     }
   }))
 
   output$ch4_step_text <- renderUI({
     step <- ch4_step()
     texts <- c(
-      "",
       "Każda kreska to jedna obserwacja. Trudno coś z tego odczytać.",
       "5 binów — widzimy ogólny zarys, ale mało szczegółów.",
       "15 binów — kształt staje się wyraźniejszy.",
@@ -512,7 +497,7 @@ ch4_server <- function(input, output, session) {
       "Nakładamy gładką krzywą, która przybliża kształt danych.",
       "To jest PDF — teoretyczny model opisujący rozkład. Pole pod krzywą = 1."
     )
-    if (step > 0) lc_feedback(type = "info", texts[step + 1])
+    texts[step]
   })
 
   # --- Widget 2: Prawdopodobienstwo = pole (bez zmian) ---

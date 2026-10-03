@@ -123,24 +123,11 @@ ch6_ui <- list(
 
     figure_panel(
       label = "Ryc. 6.3",
-      title = "Od jednej obserwacji do średniej z 30",
       full_width = TRUE,
-      fluidRow(
-        column(4,
-          lc_action("ch6_why_step1", "1. Jedna obserwacja", variant = "outline"),
-          br(), br(),
-          lc_action("ch6_why_step2", "2. Średnia z 2", variant = "outline"),
-          br(), br(),
-          lc_action("ch6_why_step3", "3. Średnia z 5", variant = "outline"),
-          br(), br(),
-          lc_action("ch6_why_step4", "4. Średnia z 30", variant = "outline"),
-          br(), br(),
-          lc_action("ch6_why_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
-        ),
-        column(8,
-          zoom_plot_ui("ch6_why_plot", height = "350px"),
-          uiOutput("ch6_why_text")
-        )
+      lc_step_widget("ch6_why",
+        title = "Od jednej obserwacji do średniej z 30",
+        steps = c("Jedna obserwacja", "Średnia z 2", "Średnia z 5", "Średnia z 30"),
+        plot_id = "ch6_why_plot"
       )
     ),
 
@@ -332,59 +319,53 @@ ch6_server <- function(input, output, session) {
   }))
 
   # --- Widget 3: Dlaczego to dziala? ---
-  ch6_why_step <- reactiveVal(0)
+  # Krok widgetu (1..4) żyje w przeglądarce.
+  ch6_why_step <- lc_step_server("ch6_why", input)$step
+  ch6_why_n <- c(1, 2, 5, 30)
 
-  observeEvent(input$ch6_why_step1, ch6_why_step(1))
-  observeEvent(input$ch6_why_step2, ch6_why_step(2))
-  observeEvent(input$ch6_why_step3, ch6_why_step(3))
-  observeEvent(input$ch6_why_step4, ch6_why_step(4))
-  observeEvent(input$ch6_why_reset, ch6_why_step(0))
+  # Symulacje wszystkich kroków naraz: stała rama osi z pełnych danych.
+  ch6_why_sims <- reactive({
+    lapply(ch6_why_n, function(n_val) replicate(5000, mean(rexp(n_val, 0.5))))
+  })
 
   zoom_plot_server("ch6_why_plot", reactive({
     step <- ch6_why_step()
+    sims <- ch6_why_sims()
+    params <- get_population_params("exponential")
 
-    if (step == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij krok 1, aby zacząć",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      n_val <- c(1, 2, 5, 30)[step]
-      means <- replicate(5000, mean(rexp(n_val, 0.5)))
-      df <- data.frame(x = means)
-      params <- get_population_params("exponential")
-      theo_sd <- params$sigma / sqrt(n_val)
+    n_val <- ch6_why_n[step]
+    means <- sims[[step]]
+    df <- data.frame(x = means)
+    theo_sd <- params$sigma / sqrt(n_val)
 
-      p <- ggplot(df, aes(x = x)) +
-        geom_histogram(aes(y = after_stat(density)),
-                       bins = 50, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7)
+    # Rama: X od 0 do 99.5 percentyla jednej obserwacji, Y z krzywej dla n = 30.
+    x_lim <- c(0, quantile(sims[[1]], 0.995))
+    y_lim <- c(0, dnorm(params$mu, params$mu, params$sigma / sqrt(max(ch6_why_n))) * 1.3)
 
-      if (n_val >= 2) {
-        x_range <- seq(min(means), max(means), length.out = 200)
-        norm_df <- data.frame(x = x_range,
-                              y = dnorm(x_range, params$mu, theo_sd))
-        p <- p + geom_line(data = norm_df, aes(x = x, y = y),
-                           color = unname(upwr_cat["terakota"]), linewidth = 1.5)
-      }
+    p <- ggplot(df, aes(x = x)) +
+      step_result(geom_histogram, mapping = aes(y = after_stat(density)), bins = 50)
 
-      p + labs(
-               
-               x = "Średnia", y = "Gęstość") +
-        theme_upwr()
+    if (n_val >= 2) {
+      x_range <- seq(min(means), max(means), length.out = 200)
+      norm_df <- data.frame(x = x_range,
+                            y = dnorm(x_range, params$mu, theo_sd))
+      p <- p + step_layer(geom_line, step_role(step, 2), data = norm_df,
+                          mapping = aes(x = x, y = y), linewidth = 1.5)
     }
+
+    p + labs(x = "Średnia", y = "Gęstość") +
+      step_frame(xlim = x_lim, ylim = y_lim)
   }))
 
   output$ch6_why_text <- renderUI({
     step <- ch6_why_step()
     texts <- list(
-      NULL,
       "Pojedyncza obserwacja z rozkładu wykładniczego — wyraźnie prawoskośny!",
       "Średnia z 2: już mniej skrajnych wartości, lewa strona zaczyna się wypełniać.",
       "Średnia z 5: kształt staje się bardziej symetryczny. Ekstrema się niwelują.",
       "Średnia z 30: praktycznie normalny! Krzywa gaussowska pasuje niemal idealnie."
     )
-    if (step > 0) lc_feedback(type = "info", texts[[step + 1]])
+    texts[[step]]
   })
 
 }
