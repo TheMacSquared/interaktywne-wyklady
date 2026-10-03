@@ -754,7 +754,7 @@ source(file.path(app_dir, "modules", "ch9_sat.R"), local = TRUE)
       tags$b("6b)"), sprintf(" B(100, 0.03), E(X) = 3. P(X ≥ 5) = %.4f. Numer pierwszej wadliwej: Geom(0.03), E = %.1f.",
                               1 - pbinom(4, 100, 0.03), 1/0.03), tags$br(), tags$br(),
       tags$b("6c)"), " P(X > 5.0) = ", .fmt_p(1 - pnorm(5.0, 4.2, 0.8)),
-        sprintf(". Aby < 5%%: μ ≤ 5.0 − 1.645 × 0.8 = "), tags$b(sprintf("%.2f mg/m³", 5.0 - qnorm(0.95) * 0.8)), "."
+        sprintf(". Aby < 5%%: μ ≤ 5.0 - 1.645 × 0.8 = "), tags$b(sprintf("%.2f mg/m³", 5.0 - qnorm(0.95) * 0.8)), "."
     )),
     sol7 = withMathJax(tagList(
       p(tags$em("Wartości empiryczne zależą od generatora.")),
@@ -807,12 +807,12 @@ source(file.path(app_dir, "modules", "ch9_sat.R"), local = TRUE)
       tags$b("b)"), " P(5.4 < X < 7.0) = ", .fmt_p(pnorm(7.0, 6.2, 0.8) - pnorm(5.4, 6.2, 0.8)), tags$br(),
       tags$b("c)"), sprintf(" Kwantyl 5%%: %.2f t/ha", qnorm(0.05, 6.2, 0.8)), tags$br(),
       tags$b("d)"), " P(X > 7.5) = ", .fmt_p(1 - pnorm(7.5, 6.2, 0.8)), " — „prawie zawsze” to grubo przesadzone", tags$br(),
-      tags$b("e)"), " 5.0 = μ − 2.326 × 0.8 → ", tags$b(sprintf("μ ≥ %.2f t/ha", 5.0 + qnorm(0.99) * 0.8))
+      tags$b("e)"), " 5.0 = μ - 2.326 × 0.8 → ", tags$b(sprintf("μ ≥ %.2f t/ha", 5.0 + qnorm(0.99) * 0.8))
     )),
     sol4 = withMathJax(tagList(
       tags$b("a)"), " λ = 1/10 = 0.1 (opadu na dzień)", tags$br(),
-      tags$b("b)"), " P(X > 15) = e^(−15/10) = ", .fmt_p(1 - pexp(15, 0.1)), tags$br(),
-      tags$b("c)"), " P(X ≤ 5) = 1 − e^(−5/10) = ", .fmt_p(pexp(5, 0.1)), tags$br(),
+      tags$b("b)"), " P(X > 15) = e^(-15/10) = ", .fmt_p(1 - pexp(15, 0.1)), tags$br(),
+      tags$b("c)"), " P(X ≤ 5) = 1 − e^(-5/10) = ", .fmt_p(pexp(5, 0.1)), tags$br(),
       tags$b("d)"), " ", tags$b("Nie zmienia"), sprintf(" — P(X > 12+10 | X > 12) = P(X > 10) = %.4f.", 1 - pexp(10, 0.1))
     )),
     sol5 = .ch9_task5_solution(
@@ -855,7 +855,7 @@ source(file.path(app_dir, "modules", "ch9_sat.R"), local = TRUE)
       tags$b("a)"), " Silnie skośny prawo", tags$br(),
       tags$b("b)"), " Średnia ≈ sd (cecha wykładniczego)", tags$br(),
       tags$b("c)"), " λ = 1/średnia", tags$br(),
-      tags$b("d)"), " P(X > 14) = e^(−14λ) — podstaw λ z danych", tags$br(),
+      tags$b("d)"), " P(X > 14) = e^(-14λ) — podstaw λ z danych", tags$br(),
       tags$b("e)"), " 90/średnia opadów → Pois(λ = 90/średnia). Oblicz P(X ≥ 15)."
     )),
     sol_summary = tagList(
@@ -888,8 +888,8 @@ source(file.path(app_dir, "modules", "ch9_sat.R"), local = TRUE)
     )),
     sol4 = withMathJax(tagList(
       tags$b("a)"), " λ = 1/8 = 0.125 (zepsuć na dzień)", tags$br(),
-      tags$b("b)"), " P(X ≤ 3) = 1 − e^(−3/8) = ", .fmt_p(pexp(3, 1/8)), tags$br(),
-      tags$b("c)"), " P(X > 10) = e^(−10/8) = ", .fmt_p(1 - pexp(10, 1/8)), tags$br(),
+      tags$b("b)"), " P(X ≤ 3) = 1 − e^(-3/8) = ", .fmt_p(pexp(3, 1/8)), tags$br(),
+      tags$b("c)"), " P(X > 10) = e^(-10/8) = ", .fmt_p(1 - pexp(10, 1/8)), tags$br(),
       tags$b("d)"), " ", tags$b("Nie zmienia"), sprintf(" — P(X > 5+3 | X > 5) = P(X > 3) = %.4f.", 1 - pexp(3, 1/8))
     )),
     sol5 = .ch9_task5_solution(
@@ -932,7 +932,7 @@ source(file.path(app_dir, "modules", "ch9_sat.R"), local = TRUE)
       tags$b("a)"), " Silnie skośny prawo", tags$br(),
       tags$b("b)"), " Średnia ≈ sd (cecha wykładniczego)", tags$br(),
       tags$b("c)"), " λ = 1/średnia (awarii na godzinę)", tags$br(),
-      tags$b("d)"), " P(X ≤ 2) = 1 − e^(−2λ) — podstaw λ z danych", tags$br(),
+      tags$b("d)"), " P(X ≤ 2) = 1 − e^(-2λ) — podstaw λ z danych", tags$br(),
       tags$b("e)"), " 40 × λ awarii → Pois(λ’ = 40/średnia). Oblicz P(X ≥ 5)."
     )),
     sol_summary = tagList(

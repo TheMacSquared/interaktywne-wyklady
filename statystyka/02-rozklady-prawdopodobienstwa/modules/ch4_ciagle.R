@@ -21,7 +21,7 @@ ch4_ui <- list(
       gloss("funkcja prawdopodobieństwa", "funkcja prawdopodobieństwa"),
       ", działa, gdy wartości da się wypisać: 0, 1, 2 i tak dalej. ",
       gloss("zmienna ciągła", "Zmienna ciągła"), " może przyjąć każdą wartość
-      z przedziału, na przykład czas oczekiwania 1,7 min albo 1,7182 min.
+      z przedziału, na przykład czas oczekiwania 1.7 min albo 1.7182 min.
       Takich wartości jest nieskończenie wiele, więc nie da się każdej z nich
       przypisać dodatniego prawdopodobieństwa tak, żeby suma wyniosła 1.
       W tym rozdziale zastąpimy słupki krzywą, a sumowanie słupków liczeniem
@@ -42,7 +42,7 @@ ch4_ui <- list(
       prawdopodobieństwa z rozdziału 3."),
 
     lc_p("Panel losuje próbę z wybranego rozkładu, domyślnie 500 obserwacji
-      z rozkładu normalnego o średniej 5 i odchyleniu standardowym 1,5,
+      z rozkładu normalnego o średniej 5 i odchyleniu standardowym 1.5,
       i w siedmiu krokach przechodzi od surowych danych do krzywej."),
 
     figure_panel(
@@ -98,12 +98,12 @@ ch4_ui <- list(
     lc_p("Z tej definicji wynikają dwie konsekwencje, które odróżniają rozkłady
       ciągłe od dyskretnych. Pierwsza: P(X = x) = 0 dla każdej pojedynczej
       wartości x, bo nad odcinkiem o szerokości zero pole jest zerowe. Nie
-      pytamy więc, jakie jest prawdopodobieństwo czasu dokładnie 5,0 min, tylko
-      czasu między 4,5 a 5,5 min. Z tego samego powodu nie ma różnicy między
+      pytamy więc, jakie jest prawdopodobieństwo czasu dokładnie 5.0 min, tylko
+      czasu między 4.5 a 5.5 min. Z tego samego powodu nie ma różnicy między
       P(a ≤ X ≤ b) a P(a < X < b). Druga: wysokość krzywej f(x) nie jest
       prawdopodobieństwem. Gęstość może być większa od 1. Rozkład jednostajny
-      na przedziale od 0 do 0,5 ma f(x) = 2 na całym przedziale, a mimo to pole
-      pod nim wynosi 2 · 0,5 = 1."),
+      na przedziale od 0 do 0.5 ma f(x) = 2 na całym przedziale, a mimo to pole
+      pod nim wynosi 2 · 0.5 = 1."),
 
     lc_p("Panel zacienia pole między granicami a i b dla trzech rozkładów,
       które omówimy w tym i następnym rozdziale."),
@@ -115,9 +115,9 @@ ch4_ui <- list(
       fluidRow(
         column(4,
           selectInput("ch4_area_dist", "Rozkład:",
-            choices = c("Normalny N(0,1)" = "norm",
+            choices = c("Normalny N(0, 1)" = "norm",
                         "Wykładniczy Exp(1)" = "exp",
-                        "Jednostajny U(0,10)" = "unif"),
+                        "Jednostajny U(0, 10)" = "unif"),
             selected = "norm"
           ),
           lc_slider("ch4_area_a", "Dolna granica (a)", -4, 4, -1, 0.1),
@@ -131,12 +131,12 @@ ch4_ui <- list(
     ),
 
     lc_p("Domyślnie panel pokazuje ", gloss("rozkład normalny"), " N(0, 1),
-      któremu poświęcimy cały następny rozdział. Pole między −1 a 1 wynosi
-      0,6827: około dwóch trzecich prawdopodobieństwa leży w tym przedziale.
+      któremu poświęcimy cały następny rozdział. Pole między -1 a 1 wynosi
+      0.6827: około dwóch trzecich prawdopodobieństwa leży w tym przedziale.
       Dla rozkładu wykładniczego Exp(1) domyślny przedział od 0 do 2 obejmuje
-      0,8647, a dla rozkładu jednostajnego U(0, 10) przedział od 2 do 7
-      obejmuje dokładnie 0,5. W tym ostatnim przypadku pole jest prostokątem
-      o szerokości 5 i wysokości 0,1. Zbliżaj suwaki a i b do siebie:
+      0.8647, a dla rozkładu jednostajnego U(0, 10) przedział od 2 do 7
+      obejmuje dokładnie 0.5. W tym ostatnim przypadku pole jest prostokątem
+      o szerokości 5 i wysokości 0.1. Zbliżaj suwaki a i b do siebie:
       zacieniony pas zwęża się, a prawdopodobieństwo spada do zera, choć
       krzywa nad tym miejscem ma dodatnią wysokość."),
 
@@ -157,15 +157,15 @@ ch4_ui <- list(
 
     lc_p("Prawdopodobieństwo przedziału to różnica dwóch pól: pola na lewo
       od b i pola na lewo od a. Dokładnie tak liczy je panel z Ryc. 4.2.
-      Dla rozkładu N(0, 1) F(1) = 0,8413 i F(−1) = 0,1587, więc
-      P(−1 < X ≤ 1) = 0,8413 − 0,1587 = 0,6827. Dystrybuanta rośnie od 0
+      Dla rozkładu N(0, 1) F(1) = 0.8413 i F(-1) = 0.1587, więc
+      P(-1 < X ≤ 1) = 0.8413 - 0.1587 = 0.6827. Dystrybuanta rośnie od 0
       na lewym krańcu do 1 na prawym i nigdy nie maleje. Ma ją także każdy
       rozkład dyskretny: tam F(x) jest sumą słupków P(X = k) dla k ≤ x."),
 
     lc_p("Dystrybuantę można też czytać odwrotnie: zamiast pytać o pole na lewo
       od danej wartości, pytamy, przy jakiej wartości to pole osiąga zadany
       poziom. Taka wartość to kwantyl rzędu q, czyli x, dla którego F(x) = q.
-      Mediana jest kwantylem rzędu 0,5, a percentyle z wykładu 01 to kwantyle
+      Mediana jest kwantylem rzędu 0.5, a percentyle z wykładu 01 to kwantyle
       wyrażone w procentach."),
 
     # ========================================================================
@@ -221,16 +221,16 @@ ch4_ui <- list(
       )
     ),
 
-    lc_p("Im szerszy przedział, tym niższy prostokąt: U(0, 10) ma wysokość 0,1,
-      a U(0, 2) — 0,5. Pole zawsze wynosi 1. Wartość oczekiwana leży w środku
+    lc_p("Im szerszy przedział, tym niższy prostokąt: U(0, 10) ma wysokość 0.1,
+      a U(0, 2) — 0.5. Pole zawsze wynosi 1. Wartość oczekiwana leży w środku
       przedziału, a odchylenie standardowe zależy tylko od jego szerokości.
       U(0, 2) i U(4, 6) to ten sam prostokąt przesunięty po osi: mają różne
-      wartości oczekiwane (1 i 5), ale jednakowe SD równe 0,58."),
+      wartości oczekiwane (1 i 5), ale jednakowe SD równe 0.58."),
 
     lc_p("Wróćmy do autobusu. Dla U(0, 10) średni czas oczekiwania to
-      E(X) = 5 min, wariancja 100/12 = 8,33, a SD = 2,89 min.
+      E(X) = 5 min, wariancja 100/12 = 8.33, a SD = 2.89 min.
       Prawdopodobieństwo, że poczekasz dłużej niż 7 minut, to pole prostokąta
-      od 7 do 10: 3 · 0,1 = 0,3."),
+      od 7 do 10: 3 · 0.1 = 0.3."),
 
     # ========================================================================
     # WIDGET 3b: Wykładniczy — scenariusze overlay
@@ -286,18 +286,18 @@ ch4_ui <- list(
       standardowe jest równe wartości oczekiwanej, więc rozrzut jest duży:
       przy λ = 1 wiadomość na godzinę E(X) = 1 h i SD = 1 h."),
 
-    lc_p("Dla tego scenariusza F(1) = 1 − e⁻¹ = 0,632. Oznacza to, że 63%
-      odstępów jest krótszych od średniej. Mediana wynosi ln 2 / λ = 0,69 h,
+    lc_p("Dla tego scenariusza F(1) = 1 − e⁻¹ = 0.632. Oznacza to, że 63%
+      odstępów jest krótszych od średniej. Mediana wynosi ln 2 / λ = 0.69 h,
       czyli około 42 minut, mniej niż średnia, bo długi prawy ogon podnosi
       średnią. Na wiadomość dłużej niż 2 godziny czekasz z prawdopodobieństwem
-      e⁻² = 0,135."),
+      e⁻² = 0.135."),
 
     lc_p("Rozkład wykładniczy ma nietypową własność, ",
       gloss("bezpamięciowość"), ". Załóżmy, że czekasz na wiadomość już
       2 godziny. Prawdopodobieństwo, że poczekasz jeszcze co najmniej godzinę,
-      wynosi P(X > 3 | X > 2) = e⁻³ / e⁻² = e⁻¹ = 0,368. To dokładnie tyle
+      wynosi P(X > 3 | X > 2) = e⁻³ / e⁻² = e⁻¹ = 0.368. To dokładnie tyle
       samo, ile prawdopodobieństwo czekania ponad godzinę od początku,
-      P(X > 1) = 0,368. Czas, który już minął, nie skraca dalszego oczekiwania.
+      P(X > 1) = 0.368. Czas, który już minął, nie skraca dalszego oczekiwania.
       Dlatego rozkład wykładniczy pasuje do zdarzeń, które nie mają pamięci,
       jak przychodzące wiadomości, a słabo do zużywających się elementów, jak
       starzejąca się maszyna."),
@@ -323,7 +323,7 @@ ch4_ui <- list(
       t-Studenta ma kształt dzwonu jak N(0, 1), ale niższy szczyt i cięższe
       ogony: wartości daleko od zera są bardziej prawdopodobne. Parametr df
       to ", gloss("stopnie swobody"), ". Przy średniej z n obserwacji
-      df = n − 1. Im więcej stopni swobody, tym rozkład bliższy N(0, 1)."),
+      df = n - 1. Im więcej stopni swobody, tym rozkład bliższy N(0, 1)."),
 
     lc_formula_box(withMathJax(
       "$$E(X) = 0 \\;\\text{ dla } df > 1, \\qquad Var(X) = \\frac{df}{df - 2} \\;\\text{ dla } df > 2$$"
@@ -345,7 +345,7 @@ ch4_ui <- list(
             selected = c("t_2", "t_4")
           ),
           hr(),
-          checkboxInput("ch4_t_show_normal", "Pokaż N(0,1) jako odniesienie", value = TRUE)
+          checkboxInput("ch4_t_show_normal", "Pokaż N(0, 1) jako odniesienie", value = TRUE)
         ),
         column(8,
           zoom_plot_ui("ch4_t_plot", height = "400px"),
@@ -356,16 +356,16 @@ ch4_ui <- list(
 
     lc_p("Krzywa t(30) prawie pokrywa się z N(0, 1), a t(3) ma wyraźnie niższy
       szczyt i grubsze ogony. Różnicę widać w liczbach. Wartość dalej niż
-      2 od zera ma w rozkładzie N(0, 1) prawdopodobieństwo 0,046, w t(30) —
-      0,055, w t(5) — 0,102, a w t(3) już 0,139, czyli trzy razy więcej niż
-      w rozkładzie normalnym. Odchylenie standardowe t(3) wynosi 1,73, a t(30) — 1,04. Skrajny
+      2 od zera ma w rozkładzie N(0, 1) prawdopodobieństwo 0.046, w t(30) —
+      0.055, w t(5) — 0.102, a w t(3) już 0.139, czyli trzy razy więcej niż
+      w rozkładzie normalnym. Odchylenie standardowe t(3) wynosi 1.73, a t(30) — 1.04. Skrajny
       przypadek t(1), zwany rozkładem Cauchy'ego, ma ogony tak ciężkie,
       że nie ma wartości oczekiwanej ani wariancji."),
 
     lc_p("Praktyczna konsekwencja: przy małej próbie, na przykład 4 obserwacjach
       (df = 3), granice, w których mieści się środkowe 95% rozkładu, leżą
-      w ±3,18, a nie w ±1,96 jak dla N(0, 1). Wnioski z małych prób muszą
-      więc być ostrożniejsze. Przy 31 obserwacjach (df = 30) granice to ±2,04
+      w ±3.18, a nie w ±1.96 jak dla N(0, 1). Wnioski z małych prób muszą
+      więc być ostrożniejsze. Przy 31 obserwacjach (df = 30) granice to ±2.04
       i różnica staje się niewielka."),
 
     # ========================================================================
@@ -409,8 +409,8 @@ ch4_ui <- list(
     ),
 
     lc_p("Każdy składnik sumy ma wartość oczekiwaną 1, więc E(X) = df. Dla
-      χ²(5) wartość oczekiwana wynosi 5, SD = 3,16, a szczyt krzywej leży
-      w punkcie 3. Wartości powyżej 11,07 pojawiają się tylko w 5% przypadków.
+      χ²(5) wartość oczekiwana wynosi 5, SD = 3.16, a szczyt krzywej leży
+      w punkcie 3. Wartości powyżej 11.07 pojawiają się tylko w 5% przypadków.
       Przy df = 2 krzywa
       opada od zera, a przy df = 20 jest już niemal symetryczna wokół 20.
       To nie przypadek: χ²(df) jest sumą df niezależnych składników, a suma
@@ -466,11 +466,11 @@ ch4_ui <- list(
     ),
 
     lc_p("Prawy ogon sprawia, że wartość oczekiwana jest zawsze większa od ",
-      gloss("mediana", "mediany"), ". Dla LogN(1, 0,5) mediana wynosi
-      e¹ = 2,72, wartość oczekiwana 3,08, a SD = 1,64. Wartość oczekiwaną
+      gloss("mediana", "mediany"), ". Dla LogN(1, 0.5) mediana wynosi
+      e¹ = 2.72, wartość oczekiwana 3.08, a SD = 1.64. Wartość oczekiwaną
       przekracza tylko 40% obserwacji. Im większe
       σ, tym dłuższy ogon i większa różnica. W scenariuszu dochodów
-      LogN(2, 0,8) mediana to 7,39, a wartość oczekiwana 10,18, więc ponad
+      LogN(2, 0.8) mediana to 7.39, a wartość oczekiwana 10.18, więc ponad
       średnią zarabia tylko 34% osób."),
 
     lc_p("To ten sam mechanizm, który w statystyce opisowej obserwowaliśmy na
@@ -829,9 +829,9 @@ ch4_server <- function(input, output, session) {
                        sapply(ch4_t_defs[selected], `[[`, "label"))
 
     if (show_normal) {
-      df_norm <- data.frame(x = x_seq, y = dnorm(x_seq), scenario = "N(0,1)")
+      df_norm <- data.frame(x = x_seq, y = dnorm(x_seq), scenario = "N(0, 1)")
       df <- rbind(df, df_norm)
-      colors <- c(colors, "N(0,1)" = "#999999")
+      colors <- c(colors, "N(0, 1)" = "#999999")
     }
 
     df$scenario <- factor(df$scenario, levels = unique(df$scenario))

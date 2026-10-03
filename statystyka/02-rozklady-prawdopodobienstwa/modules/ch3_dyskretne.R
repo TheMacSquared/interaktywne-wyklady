@@ -57,8 +57,8 @@ ch3_ui <- list(
     )),
 
     lc_p("Dla zwykłej kostki n = 6, więc każda ściana ma prawdopodobieństwo
-      1/6 ≈ 0,167. Wartość oczekiwana wynosi (6 + 1)/2 = 3,5, czyli dokładnie
-      środek zakresu, a wariancja (36 − 1)/12 ≈ 2,92, co daje SD ≈ 1,71.
+      1/6 ≈ 0.167. Wartość oczekiwana wynosi (6 + 1)/2 = 3.5, czyli dokładnie
+      środek zakresu, a wariancja (36 - 1)/12 ≈ 2.92, co daje SD ≈ 1.71.
       Panel poniżej
       symuluje serię rzutów i porównuje częstości względne z teoretycznym
       prawdopodobieństwem 1/n (linia przerywana)."),
@@ -89,8 +89,8 @@ ch3_ui <- list(
       histogram, gdy prób jest coraz więcej. Parametr n zmienia tylko liczbę
       słupków i ich wysokość. Im więcej wyników, tym niższy każdy słupek
       (1/2 dla monety, 1/12 dla kostki dwunastościennej), a wartość oczekiwana
-      przesuwa się do środka nowego zakresu: 1,5 dla monety z wynikami 1 i 2,
-      6,5 dla kostki dwunastościennej."),
+      przesuwa się do środka nowego zakresu: 1.5 dla monety z wynikami 1 i 2,
+      6.5 dla kostki dwunastościennej."),
 
     # ========================================================================
     # WIDGET 2: Rozkład dwumianowy — scenariusze overlay
@@ -116,9 +116,9 @@ ch3_ui <- list(
       prawdopodobieństwo jednego konkretnego ciągu k sukcesów i n − k porażek.
       Współczynnik \\(\\binom{n}{k}\\) liczy, na ile sposobów można rozmieścić
       te k sukcesów wśród n prób. Dla 10 rzutów monetą prawdopodobieństwo
-      dokładnie 5 orłów wynosi \\(\\binom{10}{5} \\cdot 0{,}5^{10} = 252/1024 \\approx 0{,}246\\).
-      Wartość oczekiwana to 10 · 0,5 = 5 orłów, wariancja 10 · 0,5 · 0,5 = 2,5,
-      a SD ≈ 1,58. Na wykresie można nałożyć na siebie cztery scenariusze."),
+      dokładnie 5 orłów wynosi \\(\\binom{10}{5} \\cdot 0.5^{10} = 252/1024 \\approx 0.246\\).
+      Wartość oczekiwana to 10 · 0.5 = 5 orłów, wariancja 10 · 0.5 · 0.5 = 2.5,
+      a SD ≈ 1.58. Na wykresie można nałożyć na siebie cztery scenariusze."),
 
     figure_panel(
       label = "Ryc. 3.2",
@@ -143,17 +143,17 @@ ch3_ui <- list(
       )
     ),
 
-    lc_p("Rozkład B(10; 0,5) jest symetryczny wokół 5, bo przy p = 0,5 sukces
+    lc_p("Rozkład B(10, 0.5) jest symetryczny wokół 5, bo przy p = 0.5 sukces
       i porażka są zamienne. Trzy pierwsze scenariusze mają tę samą wartość
-      oczekiwaną: 10 · 0,5 = 20 · 0,25 = 50 · 0,1 = 5. Mimo to ich kształty
-      się różnią. Im mniejsze p, tym rozkład szerszy (SD rośnie od 1,58
-      przez 1,94 do 2,12) i tym wyraźniej wydłuża się jego prawy ogon. Wynika
+      oczekiwaną: 10 · 0.5 = 20 · 0.25 = 50 · 0.1 = 5. Mimo to ich kształty
+      się różnią. Im mniejsze p, tym rozkład szerszy (SD rośnie od 1.58
+      przez 1.94 do 2.12) i tym wyraźniej wydłuża się jego prawy ogon. Wynika
       to wprost ze wzoru na wariancję: przy tej samej wartości np czynnik
       (1 − p) jest bliższy 1, gdy p jest małe. Scenariusz egzaminu to student,
       który zgaduje odpowiedzi w teście z 20 pytaniami po 4 warianty. Zgadując,
       zdobędzie przeciętnie 5 punktów, a szansa na co najmniej 10 wynosi tylko
-      1,4%. Scenariusz B(20; 0,7)
-      pokazuje sytuację odwrotną: przy p powyżej 0,5 środek przesuwa się
+      1.4%. Scenariusz B(20, 0.7)
+      pokazuje sytuację odwrotną: przy p powyżej 0.5 środek przesuwa się
       w prawo, do E(X) = 14, a dłuższy ogon pojawia się po lewej stronie."),
 
     # ========================================================================
@@ -176,13 +176,13 @@ ch3_ui <- list(
     )),
 
     lc_p("Rozkład Poissona to granica rozkładu dwumianowego, gdy n jest bardzo
-      duże, p bardzo małe, a iloczyn np = λ pozostaje stały. Dla B(1000; 0,002)
-      prawdopodobieństwo dokładnie 2 sukcesów wynosi 0,2709, a dla Pois(2)
-      0,2707. Rozkład nie ma górnej
+      duże, p bardzo małe, a iloczyn np = λ pozostaje stały. Dla B(1000, 0.002)
+      prawdopodobieństwo dokładnie 2 sukcesów wynosi 0.2709, a dla Pois(2)
+      0.2707. Rozkład nie ma górnej
       granicy, bo k może być dowolnie duże, ale prawdopodobieństwa dużych
       wartości szybko maleją. Dla λ = 2 szansa na zero zdarzeń wynosi
-      e⁻² ≈ 0,135, na co najwyżej 3 zdarzenia 0,857, a na 5 lub więcej
-      tylko 0,053."),
+      e⁻² ≈ 0.135, na co najwyżej 3 zdarzenia 0.857, a na 5 lub więcej
+      tylko 0.053."),
 
     figure_panel(
       label = "Ryc. 3.3",
@@ -208,19 +208,19 @@ ch3_ui <- list(
     ),
 
     lc_p("Parametr λ jednocześnie przesuwa i poszerza rozkład, bo wartość
-      oczekiwana i wariancja są równe λ. Przy λ = 0,5 najczęstszym wynikiem
-      jest zero (prawdopodobieństwo 0,61), a rozkład jest silnie prawoskośny.
-      Wraz ze wzrostem λ środek przesuwa się w prawo, SD = √λ rośnie od 0,71
-      do 3,16, a rozkład staje się coraz bardziej symetryczny. Równość
+      oczekiwana i wariancja są równe λ. Przy λ = 0.5 najczęstszym wynikiem
+      jest zero (prawdopodobieństwo 0.61), a rozkład jest silnie prawoskośny.
+      Wraz ze wzrostem λ środek przesuwa się w prawo, SD = √λ rośnie od 0.71
+      do 3.16, a rozkład staje się coraz bardziej symetryczny. Równość
       E(X) = Var(X) daje praktyczny test: jeśli w danych ze zliczeń średnia
       jest zbliżona do wariancji, model Poissona jest dobrym kandydatem.
       Jeśli wariancja jest wyraźnie większa, zdarzenia prawdopodobnie nie są
       niezależne, na przykład pojawiają się seriami."),
 
     lc_p("Związek z rozkładem dwumianowym widać, gdy obok scenariusza
-      „Klienci: λ = 5” postawić B(50; 0,1) z poprzedniego wykresu. Oba
+      „Klienci: λ = 5” postawić B(50, 0.1) z poprzedniego wykresu. Oba
       rozkłady mają wartość oczekiwaną 5 i bardzo podobny kształt:
-      P(X = 5) wynosi 0,185 dla dwumianowego i 0,175 dla Poissona. Różnica
+      P(X = 5) wynosi 0.185 dla dwumianowego i 0.175 dla Poissona. Różnica
       zmaleje, jeśli przy tym samym np = 5 zwiększymy n i zmniejszymy p."),
 
     # ========================================================================
@@ -243,11 +243,11 @@ ch3_ui <- list(
     )),
 
     lc_p("Żeby pierwszy sukces padł w próbie k, najpierw musi się zdarzyć
-      k − 1 porażek, każda z prawdopodobieństwem 1 − p, a potem jeden sukces.
+      k - 1 porażek, każda z prawdopodobieństwem 1 − p, a potem jeden sukces.
       Dla kostki p = 1/6, więc przeciętnie czekamy 1/p = 6 rzutów, przy
-      SD ≈ 5,48. Szansa, że szóstka padnie w ciągu pierwszych sześciu rzutów,
-      wynosi 1 − (5/6)⁶ ≈ 0,665, a że nie padnie przez 10 rzutów,
-      (5/6)¹⁰ ≈ 0,162."),
+      SD ≈ 5.48. Szansa, że szóstka padnie w ciągu pierwszych sześciu rzutów,
+      wynosi 1 − (5/6)⁶ ≈ 0.665, a że nie padnie przez 10 rzutów,
+      (5/6)¹⁰ ≈ 0.162."),
 
     figure_panel(
       label = "Ryc. 3.4",
@@ -274,10 +274,10 @@ ch3_ui <- list(
 
     lc_p("Każdy rozkład geometryczny ma najwyższy słupek przy k = 1, a kolejne
       maleją, bo każda następna próba wymaga jeszcze jednej porażki więcej.
-      Parametr p decyduje o tym, jak szybko. Przy p = 0,5 słupki spadają
-      o połowę z każdym krokiem i przeciętnie czekamy 2 próby. Przy p = 0,05
+      Parametr p decyduje o tym, jak szybko. Przy p = 0.5 słupki spadają
+      o połowę z każdym krokiem i przeciętnie czekamy 2 próby. Przy p = 0.05
       spadek jest powolny, rozkład ma bardzo długi prawy ogon, a wartość
-      oczekiwana to 20 prób przy SD ≈ 19,5. Rzadkie zdarzenia oznaczają nie
+      oczekiwana to 20 prób przy SD ≈ 19.5. Rzadkie zdarzenia oznaczają nie
       tylko długie czekanie, ale też bardzo nieprzewidywalne."),
 
     lc_p("Rozkład geometryczny ma też nieintuicyjną własność, którą nazywamy ",
@@ -294,7 +294,7 @@ ch3_ui <- list(
 
     lc_p("Cztery rozkłady różnią się mechanizmem, więc różnią się też
       kształtem. Poniżej zestawiamy po jednym przedstawicielu każdego:
-      kostkę, B(20; 0,3), Pois(4) i Geom(0,2). Wartość oczekiwaną
+      kostkę, B(20, 0.3), Pois(4) i Geom(0.2). Wartość oczekiwaną
       i przedział ±1 SD można włączyć na wykresie."),
 
     figure_panel(
@@ -306,11 +306,11 @@ ch3_ui <- list(
       lc_plot("ch3_compare_plot", ratio = "1.8/1", max_height = "350px")
     ),
 
-    lc_p("Rozkład jednostajny jest płaski: E(X) = 3,5 i SD ≈ 1,71.
-      Dwumianowy B(20; 0,3) ma kształt dzwonu z lekko wydłużonym prawym
-      ogonem, E(X) = 6 i SD ≈ 2,05. Poissona Pois(4) wygląda podobnie,
+    lc_p("Rozkład jednostajny jest płaski: E(X) = 3.5 i SD ≈ 1.71.
+      Dwumianowy B(20, 0.3) ma kształt dzwonu z lekko wydłużonym prawym
+      ogonem, E(X) = 6 i SD ≈ 2.05. Poissona Pois(4) wygląda podobnie,
       E(X) = 4 i SD = 2, ale jego prawy ogon nie ma końca. Geometryczny
-      Geom(0,2) maleje od pierwszej wartości. Ma E(X) = 5, ale SD ≈ 4,47,
+      Geom(0.2) maleje od pierwszej wartości. Ma E(X) = 5, ale SD ≈ 4.47,
       czyli rozrzut prawie tak duży jak sama wartość oczekiwana. Pas ±1 SD
       sięga przy nim poniżej 1, czyli poza możliwe wartości. To sygnał,
       że przy silnie skośnych rozkładach sama para E(X) i SD nie opisuje

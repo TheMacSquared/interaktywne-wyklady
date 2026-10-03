@@ -42,8 +42,8 @@ ch2_ev_var_ui <- list(
     lc_p("Wartość oczekiwana jest więc średnią ważoną: wartości prawdopodobne
       ważą w niej dużo, mało prawdopodobne — mało. Nie musi przy tym być wartością,
       którą zmienna może przyjąć. Dla rzutu kostką każda liczba oczek ma
-      prawdopodobieństwo 1/6, więc E(X) = (1 + 2 + 3 + 4 + 5 + 6) · 1/6 = 3,5,
-      choć 3,5 oczka nigdy nie wypada."),
+      prawdopodobieństwo 1/6, więc E(X) = (1 + 2 + 3 + 4 + 5 + 6) · 1/6 = 3.5,
+      choć 3.5 oczka nigdy nie wypada."),
 
     # ========================================================================
     # WIDGET 1: Loterie — symulacja wartości oczekiwanej
@@ -54,8 +54,8 @@ ch2_ev_var_ui <- list(
       wygranej mówi, ile średnio przynosi jedna gra, jeśli gramy wiele razy.
       Panel pozwala zagrać w jedną z czterech loterii. Dla każdej znamy wygrane
       i ich prawdopodobieństwa, więc E(X) liczymy ze wzoru. Dla loterii A
-      to 0,5 · 10 + 0,5 · 0 = 5 zł, dla B pewne 4 zł, dla C 0,1 · 100 + 0,9 · 0
-      = 10 zł, a dla D 0,6 · 8 + 0,4 · (−5) = 2,8 zł. Wykres pokazuje średnią
+      to 0.5 · 10 + 0.5 · 0 = 5 zł, dla B pewne 4 zł, dla C 0.1 · 100 + 0.9 · 0
+      = 10 zł, a dla D 0.6 · 8 + 0.4 · (-5) = 2.8 zł. Wykres pokazuje średnią
       wygraną ze wszystkich dotychczasowych gier (linia ciągła) na tle E(X)
       (linia przerywana)."),
 
@@ -70,7 +70,7 @@ ch2_ev_var_ui <- list(
               "A: 50% → 10 zł, 50% → 0 zł"     = "A",
               "B: 100% → 4 zł (pewna)"              = "B",
               "C: 10% → 100 zł, 90% → 0 zł"    = "C",
-              "D: 60% → 8 zł, 40% → −5 zł"    = "D"
+              "D: 60% → 8 zł, 40% → -5 zł"    = "D"
             ),
             selected = "A"
           ),
@@ -145,15 +145,15 @@ ch2_ev_var_ui <- list(
       )
     ),
 
-    lc_p("Przy równych prawdopodobieństwach E(X) = 4,5. To zwykła średnia
+    lc_p("Przy równych prawdopodobieństwach E(X) = 4.5. To zwykła średnia
       czterech wartości, bo każda waży tyle samo. Gdyby największą wartością
       było 7, a nie 9, punkt równowagi wypadłby w 4. Odległa wartość ciągnie
       E(X) w swoją stronę tak samo, jak wartość odstająca ciągnie średnią
       z danych."),
 
     lc_p("Ustawienie „Skośny” przenosi ciężar na wysokie wartości:
-      P(X = 9) = 0,5, a E(X) rośnie do 6,5. Ustawienie „Dwumodalny” kładzie
-      po 0,4 na skrajne wartości 1 i 9 i po 0,1 na środkowe. E(X) = 4,8 wypada
+      P(X = 9) = 0.5, a E(X) rośnie do 6.5. Ustawienie „Dwumodalny” kładzie
+      po 0.4 na skrajne wartości 1 i 9 i po 0.1 na środkowe. E(X) = 4.8 wypada
       wtedy między dwoma szczytami, w miejscu, którego zmienna w ogóle nie
       przyjmuje. O położeniu E(X) decydują więc dwie rzeczy naraz: jak
       prawdopodobna jest wartość i jak daleko leży od pozostałych. Sama E(X)
@@ -177,16 +177,16 @@ ch2_ev_var_ui <- list(
       "$$Var(X) = \\sum_x \\big(x - E(X)\\big)^2 \\cdot P(X = x) \\qquad SD(X) = \\sqrt{Var(X)}$$"
     )),
 
-    lc_p("Dla loterii A: Var(X) = 0,5 · (10 − 5)² + 0,5 · (0 − 5)² = 25 zł²,
-      więc SD(X) = 5 zł. Dla loterii C: Var(X) = 0,1 · (100 − 10)² +
-      0,9 · (0 − 10)² = 900 zł², więc SD(X) = 30 zł. Loteria B ma wariancję 0,
+    lc_p("Dla loterii A: Var(X) = 0.5 · (10 - 5)² + 0.5 · (0 - 5)² = 25 zł²,
+      więc SD(X) = 5 zł. Dla loterii C: Var(X) = 0.1 · (100 - 10)² +
+      0.9 · (0 - 10)² = 900 zł², więc SD(X) = 30 zł. Loteria B ma wariancję 0,
       bo jej jedyny wynik równa się E(X). Teraz widać, co odróżnia C od B:
       C ma wyższą wartość oczekiwaną, ale jej odchylenie standardowe jest sześć
       razy większe niż w A, a B nie ma rozrzutu wcale."),
 
     lc_p("Żeby oddzielić rozrzut od położenia, panel porównuje trzy loterie
       o tej samej wartości oczekiwanej, E(X) = 50 zł. Loteria A daje zawsze
-      50 zł. Loteria B daje 0 albo 100 zł, każdą kwotę z prawdopodobieństwem 0,5.
+      50 zł. Loteria B daje 0 albo 100 zł, każdą kwotę z prawdopodobieństwem 0.5.
       Loteria C wypłaca dowolną kwotę od 0 do 100 zł, a każda jest równie
       prawdopodobna. Panel symuluje wybraną liczbę gier i rysuje histogram wygranych
       każdej loterii."),
@@ -213,7 +213,7 @@ ch2_ev_var_ui <- list(
       W B wygrane tworzą dwa słupki na krańcach, każda leży 50 zł od E(X), więc
       Var(X) = 2500 zł², a SD(X) = 50 zł. W C wygrane rozkładają się równomiernie
       od 0 do 100 zł. To zmienna ciągła, którą poznamy w rozdziale 4; jej wariancja
-      wynosi około 833 zł², a SD(X) ≈ 28,9 zł. Średnie i odchylenia standardowe
+      wynosi około 833 zł², a SD(X) ≈ 28.9 zł. Średnie i odchylenia standardowe
       w tabeli obok zmieniają się z każdą symulacją, ale przy setkach gier trzymają
       się blisko tych wartości teoretycznych."),
 
@@ -289,7 +289,7 @@ ch2_ev_var_server <- function(input, output, session) {
     C = list(outcomes = c(100, 0), probs = c(0.1, 0.9), ev = 10,
              label = "C: 10% na 100 zł"),
     D = list(outcomes = c(8, -5), probs = c(0.6, 0.4), ev = 2.8,
-             label = "D: 60% na 8 zł, 40% na −5 zł")
+             label = "D: 60% na 8 zł, 40% na -5 zł")
   )
 
   # --- Widget 1: Loterie ---

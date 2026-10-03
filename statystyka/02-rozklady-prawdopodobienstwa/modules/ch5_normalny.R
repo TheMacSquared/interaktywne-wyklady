@@ -22,7 +22,7 @@ ch5_ui <- list(
       i nauczyliśmy się czytać prawdopodobieństwo jako pole pod krzywą gęstości.
       Jeden kształt pojawił się już wcześniej wiele razy. Histogram wzrostu
       z ankiety w wykładzie 01 był w przybliżeniu symetrycznym dzwonem,
-      a reguła 68–95–99,7 sprawdzała się na nim bardzo dobrze. Teraz nadamy
+      a reguła 68–95–99.7 sprawdzała się na nim bardzo dobrze. Teraz nadamy
       temu kształtowi wzór."),
 
     lc_p(gloss("rozkład normalny", "Rozkład normalny"), " (rozkład Gaussa) to
@@ -54,7 +54,7 @@ ch5_ui <- list(
     lc_p("Panel rysuje gęstość N(μ, σ) dla wybranych parametrów i zaznacza pasy
       μ ± σ, μ ± 2σ i μ ± 3σ. Przyciski ustawiają trzy przykłady z życia:
       wzrost kobiet N(166, 6), iloraz inteligencji N(100, 15) i temperaturę
-      ciała N(36,6; 0,4)."),
+      ciała N(36.6, 0.4)."),
 
     figure_panel(
       label = "Ryc. 5.1",
@@ -66,13 +66,13 @@ ch5_ui <- list(
           lc_slider("ch5_sigma", "σ (odch. std.)", 0.5, 5, 1, 0.1),
           hr(),
           div(class = "preset-buttons",
-            lc_action("ch5_preset_std", "N(0,1)\nStandardowy", variant = "outline"),
+            lc_action("ch5_preset_std", "N(0, 1)\nStandardowy", variant = "outline"),
             lc_action("ch5_preset_wzrost_k", "Wzrost\nkobiet", variant = "solid"),
             lc_action("ch5_preset_iq", "IQ", variant = "solid"),
             lc_action("ch5_preset_temp", "Temp.\nciała", variant = "solid")
           ),
           hr(),
-          checkboxInput("ch5_show_empirical", "Pokaż regułę 68–95–99,7", value = TRUE)
+          checkboxInput("ch5_show_empirical", "Pokaż regułę 68–95–99.7", value = TRUE)
         ),
         column(8,
           zoom_plot_ui("ch5_explore_plot", height = "400px"),
@@ -84,15 +84,15 @@ ch5_ui <- list(
     lc_p("Zmiana μ przesuwa krzywą wzdłuż osi, nie zmieniając jej kształtu.
       Zmiana σ rozciąga ją albo ściska. Ponieważ całe pole pod gęstością zawsze
       wynosi 1, szersza krzywa musi być niższa: szczyt N(0, 1) ma wysokość
-      0,399, a szczyt N(0, 2) tylko 0,199. Dla wzrostu kobiet pas μ ± σ to
-      160–172 cm, dla IQ 85–115 punktów, a dla temperatury ciała 36,2–37,0 °C."),
+      0.399, a szczyt N(0, 2) tylko 0.199. Dla wzrostu kobiet pas μ ± σ to
+      160–172 cm, dla IQ 85–115 punktów, a dla temperatury ciała 36.2–37.0 °C."),
 
     lc_p("Udział pola w każdym z pasów jest jednak zawsze taki sam, niezależnie
-      od μ i σ. W pasie μ ± σ leży 68,27% prawdopodobieństwa, w pasie μ ± 2σ —
-      95,45%, a w pasie μ ± 3σ — 99,73%. To jest ",
-      gloss("reguła 68-95-99,7", "reguła 68–95–99,7"), " w wersji teoretycznej.
+      od μ i σ. W pasie μ ± σ leży 68.27% prawdopodobieństwa, w pasie μ ± 2σ —
+      95.45%, a w pasie μ ± 3σ — 99.73%. To jest ",
+      gloss("reguła 68-95-99.7", "reguła 68–95–99.7"), " w wersji teoretycznej.
       W wykładzie 01 sprawdzaliśmy ją empirycznie na wzroście studentów
-      i otrzymaliśmy 67,5%, 96,5% i 100%. Wtedy była to obserwacja o danych,
+      i otrzymaliśmy 67.5%, 96.5% i 100%. Wtedy była to obserwacja o danych,
       teraz jest to własność rozkładu normalnego. Dane z ankiety zgadzały się
       z nią, bo rozkład wzrostu jest bliski normalnemu. Dlaczego udziały nie
       zależą od parametrów, pokaże sekcja o standaryzacji."),
@@ -104,7 +104,7 @@ ch5_ui <- list(
 
     lc_p("Dwa parametry wystarczają też do porównania grup. W wykładzie 01
       wykresy pudełkowe wzrostu kobiet i mężczyzn się nie nakładały, a mediany
-      wynosiły 166,4 i 177,1 cm. Panel rysuje dwie krzywe normalne naraz;
+      wynosiły 166.4 i 177.1 cm. Panel rysuje dwie krzywe normalne naraz;
       przycisk ustawia modele zbliżone do tych danych: N(166, 6) dla kobiet
       i N(178, 7) dla mężczyzn."),
 
@@ -132,13 +132,13 @@ ch5_ui <- list(
     ),
 
     lc_p("Przy ustawieniach startowych rozkład B, N(8, 2), leży na prawo od A,
-      N(5; 1,5), i jest szerszy, więc jego szczyt jest niższy (0,199 wobec
-      0,266). Dla wzrostu krzywe wyraźnie się nakładają, choć środkowe
+      N(5, 1.5), i jest szerszy, więc jego szczyt jest niższy (0.199 wobec
+      0.266). Dla wzrostu krzywe wyraźnie się nakładają, choć środkowe
       połowy grup są rozdzielone. Na wysokości 172 cm, w połowie między
-      średnimi, model daje 15,9% kobiet wyższych od tej wartości i 19,6%
+      średnimi, model daje 15.9% kobiet wyższych od tej wartości i 19.6%
       mężczyzn niższych od niej. Kobiet wyższych niż średni mężczyzna
-      (178 cm) jest 2,3%, a mężczyzn niższych niż średnia kobieta (166 cm)
-      4,3%. Różnica średnich mówi, która grupa jest przeciętnie wyższa,
+      (178 cm) jest 2.3%, a mężczyzn niższych niż średnia kobieta (166 cm)
+      4.3%. Różnica średnich mówi, która grupa jest przeciętnie wyższa,
       ale o tym, jak często pojedyncze osoby z obu grup się mijają, decyduje
       także σ."),
 
@@ -160,8 +160,8 @@ ch5_ui <- list(
       od średniej; znak mówi, po której stronie. Jeśli X ma rozkład normalny,
       to Z ma ", gloss("standardowy rozkład normalny", "standardowy rozkład normalny"),
       " N(0, 1), czyli rozkład o średniej 0 i SD 1. Kobieta o wzroście 180 cm
-      ma z = (180 − 166)/6 = 2,33, a mężczyzna o tym samym wzroście
-      z = (180 − 178)/7 = 0,29. Ta sama liczba centymetrów oznacza w pierwszej
+      ma z = (180 - 166)/6 = 2.33, a mężczyzna o tym samym wzroście
+      z = (180 - 178)/7 = 0.29. Ta sama liczba centymetrów oznacza w pierwszej
       grupie wartość rzadką, a w drugiej przeciętną."),
 
     lc_p("Panel standaryzuje jedną wartość. Górny wykres pokazuje ją na
@@ -186,14 +186,14 @@ ch5_ui <- list(
       )
     ),
 
-    lc_p("Wynik 80 punktów daje z = (80 − 65)/10 = 1,5: półtora odchylenia
+    lc_p("Wynik 80 punktów daje z = (80 - 65)/10 = 1.5: półtora odchylenia
       standardowego powyżej średniej. Oba wykresy mają identyczny kształt,
       a pionowa linia stoi w tym samym miejscu krzywej. Standaryzacja nie
       zmienia rozkładu, tylko opisuje oś w jednostkach σ, licząc od μ."),
 
-    lc_p("Stąd bierze się uzasadnienie reguły 68–95–99,7. Pas μ ± σ na
-      dowolnej skali to po standaryzacji zawsze przedział od −1 do 1, pas
-      μ ± 2σ to przedział od −2 do 2. Każdy rozkład normalny przechodzi
+    lc_p("Stąd bierze się uzasadnienie reguły 68–95–99.7. Pas μ ± σ na
+      dowolnej skali to po standaryzacji zawsze przedział od -1 do 1, pas
+      μ ± 2σ to przedział od -2 do 2. Każdy rozkład normalny przechodzi
       w ten sam rozkład N(0, 1), więc odsetki w pasach muszą być wszędzie
       takie same. Wystarczy je raz policzyć dla N(0, 1)."),
 
@@ -238,18 +238,18 @@ ch5_ui <- list(
       )
     ),
 
-    lc_p("Ustawienie startowe, P(−1 < Z < 1) = 0,6827, to pierwsza liczba
-      reguły 68–95–99,7. Wróćmy do egzaminu. Wynik powyżej 80 punktów
-      odpowiada z > 1,5, więc P(X > 80) = 1 − P(Z ≤ 1,5) = 0,0668: taki wynik
-      osiąga około 6,7% zdających. Podobnie IQ powyżej 130 punktów (z = 2) ma 2,3% populacji."),
+    lc_p("Ustawienie startowe, P(-1 < Z < 1) = 0.6827, to pierwsza liczba
+      reguły 68–95–99.7. Wróćmy do egzaminu. Wynik powyżej 80 punktów
+      odpowiada z > 1.5, więc P(X > 80) = 1 − P(Z ≤ 1.5) = 0.0668: taki wynik
+      osiąga około 6.7% zdających. Podobnie IQ powyżej 130 punktów (z = 2) ma 2.3% populacji."),
 
     lc_p("Często pytanie jest odwrotne: znamy prawdopodobieństwo i szukamy
       wartości. Odpowiedzią jest ", gloss("percentyl"), " rozkładu, czyli wartość
-      pozostawiającą na lewo pole p. Na przykład percentyl rzędu 0,975
-      rozkładu N(0, 1) wynosi 1,96, więc środkowe 95% rozkładu normalnego leży dokładnie w pasie
-      μ ± 1,96σ; reguła 68–95–99,7 zaokrągla to do 2σ. W modelu wzrostu
-      kobiet N(166, 6) percentyl rzędu 0,9 wynosi 173,7 cm,
-      więc 10% kobiet jest wyższych. Wartość 1,96 wróci w kolejnych
+      pozostawiającą na lewo pole p. Na przykład percentyl rzędu 0.975
+      rozkładu N(0, 1) wynosi 1.96, więc środkowe 95% rozkładu normalnego leży dokładnie w pasie
+      μ ± 1.96σ; reguła 68–95–99.7 zaokrągla to do 2σ. W modelu wzrostu
+      kobiet N(166, 6) percentyl rzędu 0.9 wynosi 173.7 cm,
+      więc 10% kobiet jest wyższych. Wartość 1.96 wróci w kolejnych
       wykładach przy przedziałach ufności."),
 
     lc_chapter_next(
@@ -340,7 +340,7 @@ ch5_server <- function(input, output, session) {
                  size = 5, fontface = "bold", color = upwr_secondary) +
         annotate("text", x = mu, y = y_top * 0.35, label = "95%",
                  size = 4.5, color = upwr_secondary) +
-        annotate("text", x = mu, y = y_top * 0.15, label = "99,7%",
+        annotate("text", x = mu, y = y_top * 0.15, label = "99.7%",
                  size = 4, color = upwr_reference)
     }
 

@@ -132,7 +132,7 @@ ch6_ui <- list(
 
     lc_p("Przy ustawieniach startowych populacja ma rozkład wykładniczy z μ = 2
       i σ = 2, a próby liczą n = 5 obserwacji. Wzory przewidują, że średnie skupią się
-      wokół 2, z odchyleniem standardowym 2/√5 ≈ 0,89. Po zebraniu 1000 średnich SD
+      wokół 2, z odchyleniem standardowym 2/√5 ≈ 0.89. Po zebraniu 1000 średnich SD
       z symulacji wypada blisko tej wartości. Histogram średnich jest jednak nadal
       wyraźnie prawoskośny: przy tak skośnej populacji pięć obserwacji to za mało,
       żeby kształt był normalny. Gdy n rośnie, asymetria stopniowo słabnie."),
@@ -174,16 +174,16 @@ ch6_ui <- list(
 
     lc_p("Dla rozkładu jednostajnego, który jest symetryczny, histogram pokrywa się
       z krzywą już przy n = 5. Rozkład wykładniczy ma skośność 2, a skośność średniej
-      maleje jak 2/√n: wynosi 0,89 dla n = 5, 0,37 dla n = 30 i 0,20 dla n = 100.
+      maleje jak 2/√n: wynosi 0.89 dla n = 5, 0.37 dla n = 30 i 0.20 dla n = 100.
       Asymetria słabnie więc powoli i najdłużej widać ją w ogonach."),
 
     lc_p("Dobrze to widać na konkretnym prawdopodobieństwie. W rozkładzie normalnym
-      przedział μ ± 1,96·SE obejmuje dokładnie 95% wartości, po 2,5% zostaje
-      w każdym ogonie (to dokładniejsza wersja reguły 68–95–99,7 z rozdziału 5).
+      przedział μ ± 1.96·SE obejmuje dokładnie 95% wartości, po 2.5% zostaje
+      w każdym ogonie (to dokładniejsza wersja reguły 68–95–99.7 z rozdziału 5).
       Dla średnich z rozkładu wykładniczego przy n = 5 powyżej górnej granicy leży
-      4,3% średnich, a poniżej dolnej tylko 0,04%. Przy n = 30 jest to 3,4% i 1,4%,
-      przy n = 100 — 3,0% i 1,9%. Łącznie poza przedziałem leży za każdym razem
-      od 4,4% do 4,9% średnich, blisko 5%, ale podział między ogonami wyrównuje się
+      4.3% średnich, a poniżej dolnej tylko 0.04%. Przy n = 30 jest to 3.4% i 1.4%,
+      przy n = 100 — 3.0% i 1.9%. Łącznie poza przedziałem leży za każdym razem
+      od 4.4% do 4.9% średnich, blisko 5%, ale podział między ogonami wyrównuje się
       dopiero przy dużych n."),
 
     inline_callout(
@@ -218,8 +218,8 @@ ch6_ui <- list(
     ),
 
     lc_p("Kolejne kroki pokazują jednocześnie oba skutki uśredniania. Rozkład się zwęża:
-      SE spada z 2 dla pojedynczej obserwacji do 1,41 dla n = 2, 0,89 dla n = 5
-      i 0,37 dla n = 30. I symetryzuje się: długi prawy ogon skraca się, lewa strona
+      SE spada z 2 dla pojedynczej obserwacji do 1.41 dla n = 2, 0.89 dla n = 5
+      i 0.37 dla n = 30. I symetryzuje się: długi prawy ogon skraca się, lewa strona
       się wypełnia, a przy n = 30 krzywa normalna pasuje do histogramu niemal dokładnie."),
 
     lc_p("To samo dotyczy sum, bo suma n obserwacji to n razy ich średnia. Dlatego
@@ -229,7 +229,7 @@ ch6_ui <- list(
       normalny jest dopiero ich łączny efekt."),
 
     lc_p("W praktyce mamy zwykle jedną próbę i jedną średnią, a μ nie znamy. CTG mówi,
-      jak daleko ta średnia może leżeć od μ: w około 95% prób nie dalej niż 1,96·SE.
+      jak daleko ta średnia może leżeć od μ: w około 95% prób nie dalej niż 1.96·SE.
       Odwrócenie tego zdania — od średniej z próby do zakresu wiarygodnych wartości μ —
       daje ", gloss("przedział ufności"), ", któremu poświęcony jest wykład 03.
       Zobaczymy tam też, co zrobić, gdy σ również trzeba oszacować z danych."),
@@ -440,9 +440,9 @@ ch6_server <- function(input, output, session) {
     step <- ch6_why_step()
     texts <- list(
       "Pojedyncza obserwacja z rozkładu wykładniczego: silnie prawoskośna, SD = σ = 2.",
-      "Średnia z 2: mniej skrajnych wartości, lewa strona zaczyna się wypełniać. SE ≈ 1,41.",
-      "Średnia z 5: kształt bardziej symetryczny, prawy ogon wciąż dłuższy. SE ≈ 0,89.",
-      "Średnia z 30: krzywa normalna pasuje niemal dokładnie. SE ≈ 0,37."
+      "Średnia z 2: mniej skrajnych wartości, lewa strona zaczyna się wypełniać. SE ≈ 1.41.",
+      "Średnia z 5: kształt bardziej symetryczny, prawy ogon wciąż dłuższy. SE ≈ 0.89.",
+      "Średnia z 30: krzywa normalna pasuje niemal dokładnie. SE ≈ 0.37."
     )
     texts[[step]]
   })

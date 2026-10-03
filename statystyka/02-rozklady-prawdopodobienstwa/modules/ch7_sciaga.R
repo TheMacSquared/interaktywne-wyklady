@@ -237,7 +237,7 @@ ch7_server <- function(input, output, session) {
       ),
       "c_chi_sq" = list(
         name = "Chi-kwadrat χ²(df)",
-        desc = "Suma kwadratów zmiennych N(0,1); nieujemny, prawoskośny",
+        desc = "Suma kwadratów zmiennych N(0, 1); nieujemny, prawoskośny",
         example = "Test niezależności, test dopasowania, estymacja wariancji"
       ),
       "c_lognormal" = list(

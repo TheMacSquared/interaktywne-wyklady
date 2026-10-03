@@ -32,7 +32,7 @@ ch1_ui <- list(
     lc_p("Wynik rzutu kostką oznaczmy literą \\(X\\). To ",
       gloss("zmienna losowa"), ": jej wartość zależy od przypadku, a przed
       rzutem znamy tylko możliwe wyniki, od 1 do 6. Dla uczciwej kostki każda
-      ścianka ma tę samą szansę, więc \\(P(X = k) = 1/6 \\approx 0{,}167\\)
+      ścianka ma tę samą szansę, więc \\(P(X = k) = 1/6 \\approx 0.167\\)
       dla każdego \\(k\\). Po \\(n\\) rzutach możemy policzyć, ile razy wypadła
       ścianka \\(k\\), i obliczyć ",
       gloss("częstość względna", "częstość względną"), " \\(n_k / n\\),
@@ -75,9 +75,9 @@ ch1_ui <- list(
       wypaść ani razu, inna kilka razy z rzędu. Linie na prawym wykresie
       skaczą najpierw gwałtownie, a potem coraz spokojniej zbliżają się do
       1/6. Wielkość tych wahań da się policzyć. Przy 10 rzutach częstość
-      ścianki odchyla się od 1/6 typowo o około 0,12, czyli prawie o tyle,
+      ścianki odchyla się od 1/6 typowo o około 0.12, czyli prawie o tyle,
       ile wynosi samo prawdopodobieństwo. Przy 100 rzutach typowe odchylenie
-      spada do 0,037, przy 1000 do 0,012, a przy 10 000 do 0,004. Stukrotnie
+      spada do 0.037, przy 1000 do 0.012, a przy 10 000 do 0.004. Stukrotnie
       więcej rzutów daje dziesięciokrotnie mniejszy błąd."),
 
     lc_p("Prawo wielkich liczb nie mówi, że kostka „wyrównuje” wyniki. Jeśli
@@ -140,12 +140,12 @@ ch1_ui <- list(
 
     lc_p("Wzrost losujemy z rozkładu normalnego o średniej 170 cm
       i odchyleniu standardowym 8 cm. To wartości bliskie tym z ankiety,
-      gdzie średni wzrost wynosił 171,1 cm, a odchylenie standardowe 8,1 cm.
+      gdzie średni wzrost wynosił 171.1 cm, a odchylenie standardowe 8.1 cm.
       Według modelu 68% osób ma od 162 do 178 cm. Czas dojazdu pochodzi
       z rozkładu skośnego, tego samego, z którego wygenerowano dane ankiety.
-      Model ma średnią 35 min i medianę 31,7 min, a w ankiecie wyszło
-      35,7 i 32,9 min. Model przewiduje, że 8,8% osób dojeżdża dłużej niż
-      godzinę. W ankiecie takich osób było 19 na 200, czyli 9,5%."),
+      Model ma średnią 35 min i medianę 31.7 min, a w ankiecie wyszło
+      35.7 i 32.9 min. Model przewiduje, że 8.8% osób dojeżdża dłużej niż
+      godzinę. W ankiecie takich osób było 19 na 200, czyli 9.5%."),
 
     lc_p("Przy próbie liczącej 200 obserwacji histogram ma zarys krzywej,
       ale jest poszarpany, a każde nowe losowanie zmienia wysokość słupków.
@@ -165,8 +165,8 @@ ch1_ui <- list(
       największą różnicą między częstością względną a prawdopodobieństwem.
       Model nie musi przy tym przypisywać wszystkim wynikom tej samej szansy.
       Obok uczciwej kostki panel pokazuje kostkę obciążoną, na której
-      szóstka wypada z prawdopodobieństwem 0,5, a każda z pozostałych ścianek
-      z prawdopodobieństwem 0,1, oraz rzut monetą."),
+      szóstka wypada z prawdopodobieństwem 0.5, a każda z pozostałych ścianek
+      z prawdopodobieństwem 0.1, oraz rzut monetą."),
 
     lc_p("Słupki pokazują częstości z wylosowanych obserwacji, punkty
       połączone linią — prawdopodobieństwa z modelu. Pod wykresem panel
@@ -193,16 +193,16 @@ ch1_ui <- list(
       )
     ),
 
-    lc_p("Przy 100 rzutach uczciwą kostką największa różnica przekracza 0,05
+    lc_p("Przy 100 rzutach uczciwą kostką największa różnica przekracza 0.05
       mniej więcej w dwóch losowaniach na trzy. Przy 500 rzutach zdarza się
       to już tylko w około 2 losowaniach na 100. Dla monety przy 100 rzutach
-      próg 0,05 zostaje przekroczony rzadziej, w około jednym losowaniu
+      próg 0.05 zostaje przekroczony rzadziej, w około jednym losowaniu
       na trzy, bo największą różnicę wybieramy spośród dwóch wyników,
       a nie sześciu."),
 
     lc_p("Obciążona kostka pokazuje drugą stronę tej zależności. Przy 100
-      rzutach częstość szóstek waha się typowo o 0,05 wokół 0,5, więc nie da
-      się jej pomylić z wartością 1/6 ≈ 0,167, jakiej oczekiwalibyśmy od
+      rzutach częstość szóstek waha się typowo o 0.05 wokół 0.5, więc nie da
+      się jej pomylić z wartością 1/6 ≈ 0.167, jakiej oczekiwalibyśmy od
       uczciwej kostki. Częstości nie tylko przybliżają znany model, ale
       pozwalają też odróżnić jeden model od drugiego. Na tym pomyśle opiera
       się wnioskowanie statystyczne, któremu poświęcimy kolejne wykłady."),
@@ -245,7 +245,7 @@ ch1_ui <- list(
       )
     ),
 
-    lc_p("Ustawienie startowe, cztery razy 0,25, to rozkład, w którym każdy
+    lc_p("Ustawienie startowe, cztery razy 0.25, to rozkład, w którym każdy
       wynik jest równie prawdopodobny, jak przy kostce z czterema ściankami.
       Gdy zwiększysz jedno prawdopodobieństwo, suma przekroczy 1 i rozkład
       przestanie być poprawny, dopóki nie zmniejszysz innego. Prawdopodobieństwa
