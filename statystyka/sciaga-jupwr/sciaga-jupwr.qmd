@@ -35,7 +35,7 @@ format:
           top=3pt, bottom=3pt, before skip=6pt, after skip=6pt,
           title={#1}, coltitle=upwraccent, colbacktitle=upwrpanel,
           fonttitle=\bfseries, titlerule=0pt, toptitle=2pt, bottomtitle=0pt}
-        \newcommand{\jmenu}[1]{{\color{upwraccent}\small #1}}
+        \newcommand{\jmenu}[1]{{\leavevmode\color{upwraccent}\small #1}}
 execute:
   echo: false
   warning: false
@@ -96,7 +96,7 @@ cat(sprintf("\\textit{Stan na jUPWR %s. Wpis każdego tematu jest raz — przy p
 \textbf{Zakładki:} Zmienne · Dane · Analizy · Wykresy · Edytuj. \quad Plik: przycisk {\symfont ☰} w lewym górnym rogu.
 
 \smallskip
-\begin{tabular}{@{}>{\bfseries\color{upwraccent}}p{3.6cm}p{13cm}@{}}
+\begin{tabular}{@{}>{\leavevmode\bfseries\color{upwraccent}}p{3.6cm}p{13cm}@{}}
 Eksploracja & Zmienne ilościowe · Zmienne jakościowe · Szereg rozdzielczy \\
 Rozkłady & rozkłady ciągłe (normalny, t, χ², F, wykładniczy …) i dyskretne (dwumianowy, Poissona …) \\
 Przedziały ufności & Średnie · Proporcje · Korelacja i regresja · Dydaktyka (Jak działa bootstrap) \\

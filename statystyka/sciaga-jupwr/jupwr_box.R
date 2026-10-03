@@ -54,7 +54,8 @@ jupwr_box <- function(id, title = NULL, compact = FALSE) {
   w <- jupwr_entry(id)
   zmienne <- if (length(w$zmienne)) {
     tags$ul(lapply(names(w$zmienne), function(pole)
-      tags$li(tags$strong(pole), ": ", w$zmienne[[pole]])))
+      tags$li(HTML(sprintf("<strong>%s</strong>: %s",
+                           htmltools::htmlEscape(pole), htmltools::htmlEscape(w$zmienne[[pole]]))))))
   }
   lc_note(
     "jUPWR",

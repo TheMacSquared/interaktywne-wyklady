@@ -6,7 +6,7 @@
 #   - sciaga-jupwr.pdf (sciaga-jupwr.qmd): część A wg wykładów, część B wg pytań,
 #   - pola „Jak to zrobić w jUPWR” w aplikacjach wykładów (jupwr_box.R).
 #
-# Etykiety menu i opcji przepisane z jUPWR 1.0.5 (pliki .a.yaml/.u.yaml modułów
+# Etykiety menu i opcji przepisane z jUPWR 1.0.6 (pliki .a.yaml/.u.yaml modułów
 # jEksplor, jdistrACTION, jCI, jTestyT, jCzest, jANOVA, jRegr). Po zmianie UI
 # w jUPWR poprawiać TUTAJ — PDF i pola w wykładach odświeżą się same.
 #
@@ -24,7 +24,7 @@
 #   uwaga    — (opcjonalnie) jedna pułapka
 # ==============================================================================
 
-wersja_jupwr: "1.0.5"
+wersja_jupwr: "1.0.6"
 
 wyklady:
   "01": Statystyka opisowa
@@ -490,8 +490,8 @@ wpisy:
       Czynniki: "zmienna grupująca (trzy lub więcej grup)"
     kroki:
       - "Test: Wielkość efektu (η²p) — przy jednym czynniku równa η²."
-      - "Test: Nierówne wariancje (Welch), gdy wariancje w grupach się różnią."
-      - "Porównania: metoda Tukeya (HSD) domyślnie; Tabela porównań parami."
+      - "Test: Nierówne wariancje (Welch), gdy wariancje w grupach się różnią — lista Porównania pokazuje wtedy Gamesa-Howella zamiast Tukeya."
+      - "Porównania: Tukeya (HSD) domyślnie, Dunnetta (vs kontrola) przy grupie kontrolnej; Tabela porównań parami."
       - "Założenia: Jednorodność wariancji, Normalność reszt, Wykres Q-Q reszt."
     wynik: "Tabela ANOVA (F, df, p, η²p); wykres średnich z literami — grupy z tą samą literą nie różnią się istotnie."
 
@@ -517,7 +517,7 @@ wpisy:
     kroki:
       - "Testy t → Dwie grupy → Sprawdzenie założeń: Jednorodność wariancji (Levene)."
       - "ANOVA → Założenia: Jednorodność wariancji (test Levene’a i Bartletta)."
-      - "Przy różnych wariancjach: t Welcha albo ANOVA → Nierówne wariancje (Welch)."
+      - "Przy różnych wariancjach: t Welcha albo ANOVA → Nierówne wariancje (Welch); porównania parami liczą się wtedy testem Gamesa-Howella."
     wynik: "Tabela testu z F i p."
 
   - id: sila-efektu
