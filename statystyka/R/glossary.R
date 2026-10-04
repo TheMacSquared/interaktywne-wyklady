@@ -83,6 +83,8 @@
     "Wartości Q1, Q2 i Q3 dzielące uporządkowane dane na cztery równe części; Q2 to mediana.",
   "percentyl" =
     "Wartość, poniżej której leży dany procent obserwacji (np. 90. percentyl).",
+  "kwantyl" =
+    "Wartość, poniżej której leży zadany odsetek obserwacji; kwartyle i percentyle są jego szczególnymi przypadkami.",
   "rozstęp" =
     "Różnica między wartością największą a najmniejszą; bardzo wrażliwy na wartości odstające.",
   "rozstęp międzykwartylowy" =
@@ -119,6 +121,8 @@
     "PMF — dla zmiennej dyskretnej przyporządkowuje każdej wartości jej prawdopodobieństwo P(X = x).",
   "funkcja gęstości" =
     "PDF — dla zmiennej ciągłej: pole pod krzywą nad przedziałem to prawdopodobieństwo wpadnięcia w ten przedział.",
+  "dystrybuanta" =
+    "Funkcja podająca prawdopodobieństwo, że zmienna losowa przyjmie wartość nie większą niż x.",
   "próba Bernoulliego" =
     "Pojedyncze doświadczenie o dwóch wynikach (sukces/porażka) z prawdopodobieństwem sukcesu p.",
   "rozkład jednostajny" =
@@ -283,6 +287,8 @@
     "Model dla zmiennej zależnej 0/1, opisujący prawdopodobieństwo sukcesu jako funkcję predyktorów.",
   "iloraz szans" =
     "OR — ile razy zmieniają się szanse sukcesu, gdy predyktor rośnie o 1; w regresji logistycznej OR = e^β.",
+  "log-szanse" =
+    "Logarytm ilorazu szans; skala, na której regresja logistyczna jest liniowa.",
 
   # Dane i metodologia badań (W07–W09) ----------------------------------------
   "jednostka obserwacji" =
@@ -369,12 +375,18 @@
     "Wartość prawdopodobieństwa (np. 0.5), powyżej której model logistyczny przypisuje obserwację do klasy „1”.",
   "macierz pomyłek" =
     "Tabela zestawiająca klasy przewidziane przez model z prawdziwymi: trafienia i oba rodzaje błędów.",
+  "czułość" =
+    "Odsetek przypadków dodatnich, które model poprawnie wykrył.",
+  "swoistość" =
+    "Odsetek przypadków ujemnych, które model poprawnie rozpoznał.",
 
   # Dane i metodologia (uzupełnienie) -----------------------------------------
   "dane eksperymentalne" =
     "Dane z badania, w którym badacz losowo przydziela warunki; pozwalają wnioskować o przyczynowości.",
   "dane podłużne" =
-    "Dane z wielokrotnych pomiarów tych samych jednostek w czasie; pokazują zmiany w obrębie jednostek."
+    "Dane z wielokrotnych pomiarów tych samych jednostek w czasie; pokazują zmiany w obrębie jednostek.",
+  "bootstrap" =
+    "Szacowanie niepewności przez wielokrotne losowanie ze zwracaniem z danych z próby."
 )
 
 # Wstawia klikalny termin ze słownika.
