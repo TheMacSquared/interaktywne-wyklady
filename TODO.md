@@ -193,8 +193,6 @@ to stosują.
 
 ### 02 — rozkłady prawdopodobieństwa
 
-- [ ] Widget krokowy (rozdz. 4): wygładzona krzywa wychodzi poza dziedzinę
-  dla rozkładu wykładniczego i jednostajnego.
 
 ### 06 — regresja
 

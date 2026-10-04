@@ -560,6 +560,16 @@ ch4_server <- function(input, output, session) {
     )
   })
 
+  # Granice dziedziny dla wygładzenia (kroki 6–7): krzywa nie wychodzi poza
+  # możliwe wartości, a odbicie jądra poprawia jej wysokość przy brzegu.
+  ch4_step_bounds <- reactive({
+    switch(input$ch4_step_dist,
+      "normal" = c(-Inf, Inf),
+      "exp"    = c(0, Inf),
+      "unif"   = c(0, 10)
+    )
+  })
+
   # Stała rama z pełnej próby: oś X wspólna dla kroków, oś Y wspólna dla
   # kroków na skali gęstości (5–7). Zapas 14% mieści skrajne słupki 5 binów.
   ch4_step_frame <- reactive({
@@ -569,7 +579,9 @@ ch4_server <- function(input, output, session) {
     hist_max <- function(bins, stat) {
       max(layer_data(ggplot(df, aes(x = x)) + geom_histogram(bins = bins))[[stat]])
     }
-    dens_max <- max(hist_max(30, "density"), max(density(data)$y))
+    kde_max <- max(layer_data(ggplot(df, aes(x = x)) +
+                                geom_density(bounds = ch4_step_bounds()))$density)
+    dens_max <- max(hist_max(30, "density"), kde_max)
     list(
       xlim = range(data) + c(-x_pad, x_pad),
       count_max = c(`5` = hist_max(5, "count"), `15` = hist_max(15, "count"),
@@ -620,13 +632,14 @@ ch4_server <- function(input, output, session) {
       ggplot(df, aes(x = x)) +
         step_result(geom_histogram, mapping = aes(y = after_stat(density)), bins = 30,
                     alpha = 0.5) +
-        step_layer(geom_density, "new", linewidth = 1.5) +
+        step_layer(geom_density, "new", linewidth = 1.5,
+                   bounds = ch4_step_bounds()) +
         labs(x = "Wartość", y = "Gęstość") +
         dens_frame
     } else {
       ggplot(df, aes(x = x)) +
         step_layer(geom_density, "known", fill = STEP_ROLES$data$colour,
-                   linewidth = 1.2, alpha = 0.3) +
+                   linewidth = 1.2, alpha = 0.3, bounds = ch4_step_bounds()) +
         labs(x = "Wartość", y = "Gęstość f(x)") +
         dens_frame
     }
