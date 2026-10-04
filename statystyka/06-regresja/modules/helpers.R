@@ -176,7 +176,7 @@ generate_confounding_data <- function(n = 160) {
   )
 }
 
-# Regresja do średniej (Ryc. 1.1a): 100 studentów, dwa kolokwia. Wynik to
+# Regresja do średniej (Ryc. 1.3): 100 studentów, dwa kolokwia. Wynik to
 # stała umiejętność plus losowa forma dnia; ziarno ustalone, dane zawsze te same.
 regression_to_mean_data <- function() {
   withr::with_seed(180, {

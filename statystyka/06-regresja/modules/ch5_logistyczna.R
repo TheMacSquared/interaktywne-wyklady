@@ -59,7 +59,7 @@ ch5_ui <- list(
       angielskiego jako drugiego języka."),
 
     figure_panel(
-      label = "Ryc. 5.0", title = "Od wyniku punktowego do prawdopodobieństwa zdania",
+      label = "Ryc. 5.1", title = "Od wyniku punktowego do prawdopodobieństwa zdania",
       full_width = TRUE,
       lc_toolbar(
         lc_slider("ch5_cas_y_cut", "Próg zaliczenia: zdał od", 630, 680, 656, 1),
@@ -100,7 +100,7 @@ ch5_ui <- list(
       modele."),
 
     figure_panel(
-      label = "Ryc. 5.1", title = "Liniowy vs logistyczny na danych binarnych",
+      label = "Ryc. 5.2", title = "Liniowy vs logistyczny na danych binarnych",
       full_width = TRUE,
       lc_toolbar(
         lc_slider("ch5_lin_log_x", "Godziny nauki", 0, 40, 2, 1),
@@ -156,7 +156,7 @@ ch5_ui <- list(
       dla wybranych wartości β₀ i β₁."),
 
     figure_panel(
-      label = "Ryc. 5.2", title = "Sigmoida w akcji",
+      label = "Ryc. 5.3", title = "Sigmoida w akcji",
       full_width = TRUE,
       lc_toolbar(
         lc_slider("ch5_b0", "β₀ (wyraz wolny)", -10, 10, -4, 0.5),
@@ -207,7 +207,7 @@ ch5_ui <- list(
       przewidywane prawdopodobieństwo zdania dla nowego studenta."),
 
     figure_panel(
-      label = "Ryc. 5.3", title = "Predykcja zdania egzaminu",
+      label = "Ryc. 5.4", title = "Predykcja zdania egzaminu",
       full_width = TRUE,
       lc_toolbar(
         lc_slider("ch5_n", "n", 50, 300, 150, 25),
@@ -281,14 +281,14 @@ ch5_ui <- list(
     ),
 
     lc_p("Tabela poniżej pokazuje współczynniki modelu dopasowanego w panelu
-      Ryc. 5.3: β na skali logitu, iloraz szans, jego 95% ", gloss("przedział ufności"), "
+      Ryc. 5.4: β na skali logitu, iloraz szans, jego 95% ", gloss("przedział ufności"), "
       i ", gloss("p-wartość"), "."),
 
     figure_panel(
-      label = "Ryc. 5.4", title = "Ilorazy szans",
+      label = "Ryc. 5.5", title = "Ilorazy szans",
       full_width = TRUE,
       uiOutput("ch5_odds_ratios"),
-      lc_caption("Używa modelu dopasowanego w Ryc. 5.3.")
+      lc_caption("Używa modelu dopasowanego w Ryc. 5.4.")
     ),
 
     lc_p("Prawdziwe ilorazy szans w modelu, z którego panel losuje dane, to
@@ -319,18 +319,18 @@ ch5_ui <- list(
       rzeczywistość, w kolumnach predykcja. Dokładność to odsetek wszystkich
       trafień. ", gloss("czułość", "Czułość"), " to odsetek rzeczywistych sukcesów, które model
       rozpoznał, a ", gloss("swoistość"), " to odsetek rzeczywistych porażek, które
-      rozpoznał. Panel buduje macierz dla modelu z Ryc. 5.3 i wybranego
+      rozpoznał. Panel buduje macierz dla modelu z Ryc. 5.4 i wybranego
       progu."),
 
     figure_panel(
-      label = "Ryc. 5.5", title = "Próg klasyfikacji i macierz pomyłek",
+      label = "Ryc. 5.6", title = "Próg klasyfikacji i macierz pomyłek",
       full_width = TRUE,
       lc_toolbar(
         lc_slider("ch5_threshold", "Próg decyzji", 0.1, 0.9, 0.5, 0.05),
         lc_readouts(uiOutput("ch5_threshold_info"))
       ),
       lc_plot("ch5_threshold_plot", max_height = "280px"),
-      lc_caption("Używa modelu dopasowanego w Ryc. 5.3.")
+      lc_caption("Używa modelu dopasowanego w Ryc. 5.4.")
     ),
 
     lc_p("Obniżenie progu sprawia, że więcej osób trafia do klasy „zda”:
@@ -798,7 +798,7 @@ ch5_server <- function(input, output, session) {
     df <- ch5_data()
     if (is.null(model) || is.null(df)) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Najpierw dopasuj model w Ryc. 5.3",
+        annotate("text", x = 0.5, y = 0.5, label = "Najpierw dopasuj model w Ryc. 5.4",
                  size = 5.5, color = upwr_reference) +
         theme_void()
     } else {

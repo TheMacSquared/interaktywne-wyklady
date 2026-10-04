@@ -94,7 +94,7 @@ ch1_ui <- list(
       standardowego"), " błędu losowego."),
 
     figure_panel(
-      label = "Ryc. 1.0", title = "Co robią β₀, β₁ i szum?",
+      label = "Ryc. 1.1", title = "Co robią β₀, β₁ i szum?",
       full_width = TRUE,
       lc_toolbar(
         lc_slider("ch1_beta_b0", "β₀ (punkt startu)", -10, 20, 5, 1),
@@ -140,7 +140,7 @@ ch1_ui <- list(
       losowej próbie 65 punktów."),
 
     figure_panel(
-      label = "Ryc. 1.1",
+      label = "Ryc. 1.2",
       full_width = TRUE,
       lc_step_widget("ch1_corr",
         title = "Jak policzyć regresję z korelacji?",
@@ -181,7 +181,7 @@ ch1_ui <- list(
       do średniego wyniku wybranej grupy na drugim kolokwium."),
 
     figure_panel(
-      label = "Ryc. 1.1a", title = "Najlepsi i najsłabsi na drugim kolokwium",
+      label = "Ryc. 1.3", title = "Najlepsi i najsłabsi na drugim kolokwium",
       full_width = TRUE,
       lc_toolbar(
         lc_segmented("ch1_rtm_group", "Grupa",
@@ -284,7 +284,7 @@ ch1_ui <- list(
       z inną prostą."),
 
     figure_panel(
-      label = "Ryc. 1.1b",
+      label = "Ryc. 1.4",
       full_width = TRUE,
       lc_step_widget("ch1_ols",
         title = "Jak linia staje się modelem",
@@ -387,7 +387,7 @@ ch1_ui <- list(
       nachyleniu."),
 
     figure_panel(
-      label = "Ryc. 1.2", title = "Kiedy nachylenie jest istotne?",
+      label = "Ryc. 1.5", title = "Kiedy nachylenie jest istotne?",
       full_width = TRUE,
       lc_toolbar(
         selectInput("ch1_pval_scenario", "Scenariusz",
@@ -464,7 +464,7 @@ ch1_ui <- list(
       swoją ocenę z odpowiedzią."),
 
     figure_panel(
-      label = "Ryc. 1.4", title = "CASchools: od tabeli wyników do interpretacji",
+      label = "Ryc. 1.6", title = "CASchools: od tabeli wyników do interpretacji",
       full_width = TRUE,
       lc_toolbar(
         selectInput("ch1_cas_x", "Zmienna X",
@@ -504,7 +504,7 @@ ch1_ui <- list(
       poprawnie odczytuje ten współczynnik."),
 
     figure_panel(
-      label = "Ryc. 1.4b",
+      label = "Ryc. 1.7",
       title = "Co znaczy b₁ = 1.94?",
       p("Model: wynik z czytania (punkty) ~ dochód okręgu (tys. USD),
         \\(b_1 = 1.94\\). Które zdanie jest poprawne?"),
@@ -569,7 +569,7 @@ ch1_ui <- list(
       \\(\\hat{Y}\\) samodzielnie przed odsłonięciem odpowiedzi."),
 
     figure_panel(
-      label = "Ryc. 1.5", title = "Użyj równania regresji do przewidywania",
+      label = "Ryc. 1.8", title = "Użyj równania regresji do przewidywania",
       full_width = TRUE,
       lc_toolbar(
         selectInput("ch1_pred_case", "Model",

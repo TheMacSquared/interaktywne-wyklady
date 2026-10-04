@@ -255,7 +255,7 @@ ch2_ui <- list(
       prosta po jego dodaniu."),
 
     figure_panel(
-      label = "Ryc. 2.1b", title = "Kiedy jeden punkt przestawia prostą",
+      label = "Ryc. 2.2", title = "Kiedy jeden punkt przestawia prostą",
       full_width = TRUE,
       lc_toolbar(
         lc_segmented("ch2_infl_case", "Dodatkowy student",
@@ -332,7 +332,7 @@ ch2_ui <- list(
       niej."),
 
     figure_panel(
-      label = "Ryc. 2.2", title = "To samo X i Y, różna siła wyjaśniania",
+      label = "Ryc. 2.3", title = "To samo X i Y, różna siła wyjaśniania",
       full_width = TRUE,
       lc_plot("ch2_r2_compare_plot", ratio = "1.7/1", max_height = "360px")
     ),
@@ -360,7 +360,7 @@ ch2_ui <- list(
       pokazuje każdy zestaw z prostą i wykresem reszt, tak jak Ryc. 2.1."),
 
     figure_panel(
-      label = "Ryc. 2.2a", title = "Ta sama prosta, to samo R², cztery różne historie",
+      label = "Ryc. 2.4", title = "Ta sama prosta, to samo R², cztery różne historie",
       full_width = TRUE,
       lc_toolbar(
         lc_segmented("ch2_ansc_set", "Zestaw",
@@ -375,7 +375,7 @@ ch2_ui <- list(
       bo zależność jest krzywa. W zestawie 3 dziesięć punktów leży niemal dokładnie
       na prostej o nachyleniu 0.35, a jeden odstający punkt podnosi je do
       0.50. W zestawie 4 dziesięć punktów ma tę samą wartość X, a nachylenie
-      wyznacza w całości jeden punkt o dużej dźwigni, jak w Ryc. 2.1b. Bez
+      wyznacza w całości jeden punkt o dużej dźwigni, jak w Ryc. 2.2. Bez
       niego prostej nie dałoby się w ogóle dopasować. Tabela współczynników
       i \\(R^2\\) są we wszystkich czterech zestawach identyczne; różnicę
       widać dopiero na wykresach."),
@@ -417,7 +417,7 @@ ch2_ui <- list(
       w następnej sekcji."),
 
     figure_panel(
-      label = "Ryc. 2.2b", title = "Przeuczenie: dopasowanie kontra generalizacja",
+      label = "Ryc. 2.5", title = "Przeuczenie: dopasowanie kontra generalizacja",
       full_width = TRUE,
       lc_plot("ch2_overfit_plot", ratio = "1.6/1", max_height = "380px"),
       uiOutput("ch2_overfit_stats")
@@ -494,7 +494,7 @@ ch2_ui <- list(
       prostej i porównuje RMSE z zakresem Y."),
 
     figure_panel(
-      label = "Ryc. 2.3", title = "RMSE i zakres Y na danych CASchools",
+      label = "Ryc. 2.6", title = "RMSE i zakres Y na danych CASchools",
       full_width = TRUE,
       lc_toolbar(
         selectInput("ch2_rmse_case", "Model",
@@ -538,7 +538,7 @@ ch2_ui <- list(
       Suwak wybiera dochód, dla którego liczymy prognozę."),
 
     figure_panel(
-      label = "Ryc. 2.4", title = "Ekstrapolacja poza zakres danych",
+      label = "Ryc. 2.7", title = "Ekstrapolacja poza zakres danych",
       full_width = TRUE,
       lc_toolbar(
         lc_slider("ch2_extrap_x", "Dochód okręgu (tys. USD)", 1, 80, 20, 1)
