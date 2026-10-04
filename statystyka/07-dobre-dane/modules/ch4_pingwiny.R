@@ -47,8 +47,8 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
   ),
 
   lc_p("Każdy wiersz to jeden osobnik, a zmienne mają jasne nazwy z jednostką
-    w nazwie (mm, g). Zbiór łączy zmienne jakościowe (gatunek, wyspa, płeć)
-    z ilościowymi pomiarami, więc nadaje się zarówno do porównań grup, jak
+    w nazwie (mm, g). Zbiór łączy ", gloss("zmienna jakościowa", "zmienne jakościowe"), " (gatunek, wyspa, płeć)
+    z ", gloss("zmienna ilościowa", "ilościowymi"), " pomiarami, więc nadaje się zarówno do porównań grup, jak
     i do korelacji. Już w pierwszych wierszach widać jednak puste komórki."),
 
   lc_h2("sec-03", "Czy są braki danych?"),
@@ -85,7 +85,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     lc_plot("tab3_boxplot", max_height = "300px")
   ),
 
-  lc_p("Gatunki wyraźnie się różnią. Mediana długości dzioba wynosi 38.8 mm
+  lc_p("Gatunki wyraźnie się różnią. ", gloss("mediana", "Mediana"), " długości dzioba wynosi 38.8 mm
     u Adelie, 49.5 mm u Chinstrap i 47.3 mm u Gentoo, a mediana masy ciała
     3700 g u Adelie i Chinstrap oraz 5000 g u Gentoo. Pojedyncze punkty poza
     wąsami leżą blisko pudełek i mają realistyczne wartości (masa od 2700
@@ -105,8 +105,8 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     w wykładzie 06 pracowaliśmy na 333 obserwacjach. Przy analizach, które
     nie używają płci, wystarczy usunąć tylko 2 wiersze bez pomiarów."),
 
-  lc_p("Z 68 obserwacjami w najmniejszej grupie mają sens test t dla dwóch
-    gatunków, ", gloss("ANOVA"), " dla trzech, test chi-kwadrat dla gatunku
+  lc_p("Z 68 obserwacjami w najmniejszej grupie mają sens ", gloss("test t", "test t"), " dla dwóch
+    gatunków, ", gloss("ANOVA"), " dla trzech, ", gloss("test chi-kwadrat", "test chi-kwadrat"), " dla gatunku
     i płci, korelacja pomiarów oraz regresja. W każdej analizie łączącej
     gatunki trzeba jednak uwzględnić gatunek. W wykładzie 06 widzieliśmy, że
     bez niego związek długości z wysokością dzioba odwraca znak, co jest

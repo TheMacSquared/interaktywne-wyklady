@@ -60,12 +60,12 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     sześć osób, ocenę 1 jedna, a dwójki nie wystawił nikt. Skala 1–5
     działa tu w praktyce jak skala dwustopniowa. To problem z katalogu
     nazwany brak zmienności: jeśli prawie wszyscy odpowiadają tak samo,
-    zmienna nie mówi, co różnicuje pobyty, a żaden predyktor nie ma czego
+    zmienna nie mówi, co różnicuje pobyty, a żaden ", gloss("predyktor", "predyktor"), " nie ma czego
     wyjaśniać."),
 
   lc_h2("sec-04", "Zmienna 2: Typ pokoju"),
 
-  lc_p("Przy zmiennej jakościowej, którą chcemy dzielić gości na grupy,
+  lc_p("Przy ", gloss("zmienna jakościowa", "zmiennej jakościowej"), ", którą chcemy dzielić gości na grupy,
     patrzymy, czy każda grupa ma dość obserwacji do porównania."),
 
   figure_panel(
@@ -84,7 +84,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   lc_h2("sec-05", "Zmienna 3: Długość pobytu"),
 
-  lc_p("Przy zmiennej ilościowej patrzymy na rozpiętość wartości: czy
+  lc_p("Przy ", gloss("zmienna ilościowa", "zmiennej ilościowej"), " patrzymy na rozpiętość wartości: czy
     obejmuje zakres, w którym może pojawić się jakaś zależność. Panel
     pozwala zobaczyć te same dane na osi obejmującej pobyty do dwóch
     tygodni."),
@@ -100,7 +100,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
   ),
 
   lc_p("Wszyscy goście zostali na 1–3 noce: 49 osób na jedną, 21 na dwie,
-    10 na trzy. Mediana to jedna noc. Na pełnej skali cały zbiór mieści się
+    10 na trzy. ", gloss("mediana", "Mediana"), " to jedna noc. Na pełnej skali cały zbiór mieści się
     w lewym rogu wykresu. Sama wąska rozpiętość nie jest błędem, bo tak może
     wyglądać klientela tego hotelu. Jest to jednak kolejna odmiana braku
     zmienności: gdy predyktor przyjmuje tylko trzy bliskie sobie wartości,
@@ -118,7 +118,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
   ),
 
   lc_p("Tu obraz jest inny. Ceny wahają się od 208 do 641 zł, mediana
-    wynosi 473.5 zł, a odchylenie standardowe około 83 zł. To jedyna zmienna
+    wynosi 473.5 zł, a ", gloss("odchylenie standardowe", "odchylenie standardowe"), " około 83 zł. To jedyna zmienna
     w zbiorze z wyraźnym rozrzutem. Sama jednak nic nie wyjaśni: żeby coś
     z niej wynikało, musimy powiązać ją z inną zmienną, która też się
     zmienia."),

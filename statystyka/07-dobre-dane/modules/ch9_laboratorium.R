@@ -16,7 +16,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     stężenie hemoglobiny, stężenie glukozy i ciśnienie skurczowe. Wyniki
     przepisywano ręcznie z papierowych kart do arkusza kalkulacyjnego.
     Chcemy sprawdzić, czy stężenie hemoglobiny zmienia się z wiekiem. To
-    pytanie o zależność dwóch zmiennych ilościowych, na które w wykładzie 06
+    pytanie o zależność dwóch ", gloss("zmienna ilościowa", "zmiennych ilościowych"), ", na które w wykładzie 06
     odpowiadała ", gloss("regresja liniowa"), "."),
 
   lc_h2("sec-02", "Podgląd danych"),
@@ -59,7 +59,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
   lc_p("Pojedyncze podejrzane wartości najłatwiej wskazać na ",
     gloss("wykres pudełkowy", "wykresach pudełkowych"), ". Jako punkty
     zaznaczone są obserwacje leżące dalej niż 1.5 ",
-    gloss("rozstęp międzykwartylowy", "IQR"), " od kwartyli, tak jak
+    gloss("rozstęp międzykwartylowy", "IQR"), " od ", gloss("kwartyl", "kwartyli"), ", tak jak
     w wykładzie 01. Zwróć uwagę, które z zaznaczonych punktów są niemożliwe,
     a które tylko nietypowe."),
 
@@ -101,12 +101,12 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
 
   lc_p("Usuwanie całych wierszy nie jest jedynym wyjściem. Błąd w glukozie
     czy w ciśnieniu nie psuje hemoglobiny tego samego pacjenta, więc w takim
-    przypadku można zamienić na brak danych tylko błędną wartość i zachować
+    przypadku można zamienić na ", gloss("braki danych", "brak danych"), " tylko błędną wartość i zachować
     resztę rekordu. Jeśli w oryginalnych kartach da się odnaleźć prawdziwy
     wynik, najlepiej go po prostu poprawić."),
 
   lc_note("Zasada", rule = TRUE,
-    "Błąd danych popraw albo usuń. Prawdziwą wartość odstającą
+    "Błąd danych popraw albo usuń. Prawdziwą ", gloss("wartość odstająca", "wartość odstającą"), "
      zostaw i sprawdź, jak wpływa na wynik."
   ),
 
@@ -137,7 +137,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     z jasnymi jednostkami i płeć (88 kobiet, 62 mężczyzn). Problemy wynikają
     z ręcznego przepisywania i dotyczą sześciu wpisów. Po ich poprawieniu
     albo usunięciu dane nadają się do regresji hemoglobiny względem wieku,
-    do porównania kobiet i mężczyzn testem t z wykładu 04 i do sprawdzenia
+    do porównania kobiet i mężczyzn ", gloss("test t", "testem t"), " z wykładu 04 i do sprawdzenia
     założeń z wykładu 05. Glukozę 310 mg/dL zostawiamy: to prawdziwy pacjent,
     a usunięcie go byłoby ukrywaniem niewygodnych danych."),
 

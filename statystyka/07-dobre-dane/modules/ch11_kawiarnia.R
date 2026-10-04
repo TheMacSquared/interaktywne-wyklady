@@ -33,7 +33,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
   lc_p("Każdy wiersz to jeden dzień. W tabeli 245 dni wygląda tak samo jak
     150 studentów z poprzedniego rozdziału: jak zbiór osobnych, równorzędnych
     pomiarów. W kolumnie kaw co jakiś czas pojawia się kreska oznaczająca
-    brak danych."),
+    ", gloss("braki danych", "brak danych"), "."),
 
   lc_h2("sec-03", "Braki danych"),
 
@@ -111,7 +111,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     z wykładów 04–06 zakładają ", gloss("niezależność obserwacji"), ".
     Gdy kolejne obserwacje są do siebie podobne, 245 dni niesie mniej
     informacji niż 245 niezależnych pomiarów. Test, który tego nie
-    uwzględnia, zaniża błędy standardowe i daje zbyt małe wartości p."),
+    uwzględnia, zaniża błędy standardowe i daje zbyt małe ", gloss("p-wartość", "wartości p"), "."),
 
   lc_h2("sec-05", "Werdykt"),
 
@@ -152,7 +152,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     zostawiają użyteczny zbiór. Najtrudniej zauważyć problemy struktury:
     zdarzenia zamiast jednostek w filmach Tarantino czy zależne od siebie
     dni w kawiarni w tabeli wyglądają jak zwykłe wiersze. Dlatego ocenę
-    każdego zbioru warto zaczynać od pytania, co jest jednostką obserwacji
+    każdego zbioru warto zaczynać od pytania, co jest ", gloss("jednostka obserwacji", "jednostką obserwacji"), "
     i czy jednostki są od siebie niezależne, a dopiero potem cokolwiek
     liczyć."),
 

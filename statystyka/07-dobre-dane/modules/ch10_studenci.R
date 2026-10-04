@@ -47,7 +47,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
       gloss("zmienna dyskretna", "zmienna dyskretna"))
   ),
 
-  lc_p("W całym zbiorze nie ma ani jednego braku danych, a wartości mieszczą
+  lc_p("W całym zbiorze nie ma ani jednego ", gloss("braki danych", "braku danych"), ", a wartości mieszczą
     się w sensownych zakresach: godziny nauki od 2.3 do 30, średnia ocen od
     2.59 do 5.00, a stres wykorzystuje całą skalę od 1 do 10. W grupach jest
     wystarczająco dużo osób do porównań: 97 kobiet i 53 mężczyzn, a najmniej
@@ -61,8 +61,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
 
   lc_p("Ta ankieta pokazuje, jak wyglądają dane zaprojektowane z myślą
     o analizie: zamknięte pytania, spójne skale, jedna osoba w jednym wierszu.
-    Mają tu sens narzędzia z wykładów 01–06: statystyki opisowe, przedziały
-    ufności dla średniej, test t dla porównania płci, ANOVA dla kierunków, ",
+    Mają tu sens narzędzia z wykładów 01–06: ", gloss("statystyka opisowa", "statystyki opisowe"), ", ", gloss("przedział ufności", "przedziały ufności"), " dla średniej, ", gloss("test t", "test t"), " dla porównania płci, ", gloss("ANOVA", "ANOVA"), " dla kierunków, ",
     gloss("test chi-kwadrat"), " dla płci i kierunku oraz korelacja i regresja
     dla godzin nauki i średniej ocen. Jedyną decyzją do podjęcia jest
     sposób traktowania stresu: skalę od 1 do 10 można liczyć jak liczby, ale
@@ -70,7 +69,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
     w wykładzie 01."),
 
   lc_p("Dobry zbiór nie gwarantuje ciekawych wyników. W tej ankiecie
-    korelacje między zmiennymi ilościowymi nie przekraczają 0.14. Słaba
+    korelacje między ", gloss("zmienna ilościowa", "zmiennymi ilościowymi"), " nie przekraczają 0.14. Słaba
     zależność jest jednak informacją o studentach, a nie o usterkach danych.
     Warto zestawić ten zbiór z formularzem z rozdziału 8 i z ankietą na
     grupie z rozdziału 3: tematy są podobne, a o jakości danych zdecydowały

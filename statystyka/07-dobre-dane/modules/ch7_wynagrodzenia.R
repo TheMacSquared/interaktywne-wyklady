@@ -45,7 +45,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
     uiOutput("tab6_table")
   ),
 
-  lc_p("Jeden wiersz to jeden mężczyzna, więc jednostka obserwacji jest
+  lc_p("Jeden wiersz to jeden mężczyzna, więc ", gloss("jednostka obserwacji", "jednostka obserwacji"), " jest
     oczywista. W całym zbiorze nie ma ani jednego brakującego pola. Obok
     dwóch ", gloss("zmienna ilościowa", "zmiennych ilościowych"), " (wiek
     i zarobki) mamy kilka ",
@@ -75,7 +75,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
   ),
 
   lc_p("Wynagrodzenia mają duży rozrzut: od około 20 do 318 tys. dolarów,
-    z medianą 104.9 tys. i średnią 111.7 tys. Rozkład ma wyraźny prawy
+    z ", gloss("mediana", "medianą"), " 104.9 tys. i średnią 111.7 tys. Rozkład ma wyraźny prawy
     ogon, a powyżej 250 tys. widać osobne skupisko 79 osób. To nie błędy
     wpisywania, tylko prawdopodobnie najlepiej zarabiający, ale przed
     modelowaniem warto je obejrzeć osobno. Wiek obejmuje zakres od 18 do
@@ -83,7 +83,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
     klasy pracy są prawie równe (1544 i 1456)."),
 
   lc_p("Żaden z problemów z katalogu nie dyskwalifikuje tego zbioru. Ślady
-    są tylko dwa. Pierwszy to niezbalansowane grupy w kilku zmiennych:
+    są tylko dwa. Pierwszy to ", gloss("niezbalansowane grupy", "niezbalansowane grupy"), " w kilku zmiennych:
     wdowców jest 19, a w kategorii „inna” rasa 37 osób, więc takie
     kategorie lepiej połączyć z innymi albo pominąć w porównaniach.
     Drugi to brak zmienności w zmiennej regionu, której nie ma
@@ -107,7 +107,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
     przyczynowym. Może ją częściowo tłumaczyć ",
     gloss("zmienna zakłócająca"), ", na przykład zamożność rodziny,
     z której ktoś pochodzi. Zmienne obecne w zbiorze, takie jak wiek czy
-    rodzaj pracy, możemy uwzględnić w regresji wielorakiej z wykładu 06,
+    rodzaj pracy, możemy uwzględnić w ", gloss("regresja wieloraka", "regresji wielorakiej"), " z wykładu 06,
     ale niezmierzonych już nie. Po drugie, badani to wyłącznie mężczyźni z jednego regionu USA, więc
     wyników nie można przenosić na kobiety ani na inne regiony."),
 

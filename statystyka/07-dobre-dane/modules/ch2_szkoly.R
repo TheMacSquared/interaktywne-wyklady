@@ -72,7 +72,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
   ),
 
   lc_p("Każda kolumna ma jasną definicję i jednostkę, a w całym zbiorze nie
-    ma ani jednej brakującej wartości. Zmienne ilościowe przeważają, ale
+    ma ani jednej brakującej wartości. ", gloss("zmienna ilościowa", "Zmienne ilościowe"), " przeważają, ale
     z odsetków łatwo zbudować grupy (np. okręgi biedniejsze i zamożniejsze),
     więc dane nadają się zarówno do korelacji i regresji, jak i do porównań
     grup."),
@@ -95,7 +95,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
   ),
 
   lc_p("Wyniki testów mają rozkład zbliżony do symetrycznego: wynik
-    z czytania waha się od 604.5 do 704 pkt, ze średnią 655.0 i medianą
+    z czytania waha się od 604.5 do 704 pkt, ze średnią 655.0 i ", gloss("mediana", "medianą"), "
     655.8. Inaczej wyglądają zmienne opisujące wielkość okręgu. Liczba
     uczniów ma silną prawostronną ", gloss("skośność"), ": mediana wynosi
     950.5, ale największy okręg liczy 27 176 uczniów, a 24 okręgi mają ich
@@ -150,9 +150,9 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
     są jasno zdefiniowane, mają duży rozrzut i nie zawierają braków ani
     błędów. Obserwacje to osobne okręgi, a każdy z nich występuje w tabeli
     raz. Na tych danych mają sens wszystkie analizy z wykładów 03–06:
-    przedziały ufności dla średnich, testy porównujące grupy okręgów,
-    korelacja oraz regresja prosta i wieloraka, w której dochód występuje
-    jako zmienna kontrolna."),
+    ", gloss("przedział ufności", "przedziały ufności"), " dla średnich, testy porównujące grupy okręgów,
+    korelacja oraz ", gloss("regresja prosta", "regresja prosta"), " i wieloraka, w której dochód występuje
+    jako ", gloss("zmienna kontrolna", "zmienna kontrolna"), "."),
 
   lc_p("Dwa ograniczenia wynikają nie z jakości danych, tylko z ich natury.
     Jednostką obserwacji jest okręg, nie uczeń, więc wnioski dotyczą

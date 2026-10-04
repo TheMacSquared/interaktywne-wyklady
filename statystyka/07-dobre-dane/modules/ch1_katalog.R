@@ -50,8 +50,8 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     obserwacji mówimy, że ma za mało danych do planowanej analizy."),
 
   lc_p("Przykład: kolega przepytał sześcioro znajomych (cztery kobiety
-    i dwóch mężczyzn) i chce testem t sprawdzić, czy kobiety i mężczyźni
-    różnią się średnią ocen. Panel pokazuje jego dane i histogram średnich ocen."),
+    i dwóch mężczyzn) i chce ", gloss("test t", "testem t"), " sprawdzić, czy kobiety i mężczyźni
+    różnią się średnią ocen. Panel pokazuje jego dane i ", gloss("histogram", "histogram"), " średnich ocen."),
 
   figure_panel(
     label = "Ryc. 1.1",
@@ -71,7 +71,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
 
   lc_p("Jeszcze gorzej wygląda porównanie grup. Przy czterech kobietach
     i dwóch mężczyznach ", gloss("moc testu"), " t dla średniego efektu
-    (d Cohena = 0.5) wynosi około 7%, a dla dużego (d = 0.8) około 11%. Nawet
+    (", gloss("d Cohena", "d Cohena"), " = 0.5) wynosi około 7%, a dla dużego (d = 0.8) około 11%. Nawet
     jeśli różnica w populacji istnieje, test przeoczy ją w zdecydowanej
     większości takich badań i popełni ",
     gloss("błąd drugiego rodzaju"), ". Wynik nieistotny przy tak małej
@@ -166,7 +166,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     (zgubione zera), cena -300 000 (zły znak), cena 5 500 000 zamiast
     550 000 (nadmiarowe zero), powierzchnia 1200 m² zamiast 120 m²
     i 42 pokoje zamiast 4. Średnia cena w surowych danych wynosi około
-    727 500 PLN, a mediana 375 000 PLN. Po poprawkach średnia spada do
+    727 500 PLN, a ", gloss("mediana", "mediana"), " 375 000 PLN. Po poprawkach średnia spada do
     402 500 PLN i niemal zrównuje się z medianą (405 000 PLN). Na
     regresję błędy działają jeszcze mocniej: w surowych danych
     nachylenie prostej jest ujemne (około -270 PLN za metr kwadratowy),
@@ -271,7 +271,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     wiersz z jakimkolwiek brakiem, z dwunastu ankiet zostałyby dwie."),
 
   lc_p("Braki zmniejszają liczebność próby, a więc i moc testu (wykład 04).
-    Groźniejsze jest jednak obciążenie. Braki rzadko pojawiają się
+    Groźniejsze jest jednak ", gloss("obciążenie", "obciążenie"), ". Braki rzadko pojawiają się
     losowo: jeśli o swoje oceny nie chcą mówić głównie osoby ze słabymi
     wynikami, średnia z pozostałych będzie zawyżona i żadne zwiększenie
     próby tego nie naprawi. Dlatego przed analizą warto policzyć braki
@@ -397,8 +397,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
 
   lc_p("Siedem problemów z katalogu da się zamienić w listę pytań, które
     warto zadać każdemu zbiorowi, zanim zacznie się analizę. Lista ma dwie
-    części. Kryteria krytyczne obejmują dopasowanie danych do pytania
-    badawczego, liczebność, typy zmiennych, zmienność, strukturę
+    części. Kryteria krytyczne obejmują dopasowanie danych do ", gloss("pytanie badawcze", "pytania badawczego"), ", liczebność, typy zmiennych, zmienność, strukturę
     i niezależność obserwacji. Jeśli zbiór ich nie spełnia, lepiej szukać
     innego. Kryteria naprawialne dotyczą braków danych, definicji zmiennych
     i błędów: wymagają pracy, ale da się je spełnić po oczyszczeniu."),

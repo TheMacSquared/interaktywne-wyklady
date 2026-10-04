@@ -65,7 +65,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     lc_plot("tab4_explore_plot", ratio = "1.8/1", max_height = "350px")
   ),
 
-  lc_p("Histogram minuty zdarzenia wrzuca do jednego worka siedem filmów
+  lc_p("", gloss("histogram", "Histogram"), " minuty zdarzenia wrzuca do jednego worka siedem filmów
     o różnej długości: w najkrótszym ostatnie zdarzenie przypada na
     95. minutę, w najdłuższym na 160. Słupki z końca osi, powyżej
     150. minuty, pochodzą już tylko z „Django”. Taki wykres opisuje więc
@@ -92,7 +92,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     uiOutput("tab4_quiz_result")
   ),
 
-  lc_p("Test t, korelacja i regresja zakładają, że każdy wiersz to niezależna
+  lc_p("", gloss("test t", "Test t"), ", ", gloss("korelacja", "korelacja"), " i regresja zakładają, że każdy wiersz to niezależna
     obserwacja z cechami mierzonymi na tej samej jednostce. Tu tego nie ma.
     Jedyna zmienna liczbowa, ", tags$code("minutes_in"), ", opisuje moment
     zdarzenia, a nie cechę filmu, więc nie ma czego z nią korelować.
@@ -111,7 +111,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     7 obserwacji, czyli problem z katalogu nazwany za mało danych.
     Współczynnik korelacji między liczbą przekleństw a liczbą śmierci
     wynosi w tych siedmiu filmach -0.67, co wygląda na wyraźną zależność.
-    Jego 95-procentowy przedział ufności sięga jednak od -0.95 do 0.17,
+    Jego 95-procentowy ", gloss("przedział ufności", "przedział ufności"), " sięga jednak od -0.95 do 0.17,
     a p = 0.10. Przy n = 7 dane są zgodne zarówno z silną ujemną
     zależnością, jak i z jej brakiem, a ",
     gloss("moc testu"), " jest tak niska, że nawet duży efekt łatwo
@@ -127,9 +127,8 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     zmiennych opisujących film w tym zbiorze nie ma. Nie da się tego
     naprawić czyszczeniem, bo brakuje po prostu jednostek."),
 
-  lc_p("Dane nie są przy tym bezużyteczne. Nadają się do statystyki opisowej
-    z wykładu 01: tabel częstości słów, porównania filmów na wykresie
-    słupkowym czy opisu, jak zdarzenia rozkładają się w czasie trwania
+  lc_p("Dane nie są przy tym bezużyteczne. Nadają się do ", gloss("statystyka opisowa", "statystyki opisowej"), "
+    z wykładu 01: ", gloss("tabela częstości", "tabel częstości"), " słów, porównania filmów na ", gloss("wykres słupkowy", "wykresie słupkowym"), " czy opisu, jak zdarzenia rozkładają się w czasie trwania
     jednego filmu. Nie nadają się do testów i modeli, które uogólniają
     wynik poza te siedem tytułów."),
 

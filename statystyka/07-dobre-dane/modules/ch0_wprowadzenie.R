@@ -16,7 +16,7 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Wprowadzenie", content
   lc_p("W poprzednich wykładach dane były gotowe: ankieta studentów, okręgi
     szkolne z Kalifornii, pingwiny z Antarktydy. Wiedzieliśmy, które zmienne
     są ilościowe, a które jakościowe, i mogliśmy od razu liczyć średnie,
-    przedziały ufności, testy i regresję. We własnym projekcie kolejność jest
+    ", gloss("przedział ufności", "przedziały ufności"), ", testy i regresję. We własnym projekcie kolejność jest
     odwrotna. Najpierw trzeba wiedzieć, co chcemy zbadać, a dopiero potem
     szukać danych, które na to pytanie odpowiedzą."),
 

@@ -52,8 +52,8 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
   lc_p("Z wykładu 04 wiemy z kolei, że ", gloss("moc testu"), " to
     prawdopodobieństwo, że test wykryje różnicę, która naprawdę istnieje.
     Panel pokazuje, jak od liczby obserwacji zależą trzy rzeczy: kształt
-    histogramu, szerokość 95% przedziału ufności dla średniej ocen (przy
-    odchyleniu standardowym 0.6) i moc testu t porównującego dwie
+    ", gloss("histogram", "histogramu"), ", szerokość 95% przedziału ufności dla średniej ocen (przy
+    ", gloss("odchylenie standardowe", "odchyleniu standardowym"), " 0.6) i moc ", gloss("test t", "testu t"), " porównującego dwie
     równoliczne grupy, gdy różnica średnich wynosi pół odchylenia
     standardowego (d = 0.5)."),
 

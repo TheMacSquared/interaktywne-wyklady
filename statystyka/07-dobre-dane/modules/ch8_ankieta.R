@@ -84,7 +84,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
 
   lc_p("Po przekodowaniu wiek i wykształcenie zostają bez zmian. W kolumnie
     doświadczenia udało się przypisać liczbę lat 47 osobom, a 43 zostały
-    z brakiem danych, i to przy założeniu, że „ponad rok” znaczy dokładnie rok.
+    z ", gloss("braki danych", "brakiem danych"), ", i to przy założeniu, że „ponad rok” znaczy dokładnie rok.
     Samoocenę przekodowaliśmy w całości, ale tylko 38 wpisów było liczbami od
     początku. 11 odpowiedzi „8/10” dało się przeliczyć wprost, a 41 ocen
     słownych zamieniliśmy na liczby według reguły, którą sami wymyśliliśmy.
@@ -132,7 +132,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     formularzu tego samego kursu respondenci też wpisywali odpowiedzi po
     swojemu, ale prawie każdą z nich da się jednoznacznie przypisać do jednej
     z kilku kategorii. Porównując obie wersje tabeli, zwróć uwagę, które wpisy
-    nie mają odpowiednika po standaryzacji."),
+    nie mają odpowiednika po ", gloss("standaryzacja", "standaryzacji"), "."),
 
   figure_panel(
     label = "Ryc. 8.4",
