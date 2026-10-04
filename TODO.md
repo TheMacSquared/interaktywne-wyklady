@@ -150,10 +150,12 @@ to stosują.
   Analiza ryzyka 01–10 zrobiona (z odczytami, 3 października 2026; zbiory
   {1,2} zostają z przecinkiem, N(82, 3) ze spacją).
   Zostało: statystyka 2.
-- [ ] Zamienić typograficzny minus `−` w liczbach na zwykły `-` (teksty,
-  formatery, etykiety wykresów).
-- [ ] Sprawdzić etykiety osi i liczby w ggplot (np. `scales::label_number`
-  z `decimal.mark = ","`).
+- [ ] Typograficzny minus `−` w liczbach → `-` i etykiety ggplot bez
+  `decimal.mark = ","`: statystyka i analiza ryzyka sprawdzone 4 października
+  2026 (liczby ujemne już ze zwykłym minusem; `−` jako znak działania
+  w wyrażeniach typu „Q3 − Q1” zostaje). Zostało: statystyka 2 (m.in.
+  `03-kierunkowe/modules/helpers.R` z `decimal.mark = ","`, „θ₁ = −0.9”,
+  „[−1, 1]”).
 
 ---
 

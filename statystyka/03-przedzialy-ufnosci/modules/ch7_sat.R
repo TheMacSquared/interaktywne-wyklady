@@ -62,7 +62,7 @@
       tags$li("Gdybyśmy powtarzali pobieranie próby, około 95% tak zbudowanych CI zawierałoby prawdziwą średnią."),
       tags$li("Węższy CI oznacza automatycznie, że sensor nie ma błędu systematycznego."),
       tags$li("Bardzo dużo sąsiednich pikseli może dać zbyt optymistyczny CI, jeśli potraktujemy je jako niezależne."),
-      tags$li("CI dla średniej różnicy satelita−grunt służy do oceny przeciętnego obciążenia.")
+      tags$li("CI dla średniej różnicy satelita–grunt służy do oceny przeciętnego obciążenia.")
     )),
 
   lc_note("Ograniczenie",

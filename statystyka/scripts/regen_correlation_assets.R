@@ -141,7 +141,7 @@ d_neg  <- make_xy(n, target_r = -0.6, seed = 21)
 d_zero <- make_xy(n, target_r =  0,   seed = 22)
 d_pos  <- make_xy(n, target_r =  0.6, seed = 23)
 
-g <- scatter_panel(d_neg,  "r = −0.6 (ujemna)") +
+g <- scatter_panel(d_neg,  "r = -0.6 (ujemna)") +
      scatter_panel(d_zero, "r = 0 (brak)") +
      scatter_panel(d_pos,  "r = +0.6 (dodatnia)") +
      plot_layout(nrow = 1)

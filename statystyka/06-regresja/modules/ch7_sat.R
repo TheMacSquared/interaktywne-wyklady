@@ -91,7 +91,7 @@ ch7_sat_server <- function(input, output, session) {
       p(tags$code(sprintf("grunt_temp_c = %.2f %+ .2f × sat_temp_c", b[1], b[2]))),
       p(sprintf("R²=%.3f, RMSE=%.2f°C, predykcja dla 30°C: %.2f°C.",
                 g$r.squared, rmse, pred)),
-      p(sprintf("Średnie satelita−grunt=%.2f°C. Wysoka korelacja/R² może współistnieć
+      p(sprintf("Średnie satelita–grunt=%.2f°C. Wysoka korelacja/R² może współistnieć
                  z systematycznym przesunięciem pomiarów.", bias))
     )
   })
