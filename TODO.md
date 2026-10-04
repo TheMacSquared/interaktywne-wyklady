@@ -102,18 +102,6 @@ Zostało w statystyce 2:
   (1), spacje przed interpunkcją po `tags$strong()` / `tags$em()` (11),
   emoji (4 linie). Analiza ryzyka: spacje przed interpunkcją (5).
 
-Decyzje:
-
-- [ ] **Decyzja:** Ryc. 2.1 (statystyka 01) na rzutniku z dużym fontem
-  dzieli się na dwie tabele, bo panel `text` ma stałe 680 px. Warianty:
-  akceptujemy / szerokość `wide` dla wąskich widgetów tabelowych / szerokości
-  paneli w `em`.
-- [ ] **Decyzja:** wykresy w analizie ryzyka 02 (`w2_filter_plot`) i 03
-  (`a3_grid`) dostały `ratio` i `max_height` szacunkowo z dawnej wysokości —
-  obejrzeć i zatwierdzić.
-
-Pozostałe:
-
 Zasady migracji:
 
 - Zmiany wspólnych komponentów wprowadzać równolegle we wszystkich
