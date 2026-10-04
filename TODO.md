@@ -196,9 +196,6 @@ to stosują.
 
 ### 06 — regresja
 
-- [ ] Rozważyć callout w ch2 lub ch4: kwartet Anscombe'a dla regresji (różne
-  wzorce reszt przy tym samym R²) albo spurious regression; resztę pułapek
-  odesłać do wykładu o korelacji.
 - [ ] Rozważyć mini-widget regresji do średniej w `ch1_liniowa.R`: suwak `r`,
   na wykresie główna oś elipsy i linia regresji, na żywo
   `b = r × (sd_y / sd_x)`; przykład „x = +2 SD → oczekiwane y = 2r SD”.

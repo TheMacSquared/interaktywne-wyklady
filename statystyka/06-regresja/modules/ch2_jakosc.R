@@ -353,9 +353,36 @@ ch2_ui <- list(
       różnic między okręgami. \\(R^2\\) opisuje siłę związku w tych
       konkretnych danych, a nie wartość modelu w ogóle."),
 
-    lc_p("Wysokie \\(R^2\\) też nie gwarantuje dobrego modelu. Model z łukiem
-      w resztach może mieć wysokie \\(R^2\\), a mimo to systematycznie się
-      mylić. Druga pułapka jest poważniejsza: model może dopasować się do
+    lc_p("To samo \\(R^2\\) nie oznacza też tych samych danych. Klasyczny
+      przykład to kwartet Anscombe'a, znany z wykładu 04: cztery zestawy po
+      11 punktów, dla których regresja daje praktycznie tę samą prostą,
+      \\(\\hat{y} = 3.0 + 0.50x\\), i to samo \\(R^2 = 0.67\\). Panel
+      pokazuje każdy zestaw z prostą i wykresem reszt, tak jak Ryc. 2.1."),
+
+    figure_panel(
+      label = "Ryc. 2.2a", title = "Ta sama prosta, to samo R², cztery różne historie",
+      full_width = TRUE,
+      lc_toolbar(
+        lc_segmented("ch2_ansc_set", "Zestaw",
+          choices = c("1" = "1", "2" = "2", "3" = "3", "4" = "4")),
+        lc_readouts(uiOutput("ch2_ansc_reads"))
+      ),
+      lc_plot("ch2_ansc_plot", ratio = "2/1", max_height = "340px")
+    ),
+
+    lc_p("Tylko w zestawie 1 prosta jest dobrym opisem: reszty tworzą
+      bezładną chmurę wokół zera. W zestawie 2 reszty układają się w łuk,
+      bo zależność jest krzywa. W zestawie 3 dziesięć punktów leży niemal dokładnie
+      na prostej o nachyleniu 0.35, a jeden odstający punkt podnosi je do
+      0.50. W zestawie 4 dziesięć punktów ma tę samą wartość X, a nachylenie
+      wyznacza w całości jeden punkt o dużej dźwigni, jak w Ryc. 2.1b. Bez
+      niego prostej nie dałoby się w ogóle dopasować. Tabela współczynników
+      i \\(R^2\\) są we wszystkich czterech zestawach identyczne; różnicę
+      widać dopiero na wykresach."),
+
+    lc_p("Wysokie \\(R^2\\) nie gwarantuje więc dobrego modelu. Zestaw 2 ma
+      \\(R^2 = 0.67\\), a mimo to prosta systematycznie się myli.
+      Druga pułapka jest poważniejsza: model może dopasować się do
       przypadkowych szczegółów próby tak mocno, że świetnie wygląda na danych,
       na których go dopasowano (", gloss("zbiór treningowy", "zbiorze
       treningowym"), "), a słabo przewiduje nowe obserwacje. Nazywa się to ",
@@ -566,6 +593,42 @@ ch2_ui <- list(
 # ============================================================================
 
 ch2_server <- function(input, output, session) {
+
+  # --- Widget: kwartet Anscombe'a (datasets::anscombe) ---
+  ch2_ansc_fit <- reactive({
+    i <- input$ch2_ansc_set %||% "1"
+    df <- data.frame(x = anscombe[[paste0("x", i)]], y = anscombe[[paste0("y", i)]])
+    m <- lm(y ~ x, df)
+    df$fit <- fitted(m)
+    df$res <- resid(m)
+    list(df = df, m = m)
+  })
+
+  output$ch2_ansc_reads <- renderUI({
+    m <- ch2_ansc_fit()$m
+    tagList(
+      lc_readout("b₀", formatC(coef(m)[[1]], format = "f", digits = 2)),
+      lc_readout("b₁", formatC(coef(m)[[2]], format = "f", digits = 2)),
+      lc_readout("R²", formatC(summary(m)$r.squared, format = "f", digits = 2))
+    )
+  })
+
+  zoom_plot_server("ch2_ansc_plot", reactive({
+    f <- ch2_ansc_fit()
+    xs <- data.frame(x = c(2, 20))
+    xs$y <- predict(f$m, xs)
+    p_data <- ggplot(f$df, aes(x, y)) +
+      geom_line(data = xs, colour = upwr_accent, linewidth = 1.1) +
+      geom_point(colour = upwr_secondary, size = 2.8) +
+      coord_cartesian(xlim = c(2, 20), ylim = c(2, 14)) +
+      labs(x = "x", y = "y")
+    p_res <- ggplot(f$df, aes(fit, res)) +
+      geom_hline(yintercept = 0, colour = upwr_reference, linetype = "dashed") +
+      geom_point(colour = upwr_secondary, size = 2.8) +
+      coord_cartesian(xlim = c(4, 13), ylim = c(-3.5, 3.5)) +
+      labs(x = "Wartość przewidywana", y = "Reszta")
+    patchwork::wrap_plots(p_data, p_res, ncol = 2)
+  }), alt = "Wybrany zestaw kwartetu Anscombe'a z prostą regresji i wykres jego reszt.")
 
   # --- Widget: obserwacja wpływowa (ustawione przykłady) ---
   ch2_infl_base <- data.frame(
