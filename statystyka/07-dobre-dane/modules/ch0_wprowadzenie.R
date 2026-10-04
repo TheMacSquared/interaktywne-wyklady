@@ -28,7 +28,7 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Wprowadzenie", content
     gloss("hipoteza badawcza", "hipotezy"), " i hipotezy statystyczne,
     tak jak w wykładzie 04."),
 
-  lc_p("Warto wybierać tematy, które naprawdę Cię interesują. Kto rozumie
+  lc_p("Warto wybierać tematy z własnej dziedziny. Kto rozumie
     kontekst, zadaje lepsze pytania, szybciej zauważa absurdalny wynik
     i łatwiej formułuje sensowne hipotezy. Znajomość dziedziny daje analizie
     niuans, którego nie zastąpi żaden podręcznik statystyki."),
@@ -41,7 +41,7 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Wprowadzenie", content
     naprawi. Inne wymagają pracy, ale po oczyszczeniu dane nadal są
     użyteczne. Ten wykład uczy odróżniać jedne od drugich."),
 
-  lc_p("Zanim przejdziesz dalej, zastanów się przez chwilę, co warto sprawdzić
+  lc_p("Przed przejściem dalej zastanów się przez chwilę, co warto sprawdzić
     najpierw po otwarciu nieznanego zbioru danych i co może w nim pójść
     nie tak. Porównaj potem swoją listę z katalogiem z następnego rozdziału."),
 
@@ -56,8 +56,8 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Wprowadzenie", content
     Każdy ma ten sam układ: opis zbioru, podgląd danych, eksploracja
     i werdykt. Część zbiorów jest wzorcowa, część ma usterki do naprawienia,
     a część nie nadaje się do klasycznej analizy statystycznej. Najwięcej
-    skorzystasz, jeśli przed przeczytaniem werdyktu ocenisz zbiór
-    samodzielnie według listy kontrolnej."),
+    daje samodzielna ocena zbioru według listy kontrolnej przed
+    przeczytaniem werdyktu."),
 
   lc_p("Rozdział 12 to ściąga: lista kontrolna, podsumowanie dziesięciu zbiorów
     i zestawienie, jakich danych wymagają metody poznane w wykładach 01–06."),

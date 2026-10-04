@@ -184,7 +184,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     analizę dało się odtworzyć."),
 
   lc_note("Zasada", rule = TRUE,
-    "Zanim zaczniesz analizę, sprawdź minimum i maksimum każdej zmiennej
+    "Przed rozpoczęciem analizy sprawdź minimum i maksimum każdej zmiennej
     ilościowej i zapytaj, czy takie wartości są w ogóle możliwe."
   ),
 
@@ -415,7 +415,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
       " jeśli zbiór ich nie spełnia, poszukaj innego"),
     checkboxGroupInput("intro_critical", NULL,
       choices = c(
-        "Dane odpowiadają hipotezie badawczej (mierzą to, co chcesz badać)" = "hyp",
+        "Dane odpowiadają hipotezie badawczej (mierzą badane zjawisko)" = "hyp",
         "Wystarczająca liczba obserwacji w każdej porównywanej grupie" = "n",
         "Różne typy zmiennych (ilościowe i jakościowe)" = "mix",
         "Zmienność w danych (nie wszystko takie samo)" = "var",

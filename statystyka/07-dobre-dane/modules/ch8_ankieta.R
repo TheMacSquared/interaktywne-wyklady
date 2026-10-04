@@ -101,7 +101,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     wczytać jako dane."),
 
   lc_note("Zasada", rule = TRUE,
-    "Pytania o zmienne, które będziesz analizować, zamykaj: lista kategorii
+    "Pytania o zmienne przeznaczone do analizy zamykaj: lista kategorii
      albo liczba z podaną jednostką."
   ),
 

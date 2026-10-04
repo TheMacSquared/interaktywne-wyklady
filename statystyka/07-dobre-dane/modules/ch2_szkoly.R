@@ -40,7 +40,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
     wydają więcej na ucznia, mają lepsze wyniki testów? Jak silnie wyniki
     wiążą się z zamożnością okręgu? Czy czytanie i matematyka idą w parze?
     Zanim zaczniemy szukać odpowiedzi, sprawdzimy zbiór według katalogu
-    z rozdziału 1. Spróbuj ocenić go samodzielnie, zanim przeczytasz werdykt."),
+    z rozdziału 1. Warto ocenić go samodzielnie przed przeczytaniem werdyktu."),
 
   lc_p("Podgląd danych niżej pokazuje 11 z 14 kolumn (pomija hrabstwo,
     zakres klas i liczbę komputerów):"),

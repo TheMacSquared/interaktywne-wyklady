@@ -23,7 +23,7 @@ ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content 
   lc_note("Krytyczne", title = "Jeśli zbiór ich nie spełnia, poszukaj innego",
     tags$ol(
       tags$li(tags$strong("Czy dane odpowiadają hipotezie badawczej?"),
-        " Najpierw sformułuj, co chcesz badać, potem sprawdź, czy dane to mierzą."),
+        " Najpierw sformułuj przedmiot badania, potem sprawdź, czy dane go mierzą."),
       tags$li(tags$strong("Czy liczebność wystarcza w każdej grupie?"),
         " Liczy się n w każdej porównywanej podgrupie, nie w całym zbiorze.
         Ile obserwacji potrzeba, zależy od spodziewanej wielkości efektu i planowanej analizy."),
@@ -33,7 +33,7 @@ ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content 
       tags$li(tags$strong("Czy jest zmienność?"),
         " Zmienna o SD bliskim zera nie nadaje się do analizy."),
       tags$li(tags$strong("Czy struktura danych pasuje do analiz?"),
-        " Sprawdź, czy masz odpowiednie zmienne do każdej planowanej analizy
+        " Sprawdź, czy są odpowiednie zmienne do każdej planowanej analizy
         i czy wiersz tabeli to jednostka obserwacji."),
       tags$li(tags$strong("Czy obserwacje są niezależne?"),
         " Dane czasowe lub pogrupowane wymagają specjalnych metod albo agregacji.")

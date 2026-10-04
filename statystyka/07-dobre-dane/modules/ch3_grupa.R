@@ -18,13 +18,13 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     i średnią ocen. Powstaje zbiór z 8 wierszami i 5 zmiennymi. Pytania,
     które chciałby na nim zadać, brzmią rozsądnie: czy osoby uczące się
     dłużej mają wyższą średnią, czy kobiety i mężczyźni różnią się poziomem
-    stresu, czy kierunki różnią się ocenami. Zanim przeczytasz dalej, oceń
-    sam, czy te dane pozwolą na nie odpowiedzieć."),
+    stresu, czy kierunki różnią się ocenami. Przed dalszą lekturą warto
+    samodzielnie ocenić, czy te dane pozwolą na nie odpowiedzieć."),
 
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("W podglądzie policz, ile osób trafia do każdej grupy, którą
-    chciałbyś porównać."),
+    student chciałby porównać."),
 
   figure_panel(
     label = "Tab. 3.1",
@@ -39,7 +39,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     Porównanie kierunków opierałoby się więc na pojedynczych odpowiedziach,
     a porównanie płci na czterech osobach z każdej strony."),
 
-  lc_h2("sec-03", "Ile obserwacji naprawdę potrzebujesz?"),
+  lc_h2("sec-03", "Ile obserwacji naprawdę potrzeba?"),
 
   lc_p("Z wykładu 03 wiemy, że precyzję oszacowania średniej opisuje
     szerokość ", gloss("przedział ufności", "przedziału ufności"), ".

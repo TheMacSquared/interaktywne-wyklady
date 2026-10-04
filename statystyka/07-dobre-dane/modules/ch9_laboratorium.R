@@ -106,16 +106,16 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     wynik, najlepiej go po prostu poprawić."),
 
   lc_note("Zasada", rule = TRUE,
-    "Błąd danych poprawiasz albo usuwasz. Prawdziwą wartość odstającą
-     zostawiasz i sprawdzasz, jak wpływa na wynik."
+    "Błąd danych popraw albo usuń. Prawdziwą wartość odstającą
+     zostaw i sprawdź, jak wpływa na wynik."
   ),
 
   lc_h2("sec-05", "Ćwiczenie: błąd czy prawdziwa wartość odstająca?"),
 
   lc_p("Ta sama liczba może być błędem albo prawdziwą, choć rzadką obserwacją.
     Zależy to od zmiennej, od jej jednostki i od reszty rekordu. Poniżej
-    pięć podejrzanych wpisów z tego zbioru. Oceń każdy z nich, zanim
-    sprawdzisz odpowiedzi."),
+    pięć podejrzanych wpisów z tego zbioru. Oceń każdy z nich przed
+    sprawdzeniem odpowiedzi."),
 
   figure_panel(
     label = "Ćwiczenie",

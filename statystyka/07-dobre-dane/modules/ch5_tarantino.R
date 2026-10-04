@@ -82,7 +82,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
 
   lc_h2("sec-04", "Próba analiz"),
 
-  lc_p("Zanim przejdziesz dalej, zastanów się, którą z poznanych analiz dałoby
+  lc_p("Przed przejściem dalej zastanów się, którą z poznanych analiz dałoby
     się tu zastosować do tabeli w obecnej postaci."),
 
   figure_panel(
