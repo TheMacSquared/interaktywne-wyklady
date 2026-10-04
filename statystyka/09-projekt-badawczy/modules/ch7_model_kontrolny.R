@@ -35,7 +35,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     08: najpierw sama atrakcyjność, potem cechy prowadzącego (płeć, wiek,
     mniejszość, native speaker, tenure), potem kontekst kursu (poziom,
     liczba punktów, liczba odpowiedzi), na końcu odsetek odpowiedzi. Tabela
-    podaje współczynnik przy atrakcyjności, jego p-wartość oraz dwie miary
+    podaje współczynnik przy atrakcyjności, jego ", gloss("p-wartość"), " oraz dwie miary
     porównawcze z rozdziału 04 wykładu 06: ",
     gloss("skorygowany R²"), " i ", gloss("AIC"), ". Wykres pod tabelą
     pokazuje współczynnik w kolejnych modelach."),
@@ -111,8 +111,8 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     prowadzących, a wynik zależy od tego, jakie zmienne są w modelu."),
 
   lc_p("Skalę efektu atrakcyjności najłatwiej ocenić w jednostkach oceny.
-    Ocena atrakcyjności jest na skali o średniej 0 i odchyleniu
-    standardowym 0.79. Prowadzący z 10% najniżej ocenianych mają wartość
+    Ocena atrakcyjności jest na skali o średniej 0 i ", gloss("odchylenie standardowe", "odchyleniu
+    standardowym"), " 0.79. Prowadzący z 10% najniżej ocenianych mają wartość
     około -0.98, z 10% najwyżej ocenianych około 1.15. W pełnym modelu
     (współczynnik 0.134, 95% przedział ufności od 0.071 do 0.197) taka
     różnica odpowiada ocenie kursu wyższej średnio o 0.29 punktu,

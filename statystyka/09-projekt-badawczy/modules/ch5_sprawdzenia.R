@@ -27,7 +27,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia",
     konspekt przewiduje ", gloss("test Manna-Whitneya"), " z wykładu 05,
     mniej wrażliwy na nierówne i skośne grupy."),
 
-  lc_p("Każdy trop dostaje ten sam zestaw: wykres, statystyki opisowe oceny
+  lc_p("Każdy trop dostaje ten sam zestaw: wykres, ", gloss("statystyka opisowa", "statystyki opisowe"), " oceny
     kursu, miarę efektu, wynik testu i wstępny werdykt. Werdykt
     „wzmocniony” oznacza, że ", gloss("p-wartość"), " jest mniejsza niż
     0.05, a „osłabiony”, że nie jest. To umowny podział na potrzeby
@@ -52,7 +52,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia",
     ma znaczenie. Przy 463 kursach nawet słaby związek daje małą
     p-wartość. Korelacja r = 0.19 oznacza, że atrakcyjność wyjaśnia 3.6%
     zmienności ocen. Różnica 0.17 punktu między kobietami i mężczyznami
-    to mniej więcej 0.3 odchylenia standardowego oceny (SD = 0.55),
+    to mniej więcej 0.3 ", gloss("odchylenie standardowe", "odchylenia standardowego"), " oceny (SD = 0.55),
     a różnica 0.33 dla statusu native speaker to około 0.6 SD, tyle że
     liczona na grupie 28 kursów. Każdy z tych tropów coś mówi o ocenie
     kursu, ale żaden nie tłumaczy jej w większej części."),

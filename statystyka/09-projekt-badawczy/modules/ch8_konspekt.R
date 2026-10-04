@@ -10,7 +10,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
 
   lc_p("Cel, który prowadził przez cały wykład, brzmiał: ",
     tags$em(tr_goal), " Rozdziały 5–7 dostarczyły wyników: pięć prostych
-    testów, przegląd zmiennych zakłócających i serię modeli kontrolnych.
+    testów, przegląd ", gloss("zmienna zakłócająca", "zmiennych zakłócających"), " i serię modeli kontrolnych.
     Ten rozdział składa je we wniosek i pokazuje, co z tego trafia do
     raportu."),
 
@@ -60,13 +60,12 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
     dostają wyższe oceny, także po uwzględnieniu płci, wieku, statusu
     native speaker, typu kursu i odsetka odpowiedzi. Różnica między
     prowadzącymi z dolnych i górnych 10% oceny atrakcyjności to średnio
-    około 0.29 punktu (95% przedział ufności od 0.15 do 0.42), czyli
-    mniej więcej połowa odchylenia standardowego ocen. Kursy prowadzone
+    około 0.29 punktu (95% ", gloss("przedział ufności"), " od 0.15 do 0.42), czyli
+    mniej więcej połowa ", gloss("odchylenie standardowe", "odchylenia standardowego"), " ocen. Kursy prowadzone
     przez kobiety mają w tym samym modelu oceny niższe o około 0.20
     punktu. Ocena wiąże się też z tym, jaka część grupy wypełniła
     ankietę: przy wyższym odsetku odpowiedzi oceny są wyższe. Wszystkie te zmienne razem
-    wyjaśniają jednak mniej niż jedną piątą zmienności ocen (skorygowany
-    R² = 0.178), więc ocena z ankiety nie jest też głównie odbiciem
+    wyjaśniają jednak mniej niż jedną piątą zmienności ocen (", gloss("skorygowany R²"), " = 0.178), więc ocena z ankiety nie jest też głównie odbiciem
     wyglądu czy płci prowadzącego."),
 
   lc_p("Ocena z ankiety wygląda więc na wskaźnik mieszany. Może zawierać
@@ -84,10 +83,10 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
       zmierzono, na przykład stylem prowadzenia."),
     tags$li("Obserwacje nie są niezależne. 463 kursy prowadziły 94 osoby,
       a cechy prowadzącego powtarzają się we wszystkich jego kursach.
-      Przedziały ufności i p-wartości są przez to zbyt optymistyczne."),
+      Przedziały ufności i ", gloss("p-wartość", "p-wartości"), " są przez to zbyt optymistyczne."),
     tags$li("Małe grupy. Wyniki dla statusu native speaker i mniejszości
       opierają się na 7 i 12 prowadzących. Wynik dla mniejszości zmienia
-      się w zależności od zestawu zmiennych kontrolnych."),
+      się w zależności od zestawu ", gloss("zmienna kontrolna", "zmiennych kontrolnych"), "."),
     tags$li("Pomiar. Ocena atrakcyjności to ocena wystawiona przez
       studentów, a nie cecha osoby, i częściowo odzwierciedla wiek.
       Ocena kursu nie jest bezpośrednim pomiarem jakości nauczania."),
@@ -122,12 +121,11 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
 
   lc_p("Ten wykład kończy kurs statystyki. Jego projekt badawczy korzystał
     po trochu z każdego wcześniejszego wykładu. Typy zmiennych z wykładu
-    01 zdecydowały, które narzędzie pasuje do którego tropu, a statystyki
-    opisowe z tego samego wykładu stały w każdym panelu rozdziału 5.
+    01 zdecydowały, które narzędzie pasuje do którego tropu, a ", gloss("statystyka opisowa", "statystyki
+    opisowe"), " z tego samego wykładu stały w każdym panelu rozdziału 5.
     Rozkłady z wykładu 02 i przedziały ufności z wykładu 03 stoją za
     każdym przedziałem i każdą p-wartością. Testy z wykładu 04 sprawdziły
-    pojedyncze tropy, a wykład 05 podpowiedział, kiedy sięgnąć po test
-    nieparametryczny. Regresja wieloraka i porównanie modeli z wykładu 06
+    pojedyncze tropy, a wykład 05 podpowiedział, kiedy sięgnąć po ", gloss("test nieparametryczny"), ". ", gloss("regresja wieloraka", "Regresja wieloraka"), " i porównanie modeli z wykładu 06
     pozwoliły sprawdzić tropy razem. Pytania o jakość danych z wykładu 07
     wróciły przy pomiarze i przy niezależności obserwacji, a wykład 08
     pokazał tę samą ścieżkę na innym zbiorze."),

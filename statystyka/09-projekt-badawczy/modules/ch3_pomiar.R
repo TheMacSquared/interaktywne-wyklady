@@ -44,7 +44,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Pomiar", content = tag
     a 28 kursów prowadzonych przez osoby, dla których angielski nie jest
     językiem ojczystym, to kursy zaledwie 7 osób. Porównanie takich grup jest
     w dużej mierze porównaniem kilku konkretnych ludzi. Response rate
-    waha się od 10.4% do 100%, z medianą 76.9%; w 39 kursach ankietę
+    waha się od 10.4% do 100%, z ", gloss("mediana", "medianą"), " 76.9%; w 39 kursach ankietę
     wypełniła mniej niż połowa zapisanych. Wiemy, ile osób odpowiedziało,
     ale nie wiemy, kim one były."),
 

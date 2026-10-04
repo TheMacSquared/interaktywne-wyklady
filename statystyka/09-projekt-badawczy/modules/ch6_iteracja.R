@@ -81,7 +81,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
   ),
 
   lc_p("Oba związki istnieją, ale idą w przeciwne strony. Kobiety dostają
-    wyższe oceny atrakcyjności (mediana -0.06 wobec -0.24 u mężczyzn),
+    wyższe oceny atrakcyjności (", gloss("mediana"), " -0.06 wobec -0.24 u mężczyzn),
     a niższe oceny kursu (mediana 3.90 wobec 4.15). Płeć spełnia więc
     warunek zmiennej zakłócającej i związku atrakcyjności z oceną nie
     można czytać bez niej. Kierunek ma jednak znaczenie. Gdyby płeć
@@ -92,8 +92,8 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
   lc_h3("Pozostałe zmienne — tabela zbiorcza"),
 
   lc_p("Ten sam test przeprowadzamy dla wszystkich cech prowadzącego
-    i kursu. Dla zmiennych ilościowych (wiek) siłę związku mierzy wartość
-    bezwzględna korelacji |r|, dla zmiennych grupujących — różnica median
+    i kursu. Dla ", gloss("zmienna ilościowa", "zmiennych ilościowych"), " (wiek) siłę związku mierzy wartość
+    bezwzględna ", gloss("korelacja", "korelacji"), " |r|, dla zmiennych grupujących — różnica median
     między grupami, wyrażona w jednostkach beauty albo w punktach oceny.
     Tabela nie wyznacza granicy, od której związek jest „wyraźny”. Szukamy
     zmiennych, których związek jest wyraźnie większy niż u pozostałych,

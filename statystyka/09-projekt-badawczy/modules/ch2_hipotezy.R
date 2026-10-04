@@ -44,7 +44,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Hipotezy jako tropy", 
     dane, które pozwolą je odróżnić od głównego tropu? Wiek prowadzącego
     jest w tabeli, więc tę alternatywę da się sprawdzić. Pewności siebie
     prowadzącego w tabeli nie ma, więc tej alternatywy nie wykluczymy
-    żadnym rachunkiem. Brak danych nie przekreśla projektu, ale musi
+    żadnym rachunkiem. ", gloss("braki danych", "Brak danych"), " nie przekreśla projektu, ale musi
     trafić do konspektu jako ograniczenie."),
 
   lc_note("Zasada", rule = TRUE,

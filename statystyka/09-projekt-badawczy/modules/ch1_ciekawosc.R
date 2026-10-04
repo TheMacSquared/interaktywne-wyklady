@@ -12,7 +12,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
 
   lc_p("Wykład 08 przeprowadził jedną analizę od pytania do wniosku. Na końcu
     padła odpowiedź ostrożna: dane są obserwacyjne, efekt podaliśmy
-    w jednostkach praktycznych razem z przedziałem ufności, a obok niego
+    w jednostkach praktycznych razem z ", gloss("przedział ufności", "przedziałem ufności"), ", a obok niego
     listę ograniczeń. Pytanie było tam jednak dane z góry. We własnym
     projekcie pytanie trzeba postawić samodzielnie i to ten etap, a nie
     wybór testu, najczęściej decyduje o tym, czy z analizy wyjdzie
@@ -87,7 +87,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     konsekwencje. Po pierwsze, eval jest już podsumowaniem: średnią z ankiet
     wszystkich osób, które odpowiedziały. Po drugie, 94 prowadzących
     rozkłada się na 463 kursy nierówno, od jednego do trzynastu kursów na
-    osobę, przy medianie 4. Cechy prowadzącego, w tym ocena wyglądu i wiek,
+    osobę, przy ", gloss("mediana", "medianie"), " 4. Cechy prowadzącego, w tym ocena wyglądu i wiek,
     powtarzają się więc identycznie we wszystkich jego kursach. Wiersze nie
     są w pełni niezależne, a to problem, który w wykładzie 07 (rozdział 1)
     opisaliśmy jako brak niezależności obserwacji."),
