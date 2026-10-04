@@ -18,9 +18,9 @@ ch5_ui <- list(
                 Ten podział porządkuje cały kurs."
     ),
 
-    lc_p("Pojęcia z tego wykładu łączą się w jeden schemat. Mamy populację
-      i interesujący nas parametr. Losujemy próbę, zapisujemy obserwacje
-      w tabeli i liczymy statystykę. Statystyka trafia w parametr tylko
+    lc_p("Pojęcia z tego wykładu łączą się w jeden schemat. Mamy ", gloss("populacja", "populację"), "
+      i interesujący nas ", gloss("parametr"), ". Losujemy ", gloss("próba", "próbę"), ", zapisujemy ", gloss("obserwacja", "obserwacje"), "
+      w tabeli i liczymy ", gloss("statystyka", "statystykę"), ". Statystyka trafia w parametr tylko
       w przybliżeniu, bo zależy od tego, kto trafił do próby. Każdy kolejny
       wykład zajmuje się jednym odcinkiem tej drogi."),
 

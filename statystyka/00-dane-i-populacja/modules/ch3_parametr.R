@@ -19,7 +19,7 @@ ch3_ui <- list(
     ),
 
     lc_p("Populacja i próba to zbiory jednostek. Statystyka nie zatrzymuje się
-      jednak na zbiorach, tylko streszcza je liczbami: średnią, odsetkiem,
+      jednak na zbiorach, tylko streszcza je liczbami: ", gloss("średnia", "średnią"), ", odsetkiem,
       rozrzutem. Ta sama formuła, na przykład „odsetek osób, które pracują”,
       daje inną liczbę, gdy liczymy ją dla całej populacji, a inną, gdy dla
       próby. Te dwie liczby mają osobne nazwy i osobne oznaczenia."),
