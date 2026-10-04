@@ -133,9 +133,11 @@ ch7_ui <- list(
         lc_segmented("ch7_tree_choice", "Typ zmiennej", choices = c(
             "Zmienna dyskretna" = "discrete",
             "Zmienna ciągła"   = "continuous"
-          ), selected = "discrete"),
-        conditionalPanel(
-          condition = "input.ch7_tree_choice == 'discrete'",
+          ), selected = "discrete")
+      ),
+      conditionalPanel(
+        condition = "input.ch7_tree_choice == 'discrete'",
+        tags$div(class = "lc-choices",
           radioButtons("ch7_disc_type", "Jaki mechanizm?",
             choices = c(
               "Każdy wynik jednakowo prawdop." = "d_uniform",
@@ -144,9 +146,11 @@ ch7_ui <- list(
               "Ile prób do pierwszego sukcesu" = "d_geometric"
             )
           )
-        ),
-        conditionalPanel(
-          condition = "input.ch7_tree_choice == 'continuous'",
+        )
+      ),
+      conditionalPanel(
+        condition = "input.ch7_tree_choice == 'continuous'",
+        tags$div(class = "lc-choices",
           radioButtons("ch7_cont_type", "Jaki kształt/mechanizm?",
             choices = c(
               "Symetryczny dzwon" = "c_normal",

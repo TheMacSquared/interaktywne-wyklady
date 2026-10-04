@@ -138,10 +138,9 @@ warunki_monty_server <- function(input, output, session) {
       tags$h4("Czy wynik jednej gry był przypadkiem?"),
       tags$p("Dograj kolejne partie obiema strategiami naraz. Wyniki się sumują, więc zobacz, jak odsetek wygranych stabilizuje się wraz z liczbą gier."),
       lc_toolbar(
-        lc_action("w2_monty_sim_1", "+1 gra", variant = "solid"),
-        lc_action("w2_monty_sim_10", "+10 gier", variant = "solid"),
-        lc_action("w2_monty_sim_100", "+100 gier", variant = "solid"),
-        lc_action("w2_monty_sim_1000", "+1000 gier", variant = "solid"),
+        lc_action_group(w2_monty_sim_1 = "+1", w2_monty_sim_10 = "+10",
+                        w2_monty_sim_100 = "+100", w2_monty_sim_1000 = "+1000",
+                        label = "Dograj gry"),
         lc_readouts(uiOutput("w2_monty_reads"))
       ),
       lc_plot("w2_monty_plot", ratio = "1.6/1", max_height = "390px"),

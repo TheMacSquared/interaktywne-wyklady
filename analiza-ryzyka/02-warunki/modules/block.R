@@ -418,7 +418,7 @@ warunki_block <- list(
         "Zagraj kilka rund, zanim przeczytasz cokolwiek dalej, i uruchom symulację tysiąca gier. Po drodze zapisz w głowie odpowiedź na jedno pytanie: czy ruch prowadzącego czegoś Cię nauczył, czy niczego nie zmienił?"
       ),
       body = list(
-        risk_try("wybierz bramkę, zdecyduj, czy zostajesz, czy zmieniasz, i sprawdź wynik. Po pierwszej grze dograj „+1000 gier” i zapisz odsetek wygranych przy pozostaniu i przy zmianie."),
+        risk_try("wybierz bramkę, zdecyduj, czy zostajesz, czy zmieniasz, i sprawdź wynik. Po pierwszej grze dograj „+1000” i zapisz odsetek wygranych przy pozostaniu i przy zmianie."),
         warunki_monty_widget
       ),
       sections = list(

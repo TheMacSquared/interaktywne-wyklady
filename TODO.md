@@ -63,8 +63,8 @@ układ kolumn / pudełka statystyk / wykres o stałej wysokości / `lc_feedback`
 | statystyka-2 03-kierunkowe | 14 | 0 | 14 | 11 | 14 | 3 |
 | statystyka-2 04-szeregi-czasowe | 41 | 4 | 37 | 4 | 35 | 21 |
 
-W statystyce i analizie ryzyka stare elementy to tylko radio w statystyce 02
-(patrz niżej) i jeden wykres z kliknięciem (statystyka 06).
+W statystyce i analizie ryzyka został tylko jeden wykres z kliknięciem
+na `zoom_plot_ui` (statystyka 06, ćwiczenie z prostą).
 
 Zostało:
 
@@ -73,9 +73,10 @@ Zostało:
   `migrate_v2_readouts.R` (report → apply → apply2), potem tabele i ręczne
   układy. W kodzie: `fluidRow` 112, `lc_stat_box` 76, `lc_feedback` 171,
   wykresy `zoom_plot_ui` o stałej wysokości 99, stare tabele 16.
-- [ ] Radio w panelach: analiza ryzyka zrobiona 3 października 2026 (karty
-  `lc-choices`). Statystyka 04 Ryc. 3.4 też na kartach. Zostały statystyka
-  02 Ryc. 2.1 i 7.1 oraz statystyka 2 (1).
+- [ ] Radio w panelach: statystyka i analiza ryzyka zrobione (karty
+  `lc-choices`, lista rozwijana w 02 Ryc. 2.1). Została statystyka 2 (1).
+  Serie akcji („1× / 10× / 100×”) w statystyce i analizie ryzyka →
+  `lc_action_group()` (4 października 2026).
 - [ ] Wykresy bez tytułów (decyzja: żadnych tytułów). Statystyka i analiza
   ryzyka 02 zrobione 4 października 2026 (liczby → `lc_readout()`, objaśnienia
   → `lc_caption()`). Analiza ryzyka 01 Ćw. 2 przebudowane według prototypu B

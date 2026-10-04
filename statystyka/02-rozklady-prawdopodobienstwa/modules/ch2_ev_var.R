@@ -64,19 +64,20 @@ ch2_ev_var_ui <- list(
       title = "Gra w loterie",
       full_width = TRUE,
       lc_toolbar(
-        radioButtons("ch2ev_lottery", "Loteria",
-          choices = c(
-            "A: 50% → 10 zł, 50% → 0 zł"     = "A",
-            "B: 100% → 4 zł (pewna)"              = "B",
-            "C: 10% → 100 zł, 90% → 0 zł"    = "C",
-            "D: 60% → 8 zł, 40% → -5 zł"    = "D"
-          ),
-          selected = "A"
+        lc_group(NULL, grow = TRUE,
+          selectInput("ch2ev_lottery", "Loteria",
+            choices = c(
+              "A: 50% → 10 zł, 50% → 0 zł"  = "A",
+              "B: 100% → 4 zł (pewna)"       = "B",
+              "C: 10% → 100 zł, 90% → 0 zł" = "C",
+              "D: 60% → 8 zł, 40% → -5 zł"  = "D"
+            ),
+            selected = "A"
+          )
         ),
-        lc_action("ch2ev_play_1", "Graj 1×", variant = "solid"),
-        lc_action("ch2ev_play_10", "Graj 10×", variant = "solid"),
-        lc_action("ch2ev_play_100", "Graj 100×", variant = "solid"),
-        lc_action("ch2ev_play_1000", "Graj 1000×", variant = "solid"),
+        lc_action_group(ch2ev_play_1 = "1×", ch2ev_play_10 = "10×",
+                        ch2ev_play_100 = "100×", ch2ev_play_1000 = "1000×",
+                        label = "Graj"),
         lc_action("ch2ev_reset_lottery", icon = "reset", variant = "ghost", aria_label = "Reset"),
         lc_readouts(uiOutput("ch2ev_play_count"), uiOutput("ch2ev_lottery_stats"))
       ),

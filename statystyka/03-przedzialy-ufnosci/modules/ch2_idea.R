@@ -88,8 +88,8 @@ ch2_ui <- list(
           ),
         lc_slider("ch2_n", "Wielkość próby (n)", 5, 100, 30, 5),
         lc_slider("ch2_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01),
-        lc_action("ch2_sim_10", "Dolosuj 10 przedziałów", variant = "solid"),
-        lc_action("ch2_sim_50", "Dolosuj 50 przedziałów", variant = "solid"),
+        lc_action_group(ch2_sim_10 = "+10", ch2_sim_50 = "+50",
+                        label = "Dolosuj przedziały"),
         lc_action("ch2_sim_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
         lc_readouts(uiOutput("ch2_coverage_info"))
       ),
@@ -221,7 +221,7 @@ ch2_server <- function(input, output, session) {
     df <- ch2_sim_data()
     if (is.null(df) || nrow(df) == 0) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Dolosuj 10 przedziałów”",
+        annotate("text", x = 0.5, y = 0.5, label = "Dolosuj przedziały przyciskiem powyżej",
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {

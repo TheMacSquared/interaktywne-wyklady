@@ -110,9 +110,8 @@ ch6_ui <- list(
           selected = "exponential"
         ),
         lc_slider("ch6_sample_size", "Wielkość próby (n)", 1, 100, 5, 1),
-        lc_action("ch6_take_1", "Pobierz 1 próbę", variant = "solid"),
-        lc_action("ch6_take_100", "Pobierz 100 prób", variant = "solid"),
-        lc_action("ch6_take_1000", "Pobierz 1000 prób", variant = "solid"),
+        lc_action_group(ch6_take_1 = "1", ch6_take_100 = "100", ch6_take_1000 = "1000",
+                        label = "Pobierz próby"),
         lc_action("ch6_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
         lc_readouts(uiOutput("ch6_sample_count"), uiOutput("ch6_means_stats"))
       ),
@@ -293,7 +292,7 @@ ch6_server <- function(input, output, session) {
     if (length(means) == 0) {
       ggplot() +
         annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij „Pobierz 1 próbę”, aby rozpocząć",
+                 label = "Pobierz próby przyciskiem powyżej",
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {

@@ -68,8 +68,7 @@ ch1_ui <- list(
             selected = "normal"
           ),
         lc_slider("ch1_n", "Wielkość próby (n)", 5, 200, 30, 5),
-        lc_action("ch1_draw_1", "Pobierz 1 próbę", variant = "solid"),
-        lc_action("ch1_draw_20", "Pobierz 20 prób", variant = "solid"),
+        lc_action_group(ch1_draw_1 = "1", ch1_draw_20 = "20", label = "Pobierz próby"),
         lc_action("ch1_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
         lc_readouts(uiOutput("ch1_estimates_stats"), uiOutput("ch1_count_info"))
       ),
@@ -266,7 +265,7 @@ ch1_server <- function(input, output, session) {
 
     if (nrow(est) == 0) {
       ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Pobierz 1 próbę”",
+        annotate("text", x = 0.5, y = 0.5, label = "Pobierz próbę przyciskiem powyżej",
                  size = 6, color = upwr_reference) +
         theme_void()
     } else {

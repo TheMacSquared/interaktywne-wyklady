@@ -1791,6 +1791,7 @@ mjx-container mjx-text {
    „Sprawdź się”). Opakowanie div.lc-choices wokół radioButtons() / checkboxGroupInput() albo listy opcji. */
 .lc-choices .shiny-options-group,.lc-check-options.lc-choices{display:flex;flex-direction:column;gap:.45em;max-width:680px}
 .lc-choices .radio,.lc-choices .checkbox{margin:0}
+.lc-choices .control-label{display:block;margin:0 0 .5em;font-size:.78em;font-weight:700;color:var(--upwr-ink-soft)}
 .lc-choices .radio label,.lc-choices .checkbox label,.lc-choices .lc-check-option{display:flex;align-items:flex-start;gap:.65em;padding:.55em .85em;border:1px solid var(--upwr-rule);border-radius:6px;background:var(--upwr-surface);font-weight:400;line-height:1.45;cursor:pointer;transition:border-color .15s,background-color .15s}
 .lc-choices .radio label:hover,.lc-choices .checkbox label:hover,.lc-choices .lc-check-option:hover{border-color:var(--upwr-ink-subtle)}
 .lc-choices .radio label:has(input:checked),.lc-choices .checkbox label:has(input:checked),.lc-choices .lc-check-option:has(input:checked){border-color:var(--upwr-accent);background:var(--upwr-accent-tint)}

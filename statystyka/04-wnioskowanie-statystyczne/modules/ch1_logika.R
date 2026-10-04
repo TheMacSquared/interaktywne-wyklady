@@ -336,8 +336,7 @@ ch1d_ui <- list(
       title = "Powtórzone eksperymenty pod H₀",
       lc_toolbar(
         lc_slider("ch1_sim_n", "n (na grupę)", 10, 100, 40, 5),
-        lc_action("ch1_sim_10", "Powtórz 10 razy", variant = "solid"),
-        lc_action("ch1_sim_200", "Powtórz 200 razy", variant = "solid"),
+        lc_action_group(ch1_sim_10 = "10×", ch1_sim_200 = "200×", label = "Powtórz eksperyment"),
         lc_action("ch1_sim_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
         lc_readouts(uiOutput("ch1_sim_info"))
       ),
