@@ -277,7 +277,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     regresja wieloraka."),
 
   lc_note("Zasada", rule = TRUE,
-    "Zanim przypiszesz różnicę w wynikach jednej zmiennej, zapytaj, czym
+    "Przed przypisaniem różnicy w wynikach jednej zmiennej zapytaj, czym
      jeszcze różnią się porównywane grupy."),
 
   # ========================================================================
