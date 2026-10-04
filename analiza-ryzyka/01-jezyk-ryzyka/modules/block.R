@@ -380,56 +380,6 @@ jezyk_chain_widget <- figure_panel(
   ))
 )
 
-# --- PROTOTYPY widżetu „Ćwiczenie 2” (do porównania; po wyborze zostaje jeden) ---
-
-jezyk_proto_toolbar <- function(prefix, add = c(1, 10, 100, 1000), estimate = FALSE) {
-  tags$div(
-    class = "lc-proto-toolbar",
-    tags$span(class = "lc-proto-toolbar-label", "Dodaj zmiany:"),
-    lapply(add, function(n) {
-      lc_action(paste0(prefix, "_add_", n), paste0("+", format(n, big.mark = " ")), variant = "solid")
-    }),
-    tags$span(class = "lc-proto-toolbar-gap"),
-    lc_action(paste0(prefix, "_reveal"), if (estimate) "Odsłoń i porównaj" else "Odsłoń modelowe P", variant = "outline"),
-    lc_action(paste0(prefix, "_reset"), "Nowa seria", variant = "outline")
-  )
-}
-
-jezyk_proto_a <- figure_panel(
-  label = "Prototyp A",
-  title = "Pasek przycisków nad wykresem, liczby w jednym rzędzie",
-  full_width = TRUE,
-  jezyk_proto_toolbar("ch2a"),
-  uiOutput("ch2a_stats"),
-  lc_plot("ch2a_plot", ratio = "1.7/1", max_height = "360px")
-)
-
-jezyk_proto_b <- figure_panel(
-  label = "Prototyp B",
-  title = "Najpierw oszacuj, potem odsłoń",
-  full_width = TRUE,
-  jezyk_proto_toolbar("ch2b", estimate = TRUE),
-  tags$div(
-    class = "lc-proto-two",
-    tags$div(lc_plot("ch2b_grid", ratio = "1.9/1", max_height = "320px")),
-    tags$div(lc_plot("ch2b_line", ratio = "1.9/1", max_height = "320px"))
-  ),
-  tags$div(
-    class = "lc-proto-estimate",
-    lc_slider("ch2b_guess", "Twoje oszacowanie modelowego P", 0, 0.30, 0.15, 0.01)
-  ),
-  uiOutput("ch2b_feedback")
-)
-
-jezyk_proto_c <- figure_panel(
-  label = "Prototyp C",
-  title = "Pięć serii naraz, oś zmian w skali logarytmicznej",
-  full_width = TRUE,
-  jezyk_proto_toolbar("ch2c", add = c(10, 100, 1000)),
-  uiOutput("ch2c_stats"),
-  lc_plot("ch2c_plot", ratio = "1.6/1", max_height = "380px")
-)
-
 jezyk_block <- list(
   id = "jezyk", title = "Język ryzyka",
   chapters = list(
@@ -670,40 +620,38 @@ jezyk_block <- list(
                fikcyjne zmiany i spróbuj oszacować je na podstawie częstości empirycznej.
                Małe serie mogą wyglądać dramatycznie albo podejrzanie dobrze. Gdy uznasz,
                że danych jest dość, odsłoń wartość przyjętą w modelu.",
-            risk_try("zacznij od kilku kliknięć „Dodaj 1 zmianę” i zapisz częstość po
-              10 zmianach. Potem dodawaj po 100 i po 1000. Obserwuj, jak zmienia się
-              zakres wahań linii. Odsłoń modelowe P dopiero, gdy wpiszesz swoje
-              oszacowanie. Na koniec kliknij „Nowa seria” i porównaj początek nowej
+            risk_try("ustaw suwak na swoje oszacowanie, zanim zobaczysz dane. Kliknij
+              kilka razy „+1” i zapisz częstość po 10 zmianach. Potem dodawaj po
+              100 i po 1000 i obserwuj, jak zmienia się zakres wahań linii. Gdy
+              uznasz, że danych jest dość, popraw oszacowanie i kliknij „Odsłoń
+              i porównaj”. Na koniec kliknij „Nowa seria” i porównaj początek nowej
               linii z poprzednią."),
             figure_panel(
               label = "Ćwiczenie 2",
               title = "Teoria kontra kolejne zmiany w Bananpolu",
               full_width = TRUE,
-              fluidRow(
-                column(
-                  4,
-                  lc_stack(
-                    lc_action("ch2_add_1", "Dodaj 1 zmianę", variant = "solid"),
-                    lc_action("ch2_add_10", "Dodaj 10 zmian", variant = "solid"),
-                    lc_action("ch2_add_100", "Dodaj 100 zmian", variant = "solid"),
-                    lc_action("ch2_add_1000", "Dodaj 1000 zmian", variant = "solid"),
-                    lc_action("ch2_reveal", "Odsłoń modelowe P", variant = "outline"),
-                    lc_action("ch2_reset", "Nowa seria (reset)", variant = "outline")
-                  ),
-                  uiOutput("ch2_stats")
+              lc_toolbar(
+                lc_action_group(ch2_add_1 = "+1", ch2_add_10 = "+10",
+                                ch2_add_100 = "+100", ch2_add_1000 = "+1 000",
+                                label = "Dodaj zmiany"),
+                lc_slider("ch2_guess", "Twoje oszacowanie P", 0, 0.30, 0.15, 0.01),
+                lc_action("ch2_reveal", "Odsłoń i porównaj", variant = "outline"),
+                lc_action("ch2_reset", "Nowa seria", variant = "outline"),
+                lc_readouts(uiOutput("ch2_stats"))
+              ),
+              lc_plots(
+                tags$div(
+                  tags$h4("Ostatnie 100 zmian"),
+                  lc_plot("ch2_grid", ratio = "1/1", max_height = "280px")
                 ),
-                column(
-                  8,
-                  zoom_plot_ui("ch2_convergence", height = "440px")
+                tags$div(
+                  tags$h4("Skumulowana częstość"),
+                  lc_plot("ch2_line", ratio = "1.7/1", max_height = "340px")
                 )
-              )
+              ),
+              uiOutput("ch2_note"),
+              uiOutput("ch2_feedback")
             ),
-            lc_note("Prototypy",
-              "Trzy alternatywne układy tego samego eksperymentu, do porównania z widżetem powyżej."
-            ),
-            jezyk_proto_a,
-            jezyk_proto_b,
-            jezyk_proto_c,
             "Na początku serii linia skacze gwałtownie: po jednej zmianie częstość
                wynosi 0 albo 1, a po kilku zmianach jedno zdarzenie przesuwa ją o
                kilkanaście punktów procentowych. Z każdą kolejną setką zmian pojedyncza
@@ -1627,72 +1575,78 @@ jezyk_czestosc_server <- function(input, output, session) {
   output$ch2_stats <- renderUI({
     observed <- history()
     n <- length(observed)
-    events <- sum(observed)
-    frequency <- if (n == 0) NA_real_ else mean(observed)
-
-    lc_stat_grid(
-      lc_stat_box("Obserwowane zmiany", format(n, big.mark = " ")),
-      lc_stat_box("Zmiany ze zdarzeniem", format(events, big.mark = " ")),
-      lc_stat_box(
-        "Częstość empiryczna",
-        if (is.na(frequency)) "—" else format_probability_pl(frequency),
-        color = upwr_cat[["niebo"]]
-      ),
-      lc_stat_box(
-        "Prawdopodobieństwo modelowe",
-        if (probability_revealed()) {
-          format_probability_pl(model_probability())
-        } else {
-          "Ukryte"
-        },
-        color = upwr_accent
-      ),
-      columns = 2
+    tagList(
+      lc_readout("Zmiany", format(n, big.mark = " ")),
+      lc_readout("Ze zdarzeniem", format(sum(observed), big.mark = " "), color = upwr_accent),
+      lc_readout("Częstość", if (n) risk_fmt_p(mean(observed)) else "—",
+                 color = upwr_cat[["niebo"]]),
+      lc_readout("Modelowe P",
+                 if (probability_revealed()) risk_fmt_p(model_probability()) else "ukryte")
     )
   })
 
-  convergence_plot <- reactive({
+  # Siatka ostatnich 100 zmian: burgund = poślizgnięcie, niebieski = bez zdarzenia.
+  zoom_plot_server("ch2_grid", reactive({
+    last <- utils::tail(history(), 100L)
+    cells <- data.frame(id = seq_len(100L))
+    cells$column <- (cells$id - 1L) %% 10L + 1L
+    cells$row <- (cells$id - 1L) %/% 10L + 1L
+    cells$state <- factor(
+      c(ifelse(last == 1L, "event", "none"), rep("empty", 100L - length(last))),
+      levels = c("event", "none", "empty")
+    )
+    ggplot(cells, aes(column, -row, fill = state)) +
+      geom_tile(colour = upwr_panel, linewidth = 1.2) +
+      scale_fill_manual(values = c(event = upwr_accent, none = upwr_cat[["niebo"]],
+                                   empty = upwr_rule), drop = FALSE, guide = "none") +
+      coord_equal(expand = FALSE) +
+      labs(x = NULL, y = NULL) +
+      theme_void()
+  }), alt = "Siatka ostatnich stu zmian; burgundowe pola to zmiany z poślizgnięciem.")
+
+  zoom_plot_server("ch2_line", reactive({
     data <- cumulative_frequency(history())
-    revealed <- probability_revealed()
-
-    plot <- ggplot(data, aes(x = trial, y = frequency)) +
+    plot <- ggplot(data, aes(trial, frequency)) +
+      geom_hline(yintercept = input$ch2_guess, colour = upwr_cat[["bursztyn"]],
+                 linewidth = 0.9, linetype = "dotted") +
       coord_cartesian(ylim = c(0, 1)) +
-      labs(subtitle = if (revealed) {
-          "Linia przerywana: prawdopodobieństwo przyjęte w modelu"
-        } else {
-          "Modelowe prawdopodobieństwo pozostaje ukryte"
-        }, x = "Liczba obserwowanych zmian", y = "Skumulowana częstość zdarzenia")
-
-    if (revealed) {
-      plot <- plot + geom_hline(
-        yintercept = model_probability(),
-        colour = upwr_accent,
-        linewidth = 0.9,
-        linetype = "dashed"
-      )
+      labs(x = "Liczba obserwowanych zmian", y = "Skumulowana częstość")
+    if (probability_revealed()) {
+      plot <- plot + geom_hline(yintercept = model_probability(), colour = upwr_accent,
+                                linewidth = 0.9, linetype = "dashed")
     }
-
     if (nrow(data) == 0) {
-      plot +
-        annotate(
-          "text",
-          x = 1,
-          y = 0.55,
-          label = "Dodaj pierwsze obserwacje",
-          colour = upwr_secondary,
-          size = 5
-        ) +
-        scale_x_continuous(limits = c(0, 2))
+      plot + scale_x_continuous(limits = c(0, 2))
     } else {
       plot + geom_line(linewidth = 0.8, colour = upwr_cat[["niebo"]])
     }
+  }), alt = "Skumulowana częstość poślizgnięć z linią oszacowania; po odsłonięciu także linia modelowego P.")
+
+  output$ch2_note <- renderUI({
+    lc_caption(paste0(
+      "Siatka: burgundowe pola to zmiany z poślizgnięciem, niebieskie bez zdarzenia, ",
+      "szare jeszcze nieobserwowane. Wykres: kropkowana linia to Twoje oszacowanie",
+      if (probability_revealed()) ", przerywana modelowe P." else "."
+    ))
   })
 
-  zoom_plot_server(
-    "ch2_convergence",
-    convergence_plot,
-    alt = "Wykres skumulowanej częstości poślizgnięć w kolejnych zmianach. Po odsłonięciu modelu pojawia się linia modelowego prawdopodobieństwa."
-  )
+  output$ch2_feedback <- renderUI({
+    req(probability_revealed())
+    observed <- history()
+    n <- length(observed)
+    p <- model_probability()
+    lc_status(
+      tags$strong("Porównanie:"),
+      paste0(
+        sprintf(" Twoje oszacowanie %s, modelowe P %s", risk_fmt_p(input$ch2_guess), risk_fmt_p(p)),
+        if (n) sprintf(paste0(", częstość po %s zmianach %s. Przy tej liczbie zmian ",
+                              "częstość waha się wokół P typowo o √(p(1 - p)/n) ≈ %s."),
+                       format(n, big.mark = " "), risk_fmt_p(mean(observed)),
+                       risk_fmt_p(sqrt(p * (1 - p) / n))) else
+          ". Dodaj zmiany, żeby porównać z częstością."
+      )
+    )
+  })
 }
 
 jezyk_przestrzen_server <- function(input, output, session) {
@@ -2098,146 +2052,7 @@ jezyk_cwiczenia_server <- function(input, output, session) {
   })
 }
 
-# --- PROTOTYPY widżetu „Ćwiczenie 2” ---------------------------------------
-
-# Stan jednej lub kilku serii z tym samym ukrytym P; przyciski dodają zmiany do
-# wszystkich serii naraz.
-jezyk_proto_series <- function(prefix, input, add, n_series = 1L) {
-  candidates <- seq(0.01, 0.30, by = 0.01)
-  p <- reactiveVal(sample(candidates, 1L))
-  revealed <- reactiveVal(FALSE)
-  series <- reactiveVal(replicate(n_series, integer(), simplify = FALSE))
-  lapply(add, function(n) {
-    observeEvent(input[[paste0(prefix, "_add_", n)]], {
-      series(lapply(series(), append_bernoulli_history, n = n, probability = p()))
-    })
-  })
-  observeEvent(input[[paste0(prefix, "_reveal")]], revealed(TRUE))
-  observeEvent(input[[paste0(prefix, "_reset")]], {
-    series(replicate(n_series, integer(), simplify = FALSE))
-    p(sample(setdiff(candidates, p()), 1L))
-    revealed(FALSE)
-  })
-  list(p = p, revealed = revealed, series = series)
-}
-
-jezyk_proto_stat_row <- function(...) tags$div(class = "lc-proto-stats", ...)
-
-jezyk_prototypes_server <- function(input, output, session) {
-  # A: ten sam eksperyment, inny układ.
-  a <- jezyk_proto_series("ch2a", input, c(1, 10, 100, 1000))
-  output$ch2a_stats <- renderUI({
-    h <- a$series()[[1]]
-    jezyk_proto_stat_row(
-      lc_stat_box("Obserwowane zmiany", format(length(h), big.mark = " ")),
-      lc_stat_box("Zmiany ze zdarzeniem", format(sum(h), big.mark = " ")),
-      lc_stat_box("Częstość empiryczna", if (length(h)) format_probability_pl(mean(h)) else "—", color = upwr_cat[["niebo"]]),
-      lc_stat_box("Modelowe P", if (a$revealed()) format_probability_pl(a$p()) else "Ukryte")
-    )
-  })
-  zoom_plot_server("ch2a_plot", reactive({
-    data <- cumulative_frequency(a$series()[[1]])
-    plot <- ggplot(data, aes(trial, frequency)) +
-      coord_cartesian(ylim = c(0, 1)) +
-      labs(x = "Liczba obserwowanych zmian", y = "Skumulowana częstość")
-    if (a$revealed()) plot <- plot + geom_hline(yintercept = a$p(), colour = upwr_accent, linewidth = 0.9, linetype = "dashed")
-    if (nrow(data) == 0) {
-      plot + annotate("text", x = 1, y = 0.5, label = "Dodaj pierwsze zmiany", colour = upwr_secondary, size = 5) +
-        scale_x_continuous(limits = c(0, 2))
-    } else {
-      plot + geom_line(linewidth = 0.8, colour = upwr_cat[["niebo"]])
-    }
-  }), alt = "Skumulowana częstość poślizgnięć w kolejnych zmianach.")
-
-  # B: siatka ostatnich 100 zmian, linia z oszacowaniem studenta, porównanie po odsłonięciu.
-  b <- jezyk_proto_series("ch2b", input, c(1, 10, 100, 1000))
-  zoom_plot_server("ch2b_grid", reactive({
-    h <- b$series()[[1]]
-    last <- utils::tail(h, 100L)
-    cells <- data.frame(id = seq_len(100L))
-    cells$column <- (cells$id - 1L) %% 10L + 1L
-    cells$row <- (cells$id - 1L) %/% 10L + 1L
-    cells$state <- factor(
-      c(ifelse(last == 1L, "Poślizgnięcie", "Bez zdarzenia"), rep("Jeszcze nie obserwowano", 100L - length(last))),
-      levels = c("Poślizgnięcie", "Bez zdarzenia", "Jeszcze nie obserwowano")
-    )
-    ggplot(cells, aes(column, -row, fill = state)) +
-      geom_tile(colour = upwr_panel, linewidth = 1.2) +
-      scale_fill_manual(values = c(upwr_accent, upwr_cat[["niebo"]], upwr_rule), drop = FALSE,
-        breaks = c("Poślizgnięcie", "Bez zdarzenia")) +
-      coord_equal() +
-      labs(subtitle = sprintf("%d z %d z poślizgnięciem", sum(last), length(last)),
-        fill = NULL, x = NULL, y = NULL) +
-      theme(axis.text = element_blank(), panel.grid = element_blank(), legend.position = "bottom")
-  }), alt = "Siatka ostatnich stu zmian; wypełnione pola oznaczają zmiany z poślizgnięciem.")
-  zoom_plot_server("ch2b_line", reactive({
-    data <- cumulative_frequency(b$series()[[1]])
-    plot <- ggplot(data, aes(trial, frequency)) +
-      geom_hline(yintercept = input$ch2b_guess, colour = upwr_cat[["bursztyn"]], linewidth = 0.9, linetype = "dotted") +
-      coord_cartesian(ylim = c(0, 1)) +
-      labs(subtitle = if (b$revealed()) "Kropki: oszacowanie · kreski: modelowe P" else "Kropki: Twoje oszacowanie", x = "Liczba obserwowanych zmian", y = "Skumulowana częstość")
-    if (b$revealed()) plot <- plot + geom_hline(yintercept = b$p(), colour = upwr_accent, linewidth = 0.9, linetype = "dashed")
-    if (nrow(data) == 0) plot + scale_x_continuous(limits = c(0, 2)) else plot + geom_line(linewidth = 0.8, colour = upwr_cat[["niebo"]])
-  }), alt = "Skumulowana częstość z linią oszacowania studenta.")
-  output$ch2b_feedback <- renderUI({
-    req(b$revealed())
-    h <- b$series()[[1]]
-    n <- length(h)
-    p <- b$p()
-    jezyk_proto_stat_row(
-      lc_stat_box("Twoje oszacowanie", format_probability_pl(input$ch2b_guess), color = upwr_cat[["bursztyn"]]),
-      lc_stat_box("Częstość po zmianach", if (n) format_probability_pl(mean(h)) else "—", caption = paste("n =", format(n, big.mark = " ")), color = upwr_cat[["niebo"]]),
-      lc_stat_box("Modelowe P", format_probability_pl(p)),
-      lc_stat_box("Typowe odchylenie", if (n) formatC(sqrt(p * (1 - p) / n), format = "f", digits = 3, decimal.mark = ",") else "—", caption = "√(p(1 - p)/n)")
-    )
-  })
-
-  # C: pięć serii, skala logarytmiczna, pas ±2 typowe odchylenia po odsłonięciu.
-  cc <- jezyk_proto_series("ch2c", input, c(10, 100, 1000), n_series = 5L)
-  output$ch2c_stats <- renderUI({
-    s <- cc$series()
-    n <- length(s[[1]])
-    freq <- if (n) vapply(s, mean, numeric(1)) else NA_real_
-    jezyk_proto_stat_row(
-      lc_stat_box("Zmiany w każdej serii", format(n, big.mark = " ")),
-      lc_stat_box("Najniższa częstość", if (n) format_probability_pl(min(freq)) else "—", color = upwr_cat[["niebo"]]),
-      lc_stat_box("Najwyższa częstość", if (n) format_probability_pl(max(freq)) else "—", color = upwr_cat[["niebo"]]),
-      lc_stat_box("Modelowe P", if (cc$revealed()) format_probability_pl(cc$p()) else "Ukryte")
-    )
-  })
-  zoom_plot_server("ch2c_plot", reactive({
-    s <- cc$series()
-    data <- do.call(rbind, lapply(seq_along(s), function(i) {
-      d <- cumulative_frequency(s[[i]])
-      if (nrow(d)) d$series <- paste("Seria", i)
-      d
-    }))
-    # Modelowe P leży w [0,01; 0,30], więc oś do 0,6 pokazuje rozrzut serii;
-    # pojedyncze skoki na samym początku są przycięte.
-    plot <- ggplot() + coord_cartesian(ylim = c(0, 0.6)) +
-      labs(subtitle = if (cc$revealed()) "Pas: P ± 2 typowe odchylenia √(p(1 - p)/n)" else "Modelowe P pozostaje ukryte", x = "Liczba obserwowanych zmian (skala logarytmiczna)", y = "Skumulowana częstość", colour = NULL)
-    if (is.null(data) || nrow(data) == 0) {
-      return(plot + annotate("text", x = 10, y = 0.5, label = "Dodaj pierwsze zmiany", colour = upwr_secondary, size = 5) +
-        scale_x_log10(limits = c(1, 100)))
-    }
-    if (cc$revealed()) {
-      p <- cc$p()
-      band <- data.frame(trial = unique(data$trial))
-      band$sd <- sqrt(p * (1 - p) / band$trial)
-      plot <- plot +
-        geom_ribbon(data = band, aes(x = trial, ymin = pmax(0, p - 2 * sd), ymax = pmin(1, p + 2 * sd)),
-          fill = upwr_accent, alpha = 0.12) +
-        geom_hline(yintercept = p, colour = upwr_accent, linewidth = 0.9, linetype = "dashed")
-    }
-    plot + geom_line(data = data, aes(trial, frequency, colour = series), linewidth = 0.7) +
-      scale_colour_manual(values = upwr_cat_n(5)) +
-      scale_x_log10(labels = function(x) format(x, big.mark = " ", scientific = FALSE)) +
-      theme(legend.position = "bottom")
-  }), alt = "Pięć linii skumulowanej częstości na osi logarytmicznej; po odsłonięciu pas wokół modelowego P.")
-}
-
 jezyk_server <- function(input, output, session) {
-  jezyk_prototypes_server(input, output, session)
   jezyk_sytuacja_server(input, output, session)
   jezyk_czestosc_server(input, output, session)
   jezyk_przestrzen_server(input, output, session)

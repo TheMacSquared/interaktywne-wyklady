@@ -62,10 +62,9 @@ układ kolumn / pudełka statystyk / wykres o stałej wysokości / `lc_feedback`
 | statystyka-2 02-metody-bayesowskie | 13 | 3 | 10 | 0 | 10 | 10 |
 | statystyka-2 03-kierunkowe | 14 | 0 | 14 | 11 | 14 | 3 |
 | statystyka-2 04-szeregi-czasowe | 41 | 4 | 37 | 4 | 35 | 21 |
-| analiza-ryzyka 01-jezyk-ryzyka | 16 | 10 | 1 | 3 | 1 | 0 |
 
-W pozostałych wykładach statystyki i analizy ryzyka stare elementy to tylko
-radio (patrz niżej) i jeden wykres z kliknięciem (statystyka 06).
+W statystyce i analizie ryzyka stare elementy to tylko radio w statystyce 02
+(patrz niżej) i jeden wykres z kliknięciem (statystyka 06).
 
 Zostało:
 
@@ -74,16 +73,13 @@ Zostało:
   `migrate_v2_readouts.R` (report → apply → apply2), potem tabele i ręczne
   układy. W kodzie: `fluidRow` 112, `lc_stat_box` 76, `lc_feedback` 171,
   wykresy `zoom_plot_ui` o stałej wysokości 99, stare tabele 16.
-- [ ] Analiza ryzyka 01 Ćw. 2 i prototypy: 16 `lc_stat_box` i jeden układ
-  kolumn — po wyborze wariantu ćwiczenia.
 - [ ] Radio w panelach: analiza ryzyka zrobiona 3 października 2026 (karty
   `lc-choices`). Statystyka 04 Ryc. 3.4 też na kartach. Zostały statystyka
   02 Ryc. 2.1 i 7.1 oraz statystyka 2 (1).
 - [ ] Wykresy bez tytułów (decyzja: żadnych tytułów). Statystyka i analiza
   ryzyka 02 zrobione 4 października 2026 (liczby → `lc_readout()`, objaśnienia
-  → `lc_caption()`). Zostały: analiza ryzyka 01 Ćw. 2 i prototypy A/B/C
-  (`modules/block.R`, 4 podtytuły — razem z wyborem wariantu) oraz
-  statystyka 2: `01-symulacje-statystyczne/modules/helpers.R` (6),
+  → `lc_caption()`). Analiza ryzyka 01 Ćw. 2 przebudowane według prototypu B
+  (prototypy usunięte). Została statystyka 2: `01-symulacje-statystyczne/modules/helpers.R` (6),
   `02-metody-bayesowskie/modules/helpers.R` (2),
   `04-szeregi-czasowe/modules/` `ch11_ets.R`, `ch5_acf.R`, `ch8_ar.R`,
   `ch9_ma_arma.R` (po 2).
@@ -367,9 +363,6 @@ Rekomendacje (do przyjęcia przy wznowieniu, bez dalszych decyzji teraz):
 
 ### 01 — język ryzyka
 
-- [ ] **Decyzja:** ćwiczenie 2 — dotychczasowy widget czy prototyp A, B lub C.
-  Po wyborze usunąć pozostały kod serwera i CSS `.lc-proto-*`. Nie migrować
-  prototypów do wspólnych komponentów przed wyborem.
 - [ ] Ocenić interaktywny łańcuch pojęć jako treść tego wykładu (uogólnienie —
   patrz sekcja globalna).
 - [ ] Stara tabela `lc-table` w `modules/block.R` (ok. l. 1406) → `lc_table()`

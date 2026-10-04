@@ -2113,37 +2113,6 @@ mjx-container mjx-text {
   color: var(--node-color);
 }
 
-/* === PROTOTYPY widżetu „Ćwiczenie 2” w wykładzie 01 (tymczasowe) === */
-.lc-proto-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin: 4px 0 12px;
-}
-.lc-proto-toolbar .btn,
-.lc-proto-toolbar button { width: auto; margin: 0; }
-.lc-proto-toolbar-label {
-  font-family: var(--upwr-mono);
-  font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--upwr-reference);
-}
-.lc-proto-toolbar-gap { flex: 1 1 12px; }
-.lc-proto-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-  margin: 8px 0 14px;
-}
-.lc-proto-two {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 16px;
-}
-.lc-proto-estimate { max-width: 520px; margin: 12px auto 0; }
-
 /* ==========================================================================
    WIDGETY V2 I TABELE V2
    Źródło: handoffy „Widgety v2” i „Tabele v2” (CSS dostosowany do klas repo:
