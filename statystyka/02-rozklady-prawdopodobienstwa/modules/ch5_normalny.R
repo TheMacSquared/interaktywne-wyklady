@@ -186,7 +186,7 @@ ch5_ui <- list(
 
     lc_p("Prawdopodobieństwo przedziału to pole pod gęstością, ale dla
       rozkładu normalnego pola tego nie da się zapisać prostym wzorem. Liczy
-      się je numerycznie, a podstawą jest dystrybuanta F(z) = P(Z ≤ z),
+      się je numerycznie, a podstawą jest ", gloss("dystrybuanta"), " F(z) = P(Z ≤ z),
       czyli pole na lewo od z. Pozostałe pytania wynikają z tego,
       że całe pole wynosi 1:"),
 

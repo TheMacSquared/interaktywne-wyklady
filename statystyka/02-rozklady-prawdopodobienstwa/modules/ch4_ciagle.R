@@ -143,7 +143,7 @@ ch4_ui <- list(
 
     lc_p("Liczenie całki przy każdym pytaniu o przedział byłoby uciążliwe.
       Wystarczy jednak znać jedną funkcję: pole pod krzywą od lewego końca
-      osi do punktu x. Tę funkcję nazywamy dystrybuantą i oznaczamy F(x).
+      osi do punktu x. Tę funkcję nazywamy ", gloss("dystrybuanta", "dystrybuantą"), " i oznaczamy F(x).
       Dystrybuanta podaje prawdopodobieństwo, że zmienna nie przekroczy
       wartości x."),
 
@@ -160,7 +160,7 @@ ch4_ui <- list(
 
     lc_p("Dystrybuantę można też czytać odwrotnie: zamiast pytać o pole na lewo
       od danej wartości, pytamy, przy jakiej wartości to pole osiąga zadany
-      poziom. Taka wartość to kwantyl rzędu q, czyli x, dla którego F(x) = q.
+      poziom. Taka wartość to ", gloss("kwantyl"), " rzędu q, czyli x, dla którego F(x) = q.
       ", gloss("mediana", "Mediana"), " jest kwantylem rzędu 0.5, a ", gloss("percentyl", "percentyle"), " z wykładu 01 to kwantyle
       wyrażone w procentach."),
 
