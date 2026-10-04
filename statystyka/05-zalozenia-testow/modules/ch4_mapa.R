@@ -22,8 +22,8 @@ ch4_ui <- lecture_chapter(
     lc_p("Trzy poprzednie rozdziały omawiały założenia po kolei: kształt rozkładu,
       równy rozrzut w porównywanych grupach, liczebności w tabelach i kształt
       związku w korelacji. Każda metoda z wykładu 04 korzysta z innej kombinacji
-      tych założeń. Test t dla par nie pyta o wariancje, test χ² nie pyta
-      o normalność, a korelacja Pearsona wymaga liniowości, której nie wymaga
+      tych założeń. ", gloss("test t", "Test t"), " dla par nie pyta o wariancje, test χ² nie pyta
+      o normalność, a ", gloss("korelacja Pearsona", "korelacja Pearsona"), " wymaga liniowości, której nie wymaga
       żaden test porównujący grupy. Poniższe tabele zestawiają te kombinacje
       w jednym miejscu."),
 
@@ -51,9 +51,9 @@ ch4_ui <- lecture_chapter(
     lc_h2("ch4-parametryczne", "Testy parametryczne"),
 
     lc_p(gloss("test parametryczny", "Testy parametryczne"), " z wykładu 04
-      wnioskują o parametrach populacji: średniej, różnicy średnich albo
-      współczynniku korelacji. P-wartość biorą z rozkładu t lub F. Ten rozkład
-      jest dokładny, gdy dane pochodzą z rozkładu normalnego, a w pozostałych
+      wnioskują o ", gloss("parametr", "parametrach"), " ", gloss("populacja", "populacji"), ": średniej, różnicy średnich albo
+      współczynniku korelacji. ", gloss("p-wartość", "P-wartość"), " biorą z rozkładu t lub F. Ten rozkład
+      jest dokładny, gdy dane pochodzą z ", gloss("rozkład normalny", "rozkładu normalnego"), ", a w pozostałych
       przypadkach jest przybliżeniem. Założenie normalności dotyczy więc
       w gruncie rzeczy rozkładu średniej z próby, a nie surowych danych. Z ",
       gloss("centralne twierdzenie graniczne", "centralnego twierdzenia granicznego"),
@@ -61,8 +61,8 @@ ch4_ui <- lecture_chapter(
       ze wzrostem próby. Im bardziej skośny rozkład danych i im więcej wartości
       odstających, tym większej próby potrzeba, żeby to przybliżenie było dobre."),
 
-    lc_p("Równe wariancje to osobna sprawa. Wymaga ich tylko klasyczny test t
-      Studenta i klasyczna ANOVA. ", gloss("test t Welcha", "Test t Welcha"),
+    lc_p("", gloss("wariancja", "Równe wariancje"), " to osobna sprawa. Wymaga ich tylko klasyczny test t
+      Studenta i klasyczna ", gloss("ANOVA"), ". ", gloss("test t Welcha", "Test t Welcha"),
       ", którego używają wszystkie panele kursu, tego założenia nie potrzebuje.
       Dla trzech i więcej grup odpowiednikiem jest ANOVA Welcha."),
 
@@ -139,11 +139,11 @@ ch4_ui <- lecture_chapter(
       bezpieczniej użyć wersji Welcha."),
 
     lc_p("Po alternatywę z ostatniej kolumny sięgamy w trzech sytuacjach. Pierwsza:
-      próba jest mała, a wykres pokazuje silną skośność albo wartości odstające,
+      próba jest mała, a wykres pokazuje silną ", gloss("skośność"), " albo wartości odstające,
       więc nie można liczyć na centralne twierdzenie graniczne. Druga: dane są
-      porządkowe, na przykład odpowiedzi na skali Likerta, i średnia nie ma
+      porządkowe, na przykład odpowiedzi na ", gloss("skala Likerta", "skali Likerta"), ", i średnia nie ma
       dobrej interpretacji. Trzecia: rozkład jest tak skośny, że średnia
-      przestaje opisywać typową wartość, a pytanie badawcze i tak dotyczy
+      przestaje opisywać typową wartość, a ", gloss("pytanie badawcze"), " i tak dotyczy
       czegoś innego niż średnia. Łagodne odchylenia od normalności, zwłaszcza
       przy podobnych liczebnościach grup, testy t i ANOVA zwykle znoszą dobrze."),
 
@@ -158,9 +158,9 @@ ch4_ui <- lecture_chapter(
       danych, i dlatego testują inną hipotezę niż ich parametryczne odpowiedniki.
       Ani ", gloss("test Manna-Whitneya", "test Manna–Whitneya"), ", ani ",
       gloss("test Kruskala-Wallisa", "test Kruskala-Wallisa"), " nie porównuje
-      średnich. Hipoteza zerowa mówi, że wszystkie grupy mają ten sam rozkład,
+      średnich. ", gloss("hipoteza zerowa", "Hipoteza zerowa"), " mówi, że wszystkie grupy mają ten sam rozkład,
       a test wykrywa przede wszystkim tendencję wartości z jednej grupy do
-      bycia większymi od wartości z drugiej. Jako porównanie median wynik można
+      bycia większymi od wartości z drugiej. Jako porównanie ", gloss("mediana", "median"), " wynik można
       czytać tylko wtedy, gdy rozkłady w grupach mają podobny kształt i różnią
       się jedynie przesunięciem. Z tego samego powodu test Manna–Whitneya
       nie jest lekarstwem na nierówne wariancje. Gdy grupy mają równe średnie,
@@ -228,7 +228,7 @@ ch4_ui <- lecture_chapter(
     # ========================================================================
     lc_h2("ch4-jakosciowe", "Testy dla zmiennych jakościowych"),
 
-    lc_p("Testy dla zmiennych jakościowych nie pytają o normalność ani wariancje,
+    lc_p("Testy dla ", gloss("zmienna jakościowa", "zmiennych jakościowych"), " nie pytają o normalność ani wariancje,
       bo pracują na liczebnościach kategorii. Ich założenia są dwa: niezależne
       obserwacje (każda osoba trafia do tabeli raz) oraz liczebności, a nie
       procenty, w komórkach. Test χ² ma trzecie, omówione w rozdziale 03:
@@ -283,11 +283,11 @@ ch4_ui <- lecture_chapter(
       gloss("regresja liniowa", "Regresja liniowa"), " ma założenia podobne do
       ANOVA, ale formułuje się je dla ", gloss("reszta", "reszt"), ", czyli
       różnic między obserwowaną a przewidywaną wartością, a nie dla surowych
-      danych. Zmienna zależna nie musi mieć rozkładu normalnego. Normalne
+      danych. ", gloss("zmienna zależna", "Zmienna zależna"), " nie musi mieć rozkładu normalnego. Normalne
       w przybliżeniu powinny być reszty, a i to ma znaczenie głównie przy
       małych próbach. Ważniejsze są liniowość związku i ",
       gloss("homoskedastyczność"), ", czyli podobny rozrzut reszt dla wszystkich
-      wartości predyktora. W regresji wielorakiej dochodzi ",
+      wartości ", gloss("predyktor", "predyktora"), ". W ", gloss("regresja wieloraka", "regresji wielorakiej"), " dochodzi ",
       gloss("współliniowość"), " predyktorów. Tabela służy na razie jako
       zapowiedź: każdą z tych diagnostyk omówimy na przykładach."),
 

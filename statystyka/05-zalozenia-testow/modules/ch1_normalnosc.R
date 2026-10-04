@@ -28,7 +28,7 @@ ch1_ui <- lecture_chapter(
 
     lc_p(gloss("test t", "Test t"), " nie analizuje pojedynczych obserwacji, tylko ich średnią.
       Założenie normalności jest mu potrzebne po to, żeby statystyka t miała
-      rozkład t-Studenta, a to zależy od rozkładu średniej z próby. Jeśli dane
+      ", gloss("rozkład t-Studenta"), ", a to zależy od rozkładu średniej z próby. Jeśli dane
       pochodzą z ", gloss("rozkład normalny", "rozkładu normalnego"), ", średnia
       ma rozkład normalny przy każdej liczebności. Jeśli nie, z pomocą przychodzi ",
       gloss("centralne twierdzenie graniczne"), " z wykładu 02: rozkład średniej
@@ -58,7 +58,7 @@ ch1_ui <- lecture_chapter(
         czyli rozkład ", gloss("reszta", "reszt"), ": odchyleń obserwacji od
         średniej ich grupy."),
       tags$li(strong(gloss("korelacja Pearsona", "Korelacja Pearsona"), ":"),
-        " sam współczynnik r można policzyć zawsze, ale test i przedział ufności
+        " sam współczynnik r można policzyć zawsze, ale test i ", gloss("przedział ufności"), "
         zakładają, że obie zmienne razem mają rozkład normalny dwuwymiarowy.
         W praktyce oglądamy rozkład każdej zmiennej i wykres rozrzutu."),
       tags$li(strong(gloss("regresja liniowa", "Regresja liniowa"), ":"),
@@ -77,8 +77,8 @@ ch1_ui <- lecture_chapter(
     # ========================================================================
     lc_h2("ch1-wizualnie", "Wizualne sprawdzanie normalności"),
 
-    lc_p("Pierwszym narzędziem jest histogram z dorysowaną krzywą normalną o tej
-      samej średniej i tym samym odchyleniu standardowym co dane. Pokazuje ogólny
+    lc_p("Pierwszym narzędziem jest ", gloss("histogram"), " z dorysowaną krzywą normalną o tej
+      samej średniej i tym samym ", gloss("odchylenie standardowe", "odchyleniu standardowym"), " co dane. Pokazuje ogólny
       kształt, ale przy małej próbie jest poszarpany i zależy od szerokości
       przedziałów. Dokładniejszy jest ",
       gloss("wykres kwantyl-kwantyl"), " (Q-Q). Powstaje tak: obserwacje
@@ -92,7 +92,7 @@ ch1_ui <- lecture_chapter(
 
     lc_p("Jeśli rozkład jest normalny, punkty układają się wzdłuż prostej. Prosta
       na wykresie przechodzi przez punkty odpowiadające pierwszemu i trzeciemu
-      kwartylowi, więc dopasowuje się do środka danych, a odchylenia widać na
+      ", gloss("kwartyl", "kwartylowi"), ", więc dopasowuje się do środka danych, a odchylenia widać na
       końcach. Typowe wzory:"),
 
     tags$ul(
@@ -104,7 +104,7 @@ ch1_ui <- lecture_chapter(
         prostą, prawy nad nią. Skrajnych wartości jest więcej i są dalej, niż
         przewiduje rozkład normalny."),
       tags$li(strong("Lekkie ogony:"), " odwrócone S, lewy koniec nad prostą,
-        prawy pod nią. Tak wygląda rozkład jednostajny, w którym wartości
+        prawy pod nią. Tak wygląda ", gloss("rozkład jednostajny"), ", w którym wartości
         skrajnych brakuje."),
       tags$li(strong("Dwa skupienia:"), " dwa płaskie odcinki rozdzielone
         stromym skokiem w środku wykresu."),
@@ -151,10 +151,10 @@ ch1_ui <- lecture_chapter(
     lc_h2("ch1-testy-formalne", "Test formalny jako pomoc"),
 
     lc_p("Ocena wykresu jest subiektywna, dlatego kusi, żeby zastąpić ją liczbą. ",
-      gloss("test Shapiro-Wilka", "Test Shapiro-Wilka"), " sprawdza hipotezę
-      zerową, że dane pochodzą z rozkładu normalnego. Jego statystyka W mierzy,
+      gloss("test Shapiro-Wilka", "Test Shapiro-Wilka"), " sprawdza ", gloss("hipoteza zerowa", "hipotezę
+      zerową"), ", że dane pochodzą z rozkładu normalnego. Jego statystyka W mierzy,
       jak blisko prostej leżą punkty wykresu Q-Q: wartość 1 oznacza idealną
-      zgodność, a im mniejsza, tym większe odchylenie. Mała p-wartość jest
+      zgodność, a im mniejsza, tym większe odchylenie. Mała ", gloss("p-wartość"), " jest
       sygnałem, że kształt danych odbiega od normalnego. Panel poniżej liczy
       test dla danych wylosowanych w poprzednim panelu."),
 
@@ -171,7 +171,7 @@ ch1_ui <- lecture_chapter(
     lc_p("Wynik pojedynczego losowania niewiele mówi o samym teście, więc
       sprawdziliśmy go na 5000 próbach dla każdego rozkładu z panelu, przy
       α = 0.05. Dla danych normalnych test odrzuca H₀ w 5% prób, zgodnie
-      z poziomem istotności. Przy n = 50 wykrywa rozkład prawoskośny w 95% prób,
+      z ", gloss("poziom istotności", "poziomem istotności"), ". Przy n = 50 wykrywa rozkład prawoskośny w 95% prób,
       jednostajny w 74%, a rozkład o ciężkich ogonach w 63%. Przy n = 10 te same
       odsetki spadają do 24%, 9% i 19%: test w większości prób nie zauważa
       odchylenia, które przy małej próbie jest najgroźniejsze. Przy n = 200
@@ -249,7 +249,7 @@ ch1_ui <- lecture_chapter(
       ". Zamiast surowych wartości analizują one ", gloss("ranga", "rangi"), ",
       czyli pozycje obserwacji po posortowaniu, więc wartości odstające i długie
       ogony nie mają na nie większego wpływu niż inne obserwacje. Każdy test
-      z wykładu 04 dla zmiennej ilościowej ma swój odpowiednik rangowy:
+      z wykładu 04 dla ", gloss("zmienna ilościowa", "zmiennej ilościowej"), " ma swój odpowiednik rangowy:
       testy t jednej próby i dla par — ", gloss("test Wilcoxona"),
       ", test t dwóch grup — ", gloss("test Manna-Whitneya"), ", ANOVA — ",
       gloss("test Kruskala-Wallisa"), ", korelacja Pearsona — ",

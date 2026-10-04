@@ -20,7 +20,7 @@ ch3_ui <- lecture_chapter(
 
     lc_p("Dwa poprzednie rozdziały dotyczyły testów porównujących średnie. Ich
       założenia mówiły o kształcie rozkładu i o rozrzucie w grupach. Testy dla
-      dwóch zmiennych jakościowych pracują na innych danych: na liczebnościach
+      dwóch ", gloss("zmienna jakościowa", "zmiennych jakościowych"), " pracują na innych danych: na liczebnościach
       w tabeli. Nie ma tu średnich ani wariancji grup, więc normalność i równość
       wariancji tracą sens. Zostają jednak dwa warunki: niezależne obserwacje
       i dostatecznie duże liczebności, żeby przybliżenie rozkładem χ² było
@@ -42,8 +42,8 @@ ch3_ui <- lecture_chapter(
       procenty ani średnie."),
 
     lc_p("Drugi warunek jest wspólny dla całego wnioskowania: dane powinny
-      pochodzić z próby losowej. Jeśli obserwacje zebrano wybiórczo, test
-      odpowiada na pytanie o próbę, a nie o populację."),
+      pochodzić z ", gloss("próba", "próby"), " losowej. Jeśli obserwacje zebrano wybiórczo, test
+      odpowiada na pytanie o próbę, a nie o ", gloss("populacja", "populację"), "."),
 
     lc_p("Trzeci warunek dotyczy wielkości próby. Statystyka χ² ma rozkład χ²
       tylko w przybliżeniu, a przybliżenie jest tym lepsze, im większe są ",
@@ -72,7 +72,7 @@ ch3_ui <- lecture_chapter(
 
     lc_p("Reguła mówi, kiedy uważać, ale nie mówi, jak bardzo test się myli,
       gdy liczebności są małe. Można to sprawdzić symulacją. Jeśli zmienne
-      są naprawdę niezależne, test na poziomie istotności α = 0.05 powinien
+      są naprawdę niezależne, test na ", gloss("poziom istotności", "poziomie istotności"), " α = 0.05 powinien
       odrzucać H₀ w 5% prób. Każde odrzucenie jest wtedy fałszywym alarmem,
       czyli ", gloss("błąd pierwszego rodzaju", "błędem I rodzaju"), ". Test,
       którego przybliżenie zawodzi, popełnia go częściej albo rzadziej niż
@@ -82,7 +82,7 @@ ch3_ui <- lecture_chapter(
       a obie zmienne mają po dwie równie częste kategorie. Na każdej tabeli
       wykonuje test χ² według wzoru z wykładu 04, bez poprawki Yatesa,
       i test Fishera, a potem liczy, jak często każdy z nich odrzucił H₀.
-      Histogram pokazuje rozkład p-wartości z obu testów."),
+      ", gloss("histogram", "Histogram"), " pokazuje rozkład ", gloss("p-wartość", "p-wartości"), " z obu testów."),
 
     figure_panel(
       label = "Ryc. 3.1",
@@ -174,12 +174,12 @@ ch3_ui <- lecture_chapter(
     lc_h2("ch3-korelacja", "Założenia korelacji"),
 
     lc_p("Test χ² mierzy związek dwóch zmiennych jakościowych. Dla dwóch
-      zmiennych ilościowych jego odpowiednikiem jest test ",
+      ", gloss("zmienna ilościowa", "zmiennych ilościowych"), " jego odpowiednikiem jest test ",
       gloss("korelacja Pearsona", "korelacji Pearsona"), " z rozdziału 06
       wykładu 04. Tam wymieniliśmy jego założenia: pary obserwacji są od siebie
       niezależne, związek jest liniowy, nie ma silnych ",
       gloss("wartość odstająca", "wartości odstających"), ", a obie zmienne
-      mają rozkład zbliżony do normalnego. Ściślej, test i przedział ufności
+      mają rozkład zbliżony do normalnego. Ściślej, test i ", gloss("przedział ufności"), "
       dla \\(\\rho\\) zakładają, że para zmiennych ma łącznie dwuwymiarowy
       rozkład normalny. W praktyce oznacza to eliptyczną chmurę punktów bez
       wyraźnie skośnych zmiennych."),

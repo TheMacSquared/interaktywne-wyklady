@@ -43,13 +43,13 @@ ch2_ui <- lecture_chapter(
     )),
 
     lc_p("Wariancja wspólna \\(s_p^2\\) to średnia ważona wariancji z grup, a wagami
-      są ich stopnie swobody. Liczniejsza grupa ma więc większy wpływ na wynik.
+      są ich ", gloss("stopnie swobody"), ". Liczniejsza grupa ma więc większy wpływ na wynik.
       Gdy wariancje w populacji naprawdę się różnią, \\(s_p^2\\) nie szacuje
-      niczego konkretnego, a błąd standardowy różnicy średnich wychodzi źle.
+      niczego konkretnego, a ", gloss("błąd standardowy"), " różnicy średnich wychodzi źle.
       Na tej samej zasadzie ", gloss("ANOVA"), " łączy wariancje wszystkich grup
-      w mianowniku statystyki F. W ", gloss("regresja liniowa", "regresji liniowej"),
+      w mianowniku ", gloss("statystyka F", "statystyki F"), ". W ", gloss("regresja liniowa", "regresji liniowej"),
       " (wykład 06) to samo założenie dotyczy ", gloss("reszta", "reszt"), ": ich
-      rozrzut ma być taki sam dla wszystkich wartości predyktora."),
+      rozrzut ma być taki sam dla wszystkich wartości ", gloss("predyktor", "predyktora"), "."),
 
     # ========================================================================
     # WIDGET 1: Wizualizacja
@@ -58,8 +58,8 @@ ch2_ui <- lecture_chapter(
 
     lc_p("Zanim sięgniemy po test, warto zobaczyć, jak różne wariancje wyglądają
       na wykresie i jak bardzo wariancje z próby wahają się nawet wtedy, gdy
-      w populacji są równe. Panel losuje dwie grupy z rozkładów normalnych
-      o średnich 170 i 175, o odchyleniach standardowych i liczebnościach
+      w populacji są równe. Panel losuje dwie grupy z ", gloss("rozkład normalny", "rozkładów normalnych"), "
+      o średnich 170 i 175, o ", gloss("odchylenie standardowe", "odchyleniach standardowych"), " i liczebnościach
       ustawionych suwakami,
       a pod wykresem podaje odchylenia z próby i iloraz większej wariancji
       do mniejszej."),
@@ -78,10 +78,10 @@ ch2_ui <- lecture_chapter(
       lc_plot("ch2_boxplot", max_height = "300px")
     ),
 
-    lc_p("Naruszenie widać na wykresie pudełkowym od razu: przy odchyleniach 10
+    lc_p("Naruszenie widać na ", gloss("wykres pudełkowy", "wykresie pudełkowym"), " od razu: przy odchyleniach 10
       i 30 jedno pudełko jest kilka razy wyższe od drugiego, a punkty jednej grupy
       rozlewają się daleko poza zakres drugiej. Trudniej ocenić przypadki
-      pośrednie, bo wariancja z próby sama jest zmienną losową. Przy jednakowych
+      pośrednie, bo wariancja z próby sama jest ", gloss("zmienna losowa", "zmienną losową"), ". Przy jednakowych
       odchyleniach w populacji i 15 obserwacjach w grupie iloraz większej
       wariancji z próby do mniejszej przekracza 2 w mniej więcej co piątym
       losowaniu. Przy 40 obserwacjach zdarza się to w około 3% losowań, przy 100
@@ -96,7 +96,7 @@ ch2_ui <- lecture_chapter(
 
     lc_p("Ocena na oko nie mówi, czy różnicę w rozrzucie da się wytłumaczyć
       przypadkiem. Formalne testy jednorodności wariancji mają we wszystkich
-      grupach tę samą hipotezę zerową:"),
+      grupach tę samą ", gloss("hipoteza zerowa", "hipotezę zerową"), ":"),
 
     lc_formula_box(withMathJax(
       "$$H_0: \\sigma_1^2 = \\sigma_2^2 = \\ldots = \\sigma_k^2 \\qquad
@@ -106,8 +106,8 @@ ch2_ui <- lecture_chapter(
     lc_p(gloss("test Levene'a", "Test Levene'a"), " zamienia każdą obserwację na
       jej odległość od środka własnej grupy i porównuje średnie tych odległości
       zwykłą ANOVA, stąd statystyka F. W klasycznej wersji środkiem grupy jest
-      średnia, w wersji odpornej (Browna-Forsythe'a) mediana, co czyni test mało
-      wrażliwym na skośność i wartości odstające. Programy statystyczne różnią
+      średnia, w wersji odpornej (Browna-Forsythe'a) ", gloss("mediana"), ", co czyni test mało
+      wrażliwym na ", gloss("skośność"), " i wartości odstające. Programy statystyczne różnią
       się tym, którą wersję liczą domyślnie. Panel poniżej mierzy odległości
       od mediany. ",
       gloss("test Bartletta", "Test Bartletta"), " porównuje wariancje
@@ -177,7 +177,7 @@ ch2_ui <- lecture_chapter(
 
     lc_p("Statystyka t wychodzi w obu testach identyczna. To nie przypadek: przy
       równych liczebnościach grup oba wzory dają ten sam błąd standardowy.
-      Różnią się tylko stopnie swobody, a z nimi p-wartość. Przy 40 obserwacjach
+      Różnią się tylko stopnie swobody, a z nimi ", gloss("p-wartość"), ". Przy 40 obserwacjach
       w grupie wersja Studenta ma zawsze 78 stopni swobody, a Welch przy
       odchyleniach 10 i 30 zwykle w okolicach 48. Przy równych grupach wersja
       Studenta jest więc w dużej mierze odporna na nierówne wariancje:
@@ -222,7 +222,7 @@ ch2_ui <- lecture_chapter(
 
     lc_p(gloss("test Manna-Whitneya", "Test Manna-Whitneya"), ", ",
       gloss("test nieparametryczny", "test nieparametryczny"), ", bywa podawany
-      jako lekarstwo na nierówne wariancje, ale nim nie jest. Porównuje rangi,
+      jako lekarstwo na nierówne wariancje, ale nim nie jest. Porównuje ", gloss("ranga", "rangi"), ",
       a nie średnie, i przy różnym rozrzucie w grupach także myli się częściej,
       niż obiecuje α: w opisanym wyżej układzie 20 i 80 obserwacji odrzuca
       prawdziwą H₀ równych średnich w około 15% losowań. Jego miejsce wśród
