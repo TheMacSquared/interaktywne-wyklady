@@ -1,0 +1,164 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "scenario": "Ośrodek badania opinii zadzwonił do 1000 losowo wybranych dorosłych Polaków i zapytał, czy ufają rządowi. Zaufanie zadeklarowało 34% rozmówców.",
+      "question": "Co jest populacją?",
+      "options": ["Wszyscy dorośli mieszkańcy Polski", "1000 osób, do których zadzwoniono", "34% rozmówców", "Wszyscy, którzy ufają rządowi"],
+      "correct": 1,
+      "explanation": "Populacja to wszyscy, o których chcemy wnioskować: dorośli Polacy. 1000 rozmówców to próba."
+    },
+    {
+      "id": 2,
+      "scenario": "Ośrodek badania opinii zadzwonił do 1000 losowo wybranych dorosłych Polaków i zapytał, czy ufają rządowi. Zaufanie zadeklarowało 34% rozmówców.",
+      "question": "Czym jest liczba 34%?",
+      "options": ["Statystyką", "Parametrem", "Populacją", "Jednostką obserwacji"],
+      "correct": 1,
+      "explanation": "34% policzono z próby, więc to statystyka (p̂). Parametrem byłby odsetek ufających wśród wszystkich dorosłych Polaków, którego nie znamy."
+    },
+    {
+      "id": 3,
+      "scenario": "Kontrola jakości w browarze co godzinę pobiera 5 butelek z linii i mierzy objętość piwa. Wszystkie butelki z dnia mają średnio zawierać 500 ml.",
+      "question": "Czym jest średnia objętość wszystkich butelek wyprodukowanych w tym dniu?",
+      "options": ["Parametrem", "Statystyką", "Próbą", "Operatem losowania"],
+      "correct": 1,
+      "explanation": "To liczba opisująca całą produkcję dnia, czyli populację. Jest parametrem μ; kontrola zna tylko średnią z pobranych butelek."
+    },
+    {
+      "id": 4,
+      "scenario": "Kontrola jakości w browarze co godzinę pobiera 5 butelek z linii i mierzy objętość piwa.",
+      "question": "Dlaczego nie mierzy się wszystkich butelek?",
+      "options": ["Pomiar wszystkich byłby zbyt kosztowny i powolny", "Badanie pełne jest zawsze mniej dokładne", "Butelek nie da się policzyć", "Parametr jest wtedy nieznany"],
+      "correct": 1,
+      "explanation": "Badanie pełne jest możliwe, ale nieopłacalne. Próba daje dostatecznie dokładną informację znacznie taniej."
+    },
+    {
+      "id": 5,
+      "scenario": "Dietetyczka zważyła 30 pacjentów co tydzień przez 8 tygodni i zapisała 240 pomiarów masy ciała. Pyta, czy pacjenci na nowej diecie chudną.",
+      "question": "Ile niezależnych jednostek obserwacji ma to badanie, jeśli pytanie dotyczy pacjentów?",
+      "options": ["30", "240", "8", "270"],
+      "correct": 1,
+      "explanation": "Jednostką obserwacji jest pacjent. 240 pomiarów to wielokrotne pomiary tych samych 30 osób, więc nie są 240 niezależnymi świadectwami."
+    },
+    {
+      "id": 6,
+      "scenario": "Portal informacyjny opublikował sondę: „Czy popierasz zakaz handlu w niedziele?”. Odpowiedziało 52 000 czytelników, 71% na „nie”.",
+      "question": "Jaki jest główny problem z tym wynikiem?",
+      "options": ["Próba jest wygodna: odpowiadał, kto chciał", "Próba jest za mała", "71% to parametr, a nie statystyka", "Nie wiadomo, jaka jest jednostka obserwacji"],
+      "correct": 1,
+      "explanation": "O udziale decydowali sami czytelnicy jednego portalu. Taka próba bywa obciążona, a duże n tego nie naprawia."
+    },
+    {
+      "id": 7,
+      "scenario": "Agronom chce poznać średni plon pszenicy w województwie. Z rejestru gospodarstw losuje osobno 40 małych, 40 średnich i 20 dużych gospodarstw, proporcjonalnie do ich liczby w rejestrze.",
+      "question": "Jaki to sposób doboru próby?",
+      "options": ["Losowanie warstwowe", "Losowanie proste", "Próba wygodna", "Badanie pełne"],
+      "correct": 1,
+      "explanation": "Populację podzielono na warstwy według wielkości gospodarstwa i losowano w każdej z nich osobno."
+    },
+    {
+      "id": 8,
+      "scenario": "Agronom chce poznać średni plon pszenicy w województwie i losuje gospodarstwa z rejestru.",
+      "question": "Czym jest rejestr gospodarstw?",
+      "options": ["Operatem losowania", "Próbą", "Parametrem", "Zmienną"],
+      "correct": 1,
+      "explanation": "Rejestr to lista jednostek, z której losujemy próbę, czyli operat losowania. Gospodarstwo spoza rejestru nie może trafić do próby."
+    },
+    {
+      "id": 9,
+      "scenario": "Ankieta wśród 120 klientów siłowni zawiera pytania o wiek, liczbę treningów w tygodniu i ulubioną porę ćwiczeń.",
+      "question": "Czym jest „liczba treningów w tygodniu”?",
+      "options": ["Zmienną", "Obserwacją", "Parametrem", "Próbą"],
+      "correct": 1,
+      "explanation": "To cecha zapisana dla każdego klienta, czyli zmienna (jedna kolumna tabeli)."
+    },
+    {
+      "id": 10,
+      "scenario": "Ankieta wśród 120 klientów siłowni zawiera pytania o wiek, liczbę treningów w tygodniu i ulubioną porę ćwiczeń.",
+      "question": "Czym jest wiersz tabeli z odpowiedziami jednego klienta?",
+      "options": ["Obserwacją", "Zmienną", "Populacją", "Statystyką"],
+      "correct": 1,
+      "explanation": "Wszystko, co zapisano o jednym kliencie, to jedna obserwacja."
+    },
+    {
+      "id": 11,
+      "scenario": "Narodowy Spis Powszechny zebrał dane o wszystkich mieszkańcach Polski. Z tych danych policzono średni wiek mieszkańca.",
+      "question": "Czym jest tak policzony średni wiek?",
+      "options": ["Parametrem", "Statystyką", "Próbą", "Obciążeniem"],
+      "correct": 1,
+      "explanation": "Spis to badanie pełne: dane dotyczą całej populacji, więc średnia z nich jest parametrem, a nie statystyką z próby."
+    },
+    {
+      "id": 12,
+      "scenario": "Badaczka mierzy ciśnienie krwi 80 losowo wybranych pracowników dużej firmy. Średnia w próbie wynosi 128 mmHg.",
+      "question": "Jak oznaczymy liczbę 128 mmHg?",
+      "options": ["x̄", "μ", "σ", "p"],
+      "correct": 1,
+      "explanation": "Średnią z próby oznaczamy x̄. Symbol μ jest zarezerwowany dla średniej w populacji."
+    },
+    {
+      "id": 13,
+      "scenario": "Badaczka mierzy ciśnienie krwi 80 losowo wybranych pracowników dużej firmy. Średnia w próbie wynosi 128 mmHg.",
+      "question": "Co się stanie, jeśli wylosuje nową próbę 80 pracowników?",
+      "options": ["Średnia będzie prawdopodobnie trochę inna", "Średnia na pewno wyniesie 128 mmHg", "Zmieni się średnie ciśnienie w populacji", "Średnia będzie na pewno wyższa"],
+      "correct": 1,
+      "explanation": "Statystyka zmienia się od próby do próby (zmienność próbkowa). Parametr populacji pozostaje ten sam."
+    },
+    {
+      "id": 14,
+      "scenario": "Firma chce poznać zadowolenie wszystkich swoich klientów, ale ankietę wysyła tylko do osób, które w ostatnim miesiącu złożyły ponowne zamówienie.",
+      "question": "W którą stronę najpewniej przesunie się wynik?",
+      "options": ["Zadowolenie wyjdzie zawyżone", "Zadowolenie wyjdzie zaniżone", "Wynik będzie nieobciążony", "Wynik nie zależy od doboru próby"],
+      "correct": 1,
+      "explanation": "Klienci, którzy wracają, są zwykle bardziej zadowoleni. Pominięcie tych, którzy odeszli, daje obciążenie w górę."
+    },
+    {
+      "id": 15,
+      "scenario": "Firma chce poznać zadowolenie wszystkich swoich klientów, ale ankietę wysyła tylko do osób, które w ostatnim miesiącu złożyły ponowne zamówienie.",
+      "question": "Czy wysłanie ankiety do dwa razy większej liczby takich klientów rozwiąże problem?",
+      "options": ["Nie, większe n nie usuwa obciążenia", "Tak, większa próba jest zawsze lepsza", "Tak, bo zmniejszy się obciążenie", "Nie, bo zwiększy się obciążenie"],
+      "correct": 1,
+      "explanation": "Większa próba zmniejsza zmienność próbkową, ale wynik nadal będzie przesunięty, bo próba wciąż pomija niezadowolonych."
+    },
+    {
+      "id": 16,
+      "scenario": "Meteorolog analizuje dane z 50 stacji pogodowych: dla każdej stacji i każdego dnia roku zapisano temperaturę maksymalną. Pyta, czy w lipcu jest cieplej niż w czerwcu.",
+      "question": "Co jest jednostką obserwacji?",
+      "options": ["Jeden dzień na jednej stacji", "Stacja pogodowa", "Miesiąc", "Temperatura maksymalna"],
+      "correct": 1,
+      "explanation": "Jeden wiersz to pomiar z jednej stacji w jednym dniu; miesiąc jest zmienną. Temperatura maksymalna to zmienna, nie jednostka."
+    },
+    {
+      "id": 17,
+      "scenario": "Prowadzący policzył średnią ocen z kolokwium w swojej grupie 24 studentów i interesuje go wyłącznie ta grupa.",
+      "question": "Czym jest w tej sytuacji średnia ocen grupy?",
+      "options": ["Parametrem, bo grupa jest całą populacją", "Statystyką z próby", "Obciążeniem", "Zmienną"],
+      "correct": 1,
+      "explanation": "Jeśli wniosek dotyczy tylko tej grupy, grupa jest populacją, a policzona średnia opisuje ją w całości."
+    },
+    {
+      "id": 18,
+      "scenario": "Biolog chce oszacować odsetek zakażonych kleszczy w parku. Zbiera kleszcze tylko wzdłuż głównej alei, bo tam najłatwiej je znaleźć.",
+      "question": "Jak nazwiemy taką próbę?",
+      "options": ["Próbą wygodną", "Losowaniem prostym", "Losowaniem warstwowym", "Badaniem pełnym"],
+      "correct": 1,
+      "explanation": "Próbę dobrano według łatwości dostępu, a nie losowo. Kleszcze przy alei mogą różnić się od tych w głębi parku."
+    },
+    {
+      "id": 19,
+      "scenario": "W losowej próbie 400 gospodarstw domowych 23% nie ma dostępu do szybkiego internetu.",
+      "question": "Które zdanie jest wnioskiem o populacji, a nie opisem próby?",
+      "options": ["Około jedna czwarta gospodarstw w kraju nie ma szybkiego internetu", "92 z 400 zbadanych gospodarstw nie ma szybkiego internetu", "W próbie przeważają gospodarstwa z internetem", "Odsetek w próbie wynosi 23%"],
+      "correct": 1,
+      "explanation": "Tylko pierwsze zdanie przenosi wynik z próby na wszystkie gospodarstwa w kraju; pozostałe opisują zbadane gospodarstwa."
+    },
+    {
+      "id": 20,
+      "scenario": "Szpital sprawdza, czy partia 10 000 strzykawek jest szczelna. Test szczelności niszczy strzykawkę.",
+      "question": "Dlaczego badanie musi opierać się na próbie?",
+      "options": ["Badanie pełne zniszczyłoby całą partię", "Strzykawek jest za mało", "Parametr jest znany z góry", "Losowanie jest niemożliwe"],
+      "correct": 1,
+      "explanation": "Przy badaniu niszczącym pełny pomiar nie zostawiłby nic do użycia. Próba jest jedynym rozsądnym wyjściem."
+    }
+  ]
+}

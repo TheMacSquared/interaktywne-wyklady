@@ -12,6 +12,15 @@
   "statystyka"            = "Funkcja danych z próby służąca do estymacji parametru (np. x̄, s, p̂).",
   "estymator"             = "Statystyka używana do szacowania nieznanego parametru populacji.",
   "estymacja"             = "Proces wnioskowania o parametrze populacji na podstawie próby.",
+  "obserwacja"            = "Wszystko, co zapisano o jednej jednostce badania; jeden wiersz tabeli danych.",
+  "zmienna"               = "Cecha zapisana dla każdej obserwacji, która może przyjmować różne wartości; jedna kolumna tabeli danych.",
+  "operat losowania"      = "Lista jednostek populacji, z której losuje się próbę (np. wykaz studentów, rejestr gospodarstw).",
+  "losowanie proste"      = "Dobór próby, w którym każda jednostka z operatu ma tę samą szansę trafienia do próby.",
+  "losowanie warstwowe"   = "Dobór próby, w którym populację dzieli się na warstwy i losuje osobno w każdej z nich.",
+  "próba wygodna"         = "Próba złożona z jednostek najłatwiej dostępnych lub zgłaszających się samodzielnie; zwykle obciążona.",
+  "zmienność próbkowa"    = "Różnice wartości statystyki między kolejnymi próbami z tej samej populacji; maleje ze wzrostem n.",
+  "statystyka opisowa"    = "Część statystyki, która streszcza zebrane dane liczbami i wykresami; jej wyniki dotyczą próby.",
+  "wnioskowanie statystyczne" = "Przenoszenie wyników z próby na populację wraz z oceną niepewności (przedziały ufności, testy).",
 
   # Miary centralne i rozproszenia ---------------------------------------------
   "średnia"               = "Suma wartości w zbiorze podzielona przez ich liczbę. Oznaczana x̄ (próba) lub μ (populacja).",

@@ -22,6 +22,7 @@
 # ============================================================================
 
 .LC_MODULES <- list(
+  list(num = "0",    slug = "wstep",      title = "Dane i populacja",            short = "Wstęp",        href = "#"),
   list(num = "I",    slug = "opisowa",    title = "Statystyka opisowa",          short = "Opisowa",      href = "#"),
   list(num = "II",   slug = "rozklady",   title = "Rozkłady prawdopodobieństwa", short = "Rozkłady",     href = "#"),
   list(num = "III",  slug = "przedzialy", title = "Przedziały ufności",          short = "Przedziały",   href = "#"),
@@ -35,6 +36,7 @@
 
 # Mapowanie lecture_id → slug modułu
 .LC_LECTURE_MODULE <- list(
+  "dane-i-populacja"            = "wstep",
   "typy-danych"                 = "opisowa",
   "rozklady-prawdopodobienstwa" = "rozklady",
   "przedzialy-ufnosci"          = "przedzialy",

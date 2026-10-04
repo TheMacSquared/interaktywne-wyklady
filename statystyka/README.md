@@ -12,6 +12,7 @@ Symulacje, Bayes, rozszerzenia kierunkowe i szeregi czasowe należą do oddzieln
 
 | Nr | Aplikacja | Zadanie dydaktyczne |
 |---|---|---|
+| 00 | [Dane i populacja](00-dane-i-populacja/) | Odróżnić obserwację od zmiennej, populację od próby i parametr od statystyki. |
 | 01 | [Typy danych](01-typy-danych/) | Rozpoznać zmienne, dobrać opis i wykres. |
 | 02 | [Rozkłady prawdopodobieństwa](02-rozklady-prawdopodobienstwa/) | Zrozumieć losowość, wartość oczekiwaną i rozkład średniej. |
 | 03 | [Przedziały ufności](03-przedzialy-ufnosci/) | Odczytać oszacowanie i jego niepewność. |
@@ -22,7 +23,7 @@ Symulacje, Bayes, rozszerzenia kierunkowe i szeregi czasowe należą do oddzieln
 | 08 | [Case studies](08-case-studies/) | Prześledzić pełną analizę na przykładzie szkół i sytuacji uczniów. |
 | 09 | [Projekt badawczy](09-projekt-badawczy/) | Sformułować własne pytanie, zaplanować analizę i przedstawić wniosek. |
 
-Numeracja porządkuje materiały, nie narzuca dziewięciu osobnych spotkań. Przy ograniczonej liczbie godzin fragmenty „Dobrych danych” i „Projektu badawczego” można wplatać we wcześniejsze przykłady. Rozbudowane aplikacje są także materiałem do pracy własnej.
+Numeracja porządkuje materiały, nie narzuca dziesięciu osobnych spotkań. Przy ograniczonej liczbie godzin fragmenty „Dobrych danych” i „Projektu badawczego” można wplatać we wcześniejsze przykłady. Rozbudowane aplikacje są także materiałem do pracy własnej.
 
 ## Jak używać na zajęciach
 
@@ -66,7 +67,7 @@ Rscript statystyka/scripts/run_tests.R
 Rscript statystyka/scripts/run_tests.R --quick
 ```
 
-Pełna kontrola obejmuje zależności, design, testy i wczytanie dziewięciu aplikacji. Tryb `--quick` pomija wczytywanie aplikacji.
+Pełna kontrola obejmuje zależności, design, testy i wczytanie dziesięciu aplikacji. Tryb `--quick` pomija wczytywanie aplikacji.
 
 ## Organizacja kodu
 
