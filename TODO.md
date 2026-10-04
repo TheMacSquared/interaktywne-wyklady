@@ -183,10 +183,6 @@ to stosują.
 
 ### 01 — typy danych
 
-- [ ] Widget autobusów (rozdz. 4, kroki 3–4): w symulowanych danych żaden
-  autobus nie przyjeżdża przed czasem, więc „zdążysz” wynosi zawsze 100%
-  dla obu linii niezależnie od suwaka. Widget do przebudowy (np. czas
-  oczekiwania zamiast „zdążysz”).
 - [ ] Reguła empiryczna (rozdz. 4): na danych ankiety widget nigdy nie
   pokazuje stanu „słaba zgodność” (wszystkie zmienne mieszczą się w progu).
 
