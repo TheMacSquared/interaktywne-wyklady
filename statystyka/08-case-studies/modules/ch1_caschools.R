@@ -311,7 +311,6 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   figure_panel(
     label = "Ryc. 1.6",
     title = "Seria modeli i współczynnik przy STR",
-    lc_toolbar(lc_action("ch1_compare_models", "Buduj 4 modele", variant = "solid")),
     uiOutput("ch1_model_comparison"),
     lc_plot("ch1_beta_str_plot", max_height = "250px")
   ),
@@ -662,9 +661,10 @@ ch1_server <- function(input, output, session) {
         }),
           p(tags$strong("ANOVA:")),
         p(paste0("F(", tidy_res$DFn, ",", tidy_res$DFd, ") = ",
-                 round(tidy_res$F, 1),
-                 ", p < 0.001, η² = ", round(tidy_res$ges, 3))),
-                 ", p < 0.001, η² = ",   p(tags$strong("Tukey HSD:")),
+                 round(tidy_res$F, 1), ", p ",
+                 if (tidy_res$p < 0.001) "< 0.001" else paste0("= ", round(tidy_res$p, 3)),
+                 ", η² = ", round(tidy_res$ges, 3))),
+        p(tags$strong("Tukey HSD:")),
         tags$ul(lapply(1:nrow(tukey_df), function(i) {
           tags$li(paste0(tukey_df$group1[i], " vs ", tukey_df$group2[i],
                          ": Δ = ", round(tukey_df$estimate[i], 1),
@@ -675,9 +675,8 @@ ch1_server <- function(input, output, session) {
   })
 
   # --- Krok 4: Seria modeli ---
-  ch1_models_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch1_compare_models, {
+  # Seria modeli jest deterministyczna, więc liczymy ją raz, bez przycisku.
+  ch1_models_data <- reactive({
     m1 <- lm(score ~ str, data = ca)
     m2 <- lm(score ~ str + income, data = ca)
     m3 <- lm(score ~ str + income + english, data = ca)
@@ -700,7 +699,7 @@ ch1_server <- function(input, output, session) {
       )
     })
 
-    ch1_models_data(do.call(rbind, results))
+    do.call(rbind, results)
   })
 
   output$ch1_model_comparison <- renderUI({
@@ -743,8 +742,7 @@ ch1_server <- function(input, output, session) {
       scale_fill_manual(values = c("TRUE" = case_model, "FALSE" = case_muted),
                         labels = c("TRUE" = "p < 0.05", "FALSE" = "nieistotny"),
                         name = NULL) +
-      labs(
-           x = NULL, y = "β przy STR") +
+      labs(x = NULL, y = "β przy STR") +
       theme_upwr() +
       theme(legend.position = "top",
             axis.text.x = element_text(angle = 20, hjust = 1))
@@ -753,7 +751,8 @@ ch1_server <- function(input, output, session) {
   # --- Krok 5: Model interaktywny ---
   ch1_model <- reactiveVal(NULL)
 
-  observeEvent(input$ch1_fit_model, {
+  # ignoreNULL = FALSE: model z domyślnymi predyktorami jest widoczny od razu.
+  observeEvent(input$ch1_fit_model, ignoreNULL = FALSE, {
     preds <- input$ch1_reg_vars
     if (length(preds) == 0) preds <- "str"
     formula <- as.formula(paste("score ~", paste(preds, collapse = " + ")))

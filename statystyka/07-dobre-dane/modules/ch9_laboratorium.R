@@ -119,6 +119,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
 
   figure_panel(
     label = "Ćwiczenie",
+    title = "Błąd czy prawdziwa wartość odstająca?",
     uiOutput("tab8_quiz"),
     lc_action("tab8_check_quiz", "Sprawdź odpowiedzi", variant = "solid"),
     uiOutput("tab8_quiz_result")

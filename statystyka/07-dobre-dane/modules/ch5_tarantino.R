@@ -57,6 +57,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
 
   figure_panel(
     label = "Ryc. 5.1",
+    title = "Kiedy w filmach pojawiają się zdarzenia",
     lc_toolbar(
       lc_segmented("tab4_view", NULL,
         choices = c("Histogram: minutes_in" = "hist", "Porównanie filmów" = "bar"))

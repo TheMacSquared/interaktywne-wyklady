@@ -61,6 +61,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
 
   figure_panel(
     label = "Ryc. 7.1",
+    title = "Rozkład wybranej zmiennej",
     lc_toolbar(
       selectInput("tab6_var", "Zmienna",
         choices = c("wage — wynagrodzenie" = "wage", "age — wiek" = "age",

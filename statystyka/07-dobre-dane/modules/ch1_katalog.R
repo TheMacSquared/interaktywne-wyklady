@@ -475,12 +475,10 @@ ch1_server <- function(input, output, session) {
   })
 
   zoom_plot_server("cat2_plot_zadowolenie", reactive({
-    pct_45 <- round(100 * mean(cat_novar$zadowolenie >= 4))
     ggplot(cat_novar, aes(x = factor(zadowolenie))) +
       geom_bar(fill = data_bad, alpha = 0.85) +
       scale_x_discrete(limits = c("1","2","3","4","5")) +
-      labs(
-           x = "Ocena (1–5)", y = "Liczba") +
+      labs(x = "Ocena (1–5)", y = "Liczba") +
       theme_upwr(base_size = 13)
   }))
 
@@ -488,9 +486,7 @@ ch1_server <- function(input, output, session) {
     ggplot(cat_novar, aes(x = staz, y = wynagrodzenie)) +
       geom_point(size = 3, alpha = 0.6, color = data_bad) +
       scale_x_continuous(limits = c(1, 10)) +
-      labs(
-           
-           x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
+      labs(x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
       theme_upwr(base_size = 13)
   }))
 
@@ -517,15 +513,11 @@ ch1_server <- function(input, output, session) {
   zoom_plot_server("cat3_plot", reactive({
     if (cat3_view() == "raw") {
       d <- cat_errors
-      title_txt <- "Z błędami"
       col <- data_bad
     } else {
       d <- cat_errors_clean
-      title_txt <- "Po oczyszczeniu"
       col <- data_good
     }
-    model <- lm(cena ~ powierzchnia, data = d)
-    r2 <- round(summary(model)$r.squared, 3)
     ggplot(d, aes(x = powierzchnia, y = cena)) +
       geom_point(size = 3, alpha = 0.7, color = data_reference) +
       geom_smooth(method = "lm", color = col, se = TRUE) +

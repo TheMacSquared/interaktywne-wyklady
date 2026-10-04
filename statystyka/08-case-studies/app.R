@@ -1,5 +1,5 @@
 # Case studies - analizy statystyczne od A do Z
-# Kazdy rozdzial to kompletna analiza jednego zbioru danych
+# Każdy rozdział to kompletna analiza jednego zbioru danych
 
 library(shiny)
 library(ggplot2)
@@ -10,7 +10,7 @@ library(tidyr)
 library(AER)
 
 # ============================================================================
-# MODULY
+# MODUŁY
 # ============================================================================
 
 .find_app_dir <- function() {

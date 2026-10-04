@@ -12,7 +12,9 @@ ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content 
 
   lc_h2("sec-01", "Podsumowanie 10 zbiorów"),
 
-  div(class = "lc-figure-panel",
+  figure_panel(
+    label = "Ściąga 12.1",
+    title = "Dziesięć zbiorów w skrócie",
     uiOutput("tab11_summary")
   ),
 
@@ -55,7 +57,9 @@ ch12_ui <- lecture_chapter(id = "ch12", num = "12", title = "Ściąga", content 
 
   lc_h2("sec-03", "Dopasowanie analizy do danych"),
 
-  div(class = "lc-figure-panel",
+  figure_panel(
+    label = "Ściąga 12.2",
+    title = "Analiza dopasowana do danych",
     uiOutput("tab11_analysis_table")
   ),
 

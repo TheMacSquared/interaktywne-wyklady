@@ -52,6 +52,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.1",
+    title = "Rozkład oceny ogólnej",
     lc_plot("tab5_plot_zadowolenie", max_height = "300px")
   ),
 
@@ -69,6 +70,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.2",
+    title = "Liczebność typów pokoju",
     lc_plot("tab5_plot_departament", max_height = "300px")
   ),
 
@@ -89,6 +91,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.3",
+    title = "Rozkład długości pobytu",
     lc_toolbar(
       lc_segmented("tab5_staz_view", NULL,
         choices = c("Dane" = "normal", "Pełna skala (1–14 nocy)" = "wide"))
@@ -110,6 +113,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.4",
+    title = "Rozkład ceny za noc",
     lc_plot("tab5_plot_wynagrodzenie", max_height = "300px")
   ),
 
@@ -126,6 +130,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.5",
+    title = "Liczebność gości według kraju",
     lc_plot("tab5_plot_plec", max_height = "300px")
   ),
 
@@ -143,6 +148,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.6",
+    title = "Cena za noc a długość pobytu",
     lc_plot("tab5_scatter", max_height = "300px")
   ),
 
@@ -163,6 +169,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
 
   figure_panel(
     label = "Ryc. 6.7",
+    title = "Ta sama zależność przy większym rozrzucie pobytów",
     lc_slider("tab5_sd_mult", "Mnożnik rozrzutu danych", 1, 5, 1, 0.5),
     lc_plot("tab5_scatter_sim", max_height = "300px")
   ),

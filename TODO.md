@@ -237,39 +237,11 @@ to stosują.
   Odniesienie: ryc. 6.1–6.3 w `04-wnioskowanie-statystyczne/modules/ch4_korelacja.R`
   i `scripts/regen_correlation_assets.R`.
 
-### 07 — dobre dane
-
-- [ ] Ryc. 3.x (moc, `ch3_grupa.R`): punkt bieżącego n przeskakuje na siatkę
-  co 5 (przy n = 8 rysowany przy n = 5, moc ~2% zamiast ~9%); przy
-  nieparzystym n grupy dzielą się nierówno (`rnorm(n/2)`); symulacja
-  (40 × 500 testów) przelicza się przy każdym ruchu suwaka.
-- [ ] Kawiarnia: wykres sprzedaży dzień po dniu (`tab10_lineplot`) usuwa
-  braki przed rysowaniem, więc linia łączy dni niesąsiadujące.
-- [ ] Panele bez tytułu (sama etykieta „Ryc. …”): Ryc. 5.1 (`ch5_tarantino.R`),
-  Ryc. 6.1–6.7 (`ch6_hotel.R`), Ryc. 7.1 (`ch7_wynagrodzenia.R`), ćwiczenie
-  z klasyfikacją rekordów w rozdz. 9 (`ch9_laboratorium.R`, panel „Ćwiczenie”).
-  Rozdz. 12: dwie tabele (podsumowanie 10 zbiorów, dopasowanie analizy) w ręcznym
-  `div(class = "lc-figure-panel")` bez etykiety i tytułu — przy dopisaniu tytułu
-  zamienić na `figure_panel()`.
-- [ ] Martwy kod w `ch1_katalog.R` (wykresy problemów 2–3: `pct_45`, `r2`,
-  `title_txt`).
-
 ### 08 — case studies
 
-- [ ] Panele Ryc. 1.6 i 1.7 są puste do kliknięcia przycisku.
-- [ ] Wynik ANOVA w kroku 3 ma na sztywno „p < 0.001” zamiast liczonej
-  p-wartości; `geom_errorbarh()` przestarzały w ggplot2 4.0.
-- [ ] Komentarze w `app.R` bez polskich znaków („Kazdy rozdzial”, „MODULY”).
 - [ ] Rozbudować wykład poza jedyny rozdział CASchools; dodać quizy.
   Kandydaci: `palmerpenguins` (ANOVA/korelacja), case binarny (regresja
   logistyczna), case czasowy.
-
-### 09 — projekt badawczy
-
-- [ ] Rozdz. 7: `geom_errorbarh()` przestarzały w ggplot2 4.0; panel modelu
-  używa `lc_stat_box` zamiast `lc_readout`.
-- [ ] Rozdz. 1: karta celu ma ręczną klasę `lc-feedback lc-feedback-warning
-  lecture-goal-card` — zastąpić komponentem z layoutu.
 
 ---
 

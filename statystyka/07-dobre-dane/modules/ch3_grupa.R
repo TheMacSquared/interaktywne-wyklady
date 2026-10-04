@@ -138,36 +138,31 @@ ch3_server <- function(input, output, session) {
   }))
 
   zoom_plot_server("tab2_ci", reactive({
-    ns <- seq(5, 200, by = 5)
-    ci_widths <- 2 * qt(0.975, ns - 1) * 0.6 / sqrt(ns)  # assuming SD = 0.6
-    df_ci <- data.frame(n = ns, ci_width = ci_widths)
+    ns <- 5:200
+    ci_width <- function(n) 2 * qt(0.975, n - 1) * 0.6 / sqrt(n)  # SD = 0.6
+    df_ci <- data.frame(n = ns, ci_width = ci_width(ns))
+    n_now <- input$tab2_n
 
     ggplot(df_ci, aes(x = n, y = ci_width)) +
       geom_line(color = data_bad, linewidth = 1.2) +
-      geom_point(data = df_ci[df_ci$n == max(ns[ns <= input$tab2_n]), ],
-                 color = data_bad, size = 4) +
+      annotate("point", x = n_now, y = ci_width(n_now), color = data_bad, size = 4) +
       labs(x = "Liczba obserwacji (n)", y = "Szerokość przedziału ufności") +
       theme_upwr(base_size = 14)
   }))
 
-  zoom_plot_server("tab2_power", reactive({
-    ns <- seq(5, 200, by = 5)
-    # Power simulation: detect effect size d=0.5
-    powers <- sapply(ns, function(n) {
-      set.seed(123)
-      rejections <- replicate(500, {
-        x <- rnorm(n / 2, 0, 1)
-        y <- rnorm(n / 2, 0.5, 1)  # effect size d = 0.5
-        t.test(x, y)$p.value < 0.05
-      })
-      mean(rejections)
-    })
-    df_pow <- data.frame(n = ns, power = powers)
+  # Moc testu t dla d = 0.5 liczona dokładnie (power.t.test), przy nieparzystym n
+  # liczymy po floor(n/2) osób w grupie.
+  tab2_power_at <- function(n) {
+    vapply(n, function(k) power.t.test(n = floor(k / 2), delta = 0.5, sd = 1)$power,
+           numeric(1))
+  }
+  tab2_power_curve <- data.frame(n = 5:200, power = tab2_power_at(5:200))
 
-    ggplot(df_pow, aes(x = n, y = power)) +
+  zoom_plot_server("tab2_power", reactive({
+    n_now <- input$tab2_n
+    ggplot(tab2_power_curve, aes(x = n, y = power)) +
       geom_line(color = data_primary, linewidth = 1.2) +
-      geom_point(data = df_pow[df_pow$n == max(ns[ns <= input$tab2_n]), ],
-                 color = data_primary, size = 4) +
+      annotate("point", x = n_now, y = tab2_power_at(n_now), color = data_primary, size = 4) +
       geom_hline(yintercept = 0.8, linetype = "dashed", color = data_reference) +
       annotate("text", x = 150, y = 0.83, label = "Moc 80%", color = data_reference, size = 4) +
       scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +

@@ -207,13 +207,12 @@ ch11_server <- function(input, output, session) {
   })
 
   zoom_plot_server("tab10_lineplot", reactive({
-    df <- cafe_data[!is.na(cafe_data$kawy), ]
-    ggplot(df, aes(x = dzien, y = kawy)) +
-      geom_line(color = data_primary, alpha = 0.6) +
-      geom_point(color = data_primary, size = 1.2, alpha = 0.4) +
-      labs(
-           
-           x = "Numer dnia (= kolejność w roku akademickim)", y = "Liczba sprzedanych kaw") +
+    # Braki zostają w danych: linia przerywa się w dniu bez pomiaru, zamiast
+    # łączyć dni niesąsiadujące.
+    ggplot(cafe_data[order(cafe_data$dzien), ], aes(x = dzien, y = kawy)) +
+      geom_line(color = data_primary, alpha = 0.6, na.rm = TRUE) +
+      geom_point(color = data_primary, size = 1.2, alpha = 0.4, na.rm = TRUE) +
+      labs(x = "Numer dnia (= kolejność w roku akademickim)", y = "Liczba sprzedanych kaw") +
       theme_upwr(base_size = 14)
   }))
 
