@@ -129,7 +129,7 @@ ch5_ui <- list(
       sukcesu do prawdopodobieństwa porażki, p/(1 − p). Gdy p = 0.8, szanse
       wynoszą 0.8/0.2 = 4, czyli „4 do 1”: na cztery sukcesy przypada przeciętnie
       jedna porażka. Gdy p = 0.5, szanse wynoszą 1. Szanse przyjmują dowolne
-      wartości dodatnie. Po zlogarytmowaniu dostajemy logit, który może być
+      wartości dodatnie. Po zlogarytmowaniu dostajemy ", gloss("log-szanse", "logit"), ", który może być
       dowolną liczbą, ujemną dla p < 0.5 i dodatnią dla p > 0.5. Regresja
       logistyczna zakłada, że to logit zależy od predyktora liniowo:"),
 
@@ -312,8 +312,8 @@ ch5_ui <- list(
 
     lc_p("Skutki decyzji zestawia ", gloss("macierz pomyłek"), ": w wierszach
       rzeczywistość, w kolumnach predykcja. Dokładność to odsetek wszystkich
-      trafień. Czułość to odsetek rzeczywistych sukcesów, które model
-      rozpoznał, a swoistość to odsetek rzeczywistych porażek, które
+      trafień. ", gloss("czułość", "Czułość"), " to odsetek rzeczywistych sukcesów, które model
+      rozpoznał, a ", gloss("swoistość"), " to odsetek rzeczywistych porażek, które
       rozpoznał. Panel buduje macierz dla modelu z Ryc. 5.3 i wybranego
       progu."),
 
