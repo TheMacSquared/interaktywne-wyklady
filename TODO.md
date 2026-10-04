@@ -199,9 +199,10 @@ to stosują.
 
 ### 08 — case studies
 
-- [ ] Rozbudować wykład poza jedyny rozdział CASchools; dodać quizy.
-  Kandydaci: `palmerpenguins` (ANOVA/korelacja), case binarny (regresja
-  logistyczna), case czasowy.
+- [x] Rozbudowa poza CASchools: rozdz. 02 pingwiny (ANOVA Welcha,
+  Games-Howell, płeć), rozdz. 03 Titanic (χ², zakłócanie płcią, regresja
+  logistyczna); pytania `lc-choices` we wszystkich trzech (4 października
+  2026). Case czasowy pominięty: szeregi czasowe są dopiero w statystyce 2.
 
 ---
 

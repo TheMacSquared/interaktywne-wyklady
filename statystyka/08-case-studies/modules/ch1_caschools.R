@@ -29,8 +29,9 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   # ========================================================================
   lc_h2("sec-01", "Sytuacja wyjściowa"),
 
-  lc_p("Ten wykład nie wprowadza nowych metod. Przechodzi jedną analizę od
-    pytania do decyzji i po kolei sięga po narzędzia z wykładów 01–06:
+  lc_p("Ten wykład nie wprowadza nowych metod. Każdy jego rozdział przechodzi
+    jedną analizę od pytania do decyzji. Pierwsza sięga po kolei po narzędzia
+    z wykładów 01–06:
     opis danych, korelację, ANOVA, regresję prostą i wieloraką, ocenę
     ", gloss("reszta", "reszt"), " i porównanie modeli. Celem jest zobaczyć, jak te narzędzia
     składają się w całość i jak każde z nich zmienia odpowiedź."),
@@ -191,6 +192,19 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     Dla matematyki nachylenie jest łagodniejsze (-1.94), więc dla średniej
     z obu testów wychodzi wartość pośrednia."),
 
+  case_quiz_ui("ch1_quiz_simple",
+    title = "Co można powiedzieć po kroku 2?",
+    question = "Korelacja r = -0.23 (p < 0.001), nachylenie -2.28 pkt na
+      ucznia, R² = 0.05. Które zdanie można uczciwie przekazać politykowi?",
+    choices = c(
+      "Zmniejszenie STR o jednego ucznia podniesie wyniki o 2.28 pkt." = "causal",
+      "Okręgi z mniejszym STR mają przeciętnie lepsze wyniki; nie wiadomo jeszcze, czy to skutek liczby uczniów." = "assoc",
+      "STR wyjaśnia większość różnic w wynikach między okręgami." = "most",
+      "Związek jest nieistotny, bo korelacja jest słaba." = "ns"
+    ),
+    correct = "assoc"
+  ),
+
   lc_p("Na tym etapie polityk mógłby powiedzieć, że mniejsze klasy dają
     lepsze wyniki, i poprosić o budżet. Zauważmy jednak, że STR wyjaśnia
     tylko 5.1% zmienności wyników, a związek jest ",
@@ -313,6 +327,19 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     title = "Seria modeli i współczynnik przy STR",
     uiOutput("ch1_model_comparison"),
     lc_plot("ch1_beta_str_plot", max_height = "250px")
+  ),
+
+  case_quiz_ui("ch1_quiz_drop",
+    title = "Dlaczego współczynnik przy STR zmalał?",
+    question = "Po dodaniu dochodu do modelu współczynnik przy STR spada
+      z -2.28 do -0.65. Które wyjaśnienie jest poprawne?",
+    choices = c(
+      "Dochód zmniejsza liczbę uczniów w klasach." = "mechanism",
+      "Część prostego związku wynikała z tego, że okręgi z mniejszym STR są zamożniejsze." = "confound",
+      "Model z dochodem jest gorzej dopasowany, więc współczynnik jest mniej wiarygodny." = "worse",
+      "STR i dochód mierzą to samo, więc model nie umie ich rozdzielić." = "collinear"
+    ),
+    correct = "confound"
   ),
 
   lc_p("Po dodaniu dochodu współczynnik przy STR spada z -2.28 do -0.65
@@ -598,6 +625,15 @@ ch1_server <- function(input, output, session) {
                  )
   })
 
+  case_quiz_server(input, output, "ch1_quiz_simple", "assoc", list(
+    causal = "Nachylenie z regresji prostej na danych obserwacyjnych opisuje
+      różnice między okręgami, a nie skutek zmiany STR w jednym okręgu.",
+    assoc = "Związek jest istotny, ale obserwacyjny. Czy wynika z liczby
+      uczniów, pokażą dopiero kolejne kroki.",
+    most = "R² = 0.05: STR wyjaśnia około 5% zmienności wyników.",
+    ns = "Słaby związek może być istotny: przy 420 okręgach p < 0.001."
+  ))
+
   # --- Krok 3: Zmienne zakłócające ---
   zoom_plot_server("ch1_conf_a", reactive({
     ggplot(ca, aes(x = lunch, y = score)) +
@@ -747,6 +783,17 @@ ch1_server <- function(input, output, session) {
       theme(legend.position = "top",
             axis.text.x = element_text(angle = 20, hjust = 1))
   }))
+
+  case_quiz_server(input, output, "ch1_quiz_drop", "confound", list(
+    mechanism = "Model nie mówi, że dochód zmienia STR. Współczynnik maleje,
+      bo porównujemy teraz okręgi o tym samym dochodzie.",
+    confound = "Zamożniejsze okręgi mają i nieco mniejszy STR, i lepsze
+      wyniki. Po wyrównaniu dochodu zostaje mniejsza różnica.",
+    worse = "Model z dochodem jest lepiej dopasowany: skorygowany R² rośnie
+      z 0.049 do 0.509.",
+    collinear = "STR i dochód są skorelowane słabo (r = -0.23), więc model
+      bez trudu je rozdziela."
+  ))
 
   # --- Krok 5: Model interaktywny ---
   ch1_model <- reactiveVal(NULL)

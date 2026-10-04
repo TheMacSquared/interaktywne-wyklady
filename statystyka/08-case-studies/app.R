@@ -52,12 +52,14 @@ lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch1_caschools.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ch2_pingwiny.R"),  local = TRUE)
+source(file.path(app_dir, "modules", "ch3_titanic.R"),   local = TRUE)
 
 # ============================================================================
 # UI
 # ============================================================================
 
-.chapters <- list(ch1_ui)
+.chapters <- list(ch1_ui, ch2_ui, ch3_ui)
 
 ui <- lecture_page(
   lecture_id    = "case-studies",
@@ -74,6 +76,8 @@ ui <- lecture_page(
 server <- function(input, output, session) {
   lc <- lecture_server(.chapters, input, output, session)
   ch1_server(input, output, session)
+  ch2_server(input, output, session)
+  ch3_server(input, output, session)
 }
 
 shinyApp(ui = ui, server = server)

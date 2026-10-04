@@ -20,7 +20,7 @@ Symulacje, Bayes, rozszerzenia kierunkowe i szeregi czasowe należą do oddzieln
 | 05 | [Założenia testów](05-zalozenia-testow/) | Rozpoznać sytuacje wymagające zmiany metody. |
 | 06 | [Regresja](06-regresja/) | Opisać związek i zobaczyć, jak uwzględnienie kontekstu zmienia interpretację. |
 | 07 | [Dobre dane](07-dobre-dane/) | Ocenić, czy dane odpowiadają na pytanie. |
-| 08 | [Case studies](08-case-studies/) | Prześledzić pełną analizę na przykładzie szkół i sytuacji uczniów. |
+| 08 | [Case studies](08-case-studies/) | Prześledzić pełne analizy od pytania do wniosku: szkoły w Kalifornii (regresja), pingwiny (porównanie grup), Titanic (wynik 0/1). |
 | 09 | [Projekt badawczy](09-projekt-badawczy/) | Sformułować własne pytanie, zaplanować analizę i przedstawić wniosek. |
 
 Numeracja porządkuje materiały, nie narzuca dziesięciu osobnych spotkań. Przy ograniczonej liczbie godzin fragmenty „Dobrych danych” i „Projektu badawczego” można wplatać we wcześniejsze przykłady. Rozbudowane aplikacje są także materiałem do pracy własnej.
