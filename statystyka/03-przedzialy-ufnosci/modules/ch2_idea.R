@@ -57,7 +57,7 @@ ch2_ui <- list(
 
     lc_p("Ten wzór wymaga dwóch uzupełnień. Po pierwsze, liczba 1.96 odpowiada
       poziomowi 95%. Dla 90% w jej miejsce wchodzi 1.645, a dla 99% — 2.576,
-      czyli kwantyle rozkładu N(0, 1), które odcinają odpowiednio po 5% i po 0.5%
+      czyli ", gloss("kwantyl", "kwantyle"), " rozkładu N(0, 1), które odcinają odpowiednio po 5% i po 0.5%
       w każdym ogonie. Po drugie, SE zawiera σ, którego zwykle nie znamy. W praktyce
       zastępujemy je odchyleniem standardowym z próby s, a 1.96 — kwantylem
       ", gloss("rozkład t-Studenta", "rozkładu t-Studenta"), " z wykładu 02 (dla n = 30 jest to 2.05). Szczegółami tej

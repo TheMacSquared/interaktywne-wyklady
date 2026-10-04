@@ -38,7 +38,7 @@ ch3_ui <- list(
       gloss("błąd standardowy"), " średniej (SE) oszacowany z danych. Ponieważ
       \\(s\\) też zmienia się z próby na próbę, do niepewności średniej
       dochodzi niepewność samego SE. Z tego powodu mnożnik 1.96 z ", gloss("rozkład normalny", "rozkładu
-      normalnego"), " zastępujemy kwantylem ", gloss("rozkład t-Studenta",
+      normalnego"), " zastępujemy ", gloss("kwantyl", "kwantylem"), " ", gloss("rozkład t-Studenta",
       "rozkładu t-Studenta"), " z \\(n - 1\\) ", gloss("stopnie swobody",
       "stopniami swobody"), ", który poznaliśmy w wykładzie 02. Tak powstaje ",
       gloss("przedział ufności"), " dla średniej populacji:"),
