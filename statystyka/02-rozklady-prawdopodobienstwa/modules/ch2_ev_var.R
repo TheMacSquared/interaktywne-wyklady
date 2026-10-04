@@ -201,8 +201,7 @@ ch2_ev_var_ui <- list(
       co najmniej dwóch liczb: E(X) mówi, gdzie leży środek, a SD(X), jak szeroko
       rozkładają się wokół niego wyniki."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Wariancja ma jednostkę do kwadratu (zł²), odchylenie standardowe — tę samą
        co X (zł). Do opisu rozrzutu używaj SD, wariancja przydaje się w obliczeniach."
     ),

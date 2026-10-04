@@ -337,7 +337,7 @@ ch4_ui <- list(
       z \\(x = 19\\). Statystyki opisowe i test korelacji nie odróżnią tych
       sytuacji, wykres odróżnia je od razu."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Zanim zinterpretujesz r albo wynik testu korelacji, obejrzyj wykres
        rozrzutu."
     ),

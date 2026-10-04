@@ -154,16 +154,14 @@ ch6_ui <- list(
     # --- Cheat sheet 1: Tools by variable type ---
     lc_h2("ch6-narzedzia", "Narzędzia wg typu zmiennej"),
 
-    inline_callout(
-      label = "Najczęstszy błąd",
+    lc_warn("Najczęstszy błąd",
       tagList(
         "Obliczanie ", gloss("średnia", "średniej"), " z danych ",
         gloss("zmienna nominalna", "nominalnych"), " lub ",
         gloss("zmienna porządkowa", "porządkowych"), "
        (np. średnia z kodów kierunków). Wynik będzie liczbą, ale
        nie będzie miał żadnego sensu!"
-      ),
-      color = "uwaga"
+      )
     ),
 
     figure_panel(

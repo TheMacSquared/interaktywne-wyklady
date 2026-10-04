@@ -235,7 +235,7 @@ ch3b_ui <- list(
       wszystkie proste musiałyby przecinać się w jednym punkcie przy długości
       płetwy 0 mm, a to zniekształca oszacowanie różnicy nachyleń."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Interakcję dodawaj wtedy, gdy masz powód sądzić, że związek zależy od
        grupy, i oceniaj ją na wykresie przewidywanych prostych, a nie tylko
        po p-wartości. Przy interakcji zachowaj w modelu oba składniki osobno."

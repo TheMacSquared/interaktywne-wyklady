@@ -268,12 +268,10 @@ ch2h_ui <- list(
       w praktyce odrzuca H₀ zawsze, gdy statystyka wychodzi poza ±1.645.
       Przy prawdziwej H₀ zdarza się to w 10% prób, a nie w deklarowanych 5%."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "W razie wątpliwości wybieraj test dwustronny. Test jednostronny ma sens
        tylko wtedy, gdy kierunek wynika z pytania i został ustalony przed
-       zebraniem danych.",
-      color = "uwaga"
+       zebraniem danych."
     ),
 
     # ========================================================================
@@ -343,8 +341,8 @@ ch2h_ui <- list(
       tags$li(
         tags$b("Hipoteza o próbie zamiast populacji."),
         " Źle: „H₀: średnia w próbie = 170”. Średnią z próby znamy
-        dokładnie, więc nie ma czego testować. Hipotezy dotyczą parametrów",
-        tags$em(" populacji"), ", tak jak przedziały ufności w wykładzie 03."
+        dokładnie, więc nie ma czego testować. Hipotezy dotyczą parametrów ",
+        em_("populacji"), ", tak jak przedziały ufności w wykładzie 03."
       ),
       tags$li(
         tags$b("Brak precyzji."),

@@ -99,7 +99,7 @@ ch1_ui <- list(
       withMathJax("\\(\\hat{\\theta}\\)"), " oznacza estymator parametru ",
       withMathJax("\\(\\theta\\)"), "."),
 
-    lc_h3("(1) Nieobciążoność"),
+    lc_h3("Nieobciążoność", num = "1"),
 
     lc_p("Estymator jest nieobciążony, gdy jego wartość oczekiwana jest równa
       szacowanemu parametrowi:"),
@@ -112,19 +112,19 @@ ch1_ui <- list(
       w bardzo wielu hipotetycznych próbach, estymator trafia w parametr.
       Nie ma błędu systematycznego w jedną stronę."),
 
-    lc_p(strong("Przykład:"), " średnia z próby jest nieobciążonym estymatorem μ.
+    lc_note("Przykład", tags$p("Średnia z próby jest nieobciążonym estymatorem μ.
       To wzór E(X̄) = μ z wykładu 02 i to właśnie widać na Ryc. 1.1:
-      bursztynowa linia średniej z estymat leży tuż przy wrzosowej linii μ."),
+      bursztynowa linia średniej z estymat leży tuż przy wrzosowej linii μ.")),
 
-    lc_p(strong("Kontrprzykład:"), " ", gloss("wariancja"), " z próby liczona
+    lc_note("Kontrprzykład", tags$p(gloss("wariancja", "Wariancja"), " z próby liczona
       z dzieleniem przez n, ",
       withMathJax("\\(\\frac{1}{n}\\sum(x_i - \\bar{x})^2\\)"), ", jest obciążona.
       Jej wartość oczekiwana wynosi (n - 1)/n · σ², więc średnio zaniża wariancję
       populacji. Dla n = 10 i σ² = 100 daje średnio 90 zamiast 100. Dlatego
       wariancję z próby liczy się z dzieleniem przez n - 1: ta poprawka usuwa
-      obciążenie."),
+      obciążenie.")),
 
-    lc_h3("(2) Efektywność"),
+    lc_h3("Efektywność", num = "2"),
 
     lc_p("Nieobciążoność mówi tylko, że estymator trafia średnio. Dwa estymatory
       nieobciążone mogą jednak różnić się rozrzutem: jeden daje estymaty
@@ -134,19 +134,19 @@ ch1_ui <- list(
       bo w pojedynczej próbie, a tylko taką zwykle mamy, częściej wypada blisko
       prawdy. Taki estymator nazywamy efektywniejszym."),
 
-    lc_p(strong("Przykład:"), " gdy populacja ma rozkład normalny, zarówno średnia,
+    lc_note("Przykład", tags$p("Gdy populacja ma rozkład normalny, zarówno średnia,
       jak i ", gloss("mediana"), " z próby są nieobciążonymi estymatorami μ.
       Przy dużych próbach wariancja mediany jest jednak około π/2 ≈ 1.57 raza
       większa niż wariancja średniej. Mediana z próby liczącej 157 obserwacji
       jest więc mniej więcej tak dokładna jak średnia ze 100 obserwacji.
       Dlatego przy pomiarach o rozkładzie zbliżonym do normalnego standardem
-      jest średnia arytmetyczna."),
+      jest średnia arytmetyczna.")),
 
-    lc_p(strong("Uwaga:"), " efektywność zależy od rozkładu populacji. Gdy w danych
+    lc_note("Uwaga", tags$p("Efektywność zależy od rozkładu populacji. Gdy w danych
       zdarzają się ", gloss("wartość odstająca", "wartości odstające"), ",
-      średnia mocno na nie reaguje i mediana może okazać się efektywniejsza."),
+      średnia mocno na nie reaguje i mediana może okazać się efektywniejsza.")),
 
-    lc_h3("(3) Zgodność"),
+    lc_h3("Zgodność", num = "3"),
 
     lc_p("Trzecia własność dotyczy tego, co dzieje się, gdy zbieramy więcej danych.
       Estymator jest zgodny, gdy wraz ze wzrostem wielkości próby zbiega
@@ -161,12 +161,12 @@ ch1_ui <- list(
       do zera, gdy n rośnie. W dużej próbie estymator praktycznie nie może
       trafić daleko od prawdy."),
 
-    lc_p(strong("Przykład:"), " średnia z próby jest zgodnym estymatorem μ.
+    lc_note("Przykład", tags$p("Średnia z próby jest zgodnym estymatorem μ.
       Wynika to z ", gloss("prawo wielkich liczb", "prawa wielkich liczb"),
       ", a widać to też we wzorze na błąd standardowy: ",
       gloss("odchylenie standardowe"), " średniej, SE = σ/√n, maleje do zera
       wraz ze wzrostem n. Wariancja z próby jest zgodna zarówno w wersji
-      z n - 1, jak i z n: obciążenie (n - 1)/n znika, gdy n rośnie."),
+      z n - 1, jak i z n: obciążenie (n - 1)/n znika, gdy n rośnie.")),
 
     lc_p("Z trzech własności wynika praktyczna kolejność wyboru. Najpierw szukamy
       estymatorów nieobciążonych, spośród nich wybieramy najefektywniejszy,
@@ -175,8 +175,7 @@ ch1_ui <- list(
       punktem wyjścia dla przedziałów ufności w tym wykładzie. Zgodność ma
       jednak swoją cenę: SE maleje jak 1/√n, a nie jak 1/n."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Żeby zmniejszyć błąd standardowy średniej o połowę, trzeba czterokrotnie
        zwiększyć próbę."
     ),

@@ -189,8 +189,7 @@ ch1_ui <- lecture_chapter(
       jest dokładnie normalny, a nas obchodzi, czy jest wystarczająco bliski
       normalnemu dla wybranej metody."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "O normalności decyduj na podstawie wykresu Q-Q, wartości odstających,
        liczebności i wymagań metody. Test Shapiro-Wilka traktuj jako uzupełnienie
        wykresu, a nie rozstrzygnięcie."

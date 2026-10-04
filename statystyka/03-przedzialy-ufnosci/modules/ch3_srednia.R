@@ -235,7 +235,7 @@ ch3_ui <- list(
       przedziały grup są mocnym sygnałem różnicy, ale nakładające się nie
       rozstrzygają niczego."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Porównując dwie grupy, patrz na przedział różnicy. Nakładanie się
        przedziałów grup nie dowodzi, że różnicy nie ma."
     ),
@@ -252,7 +252,7 @@ ch3_ui <- list(
       Przypadki A dotyczą jednej średniej, B różnicy dwóch średnich, a C
       wielu grup naraz."),
 
-    lc_h3("A. Przedział dla jednej średniej"),
+    lc_h3("Przedział dla jednej średniej", num = "A"),
 
     figure_panel(
       label = "Przykład A1",
@@ -273,7 +273,7 @@ ch3_ui <- list(
       uiOutput("ch3_caseA2_widget")
     ),
 
-    lc_h3("B. Przedział dla różnicy średnich"),
+    lc_h3("Przedział dla różnicy średnich", num = "B"),
 
     figure_panel(
       label = "Przykład B1",
@@ -313,7 +313,7 @@ ch3_ui <- list(
       uiOutput("ch3_caseB4_widget")
     ),
 
-    lc_h3("C. Wiele grup — forest plot"),
+    lc_h3("Wiele grup — forest plot", num = "C"),
 
     figure_panel(
       label = "Przykład C1",

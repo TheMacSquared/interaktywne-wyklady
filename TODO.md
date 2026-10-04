@@ -101,25 +101,14 @@ Zostało:
   na kropkach (`lc_step_nav()`); przy przebudowie rozważyć
   `lc_step_widget(body = …)` albo schemat redukcji jako wykres.
 
-Bloki tekstu (stan 3 października 2026; ramki `lc-feedback`, zwijane
-`tags$details` i ikony `case-icon` są już usunięte we wszystkich kursach):
+Bloki tekstu: statystyka zrobiona 4 października 2026 (`inline_callout` →
+`lc_note`/`lc_warn`, wstępy „Przykład:” → `lc_note`, numeracja → `lc_h3(num =)`,
+martwy CSS po marginesie i starych calloutach usunięty we wszystkich kursach).
+Zostało w statystyce 2:
 
-- [ ] Wywołania `inline_callout()`, `margin_callout()`, `margin_note()`,
-  `margin_code_note()` → `lc_note()` (statystyka 32, statystyka 2: 11;
-  działają, ale są zakazane w nowym kodzie).
-- [ ] Pogrubione wstępy `strong("Przykład:" / "Kontrprzykład:" / "Uwaga:" /
-  "Zasada:")` na początku akapitu → `lc_note()` (statystyka 5,
-  statystyka 2: 1).
-- [ ] Spacje przed interpunkcją po `tags$strong()` / `tags$em()` → `b_()` /
-  `em_()` (statystyka 3, statystyka 2: 11, analiza ryzyka 5).
-- [ ] Ręczna numeracja podsekcji („(1) Nieobciążoność”, „A. …”) →
-  `lc_h3("…", num = "1")` — do sprawdzenia, ile zostało.
-- [ ] Emoji w treści statystyki 2 (4 linie); w statystyce zostało tylko pole
-  `icon` w `08-case-studies/modules/helpers.R`.
-- [ ] Usunąć martwy CSS po marginesie i starych blokach: `.lc-margin*`,
-  `.lc-inline-callout*`, `.lc-callout-*`, `.lc-def*`, `.lc-example*`,
-  `.lc-try` (po sprawdzeniu, że nic ich nie używa; `inline_callout()`
-  renderuje się już jako `lc_note()`).
+- [ ] `inline_callout()` / `margin_*()` → `lc_note()` (11), pogrubiony wstęp
+  (1), spacje przed interpunkcją po `tags$strong()` / `tags$em()` (11),
+  emoji (4 linie). Analiza ryzyka: spacje przed interpunkcją (5).
 
 Decyzje:
 

@@ -270,7 +270,7 @@ ch5_ui <- list(
       0.91. Ilorazy szans się mnożą: wzrost dochodu o 10 tys. USD mnoży szanse
       przez 1.18¹⁰ ≈ 5.3, a nie przez 1 + 10 · 0.18."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Iloraz szans mnoży szanse, a nie prawdopodobieństwo. Żeby powiedzieć,
        o ile zmienia się prawdopodobieństwo, trzeba podać punkt startu."
     ),

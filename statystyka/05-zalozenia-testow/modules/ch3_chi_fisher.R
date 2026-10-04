@@ -108,7 +108,7 @@ ch3_ui <- lecture_chapter(
     lc_p("Widać to też na histogramie. Gdy H₀ jest prawdziwa, p-wartości
       powinny rozkładać się mniej więcej równomiernie między 0 a 1. P-wartości
       testu Fishera gromadzą się przy prawym końcu: przy n = 20 około 40%
-      z nich trafia do ostatniego przedziału, od 0.95 do 1. Test jest ", tags$em("konserwatywny"), ": jego
+      z nich trafia do ostatniego przedziału, od 0.95 do 1. Test jest ", em_("konserwatywny"), ": jego
       rzeczywisty poziom istotności jest niższy od deklarowanego. Bierze się
       to stąd, że z małej tabeli da się uzyskać niewiele różnych p-wartości.
       Ceną jest mniejsza ", gloss("moc testu"), ": test, który rzadko odrzuca
@@ -157,7 +157,7 @@ ch3_ui <- lecture_chapter(
       połączenie rzadkich kategorii, jeśli ma to uzasadnienie merytoryczne,
       na przykład zebranie kilku rzadkich odpowiedzi w kategorię „inne”."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Sprawdzaj liczebności oczekiwane, nie obserwowane. Gdy część z nich
        jest mała, oprzyj decyzję na teście Fishera."
     ),

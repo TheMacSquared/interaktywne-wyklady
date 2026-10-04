@@ -250,7 +250,7 @@ ch5_ui <- list(
       Kto najpierw patrzy na przedziały, a potem wybiera poziom, przy którym
       wniosek wychodzi „po jego myśli”, przestaje mierzyć siłę dowodów."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Poziom ufności ustal przed analizą danych i zawsze podawaj go w raporcie
        razem z przedziałem."
     ),

@@ -300,8 +300,7 @@ ch3_ui <- list(
       że przy silnie skośnych rozkładach sama para E(X) i SD nie opisuje
       dobrze kształtu."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "„Ile z n prób?” — dwumianowy. „Ile razy w ciągu godziny, na stronie,
        w miesiącu?” — Poisson. „Ile prób aż do pierwszego sukcesu?” —
        geometryczny. „Każdy wynik tak samo prawdopodobny?” — jednostajny."

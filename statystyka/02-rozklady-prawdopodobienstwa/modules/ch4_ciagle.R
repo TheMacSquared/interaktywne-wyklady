@@ -453,8 +453,7 @@ ch4_ui <- list(
       a mediana zostaje przy typowej osobie. Dlatego dla dochodów, cen
       i czasów reakcji podaje się medianę obok średniej."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Dane zawsze dodatnie, z długim prawym ogonem: zlogarytmuj je i obejrzyj
        histogram. Jeśli wygląda jak symetryczny dzwon, rozkład log-normalny
        jest dobrym kandydatem na model."

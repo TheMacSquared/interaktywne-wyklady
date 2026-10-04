@@ -253,8 +253,7 @@ ch7_ui <- list(
       Przy wyraźnie różnych wariancjach spójniejsza jest para ANOVA Welcha
       i Games-Howell."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Testy post hoc wykonuj po istotnej ANOVA. Gdy ANOVA nie odrzuca H₀,
        porównań parami nie interpretujemy."
     ),

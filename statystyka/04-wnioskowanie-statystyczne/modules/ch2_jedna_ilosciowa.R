@@ -267,8 +267,7 @@ ch2_ui <- list(
       naprawdę różni się od normy. Test jednostronny nie widzi odchylenia
       w przeciwną stronę, niezależnie od jego wielkości."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Kierunek testu ustal przed zebraniem danych, na podstawie pytania.
        Wybór strony po obejrzeniu wyników podwaja rzeczywiste ryzyko błędu
        I rodzaju: przy α = 0.05 faktycznie wynosi ono 10%."

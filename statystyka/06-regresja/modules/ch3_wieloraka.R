@@ -244,7 +244,7 @@ ch3_ui <- list(
       niestabilne, można zostawić w modelu jeden z nich albo połączyć je
       w jedną miarę."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Współliniowość nie psuje przewidywań modelu. Osłabia interpretację
        pojedynczych współczynników, dlatego VIF sprawdza się, zanim zacznie
        się je interpretować."

@@ -366,7 +366,7 @@ ch4_ui <- lecture_chapter(
       nierównych wariancjach. Wybór między nimi zależy
       od pytania badawczego, a nie od tego, który test daje mniejszą p-wartość."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Niezależność wynika z projektu badania. Pozostałe założenia oceniaj
        najpierw na wykresie, a test formalny traktuj pomocniczo. Alternatywa
        nieparametryczna odpowiada na inne pytanie niż test, który zastępuje."

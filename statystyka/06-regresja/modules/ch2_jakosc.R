@@ -493,7 +493,7 @@ ch2_ui <- list(
       Ekstrapolacja przenosi błąd kształtu modelu tam, gdzie nie ma już danych,
       które by go zdradziły."),
 
-    inline_callout(label = "Zasada", color = "wskazowka",
+    lc_note("Zasada", rule = TRUE,
       "Prognozuj tylko w zakresie X, na którym model był dopasowany. Im dalej
        od danych, tym mniej prognoza jest warta."
     ),

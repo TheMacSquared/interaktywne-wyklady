@@ -42,7 +42,7 @@ ch6_ui <- list(
       lc_note("Jamovi", title = "Przedział dla różnicy średnich (dwie grupy)",
         tags$ol(
           tags$li(tags$b("Analyses → T-Tests → Independent Samples T-Test")),
-          tags$li("Zmienna ilościowa → ", tags$em("Dependent Variable"),
+          tags$li("Zmienna ilościowa → ", em_("Dependent Variable"),
                   ", zmienna grupująca → ", tags$em("Grouping Variable")),
           tags$li("W panelu ", tags$em("Additional Statistics"), " zaznacz ",
                   tags$b("Mean difference"), " i ", tags$b("Confidence interval")),

@@ -453,8 +453,7 @@ ch1d_ui <- list(
       ufności dla różnicy nie obejmuje zera. Przedział mówi przy tym więcej niż
       sam werdykt, bo pokazuje także, jak duża może być różnica."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Poziom istotności ustal przed analizą danych. W raporcie podawaj p-wartość
        obok werdyktu, a werdykt formułuj w języku pytania badawczego."
     ),

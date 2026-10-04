@@ -119,10 +119,8 @@ ch1_ui <- list(
       skali często traktuje się ją jednak jak zmienną dyskretną i liczy średnią.
       To decyzja analityka, którą trzeba podjąć świadomie i uzasadnić."),
 
-    inline_callout(
-      label = "Zasada",
-      "Zanim zaczniesz analizę, określ typ każdej zmiennej.",
-      color = "uwaga"
+    lc_note("Zasada", rule = TRUE,
+      "Zanim zaczniesz analizę, określ typ każdej zmiennej."
     ),
 
     # --- Widget 2: Examples gallery ---

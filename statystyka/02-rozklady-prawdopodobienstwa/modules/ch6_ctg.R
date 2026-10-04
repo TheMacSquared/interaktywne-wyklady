@@ -176,8 +176,7 @@ ch6_ui <- list(
       od 4.4% do 4.9% średnich, blisko 5%, ale podział między ogonami wyrównuje się
       dopiero przy dużych n."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Nie ma jednej liczby obserwacji, od której przybliżenie normalne zaczyna
        działać. Im bardziej skośny rozkład wyjściowy, tym większej próby potrzeba:
        dla rozkładów symetrycznych wystarcza niewiele obserwacji, a przy silnej

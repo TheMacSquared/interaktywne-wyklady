@@ -433,7 +433,7 @@ ch10_ui <- list(
       odniesienia, wyrażona w punktach procentowych, najlepiej razem
       z przedziałem ufności."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Raportuj p-wartość razem z miarą siły efektu i oceniaj efekt w kontekście
        dziedziny, a nie tylko według progów Cohena."
     ),

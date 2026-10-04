@@ -90,8 +90,7 @@ ch5_ui <- list(
       i średnia ocen (-0.17) są w przybliżeniu symetryczne, a ich średnie
       i mediany niemal się pokrywają."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Gdy skośność jest wyraźnie różna od zera, a średnia i mediana się
        rozjeżdżają, podawaj obie albo opisuj dane medianą."
     ),

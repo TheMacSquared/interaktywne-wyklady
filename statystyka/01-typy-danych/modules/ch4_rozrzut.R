@@ -291,8 +291,7 @@ ch4_ui <- list(
       ważą w nim szczególnie dużo. IQR, oparty na kwartylach, jest z tych
       trzech miar najbardziej odporny."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Rozkład symetryczny bez wartości odstających opisuj średnią i odchyleniem
        standardowym, a rozkład skośny lub z wartościami odstającymi — medianą i IQR."
     ),

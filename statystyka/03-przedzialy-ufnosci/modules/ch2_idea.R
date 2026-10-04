@@ -159,7 +159,7 @@ ch2_ui <- list(
       ilu ludzi zmierzyliśmy. Zdanie D nie mówi nic: średnia z próby, 170 cm,
       jest środkiem przedziału, więc leży w nim zawsze."),
 
-    inline_callout(label = "Zasada", color = "uwaga",
+    lc_note("Zasada", rule = TRUE,
       tagList(
         "95% to własność metody, nie konkretnego przedziału. O jednym przedziale
          mówimy: z 95% ufnością μ leży między 165 a 175 cm. Rozumiemy przez to,

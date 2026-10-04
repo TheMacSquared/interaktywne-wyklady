@@ -241,8 +241,7 @@ ch1_ui <- list(
       Tam rolę sumy przejmuje pole pod krzywą gęstości, które również
       wynosi 1."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Rozkład prawdopodobieństwa opisuje model, a nie dane. Częstości
        z próby przybliżają ten model tym lepiej, im większa jest próba."
     ),

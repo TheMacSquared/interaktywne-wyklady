@@ -61,8 +61,7 @@ ch_drzewo_ui <- list(
       )
     ),
 
-    inline_callout(
-      label = "Jak używać",
+    lc_note("Jak używać",
       tagList(
         tags$ul(
           tags$li("Przed drzewem sprawdź ", tags$b("pytanie i plan badania")),

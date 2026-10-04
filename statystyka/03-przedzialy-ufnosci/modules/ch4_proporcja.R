@@ -184,7 +184,7 @@ ch4_ui <- list(
       przecinający granicę nie pozwala rozstrzygnąć. Każdy przypadek rozwija
       się po kliknięciu nagłówka."),
 
-    lc_h3("A. Przedział dla jednej proporcji"),
+    lc_h3("Przedział dla jednej proporcji", num = "A"),
 
     figure_panel(
       label = "Przykład A1",
@@ -205,7 +205,7 @@ ch4_ui <- list(
       uiOutput("ch4_caseA2_widget")
     ),
 
-    lc_h3("B. Przedział dla różnicy proporcji"),
+    lc_h3("Przedział dla różnicy proporcji", num = "B"),
 
     figure_panel(
       label = "Przykład B1",
@@ -236,7 +236,7 @@ ch4_ui <- list(
       uiOutput("ch4_caseB3_widget")
     ),
 
-    lc_h3("C. Wiele grup — forest plot"),
+    lc_h3("Wiele grup — forest plot", num = "C"),
 
     figure_panel(
       label = "Przykład C1",

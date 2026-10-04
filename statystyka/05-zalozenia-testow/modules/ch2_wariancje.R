@@ -220,7 +220,7 @@ ch2_ui <- lecture_chapter(
       prawdziwą H₀ równych średnich w około 15% losowań. Jego miejsce wśród
       alternatyw pokazuje mapa w rozdziale 04."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Wersję testu wybieraj przed analizą, na podstawie planu badania, a nie
        wyniku testu Levene'a. Gdy nie ma dobrych powodów, by zakładać równe
        wariancje, wybierz wariant Welcha."

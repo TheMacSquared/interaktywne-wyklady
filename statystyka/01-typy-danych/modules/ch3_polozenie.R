@@ -218,8 +218,7 @@ ch3_ui <- list(
       Mediana wytrzymuje znacznie więcej: zmienia się wyraźnie dopiero wtedy,
       gdy skrajne wartości stanowią blisko połowę danych."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Przy rozkładach skośnych, takich jak zarobki, ceny czy czasy oczekiwania,
        podawaj medianę obok średniej albo zamiast niej."
     ),

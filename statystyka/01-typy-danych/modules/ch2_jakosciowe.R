@@ -176,8 +176,7 @@ ch2_ui <- list(
       słupkowy jest co najmniej tak samo czytelny jak kołowy, a przy
       zbliżonych udziałach wyraźnie czytelniejszy."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Do porównywania kategorii używaj wykresu słupkowego. Wykres kołowy
        sprawdza się tylko przy kilku kategoriach o wyraźnie różnych udziałach."
     ),

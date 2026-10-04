@@ -275,8 +275,7 @@ ch4_ui <- list(
       najlepszy, wracamy do problemu porównań wielokrotnych, a zbiór
       testowy przestaje być dla modelu nowy."),
 
-    inline_callout(
-      label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Model ocenia się po tym, jak przewiduje dane, których nie widział, i po
        tym, czy ma sens merytoryczny. R² na danych użytych do dopasowania
        przy dodawaniu zmiennych tylko rośnie."

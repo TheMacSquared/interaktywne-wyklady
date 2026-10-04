@@ -292,7 +292,7 @@ ch6_ui <- list(
       nie tworzy sztucznej różnicy. Ma to swoją cenę: wynik dotyczy tylko
       pacjentów, którzy wrócili, i nic nie mówi o tych z najwyższym ciśnieniem."),
 
-    inline_callout(label = "Zasada",
+    lc_note("Zasada", rule = TRUE,
       "Gdy te same jednostki zmierzono dwa razy, analizuj różnice w parach.
        Rodzaj testu wynika z planu badania, a nie z tego, który daje mniejszą
        p-wartość."
