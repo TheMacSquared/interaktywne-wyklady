@@ -248,7 +248,7 @@ ch3_ui <- list(
       zacieniowany obszar wartości, które ją spełniają. Jeśli cały przedział
       leży w tym obszarze, dane potwierdzają hipotezę. Jeśli cały leży poza
       nim, dane ją wykluczają. Jeśli przedział przecina granicę, dane nie
-      rozstrzygają. Zanim klikniesz „Pokaż werdykt”, spróbuj odpowiedzieć sam.
+      rozstrzygają. Przed kliknięciem „Pokaż werdykt” warto odpowiedzieć samodzielnie.
       Przypadki A dotyczą jednej średniej, B różnicy dwóch średnich, a C
       wielu grup naraz."),
 
@@ -257,7 +257,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Przykład A1",
       title = "Wzrost studentów — czytanie pojedynczego CI",
-      p("Zmierzyłeś wzrost 30 studentów. Średnia z próby wynosi ",
+      p("Zmierzono wzrost 30 studentów. Średnia z próby wynosi ",
         withMathJax("\\(\\bar{x} = 173.4\\)"), " cm, odchylenie standardowe ",
         withMathJax("\\(s = 8.2\\)"), " cm. Zbudujmy przedział dla średniego
         wzrostu i sprawdźmy dwie hipotezy."),
@@ -287,7 +287,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Przykład B2",
       title = "Dwa nawozy — CI dla różnicy obejmuje 0",
-      p("Porównujesz plon kukurydzy dla dwóch nawozów. ",
+      p("Porównano plon kukurydzy dla dwóch nawozów. ",
         tags$b("Nawóz X:"), " n = 25, średnia 8.4 t/ha, s = 1.2. ",
         tags$b("Nawóz Y:"), " n = 25, średnia 8.1 t/ha, s = 1.3."),
       uiOutput("ch3_caseB2_widget")
@@ -296,7 +296,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Przykład B3",
       title = "Pułapka nakładających się CI",
-      p("Mierzysz czas reakcji w dwóch grupach po 150 osób. ",
+      p("Zmierzono czas reakcji w dwóch grupach po 150 osób. ",
         tags$b("Grupa A:"), " średnia 350 ms, s = 45. ",
         tags$b("Grupa B:"), " średnia 362 ms, s = 45. Przedziały
         obu grup nakładają się. Czy różnica jest istotna?"),
@@ -318,7 +318,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Przykład C1",
       title = "Cztery metody nauczania — czy któraś wystaje?",
-      p("Porównujesz średni wynik egzaminu (0–40 pkt) studentów uczących
+      p("Porównano średni wynik egzaminu (0–40 pkt) studentów uczących
         się czterema metodami, po 25 osób w każdej grupie. Kolejne kroki
         dodają punkty, średnie i przedziały."),
       uiOutput("ch3_caseC1_widget")
@@ -327,7 +327,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Przykład C2",
       title = "Pięć oddziałów szpitalnych — czas oczekiwania",
-      p("Mierzysz średni czas oczekiwania na konsultację (minuty) w pięciu
+      p("Zmierzono średni czas oczekiwania na konsultację (minuty) w pięciu
         oddziałach szpitala. Który wymaga interwencji?"),
       uiOutput("ch3_caseC2_widget")
     ),

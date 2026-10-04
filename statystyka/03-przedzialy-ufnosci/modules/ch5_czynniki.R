@@ -191,8 +191,8 @@ ch5_ui <- list(
 
     lc_p("W trzech przykładach poniżej ta sama próba jest oceniana przy
       poziomach 90%, 95% i 99%. Po wybraniu poziomu wykres pokazuje przedział
-      na tle obszaru hipotezy. Zanim odsłonisz werdykt, oceń sam, czy przedział
-      pozwala ją przyjąć."),
+      na tle obszaru hipotezy. Przed odsłonięciem werdyktu warto samodzielnie
+      ocenić, czy przedział pozwala ją przyjąć."),
 
     figure_panel(
       label = "Przykład 1",

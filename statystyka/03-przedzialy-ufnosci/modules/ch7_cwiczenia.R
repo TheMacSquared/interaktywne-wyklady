@@ -77,7 +77,7 @@ ch7_ui <- list(
     tagList(
       p("Kuratorium oświaty pyta: ", tags$em("„jaki jest typowy średni wynik z czytania w kalifornijskim okręgu?”"),
         " Wyznacz 95% CI dla średniej zmiennej ", tags$code("read"),
-        ". Zanim klikniesz rozwiązanie: ile wynosi średnia, granice CI i co powiedzielibyś kuratorium jednym zdaniem?")
+        ". Przed odsłonięciem rozwiązania: ile wynosi średnia, jakie są granice CI i jak przekazać wynik kuratorium jednym zdaniem?")
     ),
     lc_more("Rozwiązanie", uiOutput("ch7_sol1"))
   ),
@@ -150,7 +150,7 @@ ch7_ui <- list(
   figure_panel(label = "Ćwiczenie",
     h4("Zadanie 8 — Prawda czy fałsz?"),
     tagList(
-      p("Przyjmijmy, że w zadaniu 1 dostałeś 95% CI dla średniej ",
+      p("Przyjmijmy, że w zadaniu 1 wyszedł 95% CI dla średniej ",
         tags$code("read"), " równy ", tags$b("[653.0, 656.9]"), ". Oceń każde stwierdzenie:"),
       tags$ol(
         tags$li("„Z prawdopodobieństwem 95% prawdziwa średnia μ leży między 653.0 a 656.9.”"),
@@ -196,7 +196,7 @@ ch7_ui <- list(
       p("Inspekcja pracy chce wiedzieć: ", tags$em("„jaki jest typowy wskaźnik wypadków w polskim zakładzie produkcyjnym?”"),
         " Wyznacz 95% CI dla średniej zmiennej ", tags$code("wskaznik_wypadkow"),
         ". Przed sprawdzeniem odpowiedzi: ile wynosi średnia i granice CI?
-        Jak powiedzielibyś inspekcji jednym zdaniem?")
+        Jak przekazać wynik inspekcji jednym zdaniem?")
     ),
     lc_more("Rozwiązanie", uiOutput("ch7_sol1"))
   ),
@@ -269,7 +269,7 @@ ch7_ui <- list(
   figure_panel(label = "Ćwiczenie",
     h4("Zadanie 8 — Prawda czy fałsz?"),
     tagList(
-      p("Przyjmijmy, że w zadaniu 1 dostałeś 95% CI dla średniej ",
+      p("Przyjmijmy, że w zadaniu 1 wyszedł 95% CI dla średniej ",
         tags$code("wskaznik_wypadkow"), " równy ", tags$b("[9.33, 10.15]"),
         ". Oceń każde stwierdzenie:"),
       tags$ol(
@@ -315,7 +315,7 @@ ch7_ui <- list(
     tagList(
       p("Agencja rolna pyta: ", tags$em("„jaki jest typowy plon pszenicy na polskim polu uprawnym?”"),
         " Wyznacz 95% CI dla średniej zmiennej ", tags$code("plon_pszenicy"),
-        ". Co powiedzielibyś agencji jednym zdaniem?")
+        ". Jak przekazać wynik agencji jednym zdaniem?")
     ),
     lc_more("Rozwiązanie", uiOutput("ch7_sol1"))
   ),
@@ -388,7 +388,7 @@ ch7_ui <- list(
   figure_panel(label = "Ćwiczenie",
     h4("Zadanie 8 — Prawda czy fałsz?"),
     tagList(
-      p("Przyjmijmy, że w zadaniu 1 dostałeś 95% CI dla średniej ",
+      p("Przyjmijmy, że w zadaniu 1 wyszedł 95% CI dla średniej ",
         tags$code("plon_pszenicy"), " równy ", tags$b("[6.03, 6.31]"),
         ". Oceń każde stwierdzenie:"),
       tags$ol(
@@ -433,7 +433,7 @@ ch7_ui <- list(
     tagList(
       p("Dział jakości pyta: ", tags$em("„jaka jest typowa zawartość białka w naszych partiach?”"),
         " Wyznacz 95% CI dla średniej zmiennej ", tags$code("zawartosc_bialka"),
-        ". Co powiedzielibyś działowi jakości jednym zdaniem?")
+        ". Jak przekazać wynik działowi jakości jednym zdaniem?")
     ),
     lc_more("Rozwiązanie", uiOutput("ch7_sol1"))
   ),
@@ -506,7 +506,7 @@ ch7_ui <- list(
   figure_panel(label = "Ćwiczenie",
     h4("Zadanie 8 — Prawda czy fałsz?"),
     tagList(
-      p("Przyjmijmy, że w zadaniu 1 dostałeś 95% CI dla średniej ",
+      p("Przyjmijmy, że w zadaniu 1 wyszedł 95% CI dla średniej ",
         tags$code("zawartosc_bialka"), " równy ", tags$b("[26.57, 26.85]"),
         ". Oceń każde stwierdzenie:"),
       tags$ol(

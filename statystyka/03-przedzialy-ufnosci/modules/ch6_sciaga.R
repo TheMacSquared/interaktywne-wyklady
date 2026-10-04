@@ -20,8 +20,8 @@ ch6_ui <- list(
     lc_h2("ch6-jamovi", "Jak zrobić przedział ufności w jamovi"),
 
     tagList(
-      p("W jamovi nie musisz niczego liczyć — CI pojawia się w raporcie,
-        gdy zaznaczysz jeden checkbox. Twoja robota: nazwać go,
+      p("W jamovi nie trzeba niczego liczyć — CI pojawia się w raporcie
+        po zaznaczeniu jednego checkboxa. Zadanie analityka: nazwać go,
         zinterpretować, wyciągnąć wniosek."),
 
       lc_note("Jamovi", title = "Przedział dla średniej (jedna zmienna ilościowa)",
@@ -31,11 +31,11 @@ ch6_ui <- list(
                    czas reakcji) do ", tags$em("Dependent Variables")),
           tags$li("W panelu ", tags$em("Additional Statistics"), " zaznacz ",
                   tags$b("Confidence interval"), " — domyślnie 95%"),
-          tags$li("W tabeli wyników odczytasz kolumny ",
+          tags$li("Odczytaj w tabeli wyników kolumny ",
                   tags$code("Mean"), ", ", tags$code("Lower"), ", ",
                   tags$code("Upper"))
         ),
-        p(tags$em("jamovi zawsze używa rozkładu t — nie musisz wybierać
+        p(tags$em("jamovi zawsze używa rozkładu t — nie trzeba wybierać
                    między z a t."))
       ),
 
@@ -65,7 +65,7 @@ ch6_ui <- list(
                   " — domyślnie 95%, metoda ",
                   gloss("przedział Cloppera-Pearsona", "Cloppera-Pearsona"),
                   " (bezpieczna)"),
-          tags$li("W tabeli odczytasz ", tags$code("Proportion"), ", ",
+          tags$li("Odczytaj w tabeli ", tags$code("Proportion"), ", ",
                   tags$code("Lower"), ", ", tags$code("Upper"))
         )
       ),
@@ -97,7 +97,7 @@ ch6_ui <- list(
 171.3      168.4         174.2"
         )
       ),
-      p("To czytasz tak:"),
+      p("Jak to czytać:"),
       tags$ul(
         tags$li(tags$b(gloss("estymata", "Estymata"), " punktowa:"),
                 " w badanej próbie średnia wyniosła ",
@@ -118,7 +118,7 @@ ch6_ui <- list(
       lc_note("Przykład", title = "Średnia (pojedyncza zmienna)",
         p(tags$em("„Średni wzrost studentów wyniósł 171.3 cm
                    (95% CI: [168.4, 174.2]).”")),
-        p("Trzy liczby — i gotowe. Jeśli masz wartość odniesienia
+        p("Trzy liczby — i gotowe. Jeśli jest wartość odniesienia
            (np. norma = 170):"),
         p(tags$em("„Przedział nie zawiera wartości 170, co sugeruje,
                    że średnia w populacji różni się od normy.”"))
@@ -137,8 +137,8 @@ ch6_ui <- list(
         p(tags$em("„Odsetek zdających egzamin wyniósł 68%
                    (95% CI: [62%, 73%]).”")),
         p(tags$strong("Sprawdź wartość progową:"),
-          " jeśli interesuje cię pytanie „czy więcej niż połowa?” —
-           patrz czy 50% leży w CI. Jeśli nie — masz odpowiedź z 95%
+          " jeśli pytanie brzmi „czy więcej niż połowa?” —
+           patrz, czy 50% leży w CI. Jeśli nie — mamy odpowiedź z 95%
            ufnością.")
       )
     ),
@@ -151,7 +151,7 @@ ch6_ui <- list(
           tags$li(tags$b("CI dla średniej"), " vs wartość hipotetyczna ",
                   tags$code("μ₀"), ": jeśli ",
                   tags$code("μ₀"), " leży ", tags$em("poza"),
-                  " CI — odrzucasz hipotezę „średnia = μ₀”."),
+                  " CI — odrzucamy hipotezę „średnia = μ₀”."),
           tags$li(tags$b("CI dla różnicy średnich"),
                   ": jeśli ", tags$b("0"), " leży ", tags$em("poza"),
                   " CI — grupy różnią się istotnie."),
@@ -197,7 +197,7 @@ ch6_ui <- list(
 
     tagList(
       tagList(
-        p(tags$strong("1. Co chcesz oszacować?")),
+        p(tags$strong("1. Co szacujemy?")),
         tags$ul(
           tags$li(tags$b("Liczbę"),
                   " (średnią, np. wzrost, plon, czas) → CI dla średniej"),
@@ -206,12 +206,12 @@ ch6_ui <- list(
           tags$li(tags$b("Różnicę między grupami"),
                   " → CI dla różnicy średnich lub proporcji")
         ),
-        p(tags$strong("2. Ile masz grup?")),
+        p(tags$strong("2. Ile mamy grup?")),
         tags$ul(
           tags$li(tags$b("Jedna"), " → jeden CI (np. One Sample T-Test)"),
           tags$li(tags$b("Dwie"),
                   " → CI dla różnicy (Independent Samples T-Test)
-                   — sprawdzasz, czy zawiera 0"),
+                   — sprawdzamy, czy zawiera 0"),
           tags$li(tags$b("Więcej niż dwie"),
                   " → ", gloss("ANOVA"), " + osobne CI dla każdej pary")
         ),
@@ -219,13 +219,13 @@ ch6_ui <- list(
         tags$ul(
           tags$li("Standard: ", tags$b("95%"),
                   " (zaznaczony domyślnie w jamovi)"),
-          tags$li("Chcesz być bardziej ostrożny (np. medycyna) → 99%
+          tags$li("Potrzebna większa ostrożność (np. medycyna) → 99%
                    (szerszy przedział)"),
           tags$li("Wystarczy zgrubny obraz → 90% (węższy przedział)")
         ),
         p(tags$em("Ważne: wybieraj ", gloss("poziom ufności"), " ",
                   tags$b("zanim"),
-                  " zobaczysz wynik. Potem możesz pokazać więcej
+                  " pojawi się wynik. Potem można pokazać więcej
                    poziomów naraz (90%, 95%, 99%), ale nie wolno
                    wybierać „tego, który pasuje do oczekiwanej
                    konkluzji”."))
@@ -260,7 +260,7 @@ ch6_ui <- list(
 
     tagList(
       p(tags$em("Poniższe wzory są tym, co jamovi liczy pod spodem.
-                 Nie musisz ich pamiętać — ale jeśli chcesz zobaczyć,
+                 Nie trzeba ich pamiętać — ale żeby zobaczyć,
                  skąd biorą się liczby w kolumnach ",
                 tags$code("Lower"), " / ", tags$code("Upper"),
                 ", rozwiń którąś z sekcji.")),
@@ -330,7 +330,7 @@ ch6_ui <- list(
             withMathJax("\\(ME_{max}\\)"),
             " i przybliżonej zmienności ",
             withMathJax("\\(s\\)"),
-            " — dostaniesz minimalne n.")
+            " — wynikiem jest minimalne n.")
         ),
         lc_formula_box(
           h4("Dla proporcji"),
