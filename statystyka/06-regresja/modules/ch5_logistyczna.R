@@ -429,8 +429,8 @@ ch5_ui <- list(
       współczynniki to estymatory z przedziałami ufności i testami, a założenia
       sprawdza się na wykresach. Następne wykłady wykorzystują te narzędzia
       do oceny jakości danych i całych analiz. Ściąga w rozdziale 06 zbiera
-      wzory i zasady regresji, a ćwiczenia w rozdziale 07 pozwalają sprawdzić,
-      czy potrafisz samodzielnie zinterpretować model."),
+      wzory i zasady regresji, a ćwiczenia w rozdziale 07 pozwalają przećwiczyć
+      samodzielną interpretację modelu."),
 
     lc_chapter_next(
       num       = "06",

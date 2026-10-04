@@ -195,8 +195,8 @@ ch1_ui <- list(
       lc_caption("Przeczytaj tabelę współczynników. Potem kliknij na wykresie dwa punkty, które wyznaczają prostą regresji.")
     ),
 
-    lc_p("Najłatwiej liczy się punkty dla okrągłych wartości \\(X\\). Jeśli Twoja
-      prosta rozminęła się z poprawną, sprawdź najpierw znak nachylenia, a potem
+    lc_p("Najłatwiej liczy się punkty dla okrągłych wartości \\(X\\). Jeśli prosta
+      dopasowana ręcznie rozminęła się z poprawną, sprawdź najpierw znak nachylenia, a potem
       wysokość, na której prosta przecina pionową oś \\(X = 0\\). Punkty danych
       pojawiają się dopiero po odsłonięciu odpowiedzi, bo do narysowania prostej
       nie są potrzebne: wystarczą dwa współczynniki."),
@@ -489,7 +489,7 @@ ch1_ui <- list(
       wokół tej wartości o tyle, ile wynoszą reszty."),
 
     lc_p("Panel podaje tabelę współczynników dla kilku modeli. Policz
-      \\(\\hat{Y}\\) samodzielnie, zanim odsłonisz odpowiedź."),
+      \\(\\hat{Y}\\) samodzielnie przed odsłonięciem odpowiedzi."),
 
     figure_panel(
       label = "Ryc. 1.5", title = "Użyj równania regresji do przewidywania",
@@ -913,12 +913,12 @@ ch1_server <- function(input, output, session) {
                  label = "poprawna prosta", hjust = 0,
                  color = unname(upwr_cat["niebo"]), fontface = "bold") +
         annotate("text", x = x_min + 0.25, y = y_max - 1.8,
-                 label = "Twoja prosta", hjust = 0,
+                 label = "prosta dopasowana ręcznie", hjust = 0,
                  color = unname(upwr_cat["terakota"]), fontface = "bold")
       } else {
         p <- p +
           annotate("text", x = x_min + 0.25, y = y_max - 0.8,
-                   label = "Twoja prosta", hjust = 0,
+                   label = "prosta dopasowana ręcznie", hjust = 0,
                    color = unname(upwr_cat["terakota"]), fontface = "bold") +
           annotate("text", x = 0, y = y_max - 1,
                    label = "Kliknij „Pokaż odpowiedź”",
@@ -975,9 +975,9 @@ ch1_server <- function(input, output, session) {
     user_b1 <- diff(pts$y) / diff(pts$x)
     user_b0 <- pts$y[1] - user_b1 * pts$x[1]
     tagList(
-        lc_readout("Twoje b₀", round(user_b0, 2), color = unname(upwr_cat["terakota"])),
+        lc_readout("Wybrane b₀", round(user_b0, 2), color = unname(upwr_cat["terakota"])),
         lc_readout("Poprawne b₀", round(model$beta0, 2), color = unname(upwr_cat["niebo"])),
-        lc_readout("Twoje b₁", round(user_b1, 2), color = unname(upwr_cat["terakota"])),
+        lc_readout("Wybrane b₁", round(user_b1, 2), color = unname(upwr_cat["terakota"])),
         lc_readout("Poprawne b₁", round(model$beta1, 2), color = unname(upwr_cat["niebo"]))
     )
   })
@@ -1269,7 +1269,7 @@ ch1_server <- function(input, output, session) {
 
     if (!ch1_cas_revealed()) {
       return(lc_caption(
-               "Zanim odsłonisz odpowiedź, odczytaj z tabeli znak b₁ i p-wartość."
+               "Przed odsłonięciem odpowiedzi odczytaj z tabeli znak b₁ i p-wartość."
              ))
     }
 

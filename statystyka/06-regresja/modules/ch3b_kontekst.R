@@ -236,7 +236,7 @@ ch3b_ui <- list(
       płetwy 0 mm, a to zniekształca oszacowanie różnicy nachyleń."),
 
     lc_note("Zasada", rule = TRUE,
-      "Interakcję dodawaj wtedy, gdy masz powód sądzić, że związek zależy od
+      "Interakcję dodawaj wtedy, gdy jest powód sądzić, że związek zależy od
        grupy, i oceniaj ją na wykresie przewidywanych prostych, a nie tylko
        po p-wartości. Przy interakcji zachowaj w modelu oba składniki osobno."
     ),

@@ -69,7 +69,7 @@ ch7_ui <- list(
           tags$li(tags$code("read ~ lunch + income")),
           tags$li(tags$code("read ~ lunch + income + english + student_teacher_ratio"))
         ),
-        p("Porównaj R², adjusted R², AIC, BIC i RMSE. Który model wybierzesz
+        p("Porównaj R², adjusted R², AIC, BIC i RMSE. Który model wybrać
           do wyjaśniania, a który do predykcji?")
       ),
       lc_more("Rozwiązanie", uiOutput("ch7_sol3"))
@@ -79,8 +79,8 @@ ch7_ui <- list(
       tagList(
         p("Dla modelu ", tags$code("read ~ income"),
           " narysuj wykres reszt względem wartości dopasowanych i Q-Q plot."),
-        p("Czy widzisz sygnał nieliniowości, obserwacji odstających albo
-          problemu z normalnością reszt? Co zrobiłbyś dalej?")
+        p("Czy widać sygnał nieliniowości, obserwacji odstających albo
+          problemu z normalnością reszt? Co zrobić dalej?")
       ),
       lc_more("Wskazówka", uiOutput("ch7_sol4"))
     ),
@@ -269,7 +269,7 @@ plot(model, which = 1)  # reszty vs dopasowane
 plot(model, which = 2)  # Q-Q plot")
       ),
       p("W tym modelu R² = ", tags$b(sprintf("%.3f", g$r.squared)),
-        ", ale sama liczba nie wystarczy. Jeśli na wykresie reszt widzisz łuk,
+        ", ale sama liczba nie wystarczy. Jeśli na wykresie reszt widać łuk,
         rozważ transformację dochodu, składnik nieliniowy albo porównanie
         z modelem wielorakim.")
     )
