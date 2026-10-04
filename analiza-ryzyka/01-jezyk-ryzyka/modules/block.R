@@ -1118,10 +1118,10 @@ jezyk_block <- list(
                P(A) + P(B)."
             )),
             risk_formula(
-              "P(A)\\ge 0,\\qquad P(\\Omega)=1,\\qquad P\\Big(\\bigcup_{i} A_i\\Big)=\\sum_{i} P(A_i)\\ \\text{dla parami rozłącznych } A_i",
+              "P(A)\\ge 0,\\qquad P(\\Omega)=1,\\qquad P\\Big(\\bigcup_{i} A_i\\Big)=\\sum_{i} P(A_i)",
               num = "1.7",
               legend = c(
-                "A_i" = "kolejne zdarzenia, z których żadne dwa nie mogą zajść razem",
+                "A_i" = "kolejne zdarzenia parami rozłączne: żadne dwa nie mogą zajść razem (trzeci aksjomat dotyczy tylko takich zdarzeń)",
                 "\\bigcup_{i} A_i" = "zaszło któreś z nich"
               )
             ),
