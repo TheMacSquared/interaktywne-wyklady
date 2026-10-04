@@ -114,11 +114,6 @@ Decyzje:
 
 Pozostałe:
 
-- [ ] `lc_col(type = "num")`: dodać sufiks jednostki (np. `suffix = " cm"`,
-  `"%"`). Teraz kolumna z jednostkami musi być gotowym tekstem i traci
-  wyrównanie cyfr (statystyka 01, Ryc. 4.6, kolumna „Wartość”; cm i % oraz
-  1 lub 2 miejsca po kropce w jednej kolumnie).
-
 Zasady migracji:
 
 - Zmiany wspólnych komponentów wprowadzać równolegle we wszystkich

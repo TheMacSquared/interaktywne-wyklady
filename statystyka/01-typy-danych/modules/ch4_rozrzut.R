@@ -995,12 +995,7 @@ ch4_server <- function(input, output, session) {
       measure = c("Rozstęp", "IQR (rozstęp międzykwartylowy)",
                   "Odchylenie standardowe (SD)",
                   "Współczynnik zmienności (CV)"),
-      value = c(
-        paste0(lc_num(diff(range(vals)), 1), " cm"),
-        paste0(lc_num(IQR(vals), 1), " cm"),
-        paste0(lc_num(sd(vals), 2), " cm"),
-        paste0(lc_num(sd(vals) / mean(vals) * 100, 1), "%")
-      ),
+      value = c(diff(range(vals)), IQR(vals), sd(vals), sd(vals) / mean(vals) * 100),
       notes = c(
         "Bardzo wrażliwy na wartości odstające — zależy tylko od min i max",
         "Odporny na wartości odstające — oparty na kwartylach",
@@ -1013,7 +1008,8 @@ ch4_server <- function(input, output, session) {
     lc_table(df,
       cols = list(
         lc_col("measure", "Miara", "row"),
-        lc_col("value", "Wartość", "num"),
+        lc_col("value", "Wartość", digits = c(1, 1, 2, 1),
+               suffix = c(" cm", " cm", " cm", "%")),
         lc_col("notes", "Własności", "text")
       ),
       narrow = "stack-last"

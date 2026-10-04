@@ -1144,12 +1144,16 @@ lc_pval <- function(p) {
 # type: "row" (nagłówek wiersza), "num" (liczba), "text".
 # short + desc trafiają do widocznej legendy skrótów nad tabelą.
 # sub: druga linia nagłówka (np. typ zmiennej).
+# digits i suffix (jednostka, np. " cm", "%") mogą być wektorami — osobno dla
+# każdego wiersza; krótsze sufiksy i ułamki dopełnia niewidoczny lc-pad, więc
+# kropki dziesiętne stoją w jednej linii.
 lc_col <- function(key, label, type = c("num", "text", "row"), digits = 0,
                    short = NULL, desc = NULL, width = NULL, class = NULL,
-                   sub = NULL) {
+                   sub = NULL, suffix = NULL) {
   structure(
     list(key = key, label = label, type = match.arg(type), digits = digits,
-         short = short, desc = desc, width = width, class = class, sub = sub),
+         short = short, desc = desc, width = width, class = class, sub = sub,
+         suffix = suffix),
     class = "lc_col"
   )
 }
@@ -1162,13 +1166,30 @@ lc_col <- function(key, label, type = c("num", "text", "row"), digits = 0,
   })
 }
 
-.lc_cell_content <- function(col, value) {
+.lc_cell_content <- function(col, value, i = NULL) {
   if (is.list(value)) value <- value[[1]]
   if (inherits(value, c("shiny.tag", "shiny.tag.list", "html"))) return(value)
   if (is.null(value) || (length(value) == 1 && is.na(value))) {
     return(if (identical(col$type, "num")) HTML("–") else "")
   }
-  if (is.numeric(value)) return(HTML(lc_num(value, col$digits, int_width = col$int_width)))
+  if (is.numeric(value)) {
+    pick <- function(x) if (length(x) > 1 && !is.null(i)) x[[i]] else x[[1]]
+    pad <- function(p) paste0('<span class="lc-pad" aria-hidden="true">', p, "</span>")
+    d <- pick(col$digits)
+    out <- lc_num(value, d, int_width = col$int_width)
+    max_d <- max(col$digits)
+    # Dopełnienie za jednostką: kropki stoją w jednej linii, a jednostka
+    # przylega do liczby.
+    gap <- strrep("0", max_d - d)
+    if (d == 0 && max_d > 0) gap <- paste0(".", gap)
+    if (!is.null(col$suffix)) {
+      sfx <- pick(col$suffix)
+      out <- paste0(out, htmltools::htmlEscape(sfx))
+      gap <- paste0(gap, strrep("0", max(nchar(col$suffix)) - nchar(sfx)))
+    }
+    if (nzchar(gap)) out <- paste0(out, pad(gap))
+    return(HTML(out))
+  }
   # W kolumnie liczbowej tekst to gotowy wynik lc_num() / lc_pval().
   if (identical(col$type, "num")) return(HTML(as.character(value)))
   as.character(value)
@@ -1202,7 +1223,7 @@ lc_col <- function(key, label, type = c("num", "text", "row"), digits = 0,
     if (identical(col$type, "num") && is.null(col$int_width)) {
       vals <- c(if (is.numeric(df[[col$key]])) df[[col$key]],
                 if (!is.null(foot) && is.numeric(foot[[col$key]])) foot[[col$key]])
-      col$int_width <- .lc_int_width(vals, col$digits)
+      col$int_width <- .lc_int_width(vals, max(col$digits))
     }
     col
   })
@@ -1217,7 +1238,7 @@ lc_col <- function(key, label, type = c("num", "text", "row"), digits = 0,
       lapply(cols, function(col) {
         cls <- .lc_classes(if (is_num(col)) "n", col$class,
                            if (!is.null(i)) .lc_cell_class(cell_class, col$key, i))
-        content <- .lc_cell_content(col, values[[col$key]])
+        content <- .lc_cell_content(col, values[[col$key]], i)
         if (identical(col$type, "row")) {
           tags$th(scope = "row", role = role("rowheader"), class = cls, content)
         } else {
@@ -1283,7 +1304,7 @@ lc_table <- function(df, cols = NULL, foot = NULL, caption = NULL, number = NULL
     cols <- lapply(cols, function(col) {
       if (identical(col$type, "num") && is.numeric(df[[col$key]])) {
         col$int_width <- .lc_int_width(c(df[[col$key]],
-          if (!is.null(foot) && is.numeric(foot[[col$key]])) foot[[col$key]]), col$digits)
+          if (!is.null(foot) && is.numeric(foot[[col$key]])) foot[[col$key]]), max(col$digits))
       }
       col
     })
