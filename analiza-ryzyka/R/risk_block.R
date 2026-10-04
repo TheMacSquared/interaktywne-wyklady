@@ -251,7 +251,9 @@ risk_body <- function(items) {
 }
 
 risk_definition <- function(num, term, text) {
-  lc_note(paste0("Definicja ", num), title = term, lapply(text, tags$p))
+  # Elementy będące już tagami (np. lista pojęć) wchodzą bez opakowania w <p>.
+  lc_note(paste0("Definicja ", num), title = term,
+    lapply(text, function(x) if (inherits(x, "shiny.tag")) x else tags$p(x)))
 }
 
 # Wzór z numerem i objaśnieniem symboli. `legend` to nazwany wektor:

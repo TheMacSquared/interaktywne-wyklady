@@ -517,15 +517,13 @@ jezyk_block <- list(
               "Posadzka przy myjni skrzynek jest mokra przez całą zmianę. Jaką rolę pełni ten fakt w łańcuchu z definicji 1.1?",
               c("Zdarzenie" = "event", "Zagrożenie" = "hazard", "Skutek" = "consequence"),
               correct = "hazard",
-              explanation = "Mokra posadzka to stan otoczenia, który może spowodować szkodę. Zdarzeniem byłby dopiero upadek na niej, a skutkiem — uraz.",
+              explanation = "Mokra posadzka to stan otoczenia, który może spowodować szkodę. Zdarzeniem byłby dopiero upadek na niej, a skutkiem — uraz. Zagrożenie nie jest zdarzeniem: sama mokra posadzka nie mówi jeszcze, czy ktoś się poślizgnie ani jak poważny będzie uraz.",
               hints = c(
                 event = "Czy mokra posadzka to wynik, który „zaszedł albo nie” w konkretnej chwili? Co musiałoby się stać, żeby ktoś ucierpiał?",
                 consequence = "Skutek jest następstwem zdarzenia. Jakie zdarzenie musiałoby nastąpić wcześniej?"
               )
             )
-          ),
-          pitfall = "zagrożenie nie jest zdarzeniem, a prawdopodobieństwo zdarzenia nie
-            opisuje jeszcze dotkliwości skutku."
+          )
         ),
         list(
           id = "proces", title = "Gdzie w procesie mieści się rachunek?",
@@ -923,15 +921,13 @@ jezyk_block <- list(
                 "Nic nie uzasadnia, że oba wyniki są jednakowo możliwe" = "symmetry"
               ),
               correct = "symmetry",
-              explanation = "Definicja 1.5 wymaga jednakowo możliwych zdarzeń elementarnych. Dwuelementowa przestrzeń jest w porządku, ale żaden mechanizm nie nadaje wypadkowi i jego brakowi równych szans — dlatego to prawdopodobieństwo trzeba oszacować z danych.",
+              explanation = "Definicja 1.5 wymaga jednakowo możliwych zdarzeń elementarnych. Dwuelementowa przestrzeń jest w porządku, ale żaden mechanizm nie nadaje wypadkowi i jego brakowi równych szans — dlatego to prawdopodobieństwo trzeba oszacować z danych. Podobnie „jedna z 24 palet” opisuje losowanie do kontroli; nie oznacza, że ryzyko uszkodzenia każdej palety powstało z klasycznej symetrii.",
               hints = c(
                 ok = "Sprawdź oba warunki definicji 1.5. Który z nich nie jest tu uzasadniony?",
                 size = "Przestrzeń dwuelementowa jest dopuszczalna — rzut monetą też ma dwa wyniki. Czym moneta różni się od zmiany w magazynie?"
               )
             )
-          ),
-          pitfall = "„jedna z 24 palet” opisuje losowanie do kontroli. Nie oznacza, że
-            ryzyko uszkodzenia każdej palety powstało z klasycznej symetrii."
+          )
         )
       )
     ),
@@ -961,16 +957,23 @@ jezyk_block <- list(
             "Zdarzenie A ∪ B zachodzi, gdy wystąpiło A lub B, włącznie z sytuacją,
                gdy wystąpiły oba. Zdarzenie A ∩ B wymaga obu warunków naraz. Dopełnienie
                Aᶜ obejmuje wszystkie wyniki, w których A nie zaszło.",
-            risk_definition("1.6", "Działania na zdarzeniach", c(
-              "Niech A i B będą zdarzeniami w tej samej przestrzeni Ω. Sumą zdarzeń
-               A ∪ B nazywamy zdarzenie złożone z wyników należących do A lub do B (lub
-               do obu). Iloczynem zdarzeń A ∩ B nazywamy zdarzenie złożone z wyników
-               należących jednocześnie do A i do B. Dopełnieniem (zdarzeniem
-               przeciwnym) Aᶜ nazywamy zdarzenie złożone z tych wyników Ω, które nie
-               należą do A.",
-              "Różnicą A \\ B nazywamy zdarzenie złożone z wyników należących do A, ale
-               nie do B; zachodzi A \\ B = A ∩ Bᶜ."
+            risk_definition("1.6", "Działania na zdarzeniach", list(
+              "Niech A i B będą zdarzeniami w tej samej przestrzeni Ω.",
+              tags$ul(
+                class = "lc-def-list",
+                tags$li(tags$strong("Suma"), " A ∪ B — wyniki należące do A lub do B (lub do obu)."),
+                tags$li(tags$strong("Iloczyn"), " A ∩ B — wyniki należące jednocześnie do A i do B."),
+                tags$li(tags$strong("Dopełnienie"), " (zdarzenie przeciwne) Aᶜ — wyniki Ω, które nie należą do A."),
+                tags$li(tags$strong("Różnica"), " A \\ B — wyniki należące do A, ale nie do B; zachodzi A \\ B = A ∩ Bᶜ.")
+              )
             )),
+            figure_panel(
+              label = "Rycina 1.1",
+              title = "Cztery działania na zdarzeniach",
+              full_width = TRUE,
+              lc_plot("ch4_ops_plot", ratio = "1.7/1", max_height = "480px")
+            ),
+            lc_caption("Zaznaczony obszar to zdarzenie otrzymane w wyniku działania; prostokąt oznacza całą przestrzeń Ω."),
             risk_definition("1.7", "Zdarzenia rozłączne", c(
               "Zdarzenia A i B są rozłączne (wykluczające się), jeśli A ∩ B = ∅, czyli
                nie mogą zajść jednocześnie. Przykład: zdarzenie A i jego dopełnienie Aᶜ
@@ -1840,6 +1843,63 @@ jezyk_zbiory_server <- function(input, output, session) {
     alt = paste(
       "Czterostopniowy diagram Venna pokazujący podwójne policzenie części",
       "wspólnej oraz szczególny przypadek zdarzeń rozłącznych."
+    )
+  )
+
+  ops_plot <- reactive({
+    # Siatka punktów w prostokącie Ω; zdarzenie to zaznaczony podzbiór punktów.
+    grid <- expand.grid(x = seq(0.05, 9.95, length.out = 300L), y = seq(0.05, 5.95, length.out = 180L))
+    in_a <- (grid$x - 3.9)^2 + (grid$y - 3)^2 <= 2^2
+    in_b <- (grid$x - 6.1)^2 + (grid$y - 3)^2 <= 2^2
+    ops <- list(
+      "A ~ '∪' ~ B" = in_a | in_b,
+      "A ~ '∩' ~ B" = in_a & in_b,
+      "A^c" = !in_a,
+      "A ~ '\\\\' ~ B" = in_a & !in_b
+    )
+    data <- do.call(rbind, lapply(names(ops), function(op) {
+      cbind(grid, op = factor(op, levels = names(ops)), selected = ops[[op]])
+    }))
+
+    circles <- do.call(rbind, lapply(names(ops), function(op) {
+      angle <- seq(0, 2 * pi, length.out = 200L)
+      rbind(
+        data.frame(op = op, set = "A", x = 3.9 + 2 * cos(angle), y = 3 + 2 * sin(angle)),
+        data.frame(op = op, set = "B", x = 6.1 + 2 * cos(angle), y = 3 + 2 * sin(angle))
+      )
+    }))
+    circles$op <- factor(circles$op, levels = names(ops))
+    labels <- data.frame(
+      op = factor(rep(names(ops), each = 2L), levels = names(ops)),
+      set = c("A", "B"), x = c(3.2, 6.8), y = 3
+    )
+
+    ggplot() +
+      geom_raster(data = data, aes(x = x, y = y, fill = selected)) +
+      geom_path(data = circles, aes(x = x, y = y, group = interaction(op, set)),
+                colour = upwr_ink, linewidth = 0.6) +
+      geom_text(data = labels, aes(x = x, y = y, label = set), fontface = "bold", size = 5) +
+      annotate("rect", xmin = 0, xmax = 10, ymin = 0, ymax = 6,
+               fill = NA, colour = upwr_ink, linewidth = 0.5) +
+      facet_wrap(~op, nrow = 2L, labeller = label_parsed) +
+      scale_fill_manual(values = c(
+        "TRUE" = grDevices::colorRampPalette(c(upwr_panel, STEP_ROLES$new$colour))(101L)[46L],
+        "FALSE" = upwr_panel
+      )) +
+      coord_equal(xlim = c(-0.1, 10.1), ylim = c(-0.1, 6.1), expand = FALSE) +
+      labs(x = NULL, y = NULL) +
+      theme_void() +
+      theme(legend.position = "none",
+            strip.text = element_text(face = "bold", size = rel(1.3), margin = margin(b = 4)),
+            panel.spacing = grid::unit(1, "lines"))
+  })
+
+  zoom_plot_server(
+    "ch4_ops_plot",
+    ops_plot,
+    alt = paste(
+      "Cztery diagramy Venna: suma, iloczyn, dopełnienie A oraz różnica A bez B,",
+      "z zaznaczonym obszarem odpowiadającym każdemu działaniu."
     )
   )
 

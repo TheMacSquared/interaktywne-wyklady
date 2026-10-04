@@ -2536,3 +2536,7 @@ mjx-container mjx-text {
   .lc-stepper-actions .lc-action.is-solid{flex:1;justify-content:center}
   .lc-step-plot{--lc-plot-ratio-narrow:5/4}
 }
+
+.lc-def-list{margin:.3em 0 .6em;padding-left:1.3em}
+.lc-def-list li{margin-bottom:.35em;padding-left:.2em}
+.lc-def-list li::marker{color:var(--upwr-ink-subtle)}
