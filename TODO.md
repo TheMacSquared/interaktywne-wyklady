@@ -196,9 +196,6 @@ to stosują.
 
 ### 06 — regresja
 
-- [ ] Quiz interpretacji b₁ w jednostkach w `ch1_liniowa.R`, sekcja
-  `ch1-caschool`: „read ~ income”, b₁ = 1,88 — co znaczy wzrost dochodu
-  o 1 tys. USD? Dystraktory: mylone jednostki i skale.
 - [ ] Rozważyć widget obserwacji wpływowych w `ch2_jakosc.R`: scatter
   z wyróżnioną odległością Cooka i opcją „usuń i przelicz”.
 - [ ] Rozważyć callout w ch2 lub ch4: kwartet Anscombe'a dla regresji (różne

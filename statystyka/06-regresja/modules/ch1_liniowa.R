@@ -444,10 +444,33 @@ ch1_ui <- list(
       lc_caption("Wybierz zmienne, obejrzyj wykres i tabelę regresji. Najpierw samodzielnie zdecyduj, czy X istotnie przewiduje Y, a potem pokaż odpowiedź.")
     ),
 
-    lc_p("Dla domyślnej pary, wyniku z czytania i dochodu okręgu,
-      \\(b_1 = 1.94\\): okręg zamożniejszy o 1 tys. USD ma przeciętnie wynik
-      z czytania wyższy o niecałe 2 punkty. \\(SE = 0.10\\), \\(t = 19.9\\),
-      a p-wartość jest mniejsza niż 0.001. Korelacja tych zmiennych wynosi
+    lc_p("Dla domyślnej pary, wyniku z czytania i dochodu okręgu, tabela podaje
+      \\(b_1 = 1.94\\). Dochód jest zapisany w tysiącach dolarów, a wynik
+      testu w punktach. Przed dalszą lekturą warto sprawdzić, które zdanie
+      poprawnie odczytuje ten współczynnik."),
+
+    figure_panel(
+      label = "Ryc. 1.4b",
+      title = "Co znaczy b₁ = 1.94?",
+      p("Model: wynik z czytania (punkty) ~ dochód okręgu (tys. USD),
+        \\(b_1 = 1.94\\). Które zdanie jest poprawne?"),
+      tags$div(class = "lc-choices", `data-correct` = "per_1000",
+        radioButtons("ch1_b1_meaning", NULL,
+          choices = c(
+            "Okręg zamożniejszy o 1 dolar ma przeciętnie wynik wyższy o 1.94 pkt." = "per_dollar",
+            "Okręg zamożniejszy o 1 tys. USD ma przeciętnie wynik wyższy o 1.94 pkt." = "per_1000",
+            "Dochód wyższy o 1% wiąże się z wynikiem wyższym o 1.94%." = "percent",
+            "Okręg zamożniejszy o 1 tys. USD ma przeciętnie wynik wyższy o 1940 pkt." = "times_1000"
+          ),
+          selected = character(0)
+        )
+      ),
+      uiOutput("ch1_b1_meaning_feedback")
+    ),
+
+    lc_p("Poprawne jest drugie zdanie: okręg zamożniejszy o 1 tys. USD ma
+      przeciętnie wynik z czytania wyższy o niecałe 2 punkty.
+      \\(SE = 0.10\\), \\(t = 19.9\\), a p-wartość jest mniejsza niż 0.001. Korelacja tych zmiennych wynosi
       \\(r = 0.70\\) i test korelacji dałby dokładnie tę samą p-wartość.
       Wykres pokazuje jednak coś, czego tabela nie zdradza. Najbiedniejsze
       i najbogatsze okręgi leżą przeważnie poniżej prostej, a okręgi o średnim
@@ -1261,6 +1284,27 @@ ch1_server <- function(input, output, session) {
         lc_col("p_txt", "p")
       )
     )
+  })
+
+  output$ch1_b1_meaning_feedback <- renderUI({
+    choice <- input$ch1_b1_meaning
+    if (is.null(choice) || identical(choice, character(0))) return(NULL)
+    if (identical(choice, "per_1000")) {
+      return(lc_status(
+        lc_verdict(tags$strong("Tak."), type = "ok"),
+        " b₁ podaje zmianę Y w jego jednostkach na jednostkę X: punkty testu
+        na 1 tys. USD dochodu, bo w tysiącach dolarów zapisano dochód."
+      ))
+    }
+    why <- switch(choice,
+      per_dollar = " Dochód jest zapisany w tysiącach dolarów, więc jednostką X
+        jest 1 tys. USD, a nie 1 dolar. Na 1 dolar przypadałoby 0.002 pkt.",
+      percent = " Obie zmienne są w swoich jednostkach (tys. USD i punkty), a nie
+        w procentach. Nachylenie mówi o punktach na 1 tys. USD.",
+      times_1000 = " Tysiące dotyczą tylko dochodu (X). Wynik testu jest
+        w punktach, więc b₁ = 1.94 to 1.94 pkt na 1 tys. USD, a nie 1940 pkt."
+    )
+    lc_status(lc_verdict(tags$strong("Nie."), type = "danger"), why)
   })
 
   output$ch1_cas_answer <- renderUI({
