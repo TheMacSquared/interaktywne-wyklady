@@ -162,16 +162,70 @@ ch1_ui <- list(
       jest dokładnie tą, którą program statystyczny podaje w tabeli wyników
       regresji z jednym ", gloss("predyktor", "predyktorem"), "."),
 
-    lc_p("Taka tabela zawiera dla każdego współczynnika cztery liczby:
-      ", gloss("estymata", "estymatę"), ", ", gloss("błąd standardowy"), ", statystykę \\(t\\)
-      i p-wartość. Do końca rozdziału nauczymy się czytać je wszystkie.
-      Zaczniemy od najprostszej czynności: odczytania z tabeli dwóch estymat
-      i narysowania prostej, którą opisują."),
+    # ========================================================================
+    # Regresja do średniej
+    # ========================================================================
+    lc_h2("ch1-do-sredniej", "Regresja do średniej"),
+
+    lc_p("Wzór na nachylenie ma ważną konsekwencję. Gdy obie zmienne mają tę
+      samą skalę i podobny rozrzut, \\(s_Y / s_X \\approx 1\\) i nachylenie
+      jest po prostu równe \\(r\\). Jeśli korelacja nie jest idealna,
+      \\(r < 1\\), więc prosta przewiduje dla obserwacji o skrajnym \\(X\\)
+      wartość \\(Y\\) bliższą średniej niż samo \\(X\\). To zjawisko nazywa
+      się regresją do średniej i od niego pochodzi nazwa całej metody."),
+
+    lc_p("Panel pokazuje 100 studentów i ich wyniki z dwóch kolokwiów o tej
+      samej skali. Średnia wynosi około 61 punktów na obu, a korelacja wyników
+      \\(r = 0.59\\). Linia przerywana to przekątna „bez zmian”: student na
+      niej dostał na obu kolokwiach tyle samo. Strzałka prowadzi od przekątnej
+      do średniego wyniku wybranej grupy na drugim kolokwium."),
+
+    figure_panel(
+      label = "Ryc. 1.1a", title = "Najlepsi i najsłabsi na drugim kolokwium",
+      full_width = TRUE,
+      lc_toolbar(
+        lc_segmented("ch1_rtm_group", "Grupa",
+          choices = c("10 najlepszych na 1. kolokwium" = "top",
+                      "10 najsłabszych na 1. kolokwium" = "bottom",
+                      "Wszyscy" = "all")),
+        lc_readouts(uiOutput("ch1_rtm_reads"))
+      ),
+      lc_plot("ch1_rtm_plot", ratio = "1.4/1", max_height = "380px")
+    ),
+
+    lc_p("Dziesięciu najlepszych na pierwszym kolokwium miało średnio 79.7
+      punktu, a na drugim 69.6. Dziewięciu z nich wypadło gorzej. Dziesięciu
+      najsłabszych poprawiło się z 43.5 do 51.9 punktu, i też dziewięciu
+      z nich. Średnia wszystkich studentów prawie się nie zmieniła (60.7
+      i 60.8). Prosta regresji przewidywała ten ruch: dla średniego wyniku
+      79.7 daje 72.2 punktu, a dla 43.5 daje 50.6."),
+
+    lc_p("Nikt tu nie obniżył lotów ani nagle się nie nauczył. Wynik kolokwium
+      to umiejętność plus forma dnia, a grupa wybrana za skrajny wynik to
+      w dużej części osoby, którym akurat dopisało szczęście albo które miały
+      gorszy dzień. Za drugim razem ich szczęście jest przeciętne, więc wynik
+      wraca w stronę średniej. Działa to w obie strony: dziesięciu najlepszych
+      na drugim kolokwium miało na pierwszym średnio 65.6 punktu."),
+
+    lc_note("Pułapka",
+      "Regresja do średniej łatwo udaje skutek działania. Jeśli najsłabszym
+       po pierwszym kolokwium zaproponowano konsultacje, a najlepszych
+       pochwalono, to poprawa pierwszych i spadek drugich pojawią się nawet
+       wtedy, gdy ani konsultacje, ani pochwała niczego nie zmieniły. Żeby
+       ocenić efekt, potrzebna jest grupa porównawcza wybrana tak samo,
+       która go nie dostała."
+    ),
 
     # ========================================================================
     # Ćwiczenie: narysuj prostą z tabeli
     # ========================================================================
     lc_h2("ch1-rysuj-z-tabeli", "Ćwiczenie: narysuj prostą z tabeli"),
+
+    lc_p("Tabela wyników regresji zawiera dla każdego współczynnika cztery liczby:
+      ", gloss("estymata", "estymatę"), ", ", gloss("błąd standardowy"), ", statystykę \\(t\\)
+      i p-wartość. Do końca rozdziału nauczymy się czytać je wszystkie.
+      Zaczniemy od najprostszej czynności: odczytania z tabeli dwóch estymat
+      i narysowania prostej, którą opisują."),
 
     lc_p("Tabela w ćwiczeniu zawiera dwie liczby: wyraz wolny i współczynnik
       przy \\(X\\). Prostą wyznaczają dowolne dwa jej punkty, więc wystarczy
@@ -1285,6 +1339,55 @@ ch1_server <- function(input, output, session) {
       )
     )
   })
+
+  # --- Widget: regresja do średniej (dwa kolokwia) ---
+  ch1_rtm_data <- regression_to_mean_data()
+  ch1_rtm_model <- lm(k2 ~ k1, ch1_rtm_data)
+
+  ch1_rtm_group_idx <- reactive({
+    o <- order(ch1_rtm_data$k1)
+    switch(input$ch1_rtm_group %||% "top",
+      top = tail(o, 10),
+      bottom = head(o, 10),
+      all = o
+    )
+  })
+
+  output$ch1_rtm_reads <- renderUI({
+    g <- ch1_rtm_data[ch1_rtm_group_idx(), ]
+    fmt <- function(v) formatC(v, format = "f", digits = 1)
+    tagList(
+      lc_readout("Grupa: 1. kolokwium", fmt(mean(g$k1))),
+      lc_readout("Grupa: 2. kolokwium", fmt(mean(g$k2)), color = upwr_accent),
+      lc_readout("Średnia wszystkich", fmt(mean(ch1_rtm_data$k1)))
+    )
+  })
+
+  zoom_plot_server("ch1_rtm_plot", reactive({
+    d <- ch1_rtm_data
+    idx <- ch1_rtm_group_idx()
+    d$grp <- seq_len(nrow(d)) %in% idx
+    m1 <- mean(d$k1[idx]); m2 <- mean(d$k2[idx])
+    xs <- data.frame(k1 = c(25, 95))
+    xs$k2 <- predict(ch1_rtm_model, xs)
+    p <- ggplot(d, aes(k1, k2)) +
+      geom_abline(intercept = 0, slope = 1, linetype = "dashed",
+                  colour = upwr_reference) +
+      geom_line(data = xs, colour = unname(upwr_cat["niebo"]), linewidth = 1.1) +
+      geom_point(data = d[!d$grp, ], colour = upwr_secondary, alpha = 0.35, size = 2.2) +
+      geom_point(data = d[d$grp, ], colour = upwr_accent, alpha = 0.85, size = 2.6)
+    if (length(idx) < nrow(d)) {
+      p <- p +
+        annotate("segment", x = m1, xend = m1, y = m1, yend = m2,
+                 colour = upwr_accent, linewidth = 1,
+                 arrow = grid::arrow(length = grid::unit(0.18, "cm"), type = "closed")) +
+        annotate("point", x = m1, y = m2, shape = 21, size = 4.5, stroke = 1.3,
+                 fill = upwr_accent, colour = "white")
+    }
+    p +
+      coord_equal(xlim = c(30, 90), ylim = c(30, 90)) +
+      labs(x = "1. kolokwium (pkt)", y = "2. kolokwium (pkt)")
+  }), alt = "Wyniki 100 studentów z dwóch kolokwiów z przekątną i prostą regresji.")
 
   output$ch1_b1_meaning_feedback <- renderUI({
     choice <- input$ch1_b1_meaning

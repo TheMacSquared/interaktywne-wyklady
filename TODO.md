@@ -196,11 +196,6 @@ to stosują.
 
 ### 06 — regresja
 
-- [ ] Rozważyć mini-widget regresji do średniej w `ch1_liniowa.R`: suwak `r`,
-  na wykresie główna oś elipsy i linia regresji, na żywo
-  `b = r × (sd_y / sd_x)`; przykład „x = +2 SD → oczekiwane y = 2r SD”.
-  Odniesienie: ryc. 6.1–6.3 w `04-wnioskowanie-statystyczne/modules/ch4_korelacja.R`
-  i `scripts/regen_correlation_assets.R`.
 
 ### 08 — case studies
 

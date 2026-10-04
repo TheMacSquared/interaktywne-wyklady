@@ -176,6 +176,17 @@ generate_confounding_data <- function(n = 160) {
   )
 }
 
+# Regresja do średniej (Ryc. 1.1a): 100 studentów, dwa kolokwia. Wynik to
+# stała umiejętność plus losowa forma dnia; ziarno ustalone, dane zawsze te same.
+regression_to_mean_data <- function() {
+  withr::with_seed(180, {
+    skill <- rnorm(100, 60, 9)
+    k1 <- round(pmin(100, pmax(0, skill + rnorm(100, 0, 7))))
+    k2 <- round(pmin(100, pmax(0, skill + rnorm(100, 0, 7))))
+  })
+  data.frame(k1 = k1, k2 = k2)
+}
+
 # Ustawione przykłady współliniowości (Ryc. 3.3): wynik egzaminu a godziny
 # nauki i liczba rozwiązanych zadań, n = 30. Ziarna dobrane tak, żeby każdy
 # wariant pokazywał jedną konsekwencję; dane są zawsze te same.
