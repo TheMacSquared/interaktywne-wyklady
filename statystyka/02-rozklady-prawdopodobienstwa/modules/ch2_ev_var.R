@@ -20,9 +20,9 @@ ch2_ev_var_ui <- list(
     lc_h2("ch2-ev-intro", "Od średniej do wartości oczekiwanej"),
 
     lc_p("W poprzednim rozdziale ", gloss("rozkład prawdopodobieństwa"), " opisywał
-      zmienną losową w całości: podawał jej możliwe wartości i prawdopodobieństwo
+      ", gloss("zmienna losowa", "zmienną losową"), " w całości: podawał jej możliwe wartości i prawdopodobieństwo
       każdej z nich. Taki opis jest kompletny, ale niewygodny, gdy chcemy porównać
-      dwa rozkłady. Ten sam problem mieliśmy w wykładzie 01 z danymi. Histogram
+      dwa rozkłady. Ten sam problem mieliśmy w wykładzie 01 z danymi. ", gloss("histogram", "Histogram"), "
       pokazywał cały rozkład, a do porównań streszczaliśmy go dwiema liczbami:
       ", gloss("średnia", "średnią"), " i odchyleniem standardowym. Teraz zrobimy
       to samo z rozkładem prawdopodobieństwa."),
@@ -132,7 +132,7 @@ ch2_ev_var_ui <- list(
     lc_p("Przy równych prawdopodobieństwach E(X) = 4.5. To zwykła średnia
       czterech wartości, bo każda waży tyle samo. Gdyby największą wartością
       było 7, a nie 9, punkt równowagi wypadłby w 4. Odległa wartość ciągnie
-      E(X) w swoją stronę tak samo, jak wartość odstająca ciągnie średnią
+      E(X) w swoją stronę tak samo, jak ", gloss("wartość odstająca"), " ciągnie średnią
       z danych."),
 
     lc_p("Ustawienie „Skośny” przenosi ciężar na wysokie wartości:
@@ -213,7 +213,7 @@ ch2_ev_var_ui <- list(
     # ========================================================================
     lc_h2("ch2-od-danych", "Od danych do modelu"),
 
-    lc_p("Każde pojęcie z tego rozdziału ma odpowiednik w statystyce opisowej
+    lc_p("Każde pojęcie z tego rozdziału ma odpowiednik w ", gloss("statystyka opisowa", "statystyce opisowej"), "
       z wykładu 01. Wzory też są analogiczne: w średniej z próby każda obserwacja
       ma wagę 1/n, a w E(X) wartość x ma wagę P(X = x). Różnica leży w źródle
       liczb: statystyki z lewej kolumny liczymy z zebranych danych, parametry

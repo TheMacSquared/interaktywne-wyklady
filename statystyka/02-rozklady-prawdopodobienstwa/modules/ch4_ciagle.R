@@ -69,7 +69,7 @@ ch4_ui <- list(
       gęstość: liczebność przedziału dzielimy przez liczbę wszystkich obserwacji
       i przez szerokość przedziału. Kształt histogramu się nie zmienia, zmienia
       się sens pola. Pole słupka, czyli wysokość razy szerokość, to teraz
-      częstość względna, odsetek obserwacji w przedziale. Wszystkie słupki
+      ", gloss("częstość względna"), ", odsetek obserwacji w przedziale. Wszystkie słupki
       razem mają pole równe 1, bo obejmują wszystkie dane."),
 
     lc_p("Krzywa z kroków 6 i 7 jest wygładzeniem tej konkretnej próby, więc
@@ -161,7 +161,7 @@ ch4_ui <- list(
     lc_p("Dystrybuantę można też czytać odwrotnie: zamiast pytać o pole na lewo
       od danej wartości, pytamy, przy jakiej wartości to pole osiąga zadany
       poziom. Taka wartość to kwantyl rzędu q, czyli x, dla którego F(x) = q.
-      Mediana jest kwantylem rzędu 0.5, a percentyle z wykładu 01 to kwantyle
+      ", gloss("mediana", "Mediana"), " jest kwantylem rzędu 0.5, a ", gloss("percentyl", "percentyle"), " z wykładu 01 to kwantyle
       wyrażone w procentach."),
 
     # ========================================================================
@@ -171,7 +171,7 @@ ch4_ui <- list(
 
     lc_p("Mamy już wszystkie narzędzia, żeby opisywać konkretne rozkłady
       ciągłe. Każdy opiszemy tak samo jak dyskretne w rozdziale 3: sytuacja,
-      w której się pojawia, funkcja gęstości, wartość oczekiwana i wariancja.
+      w której się pojawia, funkcja gęstości, ", gloss("wartość oczekiwana"), " i ", gloss("wariancja"), ".
       Wzory na E(X) i Var(X) z rozdziału 2 przenosimy bez zmian w treści:
       sumę po wartościach zastępuje całka, a prawdopodobieństwo P(X = k) —
       gęstość f(x)."),
@@ -440,8 +440,7 @@ ch4_ui <- list(
       uiOutput("ch4_lnorm_stats")
     ),
 
-    lc_p("Prawy ogon sprawia, że wartość oczekiwana jest zawsze większa od ",
-      gloss("mediana", "mediany"), ". Dla LogN(1, 0.5) mediana wynosi
+    lc_p("Prawy ogon sprawia, że wartość oczekiwana jest zawsze większa od mediany. Dla LogN(1, 0.5) mediana wynosi
       e¹ = 2.72, wartość oczekiwana 3.08, a SD = 1.64. Wartość oczekiwaną
       przekracza tylko 40% obserwacji. Im większe
       σ, tym dłuższy ogon i większa różnica. W scenariuszu dochodów

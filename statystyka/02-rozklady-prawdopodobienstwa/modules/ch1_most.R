@@ -17,9 +17,10 @@ ch1_ui <- list(
     ),
 
     lc_p("W poprzednim wykładzie opisywaliśmy dane z ankiety: liczyliśmy
-      częstości względne kategorii, rysowaliśmy histogramy, obliczaliśmy
-      średnią i odchylenie standardowe. Wszystkie te liczby dotyczą jednej
-      konkretnej próby. Inna grupa studentów dałaby trochę inne wyniki.
+      częstości względne kategorii, rysowaliśmy histogramy, obliczaliśmy ",
+      gloss("średnia", "średnią"), " i ",
+      gloss("odchylenie standardowe"), ". Wszystkie te liczby dotyczą jednej
+      konkretnej ", gloss("próba", "próby"), ". Inna grupa studentów dałaby trochę inne wyniki.
       W tym rozdziale przechodzimy od opisu danych do modelu, który je
       wytwarza. Zaczniemy od rzutów kostką, bo tam model znamy z góry
       i możemy sprawdzić, jak dane się do niego zbliżają."),
@@ -36,7 +37,7 @@ ch1_ui <- list(
       dla każdego \\(k\\). Po \\(n\\) rzutach możemy policzyć, ile razy wypadła
       ścianka \\(k\\), i obliczyć ",
       gloss("częstość względna", "częstość względną"), " \\(n_k / n\\),
-      dokładnie tak jak w tabeli częstości z poprzedniego wykładu.
+      dokładnie tak jak w ", gloss("tabela częstości", "tabeli częstości"), " z poprzedniego wykładu.
       ", gloss("prawo wielkich liczb", "Prawo wielkich liczb"), " mówi, że
       wraz ze wzrostem liczby rzutów częstość względna zbliża się do
       prawdopodobieństwa."),
@@ -101,7 +102,7 @@ ch1_ui <- list(
       wzrostu krzywa opisana wzorem i kilkoma parametrami."),
 
     lc_p("Dla zmiennych o kilku wartościach oba rozkłady porównujemy słupek po
-      słupku, tak jak przy kostce. Zmienne ciągłe, takie jak wzrost czy czas
+      słupku, tak jak przy kostce. ", gloss("zmienna ciągła", "Zmienne ciągłe"), ", takie jak wzrost czy czas
       dojazdu, przyjmują wartości z całego przedziału. Rozkład empiryczny
       pokazuje dla nich ", gloss("histogram"), ", a teoretyczny gładka krzywa
       gęstości. Żeby dały się porównać, oba rysujemy w skali gęstości: łączne
@@ -196,7 +197,7 @@ ch1_ui <- list(
       się jej pomylić z wartością 1/6 ≈ 0.167, jakiej oczekiwalibyśmy od
       uczciwej kostki. Częstości nie tylko przybliżają znany model, ale
       pozwalają też odróżnić jeden model od drugiego. Na tym pomyśle opiera
-      się wnioskowanie statystyczne, któremu poświęcimy kolejne wykłady."),
+      się ", gloss("wnioskowanie statystyczne"), ", któremu poświęcimy kolejne wykłady."),
 
     # ========================================================================
     # WIDGET 3: Czym jest rozkład?

@@ -20,14 +20,14 @@ ch5_ui <- list(
 
     lc_p("W poprzednim rozdziale poznaliśmy kilka rozkładów ciągłych
       i nauczyliśmy się czytać prawdopodobieństwo jako pole pod krzywą gęstości.
-      Jeden kształt pojawił się już wcześniej wiele razy. Histogram wzrostu
+      Jeden kształt pojawił się już wcześniej wiele razy. ", gloss("histogram", "Histogram"), " wzrostu
       z ankiety w wykładzie 01 był w przybliżeniu symetrycznym dzwonem,
       a reguła 68–95–99.7 sprawdzała się na nim bardzo dobrze. Teraz nadamy
       temu kształtowi wzór."),
 
     lc_p(gloss("rozkład normalny", "Rozkład normalny"), " (rozkład Gaussa) to
       rozkład ciągły o symetrycznej, dzwonowej ", gloss("funkcja gęstości", "gęstości"),
-      ". Wyznaczają go dwa parametry: średnia \\(\\mu\\), która ustala położenie
+      ". Wyznaczają go dwa ", gloss("parametr", "parametry"), ": ", gloss("średnia"), " \\(\\mu\\), która ustala położenie
       środka krzywej, i ", gloss("odchylenie standardowe"), " \\(\\sigma\\), które
       ustala jej szerokość. Zapisujemy to krótko \\(X \\sim N(\\mu, \\sigma)\\)."),
 
@@ -95,7 +95,7 @@ ch5_ui <- list(
     lc_h2("ch5-porownanie", "Porównanie dwóch rozkładów normalnych"),
 
     lc_p("Dwa parametry wystarczają też do porównania grup. W wykładzie 01
-      wykresy pudełkowe wzrostu kobiet i mężczyzn się nie nakładały, a mediany
+      ", gloss("wykres pudełkowy", "wykresy pudełkowe"), " wzrostu kobiet i mężczyzn się nie nakładały, a ", gloss("mediana", "mediany"), "
       wynosiły 166.4 i 177.1 cm. Panel rysuje dwie krzywe normalne naraz;
       przycisk ustawia modele zbliżone do tych danych: N(166, 6) dla kobiet
       i N(178, 7) dla mężczyzn."),

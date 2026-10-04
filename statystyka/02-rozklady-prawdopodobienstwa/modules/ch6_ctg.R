@@ -16,7 +16,7 @@ ch6_ui <- list(
                 wyglądają zupełnie inaczej."
     ),
 
-    lc_p("W poprzednim rozdziale poznaliśmy rozkład normalny i nauczyliśmy się liczyć
+    lc_p("W poprzednim rozdziale poznaliśmy ", gloss("rozkład normalny"), " i nauczyliśmy się liczyć
       z nim prawdopodobieństwa. Rozkłady z rozdziałów 3 i 4 — dwumianowy, Poissona,
       wykładniczy — nie przypominają jednak dzwonu: są dyskretne, skośne albo
       ograniczone z jednej strony. Mimo to w praktyce rozkład normalny opisuje
@@ -25,17 +25,17 @@ ch6_ui <- list(
 
     lc_h2("ch6-ctg", "Centralne Twierdzenie Graniczne (CTG)"),
 
-    lc_p("W rozdziale 2 średnia z próby x̄ była przybliżeniem wartości oczekiwanej E(X),
+    lc_p("W rozdziale 2 ", gloss("średnia"), " z próby x̄ była przybliżeniem ", gloss("wartość oczekiwana", "wartości oczekiwanej"), " E(X),
       które poprawia się wraz ze wzrostem próby. Średnia z konkretnej próby jest jednak
       wynikiem losowania: druga próba z tej samej ",
       gloss("populacja", "populacji"), " da trochę inną średnią, trzecia jeszcze inną.
-      Średnia z próby jest więc zmienną losową i ma własny rozkład. Rozkład, w jaki
+      Średnia z próby jest więc ", gloss("zmienna losowa", "zmienną losową"), " i ma własny rozkład. Rozkład, w jaki
       układają się średnie z wielu prób tej samej wielkości n, nazywamy ",
       gloss("rozkład próbkowy", "rozkładem próbkowym"), " średniej."),
 
     lc_p("Dwie własności tego rozkładu wynikają wprost z rachunku wartości oczekiwanej
       i ", gloss("wariancja", "wariancji"), ". Jeśli pojedyncza obserwacja ma wartość
-      oczekiwaną μ i odchylenie standardowe σ, a obserwacje w próbie są niezależne, to:"),
+      oczekiwaną μ i ", gloss("odchylenie standardowe"), " σ, a obserwacje w próbie są niezależne, to:"),
 
     lc_formula_box(withMathJax(
       "$$E(\\bar{X}) = \\mu, \\qquad SE = SD(\\bar{X}) = \\frac{\\sigma}{\\sqrt{n}}$$"
@@ -89,7 +89,7 @@ ch6_ui <- list(
 
     lc_p("Twierdzenie najłatwiej sprawdzić, powtarzając losowanie wiele razy. Panel
       poniżej losuje próby z wybranej populacji, której rozkład widać na górnym
-      wykresie. Z każdej próby liczy jedną średnią i odkłada ją na dolnym histogramie.
+      wykresie. Z każdej próby liczy jedną średnią i odkłada ją na dolnym ", gloss("histogram", "histogramie"), ".
       Przerywana linia zaznacza μ, a od 30 zebranych średnich panel dorysowuje
       krzywą N(μ, σ/√n), czyli kształt przewidziany przez CTG. Zmiana rozkładu
       lub n czyści zebrane średnie."),
@@ -119,7 +119,7 @@ ch6_ui <- list(
       lc_plot("ch6_means_plot", max_height = "300px")
     ),
 
-    lc_p("Przy ustawieniach startowych populacja ma rozkład wykładniczy z μ = 2
+    lc_p("Przy ustawieniach startowych populacja ma ", gloss("rozkład wykładniczy"), " z μ = 2
       i σ = 2, a próby liczą n = 5 obserwacji. Wzory przewidują, że średnie skupią się
       wokół 2, z odchyleniem standardowym 2/√5 ≈ 0.89. Po zebraniu 1000 średnich SD
       z symulacji wypada blisko tej wartości. Histogram średnich jest jednak nadal

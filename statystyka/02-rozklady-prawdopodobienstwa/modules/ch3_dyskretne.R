@@ -18,7 +18,7 @@ ch3_ui <- list(
 
     lc_h2("ch3-intro", "Rozkłady dyskretne"),
 
-    lc_p("W poprzednim rozdziale wartość oczekiwaną i wariancję liczyliśmy
+    lc_p("W poprzednim rozdziale ", gloss("wartość oczekiwana", "wartość oczekiwaną"), " i ", gloss("wariancja", "wariancję"), " liczyliśmy
       z tabeli: każdą możliwą wartość mnożyliśmy przez jej prawdopodobieństwo
       i sumowaliśmy. Taką tabelę trzeba jednak najpierw mieć. Na szczęście wiele
       zupełnie różnych sytuacji powstaje według tego samego schematu: liczba
