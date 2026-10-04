@@ -56,7 +56,7 @@ ch0_map_ui <- list(
       i nadaje się do przewidywania."),
 
     lc_p("Z wykładu 05 przychodzą założenia. Normalność, równe wariancje
-      i niezależność obserwacji wracają tu w nowej roli: w regresji sprawdza się
+      i ", gloss("niezależność obserwacji"), " wracają tu w nowej roli: w regresji sprawdza się
       je na resztach, czyli odległościach punktów od dopasowanej prostej.
       Rozdział 02 pokazuje, jak czytać reszty i co oznacza, gdy założenia nie są
       spełnione."),

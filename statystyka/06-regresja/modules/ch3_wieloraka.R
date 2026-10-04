@@ -27,7 +27,7 @@ ch3_ui <- list(
     lc_p("Tę sytuację znamy z ćwiczeń w wykładzie 04. Wyniki czytania w okręgach
       szkolnych Kalifornii korelowały ujemnie z liczbą uczniów na nauczyciela
       (\\(r = -0.25\\)), ale okręgi z mniejszymi klasami bywają też
-      zamożniejsze, więc część tej korelacji mógł tłumaczyć dochód. Korelacja
+      zamożniejsze, więc część tej ", gloss("korelacja", "korelacji"), " mógł tłumaczyć dochód. Korelacja
       nie pozwalała tego sprawdzić, bo zawsze dotyczy tylko dwóch zmiennych.
       Potrzebny jest model, który uwzględnia kilka zmiennych naraz."),
 
@@ -41,15 +41,15 @@ ch3_ui <- list(
     )),
 
     lc_p("Współczynniki szacuje się tak samo jak w ",
-      gloss("regresja prosta", "regresji prostej"), ": metodą najmniejszych
-      kwadratów, czyli tak, by suma kwadratów reszt była jak najmniejsza.
+      gloss("regresja prosta", "regresji prostej"), ": ", gloss("metoda najmniejszych kwadratów", "metodą najmniejszych kwadratów"), ",
+      czyli tak, by suma kwadratów reszt była jak najmniejsza.
       Zmienia się natomiast interpretacja. Współczynnik \\(\\beta_j\\) mówi,
       o ile średnio zmienia się \\(Y\\), gdy \\(X_j\\) rośnie o jednostkę,
       a wszystkie pozostałe predyktory mają te same wartości."),
 
     lc_p("To zastrzeżenie jest sednem regresji wielorakiej. W regresji prostej
       współczynnik zbiera cały związek \\(X\\) z \\(Y\\), także ten, który
-      przechodzi przez zmienne pominięte w modelu. W regresji wielorakiej
+      przechodzi przez ", gloss("zmienna pominięta", "zmienne pominięte"), " w modelu. W regresji wielorakiej
       zostaje tylko ta część związku, której nie da się przypisać pozostałym
       predyktorom. Dlatego ten sam predyktor może mieć w obu modelach zupełnie
       inny współczynnik, czasem nawet o przeciwnym znaku."),
@@ -100,7 +100,7 @@ ch3_ui <- list(
         równania."),
       lc_note("Jak czytać",
         p("Tabela pokazuje współczynniki pełnego modelu addytywnego,
-          bez interakcji. Gwiazdka przy p-wartości oznacza p < 0.05.")
+          bez interakcji. Gwiazdka przy ", gloss("p-wartość", "p-wartości"), " oznacza p < 0.05.")
       ),
       uiOutput("ch3_model_coefs"),
       uiOutput("ch3_prediction_plot_ui")
@@ -159,7 +159,7 @@ ch3_ui <- list(
       uczących się angielskiego okręg zamożniejszy o tysiąc dolarów ma średnio
       wynik wyższy o 0.70 punktu. To prawie trzy razy mniej niż w regresji
       prostej. Dotacje (-0.40) i odsetek uczniów uczących się angielskiego
-      (-0.29) mają ujemne współczynniki, a przedziały ufności wszystkich
+      (-0.29) mają ujemne współczynniki, a ", gloss("przedział ufności", "przedziały ufności"), " wszystkich
       trzech leżą daleko od zera."),
 
     lc_p("Teraz można wrócić do zadania z wykładu 04. Tam pytaliśmy, czy dochód
@@ -204,7 +204,7 @@ ch3_ui <- list(
 
     lc_p("Gdy predyktor nie jest związany z pozostałymi, \\(R_j^2 = 0\\)
       i VIF wynosi 1. Im lepiej pozostałe predyktory odtwarzają \\(X_j\\),
-      tym większy VIF. Pierwiastek z VIF mówi, ile razy błąd standardowy
+      tym większy VIF. Pierwiastek z VIF mówi, ile razy ", gloss("błąd standardowy"), "
       współczynnika jest większy niż przy predyktorach nieskorelowanych:
       VIF równy 4 oznacza błąd standardowy dwa razy większy. Nie ma jednej
       granicy, od której VIF jest za duży. Wartości bliskie 1 nie budzą

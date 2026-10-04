@@ -36,8 +36,8 @@ ch3b_ui <- list(
 
     lc_p("W rozdziale 03 zobaczyliśmy, że współczynnik w modelu wielorakim
       opisuje związek przy stałych pozostałych zmiennych i że po dodaniu
-      zmiennej kontrolnej może zmienić wartość, a nawet znak. Wszystkie
-      tamte predyktory były liczbami. Ten rozdział dokłada predyktor, który
+      ", gloss("zmienna kontrolna", "zmiennej kontrolnej"), " może zmienić wartość, a nawet znak. Wszystkie
+      tamte ", gloss("predyktor", "predyktory"), " były liczbami. Ten rozdział dokłada predyktor, który
       liczbą nie jest: przynależność do grupy. Zamiast danych CASchools
       użyjemy danych o 333 pingwinach z Antarktydy (146 Adelie, 68 Chinstrap
       i 119 Gentoo). Trzy gatunki tworzą naturalne grupy, w których dobrze
@@ -45,7 +45,7 @@ ch3b_ui <- list(
 
     lc_h2("ch3b-simpson", "Pominięta zmienna i paradoks Simpsona"),
 
-    lc_p("W wykładzie 04 przy korelacji widzieliśmy ",
+    lc_p("W wykładzie 04 przy ", gloss("korelacja", "korelacji"), " widzieliśmy ",
       gloss("paradoks Simpsona", "paradoks Simpsona"), " na danych uczniów
       z trzech szkół. W danych połączonych korelacja czasu nauki z wynikiem
       wynosiła -0.49, a w każdej szkole osobno była dodatnia. Odwrócenie
@@ -194,7 +194,7 @@ ch3b_ui <- list(
     lc_p("To samo pytanie można zadać w danych CASchools: czy związek dochodu
       okręgu z wynikami uczniów jest taki sam w okręgach o różnym kontekście
       społecznym. Pingwiny pokazują mechanizm wyraźniej, bo grupy są
-      naturalne i dobrze rozdzielone. W danych obserwacyjnych o szkołach
+      naturalne i dobrze rozdzielone. W ", gloss("dane obserwacyjne", "danych obserwacyjnych"), " o szkołach
       granice grup trzeba zwykle zdefiniować samemu, a interpretacja wymaga
       większej ostrożności."),
 
@@ -205,7 +205,7 @@ ch3b_ui <- list(
       prowadzi do modeli trudnych do odczytania i dopasowanych do przypadku.
       Decyzja ma kilka elementów."),
 
-    lc_p("Pierwszym jest pytanie badawcze. Interakcja jest odpowiedzią na
+    lc_p("Pierwszym jest ", gloss("pytanie badawcze"), ". Interakcja jest odpowiedzią na
       pytanie, czy związek X z Y może zależeć od grupy, i najlepiej, gdy to
       pytanie pada przed analizą, na podstawie wiedzy o zjawisku. U pingwinów
       jest to sensowne: gatunki różnią się budową ciała, więc ta sama długość

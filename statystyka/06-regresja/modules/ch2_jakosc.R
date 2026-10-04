@@ -86,7 +86,7 @@ ch2_ui <- list(
                 zmienności i wielkość typowej pomyłki."
     ),
 
-    lc_p("W rozdziale 01 dopasowaliśmy prostą metodą najmniejszych kwadratów,
+    lc_p("W rozdziale 01 dopasowaliśmy prostą ", gloss("metoda najmniejszych kwadratów", "metodą najmniejszych kwadratów"), ",
       odczytaliśmy z tabeli wyników współczynniki i ich p-wartości i użyliśmy
       równania do przewidywania. Wszystkie te wyniki mają sens pod warunkiem,
       że sam model jest sensowny: że zależność rzeczywiście jest liniowa,
@@ -165,7 +165,7 @@ ch2_ui <- list(
       zależności."),
 
     lc_p("Model z odsetkiem uczniów z dotacją do obiadu nie zostawia
-      wzorca: reszty leżą równą chmurą, a ich odchylenie standardowe
+      wzorca: reszty leżą równą chmurą, a ich ", gloss("odchylenie standardowe"), "
       w dolnej, środkowej i górnej trzeciej części wartości przewidywanych
       wynosi 9.5, 9.6 i 9.8 punktu. Model z liczbą uczniów na nauczyciela też
       nie ma wzorca, ale jego reszty są prawie tak duże jak rozrzut samych
@@ -184,12 +184,12 @@ ch2_ui <- list(
     lc_h2("ch2-zalozenia", "Założenia, które widać w resztach"),
 
     lc_p("Wykład 05 zapowiadał, że w regresji założenia dotyczą reszt, a nie
-      samych zmiennych. To bezpośrednie przedłużenie tego, co znamy z testu t
+      samych zmiennych. To bezpośrednie przedłużenie tego, co znamy z ", gloss("test t", "testu t"), "
       i ", gloss("ANOVA"), ". Tam resztami były odchylenia obserwacji od średniej
       ich grupy, a założenia mówiły o ich rozkładzie i rozrzucie w każdej
       grupie. W regresji resztami są odchylenia od prostej, a „grupy”
-      zastępuje ciągły zakres wartości przewidywanych. Zmienna zależna nie
-      musi mieć rozkładu normalnego; w przybliżeniu normalne powinny być
+      zastępuje ciągły zakres wartości przewidywanych. ", gloss("zmienna zależna", "Zmienna zależna"), " nie
+      musi mieć ", gloss("rozkład normalny", "rozkładu normalnego"), "; w przybliżeniu normalne powinny być
       reszty."),
 
     lc_p("Narzędzia są te same co w wykładzie 05. Normalność oceniamy wykresem
@@ -207,12 +207,12 @@ ch2_ui <- list(
           "Normalność reszt",
           "Brak obserwacji wpływowych"
         ),
-        c2 = c(
+        c2 = I(list(
           "reszty względem wartości przewidywanych",
           "reszty względem wartości przewidywanych, wykres Scale-Location",
           "wykres Q-Q reszt",
-          "reszty standaryzowane, dźwignia, odległość Cooka"
-        ),
+          tagList("reszty standaryzowane, dźwignia, ", gloss("odległość Cooka"))
+        )),
         c3 = c(
           "łuk, fala, systematyczny wzorzec",
           "wachlarz, rosnący lub malejący rozrzut",
@@ -239,7 +239,7 @@ ch2_ui <- list(
     lc_p("Założenia nie są równie ważne. Liniowość jest najważniejsza, bo przy
       krzywej zależności błędne są same współczynniki, a nie tylko ich
       p-wartości. Stała wariancja wpływa na błędy standardowe, a przez nie na
-      p-wartości i przedziały ufności. Normalność reszt ma znaczenie głównie
+      p-wartości i ", gloss("przedział ufności", "przedziały ufności"), ". Normalność reszt ma znaczenie głównie
       w małych próbach, bo w dużych rozkład współczynników jest w przybliżeniu
       normalny niezależnie od kształtu rozkładu reszt. Osobnym założeniem jest
       niezależność reszt; wykresy z tego rozdziału jej nie pokazują, ocenia
@@ -271,7 +271,7 @@ ch2_ui <- list(
 
     lc_p("Tą miarą jest ", gloss("współczynnik determinacji"), " \\(R^2\\).
       Punktem odniesienia jest najprostsza prognoza, jaką można zrobić bez
-      żadnego predyktora: średnia \\(\\bar{y}\\) dla wszystkich obserwacji.
+      żadnego ", gloss("predyktor", "predyktora"), ": średnia \\(\\bar{y}\\) dla wszystkich obserwacji.
       Jej błędy sumują się do całkowitej sumy kwadratów \\(SS_{tot}\\).
       Model z predyktorem zostawia mniejsze błędy, czyli resztową sumę
       kwadratów \\(SS_{res}\\), tę samą, którą minimalizuje metoda najmniejszych
@@ -284,7 +284,7 @@ ch2_ui <- list(
     lc_p("\\(R^2\\) przyjmuje wartości od 0 do 1. Zero oznacza, że model
       przewiduje nie lepiej niż średnia, jedynka, że wszystkie punkty leżą
       dokładnie na prostej. W regresji prostej \\(R^2\\) jest równe kwadratowi
-      współczynnika korelacji Pearsona z wykładu 04, który już tam nazwaliśmy
+      współczynnika ", gloss("korelacja Pearsona", "korelacji Pearsona"), " z wykładu 04, który już tam nazwaliśmy
       współczynnikiem determinacji. Dla czytania i odsetka uczniów
       z dotacją do obiadu \\(r = -0.88\\), więc \\(R^2 = 0.77\\): model
       wyjaśnia 77% zmienności wyników czytania między okręgami."),

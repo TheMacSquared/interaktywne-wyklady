@@ -18,8 +18,8 @@ ch4_ui <- list(
     ),
 
     lc_p("W rozdziale 02 ocenialiśmy jeden model: oglądaliśmy reszty, liczyliśmy
-      R² i RMSE. W rozdziałach 03 i 03B modele zaczęły rosnąć: dochodziły kolejne
-      predyktory, zmienne jakościowe i interakcje. Każde takie rozszerzenie to
+      R² i ", gloss("RMSE"), ". W rozdziałach 03 i 03B modele zaczęły rosnąć: dochodziły kolejne
+      ", gloss("predyktor", "predyktory"), ", zmienne jakościowe i interakcje. Każde takie rozszerzenie to
       nowy kandydat, więc zwykle mamy do wyboru kilka modeli dla tej samej
       zmiennej zależnej. Ten rozdział pokazuje, czym je porównywać i dlaczego
       najprostsza odpowiedź, czyli wybór modelu o najwyższym R², prowadzi na
@@ -28,7 +28,7 @@ ch4_ui <- list(
     lc_h2("ch4-problem", "Dlaczego sam R² nie wystarczy"),
 
     lc_p("R² ma przy porównaniach zdradliwą własność: po dodaniu predyktora nigdy
-      nie spada. Metoda najmniejszych kwadratów może nowemu predyktorowi nadać
+      nie spada. ", gloss("metoda najmniejszych kwadratów", "Metoda najmniejszych kwadratów"), " może nowemu predyktorowi nadać
       współczynnik zero i wtedy suma kwadratów reszt pozostaje taka jak
       wcześniej. Każdy inny współczynnik wybierze tylko wtedy, gdy zmniejsza
       tę sumę. \\(SS_{res}\\) nie rośnie, \\(SS_{tot}\\) się nie zmienia, więc
@@ -103,8 +103,8 @@ ch4_ui <- list(
       jak dobrze model odtwarza dane: \\(\\hat{L}\\) oznacza wiarygodność,
       czyli prawdopodobieństwo (dokładniej: gęstość) zaobserwowanych danych
       przy najlepiej dopasowanych parametrach. Do tego dochodzi kara za liczbę
-      parametrów. W regresji liniowej z k predyktorami szacujemy k + 1
-      współczynników i wariancję reszt, razem k + 2 parametry:"),
+      parametrów. W ", gloss("regresja liniowa", "regresji liniowej"), " z k predyktorami szacujemy k + 1
+      współczynników i ", gloss("wariancja", "wariancję"), " reszt, razem k + 2 parametry:"),
 
     lc_formula_box(withMathJax(
       "$$\\text{AIC} = -2\\ln\\hat{L} + 2(k + 2), \\qquad
@@ -132,7 +132,7 @@ ch4_ui <- list(
     lc_p("Kary mają też interpretację w języku testów. Gdy do modelu dokładamy
       jedną zmienną bez żadnego związku z Y, przy n = 150 R² skorygowany
       wzrośnie w około 32% przypadków, AIC uzna większy model za lepszy
-      w około 16%, a BIC w około 2.5%. To odpowiednik poziomu istotności:
+      w około 16%, a BIC w około 2.5%. To odpowiednik ", gloss("poziom istotności", "poziomu istotności"), ":
       każda miara przepuszcza część fałszywych alarmów. Jeśli sprawdzimy
       dziesięć takich bezużytecznych kandydatów, każdego osobno, szansa,
       że przynajmniej jeden przejdzie przez AIC, wynosi około 80%. Problem
@@ -196,7 +196,7 @@ ch4_ui <- list(
     lc_p("W rozdziale 02 widzieliśmy trzy wielomiany: zbyt prosty, rozsądny
       i przeuczony. Panel poniżej pozwala przejść przez wszystkie stopnie
       od 1 do 15. Dane powstają jako fala sinusoidalna z szumem
-      o odchyleniu standardowym 1, a pod wykresem widać R², R² skorygowany,
+      o ", gloss("odchylenie standardowe", "odchyleniu standardowym"), " 1, a pod wykresem widać R², R² skorygowany,
       AIC i BIC dla wybranego stopnia."),
 
     figure_panel(
@@ -292,7 +292,7 @@ ch4_ui <- list(
     lc_p("Często Y przyjmuje tylko dwie wartości: student zdał albo nie zdał,
       klient kupił albo nie kupił. Regresja liniowa daje wtedy przewidywania
       spoza przedziału [0, 1], których nie da się czytać jako
-      prawdopodobieństw. Następny rozdział wprowadza regresję logistyczną,
+      prawdopodobieństw. Następny rozdział wprowadza ", gloss("regresja logistyczna", "regresję logistyczną"), ",
       zbudowaną dla takich zmiennych. AIC i BIC przydadzą się w niej
       bez zmian."),
 

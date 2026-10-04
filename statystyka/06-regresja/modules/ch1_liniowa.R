@@ -55,8 +55,8 @@ ch1_ui <- list(
     # ========================================================================
     lc_h2("ch1-od-korelacji", "Od korelacji do regresji"),
 
-    lc_p("W wykładzie 04 (rozdział 06) związek dwóch zmiennych ilościowych
-      opisywaliśmy współczynnikiem korelacji \\(r\\). Mówił on o kierunku i sile
+    lc_p("W wykładzie 04 (rozdział 06) związek dwóch ", gloss("zmienna ilościowa", "zmiennych ilościowych"), "
+      opisywaliśmy współczynnikiem ", gloss("korelacja", "korelacji"), " \\(r\\). Mówił on o kierunku i sile
       związku liniowego, a test korelacji sprawdzał, czy \\(r\\) da się odróżnić
       od zera. Jedno pytanie zostało tam bez odpowiedzi: o ile zmienia się
       \\(Y\\), gdy \\(X\\) rośnie o jednostkę. Trzy chmury punktów o nachyleniach
@@ -90,8 +90,8 @@ ch1_ui <- list(
       średnią populacji."),
 
     lc_p("Panel poniżej generuje dane z tego modelu dla wybranych wartości
-      \\(\\beta_0\\), \\(\\beta_1\\) i \\(\\sigma\\), czyli odchylenia
-      standardowego błędu losowego."),
+      \\(\\beta_0\\), \\(\\beta_1\\) i \\(\\sigma\\), czyli ", gloss("odchylenie standardowe", "odchylenia
+      standardowego"), " błędu losowego."),
 
     figure_panel(
       label = "Ryc. 1.0", title = "Co robią β₀, β₁ i szum?",
@@ -160,10 +160,10 @@ ch1_ui <- list(
       Korelacja ustala kierunek i siłę związku, a iloraz odchyleń standardowych
       przelicza ją na jednostki \\(X\\) i \\(Y\\). Prosta otrzymana w ten sposób
       jest dokładnie tą, którą program statystyczny podaje w tabeli wyników
-      regresji z jednym predyktorem."),
+      regresji z jednym ", gloss("predyktor", "predyktorem"), "."),
 
     lc_p("Taka tabela zawiera dla każdego współczynnika cztery liczby:
-      estymatę, ", gloss("błąd standardowy"), ", statystykę \\(t\\)
+      ", gloss("estymata", "estymatę"), ", ", gloss("błąd standardowy"), ", statystykę \\(t\\)
       i p-wartość. Do końca rozdziału nauczymy się czytać je wszystkie.
       Zaczniemy od najprostszej czynności: odczytania z tabeli dwóch estymat
       i narysowania prostej, którą opisują."),
@@ -277,7 +277,7 @@ ch1_ui <- list(
     lc_p("Pierwszy powód: kwadrat rośnie szybciej niż sama odległość. Reszta
       równa 4 wnosi do sumy 16, tyle co szesnaście reszt równych 1. Prosta MNK
       woli więc kilka umiarkowanych pomyłek niż jedną dużą. Ma to drugą stronę:
-      pojedyncza wartość odstająca potrafi mocno pociągnąć prostą ku sobie,
+      pojedyncza ", gloss("wartość odstająca"), " potrafi mocno pociągnąć prostą ku sobie,
       podobnie jak w wykładzie 04 jedna wartość odstająca zmieniała \\(r\\)."),
 
     lc_p("Drugi powód: suma kwadratów prowadzi do jawnego rozwiązania, czyli do
@@ -368,7 +368,7 @@ ch1_ui <- list(
 
     lc_p("Więcej niż sama decyzja mówi ", gloss("przedział ufności"),
       " dla \\(\\beta_1\\), zbudowany jak w wykładzie 03: estymata plus minus
-      wartość krytyczna razy błąd standardowy."),
+      ", gloss("wartość krytyczna"), " razy błąd standardowy."),
 
     lc_formula_box(withMathJax(
       "$$b_1 \\pm t^*_{\\alpha/2,\\, n-2} \\cdot SE(b_1)$$"

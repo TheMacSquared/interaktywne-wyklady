@@ -21,22 +21,22 @@ ch5_ui <- list(
     lc_p("Wszystkie modele z poprzednich rozdziałów przewidywały liczbę: wynik
       testu, ocenę, masę ciała. Wiele pytań dotyczy jednak zdarzeń, które
       zachodzą albo nie: student zdał albo nie zdał, klient kliknął albo nie,
-      pacjent przeżył albo nie. Regresję liniową da się wtedy policzyć, ale jej
+      pacjent przeżył albo nie. ", gloss("regresja liniowa", "Regresję liniową"), " da się wtedy policzyć, ale jej
       odpowiedzi przestają mieć sens. W tym rozdziale zobaczymy dlaczego
       i poznamy model zbudowany do takich danych."),
 
     lc_h2("ch5-od-ciaglej-do-binarnej", "Od wyniku ciągłego do zmiennej 0/1"),
 
-    lc_p("Zmienna, która przyjmuje tylko wartości 0 i 1, nie jest dla nas nowa.
-      W wykładzie 02 każdą taką obserwację nazywaliśmy ",
+    lc_p(gloss("zmienna", "Zmienna"), ", która przyjmuje tylko wartości 0 i 1, nie jest dla nas nowa.
+      W wykładzie 02 każdą taką ", gloss("obserwacja", "obserwację"), " nazywaliśmy ",
       gloss("próba Bernoulliego", "próbą Bernoulliego"), ": sukces zachodzi
       z prawdopodobieństwem p, a liczba sukcesów w n niezależnych próbach ma ",
       gloss("rozkład dwumianowy"), ". W wykładach 03 i 04 szacowaliśmy p jako
       odsetek sukcesów w próbie i budowaliśmy dla niego przedziały i testy.
-      Zawsze było to jedno p dla całej populacji."),
+      Zawsze było to jedno p dla całej ", gloss("populacja", "populacji"), "."),
 
     lc_p(gloss("regresja logistyczna", "Regresja logistyczna"), " robi krok
-      dalej: pozwala, żeby prawdopodobieństwo sukcesu zależało od predyktorów.
+      dalej: pozwala, żeby prawdopodobieństwo sukcesu zależało od ", gloss("predyktor", "predyktorów"), ".
       Zamiast pytać, jaki odsetek okręgów osiąga dobry wynik, pytamy, jak ten
       odsetek zmienia się z dochodem albo z udziałem uczniów uczących się
       angielskiego. ", gloss("zmienna zależna", "Zmienną zależną"), " jest
@@ -73,7 +73,7 @@ ch5_ui <- list(
       uiOutput("ch5_cas_threshold_note")
     ),
 
-    lc_p("Domyślny próg 656 pkt leży niemal dokładnie w medianie wyników
+    lc_p("Domyślny próg 656 pkt leży niemal dokładnie w ", gloss("mediana", "medianie"), " wyników
       (655.75 pkt), więc „zdaje” 208 z 420 okręgów, czyli 49.5%. Na dolnym
       wykresie każdy okręg dostaje własne prawdopodobieństwo. Okręgi zamożne
       i z małym odsetkiem dotacji do obiadu mają prawdopodobieństwa bliskie 1,
@@ -85,7 +85,7 @@ ch5_ui <- list(
     lc_p("Przesunięcie progu zmienia samą zmienną zależną, więc zmieniają się
       też współczynniki. Przy progu 630 pkt zdaje 374 okręgi (89%), przy
       680 pkt tylko 48 (11%). To dwa różne pytania i dwa różne modele. Z tego
-      samego powodu AIC i BIC pod wykresem można porównywać tylko między
+      samego powodu ", gloss("AIC"), " i ", gloss("BIC"), " pod wykresem można porównywać tylko między
       modelami dla tej samej definicji Y, a nie między progami. Tabelę ilorazów
       szans omówimy za chwilę, gdy będzie jasne, czym są szanse."),
 
@@ -147,7 +147,7 @@ ch5_ui <- list(
 
     lc_p("Niezależnie od tego, jak duże albo małe jest β₀ + β₁x, wynik leży
       między 0 a 1. Przy wielu predyktorach w wykładniku pojawia się po prostu
-      więcej składników, tak jak w regresji wielorakiej. Panel rysuje sigmoidę
+      więcej składników, tak jak w ", gloss("regresja wieloraka", "regresji wielorakiej"), ". Panel rysuje sigmoidę
       dla wybranych wartości β₀ i β₁."),
 
     figure_panel(
@@ -170,7 +170,7 @@ ch5_ui <- list(
       około 0.02, a dla x = 40 około 0.98. Oba parametry mają czytelne role.
       Współczynnik β₁ decyduje o kierunku i stromości: im większy co do wartości
       bezwzględnej, tym szybsze przejście od 0 do 1, a ujemny odwraca krzywą,
-      jak w ustawieniu „Odwrotny”. Wyraz wolny β₀ przesuwa krzywą w poziomie.
+      jak w ustawieniu „Odwrotny”. ", gloss("wyraz wolny", "Wyraz wolny"), " β₀ przesuwa krzywą w poziomie.
       Ustawienie „Płaski” ma ten sam środek co startowe, ale w całym
       narysowanym zakresie prawdopodobieństwo zmienia się tylko od 0.22
       do 0.78."),
@@ -186,7 +186,7 @@ ch5_ui <- list(
     lc_h2("ch5-model-dane", "Model logistyczny na danych"),
 
     lc_p("W praktyce β₀ i β₁ nie ustawiamy suwakami, tylko szacujemy z danych.
-      Metoda najmniejszych kwadratów z rozdziału 01 nie pasuje do wyników 0/1,
+      ", gloss("metoda najmniejszych kwadratów", "Metoda najmniejszych kwadratów"), " z rozdziału 01 nie pasuje do wyników 0/1,
       więc używa się metody największej wiarygodności: wybiera się takie
       współczynniki, przy których zaobserwowany układ zer i jedynek jest
       najbardziej prawdopodobny. To ten sam rachunek prawdopodobieństwa prób
@@ -258,7 +258,7 @@ ch5_ui <- list(
       czyli podnosi je o 18%, przy tych samych odsetkach dotacji do obiadu
       i uczniów uczących się angielskiego. Dla dotacji do obiadu OR wynosi 0.93, a dla
       angielskiego 0.92: każdy dodatkowy punkt procentowy obniża szanse
-      zdania o około 7–8%. Jak w każdej regresji na danych obserwacyjnych, to
+      zdania o około 7–8%. Jak w każdej regresji na ", gloss("dane obserwacyjne", "danych obserwacyjnych"), ", to
       opis związku, a nie dowód, że dochód sam podnosi wyniki."),
 
     lc_p("Najczęstszy błąd polega na czytaniu „szanse rosną o 18%” jako
@@ -276,8 +276,8 @@ ch5_ui <- list(
     ),
 
     lc_p("Tabela poniżej pokazuje współczynniki modelu dopasowanego w panelu
-      Ryc. 5.3: β na skali logitu, iloraz szans, jego 95% przedział ufności
-      i p-wartość."),
+      Ryc. 5.3: β na skali logitu, iloraz szans, jego 95% ", gloss("przedział ufności"), "
+      i ", gloss("p-wartość"), "."),
 
     figure_panel(
       label = "Ryc. 5.4", title = "Ilorazy szans",
@@ -376,7 +376,7 @@ ch5_ui <- list(
       od jedynek, na przykład wszyscy, którzy uczyli się ponad 20 godzin,
       zdali, a wszyscy pozostali nie, metoda największej wiarygodności nie
       ma skończonego rozwiązania. Najlepsze dopasowanie daje coraz bardziej
-      stroma sigmoida, więc współczynnik i jego błąd standardowy rosną bez
+      stroma sigmoida, więc współczynnik i jego ", gloss("błąd standardowy"), " rosną bez
       ograniczeń, a program zwraca ogromne liczby albo ostrzeżenie. Przy
       rzadkich zdarzeniach i separacji pomaga prostsza specyfikacja, więcej
       danych albo estymacja z karą, która odsuwa współczynniki od wartości
