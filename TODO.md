@@ -213,46 +213,16 @@ to stosują.
 - [ ] Widget krokowy (rozdz. 4): wygładzona krzywa wychodzi poza dziedzinę
   dla rozkładu wykładniczego i jednostajnego.
 
-### 04 — wnioskowanie statystyczne
-
-- [ ] Ryc. 3.2: statbox „Błąd I” pokazuje α z panelu mocy, a p-wartość jest
-  tylko w podpisie; suwak n zmienia tylko symulację pod H₀, obserwowana
-  różnica zawsze pochodzi z n = 40.
-- [ ] Ryc. 6.x: PNG `anscombe-quartet.png` i `correlation-nonlinear.png` mają
-  kropkę dziesiętną i nie mają skryptu generującego.
-- [ ] Ryc. 10.5: η² z próby (seed 202) wyraźnie mniejsze niż η² populacji
-  w tabeli; kolumna „x̄” pokazuje średnie populacji.
-
-### 05 — założenia testów
-
-- [ ] Ryc. 2.3: jedno n dla obu grup — przy równych n test Studenta i Welcha
-  dają identyczne t, więc panel nie pokazuje, kiedy Student zawodzi
-  (osobne suwaki n₁, n₂).
-- [ ] Ryc. 2.x: iloraz wariancji kolorowany ukrytym progiem 4.
-- [ ] Symulacja χ² a Fisher (rozdz. 03): tylko kategorie 50/50 (nie pokazuje
-  liberalnego χ² przy rzadkich kategoriach); konserwatywny Fisher
-  kolorowany jak „porażka”.
-
 ### 06 — regresja
 
 - [ ] Rozdział 00 „Mapa wykładu” jest pisany do prowadzącego („wybierz cel
   zajęć”). Przepisać na wstęp dla czytelnika: nawiązanie do korelacji
   (wykład 04) i założeń na resztach (05), jak czytać rdzeń i pogłębienia,
   dlaczego CASchools i pingwiny. Tabela tematów zostaje.
-- [ ] Ryc. 4.1 i 4.2 prawie się dublują (ten sam generator i modele; 4.2 ma
-  suwak n). W arenie (4.2) RMSE liczone na danych uczących, więc
-  wyróżnienie „najlepszej” wartości zawsze trafia w największy model.
-- [ ] Ryc. 1.2: scenariusz „Ten sam trend, mała próba” ma też większy szum
-  (σ = 5 zamiast 3) — etykieta sugeruje, że różni się tylko n.
-- [ ] Ryc. 1.4: na liście X zmienna 0/1 „grades” w rozdziale o regresji
-  prostej (nazwy w tabeli już jako etykiety).
 - [ ] Panel współliniowości (rozdz. 03): pokazuje tylko chmurę X₁–X₂,
   niestabilności β nie widać bez wielokrotnego losowania.
 - [ ] Rozdz. 05: widget liniowa a logistyczna pokazuje identyczną dokładność
   obu modeli (różnicę niesie tylko „poza [0, 1]”).
-- [ ] Ściąga: k w dwóch znaczeniach (liczba predyktorów w R² skorygowanym,
-  liczba parametrów w AIC/BIC) — ujednolicić z rozdz. 04 (k = liczba
-  predyktorów, kara 2(k + 2)).
 - [ ] Quiz interpretacji b₁ w jednostkach w `ch1_liniowa.R`, sekcja
   `ch1-caschool`: „read ~ income”, b₁ = 1,88 — co znaczy wzrost dochodu
   o 1 tys. USD? Dystraktory: mylone jednostki i skale.

@@ -259,7 +259,7 @@ ch2_server <- function(input, output, session) {
     color <- if (abs(coverage - nominal) <= 5) col_hit else col_miss
     tagList(
       lc_readout("Prób", n_total, color = upwr_secondary),
-      lc_readout("Pokrycie", paste0(coverage, "% ("), color = color),
+      lc_readout("Pokrycie", paste0(coverage, "%"), color = color),
       lc_readout("Oczekiwane", paste0(nominal, "%"), color = col_ci)
     )
   })

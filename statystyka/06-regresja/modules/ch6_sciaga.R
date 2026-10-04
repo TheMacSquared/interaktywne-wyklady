@@ -76,8 +76,8 @@ ch6_ui <- list(
         c2 = I(list(
           withMathJax("\\(1 - SS_{res}/SS_{tot}\\)"),
           withMathJax("\\(1 - \\frac{(1-R^2)(n-1)}{n-k-1}\\)"),
-          withMathJax("\\(-2\\ln L + 2k\\)"),
-          withMathJax("\\(-2\\ln L + k\\ln n\\)"),
+          withMathJax("\\(-2\\ln L + 2(k + 2)\\)"),
+          withMathJax("\\(-2\\ln L + (k + 2)\\ln n\\)"),
           withMathJax("\\(\\sqrt{\\frac{1}{n}\\sum e_i^2}\\)")
         )),
         c3 = c("↑ lepiej", "↑ lepiej", "↓ lepiej", "↓ lepiej", "↓ lepiej"),

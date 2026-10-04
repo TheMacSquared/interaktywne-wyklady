@@ -335,13 +335,12 @@ ch1d_ui <- list(
       label = "Ryc. 3.2",
       title = "Powtórzone eksperymenty pod H₀",
       lc_toolbar(
-        lc_slider("ch1_sim_n", "n (na grupę)", 10, 100, 40, 5),
         lc_action_group(ch1_sim_10 = "10×", ch1_sim_200 = "200×", label = "Powtórz eksperyment"),
         lc_action("ch1_sim_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
         lc_readouts(uiOutput("ch1_sim_info"))
       ),
       lc_plot("ch1_sim_plot", max_height = "350px"),
-      uiOutput("ch1_sim_stats")
+      lc_caption("Każdy eksperyment: dwie grupy po 40 osób z tej samej populacji, jak w rozdziale 01.")
     ),
 
     lc_p("Przy 40 osobach w grupie losowe różnice mają odchylenie standardowe
@@ -543,8 +542,8 @@ ch1_server <- function(input, output, session) {
     diff_val <- round(stats$m[1] - stats$m[2], 1)
 
     tagList(
-      lc_readout("Plecak", paste0(stats$m[1], " pkt (s="), color = col_accept),
-      lc_readout("Biurko", paste0(stats$m[2], " pkt (s="), color = col_pvalue),
+      lc_readout("Plecak", paste0(stats$m[1], " pkt"), color = col_accept),
+      lc_readout("Biurko", paste0(stats$m[2], " pkt"), color = col_pvalue),
       lc_readout("Różnica", paste0(diff_val, " pkt"), color = upwr_secondary)
     )
   })
@@ -561,7 +560,7 @@ ch1_server <- function(input, output, session) {
   ch1_sim_diffs <- reactiveVal(numeric(0))
 
   do_simulations <- function(k) {
-    n <- input$ch1_sim_n
+    n <- 40  # jak w eksperymencie z rozdziału 01
     new_diffs <- sapply(seq_len(k), function(i) {
       g1 <- rnorm(n, mean = 70, sd = 13)
       g2 <- rnorm(n, mean = 70, sd = 13)
@@ -577,9 +576,13 @@ ch1_server <- function(input, output, session) {
   output$ch1_sim_info <- renderUI({
     n_s <- length(ch1_sim_diffs())
     obs <- round(ch1_observed_diff(), 1)
+    diffs <- ch1_sim_diffs()
     tagList(
       lc_readout("Eksperymentów", n_s, color = col_h0),
-      lc_readout("Obs. różnica", paste0(obs, " pkt"), color = col_reject)
+      lc_readout("Obs. różnica", paste0(obs, " pkt"), color = col_reject),
+      lc_readout("p z symulacji",
+                 if (n_s) sprintf("%.3f", mean(abs(diffs) >= abs(ch1_observed_diff()))) else "—",
+                 color = col_pvalue)
     )
   })
 
@@ -611,19 +614,6 @@ ch1_server <- function(input, output, session) {
                 theme(legend.position = "top")
     }
   }))
-
-  output$ch1_sim_stats <- renderUI({
-    diffs <- ch1_sim_diffs()
-    if (length(diffs) == 0) return(NULL)
-    obs <- ch1_observed_diff()
-    alpha <- input$ch1_alpha
-    if (is.null(alpha)) alpha <- 0.05
-    n_extreme <- sum(abs(diffs) >= abs(obs))
-    pval <- n_extreme / length(diffs)
-    lc_caption(paste0("p ≈ ", round(pval, 3), " (", n_extreme, "/", length(diffs),
-                      " eksperymentów co najmniej tak skrajnych); błąd I rodzaju przy α = ",
-                      alpha, " wynosi ", alpha * 100, "%."))
-  })
 
   output$ch1_pvalue_meaning_feedback <- renderUI({
     choice <- input$ch1_pvalue_meaning

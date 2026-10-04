@@ -144,7 +144,7 @@ ch4_ui <- list(
     lc_p("Panel losuje dane z tego samego mechanizmu co poprzedni, ale pozwala
       zmienić liczbę obserwacji. Dla każdego z czterech modeli pokazuje
       R² skorygowany, AIC, BIC i RMSE, a w tabeli wyróżnia najlepszą wartość
-      każdej miary."),
+      R² skorygowanego, AIC i BIC."),
 
     figure_panel(
       label = "Ryc. 4.2", title = "Porównanie modeli regresji",
@@ -166,7 +166,8 @@ ch4_ui <- list(
       w małej próbie trudno go odróżnić od szumu, a kara BIC jest na tyle
       surowa, że często go odrzuca."),
 
-    lc_p("Kolumna RMSE zawsze wyróżnia model czwarty. RMSE liczone na tych samych
+    lc_p("W kolumnie RMSE najmniejsza wartość zawsze przypada modelowi
+      czwartemu, dlatego panel jej nie wyróżnia. RMSE liczone na tych samych
       danych, na których model dopasowano, zachowuje się jak R²: po dodaniu
       predyktora nie rośnie, więc nie nadaje się do porównywania modeli
       o różnej złożoności. Uczciwe RMSE trzeba policzyć na nowych danych.
@@ -449,7 +450,6 @@ ch4_server <- function(input, output, session) {
     best_adj_r2 <- which.max(df$adj_r_squared)
     best_aic <- which.min(df$aic)
     best_bic <- which.min(df$bic)
-    best_rmse <- which.min(df$rmse)
 
 
     best <- function(i) ifelse(seq_len(nrow(df)) == i, "is-best", NA)
@@ -462,8 +462,9 @@ ch4_server <- function(input, output, session) {
         lc_col("bic", "BIC", digits = 1),
         lc_col("rmse", "RMSE", digits = 3)
       ),
+      # RMSE na danych uczących zawsze wskazuje największy model — bez wyróżnienia.
       cell_class = list(adj_r_squared = best(best_adj_r2), aic = best(best_aic),
-                        bic = best(best_bic), rmse = best(best_rmse))
+                        bic = best(best_bic))
     )
   })
 

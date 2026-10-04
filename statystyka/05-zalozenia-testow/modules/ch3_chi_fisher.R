@@ -89,11 +89,14 @@ ch3_ui <- lecture_chapter(
       title = "Symulacja: χ² a Fisher przy małych n",
       lc_toolbar(
         lc_slider("ch3_n", "Wielkość próby", 10, 200, 20, 5),
+        lc_segmented("ch3_cat", "Kategorie", c("Równe (50/50)" = "equal",
+                                               "Rzadkie (10/90)" = "rare")),
         lc_action("ch3_sim", "Symuluj", variant = "solid"),
         lc_readouts(uiOutput("ch3_sim_results"))
       ),
       lc_plot("ch3_sim_plot", max_height = "250px"),
-      lc_caption("500 prób z prawdziwą H₀ (brak związku), α = 0.05.")
+      lc_caption("500 prób z prawdziwą H₀ (brak związku), α = 0.05. Tabele, w których
+        χ² nie da się policzyć (pusty wiersz lub kolumna), są pomijane.")
     ),
 
     lc_p("Przy domyślnym n = 20 prawie każda wylosowana tabela (97%) ma
@@ -101,9 +104,9 @@ ch3_ui <- lecture_chapter(
       trzyma poziom α: dokładny rachunek daje 5.1% fałszywych alarmów. Test
       Fishera odrzuca prawdziwą H₀ tylko w 2.1% prób. Pojedyncza symulacja
       z 500 prób odchyla się od tych wartości typowo o jeden punkt procentowy,
-      dlatego okienko Fishera zwykle świeci się na czerwono. Tym razem nie
-      dlatego, że test się myli zbyt często, ale dlatego, że myli się zbyt
-      rzadko."),
+      dlatego odczyt Fishera zwykle jest bursztynowy: test nie myli się zbyt
+      często, tylko zbyt rzadko. Czerwony kolor oznaczałby więcej fałszywych
+      alarmów, niż zakłada α."),
 
     lc_p("Widać to też na histogramie. Gdy H₀ jest prawdziwa, p-wartości
       powinny rozkładać się mniej więcej równomiernie między 0 a 1. P-wartości
@@ -115,8 +118,8 @@ ch3_ui <- lecture_chapter(
       prawdziwą H₀, rzadziej odrzuca też fałszywą. Wraz z próbą różnica
       maleje. Przy n = 100 test χ² daje 5.4% fałszywych alarmów, a Fisher 4.3%."),
 
-    lc_p("W tej symulacji obie zmienne mają równie częste kategorie, co jest
-      dla testu χ² sytuacją najłatwiejszą. Kłopoty zaczynają się przy rzadkich
+    lc_p("Przy ustawieniu „Równe” obie zmienne mają równie częste kategorie, co
+      jest dla testu χ² sytuacją najłatwiejszą. Kłopoty zaczynają się przy rzadkich
       kategoriach i wtedy przybliżenie potrafi mylić się w obie strony. Przy
       n = 20, gdy jedna zmienna ma kategorie po 50%, a odpowiedź „Tak” daje
       tylko 10% badanych, test χ² odrzuca prawdziwą H₀ w 2.6% prób. Gdy
@@ -124,7 +127,10 @@ ch3_ui <- lecture_chapter(
       fałszywych alarmów jest już 6.7%, więcej niż zakłada α. Reguła ≥ 5 nie
       wyznacza więc granicy, za którą test przestaje działać. Jest sygnałem,
       że wynik zależy od przybliżenia i warto go potwierdzić metodą, która
-      przybliżenia nie potrzebuje."),
+      przybliżenia nie potrzebuje. Ustawienie „Rzadkie” daje w obu zmiennych
+      jedną kategorię o częstości 10%: przy n = 20 test χ² odrzuca prawdziwą
+      H₀ w około 8% prób, a Fisher w około 1%. Od n = 30 χ² wraca w okolice 5%,
+      a Fisher pozostaje konserwatywny."),
 
     # ========================================================================
     # Kiedy który?
@@ -256,14 +262,17 @@ ch3_server <- function(input, output, session) {
   observeEvent(input$ch3_sim, {
     n <- input$ch3_n
     n_sims <- 500
+    # „Rzadkie”: w obu zmiennych jedna kategoria ma 10% częstości.
+    p_cat <- if (identical(input$ch3_cat, "rare")) c(0.1, 0.9) else c(0.5, 0.5)
 
     results <- sapply(1:n_sims, function(i) {
       # H0 prawdziwa: brak związku
-      x <- sample(c("A", "B"), n, replace = TRUE)
-      y <- sample(c("Tak", "Nie"), n, replace = TRUE)
+      x <- factor(sample(c("A", "B"), n, replace = TRUE, prob = p_cat), levels = c("A", "B"))
+      y <- factor(sample(c("Tak", "Nie"), n, replace = TRUE, prob = p_cat), levels = c("Tak", "Nie"))
       tab <- table(x, y)
 
-      p_chi <- tryCatch(chisq.test(tab, correct = FALSE)$p.value, error = function(e) NA)
+      p_chi <- tryCatch(suppressWarnings(chisq.test(tab, correct = FALSE)$p.value),
+                        error = function(e) NA)
       p_fisher <- fisher.test(tab)$p.value
 
       c(p_chi = p_chi, p_fisher = p_fisher)
@@ -280,8 +289,15 @@ ch3_server <- function(input, output, session) {
     fpr_chi <- mean(df$p_chi < 0.05, na.rm = TRUE) * 100
     fpr_fisher <- mean(df$p_fisher < 0.05, na.rm = TRUE) * 100
 
-    chi_color <- if (abs(fpr_chi - 5) <= 2) col_ok else col_fail
-    fisher_color <- if (abs(fpr_fisher - 5) <= 2) col_ok else col_fail
+    # Blisko α: zielony; za dużo fałszywych alarmów: czerwony; za mało
+    # (test konserwatywny): bursztynowy.
+    fpr_color <- function(fpr) {
+      if (abs(fpr - 5) <= 2) col_ok
+      else if (fpr > 5) col_fail
+      else unname(upwr_cat["bursztyn"])
+    }
+    chi_color <- fpr_color(fpr_chi)
+    fisher_color <- fpr_color(fpr_fisher)
 
     tagList(
       lc_readout("Fałszywe alarmy χ²", paste0(round(fpr_chi, 1), "%"), color = chi_color),

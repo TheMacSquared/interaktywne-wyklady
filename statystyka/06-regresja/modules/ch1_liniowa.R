@@ -341,7 +341,7 @@ ch1_ui <- list(
               "Wyraźny dodatni wpływ" = "strong_positive",
               "Brak wpływu" = "none",
               "Wyraźny ujemny wpływ" = "strong_negative",
-              "Ten sam trend, mała próba" = "small_sample"
+              "Ten sam trend, mała próba i większy szum" = "small_sample"
             ),
             selected = "strong_positive"
           ),

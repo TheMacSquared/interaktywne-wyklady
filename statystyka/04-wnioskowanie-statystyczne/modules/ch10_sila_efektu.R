@@ -381,7 +381,8 @@ ch10_ui <- list(
     ),
 
     lc_p("Panel losuje po 30 obserwacji w trzech grupach z populacji o zadanym
-      η². Tabela pod wykresem podaje średnie i η² tej populacji."),
+      η². Odczyty i tabela pod wykresem podają η² i średnie w populacji
+      oraz w wylosowanej próbie."),
 
     figure_panel(
       label = "Ryc. 10.5",
@@ -898,20 +899,24 @@ ch10_server <- function(input, output, session) {
     c(mu_ctr - delta, mu_ctr, mu_ctr + delta)
   }
 
-  zoom_plot_server("ch10_eta_plot", reactive({
+  ch10_eta_data <- reactive({
     req(input$ch10_eta_level, input$ch10_eta_scenario)
     eta <- as.numeric(input$ch10_eta_level)
     sc  <- ch10_eta_scenarios[[input$ch10_eta_scenario]]
     mus <- ch10_eta_means(eta, sc$mu_ctr, sc$s)
     set.seed(202)
     n_per <- 30
-    df <- data.frame(
+    data.frame(
       grupa = factor(rep(sc$grp, each = n_per), levels = sc$grp),
       y = c(rnorm(n_per, mus[1], sc$s),
             rnorm(n_per, mus[2], sc$s),
             rnorm(n_per, mus[3], sc$s))
     )
-    ggplot(df, aes(x = grupa, y = y, fill = grupa)) +
+  })
+
+  zoom_plot_server("ch10_eta_plot", reactive({
+    sc <- ch10_eta_scenarios[[input$ch10_eta_scenario]]
+    ggplot(ch10_eta_data(), aes(x = grupa, y = y, fill = grupa)) +
       geom_boxplot(alpha = 0.5, outlier.alpha = 0.5) +
       geom_jitter(width = 0.15, alpha = 0.4, size = 1.5) +
       scale_fill_upwr() +
@@ -925,18 +930,23 @@ ch10_server <- function(input, output, session) {
     sc  <- ch10_eta_scenarios[[input$ch10_eta_scenario]]
     e   <- ch10_eta_examples[[input$ch10_eta_level]]
     mus <- ch10_eta_means(eta, sc$mu_ctr, sc$s)
-    pct <- round(100 * eta)
+    df <- ch10_eta_data()
+    grand <- mean(df$y)
+    grp_means <- tapply(df$y, df$grupa, mean)
+    eta_sample <- sum(table(df$grupa) * (grp_means - grand)^2) / sum((df$y - grand)^2)
     tagList(
       lc_readouts(
-        lc_readout("η²", input$ch10_eta_level),
-        lc_readout("Wariancji wyjaśnione", paste0(pct, "%"))
+        lc_readout("η² w populacji", input$ch10_eta_level),
+        lc_readout("η² w próbie", sprintf("%.3f", eta_sample), color = col_effect)
       ),
       lc_table(
-        data.frame(group = sc$grp[1:3], mean = mus[1:3], s = sc$s),
+        data.frame(group = sc$grp[1:3], mu = mus[1:3],
+                   mean = unname(grp_means[sc$grp[1:3]]), s = sc$s),
         cols = list(
           lc_col("group", "Grupa", "row"),
-          lc_col("mean", "x̄", digits = 1),
-          lc_col("s", "s", digits = if (sc$s %% 1 == 0) 0 else 1)
+          lc_col("mu", "μ (populacja)", digits = 1),
+          lc_col("mean", "x̄ (próba)", digits = 1),
+          lc_col("s", "σ", digits = if (sc$s %% 1 == 0) 0 else 1)
         )
       ),
       lc_caption(e$kontekst)

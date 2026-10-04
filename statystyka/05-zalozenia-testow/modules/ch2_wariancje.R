@@ -59,7 +59,8 @@ ch2_ui <- lecture_chapter(
     lc_p("Zanim sięgniemy po test, warto zobaczyć, jak różne wariancje wyglądają
       na wykresie i jak bardzo wariancje z próby wahają się nawet wtedy, gdy
       w populacji są równe. Panel losuje dwie grupy z rozkładów normalnych
-      o średnich 170 i 175 i o odchyleniach standardowych ustawionych suwakami,
+      o średnich 170 i 175, o odchyleniach standardowych i liczebnościach
+      ustawionych suwakami,
       a pod wykresem podaje odchylenia z próby i iloraz większej wariancji
       do mniejszej."),
 
@@ -69,7 +70,8 @@ ch2_ui <- lecture_chapter(
       lc_toolbar(
         lc_slider("ch2_sd1", "SD grupy A", 2, 30, 10, 1),
         lc_slider("ch2_sd2", "SD grupy B", 2, 30, 10, 1),
-        lc_slider("ch2_n_per", "n (na grupę)", 15, 100, 40, 5),
+        lc_slider("ch2_n1", "n grupy A", 15, 100, 40, 5),
+        lc_slider("ch2_n2", "n grupy B", 15, 100, 40, 5),
         lc_action("ch2_gen", "Generuj dane", variant = "solid"),
         lc_readouts(uiOutput("ch2_var_stats"))
       ),
@@ -184,15 +186,21 @@ ch2_ui <- lecture_chapter(
       w około 5.2%. Ponieważ średnie w panelu zawsze różnią się o 5, oba testy przy
       domyślnych ustawieniach odrzucają H₀ w podobnej części losowań, około 60%."),
 
-    lc_p("Kłopot pojawia się, gdy grupy mają różne liczebności, a tego panel
-      nie pokazuje. W symulacji z 20 obserwacjami w grupie o odchyleniu 20
-      i 80 obserwacjami w grupie o odchyleniu 5, przy równych średnich,
+    lc_p("Kłopot pojawia się, gdy grupy mają różne liczebności. W symulacji
+      z 20 obserwacjami w grupie o odchyleniu 20 i 80 obserwacjami w grupie o odchyleniu 5, przy równych średnich,
       test Studenta odrzuca prawdziwą H₀ w około 29% losowań zamiast w 5%.
       Wariancja wspólna jest zdominowana przez liczniejszą grupę o małym
       rozrzucie, więc błąd standardowy wychodzi za mały. Gdy odwrócimy układ
       i większy rozrzut ma liczniejsza grupa, test Studenta prawie nigdy nie
       odrzuca H₀ (około 0.1%) i traci moc. Test Welcha w obu układach trzyma
       się poziomu 5%."),
+
+    lc_p("Pierwszy z tych układów można ustawić na Ryc. 2.1: grupa A z 20
+      obserwacjami i odchyleniem 20, grupa B z 80 obserwacjami i odchyleniem 5.
+      Na Ryc. 2.3 statystyka t testu Studenta wyjdzie wtedy wyraźnie większa
+      co do wartości bezwzględnej niż w teście Welcha, bo zaniżony błąd
+      standardowy ją zawyża. Pojedyncze losowanie nie pokaże odsetka fałszywych
+      alarmów, ale pokazuje mechanizm."),
 
     lc_p("Dlatego coraz częściej zaleca się używanie testu Welcha domyślnie,
       bez wstępnego sprawdzania wariancji. Gdy wariancje są równe, Welch traci
@@ -245,7 +253,7 @@ ch2_server <- function(input, output, session) {
 
   observeEvent(input$ch2_gen, {
     ch2_data(generate_two_groups(
-      n1 = input$ch2_n_per, n2 = input$ch2_n_per,
+      n1 = input$ch2_n1, n2 = input$ch2_n2,
       sd1 = input$ch2_sd1, sd2 = input$ch2_sd2
     ))
   })
@@ -278,7 +286,7 @@ ch2_server <- function(input, output, session) {
     tagList(
       lc_readout("SD(A)", round(stats$sd[1], 2), color = col_test),
       lc_readout("SD(B)", round(stats$sd[2], 2), color = col_alt),
-      lc_readout("Iloraz wariancji", round(ratio, 2), color = if (ratio < 4) col_ok else col_fail)
+      lc_readout("Iloraz wariancji", round(ratio, 2))
     )
   })
 
