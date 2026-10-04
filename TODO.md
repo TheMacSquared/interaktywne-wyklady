@@ -303,13 +303,6 @@ Rekomendacje (do przyjęcia przy wznowieniu, bez dalszych decyzji teraz):
 
 - [ ] Ocenić interaktywny łańcuch pojęć jako treść tego wykładu (uogólnienie —
   patrz sekcja globalna).
-### 03 — alarm i prawda
-
-- [ ] Tablica 2×2 (`a3_table`) po migracji ma polskie nagłówki (Stan, Alarm,
-  Brak alarmu, Razem), nadgłówek „Odczyt detektora” i wiersz sum; wcześniej
-  surowe nazwy `state`, `alarm`, `no_alarm` i liczby typu 95.00. Obejrzeć
-  i zatwierdzić.
-
 ### 05 — ile prób do zdarzenia
 
 - [ ] Sekcja `rte/parametryzacje`: dopisać zdanie o konwencji „+1” dla
@@ -323,66 +316,8 @@ Rekomendacje (do przyjęcia przy wznowieniu, bez dalszych decyzji teraz):
 Uwaga: powtórzone `id = "most"` w różnych rozdziałach nie jest błędem —
 kotwice sekcji to `blok-rozdział-sekcja` (`R/risk_block.R`, l. 420).
 
-### 07 — czas życia
-
-- [ ] **Decyzja:** wzór (7.2) λ̂ = d/Σtᵢ (`modules/block.R`, ok. l. 162)
-  kłóci się z zapowiedzią „bez estymacji parametrów”, ale pokazuje użycie
-  obserwacji cenzorowanych. Warianty: zostaje / przenieść do
-  `risk_derivation()` / usunąć i przenumerować (7.3)–(7.17). Rozstrzygnąć
-  przed zatwierdzeniem treści wykładu.
-
-- [ ] **Decyzja:** kolejność definicji — wzór (7.1) i przykład 7.1 używają f(t)
-  i R(t) przed definicją 7.4, a rozdział o cenzorowaniu opiera się na modelu
-  wykładniczym z rozdziału 4. Warianty: zostaje z jawnym odesłaniem w przód /
-  przestawić rozdziały (`jezyk` przed `mttf` i `cenzorowanie`). Powiązane
-  z decyzją o wzorze (7.2).
-- [ ] **Decyzja:** proces i rozkład Poissona pojawiają się w l. 428–456 bez
-  definicji (nigdzie w kursie). Warianty: jedno zdanie definicji w sekcji
-  `gamma` / zostaje jako „most” bez definicji.
-
-### 08 — niezawodność systemu
-
-Plik: `modules/block.R`.
-
-- [ ] **Decyzja:** widget czasu (ok. l. 679, przykład 8.6) używa MTTF
-  1800 / 2000 / 2500 h spoza danych Bananpolu — zostaje czy ujednolicić?
-- [ ] **Decyzja:** sterownik C ma R = 0,98, tyle co zasilanie Bananpolu —
-  zostaje czy zmienić (np. 0,97) i przeliczyć przykłady 8.5, 8.7, 8.11
-  (ok. l. 370, 562)?
-- [ ] Zweryfikować komunikację fikcyjnego progu 14,5 °C w definicji sukcesu.
-
-- [ ] **Decyzja:** rezerwa oczekująca jest wprowadzona jednym zdaniem (l. 242),
-  a jest przedmiotem pytania quizu 5. Warianty: dopisać krótką definicję
-  (stan w oczekiwaniu, przełącznik) / zostaje jako wzmianka.
-- [ ] **Decyzja:** układ k-z-n nie występuje w wykładzie, a używa go zadanie
-  9.5 (2-z-3) w `materialy/analiza-ryzyka/cwiczenia-listy-zadan.md`.
-  Warianty: dodać krótką sekcję w wykładzie / usunąć z listy ćwiczeń /
-  zostaje jako zadanie dodatkowe.
-- [ ] **Decyzja:** tytuł rozdziału `redundancja` („Istotność Birnbauma”) nie
-  obejmuje dwóch pierwszych sekcji (malejąca korzyść redundancji, kopie
-  zapasowe). Warianty: zostaje (tytuł = tag pojęcia) / „Redundancja
-  i istotność”.
-
-### 09 — drzewo błędów
-
-- [ ] **Decyzja:** ranking potencjalnej redukcji (`f9_rank_plot`, ok. l. 607)
-  liczy na stałych bazowych (0,005; 0,05; 0,08), więc suwak zmienia tylko
-  skalę, nie kolejność. Warianty: zostaje / podpiąć suwaki z rozdziału 3 /
-  pokazać redukcję względną lub istotność krytyczną obok Birnbauma.
-
-- [ ] **Decyzja (merytoryczna):** l. 73 mówi „detekcja ma osobne zasilanie”,
-  a l. 158, 403, 432 traktują utratę zasilania jako wspólną przyczynę
-  wyłączającą detekcję i tłumienie (także checkbox w l. 157). Warianty:
-  detekcja ma osobne zasilanie, a przykład wspólnej przyczyny dotyczy innego
-  zasobu / detekcja i tłumienie dzielą zasilanie (zmienić l. 73 i opis
-  danych).
 ### 10 — od modelu do decyzji
 
-- [ ] **Decyzja:** horyzont roczny (sekcja `id = "rok"`, ok. l. 393,
-  wzór 10.9). Obecnie wynik główny to jedna misja, a
-  P_rok = 1 − (1 − P(TOP))³ ≈ 0,005 jest rozszerzeniem; 1 − R_sys³ ≈ 0,641
-  pokazano jako pułapkę. Warianty: zostaje / horyzont roczny jako wynik główny
-  (zmiana serwera i `risk_mission_analysis()`).
 - [ ] **Zunifikować misję ochrony termicznej z danymi Bananpol z jRISK**
   (decyzja 2026-10-02: wariant A1, odłożone na osobną sesję). Cel: wątek
   ćwiczeń dane → parametr → model → decyzja domyka się w wykładzie 10.

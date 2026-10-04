@@ -70,7 +70,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
     ),
     callout = list(
       label = "Dane Bananpolu",
-      text = "Małe drzewo pożaru magazynu: P(inicjacji w roku) 0.005, P(braku detekcji | inicjacja) 0.05, P(niepowodzenia modułu tłumienia | inicjacja) 0.08. Analizujemy co najwyżej jedną inicjację w roku; parametry barier dotyczą tej inicjacji. Moduł tłumienia oznacza zdolność wykonawczą przy poprawnym sygnale, a detekcja ma osobne zasilanie. Liczby są fikcyjne.",
+      text = "Małe drzewo pożaru magazynu: P(inicjacji w roku) 0.005, P(braku detekcji | inicjacja) 0.05, P(niepowodzenia modułu tłumienia | inicjacja) 0.08. Analizujemy co najwyżej jedną inicjację w roku; parametry barier dotyczą tej inicjacji. Moduł tłumienia oznacza zdolność wykonawczą przy poprawnym sygnale. W modelu bazowym detekcja i tłumienie zawodzą niezależnie; w rozdziale o wspólnych przyczynach sprawdzimy wariant, w którym dzielą zasilanie. Liczby są fikcyjne.",
       color = "uwaga"
     ),
     sections = list(
@@ -496,7 +496,8 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             "Istotność krytyczna zdarzenia bazowego i to względny spadek P(TOP) przypadający na względny spadek p_i. Równoważnie: prawdopodobieństwo, że zdarzenie i zaszło i było krytyczne, pod warunkiem że zaszło zdarzenie szczytowe."
           )),
           risk_try("zostaw redukcję 0.5 i odczytaj kolejność słupków. Potem zmień redukcję na 0.2 i 0.9 — sprawdź, czy kolejność się zmienia."),
-          risk_widget_panel("Wrażliwość", "Ta sama redukcja względna każdego liścia", lc_slider("f9_reduction", "Redukcja parametru", 0, .9, .5, .05), "f9_rank_plot", "f9_rank_stats"),
+          risk_widget_panel("Wrażliwość", "Ta sama redukcja względna każdego liścia", lc_slider("f9_reduction", "Redukcja parametru", 0, .9, .5, .05), "f9_rank_plot", "f9_rank_stats",
+            note = "Parametry bazowe drzewa jak w przykładzie 9.3: P(I) = 0.005, P(D | I) = 0.05, P(S | I) = 0.08."),
           c(
             "Widget liczy ranking dla wartości bazowych 0.005; 0.05; 0.08, niezależnie od suwaków z rozdziału o rachunku. Przy r = 0.5 słupki mają wysokości 0.000315 dla inicjacji, 0.000190 dla tłumienia i 0.000115 dla detekcji — to 50%, 30% i 18% wyjściowego P(TOP). Istotności krytyczne wynoszą więc 1, około 0.60 dla tłumienia i około 0.37 dla detekcji.",
             "Zmiana r skaluje wszystkie słupki w tej samej proporcji i nie zmienia kolejności — tak mówi wzór (9.10). Inicjacja wygrywa, bo każdy scenariusz przez nią przechodzi: należy do obu minimalnych przekrojów. Tłumienie wyprzedza detekcję, bo zawodzi częściej (0.08 wobec 0.05), więc jego przekrój {I, S} odpowiada za większą część ryzyka."

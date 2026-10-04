@@ -650,7 +650,7 @@ alarm_server <- function(input, output, session) {
     d <- detector()
     counts <- matrix(c(d$alarm, d$no_alarm), nrow = 2,
                      dimnames = list(d$state, c("Alarm", "Brak alarmu")))
-    lc_crosstab(counts, measure = "n", row_name = "Stan", col_name = "Odczyt detektora",
+    lc_crosstab(counts, measure = "n", row_name = "Stan", col_name = "Odczyt detektora", big_mark = " ",
                 lead = FALSE, label = "Tablica 2×2 dla 10 000 zmian")
   })
   output$a3_counts <- renderUI({

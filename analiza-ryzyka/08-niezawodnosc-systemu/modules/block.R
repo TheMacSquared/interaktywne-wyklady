@@ -150,7 +150,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         id = "sukces", title = "Niezawodność systemu na czas misji",
         body = list(
           c(
-            "Definicja sukcesu jest decyzją, a nie faktem technicznym. W dojrzewalni można przyjąć, że chłodzenie działa, gdy temperatura w komorze nie przekracza 14.5 °C; ale można też wymagać, żeby dodatkowo działał alarm przekroczenia, bo bez niego awaria wyjdzie na jaw dopiero rano. Druga definicja dołącza do systemu czujnik i kanał alarmowy — i obniża niezawodność, bo wymaga więcej.",
+            "Definicja sukcesu jest decyzją, a nie faktem technicznym. W dojrzewalni można przyjąć, że chłodzenie działa, gdy temperatura w komorze nie przekracza 14.5 °C (próg przyjęty w przykładzie); ale można też wymagać, żeby dodatkowo działał alarm przekroczenia, bo bez niego awaria wyjdzie na jaw dopiero rano. Druga definicja dołącza do systemu czujnik i kanał alarmowy — i obniża niezawodność, bo wymaga więcej.",
             "Drugą decyzją jest horyzont. Z wykładu o czasie życia wiemy, że R(t) maleje z czasem, więc bez t liczba nie ma sensu. Dla systemu obowiązuje ta sama zasada: niezawodność systemu to funkcja czasu, a do jednego rachunku wchodzą tylko niezawodności elementów liczone dla tego samego t."
           ),
           risk_definition("8.1", "Niezawodność systemu", c(
@@ -341,7 +341,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             "Dla dwóch jednakowych gałęzi (λ_A = λ_B = λ) to 2/λ - 1/(2λ) = 3/(2λ): druga gałąź wydłuża średni czas życia o połowę, a nie dwukrotnie. Hazard układu równoległego nie jest stały — na początku jest bliski zeru, a z czasem rośnie do λ, gdy zostaje jedna gałąź."
           ), lines = c("MTTF_p = ∫ [e^(-λ_A t) + e^(-λ_B t) - e^(-(λ_A+λ_B)t)] dt", "       = 1/λ_A + 1/λ_B - 1/(λ_A + λ_B)", "λ_A = λ_B = λ:  MTTF_p = 3/(2λ)")),
           risk_example("8.6", "R systemu na 1000 h z MTTF elementów",
-            problem = "W widgecie poniżej elementy mają wykładnicze czasy życia: wentylator A — MTTF 1800 h, wentylator B — 2000 h, sterownik — 2500 h. Oblicz R systemu mieszanego na misję 1000 h oraz średni czas do awarii systemu.",
+            problem = "W widgecie poniżej elementy mają wykładnicze czasy życia: wentylator A — MTTF 1800 h, wentylator B — 2000 h, sterownik — 2500 h (wartości ilustracyjne, inne niż w danych Bananpolu). Oblicz R systemu mieszanego na misję 1000 h oraz średni czas do awarii systemu.",
             steps = c(
               "R_A(1000) = e^(-1000/1800) ≈ 0.574; R_B(1000) = e^(-0.5) ≈ 0.607; R_C(1000) = e^(-0.4) ≈ 0.670.",
               "Blok równoległy: R_AB = 1 - 0.426 · 0.393 ≈ 0.832.",
@@ -499,7 +499,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
     pitfall = "Suwak P(utraty wspólnego zasilania) nie zastępuje opisu mechanizmu wspólnej przyczyny."
   ),
   list(
-    id = "redundancja", title = "Istotność Birnbauma", hook = "Kolejny zapas daje coraz mniej",
+    id = "redundancja", title = "Redundancja i istotność", hook = "Kolejny zapas daje coraz mniej",
     lead = "Kolejna gałąź poprawia R, lecz wnosi koszt i coraz mniejszy przyrost; ta sama poprawa elementu ma różną wartość w różnych miejscach architektury.",
     intro = c(
       "Skoro drugi wentylator tak pomaga, czemu nie zamontować czterech? Rachunek odpowiada krzywą nasycenia. Przy gałęziach o R = 0.9 pierwsza dodatkowa gałąź obniża zawodność z 0.1 do 0.01, a druga z 0.01 do 0.001. Każda redukuje ryzyko dziesięciokrotnie, ale druga oszczędza w liczbach bezwzględnych już tylko 0.009, podczas gdy koszt każdej gałęzi jest taki sam.",
@@ -539,6 +539,16 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           )
         ),
         takeaway = "Przy niezależnych, jednakowych gałęziach każda kolejna redukuje stały ułamek pozostałego ryzyka, lecz coraz mniejszą wartość bezwzględną, a koszt rośnie liniowo. Wielkość korzyści zależy jednak od niezawodności gałęzi i od wspólnych przyczyn: zależne zasilanie potrafi odebrać redundancji większość obiecanego zysku."
+      ),
+      list(
+        id = "kzn", title = "Układ k z n",
+        body = list(
+          "Między szeregiem a układem równoległym jest cała rodzina pośrednich architektur. Układ k z n działa, gdy działa co najmniej k z n elementów. Szereg to układ n z n, układ równoległy to 1 z n, a typowy przykład pośredni to głosowanie 2 z 3: trzy czujniki temperatury, z których alarm uznajemy, gdy zgłoszą go co najmniej dwa.",
+          "Dla n jednakowych, niezależnych elementów o niezawodności r liczba działających elementów ma rozkład dwumianowy z wykładu 04, więc niezawodność układu to suma prawdopodobieństw, że działa k, k + 1, …, n elementów:",
+          risk_formula("R_{k\\,z\\,n}=\\sum_{j=k}^{n}\\binom{n}{j}\\,r^{j}(1-r)^{n-j},\\qquad R_{2\\,z\\,3}=3r^{2}-2r^{3}",
+            legend = c("k" = "najmniejsza liczba działających elementów", "n" = "liczba elementów", "r" = "niezawodność jednego elementu")),
+          "Dla r = 0.9 układ 2 z 3 ma niezawodność 3 · 0.81 - 2 · 0.729 = 0.972: mniej niż dwa elementy równolegle (0.99), ale więcej niż jeden element. W zamian pojedynczy fałszywy odczyt nie wywołuje alarmu — dlatego głosowanie stosuje się tam, gdzie liczą się oba rodzaje błędów."
+        )
       ),
       list(
         id = "transfer", title = "Przykład transferowy: kopie zapasowe",

@@ -127,6 +127,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
         )),
         risk_formula("MTTF=E(T)=\\int_{0}^{\\infty} t\\,f(t)\\,dt", num = "7.1",
           legend = c("T" = "czas życia elementu", "f(t)" = "gęstość czasu życia", "t" = "czas pracy (h)")),
+        "Gęstość f(t) i niezawodność R(t) pojawiają się tu przed formalną definicją; dokładnie zdefiniujemy je w definicji 7.4, a na razie wystarczy intuicja: f(t) opisuje, jak gęsto awarie skupiają się wokół chwili t.",
         "Wzór (7.1) jest ciągłą wersją średniej ważonej: każdy możliwy moment awarii t mnożymy przez jego „wagę” f(t) dt i sumujemy. Wynik jest jedną liczbą. Dwie gęstości o zupełnie różnych kształtach mogą dać tę samą całkę — tak jak dwie klasy o różnym rozkładzie ocen mogą mieć tę samą średnią. Zanim policzymy, dlaczego tak jest, zagłosuj.",
         risk_vote_panel("c7_vote", "c7_vote_feedback", "Czy ten sam MTTF oznacza takie samo R(1000 h)?", c("Tak" = "yes", "Nie — znaczenie ma cały rozkład" = "distribution", "Tylko dla Weibulla" = "weibull"), full_width = FALSE, correct = "distribution"),
         risk_example("7.1", "Dwie oferty, jedna średnia",
@@ -411,7 +412,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
       list(
         id = "gamma", title = "Rozkład gamma i przypadek Erlanga",
         text = c(
-          "W wykładzie piątym czekaliśmy na r-te wykrycie, licząc dyskretne próby; gamma robi to samo w czasie ciągłym. Liczbę zdarzeń, na którą czekamy, oznaczamy tu przez k — to ta sama wielkość co r z wykładu piątego. W jednorodnym procesie Poissona o intensywności λ czas do k-tego zdarzenia jest sumą k niezależnych czasów wykładniczych o tej samej intensywności — tak jak ujemny dwumianowy był sumą k oczekiwań geometrycznych. Ta paralela to nie przypadek, lecz ta sama konstrukcja w dwóch skalach czasu.",
+          "W wykładzie piątym czekaliśmy na r-te wykrycie, licząc dyskretne próby; gamma robi to samo w czasie ciągłym. Liczbę zdarzeń, na którą czekamy, oznaczamy tu przez k — to ta sama wielkość co r z wykładu piątego. Model zdarzeń w czasie nazywamy jednorodnym procesem Poissona, gdy zdarzenia pojawiają się pojedynczo, ze stałą intensywnością λ, a liczby zdarzeń w rozłącznych odcinkach czasu są niezależne; liczba zdarzeń w przedziale [0, t] ma wtedy rozkład Poissona o średniej λt. W jednorodnym procesie Poissona o intensywności λ czas do k-tego zdarzenia jest sumą k niezależnych czasów wykładniczych o tej samej intensywności — tak jak ujemny dwumianowy był sumą k oczekiwań geometrycznych. Ta paralela to nie przypadek, lecz ta sama konstrukcja w dwóch skalach czasu.",
           "Erlang jest rozkładem gamma o całkowitym parametrze kształtu k: sumą k niezależnych etapów o wykładniczych czasach — na przykład czasem do k-tej awarii w jednorodnym procesie Poissona. Ogólny rozkład gamma dopuszcza dowolne k>0. Kształt niecałkowity traci interpretację etapów, ale pozwala modelować hazard rosnący (k>1) albo malejący (k<1) i dopasowywać rozkład do danych bez sztucznego zaokrąglania."
         ),
         body = list(
@@ -700,7 +701,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
   ),
   list(
     id = "sciaga", title = "Ściąga i sprawdzenie", hook = "Najpierw mechanizm, potem termin",
-    lead = "Czas → cenzorowanie → R(t) i h(t) → mechanizm → plan; interpretuj funkcje czasu życia bez estymacji parametrów.",
+    lead = "Czas → cenzorowanie → R(t) i h(t) → mechanizm → plan; interpretuj funkcje czasu życia; jedyną estymacją w wykładzie jest λ̂ z danych cenzorowanych (7.2).",
     intro = c(
       "Zanim przejdziesz do quizu, sprawdź, czy umiesz odpowiedzieć na pięć pytań poniżej dla dowolnego elementu ze swojego otoczenia — od baterii w laptopie po pasek rozrządu. To one, a nie wzory, są szkieletem analizy czasu życia.",
       "Quiz pyta o interpretacje — zwłaszcza o to, co naprawdę znaczy stały hazard — a ćwiczenia prowadzą od rachunku R(t) przez diagnozę cenzorowania po dobór kształtu Weibulla do mechanizmu."

@@ -1126,11 +1126,11 @@ lc_num <- function(x, digits = 0, big_mark = "", int_width = NULL) {
 }
 
 # Najdłuższa część całkowita w kolumnie liczbowej (dla lc_num(int_width =)).
-.lc_int_width <- function(x, digits = 0) {
+.lc_int_width <- function(x, digits = 0, big_mark = "") {
   x <- suppressWarnings(as.numeric(x))
   x <- x[is.finite(x)]
   if (!length(x)) return(NULL)
-  max(nchar(sub("\\..*$", "", lc_fmt(x, digits))))
+  max(nchar(sub("\\..*$", "", lc_fmt(x, digits, big_mark))))
 }
 
 # Wartość p: „< 0.001” poniżej progu, inaczej 3 miejsca. Zwraca HTML jako tekst.
@@ -1423,10 +1423,12 @@ lc_table_preview <- function(df, n = 20, split = 2, cols = NULL, total = nrow(df
 # na c(i, j). short_labels: krótkie etykiety kolumn na wąskim kontenerze.
 # cell_tags: macierz etykiet znaczeniowych komórek (np. „trafienie”).
 # col_colours: kolory kategorii kolumn (próbka w nagłówku zamiast legendy wykresu).
+# big_mark: separator tysięcy liczebności, np. " " (10 000).
 lc_crosstab <- function(tab, measure = c("n", "row", "col"), target = NULL,
                         row_name = "", col_name = "", short_labels = NULL,
                         cell_tags = NULL, input_id = NULL, digits = 1,
-                        lead = TRUE, label = "Tabela krzyżowa", col_colours = NULL) {
+                        lead = TRUE, label = "Tabela krzyżowa", col_colours = NULL,
+                        big_mark = "") {
   measure <- match.arg(measure)
   tab <- as.matrix(tab)
   storage.mode(tab) <- "double"
@@ -1447,9 +1449,9 @@ lc_crosstab <- function(tab, measure = c("n", "row", "col"), target = NULL,
                    row = col_tot / total * 100)
   grand <- if (measure == "n") total else 100
   col_width <- vapply(seq_along(cols), function(j) {
-    .lc_int_width(c(value[, j], bottom[j]), value_digits)
+    .lc_int_width(c(value[, j], bottom[j]), value_digits, big_mark)
   }, numeric(1))
-  right_width <- .lc_int_width(c(right, grand), value_digits)
+  right_width <- .lc_int_width(c(right, grand), value_digits, big_mark)
   is_target <- function(i, j) !is.null(target) && target[1] == i && target[2] == j
   is_base_row <- function(i) measure == "row" && !is.null(target) && target[1] == i
   is_base_col <- function(j) measure == "col" && !is.null(target) && target[2] == j
@@ -1464,7 +1466,7 @@ lc_crosstab <- function(tab, measure = c("n", "row", "col"), target = NULL,
             tags$span(class = "lc-l-short", `aria-hidden` = "true", short_labels[j]))
   }
   cell <- function(i, j) {
-    shown <- HTML(lc_num(value[i, j], value_digits, int_width = col_width[j]))
+    shown <- HTML(lc_num(value[i, j], value_digits, big_mark, int_width = col_width[j]))
     content <- tagList(
       if (!is.null(cell_tags)) tags$span(class = "lc-cell-tag", cell_tags[i, j]),
       shown
@@ -1480,12 +1482,12 @@ lc_crosstab <- function(tab, measure = c("n", "row", "col"), target = NULL,
       `data-label` = cols[j], content)
   }
   row_total <- function(i) {
-    v <- lc_num(right[i], value_digits, int_width = right_width)
+    v <- lc_num(right[i], value_digits, big_mark, int_width = right_width)
     tags$td(class = .lc_classes("n is-total", if (measure == "row") "is-base-val",
                                 if (is_base_row(i)) "is-base"), HTML(v))
   }
   col_total <- function(j) {
-    v <- lc_num(bottom[j], value_digits, int_width = col_width[j])
+    v <- lc_num(bottom[j], value_digits, big_mark, int_width = col_width[j])
     tags$td(class = .lc_classes("n", if (measure == "col") "is-base-val",
                                 if (is_base_col(j)) "is-base"), HTML(v))
   }
@@ -1511,7 +1513,7 @@ lc_crosstab <- function(tab, measure = c("n", "row", "col"), target = NULL,
     tags$tfoot(tags$tr(
       tags$th(scope = "row", "Razem"),
       lapply(seq_along(cols), col_total),
-      tags$td(class = "n is-total", HTML(lc_num(grand, value_digits, int_width = right_width)))
+      tags$td(class = "n is-total", HTML(lc_num(grand, value_digits, big_mark, int_width = right_width)))
     ))
   )
   lead_tag <- if (isTRUE(lead)) tags$p(class = "lc-tbl-lead", switch(measure,
