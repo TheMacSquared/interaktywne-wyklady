@@ -26,8 +26,8 @@ ch2_ui <- list(
     lc_h2("ch2-czym-jest", "Czym jest przedział ufności?"),
 
     lc_p("Z ", gloss("centralne twierdzenie graniczne", "centralnego twierdzenia
-      granicznego"), " wiemy, że średnia z próby X̄ ma w przybliżeniu rozkład
-      normalny o średniej μ i odchyleniu standardowym SE = σ/√n, czyli ",
+      granicznego"), " wiemy, że średnia z próby X̄ ma w przybliżeniu ", gloss("rozkład normalny"), "
+      o średniej μ i ", gloss("odchylenie standardowe", "odchyleniu standardowym"), " SE = σ/√n, czyli ",
       gloss("błąd standardowy", "błędzie standardowym"), ". W rozkładzie normalnym
       95% wartości leży nie dalej niż 1.96 odchylenia standardowego od środka.
       Dla średniej oznacza to, że w około 95% prób X̄ leży nie dalej niż 1.96·SE
@@ -60,14 +60,14 @@ ch2_ui <- list(
       czyli kwantyle rozkładu N(0, 1), które odcinają odpowiednio po 5% i po 0.5%
       w każdym ogonie. Po drugie, SE zawiera σ, którego zwykle nie znamy. W praktyce
       zastępujemy je odchyleniem standardowym z próby s, a 1.96 — kwantylem
-      rozkładu t-Studenta z wykładu 02 (dla n = 30 jest to 2.05). Szczegółami tej
+      ", gloss("rozkład t-Studenta", "rozkładu t-Studenta"), " z wykładu 02 (dla n = 30 jest to 2.05). Szczegółami tej
       wersji zajmiemy się w rozdziale 3, ale symulacja poniżej już jej używa."),
 
     lc_h2("ch2-wiele-ci", "Wiele przedziałów ufności"),
 
     lc_p("Definicja mówi o tym, co dzieje się w wielu próbach, a w prawdziwym
       badaniu mamy jedną. Symulacja pozwala powtórzyć badanie dowolnie wiele razy
-      na populacji, w której znamy μ. Domyślnie jest to wzrost o rozkładzie
+      na ", gloss("populacja", "populacji"), ", w której znamy μ. Domyślnie jest to wzrost o rozkładzie
       normalnym z μ = 170 cm i σ = 10 cm. Każda wylosowana próba daje jeden
       przedział x̄ ± t·s/√n, narysowany jako poziomy odcinek z kropką w miejscu
       średniej. Przerywana linia pionowa to μ. Przedziały, które ją obejmują, są

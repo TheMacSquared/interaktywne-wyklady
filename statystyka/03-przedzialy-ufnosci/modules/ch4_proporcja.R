@@ -21,15 +21,15 @@ ch4_ui <- list(
     lc_h2("ch4-wzor", "Wzór"),
 
     lc_p("W poprzednim rozdziale przedział dla średniej składał się z trzech
-      elementów: estymatora \\(\\bar{x}\\), błędu standardowego \\(s/\\sqrt{n}\\)
+      elementów: ", gloss("estymator", "estymatora"), " \\(\\bar{x}\\), błędu standardowego \\(s/\\sqrt{n}\\)
       i wartości krytycznej \\(t^*\\). Wiele pytań badawczych dotyczy jednak
       odsetka: jaka część studentów zdała egzamin, jaka część wyborców popiera
       partię, ile procent produktów jest wadliwych. Każda pojedyncza odpowiedź
-      ma tu dwa warianty, TAK albo NIE, a parametrem populacji jest proporcja
+      ma tu dwa warianty, TAK albo NIE, a ", gloss("parametr", "parametrem"), " ", gloss("populacja", "populacji"), " jest proporcja
       \\(p\\), czyli odsetek odpowiedzi TAK."),
 
     lc_p("Estymatorem \\(p\\) jest ", gloss("proporcja z próby"), " \\(\\hat{p}\\):
-      liczba odpowiedzi TAK \\(x\\) podzielona przez liczebność próby \\(n\\)."),
+      liczba odpowiedzi TAK \\(x\\) podzielona przez ", gloss("liczebność"), " próby \\(n\\)."),
 
     lc_formula_box(
       withMathJax("$$\\hat{p} = \\frac{x}{n}$$")
@@ -62,10 +62,10 @@ ch4_ui <- list(
       withMathJax("$$CI = \\hat{p} \\pm z^*_{\\alpha/2} \\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$$")
     ),
 
-    lc_p("W odróżnieniu od rozdziału 3 nie sięgamy po rozkład t-Studenta.
+    lc_p("W odróżnieniu od rozdziału 3 nie sięgamy po ", gloss("rozkład t-Studenta"), ".
       Rozkład t opisuje średnią z danych o rozkładzie normalnym, gdy \\(\\sigma\\)
       szacujemy z próby niezależnie od średniej. Dane zero-jedynkowe nie mają
-      rozkładu normalnego, a ich odchylenie standardowe \\(\\sqrt{p(1-p)}\\)
+      rozkładu normalnego, a ich ", gloss("odchylenie standardowe"), " \\(\\sqrt{p(1-p)}\\)
       wynika wprost z \\(p\\). Uzasadnieniem przedziału jest tu przybliżenie
       normalne rozkładu \\(\\hat{p}\\), więc i wartość krytyczna pochodzi
       z rozkładu normalnego."),

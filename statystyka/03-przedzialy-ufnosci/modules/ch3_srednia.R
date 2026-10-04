@@ -26,9 +26,9 @@ ch3_ui <- list(
 
     lc_h2("ch3-wzor", "Wzór"),
 
-    lc_p("Punktem wyjścia jest centralne twierdzenie graniczne z wykładu 02.
+    lc_p("Punktem wyjścia jest ", gloss("centralne twierdzenie graniczne"), " z wykładu 02.
       Średnia z próby \\(\\bar{x}\\) leży w około 95% prób nie dalej niż
-      1.96 błędu standardowego \\(\\sigma/\\sqrt{n}\\) od średniej populacji μ.
+      1.96 błędu standardowego \\(\\sigma/\\sqrt{n}\\) od średniej ", gloss("populacja", "populacji"), " μ.
       Skoro μ rzadko leży dalej od \\(\\bar{x}\\) niż 1.96 błędu standardowego,
       możemy odwrócić to zdanie: zakres \\(\\bar{x} \\pm 1.96 \\cdot \\sigma/\\sqrt{n}\\)
       obejmuje μ w 95% prób. Przeszkoda jest jedna: σ populacji zwykle nie znamy."),
@@ -37,8 +37,8 @@ ch3_ui <- list(
       standardowym"), " z próby \\(s\\). Wynik \\(s/\\sqrt{n}\\) to ",
       gloss("błąd standardowy"), " średniej (SE) oszacowany z danych. Ponieważ
       \\(s\\) też zmienia się z próby na próbę, do niepewności średniej
-      dochodzi niepewność samego SE. Z tego powodu mnożnik 1.96 z rozkładu
-      normalnego zastępujemy kwantylem ", gloss("rozkład t-Studenta",
+      dochodzi niepewność samego SE. Z tego powodu mnożnik 1.96 z ", gloss("rozkład normalny", "rozkładu
+      normalnego"), " zastępujemy kwantylem ", gloss("rozkład t-Studenta",
       "rozkładu t-Studenta"), " z \\(n - 1\\) ", gloss("stopnie swobody",
       "stopniami swobody"), ", który poznaliśmy w wykładzie 02. Tak powstaje ",
       gloss("przedział ufności"), " dla średniej populacji:"),
@@ -110,7 +110,7 @@ ch3_ui <- list(
       Interesuje nas wtedy różnica średnich populacji \\(\\mu_1 - \\mu_2\\),
       a jej estymatą jest różnica średnich z prób \\(\\bar{x}_1 - \\bar{x}_2\\).
       Obie średnie mają własną niepewność. Dla niezależnych prób
-      wariancje estymatorów się dodają, więc błąd standardowy różnicy to
+      ", gloss("wariancja", "wariancje"), " ", gloss("estymator", "estymatorów"), " się dodają, więc błąd standardowy różnicy to
       pierwiastek z sumy kwadratów błędów standardowych obu średnich:"),
 
     lc_formula_box(

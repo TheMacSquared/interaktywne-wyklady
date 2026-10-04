@@ -19,7 +19,7 @@ ch5_ui <- list(
     ),
 
     lc_p("W dwóch poprzednich rozdziałach budowaliśmy przedziały dla średniej
-      i dla proporcji. Za każdym razem wynik miał tę samą postać: estymata
+      i dla proporcji. Za każdym razem wynik miał tę samą postać: ", gloss("estymata"), "
       punktowa plus minus pewna odległość. Od tej odległości zależy, czy
       przedział jest użyteczny. Przedział „wzrost studentów leży między 150
       a 190 cm” jest poprawny, ale nic nie mówi. W tym rozdziale sprawdzimy,
@@ -31,7 +31,7 @@ ch5_ui <- list(
     lc_p("Odległość od estymaty do każdej z granic przedziału nazywamy ",
       gloss("margines błędu", "marginesem błędu"), " (ME, od ang. margin of
       error). Cały przedział ma szerokość 2·ME. Dla średniej margines błędu
-      to iloczyn wartości krytycznej rozkładu t i błędu standardowego:"),
+      to iloczyn ", gloss("wartość krytyczna", "wartości krytycznej"), " rozkładu t i błędu standardowego:"),
 
     lc_formula_box(withMathJax(
       "$$ME = t^* \\cdot \\frac{s}{\\sqrt{n}}$$"
@@ -82,7 +82,7 @@ ch5_ui <- list(
       9.93, przy n = 30 już tylko 2.99. Dalej spłaszcza się i kolejne
       obserwacje dają coraz mniej."),
 
-    lc_p("To ten sam mechanizm, który poznaliśmy w wykładzie 02: błąd standardowy
+    lc_p("To ten sam mechanizm, który poznaliśmy w wykładzie 02: ", gloss("błąd standardowy"), "
       maleje jak 1/√n, więc żeby zmniejszyć go o połowę, trzeba czterokrotnie
       większej próby. Margines błędu dziedziczy tę zależność. Przejście z n = 25
       do n = 100 skraca go z 3.30 do 1.59, czyli nieco ponad dwukrotnie,
@@ -101,8 +101,8 @@ ch5_ui <- list(
       "$$n = \\left(\\frac{z^* \\cdot s}{ME_{\\text{max}}}\\right)^2$$"
     )),
 
-    lc_p("Wynik zaokrąglamy zawsze w górę. Zamiast t* używamy tu z* z rozkładu
-      normalnego, bo t* zależy od n, którego jeszcze nie znamy. Przy próbach,
+    lc_p("Wynik zaokrąglamy zawsze w górę. Zamiast t* używamy tu z* z ", gloss("rozkład normalny", "rozkładu
+      normalnego"), ", bo t* zależy od n, którego jeszcze nie znamy. Przy próbach,
       jakie zwykle wychodzą z tego wzoru, różnica między t* a z* jest niewielka.
       Najtrudniejsze jest s: przed badaniem nie mamy danych, więc odchylenie
       standardowe trzeba założyć na podstawie badania pilotażowego, wcześniejszych

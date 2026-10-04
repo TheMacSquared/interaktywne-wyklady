@@ -18,8 +18,8 @@ ch1_ui <- list(
                 gdzie leży wartość dla wszystkich i z jakim zapasem."
     ),
 
-    lc_p("Wykład 02 zakończyliśmy centralnym twierdzeniem granicznym. Pokazało ono,
-      że średnia z próby jest zmienną losową: każda nowa próba daje inną średnią,
+    lc_p("Wykład 02 zakończyliśmy ", gloss("centralne twierdzenie graniczne", "centralnym twierdzeniem granicznym"), ". Pokazało ono,
+      że średnia z próby jest ", gloss("zmienna losowa", "zmienną losową"), ": każda nowa próba daje inną średnią,
       a średnie z wielu prób układają się w ", gloss("rozkład próbkowy"), "
       o środku μ i odchyleniu standardowym σ/√n. Tam patrzyliśmy na to od strony
       populacji: znaliśmy μ i σ i pytaliśmy, jakie średnie z prób mogą wyjść.
@@ -75,9 +75,9 @@ ch1_ui <- list(
       lc_plot("ch1_estimates_plot", max_height = "400px")
     ),
 
-    lc_p("Populacja „wzrostu” ma rozkład normalny ze średnią μ = 170 cm
+    lc_p("Populacja „wzrostu” ma ", gloss("rozkład normalny"), " ze średnią μ = 170 cm
       i odchyleniem standardowym σ = 10 cm. Przy n = 30 średnie z prób rozkładają
-      się wokół 170 cm z błędem standardowym σ/√n = 10/√30 ≈ 1.83 cm, więc około
+      się wokół 170 cm z ", gloss("błąd standardowy", "błędem standardowym"), " σ/√n = 10/√30 ≈ 1.83 cm, więc około
       95% z nich wypada między 166.4 a 173.6 cm. Po kilkudziesięciu losowaniach
       dwie rzeczy są wyraźne. Pojedyncze estymaty rozrzucają się po obu stronach μ,
       ale ich średnia leży tuż przy μ. Wartość „SD estymat” w panelu jest bliska
@@ -89,7 +89,7 @@ ch1_ui <- list(
 
     lc_p("Średnia z próby nie jest jedynym możliwym estymatorem środka populacji.
       Równie dobrze można by użyć mediany z próby, średniej z najmniejszej
-      i największej obserwacji albo średniej ucinanej. Żeby wybrać między nimi,
+      i największej obserwacji albo ", gloss("średnia ucinana", "średniej ucinanej"), ". Żeby wybrać między nimi,
       potrzebujemy kryteriów. Statystyka ocenia estymatory według trzech
       podstawowych własności: ",
       gloss("nieobciążoność", "nieobciążoności"), ", ",
@@ -100,7 +100,7 @@ ch1_ui <- list(
 
     lc_h3("Nieobciążoność", num = "1"),
 
-    lc_p("Estymator jest nieobciążony, gdy jego wartość oczekiwana jest równa
+    lc_p("Estymator jest nieobciążony, gdy jego ", gloss("wartość oczekiwana"), " jest równa
       szacowanemu parametrowi:"),
 
     lc_formula_box(withMathJax(
@@ -117,7 +117,7 @@ ch1_ui <- list(
 
     lc_note("Kontrprzykład", tags$p(gloss("wariancja", "Wariancja"), " z próby liczona
       z dzieleniem przez n, ",
-      withMathJax("\\(\\frac{1}{n}\\sum(x_i - \\bar{x})^2\\)"), ", jest obciążona.
+      withMathJax("\\(\\frac{1}{n}\\sum(x_i - \\bar{x})^2\\)"), ", jest ", gloss("obciążenie", "obciążona"), ".
       Jej wartość oczekiwana wynosi (n - 1)/n · σ², więc średnio zaniża wariancję
       populacji. Dla n = 10 i σ² = 100 daje średnio 90 zamiast 100. Dlatego
       wariancję z próby liczy się z dzieleniem przez n - 1: ta poprawka usuwa
