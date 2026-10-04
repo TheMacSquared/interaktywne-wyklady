@@ -33,7 +33,7 @@ ch3_ui <- list(
     lc_p(gloss("histogram", "Histogram"), " to podstawowy wykres dla ",
       gloss("zmienna ciągła", "zmiennych ciągłych"), ". Zakres wartości dzielimy
       na przedziały równej szerokości (biny), a wysokość słupka nad przedziałem
-      pokazuje, ile obserwacji do niego wpadło. Poniżej budujemy histogram
+      pokazuje, ile ", gloss("obserwacja", "obserwacji"), " do niego wpadło. Poniżej budujemy histogram
       krok po kroku na danych z ankiety 200 studentów."),
 
     figure_panel(
@@ -65,7 +65,7 @@ ch3_ui <- list(
 
     lc_p("Histogram pokazuje cały rozkład, ale do porównań i raportów potrzebujemy
       czegoś krótszego: liczby, która mówi, gdzie leży środek danych. Takie
-      liczby nazywamy statystykami położenia."),
+      liczby nazywamy ", gloss("statystyka", "statystykami"), " położenia."),
 
     # ========================================================================
     # WIDGET 0a: Mean introduction
@@ -254,7 +254,7 @@ ch3_ui <- list(
       )
     ),
 
-    lc_p("Wykres słupkowy rysuje osobny słupek dla każdej wartości: zero, jednej,
+    lc_p(gloss("wykres słupkowy", "Wykres słupkowy"), " rysuje osobny słupek dla każdej wartości: zero, jednej,
       dwóch nieobecności i tak dalej, więc pokazuje liczebności dokładnie.
       Histogram dzieli oś na przedziały, których granice nie pokrywają się
       z liczbami całkowitymi. Dwie sąsiednie wartości mogą trafić do jednego
@@ -272,7 +272,7 @@ ch3_ui <- list(
     lc_h2("ch3-modalnosc", "Modalność rozkładu — ile „górek” ma histogram?"),
 
     lc_p("W rozdziale o ", gloss("zmienna jakościowa", "zmiennych jakościowych"),
-      " dominantą nazywaliśmy najczęstszą kategorię. Dla zmiennej ciągłej to
+      " ", gloss("dominanta", "dominantą"), " nazywaliśmy najczęstszą kategorię. Dla zmiennej ciągłej to
       pojęcie trzeba przerobić: prawie każda wartość występuje tylko raz, więc
       zamiast najczęstszej wartości szukamy najwyższego miejsca histogramu,
       czyli szczytu rozkładu. Szczyt nazywamy ", gloss("moda", "modą"), "."),
@@ -338,7 +338,7 @@ ch3_ui <- list(
       tutaj 11.5 cm, to ",
       gloss("rozstęp międzykwartylowy"), " (IQR). Jest to miara rozrzutu
       odporna na wartości odstające, z tego samego powodu co mediana. Korzysta
-      z niej wykres pudełkowy pod histogramem; wrócimy do niego w następnym
+      z niej ", gloss("wykres pudełkowy"), " pod histogramem; wrócimy do niego w następnym
       rozdziale."),
 
     # ====================================================================

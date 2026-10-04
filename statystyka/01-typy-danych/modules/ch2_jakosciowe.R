@@ -31,9 +31,9 @@ ch2_ui <- list(
 
     lc_p("Wynik liczenia zapisujemy w ", gloss("tabela częstości", "tabeli częstości"),
       ". Dla każdej kategorii podaje ona ", gloss("liczebność"), " \\(n_i\\),
-      czyli liczbę obserwacji w tej kategorii, oraz ",
+      czyli liczbę ", gloss("obserwacja", "obserwacji"), " w tej kategorii, oraz ",
       gloss("częstość względna", "częstość względną"), " \\(f_i\\), czyli udział
-      kategorii w całej próbie liczącej \\(n\\) obserwacji. Częstość względną
+      kategorii w całej ", gloss("próba", "próbie"), " liczącej \\(n\\) obserwacji. Częstość względną
       podajemy jako ułamek albo jako procent."),
 
     lc_formula_box(withMathJax(
@@ -42,7 +42,7 @@ ch2_ui <- list(
 
     lc_p("Tabelę uzupełnia ", gloss("częstość skumulowana"), ": suma częstości
       od pierwszej kategorii do bieżącej, podawana zwykle w procentach. Panel poniżej buduje tabelę krok
-      po kroku dla dwóch zmiennych z ankiety 200 studentów: kierunku studiów
+      po kroku dla dwóch ", gloss("zmienna", "zmiennych"), " z ankiety 200 studentów: kierunku studiów
       i zadowolenia ze studiów."),
 
     figure_panel(
@@ -331,11 +331,11 @@ ch2_ui <- list(
       niewielka zmiana w danych przenosi dominantę na inną kategorię."),
 
     lc_p("Dla zmiennych nominalnych dominanta jest jedyną sensowną miarą
-      tendencji centralnej. Średniej nie da się obliczyć z nazw kategorii,
+      tendencji centralnej. ", gloss("średnia", "Średniej"), " nie da się obliczyć z nazw kategorii,
       bo „Biologii” nie można dodać do „Ekonomii”, a bez naturalnej kolejności
       nie istnieje też kategoria środkowa. Dla zmiennych porządkowych,
       takich jak zadowolenie, kategorię środkową już można wskazać; tę miarę,
-      medianę, poznamy w następnym rozdziale."),
+      ", gloss("mediana", "medianę"), ", poznamy w następnym rozdziale."),
 
     lc_chapter_next(
       num       = "03",

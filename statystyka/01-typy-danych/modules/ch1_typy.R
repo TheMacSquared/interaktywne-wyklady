@@ -28,7 +28,7 @@ ch1_ui <- list(
       jest pytanie o kierunek studiów. Gdyby Biologię zapisać jako 1, Ekonomię
       jako 2, Informatykę jako 3, a Psychologię jako 4, „średni kierunek” 200
       ankietowanych wyniósłby 2.45 — coś między Ekonomią a Informatyką, czyli nic.
-      Zanim więc cokolwiek policzymy, musimy rozpoznać typ każdej zmiennej."),
+      Zanim więc cokolwiek policzymy, musimy rozpoznać typ każdej ", gloss("zmienna", "zmiennej"), "."),
 
     # --- Widget 1: Taxonomy tree ---
     lc_h2("ch1-taksonomia", "Taksonomia typów danych"),

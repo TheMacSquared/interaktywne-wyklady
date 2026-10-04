@@ -20,8 +20,8 @@ ch4_ui <- list(
     uiOutput("tracker_ch4"),
 
     lc_p("W poprzednim rozdziale streszczaliśmy dane jedną liczbą opisującą
-      położenie: średnią, medianą albo percentylem. Taka liczba nie mówi
-      jednak, czy obserwacje skupiają się ciasno wokół środka, czy są szeroko
+      położenie: ", gloss("średnia", "średnią"), ", ", gloss("mediana", "medianą"), " albo ", gloss("percentyl", "percentylem"), ". Taka liczba nie mówi
+      jednak, czy ", gloss("obserwacja", "obserwacje"), " skupiają się ciasno wokół środka, czy są szeroko
       rozrzucone. W tym rozdziale poznamy miary, które to opisują, zbudujemy
       wykres pudełkowy, zapowiedziany przy percentylach, i sprawdzimy, które
       miary rozrzutu są odporne na wartości odstające."),
@@ -87,9 +87,9 @@ ch4_ui <- list(
     )),
 
     lc_p("Dzielimy przez \\(n - 1\\), a nie przez \\(n\\), bo odchylenia liczymy od
-      średniej obliczonej z tej samej próby. Średnia próby leży zawsze
+      średniej obliczonej z tej samej ", gloss("próba", "próby"), ". Średnia próby leży zawsze
       w środku tych konkretnych danych, więc suma kwadratów odchyleń wychodzi
-      nieco mniejsza niż wokół prawdziwej średniej populacji. Dzielenie przez
+      nieco mniejsza niż wokół prawdziwej średniej ", gloss("populacja", "populacji"), ". Dzielenie przez
       \\(n - 1\\) koryguje to zaniżenie. Przy dużych próbach różnica jest
       niewielka."),
 
@@ -131,7 +131,7 @@ ch4_ui <- list(
       najwyżej jednego odchylenia standardowego od średniej, około 95% —
       dwóch, a 99.7% — trzech."),
 
-    lc_p("Panel nakłada te trzy pasy na histogram wybranej zmiennej z ankiety
+    lc_p("Panel nakłada te trzy pasy na ", gloss("histogram"), " wybranej zmiennej z ankiety
       i podaje, jaki odsetek danych naprawdę w nich leży."),
 
     figure_panel(
@@ -158,7 +158,7 @@ ch4_ui <- list(
       Jego lewy kraniec to wartość niemożliwa, a po prawej stronie i tak
       zostają dwie obserwacje. Średnia i odchylenie standardowe opisują
       rozkład dobrze tylko wtedy, gdy jest on w przybliżeniu symetryczny.
-      Dla rozkładów skośnych lepiej sięgnąć po miary oparte na kwartylach."),
+      Dla rozkładów skośnych lepiej sięgnąć po miary oparte na ", gloss("kwartyl", "kwartylach"), "."),
 
     # ====================================================================
     # WIDGET 3: Boxplot builder

@@ -28,12 +28,12 @@ ch5_ui <- list(
     # --- Widget 1: Skewness ---
     lc_h2("ch5-skosnosc", "Skośność (asymetria)"),
 
-    lc_p("W rozdziale 3 zauważyliśmy, że dla czasu dojazdu średnia (35.7 min)
-      jest wyraźnie większa od mediany (32.9 min). Przyczyną był długi prawy
+    lc_p("W rozdziale 3 zauważyliśmy, że dla czasu dojazdu ", gloss("średnia"), " (35.7 min)
+      jest wyraźnie większa od ", gloss("mediana", "mediany"), " (32.9 min). Przyczyną był długi prawy
       ogon: kilka bardzo długich dojazdów podnosiło średnią, a mediana na nie
       nie reagowała. Taką asymetrię rozkładu mierzy ",
-      gloss("skośność"), ". Liczymy ją, standaryzując każdą obserwację, czyli
-      wyrażając jej odległość od średniej w odchyleniach standardowych,
+      gloss("skośność"), ". Liczymy ją, standaryzując każdą ", gloss("obserwacja", "obserwację"), ", czyli
+      wyrażając jej odległość od średniej w ", gloss("odchylenie standardowe", "odchyleniach standardowych"), ",
       a następnie uśredniając trzecie potęgi tych odległości."),
 
     lc_formula_box(withMathJax(
@@ -103,7 +103,7 @@ ch5_ui <- list(
       nie wychwyci, bo ogony po obu stronach znoszą się w trzeciej potędze.
       Tę cechę mierzy ", gloss("kurtoza"), ". Wzór ma tę samą budowę co
       skośność, ale z czwartą potęgą. Od wyniku odejmujemy 3, czyli wartość
-      dla rozkładu normalnego, i otrzymujemy kurtozę nadwyżkową."),
+      dla ", gloss("rozkład normalny", "rozkładu normalnego"), ", i otrzymujemy kurtozę nadwyżkową."),
 
     lc_formula_box(withMathJax(
       "$$g_2 = \\frac{1}{n} \\sum_{i=1}^{n} \\left( \\frac{x_i - \\bar{x}}{s} \\right)^4 - 3$$"
@@ -159,7 +159,7 @@ ch5_ui <- list(
       środek danych, statystyki rozrzutu — jak szeroko dane się rozkładają,
       a skośność i kurtoza — jaki mają kształt. Razem dają pełny opis
       rozkładu ", gloss("zmienna ilościowa", "zmiennej ilościowej"), ".
-      Panel poniżej zestawia histogram, wykres pudełkowy i tabelę wszystkich
+      Panel poniżej zestawia ", gloss("histogram"), ", ", gloss("wykres pudełkowy"), " i tabelę wszystkich
       omówionych statystyk dla wybranej zmiennej."),
 
     figure_panel(
