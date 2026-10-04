@@ -993,14 +993,7 @@ jezyk_block <- list(
                i 08.",
             "Suma zdarzeń jest trudniejsza. Kusi, żeby dodać P(A) i P(B), ale wyniki
                należące do obu zdarzeń zostałyby wtedy policzone dwa razy — raz w A i raz
-               w B. W definicji klasycznej |A ∪ B| = |A| + |B| - |A ∩ B|, bo część
-               wspólną trzeba odjąć raz. Po podzieleniu przez |Ω| dostajemy wzór (1.5).",
-            risk_formula("P(A\\cup B)=P(A)+P(B)-P(A\\cap B)", num = "1.5",
-              legend = c(
-                "A\\cup B" = "zaszło A lub B (lub oba)",
-                "A\\cap B" = "zaszły jednocześnie A i B"
-              )),
-            "Część wspólną odejmujemy, ponieważ przy dodawaniu została policzona dwa razy.",
+               w B. Prześledź to na diagramie, zanim zapiszemy jakikolwiek wzór.",
             risk_try("klikaj „Dalej” i obserwuj diagram krok po kroku. Na
               kroku 2 zwróć uwagę, który obszar dostał dwa kolory; na kroku 4 sprawdź,
               dlaczego samo dodawanie przestaje być błędem."),
@@ -1015,12 +1008,22 @@ jezyk_block <- list(
               )
             ),
             "Naiwna suma 0.70 + 0.60 = 1.30 łamie własność 0 ≤ P ≤ 1 ze wzoru (1.3) —
-               to sygnał, że coś policzono podwójnie. Po odjęciu części wspólnej wynik
-               0.90 jest poprawny: to prawdopodobieństwo, że zaszło przynajmniej jedno z
-               dwóch zdarzeń. W ostatnim kroku koła się nie stykają, P(A ∩ B) = 0 i
-               wzór (1.5) upraszcza się do zwykłego dodawania. Dodawanie prawdopodobieństw
-               bez poprawki jest więc poprawne tylko dla zdarzeń rozłącznych
-               (definicja 1.7).",
+               to sygnał, że coś policzono podwójnie. Wystarczy odjąć część wspólną
+               raz: wynik 0.90 jest poprawny i oznacza prawdopodobieństwo, że zaszło
+               przynajmniej jedno z dwóch zdarzeń.",
+            "Ta sama zasada działa przy liczeniu elementów. W definicji klasycznej
+               |A ∪ B| = |A| + |B| - |A ∩ B|, bo część wspólna wchodzi do obu
+               składników, a w sumie ma się znaleźć jeden raz. Po podzieleniu przez |Ω|
+               dostajemy wzór (1.5).",
+            risk_formula("P(A\\cup B)=P(A)+P(B)-P(A\\cap B)", num = "1.5",
+              legend = c(
+                "A\\cup B" = "zaszło A lub B (lub oba)",
+                "A\\cap B" = "zaszły jednocześnie A i B"
+              )),
+            "W ostatnim kroku demonstracji koła się nie stykają, P(A ∩ B) = 0 i
+               wzór (1.5) upraszcza się do zwykłego dodawania. Dodawanie
+               prawdopodobieństw bez poprawki jest więc poprawne tylko dla zdarzeń
+               rozłącznych (definicja 1.7).",
             risk_example("1.4", "Nocna zmiana lub piątek",
               problem = c(
                 "Wróć do losowania zmiany z przykładu 1.3 (|Ω| = 15, A — zmiana nocna,
@@ -1043,32 +1046,32 @@ jezyk_block <- list(
         list(
           id = "siatka", title = "Zbuduj dwa zdarzenia na 100 kontrolach",
           body = list(
-            "Zmieniaj liczebności A i B oraz ich część wspólną. Aplikacja pilnuje, by
+            "Zmieniaj liczebności zdarzeń Me i Be oraz ich część wspólną. Aplikacja pilnuje, by
                wybrane zbiory mogły zmieścić się w przestrzeni 100 wyników.",
             "Tym razem przestrzeń to sto kontroli korytarza, a prawdopodobieństwa są
-               częstościami z definicji 1.2: P(A) = |A|/100. Każdy kwadrat to jedna
-               kontrola i należy do dokładnie jednej z czterech grup — tylko A, tylko B,
-               A i B, ani A, ani B. Cztery grupy są parami rozłączne i razem wypełniają
+               częstościami z definicji 1.2: P(Me) = |Me|/100. Każdy kwadrat to jedna
+               kontrola i należy do dokładnie jednej z czterech grup — tylko Me, tylko Be,
+               Me i Be, ani Me, ani Be. Cztery grupy są parami rozłączne i razem wypełniają
                Ω, dlatego wszystkie wzory tego rozdziału można sprawdzić zwykłym
                liczeniem kwadratów.",
-            risk_try("zostaw ustawienia startowe (A = 30, B = 20, część wspólna 8) i
+            risk_try("zostaw ustawienia startowe (Me = 30, Be = 20, część wspólna 8) i
               policz kwadraty w każdym kolorze. Potem zwiększ część wspólną do 20 i
-              zmniejsz ją do 0. Na koniec ustaw A = 80 i B = 40 i sprawdź, dlaczego
+              zmniejsz ją do 0. Na koniec ustaw Me = 80 i Be = 40 i sprawdź, dlaczego
               suwak części wspólnej nie pozwala zejść poniżej 20."),
             figure_panel(
               label = "Ćwiczenie 4",
               title = "Suma, iloczyn i dopełnienie zdarzeń",
               full_width = TRUE,
               lc_toolbar(
-                lc_slider("ch4_n_a", "Liczba kontroli ze zdarzeniem A", 0, 80, 30, 1),
-                lc_slider("ch4_n_b", "Liczba kontroli ze zdarzeniem B", 0, 80, 20, 1),
-                lc_slider("ch4_overlap", "Liczba kontroli z A i B", 0, 20, 8, 1),
+                lc_slider("ch4_n_a", "Liczba kontroli ze zdarzeniem Me", 0, 80, 30, 1),
+                lc_slider("ch4_n_b", "Liczba kontroli ze zdarzeniem Be", 0, 80, 20, 1),
+                lc_slider("ch4_overlap", "Liczba kontroli z Me i Be", 0, 20, 8, 1),
                 lc_readouts(uiOutput("ch4_stats"))
               ),
               lc_plot("ch4_event_grid", ratio = "1.3/1", max_height = "480px")
             ),
-            "Przy ustawieniach startowych panel pokazuje P(A ∩ B) = 0.08, P(A ∪ B) =
-               0.42, P(Aᶜ) = 0.70 i „ani A, ani B” = 0.58. Sprawdzenie wzorem (1.5):
+            "Przy ustawieniach startowych panel pokazuje P(Me ∩ Be) = 0.08, P(Me ∪ Be) =
+               0.42, P(Meᶜ) = 0.70 i „ani Me, ani Be” = 0.58. Sprawdzenie wzorem (1.5):
                0.30 + 0.20 - 0.08 = 0.42. Ostatnia wartość to 1 - 0.42, bo kontrola,
                w której nie było ani skórki, ani mokrej posadzki, jest dokładnie
                dopełnieniem sumy. Tę równoważność zapisują prawa de Morgana.",
@@ -1078,7 +1081,7 @@ jezyk_block <- list(
                „nie zaszło A lub nie zaszło B”. W raportach bezpieczeństwa przydaje się
                szczególnie pierwsze — kontrola „bez żadnych uwag” jest dopełnieniem sumy
                wszystkich rodzajów uwag. Suwak części wspólnej ma też ograniczenia: przy
-               A = 80 i B = 40 część wspólna musi mieć co najmniej 20 kontroli, bo
+               Me = 80 i Be = 40 część wspólna musi mieć co najmniej 20 kontroli, bo
                inaczej suma przekroczyłaby 100.",
             risk_check("j1_chk_suma",
               "W 100 kontrolach P(A) = 0.30, P(B) = 0.20, a P(A ∪ B) = 0.50. Co można powiedzieć o zdarzeniach A i B?",
@@ -1937,10 +1940,10 @@ jezyk_zbiory_server <- function(input, output, session) {
     union <- values$n_a + values$n_b - values$overlap
 
     tagList(
-      lc_readout("P(A ∩ B)", risk_fmt_p(values$overlap / 100), color = upwr_cat[["wrzos"]]),
-      lc_readout("P(A ∪ B)", risk_fmt_p(union / 100), color = upwr_accent),
-      lc_readout("P(Aᶜ)", risk_fmt_p(1 - values$n_a / 100), color = upwr_cat[["szalwia"]]),
-      lc_readout("Ani A, ani B", risk_fmt_p((100 - union) / 100), color = upwr_reference)
+      lc_readout("P(Me ∩ Be)", risk_fmt_p(values$overlap / 100), color = upwr_cat[["wrzos"]]),
+      lc_readout("P(Me ∪ Be)", risk_fmt_p(union / 100), color = upwr_accent),
+      lc_readout("P(Meᶜ)", risk_fmt_p(1 - values$n_a / 100), color = upwr_cat[["szalwia"]]),
+      lc_readout("Ani Me, ani Be", risk_fmt_p((100 - union) / 100), color = upwr_reference)
     )
   })
 
@@ -1961,6 +1964,9 @@ jezyk_zbiory_server <- function(input, output, session) {
         "Tylko A" = upwr_cat[["terakota"]],
         "Tylko B" = upwr_cat[["niebo"]],
         "Ani A, ani B" = upwr_reference
+      ), labels = c(
+        "A i B" = "Me i Be", "Tylko A" = "Tylko Me",
+        "Tylko B" = "Tylko Be", "Ani A, ani B" = "Ani Me, ani Be"
       )) +
       coord_equal() +
       scale_x_continuous(breaks = NULL) +
