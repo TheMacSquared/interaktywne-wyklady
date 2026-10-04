@@ -184,8 +184,8 @@ ch4_ui <- list(
       gloss("rozkład jednostajny", "rozkład jednostajny ciągły"), " U(a, b).
       Zmienna przyjmuje wartości z przedziału od a do b i żaden fragment
       przedziału nie jest wyróżniony: odcinki tej samej długości mają to samo
-      prawdopodobieństwo. Przykład: autobus odjeżdża co 10 minut, a Ty
-      przychodzisz na przystanek, nie patrząc na rozkład jazdy. Czas
+      prawdopodobieństwo. Przykład: autobus odjeżdża co 10 minut, a pasażer
+      przychodzi na przystanek, nie patrząc na rozkład jazdy. Czas
       oczekiwania ma rozkład U(0, 10). Gęstość jest stała na całym przedziale,
       więc wykres jest prostokątem. Jego wysokość wynika z warunku, że pole
       wynosi 1."),
@@ -221,7 +221,7 @@ ch4_ui <- list(
 
     lc_p("Wróćmy do autobusu. Dla U(0, 10) średni czas oczekiwania to
       E(X) = 5 min, wariancja 100/12 = 8.33, a SD = 2.89 min.
-      Prawdopodobieństwo, że poczekasz dłużej niż 7 minut, to pole prostokąta
+      Prawdopodobieństwo, że pasażer poczeka dłużej niż 7 minut, to pole prostokąta
       od 7 do 10: 3 · 0.1 = 0.3."),
 
     # ========================================================================
@@ -277,12 +277,12 @@ ch4_ui <- list(
     lc_p("Dla tego scenariusza F(1) = 1 − e⁻¹ = 0.632. Oznacza to, że 63%
       odstępów jest krótszych od średniej. Mediana wynosi ln 2 / λ = 0.69 h,
       czyli około 42 minut, mniej niż średnia, bo długi prawy ogon podnosi
-      średnią. Na wiadomość dłużej niż 2 godziny czekasz z prawdopodobieństwem
+      średnią. Na wiadomość dłużej niż 2 godziny czeka się z prawdopodobieństwem
       e⁻² = 0.135."),
 
     lc_p("Rozkład wykładniczy ma nietypową własność, ",
-      gloss("bezpamięciowość"), ". Załóżmy, że czekasz na wiadomość już
-      2 godziny. Prawdopodobieństwo, że poczekasz jeszcze co najmniej godzinę,
+      gloss("bezpamięciowość"), ". Załóżmy, że oczekiwanie na wiadomość trwa już
+      2 godziny. Prawdopodobieństwo, że potrwa jeszcze co najmniej godzinę,
       wynosi P(X > 3 | X > 2) = e⁻³ / e⁻² = e⁻¹ = 0.368. To dokładnie tyle
       samo, ile prawdopodobieństwo czekania ponad godzinę od początku,
       P(X > 1) = 0.368. Czas, który już minął, nie skraca dalszego oczekiwania.

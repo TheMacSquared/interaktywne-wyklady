@@ -32,17 +32,17 @@ ch8_ui <- list(
       kicker = "Rozdział 08 · Rozkłady prawdopodobieństwa",
       num    = "08",
       title  = "Quiz.",
-      lead   = "Czas sprawdzić, czy potrafisz rozpoznać rozkłady w praktyce!"
+      lead   = "Ćwiczenie: rozpoznawanie rozkładów w praktyce."
     ),
 
     lc_h2("ch8-quiz", "Quiz: dopasuj rozkład do zjawiska"),
 
     tagList(
       p("Przeczytaj opis zjawiska i wybierz rozkład, który najlepiej je modeluje.
-        W każdym pytaniu zobaczysz ", tags$b("3 opcje"),
+        Każde pytanie ma ", tags$b("3 opcje"),
         " — jedną poprawną i dwie losowo wybrane błędne."),
-      p("Quiz losuje ", tags$b("10 pytań"), " z puli 60. Możesz go powtarzać
-        wielokrotnie — za każdym razem dostaniesz inny zestaw.")
+      p("Quiz losuje ", tags$b("10 pytań"), " z puli 60. Można go powtarzać
+        wielokrotnie — za każdym razem pojawia się inny zestaw.")
     ),
 
     figure_panel(

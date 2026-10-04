@@ -228,7 +228,7 @@ ch9_ui <- list(
       tags$ol(
         tags$li("Rozdziel dane na dwa stanowiska (Data → Filters: ", tags$code("stanowisko == \"A_montaz\""), ")."),
         tags$li("Dla każdego stanowiska zrób ", tags$b("histogram"), " i oblicz ", tags$b("statystyki opisowe"), " (średnia, mediana, odch. std., skosność)."),
-        tags$li("Które stanowisko ma rozkład bliższy normalnemu? Po czym to poznajesz?"),
+        tags$li("Które stanowisko ma rozkład bliższy normalnemu? Po czym to widać?"),
         tags$li("Dla stanowiska o rozkładzie normalnym: jaki % pomiarów przekracza normę 85 dB? (użyj kalkulatora z parametrami z danych)"),
         tags$li(tags$em("Trudniejsze:"), " Dlaczego stanowisko B mogłoby mieć rozkład skośny? Podaj hipotezę techniczną.")
       )
@@ -269,7 +269,7 @@ ch9_ui <- list(
   lc_h3("Podsumowanie"),
   lc_note("Pytania",
     tags$ol(
-      tags$li("Który rozkład najczęściej widzisz w kontekście BHP i dlaczego?"),
+      tags$li("Który rozkład najczęściej pojawia się w kontekście BHP i dlaczego?"),
       tags$li("Jak wygląda histogram danych z rozkładu wykładniczego? Czym różni się od normalnego?"),
       tags$li("Jaki jest praktyczny sens „bezpamięciowości” rozkładu wykładniczego dla bezpieczeństwa?")
     )
@@ -421,7 +421,7 @@ ch9_ui <- list(
       tags$ol(
         tags$li("Rozdziel dane na dwie odmiany pszenicy."),
         tags$li("Dla każdej odmiany zrób ", tags$b("histogram"), " i oblicz ", tags$b("statystyki opisowe"), " (średnia, mediana, odch. std., kwartyle)."),
-        tags$li("Która odmiana ma rozkład bliższy normalnemu? Po czym to poznajesz?"),
+        tags$li("Która odmiana ma rozkład bliższy normalnemu? Po czym to widać?"),
         tags$li("Dla odmiany o rozkładzie normalnym: jaki % pól jest poniżej normy skupu 5 t/ha? (użyj kalkulatora z parametrami z danych)"),
         tags$li(tags$em("Trudniejsze:"), " Dlaczego druga odmiana mogłaby mieć rozkład skośny? Podaj hipotezę agronomiczną.")
       )
@@ -613,7 +613,7 @@ ch9_ui <- list(
       tags$ol(
         tags$li("Rozdziel dane na dwie linie produkcyjne."),
         tags$li("Dla każdej linii zrób ", tags$b("histogram"), " i oblicz ", tags$b("statystyki opisowe"), " (średnia, mediana, odch. std., kwartyle)."),
-        tags$li("Która linia ma rozkład bliższy normalnemu? Po czym to poznajesz?"),
+        tags$li("Która linia ma rozkład bliższy normalnemu? Po czym to widać?"),
         tags$li("Dla linii o rozkładzie normalnym: jaki % opakowań jest poniżej deklarowanej masy 995 g? (użyj kalkulatora z parametrami z danych)"),
         tags$li(tags$em("Trudniejsze:"), " Dlaczego druga linia mogłaby mieć rozkład skośny? Podaj hipotezę technologiczną.")
       )

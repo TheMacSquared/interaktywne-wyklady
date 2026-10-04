@@ -26,7 +26,7 @@
       "Rzut kostką (każda ściana = 1/6), losowanie numeru w loterii, losowy przydział do grup eksperymentalnych",
       "Liczba wadliwych produktów w partii 100 sztuk, ile osób z 50 odpowie „tak” w ankiecie, skuteczność leku u n pacjentów",
       "Liczba klientów wchodzących do sklepu na godzinę, zgłoszenia na helpdesk dziennie, literówki na stronie tekstu",
-      "Ile razy rzucać monetą, aż wypadnie orzeł; ile CV wysłać, zanim dostaniesz zaproszenie na rozmowę"
+      "Ile razy rzucać monetą, aż wypadnie orzeł; ile CV wysłać przed pierwszym zaproszeniem na rozmowę"
     ),
     stringsAsFactors = FALSE
   )
@@ -170,7 +170,7 @@ ch7_ui <- list(
     lc_chapter_next(
       num       = "08",
       title     = "Quiz",
-      lead      = "sprawdź, czy potrafisz rozpoznać rozkłady w praktyce.",
+      lead      = "rozpoznawanie rozkładów w praktyce.",
       target_id = "ch-quiz"
     )
   )

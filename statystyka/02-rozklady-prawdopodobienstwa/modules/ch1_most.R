@@ -234,8 +234,8 @@ ch1_ui <- list(
 
     lc_p("Ustawienie startowe, cztery razy 0.25, to rozkład, w którym każdy
       wynik jest równie prawdopodobny, jak przy kostce z czterema ściankami.
-      Gdy zwiększysz jedno prawdopodobieństwo, suma przekroczy 1 i rozkład
-      przestanie być poprawny, dopóki nie zmniejszysz innego. Prawdopodobieństwa
+      Po zwiększeniu jednego prawdopodobieństwa suma przekroczy 1 i rozkład
+      przestanie być poprawny, dopóki inne nie zostanie zmniejszone. Prawdopodobieństwa
       w rozkładzie konkurują ze sobą: pula wynosi zawsze 1 i można ją tylko
       inaczej podzielić. Ten sam warunek obowiązuje dla zmiennych ciągłych.
       Tam rolę sumy przejmuje pole pod krzywą gęstości, które również
