@@ -121,6 +121,13 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
 
 - [ ] **Decyzja:** czy interaktywny łańcuch pojęć z analizy ryzyka 01 ma być
   wspólnym komponentem.
+- [ ] (Niezobowiązująco, osobna sesja) Więcej wykresów w Chart.js: przejrzeć
+  wykłady i wskazać wykresy/widgety, które zyskałyby na reakcji po stronie
+  przeglądarki (kursor zamiast suwaka, bez czekania na serwer). Wzorce:
+  statystyka 02 Ryc. 4.3 (`modules/cdf_chart.js`: kolory z tokenów motywu,
+  tryb ciemny, `locale: "en-US"`, start po pojawieniu się w DOM) i statystyka
+  01 Ryc. 2.x (kołowy vs słupkowy). Przy kilku użyciach rozważyć wspólny
+  helper w `R/`.
 
 ### Zapis liczb: kropka dziesiętna i zwykły minus
 
