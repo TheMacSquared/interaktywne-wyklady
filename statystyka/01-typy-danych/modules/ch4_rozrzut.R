@@ -272,7 +272,8 @@ ch4_ui <- list(
       lc_toolbar(
         lc_action("ch4_comp_add1", "Dodaj wartość odstającą (+30 cm)", variant = "solid"),
         lc_action("ch4_comp_add5", "Dodaj 5 wartości odstających", variant = "solid"),
-        lc_action("ch4_comp_reset", icon = "reset", variant = "ghost", aria_label = "Reset")
+        lc_action("ch4_comp_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+        lc_readouts(uiOutput("ch4_comp_n"))
       ),
       lc_plot("ch4_comp_plot", ratio = "1.8/1", max_height = "350px"),
       uiOutput("ch4_comp_table")
@@ -975,11 +976,16 @@ ch4_server <- function(input, output, session) {
       annotate("text", x = (q1 + q3) / 2, y = -7.5,
                label = paste0("IQR = ", round(iqr_val, 1)),
                color = upwr_cat["szalwia"], size = 4, fontface = "bold") +
-      labs(x = "Wzrost (cm)", y = "Liczebność",
-           title = paste0("Histogram wzrostu (n = ", length(vals), ")")) +
+      labs(x = "Wzrost (cm)", y = "Liczebność") +
             coord_cartesian(clip = "off") +
       theme(plot.margin = margin(10, 10, 50, 10))
   }))
+
+  output$ch4_comp_n <- renderUI({
+    vals <- ch4_comp_data()
+    if (is.null(vals)) return(NULL)
+    lc_readout("n", length(vals))
+  })
 
   output$ch4_comp_table <- renderUI({
     vals <- ch4_comp_data()

@@ -279,11 +279,6 @@ ch3b_server <- function(input, output, session) {
 
     plot +
       labs(
-        title = if (identical(step, "all")) {
-          "Połączone dane sugerują związek ujemny"
-        } else {
-          "Wewnątrz gatunków linie mają inny kierunek"
-        },
         x = "Długość dzioba (mm)",
         y = "Wysokość dzioba (mm)"
       ) +
@@ -357,11 +352,6 @@ ch3b_server <- function(input, output, session) {
       ) +
       scale_color_manual(values = .ch3b_species_colors, name = "Gatunek") +
       labs(
-        title = if (identical(input$ch3b_interaction_model, "interaction")) {
-          "Interakcja pozwala gatunkom mieć różne nachylenia"
-        } else {
-          "Model addytywny wymusza równoległe linie"
-        },
         x = "Długość płetwy (mm)",
         y = "Masa ciała (g)",
         shape = "Gatunek"

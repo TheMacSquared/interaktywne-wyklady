@@ -141,10 +141,34 @@ warunki_monty_server <- function(input, output, session) {
         lc_action("w2_monty_sim_1", "+1 gra", variant = "solid"),
         lc_action("w2_monty_sim_10", "+10 gier", variant = "solid"),
         lc_action("w2_monty_sim_100", "+100 gier", variant = "solid"),
-        lc_action("w2_monty_sim_1000", "+1000 gier", variant = "solid")
+        lc_action("w2_monty_sim_1000", "+1000 gier", variant = "solid"),
+        lc_readouts(uiOutput("w2_monty_reads"))
       ),
-      lc_plot("w2_monty_plot", ratio = "1.6/1", max_height = "390px")
+      lc_plot("w2_monty_plot", ratio = "1.6/1", max_height = "390px"),
+      uiOutput("w2_monty_note")
     )
+  })
+
+  output$w2_monty_reads <- renderUI({
+    n <- monty_sim$n
+    if (n == 0L) return(NULL)
+    tagList(
+      lc_readout("Gier", format(n, big.mark = " ")),
+      lc_readout("Zostaję", scales::percent(monty_sim$wins_stay / n, accuracy = 0.1),
+                 color = upwr_reference),
+      lc_readout("Zmieniam", scales::percent(monty_sim$wins_switch / n, accuracy = 0.1),
+                 color = upwr_accent)
+    )
+  })
+
+  output$w2_monty_note <- renderUI({
+    n <- monty_sim$n
+    if (n == 0L) return(NULL)
+    lc_caption(if (n < 30L) {
+      "Przy kilku grach przypadek jeszcze rządzi — dograj więcej."
+    } else {
+      "Linie kropkowane: teoretyczne 1/3 i 2/3."
+    })
   })
 
   add_monty_games <- function(n) {
@@ -181,23 +205,13 @@ warunki_monty_server <- function(input, output, session) {
     results$label <- sprintf(
       "%s\n(%d z %d)", scales::percent(results$win_rate, accuracy = 0.1), results$wins, n
     )
-    subtitle <- if (n < 30L) {
-      "Przy kilku grach przypadek jeszcze rządzi — dograj więcej"
-    } else {
-      "Linie kropkowane: teoretyczne 1/3 i 2/3"
-    }
     ggplot(results, aes(strategy, win_rate, fill = strategy)) +
       geom_col(width = 0.62) +
       geom_text(aes(label = label), vjust = -0.35, fontface = "bold", lineheight = 0.9) +
       geom_hline(yintercept = c(1 / 3, 2 / 3), colour = upwr_reference, linetype = "dotted", linewidth = 0.6) +
       scale_fill_manual(values = c("Zostaję" = upwr_reference, "Zmieniam" = upwr_accent), guide = "none") +
       scale_y_continuous(labels = scales::percent, limits = c(0, 1.18), breaks = seq(0, 1, 0.25)) +
-      labs(
-        title = sprintf("Wyniki po %d %s", n, if (n == 1L) "grze" else "grach"),
-        subtitle = subtitle,
-        x = NULL,
-        y = "Odsetek wygranych"
-      ) +
+      labs(x = NULL, y = "Odsetek wygranych") +
       theme_upwr()
   })
 

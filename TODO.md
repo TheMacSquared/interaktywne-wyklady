@@ -79,19 +79,14 @@ Zostało:
 - [ ] Radio w panelach: analiza ryzyka zrobiona 3 października 2026 (karty
   `lc-choices`). Statystyka 04 Ryc. 3.4 też na kartach. Zostały statystyka
   02 Ryc. 2.1 i 7.1 oraz statystyka 2 (1).
-- [ ] Wykresy bez tytułów (decyzja: żadnych tytułów). Zostały dynamiczne
-  tytuły z wynikami albo objaśnieniem oznaczeń; przy migracji widgetu liczby
-  → `lc_readout()`, objaśnienie → `lc_caption()`, potem usunąć tytuł.
-  Miejsca (stan 3 października 2026):
-  - `analiza-ryzyka/01-jezyk-ryzyka/modules/block.R` (l. 1654, 2163, 2172, 2212)
-  - `analiza-ryzyka/02-warunki/modules/monty_server.R` (l. 195)
-  - `statystyka/01-typy-danych/modules/ch4_rozrzut.R` (l. 979)
-  - `statystyka/04-wnioskowanie-statystyczne/modules/ch10_sila_efektu.R` (l. 803)
-  - `statystyka/06-regresja/modules/ch3b_kontekst.R` (l. 281, 359)
-  - statystyka 2: `01-symulacje-statystyczne/modules/helpers.R` (6),
-    `02-metody-bayesowskie/modules/helpers.R` (2),
-    `04-szeregi-czasowe/modules/` `ch11_ets.R`, `ch5_acf.R`, `ch8_ar.R`,
-    `ch9_ma_arma.R` (po 2)
+- [ ] Wykresy bez tytułów (decyzja: żadnych tytułów). Statystyka i analiza
+  ryzyka 02 zrobione 4 października 2026 (liczby → `lc_readout()`, objaśnienia
+  → `lc_caption()`). Zostały: analiza ryzyka 01 Ćw. 2 i prototypy A/B/C
+  (`modules/block.R`, 4 podtytuły — razem z wyborem wariantu) oraz
+  statystyka 2: `01-symulacje-statystyczne/modules/helpers.R` (6),
+  `02-metody-bayesowskie/modules/helpers.R` (2),
+  `04-szeregi-czasowe/modules/` `ch11_ets.R`, `ch5_acf.R`, `ch8_ar.R`,
+  `ch9_ma_arma.R` (po 2).
 - [ ] Usunąć `lc_table_region()` i klasy `lc-table*`, gdy statystyka 2 nie
   będzie już używać starych tabel.
 - [ ] Legendy ggplot wychodzące poza wykres na telefonie (np. statystyka 01

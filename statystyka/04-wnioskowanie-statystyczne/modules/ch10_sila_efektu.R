@@ -647,7 +647,7 @@ ch10_server <- function(input, output, session) {
 
   output$ch10_dist_hint <- renderUI({
     req(input$ch10_dist_scenario)
-    p(tags$em(ch10_dist_hints[[input$ch10_dist_scenario]]))
+    lc_caption(ch10_dist_hints[[input$ch10_dist_scenario]])
   })
 
   zoom_plot_server("ch10_dist_plot", reactive({
@@ -777,10 +777,10 @@ ch10_server <- function(input, output, session) {
 
   output$ch10_r_hint <- renderUI({
     req(input$ch10_r_scenario)
-    p(tags$em(ch10_r_hints[[input$ch10_r_scenario]]))
+    lc_caption(ch10_r_hints[[input$ch10_r_scenario]])
   })
 
-  zoom_plot_server("ch10_r_plot", reactive({
+  ch10_r_data <- reactive({
     req(input$ch10_r_level, input$ch10_r_scenario)
     r_target <- as.numeric(input$ch10_r_level)
     sc <- ch10_r_scenarios[[input$ch10_r_scenario]]
@@ -788,22 +788,18 @@ ch10_server <- function(input, output, session) {
     n_pts <- 50
     z <- rnorm(n_pts)
     e <- rnorm(n_pts)
-    x_raw <- z
     y_raw <- sc$r_sign * r_target * z + sqrt(1 - r_target^2) * e
-    x <- sc$x_center + sc$x_scale * x_raw
-    y <- sc$y_center + sc$y_scale * y_raw
+    data.frame(x = sc$x_center + sc$x_scale * z,
+               y = sc$y_center + sc$y_scale * y_raw)
+  })
 
-    df <- data.frame(x = x, y = y)
-    r_emp <- cor(df$x, df$y)
-
-    ggplot(df, aes(x = x, y = y)) +
+  zoom_plot_server("ch10_r_plot", reactive({
+    sc <- ch10_r_scenarios[[input$ch10_r_scenario]]
+    ggplot(ch10_r_data(), aes(x = x, y = y)) +
       geom_smooth(method = "lm", se = FALSE, color = upwr_reference,
                   linewidth = 1, formula = y ~ x) +
       geom_point(color = col_effect, alpha = 0.7, size = 2.5) +
-      labs(x = sc$x_label,
-           y = sc$y_label,
-           subtitle = paste0("r empiryczne = ", round(r_emp, 2),
-                             "  (zadane |r| = ", r_target, ")"))
+      labs(x = sc$x_label, y = sc$y_label)
   }))
 
   output$ch10_r_table <- renderUI({
@@ -817,25 +813,13 @@ ch10_server <- function(input, output, session) {
       "0.7" = "Mocny związek liniowy, prawie połowa zmienności y wyjaśniona.",
       "0.9" = "Punkty bardzo blisko linii prostej — 81% zmienności y wyjaśnione przez x."
     )
+    df <- ch10_r_data()
     tagList(
-      lc_table(
-        data.frame(
-          c1 = I(list(
-            r_val
-          )),
-          c2 = I(list(
-            round(r2, 2)
-          )),
-          c3 = I(list(
-            paste0(round(100 * r2), "%")
-          ))
-        ),
-        cols = list(
-          lc_col("c1", "r", "row"),
-          lc_col("c2", "r²", "num"),
-          lc_col("c3", "% wariancji wyjaśnione", "text")
-        ),
-        narrow = "cards"
+      lc_readouts(
+        lc_readout("r zadane", r_val),
+        lc_readout("r w próbie", round(cor(df$x, df$y), 2), color = col_effect),
+        lc_readout("r²", round(r2, 2)),
+        lc_readout("Wariancji wyjaśnione", paste0(round(100 * r2), "%"))
       ),
       lc_caption(opis)
     )
@@ -847,7 +831,7 @@ ch10_server <- function(input, output, session) {
 
   output$ch10_v_hint <- renderUI({
     req(input$ch10_v_scenario)
-    p(tags$em(ch10_v_scenarios[[input$ch10_v_scenario]]$hint))
+    lc_caption(ch10_v_scenarios[[input$ch10_v_scenario]]$hint)
   })
 
   zoom_plot_server("ch10_v_plot", reactive({
@@ -906,7 +890,7 @@ ch10_server <- function(input, output, session) {
   output$ch10_eta_hint <- renderUI({
     req(input$ch10_eta_scenario)
     sc <- ch10_eta_scenarios[[input$ch10_eta_scenario]]
-    p(tags$em(paste0("3 grupy (", paste(sc$grp, collapse = " / "), ") × ", sc$y_lab, ".")))
+    lc_caption(paste0("3 grupy (", paste(sc$grp, collapse = " / "), ") × ", sc$y_lab, "."))
   })
 
   ch10_eta_means <- function(eta, mu_ctr, s) {
