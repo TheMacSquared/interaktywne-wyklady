@@ -151,6 +151,36 @@ ch4_ui <- list(
       "$$F(x) = P(X \\le x) = \\int_{-\\infty}^{x} f(t) \\, dt, \\qquad P(a < X \\le b) = F(b) - F(a)$$"
     )),
 
+    figure_panel(
+      label = "Ryc. 4.3",
+      title = "Pole na lewo od x to wartość dystrybuanty",
+      full_width = TRUE,
+      tags$div(class = "lc-cdf", `data-x` = "1",
+        lc_toolbar(
+          lc_caption("Przesuń kursor lub palec po którymkolwiek wykresie."),
+          lc_readouts(
+            lc_readout("x", tags$span(`data-role` = "x", "1.00")),
+            lc_readout("F(x)", tags$span(`data-role` = "F", "0.8413"),
+                       color = "var(--upwr-accent)")
+          )
+        ),
+        tags$div(class = "lc-cdf-grid",
+          tags$div(class = "lc-cdf-canvas",
+            tags$canvas(`data-role` = "pdf",
+                        `aria-label` = "Gęstość N(0, 1) z polem na lewo od x")),
+          tags$div(class = "lc-cdf-canvas",
+            tags$canvas(`data-role` = "cdf",
+                        `aria-label` = "Dystrybuanta N(0, 1) z punktem (x, F(x))"))
+        )
+      )
+    ),
+
+    lc_p("Na lewym wykresie zacieniowane pole pod gęstością, na prawym ta
+      sama liczba jako wysokość krzywej F w punkcie x. Gdy x przesuwa się
+      w prawo, pole rośnie, a punkt wspina się po krzywej. Najszybciej rośnie
+      tam, gdzie gęstość jest najwyższa, czyli przy średniej, a na krańcach,
+      gdzie gęstość jest prawie zerowa, F prawie się nie zmienia."),
+
     lc_p("Prawdopodobieństwo przedziału to różnica dwóch pól: pola na lewo
       od b i pola na lewo od a. Dokładnie tak liczy je panel z Ryc. 4.2.
       Dla rozkładu N(0, 1) F(1) = 0.8413 i F(-1) = 0.1587, więc
@@ -195,7 +225,7 @@ ch4_ui <- list(
     )),
 
     figure_panel(
-      label = "Ryc. 4.3",
+      label = "Ryc. 4.4",
       title = "Rozkład jednostajny U(a, b)",
       full_width = TRUE,
       lc_toolbar(
@@ -250,7 +280,7 @@ ch4_ui <- list(
     lc_p("Scenariusze w panelu mają różne jednostki czasu, podane w etykietach."),
 
     figure_panel(
-      label = "Ryc. 4.4",
+      label = "Ryc. 4.5",
       title = "Rozkład wykładniczy Exp(λ)",
       full_width = TRUE,
       lc_toolbar(
@@ -318,7 +348,7 @@ ch4_ui <- list(
     )),
 
     figure_panel(
-      label = "Ryc. 4.5",
+      label = "Ryc. 4.6",
       title = "Rozkład t-Studenta t(df)",
       full_width = TRUE,
       lc_toolbar(
@@ -369,7 +399,7 @@ ch4_ui <- list(
     )),
 
     figure_panel(
-      label = "Ryc. 4.6",
+      label = "Ryc. 4.7",
       title = "Rozkład χ²(df)",
       full_width = TRUE,
       lc_toolbar(
@@ -422,7 +452,7 @@ ch4_ui <- list(
     )),
 
     figure_panel(
-      label = "Ryc. 4.7",
+      label = "Ryc. 4.8",
       title = "Rozkład LogN(μ, σ)",
       full_width = TRUE,
       lc_toolbar(

@@ -70,7 +70,22 @@ ui <- lecture_page(
   lecture_num   = "02",
   lecture_title = "Rozkłady prawdopodobieństwa",
   module_label  = "Statystyka",
-  chapters      = .chapters
+  chapters      = .chapters,
+  # Chart.js do wykresu dystrybuanty (rozdz. 4, Ryc. 4.3)
+  header_extras = tagList(
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+    includeScript(file.path(app_dir, "modules", "cdf_chart.js")),
+    # Dwa wykresy obok siebie, gdy panel ma miejsce; pod sobą na telefonie.
+    tags$style(HTML("
+      .lc-cdf { container-type: inline-size; }
+      .lc-cdf-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.2em; }
+      .lc-cdf-canvas { position: relative; aspect-ratio: 1.5 / 1; }
+      @container (min-width: 560px) {
+        .lc-cdf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .lc-cdf-canvas { aspect-ratio: 1.15 / 1; }
+      }
+    "))
+  )
 )
 
 # ============================================================================

@@ -186,9 +186,6 @@ to stosują.
 
 ### 02 — rozkłady prawdopodobieństwa
 
-- [ ] Dystrybuanta (rozdz. 4, sekcja `ch4-dystrybuanta`): dodać wersję
-  skrótową — wzór i wykres. Hasło „dystrybuanta” dopisać do
-  `R/glossary.R`.
 - [ ] Widget krokowy (rozdz. 4): wygładzona krzywa wychodzi poza dziedzinę
   dla rozkładu wykładniczego i jednostajnego.
 
