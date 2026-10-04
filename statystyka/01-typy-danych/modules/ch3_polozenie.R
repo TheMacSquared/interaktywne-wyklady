@@ -307,7 +307,7 @@ ch3_ui <- list(
       dowolny podział. ", gloss("percentyl", "Percentyl"), " rzędu p to wartość,
       poniżej której leży p% obserwacji. Na przykład 75. percentyl wzrostu to
       wzrost, którego nie przekracza 75% studentów. Ogólniej mówimy
-      o kwantylach rzędu q, gdzie q jest ułamkiem od 0 do 1."),
+      o ", gloss("kwantyl", "kwantylach"), " rzędu q, gdzie q jest ułamkiem od 0 do 1."),
 
     lc_p("Najczęściej używamy trzech ", gloss("kwartyl", "kwartyli"),
       ", które dzielą dane na cztery równe części:"),
