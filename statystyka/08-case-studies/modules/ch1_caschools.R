@@ -32,7 +32,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   lc_p("Ten wykład nie wprowadza nowych metod. Przechodzi jedną analizę od
     pytania do decyzji i po kolei sięga po narzędzia z wykładów 01–06:
     opis danych, korelację, ANOVA, regresję prostą i wieloraką, ocenę
-    reszt i porównanie modeli. Celem jest zobaczyć, jak te narzędzia
+    ", gloss("reszta", "reszt"), " i porównanie modeli. Celem jest zobaczyć, jak te narzędzia
     składają się w całość i jak każde z nich zmienia odpowiedź."),
 
   lc_p("Wyobraźmy sobie, że pracujemy jako analitycy w kalifornijskim
@@ -84,9 +84,9 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   ),
 
   lc_p("Tak jak w wykładzie 01, każdą zmienną oglądamy najpierw osobno:
-    histogram pokazuje kształt rozkładu, a wykres pudełkowy medianę,
-    rozstęp międzykwartylowy i wartości odstające. Pod wykresem są
-    podstawowe statystyki opisowe wybranej zmiennej."),
+    ", gloss("histogram"), " pokazuje kształt rozkładu, a ", gloss("wykres pudełkowy"), " ", gloss("mediana", "medianę"), ",
+    ", gloss("rozstęp międzykwartylowy"), " i wartości odstające. Pod wykresem są
+    podstawowe ", gloss("statystyka opisowa", "statystyki opisowe"), " wybranej zmiennej."),
 
   figure_panel(
     label = "Ryc. 1.1",
@@ -109,7 +109,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
           lc_plot("ch1_eda_plot", max_height = "280px")
   ),
 
-  lc_p("Średni wynik okręgu wynosi 654.2 pkt przy odchyleniu standardowym
+  lc_p("Średni wynik okręgu wynosi 654.2 pkt przy ", gloss("odchylenie standardowe", "odchyleniu standardowym"), "
     19.1 pkt, a rozkład jest zbliżony do symetrycznego (od 605.6 do 706.8
     pkt). STR waha się od 14.0 do 25.8 ucznia na nauczyciela, ale większość
     okręgów mieści się w wąskim pasie: połowa ma STR między 18.6 a 20.9.
@@ -156,9 +156,9 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
      dwie zmienne. To punkt odniesienia dla dalszych kroków."
   ),
 
-  lc_p("Macierz korelacji opisuje próbę. Żeby powiedzieć coś o zależności
+  lc_p("Macierz korelacji opisuje ", gloss("próba", "próbę"), ". Żeby powiedzieć coś o zależności
     ogólnej, potrzebny jest test. Jak w rozdziale 06 wykładu 04 sprawdzamy
-    hipotezę, że w populacji współczynnik ", gloss("korelacja", "korelacji"),
+    hipotezę, że w ", gloss("populacja", "populacji"), " współczynnik ", gloss("korelacja", "korelacji"),
     " \\(\\rho\\) między STR a wynikiem wynosi zero:"),
 
   lc_formula_box(withMathJax(
@@ -183,7 +183,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   ),
 
   lc_p("Korelacja wynosi \\(r = -0.23\\) (95% przedział ufności od -0.32
-    do -0.13, p < 0.001), więc hipotezę zerową odrzucamy. Prosta regresji
+    do -0.13, p < 0.001), więc ", gloss("hipoteza zerowa", "hipotezę zerową"), " odrzucamy. Prosta regresji
     ma nachylenie -2.28: okręg, w którym na nauczyciela przypada o jednego
     ucznia więcej, ma średnio wynik niższy o 2.28 pkt. To ta sama
     zależność, którą w zadaniu 5 z wykładu 04 i w rozdziale 03 wykładu 06
@@ -304,7 +304,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   lc_p("Panel buduje cztery modele, za każdym razem dokładając jedną zmienną:
     sam STR, potem dochód, odsetek uczniów uczących się angielskiego
     i odsetek dotacji do obiadu. Tabela podaje współczynnik przy STR,
-    jego p-wartość oraz dwie miary porównawcze z rozdziału 04 wykładu 06:
+    jego ", gloss("p-wartość"), " oraz dwie miary porównawcze z rozdziału 04 wykładu 06:
     ", gloss("skorygowany R²"), " i ", gloss("AIC"), ". Wykres pod tabelą
     pokazuje współczynnik STR w kolejnych modelach."),
 
@@ -413,8 +413,8 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     w wykładzie 05 i w rozdziale 02 wykładu 06. Panel ich nie pokazuje,
     ale w modelu 4 nie układają się w łuk względem dochodu, jak w modelu 3,
     a ich rozrzut jest podobny dla okręgów o niskich i wysokich
-    przewidywanych wynikach. Test Shapiro-Wilka wykrywa niewielkie
-    odchylenie od rozkładu normalnego (p = 0.03), ale przy 420 okręgach
+    przewidywanych wynikach. ", gloss("test Shapiro-Wilka", "Test Shapiro-Wilka"), " wykrywa niewielkie
+    odchylenie od ", gloss("rozkład normalny", "rozkładu normalnego"), " (p = 0.03), ale przy 420 okręgach
     tak małe odchylenie nie zagraża wnioskom o współczynnikach."),
 
   # ========================================================================
@@ -461,7 +461,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   lc_p("Analiza ma kilka ograniczeń, które trzeba wymienić razem z wynikiem."),
 
   tags$ul(
-    tags$li(gloss("dane obserwacyjne", "Dane obserwacyjne"), ", nie ",
+    tags$li("Dane obserwacyjne, nie ",
       gloss("dane eksperymentalne", "eksperymentalne"), ". Nie możemy orzekać
       o ", gloss("przyczynowość", "przyczynowości"), ". Mogą istnieć ",
       gloss("zmienna pominięta", "zmienne pominięte"), ", na przykład
