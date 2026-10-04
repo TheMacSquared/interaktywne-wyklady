@@ -58,7 +58,6 @@
   "rozkład dwumianowy"    = "Rozkład liczby sukcesów w n niezależnych próbach Bernoulliego z prawdopodobieństwem p.",
   "wartość odstająca"     = "Obserwacja znacznie odbiegająca od pozostałych wartości w zbiorze.",
   "ANOVA"                 = "Analiza wariancji — test porównujący średnie w więcej niż dwóch grupach.",
-  "efekt"                 = "Praktyczna wielkość różnicy lub związku, niezależna od istotności statystycznej.",
   "wielkość efektu"       = "Praktyczna wielkość różnicy lub związku, niezależna od istotności statystycznej.",
 
   # Statystyka opisowa (W01) --------------------------------------------------
@@ -80,8 +79,6 @@
     "Wartość lub kategoria występująca najczęściej; jedyna miara tendencji centralnej dla zmiennych nominalnych.",
   "histogram" =
     "Wykres liczebności obserwacji w kolejnych przedziałach (binach) wartości zmiennej ilościowej.",
-  "rozkład bimodalny" =
-    "Rozkład z dwoma wyraźnymi szczytami; często sygnalizuje, że w danych są dwie różne grupy.",
   "kwartyl" =
     "Wartości Q1, Q2 i Q3 dzielące uporządkowane dane na cztery równe części; Q2 to mediana.",
   "percentyl" =
