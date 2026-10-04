@@ -217,10 +217,6 @@ to stosują.
 
 ### 06 — regresja
 
-- [ ] Rozdział 00 „Mapa wykładu” jest pisany do prowadzącego („wybierz cel
-  zajęć”). Przepisać na wstęp dla czytelnika: nawiązanie do korelacji
-  (wykład 04) i założeń na resztach (05), jak czytać rdzeń i pogłębienia,
-  dlaczego CASchools i pingwiny. Tabela tematów zostaje.
 - [ ] Panel współliniowości (rozdz. 03): pokazuje tylko chmurę X₁–X₂,
   niestabilności β nie widać bez wielokrotnego losowania.
 - [ ] Rozdz. 05: widget liniowa a logistyczna pokazuje identyczną dokładność

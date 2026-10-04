@@ -1,5 +1,5 @@
 # ============================================================================
-# CHAPTER 0: MAPA JEDNEGO, PEŁNEGO WYKŁADU
+# CHAPTER 0: MAPA WYKŁADU — wstęp dla czytelnika
 # ============================================================================
 
 .regression_topics <- data.frame(
@@ -36,31 +36,42 @@ ch0_map_ui <- list(
   duration = "5–10 min",
   content = tagList(
     lc_chapter_hero(
-      kicker = "Regresja · jeden materiał, różne wybory prowadzącego",
+      kicker = "Rozdział 00 · Regresja",
       num = "00",
-      title = "Najpierw wybierz cel zajęć.",
+      title = "Od związku do przewidywania.",
       lead = paste(
-        "Aplikacja zawiera jeden pełny materiał. Nie ma osobnej wersji light:",
-        "krótsze zajęcia oznaczają pominięcie pogłębień, a nie inną aplikację."
+        "Korelacja mówi, że dwie zmienne idą w parze. Regresja mówi, o ile",
+        "zmienia się jedna, gdy zmienia się druga, i pozwala tę zmianę przewidzieć."
       )
     ),
 
-    lc_h2("mapa-zasada", "Jedno źródło prawdy"),
+    lc_h2("mapa-zaczep", "Skąd przychodzimy"),
 
-    p(
-      "Kręgosłup prowadzi od pytania i modelu liniowego, przez czytanie outputu,",
-      "jakość dopasowania i model wieloraki, aż do porównania modeli oraz ",
-      gloss("regresja logistyczna", "regresji logistycznej"),
-      ". Pingwiny pojawiają się tylko tam, gdzie naturalne",
-      "grupy szczególnie dobrze pokazują kontekst, ",
-      gloss("zmienna jakościowa", "zmienne jakościowe"),
-      " i interakcje."
-    ),
+    lc_p("W wykładzie 04 ", gloss("korelacja"), " opisywała siłę i kierunek
+      liniowego związku dwóch zmiennych jedną liczbą r. Ta liczba nie mówi
+      jednak, o ile średnio wzrośnie wynik ucznia, gdy dochód okręgu wzrośnie
+      o tysiąc dolarów, ani jakiego wyniku spodziewać się w okręgu, którego nie
+      było w danych. Na oba pytania odpowiada ", gloss("regresja liniowa"), ":
+      prosta dopasowana do danych ma nachylenie w jednostkach zmiennych
+      i nadaje się do przewidywania."),
 
-    lc_note("Jak korzystać",
-      "Na zajęciach wybieraj rozdziały i sekcje według celu. Materiał oznaczony",
-      " jako pogłębienie można ominąć bez utraty głównej historii."
-    ),
+    lc_p("Z wykładu 05 przychodzą założenia. Normalność, równe wariancje
+      i niezależność obserwacji wracają tu w nowej roli: w regresji sprawdza się
+      je na resztach, czyli odległościach punktów od dopasowanej prostej.
+      Rozdział 02 pokazuje, jak czytać reszty i co oznacza, gdy założenia nie są
+      spełnione."),
+
+    lc_h2("mapa-czytanie", "Jak czytać ten wykład"),
+
+    lc_p("Rozdziały oznaczone w tabeli jako rdzeń tworzą jedną historię: od prostej
+      z jednym predyktorem, przez ocenę dopasowania i model z wieloma
+      predyktorami, po porównywanie modeli i ",
+      gloss("regresja logistyczna", "regresję logistyczną"), " dla wyników
+      binarnych. Pogłębienia rozwijają wybrane wątki: granice przewidywania,
+      ", gloss("zmienna jakościowa", "zmienne jakościowe"), " jako predyktory,
+      pominięte zmienne i interakcje. Przy pierwszym czytaniu można je pominąć
+      bez utraty głównego wątku, a wrócić do nich przy własnym projekcie
+      z wykładu 09."),
 
     lc_h2("mapa-tematy", "Mapa tematów"),
 
@@ -75,7 +86,13 @@ ch0_map_ui <- list(
       prose = TRUE
     ),
 
-    lc_h2("mapa-przypadki", "Dwa przypadki, dwie funkcje"),
+    lc_h2("mapa-przypadki", "Dwa zbiory danych"),
+
+    lc_p("Wykład opiera się na dwóch zbiorach. Dane CASchools o kalifornijskich
+      okręgach szkolnych niosą większość rozdziałów: na nich dopasowujemy pierwszą
+      prostą, sprawdzamy reszty i budujemy model wieloraki. Dane o pingwinach
+      pojawiają się tam, gdzie potrzebne są wyraźne naturalne grupy — przy
+      predyktorach jakościowych, paradoksie Simpsona i interakcjach."),
 
     lc_table(
       data.frame(
@@ -92,7 +109,7 @@ ch0_map_ui <- list(
       cols = list(
         lc_col("c1", "Przypadek", "row"),
         lc_col("c2", "Najlepiej pokazuje", "text"),
-        lc_col("c3", "Dlaczego pozostaje w kursie", "text")
+        lc_col("c3", "Dlaczego właśnie te dane", "text")
       ),
       narrow = "cards",
       prose = TRUE
