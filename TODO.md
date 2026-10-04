@@ -196,8 +196,6 @@ to stosują.
 
 ### 06 — regresja
 
-- [ ] Rozważyć widget obserwacji wpływowych w `ch2_jakosc.R`: scatter
-  z wyróżnioną odległością Cooka i opcją „usuń i przelicz”.
 - [ ] Rozważyć callout w ch2 lub ch4: kwartet Anscombe'a dla regresji (różne
   wzorce reszt przy tym samym R²) albo spurious regression; resztę pułapek
   odesłać do wykładu o korelacji.

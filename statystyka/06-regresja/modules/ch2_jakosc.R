@@ -248,6 +248,44 @@ ch2_ui <- list(
       " nie są założeniem w ścisłym sensie, ale pojedynczy punkt potrafi
       zmienić nachylenie całej prostej, więc warto je wykryć."),
 
+    lc_p("Nie każdy nietypowy punkt jest wpływowy. Panel pokazuje 14 studentów
+      z wyraźnym związkiem: im więcej godzin nauki w tygodniu, tym wyższy wynik
+      egzaminu. Do tych danych dochodzi jeden dodatkowy student, w trzech
+      różnych miejscach. Linia przerywana to prosta bez niego, ciągła to
+      prosta po jego dodaniu."),
+
+    figure_panel(
+      label = "Ryc. 2.1b", title = "Kiedy jeden punkt przestawia prostą",
+      full_width = TRUE,
+      lc_toolbar(
+        lc_segmented("ch2_infl_case", "Dodatkowy student",
+          choices = c("Brak" = "none",
+                      "Odstaje w środku" = "mid",
+                      "Daleko, zgodnie z trendem" = "lev",
+                      "Daleko, wbrew trendowi" = "infl")),
+        lc_readouts(uiOutput("ch2_infl_reads"))
+      ),
+      lc_plot("ch2_infl_plot", ratio = "1.6/1", max_height = "340px")
+    ),
+
+    lc_p("Student, który uczył się przeciętnie długo, a dostał 92 punkty, leży
+      daleko od prostej, ale prawie jej nie przechyla: nachylenie zmienia się
+      z 2.33 na 2.31 punktu na godzinę. Prosta tylko lekko się podnosi, a
+      \\(R^2\\) spada z 0.85 do 0.32, bo model gorzej trafia w tego jednego
+      studenta. Student z 24 godzinami nauki leży daleko od pozostałych na osi
+      X, ale jego wynik, 96 punktów, pasuje do trendu, więc prosta prawie się
+      nie zmienia (2.48). Dopiero ten sam student z wynikiem 40 punktów, czyli
+      daleko w X i wbrew trendowi, spłaszcza prostą do 0.37 punktu na
+      godzinę."),
+
+    lc_p("Obserwacja jest wpływowa, gdy łączy dwie cechy: leży daleko od
+      pozostałych na osi X, czyli ma dużą ", gloss("dźwignia", "dźwignię"), ",
+      i nie pasuje do trendu, który wyznaczają pozostałe punkty. Odległość
+      Cooka z tabeli powyżej mierzy właśnie to połączenie. Nie usuwa się takiego
+      punktu tylko dlatego, że przeszkadza. Najpierw sprawdza się, czy nie jest
+      błędem pomiaru, a jeśli nie jest, raport podaje wynik z nim i bez
+      niego."),
+
     lc_p("Testy formalne, np. ", gloss("test Shapiro-Wilka"), " dla reszt albo
       test Breuscha-Pagana dla ",
       gloss("heteroskedastyczność", "heteroskedastyczności"), ", są dodatkiem
@@ -528,6 +566,56 @@ ch2_ui <- list(
 # ============================================================================
 
 ch2_server <- function(input, output, session) {
+
+  # --- Widget: obserwacja wpływowa (ustawione przykłady) ---
+  ch2_infl_base <- data.frame(
+    x = c(1, 2, 3, 4, 5, 5.5, 6, 7, 8, 8.5, 9, 10, 11, 12),
+    e = c(3, -4, 2, 5, -3, 1, -5, 4, -2, 3, -4, 2, -1, -2)
+  )
+  ch2_infl_base$y <- 35 + 2.5 * ch2_infl_base$x + ch2_infl_base$e
+  ch2_infl_extra <- list(mid = c(6.5, 92), lev = c(24, 96), infl = c(24, 40))
+
+  ch2_infl_fits <- reactive({
+    case <- input$ch2_infl_case %||% "none"
+    base <- ch2_infl_base[, c("x", "y")]
+    extra <- if (case == "none") NULL else
+      data.frame(x = ch2_infl_extra[[case]][1], y = ch2_infl_extra[[case]][2])
+    list(base = base, extra = extra,
+         m0 = lm(y ~ x, base),
+         m1 = lm(y ~ x, rbind(base, extra)))
+  })
+
+  output$ch2_infl_reads <- renderUI({
+    f <- ch2_infl_fits()
+    tagList(
+      lc_readout("Nachylenie bez niego",
+                 formatC(coef(f$m0)[[2]], format = "f", digits = 2),
+                 color = upwr_reference, swatch = TRUE),
+      lc_readout("Nachylenie z nim",
+                 if (is.null(f$extra)) "—" else
+                   formatC(coef(f$m1)[[2]], format = "f", digits = 2),
+                 color = upwr_accent, swatch = TRUE)
+    )
+  })
+
+  zoom_plot_server("ch2_infl_plot", reactive({
+    f <- ch2_infl_fits()
+    xs <- data.frame(x = c(0, 26))
+    p <- ggplot(f$base, aes(x, y)) +
+      geom_line(data = transform(xs, y = predict(f$m0, xs)),
+                colour = upwr_reference, linetype = "dashed", linewidth = 0.9) +
+      geom_point(colour = upwr_secondary, size = 2.8, alpha = 0.8)
+    if (!is.null(f$extra)) {
+      p <- p +
+        geom_line(data = transform(xs, y = predict(f$m1, xs)),
+                  colour = upwr_accent, linewidth = 1.2) +
+        geom_point(data = f$extra, shape = 21, size = 4.5, stroke = 1.4,
+                   fill = upwr_accent, colour = "white")
+    }
+    p +
+      coord_cartesian(xlim = c(0, 26), ylim = c(25, 105)) +
+      labs(x = "Godziny nauki w tygodniu", y = "Wynik egzaminu (pkt)")
+  }), alt = "Wykres punktowy godzin nauki i wyniku z prostą bez dodatkowego punktu i z nim.")
 
   # --- Widget: Reszty vs fitted na CASchools ---
   ch2_resid_spec <- reactive({

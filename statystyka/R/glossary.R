@@ -365,6 +365,8 @@
     "Współczynnik inflacji wariancji — ile razy wariancja współczynnika rośnie przez współliniowość; im dalej od 1, tym mniej stabilne oszacowanie (bez jednej ostrej granicy).",
   "odległość Cooka" =
     "Miara wpływu pojedynczej obserwacji na model — jak bardzo zmieniłyby się przewidywania po jej usunięciu.",
+  "dźwignia" =
+    "Miara tego, jak daleko wartość predyktora danej obserwacji leży od pozostałych; obserwacja o dużej dźwigni może silnie przechylić prostą regresji.",
   "zbiór treningowy" =
     "Część danych, na której dopasowujemy model; jego jakość ocenia się potem na zbiorze testowym.",
   "modele zagnieżdżone" =
