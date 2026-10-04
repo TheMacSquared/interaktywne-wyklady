@@ -176,7 +176,7 @@ to stosują.
   - 05 rozdz. 04 (ch4_mapa.R): ANOVA Welcha — okno One-Way ANOVA liczy ją domyślnie.
   - 05 rozdz. 04 (ch4_mapa.R): tabela testów parametrycznych, test t dla prób niezależnych — „w jamovi zaznacz Welch's”.
   - 05 rozdz. 04 (ch4_mapa.R): selektor, test t dla prób niezależnych — „w jamovi zaznacz Welch's”; ANOVA — ANOVA Welcha „domyślna w jamovi”.
-- [ ] Wdrożyć `gloss()` we wszystkich wykładach: owijać pierwsze
+- [x] Wdrożyć `gloss()` we wszystkich wykładach: owijać pierwsze
   wprowadzenie kluczowego terminu w rozdziale, nie każde wystąpienie. Nowe
   hasła dopisywać do `statystyka/R/glossary.R`. Wzorzec:
   `03-przedzialy-ufnosci/modules/ch1_estymacja.R`.
