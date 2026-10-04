@@ -87,7 +87,7 @@ ch1_ui <- lecture_chapter(
       Najmniejsza obserwacja z 50 powinna leżeć około 2.3 odchylenia
       standardowego poniżej średniej, środkowa — przy średniej, największa —
       około 2.3 odchylenia powyżej. Na osi poziomej są te oczekiwane położenia
-      (kwantyle teoretyczne, w odchyleniach standardowych), na osi pionowej
+      (", gloss("kwantyl", "kwantyle"), " teoretyczne, w odchyleniach standardowych), na osi pionowej
       faktyczne wartości (kwantyle próbkowe). Każdy punkt to jedna obserwacja."),
 
     lc_p("Jeśli rozkład jest normalny, punkty układają się wzdłuż prostej. Prosta
