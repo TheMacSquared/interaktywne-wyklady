@@ -196,8 +196,6 @@ to stosują.
 
 ### 06 — regresja
 
-- [ ] Panel współliniowości (rozdz. 03): pokazuje tylko chmurę X₁–X₂,
-  niestabilności β nie widać bez wielokrotnego losowania.
 - [ ] Rozdz. 05: widget liniowa a logistyczna pokazuje identyczną dokładność
   obu modeli (różnicę niesie tylko „poza [0, 1]”).
 - [ ] Quiz interpretacji b₁ w jednostkach w `ch1_liniowa.R`, sekcja

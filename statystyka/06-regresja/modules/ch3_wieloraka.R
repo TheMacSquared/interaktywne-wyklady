@@ -211,30 +211,54 @@ ch3_ui <- list(
       wątpliwości, a im dalej od 1, tym ostrożniej interpretuje się
       pojedyncze współczynniki."),
 
-    lc_p("Panel poniżej losuje 140 obserwacji z modelu, w którym oba predyktory
-      mają prawdziwy współczynnik 1.1, i dopasowuje do nich regresję
-      wieloraką. Suwak ustala korelację między \\(X_1\\) i \\(X_2\\)."),
+    lc_p("Panel pokazuje trzy ustawione przykłady. W każdym jest 30 studentów
+      i ten sam model: wynik egzaminu w punktach wyjaśniany godzinami nauki
+      i liczbą rozwiązanych zadań. Obie zmienne mierzą w dużej mierze to samo,
+      wysiłek włożony w naukę, ale w kolejnych przykładach są ze sobą
+      powiązane coraz silniej. Tabela zestawia trzy modele: z każdym
+      predyktorem osobno i z oboma naraz."),
 
     figure_panel(
       label = "Ryc. 3.3", title = "Gdy predyktory mówią prawie to samo",
       full_width = TRUE,
       lc_toolbar(
-        lc_slider("ch3_collin_rho", "Korelacja X₁–X₂", 0, 0.98, 0.8, 0.02),
-        lc_action("ch3_collin_new", "Generuj i dopasuj", variant = "solid"),
-        lc_readouts(uiOutput("ch3_collin_info"))
+        lc_segmented("ch3_case", "Przykład",
+          choices = c("Słabo powiązane" = "weak",
+                      "Wyniki się znoszą" = "cancel",
+                      "Odwrócony znak" = "flip")),
+        lc_readouts(uiOutput("ch3_case_reads"))
       ),
-      lc_plot("ch3_collin_plot", max_height = "300px"),
-      uiOutput("ch3_collin_table")
+      lc_plots(
+        lc_plot("ch3_case_plot", ratio = "1.3/1", max_height = "340px"),
+        uiOutput("ch3_case_table")
+      ),
+      uiOutput("ch3_case_caption")
     ),
 
-    lc_p("Przy korelacji 0.8 VIF wynosi około 2.8, a błąd standardowy każdego
-      współczynnika jest około 1.7 razy większy niż przy predyktorach
-      nieskorelowanych. Przy korelacji 0.98 VIF wynosi około 25, a błąd
-      standardowy rośnie mniej więcej pięciokrotnie. Kolejne losowania przy
-      takiej korelacji dają współczynniki wyraźnie różne od siebie i od 1.1,
-      choć \\(R^2\\) modelu pozostaje wysokie. Model jako całość dobrze
-      przewiduje \\(Y\\). Niepewny jest tylko podział tego przewidywania
-      między \\(X_1\\) i \\(X_2\\)."),
+    lc_p("Gdy predyktory są słabo powiązane (\\(r = 0.31\\), VIF 1.1), model
+      z oboma niewiele zmienia. Każdy współczynnik zachowuje kierunek
+      i istotność, a jego błąd standardowy nie rośnie."),
+
+    lc_p("W drugim przykładzie godziny i zadania są skorelowane na poziomie
+      0.96, a VIF wynosi około 14. Każdy predyktor osobno jest wyraźnie
+      istotny (p < 0.001). W modelu z oboma żaden nie jest istotny
+      (p = 0.71 i p = 0.33), choć model jako całość jest (p < 0.001)
+      i przewiduje wynik tak samo dobrze jak każdy predyktor osobno.
+      Błąd standardowy współczynnika godzin wzrósł z 0.34 do 1.27, prawie
+      czterokrotnie, tyle, ile wynosi pierwiastek z VIF. Wniosek, że ani
+      godziny, ani zadania nie mają związku z wynikiem, byłby błędny. Związek
+      jest, tylko model nie potrafi przypisać go jednej zmiennej."),
+
+    lc_p("W trzecim przykładzie (\\(r = 0.95\\)) skutek jest bardziej mylący.
+      Osobno każde rozwiązane zadanie wiąże się z wynikiem wyższym o 0.74 pkt.
+      W modelu z godzinami współczynnik zadań staje się ujemny: -0.82 pkt na
+      zadanie przy stałych godzinach nauki, i to przy p = 0.021. Jednocześnie
+      współczynnik godzin rośnie z 1.89 do 3.60. Nie znaczy to, że
+      rozwiązywanie zadań szkodzi. Wśród studentów, którzy uczyli się tyle
+      samo godzin, liczba zadań różni się niewiele, więc model, rozdzielając
+      wspólny związek, przerzuca go na jedną zmienną. Przy silnej
+      współliniowości znak i wielkość pojedynczego współczynnika mogą być
+      dziełem przypadku."),
 
     lc_p("W CASchools współliniowość jest umiarkowana. W modelu ze wszystkimi
       siedmioma predyktorami z Ryc. 3.1 największy VIF, około 5.7, ma odsetek
@@ -654,57 +678,80 @@ ch3_server <- function(input, output, session) {
   # Widget "Efekt dodawania zmiennych" został przeniesiony do ch4
   # (Jak porównywać modele) — tam pasuje merytorycznie.
 
-  # --- Widget: współliniowość ---
-  ch3_collin_data <- reactiveVal(NULL)
+  # --- Widget: współliniowość (ustawione przykłady) ---
+  ch3_case_data <- reactive(collinearity_case(input$ch3_case %||% "weak"))
 
-  observeEvent(input$ch3_collin_new, {
-    ch3_collin_data(generate_collinearity_data(140, input$ch3_collin_rho))
-  })
-
-  zoom_plot_server("ch3_collin_plot", reactive({
-    df <- ch3_collin_data()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Generuj i dopasuj”",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      ggplot(df, aes(x = x1, y = x2)) +
-        geom_point(color = upwr_secondary, alpha = 0.5) +
-        geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"])) +
-        labs(x = "X₁", y = "X₂") +
-        theme_upwr()
+  ch3_case_fits <- reactive({
+    d <- ch3_case_data()
+    pick <- function(m, term) {
+      s <- summary(m)$coefficients
+      if (term %in% rownames(s)) s[term, c(1, 4)] else c(NA, NA)
     }
-  }), alt = "Wykres punktowy dwóch coraz silniej współliniowych predyktorów.")
+    m_h <- lm(wynik ~ godziny, d)
+    m_z <- lm(wynik ~ zadania, d)
+    m_hz <- lm(wynik ~ godziny + zadania, d)
+    rows <- list(m_h, m_z, m_hz)
+    tab <- data.frame(
+      model = c("Tylko godziny", "Tylko zadania", "Godziny + zadania"),
+      b_h = sapply(rows, function(m) pick(m, "godziny")[1]),
+      p_h = sapply(rows, function(m) pick(m, "godziny")[2]),
+      b_z = sapply(rows, function(m) pick(m, "zadania")[1]),
+      p_z = sapply(rows, function(m) pick(m, "zadania")[2])
+    )
+    fs <- summary(m_hz)$fstatistic
+    list(tab = tab, r2 = summary(m_hz)$r.squared,
+         p_model = pf(fs[1], fs[2], fs[3], lower.tail = FALSE))
+  })
 
-  output$ch3_collin_info <- renderUI({
-    df <- ch3_collin_data()
-    if (is.null(df)) return(NULL)
-    model <- lm(y ~ x1 + x2, data = df)
+  output$ch3_case_reads <- renderUI({
+    d <- ch3_case_data()
+    f <- ch3_case_fits()
     tagList(
-      lc_readout("corr(X₁,X₂)", round(cor(df$x1, df$x2), 2), color = unname(upwr_cat["niebo"])),
-      lc_readout("R² modelu", round(summary(model)$r.squared, 3), color = unname(upwr_cat["szalwia"]))
+      lc_readout("r", formatC(cor(d$godziny, d$zadania), format = "f", digits = 2)),
+      lc_readout("R² modelu", formatC(f$r2, format = "f", digits = 2)),
+      lc_readout("p modelu", HTML(lc_pval(f$p_model)))
     )
   })
 
-  output$ch3_collin_table <- renderUI({
-    df <- ch3_collin_data()
-    if (is.null(df)) return(NULL)
-    model <- lm(y ~ x1 + x2, data = df)
-    coefs <- as.data.frame(broom::tidy(model))[-1, ]
-    vifs_term <- coefs$term
-    vifs <- compute_vif_simple(df, c("x1", "x2"))
-    coefs$p_txt <- lc_pval(coefs$p.value)
-    coefs$vif <- unname(vifs[vifs_term])
-    coefs$term <- c(x1 = "X₁", x2 = "X₂")[vifs_term]
-    lc_table(coefs,
-      cols = list(
-        lc_col("term", "Zmienna", "row"),
-        lc_col("estimate", "β", digits = 3),
-        lc_col("std.error", "SE", digits = 3),
-        lc_col("p_txt", "p"),
-        lc_col("vif", "VIF", digits = 2)
-      )
-    )
+  zoom_plot_server("ch3_case_plot", reactive({
+    ggplot(ch3_case_data(), aes(godziny, zadania)) +
+      geom_point(colour = upwr_secondary, alpha = 0.7, size = 2.6) +
+      coord_cartesian(xlim = c(2, 22), ylim = c(5, 55)) +
+      labs(x = "Godziny nauki", y = "Rozwiązane zadania")
+  }), alt = "Wykres punktowy godzin nauki i liczby rozwiązanych zadań.")
+
+  output$ch3_case_table <- renderUI({
+    tab <- ch3_case_fits()$tab
+    # Komórka: współczynnik, pod nim p (mniejszym drukiem).
+    cell <- function(b, p) {
+      lapply(seq_along(b), function(k) {
+        if (is.na(b[k])) return(HTML("–"))
+        tagList(formatC(b[k], format = "f", digits = 2),
+                tags$small(style = "display:block;color:var(--upwr-ink-subtle);",
+                           HTML(paste0("p ", if (p[k] < 0.001) "" else "= ",
+                                       lc_pval(p[k])))))
+      })
+    }
+    tab$h <- I(cell(tab$b_h, tab$p_h))
+    tab$z <- I(cell(tab$b_z, tab$p_z))
+    lc_table(tab, cols = list(
+      lc_col("model", "Model", "row"),
+      lc_col("h", "Godziny", sub = "pkt na godz."),
+      lc_col("z", "Zadania", sub = "pkt na zadanie")
+    ))
+  })
+
+  output$ch3_case_caption <- renderUI({
+    lc_caption(switch(input$ch3_case %||% "weak",
+      weak = "Predyktory są słabo powiązane: w modelu z oboma każdy zachowuje
+        swój kierunek i istotność, współczynniki tylko trochę maleją.",
+      cancel = "Osobno każdy predyktor jest wyraźnie istotny. Razem żaden nie
+        jest, choć model z oboma przewiduje wynik tak samo dobrze jak każdy
+        z nich osobno (R² 0.49 wobec 0.47 i 0.48) — nie potrafi tylko
+        rozdzielić wpływu między godziny a zadania.",
+      flip = "Osobno więcej zadań to wyższy wynik. W modelu z godzinami
+        współczynnik zadań staje się ujemny, a współczynnik godzin rośnie
+        prawie dwukrotnie — model przerzucił wspólny wpływ na jedną zmienną."
+    ))
   })
 }

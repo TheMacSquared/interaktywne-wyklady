@@ -176,26 +176,23 @@ generate_confounding_data <- function(n = 160) {
   )
 }
 
-generate_collinearity_data <- function(n = 140, rho = 0.8) {
-  x1 <- rnorm(n)
-  x2 <- rho * x1 + sqrt(max(0.001, 1 - rho^2)) * rnorm(n)
-  y <- 2 + 1.1 * x1 + 1.1 * x2 + rnorm(n, 0, 1.1)
-
-  data.frame(
-    y = round(y, 2),
-    x1 = round(x1, 2),
-    x2 = round(x2, 2)
+# Ustawione przykłady współliniowości (Ryc. 3.3): wynik egzaminu a godziny
+# nauki i liczba rozwiązanych zadań, n = 30. Ziarna dobrane tak, żeby każdy
+# wariant pokazywał jedną konsekwencję; dane są zawsze te same.
+collinearity_case <- function(case = c("weak", "cancel", "flip")) {
+  case <- match.arg(case)
+  par <- switch(case,
+    weak   = list(seed = 71,  rho = 0.30, b_h = 4, b_z = 4, sd_e = 8),
+    cancel = list(seed = 3,   rho = 0.97, b_h = 4, b_z = 4, sd_e = 8),
+    flip   = list(seed = 116, rho = 0.95, b_h = 6, b_z = 1, sd_e = 6)
   )
-}
-
-compute_vif_simple <- function(df, predictors) {
-  sapply(predictors, function(pred) {
-    others <- setdiff(predictors, pred)
-    if (length(others) == 0) return(1)
-    form <- as.formula(paste(pred, "~", paste(others, collapse = " + ")))
-    r2 <- summary(lm(form, data = df))$r.squared
-    1 / (1 - r2)
+  withr::with_seed(par$seed, {
+    h <- rnorm(30)
+    z <- par$rho * h + sqrt(1 - par$rho^2) * rnorm(30)
+    y <- 60 + par$b_h * h + par$b_z * z + rnorm(30, 0, par$sd_e)
   })
+  data.frame(godziny = round(12 + 4 * h, 1), zadania = round(30 + 10 * z),
+             wynik = round(y, 1))
 }
 
 generate_train_test_poly <- function(n_train = 35, n_test = 180) {
