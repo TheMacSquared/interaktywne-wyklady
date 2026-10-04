@@ -405,7 +405,6 @@ ch2h_server <- function(input, output, session) {
     session$sendCustomMessage("ws_sided_chart", list(
       id = "ch2h_sided_chart",
       sided = sided,
-      alpha = alpha,
       crit = crit
     ))
   })

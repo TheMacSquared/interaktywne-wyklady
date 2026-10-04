@@ -285,7 +285,7 @@ ch2_server <- function(input, output, session) {
   # --- Testy ---
   output$ch2_test_results <- renderUI({
     req(input$ch2_test_var)
-    df <- isolate(ch2_data())
+    df <- ch2_data()
     if (is.null(df)) return(lc_caption("Najpierw wygeneruj dane."))
 
     lev <- rstatix::levene_test(df, value ~ group)
@@ -314,7 +314,7 @@ ch2_server <- function(input, output, session) {
   # --- Porównanie t ---
   output$ch2_t_comparison <- renderUI({
     req(input$ch2_compare_t)
-    df <- isolate(ch2_data())
+    df <- ch2_data()
     if (is.null(df)) return(lc_caption("Najpierw wygeneruj dane."))
 
     t_classic <- t_test(df, value ~ group, var.equal = TRUE)

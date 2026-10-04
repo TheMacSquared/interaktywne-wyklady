@@ -692,9 +692,11 @@ ch3_server <- function(input, output, session) {
     if (is.null(df)) return(NULL)
     model <- lm(y ~ x1 + x2, data = df)
     coefs <- as.data.frame(broom::tidy(model))[-1, ]
+    vifs_term <- coefs$term
     vifs <- compute_vif_simple(df, c("x1", "x2"))
     coefs$p_txt <- lc_pval(coefs$p.value)
-    coefs$vif <- unname(vifs[coefs$term])
+    coefs$vif <- unname(vifs[vifs_term])
+    coefs$term <- c(x1 = "X₁", x2 = "X₂")[vifs_term]
     lc_table(coefs,
       cols = list(
         lc_col("term", "Zmienna", "row"),

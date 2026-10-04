@@ -306,8 +306,8 @@ ch2_server <- function(input, output, session) {
     df$color  <- ifelse(covers, sim_success, sim_observed)
 
     p <- ggplot(df, aes(y = i)) +
-      geom_errorbarh(aes(xmin = lower, xmax = upper, color = covers),
-                     height = 0.4, linewidth = 1.2) +
+      geom_errorbar(aes(xmin = lower, xmax = upper, color = covers),
+                     width = 0.4, linewidth = 1.2, orientation = "y") +
       geom_point(aes(x = obs, color = covers), size = 3) +
       scale_color_manual(values = c("TRUE" = sim_success, "FALSE" = sim_observed),
                          labels = c("TRUE" = "Trafiło", "FALSE" = "Nie trafiło"),
@@ -498,8 +498,8 @@ ch2_server <- function(input, output, session) {
     coverage_pct <- round(mean(covers) * 100, 1)
 
     ggplot(df, aes(y = i)) +
-      geom_errorbarh(aes(xmin = lower, xmax = upper, color = covers),
-                     height = 0.5, linewidth = 0.9, alpha = 0.85) +
+      geom_errorbar(aes(xmin = lower, xmax = upper, color = covers),
+                     width = 0.5, linewidth = 0.9, alpha = 0.85, orientation = "y") +
       geom_point(aes(x = obs, color = covers), size = 2) +
       geom_vline(xintercept = true_val, color = sim_secondary,
                  linewidth = 1.3, linetype = "dashed") +

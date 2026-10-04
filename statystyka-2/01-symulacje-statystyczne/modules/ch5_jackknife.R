@@ -258,7 +258,7 @@ ch5_server <- function(input, output, session) {
 
     ggplot(df, aes(y = method, color = method)) +
       geom_point(aes(x = obs), size = 5) +
-      geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0.3, linewidth = 2) +
+      geom_errorbar(aes(xmin = lower, xmax = upper), width = 0.3, linewidth = 2, orientation = "y") +
       scale_color_manual(values = c("Jackknife" = sim_bootstrap, "Bootstrap" = sim_warning),
                          guide  = "none") +
       labs(

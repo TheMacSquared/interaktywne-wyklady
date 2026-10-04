@@ -707,9 +707,6 @@ ch5_server <- function(input, output, session) {
     if (is.null(model)) return(NULL)
 
     g <- broom::glance(model)
-    coefs <- broom::tidy(model)
-
-    # Confusion matrix
     df <- ch5_data()
     pred_class <- ifelse(predict(model, type = "response") >= 0.5, 1, 0)
     accuracy <- mean(pred_class == df$zdal_num) * 100

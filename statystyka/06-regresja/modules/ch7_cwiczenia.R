@@ -152,7 +152,7 @@ model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
     lc_h2("ch7-podsumowanie", "Na koniec"),
 
     lc_recap(
-      tagList("Model najpierw interpretuj w jednostkach danych, dopiero potem przez ", gloss("p-wartość", "p-value"), "."),
+      tagList("Model najpierw interpretuj w jednostkach danych, dopiero potem przez ", gloss("p-wartość"), "."),
       "Nie porównuj modeli tylko po R², gdy różnią się liczbą predyktorów.",
       tagList("Predykcja poza zakresem danych to ", gloss("ekstrapolacja"), ", nie zwykłe użycie modelu."),
       tagList("W regresji logistycznej decyzja zależy od ", gloss("próg klasyfikacji", "progu"), " i kosztu błędów.")

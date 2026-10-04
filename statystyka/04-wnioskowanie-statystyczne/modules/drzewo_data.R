@@ -54,9 +54,9 @@ digraph drzewo {
         <tr><td align="left">Czy średnia zawartość soli<br/>w posiłkach X jest równa 20 g?</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Hipoteza (3 warianty)</b></td></tr>
-        <tr><td align="left">H0: μ = liczba &#160;&#160;Ha: μ ≠ liczba</td></tr>
-        <tr><td align="left">H0: μ ≥ liczba &#160;&#160;Ha: μ &lt; liczba</td></tr>
-        <tr><td align="left">H0: μ ≤ liczba &#160;&#160;Ha: μ &gt; liczba</td></tr>
+        <tr><td align="left">H₀: μ = liczba &#160;&#160;Hₐ: μ ≠ liczba</td></tr>
+        <tr><td align="left">H₀: μ ≥ liczba &#160;&#160;Hₐ: μ &lt; liczba</td></tr>
+        <tr><td align="left">H₀: μ ≤ liczba &#160;&#160;Hₐ: μ &gt; liczba</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Test statystyczny</b></td></tr>
         <tr><td align="left">Test t dla jednej próby</td></tr>
@@ -70,9 +70,9 @@ digraph drzewo {
         <tr><td align="left">Czy procent osób popierających nowego<br/>premiera przekracza 50% (0.5)?</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Hipoteza (3 warianty)</b></td></tr>
-        <tr><td align="left">H0: p = liczba &#160;&#160;Ha: p ≠ liczba</td></tr>
-        <tr><td align="left">H0: p ≥ liczba &#160;&#160;Ha: p &lt; liczba</td></tr>
-        <tr><td align="left">H0: p ≤ liczba &#160;&#160;Ha: p &gt; liczba</td></tr>
+        <tr><td align="left">H₀: p = liczba &#160;&#160;Hₐ: p ≠ liczba</td></tr>
+        <tr><td align="left">H₀: p ≥ liczba &#160;&#160;Hₐ: p &lt; liczba</td></tr>
+        <tr><td align="left">H₀: p ≤ liczba &#160;&#160;Hₐ: p &gt; liczba</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Test statystyczny</b></td></tr>
         <tr><td align="left">Test proporcji (dwumianowy)</td></tr>
@@ -124,8 +124,8 @@ digraph drzewo {
         <tr><td align="left">Czy istnieje związek pomiędzy<br/>prywatnym ubezpieczeniem a płcią?</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Hipoteza (1 wariant)</b></td></tr>
-        <tr><td align="left">H0: brak związku pomiędzy zmiennymi</td></tr>
-        <tr><td align="left">Ha: istnieje istotny związek</td></tr>
+        <tr><td align="left">H₀: brak związku pomiędzy zmiennymi</td></tr>
+        <tr><td align="left">Hₐ: istnieje istotny związek</td></tr>
         <tr><td align="left">&#160;&#160;&#160;&#160;pomiędzy zmiennymi</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Test statystyczny</b></td></tr>
@@ -140,9 +140,9 @@ digraph drzewo {
         <tr><td align="left">Czy średnia zawartość soli w posiłkach firmy X<br/>jest równa średniej zawartości soli firmy Y?</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Hipoteza (3 warianty)</b></td></tr>
-        <tr><td align="left">H0: μ₁ = μ₂ &#160;&#160;Ha: μ₁ ≠ μ₂</td></tr>
-        <tr><td align="left">H0: μ₁ ≥ μ₂ &#160;&#160;Ha: μ₁ &lt; μ₂</td></tr>
-        <tr><td align="left">H0: μ₁ ≤ μ₂ &#160;&#160;Ha: μ₁ &gt; μ₂</td></tr>
+        <tr><td align="left">H₀: μ₁ = μ₂ &#160;&#160;Hₐ: μ₁ ≠ μ₂</td></tr>
+        <tr><td align="left">H₀: μ₁ ≥ μ₂ &#160;&#160;Hₐ: μ₁ &lt; μ₂</td></tr>
+        <tr><td align="left">H₀: μ₁ ≤ μ₂ &#160;&#160;Hₐ: μ₁ &gt; μ₂</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Test statystyczny</b></td></tr>
         <tr><td align="left">Test t dla dwóch prób</td></tr>
@@ -156,8 +156,8 @@ digraph drzewo {
         <tr><td align="left">Czy średnia zawartość soli w posiłkach firmy X<br/>jest równa średniej zawartości soli firmy Y?</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Hipoteza (1 wariant)</b></td></tr>
-        <tr><td align="left">H0: μ₁ = μ₂ = … = μₙ</td></tr>
-        <tr><td align="left">Ha: przynajmniej jedna para różna</td></tr>
+        <tr><td align="left">H₀: μ₁ = μ₂ = … = μₙ</td></tr>
+        <tr><td align="left">Hₐ: przynajmniej jedna para różna</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Test statystyczny</b></td></tr>
         <tr><td align="left">Analiza ANOVA</td></tr>
@@ -171,9 +171,9 @@ digraph drzewo {
         <tr><td align="left">Czy wraz ze wzrostem średniej<br/>zawartości soli rośnie średnia<br/>kaloryczność posiłków?</td></tr>
         <tr><td> </td></tr>
         <tr><td align="left"><b>Hipoteza (1 wariant)</b></td></tr>
-        <tr><td align="left">H0: ρ = 0</td></tr>
+        <tr><td align="left">H₀: ρ = 0</td></tr>
         <tr><td align="left">&#160;&#160;&#160;&#160;brak korelacji liniowej</td></tr>
-        <tr><td align="left">Ha: ρ ≠ 0</td></tr>
+        <tr><td align="left">Hₐ: ρ ≠ 0</td></tr>
         <tr><td align="left">&#160;&#160;&#160;&#160;istnieje korelacja liniowa między</td></tr>
         <tr><td align="left">&#160;&#160;&#160;&#160;zmiennymi</td></tr>
         <tr><td> </td></tr>
@@ -242,9 +242,9 @@ drzewo_nodes <- data.frame(
     .box_label(
       "Czy średnia zawartość soli\nw posiłkach X jest równa 20 g?",
       paste(
-        "H0: μ = liczba    Ha: μ ≠ liczba",
-        "H0: μ ≥ liczba    Ha: μ < liczba",
-        "H0: μ ≤ liczba    Ha: μ > liczba",
+        "H₀: μ = liczba    Hₐ: μ ≠ liczba",
+        "H₀: μ ≥ liczba    Hₐ: μ < liczba",
+        "H₀: μ ≤ liczba    Hₐ: μ > liczba",
         sep = "\n"
       ),
       "Test t dla jednej próby"
@@ -252,9 +252,9 @@ drzewo_nodes <- data.frame(
     .box_label(
       "Czy procent osób popierających nowego\npremiera przekracza 50% (0.5)?",
       paste(
-        "H0: p = liczba    Ha: p ≠ liczba",
-        "H0: p ≥ liczba    Ha: p < liczba",
-        "H0: p ≤ liczba    Ha: p > liczba",
+        "H₀: p = liczba    Hₐ: p ≠ liczba",
+        "H₀: p ≥ liczba    Hₐ: p < liczba",
+        "H₀: p ≤ liczba    Hₐ: p > liczba",
         sep = "\n"
       ),
       "Test proporcji (dwumianowy)"
@@ -269,8 +269,8 @@ drzewo_nodes <- data.frame(
     .box_label(
       "Czy istnieje związek pomiędzy\nprywatnym ubezpieczeniem a płcią?",
       paste(
-        "H0: brak związku pomiędzy zmiennymi",
-        "Ha: istnieje istotny związek",
+        "H₀: brak związku pomiędzy zmiennymi",
+        "Hₐ: istnieje istotny związek",
         "      pomiędzy zmiennymi",
         sep = "\n"
       ),
@@ -279,9 +279,9 @@ drzewo_nodes <- data.frame(
     .box_label(
       "Czy średnia zawartość soli w posiłkach firmy X\njest równa średniej zawartości soli firmy Y?",
       paste(
-        "H0: μ₁ = μ₂    Ha: μ₁ ≠ μ₂",
-        "H0: μ₁ ≥ μ₂    Ha: μ₁ < μ₂",
-        "H0: μ₁ ≤ μ₂    Ha: μ₁ > μ₂",
+        "H₀: μ₁ = μ₂    Hₐ: μ₁ ≠ μ₂",
+        "H₀: μ₁ ≥ μ₂    Hₐ: μ₁ < μ₂",
+        "H₀: μ₁ ≤ μ₂    Hₐ: μ₁ > μ₂",
         sep = "\n"
       ),
       "Test t dla dwóch prób"
@@ -289,8 +289,8 @@ drzewo_nodes <- data.frame(
     .box_label(
       "Czy średnia zawartość soli w posiłkach firmy X\njest równa średniej zawartości soli firmy Y\noraz firmy Z (i kolejnych)?",
       paste(
-        "H0: μ₁ = μ₂ = … = μₙ",
-        "Ha: przynajmniej jedna para różna",
+        "H₀: μ₁ = μ₂ = … = μₙ",
+        "Hₐ: przynajmniej jedna para różna",
         sep = "\n"
       ),
       "Analiza ANOVA"
@@ -298,8 +298,8 @@ drzewo_nodes <- data.frame(
     .box_label(
       "Czy wraz ze wzrostem średniej zawartości\nsoli rośnie średnia kaloryczność posiłków?",
       paste(
-        "H0: ρ = 0 (brak korelacji liniowej)",
-        "Ha: ρ ≠ 0 (korelacja liniowa)",
+        "H₀: ρ = 0 (brak korelacji liniowej)",
+        "Hₐ: ρ ≠ 0 (korelacja liniowa)",
         sep = "\n"
       ),
       "Współczynnik korelacji Pearsona"

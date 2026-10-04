@@ -805,7 +805,7 @@ ch1_server <- function(input, output, session) {
 
     ggplot(coefs, aes(x = estimate, y = term_pl, color = sig)) +
       geom_point(size = 3) +
-      geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
+      geom_errorbar(aes(xmin = conf.low, xmax = conf.high), width = 0.2, orientation = "y") +
       geom_vline(xintercept = 0, linetype = "dashed", color = case_reference) +
       scale_color_manual(values = c("TRUE" = case_model, "FALSE" = case_highlight),
                          labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),

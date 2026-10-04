@@ -249,8 +249,8 @@ ch7_server <- function(input, output, session) {
     coefs$label <- factor(coefs$label, levels = rev(coefs$label))
     ggplot(coefs, aes(x = estimate, y = label)) +
       geom_vline(xintercept = 0, color = proj_col_ref, linetype = "dashed") +
-      geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2,
-                     color = proj_col_ref) +
+      geom_errorbar(aes(xmin = conf.low, xmax = conf.high), width = 0.2,
+                     color = proj_col_ref, orientation = "y") +
       geom_point(color = proj_col_hyp, size = 2.5) +
       labs(x = "Współczynnik z 95% CI", y = NULL) +
       theme_upwr()

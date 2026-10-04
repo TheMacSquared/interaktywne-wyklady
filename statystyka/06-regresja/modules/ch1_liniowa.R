@@ -788,7 +788,8 @@ ch1_server <- function(input, output, session) {
       ),
       if (step >= 5) lc_status(
         p(tags$strong("Końcowy model:")),
-        withMathJax(sprintf("$$\\hat{Y} = %.2f + %.3fX$$", b0, b1))
+        withMathJax(sprintf("$$\\hat{Y} = %.2f %s %.3fX$$", b0,
+                            if (b1 < 0) "-" else "+", abs(b1)))
       )
     )
   })
@@ -1247,7 +1248,8 @@ ch1_server <- function(input, output, session) {
     model <- ch1_cas_model()
     coefs <- broom::tidy(model)
     coefs$term <- ifelse(coefs$term == "(Intercept)", "wyraz wolny",
-                         ifelse(coefs$term == "grades01", "grades: KK-08 vs KK-06", input$ch1_cas_x))
+                         ifelse(coefs$term == "grades01", "Zakres klas: KK-08 vs KK-06",
+                                unname(.cas_labels[input$ch1_cas_x])))
 
     coefs$p_txt <- lc_pval(coefs$p.value)
     lc_table(as.data.frame(coefs),
@@ -1419,7 +1421,7 @@ ch1_server <- function(input, output, session) {
     spec <- ch1_pred_spec()
     model <- ch1_pred_model()
     coefs <- broom::tidy(model)
-    coefs$term <- ifelse(coefs$term == "(Intercept)", "wyraz wolny", spec$x)
+    coefs$term <- ifelse(coefs$term == "(Intercept)", "wyraz wolny", unname(.cas_labels[spec$x]))
 
     lc_table(
       data.frame(term = coefs$term,

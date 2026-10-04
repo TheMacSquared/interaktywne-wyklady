@@ -296,7 +296,7 @@ ch5_server <- function(input, output, session) {
 
     p_top <- ggplot(df, aes(x = n, y = me)) +
       geom_line(color = col_ci, linewidth = 1.2) +
-      geom_point(aes(x = !!n, y = !!me), color = col_estimate, size = 4) +
+      annotate("point", x = n, y = me, color = col_estimate, size = 4) +
       geom_hline(yintercept = me, color = col_estimate, linetype = "dotted") +
       annotate("text", x = n + 4, y = me + 0.3,
                label = "ME",
@@ -312,8 +312,7 @@ ch5_server <- function(input, output, session) {
     xlims <- c(xbar - max_me_worst * 1.05, xbar + max_me_worst * 1.05)
 
     p_bot <- ggplot() +
-      xlim(xlims) +
-      ylim(-0.6, 0.6) +
+      coord_cartesian(xlim = xlims, ylim = c(-0.6, 0.6)) +
       labs(x = "Wartość (np. wzrost w cm)", y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
@@ -326,8 +325,8 @@ ch5_server <- function(input, output, session) {
                color = upwr_reference, size = 4, hjust = -0.1) +
       geom_point(aes(x = xbar, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
-      geom_errorbarh(aes(xmin = xbar - me, xmax = xbar + me, y = 0),
-                     height = 0.18, color = col_ci, linewidth = 2.4, alpha = 0.7) +
+      geom_errorbar(aes(xmin = xbar - me, xmax = xbar + me, y = 0),
+                     width = 0.18, color = col_ci, linewidth = 2.4, alpha = 0.7, orientation = "y") +
       annotate("text", x = xbar, y = -0.42,
                label = paste0(round(conf * 100), "% CI"),
                color = col_ci, fontface = "bold", size = 4.8)
@@ -387,7 +386,7 @@ ch5_server <- function(input, output, session) {
       geom_line(color = col_ci, linewidth = 1.2) +
       geom_hline(yintercept = me_max, color = col_miss, linetype = "dashed",
                  linewidth = 1) +
-      geom_point(aes(x = n_req, y = me_max), color = col_hit, size = 5) +
+      annotate("point", x = n_req, y = me_max, color = col_hit, size = 5) +
       annotate("text", x = n_req, y = me_max + 0.3,
                label = paste0("n = ", n_req),
                color = col_hit, fontface = "bold", size = 5) +
@@ -399,8 +398,7 @@ ch5_server <- function(input, output, session) {
     xlims <- c(center - 3 * me_max, center + 3 * me_max)
 
     p_bot <- ggplot() +
-      xlim(xlims) +
-      ylim(-0.6, 0.6) +
+      coord_cartesian(xlim = xlims, ylim = c(-0.6, 0.6)) +
       labs(x = "Wartość (jednostki dowolne)", y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
@@ -415,8 +413,8 @@ ch5_server <- function(input, output, session) {
                  linetype = "dashed", linewidth = 0.6) +
       geom_point(aes(x = center, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
-      geom_errorbarh(aes(xmin = center - me_actual, xmax = center + me_actual, y = 0),
-                     height = 0.18, color = col_hit, linewidth = 2.4, alpha = 0.8) +
+      geom_errorbar(aes(xmin = center - me_actual, xmax = center + me_actual, y = 0),
+                     width = 0.18, color = col_hit, linewidth = 2.4, alpha = 0.8, orientation = "y") +
       annotate("text", x = center, y = -0.42,
                label = "Osiągnięte ME ≤ wymagane ✓",
                color = col_hit, fontface = "bold", size = 4.8)
@@ -467,8 +465,8 @@ ch5_server <- function(input, output, session) {
       colors <- c(col_estimate, col_ci, col_true)
 
       ggplot(df, aes(y = y)) +
-        geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0.3,
-                       color = colors, linewidth = 2) +
+        geom_errorbar(aes(xmin = lower, xmax = upper), width = 0.3,
+                       color = colors, linewidth = 2, orientation = "y") +
         geom_point(aes(x = xbar), color = col_estimate, size = 4, shape = 18) +
         scale_y_continuous(breaks = c(1, 2, 3),
                            labels = c("99%", "95%", "90%")) +
@@ -616,8 +614,7 @@ ch5_server <- function(input, output, session) {
     xlims <- c(xrange[1] - pad, xrange[2] + pad)
 
     p <- ggplot() +
-      xlim(xlims) +
-      ylim(-0.65, 0.65) +
+      coord_cartesian(xlim = xlims, ylim = c(-0.65, 0.65)) +
       labs(x = cfg$xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
@@ -658,8 +655,8 @@ ch5_server <- function(input, output, session) {
     if (!is.na(conf)) {
       ci <- compute_edge_ci(case_id, conf)
       p <- p +
-        geom_errorbarh(aes(xmin = ci$lower, xmax = ci$upper, y = 0),
-                       height = 0.18, color = col_ci, linewidth = 2.4, alpha = 0.7) +
+        geom_errorbar(aes(xmin = ci$lower, xmax = ci$upper, y = 0),
+                       width = 0.18, color = col_ci, linewidth = 2.4, alpha = 0.7, orientation = "y") +
         annotate("text", x = center, y = -0.45,
                  label = paste0(round(conf * 100), "% CI: [",
                                 round(ci$lower, 3), " ; ", round(ci$upper, 3), "]"),

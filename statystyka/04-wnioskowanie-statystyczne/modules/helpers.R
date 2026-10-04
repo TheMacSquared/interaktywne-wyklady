@@ -260,9 +260,9 @@ step_null_plot <- function(stat, df, type = c("t", "chisq"),
     if (type == "t" && alternative == "two.sided") {
       tail_mid <- (crit[2] + xlim[2]) / 2
       p <- p +
-        step_label(0, y_top * 0.45, "nie odrzucamy H0", role = "known", hjust = 0.5) +
-        step_label(-tail_mid, y_top * 0.25, "Ha", role = "new", hjust = 0.5) +
-        step_label(tail_mid, y_top * 0.25, "Ha", role = "new", hjust = 0.5)
+        step_label(0, y_top * 0.45, "nie odrzucamy H₀", role = "known", hjust = 0.5) +
+        step_label(-tail_mid, y_top * 0.25, "Hₐ", role = "new", hjust = 0.5) +
+        step_label(tail_mid, y_top * 0.25, "Hₐ", role = "new", hjust = 0.5)
     }
   }
   p +

@@ -641,7 +641,7 @@ ch5_server <- function(input, output, session) {
   # --- Widget 2: Porownanie chi-kwadrat vs Fisher ---
   output$ch5_compare_result <- renderUI({
     req(input$ch5_compare)
-    tab <- isolate(ch5_tab())
+    tab <- ch5_tab()
 
     if (is.null(tab)) {
       return(lc_caption(

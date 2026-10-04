@@ -224,14 +224,17 @@ ch1_ui <- lecture_chapter(
         lc_slider("ch1_trans_n", "n", 30, 200, 80, 10),
         lc_action("ch1_transform", "Generuj i transformuj", variant = "solid")
       ),
-      lc_plot("ch1_transform_plots", max_height = "300px"),
+      lc_plots(
+        tags$div(tags$h4("Dane surowe"), lc_plot("ch1_transform_raw", max_height = "300px")),
+        tags$div(tags$h4("Po logarytmowaniu"), lc_plot("ch1_transform_log", max_height = "300px"))
+      ),
       lc_caption("Generujemy dane prawoskośne i je logarytmujemy.")
     ),
 
-    lc_p("Na lewym wykresie widać łuk typowy dla prawoskośności. Po logarytmowaniu
+    lc_p("Na wykresie danych surowych widać łuk typowy dla prawoskośności. Po logarytmowaniu
       punkty leżą znacznie bliżej prostej. Teoretyczna skośność spada z 1.41
       do -0.30, czyli logarytm nie tylko usunął prawy ogon, ale lekko przechylił
-      rozkład w drugą stronę: przy większym n końce prawego wykresu mogą
+      rozkład w drugą stronę: przy większym n końce wykresu po logarytmowaniu mogą
       układać się nieco pod prostą. Transformacja nie gwarantuje więc rozkładu
       normalnego, tylko zmienia jego kształt."),
 
@@ -315,7 +318,7 @@ ch1_server <- function(input, output, session) {
   # --- Widget 2: Testy normalności ---
   output$ch1_norm_results <- renderUI({
     req(input$ch1_test_norm)
-    x <- isolate(ch1_data())
+    x <- ch1_data()
     if (is.null(x)) return(lc_caption("Najpierw wygeneruj dane."))
 
     sw <- shapiro_test(data.frame(value = x), value)
@@ -341,29 +344,27 @@ ch1_server <- function(input, output, session) {
     ch1_trans_data(x)
   })
 
-  zoom_plot_server("ch1_transform_plots", reactive({
+  ch1_qq <- function(x, colour) {
+    ggplot(data.frame(x = x), aes(sample = x)) +
+      stat_qq(color = colour, alpha = 0.5) +
+      stat_qq_line(color = colour) +
+      labs(x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
+      theme_upwr()
+  }
+  ch1_qq_empty <- function() {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Generuj i transformuj”",
+               size = 5, color = upwr_reference) +
+      theme_void()
+  }
+
+  zoom_plot_server("ch1_transform_raw", reactive({
     x <- ch1_trans_data()
-    if (is.null(x)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Generuj i transformuj”",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      log_x <- log(x)
+    if (is.null(x)) ch1_qq_empty() else ch1_qq(x, col_fail)
+  }))
 
-      p1 <- ggplot(data.frame(x = x), aes(sample = x)) +
-        stat_qq(color = col_fail, alpha = 0.5) +
-        stat_qq_line(color = col_fail) +
-        labs(x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
-        theme_upwr()
-
-      p2 <- ggplot(data.frame(x = log_x), aes(sample = x)) +
-        stat_qq(color = col_ok, alpha = 0.5) +
-        stat_qq_line(color = col_ok) +
-        labs(x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
-        theme_upwr()
-
-      gridExtra::arrangeGrob(p1, p2, ncol = 2)
-    }
+  zoom_plot_server("ch1_transform_log", reactive({
+    x <- ch1_trans_data()
+    if (is.null(x)) ch1_qq_empty() else ch1_qq(log(x), col_ok)
   }))
 }

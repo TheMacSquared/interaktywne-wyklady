@@ -538,10 +538,10 @@ ch7_server <- function(input, output, session) {
   # Pomocnicza: licz raz, podawaj do plot/matrix/result
   ch7_gh_data <- reactive({
     req(input$ch7_run_tukey)
-    data <- isolate(ch7_data())
+    data <- ch7_data()
     if (is.null(data)) return(NULL)
-    cfg <- ch7_scenario_cfg(isolate(input$ch7_scenario))
-    var <- isolate(input$ch7_var)
+    cfg <- ch7_scenario_cfg(input$ch7_scenario)
+    var <- input$ch7_var
     req(var %in% names(data))
     formula <- as.formula(paste(var, "~", cfg$group_col))
     list(
@@ -601,7 +601,7 @@ ch7_server <- function(input, output, session) {
 
     ggplot(gh_df, aes(x = estimate, y = comparison, color = significant)) +
       geom_point(size = 3) +
-      geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
+      geom_errorbar(aes(xmin = conf.low, xmax = conf.high), width = 0.2, orientation = "y") +
       geom_vline(xintercept = 0, linetype = "dashed", color = upwr_secondary) +
       scale_color_manual(values = c("TRUE" = col_reject, "FALSE" = col_accept),
                          labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),

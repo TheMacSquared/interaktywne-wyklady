@@ -668,8 +668,8 @@ ch3_server <- function(input, output, session) {
 
   output$ch3_compare_result <- renderUI({
     req(input$ch3_compare)
-    d <- isolate(ch3_data())
-    par <- isolate(scenario_params[[input$ch3_scenario]])
+    d <- ch3_data()
+    par <- scenario_params[[input$ch3_scenario]]
 
     if (is.null(d)) {
       return(lc_caption(
@@ -683,10 +683,12 @@ ch3_server <- function(input, output, session) {
     binom_res <- binom.test(k, n, p0, alternative = "two.sided")
 
     # Test proporcji (z-test z poprawką ciągłości)
-    prop_res <- prop.test(k, n, p = p0, alternative = "two.sided", correct = TRUE)
+    prop_res <- suppressWarnings(prop.test(k, n, p = p0, alternative = "two.sided", correct = TRUE))
 
-    # Statystyka z ręcznie
-    z_stat <- (phat - p0) / sqrt(p0 * (1 - p0) / n)
+    # Statystyka z z tą samą poprawką na ciągłość co prop.test (Yates):
+    # |k - np₀| pomniejszone o 0.5 (nie więcej niż sama różnica).
+    diff_k <- k - n * p0
+    z_stat <- sign(diff_k) * (abs(diff_k) - min(0.5, abs(diff_k))) / sqrt(n * p0 * (1 - p0))
 
     # Warunki przybliżenia normalnego
     np0 <- n * p0
@@ -700,7 +702,7 @@ ch3_server <- function(input, output, session) {
           binom = c(paste0("k = ", k, ", n = ", n), paste0("k = ", k, " (dokładna)"),
                     format_p_value(binom_res$p.value),
                     format_test_result(binom_res$p.value)$decision),
-          prop = c(paste0("k = ", k, ", n = ", n), paste0("z = ", round(z_stat, 3)),
+          prop = c(paste0("k = ", k, ", n = ", n), paste0("z = ", round(z_stat, 3), " (z poprawką na ciągłość)"),
                    format_p_value(prop_res$p.value),
                    format_test_result(prop_res$p.value)$decision)
         ),

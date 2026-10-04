@@ -395,7 +395,7 @@ ch3b_server <- function(input, output, session) {
                desc = "współczynnik"),
         lc_col("se", "Błąd stand.", digits = 3, short = "SE",
                desc = "błąd standardowy"),
-        lc_col("p", "p-value")
+        lc_col("p", "p")
       )
     )
   })

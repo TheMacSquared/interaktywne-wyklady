@@ -132,10 +132,10 @@ ch3_server <- function(input, output, session) {
       geom_histogram(bins = 20, fill = bayes_freq, color = "white", alpha = 0.6) +
       geom_vline(xintercept = mean_x, color = bayes_reference,
                  linewidth = 1.3) +
-      geom_errorbarh(data = data.frame(y = 0.5, xmin = ci[1], xmax = ci[2]),
+      geom_errorbar(data = data.frame(y = 0.5, xmin = ci[1], xmax = ci[2]),
                      aes(y = y, xmin = xmin, xmax = xmax),
-                     height = 0, color = bayes_freq, linewidth = 3,
-                     inherit.aes = FALSE) +
+                     width = 0, color = bayes_freq, linewidth = 3,
+                     inherit.aes = FALSE, orientation = "y") +
       annotate("text", x = ci[1], y = Inf, label = round(ci[1], 2),
                vjust = -0.3, hjust = 1.1, color = bayes_freq, size = 3.5) +
       annotate("text", x = ci[2], y = Inf, label = round(ci[2], 2),

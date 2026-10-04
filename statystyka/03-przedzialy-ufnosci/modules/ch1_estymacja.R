@@ -250,7 +250,8 @@ ch1_server <- function(input, output, session) {
   observeEvent(input$ch1_reset, {
     ch1_estimates(data.frame(i = integer(0), xbar = numeric(0)))
   })
-  observeEvent(input$ch1_dist, {
+  # Nowy rozkład albo nowe n to nowy estymator — historia zaczyna się od zera.
+  observeEvent(list(input$ch1_dist, input$ch1_n), {
     ch1_estimates(data.frame(i = integer(0), xbar = numeric(0)))
   })
 

@@ -769,8 +769,7 @@ ch4_server <- function(input, output, session) {
     }
 
     p_right <- ggplot() +
-      xlim(xlims) +
-      ylim(-0.6, 0.6) +
+      coord_cartesian(xlim = xlims, ylim = c(-0.6, 0.6)) +
       labs(x = xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
@@ -812,8 +811,8 @@ ch4_server <- function(input, output, session) {
     # Krok 3+: SE
     if (step >= 3) {
       p_right <- p_right +
-        geom_errorbarh(aes(xmin = phat - se, xmax = phat + se, y = 0),
-                       height = 0.08, color = col_hit, linewidth = 1.8) +
+        geom_errorbar(aes(xmin = phat - se, xmax = phat + se, y = 0),
+                       width = 0.08, color = col_hit, linewidth = 1.8, orientation = "y") +
         annotate("text", x = phat, y = 0.20,
                  label = paste0("± SE = ±", round(se, 3)),
                  color = col_hit, fontface = "bold", size = 4)
@@ -822,8 +821,8 @@ ch4_server <- function(input, output, session) {
     # Krok 4: CI
     if (step >= 4) {
       p_right <- p_right +
-        geom_errorbarh(aes(xmin = phat - me, xmax = phat + me, y = 0),
-                       height = 0.14, color = col_ci, linewidth = 2.2, alpha = 0.6) +
+        geom_errorbar(aes(xmin = phat - me, xmax = phat + me, y = 0),
+                       width = 0.14, color = col_ci, linewidth = 2.2, alpha = 0.6, orientation = "y") +
         annotate("text", x = phat, y = -0.45,
                  label = paste0("95% CI: [", round(phat - me, 3),
                                 " ; ", round(phat + me, 3), "]"),
@@ -868,8 +867,7 @@ ch4_server <- function(input, output, session) {
     )
 
     p <- ggplot() +
-      xlim(xlims) +
-      ylim(0.3, k + 0.7) +
+      coord_cartesian(xlim = xlims, ylim = c(0.3, k + 0.7)) +
       labs(x = xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
@@ -909,9 +907,9 @@ ch4_server <- function(input, output, session) {
       p <- p +
         geom_point(data = rows_df, aes(x = phat, y = y),
                    color = col_estimate, size = 5, shape = 18) +
-        geom_errorbarh(data = rows_df,
+        geom_errorbar(data = rows_df,
                        aes(xmin = lower, xmax = upper, y = y),
-                       height = 0.18, color = col_ci, linewidth = 1.8, alpha = 0.7) +
+                       width = 0.18, color = col_ci, linewidth = 1.8, alpha = 0.7, orientation = "y") +
         geom_text(data = rows_df,
                   aes(x = (lower + upper) / 2, y = y - 0.22,
                       label = paste0("[", round(lower, 3), " ; ", round(upper, 3), "]")),
@@ -956,8 +954,7 @@ ch4_server <- function(input, output, session) {
 
     # ---- PRAWY GÓRNY PANEL: dwie p_hat na osi proporcji ----
     p_top <- ggplot() +
-      xlim(0, 1) +
-      ylim(0.4, 2.6) +
+      coord_cartesian(xlim = c(0, 1), ylim = c(0.4, 2.6)) +
       labs(x = xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_text(face = "bold", size = 11),
@@ -987,8 +984,7 @@ ch4_server <- function(input, output, session) {
     col_true_local <- "#9b59b6"
 
     p_bot <- ggplot() +
-      xlim(xlims_bot) +
-      ylim(-0.55, 0.55) +
+      coord_cartesian(xlim = xlims_bot, ylim = c(-0.55, 0.55)) +
       labs(x = paste0("Różnica proporcji  —  ", label1, " − ", label2),
            y = NULL) +
       theme_upwr() +
@@ -1034,8 +1030,8 @@ ch4_server <- function(input, output, session) {
 
     if (step >= 4) {
       p_bot <- p_bot +
-        geom_errorbarh(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
-                       height = 0.08, color = col_hit, linewidth = 1.8) +
+        geom_errorbar(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
+                       width = 0.08, color = col_hit, linewidth = 1.8, orientation = "y") +
         annotate("text", x = diff_val, y = 0.17,
                  label = paste0("± SE = ±", round(se, 3)),
                  color = col_hit, fontface = "bold", size = 4)
@@ -1043,8 +1039,8 @@ ch4_server <- function(input, output, session) {
 
     if (step >= 5) {
       p_bot <- p_bot +
-        geom_errorbarh(aes(xmin = diff_val - me, xmax = diff_val + me, y = 0),
-                       height = 0.14, color = col_ci, linewidth = 2.2, alpha = 0.6) +
+        geom_errorbar(aes(xmin = diff_val - me, xmax = diff_val + me, y = 0),
+                       width = 0.14, color = col_ci, linewidth = 2.2, alpha = 0.6, orientation = "y") +
         annotate("text", x = diff_val, y = -0.42,
                  label = paste0("95% CI: [", round(diff_val - me, 3),
                                 " ; ", round(diff_val + me, 3), "]"),
@@ -1080,8 +1076,7 @@ ch4_server <- function(input, output, session) {
                             label = paste0(xs, "/", ns))
 
     p <- ggplot() +
-      xlim(xlims) +
-      ylim(0.3, k + 0.7) +
+      coord_cartesian(xlim = xlims, ylim = c(0.3, k + 0.7)) +
       labs(x = xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
@@ -1110,9 +1105,9 @@ ch4_server <- function(input, output, session) {
     }
     # Krok 3+: CI
     if (step >= 3) {
-      p <- p + geom_errorbarh(data = group_df,
+      p <- p + geom_errorbar(data = group_df,
                                aes(xmin = lower, xmax = upper, y = y),
-                               height = 0.18, color = col_ci, linewidth = 1.8)
+                               width = 0.18, color = col_ci, linewidth = 1.8, orientation = "y")
     }
 
     p

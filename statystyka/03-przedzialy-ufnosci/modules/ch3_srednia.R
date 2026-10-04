@@ -886,8 +886,7 @@ ch3_server <- function(input, output, session) {
     samp_df <- data.frame(x = samp, y = jitter_y)
 
     p <- ggplot() +
-      xlim(xlims) +
-      ylim(-0.55, 0.75) +
+      coord_cartesian(xlim = xlims, ylim = c(-0.55, 0.75)) +
       labs(x = xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
@@ -933,17 +932,17 @@ ch3_server <- function(input, output, session) {
     }
     if (step >= 3) {
       p <- p +
-        geom_errorbarh(aes(xmin = xbar - se, xmax = xbar + se, y = 0),
-                       height = 0.06, color = col_hit, linewidth = 1.8) +
+        geom_errorbar(aes(xmin = xbar - se, xmax = xbar + se, y = 0),
+                       width = 0.06, color = col_hit, linewidth = 1.8, orientation = "y") +
         annotate("text", x = xbar, y = 0.14,
                  label = paste0("± SE = ±", round(se, 2)),
                  color = col_hit, fontface = "bold", size = 4)
     }
     if (step >= 4) {
       p <- p +
-        geom_errorbarh(aes(xmin = xbar - me, xmax = xbar + me, y = 0),
-                       height = 0.12, color = col_ci, linewidth = 2.2,
-                       alpha = 0.6) +
+        geom_errorbar(aes(xmin = xbar - me, xmax = xbar + me, y = 0),
+                       width = 0.12, color = col_ci, linewidth = 2.2,
+                       alpha = 0.6, orientation = "y") +
         annotate("text", x = xbar, y = -0.38,
                  label = paste0("95% CI: [", round(xbar - me, 2),
                                 " ; ", round(xbar + me, 2), "]"),
@@ -979,8 +978,7 @@ ch3_server <- function(input, output, session) {
     y_positions <- seq_along(ns)
 
     p <- ggplot() +
-      xlim(xlims) +
-      ylim(0.3, length(ns) + 0.7) +
+      coord_cartesian(xlim = xlims, ylim = c(0.3, length(ns) + 0.7)) +
       labs(x = xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
@@ -1018,9 +1016,9 @@ ch3_server <- function(input, output, session) {
         xbar_val = xbar
       )
       p <- p +
-        geom_errorbarh(data = rows_df,
+        geom_errorbar(data = rows_df,
                        aes(xmin = lower, xmax = upper, y = y),
-                       height = 0.12, color = col_ci, linewidth = 1.8) +
+                       width = 0.12, color = col_ci, linewidth = 1.8, orientation = "y") +
         geom_point(data = rows_df,
                    aes(x = xbar_val, y = y),
                    color = col_estimate, size = 5, shape = 18)
@@ -1081,8 +1079,7 @@ ch3_server <- function(input, output, session) {
     jit2 <- runif(length(samp2), 0.75, 1.25)
 
     p_top <- ggplot() +
-      xlim(xlims_top) +
-      ylim(0.35, 2.25) +
+      coord_cartesian(xlim = xlims_top, ylim = c(0.35, 2.25)) +
       labs(x = xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
@@ -1132,8 +1129,7 @@ ch3_server <- function(input, output, session) {
     xlims_bot <- c(xlims_bot[1] - pad_b, xlims_bot[2] + pad_b)
 
     p_bot <- ggplot() +
-      xlim(xlims_bot) +
-      ylim(-0.55, 0.65) +
+      coord_cartesian(xlim = xlims_bot, ylim = c(-0.55, 0.65)) +
       labs(x = paste0("Różnica (", data$unit, ")  —  ", data$diff_label),
            y = NULL) +
       theme_upwr() +
@@ -1180,17 +1176,17 @@ ch3_server <- function(input, output, session) {
 
     if (step >= 4) {
       p_bot <- p_bot +
-        geom_errorbarh(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
-                       height = 0.08, color = col_hit, linewidth = 1.8) +
+        geom_errorbar(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
+                       width = 0.08, color = col_hit, linewidth = 1.8, orientation = "y") +
         annotate("text", x = diff_val, y = 0.17,
                  label = paste0("± SE = ±", round(se, 2)),
                  color = col_hit, fontface = "bold", size = 4)
     }
     if (step >= 5) {
       p_bot <- p_bot +
-        geom_errorbarh(aes(xmin = diff_val - me, xmax = diff_val + me, y = 0),
-                       height = 0.14, color = col_ci, linewidth = 2.2,
-                       alpha = 0.6) +
+        geom_errorbar(aes(xmin = diff_val - me, xmax = diff_val + me, y = 0),
+                       width = 0.14, color = col_ci, linewidth = 2.2,
+                       alpha = 0.6, orientation = "y") +
         annotate("text", x = diff_val, y = -0.42,
                  label = paste0("95% CI: [", round(diff_val - me, 2),
                                 " ; ", round(diff_val + me, 2), "]"),
@@ -1240,8 +1236,7 @@ ch3_server <- function(input, output, session) {
                             mean = means, lower = all_lowers, upper = all_uppers)
 
     p <- ggplot() +
-      xlim(xlims) +
-      ylim(0.3, k + 0.7) +
+      coord_cartesian(xlim = xlims, ylim = c(0.3, k + 0.7)) +
       labs(x = xlab, y = NULL) +
       theme_upwr() +
       theme(axis.text.y = element_blank(),
@@ -1289,9 +1284,9 @@ ch3_server <- function(input, output, session) {
     }
     # Krok 3+: CI
     if (step >= 3) {
-      p <- p + geom_errorbarh(data = group_df,
+      p <- p + geom_errorbar(data = group_df,
                                aes(xmin = lower, xmax = upper, y = y),
-                               height = 0.18, color = col_ci, linewidth = 1.8)
+                               width = 0.18, color = col_ci, linewidth = 1.8, orientation = "y")
     }
 
     p
@@ -1679,8 +1674,8 @@ ch3_server <- function(input, output, session) {
                     inherit.aes = FALSE,
                     fill = "#f1c40f", alpha = 0.25)
       } +
-      geom_errorbarh(aes(xmin = lo, xmax = hi), height = 0.18,
-                     color = col_ci, linewidth = 1.4) +
+      geom_errorbar(aes(xmin = lo, xmax = hi), width = 0.18,
+                     color = col_ci, linewidth = 1.4, orientation = "y") +
       geom_point(aes(x = mean), color = col_estimate, size = 4) +
       geom_text(aes(x = mean, label = sprintf("%.2f", mean)),
                 vjust = -1.2, color = col_estimate, fontface = "bold", size = 4.2) +
@@ -1695,8 +1690,8 @@ ch3_server <- function(input, output, session) {
                  linewidth = 1.0, linetype = "dashed") +
       annotate("text", x = 0, y = 2.3, label = "0",
                color = col_true, fontface = "bold", size = 4.5) +
-      geom_errorbarh(aes(xmin = lo, xmax = hi), height = 0.18,
-                     color = col_ci, linewidth = 1.4) +
+      geom_errorbar(aes(xmin = lo, xmax = hi), width = 0.18,
+                     color = col_ci, linewidth = 1.4, orientation = "y") +
       geom_point(aes(x = mean), color = col_estimate, size = 4) +
       geom_text(aes(x = mean, label = sprintf("%.2f", mean)),
                 vjust = -1.2, color = col_estimate, fontface = "bold", size = 4.2) +

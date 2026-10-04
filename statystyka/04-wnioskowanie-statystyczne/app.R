@@ -149,7 +149,6 @@ header_extras <- tagList(
       var xs = [];
       var line = [];
       var shade = [];
-      var alpha = msg.alpha || 0.05;
       var sided = msg.sided || 'two.sided';
       var critHigh = sided === 'two.sided' ? msg.crit : (sided === 'greater' ? msg.crit : null);
       var critLow = sided === 'two.sided' ? -msg.crit : (sided === 'less' ? msg.crit : null);
@@ -165,7 +164,7 @@ header_extras <- tagList(
         line.push({ x: x, y: y });
         shade.push({ x: x, y: inTail ? y : null });
       }
-      return { line: line, shade: shade, critLow: critLow, critHigh: critHigh, alpha: alpha };
+      return { line: line, shade: shade, critLow: critLow, critHigh: critHigh };
     }
 
     function wsRenderSidedChart(msg) {
@@ -177,7 +176,7 @@ header_extras <- tagList(
       var reference = wsCss('--upwr-reference', '#8b8175');
       var data = wsDistributionData(msg);
       var datasets = [
-        { label: 'Obszar odrzucenia', data: data.shade, borderColor: 'transparent',
+        { label: msg.shadeLabel || 'Obszar odrzucenia', data: data.shade, borderColor: 'transparent',
           backgroundColor: 'rgba(107, 26, 42, 0.30)', fill: 'origin', pointRadius: 0,
           tension: 0.25, spanGaps: false },
         { label: 'Rozkład pod H0', data: data.line, borderColor: h0, borderWidth: 3,
@@ -209,7 +208,8 @@ header_extras <- tagList(
           animation: { duration: 650, easing: 'easeOutQuart' },
           scales: {
             x: { type: 'linear', min: -4, max: 4, grid: { color: 'rgba(139,129,117,.12)' },
-                 ticks: { color: reference } },
+                 ticks: { color: reference },
+                 title: { display: true, text: msg.xLabel || 'Statystyka testowa', color: reference } },
             y: { min: 0, max: 0.43, grid: { color: 'rgba(139,129,117,.12)' },
                  ticks: { color: reference } }
           },
@@ -222,11 +222,12 @@ header_extras <- tagList(
       });
     }
 
+    // Pole p-wartości: oba ogony od |statystyki obserwowanej| w górę.
     function wsRenderPValueChart(msg) {
       wsRenderSidedChart(Object.assign({
         sided: 'two.sided',
-        alpha: 0.03,
-        crit: msg.stat || 2.17
+        crit: msg.stat || 2.17,
+        shadeLabel: 'p-wartość: wyniki co najmniej tak skrajne'
       }, msg));
     }
 

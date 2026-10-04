@@ -213,38 +213,18 @@ to stosują.
 - [ ] Widget krokowy (rozdz. 4): wygładzona krzywa wychodzi poza dziedzinę
   dla rozkładu wykładniczego i jednostajnego.
 
-### 03 — przedziały ufności
-
-- [ ] Ryc. 1.1: zmiana suwaka n nie czyści historii estymat (czyści ją tylko
-  zmiana rozkładu).
-- [ ] Case studies w rozdz. 3: ostrzeżenia ggplot („Removed rows…”
-  w `geom_point`, przestarzały `geom_errorbarh`).
-
 ### 04 — wnioskowanie statystyczne
 
-- [ ] Post hoc w ANOVA (rozdz. 09) i porównanie χ²/Fisher (rozdz. 07) czytają
-  dane przez `isolate()`: po nowym losowaniu pokazują wyniki dla starych
-  danych, dopóki ktoś nie kliknie przycisku ponownie.
 - [ ] Ryc. 3.2: statbox „Błąd I” pokazuje α z panelu mocy, a p-wartość jest
   tylko w podpisie; suwak n zmienia tylko symulację pod H₀, obserwowana
   różnica zawsze pochodzi z n = 40.
-- [ ] Ryc. 3.3 (`wsRenderPValueChart` w `app.R`): zacieniowane pole p-wartości
-  nazywa się w kodzie „Obszar odrzucenia”; nieużywany parametr `alpha`;
-  oś x bez podpisu.
-- [ ] Ryc. 5.3: z liczone bez poprawki na ciągłość, p-wartość obok
-  z poprawką (`prop.test(correct = TRUE)`).
 - [ ] Ryc. 6.x: PNG `anscombe-quartet.png` i `correlation-nonlinear.png` mają
   kropkę dziesiętną i nie mają skryptu generującego.
 - [ ] Ryc. 10.5: η² z próby (seed 202) wyraźnie mniejsze niż η² populacji
   w tabeli; kolumna „x̄” pokazuje średnie populacji.
-- [ ] `helpers.R`: `step_null_plot` — etykiety „H0”, „Ha” bez indeksów.
 
 ### 05 — założenia testów
 
-- [ ] Ryc. 1.2 czyta dane przez `isolate()`: po „Generuj dane” wynik testu
-  dotyczy starych danych, dopóki nie kliknie się testu ponownie.
-- [ ] Ryc. 1.3: dwa wykresy Q-Q (surowe dane, logarytm) bez podpisów —
-  rozróżnia je tylko kolor.
 - [ ] Ryc. 2.3: jedno n dla obu grup — przy równych n test Studenta i Welcha
   dają identyczne t, więc panel nie pokazuje, kiedy Student zawodzi
   (osobne suwaki n₁, n₂).
@@ -264,17 +244,12 @@ to stosują.
   wyróżnienie „najlepszej” wartości zawsze trafia w największy model.
 - [ ] Ryc. 1.2: scenariusz „Ten sam trend, mała próba” ma też większy szum
   (σ = 5 zamiast 3) — etykieta sugeruje, że różni się tylko n.
-- [ ] Ryc. 1.4: w tabeli surowe nazwy zmiennych („income”); na liście X
-  zmienna 0/1 „grades” w rozdziale o regresji prostej.
-- [ ] Ryc. 1.1b, krok 5: równanie sklejane jako „b₀ + b₁X” — przy ujemnym b₁
-  dałoby „+ -”.
+- [ ] Ryc. 1.4: na liście X zmienna 0/1 „grades” w rozdziale o regresji
+  prostej (nazwy w tabeli już jako etykiety).
 - [ ] Panel współliniowości (rozdz. 03): pokazuje tylko chmurę X₁–X₂,
-  niestabilności β nie widać bez wielokrotnego losowania; w tabeli `x1`/`x2`,
-  na wykresie X₁/X₂.
-- [ ] Rozdz. 03B: nagłówek „p-value” w tabeli modelu z interakcją → „p”.
+  niestabilności β nie widać bez wielokrotnego losowania.
 - [ ] Rozdz. 05: widget liniowa a logistyczna pokazuje identyczną dokładność
-  obu modeli (różnicę niesie tylko „poza [0, 1]”); `ch5_model_summary`
-  liczy nieużywane `coefs`.
+  obu modeli (różnicę niesie tylko „poza [0, 1]”).
 - [ ] Ściąga: k w dwóch znaczeniach (liczba predyktorów w R² skorygowanym,
   liczba parametrów w AIC/BIC) — ujednolicić z rozdz. 04 (k = liczba
   predyktorów, kara 2(k + 2)).
