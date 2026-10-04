@@ -210,9 +210,6 @@ to stosują.
 - [ ] Dystrybuanta (rozdz. 4, sekcja `ch4-dystrybuanta`): dodać wersję
   skrótową — wzór i wykres. Hasło „dystrybuanta” dopisać do
   `R/glossary.R`.
-- [ ] Punkt równowagi (rozdz. 2): prawdopodobieństwa są normalizowane
-  dopiero przy odchyleniu sumy od 1 o ponad 0,05, więc przy sumie np. 1,04
-  E(X) na wykresie i w obliczeniu jest lekko błędne.
 - [ ] Widget krokowy (rozdz. 4): wygładzona krzywa wychodzi poza dziedzinę
   dla rozkładu wykładniczego i jednostajnego.
 

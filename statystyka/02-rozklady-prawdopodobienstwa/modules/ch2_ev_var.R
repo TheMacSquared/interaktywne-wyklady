@@ -106,22 +106,23 @@ ch2_ev_var_ui <- list(
 
     lc_p("Wzór na E(X) to dosłownie przepis na punkt równowagi z początku
       rozdziału. Panel pokazuje go dla zmiennej przyjmującej wartości 1, 3, 5
-      i 9, z prawdopodobieństwami ustawianymi suwakami. Słupki są ciężarkami,
+      i 9, z prawdopodobieństwami wpisywanymi w pola. Słupki są ciężarkami,
       trójkąt pod osią to punkt podparcia, a pod wykresem widać pełne obliczenie.
-      Prawdopodobieństwa muszą sumować się do 1; licznik ∑P pokazuje, czy tak jest."),
+      Prawdopodobieństwa muszą sumować się do 1. Licznik ∑P pokazuje sumę
+      wpisanych liczb, a gdy różni się od 1, panel dzieli każdą z nich przez tę
+      sumę."),
 
     figure_panel(
       label = "Ryc. 2.2",
       title = "Punkt równowagi rozkładu",
       full_width = TRUE,
       lc_toolbar(
-        lc_slider("ch2ev_bal_p1", "P(X = 1)", 0, 1, 0.25, 0.01),
-        lc_slider("ch2ev_bal_p2", "P(X = 3)", 0, 1, 0.25, 0.01),
-        lc_slider("ch2ev_bal_p3", "P(X = 5)", 0, 1, 0.25, 0.01),
-        lc_slider("ch2ev_bal_p4", "P(X = 9)", 0, 1, 0.25, 0.01),
-        lc_action("ch2ev_bal_sym", "Symetryczny", variant = "outline"),
-        lc_action("ch2ev_bal_skew", "Skośny", variant = "outline"),
-        lc_action("ch2ev_bal_bimod", "Dwumodalny", variant = "outline"),
+        lc_group(NULL, numericInput("ch2ev_bal_p1", "P(X = 1)", 0.25, min = 0, max = 1, step = 0.05)),
+        lc_group(NULL, numericInput("ch2ev_bal_p2", "P(X = 3)", 0.25, min = 0, max = 1, step = 0.05)),
+        lc_group(NULL, numericInput("ch2ev_bal_p3", "P(X = 5)", 0.25, min = 0, max = 1, step = 0.05)),
+        lc_group(NULL, numericInput("ch2ev_bal_p4", "P(X = 9)", 0.25, min = 0, max = 1, step = 0.05)),
+        lc_action_group(ch2ev_bal_sym = "Symetryczny", ch2ev_bal_skew = "Skośny",
+                        ch2ev_bal_bimod = "Dwumodalny", label = "Ustawienia"),
         lc_readouts(uiOutput("ch2ev_bal_sum"))
       ),
       lc_plot("ch2ev_balance_plot", max_height = "350px"),
@@ -337,26 +338,40 @@ ch2_ev_var_server <- function(input, output, session) {
 
   # --- Widget 2: Punkt równowagi ---
   observeEvent(input$ch2ev_bal_sym, {
-    updateSliderInput(session, "ch2ev_bal_p1", value = 0.25)
-    updateSliderInput(session, "ch2ev_bal_p2", value = 0.25)
-    updateSliderInput(session, "ch2ev_bal_p3", value = 0.25)
-    updateSliderInput(session, "ch2ev_bal_p4", value = 0.25)
+    updateNumericInput(session, "ch2ev_bal_p1", value = 0.25)
+    updateNumericInput(session, "ch2ev_bal_p2", value = 0.25)
+    updateNumericInput(session, "ch2ev_bal_p3", value = 0.25)
+    updateNumericInput(session, "ch2ev_bal_p4", value = 0.25)
   })
   observeEvent(input$ch2ev_bal_skew, {
-    updateSliderInput(session, "ch2ev_bal_p1", value = 0.05)
-    updateSliderInput(session, "ch2ev_bal_p2", value = 0.15)
-    updateSliderInput(session, "ch2ev_bal_p3", value = 0.30)
-    updateSliderInput(session, "ch2ev_bal_p4", value = 0.50)
+    updateNumericInput(session, "ch2ev_bal_p1", value = 0.05)
+    updateNumericInput(session, "ch2ev_bal_p2", value = 0.15)
+    updateNumericInput(session, "ch2ev_bal_p3", value = 0.30)
+    updateNumericInput(session, "ch2ev_bal_p4", value = 0.50)
   })
   observeEvent(input$ch2ev_bal_bimod, {
-    updateSliderInput(session, "ch2ev_bal_p1", value = 0.40)
-    updateSliderInput(session, "ch2ev_bal_p2", value = 0.10)
-    updateSliderInput(session, "ch2ev_bal_p3", value = 0.10)
-    updateSliderInput(session, "ch2ev_bal_p4", value = 0.40)
+    updateNumericInput(session, "ch2ev_bal_p1", value = 0.40)
+    updateNumericInput(session, "ch2ev_bal_p2", value = 0.10)
+    updateNumericInput(session, "ch2ev_bal_p3", value = 0.10)
+    updateNumericInput(session, "ch2ev_bal_p4", value = 0.40)
+  })
+
+  # Wpisane liczby (puste i ujemne pola liczą się jako 0) i rozkład po
+  # przeskalowaniu do sumy 1.
+  ch2ev_bal <- reactive({
+    typed <- c(input$ch2ev_bal_p1, input$ch2ev_bal_p2,
+               input$ch2ev_bal_p3, input$ch2ev_bal_p4)
+    typed <- vapply(seq_len(4), function(i) {
+      v <- typed[i]
+      if (length(v) == 0 || is.na(v) || v < 0) 0 else v
+    }, numeric(1))
+    total <- sum(typed)
+    probs <- if (total > 0) typed / total else rep(0.25, 4)
+    list(typed = typed, total = total, probs = probs)
   })
 
   output$ch2ev_bal_sum <- renderUI({
-    s <- input$ch2ev_bal_p1 + input$ch2ev_bal_p2 + input$ch2ev_bal_p3 + input$ch2ev_bal_p4
+    s <- ch2ev_bal()$total
     if (abs(s - 1) < 0.005) {
       lc_readout("∑P", paste0(sprintf("%.2f", s), " ✔"), color = unname(upwr_cat["szalwia"]))
     } else {
@@ -366,10 +381,7 @@ ch2_ev_var_server <- function(input, output, session) {
 
   zoom_plot_server("ch2ev_balance_plot", reactive({
     x_vals <- c(1, 3, 5, 9)
-    probs <- c(input$ch2ev_bal_p1, input$ch2ev_bal_p2,
-               input$ch2ev_bal_p3, input$ch2ev_bal_p4)
-    s <- sum(probs)
-    if (abs(s - 1) > 0.05) probs <- probs / s  # normalizuj
+    probs <- ch2ev_bal()$probs
 
     ev <- sum(x_vals * probs)
 
@@ -397,10 +409,8 @@ ch2_ev_var_server <- function(input, output, session) {
 
   output$ch2ev_balance_text <- renderUI({
     x_vals <- c(1, 3, 5, 9)
-    probs <- c(input$ch2ev_bal_p1, input$ch2ev_bal_p2,
-               input$ch2ev_bal_p3, input$ch2ev_bal_p4)
-    s <- sum(probs)
-    if (abs(s - 1) > 0.05) probs <- probs / s
+    bal <- ch2ev_bal()
+    probs <- bal$probs
     ev <- sum(x_vals * probs)
 
     calc_parts <- paste(
@@ -412,7 +422,13 @@ ch2_ev_var_server <- function(input, output, session) {
 
     lc_status(
       tags$strong("Obliczenie:"),
-      paste0(" ", "E(X) = ", calc_parts, " = ", round(ev, 2))
+      paste0(" ", "E(X) = ", calc_parts, " = ", round(ev, 2)),
+      if (abs(bal$total - 1) >= 0.005 && bal$total > 0) {
+        tags$p(paste0("Wpisane liczby sumują się do ", sprintf("%.2f", bal$total),
+                      ", więc każdą podzielono przez tę sumę."))
+      } else if (bal$total == 0) {
+        tags$p("Wszystkie pola są puste lub zerowe, więc panel przyjął równe prawdopodobieństwa.")
+      }
     )
   })
 
