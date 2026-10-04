@@ -17,14 +17,14 @@ ch3_ui <- list(
                 dokładnie, bez przybliżenia normalnego."
     ),
 
-    lc_p("Test t z poprzedniego rozdziału sprawdzał hipotezę o średniej zmiennej
-      ilościowej. Wiele pytań dotyczy jednak zmiennej o dwóch kategoriach:
+    lc_p(gloss("test t", "Test t"), " z poprzedniego rozdziału sprawdzał hipotezę o średniej ", gloss("zmienna ilościowa", "zmiennej
+      ilościowej"), ". Wiele pytań dotyczy jednak zmiennej o dwóch kategoriach:
       próbka wody spełnia normę albo nie, student zdał albo nie zdał, produkt
       jest wadliwy albo sprawny. Parametrem populacji jest wtedy proporcja
-      \\(p\\), czyli odsetek sukcesów, a jej estymatorem ",
+      \\(p\\), czyli odsetek sukcesów, a jej ", gloss("estymator", "estymatorem"), " ",
       gloss("proporcja z próby", "proporcja z próby"), " \\(\\hat{p} = k/n\\),
       gdzie \\(k\\) to liczba sukcesów w próbie liczącej \\(n\\) obserwacji.
-      W wykładzie 03 budowaliśmy dla \\(p\\) przedział ufności. Teraz pytanie
+      W wykładzie 03 budowaliśmy dla \\(p\\) ", gloss("przedział ufności"), ". Teraz pytanie
       brzmi inaczej: czy \\(p\\) jest równe konkretnej wartości referencyjnej
       \\(p_0\\), na przykład deklaracji producenta, normie albo wartości
       historycznej."),
@@ -170,7 +170,7 @@ ch3_ui <- list(
     ),
 
     lc_p("Przy \\(n = 50\\) i \\(p_0 = 0.8\\) rozkład z kroku 2 ma środek
-      w \\(np_0 = 40\\) sukcesach, a jego odchylenie standardowe wynosi
+      w \\(np_0 = 40\\) sukcesach, a jego ", gloss("odchylenie standardowe"), " wynosi
       \\(\\sqrt{50 \\cdot 0.8 \\cdot 0.2} \\approx 2.8\\). Prawdziwy
       odsetek 85% daje średnio 42.5 sukcesu, czyli niecałe jedno odchylenie
       od środka. Typowa próba trafia więc w gęstą część rozkładu: dla
@@ -188,8 +188,8 @@ ch3_ui <- list(
       jest przy tym umową ustaloną przed analizą, podobnie jak poziom
       ufności 95% w wykładzie 03."),
 
-    lc_p("Wynik testu warto zestawić z 95-procentowym przedziałem
-      Cloppera-Pearsona z wykładu 03, który dla tej próby wynosi od 0.73
+    lc_p("Wynik testu warto zestawić z 95-procentowym ", gloss("przedział Cloppera-Pearsona", "przedziałem
+      Cloppera-Pearsona"), " z wykładu 03, który dla tej próby wynosi od 0.73
       do 0.94. Obejmuje on \\(p_0 = 0.8\\), co zgadza się z decyzją testu:
       wartość, której przedział nie wyklucza, nie zostaje odrzucona."),
 
@@ -210,7 +210,7 @@ ch3_ui <- list(
       "$$H_a: p > p_0: \\ \\ p = P(K \\geq k) \\qquad\\qquad H_a: p < p_0: \\ \\ p = P(K \\leq k)$$"
     )),
 
-    lc_p("Panel używa tej samej próby co test dwustronny powyżej. Zmienia się
+    lc_p("Panel używa tej samej próby co ", gloss("test dwustronny"), " powyżej. Zmienia się
       tylko pytanie, a razem z nim zbiór wyników uznanych za skrajne."),
 
     figure_panel(
@@ -250,7 +250,7 @@ ch3_ui <- list(
       ", gloss("rozkład normalny", "rozkładem normalnym"), ", czyli korzysta
       z tego samego przybliżenia, na którym w wykładzie 03 opierał się
       ", gloss("przedział Walda"), ". Statystyka testowa mierzy, o ile
-      błędów standardowych \\(\\hat{p}\\) odbiega od \\(p_0\\)."),
+      ", gloss("błąd standardowy", "błędów standardowych"), " \\(\\hat{p}\\) odbiega od \\(p_0\\)."),
 
     lc_formula_box(withMathJax(
       "$$z = \\frac{\\hat{p} - p_0}{\\sqrt{p_0(1-p_0)/n}}$$"
@@ -319,7 +319,7 @@ ch3_ui <- list(
       Z-test warto jednak rozpoznawać, bo podaje go wiele źródeł, a jego
       konstrukcja, różnica podzielona przez błąd standardowy, jest taka sama
       jak w teście t. Założenia testu dwumianowego, przede wszystkim
-      niezależność obserwacji, omawiamy w wykładzie 05."),
+      ", gloss("niezależność obserwacji"), ", omawiamy w wykładzie 05."),
 
     # ========================================================================
     # Ćwiczenia CASchools

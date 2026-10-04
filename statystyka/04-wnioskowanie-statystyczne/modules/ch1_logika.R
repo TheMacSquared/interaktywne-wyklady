@@ -20,7 +20,7 @@ ch1_ui <- list(
     lc_p("Wykład 03 skończył się na pytaniach innego rodzaju niż „gdzie leży
       parametr?”. Pytaliśmy, czy średni czas dojazdu przekracza 26 minut albo
       czy poparcie przekracza 50%, i rozstrzygaliśmy to, sprawdzając, czy
-      przedział ufności obejmuje wartość progową. Testowanie hipotez zajmuje się
+      ", gloss("przedział ufności"), " obejmuje wartość progową. Testowanie hipotez zajmuje się
       właśnie takimi pytaniami: czy parametr ma konkretną wartość, czy dwie grupy
       się różnią, czy dwie zmienne są ze sobą powiązane. Odpowiedzią nie jest
       zakres wartości, tylko decyzja. Zaczniemy od przykładu, w którym taka
@@ -59,14 +59,14 @@ ch1_ui <- list(
 
     lc_p("W typowym losowaniu średnia w grupie „biurko” wypada o kilka punktów
       niżej niż w grupie „plecak”. Wyniki obu grup mocno się jednak nakładają:
-      odchylenie standardowe w każdej z nich wynosi kilkanaście punktów, więc
+      ", gloss("odchylenie standardowe"), " w każdej z nich wynosi kilkanaście punktów, więc
       wielu studentów z telefonem na biurku wypada lepiej niż przeciętny student
       z telefonem w plecaku. Kolejne kliknięcia pokazują też, że sama różnica
       średnich zmienia się od eksperymentu do eksperymentu."),
 
     lc_p("Stąd pytanie, na które odpowiada ten wykład. Gdyby telefon nie miał
       żadnego wpływu, średnie dwóch losowych grup i tak by się różniły, bo każda
-      grupa to inna próba. To ta sama zmienność próbkowa, którą w wykładzie 03
+      grupa to inna próba. To ta sama ", gloss("zmienność próbkowa"), ", którą w wykładzie 03
       mierzył błąd standardowy. Czy zaobserwowana różnica jest na tyle duża,
       że trudno ją wytłumaczyć samą zmiennością próbkową? Taką decyzję
       podejmuje test statystyczny."),
@@ -214,7 +214,7 @@ ch1d_ui <- list(
     )),
 
     lc_p("Oba prawdopodobieństwa są warunkowe i opisują procedurę, a nie pojedynczy
-      wynik, podobnie jak poziom ufności w wykładzie 03. \\(\\alpha = 0.05\\)
+      wynik, podobnie jak ", gloss("poziom ufności"), " w wykładzie 03. \\(\\alpha = 0.05\\)
       znaczy, że gdyby H₀ była prawdziwa, test zastosowany do wielu prób
       odrzucałby ją średnio w 5 przypadkach na 100. Nie znaczy, że konkretna
       decyzja jest błędna z prawdopodobieństwem 5%."),
@@ -300,7 +300,7 @@ ch1d_ui <- list(
       Po eksperymencie mamy jednak jedną konkretną różnicę średnich i trzeba
       zdecydować, co z nią zrobić. Potrzebujemy liczby, która powie, jak bardzo
       ten wynik odstaje od tego, czego spodziewalibyśmy się przy prawdziwej H₀.
-      Tą liczbą jest ", gloss("p-wartość"), "."),
+      Tą liczbą jest ", "p-wartość", "."),
 
     lc_p("p-wartość to prawdopodobieństwo, że gdyby H₀ była prawdziwa,
       otrzymalibyśmy wynik co najmniej tak skrajny jak zaobserwowany. Dla różnicy
@@ -356,7 +356,7 @@ ch1d_ui <- list(
       której rozkład przy prawdziwej H₀ znamy z teorii. Kolejne rozdziały wprowadzą
       takie statystyki po kolei: t, χ² i F. p-wartość jest wtedy polem pod krzywą
       tego rozkładu w ogonach, za wartością statystyki obliczoną z próby. Wykres
-      poniżej pokazuje to dla statystyki o standardowym rozkładzie normalnym
+      poniżej pokazuje to dla statystyki o ", gloss("standardowy rozkład normalny", "standardowym rozkładzie normalnym"), "
       i wyniku 2.17."),
 
     figure_panel(
@@ -437,8 +437,8 @@ ch1d_ui <- list(
       mogła być za mała, by go wykryć. To właśnie błąd II rodzaju, a przy małej
       mocy jego prawdopodobieństwo jest duże."),
 
-    lc_p("Formalny werdykt trzeba jeszcze przetłumaczyć z powrotem na język pytania
-      badawczego. W eksperymencie z telefonem po odrzuceniu H₀ piszemy: „średnia
+    lc_p("Formalny werdykt trzeba jeszcze przetłumaczyć z powrotem na język ", gloss("pytanie badawcze", "pytania
+      badawczego"), ". W eksperymencie z telefonem po odrzuceniu H₀ piszemy: „średnia
       koncentracja studentów z telefonem na biurku istotnie statystycznie różni się
       od średniej koncentracji studentów z telefonem w plecaku”, a nie
       „odrzuciliśmy hipotezę zerową”. Raport podaje też samą p-wartość i poziom
@@ -475,7 +475,7 @@ ch1d_ui <- list(
       niemal tak samo mocno. To kolejny powód, by w raporcie podawać samą
       p-wartość. W kolejnych rozdziałach ten sam schemat — hipotezy, statystyka
       testowa, p-wartość, decyzja — zastosujemy do konkretnych testów, zaczynając
-      od testu t dla jednej średniej."),
+      od ", gloss("test t", "testu t"), " dla jednej średniej."),
 
     lc_chapter_next(
       num       = "04",

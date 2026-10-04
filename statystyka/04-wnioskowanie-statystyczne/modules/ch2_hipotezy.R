@@ -108,8 +108,7 @@ ch2h_ui <- list(
     ),
     lc_p("Tę samą parę można zapisać przez różnicę średnich:
       H₀ mówi, że różnica ", withMathJax("\\(\\mu_{biurko} - \\mu_{plecak}\\)"),
-      " wynosi 0, a Hₐ, że jest od 0 różna. W wykładzie 03 liczyliśmy przedział
-      ufności dla różnicy średnich. Pytanie, czy taki przedział obejmuje 0,
+      " wynosi 0, a Hₐ, że jest od 0 różna. W wykładzie 03 liczyliśmy ", gloss("przedział ufności"), " dla różnicy średnich. Pytanie, czy taki przedział obejmuje 0,
       i test tej pary hipotez to dwa spojrzenia na ten sam problem. Do tego
       związku wrócimy przy konkretnych testach."),
     lc_p("Pełny zapis formalny składa się z trzech elementów: definicji
@@ -225,13 +224,13 @@ ch2h_ui <- list(
     lc_p("Prawdopodobieństwo obszaru odrzucenia przy prawdziwej H₀ to ",
       gloss("poziom istotności"), " α. Jest to ryzyko, że odrzucimy H₀, choć
       jest prawdziwa. Zwyczajowo przyjmuje się α = 0.05. To umowa, którą
-      ustala się przed analizą, tak jak poziom ufności w wykładzie 03. Oba
+      ustala się przed analizą, tak jak ", gloss("poziom ufności"), " w wykładzie 03. Oba
       pojęcia są zresztą ze sobą powiązane: poziom ufności 95% odpowiada
       α = 0.05. W teście dwustronnym α dzielimy na dwa ogony rozkładu, po α/2
       na każdy. W teście jednostronnym całe α leży w ogonie wskazanym
       przez Hₐ."),
     lc_p("Panel pokazuje rozkład statystyki testowej przy prawdziwej H₀
-      (standardowy rozkład normalny). Zacieniowany jest obszar odrzucenia,
+      (", gloss("standardowy rozkład normalny"), "). Zacieniowany jest obszar odrzucenia,
       a przerywane linie to ", gloss("wartość krytyczna", "wartości krytyczne"),
       ", czyli jego granice."),
 

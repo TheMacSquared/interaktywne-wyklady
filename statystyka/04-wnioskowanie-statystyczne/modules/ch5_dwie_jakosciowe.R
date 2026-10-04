@@ -65,7 +65,7 @@ ch5_ui <- list(
     )),
 
     lc_p("gdzie \\(n_{i\\cdot}\\) to suma i-tego wiersza, \\(n_{\\cdot j}\\) suma
-      j-tej kolumny, a n liczba wszystkich obserwacji. Statystyka testowa zbiera
+      j-tej kolumny, a n liczba wszystkich obserwacji. ", gloss("statystyka testowa", "Statystyka testowa"), " zbiera
       rozbieżności między liczebnościami obserwowanymi \\(O_{ij}\\) a oczekiwanymi
       \\(E_{ij}\\) ze wszystkich komórek tabeli. Różnice podnosimy do kwadratu,
       żeby nadwyżki i niedobory się nie znosiły, i dzielimy przez \\(E_{ij}\\),
@@ -83,7 +83,7 @@ ch5_ui <- list(
       wierszy i kolumn. Tyle komórek tabeli można wypełnić dowolnie, zanim sumy
       wierszy i kolumn wyznaczą resztę. Pełna niezależność w próbie dałaby χ² = 0,
       a każde odstępstwo od niej, w dowolną stronę, powiększa χ². Dlatego H₀
-      odrzucamy tylko przy dużych wartościach statystyki, a p-wartość to pole pod
+      odrzucamy tylko przy dużych wartościach statystyki, a ", gloss("p-wartość"), " to pole pod
       krzywą rozkładu χ² na prawo od obliczonej wartości."),
 
     # ========================================================================
@@ -116,13 +116,13 @@ ch5_ui <- list(
       odchylenia ważą jednak różnie: komórki z mniejszą liczebnością oczekiwaną,
       tu komórki z mandatem, wnoszą do χ² więcej."),
 
-    lc_p("Przy poziomie istotności α = 0.05, ustalonym jak zwykle przed
-      spojrzeniem na dane, wartość krytyczna rozkładu χ² z jednym stopniem
+    lc_p("Przy ", gloss("poziom istotności", "poziomie istotności"), " α = 0.05, ustalonym jak zwykle przed
+      spojrzeniem na dane, ", gloss("wartość krytyczna"), " rozkładu χ² z jednym stopniem
       swobody wynosi 3.84. Obliczone 8.33 leży daleko za nią, a p-wartość
       wynosi 0.004. Gdyby płeć nie miała związku
       z mandatami, rozbieżność co najmniej tak duża jak w tych danych zdarzałaby
       się mniej więcej w 4 próbach na 1000. Odrzucamy H₀. Test nie mówi natomiast,
-      skąd ten związek się bierze. To dane obserwacyjne, więc nie wiemy, czy chodzi
+      skąd ten związek się bierze. To ", gloss("dane obserwacyjne"), ", więc nie wiemy, czy chodzi
       o płeć, czy na przykład o to, że mężczyźni więcej jeżdżą."),
 
     # ========================================================================
@@ -236,7 +236,7 @@ ch5_ui <- list(
       raz, a w komórkach stoją liczebności, nie procenty. Trzecie założenie
       dotyczy wielkości próby. Rozkład χ² jest tylko przybliżeniem rozkładu
       statystyki i sprawdza się, gdy ",
-      gloss("liczebność oczekiwana", "liczebności oczekiwane"), " nie są zbyt małe.
+      "liczebności oczekiwane", " nie są zbyt małe.
       Często podawana orientacyjna reguła wymaga co najmniej 5 obserwacji
       oczekiwanych w każdej komórce. Nie jest to ostra granica, tylko sygnał,
       że wynik warto sprawdzić inną metodą."),
@@ -340,7 +340,7 @@ ch5_ui <- list(
       lc_more("Rozwiązanie", uiOutput("cas_ch5_sol9"))
     ),
 
-    lc_p("Porównując rozwiązania, zwróć uwagę na cenę podziału zmiennej ilościowej
+    lc_p("Porównując rozwiązania, zwróć uwagę na cenę podziału ", gloss("zmienna ilościowa", "zmiennej ilościowej"), "
       na dwie kategorie. Próg jest arbitralny, a obserwacje leżące tuż pod nim
       i tuż nad nim trafiają do różnych klas, choć prawie się nie różnią. Gdy obie
       zmienne są z natury ilościowe, test korelacji z rozdziału 06 zwykle lepiej

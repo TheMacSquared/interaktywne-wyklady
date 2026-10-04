@@ -31,7 +31,7 @@ ch7_ui <- list(
 
     lc_p("Najprostszy pomysł to wykonać ", gloss("test t", "test t"), " dla każdej
       pary grup. Przy trzech grupach A, B i C są to trzy porównania: A z B, A z C
-      oraz B z C. Kłopot leży w tym, co oznacza poziom istotności. Każdy test na
+      oraz B z C. Kłopot leży w tym, co oznacza ", gloss("poziom istotności"), ". Każdy test na
       poziomie ", withMathJax("\\(\\alpha = 0.05\\)"), " ma 5% szans na ",
       gloss("błąd pierwszego rodzaju"), ", czyli fałszywy alarm: odrzucenie H₀,
       choć w populacji różnicy nie ma. Te 5% dotyczy jednego testu. Gdy testów
@@ -81,8 +81,8 @@ ch7_ui <- list(
     lc_h2("ch7-intro", "ANOVA jednoczynnikowa"),
 
     lc_p("ANOVA (ang. analysis of variance, analiza wariancji) porównuje średnie
-      w k grupach wyznaczonych przez jedną zmienną jakościową, stąd nazwa
-      jednoczynnikowa. Zmienna zależna jest ilościowa, a czynnikiem jest zmienna
+      w k grupach wyznaczonych przez jedną ", gloss("zmienna jakościowa", "zmienną jakościową"), ", stąd nazwa
+      jednoczynnikowa. ", gloss("zmienna zależna", "Zmienna zależna"), " jest ilościowa, a czynnikiem jest zmienna
       grupująca. Przykład z panelu niżej: pH jogurtu (zmienna zależna) po
       fermentacji w trzech temperaturach, 20, 25 i 30 °C (czynnik o trzech
       poziomach). Hipotezy mają postać:"),
@@ -92,12 +92,12 @@ ch7_ui <- list(
       p(withMathJax("\\(H_a:\\) co najmniej jedna średnia różni się od pozostałych"))
     ),
 
-    lc_p("Hipoteza alternatywna nie twierdzi, że wszystkie średnie są różne.
+    lc_p(gloss("hipoteza alternatywna", "Hipoteza alternatywna"), " nie twierdzi, że wszystkie średnie są różne.
       Wystarczy, że jedna grupa odstaje od reszty."),
 
     lc_p("Nazwa „analiza wariancji” bierze się ze sposobu działania testu.
-      W wykładzie 01, przy porównaniu wzrostu kobiet i mężczyzn, odchylenie
-      standardowe wynosiło 6.0 cm w grupie kobiet i 6.5 cm w grupie mężczyzn,
+      W wykładzie 01, przy porównaniu wzrostu kobiet i mężczyzn, ", gloss("odchylenie standardowe", "odchylenie
+      standardowe"), " wynosiło 6.0 cm w grupie kobiet i 6.5 cm w grupie mężczyzn,
       a w całej próbie 8.1 cm. Część rozrzutu całej próby brała się z różnicy
       między grupami, a nie ze zmienności wewnątrz nich. ANOVA zamienia tę
       obserwację w test. Całkowitą zmienność danych rozkłada na zmienność ",
@@ -113,13 +113,13 @@ ch7_ui <- list(
     lc_p("Tu \\(\\bar{x}_j\\) i \\(n_j\\) to średnia i liczebność j-tej grupy,
       \\(\\bar{x}\\) — średnia wszystkich n obserwacji. Licznik i mianownik to ",
       gloss("wariancja", "wariancje"), ": sumy kwadratów odchyleń podzielone przez
-      liczby stopni swobody, k - 1 i n − k."),
+      liczby ", gloss("stopnie swobody", "stopni swobody"), ", k - 1 i n − k."),
 
     lc_p("Gdy H₀ jest prawdziwa, średnie grup różnią się tylko przypadkowo. Licznik
       i mianownik mierzą wtedy ten sam losowy szum, więc F wychodzi w okolicach 1.
       Gdy średnie w populacji się różnią, licznik rośnie i F staje się duże. Przy
       prawdziwej H₀ statystyka F ma rozkład F z k - 1 i n − k stopniami swobody.
-      P-wartość to prawdopodobieństwo, że przy prawdziwej H₀ wypadnie wartość F
+      ", gloss("p-wartość", "P-wartość"), " to prawdopodobieństwo, że przy prawdziwej H₀ wypadnie wartość F
       co najmniej tak duża jak obserwowana. Liczy się tylko prawy ogon, bo małe F
       oznacza średnie bliższe sobie, niż wynikałoby z szumu, a to nie przemawia
       przeciw H₀. Decyzja jest taka jak w poprzednich rozdziałach: odrzucamy H₀,
@@ -183,7 +183,7 @@ ch7_ui <- list(
     # ========================================================================
     lc_h2("ch7-akcja", "ANOVA w akcji"),
 
-    lc_p("Panel losuje dane z jednego z trzech scenariuszy, rysuje wykresy pudełkowe
+    lc_p("Panel losuje dane z jednego z trzech scenariuszy, rysuje ", gloss("wykres pudełkowy", "wykresy pudełkowe"), "
       w grupach i liczy ANOVA. Suwak n ustala liczebność całej próby; każda
       obserwacja trafia do grupy losowo, więc liczebności grup są zbliżone, ale
       nie równe. Panel liczy klasyczną ANOVA."),
@@ -213,7 +213,7 @@ ch7_ui <- list(
       standardowe wewnątrz każdej grupy to 0.14. Różnica między sąsiednimi
       temperaturami jest prawie dwa razy większa niż rozrzut wewnątrz grupy,
       więc pudełka praktycznie się nie nakładają. Przy n = 160 statystyka ma
-      rozkład F(2, 157), którego wartość krytyczna dla α = 0.05 wynosi około 3.05.
+      rozkład F(2, 157), którego ", gloss("wartość krytyczna"), " dla α = 0.05 wynosi około 3.05.
       W tym scenariuszu F wychodzi zwykle ponad sto, a H₀ jest odrzucana
       w praktycznie każdym losowaniu."),
 
@@ -260,7 +260,7 @@ ch7_ui <- list(
 
     lc_p("Panel korzysta z danych wylosowanych w Ryc. 9.2. Macierz p-wartości ma
       układ typowej tabeli post hoc, a wykres pokazuje różnicę średnich dla każdej pary
-      z 95-procentowym przedziałem ufności."),
+      z 95-procentowym ", gloss("przedział ufności", "przedziałem ufności"), "."),
 
     figure_panel(
       label = "Ryc. 9.3",
@@ -289,7 +289,7 @@ ch7_ui <- list(
       a magazynem przy n = 160 najczęściej nie wychodzi istotna."),
 
     lc_p("Wynik testu mówi, czy różnice są większe niż szum, ale nie mówi, czy są
-      duże. Miarą tego jest wielkość efektu, której poświęcony jest następny
+      duże. Miarą tego jest ", gloss("wielkość efektu"), ", której poświęcony jest następny
       rozdział."),
 
     lc_h2("ch7-cas", "Ćwiczenia", "CASchools — ANOVA"),

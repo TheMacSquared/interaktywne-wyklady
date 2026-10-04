@@ -115,7 +115,7 @@ ch4_ui <- list(
     # ========================================================================
     lc_h2("ch4-test", "Od współczynnika do testu"),
 
-    lc_p("Współczynnik \\(r\\) z próby jest estymatorem korelacji w populacji,
+    lc_p("Współczynnik \\(r\\) z próby jest ", gloss("estymator", "estymatorem"), " korelacji w populacji,
       oznaczanej grecką literą \\(\\rho\\) (ro). Jak każda statystyka z próby,
       \\(r\\) zmienia się od próby do próby. Nawet gdy w populacji związku nie ma
       (\\(\\rho = 0\\)), \\(r\\) z próby prawie nigdy nie wychodzi dokładnie zero.
@@ -215,7 +215,7 @@ ch4_ui <- list(
     # ========================================================================
     lc_h2("ch4-krok", "Test korelacji — krok po kroku"),
 
-    lc_p("Panel przeprowadza test dwustronny na danych symulowanych. Każdy
+    lc_p("Panel przeprowadza ", gloss("test dwustronny"), " na danych symulowanych. Każdy
       scenariusz losuje pary obserwacji z populacji o zadanej korelacji: od 0.45
       (sen a ocena) do 0.6 (nawadnianie a plon), a w scenariuszu szkoleń BHP
       -0.55. Kolejne kroki prowadzą od wykresu rozrzutu przez \\(r\\)
@@ -268,10 +268,10 @@ ch4_ui <- list(
     # ========================================================================
     lc_h2("ch4-jednostronny", "A jeśli znamy kierunek?"),
 
-    lc_p("Pytanie badawcze często wskazuje kierunek: nie „czy sen ma związek
+    lc_p(gloss("pytanie badawcze", "Pytanie badawcze"), " często wskazuje kierunek: nie „czy sen ma związek
       z oceną?”, tylko „czy więcej snu wiąże się z wyższą oceną?”. Wtedy
       stosujemy ", gloss("test jednostronny"), ". Hipoteza alternatywna obejmuje
-      tylko jeden kierunek, a obszar odrzucenia leży w całości w jednym ogonie
+      tylko jeden kierunek, a ", gloss("obszar odrzucenia"), " leży w całości w jednym ogonie
       rozkładu t. Panel poniżej używa tej samej próby co test dwustronny powyżej,
       zmienia się tylko para hipotez."),
 
@@ -292,7 +292,7 @@ ch4_ui <- list(
     lc_p("Wartości \\(r\\) i \\(t\\) są w obu panelach identyczne, bo zależą tylko
       od danych. Zmienia się p-wartość. Gdy \\(r\\) ma znak zgodny z Hₐ,
       jednostronna p-wartość jest połową dwustronnej: dla \\(r = 0.45\\)
-      i \\(n = 40\\) wynosi 0.002 zamiast 0.004. Wartość krytyczna spada z 2.02
+      i \\(n = 40\\) wynosi 0.002 zamiast 0.004. ", gloss("wartość krytyczna", "Wartość krytyczna"), " spada z 2.02
       do 1.69, więc do odrzucenia H₀ wystarcza \\(|r|\\) około 0.26 zamiast 0.31."),
 
     lc_p("Ceną jest ślepota na drugi kierunek. Jeśli próba pokaże korelację
@@ -316,7 +316,7 @@ ch4_ui <- list(
     # --- 1. Kwartet Anscombe'a ---
     lc_p("Pierwszą pokazał statystyk Francis Anscombe w 1973 roku. Zbudował cztery
       zbiory po 11 punktów o niemal identycznych statystykach. W każdym średnia
-      \\(x\\) wynosi 9, średnia \\(y\\) 7.50, wariancja \\(x\\) 11, wariancja
+      \\(x\\) wynosi 9, średnia \\(y\\) 7.50, ", gloss("wariancja"), " \\(x\\) 11, wariancja
       \\(y\\) 4.12–4.13, korelacja 0.816–0.817, a prosta regresji to
       \\(y = 3 + 0.5x\\)."),
 
@@ -334,7 +334,7 @@ ch4_ui <- list(
       punktów leży na jednej prostej (bez jedenastego punktu \\(r\\) wynosiłoby
       1.000), a jeden punkt odstaje i obniża korelację. W zbiorze 4 dziesięć
       punktów ma to samo \\(x = 8\\), a całą korelację tworzy jedenasty punkt
-      z \\(x = 19\\). Statystyki opisowe i test korelacji nie odróżnią tych
+      z \\(x = 19\\). ", gloss("statystyka opisowa", "Statystyki opisowe"), " i test korelacji nie odróżnią tych
       sytuacji, wykres odróżnia je od razu."),
 
     lc_note("Zasada", rule = TRUE,
@@ -497,7 +497,7 @@ ch4_ui <- list(
 
     lc_p("Korelacja wymaga dwóch zmiennych ilościowych. Gdy obie zmienne są
       jakościowe, na przykład płeć i wybrany kierunek studiów, nie ma czego
-      wstawić do wzoru na \\(r\\). Związek opisuje wtedy tabela kontyngencji,
+      wstawić do wzoru na \\(r\\). Związek opisuje wtedy ", gloss("tabela kontyngencji"), ",
       a sprawdza go test χ² z następnego rozdziału."),
 
     lc_chapter_next(

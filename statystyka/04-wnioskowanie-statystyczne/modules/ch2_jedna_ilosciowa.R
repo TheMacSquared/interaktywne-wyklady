@@ -20,7 +20,7 @@ ch2_ui <- list(
     lc_p("Poprzednie rozdziały opisywały logikę testowania w ogólnej postaci:
       hipotezy, dwa rodzaje błędów, p-wartość i werdykt. Teraz zastosujemy
       ją do pierwszego konkretnego testu. Zaczynamy od najprostszej sytuacji:
-      mamy jedną zmienną ilościową i pytamy, czy jej średnia w populacji
+      mamy jedną ", gloss("zmienna ilościowa", "zmienną ilościową"), " i pytamy, czy jej średnia w populacji
       zgadza się ze znaną z góry wartością, na przykład z normą, deklaracją
       producenta albo średnią krajową. Taką wartość oznaczamy \\(\\mu_0\\)."),
 
@@ -71,8 +71,8 @@ ch2_ui <- list(
       gloss("statystyka testowa", "statystykę testową"), ". Mierzy ona, ile ",
       gloss("błąd standardowy", "błędów standardowych"), " dzieli średnią
       z próby od wartości referencyjnej \\(\\mu_0\\). Oba składniki znamy
-      z wykładu 03: błąd standardowy średniej \\(SE = s/\\sqrt{n}\\) i rozkład
-      t-Studenta z \\(n - 1\\) stopniami swobody. Tak powstaje statystyka ",
+      z wykładu 03: błąd standardowy średniej \\(SE = s/\\sqrt{n}\\) i ", gloss("rozkład t-Studenta", "rozkład
+      t-Studenta"), " z \\(n - 1\\) ", gloss("stopnie swobody", "stopniami swobody"), ". Tak powstaje statystyka ",
       gloss("test t", "testu t"), " jednej próby:"),
 
     lc_formula_box(
@@ -137,10 +137,10 @@ ch2_ui <- list(
     # ========================================================================
     lc_h2("ch2-krok", "Test t jednej próby — krok po kroku"),
 
-    lc_p("Panel przeprowadza test dwustronny w pięciu scenariuszach. W każdym
-      dane losowane są z rozkładu normalnego, którego prawdziwa średnia nieco
+    lc_p("Panel przeprowadza ", gloss("test dwustronny"), " w pięciu scenariuszach. W każdym
+      dane losowane są z ", gloss("rozkład normalny", "rozkładu normalnego"), ", którego prawdziwa średnia nieco
       różni się od \\(\\mu_0\\), więc H₀ jest w nich fałszywa. Kolejne kroki
-      prowadzą od histogramu ", gloss("próba", "próby"), " przez średnią
+      prowadzą od ", gloss("histogram", "histogramu"), " ", gloss("próba", "próby"), " przez średnią
       i statystykę t do decyzji."),
 
     figure_panel(
@@ -173,7 +173,7 @@ ch2_ui <- list(
       " \\(s\\), a z nich błąd standardowy. W trzecim kroku przeliczamy
       odległość \\(\\bar{x}\\) od \\(\\mu_0\\) na statystykę t i nanosimy ją
       na rozkład t, jakiego oczekiwalibyśmy przy prawdziwej H₀. W czwartym
-      sprawdzamy, czy wynik leży w obszarze odrzucenia, i liczymy
+      sprawdzamy, czy wynik leży w ", gloss("obszar odrzucenia", "obszarze odrzucenia"), ", i liczymy
       p-wartość. W teście dwustronnym jest to pole obu ogonów rozkładu
       poza \\(\\pm|t|\\):"),
 
@@ -184,8 +184,8 @@ ch2_ui <- list(
     lc_p("Jak w rozdziale 03, p-wartość to prawdopodobieństwo, że przy
       prawdziwej H₀ statystyka wypadnie co najmniej tak daleko od zera jak
       nasza. Nie jest to prawdopodobieństwo, że H₀ jest prawdziwa. Porównujemy
-      ją z poziomem istotności \\(\\alpha\\). Wartość 0.05 to konwencja, ale
-      tak jak poziom ufności w wykładzie 03 trzeba ją ustalić przed analizą,
+      ją z ", gloss("poziom istotności", "poziomem istotności"), " \\(\\alpha\\). Wartość 0.05 to konwencja, ale
+      tak jak ", gloss("poziom ufności"), " w wykładzie 03 trzeba ją ustalić przed analizą,
       a nie dobierać do wyniku. Gdy \\(p < \\alpha\\), odrzucamy H₀. Gdy
       \\(p \\geq \\alpha\\), nie mamy podstaw do odrzucenia H₀, co nie znaczy,
       że średnia w populacji wynosi dokładnie \\(\\mu_0\\)."),
@@ -195,7 +195,7 @@ ch2_ui <- list(
       i odchyleniu standardowym 13 pkt, więc H₀: μ = 70 jest fałszywa. Przy
       n = 40 błąd standardowy wynosi około \\(13/\\sqrt{40} \\approx 2.06\\)
       pkt, a różnica 2 pkt to średnio mniej niż jeden błąd standardowy.
-      Wartość krytyczna dla df = 39 wynosi 2.02, więc test odrzuca H₀ tylko
+      ", gloss("wartość krytyczna", "Wartość krytyczna"), " dla df = 39 wynosi 2.02, więc test odrzuca H₀ tylko
       w około 16% prób. W pozostałych popełnia błąd II rodzaju. Przy n = 100
       moc rośnie do około 33%. W scenariuszu hałasu prawdziwa średnia
       (87.5 dB) leży ponad pół odchylenia standardowego (4 dB) od normy
@@ -264,7 +264,7 @@ ch2_ui <- list(
       a dane pochodzą z populacji o średniej 72 pkt. Średnia z próby zwykle
       wypada więc powyżej 70, t jest dodatnie, a p-wartość lewostronna
       przekracza 0.5. Test odrzuca H₀ w mniej niż 1% prób, choć średnia
-      naprawdę różni się od normy. Test jednostronny nie widzi odchylenia
+      naprawdę różni się od normy. ", gloss("test jednostronny", "Test jednostronny"), " nie widzi odchylenia
       w przeciwną stronę, niezależnie od jego wielkości."),
 
     lc_note("Zasada", rule = TRUE,

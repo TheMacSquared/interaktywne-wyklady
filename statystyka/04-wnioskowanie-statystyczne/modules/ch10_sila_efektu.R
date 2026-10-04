@@ -32,14 +32,14 @@ ch10_ui <- list(
 
     lc_p("Wróćmy do przykładu B4 z wykładu 03. Badanie porównywało IQ w dwóch
       województwach, po 20 000 osób w każdym. Średnie wyniosły 100.4 i 100.0
-      punktu przy odchyleniu standardowym 15. Przedział ufności dla różnicy,
-      [0.11, 0.69] pkt, nie obejmował zera. Test t daje ten sam werdykt:
+      punktu przy odchyleniu standardowym 15. ", gloss("przedział ufności", "Przedział ufności"), " dla różnicy,
+      [0.11, 0.69] pkt, nie obejmował zera. ", gloss("test t", "Test t"), " daje ten sam werdykt:
       t ≈ 2.67, p ≈ 0.008, więc na poziomie α = 0.05 odrzucamy H₀ o równości
       średnich. Mimo to różnica 0.4 punktu to około 0.03 odchylenia
       standardowego IQ. Wynik jest istotny statystycznie, ale nie ma ",
       gloss("istotność praktyczna", "istotności praktycznej"), "."),
 
-    lc_p("Rozbieżność bierze się stąd, że statystyka testowa dzieli różnicę średnich
+    lc_p("Rozbieżność bierze się stąd, że ", gloss("statystyka testowa"), " dzieli różnicę średnich
       przez ", gloss("błąd standardowy", "błąd standardowy"), ", a błąd
       standardowy maleje jak \\(1/\\sqrt{n}\\). Dla dwóch równolicznych grup
       o tym samym odchyleniu standardowym s statystykę t można zapisać przez
@@ -49,7 +49,7 @@ ch10_ui <- list(
       "$$t = \\frac{\\bar{x}_1 - \\bar{x}_2}{s\\sqrt{2/n}} = d \\cdot \\sqrt{\\frac{n}{2}}, \\qquad d = \\frac{\\bar{x}_1 - \\bar{x}_2}{s}$$"
     )),
 
-    lc_p("Ten sam efekt d daje tym większe t i tym mniejszą p-wartość, im
+    lc_p("Ten sam efekt d daje tym większe t i tym mniejszą ", gloss("p-wartość"), ", im
       większa jest próba. Przy dostatecznie dużym n każda niezerowa różnica
       stanie się istotna, a przy małym n nawet duża różnica może nie przekroczyć
       progu. Panel pokazuje dwie populacje oddalone o d odchyleń standardowych
@@ -109,7 +109,7 @@ ch10_ui <- list(
     )),
 
     lc_p("W teście t jednej próby z rozdziału 04 porównujemy średnią z wartością
-      odniesienia \\(\\mu_0\\), a w teście dla prób zależnych z rozdziału 08
+      odniesienia \\(\\mu_0\\), a w teście dla ", gloss("próby zależne", "prób zależnych"), " z rozdziału 08
       liczymy średnią różnic w parach \\(\\bar{d}\\) i dzielimy ją przez
       odchylenie standardowe tych różnic \\(s_d\\)."),
 
@@ -123,7 +123,7 @@ ch10_ui <- list(
       standardowych dają się porównać. W przeciwieństwie do t, d nie rośnie
       wraz z n. Większa próba pozwala oszacować d dokładniej, ale nie robi go
       większym. Niektóre programy w mianowniku d dla dwóch grup używają
-      pierwiastka ze średniej z dwóch wariancji zamiast \\(s_p\\); przy
+      pierwiastka ze średniej z dwóch ", gloss("wariancja", "wariancji"), " zamiast \\(s_p\\); przy
       równolicznych grupach obie wersje dają ten sam wynik."),
 
     lc_p("Cohen zaproponował orientacyjne progi: 0.2 to efekt mały, 0.5 średni,
@@ -264,7 +264,7 @@ ch10_ui <- list(
       zależność da się jeszcze dostrzec, ale wyjaśnia tylko 9% zmienności,
       a przy r = 0.1 trudno ją zauważyć na wykresie. Różnica między r zadanym
       a policzonym z 50 punktów przypomina, że r z próby jest
-      estymatorem i ma własny rozrzut."),
+      ", gloss("estymator", "estymatorem"), " i ma własny rozrzut."),
 
     # ========================================================================
     # Sekcja 4: Cramér's V
@@ -343,8 +343,8 @@ ch10_ui <- list(
     # ========================================================================
     lc_h2("ch10-eta2", "eta kwadrat — ANOVA"),
 
-    lc_p("ANOVA z rozdziału 09 dzieliła całkowitą zmienność wyników na część
-      między grupami i część wewnątrz grup. Statystyka F porównywała te części,
+    lc_p(gloss("ANOVA"), " z rozdziału 09 dzieliła całkowitą zmienność wyników na część
+      między grupami i część wewnątrz grup. ", gloss("statystyka F", "Statystyka F"), " porównywała te części,
       ale podobnie jak t rośnie wraz z n. ",
       gloss("eta kwadrat", "Eta kwadrat"), " (\\(\\eta^2\\)) mówi, jaki udział
       całkowitej zmienności przypada na różnice między grupami, czyli jaką część

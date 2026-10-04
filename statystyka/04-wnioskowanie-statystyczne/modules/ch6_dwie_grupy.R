@@ -19,8 +19,8 @@ ch6_ui <- list(
 
     lc_p("W rozdziale 04 porównywaliśmy średnią jednej próby z ustaloną wartością
       \\(\\mu_0\\). W poprzednim rozdziale badaliśmy związek dwóch zmiennych
-      jakościowych. Teraz łączymy oba wątki: mamy zmienną ilościową, na przykład
-      wzrost, i zmienną jakościową z dwiema kategoriami, na przykład płeć.
+      jakościowych. Teraz łączymy oba wątki: mamy ", gloss("zmienna ilościowa", "zmienną ilościową"), ", na przykład
+      wzrost, i ", gloss("zmienna jakościowa", "zmienną jakościową"), " z dwiema kategoriami, na przykład płeć.
       Pytanie brzmi, czy średnia zmiennej ilościowej jest taka sama w obu grupach."),
 
     lc_h2("ch6-intro", "Test t dla dwóch prób niezależnych"),
@@ -30,7 +30,7 @@ ch6_ui <- list(
       pszenicy, dwie partie towaru. Parametrem, o który pytamy, jest różnica
       średnich populacji \\(\\mu_1 - \\mu_2\\). Tak jak w teście jednej próby,
       hipotezę zapisujemy w jednym z trzech wariantów, zależnie od brzmienia
-      pytania badawczego."),
+      ", gloss("pytanie badawcze", "pytania badawczego"), "."),
 
     lc_formula_box(
       p(strong("Dwustronna"), " (grupy różnią się w dowolną stronę):"),
@@ -48,19 +48,19 @@ ch6_ui <- list(
         withMathJax("\\(H_a: \\mu_1 < \\mu_2\\)"))
     ),
 
-    lc_p("Hipoteza zerowa \\(\\mu_1 = \\mu_2\\) to to samo co \\(\\mu_1 - \\mu_2 = 0\\).
+    lc_p(gloss("hipoteza zerowa", "Hipoteza zerowa"), " \\(\\mu_1 = \\mu_2\\) to to samo co \\(\\mu_1 - \\mu_2 = 0\\).
       Mamy więc znów jedną liczbę z próby, różnicę \\(\\bar{x}_1 - \\bar{x}_2\\),
       i wartość, z którą ją porównujemy: zero. ",
       gloss("statystyka testowa", "Statystyka testowa"), " mówi, ile ",
       gloss("błąd standardowy", "błędów standardowych"), " dzieli tę różnicę od zera.
-      Błąd standardowy różnicy znamy z wykładu 03, z przedziału ufności dla
-      różnicy średnich: wariancje obu średnich się dodają."),
+      Błąd standardowy różnicy znamy z wykładu 03, z ", gloss("przedział ufności", "przedziału ufności"), " dla
+      różnicy średnich: ", gloss("wariancja", "wariancje"), " obu średnich się dodają."),
 
     lc_formula_box(withMathJax(
       "$$t = \\frac{\\bar{x}_1 - \\bar{x}_2}{\\sqrt{\\dfrac{s_1^2}{n_1} + \\dfrac{s_2^2}{n_2}}}$$"
     )),
 
-    lc_p("Każda grupa ma tu własne odchylenie standardowe, czyli nie zakładamy
+    lc_p("Każda grupa ma tu własne ", gloss("odchylenie standardowe"), ", czyli nie zakładamy
       równych wariancji. To ",
       gloss("test t Welcha", "test t Welcha"), ", ten sam wariant co w przedziale
       dla różnicy z wykładu 03. Przy prawdziwej H₀ statystyka ma w przybliżeniu
@@ -77,8 +77,8 @@ ch6_ui <- list(
     lc_p("Decyzja przebiega jak w poprzednich rozdziałach. ",
       gloss("p-wartość", "P-wartość"), " to prawdopodobieństwo, że przy
       prawdziwej H₀ dostalibyśmy statystykę co najmniej tak odległą od zera jak
-      nasza. Jeśli jest mniejsza niż ustalony przed analizą poziom istotności,
-      zwykle α = 0.05, odrzucamy H₀. Test dwustronny przy α = 0.05 i 95% przedział
+      nasza. Jeśli jest mniejsza niż ustalony przed analizą ", gloss("poziom istotności"), ",
+      zwykle α = 0.05, odrzucamy H₀. ", gloss("test dwustronny", "Test dwustronny"), " przy α = 0.05 i 95% przedział
       ufności dla różnicy z wykładu 03 mają ten sam błąd standardowy i te same
       stopnie swobody, więc dają zgodną odpowiedź: H₀ odrzucamy dokładnie wtedy,
       gdy przedział dla \\(\\mu_1 - \\mu_2\\) nie obejmuje zera."),
@@ -177,7 +177,7 @@ ch6_ui <- list(
 
     lc_p("Wynik testu zawiera statystykę t, niecałkowitą liczbę stopni swobody (znak, że to wersja
       Welcha) i p-wartość. Ile wart jest wynik 12 cm w praktyce, to pytanie
-      o wielkość efektu, którym zajmiemy się w rozdziale 10."),
+      o ", gloss("wielkość efektu"), ", którym zajmiemy się w rozdziale 10."),
 
     # ========================================================================
     # WIDGET 2: Test t parowy
@@ -196,7 +196,7 @@ ch6_ui <- list(
       \\(d_i = x_{\\text{po},i} - x_{\\text{przed},i}\\) i dalej pracujemy już
       tylko na tych różnicach. Hipotezy dotyczą średniej różnicy w populacji
       \\(\\mu_d\\), na przykład \\(H_0: \\mu_d = 0\\) i \\(H_a: \\mu_d \\neq 0\\).
-      To jest test t jednej próby z rozdziału 04 z wartością odniesienia
+      To jest ", gloss("test t"), " jednej próby z rozdziału 04 z wartością odniesienia
       \\(\\mu_0 = 0\\), policzony na kolumnie różnic:"),
 
     lc_formula_box(withMathJax(
@@ -300,7 +300,7 @@ ch6_ui <- list(
 
     lc_p("Oba warianty testu t opierają się na założeniach. Obserwacje (a w teście
       sparowanym pary) muszą być od siebie niezależne. Średnie, a w teście
-      sparowanym średnia różnic, powinny mieć w przybliżeniu rozkład normalny.
+      sparowanym średnia różnic, powinny mieć w przybliżeniu ", gloss("rozkład normalny"), ".
       Przy dużych próbach zapewnia to ",
       gloss("centralne twierdzenie graniczne", "centralne twierdzenie graniczne"), ", ale im bardziej skośny rozkład
       i im więcej wartości odstających, tym większej próby potrzeba. Wersja
