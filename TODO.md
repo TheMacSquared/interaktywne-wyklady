@@ -196,8 +196,6 @@ to stosują.
 
 ### 06 — regresja
 
-- [ ] Rozdz. 05: widget liniowa a logistyczna pokazuje identyczną dokładność
-  obu modeli (różnicę niesie tylko „poza [0, 1]”).
 - [ ] Quiz interpretacji b₁ w jednostkach w `ch1_liniowa.R`, sekcja
   `ch1-caschool`: „read ~ income”, b₁ = 1,88 — co znaczy wzrost dochodu
   o 1 tys. USD? Dystraktory: mylone jednostki i skale.

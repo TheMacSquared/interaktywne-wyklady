@@ -95,13 +95,18 @@ ch5_ui <- list(
       rozwiązania: dopasować zwykłą prostą metodą z rozdziału 01 i czytać jej
       wartości przewidywane jako prawdopodobieństwa. Panel porównuje to podejście
       z modelem logistycznym na stałym przykładzie: 180 studentów, od 0 do 40
-      godzin nauki, egzamin zdało 90 z nich."),
+      godzin nauki, egzamin zdało 90 z nich. Suwak wybiera liczbę godzin,
+      a odczyty podają prawdopodobieństwo zdania przewidywane przez oba
+      modele."),
 
     figure_panel(
       label = "Ryc. 5.1", title = "Liniowy vs logistyczny na danych binarnych",
       full_width = TRUE,
-      lc_toolbar(lc_readouts(uiOutput("ch5_lin_log_stats"))),
-      lc_plot("ch5_lin_log_plot", max_height = "300px"),
+      lc_toolbar(
+        lc_slider("ch5_lin_log_x", "Godziny nauki", 0, 40, 2, 1),
+        lc_readouts(uiOutput("ch5_lin_log_stats"))
+      ),
+      lc_plot("ch5_lin_log_plot", max_height = "320px"),
       lc_caption("Stały przykład: zdanie egzaminu (0/1) a liczba godzin nauki.")
     ),
 
@@ -587,43 +592,55 @@ ch5_server <- function(input, output, session) {
     )
   })
 
+  ch5_lin_log_fits <- reactive({
+    df <- ch5_lin_log_data()
+    list(lin = lm(zdal_num ~ godziny_nauki, data = df),
+         log = glm(zdal_num ~ godziny_nauki, data = df, family = binomial))
+  })
+
   zoom_plot_server("ch5_lin_log_plot", reactive({
     df <- ch5_lin_log_data()
+    f <- ch5_lin_log_fits()
+    x0 <- input$ch5_lin_log_x
+    req(!is.null(x0))
+    grid <- data.frame(godziny_nauki = seq(0, 40, length.out = 300))
+    grid$lin <- predict(f$lin, grid)
+    grid$log <- predict(f$log, grid, type = "response")
+    nd <- data.frame(godziny_nauki = x0)
 
-    ggplot(df, aes(x = godziny_nauki, y = zdal_num)) +
-      geom_point(aes(y = zdal_plot), alpha = 0.34, color = upwr_secondary, size = 1.6) +
-      geom_smooth(method = "lm", se = FALSE, color = unname(upwr_cat["niebo"]),
-                  linewidth = 1, linetype = "dashed") +
-      geom_smooth(method = "glm", method.args = list(family = "binomial"),
-                  se = FALSE, color = unname(upwr_cat["wrzos"]), linewidth = 1.2) +
-      geom_hline(yintercept = c(0, 1), linetype = "dotted", color = upwr_rule) +
-      annotate("text", x = 13, y = 0.28, label = "Logistyczny", color = unname(upwr_cat["wrzos"]),
-               fontface = "bold") +
-      annotate("text", x = 34, y = 1.12, label = "Liniowy", color = unname(upwr_cat["niebo"]),
-               fontface = "bold") +
-      labs(
-           x = "Godziny nauki", y = "P(zdanie)") +
-      coord_cartesian(ylim = c(-0.2, 1.2)) +
-      theme_upwr()
+    ggplot(df, aes(godziny_nauki)) +
+      geom_hline(yintercept = c(0, 1), linetype = "dotted", colour = upwr_rule) +
+      geom_point(aes(y = zdal_plot), alpha = 0.34, colour = upwr_secondary, size = 1.6) +
+      geom_line(data = grid, aes(y = lin), colour = unname(upwr_cat["niebo"]),
+                linewidth = 1, linetype = "dashed") +
+      geom_line(data = grid, aes(y = log), colour = unname(upwr_cat["wrzos"]),
+                linewidth = 1.2) +
+      geom_vline(xintercept = x0, colour = upwr_reference) +
+      annotate("point", x = x0, y = predict(f$lin, nd), size = 3.6, shape = 21,
+               stroke = 1.2, fill = unname(upwr_cat["niebo"]), colour = "white") +
+      annotate("point", x = x0, y = predict(f$log, nd, type = "response"),
+               size = 3.6, shape = 21, stroke = 1.2,
+               fill = unname(upwr_cat["wrzos"]), colour = "white") +
+      labs(x = "Godziny nauki", y = "P(zdanie)") +
+      coord_cartesian(ylim = c(-0.25, 1.25))
   }))
 
+  # Odczyty z kwadracikami koloru pełnią rolę legendy linii.
   output$ch5_lin_log_stats <- renderUI({
-    df <- ch5_lin_log_data()
-
-    lin <- lm(zdal_num ~ godziny_nauki, data = df)
-    log <- glm(zdal_num ~ godziny_nauki, data = df, family = binomial)
-
-    lin_pred <- ifelse(fitted(lin) >= 0.5, 1, 0)
-    log_pred <- ifelse(fitted(log) >= 0.5, 1, 0)
-    acc_lin <- mean(lin_pred == df$zdal_num) * 100
-    acc_log <- mean(log_pred == df$zdal_num) * 100
-
-    outside <- mean(fitted(lin) < 0 | fitted(lin) > 1) * 100
-
+    f <- ch5_lin_log_fits()
+    x0 <- input$ch5_lin_log_x
+    req(!is.null(x0))
+    nd <- data.frame(godziny_nauki = x0)
+    outside <- mean(fitted(f$lin) < 0 | fitted(f$lin) > 1)
     tagList(
-      lc_readout("Liniowy", paste0(round(acc_lin, 1), "%"), color = unname(upwr_cat["niebo"])),
-      lc_readout("Logistyczny", paste0(round(acc_log, 1), "%"), color = unname(upwr_cat["wrzos"])),
-      lc_readout("Liniowy poza [0, 1]", paste0(round(outside, 1), "%"), color = unname(upwr_cat["terakota"]))
+      lc_readout("Prosta", formatC(predict(f$lin, nd), format = "f", digits = 2),
+                 color = unname(upwr_cat["niebo"]), swatch = TRUE),
+      lc_readout("Krzywa logistyczna",
+                 formatC(predict(f$log, nd, type = "response"), format = "f", digits = 2),
+                 color = unname(upwr_cat["wrzos"]), swatch = TRUE),
+      lc_readout("Prosta poza [0, 1]",
+                 paste0(formatC(outside * 100, format = "f", digits = 1), "%"),
+                 color = unname(upwr_cat["terakota"]))
     )
   })
 
