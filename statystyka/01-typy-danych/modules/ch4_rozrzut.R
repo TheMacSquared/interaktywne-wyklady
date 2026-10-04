@@ -144,7 +144,8 @@ ch4_ui <- list(
         choices = c("Wzrost (cm)" = "wzrost",
                     "Waga (kg)" = "waga",
                     "Czas dojazdu (min)" = "czas_dojazdu",
-                    "Średnia ocen" = "srednia_ocen"),
+                    "Średnia ocen" = "srednia_ocen",
+                    "Wydatki miesięczne (zł)" = "wydatki"),
         selected = "wzrost"
       ),
       lc_plot("ch4_emp_plot", ratio = "1.6/1", max_height = "400px"),
@@ -159,8 +160,15 @@ ch4_ui <- list(
       łączny odsetek się zgadza, ale rozkład nie jest symetryczny: poniżej pasa
       leży 13% obserwacji, a powyżej 16%. Pas ±3 SD sięga od -13 do 85 minut.
       Jego lewy kraniec to wartość niemożliwa, a po prawej stronie i tak
-      zostają dwie obserwacje. Średnia i odchylenie standardowe opisują
-      rozkład dobrze tylko wtedy, gdy jest on w przybliżeniu symetryczny.
+      zostają dwie obserwacje."),
+
+    lc_p("Najwyraźniej regułę łamią miesięczne wydatki. W pasie ±1 SD leży
+      88% danych zamiast 68%: większość studentów wydaje zbliżone kwoty,
+      a kilka bardzo wysokich wartości zawyża odchylenie standardowe. Poniżej
+      pasa leży tylko 3% obserwacji, powyżej 9%. Pas ±2 SD zaczyna się od
+      -652 zł, czyli od wartości niemożliwej. Średnia i odchylenie
+      standardowe opisują rozkład dobrze tylko wtedy, gdy jest on
+      w przybliżeniu symetryczny.
       Dla rozkładów skośnych lepiej sięgnąć po miary oparte na ", gloss("kwartyl", "kwartylach"), "."),
 
     # ====================================================================
@@ -640,6 +648,9 @@ ch4_server <- function(input, output, session) {
                label = c("-1 SD", "+1 SD", "-2 SD", "+2 SD", "-3 SD", "+3 SD"),
                vjust = -0.5, hjust = c(1.1, -0.1, 1.1, -0.1, 1.1, -0.1),
                size = 3.2, color = upwr_secondary, fontface = "italic") +
+      # Gęstość wydatków jest rzędu 1e-4: bez notacji naukowej.
+      scale_y_continuous(labels = function(y) format(y, scientific = FALSE,
+                                                     drop0trailing = TRUE)) +
       labs(
         x = variable_meta[[var_name]]$label,
         y = "Gęstość"

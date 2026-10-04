@@ -70,6 +70,9 @@ student_data <- data.frame(
            prob = c(0.02, 0.03, 0.05, 0.08, 0.12, 0.15, 0.20, 0.18, 0.12, 0.05)),
     levels = 1:10, ordered = TRUE
   ),
+  # Silnie prawoskośna (log-normalna); dopisana na końcu, żeby nie zmieniać
+  # losowań wcześniejszych kolumn.
+  wydatki = round(rlnorm(n, meanlog = log(800), sdlog = 0.8), -1),
   stringsAsFactors = FALSE
 )
 
@@ -89,7 +92,8 @@ variable_meta <- list(
   srednia_ocen = list(label = "Średnia ocen", type = "ilosciowa_ciagla"),
   czas_dojazdu = list(label = "Czas dojazdu (min)", type = "ilosciowa_ciagla"),
   waga = list(label = "Waga (kg)", type = "ilosciowa_ciagla"),
-  ocena_wykladowcy = list(label = "Ocena wykładowcy (1-10)", type = "porzadkowa")
+  ocena_wykladowcy = list(label = "Ocena wykładowcy (1-10)", type = "porzadkowa"),
+  wydatki = list(label = "Wydatki miesięczne (zł)", type = "ilosciowa_ciagla")
 )
 
 # ============================================================================

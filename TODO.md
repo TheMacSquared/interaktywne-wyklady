@@ -183,8 +183,6 @@ to stosują.
 
 ### 01 — typy danych
 
-- [ ] Reguła empiryczna (rozdz. 4): na danych ankiety widget nigdy nie
-  pokazuje stanu „słaba zgodność” (wszystkie zmienne mieszczą się w progu).
 
 ### 02 — rozkłady prawdopodobieństwa
 
