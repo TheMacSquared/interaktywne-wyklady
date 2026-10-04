@@ -141,7 +141,7 @@ ch7_ui <- list(
     lc_h2("ch7-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
     lc_p("Niezależnie od liczby grup ANOVA ma jedną parę hipotez. Zapisz H₀ i Hₐ
-      dla poniższych sytuacji, zanim odsłonisz odpowiedź."),
+      dla poniższych sytuacji przed odsłonięciem odpowiedzi."),
 
     hypothesis_practice("ch7", list(
       list(

@@ -95,7 +95,7 @@ ch2_ui <- list(
     # ========================================================================
     lc_h2("ch2-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    lc_p("Zanim zobaczysz test w działaniu, przećwicz jego pierwszy krok,
+    lc_p("Przed obejrzeniem testu w działaniu przećwicz jego pierwszy krok,
       czyli zamianę pytania na hipotezy. Dla każdego pytania ustal, o jaką
       średnią chodzi, jaka jest wartość referencyjna i czy pytanie wskazuje
       kierunek. Dopiero potem odkryj odpowiedź."),
@@ -296,7 +296,7 @@ ch2_ui <- list(
       p("Departament edukacji podaje normę 650 pkt. Przetestuj, czy średni wynik ",
         tags$code("read"), " w okręgach Kalifornii istotnie różni się",
         " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0.05).
-        Co raportowałbyś departamentowi?"),
+        Co należy zaraportować departamentowi?"),
       lc_more("Rozwiązanie", uiOutput("cas_ch2_sol1"))
     ),
 

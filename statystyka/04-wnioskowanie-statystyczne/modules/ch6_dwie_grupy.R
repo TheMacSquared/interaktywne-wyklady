@@ -88,7 +88,7 @@ ch6_ui <- list(
     # ========================================================================
     lc_h2("ch6-cwiczenie", "Ćwiczenie: sformułuj hipotezy"),
 
-    lc_p("Zanim zobaczysz test w działaniu, zapisz hipotezy dla trzech pytań
+    lc_p("Przed obejrzeniem testu w działaniu zapisz hipotezy dla trzech pytań
       badawczych. Zwróć uwagę, czy pytanie wskazuje kierunek różnicy i czy
       w obu grupach są na pewno różne osoby. Swoją odpowiedź porównaj
       z rozwiązaniem po kliknięciu „Pokaż odpowiedź”."),
@@ -175,7 +175,7 @@ ch6_ui <- list(
       brak podstaw do odrzucenia H₀ nie dowodzi, że średnie są równe.
       Mówi tylko, że ta próba nie wystarcza, by wykazać różnicę."),
 
-    lc_p("W wyniku testu znajdziesz statystykę t, niecałkowitą liczbę stopni swobody (znak, że to wersja
+    lc_p("Wynik testu zawiera statystykę t, niecałkowitą liczbę stopni swobody (znak, że to wersja
       Welcha) i p-wartość. Ile wart jest wynik 12 cm w praktyce, to pytanie
       o wielkość efektu, którym zajmiemy się w rozdziale 10."),
 

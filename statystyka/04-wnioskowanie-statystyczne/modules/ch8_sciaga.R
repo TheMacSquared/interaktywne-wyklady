@@ -228,7 +228,7 @@ ch8_ui <- list(
                  To nie jest analiza — to wyszukiwanie szumu. Analiza powinna być zaplanowana ", tags$em("przed"),
                 " patrzeniem na wyniki."),
         tags$li(tags$b(gloss("porównania wielokrotne", "Wielokrotne porównania"), ":"),
-                " testujesz 4 metody pasteryzacji mleka → masz 6 par. Bez korekcji ryzyko co najmniej jednego fałszywego alarmu rośnie do ~26% (zamiast 5%).
+                " 4 metody pasteryzacji mleka → 6 par. Bez korekcji ryzyko co najmniej jednego fałszywego alarmu rośnie do ~26% (zamiast 5%).
                  Dlatego po ANOVA stosuje się Games-Howell."),
         tags$li(tags$b("Brak istotności ≠ brak efektu:"),
                 " często znaczy po prostu \"za mało danych, żeby to zobaczyć\".

@@ -23,7 +23,7 @@ ch_drzewo_ui <- list(
     ),
 
     tagList(
-      lc_note("Zanim zaczniesz",
+      lc_note("Na początek",
         tags$ul(
           tags$li("Nazwij pytanie: opis, porównanie czy związek?"),
           tags$li("ρ oznacza korelację w populacji, r — wynik w próbie. Zerowa ", gloss("korelacja Pearsona"), " nie wyklucza związku nieliniowego."),
@@ -33,7 +33,7 @@ ch_drzewo_ui <- list(
         )
       ),
       p("Jedno drzewo zaczynające się od pytania „ile mamy zmiennych?”.
-        Diagram jest interaktywny — możesz przeciągać węzły, powiększać scrollem,
+        Diagram jest interaktywny — można przeciągać węzły, powiększać scrollem,
         a także ", tags$b("kliknąć"),
         " dowolny węzeł, żeby podświetlić jego ścieżkę decyzyjną."),
       p("Gdy drzewo robi się za ciasne w kolumnie treści, kliknij przycisk ",

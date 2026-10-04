@@ -338,7 +338,7 @@ ch4_ui <- list(
       sytuacji, wykres odróżnia je od razu."),
 
     lc_note("Zasada", rule = TRUE,
-      "Zanim zinterpretujesz r albo wynik testu korelacji, obejrzyj wykres
+      "Przed interpretacją r albo wyniku testu korelacji obejrzyj wykres
        rozrzutu."
     ),
 
@@ -453,7 +453,7 @@ ch4_ui <- list(
     lc_h2("ch4-cas", "Ćwiczenia", "CASchools — korelacja Pearsona"),
 
     lc_p("Na koniec trzy zadania na prawdziwych danych o szkołach w Kalifornii.
-      W każdym zadaniu, zanim odsłonisz rozwiązanie, przewidź znak i siłę
+      W każdym zadaniu przed odsłonięciem rozwiązania przewidź znak i siłę
       korelacji, a potem przeprowadź test."),
 
     lc_note("Dane",
@@ -468,7 +468,7 @@ ch4_ui <- list(
     figure_panel(label = "Ćwiczenie",
       h4("Zadanie 3 — Jak silnie czytanie i matematyka idą w parze?"),
       p("Oblicz korelację Pearsona między ", tags$code("read"), " i ", tags$code("math"),
-        ". Zanim klikniesz: czy spodziewasz się korelacji dodatniej czy ujemnej?
+        ". Przed odsłonięciem rozwiązania: jakiej korelacji się spodziewać, dodatniej czy ujemnej?
         Silnej czy słabej? Zanotuj przewidywanie i sprawdź wynik."),
       lc_more("Rozwiązanie", uiOutput("cas_ch4_sol3"))
     ),
@@ -476,7 +476,7 @@ ch4_ui <- list(
     figure_panel(label = "Ćwiczenie",
       h4("Zadanie 4 — Czy zamożniejsze okręgi uczą się lepiej?"),
       p("Oblicz korelację Pearsona między ", tags$code("income"), " a ", tags$code("read"),
-        ". Jaki znak ma r? Czy korelacja jest istotna? Czy możesz wyciągnąć wniosek
+        ". Jaki znak ma r? Czy korelacja jest istotna? Czy można wyciągnąć wniosek
         przyczynowy — że wyższy dochód ", tags$em("powoduje"), " lepsze wyniki?"),
       lc_more("Rozwiązanie", uiOutput("cas_ch4_sol4"))
     ),

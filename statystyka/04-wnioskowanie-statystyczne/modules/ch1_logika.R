@@ -373,7 +373,7 @@ ch1d_ui <- list(
       p-wartość."),
 
     lc_p("Definicja p-wartości jest krótka, ale łatwo ją przekręcić. Sprawdź,
-      którą z trzech interpretacji wyniku p = 0.03 uważasz za poprawną."),
+      która z trzech interpretacji wyniku p = 0.03 jest poprawna."),
 
     figure_panel(
       label = "Ryc. 3.4",
@@ -463,7 +463,7 @@ ch1d_ui <- list(
       label = "Ryc. 3.5",
       title = "Quiz: odrzucić czy nie?",
       uiOutput("ch1_quiz_scenario"),
-      p("Twoja decyzja:"),
+      p("Decyzja:"),
       uiOutput("ch1_quiz_options"),
       uiOutput("ch1_quiz_feedback"),
       lc_action("ch1_quiz_next", "Nowy scenariusz", variant = "outline")

@@ -31,7 +31,7 @@ ch9_ui <- list(
       p("Każdy blok ćwiczeń opiera się na syntetycznym zbiorze danych
         specyficznym dla jednego kierunku. Dane są zróżnicowane pod względem
         zmiennych i kontekstu, ale struktura zadań jest analogiczna —
-        możesz wybrać kierunek najbliższy Twojej specjalności."),
+        można wybrać kierunek najbliższy własnej specjalności."),
       tags$ul(
         tags$li(tags$b("Blok 1: Rolnictwo"),
           " — 200 pól uprawnych z Dolnego Śląska (plon, nawożenie, pH gleby)"),
@@ -96,7 +96,7 @@ ch9_ui <- list(
       h4("Czy wyższe nawożenie wiąże się z wyższym plonem?"),
       p("Oblicz korelację Pearsona między ", tags$code("nawozenie"),
         " a ", tags$code("plon"), ". Czy korelacja jest istotna?
-        Jak interpretujesz siłę i kierunek związku?"),
+        Jak zinterpretować siłę i kierunek związku?"),
       lc_more("Rozwiązanie", uiOutput("ch9_r_sol3"))
     ),
 

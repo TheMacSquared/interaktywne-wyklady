@@ -327,9 +327,9 @@ ch3_ui <- list(
     lc_h2("ch3-cas", "Ćwiczenia", "CASchools — test proporcji"),
 
     lc_p("Na koniec dwa zadania na prawdziwych danych. Tym razem nic nie
-      losujemy: liczbę sukcesów \\(k\\) i liczebność \\(n\\) odczytasz z pliku.
-      W każdym zadaniu zapisz hipotezy, zanim policzysz p-wartość, i zanim
-      zajrzysz do rozwiązania."),
+      losujemy: liczbę sukcesów \\(k\\) i liczebność \\(n\\) trzeba odczytać z pliku.
+      W każdym zadaniu zapisz hipotezy przed policzeniem p-wartości
+      i przed zajrzeniem do rozwiązania."),
 
     lc_note("Dane",
       p("420 okręgów szkolnych Kalifornii (1998–1999). Plik: ",
@@ -344,7 +344,7 @@ ch3_ui <- list(
       p("Okręgi dzielą się na szkoły klas KK-06 i KK-08. Przetestuj
         dwustronnie, czy odsetek okręgów KK-06 różni się od 50%.
         Sformułuj H₀ i Hₐ, oblicz p-wartość testem dwumianowym (α = 0.05).
-        Jak interpretujesz wynik?"),
+        Jak zinterpretować wynik?"),
       lc_more("Rozwiązanie", uiOutput("cas_ch3_sol_a"))
     ),
 
