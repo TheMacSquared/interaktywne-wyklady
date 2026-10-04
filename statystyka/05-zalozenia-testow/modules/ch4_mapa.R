@@ -108,8 +108,8 @@ ch4_ui <- lecture_chapter(
         ),
         c4 = c(
           "Wilcoxon jednej próby, gdy rozkład jest symetryczny; przy silnej
-           skośności najpierw wróć do pytania: czy interesuje cię średnia,
-           czy typowa wartość",
+           skośności najpierw wróć do pytania: czy pytanie dotyczy średniej,
+           czy typowej wartości",
           "Welch jako wybór domyślny; Mann–Whitney, gdy pytanie dotyczy tego, czy wartości
            w jednej grupie bywają większe, a nie średnich. Mann–Whitney
            nie rozwiązuje problemu nierównych wariancji",
@@ -414,7 +414,7 @@ ch4_server <- function(input, output, session) {
                       "Średnia z próby w przybliżeniu normalna: dane bez silnej skośności i wartości odstających albo odpowiednio duża próba"),
       checks = c("Wykres Q-Q (najpierw)", "Pomocniczo: test Shapiro-Wilka"),
       alternatives = c("Przy symetrii: test Wilcoxona dla jednej próby",
-                       "Przy silnej skośności Wilcoxon nie jest automatycznym zamiennikiem; najpierw ustal, czy pytasz o średnią")
+                       "Przy silnej skośności Wilcoxon nie jest automatycznym zamiennikiem; najpierw ustal, czy pytanie dotyczy średniej")
     ),
     t_ind = list(
       name = "Test t dla prób niezależnych",

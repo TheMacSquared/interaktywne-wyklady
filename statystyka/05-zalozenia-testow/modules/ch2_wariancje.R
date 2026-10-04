@@ -86,7 +86,7 @@ ch2_ui <- lecture_chapter(
       wariancji z próby do mniejszej przekracza 2 w mniej więcej co piątym
       losowaniu. Przy 40 obserwacjach zdarza się to w około 3% losowań, przy 100
       praktycznie wcale. Wygeneruj dane kilka razy przy tych samych ustawieniach,
-      a zobaczysz, że w małych próbach wyraźna różnica w rozrzucie może być
+      a okaże się, że w małych próbach wyraźna różnica w rozrzucie może być
       dziełem przypadku."),
 
     # ========================================================================
