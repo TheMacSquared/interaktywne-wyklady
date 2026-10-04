@@ -120,7 +120,7 @@ ch1_ui <- list(
       To decyzja analityka, którą trzeba podjąć świadomie i uzasadnić."),
 
     lc_note("Zasada", rule = TRUE,
-      "Zanim zaczniesz analizę, określ typ każdej zmiennej."
+      "Przed rozpoczęciem analizy określ typ każdej zmiennej."
     ),
 
     # --- Widget 2: Examples gallery ---
@@ -229,8 +229,8 @@ ch1_ui <- list(
       title = "Śledź zmienną przez cały kurs",
       color = upwr_single_alt,
       p(
-        "Wybierz jedną zmienną ilościową. W każdym kolejnym rozdziale zobaczysz,
-         jakie nowe informacje dają Ci kolejne narzędzia statystyczne zastosowane
+        "Wybierz jedną zmienną ilościową. Każdy kolejny rozdział pokaże,
+         jakie nowe informacje dają kolejne narzędzia statystyczne zastosowane
          do tej samej zmiennej."),
       lc_toolbar(selectInput("tracked_var", "Zmienna do śledzenia",
         choices = c("Wzrost (cm)" = "wzrost",

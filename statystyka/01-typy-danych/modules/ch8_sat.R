@@ -51,7 +51,7 @@
        minimum i maksimum. Narysuj histogram i boxplot."),
     tags$ol(
       tags$li("Czy średnia i mediana są podobne?"),
-      tags$li("Czy widzisz obserwacje odstające?"),
+      tags$li("Czy widać obserwacje odstające?"),
       tags$li("Dlaczego sama średnia nie wystarcza do opisu pomiarów?")
     )
   ),
@@ -81,7 +81,7 @@
       tags$li("Czy sąsiednie lokalizacje mogą mieć podobną temperaturę i NDVI?"),
       tags$li("Czy 180 sąsiednich pikseli oznacza 180 całkowicie niezależnych pomiarów?"),
       tags$li("Jak zachmurzenie może sprawić, że braki pomiarów nie są przypadkowe?"),
-      tags$li("Jak ostrożnie opisał(a)byś populację, do której odnoszą się wyniki?")
+      tags$li("Jak ostrożnie należy opisać populację, do której odnoszą się wyniki?")
     )
   ),
 

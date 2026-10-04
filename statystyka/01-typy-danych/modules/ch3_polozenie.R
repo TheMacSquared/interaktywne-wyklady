@@ -148,7 +148,7 @@ ch3_ui <- list(
     lc_p("Różnica między średnią a medianą mówi więc coś o kształcie rozkładu.
       Mechanizm najlepiej widać na danych, w których skrajności są normą:
       na zarobkach. W typowej firmie większość pracowników zarabia umiarkowanie,
-      a nieliczni bardzo dużo. W panelu poniżej możesz dopisywać kolejne pensje
+      a nieliczni bardzo dużo. W panelu poniżej można dopisywać kolejne pensje
       do wylosowanej listy 30 wynagrodzeń, w tym ",
       gloss("wartość odstająca", "wartość odstającą"), " — pensję prezesa."),
 
@@ -168,7 +168,7 @@ ch3_ui <- list(
       lc_plot("ch3_svm_strip", ratio = "5.2/1", max_height = "120px")
     ),
 
-    lc_p("Gdy dopisujesz pensje podobne do pozostałych, średnia i mediana
+    lc_p("Po dopisaniu pensji podobnych do pozostałych średnia i mediana
       przesuwają się nieznacznie i trzymają się blisko siebie. Jedna pensja
       prezesa zmienia obraz: przy 30 pensjach średnia skacze o ponad tysiąc złotych, a mediana
       przesuwa się najwyżej o pół pozycji w posortowanej liście."),
@@ -295,7 +295,7 @@ ch3_ui <- list(
     lc_p("Kilka szczytów to zwykle znak, że w danych są pomieszane różne grupy.
       Wtedy jedna statystyka położenia może opisywać wartość, której prawie nikt
       nie ma: średnia wzrostu kobiet i mężczyzn razem wypada pomiędzy szczytami.
-      Zanim policzysz średnią, obejrzyj histogram. Jeśli widać kilka szczytów,
+      Przed policzeniem średniej obejrzyj histogram. Jeśli widać kilka szczytów,
       opisz grupy osobno."),
 
     # ========================================================================
@@ -346,9 +346,9 @@ ch3_ui <- list(
     # ====================================================================
     lc_h2("ch3-gra", "Gra: zgadnij średnią i medianę"),
 
-    lc_p("Na koniec sprawdź, czy potrafisz odczytać obie miary z samego
-      histogramu. Kliknij na wykres dwa razy: pierwszy punkt to Twój typ
-      średniej, drugi — mediany. Zanim klikniesz, ustal, w którą stronę
+    lc_p("Na koniec ćwiczenie: odczytanie obu miar z samego
+      histogramu. Kliknij na wykres dwa razy: pierwszy punkt to typowana
+      średnia, drugi — mediana. Przed kliknięciem ustal, w którą stronę
       ciągnie ogon rozkładu i po której stronie mediany powinna wtedy
       leżeć średnia."),
 
@@ -1194,7 +1194,7 @@ ch3_server <- function(input, output, session) {
   output$ch3_game_status_banner <- renderUI({
     g <- ch3_game_guesses()
     if (is.null(g$mean)) {
-      lc_caption("Kliknij na wykresie, gdzie Twoim zdaniem leży średnia.", tone = "info")
+      lc_caption("Kliknij na wykresie w miejscu, gdzie powinna leżeć średnia.", tone = "info")
     } else if (is.null(g$median)) {
       lc_caption("Teraz kliknij, gdzie leży mediana.", tone = "info")
     } else if (!ch3_game_revealed()) {
@@ -1218,13 +1218,13 @@ ch3_server <- function(input, output, session) {
     if (!is.null(g$mean)) {
       p <- p + geom_vline(xintercept = g$mean, color = upwr_accent,
                           linewidth = 1.2, linetype = "dashed") +
-        annotate("text", x = g$mean, y = Inf, label = "Twoja\nśrednia",
+        annotate("text", x = g$mean, y = Inf, label = "Wskazana\nśrednia",
                  vjust = 2, color = upwr_accent, fontface = "bold", size = 3.5)
     }
     if (!is.null(g$median)) {
       p <- p + geom_vline(xintercept = g$median, color = upwr_cat["niebo"],
                           linewidth = 1.2, linetype = "dashed") +
-        annotate("text", x = g$median, y = Inf, label = "Twoja\nmediana",
+        annotate("text", x = g$median, y = Inf, label = "Wskazana\nmediana",
                  vjust = 3.5, color = upwr_cat["niebo"], fontface = "bold", size = 3.5)
     }
 

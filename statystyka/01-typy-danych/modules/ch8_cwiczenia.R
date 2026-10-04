@@ -225,7 +225,7 @@ ch8_ui <- list(
         tags$li("Poziom hałasu: średnia, SD, odsetek zakładów powyżej normy 85 dB"),
         tags$li("Porównanie: hałas wg kategorii ryzyka (boxplot)")
       ),
-      p(tags$em("Wskazówka:"), " W Jamovi możesz rozbić analizę na grupy przez ",
+      p(tags$em("Wskazówka:"), " W Jamovi można rozbić analizę na grupy przez ",
         tags$b("Split by"), " w Descriptives.")
     ),
     lc_more("Rozwiązanie", uiOutput("ch8_sol5"))
@@ -254,7 +254,7 @@ ch8_ui <- list(
       tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest ważna ",
               tags$em("zanim"), " zaczniemy analizę?"),
       tags$li("Podaj przykład zmiennej, którą Jamovi automatycznie źle zaklasyfikuje. Dlaczego?"),
-      tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
+      tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej zaobserwowany na zajęciach?")
     )
   ),
   lc_more("Odpowiedzi", uiOutput("ch8_sol_summary"))
@@ -322,8 +322,8 @@ ch8_ui <- list(
           Czy rozkład jest symetryczny?"),
         tags$li("Dla ", tags$code("plon_t_ha"), ": średnia, SD, histogram.
           Jak wygląda rozkład?"),
-        tags$li(tags$em("Refleksja:"), " Co się stanie, gdy policzysz średnią z ",
-          tags$code("uprawa"), " w Jamovi? Czy program Ci na to pozwoli?")
+        tags$li(tags$em("Refleksja:"), " Co się stanie przy próbie policzenia średniej z ",
+          tags$code("uprawa"), " w Jamovi? Czy program na to pozwoli?")
       )
     ),
     lc_more("Rozwiązanie", uiOutput("ch8_sol3"))
@@ -383,7 +383,7 @@ ch8_ui <- list(
       tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest ważna ",
               tags$em("zanim"), " zaczniemy analizę?"),
       tags$li("Podaj przykład zmiennej, którą Jamovi automatycznie źle zaklasyfikuje. Dlaczego?"),
-      tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
+      tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej zaobserwowany na zajęciach?")
     )
   ),
   lc_more("Odpowiedzi", uiOutput("ch8_sol_summary"))
@@ -513,7 +513,7 @@ ch8_ui <- list(
       tags$li("Dlaczego poprawna klasyfikacja typu zmiennej jest ważna ",
               tags$em("zanim"), " zaczniemy analizę?"),
       tags$li("Podaj przykład zmiennej, którą Jamovi automatycznie źle zaklasyfikuje. Dlaczego?"),
-      tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej, który zaobserwowałeś/aś na zajęciach?")
+      tags$li("Jaki jest najczęstszy błąd związany z typem zmiennej zaobserwowany na zajęciach?")
     )
   ),
   lc_more("Odpowiedzi", uiOutput("ch8_sol_summary"))
@@ -592,7 +592,7 @@ source(file.path(app_dir, "modules", "ch8_sat.R"), local = TRUE)
       tags$b("3."), " Jeśli średnia ≈ mediana → symetryczny. Jeśli różne → skośny.", tags$br(),
       tags$b("4."), " Typowo rozkład plonów jest zbliżony do normalnego.", tags$br(),
       tags$b("5."), " Jamovi nie pozwoli obliczyć średniej z nominalnej (jeśli poprawnie ustawiona).
-        Ale jeśli zmienisz typ na Continuous — policzy bezsensowną średnią."
+        Ale po zmianie typu na Continuous — policzy bezsensowną średnią."
     ),
     sol4 = tagList(
       p("Wykres kołowy jest zły dla wielu kategorii, bo ludzkie oko nie odróżnia

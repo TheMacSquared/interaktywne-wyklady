@@ -40,7 +40,7 @@ ch7_ui <- list(
       title  = "Quiz.",
       lead   = "Przeczytaj opis zmiennej i wybierz jej typ. Każde pytanie ma
                 cztery opcje — dokładnie jedną poprawną. Quiz losuje 15 pytań
-                z puli 75; możesz go powtarzać wielokrotnie."
+                z puli 75; można go powtarzać wielokrotnie."
     ),
 
     # Legenda typow

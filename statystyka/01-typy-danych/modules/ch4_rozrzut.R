@@ -43,11 +43,11 @@ ch4_ui <- list(
       label = "Ryc. 4.1",
       lc_step_widget("ch4_spread",
         title = "Dwie linie autobusowe — ta sama średnia, inny rozrzut",
-        steps = c("Dwie linie", "Inny rozrzut", "Wychodzisz wcześniej",
+        steps = c("Dwie linie", "Inny rozrzut", "Wcześniejsze wyjście",
                   "Konsekwencje"),
         toolbar = lc_toolbar(
           lc_step_from(3,
-            lc_slider("ch4_spread_buffer", "Wychodzisz wcześniej o (minuty)", 0, 10, 0, 1)
+            lc_slider("ch4_spread_buffer", "Wyjście wcześniej o (minuty)", 0, 10, 0, 1)
           ),
           lc_readouts(uiOutput("ch4_spread_reads"))
         ),
@@ -63,9 +63,9 @@ ch4_ui <- list(
       się o ponad 10 minut, średnio o 13.1 min. Na linii A takie spóźnienie
       się nie zdarza."),
 
-    lc_p("Dla pasażera to różnica zasadnicza. Linia A jest przewidywalna: wiesz,
-      kiedy autobus przyjedzie. Na linii B zwykle czekasz krócej, ale musisz
-      liczyć się z tym, że raz na kilkadziesiąt kursów spóźnisz się na zajęcia.
+    lc_p("Dla pasażera to różnica zasadnicza. Linia A jest przewidywalna: wiadomo,
+      kiedy autobus przyjedzie. Na linii B zwykle czeka się krócej, ale trzeba
+      liczyć się z tym, że raz na kilkadziesiąt kursów pasażer spóźni się na zajęcia.
       Średnia tej różnicy nie widzi. Potrzebujemy liczby, która ją zmierzy."),
 
     # ====================================================================
@@ -447,8 +447,8 @@ ch4_server <- function(input, output, session) {
       )
     } else if (step == 3) {
       lbl <- if (buffer == 0) "bez zapasu" else paste0(buffer, " min wcześniej")
-      paste0("Wychodzisz ", lbl,
-             ". Zacieniowany obszar to kursy, na które zdążysz.")
+      paste0("Wyjście ", lbl,
+             ". Zacieniowany obszar to kursy, na które pasażer zdąży.")
     } else if (step == 4) {
       prob_a <- mean(bus$a >= -buffer)
       prob_b <- mean(bus$b >= -buffer)
@@ -456,13 +456,13 @@ ch4_server <- function(input, output, session) {
       mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
       lbl <- if (buffer == 0) "bez zapasu" else paste0(buffer, " min wcześniej")
       tagList(
-        paste0("Wychodzisz ", lbl, ". Linia A: zdążysz na ",
+        paste0("Wyjście ", lbl, ". Linia A: pasażer zdąży na ",
                lc_fmt(prob_a * 100, 1), "% kursów; linia B: na ",
                lc_fmt(prob_b * 100, 1), "%."),
         if (pct_10_b > 0) tagList(
           tags$br(),
           paste0("Gdy linia B spóźnia się ponad 10 min (", lc_fmt(pct_10_b, 1),
-                 "% kursów), czekasz średnio ", lc_fmt(mean_late_b, 1), " min.")
+                 "% kursów), czeka się średnio ", lc_fmt(mean_late_b, 1), " min.")
         )
       )
     }
