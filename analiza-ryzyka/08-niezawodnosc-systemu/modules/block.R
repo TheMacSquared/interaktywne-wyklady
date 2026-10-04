@@ -368,7 +368,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
       list(
         id = "struktura", title = "Stany elementów i stan systemu",
         text = c(
-          "Checkboksy z poprzednich sekcji wykonywały w tle prostą matematykę: brały wektor stanów elementów i zwracały stan systemu. Ta operacja ma nazwę — funkcja struktury φ — i zapisuje architekturę bez ani jednego prawdopodobieństwa. Rozdzielenie logiki (φ) od liczb (R_i) to porządek, który za wykład wróci w drzewach błędów.",
+          "Checkboksy z poprzednich sekcji wykonywały w tle prostą matematykę: brały wektor stanów elementów i zwracały stan systemu. Ta operacja ma nazwę — funkcja struktury φ — i zapisuje architekturę bez ani jednego prawdopodobieństwa. Rozdzielenie logiki (φ) od liczb (R_i) to porządek, który wróci w następnym wykładzie, przy drzewach błędów.",
           "Stan elementu i zapisujemy jako x_i: 1 gdy działa, 0 gdy zawiódł. Funkcja struktury φ przypisuje wektorowi stanów elementów stan całego systemu. Przełączniki stanów w rozdziale o układach robiły dokładnie to: dla szeregu φ(x)=x₁x₂⋯xₙ, dla układu równoległego φ(x)=1-(1-x₁)⋯(1-xₙ), a dla naszego układu mieszanego φ(x)=x_C·[1-(1-x_A)(1-x_B)]."
         ),
         body = list(
@@ -496,13 +496,13 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         )
       )
     ),
-    pitfall = "Suwak korelacji nie zastępuje opisu mechanizmu wspólnej przyczyny."
+    pitfall = "Suwak P(utraty wspólnego zasilania) nie zastępuje opisu mechanizmu wspólnej przyczyny."
   ),
   list(
     id = "redundancja", title = "Istotność Birnbauma", hook = "Kolejny zapas daje coraz mniej",
     lead = "Kolejna gałąź poprawia R, lecz wnosi koszt i coraz mniejszy przyrost; ta sama poprawa elementu ma różną wartość w różnych miejscach architektury.",
     intro = c(
-      "Skoro drugi wentylator tak pomaga, czemu nie zamontować czterech? Rachunek odpowiada krzywą nasycenia: pierwsza dodatkowa gałąź redukuje ryzyko dziesięciokrotnie, następna znowu dziesięciokrotnie — ale to już redukcja z 0.01 do 0.001, podczas gdy koszt każdej gałęzi jest taki sam.",
+      "Skoro drugi wentylator tak pomaga, czemu nie zamontować czterech? Rachunek odpowiada krzywą nasycenia. Przy gałęziach o R = 0.9 pierwsza dodatkowa gałąź obniża zawodność z 0.1 do 0.01, a druga z 0.01 do 0.001. Każda redukuje ryzyko dziesięciokrotnie, ale druga oszczędza w liczbach bezwzględnych już tylko 0.009, podczas gdy koszt każdej gałęzi jest taki sam.",
       "W praktyce granicę opłacalności wyznaczają dwa czynniki, których krzywa nie pokazuje: wspólne przyczyny (od pewnego momentu to one dominują ryzyko i kolejne gałęzie nie pomagają wcale) oraz koszty pośrednie — miejsce, obsługa, dodatkowe punkty awarii."
     ),
     sections = list(
@@ -597,7 +597,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
     lead = "Funkcja → misja → architektura → zależności → wynik; rachunek ma odzwierciedlać fizyczną architekturę.",
     intro = c(
       "Rachunek systemowy sprowadza się do dwóch wzorów i jednej dyscypliny: iloczyn dla szeregu, dopełnienie iloczynu dla redundancji, i bezwzględny wymóg wspólnego czasu misji oraz jawnych wspólnych przyczyn. Pięć kroków poniżej wystarcza do audytu każdej analizy — własnej i cudzej.",
-      "Quiz sprawdza logikę sukcesu i porażki w obu układach; ćwiczenia prowadzą od rachunku szeregowego przez diagnozę wspólnego zasilania po zapis logiki systemu hamulcowego — czyli transfer całego warsztatu poza chłodnię."
+      "Quiz sprawdza logikę sukcesu i porażki w obu układach, koherentność modelu i rezerwę oczekującą. Ćwiczenia zaczynają się od zapisu funkcji struktury, prowadzą przez rachunek szeregowy, diagnozę wspólnego zasilania i logikę systemu hamulcowego — transfer warsztatu poza chłodnię — a kończą na modelu beta-factor i doborze liczby gałęzi."
     ),
     sections = list(
       list(

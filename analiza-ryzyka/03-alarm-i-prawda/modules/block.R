@@ -155,7 +155,7 @@ alarm_block <- list(
               "Awaria zdarza się średnio na 1 zmianie na 100. Czujnik wykrywa 95% awarii, ale w 5% zmian bez awarii alarmuje fałszywie. Najpierw oszacuj wiarygodność alarmu bez rachunku — zapisz swoją liczbę, zanim klikniesz dalej.",
               "To pytanie ma długą historię błędnych odpowiedzi: w badaniach z udziałem lekarzy interpretujących wyniki testów przesiewowych większość podawała wartości bliskie „około 95%”, choć poprawna odpowiedź wynosiła kilka procent — liczbę opisującą test brano za wiarygodność wyniku dodatniego. Zaraz sprawdzisz, po której stronie tej statystyki jesteś."
             ),
-            risk_try("wybierz jedną odpowiedź, zanim zaczniesz liczyć, i kliknij „Sprawdź intuicję”. Zapamiętaj swój wybór — wrócimy do niego w rozdziale o naturalnych częstościach."),
+            risk_try("wybierz jedną odpowiedź, zanim zaczniesz liczyć, i kliknij „Sprawdź intuicję”. Zapamiętaj swój wybór — wrócimy do niego w rozdziale „Wzór Bayesa”."),
             risk_vote_panel(
               "a3_vote", "a3_vote_feedback",
               "Po alarmie: jak duża jest szansa rzeczywistej awarii?",
@@ -488,7 +488,7 @@ alarm_block <- list(
           id = "niezaleznosc", title = "Założenie warunkowej niezależności",
           text = "Dwa czujniki mogą reagować na to samo zakłócenie lub utracić wspólne zasilanie. Warunkowa niezależność oznacza, że przy ustalonym stanie instalacji (awaria albo jej brak) wynik jednego czujnika nie zmienia prawdopodobieństwa wyniku drugiego — i to założenie trzeba uzasadnić mechanizmem, tak jak w poprzednim wykładzie.",
           body = list(
-            risk_try("zacznij od prawdopodobieństwa skopiowania 0 i porównaj wynik z przykładem 3.6. Następnie ustaw 0.25, 0.5 i 1. Czujniki mają parametry ustawione w tablicy 2×2 w rozdziale o języku detektora."),
+            risk_try("zacznij od prawdopodobieństwa skopiowania 0 i porównaj wynik z przykładem 3.6. Następnie ustaw 0.25, 0.5 i 1. Czujniki mają parametry ustawione w tablicy 2×2 w rozdziale „Czułość i swoistość”."),
             figure_panel(
               label = "Porównanie", title = "Dwa alarmy",
               lc_toolbar(

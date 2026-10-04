@@ -303,18 +303,6 @@ Rekomendacje (do przyjęcia przy wznowieniu, bez dalszych decyzji teraz):
 
 - [ ] Ocenić interaktywny łańcuch pojęć jako treść tego wykładu (uogólnienie —
   patrz sekcja globalna).
-- [ ] Stara tabela `lc-table` w `modules/block.R` (ok. l. 1406) → `lc_table()`
-  (nie wylewała się w audycie; etap 3 migracji).
-- [ ] Intro quizu (`jezyk_quiz`, l. 4–7): „definicji klasycznej (1.2) oraz
-  działań na zdarzeniach (1.5)” → „definicji klasycznej (wzór 1.2) oraz reguły
-  sumy (wzór 1.5)”. Numer w nawiasie myli się z numerem definicji, a pytanie 4
-  dotyczy reguły sumy.
-
-### 02 — warunki
-
-- [ ] Stara tabela „Wniosek / Czy wynika z danych? / Co dalej?” w owijce
-  `lc-table-wrap` (`modules/block.R`, ok. l. 312) → `lc_table()` (etap 3).
-
 ### 03 — alarm i prawda
 
 - [ ] Tablica 2×2 (`a3_table`) po migracji ma polskie nagłówki (Stan, Alarm,
@@ -322,59 +310,15 @@ Rekomendacje (do przyjęcia przy wznowieniu, bez dalszych decyzji teraz):
   surowe nazwy `state`, `alarm`, `no_alarm` i liczby typu 95.00. Obejrzeć
   i zatwierdzić.
 
-Odsyłacze do rozdziałów opisem zamiast tytułem (tytuły są tagami pojęć, więc
-poprawiamy odsyłacze):
-
-- [ ] l. 153: „w rozdziale o naturalnych częstościach” → „w rozdziale
-  „Wzór Bayesa””.
-- [ ] l. 487: „w rozdziale o języku detektora” → „w rozdziale „Czułość
-  i swoistość””.
-
-### 04 — wiele prób
-
-- [ ] `p4_chk_zalozenia` (ok. l. 248) — ustalono 2.10.2026: reguła
-  „po wykryciu sprawdzam dokładniej” łamie **niezależność** (zmianę wywołuje
-  wynik wcześniejszej próby; p przy okazji przestaje być stałe). Zmienić
-  poprawną odpowiedź i wyjaśnienie oraz l. 242 („zmienia samą definicję
-  próby”). Reguła do zachowania w całym kursie: zmiana wywołana historią
-  wyników łamie niezależność, zmiana z przyczyn zewnętrznych (dostawy, dryf)
-  łamie stałość p.
-- [ ] l. 537: „to wzór (4.6) z k = 0 zapisany od drugiej strony” → „to warunek
-  P(X ≥ 1) = 0,95 ze wzoru (4.6) zapisany od drugiej strony” (wzór 4.6 nie
-  ma k).
-- [ ] Model hipergeometryczny — ustalono 2.10.2026: jedno zdanie w sekcji
-  `bernoulli/zalozenia`: losowanie bez zwracania dużej części małej partii to
-  model hipergeometryczny, dwumianowy jest jego przybliżeniem, gdy próbka jest
-  mała względem partii. Przewodnik i lista ćwiczeń (4.a) już tego wymagają,
-  wykład dotąd o tym nie wspomina.
-- [ ] l. 397: liczby z symulacji (0–7, 156, 67, 2,03) dotyczą n = 100,
-  p = 0,02 i ziarna 2404, a histogram bierze n i p z suwaków poprzedniego
-  rozdziału — ustalono 2.10.2026: dopisać jawnie „przy n = 100, p = 0,02”
-  zamiast samego „przy domyślnych ustawieniach”.
-
 ### 05 — ile prób do zdarzenia
 
-- [ ] l. 227: „w rozdziale o tym, kiedy model zawodzi” → „w rozdziale
-  „Założenia modelu””.
 - [ ] Sekcja `rte/parametryzacje`: dopisać zdanie o konwencji „+1” dla
   rozkładu geometrycznego — `dgeom`/`pgeom`/`qgeom` liczą porażki przed
   pierwszym sukcesem, dlatego w kodzie kursu dodaje się 1 (serwer już robi
   `rgeom() + 1`, `qgeom() + 1`, l. 449, 457; wykład nazywa tylko „+r”).
-- [ ] l. 388: etykieta suwaka „Odchylenie p przed ograniczeniem do
-  [0,005; 0,95]” → „Zmienność jakości partii (odchylenie p)”; informację
-  o obcięciu p przenieść do notki pod widgetem.
-
+  Wstrzymane 4 października 2026: treść wykładów nie zawiera kodu R ani
+  nazw funkcji — konwencja „+1” należy do materiałów z R/jRISK.
 ### 06 — zmienność i próg
-
-- [ ] l. 184: Φ pojawia się przed definicją (l. 268–270) → „dokładnie
-  P(79 < T ≤ 85) ≈ 0,683”, bez Φ.
-- [ ] l. 473: „rachunki z rozdziałów 3–5 korzystały z funkcji Φ” → „z
-  rozdziałów 2–5” (przykład 6.3 w rozdziale 2 też używa Φ).
-- [ ] Rozdział `nienormalny` (Q–Q) — ustalono 2.10.2026: zostaje
-  rozszerzeniem (`extension = TRUE`); ćwiczenie 2 i pytanie `z6_chk_qq`
-  oznaczyć etykietą „rozszerzenie”. Tak samo zadania z Q–Q w
-  `~/praca/dydaktyka/materialy/analiza-ryzyka/cwiczenia-listy-zadan.md`
-  (7.2 część Q–Q, 7.d).
 
 Uwaga: powtórzone `id = "most"` w różnych rozdziałach nie jest błędem —
 kotwice sekcji to `blok-rozdział-sekcja` (`R/risk_block.R`, l. 420).
@@ -387,13 +331,6 @@ kotwice sekcji to `blok-rozdział-sekcja` (`R/risk_block.R`, l. 420).
   `risk_derivation()` / usunąć i przenumerować (7.3)–(7.17). Rozstrzygnąć
   przed zatwierdzeniem treści wykładu.
 
-- [ ] l. 520 i 523: instrukcja eksperymentu z Weibullem każe ustawić η = 1500 h,
-  a odczyt podaje wartości dla η = 1700 h (przy 1500 h hazard w 100 h to ok.
-  0,0013, nie 0,0012). Ujednolicić instrukcję albo przeliczyć odczyt.
-- [ ] l. 456: usunąć z tekstu dla studentów notatkę autorską „To krótki kontekst
-  dla gamma, nie dodatkowy rozbudowany dział.”
-- [ ] l. 417: ujednolicić oznaczenie liczby zdarzeń („r-te wykrycie” obok
-  „suma k oczekiwań geometrycznych”).
 - [ ] **Decyzja:** kolejność definicji — wzór (7.1) i przykład 7.1 używają f(t)
   i R(t) przed definicją 7.4, a rozdział o cenzorowaniu opiera się na modelu
   wykładniczym z rozdziału 4. Warianty: zostaje z jawnym odesłaniem w przód /
@@ -414,16 +351,6 @@ Plik: `modules/block.R`.
   (ok. l. 370, 562)?
 - [ ] Zweryfikować komunikację fikcyjnego progu 14,5 °C w definicji sukcesu.
 
-- [ ] l. 489: pułapka mówi o „suwaku korelacji”, którego w wykładzie nie ma
-  (jest suwak P(utraty wspólnego zasilania), `s8_common`) — przeredagować.
-- [ ] l. 495: „pierwsza dodatkowa gałąź redukuje ryzyko … z 0,01 do 0,001” —
-  to spadek po drugiej dodatkowej gałęzi (przy r = 0,9: 0,1 → 0,01 → 0,001);
-  poprawić i podać r.
-- [ ] l. 590: intro ściągi opisuje quiz i ćwiczenia niezgodnie z zawartością
-  (quiz obejmuje też koherentność i rezerwę oczekującą; ćwiczenia zaczynają
-  się od „Struktury” i kończą na „Beta-factor” i „Ile gałęzi”).
-- [ ] l. 361: „porządek, który za wykład wróci w drzewach błędów” — poprawić
-  szyk.
 - [ ] **Decyzja:** rezerwa oczekująca jest wprowadzona jednym zdaniem (l. 242),
   a jest przedmiotem pytania quizu 5. Warianty: dopisać krótką definicję
   (stan w oczekiwaniu, przełącznik) / zostaje jako wzmianka.
@@ -449,15 +376,6 @@ Plik: `modules/block.R`.
   detekcja ma osobne zasilanie, a przykład wspólnej przyczyny dotyczy innego
   zasobu / detekcja i tłumienie dzielą zasilanie (zmienić l. 73 i opis
   danych).
-- [ ] l. 124: „wrócimy w ostatnim rozdziale” → w rozdziale „Granice drzewa
-  błędów” (przedostatni).
-- [ ] Ujednolicić „P(top)” / „Top event” → „P(TOP)” / „zdarzenie szczytowe”
-  (l. 66, 254, 444, 446, 546, 593, ćw. 2, etykiety widgetów).
-- [ ] l. 588: „i 2 wejść” → poprawna odmiana dla n = 2–4.
-- [ ] Kolejność: definicja 9.2 (l. 120) używa bramki przed definicją 9.3
-  (l. 148); wzór (9.10) wprowadza I_CR przed definicją 9.5 — przestawić albo
-  dodać odesłanie.
-
 ### 10 — od modelu do decyzji
 
 - [ ] **Decyzja:** horyzont roczny (sekcja `id = "rok"`, ok. l. 393,
@@ -465,22 +383,6 @@ Plik: `modules/block.R`.
   P_rok = 1 − (1 − P(TOP))³ ≈ 0,005 jest rozszerzeniem; 1 − R_sys³ ≈ 0,641
   pokazano jako pułapkę. Warianty: zostaje / horyzont roczny jako wynik główny
   (zmiana serwera i `risk_mission_analysis()`).
-- [ ] Wzór (10.11, l. 504) nie zawiera skalowania prawdopodobieństwa
-  przeoczenia, które opisuje tekst (l. 501) i liczy kod (`R/risk_math.R`,
-  l. 244) — uzupełnić wzór.
-- [ ] l. 320: „Równość z wynikiem b) jest przypadkową cechą β = 2” — dla β = 2
-  równość R(2000)/R(1000) = R(1000)³ zachodzi dla każdego η; przypadkowa jest
-  tylko bliskość do połowy. Przeredagować.
-- [ ] l. 91 i 88: odsyłacze do „ramki z danymi” — skuteczność 50% jako
-  hipoteza jest opisana dopiero we wstępie rozdziału `interwencje` (l. 459).
-- [ ] l. 421: odsyłacz do „pierwszego pytania quizu” nie pasuje (quiz 1 dotyczy
-  awarii a niedostępności, nie 1 − R_sys³).
-- [ ] l. 287 i l. 398: ta sama różnica modeli opisana jako „prawie dwukrotnie”
-  i „o około 40%” — ujednolicić ujęcie.
-- [ ] l. 526: „wygrywa aż do u = 0,45” jest na granicy (0,00155 wobec 0,00156) —
-  rozważyć „do około u = 0,45”.
-- [ ] Ujednolicić „P(top)” → „P(TOP)” w ćwiczeniach 1 i 3; „blok 07” →
-  „wykład 07” (l. 73).
 - [ ] **Zunifikować misję ochrony termicznej z danymi Bananpol z jRISK**
   (decyzja 2026-10-02: wariant A1, odłożone na osobną sesję). Cel: wątek
   ćwiczeń dane → parametr → model → decyzja domyka się w wykładzie 10.

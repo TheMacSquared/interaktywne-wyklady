@@ -24,7 +24,7 @@ fta_exercises <- list(
     )
   ),
   list(
-    task = "Bananpol: policz P(top) dla inicjacji 0.005 oraz OR warunkowych niepowodzeń detekcji 0.05 i modułu tłumienia 0.08 przy I.",
+    task = "Bananpol: policz P(TOP) dla inicjacji 0.005 oraz OR warunkowych niepowodzeń detekcji 0.05 i modułu tłumienia 0.08 przy I.",
     answer = c(
       "Bramka OR przy I, wzór (9.2): P(D ∪ S | I) = 1 - (1 - 0.05)(1 - 0.08) = 1 - 0.874 = 0.126.",
       "Bramka AND z inicjacją, wzór (9.4): P(TOP) = 0.005 · 0.126 = 0.00063, czyli około 6.3 nieopanowanego pożaru na 10 000 magazyno-lat. Przybliżenie rzadkich zdarzeń dałoby 0.005 · 0.13 = 0.00065 — o około 3% za dużo."
@@ -63,7 +63,7 @@ fta_exercises <- list(
 fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = list(
   list(
     id = "top", title = "Zdarzenie szczytowe", hook = "Najpierw nazwij awarię, której się boisz",
-    lead = "Top event musi opisywać konkretny niepożądany stan, system i horyzont; poziomy drzewa rozdzielają skutek, logikę mechanizmu i zdarzenia bez dalszego rozwijania.",
+    lead = "Zdarzenie szczytowe musi opisywać konkretny niepożądany stan, system i horyzont; poziomy drzewa rozdzielają skutek, logikę mechanizmu i zdarzenia bez dalszego rozwijania.",
     intro = c(
       "Analiza drzewa błędów (FTA) powstała w latach sześćdziesiątych przy programach rakietowych i lotniczych, a dziś jest standardem wszędzie tam, gdzie pojedyncza awaria ma zbyt poważne skutki, by czekać na dane z wypadków. W Bananpolu użyjemy jej do zdarzenia, które w rejestrach — na szczęście — nie występuje: nieopanowanego pożaru magazynu.",
       "Wszystko zaczyna się od definicji zdarzenia szczytowego. To zdanie, nad którym warto spędzić najwięcej czasu w całej analizie: musi wskazywać konkretny stan, konkretny system i horyzont odniesienia, tak żeby dwie osoby niezależnie potrafiły rozstrzygnąć, czy dane zdarzenie się w nim mieści."
@@ -117,11 +117,11 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
         bullets = c("szczytowe: analizowany niepożądany stan", "pośrednie: wynik bramki lub podsystemu", "bazowe: przyczyna z przypisanym stanem albo prawdopodobieństwem"),
         body = list(
           risk_definition("9.2", "Zdarzenie bazowe i zdarzenie pośrednie", c(
-            "Zdarzenie bazowe (liść drzewa) to zdarzenie, którego w danej analizie nie rozkładamy dalej; przypisujemy mu prawdopodobieństwo albo stan (zachodzi / nie zachodzi). Zdarzenie pośrednie to zdarzenie, które jest wynikiem bramki logicznej łączącej zdarzenia niższego poziomu."
+            "Zdarzenie bazowe (liść drzewa) to zdarzenie, którego w danej analizie nie rozkładamy dalej; przypisujemy mu prawdopodobieństwo albo stan (zachodzi / nie zachodzi). Zdarzenie pośrednie to zdarzenie, które jest wynikiem bramki logicznej (definicja 9.3) łączącej zdarzenia niższego poziomu."
           )),
           c(
             "W drzewie Bananpolu mamy trzy zdarzenia bazowe: inicjację I (zapłon w magazynie), brak detekcji D i niepowodzenie modułu tłumienia S. Zdarzeniem pośrednim jest „zabezpieczenia zawiodły”, czyli D lub S. Parametry D i S są warunkowe: d = P(D | I) i s = P(S | I) opisują zachowanie barier w chwili, gdy pożar już się zaczął. To ważne, bo czujnik, który jest sprawny w codziennych testach, może zawieść w dymie i temperaturze prawdziwego pożaru.",
-            "Z drzewa wynika też, czego nie modelujemy. Nie ma w nim zachowania ludzi, dostępu straży ani rozmieszczenia towaru. Nie znaczy to, że te czynniki są nieistotne — tylko że w tej wersji analizy zostały poza granicą systemu z definicji 9.1. Do konsekwencji takich decyzji wrócimy w ostatnim rozdziale."
+            "Z drzewa wynika też, czego nie modelujemy. Nie ma w nim zachowania ludzi, dostępu straży ani rozmieszczenia towaru. Nie znaczy to, że te czynniki są nieistotne — tylko że w tej wersji analizy zostały poza granicą systemu z definicji 9.1. Do konsekwencji takich decyzji wrócimy w rozdziale „Granice drzewa błędów”."
           ),
           risk_check("f9_chk_poziom",
             "Zespół rozwija „brak detekcji” na „uszkodzenie czujki” oraz „odcięcie zasilania centrali”. Jaką rolę pełni teraz „brak detekcji”?",
@@ -251,10 +251,10 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             ),
             answer = "P(TOP) = 0.00063, czyli około 6.3 nieopanowanego pożaru na 10 000 magazyno-lat."
           ),
-          risk_try("zacznij od wartości domyślnych i sprawdź wynik przykładu 9.3. Potem podwój P(inicjacji), a osobno podwój P(braku detekcji) — porównaj, jak zmienia się P(top) w obu przypadkach."),
+          risk_try("zacznij od wartości domyślnych i sprawdź wynik przykładu 9.3. Potem podwój P(inicjacji), a osobno podwój P(braku detekcji) — porównaj, jak zmienia się P(TOP) w obu przypadkach."),
           risk_widget_panel("Obliczenia", "Parametry małego drzewa", tagList(lc_slider("f9_init", "P(inicjacji)", 0, .03, .005, .001), lc_slider("f9_detect", "P(braku detekcji | I)", 0, .3, .05, .01), lc_slider("f9_suppress", "P(niepowodzenia modułu tłumienia | I)", 0, .3, .08, .01)), "f9_tree_plot", "f9_tree_stats"),
           c(
-            "Przy wartościach domyślnych panel pokazuje P(D ∪ S | I) = 0.126 i P(top) = 0.000630. Podwojenie inicjacji do 0.010 podwaja wynik do 0.00126 — inicjacja wchodzi przez AND, więc działa proporcjonalnie. Podwojenie braku detekcji do 0.10 zmienia wynik słabiej: P(D ∪ S | I) = 1 - 0.90 · 0.92 = 0.172, a P(top) = 0.00086, czyli wzrost o około 37%.",
+            "Przy wartościach domyślnych panel pokazuje P(D ∪ S | I) = 0.126 i P(TOP) = 0.000630. Podwojenie inicjacji do 0.010 podwaja wynik do 0.00126 — inicjacja wchodzi przez AND, więc działa proporcjonalnie. Podwojenie braku detekcji do 0.10 zmienia wynik słabiej: P(D ∪ S | I) = 1 - 0.90 · 0.92 = 0.172, a P(TOP) = 0.00086, czyli wzrost o około 37%.",
             "Ta asymetria jest pierwszym sygnałem, że miejsce liścia w drzewie decyduje o jego wadze. Wrócimy do niej w rozdziale o rankingu."
           )
         )
@@ -449,9 +449,9 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
   ),
   list(
     id = "ranking", title = "Istotność Birnbauma", hook = "Nie każda poprawa ma tę samą wartość",
-    lead = "Poprawiamy po kolei każdy liść i obserwujemy spadek P(top).",
+    lead = "Poprawiamy po kolei każdy liść i obserwujemy spadek P(TOP).",
     intro = c(
-      "Drzewo z liczbami odpowiada wreszcie na pytanie zarządu: co poprawić najpierw? Eksperyment myślowy jest uczciwy — każdemu liściowi po kolei fundujemy tę samą względną redukcję i porównujemy spadek P(top). Struktura drzewa sprawia, że identyczna poprawa w różnych miejscach daje różne zyski.",
+      "Drzewo z liczbami odpowiada wreszcie na pytanie zarządu: co poprawić najpierw? Eksperyment myślowy jest uczciwy — każdemu liściowi po kolei fundujemy tę samą względną redukcję i porównujemy spadek P(TOP). Struktura drzewa sprawia, że identyczna poprawa w różnych miejscach daje różne zyski.",
       "W naszym drzewie inicjacja wchodzi przez AND, więc jej redukcja przenosi się na wynik w pełnej proporcji; zabezpieczenia dzielą się zyskiem wewnątrz bramki OR. Ranking to jednak dopiero pierwsza kolumna tabeli decyzyjnej — obok muszą stanąć koszt i wykonalność, którymi zajmie się ostatni wykład."
     ),
     sections = list(
@@ -491,7 +491,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             "Z liniowości P(TOP) względem p_i wynika, że obniżenie p_i do (1 - r) · p_i zmniejsza wynik dokładnie o r · p_i · I_B(i). Podzielone przez P(TOP) daje to miarę, która nie zależy od r."
           ),
           risk_formula("\\Delta P_i=r\\,p_i\\,I_B(i)=r\\,P(\\mathrm{TOP})\\,I_{CR}(i),\\qquad I_{CR}(i)=\\frac{p_i\\,I_B(i)}{P(\\mathrm{TOP})}", num = "9.10",
-            legend = c("r" = "względna redukcja parametru, np. 0.5", "\\Delta P_i" = "spadek P(TOP) po redukcji liścia i", "I_{CR}(i)" = "istotność krytyczna liścia i")),
+            legend = c("r" = "względna redukcja parametru, np. 0.5", "\\Delta P_i" = "spadek P(TOP) po redukcji liścia i", "I_{CR}(i)" = "istotność krytyczna liścia i (definicja 9.5 poniżej)")),
           risk_definition("9.5", "Istotność krytyczna", c(
             "Istotność krytyczna zdarzenia bazowego i to względny spadek P(TOP) przypadający na względny spadek p_i. Równoważnie: prawdopodobieństwo, że zdarzenie i zaszło i było krytyczne, pod warunkiem że zaszło zdarzenie szczytowe."
           )),
@@ -551,7 +551,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           )
         )
       ),
-      list(id = "audit", title = "Przegląd ekspercki", bullets = c("Czy top event jest jednoznaczny?", "Czy lista przyczyn jest wystarczająca?", "Gdzie założono niezależność?", "Czy jednostki i horyzonty są zgodne?", "Które dane są fikcyjne lub niepewne?"))
+      list(id = "audit", title = "Przegląd ekspercki", bullets = c("Czy zdarzenie szczytowe jest jednoznaczne?", "Czy lista przyczyn jest wystarczająca?", "Gdzie założono niezależność?", "Czy jednostki i horyzonty są zgodne?", "Które dane są fikcyjne lub niepewne?"))
     )
   ),
   list(
@@ -600,7 +600,8 @@ fta_server <- function(input, output, session) {
   output$f9_structure <- renderUI({
     n <- length(input$f9_causes)
     lc_status(
-      paste0("Wybrano bramkę ", toupper(input$f9_gate), " i ", n, " wejść. "),
+      paste0("Wybrano bramkę ", toupper(input$f9_gate), " i ", n, " ",
+             if (n %% 10 %in% 2:4 && !(n %% 100 %in% 12:14)) "wejścia" else "wejść", ". "),
       if (input$f9_gate == "or") "Każde wejście może wystarczyć." else "Wszystkie wybrane wejścia są potrzebne."
     )
   })
@@ -608,7 +609,7 @@ fta_server <- function(input, output, session) {
     s <- input$f9_states
     active <- "init" %in% s && ("detect" %in% s || "suppress" %in% s)
     lc_status(
-      lc_verdict(tags$strong(if (active) "Top event aktywny." else "Top event nieaktywny."), type = if (active) "warning" else "ok"),
+      lc_verdict(tags$strong(if (active) "Zdarzenie szczytowe aktywne." else "Zdarzenie szczytowe nieaktywne."), type = if (active) "warning" else "ok"),
       " Logika: inicjacja AND (brak detekcji OR brak tłumienia)."
     )
   })
@@ -629,7 +630,7 @@ fta_server <- function(input, output, session) {
   zoom_plot_server("f9_tree_plot", tree_plot, alt = "Drzewo błędów z inicjacją połączoną przez AND z bramką OR dwóch niesprawności zabezpieczeń.")
   output$f9_tree_stats <- renderUI(tagList(
     lc_readout("P(D ∪ S | I)", risk_fmt_p(risk_gate_or(c(input$f9_detect, input$f9_suppress)))),
-    lc_readout("P(top)", risk_fmt_p(tree_value()), color = upwr_accent)
+    lc_readout("P(TOP)", risk_fmt_p(tree_value()), color = upwr_accent)
   ))
   output$f9_cut_text <- renderUI(lc_caption(
                                    if (input$f9_cut == "id") "Inicjacja + brak detekcji wystarczają do TOP." else "Inicjacja + brak tłumienia wystarczają do TOP.",
@@ -665,7 +666,7 @@ fta_server <- function(input, output, session) {
     ggplot(dat, aes(element, gain, fill = element)) +
       geom_col() +
       scale_fill_manual(values = upwr_cat_n(3), guide = "none") +
-      labs(x = NULL, y = "Redukcja P(top)") +
+      labs(x = NULL, y = "Redukcja P(TOP)") +
       theme_upwr()
   })
   zoom_plot_server("f9_rank_plot", rank_plot, alt = "Słupki redukcji prawdopodobieństwa zdarzenia szczytowego po poprawie każdego liścia.")

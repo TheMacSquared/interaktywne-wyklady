@@ -320,11 +320,14 @@ risk_derivation <- function(title, text, lines = NULL) {
 
 # Pytanie kontrolne w toku tekstu. Działa w przeglądarce (bez serwera): po wyborze
 # błędnej odpowiedzi pokazuje wskazówkę, po poprawnej — wyjaśnienie.
-risk_check <- function(id, question, choices, correct, explanation, hints = NULL) {
+# extension = TRUE: pytanie dotyczy rozszerzenia (etykieta „Sprawdź się · rozszerzenie”).
+risk_check <- function(id, question, choices, correct, explanation, hints = NULL,
+                       extension = FALSE) {
   stopifnot(correct %in% unname(choices))
   tags$div(
     class = "lc-check", `data-correct` = correct,
-    tags$div(class = "lc-check-label", "Sprawdź się"),
+    tags$div(class = "lc-check-label",
+             if (isTRUE(extension)) "Sprawdź się · rozszerzenie" else "Sprawdź się"),
     tags$p(class = "lc-check-question", question),
     tags$div(
       class = "lc-check-options lc-choices",

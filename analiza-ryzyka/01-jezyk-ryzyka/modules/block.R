@@ -3,8 +3,8 @@
 jezyk_quiz <- list(
   intro = "Pytania układają się w tej samej kolejności co wykład. Pierwsze dotyczy
     ról z definicji 1.1, kolejne — różnicy między częstością z krótkiej serii
-    a prawdopodobieństwem modelowym, warunków definicji klasycznej (1.2) oraz
-    działań na zdarzeniach (1.5). Ostatnie sprawdza, czy prawdopodobieństwo nie
+    a prawdopodobieństwem modelowym, warunków definicji klasycznej (wzór 1.2) oraz
+    reguły sumy (wzór 1.5). Ostatnie sprawdza, czy prawdopodobieństwo nie
     zostaje pomylone z pełnym opisem ryzyka. Odpowiadaj najpierw bez zaglądania
     do wcześniejszych rozdziałów; omówienie pojawi się po sprawdzeniu.",
   outro = "Jeśli błędy skupiły się na jednym typie pytań, wróć do odpowiedniego

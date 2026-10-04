@@ -229,7 +229,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             ),
             answer = "Około 0.65, tak samo jak na początku audytu. Seria 20 kontroli bez wykrycia nie jest ani rzadka, ani nie „zbliża” wykrycia."
           ),
-          "Brak pamięci jest własnością modelu, a nie świata. Jeśli kontroler się męczy, jeśli palety są ustawione w kolejności dostaw albo jeśli wady występują skupiskami, historia serii niesie informację i model geometryczny przestaje obowiązywać. Do tych założeń wrócimy w rozdziale o tym, kiedy model zawodzi."
+          "Brak pamięci jest własnością modelu, a nie świata. Jeśli kontroler się męczy, jeśli palety są ustawione w kolejności dostaw albo jeśli wady występują skupiskami, historia serii niesie informację i model geometryczny przestaje obowiązywać. Do tych założeń wrócimy w rozdziale „Założenia modelu”."
         )
       )
     ),
@@ -393,7 +393,8 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             answer = "40 kontroli, a nie 30. Partie o niskim p wydłużają audyt bardziej, niż partie o wysokim p go skracają, bo czas oczekiwania zależy od 1/p, a nie od p."
           ),
           risk_try("zacznij od odchylenia p równego zero i sprawdź, że oba histogramy się pokrywają. Potem zwiększaj odchylenie i obserwuj prawy ogon oraz średnie w panelu."),
-          risk_widget_panel("Porównanie", "Stałe p kontra partie o różnej jakości", lc_slider("d5_variation", "Odchylenie p przed ograniczeniem do [0.005; 0.95]", 0, .09, .04, .005), "d5_failure", "d5_failure_stats"),
+          risk_widget_panel("Porównanie", "Stałe p kontra partie o różnej jakości", lc_slider("d5_variation", "Zmienność jakości partii (odchylenie p)", 0, .09, .04, .005), "d5_failure", "d5_failure_stats",
+            note = "p każdej partii losujemy z rozkładu normalnego o tym odchyleniu i ograniczamy do przedziału [0.005; 0.95]."),
           "Przy rosnącym odchyleniu histogram „zmiennego p” wyraźnie wyciąga się w prawo, a średnia symulowana rośnie. Szczególnie groźne są partie o bardzo małym p: przy p = 0.02 średni czas do trzech wad to 150 kontroli. Kilka takich partii wystarczy, by plan oparty na stałym p stał się fikcją.",
           risk_check("d5_chk_mix",
             "Średnie p w dwóch rodzajach partii wynosi 0.10. Średni czas do trzeciej wady w mieszance jest…",

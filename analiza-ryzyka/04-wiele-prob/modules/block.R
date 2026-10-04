@@ -244,7 +244,8 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
             tags$li("p jest stałe"),
             tags$li("wyniki prób są niezależne")
           ),
-          "Każde z tych założeń psuje się w rozpoznawalny sposób. Dwie dostawy o różnej jakości wymieszane w jednej partii łamią stałość p. Wada, która uszkadza sąsiednie zawory w transporcie, łamie niezależność. Kontroler, który po znalezieniu wady zaczyna sprawdzać dokładniej, zmienia samą definicję próby w trakcie serii. Wybierz scenariusz poniżej i sprawdź diagnozę.",
+          "Każde z tych założeń psuje się w rozpoznawalny sposób. Dwie dostawy o różnej jakości wymieszane w jednej partii łamią stałość p. Wada, która uszkadza sąsiednie zawory w transporcie, łamie niezależność. Kontroler, który po znalezieniu wady zaczyna sprawdzać dokładniej, też łamie niezależność: sposób kolejnej kontroli zależy od wyniku poprzedniej. Reguła jest prosta — zmiana wywołana historią wyników łamie niezależność, a zmiana z przyczyn zewnętrznych, jak inna dostawa czy dryf maszyny, łamie stałość p. Wybierz scenariusz poniżej i sprawdź diagnozę.",
+          "Osobny przypadek to losowanie bez zwracania dużej części małej partii: wtedy każda wyjęta sztuka zmienia skład reszty i właściwym modelem jest rozkład hipergeometryczny. Dwumianowy jest jego dobrym przybliżeniem, gdy próbka jest mała względem partii.",
           "Złamanie założenia nie jest sprawą estetyki. Zmienia liczby, na których opieramy decyzję — nawet wtedy, gdy średnia pozostaje taka sama. Najłatwiej pokazać to na przykładzie mieszanki dostaw.",
           risk_example("4.3", "Dwie dostawy o różnej jakości",
             problem = "Partia stu zaworów pochodzi w całości od dostawcy A (p = 0.01) albo w całości od dostawcy B (p = 0.03), każdy z prawdopodobieństwem 1/2. Średnie p wynosi 0.02, tak jak w danych Bananpolu. Oblicz prawdopodobieństwo partii bez żadnej wady i porównaj z modelem, który zakłada stałe p = 0.02.",
@@ -265,10 +266,10 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
           "Diagnoza nie mówi „model jest zły”, lecz wskazuje, które założenie trzeba sprawdzić w danych. Mieszankę dostaw leczy się podziałem na warstwy: osobno partie od A, osobno od B, każda z własnym p. Zależność prób wymaga innego modelu albo zmiany jednostki — na przykład próbą staje się cała skrzynia zaworów, a nie pojedynczy zawór.",
           risk_check("p4_chk_zalozenia",
             "Kontroler po znalezieniu niesprawnego zaworu zaczyna dokładniej oglądać kolejne zawory i częściej wykrywa drobne wady. Które założenie schematu Bernoulliego jest złamane?",
-            c("Stałość p" = "p", "Ustalone n" = "n", "Dwa wyniki próby" = "two"),
-            correct = "p",
-            explanation = "Prawdopodobieństwo wykrycia wady rośnie po pierwszym wykryciu, więc p nie jest takie samo we wszystkich próbach. Zmienia się faktycznie definicja próby, a wyniki przestają być niezależne od historii serii.",
-            hints = c(n = "Liczba kontrolowanych zaworów nadal może być ustalona z góry. Co zmienia się w pojedynczej kontroli?", two = "Każda kontrola nadal kończy się wynikiem sprawny/niesprawny.")
+            c("Niezależność prób" = "indep", "Stałość p" = "p", "Ustalone n" = "n", "Dwa wyniki próby" = "two"),
+            correct = "indep",
+            explanation = "Sposób kolejnej kontroli zależy od wyniku wcześniejszej, więc próby przestają być niezależne. To, że p przy okazji przestaje być stałe, jest skutkiem tej zależności: zmianę wywołuje historia wyników, a nie przyczyna zewnętrzna.",
+            hints = c(p = "p rzeczywiście się zmienia, ale co wywołuje tę zmianę — przyczyna zewnętrzna czy wynik wcześniejszej kontroli?", n = "Liczba kontrolowanych zaworów nadal może być ustalona z góry. Co zmienia się w pojedynczej kontroli?", two = "Każda kontrola nadal kończy się wynikiem sprawny/niesprawny.")
           )
         )
       )
@@ -399,7 +400,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
             "Powtórzenia", "Wiele partii przy tych samych parametrach",
             lc_slider("p4_batches", "Liczba partii", 50, 2000, 500, 50), "p4_batches_plot", "p4_batches_stats"
           ),
-          "Przy domyślnych ustawieniach 500 symulowanych partii ma od 0 do 7 niesprawnych zaworów. Dokładnie dwie wady ma 156 partii, czyli około 31% — najczęstszy wynik, ale wciąż mniejszość. Zero wad ma 67 partii (około 13%), a średnia z symulacji wynosi 2.03, bardzo blisko linii. Środek histogramu jest więc stabilny, a pojedyncze partie rozrzucają się wokół niego szeroko.",
+          "Przy n = 100 i p = 0.02 (domyślne ustawienia) 500 symulowanych partii ma od 0 do 7 niesprawnych zaworów. Dokładnie dwie wady ma 156 partii, czyli około 31% — najczęstszy wynik, ale wciąż mniejszość. Zero wad ma 67 partii (około 13%), a średnia z symulacji wynosi 2.03, bardzo blisko linii. Środek histogramu jest więc stabilny, a pojedyncze partie rozrzucają się wokół niego szeroko.",
           "Środek tego histogramu i jego szerokość mają zwięzły zapis. Najpierw potrzebujemy ogólnej definicji średniej zmiennej losowej, a potem zastosujemy ją do sumy zer i jedynek.",
           risk_definition("4.7", "Wartość oczekiwana i wariancja", c(
             "Wartość oczekiwana zmiennej dyskretnej X to średnia jej wartości ważona prawdopodobieństwami: E(X) = Σ x · P(X = x). Wariancja to wartość oczekiwana kwadratu odchylenia od średniej: Var(X) = E[(X - E(X))²]. Pierwiastek z wariancji to odchylenie standardowe; mierzy typowy rozrzut w jednostkach X."
@@ -539,7 +540,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
             lc_p("Jeśli p nie podano, szacujemy je z próby. Zero wad w 100 niezależnych kontrolach daje oszacowanie punktowe 0, ale dokładna jednostronna górna granica ufności 95% wynosi 1-0.05^(1/100)≈0.0295. Przy tej wartości szansa zobaczenia zera wynosi jeszcze 5%. Założenia obejmują stałe p i ustaloną z góry liczebność próby."),
             lc_p("Dla następnej partii 100 elementów podstawienie oszacowania p=0 daje prognozę P(co najmniej jednej wady)=0, natomiast podstawienie górnej granicy daje 0.95. To wrażliwość prognozy na niepewność p, a nie 95-procentowe prawdopodobieństwo awarii partii. Losowość nowej partii i niepewność oszacowania to dwa różne źródła niepewności.")
           ),
-          "Górna granica z panelu to największe p, przy którym zero wad w n próbach jest jeszcze „dość prawdopodobne”, czyli ma prawdopodobieństwo co najmniej 5%. Warunek (1 - p)ⁿ = 0.05 to wzór (4.6) z k = 0 zapisany od drugiej strony. Rozwiązując go względem p, dostajemy:",
+          "Górna granica z panelu to największe p, przy którym zero wad w n próbach jest jeszcze „dość prawdopodobne”, czyli ma prawdopodobieństwo co najmniej 5%. Warunek (1 - p)ⁿ = 0.05 to warunek P(X ≥ 1) = 0.95 ze wzoru (4.6) zapisany od drugiej strony. Rozwiązując go względem p, dostajemy:",
           risk_formula("p_U=1-0.05^{1/n}\\approx \\frac{3}{n}", num = "4.8",
             legend = c("p_U" = "jednostronna górna granica ufności 95% dla p po zerze zdarzeń", "n" = "liczba niezależnych prób bez zdarzenia")),
           risk_derivation("reguła trzech", c(

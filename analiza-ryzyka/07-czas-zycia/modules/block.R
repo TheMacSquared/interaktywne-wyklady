@@ -411,7 +411,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
       list(
         id = "gamma", title = "Rozkład gamma i przypadek Erlanga",
         text = c(
-          "W wykładzie piątym czekaliśmy na r-te wykrycie, licząc dyskretne próby; gamma robi to samo w czasie ciągłym. W jednorodnym procesie Poissona o intensywności λ czas do k-tego zdarzenia jest sumą k niezależnych czasów wykładniczych o tej samej intensywności — tak jak ujemny dwumianowy był sumą k oczekiwań geometrycznych. Ta paralela to nie przypadek, lecz ta sama konstrukcja w dwóch skalach czasu.",
+          "W wykładzie piątym czekaliśmy na r-te wykrycie, licząc dyskretne próby; gamma robi to samo w czasie ciągłym. Liczbę zdarzeń, na którą czekamy, oznaczamy tu przez k — to ta sama wielkość co r z wykładu piątego. W jednorodnym procesie Poissona o intensywności λ czas do k-tego zdarzenia jest sumą k niezależnych czasów wykładniczych o tej samej intensywności — tak jak ujemny dwumianowy był sumą k oczekiwań geometrycznych. Ta paralela to nie przypadek, lecz ta sama konstrukcja w dwóch skalach czasu.",
           "Erlang jest rozkładem gamma o całkowitym parametrze kształtu k: sumą k niezależnych etapów o wykładniczych czasach — na przykład czasem do k-tej awarii w jednorodnym procesie Poissona. Ogólny rozkład gamma dopuszcza dowolne k>0. Kształt niecałkowity traci interpretację etapów, ale pozwala modelować hazard rosnący (k>1) albo malejący (k<1) i dopasowywać rozkład do danych bez sztucznego zaokrąglania."
         ),
         body = list(
@@ -450,7 +450,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             hints = c(one = "500 h to średni odstęp między kolejnymi awariami. Ile takich odstępów trzeba zsumować?", quarter = "Czekanie na więcej zdarzeń trwa dłużej, nie krócej. Wzór (7.10): E(T) = k/λ.")
           )
         ),
-        takeaway = "Most przez Poissona: przy stałej intensywności, niezależnych przyrostach i pojedynczych zdarzeniach liczba zdarzeń N(t) ma rozkład Poissona o średniej λt. Czas do pierwszego jest wykładniczy, do k-tego — Erlanga. Stała średnia liczba zgłoszeń nie wystarcza, jeśli zgłoszenia przychodzą grupami albo zależą od wcześniejszych. To krótki kontekst dla gamma, nie dodatkowy rozbudowany dział."
+        takeaway = "Most przez Poissona: przy stałej intensywności, niezależnych przyrostach i pojedynczych zdarzeniach liczba zdarzeń N(t) ma rozkład Poissona o średniej λt. Czas do pierwszego jest wykładniczy, do k-tego — Erlanga. Stała średnia liczba zgłoszeń nie wystarcza, jeśli zgłoszenia przychodzą grupami albo zależą od wcześniejszych."
       )
     )
   ),
@@ -521,7 +521,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             ),
             answer = "R(1000) ≈ 0.707; hazard podwaja się przy podwojeniu wieku (0.00035 → 0.00069 → 0.00138 na godzinę); R(1700) ≈ 0.368; MTTF ≈ 1507 h."
           ),
-          zycie_try("zacznij od β = 2 i η = 1700 h. Następnie ustaw β = 1 i η = 1500 h, a potem β = 0.5. Za każdym razem odczytaj kierunek hazardu i R(1000 h) w panelu; na dolnym wykresie zwróć uwagę na przebieg h(t) tuż po uruchomieniu."),
+          zycie_try("zacznij od β = 2 i η = 1700 h. Następnie ustaw β = 1 i η = 1500 h, a potem β = 0.5 i η = 1700 h. Za każdym razem odczytaj kierunek hazardu i R(1000 h) w panelu; na dolnym wykresie zwróć uwagę na przebieg h(t) tuż po uruchomieniu."),
           risk_widget_panel("Model", "R(t) i h(t) reagują razem", tagList(lc_slider("c7_beta", "β", .4, 4, 2, .1), lc_slider("c7_eta", "η (h)", 300, 4000, 1700, 50)), "c7_weibull", "c7_weibull_stats"),
           zycie_reading(c(
             "Dla β = 2 i η = 1700 h panel pokazuje hazard rosnący i R(1000 h) ≈ 0.707, jak w przykładzie 7.7; dolny wykres to prosta linia wychodząca z zera. Dla β = 1 i η = 1500 h hazard jest poziomy, a R(1000 h) ≈ 0.513 — odtworzyliśmy ofertę A. Dla β = 0.5 (przy η = 1700 h) hazard startuje bardzo wysoko i szybko opada: w chwili 100 h wynosi około 0.0012, a w chwili 1000 h około 0.0004 na godzinę.",

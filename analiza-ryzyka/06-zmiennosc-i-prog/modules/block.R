@@ -24,7 +24,7 @@ prog_exercises <- list(
     )
   ),
   list(
-    task = "Diagnostyka: porównaj histogram i wykres kwantylowy; wskaż, co podważa model normalny.",
+    task = "Diagnostyka (rozszerzenie): porównaj histogram i wykres kwantylowy; wskaż, co podważa model normalny.",
     answer = c(
       "Histogram pokazuje kształt całego rozkładu, ale przy kilkuset obserwacjach ogony są reprezentowane przez pojedyncze słupki i łatwo je przeoczyć. Wykres kwantylowy (6.11) porównuje każdy uporządkowany pomiar z jego normalnym odpowiednikiem, więc ogony są na nim wyraźnie widoczne.",
       "Model normalny podważają: systematyczne wygięcie punktów w jedną stronę (skośność — na przykład naturalna dolna granica temperatury), punkty odchodzące od prostej na obu końcach w przeciwnych kierunkach (ogony cięższe niż normalne) oraz pojedyncze skrajne pomiary daleko od prostej. Zgodność w środku wykresu niczego nie dowodzi o ogonie, a to ogon decyduje o ryzyku progowym."
@@ -181,7 +181,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           risk_example("6.3", "Linijka 68–95–99.7 dla łożyska",
             problem = "Dla T ~ N(82, 3) wyznacz przedziały, w których leży około 68% i 95% pomiarów. Na tej podstawie oszacuj, bez tablic, odsetek pomiarów powyżej 85°C.",
             steps = c(
-              "μ ± σ = 82 ± 3, czyli 79–85°C; dokładnie P(79 < T ≤ 85) = Φ(1) - Φ(-1) ≈ 0.683.",
+              "μ ± σ = 82 ± 3, czyli 79–85°C; dokładnie P(79 < T ≤ 85) ≈ 0.683.",
               "μ ± 2σ = 82 ± 6, czyli 76–88°C; dokładnie około 0.954. Poza μ ± 3σ = 73–91°C leży tylko około 0.27% pomiarów.",
               "Poza przedziałem 79–85°C leży około 1 - 0.683 = 0.317 pomiarów. Z symetrii połowa z nich jest powyżej 85°C: 0.317/2 ≈ 0.159."
             ),
@@ -473,7 +473,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         id = "ogony", title = "Ten sam środek, inny ogon",
         body = list(
           c(
-            "Wszystkie rachunki z rozdziałów 3–5 korzystały z funkcji Φ, czyli zakładały, że kształt rozkładu jest dokładnie normalny. Średnia i odchylenie standardowe nie wyznaczają jednak kształtu. Dwa rozkłady o μ = 82°C i σ = 3°C mogą mieć zupełnie różne ogony, a ryzyko progowe mieszka właśnie w ogonie.",
+            "Wszystkie rachunki z rozdziałów 2–5 korzystały z funkcji Φ, czyli zakładały, że kształt rozkładu jest dokładnie normalny. Średnia i odchylenie standardowe nie wyznaczają jednak kształtu. Dwa rozkłady o μ = 82°C i σ = 3°C mogą mieć zupełnie różne ogony, a ryzyko progowe mieszka właśnie w ogonie.",
             "Widget porównuje trzy modele temperatury, wszystkie ze średnią 82°C i odchyleniem 3°C. Symetryczny to N(82, 3). Skośny to przesunięty rozkład gamma: ma twardą dolną granicę około 76.8°C (łożysko nie ostygnie poniżej temperatury otoczenia) i dłuższy prawy ogon. Model z ciężkim ogonem to przeskalowany rozkład t-Studenta z trzema stopniami swobody: większość pomiarów skupia się ciaśniej wokół 82°C, ale rzadkie skoki są znacznie dalsze niż w modelu normalnym."
           ),
           risk_example("6.10", "Trzy modele, trzy ryzyka",
@@ -514,7 +514,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             ),
             answer = "Największy pomiar jest o 2.8°C wyższy, niż przewiduje model normalny — sygnał możliwego ciężkiego prawego ogona. Przy pięciu pomiarach to jednak tylko sygnał; do oceny ogona potrzeba znacznie więcej danych."
           ),
-          risk_check("z6_chk_qq",
+          risk_check("z6_chk_qq", extension = TRUE,
             "Na wykresie Q–Q punkty w środku leżą na prostej, a na prawym końcu wyraźnie zaginają się w górę. Co to oznacza dla oceny P(T > c) przy wysokim progu c?",
             c("Model normalny zaniża ryzyko" = "under", "Model normalny zawyża ryzyko" = "over", "Nic, bo środek jest zgodny" = "nothing"),
             correct = "under",

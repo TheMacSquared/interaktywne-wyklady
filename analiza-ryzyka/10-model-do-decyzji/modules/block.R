@@ -17,7 +17,7 @@ integracja_quiz <- list(questions = list(
 ))
 integracja_exercises <- list(
   list(
-    task = "Bananpol: dla misji 1000 h, p inicjacji 0.005, czułości 0.95, R zasilania 0.98 i sterownika 0.95 policz P(top) dla obu modeli wentylatora. Wyjaśnij, które parametry są warunkowe.",
+    task = "Bananpol: dla misji 1000 h, p inicjacji 0.005, czułości 0.95, R zasilania 0.98 i sterownika 0.95 policz P(TOP) dla obu modeli wentylatora. Wyjaśnij, które parametry są warunkowe.",
     answer = c(
       "Model wykładniczy: R_A = R_B = e^(-1000/1500) ≈ 0.513; gałąź równoległa 1 - 0.487² ≈ 0.763; R_sys = 0.98 · 0.95 · 0.763 ≈ 0.711. Ze wzoru (10.8): P(TOP) = 0.005 · [1 - 0.95 · 0.711] ≈ 0.005 · 0.325 ≈ 0.00162, czyli około 16 na 10 000 misji.",
       "Weibull β = 2, η = 1700 h: R_A = e^(-(1000/1700)²) ≈ 0.707; gałąź równoległa ≈ 0.914; R_sys ≈ 0.851; P(TOP) = 0.005 · [1 - 0.95 · 0.851] ≈ 0.00096, czyli około 10 na 10 000 misji.",
@@ -32,7 +32,7 @@ integracja_exercises <- list(
     )
   ),
   list(
-    task = "Decyzja: przy budżecie 2 i demonstracyjnym limicie P(top)=0.002 porównaj dopuszczalne działania w trzech scenariuszach. Sprawdź wynik po działaniu; jeśli żadne nie spełnia kryterium, nie deklaruj akceptowalności.",
+    task = "Decyzja: przy budżecie 2 i demonstracyjnym limicie P(TOP)=0.002 porównaj dopuszczalne działania w trzech scenariuszach. Sprawdź wynik po działaniu; jeśli żadne nie spełnia kryterium, nie deklaruj akceptowalności.",
     answer = c(
       "W budżecie 2 mieszczą się lepszy czujnik (koszt 2) i ograniczenie źródła ciepła (koszt 1). Dla modelu wykładniczego, misji 1000 h i u = 0.2: czujnik daje 0.00092 / 0.00154 / 0.00230 (optymistyczny / bazowy / ostrożny), ograniczenie źródła ciepła 0.00040 / 0.00081 / 0.00144.",
       "Czujnik przekracza limit 0.002 w scenariuszu ostrożnym, więc nie spełnia kryterium. Ograniczenie źródła ciepła mieści się w limicie we wszystkich trzech scenariuszach i jest najlepsze w każdym z nich — rekomendacja jest odporna w badanym zakresie. Dla Weibulla oba działania spełniają limit (najgorszy wynik czujnika ≈ 0.00130), ale ranking jest ten sam."
@@ -70,7 +70,7 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
       "Wszystkie liczby są fikcyjne. W tym uproszczonym scenariuszu nie ma napraw podczas misji, a każdy element zaczyna sprawny i nowy. Jeden wentylator wystarcza do wymaganej wydajności; oba pracują, a awaria jednego nie zmienia charakterystyki drugiego.",
       "Ten wykład nie wprowadza nowego rachunku. Wszystkie narzędzia są już w kursie: prawdopodobieństwo warunkowe z wykładu 02, Bayes z wykładu 03, rozkład dwumianowy i granica przy zerze zdarzeń z wykładu 04, funkcje czasu życia z wykładu 07, struktura systemu z wykładu 08 i drzewo błędów z wykładu 09. Nowe jest zadanie: złożyć je w jedną, spójną analizę, która kończy się decyzją. Czytaj ten wykład jak rozwiązane studium przypadku — każdy krok ma uzasadnienie, odwołanie do źródła, przeliczenie i interpretację."
     ),
-    callout = list(label = "Dane fikcyjne", text = "Misja bazowa: 1000 h. P zapotrzebowania na początku misji: 0.005; czułość: 0.95; FPR: 0.05. Parametry czasu życia wentylatora pochodzą z bloku 07. Zasilanie i sterownik mają wykładnicze czasy życia z R(1000 h)=0.98 i 0.95.", color = "uwaga"),
+    callout = list(label = "Dane fikcyjne", text = "Misja bazowa: 1000 h. P zapotrzebowania na początku misji: 0.005; czułość: 0.95; FPR: 0.05. Parametry czasu życia wentylatora pochodzą z wykładu 07. Zasilanie i sterownik mają wykładnicze czasy życia z R(1000 h)=0.98 i 0.95. Skuteczność działań: 50% — hipoteza do sprawdzenia w pilotażu.", color = "uwaga"),
     sections = list(
       list(
         id = "audyt", title = "Od czego zacząć?",
@@ -293,7 +293,7 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
           risk_widget_panel("Karta 3", "Niezawodność wentylatora", tagList(selectInput("i10_life_model", "Model", c("Wykładniczy" = "exp", "Weibull — zużycie" = "weibull")), lc_slider("i10_time", "Czas misji (h)", 100, 3000, 1000, 50)), "i10_life_plot", "i10_life_stats"),
           c(
             "Przy 1000 h panel pokazuje 0.513 dla modelu wykładniczego i 0.707 dla Weibulla. Przy 3000 h kolejność się odwraca: 0.135 wobec 0.044. Krzywa Weibulla zaczyna płasko — hazard w chwili zero wynosi zero — i potem gwałtownie opada, a krzywa wykładnicza opada równomiernie od początku.",
-            "Ta karta pokazuje, dlaczego sam MTTF nie wystarcza do analizy misji. Dwa modele o prawie tej samej średniej dają dla misji 1000 h niezawodności różniące się o 0.19, a wybór hipotezy o mechanizmie awarii przesunie końcowe P(TOP) prawie dwukrotnie. To jest niepewność modelu, a nie losowość — i musi trafić do notatki."
+            "Ta karta pokazuje, dlaczego sam MTTF nie wystarcza do analizy misji. Dwa modele o prawie tej samej średniej dają dla misji 1000 h niezawodności różniące się o 0.19, a wybór hipotezy o mechanizmie awarii przesunie końcowe P(TOP) około 1.7 raza. To jest niepewność modelu, a nie losowość — i musi trafić do notatki."
           ),
           risk_check("i10_chk_mttf",
             "Oba modele mają MTTF ≈ 1500 h. Dla której misji model Weibulla jest ostrożniejszy, czyli daje mniejsze R?",
@@ -326,7 +326,7 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
               "R(3000) ≈ 0.044.",
               "Każda misja zaczyna się od nowego egzemplarza: R(1000)³ ≈ 0.707³ ≈ 0.354.",
               "R(500)⁶ ≈ 0.917⁶ ≈ 0.595.",
-              "Ze wzoru (10.5) R(2000 | 1000) = R(2000)/R(1000) ≈ 0.251 / 0.707 ≈ 0.354. Równość z wynikiem b) jest przypadkową cechą β = 2; ważne jest, że 0.354 to połowa wartości 0.707 dla nowego egzemplarza. Dla modelu wykładniczego wszystkie trzy polityki dają e^(-2) ≈ 0.135: brak pamięci sprawia, że wymiana nic nie zmienia."
+              "Ze wzoru (10.5) R(2000 | 1000) = R(2000)/R(1000) ≈ 0.251 / 0.707 ≈ 0.354. Równość z wynikiem b) nie jest przypadkiem: dla β = 2 iloraz R(2000)/R(1000) wynosi R(1000)³ przy każdym η. Przypadkowe jest tylko to, że 0.354 wypada blisko połowy wartości 0.707 dla nowego egzemplarza — ważne, że używany egzemplarz jest wyraźnie mniej niezawodny niż nowy. Dla modelu wykładniczego wszystkie trzy polityki dają e^(-2) ≈ 0.135: brak pamięci sprawia, że wymiana nic nie zmienia."
             ),
             steps_type = "a",
             answer = "Przy zużyciu wymiana prewencyjna radykalnie poprawia przetrwanie łącznego czasu pracy (0.044 → 0.354 → 0.595). Przy stałym hazardzie ta sama wymiana jest wydatkiem bez efektu."
@@ -408,7 +408,7 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
               "Weibull: nawias = 1 - 0.95 · 0.851 ≈ 0.191; P(TOP) ≈ 0.00096, około 10 na 10 000 misji.",
               "Przybliżenie sumą: 0.05 + 0.289 = 0.339 zamiast 0.325. Przybliżenie rzadkich zdarzeń zawodzi, bo P(S | I) nie jest małe."
             ),
-            answer = "P(TOP) ≈ 0.0016 (wykładniczy) lub ≈ 0.0010 (Weibull). Wybór hipotezy o czasie życia zmienia wynik o około 40%."
+            answer = "P(TOP) ≈ 0.0016 (wykładniczy) lub ≈ 0.0010 (Weibull). Wybór hipotezy o czasie życia zmienia wynik około 1.7 raza."
           ),
           risk_try("najpierw odczytaj wysokości czterech słupków dla ustawień bazowych. Potem wróć do karty 3 i przełącz model na Weibulla, a na karcie 1 ustaw czułość 1.00. Sprawdź, który słupek reaguje."),
           risk_widget_panel("Integracja", "Utrata ochrony termicznej w misji", tags$p("Parametry zmieniasz na kartach detekcji, czasu życia i systemu."), "i10_fta_plot", "i10_fta_stats"),
@@ -431,7 +431,7 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
         body = list(
           c(
             "Zarząd myśli w latach, nie w misjach. Bananpol wykonuje trzy misje po 1000 h rocznie. Jeśli przed każdą misją elementy są odnawiane (Definicja 10.3), a misje nie wpływają na siebie nawzajem, roczny wynik to schemat Bernoulliego z wykładu 04: trzy niezależne próby, każda z prawdopodobieństwem P(TOP). Pytamy o co najmniej jedno zdarzenie w roku.",
-            "Kusi też inny rachunek: skoro układ ma R_sys na misję, to w roku ma R_sys³, więc „roczne ryzyko” wynosi 1 - R_sys³. Ta liczba istnieje, ale odpowiada na inne pytanie — i jest pułapką, przed którą ostrzega pierwsze pytanie quizu."
+            "Kusi też inny rachunek: skoro układ ma R_sys na misję, to w roku ma R_sys³, więc „roczne ryzyko” wynosi 1 - R_sys³. Ta liczba istnieje, ale odpowiada na inne pytanie — i jest pułapką, przed którą ostrzega pytanie quizu o rocznej awarii i niedostępności."
           ),
           risk_formula("P_{rok}=1-\\bigl(1-P(TOP)\\bigr)^{3}\\approx 3\\,P(TOP)", num = "10.9",
             legend = c("P(TOP)" = "prawdopodobieństwo utraty ochrony w jednej misji ze wzoru (10.8)", "3" = "liczba misji w roku, przy odnowie przed każdą z nich", "P_{rok}" = "prawdopodobieństwo co najmniej jednej utraty ochrony w roku")),
@@ -514,8 +514,8 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
         text = "Mnożnik m=1±u skaluje P(I), prawdopodobieństwo przeoczenia oraz skumulowane hazardy elementów; prawdopodobieństwa ograniczamy do 1. Skuteczność czujnika i ograniczenia źródła ciepła wynosi 0.5(2-m): w ostrożnym scenariuszu jest niższa. Te same założenia stosujemy do wszystkich opcji przed ich porównaniem. Redundancja zakłada niezależność dodanej gałęzi także w scenariuszach.",
         body = list(
           "Skalowanie skumulowanego hazardu ma prostą postać. Dla każdego elementu R(t) = e^(-H(t)), gdzie H(t) to skumulowany hazard z wykładu 07. Zwiększenie H o czynnik m daje e^(-mH(t)) = R(t)^m. Dlatego scenariusz ostrożny nie „odejmuje” stałej od niezawodności, tylko podnosi ją do potęgi większej od 1 — tak samo dla każdego elementu i w każdej opcji.",
-          risk_formula("m\\in\\{1-u,\\;1,\\;1+u\\},\\quad P(I)_m=\\min(1,\\,m\\,P(I)),\\quad R_m(t)=R(t)^{m},\\quad e_m=0.5\\,(2-m)", num = "10.11",
-            legend = c("u" = "zakres niepewności ustawiany suwakiem", "m" = "mnożnik scenariusza: optymistyczny, bazowy, ostrożny", "e_m" = "skuteczność czujnika i ograniczenia źródła ciepła w scenariuszu")),
+          risk_formula("m\\in\\{1-u,\\;1,\\;1+u\\},\\quad P(I)_m=\\min(1,\\,m\\,P(I)),\\quad P(D\\mid I)_m=\\min(1,\\,m\\,P(D\\mid I)),\\quad R_m(t)=R(t)^{m},\\quad e_m=0.5\\,(2-m)", num = "10.11",
+            legend = c("u" = "zakres niepewności ustawiany suwakiem", "m" = "mnożnik scenariusza: optymistyczny, bazowy, ostrożny", "P(D\\mid I)" = "prawdopodobieństwo przeoczenia, 1 - czułość", "e_m" = "skuteczność czujnika i ograniczenia źródła ciepła w scenariuszu")),
           risk_definition("10.5", "Odporność rekomendacji", c(
             "Rekomendacja jest odporna w badanym zakresie, jeśli to samo działanie jest najlepsze wśród dopuszczalnych opcji i spełnia kryterium w każdym rozpatrzonym scenariuszu. Odporność dotyczy zawsze konkretnego zestawu scenariuszy; nie jest gwarancją wobec założeń, których nie zmieniano."
           )),
@@ -536,7 +536,7 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
           risk_try("przy ustawieniach bazowych przesuń u od 0 do 0.5 i śledź tekst pod wykresem. Potem przełącz model na Weibulla na karcie 3, ustaw budżet 3 i powtórz."),
           risk_widget_panel("Niepewność", "Opcje w trzech scenariuszach", lc_slider("i10_uncertainty", "Zakres u", 0, .5, .2, .05), "i10_scenarios", "i10_scenarios_stats"),
           c(
-            "Dla modelu wykładniczego i budżetu 2 tekst pod wykresem wskazuje ograniczenie źródła ciepła we wszystkich scenariuszach przy każdym u. Dla Weibulla przy budżecie 3 ta sama opcja wygrywa aż do u = 0.45; dopiero przy u = 0.5 w scenariuszu ostrożnym na pierwsze miejsce wychodzi dodatkowy wentylator. Słupki pokazują też, że rozrzut między scenariuszami jest dla każdej opcji większy niż różnice między opcjami w jednym scenariuszu.",
+            "Dla modelu wykładniczego i budżetu 2 tekst pod wykresem wskazuje ograniczenie źródła ciepła we wszystkich scenariuszach przy każdym u. Dla Weibulla przy budżecie 3 ta sama opcja wygrywa do około u = 0.45; dopiero przy u = 0.5 w scenariuszu ostrożnym na pierwsze miejsce wychodzi dodatkowy wentylator. Słupki pokazują też, że rozrzut między scenariuszami jest dla każdej opcji większy niż różnice między opcjami w jednym scenariuszu.",
             "Ta ostatnia obserwacja jest kluczowa dla notatki: liczby „0.00081” nie wolno podawać jak pomiaru. Uczciwa rekomendacja mówi, w jakim zakresie niepewności jest najlepsza i przy jakim założeniu przestaje nią być."
           ),
           risk_check("i10_chk_scen",
