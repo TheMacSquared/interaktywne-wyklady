@@ -52,7 +52,8 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.1",
       title = "Porównanie trzech typów skośności",
-      lc_plot("ch5_skew_comparison", max_height = "300px")
+      lc_plot("ch5_skew_comparison", max_height = "300px"),
+      uiOutput("ch5_skew_comparison_caption")
     ),
 
     lc_p("Rozkład prawostronnie skośny ma skośność około 0.99, jego lustrzane
@@ -224,39 +225,37 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  zoom_plot_server("ch5_skew_comparison", reactive({
+  ch5_skew_cmp <- reactive({
     set.seed(42)
     n_pts <- 5000
     left_skew  <- -rgamma(n_pts, shape = 4, scale = 1)
     symmetric  <- rnorm(n_pts, mean = 0, sd = 2)
     right_skew <- rgamma(n_pts, shape = 4, scale = 1)
 
-    df_cmp <- rbind(
-      data.frame(x = left_skew,  typ = "Lewostronnie skośny"),
-      data.frame(x = symmetric,  typ = "Symetryczny"),
-      data.frame(x = right_skew, typ = "Prawostronnie skośny")
+    types <- c("Lewostronnie skośny", "Symetryczny", "Prawostronnie skośny")
+    df <- rbind(
+      data.frame(x = left_skew,  typ = types[1]),
+      data.frame(x = symmetric,  typ = types[2]),
+      data.frame(x = right_skew, typ = types[3])
     )
-    df_cmp$typ <- factor(df_cmp$typ,
-      levels = c("Lewostronnie skośny", "Symetryczny", "Prawostronnie skośny"))
+    df$typ <- factor(df$typ, levels = types)
+    skew <- setNames(
+      c(e1071::skewness(left_skew), e1071::skewness(symmetric), e1071::skewness(right_skew)),
+      types)
+    list(df = df, skew = skew)
+  })
 
-    sk_vals <- c(
-      round(e1071::skewness(left_skew), 2),
-      round(e1071::skewness(symmetric), 2),
-      round(e1071::skewness(right_skew), 2)
-    )
-    label_df <- data.frame(
-      typ = factor(
-        c("Lewostronnie skośny", "Symetryczny", "Prawostronnie skośny"),
-        levels = c("Lewostronnie skośny", "Symetryczny", "Prawostronnie skośny")),
-      label = paste0("skośność = ", sk_vals)
-    )
+  output$ch5_skew_comparison_caption <- renderUI({
+    sk <- ch5_skew_cmp()$skew
+    lc_caption(paste0("Skośność: ",
+      paste(sprintf("%s %s", tolower(names(sk)), lc_fmt(sk, 2)), collapse = ", "), "."))
+  })
+
+  zoom_plot_server("ch5_skew_comparison", reactive({
+    df_cmp <- ch5_skew_cmp()$df
 
     ggplot(df_cmp, aes(x = x)) +
       geom_density(aes(fill = typ), alpha = 0.5, color = upwr_secondary, linewidth = 0.8) +
-      geom_text(data = label_df,
-        aes(label = label), x = 0, y = Inf, vjust = 1.5,
-        size = 4, fontface = "italic", color = upwr_secondary,
-        inherit.aes = FALSE) +
       facet_wrap(~typ, scales = "free_x") +
       scale_fill_manual(values = c(
         "Lewostronnie skośny" = upwr_accent,
