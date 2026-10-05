@@ -1672,14 +1672,14 @@ mjx-container mjx-text {
 .lc-gloss-popup {
   position: fixed;
   z-index: 10000;
-  max-width: 280px;
-  padding: .55rem .8rem .6rem;
+  max-width: 360px;
+  padding: .7rem 1rem .8rem;
   background: var(--upwr-bg, #fff);
   border: 1.5px solid var(--upwr-accent);
   border-radius: 6px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, .13);
   font-family: var(--upwr-sans);
-  font-size: .875rem;
+  font-size: calc(16px * var(--lc-font-scale));
   line-height: 1.5;
   color: var(--upwr-text, #222);
   display: none;
@@ -1694,7 +1694,7 @@ mjx-container mjx-text {
   font-weight: 600;
   margin-bottom: .2rem;
   color: var(--upwr-accent);
-  font-size: .8rem;
+  font-size: calc(13px * var(--lc-font-scale));
   text-transform: uppercase;
   letter-spacing: .04em;
 }
