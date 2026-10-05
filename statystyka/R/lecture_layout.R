@@ -934,6 +934,29 @@ lc_segmented <- function(input_id, label = NULL, choices, selected = NULL,
   )
 }
 
+# Lista rozwijana (natywny <select>) w stylu v2. choices jak w selectInput().
+lc_select <- function(input_id, choices, selected = NULL, aria_label = NULL) {
+  sel <- shiny::selectInput(input_id, label = NULL, choices = choices,
+                            selected = selected, selectize = FALSE, width = "100%")
+  if (!is.null(aria_label)) {
+    sel <- htmltools::tagQuery(sel)$find("select")$addAttrs(`aria-label` = aria_label)$allTags()
+  }
+  tags$div(class = "lc-select", sel)
+}
+
+# Legenda kolorów w HTML: tytuł + próbki. Używana nad wykresem zamiast legendy ggplot.
+lc_legend <- function(title, labels, colours) {
+  tags$div(class = "lc-legend", role = "list",
+    tags$span(class = "lc-legend-t", title),
+    lapply(seq_along(labels), function(i) {
+      tags$span(class = "lc-legend-i", role = "listitem",
+        tags$i(class = "lc-th-swatch", `aria-hidden` = "true",
+               style = paste0("--lc-sw:", colours[[i]], ";")),
+        labels[[i]])
+    })
+  )
+}
+
 # Grupa akcji jako jeden segment, np. +1 · +10 · +100 · +1000.
 # Argumenty: nazwane id = etykieta, np. lc_action_group(ch1_roll_1 = "+1").
 lc_action_group <- function(..., label = NULL) {

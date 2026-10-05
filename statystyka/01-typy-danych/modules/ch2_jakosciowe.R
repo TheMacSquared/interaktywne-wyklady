@@ -2,6 +2,8 @@
 # CHAPTER 2: Zmienne jakościowe
 # ============================================================================
 
+cross_choices <- c("Płeć" = "plec", "Kierunek" = "kierunek", "Grupa krwi" = "grupa_krwi")
+
 ch2_ui <- list(
   id = "ch-jakosciowe", num = "02", title = "Zmienne jakościowe",
   content = tagList(
@@ -257,28 +259,32 @@ ch2_ui <- list(
       title = "Tabela krzyżowa",
       width_mode = "text",
       lc_toolbar(
-        lc_segmented("ch2_cross_row", "Wiersze",
-          choices = c("Płeć" = "plec", "Kierunek" = "kierunek",
-                      "Grupa krwi" = "grupa_krwi"),
-          selected = "plec", exclusive_with = "ch2_cross_col"
+        lc_group("Wiersze × kolumny",
+          tags$div(class = "lc-xt-pair",
+            lc_select("ch2_cross_row", cross_choices, selected = "plec",
+                      aria_label = "Zmienna w wierszach"),
+            tags$span(class = "lc-xt-times", `aria-hidden` = "true", "×"),
+            lc_select("ch2_cross_col", cross_choices, selected = "kierunek",
+                      aria_label = "Zmienna w kolumnach"),
+            lc_action("ch2_cross_swap", icon = "shuffle", variant = "ghost",
+                      aria_label = "Zamień wiersze z kolumnami")
+          )
         ),
-        lc_segmented("ch2_cross_col", "Kolumny",
-          choices = c("Płeć" = "plec", "Kierunek" = "kierunek",
-                      "Grupa krwi" = "grupa_krwi"),
-          selected = "kierunek", exclusive_with = "ch2_cross_row"
-        ),
-        lc_segmented("ch2_cross_type", "Miara",
-          choices = c("Liczebności" = "counts",
-                      "% wierszowe" = "row_pct",
-                      "% kolumnowe" = "col_pct"),
-          selected = "counts"
+        tags$div(class = "lc-push",
+          lc_segmented("ch2_cross_type", NULL,
+            choices = c("Liczebności" = "counts",
+                        "% wierszowe" = "row_pct",
+                        "% kolumnowe" = "col_pct"),
+            selected = "counts"
+          )
         )
       ),
       uiOutput("ch2_cross_table"),
       uiOutput("ch2_cross_caption"),
-      lc_toolbar(
-        lc_segmented("ch2_cross_chart", "Wykres",
-          choices = c("Słupkowy" = "bar", "Heatmapa" = "heatmap"),
+      tags$div(class = "lc-xt-bar is-plain",
+        uiOutput("ch2_cross_legend", inline = TRUE),
+        lc_segmented("ch2_cross_chart", NULL,
+          choices = c("Słupki" = "bar", "Mapa ciepła" = "heatmap"),
           selected = "bar"
         )
       ),
@@ -671,6 +677,36 @@ ch2_server <- function(input, output, session) {
                                    "Informatyka" = "Inf.", "Psychologia" = "Psych."))
   cross_measure <- c("counts" = "n", "row_pct" = "row", "col_pct" = "col")
   cross_target <- reactiveVal(c(1L, 1L))
+  cross_prev <- reactiveVal(c(row = "plec", col = "kierunek"))
+
+  # Ta sama zmienna w wierszach i kolumnach: druga lista dostaje poprzednią
+  # wartość pierwszej (zmiana wybranej zmiennej działa jak zamiana).
+  observeEvent(list(input$ch2_cross_row, input$ch2_cross_col), {
+    r <- input$ch2_cross_row
+    k <- input$ch2_cross_col
+    req(r, k)
+    p <- cross_prev()
+    if (identical(r, k)) {
+      if (!identical(r, p[["row"]])) {
+        k <- p[["row"]]
+        updateSelectInput(session, "ch2_cross_col", selected = k)
+      } else {
+        r <- p[["col"]]
+        updateSelectInput(session, "ch2_cross_row", selected = r)
+      }
+    }
+    cross_prev(c(row = r, col = k))
+  })
+
+  observeEvent(input$ch2_cross_swap, {
+    updateSelectInput(session, "ch2_cross_row", selected = input$ch2_cross_col)
+  })
+
+  output$ch2_cross_legend <- renderUI({
+    tbl <- cross_tab()
+    if (identical(input$ch2_cross_chart, "heatmap")) return(NULL)
+    lc_legend(cross_labels[[input$ch2_cross_col]], colnames(tbl), upwr_cat_n(ncol(tbl)))
+  })
   observeEvent(input$ch2_cross_cell, cross_target(as.integer(input$ch2_cross_cell)))
 
   cross_tab <- reactive({
@@ -697,7 +733,8 @@ ch2_server <- function(input, output, session) {
       row_name = cross_labels[[input$ch2_cross_row]],
       col_name = cross_labels[[input$ch2_cross_col]],
       short_labels = if (!is.null(short)) unname(short[col_levels]),
-      input_id = "ch2_cross_cell"
+      input_id = "ch2_cross_cell",
+      lead = FALSE
     )
   })
 
@@ -769,7 +806,7 @@ ch2_server <- function(input, output, session) {
         geom_bar(position = "dodge", alpha = 0.85, color = "white") +
         scale_fill_upwr() +
         labs(x = row_label[row_var], y = "Liczebność", fill = col_label[col_var]) +
-                theme(legend.position = "top")
+        theme(legend.position = "none")
     }
   }))
 
