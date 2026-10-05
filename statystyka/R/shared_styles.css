@@ -1812,6 +1812,10 @@ mjx-container mjx-text {
 .lc-toolbar .form-group,.lc-toolbar .shiny-input-container{margin:0}
 /* Pole wyboru w pasku ma szerokość treści, żeby inne elementy (np. kropki kroków) zmieściły się w tym samym rzędzie. */
 .lc-toolbar>.shiny-input-container:has(>.checkbox){width:auto!important;flex:0 1 auto}
+/* Kilka pól wyboru jedno pod drugim w jednym miejscu paska */
+.lc-toolbar>.lc-checks{display:flex;flex-direction:column;gap:.3em;flex:0 1 auto}
+.lc-checks .shiny-input-container{width:auto!important}
+.lc-checks .checkbox{margin:0}
 .lc-grp{display:flex;flex-direction:column;gap:.35em;min-width:0}
 .lc-grp-l{font-size:.78em;font-weight:700;color:var(--upwr-ink-soft)}
 

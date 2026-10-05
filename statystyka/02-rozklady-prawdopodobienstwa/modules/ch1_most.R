@@ -128,8 +128,10 @@ ch1_ui <- list(
           ),
         lc_slider("ch1_emp_n", "Wielkość próby", 20, 5000, 200, 20),
         lc_action("ch1_emp_resample", "Losuj nową próbę", icon = "shuffle", variant = "solid"),
-        checkboxInput("ch1_show_hist", "Histogram (dane empiryczne)", value = TRUE),
-        checkboxInput("ch1_show_density", "Krzywa gęstości (model teoretyczny)", value = FALSE)
+        tags$div(class = "lc-checks",
+          checkboxInput("ch1_show_hist", "Histogram (dane empiryczne)", value = TRUE),
+          checkboxInput("ch1_show_density", "Krzywa gęstości (model teoretyczny)", value = FALSE)
+        )
       ),
       lc_plot("ch1_emp_vs_theo", max_height = "380px")
     ),
