@@ -219,19 +219,23 @@ ch2_ev_var_ui <- list(
       liczb: statystyki z lewej kolumny liczymy z zebranych danych, parametry
       z prawej — z modelu, czyli z rozkładu prawdopodobieństwa."),
 
-    figure_panel(label = "Porównanie", title = "Dane a model", width_mode = "compact",
-      lc_table(
-        data.frame(
-          data = c("Średnia z próby x̄", "Wariancja z próby s²", "Odchylenie standardowe s", "Obliczane z danych"),
-          model = c("Wartość oczekiwana E(X)", "Wariancja Var(X)", "Odchylenie standardowe SD(X)", "Obliczane z modelu (rozkładu)")
-        ),
-        cols = list(
-          lc_col("data", "Statystyka opisowa (dane)", "text"),
-          lc_col("model", "Rachunek prawdopodobieństwa (model)", "text")
-        ),
-        narrow = "cards", prose = TRUE,
-        label = "Porównanie statystyki opisowej i modelu"
-      )
+    lc_table(
+      data.frame(
+        what  = c("Środek", "Rozrzut (kwadrat)", "Rozrzut (jednostki)", "Źródło liczb"),
+        data  = c("Średnia z próby x̄", "Wariancja z próby s²", "Odchylenie standardowe s",
+                  "Zebrane dane"),
+        model = c("Wartość oczekiwana E(X)", "Wariancja Var(X)", "Odchylenie standardowe SD(X)",
+                  "Rozkład prawdopodobieństwa"),
+        stringsAsFactors = FALSE
+      ),
+      cols = list(
+        lc_col("what", "", "row"),
+        lc_col("data", "Dane", "text"),
+        lc_col("model", "Model", "text")
+      ),
+      prose = TRUE,
+      label = "Porównanie statystyki opisowej i modelu",
+      caption = "Statystyka opisowa liczy wielkości z danych, rachunek prawdopodobieństwa wyznacza ich odpowiedniki z modelu."
     ),
 
     lc_p("Obie kolumny łączy prawo wielkich liczb, które widzieliśmy przy
