@@ -2165,6 +2165,10 @@ mjx-container mjx-text {
 .lc-stepper-head .lc-toolbar{flex:1 1 22em;justify-content:flex-end;border:0;padding:0;margin:0}
 .lc-stepper-head .lc-toolbar>*{flex:0 1 14em}
 .lc-stepper-head .lc-toolbar>*:has(.lc-chips){flex:0 1 auto}
+/* Segmenty: szerokość z treści, w jednym rzędzie; wąsko — jeden pod drugim z poziomymi liniami */
+.lc-stepper-head .lc-toolbar>.lc-seg-input{flex:0 1 auto}
+.lc-stepper-head .lc-seg{flex-wrap:nowrap}
+.lc-stepper-head .lc-seg>*{white-space:nowrap}
 
 /* Kontrolka nieaktywna w bieżącym kroku: widoczna, wyszarzona */
 .lc-is-off{opacity:.45;pointer-events:none}
@@ -2201,6 +2205,9 @@ mjx-container mjx-text {
 @container lc-fig (max-width:520px){
   .lc-stepper-head .lc-toolbar{justify-content:stretch}
   .lc-stepper-head .lc-toolbar>*{flex:1 1 12em}
+  .lc-stepper-head .lc-seg{flex-direction:column}
+  .lc-stepper-head .lc-seg>*{border-left:0;border-top:1px solid var(--upwr-rule)}
+  .lc-stepper-head .lc-seg>:first-child{border-top:0}
   .lc-step-tab{align-items:center;padding-top:.4em}
   .lc-step-tab span{display:none}
   .lc-stepper-kicker{display:block}
