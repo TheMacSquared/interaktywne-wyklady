@@ -102,6 +102,10 @@ ui <- lecture_page(
       .lc-exp-ball { fill: var(--upwr-accent); }
       .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }
       .lc-stepper-head .lc-toolbar .lc-seg { flex-wrap: nowrap; }
+      .lc-exp-cloud { fill: var(--upwr-ink-subtle); opacity: .55; stroke: none; }
+      .lc-exp-drop { stroke: var(--upwr-cat-niebo); stroke-width: 2; stroke-linecap: round; }
+      .lc-exp-sun { fill: var(--upwr-single-alt); }
+      .lc-exp-sunray { stroke: var(--upwr-single-alt); stroke-width: 2.5; stroke-linecap: round; }
       .lc-exp-peg { fill: var(--upwr-ink-subtle); }
       .lc-exp-trail { stroke: var(--upwr-accent); stroke-width: 2; opacity: .55; }
       .lc-exp-curve { stroke: var(--upwr-ink); stroke-width: 2.5; }

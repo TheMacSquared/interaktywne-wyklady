@@ -77,6 +77,28 @@
     }
   }
 
+  // Chmurka z kroplami (deszcz trwa) albo słoneczko (deszcz się skończył) w punkcie (x, y).
+  function weatherIcon(g, x, y, sunny, phase) {
+    var q = svg("g", { transform: "translate(" + x + "," + y + ") scale(1.3)" }, g);
+    if (sunny) {
+      svg("circle", { r: 10, class: "lc-exp-sun" }, q);
+      for (var a = 0; a < 8; a++) {
+        var t = a * Math.PI / 4;
+        svg("line", { x1: Math.cos(t) * 15, y1: Math.sin(t) * 15, x2: Math.cos(t) * 21, y2: Math.sin(t) * 21,
+          class: "lc-exp-sunray" }, q);
+      }
+      return;
+    }
+    svg("circle", { cx: -8, cy: 2, r: 8, class: "lc-exp-cloud" }, q);
+    svg("circle", { cx: 2, cy: -5, r: 10, class: "lc-exp-cloud" }, q);
+    svg("circle", { cx: 12, cy: 2, r: 8, class: "lc-exp-cloud" }, q);
+    svg("rect", { x: -8, y: 2, width: 20, height: 8, class: "lc-exp-cloud" }, q);
+    [-8, 2, 12].forEach(function (dx, i) {
+      var off = ((phase || 0) * 60 + i * 5) % 12;
+      svg("line", { x1: dx, y1: 14 + off, x2: dx - 2, y2: 19 + off, class: "lc-exp-drop" }, q);
+    });
+  }
+
   // --- rodzaje doświadczeń ---------------------------------------------------
   // Każdy zwraca: bins [{label, prob, tail?}], run(), binOf(x), draw(g, o, hi, prog),
   // animate(o, fast, redraw, done), log(o), sub (podpis pod X), unit (nazwa próby);
@@ -283,9 +305,9 @@
       binOf: function (x) { return Math.min(Math.floor(x / w), K); },
       draw: function (g, o, hi, prog) {
         timeAxis(g, T, " min", AX0, AX1, AY);
-        svg("text", { x: AX0, y: AY - 14, "text-anchor": "middle", class: "lc-exp-sub" }, g, "start");
-        if (!o) return;
+        if (!o) { weatherIcon(g, 46, 28, false, 0); return; }
         var frac = prog === undefined ? 1 : prog;
+        weatherIcon(g, 46, 28, frac >= 1, frac);
         var x = o.xTrue !== undefined ? o.xTrue : o.x;
         var shown = Math.min(x, T) * frac;
         svg("line", { x1: px(0), x2: px(shown), y1: AY, y2: AY, class: "lc-exp-trail" }, g);
